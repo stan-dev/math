@@ -77,7 +77,6 @@ TEST(MathMatrix, performance_test)  {
     init = rep_vector(500, 2 * n);  // initial guess
 
     Matrix<double, Dynamic, Dynamic> J;
-    
 
     for (int j = 0; j <100; j++) {
       if (!measure_jacobian_time_only) 
@@ -99,10 +98,9 @@ TEST(MathMatrix, performance_test)  {
       // compute Jacobian
       if (measure_jacobian_time_only)
         start = std::chrono::system_clock::now();
-      
+
       // it suffices to take the gradient with respect to one output,
       // since the whole Jacobian gets computed.
-
       grad(steady_state(1).vi_);
 
       // J.resize(2 * n, 2 + 2 * n);
@@ -120,7 +118,7 @@ TEST(MathMatrix, performance_test)  {
     }
     file << "\n";
   }
-} */
+}  */
 
 ///////////////////////////////////////////////////////////////////////////////
 /* Test solver for INLA optimization problem with Poisson GLM. */
@@ -204,7 +202,7 @@ struct inla_functor2 {
       stan::math::multiply(sigma_inv, theta);
   }
 };
-/*
+
 TEST(MathMatrix, optimization_inla) {
   using std::vector;
   using stan::math::var;
@@ -340,7 +338,7 @@ TEST(MathMatrix, optimization_inla) {
     EXPECT_FLOAT_EQ(solver_gradient(k, 0), g[0]);
     EXPECT_FLOAT_EQ(solver_gradient(k, 1), g[1]);
   }
-} */
+}
 
 /*
 TEST(MathMatrix, performance_test_inla)  {
@@ -364,8 +362,8 @@ TEST(MathMatrix, performance_test_inla)  {
 
   int n_dimensions = 5;
   Eigen::VectorXd dimensions(n_dimensions);
-  // dimensions << 10, 20, 50, 100, 500;
-  dimensions << 10, 20, 20, 20, 500;
+  dimensions << 10, 20, 50, 100, 500;
+  // dimensions << 10, 20, 20, 20, 500;
   
   // tuning parameter for the Powell solver
   double rel_tol = 1e-12;
@@ -381,9 +379,9 @@ TEST(MathMatrix, performance_test_inla)  {
   std::chrono::duration<double> elapsed_seconds_total;
   std::chrono::duration<double> elapsed_seconds_jacobian;
 
-  // Note: the last tier, with dim = 500 takes 20 minutes to run,
-  // so it's best to leave that out.
-  for (int k = 0; k < n_dimensions; k++) {
+  // Note: the last tier, with dim = 500 takes 20 minutes to run
+  // with Powell's solver, so it's best to leave that out.
+  for (int k = 0; k < n_dimensions - 1; k++) {
 
     std::cout << "Dimension: " << dimensions(k) << std::endl;
 
@@ -454,7 +452,7 @@ TEST(MathMatrix, performance_test_inla)  {
     std::cout << "Solver: " << solver << std::endl
               << "Total time: " << elapsed_seconds_total.count() 
               << std::endl
-              << "Jacobian time: "
+              << "Chain evaluation time: "
               << elapsed_seconds_jacobian.count()
               << std::endl;
     
@@ -588,6 +586,7 @@ TEST(MathMatrix, performance_test_inla2)  {
   }
 } */
 
+/*
 TEST(MathMatrix, performance_test_inla3) {
   // Use lgp_dense_newton_solver, which offers analytical
   // derivatives (check!)
@@ -701,4 +700,4 @@ TEST(MathMatrix, performance_test_inla3) {
     for (size_t i = 0; i < g.size(); i++) std::cout << g[i] << " ";
     std::cout << std::endl << std::endl;
   }
-}
+} */

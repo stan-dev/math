@@ -1,12 +1,14 @@
 #ifndef STAN_MATH_REV_MAT_FUNCTOR_ALGEBRA_SOLVER_NEWTON_HPP
 #define STAN_MATH_REV_MAT_FUNCTOR_ALGEBRA_SOLVER_NEWTON_HPP
 
+#include <stan/math/prim/mat/fun/mdivide_left.hpp>
+#include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/rev/mat/functor/algebra_system.hpp>
 #include <stan/math/rev/mat/functor/algebra_solver.hpp>
-#include <stan/math/prim/mat/fun/mdivide_left.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/meta/is_var.hpp>
-#include <stan/math/prim/mat/fun/value_of.hpp>
+#include <stan/math/rev/mat/functor/kinsol_solve.hpp>
+
 #include <unsupported/Eigen/NonLinearOptimization>
 #include <iostream>
 #include <string>
@@ -159,10 +161,21 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver_newton(
     std::ostream* msgs = nullptr, double relative_tolerance = 1e-10,
     double function_tolerance = 1e-6,
     long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
-  Eigen::VectorXd theta_dbl
+
+  bool test_kinsol = 1;
+
+  Eigen::VectorXd theta_dbl;
+
+  if (!test_kinsol) {
+    theta_dbl
       = algebra_solver_newton(f, x, value_of(y), dat, dat_int, 0,
                               relative_tolerance,
                               function_tolerance, max_num_steps);
+  } else {
+    theta_dbl
+      = kinsol_solve(f, x, value_of(y), dat, dat_int, 0,
+                     function_tolerance, max_num_steps);
+  }
 
   typedef system_functor<F, double, double, false> Fy;
   typedef system_functor<F, double, double, true> Fs;
@@ -180,6 +193,8 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver_newton(
 
   return theta;
 }
+
+
 }  // namespace math
 }  // namespace stan
 

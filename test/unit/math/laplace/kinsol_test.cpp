@@ -1,6 +1,8 @@
 
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/mat/functor/algebra_system.hpp>
+#include <stan/math/rev/mat/functor/kinsol_data.hpp>
+#include <stan/math/rev/mat/functor/kinsol_solve.hpp>
 
 #include <kinsol/kinsol.h>             /* access to KINSOL func., consts. */
 #include <nvector/nvector_serial.h>    /* access to serial N_Vector       */
@@ -68,7 +70,7 @@ static void PrintOutput(N_Vector u) {
 #endif
 }
 
-TEST(laplace, kinsol) {
+TEST(matrix, kinsol) {
   // User data
   UserData data = (UserData) malloc(sizeof *data);  // CHECK - do I need this?
   data->n_samples[0] = 5;
@@ -116,6 +118,14 @@ TEST(laplace, kinsol) {
 
   printf("Solutions:\n [x1, x2] = ");
   PrintOutput(theta);
+
+  // free memory
+  N_VDestroy_Serial(theta);
+  N_VDestroy_Serial(scaling);
+  KINFree(&kinsol_memory);
+  SUNLinSolFree(linear_solver);
+  SUNMatDestroy(J);
+  free(data);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -148,153 +158,153 @@ struct lgp_functor {
   }
 };
 
-namespace stan {
-namespace math {
+// namespace stan {
+// namespace math {
+// 
+// /**
+//  * KINSOL algebraic system data holder.
+//  * Based on cvodes_ode_data.
+//  * (EXPERIMENTAL)
+//  * 
+//  * F: structure type of the functor with the system
+//  * T: type of the parameter.
+//  */
+// template <typename F, typename T>
+// class kinsol_system_data {
+//   const F& f_;
+//   const Eigen::VectorXd& x_;
+//   const Eigen::Matrix<T, Eigen::Dynamic, 1>& y_;
+//   const Eigen::VectorXd& y_dbl_;
+//   const size_t N_;
+//   const std::vector<double>& dat_;
+//   const std::vector<int>& dat_int_;
+//   std::ostream* msgs_;
+// 
+//   typedef kinsol_system_data<F, T> system_data;
+// 
+// public:
+//   // system_functor object
+//   // std::vector<double> x_vec_;  // CHECK - do we need this duplicate?
+//   N_Vector nv_x_;
+//   SUNMatrix J_;
+//   SUNLinearSolver LS_;
+// 
+//   /**
+//    * Construct KINSOL system data object.
+//    * 
+//    * Arguments: f, x, y, x, x_int, msgs
+//    * 
+//    * NOTE: might be able to specify method for constructing J?
+//    * Also want to use the pre-computed precision matirx...
+//    */
+//   kinsol_system_data(const F& f,
+//                      const Eigen::VectorXd& x,
+//                      const Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
+//                      const std::vector<double>& dat,
+//                      const std::vector<int>& dat_int,
+//                      std::ostream* msgs)
+//     : f_(f), x_(x), y_(y), y_dbl_(value_of(y)),
+//       dat_(dat), dat_int_(dat_int), msgs_(msgs),
+//       N_(x.size()), // x_vec_(to_array_1d(x)),
+//       nv_x_(N_VMake_Serial(N_, &to_array_1d(x_)[0])),
+//       J_(SUNDenseMatrix(N_, N_)),
+//       LS_(SUNLinSol_Dense(nv_x_, J_)) { }
+// 
+//   ~kinsol_system_data() {
+//     SUNLinSolFree(LS_);
+//     SUNMatDestroy(J_);
+//   }
+// 
+//   /**
+//    * Implements the function of type kinsol_system, which is the user-defined
+//    * function passed to KINSOL.
+//    * 
+//    * NOTE - use f instead of ydot (i.e. what gets returned by the system
+//    * function).
+//    */
+//   static int kinsol_f_system (N_Vector x, N_Vector f, void *user_data) {
+//     const system_data* explicit_system 
+//       = static_cast<const system_data*>(user_data);
+//     explicit_system->f_system(NV_DATA_S(x), NV_DATA_S(f));  // CHECK
+// 
+//     return 0;
+//   }
+// 
+//   /**
+//    * Implements the function of type CVDlsJacFn which is the user-defined
+//    * callbacks for KINSOL to calculate the jacobian of the root function.
+//    * The Jacobian is stored in column major format.
+//    * 
+//    * CHECK -- the CVODE data equivalent has a whole lot more arguments...
+//    * what are they for?
+//    * REMARK - tmp1 and tmp2 are pointers to memory allocated for variables
+//    * of type N_Vector which can be used by KINJacFN (the function which
+//    * computes the Jacobian) as temporary storage or work space.
+//    * See https://computation.llnl.gov/sites/default/files/public/kin_guide-dev.pdf,
+//    * page 55.
+//    */
+//   static int kinsol_jacobian (N_Vector x, N_Vector f,
+//                               SUNMatrix J, void *user_data,
+//                               N_Vector tmp1, N_Vector tmp2) {
+//     const system_data* explicit_system
+//       = static_cast<const system_data*>(user_data);
+//     return explicit_system->jacobian_states(NV_DATA_S(x), J);
+//   }
+// 
+// private:
+//   /**
+//    * Calculates the root function, using the user-supplied functor
+//    * for a given value x.
+//    * 
+//    * NOTE: The unknown is in the double array x[], and the the output gets
+//    * stored in the array f[].
+//    */
+//   inline void f_system(const double x[], double f[]) const {
+//     const std::vector<double> x_vec(x, x + N_);
+// 
+//     const std::vector<double>& f_vec
+//       = to_array_1d(f_(to_vector(x_vec), y_dbl_, dat_, dat_int_, msgs_));
+//     std::move(f_vec.begin(), f_vec.end(), f);
+// 
+//     // Draft code to the above without a conversion operation
+//     // const Eigen::VectorXd x_eigen
+//     //   = to_vector(std::vector(x, x + N_));  // FIX ME -- do this properly.
+//     // double f_eigen[N_];  // CHECK - should it be the above expression?
+//     // Eigen::Map<Eigen::VectorXd>(&f_eigen[0], N_)
+//     //   = f_(x_eigen, y_dbl_, dat_, dat_int_, msgs_);
+//     // std::move(f_eigen.begin(), f_eigen.end(), f);
+//   }
+// 
+//   /**
+//    * Calculate the Jacobian of the system function with respect to x.
+//    */
+//   inline int jacobian_states(const double x[], SUNMatrix J) const {
+//     const std::vector<double> x_vec(x, x + N_);
+// 
+//     // CHECK - do we need to nest the call to Jacobian?
+//     system_functor<F, double, double, 1> 
+//       system(f_, x_, y_, dat_, dat_int_, msgs_);
+//     Eigen::VectorXd fx;
+//     Eigen::MatrixXd Jac;
+//     jacobian(system, to_vector(x_vec), fx, Jac);
+// 
+//     std::vector<double> jacobian_x = std::vector<double>(N_ * N_);
+//     Eigen::Map<Eigen::MatrixXd>(&jacobian_x[0], N_, N_) = Jac;
+// 
+//     std::move(jacobian_x.begin(), jacobian_x.end(), SM_DATA_D(J));
+// 
+//     return 0;
+//   }
+// };
+// 
+// }  // end namespace math
+// }  // end namespace stan
 
-/**
- * KINSOL algebraic system data holder.
- * Based on cvodes_ode_data.
- * (EXPERIMENTAL)
- * 
- * F: structure type of the functor with the system
- * T: type of the parameter.
- */
-template <typename F, typename T>
-class kinsol_system_data {
-  const F& f_;
-  const Eigen::VectorXd& x_;
-  const Eigen::Matrix<T, Eigen::Dynamic, 1>& y_;
-  const Eigen::VectorXd& y_dbl_;
-  const size_t N_;
-  const std::vector<double>& dat_;
-  const std::vector<int>& dat_int_;
-  std::ostream* msgs_;
-
-  typedef kinsol_system_data<F, T> system_data;
-
-public:
-  // system_functor object
-  // std::vector<double> x_vec_;  // CHECK - do we need this duplicate?
-  N_Vector nv_x_;
-  SUNMatrix J_;
-  SUNLinearSolver LS_;
-
-  /**
-   * Construct KINSOL system data object.
-   * 
-   * Arguments: f, x, y, x, x_int, msgs
-   * 
-   * NOTE: might be able to specify method for constructing J?
-   * Also want to use the pre-computed precision matirx...
-   */
-  kinsol_system_data(const F& f,
-                     const Eigen::VectorXd& x,
-                     const Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
-                     const std::vector<double>& dat,
-                     const std::vector<int>& dat_int,
-                     std::ostream* msgs)
-    : f_(f), x_(x), y_(y), y_dbl_(value_of(y)),
-      dat_(dat), dat_int_(dat_int), msgs_(msgs),
-      N_(x.size()), // x_vec_(to_array_1d(x)),
-      nv_x_(N_VMake_Serial(N_, &to_array_1d(x_)[0])),
-      J_(SUNDenseMatrix(N_, N_)),
-      LS_(SUNLinSol_Dense(nv_x_, J_)) { }
-
-  ~kinsol_system_data() {
-    SUNLinSolFree(LS_);
-    SUNMatDestroy(J_);
-  }
-
-  /**
-   * Implements the function of type kinsol_system, which is the user-defined
-   * function passed to KINSOL.
-   * 
-   * NOTE - use f instead of ydot (i.e. what gets returned by the system
-   * function).
-   */
-  static int kinsol_f_system (N_Vector x, N_Vector f, void *user_data) {
-    const system_data* explicit_system 
-      = static_cast<const system_data*>(user_data);
-    explicit_system->f_system(NV_DATA_S(x), NV_DATA_S(f));  // CHECK
-
-    return 0;
-  }
-
-  /**
-   * Implements the function of type CVDlsJacFn which is the user-defined
-   * callbacks for KINSOL to calculate the jacobian of the root function.
-   * The Jacobian is stored in column major format.
-   * 
-   * CHECK -- the CVODE data equivalent has a whole lot more arguments...
-   * what are they for?
-   * REMARK - tmp1 and tmp2 are pointers to memory allocated for variables
-   * of type N_Vector which can be used by KINJacFN (the function which
-   * computes the Jacobian) as temporary storage or work space.
-   * See https://computation.llnl.gov/sites/default/files/public/kin_guide-dev.pdf,
-   * page 55.
-   */
-  static int kinsol_jacobian (N_Vector x, N_Vector f,
-                              SUNMatrix J, void *user_data,
-                              N_Vector tmp1, N_Vector tmp2) {
-    const system_data* explicit_system
-      = static_cast<const system_data*>(user_data);
-    return explicit_system->jacobian_states(NV_DATA_S(x), J);
-  }
-
-private:
-  /**
-   * Calculates the root function, using the user-supplied functor
-   * for a given value x.
-   * 
-   * NOTE: The unknown is in the double array x[], and the the output gets
-   * stored in the array f[].
-   */
-  inline void f_system(const double x[], double f[]) const {
-    const std::vector<double> x_vec(x, x + N_);
-
-    const std::vector<double>& f_vec
-      = to_array_1d(f_(to_vector(x_vec), y_dbl_, dat_, dat_int_, msgs_));
-    std::move(f_vec.begin(), f_vec.end(), f);
-
-    // Draft code to the above without a conversion operation
-    // const Eigen::VectorXd x_eigen
-    //   = to_vector(std::vector(x, x + N_));  // FIX ME -- do this properly.
-    // double f_eigen[N_];  // CHECK - should it be the above expression?
-    // Eigen::Map<Eigen::VectorXd>(&f_eigen[0], N_)
-    //   = f_(x_eigen, y_dbl_, dat_, dat_int_, msgs_);
-    // std::move(f_eigen.begin(), f_eigen.end(), f);
-  }
-
-  /**
-   * Calculate the Jacobian of the system function with respect to x.
-   */
-  inline int jacobian_states(const double x[], SUNMatrix J) const {
-    const std::vector<double> x_vec(x, x + N_);
-
-    // CHECK - do we need to nest the call to Jacobian?
-    system_functor<F, double, double, 1> 
-      system(f_, x_, y_, dat_, dat_int_, msgs_);
-    Eigen::VectorXd fx;
-    Eigen::MatrixXd Jac;
-    jacobian(system, to_vector(x_vec), fx, Jac);
-
-    std::vector<double> jacobian_x = std::vector<double>(N_ * N_);
-    Eigen::Map<Eigen::MatrixXd>(&jacobian_x[0], N_, N_) = Jac;
-
-    std::move(jacobian_x.begin(), jacobian_x.end(), SM_DATA_D(J));
-
-    return 0;
-  }
-};
-
-}  // end namespace math
-}  // end namespace stan
-
-TEST(laplace, kinsol2) {
-  using stan::math::algebra_solver;
+TEST(matrix, kinsol2) {
+  // Apply KINSOL solver to a functor defined a la Stan (i.e. lgp_functor).
   using stan::math::kinsol_system_data;
   using stan::math::to_array_1d;
-  // Apply KINSOL solver to a functor defined a la Stan (i.e. lgp_functor).
+
   int dim_theta = 2;
   Eigen::VectorXd theta_0(dim_theta);
   theta_0 << 0, 0;
@@ -324,7 +334,7 @@ TEST(laplace, kinsol2) {
 
   /////////////////////////////////////////////////////////////////////////////
   // Build and use KINSOL solver.
-  typedef kinsol_system_data<lgp_functor, double> system_data;
+  typedef kinsol_system_data<lgp_functor> system_data;
   system_data kinsol_data(lgp_functor(), theta_0, phi, dat, dummy_int, 0);
 
   void* kinsol_memory = KINCreate(); 
@@ -353,11 +363,40 @@ TEST(laplace, kinsol2) {
   flag = KINSol(kinsol_memory, theta,
                 global_line_search, scaling, scaling);
 
-  std::cout << "flag: " << flag << std::endl;
-
   // CHECK - avoid / simplifies this conversion step?
   Eigen::VectorXd theta_eigen(dim_theta);
   for (int i = 0; i < dim_theta; i++) theta_eigen(i) = theta_data[i];
   EXPECT_FLOAT_EQ(-0.388925, theta_eigen(0));
   EXPECT_FLOAT_EQ( 0.628261, theta_eigen(1));
 }
+
+TEST(matrix, kinsol3) {
+  // use the kinsolve_solve function.
+
+  using stan::math::kinsol_solve;
+
+  int dim_theta = 2;
+  Eigen::VectorXd theta_0(dim_theta);
+  theta_0 << 0, 0;
+  Eigen::VectorXd n_samples(dim_theta);
+  n_samples << 5, 5;
+  Eigen::VectorXd sums(dim_theta);
+  sums << 3, 10;
+
+  std::vector<double> dat(2 * dim_theta);
+  dat[0] = n_samples(0);
+  dat[1] = n_samples(1);
+  dat[2] = sums(0);
+  dat[3] = sums(1);
+  std::vector<int> dummy_int;
+
+  Eigen::VectorXd phi(1);
+  phi << 1;
+
+  Eigen::VectorXd theta = kinsol_solve(lgp_functor(), theta_0, phi,
+                                       dat, dummy_int);
+
+  EXPECT_FLOAT_EQ(-0.388925, theta(0));
+  EXPECT_FLOAT_EQ( 0.628261, theta(1));
+}
+
