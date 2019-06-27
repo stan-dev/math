@@ -53,7 +53,7 @@ public:
       nv_x_(N_VMake_Serial(N_, &to_array_1d(x_)[0])),  // FIX ME - wrap eigen directly
       J_(SUNDenseMatrix(N_, N_)),
       LS_(SUNLinSol_Dense(nv_x_, J_)) { }
-  
+
   ~ kinsol_system_data() {
       N_VDestroy_Serial(nv_x_);  // FIX ME - will remove this. See above comment.
       SUNLinSolFree(LS_);

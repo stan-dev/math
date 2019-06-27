@@ -1,6 +1,8 @@
 
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/mat/functor/algebra_system.hpp>
+#include <stan/math/rev/mat/functor/algebra_solver_newton.hpp>
+#include <stan/math/rev/mat/functor/algebra_solver.hpp>
 #include <stan/math/rev/mat/functor/kinsol_data.hpp>
 #include <stan/math/rev/mat/functor/kinsol_solve.hpp>
 
@@ -11,6 +13,7 @@
 #include <sundials/sundials_types.h>   /* defs. of realtype, sunindextype */
 #include <sundials/sundials_math.h>    /* access to SUNRexp               */
 
+#include <test/unit/math/rev/mat/functor/util_algebra_solver.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
@@ -158,148 +161,6 @@ struct lgp_functor {
   }
 };
 
-// namespace stan {
-// namespace math {
-// 
-// /**
-//  * KINSOL algebraic system data holder.
-//  * Based on cvodes_ode_data.
-//  * (EXPERIMENTAL)
-//  * 
-//  * F: structure type of the functor with the system
-//  * T: type of the parameter.
-//  */
-// template <typename F, typename T>
-// class kinsol_system_data {
-//   const F& f_;
-//   const Eigen::VectorXd& x_;
-//   const Eigen::Matrix<T, Eigen::Dynamic, 1>& y_;
-//   const Eigen::VectorXd& y_dbl_;
-//   const size_t N_;
-//   const std::vector<double>& dat_;
-//   const std::vector<int>& dat_int_;
-//   std::ostream* msgs_;
-// 
-//   typedef kinsol_system_data<F, T> system_data;
-// 
-// public:
-//   // system_functor object
-//   // std::vector<double> x_vec_;  // CHECK - do we need this duplicate?
-//   N_Vector nv_x_;
-//   SUNMatrix J_;
-//   SUNLinearSolver LS_;
-// 
-//   /**
-//    * Construct KINSOL system data object.
-//    * 
-//    * Arguments: f, x, y, x, x_int, msgs
-//    * 
-//    * NOTE: might be able to specify method for constructing J?
-//    * Also want to use the pre-computed precision matirx...
-//    */
-//   kinsol_system_data(const F& f,
-//                      const Eigen::VectorXd& x,
-//                      const Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
-//                      const std::vector<double>& dat,
-//                      const std::vector<int>& dat_int,
-//                      std::ostream* msgs)
-//     : f_(f), x_(x), y_(y), y_dbl_(value_of(y)),
-//       dat_(dat), dat_int_(dat_int), msgs_(msgs),
-//       N_(x.size()), // x_vec_(to_array_1d(x)),
-//       nv_x_(N_VMake_Serial(N_, &to_array_1d(x_)[0])),
-//       J_(SUNDenseMatrix(N_, N_)),
-//       LS_(SUNLinSol_Dense(nv_x_, J_)) { }
-// 
-//   ~kinsol_system_data() {
-//     SUNLinSolFree(LS_);
-//     SUNMatDestroy(J_);
-//   }
-// 
-//   /**
-//    * Implements the function of type kinsol_system, which is the user-defined
-//    * function passed to KINSOL.
-//    * 
-//    * NOTE - use f instead of ydot (i.e. what gets returned by the system
-//    * function).
-//    */
-//   static int kinsol_f_system (N_Vector x, N_Vector f, void *user_data) {
-//     const system_data* explicit_system 
-//       = static_cast<const system_data*>(user_data);
-//     explicit_system->f_system(NV_DATA_S(x), NV_DATA_S(f));  // CHECK
-// 
-//     return 0;
-//   }
-// 
-//   /**
-//    * Implements the function of type CVDlsJacFn which is the user-defined
-//    * callbacks for KINSOL to calculate the jacobian of the root function.
-//    * The Jacobian is stored in column major format.
-//    * 
-//    * CHECK -- the CVODE data equivalent has a whole lot more arguments...
-//    * what are they for?
-//    * REMARK - tmp1 and tmp2 are pointers to memory allocated for variables
-//    * of type N_Vector which can be used by KINJacFN (the function which
-//    * computes the Jacobian) as temporary storage or work space.
-//    * See https://computation.llnl.gov/sites/default/files/public/kin_guide-dev.pdf,
-//    * page 55.
-//    */
-//   static int kinsol_jacobian (N_Vector x, N_Vector f,
-//                               SUNMatrix J, void *user_data,
-//                               N_Vector tmp1, N_Vector tmp2) {
-//     const system_data* explicit_system
-//       = static_cast<const system_data*>(user_data);
-//     return explicit_system->jacobian_states(NV_DATA_S(x), J);
-//   }
-// 
-// private:
-//   /**
-//    * Calculates the root function, using the user-supplied functor
-//    * for a given value x.
-//    * 
-//    * NOTE: The unknown is in the double array x[], and the the output gets
-//    * stored in the array f[].
-//    */
-//   inline void f_system(const double x[], double f[]) const {
-//     const std::vector<double> x_vec(x, x + N_);
-// 
-//     const std::vector<double>& f_vec
-//       = to_array_1d(f_(to_vector(x_vec), y_dbl_, dat_, dat_int_, msgs_));
-//     std::move(f_vec.begin(), f_vec.end(), f);
-// 
-//     // Draft code to the above without a conversion operation
-//     // const Eigen::VectorXd x_eigen
-//     //   = to_vector(std::vector(x, x + N_));  // FIX ME -- do this properly.
-//     // double f_eigen[N_];  // CHECK - should it be the above expression?
-//     // Eigen::Map<Eigen::VectorXd>(&f_eigen[0], N_)
-//     //   = f_(x_eigen, y_dbl_, dat_, dat_int_, msgs_);
-//     // std::move(f_eigen.begin(), f_eigen.end(), f);
-//   }
-// 
-//   /**
-//    * Calculate the Jacobian of the system function with respect to x.
-//    */
-//   inline int jacobian_states(const double x[], SUNMatrix J) const {
-//     const std::vector<double> x_vec(x, x + N_);
-// 
-//     // CHECK - do we need to nest the call to Jacobian?
-//     system_functor<F, double, double, 1> 
-//       system(f_, x_, y_, dat_, dat_int_, msgs_);
-//     Eigen::VectorXd fx;
-//     Eigen::MatrixXd Jac;
-//     jacobian(system, to_vector(x_vec), fx, Jac);
-// 
-//     std::vector<double> jacobian_x = std::vector<double>(N_ * N_);
-//     Eigen::Map<Eigen::MatrixXd>(&jacobian_x[0], N_, N_) = Jac;
-// 
-//     std::move(jacobian_x.begin(), jacobian_x.end(), SM_DATA_D(J));
-// 
-//     return 0;
-//   }
-// };
-// 
-// }  // end namespace math
-// }  // end namespace stan
-
 TEST(matrix, kinsol2) {
   // Apply KINSOL solver to a functor defined a la Stan (i.e. lgp_functor).
   using stan::math::kinsol_system_data;
@@ -372,7 +233,6 @@ TEST(matrix, kinsol2) {
 
 TEST(matrix, kinsol3) {
   // use the kinsolve_solve function.
-
   using stan::math::kinsol_solve;
 
   int dim_theta = 2;
@@ -400,3 +260,183 @@ TEST(matrix, kinsol3) {
   EXPECT_FLOAT_EQ( 0.628261, theta(1));
 }
 
+template <typename T>
+Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
+covariance (Eigen::Matrix<T, Eigen::Dynamic, 1> phi, int M,
+            bool space_matters = false) {
+  using std::pow;
+  T sigma = phi[0];
+  T rho = phi[1];
+  double exponent;
+
+  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> Sigma(M, M);
+
+  for (int i = 0; i < M; i++) {
+    for (int j = 0; j < i; j++) {
+      if (space_matters) {exponent = i - j;} else {exponent = 1;}
+      Sigma(i, j) = pow(rho, exponent) * sigma;
+      Sigma(j, i) = Sigma(i, j);
+    }
+    Sigma(i, i) = sigma;
+  }
+
+  return Sigma;
+}
+
+struct inla_functor {
+  template <typename T0, typename T1>
+  inline Eigen::Matrix<typename stan::return_type<T0, T1>::type,
+                       Eigen::Dynamic, 1>
+  operator() (const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
+           const Eigen::Matrix<T1, Eigen::Dynamic, 1>& parm,
+           const std::vector<double>& dat,
+           const std::vector<int>& dat_int,
+           std::ostream* pstream__ = 0) const {
+    using stan::math::to_vector;
+    using stan::math::head;
+    using stan::math::tail;
+
+    int n_groups = theta.size();
+    Eigen::VectorXd n_samples = to_vector(head(dat, n_groups));
+    Eigen::VectorXd sums = to_vector(tail(dat, dat.size() - n_groups));
+    Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic>
+      Sigma = covariance(parm, n_groups, 1);
+
+    return sums - stan::math::elt_multiply(n_samples, stan::math::exp(theta)) -
+      stan::math::mdivide_left(Sigma, theta);
+  }
+};
+
+TEST(matrix, kinsol4) {
+  using stan::math::kinsol_solve;
+  using stan::math::algebra_solver;
+
+  int dim_theta = 2;
+  Eigen::VectorXd phi(2);
+  phi << 0.5, 0.9;
+  Eigen::VectorXd n_samples(dim_theta);
+  n_samples << 5, 5;
+  Eigen::VectorXd sums(dim_theta);
+  sums << 3, 10;
+  std::vector<double> dat(dim_theta * 2);
+  for (int i = 0; i < dim_theta; i++) dat[i] = n_samples(i);
+  for (int i = 0; i < dim_theta; i++) dat[dim_theta + i] = sums(i);
+  std::vector<int> dat_int;
+
+  Eigen::VectorXd theta_0(dim_theta);
+  theta_0 << 0, 0;
+
+  // empirically determined so that the two solvers have the same "precision".
+  double tol = 1e-7;
+  long int max_steps = 1e+3;
+
+  Eigen::VectorXd 
+    theta = kinsol_solve(inla_functor(), theta_0, phi, dat, dat_int, 0,
+                         tol, max_steps);
+
+  Eigen::VectorXd
+    theta_powell = algebra_solver(inla_functor(), theta_0, phi, dat, dat_int, 0,
+                                  tol, tol, max_steps);
+
+  EXPECT_FLOAT_EQ(theta_powell(0), theta(0));
+  EXPECT_FLOAT_EQ(theta_powell(1), theta(1));
+  
+  inla_functor system;
+  std::cout << "Eval newton: " << system(theta, phi, dat, dat_int, 0).transpose() << std::endl;
+  std::cout << "Eval powell: " << system(theta_powell, phi, dat, dat_int, 0).transpose() << std::endl;
+  
+}
+
+
+TEST(matrix, kinsol5) {
+  // using stan::math::algebra_solver_newton;
+  using stan::math::kinsol_solve;
+  using stan::math::algebra_solver_newton_custom;
+  using stan::math::algebra_solver;
+
+  // variables to monitor runtime
+  auto start = std::chrono::system_clock::now();
+  auto end = std::chrono::system_clock::now();
+  std::chrono::duration<double> elapsed_seconds_total;
+
+  // tuning parameters
+  // empirically determined so that the two solvers have the same "precision".
+  double rel_tol = 1e-10;
+  double fun_tol = 1e-8;
+  long int max_steps = 1e+3;
+
+  int dim_theta = 100;  // options: 10, 20, 50, 100, 500
+  Eigen::VectorXd phi(2);
+  phi << 0.5, 0.9;
+
+  std::string data_directory = "test/unit/math/rev/mat/functor/performance/";
+  std::vector<double> n_samples(dim_theta);
+  std::vector<double> sums(dim_theta);
+
+  // read data from csv file to work out n_samples and sums.
+  std::ifstream input_data;
+  std::string dim_theta_string = std::to_string(dim_theta);
+  std::string file_m = data_directory + "data_cpp/m_" +
+    dim_theta_string + ".csv";
+  std::string file_sums = data_directory + "data_cpp/sums_" +
+    dim_theta_string + ".csv";
+
+  input_data.open(file_m);
+  double buffer = 0.0;
+  for (int n = 0; n < dim_theta; ++n) {
+    input_data >> buffer;
+    n_samples[n] = buffer;
+  }
+  input_data.close();
+
+  input_data.open(file_sums);
+  buffer = 0.0;
+  for (int n = 0; n < dim_theta; ++n) {
+    input_data >> buffer;
+    sums[n] = buffer;
+  }
+  input_data.close();
+
+  std::vector<double> dat(dim_theta * 2);
+  for (int i = 0; i < dim_theta; i++) dat[i] = n_samples[i];
+  for (int i = 0; i < dim_theta; i++) dat[dim_theta + i] = sums[i];
+  std::vector<int> dat_int;
+
+  Eigen::VectorXd theta_0 = Eigen::VectorXd::Zero(dim_theta);
+
+  start = std::chrono::system_clock::now();
+  Eigen::VectorXd
+    theta = algebra_solver(inla_functor(), theta_0, phi, dat, dat_int, 0,
+                           rel_tol, fun_tol, max_steps);
+  end = std::chrono::system_clock::now();
+  elapsed_seconds_total = end - start;
+  std::cout << "Time powell: " << elapsed_seconds_total.count() << std::endl;
+
+  start = std::chrono::system_clock::now();
+  Eigen::VectorXd theta_newton 
+    = kinsol_solve(inla_functor(), theta_0, phi, dat, dat_int, 0,
+                   1e-15, 1e5);
+  end = std::chrono::system_clock::now();
+  elapsed_seconds_total = end - start;
+  std::cout << "Time newton kinsol: " << elapsed_seconds_total.count() << std::endl;
+
+  start = std::chrono::system_clock::now();
+  Eigen::VectorXd theta_newton_custom
+    = algebra_solver_newton_custom(inla_functor(), theta_0, phi, dat, dat_int, 0,
+                                   0, fun_tol, max_steps);
+  end = std::chrono::system_clock::now();
+  elapsed_seconds_total = end - start;
+  std::cout << "Time newton custom: " << elapsed_seconds_total.count() << std::endl;
+
+  inla_functor system;
+  std::cout << "powell eval: " << system(theta, phi, dat, dat_int, 0).norm() << std::endl;
+  std::cout << "newton eval: " << system(theta_newton, phi, dat, dat_int, 0).norm() << std::endl;
+  std::cout << "custom newton eval: " << system(theta_newton_custom, phi, dat, dat_int, 0).norm() << std::endl;
+
+  std::cout << "Solution norm: " << theta.norm() << std::endl;
+  
+  for (int i = 0; i < dim_theta; i++) {
+    EXPECT_FLOAT_EQ(theta(i), theta_newton(i));
+    EXPECT_FLOAT_EQ(theta(i), theta_newton_custom(i));
+  }
+}

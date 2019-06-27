@@ -50,6 +50,13 @@ namespace math {
     flag = KINSetFuncNormTol(kinsol_memory, function_tolerance);
     flag = KINSetScaledStepTol(kinsol_memory, scaling_step_tol);
     flag = KINSetMaxSetupCalls(kinsol_memory, steps_eval_jacobian);
+    
+    // The default value is 1000 * ||u_0||_D where ||u_0|| is the initial guess.
+    // So we run into issues if ||u_0|| = 0.
+    // If the norm is non-zero, use kinsol's default (accessed with 0),
+    // else use the dimension of x, say divided by 20 -- CHECK - find optimal length.
+    double max_newton_step = (x.norm() == 0) ? x.size() / 20 : 0;
+    flag = KINSetMaxNewtonStep(kinsol_memory, max_newton_step);  // scaled length of Newton step
 
     flag = KINSetUserData(kinsol_memory,
                           reinterpret_cast<void*>(&kinsol_data));
@@ -66,6 +73,8 @@ namespace math {
     flag = KINSol(kinsol_memory, nv_x,
                   global_line_search, scaling, scaling);
 
+    std::cout << "Kinsol flag: " << flag << std::endl;
+    
     KINFree(&kinsol_memory);
 
     // CHECK - avoid / simplifies this conversion step?

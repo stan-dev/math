@@ -65,7 +65,7 @@ namespace math {
  * function tolerance.
  */
 template <typename F, typename T>
-Eigen::VectorXd algebra_solver_newton(
+Eigen::VectorXd algebra_solver_newton_custom(
     const F& f, const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
     const Eigen::VectorXd& y, const std::vector<double>& dat,
     const std::vector<int>& dat_int, std::ostream* msgs = nullptr,
@@ -106,6 +106,38 @@ Eigen::VectorXd algebra_solver_newton(
   // we don't reach the max number of steps?
 
   return x_dbl;
+}
+
+// FOR TESTING PURPOSES: solver using custom method
+template <typename F, typename T1, typename T2>
+Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver_newton_custom(
+    const F& f, const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
+    const Eigen::Matrix<T2, Eigen::Dynamic, 1>& y,
+    const std::vector<double>& dat, const std::vector<int>& dat_int,
+    std::ostream* msgs = nullptr, double relative_tolerance = 1e-10,
+    double function_tolerance = 1e-6,
+    long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
+  
+  Eigen::VectorXd theta_dbl
+    = algebra_solver_newton_custom(f, x, value_of(y), dat, dat_int, 0,
+                                   relative_tolerance,
+                                   function_tolerance, max_num_steps);
+
+  typedef system_functor<F, double, double, false> Fy;
+  typedef system_functor<F, double, double, true> Fs;
+  typedef hybrj_functor_solver<Fs, F, double, double> Fx;
+  Fx fx(Fs(), f, value_of(x), value_of(y), dat, dat_int, msgs);
+  
+  // Construct vari
+  algebra_solver_vari<Fy, F, T2, Fx>* vi0
+    = new algebra_solver_vari<Fy, F, T2, Fx>(Fy(), f, value_of(x), y, dat,
+                                             dat_int, theta_dbl, fx, msgs);
+  Eigen::Matrix<var, Eigen::Dynamic, 1> theta(x.size());
+  theta(0) = var(vi0->theta_[0]);
+  for (int i = 1; i < x.size(); ++i)
+    theta(i) = var(vi0->theta_[i]);
+  
+  return theta;
 }
 
 /**
@@ -168,13 +200,13 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver_newton(
 
   if (!test_kinsol) {
     theta_dbl
-      = algebra_solver_newton(f, x, value_of(y), dat, dat_int, 0,
-                              relative_tolerance,
-                              function_tolerance, max_num_steps);
+    = algebra_solver_newton(f, x, value_of(y), dat, dat_int, 0,
+                            relative_tolerance,
+                            function_tolerance, max_num_steps);
   } else {
     theta_dbl
-      = kinsol_solve(f, x, value_of(y), dat, dat_int, 0,
-                     function_tolerance, max_num_steps);
+    = kinsol_solve(f, x, value_of(y), dat, dat_int, 0,
+                   function_tolerance, max_num_steps);
   }
 
   typedef system_functor<F, double, double, false> Fy;
@@ -184,16 +216,15 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver_newton(
 
   // Construct vari
   algebra_solver_vari<Fy, F, T2, Fx>* vi0
-      = new algebra_solver_vari<Fy, F, T2, Fx>(Fy(), f, value_of(x), y, dat,
-                                               dat_int, theta_dbl, fx, msgs);
+    = new algebra_solver_vari<Fy, F, T2, Fx>(Fy(), f, value_of(x), y, dat,
+                                             dat_int, theta_dbl, fx, msgs);
   Eigen::Matrix<var, Eigen::Dynamic, 1> theta(x.size());
   theta(0) = var(vi0->theta_[0]);
   for (int i = 1; i < x.size(); ++i)
     theta(i) = var(vi0->theta_[i]);
-
+  
   return theta;
 }
-
 
 }  // namespace math
 }  // namespace stan
