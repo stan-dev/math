@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_META_STDVECTORBUILDER_HPP
-#define STAN_MATH_PRIM_META_STDVECTORBUILDER_HPP
+#ifndef STAN_MATH__PRIM_META_STDVECTORBUILDER_HPP
+#define STAN_MATH__PRIM_META_STDVECTORBUILDER_HPP
 
 #include <stan/math/prim/meta/VectorBuilderHelper.hpp>
 #include <stan/math/prim/meta/contains_std_vector.hpp>

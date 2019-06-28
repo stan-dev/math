@@ -1,5 +1,5 @@
-#ifndef STANH_PRIM_META_VECTORBUILDER_HELPER_HPP
-#define STANH_PRIM_META_VECTORBUILDER_HELPER_HPP
+#ifndef STAN_MATH_PRIM_META_VECTORBUILDER_HELPER_HPP
+#define STAN_MATH_PRIM_META_VECTORBUILDER_HELPER_HPP
 #include <stdexcept>
 #include <stan/math/prim/meta/VectorBuilderHelper.hpp>
 #include <stdexcept>

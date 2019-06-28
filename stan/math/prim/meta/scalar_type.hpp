@@ -1,5 +1,5 @@
-#ifndef STANH_PRIM_METAAR_TYPE_HPP
-#define STANH_PRIM_METAAR_TYPE_HPP
+#ifndef STAN_MATH_PRIM_METAAR_TYPE_HPP
+#define STAN_MATH_PRIM_METAAR_TYPE_HPP
 #include <stan/math/prim/meta/value_type.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/meta/scalar_type.hpp>

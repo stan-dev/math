@@ -1,5 +1,5 @@
-#ifndef STANH_PRIM_META_APPEND_RETURN_TYPE_HPP
-#define STANH_PRIM_META_APPEND_RETURN_TYPE_HPP
+#ifndef STAN_MATH_PRIM_META_APPEND_RETURN_TYPE_HPP
+#define STAN_MATH_PRIM_META_APPEND_RETURN_TYPE_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/meta/return_type.hpp>

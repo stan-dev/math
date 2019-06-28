@@ -1,5 +1,5 @@
-#ifndef STANH_PRIM_FUN_ASAR_HPP
-#define STANH_PRIM_FUN_ASAR_HPP
+#ifndef STAN_MATH_PRIM_FUN_ASAR_HPP
+#define STAN_MATH_PRIM_FUN_ASAR_HPP
 #include <Eigen/Dense>
 #include <stdexcept>
 #include <vector>

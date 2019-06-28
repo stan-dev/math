@@ -1,5 +1,5 @@
-#ifndef STANH_PRIM_META_LENGTH_HPP
-#define STANH_PRIM_META_LENGTH_HPP
+#ifndef STAN_MATH_PRIM_META_LENGTH_HPP
+#define STAN_MATH_PRIM_META_LENGTH_HPP
 #include <cstdlib>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <cstdlib>

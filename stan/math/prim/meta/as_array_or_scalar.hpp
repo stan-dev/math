@@ -1,5 +1,5 @@
-#ifndef STANH_PRIM_FUN_ASAY_ORAR_HPP
-#define STANH_PRIM_FUN_ASAY_ORAR_HPP
+#ifndef STAN_MATH_PRIM_FUN_ASAY_ORAR_HPP
+#define STAN_MATH_PRIM_FUN_ASAY_ORAR_HPP
 #include <Eigen/Dense>
 #include <vector>
 namespace math {

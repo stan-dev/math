@@ -1,10 +1,12 @@
-#ifndef STANH_PRIM_META_GET_HPP
-#define STANH_PRIM_META_GET_HPP
-#include <cmath>
+#ifndef STAN_MATH_PRIM_META_GET_HPP
+#define STAN_MATH_PRIM_META_GET_HPP
+
+//#include <stan/math/prim/mat/fun/Eigen.hpp>
+//#include <cmath>
 #include <cstddef>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <cstdlib>
-#include <vector>
+//#include <stan/math/prim/mat/fun/Eigen.hpp>
+//#include <cstdlib>
+//#include <vector>
 namespace stan {
 
 

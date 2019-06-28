@@ -1,5 +1,5 @@
-#ifndef STANH_PRIM_META_INDEX_TYPE_HPP
-#define STANH_PRIM_META_INDEX_TYPE_HPP
+#ifndef STAN_MATH_PRIM_META_INDEX_TYPE_HPP
+#define STAN_MATH_PRIM_META_INDEX_TYPE_HPP
 #include <stan/math/prim/meta/index_type.hpp>
 #include <Eigen/Core>
 #include <stan/math/prim/meta/index_type.hpp>

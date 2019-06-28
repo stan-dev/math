@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_META_CONTAINS_NONCONSTANT_STRUCT_HPP
-#define STAN_MATH_PRIM_META_CONTAINS_NONCONSTANT_STRUCT_HPP
+#ifndef STAN_MATH__PRIM_META_CONTAINS_NONCONSTANT_STRUCT_HPP
+#define STAN_MATH__PRIM_META_CONTAINS_NONCONSTANT_STRUCT_HPP
 
 #include <stan/math/prim/meta/is_nonconstant_struct.hpp>
 #include <stan/math/prim/meta/disjunction.hpp>
