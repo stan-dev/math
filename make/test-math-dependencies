@@ -25,8 +25,7 @@
 define math_warnings
 $(eval type:= $1)
 $(eval excl:=)
-$(eval excl_ids:= 1 2 3 4 5)
-$(foreach a,$(excl_ids),$(eval excl+=$(if $(word $(a),$5),! -path $(word $(a),$5),)))
+$(foreach temp,$(5),$(eval excl+=$(if $(temp),! -path $(temp) ,)))
 $(eval all_headers := $(shell find $2 -name '*.hpp' $(excl)-o -name '*.cpp'))
 $(eval pattern := $3)
 $(eval msg := $4)
