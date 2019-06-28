@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_META_vector_SEQ_VIEW_HPP
-#define STAN_MATH_PRIM_META_vector_SEQ_VIEW_HPP
+#ifndef STAN_MATH_PRIM_META_VECTOR_SEQ_VIEW_HPP
+#define STAN_MATH_PRIM_META_VECTOR_SEQ_VIEW_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <vector>

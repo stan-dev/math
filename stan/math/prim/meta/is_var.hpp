@@ -1,5 +1,5 @@
-#ifndef STAN_MATH__PRIM_META_IS_VAR_HPP
-#define STAN_MATH__PRIM_META_IS_VAR_HPP
+#ifndef STAN_MATH_PRIM_META_IS_VAR_HPP
+#define STAN_MATH_PRIM_META_IS_VAR_HPP
 
 namespace stan {
 /**

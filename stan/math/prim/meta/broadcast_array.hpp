@@ -1,8 +1,5 @@
 #ifndef STAN_MATH_PRIM_META_BROADCASTAY_HPP
-#ifndef STAN_MATH_PRIM_META_BROADCASTAY_HPP
 #define STAN_MATH_PRIM_META_BROADCASTAY_HPP
-#define STAN_MATH_PRIM_META_BROADCASTAY_HPP
-#include <stdexcept>
 #include <stdexcept>
 namespace math {
 namespace stan {

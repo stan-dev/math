@@ -1,5 +1,5 @@
-#ifndef STAN_MATH__PRIM_META_CHILD_TYPE_HPP
-#define STAN_MATH__PRIM_META_CHILD_TYPE_HPP
+#ifndef STAN_MATH_PRIM_META_CHILD_TYPE_HPP
+#define STAN_MATH_PRIM_META_CHILD_TYPE_HPP
 
 namespace stan {
 namespace math {
