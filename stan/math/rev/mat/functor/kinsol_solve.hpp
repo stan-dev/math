@@ -19,24 +19,35 @@ namespace math {
    * Return the solution to the specified algebraic system,
    * given an initial guess.
    * 
-   * [...]
+   * @param[in] function_tolerance determines how small ||f(x)|| needs to be.
+   * @param[in] max_num_steps maximum number of iterations.
+   * @param[in] global_line_search does the solver use a global line search?
+   *            If equal to KIN_NONE, no, if KIN_LINESEARCH, yes.
+   * @param[in] steps_eval_jacobian maximum number of steps before the
+   *            Jacobian gets recomputed. Note that Kinsol's default is 10.
+   *            If equal to 1, the algorithm computes exact Newton steps.
+   * @param[in] scaling_step_tol if a Newton step is smaller than the scaling
+   *            step tolerance, the code breaks, assuming the solver is no
+   *            longer making significant progress (i.e. is stuck).
+   * @param[in] J_f user supplied method for computing the Jacobian of f
+   *            w.r.t x. Defaults to reverse mode autodiff.
    */
-  template <typename F>
+  template <typename F1, typename F2>
   Eigen::VectorXd 
-  kinsol_solve(const F& f, const Eigen::VectorXd& x,
+  kinsol_solve(const F1& f, const F2& J_f,
+               const Eigen::VectorXd& x,
                const Eigen::VectorXd& y, const std::vector<double>& dat,
                const std::vector<int>& dat_int, std::ostream* msgs = nullptr,
                double function_tolerance = 1e-6,
                long int max_num_steps = 1e+3,
                int global_line_search = KIN_LINESEARCH,   // default is KIN_NONE
-               int steps_eval_jacobian = 5,  // use 0 for default (10) and 1 for exact Newton.
-                                             // picking 5 yields interesting results.
+               int steps_eval_jacobian = 5,
                double scaling_step_tol = 1e-5) {
     // CHECK -- what tuning parameters do we want to include?
     // E.g scaling_step_tol, scaling, etc.
     int N = x.size();
-    typedef kinsol_system_data<F> system_data;
-    system_data kinsol_data(f, x, y, dat, dat_int, 0);
+    typedef kinsol_system_data<F1, F2> system_data;
+    system_data kinsol_data(f, J_f, x, y, dat, dat_int, msgs);
 
     void* kinsol_memory = KINCreate();
 
@@ -44,13 +55,13 @@ namespace math {
     flag = KINInit(kinsol_memory, &system_data::kinsol_f_system,
                    kinsol_data.nv_x_);
 
-    // FIX ME - construct a set option procedure
+    // TO DO - construct a set option procedure
     N_Vector scaling = N_VNew_Serial(N);
     N_VConst_Serial(1.0, scaling);  // no scaling
     flag = KINSetFuncNormTol(kinsol_memory, function_tolerance);
     flag = KINSetScaledStepTol(kinsol_memory, scaling_step_tol);
     flag = KINSetMaxSetupCalls(kinsol_memory, steps_eval_jacobian);
-    
+
     // FIX ME
     // The default value is 1000 * ||u_0||_D where ||u_0|| is the initial guess.
     // So we run into issues if ||u_0|| = 0.
@@ -66,7 +77,7 @@ namespace math {
     flag = KINSetLinearSolver(kinsol_memory, kinsol_data.LS_, kinsol_data.J_);
     flag = KINSetJacFn(kinsol_memory, &system_data::kinsol_jacobian);
 
-    // CHECK - a better way to do this conversion.
+    // TO DO - a better way to do this conversion.
     N_Vector nv_x = N_VNew_Serial(N);
     realtype* nv_x_data = N_VGetArrayPointer_Serial(nv_x);
     for (int i = 0; i < N; i++) nv_x_data[i] = x(i);
@@ -74,7 +85,8 @@ namespace math {
     flag = KINSol(kinsol_memory, nv_x,
                   global_line_search, scaling, scaling);
 
-    std::cout << "Kinsol flag: " << flag << std::endl;
+    // TO DO - return an exception when the flag is negative.
+    // std::cout << "Kinsol flag: " << flag << std::endl;
 
     KINFree(&kinsol_memory);
 

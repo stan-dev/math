@@ -2,6 +2,7 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/mat/functor/algebra_system.hpp>
 #include <stan/math/rev/mat/functor/algebra_solver_newton.hpp>
+#include <stan/math/rev/mat/functor/algebra_solver_newton_custom.hpp>
 #include <stan/math/rev/mat/functor/algebra_solver.hpp>
 #include <stan/math/rev/mat/functor/kinsol_data.hpp>
 #include <stan/math/rev/mat/functor/kinsol_solve.hpp>
@@ -165,6 +166,7 @@ TEST(matrix, kinsol2) {
   // Apply KINSOL solver to a functor defined a la Stan (i.e. lgp_functor).
   using stan::math::kinsol_system_data;
   using stan::math::to_array_1d;
+  using stan::math::kinsol_J_f;
 
   int dim_theta = 2;
   Eigen::VectorXd theta_0(dim_theta);
@@ -195,8 +197,9 @@ TEST(matrix, kinsol2) {
 
   /////////////////////////////////////////////////////////////////////////////
   // Build and use KINSOL solver.
-  typedef kinsol_system_data<lgp_functor> system_data;
-  system_data kinsol_data(lgp_functor(), theta_0, phi, dat, dummy_int, 0);
+  typedef kinsol_system_data<lgp_functor, kinsol_J_f> system_data;
+  system_data kinsol_data(lgp_functor(), kinsol_J_f(),
+                          theta_0, phi, dat, dummy_int, 0);
 
   void* kinsol_memory = KINCreate(); 
 
@@ -234,6 +237,7 @@ TEST(matrix, kinsol2) {
 TEST(matrix, kinsol3) {
   // use the kinsolve_solve function.
   using stan::math::kinsol_solve;
+  using stan::math::kinsol_J_f;
 
   int dim_theta = 2;
   Eigen::VectorXd theta_0(dim_theta);
@@ -253,8 +257,8 @@ TEST(matrix, kinsol3) {
   Eigen::VectorXd phi(1);
   phi << 1;
 
-  Eigen::VectorXd theta = kinsol_solve(lgp_functor(), theta_0, phi,
-                                       dat, dummy_int);
+  Eigen::VectorXd theta = kinsol_solve(lgp_functor(), kinsol_J_f(),
+                                       theta_0, phi, dat, dummy_int);
 
   EXPECT_FLOAT_EQ(-0.388925, theta(0));
   EXPECT_FLOAT_EQ( 0.628261, theta(1));
@@ -310,6 +314,7 @@ struct inla_functor {
 TEST(matrix, kinsol4) {
   using stan::math::kinsol_solve;
   using stan::math::algebra_solver;
+  using stan::math::kinsol_J_f;
 
   int dim_theta = 2;
   Eigen::VectorXd phi(2);
@@ -331,7 +336,8 @@ TEST(matrix, kinsol4) {
   long int max_steps = 1e+3;
 
   Eigen::VectorXd 
-    theta = kinsol_solve(inla_functor(), theta_0, phi, dat, dat_int, 0,
+    theta = kinsol_solve(inla_functor(), kinsol_J_f(), 
+                         theta_0, phi, dat, dat_int, 0,
                          tol, max_steps);
 
   Eigen::VectorXd
@@ -351,6 +357,7 @@ TEST(matrix, kinsol4) {
 TEST(matrix, kinsol5) {
   // using stan::math::algebra_solver_newton;
   using stan::math::kinsol_solve;
+  using stan::math::kinsol_J_f;
   using stan::math::algebra_solver_newton_custom;
   using stan::math::algebra_solver;
 
@@ -365,7 +372,7 @@ TEST(matrix, kinsol5) {
   double fun_tol = 1e-8;
   long int max_steps = 1e+3;
 
-  int dim_theta = 500;  // options: 10, 20, 50, 100, 500
+  int dim_theta = 100;  // options: 10, 20, 50, 100, 500
   std::cout << "dim theta: " << dim_theta << std::endl;
   Eigen::VectorXd phi(2);
   phi << 0.5, 0.9;
@@ -417,22 +424,27 @@ TEST(matrix, kinsol5) {
     
   start = std::chrono::system_clock::now();
   Eigen::VectorXd theta_newton 
-    = kinsol_solve(inla_functor(), theta_0, phi, dat, dat_int);
+    = kinsol_solve(inla_functor(), kinsol_J_f(), theta_0, phi, dat, dat_int);
   end = std::chrono::system_clock::now();
   elapsed_seconds_total = end - start;
-  std::cout << "Time newton kinsol: " << elapsed_seconds_total.count() << std::endl;
+  std::cout << "Time newton kinsol: " << elapsed_seconds_total.count()
+            << std::endl;
 
   start = std::chrono::system_clock::now();
   Eigen::VectorXd theta_newton_custom
     = algebra_solver_newton_custom(inla_functor(), theta_0, phi, dat, dat_int);
   end = std::chrono::system_clock::now();
   elapsed_seconds_total = end - start;
-  std::cout << "Time newton custom: " << elapsed_seconds_total.count() << std::endl;
+  std::cout << "Time newton custom: " << elapsed_seconds_total.count()
+            << std::endl;
 
   inla_functor system;
-  if (powell_evaluate) std::cout << "powell eval: " << system(theta, phi, dat, dat_int, 0).norm() << std::endl;
-  std::cout << "newton eval: " << system(theta_newton, phi, dat, dat_int, 0).norm() << std::endl;
-  std::cout << "custom newton eval: " << system(theta_newton_custom, phi, dat, dat_int, 0).norm() << std::endl;
+  if (powell_evaluate) std::cout << "powell eval: "
+    << system(theta, phi, dat, dat_int, 0).norm() << std::endl;
+  std::cout << "newton eval: "
+    << system(theta_newton, phi, dat, dat_int, 0).norm() << std::endl;
+  std::cout << "custom newton eval: "
+    << system(theta_newton_custom, phi, dat, dat_int, 0).norm() << std::endl;
 
   // std::cout << "Solution norm: " << theta.norm() << std::endl;
 

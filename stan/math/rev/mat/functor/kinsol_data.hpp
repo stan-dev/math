@@ -14,17 +14,66 @@
 namespace stan {
 namespace math {
 
+// const std::vector<double> x_vec(x, x + N_);
+// // CHECK - is the best way of constructing the Jacobian
+// system_functor<F, double, double, 1>
+//   system(f_, x_, y_, dat_, dat_int_, msgs_);
+// Eigen::VectorXd fx;
+// Eigen::MatrixXd Jac;
+// jacobian(system, to_vector(x_vec), fx, Jac);
+// 
+// std::vector<double> jacobian_x = std::vector<double>(N_ * N_);
+// Eigen::Map<Eigen::MatrixXd>(&jacobian_x[0], N_, N_) = Jac;
+// 
+// std::move(jacobian_x.begin(), jacobian_x.end(), SM_DATA_D(J));
+
+/**
+ * Default Jacobian builder using autodiff.
+ */
+struct kinsol_J_f {
+  template <typename F>
+  inline int
+  operator() (const F& f,
+              const Eigen::VectorXd& x,
+              const Eigen::VectorXd& y,
+              const std::vector<double>& dat,
+              const std::vector<int>& dat_int,
+              std::ostream* msgs,
+              const double x_sun[], SUNMatrix J) const {
+    size_t N = x.size();
+    const std::vector<double> x_vec(x_sun, x_sun + N);
+    system_functor<F, double, double, 1>
+      system(f, x, y, dat, dat_int, msgs);
+    Eigen::VectorXd fx;
+    Eigen::MatrixXd Jac;
+    jacobian(system, to_vector(x_vec), fx, Jac);
+
+    std::vector<double> jacobian_x = std::vector<double>(N * N);
+    Eigen::Map<Eigen::MatrixXd>(&jacobian_x[0], N, N) = Jac;
+
+    std::move(jacobian_x.begin(), jacobian_x.end(), SM_DATA_D(J));
+
+    return 0;
+  }
+};
+
 /**
  * KINSOL algebraic system data holder.
  * Based on cvodes_ode_data.
  * (EXPERIMENTAL)
- * 
- * F: structure type of the functor which returns the system function.
+ *
+ * @tparam F1 functor type for system function.
+ * @tparam F2 functor type for jacobian function. Default is 0.
+ *         If 0, use rev mode autodiff to compute the Jacobian.
+ *
  * CHECK -- do we need a flexible mode for the parameters?
+ * CHECK -- should F2 be made into a default template parameter? And
+ *          if so, how?
  */
-template <typename F>
+template <typename F1, typename F2>
 class kinsol_system_data {
-  const F& f_;
+  const F1& f_;
+  const F2& J_f_;
   const Eigen::VectorXd& x_;
   const Eigen::VectorXd& y_;
   const size_t N_;
@@ -32,7 +81,7 @@ class kinsol_system_data {
   const std::vector<int>& dat_int_;
   std::ostream* msgs_;
 
-  typedef kinsol_system_data<F> system_data;
+  typedef kinsol_system_data<F1, F2> system_data;
 
 public:
   N_Vector nv_x_;
@@ -42,13 +91,14 @@ public:
   /**
    * Constructor
    */
-  kinsol_system_data(const F& f,
+  kinsol_system_data(const F1& f,
+                     const F2& J_f,
                      const Eigen::VectorXd& x,
                      const Eigen::VectorXd& y,
                      const std::vector<double>& dat,
                      const std::vector<int>& dat_int,
                      std::ostream* msgs)
-    : f_(f), x_(x), y_(y), dat_(dat), dat_int_(dat_int),
+    : f_(f), J_f_(J_f), x_(x), y_(y), dat_(dat), dat_int_(dat_int),
       msgs_(msgs), N_(x.size()),
       nv_x_(N_VMake_Serial(N_, &to_array_1d(x_)[0])),  // FIX ME - wrap eigen directly
       J_(SUNDenseMatrix(N_, N_)),
@@ -103,26 +153,15 @@ private:
       = to_array_1d(f_(to_vector(x_vec), y_, dat_, dat_int_, msgs_));
     std::move(f_vec.begin(), f_vec.end(), f);
   }
-  
+
   /**
    * Calculate the Jacobian of the system function with respect to x.
+   * using the method specified by J_f_.
+   * By default, J_f is constructed as a method that computes the
+   * Jacobian with reverse-mode autodiff.
    */
   inline int jacobian_states(const double x[], SUNMatrix J) const {
-    const std::vector<double> x_vec(x, x + N_);
-    
-    // CHECK - is the best way of constructing the Jacobian
-    system_functor<F, double, double, 1>
-      system(f_, x_, y_, dat_, dat_int_, msgs_);
-    Eigen::VectorXd fx;
-    Eigen::MatrixXd Jac;
-    jacobian(system, to_vector(x_vec), fx, Jac);
-
-    std::vector<double> jacobian_x = std::vector<double>(N_ * N_);
-    Eigen::Map<Eigen::MatrixXd>(&jacobian_x[0], N_, N_) = Jac;
-    
-    std::move(jacobian_x.begin(), jacobian_x.end(), SM_DATA_D(J));
-
-    return 0;
+    return J_f_(f_, x_, y_, dat_, dat_int_, msgs_, x, J);
   }
 };
 
