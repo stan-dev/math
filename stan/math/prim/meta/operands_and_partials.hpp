@@ -1,10 +1,10 @@
 #ifndef STANH_PRIM_META_OPERANDS_AND_PARTIALS_HPP
 #define STANH_PRIM_META_OPERANDS_AND_PARTIALS_HPP
-#include <stan/math/prim/scal/meta/broadcast_array.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
-#include <stan/math/prim/mat/meta/broadcast_array.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
+#include <stan/math/prim/meta/broadcast_array.hpp>
+#include <stan/math/prim/meta/return_type.hpp>
+#include <stan/math/prim/meta/broadcast_array.hpp>
+#include <stan/math/prim/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta/return_type.hpp>
 #include <Eigen/Dense>
 #include <vector>
 namespace math {

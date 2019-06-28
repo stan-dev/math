@@ -1,8 +1,8 @@
 #ifndef STANH_PRIM_META_VALUE_TYPE_HPP
 #define STANH_PRIM_META_VALUE_TYPE_HPP
-#include <stan/math/prim/arr/meta/value_type.hpp>
+#include <stan/math/prim/meta/value_type.hpp>
 #include <Eigen/Core>
-#include <stan/math/prim/scal/meta/value_type.hpp>
+#include <stan/math/prim/meta/value_type.hpp>
 #include <vector>
 namespace math {
 namespace stan {

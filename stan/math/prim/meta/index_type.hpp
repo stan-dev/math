@@ -1,8 +1,8 @@
 #ifndef STANH_PRIM_META_INDEX_TYPE_HPP
 #define STANH_PRIM_META_INDEX_TYPE_HPP
-#include <stan/math/prim/scal/meta/index_type.hpp>
+#include <stan/math/prim/meta/index_type.hpp>
 #include <Eigen/Core>
-#include <stan/math/prim/scal/meta/index_type.hpp>
+#include <stan/math/prim/meta/index_type.hpp>
 #include <vector>
 namespace math {
 namespace stan {

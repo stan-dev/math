@@ -1,7 +1,7 @@
 #ifndef STANH_PRIM_META_LENGTH_MVT_HPP
 #define STANH_PRIM_META_LENGTH_MVT_HPP
 #include <stdexcept>
-#include <stan/math/prim/scal/meta/length_mvt.hpp>
+#include <stan/math/prim/meta/length_mvt.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stdexcept>
 #include <vector>

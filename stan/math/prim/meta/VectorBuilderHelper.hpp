@@ -1,7 +1,7 @@
 #ifndef STANH_PRIM_META_VECTORBUILDER_HELPER_HPP
 #define STANH_PRIM_META_VECTORBUILDER_HELPER_HPP
 #include <stdexcept>
-#include <stan/math/prim/scal/meta/VectorBuilderHelper.hpp>
+#include <stan/math/prim/meta/VectorBuilderHelper.hpp>
 #include <stdexcept>
 #include <vector>
 namespace stan {
