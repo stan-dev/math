@@ -1,14 +1,12 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_HYPERGEOMETRIC_LPMF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_HYPERGEOMETRIC_LPMF_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_greater.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/binomial_coefficient_log.hpp>
-#include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
 
 namespace stan {
 namespace math {

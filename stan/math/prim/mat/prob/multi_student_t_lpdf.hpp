@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_MULTI_STUDENT_T_LPDF_HPP
 #define STAN_MATH_PRIM_MAT_PROB_MULTI_STUDENT_T_LPDF_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/err/check_consistent_sizes_mvt.hpp>
 #include <stan/math/prim/mat/err/check_ldlt_factor.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
-#include <stan/math/prim/mat/meta/vector_seq_view.hpp>
 #include <stan/math/prim/mat/prob/multi_normal_log.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
@@ -14,8 +14,6 @@
 #include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <stan/math/prim/scal/fun/log1p.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
-#include <stan/math/prim/scal/meta/length_mvt.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <cmath>
 #include <cstdlib>
 

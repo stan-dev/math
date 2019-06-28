@@ -1,11 +1,10 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_EXP_MOD_NORMAL_RNG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_EXP_MOD_NORMAL_RNG_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/meta/max_size.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/prob/exponential_rng.hpp>
 #include <stan/math/prim/scal/prob/normal_rng.hpp>
 #include <boost/random/normal_distribution.hpp>

@@ -1,9 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_BINOMIAL_LCDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_BINOMIAL_LCDF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
@@ -12,7 +10,6 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/beta.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
 #include <cmath>
 
@@ -88,7 +85,7 @@ typename return_type<T_prob>::type binomial_lcdf(const T_n& n, const T_N& N,
 
     P += log(Pi);
 
-    if (!is_constant_struct<T_prob>::value)
+    if (!is_constant_all<T_prob>::value)
       ops_partials.edge1_.partials_[i]
           -= pow(theta_dbl, n_dbl) * pow(1 - theta_dbl, N_dbl - n_dbl - 1)
              / betafunc / Pi;
