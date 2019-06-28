@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_META_CONTAINS_FVAR_HPP
-#define STAN_MATH_PRIM_SCAL_META_CONTAINS_FVAR_HPP
+#ifndef STAN_MATH_PRIM_META_CONTAINS_FVAR_HPP
+#define STAN_MATH_PRIM_META_CONTAINS_FVAR_HPP
 
 #include <stan/math/prim/meta/is_fvar.hpp>
 #include <stan/math/prim/meta/scalar_type.hpp>

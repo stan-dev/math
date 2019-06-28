@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_META_INCLUDE_SUMMAND_HPP
-#define STAN_MATH_PRIM_SCAL_META_INCLUDE_SUMMAND_HPP
+#ifndef STAN_MATH_PRIM_META_INCLUDE_SUMMAND_HPP
+#define STAN_MATH_PRIM_META_INCLUDE_SUMMAND_HPP
 
 #include <stan/math/prim/meta/is_constant.hpp>
 #include <stan/math/prim/meta/scalar_type.hpp>

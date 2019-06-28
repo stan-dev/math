@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_META_MAX_SIZE_MVT_HPP
-#define STAN_MATH_PRIM_SCAL_META_MAX_SIZE_MVT_HPP
+#ifndef STAN_MATH_PRIM_META_MAX_SIZE_MVT_HPP
+#define STAN_MATH_PRIM_META_MAX_SIZE_MVT_HPP
 
 #include <stan/math/prim/meta/length_mvt.hpp>
 #include <cstdlib>

@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_META_SCALAR_SEQ_VIEW_HPP
-#define STAN_MATH_PRIM_SCAL_META_SCALAR_SEQ_VIEW_HPP
+#ifndef STAN_MATH_PRIM_METAAR_SEQ_VIEW_HPP
+#define STAN_MATH_PRIM_METAAR_SEQ_VIEW_HPP
 
 #include <stan/math/prim/meta/scalar_type.hpp>
 

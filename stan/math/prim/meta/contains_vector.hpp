@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_META_CONTAINS_VECTOR_HPP
-#define STAN_MATH_PRIM_SCAL_META_CONTAINS_VECTOR_HPP
+#ifndef STAN_MATH_PRIM_META_CONTAINS_VECTOR_HPP
+#define STAN_MATH_PRIM_META_CONTAINS_VECTOR_HPP
 
 #include <stan/math/prim/meta/is_vector.hpp>
 #include <stan/math/prim/meta/disjunction.hpp>
