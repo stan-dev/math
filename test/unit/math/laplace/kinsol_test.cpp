@@ -365,7 +365,8 @@ TEST(matrix, kinsol5) {
   double fun_tol = 1e-8;
   long int max_steps = 1e+3;
 
-  int dim_theta = 100;  // options: 10, 20, 50, 100, 500
+  int dim_theta = 500;  // options: 10, 20, 50, 100, 500
+  std::cout << "dim theta: " << dim_theta << std::endl;
   Eigen::VectorXd phi(2);
   phi << 0.5, 0.9;
 
@@ -404,39 +405,39 @@ TEST(matrix, kinsol5) {
 
   Eigen::VectorXd theta_0 = Eigen::VectorXd::Zero(dim_theta);
 
-  start = std::chrono::system_clock::now();
-  Eigen::VectorXd
-    theta = algebra_solver(inla_functor(), theta_0, phi, dat, dat_int, 0,
-                           rel_tol, fun_tol, max_steps);
-  end = std::chrono::system_clock::now();
-  elapsed_seconds_total = end - start;
-  std::cout << "Time powell: " << elapsed_seconds_total.count() << std::endl;
-
+  int powell_evaluate = 0;
+  Eigen::VectorXd theta;
+  if (powell_evaluate) {
+    start = std::chrono::system_clock::now();
+    theta = algebra_solver(inla_functor(), theta_0, phi, dat, dat_int);
+    end = std::chrono::system_clock::now();
+    elapsed_seconds_total = end - start;
+    std::cout << "Time powell: " << elapsed_seconds_total.count() << std::endl;
+  }
+    
   start = std::chrono::system_clock::now();
   Eigen::VectorXd theta_newton 
-    = kinsol_solve(inla_functor(), theta_0, phi, dat, dat_int, 0,
-                   1e-15, 1e5);
+    = kinsol_solve(inla_functor(), theta_0, phi, dat, dat_int);
   end = std::chrono::system_clock::now();
   elapsed_seconds_total = end - start;
   std::cout << "Time newton kinsol: " << elapsed_seconds_total.count() << std::endl;
 
   start = std::chrono::system_clock::now();
   Eigen::VectorXd theta_newton_custom
-    = algebra_solver_newton_custom(inla_functor(), theta_0, phi, dat, dat_int, 0,
-                                   0, fun_tol, max_steps);
+    = algebra_solver_newton_custom(inla_functor(), theta_0, phi, dat, dat_int);
   end = std::chrono::system_clock::now();
   elapsed_seconds_total = end - start;
   std::cout << "Time newton custom: " << elapsed_seconds_total.count() << std::endl;
 
   inla_functor system;
-  std::cout << "powell eval: " << system(theta, phi, dat, dat_int, 0).norm() << std::endl;
+  if (powell_evaluate) std::cout << "powell eval: " << system(theta, phi, dat, dat_int, 0).norm() << std::endl;
   std::cout << "newton eval: " << system(theta_newton, phi, dat, dat_int, 0).norm() << std::endl;
   std::cout << "custom newton eval: " << system(theta_newton_custom, phi, dat, dat_int, 0).norm() << std::endl;
 
-  std::cout << "Solution norm: " << theta.norm() << std::endl;
-  
+  // std::cout << "Solution norm: " << theta.norm() << std::endl;
+
   for (int i = 0; i < dim_theta; i++) {
-    EXPECT_FLOAT_EQ(theta(i), theta_newton(i));
-    EXPECT_FLOAT_EQ(theta(i), theta_newton_custom(i));
+    if (powell_evaluate) EXPECT_FLOAT_EQ(theta(i), theta_newton(i));
+    EXPECT_FLOAT_EQ(theta_newton(i), theta_newton_custom(i));
   }
 }

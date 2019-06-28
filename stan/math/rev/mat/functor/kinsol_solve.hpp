@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/mat/fun/to_array_1d.hpp>
 #include <stan/math/prim/mat/fun/to_vector.hpp>
-// #include <stan/math/prim/mat/functor/Eigen.hpp>
 #include <stan/math/rev/mat/functor/kinsol_data.hpp>
 #include <stan/math/rev/mat/functor/algebra_system.hpp>
 
@@ -29,8 +28,9 @@ namespace math {
                const std::vector<int>& dat_int, std::ostream* msgs = nullptr,
                double function_tolerance = 1e-6,
                long int max_num_steps = 1e+3,
-               int global_line_search = KIN_NONE, 
-               int steps_eval_jacobian = 1,
+               int global_line_search = KIN_LINESEARCH,   // default is KIN_NONE
+               int steps_eval_jacobian = 5,  // use 0 for default (10) and 1 for exact Newton.
+                                             // picking 5 yields interesting results.
                double scaling_step_tol = 1e-5) {
     // CHECK -- what tuning parameters do we want to include?
     // E.g scaling_step_tol, scaling, etc.
@@ -51,11 +51,12 @@ namespace math {
     flag = KINSetScaledStepTol(kinsol_memory, scaling_step_tol);
     flag = KINSetMaxSetupCalls(kinsol_memory, steps_eval_jacobian);
     
+    // FIX ME
     // The default value is 1000 * ||u_0||_D where ||u_0|| is the initial guess.
     // So we run into issues if ||u_0|| = 0.
     // If the norm is non-zero, use kinsol's default (accessed with 0),
-    // else use the dimension of x, say divided by 20 -- CHECK - find optimal length.
-    double max_newton_step = (x.norm() == 0) ? x.size() / 20 : 0;
+    // else use the dimension of x -- CHECK - find optimal length.
+    double max_newton_step = (x.norm() == 0) ? x.size() : 0;
     flag = KINSetMaxNewtonStep(kinsol_memory, max_newton_step);  // scaled length of Newton step
 
     flag = KINSetUserData(kinsol_memory,
@@ -74,7 +75,7 @@ namespace math {
                   global_line_search, scaling, scaling);
 
     std::cout << "Kinsol flag: " << flag << std::endl;
-    
+
     KINFree(&kinsol_memory);
 
     // CHECK - avoid / simplifies this conversion step?
