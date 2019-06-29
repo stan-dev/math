@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_ARR_SCAL_FUN_INVERSE_SOFTMAX_HPP
 #define STAN_MATH_ARR_SCAL_FUN_INVERSE_SOFTMAX_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/arr/err/check_matching_sizes.hpp>
 #include <cmath>
 

@@ -196,9 +196,11 @@ class opencl_context_base {
     // used in math/opencl/multiply
     int multiply_split_upper_limit = 2000000;
     // used in math/prim/mat/fun/multiply
-    // used in math/rev/mat/fun/multiply
     int multiply_result_size_worth_transfer = 250000;
     int multiply_common_dim_worth_transfer = 100;
+    // used in math/prim/mat/fun/mdivide_left_tri
+    // and math/rev/mat/fun/mdivide_left_tri
+    int tri_inverse_size_worth_transfer = 100;
   } tuning_opts_;
 
   static opencl_context_base& getInstance() {

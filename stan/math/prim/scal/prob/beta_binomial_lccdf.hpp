@@ -1,9 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_BETA_BINOMIAL_LCCDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_BETA_BINOMIAL_LCCDF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
@@ -13,8 +11,6 @@
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/meta/contains_nonconstant_struct.hpp>
 #include <stan/math/prim/scal/fun/F32.hpp>
 #include <stan/math/prim/scal/fun/grad_F32.hpp>
 #include <cmath>
@@ -113,19 +109,19 @@ typename return_type<T_size1, T_size2>::type beta_binomial_lccdf(
     T_partials_return digammaOne = 0;
     T_partials_return digammaTwo = 0;
 
-    if (contains_nonconstant_struct<T_size1, T_size2>::value) {
+    if (!is_constant_all<T_size1, T_size2>::value) {
       digammaOne = digamma(mu + nu);
       digammaTwo = digamma(alpha_dbl + beta_dbl);
       grad_F32(dF, (T_partials_return)1, mu, -N_dbl + n_dbl + 1, n_dbl + 2,
                1 - nu, (T_partials_return)1);
     }
-    if (!is_constant_struct<T_size1>::value) {
+    if (!is_constant_all<T_size1>::value) {
       const T_partials_return g = -C
                                   * (digamma(mu) - digammaOne + dF[1] / F
                                      - digamma(alpha_dbl) + digammaTwo);
       ops_partials.edge1_.partials_[i] -= g / Pi;
     }
-    if (!is_constant_struct<T_size2>::value) {
+    if (!is_constant_all<T_size2>::value) {
       const T_partials_return g = -C
                                   * (digamma(nu) - digammaOne - dF[4] / F
                                      - digamma(beta_dbl) + digammaTwo);

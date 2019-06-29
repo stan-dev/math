@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_RANK_HPP
 #define STAN_MATH_PRIM_MAT_FUN_RANK_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/err/check_range.hpp>
-#include <stan/math/prim/mat/meta/index_type.hpp>
 
 namespace stan {
 namespace math {

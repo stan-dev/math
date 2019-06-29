@@ -1,24 +1,16 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_MULTI_NORMAL_CHOLESKY_LPDF_HPP
 #define STAN_MATH_PRIM_MAT_PROB_MULTI_NORMAL_CHOLESKY_LPDF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/mat/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/err/check_consistent_sizes_mvt.hpp>
 #include <stan/math/prim/mat/fun/dot_self.hpp>
 #include <stan/math/prim/mat/fun/log.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left_tri.hpp>
 #include <stan/math/prim/mat/fun/transpose.hpp>
-#include <stan/math/prim/mat/meta/vector_seq_view.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/meta/length_mvt.hpp>
-#include <stan/math/prim/scal/meta/max_size_mvt.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/meta/likely.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
 
 namespace stan {
 namespace math {
@@ -138,15 +130,15 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
 
       logp -= 0.5 * dot_self(half);
 
-      if (!is_constant_struct<T_y>::value) {
+      if (!is_constant_all<T_y>::value) {
         for (int j = 0; j < size_y; j++)
           ops_partials.edge1_.partials_vec_[i](j) -= scaled_diff(j);
       }
-      if (!is_constant_struct<T_loc>::value) {
+      if (!is_constant_all<T_loc>::value) {
         for (int j = 0; j < size_y; j++)
           ops_partials.edge2_.partials_vec_[i](j) += scaled_diff(j);
       }
-      if (!is_constant_struct<T_covar>::value) {
+      if (!is_constant_all<T_covar>::value) {
         ops_partials.edge3_.partials_ += scaled_diff * half;
       }
     }
@@ -154,7 +146,7 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
 
   if (include_summand<propto, T_covar_elem>::value) {
     logp += inv_L_dbl.diagonal().array().log().sum() * size_vec;
-    if (!is_constant_struct<T_covar>::value) {
+    if (!is_constant_all<T_covar>::value) {
       ops_partials.edge3_.partials_ -= size_vec * inv_L_dbl.transpose();
     }
   }

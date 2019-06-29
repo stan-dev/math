@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_INV_GAMMA_LPDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_INV_GAMMA_LPDF_HPP
 
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
@@ -10,13 +10,6 @@
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
-#include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <cmath>
 
 namespace stan {
@@ -89,12 +82,12 @@ typename return_type<T_y, T_shape, T_scale>::type inv_gamma_lpdf(
   VectorBuilder<include_summand<propto, T_shape>::value, T_partials_return,
                 T_shape>
       lgamma_alpha(length(alpha));
-  VectorBuilder<!is_constant_struct<T_shape>::value, T_partials_return, T_shape>
+  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
       digamma_alpha(length(alpha));
   for (size_t n = 0; n < length(alpha); n++) {
     if (include_summand<propto, T_shape>::value)
       lgamma_alpha[n] = lgamma(value_of(alpha_vec[n]));
-    if (!is_constant_struct<T_shape>::value)
+    if (!is_constant_all<T_shape>::value)
       digamma_alpha[n] = digamma(value_of(alpha_vec[n]));
   }
 
@@ -119,13 +112,13 @@ typename return_type<T_y, T_shape, T_scale>::type inv_gamma_lpdf(
     if (include_summand<propto, T_y, T_scale>::value)
       logp -= beta_dbl * inv_y[n];
 
-    if (!is_constant<typename is_vector<T_y>::type>::value)
+    if (!is_constant_all<typename is_vector<T_y>::type>::value)
       ops_partials.edge1_.partials_[n]
           += -(alpha_dbl + 1) * inv_y[n] + beta_dbl * inv_y[n] * inv_y[n];
-    if (!is_constant<typename is_vector<T_shape>::type>::value)
+    if (!is_constant_all<typename is_vector<T_shape>::type>::value)
       ops_partials.edge2_.partials_[n]
           += -digamma_alpha[n] + log_beta[n] - log_y[n];
-    if (!is_constant<typename is_vector<T_scale>::type>::value)
+    if (!is_constant_all<typename is_vector<T_scale>::type>::value)
       ops_partials.edge3_.partials_[n] += alpha_dbl / beta_dbl - inv_y[n];
   }
   return ops_partials.build(logp);

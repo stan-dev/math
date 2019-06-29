@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_MAT_FUN_MULTIPLY_LOWER_TRI_SELF_TRANSPOSE_HPP
 #define STAN_MATH_REV_MAT_FUN_MULTIPLY_LOWER_TRI_SELF_TRANSPOSE_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/mat/fun/typedefs.hpp>
@@ -28,7 +29,7 @@ inline matrix_v multiply_lower_tri_self_transpose(const matrix_v& L) {
   else  // if (K < J)
     Knz = (K * (K + 1)) / 2;
   vari** vs = reinterpret_cast<vari**>(
-      ChainableStack::instance().memalloc_.alloc(Knz * sizeof(vari*)));
+      ChainableStack::instance_->memalloc_.alloc(Knz * sizeof(vari*)));
   int pos = 0;
   for (int m = 0; m < K; ++m)
     for (int n = 0; n < ((J < (m + 1)) ? J : (m + 1)); ++n) {

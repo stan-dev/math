@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_FWD_SCAL_FUN_BINARY_LOG_LOSS_HPP
 #define STAN_MATH_FWD_SCAL_FUN_BINARY_LOG_LOSS_HPP
 
+#include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/scal/fun/binary_log_loss.hpp>
 
