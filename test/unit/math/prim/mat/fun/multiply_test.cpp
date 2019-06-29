@@ -151,7 +151,7 @@ TEST(MathMatrix, multiply_opencl) {
   stan::math::opencl_context.tuning_opts().multiply_common_dim_worth_transfer
       = 1;
   using stan::math::multiply;
-  int size = 512;
+  int size = 400;
   stan::math::matrix_d m1 = stan::math::matrix_d::Random(size, size).eval();
   stan::math::matrix_d m2 = stan::math::matrix_d::Random(size, size).eval();
 
