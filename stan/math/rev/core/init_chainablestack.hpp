@@ -11,7 +11,9 @@ namespace {
  * Initializes the AD stack for the main process. See
  * autodiffstackstorage.hpp for more explanations.
  */
-ChainableStack global_stack_instance_init;
+// obsolete: see init_chainablestack_tbb
+// ChainableStack global_stack_instance_init;
+
 }  // namespace
 }  // namespace math
 }  // namespace stan

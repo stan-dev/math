@@ -7,6 +7,7 @@
 #include <stan/math/rev/core/nested_size.hpp>
 #include <stan/math/rev/core/vari.hpp>
 #include <vector>
+#include <tbb/cache_aligned_allocator.h>
 
 namespace stan {
 namespace math {
@@ -35,7 +36,8 @@ static void grad(vari* vi) {
   //   for (size_t i = end; --i > begin; )
   //     var_stack_[i]->chain();
 
-  typedef std::vector<vari*>::reverse_iterator it_t;
+  typedef std::vector<
+      vari*, tbb::cache_aligned_allocator<vari*>>::reverse_iterator it_t;
   vi->init_dependent();
   const it_t begin = ChainableStack::instance_->var_stack_.rbegin();
   const it_t end = ChainableStack::instance_->var_stack_.rend();

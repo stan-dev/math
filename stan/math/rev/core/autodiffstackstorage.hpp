@@ -257,19 +257,23 @@ static std::size_t get_new_stack_id() {
     var_stack_; std::vector<ChainableT *> var_nochain_stack_;
     std::vector<ChainableAllocT *> var_alloc_stack_;
     */
-    /*
+    /**/
     std::vector<ChainableT *, tbb::cache_aligned_allocator<ChainableT *> >
-    var_stack_; std::vector<ChainableT *,
-    tbb::cache_aligned_allocator<ChainableT *> > var_nochain_stack_;
-    std::vector<ChainableAllocT *, tbb::cache_aligned_allocator<ChainableAllocT
-    *> > var_alloc_stack_;
-    */
+        var_stack_;
+    std::vector<ChainableT *, tbb::cache_aligned_allocator<ChainableT *> >
+        var_nochain_stack_;
+    std::vector<ChainableAllocT *,
+                tbb::cache_aligned_allocator<ChainableAllocT *> >
+        var_alloc_stack_;
+    /**/
+    /*
     std::vector<ChainableT *, tbb::scalable_allocator<ChainableT *> >
         var_stack_;
     std::vector<ChainableT *, tbb::scalable_allocator<ChainableT *> >
         var_nochain_stack_;
     std::vector<ChainableAllocT *, tbb::scalable_allocator<ChainableAllocT *> >
         var_alloc_stack_;
+    */
     stack_alloc memalloc_;
 
     // std::size_t stack_id_;
