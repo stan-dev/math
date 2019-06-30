@@ -2,11 +2,9 @@
 #define STAN_MATH_PRIM_MAT_MATRIX_ADDONS_H
 
 /**
- * Structure to determine whether input struct has member named "d_".
- * This is used to differentiate between var and fvar<T> without
- * depending on external code.
+ * Reimplements is_fvar without requiring external math headers
  *
- * decltype((void)(T::d_)) is a replacement for std::void_t for pre C++-17
+ * decltype((void)(T::d_)) is a pre C++17 replacement for std::void_t
  */
 template<class, class = void>
 struct is_fvar : std::false_type
@@ -41,17 +39,21 @@ using fwd_rtn_type = std::conditional_t<std::is_const<typename std::remove_refer
  */
 struct val_Op{
   EIGEN_EMPTY_STRUCT_CTOR(val_Op);
+
+  //Returns value from a vari*
   template<typename T = Scalar>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
     std::enable_if_t<std::is_pointer<T>::value, rev_rtn_type<T>>
       operator()(T &v) const { return v->val_; }
 
+  //Returns value from a var
   template<typename T = Scalar>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
     std::enable_if_t<(!std::is_pointer<T>::value && !is_fvar<T>::value),
                       rev_rtn_type<T>>
       operator()(T &v) const { return v.vi_->val_; }
 
+  //Returns value from an fvar
   template<typename T = Scalar>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
     std::enable_if_t<is_fvar<T>::value, fwd_rtn_type<T>>
@@ -68,9 +70,8 @@ val() const { return CwiseUnaryOp<val_Op, const Derived>(derived());
 }
 
 /**
- * Coefficient-wise function applying val_Op struct to a matrix of const var
- * or vari* and returning a view to the matrix of doubles containing the
- * values
+ * Coefficient-wise function applying val_Op struct to a matrix of var
+ * or vari* and returning a view to the values
  */
 inline CwiseUnaryView<val_Op, Derived>
 val() { return CwiseUnaryView<val_Op, Derived>(derived());
@@ -81,6 +82,8 @@ val() { return CwiseUnaryView<val_Op, Derived>(derived());
  */
 struct d_Op {
   EIGEN_EMPTY_STRUCT_CTOR(d_Op);
+
+  //Returns tangent from an fvar
   template<typename T = Scalar>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
     fwd_rtn_type<T> operator()(T &v) const { return v.d_; }
@@ -110,11 +113,14 @@ d() { return CwiseUnaryView<d_Op, Derived>(derived());
  */
 struct adj_Op {
   EIGEN_EMPTY_STRUCT_CTOR(adj_Op);
+
+  //Returns adjoint from a vari*
   template<typename T = Scalar>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
     std::enable_if_t<std::is_pointer<T>::value, rev_rtn_type<T>>
       operator()(T &v) const { return v->adj_; }
 
+  //Returns adjoint from a var
   template<typename T = Scalar>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
     std::enable_if_t<!std::is_pointer<T>::value, rev_rtn_type<T>>
@@ -142,6 +148,8 @@ adj() { return CwiseUnaryView<adj_Op, Derived>(derived());
  */
 struct vi_Op {
   EIGEN_EMPTY_STRUCT_CTOR(vi_Op);
+
+  //Returns vari* from a var
   template<typename T = Scalar>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
     vi_rtn_type<T> operator()(T &v) const { return v.vi_; }
