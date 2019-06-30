@@ -43,7 +43,7 @@ lkj_cov_lpdf(const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
   for (unsigned int k = 0; k < K; k++) {
     lp += lognormal_lpdf<propto>(sds(k), mu(k), sigma(k));
   }
-  if (stan::is_constant<typename stan::scalar_type<T_shape> >::value
+  if (stan::is_constant_all<typename stan::scalar_type<T_shape> >::value
       && eta == 1.0) {
     // no need to rescale y into a correlation matrix
     lp += lkj_corr_lpdf<propto, T_y, T_shape>(y, eta);
@@ -86,7 +86,7 @@ lkj_cov_lpdf(const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
   for (unsigned int k = 0; k < K; k++) {
     lp += lognormal_lpdf<propto>(sds(k), mu, sigma);
   }
-  if (stan::is_constant<typename stan::scalar_type<T_shape> >::value
+  if (stan::is_constant_all<typename stan::scalar_type<T_shape> >::value
       && eta == 1.0) {
     // no need to rescale y into a correlation matrix
     lp += lkj_corr_lpdf<propto>(y, eta);

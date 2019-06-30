@@ -61,12 +61,12 @@ typename return_type<T_rate>::type poisson_cdf(const T_n& n,
 
     P *= Pi;
 
-    if (!is_constant_struct<T_rate>::value)
+    if (!is_constant_all<T_rate>::value)
       ops_partials.edge1_.partials_[i]
           -= exp(-lambda_dbl) * pow(lambda_dbl, n_dbl) / tgamma(n_dbl + 1) / Pi;
   }
 
-  if (!is_constant_struct<T_rate>::value) {
+  if (!is_constant_all<T_rate>::value) {
     for (size_t i = 0; i < stan::length(lambda); ++i)
       ops_partials.edge1_.partials_[i] *= P;
   }

@@ -64,11 +64,11 @@ typename return_type<T_prob>::type bernoulli_cdf(const T_n& n,
 
     P *= Pi;
 
-    if (!is_constant_struct<T_prob>::value)
+    if (!is_constant_all<T_prob>::value)
       ops_partials.edge1_.partials_[i] += -1 / Pi;
   }
 
-  if (!is_constant_struct<T_prob>::value) {
+  if (!is_constant_all<T_prob>::value) {
     for (size_t i = 0; i < stan::length(theta); ++i)
       ops_partials.edge1_.partials_[i] *= P;
   }
