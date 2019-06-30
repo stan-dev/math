@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_FWD_SCAL_FUN_GAMMA_Q_HPP
 #define STAN_MATH_FWD_SCAL_FUN_GAMMA_Q_HPP
 
+#include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/scal/fun/tgamma.hpp>
 #include <stan/math/prim/scal/fun/gamma_q.hpp>

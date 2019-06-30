@@ -1,9 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_POISSON_LPMF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_POISSON_LPMF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -13,8 +11,6 @@
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <limits>
 
 namespace stan {
@@ -65,7 +61,7 @@ typename return_type<T_rate>::type poisson_lpmf(const T_n& n,
                 - value_of(lambda_vec[i]);
     }
 
-    if (!is_constant_struct<T_rate>::value)
+    if (!is_constant_all<T_rate>::value)
       ops_partials.edge1_.partials_[i]
           += n_vec[i] / value_of(lambda_vec[i]) - 1.0;
   }

@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_GAUSSIAN_DLM_OBS_LOG_HPP
 #define STAN_MATH_PRIM_MAT_PROB_GAUSSIAN_DLM_OBS_LOG_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/prob/gaussian_dlm_obs_lpdf.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
 
 namespace stan {
 namespace math {

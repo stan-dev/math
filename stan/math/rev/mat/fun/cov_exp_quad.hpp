@@ -1,13 +1,13 @@
 #ifndef STAN_MATH_REV_MAT_FUN_COV_EXP_QUAD_HPP
 #define STAN_MATH_REV_MAT_FUN_COV_EXP_QUAD_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
 #include <stan/math/rev/mat/fun/gp_exp_quad_cov.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/fun/squared_distance.hpp>
 #include <stan/math/prim/scal/fun/exp.hpp>
-#include <stan/math/prim/scal/meta/scalar_type.hpp>
 #include <type_traits>
 #include <vector>
 #include <cmath>

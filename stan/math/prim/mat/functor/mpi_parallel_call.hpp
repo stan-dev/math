@@ -1,6 +1,7 @@
 #ifdef STAN_MPI
 
 #ifndef STAN_MATH_PRIM_MAT_FUNCTOR_MPI_PARALLEL_CALL_HPP
+#include <stan/math/prim/meta.hpp>
 #define STAN_MATH_PRIM_MAT_FUNCTOR_MPI_PARALLEL_CALL_HPP
 
 #include <stan/math/prim/arr/functor/mpi_cluster.hpp>

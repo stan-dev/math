@@ -1,16 +1,16 @@
 #ifndef STAN_MATH_PRIM_MAT_FUNCTOR_MAP_RECT_CONCURRENT_HPP
 #define STAN_MATH_PRIM_MAT_FUNCTOR_MAP_RECT_CONCURRENT_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 
-#include <stan/math/prim/mat/functor/map_rect_reduce.hpp>
-#include <stan/math/prim/mat/functor/map_rect_combine.hpp>
+#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/err/invalid_argument.hpp>
 #include <boost/lexical_cast.hpp>
 
+#include <cstdlib>
 #include <vector>
 #include <thread>
-#include <cstdlib>
 
 namespace stan {
 namespace math {

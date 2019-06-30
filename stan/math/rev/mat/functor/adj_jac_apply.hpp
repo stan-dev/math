@@ -1,11 +1,10 @@
 #ifndef STAN_MATH_REV_MAT_FUNCTOR_ADJ_JAC_APPLY_HPP
 #define STAN_MATH_REV_MAT_FUNCTOR_ADJ_JAC_APPLY_HPP
 
-#include <stan/math/prim/scal/meta/scalar_type.hpp>
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
-#include <stan/math/rev/scal/meta/is_var.hpp>
 #include <limits>
 #include <tuple>
 #include <vector>

@@ -2,11 +2,10 @@
 #define STAN_MATH_REV_MAT_FUNCTOR_MAP_RECT_CONCURRENT_HPP
 
 #include <stan/math/prim/mat/fun/typedefs.hpp>
-
-#include <stan/math/prim/mat/functor/map_rect_reduce.hpp>
+#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/mat/functor/map_rect_concurrent.hpp>
-#include <stan/math/prim/scal/err/invalid_argument.hpp>
-#include <stan/math/rev/mat/functor/map_rect_reduce.hpp>
+#include <stan/math/prim/mat/functor/map_rect_reduce.hpp>
+#include <stan/math/prim/mat/functor/map_rect_combine.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
 
 #include <vector>
