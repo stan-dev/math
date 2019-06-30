@@ -3,23 +3,21 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/scal/meta/is_fvar.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 
 namespace stan {
 namespace math {
 
 /**
- * Returns true if the input's value is NaN and false otherwise.
+ * Returns 1 if the input's value is NaN and 0 otherwise.
  *
  * Delegates to <code>is_nan</code>.
  *
  * @param x Value to test.
- * @return <code>true</code> if the value is NaN and <code>false</code>
- * otherwise.
+ * @return <code>1</code> if the value is NaN and <code>0</code> otherwise.
  */
 template <typename T>
-inline typename std::enable_if_t<is_fvar<T>::value, bool> is_nan(const T& x) {
+inline int is_nan(const fvar<T>& x) {
   return is_nan(x.val());
 }
 
