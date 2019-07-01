@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/inv.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/err/check_3F2_converges.hpp>
 #include <cmath>
@@ -48,7 +49,7 @@ void grad_F32(T* g, const T& a1, const T& a2, const T& a3, const T& b1,
 
   T log_g_old[6];
   for (auto& x : log_g_old)
-    x = -std::numeric_limits<double>::infinity();
+    x = NEGATIVE_INFTY;
 
   T log_t_old = 0.0;
   T log_t_new = 0.0;
