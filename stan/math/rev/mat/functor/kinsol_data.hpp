@@ -42,8 +42,7 @@ struct kinsol_J_f {
               const double x_sun[], SUNMatrix J) const {
     size_t N = x.size();
     const std::vector<double> x_vec(x_sun, x_sun + N);
-    system_functor<F, double, double, 1>
-      system(f, x, y, dat, dat_int, msgs);
+    system_functor<F, double, double, 1> system(f, x, y, dat, dat_int, msgs);
     Eigen::VectorXd fx;
     Eigen::MatrixXd Jac;
     jacobian(system, to_vector(x_vec), fx, Jac);

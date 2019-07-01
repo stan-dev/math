@@ -446,8 +446,6 @@ TEST(matrix, kinsol5) {
   std::cout << "custom newton eval: "
     << system(theta_newton_custom, phi, dat, dat_int, 0).norm() << std::endl;
 
-  // std::cout << "Solution norm: " << theta.norm() << std::endl;
-
   for (int i = 0; i < dim_theta; i++) {
     if (powell_evaluate) EXPECT_FLOAT_EQ(theta(i), theta_newton(i));
     EXPECT_FLOAT_EQ(theta_newton(i), theta_newton_custom(i));

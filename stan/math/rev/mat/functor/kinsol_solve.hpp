@@ -19,6 +19,7 @@ namespace math {
    * Return the solution to the specified algebraic system,
    * given an initial guess.
    * 
+   * . . .
    * @param[in] function_tolerance determines how small ||f(x)|| needs to be.
    * @param[in] max_num_steps maximum number of iterations.
    * @param[in] global_line_search does the solver use a global line search?
@@ -34,13 +35,16 @@ namespace math {
    */
   template <typename F1, typename F2>
   Eigen::VectorXd 
-  kinsol_solve(const F1& f, const F2& J_f,
+  kinsol_solve(const F1& f,
+               const F2& J_f,
                const Eigen::VectorXd& x,
-               const Eigen::VectorXd& y, const std::vector<double>& dat,
-               const std::vector<int>& dat_int, std::ostream* msgs = nullptr,
+               const Eigen::VectorXd& y,
+               const std::vector<double>& dat,
+               const std::vector<int>& dat_int,
+               std::ostream* msgs = nullptr,
                double function_tolerance = 1e-6,
                long int max_num_steps = 1e+3,
-               int global_line_search = KIN_LINESEARCH,   // default is KIN_NONE
+               int global_line_search = KIN_LINESEARCH,
                int steps_eval_jacobian = 5,
                double scaling_step_tol = 1e-5) {
     // CHECK -- what tuning parameters do we want to include?

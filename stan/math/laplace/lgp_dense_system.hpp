@@ -87,6 +87,7 @@ struct lgp_dense_system {
 
   /**
   * Functions which retun class members
+  * NOTE: can also access elements directly, since they're public.
   */
   Eigen::Matrix<T0, Eigen::Dynamic, 1> get_phi() const { return phi_; }
   Eigen::VectorXd get_n_samples() const { return n_samples_; }

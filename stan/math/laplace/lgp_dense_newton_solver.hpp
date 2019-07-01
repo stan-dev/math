@@ -22,8 +22,7 @@ namespace math {
     /** vector of solution */
     vari** theta_;
     /** Jacobian of the solution with respect to the global parameter */
-    Eigen::MatrixXd J_;
-    // double* J_;
+    Eigen::MatrixXd J_;  // double* J_;
     /** Jacobian of the system with respect to the unknown theta */
     Eigen::MatrixXd J_f_theta_;
 
@@ -46,17 +45,8 @@ namespace math {
       for (int i = 0; i < theta_size_; i++)
         theta_[i] = new vari(theta_dbl(i), false);
 
-      // Compute the Jacobian and store in array, using
-      // the operator in the lgp_dense_system structure.
+      // TO DO -- use Eigen::map to store the Jacobian.
       J_ = system.solver_gradient(theta_dbl);
-
-      // Jacobian vector product
-      // J_f_theta_ = system.cond_hessian(theta_dbl);
-
-      // CHECK - is the code below more memory efficient?
-      // std::cout << system.solver_gradient(theta_dbl) << std::endl;
-      // Map<VectorXd>(&J_[0], theta_size_) = system.solver_gradient(theta_dbl);
-      // std::cout << "marker d" << std::endl;
     }
 
     void chain() {
@@ -104,6 +94,7 @@ namespace math {
     long int max_num_steps = 100,
     bool line_search = false,
     bool print_iteration = false) {
+    // CHECK -- add more control over the tuning parameters?
 
     Eigen::VectorXd theta_dbl = value_of(theta_0);
     Eigen::MatrixXd gradient; 
