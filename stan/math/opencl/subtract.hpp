@@ -27,7 +27,7 @@ namespace math {
  */
 inline auto subtract(const matrix_cl& A, const matrix_cl& B) {
   check_matching_dims("subtract ((OpenCL))", "A", A, "B", B);
-  matrix_cl C(A.rows(), A.cols(), A.triangular_view() | B.triangular_view());
+  matrix_cl C(A.rows(), A.cols(), combine(A.triangular_view(), B.triangular_view()));
   if (A.size() == 0) {
     return C;
   }

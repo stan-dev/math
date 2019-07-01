@@ -4,7 +4,7 @@
 
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/opencl/buffer_types.hpp>
-#include <vector>
+#include <stan/math/opencl/triangular.hpp>
 
 namespace stan {
 namespace math {
@@ -57,8 +57,8 @@ static const char *sub_block_kernel_code = STRINGIFY(
 
       if (src_idx_i < src_rows && src_idx_j < src_cols && dst_idx_i < dst_rows
           && dst_idx_j < dst_cols) {
-        if ((triangular_view & LOWER && src_idx_i >= src_idx_j)
-            || (triangular_view & UPPER && src_idx_i <= src_idx_j)) {
+        if ((containsNonzeroPart(triangular_view, LOWER) && src_idx_i >= src_idx_j)
+            || (containsNonzeroPart(triangular_view, UPPER) && src_idx_i <= src_idx_j)) {
           dst(dst_idx_i, dst_idx_j) = src(src_idx_i, src_idx_j);
         } else {
           dst(dst_idx_i, dst_idx_j) = 0;
@@ -74,7 +74,7 @@ static const char *sub_block_kernel_code = STRINGIFY(
  */
 const kernel_cl<in_buffer, out_buffer, int, int, int, int, int, int, int, int,
                 int, int, TriangularViewCL>
-    sub_block("sub_block", {indexing_helpers, sub_block_kernel_code});
+    sub_block("sub_block", {indexing_helpers, triangular_kernel_helpers, sub_block_kernel_code});
 
 }  // namespace opencl_kernels
 }  // namespace math

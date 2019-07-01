@@ -4,6 +4,7 @@
 
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/opencl/buffer_types.hpp>
+#include <stan/math/opencl/triangular.hpp>
 
 namespace stan {
 namespace math {
@@ -79,13 +80,13 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
       // is 0 and the end tile is num_tiles-1 which
       // is then a general matrix multiply
       const int end_tile_A
-          = lower_upper_A & UPPER ? (num_tiles - 1) : (i / THREAD_BLOCK_SIZE);
+          = containsNonzeroPart(lower_upper_A, UPPER) ? (num_tiles - 1) : (i / THREAD_BLOCK_SIZE);
       const int end_tile_B
-          = lower_upper_B & LOWER ? (num_tiles - 1) : (j / THREAD_BLOCK_SIZE);
+          = containsNonzeroPart(lower_upper_B, LOWER) ? (num_tiles - 1) : (j / THREAD_BLOCK_SIZE);
       const int start_tile_A
-          = lower_upper_A & LOWER ? 0 : (i / THREAD_BLOCK_SIZE);
+          = containsNonzeroPart(lower_upper_A, LOWER) ? 0 : (i / THREAD_BLOCK_SIZE);
       const int start_tile_B
-          = lower_upper_B & UPPER ? 0 : (j / THREAD_BLOCK_SIZE);
+          = containsNonzeroPart(lower_upper_B, UPPER) ? 0 : (j / THREAD_BLOCK_SIZE);
       // the starting and end tiles for a thread are determined by
       // split_offset_tiles and split_tiles. If the input matrix is
       // triangular some tiles can be skipped in which case we
@@ -110,8 +111,8 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
           // or under/above the diagonal with upper/lower
           // triangular matrices
           if (A_curr_j >= K || i >= M
-              || (!(lower_upper_A & UPPER) && A_curr_j > i)
-              || (!(lower_upper_A & LOWER) && A_curr_j < i)) {
+              || (!containsNonzeroPart(lower_upper_A, UPPER) && A_curr_j > i)
+              || (!containsNonzeroPart(lower_upper_A, LOWER) && A_curr_j < i)) {
             A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
                    [thread_block_row]
                 = 0.0;
@@ -121,8 +122,8 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
                 = A[A_curr_j * M + i];
           }
           if (B_curr_j >= N || tiled_i >= K
-              || (!(lower_upper_B & UPPER) && B_curr_j > tiled_i)
-              || (!(lower_upper_B & LOWER) && B_curr_j < tiled_i)) {
+              || (!containsNonzeroPart(lower_upper_B, UPPER) && B_curr_j > tiled_i)
+              || (!containsNonzeroPart(lower_upper_B, LOWER) && B_curr_j < tiled_i)) {
             B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
                    [thread_block_row]
                 = 0.0;
@@ -165,7 +166,7 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
 const kernel_cl<in_buffer, in_buffer, out_buffer, int, int, int,
                 TriangularViewCL, TriangularViewCL>
     matrix_multiply("matrix_multiply",
-                    {thread_block_helpers, matrix_multiply_kernel_code},
+                    {thread_block_helpers, triangular_kernel_helpers, matrix_multiply_kernel_code},
                     {{"THREAD_BLOCK_SIZE", 32}, {"WORK_PER_THREAD", 8}});
 
 // \cond
@@ -188,9 +189,9 @@ static const char* matrix_vector_multiply_kernel_code = STRINGIFY(
         unsigned int lower_upper_B) {
       const int gid = get_global_id(0);
 
-      const int start = lower_upper_A & LOWER ? 0 : gid;
+      const int start = containsNonzeroPart(lower_upper_A, LOWER) ? 0 : gid;
       const int stop
-          = lower_upper_B & LOWER ? (lower_upper_A & UPPER ? N : gid + 1) : 1;
+          = containsNonzeroPart(lower_upper_B, LOWER) ? (containsNonzeroPart(lower_upper_A, UPPER) ? N : gid + 1) : 1;
 
       double acc = 0;
       for (int i = start, j = M * start; i < stop; i++, j += M) {
@@ -209,7 +210,7 @@ static const char* matrix_vector_multiply_kernel_code = STRINGIFY(
 const kernel_cl<in_buffer, in_buffer, out_buffer, int, int, TriangularViewCL,
                 TriangularViewCL>
     matrix_vector_multiply("matrix_vector_multiply",
-                           matrix_vector_multiply_kernel_code);
+                           {triangular_kernel_helpers, matrix_vector_multiply_kernel_code});
 
 // \cond
 static const char* row_vector_matrix_multiply_kernel_code = STRINGIFY(
@@ -234,9 +235,9 @@ static const char* row_vector_matrix_multiply_kernel_code = STRINGIFY(
       const int gid = get_global_id(0);
       const int wgid = get_group_id(0);
 
-      const int start = lower_upper_B & UPPER ? 0 : wgid;
+      const int start = containsNonzeroPart(lower_upper_B, UPPER) ? 0 : wgid;
       const int stop
-          = lower_upper_A & UPPER ? (lower_upper_B & LOWER) ? N : wgid + 1 : 1;
+          = containsNonzeroPart(lower_upper_A, UPPER) ? containsNonzeroPart(lower_upper_B, LOWER) ? N : wgid + 1 : 1;
 
       double acc = 0;
       for (int i = lid + start; i < stop; i += LOCAL_SIZE_) {
@@ -270,7 +271,7 @@ static const char* row_vector_matrix_multiply_kernel_code = STRINGIFY(
 const kernel_cl<in_buffer, in_buffer, out_buffer, int, int, TriangularViewCL,
                 TriangularViewCL>
     row_vector_matrix_multiply("row_vector_matrix_multiply",
-                               row_vector_matrix_multiply_kernel_code,
+                               {triangular_kernel_helpers, row_vector_matrix_multiply_kernel_code},
                                {{"LOCAL_SIZE_", 64},
                                 {"REDUCTION_STEP_SIZE", 4}});
 

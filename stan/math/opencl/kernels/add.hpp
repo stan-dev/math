@@ -4,6 +4,7 @@
 
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/opencl/buffer_types.hpp>
+#include <stan/math/opencl/triangular.hpp>
 
 namespace stan {
 namespace math {
@@ -32,13 +33,13 @@ static const char *add_kernel_code = STRINGIFY(
       const int j = get_global_id(1);
       if (i < rows && j < cols) {
         double a;
-        if ((!(part_A & LOWER) && j < i) || (!(part_A & UPPER) && j > i)) {
+        if ((!containsNonzeroPart(part_A, LOWER) && j < i) || (!containsNonzeroPart(part_A, UPPER) && j > i)) {
           a = 0;
         } else {
           a = A(i, j);
         }
         double b;
-        if ((!(part_B & LOWER) && j < i) || (!(part_B & UPPER) && j > i)) {
+        if ((!containsNonzeroPart(part_B, LOWER) && j < i) || (!containsNonzeroPart(part_B, UPPER) && j > i)) {
           b = 0;
         } else {
           b = B(i, j);
@@ -55,7 +56,7 @@ static const char *add_kernel_code = STRINGIFY(
  */
 const kernel_cl<out_buffer, in_buffer, in_buffer, int, int, TriangularViewCL,
                 TriangularViewCL>
-    add("add", {indexing_helpers, add_kernel_code});
+    add("add", {indexing_helpers, triangular_kernel_helpers, add_kernel_code});
 // \cond
 static const char *add_batch_kernel_code = STRINGIFY(
     // \endcond

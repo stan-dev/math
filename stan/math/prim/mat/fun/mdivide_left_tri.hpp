@@ -116,7 +116,7 @@ inline Eigen::Matrix<double, R1, C2> mdivide_left_tri(
  * @return x = A^-1 .
  * @throws std::domain_error if A is not square
  */
-template <int TriView, int R1, int C1>
+template <Eigen::UpLoType TriView, int R1, int C1>
 inline Eigen::Matrix<double, R1, C1> mdivide_left_tri(
     const Eigen::Matrix<double, R1, C1> &A) {
   check_square("mdivide_left_tri", "A", A);
@@ -124,8 +124,7 @@ inline Eigen::Matrix<double, R1, C1> mdivide_left_tri(
 #ifdef STAN_OPENCL
   if (A.rows()
       >= opencl_context.tuning_opts().tri_inverse_size_worth_transfer) {
-    matrix_cl A_cl(A, TriView == Eigen::Lower ? TriangularViewCL::Lower
-                                              : TriangularViewCL::Upper);
+    matrix_cl A_cl(A, fromEigenUpLoType(TriView));
     A_cl = tri_inverse(A_cl);
     return from_matrix_cl(A_cl);
   } else {

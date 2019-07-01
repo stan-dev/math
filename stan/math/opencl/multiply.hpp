@@ -34,7 +34,7 @@ namespace opencl {
 inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
   check_size_match("multiply ((OpenCL))", "A.cols()", A.cols(), "B.rows()",
                    B.rows());
-  matrix_cl temp(A.rows(), B.cols(), A.triangular_view() | B.triangular_view());
+  matrix_cl temp(A.rows(), B.cols(), combine(A.triangular_view(), B.triangular_view()));
   if (A.size() == 0 || B.size() == 0) {
     temp.zeros();
     return temp;

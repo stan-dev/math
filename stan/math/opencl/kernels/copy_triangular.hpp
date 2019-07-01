@@ -4,6 +4,7 @@
 
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/opencl/buffer_types.hpp>
+#include <stan/math/opencl/triangular.hpp>
 
 namespace stan {
 namespace math {
@@ -38,8 +39,9 @@ static const char *copy_triangular_kernel_code = STRINGIFY(
       int i = get_global_id(0);
       int j = get_global_id(1);
       if (i < rows && j < cols) {
-        if ((triangular_part & LOWER && j <= i)
-            || (triangular_part & UPPER && j >= i) || j == i) {
+        if ((containsNonzeroPart(triangular_part, LOWER) && j <= i)
+            || (containsNonzeroPart(triangular_part, UPPER) && j >= i)
+            || j == i) {
           A(i, j) = B(i, j);
         } else {
           A(i, j) = 0;
@@ -55,7 +57,7 @@ static const char *copy_triangular_kernel_code = STRINGIFY(
  */
 const kernel_cl<out_buffer, in_buffer, int, int, TriangularViewCL>
     copy_triangular("copy_triangular",
-                    {indexing_helpers, copy_triangular_kernel_code});
+                    {indexing_helpers, triangular_kernel_helpers, copy_triangular_kernel_code});
 
 }  // namespace opencl_kernels
 }  // namespace math

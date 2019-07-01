@@ -27,7 +27,7 @@ template <TriangularViewCL view>
 inline void matrix_cl::zeros() try {
   if (size() == 0)
     return;
-  triangular_view_ = invert(view);
+  this->triangular_view_ = invert(view);
   cl::CommandQueue cmdQueue = opencl_context.queue();
   opencl_kernels::zeros(cl::NDRange(this->rows(), this->cols()), *this,
                         this->rows(), this->cols(), view);
