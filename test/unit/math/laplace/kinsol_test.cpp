@@ -456,32 +456,42 @@ TEST(matrix, kinsol5) {
               << std::endl;
   }
 
-  // lgp solver using kinsol
-  using stan::math::lgp_f;
-  using stan::math::lgp_J_f;
-  using stan::math::lgp_covariance;
-  using stan::math::inverse_spd;
-  using stan::math::inverse;
-  using stan::math::to_array_1d;
+  // lgp solver using kinsol wrapper
+  // using stan::math::lgp_f;
+  // using stan::math::lgp_J_f;
+  // using stan::math::lgp_covariance;
+  // using stan::math::inverse_spd;
+  // using stan::math::inverse;
+  // using stan::math::to_array_1d;
+  using stan::math::lgp_solver;  // wrapper around kinsol solver.
 
+  std::vector<int> n_samples_int(dim_theta);
+  for (int i = 0; i < dim_theta; i++) n_samples_int[i] = n_samples[i];
+
+  std::vector<int> sums_int(dim_theta);
+  for (int i = 0; i < dim_theta; i++) sums_int[i] = sums[i];
   Eigen::VectorXd theta_lgp;
   if (evaluate_solver[3]) {
     start = std::chrono::system_clock::now();
 
-    int n_elements = dim_theta * (2 + dim_theta);
-    std::vector<double> dat(n_elements);
-    for (int i = 0; i < dim_theta; i++) dat[i] = n_samples[i];
-    for (int i = 0; i < dim_theta; i++) dat[dim_theta + i] = sums[i];
+    // int n_elements = dim_theta * (2 + dim_theta);
+    // std::vector<double> dat(n_elements);
+    // for (int i = 0; i < dim_theta; i++) dat[i] = n_samples[i];
+    // for (int i = 0; i < dim_theta; i++) dat[dim_theta + i] = sums[i];
+    // 
+    // {
+    //   std::vector<double> Q_array = to_array_1d(
+    //     inverse_spd(lgp_covariance(phi, dim_theta, true))
+    //   );
+    //   for (int i = 0; i < dim_theta * dim_theta; i++)
+    //     dat[2 * dim_theta + i] = Q_array[i];
+    // }
+    // // start = std::chrono::system_clock::now();
+    // theta_lgp = kinsol_solve(lgp_f(), lgp_J_f(), theta_0, phi, dat, dat_int);
 
-    {
-      std::vector<double> Q_array = to_array_1d(
-        inverse_spd(lgp_covariance(phi, dim_theta, true))
-      );
-      for (int i = 0; i < dim_theta * dim_theta; i++)
-        dat[2 * dim_theta + i] = Q_array[i];
-    }
-    // start = std::chrono::system_clock::now();
-    theta_lgp = kinsol_solve(lgp_f(), lgp_J_f(), theta_0, phi, dat, dat_int);
+    theta_lgp
+      = lgp_solver(theta_0, phi, n_samples_int, sums_int);
+
     end = std::chrono::system_clock::now();
     elapsed_seconds_total = end - start;
     std::cout << "Time lgp solver: " << elapsed_seconds_total.count()
@@ -490,13 +500,6 @@ TEST(matrix, kinsol5) {
 
   // lgp solver using custom method
   using stan::math::lgp_dense_newton_solver;
-  using stan::math::lgp_dense_system;
-
-  std::vector<int> n_samples_int(dim_theta);
-  for (int i = 0; i < dim_theta; i++) n_samples_int[i] = n_samples[i];
-
-  std::vector<int> sums_int(dim_theta);
-  for (int i = 0; i < dim_theta; i++) sums_int[i] = sums[i];
 
   Eigen::VectorXd theta_lgp_custom;
   if (evaluate_solver[4]) {
@@ -504,6 +507,9 @@ TEST(matrix, kinsol5) {
     theta_lgp_custom
       = lgp_dense_newton_solver(theta_0, phi, n_samples_int, sums_int,
                                 1e-6, 100, 0, 0, 1);
+    // theta_lgp_custom
+    //   = lgp_solver(theta_0, phi, n_samples_int, sums_int);
+
     end = std::chrono::system_clock::now();
     elapsed_seconds_total = end - start;
     std::cout << "Time lgp custom solver: " << elapsed_seconds_total.count()

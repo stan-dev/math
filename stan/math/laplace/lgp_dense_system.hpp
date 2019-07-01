@@ -67,27 +67,41 @@ lgp_covariance (Eigen::Matrix<T, Eigen::Dynamic, 1> phi, int M,
 template<typename T0>
 struct lgp_dense_system {
   Eigen::Matrix<T0, Eigen::Dynamic, 1> phi_;
+  int M_;  // size of the system.
+  bool space_matters_;
+  std::vector<double> dat;
   Eigen::VectorXd n_samples_;  // number of samples for local parameter
   Eigen::VectorXd sums_;  // sums of observation for local parameter
-  bool space_matters_;
   Eigen::Matrix<T0, Eigen::Dynamic, Eigen::Dynamic> Q_;  // precision matrix
 
-  // Constructors
   lgp_dense_system() {}
 
   lgp_dense_system(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& phi,
                    const Eigen::VectorXd n_samples,
                    const Eigen::VectorXd& sums,
                    bool space_matters = false)
-    : phi_(phi), n_samples_(n_samples), sums_(sums),
+    : phi_(phi), M_(n_samples.size()), n_samples_(n_samples), sums_(sums),
       space_matters_(space_matters) {
-    int M = n_samples.size();
-    Q_ = inverse_spd(lgp_covariance(phi, M, true));
+    Q_ = inverse_spd(lgp_covariance(phi, M_, true));
+  }
+
+  /**
+   * Function to generate dat for kinsol solver.
+   * FIX ME -- use pointer approach, that avoids duplicating data.
+   */
+  std::vector<double> get_dat() {
+    std::vector<double> dat(M_ * (2 + M_));
+    std::vector<double> Q_array = to_array_1d(Q_);
+    for (int i = 0; i < M_; i++) dat[i] = n_samples_(i);
+    for (int i = 0; i < M_; i++) dat[M_ + i] = sums_(i);
+    for (int i = 0; i < M_ * M_; i++) dat[2 * M_ + i] = Q_array[i];
+    return dat;
   }
 
   /**
   * Functions which retun class members
   * NOTE: can also access elements directly, since they're public.
+  * Likely more efficient to use ->
   */
   Eigen::Matrix<T0, Eigen::Dynamic, 1> get_phi() const { return phi_; }
   Eigen::VectorXd get_n_samples() const { return n_samples_; }
@@ -163,8 +177,6 @@ struct lgp_dense_system {
   /**
    * An operator that returns the Jacobian of theta with respect
    * to phi. This is done using the implicit function theorem.
-   * The calculations are greatly simplified by the fact phi
-   * is one dimensional and the hessian is a diagonal.
    */
   template<typename T1>
   Eigen::Matrix<typename stan::return_type<T0, T1>::type,
