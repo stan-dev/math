@@ -61,9 +61,10 @@ inline void matrix_cl::sub_block(const matrix_cl& A, size_t A_i, size_t A_j,
   }
   // calculation of extreme sub- and super- diagonal written
   int diag_in_copy = A_i - A_j;
-  int copy_low = containsNonzeroPart(A.triangular_view_, TriangularViewCL::Lower)
-                     ? 1 - nrows
-                     : diag_in_copy;
+  int copy_low
+      = containsNonzeroPart(A.triangular_view_, TriangularViewCL::Lower)
+            ? 1 - nrows
+            : diag_in_copy;
   int copy_high
       = containsNonzeroPart(A.triangular_view_, TriangularViewCL::Upper)
             ? ncols - 1
@@ -71,19 +72,25 @@ inline void matrix_cl::sub_block(const matrix_cl& A, size_t A_i, size_t A_j,
   int start = this_j - this_i;
 
   if (start + copy_low < 0) {
-    this->triangular_view_ = combine(this->triangular_view_, TriangularViewCL::Lower);
+    this->triangular_view_
+        = combine(this->triangular_view_, TriangularViewCL::Lower);
   } else if (this_i <= 1 && this_j == 0 && nrows + this_i >= rows_
              && ncols >= std::min(rows_, cols_) - 1
-             && !containsNonzeroPart(A.triangular_view_, TriangularViewCL::Lower)) {
-    this->triangular_view_ = commonNonzeroPart(this->triangular_view_, TriangularViewCL::Upper);
+             && !containsNonzeroPart(A.triangular_view_,
+                                     TriangularViewCL::Lower)) {
+    this->triangular_view_
+        = commonNonzeroPart(this->triangular_view_, TriangularViewCL::Upper);
   }
 
   if (start + copy_high > 0) {
-    this->triangular_view_ = combine(this->triangular_view_, TriangularViewCL::Upper);
+    this->triangular_view_
+        = combine(this->triangular_view_, TriangularViewCL::Upper);
   } else if (this_i == 0 && this_j <= 1 && ncols + this_j >= cols_
              && nrows >= std::min(rows_, cols_) - 1
-             && !containsNonzeroPart(A.triangular_view_, TriangularViewCL::Upper)) {
-    this->triangular_view_ = commonNonzeroPart(this->triangular_view_, TriangularViewCL::Lower);
+             && !containsNonzeroPart(A.triangular_view_,
+                                     TriangularViewCL::Upper)) {
+    this->triangular_view_
+        = commonNonzeroPart(this->triangular_view_, TriangularViewCL::Lower);
   }
 } catch (const cl::Error& e) {
   check_opencl_error("copy_submatrix", e);

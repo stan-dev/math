@@ -33,13 +33,15 @@ static const char *add_kernel_code = STRINGIFY(
       const int j = get_global_id(1);
       if (i < rows && j < cols) {
         double a;
-        if ((!containsNonzeroPart(part_A, LOWER) && j < i) || (!containsNonzeroPart(part_A, UPPER) && j > i)) {
+        if ((!containsNonzeroPart(part_A, LOWER) && j < i)
+            || (!containsNonzeroPart(part_A, UPPER) && j > i)) {
           a = 0;
         } else {
           a = A(i, j);
         }
         double b;
-        if ((!containsNonzeroPart(part_B, LOWER) && j < i) || (!containsNonzeroPart(part_B, UPPER) && j > i)) {
+        if ((!containsNonzeroPart(part_B, LOWER) && j < i)
+            || (!containsNonzeroPart(part_B, UPPER) && j > i)) {
           b = 0;
         } else {
           b = B(i, j);

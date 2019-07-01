@@ -9,4 +9,4 @@
 #define STRINGIFY(src) #src
 #endif
 
-#endif //STAN_MATH_OPENCL_STRINGIFY_HPP
+#endif  // STAN_MATH_OPENCL_STRINGIFY_HPP

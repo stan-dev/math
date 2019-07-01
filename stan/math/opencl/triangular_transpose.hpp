@@ -39,9 +39,11 @@ inline void matrix_cl::triangular_transpose() try {
                                        triangular_map);
   triangular_view_
       = (triangular_map == TriangularMapCL::LowerToUpper
-         && !containsNonzeroPart(this->triangular_view_, TriangularViewCL::Lower))
+         && !containsNonzeroPart(this->triangular_view_,
+                                 TriangularViewCL::Lower))
                 || (triangular_map == TriangularMapCL::UpperToLower
-                    && !containsNonzeroPart(this->triangular_view_, TriangularViewCL::Upper))
+                    && !containsNonzeroPart(this->triangular_view_,
+                                            TriangularViewCL::Upper))
             ? TriangularViewCL::Diagonal
             : TriangularViewCL::Entire;
 } catch (const cl::Error& e) {

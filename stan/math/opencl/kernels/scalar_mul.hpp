@@ -28,7 +28,8 @@ static const char *scalar_mul_kernel_code = STRINGIFY(
       int i = get_global_id(0);
       int j = get_global_id(1);
       if (i < rows && j < cols) {
-        if (!((!containsNonzeroPart(part, LOWER) && j < i) || (!containsNonzeroPart(part, UPPER) && j > i))) {
+        if (!((!containsNonzeroPart(part, LOWER) && j < i)
+              || (!containsNonzeroPart(part, UPPER) && j > i))) {
           A(i, j) = B(i, j) * scalar;
         }
       }
@@ -41,7 +42,8 @@ static const char *scalar_mul_kernel_code = STRINGIFY(
  * See the docs for \link kernels/scalar_mul.hpp add() \endlink
  */
 const kernel_cl<out_buffer, in_buffer, double, int, int, TriangularViewCL>
-    scalar_mul("scalar_mul", {indexing_helpers, triangular_kernel_helpers, scalar_mul_kernel_code});
+    scalar_mul("scalar_mul", {indexing_helpers, triangular_kernel_helpers,
+                              scalar_mul_kernel_code});
 
 }  // namespace opencl_kernels
 }  // namespace math

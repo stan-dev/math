@@ -38,13 +38,15 @@ static const char *subtract_kernel_code = STRINGIFY(
 
       if (i < rows && j < cols) {
         double a;
-        if ((!containsNonzeroPart(part_A, LOWER) && j < i) || (!containsNonzeroPart(part_A, UPPER) && j > i)) {
+        if ((!containsNonzeroPart(part_A, LOWER) && j < i)
+            || (!containsNonzeroPart(part_A, UPPER) && j > i)) {
           a = 0;
         } else {
           a = A(i, j);
         }
         double b;
-        if ((!containsNonzeroPart(part_B, LOWER) && j < i) || (!containsNonzeroPart(part_B, UPPER) && j > i)) {
+        if ((!containsNonzeroPart(part_B, LOWER) && j < i)
+            || (!containsNonzeroPart(part_B, UPPER) && j > i)) {
           b = 0;
         } else {
           b = B(i, j);
@@ -61,7 +63,8 @@ static const char *subtract_kernel_code = STRINGIFY(
  */
 const kernel_cl<out_buffer, in_buffer, in_buffer, int, int, TriangularViewCL,
                 TriangularViewCL>
-    subtract("subtract", {indexing_helpers, triangular_kernel_helpers, subtract_kernel_code});
+    subtract("subtract", {indexing_helpers, triangular_kernel_helpers,
+                          subtract_kernel_code});
 
 }  // namespace opencl_kernels
 }  // namespace math

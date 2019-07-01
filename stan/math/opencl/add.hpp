@@ -23,7 +23,8 @@ namespace math {
  */
 inline matrix_cl add(const matrix_cl& A, const matrix_cl& B) {
   check_matching_dims("add", "A", A, "B", B);
-  matrix_cl C(A.rows(), A.cols(), combine(A.triangular_view(), B.triangular_view()));
+  matrix_cl C(A.rows(), A.cols(),
+              combine(A.triangular_view(), B.triangular_view()));
   if (C.size() == 0) {
     return C;
   }

@@ -16,16 +16,16 @@ inline TriangularViewCL combine(TriangularViewCL a, TriangularViewCL b) {
                                        | static_cast<underlying>(b));
 }
 
-inline TriangularViewCL commonNonzeroPart(TriangularViewCL a, TriangularViewCL b) {
+inline TriangularViewCL commonNonzeroPart(TriangularViewCL a,
+                                          TriangularViewCL b) {
   typedef typename std::underlying_type<TriangularViewCL>::type underlying;
   return static_cast<TriangularViewCL>(static_cast<underlying>(a)
                                        & static_cast<underlying>(b));
 }
 
-inline bool containsNonzeroPart(TriangularViewCL a, TriangularViewCL b){
-  return static_cast<bool>(commonNonzeroPart(a,b));
+inline bool containsNonzeroPart(TriangularViewCL a, TriangularViewCL b) {
+  return static_cast<bool>(commonNonzeroPart(a, b));
 }
-
 
 inline TriangularViewCL transpose(TriangularViewCL a) {
   switch (a) {
@@ -51,11 +51,11 @@ inline TriangularViewCL invert(TriangularViewCL a) {
   }
 }
 
-inline TriangularViewCL fromEigenUpLoType(Eigen::UpLoType a){
-  if(a & Eigen::Lower) {
+inline TriangularViewCL fromEigenUpLoType(Eigen::UpLoType a) {
+  if (a & Eigen::Lower) {
     return TriangularViewCL::Lower;
   }
-  if(a & Eigen::Upper) {
+  if (a & Eigen::Upper) {
     return TriangularViewCL::Upper;
   }
   return TriangularViewCL::Entire;
@@ -65,19 +65,13 @@ enum class TriangularMapCL { UpperToLower = 0, LowerToUpper = 1 };
 
 // \cond
 static const char *triangular_kernel_helpers = STRINGIFY(
-        // \endcond
-        int combine(int a, int b){
-          return a | b;
-        }
+    // \endcond
+    int combine(int a, int b) { return a | b; }
 
-        int commonNonzeroPart(int a, int b){
-          return a & b;
-        }
+    int commonNonzeroPart(int a, int b) { return a & b; }
 
-        bool containsNonzeroPart(int a, int b){
-          return commonNonzeroPart(a, b);
-        }
-        // \cond
+    bool containsNonzeroPart(int a, int b) { return commonNonzeroPart(a, b); }
+    // \cond
 );
 // \endcond
 
