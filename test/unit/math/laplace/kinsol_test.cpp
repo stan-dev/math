@@ -6,6 +6,8 @@
 #include <stan/math/rev/mat/functor/algebra_solver.hpp>
 #include <stan/math/rev/mat/functor/kinsol_data.hpp>
 #include <stan/math/rev/mat/functor/kinsol_solve.hpp>
+#include <stan/math/laplace/lgp_solver.hpp>
+#include <stan/math/laplace/lgp_dense_newton_solver.hpp>
 
 #include <kinsol/kinsol.h>             /* access to KINSOL func., consts. */
 #include <nvector/nvector_serial.h>    /* access to serial N_Vector       */
@@ -355,6 +357,14 @@ TEST(matrix, kinsol4) {
 
 
 TEST(matrix, kinsol5) {
+  // Select wich solver you want to test. The options are:
+  //  1. Powell dogleg solver
+  //  2. Kinsol newton solver
+  //  3. Custom newton solver
+  //  4. lgp solver using kinsol
+  //  5. lgp solver using custom
+  std::vector<bool> evaluate_solver = {0, 0, 0, 1, 1};
+
   // using stan::math::algebra_solver_newton;
   using stan::math::kinsol_solve;
   using stan::math::kinsol_J_f;
@@ -372,7 +382,7 @@ TEST(matrix, kinsol5) {
   double fun_tol = 1e-8;
   long int max_steps = 1e+3;
 
-  int dim_theta = 100;  // options: 10, 20, 50, 100, 500
+  int dim_theta = 500;  // options: 10, 20, 50, 100, 500
   std::cout << "dim theta: " << dim_theta << std::endl;
   Eigen::VectorXd phi(2);
   phi << 0.5, 0.9;
@@ -412,42 +422,125 @@ TEST(matrix, kinsol5) {
 
   Eigen::VectorXd theta_0 = Eigen::VectorXd::Zero(dim_theta);
 
-  int powell_evaluate = 0;
+  // Powell solver
   Eigen::VectorXd theta;
-  if (powell_evaluate) {
+  if (evaluate_solver[0]) {
     start = std::chrono::system_clock::now();
     theta = algebra_solver(inla_functor(), theta_0, phi, dat, dat_int);
     end = std::chrono::system_clock::now();
     elapsed_seconds_total = end - start;
     std::cout << "Time powell: " << elapsed_seconds_total.count() << std::endl;
   }
-    
-  start = std::chrono::system_clock::now();
-  Eigen::VectorXd theta_newton 
-    = kinsol_solve(inla_functor(), kinsol_J_f(), theta_0, phi, dat, dat_int);
-  end = std::chrono::system_clock::now();
-  elapsed_seconds_total = end - start;
-  std::cout << "Time newton kinsol: " << elapsed_seconds_total.count()
-            << std::endl;
 
-  start = std::chrono::system_clock::now();
-  Eigen::VectorXd theta_newton_custom
-    = algebra_solver_newton_custom(inla_functor(), theta_0, phi, dat, dat_int);
-  end = std::chrono::system_clock::now();
-  elapsed_seconds_total = end - start;
-  std::cout << "Time newton custom: " << elapsed_seconds_total.count()
-            << std::endl;
+  // Kinsol solver
+  Eigen::VectorXd theta_newton;
+  if (evaluate_solver[1]) {
+    start = std::chrono::system_clock::now();
+    theta_newton 
+      = kinsol_solve(inla_functor(), kinsol_J_f(), theta_0, phi, dat, dat_int);
+    end = std::chrono::system_clock::now();
+    elapsed_seconds_total = end - start;
+    std::cout << "Time newton kinsol: " << elapsed_seconds_total.count()
+              << std::endl;
+  }
+
+  // Custom Newton solver
+  Eigen::VectorXd theta_newton_custom;
+  if (evaluate_solver[2]) {
+    start = std::chrono::system_clock::now();
+    theta_newton_custom
+      = algebra_solver_newton_custom(inla_functor(), theta_0, phi, dat, dat_int);
+    end = std::chrono::system_clock::now();
+    elapsed_seconds_total = end - start;
+    std::cout << "Time newton custom: " << elapsed_seconds_total.count()
+              << std::endl;
+  }
+
+  // lgp solver using kinsol
+  using stan::math::lgp_f;
+  using stan::math::lgp_J_f;
+  using stan::math::lgp_covariance;
+  using stan::math::inverse_spd;
+  using stan::math::inverse;
+  using stan::math::to_array_1d;
+
+  Eigen::VectorXd theta_lgp;
+  if (evaluate_solver[3]) {
+    start = std::chrono::system_clock::now();
+
+    int n_elements = dim_theta * (2 + dim_theta);
+    std::vector<double> dat(n_elements);
+    for (int i = 0; i < dim_theta; i++) dat[i] = n_samples[i];
+    for (int i = 0; i < dim_theta; i++) dat[dim_theta + i] = sums[i];
+
+    {
+      std::vector<double> Q_array = to_array_1d(
+        inverse_spd(lgp_covariance(phi, dim_theta, true))
+      );
+      for (int i = 0; i < dim_theta * dim_theta; i++)
+        dat[2 * dim_theta + i] = Q_array[i];
+    }
+    // start = std::chrono::system_clock::now();
+    theta_lgp = kinsol_solve(lgp_f(), lgp_J_f(), theta_0, phi, dat, dat_int);
+    end = std::chrono::system_clock::now();
+    elapsed_seconds_total = end - start;
+    std::cout << "Time lgp solver: " << elapsed_seconds_total.count()
+              << std::endl;
+  }
+
+  // lgp solver using custom method
+  using stan::math::lgp_dense_newton_solver;
+  using stan::math::lgp_dense_system;
+
+  std::vector<int> n_samples_int(dim_theta);
+  for (int i = 0; i < dim_theta; i++) n_samples_int[i] = n_samples[i];
+
+  std::vector<int> sums_int(dim_theta);
+  for (int i = 0; i < dim_theta; i++) sums_int[i] = sums[i];
+
+  Eigen::VectorXd theta_lgp_custom;
+  if (evaluate_solver[4]) {
+    start = std::chrono::system_clock::now();
+    theta_lgp_custom
+      = lgp_dense_newton_solver(theta_0, phi, n_samples_int, sums_int,
+                                1e-6, 100, 0, 0, 1);
+    end = std::chrono::system_clock::now();
+    elapsed_seconds_total = end - start;
+    std::cout << "Time lgp custom solver: " << elapsed_seconds_total.count()
+              << std::endl;
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
+  // Check the solvers found a root and converged to the right solution.
 
   inla_functor system;
-  if (powell_evaluate) std::cout << "powell eval: "
-    << system(theta, phi, dat, dat_int, 0).norm() << std::endl;
-  std::cout << "newton eval: "
-    << system(theta_newton, phi, dat, dat_int, 0).norm() << std::endl;
-  std::cout << "custom newton eval: "
-    << system(theta_newton_custom, phi, dat, dat_int, 0).norm() << std::endl;
 
-  for (int i = 0; i < dim_theta; i++) {
-    if (powell_evaluate) EXPECT_FLOAT_EQ(theta(i), theta_newton(i));
-    EXPECT_FLOAT_EQ(theta_newton(i), theta_newton_custom(i));
-  }
+  if (evaluate_solver[0]) 
+    std::cout << "powell eval: " << system(theta, phi, dat, dat_int, 0).norm() 
+    << std::endl;
+
+  if (evaluate_solver[1])
+    std::cout << "newton eval: "
+              << system(theta_newton, phi, dat, dat_int, 0).norm()
+              << std::endl;
+
+  if (evaluate_solver[2])
+    std::cout << "custom newton eval: "
+              << system(theta_newton_custom, phi, dat, dat_int, 0).norm()
+              << std::endl;
+
+  if (evaluate_solver[3])
+    std::cout << "lgp solver eval: "
+              << system(theta_lgp, phi, dat, dat_int, 0).norm()
+              << std::endl;
+
+  if (evaluate_solver[4])
+    std::cout << "lgp solver custom eval: "
+              << system(theta_lgp_custom, phi, dat, dat_int, 0).norm()
+              << std::endl;
+
+  // for (int i = 0; i < dim_theta; i++) {
+  //   if (evaluate_solver(0)) EXPECT_FLOAT_EQ(theta(i), theta_newton(i));
+  //   EXPECT_FLOAT_EQ(theta_newton(i), theta_newton_custom(i));
+  // }
 }

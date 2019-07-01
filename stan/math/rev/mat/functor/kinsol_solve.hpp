@@ -45,7 +45,7 @@ namespace math {
                double function_tolerance = 1e-6,
                long int max_num_steps = 1e+3,
                int global_line_search = KIN_LINESEARCH,
-               int steps_eval_jacobian = 5,
+               int steps_eval_jacobian = 5,  // 5
                double scaling_step_tol = 1e-5) {
     // CHECK -- what tuning parameters do we want to include?
     // E.g scaling_step_tol, scaling, etc.

@@ -91,11 +91,11 @@ TEST(laplace, lgp_performance) {
   Eigen::VectorXd phi(dim_phi);
   phi << 0.5, 0.9;
   bool space_matters = true;
-  
+
   int n_dimensions = 5;
   Eigen::VectorXd dimensions(n_dimensions);
   dimensions << 10, 20, 50, 100, 500;
-  
+
   // Open csv file to store results.
   std::ofstream myfile;
   myfile.open("test/unit/math/laplace/deliv/results.csv");
@@ -103,7 +103,7 @@ TEST(laplace, lgp_performance) {
   for (int i = 0; i < n_guesses; i++)
     myfile << i + 1 << ", ";
   myfile << n_guesses + 1 << "\n";
-  
+
   // Tuning parameters for the algebraic solver
   double tol = 1e-6;
   int max_num_steps = 1e+6;
@@ -168,7 +168,7 @@ TEST(laplace, lgp_performance) {
                                     false);
       n_iterations(i + 1) = iteration;
     }
-  
+
     std::cout << "Dim theta: " << dim_theta 
               << " Iterations: " << n_iterations.transpose() << std::endl;
 

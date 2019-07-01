@@ -12,6 +12,8 @@ namespace math {
  * a latent Gaussian Poisson process. Note that the
  * number of samples per group, sum per group,
  * and Gaussian precision matrix (Q) are pre-computed.
+ * 
+ * CHECK - should we sums and n_samples as vector<int>? 
  */
 struct lgp_f {
   inline Eigen::VectorXd
@@ -33,7 +35,6 @@ struct lgp_f {
  * A functor that returns the Jacobian of f, the system function,
  * with respect to the unknown theta.
  * CHECK -- do I need that strict a signature, or can I relax it?
- * FIX ME -- why do we need templates for x to make elt_multiply work?
  */
 struct lgp_J_f {
   template <typename F>
