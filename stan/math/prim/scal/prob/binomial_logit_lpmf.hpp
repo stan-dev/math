@@ -88,13 +88,13 @@ typename return_type<T_prob>::type binomial_logit_lpmf(const T_n& n,
       temp1 += n_vec[i];
       temp2 += N_vec[i] - n_vec[i];
     }
-    if (!is_constant_struct<T_prob>::value) {
+    if (!is_constant_all<T_prob>::value) {
       ops_partials.edge1_.partials_[0]
           += temp1 * inv_logit(-value_of(alpha_vec[0]))
              - temp2 * inv_logit(value_of(alpha_vec[0]));
     }
   } else {
-    if (!is_constant_struct<T_prob>::value) {
+    if (!is_constant_all<T_prob>::value) {
       for (size_t i = 0; i < size; ++i)
         ops_partials.edge1_.partials_[i]
             += n_vec[i] * inv_logit(-value_of(alpha_vec[i]))

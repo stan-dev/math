@@ -56,10 +56,10 @@ typename return_type<T_y, T_scale>::type rayleigh_lcdf(const T_y& y,
     if (include_summand<false, T_y, T_scale>::value)
       cdf_log += log1m(exp_val);
 
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n]
           += y_dbl * inv_sigma_sqr * exp_div_1m_exp;
-    if (!is_constant_struct<T_scale>::value)
+    if (!is_constant_all<T_scale>::value)
       ops_partials.edge2_.partials_[n]
           -= y_sqr * inv_sigma_sqr * inv_sigma[n] * exp_div_1m_exp;
   }

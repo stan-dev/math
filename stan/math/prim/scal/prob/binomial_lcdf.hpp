@@ -85,7 +85,7 @@ typename return_type<T_prob>::type binomial_lcdf(const T_n& n, const T_N& N,
 
     P += log(Pi);
 
-    if (!is_constant_struct<T_prob>::value)
+    if (!is_constant_all<T_prob>::value)
       ops_partials.edge1_.partials_[i]
           -= pow(theta_dbl, n_dbl) * pow(1 - theta_dbl, N_dbl - n_dbl - 1)
              / betafunc / Pi;

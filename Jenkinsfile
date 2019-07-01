@@ -49,6 +49,9 @@ pipeline {
         skipDefaultCheckout()
         preserveStashes(buildCount: 7)
     }
+    environment {
+        STAN_NUM_THREADS = '4'
+    }
     stages {
         stage('Kill previous builds') {
             when {
@@ -225,6 +228,17 @@ pipeline {
                         runTestsWin("test/unit")
                     }
                 }
+                stage('Windows Threading') {
+                    agent { label 'windows' }
+                    steps {
+                        deleteDirWin()
+                        unstash 'MathSetup'
+                        bat "echo CXX=${env.CXX} -Werror > make/local"
+                        bat "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
+                        runTestsWin("test/unit -f thread")
+                        runTestsWin("test/unit -f map_rect")
+                    }
+                }
             }
         }
         stage('Additional merge tests') {
@@ -236,7 +250,7 @@ pipeline {
                         deleteDir()
                         unstash 'MathSetup'
                         sh "echo CXX=${GCC} >> make/local"
-                        sh "echo CPPFLAGS=-DSTAN_THREADS >> make/local"
+                        sh "echo CXXFLAGS=-DSTAN_THREADS >> make/local"
                         runTests("test/unit")
                     }
                     post { always { retry(3) { deleteDir() } } }
