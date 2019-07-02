@@ -38,7 +38,7 @@ inline TriangularViewCL commonNonzeroPart(TriangularViewCL a,
 }
 
 /**
- * Chech whether a view contains certain nonzero part
+ * Check whether a view contains certain nonzero part
  * @param a view to check
  * @param b part to check for (usually `Lower` or `Upper`)
  * @return true, if `a` has part `b` nonzero
@@ -85,9 +85,9 @@ inline TriangularViewCL invert(TriangularViewCL a) {
 /**
  * Creates a triangular view from `Eigen::UpLoType`. `Eigen::Lower`,
  * `Eigen::StrictlyLower` and `Eigen::UnitLower` become
- * `TriangularViewCL::Lower. Similar for `Upper`. Any other view becomes
+ * `TriangularViewCL::Lower`. Similar for `Upper`. Any other view becomes
  * `TriangularViewCL::Entire`.
- * @param a `UpLoType` to vreate a view from
+ * @param a `UpLoType` to create a view from
  * @return triangular view
  */
 inline TriangularViewCL fromEigenUpLoType(Eigen::UpLoType a) {
@@ -124,7 +124,7 @@ static const char *triangular_kernel_helpers = STRINGIFY(
     int commonNonzeroPart(int a, int b) { return a & b; }
 
     /**
-     * Chech whether a view contains certain nonzero part
+     * Check whether a view contains certain nonzero part
      * @param a view to check
      * @param b part to check for (usually `Lower` or `Upper`)
      * @return true, if `a` has part `b` nonzero
