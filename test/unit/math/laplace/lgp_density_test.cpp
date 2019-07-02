@@ -1,17 +1,21 @@
 #include <stan/math.hpp>
 #include <stan/math/laplace/lgp_dense_system.hpp>
 #include <stan/math/laplace/lgp_dense_newton_solver.hpp>
+#include <stan/math/laplace/lgp_solver.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/util.hpp>
+#include <test/unit/math/laplace/kinsol_test.cpp>
 #include <gtest/gtest.h>
 #include <iostream>
 #include <istream>
 #include <fstream>
 #include <vector>
 
+
 TEST(laplace, lgp_performance_density) {
   using stan::math::var;
   using stan::math::lgp_dense_newton_solver;
+  using stan::math::lgp_solver;
   using stan::math::to_vector;
   using stan::math::to_row_vector;
   using stan::math::elt_multiply;
@@ -21,6 +25,7 @@ TEST(laplace, lgp_performance_density) {
   using stan::math::log_determinant;
   using stan::math::diag_post_multiply;
   using stan::math::value_of;
+  using stan::math::dot_product;
 
   std::string data_directory = "test/unit/math/laplace/data_cpp/";
   int n_dimensions = 5;
@@ -94,12 +99,19 @@ TEST(laplace, lgp_performance_density) {
     target += lognormal_lpdf(phi(0), -0.5, 0.5);
     target += normal_lpdf(phi(1), 0.5, 0.1);
 
-    // find mode value for theta.
-    bool line_search = false;
     Eigen::VectorXd theta_0 = Eigen::VectorXd::Zero(dim_theta);
-    Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
-      theta = lgp_dense_newton_solver(theta_0, phi, n_samples, sums,
-                                      1e-3, 100, line_search);
+
+    // find mode value for theta.
+    // bool line_search = false;
+    // bool print_iteration = false;
+    // bool space_matters = true;
+    // Eigen::Matrix<var, Eigen::Dynamic, 1>
+    //   theta = lgp_dense_newton_solver(theta_0, phi, n_samples, sums,
+    //                                   1e-6, 100, line_search,
+    //                                   print_iteration, space_matters);
+
+    Eigen::Matrix<var, Eigen::Dynamic, 1>
+      theta = lgp_solver(theta_0, phi, n_samples, sums);
 
     // likelihood of y conditional on phi and theta
     for (int i = 0; i < N; i++)
@@ -115,9 +127,7 @@ TEST(laplace, lgp_performance_density) {
     bool efficient = 1;
 
     if (efficient) {
-      target += - 0.5 * multiply(transpose(theta),
-                         mdivide_left(Sigma, theta))(0);
-      // target += -0.5 * log_determinant(Sigma);
+      target += - 0.5 * dot_product(theta, mdivide_left(Sigma, theta));
       {
         Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
           negative_Sigma = - Sigma;
@@ -125,21 +135,20 @@ TEST(laplace, lgp_performance_density) {
           first_matrix = Eigen::MatrixXd::Identity(dim_theta, dim_theta) -
             diag_post_multiply(Sigma, first_term);
 
-        // target += -0.5 * (log_determinant(first_matrix) -
-        //   log_determinant(Sigma));
         target += - 0.5 * log_determinant(first_matrix);
       }
     }
-    
+
     if (!efficient) {
-      // former (and much slower) method
+      // former (and much slower) method.
+      // Use as a benchmark.
       Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
         Q = stan::math::inverse(Sigma);
 
       Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
         laplace_precision = stan::math::diag_matrix(first_term) - Q;
 
-      target += - 0.5 * (stan::math::quad_form(Q, theta)(0) +
+      target += - 0.5 * (stan::math::quad_form(Q, theta) +
         log_determinant(Sigma) +
         log_determinant(laplace_precision));
       
@@ -164,7 +173,19 @@ TEST(laplace, lgp_performance_density) {
               << "grad: " << g[0] << " " << g[1] << std::endl
               << "evaluation time: " << elapsed_time_evaluation.count()
               << std::endl
-              << "jacobian time: " << elapsed_time_jacobian.count()
+              << "chain time: " << elapsed_time_jacobian.count()
+              << std::endl;
+
+    // evaluate function with solution
+    std::vector<double> dat(dim_theta * 2);
+    for (int i = 0; i < dim_theta; i++) dat[i] = n_samples[i];
+    for (int i = 0; i < dim_theta; i++) dat[dim_theta + i] = sums[i];
+    std::vector<int> dat_int;
+
+    inla_functor system;
+    std::cout << "function eval: "
+              << system(value_of(theta), value_of(phi),
+                        dat, dat_int, 0).norm()
               << std::endl << std::endl;
   }
 }

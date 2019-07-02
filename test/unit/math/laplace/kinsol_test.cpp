@@ -456,13 +456,6 @@ TEST(matrix, kinsol5) {
               << std::endl;
   }
 
-  // lgp solver using kinsol wrapper
-  // using stan::math::lgp_f;
-  // using stan::math::lgp_J_f;
-  // using stan::math::lgp_covariance;
-  // using stan::math::inverse_spd;
-  // using stan::math::inverse;
-  // using stan::math::to_array_1d;
   using stan::math::lgp_solver;  // wrapper around kinsol solver.
 
   std::vector<int> n_samples_int(dim_theta);

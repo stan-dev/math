@@ -91,7 +91,14 @@ namespace math {
 
     // TO DO - return an exception when the flag is negative.
     // std::cout << "Kinsol flag: " << flag << std::endl;
-
+    if (flag < 0) {
+      std::ostringstream message;
+      message << "lgp_solver: the kinsol solver encounter an error"
+              << "with flag = " << flag;
+      throw boost::math::evaluation_error(message.str());
+    }
+    
+    
     KINFree(&kinsol_memory);
 
     // CHECK - avoid / simplifies this conversion step?

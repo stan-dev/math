@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_LAPLACE_LGP_SOLVER_HPP
 #define STAN_MATH_LAPLACE_LGP_SOLVER_HPP
 
+#include <stan/math/rev/mat/functor/kinsol_solve.hpp>
 #include <stan/math/laplace/lgp_dense_system.hpp>
-#include <stan/math/laplace/lgp_newton_solver.hpp>
-
+#include <stan/math/laplace/lgp_dense_newton_solver.hpp>
 
 namespace stan {
 namespace math {
@@ -90,6 +90,23 @@ Eigen::VectorXd lgp_solver(
 }
 
 /**
+ * Overload function to directly take in system as an argument.
+ */
+template <typename T>
+Eigen::VectorXd lgp_solver(
+    const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta_0,
+    const Eigen::VectorXd& phi,
+    const lgp_dense_system<double>& system,
+    double tol = 1e-3,
+    long int max_num_steps = 100)  {
+  std::vector<int> dummy_int;
+  Eigen::VectorXd theta_dbl
+    = kinsol_solve(lgp_f(), lgp_J_f(), theta_0, phi,
+                   system.get_dat(), dummy_int);
+  return theta_dbl;
+}
+
+/**
  * Function when phi is passed as a vector of var.
  */
 template <typename T1, typename T2>
@@ -101,12 +118,20 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> lgp_solver(
   double function_tol = 1e-6,
   long int max_num_steps = 100) {
 
+  bool space_matters = true;
+  lgp_dense_system<double> system(value_of(phi),
+                                  to_vector(n_samples),
+                                  to_vector(sums),
+                                  space_matters);
+
   Eigen::VectorXd theta_dbl
-    = lgp_solver(theta_0, value_of(phi), n_samples, sums,
+    = lgp_solver(value_of(theta_0), value_of(phi), system,
                  function_tol, max_num_steps);
 
-  lgp_newton_solver_vari<T2>* vi0
-    = new lgp_newton_solver_vari<T2>(phi, system, theta_dbl);
+  // construct vari
+  lgp_dense_newton_solver_vari<T2>* vi0
+    = new lgp_dense_newton_solver_vari<T2>(phi, system, theta_dbl);
+
   Eigen::Matrix<var, Eigen::Dynamic, 1> theta(theta_dbl.size());
   theta(0) = var(vi0->theta_[0]);
   for (int i = 1; i < theta_dbl.size(); i++)

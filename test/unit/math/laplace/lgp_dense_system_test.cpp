@@ -1,6 +1,7 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/laplace/lgp_dense_system.hpp>
 #include <stan/math/laplace/lgp_dense_newton_solver.hpp>
+#include <stan/math/laplace/lgp_solver.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
@@ -83,6 +84,7 @@ TEST(laplace, lgp_newton_solver) {
   using stan::math::algebra_solver;
   using stan::math::value_of;
   using stan::math::lgp_dense_system;
+  using stan::math::lgp_solver;
   using std::cout;
   using std::endl;
 
@@ -186,7 +188,8 @@ TEST(laplace, lgp_newton_solver) {
     Eigen::Matrix<var, Eigen::Dynamic, 1> phi_v(2);
     phi_v << sigma, corr;
     Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> theta
-      = lgp_dense_newton_solver(theta_0, phi_v, n_samples_array, sums_array);
+      // = lgp_dense_newton_solver(theta_0, phi_v, n_samples_array, sums_array);
+      = lgp_solver(theta_0, phi_v, n_samples_array, sums_array);
 
     AVEC parameters = createAVEC(sigma, corr);
     VEC g;
@@ -195,7 +198,7 @@ TEST(laplace, lgp_newton_solver) {
     EXPECT_FLOAT_EQ(solver_gradient(k, 1), g[1]);
 
     // check solution (redundant)
-    EXPECT_FLOAT_EQ(powell_solution[0], value_of(theta(0)));
-    EXPECT_FLOAT_EQ(powell_solution[1], value_of(theta(1)));
+    EXPECT_NEAR(powell_solution[0], value_of(theta(0)), 1e-6);
+    EXPECT_NEAR(powell_solution[1], value_of(theta(1)), 1e-6);
   }
 }

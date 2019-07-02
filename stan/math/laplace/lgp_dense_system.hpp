@@ -89,7 +89,7 @@ struct lgp_dense_system {
    * Function to generate dat for kinsol solver.
    * FIX ME -- use pointer approach, that avoids duplicating data.
    */
-  std::vector<double> get_dat() {
+  std::vector<double> get_dat() const {
     std::vector<double> dat(M_ * (2 + M_));
     std::vector<double> Q_array = to_array_1d(Q_);
     for (int i = 0; i < M_; i++) dat[i] = n_samples_(i);
