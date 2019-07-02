@@ -167,7 +167,7 @@ typename return_type<T1, T2>::type grad_reg_lower_inc_gamma(
                    " iterations, gamma_p(a,z) gradient (a) "
                    "did not converge.");
     ++n;
-    lgamma_a_plus_n_plus_1 += log(a_plus_n + 1);
+    lgamma_a_plus_n_plus_1 += log1p(a_plus_n);
     ++a_plus_n;
   }
 }
