@@ -11,7 +11,8 @@ namespace math {
 enum class TriangularViewCL { Diagonal = 0, Lower = 1, Upper = 2, Entire = 3 };
 
 /**
- * Combines two triangular views. Result is nonzero, where any of the inputs is nonzero.
+ * Combines two triangular views. Result is nonzero, where any of the inputs is
+ * nonzero.
  * @param a first view
  * @param b second view
  * @return combined view
@@ -23,7 +24,8 @@ inline TriangularViewCL combine(TriangularViewCL a, TriangularViewCL b) {
 }
 
 /**
- * Determines common nonzero part of the inputs. Result is nonzero, where both inputs are nonzero.
+ * Determines common nonzero part of the inputs. Result is nonzero, where both
+ * inputs are nonzero.
  * @param a first view
  * @param b second view
  * @return common nonzero part
@@ -62,7 +64,8 @@ inline TriangularViewCL transpose(TriangularViewCL a) {
 }
 
 /**
- * Inverts a triangular view. Parts that are zero in the input become nonzero in output and vice versa.
+ * Inverts a triangular view. Parts that are zero in the input become nonzero in
+ * output and vice versa.
  * @param a view to invert
  * @return inverted view
  */
@@ -80,7 +83,10 @@ inline TriangularViewCL invert(TriangularViewCL a) {
 }
 
 /**
- * Creates a triangular view from `Eigen::UpLoType`. `Eigen::Lower`, `Eigen::StrictlyLower` and `Eigen::UnitLower` become `TriangularViewCL::Lower. Similar for `Upper`. Any other view becomes `TriangularViewCL::Entire`.
+ * Creates a triangular view from `Eigen::UpLoType`. `Eigen::Lower`,
+ * `Eigen::StrictlyLower` and `Eigen::UnitLower` become
+ * `TriangularViewCL::Lower. Similar for `Upper`. Any other view becomes
+ * `TriangularViewCL::Entire`.
  * @param a `UpLoType` to vreate a view from
  * @return triangular view
  */
@@ -100,15 +106,17 @@ enum class TriangularMapCL { UpperToLower = 0, LowerToUpper = 1 };
 static const char *triangular_kernel_helpers = STRINGIFY(
     // \endcond
     /**
-    * Combines two triangular views. Result is nonzero, where any of the inputs is nonzero.
-    * @param a first view
-    * @param b second view
-    * @return combined view
-    */
+     * Combines two triangular views. Result is nonzero, where any of the inputs
+     * is nonzero.
+     * @param a first view
+     * @param b second view
+     * @return combined view
+     */
     int combine(int a, int b) { return a | b; }
 
     /**
-     * Determines common nonzero part of the inputs. Result is nonzero, where both inputs are nonzero.
+     * Determines common nonzero part of the inputs. Result is nonzero, where
+     * both inputs are nonzero.
      * @param a first view
      * @param b second view
      * @return common nonzero part
