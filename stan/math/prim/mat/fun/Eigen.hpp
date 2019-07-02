@@ -4,6 +4,7 @@
 #define EIGEN_MATRIXBASE_PLUGIN "stan/math/prim/mat/matrix_addons.h"
 
 #include <Eigen/Dense>
+#include <Eigen/Sparse>
 #include <Eigen/QR>
 #include <Eigen/src/Core/NumTraits.h>
 
