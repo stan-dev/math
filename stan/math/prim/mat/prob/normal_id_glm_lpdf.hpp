@@ -104,28 +104,26 @@ normal_id_glm_lpdf(const T_y &y, const T_x &x, const T_alpha &alpha,
   double y_minus_mu_over_sigma_squared_sum;  // the most efficient way to
                                              // calculate this depends on
                                              // template parameters
-  if (!(is_constant_struct<T_y>::value && is_constant_struct<T_x>::value
-        && is_constant_struct<T_beta>::value
-        && is_constant_struct<T_alpha>::value)) {
+  if (!is_constant_all<T_y, T_x, T_beta, T_alpha>::value) {
     Matrix<T_partials_return, Dynamic, 1> mu_derivative
         = inv_sigma * y_minus_mu_over_sigma;
-    if (!is_constant_struct<T_y>::value) {
+    if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_ = -mu_derivative;
     }
-    if (!is_constant_struct<T_x>::value) {
+    if (!is_constant_all<T_x>::value) {
       ops_partials.edge2_.partials_
           = (beta_val_vec * mu_derivative.transpose()).transpose();
     }
-    if (!is_constant_struct<T_beta>::value) {
+    if (!is_constant_all<T_beta>::value) {
       ops_partials.edge4_.partials_ = mu_derivative.transpose() * x_val;
     }
-    if (!is_constant_struct<T_alpha>::value) {
+    if (!is_constant_all<T_alpha>::value) {
       if (is_vector<T_alpha>::value)
         ops_partials.edge3_.partials_ = mu_derivative;
       else
         ops_partials.edge3_.partials_[0] = sum(mu_derivative);
     }
-    if (!is_constant_struct<T_scale>::value) {
+    if (!is_constant_all<T_scale>::value) {
       if (is_vector<T_scale>::value) {
         Array<T_partials_return, Dynamic, 1> y_minus_mu_over_sigma_squared
             = y_minus_mu_over_sigma * y_minus_mu_over_sigma;

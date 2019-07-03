@@ -96,17 +96,17 @@ typename return_type<T_y, T_shape, T_scale>::type frechet_lpdf(
     if (include_summand<propto, T_y, T_shape, T_scale>::value)
       logp -= sigma_div_y_pow_alpha[n];
 
-    if (!is_constant_struct<T_y>::value) {
+    if (!is_constant_all<T_y>::value) {
       const T_partials_return inv_y_dbl = value_of(inv_y[n]);
       ops_partials.edge1_.partials_[n]
           += -(alpha_dbl + 1.0) * inv_y_dbl
              + alpha_dbl * sigma_div_y_pow_alpha[n] * inv_y_dbl;
     }
-    if (!is_constant_struct<T_shape>::value)
+    if (!is_constant_all<T_shape>::value)
       ops_partials.edge2_.partials_[n]
           += 1.0 / alpha_dbl
              + (1.0 - sigma_div_y_pow_alpha[n]) * (log_sigma[n] - log_y[n]);
-    if (!is_constant_struct<T_scale>::value)
+    if (!is_constant_all<T_scale>::value)
       ops_partials.edge3_.partials_[n] += alpha_dbl / value_of(sigma_vec[n])
                                           * (1 - sigma_div_y_pow_alpha[n]);
   }

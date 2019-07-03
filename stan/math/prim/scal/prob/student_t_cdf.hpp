@@ -56,14 +56,14 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_cdf(
 
   T_partials_return digammaHalf = 0;
 
-  VectorBuilder<!is_constant_struct<T_dof>::value, T_partials_return, T_dof>
+  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
       digamma_vec(stan::length(nu));
-  VectorBuilder<!is_constant_struct<T_dof>::value, T_partials_return, T_dof>
+  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
       digammaNu_vec(stan::length(nu));
-  VectorBuilder<!is_constant_struct<T_dof>::value, T_partials_return, T_dof>
+  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
       digammaNuPlusHalf_vec(stan::length(nu));
 
-  if (!is_constant_struct<T_dof>::value) {
+  if (!is_constant_all<T_dof>::value) {
     digammaHalf = digamma(0.5);
 
     for (size_t i = 0; i < stan::length(nu); i++) {
@@ -100,10 +100,10 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_cdf(
 
       P *= Pn;
 
-      if (!is_constant_struct<T_y>::value)
+      if (!is_constant_all<T_y>::value)
         ops_partials.edge1_.partials_[n]
             += -zJacobian * d_ibeta * J * sigma_inv / Pn;
-      if (!is_constant_struct<T_dof>::value) {
+      if (!is_constant_all<T_dof>::value) {
         T_partials_return g1 = 0;
         T_partials_return g2 = 0;
 
@@ -115,10 +115,10 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_cdf(
             += zJacobian * (d_ibeta * (r / t) * (r / t) + 0.5 * g1) / Pn;
       }
 
-      if (!is_constant_struct<T_loc>::value)
+      if (!is_constant_all<T_loc>::value)
         ops_partials.edge3_.partials_[n]
             += zJacobian * d_ibeta * J * sigma_inv / Pn;
-      if (!is_constant_struct<T_scale>::value)
+      if (!is_constant_all<T_scale>::value)
         ops_partials.edge4_.partials_[n]
             += zJacobian * d_ibeta * J * sigma_inv * t / Pn;
 
@@ -135,10 +135,10 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_cdf(
 
       P *= Pn;
 
-      if (!is_constant_struct<T_y>::value)
+      if (!is_constant_all<T_y>::value)
         ops_partials.edge1_.partials_[n]
             += zJacobian * d_ibeta * J * sigma_inv / Pn;
-      if (!is_constant_struct<T_dof>::value) {
+      if (!is_constant_all<T_dof>::value) {
         T_partials_return g1 = 0;
         T_partials_return g2 = 0;
 
@@ -149,28 +149,28 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_cdf(
         ops_partials.edge2_.partials_[n]
             += zJacobian * (-d_ibeta * (r / t) * (r / t) + 0.5 * g2) / Pn;
       }
-      if (!is_constant_struct<T_loc>::value)
+      if (!is_constant_all<T_loc>::value)
         ops_partials.edge3_.partials_[n]
             += -zJacobian * d_ibeta * J * sigma_inv / Pn;
-      if (!is_constant_struct<T_scale>::value)
+      if (!is_constant_all<T_scale>::value)
         ops_partials.edge4_.partials_[n]
             += -zJacobian * d_ibeta * J * sigma_inv * t / Pn;
     }
   }
 
-  if (!is_constant_struct<T_y>::value) {
+  if (!is_constant_all<T_y>::value) {
     for (size_t n = 0; n < stan::length(y); ++n)
       ops_partials.edge1_.partials_[n] *= P;
   }
-  if (!is_constant_struct<T_dof>::value) {
+  if (!is_constant_all<T_dof>::value) {
     for (size_t n = 0; n < stan::length(nu); ++n)
       ops_partials.edge2_.partials_[n] *= P;
   }
-  if (!is_constant_struct<T_loc>::value) {
+  if (!is_constant_all<T_loc>::value) {
     for (size_t n = 0; n < stan::length(mu); ++n)
       ops_partials.edge3_.partials_[n] *= P;
   }
-  if (!is_constant_struct<T_scale>::value) {
+  if (!is_constant_all<T_scale>::value) {
     for (size_t n = 0; n < stan::length(sigma); ++n)
       ops_partials.edge4_.partials_[n] *= P;
   }

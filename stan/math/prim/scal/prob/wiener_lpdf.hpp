@@ -82,7 +82,7 @@ typename return_type<T_y, T_alpha, T_tau, T_beta, T_delta>::type wiener_lpdf(
   static const double TWO_TIMES_SQRT_2_TIMES_SQRT_PI_TIMES_WIENER_ERR
       = 2.0 * SQRT_2_TIMES_SQRT_PI * WIENER_ERR;
   static const double LOG_TWO_OVER_TWO_PLUS_LOG_SQRT_PI
-      = LOG_TWO / 2 + LOG_SQRT_PI;
+      = LOG_2 / 2 + LOG_SQRT_PI;
   static const double SQUARE_PI_OVER_TWO = square(pi()) * 0.5;
   static const double TWO_TIMES_LOG_SQRT_PI = 2.0 * LOG_SQRT_PI;
 

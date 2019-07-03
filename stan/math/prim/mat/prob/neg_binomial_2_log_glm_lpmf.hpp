@@ -150,29 +150,26 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
   // Compute the necessary derivatives.
   operands_and_partials<T_x, T_alpha, T_beta, T_precision> ops_partials(
       x, alpha, beta, phi);
-  if (!(is_constant_struct<T_x>::value && is_constant_struct<T_beta>::value
-        && is_constant_struct<T_alpha>::value
-        && is_constant_struct<T_precision>::value)) {
+  if (!is_constant_all<T_x, T_beta, T_alpha, T_precision>::value) {
     Array<T_partials_return, Dynamic, 1> theta_exp = theta.exp();
-    if (!(is_constant_struct<T_x>::value && is_constant_struct<T_beta>::value
-          && is_constant_struct<T_alpha>::value)) {
+    if (!is_constant_all<T_x, T_beta, T_alpha>::value) {
       Matrix<T_partials_return, Dynamic, 1> theta_derivative
           = y_arr - theta_exp * y_plus_phi / (theta_exp + phi_arr);
-      if (!is_constant_struct<T_beta>::value) {
+      if (!is_constant_all<T_beta>::value) {
         ops_partials.edge3_.partials_ = x_val.transpose() * theta_derivative;
       }
-      if (!is_constant_struct<T_x>::value) {
+      if (!is_constant_all<T_x>::value) {
         ops_partials.edge1_.partials_
             = (beta_val_vec * theta_derivative.transpose()).transpose();
       }
-      if (!is_constant_struct<T_alpha>::value) {
+      if (!is_constant_all<T_alpha>::value) {
         if (is_vector<T_alpha>::value)
           ops_partials.edge2_.partials_ = theta_derivative;
         else
           ops_partials.edge2_.partials_[0] = sum(theta_derivative);
       }
     }
-    if (!is_constant_struct<T_precision>::value) {
+    if (!is_constant_all<T_precision>::value) {
       if (is_vector<T_precision>::value) {
         ops_partials.edge4_.partials_
             = 1 - y_plus_phi / (theta_exp + phi_arr) + log_phi

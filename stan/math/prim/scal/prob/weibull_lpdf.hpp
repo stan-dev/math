@@ -107,17 +107,17 @@ typename return_type<T_y, T_shape, T_scale>::type weibull_lpdf(
     if (include_summand<propto, T_y, T_shape, T_scale>::value)
       logp -= y_div_sigma_pow_alpha[n];
 
-    if (!is_constant_struct<T_y>::value) {
+    if (!is_constant_all<T_y>::value) {
       const T_partials_return inv_y = 1.0 / value_of(y_vec[n]);
       ops_partials.edge1_.partials_[n]
           += (alpha_dbl - 1.0) * inv_y
              - alpha_dbl * y_div_sigma_pow_alpha[n] * inv_y;
     }
-    if (!is_constant_struct<T_shape>::value)
+    if (!is_constant_all<T_shape>::value)
       ops_partials.edge2_.partials_[n]
           += 1.0 / alpha_dbl
              + (1.0 - y_div_sigma_pow_alpha[n]) * (log_y[n] - log_sigma[n]);
-    if (!is_constant_struct<T_scale>::value)
+    if (!is_constant_all<T_scale>::value)
       ops_partials.edge3_.partials_[n]
           += alpha_dbl * inv_sigma[n] * (y_div_sigma_pow_alpha[n] - 1.0);
   }

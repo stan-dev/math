@@ -5,6 +5,8 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/fun/floor.hpp>
 #include <stan/math/rev/scal/fun/sin.hpp>
+#include <stan/math/rev/scal/fun/square.hpp>
+#include <stan/math/rev/scal/fun/inv_square.hpp>
 #include <stan/math/prim/scal/fun/trigamma.hpp>
 
 namespace stan {
