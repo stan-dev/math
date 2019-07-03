@@ -1,13 +1,8 @@
-
-#include <stan/math/rev/core.hpp>
-#include <stan/math/rev/mat/functor/algebra_system.hpp>
+// Use stan/math.hpp, to make sure the laplace functions are
+// properly linked to the Stan library.
+#include <stan/math.hpp>
 #include <stan/math/rev/mat/functor/algebra_solver_newton.hpp>
 #include <stan/math/rev/mat/functor/algebra_solver_newton_custom.hpp>
-#include <stan/math/rev/mat/functor/algebra_solver.hpp>
-#include <stan/math/rev/mat/functor/kinsol_data.hpp>
-#include <stan/math/rev/mat/functor/kinsol_solve.hpp>
-#include <stan/math/laplace/lgp_solver.hpp>
-#include <stan/math/laplace/lgp_dense_newton_solver.hpp>
 
 #include <kinsol/kinsol.h>             /* access to KINSOL func., consts. */
 #include <nvector/nvector_serial.h>    /* access to serial N_Vector       */
