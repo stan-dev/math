@@ -40,8 +40,6 @@ namespace math {
 * argument
 */
 inline double lgamma(double x) {
-  return std::lgamma(x);
-  /*
 #if _REENTRANT & !__MINGW32__
   int sign = 0;
   return lgamma_r(x, &sign);
@@ -50,7 +48,6 @@ inline double lgamma(double x) {
     return std::numeric_limits<double>::infinity();
   return boost::math::lgamma(x, boost_policy_t());
 #endif
-  */
 }
 
 /**
@@ -62,8 +59,6 @@ inline double lgamma(double x) {
  * argument
  */
 inline double lgamma(int x) {
-  return std::lgamma(x);
-  /*
 #if _REENTRANT & !__MINGW32__
   int sign = 0;
   return lgamma_r(x, &sign);
@@ -72,7 +67,6 @@ inline double lgamma(int x) {
     return std::numeric_limits<double>::infinity();
   return boost::math::lgamma(x, boost_policy_t());
 #endif
-  */
 }
 
 }  // namespace math
