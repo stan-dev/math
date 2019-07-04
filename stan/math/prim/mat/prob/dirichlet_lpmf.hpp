@@ -80,10 +80,10 @@ typename return_type<T_prob, T_prior_size>::type dirichlet_lpmf(
                                + theta_dbl.array().log();
 
   operands_and_partials<T_prob, T_prior_size> ops_partials(theta, alpha);
-  if (!is_constant_struct<T_prob>::value)
+  if (!is_constant_all<T_prob>::value)
     ops_partials.edge1_.partials_ = theta_deriv;
 
-  if (!is_constant_struct<T_prior_size>::value)
+  if (!is_constant_all<T_prior_size>::value)
     ops_partials.edge2_.partials_ = alpha_deriv;
 
   return ops_partials.build(lp);

@@ -2,9 +2,10 @@
 #define STAN_MATH_PRIM_SCAL_FUN_FDIM_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/is_any_nan.hpp>
 #include <boost/math/tools/promotion.hpp>
-#include <limits>
 
 namespace stan {
 namespace math {
