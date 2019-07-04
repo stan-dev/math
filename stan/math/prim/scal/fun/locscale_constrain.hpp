@@ -45,7 +45,7 @@ locscale_constrain(const T& x, const M& mu, const S& sigma) {
     return mu + x;
   }
   check_positive_finite("locscale_constrain", "scale", sigma);
-  return mu + sigma * x;
+  return fma(sigma, x, mu);
 }
 
 /**
@@ -85,8 +85,8 @@ locscale_constrain(const T& x, const M& mu, const S& sigma, T& lp) {
     return mu + x;
   }
   check_positive_finite("locscale_constrain", "scale", sigma);
-  lp += size_of(x) * log(sigma);
-  return mu + sigma * x;
+  lp += multiply_log(size_of(x), sigma);
+  return fma(sigma, x, mu);
 }
 
 }  // namespace math
