@@ -53,10 +53,10 @@ inline bool containsNonzeroPart(TriangularViewCL a, TriangularViewCL b) {
  * @return transposition of input
  */
 inline TriangularViewCL transpose(TriangularViewCL a) {
-  if(a==TriangularViewCL::Lower){
+  if (a == TriangularViewCL::Lower) {
     return TriangularViewCL::Upper;
   }
-  if(a==TriangularViewCL::Upper){
+  if (a == TriangularViewCL::Upper) {
     return TriangularViewCL::Lower;
   }
   return a;
@@ -70,7 +70,9 @@ inline TriangularViewCL transpose(TriangularViewCL a) {
  */
 inline TriangularViewCL invert(TriangularViewCL a) {
   typedef typename std::underlying_type<TriangularViewCL>::type underlying;
-  return static_cast<TriangularViewCL>(static_cast<underlying>(TriangularViewCL::Entire) & ~static_cast<underlying>(a));
+  return static_cast<TriangularViewCL>(
+      static_cast<underlying>(TriangularViewCL::Entire)
+      & ~static_cast<underlying>(a));
 }
 
 /**
