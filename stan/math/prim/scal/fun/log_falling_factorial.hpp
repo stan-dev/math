@@ -55,7 +55,7 @@ template <typename T1, typename T2>
 inline typename return_type<T1, T2>::type log_falling_factorial(const T1 x,
                                                                 const T2 n) {
   if (is_any_nan(x, n))
-    return std::numeric_limits<double>::quiet_NaN();
+    return NOT_A_NUMBER;
   static const char* function = "log_falling_factorial";
   check_positive(function, "first argument", x);
   return lgamma(x + 1) - lgamma(x - n + 1);

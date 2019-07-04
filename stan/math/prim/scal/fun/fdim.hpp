@@ -27,7 +27,7 @@ inline typename boost::math::tools::promote_args<T1, T2>::type fdim(T1 x,
   typedef typename boost::math::tools::promote_args<T1, T2>::type return_t;
   using std::numeric_limits;
   if (is_any_nan(x, y))
-    return numeric_limits<return_t>::quiet_NaN();
+    return NOT_A_NUMBER;
   return (x <= y) ? 0 : x - y;
 }
 
