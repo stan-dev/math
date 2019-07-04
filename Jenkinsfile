@@ -233,8 +233,7 @@ pipeline {
                     steps {
                         deleteDirWin()
                         unstash 'MathSetup'
-                        bat "echo CXX=${env.CXX} -Werror > make/local"
-                        bat "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
+                        bat "echo CXXFLAGS+=-DSTAN_THREADS > make/local"
                         runTestsWin("test/unit -f thread")
                         runTestsWin("test/unit -f map_rect")
                     }
