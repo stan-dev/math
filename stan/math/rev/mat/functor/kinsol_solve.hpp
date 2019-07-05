@@ -97,8 +97,7 @@ namespace math {
               << "with flag = " << flag;
       throw boost::math::evaluation_error(message.str());
     }
-    
-    
+
     KINFree(&kinsol_memory);
 
     // CHECK - avoid / simplifies this conversion step?

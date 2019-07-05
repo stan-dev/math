@@ -1,7 +1,10 @@
 #include <stan/math.hpp>
+
 #include <stan/math/laplace/lgp_dense_system.hpp>
 #include <stan/math/laplace/lgp_dense_newton_solver.hpp>
 #include <stan/math/laplace/lgp_solver.hpp>
+#include <stan/math/laplace/lgp_density.hpp>
+
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/util.hpp>
 #include <test/unit/math/laplace/kinsol_test.cpp>
@@ -26,6 +29,7 @@ TEST(laplace, lgp_performance_density) {
   using stan::math::diag_post_multiply;
   using stan::math::value_of;
   using stan::math::dot_product;
+  using stan::math::sum;
 
   std::string data_directory = "test/unit/math/laplace/data_cpp/";
   int n_dimensions = 5;
@@ -37,7 +41,7 @@ TEST(laplace, lgp_performance_density) {
   std::chrono::duration<double> elapsed_time_evaluation;
   std::chrono::duration<double> elapsed_time_jacobian;
 
-  for (int k = 0; k < n_dimensions; k++) {
+  for (int k = 4; k < 5; k++) {
     int dim_theta = dimensions(k);
 
     int N = 3 * dim_theta;  // number of observations
@@ -124,9 +128,13 @@ TEST(laplace, lgp_performance_density) {
     for (int i = 0; i < dim_theta; i++)  // CHECK -- use dot_product?
       first_term(i) = - n_samples[i] * exp(theta(i));
 
-    bool efficient = 1;
+    // several options:
+    //  1. efficient method, see math appendix.
+    //  2. former inefficient method, works as a benchmark.
+    //  3. method based on algorithm 3.1.
+    int method = 3;
 
-    if (efficient) {
+    if (method == 1) {
       target += - 0.5 * dot_product(theta, mdivide_left(Sigma, theta));
       {
         Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
@@ -139,8 +147,8 @@ TEST(laplace, lgp_performance_density) {
       }
     }
 
-    if (!efficient) {
-      // former (and much slower) method.
+    if (method == 2) {
+      // Former (and much slower) method.
       // Use as a benchmark.
       Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
         Q = stan::math::inverse(Sigma);
@@ -151,9 +159,18 @@ TEST(laplace, lgp_performance_density) {
       target += - 0.5 * (stan::math::quad_form(Q, theta) +
         log_determinant(Sigma) +
         log_determinant(laplace_precision));
-      
-      // PRINT
-      std::cout << value_of(log_determinant(laplace_precision)) << std::endl;
+    }
+
+    if (method == 3) {
+      using stan::math::diff_poisson_log;
+      var sum_log_diag_L;
+      Eigen::Matrix<var, Eigen::Dynamic, 1>
+        a = newton_update(theta, Sigma,
+                          diff_poisson_log(to_vector(n_samples),
+                                           to_vector(sums)),
+                          sum_log_diag_L);
+
+      target += -0.5 * multiply(transpose(a), theta) - sum_log_diag_L;
     }
 
     end = std::chrono::system_clock::now();
@@ -174,6 +191,9 @@ TEST(laplace, lgp_performance_density) {
               << "evaluation time: " << elapsed_time_evaluation.count()
               << std::endl
               << "chain time: " << elapsed_time_jacobian.count()
+              << std::endl
+              << "total time: " << elapsed_time_evaluation.count()
+                                   + elapsed_time_jacobian.count()
               << std::endl;
 
     // evaluate function with solution
