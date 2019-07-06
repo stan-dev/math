@@ -4,7 +4,10 @@
 /**
  * Reimplements is_fvar without requiring external math headers
  *
- * decltype((void)(T::d_)) is a pre C++17 replacement for std::void_t
+ * decltype((void)(T::d_)) is a pre C++17 replacement for 
+ * std::void_t<decltype(T::d_)>
+ *
+ * TODO(Andrew): Replace with std::void_t after move to C++17
  */
 template<class, class = void>
 struct is_fvar : std::false_type
@@ -13,18 +16,19 @@ template<class T>
 struct is_fvar<T, decltype((void)(T::d_))> : std::true_type
 { };
 
+//TODO(Andrew): Replace std::is_const<>::value with std::is_const_v<> after move to C++17
 template<typename T>
-using rev_rtn_type = std::conditional_t<std::is_const<typename std::remove_reference<T>::type>::value,
+using reverse_return_t = std::conditional_t<std::is_const<std::remove_reference_t<T>>::value,
                                          const double&,
                                          double&>;
 
 template<typename T>
-using vi_rtn_type = std::conditional_t<std::is_const<typename std::remove_reference<T>::type>::value,
+using vari_return_t = std::conditional_t<std::is_const<std::remove_reference_t<T>>::value,
                                           const decltype(T::vi_)&,
                                           decltype(T::vi_)&>;
 
 template<typename T>
-using fwd_rtn_type = std::conditional_t<std::is_const<typename std::remove_reference<T>::type>::value,
+using forward_return_t = std::conditional_t<std::is_const<std::remove_reference_t<T>>::value,
                                          const decltype(T::val_)&,
                                          decltype(T::val_)&>;
 
@@ -43,20 +47,20 @@ struct val_Op{
   //Returns value from a vari*
   template<typename T = Scalar>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-    std::enable_if_t<std::is_pointer<T>::value, rev_rtn_type<T>>
+    std::enable_if_t<std::is_pointer<T>::value, reverse_return_t<T>>
       operator()(T &v) const { return v->val_; }
 
   //Returns value from a var
   template<typename T = Scalar>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
     std::enable_if_t<(!std::is_pointer<T>::value && !is_fvar<T>::value),
-                      rev_rtn_type<T>>
+                      reverse_return_t<T>>
       operator()(T &v) const { return v.vi_->val_; }
 
   //Returns value from an fvar
   template<typename T = Scalar>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-    std::enable_if_t<is_fvar<T>::value, fwd_rtn_type<T>>
+    std::enable_if_t<is_fvar<T>::value, forward_return_t<T>>
       operator()(T &v) const { return v.val_; }
 };
 
@@ -86,11 +90,11 @@ struct d_Op {
   //Returns tangent from an fvar
   template<typename T = Scalar>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-    fwd_rtn_type<T> operator()(T &v) const { return v.d_; }
+    forward_return_t<T> operator()(T &v) const { return v.d_; }
 };
 
 /**
- * Coefficient-wise function applying d__Op struct to a matrix of const fvar<T>
+ * Coefficient-wise function applying d_Op struct to a matrix of const fvar<T>
  * and returning a const matrix of type T containing the tangents
  */
 inline const CwiseUnaryOp<d_Op, const Derived>
@@ -98,7 +102,7 @@ d() const { return CwiseUnaryOp<d_Op, const Derived>(derived());
 }
 
 /**
- * Coefficient-wise function applying d__Op struct to a matrix of fvar<T>
+ * Coefficient-wise function applying d_Op struct to a matrix of fvar<T>
  * and returning a view to a matrix of type T of the tangents that can
  * be modified
  */
@@ -107,7 +111,7 @@ d() { return CwiseUnaryView<d_Op, Derived>(derived());
 }
 
 /**
- * Structure to return adjoints from var and vari*. Tests whether the variables
+ * Structure to return adjoints from var and vari*. Deduces whether the variables
  * are pointers (i.e. vari*) to determine whether to return the adjoint or
  * first point to the underlying vari* (in the case of var).
  */
@@ -117,13 +121,13 @@ struct adj_Op {
   //Returns adjoint from a vari*
   template<typename T = Scalar>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-    std::enable_if_t<std::is_pointer<T>::value, rev_rtn_type<T>>
+    std::enable_if_t<std::is_pointer<T>::value, reverse_return_t<T>>
       operator()(T &v) const { return v->adj_; }
 
   //Returns adjoint from a var
   template<typename T = Scalar>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-    std::enable_if_t<!std::is_pointer<T>::value, rev_rtn_type<T>>
+    std::enable_if_t<!std::is_pointer<T>::value, reverse_return_t<T>>
       operator()(T &v) const { return v.vi_->adj_; }
 };
 
@@ -152,7 +156,7 @@ struct vi_Op {
   //Returns vari* from a var
   template<typename T = Scalar>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-    vi_rtn_type<T> operator()(T &v) const { return v.vi_; }
+    vari_return_t<T> operator()(T &v) const { return v.vi_; }
 };
 
 /**
