@@ -25,16 +25,17 @@ namespace internal {
 
 template <class InputIt, class UnaryFunction>
 struct parallel_map_impl<InputIt, UnaryFunction, var> {
-  auto operator()(InputIt first, InputIt last, UnaryFunction f) const {
+  auto operator()(InputIt first, InputIt last, UnaryFunction f,
+                  std::size_t grainsize) const {
     typedef decltype(f(*first)) T_return_elem;
     typedef std::vector<decltype(f(*first))> T_return;
     typedef boost::counting_iterator<std::size_t> count_iter;
 
     const std::size_t num_jobs = std::distance(first, last);
 
-    std::cout
-        << "Running NEW var parallel_for_each implementation (non-nestable)..."
-        << std::endl;
+    // std::cout
+    //    << "Running NEW var parallel_for_each implementation..."
+    //    << std::endl;
 
     typedef ChainableStack::AutodiffStackStorage chainablestack_t;
     typedef tbb::enumerable_thread_specific<ScopedChainableStack>
@@ -49,7 +50,9 @@ struct parallel_map_impl<InputIt, UnaryFunction, var> {
     tls_scoped_stack_t tls_scoped_stacks(
         [&parent_stack]() { return ScopedChainableStack(parent_stack); });
 
-    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, num_jobs),
+    static tbb::affinity_partitioner partitioner;
+
+    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, num_jobs, grainsize),
                       [&](const tbb::blocked_range<size_t>& r) {
                         tls_scoped_stacks.local().execute([&] {
                           auto elem = first;
@@ -59,7 +62,8 @@ struct parallel_map_impl<InputIt, UnaryFunction, var> {
                             f_eval[i] = f(*elem);
                           }
                         });
-                      });
+                      },
+                      partitioner);
 
     tls_scoped_stacks.combine_each(
         [&parent_stack](ScopedChainableStack& child_scoped_stack) {

@@ -2,6 +2,8 @@
 #define STAN_MATH_REV_SCAL_FUNCTOR_PARALLEL_REDUCE_SUM_HPP
 
 #include <stan/math/prim/scal/functor/parallel_reduce_sum.hpp>
+#include <stan/math/prim/scal/functor/parallel_for_each.hpp>
+#include <stan/math/rev/scal/functor/parallel_for_each.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 
 #include <stan/math/rev/core/scoped_chainablestack.hpp>
@@ -23,6 +25,54 @@ namespace stan {
 namespace math {
 namespace internal {
 
+/*
+template <class InputIt, class T, class BinaryFunction>
+struct parallel_reduce_sum_impl<InputIt, T, BinaryFunction, var> {
+  T operator()(InputIt first, InputIt last, T init, BinaryFunction f,
+               std::size_t grainsize) const {
+
+    // avoid TBB overhead in case of only 1 core
+    if (get_num_threads() == 1)
+      return f(*first, *(last-1));
+
+    typedef boost::counting_iterator<std::size_t> count_iter;
+
+    const std::size_t num_terms = std::distance(first, last);
+
+    const std::size_t blocksize = grainsize == 0
+                                  ? num_terms / get_num_threads()
+                                  : grainsize ;
+
+    const std::size_t num_blocks = num_terms / blocksize;
+    //std::size_t extra_terms = num_terms % grainsize;
+
+    // if we allow non-determinism in outputs, then we could code the
+    // parallel_for call here directly and take advantage of blocked
+    // reduce sweeps (so that we get larger reduces in a single go)
+
+    std::vector<T> partial_sums = parallel_map(count_iter(0),
+                                               count_iter(num_blocks),
+                                               [&](int block) -> T {
+                                                 int start = block * blocksize;
+                                                 int end = block == num_blocks-1
+                                                           ? num_terms
+                                                           : (block+1) *
+blocksize;
+
+                                                 auto start_iter = first;
+                                                 std::advance(start_iter,
+start); auto end_iter = first; std::advance(end_iter, end-1);
+
+                                                 return f(*start_iter,
+*end_iter);
+                                               });
+
+    return init + sum(partial_sums);
+  }
+};
+*/
+
+/*
 template <class InputIt, class T, class BinaryFunction>
 struct parallel_reduce_sum_impl<InputIt, T, BinaryFunction, var> {
   typedef ChainableStack::AutodiffStackStorage chainablestack_t;
@@ -116,6 +166,7 @@ struct parallel_reduce_sum_impl<InputIt, T, BinaryFunction, var> {
     return sum(worker.sum_terms_);
   }
 };
+*/
 
 /*
 template <class InputIt, class T, class BinaryFunction>

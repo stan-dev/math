@@ -16,6 +16,7 @@
 
 namespace stan {
 namespace math {
+/*
 namespace internal {
 
 // base definition => compile error
@@ -71,6 +72,47 @@ constexpr T parallel_reduce_sum(InputIt first, InputIt last, T init,
   return internal::parallel_reduce_sum_impl<InputIt, T, BinaryFunction,
                                             return_base_t>()(first, last, init,
                                                              f, grainsize);
+}
+*/
+
+template <class InputIt, class T, class BinaryFunction>
+constexpr T parallel_reduce_sum(InputIt first, InputIt last, T init,
+                                BinaryFunction f, std::size_t grainsize = 0) {
+  // avoid TBB overhead in case of only 1 core
+  const std::size_t num_threads = internal::get_num_threads();
+  if (num_threads == 1)
+    return f(*first, *(last - 1));
+
+  typedef boost::counting_iterator<std::size_t> count_iter;
+
+  const std::size_t num_terms = std::distance(first, last);
+
+  const std::size_t blocksize
+      = grainsize == 0 ? num_terms / num_threads : grainsize;
+
+  const std::size_t num_blocks = num_terms / blocksize;
+  // std::size_t extra_terms = num_terms % grainsize;
+
+  // if we allow non-determinism in outputs, then we could code the
+  // parallel_for call here directly and take advantage of blocked
+  // reduce sweeps (so that we get larger reduces in a single go)
+
+  // TODO: Should we use grainsize of the parallel for loop?
+
+  std::vector<T> partial_sums = parallel_map(
+      count_iter(0), count_iter(num_blocks), [&](int block) -> T {
+        int start = block * blocksize;
+        int end = block == num_blocks - 1 ? num_terms : (block + 1) * blocksize;
+
+        auto start_iter = first;
+        std::advance(start_iter, start);
+        auto end_iter = first;
+        std::advance(end_iter, end - 1);
+
+        return f(*start_iter, *end_iter);
+      });
+
+  return init + sum(partial_sums);
 }
 
 }  // namespace math

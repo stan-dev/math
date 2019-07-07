@@ -14,13 +14,12 @@ namespace stan {
 namespace math {
 namespace {
 
-static tbb::task_scheduler_init task_scheduler(
-    stan::math::internal::get_num_threads());
-
 static std::mutex cout_mutex;
 
 // initialize AD tape & pin thread to hardware thread
 class ad_tape_observer : public tbb::task_scheduler_observer {
+  typedef ChainableStack::AutodiffStackStorage chainablestack_t;
+
  public:
   // affinity_mask_t m_mask; // HW affinity mask to be used with an arena
 
@@ -42,6 +41,9 @@ class ad_tape_observer : public tbb::task_scheduler_observer {
   }
   /*override*/ void on_scheduler_exit(bool worker) {
     std::lock_guard<std::mutex> cout_lock(cout_mutex);
+    chainablestack_t* ad_tape = stan::math::ChainableStack::instance_;
+    delete ad_tape;
+    stan::math::ChainableStack::instance_ = nullptr;
     if (worker)
       std::cout << "a worker thread is finished to do some work." << std::endl;
     else
@@ -49,7 +51,18 @@ class ad_tape_observer : public tbb::task_scheduler_observer {
   }
 };
 
-static ad_tape_observer tape_initializer;
+// the tbb_ressources is only there to ensure that the destruction is
+// in correct order (first the observer, then the scheduler)
+struct tbb_ressources {
+  tbb_ressources()
+      : tbb_scheduler(stan::math::internal::get_num_threads()),
+        tape_initializer() {}
+
+  tbb::task_scheduler_init tbb_scheduler;
+  ad_tape_observer tape_initializer;
+};
+
+static tbb_ressources tbb_init;
 
 // const ChainableStack::AutodiffStackStorage* __chainable_stack
 //    = ChainableStack::init();

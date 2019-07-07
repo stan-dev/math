@@ -24,27 +24,28 @@ struct parallel_map_impl {};
 
 template <class InputIt, class UnaryFunction>
 struct parallel_map_impl<InputIt, UnaryFunction, double> {
-  auto operator()(InputIt first, InputIt last, UnaryFunction f) const {
+  auto operator()(InputIt first, InputIt last, UnaryFunction f,
+                  std::size_t grainsize) const {
     typedef decltype(f(*first)) T_return_elem;
-    typedef std::vector<decltype(f(*first))>
-        T_return;
+    typedef std::vector<decltype(f(*first))> T_return;
     typedef boost::counting_iterator<std::size_t> count_iter;
 
     const std::size_t num_jobs = std::distance(first, last);
 
-    std::cout << "Running base parallel_for_each implementation..."
-              << std::endl;
+    // std::cout << "Running base parallel_for_each implementation..."
+    //          << std::endl;
 
     T_return f_eval(num_jobs);
 
-    tbb::parallel_for( tbb::blocked_range<std::size_t>( 0, num_jobs ),
-                       [&](const tbb::blocked_range<size_t>& r) {
-                         auto elem = first;
-                         std::advance(elem, r.begin());
-                         for (std::size_t i = r.begin(); i != r.end(); ++elem, ++i) {
-                           f_eval[i] = f(*elem);
-                         }
-                       });
+    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, num_jobs, grainsize),
+                      [&](const tbb::blocked_range<size_t>& r) {
+                        auto elem = first;
+                        std::advance(elem, r.begin());
+                        for (std::size_t i = r.begin(); i != r.end();
+                             ++elem, ++i) {
+                          f_eval[i] = f(*elem);
+                        }
+                      });
 
     return std::move(f_eval);
   }
@@ -53,10 +54,11 @@ struct parallel_map_impl<InputIt, UnaryFunction, double> {
 }  // namespace internal
 
 template <class InputIt, class UnaryFunction>
-constexpr auto parallel_map(InputIt first, InputIt last, UnaryFunction f) {
+constexpr auto parallel_map(InputIt first, InputIt last, UnaryFunction f,
+                            std::size_t grainsize = 1) {
   typedef typename return_type<decltype(f(*first))>::type return_base_t;
-  return internal::parallel_map_impl<InputIt, UnaryFunction,
-                                     return_base_t>()(first, last, f);
+  return internal::parallel_map_impl<InputIt, UnaryFunction, return_base_t>()(
+      first, last, f, grainsize);
 }
 
 }  // namespace math
