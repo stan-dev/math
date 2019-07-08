@@ -23,7 +23,72 @@
 
 namespace stan {
 namespace math {
+
 namespace internal {
+
+/*
+template <class InputIt, class T, class BinaryFunction>
+struct parallel_reduce_sum_impl<InputIt, T, BinaryFunction, var> {
+  typedef ChainableStack::AutodiffStackStorage chainablestack_t;
+
+  typedef tbb::enumerable_thread_specific<ScopedChainableStack>
+      tls_scoped_stack_t;
+
+  T operator()(InputIt first, InputIt last, T init, BinaryFunction f,
+               std::size_t grainsize) const {
+
+    // avoid TBB overhead in case of only 1 core
+    if (get_num_threads() == 1)
+      return init + f(*first, *(last-1));
+
+    const std::size_t num_jobs = std::distance(first, last);
+
+    // All AD terms are written to thread-local AD tapes which are all
+    // stored as part of the parent nochain stacks.
+    chainablestack_t& parent_stack = *ChainableStack::instance_;
+
+    tls_scoped_stack_t child_stacks(
+        [&parent_stack]() { return ScopedChainableStack(parent_stack); });
+
+    tbb::enumerable_thread_specific<var> partial_sums(var(0.0));
+
+    // static tbb::affinity_partitioner partitioner;
+    tbb::auto_partitioner partitioner;
+    //tbb::static_partitioner partitioner;
+    // it seems that best performance is attained with the simple
+    // partititioner and a reasonable grainsize
+    // tbb::simple_partitioner partitioner;
+
+    // TODO: make grainsize a parameter??!!!
+    tbb::parallel_for(
+        tbb::blocked_range<std::size_t>(0, num_jobs, grainsize),
+        [&](const tbb::blocked_range<size_t>& r) {
+          child_stacks.local().execute([&](){
+                                         auto start_iter = first;
+                                         std::advance(start_iter, r.begin());
+                                         auto end_iter = first;
+                                         std::advance(end_iter, r.end()-1);
+                                         partial_sums.local() += f(*start_iter,
+*end_iter);
+                                       });
+        }, partitioner);
+
+    child_stacks.combine_each(
+        [&parent_stack](ScopedChainableStack& child_scoped_stack) {
+          child_scoped_stack.append_to_parent();
+        });
+
+    var total = init;
+    partial_sums.combine_each([&total](var& term) {
+                                total += term;
+                              });
+
+    return total;
+  }
+
+};
+
+*/
 
 /*
 template <class InputIt, class T, class BinaryFunction>
@@ -33,7 +98,7 @@ struct parallel_reduce_sum_impl<InputIt, T, BinaryFunction, var> {
 
     // avoid TBB overhead in case of only 1 core
     if (get_num_threads() == 1)
-      return f(*first, *(last-1));
+      return init + f(*first, *(last-1));
 
     typedef boost::counting_iterator<std::size_t> count_iter;
 

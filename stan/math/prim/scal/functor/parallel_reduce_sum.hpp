@@ -81,7 +81,7 @@ constexpr T parallel_reduce_sum(InputIt first, InputIt last, T init,
   // avoid TBB overhead in case of only 1 core
   const std::size_t num_threads = internal::get_num_threads();
   if (num_threads == 1)
-    return f(*first, *(last - 1));
+    return init + f(*first, *(last - 1));
 
   typedef boost::counting_iterator<std::size_t> count_iter;
 
