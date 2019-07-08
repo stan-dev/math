@@ -95,6 +95,100 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
       start_tile = max(start_tile, split_offset_tiles);
       int end_tile = min(end_tile_A, end_tile_B);                      // NOLINT
       end_tile = min(end_tile, split_offset_tiles + split_tiles - 1);  // NOLINT
+      //special handling of first block
+      if(lower_upper_A == UPPER || lower_upper_B == LOWER){
+        const int tiled_i = THREAD_BLOCK_SIZE * start_tile + thread_block_row;
+        const int tiled_j = THREAD_BLOCK_SIZE * start_tile + thread_block_col;
+        for (int w = 0; w < WORK_PER_THREAD; w++) {
+          // For the tiles on the diagonal we can ignore the values over
+          // the diagonal if the matrix is lower triangular or under
+          // the diagonal if the matrix is upper triangular
+          const A_curr_j = tiled_j + w * THREAD_BLOCK_SIZE_COL;
+          const B_curr_j = j + w * THREAD_BLOCK_SIZE_COL;
+          // check if the indexes are outside the matrix
+          // or under/above the diagonal with upper/lower
+          // triangular matrices
+          if (A_curr_j >= K || i >= M
+              || (lower_upper_A == LOWER && A_curr_j > i)
+              || (lower_upper_A == UPPER && A_curr_j < i)) {
+            A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
+            [thread_block_row]
+                    = 0.0;
+          } else {
+            A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
+            [thread_block_row]
+                    = A[A_curr_j * M + i];
+          }
+          if (B_curr_j >= N || tiled_i >= K
+              || (lower_upper_B == LOWER && B_curr_j > tiled_i)
+              || (lower_upper_B == UPPER && B_curr_j < tiled_i)) {
+            B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
+            [thread_block_row]
+                    = 0.0;
+          } else {
+            B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
+            [thread_block_row]
+                    = B[B_curr_j * K + tiled_i];
+          }
+        }
+        barrier(CLK_LOCAL_MEM_FENCE);
+        for (int block_idx = 0; block_idx < THREAD_BLOCK_SIZE; block_idx++) {
+          for (int w = 0; w < WORK_PER_THREAD; w++) {
+            acc[w] += A_local[block_idx][thread_block_row]
+                      * B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
+                      [block_idx];
+          }
+        }
+        barrier(CLK_LOCAL_MEM_FENCE);
+        start_tile++;
+      }
+      //special handling of last block
+      if(start_tile <= end_tile && (lower_upper_A == LOWER || lower_upper_B == UPPER)){
+        const int tiled_i = THREAD_BLOCK_SIZE * end_tile + thread_block_row;
+        const int tiled_j = THREAD_BLOCK_SIZE * end_tile + thread_block_col;
+        for (int w = 0; w < WORK_PER_THREAD; w++) {
+          // For the tiles on the diagonal we can ignore the values over
+          // the diagonal if the matrix is lower triangular or under
+          // the diagonal if the matrix is upper triangular
+          const A_curr_j = tiled_j + w * THREAD_BLOCK_SIZE_COL;
+          const B_curr_j = j + w * THREAD_BLOCK_SIZE_COL;
+          // check if the indexes are outside the matrix
+          // or under/above the diagonal with upper/lower
+          // triangular matrices
+          if (A_curr_j >= K || i >= M
+              || (lower_upper_A == LOWER && A_curr_j > i)
+              || (lower_upper_A == UPPER && A_curr_j < i)) {
+            A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
+            [thread_block_row]
+                    = 0.0;
+          } else {
+            A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
+            [thread_block_row]
+                    = A[A_curr_j * M + i];
+          }
+          if (B_curr_j >= N || tiled_i >= K
+              || (lower_upper_B == LOWER && B_curr_j > tiled_i)
+              || (lower_upper_B == UPPER && B_curr_j < tiled_i)) {
+            B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
+            [thread_block_row]
+                    = 0.0;
+          } else {
+            B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
+            [thread_block_row]
+                    = B[B_curr_j * K + tiled_i];
+          }
+        }
+        barrier(CLK_LOCAL_MEM_FENCE);
+        for (int block_idx = 0; block_idx < THREAD_BLOCK_SIZE; block_idx++) {
+          for (int w = 0; w < WORK_PER_THREAD; w++) {
+            acc[w] += A_local[block_idx][thread_block_row]
+                      * B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
+                      [block_idx];
+          }
+        }
+        barrier(CLK_LOCAL_MEM_FENCE);
+        end_tile--;
+      }
       for (int tile_idx = start_tile; tile_idx <= end_tile; tile_idx++) {
         const int tiled_i = THREAD_BLOCK_SIZE * tile_idx + thread_block_row;
         const int tiled_j = THREAD_BLOCK_SIZE * tile_idx + thread_block_col;
@@ -109,9 +203,7 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
           // check if the indexes are outside the matrix
           // or under/above the diagonal with upper/lower
           // triangular matrices
-          if (A_curr_j >= K || i >= M
-              || (lower_upper_A == LOWER && A_curr_j > i)
-              || (lower_upper_A == UPPER && A_curr_j < i)) {
+          if (A_curr_j >= K || i >= M) {
             A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
                    [thread_block_row]
                 = 0.0;
@@ -120,9 +212,7 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
                    [thread_block_row]
                 = A[A_curr_j * M + i];
           }
-          if (B_curr_j >= N || tiled_i >= K
-              || (lower_upper_B == LOWER && B_curr_j > tiled_i)
-              || (lower_upper_B == UPPER && B_curr_j < tiled_i)) {
+          if (B_curr_j >= N || tiled_i >= K) {
             B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
                    [thread_block_row]
                 = 0.0;
