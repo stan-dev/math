@@ -24,7 +24,9 @@
 ##
 define math_warnings
 $(eval type:= $1)
-$(eval all_headers := $(shell find $2 -name '*.hpp' -o -name '*.cpp'))
+$(eval excl:=)
+$(foreach temp,$(5),$(eval excl+=$(if $(temp),! -path $(temp) ,)))
+$(eval all_headers := $(shell find $2 -name '*.hpp' $(excl)-o -name '*.cpp'))
 $(eval pattern := $3)
 $(eval msg := $4)
 $(eval _new_math_warnings_str:=$(foreach file,\
@@ -82,6 +84,11 @@ test-math-dependencies:
              '<Eigen', 'File includes an Eigen header.')
 	@$(call math_warnings, 'scal', stan/math/*/scal,\
              'Eigen::', 'File uses Eigen.')
+## Check for includes of stan/math/*/meta/*.hpp inside stan/math,
+## excluding meta.hpp files and the /meta subfolder
+	@$(call math_warnings, 'meta', stan/math,\
+             '<stan/math/.*/meta/.*hpp', 'File includes */meta/*.hpp header file. Should include meta.hpp',\
+             'stan/math/*/*/meta/*' '*/meta.hpp')
 ## Check for files inside stan/math/*/arr that contain
 ##   stan/math/*/mat
 	@$(call math_warnings, 'arr', stan/math/*/arr,\
