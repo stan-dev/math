@@ -6,11 +6,10 @@
 #include <stan/math/prim/mat/functor/map_rect_concurrent.hpp>
 #include <stan/math/prim/mat/functor/map_rect_reduce.hpp>
 #include <stan/math/prim/mat/functor/map_rect_combine.hpp>
+#include <stan/math/prim/scal/functor/parallel_for_each.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
 
 #include <vector>
-#include <thread>
-#include <future>
 
 namespace stan {
 namespace math {
@@ -31,63 +30,34 @@ map_rect_concurrent(
 
   const int num_jobs = job_params.size();
   const vector_d shared_params_dbl = value_of(shared_params);
-  std::vector<std::future<std::vector<matrix_d>>> futures;
+  typedef boost::counting_iterator<std::size_t> count_iter;
 
-  auto execute_chunk = [&](int start, int size) -> std::vector<matrix_d> {
-    const int end = start + size;
-    ChainableStack::init();
-    std::vector<matrix_d> chunk_f_out;
-    chunk_f_out.reserve(size);
-    for (int i = start; i != end; i++)
-      chunk_f_out.push_back(ReduceF()(
-          shared_params_dbl, value_of(job_params[i]), x_r[i], x_i[i], msgs));
-    return chunk_f_out;
-  };
-
-  int num_threads = get_num_threads(num_jobs);
-  int num_jobs_per_thread = num_jobs / num_threads;
-  futures.emplace_back(
-      std::async(std::launch::deferred, execute_chunk, 0, num_jobs_per_thread));
-
-#ifdef STAN_THREADS
-  if (num_threads > 1) {
-    const int num_big_threads = num_jobs % num_threads;
-    const int first_big_thread = num_threads - num_big_threads;
-    for (int i = 1, job_start = num_jobs_per_thread, job_size = 0;
-         i < num_threads; ++i, job_start += job_size) {
-      job_size = i >= first_big_thread ? num_jobs_per_thread + 1
-                                       : num_jobs_per_thread;
-      futures.emplace_back(
-          std::async(std::launch::async, execute_chunk, job_start, job_size));
-    }
-  }
-#endif
+  std::vector<matrix_d> results = parallel_map(
+      count_iter(0), count_iter(num_jobs), [&](std::size_t job) -> matrix_d {
+        return ReduceF()(shared_params_dbl, value_of(job_params[job]), x_r[job],
+                         x_i[job], msgs);
+      });
 
   // collect results
   std::vector<int> world_f_out;
+  std::size_t num_outputs = 0;
+  for (std::size_t i = 0; i < num_jobs; ++i) {
+    world_f_out.push_back(results[i].cols());
+    num_outputs += results[i].cols();
+  }
+
   world_f_out.reserve(num_jobs);
-  matrix_d world_output(0, 0);
+
+  matrix_d world_output(results[0].rows(), num_outputs);
 
   int offset = 0;
-  for (std::size_t i = 0; i < futures.size(); ++i) {
-    const std::vector<matrix_d>& chunk_result = futures[i].get();
-    if (i == 0)
-      world_output.resize(chunk_result[0].rows(),
-                          num_jobs * chunk_result[0].cols());
+  for (const auto& job_result : results) {
+    const int num_job_outputs = job_result.cols();
 
-    for (const auto& job_result : chunk_result) {
-      const int num_job_outputs = job_result.cols();
-      world_f_out.push_back(num_job_outputs);
+    world_output.block(0, offset, world_output.rows(), num_job_outputs)
+        = job_result;
 
-      if (world_output.cols() < offset + num_job_outputs)
-        world_output.conservativeResize(Eigen::NoChange,
-                                        2 * (offset + num_job_outputs));
-
-      world_output.block(0, offset, world_output.rows(), num_job_outputs)
-          = job_result;
-
-      offset += num_job_outputs;
-    }
+    offset += num_job_outputs;
   }
   CombineF combine(shared_params, job_params);
   return combine(world_output, world_f_out);
