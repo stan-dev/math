@@ -1,5 +1,5 @@
 #include <stan/math/prim/arr.hpp>
-#include <stan/math/prim/arr/meta/index_type.hpp>
+#include <stan/math/prim/meta/index_type.hpp>
 #include <test/unit/math/prim/scal/fun/promote_type_test_util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
