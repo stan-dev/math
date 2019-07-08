@@ -1,7 +1,8 @@
 #ifndef STAN_MATH_PRIM_META_HPP
 #define STAN_MATH_PRIM_META_HPP
 
-#include <stan/math/prim/arr/meta/get.hpp>
+#include <stan/math/prim/meta/get.hpp>
+
 #include <stan/math/prim/arr/meta/index_type.hpp>
 #include <stan/math/prim/arr/meta/is_vector.hpp>
 #include <stan/math/prim/arr/meta/length.hpp>
@@ -11,7 +12,6 @@
 #include <stan/math/prim/mat/meta/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/mat/meta/as_scalar.hpp>
 #include <stan/math/prim/mat/meta/broadcast_array.hpp>
-#include <stan/math/prim/mat/meta/get.hpp>
 #include <stan/math/prim/mat/meta/index_type.hpp>
 #include <stan/math/prim/mat/meta/is_constant.hpp>
 #include <stan/math/prim/mat/meta/is_vector.hpp>
@@ -40,7 +40,6 @@
 #include <stan/math/prim/scal/meta/contains_std_vector.hpp>
 #include <stan/math/prim/scal/meta/contains_vector.hpp>
 #include <stan/math/prim/scal/meta/error_index.hpp>
-#include <stan/math/prim/scal/meta/get.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/index_type.hpp>
 #include <stan/math/prim/scal/meta/is_constant.hpp>
