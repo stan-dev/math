@@ -143,7 +143,7 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
         start_tile++;
       }
       //special handling of last block
-      if(start_tile <= end_tile && (lower_upper_A == LOWER || lower_upper_B == UPPER)){
+      if(start_tile <= end_tile && (lower_upper_A == LOWER || lower_upper_B == UPPER || K % THREAD_BLOCK_SIZE != 0)){
         const int tiled_i = THREAD_BLOCK_SIZE * end_tile + thread_block_row;
         const int tiled_j = THREAD_BLOCK_SIZE * end_tile + thread_block_col;
         for (int w = 0; w < WORK_PER_THREAD; w++) {
@@ -203,7 +203,7 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
           // check if the indexes are outside the matrix
           // or under/above the diagonal with upper/lower
           // triangular matrices
-          if (A_curr_j >= K || i >= M) {
+          if (i >= M) {
             A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
                    [thread_block_row]
                 = 0.0;
@@ -212,7 +212,7 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
                    [thread_block_row]
                 = A[A_curr_j * M + i];
           }
-          if (B_curr_j >= N || tiled_i >= K) {
+          if (B_curr_j >= N) {
             B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
                    [thread_block_row]
                 = 0.0;
