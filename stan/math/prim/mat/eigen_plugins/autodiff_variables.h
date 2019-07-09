@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_MAT_MATRIX_ADDONS_H
-#define STAN_MATH_PRIM_MAT_MATRIX_ADDONS_H
+#ifndef STAN_MATH_PRIM_MAT_EIGEN_PLUGINS_AUTODIFF_VARIABLES_H
+#define STAN_MATH_PRIM_MAT_EIGEN_PLUGINS_AUTODIFF_VARIABLES_H
 
 /**
  * Reimplements is_fvar without requiring external math headers
