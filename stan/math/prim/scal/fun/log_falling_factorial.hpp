@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <stan/math/prim/scal/fun/is_any_nan.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 
@@ -54,7 +54,7 @@ namespace math {
 template <typename T1, typename T2>
 inline typename return_type<T1, T2>::type log_falling_factorial(const T1 x,
                                                                 const T2 n) {
-  if (is_nan(x) || is_nan(n))
+  if (is_any_nan(x, n))
     return NOT_A_NUMBER;
   static const char* function = "log_falling_factorial";
   check_positive(function, "first argument", x);
