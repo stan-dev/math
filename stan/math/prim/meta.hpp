@@ -9,7 +9,7 @@
 #include <stan/math/prim/meta/is_vector.hpp>
 #include <stan/math/prim/meta/length.hpp>
 
-#include <stan/math/prim/mat/meta/append_return_type.hpp>
+#include <stan/math/prim/meta/append_return_type.hpp>
 #include <stan/math/prim/mat/meta/as_array_or_scalar.hpp>
 #include <stan/math/prim/mat/meta/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/mat/meta/as_scalar.hpp>

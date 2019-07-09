@@ -1,14 +1,7 @@
-
 #include <stan/math/prim/meta.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
-
 #include <vector>
-
-
-
-
-
 
 using stan::math::append_return_type;
 
