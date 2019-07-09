@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_MAT_EIGEN_PLUGINS_HPP
-#define STAN_MATH_PRIM_MAT_EIGEN_PLUGINS_HPP
+#ifndef STAN_MATH_PRIM_MAT_EIGEN_PLUGINS_H
+#define STAN_MATH_PRIM_MAT_EIGEN_PLUGINS_H
 
 /**
  * Use this header file to add extensions to Eigen using the
