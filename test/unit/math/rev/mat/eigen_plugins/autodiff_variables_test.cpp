@@ -17,6 +17,7 @@ TEST(AgradRevMatrixAddons, var_matrix) {
       mat_in(i, j).vi_->adj_ = derivs(i, j);
 
   expect_matrix_eq(vals, mat_in.val());
+  expect_matrix_eq(vals.val(), mat_in.val());
   expect_matrix_eq(vals.array().exp(), mat_in.val().array().exp());
 
   expect_matrix_eq(derivs, mat_in.adj());
