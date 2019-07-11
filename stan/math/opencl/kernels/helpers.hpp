@@ -48,7 +48,7 @@ static const char* indexing_helpers =
 static const char* thread_block_helpers =
     R"(
   // The local memory column for each thread block
-  #define THREAD_BLOCK_SIZE_COL THREAD_BLOCK_SIZE/WORK_PER_THREAD
+  #define THREAD_BLOCK_SIZE_COL (THREAD_BLOCK_SIZE/WORK_PER_THREAD)
         )";
 }  // namespace opencl_kernels
 }  // namespace math

@@ -38,7 +38,7 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
       const int split_size = get_global_size(2);
       // local memory
       __local double A_local[THREAD_BLOCK_SIZE][THREAD_BLOCK_SIZE];
-      __local double B_local[THREAD_BLOCK_SIZE][THREAD_BLOCK_SIZE];
+      __local double B_local[THREAD_BLOCK_SIZE][THREAD_BLOCK_SIZE+1];
 
       double acc[WORK_PER_THREAD];
       for (int w = 0; w < WORK_PER_THREAD; w++) {
@@ -95,48 +95,50 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
       start_tile = max(start_tile, split_offset_tiles);
       int end_tile = min(end_tile_A, end_tile_B);                      // NOLINT
       end_tile = min(end_tile, split_offset_tiles + split_tiles - 1);  // NOLINT
+
+      const int total_work_n = min(THREAD_BLOCK_SIZE, N - THREAD_BLOCK_SIZE * (int)get_group_id(1));
+      const int total_work_m = min(THREAD_BLOCK_SIZE, M - THREAD_BLOCK_SIZE * (int)get_group_id(0));
+      const int total_work_nm = total_work_n * total_work_m;
+      const int threads_in_block = THREAD_BLOCK_SIZE_COL*THREAD_BLOCK_SIZE;
+      const int linear_index = get_local_id(0) + get_local_id(1) * THREAD_BLOCK_SIZE;
+
       //special handling of first block
-      if(lower_upper_A == UPPER || lower_upper_B == LOWER){
+      if(start_tile <= end_tile && (lower_upper_A == UPPER || lower_upper_B == LOWER)){
         const int tiled_i = THREAD_BLOCK_SIZE * start_tile + thread_block_row;
         const int tiled_j = THREAD_BLOCK_SIZE * start_tile + thread_block_col;
         for (int w = 0; w < WORK_PER_THREAD; w++) {
           // For the tiles on the diagonal we can ignore the values over
           // the diagonal if the matrix is lower triangular or under
           // the diagonal if the matrix is upper triangular
-          const A_curr_j = tiled_j + w * THREAD_BLOCK_SIZE_COL;
-          const B_curr_j = j + w * THREAD_BLOCK_SIZE_COL;
+          const int A_curr_j = tiled_j + w * THREAD_BLOCK_SIZE_COL;
+          const int B_curr_j = j + w * THREAD_BLOCK_SIZE_COL;
+          const int curr_k = thread_block_col + w * THREAD_BLOCK_SIZE_COL;
           // check if the indexes are outside the matrix
           // or under/above the diagonal with upper/lower
           // triangular matrices
           if (A_curr_j >= K || i >= M
               || (lower_upper_A == LOWER && A_curr_j > i)
               || (lower_upper_A == UPPER && A_curr_j < i)) {
-            A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-            [thread_block_row]
-                    = 0.0;
+            A_local[curr_k][thread_block_row] = 0.0;
           } else {
-            A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-            [thread_block_row]
-                    = A[A_curr_j * M + i];
+            A_local[curr_k][thread_block_row] = A[A_curr_j * M + i];
           }
           if (B_curr_j >= N || tiled_i >= K
               || (lower_upper_B == LOWER && B_curr_j > tiled_i)
               || (lower_upper_B == UPPER && B_curr_j < tiled_i)) {
-            B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-            [thread_block_row]
-                    = 0.0;
+            B_local[curr_k][thread_block_row] = 0.0;
           } else {
-            B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-            [thread_block_row]
-                    = B[B_curr_j * K + tiled_i];
+            B_local[curr_k][thread_block_row] = B[B_curr_j * K + tiled_i];
           }
         }
         barrier(CLK_LOCAL_MEM_FENCE);
-        for (int block_idx = 0; block_idx < THREAD_BLOCK_SIZE; block_idx++) {
-          for (int w = 0; w < WORK_PER_THREAD; w++) {
-            acc[w] += A_local[block_idx][thread_block_row]
-                      * B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                      [block_idx];
+        const int total_work_k = min(THREAD_BLOCK_SIZE, K - THREAD_BLOCK_SIZE * start_tile);
+        for (int idx = linear_index, acc_idx = 0; idx < total_work_nm; idx += threads_in_block, acc_idx++) {
+          const int w = idx % total_work_n;
+          const int v = idx / total_work_n;
+          for (int block_idx = 0; block_idx < total_work_k; block_idx++) {
+            acc[acc_idx] += A_local[block_idx][v]
+                            * B_local[w][block_idx];
           }
         }
         barrier(CLK_LOCAL_MEM_FENCE);
@@ -150,98 +152,106 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
           // For the tiles on the diagonal we can ignore the values over
           // the diagonal if the matrix is lower triangular or under
           // the diagonal if the matrix is upper triangular
-          const A_curr_j = tiled_j + w * THREAD_BLOCK_SIZE_COL;
-          const B_curr_j = j + w * THREAD_BLOCK_SIZE_COL;
+          const int A_curr_j = tiled_j + w * THREAD_BLOCK_SIZE_COL;
+          const int B_curr_j = j + w * THREAD_BLOCK_SIZE_COL;
+          const int curr_k = thread_block_col + w * THREAD_BLOCK_SIZE_COL;
           // check if the indexes are outside the matrix
           // or under/above the diagonal with upper/lower
           // triangular matrices
           if (A_curr_j >= K || i >= M
               || (lower_upper_A == LOWER && A_curr_j > i)
               || (lower_upper_A == UPPER && A_curr_j < i)) {
-            A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-            [thread_block_row]
-                    = 0.0;
+            A_local[curr_k][thread_block_row] = 0.0;
           } else {
-            A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-            [thread_block_row]
-                    = A[A_curr_j * M + i];
+            A_local[curr_k][thread_block_row] = A[A_curr_j * M + i];
           }
           if (B_curr_j >= N || tiled_i >= K
               || (lower_upper_B == LOWER && B_curr_j > tiled_i)
               || (lower_upper_B == UPPER && B_curr_j < tiled_i)) {
-            B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-            [thread_block_row]
-                    = 0.0;
+            B_local[curr_k][thread_block_row] = 0.0;
           } else {
-            B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-            [thread_block_row]
-                    = B[B_curr_j * K + tiled_i];
+            B_local[curr_k][thread_block_row] = B[B_curr_j * K + tiled_i];
           }
         }
         barrier(CLK_LOCAL_MEM_FENCE);
-        for (int block_idx = 0; block_idx < THREAD_BLOCK_SIZE; block_idx++) {
-          for (int w = 0; w < WORK_PER_THREAD; w++) {
-            acc[w] += A_local[block_idx][thread_block_row]
-                      * B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                      [block_idx];
+        const int total_work_k = min(THREAD_BLOCK_SIZE, K - THREAD_BLOCK_SIZE * end_tile);
+        for (int idx = linear_index, acc_idx = 0; idx < total_work_nm; idx += threads_in_block, acc_idx++) {
+          const int w = idx % total_work_n;
+          const int v = idx / total_work_n;
+          for (int block_idx = 0; block_idx < total_work_k; block_idx++) {
+            acc[acc_idx] += A_local[block_idx][v]
+                            * B_local[w][block_idx];
           }
         }
         barrier(CLK_LOCAL_MEM_FENCE);
         end_tile--;
       }
-      for (int tile_idx = start_tile; tile_idx <= end_tile; tile_idx++) {
-        const int tiled_i = THREAD_BLOCK_SIZE * tile_idx + thread_block_row;
-        const int tiled_j = THREAD_BLOCK_SIZE * tile_idx + thread_block_col;
-        // each thread copies WORK_PER_THREAD values to the local
-        // memory
-        for (int w = 0; w < WORK_PER_THREAD; w++) {
-          // For the tiles on the diagonal we can ignore the values over
-          // the diagonal if the matrix is lower triangular or under
-          // the diagonal if the matrix is upper triangular
-          const A_curr_j = tiled_j + w * THREAD_BLOCK_SIZE_COL;
-          const B_curr_j = j + w * THREAD_BLOCK_SIZE_COL;
-          // check if the indexes are outside the matrix
-          // or under/above the diagonal with upper/lower
-          // triangular matrices
-          if (i >= M) {
-            A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                   [thread_block_row]
-                = 0.0;
-          } else {
-            A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                   [thread_block_row]
-                = A[A_curr_j * M + i];
-          }
-          if (B_curr_j >= N) {
-            B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                   [thread_block_row]
-                = 0.0;
-          } else {
-            B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                   [thread_block_row]
-                = B[B_curr_j * K + tiled_i];
-          }
-        }
-        barrier(CLK_LOCAL_MEM_FENCE);
-        for (int block_idx = 0; block_idx < THREAD_BLOCK_SIZE; block_idx++) {
+      //special handling of edge blocks
+      if(total_work_n < THREAD_BLOCK_SIZE || total_work_m < THREAD_BLOCK_SIZE) {
+        for (int tile_idx = start_tile; tile_idx <= end_tile; tile_idx++) {
+          const int tiled_i = THREAD_BLOCK_SIZE * tile_idx + thread_block_row;
+          const int tiled_j = THREAD_BLOCK_SIZE * tile_idx + thread_block_col;
+          // each thread copies WORK_PER_THREAD values to the local
+          // memory
           for (int w = 0; w < WORK_PER_THREAD; w++) {
-            acc[w] += A_local[block_idx][thread_block_row]
-                      * B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
-                               [block_idx];
+            const int A_curr_j = tiled_j + w * THREAD_BLOCK_SIZE_COL;
+            const int B_curr_j = j + w * THREAD_BLOCK_SIZE_COL;
+            const int curr_k = thread_block_col + w * THREAD_BLOCK_SIZE_COL;
+            // check if the indexes are outside the matrix
+            if (i < M) {
+              A_local[curr_k][thread_block_row] = A[A_curr_j * M + i];
+            }
+            if (B_curr_j < N) {
+              B_local[curr_k][thread_block_row] = B[B_curr_j * K + tiled_i];
+            }
           }
+          barrier(CLK_LOCAL_MEM_FENCE);
+          int total_work_k = min(THREAD_BLOCK_SIZE, K - THREAD_BLOCK_SIZE * tile_idx);
+          for (int idx = linear_index, acc_idx = 0; idx < total_work_nm; idx += threads_in_block, acc_idx++) {
+            const int w = idx % total_work_n;
+            const int v = idx / total_work_n;
+            for (int block_idx = 0; block_idx < total_work_k; block_idx++) {
+              acc[acc_idx] += A_local[block_idx][v]
+                              * B_local[w][block_idx];
+            }
+          }
+          barrier(CLK_LOCAL_MEM_FENCE);
         }
-        barrier(CLK_LOCAL_MEM_FENCE);
+        for(int idx = linear_index, acc_idx=0; idx < total_work_nm; idx += threads_in_block, acc_idx++){
+          const int curr_i = THREAD_BLOCK_SIZE * get_group_id(0) + idx / total_work_n;
+          const int B_curr_j = THREAD_BLOCK_SIZE * get_group_id(1) + idx % total_work_n;
+          C[split_id * M * N + B_curr_j * M + curr_i] = acc[acc_idx];
+        }
       }
-      // each thread saves WORK_PER_THREAD values
-      for (int w = 0; w < WORK_PER_THREAD; w++) {
-        // This prevents threads from accessing elements
-        // outside the allocated memory for C. The check
-        // is in the loop because some threads
-        // can be assigned elements in and out of
-        // the allocated memory.
-        if ((j + w * THREAD_BLOCK_SIZE_COL) < N && i < M) {
-          C[split_id * M * N + (j + w * THREAD_BLOCK_SIZE_COL) * M + i]
-              = acc[w];
+      //general case that is not on the edge - all threads have work
+      else{
+        for (int tile_idx = start_tile; tile_idx <= end_tile; tile_idx++) {
+          const int tiled_i = THREAD_BLOCK_SIZE * tile_idx + thread_block_row;
+          const int tiled_j = THREAD_BLOCK_SIZE * tile_idx + thread_block_col;
+          // each thread copies WORK_PER_THREAD values to the local
+          // memory
+          for (int w = 0; w < WORK_PER_THREAD; w++) {
+            const int A_curr_j = tiled_j + w * THREAD_BLOCK_SIZE_COL;
+            const int B_curr_j = j + w * THREAD_BLOCK_SIZE_COL;
+            const int curr_k = thread_block_col + w * THREAD_BLOCK_SIZE_COL;
+            A_local[curr_k][thread_block_row] = A[A_curr_j * M + i];
+            B_local[thread_block_row][curr_k] = B[B_curr_j * K + tiled_i];
+          }
+          barrier(CLK_LOCAL_MEM_FENCE);
+          for(int acc_idx = 0; acc_idx < WORK_PER_THREAD;  acc_idx++){
+            for (int block_idx = 0; block_idx < THREAD_BLOCK_SIZE; block_idx++) {
+                acc[acc_idx] += A_local[block_idx][acc_idx * THREAD_BLOCK_SIZE_COL + thread_block_col]
+                          * B_local[block_idx][thread_block_row];
+            }
+          }
+          barrier(CLK_LOCAL_MEM_FENCE);
+        }
+        // each thread saves WORK_PER_THREAD values
+        for(int acc_idx = 0; acc_idx < WORK_PER_THREAD;  acc_idx++){
+          const int curr_i = THREAD_BLOCK_SIZE * get_group_id(0) + acc_idx * THREAD_BLOCK_SIZE_COL + thread_block_col;
+          const int B_curr_j = THREAD_BLOCK_SIZE * get_group_id(1) + thread_block_row;
+          C[split_id * M * N + B_curr_j * M + curr_i] = acc[acc_idx];
+
         }
       }
     }
