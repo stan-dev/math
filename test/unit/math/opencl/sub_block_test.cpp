@@ -62,36 +62,4 @@ TEST(MathMatrixCL, sub_block_lower_pass) {
   EXPECT_EQ(7, d2(2, 0));
 }
 
-TEST(MathMatrixCL, sub_block_pass_var) {
-  using stan::math::matrix_d;
-  using stan::math::matrix_v;
-  using stan::math::var;
-  using stan::math::matrix_cl;
-  using stan::math::vari;
-  using stan::math::matrix_vi;
-  vari** d1_vals(stan::math::ChainableStack::instance().memalloc_.alloc_array<vari*>(9));
-  vari** d2_vals(stan::math::ChainableStack::instance().memalloc_.alloc_array<vari*>(16));
-
-  for (int i = 0; i < 9; i++) {
-    d1_vals[i] = new vari(i, i+1);
-  }
-  for (int i = 0; i < 16; i++) {
-    d2_vals[i] = new vari(i, i + 1);
-  }
-  const matrix_vi d1 = Eigen::Map<matrix_vi>(d1_vals, 3, 3);
-  const matrix_vi d2 = Eigen::Map<matrix_vi>(d1_vals, 4, 4);
-  matrix_d d3(3, 3);
-
-  std::cout << d1.val();
-  matrix_cl<var> d11(d1);
-  matrix_cl<var> d22(d2);
-  d22.sub_block(d11, 0, 0, 0, 0, 2, 2);
-  d3 = stan::math::from_matrix_cl(d22.val());
-  EXPECT_EQ(0, d3(0, 0));
-  EXPECT_EQ(3, d3(0, 1));
-  EXPECT_EQ(1, d3(1, 0));
-  EXPECT_EQ(4, d3(1, 1));
-}
-
-
 #endif

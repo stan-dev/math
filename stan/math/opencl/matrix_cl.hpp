@@ -4,12 +4,10 @@
 #include <stan/math/opencl/opencl_context.hpp>
 #include <stan/math/opencl/constants.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
-#include <stan/math/opencl/buffer_types.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/arr/fun/vec_concat.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
-#include <stan/math/prim/arr/fun/vec_concat.hpp>
-#include <stan/math/rev/core.hpp>
 #include <CL/cl.hpp>
 #include <iostream>
 #include <string>
@@ -24,10 +22,14 @@
 namespace stan {
 namespace math {
 
+// Forward declare matrix_cl
+template <typename T>
+class matrix_cl;
+
 /**
  * Represents a matrix on the OpenCL device.
  *
- * The matrix data is stored in the oclBuffer_.
+ * The matrix data is stored in the buffer_cl_.
  */
 template <>
 class matrix_cl<double> {
@@ -37,7 +39,7 @@ class matrix_cl<double> {
    * An OpenCL buffer allocates the memory in the device that
    * is provided by the context.
    */
-  cl::Buffer oclBuffer_;
+  cl::Buffer buffer_cl_;
   const int rows_;
   const int cols_;
   mutable std::vector<cl::Event> write_events_;  // Tracks write jobs
@@ -171,8 +173,8 @@ class matrix_cl<double> {
     return;
   }
 
-  const cl::Buffer& buffer() const { return oclBuffer_; }
-  cl::Buffer& buffer() { return oclBuffer_; }
+  const cl::Buffer& buffer() const { return buffer_cl_; }
+  cl::Buffer& buffer() { return buffer_cl_; }
   matrix_cl() : rows_(0), cols_(0) {}
 
   matrix_cl(const matrix_cl& A) : rows_(A.rows()), cols_(A.cols()) {
@@ -184,7 +186,7 @@ class matrix_cl<double> {
     try {
       // creates a read&write object for "size" double values
       // in the provided context
-      oclBuffer_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * size());
+      buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * size());
       cl::Event cstr_event;
       queue.enqueueCopyBuffer(A.buffer(), this->buffer(), 0, 0,
                               A.size() * sizeof(double), &A.write_events(),
@@ -212,7 +214,7 @@ class matrix_cl<double> {
     cl::Context& ctx = opencl_context.context();
     try {
       // creates the OpenCL buffer of the provided size
-      oclBuffer_
+      buffer_cl_
           = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * rows_ * cols_);
     } catch (const cl::Error& e) {
       check_opencl_error("matrix constructor", e);
@@ -240,7 +242,7 @@ class matrix_cl<double> {
     try {
       // creates the OpenCL buffer to copy the Eigen
       // matrix to the OpenCL device
-      oclBuffer_
+      buffer_cl_
           = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * A.size());
       /**
        * Writes the contents of A to the OpenCL buffer
@@ -251,7 +253,7 @@ class matrix_cl<double> {
        * is finished transfering)
        */
       cl::Event transfer_event;
-      queue.enqueueWriteBuffer(oclBuffer_, CL_FALSE, 0,
+      queue.enqueueWriteBuffer(buffer_cl_, CL_FALSE, 0,
                                sizeof(double) * A.size(), A.data(), NULL,
                                &transfer_event);
       this->add_write_event(transfer_event);
@@ -270,7 +272,7 @@ class matrix_cl<double> {
     try {
       // creates the OpenCL buffer to copy the Eigen
       // matrix to the OpenCL device
-      oclBuffer_
+      buffer_cl_
           = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * A.size());
       /**
        * Writes the contents of A to the OpenCL buffer
@@ -281,7 +283,7 @@ class matrix_cl<double> {
        * is finished transfering)
        */
       cl::Event transfer_event;
-      queue.enqueueWriteBuffer(oclBuffer_, CL_FALSE, 0,
+      queue.enqueueWriteBuffer(buffer_cl_, CL_FALSE, 0,
                                sizeof(double) * A.size(), A.data(), NULL,
                                &transfer_event);
       this->add_write_event(transfer_event);
@@ -298,19 +300,11 @@ class matrix_cl<double> {
                      a.cols(), "destination.cols()", cols());
     // Need to wait for all of matrices events before destroying old buffer
     this->wait_for_read_write_events();
-    oclBuffer_ = a.buffer();
+    buffer_cl_ = a.buffer();
     return *this;
   }
 };
 
-template <int R, int C>
-std::vector<double> adjoint_of_vv(const Eigen::Matrix<var, R, C>& A) {
-  std::vector<double> ans(A.size());
-  for (int i = 0; i < A.size(); i++) {
-    ans.push_back(A(i).vi_->adj_);
-  }
-  return ans;
-}
 
 
 }  // namespace math

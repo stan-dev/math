@@ -3,13 +3,11 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/constants.hpp>
+#include <stan/math/opencl/matrix_cl.hpp>
 #include <CL/cl.hpp>
 
 namespace stan {
 namespace math {
-template <typename T>
-class matrix_cl;
-
 namespace opencl_kernels {
 
 // An in_buffer signifies a cl::Buffer argument used as input.
