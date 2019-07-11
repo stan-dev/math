@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_MAT_FUN_CSR_EXTRACT_W_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <Eigen/Sparse>
 
 namespace stan {
 namespace math {

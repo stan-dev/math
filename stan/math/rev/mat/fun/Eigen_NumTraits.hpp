@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_MAT_FUN_EIGEN_NUMTRAITS_HPP
 #define STAN_MATH_REV_MAT_FUN_EIGEN_NUMTRAITS_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/core/std_numeric_limits.hpp>
@@ -80,7 +81,8 @@ struct NumTraits<stan::math::var> : GenericNumTraits<stan::math::var> {
 
 namespace internal {
 /**
- * Workaround for Eigen removing pointer from vari* variables
+ * Partial specialization of Eigen's remove_all struct to stop
+ * Eigen removing pointer from vari* variables
  */
 template <>
 struct remove_all<stan::math::vari*> {

@@ -36,7 +36,7 @@ static const char* diag_inv_kernel_code = STRINGIFY(
      * @param rows The number of rows for A.
      * @note Code is a <code>const char*</code> held in
      * <code>diag_inv_kernel_code.</code>
-     *  Used in math/opencl/lower_tri_inverse.hpp.
+     *  Used in math/opencl/tri_inverse.hpp.
      *  This kernel uses the helper macros available in helpers.cl.
      */
     __kernel void diag_inv(__global double* A, __global double* tmp_inv,

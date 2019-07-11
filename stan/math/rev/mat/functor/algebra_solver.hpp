@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_REV_MAT_FUNCTOR_ALGEBRA_SOLVER_HPP
 #define STAN_MATH_REV_MAT_FUNCTOR_ALGEBRA_SOLVER_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/mat/functor/algebra_system.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/scal/meta/is_var.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_consistent_size.hpp>
@@ -44,12 +44,12 @@ struct algebra_solver_vari : public vari {
                       const Eigen::VectorXd& theta_dbl, Fx& fx,
                       std::ostream* msgs)
       : vari(theta_dbl(0)),
-        y_(ChainableStack::instance().memalloc_.alloc_array<vari*>(y.size())),
+        y_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(y.size())),
         y_size_(y.size()),
         x_size_(x.size()),
         theta_(
-            ChainableStack::instance().memalloc_.alloc_array<vari*>(x_size_)),
-        Jx_y_(ChainableStack::instance().memalloc_.alloc_array<double>(
+            ChainableStack::instance_->memalloc_.alloc_array<vari*>(x_size_)),
+        Jx_y_(ChainableStack::instance_->memalloc_.alloc_array<double>(
             x_size_ * y_size_)) {
     using Eigen::Map;
     using Eigen::MatrixXd;

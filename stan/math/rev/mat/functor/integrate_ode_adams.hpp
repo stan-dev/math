@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_MAT_FUNCTOR_INTEGRATE_ODE_ADAMS_HPP
 #define STAN_MATH_REV_MAT_FUNCTOR_INTEGRATE_ODE_ADAMS_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/mat/functor/cvodes_integrator.hpp>
 #include <ostream>
 #include <vector>

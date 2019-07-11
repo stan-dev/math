@@ -1,6 +1,7 @@
 // Original code from which Stan's code is derived:
 // Copyright (c) 2013, Joachim Vandekerckhove.
 // All rights reserved.
+#include <stan/math/prim/meta.hpp>
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted
@@ -39,9 +40,6 @@
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <algorithm>
 #include <cmath>
 #include <string>
@@ -84,7 +82,7 @@ typename return_type<T_y, T_alpha, T_tau, T_beta, T_delta>::type wiener_lpdf(
   static const double TWO_TIMES_SQRT_2_TIMES_SQRT_PI_TIMES_WIENER_ERR
       = 2.0 * SQRT_2_TIMES_SQRT_PI * WIENER_ERR;
   static const double LOG_TWO_OVER_TWO_PLUS_LOG_SQRT_PI
-      = LOG_TWO / 2 + LOG_SQRT_PI;
+      = LOG_2 / 2 + LOG_SQRT_PI;
   static const double SQUARE_PI_OVER_TWO = square(pi()) * 0.5;
   static const double TWO_TIMES_LOG_SQRT_PI = 2.0 * LOG_SQRT_PI;
 

@@ -1,17 +1,17 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LOWER_REG_INC_GAMMA_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LOWER_REG_INC_GAMMA_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/gamma_p.hpp>
 #include <stan/math/prim/scal/fun/log1p.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <stan/math/prim/scal/fun/is_any_nan.hpp>
 #include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
 #include <stan/math/prim/scal/fun/value_of_rec.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <limits>
 
 namespace stan {
@@ -110,7 +110,7 @@ typename return_type<T1, T2>::type grad_reg_lower_inc_gamma(
   using std::pow;
   typedef typename return_type<T1, T2>::type TP;
 
-  if (is_nan(a) || is_nan(z))
+  if (is_any_nan(a, z))
     return std::numeric_limits<TP>::quiet_NaN();
 
   check_positive_finite("grad_reg_lower_inc_gamma", "a", a);
@@ -167,7 +167,7 @@ typename return_type<T1, T2>::type grad_reg_lower_inc_gamma(
                    " iterations, gamma_p(a,z) gradient (a) "
                    "did not converge.");
     ++n;
-    lgamma_a_plus_n_plus_1 += log(a_plus_n + 1);
+    lgamma_a_plus_n_plus_1 += log1p(a_plus_n);
     ++a_plus_n;
   }
 }

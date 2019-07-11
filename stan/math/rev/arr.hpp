@@ -2,8 +2,7 @@
 #define STAN_MATH_REV_ARR_HPP
 
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/scal/meta/is_var.hpp>
-#include <stan/math/rev/scal/meta/partials_type.hpp>
+#include <stan/math/rev/meta.hpp>
 
 #include <stan/math/prim/arr.hpp>
 #include <stan/math/rev/scal.hpp>
