@@ -5,7 +5,7 @@
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
-#include <Eigen/Dense>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 
 namespace stan {
