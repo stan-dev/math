@@ -3,7 +3,7 @@
 
 #include <stan/math/mix/mat.hpp>
 
-using stan::is_constant_struct;
+using stan::is_constant_all;
 using stan::is_vector;
 using stan::math::fvar;
 using stan::math::var;
@@ -596,7 +596,7 @@ typename scalar_type<T>::type select_var_param(
     const vector<vector<double> >& parameters, const size_t n, const size_t p) {
   typename scalar_type<T>::type param(0);
   if (p < parameters[0].size()) {
-    if (is_vector<T>::value && !is_constant_struct<T>::value)
+    if (is_vector<T>::value && !is_constant_all<T>::value)
       param = parameters[n][p];
     else
       param = parameters[0][p];
@@ -628,12 +628,12 @@ template <typename T0, typename T1, typename T2, typename T3, typename T4,
           typename T5>
 struct all_constant {
   enum {
-    value = (is_constant_struct<T0>::value || is_empty<T0>::value)
-            && (is_constant_struct<T1>::value || is_empty<T1>::value)
-            && (is_constant_struct<T2>::value || is_empty<T2>::value)
-            && (is_constant_struct<T3>::value || is_empty<T3>::value)
-            && (is_constant_struct<T4>::value || is_empty<T4>::value)
-            && (is_constant_struct<T5>::value || is_empty<T5>::value)
+    value = (is_constant_all<T0>::value || is_empty<T0>::value)
+            && (is_constant_all<T1>::value || is_empty<T1>::value)
+            && (is_constant_all<T2>::value || is_empty<T2>::value)
+            && (is_constant_all<T3>::value || is_empty<T3>::value)
+            && (is_constant_all<T4>::value || is_empty<T4>::value)
+            && (is_constant_all<T5>::value || is_empty<T5>::value)
   };
 };
 
@@ -641,12 +641,12 @@ template <typename T0, typename T1, typename T2, typename T3, typename T4,
           typename T5>
 struct all_var {
   enum {
-    value = (!is_constant_struct<T0>::value || is_empty<T0>::value)
-            && (!is_constant_struct<T1>::value || is_empty<T1>::value)
-            && (!is_constant_struct<T2>::value || is_empty<T2>::value)
-            && (!is_constant_struct<T3>::value || is_empty<T3>::value)
-            && (!is_constant_struct<T4>::value || is_empty<T4>::value)
-            && (!is_constant_struct<T5>::value || is_empty<T5>::value)
+    value = (!is_constant_all<T0>::value || is_empty<T0>::value)
+            && (!is_constant_all<T1>::value || is_empty<T1>::value)
+            && (!is_constant_all<T2>::value || is_empty<T2>::value)
+            && (!is_constant_all<T3>::value || is_empty<T3>::value)
+            && (!is_constant_all<T4>::value || is_empty<T4>::value)
+            && (!is_constant_all<T5>::value || is_empty<T5>::value)
   };
 };
 
@@ -742,17 +742,17 @@ void add_var<Eigen::Matrix<fvar<fvar<var> >, Eigen::Dynamic, 1> >(
 template <typename T0, typename T1, typename T2, typename T3, typename T4,
           typename T5>
 void add_vars(vector<var>& x, T0& p0, T1& p1, T2& p2, T3& p3, T4& p4, T5& p5) {
-  if (!is_constant_struct<T0>::value)
+  if (!is_constant_all<T0>::value)
     add_var(x, p0);
-  if (!is_constant_struct<T1>::value)
+  if (!is_constant_all<T1>::value)
     add_var(x, p1);
-  if (!is_constant_struct<T2>::value)
+  if (!is_constant_all<T2>::value)
     add_var(x, p2);
-  if (!is_constant_struct<T3>::value)
+  if (!is_constant_all<T3>::value)
     add_var(x, p3);
-  if (!is_constant_struct<T4>::value)
+  if (!is_constant_all<T4>::value)
     add_var(x, p4);
-  if (!is_constant_struct<T5>::value)
+  if (!is_constant_all<T5>::value)
     add_var(x, p5);
 }
 

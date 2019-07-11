@@ -8,6 +8,8 @@
 #include <stan/math/opencl/zeros.hpp>
 #include <stan/math/opencl/sub_block.hpp>
 
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+
 namespace stan {
 namespace math {
 /**

@@ -71,11 +71,11 @@ typename return_type<T_y, T_loc, T_scale>::type cauchy_lcdf(
 
     const T_partials_return rep_deriv
         = 1.0 / (pi() * Pn * (z * z * sigma_dbl + sigma_dbl));
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n] += rep_deriv;
-    if (!is_constant_struct<T_loc>::value)
+    if (!is_constant_all<T_loc>::value)
       ops_partials.edge2_.partials_[n] -= rep_deriv;
-    if (!is_constant_struct<T_scale>::value)
+    if (!is_constant_all<T_scale>::value)
       ops_partials.edge3_.partials_[n] -= rep_deriv * z;
   }
   return ops_partials.build(cdf_log);

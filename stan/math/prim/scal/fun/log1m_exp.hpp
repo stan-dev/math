@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/expm1.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <cmath>
 #include <limits>
 
@@ -46,7 +47,7 @@ inline double log1m_exp(double a) {
   using std::exp;
   using std::log;
   if (a >= 0)
-    return std::numeric_limits<double>::quiet_NaN();
+    return NOT_A_NUMBER;
   else if (a > -0.693147)
     return log(-expm1(a));  // 0.693147 ~= log(2)
   else

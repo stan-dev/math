@@ -66,12 +66,12 @@ typename return_type<T_y, T_scale, T_shape>::type pareto_lccdf(
 
     P += alpha_dbl * log_dbl;
 
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n]
           -= alpha_dbl * y_min_inv_dbl * exp(log_dbl);
-    if (!is_constant_struct<T_scale>::value)
+    if (!is_constant_all<T_scale>::value)
       ops_partials.edge2_.partials_[n] += alpha_dbl * y_min_inv_dbl;
-    if (!is_constant_struct<T_shape>::value)
+    if (!is_constant_all<T_shape>::value)
       ops_partials.edge3_.partials_[n] += log_dbl;
   }
   return ops_partials.build(P);

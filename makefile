@@ -47,6 +47,7 @@ help:
 	@echo '      * fwd -> prim'
 	@echo '      * mix -> {rev, fwd, prim}'
 	@echo '      * within {prim, rev, fwd, mix}: mat -> arr -> scal'
+	@echo '      * only include {prim, rev, fwd, mix}/meta.hpp from the meta subfolders'
 	@echo ''
 	@echo '  Cpplint'
 	@echo '  - cpplint       : runs cpplint.py on source files. requires python 2.7.'

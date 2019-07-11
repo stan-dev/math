@@ -24,11 +24,11 @@ do_lkj_constant(const T_shape& eta, const unsigned int& K) {
       denominator(k - 1) = lgamma(2.0 * k);
     constant = -denominator.sum();
     if ((K % 2) == 1)
-      constant -= 0.25 * (K * K - 1) * LOG_PI - 0.25 * (Km1 * Km1) * LOG_TWO
+      constant -= 0.25 * (K * K - 1) * LOG_PI - 0.25 * (Km1 * Km1) * LOG_2
                   - Km1 * lgamma(0.5 * (K + 1));
     else
       constant -= 0.25 * K * (K - 2) * LOG_PI
-                  + 0.25 * (3 * K * K - 4 * K) * LOG_TWO + K * lgamma(0.5 * K)
+                  + 0.25 * (3 * K * K - 4 * K) * LOG_2 + K * lgamma(0.5 * K)
                   - Km1 * lgamma(static_cast<double>(K));
   } else {
     constant = Km1 * lgamma(eta + 0.5 * Km1);
@@ -60,7 +60,7 @@ typename boost::math::tools::promote_args<T_y, T_shape>::type lkj_corr_lpdf(
     lp += do_lkj_constant(eta, K);
 
   if ((eta == 1.0)
-      && stan::is_constant<typename stan::scalar_type<T_shape> >::value)
+      && stan::is_constant_all<typename stan::scalar_type<T_shape> >::value)
     return lp;
 
   if (!include_summand<propto, T_y, T_shape>::value)

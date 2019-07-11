@@ -51,12 +51,12 @@ typename return_type<T_y, T_loc, T_scale, T_shape>::type pareto_type_2_cdf(
   VectorBuilder<true, T_partials_return, T_y, T_loc, T_scale, T_shape>
       p1_pow_alpha(N);
 
-  VectorBuilder<contains_nonconstant_struct<T_y, T_loc, T_scale>::value,
-                T_partials_return, T_y, T_loc, T_scale, T_shape>
+  VectorBuilder<!is_constant_all<T_y, T_loc, T_scale>::value, T_partials_return,
+                T_y, T_loc, T_scale, T_shape>
       grad_1_2(N);
 
-  VectorBuilder<contains_nonconstant_struct<T_shape, T_y>::value,
-                T_partials_return, T_y, T_loc, T_scale, T_shape>
+  VectorBuilder<!is_constant_all<T_shape, T_y>::value, T_partials_return, T_y,
+                T_loc, T_scale, T_shape>
       grad_3(N);
 
   for (size_t i = 0; i < N; i++) {
@@ -66,10 +66,10 @@ typename return_type<T_y, T_loc, T_scale, T_shape>::type pareto_type_2_cdf(
         = 1 + (value_of(y_vec[i]) - value_of(mu_vec[i])) / lambda_dbl;
     p1_pow_alpha[i] = pow(temp, -alpha_dbl);
 
-    if (contains_nonconstant_struct<T_y, T_loc, T_scale>::value)
+    if (!is_constant_all<T_y, T_loc, T_scale>::value)
       grad_1_2[i] = p1_pow_alpha[i] / temp * alpha_dbl / lambda_dbl;
 
-    if (!is_constant_struct<T_shape>::value)
+    if (!is_constant_all<T_shape>::value)
       grad_3[i] = log(temp) * p1_pow_alpha[i];
   }
 
@@ -82,30 +82,30 @@ typename return_type<T_y, T_loc, T_scale, T_shape>::type pareto_type_2_cdf(
 
     P *= Pn;
 
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n] += grad_1_2[n] / Pn;
-    if (!is_constant_struct<T_loc>::value)
+    if (!is_constant_all<T_loc>::value)
       ops_partials.edge2_.partials_[n] -= grad_1_2[n] / Pn;
-    if (!is_constant_struct<T_scale>::value)
+    if (!is_constant_all<T_scale>::value)
       ops_partials.edge3_.partials_[n]
           += (mu_dbl - y_dbl) * grad_1_2[n] / lambda_dbl / Pn;
-    if (!is_constant_struct<T_shape>::value)
+    if (!is_constant_all<T_shape>::value)
       ops_partials.edge4_.partials_[n] += grad_3[n] / Pn;
   }
 
-  if (!is_constant_struct<T_y>::value) {
+  if (!is_constant_all<T_y>::value) {
     for (size_t n = 0; n < stan::length(y); ++n)
       ops_partials.edge1_.partials_[n] *= P;
   }
-  if (!is_constant_struct<T_loc>::value) {
+  if (!is_constant_all<T_loc>::value) {
     for (size_t n = 0; n < stan::length(mu); ++n)
       ops_partials.edge2_.partials_[n] *= P;
   }
-  if (!is_constant_struct<T_scale>::value) {
+  if (!is_constant_all<T_scale>::value) {
     for (size_t n = 0; n < stan::length(lambda); ++n)
       ops_partials.edge3_.partials_[n] *= P;
   }
-  if (!is_constant_struct<T_shape>::value) {
+  if (!is_constant_all<T_shape>::value) {
     for (size_t n = 0; n < stan::length(alpha); ++n)
       ops_partials.edge4_.partials_[n] *= P;
   }

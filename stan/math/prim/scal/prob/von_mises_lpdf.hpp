@@ -38,9 +38,9 @@ typename return_type<T_y, T_loc, T_scale>::type von_mises_lpdf(
   if (!include_summand<propto, T_y, T_loc, T_scale>::value)
     return logp;
 
-  const bool y_const = is_constant_struct<T_y>::value;
-  const bool mu_const = is_constant_struct<T_loc>::value;
-  const bool kappa_const = is_constant_struct<T_scale>::value;
+  const bool y_const = is_constant_all<T_y>::value;
+  const bool mu_const = is_constant_all<T_loc>::value;
+  const bool kappa_const = is_constant_all<T_scale>::value;
 
   const bool compute_bessel0 = include_summand<propto, T_scale>::value;
   const bool compute_bessel1 = !kappa_const;

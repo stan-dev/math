@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_HPP
 #define STAN_MATH_PRIM_MAT_HPP
 
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 
 #include <stan/math/prim/mat/err/check_cholesky_factor.hpp>
@@ -43,7 +44,6 @@
 #include <stan/math/prim/mat/err/is_unit_vector.hpp>
 #include <stan/math/prim/mat/err/validate_non_negative_index.hpp>
 
-#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/LDLT_factor.hpp>
 #include <stan/math/prim/mat/fun/Phi.hpp>
 #include <stan/math/prim/mat/fun/Phi_approx.hpp>
