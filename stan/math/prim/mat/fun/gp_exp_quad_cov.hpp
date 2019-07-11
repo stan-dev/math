@@ -446,7 +446,7 @@ inline Eigen::MatrixXd gp_exp_quad_cov(
   check_size_match(function_name, "x dimension", inner_x1_size,
                    "number of length scales", length_scale.size());
   const auto total_size = x_size * inner_x1_size + inner_x1_size + cov.size();
-  if (total_size <  opencl_context.tuning_opts().gp_exp_quad_cov_complex) {
+  if (total_size < opencl_context.tuning_opts().gp_exp_quad_cov_complex) {
     return internal::gp_exp_quad_cov(divide_columns(x, length_scale),
                                      square(sigma));
   }
@@ -539,7 +539,8 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(
 
   const int x1_inner_size = x1[0].size();
   const int x2_inner_size = x1[0].size();
-  const auto total_size = x1_size * x1_inner_size + x2_size * x2_inner_size + cov.size();
+  const auto total_size
+      = x1_size * x1_inner_size + x2_size * x2_inner_size + cov.size();
   if (total_size < opencl_context.tuning_opts().gp_exp_quad_cov_complex) {
     for (size_t i = 0; i < x1.size(); ++i)
       check_not_nan(function_name, "x1", x1[i]);
@@ -596,7 +597,8 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(
                    "number of length scales", l_size);
   check_size_match(function_name, "x dimension", x2[0].size(),
                    "number of length scales", l_size);
-  const auto total_size = x1_size * x1_inner_size + x2_size * x2_inner_size + l_size + cov.size();
+  const auto total_size
+      = x1_size * x1_inner_size + x2_size * x2_inner_size + l_size + cov.size();
   if (total_size < opencl_context.tuning_opts().gp_exp_quad_cov_complex) {
     for (size_t i = 0; i < x1_size; ++i)
       check_not_nan(function_name, "x1", x1[i]);
