@@ -196,9 +196,8 @@ class opencl_context_base {
     // used in math/opencl/multiply
     int multiply_split_upper_limit = 2000000;
     // used in math/prim/mat/fun/gp_exp_quad_cov
-    double gp_exp_quad_cov_size_coef = 0.6272023;
-    double gp_exp_quad_cov_complex_coef = -7.4370459;
-    double gp_exp_quad_cov_simple_coef = -8.0973003;
+    double gp_exp_quad_cov_complex = 1'000'000;
+    double gp_exp_quad_cov_simple = 1'250;
     // used in math/prim/mat/fun/mdivide_left_tri
     // and math/rev/mat/fun/mdivide_left_tri
     int tri_inverse_size_worth_transfer = 100;
