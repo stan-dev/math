@@ -170,9 +170,6 @@ inline matrix_cl<double> packed_copy(const std::vector<double>& src, int rows) {
   return dst;
 }
 
-
-
-
 /**
  * Copies the source matrix to the
  * destination matrix. Both matrices

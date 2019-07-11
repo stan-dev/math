@@ -21,7 +21,8 @@ namespace math {
  * input matrices do not have matching dimensions
  *
  */
-inline matrix_cl<double> add(const matrix_cl<double>& A, const matrix_cl<double>& B) {
+inline matrix_cl<double> add(const matrix_cl<double>& A,
+                             const matrix_cl<double>& B) {
   check_matching_dims("add", "A", A, "B", B);
   matrix_cl<double> C(A.rows(), A.cols());
   if (C.size() == 0) {

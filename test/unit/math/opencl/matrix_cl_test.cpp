@@ -23,5 +23,4 @@ TEST(MathMatrixCL, matrix_cl_double_creation) {
   EXPECT_NO_THROW(stan::math::matrix_cl<double> mat_2cl(mat_2));
 }
 
-
 #endif

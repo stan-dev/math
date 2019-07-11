@@ -39,7 +39,8 @@ inline const T& get_kernel_args(const T& t) {
   return t;
 }
 
-inline const cl::Buffer& get_kernel_args(const stan::math::matrix_cl<double>& m) {
+inline const cl::Buffer& get_kernel_args(
+    const stan::math::matrix_cl<double>& m) {
   return m.buffer();
 }
 
@@ -59,8 +60,8 @@ inline void assign_event<out_buffer>(const cl::Event& e,
 }
 
 template <>
-inline void assign_event<in_out_buffer>(const cl::Event& e,
-                                        const stan::math::matrix_cl<double>& m) {
+inline void assign_event<in_out_buffer>(
+    const cl::Event& e, const stan::math::matrix_cl<double>& m) {
   m.add_read_write_event(e);
 }
 

@@ -292,7 +292,6 @@ class matrix_cl<double> {
     }
   }
 
-
   matrix_cl<double>& operator=(const matrix_cl<double>& a) {
     check_size_match("assignment of (OpenCL) matrices", "source.rows()",
                      a.rows(), "destination.rows()", rows());
@@ -304,8 +303,6 @@ class matrix_cl<double> {
     return *this;
   }
 };
-
-
 
 }  // namespace math
 }  // namespace stan

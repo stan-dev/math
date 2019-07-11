@@ -40,8 +40,8 @@ TEST(MathMatrixCL, sub_block_exception) {
 }
 
 TEST(MathMatrixCL, sub_block_lower_pass) {
-  using stan::math::matrix_d;
   using stan::math::matrix_cl;
+  using stan::math::matrix_d;
   matrix_d d1;
   matrix_d d2;
 

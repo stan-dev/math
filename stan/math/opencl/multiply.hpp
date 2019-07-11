@@ -33,7 +33,8 @@ namespace opencl {
 
 template <TriangularViewCL triangular_view_A = TriangularViewCL::Entire,
           TriangularViewCL triangular_view_B = TriangularViewCL::Entire>
-inline matrix_cl<double> multiply(const matrix_cl<double>& A, const matrix_cl<double>& B) {
+inline matrix_cl<double> multiply(const matrix_cl<double>& A,
+                                  const matrix_cl<double>& B) {
   check_size_match("multiply ((OpenCL))", "A.cols()", A.cols(), "B.rows()",
                    B.rows());
   matrix_cl<double> temp(A.rows(), B.cols());
@@ -110,7 +111,8 @@ inline matrix_cl<double> multiply(const matrix_cl<double>& A, const matrix_cl<do
  * @param scalar scalar
  * @return matrix multipled with scalar
  */
-inline matrix_cl<double> multiply(const matrix_cl<double>& A, const double scalar) {
+inline matrix_cl<double> multiply(const matrix_cl<double>& A,
+                                  const double scalar) {
   matrix_cl<double> temp(A.rows(), A.cols());
   if (A.size() == 0)
     return temp;
@@ -131,7 +133,8 @@ inline matrix_cl<double> multiply(const matrix_cl<double>& A, const double scala
  * @param A matrix
  * @return matrix multipled with scalar
  */
-inline matrix_cl<double> multiply(const double scalar, const matrix_cl<double>& A) {
+inline matrix_cl<double> multiply(const double scalar,
+                                  const matrix_cl<double>& A) {
   return multiply(A, scalar);
 }
 
@@ -147,7 +150,8 @@ inline matrix_cl<double> multiply(const double scalar, const matrix_cl<double>& 
  * @throw <code>std::invalid_argument</code> if the
  *   number of columns in A and rows in B do not match
  */
-inline matrix_cl<double> multiply(const matrix_cl<double>& A, const matrix_cl<double>& B) {
+inline matrix_cl<double> multiply(const matrix_cl<double>& A,
+                                  const matrix_cl<double>& B) {
   return opencl::multiply(A, B);
 }
 
@@ -163,13 +167,16 @@ inline matrix_cl<double> multiply(const matrix_cl<double>& A, const matrix_cl<do
  * @throw <code>std::invalid_argument</code> if the
  *   number of columns in A and rows in B do not match
  */
-inline matrix_cl<double> operator*(const matrix_cl<double>& A, const matrix_cl<double>& B) {
+inline matrix_cl<double> operator*(const matrix_cl<double>& A,
+                                   const matrix_cl<double>& B) {
   return opencl::multiply(A, B);
 }
-inline matrix_cl<double> operator*(const matrix_cl<double>& B, const double scalar) {
+inline matrix_cl<double> operator*(const matrix_cl<double>& B,
+                                   const double scalar) {
   return multiply(B, scalar);
 }
-inline matrix_cl<double> operator*(const double scalar, const matrix_cl<double>& B) {
+inline matrix_cl<double> operator*(const double scalar,
+                                   const matrix_cl<double>& B) {
   return multiply(scalar, B);
 }
 }  // namespace math
