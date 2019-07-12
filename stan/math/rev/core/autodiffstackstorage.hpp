@@ -387,16 +387,18 @@ static std::size_t get_new_stack_id() {
 
   static void init() {
     if (!instance_) {
-      std::cout << "Creating AD tape instance in init." << std::endl;
+      // std::cout << "Creating AD tape instance in init." << std::endl;
       AutodiffStackStorage *root_instance = new AutodiffStackStorage();
       root_instance->is_root_ = true;
       instance_ = root_instance;
       root_instance->activate();
+      /*
       std::cout << "Root instance activated." << std::endl;
       if (instance_->is_root())
         std::cout << "Yep, we got root" << std::endl;
       else
         std::cout << "Nope, we do not have root" << std::endl;
+      */
       // AutodiffStackQueue &local_queue = queue();
       // instance_
       //    = local_queue.instance_stack_[local_queue.current_instance_].get();

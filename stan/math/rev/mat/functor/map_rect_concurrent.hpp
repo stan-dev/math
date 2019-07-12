@@ -35,7 +35,7 @@ map_rect_concurrent(
 
   auto execute_chunk = [&](int start, int size) -> std::vector<matrix_d> {
 #ifdef STAN_THREADS
-    ChainableStack thread_stack_instance;
+    ChainableStack::init();  // thread_stack_instance;
 #endif
     const int end = start + size;
     std::vector<matrix_d> chunk_f_out;
