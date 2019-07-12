@@ -24,7 +24,7 @@ namespace math {
     /** Jacobian of the solution with respect to the global parameter */
     Eigen::MatrixXd J_;  // double* J_;
     /** Jacobian of the system with respect to the unknown theta */
-    Eigen::MatrixXd J_f_theta_;
+    // Eigen::MatrixXd J_f_theta_;
 
     lgp_dense_newton_solver_vari(const Eigen::Matrix<T,
                                    Eigen::Dynamic, 1>& phi,

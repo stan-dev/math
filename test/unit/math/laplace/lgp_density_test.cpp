@@ -7,7 +7,7 @@
 
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/util.hpp>
-#include <test/unit/math/laplace/kinsol_test.cpp>
+#include <test/unit/math/laplace/lgp_utility.hpp>
 #include <gtest/gtest.h>
 #include <iostream>
 #include <istream>
@@ -32,6 +32,9 @@ TEST(laplace, lgp_performance_density) {
   using stan::math::sum;
 
   std::string data_directory = "test/unit/math/laplace/data_cpp/";
+  // std::string data_directory = "test/unit/math/laplace/big_data_cpp/";
+  // std::string data_directory
+  //   = "test/unit/math/rev/mat/functor/performance/data_cpp/";
   int n_dimensions = 5;
   Eigen::VectorXd dimensions(n_dimensions);
   dimensions << 10, 20, 50, 100, 500;
@@ -41,7 +44,7 @@ TEST(laplace, lgp_performance_density) {
   std::chrono::duration<double> elapsed_time_evaluation;
   std::chrono::duration<double> elapsed_time_jacobian;
 
-  for (int k = 4; k < 5; k++) {
+  for (int k = 0; k < 5; k++) {
     int dim_theta = dimensions(k);
 
     int N = 3 * dim_theta;  // number of observations
@@ -50,47 +53,7 @@ TEST(laplace, lgp_performance_density) {
     std::vector<int> sums(dim_theta);
     std::vector<int> n_samples(dim_theta);
 
-    // Read in data -- CHECK: is there a cleaner way of doing this?
-    std::ifstream input_data;
-    std::string dim_theta_string = std::to_string(dim_theta);
-    std::string file_y = data_directory + "y_" + dim_theta_string + ".csv";
-    std::string file_index = data_directory + "index_" +
-      dim_theta_string + ".csv";
-    std::string file_m = data_directory + "m_" + dim_theta_string + ".csv";
-    std::string file_sums = data_directory + "sums_" +
-      dim_theta_string + ".csv";
-
-    input_data.open(file_m);
-    double buffer = 0.0;
-    for (int n = 0; n < dim_theta; ++n) {
-      input_data >> buffer;
-      n_samples[n] = buffer;
-    }
-    input_data.close();
-
-    input_data.open(file_sums);
-    buffer = 0.0;
-    for (int n = 0; n < dim_theta; ++n) {
-      input_data >> buffer;
-      sums[n] = buffer;
-    }
-    input_data.close();
-
-    input_data.open(file_y);
-    buffer = 0.0;
-    for (int n = 0; n < N; ++n) {
-      input_data >> buffer;
-      y[n] = buffer;
-    }
-    input_data.close();
-
-    input_data.open(file_index);
-    buffer = 0.0;
-    for (int n = 0; n < N; ++n) {
-      input_data >> buffer;
-      index[n] = buffer;
-    }
-    input_data.close();
+    read_in_data(dim_theta, N, data_directory, y, index, sums, n_samples);
 
     int dim_phi = 2;
     Eigen::Matrix<var, Eigen::Dynamic, 1> phi(dim_phi);
@@ -104,22 +67,28 @@ TEST(laplace, lgp_performance_density) {
     target += normal_lpdf(phi(1), 0.5, 0.1);
 
     Eigen::VectorXd theta_0 = Eigen::VectorXd::Zero(dim_theta);
+    Eigen::Matrix<var, Eigen::Dynamic, 1> theta;
 
-    // find mode value for theta.
-    // bool line_search = false;
-    // bool print_iteration = false;
-    // bool space_matters = true;
-    // Eigen::Matrix<var, Eigen::Dynamic, 1>
-    //   theta = lgp_dense_newton_solver(theta_0, phi, n_samples, sums,
-    //                                   1e-6, 100, line_search,
-    //                                   print_iteration, space_matters);
-
-    Eigen::Matrix<var, Eigen::Dynamic, 1>
-      theta = lgp_solver(theta_0, phi, n_samples, sums);
+    // options:
+    //  1. kinsol solver
+    //  2. custom Newton solver.
+    //  3. algoritm 3.1 solver
+    int solving_method = 1;
+    auto start_optimization = std::chrono::system_clock::now();
+    if (solving_method == 1)
+      theta = lgp_solver(theta_0, phi, n_samples, sums, 1e-6, 100);
+    if (solving_method == 2) 
+      theta = lgp_dense_newton_solver(theta_0, phi, n_samples, sums, 1e-6,
+                                      100, 0, 0, 1);
+    auto end_optimization = std::chrono::system_clock::now();
+    std::chrono::duration<double>
+      elapsed_time_optimization = end_optimization - start_optimization;
 
     // likelihood of y conditional on phi and theta
-    for (int i = 0; i < N; i++)
-      target += poisson_log_lpmf(y[i], theta(index[i] - 1));
+    // (commented out: likelihood density is not relevant for 
+    // comparing algorithms, since it is the same for all methods.)
+    // for (int i = 0; i < N; i++)
+    //   target += poisson_log_lpmf(y[i], theta(index[i] - 1));
 
     // ratio of conditionals on theta
     Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
@@ -128,11 +97,11 @@ TEST(laplace, lgp_performance_density) {
     for (int i = 0; i < dim_theta; i++)  // CHECK -- use dot_product?
       first_term(i) = - n_samples[i] * exp(theta(i));
 
-    // several options:
+    // options:
     //  1. efficient method, see math appendix.
-    //  2. former inefficient method, works as a benchmark.
-    //  3. method based on algorithm 3.1.
-    int method = 3;
+    //  2. former inefficient method, which should be used as a benchmark.
+    //  3. method based on algorithm 3.1. of GP for ML textbook.
+    int method = 1;
 
     if (method == 1) {
       target += - 0.5 * dot_product(theta, mdivide_left(Sigma, theta));
@@ -164,11 +133,12 @@ TEST(laplace, lgp_performance_density) {
     if (method == 3) {
       using stan::math::diff_poisson_log;
       var sum_log_diag_L;
+      
       Eigen::Matrix<var, Eigen::Dynamic, 1>
         a = newton_update(theta, Sigma,
                           diff_poisson_log(to_vector(n_samples),
                                            to_vector(sums)),
-                          sum_log_diag_L);
+                          sum_log_diag_L, true);
 
       target += -0.5 * multiply(transpose(a), theta) - sum_log_diag_L;
     }
@@ -186,6 +156,10 @@ TEST(laplace, lgp_performance_density) {
     elapsed_time_jacobian = end - start;
 
     std::cout << "dim theta: " << dim_theta << std::endl
+              << "method: " << solving_method << " " << method
+              << std::endl
+              << "data: " << data_directory
+              << std::endl
               << "target: " << target << std::endl
               << "grad: " << g[0] << " " << g[1] << std::endl
               << "evaluation time: " << elapsed_time_evaluation.count()
@@ -194,6 +168,8 @@ TEST(laplace, lgp_performance_density) {
               << std::endl
               << "total time: " << elapsed_time_evaluation.count()
                                    + elapsed_time_jacobian.count()
+              << std::endl
+              << "Optimization time: " << elapsed_time_optimization.count() 
               << std::endl;
 
     // evaluate function with solution

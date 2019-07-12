@@ -106,10 +106,6 @@ namespace math {
         theta_dbl = theta_candidate;
       }
 
-      // Should really be an mdivide. However, the hessian is diagonal and 
-      // stored as a vector, so need to use elt_divide.
-      // theta_dbl -= mdivide_left(gradient, system.cond_hessian(theta_dbl));
-
       // Check solution is a root of the gradient
       if (gradient.norm() <= tol) break;
     }

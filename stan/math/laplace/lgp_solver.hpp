@@ -65,7 +65,7 @@ struct lgp_J_f {
 };
 
 /**
- * Function decleration when phi is passed as a vector of double.
+ * Function definition when phi is passed as a vector of double.
  */
 template <typename T>
 Eigen::VectorXd lgp_solver(

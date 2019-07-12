@@ -12,6 +12,7 @@
 #include <sundials/sundials_types.h>   /* defs. of realtype, sunindextype */
 #include <sundials/sundials_math.h>    /* access to SUNRexp               */
 
+#include <test/unit/math/laplace/lgp_utility.hpp>
 #include <test/unit/math/rev/mat/functor/util_algebra_solver.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/util.hpp>
@@ -133,33 +134,6 @@ TEST(matrix, kinsol) {
 ///////////////////////////////////////////////////////////////////////////////
 // Now do the tests, using a regular Stan functor as a starting point.
 
-struct lgp_functor {
-  template <typename T0, typename T1>
-  inline Eigen::Matrix<typename stan::return_type<T0, T1>::type,
-                       Eigen::Dynamic, 1>
-  operator ()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
-              const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,
-              const std::vector<double>& dat,
-              const std::vector<int>& dat_int,
-              std::ostream* pstream__) const {
-    typedef typename stan::return_type<T0, T1>::type scalar;
-    Eigen::Matrix<scalar, Eigen::Dynamic, 1> fgrad;
-    int dim_theta = 2;
-
-    Eigen::VectorXd n_samples(dim_theta);
-    n_samples(0) = dat[0];
-    n_samples(1) = dat[1];
-
-    Eigen::VectorXd sums(dim_theta);
-    sums(0) = dat[2];
-    sums(1) = dat[3];
-
-    return sums - stan::math::elt_multiply(n_samples,
-                                           stan::math::exp(theta))
-      - theta / phi(0);
-  }
-};
-
 TEST(matrix, kinsol2) {
   // Apply KINSOL solver to a functor defined a la Stan (i.e. lgp_functor).
   using stan::math::kinsol_system_data;
@@ -262,53 +236,6 @@ TEST(matrix, kinsol3) {
   EXPECT_FLOAT_EQ( 0.628261, theta(1));
 }
 
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
-covariance (Eigen::Matrix<T, Eigen::Dynamic, 1> phi, int M,
-            bool space_matters = false) {
-  using std::pow;
-  T sigma = phi[0];
-  T rho = phi[1];
-  double exponent;
-
-  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> Sigma(M, M);
-
-  for (int i = 0; i < M; i++) {
-    for (int j = 0; j < i; j++) {
-      if (space_matters) {exponent = i - j;} else {exponent = 1;}
-      Sigma(i, j) = pow(rho, exponent) * sigma;
-      Sigma(j, i) = Sigma(i, j);
-    }
-    Sigma(i, i) = sigma;
-  }
-
-  return Sigma;
-}
-
-struct inla_functor {
-  template <typename T0, typename T1>
-  inline Eigen::Matrix<typename stan::return_type<T0, T1>::type,
-                       Eigen::Dynamic, 1>
-  operator() (const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
-           const Eigen::Matrix<T1, Eigen::Dynamic, 1>& parm,
-           const std::vector<double>& dat,
-           const std::vector<int>& dat_int,
-           std::ostream* pstream__ = 0) const {
-    using stan::math::to_vector;
-    using stan::math::head;
-    using stan::math::tail;
-
-    int n_groups = theta.size();
-    Eigen::VectorXd n_samples = to_vector(head(dat, n_groups));
-    Eigen::VectorXd sums = to_vector(tail(dat, dat.size() - n_groups));
-    Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic>
-      Sigma = covariance(parm, n_groups, 1);
-
-    return sums - stan::math::elt_multiply(n_samples, stan::math::exp(theta)) -
-      stan::math::mdivide_left(Sigma, theta);
-  }
-};
-
 TEST(matrix, kinsol4) {
   using stan::math::kinsol_solve;
   using stan::math::algebra_solver;
@@ -360,7 +287,7 @@ TEST(matrix, kinsol5) {
   //  4. lgp solver using kinsol
   //  5. lgp solver using custom
   //  6. gp solver using algorithm 3.1
-  std::vector<bool> evaluate_solver = {0, 0, 0, 1, 1, 0};
+  std::vector<bool> evaluate_solver = {0, 0, 0, 1, 1, 1};
 
   // using stan::math::algebra_solver_newton;
   using stan::math::kinsol_solve;
@@ -381,37 +308,23 @@ TEST(matrix, kinsol5) {
   long int max_steps = 1e+3;
 
   int dim_theta = 500;  // options: 10, 20, 50, 100, 500
+  int n_obs_dummy = 0;
   std::cout << "dim theta: " << dim_theta << std::endl;
   Eigen::VectorXd phi(2);
   phi << 0.5, 0.9;
 
-  std::string data_directory = "test/unit/math/rev/mat/functor/performance/";
-  std::vector<double> n_samples(dim_theta);
-  std::vector<double> sums(dim_theta);
+  std::string data_directory
+    = "test/unit/math/rev/mat/functor/performance/data_cpp/";
+  // std::string data_directory = "test/unit/math/laplace/data_cpp/";
+  // std::string data_directory = "test/unit/math/laplace/big_data_cpp/";
 
-  // read data from csv file to work out n_samples and sums.
-  std::ifstream input_data;
-  std::string dim_theta_string = std::to_string(dim_theta);
-  std::string file_m = data_directory + "data_cpp/m_" +
-    dim_theta_string + ".csv";
-  std::string file_sums = data_directory + "data_cpp/sums_" +
-    dim_theta_string + ".csv";
+  std::vector<int> n_samples(dim_theta);
+  std::vector<int> sums(dim_theta);
+  std::vector<int> y_dummy(n_obs_dummy);
+  std::vector<int> index_dummy(n_obs_dummy);
 
-  input_data.open(file_m);
-  double buffer = 0.0;
-  for (int n = 0; n < dim_theta; ++n) {
-    input_data >> buffer;
-    n_samples[n] = buffer;
-  }
-  input_data.close();
-
-  input_data.open(file_sums);
-  buffer = 0.0;
-  for (int n = 0; n < dim_theta; ++n) {
-    input_data >> buffer;
-    sums[n] = buffer;
-  }
-  input_data.close();
+  read_in_data (dim_theta, n_obs_dummy, data_directory,
+                y_dummy, index_dummy, sums, n_samples);
 
   std::vector<double> dat(dim_theta * 2);
   for (int i = 0; i < dim_theta; i++) dat[i] = n_samples[i];
@@ -483,7 +396,7 @@ TEST(matrix, kinsol5) {
     start = std::chrono::system_clock::now();
     theta_lgp_custom
       = lgp_dense_newton_solver(theta_0, phi, n_samples_int, sums_int,
-                                1e-6, 100, 0, 0, 1);
+                                1e-6, 100, 0, 1, 1);
     // theta_lgp_custom
     //   = lgp_solver(theta_0, phi, n_samples_int, sums_int);
 
@@ -498,10 +411,11 @@ TEST(matrix, kinsol5) {
   using stan::math::diff_poisson_log;
   using stan::math::spatial_covariance;
 
+  std::vector<Eigen::VectorXd> x_dummy;
   Eigen::VectorXd theta_gp;
   if (evaluate_solver[5]) {
     start = std::chrono::system_clock::now();
-    theta_gp = gp_newton_solver(theta_0, phi,
+    theta_gp = gp_newton_solver(theta_0, phi, x_dummy,
                                 diff_poisson_log(to_vector(n_samples),
                                                  to_vector(sums)),
                                 spatial_covariance(),

@@ -44,18 +44,16 @@ namespace math {
                std::ostream* msgs = nullptr,
                double function_tolerance = 1e-6,
                long int max_num_steps = 1e+3,
-               int global_line_search = KIN_LINESEARCH,
-               int steps_eval_jacobian = 5,  // 5
-               double scaling_step_tol = 1e-5) {
-    // CHECK -- what tuning parameters do we want to include?
-    // E.g scaling_step_tol, scaling, etc.
+               double scaling_step_tol = 1e-3,
+               int steps_eval_jacobian = 10,
+               int global_line_search = KIN_LINESEARCH) {
     int N = x.size();
     typedef kinsol_system_data<F1, F2> system_data;
     system_data kinsol_data(f, J_f, x, y, dat, dat_int, msgs);
 
     void* kinsol_memory = KINCreate();
 
-    int flag;  // FIX ME -- replace with a checkflag procedure
+    int flag;  // TO DO -- replace with a checkflag procedure
     flag = KINInit(kinsol_memory, &system_data::kinsol_f_system,
                    kinsol_data.nv_x_);
 
@@ -94,9 +92,14 @@ namespace math {
     if (flag < 0) {
       std::ostringstream message;
       message << "lgp_solver: the kinsol solver encounter an error"
-              << "with flag = " << flag;
+              << " with flag = " << flag;
       throw boost::math::evaluation_error(message.str());
     }
+
+    // keep track of how many iterations are used.
+    long int nniters;
+    KINGetNumNonlinSolvIters(kinsol_memory, &nniters);
+    std::cout << "number of iterations: " << nniters << std::endl;
 
     KINFree(&kinsol_memory);
 
