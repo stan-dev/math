@@ -16,7 +16,7 @@
 #include <stan/math/prim/mat/meta/broadcast_array.hpp>
 //#include <stan/math/prim/meta/is_constant.hpp>
 #include <stan/math/prim/meta/is_vector_like.hpp>
-#include <stan/math/prim/mat/meta/length_mvt.hpp>
+#include <stan/math/prim/meta/length_mvt.hpp>
 #include <stan/math/prim/mat/meta/operands_and_partials.hpp>
 #include <stan/math/prim/mat/meta/scalar_type.hpp>
 #include <stan/math/prim/mat/meta/seq_view.hpp>
@@ -40,10 +40,9 @@
 #include <stan/math/prim/scal/meta/is_fvar.hpp>
 #include <stan/math/prim/scal/meta/is_var.hpp>
 #include <stan/math/prim/scal/meta/is_var_or_arithmetic.hpp>
-#include <stan/math/prim/scal/meta/length_mvt.hpp>
 #include <stan/math/prim/scal/meta/likely.hpp>
 #include <stan/math/prim/scal/meta/max_size.hpp>
-#include <stan/math/prim/scal/meta/max_size_mvt.hpp>
+//#include <stan/math/prim/scal/meta/max_size_mvt.hpp>
 #include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/partials_type.hpp>
