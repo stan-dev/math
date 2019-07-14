@@ -4,9 +4,13 @@
 
 #include <vector>
 
+TEST(is_vector_like, double) {
+  EXPECT_FALSE(stan::is_vector_like<double>::value);
+}
 
-
-
+TEST(is_vector_like, double_pointer) {
+  EXPECT_TRUE(stan::is_vector_like<double *>::value);
+}
 
 TEST(is_vector_like_mat, MatrixXd) {
   EXPECT_TRUE(stan::is_vector_like<Eigen::MatrixXd>::value);
@@ -30,4 +34,8 @@ TEST(is_vector_like_mat, RowVectorXd) {
 
 TEST(is_vector_like_mat, vector_of_RowVectorXd) {
   EXPECT_TRUE(stan::is_vector_like<std::vector<Eigen::RowVectorXd> >::value);
+}
+
+TEST(is_vector_like, vector) {
+  EXPECT_TRUE(stan::is_vector_like<std::vector<double> >::value);
 }
