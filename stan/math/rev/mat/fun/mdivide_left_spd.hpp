@@ -55,14 +55,14 @@ class mdivide_left_spd_vv_vari : public vari {
     alloc_->llt_.solveInPlace(alloc_->C_);
 
     Eigen::Map<matrix_vi>(variRefC_, M_, N_)
-            = alloc_->C_.unaryExpr([](double x) { return new vari(x, false); });
+        = alloc_->C_.unaryExpr([](double x) { return new vari(x, false); });
   }
 
   virtual void chain() {
     matrix_d adjB = Eigen::Map<matrix_vi>(variRefC_, M_, N_).adj();
     alloc_->llt_.solveInPlace(adjB);
     Eigen::Map<matrix_vi>(variRefA_, M_, M_).adj()
-                                               -= adjB * alloc_->C_.transpose();
+        -= adjB * alloc_->C_.transpose();
     Eigen::Map<matrix_vi>(variRefB_, M_, N_).adj() += adjB;
   }
 };
@@ -94,7 +94,7 @@ class mdivide_left_spd_dv_vari : public vari {
     alloc_->llt_.solveInPlace(alloc_->C_);
 
     Eigen::Map<matrix_vi>(variRefC_, M_, N_)
-            = alloc_->C_.unaryExpr([](double x) { return new vari(x, false); });
+        = alloc_->C_.unaryExpr([](double x) { return new vari(x, false); });
   }
 
   virtual void chain() {
@@ -130,13 +130,13 @@ class mdivide_left_spd_vd_vari : public vari {
     alloc_->C_ = alloc_->llt_.solve(B);
 
     Eigen::Map<matrix_vi>(variRefC_, M_, N_)
-            = alloc_->C_.unaryExpr([](double x) { return new vari(x, false); });
+        = alloc_->C_.unaryExpr([](double x) { return new vari(x, false); });
   }
 
   virtual void chain() {
     matrix_d adjC = Eigen::Map<matrix_vi>(variRefC_, M_, N_).adj();
     Eigen::Map<matrix_vi>(variRefA_, M_, M_).adj()
-      -= alloc_->llt_.solve(adjC * alloc_->C_.transpose());
+        -= alloc_->llt_.solve(adjC * alloc_->C_.transpose());
   }
 };
 }  // namespace internal
@@ -156,8 +156,7 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_spd(
   internal::mdivide_left_spd_vv_vari<R1, C1, R2, C2> *baseVari
       = new internal::mdivide_left_spd_vv_vari<R1, C1, R2, C2>(A, b);
 
-  res.vi() = Eigen::Map<matrix_vi>(&baseVari->variRefC_[0],
-                                   b.rows(), b.cols());
+  res.vi() = Eigen::Map<matrix_vi>(&baseVari->variRefC_[0], b.rows(), b.cols());
   return res;
 }
 
@@ -177,8 +176,7 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_spd(
   internal::mdivide_left_spd_vd_vari<R1, C1, R2, C2> *baseVari
       = new internal::mdivide_left_spd_vd_vari<R1, C1, R2, C2>(A, b);
 
-  res.vi() = Eigen::Map<matrix_vi>(&baseVari->variRefC_[0],
-                                   b.rows(), b.cols());
+  res.vi() = Eigen::Map<matrix_vi>(&baseVari->variRefC_[0], b.rows(), b.cols());
   return res;
 }
 
@@ -198,8 +196,7 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_spd(
   internal::mdivide_left_spd_dv_vari<R1, C1, R2, C2> *baseVari
       = new internal::mdivide_left_spd_dv_vari<R1, C1, R2, C2>(A, b);
 
-  res.vi() = Eigen::Map<matrix_vi>(&baseVari->variRefC_[0],
-                                   b.rows(), b.cols());
+  res.vi() = Eigen::Map<matrix_vi>(&baseVari->variRefC_[0], b.rows(), b.cols());
 
   return res;
 }

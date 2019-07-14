@@ -64,16 +64,16 @@ class mdivide_left_tri_vv_vari : public vari {
     Map<matrix_vi>(variRefB_, M_, N_) = B.vi();
     c_map = a_map.template triangularView<TriView>().solve(c_map);
     Map<matrix_vi>(variRefC_, M_, N_)
-            = c_map.unaryExpr([](double x) { return new vari(x, false); });
+        = c_map.unaryExpr([](double x) { return new vari(x, false); });
   }
 
   virtual void chain() {
     using Eigen::Map;
 
     matrix_d adjB = Map<matrix_d>(A_, M_, M_)
-                       .template triangularView<TriView>()
-                       .transpose()
-                       .solve(Map<matrix_vi>(variRefC_, M_, N_).adj());
+                        .template triangularView<TriView>()
+                        .transpose()
+                        .solve(Map<matrix_vi>(variRefC_, M_, N_).adj());
     matrix_d adjA = -adjB * Map<matrix_d>(C_, M_, N_).transpose();
 
     size_t pos = 0;
@@ -124,20 +124,21 @@ class mdivide_left_tri_dv_vari : public vari {
     Map<matrix_d> c_map(C_, M_, N_);
 
     c_map = B.val();
-    c_map = Map<matrix_d>(A_, M_, M_).template triangularView<TriView>()
-                                     .solve(c_map);
+    c_map = Map<matrix_d>(A_, M_, M_)
+                .template triangularView<TriView>()
+                .solve(c_map);
     Map<matrix_vi>(variRefC_, M_, N_)
-            = c_map.unaryExpr([](double x) { return new vari(x, false); });
+        = c_map.unaryExpr([](double x) { return new vari(x, false); });
   }
 
   virtual void chain() {
     using Eigen::Map;
 
     Map<matrix_vi>(variRefB_, M_, N_).adj()
-              += Map<matrix_d>(A_, M_, M_)
-                     .template triangularView<TriView>()
-                     .transpose()
-                     .solve(Map<matrix_vi>(variRefC_, M_, N_).adj());
+        += Map<matrix_d>(A_, M_, M_)
+               .template triangularView<TriView>()
+               .transpose()
+               .solve(Map<matrix_vi>(variRefC_, M_, N_).adj());
   }
 };
 
@@ -188,7 +189,7 @@ class mdivide_left_tri_vd_vari : public vari {
 
     Cd = Ad.template triangularView<TriView>().solve(B);
     Map<matrix_vi>(variRefC_, M_, N_)
-                  = Cd.unaryExpr([](double x) { return new vari(x, false); });
+        = Cd.unaryExpr([](double x) { return new vari(x, false); });
   }
 
   virtual void chain() {
@@ -235,8 +236,8 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_tri(
   internal::mdivide_left_tri_vv_vari<TriView, R1, C1, R2, C2> *baseVari
       = new internal::mdivide_left_tri_vv_vari<TriView, R1, C1, R2, C2>(A, b);
 
-  res.vi() = Eigen::Map<matrix_vi>(&(baseVari->variRefC_[0]),
-                                   b.rows(), b.cols());
+  res.vi()
+      = Eigen::Map<matrix_vi>(&(baseVari->variRefC_[0]), b.rows(), b.cols());
 
   return res;
 }
@@ -256,8 +257,8 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_tri(
   internal::mdivide_left_tri_dv_vari<TriView, R1, C1, R2, C2> *baseVari
       = new internal::mdivide_left_tri_dv_vari<TriView, R1, C1, R2, C2>(A, b);
 
-  res.vi() = Eigen::Map<matrix_vi>(&(baseVari->variRefC_[0]),
-                                   b.rows(), b.cols());
+  res.vi()
+      = Eigen::Map<matrix_vi>(&(baseVari->variRefC_[0]), b.rows(), b.cols());
 
   return res;
 }
@@ -277,8 +278,8 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_tri(
   internal::mdivide_left_tri_vd_vari<TriView, R1, C1, R2, C2> *baseVari
       = new internal::mdivide_left_tri_vd_vari<TriView, R1, C1, R2, C2>(A, b);
 
-  res.vi() = Eigen::Map<matrix_vi>(&(baseVari->variRefC_[0]),
-                                   b.rows(), b.cols());
+  res.vi()
+      = Eigen::Map<matrix_vi>(&(baseVari->variRefC_[0]), b.rows(), b.cols());
 
   return res;
 }

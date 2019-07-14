@@ -32,7 +32,7 @@ class log_det_ldlt_vari : public vari {
     // If we start computing Jacobians, this may be a bit inefficient
     invA.setIdentity(alloc_ldlt_->N_, alloc_ldlt_->N_);
     alloc_ldlt_->ldlt_.solveInPlace(invA);
-    const_cast<matrix_vi&>(alloc_ldlt_->variA_).adj() += adj_ * invA;
+    const_cast<matrix_vi &>(alloc_ldlt_->variA_).adj() += adj_ * invA;
   }
   const LDLT_alloc<R, C> *alloc_ldlt_;
 };

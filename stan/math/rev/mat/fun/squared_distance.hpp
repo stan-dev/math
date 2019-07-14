@@ -27,7 +27,8 @@ class squared_distance_vv_vari : public vari {
     typedef typename index_type<matrix_v>::type idx_t;
 
     return (Eigen::Ref<const vector_v>(v1).val()
-                - Eigen::Ref<const vector_v>(v2).val()).squaredNorm();
+            - Eigen::Ref<const vector_v>(v2).val())
+        .squaredNorm();
   }
 
  public:
@@ -63,7 +64,8 @@ class squared_distance_vd_vari : public vari {
     typedef typename index_type<matrix_d>::type idx_t;
 
     return (Eigen::Ref<const vector_v>(v1).val()
-                - Eigen::Ref<const vector_d>(v2)).squaredNorm();
+            - Eigen::Ref<const vector_d>(v2))
+        .squaredNorm();
   }
 
  public:
@@ -80,8 +82,8 @@ class squared_distance_vd_vari : public vari {
   }
   virtual void chain() {
     Eigen::Map<vector_vi> v1_map(v1_, length_);
-    v1_map.adj() += 2 * adj_ * (v1_map.val()
-                                        - Eigen::Map<vector_d>(v2_, length_));
+    v1_map.adj()
+        += 2 * adj_ * (v1_map.val() - Eigen::Map<vector_d>(v2_, length_));
   }
 };
 }  // namespace internal

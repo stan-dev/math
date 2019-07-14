@@ -24,7 +24,7 @@ inline void initialize_variable(var& variable, const var& value) {
 template <int R, int C>
 inline void initialize_variable(Eigen::Matrix<var, R, C>& matrix,
                                 const var& value) {
-    matrix.fill(value);
+  matrix.fill(value);
 }
 
 /**

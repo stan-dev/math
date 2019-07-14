@@ -55,18 +55,18 @@ class mdivide_left_vv_vari : public vari {
     Map<matrix_vi>(variRefA_, M_, M_) = A.vi();
     Map<matrix_vi>(variRefB_, M_, N_) = B.vi();
     Map<matrix_vi>(variRefC_, M_, N_)
-                    = Cd.unaryExpr([](double x) { return new vari(x, false); });
+        = Cd.unaryExpr([](double x) { return new vari(x, false); });
   }
 
   virtual void chain() {
     using Eigen::Map;
     matrix_d adjB = Map<matrix_d>(A_, M_, M_)
-                               .transpose()
-                               .colPivHouseholderQr()
-                               .solve(Map<matrix_vi>(variRefC_, M_, N_).adj());
+                        .transpose()
+                        .colPivHouseholderQr()
+                        .solve(Map<matrix_vi>(variRefC_, M_, N_).adj());
 
     Map<matrix_vi>(variRefA_, M_, M_).adj()
-                              -= adjB * Map<matrix_d>(C_, M_, N_).transpose();
+        -= adjB * Map<matrix_d>(C_, M_, N_).transpose();
     Map<matrix_vi>(variRefB_, M_, N_).adj() += adjB;
   }
 };
@@ -106,17 +106,17 @@ class mdivide_left_dv_vari : public vari {
     Cd = Ad.colPivHouseholderQr().solve(B.val());
     Map<matrix_vi>(variRefB_, M_, N_) = B.vi();
     Map<matrix_vi>(variRefC_, M_, N_)
-                    = Cd.unaryExpr([](double x) { return new vari(x, false); });
+        = Cd.unaryExpr([](double x) { return new vari(x, false); });
   }
 
   virtual void chain() {
     using Eigen::Map;
 
-    Map<matrix_vi>(variRefB_, M_, N_).adj() +=
-                          Map<matrix_d>(A_, M_, M_)
-                               .transpose()
-                               .colPivHouseholderQr()
-                               .solve(Map<matrix_vi>(variRefC_, M_, N_).adj());
+    Map<matrix_vi>(variRefB_, M_, N_).adj()
+        += Map<matrix_d>(A_, M_, M_)
+               .transpose()
+               .colPivHouseholderQr()
+               .solve(Map<matrix_vi>(variRefC_, M_, N_).adj());
   }
 };
 
@@ -156,7 +156,7 @@ class mdivide_left_vd_vari : public vari {
     Ad = A.val();
     Cd = Ad.colPivHouseholderQr().solve(B);
     Map<matrix_vi>(variRefC_, M_, N_)
-                    = Cd.unaryExpr([](double x) { return new vari(x, false); });
+        = Cd.unaryExpr([](double x) { return new vari(x, false); });
   }
 
   virtual void chain() {
@@ -165,11 +165,10 @@ class mdivide_left_vd_vari : public vari {
     matrix_d adjC = Map<matrix_vi>(variRefC_, M_, N_).adj();
 
     Map<matrix_vi>(variRefA_, M_, M_).adj()
-                          -= Map<matrix_d>(A_, M_, M_)
-                                .transpose()
-                                .colPivHouseholderQr()
-                                .solve(adjC
-                                       * Map<matrix_d>(C_, M_, N_).transpose());
+        -= Map<matrix_d>(A_, M_, M_)
+               .transpose()
+               .colPivHouseholderQr()
+               .solve(adjC * Map<matrix_d>(C_, M_, N_).transpose());
   }
 };
 }  // namespace internal

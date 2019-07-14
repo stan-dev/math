@@ -26,7 +26,7 @@ inline var log_determinant(const Eigen::Matrix<var, R, C>& m) {
   double* gradients
       = ChainableStack::instance_->memalloc_.alloc_array<double>(m.size());
   Eigen::Map<matrix_d>(gradients, m.rows(), m.cols())
-                                                = hh.inverse().transpose();
+      = hh.inverse().transpose();
 
   return var(new precomputed_gradients_vari(hh.logAbsDeterminant(), m.size(),
                                             varis, gradients));

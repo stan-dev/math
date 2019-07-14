@@ -85,7 +85,7 @@ class multiply_mat_vari : public vari {
     Bd = B.val();
 
     Map<matrix_vi>(variRefAB_, A_rows_, B_cols_)
-            = (Ad * Bd).unaryExpr([](double x) { return new vari(x, false); });
+        = (Ad * Bd).unaryExpr([](double x) { return new vari(x, false); });
   }
 
   virtual void chain() {
@@ -94,9 +94,9 @@ class multiply_mat_vari : public vari {
 
     adjAB = Map<matrix_vi>(variRefAB_, A_rows_, B_cols_).adj();
     Map<matrix_vi>(variRefA_, A_rows_, A_cols_).adj()
-                  += adjAB * Map<matrix_d>(Bd_, A_cols_, B_cols_).transpose();
+        += adjAB * Map<matrix_d>(Bd_, A_cols_, B_cols_).transpose();
     Map<matrix_vi>(variRefB_, A_cols_, B_cols_).adj()
-                  += Map<matrix_d>(Ad_, A_rows_, A_cols_).transpose() * adjAB;
+        += Map<matrix_d>(Ad_, A_rows_, A_cols_).transpose() * adjAB;
   }
 };
 
@@ -238,7 +238,7 @@ class multiply_mat_vari<double, Ra, Ca, Tb, Cb> : public vari {
     Bd = B.val();
 
     Map<matrix_vi>(variRefAB_, A_rows_, B_cols_)
-            = (Ad * Bd).unaryExpr([](double x) { return new vari(x, false); });
+        = (Ad * Bd).unaryExpr([](double x) { return new vari(x, false); });
   }
 
   virtual void chain() {
@@ -246,8 +246,7 @@ class multiply_mat_vari<double, Ra, Ca, Tb, Cb> : public vari {
     matrix_d adjAB = Map<matrix_vi>(variRefAB_, A_rows_, B_cols_).adj();
 
     Map<matrix_vi>(variRefB_, A_cols_, B_cols_).adj()
-                  += Map<matrix_d>(Ad_, A_rows_, A_cols_).transpose()
-                          * adjAB;
+        += Map<matrix_d>(Ad_, A_rows_, A_cols_).transpose() * adjAB;
   }
 };
 
@@ -311,7 +310,7 @@ class multiply_mat_vari<double, 1, Ca, Tb, 1> : public vari {
   virtual void chain() {
     using Eigen::Map;
     Map<vector_vi>(variRefB_, size_).adj()
-                              += Map<vector_d>(Ad_, size_) * variRefAB_->adj_;
+        += Map<vector_d>(Ad_, size_) * variRefAB_->adj_;
   }
 };
 
@@ -382,7 +381,7 @@ class multiply_mat_vari<Ta, Ra, Ca, double, Cb> : public vari {
     Bd = B.val();
 
     Map<matrix_vi>(variRefAB_, A_rows_, B_cols_)
-            = (Ad * Bd).unaryExpr([](double x) { return new vari(x, false); });
+        = (Ad * Bd).unaryExpr([](double x) { return new vari(x, false); });
   }
 
   virtual void chain() {
@@ -390,8 +389,7 @@ class multiply_mat_vari<Ta, Ra, Ca, double, Cb> : public vari {
     matrix_d adjAB = Map<matrix_vi>(variRefAB_, A_rows_, B_cols_).adj();
 
     Map<matrix_vi>(variRefA_, A_rows_, A_cols_).adj()
-                      += adjAB
-                            * Map<matrix_d>(Bd_, A_cols_, B_cols_).transpose();
+        += adjAB * Map<matrix_d>(Bd_, A_cols_, B_cols_).transpose();
   }
 };
 
@@ -460,7 +458,7 @@ class multiply_mat_vari<Ta, 1, Ca, double, 1> : public vari {
     using Eigen::Map;
 
     Map<row_vector_vi>(variRefA_, size_).adj()
-                          += variRefAB_->adj_ * Map<row_vector_d>(Bd_, size_);
+        += variRefAB_->adj_ * Map<row_vector_d>(Bd_, size_);
   }
 };
 
@@ -543,8 +541,8 @@ multiply(const Eigen::Matrix<Ta, Ra, Ca>& A,
   multiply_mat_vari<Ta, Ra, Ca, Tb, Cb>* baseVari
       = new multiply_mat_vari<Ta, Ra, Ca, Tb, Cb>(A, B);
   Eigen::Matrix<var, Ra, Cb> AB_v(A.rows(), B.cols());
-  AB_v.vi() = Eigen::Map<matrix_vi>(&baseVari->variRefAB_[0],
-                                    A.rows(), B.cols());
+  AB_v.vi()
+      = Eigen::Map<matrix_vi>(&baseVari->variRefAB_[0], A.rows(), B.cols());
 
   return AB_v;
 }
