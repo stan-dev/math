@@ -115,8 +115,7 @@ class dot_product_vari : public vari {
     if (shared == nullptr) {
       mem_d = reinterpret_cast<double*>(
           ChainableStack::instance_->memalloc_.alloc(length_ * sizeof(double)));
-      Eigen::Map<vector_d>(mem_d, length_)
-          = Eigen::Ref<const vector_d>(ind);
+      Eigen::Map<vector_d>(mem_d, length_) = Eigen::Ref<const vector_d>(ind);
     } else {
       mem_d = shared;
     }
