@@ -9,6 +9,7 @@
 #include <stan/math/opencl/sub_block.hpp>
 #include <stan/math/opencl/zeros.hpp>
 #include <Eigen/Dense>
+#include <algorithm>
 
 namespace stan {
 namespace math {
@@ -70,16 +71,8 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
   const int Npad = ((B.cols() + local - 1) / local) * local;
   const int wpt = opencl_kernels::matrix_multiply.make_functor.get_opts().at(
       "WORK_PER_THREAD");
-  int split = A.cols() / std::sqrt(A.rows() * B.cols());
-  if (split > 20) {
-    split = 20;
-  }
-  // when there result matrix is large, there is no benefit of splitting
-  // as the number of created threads is large enough to occupy all
-  // compute units in the OpenCL device
-  if (temp.size() > opencl_context.tuning_opts().multiply_split_upper_limit) {
-    split = 1;
-  }
+  const int wgs = Mpad / local * Npad / local;
+  const int split = std::min(A.cols() / local, (opencl_context.tuning_opts().multiply_wgs_per_compute_unit * static_cast<int>(opencl_context.device()[0].getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>()) + wgs - 1) / wgs);
   try {
     if (split <= 1) {
       opencl_kernels::matrix_multiply(cl::NDRange(Mpad, Npad / wpt),
