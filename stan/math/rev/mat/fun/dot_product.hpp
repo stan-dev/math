@@ -92,7 +92,7 @@ class dot_product_vari : public vari {
       mem_v = reinterpret_cast<vari**>(
           ChainableStack::instance_->memalloc_.alloc(length_ * sizeof(vari*)));
       Eigen::Map<vector_vi>(mem_v, length_)
-          = Eigen::Map<const vector_v>(&inv(0), length_).vi();
+          = Eigen::Ref<const vector_v>(inv).vi();
     } else {
       mem_v = shared;
     }
@@ -116,7 +116,7 @@ class dot_product_vari : public vari {
       mem_d = reinterpret_cast<double*>(
           ChainableStack::instance_->memalloc_.alloc(length_ * sizeof(double)));
       Eigen::Map<vector_d>(mem_d, length_)
-          = Eigen::Map<const vector_d>(&ind(0), length_);
+          = Eigen::Ref<const vector_d>(ind);
     } else {
       mem_d = shared;
     }
