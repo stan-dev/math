@@ -52,11 +52,11 @@ typename return_type<T_y, T_shape, T_scale>::type frechet_lcdf(
 
     cdf_log -= pow_;
 
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n] += pow_ * alpha_dbl / y_dbl;
-    if (!is_constant_struct<T_shape>::value)
+    if (!is_constant_all<T_shape>::value)
       ops_partials.edge2_.partials_[n] += pow_ * log(y_dbl / sigma_dbl);
-    if (!is_constant_struct<T_scale>::value)
+    if (!is_constant_all<T_scale>::value)
       ops_partials.edge3_.partials_[n] -= pow_ * alpha_dbl / sigma_dbl;
   }
   return ops_partials.build(cdf_log);

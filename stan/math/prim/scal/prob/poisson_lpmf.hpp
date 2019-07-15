@@ -61,7 +61,7 @@ typename return_type<T_rate>::type poisson_lpmf(const T_n& n,
                 - value_of(lambda_vec[i]);
     }
 
-    if (!is_constant_struct<T_rate>::value)
+    if (!is_constant_all<T_rate>::value)
       ops_partials.edge1_.partials_[i]
           += n_vec[i] / value_of(lambda_vec[i]) - 1.0;
   }

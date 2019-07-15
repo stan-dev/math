@@ -84,7 +84,7 @@ struct coupled_ode_observer {
         y_(y),
         N_(y0.size()),
         M_(theta.size()),
-        index_offset_theta_(is_constant_struct<T1>::value ? 0 : N_ * N_),
+        index_offset_theta_(is_constant_all<T1>::value ? 0 : N_ * N_),
         next_ts_index_(0) {}
 
   /**
@@ -110,7 +110,7 @@ struct coupled_ode_observer {
     ops_partials_t ops_partials(y0_, theta_, t0_, ts_[next_ts_index_]);
 
     std::vector<double> dy_dt;
-    if (!is_constant_struct<T_ts>::value) {
+    if (!is_constant_all<T_ts>::value) {
       std::vector<double> y_dbl(coupled_state.begin(),
                                 coupled_state.begin() + N_);
       dy_dt = f_(value_of(ts_[next_ts_index_]), y_dbl, value_of(theta_), x_,
@@ -121,18 +121,18 @@ struct coupled_ode_observer {
 
     for (size_t j = 0; j < N_; j++) {
       // iterate over parameters for each equation
-      if (!is_constant_struct<T1>::value) {
+      if (!is_constant_all<T1>::value) {
         for (std::size_t k = 0; k < N_; k++)
           ops_partials.edge1_.partials_[k] = coupled_state[N_ + N_ * k + j];
       }
 
-      if (!is_constant_struct<T2>::value) {
+      if (!is_constant_all<T2>::value) {
         for (std::size_t k = 0; k < M_; k++)
           ops_partials.edge2_.partials_[k]
               = coupled_state[N_ + index_offset_theta_ + N_ * k + j];
       }
 
-      if (!is_constant_struct<T_ts>::value) {
+      if (!is_constant_all<T_ts>::value) {
         ops_partials.edge4_.partials_[0] = dy_dt[j];
       }
 

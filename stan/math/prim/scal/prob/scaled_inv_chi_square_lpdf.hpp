@@ -98,14 +98,14 @@ typename return_type<T_y, T_dof, T_scale>::type scaled_inv_chi_square_lpdf(
       log_half_nu(length(nu));
   VectorBuilder<include_summand<propto, T_dof>::value, T_partials_return, T_dof>
       lgamma_half_nu(length(nu));
-  VectorBuilder<!is_constant_struct<T_dof>::value, T_partials_return, T_dof>
+  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
       digamma_half_nu_over_two(length(nu));
   for (size_t i = 0; i < length(nu); i++) {
     if (include_summand<propto, T_dof>::value)
       lgamma_half_nu[i] = lgamma(half_nu[i]);
     if (include_summand<propto, T_dof>::value)
       log_half_nu[i] = log(half_nu[i]);
-    if (!is_constant_struct<T_dof>::value)
+    if (!is_constant_all<T_dof>::value)
       digamma_half_nu_over_two[i] = digamma(half_nu[i]) * 0.5;
   }
 
@@ -122,17 +122,17 @@ typename return_type<T_y, T_dof, T_scale>::type scaled_inv_chi_square_lpdf(
     if (include_summand<propto, T_dof, T_y, T_scale>::value)
       logp -= half_nu[n] * s_dbl * s_dbl * inv_y[n];
 
-    if (!is_constant_struct<T_y>::value) {
+    if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n]
           += -(half_nu[n] + 1.0) * inv_y[n]
              + half_nu[n] * s_dbl * s_dbl * inv_y[n] * inv_y[n];
     }
-    if (!is_constant_struct<T_dof>::value) {
+    if (!is_constant_all<T_dof>::value) {
       ops_partials.edge2_.partials_[n]
           += 0.5 * log_half_nu[n] + 0.5 - digamma_half_nu_over_two[n] + log_s[n]
              - 0.5 * log_y[n] - 0.5 * s_dbl * s_dbl * inv_y[n];
     }
-    if (!is_constant_struct<T_scale>::value) {
+    if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n]
           += nu_dbl / s_dbl - nu_dbl * inv_y[n] * s_dbl;
     }

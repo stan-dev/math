@@ -46,6 +46,7 @@ TEST(AgradAutoDiff, gradient_threaded) {
   EXPECT_FLOAT_EQ(x_ref(0) * x_ref(0) + 3 * 2 * x_ref(1), grad_fx_ref(1));
 
   auto thread_job = [&](double x1, double x2) {
+    stan::math::ChainableStack thread_instance;
     double fx;
     VectorXd x_local(2);
     x_local << x1, x2;
@@ -138,6 +139,6 @@ TEST(AgradAutoDiff, RecoverMemory) {
   }
   // depends on starting allocation of 65K not being exceeded
   // without recovery_memory in autodiff::apply_recover(), takes 67M
-  EXPECT_LT(stan::math::ChainableStack::instance().memalloc_.bytes_allocated(),
+  EXPECT_LT(stan::math::ChainableStack::instance_->memalloc_.bytes_allocated(),
             100000);
 }

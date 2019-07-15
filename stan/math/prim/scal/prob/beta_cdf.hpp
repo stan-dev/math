@@ -69,19 +69,19 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_cdf(
       return ops_partials.build(0.0);
   }
 
-  VectorBuilder<contains_nonconstant_struct<T_scale_succ, T_scale_fail>::value,
+  VectorBuilder<!is_constant_all<T_scale_succ, T_scale_fail>::value,
                 T_partials_return, T_scale_succ, T_scale_fail>
       digamma_alpha_vec(max_size(alpha, beta));
 
-  VectorBuilder<contains_nonconstant_struct<T_scale_succ, T_scale_fail>::value,
+  VectorBuilder<!is_constant_all<T_scale_succ, T_scale_fail>::value,
                 T_partials_return, T_scale_succ, T_scale_fail>
       digamma_beta_vec(max_size(alpha, beta));
 
-  VectorBuilder<contains_nonconstant_struct<T_scale_succ, T_scale_fail>::value,
+  VectorBuilder<!is_constant_all<T_scale_succ, T_scale_fail>::value,
                 T_partials_return, T_scale_succ, T_scale_fail>
       digamma_sum_vec(max_size(alpha, beta));
 
-  if (contains_nonconstant_struct<T_scale_succ, T_scale_fail>::value) {
+  if (!is_constant_all<T_scale_succ, T_scale_fail>::value) {
     for (size_t n = 0; n < N; n++) {
       const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
       const T_partials_return beta_dbl = value_of(beta_vec[n]);
@@ -106,31 +106,31 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_cdf(
 
     P *= Pn;
 
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n]
           += inc_beta_ddz(alpha_dbl, beta_dbl, y_dbl) / Pn;
 
-    if (!is_constant_struct<T_scale_succ>::value)
+    if (!is_constant_all<T_scale_succ>::value)
       ops_partials.edge2_.partials_[n]
           += inc_beta_dda(alpha_dbl, beta_dbl, y_dbl, digamma_alpha_vec[n],
                           digamma_sum_vec[n])
              / Pn;
-    if (!is_constant_struct<T_scale_fail>::value)
+    if (!is_constant_all<T_scale_fail>::value)
       ops_partials.edge3_.partials_[n]
           += inc_beta_ddb(alpha_dbl, beta_dbl, y_dbl, digamma_beta_vec[n],
                           digamma_sum_vec[n])
              / Pn;
   }
 
-  if (!is_constant_struct<T_y>::value) {
+  if (!is_constant_all<T_y>::value) {
     for (size_t n = 0; n < stan::length(y); ++n)
       ops_partials.edge1_.partials_[n] *= P;
   }
-  if (!is_constant_struct<T_scale_succ>::value) {
+  if (!is_constant_all<T_scale_succ>::value) {
     for (size_t n = 0; n < stan::length(alpha); ++n)
       ops_partials.edge2_.partials_[n] *= P;
   }
-  if (!is_constant_struct<T_scale_fail>::value) {
+  if (!is_constant_all<T_scale_fail>::value) {
     for (size_t n = 0; n < stan::length(beta); ++n)
       ops_partials.edge3_.partials_[n] *= P;
   }

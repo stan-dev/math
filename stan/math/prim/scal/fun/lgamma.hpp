@@ -1,8 +1,14 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LGAMMA_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LGAMMA_HPP
 
+#if _REENTRANT & !__MINGW32__
+#include <cmath>
+#else
 #include <stan/math/prim/meta.hpp>
-#include <math.h>
+#include <stan/math/prim/scal/fun/boost_policy.hpp>
+#include <boost/math/special_functions/gamma.hpp>
+#include <limits>
+#endif
 
 namespace stan {
 namespace math {
@@ -34,8 +40,14 @@ namespace math {
 * argument
 */
 inline double lgamma(double x) {
+#if _REENTRANT & !__MINGW32__
   int sign = 0;
   return lgamma_r(x, &sign);
+#else
+  if (unlikely(x == 0.0))
+    return std::numeric_limits<double>::infinity();
+  return boost::math::lgamma(x, boost_policy_t());
+#endif
 }
 
 /**
@@ -47,8 +59,14 @@ inline double lgamma(double x) {
  * argument
  */
 inline double lgamma(int x) {
+#if _REENTRANT & !__MINGW32__
   int sign = 0;
   return lgamma_r(x, &sign);
+#else
+  if (unlikely(x == 0.0))
+    return std::numeric_limits<double>::infinity();
+  return boost::math::lgamma(x, boost_policy_t());
+#endif
 }
 
 }  // namespace math
