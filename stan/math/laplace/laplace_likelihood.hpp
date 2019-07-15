@@ -39,7 +39,10 @@ struct diff_logistic_log {
   T log_likelihood (const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta)
     const {
       Eigen::VectorXd one = rep_vector(1, theta.size());
-      return dot_product(n_samples_, theta) - sum(log(exp(theta) + one));
+      return sum(- sums_.cwiseProduct(log(one + exp(-theta)))
+               - (n_samples_ - sums_).cwiseProduct(log(one + exp(theta))));
+
+      // return dot_product(n_samples_, theta) - sum(log(exp(theta) + one));
     }
 
   template <typename T>
@@ -52,6 +55,23 @@ struct diff_logistic_log {
     Eigen::VectorXd one = rep_vector(1, theta.size());
     hessian = - n_samples_.cwiseProduct(elt_divide(exp_theta,
                                                    square(one + exp_theta)));
+
+    // Eigen::VectorXd one = rep_vector(1, theta.size());
+    // Eigen::VectorXd exp_theta = exp(theta);
+    // Eigen::VectorXd one_plus_exp_theta = one + exp_theta;
+    // Eigen::VectorXd one_plus_exp_neg_theta = one + exp(-theta);
+    // 
+    // gradient = sums_.cwiseProduct(elt_divide(one, one_plus_exp_theta)
+    //   - (n_samples_ - sums_)
+    //   .cwiseProduct(elt_divide(one, one_plus_exp_neg_theta)));
+    // 
+    // hessian = - n_samples_.cwiseProduct(elt_divide(exp_theta,
+    //   square(one_plus_exp_theta)));
+
+    // Eigen::VectorXd exp_theta = exp(theta);
+    // Eigen::VectorXd one = rep_vector(1, theta.size());
+    // hessian = - n_samples_.cwiseProduct(elt_divide(exp_theta,
+    //                                                square(one + exp_theta)));
   }
   
   template <typename T>
@@ -60,10 +80,10 @@ struct diff_logistic_log {
     Eigen::VectorXd exp_theta = exp(theta);
     Eigen::VectorXd one = rep_vector(1, theta.size());
     Eigen::VectorXd nominator = exp_theta.cwiseProduct(exp_theta - one);
-    Eigen::VectorXd denominator = square(one +
-                                    exp_theta).cwiseProduct(one + exp_theta);
+    Eigen::VectorXd denominator = square(one + exp_theta)
+                                   .cwiseProduct(one + exp_theta);
 
-    return - n_samples_.cwiseProduct(elt_divide(nominator, denominator));
+    return n_samples_.cwiseProduct(elt_divide(nominator, denominator));
   }
 };
 

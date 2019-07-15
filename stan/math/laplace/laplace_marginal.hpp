@@ -177,6 +177,7 @@ namespace math {
 
       // compute derivatives of covariance matrix with respect to phi.
       // TO DO -- more efficient approach using covariance function.
+      // EXP -- this seems to return the right derivative.
       covariance_sensitivities<K> f(x, theta_size_, covariance_function);
       Eigen::MatrixXd diff_cov;
       Eigen::MatrixXd covariance;
@@ -196,11 +197,6 @@ namespace math {
                .solve(L.triangularView<Eigen::Lower>()
                .solve(W_root_diag));
       }
-      // Eigen::MatrixXd
-      //   Z = diag_pre_multiply(W_root,
-      //         mdivide_left_tri<Eigen::Upper>(transpose(L),
-      //           mdivide_left_tri<Eigen::Lower>(L, W_root.asDiagonal())));
-                // mdivide_left_tri<Eigen::Lower>(L, W_root.asDiagonal())));
 
       Eigen::MatrixXd
         C = mdivide_left_tri<Eigen::Lower>(L, diag_pre_multiply(W_root, covariance));
@@ -216,11 +212,8 @@ namespace math {
 
         double s1 = 0.5 * quad_form(C, a) - 0.5 * sum((Z * C).diagonal());
         Eigen::VectorXd b = multiply(C, l_grad);
-
         Eigen::VectorXd s3 = b - multiply(covariance, multiply(Z, b));
-
         phi_adj_[j] = (s1 + dot_product(s2, s3));
-
       }
     }
 
