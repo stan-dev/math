@@ -97,9 +97,10 @@ namespace math {
     }
 
     // keep track of how many iterations are used.
-    long int nniters;
-    KINGetNumNonlinSolvIters(kinsol_memory, &nniters);
-    std::cout << "number of iterations: " << nniters << std::endl;
+    // Useful when running tests.
+    // long int nniters;
+    // KINGetNumNonlinSolvIters(kinsol_memory, &nniters);
+    // std::cout << "number of iterations: " << nniters << std::endl;
 
     KINFree(&kinsol_memory);
 

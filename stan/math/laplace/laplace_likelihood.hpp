@@ -17,11 +17,25 @@ struct diff_poisson_log {
     : n_samples_(n_samples), sums_(sums) { }
 
   template <typename T>
+  T log_likelihood (const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta)
+    const {
+    return -sum(log_falling_factorial(sums_, sums_))
+      + dot_product(theta, sums_)
+      - dot_product(theta, n_samples_);
+  }
+
+  template <typename T>
   void diff (const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta,
              Eigen::Matrix<T, Eigen::Dynamic, 1>& gradient,
              Eigen::Matrix<T, Eigen::Dynamic, 1>& hessian) const {
     hessian = - elt_multiply(n_samples_, exp(theta));
     gradient = sums_ + hessian;
+  }
+
+  template <typename T>
+  Eigen::Matrix<T, Eigen::Dynamic, 1>
+  third_diff(const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta) const {
+    return - elt_multiply(n_samples_, exp(theta));
   }
 };
 
@@ -66,6 +80,19 @@ struct diff_logistic_log {
                                    .cwiseProduct(one + exp_theta);
 
     return n_samples_.cwiseProduct(elt_divide(nominator, denominator));
+  }
+};
+
+// To experiment with the prototype, provide a built-in covariance
+// function. In the final version, the user will pass the covariance
+// function.
+struct sqr_exp_kernel_functor {
+  template <typename T1, typename T2>
+  Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic>
+  operator() (const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,
+           const T2& x, int M = 0) const {
+    return stan::math::gp_exp_quad_cov(x, phi(0), phi(1))
+    + 1e-9 * Eigen::MatrixXd::Identity(x.size(), x.size());
   }
 };
 

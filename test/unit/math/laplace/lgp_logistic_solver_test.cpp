@@ -2,6 +2,7 @@
 #include <stan/math/laplace/lg_logistic_solver.hpp>
 #include <stan/math/laplace/lgp_density.hpp>
 #include <stan/math/laplace/laplace_marginal.hpp>
+#include <stan/math/laplace/laplace_marginal_bernoulli.hpp>
 #include <test/unit/math/laplace/lgp_utility.hpp>
 
 #include <test/unit/math/rev/mat/fun/util.hpp>
@@ -12,7 +13,7 @@
 #include <fstream>
 #include <vector>
 
-TEST(laplace, lg_logistic_solver) {
+TEST(laplace, lg_logistic_solver_dim_2) {
   using stan::math::lg_logistic_solver;
   using stan::math::lg_logistic_f;
   using stan::math::to_array_1d;
@@ -48,7 +49,7 @@ TEST(laplace, lg_logistic_solver) {
   //           << K(phi, x) << std::endl;
 
   /////////////////////////////////////////////////////////////////////////////
-  // Test lg solver.
+  // Test Kinsol solver based method.
 
   // Run solver
   Eigen::VectorXd
@@ -76,7 +77,6 @@ TEST(laplace, lg_logistic_solver) {
     theta_v = lg_logistic_solver(theta_0, phi_v, x, squared_kernel_functor(),
                                  n_samples, sums);
 
-
   diff_logistic_log diff_likelihood(to_vector(n_samples), to_vector(sums));
 
   Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
@@ -95,12 +95,13 @@ TEST(laplace, lg_logistic_solver) {
   AVEC parm_vec = createAVEC(phi_v(0), phi_v(1));
   target.grad(parm_vec, g);
 
-  std::cout << "mode: " << theta.transpose() << std::endl 
-            << "target: " << target.val() << std::endl
-            << "lg grad: " << g[0] << " " << g[1] << std::endl;
-            // << "Sigma: " << value_of(Sigma_v) << std::endl;
+  // Print evaluation and gradient calculations
+  // std::cout << "mode: " << theta.transpose() << std::endl 
+  //           << "target: " << target.val() << std::endl
+  //           << "lg grad: " << g[0] << " " << g[1] << std::endl;
 
   /////////////////////////////////////////////////////////////////////////////
+  // Use laplace_marginal function.
   Eigen::Matrix<var, Eigen::Dynamic, 1> phi_v2 = phi;
 
   var target_laplace = laplace_marginal_density(theta, phi_v2, x,
@@ -111,10 +112,10 @@ TEST(laplace, lg_logistic_solver) {
   AVEC parm_vec2 = createAVEC(phi_v2(0), phi_v2(1));
   target_laplace.grad(parm_vec2, g2);
 
-  std::cout << "target: " << target_laplace.val() << std::endl
-            << "laplace grad: " << g2[0] << " " << g[1] << std::endl;
-  
-  // Use finite diff
+  // std::cout << "target: " << target_laplace.val() << std::endl
+  //           << "laplace grad: " << g2[0] << " " << g[1] << std::endl;
+
+  // Compute derivatives using finite differentiation.
   double diff = 1e-7;
   Eigen::VectorXd phi_1l = phi;
   Eigen::VectorXd phi_1u = phi;
@@ -149,10 +150,15 @@ TEST(laplace, lg_logistic_solver) {
   VEC g3(2);
   g3[0] = (target_1u - target_1l) / (2 * diff);
   g3[1] = (target_2u - target_2l) / (2 * diff);
-  std::cout << "finite diff: " << g3[0] << " " << g3[1] << std::endl;
+  // std::cout << "finite diff: " << g3[0] << " " << g3[1] << std::endl;
+  
+  // Soft test: use Kinsol approach as benchmark. This is mostly to monitor
+  // that there are no accidental changes.
+  // CHECK -- how reliable is this test?
+  double tol = 0.2;
+  EXPECT_NEAR(g[0], g2[0], tol);
+  EXPECT_NEAR(g[1], g2[1], tol);
 }
-    
-    
     
 
 TEST(laplace, likelihood_differentiation) {
@@ -216,9 +222,7 @@ TEST(laplace, likelihood_differentiation) {
   EXPECT_NEAR(diff_hess_2, third_tensor(1), test_tolerance);
 }
 
-
-
-TEST(laplace, lg_logistic_solver2) {
+TEST(laplace, lg_logistic_solver_dim_500) {
   using stan::math::var;
   using stan::math::lg_logistic_solver;
   using stan::math::lg_logistic_f;
@@ -230,6 +234,7 @@ TEST(laplace, lg_logistic_solver2) {
   using stan::math::mdivide_left;
   using stan::math::start_nested;
   using stan::math::recover_memory_nested;
+  using stan::math::value_of;
 
   int dim_theta = 500;
   int n_observations = 500;
@@ -432,5 +437,32 @@ TEST(laplace, lg_logistic_solver2) {
     squared_kernel_functor(), 1e-3, 100);
 
   double diff_2 = (marg_density_2u - marg_density_2l) / (2 * diff);
-  std::cout << "finite diff: " << diff_1 << " " << diff_2 << std::endl;
+  std::cout << "finite diff: " << diff_1 << " " << diff_2 << std::endl
+            << std::endl;
+
+  // Basic unit tests. This will fail if we inadvertently make a bad change.
+  // Use kinsol method to benchmark density and finite diff to benchmark
+  // gradient.
+  double tol = 2;
+  EXPECT_NEAR(diff_1, g2[0], tol);
+  EXPECT_NEAR(diff_2, g2[1], tol);
+  EXPECT_NEAR(value_of(target), value_of(marginal_density), 0.001);
+  
+  /////////////////////////////////////////////////////////////////////////////
+  // Test the wrapper to be exposed to Stan
+  start_optimization = std::chrono::system_clock::now();
+  using stan::math::laplace_marginal_bernouilli;
+  using stan::math::value_of;
+
+  double marginal_density_v2
+    = laplace_marginal_bernouilli(theta_0, phi, x, n_samples, y,
+                                  1e-3, 100);
+  end_optimization = std::chrono::system_clock::now();
+  elapsed_time_optimization = end_optimization - start_optimization;
+
+  EXPECT_EQ(marginal_density, marginal_density_v2);
+
+  // std::cout << "density: " << value_of(marginal_density_v2) << std::endl
+  //           << "time: " << elapsed_time_optimization.count()
+  //           << std::endl;
 }
