@@ -134,11 +134,11 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
         barrier(CLK_LOCAL_MEM_FENCE);
         const int total_work_k = min(THREAD_BLOCK_SIZE, K - THREAD_BLOCK_SIZE * start_tile);
         for (int idx = linear_index, acc_idx = 0; idx < total_work_nm; idx += threads_in_block, acc_idx++) {
-          const int w = idx % total_work_n;
-          const int v = idx / total_work_n;
+          const int row_B_local = idx % total_work_n;
+          const int col_A_local = idx / total_work_n;
           for (int block_idx = 0; block_idx < total_work_k; block_idx++) {
-            acc[acc_idx] += A_local[block_idx][v]
-                            * B_local[w][block_idx];
+            acc[acc_idx] += A_local[block_idx][col_A_local]
+                            * B_local[row_B_local][block_idx];
           }
         }
         barrier(CLK_LOCAL_MEM_FENCE);
@@ -159,14 +159,12 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
           // or under/above the diagonal with upper/lower
           // triangular matrices
           if (A_curr_j >= K || i >= M
-              || (lower_upper_A == LOWER && A_curr_j > i)
               || (lower_upper_A == UPPER && A_curr_j < i)) {
             A_local[curr_k][thread_block_row] = 0.0;
           } else {
             A_local[curr_k][thread_block_row] = A[A_curr_j * M + i];
           }
           if (B_curr_j >= N || tiled_i >= K
-              || (lower_upper_B == LOWER && B_curr_j > tiled_i)
               || (lower_upper_B == UPPER && B_curr_j < tiled_i)) {
             B_local[curr_k][thread_block_row] = 0.0;
           } else {
@@ -176,11 +174,11 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
         barrier(CLK_LOCAL_MEM_FENCE);
         const int total_work_k = min(THREAD_BLOCK_SIZE, K - THREAD_BLOCK_SIZE * end_tile);
         for (int idx = linear_index, acc_idx = 0; idx < total_work_nm; idx += threads_in_block, acc_idx++) {
-          const int w = idx % total_work_n;
-          const int v = idx / total_work_n;
+          const int row_B_local = idx % total_work_n;
+          const int col_A_local = idx / total_work_n;
           for (int block_idx = 0; block_idx < total_work_k; block_idx++) {
-            acc[acc_idx] += A_local[block_idx][v]
-                            * B_local[w][block_idx];
+            acc[acc_idx] += A_local[block_idx][col_A_local]
+                            * B_local[row_B_local][block_idx];
           }
         }
         barrier(CLK_LOCAL_MEM_FENCE);
@@ -208,11 +206,11 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
           barrier(CLK_LOCAL_MEM_FENCE);
           int total_work_k = min(THREAD_BLOCK_SIZE, K - THREAD_BLOCK_SIZE * tile_idx);
           for (int idx = linear_index, acc_idx = 0; idx < total_work_nm; idx += threads_in_block, acc_idx++) {
-            const int w = idx % total_work_n;
-            const int v = idx / total_work_n;
+            const int row_B_local = idx % total_work_n;
+            const int col_A_local = idx / total_work_n;
             for (int block_idx = 0; block_idx < total_work_k; block_idx++) {
-              acc[acc_idx] += A_local[block_idx][v]
-                              * B_local[w][block_idx];
+              acc[acc_idx] += A_local[block_idx][col_A_local]
+                              * B_local[row_B_local][block_idx];
             }
           }
           barrier(CLK_LOCAL_MEM_FENCE);
