@@ -13,7 +13,7 @@
 
 // Reference for calculations of marginal and its gradients:
 // Rasmussen and Williams,
-// "Gaussian Processes for Machine Learning",
+// "Gaussian Processes for Machine Learning", first edition,
 // Algorithms 3.1 and 5.1.
 // The MIT Press, 2006.
 // Note: where I didn't conflict with my own notation, I used their notation.
@@ -23,7 +23,7 @@ namespace math {
   /**
    * Function to compute the log marginal density.
    * Variables needed for the gradient are stored by reference.
-   * 
+   *
    * theta_0: initial guess for latent gaussian variable.
    * phi: global parameter (input in covariance function)
    * x: fixed data (input in covariance function)
@@ -32,10 +32,11 @@ namespace math {
    * K: a functor to compute the covariance function specified by the user.
    * theta: mode of the target.
    * W_root: squared root of the negative diagnonal Hessian.
-   * L: Cholesky decomposition of B (stabilized covariance inverse).
+   * L: Cholesky decomposition of B, the stabilized covariance inverse.
    * a: component in the Newton step.
    * tolerance: function tolerance defined in terms of objective function.
-   * max_num_steps: number of Newton iterations after which the algorithm stops.
+   * max_num_steps: number of Newton iterations after which the algorithm
+   *                stops.
    */
   template <typename D, typename K>
   double
@@ -63,7 +64,7 @@ namespace math {
     for (int i = 0; i <= max_num_steps; i++) {
       if (i == max_num_steps) {
         std::ostringstream message;
-        message << "gp_newton_solver: max number of iterations:"
+        message << "laplace_marginal_density: max number of iterations:"
                 << max_num_steps << " exceeded.";
         throw boost::math::evaluation_error(message.str());
       }
@@ -92,16 +93,16 @@ namespace math {
       objective_new = -0.5 * dot_product(a, theta)
         + diff_likelihood.log_likelihood(theta);
       double objective_diff = abs(objective_new - objective_old);
-      if (objective_diff < tolerance)
-        std::cout << "iterations: " << i << std::endl;
       if (objective_diff < tolerance) break;
     }
 
     return objective_new - sum(log(diagonal(L)));
   }
 
-  // A wrapper that doesn't intermediate variables used to
-  // compute derivatives.
+  /**
+   * Function wrapper when the global parameter phi is passed
+   * as dbl.
+   */
   template <typename D, typename K>
   double
   laplace_marginal_density (const Eigen::VectorXd& theta_0,
@@ -119,8 +120,10 @@ namespace math {
               tolerance, max_num_steps);
   }
 
-  // a structure to compute the sensitivities of the covariance
-  // matrix using forward autodiff.
+  /**
+   * A structure to compute sensitivities of the covariance
+   * function using forward mode autodiff.
+   */
   template <typename K>
   struct covariance_sensitivities {
     std::vector<Eigen::VectorXd> x_;
@@ -140,14 +143,24 @@ namespace math {
     }
   };
 
-  // The vari class for the laplace marginal density.
-  // The method for computing gradients couples built-in forward autodiff
-  // with algorithm 5.1 in R & W.
+  /**
+   * The vari class for the laplace marginal density.
+   * The method to compute gradients couples built-in forward autodiff
+   * with algorithm 5.1 in R & W.
+   * To make computation efficient, variables produced during the
+   * Newton step are stored and reused. 
+   */
   struct laplace_marginal_density_vari : public vari {
+    /* dimension of the global parameters. */
     int phi_size_;
+    /* global parameters. */
     vari** phi_;
+    /* dimension of the latent Gaussian parameters. */
     int theta_size_;
+    /* the marginal density of the observation, conditional on the 
+     * globl parameters. */
     vari** marginal_density_;
+    /* An object to store the sensitivities of phi. */
     Eigen::VectorXd phi_adj_;
 
     template <typename T, typename K, typename D>
@@ -176,8 +189,6 @@ namespace math {
       marginal_density_[0] = new vari(marginal_density, false);
 
       // compute derivatives of covariance matrix with respect to phi.
-      // TO DO -- more efficient approach using covariance function.
-      // EXP -- this seems to return the right derivative.
       covariance_sensitivities<K> f(x, theta_size_, covariance_function);
       Eigen::MatrixXd diff_cov;
       Eigen::MatrixXd covariance;
@@ -192,28 +203,28 @@ namespace math {
       Eigen::MatrixXd Z;
       {
         Eigen::MatrixXd W_root_diag = W_root.asDiagonal();
-        Z = W_root.asDiagonal() *
+        Z = W_root_diag *
               L.transpose().triangularView<Eigen::Upper>()
                .solve(L.triangularView<Eigen::Lower>()
-               .solve(W_root_diag));
+                 .solve(W_root_diag));
       }
 
       Eigen::MatrixXd
-        C = mdivide_left_tri<Eigen::Lower>(L, diag_pre_multiply(W_root, covariance));
+        C = mdivide_left_tri<Eigen::Lower>(L,
+                  diag_pre_multiply(W_root, covariance));
 
       Eigen::VectorXd s2 = - 0.5 * (covariance.diagonal()
-                 - (C * C.transpose()).diagonal())
+                 - (C.transpose() * C).diagonal())
                  .cwiseProduct(diff_likelihood.third_diff(theta));
 
       phi_adj_ = Eigen::VectorXd(phi_size_);
       for (int j = 0; j < phi_size_; j++) {
         Eigen::VectorXd j_col = diff_cov.col(j);
         C = to_matrix(j_col, theta_size_, theta_size_);
-
         double s1 = 0.5 * quad_form(C, a) - 0.5 * sum((Z * C).diagonal());
         Eigen::VectorXd b = multiply(C, l_grad);
         Eigen::VectorXd s3 = b - multiply(covariance, multiply(Z, b));
-        phi_adj_[j] = (s1 + dot_product(s2, s3));
+        phi_adj_[j] = s1 + dot_product(s2, s3);
       }
     }
 

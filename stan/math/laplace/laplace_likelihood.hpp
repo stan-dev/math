@@ -39,41 +39,23 @@ struct diff_logistic_log {
   T log_likelihood (const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta)
     const {
       Eigen::VectorXd one = rep_vector(1, theta.size());
-      return sum(- sums_.cwiseProduct(log(one + exp(-theta)))
-               - (n_samples_ - sums_).cwiseProduct(log(one + exp(theta))));
-
-      // return dot_product(n_samples_, theta) - sum(log(exp(theta) + one));
+      return sum(theta.cwiseProduct(sums_)
+                   - n_samples_.cwiseProduct(log(one + exp(theta))));
     }
 
   template <typename T>
   void diff (const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta,
              Eigen::Matrix<T, Eigen::Dynamic, 1>& gradient,
              Eigen::Matrix<T, Eigen::Dynamic, 1>& hessian) const {
+    Eigen::Matrix<T, Eigen::Dynamic, 1> exp_theta = exp(theta);
+    Eigen::VectorXd one = rep_vector(1, theta.size());
+
     gradient = sums_ - n_samples_.cwiseProduct(inv_logit(theta));
 
-    Eigen::VectorXd exp_theta = exp(theta);
-    Eigen::VectorXd one = rep_vector(1, theta.size());
-    hessian = - n_samples_.cwiseProduct(elt_divide(exp_theta,
-                                                   square(one + exp_theta)));
-
-    // Eigen::VectorXd one = rep_vector(1, theta.size());
-    // Eigen::VectorXd exp_theta = exp(theta);
-    // Eigen::VectorXd one_plus_exp_theta = one + exp_theta;
-    // Eigen::VectorXd one_plus_exp_neg_theta = one + exp(-theta);
-    // 
-    // gradient = sums_.cwiseProduct(elt_divide(one, one_plus_exp_theta)
-    //   - (n_samples_ - sums_)
-    //   .cwiseProduct(elt_divide(one, one_plus_exp_neg_theta)));
-    // 
-    // hessian = - n_samples_.cwiseProduct(elt_divide(exp_theta,
-    //   square(one_plus_exp_theta)));
-
-    // Eigen::VectorXd exp_theta = exp(theta);
-    // Eigen::VectorXd one = rep_vector(1, theta.size());
-    // hessian = - n_samples_.cwiseProduct(elt_divide(exp_theta,
-    //                                                square(one + exp_theta)));
+    hessian = - elt_multiply(n_samples_, elt_divide(exp_theta,
+                                                    square(one + exp_theta)));
   }
-  
+
   template <typename T>
   Eigen::Matrix<T, Eigen::Dynamic, 1>
   third_diff(const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta) const {
