@@ -24,8 +24,9 @@ namespace math {
  * @throw <code>std::invalid_argument</code> if the matrix is not square.
  *
  */
+template <typename T>
 template <TriangularMapCL triangular_map>
-inline void matrix_cl<double>::triangular_transpose() try {
+inline void matrix_cl<T>::triangular_transpose() try {
   if (size() == 0 || size() == 1) {
     return;
   }

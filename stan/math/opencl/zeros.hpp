@@ -23,8 +23,9 @@ namespace math {
  * the entire matrix, lower triangular or upper triangular. The
  * value must be of type TriangularViewCL
  */
+template <typename T>
 template <TriangularViewCL triangular_view>
-inline void matrix_cl<double>::zeros() try {
+inline void matrix_cl<T>::zeros() try {
   if (size() == 0)
     return;
   cl::CommandQueue cmdQueue = opencl_context.queue();
