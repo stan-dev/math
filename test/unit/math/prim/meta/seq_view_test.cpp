@@ -1,14 +1,8 @@
-
 #include <gtest/gtest.h>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/prim/meta.hpp>
 
 #include <vector>
-
-
-
-
-
 
 using stan::math::matrix_d;
 using stan::math::row_vector_d;
