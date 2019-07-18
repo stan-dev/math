@@ -43,6 +43,11 @@ using forward_return_t = std::conditional_t<std::is_const<std::remove_reference_
  * check a combination of whether the input is a pointer (i.e. vari*)
  * and/or whether the input has member ".d_" (i.e. fvar).
  *
+ * There are two methods for returning doubles unchanged. One which takes a reference
+ * to a double and returns the same reference, used when 'chaining' methods
+ * (i.e. A.adj().val()). The other for passing and returning by value, used directly 
+ * with matrices of doubles (i.e. A.val(), where A is of type MatrixXd).
+ *
  * For definitions of EIGEN_EMPTY_STRUCT_CTOR, EIGEN_DEVICE_FUNC, and
  * EIGEN_STRONG_INLINE; see: https://eigen.tuxfamily.org/dox/XprHelper_8h_source.html
  */
@@ -68,15 +73,17 @@ struct val_Op{
     std::enable_if_t<is_fvar<T>::value, forward_return_t<T>>
       operator()(T &v) const { return v.val_; }
 
-  //Returns double unchanged from input
+  //Returns double unchanged from input (by value)
   template<typename T = Scalar>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
     std::enable_if_t<std::is_arithmetic<T>::value, double_return_t<T>>
       operator()(T v) const { return v; }
 
+  //Returns double unchanged from input (by reference)
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   const double& operator()(const double& v) const { return v; }
 
+  //Returns double unchanged from input (by reference)
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   double& operator()(double& v) const { return v; }
 };
