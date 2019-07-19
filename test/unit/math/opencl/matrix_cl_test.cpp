@@ -24,7 +24,6 @@ TEST(MathMatrixCL, matrix_cl_types_creation) {
   test_matrix_creation<float>();
   test_matrix_creation<int>();
   test_matrix_creation<long double>();
-  test_matrix_creation<int16>();
 }
 
 #endif
