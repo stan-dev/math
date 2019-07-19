@@ -4,6 +4,8 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernels/add.hpp>
 #include <stan/math/opencl/err/check_matching_dims.hpp>
+#include <stan/math/prim/meta.hpp>
+
 #include <CL/cl.hpp>
 
 namespace stan {
@@ -21,10 +23,13 @@ namespace math {
  * input matrices do not have matching dimensions
  *
  */
-inline matrix_cl<double> add(const matrix_cl<double>& A,
-                             const matrix_cl<double>& B) {
+ template <typename T1, typename T2,
+ typename std::enable_if_t<std::is_arithmetic<T1>::value, int> = 0,
+ typename std::enable_if_t<std::is_arithmetic<T2>::value, int> = 0>
+inline matrix_cl<return_type_t<T1, T2>> add(const matrix_cl<T1>& A,
+                             const matrix_cl<T2>& B) {
   check_matching_dims("add", "A", A, "B", B);
-  matrix_cl<double> C(A.rows(), A.cols());
+  matrix_cl<return_type_t<T1, T2>> C(A.rows(), A.cols());
   if (C.size() == 0) {
     return C;
   }
@@ -49,7 +54,10 @@ inline matrix_cl<double> add(const matrix_cl<double>& A,
  * input matrices do not have matching dimensions
  *
  */
-inline auto operator+(const matrix_cl<double>& A, const matrix_cl<double>& B) {
+ template <typename T1, typename T2,
+ typename std::enable_if_t<std::is_arithmetic<T1>::value, int> = 0,
+ typename std::enable_if_t<std::is_arithmetic<T2>::value, int> = 0>
+inline auto operator+(const matrix_cl<T1>& A, const matrix_cl<T2>& B) {
   return add(A, B);
 }
 }  // namespace math

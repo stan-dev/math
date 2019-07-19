@@ -42,5 +42,8 @@ struct return_type<T> {
       double, typename scalar_type<T>::type>::type type;
 };
 
+template <typename ... Args>
+using return_type_t = typename stan::return_type<Args...>::type;
+
 }  // namespace stan
 #endif

@@ -34,35 +34,52 @@ namespace internal {
  * @param t The type that will be returned.
  * @return the input t.
  */
-template <typename T>
+template <typename T, typename K = double>
 inline const T& get_kernel_args(const T& t) {
   return t;
 }
 
+template <typename K>
 inline const cl::Buffer& get_kernel_args(
-    const stan::math::matrix_cl<double>& m) {
+    const stan::math::matrix_cl<K>& m) {
   return m.buffer();
 }
 
+template <typename T, typename K = double>
+struct assign_event_helper {
+  inline void set(const cl::Event& e, const stan::math::matrix_cl<K>& m) {}
+};
+
+template <typename K>
+struct assign_event_helper<in_buffer, K> {
+  inline void set(const cl::Event& e, const stan::math::matrix_cl<K>& m) {
+    m.add_read_event(e);
+  }
+};
+
+template <typename K>
+struct assign_event_helper<out_buffer, K> {
+  inline void set(const cl::Event& e, const stan::math::matrix_cl<K>& m) {
+    m.add_write_event(e);
+  }
+};
+
+template <typename K>
+struct assign_event_helper<in_out_buffer, K> {
+  inline void set(const cl::Event& e, const stan::math::matrix_cl<K>& m) {
+    m.add_read_write_event(e);
+  }
+};
+
 template <typename T>
-inline void assign_event(const cl::Event&, to_const_matrix_cl_t<T>&) {}
+inline void assign_event(const cl::Event& e,
+                                    const T&) {}
 
-template <>
-inline void assign_event<in_buffer>(const cl::Event& e,
-                                    const stan::math::matrix_cl<double>& m) {
-  m.add_read_event(e);
-}
-
-template <>
-inline void assign_event<out_buffer>(const cl::Event& e,
-                                     const stan::math::matrix_cl<double>& m) {
-  m.add_write_event(e);
-}
-
-template <>
-inline void assign_event<in_out_buffer>(
-    const cl::Event& e, const stan::math::matrix_cl<double>& m) {
-  m.add_read_write_event(e);
+template <typename T, typename K>
+inline void assign_event(const cl::Event& e,
+                                    const stan::math::matrix_cl<K>& m) {
+  assign_event_helper<T, K> helper;
+  helper.set(e, m);
 }
 
 template <typename T,
@@ -90,27 +107,44 @@ inline void assign_events(const cl::Event& new_event,
   assign_events<Args...>(new_event, args...);
 }
 
-template <typename T>
-inline const std::vector<cl::Event> select_events(to_const_matrix_cl_t<T>& t) {
-  return std::vector<cl::Event>();
+template <typename T, typename K = double>
+struct select_event_helper {
+  inline const std::vector<cl::Event> get(const T& m) {
+    return std::vector<cl::Event>();
+  }
+};
+
+template <typename K>
+struct select_event_helper<in_buffer, K> {
+  inline const std::vector<cl::Event> get(const stan::math::matrix_cl<K>& m) {
+    return m.write_events();
+  }
+};
+
+template <typename K>
+struct select_event_helper<out_buffer, K> {
+  inline const std::vector<cl::Event> get(const stan::math::matrix_cl<K>& m) {
+    return m.read_events();
+  }
+};
+
+template <typename K>
+struct select_event_helper<in_out_buffer, K> {
+  inline const std::vector<cl::Event> get(const stan::math::matrix_cl<K>& m) {
+    return m.read_write_events();
+  }
+};
+
+template <typename T, typename K = double>
+inline const std::vector<cl::Event> select_events(const T& m) {
+  select_event_helper<T, K> helper;
+  return helper.get(m);
 }
 
-template <>
-inline const std::vector<cl::Event> select_events<in_buffer>(
-    const stan::math::matrix_cl<double>& m) {
-  return m.write_events();
-}
-
-template <>
-inline const std::vector<cl::Event> select_events<out_buffer>(
-    const stan::math::matrix_cl<double>& m) {
-  return m.read_write_events();
-}
-
-template <>
-inline const std::vector<cl::Event> select_events<in_out_buffer>(
-    const stan::math::matrix_cl<double>& m) {
-  return m.read_write_events();
+template <typename T, typename K>
+inline const std::vector<cl::Event> select_events(const stan::math::matrix_cl<K>& m) {
+  select_event_helper<T, K> helper;
+  return helper.get(m);
 }
 
 }  // namespace internal

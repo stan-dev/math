@@ -35,8 +35,8 @@ namespace math {
  * @throw <code>std::invalid_argument</code> if the matrix
  *    is not square
  */
-template <TriangularViewCL triangular_view>
-inline matrix_cl<double> tri_inverse(const matrix_cl<double>& A) {
+template <TriangularViewCL triangular_view, typename T, typename std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
+inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
   static_assert(triangular_view != TriangularViewCL::Entire,
                 "tri_inverse(OpenCL) only supports triangular input matrices");
   check_square("tri_inverse (OpenCL)", "A", A);
@@ -67,13 +67,13 @@ inline matrix_cl<double> tri_inverse(const matrix_cl<double>& A) {
       = ((A.rows() + thread_block_size_1D - 1) / thread_block_size_1D)
         * thread_block_size_1D;
 
-  matrix_cl<double> temp(A_rows_padded, A_rows_padded);
-  matrix_cl<double> inv_padded(A_rows_padded, A_rows_padded);
-  matrix_cl<double> inv_mat(A);
-  matrix_cl<double> zero_mat(A_rows_padded - A.rows(), A_rows_padded);
-  zero_mat.zeros<stan::math::TriangularViewCL::Entire>();
-  temp.zeros<stan::math::TriangularViewCL::Entire>();
-  inv_padded.zeros<stan::math::TriangularViewCL::Entire>();
+  matrix_cl<T> temp(A_rows_padded, A_rows_padded);
+  matrix_cl<T> inv_padded(A_rows_padded, A_rows_padded);
+  matrix_cl<T> inv_mat(A);
+  matrix_cl<T> zero_mat(A_rows_padded - A.rows(), A_rows_padded);
+  zero_mat.template zeros<stan::math::TriangularViewCL::Entire>();
+  temp.template zeros<stan::math::TriangularViewCL::Entire>();
+  inv_padded.template zeros<stan::math::TriangularViewCL::Entire>();
   if (triangular_view == TriangularViewCL::Upper) {
     inv_mat = transpose(inv_mat);
   }
@@ -99,7 +99,7 @@ inline matrix_cl<double> tri_inverse(const matrix_cl<double>& A) {
   // set the padded part of the matrix and the upper triangular to zeros
   inv_padded.sub_block(zero_mat, 0, 0, inv_mat.rows(), 0, zero_mat.rows(),
                        zero_mat.cols());
-  inv_padded.zeros<stan::math::TriangularViewCL::Upper>();
+  inv_padded.template zeros<stan::math::TriangularViewCL::Upper>();
   if (parts == 1) {
     inv_mat.sub_block(inv_padded, 0, 0, 0, 0, inv_mat.rows(), inv_mat.rows());
     if (triangular_view == TriangularViewCL::Upper) {
@@ -139,7 +139,7 @@ inline matrix_cl<double> tri_inverse(const matrix_cl<double>& A) {
     // set the padded part and upper diagonal to zeros
     inv_padded.sub_block(zero_mat, 0, 0, inv_mat.rows(), 0, zero_mat.rows(),
                          zero_mat.cols());
-    inv_padded.zeros<stan::math::TriangularViewCL::Upper>();
+    inv_padded.template zeros<stan::math::TriangularViewCL::Upper>();
   }
   // un-pad and return
   inv_mat.sub_block(inv_padded, 0, 0, 0, 0, inv_mat.rows(), inv_mat.rows());

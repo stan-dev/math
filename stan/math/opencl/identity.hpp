@@ -17,8 +17,9 @@ namespace math {
  * @return the identity matrix
  *
  */
-inline matrix_cl<double> identity(int rows_cols) {
-  matrix_cl<double> A(rows_cols, rows_cols);
+template <typename T, typename std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
+inline matrix_cl<T> identity(int rows_cols) {
+  matrix_cl<T> A(rows_cols, rows_cols);
   if (rows_cols == 0) {
     return A;
   }

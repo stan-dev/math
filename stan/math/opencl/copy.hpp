@@ -33,9 +33,9 @@ namespace math {
  * @param src source Eigen matrix
  * @return matrix_cl with a copy of the data in the source matrix
  */
-template <int R, int C>
-inline matrix_cl<double> to_matrix_cl(const Eigen::Matrix<double, R, C>& src) {
-  matrix_cl<double> dst(src.rows(), src.cols());
+template <typename T, int R, int C, typename std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
+inline matrix_cl<T> to_matrix_cl(const Eigen::Matrix<T, R, C>& src) {
+  matrix_cl<T> dst(src.rows(), src.cols());
   if (src.size() == 0) {
     return dst;
   }
@@ -50,7 +50,7 @@ inline matrix_cl<double> to_matrix_cl(const Eigen::Matrix<double, R, C>& src) {
     cl::Event copy_event;
     const cl::CommandQueue& queue = opencl_context.queue();
     queue.enqueueWriteBuffer(dst.buffer(), CL_FALSE, 0,
-                             sizeof(double) * dst.size(), src.data(),
+                             sizeof(T) * dst.size(), src.data(),
                              &dst.write_events(), &copy_event);
     dst.add_write_event(copy_event);
   } catch (const cl::Error& e) {
@@ -67,9 +67,10 @@ inline matrix_cl<double> to_matrix_cl(const Eigen::Matrix<double, R, C>& src) {
  * @param src source matrix on the OpenCL device
  * @return Eigen matrix with a copy of the data in the source matrix
  */
-inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> from_matrix_cl(
-    const matrix_cl<double>& src) {
-  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> dst(src.rows(),
+template <typename T, typename std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
+inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> from_matrix_cl(
+    const matrix_cl<T>& src) {
+  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> dst(src.rows(),
                                                             src.cols());
   if (src.size() == 0) {
     return dst;
@@ -104,16 +105,17 @@ inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> from_matrix_cl(
  * @param src the flat triangular source matrix on the OpenCL device
  * @return the packed std::vector
  */
-template <TriangularViewCL triangular_view>
-inline std::vector<double> packed_copy(const matrix_cl<double>& src) {
+template <TriangularViewCL triangular_view, typename T,
+ typename std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
+inline std::vector<T> packed_copy(const matrix_cl<T>& src) {
   const int packed_size = src.rows() * (src.rows() + 1) / 2;
-  std::vector<double> dst(packed_size);
+  std::vector<T> dst(packed_size);
   if (dst.size() == 0) {
     return dst;
   }
   try {
     const cl::CommandQueue queue = opencl_context.queue();
-    matrix_cl<double> packed(packed_size, 1);
+    matrix_cl<T> packed(packed_size, 1);
     stan::math::opencl_kernels::pack(cl::NDRange(src.rows(), src.rows()),
                                      packed, src, src.rows(), src.rows(),
                                      triangular_view);
@@ -121,7 +123,7 @@ inline std::vector<double> packed_copy(const matrix_cl<double>& src) {
         = vec_concat(packed.read_write_events(), src.write_events());
     cl::Event copy_event;
     queue.enqueueReadBuffer(packed.buffer(), CL_FALSE, 0,
-                            sizeof(double) * packed_size, dst.data(),
+                            sizeof(T) * packed_size, dst.data(),
                             &mat_events, &copy_event);
     copy_event.wait();
     src.clear_write_events();
@@ -144,21 +146,21 @@ inline std::vector<double> packed_copy(const matrix_cl<double>& src) {
  * size of the vector does not match the expected size
  * for the packed triangular matrix
  */
-template <TriangularViewCL triangular_view>
-inline matrix_cl<double> packed_copy(const std::vector<double>& src, int rows) {
+template <TriangularViewCL triangular_view, typename T, typename std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
+inline matrix_cl<T> packed_copy(const std::vector<T>& src, int rows) {
   const int packed_size = rows * (rows + 1) / 2;
   check_size_match("copy (packed std::vector -> OpenCL)", "src.size()",
                    src.size(), "rows * (rows + 1) / 2", packed_size);
-  matrix_cl<double> dst(rows, rows);
+  matrix_cl<T> dst(rows, rows);
   if (dst.size() == 0) {
     return dst;
   }
   try {
-    matrix_cl<double> packed(packed_size, 1);
+    matrix_cl<T> packed(packed_size, 1);
     cl::Event packed_event;
     const cl::CommandQueue queue = opencl_context.queue();
     queue.enqueueWriteBuffer(packed.buffer(), CL_FALSE, 0,
-                             sizeof(double) * packed_size, src.data(), NULL,
+                             sizeof(T) * packed_size, src.data(), NULL,
                              &packed_event);
     packed.add_write_event(packed_event);
     stan::math::opencl_kernels::unpack(cl::NDRange(dst.rows(), dst.rows()), dst,
@@ -180,8 +182,9 @@ inline matrix_cl<double> packed_copy(const std::vector<double>& src, int rows) {
  * @throw <code>std::invalid_argument</code> if the
  * matrices do not have matching dimensions
  */
-inline matrix_cl<double> copy_cl(const matrix_cl<double>& src) {
-  matrix_cl<double> dst(src.rows(), src.cols());
+template <typename T, typename std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
+inline matrix_cl<T> copy_cl(const matrix_cl<T>& src) {
+  matrix_cl<T> dst(src.rows(), src.cols());
   if (src.size() == 0) {
     return dst;
   }
@@ -196,12 +199,12 @@ inline matrix_cl<double> copy_cl(const matrix_cl<double>& src) {
         = vec_concat(dst.read_write_events(), src.write_events());
     cl::Event copy_event;
     queue.enqueueCopyBuffer(src.buffer(), dst.buffer(), 0, 0,
-                            sizeof(double) * src.size(), &mat_events,
+                            sizeof(T) * src.size(), &mat_events,
                             &copy_event);
     dst.add_write_event(copy_event);
     src.add_read_event(copy_event);
   } catch (const cl::Error& e) {
-    check_opencl_error("copy (OpenCL)->(OpenCL)", e);
+    check_opencl_error("copy_cl (OpenCL)->(OpenCL)", e);
   }
   return dst;
 }
@@ -213,21 +216,21 @@ inline matrix_cl<double> copy_cl(const matrix_cl<double>& src) {
  * @return dst Arithmetic to receive the matrix_cl value.
  */
 template <typename T, std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
-inline T from_matrix_cl(const matrix_cl<double>& src) {
-  T dst;
-  check_size_match("copy ((OpenCL) -> (OpenCL))", "src.rows()", src.rows(),
+inline int from_matrix_cl_error_code(const matrix_cl<T>& src) {
+  int dst;
+  check_size_match("copy_error_code ((OpenCL) -> (OpenCL))", "src.rows()", src.rows(),
                    "dst.rows()", 1);
-  check_size_match("copy ((OpenCL) -> (OpenCL))", "src.cols()", src.cols(),
+  check_size_match("copy_error_code ((OpenCL) -> (OpenCL))", "src.cols()", src.cols(),
                    "dst.cols()", 1);
   try {
     cl::Event copy_event;
     const cl::CommandQueue queue = opencl_context.queue();
-    queue.enqueueReadBuffer(src.buffer(), CL_FALSE, 0, sizeof(T), &dst,
+    queue.enqueueReadBuffer(src.buffer(), CL_FALSE, 0, sizeof(int), &dst,
                             &src.write_events(), &copy_event);
     copy_event.wait();
     src.clear_write_events();
   } catch (const cl::Error& e) {
-    check_opencl_error("copy (OpenCL)->(OpenCL)", e);
+    check_opencl_error("copy_error_code (OpenCL)->(OpenCL)", e);
   }
   return dst;
 }
@@ -239,11 +242,11 @@ inline T from_matrix_cl(const matrix_cl<double>& src) {
  * @return A 1x1 matrix on the device.
  */
 template <typename T, std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
-inline matrix_cl<double> to_matrix_cl(const T& src) {
-  matrix_cl<double> dst(1, 1);
-  check_size_match("copy ((OpenCL) -> (OpenCL))", "src.rows()", dst.rows(),
+inline matrix_cl<T> to_matrix_cl(const T& src) {
+  matrix_cl<T> dst(1, 1);
+  check_size_match("to_matrix_cl ((OpenCL) -> (OpenCL))", "src.rows()", dst.rows(),
                    "dst.rows()", 1);
-  check_size_match("copy ((OpenCL) -> (OpenCL))", "src.cols()", dst.cols(),
+  check_size_match("to_matrix_cl ((OpenCL) -> (OpenCL))", "src.cols()", dst.cols(),
                    "dst.cols()", 1);
   try {
     cl::Event copy_event;
@@ -252,7 +255,7 @@ inline matrix_cl<double> to_matrix_cl(const T& src) {
                              &dst.write_events(), &copy_event);
     dst.add_write_event(copy_event);
   } catch (const cl::Error& e) {
-    check_opencl_error("copy (OpenCL)->(OpenCL)", e);
+    check_opencl_error("to_matrix_cl (OpenCL)->(OpenCL)", e);
   }
   return dst;
 }

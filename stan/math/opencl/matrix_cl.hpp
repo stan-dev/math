@@ -22,13 +22,17 @@
 namespace stan {
 namespace math {
 
+// Dummy class to instantiate matrix_cl to enable for specific types.
+template <typename T>
+class matrix_cl_impl {};
+
 /**
  * Represents a matrix on the OpenCL device.
  *
- * The matrix data is stored in the buffer_cl_.
+ * @tparam T an arithmetic type for the type stored in the OpenCL buffer.
  */
 template <typename T>
-class matrix_cl {
+class matrix_cl : matrix_cl_impl<std::enable_if_t<std::is_arithmetic<T>::value>> {
  private:
   /**
    * cl::Buffer provides functionality for working with the OpenCL buffer.
@@ -42,12 +46,16 @@ class matrix_cl {
   mutable std::vector<cl::Event> read_events_;   // Tracks reads
 
  public:
+  typedef T type;
   // Forward declare the methods that work in place on the matrix
-  template <TriangularViewCL triangular_view = TriangularViewCL::Entire>
+  template <TriangularViewCL triangular_view = TriangularViewCL::Entire,
+  typename std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
   void zeros();
-  template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper>
+  template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper,
+  typename std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
   void triangular_transpose();
-  template <TriangularViewCL triangular_view = TriangularViewCL::Entire>
+  template <TriangularViewCL triangular_view = TriangularViewCL::Entire,
+  typename std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
   void sub_block(const matrix_cl<T>& A, size_t A_i, size_t A_j, size_t this_i,
                  size_t this_j, size_t nrows, size_t ncols);
   int rows() const { return rows_; }
@@ -298,6 +306,19 @@ class matrix_cl {
     buffer_cl_ = a.buffer();
     return *this;
   }
+
+  template <typename U>
+  matrix_cl<T>& operator=(const matrix_cl<U>& a) {
+    check_size_match("assignment of (OpenCL) matrices", "source.rows()",
+                     a.rows(), "destination.rows()", rows());
+    check_size_match("assignment of (OpenCL) matrices", "source.cols()",
+                     a.cols(), "destination.cols()", cols());
+    // Need to wait for all of matrices events before destroying old buffer
+    this->wait_for_read_write_events();
+    buffer_cl_ = a.buffer();
+    return *this;
+  }
+
 };
 
 }  // namespace math

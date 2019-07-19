@@ -68,16 +68,16 @@ TEST(MathMatrixCL, matrix_cl_matrix_copy) {
 }
 
 TEST(MathMatrixCL, matrix_cl_matrix_copy_arithmetic) {
-  int test_val = 5;
+  double test_val = 5;
   // Use this for successful copy
   stan::math::matrix_cl<double> d22_cl(1, 1);
   // Use this for failure copy
   stan::math::matrix_cl<double> d222_cl(2, 3);
   EXPECT_NO_THROW(d22_cl = stan::math::to_matrix_cl(test_val));
-  EXPECT_NO_THROW(test_val = stan::math::from_matrix_cl<int>(d22_cl));
+  EXPECT_NO_THROW(test_val = stan::math::from_matrix_cl_error_code(d22_cl));
   EXPECT_THROW(d222_cl = stan::math::to_matrix_cl(test_val),
                std::invalid_argument);
-  EXPECT_THROW(test_val = stan::math::from_matrix_cl<int>(d222_cl),
+  EXPECT_THROW(test_val = stan::math::from_matrix_cl_error_code(d222_cl),
                std::invalid_argument);
 }
 

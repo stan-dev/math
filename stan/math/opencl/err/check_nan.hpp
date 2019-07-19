@@ -31,7 +31,7 @@ inline void check_nan(const char* function, const char* name,
     nan_chk = to_matrix_cl(nan_flag);
     opencl_kernels::check_nan(cl::NDRange(y.rows(), y.cols()), y, nan_chk,
                               y.rows(), y.cols());
-    nan_flag = from_matrix_cl<int>(nan_chk);
+    nan_flag = from_matrix_cl_error_code(nan_chk);
     if (nan_flag) {
       domain_error(function, name, "has NaN values", "");
     }

@@ -26,13 +26,14 @@ namespace math {
  * @return the matrix with the copied content
  *
  */
-template <TriangularViewCL triangular_view = TriangularViewCL::Entire>
-inline matrix_cl<double> copy_triangular(const matrix_cl<double>& src) {
+template <TriangularViewCL triangular_view = TriangularViewCL::Entire,
+ typename T, typename std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
+inline matrix_cl<T> copy_triangular(const matrix_cl<T>& src) {
   if (src.size() == 0 || src.size() == 1) {
-    matrix_cl<double> dst(src);
+    matrix_cl<T> dst(src);
     return dst;
   }
-  matrix_cl<double> dst(src.rows(), src.cols());
+  matrix_cl<T> dst(src.rows(), src.cols());
   try {
     opencl_kernels::copy_triangular(cl::NDRange(dst.rows(), dst.cols()), dst,
                                     src, dst.rows(), dst.cols(),
