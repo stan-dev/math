@@ -23,11 +23,11 @@ namespace math {
  * input matrices do not have matching dimensions
  *
  */
- template <typename T1, typename T2,
- typename std::enable_if_t<std::is_arithmetic<T1>::value, int> = 0,
- typename std::enable_if_t<std::is_arithmetic<T2>::value, int> = 0>
+template <typename T1, typename T2,
+          typename std::enable_if_t<std::is_arithmetic<T1>::value, int> = 0,
+          typename std::enable_if_t<std::is_arithmetic<T2>::value, int> = 0>
 inline matrix_cl<return_type_t<T1, T2>> add(const matrix_cl<T1>& A,
-                             const matrix_cl<T2>& B) {
+                                            const matrix_cl<T2>& B) {
   check_matching_dims("add", "A", A, "B", B);
   matrix_cl<return_type_t<T1, T2>> C(A.rows(), A.cols());
   if (C.size() == 0) {
@@ -54,9 +54,9 @@ inline matrix_cl<return_type_t<T1, T2>> add(const matrix_cl<T1>& A,
  * input matrices do not have matching dimensions
  *
  */
- template <typename T1, typename T2,
- typename std::enable_if_t<std::is_arithmetic<T1>::value, int> = 0,
- typename std::enable_if_t<std::is_arithmetic<T2>::value, int> = 0>
+template <typename T1, typename T2,
+          typename std::enable_if_t<std::is_arithmetic<T1>::value, int> = 0,
+          typename std::enable_if_t<std::is_arithmetic<T2>::value, int> = 0>
 inline auto operator+(const matrix_cl<T1>& A, const matrix_cl<T2>& B) {
   return add(A, B);
 }

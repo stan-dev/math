@@ -40,8 +40,7 @@ inline const T& get_kernel_args(const T& t) {
 }
 
 template <typename K>
-inline const cl::Buffer& get_kernel_args(
-    const stan::math::matrix_cl<K>& m) {
+inline const cl::Buffer& get_kernel_args(const stan::math::matrix_cl<K>& m) {
   return m.buffer();
 }
 
@@ -72,12 +71,11 @@ struct assign_event_helper<in_out_buffer, K> {
 };
 
 template <typename T>
-inline void assign_event(const cl::Event& e,
-                                    const T&) {}
+inline void assign_event(const cl::Event& e, const T&) {}
 
 template <typename T, typename K>
 inline void assign_event(const cl::Event& e,
-                                    const stan::math::matrix_cl<K>& m) {
+                         const stan::math::matrix_cl<K>& m) {
   assign_event_helper<T, K> helper;
   helper.set(e, m);
 }
@@ -142,7 +140,8 @@ inline const std::vector<cl::Event> select_events(const T& m) {
 }
 
 template <typename T, typename K>
-inline const std::vector<cl::Event> select_events(const stan::math::matrix_cl<K>& m) {
+inline const std::vector<cl::Event> select_events(
+    const stan::math::matrix_cl<K>& m) {
   select_event_helper<T, K> helper;
   return helper.get(m);
 }

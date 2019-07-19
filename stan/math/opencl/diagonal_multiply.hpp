@@ -17,10 +17,10 @@ namespace math {
  * @return copy of the input matrix with the diagonal multiplied by scalar
  */
 template <typename T1, typename T2,
-typename std::enable_if_t<std::is_arithmetic<T1>::value, int> = 0,
-typename std::enable_if_t<std::is_arithmetic<T2>::value, int> = 0>
-inline matrix_cl<return_type_t<T1, T2>> diagonal_multiply(const matrix_cl<T1>& A,
-                                           const T2 scalar) {
+          typename std::enable_if_t<std::is_arithmetic<T1>::value, int> = 0,
+          typename std::enable_if_t<std::is_arithmetic<T2>::value, int> = 0>
+inline matrix_cl<return_type_t<T1, T2>> diagonal_multiply(
+    const matrix_cl<T1>& A, const T2 scalar) {
   matrix_cl<return_type_t<T1, T2>> B(A);
   if (B.size() == 0)
     return B;

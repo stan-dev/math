@@ -25,7 +25,8 @@ namespace math {
  * @param ncols the number of columns in the submatrix
  */
 template <typename T>
-template <TriangularViewCL triangular_view, typename std::enable_if_t<std::is_arithmetic<T>::value, int>>
+template <TriangularViewCL triangular_view,
+          typename std::enable_if_t<std::is_arithmetic<T>::value, int>>
 inline void matrix_cl<T>::sub_block(const matrix_cl<T>& A, size_t A_i,
                                     size_t A_j, size_t this_i, size_t this_j,
                                     size_t nrows, size_t ncols) try {
