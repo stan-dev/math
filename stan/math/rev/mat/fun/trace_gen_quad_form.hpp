@@ -51,24 +51,12 @@ class trace_gen_quad_form_vari : public vari {
     if (varB || varD)
       AtB.noalias() = A.transpose() * B;
 
-    if (varB) {
-      Eigen::Matrix<double, Rb, Cb> adjB(adj * (A * BD + AtB * D.transpose()));
-      for (int j = 0; j < B.cols(); j++)
-        for (int i = 0; i < B.rows(); i++)
-          (*varB)(i, j).vi_->adj_ += adjB(i, j);
-    }
-    if (varA) {
-      Eigen::Matrix<double, Ra, Ca> adjA(adj * (B * BD.transpose()));
-      for (int j = 0; j < A.cols(); j++)
-        for (int i = 0; i < A.rows(); i++)
-          (*varA)(i, j).vi_->adj_ += adjA(i, j);
-    }
-    if (varD) {
-      Eigen::Matrix<double, Rd, Cd> adjD(adj * (B.transpose() * AtB));
-      for (int j = 0; j < D.cols(); j++)
-        for (int i = 0; i < D.rows(); i++)
-          (*varD)(i, j).vi_->adj_ += adjD(i, j);
-    }
+    if (varB)
+      (*varB).adj() += adj * (A * BD + AtB * D.transpose());
+    if (varA)
+      (*varA).adj() += adj * (B * BD.transpose());
+    if (varD)
+      (*varD).adj() += adj * (B.transpose() * AtB);
   }
 
  public:

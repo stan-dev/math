@@ -42,19 +42,13 @@ class trace_quad_form_vari : public vari {
   static inline void chainA(Eigen::Matrix<var, Ra, Ca>& A,
                             const Eigen::Matrix<double, Rb, Cb>& Bd,
                             double adjC) {
-    Eigen::Matrix<double, Ra, Ca> adjA(adjC * Bd * Bd.transpose());
-    for (int j = 0; j < A.cols(); j++)
-      for (int i = 0; i < A.rows(); i++)
-        A(i, j).vi_->adj_ += adjA(i, j);
+    A.adj() += adjC * Bd * Bd.transpose();
   }
   static inline void chainB(Eigen::Matrix<var, Rb, Cb>& B,
                             const Eigen::Matrix<double, Ra, Ca>& Ad,
                             const Eigen::Matrix<double, Rb, Cb>& Bd,
                             double adjC) {
-    Eigen::Matrix<double, Ra, Ca> adjB(adjC * (Ad + Ad.transpose()) * Bd);
-    for (int j = 0; j < B.cols(); j++)
-      for (int i = 0; i < B.rows(); i++)
-        B(i, j).vi_->adj_ += adjB(i, j);
+    B.adj() += adjC * (Ad + Ad.transpose()) * Bd;
   }
 
   inline void chainAB(Eigen::Matrix<Ta, Ra, Ca>& A,
