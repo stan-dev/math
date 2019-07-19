@@ -25,7 +25,8 @@ namespace math {
  *
  */
 template <typename T>
-template <TriangularMapCL triangular_map, typename std::enable_if_t<std::is_arithmetic<T>::value, int>>
+template <TriangularMapCL triangular_map,
+          typename std::enable_if_t<std::is_arithmetic<T>::value, int>>
 inline void matrix_cl<T>::triangular_transpose() try {
   if (size() == 0 || size() == 1) {
     return;

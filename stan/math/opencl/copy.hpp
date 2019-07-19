@@ -33,7 +33,8 @@ namespace math {
  * @param src source Eigen matrix
  * @return matrix_cl with a copy of the data in the source matrix
  */
-template <typename T, int R, int C, typename std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
+template <typename T, int R, int C,
+          typename std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
 inline matrix_cl<T> to_matrix_cl(const Eigen::Matrix<T, R, C>& src) {
   matrix_cl<T> dst(src.rows(), src.cols());
   if (src.size() == 0) {
@@ -49,9 +50,8 @@ inline matrix_cl<T> to_matrix_cl(const Eigen::Matrix<T, R, C>& src) {
      */
     cl::Event copy_event;
     const cl::CommandQueue& queue = opencl_context.queue();
-    queue.enqueueWriteBuffer(dst.buffer(), CL_FALSE, 0,
-                             sizeof(T) * dst.size(), src.data(),
-                             &dst.write_events(), &copy_event);
+    queue.enqueueWriteBuffer(dst.buffer(), CL_FALSE, 0, sizeof(T) * dst.size(),
+                             src.data(), &dst.write_events(), &copy_event);
     dst.add_write_event(copy_event);
   } catch (const cl::Error& e) {
     check_opencl_error("copy Eigen->(OpenCL)", e);
@@ -67,11 +67,11 @@ inline matrix_cl<T> to_matrix_cl(const Eigen::Matrix<T, R, C>& src) {
  * @param src source matrix on the OpenCL device
  * @return Eigen matrix with a copy of the data in the source matrix
  */
-template <typename T, typename std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
+template <typename T,
+          typename std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
 inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> from_matrix_cl(
     const matrix_cl<T>& src) {
-  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> dst(src.rows(),
-                                                            src.cols());
+  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> dst(src.rows(), src.cols());
   if (src.size() == 0) {
     return dst;
   }
@@ -106,7 +106,7 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> from_matrix_cl(
  * @return the packed std::vector
  */
 template <TriangularViewCL triangular_view, typename T,
- typename std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
+          typename std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
 inline std::vector<T> packed_copy(const matrix_cl<T>& src) {
   const int packed_size = src.rows() * (src.rows() + 1) / 2;
   std::vector<T> dst(packed_size);
@@ -123,8 +123,8 @@ inline std::vector<T> packed_copy(const matrix_cl<T>& src) {
         = vec_concat(packed.read_write_events(), src.write_events());
     cl::Event copy_event;
     queue.enqueueReadBuffer(packed.buffer(), CL_FALSE, 0,
-                            sizeof(T) * packed_size, dst.data(),
-                            &mat_events, &copy_event);
+                            sizeof(T) * packed_size, dst.data(), &mat_events,
+                            &copy_event);
     copy_event.wait();
     src.clear_write_events();
   } catch (const cl::Error& e) {
@@ -146,7 +146,8 @@ inline std::vector<T> packed_copy(const matrix_cl<T>& src) {
  * size of the vector does not match the expected size
  * for the packed triangular matrix
  */
-template <TriangularViewCL triangular_view, typename T, typename std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
+template <TriangularViewCL triangular_view, typename T,
+          typename std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
 inline matrix_cl<T> packed_copy(const std::vector<T>& src, int rows) {
   const int packed_size = rows * (rows + 1) / 2;
   check_size_match("copy (packed std::vector -> OpenCL)", "src.size()",
@@ -182,7 +183,8 @@ inline matrix_cl<T> packed_copy(const std::vector<T>& src, int rows) {
  * @throw <code>std::invalid_argument</code> if the
  * matrices do not have matching dimensions
  */
-template <typename T, typename std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
+template <typename T,
+          typename std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
 inline matrix_cl<T> copy_cl(const matrix_cl<T>& src) {
   matrix_cl<T> dst(src.rows(), src.cols());
   if (src.size() == 0) {
@@ -199,8 +201,7 @@ inline matrix_cl<T> copy_cl(const matrix_cl<T>& src) {
         = vec_concat(dst.read_write_events(), src.write_events());
     cl::Event copy_event;
     queue.enqueueCopyBuffer(src.buffer(), dst.buffer(), 0, 0,
-                            sizeof(T) * src.size(), &mat_events,
-                            &copy_event);
+                            sizeof(T) * src.size(), &mat_events, &copy_event);
     dst.add_write_event(copy_event);
     src.add_read_event(copy_event);
   } catch (const cl::Error& e) {
@@ -218,10 +219,10 @@ inline matrix_cl<T> copy_cl(const matrix_cl<T>& src) {
 template <typename T, std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
 inline int from_matrix_cl_error_code(const matrix_cl<T>& src) {
   int dst;
-  check_size_match("copy_error_code ((OpenCL) -> (OpenCL))", "src.rows()", src.rows(),
-                   "dst.rows()", 1);
-  check_size_match("copy_error_code ((OpenCL) -> (OpenCL))", "src.cols()", src.cols(),
-                   "dst.cols()", 1);
+  check_size_match("copy_error_code ((OpenCL) -> (OpenCL))", "src.rows()",
+                   src.rows(), "dst.rows()", 1);
+  check_size_match("copy_error_code ((OpenCL) -> (OpenCL))", "src.cols()",
+                   src.cols(), "dst.cols()", 1);
   try {
     cl::Event copy_event;
     const cl::CommandQueue queue = opencl_context.queue();
@@ -244,10 +245,10 @@ inline int from_matrix_cl_error_code(const matrix_cl<T>& src) {
 template <typename T, std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
 inline matrix_cl<T> to_matrix_cl(const T& src) {
   matrix_cl<T> dst(1, 1);
-  check_size_match("to_matrix_cl ((OpenCL) -> (OpenCL))", "src.rows()", dst.rows(),
-                   "dst.rows()", 1);
-  check_size_match("to_matrix_cl ((OpenCL) -> (OpenCL))", "src.cols()", dst.cols(),
-                   "dst.cols()", 1);
+  check_size_match("to_matrix_cl ((OpenCL) -> (OpenCL))", "src.rows()",
+                   dst.rows(), "dst.rows()", 1);
+  check_size_match("to_matrix_cl ((OpenCL) -> (OpenCL))", "src.cols()",
+                   dst.cols(), "dst.cols()", 1);
   try {
     cl::Event copy_event;
     const cl::CommandQueue queue = opencl_context.queue();

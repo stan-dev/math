@@ -32,7 +32,8 @@ class matrix_cl_impl {};
  * @tparam T an arithmetic type for the type stored in the OpenCL buffer.
  */
 template <typename T>
-class matrix_cl : matrix_cl_impl<std::enable_if_t<std::is_arithmetic<T>::value>> {
+class matrix_cl
+    : matrix_cl_impl<std::enable_if_t<std::is_arithmetic<T>::value>> {
  private:
   /**
    * cl::Buffer provides functionality for working with the OpenCL buffer.
@@ -49,13 +50,13 @@ class matrix_cl : matrix_cl_impl<std::enable_if_t<std::is_arithmetic<T>::value>>
   typedef T type;
   // Forward declare the methods that work in place on the matrix
   template <TriangularViewCL triangular_view = TriangularViewCL::Entire,
-  typename std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
+            typename std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
   void zeros();
   template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper,
-  typename std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
+            typename std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
   void triangular_transpose();
   template <TriangularViewCL triangular_view = TriangularViewCL::Entire,
-  typename std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
+            typename std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
   void sub_block(const matrix_cl<T>& A, size_t A_i, size_t A_j, size_t this_i,
                  size_t this_j, size_t nrows, size_t ncols);
   int rows() const { return rows_; }
@@ -314,7 +315,6 @@ class matrix_cl : matrix_cl_impl<std::enable_if_t<std::is_arithmetic<T>::value>>
     buffer_cl_ = a.buffer();
     return *this;
   }
-
 };
 
 }  // namespace math

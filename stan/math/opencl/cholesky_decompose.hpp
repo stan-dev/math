@@ -40,7 +40,8 @@ namespace math {
  * @throw std::domain_error if m is not
  *  positive definite (if m has more than 0 elements)
  */
-template <typename T, typename std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
+template <typename T,
+          typename std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
 inline void cholesky_decompose(matrix_cl<T>& A) {
   if (A.rows() == 0)
     return;

@@ -17,7 +17,8 @@ namespace math {
  * @return transposed input matrix
  *
  */
-template <typename T, typename std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
+template <typename T,
+          typename std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
 inline matrix_cl<T> transpose(const matrix_cl<T>& src) {
   matrix_cl<T> dst(src.cols(), src.rows());
   if (dst.size() == 0)

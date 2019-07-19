@@ -27,7 +27,8 @@ namespace math {
  *
  */
 template <TriangularViewCL triangular_view = TriangularViewCL::Entire,
- typename T, typename std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
+          typename T,
+          typename std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
 inline matrix_cl<T> copy_triangular(const matrix_cl<T>& src) {
   if (src.size() == 0 || src.size() == 1) {
     matrix_cl<T> dst(src);
