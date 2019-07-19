@@ -246,8 +246,7 @@ class matrix_cl : matrix_cl_impl<std::enable_if_t<std::is_arithmetic<T>::value>>
     try {
       // creates the OpenCL buffer to copy the Eigen
       // matrix to the OpenCL device
-      buffer_cl_
-          = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
+      buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
       /**
        * Writes the contents of A to the OpenCL buffer
        * starting at the offset 0.
@@ -257,9 +256,8 @@ class matrix_cl : matrix_cl_impl<std::enable_if_t<std::is_arithmetic<T>::value>>
        * is finished transfering)
        */
       cl::Event transfer_event;
-      queue.enqueueWriteBuffer(buffer_cl_, CL_FALSE, 0,
-                               sizeof(T) * A.size(), A.data(), NULL,
-                               &transfer_event);
+      queue.enqueueWriteBuffer(buffer_cl_, CL_FALSE, 0, sizeof(T) * A.size(),
+                               A.data(), NULL, &transfer_event);
       this->add_write_event(transfer_event);
     } catch (const cl::Error& e) {
       check_opencl_error("matrix constructor", e);
@@ -276,8 +274,7 @@ class matrix_cl : matrix_cl_impl<std::enable_if_t<std::is_arithmetic<T>::value>>
     try {
       // creates the OpenCL buffer to copy the Eigen
       // matrix to the OpenCL device
-      buffer_cl_
-          = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
+      buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
       /**
        * Writes the contents of A to the OpenCL buffer
        * starting at the offset 0.
@@ -287,9 +284,8 @@ class matrix_cl : matrix_cl_impl<std::enable_if_t<std::is_arithmetic<T>::value>>
        * is finished transfering)
        */
       cl::Event transfer_event;
-      queue.enqueueWriteBuffer(buffer_cl_, CL_FALSE, 0,
-                               sizeof(T) * A.size(), A.data(), NULL,
-                               &transfer_event);
+      queue.enqueueWriteBuffer(buffer_cl_, CL_FALSE, 0, sizeof(T) * A.size(),
+                               A.data(), NULL, &transfer_event);
       this->add_write_event(transfer_event);
     } catch (const cl::Error& e) {
       check_opencl_error("matrix constructor", e);
