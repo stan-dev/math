@@ -6,6 +6,7 @@
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/err/check_square.hpp>
 #include <stan/math/opencl/kernels/check_symmetric.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/mat/err/constraint_tolerance.hpp>
 #include <vector>
@@ -21,8 +22,9 @@ namespace math {
  * @throw <code>std::domain_error</code> if
  *    the matrix is not symmetric.
  */
+template <typename T, typename = enable_if_arithmetic<T>>
 inline void check_symmetric(const char* function, const char* name,
-                            const matrix_cl<double>& y) {
+                            const matrix_cl<T>& y) {
   if (y.size() == 0)
     return;
   check_square(function, name, y);

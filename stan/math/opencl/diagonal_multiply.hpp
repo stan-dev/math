@@ -16,8 +16,7 @@ namespace math {
  * @param scalar scalar
  * @return copy of the input matrix with the diagonal multiplied by scalar
  */
-template <typename T1, typename T2, typename = enable_if_arithmetic<T1>,
-          typename = enable_if_arithmetic<T2>>
+template <typename T1, typename T2, typename = enable_if_all_arithmetic<T1, T2>>
 inline matrix_cl<return_type_t<T1, T2>> diagonal_multiply(
     const matrix_cl<T1>& A, const T2 scalar) {
   matrix_cl<return_type_t<T1, T2>> B(A);

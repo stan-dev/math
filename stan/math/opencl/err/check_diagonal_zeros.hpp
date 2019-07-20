@@ -5,6 +5,7 @@
 #include <stan/math/opencl/constants.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/kernels/check_diagonal_zeros.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <vector>
 
@@ -20,8 +21,9 @@ namespace math {
  * @throw <code>std::domain_error</code> if
  *    any diagonal element of the matrix is zero.
  */
+template <typename T, typename = enable_if_arithmetic<T>>
 inline void check_diagonal_zeros(const char* function, const char* name,
-                                 const matrix_cl<double>& y) {
+                                 const matrix_cl<T>& y) {
   if (y.size() == 0)
     return;
   cl::CommandQueue cmd_queue = opencl_context.queue();

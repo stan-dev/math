@@ -24,8 +24,8 @@ namespace stan {
 namespace math {
 
 // Dummy class to instantiate matrix_cl to enable for specific types.
-template <typename T>
-class matrix_cl_impl {};
+template <typename T, typename = void>
+class matrix_cl {};
 
 /**
  * Represents a matrix on the OpenCL device.
@@ -33,7 +33,7 @@ class matrix_cl_impl {};
  * @tparam T an arithmetic type for the type stored in the OpenCL buffer.
  */
 template <typename T>
-class matrix_cl : matrix_cl_impl<enable_if_arithmetic<T>> {
+class matrix_cl<T, enable_if_arithmetic<T>>{
  private:
   /**
    * cl::Buffer provides functionality for working with the OpenCL buffer.
@@ -49,15 +49,12 @@ class matrix_cl : matrix_cl_impl<enable_if_arithmetic<T>> {
  public:
   typedef T type;
   // Forward declare the methods that work in place on the matrix
-  template <TriangularViewCL triangular_view = TriangularViewCL::Entire,
-            typename = enable_if_arithmetic<T>>
+  template <TriangularViewCL triangular_view = TriangularViewCL::Entire>
   void zeros();
-  template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper,
-            typename = enable_if_arithmetic<T>>
+  template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper>
   void triangular_transpose();
-  template <TriangularViewCL triangular_view = TriangularViewCL::Entire,
-            typename = enable_if_arithmetic<T>>
-  void sub_block(const matrix_cl<T>& A, size_t A_i, size_t A_j, size_t this_i,
+  template <TriangularViewCL triangular_view = TriangularViewCL::Entire>
+  void sub_block(const matrix_cl<T, enable_if_arithmetic<T>>& A, size_t A_i, size_t A_j, size_t this_i,
                  size_t this_j, size_t nrows, size_t ncols);
   int rows() const { return rows_; }
 
@@ -316,6 +313,9 @@ class matrix_cl : matrix_cl_impl<enable_if_arithmetic<T>> {
     return *this;
   }
 };
+
+template <typename T>
+using matrix_cl_primitive = matrix_cl<T, enable_if_arithmetic<T>>;
 
 }  // namespace math
 }  // namespace stan
