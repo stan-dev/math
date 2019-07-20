@@ -114,7 +114,8 @@ inline matrix_cl<return_type_t<T1, T2>> multiply(const matrix_cl<T1>& A,
  * @param scalar scalar
  * @return matrix multipled with scalar
  */
-template <typename T1, typename T2, typename = enable_if_arithmetic<T1>, typename = enable_if_arithmetic<T2>>
+template <typename T1, typename T2, typename = enable_if_arithmetic<T1>,
+          typename = enable_if_arithmetic<T2>>
 inline matrix_cl<return_type_t<T1, T2>> multiply(const matrix_cl<T1>& A,
                                                  const T2 scalar) {
   matrix_cl<return_type_t<T1, T2>> temp(A.rows(), A.cols());
@@ -137,7 +138,8 @@ inline matrix_cl<return_type_t<T1, T2>> multiply(const matrix_cl<T1>& A,
  * @param A matrix
  * @return matrix multipled with scalar
  */
-template <typename T1, typename T2, typename = enable_if_arithmetic<T1>, typename = enable_if_arithmetic<T2>>
+template <typename T1, typename T2, typename = enable_if_arithmetic<T1>,
+          typename = enable_if_arithmetic<T2>>
 inline matrix_cl<return_type_t<T1, T2>> multiply(const T1 scalar,
                                                  const matrix_cl<T2>& A) {
   return multiply(A, scalar);
@@ -155,7 +157,8 @@ inline matrix_cl<return_type_t<T1, T2>> multiply(const T1 scalar,
  * @throw <code>std::invalid_argument</code> if the
  *   number of columns in A and rows in B do not match
  */
-template <typename T1, typename T2, typename = enable_if_arithmetic<T1>, typename = enable_if_arithmetic<T2>>
+template <typename T1, typename T2, typename = enable_if_arithmetic<T1>,
+          typename = enable_if_arithmetic<T2>>
 inline matrix_cl<return_type_t<T1, T2>> multiply(const matrix_cl<T1>& A,
                                                  const matrix_cl<T2>& B) {
   return opencl::multiply(A, B);
@@ -173,17 +176,20 @@ inline matrix_cl<return_type_t<T1, T2>> multiply(const matrix_cl<T1>& A,
  * @throw <code>std::invalid_argument</code> if the
  *   number of columns in A and rows in B do not match
  */
-template <typename T1, typename T2, typename = enable_if_arithmetic<T1>, typename = enable_if_arithmetic<T2>>
+template <typename T1, typename T2, typename = enable_if_arithmetic<T1>,
+          typename = enable_if_arithmetic<T2>>
 inline matrix_cl<return_type_t<T1, T2>> operator*(const matrix_cl<T1>& A,
                                                   const matrix_cl<T2>& B) {
   return opencl::multiply(A, B);
 }
-template <typename T1, typename T2, typename = enable_if_arithmetic<T1>, typename = enable_if_arithmetic<T2>>
+template <typename T1, typename T2, typename = enable_if_arithmetic<T1>,
+          typename = enable_if_arithmetic<T2>>
 inline matrix_cl<return_type_t<T1, T2>> operator*(const matrix_cl<T1>& B,
                                                   const T2 scalar) {
   return multiply(B, scalar);
 }
-template <typename T1, typename T2, typename = enable_if_arithmetic<T1>, typename = enable_if_arithmetic<T2>>
+template <typename T1, typename T2, typename = enable_if_arithmetic<T1>,
+          typename = enable_if_arithmetic<T2>>
 inline matrix_cl<return_type_t<T1, T2>> operator*(const T1 scalar,
                                                   const matrix_cl<T2>& B) {
   return multiply(scalar, B);

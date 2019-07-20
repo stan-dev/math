@@ -103,7 +103,8 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> from_matrix_cl(
  * @param src the flat triangular source matrix on the OpenCL device
  * @return the packed std::vector
  */
-template <TriangularViewCL triangular_view, typename T, typename = enable_if_arithmetic<T>>
+template <TriangularViewCL triangular_view, typename T,
+          typename = enable_if_arithmetic<T>>
 inline std::vector<T> packed_copy(const matrix_cl<T>& src) {
   const int packed_size = src.rows() * (src.rows() + 1) / 2;
   std::vector<T> dst(packed_size);
@@ -143,7 +144,8 @@ inline std::vector<T> packed_copy(const matrix_cl<T>& src) {
  * size of the vector does not match the expected size
  * for the packed triangular matrix
  */
-template <TriangularViewCL triangular_view, typename T, typename = enable_if_arithmetic<T>>
+template <TriangularViewCL triangular_view, typename T,
+          typename = enable_if_arithmetic<T>>
 inline matrix_cl<T> packed_copy(const std::vector<T>& src, int rows) {
   const int packed_size = rows * (rows + 1) / 2;
   check_size_match("copy (packed std::vector -> OpenCL)", "src.size()",

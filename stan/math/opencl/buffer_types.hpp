@@ -10,7 +10,6 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 
-
 // An in_buffer signifies a cl::Buffer argument used as input.
 struct in_buffer {};
 
@@ -60,7 +59,6 @@ template <typename T = cl::Buffer>
 struct to_matrix_cl {
   typedef T type;
 };
-
 
 template <>
 struct to_matrix_cl<cl::Buffer> {
