@@ -13,6 +13,7 @@
 #include <stan/math/opencl/err/check_square.hpp>
 #include <stan/math/opencl/sub_block.hpp>
 #include <stan/math/opencl/zeros.hpp>
+#include <stan/math/prim/meta.hpp>
 
 #include <string>
 #include <vector>
@@ -35,8 +36,7 @@ namespace math {
  * @throw <code>std::invalid_argument</code> if the matrix
  *    is not square
  */
-template <TriangularViewCL triangular_view, typename T,
-          typename std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
+template <TriangularViewCL triangular_view, typename T, typename = enable_if_arithmetic<T>>
 inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
   static_assert(triangular_view != TriangularViewCL::Entire,
                 "tri_inverse(OpenCL) only supports triangular input matrices");

@@ -4,6 +4,7 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/opencl/kernels/identity.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <CL/cl.hpp>
 
 namespace stan {
@@ -17,8 +18,7 @@ namespace math {
  * @return the identity matrix
  *
  */
-template <typename T,
-          typename std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
+template <typename T, typename = enable_if_arithmetic<T>>
 inline matrix_cl<T> identity(int rows_cols) {
   matrix_cl<T> A(rows_cols, rows_cols);
   if (rows_cols == 0) {

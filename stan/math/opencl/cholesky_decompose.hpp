@@ -13,6 +13,7 @@
 #include <stan/math/opencl/err/check_nan.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/opencl/sub_block.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <CL/cl.hpp>
 #include <algorithm>
 #include <cmath>
@@ -40,8 +41,7 @@ namespace math {
  * @throw std::domain_error if m is not
  *  positive definite (if m has more than 0 elements)
  */
-template <typename T,
-          typename std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
+template <typename T, typename = enable_if_arithmetic<T>>
 inline void cholesky_decompose(matrix_cl<T>& A) {
   if (A.rows() == 0)
     return;

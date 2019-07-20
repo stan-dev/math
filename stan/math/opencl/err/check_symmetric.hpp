@@ -28,7 +28,7 @@ inline void check_symmetric(const char* function, const char* name,
   check_square(function, name, y);
   try {
     int symmetric_flag = 1;
-    matrix_cl<double> symm_flag(1, 1);
+    matrix_cl<int> symm_flag(1, 1);
     symm_flag = to_matrix_cl(symmetric_flag);
     opencl_kernels::check_symmetric(cl::NDRange(y.rows(), y.cols()), y,
                                     symm_flag, y.rows(), y.cols(),

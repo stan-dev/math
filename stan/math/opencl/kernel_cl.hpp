@@ -39,13 +39,32 @@ inline const T& get_kernel_args(const T& t) {
   return t;
 }
 
+/**
+ * Extracts the kernel's arguments, used in the global and local kernel
+ * constructor.
+ * @tparam K The type of the @c matrix_cl
+ * @param m The @c matrix with an OpenCL Buffer.
+ * @return The OpenCL Buffer.
+ */
 template <typename K>
 inline const cl::Buffer& get_kernel_args(const stan::math::matrix_cl<K>& m) {
   return m.buffer();
 }
 
+/**
+ * Helper function for assigning events to a @c matrix_cl.
+ *
+ * @tparam T Whether the assignment is to an @c in_buffer, @c out_buffer, or @c in_out_buffer.
+ * @tparam K The type of the @c matrix_cl.
+ *
+ */
 template <typename T, typename K = double>
 struct assign_event_helper {
+  /**
+   * Assigns the event to the @c matrix_cl.
+   * @param e the event to be assigned.
+   * @param m The @c matrix_cl to be assigned to.
+   */
   inline void set(const cl::Event& e, const stan::math::matrix_cl<K>& m) {}
 };
 
@@ -70,9 +89,22 @@ struct assign_event_helper<in_out_buffer, K> {
   }
 };
 
-template <typename T>
+/**
+ * Assigns the event to @c matrix_cl's
+ * @tparam T The type to be assigned, if not a matrix_cl will do nothing.
+ * @tparam K The type of the @c matrix_cl.
+ * @param e The event to be assigned.
+ */
+template <typename T, typename K = double>
 inline void assign_event(const cl::Event& e, const T&) {}
 
+/**
+ * Assigns the event to @c matrix_cl's
+ * @tparam T The type to be assigned, if not a matrix_cl will do nothing.
+ * @tparam K The type of the @c matrix_cl.
+ * @param e The event to be assigned.
+ * @param m The @c matrix_cl to be assigned
+ */
 template <typename T, typename K>
 inline void assign_event(const cl::Event& e,
                          const stan::math::matrix_cl<K>& m) {
@@ -97,16 +129,25 @@ inline void assign_events(const T&) {}
  * @param args Arguments to the kernel that may be matrices or not. Non-matrices
  * ignored.
  */
-template <typename Arg, typename... Args>
+template <typename Arg, typename... Args, typename CallArg, typename... CallArgs>
 inline void assign_events(const cl::Event& new_event,
-                          to_const_matrix_cl_t<Arg>& m,
-                          to_const_matrix_cl_t<Args>&... args) {
+                          CallArg& m,
+                          CallArgs&... args) {
   assign_event<Arg>(new_event, m);
   assign_events<Args...>(new_event, args...);
 }
 
+/**
+ * Helper function to select OpenCL event vectors from a @c matrix_cl
+ * @tparam T For non-matrixcl types, the type of the first argument. Otherwise this is the in/out/inout buffer type.
+ * @tparam K For @c matrix_cl types, the type of the matrix_cl
+ */
 template <typename T, typename K = double>
 struct select_event_helper {
+  /**
+   * Get the events from a matrix_cl. For non @c matrix_cl types this will do nothing.
+   * @param m A type to extract the event from.
+   */
   inline const std::vector<cl::Event> get(const T& m) {
     return std::vector<cl::Event>();
   }
@@ -133,6 +174,13 @@ struct select_event_helper<in_out_buffer, K> {
   }
 };
 
+/**
+ * Select events from kernel arguments. Does nothing for non @c matri_cl types.
+ * @tparam T The argument type for a non @c matrix_cl, else the in/out/in_out buffer types.
+ * @tparam K The type of the @c matrix_cl
+ * @param m If a @c matrix_cl, gets the event vector, else another value that does nothing.
+ * @return A vector of events.
+ */
 template <typename T, typename K = double>
 inline const std::vector<cl::Event> select_events(const T& m) {
   select_event_helper<T, K> helper;
@@ -256,12 +304,15 @@ struct kernel_cl {
       : make_functor(name, sources, options) {}
   /**
    * Executes a kernel
+   * @tparam CallArgs The types of the callee arguments.
+   * @tparam Args Parameter pack of all kernel argument types.
    * @param global_thread_size The global work size.
    * @param args The arguments to pass to the kernel.
-   * @tparam Args Parameter pack of all kernel argument types.
+   * @return An Opencl event.
    */
+  template <typename... CallArgs>
   auto operator()(cl::NDRange global_thread_size,
-                  internal::to_const_matrix_cl_t<Args>&... args) const {
+      const CallArgs&... args) const {
     auto f = make_functor();
     const std::vector<cl::Event> kernel_events
         = vec_concat(internal::select_events<Args>(args)...);
@@ -274,13 +325,16 @@ struct kernel_cl {
 
   /**
    * Executes a kernel
+   * @tparam CallArgs The types of the callee arguments.
+   * @tparam Args Parameter pack of all kernel argument types.
    * @param global_thread_size The global work size.
    * @param thread_block_size The thread block size.
    * @param args The arguments to pass to the kernel.
-   * @tparam Args Parameter pack of all kernel argument types.
+   * @return An Opencl event.
    */
+  template <typename... CallArgs>
   auto operator()(cl::NDRange global_thread_size, cl::NDRange thread_block_size,
-                  internal::to_const_matrix_cl_t<Args>&... args) const {
+                  const CallArgs&... args) const {
     auto f = make_functor();
     const std::vector<cl::Event> kernel_events
         = vec_concat(internal::select_events<Args>(args)...);

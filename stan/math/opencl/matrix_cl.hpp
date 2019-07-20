@@ -5,6 +5,7 @@
 #include <stan/math/opencl/constants.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/arr/fun/vec_concat.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
@@ -33,7 +34,7 @@ class matrix_cl_impl {};
  */
 template <typename T>
 class matrix_cl
-    : matrix_cl_impl<std::enable_if_t<std::is_arithmetic<T>::value>> {
+    : matrix_cl_impl<enable_if_arithmetic<T>> {
  private:
   /**
    * cl::Buffer provides functionality for working with the OpenCL buffer.
@@ -49,14 +50,11 @@ class matrix_cl
  public:
   typedef T type;
   // Forward declare the methods that work in place on the matrix
-  template <TriangularViewCL triangular_view = TriangularViewCL::Entire,
-            typename std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
+  template <TriangularViewCL triangular_view = TriangularViewCL::Entire, typename = enable_if_arithmetic<T>>
   void zeros();
-  template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper,
-            typename std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
+  template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper, typename = enable_if_arithmetic<T>>
   void triangular_transpose();
-  template <TriangularViewCL triangular_view = TriangularViewCL::Entire,
-            typename std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
+  template <TriangularViewCL triangular_view = TriangularViewCL::Entire, typename = enable_if_arithmetic<T>>
   void sub_block(const matrix_cl<T>& A, size_t A_i, size_t A_j, size_t this_i,
                  size_t this_j, size_t nrows, size_t ncols);
   int rows() const { return rows_; }

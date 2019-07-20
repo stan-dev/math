@@ -6,8 +6,9 @@
 #include <stan/math/opencl/constants.hpp>
 #include <stan/math/opencl/kernels/triangular_transpose.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/scal/err/domain_error.hpp>
 
 #include <CL/cl.hpp>
 
@@ -25,8 +26,7 @@ namespace math {
  *
  */
 template <typename T>
-template <TriangularMapCL triangular_map,
-          typename std::enable_if_t<std::is_arithmetic<T>::value, int>>
+template <TriangularMapCL triangular_map, typename >
 inline void matrix_cl<T>::triangular_transpose() try {
   if (size() == 0 || size() == 1) {
     return;
