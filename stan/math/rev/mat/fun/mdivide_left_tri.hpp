@@ -57,12 +57,32 @@ class mdivide_left_tri_vv_vari : public vari {
           variRefA_[pos++] = A(i, j).vi_;
     }
 
-    Map<matrix_d> a_map(A_, M_, M_);
+
     Map<matrix_d> c_map(C_, M_, N_);
+    Map<matrix_d> a_map(A_, M_, M_);
     a_map = A.val();
     c_map = B.val();
     Map<matrix_vi>(variRefB_, M_, N_) = B.vi();
+#ifdef STAN_OPENCL
+  if (A.rows()
+    >= opencl_context.tuning_opts().tri_inverse_size_worth_transfer) {
+      matrix_cl A_cl(a_map);
+      matrix_cl C_cl(c_map);
+      if (TriView == Eigen::Lower) {
+        A_cl = tri_inverse<TriangularViewCL::Lower>(A_cl);
+      } else {
+        A_cl = tri_inverse<TriangularViewCL::Upper>(A_cl);
+      }
+      C_cl = A_cl * C_cl;
+      c_map = from_matrix_cl(C_cl);
+  } else {
+#endif
+        
     c_map = a_map.template triangularView<TriView>().solve(c_map);
+    
+#ifdef STAN_OPENCL
+  }
+#endif
     Map<matrix_vi>(variRefC_, M_, N_)
         = c_map.unaryExpr([](double x) { return new vari(x, false); });
   }
