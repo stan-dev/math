@@ -278,7 +278,6 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
     }
   }
 
-
   /**
    * Assign a @c matrix_cl to another
    */
