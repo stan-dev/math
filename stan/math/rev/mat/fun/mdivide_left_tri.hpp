@@ -66,8 +66,8 @@ class mdivide_left_tri_vv_vari : public vari {
 #ifdef STAN_OPENCL
   if (A.rows()
     >= opencl_context.tuning_opts().tri_inverse_size_worth_transfer) {
-      matrix_cl A_cl(a_map);
-      matrix_cl C_cl(c_map);
+      matrix_cl<double> A_cl(A_, M_, M_);
+      matrix_cl<double> C_cl(C_, M_, N_);
       if (TriView == Eigen::Lower) {
         A_cl = tri_inverse<TriangularViewCL::Lower>(A_cl);
       } else {
@@ -76,25 +76,50 @@ class mdivide_left_tri_vv_vari : public vari {
       C_cl = A_cl * C_cl;
       c_map = from_matrix_cl(C_cl);
   } else {
-#endif
-        
-    c_map = a_map.template triangularView<TriView>().solve(c_map);
-    
+#endif        
+    c_map = a_map.template triangularView<TriView>().solve(c_map);    
 #ifdef STAN_OPENCL
   }
 #endif
+
     Map<matrix_vi>(variRefC_, M_, N_)
         = c_map.unaryExpr([](double x) { return new vari(x, false); });
   }
 
   virtual void chain() {
     using Eigen::Map;
+    matrix_d adjA;
+    matrix_d adjB;
 
-    matrix_d adjB = Map<matrix_d>(A_, M_, M_)
+#ifdef STAN_OPENCL
+  if (M_
+    >= opencl_context.tuning_opts().tri_inverse_size_worth_transfer) {
+      matrix_d tmp_variRefC = Map<matrix_vi>(variRefC_, M_, N_).adj();
+      matrix_cl<double> A_cl(A_, M_, M_);
+      matrix_cl<double> C_cl(C_, M_, N_);
+      matrix_cl<double> adjC_cl(tmp_variRefC);
+      C_cl = transpose(C_cl);
+      if (TriView == Eigen::Lower) {
+        A_cl = transpose(tri_inverse<TriangularViewCL::Lower>(A_cl));
+      } else {
+        A_cl = transpose(tri_inverse<TriangularViewCL::Upper>(A_cl));
+      }
+      matrix_cl<double> adjB_cl = A_cl * adjC_cl;
+      matrix_cl<double> adjA_cl = multiply(adjB_cl * C_cl, -1.0);
+      adjA = from_matrix_cl(adjA_cl);
+      adjB = from_matrix_cl(adjB_cl);
+  } else {
+#endif
+
+    adjB = Map<matrix_d>(A_, M_, M_)
                         .template triangularView<TriView>()
                         .transpose()
                         .solve(Map<matrix_vi>(variRefC_, M_, N_).adj());
-    matrix_d adjA = -adjB * Map<matrix_d>(C_, M_, N_).transpose();
+    adjA = -adjB * Map<matrix_d>(C_, M_, N_).transpose();
+
+#ifdef STAN_OPENCL
+  }
+#endif
 
     size_t pos = 0;
     if (TriView == Eigen::Lower) {
@@ -144,21 +169,64 @@ class mdivide_left_tri_dv_vari : public vari {
     Map<matrix_d> c_map(C_, M_, N_);
 
     c_map = B.val();
+    
+#ifdef STAN_OPENCL
+  if (A.rows()
+    >= opencl_context.tuning_opts().tri_inverse_size_worth_transfer) {
+      matrix_cl<double> A_cl(A_, M_, M_);
+      matrix_cl<double> C_cl(C_, M_, N_);
+      if (TriView == Eigen::Lower) {
+        A_cl = tri_inverse<TriangularViewCL::Lower>(A_cl);
+      } else {
+        A_cl = tri_inverse<TriangularViewCL::Upper>(A_cl);
+      }
+      C_cl = A_cl * C_cl;
+      c_map = from_matrix_cl(C_cl);
+  } else {
+#endif        
     c_map = Map<matrix_d>(A_, M_, M_)
                 .template triangularView<TriView>()
-                .solve(c_map);
+                .solve(c_map);  
+#ifdef STAN_OPENCL
+  }
+#endif
     Map<matrix_vi>(variRefC_, M_, N_)
         = c_map.unaryExpr([](double x) { return new vari(x, false); });
   }
 
   virtual void chain() {
     using Eigen::Map;
-
-    Map<matrix_vi>(variRefB_, M_, N_).adj()
+#ifdef STAN_OPENCL
+  if (M_
+    >= opencl_context.tuning_opts().tri_inverse_size_worth_transfer) {
+     /*matrix_d tmp = Map<matrix_vi>(variRefC_, M_, N_).adj();
+     matrix_cl<double> A_cl(A_, M_, M_);
+     matrix_cl<double> C_cl(tmp);
+     C_cl = transpose(C_cl);
+     if (TriView == Eigen::Lower) {
+       A_cl = tri_inverse<TriangularViewCL::Lower>(A_cl);
+     } else {
+       A_cl = tri_inverse<TriangularViewCL::Upper>(A_cl);
+     }
+     C_cl = A_cl * C_cl;
+     matrix_d ttmp = from_matrix_cl(transpose(C_cl));
+     Map<matrix_vi>(variRefB_, M_, N_).adj() += ttmp;*/
+     Map<matrix_vi>(variRefB_, M_, N_).adj()
         += Map<matrix_d>(A_, M_, M_)
                .template triangularView<TriView>()
                .transpose()
                .solve(Map<matrix_vi>(variRefC_, M_, N_).adj());
+  } else {
+#endif        
+  Map<matrix_vi>(variRefB_, M_, N_).adj()
+        += Map<matrix_d>(A_, M_, M_)
+               .template triangularView<TriView>()
+               .transpose()
+               .solve(Map<matrix_vi>(variRefC_, M_, N_).adj());
+#ifdef STAN_OPENCL
+  }
+#endif
+
   }
 };
 
@@ -206,8 +274,25 @@ class mdivide_left_tri_vd_vari : public vari {
     Map<matrix_d> Ad(A_, M_, M_);
     Map<matrix_d> Cd(C_, M_, N_);
     Ad = A.val();
-
-    Cd = Ad.template triangularView<TriView>().solve(B);
+#ifdef STAN_OPENCL
+  if (M_
+    >= opencl_context.tuning_opts().tri_inverse_size_worth_transfer) {
+      matrix_cl<double> A_cl(A_, M_, M_);
+      matrix_cl<double> B_cl(B);
+      if (TriView == Eigen::Lower) {
+        A_cl = tri_inverse<TriangularViewCL::Lower>(A_cl);
+      } else {
+        A_cl = tri_inverse<TriangularViewCL::Upper>(A_cl);
+      }
+      B_cl = A_cl * B_cl;
+      Cd = from_matrix_cl(B_cl);
+  } else {
+#endif        
+    Cd = Ad.template triangularView<TriView>().solve(B);  
+#ifdef STAN_OPENCL
+  }
+#endif
+    
     Map<matrix_vi>(variRefC_, M_, N_)
         = Cd.unaryExpr([](double x) { return new vari(x, false); });
   }
@@ -219,14 +304,31 @@ class mdivide_left_tri_vd_vari : public vari {
     Matrix<double, R1, C2> adjC(M_, N_);
 
     adjC = Map<matrix_vi>(variRefC_, M_, N_).adj();
-
+#ifdef STAN_OPENCL
+    if (M_
+        >= opencl_context.tuning_opts().tri_inverse_size_worth_transfer) {
+      matrix_cl<double> A_cl(A_, M_, M_);
+      matrix_cl<double> C_cl(C_, M_, N_);
+      C_cl = transpose(C_cl);
+      matrix_cl<double> adjC_cl(adjC);
+      if (TriView == Eigen::Lower) {
+        A_cl = transpose(tri_inverse<TriangularViewCL::Lower>(A_cl));
+      } else {
+        A_cl = transpose(tri_inverse<TriangularViewCL::Upper>(A_cl));
+      }
+      matrix_cl<double> adjA_cl = multiply(A_cl * (adjC_cl * C_cl), -1.0);
+      adjA = from_matrix_cl(adjA_cl);
+    } else {
+#endif
     adjA.noalias()
         = -Map<Matrix<double, R1, C1> >(A_, M_, M_)
                .template triangularView<TriView>()
                .transpose()
                .solve(adjC
                       * Map<Matrix<double, R1, C2> >(C_, M_, N_).transpose());
-
+#ifdef STAN_OPENCL
+    }
+#endif
     size_t pos = 0;
     if (TriView == Eigen::Lower) {
       for (size_type j = 0; j < adjA.cols(); j++)
