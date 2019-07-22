@@ -383,7 +383,6 @@ TEST(laplace, lg_logistic_solver_dim_500) {
   start_optimization = std::chrono::system_clock::now();
   var marginal_density_v
     = laplace_marginal_density(theta_0, phi_v2, x,
-    // = laplace_marginal_density(theta, phi_v2, x,
         diff_logistic_log(to_vector(n_samples), to_vector(y)),
         squared_kernel_functor(), 1e-3, 100);
 
