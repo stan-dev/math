@@ -1,9 +1,13 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LGAMMA_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LGAMMA_HPP
 
-#if _REENTRANT & !__MINGW32__
+#if !__MINGW32__
+// _REENTRANT must be defined during compilation to ensure that cmath
+// exports reentrant safe lgamma_r version.
 #include <cmath>
 #else
+// MinGW does not provide the reentrant lgamma_r such that we fall
+// back to boost.
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/boost_policy.hpp>
 #include <boost/math/special_functions/gamma.hpp>
@@ -40,9 +44,9 @@ namespace math {
 * argument
 */
 inline double lgamma(double x) {
-#if _REENTRANT & !__MINGW32__
-  int sign = 0;
-  return lgamma_r(x, &sign);
+#if !__MINGW32__
+  int sign = 1;
+  return ::lgamma_r(x, &sign);
 #else
   if (unlikely(x == 0.0))
     return std::numeric_limits<double>::infinity();
@@ -59,9 +63,9 @@ inline double lgamma(double x) {
  * argument
  */
 inline double lgamma(int x) {
-#if _REENTRANT & !__MINGW32__
-  int sign = 0;
-  return lgamma_r(x, &sign);
+#if !__MINGW32__
+  int sign = 1;
+  return ::lgamma_r(x, &sign);
 #else
   if (unlikely(x == 0.0))
     return std::numeric_limits<double>::infinity();

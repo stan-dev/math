@@ -115,7 +115,6 @@ ifeq ($(OS),Darwin)
   ifeq (clang,$(CXX_TYPE))
     CXXFLAGS_OS ?= -Wno-unknown-warning-option -Wno-tautological-compare -Wno-sign-compare
   endif
-  CXXFLAGS_OS += -D_REENTRANT
 endif
 
 ifeq ($(OS),Linux)
@@ -132,8 +131,10 @@ ifeq ($(OS),Linux)
   ifeq (clang,$(CXX_TYPE))
     LDLIBS_OS ?= -lpthread
   endif
-  CXXFLAGS_OS += -D_REENTRANT
 endif
+
+## makes reentrant version lgamma_r available from cmath
+CXXFLAGS_OS += -D_REENTRANT
 
 ################################################################################
 # Setup OpenCL
