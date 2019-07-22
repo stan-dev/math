@@ -13,15 +13,6 @@
 namespace stan {
 namespace math {
 namespace opencl {
-inline bool check_multiply_size_worth_opencl_transfer(
-              const Eigen::Matrix<double, R1, C1>& m1,
-              const Eigen::Matrix<double, R2, C2>& m2){
-    const size_t result_mat_size = m1.rows() * m2.cols();
-    //if(m1.rows() == 1 && )
-    if(result_mat_size > opencl_context.tuning_opts().multiply_result_size_worth_transfer && m1.cols() < opencl_context.tuning_opts().multiply_common_dim_worth_transfer)
-      return true;
-    return false;
-}
 /**
  * Computes the product of the specified matrices with the option
  * of specifying the triangularity of either input matrices.
