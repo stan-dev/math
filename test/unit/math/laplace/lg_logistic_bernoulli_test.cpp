@@ -43,10 +43,7 @@ TEST(laplace, lg_logistic_solver_dim_2) {
   std::vector<int> n_samples = {1, 1};
   std::vector<int> sums = {0, 1};
 
-  // Check Kernel function
   squared_kernel_functor K;
-  // std::cout << "kernel function: " << std::endl
-  //           << K(phi, x) << std::endl;
 
   /////////////////////////////////////////////////////////////////////////////
   // Test Kinsol solver based method.
@@ -96,7 +93,7 @@ TEST(laplace, lg_logistic_solver_dim_2) {
   target.grad(parm_vec, g);
 
   // Print evaluation and gradient calculations
-  // std::cout << "mode: " << theta.transpose() << std::endl 
+  // std::cout << "mode: " << theta.transpose() << std::endl
   //           << "target: " << target.val() << std::endl
   //           << "lg grad: " << g[0] << " " << g[1] << std::endl;
 

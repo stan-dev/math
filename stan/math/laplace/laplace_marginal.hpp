@@ -213,6 +213,7 @@ namespace math {
         C = mdivide_left_tri<Eigen::Lower>(L,
                   diag_pre_multiply(W_root, covariance));
 
+      // CHECK -- should there be a minus sign here?
       Eigen::VectorXd s2 = 0.5 * (covariance.diagonal()
                  - (C.transpose() * C).diagonal())
                  .cwiseProduct(diff_likelihood.third_diff(theta));

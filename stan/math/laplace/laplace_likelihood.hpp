@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_LAPLACE_LAPLACE_LIKELIHOOD_HPP
 #define STAN_MATH_LAPLACE_LAPLACE_LIKELIHOOD_HPP
 
+#include <stan/math/prim/scal/fun/lgamma.hpp>
+
 namespace stan {
 namespace math {
 
@@ -19,9 +21,13 @@ struct diff_poisson_log {
   template <typename T>
   T log_likelihood (const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta)
     const {
-    return -sum(log_falling_factorial(sums_, sums_))
+    double factorial_term = 0;
+    for (int i = 0; i < sums_.size(); i++)
+      factorial_term += lgamma(sums_(i) + 1);
+
+    return - factorial_term
       + dot_product(theta, sums_)
-      - dot_product(theta, n_samples_);
+      - dot_product(exp(theta), n_samples_);
   }
 
   template <typename T>
