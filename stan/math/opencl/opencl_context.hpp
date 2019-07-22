@@ -207,7 +207,7 @@ class opencl_context_base {
     static opencl_context_base instance_;
     return instance_;
   }
-//
+  //
   opencl_context_base(opencl_context_base const&) = delete;
   void operator=(opencl_context_base const&) = delete;
 };
