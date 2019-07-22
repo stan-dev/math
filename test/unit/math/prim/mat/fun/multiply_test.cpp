@@ -143,8 +143,7 @@ TEST(MathMatrix, multiply_opencl) {
   int multiply_dim_prod_worth_transfer
       = stan::math::opencl_context.tuning_opts()
             .multiply_dim_prod_worth_transfer;
-  stan::math::opencl_context.tuning_opts().multiply_dim_prod_worth_transfer
-      = 0;
+  stan::math::opencl_context.tuning_opts().multiply_dim_prod_worth_transfer = 0;
   using stan::math::multiply;
   int size = 400;
   stan::math::matrix_d m1 = stan::math::matrix_d::Random(size, size).eval();
