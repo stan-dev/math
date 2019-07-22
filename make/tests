@@ -64,8 +64,8 @@ ALGEBRA_SOLVER_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *algebra_sol
 $(ALGEBRA_SOLVER_TESTS) : $(LIBSUNDIALS)
 
 # also link lap tests
-LGP_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *lgp*_test.cpp))
-$(LGP_TESTS) : $(LIBSUNDIALS)
+LG_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *lg*_test.cpp))
+$(LG_TESTS) : $(LIBSUNDIALS)
 
 ############################################################
 #
