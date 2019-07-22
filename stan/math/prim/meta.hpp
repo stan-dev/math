@@ -34,7 +34,7 @@
 #include <stan/math/prim/meta/contains_fvar.hpp>
 //#include <stan/math/prim/meta/contains_std_vector.hpp>
 #include <stan/math/prim/meta/contains_vector.hpp>
-#include <stan/math/prim/scal/meta/error_index.hpp>
+#include <stan/math/prim/meta/error_index.hpp>
 //#include <stan/math/prim/scal/meta/include_summand.hpp>  // causing bug
 //#include <stan/math/prim/scal/meta/is_constant.hpp>
 #include <stan/math/prim/scal/meta/is_fvar.hpp>
