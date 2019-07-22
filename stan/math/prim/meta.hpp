@@ -29,7 +29,7 @@
 //#include <stan/math/prim/arr/meta/value_type.hpp>
 #include <stan/math/prim/meta/VectorBuilderHelper.hpp>
 
-#include <stan/math/prim/scal/meta/ad_promotable.hpp>
+#include <stan/math/prim/meta/ad_promotable.hpp>
 #include <stan/math/prim/scal/meta/child_type.hpp>
 #include <stan/math/prim/scal/meta/contains_fvar.hpp>
 #include <stan/math/prim/scal/meta/contains_std_vector.hpp>
