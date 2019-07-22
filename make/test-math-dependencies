@@ -124,6 +124,6 @@ test-math-dependencies:
 ## Check that we do not use non-reentrant safe functions from std
 	@$(call math_warnings, 'thread-reentrant-safe', 'stan/math',\
              'std::lgamma',\
-             'Replace std::lgamma with reentrnat safe version boost::math::lgamma or lgamma_r on supporting platforms.')
+             'Replace std::lgamma with reentrant safe version boost::math::lgamma or lgamma_r on supporting platforms.')
 ## Print all warnings
 	@$(call print_math_warnings)
