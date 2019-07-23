@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_FWD_CORE_FVAR_HPP
 #define STAN_MATH_FWD_CORE_FVAR_HPP
 
-#include <stan/math/prim/scal/meta/likely.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
-#include <stan/math/fwd/scal/meta/ad_promotable.hpp>
+#include <stan/math/fwd/meta.hpp>
 #include <ostream>
 
 namespace stan {

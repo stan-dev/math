@@ -23,8 +23,8 @@ TEST(MathMatrix, cholesky_decompose_cpu_vs_cl_small) {
   stan::math::matrix_d m1(4, 4);
   m1 << 18, 22, 54, 42, 22, 70, 86, 62, 54, 86, 174, 134, 42, 62, 134, 106;
 
-  stan::math::matrix_cl m0_cl(m0);
-  stan::math::matrix_cl m1_cl(m1);
+  stan::math::matrix_cl<double> m0_cl(m0);
+  stan::math::matrix_cl<double> m1_cl(m1);
 
   stan::math::matrix_d m0_res = stan::math::cholesky_decompose(m0);
   stan::math::matrix_d m1_res = stan::math::cholesky_decompose(m1);

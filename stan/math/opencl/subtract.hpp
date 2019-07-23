@@ -5,6 +5,7 @@
 #include <stan/math/opencl/kernels/subtract.hpp>
 #include <stan/math/opencl/err/check_matching_dims.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <CL/cl.hpp>
 
 namespace stan {
@@ -25,9 +26,11 @@ namespace math {
  * input matrices do not have matching dimensions.
  *
  */
-inline auto subtract(const matrix_cl& A, const matrix_cl& B) {
+template <typename T1, typename T2, typename = enable_if_all_arithmetic<T1, T2>>
+inline matrix_cl<return_type_t<T1, T2>> subtract(const matrix_cl<T1>& A,
+                                                 const matrix_cl<T2>& B) {
   check_matching_dims("subtract ((OpenCL))", "A", A, "B", B);
-  matrix_cl C(A.rows(), A.cols(),
+  matrix_cl<return_type_t<T1, T2>> C(A.rows(), A.cols(),
               combine(A.triangular_view(), B.triangular_view()));
   if (A.size() == 0) {
     return C;
@@ -57,7 +60,8 @@ inline auto subtract(const matrix_cl& A, const matrix_cl& B) {
  * input matrices do not have matching dimensions.
  *
  */
-inline auto operator-(const matrix_cl& A, const matrix_cl& B) {
+template <typename T1, typename T2, typename = enable_if_all_arithmetic<T1, T2>>
+inline auto operator-(const matrix_cl<T1>& A, const matrix_cl<T2>& B) {
   return subtract(A, B);
 }
 }  // namespace math

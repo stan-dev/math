@@ -5,9 +5,10 @@
 #include <stan/math/opencl/triangular.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/arr/fun/vec_concat.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
-#include <stan/math/prim/arr/fun/vec_concat.hpp>
 #include <CL/cl.hpp>
 #include <iostream>
 #include <string>
@@ -21,19 +22,25 @@
  */
 namespace stan {
 namespace math {
+
+// Dummy class to instantiate matrix_cl to enable for specific types.
+template <typename T, typename = void>
+class matrix_cl {};
+
 /**
  * Represents a matrix on the OpenCL device.
  *
- * The matrix data is stored in the oclBuffer_.
+ * @tparam T an arithmetic type for the type stored in the OpenCL buffer.
  */
-class matrix_cl {
+template <typename T>
+class matrix_cl<T, enable_if_arithmetic<T>> {
  private:
   /**
    * cl::Buffer provides functionality for working with the OpenCL buffer.
    * An OpenCL buffer allocates the memory in the device that
    * is provided by the context.
    */
-  cl::Buffer oclBuffer_;
+  cl::Buffer buffer_cl_;
   const int rows_;
   const int cols_;
   TriangularViewCL triangular_view_;
@@ -41,13 +48,16 @@ class matrix_cl {
   mutable std::vector<cl::Event> read_events_;   // Tracks reads
 
  public:
+  typedef T type;
   // Forward declare the methods that work in place on the matrix
   template <TriangularViewCL triangular_view = TriangularViewCL::Entire>
   void zeros();
   template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper>
   void triangular_transpose();
-  void sub_block(const matrix_cl& A, size_t A_i, size_t A_j, size_t this_i,
-                 size_t this_j, size_t nrows, size_t ncols);
+
+  void sub_block(const matrix_cl<T, enable_if_arithmetic<T>>& A, size_t A_i,
+                 size_t A_j, size_t this_i, size_t this_j, size_t nrows,
+                 size_t ncols);
   int rows() const { return rows_; }
 
   int cols() const { return cols_; }
@@ -173,25 +183,20 @@ class matrix_cl {
     return;
   }
 
-  const cl::Buffer& buffer() const { return oclBuffer_; }
+  const cl::Buffer& buffer() const { return buffer_cl_; }
+  cl::Buffer& buffer() { return buffer_cl_; }
+  matrix_cl() : rows_(0), cols_(0) {}
 
-  matrix_cl()
-      : rows_(0), cols_(0), triangular_view_(TriangularViewCL::Diagonal) {}
-
-  matrix_cl(const matrix_cl& A)
-      : rows_(A.rows()), cols_(A.cols()), triangular_view_(A.triangular_view_) {
+  matrix_cl(const matrix_cl<T>& A) : rows_(A.rows()), cols_(A.cols()) {
     if (A.size() == 0)
       return;
-    // the context is needed to create the buffer object
     cl::Context& ctx = opencl_context.context();
     cl::CommandQueue queue = opencl_context.queue();
     try {
-      // creates a read&write object for "size" double values
-      // in the provided context
-      oclBuffer_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * size());
+      buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * size());
       cl::Event cstr_event;
       queue.enqueueCopyBuffer(A.buffer(), this->buffer(), 0, 0,
-                              A.size() * sizeof(double), &A.write_events(),
+                              A.size() * sizeof(T), &A.write_events(),
                               &cstr_event);
       this->add_write_event(cstr_event);
     } catch (const cl::Error& e) {
@@ -220,12 +225,13 @@ class matrix_cl {
     cl::Context& ctx = opencl_context.context();
     try {
       // creates the OpenCL buffer of the provided size
-      oclBuffer_
-          = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * rows_ * cols_);
+      buffer_cl_
+          = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * rows_ * cols_);
     } catch (const cl::Error& e) {
       check_opencl_error("matrix constructor", e);
     }
   }
+
   /**
    * Constructor for the matrix_cl that
    * creates a copy of the Eigen matrix on the OpenCL device.
@@ -239,7 +245,7 @@ class matrix_cl {
    * matrices do not have matching dimensions
    */
   template <int R, int C>
-  explicit matrix_cl(const Eigen::Matrix<double, R, C>& A,
+  explicit matrix_cl(const Eigen::Matrix<T, R, C>& A,
                      TriangularViewCL triangular_view
                      = TriangularViewCL::Entire)
       : rows_(A.rows()), cols_(A.cols()), triangular_view_(triangular_view) {
@@ -249,40 +255,79 @@ class matrix_cl {
     cl::Context& ctx = opencl_context.context();
     cl::CommandQueue& queue = opencl_context.queue();
     try {
-      // creates the OpenCL buffer to copy the Eigen
-      // matrix to the OpenCL device
-      oclBuffer_
-          = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * A.size());
-      /**
-       * Writes the contents of A to the OpenCL buffer
-       * starting at the offset 0.
-       * CL_TRUE denotes that the call is blocking as
-       * we do not want to execute any further kernels
-       * on the device until we are sure that the data
-       * is finished transfering)
-       */
+      buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
       cl::Event transfer_event;
-      queue.enqueueWriteBuffer(oclBuffer_, CL_FALSE, 0,
-                               sizeof(double) * A.size(), A.data(), NULL,
-                               &transfer_event);
+      queue.enqueueWriteBuffer(buffer_cl_, CL_FALSE, 0, sizeof(T) * A.size(),
+                               A.data(), NULL, &transfer_event);
       this->add_write_event(transfer_event);
     } catch (const cl::Error& e) {
       check_opencl_error("matrix constructor", e);
     }
   }
 
-  matrix_cl& operator=(const matrix_cl& a) {
+  /**
+   * Construct from @c std::vector with given rows and columns
+   *
+   * @param A Standard vector
+   * @param R Number of rows the matrix should have.
+   * @param C Number of columns the matrix should have.
+   * @throw <code>std::system_error</code> if the
+   * matrices do not have matching dimensions
+   */
+  explicit matrix_cl(const std::vector<T>& A, const int& R, const int& C)
+      : rows_(R), cols_(C) {
+    if (size() == 0) {
+      return;
+    }
+    cl::Context& ctx = opencl_context.context();
+    cl::CommandQueue& queue = opencl_context.queue();
+    try {
+      buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
+      cl::Event transfer_event;
+      queue.enqueueWriteBuffer(buffer_cl_, CL_FALSE, 0, sizeof(T) * A.size(),
+                               A.data(), NULL, &transfer_event);
+      this->add_write_event(transfer_event);
+    } catch (const cl::Error& e) {
+      check_opencl_error("matrix constructor", e);
+    }
+  }
+
+  /**
+   * Assign a @c matrix_cl to another
+   */
+  matrix_cl<T>& operator=(const matrix_cl<T>& a) {
     check_size_match("assignment of (OpenCL) matrices", "source.rows()",
                      a.rows(), "destination.rows()", rows());
     check_size_match("assignment of (OpenCL) matrices", "source.cols()",
                      a.cols(), "destination.cols()", cols());
     // Need to wait for all of matrices events before destroying old buffer
     this->wait_for_read_write_events();
-    oclBuffer_ = a.buffer();
+    buffer_cl_ = a.buffer();
+    return *this;
+  }
+
+  /**
+   * Assign a @c matrix_cl of one arithmetic type to another
+   */
+  template <typename U, typename = enable_if_arithmetic<T>>
+  matrix_cl<T>& operator=(const matrix_cl<U>& a) {
+    check_size_match("assignment of (OpenCL) matrices", "source.rows()",
+                     a.rows(), "destination.rows()", rows());
+    check_size_match("assignment of (OpenCL) matrices", "source.cols()",
+                     a.cols(), "destination.cols()", cols());
+    // Need to wait for all of matrices events before destroying old buffer
+    this->wait_for_read_write_events();
+    buffer_cl_ = a.buffer();
     triangular_view_ = a.triangular_view_;
     return *this;
   }
 };
+
+template <typename T>
+using matrix_cl_prim = matrix_cl<T, enable_if_arithmetic<T>>;
+
+template <typename T>
+using matrix_cl_fp = matrix_cl<T, enable_if_floating_point<T>>;
 
 }  // namespace math
 }  // namespace stan

@@ -80,6 +80,14 @@ struct NumTraits<stan::math::var> : GenericNumTraits<stan::math::var> {
 };
 
 namespace internal {
+/**
+ * Partial specialization of Eigen's remove_all struct to stop
+ * Eigen removing pointer from vari* variables
+ */
+template <>
+struct remove_all<stan::math::vari*> {
+  typedef stan::math::vari* type;
+};
 
 #if EIGEN_VERSION_AT_LEAST(3, 3, 0)
 /**

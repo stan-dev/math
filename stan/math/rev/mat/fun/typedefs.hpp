@@ -28,6 +28,24 @@ typedef Eigen::Matrix<var, Eigen::Dynamic, 1> vector_v;
  */
 typedef Eigen::Matrix<var, 1, Eigen::Dynamic> row_vector_v;
 
+/**
+ * The type of a matrix holding <code>vari*</code>
+ * values.
+ */
+typedef Eigen::Matrix<vari*, Eigen::Dynamic, Eigen::Dynamic> matrix_vi;
+
+/**
+ * The type of a (column) vector holding <code>vari*</code>
+ * values.
+ */
+typedef Eigen::Matrix<vari*, Eigen::Dynamic, 1> vector_vi;
+
+/**
+ * The type of a row vector holding <code>vari*</code>
+ * values.
+ */
+typedef Eigen::Matrix<vari*, 1, Eigen::Dynamic> row_vector_vi;
+
 }  // namespace math
 }  // namespace stan
 #endif

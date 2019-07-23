@@ -6,6 +6,7 @@
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/kernels/copy_triangular.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <CL/cl.hpp>
 
 namespace stan {
@@ -26,15 +27,16 @@ namespace math {
  * @return the matrix with the copied content
  *
  */
-template <TriangularViewCL triangular_view = TriangularViewCL::Entire>
-inline matrix_cl copy_triangular(const matrix_cl& src) {
+template <TriangularViewCL triangular_view = TriangularViewCL::Entire,
+          typename T, typename = enable_if_arithmetic<T>>
+inline matrix_cl<T> copy_triangular(const matrix_cl<T>& src) {
   if (src.size() == 0 || src.size() == 1) {
-    matrix_cl dst(src);
+    matrix_cl<T> dst(src);
     return dst;
   }
   TriangularViewCL dst_view
       = commonNonzeroPart(triangular_view, src.triangular_view());
-  matrix_cl dst(src.rows(), src.cols(), dst_view);
+  matrix_cl<T> dst(src.rows(), src.cols(), dst_view);
   try {
     opencl_kernels::copy_triangular(cl::NDRange(dst.rows(), dst.cols()), dst,
                                     src, dst.rows(), dst.cols(), dst_view);

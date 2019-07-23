@@ -20,8 +20,9 @@ namespace math {
  * @throw <code>std::invalid_argument</code> if the <code>matrix_cl</code>
  *    is not triangular
  */
+template <typename T>
 inline void check_triangular(const char* function, const char* name,
-                             const matrix_cl& A) {
+                             const matrix_cl<T>& A) {
   if (A.triangular_view() != TriangularViewCL::Lower
       && A.triangular_view() != TriangularViewCL::Upper) {
     invalid_argument("tri_inverse(OpenCL)", "A.triangular_view()",
