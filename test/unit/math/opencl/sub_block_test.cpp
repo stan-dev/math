@@ -1,4 +1,5 @@
 #ifdef STAN_OPENCL
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
@@ -16,8 +17,8 @@ TEST(MathMatrixCL, sub_block_pass) {
   d1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
   d2 << 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1;
 
-  stan::math::matrix_cl d11(d1);
-  stan::math::matrix_cl d22(d2);
+  stan::math::matrix_cl<double> d11(d1);
+  stan::math::matrix_cl<double> d22(d2);
   d22.sub_block(d11, 0, 0, 0, 0, 2, 2);
   d2 = stan::math::from_matrix_cl(d22);
   EXPECT_EQ(1, d2(0, 0));
@@ -32,15 +33,17 @@ TEST(MathMatrixCL, sub_block_exception) {
 
   d1.resize(3, 3);
   d2.resize(4, 4);
-  stan::math::matrix_cl d11(d1);
-  stan::math::matrix_cl d22(d2);
+  stan::math::matrix_cl<double> d11(d1);
+  stan::math::matrix_cl<double> d22(d2);
   EXPECT_THROW(d22.sub_block(d11, 1, 1, 0, 0, 4, 4), std::domain_error);
   EXPECT_THROW(d22.sub_block(d11, 4, 4, 0, 0, 2, 2), std::domain_error);
 }
 
 TEST(MathMatrixCL, sub_block_lower_pass) {
-  stan::math::matrix_d d1;
-  stan::math::matrix_d d2;
+  using stan::math::matrix_cl;
+  using stan::math::matrix_d;
+  matrix_d d1;
+  matrix_d d2;
 
   d1.resize(3, 3);
   d2.resize(4, 4);
@@ -48,8 +51,8 @@ TEST(MathMatrixCL, sub_block_lower_pass) {
   d1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
   d2 << 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1;
 
-  stan::math::matrix_cl d11(d1);
-  stan::math::matrix_cl d22(d2);
+  matrix_cl<double> d11(d1);
+  matrix_cl<double> d22(d2);
   d22.sub_block<stan::math::TriangularViewCL::Lower>(d11, 0, 0, 0, 0, 3, 3);
   d2 = stan::math::from_matrix_cl(d22);
   EXPECT_EQ(1, d2(0, 0));

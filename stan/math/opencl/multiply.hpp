@@ -9,6 +9,7 @@
 #include <stan/math/opencl/sub_block.hpp>
 #include <stan/math/opencl/zeros.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
 
 namespace stan {
 namespace math {
@@ -32,11 +33,13 @@ namespace opencl {
  */
 
 template <TriangularViewCL triangular_view_A = TriangularViewCL::Entire,
-          TriangularViewCL triangular_view_B = TriangularViewCL::Entire>
-inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
+          TriangularViewCL triangular_view_B = TriangularViewCL::Entire,
+          typename T1, typename T2, typename = enable_if_all_arithmetic<T1, T2>>
+inline matrix_cl<return_type_t<T1, T2>> multiply(const matrix_cl<T1>& A,
+                                                 const matrix_cl<T2>& B) {
   check_size_match("multiply ((OpenCL))", "A.cols()", A.cols(), "B.rows()",
                    B.rows());
-  matrix_cl temp(A.rows(), B.cols());
+  matrix_cl<return_type_t<T1, T2>> temp(A.rows(), B.cols());
   if (A.size() == 0 || B.size() == 0) {
     temp.zeros();
     return temp;
@@ -87,7 +90,7 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
                                       temp, A.rows(), B.cols(), B.rows(),
                                       triangular_view_A, triangular_view_B);
     } else {
-      matrix_cl tempSplit(A.rows(), B.cols() * split);
+      matrix_cl<return_type_t<T1, T2>> tempSplit(A.rows(), B.cols() * split);
       opencl_kernels::matrix_multiply(cl::NDRange(Mpad, Npad / wpt, split),
                                       cl::NDRange(local, local / wpt, 1), A, B,
                                       tempSplit, A.rows(), B.cols(), B.rows(),
@@ -110,8 +113,10 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
  * @param scalar scalar
  * @return matrix multipled with scalar
  */
-inline matrix_cl multiply(const matrix_cl& A, const double scalar) {
-  matrix_cl temp(A.rows(), A.cols());
+template <typename T1, typename T2, typename = enable_if_all_arithmetic<T1, T2>>
+inline matrix_cl<return_type_t<T1, T2>> multiply(const matrix_cl<T1>& A,
+                                                 const T2 scalar) {
+  matrix_cl<return_type_t<T1, T2>> temp(A.rows(), A.cols());
   if (A.size() == 0)
     return temp;
   try {
@@ -131,7 +136,9 @@ inline matrix_cl multiply(const matrix_cl& A, const double scalar) {
  * @param A matrix
  * @return matrix multipled with scalar
  */
-inline auto multiply(const double scalar, const matrix_cl& A) {
+template <typename T1, typename T2, typename = enable_if_all_arithmetic<T1, T2>>
+inline matrix_cl<return_type_t<T1, T2>> multiply(const T1 scalar,
+                                                 const matrix_cl<T2>& A) {
   return multiply(A, scalar);
 }
 
@@ -147,7 +154,9 @@ inline auto multiply(const double scalar, const matrix_cl& A) {
  * @throw <code>std::invalid_argument</code> if the
  *   number of columns in A and rows in B do not match
  */
-inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
+template <typename T1, typename T2, typename = enable_if_all_arithmetic<T1, T2>>
+inline matrix_cl<return_type_t<T1, T2>> multiply(const matrix_cl<T1>& A,
+                                                 const matrix_cl<T2>& B) {
   return opencl::multiply(A, B);
 }
 
@@ -163,13 +172,19 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
  * @throw <code>std::invalid_argument</code> if the
  *   number of columns in A and rows in B do not match
  */
-inline matrix_cl operator*(const matrix_cl& A, const matrix_cl& B) {
+template <typename T1, typename T2, typename = enable_if_all_arithmetic<T1, T2>>
+inline matrix_cl<return_type_t<T1, T2>> operator*(const matrix_cl<T1>& A,
+                                                  const matrix_cl<T2>& B) {
   return opencl::multiply(A, B);
 }
-inline matrix_cl operator*(const matrix_cl& B, const double scalar) {
+template <typename T1, typename T2, typename = enable_if_all_arithmetic<T1, T2>>
+inline matrix_cl<return_type_t<T1, T2>> operator*(const matrix_cl<T1>& B,
+                                                  const T2 scalar) {
   return multiply(B, scalar);
 }
-inline matrix_cl operator*(const double scalar, const matrix_cl& B) {
+template <typename T1, typename T2, typename = enable_if_all_arithmetic<T1, T2>>
+inline matrix_cl<return_type_t<T1, T2>> operator*(const T1 scalar,
+                                                  const matrix_cl<T2>& B) {
   return multiply(scalar, B);
 }
 }  // namespace math
