@@ -10,9 +10,9 @@ TEST(MathMatrixCL, subtract_v_exception_pass) {
 
   d1.resize(3);
   d2.resize(3);
-  stan::math::matrix_cl d11(d1);
-  stan::math::matrix_cl d22(d2);
-  stan::math::matrix_cl d33(3, 1);
+  stan::math::matrix_cl<double> d11(d1);
+  stan::math::matrix_cl<double> d22(d2);
+  stan::math::matrix_cl<double> d33(3, 1);
   EXPECT_NO_THROW(d33 = d11 - d22);
 }
 
@@ -22,9 +22,9 @@ TEST(MathMatrixCL, subtract_v_exception_pass_zero) {
   stan::math::vector_d d1, d2;
   d1.resize(0);
   d2.resize(0);
-  stan::math::matrix_cl d11(d1);
-  stan::math::matrix_cl d22(d2);
-  stan::math::matrix_cl d33(0, 1);
+  stan::math::matrix_cl<double> d11(d1);
+  stan::math::matrix_cl<double> d22(d2);
+  stan::math::matrix_cl<double> d33(0, 1);
   EXPECT_NO_THROW(d33 = d11 - d22);
 }
 
@@ -32,9 +32,9 @@ TEST(MathMatrixCL, subtract_v_exception_fail_zero) {
   stan::math::vector_d d1, d2;
   d1.resize(2);
   d2.resize(3);
-  stan::math::matrix_cl d11(d1);
-  stan::math::matrix_cl d22(d2);
-  stan::math::matrix_cl d33(3, 3);
+  stan::math::matrix_cl<double> d11(d1);
+  stan::math::matrix_cl<double> d22(d2);
+  stan::math::matrix_cl<double> d33(3, 3);
   EXPECT_THROW(d33 = d11 - d22, std::invalid_argument);
 }
 
@@ -43,9 +43,9 @@ TEST(MathMatrixCL, subtract_rv_exception_pass) {
 
   d1.resize(3);
   d2.resize(3);
-  stan::math::matrix_cl d11(d1);
-  stan::math::matrix_cl d22(d2);
-  stan::math::matrix_cl d33(1, 3);
+  stan::math::matrix_cl<double> d11(d1);
+  stan::math::matrix_cl<double> d22(d2);
+  stan::math::matrix_cl<double> d33(1, 3);
   EXPECT_NO_THROW(d33 = d11 - d22);
 }
 
@@ -53,9 +53,9 @@ TEST(MathMatrixCL, subtract_rv_exception_pass_zero) {
   stan::math::row_vector_d d1, d2;
   d1.resize(0);
   d2.resize(0);
-  stan::math::matrix_cl d11(d1);
-  stan::math::matrix_cl d22(d2);
-  stan::math::matrix_cl d33(1, 0);
+  stan::math::matrix_cl<double> d11(d1);
+  stan::math::matrix_cl<double> d22(d2);
+  stan::math::matrix_cl<double> d33(1, 0);
   EXPECT_NO_THROW(d33 = d11 - d22);
 }
 
@@ -63,9 +63,9 @@ TEST(MathMatrixCL, subtract_rv_exception_fail_zero) {
   stan::math::row_vector_d d1, d2;
   d1.resize(2);
   d2.resize(3);
-  stan::math::matrix_cl d11(d1);
-  stan::math::matrix_cl d22(d2);
-  stan::math::matrix_cl d33(3, 1);
+  stan::math::matrix_cl<double> d11(d1);
+  stan::math::matrix_cl<double> d22(d2);
+  stan::math::matrix_cl<double> d33(3, 1);
   EXPECT_THROW(d33 = d11 - d22, std::invalid_argument);
 }
 
@@ -73,9 +73,9 @@ TEST(MathMatrixCL, subtract_m_exception) {
   stan::math::matrix_d d1, d2;
   d1.resize(2, 3);
   d2.resize(2, 3);
-  stan::math::matrix_cl d11(d1);
-  stan::math::matrix_cl d22(d2);
-  stan::math::matrix_cl d33(2, 3);
+  stan::math::matrix_cl<double> d11(d1);
+  stan::math::matrix_cl<double> d22(d2);
+  stan::math::matrix_cl<double> d33(2, 3);
   EXPECT_NO_THROW(d33 = d11 - d22);
 }
 
@@ -83,9 +83,9 @@ TEST(MathMatrixCL, subtract_m_exception_pass_zero) {
   stan::math::matrix_d d1, d2;
   d1.resize(0, 0);
   d2.resize(0, 0);
-  stan::math::matrix_cl d11(d1);
-  stan::math::matrix_cl d22(d2);
-  stan::math::matrix_cl d33(0, 0);
+  stan::math::matrix_cl<double> d11(d1);
+  stan::math::matrix_cl<double> d22(d2);
+  stan::math::matrix_cl<double> d33(0, 0);
   EXPECT_NO_THROW(d33 = d11 - d22);
 }
 
@@ -93,9 +93,9 @@ TEST(MathMatrixCL, subtract_m_exception_fail) {
   stan::math::matrix_d d1, d2;
   d1.resize(2, 3);
   d2.resize(3, 3);
-  stan::math::matrix_cl d11(d1);
-  stan::math::matrix_cl d22(d2);
-  stan::math::matrix_cl d33(3, 2);
+  stan::math::matrix_cl<double> d11(d1);
+  stan::math::matrix_cl<double> d22(d2);
+  stan::math::matrix_cl<double> d33(3, 2);
   EXPECT_THROW(d33 = d11 - d22, std::invalid_argument);
 }
 
@@ -117,15 +117,15 @@ TEST(MathMatrixCL, subtract_exception) {
 
   using stan::math::matrix_cl;
   using stan::math::subtract;
-  matrix_cl v11(v1);
-  matrix_cl v22(v2);
-  matrix_cl v33(v1);
-  matrix_cl rv11(rv1);
-  matrix_cl rv22(rv2);
-  matrix_cl rv33(rv1);
-  matrix_cl m11(m1);
-  matrix_cl m22(m2);
-  matrix_cl m33(m1);
+  matrix_cl<double> v11(v1);
+  matrix_cl<double> v22(v2);
+  matrix_cl<double> v33(v1);
+  matrix_cl<double> rv11(rv1);
+  matrix_cl<double> rv22(rv2);
+  matrix_cl<double> rv33(rv1);
+  matrix_cl<double> m11(m1);
+  matrix_cl<double> m22(m2);
+  matrix_cl<double> m33(m1);
   EXPECT_THROW(v33 = v11 - v22, std::invalid_argument);
   EXPECT_THROW(rv33 = rv11 - rv22, std::invalid_argument);
   EXPECT_THROW(m33 = m11 - m22, std::invalid_argument);
@@ -152,15 +152,15 @@ TEST(MathMatrixCL, subtract_value_check) {
 
   using stan::math::matrix_cl;
   using stan::math::subtract;
-  matrix_cl v11(v1);
-  matrix_cl v22(v2);
-  matrix_cl v33(3, 1);
-  matrix_cl rv11(rv1);
-  matrix_cl rv22(rv2);
-  matrix_cl rv33(1, 3);
-  matrix_cl m11(m1);
-  matrix_cl m22(m2);
-  matrix_cl m33(3, 3);
+  matrix_cl<double> v11(v1);
+  matrix_cl<double> v22(v2);
+  matrix_cl<double> v33(3, 1);
+  matrix_cl<double> rv11(rv1);
+  matrix_cl<double> rv22(rv2);
+  matrix_cl<double> rv33(1, 3);
+  matrix_cl<double> m11(m1);
+  matrix_cl<double> m22(m2);
+  matrix_cl<double> m33(3, 3);
 
   EXPECT_NO_THROW(v33 = v11 - v22);
   EXPECT_NO_THROW(rv33 = rv11 - rv22);
