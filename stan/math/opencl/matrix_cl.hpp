@@ -197,7 +197,6 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
     }
   }
 
-
   /**
    * Constructor for the matrix_cl that
    * creates a copy of the Eigen matrix on the OpenCL device.
@@ -241,7 +240,6 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
   } catch (const cl::Error& e) {
     check_opencl_error("matrix constructor", e);
   }
-
 
   /**
    * Constructor for the matrix_cl that
