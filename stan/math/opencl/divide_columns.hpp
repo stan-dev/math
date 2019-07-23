@@ -5,6 +5,8 @@
 #include <stan/math/opencl/kernels/divide_columns.hpp>
 #include <stan/math/prim/mat/err/check_vector.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
+#include <stan/math/prim/meta.hpp>
+
 #include <CL/cl.hpp>
 
 namespace stan {
@@ -22,7 +24,8 @@ namespace math {
  * input matrices do not have matching dimensions
  *
  */
-inline void divide_columns(const matrix_cl& A, const matrix_cl& B) try {
+template <typename T1, typename T2, typename = enable_if_all_arithmetic<T1, T2>>
+inline void divide_columns(const matrix_cl<T1>& A, const matrix_cl<T2>& B) try {
   if (A.size() == 0 || B.size() == 0) {
     return;
   }
@@ -45,7 +48,8 @@ inline void divide_columns(const matrix_cl& A, const matrix_cl& B) try {
  * @return element-wise division of @c A by @c divisor.
  *
  */
-inline void divide_columns(const matrix_cl& A, const double& divisor) try {
+template <typename T1, typename T2, typename = enable_if_all_arithmetic<T1, T2>>
+inline void divide_columns(const matrix_cl<T1>& A, const T2& divisor) try {
   if (A.size() == 0) {
     return;
   }

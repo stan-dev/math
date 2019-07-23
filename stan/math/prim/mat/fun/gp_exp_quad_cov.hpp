@@ -367,9 +367,9 @@ inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x,
     return cov;
   }
 
-  matrix_cl x_cl(x, 1, x.size());
+  matrix_cl<double> x_cl(x, 1, x.size());
   check_nan(function_name, "x", x_cl);
-  matrix_cl cov_cl = gp_exp_quad_cov(x_cl, sigma, length_scale);
+  matrix_cl<double> cov_cl = gp_exp_quad_cov(x_cl, sigma, length_scale);
   cov = from_matrix_cl(cov_cl);
 
   return cov;
@@ -410,9 +410,9 @@ inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<Eigen::VectorXd> &x,
     return cov;
   }
 
-  matrix_cl x_cl(x);
+  matrix_cl<double> x_cl(x);
   check_nan(function_name, "x", x_cl);
-  matrix_cl cov_cl = gp_exp_quad_cov(x_cl, sigma, length_scale);
+  matrix_cl<double> cov_cl = gp_exp_quad_cov(x_cl, sigma, length_scale);
   cov = from_matrix_cl(cov_cl);
 
   return cov;
@@ -451,11 +451,11 @@ inline Eigen::MatrixXd gp_exp_quad_cov(
                                      square(sigma));
   }
 
-  matrix_cl x_cl(x);
+  matrix_cl<double> x_cl(x);
   check_nan(function_name, "x", x_cl);
-  matrix_cl length_scale_cl(length_scale, length_scale.size(), 1);
+  matrix_cl<double> length_scale_cl(length_scale, length_scale.size(), 1);
   divide_columns(x_cl, length_scale_cl);
-  matrix_cl cov_cl = gp_exp_quad_cov(x_cl, sigma, 1);
+  matrix_cl<double> cov_cl = gp_exp_quad_cov(x_cl, sigma, 1);
   cov = from_matrix_cl(cov_cl);
   return cov;
 }
@@ -498,11 +498,11 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x1,
     return cov;
   }
 
-  matrix_cl x1_cl(x1, 1, x1.size());
+  matrix_cl<double> x1_cl(x1, 1, x1.size());
   check_nan(function_name, "x1", x1_cl);
-  matrix_cl x2_cl(x2, 1, x2.size());
+  matrix_cl<double> x2_cl(x2, 1, x2.size());
   check_nan(function_name, "x2", x2_cl);
-  matrix_cl cov_cl = gp_exp_quad_cov(x1_cl, x2_cl, sigma, length_scale);
+  matrix_cl<double> cov_cl = gp_exp_quad_cov(x1_cl, x2_cl, sigma, length_scale);
   cov = from_matrix_cl(cov_cl);
   return cov;
 }
@@ -552,11 +552,11 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(
     return cov;
   }
 
-  matrix_cl x1_cl(x1);
+  matrix_cl<double> x1_cl(x1);
   check_nan(function_name, "x1", x1_cl);
-  matrix_cl x2_cl(x2);
+  matrix_cl<double> x2_cl(x2);
   check_nan(function_name, "x2", x2_cl);
-  matrix_cl cov_cl = gp_exp_quad_cov(x1_cl, x2_cl, sigma, length_scale);
+  matrix_cl<double> cov_cl = gp_exp_quad_cov(x1_cl, x2_cl, sigma, length_scale);
   cov = from_matrix_cl(cov_cl);
   return cov;
 }
@@ -609,14 +609,14 @@ inline typename Eigen::MatrixXd gp_exp_quad_cov(
                                     square(sigma));
     return cov;
   }
-  matrix_cl x1_cl(x1);
+  matrix_cl<double> x1_cl(x1);
   check_nan(function_name, "x1", x1_cl);
-  matrix_cl length_scale_cl(length_scale, length_scale.size(), 1);
+  matrix_cl<double> length_scale_cl(length_scale, length_scale.size(), 1);
   divide_columns(x1_cl, length_scale_cl);
-  matrix_cl x2_cl(x2);
+  matrix_cl<double> x2_cl(x2);
   check_nan(function_name, "x2", x2_cl);
   divide_columns(x2_cl, length_scale_cl);
-  matrix_cl cov_cl = gp_exp_quad_cov(x1_cl, x2_cl, sigma, 1);
+  matrix_cl<double> cov_cl = gp_exp_quad_cov(x1_cl, x2_cl, sigma, 1);
   cov = from_matrix_cl(cov_cl);
   return cov;
 }

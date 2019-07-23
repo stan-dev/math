@@ -7,6 +7,9 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/opencl/kernels/zeros.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/scal/err/domain_error.hpp>
+
 #include <CL/cl.hpp>
 
 namespace stan {
@@ -21,8 +24,9 @@ namespace math {
  * the entire matrix, lower triangular or upper triangular. The
  * value must be of type TriangularViewCL
  */
+template <typename T>
 template <TriangularViewCL triangular_view>
-inline void matrix_cl::zeros() try {
+inline void matrix_cl<T, enable_if_arithmetic<T>>::zeros() try {
   if (size() == 0)
     return;
   cl::CommandQueue cmdQueue = opencl_context.queue();

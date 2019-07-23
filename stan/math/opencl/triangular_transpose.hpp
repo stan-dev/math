@@ -7,6 +7,8 @@
 #include <stan/math/opencl/kernels/triangular_transpose.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/scal/err/domain_error.hpp>
 
 #include <CL/cl.hpp>
 
@@ -23,8 +25,9 @@ namespace math {
  * @throw <code>std::invalid_argument</code> if the matrix is not square.
  *
  */
+template <typename T>
 template <TriangularMapCL triangular_map>
-inline void matrix_cl::triangular_transpose() try {
+inline void matrix_cl<T, enable_if_arithmetic<T>>::triangular_transpose() try {
   if (size() == 0 || size() == 1) {
     return;
   }
