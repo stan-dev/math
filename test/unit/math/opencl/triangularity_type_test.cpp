@@ -1,5 +1,5 @@
 #ifdef STAN_OPENCL
-#include <stan/math/opencl/triangular.hpp>
+#include <stan/math/opencl/partial_types.hpp>
 #include <gtest/gtest.h>
 
 TEST(PartialViewCL, operator_add) {

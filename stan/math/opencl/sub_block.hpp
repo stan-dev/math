@@ -3,7 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/opencl_context.hpp>
-#include <stan/math/opencl/triangular.hpp>
+#include <stan/math/opencl/partial_types.hpp>
 #include <stan/math/opencl/kernels/sub_block.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/prim/meta.hpp>

@@ -4,6 +4,7 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernels/add.hpp>
 #include <stan/math/opencl/err/check_matching_dims.hpp>
+#include <stan/math/opencl/partial_types.hpp>
 #include <stan/math/prim/meta.hpp>
 
 #include <CL/cl.hpp>

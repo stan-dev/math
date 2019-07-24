@@ -2,6 +2,7 @@
 #define STAN_MATH_OPENCL_SUBTRACT_HPP
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/matrix_cl.hpp>
+#include <stan/math/opencl/partial_types.hpp>
 #include <stan/math/opencl/kernels/subtract.hpp>
 #include <stan/math/opencl/err/check_matching_dims.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>

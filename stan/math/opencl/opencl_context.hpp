@@ -10,7 +10,7 @@
 #error OPENCL_PLATFORM_ID_NOT_SET
 #endif
 
-#include <stan/math/opencl/triangular.hpp>
+#include <stan/math/opencl/partial_types.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/prim/scal/err/system_error.hpp>
 

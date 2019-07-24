@@ -2,7 +2,7 @@
 #define STAN_MATH_OPENCL_MATRIX_CL_HPP
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/opencl_context.hpp>
-#include <stan/math/opencl/triangular.hpp>
+#include <stan/math/opencl/partial_types.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
