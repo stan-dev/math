@@ -26,22 +26,21 @@ struct diff_poisson_log {
       factorial_term += lgamma(sums_(i) + 1);
 
     return - factorial_term
-      + dot_product(theta, sums_)
-      - dot_product(exp(theta), n_samples_);
+      + theta.dot(sums_) - exp(theta).dot(n_samples_);
   }
 
   template <typename T>
   void diff (const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta,
              Eigen::Matrix<T, Eigen::Dynamic, 1>& gradient,
              Eigen::Matrix<T, Eigen::Dynamic, 1>& hessian) const {
-    hessian = - elt_multiply(n_samples_, exp(theta));
+    hessian = - n_samples_.cwiseProduct(exp(theta));
     gradient = sums_ + hessian;
   }
 
   template <typename T>
   Eigen::Matrix<T, Eigen::Dynamic, 1>
   third_diff(const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta) const {
-    return - elt_multiply(n_samples_, exp(theta));
+    return - n_samples_.cwiseProduct(exp(theta));
   }
 };
 
@@ -72,7 +71,7 @@ struct diff_logistic_log {
 
     gradient = sums_ - n_samples_.cwiseProduct(inv_logit(theta));
 
-    hessian = - elt_multiply(n_samples_, elt_divide(exp_theta,
+    hessian = - n_samples_.cwiseProduct(elt_divide(exp_theta,
                                                     square(one + exp_theta)));
   }
 

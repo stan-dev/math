@@ -79,24 +79,24 @@ namespace math {
           + quad_form_diag(covariance, W_root);
         L = cholesky_decompose(B);
       }
-      VectorXd b = elt_multiply(W, theta) + l_grad;
-      a = b - diag_pre_multiply(W_root,
-            mdivide_left_tri<Eigen::Upper>(transpose(L),
-              mdivide_left_tri_low(L,
-                diag_pre_multiply(W_root, multiply(covariance, b)))));
+      // VectorXd b = elt_multiply(W, theta) + l_grad;
+      VectorXd b = W.cwiseProduct(theta) + l_grad;
+      a = b - W_root.asDiagonal() * mdivide_left_tri<Eigen::Upper>(transpose(L),
+           mdivide_left_tri<Eigen::Lower>(L,
+           diag_pre_multiply(W_root, multiply(covariance, b))));
 
       // Simple Newton step
-      theta = multiply(covariance, a);
+      theta = covariance * a;
 
       // Check for convergence.
       if (i != 0) objective_old = objective_new;
-      objective_new = -0.5 * dot_product(a, theta)
+      objective_new = -0.5 * a.dot(theta)
         + diff_likelihood.log_likelihood(theta);
       double objective_diff = abs(objective_new - objective_old);
       if (objective_diff < tolerance) break;
     }
 
-    return objective_new - sum(log(diagonal(L)));
+    return objective_new - sum(L.diagonal().array().log());
   }
 
   /**
@@ -223,9 +223,9 @@ namespace math {
         Eigen::VectorXd j_col = diff_cov.col(j);
         C = to_matrix(j_col, theta_size_, theta_size_);
         double s1 = 0.5 * quad_form(C, a) - 0.5 * sum((Z * C).diagonal());
-        Eigen::VectorXd b = multiply(C, l_grad);
-        Eigen::VectorXd s3 = b - multiply(covariance, multiply(Z, b));
-        phi_adj_[j] = s1 + dot_product(s2, s3);
+        Eigen::VectorXd b = C * l_grad;
+        Eigen::VectorXd s3 = b - covariance * (Z * b);
+        phi_adj_[j] = s1 + s2.dot(s3);
       }
     }
 
