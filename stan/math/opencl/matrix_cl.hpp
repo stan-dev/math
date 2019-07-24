@@ -43,14 +43,14 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
   cl::Buffer buffer_cl_;
   const int rows_;
   const int cols_;
-  TriangularViewCL triangular_view_;
+  PartialViewCL triangular_view_;
   mutable std::vector<cl::Event> write_events_;  // Tracks write jobs
   mutable std::vector<cl::Event> read_events_;   // Tracks reads
 
  public:
   typedef T type;
   // Forward declare the methods that work in place on the matrix
-  template <TriangularViewCL triangular_view = TriangularViewCL::Entire>
+  template <PartialViewCL triangular_view = PartialViewCL::Entire>
   void zeros();
   template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper>
   void triangular_transpose();
@@ -64,9 +64,9 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
 
   int size() const { return rows_ * cols_; }
 
-  TriangularViewCL triangular_view() const { return triangular_view_; }
+  const PartialViewCL& triangular_view() const { return triangular_view_; }
 
-  void triangular_view(TriangularViewCL triangular_view) {
+  void triangular_view(const PartialViewCL& triangular_view) {
     triangular_view_ = triangular_view;
   }
 
@@ -217,7 +217,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
    *
    */
   matrix_cl(const int& rows, const int& cols,
-            TriangularViewCL triangular_view = TriangularViewCL::Entire)
+            PartialViewCL triangular_view = PartialViewCL::Entire)
       : rows_(rows), cols_(cols), triangular_view_(triangular_view) {
     if (size() == 0) {
       return;
@@ -246,8 +246,8 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
    */
   template <int R, int C>
   explicit matrix_cl(const Eigen::Matrix<T, R, C>& A,
-                     TriangularViewCL triangular_view
-                     = TriangularViewCL::Entire)
+                     PartialViewCL triangular_view
+                     = PartialViewCL::Entire)
       : rows_(A.rows()), cols_(A.cols()), triangular_view_(triangular_view) {
     if (size() == 0) {
       return;
@@ -303,13 +303,14 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
     // Need to wait for all of matrices events before destroying old buffer
     this->wait_for_read_write_events();
     buffer_cl_ = a.buffer();
+    triangular_view_ = a.triangular_view_;
     return *this;
   }
 
   /**
    * Assign a @c matrix_cl of one arithmetic type to another
    */
-  template <typename U, typename = enable_if_arithmetic<T>>
+  template <typename U, typename = enable_if_arithmetic<U>>
   matrix_cl<T>& operator=(const matrix_cl<U>& a) {
     check_size_match("assignment of (OpenCL) matrices", "source.rows()",
                      a.rows(), "destination.rows()", rows());

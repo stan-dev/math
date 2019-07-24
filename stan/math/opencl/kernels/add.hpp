@@ -56,8 +56,8 @@ static const char *add_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/add.hpp add() \endlink
  */
-const kernel_cl<out_buffer, in_buffer, in_buffer, int, int, TriangularViewCL,
-                TriangularViewCL>
+const kernel_cl<out_buffer, in_buffer, in_buffer, int, int, PartialViewCL,
+                PartialViewCL>
     add("add", {indexing_helpers, triangular_kernel_helpers, add_kernel_code});
 // \cond
 static const char *add_batch_kernel_code = STRINGIFY(

@@ -200,10 +200,10 @@ TEST(MathMatrixCL, add_tri_value_check) {
   stan::math::matrix_cl<double> c_cl(3, 3);
   Eigen::MatrixXd c(3, 3);
 
-  a_cl.triangular_view(stan::math::TriangularViewCL::Lower);
-  b_cl.triangular_view(stan::math::TriangularViewCL::Lower);
+  a_cl.triangular_view(stan::math::PartialViewCL::Lower);
+  b_cl.triangular_view(stan::math::PartialViewCL::Lower);
   c_cl = a_cl + b_cl;
-  EXPECT_EQ(c_cl.triangular_view(), stan::math::TriangularViewCL::Lower);
+  EXPECT_EQ(c_cl.triangular_view(), stan::math::PartialViewCL::Lower);
   c = stan::math::from_matrix_cl(c_cl);
   EXPECT_EQ(-2, c(0, 0));
   EXPECT_EQ(1, c(1, 0));
@@ -212,10 +212,10 @@ TEST(MathMatrixCL, add_tri_value_check) {
   EXPECT_EQ(5, c(2, 1));
   EXPECT_EQ(6, c(2, 2));
 
-  a_cl.triangular_view(stan::math::TriangularViewCL::Lower);
-  b_cl.triangular_view(stan::math::TriangularViewCL::Upper);
+  a_cl.triangular_view(stan::math::PartialViewCL::Lower);
+  b_cl.triangular_view(stan::math::PartialViewCL::Upper);
   c_cl = a_cl + b_cl;
-  EXPECT_EQ(c_cl.triangular_view(), stan::math::TriangularViewCL::Entire);
+  EXPECT_EQ(c_cl.triangular_view(), stan::math::PartialViewCL::Entire);
   c = stan::math::from_matrix_cl(c_cl);
   EXPECT_EQ(-2, c(0, 0));
   EXPECT_EQ(-3, c(0, 1));
@@ -227,10 +227,10 @@ TEST(MathMatrixCL, add_tri_value_check) {
   EXPECT_EQ(8, c(2, 1));
   EXPECT_EQ(6, c(2, 2));
 
-  a_cl.triangular_view(stan::math::TriangularViewCL::Upper);
-  b_cl.triangular_view(stan::math::TriangularViewCL::Lower);
+  a_cl.triangular_view(stan::math::PartialViewCL::Upper);
+  b_cl.triangular_view(stan::math::PartialViewCL::Lower);
   c_cl = a_cl + b_cl;
-  EXPECT_EQ(c_cl.triangular_view(), stan::math::TriangularViewCL::Entire);
+  EXPECT_EQ(c_cl.triangular_view(), stan::math::PartialViewCL::Entire);
   c = stan::math::from_matrix_cl(c_cl);
   EXPECT_EQ(-2, c(0, 0));
   EXPECT_EQ(2, c(0, 1));
@@ -242,10 +242,10 @@ TEST(MathMatrixCL, add_tri_value_check) {
   EXPECT_EQ(-3, c(2, 1));
   EXPECT_EQ(6, c(2, 2));
 
-  a_cl.triangular_view(stan::math::TriangularViewCL::Entire);
-  b_cl.triangular_view(stan::math::TriangularViewCL::Lower);
+  a_cl.triangular_view(stan::math::PartialViewCL::Entire);
+  b_cl.triangular_view(stan::math::PartialViewCL::Lower);
   c_cl = a_cl + b_cl;
-  EXPECT_EQ(c_cl.triangular_view(), stan::math::TriangularViewCL::Entire);
+  EXPECT_EQ(c_cl.triangular_view(), stan::math::PartialViewCL::Entire);
   c = stan::math::from_matrix_cl(c_cl);
   EXPECT_EQ(-2, c(0, 0));
   EXPECT_EQ(2, c(0, 1));

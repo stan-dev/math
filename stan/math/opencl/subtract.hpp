@@ -30,15 +30,13 @@ template <typename T1, typename T2, typename = enable_if_all_arithmetic<T1, T2>>
 inline matrix_cl<return_type_t<T1, T2>> subtract(const matrix_cl<T1>& A,
                                                  const matrix_cl<T2>& B) {
   check_matching_dims("subtract ((OpenCL))", "A", A, "B", B);
-  matrix_cl<return_type_t<T1, T2>> C(
-      A.rows(), A.cols(), combine(A.triangular_view(), B.triangular_view()));
+  matrix_cl<return_type_t<T1, T2>> C(A.rows(), A.cols(), A.triangular_view() + B.triangular_view());
   if (A.size() == 0) {
     return C;
   }
   try {
     opencl_kernels::subtract(cl::NDRange(A.rows(), A.cols()), C, A, B, A.rows(),
-                             A.cols(), A.triangular_view(),
-                             B.triangular_view());
+                             A.cols(), A.triangular_view(), B.triangular_view());
   } catch (cl::Error& e) {
     check_opencl_error("subtract", e);
   }

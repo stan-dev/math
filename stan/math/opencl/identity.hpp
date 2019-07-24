@@ -20,7 +20,7 @@ namespace math {
  */
 template <typename T, typename = enable_if_arithmetic<T>>
 inline matrix_cl<T> identity(int rows_cols) {
-  matrix_cl<T> A(rows_cols, rows_cols, TriangularViewCL::Diagonal);
+  matrix_cl<T> A(rows_cols, rows_cols, PartialViewCL::Diagonal);
   if (rows_cols == 0) {
     return A;
   }

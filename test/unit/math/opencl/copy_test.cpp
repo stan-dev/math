@@ -90,7 +90,7 @@ TEST(MathMatrixCL, matrix_cl_pack_unpack_copy_lower) {
     packed_mat[i] = i;
   }
   stan::math::matrix_d m_flat_cpu(size, size);
-  auto m_cl = stan::math::packed_copy<stan::math::TriangularViewCL::Lower>(
+  auto m_cl = stan::math::packed_copy<stan::math::PartialViewCL::Lower>(
       packed_mat, size);
   m_flat_cpu = stan::math::from_matrix_cl(m_cl);
   size_t pos = 0;
@@ -118,7 +118,7 @@ TEST(MathMatrixCL, matrix_cl_pack_unpack_copy_upper) {
     packed_mat[i] = i;
   }
   stan::math::matrix_d m_flat_cpu(size, size);
-  auto m_cl = stan::math::packed_copy<stan::math::TriangularViewCL::Upper>(
+  auto m_cl = stan::math::packed_copy<stan::math::PartialViewCL::Upper>(
       packed_mat, size);
   m_flat_cpu = stan::math::from_matrix_cl(m_cl);
   size_t pos = 0;
@@ -140,13 +140,13 @@ TEST(MathMatrixCL, matrix_cl_pack_unpack_copy_upper) {
 TEST(MathMatrixCL, matrix_cl_pack_unpack_copy_exception) {
   std::vector<double> packed_mat;
   stan::math::matrix_cl<double> m_cl_zero;
-  EXPECT_NO_THROW(stan::math::packed_copy<stan::math::TriangularViewCL::Upper>(
+  EXPECT_NO_THROW(stan::math::packed_copy<stan::math::PartialViewCL::Upper>(
       packed_mat, 0));
-  m_cl_zero.triangular_view(stan::math::TriangularViewCL::Upper);
+  m_cl_zero.triangular_view(stan::math::PartialViewCL::Upper);
   EXPECT_NO_THROW(stan::math::packed_copy(m_cl_zero));
-  m_cl_zero.triangular_view(stan::math::TriangularViewCL::Entire);
+  m_cl_zero.triangular_view(stan::math::PartialViewCL::Entire);
   EXPECT_THROW(stan::math::packed_copy(m_cl_zero), std::invalid_argument);
-  EXPECT_THROW(stan::math::packed_copy<stan::math::TriangularViewCL::Upper>(
+  EXPECT_THROW(stan::math::packed_copy<stan::math::PartialViewCL::Upper>(
                    packed_mat, 1),
                std::invalid_argument);
 }

@@ -41,7 +41,7 @@ static const char *scalar_mul_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/scalar_mul.hpp add() \endlink
  */
-const kernel_cl<out_buffer, in_buffer, double, int, int, TriangularViewCL>
+const kernel_cl<out_buffer, in_buffer, double, int, int, PartialViewCL>
     scalar_mul("scalar_mul", {indexing_helpers, triangular_kernel_helpers,
                               scalar_mul_kernel_code});
 

@@ -44,9 +44,7 @@ inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
   int thread_block_2D_dim = 32;
   int max_1D_thread_block_size = opencl_context.max_thread_block_size();
   // we split the input matrix to 32 blocks
-  int thread_block_size_1D
-      = (((A.rows() / 32) + thread_block_2D_dim - 1) / thread_block_2D_dim)
-        * thread_block_2D_dim;
+  int thread_block_size_1D = (((A.rows() / 32) + thread_block_2D_dim - 1) / thread_block_2D_dim) * thread_block_2D_dim;
   if (max_1D_thread_block_size < thread_block_size_1D) {
     thread_block_size_1D = max_1D_thread_block_size;
   }
@@ -63,18 +61,16 @@ inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
   }
 
   // pad the input matrix
-  int A_rows_padded
-      = ((A.rows() + thread_block_size_1D - 1) / thread_block_size_1D)
-        * thread_block_size_1D;
+  int A_rows_padded = ((A.rows() + thread_block_size_1D - 1) / thread_block_size_1D) * thread_block_size_1D;
 
   matrix_cl<T> temp(A_rows_padded, A_rows_padded);
   matrix_cl<T> inv_padded(A_rows_padded, A_rows_padded);
   matrix_cl<T> inv_mat(A);
   matrix_cl<T> zero_mat(A_rows_padded - A.rows(), A_rows_padded);
-  zero_mat.template zeros<stan::math::TriangularViewCL::Entire>();
-  temp.template zeros<stan::math::TriangularViewCL::Entire>();
-  inv_padded.template zeros<stan::math::TriangularViewCL::Entire>();
-  if (A.triangular_view() == TriangularViewCL::Upper) {
+  zero_mat.template zeros<stan::math::PartialViewCL::Entire>();
+  temp.template zeros<stan::math::PartialViewCL::Entire>();
+  inv_padded.template zeros<stan::math::PartialViewCL::Entire>();
+  if (A.triangular_view() == PartialViewCL::Upper) {
     inv_mat = transpose(inv_mat);
   }
   int work_per_thread
@@ -99,10 +95,10 @@ inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
   // set the padded part of the matrix and the upper triangular to zeros
   inv_padded.sub_block(zero_mat, 0, 0, inv_mat.rows(), 0, zero_mat.rows(),
                        zero_mat.cols());
-  inv_padded.template zeros<stan::math::TriangularViewCL::Upper>();
+  inv_padded.template zeros<stan::math::PartialViewCL::Upper>();
   if (parts == 1) {
     inv_mat.sub_block(inv_padded, 0, 0, 0, 0, inv_mat.rows(), inv_mat.rows());
-    if (A.triangular_view() == TriangularViewCL::Upper) {
+    if (A.triangular_view() == PartialViewCL::Upper) {
       inv_mat = transpose(inv_mat);
     }
     return inv_mat;
@@ -139,11 +135,11 @@ inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
     // set the padded part and upper diagonal to zeros
     inv_padded.sub_block(zero_mat, 0, 0, inv_mat.rows(), 0, zero_mat.rows(),
                          zero_mat.cols());
-    inv_padded.template zeros<stan::math::TriangularViewCL::Upper>();
+    inv_padded.template zeros<stan::math::PartialViewCL::Upper>();
   }
   // un-pad and return
   inv_mat.sub_block(inv_padded, 0, 0, 0, 0, inv_mat.rows(), inv_mat.rows());
-  if (A.triangular_view() == TriangularViewCL::Upper) {
+  if (A.triangular_view() == PartialViewCL::Upper) {
     inv_mat = transpose(inv_mat);
   }
   inv_mat.triangular_view(A.triangular_view());

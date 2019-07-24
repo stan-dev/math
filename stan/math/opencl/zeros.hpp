@@ -22,10 +22,10 @@ namespace math {
  *
  * @tparam triangular_view Specifies if zeros are assigned to
  * the entire matrix, lower triangular or upper triangular. The
- * value must be of type TriangularViewCL
+ * value must be of type PartialViewCL
  */
 template <typename T>
-template <TriangularViewCL view>
+template <PartialViewCL view>
 inline void matrix_cl<T, enable_if_arithmetic<T>>::zeros() try {
   if (size() == 0)
     return;
