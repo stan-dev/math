@@ -7,14 +7,14 @@
 #include <algorithm>
 
 TEST(MathMatrixCL, copy_triangular_m_exception_pass) {
-  stan::math::matrix_cl m0;
+  stan::math::matrix_cl<double> m0;
 
   EXPECT_NO_THROW(
       stan::math::copy_triangular<stan::math::TriangularViewCL::Upper>(m0));
   EXPECT_NO_THROW(
       stan::math::copy_triangular<stan::math::TriangularViewCL::Lower>(m0));
 
-  stan::math::matrix_cl m1(1, 1);
+  stan::math::matrix_cl<double> m1(1, 1);
 
   EXPECT_NO_THROW(
       stan::math::copy_triangular<stan::math::TriangularViewCL::Upper>(m1));
@@ -28,8 +28,8 @@ TEST(MathMatrixCL, copy_triangular_m_pass) {
   m0 << 1, 2, 3, 4;
   m0_dst << 0, 0, 0, 0;
 
-  stan::math::matrix_cl m00(m0);
-  stan::math::matrix_cl m00_dst(m0_dst);
+  stan::math::matrix_cl<double> m00(m0);
+  stan::math::matrix_cl<double> m00_dst(m0_dst);
 
   EXPECT_NO_THROW(
       m00_dst
