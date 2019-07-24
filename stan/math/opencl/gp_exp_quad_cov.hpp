@@ -19,9 +19,10 @@ namespace math {
  *
  * @return Squared distance between elements of x.
  */
-template <typename T1, typename T2, typename T3, typename = enable_if_all_arithmetic<T1, T2, T3>>
-inline matrix_cl<return_type_t<T1, T2, T3>> gp_exp_quad_cov(const matrix_cl<T1>& x, const T2 sigma,
-                                 const T3 length_scale) try {
+template <typename T1, typename T2, typename T3,
+          typename = enable_if_all_arithmetic<T1, T2, T3>>
+inline matrix_cl<return_type_t<T1, T2, T3>> gp_exp_quad_cov(
+    const matrix_cl<T1>& x, const T2 sigma, const T3 length_scale) try {
   matrix_cl<return_type_t<T1, T2, T3>> res(x.cols(), x.cols());
   opencl_kernels::gp_exp_quad_cov(cl::NDRange(x.cols(), x.cols()), x, res,
                                   sigma * sigma, -0.5 / square(length_scale),
@@ -47,10 +48,11 @@ inline matrix_cl<return_type_t<T1, T2, T3>> gp_exp_quad_cov(const matrix_cl<T1>&
  *
  * @return Squared distance between elements of x and y.
  */
-template <typename T1, typename T2, typename T3, typename T4, typename = enable_if_all_arithmetic<T1, T2, T3, T4>>
-inline matrix_cl<return_type_t<T1, T2, T3, T4>> gp_exp_quad_cov(const matrix_cl<T1>& x, const matrix_cl<T2>& y,
-                                 const T3 sigma,
-                                 const T4 length_scale) try {
+template <typename T1, typename T2, typename T3, typename T4,
+          typename = enable_if_all_arithmetic<T1, T2, T3, T4>>
+inline matrix_cl<return_type_t<T1, T2, T3, T4>> gp_exp_quad_cov(
+    const matrix_cl<T1>& x, const matrix_cl<T2>& y, const T3 sigma,
+    const T4 length_scale) try {
   check_size_match("gp_exp_quad_cov_cross", "x", x.rows(), "y", y.rows());
   matrix_cl<return_type_t<T1, T2, T3, T4>> res(x.cols(), y.cols());
   opencl_kernels::gp_exp_quad_cov_cross(
