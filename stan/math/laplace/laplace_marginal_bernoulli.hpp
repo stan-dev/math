@@ -18,7 +18,7 @@ namespace math {
    * pass their covariance function.
    */
   template <typename T0, typename T1>
-  T1 laplace_marginal_bernouilli 
+  T1 laplace_marginal_bernoulli 
                (const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,
                 const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,
                 const std::vector<Eigen::VectorXd>& x,
