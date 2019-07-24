@@ -27,8 +27,8 @@ namespace math {
  * @return the matrix with the copied content
  *
  */
-template <PartialViewCL triangular_view = PartialViewCL::Entire,
-          typename T, typename = enable_if_arithmetic<T>>
+template <PartialViewCL triangular_view = PartialViewCL::Entire, typename T,
+          typename = enable_if_arithmetic<T>>
 inline matrix_cl<T> copy_triangular(const matrix_cl<T>& src) {
   if (src.size() == 0 || src.size() == 1) {
     matrix_cl<T> dst(src);

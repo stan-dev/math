@@ -44,7 +44,9 @@ inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
   int thread_block_2D_dim = 32;
   int max_1D_thread_block_size = opencl_context.max_thread_block_size();
   // we split the input matrix to 32 blocks
-  int thread_block_size_1D = (((A.rows() / 32) + thread_block_2D_dim - 1) / thread_block_2D_dim) * thread_block_2D_dim;
+  int thread_block_size_1D
+      = (((A.rows() / 32) + thread_block_2D_dim - 1) / thread_block_2D_dim)
+        * thread_block_2D_dim;
   if (max_1D_thread_block_size < thread_block_size_1D) {
     thread_block_size_1D = max_1D_thread_block_size;
   }
@@ -61,7 +63,9 @@ inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
   }
 
   // pad the input matrix
-  int A_rows_padded = ((A.rows() + thread_block_size_1D - 1) / thread_block_size_1D) * thread_block_size_1D;
+  int A_rows_padded
+      = ((A.rows() + thread_block_size_1D - 1) / thread_block_size_1D)
+        * thread_block_size_1D;
 
   matrix_cl<T> temp(A_rows_padded, A_rows_padded);
   matrix_cl<T> inv_padded(A_rows_padded, A_rows_padded);

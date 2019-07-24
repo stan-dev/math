@@ -246,8 +246,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
    */
   template <int R, int C>
   explicit matrix_cl(const Eigen::Matrix<T, R, C>& A,
-                     PartialViewCL triangular_view
-                     = PartialViewCL::Entire)
+                     PartialViewCL triangular_view = PartialViewCL::Entire)
       : rows_(A.rows()), cols_(A.cols()), triangular_view_(triangular_view) {
     if (size() == 0) {
       return;

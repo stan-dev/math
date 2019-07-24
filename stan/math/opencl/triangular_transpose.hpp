@@ -39,7 +39,14 @@ inline void matrix_cl<T, enable_if_arithmetic<T>>::triangular_transpose() try {
   opencl_kernels::triangular_transpose(cl::NDRange(this->rows(), this->cols()),
                                        *this, this->rows(), this->cols(),
                                        triangular_map);
-  this->triangular_view_ = (triangular_map == TriangularMapCL::LowerToUpper && !is_not_diagonal(this->triangular_view_, PartialViewCL::Lower)) || (triangular_map == TriangularMapCL::UpperToLower && !is_not_diagonal(this->triangular_view_, PartialViewCL::Upper)) ? PartialViewCL::Diagonal : PartialViewCL::Entire;
+  this->triangular_view_
+      = (triangular_map == TriangularMapCL::LowerToUpper
+         && !is_not_diagonal(this->triangular_view_, PartialViewCL::Lower))
+                || (triangular_map == TriangularMapCL::UpperToLower
+                    && !is_not_diagonal(this->triangular_view_,
+                                        PartialViewCL::Upper))
+            ? PartialViewCL::Diagonal
+            : PartialViewCL::Entire;
 } catch (const cl::Error& e) {
   check_opencl_error("triangular_transpose", e);
 }

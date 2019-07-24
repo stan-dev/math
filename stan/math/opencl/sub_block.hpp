@@ -39,10 +39,14 @@ inline void matrix_cl<T, enable_if_arithmetic<T>>::sub_block(
   }
   cl::CommandQueue cmdQueue = opencl_context.queue();
   if (A.triangular_view() == PartialViewCL::Entire) {
-    cl::size_t<3> src_offset = opencl::to_size_t<3>({A_i * sizeof(double), A_j, 0});
-    cl::size_t<3> dst_offset = opencl::to_size_t<3>({this_i * sizeof(double), this_j, 0});
-    cl::size_t<3> size = opencl::to_size_t<3>({nrows * sizeof(double), ncols, 1});
-    std::vector<cl::Event> kernel_events = vec_concat(A.write_events(), this->read_write_events());
+    cl::size_t<3> src_offset
+        = opencl::to_size_t<3>({A_i * sizeof(double), A_j, 0});
+    cl::size_t<3> dst_offset
+        = opencl::to_size_t<3>({this_i * sizeof(double), this_j, 0});
+    cl::size_t<3> size
+        = opencl::to_size_t<3>({nrows * sizeof(double), ncols, 1});
+    std::vector<cl::Event> kernel_events
+        = vec_concat(A.write_events(), this->read_write_events());
     cl::Event copy_event;
     cmdQueue.enqueueCopyBufferRect(A.buffer(), this->buffer(), src_offset,
                                    dst_offset, size, A.rows() * sizeof(double),
@@ -59,19 +63,27 @@ inline void matrix_cl<T, enable_if_arithmetic<T>>::sub_block(
   }
   // calculation of extreme sub- and super- diagonal written
   int diag_in_copy = A_i - A_j;
-  int copy_low = is_not_diagonal(A.triangular_view(), PartialViewCL::Lower) ? 1 - nrows : diag_in_copy;
-  int copy_high = is_not_diagonal(A.triangular_view(), PartialViewCL::Upper) ? ncols - 1 : diag_in_copy;
+  int copy_low = is_not_diagonal(A.triangular_view(), PartialViewCL::Lower)
+                     ? 1 - nrows
+                     : diag_in_copy;
+  int copy_high = is_not_diagonal(A.triangular_view(), PartialViewCL::Upper)
+                      ? ncols - 1
+                      : diag_in_copy;
   int start = this_j - this_i;
 
   if (start + copy_low < 0) {
     this->triangular_view_ = this->triangular_view_ + PartialViewCL::Lower;
-  } else if (this_i <= 1 && this_j == 0 && nrows + this_i >= rows_ && ncols >= std::min(rows_, cols_) - 1 && !is_not_diagonal(A.triangular_view_, PartialViewCL::Lower)) {
+  } else if (this_i <= 1 && this_j == 0 && nrows + this_i >= rows_
+             && ncols >= std::min(rows_, cols_) - 1
+             && !is_not_diagonal(A.triangular_view_, PartialViewCL::Lower)) {
     this->triangular_view_ = this->triangular_view_ * PartialViewCL::Upper;
   }
 
   if (start + copy_high > 0) {
     this->triangular_view_ = this->triangular_view_ + PartialViewCL::Upper;
-  } else if (this_i == 0 && this_j <= 1 && ncols + this_j >= cols_ && nrows >= std::min(rows_, cols_) - 1 && !is_not_diagonal(A.triangular_view_, PartialViewCL::Upper)) {
+  } else if (this_i == 0 && this_j <= 1 && ncols + this_j >= cols_
+             && nrows >= std::min(rows_, cols_) - 1
+             && !is_not_diagonal(A.triangular_view_, PartialViewCL::Upper)) {
     this->triangular_view_ = this->triangular_view_ * PartialViewCL::Lower;
   }
 } catch (const cl::Error& e) {

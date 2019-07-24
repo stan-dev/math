@@ -11,29 +11,31 @@ namespace math {
 enum class PartialViewCL { Diagonal = 0, Lower = 1, Upper = 2, Entire = 3 };
 
 /**
- * Performs bitwise @c or to deduce return type from adding two @c matrix_cls together
+ * Performs bitwise @c or to deduce return type from adding two @c matrix_cls
+ * together
  * @param a first view
  * @param b second view
  * @return combined view
  */
-inline const PartialViewCL operator+(const PartialViewCL& a, const PartialViewCL& b) {
+inline const PartialViewCL operator+(const PartialViewCL& a,
+                                     const PartialViewCL& b) {
   typedef typename std::underlying_type<PartialViewCL>::type underlying;
   return static_cast<PartialViewCL>(static_cast<underlying>(a)
-                                       | static_cast<underlying>(b));
+                                    | static_cast<underlying>(b));
 }
 
-
 /**
- * Performs bitwise @c and to deduce return type from adding two @c matrix_cls together.
+ * Performs bitwise @c and to deduce return type from adding two @c matrix_cls
+ * together.
  * @param a first view
  * @param b second view
  * @return common nonzero part
  */
 inline const PartialViewCL operator*(const PartialViewCL& a,
-                                          const PartialViewCL& b) {
+                                     const PartialViewCL& b) {
   typedef typename std::underlying_type<PartialViewCL>::type underlying;
   return static_cast<PartialViewCL>(static_cast<underlying>(a)
-                                       & static_cast<underlying>(b));
+                                    & static_cast<underlying>(b));
 }
 
 /**
@@ -95,7 +97,7 @@ inline PartialViewCL from_eigen_triangular_type(Eigen::UpLoType eigen_type) {
 enum class TriangularMapCL { UpperToLower = 0, LowerToUpper = 1 };
 
 // \cond
-static const char *triangular_kernel_helpers = STRINGIFY(
+static const char* triangular_kernel_helpers = STRINGIFY(
     // \endcond
     /**
      * Combines two triangular views. Result is nonzero, where any of the inputs
