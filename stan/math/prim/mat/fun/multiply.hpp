@@ -60,9 +60,9 @@ inline Eigen::Matrix<double, R1, C2> multiply(
 #ifdef STAN_OPENCL
   if (m1.rows() * m1.cols() * m2.cols()
       > opencl_context.tuning_opts().multiply_dim_prod_worth_transfer) {
-    matrix_cl m1_cl(m1);
-    matrix_cl m2_cl(m2);
-    matrix_cl m3_cl = m1_cl * m2_cl;
+    matrix_cl<double> m1_cl(m1);
+    matrix_cl<double> m2_cl(m2);
+    matrix_cl<double> m3_cl = m1_cl * m2_cl;
     return from_matrix_cl(m3_cl);
   } else {
 #endif
