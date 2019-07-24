@@ -447,16 +447,16 @@ TEST(laplace, lg_logistic_solver_dim_500) {
   /////////////////////////////////////////////////////////////////////////////
   // Test the wrapper to be exposed to Stan
   start_optimization = std::chrono::system_clock::now();
-  using stan::math::laplace_marginal_bernouilli;
+  using stan::math::laplace_marginal_bernoulli;
   using stan::math::value_of;
 
   double marginal_density_v2
-    = laplace_marginal_bernouilli(theta_0, phi, x, n_samples, y,
+    = laplace_marginal_bernoulli(theta_0, phi, x, n_samples, y,
                                   1e-3, 100);
   end_optimization = std::chrono::system_clock::now();
   elapsed_time_optimization = end_optimization - start_optimization;
 
-  EXPECT_EQ(marginal_density, marginal_density_v2);
+  EXPECT_FLOAT_EQ(marginal_density, marginal_density_v2);
 
   // std::cout << "density: " << value_of(marginal_density_v2) << std::endl
   //           << "time: " << elapsed_time_optimization.count()
