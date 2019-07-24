@@ -21,15 +21,16 @@ void jacobian(const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
     Matrix<var, Dynamic, 1> x_var(x);
     Matrix<var, Dynamic, 1> fx_var = f(x_var);
     fx.resize(fx_var.size());
-    J.resize(fx_var.size(), x.size());
+    J.resize(x.size(), fx_var.size());
     fx = fx_var.val();
     grad(fx_var(0).vi_);
-    J.row(0) = x_var.adj();
+    J.col(0) = x_var.adj();
     for (int i = 1; i < fx_var.size(); ++i) {
       set_zero_all_adjoints_nested();
       grad(fx_var(i).vi_);
-      J.row(i) = x_var.adj();
+      J.col(i) = x_var.adj();
     }
+    J.transposeInPlace();
   } catch (const std::exception& e) {
     recover_memory_nested();
     throw;
