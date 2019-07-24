@@ -22,7 +22,7 @@ void jacobian(const F& f, const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
   x_fvar(0) = fvar<T>(x(0), 1);
   Matrix<fvar<T>, Dynamic, 1> fx_fvar = f(x_fvar);
   fx = fx_fvar.val();
-   J.col(0) = fx_fvar.d();
+  J.col(0) = fx_fvar.d();
   const fvar<T> switch_fvar(0, 1);  // flips the tangents on and off
   for (int i = 1; i < x.size(); ++i) {
     x_fvar(i - 1) -= switch_fvar;
