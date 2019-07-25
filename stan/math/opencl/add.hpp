@@ -29,13 +29,13 @@ inline matrix_cl<return_type_t<T1, T2>> add(const matrix_cl<T1>& A,
                                             const matrix_cl<T2>& B) {
   check_matching_dims("add", "A", A, "B", B);
   matrix_cl<return_type_t<T1, T2>> C(A.rows(), A.cols(),
-                                     A.triangular_view() + B.triangular_view());
+                                     A.partial_view() + B.partial_view());
   if (C.size() == 0) {
     return C;
   }
   try {
     opencl_kernels::add(cl::NDRange(A.rows(), A.cols()), C, A, B, A.rows(),
-                        A.cols(), A.triangular_view(), B.triangular_view());
+                        A.cols(), A.partial_view(), B.partial_view());
   } catch (const cl::Error& e) {
     check_opencl_error("add", e);
   }

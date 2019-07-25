@@ -25,7 +25,7 @@ namespace math {
 template <typename T, typename = enable_if_arithmetic<T>>
 inline matrix_cl<T> multiply_transpose(const matrix_cl<T>& A) {
   matrix_cl<T> temp(A.rows(), A.rows(),
-                    A.triangular_view() == PartialViewCL::Diagonal
+                    A.partial_view() == PartialViewCL::Diagonal
                         ? PartialViewCL::Diagonal
                         : PartialViewCL::Entire);
 

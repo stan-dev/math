@@ -38,7 +38,7 @@ inline void matrix_cl<T, enable_if_arithmetic<T>>::sub_block(
     domain_error("sub_block", "submatrix in *this", " is out of bounds", "");
   }
   cl::CommandQueue cmdQueue = opencl_context.queue();
-  if (A.triangular_view() == PartialViewCL::Entire) {
+  if (A.partial_view() == PartialViewCL::Entire) {
     cl::size_t<3> src_offset
         = opencl::to_size_t<3>({A_i * sizeof(double), A_j, 0});
     cl::size_t<3> dst_offset
@@ -59,14 +59,14 @@ inline void matrix_cl<T, enable_if_arithmetic<T>>::sub_block(
   } else {
     opencl_kernels::sub_block(cl::NDRange(nrows, ncols), A, *this, A_i, A_j,
                               this_i, this_j, nrows, ncols, A.rows(), A.cols(),
-                              this->rows(), this->cols(), A.triangular_view());
+                              this->rows(), this->cols(), A.partial_view());
   }
   // calculation of extreme sub- and super- diagonal written
   int diag_in_copy = A_i - A_j;
-  int copy_low = is_not_diagonal(A.triangular_view(), PartialViewCL::Lower)
+  int copy_low = is_not_diagonal(A.partial_view(), PartialViewCL::Lower)
                      ? 1 - nrows
                      : diag_in_copy;
-  int copy_high = is_not_diagonal(A.triangular_view(), PartialViewCL::Upper)
+  int copy_high = is_not_diagonal(A.partial_view(), PartialViewCL::Upper)
                       ? ncols - 1
                       : diag_in_copy;
   int start = this_j - this_i;

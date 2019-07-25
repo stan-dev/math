@@ -64,7 +64,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
 
   int size() const { return rows_ * cols_; }
 
-  const PartialViewCL& triangular_view() const { return triangular_view_; }
+  const PartialViewCL& partial_view() const { return triangular_view_; }
 
   void triangular_view(const PartialViewCL& triangular_view) {
     triangular_view_ = triangular_view;

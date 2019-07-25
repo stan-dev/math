@@ -74,7 +74,7 @@ inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
   zero_mat.template zeros<stan::math::PartialViewCL::Entire>();
   temp.template zeros<stan::math::PartialViewCL::Entire>();
   inv_padded.template zeros<stan::math::PartialViewCL::Entire>();
-  if (A.triangular_view() == PartialViewCL::Upper) {
+  if (A.partial_view() == PartialViewCL::Upper) {
     inv_mat = transpose(inv_mat);
   }
   int work_per_thread
@@ -102,7 +102,7 @@ inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
   inv_padded.template zeros<stan::math::PartialViewCL::Upper>();
   if (parts == 1) {
     inv_mat.sub_block(inv_padded, 0, 0, 0, 0, inv_mat.rows(), inv_mat.rows());
-    if (A.triangular_view() == PartialViewCL::Upper) {
+    if (A.partial_view() == PartialViewCL::Upper) {
       inv_mat = transpose(inv_mat);
     }
     return inv_mat;
@@ -143,10 +143,10 @@ inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
   }
   // un-pad and return
   inv_mat.sub_block(inv_padded, 0, 0, 0, 0, inv_mat.rows(), inv_mat.rows());
-  if (A.triangular_view() == PartialViewCL::Upper) {
+  if (A.partial_view() == PartialViewCL::Upper) {
     inv_mat = transpose(inv_mat);
   }
-  inv_mat.triangular_view(A.triangular_view());
+  inv_mat.triangular_view(A.partial_view());
   return inv_mat;
 }
 }  // namespace math

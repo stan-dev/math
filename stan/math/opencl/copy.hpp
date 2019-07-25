@@ -118,7 +118,7 @@ inline std::vector<T> packed_copy(const matrix_cl<T>& src) {
     matrix_cl<T> packed(packed_size, 1);
     stan::math::opencl_kernels::pack(cl::NDRange(src.rows(), src.rows()),
                                      packed, src, src.rows(), src.rows(),
-                                     src.triangular_view());
+                                     src.partial_view());
     const std::vector<cl::Event> mat_events
         = vec_concat(packed.read_write_events(), src.write_events());
     cl::Event copy_event;
@@ -185,7 +185,7 @@ inline matrix_cl<T> packed_copy(const std::vector<T>& src, int rows) {
  */
 template <typename T, typename = enable_if_arithmetic<T>>
 inline matrix_cl<T> copy_cl(const matrix_cl<T>& src) {
-  matrix_cl<T> dst(src.rows(), src.cols(), src.triangular_view());
+  matrix_cl<T> dst(src.rows(), src.cols(), src.partial_view());
   if (src.size() == 0) {
     return dst;
   }
