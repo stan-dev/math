@@ -5,7 +5,7 @@
 #include <stan/math/prim/arr/err/check_matching_sizes.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #ifdef STAN_OPENCL
-#include <stan/math/opencl/multiply.hpp>
+#include <stan/math/opencl/opencl.hpp>
 #endif
 #include <type_traits>
 
@@ -65,10 +65,10 @@ inline Eigen::Matrix<double, R1, C2> multiply(
     matrix_cl<double> m3_cl = m1_cl * m2_cl;
     return from_matrix_cl(m3_cl);
   } else {
-#endif
     return m1 * m2;
-#ifdef STAN_OPENCL
   }
+#else
+  return m1 * m2;
 #endif
 }
 
