@@ -60,7 +60,7 @@ inline const PartialViewCL transpose(const PartialViewCL& view_type) {
   if (view_type == PartialViewCL::Upper) {
     return PartialViewCL::Lower;
   }
-  return a;
+  return view_type;
 }
 
 /**
