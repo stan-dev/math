@@ -4,7 +4,6 @@
 #include <stan/math/opencl/partial_types.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/copy.hpp>
-#include <stan/math/opencl/partial_types.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/opencl/kernels/copy_triangular.hpp>
 #include <stan/math/prim/meta.hpp>

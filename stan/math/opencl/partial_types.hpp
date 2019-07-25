@@ -13,51 +13,51 @@ enum class PartialViewCL { Diagonal = 0, Lower = 1, Upper = 2, Entire = 3 };
 /**
  * Performs bitwise @c or to deduce return type from adding two @c matrix_cls
  * together
- * @param a first view
- * @param b second view
+ * @param left_view first view
+ * @param right_view second view
  * @return combined view
  */
-inline const PartialViewCL operator+(const PartialViewCL& a,
-                                     const PartialViewCL& b) {
+inline const PartialViewCL operator+(const PartialViewCL& left_view,
+                                     const PartialViewCL& right_view) {
   typedef typename std::underlying_type<PartialViewCL>::type underlying;
-  return static_cast<PartialViewCL>(static_cast<underlying>(a)
-                                    | static_cast<underlying>(b));
+  return static_cast<PartialViewCL>(static_cast<underlying>(left_view)
+                                    | static_cast<underlying>(right_view));
 }
 
 /**
  * Performs bitwise @c and to deduce return type from adding two @c matrix_cls
  * together.
- * @param a first view
- * @param b second view
+ * @param left_view first view
+ * @param right_view second view
  * @return common nonzero part
  */
-inline const PartialViewCL operator*(const PartialViewCL& a,
-                                     const PartialViewCL& b) {
+inline const PartialViewCL operator*(const PartialViewCL& left_view,
+                                     const PartialViewCL& right_view) {
   typedef typename std::underlying_type<PartialViewCL>::type underlying;
-  return static_cast<PartialViewCL>(static_cast<underlying>(a)
-                                    & static_cast<underlying>(b));
+  return static_cast<PartialViewCL>(static_cast<underlying>(left_view)
+                                    & static_cast<underlying>(right_view));
 }
 
 /**
  * Check whether a view contains certain nonzero part
- * @param a view to check
- * @param b part to check for (usually `Lower` or `Upper`)
+ * @param left_view view to check
+ * @param right_view part to check for (usually `Lower` or `Upper`)
  * @return true, if `a` has part `b` nonzero
  */
-inline bool is_not_diagonal(const PartialViewCL& a, const PartialViewCL& b) {
-  return static_cast<bool>(a * b);
+inline bool is_not_diagonal(const PartialViewCL& left_view, const PartialViewCL& right_view) {
+  return static_cast<bool>(left_view * right_view);
 }
 
 /**
  * Transposes a triangular view - swaps lower and upper parts.
- * @param a view to transpose
+ * @param view_type view to transpose
  * @return transposition of input
  */
-inline const PartialViewCL transpose(const PartialViewCL& a) {
-  if (a == PartialViewCL::Lower) {
+inline const PartialViewCL transpose(const PartialViewCL& view_type) {
+  if (view_type == PartialViewCL::Lower) {
     return PartialViewCL::Upper;
   }
-  if (a == PartialViewCL::Upper) {
+  if (view_type == PartialViewCL::Upper) {
     return PartialViewCL::Lower;
   }
   return a;
@@ -66,14 +66,14 @@ inline const PartialViewCL transpose(const PartialViewCL& a) {
 /**
  * Inverts a triangular view. Parts that are zero in the input become nonzero in
  * output and vice versa.
- * @param a view to invert
+ * @param view_type view to invert
  * @return inverted view
  */
-inline const PartialViewCL invert(const PartialViewCL& a) {
+inline const PartialViewCL invert(const PartialViewCL& view_type) {
   typedef typename std::underlying_type<PartialViewCL>::type underlying;
   return static_cast<PartialViewCL>(
       static_cast<underlying>(PartialViewCL::Entire)
-      & ~static_cast<underlying>(a));
+      & ~static_cast<underlying>(view_type));
 }
 
 /**
@@ -81,7 +81,7 @@ inline const PartialViewCL invert(const PartialViewCL& a) {
  * `Eigen::StrictlyLower` and `Eigen::UnitLower` become
  * `PartialViewCL::Lower`. Similar for `Upper`. Any other view becomes
  * `PartialViewCL::Entire`.
- * @param a `UpLoType` to create a view from
+ * @param eigen_type `UpLoType` to create a view from
  * @return triangular view
  */
 inline PartialViewCL from_eigen_triangular_type(Eigen::UpLoType eigen_type) {
