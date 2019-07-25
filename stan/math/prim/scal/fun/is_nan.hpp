@@ -16,8 +16,7 @@ namespace math {
  * @return <code>true</code> if the value is NaN.
  */
 template <typename T, typename = enable_if_arithmetic<T>>
-inline bool is_nan(
-    T x) {
+inline bool is_nan(T x) {
   return std::isnan(x);
 }
 

@@ -15,10 +15,12 @@ template <typename T, typename S>
 using enable_if_not_same = std::enable_if_t<!std::is_same<T, S>::value>;
 
 template <typename T, typename... Types>
-using enable_if_all_same = std::enable_if_t<math::conjunction<std::is_same<T, Types>...>::value>;
+using enable_if_all_same
+    = std::enable_if_t<math::conjunction<std::is_same<T, Types>...>::value>;
 
 template <typename T, typename... Types>
-using enable_if_all_not_same = std::enable_if_t<math::conjunction<std::is_same<T, Types>...>::value>;
+using enable_if_all_not_same
+    = std::enable_if_t<math::conjunction<std::is_same<T, Types>...>::value>;
 
 }  // namespace stan
 #endif

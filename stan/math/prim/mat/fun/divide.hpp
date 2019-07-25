@@ -16,8 +16,10 @@ namespace math {
  * @param c Scalar.
  * @return Matrix divided by scalar.
  */
-template <int R, int C, typename T1, typename T2, typename = enable_if_all_arithmetic<T1, T2>>
-inline Eigen::Matrix<return_type_t<T1, T2>, R, C> divide(const Eigen::Matrix<T1, R, C>& m, T2 c) {
+template <int R, int C, typename T1, typename T2,
+          typename = enable_if_all_arithmetic<T1, T2>>
+inline Eigen::Matrix<return_type_t<T1, T2>, R, C> divide(
+    const Eigen::Matrix<T1, R, C>& m, T2 c) {
   return m / c;
 }
 
