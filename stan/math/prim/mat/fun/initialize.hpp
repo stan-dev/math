@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_INITIALIZE_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <vector>
 #include <type_traits>
 
@@ -15,9 +16,8 @@ template <typename T>
 inline void initialize(T& x, const T& v) {
   x = v;
 }
-template <typename T, typename V>
-inline typename std::enable_if<std::is_arithmetic<V>::value, void>::type
-initialize(T& x, V v) {
+template <typename T, typename V, typename = enable_if_arithmetic<V>>
+inline void initialize(T& x, V v) {
   x = v;
 }
 template <typename T, int R, int C, typename V>

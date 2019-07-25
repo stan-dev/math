@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_ACCUMULATOR_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/sum.hpp>
 #include <vector>
 #include <type_traits>
@@ -45,8 +46,8 @@ class accumulator {
    * @tparam S Type of argument
    * @param x Value to add
    */
-  template <typename S>
-  typename std::enable_if<std::is_arithmetic<S>::value, void>::type add(S x) {
+  template <typename S, typename = enable_if_arithmetic<S>, typename = enable_if_not_same<S,T>>
+  void add(S x) {
     buf_.push_back(static_cast<T>(x));
   }
 
@@ -62,11 +63,8 @@ class accumulator {
    * @tparam S Type of argument
    * @param x Value to add
    */
-  template <typename S>
-  typename std::enable_if<
-      !std::is_arithmetic<S>::value,
-      typename std::enable_if<std::is_same<S, T>::value, void>::type>::type
-  add(const S& x) {
+  template <typename S, typename = enable_if_arithmetic<S>, typename = enable_if_same<S, T>>
+void add(const S& x) {
     buf_.push_back(x);
   }
 
