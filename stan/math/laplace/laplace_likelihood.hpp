@@ -8,16 +8,30 @@ namespace math {
 
 // TO DO: create a parent structure, with each likelihood
 // function acting as a child structure.
-struct diff_poisson_log {
-  Eigen::VectorXd n_samples_;
-  Eigen::VectorXd sums_;
 
-  diff_poisson_log();
+/**
+ * A structure to compute the log density, first, second,
+ * and third-order derivatives for a log poisson likelihood
+ * whith multiple groups.
+ * This structure can be passed to the the laplace_marginal function.
+ * Uses sufficient statistics for the data. 
+ */
+struct diff_poisson_log {
+  /* The number of samples in each group. */
+  Eigen::VectorXd n_samples_;
+  /* The sum of counts in each group. */
+  Eigen::VectorXd sums_;
 
   diff_poisson_log(const Eigen::VectorXd& n_samples,
                    const Eigen::VectorXd& sums)
     : n_samples_(n_samples), sums_(sums) { }
 
+  /**
+   * Return the log density.
+   * @tparam T type of the log poisson parameter.
+   * @param[in] theta log poisson parameters for each group.
+   * @return the log density. 
+   */
   template <typename T>
   T log_likelihood (const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta)
     const {
@@ -29,6 +43,17 @@ struct diff_poisson_log {
       + theta.dot(sums_) - exp(theta).dot(n_samples_);
   }
 
+  /**
+   * Returns the gradient of the log density, and the hessian.
+   * Since the latter is diagonal, it is stored inside a vector.
+   * The two objects are computed together, because we always use
+   * both when solving the Newton iteration of the Laplace
+   * approximation, and to avoid redundant computation. 
+   * @tparam T type of the log poisson parameter.
+   * @param[in] theta log poisson parameters for each group.
+   * @param[in, out] gradient
+   * @param[in, out] hessian diagonal, so stored in a vector.
+   */
   template <typename T>
   void diff (const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta,
              Eigen::Matrix<T, Eigen::Dynamic, 1>& gradient,
@@ -37,6 +62,14 @@ struct diff_poisson_log {
     gradient = sums_ + hessian;
   }
 
+  /**
+   * Returns the third derivative tensor. Because it is (cubic) diagonal,
+   * the object is stored in a vector.
+   * @tparam T type of the log poisson parameter.
+   * @param[in] theta log poisson parameters for each group.
+   * @return A vector containing the non-zero elements of the third
+   *         derivative tensor.
+   */
   template <typename T>
   Eigen::Matrix<T, Eigen::Dynamic, 1>
   third_diff(const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta) const {
@@ -44,16 +77,29 @@ struct diff_poisson_log {
   }
 };
 
+/**
+ * A structure to compute the log density, first, second,
+ * and third-order derivatives for a Bernoulli logistic likelihood
+ * whith multiple groups.
+ * This structure can be passed to the the laplace_marginal function.
+ * Uses sufficient statistics for the data. 
+ */
 struct diff_logistic_log {
+  /* The number of samples in each group. */
   Eigen::VectorXd n_samples_;
+  /* The sum of counts in each group. */
   Eigen::VectorXd sums_;
-
-  diff_logistic_log();
 
   diff_logistic_log(const Eigen::VectorXd& n_samples,
                     const Eigen::VectorXd& sums)
     : n_samples_(n_samples), sums_(sums) { }
 
+  /**
+   * Return the log density.
+   * @tparam T type of the log poisson parameter.
+   * @param[in] theta log poisson parameters for each group.
+   * @return the log density. 
+   */
   template <typename T>
   T log_likelihood (const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta)
     const {
@@ -62,6 +108,17 @@ struct diff_logistic_log {
                    - n_samples_.cwiseProduct(log(one + exp(theta))));
     }
 
+  /**
+   * Returns the gradient of the log density, and the hessian.
+   * Since the latter is diagonal, it is stored inside a vector.
+   * The two objects are computed together, because we always use
+   * both when solving the Newton iteration of the Laplace
+   * approximation, and to avoid redundant computation. 
+   * @tparam T type of the Bernoulli logistic parameter.
+   * @param[in] theta Bernoulli logistic parameters for each group.
+   * @param[in, out] gradient
+   * @param[in, out] hessian diagonal, so stored in a vector.
+   */  
   template <typename T>
   void diff (const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta,
              Eigen::Matrix<T, Eigen::Dynamic, 1>& gradient,
@@ -75,6 +132,14 @@ struct diff_logistic_log {
                                                     square(one + exp_theta)));
   }
 
+  /**
+   * Returns the third derivative tensor. Because it is (cubic) diagonal,
+   * the object is stored in a vector.
+   * @tparam T type of the log poisson parameter.
+   * @param[in] theta log poisson parameters for each group.
+   * @return A vector containing the non-zero elements of the third
+   *         derivative tensor.
+   */  
   template <typename T>
   Eigen::Matrix<T, Eigen::Dynamic, 1>
   third_diff(const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta) const {
@@ -88,6 +153,7 @@ struct diff_logistic_log {
   }
 };
 
+// TO DO: delete this structure.
 // To experiment with the prototype, provide a built-in covariance
 // function. In the final version, the user will pass the covariance
 // function.

@@ -13,10 +13,24 @@ namespace math {
   // function.
 
   /**
-   * Wrapper function to be exposed to the Stan language.
-   * This first prototype will enforce the squared kernel for the
-   * covariance matrix. Future versions will require the user to
-   * pass their covariance function.
+   * Wrapper function around the laplace_marginal function for
+   * a log poisson likelihood. Returns the marginal density
+   * p(y | phi) by marginalizing out the latent gaussian variable,
+   * with a Laplace approximation. See the laplace_marginal function
+   * for more details.
+   *
+   * @tparam T0 The type of the initial guess, theta_0.
+   * @tparam T1 The type for the global parameter, phi.
+   * @param[in] theta_0 the initial guess for the Laplace approximation.
+   * @param[in] phi model parameters for the covariance function.
+   * @param[in] x data for the covariance function.
+   * @param[in] n_samples number of samples per group. First sufficient
+   *            statistics.
+   * @param[in] y total counts per group. Second sufficient statistics.
+   * @param[in] tolerance controls the convergence criterion when finding
+   *            the mode in the Laplace approximation.
+   * @param[in] max_num_steps maximum number of steps before the Newton solver
+   *            breaks and returns an error.
    */
   template <typename T0, typename T1>
   T1 laplace_marginal_poisson 
