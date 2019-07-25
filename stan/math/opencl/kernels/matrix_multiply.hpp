@@ -169,8 +169,8 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/matrix_multiply.hpp matrix_multiply() \endlink
  */
-const kernel_cl<in_buffer, in_buffer, out_buffer, int, int, int,
-                PartialViewCL, PartialViewCL>
+const kernel_cl<in_buffer, in_buffer, out_buffer, int, int, int, PartialViewCL,
+                PartialViewCL>
     matrix_multiply("matrix_multiply",
                     {thread_block_helpers, triangular_kernel_helpers,
                      matrix_multiply_kernel_code},

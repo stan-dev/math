@@ -140,14 +140,14 @@ TEST(MathMatrixCL, matrix_cl_pack_unpack_copy_upper) {
 TEST(MathMatrixCL, matrix_cl_pack_unpack_copy_exception) {
   std::vector<double> packed_mat;
   stan::math::matrix_cl<double> m_cl_zero;
-  EXPECT_NO_THROW(stan::math::packed_copy<stan::math::PartialViewCL::Upper>(
-      packed_mat, 0));
+  EXPECT_NO_THROW(
+      stan::math::packed_copy<stan::math::PartialViewCL::Upper>(packed_mat, 0));
   m_cl_zero.triangular_view(stan::math::PartialViewCL::Upper);
   EXPECT_NO_THROW(stan::math::packed_copy(m_cl_zero));
   m_cl_zero.triangular_view(stan::math::PartialViewCL::Entire);
   EXPECT_THROW(stan::math::packed_copy(m_cl_zero), std::invalid_argument);
-  EXPECT_THROW(stan::math::packed_copy<stan::math::PartialViewCL::Upper>(
-                   packed_mat, 1),
-               std::invalid_argument);
+  EXPECT_THROW(
+      stan::math::packed_copy<stan::math::PartialViewCL::Upper>(packed_mat, 1),
+      std::invalid_argument);
 }
 #endif

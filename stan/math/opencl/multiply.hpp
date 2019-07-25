@@ -37,8 +37,8 @@ inline matrix_cl<return_type_t<T1, T2>> multiply(const matrix_cl<T1>& A,
                                                  const matrix_cl<T2>& B) {
   check_size_match("multiply ((OpenCL))", "A.cols()", A.cols(), "B.rows()",
                    B.rows());
-  matrix_cl<return_type_t<T1, T2>> temp(
-      A.rows(), B.cols(), A.partial_view() + B.partial_view());
+  matrix_cl<return_type_t<T1, T2>> temp(A.rows(), B.cols(),
+                                        A.partial_view() + B.partial_view());
   if (A.size() == 0 || B.size() == 0) {
     temp.zeros();
     return temp;
@@ -115,8 +115,7 @@ inline matrix_cl<return_type_t<T1, T2>> multiply(const matrix_cl<T1>& A,
 template <typename T1, typename T2, typename = enable_if_all_arithmetic<T1, T2>>
 inline matrix_cl<return_type_t<T1, T2>> multiply(const matrix_cl<T1>& A,
                                                  const T2 scalar) {
-  matrix_cl<return_type_t<T1, T2>> temp(A.rows(), A.cols(),
-                                        A.partial_view());
+  matrix_cl<return_type_t<T1, T2>> temp(A.rows(), A.cols(), A.partial_view());
   if (A.size() == 0)
     return temp;
   try {

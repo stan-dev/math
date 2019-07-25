@@ -91,9 +91,8 @@ inline Eigen::Matrix<double, R1, C2> mdivide_left_tri(
 #ifdef STAN_OPENCL
   if (A.rows()
       >= opencl_context.tuning_opts().tri_inverse_size_worth_transfer) {
-    matrix_cl<double> A_cl(A, TriView == Eigen::Lower
-                                  ? PartialViewCL::Lower
-                                  : PartialViewCL::Upper);
+    matrix_cl<double> A_cl(A, TriView == Eigen::Lower ? PartialViewCL::Lower
+                                                      : PartialViewCL::Upper);
     matrix_cl<double> b_cl(b);
     matrix_cl<double> A_inv_cl = tri_inverse(A_cl);
     matrix_cl<double> C_cl = A_inv_cl * b_cl;

@@ -38,8 +38,7 @@ inline matrix_cl<return_type_t<T1, T2>> subtract(const matrix_cl<T1>& A,
   }
   try {
     opencl_kernels::subtract(cl::NDRange(A.rows(), A.cols()), C, A, B, A.rows(),
-                             A.cols(), A.partial_view(),
-                             B.partial_view());
+                             A.cols(), A.partial_view(), B.partial_view());
   } catch (cl::Error& e) {
     check_opencl_error("subtract", e);
   }
