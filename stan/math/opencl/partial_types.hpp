@@ -44,7 +44,8 @@ inline const PartialViewCL operator*(const PartialViewCL& left_view,
  * @param right_view part to check for (usually `Lower` or `Upper`)
  * @return true, if `a` has part `b` nonzero
  */
-inline bool is_not_diagonal(const PartialViewCL& left_view, const PartialViewCL& right_view) {
+inline bool is_not_diagonal(const PartialViewCL& left_view,
+                            const PartialViewCL& right_view) {
   return static_cast<bool>(left_view * right_view);
 }
 
