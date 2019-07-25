@@ -6,13 +6,13 @@
 #include <algorithm>
 
 TEST(MathMatrixCL, zero_m_exception_pass) {
-  stan::math::matrix_cl m(1, 1);
+  stan::math::matrix_cl<double> m(1, 1);
 
   EXPECT_NO_THROW(m.zeros<stan::math::TriangularViewCL::Entire>());
   EXPECT_NO_THROW(m.zeros<stan::math::TriangularViewCL::Lower>());
   EXPECT_NO_THROW(m.zeros<stan::math::TriangularViewCL::Upper>());
 
-  stan::math::matrix_cl m0;
+  stan::math::matrix_cl<double> m0;
   EXPECT_NO_THROW(m0.zeros<stan::math::TriangularViewCL::Entire>());
   EXPECT_NO_THROW(m0.zeros<stan::math::TriangularViewCL::Lower>());
   EXPECT_NO_THROW(m0.zeros<stan::math::TriangularViewCL::Upper>());
@@ -22,9 +22,9 @@ TEST(MathMatrixCL, zero_m_value_check) {
   stan::math::matrix_d m0(2, 2);
   stan::math::matrix_d m0_dst(2, 2);
   m0 << 2, 2, 2, 2;
-  stan::math::matrix_cl m(m0);
-  stan::math::matrix_cl m_upper(m0);
-  stan::math::matrix_cl m_lower(m0);
+  stan::math::matrix_cl<double> m(m0);
+  stan::math::matrix_cl<double> m_upper(m0);
+  stan::math::matrix_cl<double> m_lower(m0);
 
   EXPECT_NO_THROW(m.zeros<stan::math::TriangularViewCL::Entire>());
   EXPECT_NO_THROW(m_lower.zeros<stan::math::TriangularViewCL::Lower>());

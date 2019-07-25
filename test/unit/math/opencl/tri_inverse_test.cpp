@@ -14,8 +14,8 @@
 TEST(MathMatrixCL, inverse_cl_exception) {
   stan::math::matrix_d m1(2, 3);
   m1 << 1, 2, 3, 4, 5, 6;
-  stan::math::matrix_cl m2(m1);
-  stan::math::matrix_cl m3(2, 3);
+  stan::math::matrix_cl<double> m2(m1);
+  stan::math::matrix_cl<double> m3(2, 3);
   using stan::math::tri_inverse;
   EXPECT_THROW(m3 = tri_inverse<stan::math::TriangularViewCL::Lower>(m2),
                std::invalid_argument);
@@ -40,7 +40,7 @@ void lower_inverse_test(int size) {
 
   m1_cpu = stan::math::mdivide_left_tri<Eigen::Lower>(m1);
 
-  stan::math::matrix_cl m2(m1);
+  stan::math::matrix_cl<double> m2(m1);
   auto m3 = stan::math::tri_inverse<stan::math::TriangularViewCL::Lower>(m2);
   m1_cl = stan::math::from_matrix_cl(m3);
   double max_error = 0;
@@ -71,7 +71,7 @@ void upper_inverse_test(int size) {
 
   m1_cpu = stan::math::mdivide_left_tri<Eigen::Upper>(m1);
 
-  stan::math::matrix_cl m2(m1);
+  stan::math::matrix_cl<double> m2(m1);
   auto m3 = stan::math::tri_inverse<stan::math::TriangularViewCL::Upper>(m2);
   m1_cl = stan::math::from_matrix_cl(m3);
   double max_error = 0;

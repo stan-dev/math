@@ -14,19 +14,21 @@ void jacobian(const F& f, const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
   using Eigen::Dynamic;
   using Eigen::Matrix;
   Matrix<fvar<T>, Dynamic, 1> x_fvar(x.size());
-  for (int i = 0; i < x.size(); ++i) {
-    for (int k = 0; k < x.size(); ++k)
-      x_fvar(k) = fvar<T>(x(k), i == k);
+  J.resize(x_fvar.size(), x.size());
+  fx.resize(x_fvar.size());
+  for (int k = 0; k < x.size(); ++k) {
+    x_fvar(k) = fvar<T>(x(k), 0);
+  }
+  x_fvar(0) = fvar<T>(x(0), 1);
+  Matrix<fvar<T>, Dynamic, 1> fx_fvar = f(x_fvar);
+  fx = fx_fvar.val();
+  J.col(0) = fx_fvar.d();
+  const fvar<T> switch_fvar(0, 1);  // flips the tangents on and off
+  for (int i = 1; i < x.size(); ++i) {
+    x_fvar(i - 1) -= switch_fvar;
+    x_fvar(i) += switch_fvar;
     Matrix<fvar<T>, Dynamic, 1> fx_fvar = f(x_fvar);
-    if (i == 0) {
-      J.resize(fx_fvar.size(), x.size());
-      fx.resize(fx_fvar.size());
-      for (int k = 0; k < fx_fvar.size(); ++k)
-        fx(k) = fx_fvar(k).val_;
-    }
-    for (int k = 0; k < fx_fvar.size(); ++k) {
-      J(k, i) = fx_fvar(k).d_;
-    }
+    J.col(i) = fx_fvar.d();
   }
 }
 

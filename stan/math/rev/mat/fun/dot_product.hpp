@@ -3,6 +3,7 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/prim/mat/err/check_vector.hpp>
 #include <stan/math/prim/arr/err/check_matching_sizes.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
@@ -36,56 +37,50 @@ class dot_product_vari : public vari {
   size_t length_;
 
   inline static double var_dot(vari** v1, vari** v2, size_t length) {
-    Eigen::VectorXd vd1(length), vd2(length);
-    for (size_t i = 0; i < length; i++) {
-      vd1[i] = v1[i]->val_;
-      vd2[i] = v2[i]->val_;
-    }
-    return vd1.dot(vd2);
+    Eigen::Map<vector_vi> vd1(v1, length);
+    Eigen::Map<vector_vi> vd2(v2, length);
+
+    return vd1.val().dot(vd2.val());
   }
 
   inline static double var_dot(const T1* v1, const T2* v2, size_t length) {
-    Eigen::VectorXd vd1(length), vd2(length);
-    for (size_t i = 0; i < length; i++) {
-      vd1[i] = value_of(v1[i]);
-      vd2[i] = value_of(v2[i]);
-    }
-    return vd1.dot(vd2);
+    Eigen::Map<const Eigen::Matrix<T1, -1, 1>> vd1(v1, length);
+    Eigen::Map<const Eigen::Matrix<T2, -1, 1>> vd2(v2, length);
+    return vd1.val().dot(vd2.val());
   }
 
   template <typename Derived1, typename Derived2>
   inline static double var_dot(const Eigen::DenseBase<Derived1>& v1,
                                const Eigen::DenseBase<Derived2>& v2) {
-    Eigen::VectorXd vd1(v1.size()), vd2(v1.size());
-    for (int i = 0; i < v1.size(); i++) {
-      vd1[i] = value_of(v1[i]);
-      vd2[i] = value_of(v2[i]);
-    }
+    vector_d vd1
+        = Eigen::Ref<const Eigen::Matrix<typename Derived1::Scalar, -1, 1>>(v1)
+              .val();
+    vector_d vd2
+        = Eigen::Ref<const Eigen::Matrix<typename Derived2::Scalar, -1, 1>>(v2)
+              .val();
     return vd1.dot(vd2);
   }
   inline void chain(vari** v1, vari** v2) {
-    for (size_t i = 0; i < length_; i++) {
-      v1[i]->adj_ += adj_ * v2_[i]->val_;
-      v2[i]->adj_ += adj_ * v1_[i]->val_;
-    }
+    Eigen::Map<vector_vi> vd1(v1, length_);
+    Eigen::Map<vector_vi> vd2(v2, length_);
+    vd1.adj() += adj_ * vd2.val();
+    vd2.adj() += adj_ * vd1.val();
   }
   inline void chain(double* v1, vari** v2) {
-    for (size_t i = 0; i < length_; i++) {
-      v2[i]->adj_ += adj_ * v1_[i];
-    }
+    Eigen::Map<vector_vi>(v2, length_).adj()
+        += adj_ * Eigen::Map<vector_d>(v1, length_);
   }
   inline void chain(vari** v1, double* v2) {
-    for (size_t i = 0; i < length_; i++) {
-      v1[i]->adj_ += adj_ * v2_[i];
-    }
+    Eigen::Map<vector_vi>(v1, length_).adj()
+        += adj_ * Eigen::Map<vector_d>(v2, length_);
   }
   inline void initialize(vari**& mem_v, const var* inv,
                          vari** shared = nullptr) {
     if (shared == nullptr) {
       mem_v = reinterpret_cast<vari**>(
           ChainableStack::instance_->memalloc_.alloc(length_ * sizeof(vari*)));
-      for (size_t i = 0; i < length_; i++)
-        mem_v[i] = inv[i].vi_;
+      Eigen::Map<vector_vi>(mem_v, length_)
+          = Eigen::Map<const vector_v>(inv, length_).vi();
     } else {
       mem_v = shared;
     }
@@ -96,8 +91,8 @@ class dot_product_vari : public vari {
     if (shared == nullptr) {
       mem_v = reinterpret_cast<vari**>(
           ChainableStack::instance_->memalloc_.alloc(length_ * sizeof(vari*)));
-      for (size_t i = 0; i < length_; i++)
-        mem_v[i] = inv(i).vi_;
+      Eigen::Map<vector_vi>(mem_v, length_)
+          = Eigen::Ref<const vector_v>(inv).vi();
     } else {
       mem_v = shared;
     }
@@ -120,8 +115,7 @@ class dot_product_vari : public vari {
     if (shared == nullptr) {
       mem_d = reinterpret_cast<double*>(
           ChainableStack::instance_->memalloc_.alloc(length_ * sizeof(double)));
-      for (size_t i = 0; i < length_; i++)
-        mem_d[i] = ind(i);
+      Eigen::Map<vector_d>(mem_d, length_) = Eigen::Ref<const vector_d>(ind);
     } else {
       mem_d = shared;
     }

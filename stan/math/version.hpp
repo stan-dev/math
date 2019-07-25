@@ -12,8 +12,8 @@
 #endif
 
 #define STAN_MATH_MAJOR 2
-#define STAN_MATH_MINOR 19
-#define STAN_MATH_PATCH 1
+#define STAN_MATH_MINOR 20
+#define STAN_MATH_PATCH 0
 
 namespace stan {
 namespace math {

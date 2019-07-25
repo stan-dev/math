@@ -20,10 +20,7 @@ namespace math {
  * @return A Matrix with automatic differentiation variables
  */
 inline matrix_v to_var(const matrix_d& m) {
-  matrix_v m_v(m.rows(), m.cols());
-  for (int j = 0; j < m.cols(); ++j)
-    for (int i = 0; i < m.rows(); ++i)
-      m_v(i, j) = m(i, j);
+  matrix_v m_v = m;
   return m_v;
 }
 /**
@@ -45,9 +42,7 @@ inline matrix_v to_var(const matrix_v& m) { return m; }
  *   values of v
  */
 inline vector_v to_var(const vector_d& v) {
-  vector_v v_v(v.size());
-  for (int i = 0; i < v.size(); ++i)
-    v_v[i] = v[i];
+  vector_v v_v = v;
   return v_v;
 }
 /**
@@ -70,9 +65,7 @@ inline vector_v to_var(const vector_v& v) { return v; }
  *   values of rv.
  */
 inline row_vector_v to_var(const row_vector_d& rv) {
-  row_vector_v rv_v(rv.size());
-  for (int i = 0; i < rv.size(); ++i)
-    rv_v[i] = rv[i];
+  row_vector_v rv_v = rv;
   return rv_v;
 }
 /**
