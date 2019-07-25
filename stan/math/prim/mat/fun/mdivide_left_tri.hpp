@@ -92,8 +92,8 @@ inline Eigen::Matrix<double, R1, C2> mdivide_left_tri(
   if (A.rows()
       >= opencl_context.tuning_opts().tri_inverse_size_worth_transfer) {
     matrix_cl<double> A_cl(A, TriView == Eigen::Lower
-                                  ? TriangularViewCL::Lower
-                                  : TriangularViewCL::Upper);
+                                  ? PartialViewCL::Lower
+                                  : PartialViewCL::Upper);
     matrix_cl<double> b_cl(b);
     matrix_cl<double> A_inv_cl = tri_inverse(A_cl);
     matrix_cl<double> C_cl = A_inv_cl * b_cl;
@@ -125,7 +125,7 @@ inline Eigen::Matrix<double, R1, C1> mdivide_left_tri(
 #ifdef STAN_OPENCL
   if (A.rows()
       >= opencl_context.tuning_opts().tri_inverse_size_worth_transfer) {
-    matrix_cl<double> A_cl(A, fromEigenUpLoType(TriView));
+    matrix_cl<double> A_cl(A, from_eigen_triangular_type(TriView));
     A_cl = tri_inverse(A_cl);
     return from_matrix_cl(A_cl);
   } else {

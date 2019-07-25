@@ -4,7 +4,7 @@
 
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/opencl/buffer_types.hpp>
-#include <stan/math/opencl/triangular.hpp>
+#include <stan/math/opencl/partial_types.hpp>
 
 namespace stan {
 namespace math {
@@ -55,7 +55,7 @@ static const char *copy_triangular_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/copy_triangular.hpp copy_triangular() \endlink
  */
-const kernel_cl<out_buffer, in_buffer, int, int, TriangularViewCL>
+const kernel_cl<out_buffer, in_buffer, int, int, PartialViewCL>
     copy_triangular("copy_triangular",
                     {indexing_helpers, triangular_kernel_helpers,
                      copy_triangular_kernel_code});

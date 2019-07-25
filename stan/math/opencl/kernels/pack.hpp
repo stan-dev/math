@@ -55,7 +55,7 @@ static const char* pack_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/pack.hpp pack() \endlink
  */
-const kernel_cl<out_buffer, in_buffer, int, int, TriangularViewCL> pack(
+const kernel_cl<out_buffer, in_buffer, int, int, PartialViewCL> pack(
     "pack", {indexing_helpers, pack_kernel_code});
 
 }  // namespace opencl_kernels

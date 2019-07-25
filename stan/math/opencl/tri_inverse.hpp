@@ -3,7 +3,7 @@
 
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/matrix_cl.hpp>
-#include <stan/math/opencl/triangular.hpp>
+#include <stan/math/opencl/partial_types.hpp>
 #include <stan/math/opencl/kernels/diag_inv.hpp>
 #include <stan/math/opencl/kernels/inv_lower_tri_multiply.hpp>
 #include <stan/math/opencl/kernels/neg_rect_lower_tri_multiply.hpp>
@@ -71,10 +71,10 @@ inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
   matrix_cl<T> inv_padded(A_rows_padded, A_rows_padded);
   matrix_cl<T> inv_mat(A);
   matrix_cl<T> zero_mat(A_rows_padded - A.rows(), A_rows_padded);
-  zero_mat.template zeros<stan::math::TriangularViewCL::Entire>();
-  temp.template zeros<stan::math::TriangularViewCL::Entire>();
-  inv_padded.template zeros<stan::math::TriangularViewCL::Entire>();
-  if (A.triangular_view() == TriangularViewCL::Upper) {
+  zero_mat.template zeros<stan::math::PartialViewCL::Entire>();
+  temp.template zeros<stan::math::PartialViewCL::Entire>();
+  inv_padded.template zeros<stan::math::PartialViewCL::Entire>();
+  if (A.partial_view() == PartialViewCL::Upper) {
     inv_mat = transpose(inv_mat);
   }
   int work_per_thread
@@ -99,10 +99,10 @@ inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
   // set the padded part of the matrix and the upper triangular to zeros
   inv_padded.sub_block(zero_mat, 0, 0, inv_mat.rows(), 0, zero_mat.rows(),
                        zero_mat.cols());
-  inv_padded.template zeros<stan::math::TriangularViewCL::Upper>();
+  inv_padded.template zeros<stan::math::PartialViewCL::Upper>();
   if (parts == 1) {
     inv_mat.sub_block(inv_padded, 0, 0, 0, 0, inv_mat.rows(), inv_mat.rows());
-    if (A.triangular_view() == TriangularViewCL::Upper) {
+    if (A.partial_view() == PartialViewCL::Upper) {
       inv_mat = transpose(inv_mat);
     }
     return inv_mat;
@@ -139,14 +139,14 @@ inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
     // set the padded part and upper diagonal to zeros
     inv_padded.sub_block(zero_mat, 0, 0, inv_mat.rows(), 0, zero_mat.rows(),
                          zero_mat.cols());
-    inv_padded.template zeros<stan::math::TriangularViewCL::Upper>();
+    inv_padded.template zeros<stan::math::PartialViewCL::Upper>();
   }
   // un-pad and return
   inv_mat.sub_block(inv_padded, 0, 0, 0, 0, inv_mat.rows(), inv_mat.rows());
-  if (A.triangular_view() == TriangularViewCL::Upper) {
+  if (A.partial_view() == PartialViewCL::Upper) {
     inv_mat = transpose(inv_mat);
   }
-  inv_mat.triangular_view(A.triangular_view());
+  inv_mat.triangular_view(A.partial_view());
   return inv_mat;
 }
 }  // namespace math

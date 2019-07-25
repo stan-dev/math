@@ -4,7 +4,7 @@
 
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/opencl/buffer_types.hpp>
-#include <stan/math/opencl/triangular.hpp>
+#include <stan/math/opencl/partial_types.hpp>
 
 namespace stan {
 namespace math {
@@ -61,8 +61,8 @@ static const char *subtract_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/subtract.hpp subtract() \endlink
  */
-const kernel_cl<out_buffer, in_buffer, in_buffer, int, int, TriangularViewCL,
-                TriangularViewCL>
+const kernel_cl<out_buffer, in_buffer, in_buffer, int, int, PartialViewCL,
+                PartialViewCL>
     subtract("subtract", {indexing_helpers, triangular_kernel_helpers,
                           subtract_kernel_code});
 

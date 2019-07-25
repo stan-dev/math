@@ -4,7 +4,7 @@
 
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/opencl/buffer_types.hpp>
-#include <stan/math/opencl/triangular.hpp>
+#include <stan/math/opencl/partial_types.hpp>
 
 namespace stan {
 namespace math {
@@ -170,7 +170,7 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
  * See the docs for \link kernels/matrix_multiply.hpp matrix_multiply() \endlink
  */
 const kernel_cl<in_buffer, in_buffer, out_buffer, int, int, int,
-                TriangularViewCL, TriangularViewCL>
+                PartialViewCL, PartialViewCL>
     matrix_multiply("matrix_multiply",
                     {thread_block_helpers, triangular_kernel_helpers,
                      matrix_multiply_kernel_code},
@@ -216,8 +216,8 @@ static const char* matrix_vector_multiply_kernel_code = STRINGIFY(
  * See the docs for \link kernels/matrix_multiply.hpp matrix_vector_multiply()
  * \endlink
  */
-const kernel_cl<in_buffer, in_buffer, out_buffer, int, int, TriangularViewCL,
-                TriangularViewCL>
+const kernel_cl<in_buffer, in_buffer, out_buffer, int, int, PartialViewCL,
+                PartialViewCL>
     matrix_vector_multiply("matrix_vector_multiply",
                            {triangular_kernel_helpers,
                             matrix_vector_multiply_kernel_code});
@@ -280,8 +280,8 @@ static const char* row_vector_matrix_multiply_kernel_code = STRINGIFY(
  * See the docs for \link kernels/matrix_multiply.hpp
  * row_vector_matrix_multiply() \endlink
  */
-const kernel_cl<in_buffer, in_buffer, out_buffer, int, int, TriangularViewCL,
-                TriangularViewCL>
+const kernel_cl<in_buffer, in_buffer, out_buffer, int, int, PartialViewCL,
+                PartialViewCL>
     row_vector_matrix_multiply("row_vector_matrix_multiply",
                                {triangular_kernel_helpers,
                                 row_vector_matrix_multiply_kernel_code},

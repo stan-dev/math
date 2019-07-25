@@ -2,11 +2,12 @@
 #define STAN_MATH_OPENCL_KERNEL_CL_HPP
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/opencl_context.hpp>
-#include <stan/math/opencl/kernels/helpers.hpp>
-#include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/buffer_types.hpp>
-#include <stan/math/opencl/err/check_opencl.hpp>
+#include <stan/math/opencl/matrix_cl.hpp>
+#include <stan/math/opencl/partial_types.hpp>
 #include <stan/math/opencl/stringify.hpp>
+#include <stan/math/opencl/err/check_opencl.hpp>
+#include <stan/math/opencl/kernels/helpers.hpp>
 #include <stan/math/prim/arr/fun/vec_concat.hpp>
 #include <CL/cl.hpp>
 #include <string>

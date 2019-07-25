@@ -5,16 +5,17 @@
 #include <stan/math/opencl/opencl_context.hpp>
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
+#include <stan/math/opencl/partial_types.hpp>
 #include <stan/math/opencl/kernels/copy.hpp>
 #include <stan/math/opencl/kernels/pack.hpp>
 #include <stan/math/opencl/kernels/unpack.hpp>
 #include <stan/math/opencl/buffer_types.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
+#include <stan/math/opencl/err/check_triangular.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/arr/fun/vec_concat.hpp>
-#include <stan/math/opencl/err/check_triangular.hpp>
 
 #include <CL/cl.hpp>
 #include <iostream>
@@ -117,7 +118,7 @@ inline std::vector<T> packed_copy(const matrix_cl<T>& src) {
     matrix_cl<T> packed(packed_size, 1);
     stan::math::opencl_kernels::pack(cl::NDRange(src.rows(), src.rows()),
                                      packed, src, src.rows(), src.rows(),
-                                     src.triangular_view());
+                                     src.partial_view());
     const std::vector<cl::Event> mat_events
         = vec_concat(packed.read_write_events(), src.write_events());
     cl::Event copy_event;
@@ -145,7 +146,7 @@ inline std::vector<T> packed_copy(const matrix_cl<T>& src) {
  * size of the vector does not match the expected size
  * for the packed triangular matrix
  */
-template <TriangularViewCL triangular_view, typename T,
+template <PartialViewCL triangular_view, typename T,
           typename = enable_if_arithmetic<T>>
 inline matrix_cl<T> packed_copy(const std::vector<T>& src, int rows) {
   const int packed_size = rows * (rows + 1) / 2;
@@ -184,7 +185,7 @@ inline matrix_cl<T> packed_copy(const std::vector<T>& src, int rows) {
  */
 template <typename T, typename = enable_if_arithmetic<T>>
 inline matrix_cl<T> copy_cl(const matrix_cl<T>& src) {
-  matrix_cl<T> dst(src.rows(), src.cols(), src.triangular_view());
+  matrix_cl<T> dst(src.rows(), src.cols(), src.partial_view());
   if (src.size() == 0) {
     return dst;
   }

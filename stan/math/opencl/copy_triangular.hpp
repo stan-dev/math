@@ -1,11 +1,12 @@
 #ifndef STAN_MATH_OPENCL_COPY_TRIANGULAR_HPP
 #define STAN_MATH_OPENCL_COPY_TRIANGULAR_HPP
 #ifdef STAN_OPENCL
-#include <stan/math/opencl/triangular.hpp>
+#include <stan/math/opencl/partial_types.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/copy.hpp>
-#include <stan/math/opencl/kernels/copy_triangular.hpp>
+#include <stan/math/opencl/partial_types.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
+#include <stan/math/opencl/kernels/copy_triangular.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <CL/cl.hpp>
 
@@ -21,21 +22,21 @@ namespace math {
  * @param src the source matrix
  * @tparam triangular_map int to describe
  * which part of the matrix to copy:
- * TriangularViewCL::Lower - copies the lower triangular
- * TriangularViewCL::Upper - copes the upper triangular
+ * PartialViewCL::Lower - copies the lower triangular
+ * PartialViewCL::Upper - copes the upper triangular
  *
  * @return the matrix with the copied content
  *
  */
-template <TriangularViewCL triangular_view = TriangularViewCL::Entire,
-          typename T, typename = enable_if_arithmetic<T>>
+template <PartialViewCL triangular_view = PartialViewCL::Entire, typename T,
+          typename = enable_if_arithmetic<T>>
 inline matrix_cl<T> copy_triangular(const matrix_cl<T>& src) {
   if (src.size() == 0 || src.size() == 1) {
     matrix_cl<T> dst(src);
     return dst;
   }
-  TriangularViewCL dst_view
-      = commonNonzeroPart(triangular_view, src.triangular_view());
+  PartialViewCL dst_view
+      = commonNonzeroPart(triangular_view, src.partial_view());
   matrix_cl<T> dst(src.rows(), src.cols(), dst_view);
   try {
     opencl_kernels::copy_triangular(cl::NDRange(dst.rows(), dst.cols()), dst,

@@ -10,7 +10,7 @@
 #error OPENCL_PLATFORM_ID_NOT_SET
 #endif
 
-#include <stan/math/opencl/triangular.hpp>
+#include <stan/math/opencl/partial_types.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/prim/scal/err/system_error.hpp>
 
@@ -175,10 +175,10 @@ class opencl_context_base {
   // Holds Default parameter values for each Kernel.
   typedef std::map<const char*, int> map_base_opts;
   map_base_opts base_opts_
-      = {{"LOWER", static_cast<int>(TriangularViewCL::Lower)},
-         {"UPPER", static_cast<int>(TriangularViewCL::Upper)},
-         {"ENTIRE", static_cast<int>(TriangularViewCL::Entire)},
-         {"DIAGONAL", static_cast<int>(TriangularViewCL::Diagonal)},
+      = {{"LOWER", static_cast<int>(PartialViewCL::Lower)},
+         {"UPPER", static_cast<int>(PartialViewCL::Upper)},
+         {"ENTIRE", static_cast<int>(PartialViewCL::Entire)},
+         {"DIAGONAL", static_cast<int>(PartialViewCL::Diagonal)},
          {"UPPER_TO_LOWER", static_cast<int>(TriangularMapCL::UpperToLower)},
          {"LOWER_TO_UPPER", static_cast<int>(TriangularMapCL::LowerToUpper)},
          {"THREAD_BLOCK_SIZE", 32},

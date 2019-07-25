@@ -2,7 +2,7 @@
 #define STAN_MATH_OPENCL_BUFFER_TYPES_HPP
 #ifdef STAN_OPENCL
 
-#include <stan/math/opencl/triangular.hpp>
+#include <stan/math/opencl/partial_types.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <CL/cl.hpp>
 

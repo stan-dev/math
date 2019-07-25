@@ -3,7 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/opencl_context.hpp>
-#include <stan/math/opencl/triangular.hpp>
+#include <stan/math/opencl/partial_types.hpp>
 #include <stan/math/opencl/kernels/triangular_transpose.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
@@ -28,26 +28,25 @@ namespace math {
 template <typename T>
 template <TriangularMapCL triangular_map>
 inline void matrix_cl<T, enable_if_arithmetic<T>>::triangular_transpose() try {
-  if (size() == 0 || size() == 1) {
+  if (this->size() == 0 || this->size() == 1) {
     return;
   }
   check_size_match("triangular_transpose ((OpenCL))",
-                   "Expecting a square matrix; rows of ", "A", rows(),
-                   "columns of ", "A", cols());
+                   "Expecting a square matrix; rows of ", "A", this->rows(),
+                   "columns of ", "A", this->cols());
 
   cl::CommandQueue cmdQueue = opencl_context.queue();
   opencl_kernels::triangular_transpose(cl::NDRange(this->rows(), this->cols()),
                                        *this, this->rows(), this->cols(),
                                        triangular_map);
-  triangular_view_
+  this->triangular_view_
       = (triangular_map == TriangularMapCL::LowerToUpper
-         && !containsNonzeroPart(this->triangular_view_,
-                                 TriangularViewCL::Lower))
+         && !is_not_diagonal(this->triangular_view_, PartialViewCL::Lower))
                 || (triangular_map == TriangularMapCL::UpperToLower
-                    && !containsNonzeroPart(this->triangular_view_,
-                                            TriangularViewCL::Upper))
-            ? TriangularViewCL::Diagonal
-            : TriangularViewCL::Entire;
+                    && !is_not_diagonal(this->triangular_view_,
+                                        PartialViewCL::Upper))
+            ? PartialViewCL::Diagonal
+            : PartialViewCL::Entire;
 } catch (const cl::Error& e) {
   check_opencl_error("triangular_transpose", e);
 }

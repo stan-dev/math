@@ -4,7 +4,7 @@
 
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/opencl/buffer_types.hpp>
-#include <stan/math/opencl/triangular.hpp>
+#include <stan/math/opencl/partial_types.hpp>
 
 namespace stan {
 namespace math {
@@ -75,7 +75,7 @@ static const char *sub_block_kernel_code = STRINGIFY(
  * See the docs for \link kernels/sub_block.hpp sub_block() \endlink
  */
 const kernel_cl<in_buffer, out_buffer, int, int, int, int, int, int, int, int,
-                int, int, TriangularViewCL>
+                int, int, PartialViewCL>
     sub_block("sub_block", {indexing_helpers, triangular_kernel_helpers,
                             sub_block_kernel_code});
 

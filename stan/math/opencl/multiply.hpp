@@ -38,7 +38,7 @@ inline matrix_cl<return_type_t<T1, T2>> multiply(const matrix_cl<T1>& A,
   check_size_match("multiply ((OpenCL))", "A.cols()", A.cols(), "B.rows()",
                    B.rows());
   matrix_cl<return_type_t<T1, T2>> temp(
-      A.rows(), B.cols(), combine(A.triangular_view(), B.triangular_view()));
+      A.rows(), B.cols(), A.partial_view() + B.partial_view());
   if (A.size() == 0 || B.size() == 0) {
     temp.zeros();
     return temp;
@@ -50,7 +50,7 @@ inline matrix_cl<return_type_t<T1, T2>> multiply(const matrix_cl<T1>& A,
     try {
       opencl_kernels::row_vector_matrix_multiply(
           cl::NDRange(temp.cols() * local_size), cl::NDRange(local_size), A, B,
-          temp, B.rows(), B.cols(), A.triangular_view(), B.triangular_view());
+          temp, B.rows(), B.cols(), A.partial_view(), B.partial_view());
     } catch (cl::Error& e) {
       check_opencl_error("row_vector - matrix multiply", e);
     }
@@ -60,7 +60,7 @@ inline matrix_cl<return_type_t<T1, T2>> multiply(const matrix_cl<T1>& A,
     try {
       opencl_kernels::matrix_vector_multiply(
           cl::NDRange(temp.rows()), A, B, temp, A.rows(), A.cols(),
-          A.triangular_view(), B.triangular_view());
+          A.partial_view(), B.partial_view());
     } catch (cl::Error& e) {
       check_opencl_error("matrix - vector multiply", e);
     }
@@ -87,13 +87,13 @@ inline matrix_cl<return_type_t<T1, T2>> multiply(const matrix_cl<T1>& A,
       opencl_kernels::matrix_multiply(cl::NDRange(Mpad, Npad / wpt),
                                       cl::NDRange(local, local / wpt), A, B,
                                       temp, A.rows(), B.cols(), B.rows(),
-                                      A.triangular_view(), B.triangular_view());
+                                      A.partial_view(), B.partial_view());
     } else {
       matrix_cl<return_type_t<T1, T2>> tempSplit(A.rows(), B.cols() * split);
       opencl_kernels::matrix_multiply(cl::NDRange(Mpad, Npad / wpt, split),
                                       cl::NDRange(local, local / wpt, 1), A, B,
                                       tempSplit, A.rows(), B.cols(), B.rows(),
-                                      A.triangular_view(), B.triangular_view());
+                                      A.partial_view(), B.partial_view());
       opencl_kernels::add_batch(cl::NDRange(A.rows(), B.cols()), temp,
                                 tempSplit, A.rows(), B.cols(), split);
     }
@@ -116,12 +116,12 @@ template <typename T1, typename T2, typename = enable_if_all_arithmetic<T1, T2>>
 inline matrix_cl<return_type_t<T1, T2>> multiply(const matrix_cl<T1>& A,
                                                  const T2 scalar) {
   matrix_cl<return_type_t<T1, T2>> temp(A.rows(), A.cols(),
-                                        A.triangular_view());
+                                        A.partial_view());
   if (A.size() == 0)
     return temp;
   try {
     opencl_kernels::scalar_mul(cl::NDRange(A.rows(), A.cols()), temp, A, scalar,
-                               A.rows(), A.cols(), A.triangular_view());
+                               A.rows(), A.cols(), A.partial_view());
   } catch (const cl::Error& e) {
     check_opencl_error("multiply scalar", e);
   }
