@@ -162,8 +162,13 @@ struct sqr_exp_kernel_functor {
   Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic>
   operator() (const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,
            const T2& x, int M = 0) const {
-    return stan::math::gp_exp_quad_cov(x, phi(0), phi(1))
-    + 1e-9 * Eigen::MatrixXd::Identity(x.size(), x.size());
+    double jitter = 1e-8;
+    Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic>
+      kernel = stan::math::gp_exp_quad_cov(x, phi(0), phi(1));
+    for (int i = 0; i < kernel.cols(); i++)
+      kernel(i, i) += jitter;
+
+    return kernel;
   }
 };
 
