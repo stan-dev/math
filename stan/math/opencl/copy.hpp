@@ -138,7 +138,7 @@ inline std::vector<T> packed_copy(const matrix_cl<T>& src) {
  * the source std::vector to an OpenCL buffer and
  * unpacks it to a flat matrix on the OpenCL device.
  *
- * @tparam triangular_view the triangularity of the source matrix
+ * @tparam partial_view the triangularity of the source matrix
  * @param src the packed source std::vector
  * @param rows the number of rows in the flat matrix
  * @return the destination flat matrix on the OpenCL device
@@ -146,13 +146,13 @@ inline std::vector<T> packed_copy(const matrix_cl<T>& src) {
  * size of the vector does not match the expected size
  * for the packed triangular matrix
  */
-template <PartialViewCL triangular_view, typename T,
+template <PartialViewCL partial_view, typename T,
           typename = enable_if_arithmetic<T>>
 inline matrix_cl<T> packed_copy(const std::vector<T>& src, int rows) {
   const int packed_size = rows * (rows + 1) / 2;
   check_size_match("copy (packed std::vector -> OpenCL)", "src.size()",
                    src.size(), "rows * (rows + 1) / 2", packed_size);
-  matrix_cl<T> dst(rows, rows, triangular_view);
+  matrix_cl<T> dst(rows, rows, partial_view);
   if (dst.size() == 0) {
     return dst;
   }
@@ -166,7 +166,7 @@ inline matrix_cl<T> packed_copy(const std::vector<T>& src, int rows) {
     packed.add_write_event(packed_event);
     stan::math::opencl_kernels::unpack(cl::NDRange(dst.rows(), dst.rows()), dst,
                                        packed, dst.rows(), dst.rows(),
-                                       triangular_view);
+                                       partial_view);
   } catch (const cl::Error& e) {
     check_opencl_error("packed_copy (std::vector->OpenCL)", e);
   }

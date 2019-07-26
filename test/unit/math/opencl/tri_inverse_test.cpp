@@ -18,14 +18,14 @@ TEST(MathMatrixCL, inverse_cl_exception) {
   stan::math::matrix_cl<double> m3(2, 3);
   using stan::math::tri_inverse;
   EXPECT_THROW(m3 = tri_inverse(m2), std::invalid_argument);
-  m2.triangular_view(stan::math::PartialViewCL::Upper);
+  m2.partial_view(stan::math::PartialViewCL::Upper);
   EXPECT_THROW(m3 = tri_inverse(m2), std::invalid_argument);
 
   stan::math::matrix_d m4(3, 3);
   m4 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
   stan::math::matrix_cl<double> m5(m1, stan::math::PartialViewCL::Entire);
   EXPECT_THROW(m3 = tri_inverse(m5), std::invalid_argument);
-  m5.triangular_view(stan::math::PartialViewCL::Diagonal);
+  m5.partial_view(stan::math::PartialViewCL::Diagonal);
   EXPECT_THROW(m3 = tri_inverse(m5), std::invalid_argument);
 }
 

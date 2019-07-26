@@ -72,19 +72,19 @@ inline void matrix_cl<T, enable_if_arithmetic<T>>::sub_block(
   int start = this_j - this_i;
 
   if (start + copy_low < 0) {
-    this->triangular_view_ = this->triangular_view_ + PartialViewCL::Lower;
+    this->partial_view_ = this->partial_view_ + PartialViewCL::Lower;
   } else if (this_i <= 1 && this_j == 0 && nrows + this_i >= rows_
              && ncols >= std::min(rows_, cols_) - 1
-             && !is_not_diagonal(A.triangular_view_, PartialViewCL::Lower)) {
-    this->triangular_view_ = this->triangular_view_ * PartialViewCL::Upper;
+             && !is_not_diagonal(A.partial_view_, PartialViewCL::Lower)) {
+    this->partial_view_ = this->partial_view_ * PartialViewCL::Upper;
   }
 
   if (start + copy_high > 0) {
-    this->triangular_view_ = this->triangular_view_ + PartialViewCL::Upper;
+    this->partial_view_ = this->partial_view_ + PartialViewCL::Upper;
   } else if (this_i == 0 && this_j <= 1 && ncols + this_j >= cols_
              && nrows >= std::min(rows_, cols_) - 1
-             && !is_not_diagonal(A.triangular_view_, PartialViewCL::Upper)) {
-    this->triangular_view_ = this->triangular_view_ * PartialViewCL::Lower;
+             && !is_not_diagonal(A.partial_view_, PartialViewCL::Upper)) {
+    this->partial_view_ = this->partial_view_ * PartialViewCL::Lower;
   }
 } catch (const cl::Error& e) {
   check_opencl_error("copy_submatrix", e);

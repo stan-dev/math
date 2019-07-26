@@ -146,7 +146,7 @@ inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
   if (A.partial_view() == PartialViewCL::Upper) {
     inv_mat = transpose(inv_mat);
   }
-  inv_mat.triangular_view(A.partial_view());
+  inv_mat.partial_view(A.partial_view());
   return inv_mat;
 }
 }  // namespace math

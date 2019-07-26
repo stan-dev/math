@@ -27,14 +27,14 @@ namespace math {
  * @return the matrix with the copied content
  *
  */
-template <PartialViewCL triangular_view = PartialViewCL::Entire, typename T,
+template <PartialViewCL partial_view = PartialViewCL::Entire, typename T,
           typename = enable_if_arithmetic<T>>
 inline matrix_cl<T> copy_triangular(const matrix_cl<T>& src) {
   if (src.size() == 0 || src.size() == 1) {
     matrix_cl<T> dst(src);
     return dst;
   }
-  PartialViewCL dst_view = triangular_view * src.partial_view();
+  PartialViewCL dst_view = partial_view * src.partial_view();
   matrix_cl<T> dst(src.rows(), src.cols(), dst_view);
   try {
     opencl_kernels::copy_triangular(cl::NDRange(dst.rows(), dst.cols()), dst,

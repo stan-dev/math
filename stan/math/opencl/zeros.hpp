@@ -20,7 +20,7 @@ namespace math {
  * Supports writing zeroes to the lower and upper triangular or
  * the whole matrix.
  *
- * @tparam triangular_view Specifies if zeros are assigned to
+ * @tparam partial_view Specifies if zeros are assigned to
  * the entire matrix, lower triangular or upper triangular. The
  * value must be of type PartialViewCL
  */
@@ -29,7 +29,7 @@ template <PartialViewCL view>
 inline void matrix_cl<T, enable_if_arithmetic<T>>::zeros() try {
   if (size() == 0)
     return;
-  this->triangular_view_ = invert(view);
+  this->partial_view_ = invert(view);
   cl::CommandQueue cmdQueue = opencl_context.queue();
   opencl_kernels::zeros(cl::NDRange(this->rows(), this->cols()), *this,
                         this->rows(), this->cols(), view);

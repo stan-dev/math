@@ -35,22 +35,17 @@ class matrix_cl {};
 template <typename T>
 class matrix_cl<T, enable_if_arithmetic<T>> {
  private:
-  /**
-   * cl::Buffer provides functionality for working with the OpenCL buffer.
-   * An OpenCL buffer allocates the memory in the device that
-   * is provided by the context.
-   */
-  cl::Buffer buffer_cl_;
+  cl::Buffer buffer_cl_; // Holds the allocated memory on the device
   const int rows_;
   const int cols_;
-  PartialViewCL triangular_view_;
+  PartialViewCL partial_view_; // Holds info on if matrix is a special type
   mutable std::vector<cl::Event> write_events_;  // Tracks write jobs
   mutable std::vector<cl::Event> read_events_;   // Tracks reads
 
  public:
   typedef T type;
   // Forward declare the methods that work in place on the matrix
-  template <PartialViewCL triangular_view = PartialViewCL::Entire>
+  template <PartialViewCL partial_view = PartialViewCL::Entire>
   void zeros();
   template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper>
   void triangular_transpose();
@@ -64,10 +59,10 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
 
   int size() const { return rows_ * cols_; }
 
-  const PartialViewCL& partial_view() const { return triangular_view_; }
+  const PartialViewCL& partial_view() const { return partial_view_; }
 
-  void triangular_view(const PartialViewCL& triangular_view) {
-    triangular_view_ = triangular_view;
+  void partial_view(const PartialViewCL& partial_view) {
+    partial_view_ = partial_view;
   }
 
   /**
@@ -206,19 +201,19 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
   /**
    * Constructor for the matrix_cl that
    * only allocates the buffer on the OpenCL device.
-   * Regardless of `triangular_view`, whole matrix is stored.
+   * Regardless of `partial_view`, whole matrix is stored.
    *
    * @param rows number of matrix rows, must be greater or equal to 0
    * @param cols number of matrix columns, must be greater or equal to 0
-   * @param triangular_view which part of the matrix is used
+   * @param partial_view which part of the matrix is used
    *
    * @throw <code>std::system_error</code> if the
    * matrices do not have matching dimensions
    *
    */
   matrix_cl(const int& rows, const int& cols,
-            PartialViewCL triangular_view = PartialViewCL::Entire)
-      : rows_(rows), cols_(cols), triangular_view_(triangular_view) {
+            PartialViewCL partial_view = PartialViewCL::Entire)
+      : rows_(rows), cols_(cols), partial_view_(partial_view) {
     if (size() == 0) {
       return;
     }
@@ -235,19 +230,19 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
   /**
    * Constructor for the matrix_cl that
    * creates a copy of the Eigen matrix on the OpenCL device.
-   * Regardless of `triangular_view`, whole matrix is stored.
+   * Regardless of `partial_view`, whole matrix is stored.
    *
    * @tparam T type of data in the Eigen matrix
    * @param A the Eigen matrix
-   * @param triangular_view which part of the matrix is used
+   * @param partial_view which part of the matrix is used
    *
    * @throw <code>std::system_error</code> if the
    * matrices do not have matching dimensions
    */
   template <int R, int C>
   explicit matrix_cl(const Eigen::Matrix<T, R, C>& A,
-                     PartialViewCL triangular_view = PartialViewCL::Entire)
-      : rows_(A.rows()), cols_(A.cols()), triangular_view_(triangular_view) {
+                     PartialViewCL partial_view = PartialViewCL::Entire)
+      : rows_(A.rows()), cols_(A.cols()), partial_view_(partial_view) {
     if (size() == 0) {
       return;
     }
@@ -302,7 +297,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
     // Need to wait for all of matrices events before destroying old buffer
     this->wait_for_read_write_events();
     buffer_cl_ = a.buffer();
-    triangular_view_ = a.triangular_view_;
+    partial_view_ = a.partial_view_;
     return *this;
   }
 
@@ -318,7 +313,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
     // Need to wait for all of matrices events before destroying old buffer
     this->wait_for_read_write_events();
     buffer_cl_ = a.buffer();
-    triangular_view_ = a.triangular_view_;
+    partial_view_ = a.partial_view_;
     return *this;
   }
 };

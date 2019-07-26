@@ -22,9 +22,9 @@ namespace opencl {
  *
  * @param A first matrix
  * @param B second matrix
- * @tparam triangular_view_A specifies whether the matrix A is a
+ * @tparam partial_view_A specifies whether the matrix A is a
  *  lower/upper triangular or a rectangular matrix
- * @tparam triangular_view_B specifies whether the matrix B is a
+ * @tparam partial_view_B specifies whether the matrix B is a
  *  lower/upper triangular or a rectangular matrix
  * @return the product of the first and second matrix
  *
