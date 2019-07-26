@@ -10,8 +10,8 @@ using Eigen::Dynamic;
 using Eigen::Matrix;
 using stan::math::var;
 
-//  We check that the values of the new regression match those of one built
-//  from existing primitives.
+//  We check that the values of the new rression match those of one built
+//  from existin primitives.
 TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_doubles) {
   Matrix<int, Dynamic, 1> y(3, 1);
   y << 1, 0, 1;
@@ -382,7 +382,7 @@ TEST(ProbDistributionsPoissonLogGLM,
 }
 
 TEST(ProbDistributionsBernoulliLogitGLM, test_scalar_rowvec_stdvec) {
-  Matrix<int, Dynamic, 1> y(3, 1);
+  Matrix<double, Dynamic, 1> y(3, 1);
   y << 1, 0, 1;
   Matrix<double, Dynamic, Dynamic> x(3, 2);
   x << -12, 46, -42, 24, 25, 27;
@@ -397,7 +397,7 @@ TEST(ProbDistributionsBernoulliLogitGLM, test_scalar_rowvec_stdvec) {
   y_vec[2] = 0;
   EXPECT_NO_THROW(stan::math::bernoulli_logit_glm_lpmf(y_vec, x, alpha, beta));
 
-  Matrix<int, 1, Dynamic> y_rvec(1, 3);
+  Matrix<double, 1, Dynamic> y_rvec(1, 3);
   y_rvec << 1, 0, 1;
   EXPECT_NO_THROW(stan::math::bernoulli_logit_glm_lpmf(y_rvec, x, alpha, beta));
 
