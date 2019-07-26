@@ -188,9 +188,10 @@ class dot_product_vari : public vari {
  * @return Dot product of the vectors.
  * @throw std::domain_error if length of v1 is not equal to length of v2.
  */
-template <typename T1, int R1, int C1, typename T2, int R2, int C2, typename = enable_if_any_var<T1, T2>>
+template <typename T1, int R1, int C1, typename T2, int R2, int C2,
+          typename = enable_if_any_var<T1, T2>>
 inline return_type_t<T1, T2> dot_product(const Eigen::Matrix<T1, R1, C1>& v1,
-            const Eigen::Matrix<T2, R2, C2>& v2) {
+                                         const Eigen::Matrix<T2, R2, C2>& v2) {
   check_vector("dot_product", "v1", v1);
   check_vector("dot_product", "v2", v2);
   check_matching_sizes("dot_product", "v1", v1, "v2", v2);
@@ -205,7 +206,8 @@ inline return_type_t<T1, T2> dot_product(const Eigen::Matrix<T1, R1, C1>& v1,
  * @return Dot product of the arrays.
  */
 template <typename T1, typename T2, typename = enable_if_any_var<T1, T2>>
-inline return_type_t<T1, T2> dot_product(const T1* v1, const T2* v2, size_t length) {
+inline return_type_t<T1, T2> dot_product(const T1* v1, const T2* v2,
+                                         size_t length) {
   return var(new internal::dot_product_vari<T1, T2>(v1, v2, length));
 }
 
@@ -218,7 +220,8 @@ inline return_type_t<T1, T2> dot_product(const T1* v1, const T2* v2, size_t leng
  * @throw std::domain_error if sizes of v1 and v2 do not match.
  */
 template <typename T1, typename T2, typename = enable_if_any_var<T1, T2>>
-inline return_type_t<T1, T2> dot_product(const std::vector<T1>& v1, const std::vector<T2>& v2) {
+inline return_type_t<T1, T2> dot_product(const std::vector<T1>& v1,
+                                         const std::vector<T2>& v2) {
   check_matching_sizes("dot_product", "v1", v1, "v2", v2);
   return var(new internal::dot_product_vari<T1, T2>(&v1[0], &v2[0], v1.size()));
 }
