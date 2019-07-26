@@ -75,6 +75,19 @@ inline return_type_t<T1, T2> multiply(const Eigen::Matrix<T1, 1, C1>& rv,
   return rv.dot(v);
 }
 
+/**
+ * Return specified matrix multiplied by specified scalar.
+ * @tparam R Row type for matrix.
+ * @tparam C Column type for matrix.
+ * @param m Matrix.
+ * @param c Scalar.
+ * @return Product of matrix and scalar.
+ */
+template <typename T1, typename T2, typename = enable_if_all_arithmetic<T1, T2>>
+inline return_type_t<T1, T2> multiply(T1 m, T2 c) {
+  return c * m;
+}
+
 }  // namespace math
 }  // namespace stan
 #endif
