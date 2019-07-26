@@ -1,8 +1,5 @@
-
-#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/meta/is_var.hpp>
 #include <gtest/gtest.h>
-
-
 
 
 TEST(MetaTraits_scal, is_var) {

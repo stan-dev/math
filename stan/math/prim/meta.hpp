@@ -37,8 +37,8 @@
 #include <stan/math/prim/meta/error_index.hpp>
 //#include <stan/math/prim/scal/meta/include_summand.hpp>  // causing bug
 //#include <stan/math/prim/scal/meta/is_constant.hpp>
-#include <stan/math/prim/scal/meta/is_fvar.hpp>
-#include <stan/math/prim/scal/meta/is_var.hpp>
+#include <stan/math/prim/meta/is_fvar.hpp>
+#include <stan/math/prim/meta/is_var.hpp>
 #include <stan/math/prim/scal/meta/is_var_or_arithmetic.hpp>
 #include <stan/math/prim/scal/meta/likely.hpp>
 #include <stan/math/prim/scal/meta/max_size.hpp>
