@@ -83,8 +83,8 @@ class trace_gen_quad_form_vari : public vari {
 template <typename Td, int Rd, int Cd, typename Ta, int Ra, int Ca, typename Tb,
           int Rb, int Cb, typename = enable_if_any_var<Td, Ta, Tb>>
 inline var trace_gen_quad_form(const Eigen::Matrix<Td, Rd, Cd>& D,
-                    const Eigen::Matrix<Ta, Ra, Ca>& A,
-                    const Eigen::Matrix<Tb, Rb, Cb>& B) {
+                               const Eigen::Matrix<Ta, Ra, Ca>& A,
+                               const Eigen::Matrix<Tb, Rb, Cb>& B) {
   check_square("trace_gen_quad_form", "A", A);
   check_square("trace_gen_quad_form", "D", D);
   check_multiplicable("trace_gen_quad_form", "A", A, "B", B);
