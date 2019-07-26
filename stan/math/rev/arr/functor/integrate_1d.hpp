@@ -8,6 +8,7 @@
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/rev/scal/fun/is_nan.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <type_traits>
 #include <string>
 #include <vector>
@@ -112,12 +113,8 @@ inline double gradient_of_f(const F &f, const double &x, const double &xc,
  * @param relative_tolerance relative tolerance passed to Boost quadrature
  * @return numeric integral of function f
  */
-template <typename F, typename T_a, typename T_b, typename T_theta>
-inline typename std::enable_if<std::is_same<T_a, var>::value
-                                   || std::is_same<T_b, var>::value
-                                   || std::is_same<T_theta, var>::value,
-                               var>::type
-integrate_1d(const F &f, const T_a &a, const T_b &b,
+template <typename F, typename T_a, typename T_b, typename T_theta, typename = enable_if_any_var<T_a, T_b, T_theta>>
+inline return_type_t<T_a, T_b, T_theta> integrate_1d(const F &f, const T_a &a, const T_b &b,
              const std::vector<T_theta> &theta, const std::vector<double> &x_r,
              const std::vector<int> &x_i, std::ostream &msgs,
              const double relative_tolerance
