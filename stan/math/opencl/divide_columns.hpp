@@ -13,8 +13,10 @@ namespace stan {
 namespace math {
 
 /**
- * Divides matrix columns element-wise by a vector
+ * Divides arithmetic matrices columns element-wise by an arithmetic vector
  *
+ * @tparam T1 Type of first matrix
+ * @tparam T2 Type of second matrix
  * @param A first matrix
  * @param B Vector of elements to divide each column of \c A by element-wise.
  *
@@ -40,8 +42,10 @@ inline void divide_columns(const matrix_cl<T1>& A, const matrix_cl<T2>& B) try {
 }
 
 /**
- * Takes matrix \c A element-wise
+ * Divides matrix \c A element-wise
  *
+ * @tparam T1 Type of first matrix
+ * @tparam T2 Type of the divisor
  * @param A Matrix to divide
  * @param divisor scalar to divide by
  *

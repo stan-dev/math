@@ -13,6 +13,9 @@ namespace math {
 /**
  * Squared exponential kernel on the GPU.
  *
+ * @tparam T1 Type of the matrix
+ * @tparam T2 Type of sigma
+ * @tparam T3 Type of length_scale
  * @param x input vector or matrix
  * @param sigma standard deviation
  * @param length_scale length scale
@@ -40,6 +43,10 @@ inline matrix_cl<return_type_t<T1, T2, T3>> gp_exp_quad_cov(
  * This function is for the cross covariance
  * matrix needed to compute the posterior predictive density.
  *
+ * @tparam T1 Type of the first matrix
+ * @tparam T2 Type of the second matrix
+ * @tparam T3 Type of sigma
+ * @tparam T4 Type of length scale
  * @param x first input vector or matrix
  * @param y second input vector or matrix
  * @param sigma standard deviation
