@@ -12,7 +12,6 @@ namespace stan {
 template <typename T>
 using enable_if_var = std::enable_if_t<is_var<T>::value>;
 
-
 template <typename... Types>
 using enable_if_all_var
     = std::enable_if_t<math::conjunction<is_var<Types>...>::value>;
