@@ -3,8 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/log1p_exp.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <boost/math/tools/promotion.hpp>
-#include <limits>
 
 namespace stan {
 namespace math {
@@ -48,6 +48,10 @@ template <typename T1, typename T2>
 inline typename boost::math::tools::promote_args<T1, T2>::type log_sum_exp(
     const T2& a, const T1& b) {
   using std::exp;
+  if (a == NEGATIVE_INFTY)
+    return b;
+  if (a == INFTY && b == INFTY)
+    return INFTY;
   if (a > b)
     return a + log1p_exp(b - a);
   return b + log1p_exp(a - b);
