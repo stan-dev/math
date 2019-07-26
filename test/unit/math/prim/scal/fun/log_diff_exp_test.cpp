@@ -42,7 +42,6 @@ TEST(MathFunctions, log_diff_exp_inf) {
   EXPECT_PRED1(boost::math::isnan<double>, log_diff_exp(inf, inf));
 }
 
-
 TEST(MathFunctions, log_diff_exp_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
 

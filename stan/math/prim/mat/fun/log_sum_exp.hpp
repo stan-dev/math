@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_LOG_SUM_EXP_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <boost/math/special_functions/fpclassify.hpp>
 #include <vector>
 #include <cmath>
 
@@ -25,6 +26,8 @@ namespace math {
 template <int R, int C>
 double log_sum_exp(const Eigen::Matrix<double, R, C>& x) {
   const double max = x.maxCoeff();
+  if (!boost::math::isfinite(max))
+    return max;
   return max + std::log((x.array() - max).exp().sum());
 }
 
