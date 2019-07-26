@@ -35,10 +35,10 @@ class matrix_cl {};
 template <typename T>
 class matrix_cl<T, enable_if_arithmetic<T>> {
  private:
-  cl::Buffer buffer_cl_; // Holds the allocated memory on the device
+  cl::Buffer buffer_cl_;  // Holds the allocated memory on the device
   const int rows_;
   const int cols_;
-  PartialViewCL partial_view_; // Holds info on if matrix is a special type
+  PartialViewCL partial_view_;  // Holds info on if matrix is a special type
   mutable std::vector<cl::Event> write_events_;  // Tracks write jobs
   mutable std::vector<cl::Event> read_events_;   // Tracks reads
 

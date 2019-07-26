@@ -57,8 +57,7 @@ static const char *sub_block_kernel_code = STRINGIFY(
 
       if (src_idx_i < src_rows && src_idx_j < src_cols && dst_idx_i < dst_rows
           && dst_idx_j < dst_cols) {
-        if ((containsNonzeroPart(partial_view, LOWER)
-             && src_idx_i >= src_idx_j)
+        if ((containsNonzeroPart(partial_view, LOWER) && src_idx_i >= src_idx_j)
             || (containsNonzeroPart(partial_view, UPPER)
                 && src_idx_i <= src_idx_j)) {
           dst(dst_idx_i, dst_idx_j) = src(src_idx_i, src_idx_j);
