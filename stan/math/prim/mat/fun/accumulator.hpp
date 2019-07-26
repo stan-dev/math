@@ -26,7 +26,6 @@ class accumulator {
   std::vector<T> buf_;
 
  public:
-
   /**
    * Add the specified arithmetic type value to the buffer after
    * static casting it to the class type <code>T</code>.
@@ -55,8 +54,9 @@ class accumulator {
    * @tparam S Type of argument
    * @param x Value to add
    */
-template <typename S, typename = enable_if_not_arithmetic<S>, typename = enable_if_same<S, T>>
-void add(const S& x) {
+  template <typename S, typename = enable_if_not_arithmetic<S>,
+            typename = enable_if_same<S, T>>
+  void add(const S& x) {
     buf_.push_back(x);
   }
 
