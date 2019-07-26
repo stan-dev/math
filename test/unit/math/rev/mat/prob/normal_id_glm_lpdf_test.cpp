@@ -497,7 +497,7 @@ TEST(ProbDistributionsNormalIdGlm, test_scalar_stdvec_rowvec) {
   Matrix<double, Dynamic, Dynamic> x2(1, 2);
   x2 << -12, 46;
   Matrix<double, Dynamic, 1> beta2(2, 1);
-  beta << 0.3, 2;
+  beta2 << 0.3, 2;
 
   double y4 = 1;
   EXPECT_NO_THROW(stan::math::normal_id_glm_lpdf(y4, x2, alpha, beta2, sigma));
