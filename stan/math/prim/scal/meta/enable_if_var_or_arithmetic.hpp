@@ -10,26 +10,28 @@
 namespace stan {
 
 template <typename T>
-using enable_if_var_or_arithmetic = std::enable_if_t<is_var_or_arithmetic<T>::value>;
+using enable_if_var_or_arithmetic
+    = std::enable_if_t<is_var_or_arithmetic<T>::value>;
 
 template <typename T>
-using enable_if_not_var_or_arithmetic = std::enable_if_t<!is_var_or_arithmetic<T>::value>;
+using enable_if_not_var_or_arithmetic
+    = std::enable_if_t<!is_var_or_arithmetic<T>::value>;
 
 template <typename... Types>
-using enable_if_all_var_or_arithmetic
-    = std::enable_if_t<math::conjunction<is_var_or_arithmetic<Types>...>::value>;
+using enable_if_all_var_or_arithmetic = std::enable_if_t<
+    math::conjunction<is_var_or_arithmetic<Types>...>::value>;
 
 template <typename... Types>
-using enable_if_any_var_or_arithmetic
-    = std::enable_if_t<math::disjunction<is_var_or_arithmetic<Types>...>::value>;
+using enable_if_any_var_or_arithmetic = std::enable_if_t<
+    math::disjunction<is_var_or_arithmetic<Types>...>::value>;
 
 template <typename... Types>
-using enable_if_all_not_var_or_arithmetic
-    = std::enable_if_t<!math::conjunction<is_var_or_arithmetic<Types>...>::value>;
+using enable_if_all_not_var_or_arithmetic = std::enable_if_t<
+    !math::conjunction<is_var_or_arithmetic<Types>...>::value>;
 
 template <typename... Types>
-using enable_if_any_not_var_or_arithmetic
-    = std::enable_if_t<!math::disjunction<is_var_or_arithmetic<Types>...>::value>;
+using enable_if_any_not_var_or_arithmetic = std::enable_if_t<
+    !math::disjunction<is_var_or_arithmetic<Types>...>::value>;
 
 }  // namespace stan
 #endif

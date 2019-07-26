@@ -12,8 +12,7 @@ template <typename T>
 using enable_if_scalar = std::enable_if_t<std::is_scalar<T>::value>;
 
 template <typename T>
-using enable_if_not_scalar
-    = std::enable_if_t<!std::is_scalar<T>::value>;
+using enable_if_not_scalar = std::enable_if_t<!std::is_scalar<T>::value>;
 
 template <typename... Types>
 using enable_if_all_scalar
