@@ -16,9 +16,9 @@ namespace math {
  * Divides matrix columns element-wise by a vector
  *
  * @param A first matrix
- * @param B Vector of elements to divide each column of @c A by element-wise.
+ * @param B Vector of elements to divide each column of \c A by element-wise.
  *
- * @return element-wise division of @c A by @c B.
+ * @return element-wise division of \c A by \c B.
  *
  * @throw <code>std::invalid_argument</code> if the
  * input matrices do not have matching dimensions
@@ -40,12 +40,12 @@ inline void divide_columns(const matrix_cl<T1>& A, const matrix_cl<T2>& B) try {
 }
 
 /**
- * Takes matrix @c A element-wise
+ * Takes matrix \c A element-wise
  *
  * @param A Matrix to divide
  * @param divisor scalar to divide by
  *
- * @return element-wise division of @c A by @c divisor.
+ * @return element-wise division of \c A by \c divisor.
  *
  */
 template <typename T1, typename T2, typename = enable_if_all_arithmetic<T1, T2>>

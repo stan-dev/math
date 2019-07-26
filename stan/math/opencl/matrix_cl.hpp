@@ -269,10 +269,10 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
   /**
    * Construct from Eigen Matrix
    *
-   * @tparam R Rows of the @c Eigen @c Matrix
-   * @tparam C Columns of the @c Eigen @c Matrix
+   * @tparam R Rows of the \c Eigen \c Matrix
+   * @tparam C Columns of the \c Eigen \c Matrix
    *
-   * @param A The @c Eigen @c Matrix to move to OpenCL device.
+   * @param A The \c Eigen \c Matrix to move to OpenCL device.
    *
    * @throw <code>std::system_error</code> if the
    * matrices do not have matching dimensions
@@ -297,7 +297,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
   }
 
   /**
-   * Construct from @c std::vector with given rows and columns
+   * Construct from \c std::vector with given rows and columns
    *
    * @param A Standard vector
    * @param R Number of rows the matrix should have.
@@ -324,7 +324,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
   }
 
   /**
-   * Assign a @c matrix_cl to another
+   * Assign a \c matrix_cl to another
    */
   matrix_cl<T>& operator=(const matrix_cl<T>& a) {
     check_size_match("assignment of (OpenCL) matrices", "source.rows()",
@@ -338,7 +338,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
   }
 
   /**
-   * Assign a @c matrix_cl of one arithmetic type to another
+   * Assign a \c matrix_cl of one arithmetic type to another
    */
   template <typename U, typename = enable_if_arithmetic<T>>
   matrix_cl<T>& operator=(const matrix_cl<U>& a) {

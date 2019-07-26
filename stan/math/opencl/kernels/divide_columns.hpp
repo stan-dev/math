@@ -39,7 +39,7 @@ const kernel_cl<out_buffer, in_buffer, int> divide_columns_vec(
 static const char *divide_column_scalar_kernel_code = STRINGIFY(
     // \endcond
     /**
-     * Performs element-wise division on @c A
+     * Performs element-wise division on \c A
      * @param[out] A  Matrix to be divided elementwise
      * @param divisor  element to divide A by elementwise
      * @note Code is a <code>const char*</code> held in
