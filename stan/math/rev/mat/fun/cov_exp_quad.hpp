@@ -156,7 +156,7 @@ cov_exp_quad(const std::vector<T_x>& x, const var& sigma, const var& l) {
 /**
  * @deprecated use <code>gp_exp_quad_cov_vari</code>
  */
-template <typename T_x, typename = enable_if_arithmetic<typename scalar_type<T_x>::type>
+template <typename T_x, typename = enable_if_arithmetic<typename scalar_type<T_x>::type>>
 inline Eigen::Matrix<var, -1, -1>
 cov_exp_quad(const std::vector<T_x>& x, double sigma, const var& l) {
   return gp_exp_quad_cov(x, sigma, l);
