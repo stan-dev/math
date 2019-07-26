@@ -49,7 +49,7 @@ class log_diff_exp_dv_vari : public op_dv_vari {
  *
  * @param[in] a First argument.
  * @param[in] b Second argument.
- * @return Log difference of the expnoentiated arguments.
+ * @return Log difference of the exponentiated arguments.
  */
 inline var log_diff_exp(const var& a, const var& b) {
   return var(new internal::log_diff_exp_vv_vari(a.vi_, b.vi_));
@@ -60,7 +60,7 @@ inline var log_diff_exp(const var& a, const var& b) {
  *
  * @param[in] a First argument.
  * @param[in] b Second argument.
- * @return Log difference of the expnoentiated arguments.
+ * @return Log difference of the exponentiated arguments.
  */
 inline var log_diff_exp(const var& a, double b) {
   return var(new internal::log_diff_exp_vd_vari(a.vi_, b));
@@ -71,7 +71,7 @@ inline var log_diff_exp(const var& a, double b) {
  *
  * @param[in] a First argument.
  * @param[in] b Second argument.
- * @return Log difference of the expnoentiated arguments.
+ * @return Log difference of the exponentiated arguments.
  */
 inline var log_diff_exp(double a, const var& b) {
   return var(new internal::log_diff_exp_dv_vari(a, b.vi_));
