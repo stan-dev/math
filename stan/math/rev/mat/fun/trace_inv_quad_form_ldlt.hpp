@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_MAT_FUN_TRACE_INV_QUAD_FORM_LDLT_HPP
 
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/rev/core.hpp>
@@ -14,10 +15,10 @@ namespace stan {
 namespace math {
 
 namespace internal {
-template <typename T2, int R2, int C2, typename T3, int R3, int C3>
+template <typename T1, int R1, int C1, typename T2, int R2, int C2>
 class trace_inv_quad_form_ldlt_impl : public chainable_alloc {
  protected:
-  inline void initializeB(const Eigen::Matrix<var, R3, C3> &B, bool haveD) {
+  inline void initializeB(const Eigen::Matrix<var, R2, C2> &B, bool haveD) {
     matrix_d Bd = B.val();
     variB_ = B.vi();
     AinvB_ = ldlt_.solve(Bd);
@@ -26,7 +27,7 @@ class trace_inv_quad_form_ldlt_impl : public chainable_alloc {
     else
       value_ = (Bd.transpose() * AinvB_).trace();
   }
-  inline void initializeB(const Eigen::Matrix<double, R3, C3> &B, bool haveD) {
+  inline void initializeB(const Eigen::Matrix<double, R2, C2> &B, bool haveD) {
     AinvB_ = ldlt_.solve(B);
     if (haveD)
       C_.noalias() = B.transpose() * AinvB_;
@@ -47,8 +48,8 @@ class trace_inv_quad_form_ldlt_impl : public chainable_alloc {
  public:
   template <typename T1, int R1, int C1>
   trace_inv_quad_form_ldlt_impl(const Eigen::Matrix<T1, R1, C1> &D,
-                                const LDLT_factor<T2, R2, C2> &A,
-                                const Eigen::Matrix<T3, R3, C3> &B)
+                                const LDLT_factor<T1, R1, C1> &A,
+                                const Eigen::Matrix<T2, R2, C2> &B)
       : Dtype_(stan::is_var<T1>::value), ldlt_(A) {
     initializeB(B, true);
     initializeD(D);
@@ -56,14 +57,14 @@ class trace_inv_quad_form_ldlt_impl : public chainable_alloc {
     value_ = (D_ * C_).trace();
   }
 
-  trace_inv_quad_form_ldlt_impl(const LDLT_factor<T2, R2, C2> &A,
-                                const Eigen::Matrix<T3, R3, C3> &B)
+  trace_inv_quad_form_ldlt_impl(const LDLT_factor<T1, R1, C1> &A,
+                                const Eigen::Matrix<T2, R2, C2> &B)
       : Dtype_(2), ldlt_(A) {
     initializeB(B, false);
   }
 
   const int Dtype_;  // 0 = double, 1 = var, 2 = missing
-  LDLT_factor<T2, R2, C2> ldlt_;
+  LDLT_factor<T1, R1, C1> ldlt_;
   matrix_d D_;
   matrix_vi variD_;
   matrix_vi variB_;
@@ -72,20 +73,20 @@ class trace_inv_quad_form_ldlt_impl : public chainable_alloc {
   double value_;
 };
 
-template <typename T2, int R2, int C2, typename T3, int R3, int C3>
+template <typename T1, int R1, int C1, typename T2, int R2, int C2>
 class trace_inv_quad_form_ldlt_vari : public vari {
  protected:
   static inline void chainA(
       double adj,
-      trace_inv_quad_form_ldlt_impl<double, R2, C2, T3, R3, C3> *impl) {}
+      trace_inv_quad_form_ldlt_impl<double, R1, C1, T2, R2, C2> *impl) {}
   static inline void chainB(
       double adj,
-      trace_inv_quad_form_ldlt_impl<T2, R2, C2, double, R3, C3> *impl) {}
+      trace_inv_quad_form_ldlt_impl<T1, R1, C1, double, R2, C2> *impl) {}
 
   static inline void chainA(
       double adj,
-      trace_inv_quad_form_ldlt_impl<var, R2, C2, T3, R3, C3> *impl) {
-    Eigen::Matrix<double, R2, C2> aA;
+      trace_inv_quad_form_ldlt_impl<var, R1, C1, T2, R2, C2> *impl) {
+    Eigen::Matrix<double, R1, C1> aA;
 
     if (impl->Dtype_ != 2)
       aA.noalias()
@@ -98,7 +99,7 @@ class trace_inv_quad_form_ldlt_vari : public vari {
   }
   static inline void chainB(
       double adj,
-      trace_inv_quad_form_ldlt_impl<T2, R2, C2, var, R3, C3> *impl) {
+      trace_inv_quad_form_ldlt_impl<T1, R1, C1, var, R2, C2> *impl) {
     matrix_d aB;
 
     if (impl->Dtype_ != 2)
@@ -111,7 +112,7 @@ class trace_inv_quad_form_ldlt_vari : public vari {
 
  public:
   explicit trace_inv_quad_form_ldlt_vari(
-      trace_inv_quad_form_ldlt_impl<T2, R2, C2, T3, R3, C3> *impl)
+      trace_inv_quad_form_ldlt_impl<T1, R1, C1, T2, R2, C2> *impl)
       : vari(impl->value_), impl_(impl) {}
 
   virtual void chain() {
@@ -127,7 +128,7 @@ class trace_inv_quad_form_ldlt_vari : public vari {
       impl_->variD_.adj() += adj_ * impl_->C_;
   }
 
-  trace_inv_quad_form_ldlt_impl<T2, R2, C2, T3, R3, C3> *impl_;
+  trace_inv_quad_form_ldlt_impl<T1, R1, C1, T2, R2, C2> *impl_;
 };
 
 }  // namespace internal
@@ -137,20 +138,17 @@ class trace_inv_quad_form_ldlt_vari : public vari {
  *       trace(B^T A^-1 B)
  * where the LDLT_factor of A is provided.
  **/
-template <typename T2, int R2, int C2, typename T3, int R3, int C3>
-inline
-    typename std::enable_if<stan::is_var<T2>::value || stan::is_var<T3>::value,
-                            var>::type
-    trace_inv_quad_form_ldlt(const LDLT_factor<T2, R2, C2> &A,
-                             const Eigen::Matrix<T3, R3, C3> &B) {
+template <typename T1, int R1, int C1, typename T2, int R2, int C2, typename = enable_if_any_var<T1, T@>>
+inline return_type_t<T1, T2> trace_inv_quad_form_ldlt(const LDLT_factor<T1, R1, C1> &A,
+                             const Eigen::Matrix<T2, R2, C2> &B) {
   check_multiplicable("trace_inv_quad_form_ldlt", "A", A, "B", B);
 
-  internal::trace_inv_quad_form_ldlt_impl<T2, R2, C2, T3, R3, C3> *impl_
-      = new internal::trace_inv_quad_form_ldlt_impl<T2, R2, C2, T3, R3, C3>(A,
+  internal::trace_inv_quad_form_ldlt_impl<T1, R1, C1, T2, R2, C2> *impl_
+      = new internal::trace_inv_quad_form_ldlt_impl<T1, R1, C1, T2, R2, C2>(A,
                                                                             B);
 
   return var(
-      new internal::trace_inv_quad_form_ldlt_vari<T2, R2, C2, T3, R3, C3>(
+      new internal::trace_inv_quad_form_ldlt_vari<T1, R1, C1, T2, R2, C2>(
           impl_));
 }
 
