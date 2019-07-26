@@ -35,7 +35,7 @@ TEST(AgradFwdMatrixAccumulate, collection_fvar_double) {
   int pos = 0;
   test_sum(a, 0);
 
-  vector<fvar<double> > v(10);
+  vector<fvar<double>> v(10);
   for (size_t i = 0; i < 10; ++i)
     v[i] = pos++;
   a.add(v);

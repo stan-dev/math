@@ -26,15 +26,6 @@ class accumulator {
   std::vector<T> buf_;
 
  public:
-  /**
-   * Construct an accumulator.
-   */
-  accumulator() : buf_() {}
-
-  /**
-   * Destroy an accumulator.
-   */
-  ~accumulator() {}
 
   /**
    * Add the specified arithmetic type value to the buffer after
@@ -63,7 +54,7 @@ class accumulator {
    * @tparam S Type of argument
    * @param x Value to add
    */
-  template <typename S, typename = enable_if_arithmetic<S>, typename = enable_if_same<S, T>>
+template <typename S, typename = enable_if_not_arithmetic<S>, typename = enable_if_same<S, T>>
 void add(const S& x) {
     buf_.push_back(x);
   }
@@ -80,7 +71,7 @@ void add(const S& x) {
   template <typename S, int R, int C>
   void add(const Eigen::Matrix<S, R, C>& m) {
     for (int i = 0; i < m.size(); ++i)
-      add(m(i));
+      this->add(m(i));
   }
 
   /**
@@ -95,7 +86,7 @@ void add(const S& x) {
   template <typename S>
   void add(const std::vector<S>& xs) {
     for (size_t i = 0; i < xs.size(); ++i)
-      add(xs[i]);
+      this->add(xs[i]);
   }
 
   /**
