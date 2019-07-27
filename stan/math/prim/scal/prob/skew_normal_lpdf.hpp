@@ -18,7 +18,7 @@ namespace math {
 
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
           typename T_shape>
-typename return_type<T_y, T_loc, T_scale, T_shape>::type skew_normal_lpdf(
+return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& alpha) {
   static const char* function = "skew_normal_lpdf";
   typedef
@@ -108,7 +108,7 @@ typename return_type<T_y, T_loc, T_scale, T_shape>::type skew_normal_lpdf(
 }
 
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
-inline typename return_type<T_y, T_loc, T_scale, T_shape>::type
+inline return_type_t<T_y, T_loc, T_scale, T_shape>
 skew_normal_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma,
                  const T_shape& alpha) {
   return skew_normal_lpdf<false>(y, mu, sigma, alpha);

@@ -20,7 +20,7 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_shape, typename T_inv_scale>
-typename return_type<T_y, T_shape, T_inv_scale>::type gamma_lcdf(
+return_type_t<T_y, T_shape, T_inv_scale> gamma_lcdf(
     const T_y& y, const T_shape& alpha, const T_inv_scale& beta) {
   if (size_zero(y, alpha, beta))
     return 0.0;

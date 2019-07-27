@@ -40,7 +40,7 @@ namespace math {
  * @tparam T_prec Type of prior precision.
  */
 template <bool propto, typename T_y, typename T_loc, typename T_prec>
-typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lpdf(
+return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(
     const T_y& y, const T_loc& mu, const T_prec& kappa) {
   static const char* function = "beta_proportion_lpdf";
 
@@ -168,7 +168,7 @@ typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lpdf(
 }
 
 template <typename T_y, typename T_loc, typename T_prec>
-inline typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lpdf(
+inline return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(
     const T_y& y, const T_loc& mu, const T_prec& kappa) {
   return beta_proportion_lpdf<false>(y, mu, kappa);
 }

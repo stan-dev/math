@@ -37,7 +37,7 @@ namespace math {
  */
 template <bool propto, typename T_n, typename T_N, typename T_size1,
           typename T_size2>
-typename return_type<T_size1, T_size2>::type beta_binomial_lpmf(
+return_type_t<T_size1, T_size2> beta_binomial_lpmf(
     const T_n& n, const T_N& N, const T_size1& alpha, const T_size2& beta) {
   static const char* function = "beta_binomial_lpmf";
   typedef typename stan::partials_return_type<T_size1, T_size2>::type
@@ -148,7 +148,7 @@ typename return_type<T_size1, T_size2>::type beta_binomial_lpmf(
 }
 
 template <typename T_n, typename T_N, typename T_size1, typename T_size2>
-typename return_type<T_size1, T_size2>::type beta_binomial_lpmf(
+return_type_t<T_size1, T_size2> beta_binomial_lpmf(
     const T_n& n, const T_N& N, const T_size1& alpha, const T_size2& beta) {
   return beta_binomial_lpmf<false>(n, N, alpha, beta);
 }

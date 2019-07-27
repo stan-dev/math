@@ -11,7 +11,7 @@ namespace math {
  * @deprecated use <code>binomial_logit_lpmf</code>
  */
 template <bool propto, typename T_n, typename T_N, typename T_prob>
-typename return_type<T_prob>::type binomial_logit_log(const T_n& n,
+return_type_t<T_prob> binomial_logit_log(const T_n& n,
                                                       const T_N& N,
                                                       const T_prob& alpha) {
   return binomial_logit_lpmf<propto, T_n, T_N, T_prob>(n, N, alpha);
@@ -21,7 +21,7 @@ typename return_type<T_prob>::type binomial_logit_log(const T_n& n,
  * @deprecated use <code>binomial_logit_lpmf</code>
  */
 template <typename T_n, typename T_N, typename T_prob>
-inline typename return_type<T_prob>::type binomial_logit_log(
+inline return_type_t<T_prob> binomial_logit_log(
     const T_n& n, const T_N& N, const T_prob& alpha) {
   return binomial_logit_lpmf<T_n, T_N, T_prob>(n, N, alpha);
 }

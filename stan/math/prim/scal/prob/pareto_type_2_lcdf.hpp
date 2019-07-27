@@ -16,7 +16,7 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
-typename return_type<T_y, T_loc, T_scale, T_shape>::type pareto_type_2_lcdf(
+return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lcdf(
     const T_y& y, const T_loc& mu, const T_scale& lambda,
     const T_shape& alpha) {
   typedef

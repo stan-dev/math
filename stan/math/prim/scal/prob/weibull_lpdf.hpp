@@ -28,7 +28,7 @@ namespace math {
  * @throw std::domain_error if y is negative, alpha sigma is nonpositive
  */
 template <bool propto, typename T_y, typename T_shape, typename T_scale>
-typename return_type<T_y, T_shape, T_scale>::type weibull_lpdf(
+return_type_t<T_y, T_shape, T_scale> weibull_lpdf(
     const T_y& y, const T_shape& alpha, const T_scale& sigma) {
   static const char* function = "weibull_lpdf";
   typedef typename stan::partials_return_type<T_y, T_shape, T_scale>::type
@@ -125,7 +125,7 @@ typename return_type<T_y, T_shape, T_scale>::type weibull_lpdf(
 }
 
 template <typename T_y, typename T_shape, typename T_scale>
-inline typename return_type<T_y, T_shape, T_scale>::type weibull_lpdf(
+inline return_type_t<T_y, T_shape, T_scale> weibull_lpdf(
     const T_y& y, const T_shape& alpha, const T_scale& sigma) {
   return weibull_lpdf<false>(y, alpha, sigma);
 }

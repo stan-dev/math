@@ -33,7 +33,7 @@ template <typename T, typename... Types_pack>
 struct return_type {
   typedef typename boost::math::tools::promote_args<
       double, typename scalar_type<T>::type,
-      typename return_type<Types_pack...>::type>::type type;
+      return_type_t<Types_pack...>::type> type;
 };
 
 template <typename T>

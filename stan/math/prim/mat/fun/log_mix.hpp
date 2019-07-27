@@ -38,7 +38,7 @@ namespace math {
  * @return log mixture of densities in specified proportion
  */
 template <typename T_theta, typename T_lam>
-typename return_type<T_theta, T_lam>::type log_mix(const T_theta& theta,
+return_type_t<T_theta, T_lam> log_mix(const T_theta& theta,
                                                    const T_lam& lambda) {
   static const char* function = "log_mix";
   typedef typename stan::partials_return_type<T_theta, T_lam>::type
@@ -114,7 +114,7 @@ typename return_type<T_theta, T_lam>::type log_mix(const T_theta& theta,
  * @return log mixture of densities in specified proportion
  */
 template <typename T_theta, typename T_lam, int R, int C>
-typename return_type<T_theta, std::vector<Eigen::Matrix<T_lam, R, C> > >::type
+return_type_t<T_theta, std::vector<Eigen::Matrix<T_lam, R, C> > >
 log_mix(const T_theta& theta,
         const std::vector<Eigen::Matrix<T_lam, R, C> >& lambda) {
   static const char* function = "log_mix";
@@ -204,7 +204,7 @@ log_mix(const T_theta& theta,
  * @return log mixture of densities in specified proportion
  */
 template <typename T_theta, typename T_lam>
-typename return_type<T_theta, std::vector<std::vector<T_lam> > >::type log_mix(
+return_type_t<T_theta, std::vector<std::vector<T_lam> > > log_mix(
     const T_theta& theta, const std::vector<std::vector<T_lam> >& lambda) {
   static const char* function = "log_mix";
   typedef typename stan::partials_return_type<

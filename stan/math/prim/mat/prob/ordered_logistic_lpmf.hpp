@@ -69,7 +69,7 @@ namespace math {
  * lengths.
  */
 template <bool propto, typename T_y, typename T_loc, typename T_cut>
-typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
+return_type_t<T_loc, T_cut> ordered_logistic_lpmf(
     const T_y& y, const T_loc& lambda, const T_cut& c) {
   static const char* function = "ordered_logistic";
 
@@ -164,7 +164,7 @@ typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
 }
 
 template <typename T_y, typename T_loc, typename T_cut>
-typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
+return_type_t<T_loc, T_cut> ordered_logistic_lpmf(
     const T_y& y, const T_loc& lambda, const T_cut& c) {
   return ordered_logistic_lpmf<false>(y, lambda, c);
 }

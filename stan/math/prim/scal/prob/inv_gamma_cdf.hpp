@@ -35,7 +35,7 @@ namespace math {
  */
 
 template <typename T_y, typename T_shape, typename T_scale>
-typename return_type<T_y, T_shape, T_scale>::type inv_gamma_cdf(
+return_type_t<T_y, T_shape, T_scale> inv_gamma_cdf(
     const T_y& y, const T_shape& alpha, const T_scale& beta) {
   typedef typename stan::partials_return_type<T_y, T_shape, T_scale>::type
       T_partials_return;

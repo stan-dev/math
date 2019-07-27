@@ -26,7 +26,7 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch.
  */
 template <bool propto, typename T_n, typename T_prob>
-typename return_type<T_prob>::type bernoulli_logit_lpmf(const T_n& n,
+return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n,
                                                         const T_prob& theta) {
   static const char* function = "bernoulli_logit_lpmf";
   typedef
@@ -82,7 +82,7 @@ typename return_type<T_prob>::type bernoulli_logit_lpmf(const T_n& n,
 }
 
 template <typename T_n, typename T_prob>
-inline typename return_type<T_prob>::type bernoulli_logit_lpmf(
+inline return_type_t<T_prob> bernoulli_logit_lpmf(
     const T_n& n, const T_prob& theta) {
   return bernoulli_logit_lpmf<false>(n, theta);
 }
