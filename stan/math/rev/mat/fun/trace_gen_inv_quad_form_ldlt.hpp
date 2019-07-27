@@ -21,8 +21,8 @@ namespace math {
 template <typename T1, int R1, int C1, typename T2, int R2, int C2, typename T3,
           int R3, int C3, typename = enable_if_any_var<T1, T2, T3>>
 inline var trace_gen_inv_quad_form_ldlt(const Eigen::Matrix<T1, R1, C1> &D,
-                                 const LDLT_factor<T2, R2, C2> &A,
-                                 const Eigen::Matrix<T3, R3, C3> &B) {
+                                        const LDLT_factor<T2, R2, C2> &A,
+                                        const Eigen::Matrix<T3, R3, C3> &B) {
   check_square("trace_gen_inv_quad_form_ldlt", "D", D);
   check_multiplicable("trace_gen_inv_quad_form_ldlt", "A", A, "B", B);
   check_multiplicable("trace_gen_inv_quad_form_ldlt", "B", B, "D", D);

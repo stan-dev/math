@@ -22,8 +22,9 @@ namespace math {
 // Frechet(y|alpha, sigma)     [y > 0;  alpha > 0;  sigma > 0]
 // FIXME: document
 template <bool propto, typename T_y, typename T_shape, typename T_scale>
-return_type_t<T_y, T_shape, T_scale> frechet_lpdf(
-    const T_y& y, const T_shape& alpha, const T_scale& sigma) {
+return_type_t<T_y, T_shape, T_scale> frechet_lpdf(const T_y& y,
+                                                  const T_shape& alpha,
+                                                  const T_scale& sigma) {
   static const char* function = "frechet_lpdf";
   typedef typename stan::partials_return_type<T_y, T_shape, T_scale>::type
       T_partials_return;
@@ -114,8 +115,9 @@ return_type_t<T_y, T_shape, T_scale> frechet_lpdf(
 }
 
 template <typename T_y, typename T_shape, typename T_scale>
-inline return_type_t<T_y, T_shape, T_scale> frechet_lpdf(
-    const T_y& y, const T_shape& alpha, const T_scale& sigma) {
+inline return_type_t<T_y, T_shape, T_scale> frechet_lpdf(const T_y& y,
+                                                         const T_shape& alpha,
+                                                         const T_scale& sigma) {
   return frechet_lpdf<false>(y, alpha, sigma);
 }
 

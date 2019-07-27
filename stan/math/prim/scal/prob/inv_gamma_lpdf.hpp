@@ -32,8 +32,9 @@ namespace math {
  * @tparam T_scale Type of scale.
  */
 template <bool propto, typename T_y, typename T_shape, typename T_scale>
-return_type_t<T_y, T_shape, T_scale> inv_gamma_lpdf(
-    const T_y& y, const T_shape& alpha, const T_scale& beta) {
+return_type_t<T_y, T_shape, T_scale> inv_gamma_lpdf(const T_y& y,
+                                                    const T_shape& alpha,
+                                                    const T_scale& beta) {
   static const char* function = "inv_gamma_lpdf";
   typedef typename stan::partials_return_type<T_y, T_shape, T_scale>::type
       T_partials_return;

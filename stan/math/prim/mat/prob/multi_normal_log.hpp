@@ -11,8 +11,9 @@ namespace math {
  * @deprecated use <code>matrix_normal_lpdf</code>
  */
 template <bool propto, typename T_y, typename T_loc, typename T_covar>
-return_type_t<T_y, T_loc, T_covar> multi_normal_log(
-    const T_y& y, const T_loc& mu, const T_covar& Sigma) {
+return_type_t<T_y, T_loc, T_covar> multi_normal_log(const T_y& y,
+                                                    const T_loc& mu,
+                                                    const T_covar& Sigma) {
   return multi_normal_lpdf<propto, T_y, T_loc, T_covar>(y, mu, Sigma);
 }
 

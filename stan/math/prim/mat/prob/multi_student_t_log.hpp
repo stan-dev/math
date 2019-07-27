@@ -27,9 +27,8 @@ return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_log(
  * @deprecated use <code>multi_student_t_lpdf</code>
  */
 template <typename T_y, typename T_dof, typename T_loc, typename T_scale>
-inline return_type_t<T_y, T_dof, T_loc, T_scale>
-multi_student_t_log(const T_y& y, const T_dof& nu, const T_loc& mu,
-                    const T_scale& Sigma) {
+inline return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_log(
+    const T_y& y, const T_dof& nu, const T_loc& mu, const T_scale& Sigma) {
   return multi_student_t_lpdf<T_y, T_dof, T_loc, T_scale>(y, nu, mu, Sigma);
 }
 

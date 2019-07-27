@@ -13,8 +13,8 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_inv_scale>
-return_type_t<T_y, T_inv_scale> exponential_lcdf(
-    const T_y& y, const T_inv_scale& beta) {
+return_type_t<T_y, T_inv_scale> exponential_lcdf(const T_y& y,
+                                                 const T_inv_scale& beta) {
   typedef typename stan::partials_return_type<T_y, T_inv_scale>::type
       T_partials_return;
 

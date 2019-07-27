@@ -33,8 +33,7 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_y, typename T_dof>
-return_type_t<T_y, T_dof> chi_square_lccdf(const T_y& y,
-                                                        const T_dof& nu) {
+return_type_t<T_y, T_dof> chi_square_lccdf(const T_y& y, const T_dof& nu) {
   static const char* function = "chi_square_lccdf";
   typedef
       typename stan::partials_return_type<T_y, T_dof>::type T_partials_return;

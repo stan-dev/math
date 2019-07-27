@@ -104,9 +104,8 @@ inline
                    "number of length scales", l_size);
 
   T_sigma sigma_sq = square(sigma);
-  std::vector<
-      Eigen::Matrix<return_type_t<T_x, T_l>, Eigen::Dynamic, 1>>
-      x_new = divide_columns(x, length_scale);
+  std::vector<Eigen::Matrix<return_type_t<T_x, T_l>, Eigen::Dynamic, 1>> x_new
+      = divide_columns(x, length_scale);
 
   for (size_t j = 0; j < x_size; ++j) {
     cov(j, j) = sigma_sq;
@@ -226,11 +225,9 @@ gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
 
   T_s sigma_sq = square(sigma);
 
-  std::vector<Eigen::Matrix<return_type_t<T_x1, T_l, T_s>,
-                            Eigen::Dynamic, 1>>
+  std::vector<Eigen::Matrix<return_type_t<T_x1, T_l, T_s>, Eigen::Dynamic, 1>>
       x1_new = divide_columns(x1, length_scale);
-  std::vector<Eigen::Matrix<return_type_t<T_x2, T_l, T_s>,
-                            Eigen::Dynamic, 1>>
+  std::vector<Eigen::Matrix<return_type_t<T_x2, T_l, T_s>, Eigen::Dynamic, 1>>
       x2_new = divide_columns(x2, length_scale);
 
   for (size_t i = 0; i < x1_size; ++i) {

@@ -46,8 +46,8 @@ namespace math {
  * @tparam T_prior_size Type of prior sample sizes.
  */
 template <bool propto, typename T_prob, typename T_prior_size>
-return_type_t<T_prob, T_prior_size> dirichlet_lpmf(
-    const T_prob& theta, const T_prior_size& alpha) {
+return_type_t<T_prob, T_prior_size> dirichlet_lpmf(const T_prob& theta,
+                                                   const T_prior_size& alpha) {
   static const char* function = "dirichlet_lpmf";
 
   typedef typename stan::partials_return_type<T_prob, T_prior_size>::type
@@ -90,8 +90,8 @@ return_type_t<T_prob, T_prior_size> dirichlet_lpmf(
 }
 
 template <typename T_prob, typename T_prior_size>
-return_type_t<T_prob, T_prior_size> dirichlet_lpmf(
-    const T_prob& theta, const T_prior_size& alpha) {
+return_type_t<T_prob, T_prior_size> dirichlet_lpmf(const T_prob& theta,
+                                                   const T_prior_size& alpha) {
   return dirichlet_lpmf<false>(theta, alpha);
 }
 
