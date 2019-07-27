@@ -5,6 +5,9 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/arr/err/check_matching_sizes.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
+#ifdef STAN_OPENCL
+#include <stan/math/opencl/opencl.hpp>
+#endif
 #include <type_traits>
 
 namespace stan {
@@ -55,7 +58,19 @@ template <int R1, int C1, int R2, int C2, typename T1, typename T2,
 inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> multiply(
     const Eigen::Matrix<T1, R1, C1>& m1, const Eigen::Matrix<T2, R2, C2>& m2) {
   check_multiplicable("multiply", "m1", m1, "m2", m2);
+#ifdef STAN_OPENCL
+  if (m1.rows() * m1.cols() * m2.cols()
+      > opencl_context.tuning_opts().multiply_dim_prod_worth_transfer) {
+    matrix_cl<double> m1_cl(m1);
+    matrix_cl<double> m2_cl(m2);
+    matrix_cl<double> m3_cl = m1_cl * m2_cl;
+    return from_matrix_cl(m3_cl);
+  } else {
+    return m1 * m2;
+  }
+#else
   return m1 * m2;
+#endif
 }
 
 /**
