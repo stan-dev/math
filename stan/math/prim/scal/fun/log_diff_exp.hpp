@@ -45,7 +45,7 @@ namespace math {
  *
  */
 template <typename T1, typename T2>
-inline typename boost::math::tools::promote_args<T1, T2>::type log_diff_exp(
+inline return_type_t<T1, T2> log_diff_exp(
     const T1 x, const T2 y) {
   if (x <= y)
     return NOT_A_NUMBER;

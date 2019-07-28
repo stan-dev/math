@@ -52,8 +52,8 @@ namespace math {
  * @tparam T Type of scalar.
  */
 template <typename T>
-inline typename boost::math::tools::promote_args<T>::type lmgamma(int k, T x) {
-  typename boost::math::tools::promote_args<T>::type result
+inline return_type_t<T> lmgamma(int k, T x) {
+  return_type_t<T> result
       = k * (k - 1) * LOG_PI_OVER_FOUR;
 
   for (int j = 1; j <= k; ++j)

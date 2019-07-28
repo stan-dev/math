@@ -71,7 +71,7 @@ namespace math {
  * same size as the state variable, corresponding to a time in ts.
  */
 template <typename F, typename T1, typename T2, typename T_t0, typename T_ts>
-std::vector<std::vector<typename stan::return_type<T1, T2, T_t0, T_ts>::type>>
+std::vector<std::vector<return_type_t<T1, T2, T_t0, T_ts>>>
 integrate_ode_rk45(const F& f, const std::vector<T1>& y0, const T_t0& t0,
                    const std::vector<T_ts>& ts, const std::vector<T2>& theta,
                    const std::vector<double>& x, const std::vector<int>& x_int,
@@ -115,7 +115,7 @@ integrate_ode_rk45(const F& f, const std::vector<T1>& y0, const T_t0& t0,
   ts_vec[0] = t0_dbl;
   std::copy(ts_dbl.begin(), ts_dbl.end(), ts_vec.begin() + 1);
 
-  std::vector<std::vector<typename stan::return_type<T1, T2, T_t0, T_ts>::type>>
+  std::vector<std::vector<return_type_t<T1, T2, T_t0, T_ts>>>
       y;
   coupled_ode_observer<F, T1, T2, T_t0, T_ts> observer(f, y0, theta, t0, ts, x,
                                                        x_int, msgs, y);

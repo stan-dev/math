@@ -30,7 +30,7 @@ namespace math {
  * @return lower bound constrained value correspdonding to inputs
  */
 template <typename T, typename L>
-inline typename boost::math::tools::promote_args<T, L>::type lb_constrain(
+inline return_type_t<T, L> lb_constrain(
     const T& x, const L& lb) {
   using std::exp;
   if (lb == NEGATIVE_INFTY)
@@ -55,7 +55,7 @@ inline typename boost::math::tools::promote_args<T, L>::type lb_constrain(
  * @return lower-bound constrained value corresponding to inputs
  */
 template <typename T, typename L>
-inline typename boost::math::tools::promote_args<T, L>::type lb_constrain(
+inline return_type_t<T, L> lb_constrain(
     const T& x, const L& lb, T& lp) {
   using std::exp;
   if (lb == NEGATIVE_INFTY)

@@ -22,7 +22,7 @@ namespace math {
  * @param y_false Value to return if condition is false.
  */
 template <typename T_true, typename T_false>
-inline typename boost::math::tools::promote_args<T_true, T_false>::type if_else(
+inline return_type_t<T_true, T_false> if_else(
     const bool c, const T_true y_true, const T_false y_false) {
   return c ? y_true : y_false;
 }

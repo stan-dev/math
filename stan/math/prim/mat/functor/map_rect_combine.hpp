@@ -46,7 +46,7 @@ class map_rect_combine {
 
  public:
   typedef Eigen::Matrix<
-      typename stan::return_type<T_shared_param, T_job_param>::type,
+      return_type_t<T_shared_param, T_job_param>,
       Eigen::Dynamic, 1>
       result_t;
 

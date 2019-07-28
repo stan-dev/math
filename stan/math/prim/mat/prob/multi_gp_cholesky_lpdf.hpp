@@ -35,14 +35,14 @@ namespace math {
  * @tparam T_w Type of weight.
  */
 template <bool propto, typename T_y, typename T_covar, typename T_w>
-typename boost::math::tools::promote_args<T_y, T_covar, T_w>::type
+return_type_t<T_y, T_covar, T_w>
 multi_gp_cholesky_lpdf(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
     const Eigen::Matrix<T_covar, Eigen::Dynamic, Eigen::Dynamic>& L,
     const Eigen::Matrix<T_w, Eigen::Dynamic, 1>& w) {
   static const char* function = "multi_gp_cholesky_lpdf";
   typedef
-      typename boost::math::tools::promote_args<T_y, T_covar, T_w>::type T_lp;
+      return_type_t<T_y, T_covar, T_w> T_lp;
 
   check_size_match(function, "Size of random variable (rows y)", y.rows(),
                    "Size of kernel scales (w)", w.size());
@@ -73,7 +73,7 @@ multi_gp_cholesky_lpdf(
     for (int i = 0; i < y.rows(); i++) {
       Eigen::Matrix<T_y, Eigen::Dynamic, 1> y_row(y.row(i));
       Eigen::Matrix<
-          typename boost::math::tools::promote_args<T_y, T_covar>::type,
+          return_type_t<T_y, T_covar>,
           Eigen::Dynamic, 1>
           half(mdivide_left_tri_low(L, y_row));
       sum_lp_vec += w(i) * dot_self(half);
@@ -85,7 +85,7 @@ multi_gp_cholesky_lpdf(
 }
 
 template <typename T_y, typename T_covar, typename T_w>
-inline typename boost::math::tools::promote_args<T_y, T_covar, T_w>::type
+inline return_type_t<T_y, T_covar, T_w>
 multi_gp_cholesky_lpdf(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
     const Eigen::Matrix<T_covar, Eigen::Dynamic, Eigen::Dynamic>& L,

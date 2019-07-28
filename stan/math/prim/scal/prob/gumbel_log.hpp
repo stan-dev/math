@@ -11,7 +11,7 @@ namespace math {
  * @deprecated use <code>gumbel_lpdf</code>
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
-typename return_type<T_y, T_loc, T_scale>::type gumbel_log(
+return_type_t<T_y, T_loc, T_scale> gumbel_log(
     const T_y& y, const T_loc& mu, const T_scale& beta) {
   return gumbel_lpdf<propto, T_y, T_loc, T_scale>(y, mu, beta);
 }
@@ -20,7 +20,7 @@ typename return_type<T_y, T_loc, T_scale>::type gumbel_log(
  * @deprecated use <code>gumbel_lpdf</code>
  */
 template <typename T_y, typename T_loc, typename T_scale>
-inline typename return_type<T_y, T_loc, T_scale>::type gumbel_log(
+inline return_type_t<T_y, T_loc, T_scale> gumbel_log(
     const T_y& y, const T_loc& mu, const T_scale& beta) {
   return gumbel_lpdf<T_y, T_loc, T_scale>(y, mu, beta);
 }

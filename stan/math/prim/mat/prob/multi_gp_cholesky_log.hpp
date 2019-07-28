@@ -32,7 +32,7 @@ namespace math {
  * @tparam T_w Type of weight.
  */
 template <bool propto, typename T_y, typename T_covar, typename T_w>
-typename boost::math::tools::promote_args<T_y, T_covar, T_w>::type
+return_type_t<T_y, T_covar, T_w>
 multi_gp_cholesky_log(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
     const Eigen::Matrix<T_covar, Eigen::Dynamic, Eigen::Dynamic>& L,
@@ -44,7 +44,7 @@ multi_gp_cholesky_log(
  * @deprecated use <code>multi_gp_cholesky_lpdf</code>
  */
 template <typename T_y, typename T_covar, typename T_w>
-inline typename boost::math::tools::promote_args<T_y, T_covar, T_w>::type
+inline return_type_t<T_y, T_covar, T_w>
 multi_gp_cholesky_log(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
     const Eigen::Matrix<T_covar, Eigen::Dynamic, Eigen::Dynamic>& L,

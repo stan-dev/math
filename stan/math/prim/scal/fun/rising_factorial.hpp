@@ -62,7 +62,7 @@ namespace math {
  *
  */
 template <typename T>
-inline typename boost::math::tools::promote_args<T>::type rising_factorial(
+inline return_type_t<T> rising_factorial(
     const T& x, int n) {
   static const char* function = "rising_factorial";
   check_not_nan(function, "first argument", x);

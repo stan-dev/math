@@ -39,7 +39,7 @@ namespace math {
  * @throw std::domain_error if mu is not finite
  */
 template <typename T, typename L, typename S>
-inline typename boost::math::tools::promote_args<T, L, S>::type
+inline return_type_t<T, L, S>
 offset_multiplier_free(const T& y, const L& mu, const S& sigma) {
   check_finite("offset_multiplier_free", "offset", mu);
   if (sigma == 1) {

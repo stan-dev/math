@@ -43,15 +43,14 @@ namespace math {
 
 template <bool propto, typename T_y, typename T_x, typename T_alpha,
           typename T_beta>
-typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
+return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
     const T_y &y, const T_x &x, const T_alpha &alpha, const T_beta &beta) {
   static const char *function = "bernoulli_logit_glm_lpmf";
-  typedef typename partials_return_type<T_y, T_x, T_alpha, T_beta>::type
-      T_partials_return;
-  typedef typename std::conditional<
+  typedef partials_return_type_t<T_y, T_x, T_alpha, T_beta> T_partials_return;
+  typedef std::conditional<
       is_vector<T_y>::value,
-      Eigen::Matrix<typename partials_return_type<T_y>::type, -1, 1>,
-      typename partials_return_type<T_y>::type>::type T_y_val;
+      Eigen::Matrix<partials_return_type_t<T_y>, -1, 1>,
+      partials_return_type_t<T_y>> T_y_val;
 
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -132,7 +131,7 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
 }
 
 template <typename T_y, typename T_x, typename T_alpha, typename T_beta>
-inline typename return_type<T_x, T_beta, T_alpha>::type
+inline return_type_t<T_x, T_beta, T_alpha>
 bernoulli_logit_glm_lpmf(const T_y &y, const T_x &x, const T_alpha &alpha,
                          const T_beta &beta) {
   return bernoulli_logit_glm_lpmf<false>(y, x, alpha, beta);

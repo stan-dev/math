@@ -48,7 +48,7 @@ namespace math {
  * @return a * log(b)
  */
 template <typename T_a, typename T_b>
-inline typename boost::math::tools::promote_args<T_a, T_b>::type multiply_log(
+inline return_type_t<T_a, T_b> multiply_log(
     const T_a a, const T_b b) {
   using std::log;
   if (b == 0.0 && a == 0.0)

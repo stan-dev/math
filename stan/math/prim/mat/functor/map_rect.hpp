@@ -88,7 +88,7 @@ namespace math {
  * with signature
  *
  * template <typename T1, typename T2>
- * Eigen::Matrix<typename stan::return_type<T1, T2>::type, Eigen::Dynamic, 1>
+ * Eigen::Matrix<return_type_t<T1, T2>, Eigen::Dynamic, 1>
  * operator()(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& eta,
  *            const Eigen::Matrix<T2, Eigen::Dynamic, 1>& theta,
  *            const std::vector<double>& x_r, const std::vector<int>& x_i,
@@ -119,7 +119,7 @@ namespace math {
 
 template <int call_id, typename F, typename T_shared_param,
           typename T_job_param>
-Eigen::Matrix<typename stan::return_type<T_shared_param, T_job_param>::type,
+Eigen::Matrix<return_type_t<T_shared_param, T_job_param>,
               Eigen::Dynamic, 1>
 map_rect(const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
          const std::vector<Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>&
@@ -129,7 +129,7 @@ map_rect(const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
          std::ostream* msgs = nullptr) {
   static const char* function = "map_rect";
   typedef Eigen::Matrix<
-      typename stan::return_type<T_shared_param, T_job_param>::type,
+      return_type_t<T_shared_param, T_job_param>,
       Eigen::Dynamic, 1>
       return_t;
 

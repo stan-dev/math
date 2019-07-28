@@ -34,14 +34,14 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_Mu, typename T_Sigma,
           typename T_D>
-typename boost::math::tools::promote_args<T_y, T_Mu, T_Sigma, T_D>::type
+return_type_t<T_y, T_Mu, T_Sigma, T_D>
 matrix_normal_prec_lpdf(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
     const Eigen::Matrix<T_Mu, Eigen::Dynamic, Eigen::Dynamic>& Mu,
     const Eigen::Matrix<T_Sigma, Eigen::Dynamic, Eigen::Dynamic>& Sigma,
     const Eigen::Matrix<T_D, Eigen::Dynamic, Eigen::Dynamic>& D) {
   static const char* function = "matrix_normal_prec_lpdf";
-  typename boost::math::tools::promote_args<T_y, T_Mu, T_Sigma, T_D>::type lp(
+  return_type_t<T_y, T_Mu, T_Sigma, T_D> lp(
       0.0);
 
   check_positive(function, "Sigma rows", Sigma.rows());
@@ -85,7 +85,7 @@ matrix_normal_prec_lpdf(
 }
 
 template <typename T_y, typename T_Mu, typename T_Sigma, typename T_D>
-typename boost::math::tools::promote_args<T_y, T_Mu, T_Sigma, T_D>::type
+return_type_t<T_y, T_Mu, T_Sigma, T_D>
 matrix_normal_prec_lpdf(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
     const Eigen::Matrix<T_Mu, Eigen::Dynamic, Eigen::Dynamic>& Mu,

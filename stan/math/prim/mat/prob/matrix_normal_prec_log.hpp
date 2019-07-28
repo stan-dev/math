@@ -31,7 +31,7 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_Mu, typename T_Sigma,
           typename T_D>
-typename boost::math::tools::promote_args<T_y, T_Mu, T_Sigma, T_D>::type
+return_type_t<T_y, T_Mu, T_Sigma, T_D>
 matrix_normal_prec_log(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
     const Eigen::Matrix<T_Mu, Eigen::Dynamic, Eigen::Dynamic>& Mu,
@@ -45,7 +45,7 @@ matrix_normal_prec_log(
  * @deprecated use <code>matrix_normal_prec_lpdf</code>
  */
 template <typename T_y, typename T_Mu, typename T_Sigma, typename T_D>
-typename boost::math::tools::promote_args<T_y, T_Mu, T_Sigma, T_D>::type
+return_type_t<T_y, T_Mu, T_Sigma, T_D>
 matrix_normal_prec_log(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
     const Eigen::Matrix<T_Mu, Eigen::Dynamic, Eigen::Dynamic>& Mu,

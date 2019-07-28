@@ -33,7 +33,7 @@ namespace math {
  */
 template <typename T_x, typename T_sigma, typename T_l>
 inline
-    typename Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l>::type,
+    typename Eigen::Matrix<return_type_t<T_x, T_sigma, T_l>,
                            Eigen::Dynamic, Eigen::Dynamic>
     gp_exp_quad_cov(const std::vector<T_x> &x, const T_sigma &sigma,
                     const T_l &length_scale) {
@@ -42,7 +42,7 @@ inline
   check_positive("gp_exp_quad_cov", "length scale", length_scale);
 
   size_t x_size = x.size();
-  Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l>::type,
+  Eigen::Matrix<return_type_t<T_x, T_sigma, T_l>,
                 Eigen::Dynamic, Eigen::Dynamic>
       cov(x_size, x_size);
 
@@ -82,7 +82,7 @@ inline
  */
 template <typename T_x, typename T_sigma, typename T_l>
 inline
-    typename Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l>::type,
+    typename Eigen::Matrix<return_type_t<T_x, T_sigma, T_l>,
                            Eigen::Dynamic, Eigen::Dynamic>
     gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
                     const T_sigma &sigma,
@@ -93,7 +93,7 @@ inline
   check_positive_finite("gp_exp_quad_cov", "length scale", length_scale);
 
   size_t x_size = x.size();
-  Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l>::type,
+  Eigen::Matrix<return_type_t<T_x, T_sigma, T_l>,
                 Eigen::Dynamic, Eigen::Dynamic>
       cov(x_size, x_size);
   if (x_size == 0)
@@ -105,7 +105,7 @@ inline
 
   T_sigma sigma_sq = square(sigma);
   std::vector<
-      Eigen::Matrix<typename return_type<T_x, T_l>::type, Eigen::Dynamic, 1>>
+      Eigen::Matrix<return_type_t<T_x, T_l>, Eigen::Dynamic, 1>>
       x_new = divide_columns(x, length_scale);
 
   for (size_t j = 0; j < x_size; ++j) {
@@ -140,7 +140,7 @@ inline
  */
 template <typename T_x1, typename T_x2, typename T_sigma, typename T_l>
 inline typename Eigen::Matrix<
-    typename stan::return_type<T_x1, T_x2, T_sigma, T_l>::type, Eigen::Dynamic,
+    return_type_t<T_x1, T_x2, T_sigma, T_l>, Eigen::Dynamic,
     Eigen::Dynamic>
 gp_exp_quad_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
                 const T_sigma &sigma, const T_l &length_scale) {
@@ -152,7 +152,7 @@ gp_exp_quad_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 
   size_t x1_size = x1.size();
   size_t x2_size = x2.size();
-  Eigen::Matrix<typename stan::return_type<T_x1, T_x2, T_sigma, T_l>::type,
+  Eigen::Matrix<return_type_t<T_x1, T_x2, T_sigma, T_l>,
                 Eigen::Dynamic, Eigen::Dynamic>
       cov(x1_size, x2_size);
   if (x1_size == 0 || x2_size == 0)
@@ -196,7 +196,7 @@ gp_exp_quad_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  */
 template <typename T_x1, typename T_x2, typename T_s, typename T_l>
 inline typename Eigen::Matrix<
-    typename stan::return_type<T_x1, T_x2, T_s, T_l>::type, Eigen::Dynamic,
+    return_type_t<T_x1, T_x2, T_s, T_l>, Eigen::Dynamic,
     Eigen::Dynamic>
 gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
                 const std::vector<Eigen::Matrix<T_x2, Eigen::Dynamic, 1>> &x2,
@@ -206,7 +206,7 @@ gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
   size_t x2_size = x2.size();
   size_t l_size = length_scale.size();
 
-  Eigen::Matrix<typename stan::return_type<T_x1, T_x2, T_s, T_l>::type,
+  Eigen::Matrix<return_type_t<T_x1, T_x2, T_s, T_l>,
                 Eigen::Dynamic, Eigen::Dynamic>
       cov(x1_size, x2_size);
   if (x1_size == 0 || x2_size == 0)
@@ -226,10 +226,10 @@ gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
 
   T_s sigma_sq = square(sigma);
 
-  std::vector<Eigen::Matrix<typename return_type<T_x1, T_l, T_s>::type,
+  std::vector<Eigen::Matrix<return_type_t<T_x1, T_l, T_s>,
                             Eigen::Dynamic, 1>>
       x1_new = divide_columns(x1, length_scale);
-  std::vector<Eigen::Matrix<typename return_type<T_x2, T_l, T_s>::type,
+  std::vector<Eigen::Matrix<return_type_t<T_x2, T_l, T_s>,
                             Eigen::Dynamic, 1>>
       x2_new = divide_columns(x2, length_scale);
 

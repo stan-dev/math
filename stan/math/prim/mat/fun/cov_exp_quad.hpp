@@ -16,7 +16,7 @@ namespace math {
  */
 template <typename T_x, typename T_sigma, typename T_l>
 inline
-    typename Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l>::type,
+    typename Eigen::Matrix<return_type_t<T_x, T_sigma, T_l>,
                            Eigen::Dynamic, Eigen::Dynamic>
     cov_exp_quad(const std::vector<T_x>& x, const T_sigma& sigma,
                  const T_l& length_scale) {
@@ -28,7 +28,7 @@ inline
  */
 template <typename T_x, typename T_sigma, typename T_l>
 inline
-    typename Eigen::Matrix<typename stan::return_type<T_x, T_sigma, T_l>::type,
+    typename Eigen::Matrix<return_type_t<T_x, T_sigma, T_l>,
                            Eigen::Dynamic, Eigen::Dynamic>
     cov_exp_quad(const std::vector<T_x>& x, const T_sigma& sigma,
                  const std::vector<T_l>& length_scale) {
@@ -40,7 +40,7 @@ inline
  */
 template <typename T_x1, typename T_x2, typename T_sigma, typename T_l>
 inline typename Eigen::Matrix<
-    typename stan::return_type<T_x1, T_x2, T_sigma, T_l>::type, Eigen::Dynamic,
+    return_type_t<T_x1, T_x2, T_sigma, T_l>, Eigen::Dynamic,
     Eigen::Dynamic>
 cov_exp_quad(const std::vector<T_x1>& x1, const std::vector<T_x2>& x2,
              const T_sigma& sigma, const T_l& length_scale) {
@@ -52,7 +52,7 @@ cov_exp_quad(const std::vector<T_x1>& x1, const std::vector<T_x2>& x2,
  */
 template <typename T_x1, typename T_x2, typename T_sigma, typename T_l>
 inline typename Eigen::Matrix<
-    typename stan::return_type<T_x1, T_x2, T_sigma, T_l>::type, Eigen::Dynamic,
+    return_type_t<T_x1, T_x2, T_sigma, T_l>, Eigen::Dynamic,
     Eigen::Dynamic>
 cov_exp_quad(const std::vector<T_x1>& x1, const std::vector<T_x2>& x2,
              const T_sigma& sigma, const std::vector<T_l>& length_scale) {

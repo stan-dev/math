@@ -36,7 +36,7 @@ namespace math {
  * @return log of Bessel I function
  */
 template <typename T1, typename T2>
-inline typename boost::math::tools::promote_args<T1, T2, double>::type
+inline return_type_t<T1, T2, double>
 log_modified_bessel_first_kind(const T1 v, const T2 z) {
   check_not_nan("log_modified_bessel_first_kind", "first argument (order)", v);
   check_not_nan("log_modified_bessel_first_kind", "second argument (variable)",
@@ -50,7 +50,7 @@ log_modified_bessel_first_kind(const T1 v, const T2 z) {
   using std::log;
   using std::sqrt;
 
-  typedef typename boost::math::tools::promote_args<T1, T2, double>::type T;
+  typedef return_type_t<T1, T2, double> T;
 
   if (z == 0) {
     if (v == 0)
@@ -183,8 +183,8 @@ log_modified_bessel_first_kind(const T1 v, const T2 z) {
     }
   }
 
-  typename boost::math::tools::promote_args<T2>::type log_half_z = log(0.5 * z);
-  typename boost::math::tools::promote_args<T1>::type lgam
+  return_type_t<T2> log_half_z = log(0.5 * z);
+  return_type_t<T1> lgam
       = v > -1 ? lgamma(v + 1.0) : 0;
   T lcons = (2.0 + v) * log_half_z;
   T out;

@@ -11,7 +11,7 @@ namespace math {
  * @deprecated use <code>frechet_lpdf</code>
  */
 template <bool propto, typename T_y, typename T_shape, typename T_scale>
-typename return_type<T_y, T_shape, T_scale>::type frechet_log(
+return_type_t<T_y, T_shape, T_scale> frechet_log(
     const T_y& y, const T_shape& alpha, const T_scale& sigma) {
   return frechet_lpdf<propto, T_y, T_shape, T_scale>(y, alpha, sigma);
 }
@@ -20,7 +20,7 @@ typename return_type<T_y, T_shape, T_scale>::type frechet_log(
  * @deprecated use <code>frechet_lpdf</code>
  */
 template <typename T_y, typename T_shape, typename T_scale>
-inline typename return_type<T_y, T_shape, T_scale>::type frechet_log(
+inline return_type_t<T_y, T_shape, T_scale> frechet_log(
     const T_y& y, const T_shape& alpha, const T_scale& sigma) {
   return frechet_lpdf<T_y, T_shape, T_scale>(y, alpha, sigma);
 }

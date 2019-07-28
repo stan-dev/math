@@ -41,7 +41,7 @@ namespace math {
  * @throw std::domain_error if ub <= lb
  */
 template <typename T, typename L, typename U>
-inline typename boost::math::tools::promote_args<T, L, U>::type lub_constrain(
+inline return_type_t<T, L, U> lub_constrain(
     const T& x, const L& lb, const U& ub) {
   using std::exp;
   check_less("lub_constrain", "lb", lb, ub);
@@ -107,7 +107,7 @@ inline typename boost::math::tools::promote_args<T, L, U>::type lub_constrain(
  * @throw std::domain_error if ub <= lb
  */
 template <typename T, typename L, typename U>
-inline typename boost::math::tools::promote_args<T, L, U>::type lub_constrain(
+inline return_type_t<T, L, U> lub_constrain(
     const T& x, const L& lb, const U& ub, T& lp) {
   using std::exp;
   using std::log;

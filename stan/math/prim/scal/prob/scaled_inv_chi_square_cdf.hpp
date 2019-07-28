@@ -32,9 +32,9 @@ namespace math {
  * @tparam T_dof Type of degrees of freedom.
  */
 template <typename T_y, typename T_dof, typename T_scale>
-typename return_type<T_y, T_dof, T_scale>::type scaled_inv_chi_square_cdf(
+return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_cdf(
     const T_y& y, const T_dof& nu, const T_scale& s) {
-  typedef typename stan::partials_return_type<T_y, T_dof, T_scale>::type
+  typedef partials_return_type_t<T_y, T_dof, T_scale>
       T_partials_return;
 
   if (size_zero(y, nu, s))
