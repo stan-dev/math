@@ -2,6 +2,7 @@
 #include <stan/math/opencl/opencl.hpp>
 #include <gtest/gtest.h>
 #include <limits>
+#include <vector>
 
 TEST(ErrorHandlingMatrix, checkVectorMatrix) {
   using stan::math::matrix_cl;
