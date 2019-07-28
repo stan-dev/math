@@ -7,13 +7,13 @@
 using Eigen::Dynamic;
 using Eigen::Matrix;
 using stan::math::var;
+using std::vector;
 
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.
 TEST(ProbDistributionsNegBinomial2LogGLM,
      glm_matches_neg_binomial_2_log_doubles) {
-  Matrix<int, Dynamic, 1> y(3, 1);
-  y << 1, 0, 1;
+  vector<int> y{1, 0, 1};
   Matrix<double, Dynamic, Dynamic> x(3, 2);
   x << -12, 46, -42, 24, 25, 27;
   Matrix<double, Dynamic, 1> beta(2, 1);
@@ -35,7 +35,7 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
 TEST(ProbDistributionsNegBinomial2LogGLM,
      glm_matches_neg_binomial_2_log_doubles_rand) {
   for (size_t ii = 0; ii < 42; ii++) {
-    Matrix<int, Dynamic, 1> y(3, 1);
+    vector<int> y(3);
     for (size_t i = 0; i < 3; i++) {
       y[i] = Matrix<unsigned int, 1, 1>::Random(1, 1)[0] % 200;
     }
@@ -60,8 +60,7 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives.
 TEST(ProbDistributionsNegBinomial2LogGLM, glm_matches_neg_binomial_2_log_vars) {
-  Matrix<int, Dynamic, 1> y(3, 1);
-  y << 1, 0, 1;
+  vector<int> y{1, 0, 1};
   Matrix<var, Dynamic, Dynamic> x(3, 2);
   x << -12, 46, -42, 24, 25, 27;
   Matrix<var, Dynamic, 1> beta(2, 1);
@@ -88,8 +87,7 @@ TEST(ProbDistributionsNegBinomial2LogGLM, glm_matches_neg_binomial_2_log_vars) {
 
   stan::math::recover_memory();
 
-  Matrix<int, Dynamic, 1> y2(3, 1);
-  y2 << 1, 0, 1;
+  vector<int> y2{1, 0, 1};
   Matrix<var, Dynamic, Dynamic> x2(3, 2);
   x2 << -12, 46, -42, 24, 25, 27;
   Matrix<var, Dynamic, 1> beta2(2, 1);
@@ -117,7 +115,7 @@ TEST(ProbDistributionsNegBinomial2LogGLM, glm_matches_neg_binomial_2_log_vars) {
 TEST(ProbDistributionsNegBinomial2LogGLM,
      glm_matches_neg_binomial_2_log_vars_rand) {
   for (size_t ii = 0; ii < 200; ii++) {
-    Matrix<int, Dynamic, 1> y(3, 1);
+    vector<int> y(3);
     for (size_t i = 0; i < 3; i++) {
       y[i] = Matrix<unsigned int, 1, 1>::Random(1, 1)[0] % 200;
     }
@@ -176,7 +174,7 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
 TEST(ProbDistributionsNegBinomial2LogGLM,
      glm_matches_neg_binomial_2_log_vars_rand_scal_beta) {
   for (size_t ii = 0; ii < 42; ii++) {
-    Matrix<int, Dynamic, 1> y(3, 1);
+    vector<int> y(3);
     for (size_t i = 0; i < 3; i++) {
       y[i] = Matrix<unsigned int, 1, 1>::Random(1, 1)[0] % 200;
     }
@@ -228,7 +226,7 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
 TEST(ProbDistributionsNegBinomial2LogGLM,
      glm_matches_neg_binomial_2_log_varying_intercept) {
   for (size_t ii = 0; ii < 200; ii++) {
-    Matrix<int, Dynamic, 1> y(3, 1);
+    vector<int> y(3);
     for (size_t i = 0; i < 3; i++) {
       y[i] = Matrix<unsigned int, 1, 1>::Random(1, 1)[0] % 200;
     }
