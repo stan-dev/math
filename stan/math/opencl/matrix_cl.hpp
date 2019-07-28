@@ -182,7 +182,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
   cl::Buffer& buffer() { return buffer_cl_; }
   matrix_cl() : rows_(0), cols_(0) {}
 
-  matrix_cl(const matrix_cl<T>& A) : rows_(A.rows()), cols_(A.cols()) {
+  matrix_cl(const matrix_cl<T>& A) : rows_(A.rows()), cols_(A.cols()), partial_view_(A.partial_view()) {
     if (A.size() == 0)
       return;
     cl::Context& ctx = opencl_context.context();
@@ -297,7 +297,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
     // Need to wait for all of matrices events before destroying old buffer
     this->wait_for_read_write_events();
     buffer_cl_ = a.buffer();
-    partial_view_ = a.partial_view_;
+    partial_view_ = a.partial_view();
     return *this;
   }
 
@@ -313,7 +313,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
     // Need to wait for all of matrices events before destroying old buffer
     this->wait_for_read_write_events();
     buffer_cl_ = a.buffer();
-    partial_view_ = a.partial_view_;
+    partial_view_ = a.partial_view();
     return *this;
   }
 };
