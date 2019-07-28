@@ -11,7 +11,7 @@ namespace math {
  * @deprecated use <code>logistic_lpdf</code>
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
-return_type_t<T_y, T_loc, T_scale> logistic_log(
+typename return_type<T_y, T_loc, T_scale>::type logistic_log(
     const T_y& y, const T_loc& mu, const T_scale& sigma) {
   return logistic_lpdf<propto, T_y, T_loc, T_scale>(y, mu, sigma);
 }
@@ -20,7 +20,7 @@ return_type_t<T_y, T_loc, T_scale> logistic_log(
  * @deprecated use <code>logistic_lpdf</code>
  */
 template <typename T_y, typename T_loc, typename T_scale>
-inline return_type_t<T_y, T_loc, T_scale> logistic_log(
+inline typename return_type<T_y, T_loc, T_scale>::type logistic_log(
     const T_y& y, const T_loc& mu, const T_scale& sigma) {
   return logistic_lpdf<T_y, T_loc, T_scale>(y, mu, sigma);
 }

@@ -11,7 +11,7 @@ namespace math {
  * @deprecated use <code>lognormal_lpdf</code>
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
-return_type_t<T_y, T_loc, T_scale> lognormal_log(
+typename return_type<T_y, T_loc, T_scale>::type lognormal_log(
     const T_y& y, const T_loc& mu, const T_scale& sigma) {
   return lognormal_lpdf<propto, T_y, T_loc, T_scale>(y, mu, sigma);
 }
@@ -20,7 +20,7 @@ return_type_t<T_y, T_loc, T_scale> lognormal_log(
  * @deprecated use <code>lognormal_lpdf</code>
  */
 template <typename T_y, typename T_loc, typename T_scale>
-inline return_type_t<T_y, T_loc, T_scale> lognormal_log(
+inline typename return_type<T_y, T_loc, T_scale>::type lognormal_log(
     const T_y& y, const T_loc& mu, const T_scale& sigma) {
   return lognormal_lpdf<T_y, T_loc, T_scale>(y, mu, sigma);
 }

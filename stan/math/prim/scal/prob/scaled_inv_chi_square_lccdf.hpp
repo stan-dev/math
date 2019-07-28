@@ -20,7 +20,7 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_dof, typename T_scale>
-return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lccdf(
+typename return_type<T_y, T_dof, T_scale>::type scaled_inv_chi_square_lccdf(
     const T_y& y, const T_dof& nu, const T_scale& s) {
   typedef typename stan::partials_return_type<T_y, T_dof, T_scale>::type
       T_partials_return;

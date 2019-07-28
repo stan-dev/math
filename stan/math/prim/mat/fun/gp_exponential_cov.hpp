@@ -113,14 +113,14 @@ gp_exponential_cov(const std::vector<Eigen::Matrix<T_x, -1, 1>> &x,
   check_size_match(function, "x dimension", x[0].size(),
                    "number of length scales", l_size);
 
-  std::vector<Eigen::Matrix<return_type_t<T_x, T_l>, -1, 1>> x_new
+  std::vector<Eigen::Matrix<typename return_type<T_x, T_l>::type, -1, 1>> x_new
       = divide_columns(x, length_scale);
 
   T_s sigma_sq = square(sigma);
   for (size_t i = 0; i < x_size; ++i) {
     cov(i, i) = sigma_sq;
     for (size_t j = i + 1; j < x_size; ++j) {
-      return_type_t<T_x, T_l> dist = distance(x_new[i], x_new[j]);
+      typename return_type<T_x, T_l>::type dist = distance(x_new[i], x_new[j]);
       cov(i, j) = sigma_sq * exp(-dist);
       cov(j, i) = cov(i, j);
     }
@@ -214,7 +214,7 @@ gp_exponential_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  * @throw std::domain error if sigma <= 0, l <= 0, or x1, x2 are nan or inf
  */
 template <typename T_x1, typename T_x2, typename T_s, typename T_l>
-inline typename Eigen::Matrix<return_type_t<T_x1, T_x2, T_s, T_l>,
+inline typename Eigen::Matrix<typename return_type<T_x1, T_x2, T_s, T_l>::type,
                               Eigen::Dynamic, Eigen::Dynamic>
 gp_exponential_cov(const std::vector<Eigen::Matrix<T_x1, -1, 1>> &x1,
                    const std::vector<Eigen::Matrix<T_x2, -1, 1>> &x2,
@@ -250,9 +250,9 @@ gp_exponential_cov(const std::vector<Eigen::Matrix<T_x1, -1, 1>> &x1,
   T_s sigma_sq = square(sigma);
   T_l temp;
 
-  std::vector<Eigen::Matrix<return_type_t<T_x1, T_l>, -1, 1>>
+  std::vector<Eigen::Matrix<typename return_type<T_x1, T_l>::type, -1, 1>>
       x1_new = divide_columns(x1, length_scale);
-  std::vector<Eigen::Matrix<return_type_t<T_x2, T_l>, -1, 1>>
+  std::vector<Eigen::Matrix<typename return_type<T_x2, T_l>::type, -1, 1>>
       x2_new = divide_columns(x2, length_scale);
 
   for (size_t i = 0; i < x1_size; ++i) {

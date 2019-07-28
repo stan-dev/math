@@ -19,7 +19,7 @@ namespace stan {
 namespace math {
 
 template <typename T_n, typename T_shape, typename T_inv_scale>
-return_type_t<T_shape, T_inv_scale> neg_binomial_lccdf(
+typename return_type<T_shape, T_inv_scale>::type neg_binomial_lccdf(
     const T_n& n, const T_shape& alpha, const T_inv_scale& beta) {
   static const char* function = "neg_binomial_lccdf";
   typedef typename stan::partials_return_type<T_n, T_shape, T_inv_scale>::type

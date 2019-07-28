@@ -35,7 +35,7 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_x_scalar, int T_x_rows,
           typename T_alpha_scalar, typename T_beta_scalar>
-return_type_t<T_x_scalar, T_alpha_scalar, T_beta_scalar>
+typename return_type<T_x_scalar, T_alpha_scalar, T_beta_scalar>::type
 categorical_logit_glm_lpmf(
     const T_y& y, const Eigen::Matrix<T_x_scalar, T_x_rows, Eigen::Dynamic>& x,
     const Eigen::Matrix<T_alpha_scalar, Eigen::Dynamic, 1>& alpha,
@@ -185,7 +185,7 @@ categorical_logit_glm_lpmf(
 
 template <typename T_y, typename T_x_scalar, int T_x_rows,
           typename T_alpha_scalar, typename T_beta_scalar>
-return_type_t<T_x_scalar, T_alpha_scalar, T_beta_scalar>
+typename return_type<T_x_scalar, T_alpha_scalar, T_beta_scalar>::type
 categorical_logit_glm_lpmf(
     const T_y& y, const Eigen::Matrix<T_x_scalar, T_x_rows, Eigen::Dynamic>& x,
     const Eigen::Matrix<T_alpha_scalar, Eigen::Dynamic, 1>& alpha,

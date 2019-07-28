@@ -26,7 +26,7 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch.
  */
 template <typename T_n, typename T_prob>
-return_type_t<T_prob> bernoulli_lccdf(const T_n& n,
+typename return_type<T_prob>::type bernoulli_lccdf(const T_n& n,
                                                    const T_prob& theta) {
   static const char* function = "bernoulli_lccdf";
   typedef

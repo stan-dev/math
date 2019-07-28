@@ -32,7 +32,7 @@ namespace math {
  * @tparam T_high Type of upper bound.
  */
 template <bool propto, typename T_y, typename T_low, typename T_high>
-return_type_t<T_y, T_low, T_high> uniform_log(const T_y& y,
+typename return_type<T_y, T_low, T_high>::type uniform_log(const T_y& y,
                                                            const T_low& alpha,
                                                            const T_high& beta) {
   return uniform_lpdf<propto, T_y, T_low, T_high>(y, alpha, beta);
@@ -42,7 +42,7 @@ return_type_t<T_y, T_low, T_high> uniform_log(const T_y& y,
  * @deprecated use <code>uniform_lpdf</code>
  */
 template <typename T_y, typename T_low, typename T_high>
-inline return_type_t<T_y, T_low, T_high> uniform_log(
+inline typename return_type<T_y, T_low, T_high>::type uniform_log(
     const T_y& y, const T_low& alpha, const T_high& beta) {
   return uniform_lpdf<T_y, T_low, T_high>(y, alpha, beta);
 }

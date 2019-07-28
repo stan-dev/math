@@ -38,11 +38,11 @@ namespace math {
  * @tparam T_covar Type of scale.
  */
 template <bool propto, typename T_y, typename T_loc, typename T_covar>
-return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
+typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_lpdf(
     const T_y& y, const T_loc& mu, const T_covar& L) {
   static const char* function = "multi_normal_cholesky_lpdf";
   typedef typename scalar_type<T_covar>::type T_covar_elem;
-  typedef return_type_t<T_y, T_loc, T_covar> T_return;
+  typedef typename return_type<T_y, T_loc, T_covar>::type T_return;
   typedef typename stan::partials_return_type<T_y, T_loc, T_covar>::type
       T_partials_return;
   typedef Eigen::Matrix<T_partials_return, Eigen::Dynamic, Eigen::Dynamic>
@@ -155,7 +155,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
 }
 
 template <typename T_y, typename T_loc, typename T_covar>
-inline return_type_t<T_y, T_loc, T_covar>
+inline typename return_type<T_y, T_loc, T_covar>::type
 multi_normal_cholesky_lpdf(const T_y& y, const T_loc& mu, const T_covar& L) {
   return multi_normal_cholesky_lpdf<false>(y, mu, L);
 }

@@ -15,7 +15,7 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_scale>
-return_type_t<T_y, T_scale> rayleigh_cdf(const T_y& y,
+typename return_type<T_y, T_scale>::type rayleigh_cdf(const T_y& y,
                                                       const T_scale& sigma) {
   static const char* function = "rayleigh_cdf";
   typedef

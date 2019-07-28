@@ -14,7 +14,7 @@ namespace math {
 // Temporary neg_binomial_2_ccdf implementation that
 // transforms the input parameters and calls neg_binomial_ccdf
 template <typename T_n, typename T_location, typename T_precision>
-return_type_t<T_location, T_precision> neg_binomial_2_lccdf(
+typename return_type<T_location, T_precision>::type neg_binomial_2_lccdf(
     const T_n& n, const T_location& mu, const T_precision& phi) {
   if (size_zero(n, mu, phi))
     return 0.0;
@@ -31,7 +31,7 @@ return_type_t<T_location, T_precision> neg_binomial_2_lccdf(
 
   size_t size_beta = max_size(mu, phi);
 
-  VectorBuilder<true, return_type_t<T_location, T_precision>,
+  VectorBuilder<true, typename return_type<T_location, T_precision>::type,
                 T_location, T_precision>
       beta_vec(size_beta);
   for (size_t i = 0; i < size_beta; ++i)

@@ -45,7 +45,7 @@ namespace math {
 template <bool propto, typename T_y, typename T_F, typename T_G, typename T_V,
           typename T_W, typename T_m0, typename T_C0>
 typename return_type<
-    T_y, return_type_t<T_F, T_G, T_V, T_W, T_m0, T_C0>::type>
+    T_y, typename return_type<T_F, T_G, T_V, T_W, T_m0, T_C0>::type>::type
 gaussian_dlm_obs_log(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
     const Eigen::Matrix<T_F, Eigen::Dynamic, Eigen::Dynamic>& F,
@@ -64,7 +64,7 @@ gaussian_dlm_obs_log(
 template <typename T_y, typename T_F, typename T_G, typename T_V, typename T_W,
           typename T_m0, typename T_C0>
 inline typename return_type<
-    T_y, return_type_t<T_F, T_G, T_V, T_W, T_m0, T_C0>::type>
+    T_y, typename return_type<T_F, T_G, T_V, T_W, T_m0, T_C0>::type>::type
 gaussian_dlm_obs_log(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
     const Eigen::Matrix<T_F, Eigen::Dynamic, Eigen::Dynamic>& F,
@@ -117,7 +117,7 @@ gaussian_dlm_obs_log(
 template <bool propto, typename T_y, typename T_F, typename T_G, typename T_V,
           typename T_W, typename T_m0, typename T_C0>
 typename return_type<
-    T_y, return_type_t<T_F, T_G, T_V, T_W, T_m0, T_C0>::type>
+    T_y, typename return_type<T_F, T_G, T_V, T_W, T_m0, T_C0>::type>::type
 gaussian_dlm_obs_log(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
     const Eigen::Matrix<T_F, Eigen::Dynamic, Eigen::Dynamic>& F,
@@ -136,7 +136,7 @@ gaussian_dlm_obs_log(
 template <typename T_y, typename T_F, typename T_G, typename T_V, typename T_W,
           typename T_m0, typename T_C0>
 inline typename return_type<
-    T_y, return_type_t<T_F, T_G, T_V, T_W, T_m0, T_C0>::type>
+    T_y, typename return_type<T_F, T_G, T_V, T_W, T_m0, T_C0>::type>::type
 gaussian_dlm_obs_log(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
     const Eigen::Matrix<T_F, Eigen::Dynamic, Eigen::Dynamic>& F,

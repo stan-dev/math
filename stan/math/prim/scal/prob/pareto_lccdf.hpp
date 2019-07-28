@@ -16,7 +16,7 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_scale, typename T_shape>
-return_type_t<T_y, T_scale, T_shape> pareto_lccdf(
+typename return_type<T_y, T_scale, T_shape>::type pareto_lccdf(
     const T_y& y, const T_scale& y_min, const T_shape& alpha) {
   typedef typename stan::partials_return_type<T_y, T_scale, T_shape>::type
       T_partials_return;

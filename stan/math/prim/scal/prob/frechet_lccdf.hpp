@@ -20,7 +20,7 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_shape, typename T_scale>
-return_type_t<T_y, T_shape, T_scale> frechet_lccdf(
+typename return_type<T_y, T_shape, T_scale>::type frechet_lccdf(
     const T_y& y, const T_shape& alpha, const T_scale& sigma) {
   typedef typename stan::partials_return_type<T_y, T_shape, T_scale>::type
       T_partials_return;

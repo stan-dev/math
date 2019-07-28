@@ -18,7 +18,7 @@ namespace math {
 // pareto_type_2(y|lambda, alpha)  [y >= 0;  lambda > 0;  alpha > 0]
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
           typename T_shape>
-return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
+typename return_type<T_y, T_loc, T_scale, T_shape>::type pareto_type_2_lpdf(
     const T_y& y, const T_loc& mu, const T_scale& lambda,
     const T_shape& alpha) {
   static const char* function = "pareto_type_2_lpdf";
@@ -115,7 +115,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
 }
 
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
-inline return_type_t<T_y, T_loc, T_scale, T_shape>
+inline typename return_type<T_y, T_loc, T_scale, T_shape>::type
 pareto_type_2_lpdf(const T_y& y, const T_loc& mu, const T_scale& lambda,
                    const T_shape& alpha) {
   return pareto_type_2_lpdf<false>(y, mu, lambda, alpha);

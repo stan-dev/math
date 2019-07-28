@@ -53,7 +53,7 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_x, typename T_alpha,
           typename T_beta, typename T_precision>
-return_type_t<T_x, T_alpha, T_beta, T_precision>
+typename return_type<T_x, T_alpha, T_beta, T_precision>::type
 neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
                             const T_beta& beta, const T_precision& phi) {
   static const char* function = "neg_binomial_2_log_glm_lpmf";
@@ -190,7 +190,7 @@ neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
 
 template <typename T_y, typename T_x, typename T_alpha, typename T_beta,
           typename T_precision>
-inline return_type_t<T_x, T_alpha, T_beta, T_precision>
+inline typename return_type<T_x, T_alpha, T_beta, T_precision>::type
 neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
                             const T_beta& beta, const T_precision& phi) {
   return neg_binomial_2_log_glm_lpmf<false>(y, x, alpha, beta, phi);

@@ -37,7 +37,7 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_y, typename T_scale_succ, typename T_scale_fail>
-return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lccdf(
+typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lccdf(
     const T_y& y, const T_scale_succ& alpha, const T_scale_fail& beta) {
   typedef
       typename stan::partials_return_type<T_y, T_scale_succ, T_scale_fail>::type
