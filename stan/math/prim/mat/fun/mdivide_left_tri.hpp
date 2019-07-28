@@ -7,7 +7,11 @@
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #ifdef STAN_OPENCL
-#include <stan/math/opencl/opencl.hpp>
+#include <stan/math/opencl/opencl_context.hpp>
+#include <stan/math/opencl/multiply.hpp>
+#include <stan/math/opencl/tri_inverse.hpp>
+#include <stan/math/opencl/transpose.hpp>
+#include <stan/math/opencl/copy.hpp>
 #endif
 namespace stan {
 namespace math {

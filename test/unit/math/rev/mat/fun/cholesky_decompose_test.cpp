@@ -5,7 +5,7 @@
 #include <vector>
 
 #ifdef STAN_OPENCL
-#include <stan/math/opencl/opencl.hpp>
+#include <stan/math/opencl/opencl_context.hpp>
 #endif
 
 template <typename T_x>
