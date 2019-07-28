@@ -34,11 +34,10 @@ namespace math {
  * @throw std::domain_error if the scale is not positive.
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
-return_type_t<T_y, T_loc, T_scale> normal_lpdf(
-    const T_y& y, const T_loc& mu, const T_scale& sigma) {
+return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y, const T_loc& mu,
+                                               const T_scale& sigma) {
   static const char* function = "normal_lpdf";
-  typedef partials_return_type_t<T_y, T_loc, T_scale>
-      T_partials_return;
+  typedef partials_return_type_t<T_y, T_loc, T_scale> T_partials_return;
 
   using std::log;
 
@@ -103,8 +102,9 @@ return_type_t<T_y, T_loc, T_scale> normal_lpdf(
 }
 
 template <typename T_y, typename T_loc, typename T_scale>
-inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(
-    const T_y& y, const T_loc& mu, const T_scale& sigma) {
+inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y,
+                                                      const T_loc& mu,
+                                                      const T_scale& sigma) {
   return normal_lpdf<false>(y, mu, sigma);
 }
 

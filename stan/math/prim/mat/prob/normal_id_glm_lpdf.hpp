@@ -46,15 +46,16 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_x, typename T_alpha,
           typename T_beta, typename T_scale>
-return_type_t<T_y, T_x, T_alpha, T_beta, T_scale>
-normal_id_glm_lpdf(const T_y &y, const T_x &x, const T_alpha &alpha,
-                   const T_beta &beta, const T_scale &sigma) {
+return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
+    const T_y &y, const T_x &x, const T_alpha &alpha, const T_beta &beta,
+    const T_scale &sigma) {
   static const char *function = "normal_id_glm_lpdf";
-  typedef partials_return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> T_partials_return;
-  typedef std::conditional<
-      is_vector<T_scale>::value,
-      Eigen::Array<partials_return_type_t<T_scale>, -1, 1>,
-      partials_return_type_t<T_scale>> T_scale_val;
+  typedef partials_return_type_t<T_y, T_x, T_alpha, T_beta, T_scale>
+      T_partials_return;
+  typedef std::conditional<is_vector<T_scale>::value,
+                           Eigen::Array<partials_return_type_t<T_scale>, -1, 1>,
+                           partials_return_type_t<T_scale>>
+      T_scale_val;
 
   using Eigen::Array;
   using Eigen::Dynamic;
@@ -168,9 +169,9 @@ normal_id_glm_lpdf(const T_y &y, const T_x &x, const T_alpha &alpha,
 
 template <typename T_y, typename T_x, typename T_alpha, typename T_beta,
           typename T_scale>
-inline return_type_t<T_y, T_x, T_alpha, T_beta, T_scale>
-normal_id_glm_lpdf(const T_y &y, const T_x &x, const T_alpha &alpha,
-                   const T_beta &beta, const T_scale &sigma) {
+inline return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
+    const T_y &y, const T_x &x, const T_alpha &alpha, const T_beta &beta,
+    const T_scale &sigma) {
   return normal_id_glm_lpdf<false>(y, x, alpha, beta, sigma);
 }
 }  // namespace math

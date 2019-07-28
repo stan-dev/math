@@ -23,10 +23,8 @@ namespace math {
  * match the size of A.
  */
 template <int TriView, typename T1, typename T2, int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<return_type_t<T1, T2>,
-                     R1, C2>
-mdivide_right_tri(const Eigen::Matrix<T1, R1, C1> &b,
-                  const Eigen::Matrix<T2, R2, C2> &A) {
+inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_right_tri(
+    const Eigen::Matrix<T1, R1, C1> &b, const Eigen::Matrix<T2, R2, C2> &A) {
   check_square("mdivide_right_tri", "A", A);
   check_multiplicable("mdivide_right_tri", "b", b, "A", A);
   if (TriView != Eigen::Lower && TriView != Eigen::Upper)

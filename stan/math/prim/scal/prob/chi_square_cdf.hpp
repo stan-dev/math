@@ -32,11 +32,9 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_y, typename T_dof>
-return_type_t<T_y, T_dof> chi_square_cdf(const T_y& y,
-                                                      const T_dof& nu) {
+return_type_t<T_y, T_dof> chi_square_cdf(const T_y& y, const T_dof& nu) {
   static const char* function = "chi_square_cdf";
-  typedef
-      partials_return_type_t<T_y, T_dof> T_partials_return;
+  typedef partials_return_type_t<T_y, T_dof> T_partials_return;
 
   T_partials_return cdf(1.0);
 

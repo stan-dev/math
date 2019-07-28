@@ -29,18 +29,18 @@ namespace stan {
  * @tparam Types_pack (optional) A parameter pack containing further types.
  */
 
- template <typename T, typename... Types_pack>
- struct return_type {
-   typedef typename boost::math::tools::promote_args<
-       double, typename scalar_type<T>::type,
-       typename return_type<Types_pack...>::type>::type type;
- };
+template <typename T, typename... Types_pack>
+struct return_type {
+  typedef typename boost::math::tools::promote_args<
+      double, typename scalar_type<T>::type,
+      typename return_type<Types_pack...>::type>::type type;
+};
 
- template <typename T>
- struct return_type<T> {
-   typedef typename boost::math::tools::promote_args<
-       double, typename scalar_type<T>::type>::type type;
- };
+template <typename T>
+struct return_type<T> {
+  typedef typename boost::math::tools::promote_args<
+      double, typename scalar_type<T>::type>::type type;
+};
 
 template <typename... Args>
 using return_type_t = typename return_type<Args...>::type;

@@ -27,8 +27,7 @@ namespace math {
  * @throw std::domain_error if y is lower than the lower bound
  */
 template <typename T, typename L>
-inline return_type_t<T, L> lb_free(
-    const T& y, const L& lb) {
+inline return_type_t<T, L> lb_free(const T& y, const L& lb) {
   using std::log;
   if (lb == NEGATIVE_INFTY)
     return identity_free(y);

@@ -14,11 +14,9 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_scale>
-return_type_t<T_y, T_scale> rayleigh_lccdf(const T_y& y,
-                                                        const T_scale& sigma) {
+return_type_t<T_y, T_scale> rayleigh_lccdf(const T_y& y, const T_scale& sigma) {
   static const char* function = "rayleigh_lccdf";
-  typedef
-      partials_return_type_t<T_y, T_scale> T_partials_return;
+  typedef partials_return_type_t<T_y, T_scale> T_partials_return;
 
   T_partials_return ccdf_log(0.0);
 

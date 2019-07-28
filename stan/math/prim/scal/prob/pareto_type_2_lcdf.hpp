@@ -19,9 +19,8 @@ template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
 return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lcdf(
     const T_y& y, const T_loc& mu, const T_scale& lambda,
     const T_shape& alpha) {
-  typedef
-      partials_return_type_t<T_y, T_loc, T_scale, T_shape>
-          T_partials_return;
+  typedef partials_return_type_t<T_y, T_loc, T_scale, T_shape>
+      T_partials_return;
 
   if (size_zero(y, mu, lambda, alpha))
     return 0.0;

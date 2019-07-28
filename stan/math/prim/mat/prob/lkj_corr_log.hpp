@@ -23,9 +23,9 @@ return_type_t<T_y, T_shape> lkj_corr_log(
  * @deprecated use <code>lkj_corr_lpdf</code>
  */
 template <typename T_y, typename T_shape>
-inline return_type_t<T_y, T_shape>
-lkj_corr_log(const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
-             const T_shape& eta) {
+inline return_type_t<T_y, T_shape> lkj_corr_log(
+    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
+    const T_shape& eta) {
   return lkj_corr_lpdf<T_y, T_shape>(y, eta);
 }
 

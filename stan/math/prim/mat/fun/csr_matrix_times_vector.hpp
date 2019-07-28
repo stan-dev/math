@@ -73,8 +73,7 @@ namespace math {
 /** \addtogroup csr_format
  */
 template <typename T1, typename T2>
-inline Eigen::Matrix<return_type_t<T1, T2>,
-                     Eigen::Dynamic, 1>
+inline Eigen::Matrix<return_type_t<T1, T2>, Eigen::Dynamic, 1>
 csr_matrix_times_vector(int m, int n,
                         const Eigen::Matrix<T1, Eigen::Dynamic, 1>& w,
                         const std::vector<int>& v, const std::vector<int>& u,

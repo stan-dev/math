@@ -64,9 +64,8 @@ return_type_t<T_prob> categorical_lpmf(
   for (int i = 0; i < theta.size(); ++i)
     log_theta(i) = log(theta(i));
 
-  Eigen::Matrix<return_type_t<T_prob>,
-                Eigen::Dynamic, 1>
-      log_theta_ns(ns.size());
+  Eigen::Matrix<return_type_t<T_prob>, Eigen::Dynamic, 1> log_theta_ns(
+      ns.size());
   for (size_t i = 0; i < ns.size(); ++i)
     log_theta_ns(i) = log_theta(ns[i] - 1);
 

@@ -15,11 +15,11 @@ namespace math {
 
 // Pareto(y|y_m, alpha)  [y > y_m;  y_m > 0;  alpha > 0]
 template <bool propto, typename T_y, typename T_scale, typename T_shape>
-return_type_t<T_y, T_scale, T_shape> pareto_lpdf(
-    const T_y& y, const T_scale& y_min, const T_shape& alpha) {
+return_type_t<T_y, T_scale, T_shape> pareto_lpdf(const T_y& y,
+                                                 const T_scale& y_min,
+                                                 const T_shape& alpha) {
   static const char* function = "pareto_lpdf";
-  typedef partials_return_type_t<T_y, T_scale, T_shape>
-      T_partials_return;
+  typedef partials_return_type_t<T_y, T_scale, T_shape> T_partials_return;
   using std::log;
   check_not_nan(function, "Random variable", y);
   check_positive_finite(function, "Scale parameter", y_min);
@@ -98,8 +98,9 @@ return_type_t<T_y, T_scale, T_shape> pareto_lpdf(
 }
 
 template <typename T_y, typename T_scale, typename T_shape>
-inline return_type_t<T_y, T_scale, T_shape> pareto_lpdf(
-    const T_y& y, const T_scale& y_min, const T_shape& alpha) {
+inline return_type_t<T_y, T_scale, T_shape> pareto_lpdf(const T_y& y,
+                                                        const T_scale& y_min,
+                                                        const T_shape& alpha) {
   return pareto_lpdf<false>(y, y_min, alpha);
 }
 

@@ -75,8 +75,8 @@ gaussian_dlm_obs_lpdf(
     const Eigen::Matrix<T_m0, Eigen::Dynamic, 1>& m0,
     const Eigen::Matrix<T_C0, Eigen::Dynamic, Eigen::Dynamic>& C0) {
   static const char* function = "gaussian_dlm_obs_lpdf";
-  typedef return_type_t<T_y, return_type_t<T_F, T_G, T_V, T_W, T_m0,
-                                                     T_C0>> T_lp;
+  typedef return_type_t<T_y, return_type_t<T_F, T_G, T_V, T_W, T_m0, T_C0>>
+      T_lp;
   int r = y.rows();  // number of variables
   int T = y.cols();  // number of observations
   int n = G.rows();  // number of states
@@ -222,7 +222,8 @@ gaussian_dlm_obs_lpdf(
     const Eigen::Matrix<T_m0, Eigen::Dynamic, 1>& m0,
     const Eigen::Matrix<T_C0, Eigen::Dynamic, Eigen::Dynamic>& C0) {
   static const char* function = "gaussian_dlm_obs_lpdf";
-  typedef return_type_t<T_y, return_type_t<T_F, T_G, T_V, T_W, T_m0, T_C0>> T_lp;
+  typedef return_type_t<T_y, return_type_t<T_F, T_G, T_V, T_W, T_m0, T_C0>>
+      T_lp;
   using std::log;
 
   int r = y.rows();  // number of variables

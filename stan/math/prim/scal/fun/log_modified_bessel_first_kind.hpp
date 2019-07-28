@@ -36,8 +36,8 @@ namespace math {
  * @return log of Bessel I function
  */
 template <typename T1, typename T2>
-inline return_type_t<T1, T2, double>
-log_modified_bessel_first_kind(const T1 v, const T2 z) {
+inline return_type_t<T1, T2, double> log_modified_bessel_first_kind(
+    const T1 v, const T2 z) {
   check_not_nan("log_modified_bessel_first_kind", "first argument (order)", v);
   check_not_nan("log_modified_bessel_first_kind", "second argument (variable)",
                 z);
@@ -184,8 +184,7 @@ log_modified_bessel_first_kind(const T1 v, const T2 z) {
   }
 
   return_type_t<T2> log_half_z = log(0.5 * z);
-  return_type_t<T1> lgam
-      = v > -1 ? lgamma(v + 1.0) : 0;
+  return_type_t<T1> lgam = v > -1 ? lgamma(v + 1.0) : 0;
   T lcons = (2.0 + v) * log_half_z;
   T out;
   if (v > -1) {

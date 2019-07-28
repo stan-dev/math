@@ -42,8 +42,7 @@ return_type_t<T_y, T_covar, T_w> multi_gp_log(
  * @deprecated use <code>multi_gp_lpdf</code>
  */
 template <typename T_y, typename T_covar, typename T_w>
-inline return_type_t<T_y, T_covar, T_w>
-multi_gp_log(
+inline return_type_t<T_y, T_covar, T_w> multi_gp_log(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
     const Eigen::Matrix<T_covar, Eigen::Dynamic, Eigen::Dynamic>& Sigma,
     const Eigen::Matrix<T_w, Eigen::Dynamic, 1>& w) {

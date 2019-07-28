@@ -15,11 +15,10 @@ namespace math {
 
 // Logistic(y|mu, sigma)    [sigma > 0]
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
-return_type_t<T_y, T_loc, T_scale> logistic_lpdf(
-    const T_y& y, const T_loc& mu, const T_scale& sigma) {
+return_type_t<T_y, T_loc, T_scale> logistic_lpdf(const T_y& y, const T_loc& mu,
+                                                 const T_scale& sigma) {
   static const char* function = "logistic_lpdf";
-  typedef partials_return_type_t<T_y, T_loc, T_scale>
-      T_partials_return;
+  typedef partials_return_type_t<T_y, T_loc, T_scale> T_partials_return;
 
   using std::exp;
   using std::log;
@@ -107,8 +106,9 @@ return_type_t<T_y, T_loc, T_scale> logistic_lpdf(
 }
 
 template <typename T_y, typename T_loc, typename T_scale>
-inline return_type_t<T_y, T_loc, T_scale> logistic_lpdf(
-    const T_y& y, const T_loc& mu, const T_scale& sigma) {
+inline return_type_t<T_y, T_loc, T_scale> logistic_lpdf(const T_y& y,
+                                                        const T_loc& mu,
+                                                        const T_scale& sigma) {
   return logistic_lpdf<false>(y, mu, sigma);
 }
 

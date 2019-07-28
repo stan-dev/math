@@ -16,11 +16,10 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_loc, typename T_scale>
-return_type_t<T_y, T_loc, T_scale> normal_lcdf(
-    const T_y& y, const T_loc& mu, const T_scale& sigma) {
+return_type_t<T_y, T_loc, T_scale> normal_lcdf(const T_y& y, const T_loc& mu,
+                                               const T_scale& sigma) {
   static const char* function = "normal_lcdf";
-  typedef partials_return_type_t<T_y, T_loc, T_scale>
-      T_partials_return;
+  typedef partials_return_type_t<T_y, T_loc, T_scale> T_partials_return;
 
   using std::exp;
   using std::log;

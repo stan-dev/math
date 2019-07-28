@@ -19,8 +19,7 @@ namespace math {
  * than 1.
  */
 template <typename T>
-inline return_type_t<T> variance(
-    const std::vector<T>& v) {
+inline return_type_t<T> variance(const std::vector<T>& v) {
   check_nonzero_size("variance", "v", v);
   if (v.size() == 1)
     return 0.0;
@@ -40,8 +39,7 @@ inline return_type_t<T> variance(
  * @return Sample variance of vector.
  */
 template <typename T, int R, int C>
-inline return_type_t<T> variance(
-    const Eigen::Matrix<T, R, C>& m) {
+inline return_type_t<T> variance(const Eigen::Matrix<T, R, C>& m) {
   check_nonzero_size("variance", "m", m);
 
   if (m.size() == 1)

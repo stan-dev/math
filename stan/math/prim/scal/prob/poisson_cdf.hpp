@@ -17,11 +17,9 @@ namespace math {
 
 // Poisson CDF
 template <typename T_n, typename T_rate>
-return_type_t<T_rate> poisson_cdf(const T_n& n,
-                                               const T_rate& lambda) {
+return_type_t<T_rate> poisson_cdf(const T_n& n, const T_rate& lambda) {
   static const char* function = "poisson_cdf";
-  typedef
-      partials_return_type_t<T_n, T_rate> T_partials_return;
+  typedef partials_return_type_t<T_n, T_rate> T_partials_return;
 
   if (size_zero(n, lambda))
     return 1.0;

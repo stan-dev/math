@@ -21,10 +21,9 @@ namespace math {
  */
 template <typename T1, typename T2, typename T3, int R1, int C1, int R2, int C2,
           int R3, int C3>
-inline std::enable_if<
-    !stan::is_var<T1>::value && !stan::is_var<T2>::value
-        && !stan::is_var<T3>::value,
-    return_type_t<T1, T2, T3>>
+inline std::enable_if<!stan::is_var<T1>::value && !stan::is_var<T2>::value
+                          && !stan::is_var<T3>::value,
+                      return_type_t<T1, T2, T3>>
 trace_gen_inv_quad_form_ldlt(const Eigen::Matrix<T1, R1, C1> &D,
                              const LDLT_factor<T2, R2, C2> &A,
                              const Eigen::Matrix<T3, R3, C3> &B) {

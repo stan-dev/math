@@ -32,9 +32,8 @@ return_type_t<T_prob> categorical_logit_lpmf(
 }
 
 template <typename T_prob>
-inline return_type_t<T_prob>
-categorical_logit_lpmf(int n,
-                       const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& beta) {
+inline return_type_t<T_prob> categorical_logit_lpmf(
+    int n, const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& beta) {
   return categorical_logit_lpmf<false>(n, beta);
 }
 
@@ -58,18 +57,16 @@ return_type_t<T_prob> categorical_logit_lpmf(
   Eigen::Matrix<T_prob, Eigen::Dynamic, 1> log_softmax_beta = log_softmax(beta);
 
   // FIXME:  replace with more efficient sum()
-  Eigen::Matrix<return_type_t<T_prob>,
-                Eigen::Dynamic, 1>
-      results(ns.size());
+  Eigen::Matrix<return_type_t<T_prob>, Eigen::Dynamic, 1> results(ns.size());
   for (size_t i = 0; i < ns.size(); ++i)
     results[i] = log_softmax_beta(ns[i] - 1);
   return sum(results);
 }
 
 template <typename T_prob>
-inline return_type_t<T_prob>
-categorical_logit_lpmf(const std::vector<int>& ns,
-                       const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& beta) {
+inline return_type_t<T_prob> categorical_logit_lpmf(
+    const std::vector<int>& ns,
+    const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& beta) {
   return categorical_logit_lpmf<false>(ns, beta);
 }
 

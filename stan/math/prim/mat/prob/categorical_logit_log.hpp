@@ -23,9 +23,8 @@ return_type_t<T_prob> categorical_logit_log(
  * @deprecated use <code>categorical_logit_lpmf</code>
  */
 template <typename T_prob>
-inline return_type_t<T_prob>
-categorical_logit_log(int n,
-                      const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& beta) {
+inline return_type_t<T_prob> categorical_logit_log(
+    int n, const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& beta) {
   return categorical_logit_lpmf<T_prob>(n, beta);
 }
 
@@ -43,9 +42,9 @@ return_type_t<T_prob> categorical_logit_log(
  * @deprecated use <code>categorical_logit_lpmf</code>
  */
 template <typename T_prob>
-inline return_type_t<T_prob>
-categorical_logit_log(const std::vector<int>& ns,
-                      const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& beta) {
+inline return_type_t<T_prob> categorical_logit_log(
+    const std::vector<int>& ns,
+    const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& beta) {
   return categorical_logit_lpmf<T_prob>(ns, beta);
 }
 

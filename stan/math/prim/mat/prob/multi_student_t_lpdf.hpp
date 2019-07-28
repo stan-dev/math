@@ -125,8 +125,8 @@ return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_lpdf(
   if (include_summand<propto, T_y, T_dof, T_loc, T_scale_elem>::value) {
     lp_type sum_lp_vec(0.0);
     for (size_t i = 0; i < size_vec; i++) {
-      Eigen::Matrix<return_type_t<T_y, T_loc>, Eigen::Dynamic, 1>
-          y_minus_mu(size_y);
+      Eigen::Matrix<return_type_t<T_y, T_loc>, Eigen::Dynamic, 1> y_minus_mu(
+          size_y);
       for (int j = 0; j < size_y; j++)
         y_minus_mu(j) = y_vec[i](j) - mu_vec[i](j);
       sum_lp_vec
@@ -138,9 +138,8 @@ return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_lpdf(
 }
 
 template <typename T_y, typename T_dof, typename T_loc, typename T_scale>
-inline return_type_t<T_y, T_dof, T_loc, T_scale>
-multi_student_t_lpdf(const T_y& y, const T_dof& nu, const T_loc& mu,
-                     const T_scale& Sigma) {
+inline return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_lpdf(
+    const T_y& y, const T_dof& nu, const T_loc& mu, const T_scale& Sigma) {
   return multi_student_t_lpdf<false>(y, nu, mu, Sigma);
 }
 

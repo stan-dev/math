@@ -36,8 +36,7 @@ namespace math {
  *   x is nan or infinite
  */
 template <typename T_x, typename T_sigma>
-Eigen::Matrix<return_type_t<T_x, T_sigma>, Eigen::Dynamic,
-              Eigen::Dynamic>
+Eigen::Matrix<return_type_t<T_x, T_sigma>, Eigen::Dynamic, Eigen::Dynamic>
 gp_dot_prod_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
                 const T_sigma &sigma) {
   check_not_nan("gp_dot_prod_cov", "sigma", sigma);
@@ -50,8 +49,7 @@ gp_dot_prod_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
     check_finite("gp_dot_prod_cov", "x", x[i]);
   }
 
-  Eigen::Matrix<return_type_t<T_x, T_sigma>, Eigen::Dynamic,
-                Eigen::Dynamic>
+  Eigen::Matrix<return_type_t<T_x, T_sigma>, Eigen::Dynamic, Eigen::Dynamic>
       cov(x_size, x_size);
   if (x_size == 0)
     return cov;
@@ -92,8 +90,7 @@ gp_dot_prod_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
  *   x is nan or infinite
  */
 template <typename T_x, typename T_sigma>
-Eigen::Matrix<return_type_t<T_x, T_sigma>, Eigen::Dynamic,
-              Eigen::Dynamic>
+Eigen::Matrix<return_type_t<T_x, T_sigma>, Eigen::Dynamic, Eigen::Dynamic>
 gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma &sigma) {
   check_not_nan("gp_dot_prod_cov", "sigma", sigma);
   check_nonnegative("gp_dot_prod_cov", "sigma", sigma);
@@ -103,8 +100,7 @@ gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma &sigma) {
   check_not_nan("gp_dot_prod_cov", "x", x);
   check_finite("gp_dot_prod_cov", "x", x);
 
-  Eigen::Matrix<return_type_t<T_x, T_sigma>, Eigen::Dynamic,
-                Eigen::Dynamic>
+  Eigen::Matrix<return_type_t<T_x, T_sigma>, Eigen::Dynamic, Eigen::Dynamic>
       cov(x_size, x_size);
   if (x_size == 0)
     return cov;
@@ -219,8 +215,8 @@ gp_dot_prod_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   check_not_nan("gp_dot_prod_cov", "x2", x2);
   check_finite("gp_dot_prod_cov", "x2", x2);
 
-  Eigen::Matrix<return_type_t<T_x1, T_x2, T_sigma>,
-                Eigen::Dynamic, Eigen::Dynamic>
+  Eigen::Matrix<return_type_t<T_x1, T_x2, T_sigma>, Eigen::Dynamic,
+                Eigen::Dynamic>
       cov(x1_size, x2_size);
 
   if (x1_size == 0 || x2_size == 0)

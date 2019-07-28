@@ -11,8 +11,8 @@ namespace stan {
 namespace math {
 
 template <typename T_shape>
-return_type_t<double, T_shape>
-do_lkj_constant(const T_shape& eta, const unsigned int& K) {
+return_type_t<double, T_shape> do_lkj_constant(const T_shape& eta,
+                                               const unsigned int& K) {
   // Lewandowski, Kurowicka, and Joe (2009) theorem 5
   return_type_t<double, T_shape> constant;
   const int Km1 = K - 1;
@@ -73,9 +73,9 @@ return_type_t<T_y, T_shape> lkj_corr_lpdf(
 }
 
 template <typename T_y, typename T_shape>
-inline return_type_t<T_y, T_shape>
-lkj_corr_lpdf(const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
-              const T_shape& eta) {
+inline return_type_t<T_y, T_shape> lkj_corr_lpdf(
+    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
+    const T_shape& eta) {
   return lkj_corr_lpdf<false>(y, eta);
 }
 

@@ -53,20 +53,22 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_x, typename T_alpha,
           typename T_beta, typename T_precision>
-return_type_t<T_x, T_alpha, T_beta, T_precision>
-neg_binomial_2_log_glm_lpmf(const T_y& y, const T_x& x, const T_alpha& alpha,
-                            const T_beta& beta, const T_precision& phi) {
+return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
+    const T_y& y, const T_x& x, const T_alpha& alpha, const T_beta& beta,
+    const T_precision& phi) {
   static const char* function = "neg_binomial_2_log_glm_lpmf";
-  typedef partials_return_type_t<T_y, T_x, T_alpha, T_beta, T_precision> T_partials_return;
+  typedef partials_return_type_t<T_y, T_x, T_alpha, T_beta, T_precision>
+      T_partials_return;
   typedef std::conditional<
       is_vector<T_precision>::value,
       Eigen::Array<partials_return_type_t<T_precision>, -1, 1>,
-      partials_return_type_t<T_precision>> T_precision_val;
+      partials_return_type_t<T_precision>>
+      T_precision_val;
   typedef typename std::conditional<
       is_vector<T_y>::value || is_vector<T_precision>::value,
-      Eigen::Array<partials_return_type_t<T_y, T_precision>, -1,
-                   1>,
-      partials_return_type_t<T_y, T_precision>> T_sum_val;
+      Eigen::Array<partials_return_type_t<T_y, T_precision>, -1, 1>,
+      partials_return_type_t<T_y, T_precision>>
+      T_sum_val;
 
   using Eigen::Array;
   using Eigen::Dynamic;
