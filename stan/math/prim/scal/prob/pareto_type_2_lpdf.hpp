@@ -115,9 +115,9 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
 }
 
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
-inline return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
-    const T_y& y, const T_loc& mu, const T_scale& lambda,
-    const T_shape& alpha) {
+inline return_type_t<T_y, T_loc, T_scale, T_shape>
+pareto_type_2_lpdf(const T_y& y, const T_loc& mu, const T_scale& lambda,
+                   const T_shape& alpha) {
   return pareto_type_2_lpdf<false>(y, mu, lambda, alpha);
 }
 

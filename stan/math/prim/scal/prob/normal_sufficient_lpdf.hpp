@@ -128,9 +128,9 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
 
 template <typename T_y, typename T_s, typename T_n, typename T_loc,
           typename T_scale>
-inline return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
-    const T_y& y_bar, const T_s& s_squared, const T_n& n_obs, const T_loc& mu,
-    const T_scale& sigma) {
+inline return_type_t<T_y, T_s, T_loc, T_scale>
+normal_sufficient_lpdf(const T_y& y_bar, const T_s& s_squared, const T_n& n_obs,
+                       const T_loc& mu, const T_scale& sigma) {
   return normal_sufficient_lpdf<false>(y_bar, s_squared, n_obs, mu, sigma);
 }
 

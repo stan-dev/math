@@ -31,7 +31,8 @@ namespace math {
  * @return Result of stacking first matrix on top of second.
  */
 template <typename T1, typename T2, int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<return_type_t<T1, T2>, Eigen::Dynamic, Eigen::Dynamic>
+inline Eigen::Matrix<return_type_t<T1, T2>, Eigen::Dynamic,
+                     Eigen::Dynamic>
 append_row(const Eigen::Matrix<T1, R1, C1>& A,
            const Eigen::Matrix<T2, R2, C2>& B) {
   using Eigen::Dynamic;
@@ -43,7 +44,8 @@ append_row(const Eigen::Matrix<T1, R1, C1>& A,
   int Bcols = B.cols();
   check_size_match("append_row", "columns of A", Acols, "columns of B", Bcols);
 
-  Matrix<return_type_t<T1, T2>, Dynamic, Dynamic> result(Arows + Brows, Acols);
+  Matrix<return_type_t<T1, T2>, Dynamic, Dynamic> result(
+      Arows + Brows, Acols);
   for (int j = 0; j < Acols; j++) {
     for (int i = 0; i < Arows; i++)
       result(i, j) = A(i, j);
@@ -69,8 +71,9 @@ append_row(const Eigen::Matrix<T1, R1, C1>& A,
  * vector.
  */
 template <typename T1, typename T2, int R1, int R2>
-inline Eigen::Matrix<return_type_t<T1, T2>, Eigen::Dynamic, 1> append_row(
-    const Eigen::Matrix<T1, R1, 1>& A, const Eigen::Matrix<T2, R2, 1>& B) {
+inline Eigen::Matrix<return_type_t<T1, T2>, Eigen::Dynamic, 1>
+append_row(const Eigen::Matrix<T1, R1, 1>& A,
+           const Eigen::Matrix<T2, R2, 1>& B) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
@@ -161,8 +164,8 @@ inline Eigen::Matrix<T, Eigen::Dynamic, 1> append_row(
  * @return Result of stacking the scalar on top of the vector.
  */
 template <typename T1, typename T2, int R, int C>
-inline Eigen::Matrix<return_type_t<T1, T2>, Eigen::Dynamic, 1> append_row(
-    const T1& A, const Eigen::Matrix<T2, R, C>& B) {
+inline Eigen::Matrix<return_type_t<T1, T2>, Eigen::Dynamic, 1>
+append_row(const T1& A, const Eigen::Matrix<T2, R, C>& B) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   typedef return_type_t<T1, T2> return_type;
@@ -186,8 +189,8 @@ inline Eigen::Matrix<return_type_t<T1, T2>, Eigen::Dynamic, 1> append_row(
  * @return Result of stacking the vector on top of the scalar.
  */
 template <typename T1, typename T2, int R, int C>
-inline Eigen::Matrix<return_type_t<T1, T2>, Eigen::Dynamic, 1> append_row(
-    const Eigen::Matrix<T1, R, C>& A, const T2& B) {
+inline Eigen::Matrix<return_type_t<T1, T2>, Eigen::Dynamic, 1>
+append_row(const Eigen::Matrix<T1, R, C>& A, const T2& B) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   typedef return_type_t<T1, T2> return_type;

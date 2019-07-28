@@ -17,9 +17,8 @@ namespace stan {
 namespace math {
 
 template <bool propto, typename T_y, typename T_loc, typename T_covar>
-return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
-                                                     const T_loc& mu,
-                                                     const T_covar& Sigma) {
+return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(
+    const T_y& y, const T_loc& mu, const T_covar& Sigma) {
   static const char* function = "multi_normal_lpdf";
   typedef typename scalar_type<T_covar>::type T_covar_elem;
   typedef return_type_t<T_y, T_loc, T_covar> lp_type;
@@ -103,7 +102,8 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
   if (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
     lp_type sum_lp_vec(0.0);
     for (size_t i = 0; i < size_vec; i++) {
-      Eigen::Matrix<return_type_t<T_y, T_loc>, Dynamic, 1> y_minus_mu(size_y);
+      Eigen::Matrix<return_type_t<T_y, T_loc>, Dynamic, 1>
+          y_minus_mu(size_y);
       for (int j = 0; j < size_y; j++)
         y_minus_mu(j) = y_vec[i](j) - mu_vec[i](j);
       sum_lp_vec += trace_inv_quad_form_ldlt(ldlt_Sigma, y_minus_mu);

@@ -31,9 +31,8 @@ namespace math {
  * @tparam T_prec Type of prior precision.
  */
 template <bool propto, typename T_y, typename T_loc, typename T_prec>
-return_type_t<T_y, T_loc, T_prec> beta_proportion_log(const T_y& y,
-                                                      const T_loc& mu,
-                                                      const T_prec& kappa) {
+return_type_t<T_y, T_loc, T_prec> beta_proportion_log(
+    const T_y& y, const T_loc& mu, const T_prec& kappa) {
   return beta_proportion_lpdf<propto, T_y, T_loc, T_prec>(y, mu, kappa);
 }
 

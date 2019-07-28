@@ -40,8 +40,8 @@ namespace math {
  * @tparam T_inv_scale Type of inverse scale.
  */
 template <bool propto, typename T_y, typename T_inv_scale>
-return_type_t<T_y, T_inv_scale> exponential_lpdf(const T_y& y,
-                                                 const T_inv_scale& beta) {
+return_type_t<T_y, T_inv_scale> exponential_lpdf(
+    const T_y& y, const T_inv_scale& beta) {
   static const char* function = "exponential_lpdf";
   typedef typename stan::partials_return_type<T_y, T_inv_scale>::type
       T_partials_return;

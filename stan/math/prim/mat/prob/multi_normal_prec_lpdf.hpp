@@ -103,8 +103,8 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_prec_lpdf(
   if (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
     lp_type sum_lp_vec(0.0);
     for (size_t i = 0; i < size_vec; i++) {
-      Eigen::Matrix<return_type_t<T_y, T_loc>, Eigen::Dynamic, 1> y_minus_mu(
-          size_y);
+      Eigen::Matrix<return_type_t<T_y, T_loc>, Eigen::Dynamic, 1>
+          y_minus_mu(size_y);
       for (int j = 0; j < size_y; j++)
         y_minus_mu(j) = y_vec[i](j) - mu_vec[i](j);
       sum_lp_vec += trace_quad_form(Sigma, y_minus_mu);

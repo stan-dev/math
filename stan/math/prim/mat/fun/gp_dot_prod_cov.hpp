@@ -36,7 +36,8 @@ namespace math {
  *   x is nan or infinite
  */
 template <typename T_x, typename T_sigma>
-Eigen::Matrix<return_type_t<T_x, T_sigma>, Eigen::Dynamic, Eigen::Dynamic>
+Eigen::Matrix<return_type_t<T_x, T_sigma>, Eigen::Dynamic,
+              Eigen::Dynamic>
 gp_dot_prod_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
                 const T_sigma &sigma) {
   check_not_nan("gp_dot_prod_cov", "sigma", sigma);
@@ -91,7 +92,8 @@ gp_dot_prod_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
  *   x is nan or infinite
  */
 template <typename T_x, typename T_sigma>
-Eigen::Matrix<return_type_t<T_x, T_sigma>, Eigen::Dynamic, Eigen::Dynamic>
+Eigen::Matrix<return_type_t<T_x, T_sigma>, Eigen::Dynamic,
+              Eigen::Dynamic>
 gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma &sigma) {
   check_not_nan("gp_dot_prod_cov", "sigma", sigma);
   check_nonnegative("gp_dot_prod_cov", "sigma", sigma);

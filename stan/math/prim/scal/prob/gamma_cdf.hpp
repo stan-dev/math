@@ -39,9 +39,8 @@ namespace math {
  * @tparam T_inv_scale Type of inverse scale.
  */
 template <typename T_y, typename T_shape, typename T_inv_scale>
-return_type_t<T_y, T_shape, T_inv_scale> gamma_cdf(const T_y& y,
-                                                   const T_shape& alpha,
-                                                   const T_inv_scale& beta) {
+return_type_t<T_y, T_shape, T_inv_scale> gamma_cdf(
+    const T_y& y, const T_shape& alpha, const T_inv_scale& beta) {
   if (size_zero(y, alpha, beta))
     return 1.0;
   typedef typename stan::partials_return_type<T_y, T_shape, T_inv_scale>::type

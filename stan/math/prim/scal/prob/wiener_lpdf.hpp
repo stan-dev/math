@@ -89,7 +89,8 @@ return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
   if (size_zero(y, alpha, beta, tau, delta))
     return 0.0;
 
-  typedef return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> T_return_type;
+  typedef return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta>
+      T_return_type;
   T_return_type lp(0.0);
 
   check_not_nan(function, "Random variable", y);
@@ -191,9 +192,9 @@ return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
 
 template <typename T_y, typename T_alpha, typename T_tau, typename T_beta,
           typename T_delta>
-inline return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
-    const T_y& y, const T_alpha& alpha, const T_tau& tau, const T_beta& beta,
-    const T_delta& delta) {
+inline return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta>
+wiener_lpdf(const T_y& y, const T_alpha& alpha, const T_tau& tau,
+            const T_beta& beta, const T_delta& delta) {
   return wiener_lpdf<false>(y, alpha, tau, beta, delta);
 }
 

@@ -33,7 +33,7 @@ namespace math {
  */
 template <typename T_n, typename T_N, typename T_prob>
 return_type_t<T_prob> binomial_cdf(const T_n& n, const T_N& N,
-                                   const T_prob& theta) {
+                                                const T_prob& theta) {
   static const char* function = "binomial_cdf";
   typedef typename stan::partials_return_type<T_n, T_N, T_prob>::type
       T_partials_return;

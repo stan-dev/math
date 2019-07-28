@@ -31,8 +31,8 @@ return_type_t<T_location, T_precision> neg_binomial_2_lccdf(
 
   size_t size_beta = max_size(mu, phi);
 
-  VectorBuilder<true, return_type_t<T_location, T_precision>, T_location,
-                T_precision>
+  VectorBuilder<true, return_type_t<T_location, T_precision>,
+                T_location, T_precision>
       beta_vec(size_beta);
   for (size_t i = 0; i < size_beta; ++i)
     beta_vec[i] = phi_vec[i] / mu_vec[i];

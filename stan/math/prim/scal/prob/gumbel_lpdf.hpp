@@ -29,8 +29,8 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
-return_type_t<T_y, T_loc, T_scale> gumbel_lpdf(const T_y& y, const T_loc& mu,
-                                               const T_scale& beta) {
+return_type_t<T_y, T_loc, T_scale> gumbel_lpdf(
+    const T_y& y, const T_loc& mu, const T_scale& beta) {
   static const char* function = "gumbel_lpdf";
   typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
       T_partials_return;
@@ -95,9 +95,8 @@ return_type_t<T_y, T_loc, T_scale> gumbel_lpdf(const T_y& y, const T_loc& mu,
 }
 
 template <typename T_y, typename T_loc, typename T_scale>
-inline return_type_t<T_y, T_loc, T_scale> gumbel_lpdf(const T_y& y,
-                                                      const T_loc& mu,
-                                                      const T_scale& beta) {
+inline return_type_t<T_y, T_loc, T_scale> gumbel_lpdf(
+    const T_y& y, const T_loc& mu, const T_scale& beta) {
   return gumbel_lpdf<false>(y, mu, beta);
 }
 

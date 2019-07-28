@@ -29,8 +29,8 @@ namespace math {
  * @tparam T_loc Type of location parameter.
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
-return_type_t<T_y, T_loc, T_scale> normal_log(const T_y& y, const T_loc& mu,
-                                              const T_scale& sigma) {
+return_type_t<T_y, T_loc, T_scale> normal_log(
+    const T_y& y, const T_loc& mu, const T_scale& sigma) {
   return normal_lpdf<propto, T_y, T_loc, T_scale>(y, mu, sigma);
 }
 
@@ -38,9 +38,8 @@ return_type_t<T_y, T_loc, T_scale> normal_log(const T_y& y, const T_loc& mu,
  * @deprecated use <code>normal_lpdf</code>
  */
 template <typename T_y, typename T_loc, typename T_scale>
-inline return_type_t<T_y, T_loc, T_scale> normal_log(const T_y& y,
-                                                     const T_loc& mu,
-                                                     const T_scale& sigma) {
+inline return_type_t<T_y, T_loc, T_scale> normal_log(
+    const T_y& y, const T_loc& mu, const T_scale& sigma) {
   return normal_lpdf<T_y, T_loc, T_scale>(y, mu, sigma);
 }
 

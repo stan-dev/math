@@ -43,10 +43,8 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_x, typename T_alpha,
           typename T_beta>
-return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
-                                                         const T_x& x,
-                                                         const T_alpha& alpha,
-                                                         const T_beta& beta) {
+return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(
+    const T_y& y, const T_x& x, const T_alpha& alpha, const T_beta& beta) {
   static const char* function = "poisson_log_glm_lpmf";
   typedef typename partials_return_type<T_y, T_x, T_alpha, T_beta>::type
       T_partials_return;

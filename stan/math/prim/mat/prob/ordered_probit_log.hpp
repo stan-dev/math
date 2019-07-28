@@ -39,8 +39,8 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_loc, typename T_cut>
 return_type_t<T_loc, T_cut> ordered_probit_log(const T_y& y,
-                                               const T_loc& lambda,
-                                               const T_cut& c) {
+                                                            const T_loc& lambda,
+                                                            const T_cut& c) {
   return ordered_probit_lpmf<propto>(y, lambda, c);
 }
 
@@ -49,8 +49,8 @@ return_type_t<T_loc, T_cut> ordered_probit_log(const T_y& y,
  */
 template <typename T_y, typename T_loc, typename T_cut>
 return_type_t<T_loc, T_cut> ordered_probit_log(const T_y& y,
-                                               const T_loc& lambda,
-                                               const T_cut& c) {
+                                                            const T_loc& lambda,
+                                                            const T_cut& c) {
   return ordered_probit_lpmf(y, lambda, c);
 }
 

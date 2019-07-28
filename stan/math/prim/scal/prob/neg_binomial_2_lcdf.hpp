@@ -32,8 +32,8 @@ return_type_t<T_location, T_precision> neg_binomial_2_lcdf(
   scalar_seq_view<T_precision> phi_vec(phi);
 
   size_t size_phi_mu = max_size(mu, phi);
-  VectorBuilder<true, return_type_t<T_location, T_precision>, T_location,
-                T_precision>
+  VectorBuilder<true, return_type_t<T_location, T_precision>,
+                T_location, T_precision>
       phi_mu(size_phi_mu);
   for (size_t i = 0; i < size_phi_mu; i++)
     phi_mu[i] = phi_vec[i] / (phi_vec[i] + mu_vec[i]);

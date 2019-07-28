@@ -141,8 +141,8 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
 }
 
 template <typename T_y, typename T_dof, typename T_scale>
-inline return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
-    const T_y& y, const T_dof& nu, const T_scale& s) {
+inline return_type_t<T_y, T_dof, T_scale>
+scaled_inv_chi_square_lpdf(const T_y& y, const T_dof& nu, const T_scale& s) {
   return scaled_inv_chi_square_lpdf<false>(y, nu, s);
 }
 

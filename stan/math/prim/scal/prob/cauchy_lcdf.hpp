@@ -30,8 +30,8 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_y, typename T_loc, typename T_scale>
-return_type_t<T_y, T_loc, T_scale> cauchy_lcdf(const T_y& y, const T_loc& mu,
-                                               const T_scale& sigma) {
+return_type_t<T_y, T_loc, T_scale> cauchy_lcdf(
+    const T_y& y, const T_loc& mu, const T_scale& sigma) {
   typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
       T_partials_return;
 

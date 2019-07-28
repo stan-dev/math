@@ -11,7 +11,8 @@ namespace math {
  * @deprecated use <code>bernoulli_logit_lpmf</code>
  */
 template <bool propto, typename T_n, typename T_prob>
-return_type_t<T_prob> bernoulli_logit_log(const T_n& n, const T_prob& theta) {
+return_type_t<T_prob> bernoulli_logit_log(const T_n& n,
+                                                       const T_prob& theta) {
   return bernoulli_logit_lpmf<propto, T_n, T_prob>(n, theta);
 }
 
@@ -19,8 +20,8 @@ return_type_t<T_prob> bernoulli_logit_log(const T_n& n, const T_prob& theta) {
  * @deprecated use <code>bernoulli_logit_lpmf</code>
  */
 template <typename T_n, typename T_prob>
-inline return_type_t<T_prob> bernoulli_logit_log(const T_n& n,
-                                                 const T_prob& theta) {
+inline return_type_t<T_prob> bernoulli_logit_log(
+    const T_n& n, const T_prob& theta) {
   return bernoulli_logit_lpmf<T_n, T_prob>(n, theta);
 }
 
