@@ -49,9 +49,10 @@ return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
                                                          const T_beta& beta) {
   static const char* function = "poisson_log_glm_lpmf";
   typedef partials_return_type_t<T_y, T_x, T_alpha, T_beta> T_partials_return;
-  typedef typename std::conditional_t<is_vector<T_alpha>::value,
-                           Eigen::Array<partials_return_type_t<T_alpha>, -1, 1>,
-                           partials_return_type_t<T_alpha>>
+  typedef typename std::conditional_t<
+      is_vector<T_alpha>::value,
+      Eigen::Array<partials_return_type_t<T_alpha>, -1, 1>,
+      partials_return_type_t<T_alpha>>
       T_alpha_val;
 
   using Eigen::Dynamic;
