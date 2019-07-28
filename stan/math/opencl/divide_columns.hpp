@@ -35,9 +35,9 @@ inline void divide_columns(const matrix_cl<T1>& A, const matrix_cl<T2>& B) {
                    0);
   check_vector("divide_columns", "B", B);
   try {
-  opencl_kernels::divide_columns_vec(cl::NDRange(A.size()), A, B, B.size());
+    opencl_kernels::divide_columns_vec(cl::NDRange(A.size()), A, B, B.size());
   } catch (const cl::Error& e) {
-  check_opencl_error("divide_columns", e);
+    check_opencl_error("divide_columns", e);
   }
 }
 
