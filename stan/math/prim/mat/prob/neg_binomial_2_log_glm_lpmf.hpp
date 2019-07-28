@@ -59,12 +59,12 @@ return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
   static const char* function = "neg_binomial_2_log_glm_lpmf";
   typedef partials_return_type_t<T_y, T_x, T_alpha, T_beta, T_precision>
       T_partials_return;
-  typedef std::conditional<
+  typedef typename std::conditional_t<
       is_vector<T_precision>::value,
       Eigen::Array<partials_return_type_t<T_precision>, -1, 1>,
       partials_return_type_t<T_precision>>
       T_precision_val;
-  typedef typename std::conditional<
+  typedef typename std::conditional_t<
       is_vector<T_y>::value || is_vector<T_precision>::value,
       Eigen::Array<partials_return_type_t<T_y, T_precision>, -1, 1>,
       partials_return_type_t<T_y, T_precision>>

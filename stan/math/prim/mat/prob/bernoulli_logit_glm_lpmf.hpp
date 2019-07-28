@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_BERNOULLI_LOGIT_GLM_LPMF_HPP
 #define STAN_MATH_PRIM_MAT_PROB_BERNOULLI_LOGIT_GLM_LPMF_HPP
 
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
@@ -47,10 +48,9 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
     const T_y &y, const T_x &x, const T_alpha &alpha, const T_beta &beta) {
   static const char *function = "bernoulli_logit_glm_lpmf";
   typedef partials_return_type_t<T_y, T_x, T_alpha, T_beta> T_partials_return;
-  typedef std::conditional<is_vector<T_y>::value,
+  typedef typename std::conditional_t<is_vector<T_y>::value,
                            Eigen::Matrix<partials_return_type_t<T_y>, -1, 1>,
-                           partials_return_type_t<T_y>>
-      T_y_val;
+                           partials_return_type_t<T_y>> T_y_val;
 
   using Eigen::Dynamic;
   using Eigen::Matrix;

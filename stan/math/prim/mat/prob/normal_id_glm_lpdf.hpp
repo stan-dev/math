@@ -52,7 +52,7 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   static const char *function = "normal_id_glm_lpdf";
   typedef partials_return_type_t<T_y, T_x, T_alpha, T_beta, T_scale>
       T_partials_return;
-  typedef std::conditional<is_vector<T_scale>::value,
+  typedef typename std::conditional_t<is_vector<T_scale>::value,
                            Eigen::Array<partials_return_type_t<T_scale>, -1, 1>,
                            partials_return_type_t<T_scale>>
       T_scale_val;
