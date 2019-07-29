@@ -404,4 +404,7 @@ TEST(ProbDistributionsBernoulliLogitGLM, test_scalar_rowvec_stdvec) {
 
   EXPECT_NO_THROW(
       stan::math::bernoulli_logit_glm_lpmf(y_scal, x_s, alpha, beta));
+  int alpha2 = 1.0;
+  EXPECT_NO_THROW(
+      stan::math::bernoulli_logit_glm_lpmf(y_scal, x_s, alpha2, beta));
 }
