@@ -382,14 +382,11 @@ TEST(ProbDistributionsPoissonLogGLM,
 }
 
 TEST(ProbDistributionsBernoulliLogitGLM, test_scalar_rowvec_stdvec) {
-  Matrix<double, Dynamic, 1> y(3, 1);
-  y << 1, 0, 1;
   Matrix<double, Dynamic, Dynamic> x(3, 2);
   x << -12, 46, -42, 24, 25, 27;
   Matrix<double, Dynamic, 1> beta(2, 1);
   beta << 0.3, 2;
   double alpha = 0.3;
-  EXPECT_NO_THROW(stan::math::bernoulli_logit_glm_lpmf(y, x, alpha, beta));
 
   std::vector<double> y_vec(3);
   y_vec[0] = 0;
