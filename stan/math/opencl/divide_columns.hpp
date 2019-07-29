@@ -13,7 +13,7 @@ namespace stan {
 namespace math {
 
 /**
- * Divides arithmetic matrices columns element-wise by an arithmetic vector
+ * Divides each column of a matrix by a vector
  *
  * @tparam T1 Type of first matrix
  * @tparam T2 Type of second matrix
@@ -42,7 +42,7 @@ inline void divide_columns(const matrix_cl<T1>& A, const matrix_cl<T2>& B) {
 }
 
 /**
- * Divides matrix \c A element-wise
+ * Divides each column of a matrix by a scalar
  *
  * @tparam T1 Type of first matrix
  * @tparam T2 Type of the divisor
