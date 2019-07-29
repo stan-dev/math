@@ -2,7 +2,7 @@
 #define STAN_MATH_OPENCL_MATRIX_CL_HPP
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/opencl_context.hpp>
-#include <stan/math/opencl/partial_types.hpp>
+#include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
@@ -38,14 +38,14 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
   cl::Buffer buffer_cl_;  // Holds the allocated memory on the device
   const int rows_;
   const int cols_;
-  PartialViewCL partial_view_;  // Holds info on if matrix is a special type
+  matrix_cl_view view_;  // Holds info on if matrix is a special type
   mutable std::vector<cl::Event> write_events_;  // Tracks write jobs
   mutable std::vector<cl::Event> read_events_;   // Tracks reads
 
  public:
   typedef T type;
   // Forward declare the methods that work in place on the matrix
-  template <PartialViewCL partial_view = PartialViewCL::Entire>
+  template <matrix_cl_view matrix_view = matrix_cl_view::Entire>
   void zeros();
   template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper>
   void triangular_transpose();
@@ -59,10 +59,10 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
 
   int size() const { return rows_ * cols_; }
 
-  const PartialViewCL& partial_view() const { return partial_view_; }
+  const matrix_cl_view& view() const { return view_; }
 
-  void partial_view(const PartialViewCL& partial_view) {
-    partial_view_ = partial_view;
+  void view(const matrix_cl_view& view) {
+    view_ = view;
   }
 
   /**
@@ -183,7 +183,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
   matrix_cl() : rows_(0), cols_(0) {}
 
   matrix_cl(const matrix_cl<T>& A)
-      : rows_(A.rows()), cols_(A.cols()), partial_view_(A.partial_view()) {
+      : rows_(A.rows()), cols_(A.cols()), view_(A.view()) {
     if (A.size() == 0)
       return;
     cl::Context& ctx = opencl_context.context();
@@ -213,8 +213,8 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
    *
    */
   matrix_cl(const int& rows, const int& cols,
-            PartialViewCL partial_view = PartialViewCL::Entire)
-      : rows_(rows), cols_(cols), partial_view_(partial_view) {
+            matrix_cl_view partial_view = matrix_cl_view::Entire)
+      : rows_(rows), cols_(cols), view_(partial_view) {
     if (size() == 0) {
       return;
     }
@@ -242,8 +242,8 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
    */
   template <int R, int C>
   explicit matrix_cl(const Eigen::Matrix<T, R, C>& A,
-                     PartialViewCL partial_view = PartialViewCL::Entire)
-      : rows_(A.rows()), cols_(A.cols()), partial_view_(partial_view) {
+                     matrix_cl_view partial_view = matrix_cl_view::Entire)
+      : rows_(A.rows()), cols_(A.cols()), view_(partial_view) {
     if (size() == 0) {
       return;
     }
@@ -298,7 +298,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
     // Need to wait for all of matrices events before destroying old buffer
     this->wait_for_read_write_events();
     buffer_cl_ = a.buffer();
-    partial_view_ = a.partial_view();
+    view_ = a.view();
     return *this;
   }
 
@@ -314,7 +314,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
     // Need to wait for all of matrices events before destroying old buffer
     this->wait_for_read_write_events();
     buffer_cl_ = a.buffer();
-    partial_view_ = a.partial_view();
+    view_ = a.view();
     return *this;
   }
 };

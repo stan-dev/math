@@ -4,7 +4,7 @@
 
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/opencl/buffer_types.hpp>
-#include <stan/math/opencl/partial_types.hpp>
+#include <stan/math/opencl/matrix_cl_view.hpp>
 
 namespace stan {
 namespace math {
@@ -20,28 +20,28 @@ static const char *add_kernel_code = STRINGIFY(
      * @param[in] B RHS of matrix addition.
      * @param rows Number of rows for matrix A.
      * @param cols Number of cols for matrix A.
-     * @param part_A triangular part of matrix A to use
-     * @param part_B triangular part of matrix B to use
+     * @param view_A triangular part of matrix A to use
+     * @param view_B triangular part of matrix B to use
      * @note Code is a <code>const char*</code> held in
      * <code>add_kernel_code.</code>
      * This kernel uses the helper macros available in helpers.cl.
      */
     __kernel void add(__global double *C, __global double *A,
                       __global double *B, unsigned int rows, unsigned int cols,
-                      int part_A, int part_B) {
+                      int view_A, int view_B) {
       const int i = get_global_id(0);
       const int j = get_global_id(1);
       if (i < rows && j < cols) {
         double a;
-        if ((!containsNonzeroPart(part_A, LOWER) && j < i)
-            || (!containsNonzeroPart(part_A, UPPER) && j > i)) {
+        if ((!containsNonzeroPart(view_A, LOWER) && j < i)
+            || (!containsNonzeroPart(view_A, UPPER) && j > i)) {
           a = 0;
         } else {
           a = A(i, j);
         }
         double b;
-        if ((!containsNonzeroPart(part_B, LOWER) && j < i)
-            || (!containsNonzeroPart(part_B, UPPER) && j > i)) {
+        if ((!containsNonzeroPart(view_B, LOWER) && j < i)
+            || (!containsNonzeroPart(view_B, UPPER) && j > i)) {
           b = 0;
         } else {
           b = B(i, j);
@@ -56,9 +56,9 @@ static const char *add_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/add.hpp add() \endlink
  */
-const kernel_cl<out_buffer, in_buffer, in_buffer, int, int, PartialViewCL,
-                PartialViewCL>
-    add("add", {indexing_helpers, triangular_kernel_helpers, add_kernel_code});
+const kernel_cl<out_buffer, in_buffer, in_buffer, int, int, matrix_cl_view,
+                matrix_cl_view>
+    add("add", {indexing_helpers, view_kernel_helpers, add_kernel_code});
 // \cond
 static const char *add_batch_kernel_code = STRINGIFY(
     // \endcond

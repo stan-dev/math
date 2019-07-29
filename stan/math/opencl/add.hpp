@@ -4,7 +4,7 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernels/add.hpp>
 #include <stan/math/opencl/err/check_matching_dims.hpp>
-#include <stan/math/opencl/partial_types.hpp>
+#include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/prim/meta.hpp>
 
 #include <CL/cl.hpp>
@@ -29,13 +29,13 @@ inline matrix_cl<return_type_t<T1, T2>> add(const matrix_cl<T1>& A,
                                             const matrix_cl<T2>& B) {
   check_matching_dims("add", "A", A, "B", B);
   matrix_cl<return_type_t<T1, T2>> C(A.rows(), A.cols(),
-                                     A.partial_view() + B.partial_view());
+                                     A.view() + B.view());
   if (C.size() == 0) {
     return C;
   }
   try {
     opencl_kernels::add(cl::NDRange(A.rows(), A.cols()), C, A, B, A.rows(),
-                        A.cols(), A.partial_view(), B.partial_view());
+                        A.cols(), A.view(), B.view());
   } catch (const cl::Error& e) {
     check_opencl_error("add", e);
   }

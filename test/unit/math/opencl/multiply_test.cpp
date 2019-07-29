@@ -202,29 +202,29 @@ TEST(MathMatrix, matrix_vector_tri_small) {
   stan::math::matrix_cl<double> m0_cl(4, 1);
 
   m0 = m * v.triangularView<Eigen::Lower>();
-  m_cl.partial_view(stan::math::PartialViewCL::Entire);
-  v_cl.partial_view(stan::math::PartialViewCL::Lower);
+  m_cl.view(stan::math::matrix_cl_view::Entire);
+  v_cl.view(stan::math::matrix_cl_view::Lower);
   m0_cl = m_cl * v_cl;
   m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = m.triangularView<Eigen::Lower>() * v;
-  m_cl.partial_view(stan::math::PartialViewCL::Lower);
-  v_cl.partial_view(stan::math::PartialViewCL::Entire);
+  m_cl.view(stan::math::matrix_cl_view::Lower);
+  v_cl.view(stan::math::matrix_cl_view::Entire);
   m0_cl = m_cl * v_cl;
   m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = m * v.triangularView<Eigen::Upper>();
-  m_cl.partial_view(stan::math::PartialViewCL::Entire);
-  v_cl.partial_view(stan::math::PartialViewCL::Upper);
+  m_cl.view(stan::math::matrix_cl_view::Entire);
+  v_cl.view(stan::math::matrix_cl_view::Upper);
   m0_cl = m_cl * v_cl;
   m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = m.triangularView<Eigen::Upper>() * v;
-  m_cl.partial_view(stan::math::PartialViewCL::Upper);
-  v_cl.partial_view(stan::math::PartialViewCL::Entire);
+  m_cl.view(stan::math::matrix_cl_view::Upper);
+  v_cl.view(stan::math::matrix_cl_view::Entire);
   m0_cl = m_cl * v_cl;
   m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
@@ -233,32 +233,32 @@ TEST(MathMatrix, matrix_vector_tri_small) {
   // exist
   m0 = static_cast<Eigen::MatrixXd>(m.triangularView<Eigen::Lower>())
        * v.triangularView<Eigen::Lower>();
-  m_cl.partial_view(stan::math::PartialViewCL::Lower);
-  v_cl.partial_view(stan::math::PartialViewCL::Lower);
+  m_cl.view(stan::math::matrix_cl_view::Lower);
+  v_cl.view(stan::math::matrix_cl_view::Lower);
   m0_cl = m_cl * v_cl;
   m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = static_cast<Eigen::MatrixXd>(m.triangularView<Eigen::Upper>())
        * v.triangularView<Eigen::Upper>();
-  m_cl.partial_view(stan::math::PartialViewCL::Upper);
-  v_cl.partial_view(stan::math::PartialViewCL::Upper);
+  m_cl.view(stan::math::matrix_cl_view::Upper);
+  v_cl.view(stan::math::matrix_cl_view::Upper);
   m0_cl = m_cl * v_cl;
   m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = static_cast<Eigen::MatrixXd>(m.triangularView<Eigen::Lower>())
        * v.triangularView<Eigen::Upper>();
-  m_cl.partial_view(stan::math::PartialViewCL::Lower);
-  v_cl.partial_view(stan::math::PartialViewCL::Upper);
+  m_cl.view(stan::math::matrix_cl_view::Lower);
+  v_cl.view(stan::math::matrix_cl_view::Upper);
   m0_cl = m_cl * v_cl;
   m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = static_cast<Eigen::MatrixXd>(m.triangularView<Eigen::Upper>())
        * v.triangularView<Eigen::Lower>();
-  m_cl.partial_view(stan::math::PartialViewCL::Upper);
-  v_cl.partial_view(stan::math::PartialViewCL::Lower);
+  m_cl.view(stan::math::matrix_cl_view::Upper);
+  v_cl.view(stan::math::matrix_cl_view::Lower);
   m0_cl = m_cl * v_cl;
   m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
@@ -275,29 +275,29 @@ TEST(MathMatrix, matrix_vector_tri_big) {
   stan::math::matrix_cl<double> m0_cl(400, 1);
 
   m0 = m * v.triangularView<Eigen::Lower>();
-  m_cl.partial_view(stan::math::PartialViewCL::Entire);
-  v_cl.partial_view(stan::math::PartialViewCL::Lower);
+  m_cl.view(stan::math::matrix_cl_view::Entire);
+  v_cl.view(stan::math::matrix_cl_view::Lower);
   m0_cl = m_cl * v_cl;
   m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = m.triangularView<Eigen::Lower>() * v;
-  m_cl.partial_view(stan::math::PartialViewCL::Lower);
-  v_cl.partial_view(stan::math::PartialViewCL::Entire);
+  m_cl.view(stan::math::matrix_cl_view::Lower);
+  v_cl.view(stan::math::matrix_cl_view::Entire);
   m0_cl = m_cl * v_cl;
   m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = m * v.triangularView<Eigen::Upper>();
-  m_cl.partial_view(stan::math::PartialViewCL::Entire);
-  v_cl.partial_view(stan::math::PartialViewCL::Upper);
+  m_cl.view(stan::math::matrix_cl_view::Entire);
+  v_cl.view(stan::math::matrix_cl_view::Upper);
   m0_cl = m_cl * v_cl;
   m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = m.triangularView<Eigen::Upper>() * v;
-  m_cl.partial_view(stan::math::PartialViewCL::Upper);
-  v_cl.partial_view(stan::math::PartialViewCL::Entire);
+  m_cl.view(stan::math::matrix_cl_view::Upper);
+  v_cl.view(stan::math::matrix_cl_view::Entire);
   m0_cl = m_cl * v_cl;
   m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
@@ -306,32 +306,32 @@ TEST(MathMatrix, matrix_vector_tri_big) {
   // exist
   m0 = static_cast<Eigen::MatrixXd>(m.triangularView<Eigen::Lower>())
        * v.triangularView<Eigen::Lower>();
-  m_cl.partial_view(stan::math::PartialViewCL::Lower);
-  v_cl.partial_view(stan::math::PartialViewCL::Lower);
+  m_cl.view(stan::math::matrix_cl_view::Lower);
+  v_cl.view(stan::math::matrix_cl_view::Lower);
   m0_cl = m_cl * v_cl;
   m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = static_cast<Eigen::MatrixXd>(m.triangularView<Eigen::Upper>())
        * v.triangularView<Eigen::Upper>();
-  m_cl.partial_view(stan::math::PartialViewCL::Upper);
-  v_cl.partial_view(stan::math::PartialViewCL::Upper);
+  m_cl.view(stan::math::matrix_cl_view::Upper);
+  v_cl.view(stan::math::matrix_cl_view::Upper);
   m0_cl = m_cl * v_cl;
   m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = static_cast<Eigen::MatrixXd>(m.triangularView<Eigen::Lower>())
        * v.triangularView<Eigen::Upper>();
-  m_cl.partial_view(stan::math::PartialViewCL::Lower);
-  v_cl.partial_view(stan::math::PartialViewCL::Upper);
+  m_cl.view(stan::math::matrix_cl_view::Lower);
+  v_cl.view(stan::math::matrix_cl_view::Upper);
   m0_cl = m_cl * v_cl;
   m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = static_cast<Eigen::MatrixXd>(m.triangularView<Eigen::Upper>())
        * v.triangularView<Eigen::Lower>();
-  m_cl.partial_view(stan::math::PartialViewCL::Upper);
-  v_cl.partial_view(stan::math::PartialViewCL::Lower);
+  m_cl.view(stan::math::matrix_cl_view::Upper);
+  v_cl.view(stan::math::matrix_cl_view::Lower);
   m0_cl = m_cl * v_cl;
   m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
@@ -353,29 +353,29 @@ TEST(MathMatrix, row_vector_matrix_tri_small) {
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = rv * m.triangularView<Eigen::Lower>();
-  rv_cl.partial_view(stan::math::PartialViewCL::Entire);
-  m_cl.partial_view(stan::math::PartialViewCL::Lower);
+  rv_cl.view(stan::math::matrix_cl_view::Entire);
+  m_cl.view(stan::math::matrix_cl_view::Lower);
   m0_cl = rv_cl * m_cl;
   m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = rv.triangularView<Eigen::Lower>() * m;
-  rv_cl.partial_view(stan::math::PartialViewCL::Lower);
-  m_cl.partial_view(stan::math::PartialViewCL::Entire);
+  rv_cl.view(stan::math::matrix_cl_view::Lower);
+  m_cl.view(stan::math::matrix_cl_view::Entire);
   m0_cl = rv_cl * m_cl;
   m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = rv * m.triangularView<Eigen::Upper>();
-  rv_cl.partial_view(stan::math::PartialViewCL::Entire);
-  m_cl.partial_view(stan::math::PartialViewCL::Upper);
+  rv_cl.view(stan::math::matrix_cl_view::Entire);
+  m_cl.view(stan::math::matrix_cl_view::Upper);
   m0_cl = rv_cl * m_cl;
   m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = rv.triangularView<Eigen::Upper>() * m;
-  rv_cl.partial_view(stan::math::PartialViewCL::Upper);
-  m_cl.partial_view(stan::math::PartialViewCL::Entire);
+  rv_cl.view(stan::math::matrix_cl_view::Upper);
+  m_cl.view(stan::math::matrix_cl_view::Entire);
   m0_cl = rv_cl * m_cl;
   m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
@@ -384,32 +384,32 @@ TEST(MathMatrix, row_vector_matrix_tri_small) {
   // exist
   m0 = static_cast<Eigen::MatrixXd>(rv.triangularView<Eigen::Lower>())
        * m.triangularView<Eigen::Lower>();
-  rv_cl.partial_view(stan::math::PartialViewCL::Lower);
-  m_cl.partial_view(stan::math::PartialViewCL::Lower);
+  rv_cl.view(stan::math::matrix_cl_view::Lower);
+  m_cl.view(stan::math::matrix_cl_view::Lower);
   m0_cl = rv_cl * m_cl;
   m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = static_cast<Eigen::MatrixXd>(rv.triangularView<Eigen::Upper>())
        * m.triangularView<Eigen::Upper>();
-  rv_cl.partial_view(stan::math::PartialViewCL::Upper);
-  m_cl.partial_view(stan::math::PartialViewCL::Upper);
+  rv_cl.view(stan::math::matrix_cl_view::Upper);
+  m_cl.view(stan::math::matrix_cl_view::Upper);
   m0_cl = rv_cl * m_cl;
   m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = static_cast<Eigen::MatrixXd>(rv.triangularView<Eigen::Lower>())
        * m.triangularView<Eigen::Upper>();
-  rv_cl.partial_view(stan::math::PartialViewCL::Lower);
-  m_cl.partial_view(stan::math::PartialViewCL::Upper);
+  rv_cl.view(stan::math::matrix_cl_view::Lower);
+  m_cl.view(stan::math::matrix_cl_view::Upper);
   m0_cl = rv_cl * m_cl;
   m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = static_cast<Eigen::MatrixXd>(rv.triangularView<Eigen::Upper>())
        * m.triangularView<Eigen::Lower>();
-  rv_cl.partial_view(stan::math::PartialViewCL::Upper);
-  m_cl.partial_view(stan::math::PartialViewCL::Lower);
+  rv_cl.view(stan::math::matrix_cl_view::Upper);
+  m_cl.view(stan::math::matrix_cl_view::Lower);
   m0_cl = rv_cl * m_cl;
   m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
@@ -431,29 +431,29 @@ TEST(MathMatrix, row_vector_matrix_tri_big) {
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = rv * m.triangularView<Eigen::Lower>();
-  rv_cl.partial_view(stan::math::PartialViewCL::Entire);
-  m_cl.partial_view(stan::math::PartialViewCL::Lower);
+  rv_cl.view(stan::math::matrix_cl_view::Entire);
+  m_cl.view(stan::math::matrix_cl_view::Lower);
   m0_cl = rv_cl * m_cl;
   m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = rv.triangularView<Eigen::Lower>() * m;
-  rv_cl.partial_view(stan::math::PartialViewCL::Lower);
-  m_cl.partial_view(stan::math::PartialViewCL::Entire);
+  rv_cl.view(stan::math::matrix_cl_view::Lower);
+  m_cl.view(stan::math::matrix_cl_view::Entire);
   m0_cl = rv_cl * m_cl;
   m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = rv * m.triangularView<Eigen::Upper>();
-  rv_cl.partial_view(stan::math::PartialViewCL::Entire);
-  m_cl.partial_view(stan::math::PartialViewCL::Upper);
+  rv_cl.view(stan::math::matrix_cl_view::Entire);
+  m_cl.view(stan::math::matrix_cl_view::Upper);
   m0_cl = rv_cl * m_cl;
   m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = rv.triangularView<Eigen::Upper>() * m;
-  rv_cl.partial_view(stan::math::PartialViewCL::Upper);
-  m_cl.partial_view(stan::math::PartialViewCL::Entire);
+  rv_cl.view(stan::math::matrix_cl_view::Upper);
+  m_cl.view(stan::math::matrix_cl_view::Entire);
   m0_cl = rv_cl * m_cl;
   m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
@@ -462,32 +462,32 @@ TEST(MathMatrix, row_vector_matrix_tri_big) {
   // exist
   m0 = static_cast<Eigen::MatrixXd>(rv.triangularView<Eigen::Lower>())
        * m.triangularView<Eigen::Lower>();
-  rv_cl.partial_view(stan::math::PartialViewCL::Lower);
-  m_cl.partial_view(stan::math::PartialViewCL::Lower);
+  rv_cl.view(stan::math::matrix_cl_view::Lower);
+  m_cl.view(stan::math::matrix_cl_view::Lower);
   m0_cl = rv_cl * m_cl;
   m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = static_cast<Eigen::MatrixXd>(rv.triangularView<Eigen::Upper>())
        * m.triangularView<Eigen::Upper>();
-  rv_cl.partial_view(stan::math::PartialViewCL::Upper);
-  m_cl.partial_view(stan::math::PartialViewCL::Upper);
+  rv_cl.view(stan::math::matrix_cl_view::Upper);
+  m_cl.view(stan::math::matrix_cl_view::Upper);
   m0_cl = rv_cl * m_cl;
   m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = static_cast<Eigen::MatrixXd>(rv.triangularView<Eigen::Lower>())
        * m.triangularView<Eigen::Upper>();
-  rv_cl.partial_view(stan::math::PartialViewCL::Lower);
-  m_cl.partial_view(stan::math::PartialViewCL::Upper);
+  rv_cl.view(stan::math::matrix_cl_view::Lower);
+  m_cl.view(stan::math::matrix_cl_view::Upper);
   m0_cl = rv_cl * m_cl;
   m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 
   m0 = static_cast<Eigen::MatrixXd>(rv.triangularView<Eigen::Upper>())
        * m.triangularView<Eigen::Lower>();
-  rv_cl.partial_view(stan::math::PartialViewCL::Upper);
-  m_cl.partial_view(stan::math::PartialViewCL::Lower);
+  rv_cl.view(stan::math::matrix_cl_view::Upper);
+  m_cl.view(stan::math::matrix_cl_view::Lower);
   m0_cl = rv_cl * m_cl;
   m0_cl_res = stan::math::from_matrix_cl(m0_cl);
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
@@ -535,7 +535,7 @@ TEST(MathMatrix, lower_tri_rect_multiply_small) {
   auto m2 = stan::math::matrix_d::Random(3, 3).eval();
   stan::math::matrix_d m3_cl_res(3, 3);
 
-  stan::math::matrix_cl<double> m11(m1, stan::math::PartialViewCL::Lower);
+  stan::math::matrix_cl<double> m11(m1, stan::math::matrix_cl_view::Lower);
   stan::math::matrix_cl<double> m22(m2);
 
   auto m3 = (m1.triangularView<Eigen::Lower>() * m2).eval();
@@ -553,7 +553,7 @@ TEST(MathMatrix, lower_tri_rect_multiply_big) {
   auto m2 = stan::math::matrix_d::Random(size, size).eval();
   stan::math::matrix_d m3_cl_res(size, size);
 
-  stan::math::matrix_cl<double> m11(m1, stan::math::PartialViewCL::Lower);
+  stan::math::matrix_cl<double> m11(m1, stan::math::matrix_cl_view::Lower);
   stan::math::matrix_cl<double> m22(m2);
 
   auto m3 = (m1.triangularView<Eigen::Lower>() * m2).eval();
@@ -571,7 +571,7 @@ TEST(MathMatrix, lower_tri_rect_multiply_big_rect) {
   auto m2 = stan::math::matrix_d::Random(size, size * 3).eval();
   stan::math::matrix_d m3_cl_res(size, size * 3);
 
-  stan::math::matrix_cl<double> m11(m1, stan::math::PartialViewCL::Lower);
+  stan::math::matrix_cl<double> m11(m1, stan::math::matrix_cl_view::Lower);
   stan::math::matrix_cl<double> m22(m2);
 
   auto m3 = (m1.triangularView<Eigen::Lower>() * m2).eval();
@@ -588,7 +588,7 @@ TEST(MathMatrix, upper_tri_rect_multiply_small) {
   auto m2 = stan::math::matrix_d::Random(3, 3).eval();
   stan::math::matrix_d m3_cl_res(3, 3);
 
-  stan::math::matrix_cl<double> m11(m1, stan::math::PartialViewCL::Upper);
+  stan::math::matrix_cl<double> m11(m1, stan::math::matrix_cl_view::Upper);
   stan::math::matrix_cl<double> m22(m2);
 
   auto m3 = (m1.triangularView<Eigen::Upper>() * m2).eval();
@@ -606,7 +606,7 @@ TEST(MathMatrix, upper_tri_rect_multiply_big) {
   auto m2 = stan::math::matrix_d::Random(size, size).eval();
   stan::math::matrix_d m3_cl_res(size, size);
 
-  stan::math::matrix_cl<double> m11(m1, stan::math::PartialViewCL::Upper);
+  stan::math::matrix_cl<double> m11(m1, stan::math::matrix_cl_view::Upper);
   stan::math::matrix_cl<double> m22(m2);
 
   auto m3 = (m1.triangularView<Eigen::Upper>() * m2).eval();
@@ -624,7 +624,7 @@ TEST(MathMatrix, upper_tri_rect_multiply_big_rect) {
   auto m2 = stan::math::matrix_d::Random(size, size * 3).eval();
   stan::math::matrix_d m3_cl_res(size, size * 3);
 
-  stan::math::matrix_cl<double> m11(m1, stan::math::PartialViewCL::Upper);
+  stan::math::matrix_cl<double> m11(m1, stan::math::matrix_cl_view::Upper);
   stan::math::matrix_cl<double> m22(m2);
 
   auto m3 = (m1.triangularView<Eigen::Upper>() * m2).eval();
@@ -642,7 +642,7 @@ TEST(MathMatrix, rect_lower_tri_multiply_small) {
   stan::math::matrix_d m3_cl_res(3, 3);
 
   stan::math::matrix_cl<double> m11(m1);
-  stan::math::matrix_cl<double> m22(m2, stan::math::PartialViewCL::Lower);
+  stan::math::matrix_cl<double> m22(m2, stan::math::matrix_cl_view::Lower);
 
   auto m3 = (m1 * m2.triangularView<Eigen::Lower>()).eval();
 
@@ -660,7 +660,7 @@ TEST(MathMatrix, rect_lower_tri_multiply_big) {
   stan::math::matrix_d m3_cl_res(size, size);
 
   stan::math::matrix_cl<double> m11(m1);
-  stan::math::matrix_cl<double> m22(m2, stan::math::PartialViewCL::Lower);
+  stan::math::matrix_cl<double> m22(m2, stan::math::matrix_cl_view::Lower);
 
   auto m3 = (m1 * m2.triangularView<Eigen::Lower>()).eval();
 
@@ -678,7 +678,7 @@ TEST(MathMatrix, rect_lower_tri_multiply_big_rect) {
   stan::math::matrix_d m3_cl_res(size, size * 3);
 
   stan::math::matrix_cl<double> m11(m1);
-  stan::math::matrix_cl<double> m22(m2, stan::math::PartialViewCL::Lower);
+  stan::math::matrix_cl<double> m22(m2, stan::math::matrix_cl_view::Lower);
 
   auto m3 = (m1 * m2.triangularView<Eigen::Lower>()).eval();
 
@@ -695,7 +695,7 @@ TEST(MathMatrix, rect_upper_tri_multiply_small) {
   stan::math::matrix_d m3_cl_res(3, 3);
 
   stan::math::matrix_cl<double> m11(m1);
-  stan::math::matrix_cl<double> m22(m2, stan::math::PartialViewCL::Upper);
+  stan::math::matrix_cl<double> m22(m2, stan::math::matrix_cl_view::Upper);
 
   auto m3 = (m1 * m2.triangularView<Eigen::Upper>()).eval();
 
@@ -713,7 +713,7 @@ TEST(MathMatrix, rect_upper_tri_multiply_big) {
   stan::math::matrix_d m3_cl_res(size, size);
 
   stan::math::matrix_cl<double> m11(m1);
-  stan::math::matrix_cl<double> m22(m2, stan::math::PartialViewCL::Upper);
+  stan::math::matrix_cl<double> m22(m2, stan::math::matrix_cl_view::Upper);
 
   auto m3 = (m1 * m2.triangularView<Eigen::Upper>()).eval();
 
@@ -731,7 +731,7 @@ TEST(MathMatrix, rect_upper_tri_multiply_big_rect) {
   stan::math::matrix_d m3_cl_res(size * 3, size);
 
   stan::math::matrix_cl<double> m11(m1);
-  stan::math::matrix_cl<double> m22(m2, stan::math::PartialViewCL::Upper);
+  stan::math::matrix_cl<double> m22(m2, stan::math::matrix_cl_view::Upper);
 
   auto m3 = (m1 * m2.triangularView<Eigen::Upper>()).eval();
 

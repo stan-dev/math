@@ -2,7 +2,7 @@
 #define STAN_MATH_OPENCL_ERR_CHECK_TRIANGULAR_HPP
 #ifdef STAN_OPENCL
 
-#include <stan/math/opencl/partial_types.hpp>
+#include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/prim/scal/err/invalid_argument.hpp>
 
@@ -23,10 +23,10 @@ namespace math {
 template <typename T>
 inline void check_triangular(const char* function, const char* name,
                              const matrix_cl<T>& A) {
-  if (A.partial_view() != PartialViewCL::Lower
-      && A.partial_view() != PartialViewCL::Upper) {
-    invalid_argument("tri_inverse(OpenCL)", "A.partial_view()",
-                     static_cast<int>(A.partial_view()), "is ",
+  if (A.view() != matrix_cl_view::Lower
+      && A.view() != matrix_cl_view::Upper) {
+    invalid_argument("tri_inverse(OpenCL)", "A.view()",
+                     static_cast<int>(A.view()), "is ",
                      ". Only triangular input matrices are supported!");
   }
 }

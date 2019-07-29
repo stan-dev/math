@@ -8,7 +8,7 @@
 
 namespace stan {
 namespace math {
-enum class PartialViewCL { Diagonal = 0, Lower = 1, Upper = 2, Entire = 3 };
+enum class matrix_cl_view { Diagonal = 0, Lower = 1, Upper = 2, Entire = 3 };
 
 /**
  * Performs bitwise @c or to deduce return type from adding two @c matrix_cls
@@ -17,11 +17,11 @@ enum class PartialViewCL { Diagonal = 0, Lower = 1, Upper = 2, Entire = 3 };
  * @param right_view second view
  * @return combined view
  */
-inline const PartialViewCL operator+(const PartialViewCL& left_view,
-                                     const PartialViewCL& right_view) {
-  typedef typename std::underlying_type<PartialViewCL>::type underlying;
-  return static_cast<PartialViewCL>(static_cast<underlying>(left_view)
-                                    | static_cast<underlying>(right_view));
+inline const matrix_cl_view operator+(const matrix_cl_view& left_view,
+                                      const matrix_cl_view& right_view) {
+  typedef typename std::underlying_type<matrix_cl_view>::type underlying;
+  return static_cast<matrix_cl_view>(static_cast<underlying>(left_view)
+                                     | static_cast<underlying>(right_view));
 }
 
 /**
@@ -31,11 +31,11 @@ inline const PartialViewCL operator+(const PartialViewCL& left_view,
  * @param right_view second view
  * @return common nonzero part
  */
-inline const PartialViewCL operator*(const PartialViewCL& left_view,
-                                     const PartialViewCL& right_view) {
-  typedef typename std::underlying_type<PartialViewCL>::type underlying;
-  return static_cast<PartialViewCL>(static_cast<underlying>(left_view)
-                                    & static_cast<underlying>(right_view));
+inline const matrix_cl_view operator*(const matrix_cl_view& left_view,
+                                      const matrix_cl_view& right_view) {
+  typedef typename std::underlying_type<matrix_cl_view>::type underlying;
+  return static_cast<matrix_cl_view>(static_cast<underlying>(left_view)
+                                     & static_cast<underlying>(right_view));
 }
 
 /**
@@ -44,8 +44,8 @@ inline const PartialViewCL operator*(const PartialViewCL& left_view,
  * @param right_view part to check for (usually `Lower` or `Upper`)
  * @return true, if `a` has part `b` nonzero
  */
-inline bool is_not_diagonal(const PartialViewCL& left_view,
-                            const PartialViewCL& right_view) {
+inline bool is_not_diagonal(const matrix_cl_view& left_view,
+                            const matrix_cl_view& right_view) {
   return static_cast<bool>(left_view * right_view);
 }
 
@@ -54,12 +54,12 @@ inline bool is_not_diagonal(const PartialViewCL& left_view,
  * @param view_type view to transpose
  * @return transposition of input
  */
-inline const PartialViewCL transpose(const PartialViewCL& view_type) {
-  if (view_type == PartialViewCL::Lower) {
-    return PartialViewCL::Upper;
+inline const matrix_cl_view transpose(const matrix_cl_view& view_type) {
+  if (view_type == matrix_cl_view::Lower) {
+    return matrix_cl_view::Upper;
   }
-  if (view_type == PartialViewCL::Upper) {
-    return PartialViewCL::Lower;
+  if (view_type == matrix_cl_view::Upper) {
+    return matrix_cl_view::Lower;
   }
   return view_type;
 }
@@ -70,10 +70,10 @@ inline const PartialViewCL transpose(const PartialViewCL& view_type) {
  * @param view_type view to invert
  * @return inverted view
  */
-inline const PartialViewCL invert(const PartialViewCL& view_type) {
-  typedef typename std::underlying_type<PartialViewCL>::type underlying;
-  return static_cast<PartialViewCL>(
-      static_cast<underlying>(PartialViewCL::Entire)
+inline const matrix_cl_view invert(const matrix_cl_view& view_type) {
+  typedef typename std::underlying_type<matrix_cl_view>::type underlying;
+  return static_cast<matrix_cl_view>(
+      static_cast<underlying>(matrix_cl_view::Entire)
       & ~static_cast<underlying>(view_type));
 }
 
@@ -85,20 +85,20 @@ inline const PartialViewCL invert(const PartialViewCL& view_type) {
  * @param eigen_type `UpLoType` to create a view from
  * @return triangular view
  */
-inline PartialViewCL from_eigen_triangular_type(Eigen::UpLoType eigen_type) {
+inline matrix_cl_view from_eigen_triangular_type(Eigen::UpLoType eigen_type) {
   if (eigen_type & Eigen::Lower) {
-    return PartialViewCL::Lower;
+    return matrix_cl_view::Lower;
   }
   if (eigen_type & Eigen::Upper) {
-    return PartialViewCL::Upper;
+    return matrix_cl_view::Upper;
   }
-  return PartialViewCL::Entire;
+  return matrix_cl_view::Entire;
 }
 
 enum class TriangularMapCL { UpperToLower = 0, LowerToUpper = 1 };
 
 // \cond
-static const char* triangular_kernel_helpers = STRINGIFY(
+static const char* view_kernel_helpers = STRINGIFY(
     // \endcond
     /**
      * Combines two triangular views. Result is nonzero, where any of the inputs

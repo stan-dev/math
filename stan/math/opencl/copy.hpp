@@ -5,7 +5,7 @@
 #include <stan/math/opencl/opencl_context.hpp>
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
-#include <stan/math/opencl/partial_types.hpp>
+#include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/kernels/copy.hpp>
 #include <stan/math/opencl/kernels/pack.hpp>
 #include <stan/math/opencl/kernels/unpack.hpp>
@@ -108,6 +108,7 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> from_matrix_cl(
  */
 template <typename T, typename = enable_if_arithmetic<T>>
 inline std::vector<T> packed_copy(const matrix_cl<T>& src) {
+  check_triangular("packed_copy", "src", src);
   const int packed_size = src.rows() * (src.rows() + 1) / 2;
   std::vector<T> dst(packed_size);
   if (dst.size() == 0) {
@@ -118,7 +119,7 @@ inline std::vector<T> packed_copy(const matrix_cl<T>& src) {
     matrix_cl<T> packed(packed_size, 1);
     stan::math::opencl_kernels::pack(cl::NDRange(src.rows(), src.rows()),
                                      packed, src, src.rows(), src.rows(),
-                                     src.partial_view());
+                                     src.view());
     const std::vector<cl::Event> mat_events
         = vec_concat(packed.read_write_events(), src.write_events());
     cl::Event copy_event;
@@ -138,7 +139,7 @@ inline std::vector<T> packed_copy(const matrix_cl<T>& src) {
  * the source std::vector to an OpenCL buffer and
  * unpacks it to a flat matrix on the OpenCL device.
  *
- * @tparam partial_view the triangularity of the source matrix
+ * @tparam matrix_view the triangularity of the source matrix
  * @param src the packed source std::vector
  * @param rows the number of rows in the flat matrix
  * @return the destination flat matrix on the OpenCL device
@@ -146,13 +147,13 @@ inline std::vector<T> packed_copy(const matrix_cl<T>& src) {
  * size of the vector does not match the expected size
  * for the packed triangular matrix
  */
-template <PartialViewCL partial_view, typename T,
+template <matrix_cl_view matrix_view, typename T,
           typename = enable_if_arithmetic<T>>
 inline matrix_cl<T> packed_copy(const std::vector<T>& src, int rows) {
   const int packed_size = rows * (rows + 1) / 2;
   check_size_match("copy (packed std::vector -> OpenCL)", "src.size()",
                    src.size(), "rows * (rows + 1) / 2", packed_size);
-  matrix_cl<T> dst(rows, rows, partial_view);
+  matrix_cl<T> dst(rows, rows, matrix_view);
   if (dst.size() == 0) {
     return dst;
   }
@@ -166,7 +167,7 @@ inline matrix_cl<T> packed_copy(const std::vector<T>& src, int rows) {
     packed.add_write_event(packed_event);
     stan::math::opencl_kernels::unpack(cl::NDRange(dst.rows(), dst.rows()), dst,
                                        packed, dst.rows(), dst.rows(),
-                                       partial_view);
+                                       matrix_view);
   } catch (const cl::Error& e) {
     check_opencl_error("packed_copy (std::vector->OpenCL)", e);
   }
@@ -185,7 +186,7 @@ inline matrix_cl<T> packed_copy(const std::vector<T>& src, int rows) {
  */
 template <typename T, typename = enable_if_arithmetic<T>>
 inline matrix_cl<T> copy_cl(const matrix_cl<T>& src) {
-  matrix_cl<T> dst(src.rows(), src.cols(), src.partial_view());
+  matrix_cl<T> dst(src.rows(), src.cols(), src.view());
   if (src.size() == 0) {
     return dst;
   }

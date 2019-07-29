@@ -5,7 +5,7 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/multiply.hpp>
 #include <stan/math/opencl/multiply_transpose.hpp>
-#include <stan/math/opencl/partial_types.hpp>
+#include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/tri_inverse.hpp>
 #include <stan/math/opencl/transpose.hpp>
 #include <stan/math/opencl/subtract.hpp>
@@ -58,7 +58,7 @@ inline void cholesky_decompose(matrix_cl<T>& A) {
     } catch (const cl::Error& e) {
       check_opencl_error("cholesky_decompose", e);
     }
-    A.partial_view(PartialViewCL::Lower);
+    A.view(matrix_cl_view::Lower);
     return;
   }
   // NOTE: The code in this section follows the naming conventions
@@ -89,7 +89,7 @@ inline void cholesky_decompose(matrix_cl<T>& A) {
   // copy L_22 into A's lower left hand corner
   cholesky_decompose(L_22);
   A.sub_block(L_22, 0, 0, block, block, block_subset, block_subset);
-  A.partial_view(PartialViewCL::Lower);
+  A.view(matrix_cl_view::Lower);
 }
 
 }  // namespace math

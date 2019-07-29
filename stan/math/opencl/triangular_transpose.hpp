@@ -3,7 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/opencl_context.hpp>
-#include <stan/math/opencl/partial_types.hpp>
+#include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/kernels/triangular_transpose.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
@@ -39,14 +39,14 @@ inline void matrix_cl<T, enable_if_arithmetic<T>>::triangular_transpose() try {
   opencl_kernels::triangular_transpose(cl::NDRange(this->rows(), this->cols()),
                                        *this, this->rows(), this->cols(),
                                        triangular_map);
-  this->partial_view_
+  this->view_
       = (triangular_map == TriangularMapCL::LowerToUpper
-         && !is_not_diagonal(this->partial_view_, PartialViewCL::Lower))
+         && !is_not_diagonal(this->view_, matrix_cl_view::Lower))
                 || (triangular_map == TriangularMapCL::UpperToLower
-                    && !is_not_diagonal(this->partial_view_,
-                                        PartialViewCL::Upper))
-            ? PartialViewCL::Diagonal
-            : PartialViewCL::Entire;
+                    && !is_not_diagonal(this->view_,
+                                        matrix_cl_view::Upper))
+            ? matrix_cl_view::Diagonal
+            : matrix_cl_view::Entire;
 } catch (const cl::Error& e) {
   check_opencl_error("triangular_transpose", e);
 }

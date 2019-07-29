@@ -46,8 +46,8 @@ static const char* zeros_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/zeros.hpp zeros() \endlink
  */
-const kernel_cl<out_buffer, int, int, PartialViewCL> zeros("zeros",
-                                                           {indexing_helpers,
+const kernel_cl<out_buffer, int, int, matrix_cl_view> zeros("zeros",
+                                                            {indexing_helpers,
                                                             zeros_kernel_code});
 
 }  // namespace opencl_kernels

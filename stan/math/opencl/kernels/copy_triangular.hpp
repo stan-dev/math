@@ -4,7 +4,7 @@
 
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/opencl/buffer_types.hpp>
-#include <stan/math/opencl/partial_types.hpp>
+#include <stan/math/opencl/matrix_cl_view.hpp>
 
 namespace stan {
 namespace math {
@@ -22,7 +22,7 @@ static const char *copy_triangular_kernel_code = STRINGIFY(
      * @param[in] B The matrix to copy the triangular from.
      * @param rows The number of rows of B.
      * @param cols The number of cols of B.
-     * @param triangular_part determines
+     * @param view determines
      * which part of the matrix to copy:
      *  ENTIRE: copies entire matrix
      *  LOWER: copies the lower triangular
@@ -35,12 +35,12 @@ static const char *copy_triangular_kernel_code = STRINGIFY(
      */
     __kernel void copy_triangular(__global double *A, __global double *B,
                                   unsigned int rows, unsigned int cols,
-                                  unsigned int triangular_part) {
+                                  unsigned int view) {
       int i = get_global_id(0);
       int j = get_global_id(1);
       if (i < rows && j < cols) {
-        if ((containsNonzeroPart(triangular_part, LOWER) && j <= i)
-            || (containsNonzeroPart(triangular_part, UPPER) && j >= i)
+        if ((containsNonzeroPart(view, LOWER) && j <= i)
+            || (containsNonzeroPart(view, UPPER) && j >= i)
             || j == i) {
           A(i, j) = B(i, j);
         } else {
@@ -55,9 +55,9 @@ static const char *copy_triangular_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/copy_triangular.hpp copy_triangular() \endlink
  */
-const kernel_cl<out_buffer, in_buffer, int, int, PartialViewCL> copy_triangular(
+const kernel_cl<out_buffer, in_buffer, int, int, matrix_cl_view> copy_triangular(
     "copy_triangular",
-    {indexing_helpers, triangular_kernel_helpers, copy_triangular_kernel_code});
+    {indexing_helpers, view_kernel_helpers, copy_triangular_kernel_code});
 
 }  // namespace opencl_kernels
 }  // namespace math
