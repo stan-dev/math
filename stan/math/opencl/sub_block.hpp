@@ -5,8 +5,9 @@
 #include <stan/math/opencl/opencl_context.hpp>
 #include <stan/math/opencl/constants.hpp>
 #include <stan/math/opencl/kernels/sub_block.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/scal/err/domain_error.hpp>
 #include <CL/cl.hpp>
 #include <vector>
 
@@ -24,10 +25,11 @@ namespace math {
  * @param nrows the number of rows in the submatrix
  * @param ncols the number of columns in the submatrix
  */
+template <typename T>
 template <TriangularViewCL triangular_view>
-inline void matrix_cl::sub_block(const matrix_cl& A, size_t A_i, size_t A_j,
-                                 size_t this_i, size_t this_j, size_t nrows,
-                                 size_t ncols) try {
+inline void matrix_cl<T, enable_if_arithmetic<T>>::sub_block(
+    const matrix_cl<T, enable_if_arithmetic<T>>& A, size_t A_i, size_t A_j,
+    size_t this_i, size_t this_j, size_t nrows, size_t ncols) try {
   if (nrows == 0 || ncols == 0) {
     return;
   }

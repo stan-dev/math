@@ -5,7 +5,7 @@
 #include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 
-#include <Eigen/Dense>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <vector>
 
 namespace stan {

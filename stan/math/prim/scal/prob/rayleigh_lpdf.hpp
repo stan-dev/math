@@ -64,9 +64,9 @@ typename return_type<T_y, T_scale>::type rayleigh_lpdf(const T_y& y,
     logp += NEGATIVE_HALF * y_over_sigma * y_over_sigma;
 
     T_partials_return scaled_diff = inv_sigma[n] * y_over_sigma;
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n] += 1.0 / y_dbl - scaled_diff;
-    if (!is_constant_struct<T_scale>::value)
+    if (!is_constant_all<T_scale>::value)
       ops_partials.edge2_.partials_[n]
           += y_over_sigma * scaled_diff - 2.0 * inv_sigma[n];
   }

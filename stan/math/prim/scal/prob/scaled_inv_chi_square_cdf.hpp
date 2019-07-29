@@ -69,12 +69,12 @@ typename return_type<T_y, T_dof, T_scale>::type scaled_inv_chi_square_cdf(
   using std::exp;
   using std::pow;
 
-  VectorBuilder<!is_constant_struct<T_dof>::value, T_partials_return, T_dof>
+  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
       gamma_vec(stan::length(nu));
-  VectorBuilder<!is_constant_struct<T_dof>::value, T_partials_return, T_dof>
+  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
       digamma_vec(stan::length(nu));
 
-  if (!is_constant_struct<T_dof>::value) {
+  if (!is_constant_all<T_dof>::value) {
     for (size_t i = 0; i < stan::length(nu); i++) {
       const T_partials_return half_nu_dbl = 0.5 * value_of(nu_vec[i]);
       gamma_vec[i] = tgamma(half_nu_dbl);
@@ -104,11 +104,11 @@ typename return_type<T_y, T_dof, T_scale>::type scaled_inv_chi_square_cdf(
 
     P *= Pn;
 
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n]
           += half_nu_s2_overx_dbl * y_inv_dbl * gamma_p_deriv / Pn;
 
-    if (!is_constant_struct<T_dof>::value)
+    if (!is_constant_all<T_dof>::value)
       ops_partials.edge2_.partials_[n]
           += (0.5
                   * grad_reg_inc_gamma(half_nu_dbl, half_nu_s2_overx_dbl,
@@ -116,20 +116,20 @@ typename return_type<T_y, T_dof, T_scale>::type scaled_inv_chi_square_cdf(
               - half_s2_overx_dbl * gamma_p_deriv)
              / Pn;
 
-    if (!is_constant_struct<T_scale>::value)
+    if (!is_constant_all<T_scale>::value)
       ops_partials.edge3_.partials_[n]
           += -2.0 * half_nu_dbl * s_dbl * y_inv_dbl * gamma_p_deriv / Pn;
   }
 
-  if (!is_constant_struct<T_y>::value) {
+  if (!is_constant_all<T_y>::value) {
     for (size_t n = 0; n < stan::length(y); ++n)
       ops_partials.edge1_.partials_[n] *= P;
   }
-  if (!is_constant_struct<T_dof>::value) {
+  if (!is_constant_all<T_dof>::value) {
     for (size_t n = 0; n < stan::length(nu); ++n)
       ops_partials.edge2_.partials_[n] *= P;
   }
-  if (!is_constant_struct<T_scale>::value) {
+  if (!is_constant_all<T_scale>::value) {
     for (size_t n = 0; n < stan::length(s); ++n)
       ops_partials.edge3_.partials_[n] *= P;
   }

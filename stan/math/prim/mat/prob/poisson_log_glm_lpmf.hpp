@@ -108,14 +108,14 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
 
   // Compute the necessary derivatives.
   operands_and_partials<T_x, T_alpha, T_beta> ops_partials(x, alpha, beta);
-  if (!is_constant_struct<T_beta>::value) {
+  if (!is_constant_all<T_beta>::value) {
     ops_partials.edge3_.partials_ = x_val.transpose() * theta_derivative;
   }
-  if (!is_constant_struct<T_x>::value) {
+  if (!is_constant_all<T_x>::value) {
     ops_partials.edge1_.partials_
         = (beta_val_vec * theta_derivative.transpose()).transpose();
   }
-  if (!is_constant_struct<T_alpha>::value) {
+  if (!is_constant_all<T_alpha>::value) {
     if (is_vector<T_alpha>::value)
       ops_partials.edge2_.partials_ = theta_derivative;
     else
