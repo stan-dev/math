@@ -423,16 +423,13 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
       std::domain_error);
 }
 TEST(ProbDistributionsNegBinomialLog2GLM, test_scalar_stdvec_rowvec) {
-  Matrix<int, 1, Dynamic> y(1, 3);
-  y << 1, 0, 1;
   Matrix<double, Dynamic, Dynamic> x(3, 2);
   x << -12, 46, -42, 24, 25, 27;
   Matrix<double, Dynamic, 1> beta(2, 1);
   beta << 0.3, 2;
   double alpha = 0.3;
   double phi = 2;
-  EXPECT_NO_THROW(
-      stan::math::neg_binomial_2_log_glm_lpmf(y, x, alpha, beta, phi));
+
   std::vector<double> y_vec(3);
   y_vec[0] = 0;
   y_vec[0] = 0;
@@ -444,4 +441,9 @@ TEST(ProbDistributionsNegBinomialLog2GLM, test_scalar_stdvec_rowvec) {
   x_scal << -12, 46;
   EXPECT_NO_THROW(
       stan::math::neg_binomial_2_log_glm_lpmf(y_vec, x, alpha, beta, phi));
+
+  int alpha2 = 10.0;
+  EXPECT_NO_THROW(
+      stan::math::neg_binomial_2_log_glm_lpmf(y_vec, x, alpha2, beta, phi));
+  
 }
