@@ -443,5 +443,4 @@ TEST(ProbDistributionsNegBinomialLog2GLM, test_scalar_stdvec_rowvec) {
   int alpha2 = 10.0;
   EXPECT_NO_THROW(
       stan::math::neg_binomial_2_log_glm_lpmf(y_vec, x, alpha2, beta, phi));
-  
 }
