@@ -62,14 +62,14 @@ inline void matrix_cl<T, enable_if_arithmetic<T>>::sub_block(
                               this->rows(), this->cols(), A.partial_view());
   }
   // calculation of extreme sub- and super- diagonal written
-  int diag_in_copy = A_i - A_j;
-  int copy_low = is_not_diagonal(A.partial_view(), PartialViewCL::Lower)
+  const int diag_in_copy = A_i - A_j;
+  const int copy_low = is_not_diagonal(A.partial_view(), PartialViewCL::Lower)
                      ? 1 - nrows
                      : diag_in_copy;
-  int copy_high = is_not_diagonal(A.partial_view(), PartialViewCL::Upper)
+  const int copy_high = is_not_diagonal(A.partial_view(), PartialViewCL::Upper)
                       ? ncols - 1
                       : diag_in_copy;
-  int start = this_j - this_i;
+  const int start = this_j - this_i;
 
   if (start + copy_low < 0) {
     this->partial_view_ = this->partial_view_ + PartialViewCL::Lower;

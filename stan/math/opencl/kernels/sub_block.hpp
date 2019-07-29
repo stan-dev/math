@@ -47,13 +47,13 @@ static const char *sub_block_kernel_code = STRINGIFY(
         unsigned int dst_offset_j, unsigned int size_i, unsigned int size_j,
         unsigned int src_rows, unsigned int src_cols, unsigned int dst_rows,
         unsigned int dst_cols, unsigned int partial_view) {
-      int i = get_global_id(0);
-      int j = get_global_id(1);
+      const int i = get_global_id(0);
+      const int j = get_global_id(1);
 
-      int src_idx_i = i + src_offset_i;
-      int src_idx_j = j + src_offset_j;
-      int dst_idx_i = i + dst_offset_i;
-      int dst_idx_j = j + dst_offset_j;
+      const int src_idx_i = i + src_offset_i;
+      const int src_idx_j = j + src_offset_j;
+      const int dst_idx_i = i + dst_offset_i;
+      const int dst_idx_j = j + dst_offset_j;
 
       if (src_idx_i < src_rows && src_idx_j < src_cols && dst_idx_i < dst_rows
           && dst_idx_j < dst_cols) {
