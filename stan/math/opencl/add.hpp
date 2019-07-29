@@ -2,8 +2,8 @@
 #define STAN_MATH_OPENCL_ADD_HPP
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/matrix_cl.hpp>
-#include <stan/math/opencl/kernels/add.hpp>
 #include <stan/math/opencl/err/check_matching_dims.hpp>
+#include <stan/math/opencl/kernels/add.hpp>
 #include <stan/math/prim/meta.hpp>
 
 #include <CL/cl.hpp>
@@ -52,8 +52,7 @@ inline matrix_cl<return_type_t<T1, T2>> add(const matrix_cl<T1>& A,
  * input matrices do not have matching dimensions
  *
  */
-template <typename T1, typename T2, typename = enable_if_arithmetic<T1>,
-          typename = enable_if_arithmetic<T2>>
+template <typename T1, typename T2, typename = enable_if_all_arithmetic<T1, T2>>
 inline auto operator+(const matrix_cl<T1>& A, const matrix_cl<T2>& B) {
   return add(A, B);
 }
