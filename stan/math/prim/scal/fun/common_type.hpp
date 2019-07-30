@@ -23,7 +23,7 @@ namespace math {
  */
 template <typename T1, typename T2>
 struct common_type {
-  typedef typename boost::math::tools::promote_args<T1, T2>::type type;
+  typedef return_type_t<T1, T2> type;
 };
 
 }  // namespace math

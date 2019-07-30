@@ -1,5 +1,31 @@
 Stan Math Library Release Notes
+
 ======================================================================
+v2.20.0 (18 July 2019)
+======================================================================
+
+New Features
+------------
+- OpenCL rectangular matrix multiply optimization (#1196)
+- Change name of opencl `copy` function (#1217)
+- Add better doc for all traits (#377)
+- Math repo runs tests on Windows (#951)
+
+Bug Fixes
+---------
+- Length 0 checks should come after checking for mismatched sizes (#336)
+- abs(real) translates to C++ but fails to compile (#907)
+- prim/mat/meta/is_vector_like.hpp weirdness through check_finite.hpp (#79)
+- Clang 4.0.0 fails tests that _should_ fail already (#561)
+
+
+Other
+-----
+- Fix code style in stan/math/rev/mat/fun/multiply.hpp (#598)
+- Remove unnecessary using statements from vectorized functions (#426)
+- factor size zero tests into variadic function (#589)
+- Update cholesky_decompose to use inplace decomposition per Eigen 3.3 (#359)
+
 
 v2.19.1 (18 Apr 2019)
 ======================================================================

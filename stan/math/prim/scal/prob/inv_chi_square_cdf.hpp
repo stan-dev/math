@@ -32,10 +32,8 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_y, typename T_dof>
-typename return_type<T_y, T_dof>::type inv_chi_square_cdf(const T_y& y,
-                                                          const T_dof& nu) {
-  typedef
-      typename stan::partials_return_type<T_y, T_dof>::type T_partials_return;
+return_type_t<T_y, T_dof> inv_chi_square_cdf(const T_y& y, const T_dof& nu) {
+  typedef partials_return_type_t<T_y, T_dof> T_partials_return;
 
   if (size_zero(y, nu))
     return 1.0;

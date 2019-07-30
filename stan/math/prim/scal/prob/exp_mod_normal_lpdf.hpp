@@ -17,13 +17,12 @@ namespace math {
 
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
           typename T_inv_scale>
-typename return_type<T_y, T_loc, T_scale, T_inv_scale>::type
-exp_mod_normal_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma,
-                    const T_inv_scale& lambda) {
+return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
+    const T_y& y, const T_loc& mu, const T_scale& sigma,
+    const T_inv_scale& lambda) {
   static const char* function = "exp_mod_normal_lpdf";
-  typedef
-      typename stan::partials_return_type<T_y, T_loc, T_scale,
-                                          T_inv_scale>::type T_partials_return;
+  typedef partials_return_type_t<T_y, T_loc, T_scale, T_inv_scale>
+      T_partials_return;
 
   if (size_zero(y, mu, sigma, lambda))
     return 0.0;
@@ -103,9 +102,9 @@ exp_mod_normal_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma,
 }
 
 template <typename T_y, typename T_loc, typename T_scale, typename T_inv_scale>
-inline typename return_type<T_y, T_loc, T_scale, T_inv_scale>::type
-exp_mod_normal_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma,
-                    const T_inv_scale& lambda) {
+inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
+    const T_y& y, const T_loc& mu, const T_scale& sigma,
+    const T_inv_scale& lambda) {
   return exp_mod_normal_lpdf<false>(y, mu, sigma, lambda);
 }
 

@@ -296,7 +296,7 @@ class cholesky_opencl : public vari {
    * @param L cholesky factor
    * @param L_adj matrix of adjoints of L
    */
-  inline void symbolic_rev(matrix_cl& L, matrix_cl& L_adj) {
+  inline void symbolic_rev(matrix_cl<double>& L, matrix_cl<double>& L_adj) {
     L_adj = opencl::multiply<TriangularViewCL::Upper, TriangularViewCL::Entire>(
         transpose(L), L_adj);
     L_adj.triangular_transpose<TriangularMapCL::LowerToUpper>();
@@ -324,8 +324,9 @@ class cholesky_opencl : public vari {
       L_adj_cpu[j] = vari_ref_L_[j]->adj_;
       L_val_cpu[j] = vari_ref_L_[j]->val_;
     }
-    matrix_cl L = packed_copy<TriangularViewCL::Lower>(L_val_cpu, M_);
-    matrix_cl L_adj = packed_copy<TriangularViewCL::Lower>(L_adj_cpu, M_);
+    matrix_cl<double> L = packed_copy<TriangularViewCL::Lower>(L_val_cpu, M_);
+    matrix_cl<double> L_adj
+        = packed_copy<TriangularViewCL::Lower>(L_adj_cpu, M_);
     int block_size
         = M_ / opencl_context.tuning_opts().cholesky_rev_block_partition;
     block_size = std::max(block_size, 8);
@@ -339,15 +340,15 @@ class cholesky_opencl : public vari {
       const int k_j_ind = k - j;
       const int m_k_ind = M_ - k;
 
-      matrix_cl R(k_j_ind, j);
-      matrix_cl D(k_j_ind, k_j_ind);
-      matrix_cl B(m_k_ind, j);
-      matrix_cl C(m_k_ind, k_j_ind);
+      matrix_cl<double> R(k_j_ind, j);
+      matrix_cl<double> D(k_j_ind, k_j_ind);
+      matrix_cl<double> B(m_k_ind, j);
+      matrix_cl<double> C(m_k_ind, k_j_ind);
 
-      matrix_cl R_adj(k_j_ind, j);
-      matrix_cl D_adj(k_j_ind, k_j_ind);
-      matrix_cl B_adj(m_k_ind, j);
-      matrix_cl C_adj(m_k_ind, k_j_ind);
+      matrix_cl<double> R_adj(k_j_ind, j);
+      matrix_cl<double> D_adj(k_j_ind, k_j_ind);
+      matrix_cl<double> B_adj(m_k_ind, j);
+      matrix_cl<double> C_adj(m_k_ind, k_j_ind);
 
       R.sub_block(L, j, 0, 0, 0, k_j_ind, j);
       D.sub_block(L, j, j, 0, 0, k_j_ind, k_j_ind);
@@ -369,7 +370,6 @@ class cholesky_opencl : public vari {
 
       R_adj = R_adj - transpose(C_adj) * B - D_adj * R;
       D_adj = diagonal_multiply(D_adj, 0.5);
-      D_adj.zeros<TriangularViewCL::Upper>();
 
       L_adj.sub_block(R_adj, 0, 0, j, 0, k_j_ind, j);
       L_adj.sub_block(D_adj, 0, 0, j, j, k_j_ind, k_j_ind);

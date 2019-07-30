@@ -40,10 +40,10 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_y, typename T_loc, typename T_prec>
-typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lcdf(
-    const T_y& y, const T_loc& mu, const T_prec& kappa) {
-  typedef typename stan::partials_return_type<T_y, T_loc, T_prec>::type
-      T_partials_return;
+return_type_t<T_y, T_loc, T_prec> beta_proportion_lcdf(const T_y& y,
+                                                       const T_loc& mu,
+                                                       const T_prec& kappa) {
+  typedef partials_return_type_t<T_y, T_loc, T_prec> T_partials_return;
 
   if (size_zero(y, mu, kappa))
     return 0.0;
