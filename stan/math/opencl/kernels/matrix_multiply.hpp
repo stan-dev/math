@@ -30,9 +30,12 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
       // thread index inside the thread_block
       const int row_in_block = get_local_id(0);
       const int col_in_block = get_local_id(1);
+
+      const int group_id_row = get_group_id(0);
+      const int group_id_col = get_group_id(1);
       // global thread index
-      const int i = THREAD_BLOCK_SIZE * get_group_id(0) + row_in_block;
-      const int j = THREAD_BLOCK_SIZE * get_group_id(1) + col_in_block;
+      const int i = THREAD_BLOCK_SIZE * group_id_row + row_in_block;
+      const int j = THREAD_BLOCK_SIZE * group_id_col + col_in_block;
       // identify if the matrix multiply is split
       const int split_id = get_global_id(2);
       const int split_size = get_global_size(2);
@@ -96,18 +99,17 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
       int end_tile = min(end_tile_A, end_tile_B);                      // NOLINT
       end_tile = min(end_tile, split_offset_tiles + split_tiles - 1);  // NOLINT
 
-      const int total_work_n = min(
+      const int total_work_n = min(  // NOLINT
           THREAD_BLOCK_SIZE, N - THREAD_BLOCK_SIZE * (int)get_group_id(1));
-      const int total_work_m = min(
+      const int total_work_m = min(  // NOLINT
           THREAD_BLOCK_SIZE, M - THREAD_BLOCK_SIZE * (int)get_group_id(0));
       const int total_work_nm = total_work_n * total_work_m;
       const int threads_in_block = THREAD_BLOCK_SIZE_COL * THREAD_BLOCK_SIZE;
       const int linear_index
           = get_local_id(0) + get_local_id(1) * THREAD_BLOCK_SIZE;
 
-      // special handling of first block
       if (start_tile <= end_tile
-          && (lower_upper_A == UPPER || lower_upper_B == LOWER)) {
+          && (lower_upper_A == UPPER || lower_upper_B == LOWER)) { // special handling of first block
         const int tiled_i = THREAD_BLOCK_SIZE * start_tile + row_in_block;
         const int tiled_j = THREAD_BLOCK_SIZE * start_tile + col_in_block;
         for (int w = 0; w < WORK_PER_THREAD; w++) {
@@ -137,7 +139,7 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
         }
         barrier(CLK_LOCAL_MEM_FENCE);
         const int total_work_k
-            = min(THREAD_BLOCK_SIZE, K - THREAD_BLOCK_SIZE * start_tile);
+            = min(THREAD_BLOCK_SIZE, K - THREAD_BLOCK_SIZE * start_tile);   // NOLINT
         for (int idx = linear_index, w = 0; idx < total_work_nm;
              idx += threads_in_block, w++) {
           const int row_B_local = idx / total_work_m;
@@ -151,10 +153,9 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
         barrier(CLK_LOCAL_MEM_FENCE);
         start_tile++;
       }
-      // special handling of last block
       if (start_tile <= end_tile
           && (lower_upper_A == LOWER || lower_upper_B == UPPER
-              || K % THREAD_BLOCK_SIZE != 0)) {
+              || K % THREAD_BLOCK_SIZE != 0)) { // special handling of last block
         const int tiled_i = THREAD_BLOCK_SIZE * end_tile + row_in_block;
         const int tiled_j = THREAD_BLOCK_SIZE * end_tile + col_in_block;
         for (int w = 0; w < WORK_PER_THREAD; w++) {
@@ -184,7 +185,7 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
         }
         barrier(CLK_LOCAL_MEM_FENCE);
         const int total_work_k
-            = min(THREAD_BLOCK_SIZE, K - THREAD_BLOCK_SIZE * end_tile);
+            = min(THREAD_BLOCK_SIZE, K - THREAD_BLOCK_SIZE * end_tile);  // NOLINT
         for (int idx = linear_index, w = 0; idx < total_work_nm;
              idx += threads_in_block, w++) {
           const int row_B_local = idx / total_work_m;
@@ -198,9 +199,8 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
         barrier(CLK_LOCAL_MEM_FENCE);
         end_tile--;
       }
-      // special handling of edge blocks
       if (total_work_n < THREAD_BLOCK_SIZE
-          || total_work_m < THREAD_BLOCK_SIZE) {
+          || total_work_m < THREAD_BLOCK_SIZE) { // special handling of edge blocks
         for (int tile_idx = start_tile; tile_idx <= end_tile; tile_idx++) {
           const int tiled_i = THREAD_BLOCK_SIZE * tile_idx + row_in_block;
           const int tiled_j = THREAD_BLOCK_SIZE * tile_idx + col_in_block;
@@ -220,7 +220,7 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
           }
           barrier(CLK_LOCAL_MEM_FENCE);
           int total_work_k
-              = min(THREAD_BLOCK_SIZE, K - THREAD_BLOCK_SIZE * tile_idx);
+              = min(THREAD_BLOCK_SIZE, K - THREAD_BLOCK_SIZE * tile_idx);   // NOLINT
           for (int idx = linear_index, w = 0; idx < total_work_nm;
                idx += threads_in_block, w++) {
             const int row_B_local = idx / total_work_m;
@@ -241,9 +241,7 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
               = THREAD_BLOCK_SIZE * get_group_id(1) + idx / total_work_m;
           C[split_id * M * N + B_curr_j * M + curr_i] = acc[w];
         }
-      }
-      // general case that is not on the edge - all threads have work
-      else {
+      } else { // general case that is not on the edge - all threads have work
         for (int tile_idx = start_tile; tile_idx <= end_tile; tile_idx++) {
           const int tiled_i = THREAD_BLOCK_SIZE * tile_idx + row_in_block;
           const int tiled_j = THREAD_BLOCK_SIZE * tile_idx + col_in_block;
