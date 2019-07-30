@@ -34,7 +34,7 @@ inline matrix_cl<T> copy_triangular(const matrix_cl<T>& src) {
     matrix_cl<T> dst(src);
     return dst;
   }
-  matrix_cl_view dst_view = partial_view * src.view();
+  matrix_cl_view dst_view = both(partial_view, src.view());
   matrix_cl<T> dst(src.rows(), src.cols(), dst_view);
   try {
     opencl_kernels::copy_triangular(cl::NDRange(dst.rows(), dst.cols()), dst,

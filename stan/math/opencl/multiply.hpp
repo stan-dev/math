@@ -38,7 +38,7 @@ inline matrix_cl<return_type_t<T1, T2>> multiply(const matrix_cl<T1>& A,
   check_size_match("multiply ((OpenCL))", "A.cols()", A.cols(), "B.rows()",
                    B.rows());
   matrix_cl<return_type_t<T1, T2>> temp(A.rows(), B.cols(),
-                                        A.view() + B.view());
+                                        either(A.view(), B.view()));
   if (A.size() == 0 || B.size() == 0) {
     temp.zeros();
     return temp;

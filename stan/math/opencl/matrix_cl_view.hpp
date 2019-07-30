@@ -11,28 +11,26 @@ namespace math {
 enum class matrix_cl_view { Diagonal = 0, Lower = 1, Upper = 2, Entire = 3 };
 
 /**
- * Performs bitwise @c or to deduce return type from adding two @c matrix_cls
- * together
+ * Determines which parts are nonzero in any of the input views.
  * @param left_view first view
  * @param right_view second view
  * @return combined view
  */
-inline const matrix_cl_view operator+(const matrix_cl_view& left_view,
-                                      const matrix_cl_view& right_view) {
+inline const matrix_cl_view either(const matrix_cl_view left_view,
+                                   const matrix_cl_view right_view) {
   typedef typename std::underlying_type<matrix_cl_view>::type underlying;
   return static_cast<matrix_cl_view>(static_cast<underlying>(left_view)
                                      | static_cast<underlying>(right_view));
 }
 
 /**
- * Performs bitwise @c and to deduce return type from adding two @c matrix_cls
- * together.
+ * Determines which parts are nonzero in both input views.
  * @param left_view first view
  * @param right_view second view
  * @return common nonzero part
  */
-inline const matrix_cl_view operator*(const matrix_cl_view& left_view,
-                                      const matrix_cl_view& right_view) {
+inline const matrix_cl_view both(const matrix_cl_view left_view,
+                                      const matrix_cl_view right_view) {
   typedef typename std::underlying_type<matrix_cl_view>::type underlying;
   return static_cast<matrix_cl_view>(static_cast<underlying>(left_view)
                                      & static_cast<underlying>(right_view));
@@ -40,52 +38,50 @@ inline const matrix_cl_view operator*(const matrix_cl_view& left_view,
 
 /**
  * Check whether a view contains certain nonzero part
- * @param left_view view to check
- * @param right_view part to check for (usually `Lower` or `Upper`)
- * @return true, if `a` has part `b` nonzero
+ * @param view view to check
+ * @param part part to check for (usually `Lower` or `Upper`)
+ * @return true, if `view` has `part` nonzero
  */
-inline bool is_not_diagonal(const matrix_cl_view& left_view,
-                            const matrix_cl_view& right_view) {
-  return static_cast<bool>(left_view * right_view);
+inline bool contains_nonzero(const matrix_cl_view view,
+                             const matrix_cl_view part) {
+  return static_cast<bool>(both(view, part));
 }
 
 /**
- * Transposes a triangular view - swaps lower and upper parts.
- * @param view_type view to transpose
+ * Transposes a view - swaps lower and upper parts.
+ * @param view view to transpose
  * @return transposition of input
  */
-inline const matrix_cl_view transpose(const matrix_cl_view& view_type) {
-  if (view_type == matrix_cl_view::Lower) {
+inline const matrix_cl_view transpose(const matrix_cl_view view) {
+  if (view == matrix_cl_view::Lower) {
     return matrix_cl_view::Upper;
   }
-  if (view_type == matrix_cl_view::Upper) {
+  if (view == matrix_cl_view::Upper) {
     return matrix_cl_view::Lower;
   }
-  return view_type;
+  return view;
 }
 
 /**
- * Inverts a triangular view. Parts that are zero in the input become nonzero in
+ * Inverts a view. Parts that are zero in the input become nonzero in
  * output and vice versa.
- * @param view_type view to invert
+ * @param view view to invert
  * @return inverted view
  */
-inline const matrix_cl_view invert(const matrix_cl_view& view_type) {
+inline const matrix_cl_view invert(const matrix_cl_view view) {
   typedef typename std::underlying_type<matrix_cl_view>::type underlying;
-  return static_cast<matrix_cl_view>(
-      static_cast<underlying>(matrix_cl_view::Entire)
-      & ~static_cast<underlying>(view_type));
+  return static_cast<matrix_cl_view>(~static_cast<underlying>(view));
 }
 
 /**
- * Creates a triangular view from `Eigen::UpLoType`. `Eigen::Lower`,
+ * Creates a view from `Eigen::UpLoType`. `Eigen::Lower`,
  * `Eigen::StrictlyLower` and `Eigen::UnitLower` become
  * `PartialViewCL::Lower`. Similar for `Upper`. Any other view becomes
  * `PartialViewCL::Entire`.
  * @param eigen_type `UpLoType` to create a view from
- * @return triangular view
+ * @return view
  */
-inline matrix_cl_view from_eigen_triangular_type(Eigen::UpLoType eigen_type) {
+inline matrix_cl_view from_eigen_uplo_type(Eigen::UpLoType eigen_type) {
   if (eigen_type & Eigen::Lower) {
     return matrix_cl_view::Lower;
   }
@@ -101,30 +97,28 @@ enum class TriangularMapCL { UpperToLower = 0, LowerToUpper = 1 };
 static const char* view_kernel_helpers = STRINGIFY(
     // \endcond
     /**
-     * Combines two triangular views. Result is nonzero, where any of the inputs
-     * is nonzero.
-     * @param a first view
-     * @param b second view
-     * @return combined view
-     */
-    int combine(int a, int b) { return a | b; }
+    * Determines which parts are nonzero in any of the input views.
+    * @param left_view first view
+    * @param right_view second view
+    * @return combined view
+    */
+    int either(int left_view, int right_view) { return left_view | right_view; }
 
     /**
-     * Determines common nonzero part of the inputs. Result is nonzero, where
-     * both inputs are nonzero.
-     * @param a first view
-     * @param b second view
+     * Determines which parts are nonzero in both input views.
+     * @param left_view first view
+     * @param right_view second view
      * @return common nonzero part
      */
-    int commonNonzeroPart(int a, int b) { return a & b; }
+    int both(int left_view, int right_view) { return left_view & right_view; }
 
     /**
      * Check whether a view contains certain nonzero part
-     * @param a view to check
-     * @param b part to check for (usually `Lower` or `Upper`)
-     * @return true, if `a` has part `b` nonzero
+     * @param view view to check
+     * @param part part to check for (usually `Lower` or `Upper`)
+     * @return true, if `view` has `part` nonzero
      */
-    bool containsNonzeroPart(int a, int b) { return commonNonzeroPart(a, b); }
+    bool contains_nonzero(int view, int part) { return both(view, part); }
     // \cond
 );
 // \endcond

@@ -38,15 +38,15 @@ static const char *subtract_kernel_code = STRINGIFY(
 
       if (i < rows && j < cols) {
         double a;
-        if ((!containsNonzeroPart(view_A, LOWER) && j < i)
-            || (!containsNonzeroPart(view_A, UPPER) && j > i)) {
+        if ((!contains_nonzero(view_A, LOWER) && j < i)
+            || (!contains_nonzero(view_A, UPPER) && j > i)) {
           a = 0;
         } else {
           a = A(i, j);
         }
         double b;
-        if ((!containsNonzeroPart(view_B, LOWER) && j < i)
-            || (!containsNonzeroPart(view_B, UPPER) && j > i)) {
+        if ((!contains_nonzero(view_B, LOWER) && j < i)
+            || (!contains_nonzero(view_B, UPPER) && j > i)) {
           b = 0;
         } else {
           b = B(i, j);

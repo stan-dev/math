@@ -32,7 +32,7 @@ inline matrix_cl<return_type_t<T1, T2>> subtract(const matrix_cl<T1>& A,
                                                  const matrix_cl<T2>& B) {
   check_matching_dims("subtract ((OpenCL))", "A", A, "B", B);
   matrix_cl<return_type_t<T1, T2>> C(A.rows(), A.cols(),
-                                     A.view() + B.view());
+                                     either(A.view(), B.view()));
   if (A.size() == 0) {
     return C;
   }

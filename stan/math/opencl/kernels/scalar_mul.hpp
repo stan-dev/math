@@ -28,9 +28,12 @@ static const char *scalar_mul_kernel_code = STRINGIFY(
       int i = get_global_id(0);
       int j = get_global_id(1);
       if (i < rows && j < cols) {
-        if (!((!containsNonzeroPart(view, LOWER) && j < i)
-              || (!containsNonzeroPart(view, UPPER) && j > i))) {
+        if (!((!contains_nonzero(view, LOWER) && j < i)
+              || (!contains_nonzero(view, UPPER) && j > i))) {
           A(i, j) = B(i, j) * scalar;
+        }
+        else{
+          A(i, j) = 0;
         }
       }
     }

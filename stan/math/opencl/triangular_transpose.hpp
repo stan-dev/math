@@ -41,9 +41,9 @@ inline void matrix_cl<T, enable_if_arithmetic<T>>::triangular_transpose() try {
                                        triangular_map);
   this->view_
       = (triangular_map == TriangularMapCL::LowerToUpper
-         && !is_not_diagonal(this->view_, matrix_cl_view::Lower))
+         && !contains_nonzero(this->view_, matrix_cl_view::Lower))
                 || (triangular_map == TriangularMapCL::UpperToLower
-                    && !is_not_diagonal(this->view_,
+                    && !contains_nonzero(this->view_,
                                         matrix_cl_view::Upper))
             ? matrix_cl_view::Diagonal
             : matrix_cl_view::Entire;

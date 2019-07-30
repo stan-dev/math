@@ -79,16 +79,16 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
       // If no matrices are triangular the starting tile
       // is 0 and the end tile is num_tiles-1 which
       // is then a general matrix multiply
-      const int end_tile_A = containsNonzeroPart(view_A, UPPER)
+      const int end_tile_A = contains_nonzero(view_A, UPPER)
                                  ? (num_tiles - 1)
                                  : (i / THREAD_BLOCK_SIZE);
-      const int end_tile_B = containsNonzeroPart(view_B, LOWER)
+      const int end_tile_B = contains_nonzero(view_B, LOWER)
                                  ? (num_tiles - 1)
                                  : (j / THREAD_BLOCK_SIZE);
-      const int start_tile_A = containsNonzeroPart(view_A, LOWER)
+      const int start_tile_A = contains_nonzero(view_A, LOWER)
                                    ? 0
                                    : (i / THREAD_BLOCK_SIZE);
-      const int start_tile_B = containsNonzeroPart(view_B, UPPER)
+      const int start_tile_B = contains_nonzero(view_B, UPPER)
                                    ? 0
                                    : (j / THREAD_BLOCK_SIZE);
       // the starting and end tiles for a thread are determined by
@@ -115,8 +115,8 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
           // or under/above the diagonal with upper/lower
           // triangular matrices
           if (A_curr_j >= K || i >= M
-              || (!containsNonzeroPart(view_A, UPPER) && A_curr_j > i)
-              || (!containsNonzeroPart(view_A, LOWER) && A_curr_j < i)) {
+              || (!contains_nonzero(view_A, UPPER) && A_curr_j > i)
+              || (!contains_nonzero(view_A, LOWER) && A_curr_j < i)) {
             A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
                    [thread_block_row]
                 = 0.0;
@@ -126,9 +126,9 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
                 = A[A_curr_j * M + i];
           }
           if (B_curr_j >= N || tiled_i >= K
-              || (!containsNonzeroPart(view_B, UPPER)
+              || (!contains_nonzero(view_B, UPPER)
                   && B_curr_j > tiled_i)
-              || (!containsNonzeroPart(view_B, LOWER)
+              || (!contains_nonzero(view_B, LOWER)
                   && B_curr_j < tiled_i)) {
             B_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
                    [thread_block_row]
@@ -196,10 +196,10 @@ static const char* matrix_vector_multiply_kernel_code = STRINGIFY(
         unsigned int view_B) {
       const int gid = get_global_id(0);
 
-      const int start = containsNonzeroPart(view_A, LOWER) ? 0 : gid;
+      const int start = contains_nonzero(view_A, LOWER) ? 0 : gid;
       const int stop
-          = containsNonzeroPart(view_B, LOWER)
-                ? (containsNonzeroPart(view_A, UPPER) ? N : gid + 1)
+          = contains_nonzero(view_B, LOWER)
+                ? (contains_nonzero(view_A, UPPER) ? N : gid + 1)
                 : 1;
 
       double acc = 0;
@@ -245,10 +245,10 @@ static const char* row_vector_matrix_multiply_kernel_code = STRINGIFY(
       const int gid = get_global_id(0);
       const int wgid = get_group_id(0);
 
-      const int start = containsNonzeroPart(view_B, UPPER) ? 0 : wgid;
+      const int start = contains_nonzero(view_B, UPPER) ? 0 : wgid;
       const int stop
-          = containsNonzeroPart(view_A, UPPER)
-                ? containsNonzeroPart(view_B, LOWER) ? N : wgid + 1
+          = contains_nonzero(view_A, UPPER)
+                ? contains_nonzero(view_B, LOWER) ? N : wgid + 1
                 : 1;
 
       double acc = 0;

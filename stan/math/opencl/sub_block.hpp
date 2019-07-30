@@ -63,28 +63,28 @@ inline void matrix_cl<T, enable_if_arithmetic<T>>::sub_block(
   }
   // calculation of extreme sub- and super- diagonal written
   const int diag_in_copy = A_i - A_j;
-  const int copy_low = is_not_diagonal(A.view(), matrix_cl_view::Lower)
+  const int copy_low = contains_nonzero(A.view(), matrix_cl_view::Lower)
                      ? 1 - nrows
                      : diag_in_copy;
-  const int copy_high = is_not_diagonal(A.view(), matrix_cl_view::Upper)
+  const int copy_high = contains_nonzero(A.view(), matrix_cl_view::Upper)
                       ? ncols - 1
                       : diag_in_copy;
   const int start = this_j - this_i;
 
   if (start + copy_low < 0) {
-    this->view_ = this->view_ + matrix_cl_view::Lower;
+    this->view_ = either(this->view_, matrix_cl_view::Lower);
   } else if (this_i <= 1 && this_j == 0 && nrows + this_i >= rows_
              && ncols >= std::min(rows_, cols_) - 1
-             && !is_not_diagonal(A.view_, matrix_cl_view::Lower)) {
-    this->view_ = this->view_ * matrix_cl_view::Upper;
+             && !contains_nonzero(A.view_, matrix_cl_view::Lower)) {
+    this->view_ = both(this->view_, matrix_cl_view::Upper);
   }
 
   if (start + copy_high > 0) {
-    this->view_ = this->view_ + matrix_cl_view::Upper;
+    this->view_ = either(this->view_, matrix_cl_view::Upper);
   } else if (this_i == 0 && this_j <= 1 && ncols + this_j >= cols_
              && nrows >= std::min(rows_, cols_) - 1
-             && !is_not_diagonal(A.view_, matrix_cl_view::Upper)) {
-    this->view_ = this->view_ * matrix_cl_view::Lower;
+             && !contains_nonzero(A.view_, matrix_cl_view::Upper)) {
+    this->view_ = both(this->view_, matrix_cl_view::Lower);
   }
 } catch (const cl::Error& e) {
   check_opencl_error("copy_submatrix", e);
