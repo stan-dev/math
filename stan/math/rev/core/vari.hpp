@@ -3,6 +3,7 @@
 
 #include <stan/math/rev/core/chainable_alloc.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <ostream>
 
 namespace stan {
@@ -55,17 +56,19 @@ class vari {
    *
    * @param x Value of the constructed variable.
    */
-  explicit vari(double x) : val_(x), adj_(0.0) {
+  template <typename T, typename = enable_if_arithmetic<T>>
+  explicit vari(T x) : val_(static_cast<double>(x)), adj_(0.0) {
     ChainableStack::instance_->var_stack_.push_back(this);
   }
 
-  vari(double x, bool stacked) : val_(x), adj_(0.0) {
+  template <typename T>
+  vari(T x, bool stacked) : val_(static_cast<double>(x)), adj_(0.0) {
     if (stacked)
       ChainableStack::instance_->var_stack_.push_back(this);
     else
       ChainableStack::instance_->var_nochain_stack_.push_back(this);
   }
-
+  explicit vari(vari* const& x) : val_(x->val_), adj_(x->adj_) {}
   /**
    * Throw an illegal argument exception.
    *

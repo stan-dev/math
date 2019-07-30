@@ -272,6 +272,7 @@ class stack_alloc {
   }
 };
 
+
 }  // namespace math
 }  // namespace stan
 #endif

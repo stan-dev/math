@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_MAT_FUN_DETERMINANT_HPP
 
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/rev/core/chainable_allocator.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/mat/fun/typedefs.hpp>
@@ -15,29 +16,26 @@ template <int R, int C>
 class determinant_vari : public vari {
   int rows_;
   int cols_;
-  double* A_;
-  vari** adjARef_;
+  std::vector<double, chainable_allocator<double>> A_;
+  std::vector<vari, chainable_allocator<vari>> adjARef_;
 
  public:
   explicit determinant_vari(const Eigen::Matrix<var, R, C>& A)
       : vari(determinant_vari_calc(A)),
         rows_(A.rows()),
         cols_(A.cols()),
-        A_(reinterpret_cast<double*>(ChainableStack::instance_->memalloc_.alloc(
-            sizeof(double) * A.rows() * A.cols()))),
-        adjARef_(
-            reinterpret_cast<vari**>(ChainableStack::instance_->memalloc_.alloc(
-                sizeof(vari*) * A.rows() * A.cols()))) {
-    Eigen::Map<Eigen::MatrixXd>(A_, rows_, cols_) = A.val();
-    Eigen::Map<matrix_vi>(adjARef_, rows_, cols_) = A.vi();
+        A_(A.val().data(), A.val().eval().data() + A.size()),
+        adjARef_(A.vi().data(), A.vi().data() + A.size()) {
+    //Eigen::Map<Eigen::MatrixXd>(A_, rows_, cols_) = A.val();
+    //Eigen::Map<matrix_vi>(adjARef_, rows_, cols_) = A.vi();
   }
   static double determinant_vari_calc(const Eigen::Matrix<var, R, C>& A) {
     return A.val().determinant();
   }
   virtual void chain() {
-    Eigen::Map<matrix_vi>(adjARef_, rows_, cols_).adj()
+    Eigen::Map<Eigen::Matrix<vari, -1, -1>>(adjARef_.data(), rows_, cols_).adj()
         += (adj_ * val_)
-           * Eigen::Map<Eigen::MatrixXd>(A_, rows_, cols_)
+           * Eigen::Map<Eigen::MatrixXd>(A_.data(), rows_, cols_)
                  .inverse()
                  .transpose();
   }
