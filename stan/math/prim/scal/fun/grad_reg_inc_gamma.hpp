@@ -46,13 +46,13 @@ namespace math {
  (a-1)_k\right) \frac{1}{z^k} \end{array} \f]
  */
 template <typename T1, typename T2>
-typename return_type<T1, T2>::type grad_reg_inc_gamma(T1 a, T2 z, T1 g, T1 dig,
-                                                      double precision = 1e-6,
-                                                      int max_steps = 1e5) {
+return_type_t<T1, T2> grad_reg_inc_gamma(T1 a, T2 z, T1 g, T1 dig,
+                                         double precision = 1e-6,
+                                         int max_steps = 1e5) {
   using std::exp;
   using std::fabs;
   using std::log;
-  typedef typename return_type<T1, T2>::type TP;
+  typedef return_type_t<T1, T2> TP;
 
   if (is_any_nan(a, z, g, dig))
     return std::numeric_limits<TP>::quiet_NaN();

@@ -18,10 +18,11 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_dof, typename T_loc, typename T_scale>
-typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_cdf(
-    const T_y& y, const T_dof& nu, const T_loc& mu, const T_scale& sigma) {
-  typedef typename stan::partials_return_type<T_y, T_dof, T_loc, T_scale>::type
-      T_partials_return;
+return_type_t<T_y, T_dof, T_loc, T_scale> student_t_cdf(const T_y& y,
+                                                        const T_dof& nu,
+                                                        const T_loc& mu,
+                                                        const T_scale& sigma) {
+  typedef partials_return_type_t<T_y, T_dof, T_loc, T_scale> T_partials_return;
 
   if (size_zero(y, nu, mu, sigma))
     return 1.0;

@@ -16,11 +16,9 @@ namespace stan {
 namespace math {
 
 template <typename T_n, typename T_rate>
-typename return_type<T_rate>::type poisson_lccdf(const T_n& n,
-                                                 const T_rate& lambda) {
+return_type_t<T_rate> poisson_lccdf(const T_n& n, const T_rate& lambda) {
   static const char* function = "poisson_lccdf";
-  typedef
-      typename stan::partials_return_type<T_n, T_rate>::type T_partials_return;
+  typedef partials_return_type_t<T_n, T_rate> T_partials_return;
 
   if (size_zero(n, lambda))
     return 0.0;

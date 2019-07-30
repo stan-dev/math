@@ -33,11 +33,10 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_n, typename T_N, typename T_prob>
-typename return_type<T_prob>::type binomial_lccdf(const T_n& n, const T_N& N,
-                                                  const T_prob& theta) {
+return_type_t<T_prob> binomial_lccdf(const T_n& n, const T_N& N,
+                                     const T_prob& theta) {
   static const char* function = "binomial_lccdf";
-  typedef typename stan::partials_return_type<T_n, T_N, T_prob>::type
-      T_partials_return;
+  typedef partials_return_type_t<T_n, T_N, T_prob> T_partials_return;
 
   if (size_zero(n, N, theta))
     return 0.0;

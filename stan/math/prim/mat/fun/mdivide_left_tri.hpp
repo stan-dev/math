@@ -7,11 +7,7 @@
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #ifdef STAN_OPENCL
-#include <stan/math/opencl/opencl_context.hpp>
-#include <stan/math/opencl/multiply.hpp>
-#include <stan/math/opencl/tri_inverse.hpp>
-#include <stan/math/opencl/transpose.hpp>
-#include <stan/math/opencl/copy.hpp>
+#include <stan/math/opencl/opencl.hpp>
 #endif
 namespace stan {
 namespace math {
@@ -33,10 +29,8 @@ namespace math {
  * match the size of A.
  */
 template <int TriView, typename T1, typename T2, int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type,
-                     R1, C2>
-mdivide_left_tri(const Eigen::Matrix<T1, R1, C1> &A,
-                 const Eigen::Matrix<T2, R2, C2> &b) {
+inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_left_tri(
+    const Eigen::Matrix<T1, R1, C1> &A, const Eigen::Matrix<T2, R2, C2> &b) {
   check_square("mdivide_left_tri", "A", A);
   check_multiplicable("mdivide_left_tri", "A", A, "b", b);
   return promote_common<Eigen::Matrix<T1, R1, C1>, Eigen::Matrix<T2, R1, C1> >(

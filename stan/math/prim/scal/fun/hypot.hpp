@@ -22,8 +22,7 @@ namespace math {
  * and adjacent side lengths x and y.
  */
 template <typename T1, typename T2>
-inline typename boost::math::tools::promote_args<T1, T2>::type hypot(
-    const T1& x, const T2& y) {
+inline return_type_t<T1, T2> hypot(const T1& x, const T2& y) {
   using std::sqrt;
   return sqrt(square(x) + square(y));
 }

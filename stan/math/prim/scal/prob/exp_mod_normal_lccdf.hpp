@@ -16,13 +16,12 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_loc, typename T_scale, typename T_inv_scale>
-typename return_type<T_y, T_loc, T_scale, T_inv_scale>::type
-exp_mod_normal_lccdf(const T_y& y, const T_loc& mu, const T_scale& sigma,
-                     const T_inv_scale& lambda) {
+return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lccdf(
+    const T_y& y, const T_loc& mu, const T_scale& sigma,
+    const T_inv_scale& lambda) {
   static const char* function = "exp_mod_normal_lccdf";
-  typedef
-      typename stan::partials_return_type<T_y, T_loc, T_scale,
-                                          T_inv_scale>::type T_partials_return;
+  typedef partials_return_type_t<T_y, T_loc, T_scale, T_inv_scale>
+      T_partials_return;
 
   T_partials_return ccdf_log(0.0);
   if (size_zero(y, mu, sigma, lambda))

@@ -36,11 +36,9 @@ namespace math {
  * @tparam T_dof Type of degrees of freedom.
  */
 template <bool propto, typename T_y, typename T_dof>
-typename return_type<T_y, T_dof>::type inv_chi_square_lpdf(const T_y& y,
-                                                           const T_dof& nu) {
+return_type_t<T_y, T_dof> inv_chi_square_lpdf(const T_y& y, const T_dof& nu) {
   static const char* function = "inv_chi_square_lpdf";
-  typedef
-      typename stan::partials_return_type<T_y, T_dof>::type T_partials_return;
+  typedef partials_return_type_t<T_y, T_dof> T_partials_return;
 
   check_positive_finite(function, "Degrees of freedom parameter", nu);
   check_not_nan(function, "Random variable", y);
@@ -112,8 +110,8 @@ typename return_type<T_y, T_dof>::type inv_chi_square_lpdf(const T_y& y,
 }
 
 template <typename T_y, typename T_dof>
-inline typename return_type<T_y, T_dof>::type inv_chi_square_lpdf(
-    const T_y& y, const T_dof& nu) {
+inline return_type_t<T_y, T_dof> inv_chi_square_lpdf(const T_y& y,
+                                                     const T_dof& nu) {
   return inv_chi_square_lpdf<false>(y, nu);
 }
 

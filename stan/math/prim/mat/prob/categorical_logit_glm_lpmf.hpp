@@ -35,13 +35,13 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_x_scalar, int T_x_rows,
           typename T_alpha_scalar, typename T_beta_scalar>
-typename return_type<T_x_scalar, T_alpha_scalar, T_beta_scalar>::type
+return_type_t<T_x_scalar, T_alpha_scalar, T_beta_scalar>
 categorical_logit_glm_lpmf(
     const T_y& y, const Eigen::Matrix<T_x_scalar, T_x_rows, Eigen::Dynamic>& x,
     const Eigen::Matrix<T_alpha_scalar, Eigen::Dynamic, 1>& alpha,
     const Eigen::Matrix<T_beta_scalar, Eigen::Dynamic, Eigen::Dynamic>& beta) {
-  typedef typename stan::partials_return_type<
-      T_x_scalar, T_alpha_scalar, T_beta_scalar>::type T_partials_return;
+  typedef partials_return_type_t<T_x_scalar, T_alpha_scalar, T_beta_scalar>
+      T_partials_return;
   static const char* function = "categorical_logit_glm_lpmf";
 
   using Eigen::Array;
@@ -185,7 +185,7 @@ categorical_logit_glm_lpmf(
 
 template <typename T_y, typename T_x_scalar, int T_x_rows,
           typename T_alpha_scalar, typename T_beta_scalar>
-typename return_type<T_x_scalar, T_alpha_scalar, T_beta_scalar>::type
+return_type_t<T_x_scalar, T_alpha_scalar, T_beta_scalar>
 categorical_logit_glm_lpmf(
     const T_y& y, const Eigen::Matrix<T_x_scalar, T_x_rows, Eigen::Dynamic>& x,
     const Eigen::Matrix<T_alpha_scalar, Eigen::Dynamic, 1>& alpha,
