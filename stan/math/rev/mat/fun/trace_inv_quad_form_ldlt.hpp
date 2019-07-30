@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_MAT_FUN_TRACE_INV_QUAD_FORM_LDLT_HPP
 
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/rev/core.hpp>
@@ -137,12 +138,10 @@ class trace_inv_quad_form_ldlt_vari : public vari {
  *       trace(B^T A^-1 B)
  * where the LDLT_factor of A is provided.
  **/
-template <typename T2, int R2, int C2, typename T3, int R3, int C3>
-inline
-    typename std::enable_if<stan::is_var<T2>::value || stan::is_var<T3>::value,
-                            var>::type
-    trace_inv_quad_form_ldlt(const LDLT_factor<T2, R2, C2> &A,
-                             const Eigen::Matrix<T3, R3, C3> &B) {
+template <typename T2, int R2, int C2, typename T3, int R3, int C3,
+          typename = enable_if_any_var<T2, T3>>
+inline return_type_t<T2, T3> trace_inv_quad_form_ldlt(
+    const LDLT_factor<T2, R2, C2> &A, const Eigen::Matrix<T3, R3, C3> &B) {
   check_multiplicable("trace_inv_quad_form_ldlt", "A", A, "B", B);
 
   internal::trace_inv_quad_form_ldlt_impl<T2, R2, C2, T3, R3, C3> *impl_
