@@ -199,6 +199,51 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
       check_opencl_error("copy (OpenCL)->(OpenCL)", e);
     }
   }
+
+  /**
+   * Constructor for the matrix_cl that
+   * creates a copy of the Eigen matrix on the OpenCL device.
+   *
+   *
+   * @tparam R row type
+   * @tparam C column type
+   * @param A the Eigen matrix
+   *
+   * @throw <code>std::invalid_argument</code> if the
+   * matrices do not have matching dimensions
+   */
+  template <int R, int C>
+  explicit matrix_cl(const std::vector<Eigen::Matrix<T, R, C>>& A) try
+      : rows_(A.empty() ? 0 : A[0].size()),
+        cols_(A.size()) {
+    if (this->size() == 0)
+      return;
+    cl::Context& ctx = opencl_context.context();
+    cl::CommandQueue& queue = opencl_context.queue();
+    // creates the OpenCL buffer to copy the Eigen
+    // matrix to the OpenCL device
+    buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * size());
+    for (int i = 0, offset_size = 0; i < cols_; i++, offset_size += rows_) {
+      check_size_match("matrix constructor", "input rows", A[i].size(),
+                       "matrix_cl rows", rows_);
+      /**
+       * Writes the contents of A[i] to the OpenCL buffer
+       * starting at the offset sizeof(double)*start.
+       * CL_TRUE denotes that the call is blocking as
+       * we do not want to execute any further kernels
+       * on the device until we are sure that the data
+       * is finished transfering
+       */
+      cl::Event write_event;
+      queue.enqueueWriteBuffer(
+          buffer_cl_, CL_FALSE, sizeof(double) * offset_size,
+          sizeof(double) * rows_, A[i].data(), NULL, &write_event);
+      this->add_write_event(write_event);
+    }
+  } catch (const cl::Error& e) {
+    check_opencl_error("matrix constructor", e);
+  }
+
   /**
    * Constructor for the matrix_cl that
    * only allocates the buffer on the OpenCL device.
@@ -233,8 +278,8 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
    * creates a copy of the Eigen matrix on the OpenCL device.
    * Regardless of `partial_view`, whole matrix is stored.
    *
-   * @tparam T type of data in the Eigen matrix
-   * @param A the Eigen matrix
+   * @tparam T type of data in the \c Eigen \c Matrix
+   * @param A the \c Eigen \c Matrix
    * @param partial_view which part of the matrix is used
    *
    * @throw <code>std::system_error</code> if the
@@ -261,7 +306,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
   }
 
   /**
-   * Construct from @c std::vector with given rows and columns
+   * Construct from \c std::vector with given rows and columns
    *
    * @param A Standard vector
    * @param R Number of rows the matrix should have.
@@ -288,7 +333,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
   }
 
   /**
-   * Assign a @c matrix_cl to another
+   * Assign a \c matrix_cl to another
    */
   matrix_cl<T>& operator=(const matrix_cl<T>& a) {
     check_size_match("assignment of (OpenCL) matrices", "source.rows()",
@@ -303,7 +348,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
   }
 
   /**
-   * Assign a @c matrix_cl of one arithmetic type to another
+   * Assign a \c matrix_cl of one arithmetic type to another
    */
   template <typename U, typename = enable_if_arithmetic<U>>
   matrix_cl<T>& operator=(const matrix_cl<U>& a) {

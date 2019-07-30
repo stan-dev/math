@@ -11,8 +11,9 @@ namespace math {
  * @deprecated use <code>uniform_lccdf</code>
  */
 template <typename T_y, typename T_low, typename T_high>
-typename return_type<T_y, T_low, T_high>::type uniform_ccdf_log(
-    const T_y& y, const T_low& alpha, const T_high& beta) {
+return_type_t<T_y, T_low, T_high> uniform_ccdf_log(const T_y& y,
+                                                   const T_low& alpha,
+                                                   const T_high& beta) {
   return uniform_lccdf<T_y, T_low, T_high>(y, alpha, beta);
 }
 

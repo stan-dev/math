@@ -50,8 +50,7 @@ namespace math {
  * @throw std::domain_error if the first argument is not positive
  */
 template <typename T1, typename T2>
-inline typename return_type<T1, T2>::type log_rising_factorial(const T1& x,
-                                                               const T2& n) {
+inline return_type_t<T1, T2> log_rising_factorial(const T1& x, const T2& n) {
   if (is_any_nan(x, n))
     return std::numeric_limits<double>::quiet_NaN();
   static const char* function = "log_rising_factorial";

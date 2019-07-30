@@ -1,18 +1,18 @@
 #ifndef STAN_MATH_OPENCL_KERNEL_CL_HPP
 #define STAN_MATH_OPENCL_KERNEL_CL_HPP
 #ifdef STAN_OPENCL
-#include <stan/math/opencl/opencl_context.hpp>
 #include <stan/math/opencl/buffer_types.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
+#include <stan/math/opencl/opencl_context.hpp>
 #include <stan/math/opencl/stringify.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/opencl/kernels/helpers.hpp>
 #include <stan/math/prim/arr/fun/vec_concat.hpp>
 #include <CL/cl.hpp>
-#include <string>
 #include <algorithm>
 #include <map>
+#include <string>
 #include <vector>
 #include <utility>
 
@@ -36,8 +36,8 @@ inline const T& get_kernel_args(const T& t) {
 /**
  * Extracts the kernel's arguments, used in the global and local kernel
  * constructor.
- * @tparam K The type of the @c matrix_cl.
- * @param m The @c matrix with an OpenCL Buffer.
+ * @tparam K The type of the \c matrix_cl.
+ * @param m The \c matrix with an OpenCL Buffer.
  * @return The OpenCL Buffer.
  */
 template <typename K>
@@ -46,24 +46,24 @@ inline const cl::Buffer& get_kernel_args(const stan::math::matrix_cl<K>& m) {
 }
 
 /**
- * Helper function for assigning events to a @c matrix_cl.
+ * Helper function for assigning events to a \c matrix_cl.
  *
- * @tparam T Whether the assignment is to an @c in_buffer, @c out_buffer, or @c
+ * @tparam T Whether the assignment is to an \c in_buffer, \c out_buffer, or \c
  * in_out_buffer.
- * @tparam K The type of the @c matrix_cl.
+ * @tparam K The type of the \c matrix_cl.
  *
  */
 template <typename T, typename K = double>
 struct assign_event_helper {
   /**
-   * Assigns the event to the @c matrix_cl.
+   * Assigns the event to the \c matrix_cl.
    * @param e the event to be assigned.
-   * @param m The @c matrix_cl to be assigned to.
+   * @param m The \c matrix_cl to be assigned to.
    */
   inline void set(const cl::Event& e, const stan::math::matrix_cl<K>& m) {}
 };
 
-// Specialization for @c in_buffer
+// Specialization for \c in_buffer
 template <typename K>
 struct assign_event_helper<in_buffer, K> {
   inline void set(const cl::Event& e, const stan::math::matrix_cl<K>& m) {
@@ -71,7 +71,7 @@ struct assign_event_helper<in_buffer, K> {
   }
 };
 
-// Specialization for @c out_buffer
+// Specialization for \c out_buffer
 template <typename K>
 struct assign_event_helper<out_buffer, K> {
   inline void set(const cl::Event& e, const stan::math::matrix_cl<K>& m) {
@@ -79,7 +79,7 @@ struct assign_event_helper<out_buffer, K> {
   }
 };
 
-// Specialization for @c in_out_buffer
+// Specialization for \c in_out_buffer
 template <typename K>
 struct assign_event_helper<in_out_buffer, K> {
   inline void set(const cl::Event& e, const stan::math::matrix_cl<K>& m) {
@@ -88,21 +88,21 @@ struct assign_event_helper<in_out_buffer, K> {
 };
 
 /**
- * Assigns the event to a @c matrix_cl.
+ * Assigns the event to a \c matrix_cl.
  * @tparam T The type to be assigned, if not a matrix_cl this function
  * will do nothing.
- * @tparam K The type of the @c matrix_cl.
+ * @tparam K The type of the \c matrix_cl.
  * @param e The event to be assigned.
  */
 template <typename T, typename K = double>
 inline void assign_event(const cl::Event& e, const T&) {}
 
 /**
- * Assigns the event to a @c matrix_cl
+ * Assigns the event to a \c matrix_cl
  * @tparam T The type to be assigned, if not a matrix_cl will do nothing.
- * @tparam K The type of the @c matrix_cl.
+ * @tparam K The type of the \c matrix_cl.
  * @param e The event to be assigned.
- * @param m The @c matrix_cl to be assigned
+ * @param m The \c matrix_cl to be assigned
  */
 template <typename T, typename K>
 inline void assign_event(const cl::Event& e,
@@ -116,8 +116,8 @@ template <typename T,
 inline void assign_events(const T&) {}
 
 /**
- * Adds the event to any @c matrix_cls in the arguments depending on whether
- * they are @c in_buffer, @c out_buffer, or @c in_out_buffers.
+ * Adds the event to any \c matrix_cls in the arguments depending on whether
+ * they are \c in_buffer, \c out_buffer, or \c in_out_buffers.
  * @tparam Arg Arguments given during kernel creation that specify the kernel
  * signature.
  * @tparam Args Arguments given during kernel creation that specify the kernel
@@ -125,7 +125,7 @@ inline void assign_events(const T&) {}
  * @tparam CallArg First argument type used to call the kernel
  * @tparam CallArgs Other argument types used to call the kernel.
  * @param new_event The cl::Event generated involving the arguments.
- * @param m Arguments to the kernel that may be @c matrix_cls or not.
+ * @param m Arguments to the kernel that may be \c matrix_cls or not.
  * Non-matrices are ignored.
  * @param args Arguments to the kernel that may be matrices or not.
  * Non-matrices are ignored.
@@ -139,15 +139,15 @@ inline void assign_events(const cl::Event& new_event, CallArg& m,
 }
 
 /**
- * Helper function to select OpenCL event vectors from an @c matrix_cl
- * @tparam T For non @c matrix_cl types, the type of the first argument.
+ * Helper function to select OpenCL event vectors from an \c matrix_cl
+ * @tparam T For non \c matrix_cl types, the type of the first argument.
  * Otherwise this is the in/out/inout buffer type.
- * @tparam K For @c matrix_cl types, the type of the matrix_cl
+ * @tparam K For \c matrix_cl types, the type of the matrix_cl
  */
 template <typename T, typename K = double>
 struct select_event_helper {
   /**
-   * Get the events from a matrix_cl. For non @c matrix_cl types this will do
+   * Get the events from a matrix_cl. For non \c matrix_cl types this will do
    * nothing.
    * @param m A type to extract the event from.
    */
@@ -181,11 +181,11 @@ struct select_event_helper<in_out_buffer, K> {
 };
 
 /**
- * Select events from kernel arguments. Does nothing for non @c matrix_cl types.
- * @tparam T The argument type for a non @c matrix_cl, else the in/out/in_out
+ * Select events from kernel arguments. Does nothing for non \c matrix_cl types.
+ * @tparam T The argument type for a non \c matrix_cl, else the in/out/in_out
  * buffer types.
- * @tparam K The type of the @c matrix_cl
- * @param m If an @c matrix_cl, gets the event vector, else this argument does
+ * @tparam K The type of the \c matrix_cl
+ * @param m If an \c matrix_cl, gets the event vector, else this argument does
  * nothing.
  * @return A vector of OpenCL events.
  */
@@ -195,7 +195,7 @@ inline const std::vector<cl::Event> select_events(const T& m) {
   return helper.get(m);
 }
 
-// Specialization for @c matrix_cl
+// Specialization for \c matrix_cl
 template <typename T, typename K>
 inline const std::vector<cl::Event> select_events(
     const stan::math::matrix_cl<K>& m) {

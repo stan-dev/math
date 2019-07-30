@@ -103,12 +103,13 @@ namespace math {
  *
  */
 template <typename T1, typename T2>
-typename return_type<T1, T2>::type grad_reg_lower_inc_gamma(
-    const T1& a, const T2& z, double precision = 1e-10, int max_steps = 1e5) {
+return_type_t<T1, T2> grad_reg_lower_inc_gamma(const T1& a, const T2& z,
+                                               double precision = 1e-10,
+                                               int max_steps = 1e5) {
   using std::exp;
   using std::log;
   using std::pow;
-  typedef typename return_type<T1, T2>::type TP;
+  typedef return_type_t<T1, T2> TP;
 
   if (is_any_nan(a, z))
     return std::numeric_limits<TP>::quiet_NaN();

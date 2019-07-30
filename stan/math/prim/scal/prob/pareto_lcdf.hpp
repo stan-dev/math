@@ -16,10 +16,10 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_scale, typename T_shape>
-typename return_type<T_y, T_scale, T_shape>::type pareto_lcdf(
-    const T_y& y, const T_scale& y_min, const T_shape& alpha) {
-  typedef typename stan::partials_return_type<T_y, T_scale, T_shape>::type
-      T_partials_return;
+return_type_t<T_y, T_scale, T_shape> pareto_lcdf(const T_y& y,
+                                                 const T_scale& y_min,
+                                                 const T_shape& alpha) {
+  typedef partials_return_type_t<T_y, T_scale, T_shape> T_partials_return;
 
   if (size_zero(y, y_min, alpha))
     return 0.0;

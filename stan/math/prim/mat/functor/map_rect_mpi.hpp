@@ -18,8 +18,7 @@ namespace internal {
 
 template <int call_id, typename F, typename T_shared_param,
           typename T_job_param>
-Eigen::Matrix<typename stan::return_type<T_shared_param, T_job_param>::type,
-              Eigen::Dynamic, 1>
+Eigen::Matrix<return_type_t<T_shared_param, T_job_param>, Eigen::Dynamic, 1>
 map_rect_mpi(
     const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
     const std::vector<Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>&

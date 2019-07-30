@@ -11,8 +11,7 @@ namespace math {
  * @deprecated use <code>chi_square_lccdf</code>
  */
 template <typename T_y, typename T_dof>
-typename return_type<T_y, T_dof>::type chi_square_ccdf_log(const T_y& y,
-                                                           const T_dof& nu) {
+return_type_t<T_y, T_dof> chi_square_ccdf_log(const T_y& y, const T_dof& nu) {
   return chi_square_lccdf<T_y, T_dof>(y, nu);
 }
 

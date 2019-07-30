@@ -196,6 +196,9 @@ class opencl_context_base {
     int cholesky_rev_block_partition = 8;
     // used in math/opencl/multiply
     int multiply_split_upper_limit = 2000000;
+    // used in math/prim/mat/fun/gp_exp_quad_cov
+    double gp_exp_quad_cov_complex = 1'000'000;
+    double gp_exp_quad_cov_simple = 1'250;
     // used in math/prim/mat/fun/multiply
     // and math/rev/mat/fun/multiply
     int multiply_dim_prod_worth_transfer = 2000000;

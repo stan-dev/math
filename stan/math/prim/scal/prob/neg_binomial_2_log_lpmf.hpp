@@ -19,7 +19,7 @@ namespace math {
 // NegBinomial(n|eta, phi)  [phi > 0;  n >= 0]
 template <bool propto, typename T_n, typename T_log_location,
           typename T_precision>
-typename return_type<T_log_location, T_precision>::type neg_binomial_2_log_lpmf(
+return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
     const T_n& n, const T_log_location& eta, const T_precision& phi) {
   typedef
       typename stan::partials_return_type<T_n, T_log_location,
@@ -100,9 +100,8 @@ typename return_type<T_log_location, T_precision>::type neg_binomial_2_log_lpmf(
 }
 
 template <typename T_n, typename T_log_location, typename T_precision>
-inline typename return_type<T_log_location, T_precision>::type
-neg_binomial_2_log_lpmf(const T_n& n, const T_log_location& eta,
-                        const T_precision& phi) {
+inline return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
+    const T_n& n, const T_log_location& eta, const T_precision& phi) {
   return neg_binomial_2_log_lpmf<false>(n, eta, phi);
 }
 }  // namespace math
