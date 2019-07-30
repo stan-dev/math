@@ -15,12 +15,11 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_loc, typename T_scale>
-typename return_type<T_y, T_loc, T_scale>::type lognormal_cdf(
-    const T_y& y, const T_loc& mu, const T_scale& sigma) {
+return_type_t<T_y, T_loc, T_scale> lognormal_cdf(const T_y& y, const T_loc& mu,
+                                                 const T_scale& sigma) {
   static const char* function = "lognormal_cdf";
 
-  typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
-      T_partials_return;
+  typedef partials_return_type_t<T_y, T_loc, T_scale> T_partials_return;
 
   T_partials_return cdf = 1.0;
 

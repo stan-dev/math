@@ -23,10 +23,8 @@ namespace math {
  * match the size of A.
  */
 template <typename T1, typename T2, int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type,
-                     R1, C2>
-mdivide_right_spd(const Eigen::Matrix<T1, R1, C1> &b,
-                  const Eigen::Matrix<T2, R2, C2> &A) {
+inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_right_spd(
+    const Eigen::Matrix<T1, R1, C1> &b, const Eigen::Matrix<T2, R2, C2> &A) {
   check_square("mdivide_right_spd", "A", A);
   check_multiplicable("mdivide_right_spd", "b", b, "A", A);
   check_symmetric("mdivide_right_spd", "A", A);

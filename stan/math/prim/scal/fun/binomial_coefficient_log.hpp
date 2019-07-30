@@ -60,15 +60,15 @@ namespace math {
  * @return log (N choose n).
  */
 template <typename T_N, typename T_n>
-inline typename boost::math::tools::promote_args<T_N, T_n>::type
-binomial_coefficient_log(const T_N N, const T_n n) {
+inline return_type_t<T_N, T_n> binomial_coefficient_log(const T_N N,
+                                                        const T_n n) {
   using std::log;
   const double CUTOFF = 1000;
   if (N - n < CUTOFF) {
     const T_N N_plus_1 = N + 1;
     return lgamma(N_plus_1) - lgamma(n + 1) - lgamma(N_plus_1 - n);
   } else {
-    typename boost::math::tools::promote_args<T_N, T_n>::type N_minus_n = N - n;
+    return_type_t<T_N, T_n> N_minus_n = N - n;
     const double one_twelfth = inv(12);
     return multiply_log(n, N_minus_n) + multiply_log((N + 0.5), N / N_minus_n)
            + one_twelfth / N - n - one_twelfth / N_minus_n - lgamma(n + 1);

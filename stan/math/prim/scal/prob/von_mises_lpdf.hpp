@@ -16,11 +16,10 @@ namespace stan {
 namespace math {
 
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
-typename return_type<T_y, T_loc, T_scale>::type von_mises_lpdf(
-    T_y const& y, T_loc const& mu, T_scale const& kappa) {
+return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
+                                                  T_scale const& kappa) {
   static char const* const function = "von_mises_lpdf";
-  typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
-      T_partials_return;
+  typedef partials_return_type_t<T_y, T_loc, T_scale> T_partials_return;
 
   if (size_zero(y, mu, kappa))
     return 0.0;
@@ -98,8 +97,9 @@ typename return_type<T_y, T_loc, T_scale>::type von_mises_lpdf(
 }
 
 template <typename T_y, typename T_loc, typename T_scale>
-inline typename return_type<T_y, T_loc, T_scale>::type von_mises_lpdf(
-    T_y const& y, T_loc const& mu, T_scale const& kappa) {
+inline return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y,
+                                                         T_loc const& mu,
+                                                         T_scale const& kappa) {
   return von_mises_lpdf<false>(y, mu, kappa);
 }
 

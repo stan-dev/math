@@ -39,11 +39,11 @@ namespace math {
  * @tparam T_inv_scale Type of inverse scale.
  */
 template <bool propto, typename T_y, typename T_shape, typename T_inv_scale>
-typename return_type<T_y, T_shape, T_inv_scale>::type gamma_lpdf(
-    const T_y& y, const T_shape& alpha, const T_inv_scale& beta) {
+return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
+                                                    const T_shape& alpha,
+                                                    const T_inv_scale& beta) {
   static const char* function = "gamma_lpdf";
-  typedef typename stan::partials_return_type<T_y, T_shape, T_inv_scale>::type
-      T_partials_return;
+  typedef partials_return_type_t<T_y, T_shape, T_inv_scale> T_partials_return;
 
   if (size_zero(y, alpha, beta))
     return 0.0;
@@ -130,7 +130,7 @@ typename return_type<T_y, T_shape, T_inv_scale>::type gamma_lpdf(
 }
 
 template <typename T_y, typename T_shape, typename T_inv_scale>
-inline typename return_type<T_y, T_shape, T_inv_scale>::type gamma_lpdf(
+inline return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(
     const T_y& y, const T_shape& alpha, const T_inv_scale& beta) {
   return gamma_lpdf<false>(y, alpha, beta);
 }

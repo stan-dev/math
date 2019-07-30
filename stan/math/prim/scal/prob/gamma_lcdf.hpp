@@ -20,12 +20,12 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_shape, typename T_inv_scale>
-typename return_type<T_y, T_shape, T_inv_scale>::type gamma_lcdf(
-    const T_y& y, const T_shape& alpha, const T_inv_scale& beta) {
+return_type_t<T_y, T_shape, T_inv_scale> gamma_lcdf(const T_y& y,
+                                                    const T_shape& alpha,
+                                                    const T_inv_scale& beta) {
   if (size_zero(y, alpha, beta))
     return 0.0;
-  typedef typename stan::partials_return_type<T_y, T_shape, T_inv_scale>::type
-      T_partials_return;
+  typedef partials_return_type_t<T_y, T_shape, T_inv_scale> T_partials_return;
 
   static const char* function = "gamma_lcdf";
 

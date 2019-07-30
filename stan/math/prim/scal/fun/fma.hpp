@@ -21,8 +21,7 @@ namespace math {
  * argument.
  */
 template <typename T1, typename T2, typename T3>
-inline typename boost::math::tools::promote_args<T1, T2, T3>::type fma(
-    const T1& x, const T2& y, const T3& z) {
+inline return_type_t<T1, T2, T3> fma(const T1& x, const T2& y, const T3& z) {
   return x * y + z;
 }
 
