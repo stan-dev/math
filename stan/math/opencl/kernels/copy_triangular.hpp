@@ -40,8 +40,7 @@ static const char *copy_triangular_kernel_code = STRINGIFY(
       int j = get_global_id(1);
       if (i < rows && j < cols) {
         if ((contains_nonzero(view, LOWER) && j <= i)
-            || (contains_nonzero(view, UPPER) && j >= i)
-            || j == i) {
+            || (contains_nonzero(view, UPPER) && j >= i) || j == i) {
           A(i, j) = B(i, j);
         } else {
           A(i, j) = 0;
@@ -55,9 +54,9 @@ static const char *copy_triangular_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/copy_triangular.hpp copy_triangular() \endlink
  */
-const kernel_cl<out_buffer, in_buffer, int, int, matrix_cl_view> copy_triangular(
-    "copy_triangular",
-    {indexing_helpers, view_kernel_helpers, copy_triangular_kernel_code});
+const kernel_cl<out_buffer, in_buffer, int, int, matrix_cl_view>
+    copy_triangular("copy_triangular", {indexing_helpers, view_kernel_helpers,
+                                        copy_triangular_kernel_code});
 
 }  // namespace opencl_kernels
 }  // namespace math

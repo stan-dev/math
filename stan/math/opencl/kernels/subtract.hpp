@@ -63,8 +63,8 @@ static const char *subtract_kernel_code = STRINGIFY(
  */
 const kernel_cl<out_buffer, in_buffer, in_buffer, int, int, matrix_cl_view,
                 matrix_cl_view>
-    subtract("subtract", {indexing_helpers, view_kernel_helpers,
-                          subtract_kernel_code});
+    subtract("subtract",
+             {indexing_helpers, view_kernel_helpers, subtract_kernel_code});
 
 }  // namespace opencl_kernels
 }  // namespace math

@@ -31,8 +31,7 @@ static const char *scalar_mul_kernel_code = STRINGIFY(
         if (!((!contains_nonzero(view, LOWER) && j < i)
               || (!contains_nonzero(view, UPPER) && j > i))) {
           A(i, j) = B(i, j) * scalar;
-        }
-        else{
+        } else {
           A(i, j) = 0;
         }
       }
@@ -45,8 +44,8 @@ static const char *scalar_mul_kernel_code = STRINGIFY(
  * See the docs for \link kernels/scalar_mul.hpp add() \endlink
  */
 const kernel_cl<out_buffer, in_buffer, double, int, int, matrix_cl_view>
-    scalar_mul("scalar_mul", {indexing_helpers, view_kernel_helpers,
-                              scalar_mul_kernel_code});
+    scalar_mul("scalar_mul",
+               {indexing_helpers, view_kernel_helpers, scalar_mul_kernel_code});
 
 }  // namespace opencl_kernels
 }  // namespace math

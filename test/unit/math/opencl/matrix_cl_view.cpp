@@ -4,12 +4,15 @@
 
 TEST(matrix_cl_view, either) {
   using stan::math::matrix_cl_view;
-  EXPECT_EQ(matrix_cl_view::Lower, either(matrix_cl_view::Lower, matrix_cl_view::Lower));
-  EXPECT_EQ(matrix_cl_view::Entire, either(matrix_cl_view::Lower, matrix_cl_view::Upper));
+  EXPECT_EQ(matrix_cl_view::Lower,
+            either(matrix_cl_view::Lower, matrix_cl_view::Lower));
+  EXPECT_EQ(matrix_cl_view::Entire,
+            either(matrix_cl_view::Lower, matrix_cl_view::Upper));
   EXPECT_EQ(matrix_cl_view::Lower,
             either(matrix_cl_view::Lower, matrix_cl_view::Diagonal));
 
-  EXPECT_EQ(matrix_cl_view::Upper, either(matrix_cl_view::Upper, matrix_cl_view::Upper));
+  EXPECT_EQ(matrix_cl_view::Upper,
+            either(matrix_cl_view::Upper, matrix_cl_view::Upper));
   EXPECT_EQ(matrix_cl_view::Upper,
             either(matrix_cl_view::Upper, matrix_cl_view::Diagonal));
 
@@ -34,31 +37,40 @@ TEST(matrix_cl_view, operator_multiply) {
   EXPECT_EQ(matrix_cl_view::Diagonal,
             both(matrix_cl_view::Lower, matrix_cl_view::Upper));
 
-  EXPECT_EQ(matrix_cl_view::Lower, both(matrix_cl_view::Lower, matrix_cl_view::Lower));
-  EXPECT_EQ(matrix_cl_view::Lower, both(matrix_cl_view::Entire, matrix_cl_view::Lower));
+  EXPECT_EQ(matrix_cl_view::Lower,
+            both(matrix_cl_view::Lower, matrix_cl_view::Lower));
+  EXPECT_EQ(matrix_cl_view::Lower,
+            both(matrix_cl_view::Entire, matrix_cl_view::Lower));
 
-  EXPECT_EQ(matrix_cl_view::Upper, both(matrix_cl_view::Upper, matrix_cl_view::Upper));
-  EXPECT_EQ(matrix_cl_view::Upper, both(matrix_cl_view::Entire, matrix_cl_view::Upper));
+  EXPECT_EQ(matrix_cl_view::Upper,
+            both(matrix_cl_view::Upper, matrix_cl_view::Upper));
+  EXPECT_EQ(matrix_cl_view::Upper,
+            both(matrix_cl_view::Entire, matrix_cl_view::Upper));
   EXPECT_EQ(matrix_cl_view::Entire,
             both(matrix_cl_view::Entire, matrix_cl_view::Entire));
 }
 
 TEST(matrix_cl_view, contains_nonzero) {
-  using stan::math::matrix_cl_view;
   using stan::math::contains_nonzero;
+  using stan::math::matrix_cl_view;
   EXPECT_EQ(false,
             contains_nonzero(matrix_cl_view::Upper, matrix_cl_view::Diagonal));
   EXPECT_EQ(false,
             contains_nonzero(matrix_cl_view::Entire, matrix_cl_view::Diagonal));
   EXPECT_EQ(false,
             contains_nonzero(matrix_cl_view::Lower, matrix_cl_view::Diagonal));
-  EXPECT_EQ(false, contains_nonzero(matrix_cl_view::Lower, matrix_cl_view::Upper));
+  EXPECT_EQ(false,
+            contains_nonzero(matrix_cl_view::Lower, matrix_cl_view::Upper));
 
-  EXPECT_EQ(true, contains_nonzero(matrix_cl_view::Lower, matrix_cl_view::Lower));
-  EXPECT_EQ(true, contains_nonzero(matrix_cl_view::Entire, matrix_cl_view::Lower));
+  EXPECT_EQ(true,
+            contains_nonzero(matrix_cl_view::Lower, matrix_cl_view::Lower));
+  EXPECT_EQ(true,
+            contains_nonzero(matrix_cl_view::Entire, matrix_cl_view::Lower));
 
-  EXPECT_EQ(true, contains_nonzero(matrix_cl_view::Upper, matrix_cl_view::Upper));
-  EXPECT_EQ(true, contains_nonzero(matrix_cl_view::Entire, matrix_cl_view::Upper));
+  EXPECT_EQ(true,
+            contains_nonzero(matrix_cl_view::Upper, matrix_cl_view::Upper));
+  EXPECT_EQ(true,
+            contains_nonzero(matrix_cl_view::Entire, matrix_cl_view::Upper));
   EXPECT_EQ(true,
             contains_nonzero(matrix_cl_view::Entire, matrix_cl_view::Entire));
 }
@@ -73,8 +85,8 @@ TEST(matrix_cl_view, transpose) {
 }
 
 TEST(matrix_cl_view, invert) {
-  using stan::math::matrix_cl_view;
   using stan::math::invert;
+  using stan::math::matrix_cl_view;
   EXPECT_EQ(matrix_cl_view::Lower, invert(matrix_cl_view::Upper));
   EXPECT_EQ(matrix_cl_view::Upper, invert(matrix_cl_view::Lower));
   EXPECT_EQ(matrix_cl_view::Entire, invert(matrix_cl_view::Diagonal));
@@ -82,13 +94,14 @@ TEST(matrix_cl_view, invert) {
 }
 
 TEST(matrix_cl_view, from_eigen_triangular_type) {
-  using stan::math::matrix_cl_view;
   using stan::math::from_eigen_triangular_type;
+  using stan::math::matrix_cl_view;
   EXPECT_EQ(matrix_cl_view::Lower, from_eigen_triangular_type(Eigen::Lower));
   EXPECT_EQ(matrix_cl_view::Upper, from_eigen_triangular_type(Eigen::Upper));
   EXPECT_EQ(matrix_cl_view::Entire,
             from_eigen_triangular_type(Eigen::SelfAdjoint));
-  EXPECT_EQ(matrix_cl_view::Entire, from_eigen_triangular_type(Eigen::UnitDiag));
+  EXPECT_EQ(matrix_cl_view::Entire,
+            from_eigen_triangular_type(Eigen::UnitDiag));
 }
 
 #endif

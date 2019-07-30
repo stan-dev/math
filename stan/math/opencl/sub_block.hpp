@@ -64,11 +64,11 @@ inline void matrix_cl<T, enable_if_arithmetic<T>>::sub_block(
   // calculation of extreme sub- and super- diagonal written
   const int diag_in_copy = A_i - A_j;
   const int copy_low = contains_nonzero(A.view(), matrix_cl_view::Lower)
-                     ? 1 - nrows
-                     : diag_in_copy;
+                           ? 1 - nrows
+                           : diag_in_copy;
   const int copy_high = contains_nonzero(A.view(), matrix_cl_view::Upper)
-                      ? ncols - 1
-                      : diag_in_copy;
+                            ? ncols - 1
+                            : diag_in_copy;
   const int start = this_j - this_i;
 
   if (start + copy_low < 0) {

@@ -23,8 +23,7 @@ namespace math {
 template <typename T>
 inline void check_triangular(const char* function, const char* name,
                              const matrix_cl<T>& A) {
-  if (A.view() != matrix_cl_view::Lower
-      && A.view() != matrix_cl_view::Upper) {
+  if (A.view() != matrix_cl_view::Lower && A.view() != matrix_cl_view::Upper) {
     invalid_argument("tri_inverse(OpenCL)", "A.view()",
                      static_cast<int>(A.view()), "is ",
                      ". Only triangular input matrices are supported!");

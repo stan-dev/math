@@ -43,8 +43,7 @@ inline void matrix_cl<T, enable_if_arithmetic<T>>::triangular_transpose() try {
       = (triangular_map == TriangularMapCL::LowerToUpper
          && !contains_nonzero(this->view_, matrix_cl_view::Lower))
                 || (triangular_map == TriangularMapCL::UpperToLower
-                    && !contains_nonzero(this->view_,
-                                        matrix_cl_view::Upper))
+                    && !contains_nonzero(this->view_, matrix_cl_view::Upper))
             ? matrix_cl_view::Diagonal
             : matrix_cl_view::Entire;
 } catch (const cl::Error& e) {

@@ -30,7 +30,7 @@ inline const matrix_cl_view either(const matrix_cl_view left_view,
  * @return common nonzero part
  */
 inline const matrix_cl_view both(const matrix_cl_view left_view,
-                                      const matrix_cl_view right_view) {
+                                 const matrix_cl_view right_view) {
   typedef typename std::underlying_type<matrix_cl_view>::type underlying;
   return static_cast<matrix_cl_view>(static_cast<underlying>(left_view)
                                      & static_cast<underlying>(right_view));
@@ -97,11 +97,11 @@ enum class TriangularMapCL { UpperToLower = 0, LowerToUpper = 1 };
 static const char* view_kernel_helpers = STRINGIFY(
     // \endcond
     /**
-    * Determines which parts are nonzero in any of the input views.
-    * @param left_view first view
-    * @param right_view second view
-    * @return combined view
-    */
+     * Determines which parts are nonzero in any of the input views.
+     * @param left_view first view
+     * @param right_view second view
+     * @return combined view
+     */
     int either(int left_view, int right_view) { return left_view | right_view; }
 
     /**

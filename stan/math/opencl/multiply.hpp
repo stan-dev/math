@@ -49,8 +49,8 @@ inline matrix_cl<return_type_t<T1, T2>> multiply(const matrix_cl<T1>& A,
             "LOCAL_SIZE_");
     try {
       opencl_kernels::row_vector_matrix_multiply(
-              cl::NDRange(temp.cols() * local_size), cl::NDRange(local_size), A, B,
-              temp, B.rows(), B.cols(), A.view(), B.view());
+          cl::NDRange(temp.cols() * local_size), cl::NDRange(local_size), A, B,
+          temp, B.rows(), B.cols(), A.view(), B.view());
     } catch (cl::Error& e) {
       check_opencl_error("row_vector - matrix multiply", e);
     }
@@ -58,9 +58,9 @@ inline matrix_cl<return_type_t<T1, T2>> multiply(const matrix_cl<T1>& A,
   }
   if (B.cols() == 1) {
     try {
-      opencl_kernels::matrix_vector_multiply(
-              cl::NDRange(temp.rows()), A, B, temp, A.rows(), A.cols(),
-              A.view(), B.view());
+      opencl_kernels::matrix_vector_multiply(cl::NDRange(temp.rows()), A, B,
+                                             temp, A.rows(), A.cols(), A.view(),
+                                             B.view());
     } catch (cl::Error& e) {
       check_opencl_error("matrix - vector multiply", e);
     }
@@ -84,10 +84,9 @@ inline matrix_cl<return_type_t<T1, T2>> multiply(const matrix_cl<T1>& A,
   }
   try {
     if (split <= 1) {
-      opencl_kernels::matrix_multiply(cl::NDRange(Mpad, Npad / wpt),
-                                      cl::NDRange(local, local / wpt), A, B,
-                                      temp, A.rows(), B.cols(), B.rows(),
-                                      A.view(), B.view());
+      opencl_kernels::matrix_multiply(
+          cl::NDRange(Mpad, Npad / wpt), cl::NDRange(local, local / wpt), A, B,
+          temp, A.rows(), B.cols(), B.rows(), A.view(), B.view());
     } else {
       matrix_cl<return_type_t<T1, T2>> tempSplit(A.rows(), B.cols() * split);
       opencl_kernels::matrix_multiply(cl::NDRange(Mpad, Npad / wpt, split),

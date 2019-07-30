@@ -58,8 +58,7 @@ static const char *sub_block_kernel_code = STRINGIFY(
       if (src_idx_i < src_rows && src_idx_j < src_cols && dst_idx_i < dst_rows
           && dst_idx_j < dst_cols) {
         if ((contains_nonzero(view, LOWER) && src_idx_i >= src_idx_j)
-            || (contains_nonzero(view, UPPER)
-                && src_idx_i <= src_idx_j)) {
+            || (contains_nonzero(view, UPPER) && src_idx_i <= src_idx_j)) {
           dst(dst_idx_i, dst_idx_j) = src(src_idx_i, src_idx_j);
         } else {
           dst(dst_idx_i, dst_idx_j) = 0;
@@ -75,8 +74,8 @@ static const char *sub_block_kernel_code = STRINGIFY(
  */
 const kernel_cl<in_buffer, out_buffer, int, int, int, int, int, int, int, int,
                 int, int, matrix_cl_view>
-    sub_block("sub_block", {indexing_helpers, view_kernel_helpers,
-                            sub_block_kernel_code});
+    sub_block("sub_block",
+              {indexing_helpers, view_kernel_helpers, sub_block_kernel_code});
 
 }  // namespace opencl_kernels
 }  // namespace math

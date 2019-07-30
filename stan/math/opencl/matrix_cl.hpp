@@ -61,9 +61,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
 
   const matrix_cl_view& view() const { return view_; }
 
-  void view(const matrix_cl_view& view) {
-    view_ = view;
-  }
+  void view(const matrix_cl_view& view) { view_ = view; }
 
   /**
    * Clear the write events from the event stacks.
