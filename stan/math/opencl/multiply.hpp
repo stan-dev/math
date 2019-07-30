@@ -75,7 +75,13 @@ inline matrix_cl<return_type_t<T1, T2>> multiply(const matrix_cl<T1>& A,
   const int wpt = opencl_kernels::matrix_multiply.make_functor.get_opts().at(
       "WORK_PER_THREAD");
   const int wgs = Mpad / local * Npad / local;
-  const int split = std::min(A.cols() / local, (opencl_context.tuning_opts().multiply_wgs_per_compute_unit * static_cast<int>(opencl_context.device()[0].getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>()) + wgs - 1) / wgs);
+  const int split = std::min(
+      A.cols() / local,
+      (opencl_context.tuning_opts().multiply_wgs_per_compute_unit
+           * static_cast<int>(opencl_context.device()[0]
+                                  .getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>())
+       + wgs - 1)
+          / wgs);
   try {
     if (split <= 1) {
       opencl_kernels::matrix_multiply(cl::NDRange(Mpad, Npad / wpt),
