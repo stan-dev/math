@@ -36,7 +36,6 @@ class accumulator {
    */
   ~accumulator() {}
 
-
   /**
    * Add the specified arithmetic type value to the buffer after
    * static casting it to the class type <code>T</code>.
