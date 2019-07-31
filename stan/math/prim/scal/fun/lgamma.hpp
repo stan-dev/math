@@ -6,7 +6,8 @@
 // exports reentrant safe lgamma_r version.
 #if !_REENTRANT
 #error \
-    "stan-math requires _REENTRANT being defined during compilation to make lgamma_r available."
+    "stan-math requires _REENTRANT being defined during compilation" \
+    "to make lgamma_r available."
 #endif
 #include <cmath>
 #else
