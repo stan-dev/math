@@ -4,6 +4,10 @@
 #if !__MINGW32__
 // _REENTRANT must be defined during compilation to ensure that cmath
 // exports reentrant safe lgamma_r version.
+#if !_REENTRANT
+#error \
+    "stan-math requires _REENTRANT being defined during compilation to make lgamma_r available."
+#endif
 #include <cmath>
 #else
 // MinGW does not provide the reentrant lgamma_r such that we fall
