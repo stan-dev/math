@@ -336,15 +336,15 @@ class cholesky_opencl : public vari {
       const int k_j_ind = k - j;
       const int m_k_ind = M_ - k;
 
-      matrix_cl<double> R(k_j_ind, j);
+      matrix_cl<double> R(k_j_ind, j, matrix_cl_view::Lower);
       matrix_cl<double> D(k_j_ind, k_j_ind, matrix_cl_view::Lower);
       matrix_cl<double> B(m_k_ind, j);
-      matrix_cl<double> C(m_k_ind, k_j_ind);
+      matrix_cl<double> C(m_k_ind, k_j_ind, matrix_cl_view::Lower);
 
-      matrix_cl<double> R_adj(k_j_ind, j);
-      matrix_cl<double> D_adj(k_j_ind, k_j_ind);
+      matrix_cl<double> R_adj(k_j_ind, j, matrix_cl_view::Lower);
+      matrix_cl<double> D_adj(k_j_ind, k_j_ind, matrix_cl_view::Lower);
       matrix_cl<double> B_adj(m_k_ind, j);
-      matrix_cl<double> C_adj(m_k_ind, k_j_ind);
+      matrix_cl<double> C_adj(m_k_ind, k_j_ind, matrix_cl_view::Lower);
 
       R.sub_block(L, j, 0, 0, 0, k_j_ind, j);
       D.sub_block(L, j, j, 0, 0, k_j_ind, k_j_ind);
@@ -370,6 +370,7 @@ class cholesky_opencl : public vari {
       L_adj.sub_block(B_adj, 0, 0, k, 0, m_k_ind, j);
       L_adj.sub_block(C_adj, 0, 0, k, j, m_k_ind, k_j_ind);
     }
+    L_adj.view(matrix_cl_view::Lower);
     L_adj_cpu = packed_copy(L_adj);
     for (size_type j = 0; j < packed_size; ++j) {
       vari_ref_A_[j]->adj_ += L_adj_cpu[j];
