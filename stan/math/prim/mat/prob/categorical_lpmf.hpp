@@ -14,7 +14,7 @@ namespace math {
 
 // Categorical(n|theta)  [0 < n <= N;   0 <= theta[n] <= 1;  SUM theta = 1]
 template <bool propto, typename T_prob>
-typename boost::math::tools::promote_args<T_prob>::type categorical_lpmf(
+return_type_t<T_prob> categorical_lpmf(
     int n, const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
   static const char* function = "categorical_lpmf";
 
@@ -31,7 +31,7 @@ typename boost::math::tools::promote_args<T_prob>::type categorical_lpmf(
 }
 
 template <typename T_prob>
-inline typename boost::math::tools::promote_args<T_prob>::type categorical_lpmf(
+inline return_type_t<T_prob> categorical_lpmf(
     const typename math::index_type<
         Eigen::Matrix<T_prob, Eigen::Dynamic, 1> >::type n,
     const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
@@ -39,7 +39,7 @@ inline typename boost::math::tools::promote_args<T_prob>::type categorical_lpmf(
 }
 
 template <bool propto, typename T_prob>
-typename boost::math::tools::promote_args<T_prob>::type categorical_lpmf(
+return_type_t<T_prob> categorical_lpmf(
     const std::vector<int>& ns,
     const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
   static const char* function = "categorical_lpmf";
@@ -64,9 +64,8 @@ typename boost::math::tools::promote_args<T_prob>::type categorical_lpmf(
   for (int i = 0; i < theta.size(); ++i)
     log_theta(i) = log(theta(i));
 
-  Eigen::Matrix<typename boost::math::tools::promote_args<T_prob>::type,
-                Eigen::Dynamic, 1>
-      log_theta_ns(ns.size());
+  Eigen::Matrix<return_type_t<T_prob>, Eigen::Dynamic, 1> log_theta_ns(
+      ns.size());
   for (size_t i = 0; i < ns.size(); ++i)
     log_theta_ns(i) = log_theta(ns[i] - 1);
 
@@ -74,7 +73,7 @@ typename boost::math::tools::promote_args<T_prob>::type categorical_lpmf(
 }
 
 template <typename T_prob>
-inline typename boost::math::tools::promote_args<T_prob>::type categorical_lpmf(
+inline return_type_t<T_prob> categorical_lpmf(
     const std::vector<int>& ns,
     const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
   return categorical_lpmf<false>(ns, theta);

@@ -19,10 +19,10 @@ namespace math {
 
 // NegBinomial(n|alpha, beta)  [alpha > 0;  beta > 0;  n >= 0]
 template <bool propto, typename T_n, typename T_shape, typename T_inv_scale>
-typename return_type<T_shape, T_inv_scale>::type neg_binomial_lpmf(
-    const T_n& n, const T_shape& alpha, const T_inv_scale& beta) {
-  typedef typename stan::partials_return_type<T_n, T_shape, T_inv_scale>::type
-      T_partials_return;
+return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
+                                                      const T_shape& alpha,
+                                                      const T_inv_scale& beta) {
+  typedef partials_return_type_t<T_n, T_shape, T_inv_scale> T_partials_return;
 
   static const char* function = "neg_binomial_lpmf";
 
@@ -129,7 +129,7 @@ typename return_type<T_shape, T_inv_scale>::type neg_binomial_lpmf(
 }
 
 template <typename T_n, typename T_shape, typename T_inv_scale>
-inline typename return_type<T_shape, T_inv_scale>::type neg_binomial_lpmf(
+inline return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(
     const T_n& n, const T_shape& alpha, const T_inv_scale& beta) {
   return neg_binomial_lpmf<false>(n, alpha, beta);
 }

@@ -17,8 +17,7 @@ namespace math {
  * @return maximum of x or y and if one is NaN return the other
  */
 template <typename T1, typename T2>
-inline typename boost::math::tools::promote_args<T1, T2>::type fmax(
-    const T1& x, const T2& y) {
+inline return_type_t<T1, T2> fmax(const T1& x, const T2& y) {
   if (is_nan(x))
     return y;
   if (is_nan(y))

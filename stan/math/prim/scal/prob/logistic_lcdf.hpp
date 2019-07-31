@@ -16,10 +16,9 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_loc, typename T_scale>
-typename return_type<T_y, T_loc, T_scale>::type logistic_lcdf(
-    const T_y& y, const T_loc& mu, const T_scale& sigma) {
-  typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
-      T_partials_return;
+return_type_t<T_y, T_loc, T_scale> logistic_lcdf(const T_y& y, const T_loc& mu,
+                                                 const T_scale& sigma) {
+  typedef partials_return_type_t<T_y, T_loc, T_scale> T_partials_return;
 
   if (size_zero(y, mu, sigma))
     return 0.0;

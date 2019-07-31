@@ -44,8 +44,7 @@ namespace math {
  *   greater than the upper bound
  */
 template <typename T, typename L, typename U>
-inline typename boost::math::tools::promote_args<T, L, U>::type lub_free(
-    const T& y, const L& lb, const U& ub) {
+inline return_type_t<T, L, U> lub_free(const T& y, const L& lb, const U& ub) {
   check_bounded<T, L, U>("lub_free", "Bounded variable", y, lb, ub);
   if (lb == NEGATIVE_INFTY)
     return ub_free(y, ub);

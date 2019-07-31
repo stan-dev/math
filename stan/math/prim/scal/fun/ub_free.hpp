@@ -34,8 +34,7 @@ namespace math {
  *   than the upper bound.
  */
 template <typename T, typename U>
-inline typename boost::math::tools::promote_args<T, U>::type ub_free(
-    const T& y, const U& ub) {
+inline return_type_t<T, U> ub_free(const T& y, const U& ub) {
   using std::log;
   if (ub == INFTY)
     return identity_free(y);

@@ -16,12 +16,11 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
-typename return_type<T_y, T_loc, T_scale, T_shape>::type skew_normal_cdf(
+return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_cdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& alpha) {
   static const char* function = "skew_normal_cdf";
-  typedef
-      typename stan::partials_return_type<T_y, T_loc, T_scale, T_shape>::type
-          T_partials_return;
+  typedef partials_return_type_t<T_y, T_loc, T_scale, T_shape>
+      T_partials_return;
 
   T_partials_return cdf(1.0);
 
