@@ -11,8 +11,8 @@ using Eigen::Matrix;
 using stan::math::var;
 using std::vector;
 
-//  We check that the values of the new rression match those of one built
-//  from existin primitives.
+//  We check that the values of the new regression match those of one built
+//  from existing primitives.
 TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_doubles) {
   vector<int> y{1, 0, 1};
   Matrix<double, Dynamic, Dynamic> x(3, 2);
