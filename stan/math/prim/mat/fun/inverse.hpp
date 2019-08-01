@@ -18,6 +18,16 @@ inline Eigen::Matrix<T, R, C> inverse(const Eigen::Matrix<T, R, C>& m) {
   return m.inverse();
 }
 
+template <typename Derived>
+inline Eigen::SparseMatrixBase<Derived> inverse(const Eigen::SparseMatrixBase<Derived>& m) {
+  Eigen::SimplicialLLT<Eigen::SparseMatrixBase<Derived>> m_solver;
+  m.makeCompressed();
+  m_solver.compute(m);
+  Eigen::SparseMatrixBase<Derived> identity(m.rows(), m.cols());
+  identity.setIdentity();
+  return m_solver.solve(identity);
+}
+
 }  // namespace math
 }  // namespace stan
 #endif

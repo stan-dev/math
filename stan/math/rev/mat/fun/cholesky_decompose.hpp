@@ -17,6 +17,7 @@
 #include <stan/math/opencl/opencl.hpp>
 #endif
 
+#include <Eigen/Sparse>
 #include <algorithm>
 #include <vector>
 
@@ -383,6 +384,128 @@ class cholesky_opencl : public vari {
   }
 };
 #endif
+
+
+    class cholesky_decompose_sparse_v_vari : public vari {
+    public:
+      int M_;  // A.rows() = A.cols()
+      vari** variRefA_;
+      vari** variRefL_;
+
+      /* ctor for cholesky function
+       *
+       * Stores varis for A
+       * Instantiates and stores varis for L
+       * Instantiates and stores dummy vari for
+       * upper triangular part of var result returned
+       * in cholesky_decompose function call
+       *
+       * variRefL aren't on the chainable
+       * autodiff stack, only used for storage
+       * and computation. Note that varis for
+       * L are constructed externally in
+       * cholesky_decompose.
+       *
+       * @param matrix A
+       * @param matrix L, cholesky factor of A
+       * */
+      cholesky_decompose_sparse_v_vari(const Eigen::SparseMatrix<var>& A,
+                                const Eigen::SparseMatrix<double>& L_A)
+        : vari(0.0),
+          M_(A.rows()),
+          variRefA_(ChainableStack::instance_->memalloc_.alloc_array<vari*>
+                    (A.rows() * (A.rows() + 1) / 2)),
+          variRefL_(ChainableStack::instance_->memalloc_.alloc_array<vari*>
+                    (A.rows() * (A.rows() + 1) / 2)) {
+        size_t accum = 0;
+        size_t accum_i = accum;
+        for (size_type j = 0; j < M_; ++j) {
+          for (size_type i = j; i < M_; ++i) {
+            accum_i += i;
+            size_t pos = j + accum_i;
+            variRefA_[pos] = A.coeff(i, j).vi_;
+            variRefL_[pos] = new vari(L_A.coeff(i, j), false);
+          }
+          accum += j;
+          accum_i = accum;
+        }
+      }
+
+      /* Reverse mode differentiation
+       * algorithm refernce:
+       *
+       * Mike Giles. An extended collection of matrix
+       * derivative results for forward and reverse mode AD.
+       * Jan. 2008.
+       *
+       * Note algorithm  as laid out in Giles is
+       * row-major, so Eigen::Matrices are explicitly storage
+       * order RowMajor, whereas Eigen defaults to
+       * ColumnMajor. Also note algorithm
+       * starts by calculating the adjoint for
+       * A(M_ - 1, M_ - 1), hence pos on line 94 is decremented
+       * to start at pos = M_ * (M_ + 1) / 2.
+       * */
+      virtual void chain() {
+        using Eigen::Matrix;
+        using Eigen::RowMajor;
+        Matrix<double, -1, -1, RowMajor> adjL(M_, M_);
+        Matrix<double, -1, -1, RowMajor> LA(M_, M_);
+        Matrix<double, -1, -1, RowMajor> adjA(M_, M_);
+        size_t pos = 0;
+        for (size_type i = 0; i < M_; ++i) {
+          for (size_type j = 0; j <= i; ++j) {
+            adjL.coeffRef(i, j) = variRefL_[pos]->adj_;
+            LA.coeffRef(i, j) = variRefL_[pos]->val_;
+            ++pos;
+          }
+        }
+
+        --pos;
+        for (int i = M_ - 1; i >= 0; --i) {
+          for (int j = i; j >= 0; --j) {
+            if (i == j) {
+              adjA.coeffRef(i, j) = 0.5 * adjL.coeff(i, j)
+                / LA.coeff(i, j);
+            } else {
+              adjA.coeffRef(i, j) = adjL.coeff(i, j)
+                / LA.coeff(j, j);
+              adjL.coeffRef(j, j) -= adjL.coeff(i, j)
+                * LA.coeff(i, j) / LA.coeff(j, j);
+            }
+            for (int k = j - 1; k >=0; --k) {
+              adjL.coeffRef(i, k) -= adjA.coeff(i, j)
+                * LA.coeff(j, k);
+              adjL.coeffRef(j, k) -= adjA.coeff(i, j)
+                * LA.coeff(i, k);
+            }
+            variRefA_[pos--]->adj_ += adjA.coeffRef(i, j);
+          }
+        }
+      }
+    };
+
+/**
+ * Reverse mode specialization of cholesky decomposition
+ *
+ * Internally calls Eigen::LLT rather than using
+ * stan::math::cholesky_decompose in order to use an inplace decomposition.
+ *
+ * Note chainable stack varis are created below in Matrix<var, -1, -1>
+ *
+ * @param A Matrix
+ * @return L cholesky factor of A
+ */
+/*inline Eigen::SparseMatrix<var> cholesky_decompose(
+  const Eigen::SparseMatrix<var>& A) {
+  //check_square("cholesky_decompose", "A", A);
+  //check_symmetric("cholesky_decompose", "A", A);
+  Eigen::SparseMatrix<var> L_A = cholesky_decompose(A.vi().val());
+  Eigen::SparseMatrix<var> L(A.rows(), A.cols());
+  cholesky_block* baseVari = new cholesky_decompose_sparse_v_vari(A.makeCompressed(), L_A.makeCompressed());
+  internal::set_lower_tri_coeff_ref(L, baseVari->vari_ref_L_);
+  return L;
+}*/
 
 /**
  * Reverse mode specialization of cholesky decomposition

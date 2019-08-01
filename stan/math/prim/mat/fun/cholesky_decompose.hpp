@@ -88,6 +88,32 @@ inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
   return llt.matrixL();
 #endif
 }
+
+/**
+ * Return the lower-triangular Cholesky factor (i.e., matrix
+ * square root) of the specified square, symmetric matrix.  The return
+ * value \f$L\f$ will be a lower-traingular matrix such that the
+ * original matrix \f$A\f$ is given by
+ * <p>\f$A = L \times L^T\f$.
+ * @param m Symmetrix matrix.
+ * @return Square root of matrix.
+ * @note Because OpenCL only works on doubles there are two
+ * <code>cholesky_decompose</code> functions. One that works on doubles
+ * (this one) and another that works on all other types.
+ * @throw std::domain_error if m is not a symmetric matrix or
+ *   if m is not positive definite (if m has more than 0 elements)
+ */
+template<typename Derived>
+inline Eigen::SparseMatrixBase<Derived>
+ cholesky_decompose(const Eigen::SparseMatrixBase<Derived>& m) {
+  check_square("cholesky_decompose", "m", m);
+  check_symmetric("cholesky_decompose", "m", m);
+  Eigen::SimplicialLLT<Eigen::SparseMatrix<Derived>> llt();
+  llt.compute(m);
+  //check_pos_definite("cholesky_decompose", "m", llt);
+  return llt.matrixL();
+}
+
 }  // namespace math
 
 }  // namespace stan
