@@ -89,6 +89,7 @@
 #include <stan/math/prim/scal/fun/is_any_nan.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/fun/is_uninitialized.hpp>
+#include <stan/math/prim/scal/fun/lambertw.hpp>
 #include <stan/math/prim/scal/fun/lb_constrain.hpp>
 #include <stan/math/prim/scal/fun/lb_free.hpp>
 #include <stan/math/prim/scal/fun/lbeta.hpp>
