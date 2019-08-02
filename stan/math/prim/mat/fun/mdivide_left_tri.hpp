@@ -76,7 +76,7 @@ inline Eigen::Matrix<T, R1, C1> mdivide_left_tri(
  * @throws std::domain_error if A is not square or the rows of b don't
  * match the size of A.
  */
-template <int TriView, int R1, int C1, int R2, int C2>
+template <Eigen::UpLoType TriView, int R1, int C1, int R2, int C2>
 inline Eigen::Matrix<double, R1, C2> mdivide_left_tri(
     const Eigen::Matrix<double, R1, C1> &A,
     const Eigen::Matrix<double, R2, C2> &b) {
@@ -85,14 +85,9 @@ inline Eigen::Matrix<double, R1, C2> mdivide_left_tri(
 #ifdef STAN_OPENCL
   if (A.rows()
       >= opencl_context.tuning_opts().tri_inverse_size_worth_transfer) {
-    matrix_cl<double> A_cl(A);
+    matrix_cl<double> A_cl(A, from_eigen_uplo_type(TriView));
     matrix_cl<double> b_cl(b);
-    matrix_cl<double> A_inv_cl(A.rows(), A.cols());
-    if (TriView == Eigen::Lower) {
-      A_inv_cl = tri_inverse<TriangularViewCL::Lower>(A_cl);
-    } else {
-      A_inv_cl = tri_inverse<TriangularViewCL::Upper>(A_cl);
-    }
+    matrix_cl<double> A_inv_cl = tri_inverse(A_cl);
     matrix_cl<double> C_cl = A_inv_cl * b_cl;
     return from_matrix_cl(C_cl);
   } else {
@@ -114,7 +109,7 @@ inline Eigen::Matrix<double, R1, C2> mdivide_left_tri(
  * @return x = A^-1 .
  * @throws std::domain_error if A is not square
  */
-template <int TriView, int R1, int C1>
+template <Eigen::UpLoType TriView, int R1, int C1>
 inline Eigen::Matrix<double, R1, C1> mdivide_left_tri(
     const Eigen::Matrix<double, R1, C1> &A) {
   check_square("mdivide_left_tri", "A", A);
@@ -122,12 +117,8 @@ inline Eigen::Matrix<double, R1, C1> mdivide_left_tri(
 #ifdef STAN_OPENCL
   if (A.rows()
       >= opencl_context.tuning_opts().tri_inverse_size_worth_transfer) {
-    matrix_cl<double> A_cl(A);
-    if (TriView == Eigen::Lower) {
-      A_cl = tri_inverse<TriangularViewCL::Lower>(A_cl);
-    } else {
-      A_cl = tri_inverse<TriangularViewCL::Upper>(A_cl);
-    }
+    matrix_cl<double> A_cl(A, from_eigen_uplo_type(TriView));
+    A_cl = tri_inverse(A_cl);
     return from_matrix_cl(A_cl);
   } else {
 #endif

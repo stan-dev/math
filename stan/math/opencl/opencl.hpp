@@ -13,6 +13,7 @@
 #include <stan/math/opencl/tri_inverse.hpp>
 #include <stan/math/opencl/multiply.hpp>
 #include <stan/math/opencl/multiply_transpose.hpp>
+#include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/sub_block.hpp>
 #include <stan/math/opencl/subtract.hpp>
 #include <stan/math/opencl/triangular_transpose.hpp>
