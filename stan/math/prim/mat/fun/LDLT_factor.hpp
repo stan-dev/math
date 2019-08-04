@@ -99,19 +99,11 @@ class LDLT_factor {
     ldltP_->solveInPlace(invA);
   }
 
-#if EIGEN_VERSION_AT_LEAST(3, 3, 0)
   template <typename Rhs>
   inline const Eigen::Solve<ldlt_t, Rhs> solve(
       const Eigen::MatrixBase<Rhs>& b) const {
     return ldltP_->solve(b);
   }
-#else
-  template <typename Rhs>
-  inline const Eigen::internal::solve_retval<ldlt_t, Rhs> solve(
-      const Eigen::MatrixBase<Rhs>& b) const {
-    return ldltP_->solve(b);
-  }
-#endif
 
   inline matrix_t solveRight(const matrix_t& B) const {
     return ldltP_->solve(B.transpose()).transpose();
