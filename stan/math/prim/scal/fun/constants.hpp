@@ -19,6 +19,12 @@ using std::sqrt;
 const double E = boost::math::constants::e<double>();
 
 /**
+ * The base of the natural logarithm,
+ * \f$ e \f$.
+ */
+const double INV_E = 1 / boost::math::constants::e<double>();
+
+/**
  * The value of the square root of 2,
  * \f$ \sqrt{2} \f$.
  */

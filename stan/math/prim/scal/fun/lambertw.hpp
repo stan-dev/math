@@ -9,257 +9,270 @@
 namespace stan {
 namespace math {
 
-template <int branch>
 class lambert {
-private:
-  const std::vector<double> lambert_small_approx_consts {
-      -1,
+ private:
+  const std::vector<double> lagrange_inv_coeffs{-1,
+                                                +1,
+                                                -0.333333333333333333,
+                                                +0.152777777777777778,
+                                                -0.0796296296296296296,
+                                                +0.0445023148148148148,
+                                                -0.0259847148736037625,
+                                                +0.0156356325323339212,
+                                                -0.00961689202429943171,
+                                                +0.00601454325295611786,
+                                                -0.00381129803489199923,
+                                                +0.00244087799114398267,
+                                                -0.00157693034468678425,
+                                                +0.00102626332050760715,
+                                                -0.000672061631156136204,
+                                                +0.000442473061814620910,
+                                                -0.000292677224729627445,
+                                                +0.000194387276054539318,
+                                                -0.000129574266852748819,
+                                                +0.0000866503580520812717,
+                                                -0.0000581136075044138168};
+
+  inline double quick_series_approx(const double p) {
+    const double ap = std::abs(p);
+    double approx_val = lagrange_inv_coeffs[0] + lagrange_inv_coeffs[1] * p;
+    // We could move this loop to set the bound and have one, but bounded loops
+    // Are better targets for unrolling
+    if (ap < 0.01159) {
+      for (int i = 2; i < 7; i++) {
+        approx_val += lagrange_inv_coeffs[i] * std::pow(p, i);
+      }
+    } else if (ap < 0.0766) {
+      for (int i = 2; i < 11; i++) {
+        approx_val += lagrange_inv_coeffs[i] * std::pow(p, i);
+      }
+    } else {
+      for (int i = 2; i < 21; i++) {
+        approx_val += lagrange_inv_coeffs[i] * std::pow(p, i);
+      }
+    }
+    return approx_val;
+  }
+  // Used when input value is near zero on branch 0
+  const std::vector<double> lagrange_inv_small_val_coeffs{
       1,
-      -0.333333333333333333,
-      +0.152777777777777778,
-      -0.0796296296296296296,
-      +0.0445023148148148148,
-      -0.0259847148736037625,
-      +0.0156356325323339212,
-      -0.00961689202429943171,
-      +0.00601454325295611786,
-      -0.00381129803489199923,
-      +0.00244087799114398267,
-      -0.00157693034468678425,
-      +0.00102626332050760715,
-      -0.000672061631156136204,
-      +0.000442473061814620910,
-      -0.000292677224729627445,
-      +0.000194387276054539318,
-      -0.000129574266852748819,
-      +0.0000866503580520812717,
-      -0.0000581136075044138168};
+      1,
+      1.5,
+      2.6666666666666666667,
+      5.2083333333333333333,
+      10.8,
+      23.343055555555555556,
+      52.012698412698412698,
+      118.62522321428571429,
+      275.57319223985890653,
+      649.78717234347442681,
+      1551.1605194805194805,
+      3741.4497029592385495,
+      9104.5002411580189358,
+      22324.308512706601434,
+      55103.621972903835338,
+      136808.86090394293563};
 
-  const std::vector<double> lambert_large_approx_consts {
-  1,
-  1,
-  1.5,
-  2.6666666666666666667,
-  5.2083333333333333333,
-  10.8,
-  23.343055555555555556,
-  52.012698412698412698,
-  118.62522321428571429,
-  275.57319223985890653,
-  649.78717234347442681,
-  1551.1605194805194805,
-  3741.4497029592385495,
-  9104.5002411580189358,
-  22324.308512706601434,
-  55103.621972903835338,
-  136808.86090394293563};
-
-  inline double lambertw_series(const double val) {
-    const double abs_val = std::abs(val);
-    double series_sum = 0.0;
-    auto approx_iters = 20;
-    if (abs_val < 0.01159) {
-      approx_iters = 7;
-    } else if (abs_val < 0.0766) {
-      approx_iters = 11;
+  inline double small_value_branch0_approx(const double val) {
+    double approx_w = 0;
+    for (int i = 1; i < 18; i++, i++) {
+        approx_w += lagrange_inv_small_val_coeffs[i - 1] * std::pow(val, i);
     }
-    for (auto i = 0; i < approx_iters; i++) {
-      series_sum += lambert_small_approx_consts[i] * pow(val, i);
+    for (int i = 2; i < 18; i++, i++) {
+        approx_w -= lagrange_inv_small_val_coeffs[i - 1] * std::pow(val, i);
     }
-    return series_sum;
+    return approx_w;
   }
 
-  inline double lambert_w0_zero_series(const double val) {
-    double series_sum = 0.0;
-    for (auto i = 0; i < lambert_large_approx_consts.size(); i += 2) {
-        series_sum += lambert_large_approx_consts[i] * pow(val, (i+1));
-    }
-    for (auto i = 1; i < lambert_large_approx_consts.size(); i += 2) {
-        series_sum -= lambert_large_approx_consts[i] * pow(val, (i + 1));
-    }
-    return series_sum;
+  inline double schroder_method(const double w, const double y) {
+    const double f0 = w - y;
+    const double f1 = 1 + y;
+    const double f00 = f0 * f0;
+    const double f11 = f1 * f1;
+    const double f0y = f0 * y;
+    return w
+           - 4 * f0 * (6 * f1 * (f11 + f0y) + f00 * y)
+                 / (f11 * (24 * f11 + 36 * f0y)
+                    + f00 * (6 * y * y + 8 * f1 * y + f0y));
   }
 
-  inline double final_result(const double w, const double y) {
-    auto top = -102 * pow(w, 2) * y - 3 * pow(w, 2) + 21 * w * pow(y, 3);
-    top -= 6 * w * pow(y, 2) - 52 * w * y - 3 * w + pow(y, 4) - pow(y, 3) - pow(y, 2) - 6 * y;
-    auto bottom = 34 * w * y + w - 7 * pow(y, 3) + 2 * pow(y, 2) + 17 * y + 1;
-    return top/bottom;
-  }
-
-  inline double lambertw0_final_approx(const std::vector<double> a_base,
-    const std::vector<double> b_base, const std::vector<double> e_base,
-    const double val, const double n) {
+  inline double lambert_w0_final(const double val, const int nn, const std::vector<double>& e, const std::vector<double>& a, const std::vector<double>& b) {
+    int n = nn - 1;
     int jmax = 8;
-    if (val <= -0.36) {
+    if (val <= -0.36)
       jmax = 12;
-    } else if (val <= -0.3) {
+    else if (val <= -0.3)
       jmax = 11;
-    } else if (n < 0) {
+    else if (n <= 0)
       jmax = 10;
-    } else if (n < 1) {
+    else if (n <= 1)
       jmax = 9;
-    }
-    double y = val * e_base[n];
-    double w = n - 1;
+    double y = val * e[n + 1];
+    double w = n;
     for (int j = 0; j < jmax; ++j) {
-      const double wj = w + b_base[j];
-      const double yj = y * a_base[j];
+      const double wj = w + b[j];
+      const double yj = y * a[j];
       if (wj < yj) {
         w = wj;
         y = yj;
       }
     }
-    return final_result(w, y);
+    return schroder_method(w, y);
   }
 
-  inline double lambertw1_final_approx(const std::vector<double> a_base,
-    const std::vector<double> b_base, const std::vector<double> e_base,
-    const double val, const double n) {
-      int jmax = 11;
-      if (n > 8) {
-        jmax = 8;
-      } else if (n > 3) {
-        jmax = 9;
-      } else if (n > 2) {
-        jmax = 10;
-      }
-      double w = -(n - 1);
-      double y = val * e_base[n - 2];
-      for (int j = 0; j < jmax; ++j) {
-        const double wj = w - b_base[j];
-        const double yj = y * a_base[j];
-        if (wj < yj) {
-          w = wj;
-          y = yj;
-        }
+  inline double lambert_w1_final(const double val, const int nn, const std::vector<double>& e, const std::vector<double>& a, const std::vector<double>& b) {
+  int n = nn - 1;
+  int jmax = 11;
+  if (n >= 8)
+    jmax = 8;
+  else if (n >= 3)
+    jmax = 9;
+  else if (n >= 2)
+    jmax = 10;
+  double w = -n;
+  double y = val * e[n - 1];
+  for (int j = 0; j < jmax; ++j) {
+    const double wj = w - b[j];
+    const double yj = y * a[j];
+    if (wj < yj) {
+      w = wj;
+      y = yj;
     }
-    return final_result(w, y);
   }
-  inline double lambert_w0(const double val) {
-    std::vector<double> e_base(66);
-    std::vector<double> g_base(65);
-    std::vector<double> a_base(12);
-    std::vector<double> b_base(12);
-    double e_iter = 1;
-    const double e_inv = 1 / E;
-    e_base[0] = E;
-    e_base[1] = 1;
-    g_base[0] = 0;
-    a_base[0] = sqrt(e_inv);
-    b_base[0] = 0.5;
-    for (auto i = 2; i < e_base.size(); i++) {
-      e_iter *= E;
-      e_base[i] = e_base[i - 1] * e_inv;
-      g_base[i - 1] = (i - 1) * e_iter;
-    }
-    for (auto i = 1; i < a_base.size(); i++) {
-      a_base[i] = sqrt(a_base[i - 1]);
-      b_base[i] = b_base[i - 1] * 0.5;
-    }
+  return schroder_method(w, y);
+}
+
+
+
+  double lambert_w0(const double val) {
     if (abs(val) < 0.05) {
-      return lambert_w0_zero_series(val);
-    } else if (val < -0.35) {
-      const double quick_approx = 2 * (E * val + 1);
-      if (quick_approx > 0) {
-        return lambertw_series(sqrt(quick_approx));
-      } else if (quick_approx == 0) {
-        return -1.0;
+      return small_value_branch0_approx(val);
+    }
+    if (val < -0.35) {
+      const double p2 = 2 * (E * val + 1);
+      if (p2 > 0)
+        return quick_series_approx(sqrt(p2));
+      if (p2 == 0)
+        return -1;
+      return std::numeric_limits<double>::quiet_NaN();
+    }
+
+    std::vector<double> e(66);
+    std::vector<double> g(65);
+    std::vector<double> a(12);
+    std::vector<double> b(12);
+
+    e[0] = E;
+    e[1] = 1;
+    g[0] = 0;
+    a[0] = sqrt(INV_E);
+    b[0] = 0.5;
+    double ej = 1;
+    for (int jj = 2; jj < 66; ++jj) {
+      const int j = jj - 1;
+      ej *= E;
+      e[jj] = e[j] * INV_E;
+      g[j] = j * ej;
+    }
+    for (int j = 0, jj = 1; jj < 12; ++jj) {
+      a[jj] = sqrt(a[j]);
+      b[jj] = b[j] * 0.5;
+      j = jj;
+    }
+    int n;
+    for (n = 0; n <= 2; ++n) {
+      if (g[n] > val) {
+        printf("Jump to line 1 happened\n");
+        return lambert_w0_final(val, n, e, a, b);
       }
     }
-    for (auto i = 0; i <= 2; i++) {
-      if (g_base[i] > val) {
-        return lambertw0_final_approx(a_base, b_base, e_base, val, i);
-      }
-    }
-    auto n = 2;
+    n = 2;
     for (int j = 1; j <= 5; ++j) {
       n *= 2;
-      if (g_base[n] > val) {
+      if (g[n] > val) {
         int nh = n / 2;
         for (int j = 1; j <= 5; ++j) {
           nh /= 2;
           if (nh <= 0)
             break;
-          if (g_base[n-nh] > val)
+          if (g[n - nh] > val)
             n -= nh;
         }
-        return lambertw0_final_approx(a_base, b_base, e_base, val, n);
+        return lambert_w0_final(val, n, e, a, b);
       }
     }
-    // This only happens if val is too large
-                  printf("%s", "Gets Herew00");
     return std::numeric_limits<double>::quiet_NaN();
   }
 
-  double lambert_w1(const double val) {
+
+  double lambert_wm1(const double val) {
     if (val >= 0) {
-              printf("%s", "Gets Here0");
       return std::numeric_limits<double>::quiet_NaN();
     }
-
-    std::vector<double> e_base(64);
-    std::vector<double> g_base(64);
-    std::vector<double> a_base(12);
-    std::vector<double> b_base(12);
-
-
-    const double e_first = 1 / E;
-    double e_iter = e_first;
-    e_base[0] = E;
-    g_base[0] = -e_first;
-    a_base[0] = sqrt(E);
-    b_base[0] = 0.5;
-    for (int i = 1; i < e_base.size(); i++) {
-      e_iter *= e_first;
-      e_base[i] = e_base[i - 1] * E;
-      g_base[i] = -(i + 1) * e_iter;
-    }
-    for (int i = 1; i < a_base.size(); i++) {
-      a_base[i] = sqrt(a_base[i - 1]);
-      b_base[i] = b_base[i - 1] * 0.5;
-    }
     if (val < -0.35) {
-      const double quick_iter = 2 * (E * val + 1);
-      if (quick_iter > 0) {
-        return lambertw_series(-sqrt(quick_iter));
-      } else if (quick_iter == 0) {
+      const double p2 = 2 * (E * val + 1);
+      if (p2 > 0)
+        return quick_series_approx(-sqrt(p2));
+      if (p2 == 0)
         return -1;
-      } 
+      return std::numeric_limits<double>::quiet_NaN();
     }
+    std::vector<double> e(64);
+    std::vector<double> g(64);
+    std::vector<double> a(12);
+    std::vector<double> b(12);
+
+    e[0] = E;
+    g[0] = -INV_E;
+    a[0] = sqrt(E);
+    b[0] = 0.5;
+    double ej = INV_E;
+    for (int jj = 1; jj < 64; ++jj) {
+      const int j = jj - 1;
+      ej *= INV_E;
+      e[jj] = e[j] * E;
+      g[jj] = -(jj + 1) * ej;
+    }
+    for (int j = 0, jj = 1; jj < 12; ++jj) {
+      a[jj] = sqrt(a[j]);
+      b[jj] = b[j] * 0.5;
+      j = jj;
+    }
+
     int n = 2;
-    if (g_base[1] > val)
-      return lambertw1_final_approx(a_base, b_base, e_base, val, n);
-    for (int j = 1; j <= 5; j++) {
+    if (g[n - 1] > val) {
+      return lambert_w1_final(val, n, e, a, b);
+    }
+    for (int j = 1; j <= 5; ++j) {
       n *= 2;
-      if (g_base[n - 1] > val) {
+      if (g[n - 1] > val) {
         int nh = n / 2;
-        for (int k = 1; k <= 5; k++) {
+        for (int j = 1; j <= 5; ++j) {
           nh /= 2;
           if (nh <= 0)
             break;
-          if (g_base[n-nh - 1] > val)
+          if (g[n - nh - 1] > val)
             n -= nh;
         }
-        return lambertw1_final_approx(a_base, b_base, e_base, val, n);
+      return lambert_w1_final(val, n, e, a, b);
       }
     }
     return std::numeric_limits<double>::quiet_NaN();
-
   }
-public:
-  double operator()(const double val) {
-    if (branch == 1) {
-      return lambert_w1(val);
-    } else if (branch == 0) {
+
+ public:
+  double operator()(const double val, const int branch = 0) {
+    if (branch == 0) {
       return lambert_w0(val);
+    } else if (branch == -1) {
+      return lambert_wm1(val);
+    } else {
+      return std::numeric_limits<double>::quiet_NaN();
     }
   }
 };
 
-auto lambert_w1 = lambert<1>();
-auto lambert_w0 = lambert<0>();
-
-}
-}
+lambert lambert_w;
+}  // namespace math
+}  // namespace stan
 #endif
