@@ -3,7 +3,9 @@
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/buffer_types.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
+#include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/opencl_context.hpp>
+#include <stan/math/opencl/stringify.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/opencl/kernels/helpers.hpp>
 #include <stan/math/prim/arr/fun/vec_concat.hpp>
@@ -13,14 +15,6 @@
 #include <string>
 #include <vector>
 #include <utility>
-
-// Used for importing the OpenCL kernels at compile time.
-// There has been much discussion about the best ways to do this:
-// https://github.com/bstatcomp/math/pull/7
-// and https://github.com/stan-dev/math/pull/966
-#ifndef STRINGIFY
-#define STRINGIFY(src) #src
-#endif
 
 namespace stan {
 namespace math {
