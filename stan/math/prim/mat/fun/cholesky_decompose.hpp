@@ -6,7 +6,10 @@
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 #ifdef STAN_OPENCL
-#include <stan/math/opencl/opencl.hpp>
+#include <stan/math/opencl/opencl_context.hpp>
+#include <stan/math/opencl/err/check_symmetric.hpp>
+#include <stan/math/opencl/cholesky_decompose.hpp>
+#include <stan/math/opencl/copy.hpp>
 #endif
 
 #include <cmath>

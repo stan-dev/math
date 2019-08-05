@@ -5,7 +5,7 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/mat/fun/to_var.hpp>
-
+#include <stan/math/prim/meta.hpp>
 namespace stan {
 namespace math {
 
@@ -16,7 +16,8 @@ namespace math {
  * @param[in] c Specified scalar.
  * @return Vector divided by the scalar.
  */
-template <typename T1, typename T2, int R, int C>
+template <typename T1, typename T2, int R, int C,
+          typename = enable_if_any_var<T1, T2>>
 inline Eigen::Matrix<var, R, C> divide(const Eigen::Matrix<T1, R, C>& v,
                                        const T2& c) {
   return to_var(v) / to_var(c);

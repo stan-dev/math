@@ -7,17 +7,17 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/mat/fun/typedefs.hpp>
 #include <stan/math/rev/mat/fun/dot_product.hpp>
+#include <stan/math/prim/meta.hpp>
+
 #include <type_traits>
 
 namespace stan {
 namespace math {
 
-template <typename T1, int R1, int C1, typename T2, int R2, int C2>
-inline typename std::enable_if<std::is_same<T1, var>::value
-                                   || std::is_same<T2, var>::value,
-                               Eigen::Matrix<var, 1, C1> >::type
-columns_dot_product(const Eigen::Matrix<T1, R1, C1>& v1,
-                    const Eigen::Matrix<T2, R2, C2>& v2) {
+template <typename T1, int R1, int C1, typename T2, int R2, int C2,
+          typename = enable_if_any_var<T1, T2>>
+inline Eigen::Matrix<return_type_t<T1, T2>, 1, C1> columns_dot_product(
+    const Eigen::Matrix<T1, R1, C1>& v1, const Eigen::Matrix<T2, R2, C2>& v2) {
   check_matching_sizes("dot_product", "v1", v1, "v2", v2);
   Eigen::Matrix<var, 1, C1> ret(1, v1.cols());
   for (size_type j = 0; j < v1.cols(); ++j) {
