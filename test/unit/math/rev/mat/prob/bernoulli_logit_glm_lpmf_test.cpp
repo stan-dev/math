@@ -386,7 +386,7 @@ TEST(ProbDistributionsBernoulliLogitGLM, test_scalar_rowvec_stdvec) {
   beta << 0.3, 2;
   double alpha = 0.3;
 
-  std::vector<double> y_vec(3);
+  std::vector<int> y_vec(3);
   y_vec[0] = 0;
   y_vec[1] = 0;
   y_vec[2] = 0;
@@ -397,7 +397,7 @@ TEST(ProbDistributionsBernoulliLogitGLM, test_scalar_rowvec_stdvec) {
   EXPECT_NO_THROW(stan::math::bernoulli_logit_glm_lpmf(y_rvec, x, alpha, beta));
 
   double y_scal = .5;
-  Matrix<double, Dynamic, Dynamic> x_s(1, 2);
+  Matrix<int, Dynamic, Dynamic> x_s(1, 2);
   x_s << -12, 46;
 
   EXPECT_NO_THROW(
