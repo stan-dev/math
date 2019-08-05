@@ -22,7 +22,8 @@ namespace math {
  * @throws std::domain_error if A is not square or the rows of b don't
  * match the size of A.
  */
-template <Eigen::UpLoType TriView, typename T1, typename T2, int R1, int C1, int R2, int C2>
+template <Eigen::UpLoType TriView, typename T1, typename T2, int R1, int C1,
+          int R2, int C2>
 inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_right_tri(
     const Eigen::Matrix<T1, R1, C1> &b, const Eigen::Matrix<T2, R2, C2> &A) {
   check_square("mdivide_right_tri", "A", A);
@@ -53,7 +54,9 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_right_tri(
  * match the size of A.
  */
 template <Eigen::UpLoType TriView, int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<double, R1, C2> mdivide_right_tri(const Eigen::Matrix<double, R1, C1> &b, const Eigen::Matrix<double, R2, C2> &A) {
+inline Eigen::Matrix<double, R1, C2> mdivide_right_tri(
+    const Eigen::Matrix<double, R1, C1> &b,
+    const Eigen::Matrix<double, R2, C2> &A) {
   check_square("mdivide_right_tri", "A", A);
   check_multiplicable("mdivide_right_tri", "b", b, "A", A);
 #ifdef STAN_OPENCL
@@ -66,7 +69,10 @@ inline Eigen::Matrix<double, R1, C2> mdivide_right_tri(const Eigen::Matrix<doubl
     return from_matrix_cl(C_cl);
   } else {
 #endif
-    return A.template triangularView<TriView>().transpose().solve(b.transpose()).transpose();
+    return A.template triangularView<TriView>()
+        .transpose()
+        .solve(b.transpose())
+        .transpose();
 #ifdef STAN_OPENCL
   }
 #endif

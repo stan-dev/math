@@ -10,7 +10,6 @@
   for (int i = 0; i < A.size(); i++)    \
     EXPECT_NEAR(A(i), B(i), DELTA);
 
-
 TEST(MathMatrix, mdivide_right_tri_val) {
   using stan::math::mdivide_right_tri;
   stan::math::matrix_d Ad(2, 2);
@@ -49,15 +48,15 @@ void mdivide_right_tri_cl_test(int size) {
   }
 
   stan::math::opencl_context.tuning_opts().tri_inverse_size_worth_transfer
-          = size * 2;
+      = size * 2;
 
   stan::math::matrix_d m1_cpu
-          = stan::math::mdivide_right_tri<Eigen::Lower>(m1, m1);
+      = stan::math::mdivide_right_tri<Eigen::Lower>(m1, m1);
 
   stan::math::opencl_context.tuning_opts().tri_inverse_size_worth_transfer = 0;
 
   stan::math::matrix_d m1_cl
-          = stan::math::mdivide_right_tri<Eigen::Lower>(m1, m1);
+      = stan::math::mdivide_right_tri<Eigen::Lower>(m1, m1);
 
   EXPECT_MATRIX_NEAR(m1_cpu, m1_cl, 1E-8);
 }
