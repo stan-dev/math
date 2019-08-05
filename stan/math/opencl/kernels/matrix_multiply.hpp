@@ -126,8 +126,7 @@ static const char* matrix_multiply_kernel_code = STRINGIFY(
           // check if the indexes are outside the matrix
           // or under/above the diagonal with upper/lower
           // triangular matrices
-          if (A_curr_j >= K || i >= M
-              || (view_A == LOWER && A_curr_j > i)
+          if (A_curr_j >= K || i >= M || (view_A == LOWER && A_curr_j > i)
               || (view_A == UPPER && A_curr_j < i)) {
             A_local[curr_k][row_in_block] = 0.0;
           } else {
