@@ -57,6 +57,7 @@
 #include <stan/math/rev/scal/fun/is_inf.hpp>
 #include <stan/math/rev/scal/fun/is_nan.hpp>
 #include <stan/math/rev/scal/fun/is_uninitialized.hpp>
+#include <stan/math/rev/scal/fun/lambertw.hpp>
 #include <stan/math/rev/scal/fun/lbeta.hpp>
 #include <stan/math/rev/scal/fun/lgamma.hpp>
 #include <stan/math/rev/scal/fun/lmgamma.hpp>
