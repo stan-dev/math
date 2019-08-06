@@ -136,6 +136,7 @@
 #include <stan/math/prim/mat/fun/inv_square.hpp>
 #include <stan/math/prim/mat/fun/inverse.hpp>
 #include <stan/math/prim/mat/fun/inverse_spd.hpp>
+#include <stan/math/prim/mat/fun/lambertw.hpp>
 #include <stan/math/prim/mat/fun/lgamma.hpp>
 #include <stan/math/prim/mat/fun/log.hpp>
 #include <stan/math/prim/mat/fun/log10.hpp>

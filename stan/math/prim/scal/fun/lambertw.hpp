@@ -10,6 +10,7 @@ namespace stan {
 namespace math {
 
 // Contains methods for doing a quick approximation of the Lambert W function.
+template <int branch>
 class lambert {
  private:
   // Pre-computed series of the quick series approximation
@@ -113,13 +114,13 @@ class lambert {
                     + f00 * (6 * y * y + 8 * f1 * y + f0y));
   }
 
-  /** Get the heuristic number of bisection iterations
+  /**
+   * Get the heuristic number of bisection iterations
    * @param val The value going through the lambert W approx.
    * @param n
    * @param branch
    * @return The number of times the bisection method should go on for.
    */
-  template <int branch>
   inline int number_of_bisections(const double val, const int n) {
     int jmax;
     if (branch == 0) {
@@ -148,68 +149,44 @@ class lambert {
 
   /**
    * Approximation method with mix of series approx and finish with schroder for
-   * branch 0
-   */
-  inline double lambert_w0_final(const double val, const int n,
-                                 const std::vector<double>& e) {
-    std::vector<double> a(12); // page 12 for A and B
-    std::vector<double> b(12);
-    a[0] = sqrt(INV_E);
-    b[0] = 0.5;
-
-    for (int j = 0, jj = 1; jj < 12; ++jj) {
-      a[jj] = sqrt(a[j]);
-      b[jj] = b[j] * 0.5;
-      j = jj;
-    }
-
-    double y = val * e[n];
-    double w = n - 1;  // here
-    const int jmax = number_of_bisections<0>(val, n - 1);
-    for (int j = 0; j < jmax; ++j) {
-      const double wj = w + b[j];  // here
-      const double yj = y * a[j];
-      if (wj < yj) {
-        w = wj;
-        y = yj;
-      }
-    }
-    return schroder_method(w, y);
-  }
-
-  /**
-   * Approximation method with mix of series approx and finish with schroder for
    * branch -1
    */
-  inline double lambert_w1_final(const double val, const int n,
+  inline double lambert_final(const double val, const int n,
                                  const std::vector<double>& e) {
     std::vector<double> a(12);
     std::vector<double> b(12);
-    a[0] = sqrt(E);
+    double y;
+    double w;
+    if (branch == 0) {
+      a[0] = sqrt(INV_E);
+      w = n - 1;  // here
+    } else if (branch == -1) {
+      a[0] = sqrt(E);
+      w = -(n - 1);  // here
+    }
+    y = val * e[n + (2 * branch)]; // b = 0 is no shift and b = -1 is n - 2
     b[0] = 0.5;
 
-    for (int j = 0, jj = 1; jj < 12; ++jj) {
-      a[jj] = sqrt(a[j]);
-      b[jj] = b[j] * 0.5;
-      j = jj;
-    }
-
-    double y = val * e[n - 2];
-    double w = -(n - 1);  // here
-    const int jmax = number_of_bisections<-1>(val, n - 1);
+    const int jmax = number_of_bisections(val, n - 1);
     for (int j = 0; j < jmax; ++j) {
-      const double wj = w - b[j];  // here
+      double wj;
+      if (branch == 0) {
+        wj = w + b[j];
+      } else if (branch == -1) {
+        wj = w - b[j];  // here
+      }
       const double yj = y * a[j];
       if (wj < yj) {
         w = wj;
         y = yj;
       }
+      const int jj = j + 1;
+      a[jj] = sqrt(a[j]);
+      b[jj] = b[j] * 0.5;
     }
     return schroder_method(w, y);
   }
 
-
-  template <int branch>
   inline int find_midpoint(const double val, const std::vector<double>& g) {
     int n = 2;
     for (int j = 1; j <= 5; ++j) {
@@ -231,7 +208,7 @@ class lambert {
     return n;
   }
 
-  double lambert_w0(const double val) {
+  inline double lambert_w0(const double val) {
     // For certain values we can do  a quick series approx and be fine
     if (abs(val) < 0.05) {
       return small_value_branch0_approx(val);
@@ -262,14 +239,14 @@ class lambert {
     for (n = 0; n <= 2; ++n) {
       if (g[n] > val) {
         printf("Jump to line 1 happened\n");
-        return lambert_w0_final(val, n, e);
+        return lambert_final(val, n, e);
       }
     }
-    n = find_midpoint<0>(val, g);
-    return lambert_w0_final(val, n, e);
+    n = find_midpoint(val, g);
+    return lambert_final(val, n, e);
   }
 
-  double lambert_wm1(const double val) {
+  inline double lambert_wm1(const double val) {
     if (val >= 0) {
       return std::numeric_limits<double>::quiet_NaN();
     } else if (val <= -INV_E) {
@@ -296,14 +273,14 @@ class lambert {
     }
 
     if (g[1] > val) {
-      return lambert_w1_final(val, 2, e);
+      return lambert_final(val, 2, e);
     }
-    const int n = find_midpoint<-1>(val, g);
-    return lambert_w1_final(val, n, e);
+    const int n = find_midpoint(val, g);
+    return lambert_final(val, n, e);
   }
 
  public:
-  double operator()(const double val, const int branch = 0) {
+  double operator()(const double val) {
     if (branch == 0) {
       return lambert_w0(val);
     } else if (branch == -1) {
@@ -314,7 +291,8 @@ class lambert {
   }
 };
 
-lambert lambert_w;
+lambert<-1> lambert_w1;
+lambert<0> lambert_w0;
 }  // namespace math
 }  // namespace stan
 #endif
