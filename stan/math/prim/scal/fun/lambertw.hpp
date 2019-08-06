@@ -9,8 +9,10 @@
 namespace stan {
 namespace math {
 
+// Contains methods for doing a quick approximation of the Lambert W function.
 class lambert {
  private:
+  // Pre-computed series of the quick series approximation
   const std::vector<double> lagrange_inv_coeffs{-1,
                                                 +1,
                                                 -0.333333333333333333,
@@ -32,11 +34,15 @@ class lambert {
                                                 -0.000129574266852748819,
                                                 +0.0000866503580520812717,
                                                 -0.0000581136075044138168};
-
+  /**
+   * Quick approximation of the lambert W
+   * @param p Value transfored by \code{2*(e * input_value + 1)}
+   * @return The solution of the lambert W function
+   */
   inline double quick_series_approx(const double p) {
     const double ap = std::abs(p);
     double approx_val = lagrange_inv_coeffs[0] + lagrange_inv_coeffs[1] * p;
-    // We could move this loop to set the bound and have one, but bounded loops
+    // We could move this loop to set the bound dynamically, but bounded loops
     // Are better targets for unrolling
     if (ap < 0.01159) {
       for (int i = 2; i < 7; i++) {
@@ -73,20 +79,31 @@ class lambert {
       55103.621972903835338,
       136808.86090394293563};
 
+  /** Approximation of Lambert W on the zero branch when value is small
+   *
+   * @param val The value to be approximated
+   * @return The result of the lambert W transform.
+   */
   inline double small_value_branch0_approx(const double val) {
     double approx_w = 0;
     for (int i = 1; i < 18; i++, i++) {
-        approx_w += lagrange_inv_small_val_coeffs[i - 1] * std::pow(val, i);
+      approx_w += lagrange_inv_small_val_coeffs[i - 1] * std::pow(val, i);
     }
     for (int i = 2; i < 18; i++, i++) {
-        approx_w -= lagrange_inv_small_val_coeffs[i - 1] * std::pow(val, i);
+      approx_w -= lagrange_inv_small_val_coeffs[i - 1] * std::pow(val, i);
     }
     return approx_w;
   }
-
+  /**
+   * Approximate Solution of Lambert W function through Schroder's fifth-order
+   * update formula.
+   * @param w a first estimate for the value of the Lambert W
+   * @param y Approximation of \code{val*e^-W}
+   * @return Estimate of the lambert W function's output
+   */
   inline double schroder_method(const double w, const double y) {
-    const double f0 = w - y;
-    const double f1 = 1 + y;
+    const double f0 = w - y;  // base function
+    const double f1 = 1 + y;  // first derivative wrt w
     const double f00 = f0 * f0;
     const double f11 = f1 * f1;
     const double f0y = f0 * y;
@@ -96,21 +113,61 @@ class lambert {
                     + f00 * (6 * y * y + 8 * f1 * y + f0y));
   }
 
-  inline double lambert_w0_final(const double val, const int nn, const std::vector<double>& e, const std::vector<double>& a, const std::vector<double>& b) {
-    int n = nn - 1;
-    int jmax = 8;
-    if (val <= -0.36)
-      jmax = 12;
-    else if (val <= -0.3)
+  /** Get the heuristic number of bisection iterations
+   * @param val The value going through the lambert W approx.
+   * @param n
+   * @param branch
+   * @return The number of times the bisection method should go on for.
+   */
+  template <int branch>
+  inline int number_of_bisections(const double val, const int n) {
+    int jmax;
+    if (branch == 0) {
+      jmax = 8;
+      if (val <= -0.36) {
+        jmax = 12;
+      } else if (val <= -0.3) {
+        jmax = 11;
+      } else if (n <= 0) {
+        jmax = 10;
+      } else if (n <= 1) {
+        jmax = 9;
+      }
+    } else if (branch == -1) {
       jmax = 11;
-    else if (n <= 0)
-      jmax = 10;
-    else if (n <= 1)
-      jmax = 9;
-    double y = val * e[n + 1];
-    double w = n;
+      if (n >= 8) {
+        jmax = 8;
+      } else if (n >= 3) {
+        jmax = 9;
+      } else if (n >= 2) {
+        jmax = 10;
+      }
+    }
+    return jmax;
+  };
+
+  /**
+   * Approximation method with mix of series approx and finish with schroder for
+   * branch 0
+   */
+  inline double lambert_w0_final(const double val, const int n,
+                                 const std::vector<double>& e) {
+    std::vector<double> a(12); // page 12 for A and B
+    std::vector<double> b(12);
+    a[0] = sqrt(INV_E);
+    b[0] = 0.5;
+
+    for (int j = 0, jj = 1; jj < 12; ++jj) {
+      a[jj] = sqrt(a[j]);
+      b[jj] = b[j] * 0.5;
+      j = jj;
+    }
+
+    double y = val * e[n];
+    double w = n - 1;  // here
+    const int jmax = number_of_bisections<0>(val, n - 1);
     for (int j = 0; j < jmax; ++j) {
-      const double wj = w + b[j];
+      const double wj = w + b[j];  // here
       const double yj = y * a[j];
       if (wj < yj) {
         w = wj;
@@ -120,93 +177,102 @@ class lambert {
     return schroder_method(w, y);
   }
 
-  inline double lambert_w1_final(const double val, const int nn, const std::vector<double>& e, const std::vector<double>& a, const std::vector<double>& b) {
-  int n = nn - 1;
-  int jmax = 11;
-  if (n >= 8)
-    jmax = 8;
-  else if (n >= 3)
-    jmax = 9;
-  else if (n >= 2)
-    jmax = 10;
-  double w = -n;
-  double y = val * e[n - 1];
-  for (int j = 0; j < jmax; ++j) {
-    const double wj = w - b[j];
-    const double yj = y * a[j];
-    if (wj < yj) {
-      w = wj;
-      y = yj;
-    }
-  }
-  return schroder_method(w, y);
-}
-
-
-
-  double lambert_w0(const double val) {
-    if (abs(val) < 0.05) {
-      return small_value_branch0_approx(val);
-    }
-    if (val < -0.35) {
-      const double p2 = 2 * (E * val + 1);
-      if (p2 > 0)
-        return quick_series_approx(sqrt(p2));
-      if (p2 == 0)
-        return -1;
-      return std::numeric_limits<double>::quiet_NaN();
-    }
-
-    std::vector<double> e(66);
-    std::vector<double> g(65);
+  /**
+   * Approximation method with mix of series approx and finish with schroder for
+   * branch -1
+   */
+  inline double lambert_w1_final(const double val, const int n,
+                                 const std::vector<double>& e) {
     std::vector<double> a(12);
     std::vector<double> b(12);
-
-    e[0] = E;
-    e[1] = 1;
-    g[0] = 0;
-    a[0] = sqrt(INV_E);
+    a[0] = sqrt(E);
     b[0] = 0.5;
-    double ej = 1;
-    for (int jj = 2; jj < 66; ++jj) {
-      const int j = jj - 1;
-      ej *= E;
-      e[jj] = e[j] * INV_E;
-      g[j] = j * ej;
-    }
+
     for (int j = 0, jj = 1; jj < 12; ++jj) {
       a[jj] = sqrt(a[j]);
       b[jj] = b[j] * 0.5;
       j = jj;
     }
+
+    double y = val * e[n - 2];
+    double w = -(n - 1);  // here
+    const int jmax = number_of_bisections<-1>(val, n - 1);
+    for (int j = 0; j < jmax; ++j) {
+      const double wj = w - b[j];  // here
+      const double yj = y * a[j];
+      if (wj < yj) {
+        w = wj;
+        y = yj;
+      }
+    }
+    return schroder_method(w, y);
+  }
+
+
+  template <int branch>
+  inline int find_midpoint(const double val, const std::vector<double>& g) {
+    int n = 2;
+    for (int j = 1; j <= 5; ++j) {
+      n *= 2;
+      if (g[n + branch] > val) {
+        int m = n / 2;
+        for (int j = 1; j <= 5; ++j) {
+          m /= 2;
+          if (m <= 0) {
+            break;
+          }
+          if (g[n - m + branch] > val) {
+            n -= m;
+          }
+        }
+        break;
+      }
+    }
+    return n;
+  }
+
+  double lambert_w0(const double val) {
+    // For certain values we can do  a quick series approx and be fine
+    if (abs(val) < 0.05) {
+      return small_value_branch0_approx(val);
+    } else if (val < -0.35) {  // very near limit of -INV_E
+      const double p2 = 2 * (E * val + 1);
+      if (p2 > 0) {
+        return quick_series_approx(sqrt(p2));
+      } else if (p2 == 0) {
+        return -1;
+      } else if (val < -INV_E) {
+        return std::numeric_limits<double>::quiet_NaN();
+      }
+    }
+    std::vector<double> e(66);
+    std::vector<double> g(66);
+
+    e[0] = E;
+    e[1] = 1;
+    g[0] = 0;
+    double ej = 1;
+    for (int jj = 2; jj < 66; ++jj) {
+      const int j = jj - 1;
+      ej *= E;
+      e[jj] = e[j] * INV_E;
+      g[j] = j * ej;  // In paper this is F_k
+    }
     int n;
     for (n = 0; n <= 2; ++n) {
       if (g[n] > val) {
         printf("Jump to line 1 happened\n");
-        return lambert_w0_final(val, n, e, a, b);
+        return lambert_w0_final(val, n, e);
       }
     }
-    n = 2;
-    for (int j = 1; j <= 5; ++j) {
-      n *= 2;
-      if (g[n] > val) {
-        int nh = n / 2;
-        for (int j = 1; j <= 5; ++j) {
-          nh /= 2;
-          if (nh <= 0)
-            break;
-          if (g[n - nh] > val)
-            n -= nh;
-        }
-        return lambert_w0_final(val, n, e, a, b);
-      }
-    }
-    return std::numeric_limits<double>::quiet_NaN();
+    n = find_midpoint<0>(val, g);
+    return lambert_w0_final(val, n, e);
   }
-
 
   double lambert_wm1(const double val) {
     if (val >= 0) {
+      return std::numeric_limits<double>::quiet_NaN();
+    } else if (val <= -INV_E) {
       return std::numeric_limits<double>::quiet_NaN();
     }
     if (val < -0.35) {
@@ -215,17 +281,12 @@ class lambert {
         return quick_series_approx(-sqrt(p2));
       if (p2 == 0)
         return -1;
-      return std::numeric_limits<double>::quiet_NaN();
     }
     std::vector<double> e(64);
     std::vector<double> g(64);
-    std::vector<double> a(12);
-    std::vector<double> b(12);
 
     e[0] = E;
     g[0] = -INV_E;
-    a[0] = sqrt(E);
-    b[0] = 0.5;
     double ej = INV_E;
     for (int jj = 1; jj < 64; ++jj) {
       const int j = jj - 1;
@@ -233,31 +294,12 @@ class lambert {
       e[jj] = e[j] * E;
       g[jj] = -(jj + 1) * ej;
     }
-    for (int j = 0, jj = 1; jj < 12; ++jj) {
-      a[jj] = sqrt(a[j]);
-      b[jj] = b[j] * 0.5;
-      j = jj;
-    }
 
-    int n = 2;
-    if (g[n - 1] > val) {
-      return lambert_w1_final(val, n, e, a, b);
+    if (g[1] > val) {
+      return lambert_w1_final(val, 2, e);
     }
-    for (int j = 1; j <= 5; ++j) {
-      n *= 2;
-      if (g[n - 1] > val) {
-        int nh = n / 2;
-        for (int j = 1; j <= 5; ++j) {
-          nh /= 2;
-          if (nh <= 0)
-            break;
-          if (g[n - nh - 1] > val)
-            n -= nh;
-        }
-      return lambert_w1_final(val, n, e, a, b);
-      }
-    }
-    return std::numeric_limits<double>::quiet_NaN();
+    const int n = find_midpoint<-1>(val, g);
+    return lambert_w1_final(val, n, e);
   }
 
  public:
