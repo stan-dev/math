@@ -2,6 +2,7 @@
 #define STAN_MATH_OPENCL_SUBTRACT_HPP
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/matrix_cl.hpp>
+#include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/kernels/subtract.hpp>
 #include <stan/math/opencl/err/check_matching_dims.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
@@ -30,13 +31,14 @@ template <typename T1, typename T2, typename = enable_if_all_arithmetic<T1, T2>>
 inline matrix_cl<return_type_t<T1, T2>> subtract(const matrix_cl<T1>& A,
                                                  const matrix_cl<T2>& B) {
   check_matching_dims("subtract ((OpenCL))", "A", A, "B", B);
-  matrix_cl<return_type_t<T1, T2>> C(A.rows(), A.cols());
+  matrix_cl<return_type_t<T1, T2>> C(A.rows(), A.cols(),
+                                     either(A.view(), B.view()));
   if (A.size() == 0) {
     return C;
   }
   try {
     opencl_kernels::subtract(cl::NDRange(A.rows(), A.cols()), C, A, B, A.rows(),
-                             A.cols());
+                             A.cols(), A.view(), B.view());
   } catch (cl::Error& e) {
     check_opencl_error("subtract", e);
   }

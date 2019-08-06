@@ -17,8 +17,7 @@ namespace math {
  * @return Vector divided by the scalar.
  */
 template <typename T1, typename T2>
-inline typename stan::return_type<T1, T2>::type divide(const T1& x,
-                                                       const T2& y) {
+inline return_type_t<T1, T2> divide(const T1& x, const T2& y) {
   return x / y;
 }
 

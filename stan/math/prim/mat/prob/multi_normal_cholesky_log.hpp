@@ -27,8 +27,9 @@ namespace math {
  * @tparam T_covar Type of scale.
  */
 template <bool propto, typename T_y, typename T_loc, typename T_covar>
-typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_log(
-    const T_y& y, const T_loc& mu, const T_covar& L) {
+return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_log(const T_y& y,
+                                                             const T_loc& mu,
+                                                             const T_covar& L) {
   return multi_normal_cholesky_lpdf<propto, T_y, T_loc, T_covar>(y, mu, L);
 }
 
@@ -36,8 +37,8 @@ typename return_type<T_y, T_loc, T_covar>::type multi_normal_cholesky_log(
  * @deprecated use <code>multi_normal_cholesky_lpdf</code>
  */
 template <typename T_y, typename T_loc, typename T_covar>
-inline typename return_type<T_y, T_loc, T_covar>::type
-multi_normal_cholesky_log(const T_y& y, const T_loc& mu, const T_covar& L) {
+inline return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_log(
+    const T_y& y, const T_loc& mu, const T_covar& L) {
   return multi_normal_cholesky_lpdf<T_y, T_loc, T_covar>(y, mu, L);
 }
 

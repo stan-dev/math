@@ -11,8 +11,7 @@ namespace stan {
 namespace math {
 
 template <typename T1, typename T2, int R, int C>
-inline Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type,
-                     Eigen::Dynamic, Eigen::Dynamic>
+inline Eigen::Matrix<return_type_t<T1, T2>, Eigen::Dynamic, Eigen::Dynamic>
 quad_form_diag(const Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic>& mat,
                const Eigen::Matrix<T2, R, C>& vec) {
   check_vector("quad_form_diag", "vec", vec);

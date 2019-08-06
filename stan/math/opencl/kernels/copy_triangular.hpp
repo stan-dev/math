@@ -4,6 +4,7 @@
 
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/opencl/buffer_types.hpp>
+#include <stan/math/opencl/matrix_cl_view.hpp>
 
 namespace stan {
 namespace math {
@@ -21,10 +22,12 @@ static const char *copy_triangular_kernel_code = STRINGIFY(
      * @param[in] B The matrix to copy the triangular from.
      * @param rows The number of rows of B.
      * @param cols The number of cols of B.
-     * @param lower_upper determines
+     * @param view determines
      * which part of the matrix to copy:
-     *  LOWER: 0 - copies the lower triangular
-     *  UPPER: 1 - copes the upper triangular
+     *  ENTIRE: copies entire matrix
+     *  LOWER: copies the lower triangular
+     *  UPPER: copies the upper triangular
+     *  DIAGONAL: copies the diagonal
      * @note Code is a <code>const char*</code> held in
      * <code>copy_triangular_kernel_code.</code>
      * Used in math/opencl/copy_triangular_opencl.hpp.
@@ -32,17 +35,14 @@ static const char *copy_triangular_kernel_code = STRINGIFY(
      */
     __kernel void copy_triangular(__global double *A, __global double *B,
                                   unsigned int rows, unsigned int cols,
-                                  unsigned int lower_upper) {
+                                  unsigned int view) {
       int i = get_global_id(0);
       int j = get_global_id(1);
       if (i < rows && j < cols) {
-        if (!lower_upper && j <= i) {
+        if ((contains_nonzero(view, LOWER) && j <= i)
+            || (contains_nonzero(view, UPPER) && j >= i) || j == i) {
           A(i, j) = B(i, j);
-        } else if (!lower_upper) {
-          A(i, j) = 0;
-        } else if (lower_upper && j >= i) {
-          A(i, j) = B(i, j);
-        } else if (lower_upper && j < i) {
+        } else {
           A(i, j) = 0;
         }
       }
@@ -54,9 +54,9 @@ static const char *copy_triangular_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/copy_triangular.hpp copy_triangular() \endlink
  */
-const kernel_cl<out_buffer, in_buffer, int, int, TriangularViewCL>
-    copy_triangular("copy_triangular",
-                    {indexing_helpers, copy_triangular_kernel_code});
+const kernel_cl<out_buffer, in_buffer, int, int, matrix_cl_view>
+    copy_triangular("copy_triangular", {indexing_helpers, view_kernel_helpers,
+                                        copy_triangular_kernel_code});
 
 }  // namespace opencl_kernels
 }  // namespace math

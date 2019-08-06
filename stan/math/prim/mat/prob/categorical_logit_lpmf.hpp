@@ -16,7 +16,7 @@ namespace math {
 
 // CategoricalLog(n|theta)  [0 < n <= N, theta unconstrained], no checking
 template <bool propto, typename T_prob>
-typename boost::math::tools::promote_args<T_prob>::type categorical_logit_lpmf(
+return_type_t<T_prob> categorical_logit_lpmf(
     int n, const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& beta) {
   static const char* function = "categorical_logit_lpmf";
 
@@ -32,14 +32,13 @@ typename boost::math::tools::promote_args<T_prob>::type categorical_logit_lpmf(
 }
 
 template <typename T_prob>
-inline typename boost::math::tools::promote_args<T_prob>::type
-categorical_logit_lpmf(int n,
-                       const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& beta) {
+inline return_type_t<T_prob> categorical_logit_lpmf(
+    int n, const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& beta) {
   return categorical_logit_lpmf<false>(n, beta);
 }
 
 template <bool propto, typename T_prob>
-typename boost::math::tools::promote_args<T_prob>::type categorical_logit_lpmf(
+return_type_t<T_prob> categorical_logit_lpmf(
     const std::vector<int>& ns,
     const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& beta) {
   static const char* function = "categorical_logit_lpmf";
@@ -58,18 +57,16 @@ typename boost::math::tools::promote_args<T_prob>::type categorical_logit_lpmf(
   Eigen::Matrix<T_prob, Eigen::Dynamic, 1> log_softmax_beta = log_softmax(beta);
 
   // FIXME:  replace with more efficient sum()
-  Eigen::Matrix<typename boost::math::tools::promote_args<T_prob>::type,
-                Eigen::Dynamic, 1>
-      results(ns.size());
+  Eigen::Matrix<return_type_t<T_prob>, Eigen::Dynamic, 1> results(ns.size());
   for (size_t i = 0; i < ns.size(); ++i)
     results[i] = log_softmax_beta(ns[i] - 1);
   return sum(results);
 }
 
 template <typename T_prob>
-inline typename boost::math::tools::promote_args<T_prob>::type
-categorical_logit_lpmf(const std::vector<int>& ns,
-                       const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& beta) {
+inline return_type_t<T_prob> categorical_logit_lpmf(
+    const std::vector<int>& ns,
+    const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& beta) {
   return categorical_logit_lpmf<false>(ns, beta);
 }
 

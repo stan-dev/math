@@ -14,11 +14,11 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
           typename T_shape>
-typename boost::math::tools::promote_args<T_y, T_loc, T_scale, T_shape>::type
-lkj_cov_log(const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
-            const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& mu,
-            const Eigen::Matrix<T_scale, Eigen::Dynamic, 1>& sigma,
-            const T_shape& eta) {
+inline return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_log(
+    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
+    const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& mu,
+    const Eigen::Matrix<T_scale, Eigen::Dynamic, 1>& sigma,
+    const T_shape& eta) {
   return lkj_cov_lpdf<propto, T_y, T_loc, T_scale, T_shape>(y, mu, sigma, eta);
 }
 
@@ -26,12 +26,11 @@ lkj_cov_log(const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
  * @deprecated use <code>lkj_cov_lpdf</code>
  */
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
-inline typename boost::math::tools::promote_args<T_y, T_loc, T_scale,
-                                                 T_shape>::type
-lkj_cov_log(const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
-            const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& mu,
-            const Eigen::Matrix<T_scale, Eigen::Dynamic, 1>& sigma,
-            const T_shape& eta) {
+inline return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_log(
+    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
+    const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& mu,
+    const Eigen::Matrix<T_scale, Eigen::Dynamic, 1>& sigma,
+    const T_shape& eta) {
   return lkj_cov_lpdf<T_y, T_loc, T_scale, T_shape>(y, mu, sigma, eta);
 }
 
@@ -40,9 +39,9 @@ lkj_cov_log(const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
           typename T_shape>
-typename boost::math::tools::promote_args<T_y, T_loc, T_scale, T_shape>::type
-lkj_cov_log(const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
-            const T_loc& mu, const T_scale& sigma, const T_shape& eta) {
+inline return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_log(
+    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
+    const T_loc& mu, const T_scale& sigma, const T_shape& eta) {
   return lkj_cov_lpdf<propto, T_y, T_loc, T_scale, T_shape>(y, mu, sigma, eta);
 }
 
@@ -50,10 +49,9 @@ lkj_cov_log(const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
  * @deprecated use <code>lkj_cov_lpdf</code>
  */
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
-inline typename boost::math::tools::promote_args<T_y, T_loc, T_scale,
-                                                 T_shape>::type
-lkj_cov_log(const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
-            const T_loc& mu, const T_scale& sigma, const T_shape& eta) {
+inline return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_log(
+    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
+    const T_loc& mu, const T_scale& sigma, const T_shape& eta) {
   return lkj_cov_lpdf<T_y, T_loc, T_scale, T_shape>(y, mu, sigma, eta);
 }
 

@@ -43,7 +43,7 @@ struct return_type<T> {
 };
 
 template <typename... Args>
-using return_type_t = typename stan::return_type<Args...>::type;
+using return_type_t = typename return_type<Args...>::type;
 
 }  // namespace stan
 #endif

@@ -27,11 +27,10 @@ namespace math {
  *  or sigma is nonpositive
  */
 template <typename T_y, typename T_loc, typename T_scale>
-typename return_type<T_y, T_loc, T_scale>::type double_exponential_cdf(
+return_type_t<T_y, T_loc, T_scale> double_exponential_cdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma) {
   static const char* function = "double_exponential_cdf";
-  typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
-      T_partials_return;
+  typedef partials_return_type_t<T_y, T_loc, T_scale> T_partials_return;
 
   if (size_zero(y, mu, sigma))
     return 1.0;

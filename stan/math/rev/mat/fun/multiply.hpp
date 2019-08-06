@@ -7,6 +7,8 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
+#include <stan/math/prim/mat.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <boost/math/tools/promotion.hpp>
 #include <type_traits>
 
@@ -470,12 +472,10 @@ class multiply_mat_vari<Ta, 1, Ca, double, 1> : public vari {
  * @param[in] c Specified scalar
  * @return Product of scalars
  */
-template <typename T1, typename T2>
-inline typename std::enable_if<
-    (boost::is_scalar<T1>::value || std::is_same<T1, var>::value)
-        && (boost::is_scalar<T2>::value || std::is_same<T2, var>::value),
-    typename boost::math::tools::promote_args<T1, T2>::type>::type
-multiply(const T1& v, const T2& c) {
+template <typename T1, typename T2,
+          typename = enable_if_all_var_or_arithmetic<T1, T2>,
+          typename = enable_if_any_var<T1, T2>>
+inline return_type_t<T1, T2> multiply(const T1& v, const T2& c) {
   return v * c;
 }
 
@@ -489,7 +489,8 @@ multiply(const T1& v, const T2& c) {
  * @param[in] m Matrix
  * @return Product of scalar and matrix
  */
-template <typename T1, typename T2, int R2, int C2>
+template <typename T1, typename T2, int R2, int C2,
+          typename = enable_if_any_var<T1, T2>>
 inline Eigen::Matrix<var, R2, C2> multiply(const T1& c,
                                            const Eigen::Matrix<T2, R2, C2>& m) {
   // TODO(trangucci) pull out to eliminate overpromotion of one side
@@ -507,7 +508,8 @@ inline Eigen::Matrix<var, R2, C2> multiply(const T1& c,
  * @param[in] m Matrix
  * @return Product of scalar and matrix
  */
-template <typename T1, int R1, int C1, typename T2>
+template <typename T1, int R1, int C1, typename T2,
+          typename = enable_if_any_var<T1, T2>>
 inline Eigen::Matrix<var, R1, C1> multiply(const Eigen::Matrix<T1, R1, C1>& m,
                                            const T2& c) {
   // TODO(trangucci) pull out to eliminate overpromotion of one side
@@ -527,12 +529,10 @@ inline Eigen::Matrix<var, R1, C1> multiply(const Eigen::Matrix<T1, R1, C1>& m,
  * @param[in] B Matrix
  * @return Product of scalar and matrix.
  */
-template <typename Ta, int Ra, int Ca, typename Tb, int Cb>
-inline typename std::enable_if<std::is_same<Ta, var>::value
-                                   || std::is_same<Tb, var>::value,
-                               Eigen::Matrix<var, Ra, Cb> >::type
-multiply(const Eigen::Matrix<Ta, Ra, Ca>& A,
-         const Eigen::Matrix<Tb, Ca, Cb>& B) {
+template <typename Ta, int Ra, int Ca, typename Tb, int Cb,
+          typename = enable_if_any_var<Ta, Tb>>
+inline Eigen::Matrix<var, Ra, Cb> multiply(const Eigen::Matrix<Ta, Ra, Ca>& A,
+                                           const Eigen::Matrix<Tb, Ca, Cb>& B) {
   check_multiplicable("multiply", "A", A, "B", B);
   check_not_nan("multiply", "A", A);
   check_not_nan("multiply", "B", B);
@@ -557,10 +557,10 @@ multiply(const Eigen::Matrix<Ta, Ra, Ca>& A,
  * @param[in] B Column vector
  * @return Scalar product of row vector and vector
  */
-template <typename Ta, int Ca, typename Tb>
-inline typename std::enable_if<
-    std::is_same<Ta, var>::value || std::is_same<Tb, var>::value, var>::type
-multiply(const Eigen::Matrix<Ta, 1, Ca>& A, const Eigen::Matrix<Tb, Ca, 1>& B) {
+template <typename Ta, int Ca, typename Tb,
+          typename = enable_if_any_var<Ta, Tb>>
+inline var multiply(const Eigen::Matrix<Ta, 1, Ca>& A,
+                    const Eigen::Matrix<Tb, Ca, 1>& B) {
   check_multiplicable("multiply", "A", A, "B", B);
   check_not_nan("multiply", "A", A);
   check_not_nan("multiply", "B", B);

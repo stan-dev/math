@@ -36,8 +36,8 @@ namespace math {
  * @throw std::domain_error if mu is not finite
  */
 template <typename T, typename M, typename S>
-inline typename boost::math::tools::promote_args<T, M, S>::type
-locscale_constrain(const T& x, const M& mu, const S& sigma) {
+inline return_type_t<T, M, S> locscale_constrain(const T& x, const M& mu,
+                                                 const S& sigma) {
   check_finite("locscale_constrain", "location", mu);
   if (sigma == 1) {
     if (mu == 0)
@@ -75,8 +75,8 @@ locscale_constrain(const T& x, const M& mu, const S& sigma) {
  * @throw std::domain_error if mu is not finite
  */
 template <typename T, typename M, typename S>
-inline typename boost::math::tools::promote_args<T, M, S>::type
-locscale_constrain(const T& x, const M& mu, const S& sigma, T& lp) {
+inline return_type_t<T, M, S> locscale_constrain(const T& x, const M& mu,
+                                                 const S& sigma, T& lp) {
   using std::log;
   check_finite("locscale_constrain", "location", mu);
   if (sigma == 1) {

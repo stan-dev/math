@@ -41,7 +41,7 @@ std::vector<std::vector<Tpar> > integrate_dae(
     const double rtol, const double atol,
     const int64_t max_num_steps = idas_integrator::IDAS_MAX_STEPS,
     std::ostream* msgs = nullptr) {
-  /* it doesn't matter here what values @c eq_id has, as we
+  /* it doesn't matter here what values \c eq_id has, as we
      don't allow yy0 or yp0 to be parameters */
   const std::vector<int> dummy_eq_id(yy0.size(), 0);
 

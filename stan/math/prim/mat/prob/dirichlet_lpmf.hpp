@@ -46,12 +46,11 @@ namespace math {
  * @tparam T_prior_size Type of prior sample sizes.
  */
 template <bool propto, typename T_prob, typename T_prior_size>
-typename return_type<T_prob, T_prior_size>::type dirichlet_lpmf(
-    const T_prob& theta, const T_prior_size& alpha) {
+return_type_t<T_prob, T_prior_size> dirichlet_lpmf(const T_prob& theta,
+                                                   const T_prior_size& alpha) {
   static const char* function = "dirichlet_lpmf";
 
-  typedef typename stan::partials_return_type<T_prob, T_prior_size>::type
-      T_partials_return;
+  typedef partials_return_type_t<T_prob, T_prior_size> T_partials_return;
   typedef typename Eigen::Matrix<T_partials_return, -1, 1> T_partials_vec;
 
   check_consistent_sizes(function, "probabilities", theta, "prior sample sizes",
@@ -90,8 +89,8 @@ typename return_type<T_prob, T_prior_size>::type dirichlet_lpmf(
 }
 
 template <typename T_prob, typename T_prior_size>
-typename return_type<T_prob, T_prior_size>::type dirichlet_lpmf(
-    const T_prob& theta, const T_prior_size& alpha) {
+return_type_t<T_prob, T_prior_size> dirichlet_lpmf(const T_prob& theta,
+                                                   const T_prior_size& alpha) {
   return dirichlet_lpmf<false>(theta, alpha);
 }
 

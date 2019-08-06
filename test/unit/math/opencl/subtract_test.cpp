@@ -187,4 +187,70 @@ TEST(MathMatrixCL, subtract_value_check) {
   EXPECT_EQ(4, m3(2, 1));
   EXPECT_EQ(1, m3(2, 2));
 }
+TEST(MathMatrixCL, subtract_tri_value_check) {
+  Eigen::MatrixXd a(3, 3);
+  a << 1, 2, 3, 4, 5, 6, 7, 8, 9;
+  Eigen::MatrixXd b = Eigen::MatrixXd::Ones(3, 3) * 3;
+  stan::math::matrix_cl<double> a_cl(a);
+  stan::math::matrix_cl<double> b_cl(b);
+  stan::math::matrix_cl<double> c_cl(3, 3);
+  Eigen::MatrixXd c(3, 3);
+
+  a_cl.view(stan::math::matrix_cl_view::Lower);
+  b_cl.view(stan::math::matrix_cl_view::Lower);
+  c_cl = a_cl - b_cl;
+  EXPECT_EQ(c_cl.view(), stan::math::matrix_cl_view::Lower);
+  c = stan::math::from_matrix_cl(c_cl);
+  EXPECT_EQ(-2, c(0, 0));
+  EXPECT_EQ(1, c(1, 0));
+  EXPECT_EQ(2, c(1, 1));
+  EXPECT_EQ(4, c(2, 0));
+  EXPECT_EQ(5, c(2, 1));
+  EXPECT_EQ(6, c(2, 2));
+
+  a_cl.view(stan::math::matrix_cl_view::Lower);
+  b_cl.view(stan::math::matrix_cl_view::Upper);
+  c_cl = a_cl - b_cl;
+  EXPECT_EQ(c_cl.view(), stan::math::matrix_cl_view::Entire);
+  c = stan::math::from_matrix_cl(c_cl);
+  EXPECT_EQ(-2, c(0, 0));
+  EXPECT_EQ(-3, c(0, 1));
+  EXPECT_EQ(-3, c(0, 2));
+  EXPECT_EQ(4, c(1, 0));
+  EXPECT_EQ(2, c(1, 1));
+  EXPECT_EQ(-3, c(1, 2));
+  EXPECT_EQ(7, c(2, 0));
+  EXPECT_EQ(8, c(2, 1));
+  EXPECT_EQ(6, c(2, 2));
+
+  a_cl.view(stan::math::matrix_cl_view::Upper);
+  b_cl.view(stan::math::matrix_cl_view::Lower);
+  c_cl = a_cl - b_cl;
+  EXPECT_EQ(c_cl.view(), stan::math::matrix_cl_view::Entire);
+  c = stan::math::from_matrix_cl(c_cl);
+  EXPECT_EQ(-2, c(0, 0));
+  EXPECT_EQ(2, c(0, 1));
+  EXPECT_EQ(3, c(0, 2));
+  EXPECT_EQ(-3, c(1, 0));
+  EXPECT_EQ(2, c(1, 1));
+  EXPECT_EQ(6, c(1, 2));
+  EXPECT_EQ(-3, c(2, 0));
+  EXPECT_EQ(-3, c(2, 1));
+  EXPECT_EQ(6, c(2, 2));
+
+  a_cl.view(stan::math::matrix_cl_view::Entire);
+  b_cl.view(stan::math::matrix_cl_view::Lower);
+  c_cl = a_cl - b_cl;
+  EXPECT_EQ(c_cl.view(), stan::math::matrix_cl_view::Entire);
+  c = stan::math::from_matrix_cl(c_cl);
+  EXPECT_EQ(-2, c(0, 0));
+  EXPECT_EQ(2, c(0, 1));
+  EXPECT_EQ(3, c(0, 2));
+  EXPECT_EQ(1, c(1, 0));
+  EXPECT_EQ(2, c(1, 1));
+  EXPECT_EQ(6, c(1, 2));
+  EXPECT_EQ(4, c(2, 0));
+  EXPECT_EQ(5, c(2, 1));
+  EXPECT_EQ(6, c(2, 2));
+}
 #endif

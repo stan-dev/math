@@ -37,11 +37,10 @@ namespace math {
  * @tparam T_high Type of upper bound.
  */
 template <bool propto, typename T_y, typename T_low, typename T_high>
-typename return_type<T_y, T_low, T_high>::type uniform_lpdf(
-    const T_y& y, const T_low& alpha, const T_high& beta) {
+return_type_t<T_y, T_low, T_high> uniform_lpdf(const T_y& y, const T_low& alpha,
+                                               const T_high& beta) {
   static const char* function = "uniform_lpdf";
-  typedef typename stan::partials_return_type<T_y, T_low, T_high>::type
-      T_partials_return;
+  typedef partials_return_type_t<T_y, T_low, T_high> T_partials_return;
 
   using std::log;
 
@@ -101,8 +100,9 @@ typename return_type<T_y, T_low, T_high>::type uniform_lpdf(
 }
 
 template <typename T_y, typename T_low, typename T_high>
-inline typename return_type<T_y, T_low, T_high>::type uniform_lpdf(
-    const T_y& y, const T_low& alpha, const T_high& beta) {
+inline return_type_t<T_y, T_low, T_high> uniform_lpdf(const T_y& y,
+                                                      const T_low& alpha,
+                                                      const T_high& beta) {
   return uniform_lpdf<false>(y, alpha, beta);
 }
 

@@ -22,9 +22,8 @@ namespace math {
  * @return max(x- y, 0)
  */
 template <typename T1, typename T2>
-inline typename boost::math::tools::promote_args<T1, T2>::type fdim(T1 x,
-                                                                    T2 y) {
-  typedef typename boost::math::tools::promote_args<T1, T2>::type return_t;
+inline return_type_t<T1, T2> fdim(T1 x, T2 y) {
+  typedef return_type_t<T1, T2> return_t;
   using std::numeric_limits;
   if (is_any_nan(x, y))
     return NOT_A_NUMBER;
