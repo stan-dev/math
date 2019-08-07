@@ -370,6 +370,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
    * @param A array of doubles
    * @param R Number of rows the matrix should have.
    * @param C Number of columns the matrix should have.
+   * @param partial_view which part of the matrix is used
    * @throw <code>std::system_error</code> if the
    * matrices do not have matching dimensions
    */
