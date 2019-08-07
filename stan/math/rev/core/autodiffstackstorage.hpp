@@ -119,7 +119,7 @@ struct AutodiffStackSingleton {
 
  private:
   static bool init() {
-    static STAN_THREADS_DEF is_initialized = false;
+    static STAN_THREADS_DEF bool is_initialized = false;
     if (!is_initialized) {
       is_initialized = true;
       instance_ = new AutodiffStackStorage();
