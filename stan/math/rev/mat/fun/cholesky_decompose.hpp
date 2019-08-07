@@ -114,7 +114,7 @@ class cholesky_block : public vari {
    * Iain Murray: Differentiation of the Cholesky decomposition, 2016.
    *
    */
-  virtual void chain() final {
+  void chain() final {
     using Eigen::Block;
     using Eigen::Lower;
     using Eigen::MatrixXd;
@@ -216,7 +216,7 @@ class cholesky_scalar : public vari {
    * A(M_ - 1, M_ - 1), hence pos on line 94 is decremented to start at pos
    * = M_ * (M_ + 1) / 2.
    */
-  virtual void chain() final {
+  void chain() final {
     using Eigen::Matrix;
     using Eigen::RowMajor;
     Matrix<double, -1, -1, RowMajor> adjL(M_, M_);
@@ -312,7 +312,7 @@ class cholesky_opencl : public vari {
    * Iain Murray: Differentiation of the Cholesky decomposition, 2016.
    *
    */
-  virtual void chain() final {
+  void chain() final {
     const int packed_size = M_ * (M_ + 1) / 2;
     std::vector<double> L_adj_cpu(packed_size);
     std::vector<double> L_val_cpu(packed_size);

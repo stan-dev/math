@@ -66,7 +66,7 @@ class mdivide_left_ldlt_vv_vari : public vari {
         = alloc_->C_.unaryExpr([](double x) { return new vari(x, false); });
   }
 
-  virtual void chain() final {
+  void chain() final {
     matrix_d adjB = Eigen::Map<matrix_vi>(variRefC_, M_, N_).adj();
 
     alloc_ldlt_->ldlt_.solveInPlace(adjB);
@@ -116,7 +116,7 @@ class mdivide_left_ldlt_dv_vari : public vari {
         = alloc_->C_.unaryExpr([](double x) { return new vari(x, false); });
   }
 
-  virtual void chain() final {
+  void chain() final {
     matrix_d adjB = Eigen::Map<matrix_vi>(variRefC_, M_, N_).adj();
     alloc_->ldltP_->solveInPlace(adjB);
     Eigen::Map<matrix_vi>(variRefB_, M_, N_).adj() += adjB;
@@ -158,7 +158,7 @@ class mdivide_left_ldlt_vd_vari : public vari {
         = alloc_->C_.unaryExpr([](double x) { return new vari(x, false); });
   }
 
-  virtual void chain() final {
+  void chain() final {
     matrix_d adjC = Eigen::Map<matrix_vi>(variRefC_, M_, N_).adj();
 
     const_cast<matrix_vi &>(alloc_ldlt_->variA_).adj()

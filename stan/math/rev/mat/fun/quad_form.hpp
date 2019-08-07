@@ -86,7 +86,7 @@ class quad_form_vari : public vari {
     impl_ = new quad_form_vari_alloc<Ta, Ra, Ca, Tb, Rb, Cb>(A, B, symmetric);
   }
 
-  virtual void chain() final {
+  void chain() final {
     matrix_d adjC = impl_->C_.adj();
 
     chainAB(impl_->A_, impl_->B_, value_of(impl_->A_), value_of(impl_->B_),

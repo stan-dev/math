@@ -176,7 +176,7 @@ class dot_product_vari : public vari {
       initialize(v2_, v2, shared_v2->v2_);
     }
   }
-  virtual void chain() final { chain(v1_, v2_); }
+  void chain() final { chain(v1_, v2_); }
 };
 }  // namespace internal
 

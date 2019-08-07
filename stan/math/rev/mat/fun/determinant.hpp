@@ -34,7 +34,7 @@ class determinant_vari : public vari {
   static double determinant_vari_calc(const Eigen::Matrix<var, R, C>& A) {
     return A.val().determinant();
   }
-  virtual void chain() final {
+  void chain() final {
     Eigen::Map<matrix_vi>(adjARef_, rows_, cols_).adj()
         += (adj_ * val_)
            * Eigen::Map<Eigen::MatrixXd>(A_, rows_, cols_)
