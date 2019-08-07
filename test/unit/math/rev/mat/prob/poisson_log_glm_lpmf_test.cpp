@@ -371,4 +371,14 @@ TEST(ProbDistributionsPoissonLogGLM, test_scalar_stdvec_rowvec_y) {
   x_1obs << -12, 46;
   EXPECT_NO_THROW(
       stan::math::poisson_log_glm_lpmf(y_const, x_1obs, alpha, beta));
+
+  Matrix<double, 1, Dynamic> beta_r(1, 2);
+  beta_r << 0.3, 2;
+  EXPECT_NO_THROW(
+      stan::math::poisson_log_glm_lpmf(y_const, x_1obs, alpha, beta_r));
+
+  std::vector<double> beta_std(2);
+  beta_std[0] = 1; beta_std[1];
+  EXPECT_NO_THROW(
+      stan::math::poisson_log_glm_lpmf(y_const, x_1obs, alpha, beta_std));
 }
