@@ -297,13 +297,10 @@ class cholesky_opencl : public vari {
    * @param L_adj matrix of adjoints of L
    */
   inline void symbolic_rev(matrix_cl<double>& L, matrix_cl<double>& L_adj) {
-    L_adj = opencl::multiply<TriangularViewCL::Upper, TriangularViewCL::Entire>(
-        transpose(L), L_adj);
+    L_adj = transpose(L) * L_adj;
     L_adj.triangular_transpose<TriangularMapCL::LowerToUpper>();
-    L = transpose(tri_inverse<TriangularViewCL::Lower>(L));
-    L_adj = L
-            * transpose(opencl::multiply<TriangularViewCL::Upper,
-                                         TriangularViewCL::Entire>(L, L_adj));
+    L = transpose(tri_inverse(L));
+    L_adj = L * transpose(L * L_adj);
     L_adj.triangular_transpose<TriangularMapCL::LowerToUpper>();
   }
 
@@ -324,9 +321,8 @@ class cholesky_opencl : public vari {
       L_adj_cpu[j] = vari_ref_L_[j]->adj_;
       L_val_cpu[j] = vari_ref_L_[j]->val_;
     }
-    matrix_cl<double> L = packed_copy<TriangularViewCL::Lower>(L_val_cpu, M_);
-    matrix_cl<double> L_adj
-        = packed_copy<TriangularViewCL::Lower>(L_adj_cpu, M_);
+    matrix_cl<double> L = packed_copy<matrix_cl_view::Lower>(L_val_cpu, M_);
+    matrix_cl<double> L_adj = packed_copy<matrix_cl_view::Lower>(L_adj_cpu, M_);
     int block_size
         = M_ / opencl_context.tuning_opts().cholesky_rev_block_partition;
     block_size = std::max(block_size, 8);
@@ -340,15 +336,15 @@ class cholesky_opencl : public vari {
       const int k_j_ind = k - j;
       const int m_k_ind = M_ - k;
 
-      matrix_cl<double> R(k_j_ind, j);
-      matrix_cl<double> D(k_j_ind, k_j_ind);
+      matrix_cl<double> R(k_j_ind, j, matrix_cl_view::Lower);
+      matrix_cl<double> D(k_j_ind, k_j_ind, matrix_cl_view::Lower);
       matrix_cl<double> B(m_k_ind, j);
-      matrix_cl<double> C(m_k_ind, k_j_ind);
+      matrix_cl<double> C(m_k_ind, k_j_ind, matrix_cl_view::Lower);
 
-      matrix_cl<double> R_adj(k_j_ind, j);
-      matrix_cl<double> D_adj(k_j_ind, k_j_ind);
+      matrix_cl<double> R_adj(k_j_ind, j, matrix_cl_view::Lower);
+      matrix_cl<double> D_adj(k_j_ind, k_j_ind, matrix_cl_view::Lower);
       matrix_cl<double> B_adj(m_k_ind, j);
-      matrix_cl<double> C_adj(m_k_ind, k_j_ind);
+      matrix_cl<double> C_adj(m_k_ind, k_j_ind, matrix_cl_view::Lower);
 
       R.sub_block(L, j, 0, 0, 0, k_j_ind, j);
       D.sub_block(L, j, j, 0, 0, k_j_ind, k_j_ind);
@@ -360,9 +356,7 @@ class cholesky_opencl : public vari {
       B_adj.sub_block(L_adj, k, 0, 0, 0, m_k_ind, j);
       C_adj.sub_block(L_adj, k, j, 0, 0, m_k_ind, k_j_ind);
 
-      C_adj
-          = opencl::multiply<TriangularViewCL::Entire, TriangularViewCL::Lower>(
-              C_adj, tri_inverse<TriangularViewCL::Lower>(D));
+      C_adj = C_adj * tri_inverse(D);
       B_adj = B_adj - C_adj * R;
       D_adj = D_adj - transpose(C_adj) * C;
 
@@ -376,7 +370,8 @@ class cholesky_opencl : public vari {
       L_adj.sub_block(B_adj, 0, 0, k, 0, m_k_ind, j);
       L_adj.sub_block(C_adj, 0, 0, k, j, m_k_ind, k_j_ind);
     }
-    L_adj_cpu = packed_copy<TriangularViewCL::Lower>(L_adj);
+    L_adj.view(matrix_cl_view::Lower);
+    L_adj_cpu = packed_copy(L_adj);
     for (size_type j = 0; j < packed_size; ++j) {
       vari_ref_A_[j]->adj_ += L_adj_cpu[j];
     }

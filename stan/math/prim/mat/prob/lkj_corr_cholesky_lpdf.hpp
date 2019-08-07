@@ -13,15 +13,14 @@ namespace math {
 // LKJ_Corr(L|eta) [ L Cholesky factor of correlation matrix
 //                  eta > 0; eta == 1 <-> uniform]
 template <bool propto, typename T_covar, typename T_shape>
-typename boost::math::tools::promote_args<T_covar, T_shape>::type
-lkj_corr_cholesky_lpdf(
+return_type_t<T_covar, T_shape> lkj_corr_cholesky_lpdf(
     const Eigen::Matrix<T_covar, Eigen::Dynamic, Eigen::Dynamic>& L,
     const T_shape& eta) {
   static const char* function = "lkj_corr_cholesky_lpdf";
 
   using boost::math::tools::promote_args;
 
-  typedef typename promote_args<T_covar, T_shape>::type lp_ret;
+  typedef return_type_t<T_covar, T_shape> lp_ret;
   lp_ret lp(0.0);
   check_positive(function, "Shape parameter", eta);
   check_lower_triangular(function, "Random variable", L);
@@ -52,8 +51,7 @@ lkj_corr_cholesky_lpdf(
 }
 
 template <typename T_covar, typename T_shape>
-inline typename boost::math::tools::promote_args<T_covar, T_shape>::type
-lkj_corr_cholesky_lpdf(
+inline return_type_t<T_covar, T_shape> lkj_corr_cholesky_lpdf(
     const Eigen::Matrix<T_covar, Eigen::Dynamic, Eigen::Dynamic>& L,
     const T_shape& eta) {
   return lkj_corr_cholesky_lpdf<false>(L, eta);

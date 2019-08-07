@@ -18,12 +18,10 @@ namespace math {
  *       trace(B^T A^-1 B)
  * where the LDLT_factor of A is provided.
  */
-template <typename T1, typename T2, int R2, int C2, int R3, int C3>
-inline typename std::enable_if<
-    !stan::is_var<T1>::value && !stan::is_var<T2>::value,
-    typename boost::math::tools::promote_args<T1, T2>::type>::type
-trace_inv_quad_form_ldlt(const LDLT_factor<T1, R2, C2> &A,
-                         const Eigen::Matrix<T2, R3, C3> &B) {
+template <typename T1, typename T2, int R2, int C2, int R3, int C3,
+          typename = enable_if_any_not_var<T1, T2>>
+inline return_type_t<T1, T2> trace_inv_quad_form_ldlt(
+    const LDLT_factor<T1, R2, C2> &A, const Eigen::Matrix<T2, R3, C3> &B) {
   check_multiplicable("trace_inv_quad_form_ldlt", "A", A, "B", B);
 
   return trace(multiply(transpose(B), mdivide_left_ldlt(A, B)));
