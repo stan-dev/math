@@ -305,11 +305,13 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
 
   /**
    * Constructor for the matrix_cl that
-   * creates a copy of the Eigen matrix on the OpenCL device.
-   * Regardless of `partial_view`, whole matrix is stored.
+   * creates a copy of the Eigen Map of Eigen Matrix of doubles
+   * on the OpenCL device.
+   * Regardless of `partial_view`, whole matrix in the map
+   * is stored.
    *
    * @tparam T type of data in the \c Eigen \c Matrix
-   * @param A the \c Eigen \c Matrix
+   * @param A the \c Eigen \c Map of the Eigen Matrix
    * @param partial_view which part of the matrix is used
    *
    * @throw <code>std::system_error</code> if the
