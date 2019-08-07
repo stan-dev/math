@@ -136,13 +136,11 @@ struct AutodiffStackSingleton {
   bool own_instance_;
 };
 
-
 template <typename ChainableT, typename ChainableAllocT>
 STAN_THREADS_DEF
     typename AutodiffStackSingleton<ChainableT,
                                     ChainableAllocT>::AutodiffStackStorage
         *AutodiffStackSingleton<ChainableT, ChainableAllocT>::instance_;
-
 
 }  // namespace math
 }  // namespace stan
