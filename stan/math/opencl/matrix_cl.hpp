@@ -316,7 +316,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
    * matrices do not have matching dimensions
    */
   template <int R, int C>
-  explicit matrix_cl(Eigen::Map<const Eigen::Matrix<T, R, C>>& A,
+  explicit matrix_cl(Eigen::Map<Eigen::Matrix<T, R, C>>& A,
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
       : rows_(A.rows()), cols_(A.cols()), view_(partial_view) {
     if (size() == 0) {
