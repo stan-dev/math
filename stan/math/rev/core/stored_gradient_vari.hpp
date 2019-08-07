@@ -38,7 +38,7 @@ class stored_gradient_vari : public vari {
    * Propagate derivatives through this vari with partial
    * derivatives given for the daughter vari by the stored partials.
    */
-  void chain() {
+  void chain() final {
     for (size_t i = 0; i < size_; ++i)
       dtrs_[i]->adj_ += adj_ * partials_[i];
   }

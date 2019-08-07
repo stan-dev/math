@@ -67,7 +67,7 @@ class precomputed_gradients_vari : public vari {
    * Implements the chain rule for this variable, using the
    * prestored operands and gradient.
    */
-  void chain() {
+  void chain() final {
     for (size_t i = 0; i < size_; ++i)
       varis_[i]->adj_ += adj_ * gradients_[i];
   }

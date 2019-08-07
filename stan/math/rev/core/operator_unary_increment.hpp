@@ -13,7 +13,7 @@ namespace internal {
 class increment_vari : public op_v_vari {
  public:
   explicit increment_vari(vari* avi) : op_v_vari(avi->val_ + 1.0, avi) {}
-  void chain() {
+  void chain() final {
     if (unlikely(is_nan(avi_->val_)))
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
     else

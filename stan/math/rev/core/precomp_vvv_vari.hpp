@@ -18,7 +18,7 @@ class precomp_vvv_vari : public op_vvv_vari {
   precomp_vvv_vari(double val, vari* avi, vari* bvi, vari* cvi, double da,
                    double db, double dc)
       : op_vvv_vari(val, avi, bvi, cvi), da_(da), db_(db), dc_(dc) {}
-  void chain() {
+  void chain() final {
     avi_->adj_ += adj_ * da_;
     bvi_->adj_ += adj_ * db_;
     cvi_->adj_ += adj_ * dc_;

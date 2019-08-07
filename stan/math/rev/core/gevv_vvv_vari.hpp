@@ -41,7 +41,7 @@ class gevv_vvv_vari : public vari {
       v2_[i] = v2[i * stride2].vi_;
   }
   virtual ~gevv_vvv_vari() {}
-  void chain() {
+  void chain() final {
     const double adj_alpha = adj_ * alpha_->val_;
     for (size_t i = 0; i < length_; i++) {
       v1_[i]->adj_ += adj_alpha * v2_[i]->val_;

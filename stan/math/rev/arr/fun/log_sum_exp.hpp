@@ -30,7 +30,7 @@ class log_sum_exp_vector_vari : public op_vector_vari {
  public:
   explicit log_sum_exp_vector_vari(const std::vector<var>& x)
       : op_vector_vari(log_sum_exp_as_double(x), x) {}
-  void chain() {
+  void chain() final {
     for (size_t i = 0; i < size_; ++i) {
       vis_[i]->adj_ += adj_ * calculate_chain(vis_[i]->val_, val_);
     }

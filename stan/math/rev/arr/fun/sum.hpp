@@ -36,7 +36,7 @@ class sum_v_vari : public vari {
       v_[i] = v1[i].vi_;
   }
 
-  virtual void chain() {
+  void chain() final {
     for (size_t i = 0; i < length_; i++) {
       v_[i]->adj_ += adj_;
     }
