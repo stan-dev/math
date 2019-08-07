@@ -204,7 +204,7 @@ class opencl_context_base {
     int multiply_dim_prod_worth_transfer = 2000000;
     // used in math/prim/mat/fun/mdivide_left_tri
     // and math/rev/mat/fun/mdivide_left_tri
-    int tri_inverse_size_worth_transfer = 0;
+    int tri_inverse_size_worth_transfer = 100;
   } tuning_opts_;
 
   static opencl_context_base& getInstance() {

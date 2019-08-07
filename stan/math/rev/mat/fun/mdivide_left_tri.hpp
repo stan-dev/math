@@ -71,7 +71,7 @@ class mdivide_left_tri_vv_vari : public vari {
       C_cl = tri_inverse(A_cl) * C_cl;
       c_map = from_matrix_cl(C_cl);
   } else {
-#endif        
+#endif
     c_map = a_map.template triangularView<TriView>().solve(c_map);    
 #ifdef STAN_OPENCL
   }
