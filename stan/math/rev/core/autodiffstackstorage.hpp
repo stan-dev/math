@@ -119,7 +119,14 @@ struct AutodiffStackSingleton {
 
  private:
   static bool init() {
+    static STAN_THREADS_DEF is_initialized = false;
+    if (!is_initialized) {
+      is_initialized = true;
+      instance_ = new AutodiffStackStorage();
+      return true;
+    }
     if (!instance_) {
+      is_initialized = true;
       instance_ = new AutodiffStackStorage();
       return true;
     }
@@ -129,12 +136,13 @@ struct AutodiffStackSingleton {
   bool own_instance_;
 };
 
+/* this is likely not needed any more
 template <typename ChainableT, typename ChainableAllocT>
 STAN_THREADS_DEF
     typename AutodiffStackSingleton<ChainableT,
                                     ChainableAllocT>::AutodiffStackStorage
-        *AutodiffStackSingleton<ChainableT, ChainableAllocT>::instance_
-    = nullptr;
+        *AutodiffStackSingleton<ChainableT, ChainableAllocT>::instance_;
+*/
 
 }  // namespace math
 }  // namespace stan
