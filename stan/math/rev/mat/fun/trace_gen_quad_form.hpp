@@ -65,7 +65,7 @@ class trace_gen_quad_form_vari : public vari {
       trace_gen_quad_form_vari_alloc<Td, Rd, Cd, Ta, Ra, Ca, Tb, Rb, Cb>* impl)
       : vari(impl->compute()), impl_(impl) {}
 
-  virtual void chain() {
+  virtual void chain() final {
     computeAdjoints(adj_, value_of(impl_->D_), value_of(impl_->A_),
                     value_of(impl_->B_),
                     reinterpret_cast<Eigen::Matrix<var, Rd, Cd>*>(

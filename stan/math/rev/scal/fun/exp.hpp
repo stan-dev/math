@@ -12,7 +12,7 @@ namespace internal {
 class exp_vari : public op_v_vari {
  public:
   explicit exp_vari(vari* avi) : op_v_vari(std::exp(avi->val_), avi) {}
-  void chain() { avi_->adj_ += adj_ * val_; }
+  void chain() final { avi_->adj_ += adj_ * val_; }
 };
 }  // namespace internal
 

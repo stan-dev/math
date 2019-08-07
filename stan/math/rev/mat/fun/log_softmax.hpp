@@ -31,7 +31,7 @@ class log_softmax_elt_vari : public vari {
         softmax_alpha_(softmax_alpha),
         size_(size),
         idx_(idx) {}
-  void chain() {
+  void chain() final {
     for (int m = 0; m < size_; ++m) {
       if (m == idx_)
         alpha_[m]->adj_ += adj_ * (1 - softmax_alpha_[m]);

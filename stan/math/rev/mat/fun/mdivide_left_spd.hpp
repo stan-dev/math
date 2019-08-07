@@ -58,7 +58,7 @@ class mdivide_left_spd_vv_vari : public vari {
         = alloc_->C_.unaryExpr([](double x) { return new vari(x, false); });
   }
 
-  virtual void chain() {
+  virtual void chain() final {
     matrix_d adjB = Eigen::Map<matrix_vi>(variRefC_, M_, N_).adj();
     alloc_->llt_.solveInPlace(adjB);
     Eigen::Map<matrix_vi>(variRefA_, M_, M_).adj()
@@ -97,7 +97,7 @@ class mdivide_left_spd_dv_vari : public vari {
         = alloc_->C_.unaryExpr([](double x) { return new vari(x, false); });
   }
 
-  virtual void chain() {
+  virtual void chain() final {
     matrix_d adjB = Eigen::Map<matrix_vi>(variRefC_, M_, N_).adj();
     alloc_->llt_.solveInPlace(adjB);
     Eigen::Map<matrix_vi>(variRefB_, M_, N_).adj() += adjB;
@@ -133,7 +133,7 @@ class mdivide_left_spd_vd_vari : public vari {
         = alloc_->C_.unaryExpr([](double x) { return new vari(x, false); });
   }
 
-  virtual void chain() {
+  virtual void chain() final {
     matrix_d adjC = Eigen::Map<matrix_vi>(variRefC_, M_, N_).adj();
     Eigen::Map<matrix_vi>(variRefA_, M_, M_).adj()
         -= alloc_->llt_.solve(adjC * alloc_->C_.transpose());

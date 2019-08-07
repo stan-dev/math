@@ -15,7 +15,7 @@ class fma_vvv_vari : public op_vvv_vari {
  public:
   fma_vvv_vari(vari* avi, vari* bvi, vari* cvi)
       : op_vvv_vari(fma(avi->val_, bvi->val_, cvi->val_), avi, bvi, cvi) {}
-  void chain() {
+  void chain() final {
     if (unlikely(is_any_nan(avi_->val_, bvi_->val_, cvi_->val_))) {
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
       bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
@@ -32,7 +32,7 @@ class fma_vvd_vari : public op_vvd_vari {
  public:
   fma_vvd_vari(vari* avi, vari* bvi, double c)
       : op_vvd_vari(fma(avi->val_, bvi->val_, c), avi, bvi, c) {}
-  void chain() {
+  void chain() final {
     if (unlikely(is_any_nan(avi_->val_, bvi_->val_, cd_))) {
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
       bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
@@ -47,7 +47,7 @@ class fma_vdv_vari : public op_vdv_vari {
  public:
   fma_vdv_vari(vari* avi, double b, vari* cvi)
       : op_vdv_vari(fma(avi->val_, b, cvi->val_), avi, b, cvi) {}
-  void chain() {
+  void chain() final {
     if (unlikely(is_any_nan(avi_->val_, cvi_->val_, bd_))) {
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
       cvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
@@ -62,7 +62,7 @@ class fma_vdd_vari : public op_vdd_vari {
  public:
   fma_vdd_vari(vari* avi, double b, double c)
       : op_vdd_vari(fma(avi->val_, b, c), avi, b, c) {}
-  void chain() {
+  void chain() final {
     if (unlikely(is_any_nan(avi_->val_, bd_, cd_)))
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
     else
@@ -74,7 +74,7 @@ class fma_ddv_vari : public op_ddv_vari {
  public:
   fma_ddv_vari(double a, double b, vari* cvi)
       : op_ddv_vari(fma(a, b, cvi->val_), a, b, cvi) {}
-  void chain() {
+  void chain() final {
     if (unlikely(is_any_nan(cvi_->val_, ad_, bd_)))
       cvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
     else

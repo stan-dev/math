@@ -40,7 +40,7 @@ class log_inv_logit_diff_vv_vari : public op_vv_vari {
  public:
   log_inv_logit_diff_vv_vari(vari* avi, vari* bvi)
       : op_vv_vari(log_inv_logit_diff(avi->val_, bvi->val_), avi, bvi) {}
-  void chain() {
+  void chain() final {
     avi_->adj_
         -= adj_ * (inv(expm1(bvi_->val_ - avi_->val_)) + inv_logit(avi_->val_));
 
@@ -53,7 +53,7 @@ class log_inv_logit_diff_vd_vari : public op_vd_vari {
  public:
   log_inv_logit_diff_vd_vari(vari* avi, double b)
       : op_vd_vari(log_inv_logit_diff(avi->val_, b), avi, b) {}
-  void chain() {
+  void chain() final {
     avi_->adj_ -= adj_ * (inv(expm1(bd_ - avi_->val_)) + inv_logit(avi_->val_));
   }
 };
@@ -62,7 +62,7 @@ class log_inv_logit_diff_dv_vari : public op_dv_vari {
  public:
   log_inv_logit_diff_dv_vari(double a, vari* bvi)
       : op_dv_vari(log_inv_logit_diff(a, bvi->val_), a, bvi) {}
-  void chain() {
+  void chain() final {
     bvi_->adj_ -= adj_ * (inv(expm1(ad_ - bvi_->val_)) + inv_logit(bvi_->val_));
   }
 };

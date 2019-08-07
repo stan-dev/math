@@ -92,7 +92,7 @@ class gp_exp_quad_cov_vari : public vari {
       cov_diag_[i] = new vari(sigma_sq_d_, false);
   }
 
-  virtual void chain() {
+  virtual void chain() final {
     double adjl = 0;
     double adjsigma = 0;
 
@@ -184,7 +184,7 @@ class gp_exp_quad_cov_vari<T_x, double, T_l> : public vari {
       cov_diag_[i] = new vari(sigma_sq_d_, false);
   }
 
-  virtual void chain() {
+  virtual void chain() final {
     double adjl = 0;
 
     for (size_t i = 0; i < size_ltri_; ++i) {

@@ -61,17 +61,17 @@ class dot_product_vari : public vari {
               .val();
     return vd1.dot(vd2);
   }
-  inline void chain(vari** v1, vari** v2) {
+  inline void chain(vari** v1, vari** v2) final {
     Eigen::Map<vector_vi> vd1(v1, length_);
     Eigen::Map<vector_vi> vd2(v2, length_);
     vd1.adj() += adj_ * vd2.val();
     vd2.adj() += adj_ * vd1.val();
   }
-  inline void chain(double* v1, vari** v2) {
+  inline void chain(double* v1, vari** v2) final {
     Eigen::Map<vector_vi>(v2, length_).adj()
         += adj_ * Eigen::Map<vector_d>(v1, length_);
   }
-  inline void chain(vari** v1, double* v2) {
+  inline void chain(vari** v1, double* v2) final {
     Eigen::Map<vector_vi>(v1, length_).adj()
         += adj_ * Eigen::Map<vector_d>(v2, length_);
   }
@@ -176,7 +176,7 @@ class dot_product_vari : public vari {
       initialize(v2_, v2, shared_v2->v2_);
     }
   }
-  virtual void chain() { chain(v1_, v2_); }
+  virtual void chain() final { chain(v1_, v2_); }
 };
 }  // namespace internal
 

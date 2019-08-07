@@ -14,7 +14,7 @@ class bessel_second_kind_dv_vari : public op_dv_vari {
  public:
   bessel_second_kind_dv_vari(int a, vari* bvi)
       : op_dv_vari(bessel_second_kind(a, bvi->val_), a, bvi) {}
-  void chain() {
+  void chain() final {
     bvi_->adj_ += adj_
                   * (ad_ * bessel_second_kind(ad_, bvi_->val_) / bvi_->val_
                      - bessel_second_kind(ad_ + 1, bvi_->val_));

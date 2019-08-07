@@ -17,7 +17,7 @@ class owens_t_vv_vari : public op_vv_vari {
  public:
   owens_t_vv_vari(vari* avi, vari* bvi)
       : op_vv_vari(owens_t(avi->val_, bvi->val_), avi, bvi) {}
-  void chain() {
+  void chain() final {
     const double neg_avi_sq_div_2 = -square(avi_->val_) * 0.5;
     const double one_p_bvi_sq = 1.0 + square(bvi_->val_);
 
@@ -32,7 +32,7 @@ class owens_t_vd_vari : public op_vd_vari {
  public:
   owens_t_vd_vari(vari* avi, double b)
       : op_vd_vari(owens_t(avi->val_, b), avi, b) {}
-  void chain() {
+  void chain() final {
     avi_->adj_ += adj_ * erf(bd_ * avi_->val_ * INV_SQRT_2)
                   * std::exp(-square(avi_->val_) * 0.5) * INV_SQRT_TWO_PI
                   * -0.5;
@@ -43,7 +43,7 @@ class owens_t_dv_vari : public op_dv_vari {
  public:
   owens_t_dv_vari(double a, vari* bvi)
       : op_dv_vari(owens_t(a, bvi->val_), a, bvi) {}
-  void chain() {
+  void chain() final {
     const double one_p_bvi_sq = 1.0 + square(bvi_->val_);
     bvi_->adj_ += adj_ * std::exp(-0.5 * square(ad_) * one_p_bvi_sq)
                   / (one_p_bvi_sq * 2.0 * pi());

@@ -47,7 +47,7 @@ class dot_self_vari : public vari {
   inline static double var_dot_self(const Eigen::Matrix<var, R, C>& v) {
     return v.val().squaredNorm();
   }
-  virtual void chain() {
+  virtual void chain() final {
     Eigen::Map<vector_vi> v_map(v_, size_);
     v_map.adj() += adj_ * 2.0 * v_map.val();
   }

@@ -16,7 +16,7 @@ class log_rising_factorial_vv_vari : public op_vv_vari {
  public:
   log_rising_factorial_vv_vari(vari* avi, vari* bvi)
       : op_vv_vari(log_rising_factorial(avi->val_, bvi->val_), avi, bvi) {}
-  void chain() {
+  void chain() final {
     avi_->adj_
         += adj_ * (digamma(avi_->val_ + bvi_->val_) - digamma(avi_->val_));
     bvi_->adj_ += adj_ * digamma(avi_->val_ + bvi_->val_);
@@ -27,7 +27,7 @@ class log_rising_factorial_vd_vari : public op_vd_vari {
  public:
   log_rising_factorial_vd_vari(vari* avi, double b)
       : op_vd_vari(log_rising_factorial(avi->val_, b), avi, b) {}
-  void chain() {
+  void chain() final {
     avi_->adj_ += adj_ * (digamma(avi_->val_ + bd_) - digamma(avi_->val_));
   }
 };
@@ -36,7 +36,7 @@ class log_rising_factorial_dv_vari : public op_dv_vari {
  public:
   log_rising_factorial_dv_vari(double a, vari* bvi)
       : op_dv_vari(log_rising_factorial(a, bvi->val_), a, bvi) {}
-  void chain() { bvi_->adj_ += adj_ * digamma(bvi_->val_ + ad_); }
+  void chain() final { bvi_->adj_ += adj_ * digamma(bvi_->val_ + ad_); }
 };
 }  // namespace internal
 

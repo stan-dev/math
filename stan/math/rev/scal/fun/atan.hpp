@@ -12,7 +12,7 @@ namespace internal {
 class atan_vari : public op_v_vari {
  public:
   explicit atan_vari(vari* avi) : op_v_vari(std::atan(avi->val_), avi) {}
-  void chain() { avi_->adj_ += adj_ / (1.0 + (avi_->val_ * avi_->val_)); }
+  void chain() final { avi_->adj_ += adj_ / (1.0 + (avi_->val_ * avi_->val_)); }
 };
 }  // namespace internal
 

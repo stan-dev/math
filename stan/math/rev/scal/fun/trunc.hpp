@@ -14,7 +14,7 @@ namespace internal {
 class trunc_vari : public op_v_vari {
  public:
   explicit trunc_vari(vari* avi) : op_v_vari(trunc(avi->val_), avi) {}
-  void chain() {
+  void chain() final {
     if (unlikely(is_nan(avi_->val_)))
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
   }

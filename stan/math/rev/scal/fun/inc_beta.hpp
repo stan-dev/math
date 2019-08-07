@@ -17,7 +17,7 @@ class inc_beta_vvv_vari : public op_vvv_vari {
  public:
   inc_beta_vvv_vari(vari* avi, vari* bvi, vari* cvi)
       : op_vvv_vari(inc_beta(avi->val_, bvi->val_, cvi->val_), avi, bvi, cvi) {}
-  void chain() {
+  void chain() final {
     double d_a;
     double d_b;
     const double beta_ab = beta(avi_->val_, bvi_->val_);

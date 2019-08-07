@@ -58,7 +58,7 @@ class mdivide_left_vv_vari : public vari {
         = Cd.unaryExpr([](double x) { return new vari(x, false); });
   }
 
-  virtual void chain() {
+  virtual void chain() final {
     using Eigen::Map;
     matrix_d adjB = Map<matrix_d>(A_, M_, M_)
                         .transpose()
@@ -109,7 +109,7 @@ class mdivide_left_dv_vari : public vari {
         = Cd.unaryExpr([](double x) { return new vari(x, false); });
   }
 
-  virtual void chain() {
+  virtual void chain() final {
     using Eigen::Map;
 
     Map<matrix_vi>(variRefB_, M_, N_).adj()
@@ -159,7 +159,7 @@ class mdivide_left_vd_vari : public vari {
         = Cd.unaryExpr([](double x) { return new vari(x, false); });
   }
 
-  virtual void chain() {
+  virtual void chain() final {
     using Eigen::Map;
 
     matrix_d adjC = Map<matrix_vi>(variRefC_, M_, N_).adj();

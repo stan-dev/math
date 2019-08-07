@@ -14,7 +14,7 @@ namespace internal {
 class erfc_vari : public op_v_vari {
  public:
   explicit erfc_vari(vari* avi) : op_v_vari(erfc(avi->val_), avi) {}
-  void chain() {
+  void chain() final {
     avi_->adj_
         += adj_ * NEG_TWO_OVER_SQRT_PI * std::exp(-avi_->val_ * avi_->val_);
   }

@@ -16,7 +16,7 @@ class multiply_log_vv_vari : public op_vv_vari {
  public:
   multiply_log_vv_vari(vari* avi, vari* bvi)
       : op_vv_vari(multiply_log(avi->val_, bvi->val_), avi, bvi) {}
-  void chain() {
+  void chain() final {
     using std::log;
     if (unlikely(is_any_nan(avi_->val_, bvi_->val_))) {
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
@@ -34,7 +34,7 @@ class multiply_log_vd_vari : public op_vd_vari {
  public:
   multiply_log_vd_vari(vari* avi, double b)
       : op_vd_vari(multiply_log(avi->val_, b), avi, b) {}
-  void chain() {
+  void chain() final {
     using std::log;
     if (unlikely(is_any_nan(avi_->val_, bd_)))
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
@@ -46,7 +46,7 @@ class multiply_log_dv_vari : public op_dv_vari {
  public:
   multiply_log_dv_vari(double a, vari* bvi)
       : op_dv_vari(multiply_log(a, bvi->val_), a, bvi) {}
-  void chain() {
+  void chain() final {
     if (bvi_->val_ == 0.0 && ad_ == 0.0)
       bvi_->adj_ += adj_ * std::numeric_limits<double>::infinity();
     else

@@ -17,7 +17,7 @@ class gamma_p_vv_vari : public op_vv_vari {
  public:
   gamma_p_vv_vari(vari* avi, vari* bvi)
       : op_vv_vari(gamma_p(avi->val_, bvi->val_), avi, bvi) {}
-  void chain() {
+  void chain() final {
     using std::exp;
     using std::fabs;
     using std::log;
@@ -50,7 +50,7 @@ class gamma_p_vd_vari : public op_vd_vari {
  public:
   gamma_p_vd_vari(vari* avi, double b)
       : op_vd_vari(gamma_p(avi->val_, b), avi, b) {}
-  void chain() {
+  void chain() final {
     if (is_inf(avi_->val_)) {
       avi_->adj_ += std::numeric_limits<double>::quiet_NaN();
       return;
@@ -73,7 +73,7 @@ class gamma_p_dv_vari : public op_dv_vari {
  public:
   gamma_p_dv_vari(double a, vari* bvi)
       : op_dv_vari(gamma_p(a, bvi->val_), a, bvi) {}
-  void chain() {
+  void chain() final {
     if (is_inf(ad_)) {
       bvi_->adj_ += std::numeric_limits<double>::quiet_NaN();
       return;

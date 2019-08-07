@@ -13,7 +13,7 @@ class hypot_vv_vari : public op_vv_vari {
  public:
   hypot_vv_vari(vari* avi, vari* bvi)
       : op_vv_vari(hypot(avi->val_, bvi->val_), avi, bvi) {}
-  void chain() {
+  void chain() final {
     avi_->adj_ += adj_ * avi_->val_ / val_;
     bvi_->adj_ += adj_ * bvi_->val_ / val_;
   }
@@ -22,7 +22,7 @@ class hypot_vv_vari : public op_vv_vari {
 class hypot_vd_vari : public op_v_vari {
  public:
   hypot_vd_vari(vari* avi, double b) : op_v_vari(hypot(avi->val_, b), avi) {}
-  void chain() { avi_->adj_ += adj_ * avi_->val_ / val_; }
+  void chain() final { avi_->adj_ += adj_ * avi_->val_ / val_; }
 };
 }  // namespace internal
 

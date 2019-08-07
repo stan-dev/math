@@ -26,7 +26,7 @@ class log_det_ldlt_vari : public vari {
   explicit log_det_ldlt_vari(const LDLT_factor<var, R, C> &A)
       : vari(A.alloc_->log_abs_det()), alloc_ldlt_(A.alloc_) {}
 
-  virtual void chain() {
+  virtual void chain() final {
     Eigen::Matrix<double, R, C> invA;
 
     // If we start computing Jacobians, this may be a bit inefficient

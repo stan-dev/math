@@ -12,7 +12,7 @@ namespace internal {
 class atanh_vari : public op_v_vari {
  public:
   atanh_vari(double val, vari* avi) : op_v_vari(val, avi) {}
-  void chain() { avi_->adj_ += adj_ / (1.0 - avi_->val_ * avi_->val_); }
+  void chain() final { avi_->adj_ += adj_ / (1.0 - avi_->val_ * avi_->val_); }
 };
 }  // namespace internal
 

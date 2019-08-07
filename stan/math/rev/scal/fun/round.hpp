@@ -14,7 +14,7 @@ namespace internal {
 class round_vari : public op_v_vari {
  public:
   explicit round_vari(vari* avi) : op_v_vari(round(avi->val_), avi) {}
-  void chain() {
+  void chain() final {
     if (unlikely(is_nan(avi_->val_)))
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
   }

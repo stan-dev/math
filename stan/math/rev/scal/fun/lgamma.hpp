@@ -13,7 +13,7 @@ namespace internal {
 class lgamma_vari : public op_v_vari {
  public:
   lgamma_vari(double value, vari* avi) : op_v_vari(value, avi) {}
-  void chain() { avi_->adj_ += adj_ * digamma(avi_->val_); }
+  void chain() final { avi_->adj_ += adj_ * digamma(avi_->val_); }
 };
 }  // namespace internal
 

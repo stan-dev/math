@@ -12,7 +12,7 @@ namespace internal {
 class sin_vari : public op_v_vari {
  public:
   explicit sin_vari(vari* avi) : op_v_vari(std::sin(avi->val_), avi) {}
-  void chain() { avi_->adj_ += adj_ * std::cos(avi_->val_); }
+  void chain() final { avi_->adj_ += adj_ * std::cos(avi_->val_); }
 };
 }  // namespace internal
 

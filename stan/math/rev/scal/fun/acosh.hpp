@@ -13,7 +13,7 @@ namespace internal {
 class acosh_vari : public op_v_vari {
  public:
   acosh_vari(double val, vari* avi) : op_v_vari(val, avi) {}
-  void chain() {
+  void chain() final {
     avi_->adj_ += adj_ / std::sqrt(avi_->val_ * avi_->val_ - 1.0);
   }
 };

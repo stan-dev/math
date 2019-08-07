@@ -15,7 +15,7 @@ class rising_factorial_vd_vari : public op_vd_vari {
  public:
   rising_factorial_vd_vari(vari* avi, int b)
       : op_vd_vari(rising_factorial(avi->val_, b), avi, b) {}
-  void chain() {
+  void chain() final {
     avi_->adj_ += adj_ * rising_factorial(avi_->val_, bd_)
                   * (digamma(avi_->val_ + bd_) - digamma(avi_->val_));
   }

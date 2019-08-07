@@ -13,7 +13,7 @@ namespace internal {
 class asinh_vari : public op_v_vari {
  public:
   asinh_vari(double val, vari* avi) : op_v_vari(val, avi) {}
-  void chain() {
+  void chain() final {
     avi_->adj_ += adj_ / std::sqrt(avi_->val_ * avi_->val_ + 1.0);
   }
 };

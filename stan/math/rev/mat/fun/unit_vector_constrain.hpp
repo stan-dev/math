@@ -33,7 +33,7 @@ class unit_vector_elt_vari : public vari {
         size_(size),
         idx_(idx),
         norm_(norm) {}
-  void chain() {
+  void chain() final {
     const double cubed_norm = std::pow(norm_, 3);
     for (int m = 0; m < size_; ++m) {
       y_[m]->adj_

@@ -115,7 +115,7 @@ class trace_inv_quad_form_ldlt_vari : public vari {
       trace_inv_quad_form_ldlt_impl<T2, R2, C2, T3, R3, C3> *impl)
       : vari(impl->value_), impl_(impl) {}
 
-  virtual void chain() {
+  virtual void chain() final {
     // F = trace(D * B' * inv(A) * B)
     // aA = -aF * inv(A') * B * D' * B' * inv(A')
     // aB = aF*(inv(A) * B * D + inv(A') * B * D')

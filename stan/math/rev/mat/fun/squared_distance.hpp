@@ -43,7 +43,7 @@ class squared_distance_vv_vari : public vari {
     Eigen::Map<vector_vi>(v1_, length_) = v1.vi();
     Eigen::Map<vector_vi>(v2_, length_) = v2.vi();
   }
-  virtual void chain() {
+  virtual void chain() final {
     Eigen::Map<vector_vi> v1_map(v1_, length_);
     Eigen::Map<vector_vi> v2_map(v2_, length_);
     vector_d di = 2 * adj_ * (v1_map.val() - v2_map.val());
@@ -80,7 +80,7 @@ class squared_distance_vd_vari : public vari {
     Eigen::Map<vector_vi>(v1_, length_) = v1.vi();
     Eigen::Map<vector_d>(v2_, length_) = v2;
   }
-  virtual void chain() {
+  virtual void chain() final {
     Eigen::Map<vector_vi> v1_map(v1_, length_);
     v1_map.adj()
         += 2 * adj_ * (v1_map.val() - Eigen::Map<vector_d>(v2_, length_));

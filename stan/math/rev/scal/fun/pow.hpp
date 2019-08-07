@@ -20,7 +20,7 @@ class pow_vv_vari : public op_vv_vari {
  public:
   pow_vv_vari(vari* avi, vari* bvi)
       : op_vv_vari(std::pow(avi->val_, bvi->val_), avi, bvi) {}
-  void chain() {
+  void chain() final {
     if (unlikely(is_any_nan(avi_->val_, bvi_->val_))) {
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
       bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
@@ -37,7 +37,7 @@ class pow_vd_vari : public op_vd_vari {
  public:
   pow_vd_vari(vari* avi, double b)
       : op_vd_vari(std::pow(avi->val_, b), avi, b) {}
-  void chain() {
+  void chain() final {
     if (unlikely(is_any_nan(avi_->val_, bd_))) {
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
     } else {
@@ -52,7 +52,7 @@ class pow_dv_vari : public op_dv_vari {
  public:
   pow_dv_vari(double a, vari* bvi)
       : op_dv_vari(std::pow(a, bvi->val_), a, bvi) {}
-  void chain() {
+  void chain() final {
     if (unlikely(is_any_nan(bvi_->val_, ad_))) {
       bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
     } else {

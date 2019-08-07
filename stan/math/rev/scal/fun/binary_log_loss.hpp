@@ -13,14 +13,14 @@ class binary_log_loss_1_vari : public op_v_vari {
  public:
   explicit binary_log_loss_1_vari(vari* avi)
       : op_v_vari(-std::log(avi->val_), avi) {}
-  void chain() { avi_->adj_ -= adj_ / avi_->val_; }
+  void chain() final { avi_->adj_ -= adj_ / avi_->val_; }
 };
 
 class binary_log_loss_0_vari : public op_v_vari {
  public:
   explicit binary_log_loss_0_vari(vari* avi)
       : op_v_vari(-log1p(-avi->val_), avi) {}
-  void chain() { avi_->adj_ += adj_ / (1.0 - avi_->val_); }
+  void chain() final { avi_->adj_ += adj_ / (1.0 - avi_->val_); }
 };
 }  // namespace internal
 

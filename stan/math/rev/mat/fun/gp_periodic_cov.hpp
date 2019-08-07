@@ -130,7 +130,7 @@ class gp_periodic_cov_vari : public vari {
     }
   }
 
-  virtual void chain() {
+  virtual void chain() final {
     double adjl = 0;
     double adjsigma = 0;
     double adjp = 0;
@@ -262,7 +262,7 @@ class gp_periodic_cov_vari<T_x, double, T_l, T_p> : public vari {
     }
   }
 
-  virtual void chain() {
+  virtual void chain() final {
     double adjl = 0;
     double adjp = 0;
 

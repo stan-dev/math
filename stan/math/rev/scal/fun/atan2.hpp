@@ -13,7 +13,7 @@ class atan2_vv_vari : public op_vv_vari {
  public:
   atan2_vv_vari(vari* avi, vari* bvi)
       : op_vv_vari(std::atan2(avi->val_, bvi->val_), avi, bvi) {}
-  void chain() {
+  void chain() final {
     double a_sq_plus_b_sq
         = (avi_->val_ * avi_->val_) + (bvi_->val_ * bvi_->val_);
     avi_->adj_ += adj_ * bvi_->val_ / a_sq_plus_b_sq;
@@ -25,7 +25,7 @@ class atan2_vd_vari : public op_vd_vari {
  public:
   atan2_vd_vari(vari* avi, double b)
       : op_vd_vari(std::atan2(avi->val_, b), avi, b) {}
-  void chain() {
+  void chain() final {
     double a_sq_plus_b_sq = (avi_->val_ * avi_->val_) + (bd_ * bd_);
     avi_->adj_ += adj_ * bd_ / a_sq_plus_b_sq;
   }
@@ -35,7 +35,7 @@ class atan2_dv_vari : public op_dv_vari {
  public:
   atan2_dv_vari(double a, vari* bvi)
       : op_dv_vari(std::atan2(a, bvi->val_), a, bvi) {}
-  void chain() {
+  void chain() final {
     double a_sq_plus_b_sq = (ad_ * ad_) + (bvi_->val_ * bvi_->val_);
     bvi_->adj_ -= adj_ * ad_ / a_sq_plus_b_sq;
   }
