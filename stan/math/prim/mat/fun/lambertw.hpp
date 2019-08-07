@@ -21,8 +21,15 @@ struct lam0_fun {
   }
 };
 
+struct lam1_fun {
+  template <typename T>
+  static inline T fun(const T& x) {
+    return lambert_wm1(x);
+  }
+};
+
 /**
- * Vectorized version of ceil().
+ * Vectorized version of lambert_w0().
  * @param x Container.
  * @tparam T Container type.
  * @return
@@ -32,21 +39,14 @@ inline typename apply_scalar_unary<lam0_fun, T>::return_t lambert_w0(const T& x)
   return apply_scalar_unary<lam0_fun, T>::apply(x);
 }
 
-struct lam1_fun {
-  template <typename T>
-  static inline T fun(const T& x) {
-    return lambert_w1(x);
-  }
-};
-
 /**
- * Vectorized version of lambert_w1().
+ * Vectorized version of lambert_wm1().
  * @param x Container.
  * @tparam T Container type.
- * @return 
+ * @return
  */
 template <typename T>
-inline typename apply_scalar_unary<lam1_fun, T>::return_t lambert_w0(const T& x) {
+inline typename apply_scalar_unary<lam1_fun, T>::return_t lambert_wm1(const T& x) {
   return apply_scalar_unary<lam1_fun, T>::apply(x);
 }
 
