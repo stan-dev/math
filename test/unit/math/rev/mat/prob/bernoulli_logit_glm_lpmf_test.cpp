@@ -407,7 +407,8 @@ TEST(ProbDistributionsBernoulliLogitGLM, test_scalar_rowvec_stdvec) {
       stan::math::bernoulli_logit_glm_lpmf(y_scal, x_s, alpha2, beta));
 
   std::vector<double> beta_vec(2);
-  beta_vec[0] = 1; beta_vec[1] = 1;
+  beta_vec[0] = 1;
+  beta_vec[1] = 1;
   EXPECT_NO_THROW(
       stan::math::bernoulli_logit_glm_lpmf(y_scal, x_s, alpha, beta_vec));
 
