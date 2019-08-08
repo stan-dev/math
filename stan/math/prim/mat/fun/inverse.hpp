@@ -19,11 +19,22 @@ inline Eigen::Matrix<T, R, C> inverse(const Eigen::Matrix<T, R, C>& m) {
 }
 
 template <typename Derived>
-inline Eigen::SparseMatrixBase<Derived> inverse(const Eigen::SparseMatrixBase<Derived>& m) {
-  Eigen::SimplicialLLT<Eigen::SparseMatrixBase<Derived>> m_solver;
-  m.makeCompressed();
+using scalar_t = typename Derived::Scalar;
+
+template <typename Derived>
+using eigen_return_t = typename Derived::PlainObject;
+
+template <typename Derived>
+using eigen_sparse_matrix = typename Eigen::SparseMatrix<scalar_t<Derived>>;
+
+template <typename Derived>
+using eigen_sparse_matrix_input = typename Eigen::SparseMatrixBase<Derived>;
+
+template <typename Derived>
+inline eigen_return_t<Derived> inverse(const eigen_sparse_matrix_input<Derived>& m) {
+  Eigen::SimplicialLLT<eigen_sparse_matrix<Derived>> m_solver;
   m_solver.compute(m);
-  Eigen::SparseMatrixBase<Derived> identity(m.rows(), m.cols());
+  eigen_sparse_matrix<Derived> identity(m.rows(), m.cols());
   identity.setIdentity();
   return m_solver.solve(identity);
 }
