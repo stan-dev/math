@@ -3,7 +3,9 @@
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/buffer_types.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
+#include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/opencl_context.hpp>
+#include <stan/math/opencl/stringify.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/opencl/kernels/helpers.hpp>
 #include <stan/math/prim/arr/fun/vec_concat.hpp>
@@ -13,14 +15,6 @@
 #include <string>
 #include <vector>
 #include <utility>
-
-// Used for importing the OpenCL kernels at compile time.
-// There has been much discussion about the best ways to do this:
-// https://github.com/bstatcomp/math/pull/7
-// and https://github.com/stan-dev/math/pull/966
-#ifndef STRINGIFY
-#define STRINGIFY(src) #src
-#endif
 
 namespace stan {
 namespace math {
@@ -220,14 +214,14 @@ inline const std::vector<cl::Event> select_events(
  */
 inline auto compile_kernel(const char* name,
                            const std::vector<const char*>& sources,
-                           std::map<const char*, int>& options) {
+                           std::map<std::string, int>& options) {
   std::string kernel_opts = "";
   for (auto&& comp_opts : options) {
     kernel_opts += std::string(" -D") + comp_opts.first + "="
                    + std::to_string(comp_opts.second);
   }
   std::string kernel_source;
-  for (const char* source : sources) {
+  for (auto&& source : sources) {
     kernel_source.append(source);
   }
   cl::Program program;
@@ -260,7 +254,7 @@ template <typename... Args>
 class kernel_functor {
  private:
   cl::Kernel kernel_;
-  std::map<const char*, int> opts_;
+  std::map<std::string, int> opts_;
 
  public:
   /**
@@ -270,7 +264,7 @@ class kernel_functor {
    * @param options The values of macros to be passed at compile time.
    */
   kernel_functor(const char* name, const std::vector<const char*>& sources,
-                 const std::map<const char*, int>& options) {
+                 const std::map<std::string, int>& options) {
     auto base_opts = opencl_context.base_opts();
     for (auto& it : options) {
       if (base_opts[it.first] > it.second) {
@@ -286,7 +280,7 @@ class kernel_functor {
   /**
    * @return The options that the kernel was compiled with.
    */
-  inline const std::map<const char*, int>& get_opts() const { return opts_; }
+  inline const std::map<std::string, int>& get_opts() const { return opts_; }
 };
 
 /**
@@ -305,7 +299,7 @@ struct kernel_cl {
    * @param options The values of macros to be passed at compile time.
    */
   kernel_cl(const char* name, const char* source,
-            const std::map<const char*, int>& options = {})
+            const std::map<std::string, int>& options = {})
       : make_functor(name, {source}, options) {}
   /**
    * Creates functor for kernels that only need access to defining
@@ -315,7 +309,7 @@ struct kernel_cl {
    * @param options The values of macros to be passed at compile time.
    */
   kernel_cl(const char* name, const std::vector<const char*>& sources,
-            const std::map<const char*, int>& options = {})
+            const std::map<std::string, int>& options = {})
       : make_functor(name, sources, options) {}
   /**
    * Executes a kernel
