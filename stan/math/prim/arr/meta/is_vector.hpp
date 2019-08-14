@@ -45,8 +45,8 @@ struct is_std_vector<
  * @tparam T Type of object.
  */
 template <typename T>
-struct is_vector<
-    T, typename std::enable_if_t<internal::is_same_vector<T>::value>>
+struct is_vector<T,
+                 typename std::enable_if_t<internal::is_same_vector<T>::value>>
     : is_std_vector<T> {
   typedef std::decay_t<T> type;
 };
