@@ -14,30 +14,10 @@ namespace stan {
  *
  * Access is_vector_like::value for the result.
  *
- * This metaprogram removes the const qualifier.
- *
  * @tparam T Type to test
  */
-template <typename T, int R, int C>
-struct is_vector_like<Eigen::Matrix<T, R, C> > {
-  enum { value = true };
-};
+template <typename T>
+struct is_vector_like<T, enable_if_eigen<T>> : std::true_type {};
 
-/**
- * Template metaprogram indicates whether a type is vector_like.
- *
- * A type is vector_like if an instance can be accessed like a
- * vector, i.e. square brackets.
- *
- * Access is_vector_like::value for the result.
- *
- * This metaprogram removes the const qualifier.
- *
- * @tparam T Type to test
- */
-template <typename T, int R, int C>
-struct is_vector_like<Eigen::Array<T, R, C> > {
-  enum { value = true };
-};
 }  // namespace stan
 #endif

@@ -8,17 +8,20 @@ namespace stan {
  * Metaprogram structure to determine the base scalar type
  * of a template argument.
  *
- * <p>This base class should be specialized for structured types.
+ * <p>This base class should be specialized for structured types.</p>
  *
  * @tparam T Type of object.
  */
-template <typename T>
+template <typename T, typename = void>
 struct scalar_type {
-  typedef T type;
+  typedef std::decay_t<T> type;
 };
 
+/**
+ * Specialization of scalar_type for pointers
+ */
 template <typename T>
-struct scalar_type<T*> {
+struct scalar_type<T, std::enable_if_t<std::is_pointer<T>::value>> {
   typedef typename scalar_type<T>::type type;
 };
 
