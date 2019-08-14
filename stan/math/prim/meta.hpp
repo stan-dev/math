@@ -11,6 +11,8 @@
 #include <stan/math/prim/mat/meta/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/mat/meta/as_scalar.hpp>
 #include <stan/math/prim/mat/meta/broadcast_array.hpp>
+#include <stan/math/prim/mat/meta/enable_if_eigen.hpp>
+#include <stan/math/prim/mat/meta/enable_if_eigen_vector.hpp>
 #include <stan/math/prim/mat/meta/get.hpp>
 #include <stan/math/prim/mat/meta/index_type.hpp>
 #include <stan/math/prim/mat/meta/is_constant.hpp>
@@ -41,8 +43,6 @@
 #include <stan/math/prim/scal/meta/contains_vector.hpp>
 #include <stan/math/prim/scal/meta/error_index.hpp>
 #include <stan/math/prim/scal/meta/enable_if_arithmetic.hpp>
-#include <stan/math/prim/scal/meta/enable_if_eigen.hpp>
-#include <stan/math/prim/scal/meta/enable_if_eigen_vector.hpp>
 #include <stan/math/prim/scal/meta/enable_if_floating_point.hpp>
 #include <stan/math/prim/scal/meta/enable_if_same.hpp>
 #include <stan/math/prim/scal/meta/enable_if_scalar.hpp>
