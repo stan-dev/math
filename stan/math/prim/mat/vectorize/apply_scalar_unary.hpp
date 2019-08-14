@@ -9,20 +9,21 @@
 namespace stan {
 namespace math {
 
-/** base template class */
-template <typename F, typename T, typename = void>
-struct apply_scalar_unary {};
 /**
  * Base template class for vectorization of unary scalar functions
  * defined by a template class <code>F</code> to a scalar,
- * standard library vector, or Eigen dense matrix expression
+ * standard library vector, or Eigen matrix expression
  * template.
- *
- * <p>The base class applies to any Eigen dense matrix expression
+ */
+template <typename F, typename T, typename = void>
+struct apply_scalar_unary {};
+
+/**
+ * <p>The specialization applies to any Eigen matrix expression
  * template.  Specializations define applications to scalars
  * (primitive or autodiff in the corresponding autodiff library
  * directories) or to standard library vectors of vectorizable
- * types (primitives, Eigen dense matrix expressions, or further
+ * types (primitives, Eigen matrix expressions, or further
  * standard vectors).
  *
  * <p>Each specialization must define the typedef
