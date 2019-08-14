@@ -15,19 +15,20 @@ template <typename T>
 using enable_if_not_fvar = std::enable_if_t<!is_fvar<std::decay_t<T>>::value>;
 
 template <typename... Types>
-using enable_if_all_fvar = std::enable_if_t<math::conjunction<is_fvar<std::decay_t<Types>>...>::value>;
+using enable_if_all_fvar = std::enable_if_t<
+    math::conjunction<is_fvar<std::decay_t<Types>>...>::value>;
 
 template <typename... Types>
-using enable_if_any_fvar = std::enable_if_t<math::disjunction<is_fvar<std::decay_t<Types>>...>::value>;
+using enable_if_any_fvar = std::enable_if_t<
+    math::disjunction<is_fvar<std::decay_t<Types>>...>::value>;
 
 template <typename... Types>
-using enable_if_all_not_fvar
-    = std::enable_if_t<!math::conjunction<is_fvar<std::decay_t<Types>>...>::value>;
+using enable_if_all_not_fvar = std::enable_if_t<
+    !math::conjunction<is_fvar<std::decay_t<Types>>...>::value>;
 
 template <typename... Types>
-using enable_if_any_not_fvar
-    = std::enable_if_t<!math::disjunction<is_fvar<std::decay_t<Types>>...>::value>;
-
+using enable_if_any_not_fvar = std::enable_if_t<
+    !math::disjunction<is_fvar<std::decay_t<Types>>...>::value>;
 
 }  // namespace stan
 #endif
