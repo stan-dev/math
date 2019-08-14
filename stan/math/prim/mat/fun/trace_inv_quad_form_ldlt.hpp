@@ -18,9 +18,10 @@ namespace math {
  *       trace(B^T A^-1 B)
  * where the LDLT_factor of A is provided.
  */
-template <typename T1, int R2, int C2, typename T2, typename = enable_if_any_not_var<T1, scalar_type_t<T2>>>
-inline auto trace_inv_quad_form_ldlt(
-    const LDLT_factor<T1, R2, C2> &A, const T2 &B) {
+template <typename T1, int R2, int C2, typename T2,
+          typename = enable_if_any_not_var<T1, scalar_type_t<T2>>>
+inline auto trace_inv_quad_form_ldlt(const LDLT_factor<T1, R2, C2> &A,
+                                     const T2 &B) {
   check_multiplicable("trace_inv_quad_form_ldlt", "A", A, "B", B);
   return trace(multiply(transpose(B), mdivide_left_ldlt(A, B)));
 }

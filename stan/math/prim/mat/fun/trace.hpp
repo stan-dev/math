@@ -20,7 +20,8 @@ inline auto trace(const T& m) {
   return m.trace();
 }
 
-template <typename T, typename = enable_if_not_eigen<T>, typename = enable_if_arithmetic<T>>
+template <typename T, typename = enable_if_not_eigen<T>,
+          typename = enable_if_arithmetic<T>>
 inline auto trace(const T& m) {
   return m;
 }

@@ -45,7 +45,7 @@ inline auto variance(const T& m) {
 
   if (m.size() == 1)
     return 0.0;
-  return (m.array() - mean(m)).square().sum()/(m.size() - 1);
+  return (m.array() - mean(m)).square().sum() / (m.size() - 1);
 }
 
 }  // namespace math

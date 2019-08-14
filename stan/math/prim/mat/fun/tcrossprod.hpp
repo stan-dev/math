@@ -15,7 +15,7 @@ namespace math {
  */
 template <typename T, typename = enable_if_eigen<T>>
 inline auto tcrossprod(const T& M) {
-    return M * M.transpose();
+  return M * M.transpose();
 }
 
 }  // namespace math

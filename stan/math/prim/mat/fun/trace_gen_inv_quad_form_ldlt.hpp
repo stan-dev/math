@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_TRACE_GEN_INV_QUAD_FORM_LDLT_HPP
 #define STAN_MATH_PRIM_MAT_FUN_TRACE_GEN_INV_QUAD_FORM_LDLT_HPP
 
-
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/LDLT_factor.hpp>
@@ -20,10 +19,13 @@ namespace math {
  *       trace(D B^T A^-1 B)
  * where D is a square matrix and the LDLT_factor of A is provided.
  */
-template <typename T1, typename T2, int R2, int C2, typename T3, typename = enable_if_all_eigen<T1, T3>, typename = enable_if_any_not_var<scalar_type_t<T1>, T2, scalar_type_t<T3>>>
-inline auto trace_gen_inv_quad_form_ldlt(
-    const T1 &D, const LDLT_factor<T2, R2, C2> &A,
-    const T3 &B) {
+template <typename T1, typename T2, int R2, int C2, typename T3,
+          typename = enable_if_all_eigen<T1, T3>,
+          typename
+          = enable_if_any_not_var<scalar_type_t<T1>, T2, scalar_type_t<T3>>>
+inline auto trace_gen_inv_quad_form_ldlt(const T1 &D,
+                                         const LDLT_factor<T2, R2, C2> &A,
+                                         const T3 &B) {
   check_square("trace_gen_inv_quad_form_ldlt", "D", D);
   check_multiplicable("trace_gen_inv_quad_form_ldlt", "A", A, "B", B);
   check_multiplicable("trace_gen_inv_quad_form_ldlt", "B", B, "D", D);

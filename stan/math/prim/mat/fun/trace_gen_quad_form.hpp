@@ -11,10 +11,11 @@ namespace math {
 /**
  * Compute trace(D B^T A B).
  **/
-template <typename TD, typename TA, typename TB, typename = enable_if_all_eigen<TD, TA, TB>, typename = enable_if_any_not_var<scalar_type_t<TD>, scalar_type_t<TA>, scalar_type_t<TB>>>
-inline auto trace_gen_quad_form(
-    const TD &D, const TA &A,
-    const TB &B) {
+template <typename TD, typename TA, typename TB,
+          typename = enable_if_all_eigen<TD, TA, TB>,
+          typename = enable_if_any_not_var<scalar_type_t<TD>, scalar_type_t<TA>,
+                                           scalar_type_t<TB>>>
+inline auto trace_gen_quad_form(const TD &D, const TA &A, const TB &B) {
   check_square("trace_gen_quad_form", "A", A);
   check_square("trace_gen_quad_form", "D", D);
   check_multiplicable("trace_gen_quad_form", "A", A, "B", B);

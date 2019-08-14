@@ -57,10 +57,10 @@ template <typename T1, typename T2, typename = enable_if_all_eigen<T1, T2>,
           typename = enable_if_not_dot_product<T1, T2>>
 inline auto multiply(const T1& m1, const T2& m2) {
   check_multiplicable("multiply", "m1", m1, "m2", m2);
-    matrix_cl<double> m1_cl(m1);
-    matrix_cl<double> m2_cl(m2);
-    matrix_cl<double> m3_cl = m1_cl * m2_cl;
-    return from_matrix_cl(m3_cl);
+  matrix_cl<double> m1_cl(m1);
+  matrix_cl<double> m2_cl(m2);
+  matrix_cl<double> m3_cl = m1_cl * m2_cl;
+  return from_matrix_cl(m3_cl);
 }
 #else
 template <typename T1, typename T2, typename = enable_if_all_eigen<T1, T2>,
@@ -68,7 +68,7 @@ template <typename T1, typename T2, typename = enable_if_all_eigen<T1, T2>,
           typename = enable_if_not_dot_product<T1, T2>>
 inline auto multiply(const T1& m1, const T2& m2) {
   check_multiplicable("multiply", "m1", m1, "m2", m2);
-    return m1 * m2;
+  return m1 * m2;
 }
 #endif
 
