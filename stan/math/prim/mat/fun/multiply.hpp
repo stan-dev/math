@@ -5,6 +5,9 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/arr/err/check_matching_sizes.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
+#ifdef STAN_OPENCL
+#include <stan/math/opencl/opencl.hpp>
+#endif
 #include <type_traits>
 
 namespace stan {
@@ -18,7 +21,8 @@ namespace math {
  * @param c Scalar.
  * @return Product of matrix and scalar.
  */
-template <typename T1, typename T2, typename = enable_if_eigen<T1>, typename = enable_if_all_arithmetic<scalar_type_t<T1>, T2>>
+template <typename T1, typename T2, typename = enable_if_eigen<T1>,
+          typename = enable_if_all_arithmetic<scalar_type_t<T1>, T2>>
 inline auto multiply(const T1& m, const T2 c) {
   return c * m;
 }
@@ -31,7 +35,8 @@ inline auto multiply(const T1& m, const T2 c) {
  * @param m Matrix.
  * @return Product of scalar and matrix.
  */
-template <typename T1, typename T2, typename = enable_if_eigen<T2>, typename = enable_if_all_arithmetic<T1, scalar_type_t<T2>>>
+template <typename T1, typename T2, typename = enable_if_eigen<T2>,
+          typename = enable_if_all_arithmetic<T1, scalar_type_t<T2>>>
 inline auto multiply(const T1 c, const T2& m) {
   return c * m;
 }
@@ -46,10 +51,24 @@ inline auto multiply(const T1 c, const T2& m) {
  * @throw std::domain_error if the number of columns of m1 does not match
  *   the number of rows of m2.
  */
-template <typename T1, typename T2, typename = enable_if_all_eigen<T1, T2>, typename = enable_if_all_scalar_arithmetic<T1, T2>, typename = enable_if_not_dot_product<T1, T2>>
+template <typename T1, typename T2, typename = enable_if_all_eigen<T1, T2>,
+          typename = enable_if_all_scalar_arithmetic<T1, T2>,
+          typename = enable_if_not_dot_product<T1, T2>>
 inline auto multiply(const T1& m1, const T2& m2) {
   check_multiplicable("multiply", "m1", m1, "m2", m2);
+#ifdef STAN_OPENCL
+  if (m1.rows() * m1.cols() * m2.cols()
+      > opencl_context.tuning_opts().multiply_dim_prod_worth_transfer) {
+    matrix_cl<double> m1_cl(m1);
+    matrix_cl<double> m2_cl(m2);
+    matrix_cl<double> m3_cl = m1_cl * m2_cl;
+    return from_matrix_cl(m3_cl);
+  } else {
+    return m1 * m2;
+  }
+#else
   return m1 * m2;
+#endif
 }
 
 /**
@@ -61,7 +80,9 @@ inline auto multiply(const T1& m1, const T2& m2) {
  * @return Scalar result of multiplying row vector by column vector.
  * @throw std::domain_error if rv and v are not the same size.
  */
-template <typename T1, typename T2, typename = enable_if_all_scalar_arithmetic<T1, T2>, typename = enable_if_dot_product<T1, T2>> 
+template <typename T1, typename T2,
+          typename = enable_if_all_scalar_arithmetic<T1, T2>,
+          typename = enable_if_dot_product<T1, T2>>
 inline auto multiply(const T1& rv, const T2& v) {
   check_matching_sizes("multiply", "rv", rv, "v", v);
   return rv.dot(v);

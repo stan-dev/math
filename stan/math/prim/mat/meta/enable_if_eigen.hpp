@@ -10,27 +10,31 @@
 namespace stan {
 
 template <typename T>
-using enable_if_eigen = std::enable_if_t<std::is_base_of<Eigen::EigenBase<std::decay_t<T>>, std::decay_t<T>>::value>;
+using enable_if_eigen = std::enable_if_t<
+    std::is_base_of<Eigen::EigenBase<std::decay_t<T>>, std::decay_t<T>>::value>;
 
 template <typename T>
 using enable_if_not_eigen
-    = std::enable_if_t<!std::is_base_of<Eigen::EigenBase<std::decay_t<T>>, std::decay_t<T>>::value>;
+    = std::enable_if_t<!std::is_base_of<Eigen::EigenBase<std::decay_t<T>>,
+                                        std::decay_t<T>>::value>;
 
 template <typename... Types>
-using enable_if_all_eigen
-    = std::enable_if_t<math::conjunction<std::is_base_of<Eigen::EigenBase<std::decay_t<Types>>, std::decay_t<Types>>...>::value>;
+using enable_if_all_eigen = std::enable_if_t<math::conjunction<std::is_base_of<
+    Eigen::EigenBase<std::decay_t<Types>>, std::decay_t<Types>>...>::value>;
 
 template <typename... Types>
-using enable_if_any_eigen
-    = std::enable_if_t<math::disjunction<std::is_base_of<Eigen::EigenBase<std::decay_t<Types>>, std::decay_t<Types>>...>::value>;
+using enable_if_any_eigen = std::enable_if_t<math::disjunction<std::is_base_of<
+    Eigen::EigenBase<std::decay_t<Types>>, std::decay_t<Types>>...>::value>;
 
 template <typename... Types>
 using enable_if_all_not_eigen
-    = std::enable_if_t<!math::conjunction<std::is_base_of<Eigen::EigenBase<std::decay_t<Types>>, std::decay_t<Types>>...>::value>;
+    = std::enable_if_t<!math::conjunction<std::is_base_of<
+        Eigen::EigenBase<std::decay_t<Types>>, std::decay_t<Types>>...>::value>;
 
 template <typename... Types>
 using enable_if_any_not_eigen
-    = std::enable_if_t<!math::disjunction<std::is_base_of<Eigen::EigenBase<std::decay_t<Types>>, std::decay_t<Types>>...>::value>;
+    = std::enable_if_t<!math::disjunction<std::is_base_of<
+        Eigen::EigenBase<std::decay_t<Types>>, std::decay_t<Types>>...>::value>;
 
 }  // namespace stan
 #endif
