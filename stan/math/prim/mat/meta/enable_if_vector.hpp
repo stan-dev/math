@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/meta/is_vector.hpp>
+#include <stan/math/prim/arr/meta/is_vector.hpp>
 #include <stan/math/prim/scal/meta/conjunction.hpp>
 #include <stan/math/prim/scal/meta/disjunction.hpp>
 #include <type_traits>
