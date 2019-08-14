@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/mean.hpp>
 #include <boost/math/tools/promotion.hpp>
 #include <vector>
@@ -38,19 +39,13 @@ inline return_type_t<T> variance(const std::vector<T>& v) {
  * @param m Specified vector.
  * @return Sample variance of vector.
  */
-template <typename T, int R, int C>
-inline return_type_t<T> variance(const Eigen::Matrix<T, R, C>& m) {
+template <typename T, typename = enable_if_eigen<T>>
+inline auto variance(const T& m) {
   check_nonzero_size("variance", "m", m);
 
   if (m.size() == 1)
     return 0.0;
-  return_type_t<T> mn(mean(m));
-  return_type_t<T> sum_sq_diff(0);
-  for (int i = 0; i < m.size(); ++i) {
-    return_type_t<T> diff = m(i) - mn;
-    sum_sq_diff += diff * diff;
-  }
-  return sum_sq_diff / (m.size() - 1);
+  return (m.array() - mean(m)).square().sum()/(m.size() - 1);
 }
 
 }  // namespace math

@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_TRACE_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-
+#include <stan/math/prim/meta.hpp>
 namespace stan {
 namespace math {
 
@@ -15,13 +15,13 @@ namespace math {
  * @param[in] m Specified matrix.
  * @return Trace of the matrix.
  */
-template <typename T>
-inline T trace(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& m) {
+template <typename T, typename = enable_if_eigen<T>>
+inline auto trace(const T& m) {
   return m.trace();
 }
 
-template <typename T>
-inline T trace(const T& m) {
+template <typename T, typename = enable_if_not_eigen<T>, typename = enable_if_arithmetic<T>>
+inline auto trace(const T& m) {
   return m;
 }
 }  // namespace math

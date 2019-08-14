@@ -1,8 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_SD_HPP
 #define STAN_MATH_PRIM_MAT_FUN_SD_HPP
 
-#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/fun/variance.hpp>
 #include <boost/math/tools/promotion.hpp>
 #include <vector>
@@ -30,8 +31,8 @@ inline return_type_t<T> sd(const std::vector<T>& v) {
  * @param m Specified vector, row vector or matrix.
  * @return Sample variance.
  */
-template <typename T, int R, int C>
-inline return_type_t<T> sd(const Eigen::Matrix<T, R, C>& m) {
+template <typename T, typename = enable_if_eigen<T>>
+inline return_type_t<T> sd(const T& m) {
   check_nonzero_size("sd", "m", m);
   if (m.size() == 1)
     return 0.0;

@@ -2,12 +2,12 @@
 #define STAN_MATH_PRIM_MAT_FUN_TRANSPOSE_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-
+#include <stan/math/prim/meta.hpp>
 namespace stan {
 namespace math {
 
-template <typename T, int R, int C>
-Eigen::Matrix<T, C, R> inline transpose(const Eigen::Matrix<T, R, C>& m) {
+template <typename T, typename = enable_if_eigen<T>>
+auto inline transpose(const T& m) {
   return m.transpose();
 }
 

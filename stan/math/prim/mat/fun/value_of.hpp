@@ -41,9 +41,9 @@ inline Eigen::Matrix<typename child_type<T>::type, R, C> value_of(
  * @param x Specified matrix.
  * @return Specified matrix.
  */
-template <int R, int C>
-inline const Eigen::Matrix<double, R, C>& value_of(
-    const Eigen::Matrix<double, R, C>& x) {
+template <typename T, typename = enable_if_eigen<T>>
+inline const T& value_of(
+    const T& x) {
   return x;
 }
 }  // namespace math

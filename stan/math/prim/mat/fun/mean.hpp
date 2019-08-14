@@ -1,8 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_MEAN_HPP
 #define STAN_MATH_PRIM_MAT_FUN_MEAN_HPP
 
-#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <boost/math/tools/promotion.hpp>
 #include <vector>
 
@@ -30,8 +31,8 @@ inline return_type_t<T> mean(const std::vector<T>& v) {
  * @param m Specified vector, row vector, or matrix.
  * @return Sample mean of vector coefficients.
  */
-template <typename T, int R, int C>
-inline return_type_t<T> mean(const Eigen::Matrix<T, R, C>& m) {
+template <typename T, typename = enable_if_eigen<T>>
+inline auto mean(const T& m) {
   check_nonzero_size("mean", "m", m);
   return m.mean();
 }

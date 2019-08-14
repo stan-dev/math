@@ -51,25 +51,26 @@ inline auto multiply(const T1 c, const T2& m) {
  * @throw std::domain_error if the number of columns of m1 does not match
  *   the number of rows of m2.
  */
+#ifdef STAN_OPENCL
 template <typename T1, typename T2, typename = enable_if_all_eigen<T1, T2>,
           typename = enable_if_all_scalar_arithmetic<T1, T2>,
           typename = enable_if_not_dot_product<T1, T2>>
 inline auto multiply(const T1& m1, const T2& m2) {
   check_multiplicable("multiply", "m1", m1, "m2", m2);
-#ifdef STAN_OPENCL
-  if (m1.rows() * m1.cols() * m2.cols()
-      > opencl_context.tuning_opts().multiply_dim_prod_worth_transfer) {
     matrix_cl<double> m1_cl(m1);
     matrix_cl<double> m2_cl(m2);
     matrix_cl<double> m3_cl = m1_cl * m2_cl;
     return from_matrix_cl(m3_cl);
-  } else {
-    return m1 * m2;
-  }
-#else
-  return m1 * m2;
-#endif
 }
+#else
+template <typename T1, typename T2, typename = enable_if_all_eigen<T1, T2>,
+          typename = enable_if_all_scalar_arithmetic<T1, T2>,
+          typename = enable_if_not_dot_product<T1, T2>>
+inline auto multiply(const T1& m1, const T2& m2) {
+  check_multiplicable("multiply", "m1", m1, "m2", m2);
+    return m1 * m2;
+}
+#endif
 
 /**
  * Return the scalar product of the specified row vector and
@@ -97,7 +98,7 @@ inline auto multiply(const T1& rv, const T2& v) {
  * @return Product of matrix and scalar.
  */
 template <typename T1, typename T2, typename = enable_if_all_arithmetic<T1, T2>>
-inline return_type_t<T1, T2> multiply(T1 m, T2 c) {
+inline auto multiply(T1 m, T2 c) {
   return c * m;
 }
 

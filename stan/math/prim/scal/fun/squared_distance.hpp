@@ -17,7 +17,7 @@ namespace math {
  * @throw std::domain_error If the vectors are not the same
  * size or if they are both not vector dimensioned.
  */
-template <typename T1, typename T2>
+template <typename T1, typename T2, typename = enable_if_all_arithmetic<T1, T2>>
 inline return_type_t<T1, T2> squared_distance(const T1& x1, const T2& x2) {
   check_finite("squared_distance", "x1", x1);
   check_finite("squared_distance", "x2", x2);
