@@ -10,7 +10,9 @@
 namespace stan {
 
 template <typename T>
-using enable_if_eigen_vector = std::enable_if_t<std::is_base_of<Eigen::EigenBase<std::decay_t<T>>, std::decay_t<T>>::value && T::RowsAtCompileTime + T::ColsAtCompileTime == 0>;
+using enable_if_eigen_vector = std::enable_if_t<
+    std::is_base_of<Eigen::EigenBase<std::decay_t<T>>, std::decay_t<T>>::value
+    && T::RowsAtCompileTime + T::ColsAtCompileTime == 0>;
 
 template <typename T>
 using enable_if_eigen_row_vector = std::enable_if_t<

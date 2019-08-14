@@ -8,8 +8,8 @@
 namespace stan {
 
 /**
-  * Specialization of is_vector for Eigen vectors
-  */
+ * Specialization of is_vector for Eigen vectors
+ */
 template <typename T>
 struct is_vector<T, enable_if_eigen_vector<T>> : std::true_type {
   typedef std::decay_t<T> type;

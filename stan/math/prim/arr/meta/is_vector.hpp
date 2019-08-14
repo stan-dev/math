@@ -7,10 +7,11 @@
 namespace stan {
 
 namespace internal {
-  // FIXME(Steve): this is a stupid name
-  template <typename T>
-  using inherit_vector = std::vector<typename std::decay_t<T>::value_type, typename std::decay_t<T>::allocator_type>;
-}
+// FIXME(Steve): this is a stupid name
+template <typename T>
+using inherit_vector = std::vector<typename std::decay_t<T>::value_type,
+                                   typename std::decay_t<T>::allocator_type>;
+}  // namespace internal
 
 /**
  * Metaprogram structure to determine if type is a standard vector
@@ -28,8 +29,10 @@ struct is_std_vector : std::false_type {};
  * @tparam T Type of object.
  */
 template <typename T>
-struct is_std_vector<T,
-        typename std::enable_if_t<std::is_same<typename std::decay_t<T>, internal::inherit_vector<T>>::value>> : std::true_type {
+struct is_std_vector<
+    T, typename std::enable_if_t<std::is_same<
+           typename std::decay_t<T>, internal::inherit_vector<T>>::value>>
+    : std::true_type {
   typedef std::decay_t<T> type;
 };
 
@@ -38,13 +41,13 @@ struct is_std_vector<T,
  *
  * @tparam T Type of object.
  */
-template<typename T>
-struct is_vector<T,
-        typename std::enable_if_t<std::is_same<typename std::decay_t<T>, internal::inherit_vector<T>>::value>> : is_std_vector<T> {
+template <typename T>
+struct is_vector<
+    T, typename std::enable_if_t<std::is_same<
+           typename std::decay_t<T>, internal::inherit_vector<T>>::value>>
+    : is_std_vector<T> {
   typedef std::decay_t<T> type;
 };
-
-
 
 }  // namespace stan
 #endif

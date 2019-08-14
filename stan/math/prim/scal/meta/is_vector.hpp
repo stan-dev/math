@@ -12,8 +12,8 @@ namespace stan {
  *
  * @tparam T Type of object.
  */
-template<typename T, typename = void>
-struct is_vector: std::false_type {
+template <typename T, typename = void>
+struct is_vector : std::false_type {
   typedef std::decay_t<T> type;
 };
 }  // namespace stan
