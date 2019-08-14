@@ -34,7 +34,7 @@ struct is_std_vector : std::false_type {};
  */
 template <typename T>
 struct is_std_vector<
-    T, typename std::enable_if_t<internal::is_same_vector<T>::value>>
+    T, typename std::enable_if_t<internal::is_same_vector<T>::value>
     : std::true_type {
   typedef std::decay_t<T> type;
 };
@@ -46,7 +46,7 @@ struct is_std_vector<
  */
 template <typename T>
 struct is_vector<
-    T, typename std::enable_if_t<internal::is_same_vector<T>::value>>
+    T, typename std::enable_if_t<internal::is_same_vector<T>::value>
     : is_std_vector<T> {
   typedef std::decay_t<T> type;
 };
