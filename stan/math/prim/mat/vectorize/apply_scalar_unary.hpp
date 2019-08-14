@@ -89,7 +89,6 @@ struct apply_scalar_unary<F, T, enable_if_arithmetic<T>> {
   static inline return_t apply(T x) { return F::fun(static_cast<double>(x)); }
 };
 
-
 /**
  * Template specialization for vectorized functions applying to
  * standard vector containers.  The lowest-level scalar type of
