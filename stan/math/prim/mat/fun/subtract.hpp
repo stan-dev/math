@@ -4,6 +4,7 @@
 #include <boost/math/tools/promotion.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/err/check_matching_dims.hpp>
+#include <stan/math/prim/meta.hpp>
 
 namespace stan {
 namespace math {
@@ -21,22 +22,19 @@ namespace math {
  * @param m2 Second matrix.
  * @return Difference between first matrix and second matrix.
  */
-template <typename T1, typename T2, int R, int C>
-inline Eigen::Matrix<return_type_t<T1, T2>, R, C> subtract(
-    const Eigen::Matrix<T1, R, C>& m1, const Eigen::Matrix<T2, R, C>& m2) {
+template <typename Mat1, typename Mat2, typename = enable_if_all_eigen<Mat1, Mat2>>
+inline auto subtract(const Mat1& m1, const Mat2& m2) {
   check_matching_dims("subtract", "m1", m1, "m2", m2);
   return m1 - m2;
 }
 
-template <typename T1, typename T2, int R, int C>
-inline Eigen::Matrix<return_type_t<T1, T2>, R, C> subtract(
-    const T1& c, const Eigen::Matrix<T2, R, C>& m) {
+template <typename Mat, typename Arith, typename = enable_if_eigen<Mat>, typename = enable_if_arithmetic<Arith>>
+inline auto subtract(const Arith& c, const Mat& m) {
   return c - m.array();
 }
 
-template <typename T1, typename T2, int R, int C>
-inline Eigen::Matrix<return_type_t<T1, T2>, R, C> subtract(
-    const Eigen::Matrix<T1, R, C>& m, const T2& c) {
+template <typename Mat, typename Arith, typename = enable_if_arithmetic<Arith>, typename = enable_if_eigen<Mat>>
+inline auto subtract(const Mat& m, const Arith& c) {
   return m.array() - c;
 }
 

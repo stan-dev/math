@@ -18,10 +18,8 @@ namespace math {
  * @param c Scalar.
  * @return Product of matrix and scalar.
  */
-template <int R, int C, typename T1, typename T2,
-          typename = enable_if_all_arithmetic<T1, T2>>
-inline Eigen::Matrix<return_type_t<T1, T2>, R, C> multiply(
-    const Eigen::Matrix<T1, R, C>& m, T2 c) {
+template <typename T1, typename T2, typename = enable_if_eigen<T1>, typename = enable_if_all_arithmetic<scalar_type_t<T1>, T2>>
+inline auto multiply(const T1& m, const T2 c) {
   return c * m;
 }
 
@@ -33,10 +31,8 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R, C> multiply(
  * @param m Matrix.
  * @return Product of scalar and matrix.
  */
-template <int R, int C, typename T1, typename T2,
-          typename = enable_if_all_arithmetic<T1, T2>>
-inline Eigen::Matrix<return_type_t<T1, T2>, R, C> multiply(
-    T1 c, const Eigen::Matrix<T2, R, C>& m) {
+template <typename T1, typename T2, typename = enable_if_eigen<T2>, typename = enable_if_all_arithmetic<T1, scalar_type_t<T2>>>
+inline auto multiply(const T1 c, const T2& m) {
   return c * m;
 }
 
@@ -50,10 +46,8 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R, C> multiply(
  * @throw std::domain_error if the number of columns of m1 does not match
  *   the number of rows of m2.
  */
-template <int R1, int C1, int R2, int C2, typename T1, typename T2,
-          typename = enable_if_all_arithmetic<T1, T2>>
-inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> multiply(
-    const Eigen::Matrix<T1, R1, C1>& m1, const Eigen::Matrix<T2, R2, C2>& m2) {
+template <typename T1, typename T2, typename = enable_if_all_eigen<T1, T2>, typename = enable_if_all_scalar_arithmetic<T1, T2>, typename = enable_if_not_dot_product<T1, T2>>
+inline auto multiply(const T1& m1, const T2& m2) {
   check_multiplicable("multiply", "m1", m1, "m2", m2);
   return m1 * m2;
 }
@@ -67,10 +61,8 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> multiply(
  * @return Scalar result of multiplying row vector by column vector.
  * @throw std::domain_error if rv and v are not the same size.
  */
-template <int C1, int R2, typename T1, typename T2,
-          typename = enable_if_all_arithmetic<T1, T2>>
-inline return_type_t<T1, T2> multiply(const Eigen::Matrix<T1, 1, C1>& rv,
-                                      const Eigen::Matrix<T2, R2, 1>& v) {
+template <typename T1, typename T2, typename = enable_if_all_scalar_arithmetic<T1, T2>, typename = enable_if_dot_product<T1, T2>> 
+inline auto multiply(const T1& rv, const T2& v) {
   check_matching_sizes("multiply", "rv", rv, "v", v);
   return rv.dot(v);
 }
