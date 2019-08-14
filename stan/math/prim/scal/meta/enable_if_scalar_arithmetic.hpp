@@ -10,27 +10,27 @@ namespace stan {
 
 template <typename T>
 using enable_if_scalar_arithmetic
-    = std::enable_if_t<std::is_arithmetic<scalar_type_t<T>>::value>;
+    = std::enable_if_t<std::is_arithmetic<scalar_type_t<std::decay_t<T>>>::value>;
 
 template <typename T>
 using enable_if_not_scalar_arithmetic
-    = std::enable_if_t<!std::is_arithmetic<scalar_type_t<T>>::value>;
+    = std::enable_if_t<!std::is_arithmetic<scalar_type_t<std::decay_t<T>>>::value>;
 
 template <typename... Types>
 using enable_if_all_scalar_arithmetic = std::enable_if_t<
-    math::conjunction<std::is_arithmetic<scalar_type_t<Types>>...>::value>;
+    math::conjunction<std::is_arithmetic<scalar_type_t<std::decay_t<Types>>>...>::value>;
 
 template <typename... Types>
 using enable_if_any_scalar_arithmetic = std::enable_if_t<
-    math::disjunction<std::is_arithmetic<scalar_type_t<Types>>...>::value>;
+    math::disjunction<std::is_arithmetic<scalar_type_t<std::decay_t<Types>>>...>::value>;
 
 template <typename... Types>
 using enable_if_all_not_scalar_arithmetic = std::enable_if_t<
-    !math::conjunction<std::is_arithmetic<scalar_type_t<Types>>...>::value>;
+    !math::conjunction<std::is_arithmetic<scalar_type_t<std::decay_t<Types>>>...>::value>;
 
 template <typename... Types>
 using enable_if_any_not_scalar_arithmetic = std::enable_if_t<
-    !math::disjunction<std::is_arithmetic<scalar_type_t<Types>>...>::value>;
+    !math::disjunction<std::is_arithmetic<scalar_type_t<std::decay_t<Types>>>...>::value>;
 
 }  // namespace stan
 #endif

@@ -9,26 +9,26 @@
 namespace stan {
 
 template <typename T>
-using enable_if_scalar = std::enable_if_t<std::is_scalar<T>::value>;
+using enable_if_scalar = std::enable_if_t<std::is_scalar<std::decay_t<T>>::value>;
 
 template <typename T>
-using enable_if_not_scalar = std::enable_if_t<!std::is_scalar<T>::value>;
+using enable_if_not_scalar = std::enable_if_t<!std::is_scalar<std::decay_t<T>>::value>;
 
 template <typename... Types>
 using enable_if_all_scalar
-    = std::enable_if_t<math::conjunction<std::is_scalar<Types>...>::value>;
+    = std::enable_if_t<math::conjunction<std::is_scalar<std::decay_t<Types>>...>::value>;
 
 template <typename... Types>
 using enable_if_any_scalar
-    = std::enable_if_t<math::disjunction<std::is_scalar<Types>...>::value>;
+    = std::enable_if_t<math::disjunction<std::is_scalar<std::decay_t<Types>>...>::value>;
 
 template <typename... Types>
 using enable_if_all_not_scalar
-    = std::enable_if_t<!math::conjunction<std::is_scalar<Types>...>::value>;
+    = std::enable_if_t<!math::conjunction<std::is_scalar<std::decay_t<Types>>...>::value>;
 
 template <typename... Types>
 using enable_if_any_not_scalar
-    = std::enable_if_t<!math::disjunction<std::is_scalar<Types>...>::value>;
+    = std::enable_if_t<!math::disjunction<std::is_scalar<std::decay_t<Types>>...>::value>;
 
 }  // namespace stan
 #endif

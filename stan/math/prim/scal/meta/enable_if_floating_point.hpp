@@ -10,27 +10,27 @@ namespace stan {
 
 template <typename T>
 using enable_if_floating_point
-    = std::enable_if_t<std::is_floating_point<T>::value>;
+    = std::enable_if_t<std::is_floating_point<std::decay_t<T>>::value>;
 
 template <typename T>
 using enable_if_not_floating_point
-    = std::enable_if_t<!std::is_floating_point<T>::value>;
+    = std::enable_if_t<!std::is_floating_point<std::decay_t<T>>::value>;
 
 template <typename... Types>
 using enable_if_all_floating_point = std::enable_if_t<
-    math::conjunction<std::is_floating_point<Types>...>::value>;
+    math::conjunction<std::is_floating_point<std::decay_t<Types>>...>::value>;
 
 template <typename... Types>
 using enable_if_any_floating_point = std::enable_if_t<
-    math::disjunction<std::is_floating_point<Types>...>::value>;
+    math::disjunction<std::is_floating_point<std::decay_t<Types>>...>::value>;
 
 template <typename... Types>
 using enable_if_all_not_floating_point = std::enable_if_t<
-    !math::conjunction<std::is_floating_point<Types>...>::value>;
+    !math::conjunction<std::is_floating_point<std::decay_t<Types>>...>::value>;
 
 template <typename... Types>
 using enable_if_any_not_floating_point = std::enable_if_t<
-    !math::disjunction<std::is_floating_point<Types>...>::value>;
+    !math::disjunction<std::is_floating_point<std::decay_t<Types>>...>::value>;
 
 }  // namespace stan
 #endif

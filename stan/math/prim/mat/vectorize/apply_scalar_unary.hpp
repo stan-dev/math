@@ -2,11 +2,15 @@
 #define STAN_MATH_PRIM_MAT_VECTORIZE_APPLY_SCALAR_UNARY_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <vector>
 
 namespace stan {
 namespace math {
 
+  /** base template class */
+  template <typename F, typename T, typename = void>
+  struct apply_scalar_unary {};
 /**
  * Base template class for vectorization of unary scalar functions
  * defined by a template class <code>F</code> to a scalar,
@@ -32,7 +36,7 @@ namespace math {
  * @tparam T Type of argument to which function is applied.
  */
 template <typename F, typename T>
-struct apply_scalar_unary {
+struct apply_scalar_unary<F, T, enable_if_eigen<T>> {
   /**
    * Type of underlying scalar for the matrix type T.
    */
@@ -42,8 +46,7 @@ struct apply_scalar_unary {
    * Return type for applying the function elementwise to a matrix
    * expression template of type T.
    */
-  typedef Eigen::Matrix<scalar_t, T::RowsAtCompileTime, T::ColsAtCompileTime>
-      return_t;
+  typedef T return_t;
 
   /**
    * Return the result of applying the function defined by the
@@ -65,8 +68,8 @@ struct apply_scalar_unary {
  *
  * @tparam F Type of function defining static apply function.
  */
-template <typename F>
-struct apply_scalar_unary<F, double> {
+template <typename F, typename T>
+struct apply_scalar_unary<F, T, enable_if_arithmetic<T>> {
   /**
    * The return type, double.
    */
@@ -81,7 +84,7 @@ struct apply_scalar_unary<F, double> {
    * @param x Argument scalar.
    * @return Result of applying F to the scalar.
    */
-  static inline return_t apply(double x) { return F::fun(x); }
+  static inline return_t apply(T x) { return F::fun(static_cast<double>(x)); }
 };
 
 /**
@@ -91,12 +94,11 @@ struct apply_scalar_unary<F, double> {
  * integers to doubles in vectorized functions, or in containers.
  *
  * @tparam F Type of function defining static apply function.
- */
 template <typename F>
 struct apply_scalar_unary<F, int> {
   /**
    * The return type, double.
-   */
+
   typedef double return_t;
 
   /**
@@ -107,10 +109,10 @@ struct apply_scalar_unary<F, int> {
    *
    * @param x Argument scalar.
    * @return Result of applying F to the scalar.
-   */
+
   static inline return_t apply(int x) { return F::fun(static_cast<double>(x)); }
 };
-
+*/
 /**
  * Template specialization for vectorized functions applying to
  * standard vector containers.  The lowest-level scalar type of
@@ -121,13 +123,13 @@ struct apply_scalar_unary<F, int> {
  * @tparam T Type of element contained in standard vector.
  */
 template <typename F, typename T>
-struct apply_scalar_unary<F, std::vector<T> > {
+struct apply_scalar_unary<F, T, enable_if_std_vector<T>> {
   /**
    * Return type, which is calculated recursively as a standard
    * vector of the return type of the contained type T.
    */
-  typedef typename std::vector<typename apply_scalar_unary<F, T>::return_t>
-      return_t;
+  using underlying_type = typename T::value_type;
+  typedef typename std::vector<typename apply_scalar_unary<F, underlying_type>::return_t> return_t;
 
   /**
    * Apply the function specified by F elementwise to the
@@ -138,10 +140,9 @@ struct apply_scalar_unary<F, std::vector<T> > {
    * @return Elementwise application of F to the elements of the
    * container.
    */
-  static inline return_t apply(const std::vector<T>& x) {
+  static inline return_t apply(const std::vector<underlying_type>& x) {
     return_t fx(x.size());
-    for (size_t i = 0; i < x.size(); ++i)
-      fx[i] = apply_scalar_unary<F, T>::apply(x[i]);
+    std::transform(x.begin(), x.end(), fx.begin(), [](const underlying_type& xx) -> return_t {return apply_scalar_unary<F, underlying_type>::apply(xx);});
     return fx;
   }
 };

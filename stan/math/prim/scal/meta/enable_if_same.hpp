@@ -9,18 +9,18 @@
 namespace stan {
 
 template <typename T, typename S>
-using enable_if_same = std::enable_if_t<std::is_same<T, S>::value>;
+using enable_if_same = std::enable_if_t<std::is_same<std::decay_t<T>, std::decay_t<S>>::value>;
 
 template <typename T, typename S>
-using enable_if_not_same = std::enable_if_t<!std::is_same<T, S>::value>;
+using enable_if_not_same = std::enable_if_t<!std::is_same<std::decay_t<T>, std::decay_t<S>>::value>;
 
 template <typename T, typename... Types>
 using enable_if_all_same
-    = std::enable_if_t<math::conjunction<std::is_same<T, Types>...>::value>;
+    = std::enable_if_t<math::conjunction<std::is_same<std::decay_t<T>, std::decay_t<Types>>...>::value>;
 
 template <typename T, typename... Types>
 using enable_if_all_not_same
-    = std::enable_if_t<!math::conjunction<std::is_same<T, Types>...>::value>;
+    = std::enable_if_t<!math::conjunction<std::is_same<std::decay_t<T>, std::decay_t<Types>>...>::value>;
 
 }  // namespace stan
 #endif
