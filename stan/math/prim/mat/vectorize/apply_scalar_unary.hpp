@@ -9,9 +9,9 @@
 namespace stan {
 namespace math {
 
-  /** base template class */
-  template <typename F, typename T, typename = void>
-  struct apply_scalar_unary {};
+/** base template class */
+template <typename F, typename T, typename = void>
+struct apply_scalar_unary {};
 /**
  * Base template class for vectorization of unary scalar functions
  * defined by a template class <code>F</code> to a scalar,
@@ -130,7 +130,9 @@ struct apply_scalar_unary<F, T, enable_if_std_vector<T>> {
    * vector of the return type of the contained type T.
    */
   using underlying_type = typename T::value_type;
-  typedef typename std::vector<typename apply_scalar_unary<F, underlying_type>::return_t> return_t;
+  typedef typename std::vector<
+      typename apply_scalar_unary<F, underlying_type>::return_t>
+      return_t;
 
   /**
    * Apply the function specified by F elementwise to the
@@ -143,7 +145,10 @@ struct apply_scalar_unary<F, T, enable_if_std_vector<T>> {
    */
   static inline return_t apply(const std::vector<underlying_type>& x) {
     return_t fx(x.size());
-    std::transform(x.begin(), x.end(), fx.begin(), [](const underlying_type& xx) -> return_t {return apply_scalar_unary<F, underlying_type>::apply(xx);});
+    std::transform(x.begin(), x.end(), fx.begin(),
+                   [](const underlying_type& xx) -> return_t {
+                     return apply_scalar_unary<F, underlying_type>::apply(xx);
+                   });
     return fx;
   }
 };
