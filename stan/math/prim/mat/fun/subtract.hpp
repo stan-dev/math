@@ -22,18 +22,21 @@ namespace math {
  * @param m2 Second matrix.
  * @return Difference between first matrix and second matrix.
  */
-template <typename Mat1, typename Mat2, typename = enable_if_all_eigen<Mat1, Mat2>>
+template <typename Mat1, typename Mat2,
+          typename = enable_if_all_eigen<Mat1, Mat2>>
 inline auto subtract(const Mat1& m1, const Mat2& m2) {
   check_matching_dims("subtract", "m1", m1, "m2", m2);
   return m1 - m2;
 }
 
-template <typename Mat, typename Arith, typename = enable_if_eigen<Mat>, typename = enable_if_arithmetic<Arith>>
+template <typename Mat, typename Arith, typename = enable_if_eigen<Mat>,
+          typename = enable_if_arithmetic<Arith>>
 inline auto subtract(const Arith& c, const Mat& m) {
   return c - m.array();
 }
 
-template <typename Mat, typename Arith, typename = enable_if_arithmetic<Arith>, typename = enable_if_eigen<Mat>>
+template <typename Mat, typename Arith, typename = enable_if_arithmetic<Arith>,
+          typename = enable_if_eigen<Mat>>
 inline auto subtract(const Mat& m, const Arith& c) {
   return m.array() - c;
 }

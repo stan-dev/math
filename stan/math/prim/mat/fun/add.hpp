@@ -21,7 +21,8 @@ namespace math {
  * @throw std::invalid_argument if m1 and m2 do not have the same
  * dimensions.
  */
-template <typename Mat1, typename Mat2, typename = enable_if_all_eigen<Mat1, Mat2>>
+template <typename Mat1, typename Mat2,
+          typename = enable_if_all_eigen<Mat1, Mat2>>
 inline auto add(const Mat1& m1, const Mat2& m2) {
   check_matching_dims("add", "m1", m1, "m2", m2);
   return m1 + m2;
@@ -36,7 +37,8 @@ inline auto add(const Mat1& m1, const Mat2& m2) {
  * @param c Scalar.
  * @return The matrix plus the scalar.
  */
-template <typename Mat, typename Arith, typename = enable_if_eigen<Mat>, typename = enable_if_arithmetic<Arith>>
+template <typename Mat, typename Arith, typename = enable_if_eigen<Mat>,
+          typename = enable_if_arithmetic<Arith>>
 inline auto add(const Mat& m, const Arith& c) {
   return m.array() + c;
 }
@@ -50,7 +52,8 @@ inline auto add(const Mat& m, const Arith& c) {
  * @param m Matrix.
  * @return The scalar plus the matrix.
  */
-template <typename Mat, typename Arith, typename = enable_if_arithmetic<Arith>, typename = enable_if_eigen<Mat>>
+template <typename Mat, typename Arith, typename = enable_if_arithmetic<Arith>,
+          typename = enable_if_eigen<Mat>>
 inline auto add(const Arith& c, const Mat& m) {
   return c + m.array();
 }
