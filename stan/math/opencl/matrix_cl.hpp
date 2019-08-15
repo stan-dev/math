@@ -206,8 +206,8 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
         rows_(A.rows_),
         cols_(A.cols_),
         view_(A.view_),
-        read_events_(std::move(A.read_events_)),
-        write_events_(std::move(A.write_events_)) {}
+        write_events_(std::move(A.write_events_)),
+        read_events_(std::move(A.read_events_)) {}
 
   /**
    * Constructor for the matrix_cl that
@@ -380,8 +380,8 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
     this->wait_for_read_write_events();
     buffer_cl_ = a.buffer();
     view_ = a.view();
-    read_events_ = std::move(a.read_events_);
     write_events_ = std::move(a.write_events_);
+    read_events_ = std::move(a.read_events_);
     return *this;
   }
 
