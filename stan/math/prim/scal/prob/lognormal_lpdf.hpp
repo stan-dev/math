@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_LOGNORMAL_LPDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_LOGNORMAL_LPDF_HPP
 
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
@@ -10,14 +10,6 @@
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/contains_nonconstant_struct.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <cmath>
 
 namespace stan {
@@ -25,11 +17,10 @@ namespace math {
 
 // LogNormal(y|mu, sigma)  [y >= 0;  sigma > 0]
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
-typename return_type<T_y, T_loc, T_scale>::type lognormal_lpdf(
-    const T_y& y, const T_loc& mu, const T_scale& sigma) {
+return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
+                                                  const T_scale& sigma) {
   static const char* function = "lognormal_lpdf";
-  typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
-      T_partials_return;
+  typedef partials_return_type_t<T_y, T_loc, T_scale> T_partials_return;
 
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
@@ -86,9 +77,9 @@ typename return_type<T_y, T_loc, T_scale>::type lognormal_lpdf(
       log_y[n] = log(value_of(y_vec[n]));
   }
 
-  VectorBuilder<!is_constant_struct<T_y>::value, T_partials_return, T_y> inv_y(
+  VectorBuilder<!is_constant_all<T_y>::value, T_partials_return, T_y> inv_y(
       length(y));
-  if (!is_constant_struct<T_y>::value) {
+  if (!is_constant_all<T_y>::value) {
     for (size_t n = 0; n < length(y); n++)
       inv_y[n] = 1 / value_of(y_vec[n]);
   }
@@ -105,7 +96,7 @@ typename return_type<T_y, T_loc, T_scale>::type lognormal_lpdf(
 
     T_partials_return logy_m_mu_sq = logy_m_mu * logy_m_mu;
     T_partials_return logy_m_mu_div_sigma(0);
-    if (contains_nonconstant_struct<T_y, T_loc, T_scale>::value)
+    if (!is_constant_all<T_y, T_loc, T_scale>::value)
       logy_m_mu_div_sigma = logy_m_mu * inv_sigma_sq[n];
 
     if (include_summand<propto, T_scale>::value)
@@ -115,11 +106,11 @@ typename return_type<T_y, T_loc, T_scale>::type lognormal_lpdf(
     if (include_summand<propto, T_y, T_loc, T_scale>::value)
       logp -= 0.5 * logy_m_mu_sq * inv_sigma_sq[n];
 
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n] -= (1 + logy_m_mu_div_sigma) * inv_y[n];
-    if (!is_constant_struct<T_loc>::value)
+    if (!is_constant_all<T_loc>::value)
       ops_partials.edge2_.partials_[n] += logy_m_mu_div_sigma;
-    if (!is_constant_struct<T_scale>::value)
+    if (!is_constant_all<T_scale>::value)
       ops_partials.edge3_.partials_[n]
           += (logy_m_mu_div_sigma * logy_m_mu - 1) * inv_sigma[n];
   }
@@ -127,8 +118,9 @@ typename return_type<T_y, T_loc, T_scale>::type lognormal_lpdf(
 }
 
 template <typename T_y, typename T_loc, typename T_scale>
-inline typename return_type<T_y, T_loc, T_scale>::type lognormal_lpdf(
-    const T_y& y, const T_loc& mu, const T_scale& sigma) {
+inline return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y,
+                                                         const T_loc& mu,
+                                                         const T_scale& sigma) {
   return lognormal_lpdf<false>(y, mu, sigma);
 }
 

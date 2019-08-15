@@ -10,13 +10,13 @@ TEST(MathGpu, transpose_size_zero) {
   stan::math::row_vector_d rv0;
   stan::math::matrix_d m0;
 
-  stan::math::matrix_cl v00(v0);
-  stan::math::matrix_cl rv00(rv0);
-  stan::math::matrix_cl m00(m0);
+  stan::math::matrix_cl<double> v00(v0);
+  stan::math::matrix_cl<double> rv00(rv0);
+  stan::math::matrix_cl<double> m00(m0);
 
-  stan::math::matrix_cl v00_dst(v0.cols(), v0.rows());
-  stan::math::matrix_cl rv00_dst(rv0.cols(), rv0.rows());
-  stan::math::matrix_cl m00_dst(m0.cols(), m0.rows());
+  stan::math::matrix_cl<double> v00_dst(v0.cols(), v0.rows());
+  stan::math::matrix_cl<double> rv00_dst(rv0.cols(), rv0.rows());
+  stan::math::matrix_cl<double> m00_dst(m0.cols(), m0.rows());
 
   using stan::math::transpose;
   EXPECT_NO_THROW(transpose(v00));
@@ -38,28 +38,28 @@ TEST(MathGpu, transpose) {
   v0 << 1, 2, 3;
   rv0 << 1, 2, 3;
   m0 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
-  stan::math::matrix_cl v00(v0);
-  stan::math::matrix_cl rv00(rv0);
-  stan::math::matrix_cl m00(m0);
+  stan::math::matrix_cl<double> v00(v0);
+  stan::math::matrix_cl<double> rv00(rv0);
+  stan::math::matrix_cl<double> m00(m0);
 
-  stan::math::matrix_cl v00_dst(v0.cols(), v0.rows());
-  stan::math::matrix_cl rv00_dst(rv0.cols(), rv0.rows());
-  stan::math::matrix_cl m00_dst(m0.cols(), m0.rows());
+  stan::math::matrix_cl<double> v00_dst(v0.cols(), v0.rows());
+  stan::math::matrix_cl<double> rv00_dst(rv0.cols(), rv0.rows());
+  stan::math::matrix_cl<double> m00_dst(m0.cols(), m0.rows());
 
   using stan::math::transpose;
   v00_dst = transpose(v00);
   EXPECT_NO_THROW(rv00_dst = transpose(rv00));
   EXPECT_NO_THROW(m00_dst = transpose(m00));
 
-  EXPECT_NO_THROW(stan::math::copy(v0_dst, v00_dst));
+  EXPECT_NO_THROW(v0_dst = stan::math::from_matrix_cl(v00_dst));
   EXPECT_EQ(v0(0), v0_dst(0));
   EXPECT_EQ(v0(1), v0_dst(1));
   EXPECT_EQ(v0(2), v0_dst(2));
-  EXPECT_NO_THROW(stan::math::copy(rv0_dst, rv00_dst));
+  EXPECT_NO_THROW(rv0_dst = stan::math::from_matrix_cl(rv00_dst));
   EXPECT_EQ(rv0(0), rv0_dst(0));
   EXPECT_EQ(rv0(1), rv0_dst(1));
   EXPECT_EQ(rv0(2), rv0_dst(2));
-  EXPECT_NO_THROW(stan::math::copy(m0_dst, m00_dst));
+  EXPECT_NO_THROW(m0_dst = stan::math::from_matrix_cl(m00_dst));
   EXPECT_EQ(m0(0, 0), m0_dst(0, 0));
   EXPECT_EQ(m0(0, 1), m0_dst(1, 0));
   EXPECT_EQ(m0(0, 2), m0_dst(2, 0));

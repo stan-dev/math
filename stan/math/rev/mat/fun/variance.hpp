@@ -1,7 +1,9 @@
 #ifndef STAN_MATH_REV_MAT_FUN_VARIANCE_HPP
 #define STAN_MATH_REV_MAT_FUN_VARIANCE_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <vector>
@@ -12,24 +14,19 @@ namespace math {
 namespace internal {
 
 inline var calc_variance(size_t size, const var* dtrs) {
-  vari** varis = ChainableStack::instance().memalloc_.alloc_array<vari*>(size);
-  for (size_t i = 0; i < size; ++i)
-    varis[i] = dtrs[i].vi_;
-  double sum = 0.0;
-  for (size_t i = 0; i < size; ++i)
-    sum += dtrs[i].vi_->val_;
-  double mean = sum / size;
-  double sum_of_squares = 0;
-  double reciprocal_size_m1 = 1.0 / (size - 1);
-  double two_over_size_m1 = 2.0 * reciprocal_size_m1;
+  vari** varis = ChainableStack::instance_->memalloc_.alloc_array<vari*>(size);
   double* partials
-      = ChainableStack::instance().memalloc_.alloc_array<double>(size);
-  for (size_t i = 0; i < size; ++i) {
-    double diff = dtrs[i].vi_->val_ - mean;
-    sum_of_squares += diff * diff;
-    partials[i] = two_over_size_m1 * diff;
-  }
-  double variance = sum_of_squares * reciprocal_size_m1;
+      = ChainableStack::instance_->memalloc_.alloc_array<double>(size);
+
+  Eigen::Map<const vector_v> dtrs_map(dtrs, size);
+  Eigen::Map<vector_vi>(varis, size) = dtrs_map.vi();
+  vector_d dtrs_vals = dtrs_map.val();
+
+  vector_d diff = dtrs_vals.array() - dtrs_vals.mean();
+  double size_m1 = size - 1;
+  Eigen::Map<vector_d>(partials, size) = 2 * diff.array() / size_m1;
+  double variance = diff.squaredNorm() / size_m1;
+
   return var(new stored_gradient_vari(variance, size, varis, partials));
 }
 

@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_INV_GAMMA_CDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_INV_GAMMA_CDF_HPP
 
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -11,12 +11,6 @@
 #include <stan/math/prim/scal/fun/gamma_q.hpp>
 #include <stan/math/prim/scal/fun/tgamma.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
 #include <cmath>
 #include <limits>
@@ -41,10 +35,10 @@ namespace math {
  */
 
 template <typename T_y, typename T_shape, typename T_scale>
-typename return_type<T_y, T_shape, T_scale>::type inv_gamma_cdf(
-    const T_y& y, const T_shape& alpha, const T_scale& beta) {
-  typedef typename stan::partials_return_type<T_y, T_shape, T_scale>::type
-      T_partials_return;
+return_type_t<T_y, T_shape, T_scale> inv_gamma_cdf(const T_y& y,
+                                                   const T_shape& alpha,
+                                                   const T_scale& beta) {
+  typedef partials_return_type_t<T_y, T_shape, T_scale> T_partials_return;
 
   if (size_zero(y, alpha, beta))
     return 1.0;
@@ -77,12 +71,12 @@ typename return_type<T_y, T_shape, T_scale>::type inv_gamma_cdf(
   using std::exp;
   using std::pow;
 
-  VectorBuilder<!is_constant_struct<T_shape>::value, T_partials_return, T_shape>
+  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
       gamma_vec(stan::length(alpha));
-  VectorBuilder<!is_constant_struct<T_shape>::value, T_partials_return, T_shape>
+  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
       digamma_vec(stan::length(alpha));
 
-  if (!is_constant_struct<T_shape>::value) {
+  if (!is_constant_all<T_shape>::value) {
     for (size_t i = 0; i < stan::length(alpha); i++) {
       const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
       gamma_vec[i] = tgamma(alpha_dbl);
@@ -105,32 +99,32 @@ typename return_type<T_y, T_shape, T_scale>::type inv_gamma_cdf(
 
     P *= Pn;
 
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n]
           += beta_dbl * y_inv_dbl * y_inv_dbl * exp(-beta_dbl * y_inv_dbl)
              * pow(beta_dbl * y_inv_dbl, alpha_dbl - 1) / tgamma(alpha_dbl)
              / Pn;
-    if (!is_constant_struct<T_shape>::value)
+    if (!is_constant_all<T_shape>::value)
       ops_partials.edge2_.partials_[n]
           += grad_reg_inc_gamma(alpha_dbl, beta_dbl * y_inv_dbl, gamma_vec[n],
                                 digamma_vec[n])
              / Pn;
-    if (!is_constant_struct<T_scale>::value)
+    if (!is_constant_all<T_scale>::value)
       ops_partials.edge3_.partials_[n]
           += -y_inv_dbl * exp(-beta_dbl * y_inv_dbl)
              * pow(beta_dbl * y_inv_dbl, alpha_dbl - 1) / tgamma(alpha_dbl)
              / Pn;
   }
 
-  if (!is_constant_struct<T_y>::value) {
+  if (!is_constant_all<T_y>::value) {
     for (size_t n = 0; n < stan::length(y); ++n)
       ops_partials.edge1_.partials_[n] *= P;
   }
-  if (!is_constant_struct<T_shape>::value) {
+  if (!is_constant_all<T_shape>::value) {
     for (size_t n = 0; n < stan::length(alpha); ++n)
       ops_partials.edge2_.partials_[n] *= P;
   }
-  if (!is_constant_struct<T_scale>::value) {
+  if (!is_constant_all<T_scale>::value) {
     for (size_t n = 0; n < stan::length(beta); ++n)
       ops_partials.edge3_.partials_[n] *= P;
   }

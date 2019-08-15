@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_HYPOT_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_HYPOT_HPP
 
-#include <boost/math/tools/promotion.hpp>
+#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <cmath>
 
 namespace stan {
@@ -20,8 +20,7 @@ namespace math {
  * and adjacent side lengths x and y.
  */
 template <typename T1, typename T2>
-inline typename boost::math::tools::promote_args<T1, T2>::type hypot(
-    const T1& x, const T2& y) {
+inline return_type_t<T1, T2> hypot(const T1& x, const T2& y) {
   using std::hypot;
   return hypot(x, y);
 }

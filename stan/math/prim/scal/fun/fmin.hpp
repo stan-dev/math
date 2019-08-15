@@ -1,7 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_FMIN_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_FMIN_HPP
 
-#include <boost/math/tools/promotion.hpp>
+#include <stan/math/prim/scal/meta/return_type.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -15,8 +16,7 @@ namespace math {
  * @return Minimum of x or y and if one is NaN return the other
  */
 template <typename T1, typename T2>
-inline typename boost::math::tools::promote_args<T1, T2>::type fmin(
-    const T1& x, const T2& y) {
+inline return_type_t<T1, T2> fmin(const T1& x, const T2& y) {
   using std::fmin;
   return fmin(x, y);
 }

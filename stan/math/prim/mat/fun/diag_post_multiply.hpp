@@ -10,9 +10,8 @@ namespace stan {
 namespace math {
 
 template <typename T1, typename T2, int R1, int C1, int R2, int C2>
-Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type, R1, C1>
-diag_post_multiply(const Eigen::Matrix<T1, R1, C1>& m1,
-                   const Eigen::Matrix<T2, R2, C2>& m2) {
+Eigen::Matrix<return_type_t<T1, T2>, R1, C1> diag_post_multiply(
+    const Eigen::Matrix<T1, R1, C1>& m1, const Eigen::Matrix<T2, R2, C2>& m2) {
   check_vector("diag_post_multiply", "m2", m2);
   check_size_match("diag_post_multiply", "m2.size()", m2.size(), "m1.cols()",
                    m1.cols());

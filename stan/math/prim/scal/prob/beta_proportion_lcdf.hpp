@@ -1,9 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_BETA_PROPORTION_LCDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_BETA_PROPORTION_LCDF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
@@ -13,12 +11,7 @@
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/beta.hpp>
-#include <stan/math/prim/scal/meta/contains_nonconstant_struct.hpp>
-#include <stan/math/prim/scal/meta/max_size.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
 #include <cmath>
@@ -47,10 +40,10 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_y, typename T_loc, typename T_prec>
-typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lcdf(
-    const T_y& y, const T_loc& mu, const T_prec& kappa) {
-  typedef typename stan::partials_return_type<T_y, T_loc, T_prec>::type
-      T_partials_return;
+return_type_t<T_y, T_loc, T_prec> beta_proportion_lcdf(const T_y& y,
+                                                       const T_loc& mu,
+                                                       const T_prec& kappa) {
+  typedef partials_return_type_t<T_y, T_loc, T_prec> T_partials_return;
 
   if (size_zero(y, mu, kappa))
     return 0.0;
@@ -79,17 +72,17 @@ typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lcdf(
   using std::log;
   using std::pow;
 
-  VectorBuilder<contains_nonconstant_struct<T_loc, T_prec>::value,
-                T_partials_return, T_loc, T_prec>
+  VectorBuilder<!is_constant_all<T_loc, T_prec>::value, T_partials_return,
+                T_loc, T_prec>
       digamma_mukappa(max_size(mu, kappa));
-  VectorBuilder<contains_nonconstant_struct<T_loc, T_prec>::value,
-                T_partials_return, T_loc, T_prec>
+  VectorBuilder<!is_constant_all<T_loc, T_prec>::value, T_partials_return,
+                T_loc, T_prec>
       digamma_kappa_mukappa(max_size(mu, kappa));
-  VectorBuilder<contains_nonconstant_struct<T_loc, T_prec>::value,
-                T_partials_return, T_prec>
+  VectorBuilder<!is_constant_all<T_loc, T_prec>::value, T_partials_return,
+                T_prec>
       digamma_kappa(length(kappa));
 
-  if (contains_nonconstant_struct<T_loc, T_prec>::value) {
+  if (!is_constant_all<T_loc, T_prec>::value) {
     for (size_t i = 0; i < max_size(mu, kappa); i++) {
       const T_partials_return mukappa_dbl
           = value_of(mu_vec[i]) * value_of(kappa_vec[i]);
@@ -117,7 +110,7 @@ typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lcdf(
 
     cdf_log += log(Pn);
 
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n] += pow(1 - y_dbl, kappa_mukappa_dbl - 1)
                                           * pow(y_dbl, mukappa_dbl - 1)
                                           / betafunc_dbl / Pn;
@@ -125,14 +118,14 @@ typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lcdf(
     T_partials_return g1 = 0;
     T_partials_return g2 = 0;
 
-    if (contains_nonconstant_struct<T_loc, T_prec>::value) {
+    if (!is_constant_all<T_loc, T_prec>::value) {
       grad_reg_inc_beta(g1, g2, mukappa_dbl, kappa_mukappa_dbl, y_dbl,
                         digamma_mukappa[n], digamma_kappa_mukappa[n],
                         digamma_kappa[n], betafunc_dbl);
     }
-    if (!is_constant_struct<T_loc>::value)
+    if (!is_constant_all<T_loc>::value)
       ops_partials.edge2_.partials_[n] += kappa_dbl * (g1 - g2) / Pn;
-    if (!is_constant_struct<T_prec>::value)
+    if (!is_constant_all<T_prec>::value)
       ops_partials.edge3_.partials_[n]
           += (g1 * mu_dbl + g2 * (1 - mu_dbl)) / Pn;
   }

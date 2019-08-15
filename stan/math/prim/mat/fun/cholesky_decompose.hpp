@@ -6,10 +6,7 @@
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 #ifdef STAN_OPENCL
-#include <stan/math/opencl/opencl_context.hpp>
-#include <stan/math/opencl/err/check_symmetric.hpp>
-#include <stan/math/opencl/cholesky_decompose.hpp>
-#include <stan/math/opencl/copy.hpp>
+#include <stan/math/opencl/opencl.hpp>
 #endif
 
 #include <cmath>
@@ -62,14 +59,14 @@ inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
   check_square("cholesky_decompose", "m", m);
 #ifdef STAN_OPENCL
   if (m.rows() >= opencl_context.tuning_opts().cholesky_size_worth_transfer) {
-    matrix_cl m_cl(m);
+    matrix_cl<double> m_cl(m);
     check_symmetric("cholesky_decompose", "m", m_cl);
     Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m_chol(m.rows(),
                                                                  m.cols());
     cholesky_decompose(m_cl);
     check_nan("cholesky_decompose (OpenCL)", "Matrix m", m_cl);
     check_diagonal_zeros("cholesky_decompose (OpenCL)", "Matrix m", m_cl);
-    copy(m_chol, m_cl);  // NOLINT
+    m_chol = from_matrix_cl(m_cl);
     return m_chol;
   } else {
     check_symmetric("cholesky_decompose", "m", m);

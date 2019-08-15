@@ -1,11 +1,14 @@
 #ifndef STAN_MATH_REV_MAT_FUN_MULTIPLY_HPP
 #define STAN_MATH_REV_MAT_FUN_MULTIPLY_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/mat/fun/to_var.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
+#include <stan/math/prim/mat.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <boost/math/tools/promotion.hpp>
 #include <type_traits>
 
@@ -67,45 +70,35 @@ class multiply_mat_vari : public vari {
         B_cols_(B.cols()),
         A_size_(A.size()),
         B_size_(B.size()),
-        Ad_(ChainableStack::instance().memalloc_.alloc_array<double>(A_size_)),
-        Bd_(ChainableStack::instance().memalloc_.alloc_array<double>(B_size_)),
+        Ad_(ChainableStack::instance_->memalloc_.alloc_array<double>(A_size_)),
+        Bd_(ChainableStack::instance_->memalloc_.alloc_array<double>(B_size_)),
         variRefA_(
-            ChainableStack::instance().memalloc_.alloc_array<vari*>(A_size_)),
+            ChainableStack::instance_->memalloc_.alloc_array<vari*>(A_size_)),
         variRefB_(
-            ChainableStack::instance().memalloc_.alloc_array<vari*>(B_size_)),
-        variRefAB_(ChainableStack::instance().memalloc_.alloc_array<vari*>(
+            ChainableStack::instance_->memalloc_.alloc_array<vari*>(B_size_)),
+        variRefAB_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
             A_rows_ * B_cols_)) {
     using Eigen::Map;
-    using Eigen::MatrixXd;
-    for (size_type i = 0; i < A.size(); ++i) {
-      variRefA_[i] = A.coeffRef(i).vi_;
-      Ad_[i] = A.coeffRef(i).val();
-    }
-    for (size_type i = 0; i < B.size(); ++i) {
-      variRefB_[i] = B.coeffRef(i).vi_;
-      Bd_[i] = B.coeffRef(i).val();
-    }
-    MatrixXd AB = Map<MatrixXd>(Ad_, A_rows_, A_cols_)
-                  * Map<MatrixXd>(Bd_, A_cols_, B_cols_);
-    for (size_type i = 0; i < AB.size(); ++i)
-      variRefAB_[i] = new vari(AB.coeffRef(i), false);
+    Map<matrix_vi>(variRefA_, A_rows_, A_cols_) = A.vi();
+    Map<matrix_vi>(variRefB_, A_cols_, B_cols_) = B.vi();
+    Map<matrix_d> Ad(Ad_, A_rows_, A_cols_);
+    Map<matrix_d> Bd(Bd_, A_cols_, B_cols_);
+    Ad = A.val();
+    Bd = B.val();
+
+    Map<matrix_vi>(variRefAB_, A_rows_, B_cols_)
+        = (Ad * Bd).unaryExpr([](double x) { return new vari(x, false); });
   }
 
   virtual void chain() {
     using Eigen::Map;
-    using Eigen::MatrixXd;
-    MatrixXd adjAB(A_rows_, B_cols_);
-    MatrixXd adjA(A_rows_, A_cols_);
-    MatrixXd adjB(A_cols_, B_cols_);
+    matrix_d adjAB(A_rows_, B_cols_);
 
-    for (size_type i = 0; i < adjAB.size(); ++i)
-      adjAB(i) = variRefAB_[i]->adj_;
-    adjA = adjAB * Map<MatrixXd>(Bd_, A_cols_, B_cols_).transpose();
-    adjB = Map<MatrixXd>(Ad_, A_rows_, A_cols_).transpose() * adjAB;
-    for (size_type i = 0; i < A_size_; ++i)
-      variRefA_[i]->adj_ += adjA(i);
-    for (size_type i = 0; i < B_size_; ++i)
-      variRefB_[i]->adj_ += adjB(i);
+    adjAB = Map<matrix_vi>(variRefAB_, A_rows_, B_cols_).adj();
+    Map<matrix_vi>(variRefA_, A_rows_, A_cols_).adj()
+        += adjAB * Map<matrix_d>(Bd_, A_cols_, B_cols_).transpose();
+    Map<matrix_vi>(variRefB_, A_cols_, B_cols_).adj()
+        += Map<matrix_d>(Ad_, A_rows_, A_cols_).transpose() * adjAB;
   }
 };
 
@@ -154,40 +147,29 @@ class multiply_mat_vari<Ta, 1, Ca, Tb, 1> : public vari {
                     const Eigen::Matrix<Tb, Ca, 1>& B)
       : vari(0.0),
         size_(A.cols()),
-        Ad_(ChainableStack::instance().memalloc_.alloc_array<double>(size_)),
-        Bd_(ChainableStack::instance().memalloc_.alloc_array<double>(size_)),
+        Ad_(ChainableStack::instance_->memalloc_.alloc_array<double>(size_)),
+        Bd_(ChainableStack::instance_->memalloc_.alloc_array<double>(size_)),
         variRefA_(
-            ChainableStack::instance().memalloc_.alloc_array<vari*>(size_)),
+            ChainableStack::instance_->memalloc_.alloc_array<vari*>(size_)),
         variRefB_(
-            ChainableStack::instance().memalloc_.alloc_array<vari*>(size_)) {
+            ChainableStack::instance_->memalloc_.alloc_array<vari*>(size_)) {
     using Eigen::Map;
-    using Eigen::RowVectorXd;
-    using Eigen::VectorXd;
-    for (size_type i = 0; i < size_; ++i) {
-      variRefA_[i] = A.coeffRef(i).vi_;
-      Ad_[i] = A.coeffRef(i).val();
-    }
-    for (size_type i = 0; i < size_; ++i) {
-      variRefB_[i] = B.coeffRef(i).vi_;
-      Bd_[i] = B.coeffRef(i).val();
-    }
-    double AB = Map<RowVectorXd>(Ad_, 1, size_) * Map<VectorXd>(Bd_, size_, 1);
-    variRefAB_ = new vari(AB, false);
+    Map<row_vector_vi>(variRefA_, size_) = A.vi();
+    Map<vector_vi>(variRefB_, size_) = B.vi();
+    Map<row_vector_d> Ad(Ad_, size_);
+    Map<vector_d> Bd(Bd_, size_);
+    Ad = A.val();
+    Bd = B.val();
+
+    variRefAB_ = new vari(Ad * Bd, false);
   }
 
   virtual void chain() {
     using Eigen::Map;
-    using Eigen::RowVectorXd;
-    using Eigen::VectorXd;
-    double adjAB;
 
-    adjAB = variRefAB_->adj_;
-    auto adjA = adjAB * Map<VectorXd>(Bd_, size_, 1).transpose();
-    auto adjB = Map<RowVectorXd>(Ad_, 1, size_).transpose() * adjAB;
-    for (size_type i = 0; i < size_; ++i)
-      variRefA_[i]->adj_ += adjA(i);
-    for (size_type i = 0; i < size_; ++i)
-      variRefB_[i]->adj_ += adjB(i);
+    double adjAB = variRefAB_->adj_;
+    Map<vector_vi>(variRefA_, size_).adj() += adjAB * Map<vector_d>(Bd_, size_);
+    Map<vector_vi>(variRefB_, size_).adj() += Map<vector_d>(Ad_, size_) * adjAB;
   }
 };
 
@@ -244,37 +226,29 @@ class multiply_mat_vari<double, Ra, Ca, Tb, Cb> : public vari {
         B_cols_(B.cols()),
         A_size_(A.size()),
         B_size_(B.size()),
-        Ad_(ChainableStack::instance().memalloc_.alloc_array<double>(A_size_)),
-        Bd_(ChainableStack::instance().memalloc_.alloc_array<double>(B_size_)),
+        Ad_(ChainableStack::instance_->memalloc_.alloc_array<double>(A_size_)),
+        Bd_(ChainableStack::instance_->memalloc_.alloc_array<double>(B_size_)),
         variRefB_(
-            ChainableStack::instance().memalloc_.alloc_array<vari*>(B_size_)),
-        variRefAB_(ChainableStack::instance().memalloc_.alloc_array<vari*>(
+            ChainableStack::instance_->memalloc_.alloc_array<vari*>(B_size_)),
+        variRefAB_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
             A_rows_ * B_cols_)) {
     using Eigen::Map;
-    using Eigen::MatrixXd;
-    for (size_type i = 0; i < A.size(); ++i)
-      Ad_[i] = A.coeffRef(i);
-    for (size_type i = 0; i < B.size(); ++i) {
-      variRefB_[i] = B.coeffRef(i).vi_;
-      Bd_[i] = B.coeffRef(i).val();
-    }
-    MatrixXd AB = Map<MatrixXd>(Ad_, A_rows_, A_cols_)
-                  * Map<MatrixXd>(Bd_, A_cols_, B_cols_);
-    for (size_type i = 0; i < AB.size(); ++i)
-      variRefAB_[i] = new vari(AB.coeffRef(i), false);
+    Map<matrix_vi>(variRefB_, A_cols_, B_cols_) = B.vi();
+    Map<matrix_d> Ad(Ad_, A_rows_, A_cols_);
+    Map<matrix_d> Bd(Bd_, A_cols_, B_cols_);
+    Ad = A;
+    Bd = B.val();
+
+    Map<matrix_vi>(variRefAB_, A_rows_, B_cols_)
+        = (Ad * Bd).unaryExpr([](double x) { return new vari(x, false); });
   }
 
   virtual void chain() {
     using Eigen::Map;
-    using Eigen::MatrixXd;
-    MatrixXd adjAB(A_rows_, B_cols_);
-    MatrixXd adjB(A_cols_, B_cols_);
+    matrix_d adjAB = Map<matrix_vi>(variRefAB_, A_rows_, B_cols_).adj();
 
-    for (size_type i = 0; i < adjAB.size(); ++i)
-      adjAB(i) = variRefAB_[i]->adj_;
-    adjB = Map<MatrixXd>(Ad_, A_rows_, A_cols_).transpose() * adjAB;
-    for (size_type i = 0; i < B_size_; ++i)
-      variRefB_[i]->adj_ += adjB(i);
+    Map<matrix_vi>(variRefB_, A_cols_, B_cols_).adj()
+        += Map<matrix_d>(Ad_, A_rows_, A_cols_).transpose() * adjAB;
   }
 };
 
@@ -322,34 +296,23 @@ class multiply_mat_vari<double, 1, Ca, Tb, 1> : public vari {
                     const Eigen::Matrix<Tb, Ca, 1>& B)
       : vari(0.0),
         size_(A.cols()),
-        Ad_(ChainableStack::instance().memalloc_.alloc_array<double>(size_)),
-        Bd_(ChainableStack::instance().memalloc_.alloc_array<double>(size_)),
+        Ad_(ChainableStack::instance_->memalloc_.alloc_array<double>(size_)),
+        Bd_(ChainableStack::instance_->memalloc_.alloc_array<double>(size_)),
         variRefB_(
-            ChainableStack::instance().memalloc_.alloc_array<vari*>(size_)) {
+            ChainableStack::instance_->memalloc_.alloc_array<vari*>(size_)) {
     using Eigen::Map;
-    using Eigen::RowVectorXd;
-    using Eigen::VectorXd;
-    for (size_type i = 0; i < size_; ++i)
-      Ad_[i] = A.coeffRef(i);
-    for (size_type i = 0; i < size_; ++i) {
-      variRefB_[i] = B.coeffRef(i).vi_;
-      Bd_[i] = B.coeffRef(i).val();
-    }
-    double AB = Eigen::Map<RowVectorXd>(Ad_, 1, size_)
-                * Eigen::Map<VectorXd>(Bd_, size_, 1);
-    variRefAB_ = new vari(AB, false);
+    Map<row_vector_d> Ad(Ad_, size_);
+    Map<vector_d> Bd(Bd_, size_);
+    Map<vector_vi>(variRefB_, size_) = B.vi();
+    Ad = A;
+    Bd = B.val();
+    variRefAB_ = new vari(Ad * Bd, false);
   }
 
   virtual void chain() {
     using Eigen::Map;
-    using Eigen::RowVectorXd;
-    using Eigen::VectorXd;
-    double adjAB;
-
-    adjAB = variRefAB_->adj_;
-    auto adjB = Map<RowVectorXd>(Ad_, 1, size_).transpose() * adjAB;
-    for (size_type i = 0; i < size_; ++i)
-      variRefB_[i]->adj_ += adjB(i);
+    Map<vector_vi>(variRefB_, size_).adj()
+        += Map<vector_d>(Ad_, size_) * variRefAB_->adj_;
   }
 };
 
@@ -406,38 +369,29 @@ class multiply_mat_vari<Ta, Ra, Ca, double, Cb> : public vari {
         B_cols_(B.cols()),
         A_size_(A.size()),
         B_size_(B.size()),
-        Ad_(ChainableStack::instance().memalloc_.alloc_array<double>(A_size_)),
-        Bd_(ChainableStack::instance().memalloc_.alloc_array<double>(B_size_)),
+        Ad_(ChainableStack::instance_->memalloc_.alloc_array<double>(A_size_)),
+        Bd_(ChainableStack::instance_->memalloc_.alloc_array<double>(B_size_)),
         variRefA_(
-            ChainableStack::instance().memalloc_.alloc_array<vari*>(A_size_)),
-        variRefAB_(ChainableStack::instance().memalloc_.alloc_array<vari*>(
+            ChainableStack::instance_->memalloc_.alloc_array<vari*>(A_size_)),
+        variRefAB_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
             A_rows_ * B_cols_)) {
     using Eigen::Map;
-    using Eigen::MatrixXd;
-    for (size_type i = 0; i < A_size_; ++i) {
-      variRefA_[i] = A.coeffRef(i).vi_;
-      Ad_[i] = A.coeffRef(i).val();
-    }
-    for (size_type i = 0; i < B_size_; ++i) {
-      Bd_[i] = B.coeffRef(i);
-    }
-    MatrixXd AB = Map<MatrixXd>(Ad_, A_rows_, A_cols_)
-                  * Map<MatrixXd>(Bd_, A_cols_, B_cols_);
-    for (size_type i = 0; i < AB.size(); ++i)
-      variRefAB_[i] = new vari(AB.coeffRef(i), false);
+    Map<matrix_vi>(variRefA_, A_rows_, A_cols_) = A.vi();
+    Map<matrix_d> Ad(Ad_, A_rows_, A_cols_);
+    Map<matrix_d> Bd(Bd_, A_cols_, B_cols_);
+    Ad = A.val();
+    Bd = B.val();
+
+    Map<matrix_vi>(variRefAB_, A_rows_, B_cols_)
+        = (Ad * Bd).unaryExpr([](double x) { return new vari(x, false); });
   }
 
   virtual void chain() {
     using Eigen::Map;
-    using Eigen::MatrixXd;
-    MatrixXd adjAB(A_rows_, B_cols_);
-    MatrixXd adjA(A_rows_, A_cols_);
+    matrix_d adjAB = Map<matrix_vi>(variRefAB_, A_rows_, B_cols_).adj();
 
-    for (size_type i = 0; i < adjAB.size(); ++i)
-      adjAB(i) = variRefAB_[i]->adj_;
-    adjA = adjAB * Map<MatrixXd>(Bd_, A_cols_, B_cols_).transpose();
-    for (size_type i = 0; i < A_size_; ++i)
-      variRefA_[i]->adj_ += adjA(i);
+    Map<matrix_vi>(variRefA_, A_rows_, A_cols_).adj()
+        += adjAB * Map<matrix_d>(Bd_, A_cols_, B_cols_).transpose();
   }
 };
 
@@ -488,33 +442,25 @@ class multiply_mat_vari<Ta, 1, Ca, double, 1> : public vari {
                     const Eigen::Matrix<double, Ca, 1>& B)
       : vari(0.0),
         size_(A.cols()),
-        Ad_(ChainableStack::instance().memalloc_.alloc_array<double>(size_)),
-        Bd_(ChainableStack::instance().memalloc_.alloc_array<double>(size_)),
+        Ad_(ChainableStack::instance_->memalloc_.alloc_array<double>(size_)),
+        Bd_(ChainableStack::instance_->memalloc_.alloc_array<double>(size_)),
         variRefA_(
-            ChainableStack::instance().memalloc_.alloc_array<vari*>(size_)) {
+            ChainableStack::instance_->memalloc_.alloc_array<vari*>(size_)) {
     using Eigen::Map;
-    using Eigen::RowVectorXd;
-    using Eigen::VectorXd;
-    for (size_type i = 0; i < size_; ++i) {
-      variRefA_[i] = A.coeffRef(i).vi_;
-      Ad_[i] = A.coeffRef(i).val();
-    }
-    for (size_type i = 0; i < size_; ++i)
-      Bd_[i] = B.coeffRef(i);
-    double AB = Map<RowVectorXd>(Ad_, 1, size_) * Map<VectorXd>(Bd_, size_, 1);
-    variRefAB_ = new vari(AB, false);
+    Map<row_vector_vi>(variRefA_, size_) = A.vi();
+    Map<row_vector_d> Ad(Ad_, size_);
+    Map<vector_d> Bd(Bd_, size_);
+    Ad = A.val();
+    Bd = B;
+
+    variRefAB_ = new vari(Ad * Bd, false);
   }
 
   virtual void chain() {
     using Eigen::Map;
-    using Eigen::RowVectorXd;
-    using Eigen::VectorXd;
-    double adjAB;
 
-    adjAB = variRefAB_->adj_;
-    auto adjA = adjAB * Map<VectorXd>(Bd_, size_, 1).transpose();
-    for (size_type i = 0; i < size_; ++i)
-      variRefA_[i]->adj_ += adjA(i);
+    Map<row_vector_vi>(variRefA_, size_).adj()
+        += variRefAB_->adj_ * Map<row_vector_d>(Bd_, size_);
   }
 };
 
@@ -526,12 +472,10 @@ class multiply_mat_vari<Ta, 1, Ca, double, 1> : public vari {
  * @param[in] c Specified scalar
  * @return Product of scalars
  */
-template <typename T1, typename T2>
-inline typename std::enable_if<
-    (boost::is_scalar<T1>::value || std::is_same<T1, var>::value)
-        && (boost::is_scalar<T2>::value || std::is_same<T2, var>::value),
-    typename boost::math::tools::promote_args<T1, T2>::type>::type
-multiply(const T1& v, const T2& c) {
+template <typename T1, typename T2,
+          typename = enable_if_all_var_or_arithmetic<T1, T2>,
+          typename = enable_if_any_var<T1, T2>>
+inline return_type_t<T1, T2> multiply(const T1& v, const T2& c) {
   return v * c;
 }
 
@@ -545,7 +489,8 @@ multiply(const T1& v, const T2& c) {
  * @param[in] m Matrix
  * @return Product of scalar and matrix
  */
-template <typename T1, typename T2, int R2, int C2>
+template <typename T1, typename T2, int R2, int C2,
+          typename = enable_if_any_var<T1, T2>>
 inline Eigen::Matrix<var, R2, C2> multiply(const T1& c,
                                            const Eigen::Matrix<T2, R2, C2>& m) {
   // TODO(trangucci) pull out to eliminate overpromotion of one side
@@ -563,7 +508,8 @@ inline Eigen::Matrix<var, R2, C2> multiply(const T1& c,
  * @param[in] m Matrix
  * @return Product of scalar and matrix
  */
-template <typename T1, int R1, int C1, typename T2>
+template <typename T1, int R1, int C1, typename T2,
+          typename = enable_if_any_var<T1, T2>>
 inline Eigen::Matrix<var, R1, C1> multiply(const Eigen::Matrix<T1, R1, C1>& m,
                                            const T2& c) {
   // TODO(trangucci) pull out to eliminate overpromotion of one side
@@ -583,12 +529,10 @@ inline Eigen::Matrix<var, R1, C1> multiply(const Eigen::Matrix<T1, R1, C1>& m,
  * @param[in] B Matrix
  * @return Product of scalar and matrix.
  */
-template <typename Ta, int Ra, int Ca, typename Tb, int Cb>
-inline typename std::enable_if<std::is_same<Ta, var>::value
-                                   || std::is_same<Tb, var>::value,
-                               Eigen::Matrix<var, Ra, Cb> >::type
-multiply(const Eigen::Matrix<Ta, Ra, Ca>& A,
-         const Eigen::Matrix<Tb, Ca, Cb>& B) {
+template <typename Ta, int Ra, int Ca, typename Tb, int Cb,
+          typename = enable_if_any_var<Ta, Tb>>
+inline Eigen::Matrix<var, Ra, Cb> multiply(const Eigen::Matrix<Ta, Ra, Ca>& A,
+                                           const Eigen::Matrix<Tb, Ca, Cb>& B) {
   check_multiplicable("multiply", "A", A, "B", B);
   check_not_nan("multiply", "A", A);
   check_not_nan("multiply", "B", B);
@@ -597,9 +541,9 @@ multiply(const Eigen::Matrix<Ta, Ra, Ca>& A,
   multiply_mat_vari<Ta, Ra, Ca, Tb, Cb>* baseVari
       = new multiply_mat_vari<Ta, Ra, Ca, Tb, Cb>(A, B);
   Eigen::Matrix<var, Ra, Cb> AB_v(A.rows(), B.cols());
-  for (size_type i = 0; i < AB_v.size(); ++i) {
-    AB_v.coeffRef(i).vi_ = baseVari->variRefAB_[i];
-  }
+  AB_v.vi()
+      = Eigen::Map<matrix_vi>(&baseVari->variRefAB_[0], A.rows(), B.cols());
+
   return AB_v;
 }
 
@@ -613,10 +557,10 @@ multiply(const Eigen::Matrix<Ta, Ra, Ca>& A,
  * @param[in] B Column vector
  * @return Scalar product of row vector and vector
  */
-template <typename Ta, int Ca, typename Tb>
-inline typename std::enable_if<
-    std::is_same<Ta, var>::value || std::is_same<Tb, var>::value, var>::type
-multiply(const Eigen::Matrix<Ta, 1, Ca>& A, const Eigen::Matrix<Tb, Ca, 1>& B) {
+template <typename Ta, int Ca, typename Tb,
+          typename = enable_if_any_var<Ta, Tb>>
+inline var multiply(const Eigen::Matrix<Ta, 1, Ca>& A,
+                    const Eigen::Matrix<Tb, Ca, 1>& B) {
   check_multiplicable("multiply", "A", A, "B", B);
   check_not_nan("multiply", "A", A);
   check_not_nan("multiply", "B", B);

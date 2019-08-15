@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LOG_DIFF_EXP_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LOG_DIFF_EXP_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/log1m_exp.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <boost/math/tools/promotion.hpp>
-#include <limits>
-#include <stdexcept>
 
 namespace stan {
 namespace math {
@@ -45,10 +45,9 @@ namespace math {
  *
  */
 template <typename T1, typename T2>
-inline typename boost::math::tools::promote_args<T1, T2>::type log_diff_exp(
-    const T1 x, const T2 y) {
+inline return_type_t<T1, T2> log_diff_exp(const T1 x, const T2 y) {
   if (x <= y)
-    return std::numeric_limits<double>::quiet_NaN();
+    return NOT_A_NUMBER;
   return x + log1m_exp(y - x);
 }
 

@@ -1,10 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_PARETO_LCCDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_PARETO_LCCDF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -19,10 +16,10 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_scale, typename T_shape>
-typename return_type<T_y, T_scale, T_shape>::type pareto_lccdf(
-    const T_y& y, const T_scale& y_min, const T_shape& alpha) {
-  typedef typename stan::partials_return_type<T_y, T_scale, T_shape>::type
-      T_partials_return;
+return_type_t<T_y, T_scale, T_shape> pareto_lccdf(const T_y& y,
+                                                  const T_scale& y_min,
+                                                  const T_shape& alpha) {
+  typedef partials_return_type_t<T_y, T_scale, T_shape> T_partials_return;
 
   if (size_zero(y, y_min, alpha))
     return 0.0;
@@ -69,12 +66,12 @@ typename return_type<T_y, T_scale, T_shape>::type pareto_lccdf(
 
     P += alpha_dbl * log_dbl;
 
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n]
           -= alpha_dbl * y_min_inv_dbl * exp(log_dbl);
-    if (!is_constant_struct<T_scale>::value)
+    if (!is_constant_all<T_scale>::value)
       ops_partials.edge2_.partials_[n] += alpha_dbl * y_min_inv_dbl;
-    if (!is_constant_struct<T_shape>::value)
+    if (!is_constant_all<T_shape>::value)
       ops_partials.edge3_.partials_[n] += log_dbl;
   }
   return ops_partials.build(P);

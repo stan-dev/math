@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_FDIM_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_FDIM_HPP
 
-#include <boost/math/tools/promotion.hpp>
+#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <limits>
 
 namespace stan {
@@ -19,9 +19,7 @@ namespace math {
  * @return max(x- y, 0)
  */
 template <typename T1, typename T2>
-inline typename boost::math::tools::promote_args<T1, T2>::type fdim(T1 x,
-                                                                    T2 y) {
-  typedef typename boost::math::tools::promote_args<T1, T2>::type return_t;
+inline return_type_t<T1, T2> fdim(T1 x, T2 y) {
   using std::fdim;
   return fdim(x, y);
 }

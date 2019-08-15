@@ -1,9 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_CHI_SQUARE_LPDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_CHI_SQUARE_LPDF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -13,9 +11,6 @@
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <cmath>
 
 namespace stan {
@@ -41,11 +36,9 @@ namespace math {
  * @tparam T_dof Type of degrees of freedom.
  */
 template <bool propto, typename T_y, typename T_dof>
-typename return_type<T_y, T_dof>::type chi_square_lpdf(const T_y& y,
-                                                       const T_dof& nu) {
+return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
   static const char* function = "chi_square_lpdf";
-  typedef
-      typename stan::partials_return_type<T_y, T_dof>::type T_partials_return;
+  typedef partials_return_type_t<T_y, T_dof> T_partials_return;
 
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
@@ -85,14 +78,14 @@ typename return_type<T_y, T_dof>::type chi_square_lpdf(const T_y& y,
 
   VectorBuilder<include_summand<propto, T_dof>::value, T_partials_return, T_dof>
       lgamma_half_nu(length(nu));
-  VectorBuilder<!is_constant_struct<T_dof>::value, T_partials_return, T_dof>
+  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
       digamma_half_nu_over_two(length(nu));
 
   for (size_t i = 0; i < length(nu); i++) {
     T_partials_return half_nu = 0.5 * value_of(nu_vec[i]);
     if (include_summand<propto, T_dof>::value)
       lgamma_half_nu[i] = lgamma(half_nu);
-    if (!is_constant_struct<T_dof>::value)
+    if (!is_constant_all<T_dof>::value)
       digamma_half_nu_over_two[i] = digamma(half_nu) * 0.5;
   }
 
@@ -110,10 +103,10 @@ typename return_type<T_y, T_dof>::type chi_square_lpdf(const T_y& y,
     if (include_summand<propto, T_y>::value)
       logp -= half_y;
 
-    if (!is_constant_struct<T_y>::value) {
+    if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] += (half_nu - 1.0) * inv_y[n] - 0.5;
     }
-    if (!is_constant_struct<T_dof>::value) {
+    if (!is_constant_all<T_dof>::value) {
       ops_partials.edge2_.partials_[n] += NEG_LOG_TWO_OVER_TWO
                                           - digamma_half_nu_over_two[n]
                                           + log_y[n] * 0.5;
@@ -123,8 +116,8 @@ typename return_type<T_y, T_dof>::type chi_square_lpdf(const T_y& y,
 }
 
 template <typename T_y, typename T_dof>
-inline typename return_type<T_y, T_dof>::type chi_square_lpdf(const T_y& y,
-                                                              const T_dof& nu) {
+inline return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y,
+                                                 const T_dof& nu) {
   return chi_square_lpdf<false>(y, nu);
 }
 

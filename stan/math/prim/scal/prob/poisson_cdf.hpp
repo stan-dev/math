@@ -1,10 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_POISSON_CDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_POISSON_CDF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -20,11 +17,9 @@ namespace math {
 
 // Poisson CDF
 template <typename T_n, typename T_rate>
-typename return_type<T_rate>::type poisson_cdf(const T_n& n,
-                                               const T_rate& lambda) {
+return_type_t<T_rate> poisson_cdf(const T_n& n, const T_rate& lambda) {
   static const char* function = "poisson_cdf";
-  typedef
-      typename stan::partials_return_type<T_n, T_rate>::type T_partials_return;
+  typedef partials_return_type_t<T_n, T_rate> T_partials_return;
 
   if (size_zero(n, lambda))
     return 1.0;
@@ -64,12 +59,12 @@ typename return_type<T_rate>::type poisson_cdf(const T_n& n,
 
     P *= Pi;
 
-    if (!is_constant_struct<T_rate>::value)
+    if (!is_constant_all<T_rate>::value)
       ops_partials.edge1_.partials_[i]
           -= exp(-lambda_dbl) * pow(lambda_dbl, n_dbl) / tgamma(n_dbl + 1) / Pi;
   }
 
-  if (!is_constant_struct<T_rate>::value) {
+  if (!is_constant_all<T_rate>::value) {
     for (size_t i = 0; i < stan::length(lambda); ++i)
       ops_partials.edge1_.partials_[i] *= P;
   }

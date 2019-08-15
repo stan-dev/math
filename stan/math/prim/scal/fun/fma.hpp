@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_FMA_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_FMA_HPP
 
-#include <boost/math/tools/promotion.hpp>
+#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <cmath>
 
 namespace stan {
@@ -21,8 +21,7 @@ namespace math {
  * argument.
  */
 template <typename T1, typename T2, typename T3>
-inline typename boost::math::tools::promote_args<T1, T2, T3>::type fma(
-    const T1& x, const T2& y, const T3& z) {
+inline return_type_t<T1, T2, T3> fma(const T1& x, const T2& y, const T3& z) {
   using std::fma;
   return fma(x, y, z);
 }

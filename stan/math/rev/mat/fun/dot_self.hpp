@@ -1,8 +1,10 @@
 #ifndef STAN_MATH_REV_MAT_FUN_DOT_SELF_HPP
 #define STAN_MATH_REV_MAT_FUN_DOT_SELF_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/err/check_vector.hpp>
+#include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/rev/core.hpp>
 #include <vector>
 
@@ -22,42 +24,32 @@ class dot_self_vari : public vari {
   explicit dot_self_vari(const Eigen::DenseBase<Derived>& v)
       : vari(var_dot_self(v)), size_(v.size()) {
     v_ = reinterpret_cast<vari**>(
-        ChainableStack::instance().memalloc_.alloc(size_ * sizeof(vari*)));
-    for (size_t i = 0; i < size_; i++)
-      v_[i] = v[i].vi_;
+        ChainableStack::instance_->memalloc_.alloc(size_ * sizeof(vari*)));
+
+    Eigen::Map<vector_vi>(v_, size_) = Eigen::Ref<const vector_v>(v).vi();
   }
   template <int R, int C>
   explicit dot_self_vari(const Eigen::Matrix<var, R, C>& v)
       : vari(var_dot_self(v)), size_(v.size()) {
     v_ = reinterpret_cast<vari**>(
-        ChainableStack::instance().memalloc_.alloc(size_ * sizeof(vari*)));
-    for (size_t i = 0; i < size_; ++i)
-      v_[i] = v(i).vi_;
+        ChainableStack::instance_->memalloc_.alloc(size_ * sizeof(vari*)));
+    Eigen::Map<matrix_vi>(v_, v.rows(), v.cols()) = v.vi();
   }
-  inline static double square(double x) { return x * x; }
+  inline static double square(double x) { return square(x); }
   inline static double var_dot_self(vari** v, size_t size) {
-    double sum = 0.0;
-    for (size_t i = 0; i < size; ++i)
-      sum += square(v[i]->val_);
-    return sum;
+    return Eigen::Map<vector_vi>(v, size).val().squaredNorm();
   }
   template <typename Derived>
   double var_dot_self(const Eigen::DenseBase<Derived>& v) {
-    double sum = 0.0;
-    for (int i = 0; i < v.size(); ++i)
-      sum += square(v(i).vi_->val_);
-    return sum;
+    return Eigen::Ref<const vector_v>(v).val().squaredNorm();
   }
   template <int R, int C>
   inline static double var_dot_self(const Eigen::Matrix<var, R, C>& v) {
-    double sum = 0.0;
-    for (int i = 0; i < v.size(); ++i)
-      sum += square(v(i).vi_->val_);
-    return sum;
+    return v.val().squaredNorm();
   }
   virtual void chain() {
-    for (size_t i = 0; i < size_; ++i)
-      v_[i]->adj_ += adj_ * 2.0 * v_[i]->val_;
+    Eigen::Map<vector_vi> v_map(v_, size_);
+    v_map.adj() += adj_ * 2.0 * v_map.val();
   }
 };
 }  // namespace internal

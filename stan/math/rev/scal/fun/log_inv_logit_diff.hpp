@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_LOG_INV_LOGIT_DIFF_HPP
 #define STAN_MATH_REV_SCAL_FUN_LOG_INV_LOGIT_DIFF_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/fun/log_inv_logit_diff.hpp>
 #include <stan/math/prim/scal/fun/inv_logit.hpp>

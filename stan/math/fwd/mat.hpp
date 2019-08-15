@@ -1,9 +1,10 @@
 #ifndef STAN_MATH_FWD_MAT_HPP
 #define STAN_MATH_FWD_MAT_HPP
 
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/scal/meta/is_fvar.hpp>
-#include <stan/math/fwd/scal/meta/partials_type.hpp>
+#include <stan/math/fwd/meta.hpp>
 
 #include <stan/math/fwd/mat/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/mat.hpp>
@@ -46,7 +47,5 @@
 #include <stan/math/fwd/mat/functor/gradient.hpp>
 #include <stan/math/fwd/mat/functor/hessian.hpp>
 #include <stan/math/fwd/mat/functor/jacobian.hpp>
-
-#include <stan/math/fwd/mat/meta/operands_and_partials.hpp>
 
 #endif

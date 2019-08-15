@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_GP_MATERN32_COV_HPP
 #define STAN_MATH_PRIM_MAT_FUN_GP_MATERN32_COV_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/divide_columns.hpp>
 #include <stan/math/prim/mat/fun/distance.hpp>
@@ -11,8 +12,6 @@
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/squared_distance.hpp>
 #include <stan/math/prim/scal/fun/distance.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
-#include <stan/math/prim/scal/meta/size_of.hpp>
 #include <cmath>
 #include <vector>
 
@@ -38,16 +37,15 @@ namespace math {
  * @throw std::domain error if sigma <= 0, l <= 0, or x is nan or inf
  */
 template <typename T_x, typename T_s, typename T_l>
-inline typename Eigen::Matrix<typename return_type<T_x, T_s, T_l>::type,
-                              Eigen::Dynamic, Eigen::Dynamic>
+inline typename Eigen::Matrix<return_type_t<T_x, T_s, T_l>, Eigen::Dynamic,
+                              Eigen::Dynamic>
 gp_matern32_cov(const std::vector<T_x> &x, const T_s &sigma,
                 const T_l &length_scale) {
   using std::exp;
   using std::pow;
 
   size_t x_size = size_of(x);
-  Eigen::Matrix<typename return_type<T_x, T_s, T_l>::type, Eigen::Dynamic,
-                Eigen::Dynamic>
+  Eigen::Matrix<return_type_t<T_x, T_s, T_l>, Eigen::Dynamic, Eigen::Dynamic>
       cov(x_size, x_size);
 
   if (x_size == 0)
@@ -72,7 +70,7 @@ gp_matern32_cov(const std::vector<T_x> &x, const T_s &sigma,
   for (size_t i = 0; i < x_size; ++i) {
     cov(i, i) = sigma_sq;
     for (size_t j = i + 1; j < x_size; ++j) {
-      typename return_type<T_x>::type dist = distance(x[i], x[j]);
+      return_type_t<T_x> dist = distance(x[i], x[j]);
       cov(i, j) = sigma_sq * (1.0 + root_3_inv_l * dist)
                   * exp(neg_root_3_inv_l * dist);
       cov(j, i) = cov(i, j);
@@ -100,15 +98,14 @@ gp_matern32_cov(const std::vector<T_x> &x, const T_s &sigma,
  * @throw std::domain error if sigma <= 0, l <= 0, or x is nan or inf
  */
 template <typename T_x, typename T_s, typename T_l>
-inline typename Eigen::Matrix<typename return_type<T_x, T_s, T_l>::type,
-                              Eigen::Dynamic, Eigen::Dynamic>
+inline typename Eigen::Matrix<return_type_t<T_x, T_s, T_l>, Eigen::Dynamic,
+                              Eigen::Dynamic>
 gp_matern32_cov(const std::vector<Eigen::Matrix<T_x, -1, 1>> &x,
                 const T_s &sigma, const std::vector<T_l> &length_scale) {
   using std::exp;
 
   size_t x_size = size_of(x);
-  Eigen::Matrix<typename return_type<T_x, T_s, T_l>::type, Eigen::Dynamic,
-                Eigen::Dynamic>
+  Eigen::Matrix<return_type_t<T_x, T_s, T_l>, Eigen::Dynamic, Eigen::Dynamic>
       cov(x_size, x_size);
 
   if (x_size == 0)
@@ -131,12 +128,12 @@ gp_matern32_cov(const std::vector<Eigen::Matrix<T_x, -1, 1>> &x,
   double root_3 = sqrt(3.0);
   double neg_root_3 = -1.0 * sqrt(3.0);
 
-  std::vector<Eigen::Matrix<typename return_type<T_x, T_l>::type, -1, 1>> x_new
+  std::vector<Eigen::Matrix<return_type_t<T_x, T_l>, -1, 1>> x_new
       = divide_columns(x, length_scale);
 
   for (size_t i = 0; i < x_size; ++i) {
     for (size_t j = i; j < x_size; ++j) {
-      typename return_type<T_x, T_l>::type dist = distance(x_new[i], x_new[j]);
+      return_type_t<T_x, T_l> dist = distance(x_new[i], x_new[j]);
       cov(i, j) = sigma_sq * (1.0 + root_3 * dist) * exp(neg_root_3 * dist);
       cov(j, i) = cov(i, j);
     }
@@ -169,7 +166,7 @@ gp_matern32_cov(const std::vector<Eigen::Matrix<T_x, -1, 1>> &x,
  *
  */
 template <typename T_x1, typename T_x2, typename T_s, typename T_l>
-inline typename Eigen::Matrix<typename return_type<T_x1, T_x2, T_s, T_l>::type,
+inline typename Eigen::Matrix<return_type_t<T_x1, T_x2, T_s, T_l>,
                               Eigen::Dynamic, Eigen::Dynamic>
 gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
                 const T_s &sigma, const T_l &length_scale) {
@@ -177,8 +174,8 @@ gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 
   size_t x1_size = size_of(x1);
   size_t x2_size = size_of(x2);
-  Eigen::Matrix<typename return_type<T_x1, T_x2, T_s, T_l>::type,
-                Eigen::Dynamic, Eigen::Dynamic>
+  Eigen::Matrix<return_type_t<T_x1, T_x2, T_s, T_l>, Eigen::Dynamic,
+                Eigen::Dynamic>
       cov(x1_size, x2_size);
 
   if (x1_size == 0 || x2_size == 0)
@@ -207,7 +204,7 @@ gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
-      typename return_type<T_x1, T_x2>::type dist = distance(x1[i], x2[j]);
+      return_type_t<T_x1, T_x2> dist = distance(x1[i], x2[j]);
       cov(i, j) = sigma_sq * (1.0 + root_3_inv_l_sq * dist)
                   * exp(neg_root_3_inv_l_sq * dist);
     }
@@ -240,7 +237,7 @@ gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  *
  */
 template <typename T_x1, typename T_x2, typename T_s, typename T_l>
-inline typename Eigen::Matrix<typename return_type<T_x1, T_x2, T_s, T_l>::type,
+inline typename Eigen::Matrix<return_type_t<T_x1, T_x2, T_s, T_l>,
                               Eigen::Dynamic, Eigen::Dynamic>
 gp_matern32_cov(const std::vector<Eigen::Matrix<T_x1, -1, 1>> &x1,
                 const std::vector<Eigen::Matrix<T_x2, -1, 1>> &x2,
@@ -249,8 +246,8 @@ gp_matern32_cov(const std::vector<Eigen::Matrix<T_x1, -1, 1>> &x1,
 
   size_t x1_size = size_of(x1);
   size_t x2_size = size_of(x2);
-  Eigen::Matrix<typename return_type<T_x1, T_x2, T_s, T_l>::type,
-                Eigen::Dynamic, Eigen::Dynamic>
+  Eigen::Matrix<return_type_t<T_x1, T_x2, T_s, T_l>, Eigen::Dynamic,
+                Eigen::Dynamic>
       cov(x1_size, x2_size);
 
   if (x1_size == 0 || x2_size == 0)
@@ -280,15 +277,14 @@ gp_matern32_cov(const std::vector<Eigen::Matrix<T_x1, -1, 1>> &x1,
   double root_3 = sqrt(3.0);
   double neg_root_3 = -1.0 * sqrt(3.0);
 
-  std::vector<Eigen::Matrix<typename return_type<T_x1, T_l>::type, -1, 1>>
-      x1_new = divide_columns(x1, length_scale);
-  std::vector<Eigen::Matrix<typename return_type<T_x2, T_l>::type, -1, 1>>
-      x2_new = divide_columns(x2, length_scale);
+  std::vector<Eigen::Matrix<return_type_t<T_x1, T_l>, -1, 1>> x1_new
+      = divide_columns(x1, length_scale);
+  std::vector<Eigen::Matrix<return_type_t<T_x2, T_l>, -1, 1>> x2_new
+      = divide_columns(x2, length_scale);
 
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
-      typename return_type<T_x1, T_x2, T_l>::type dist
-          = distance(x1_new[i], x2_new[j]);
+      return_type_t<T_x1, T_x2, T_l> dist = distance(x1_new[i], x2_new[j]);
       cov(i, j) = sigma_sq * (1.0 + root_3 * dist) * exp(neg_root_3 * dist);
     }
   }

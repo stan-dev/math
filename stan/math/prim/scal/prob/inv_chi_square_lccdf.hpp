@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_INV_CHI_SQUARE_LCCDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_INV_CHI_SQUARE_LCCDF_HPP
 
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -12,12 +12,6 @@
 #include <stan/math/prim/scal/fun/gamma_p.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/tgamma.hpp>
-#include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
 #include <cmath>
 #include <limits>
@@ -39,10 +33,8 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_y, typename T_dof>
-typename return_type<T_y, T_dof>::type inv_chi_square_lccdf(const T_y& y,
-                                                            const T_dof& nu) {
-  typedef
-      typename stan::partials_return_type<T_y, T_dof>::type T_partials_return;
+return_type_t<T_y, T_dof> inv_chi_square_lccdf(const T_y& y, const T_dof& nu) {
+  typedef partials_return_type_t<T_y, T_dof> T_partials_return;
 
   if (size_zero(y, nu))
     return 0.0;
@@ -73,12 +65,12 @@ typename return_type<T_y, T_dof>::type inv_chi_square_lccdf(const T_y& y,
   using std::log;
   using std::pow;
 
-  VectorBuilder<!is_constant_struct<T_dof>::value, T_partials_return, T_dof>
+  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
       gamma_vec(stan::length(nu));
-  VectorBuilder<!is_constant_struct<T_dof>::value, T_partials_return, T_dof>
+  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
       digamma_vec(stan::length(nu));
 
-  if (!is_constant_struct<T_dof>::value) {
+  if (!is_constant_all<T_dof>::value) {
     for (size_t i = 0; i < stan::length(nu); i++) {
       const T_partials_return nu_dbl = value_of(nu_vec[i]);
       gamma_vec[i] = tgamma(0.5 * nu_dbl);
@@ -101,12 +93,12 @@ typename return_type<T_y, T_dof>::type inv_chi_square_lccdf(const T_y& y,
 
     P += log(Pn);
 
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n]
           -= 0.5 * y_inv_dbl * y_inv_dbl * exp(-0.5 * y_inv_dbl)
              * pow(0.5 * y_inv_dbl, 0.5 * nu_dbl - 1) / tgamma(0.5 * nu_dbl)
              / Pn;
-    if (!is_constant_struct<T_dof>::value)
+    if (!is_constant_all<T_dof>::value)
       ops_partials.edge2_.partials_[n]
           -= 0.5
              * grad_reg_inc_gamma(0.5 * nu_dbl, 0.5 * y_inv_dbl, gamma_vec[n],

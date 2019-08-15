@@ -1,8 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_SKEW_NORMAL_LCCDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_SKEW_NORMAL_LCCDF_HPP
 
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
@@ -10,22 +9,18 @@
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/owens_t.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <cmath>
 
 namespace stan {
 namespace math {
 
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
-typename return_type<T_y, T_loc, T_scale, T_shape>::type skew_normal_lccdf(
+return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lccdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& alpha) {
   static const char* function = "skew_normal_lccdf";
-  typedef
-      typename stan::partials_return_type<T_y, T_loc, T_scale, T_shape>::type
-          T_partials_return;
+  typedef partials_return_type_t<T_y, T_loc, T_scale, T_shape>
+      T_partials_return;
 
   T_partials_return ccdf_log(0.0);
 
@@ -77,13 +72,13 @@ typename return_type<T_y, T_loc, T_scale, T_shape>::type skew_normal_lccdf(
     const T_partials_return rep_deriv
         = (-2.0 * deriv_owens + deriv_erfc) / ccdf_log_;
 
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n] -= rep_deriv;
-    if (!is_constant_struct<T_loc>::value)
+    if (!is_constant_all<T_loc>::value)
       ops_partials.edge2_.partials_[n] += rep_deriv;
-    if (!is_constant_struct<T_scale>::value)
+    if (!is_constant_all<T_scale>::value)
       ops_partials.edge3_.partials_[n] += rep_deriv * diff;
-    if (!is_constant_struct<T_shape>::value)
+    if (!is_constant_all<T_shape>::value)
       ops_partials.edge4_.partials_[n]
           -= -2.0 * exp(-0.5 * diff_sq * (1.0 + alpha_dbl_sq))
              / ((1 + alpha_dbl_sq) * 2.0 * pi()) / ccdf_log_;

@@ -1,9 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_PARETO_TYPE_2_LPDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_PARETO_TYPE_2_LPDF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
@@ -12,9 +10,6 @@
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/log1p.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <cmath>
 
 namespace stan {
@@ -23,13 +18,12 @@ namespace math {
 // pareto_type_2(y|lambda, alpha)  [y >= 0;  lambda > 0;  alpha > 0]
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
           typename T_shape>
-typename return_type<T_y, T_loc, T_scale, T_shape>::type pareto_type_2_lpdf(
+return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
     const T_y& y, const T_loc& mu, const T_scale& lambda,
     const T_shape& alpha) {
   static const char* function = "pareto_type_2_lpdf";
-  typedef
-      typename stan::partials_return_type<T_y, T_loc, T_scale, T_shape>::type
-          T_partials_return;
+  typedef partials_return_type_t<T_y, T_loc, T_scale, T_shape>
+      T_partials_return;
 
   using std::log;
 
@@ -82,9 +76,9 @@ typename return_type<T_y, T_loc, T_scale, T_shape>::type pareto_type_2_lpdf(
       log_alpha[n] = log(value_of(alpha_vec[n]));
   }
 
-  VectorBuilder<!is_constant_struct<T_shape>::value, T_partials_return, T_shape>
+  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
       inv_alpha(length(alpha));
-  if (!is_constant_struct<T_shape>::value) {
+  if (!is_constant_all<T_shape>::value) {
     for (size_t n = 0; n < length(alpha); n++)
       inv_alpha[n] = 1 / value_of(alpha_vec[n]);
   }
@@ -106,23 +100,23 @@ typename return_type<T_y, T_loc, T_scale, T_shape>::type pareto_type_2_lpdf(
     if (include_summand<propto, T_y, T_scale, T_shape>::value)
       logp -= (alpha_dbl + 1.0) * log1p_scaled_diff[n];
 
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n] -= deriv_1_2;
-    if (!is_constant_struct<T_loc>::value)
+    if (!is_constant_all<T_loc>::value)
       ops_partials.edge2_.partials_[n] += deriv_1_2;
-    if (!is_constant_struct<T_scale>::value)
+    if (!is_constant_all<T_scale>::value)
       ops_partials.edge3_.partials_[n]
           -= alpha_div_sum * (mu_dbl - y_dbl) / lambda_dbl + inv_sum;
-    if (!is_constant_struct<T_shape>::value)
+    if (!is_constant_all<T_shape>::value)
       ops_partials.edge4_.partials_[n] += inv_alpha[n] - log1p_scaled_diff[n];
   }
   return ops_partials.build(logp);
 }
 
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
-inline typename return_type<T_y, T_loc, T_scale, T_shape>::type
-pareto_type_2_lpdf(const T_y& y, const T_loc& mu, const T_scale& lambda,
-                   const T_shape& alpha) {
+inline return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
+    const T_y& y, const T_loc& mu, const T_scale& lambda,
+    const T_shape& alpha) {
   return pareto_type_2_lpdf<false>(y, mu, lambda, alpha);
 }
 

@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_MULTI_GP_CHOLESKY_LPDF_HPP
 #define STAN_MATH_PRIM_MAT_PROB_MULTI_GP_CHOLESKY_LPDF_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/mat/fun/dot_self.hpp>
 #include <stan/math/prim/mat/fun/log.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left_tri_low.hpp>
@@ -35,14 +35,12 @@ namespace math {
  * @tparam T_w Type of weight.
  */
 template <bool propto, typename T_y, typename T_covar, typename T_w>
-typename boost::math::tools::promote_args<T_y, T_covar, T_w>::type
-multi_gp_cholesky_lpdf(
+return_type_t<T_y, T_covar, T_w> multi_gp_cholesky_lpdf(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
     const Eigen::Matrix<T_covar, Eigen::Dynamic, Eigen::Dynamic>& L,
     const Eigen::Matrix<T_w, Eigen::Dynamic, 1>& w) {
   static const char* function = "multi_gp_cholesky_lpdf";
-  typedef
-      typename boost::math::tools::promote_args<T_y, T_covar, T_w>::type T_lp;
+  typedef return_type_t<T_y, T_covar, T_w> T_lp;
 
   check_size_match(function, "Size of random variable (rows y)", y.rows(),
                    "Size of kernel scales (w)", w.size());
@@ -72,10 +70,8 @@ multi_gp_cholesky_lpdf(
     T_lp sum_lp_vec(0);
     for (int i = 0; i < y.rows(); i++) {
       Eigen::Matrix<T_y, Eigen::Dynamic, 1> y_row(y.row(i));
-      Eigen::Matrix<
-          typename boost::math::tools::promote_args<T_y, T_covar>::type,
-          Eigen::Dynamic, 1>
-          half(mdivide_left_tri_low(L, y_row));
+      Eigen::Matrix<return_type_t<T_y, T_covar>, Eigen::Dynamic, 1> half(
+          mdivide_left_tri_low(L, y_row));
       sum_lp_vec += w(i) * dot_self(half);
     }
     lp -= 0.5 * sum_lp_vec;
@@ -85,8 +81,7 @@ multi_gp_cholesky_lpdf(
 }
 
 template <typename T_y, typename T_covar, typename T_w>
-inline typename boost::math::tools::promote_args<T_y, T_covar, T_w>::type
-multi_gp_cholesky_lpdf(
+inline return_type_t<T_y, T_covar, T_w> multi_gp_cholesky_lpdf(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
     const Eigen::Matrix<T_covar, Eigen::Dynamic, Eigen::Dynamic>& L,
     const Eigen::Matrix<T_w, Eigen::Dynamic, 1>& w) {
