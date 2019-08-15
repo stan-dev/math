@@ -121,7 +121,8 @@ inline var fma(const var& a, const var& b, const var& c) {
  * @param c Summand.
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
-inline var fma(const var& a, const var& b, double c) {
+template <typename Tc, typename = enable_if_arithmetic<Tc>>
+inline var fma(const var& a, const var& b, Tc c) {
   return var(new internal::fma_vvd_vari(a.vi_, b.vi_, c));
 }
 
@@ -141,7 +142,8 @@ inline var fma(const var& a, const var& b, double c) {
  * @param c Summand.
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
-inline var fma(const var& a, double b, const var& c) {
+template <typename Tb, typename = enable_if_arithmetic<Tb>>
+inline var fma(const var& a, Tb b, const var& c) {
   return var(new internal::fma_vdv_vari(a.vi_, b, c.vi_));
 }
 
@@ -163,7 +165,8 @@ inline var fma(const var& a, double b, const var& c) {
  * @param c Summand.
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
-inline var fma(const var& a, double b, double c) {
+template <typename Tb, typename Tc, typename = enable_if_all_arithmetic<Tb, Tc>>
+inline var fma(const var& a, Tb b, Tc c) {
   return var(new internal::fma_vdd_vari(a.vi_, b, c));
 }
 
@@ -181,7 +184,8 @@ inline var fma(const var& a, double b, double c) {
  * @param c Summand.
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
-inline var fma(double a, const var& b, double c) {
+template <typename Ta, typename Tc, typename = enable_if_all_arithmetic<Ta, Tc>>
+inline var fma(Ta a, const var& b, Tc c) {
   return var(new internal::fma_vdd_vari(b.vi_, a, c));
 }
 
@@ -199,7 +203,8 @@ inline var fma(double a, const var& b, double c) {
  * @param c Summand.
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
-inline var fma(double a, double b, const var& c) {
+template <typename Ta, typename Tb, typename = enable_if_all_arithmetic<Ta, Tb>>
+inline var fma(Ta a, Tb b, const var& c) {
   return var(new internal::fma_ddv_vari(a, b, c.vi_));
 }
 
@@ -219,7 +224,8 @@ inline var fma(double a, double b, const var& c) {
  * @param c Summand.
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
-inline var fma(double a, const var& b, const var& c) {
+template <typename Ta, typename = enable_if_arithmetic<Ta>>
+inline var fma(Ta a, const var& b, const var& c) {
   return var(new internal::fma_vdv_vari(b.vi_, a, c.vi_));  // a-b symmetry
 }
 

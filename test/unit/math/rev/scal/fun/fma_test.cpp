@@ -112,10 +112,10 @@ TEST(, check_varis_on_stack) {
   AVAR b = 5.0;
   AVAR c = 7.0;
   test::check_varis_on_stack(stan::math::fma(a, b, c));
-  test::check_varis_on_stack(stan::math::fma(a, b, 7.0));
-  test::check_varis_on_stack(stan::math::fma(a, 5.0, c));
-  test::check_varis_on_stack(stan::math::fma(a, 5.0, 7.0));
-  test::check_varis_on_stack(stan::math::fma(3.0, b, c));
-  test::check_varis_on_stack(stan::math::fma(3.0, b, 7.0));
-  test::check_varis_on_stack(stan::math::fma(3.0, 5.0, c));
+  test::check_varis_on_stack(stan::math::fma(a, b, 7));
+  test::check_varis_on_stack(stan::math::fma(a, 5, c));
+  test::check_varis_on_stack(stan::math::fma(a, 5, 7));
+  test::check_varis_on_stack(stan::math::fma(3, b, c));
+  test::check_varis_on_stack(stan::math::fma(3, b, 7));
+  test::check_varis_on_stack(stan::math::fma(3, 5, c));
 }
