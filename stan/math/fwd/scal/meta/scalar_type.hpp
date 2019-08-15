@@ -4,6 +4,8 @@
 #include <stan/math/fwd/scal/meta/is_fvar.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <type_traits>
+template <typename T>
+class fvar;
 namespace stan {
 
 /**
