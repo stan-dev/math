@@ -24,7 +24,6 @@ inline auto rows_dot_product(const T1& v1, const T2& v2) {
   return (v1.cwiseProduct(v2)).rowwise().sum();
 }
 
-
 }  // namespace math
 }  // namespace stan
 #endif

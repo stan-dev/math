@@ -9,17 +9,17 @@
 
 namespace stan {
 
-template<typename T>
-struct is_stan_scalar : std::integral_constant<bool,
- std::is_arithmetic<std::decay_t<T>>::value || is_var<std::decay_t<T>>::value || is_fvar<std::decay_t<T>>::value> {};
+template <typename T>
+struct is_stan_scalar
+    : std::integral_constant<bool, std::is_arithmetic<std::decay_t<T>>::value
+                                       || is_var<std::decay_t<T>>::value
+                                       || is_fvar<std::decay_t<T>>::value> {};
 
 template <typename T>
-using enable_if_stan_scalar
-    = std::enable_if_t<is_stan_scalar<T>::value>;
+using enable_if_stan_scalar = std::enable_if_t<is_stan_scalar<T>::value>;
 
 template <typename T>
-using enable_if_not_stan_scalar
-    = std::enable_if_t<is_stan_scalar<T>::value>;
+using enable_if_not_stan_scalar = std::enable_if_t<is_stan_scalar<T>::value>;
 
 template <typename... Types>
 using enable_if_all_stan_scalar = std::enable_if_t<

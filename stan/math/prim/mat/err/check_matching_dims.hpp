@@ -31,9 +31,7 @@ namespace math {
  */
 template <typename T1, typename T2, enable_if_all_eigen<T1, T2>* = nullptr>
 inline void check_matching_dims(const char* function, const char* name1,
-                                const T1& y1,
-                                const char* name2,
-                                const T2& y2) {
+                                const T1& y1, const char* name2, const T2& y2) {
   check_size_match(function, "Rows of ", name1, y1.rows(), "rows of ", name2,
                    y2.rows());
   check_size_match(function, "Columns of ", name1, y1.cols(), "columns of ",

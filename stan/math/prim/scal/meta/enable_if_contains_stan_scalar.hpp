@@ -10,9 +10,12 @@
 
 namespace stan {
 
-template<typename T>
-struct is_contains_stan_scalar: std::integral_constant<bool,
- std::is_arithmetic<scalar_type_t<std::decay_t<T>>>::value || is_var<scalar_type_t<std::decay_t<T>>>::value || is_fvar<scalar_type_t<std::decay_t<T>>>::value> {};
+template <typename T>
+struct is_contains_stan_scalar
+    : std::integral_constant<
+          bool, std::is_arithmetic<scalar_type_t<std::decay_t<T>>>::value
+                    || is_var<scalar_type_t<std::decay_t<T>>>::value
+                    || is_fvar<scalar_type_t<std::decay_t<T>>>::value> {};
 
 template <typename T>
 using enable_if_contains_stan_scalar
@@ -23,19 +26,19 @@ using enable_if_not_contains_stan_scalar
     = std::enable_if_t<is_contains_stan_scalar<T>::value>;
 
 template <typename... Types>
-using enable_if_all_contains_stan_scalar= std::enable_if_t<
+using enable_if_all_contains_stan_scalar = std::enable_if_t<
     math::conjunction<is_contains_stan_scalar<Types>...>::value>;
 
 template <typename... Types>
-using enable_if_any_contains_stan_scalar= std::enable_if_t<
+using enable_if_any_contains_stan_scalar = std::enable_if_t<
     math::disjunction<is_contains_stan_scalar<Types>...>::value>;
 
 template <typename... Types>
-using enable_if_all_not_contains_stan_scalar= std::enable_if_t<
+using enable_if_all_not_contains_stan_scalar = std::enable_if_t<
     !math::conjunction<is_contains_stan_scalar<Types>...>::value>;
 
 template <typename... Types>
-using enable_if_any_not_stan_contains_stan_scalar= std::enable_if_t<
+using enable_if_any_not_stan_contains_stan_scalar = std::enable_if_t<
     !math::disjunction<is_contains_stan_scalar<Types>...>::value>;
 
 }  // namespace stan

@@ -10,8 +10,6 @@
 #include <stan/math/fwd/mat/fun/typedefs.hpp>
 #include <stan/math/fwd/mat/fun/dot_product.hpp>
 namespace stan {
-namespace math {
-
-}  // namespace math
+namespace math {}  // namespace math
 }  // namespace stan
 #endif

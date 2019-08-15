@@ -9,15 +9,18 @@
 
 namespace stan {
 
-template<typename T>
-struct is_eigen_vector : std::integral_constant<bool, T::RowsAtCompileTime == 1 || T::ColsAtCompileTime == 1> {};
-
+template <typename T>
+struct is_eigen_vector
+    : std::integral_constant<bool, T::RowsAtCompileTime == 1
+                                       || T::ColsAtCompileTime == 1> {};
 
 template <typename T>
-using enable_if_eigen_vector = std::enable_if_t<T::RowsAtCompileTime == 1 || T::ColsAtCompileTime == 1>;
+using enable_if_eigen_vector
+    = std::enable_if_t<T::RowsAtCompileTime == 1 || T::ColsAtCompileTime == 1>;
 
 template <typename T>
-using enable_if_not_eigen_vector = std::enable_if_t<!(T::RowsAtCompileTime == 1 || T::ColsAtCompileTime == 1)>;
+using enable_if_not_eigen_vector = std::enable_if_t<!(
+    T::RowsAtCompileTime == 1 || T::ColsAtCompileTime == 1)>;
 
 template <typename... Types>
 using enable_if_all_eigen_vector
@@ -61,10 +64,10 @@ using enable_if_dot_product = std::enable_if_t<(
     && T2::RowsAtCompileTime == -1 && T2::ColsAtCompileTime == 1)>;
 
 template <typename T1, typename T2>
-using enable_if_either_dot_product = std::enable_if_t<(
-    T1::RowsAtCompileTime == 1 && T1::ColsAtCompileTime == -1
-    && T2::RowsAtCompileTime == -1 && T2::ColsAtCompileTime == 1) ||
-    (T2::RowsAtCompileTime == 1 && T2::ColsAtCompileTime == -1
+using enable_if_either_dot_product = std::enable_if_t<
+    (T1::RowsAtCompileTime == 1 && T1::ColsAtCompileTime == -1
+     && T2::RowsAtCompileTime == -1 && T2::ColsAtCompileTime == 1)
+    || (T2::RowsAtCompileTime == 1 && T2::ColsAtCompileTime == -1
         && T1::RowsAtCompileTime == -1 && T1::ColsAtCompileTime == 1)>;
 
 template <typename T1, typename T2>
