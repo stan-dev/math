@@ -201,7 +201,13 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
     }
   }
 
-  matrix_cl(matrix_cl<T>&& A) : buffer_cl_(A.buffer_cl_), rows_(A.rows_), cols_(A.cols_), view_(A.view_), read_events_(std::move(A.read_events_)), write_events_(std::move(A.write_events_)) {}
+  matrix_cl(matrix_cl<T>&& A)
+      : buffer_cl_(A.buffer_cl_),
+        rows_(A.rows_),
+        cols_(A.cols_),
+        view_(A.view_),
+        read_events_(std::move(A.read_events_)),
+        write_events_(std::move(A.write_events_)) {}
 
   /**
    * Constructor for the matrix_cl that
@@ -366,10 +372,10 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
    * Move a \c matrix_cl to another
    */
   matrix_cl<T>& operator=(matrix_cl<T>&& a) {
-    check_size_match("move of (OpenCL) matrix", "source.rows()",
-                     a.rows(), "destination.rows()", rows());
-    check_size_match("move of (OpenCL) matrix", "source.cols()",
-                     a.cols(), "destination.cols()", cols());
+    check_size_match("move of (OpenCL) matrix", "source.rows()", a.rows(),
+                     "destination.rows()", rows());
+    check_size_match("move of (OpenCL) matrix", "source.cols()", a.cols(),
+                     "destination.cols()", cols());
     // Need to wait for all of matrices events before destroying old buffer
     this->wait_for_read_write_events();
     buffer_cl_ = a.buffer();
