@@ -13,6 +13,7 @@
 #include <stan/math/prim/mat/meta/broadcast_array.hpp>
 #include <stan/math/prim/mat/meta/enable_if_eigen.hpp>
 #include <stan/math/prim/mat/meta/enable_if_eigen_vector.hpp>
+#include <stan/math/prim/mat/meta/enable_if_eigen_sizes_match.hpp>
 #include <stan/math/prim/mat/meta/enable_if_vector.hpp>
 #include <stan/math/prim/mat/meta/get.hpp>
 #include <stan/math/prim/mat/meta/index_type.hpp>

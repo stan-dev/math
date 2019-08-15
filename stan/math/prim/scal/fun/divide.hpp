@@ -16,8 +16,8 @@ namespace math {
  * @param[in] y Specified scalar.
  * @return Vector divided by the scalar.
  */
-template <typename T1, typename T2>
-inline return_type_t<T1, T2> divide(const T1& x, const T2& y) {
+template <typename T1, typename T2, enable_if_all_arithmetic<T1, T2>* = nullptr>
+inline auto divide(const T1& x, const T2& y) {
   return x / y;
 }
 

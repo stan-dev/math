@@ -15,15 +15,14 @@ namespace math {
  * @tparam T scalar type
  * @return Upper triangular matrix with minimal rows
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> qr_thin_R(
-    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& m) {
-  typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> matrix_t;
+template <typename T, typename = enable_if_eigen<T>>
+auto qr_thin_R(const T& m) {
+  using plain_type = typename T::PlainObject;
   check_nonzero_size("qr_thin_R", "m", m);
-  Eigen::HouseholderQR<matrix_t> qr(m.rows(), m.cols());
+  Eigen::HouseholderQR<plain_type> qr(m.rows(), m.cols());
   qr.compute(m);
   const int min_size = std::min(m.rows(), m.cols());
-  matrix_t R = qr.matrixQR().topLeftCorner(min_size, m.cols());
+  plain_type R = qr.matrixQR().topLeftCorner(min_size, m.cols());
   for (int i = 0; i < min_size; i++) {
     for (int j = 0; j < i; j++)
       R.coeffRef(i, j) = 0.0;

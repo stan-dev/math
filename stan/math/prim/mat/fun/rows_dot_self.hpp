@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_ROWS_DOT_SELF_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
 
 namespace stan {
 namespace math {
@@ -11,8 +12,8 @@ namespace math {
  * @param x Matrix.
  * @tparam T scalar type
  */
-template <typename T, int R, int C>
-inline Eigen::Matrix<T, R, 1> rows_dot_self(const Eigen::Matrix<T, R, C>& x) {
+template <typename T, typename = enable_if_eigen<T>>
+inline auto rows_dot_self(const T& x) {
   return x.rowwise().squaredNorm();
 }
 

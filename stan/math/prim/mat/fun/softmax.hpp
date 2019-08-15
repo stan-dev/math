@@ -1,8 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_SOFTMAX_HPP
 #define STAN_MATH_PRIM_MAT_FUN_SOFTMAX_HPP
 
-#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <cmath>
 
 namespace stan {
@@ -41,13 +42,10 @@ namespace math {
  * @param[in] v Vector to transform.
  * @return Unit simplex result of the softmax transform of the vector.
  */
-template <typename T>
-inline Eigen::Matrix<T, Eigen::Dynamic, 1> softmax(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& v) {
-  using std::exp;
+ template <typename T, typename = enable_if_eigen<T>, std::enable_if_t<T::ColsAtCompileTime == 1>* = nullptr>
+inline auto softmax(const T& v) {
   check_nonzero_size("softmax", "v", v);
-  Eigen::Matrix<T, Eigen::Dynamic, 1> theta(v.size());
-  theta = (v.array() - v.maxCoeff()).exp();
+  auto theta = (v.array() - v.maxCoeff()).exp();
   return theta.array() / theta.sum();
 }
 

@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_NUM_ELEMENTS_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <vector>
 
 namespace stan {
@@ -13,8 +14,8 @@ namespace math {
  * @param x Argument of primitive type.
  * @return 1
  */
-template <typename T>
-inline int num_elements(const T& x) {
+template <typename T, enable_if_arithmetic<T>* = nullptr>
+constexpr inline int num_elements(const T& x) {
   return 1;
 }
 
@@ -24,8 +25,8 @@ inline int num_elements(const T& x) {
  * @param m argument matrix
  * @return size of matrix
  */
-template <typename T, int R, int C>
-inline int num_elements(const Eigen::Matrix<T, R, C>& m) {
+template <typename T, enable_if_eigen<T>* = nullptr>
+inline auto num_elements(const T& m) {
   return m.size();
 }
 
@@ -38,7 +39,7 @@ inline int num_elements(const Eigen::Matrix<T, R, C>& m) {
  * @return number of contained arguments
  */
 template <typename T>
-inline int num_elements(const std::vector<T>& v) {
+inline auto num_elements(const std::vector<T>& v) {
   if (v.size() == 0)
     return 0;
   return v.size() * num_elements(v[0]);

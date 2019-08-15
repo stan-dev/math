@@ -1,9 +1,10 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_QR_Q_HPP
 #define STAN_MATH_PRIM_MAT_FUN_QR_Q_HPP
 
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <algorithm>
 
 namespace stan {
@@ -15,14 +16,14 @@ namespace math {
  * @tparam T scalar type
  * @return Orthogonal matrix with maximal columns
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> qr_Q(
-    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& m) {
-  typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> matrix_t;
+template <typename T, typename = enable_if_eigen<T>>
+auto qr_Q(const T& m) {
   check_nonzero_size("qr_Q", "m", m);
-  Eigen::HouseholderQR<matrix_t> qr(m.rows(), m.cols());
+  check_greater_or_equal("qr_Q", "m.rows()", m.rows(), m.cols());
+  using plain_type = typename T::PlainObject;
+  Eigen::HouseholderQR<plain_type> qr(m.rows(), m.cols());
   qr.compute(m);
-  matrix_t Q = qr.householderQ();
+  plain_type Q = qr.householderQ();
   const int min_size = std::min(m.rows(), m.cols());
   for (int i = 0; i < min_size; i++)
     if (qr.matrixQR().coeff(i, i) < 0)

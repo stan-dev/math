@@ -1,9 +1,10 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_UNIT_VECTOR_CONSTRAIN_HPP
 #define STAN_MATH_PRIM_MAT_FUN_UNIT_VECTOR_CONSTRAIN_HPP
 
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/err/check_vector.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/dot_self.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <cmath>
@@ -22,12 +23,12 @@ namespace math {
  * @param y vector of K unrestricted variables
  * @return Unit length vector of dimension K
  */
-template <typename T, int R, int C>
-Eigen::Matrix<T, R, C> unit_vector_constrain(const Eigen::Matrix<T, R, C>& y) {
+template <typename T, enable_if_eigen<T>* = nullptr>
+auto unit_vector_constrain(const T& y) {
   using std::sqrt;
   check_vector("unit_vector_constrain", "y", y);
   check_nonzero_size("unit_vector_constrain", "y", y);
-  T SN = dot_self(y);
+  typename T::Scalar SN = dot_self(y);
   check_positive_finite("unit_vector_constrain", "norm", SN);
   return y / sqrt(SN);
 }
@@ -41,13 +42,12 @@ Eigen::Matrix<T, R, C> unit_vector_constrain(const Eigen::Matrix<T, R, C>& y) {
  * @param lp Log probability reference to increment.
  * @tparam T Scalar type.
  */
-template <typename T, int R, int C>
-Eigen::Matrix<T, R, C> unit_vector_constrain(const Eigen::Matrix<T, R, C>& y,
-                                             T& lp) {
+template <typename T1, typename T2, enable_if_eigen<T1>* = nullptr>
+auto unit_vector_constrain(const T1& y, T2& lp) {
   using std::sqrt;
   check_vector("unit_vector_constrain", "y", y);
   check_nonzero_size("unit_vector_constrain", "y", y);
-  T SN = dot_self(y);
+  typename T1::Scalar SN = dot_self(y);
   check_positive_finite("unit_vector_constrain", "norm", SN);
   lp -= 0.5 * SN;
   return y / sqrt(SN);

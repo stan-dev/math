@@ -37,8 +37,7 @@ inline auto add(const Mat1& m1, const Mat2& m2) {
  * @param c Scalar.
  * @return The matrix plus the scalar.
  */
-template <typename Mat, typename Arith, typename = enable_if_eigen<Mat>,
-          typename = enable_if_arithmetic<Arith>>
+template <typename Mat, typename Arith, typename = enable_if_eigen<Mat>, typename = enable_if_not_eigen<Arith>>
 inline auto add(const Mat& m, const Arith& c) {
   return m.array() + c;
 }
@@ -52,7 +51,7 @@ inline auto add(const Mat& m, const Arith& c) {
  * @param m Matrix.
  * @return The scalar plus the matrix.
  */
-template <typename Mat, typename Arith, typename = enable_if_arithmetic<Arith>,
+template <typename Mat, typename Arith, typename = enable_if_not_eigen<Arith>,
           typename = enable_if_eigen<Mat>>
 inline auto add(const Arith& c, const Mat& m) {
   return c + m.array();

@@ -20,10 +20,10 @@ namespace math {
  * than 1.
  */
 template <typename T>
-inline return_type_t<T> variance(const std::vector<T>& v) {
+inline auto variance(const std::vector<T>& v) {
   check_nonzero_size("variance", "v", v);
   if (v.size() == 1)
-    return 0.0;
+    return scalar_type_t<T>(0.0);
   T v_mean(mean(v));
   T sum_sq_diff(0);
   for (size_t i = 0; i < v.size(); ++i) {
@@ -44,7 +44,7 @@ inline auto variance(const T& m) {
   check_nonzero_size("variance", "m", m);
 
   if (m.size() == 1)
-    return 0.0;
+    return typename T::Scalar(0.0);
   return (m.array() - mean(m)).square().sum() / (m.size() - 1);
 }
 

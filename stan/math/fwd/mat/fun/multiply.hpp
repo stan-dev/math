@@ -2,133 +2,64 @@
 #define STAN_MATH_FWD_MAT_FUN_MULTIPLY_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/fwd/core.hpp>
+#include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/mat/fun/typedefs.hpp>
 #include <stan/math/fwd/mat/fun/dot_product.hpp>
 
 namespace stan {
 namespace math {
 
-template <typename T, int R1, int C1>
-inline Eigen::Matrix<fvar<T>, R1, C1> multiply(
-    const Eigen::Matrix<fvar<T>, R1, C1>& m, const fvar<T>& c) {
-  Eigen::Matrix<fvar<T>, R1, C1> res(m.rows(), m.cols());
-  for (int i = 0; i < m.rows(); i++) {
-    for (int j = 0; j < m.cols(); j++)
-      res(i, j) = c * m(i, j);
+  /**
+   * Return specified matrix multiplied by specified scalar.
+   * @tparam R Row type for matrix.
+   * @tparam C Column type for matrix.
+   * @param m Matrix.
+   * @param c Scalar.
+   * @return Product of matrix and scalar.
+   */
+  template <typename T1, typename T2, enable_if_any_fvar<T1, T2>* = nullptr>
+  inline auto multiply(T1 m, T2 c) {
+    return c * m;
   }
-  return res;
-}
 
-template <typename T, int R2, int C2>
-inline Eigen::Matrix<fvar<T>, R2, C2> multiply(
-    const Eigen::Matrix<fvar<T>, R2, C2>& m, double c) {
-  Eigen::Matrix<fvar<T>, R2, C2> res(m.rows(), m.cols());
-  for (int i = 0; i < m.rows(); i++) {
-    for (int j = 0; j < m.cols(); j++)
-      res(i, j) = c * m(i, j);
+  /**
+   * Return the product of the specified matrices.  The number of
+   * columns in the first matrix must be the same as the number of rows
+   * in the second matrix.
+   * @param m1 First matrix.
+   * @param m2 Second matrix.
+   * @return The product of the first and second matrices.
+   * @throw std::domain_error if the number of columns of m1 does not match
+   *   the number of rows of m2.
+   */
+  template <typename T1, typename T2, enable_if_all_eigen<T1, T2>* = nullptr,
+            enable_if_all_fvar<scalar_type_t<T1>, scalar_type_t<T2>>* = nullptr,
+            enable_if_not_dot_product<T1, T2>* = nullptr>
+  inline auto multiply(const T1& m1, const T2& m2) {
+    check_multiplicable("multiply", "m1", m1, "m2", m2);
+    return m1 * m2;
   }
-  return res;
-}
 
-template <typename T, int R1, int C1>
-inline Eigen::Matrix<fvar<T>, R1, C1> multiply(
-    const Eigen::Matrix<double, R1, C1>& m, const fvar<T>& c) {
-  Eigen::Matrix<fvar<T>, R1, C1> res(m.rows(), m.cols());
-  for (int i = 0; i < m.rows(); i++) {
-    for (int j = 0; j < m.cols(); j++)
-      res(i, j) = c * m(i, j);
+  /**
+   * Return the scalar product of the specified row vector and
+   * specified column vector.  The return is the same as the dot
+   * product.  The two vectors must be the same size.
+   * @param rv Row vector.
+   * @param v Column vector.
+   * @return Scalar result of multiplying row vector by column vector.
+   * @throw std::domain_error if rv and v are not the same size.
+   */
+  template <typename T1, typename T2, enable_if_all_fvar<scalar_type_t<T1>, scalar_type_t<T2>>* = nullptr,
+            enable_if_dot_product<T1, T2>* = nullptr>
+  inline auto multiply(const T1& rv, const T2& v) {
+    check_matching_sizes("multiply", "rv", rv, "v", v);
+    return rv.dot(v);
   }
-  return res;
-}
 
-template <typename T, int R1, int C1>
-inline Eigen::Matrix<fvar<T>, R1, C1> multiply(
-    const fvar<T>& c, const Eigen::Matrix<fvar<T>, R1, C1>& m) {
-  return multiply(m, c);
-}
 
-template <typename T, int R1, int C1>
-inline Eigen::Matrix<fvar<T>, R1, C1> multiply(
-    double c, const Eigen::Matrix<fvar<T>, R1, C1>& m) {
-  return multiply(m, c);
-}
-
-template <typename T, int R1, int C1>
-inline Eigen::Matrix<fvar<T>, R1, C1> multiply(
-    const fvar<T>& c, const Eigen::Matrix<double, R1, C1>& m) {
-  return multiply(m, c);
-}
-
-template <typename T, int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<fvar<T>, R1, C2> multiply(
-    const Eigen::Matrix<fvar<T>, R1, C1>& m1,
-    const Eigen::Matrix<fvar<T>, R2, C2>& m2) {
-  check_multiplicable("multiply", "m1", m1, "m2", m2);
-  Eigen::Matrix<fvar<T>, R1, C2> result(m1.rows(), m2.cols());
-  for (size_type i = 0; i < m1.rows(); i++) {
-    Eigen::Matrix<fvar<T>, 1, C1> crow = m1.row(i);
-    for (size_type j = 0; j < m2.cols(); j++) {
-      Eigen::Matrix<fvar<T>, R2, 1> ccol = m2.col(j);
-      result(i, j) = dot_product(crow, ccol);
-    }
-  }
-  return result;
-}
-
-template <typename T, int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<fvar<T>, R1, C2> multiply(
-    const Eigen::Matrix<fvar<T>, R1, C1>& m1,
-    const Eigen::Matrix<double, R2, C2>& m2) {
-  check_multiplicable("multiply", "m1", m1, "m2", m2);
-  Eigen::Matrix<fvar<T>, R1, C2> result(m1.rows(), m2.cols());
-  for (size_type i = 0; i < m1.rows(); i++) {
-    Eigen::Matrix<fvar<T>, 1, C1> crow = m1.row(i);
-    for (size_type j = 0; j < m2.cols(); j++) {
-      Eigen::Matrix<double, R2, 1> ccol = m2.col(j);
-      result(i, j) = dot_product(crow, ccol);
-    }
-  }
-  return result;
-}
-
-template <typename T, int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<fvar<T>, R1, C2> multiply(
-    const Eigen::Matrix<double, R1, C1>& m1,
-    const Eigen::Matrix<fvar<T>, R2, C2>& m2) {
-  check_multiplicable("multiply", "m1", m1, "m2", m2);
-  Eigen::Matrix<fvar<T>, R1, C2> result(m1.rows(), m2.cols());
-  for (size_type i = 0; i < m1.rows(); i++) {
-    Eigen::Matrix<double, 1, C1> crow = m1.row(i);
-    for (size_type j = 0; j < m2.cols(); j++) {
-      Eigen::Matrix<fvar<T>, R2, 1> ccol = m2.col(j);
-      result(i, j) = dot_product(crow, ccol);
-    }
-  }
-  return result;
-}
-
-template <typename T, int C1, int R2>
-inline fvar<T> multiply(const Eigen::Matrix<fvar<T>, 1, C1>& rv,
-                        const Eigen::Matrix<fvar<T>, R2, 1>& v) {
-  check_multiplicable("multiply", "rv", rv, "v", v);
-  return dot_product(rv, v);
-}
-
-template <typename T, int C1, int R2>
-inline fvar<T> multiply(const Eigen::Matrix<fvar<T>, 1, C1>& rv,
-                        const Eigen::Matrix<double, R2, 1>& v) {
-  check_multiplicable("multiply", "rv", rv, "v", v);
-  return dot_product(rv, v);
-}
-
-template <typename T, int C1, int R2>
-inline fvar<T> multiply(const Eigen::Matrix<double, 1, C1>& rv,
-                        const Eigen::Matrix<fvar<T>, R2, 1>& v) {
-  check_multiplicable("multiply", "rv", rv, "v", v);
-  return dot_product(rv, v);
-}
 
 }  // namespace math
 }  // namespace stan
