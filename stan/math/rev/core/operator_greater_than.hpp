@@ -25,7 +25,7 @@ namespace math {
  */
 inline bool operator>(const var& a, const var& b) {
   using std::isgreater;
-  return isgreater(a.val(), b.val()); 
+  return isgreater(a.val(), b.val());
 }
 
 /**
@@ -38,7 +38,7 @@ inline bool operator>(const var& a, const var& b) {
  */
 inline bool operator>(const var& a, double b) {
   using std::isgreater;
-  return isgreater(a.val(), b); 
+  return isgreater(a.val(), b);
 }
 
 /**
@@ -51,7 +51,7 @@ inline bool operator>(const var& a, double b) {
  */
 inline bool operator>(double a, const var& b) {
   using std::isgreater;
-  return isgreater(a, b.val()); 
+  return isgreater(a, b.val());
 }
 
 }  // namespace math
