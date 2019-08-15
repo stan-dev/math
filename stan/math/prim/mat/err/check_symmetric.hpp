@@ -34,7 +34,7 @@ inline void check_symmetric(const char* function, const char* name, T_y& y) {
     return;
   for (auto m = 0; m < k; ++m) {
     for (auto n = m + 1; n < k; ++n) {
-      if (!(fabs(value_of(y(m, n)) - value_of(y(n, m)))
+      if (!(abs(value_of(y(m, n)) - value_of(y(n, m)))
             <= CONSTRAINT_TOLERANCE)) {
         std::ostringstream msg1;
         msg1 << "is not symmetric. " << name << "["

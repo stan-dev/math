@@ -27,7 +27,7 @@ TEST(AgradMixMatrixLogDeterminant, fv_1stDeriv) {
   EXPECT_FLOAT_EQ(-1.5, h[0]);
   EXPECT_FLOAT_EQ(1, h[1]);
   EXPECT_FLOAT_EQ(.5, h[2]);
-  EXPECT_FLOAT_EQ(0.0, h[3]);
+  EXPECT_NEAR(0.0, h[3], 1e-15);
 }
 TEST(AgradMixMatrixLogDeterminant, fv_2ndDeriv) {
   using stan::math::fvar;
@@ -85,7 +85,7 @@ TEST(AgradMixMatrixLogDeterminant, ffv_1stDeriv) {
   EXPECT_FLOAT_EQ(-1.5, h[0]);
   EXPECT_FLOAT_EQ(1, h[1]);
   EXPECT_FLOAT_EQ(.5, h[2]);
-  EXPECT_FLOAT_EQ(0.0, h[3]);
+  EXPECT_NEAR(0.0, h[3], 1e-15);
 }
 TEST(AgradMixMatrixLogDeterminant, ffv_2ndDeriv_1) {
   using stan::math::fvar;
