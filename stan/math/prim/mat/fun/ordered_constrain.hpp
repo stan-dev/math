@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_ORDERED_CONSTRAIN_HPP
 #define STAN_MATH_PRIM_MAT_FUN_ORDERED_CONSTRAIN_HPP
 
-
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <cmath>
@@ -18,9 +17,9 @@ namespace math {
  * @return Positive, increasing ordered vector.
  * @tparam T Type of scalar.
  */
-template <typename T, typename = enable_if_eigen<T>, std::enable_if_t<T::ColsAtCompileTime == 1>* = nullptr>
-auto ordered_constrain(
-    const T& x) {
+template <typename T, typename = enable_if_eigen<T>,
+          std::enable_if_t<T::ColsAtCompileTime == 1>* = nullptr>
+auto ordered_constrain(const T& x) {
   using std::exp;
 
   auto k = x.size();
@@ -44,9 +43,9 @@ auto ordered_constrain(
  * @return Positive, increasing ordered vector.
  * @tparam T Type of scalar.
  */
- template <typename T1, typename T2, typename = enable_if_eigen<T1>, std::enable_if_t<T1::ColsAtCompileTime == 1>* = nullptr>
-inline auto ordered_constrain(
-    const T1& x, T2& lp) {
+template <typename T1, typename T2, typename = enable_if_eigen<T1>,
+          std::enable_if_t<T1::ColsAtCompileTime == 1>* = nullptr>
+inline auto ordered_constrain(const T1& x, T2& lp) {
   for (int i = 1; i < x.size(); ++i) {
     lp += x(i);
   }

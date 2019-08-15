@@ -26,7 +26,8 @@ inline std::vector<T> cumulative_sum(const std::vector<T>& x) {
   std::vector<T> result(x.size());
   if (x.size() == 0)
     return result;
-  std::partial_sum(x.begin(), x.end(), result.begin(), std::plus<scalar_type_t<T>>());
+  std::partial_sum(x.begin(), x.end(), result.begin(),
+                   std::plus<scalar_type_t<T>>());
   return result;
 }
 

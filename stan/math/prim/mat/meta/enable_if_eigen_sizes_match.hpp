@@ -10,22 +10,30 @@
 namespace stan {
 
 template <typename T1, typename T2>
-using enable_if_eigen_rows_match = std::enable_if_t<T1::RowsAtCompileTime == T2::RowsAtCompileTime>;
+using enable_if_eigen_rows_match
+    = std::enable_if_t<T1::RowsAtCompileTime == T2::RowsAtCompileTime>;
 
 template <typename T1, typename T2>
-using enable_if_not_eigen_rows_match = std::enable_if_t<!(T1::RowsAtCompileTime == T2::RowsAtCompileTime)>;
+using enable_if_not_eigen_rows_match
+    = std::enable_if_t<!(T1::RowsAtCompileTime == T2::RowsAtCompileTime)>;
 
 template <typename T1, typename T2>
-using enable_if_eigen_cols_match = std::enable_if_t<T1::ColsAtCompileTime == T2::ColsAtCompileTime>;
+using enable_if_eigen_cols_match
+    = std::enable_if_t<T1::ColsAtCompileTime == T2::ColsAtCompileTime>;
 
 template <typename T1, typename T2>
-using enable_if_not_eigen_cols_match = std::enable_if_t<!(T1::ColsAtCompileTime == T2::ColsAtCompileTime)>;
+using enable_if_not_eigen_cols_match
+    = std::enable_if_t<!(T1::ColsAtCompileTime == T2::ColsAtCompileTime)>;
 
 template <typename T1, typename T2>
-using enable_if_eigen_size_match = std::enable_if_t<T1::ColsAtCompileTime == T2::ColsAtCompileTime || T1::RowsAtCompileTime == T2::RowsAtCompileTime>;
+using enable_if_eigen_size_match
+    = std::enable_if_t<T1::ColsAtCompileTime == T2::ColsAtCompileTime
+                       || T1::RowsAtCompileTime == T2::RowsAtCompileTime>;
 
 template <typename T1, typename T2>
-using enable_if_not_eigen_size_match = std::enable_if_t<!(T1::ColsAtCompileTime == T2::ColsAtCompileTime || T1::RowsAtCompileTime == T2::RowsAtCompileTime)>;
+using enable_if_not_eigen_size_match
+    = std::enable_if_t<!(T1::ColsAtCompileTime == T2::ColsAtCompileTime
+                         || T1::RowsAtCompileTime == T2::RowsAtCompileTime)>;
 
 }  // namespace stan
 #endif

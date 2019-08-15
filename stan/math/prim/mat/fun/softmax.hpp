@@ -42,7 +42,8 @@ namespace math {
  * @param[in] v Vector to transform.
  * @return Unit simplex result of the softmax transform of the vector.
  */
- template <typename T, typename = enable_if_eigen<T>, std::enable_if_t<T::ColsAtCompileTime == 1>* = nullptr>
+template <typename T, typename = enable_if_eigen<T>,
+          std::enable_if_t<T::ColsAtCompileTime == 1>* = nullptr>
 inline auto softmax(const T& v) {
   check_nonzero_size("softmax", "v", v);
   auto theta = (v.array() - v.maxCoeff()).exp();

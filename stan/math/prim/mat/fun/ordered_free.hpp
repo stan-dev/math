@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_ORDERED_FREE_HPP
 #define STAN_MATH_PRIM_MAT_FUN_ORDERED_FREE_HPP
 
-
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/err/check_ordered.hpp>
@@ -22,9 +21,9 @@ namespace math {
  * @throw std::domain_error if y is not a vector of positive,
  *   ordered scalars.
  */
-template <typename T, typename = enable_if_eigen<T>, std::enable_if_t<T::ColsAtCompileTime == 1>* = nullptr>
-auto ordered_free(
-    const T& y) {
+template <typename T, typename = enable_if_eigen<T>,
+          std::enable_if_t<T::ColsAtCompileTime == 1>* = nullptr>
+auto ordered_free(const T& y) {
   check_ordered("stan::math::ordered_free", "Ordered variable", y);
   auto k = y.size();
   typename T::PlainObject x(k);
