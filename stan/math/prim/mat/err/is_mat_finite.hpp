@@ -16,8 +16,8 @@ namespace math {
  * @param y Matrix to test
  * @return <code>true</code> if the matrix is finite
  **/
-template <typename T, int R, int C>
-inline bool is_mat_finite(const Eigen::Matrix<T, R, C>& y) {
+template <typename T, enable_if_eigen<T>* = nullptr>
+inline bool is_mat_finite(const T& y) {
   return y.allFinite();
 }
 

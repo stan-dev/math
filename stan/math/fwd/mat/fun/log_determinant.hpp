@@ -7,17 +7,17 @@
 #include <stan/math/fwd/scal/fun/fabs.hpp>
 #include <stan/math/fwd/scal/fun/log.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
-
+#include <stan/math/prim/mat.hpp>
 namespace stan {
 namespace math {
-
+#ifdef NOOOO
 template <typename T, int R, int C>
 inline fvar<T> log_determinant(const Eigen::Matrix<fvar<T>, R, C>& m) {
   check_square("log_determinant", "m", m);
 
   return log(fabs(determinant(m)));
 }
-
+#endif
 }  // namespace math
 }  // namespace stan
 #endif

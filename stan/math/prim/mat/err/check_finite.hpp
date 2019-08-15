@@ -23,10 +23,10 @@ namespace math {
  * @return <code>true</code> if the matrix is finite
  **/
 namespace internal {
-template <typename T, int R, int C>
-struct finite<Eigen::Matrix<T, R, C>, true> {
+template <typename T>
+struct finite<T, enable_if_eigen<T>> {
   static void check(const char* function, const char* name,
-                    const Eigen::Matrix<T, R, C>& y) {
+                    const T& y) {
     if (!value_of(y).allFinite()) {
       for (int n = 0; n < y.size(); ++n) {
         if (!(boost::math::isfinite)(y(n)))

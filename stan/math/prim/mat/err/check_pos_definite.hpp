@@ -24,9 +24,9 @@ namespace math {
  * @throw <code>std::domain_error</code> if the matrix is not symmetric,
  * if it is not positive definite, or if any element is <code>NaN</code>
  */
-template <typename T_y>
+template <typename T_y, enable_if_eigen<T_y>* = nullptr>
 inline void check_pos_definite(const char* function, const char* name,
-                               const Eigen::Matrix<T_y, -1, -1>& y) {
+                               const T_y& y) {
   check_symmetric(function, name, y);
   check_positive(function, name, "rows", y.rows());
   if (y.rows() == 1 && !(y(0, 0) > CONSTRAINT_TOLERANCE))

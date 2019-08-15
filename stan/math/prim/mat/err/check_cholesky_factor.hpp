@@ -24,16 +24,15 @@ namespace math {
  *   factor, if number of rows is less than the number of columns,
  *   if there are 0 columns, or if any element in matrix is NaN
  */
-template <typename T_y>
+template <typename T_y, enable_if_eigen<T_y>* = nullptr>
 inline void check_cholesky_factor(
     const char* function, const char* name,
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
+    const T_y& y) {
   check_less_or_equal(function, "columns and rows of Cholesky factor", y.cols(),
                       y.rows());
   check_positive(function, "columns of Cholesky factor", y.cols());
   check_lower_triangular(function, name, y);
   for (int i = 0; i < y.cols(); ++i)
-    // FIXME:  should report row
     check_positive(function, name, y(i, i));
 }
 

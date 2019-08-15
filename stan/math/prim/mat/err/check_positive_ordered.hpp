@@ -21,9 +21,9 @@ namespace math {
  *   values, if the values are not ordered, if there are duplicated
  *   values, or if any element is <code>NaN</code>.
  */
-template <typename T_y>
+template <typename T_y, enable_if_eigen_vector<T_y>* = nullptr>
 void check_positive_ordered(const char* function, const char* name,
-                            const Eigen::Matrix<T_y, Eigen::Dynamic, 1>& y) {
+                            const T_y& y) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 

@@ -1,8 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_LOG_SOFTMAX_HPP
 #define STAN_MATH_PRIM_MAT_FUN_LOG_SOFTMAX_HPP
 
-#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/fun/log_sum_exp.hpp>
 
 namespace stan {
@@ -36,9 +37,8 @@ namespace math {
  * @param[in] v Vector to transform.
  * @return Unit simplex result of the softmax transform of the vector.
  */
-template <typename T>
-inline Eigen::Matrix<T, Eigen::Dynamic, 1> log_softmax(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& v) {
+template <typename T, enable_if_eigen_vector<T>* = nullptr>
+inline auto log_softmax(const T& v) {
   check_nonzero_size("log_softmax", "v", v);
   return v.array() - log_sum_exp(v);
 }

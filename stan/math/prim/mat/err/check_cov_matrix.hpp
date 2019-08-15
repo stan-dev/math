@@ -21,10 +21,10 @@ namespace math {
  *   if the matrix is not positive definite,
  *   or if any element of the matrix is nan
  */
-template <typename T_y>
+template <typename T_y, enable_if_eigen<T_y>* = nullptr>
 inline void check_cov_matrix(
     const char* function, const char* name,
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
+    const T_y& y) {
   check_pos_definite(function, name, y);
 }
 

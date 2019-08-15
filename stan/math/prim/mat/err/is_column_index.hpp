@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_IS_COLUMN_INDEX_HPP
 #define STAN_MATH_PRIM_MAT_ERR_IS_COLUMN_INDEX_HPP
 
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
 
 namespace stan {
 namespace math {
@@ -18,8 +18,8 @@ namespace math {
  * @param i Index to check
  * @return <code>true</code> no index is invalid column
  */
-template <typename T_y, int R, int C>
-inline bool is_column_index(const Eigen::Matrix<T_y, R, C>& y, size_t i) {
+template <typename T_y, enable_if_eigen<T_y>* = nullptr>
+inline bool is_column_index(const T_y& y, size_t i) {
   return i >= stan::error_index::value
          && i < static_cast<size_t>(y.cols()) + stan::error_index::value;
 }

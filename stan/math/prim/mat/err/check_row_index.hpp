@@ -23,9 +23,9 @@ namespace math {
  * @param i is index
  * @throw <code>std::out_of_range</code> if the index is out of range.
  */
-template <typename T_y, int R, int C>
+template <typename T_y, enable_if_eigen<T_y>* = nullptr>
 inline void check_row_index(const char* function, const char* name,
-                            const Eigen::Matrix<T_y, R, C>& y, size_t i) {
+                            const T_y& y, size_t i) {
   if (i >= stan::error_index::value
       && i < static_cast<size_t>(y.rows()) + stan::error_index::value)
     return;

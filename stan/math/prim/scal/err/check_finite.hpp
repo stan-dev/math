@@ -11,7 +11,7 @@ namespace stan {
 namespace math {
 
 namespace internal {
-template <typename T_y, bool is_vec>
+template <typename T_y, typename = void>
 struct finite {
   static void check(const char* function, const char* name, const T_y& y) {
     if (!(boost::math::isfinite(value_of_rec(y))))
@@ -20,7 +20,7 @@ struct finite {
 };
 
 template <typename T_y>
-struct finite<T_y, true> {
+struct finite<T_y, std::enable_if_t<is_vector_like<T_y>::value>> {
   static void check(const char* function, const char* name, const T_y& y) {
     for (size_t n = 0; n < stan::length(y); n++) {
       if (!(boost::math::isfinite(value_of_rec(stan::get(y, n)))))
@@ -28,6 +28,17 @@ struct finite<T_y, true> {
     }
   }
 };
+
+template <typename T_y>
+struct finite<T_y, std::enable_if_t<is_stan_scalar<T_y>::value>> {
+  static void check(const char* function, const char* name, const T_y& y) {
+    for (size_t n = 0; n < stan::length(y); n++) {
+      if (!(boost::math::isfinite(value_of_rec(stan::get(y, n)))))
+        domain_error_vec(function, name, y, n, "is ", ", but must be finite!");
+    }
+  }
+};
+
 }  // namespace internal
 
 /**
@@ -42,7 +53,7 @@ struct finite<T_y, true> {
  */
 template <typename T_y>
 inline void check_finite(const char* function, const char* name, const T_y& y) {
-  internal::finite<T_y, is_vector_like<T_y>::value>::check(function, name, y);
+  internal::finite<T_y>::check(function, name, y);
 }
 }  // namespace math
 }  // namespace stan

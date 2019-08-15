@@ -2,10 +2,10 @@
 #define STAN_MATH_PRIM_MAT_FUN_DISTANCE_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/squared_distance.hpp>
 #include <stan/math/prim/mat/err/check_vector.hpp>
 #include <stan/math/prim/arr/err/check_matching_sizes.hpp>
-#include <boost/math/tools/promotion.hpp>
 
 namespace stan {
 namespace math {
@@ -19,9 +19,8 @@ namespace math {
  * @throw std::domain_error If the vectors are not the same
  * size or if they are both not vector dimensioned.
  */
-template <typename T1, int R1, int C1, typename T2, int R2, int C2>
-inline return_type_t<T1, T2> distance(const Eigen::Matrix<T1, R1, C1>& v1,
-                                      const Eigen::Matrix<T2, R2, C2>& v2) {
+template <typename T1, typename T2, enable_if_all_eigen<T1, T2>* = nullptr>
+inline auto distance(const T2& v1, const T2& v2) {
   using std::sqrt;
   check_vector("distance", "v1", v1);
   check_vector("distance", "v2", v2);

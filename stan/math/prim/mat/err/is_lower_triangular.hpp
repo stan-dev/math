@@ -20,9 +20,8 @@ inline double notNan(double x) { return std::isnan(x) ? 1.0 : x; }
  * @param y Matrix to test
  * @return <code>true</code> is matrix is lower triangular
  */
-template <typename T_y>
-inline bool is_lower_triangular(
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
+template <typename T_y, enable_if_eigen<T_y>* = nullptr>
+inline bool is_lower_triangular(const T_y& y) {
   return y.unaryExpr(std::function<double(double)>(internal::notNan))
       .transpose()
       .isUpperTriangular();

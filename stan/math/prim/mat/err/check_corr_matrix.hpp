@@ -31,12 +31,8 @@ namespace math {
  *   diagonals not near 1, not positive definite, or any of the
  *   elements nan
  */
-template <typename T_y>
-inline void check_corr_matrix(
-    const char* function, const char* name,
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
-  typedef typename index_type<
-      Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> >::type size_t;
+template <typename T_y, enable_if_eigen<T_y>* = nullptr>
+inline void check_corr_matrix(const char* function, const char* name, const T_y& y) {
 
   check_size_match(function, "Rows of correlation matrix", y.rows(),
                    "columns of correlation matrix", y.cols());

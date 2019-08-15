@@ -25,10 +25,10 @@ namespace math {
  *   or if it is not positive semi-definite,
  *   or if any element of the matrix is <code>NaN</code>.
  */
-template <typename T_y>
+template <typename T_y, enable_if_eigen<T_y>* = nullptr>
 inline void check_pos_semidefinite(
     const char* function, const char* name,
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
+    const T_y& y) {
   check_symmetric(function, name, y);
   check_positive(function, name, "rows", y.rows());
 

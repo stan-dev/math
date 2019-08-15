@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_CHECK_SYMMETRIC_HPP
 #define STAN_MATH_PRIM_MAT_ERR_CHECK_SYMMETRIC_HPP
 
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/err/constraint_tolerance.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <sstream>
 #include <string>
@@ -25,20 +25,16 @@ namespace math {
  * @throw <code>std::domain_error</code> if any element not on the
  *   main diagonal is <code>NaN</code>
  */
-template <typename T_y>
+template <typename T_y, enable_if_eigen<T_y>* = nullptr>
 inline void check_symmetric(
-    const char* function, const char* name,
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
+    const char* function, const char* name, T_y& y) {
   check_square(function, name, y);
 
-  typedef typename index_type<
-      Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> >::type size_type;
-
-  size_type k = y.rows();
+  auto k = y.rows();
   if (k == 1)
     return;
-  for (size_type m = 0; m < k; ++m) {
-    for (size_type n = m + 1; n < k; ++n) {
+  for (auto m = 0; m < k; ++m) {
+    for (auto n = m + 1; n < k; ++n) {
       if (!(fabs(value_of(y(m, n)) - value_of(y(n, m)))
             <= CONSTRAINT_TOLERANCE)) {
         std::ostringstream msg1;

@@ -23,9 +23,8 @@ namespace math {
  * @param y2 Second matrix to test
  * @return <code>true</code> if the dimensions of the matrices match
  */
-template <typename T1, typename T2, int R1, int C1, int R2, int C2>
-inline bool is_matching_dims(const Eigen::Matrix<T1, R1, C1>& y1,
-                             const Eigen::Matrix<T2, R2, C2>& y2) {
+template <typename T1, typename T2, enable_if_all_eigen<T1, T2>* = nullptr>
+inline bool is_matching_dims(const T1& y1, const T2& y2) {
   return is_size_match(y1.rows(), y2.rows())
          && is_size_match(y1.cols(), y2.cols());
 }
@@ -46,11 +45,10 @@ inline bool is_matching_dims(const Eigen::Matrix<T1, R1, C1>& y1,
  * @param y2 Second matrix to test
  * @return <code>true</code> if the dimensions of the matrices match
  */
-template <bool check_compile, typename T1, typename T2, int R1, int C1, int R2,
-          int C2>
-inline bool is_matching_dims(const Eigen::Matrix<T1, R1, C1>& y1,
-                             const Eigen::Matrix<T2, R2, C2>& y2) {
-  return !(check_compile && (R1 != R2 || C1 != C2)) && is_matching_dims(y1, y2);
+template <bool check_compile, typename T1, typename T2, enable_if_all_eigen<T1, T2>* = nullptr>
+inline bool is_matching_dims(const T1& y1,
+                             const T2& y2) {
+  return !(check_compile && (T1::RowsAtCompileTime != T2::RowsAtCompileTime || T1::ColsAtCompileTime != T2::ColsAtCompileTime)) && is_matching_dims(y1, y2);
 }
 
 }  // namespace math

@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_CHECK_VECTOR_HPP
 #define STAN_MATH_PRIM_MAT_ERR_CHECK_VECTOR_HPP
 
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/invalid_argument.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <sstream>
 #include <string>
 #include <typeinfo>
@@ -24,12 +24,12 @@ namespace math {
  * @throw <code>std::invalid_argument</code> if x is not a row or column
  *   vector.
  */
-template <typename T, int R, int C>
+template <typename T, enable_if_eigen<T>* = nullptr>
 inline void check_vector(const char* function, const char* name,
-                         const Eigen::Matrix<T, R, C>& x) {
-  if (R == 1)
+                         const T& x) {
+  if (T::RowsAtCompileTime == 1)
     return;
-  if (C == 1)
+  if (T::ColsAtCompileTime == 1)
     return;
   if (x.rows() == 1 || x.cols() == 1)
     return;

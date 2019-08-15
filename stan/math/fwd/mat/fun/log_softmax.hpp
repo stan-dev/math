@@ -9,7 +9,7 @@
 
 namespace stan {
 namespace math {
-
+#ifdef NOOOOO
 template <typename T>
 inline Eigen::Matrix<fvar<T>, Eigen::Dynamic, 1> log_softmax(
     const Eigen::Matrix<fvar<T>, Eigen::Dynamic, 1>& alpha) {
@@ -43,7 +43,7 @@ inline Eigen::Matrix<fvar<T>, Eigen::Dynamic, 1> log_softmax(
 
   return log_softmax_alpha;
 }
-
+#endif
 }  // namespace math
 }  // namespace stan
 #endif

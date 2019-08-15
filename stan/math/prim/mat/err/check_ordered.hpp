@@ -21,12 +21,8 @@ namespace math {
  *   not ordered, if there are duplicated
  *   values, or if any element is <code>NaN</code>.
  */
-template <typename T_y>
-void check_ordered(const char* function, const char* name,
-                   const Eigen::Matrix<T_y, Eigen::Dynamic, 1>& y) {
-  typedef
-      typename index_type<Eigen::Matrix<T_y, Eigen::Dynamic, 1> >::type size_t;
-
+template <typename T_y, enable_if_eigen_vector<T_y>* = nullptr>
+void check_ordered(const char* function, const char* name, const T_y& y) {
   for (size_t n = 1; n < y.size(); n++) {
     if (!(y[n] > y[n - 1])) {
       std::ostringstream msg1;

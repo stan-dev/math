@@ -22,12 +22,10 @@ namespace math {
  * @return <code>true</code> if the vector is not a unit
  *   vector or if any element is <code>NaN</code>
  */
-template <typename T_prob>
-inline bool is_unit_vector(
-    const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
+template <typename T_y, enable_if_eigen<T_y>* = nullptr>
+inline bool is_unit_vector(const T_y& theta) {
   if (is_nonzero_size(theta)) {
-    T_prob seq = theta.squaredNorm();
-    return fabs(1.0 - seq) <= CONSTRAINT_TOLERANCE;
+    return fabs(1.0 - theta.squaredNorm()) <= CONSTRAINT_TOLERANCE;
   }
   return false;
 }

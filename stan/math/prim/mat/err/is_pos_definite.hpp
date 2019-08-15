@@ -23,15 +23,15 @@ namespace math {
  *   size, or if the matrix is symmetric, or if it is positive definite, or if
  *   no element is <code>NaN</code>
  */
-template <typename T_y>
-inline bool is_pos_definite(const Eigen::Matrix<T_y, -1, -1>& y) {
+template <typename T_y, enable_if_eigen<T_y>* = nullptr>
+inline bool is_pos_definite(const T_y& y) {
   if (!is_symmetric(y))
     return false;
   if (!is_positive(y.rows()))
     return false;
   if (y.rows() == 1 && !(y(0, 0) > CONSTRAINT_TOLERANCE))
     return false;
-  Eigen::LDLT<Eigen::MatrixXd> cholesky = value_of_rec(y).ldlt();
+  Eigen::LDLT<typename T_y::PlainBase> cholesky = value_of_rec(y).ldlt();
   if (cholesky.info() != Eigen::Success || !cholesky.isPositive()
       || (cholesky.vectorD().array() <= 0.0).any())
     return false;

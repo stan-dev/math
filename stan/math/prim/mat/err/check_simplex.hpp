@@ -21,7 +21,7 @@ namespace math {
  * specified by <code>CONSTRAINT_TOLERANCE</code>. This function
  * only accepts Eigen vectors, statically typed vectors, not
  * general matrices with 1 column.
- * @tparam T_prob Scalar type of the vector
+ * @tparam T_y Scalar type of the vector
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param theta Vector to test.
@@ -30,16 +30,13 @@ namespace math {
  * @throw <code>std::domain_error</code> if the vector is not a
  *   simplex or if any element is <code>NaN</code>.
  */
-template <typename T_prob>
+template <typename T_y, enable_if_eigen_vector<T_y>* = nullptr>
 void check_simplex(const char* function, const char* name,
-                   const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
-  typedef typename index_type<Eigen::Matrix<T_prob, Eigen::Dynamic, 1> >::type
-      size_t;
-
+                   const T_y& theta) {
   check_nonzero_size(function, name, theta);
   if (!(fabs(1.0 - theta.sum()) <= CONSTRAINT_TOLERANCE)) {
     std::stringstream msg;
-    T_prob sum = theta.sum();
+    T_y sum = theta.sum();
     msg << "is not a valid simplex.";
     msg.precision(10);
     msg << " sum(" << name << ") = " << sum << ", but should be ";

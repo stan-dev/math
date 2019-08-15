@@ -31,6 +31,7 @@ inline auto dot_product(const T1 &v1, const T2 &v2) {
  *
  * @param v1 First vector.
  * @param v2 Second vector.
+ * @param length Number of elements of vectors to sum.
  * @return Dot product of the vectors.
  * @throw std::domain_error If the vectors are not the same
  * size or if they are both not vector dimensioned.
@@ -45,6 +46,7 @@ inline auto dot_product(const T1 &v1, const T2 &v2, const T3 length) {
  * Returns the dot product of the specified arrays of doubles.
  * @param v1 First array.
  * @param v2 Second array.
+ * @param length Number of elements of vectors to sum.
  * @param length Length of both arrays.
  */
 template <typename T1, typename T2,

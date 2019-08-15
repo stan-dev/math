@@ -17,20 +17,17 @@ namespace math {
  * @return <code>true</code> if the matrix is square, and no
  *    element not on the main diagonal is <code>NaN</code>
  */
-template <typename T_y>
+template <typename T_y, enable_if_eigen<T_y>* = nullptr>
 inline bool is_symmetric(
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
+    const T_y& y) {
   if (!is_square(y))
     return false;
 
-  typedef typename index_type<
-      Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>>::type size_type;
-
-  size_type k = y.rows();
+  auto k = y.rows();
   if (k == 1)
     return true;
-  for (size_type m = 0; m < k; ++m) {
-    for (size_type n = m + 1; n < k; ++n) {
+  for (auto m = 0; m < k; ++m) {
+    for (auto n = m + 1; n < k; ++n) {
       if (!(fabs(value_of(y(m, n)) - value_of(y(n, m)))
             <= CONSTRAINT_TOLERANCE))
         return false;

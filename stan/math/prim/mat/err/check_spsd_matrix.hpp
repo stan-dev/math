@@ -22,10 +22,9 @@ namespace math {
  * @throw <code>std::domain_error</code> if the matrix is not symmetric
  *   or if the matrix is not positive semi-definite
  */
-template <typename T_y>
+template <typename T_y, enable_if_eigen<T_y>* = nullptr>
 inline void check_spsd_matrix(
-    const char* function, const char* name,
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
+    const char* function, const char* name, T_y& y) {
   check_square(function, name, y);
   check_positive(function, name, "rows()", y.rows());
   check_symmetric(function, name, y);

@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_IS_CHOLESKY_FACTOR_HPP
 #define STAN_MATH_PRIM_MAT_ERR_IS_CHOLESKY_FACTOR_HPP
 
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/is_positive.hpp>
 #include <stan/math/prim/mat/err/is_lower_triangular.hpp>
 #include <stan/math/prim/scal/err/is_less_or_equal.hpp>
@@ -25,12 +25,10 @@ namespace math {
  *   number of rows is not less than the number of columns,
  *   if there are no 0 columns, and no element in matrix is <code>NaN</code>
  */
-template <typename T_y>
-inline bool is_cholesky_factor(
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
-  Eigen::Matrix<T_y, -1, 1> y_diag = y.diagonal();
+template <typename T_y, enable_if_eigen<T_y>* = nullptr>
+inline bool is_cholesky_factor(const T_y& y) {
   return is_less_or_equal(y.cols(), y.rows()) && is_positive(y.cols())
-         && is_lower_triangular(y) && is_positive(y_diag);
+         && is_lower_triangular(y) && is_positive(y.diagonal());
 }
 
 }  // namespace math

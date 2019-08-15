@@ -58,13 +58,9 @@ inline void check_matching_dims(const char* function, const char* name1,
  * @throw <code>std::invalid_argument</code> if the dimensions of the matrices
  *    do not match
  */
-template <bool check_compile, typename T1, typename T2, int R1, int C1, int R2,
-          int C2>
-inline void check_matching_dims(const char* function, const char* name1,
-                                const Eigen::Matrix<T1, R1, C1>& y1,
-                                const char* name2,
-                                const Eigen::Matrix<T2, R2, C2>& y2) {
-  if (check_compile && (R1 != R2 || C1 != C2)) {
+template <bool check_compile, typename T1, typename T2, enable_if_all_eigen<T1, T2>* = nullptr>
+inline void check_matching_dims(const char* function, const char* name1, const T1& y1, const char* name2, const T2& y2) {
+  if (check_compile && (T1::RowsAtCompileTime != T2::RowsAtCompileTime || T1::ColsAtCompileTime != T1::ColsAtCompileTime)) {
     std::ostringstream msg;
     msg << "Static rows and cols of " << name1 << " and " << name2
         << " must match in size.";
