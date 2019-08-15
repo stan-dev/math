@@ -7,7 +7,8 @@
 
 namespace test {
 
-template <typename T, stan::enable_if_eigen<T>* = nullptr, stan::enable_if_contains_var<T>* = nullptr>
+template <typename T, stan::enable_if_eigen<T>* = nullptr,
+          stan::enable_if_contains_var<T>* = nullptr>
 void check_varis_on_stack(const T& x) {
   for (int j = 0; j < x.cols(); ++j)
     for (int i = 0; i < x.rows(); ++i)

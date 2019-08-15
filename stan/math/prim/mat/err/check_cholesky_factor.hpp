@@ -25,9 +25,8 @@ namespace math {
  *   if there are 0 columns, or if any element in matrix is NaN
  */
 template <typename T_y, enable_if_eigen<T_y>* = nullptr>
-inline void check_cholesky_factor(
-    const char* function, const char* name,
-    const T_y& y) {
+inline void check_cholesky_factor(const char* function, const char* name,
+                                  const T_y& y) {
   check_less_or_equal(function, "columns and rows of Cholesky factor", y.cols(),
                       y.rows());
   check_positive(function, "columns of Cholesky factor", y.cols());

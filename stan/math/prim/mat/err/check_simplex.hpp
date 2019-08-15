@@ -31,8 +31,7 @@ namespace math {
  *   simplex or if any element is <code>NaN</code>.
  */
 template <typename T_y, enable_if_eigen_vector<T_y>* = nullptr>
-void check_simplex(const char* function, const char* name,
-                   const T_y& theta) {
+void check_simplex(const char* function, const char* name, const T_y& theta) {
   check_nonzero_size(function, name, theta);
   if (!(fabs(1.0 - theta.sum()) <= CONSTRAINT_TOLERANCE)) {
     std::stringstream msg;

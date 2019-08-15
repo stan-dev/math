@@ -22,9 +22,8 @@ namespace math {
  *   or if any element of the matrix is nan
  */
 template <typename T_y, enable_if_eigen<T_y>* = nullptr>
-inline void check_cov_matrix(
-    const char* function, const char* name,
-    const T_y& y) {
+inline void check_cov_matrix(const char* function, const char* name,
+                             const T_y& y) {
   check_pos_definite(function, name, y);
 }
 

@@ -45,10 +45,13 @@ inline bool is_matching_dims(const T1& y1, const T2& y2) {
  * @param y2 Second matrix to test
  * @return <code>true</code> if the dimensions of the matrices match
  */
-template <bool check_compile, typename T1, typename T2, enable_if_all_eigen<T1, T2>* = nullptr>
-inline bool is_matching_dims(const T1& y1,
-                             const T2& y2) {
-  return !(check_compile && (T1::RowsAtCompileTime != T2::RowsAtCompileTime || T1::ColsAtCompileTime != T2::ColsAtCompileTime)) && is_matching_dims(y1, y2);
+template <bool check_compile, typename T1, typename T2,
+          enable_if_all_eigen<T1, T2>* = nullptr>
+inline bool is_matching_dims(const T1& y1, const T2& y2) {
+  return !(check_compile
+           && (T1::RowsAtCompileTime != T2::RowsAtCompileTime
+               || T1::ColsAtCompileTime != T2::ColsAtCompileTime))
+         && is_matching_dims(y1, y2);
 }
 
 }  // namespace math

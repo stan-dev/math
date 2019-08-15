@@ -28,9 +28,8 @@ namespace math {
  *   if there are 0 columns, or if any element in matrix is NaN
  */
 template <typename T_y, enable_if_eigen<T_y>* = nullptr>
-void check_cholesky_factor_corr(
-    const char* function, const char* name,
-    const T_y& y) {
+void check_cholesky_factor_corr(const char* function, const char* name,
+                                const T_y& y) {
   check_square(function, name, y);
   check_lower_triangular(function, name, y);
   for (int i = 0; i < y.rows(); ++i)

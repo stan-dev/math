@@ -25,8 +25,7 @@ namespace math {
 namespace internal {
 template <typename T>
 struct finite<T, enable_if_eigen<T>> {
-  static void check(const char* function, const char* name,
-                    const T& y) {
+  static void check(const char* function, const char* name, const T& y) {
     if (!value_of(y).allFinite()) {
       for (int n = 0; n < y.size(); ++n) {
         if (!(boost::math::isfinite)(y(n)))

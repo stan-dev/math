@@ -18,8 +18,7 @@ namespace math {
  *    element not on the main diagonal is <code>NaN</code>
  */
 template <typename T_y, enable_if_eigen<T_y>* = nullptr>
-inline bool is_symmetric(
-    const T_y& y) {
+inline bool is_symmetric(const T_y& y) {
   if (!is_square(y))
     return false;
 

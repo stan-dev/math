@@ -23,8 +23,7 @@ namespace math {
  *   or if the matrix is not positive semi-definite
  */
 template <typename T_y, enable_if_eigen<T_y>* = nullptr>
-inline void check_spsd_matrix(
-    const char* function, const char* name, T_y& y) {
+inline void check_spsd_matrix(const char* function, const char* name, T_y& y) {
   check_square(function, name, y);
   check_positive(function, name, "rows()", y.rows());
   check_symmetric(function, name, y);

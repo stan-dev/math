@@ -24,9 +24,8 @@ namespace math {
  *   portion is NaN
  */
 template <typename T_y, enable_if_eigen<T_y>* = nullptr>
-inline void check_lower_triangular(
-    const char* function, const char* name,
-    const T_y& y) {
+inline void check_lower_triangular(const char* function, const char* name,
+                                   const T_y& y) {
   for (int n = 1; n < y.cols(); ++n) {
     for (int m = 0; m < n && m < y.rows(); ++m) {
       if (y.coeff(m, n) != 0) {

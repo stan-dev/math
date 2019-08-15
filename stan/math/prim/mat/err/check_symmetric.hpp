@@ -26,8 +26,7 @@ namespace math {
  *   main diagonal is <code>NaN</code>
  */
 template <typename T_y, enable_if_eigen<T_y>* = nullptr>
-inline void check_symmetric(
-    const char* function, const char* name, T_y& y) {
+inline void check_symmetric(const char* function, const char* name, T_y& y) {
   check_square(function, name, y);
 
   auto k = y.rows();

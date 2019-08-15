@@ -25,8 +25,7 @@ namespace math {
  *   vector.
  */
 template <typename T, enable_if_eigen<T>* = nullptr>
-inline void check_vector(const char* function, const char* name,
-                         const T& x) {
+inline void check_vector(const char* function, const char* name, const T& x) {
   if (T::RowsAtCompileTime == 1)
     return;
   if (T::ColsAtCompileTime == 1)

@@ -26,9 +26,8 @@ namespace math {
  *   or if any element of the matrix is <code>NaN</code>.
  */
 template <typename T_y, enable_if_eigen<T_y>* = nullptr>
-inline void check_pos_semidefinite(
-    const char* function, const char* name,
-    const T_y& y) {
+inline void check_pos_semidefinite(const char* function, const char* name,
+                                   const T_y& y) {
   check_symmetric(function, name, y);
   check_positive(function, name, "rows", y.rows());
 
