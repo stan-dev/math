@@ -5,10 +5,10 @@
 #include <stan/math/prim/mat/err/check_matching_dims.hpp>
 #include <stan/math/fwd/mat/fun/typedefs.hpp>
 #include <stan/math/fwd/core.hpp>
-
+#include <stan/math/prim/mat/fun/columns_dot_product.hpp>
 namespace stan {
 namespace math {
-
+#ifdef NOOO
 template <typename T, int R1, int C1, int R2, int C2>
 inline Eigen::Matrix<fvar<T>, 1, C1> columns_dot_product(
     const Eigen::Matrix<fvar<T>, R1, C1>& v1,
@@ -50,7 +50,7 @@ inline Eigen::Matrix<fvar<T>, 1, C1> columns_dot_product(
   }
   return ret;
 }
-
+#endif
 }  // namespace math
 }  // namespace stan
 #endif

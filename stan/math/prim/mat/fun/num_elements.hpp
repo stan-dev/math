@@ -14,7 +14,7 @@ namespace math {
  * @param x Argument of primitive type.
  * @return 1
  */
-template <typename T, enable_if_arithmetic<T>* = nullptr>
+template <typename T, enable_if_stan_scalar<T>* = nullptr>
 constexpr inline int num_elements(const T& x) {
   return 1;
 }

@@ -49,6 +49,9 @@
 #include <stan/math/prim/scal/meta/enable_if_same.hpp>
 #include <stan/math/prim/scal/meta/enable_if_scalar.hpp>
 #include <stan/math/prim/scal/meta/enable_if_scalar_arithmetic.hpp>
+#include <stan/math/prim/scal/meta/enable_if_contains_stan_scalar.hpp>
+#include <stan/math/prim/scal/meta/enable_if_contains_var.hpp>
+#include <stan/math/prim/scal/meta/enable_if_stan_scalar.hpp>
 #include <stan/math/prim/scal/meta/enable_if_var.hpp>
 #include <stan/math/prim/scal/meta/enable_if_var_or_arithmetic.hpp>
 #include <stan/math/prim/scal/meta/get.hpp>

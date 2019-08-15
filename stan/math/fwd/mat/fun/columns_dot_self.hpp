@@ -4,10 +4,10 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/mat/fun/dot_self.hpp>
-
+#include <stan/math/prim/mat.hpp>
 namespace stan {
 namespace math {
-
+#ifdef NOOOO
 template <typename T, int R, int C>
 inline Eigen::Matrix<fvar<T>, 1, C> columns_dot_self(
     const Eigen::Matrix<fvar<T>, R, C>& x) {
@@ -18,6 +18,7 @@ inline Eigen::Matrix<fvar<T>, 1, C> columns_dot_self(
   }
   return ret;
 }
+#endif
 }  // namespace math
 }  // namespace stan
 #endif

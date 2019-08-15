@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_CHECK_MATCHING_DIMS_HPP
 #define STAN_MATH_PRIM_MAT_ERR_CHECK_MATCHING_DIMS_HPP
 
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/invalid_argument.hpp>
 #include <sstream>
@@ -29,11 +29,11 @@ namespace math {
  * @throw <code>std::invalid_argument</code> if the dimensions of the
  *    matrices do not match
  */
-template <typename T1, typename T2, int R1, int C1, int R2, int C2>
+template <typename T1, typename T2, enable_if_all_eigen<T1, T2>* = nullptr>
 inline void check_matching_dims(const char* function, const char* name1,
-                                const Eigen::Matrix<T1, R1, C1>& y1,
+                                const T1& y1,
                                 const char* name2,
-                                const Eigen::Matrix<T2, R2, C2>& y2) {
+                                const T2& y2) {
   check_size_match(function, "Rows of ", name1, y1.rows(), "rows of ", name2,
                    y2.rows());
   check_size_match(function, "Columns of ", name1, y1.cols(), "columns of ",

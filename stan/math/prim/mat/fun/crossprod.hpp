@@ -13,8 +13,9 @@ namespace math {
  * @param M Matrix to multiply.
  * @return Transpose of M times M
  */
-inline matrix_d crossprod(const matrix_d& M) {
-  return tcrossprod(static_cast<matrix_d>(M.transpose()));
+template <typename T, enable_if_eigen<T>* = nullptr>
+inline auto crossprod(const T& M) {
+  return tcrossprod(M.transpose());
 }
 
 }  // namespace math

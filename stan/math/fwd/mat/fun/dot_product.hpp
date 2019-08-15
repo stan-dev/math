@@ -5,11 +5,12 @@
 #include <stan/math/prim/mat/err/check_vector.hpp>
 #include <stan/math/prim/arr/err/check_matching_sizes.hpp>
 #include <stan/math/fwd/mat/fun/typedefs.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <vector>
 
 namespace stan {
 namespace math {
-
+#ifdef NOOO
 template <typename T, int R1, int C1, int R2, int C2>
 inline fvar<T> dot_product(const Eigen::Matrix<fvar<T>, R1, C1>& v1,
                            const Eigen::Matrix<fvar<T>, R2, C2>& v2) {
@@ -144,7 +145,7 @@ inline fvar<T> dot_product(const std::vector<fvar<T> >& v1,
     ret += v1.at(i) * v2.at(i);
   return ret;
 }
-
+#endif
 }  // namespace math
 }  // namespace stan
 #endif
