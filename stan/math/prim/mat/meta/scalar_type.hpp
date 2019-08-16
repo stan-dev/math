@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_MAT_META_SCALAR_TYPE_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/meta/enable_if_eigen.hpp>
+#include <stan/math/prim/mat/meta/is_eigen.hpp>
 #include <stan/math/prim/arr/meta/scalar_type.hpp>
 
 namespace stan {
@@ -13,7 +13,7 @@ namespace stan {
  * @tparam T type of matrix.
  */
 template <typename T>
-struct scalar_type<T, enable_if_eigen<T>> {
+struct scalar_type<T, std::enable_if_t<is_eigen_decay<T>::value>> {
   typedef typename scalar_type<typename std::decay_t<T>::Scalar>::type type;
 };
 

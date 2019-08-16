@@ -308,7 +308,6 @@ TEST(AgradRevMatrix, multiply_rowvector_vector) {
   v1 << 1, 3, -5;
   d2 << 4, -2, -1;
   v2 << 4, -2, -1;
-
   EXPECT_FLOAT_EQ(3, multiply(v1, v2).val());
   EXPECT_FLOAT_EQ(3, multiply(v1, d2).val());
   EXPECT_FLOAT_EQ(3, multiply(d1, v2).val());

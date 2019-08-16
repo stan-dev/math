@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_CHECK_MULTIPLICABLE_HPP
 #define STAN_MATH_PRIM_MAT_ERR_CHECK_MULTIPLICABLE_HPP
 
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 
@@ -26,7 +26,7 @@ namespace math {
  * @throw <code>std::invalid_argument</code> if the matrices are not
  *   multiplicable or if either matrix is size 0 for either rows or columns
  */
-template <typename T1, typename T2>
+template <typename T1, typename T2, enable_if_all_eigen<T1, T2>* = nullptr>
 inline void check_multiplicable(const char* function, const char* name1,
                                 const T1& y1, const char* name2, const T2& y2) {
   check_positive(function, name1, "rows()", y1.rows());
@@ -35,6 +35,9 @@ inline void check_multiplicable(const char* function, const char* name1,
                    y2.rows());
   check_positive(function, name1, "cols()", y1.cols());
 }
+
+template <typename T1, typename T2, enable_if_all_not_eigen<T1, T2>* = nullptr>
+inline void check_multiplicable(const char* function, const char* name1, const T1& y1, const char* name2, const T2& y2) {}
 }  // namespace math
 }  // namespace stan
 #endif

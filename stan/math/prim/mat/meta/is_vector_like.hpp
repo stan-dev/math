@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_MAT_META_IS_VECTOR_LIKE_HPP
 
 #include <stan/math/prim/scal/meta/is_vector_like.hpp>
-#include <stan/math/prim/mat/meta/enable_if_eigen.hpp>
+#include <stan/math/prim/mat/meta/is_eigen.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 
 namespace stan {
@@ -18,7 +18,7 @@ namespace stan {
  * @tparam T Type to test
  */
 template <typename T>
-struct is_vector_like<T, enable_if_eigen<T>> : std::true_type {};
+struct is_vector_like<T, std::enable_if_t<is_eigen_decay<T>::value>> : std::true_type {};
 
 }  // namespace stan
 #endif

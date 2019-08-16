@@ -18,16 +18,6 @@ using is_same_vector
 }  // namespace internal
 
 /**
- * Metaprogram structure to determine if type is a standard vector
- *
- * <p>This base class should be specialized for structured types.</p>
- *
- * @tparam T Type of object.
- */
-template <typename T, typename = void>
-struct is_std_vector : std::false_type {};
-
-/**
  * Specialization of is_std_vector for standard vectors.
  *
  * @tparam T Type of object.

@@ -12,7 +12,7 @@ namespace math {
  * Compute trace(B^T A B).
  **/
 template <typename T1, typename T2, typename = enable_if_all_eigen<T1, T2>,
-          typename = enable_if_all_scalar_arithmetic<T1, T2>>
+          typename = enable_if_all_contains_arithmetic<T1, T2>>
 inline double trace_quad_form(const T1 &A, const T2 &B) {
   check_square("trace_quad_form", "A", A);
   check_multiplicable("trace_quad_form", "A", A, "B", B);
