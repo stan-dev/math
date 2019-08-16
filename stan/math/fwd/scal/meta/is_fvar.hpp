@@ -10,7 +10,7 @@ namespace stan {
  * when instantiated with the stan::math::fvar type.
  */
 template <typename T>
-struct is_fvar<stan::math::fvar<T> > {
+struct is_fvar<stan::math::fvar<T>> {
   enum { value = true };
 };
 
