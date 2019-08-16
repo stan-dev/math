@@ -473,12 +473,10 @@ class multiply_mat_vari<T1, T2, enable_if_contains_var<T1>,
 
 /**
  * Return the product of scalar and matrix.
- * @tparam T1 scalar type v
- * @tparam T2 scalar type matrix m
- * @tparam R2 Rows matrix m
- * @tparam C2 Columns matrix m
- * @param[in] c Specified scalar
- * @param[in] m Matrix
+ * @tparam T1 Type of LHS input, either scalar or matrix.
+ * @tparam T2 Type of RHS input, either scalar or matrix.
+ * @param[in] A Specified scalar
+ * @param[in] B Matrix
  * @return Product of scalar and matrix
  */
 template <typename T1, typename T2,
@@ -486,18 +484,14 @@ template <typename T1, typename T2,
           enable_if_all_not_eigen<T1, T2>* = nullptr,
           enable_if_any_contains_var<T1, T2>* = nullptr,
           enable_if_not_dot_product<T1, T2>* = nullptr>
-inline auto multiply(const T1& c, const T2& m) {
-  return c * m;
+inline auto multiply(const T1& A, const T2& B) {
+  return A * B;
 }
 
 /**
- * Return the product of two matrices.
- * @tparam Ta scalar type matrix A
- * @tparam Ra Rows matrix A
- * @tparam Ca Columns matrix A
- * @tparam Tb scalar type matrix B
- * @tparam RB Rows matrix B
- * @tparam Cb Columns matrix B
+ * Return the product of two matrices. Specialized for eigen matrices of vars that are not dot products
+ * @tparam T1 Type of LHS Eigen Matrix
+ * @tparam T2 Type of RHS Eigen Matrix
  * @param[in] A Matrix
  * @param[in] B Matrix
  * @return Product of scalar and matrix.
@@ -521,11 +515,9 @@ inline auto multiply(const T1& A, const T2& B) {
 }
 
 /**
- * Return the scalar product of a row vector and
- * a vector.
- * @tparam Ta scalar type row vector A
- * @tparam Ca Columns matrix A
- * @tparam Tb scalar type vector B
+ * Return the scalar product of a row vector and column vector.
+ * @tparam T1 Type of Eigen Matrix
+ * @tparam T2 Type of Eigen Matrix
  * @param[in] A Row vector
  * @param[in] B Column vector
  * @return Scalar product of row vector and vector
