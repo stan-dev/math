@@ -221,15 +221,15 @@ using enable_if_not_dot_product = enable_if_not<is_dot_product<T1, T2>>;
 
 namespace internal {
 // primary template for checking if eigen matrix rows match
-template <class T1, class T2,
-          bool = is_eigen_decay<T1>::value&& is_eigen_decay<T2>::value>
+template <class T1, class T2, bool = is_eigen_decay<T1>::value,
+          bool = is_eigen_decay<T2>::value>
 struct is_eigen_rows_match_impl
     : std::integral_constant<bool,
                              T1::RowsAtCompileTime == T2::RowsAtCompileTime> {};
 
 // if not eigen
 template <class T1, class T2>
-struct is_eigen_rows_match_impl<T1, T2, false> : std::false_type {};
+struct is_eigen_rows_match_impl<T1, T2, false, false> : std::false_type {};
 
 }  // namespace internal
 
@@ -248,15 +248,15 @@ using enable_if_not_eigen_rows_match
 
 namespace internal {
 // primary template for checking if eigen matrix cols match
-template <class T1, class T2,
-          bool = is_eigen_decay<T1>::value&& is_eigen_decay<T2>::value>
+template <class T1, class T2, bool = is_eigen_decay<T1>::value,
+          bool = is_eigen_decay<T2>::value>
 struct is_eigen_cols_match_impl
     : std::integral_constant<bool,
                              T1::ColsAtCompileTime == T2::ColsAtCompileTime> {};
 
 // if not eigen
 template <class T1, class T2>
-struct is_eigen_cols_match_impl<T1, T2, false> : std::false_type {};
+struct is_eigen_cols_match_impl<T1, T2, false, false> : std::false_type {};
 
 }  // namespace internal
 
