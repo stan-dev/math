@@ -26,7 +26,7 @@ namespace math {
  */
 template <
     typename T1, typename T2, enable_if_all_eigen<T1, T2>* = nullptr,
-    enable_if_all_arithmetic<scalar_value_t<T1>, scalar_value_t<T2>>* = nullptr,
+    enable_if_all_arithmetic<scalar_type_t<T1>, scalar_type_t<T2>>* = nullptr,
     enable_if_not_dot_product<T1, T2>* = nullptr>
 inline auto multiply(const T1& m1, const T2& m2) {
   check_multiplicable("multiply", "m1", m1, "m2", m2);
@@ -47,8 +47,8 @@ inline auto multiply(const T1& m1, const T2& m2) {
  *   the number of rows of m2.
  */
 template <typename T1, typename T2, enable_if_any_eigen<T1, T2>* = nullptr,
-          enable_if_all_any_not_arithmetic<scalar_value_t<T1>,
-                                           scalar_value_t<T2>>* = nullptr,
+          enable_if_any_not_arithmetic<scalar_type_t<T1>,
+                                           scalar_type_t<T2>>* = nullptr,
           enable_if_not_dot_product<T1, T2>* = nullptr,
           enable_if_any_not_contains_var<T1, T2>* = nullptr>
 inline auto multiply(const T1& m1, const T2& m2) {
