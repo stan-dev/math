@@ -24,10 +24,9 @@ namespace math {
  * @throw std::domain_error if the number of columns of A does not match
  *   the number of rows of B.
  */
-template <typename T1, typename T2,
-  enable_if_all_eigen<T1, T2>* = nullptr,
-  enable_if_all_eigen_arithmetic<T1, T2>* = nullptr,
-  enable_if_not_dot_product<T1, T2>* = nullptr>
+template <typename T1, typename T2, enable_if_all_eigen<T1, T2>* = nullptr,
+          enable_if_all_eigen_arithmetic<T1, T2>* = nullptr,
+          enable_if_not_dot_product<T1, T2>* = nullptr>
 inline auto multiply(const T1& A, const T2& B) {
   check_multiplicable("multiply", "A", A, "B", B);
   matrix_cl<double> A_cl(A);
@@ -47,10 +46,10 @@ inline auto multiply(const T1& A, const T2& B) {
  *   the number of rows of B.
  */
 template <typename T1, typename T2,
-  enable_if_all_eigen_or_stan_scalar<T1, T2>* = nullptr,
-  enable_if_all_not_eigen_arithmetic<T1, T2>* = nullptr,
-  enable_if_any_not_contains_var<T1, T2>* = nullptr,
-  enable_if_not_dot_product<T1, T2>* = nullptr>
+          enable_if_all_eigen_or_stan_scalar<T1, T2>* = nullptr,
+          enable_if_all_not_eigen_arithmetic<T1, T2>* = nullptr,
+          enable_if_any_not_contains_var<T1, T2>* = nullptr,
+          enable_if_not_dot_product<T1, T2>* = nullptr>
 inline auto multiply(const T1& A, const T2& B) {
   check_multiplicable("multiply", "A", A, "B", B);
   return A * B;
@@ -68,9 +67,9 @@ inline auto multiply(const T1& A, const T2& B) {
  *   the number of rows of B.
  */
 template <typename T1, typename T2,
-  enable_if_all_eigen_or_stan_scalar<T1, T2>* = nullptr,
-  enable_if_any_not_contains_var<T1, T2>* = nullptr,
-  enable_if_not_dot_product<T1, T2>* = nullptr>
+          enable_if_all_eigen_or_stan_scalar<T1, T2>* = nullptr,
+          enable_if_any_not_contains_var<T1, T2>* = nullptr,
+          enable_if_not_dot_product<T1, T2>* = nullptr>
 inline auto multiply(const T1& A, const T2& B) {
   check_multiplicable("multiply", "A", A, "B", B);
   return A * B;
@@ -86,9 +85,10 @@ inline auto multiply(const T1& A, const T2& B) {
  * @return Scalar result of multiplying row vector by column vector.
  * @throw std::domain_error if rv and v are not the same size.
  */
-template <typename T1, typename T2, enable_if_all_eigen_or_stan_scalar<T1, T2>* = nullptr,
- enable_if_any_not_contains_var<T1, T2>* = nullptr,
- enable_if_dot_product<T1, T2>* = nullptr>
+template <typename T1, typename T2,
+          enable_if_all_eigen_or_stan_scalar<T1, T2>* = nullptr,
+          enable_if_any_not_contains_var<T1, T2>* = nullptr,
+          enable_if_dot_product<T1, T2>* = nullptr>
 inline auto multiply(const T1& A, const T2& B) {
   check_matching_sizes("multiply", "rv", A, "v", B);
   return A.dot(B);
