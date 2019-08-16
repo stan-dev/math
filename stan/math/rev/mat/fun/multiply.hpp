@@ -537,7 +537,6 @@ inline auto multiply(const T1& A, const T2& B) {
   AB_v.vi_ = baseVari->variRefAB_;
   return AB_v;
 }
-
 }  // namespace math
 }  // namespace stan
 #endif
