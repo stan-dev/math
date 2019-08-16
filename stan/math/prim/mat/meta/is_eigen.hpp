@@ -9,7 +9,9 @@ namespace stan {
 // Checks whether decayed type is inherits from EigenBase
 template <typename T>
 struct is_eigen_decay
-    : std::integral_constant<bool, std::is_base_of<Eigen::EigenBase<std::decay_t<T>>, std::decay_t<T>>::value> {};
+    : std::integral_constant<bool,
+                             std::is_base_of<Eigen::EigenBase<std::decay_t<T>>,
+                                             std::decay_t<T>>::value> {};
 
-}
+}  // namespace stan
 #endif

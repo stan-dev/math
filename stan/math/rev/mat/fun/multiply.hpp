@@ -14,9 +14,9 @@
 
 namespace stan {
 namespace math {
-template <typename T1, typename T2, typename = void, typename = void, typename = void>
+template <typename T1, typename T2, typename = void, typename = void,
+          typename = void>
 class multiply_mat_vari : public vari {};
-
 
 /**
  * This is a subclass of the vari class for matrix
@@ -36,9 +36,8 @@ class multiply_mat_vari : public vari {};
  * @tparam Cb Columns for matrix B
  */
 template <typename T1, typename T2>
-class multiply_mat_vari<T1, T2,
-  enable_if_all_contains_var<T1, T2>,
-  enable_if_not_dot_product<T1, T2>, void> : public vari {
+class multiply_mat_vari<T1, T2, enable_if_all_contains_var<T1, T2>,
+                        enable_if_not_dot_product<T1, T2>, void> : public vari {
  public:
   int A_rows_;
   int A_cols_;
@@ -120,9 +119,10 @@ class multiply_mat_vari<T1, T2,
  * @tparam Ta Scalar type for matrix A
  * @tparam Ca Columns for matrix A, Rows for matrix B
  * @tparam Tb Scalar type for matrix B
- */ // <Ta, 1, Ca, Tb, 1>
- template <typename T1, typename T2>
-class multiply_mat_vari<T1, T2, enable_if_all_contains_var<T1, T2>, enable_if_dot_product<T1, T2>, void> : public vari {
+ */  // <Ta, 1, Ca, Tb, 1>
+template <typename T1, typename T2>
+class multiply_mat_vari<T1, T2, enable_if_all_contains_var<T1, T2>,
+                        enable_if_dot_product<T1, T2>, void> : public vari {
  public:
   int size_;
   double* Ad_;
@@ -191,12 +191,11 @@ class multiply_mat_vari<T1, T2, enable_if_all_contains_var<T1, T2>, enable_if_do
  * @tparam Ca Columns for matrix A, Rows for matrix B
  * @tparam Tb Scalar type for matrix B
  * @tparam Cb Columns for matrix B
- */ // <double, Ra, Ca, Tb, Cb>
- template <typename T1, typename T2>
-class multiply_mat_vari<T1, T2,
- enable_if_contains_arithmetic<T1>,
- enable_if_contains_var<T2>,
- enable_if_not_dot_product<T1, T2>> : public vari {
+ */  // <double, Ra, Ca, Tb, Cb>
+template <typename T1, typename T2>
+class multiply_mat_vari<T1, T2, enable_if_contains_arithmetic<T1>,
+                        enable_if_contains_var<T2>,
+                        enable_if_not_dot_product<T1, T2>> : public vari {
  public:
   int A_rows_;
   int A_cols_;
@@ -271,12 +270,11 @@ class multiply_mat_vari<T1, T2,
  *
  * @tparam Ca Columns for matrix A, Rows for matrix B
  * @tparam Tb Scalar type for matrix B
- */ // <double, 1, Ca, Tb, 1>
- template <typename T1, typename T2>
-class multiply_mat_vari<T1, T2,
-   enable_if_contains_arithmetic<T1>,
-   enable_if_contains_var<T2>,
-   enable_if_dot_product<T1, T2>> : public vari {
+ */  // <double, 1, Ca, Tb, 1>
+template <typename T1, typename T2>
+class multiply_mat_vari<T1, T2, enable_if_contains_arithmetic<T1>,
+                        enable_if_contains_var<T2>,
+                        enable_if_dot_product<T1, T2>> : public vari {
  public:
   int size_;
   double* Ad_;
@@ -338,11 +336,11 @@ class multiply_mat_vari<T1, T2,
  * @tparam Ra Rows for matrix A
  * @tparam Ca Columns for matrix A, Rows for matrix B
  * @tparam Cb Columns for matrix B
- */ // <Ta, Ra, Ca, double, Cb>
- template <typename T1, typename T2>
+ */  // <Ta, Ra, Ca, double, Cb>
+template <typename T1, typename T2>
 class multiply_mat_vari<T1, T2, enable_if_contains_var<T1>,
-enable_if_contains_arithmetic<T2>,
-enable_if_not_dot_product<T1, T2>> : public vari {
+                        enable_if_contains_arithmetic<T2>,
+                        enable_if_not_dot_product<T1, T2>> : public vari {
  public:
   int A_rows_;
   int A_cols_;
@@ -370,8 +368,7 @@ enable_if_not_dot_product<T1, T2>> : public vari {
    * @param A row vector
    * @param B vector
    */
-  multiply_mat_vari(const T1& A,
-                    const T2& B)
+  multiply_mat_vari(const T1& A, const T2& B)
       : vari(0.0),
         A_rows_(A.rows()),
         A_cols_(A.cols()),
@@ -421,11 +418,11 @@ enable_if_not_dot_product<T1, T2>> : public vari {
  * @tparam Ca Columns for matrix A, Rows for matrix B
  * @tparam Tb Scalar type for matrix B
  * @tparam Cb Columns for matrix B
- */ // <Ta, 1, Ca, double, 1>
- template <typename T1, typename T2>
+ */  // <Ta, 1, Ca, double, 1>
+template <typename T1, typename T2>
 class multiply_mat_vari<T1, T2, enable_if_contains_var<T1>,
-enable_if_contains_arithmetic<T2>,
-enable_if_dot_product<T1, T2>> : public vari {
+                        enable_if_contains_arithmetic<T2>,
+                        enable_if_dot_product<T1, T2>> : public vari {
  public:
   int size_;
   double* Ad_;
@@ -485,14 +482,13 @@ enable_if_dot_product<T1, T2>> : public vari {
  * @return Product of scalar and matrix
  */
 template <typename T1, typename T2,
-  enable_if_all_eigen_or_stan_scalar<T1, T2>* = nullptr,
-  enable_if_all_not_eigen<T1, T2>* = nullptr,
-  enable_if_any_contains_var<T1, T2>* = nullptr,
-  enable_if_not_dot_product<T1, T2>* = nullptr>
+          enable_if_all_eigen_or_stan_scalar<T1, T2>* = nullptr,
+          enable_if_all_not_eigen<T1, T2>* = nullptr,
+          enable_if_any_contains_var<T1, T2>* = nullptr,
+          enable_if_not_dot_product<T1, T2>* = nullptr>
 inline auto multiply(const T1& c, const T2& m) {
   return c * m;
 }
-
 
 /**
  * Return the product of two matrices.
@@ -506,10 +502,9 @@ inline auto multiply(const T1& c, const T2& m) {
  * @param[in] B Matrix
  * @return Product of scalar and matrix.
  */
-template <typename T1, typename T2,
- enable_if_all_eigen<T1, T2>* = nullptr,
- enable_if_any_contains_var<T1, T2>* = nullptr,
- enable_if_not_dot_product<T1, T2>* = nullptr>
+template <typename T1, typename T2, enable_if_all_eigen<T1, T2>* = nullptr,
+          enable_if_any_contains_var<T1, T2>* = nullptr,
+          enable_if_not_dot_product<T1, T2>* = nullptr>
 inline auto multiply(const T1& A, const T2& B) {
   check_multiplicable("multiply", "A", A, "B", B);
   check_not_nan("multiply", "A", A);
@@ -517,7 +512,8 @@ inline auto multiply(const T1& A, const T2& B) {
 
   // Memory managed with the arena allocator.
   multiply_mat_vari<T1, T2>* baseVari = new multiply_mat_vari<T1, T2>(A, B);
-  Eigen::Matrix<var, T1::RowsAtCompileTime, T2::ColsAtCompileTime> AB_v(A.rows(), B.cols());
+  Eigen::Matrix<var, T1::RowsAtCompileTime, T2::ColsAtCompileTime> AB_v(
+      A.rows(), B.cols());
   AB_v.vi()
       = Eigen::Map<matrix_vi>(&baseVari->variRefAB_[0], A.rows(), B.cols());
 
@@ -534,16 +530,15 @@ inline auto multiply(const T1& A, const T2& B) {
  * @param[in] B Column vector
  * @return Scalar product of row vector and vector
  */
- template <typename T1, typename T2,
-  enable_if_all_eigen<T1, T2>* = nullptr,
-  enable_if_any_contains_var<T1, T2>* = nullptr,
-  enable_if_dot_product<T1, T2>* = nullptr>
- inline auto multiply(const T1& A, const T2& B) {
-   check_multiplicable("multiply", "A", A, "B", B);
-   check_not_nan("multiply", "A", A);
-   check_not_nan("multiply", "B", B);
-   // Memory managed with the arena allocator.
-   multiply_mat_vari<T1, T2>* baseVari = new multiply_mat_vari<T1, T2>(A, B);
+template <typename T1, typename T2, enable_if_all_eigen<T1, T2>* = nullptr,
+          enable_if_any_contains_var<T1, T2>* = nullptr,
+          enable_if_dot_product<T1, T2>* = nullptr>
+inline auto multiply(const T1& A, const T2& B) {
+  check_multiplicable("multiply", "A", A, "B", B);
+  check_not_nan("multiply", "A", A);
+  check_not_nan("multiply", "B", B);
+  // Memory managed with the arena allocator.
+  multiply_mat_vari<T1, T2>* baseVari = new multiply_mat_vari<T1, T2>(A, B);
   var AB_v;
 
   AB_v.vi_ = baseVari->variRefAB_;

@@ -18,7 +18,8 @@ namespace stan {
  * @tparam T Type to test
  */
 template <typename T>
-struct is_vector_like<T, std::enable_if_t<is_eigen_decay<T>::value>> : std::true_type {};
+struct is_vector_like<T, std::enable_if_t<is_eigen_decay<T>::value>>
+    : std::true_type {};
 
 }  // namespace stan
 #endif

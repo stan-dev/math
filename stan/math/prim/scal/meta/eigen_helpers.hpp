@@ -9,8 +9,8 @@ struct eigen_traits {
   const int T::RowsAtCompileTime rows;
   const int T::ColsAtCompileTime cols;
   typedef typename T::PlainObject plain_object;
-    typedef typename T::PlainObjectBase plain_object_base;
+  typedef typename T::PlainObjectBase plain_object_base;
 }
-}
+}  // namespace stan
 
 #endif

@@ -37,7 +37,9 @@ inline void check_multiplicable(const char* function, const char* name1,
 }
 
 template <typename T1, typename T2, enable_if_all_not_eigen<T1, T2>* = nullptr>
-inline void check_multiplicable(const char* function, const char* name1, const T1& y1, const char* name2, const T2& y2) {}
+inline void check_multiplicable(const char* function, const char* name1,
+                                const T1& y1, const char* name2, const T2& y2) {
+}
 }  // namespace math
 }  // namespace stan
 #endif
