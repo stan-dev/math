@@ -489,7 +489,8 @@ inline auto multiply(const T1& A, const T2& B) {
 }
 
 /**
- * Return the product of two matrices. Specialized for eigen matrices of vars that are not dot products
+ * Return the product of two matrices. Specialized for eigen matrices of vars
+ * that are not dot products
  * @tparam T1 Type of LHS Eigen Matrix
  * @tparam T2 Type of RHS Eigen Matrix
  * @param[in] A Matrix
