@@ -46,11 +46,11 @@ inline auto multiply(const T1& m1, const T2& m2) {
  * @throw std::domain_error if the number of columns of m1 does not match
  *   the number of rows of m2.
  */
-template <typename T1, typename T2,
-  enable_if_all_eigen_or_stan_scalar<T1, T2>* = nullptr,
-  enable_if_all_not_eigen_arithmetic<T1, T2>* = nullptr,
-  enable_if_any_not_contains_var<T1, T2>* = nullptr,
-  enable_if_not_dot_product<T1, T2>* = nullptr>
+template <typename T1, typename T2, enable_if_any_eigen<T1, T2>* = nullptr,
+          enable_if_any_not_arithmetic<scalar_type_t<T1>,
+                                       scalar_type_t<T2>>* = nullptr,
+          enable_if_not_dot_product<T1, T2>* = nullptr,
+          enable_if_any_not_contains_var<T1, T2>* = nullptr>
 inline auto multiply(const T1& m1, const T2& m2) {
   check_multiplicable("multiply", "m1", m1, "m2", m2);
   return m1 * m2;
