@@ -70,7 +70,9 @@ inline const matrix_cl_view transpose(const matrix_cl_view view) {
  */
 inline const matrix_cl_view invert(const matrix_cl_view view) {
   typedef typename std::underlying_type<matrix_cl_view>::type underlying;
-  return static_cast<matrix_cl_view>(~static_cast<underlying>(view));
+  return static_cast<matrix_cl_view>(
+      static_cast<underlying>(matrix_cl_view::Entire)
+      & ~static_cast<underlying>(view));
 }
 
 /**
