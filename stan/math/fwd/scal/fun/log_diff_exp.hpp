@@ -12,7 +12,6 @@ namespace math {
 
 template <typename T>
 inline fvar<T> log_diff_exp(const fvar<T>& x1, const fvar<T>& x2) {
-  using std::exp;
   if (x1.val_ <= x2.val_) {
     if (x1.val_ < INFTY && x1.val_ == x2.val_)
       return fvar<T>(NEGATIVE_INFTY, NOT_A_NUMBER);
@@ -25,7 +24,6 @@ inline fvar<T> log_diff_exp(const fvar<T>& x1, const fvar<T>& x2) {
 
 template <typename T1, typename T2>
 inline fvar<T2> log_diff_exp(const T1& x1, const fvar<T2>& x2) {
-  using std::exp;
   if (x1 <= x2.val_) {
     if (x1 < INFTY && x1 == x2.val_)
       return fvar<T2>(NEGATIVE_INFTY, x2.d_ * NEGATIVE_INFTY);
@@ -36,7 +34,6 @@ inline fvar<T2> log_diff_exp(const T1& x1, const fvar<T2>& x2) {
 
 template <typename T1, typename T2>
 inline fvar<T1> log_diff_exp(const fvar<T1>& x1, const T2& x2) {
-  using std::exp;
   if (x1.val_ <= x2) {
     if (x1.val_ < INFTY && x1.val_ == x2) {
       if (x2 == NEGATIVE_INFTY)
