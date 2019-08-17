@@ -281,7 +281,9 @@ using enable_if_any_not_contains_fvar
     = enable_if_any_not<is_contains_fvar<Types>...>;
 
 template <typename T>
-struct is_ad_type : std::integral_constant<bool, is_fvar<std::decay_t<T>>::value || is_var<std::decay_t<T>>::value> {};
+struct is_ad_type
+    : std::integral_constant<bool, is_fvar<std::decay_t<T>>::value
+                                       || is_var<std::decay_t<T>>::value> {};
 
 template <typename T>
 using enable_if_ad_type = std::enable_if_t<is_ad_type<std::decay<T>>::value>;
@@ -296,28 +298,33 @@ template <typename... Types>
 using enable_if_any_ad_type = enable_if_any<is_ad_type<std::decay<Types>>...>;
 
 template <typename... Types>
-using enable_if_all_not_ad_type = enable_if_all_not<is_ad_type<std::decay<Types>>...>;
+using enable_if_all_not_ad_type
+    = enable_if_all_not<is_ad_type<std::decay<Types>>...>;
 
 template <typename... Types>
-using enable_if_any_not_ad_type = enable_if_any_not<is_ad_type<std::decay<Types>>...>;
+using enable_if_any_not_ad_type
+    = enable_if_any_not<is_ad_type<std::decay<Types>>...>;
 
 // Check if type contains or is a ad_type
 template <typename T>
 struct is_contains_ad_type
-    : std::integral_constant<bool,
-                             is_ad_type<scalar_type_t<std::decay_t<T>>>::value> {};
+    : std::integral_constant<
+          bool, is_ad_type<scalar_type_t<std::decay_t<T>>>::value> {};
 
 template <typename T>
-using enable_if_contains_ad_type = std::enable_if_t<is_contains_ad_type<T>::value>;
+using enable_if_contains_ad_type
+    = std::enable_if_t<is_contains_ad_type<T>::value>;
 
 template <typename T>
 using enable_if_not_contains_ad_type = enable_if_not<is_contains_ad_type<T>>;
 
 template <typename... Types>
-using enable_if_all_contains_ad_type = enable_if_all<is_contains_ad_type<Types>...>;
+using enable_if_all_contains_ad_type
+    = enable_if_all<is_contains_ad_type<Types>...>;
 
 template <typename... Types>
-using enable_if_any_contains_ad_type = enable_if_any<is_contains_ad_type<Types>...>;
+using enable_if_any_contains_ad_type
+    = enable_if_any<is_contains_ad_type<Types>...>;
 
 template <typename... Types>
 using enable_if_all_not_contains_ad_type
@@ -326,7 +333,6 @@ using enable_if_all_not_contains_ad_type
 template <typename... Types>
 using enable_if_any_not_contains_ad_type
     = enable_if_any_not<is_contains_ad_type<Types>...>;
-
 
 // Enables if type is var or arithmetic
 template <typename T>
