@@ -69,12 +69,12 @@ namespace math {
  * lengths.
  */
 template <bool propto, typename T_y, typename T_loc, typename T_cut>
-typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
-    const T_y& y, const T_loc& lambda, const T_cut& c) {
+return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
+                                                  const T_loc& lambda,
+                                                  const T_cut& c) {
   static const char* function = "ordered_logistic";
 
-  typedef
-      typename stan::partials_return_type<T_loc, T_cut>::type T_partials_return;
+  typedef partials_return_type_t<T_loc, T_cut> T_partials_return;
   typedef typename Eigen::Matrix<T_partials_return, -1, 1> T_partials_vec;
 
   scalar_seq_view<T_loc> lam_vec(lambda);
@@ -164,8 +164,9 @@ typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
 }
 
 template <typename T_y, typename T_loc, typename T_cut>
-typename return_type<T_loc, T_cut>::type ordered_logistic_lpmf(
-    const T_y& y, const T_loc& lambda, const T_cut& c) {
+return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
+                                                  const T_loc& lambda,
+                                                  const T_cut& c) {
   return ordered_logistic_lpmf<false>(y, lambda, c);
 }
 

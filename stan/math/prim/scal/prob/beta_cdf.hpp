@@ -32,11 +32,10 @@ namespace math {
  * @tparam T_scale_fail Type of beta.
  */
 template <typename T_y, typename T_scale_succ, typename T_scale_fail>
-typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_cdf(
+return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
     const T_y& y, const T_scale_succ& alpha, const T_scale_fail& beta) {
-  typedef
-      typename stan::partials_return_type<T_y, T_scale_succ, T_scale_fail>::type
-          T_partials_return;
+  typedef partials_return_type_t<T_y, T_scale_succ, T_scale_fail>
+      T_partials_return;
 
   if (size_zero(y, alpha, beta))
     return 1.0;

@@ -43,15 +43,17 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_x, typename T_alpha,
           typename T_beta>
-typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
-    const T_y& y, const T_x& x, const T_alpha& alpha, const T_beta& beta) {
+return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
+                                                         const T_x& x,
+                                                         const T_alpha& alpha,
+                                                         const T_beta& beta) {
   static const char* function = "poisson_log_glm_lpmf";
-  typedef typename partials_return_type<T_y, T_x, T_alpha, T_beta>::type
-      T_partials_return;
-  typedef typename std::conditional<
+  typedef partials_return_type_t<T_y, T_x, T_alpha, T_beta> T_partials_return;
+  typedef typename std::conditional_t<
       is_vector<T_alpha>::value,
-      Eigen::Array<typename partials_return_type<T_alpha>::type, -1, 1>,
-      typename partials_return_type<T_alpha>::type>::type T_alpha_val;
+      Eigen::Array<partials_return_type_t<T_alpha>, -1, 1>,
+      partials_return_type_t<T_alpha>>
+      T_alpha_val;
 
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -125,7 +127,7 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
 }
 
 template <typename T_y, typename T_x, typename T_alpha, typename T_beta>
-inline typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
+inline return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(
     const T_y& y, const T_x& x, const T_alpha& alpha, const T_beta& beta) {
   return poisson_log_glm_lpmf<false>(y, x, alpha, beta);
 }

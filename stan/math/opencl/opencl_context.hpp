@@ -10,7 +10,7 @@
 #error OPENCL_PLATFORM_ID_NOT_SET
 #endif
 
-#include <stan/math/opencl/constants.hpp>
+#include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/prim/scal/err/system_error.hpp>
 
@@ -173,11 +173,12 @@ class opencl_context_base {
                                   // the device
 
   // Holds Default parameter values for each Kernel.
-  typedef std::map<const char*, int> map_base_opts;
+  typedef std::map<std::string, int> map_base_opts;
   map_base_opts base_opts_
-      = {{"LOWER", static_cast<int>(TriangularViewCL::Lower)},
-         {"UPPER", static_cast<int>(TriangularViewCL::Upper)},
-         {"ENTIRE", static_cast<int>(TriangularViewCL::Entire)},
+      = {{"LOWER", static_cast<int>(matrix_cl_view::Lower)},
+         {"UPPER", static_cast<int>(matrix_cl_view::Upper)},
+         {"ENTIRE", static_cast<int>(matrix_cl_view::Entire)},
+         {"DIAGONAL", static_cast<int>(matrix_cl_view::Diagonal)},
          {"UPPER_TO_LOWER", static_cast<int>(TriangularMapCL::UpperToLower)},
          {"LOWER_TO_UPPER", static_cast<int>(TriangularMapCL::LowerToUpper)},
          {"THREAD_BLOCK_SIZE", 32},
@@ -195,6 +196,12 @@ class opencl_context_base {
     int cholesky_rev_block_partition = 8;
     // used in math/opencl/multiply
     int multiply_split_upper_limit = 2000000;
+    // used in math/prim/mat/fun/gp_exp_quad_cov
+    double gp_exp_quad_cov_complex = 1'000'000;
+    double gp_exp_quad_cov_simple = 1'250;
+    // used in math/prim/mat/fun/multiply
+    // and math/rev/mat/fun/multiply
+    int multiply_dim_prod_worth_transfer = 2000000;
     // used in math/prim/mat/fun/mdivide_left_tri
     // and math/rev/mat/fun/mdivide_left_tri
     int tri_inverse_size_worth_transfer = 100;

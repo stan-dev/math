@@ -23,9 +23,9 @@ namespace math {
  * @throw std::domain_error if any scalar is nan.
  */
 template <bool propto, typename T_y>
-typename return_type<T_y>::type std_normal_lpdf(const T_y& y) {
+return_type_t<T_y> std_normal_lpdf(const T_y& y) {
   static const char* function = "std_normal_lpdf";
-  typedef typename stan::partials_return_type<T_y>::type T_partials_return;
+  typedef partials_return_type_t<T_y> T_partials_return;
 
   if (size_zero(y))
     return 0.0;
@@ -51,7 +51,7 @@ typename return_type<T_y>::type std_normal_lpdf(const T_y& y) {
 }
 
 template <typename T_y>
-inline typename return_type<T_y>::type std_normal_lpdf(const T_y& y) {
+inline return_type_t<T_y> std_normal_lpdf(const T_y& y) {
   return std_normal_lpdf<false>(y);
 }
 

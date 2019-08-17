@@ -11,7 +11,7 @@ namespace math {
  * @deprecated use <code>beta_lccdf</code>
  */
 template <typename T_y, typename T_scale_succ, typename T_scale_fail>
-typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_ccdf_log(
+return_type_t<T_y, T_scale_succ, T_scale_fail> beta_ccdf_log(
     const T_y& y, const T_scale_succ& alpha, const T_scale_fail& beta) {
   return beta_lccdf<T_y, T_scale_succ, T_scale_fail>(y, alpha, beta);
 }

@@ -11,10 +11,10 @@ namespace stan {
 namespace math {
 
 template <typename T_shape>
-typename boost::math::tools::promote_args<double, T_shape>::type
-do_lkj_constant(const T_shape& eta, const unsigned int& K) {
+return_type_t<double, T_shape> do_lkj_constant(const T_shape& eta,
+                                               const unsigned int& K) {
   // Lewandowski, Kurowicka, and Joe (2009) theorem 5
-  typename boost::math::tools::promote_args<double, T_shape>::type constant;
+  return_type_t<double, T_shape> constant;
   const int Km1 = K - 1;
   using stan::math::lgamma;
   if (eta == 1.0) {
@@ -41,14 +41,14 @@ do_lkj_constant(const T_shape& eta, const unsigned int& K) {
 // LKJ_Corr(y|eta) [ y correlation matrix (not covariance matrix)
 //                  eta > 0; eta == 1 <-> uniform]
 template <bool propto, typename T_y, typename T_shape>
-typename boost::math::tools::promote_args<T_y, T_shape>::type lkj_corr_lpdf(
+return_type_t<T_y, T_shape> lkj_corr_lpdf(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
     const T_shape& eta) {
   static const char* function = "lkj_corr_lpdf";
 
   using boost::math::tools::promote_args;
 
-  typename promote_args<T_y, T_shape>::type lp(0.0);
+  return_type_t<T_y, T_shape> lp(0.0);
   check_positive(function, "Shape parameter", eta);
   check_corr_matrix(function, "Correlation matrix", y);
 
@@ -73,9 +73,9 @@ typename boost::math::tools::promote_args<T_y, T_shape>::type lkj_corr_lpdf(
 }
 
 template <typename T_y, typename T_shape>
-inline typename boost::math::tools::promote_args<T_y, T_shape>::type
-lkj_corr_lpdf(const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
-              const T_shape& eta) {
+inline return_type_t<T_y, T_shape> lkj_corr_lpdf(
+    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
+    const T_shape& eta) {
   return lkj_corr_lpdf<false>(y, eta);
 }
 

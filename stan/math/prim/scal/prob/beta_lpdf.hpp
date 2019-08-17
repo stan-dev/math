@@ -39,13 +39,12 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_scale_succ,
           typename T_scale_fail>
-typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lpdf(
+return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
     const T_y& y, const T_scale_succ& alpha, const T_scale_fail& beta) {
   static const char* function = "beta_lpdf";
 
-  typedef
-      typename stan::partials_return_type<T_y, T_scale_succ, T_scale_fail>::type
-          T_partials_return;
+  typedef partials_return_type_t<T_y, T_scale_succ, T_scale_fail>
+      T_partials_return;
   using std::log;
   check_positive_finite(function, "First shape parameter", alpha);
   check_positive_finite(function, "Second shape parameter", beta);
@@ -164,7 +163,7 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lpdf(
 }
 
 template <typename T_y, typename T_scale_succ, typename T_scale_fail>
-inline typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lpdf(
+inline return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
     const T_y& y, const T_scale_succ& alpha, const T_scale_fail& beta) {
   return beta_lpdf<false>(y, alpha, beta);
 }

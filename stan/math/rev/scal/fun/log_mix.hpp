@@ -74,7 +74,7 @@ inline void log_mix_partial_helper(
  * @return log mixture of densities in specified proportion
  */
 template <typename T_theta, typename T_lambda1, typename T_lambda2>
-inline typename return_type<T_theta, T_lambda1, T_lambda2>::type log_mix(
+inline return_type_t<T_theta, T_lambda1, T_lambda2> log_mix(
     const T_theta& theta, const T_lambda1& lambda1, const T_lambda2& lambda2) {
   using std::log;
 
