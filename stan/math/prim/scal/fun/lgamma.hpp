@@ -44,6 +44,10 @@ namespace math {
    \end{cases}
 \f]
 *
+* Note: Please refer to https://github.com/stan-dev/math/pull/1255 for
+* requirement to use different implementations on Windows MINGW32 and
+* other OSs.
+*
 * @param x argument
 * @return natural logarithm of the gamma function applied to
 * argument
@@ -62,6 +66,10 @@ inline double lgamma(double x) {
 /**
  * Return the natural logarithm of the gamma function applied
  * to the specified argument.
+ *
+ * Note: Please refer to https://github.com/stan-dev/math/pull/1255 for
+ * requirement to use different implementations on Windows MINGW32 and
+ * other OSs.
  *
  * @param x argument
  * @return natural logarithm of the gamma function applied to
