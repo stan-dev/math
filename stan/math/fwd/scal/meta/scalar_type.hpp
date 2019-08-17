@@ -11,9 +11,9 @@ namespace stan {
 /**
  * Specialization of scalar_type for fvar
  */
-template <template <class> class K, typename T>
-struct scalar_type<K<T>, std::enable_if_t<is_fvar<K<T>>::value>> {
-  typedef fvar<T> type;
+template <typename T>
+struct scalar_type<T, std::enable_if_t<is_fvar<T>::value>> {
+  typedef T type;
 };
 
 }  // namespace stan
