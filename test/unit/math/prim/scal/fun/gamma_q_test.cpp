@@ -22,8 +22,4 @@ TEST(MathFunctions, gamma_q_nan) {
   EXPECT_PRED1(boost::math::isnan<double>, stan::math::gamma_q(nan, 1.0));
 
   EXPECT_PRED1(boost::math::isnan<double>, stan::math::gamma_q(nan, nan));
-
-  // see comments in test/unit/math/prim/scal/fun/lgamma_test.cpp
-  EXPECT_PRED1(boost::math::isnormal<double>,
-               boost::math::gamma_q(1.0E50, 1.0E50));
 }
