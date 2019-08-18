@@ -25,7 +25,8 @@ inline var to_var(double x) { return var(x); }
  * @param[in] x An automatic differentiation variable.
  * @return An automatic differentiation variable with the input value.
  */
-inline var to_var(const var& x) { return x; }
+inline var& to_var(var& x) { return x; }
+inline const var& to_var(const var& x) { return x; }
 
 }  // namespace math
 }  // namespace stan
