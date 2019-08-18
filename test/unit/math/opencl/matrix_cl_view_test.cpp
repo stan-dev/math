@@ -93,15 +93,13 @@ TEST(matrix_cl_view, invert) {
   EXPECT_EQ(matrix_cl_view::Diagonal, invert(matrix_cl_view::Entire));
 }
 
-TEST(matrix_cl_view, from_eigen_triangular_type) {
-  using stan::math::from_eigen_triangular_type;
+TEST(matrix_cl_view, from_eigen_uplo_type) {
+  using stan::math::from_eigen_uplo_type;
   using stan::math::matrix_cl_view;
-  EXPECT_EQ(matrix_cl_view::Lower, from_eigen_triangular_type(Eigen::Lower));
-  EXPECT_EQ(matrix_cl_view::Upper, from_eigen_triangular_type(Eigen::Upper));
-  EXPECT_EQ(matrix_cl_view::Entire,
-            from_eigen_triangular_type(Eigen::SelfAdjoint));
-  EXPECT_EQ(matrix_cl_view::Entire,
-            from_eigen_triangular_type(Eigen::UnitDiag));
+  EXPECT_EQ(matrix_cl_view::Lower, from_eigen_uplo_type(Eigen::Lower));
+  EXPECT_EQ(matrix_cl_view::Upper, from_eigen_uplo_type(Eigen::Upper));
+  EXPECT_EQ(matrix_cl_view::Entire, from_eigen_uplo_type(Eigen::SelfAdjoint));
+  EXPECT_EQ(matrix_cl_view::Entire, from_eigen_uplo_type(Eigen::UnitDiag));
 }
 
 #endif
