@@ -61,7 +61,8 @@ using disable_if_any = std::enable_if_t<!math::conjunction<Checks...>::value>;
 
 // Check whether the decayed types are the same
 template <typename T, typename S>
-struct is_same_decay : std::integral_constant<
+struct is_same_decay
+    : std::integral_constant<
           bool, std::is_same<std::decay_t<T>, std::decay_t<S>>::value> {};
 
 template <typename T, typename S>
@@ -78,7 +79,8 @@ using disable_if_all_same = disable_if_all<is_same_decay<T, Types>...>;
 
 // Checks decayed (non-const/ref'd) type is arithmetic
 template <typename T>
-struct is_arithmetic_decay : std::integral_constant<bool, std::is_arithmetic<std::decay_t<T>>::value> {
+struct is_arithmetic_decay
+    : std::integral_constant<bool, std::is_arithmetic<std::decay_t<T>>::value> {
 };
 
 template <typename T>
@@ -101,30 +103,37 @@ using disable_if_any_arithmetic = disable_if_any<is_arithmetic_decay<Types>...>;
 
 // Check if a type contains or is arithmetic
 template <typename T>
-struct is_arithmetic_container : std::integral_constant<
+struct is_arithmetic_container
+    : std::integral_constant<
           bool, std::is_arithmetic<scalar_type_t<std::decay_t<T>>>::value> {};
 
 template <typename T>
-using enable_if_arithmetic_container = std::enable_if_t<is_arithmetic_container<T>::value>;
+using enable_if_arithmetic_container
+    = std::enable_if_t<is_arithmetic_container<T>::value>;
 
 template <typename T>
 using disable_if_arithmetic_container = disable_if<is_arithmetic_container<T>>;
 
 template <typename... Types>
-using enable_if_all_arithmetic_container = enable_if_all<is_arithmetic_container<Types>...>;
+using enable_if_all_arithmetic_container
+    = enable_if_all<is_arithmetic_container<Types>...>;
 
 template <typename... Types>
-using enable_if_any_arithmetic_container = enable_if_any<is_arithmetic_container<Types>...>;
+using enable_if_any_arithmetic_container
+    = enable_if_any<is_arithmetic_container<Types>...>;
 
 template <typename... Types>
-using disable_if_all_arithmetic_container = disable_if_all<is_arithmetic_container<Types>...>;
+using disable_if_all_arithmetic_container
+    = disable_if_all<is_arithmetic_container<Types>...>;
 
 template <typename... Types>
-using disable_if_any_arithmetic_container = disable_if_any<is_arithmetic_container<Types>...>;
+using disable_if_any_arithmetic_container
+    = disable_if_any<is_arithmetic_container<Types>...>;
 
 // Checks whether the type is floating_point
 template <typename T>
-struct is_fp_decay : std::integral_constant<bool,
+struct is_fp_decay
+    : std::integral_constant<bool,
                              std::is_floating_point<std::decay_t<T>>::value> {};
 
 template <typename T>
@@ -147,27 +156,34 @@ using disable_if_any_floating_point = disable_if_any<is_fp_decay<Types>...>;
 
 // Check if a type contains or is floating point
 template <typename T>
-struct is_floating_point_container : std::integral_constant<
+struct is_floating_point_container
+    : std::integral_constant<
           bool, std::is_floating_point<scalar_type_t<std::decay_t<T>>>::value> {
 };
 
 template <typename T>
-using enable_if_floating_point_container = std::enable_if_t<is_floating_point_container<T>::value>;
+using enable_if_floating_point_container
+    = std::enable_if_t<is_floating_point_container<T>::value>;
 
 template <typename T>
-using disable_if_floating_point_container = disable_if<is_floating_point_container<T>>;
+using disable_if_floating_point_container
+    = disable_if<is_floating_point_container<T>>;
 
 template <typename... Types>
-using enable_if_all_floating_point_container = enable_if_all<is_floating_point_container<Types>...>;
+using enable_if_all_floating_point_container
+    = enable_if_all<is_floating_point_container<Types>...>;
 
 template <typename... Types>
-using enable_if_any_floating_point_container = enable_if_any<is_floating_point_container<Types>...>;
+using enable_if_any_floating_point_container
+    = enable_if_any<is_floating_point_container<Types>...>;
 
 template <typename... Types>
-using disable_if_all_floating_point_container = disable_if_all<is_floating_point_container<Types>...>;
+using disable_if_all_floating_point_container
+    = disable_if_all<is_floating_point_container<Types>...>;
 
 template <typename... Types>
-using disable_if_any_floating_point_container = disable_if_any<is_floating_point_container<Types>...>;
+using disable_if_any_floating_point_container
+    = disable_if_any<is_floating_point_container<Types>...>;
 
 // Check if type is a var
 
@@ -191,7 +207,8 @@ using disable_if_any_var = disable_if_any<is_var<std::decay<Types>>...>;
 
 // Check if type contains or is a var
 template <typename T>
-struct is_var_container : std::integral_constant<bool,
+struct is_var_container
+    : std::integral_constant<bool,
                              is_var<scalar_type_t<std::decay_t<T>>>::value> {};
 
 template <typename T>
@@ -233,7 +250,8 @@ using disable_if_any_fvar = disable_if_any<is_fvar<std::decay<Types>>...>;
 
 // Check if type contains or is a fvar
 template <typename T>
-struct is_fvar_container : std::integral_constant<bool,
+struct is_fvar_container
+    : std::integral_constant<bool,
                              is_fvar<scalar_type_t<std::decay_t<T>>>::value> {};
 
 template <typename T>
@@ -249,13 +267,16 @@ template <typename... Types>
 using enable_if_any_fvar_container = enable_if_any<is_fvar_container<Types>...>;
 
 template <typename... Types>
-using disable_if_all_fvar_container = disable_if_all<is_fvar_container<Types>...>;
+using disable_if_all_fvar_container
+    = disable_if_all<is_fvar_container<Types>...>;
 
 template <typename... Types>
-using disable_if_any_fvar_container = disable_if_any<is_fvar_container<Types>...>;
+using disable_if_any_fvar_container
+    = disable_if_any<is_fvar_container<Types>...>;
 
 template <typename T>
-struct is_ad_type : std::integral_constant<bool, is_fvar<std::decay_t<T>>::value
+struct is_ad_type
+    : std::integral_constant<bool, is_fvar<std::decay_t<T>>::value
                                        || is_var<std::decay_t<T>>::value> {};
 
 template <typename T>
@@ -278,72 +299,91 @@ using disable_if_any_ad_type = disable_if_any<is_ad_type<std::decay<Types>>...>;
 
 // Check if type contains or is a ad_type
 template <typename T>
-struct is_ad_type_container : std::integral_constant<
+struct is_ad_type_container
+    : std::integral_constant<
           bool, is_ad_type<scalar_type_t<std::decay_t<T>>>::value> {};
 
 template <typename T>
-using enable_if_ad_type_container = std::enable_if_t<is_ad_type_container<T>::value>;
+using enable_if_ad_type_container
+    = std::enable_if_t<is_ad_type_container<T>::value>;
 
 template <typename T>
 using disable_if_ad_type_container = disable_if<is_ad_type_container<T>>;
 
 template <typename... Types>
-using enable_if_all_ad_type_container = enable_if_all<is_ad_type_container<Types>...>;
+using enable_if_all_ad_type_container
+    = enable_if_all<is_ad_type_container<Types>...>;
 
 template <typename... Types>
-using enable_if_any_ad_type_container = enable_if_any<is_ad_type_container<Types>...>;
+using enable_if_any_ad_type_container
+    = enable_if_any<is_ad_type_container<Types>...>;
 
 template <typename... Types>
-using disable_if_all_ad_type_container = disable_if_all<is_ad_type_container<Types>...>;
+using disable_if_all_ad_type_container
+    = disable_if_all<is_ad_type_container<Types>...>;
 
 template <typename... Types>
-using disable_if_any_ad_type_container = disable_if_any<is_ad_type_container<Types>...>;
+using disable_if_any_ad_type_container
+    = disable_if_any<is_ad_type_container<Types>...>;
 
 // Enables if type is var or arithmetic
 template <typename T>
-using enable_if_var_or_arithmetic = std::enable_if_t<is_var_or_arithmetic<T>::value>;
+using enable_if_var_or_arithmetic
+    = std::enable_if_t<is_var_or_arithmetic<T>::value>;
 
 template <typename T>
 using disable_if_var_or_arithmetic = disable_if<is_var_or_arithmetic<T>>;
 
 template <typename... Types>
-using enable_if_all_var_or_arithmetic = enable_if_all<is_var_or_arithmetic<Types>...>;
+using enable_if_all_var_or_arithmetic
+    = enable_if_all<is_var_or_arithmetic<Types>...>;
 
 template <typename... Types>
-using enable_if_any_var_or_arithmetic = enable_if_any<is_var_or_arithmetic<Types>...>;
+using enable_if_any_var_or_arithmetic
+    = enable_if_any<is_var_or_arithmetic<Types>...>;
 
 template <typename... Types>
-using disable_if_all_var_or_arithmetic = disable_if_all<is_var_or_arithmetic<Types>...>;
+using disable_if_all_var_or_arithmetic
+    = disable_if_all<is_var_or_arithmetic<Types>...>;
 
 template <typename... Types>
-using disable_if_any_var_or_arithmetic = disable_if_any<is_var_or_arithmetic<Types>...>;
+using disable_if_any_var_or_arithmetic
+    = disable_if_any<is_var_or_arithmetic<Types>...>;
 
 // Enables if type is var or arithmetic
 template <typename T>
-struct is_var_or_arithmetic_container : std::integral_constant<bool,
+struct is_var_or_arithmetic_container
+    : std::integral_constant<bool,
                              is_var_or_arithmetic<scalar_type_t<T>>::value> {};
 
 template <typename T>
-using enable_if_var_or_arithmetic_container = std::enable_if_t<is_var_or_arithmetic_container<T>::value>;
+using enable_if_var_or_arithmetic_container
+    = std::enable_if_t<is_var_or_arithmetic_container<T>::value>;
 
 template <typename T>
-using disable_if_var_or_arithmetic_container = disable_if<is_var_or_arithmetic_container<T>>;
+using disable_if_var_or_arithmetic_container
+    = disable_if<is_var_or_arithmetic_container<T>>;
 
 template <typename... Types>
-using enable_if_all_var_or_arithmetic_container = enable_if_all<is_var_or_arithmetic_container<Types>...>;
+using enable_if_all_var_or_arithmetic_container
+    = enable_if_all<is_var_or_arithmetic_container<Types>...>;
 
 template <typename... Types>
-using enable_if_any_var_or_arithmetic_container = enable_if_any<is_var_or_arithmetic_container<Types>...>;
+using enable_if_any_var_or_arithmetic_container
+    = enable_if_any<is_var_or_arithmetic_container<Types>...>;
 
 template <typename... Types>
-using disable_if_all_var_or_arithmetic_container = disable_if_all<is_var_or_arithmetic_container<Types>...>;
+using disable_if_all_var_or_arithmetic_container
+    = disable_if_all<is_var_or_arithmetic_container<Types>...>;
 
 template <typename... Types>
-using disable_if_any_var_or_arithmetic_container = disable_if_any<is_var_or_arithmetic_container<Types>...>;
+using disable_if_any_var_or_arithmetic_container
+    = disable_if_any<is_var_or_arithmetic_container<Types>...>;
 
 // Checks whether type is arithmetic, var, or fvar
 template <typename T>
-struct is_stan_scalar : std::integral_constant<bool, std::is_arithmetic<std::decay_t<T>>::value
+struct is_stan_scalar
+    : std::integral_constant<bool, std::is_arithmetic<std::decay_t<T>>::value
                                        || is_var<std::decay_t<T>>::value
                                        || is_fvar<std::decay_t<T>>::value> {};
 
@@ -363,33 +403,42 @@ template <typename... Types>
 using disable_if_all_stan_scalar = disable_if_all<is_stan_scalar<Types>...>;
 
 template <typename... Types>
-using disable_if_any_stan_stan_scalar = disable_if_any<is_stan_scalar<Types>...>;
+using disable_if_any_stan_stan_scalar
+    = disable_if_any<is_stan_scalar<Types>...>;
 
 // Check whether a type contains (or is) arithmetic, var, or fvar
 template <typename T>
-struct is_stan_scalar_container : std::integral_constant<bool, is_stan_scalar<scalar_type_t<T>>::value> {};
+struct is_stan_scalar_container
+    : std::integral_constant<bool, is_stan_scalar<scalar_type_t<T>>::value> {};
 
 template <typename T>
-using enable_if_stan_scalar_container = std::enable_if_t<is_stan_scalar_container<T>::value>;
+using enable_if_stan_scalar_container
+    = std::enable_if_t<is_stan_scalar_container<T>::value>;
 
 template <typename T>
-using disable_if_stan_scalar_container = disable_if<is_stan_scalar_container<T>>;
+using disable_if_stan_scalar_container
+    = disable_if<is_stan_scalar_container<T>>;
 
 template <typename... Types>
-using enable_if_all_stan_scalar_container = enable_if_all<is_stan_scalar_container<Types>...>;
+using enable_if_all_stan_scalar_container
+    = enable_if_all<is_stan_scalar_container<Types>...>;
 
 template <typename... Types>
-using enable_if_any_stan_scalar_container = enable_if_any<is_stan_scalar_container<Types>...>;
+using enable_if_any_stan_scalar_container
+    = enable_if_any<is_stan_scalar_container<Types>...>;
 
 template <typename... Types>
-using disable_if_all_stan_scalar_container = enable_if_all<is_stan_scalar_container<Types>...>;
+using disable_if_all_stan_scalar_container
+    = enable_if_all<is_stan_scalar_container<Types>...>;
 
 template <typename... Types>
-using disable_if_any_stan_contains_stan_scalar = enable_if_any<is_stan_scalar_container<Types>...>;
+using disable_if_any_stan_contains_stan_scalar
+    = enable_if_any<is_stan_scalar_container<Types>...>;
 
 // Checks whether type is a scalar as defined by the standard
 template <typename T>
-struct is_scalar_decay : std::integral_constant<bool, std::is_scalar<std::decay_t<T>>::value> {};
+struct is_scalar_decay
+    : std::integral_constant<bool, std::is_scalar<std::decay_t<T>>::value> {};
 
 template <typename T>
 using enable_if_scalar = std::enable_if_t<is_scalar_decay<T>::value>;
@@ -411,7 +460,8 @@ using disable_if_any_scalar = disable_if_any<is_scalar_decay<Types>...>;
 
 // Checks whether decayed type is a vector
 template <typename T>
-struct is_vector_decay : std::integral_constant<bool, is_vector<std::decay_t<T>>::value> {};
+struct is_vector_decay
+    : std::integral_constant<bool, is_vector<std::decay_t<T>>::value> {};
 
 template <typename T>
 using enable_if_vector = std::enable_if_t<is_vector_decay<T>::value>;
@@ -433,7 +483,8 @@ using disable_if_any_vector = disable_if_any<is_vector_decay<Types>...>;
 
 // Checks whether decayed type is a standard vector
 template <typename T>
-struct is_std_vector_decay : std::integral_constant<bool, is_std_vector<std::decay_t<T>>::value> {};
+struct is_std_vector_decay
+    : std::integral_constant<bool, is_std_vector<std::decay_t<T>>::value> {};
 
 template <typename T>
 using enable_if_std_vector = std::enable_if_t<is_std_vector_decay<T>::value>;
@@ -474,53 +525,66 @@ using disable_if_any_eigen = disable_if_any<is_eigen<Types>...>;
 
 // Checks if type is Eigen or arithmetic, var, or fvar
 template <typename T>
-struct is_eigen_or_stan_scalar : std::integral_constant<bool,
+struct is_eigen_or_stan_scalar
+    : std::integral_constant<bool,
                              is_eigen<T>::value || is_stan_scalar<T>::value> {};
 
 template <typename T>
-using enable_if_eigen_or_stan_scalar = std::enable_if_t<is_eigen_or_stan_scalar<T>::value>;
+using enable_if_eigen_or_stan_scalar
+    = std::enable_if_t<is_eigen_or_stan_scalar<T>::value>;
 
 template <typename T>
 using disable_if_eigen_or_stan_scalar = disable_if<is_eigen_or_stan_scalar<T>>;
 
 template <typename... Types>
-using enable_if_all_eigen_or_stan_scalar = enable_if_all<is_eigen_or_stan_scalar<Types>...>;
+using enable_if_all_eigen_or_stan_scalar
+    = enable_if_all<is_eigen_or_stan_scalar<Types>...>;
 
 template <typename... Types>
-using enable_if_any_eigen_or_stan_scalar = enable_if_any<is_eigen_or_stan_scalar<Types>...>;
+using enable_if_any_eigen_or_stan_scalar
+    = enable_if_any<is_eigen_or_stan_scalar<Types>...>;
 
 template <typename... Types>
-using disable_if_all_eigen_or_stan_scalar = disable_if_all<is_eigen_or_stan_scalar<Types>...>;
+using disable_if_all_eigen_or_stan_scalar
+    = disable_if_all<is_eigen_or_stan_scalar<Types>...>;
 
 template <typename... Types>
-using disable_if_any_eigen_or_stan_scalar = disable_if_any<is_eigen_or_stan_scalar<Types>...>;
+using disable_if_any_eigen_or_stan_scalar
+    = disable_if_any<is_eigen_or_stan_scalar<Types>...>;
 
 // Checks if type is Eigen and scalar type is arithmetic
 template <typename T>
-struct is_eigen_arithmetic : std::integral_constant<bool, is_eigen<T>::value
+struct is_eigen_arithmetic
+    : std::integral_constant<bool, is_eigen<T>::value
                                        && is_arithmetic_container<T>::value> {};
 
 template <typename T>
-using enable_if_eigen_arithmetic = std::enable_if_t<is_eigen_arithmetic<T>::value>;
+using enable_if_eigen_arithmetic
+    = std::enable_if_t<is_eigen_arithmetic<T>::value>;
 
 template <typename T>
 using disable_if_eigen_arithmetic = disable_if<is_eigen_arithmetic<T>>;
 
 template <typename... Types>
-using enable_if_all_eigen_arithmetic = enable_if_all<is_eigen_arithmetic<Types>...>;
+using enable_if_all_eigen_arithmetic
+    = enable_if_all<is_eigen_arithmetic<Types>...>;
 
 template <typename... Types>
-using enable_if_any_eigen_arithmetic = enable_if_any<is_eigen_arithmetic<Types>...>;
+using enable_if_any_eigen_arithmetic
+    = enable_if_any<is_eigen_arithmetic<Types>...>;
 
 template <typename... Types>
-using disable_if_all_eigen_arithmetic = disable_if_all<is_eigen_arithmetic<Types>...>;
+using disable_if_all_eigen_arithmetic
+    = disable_if_all<is_eigen_arithmetic<Types>...>;
 
 template <typename... Types>
-using disable_if_any_eigen_arithmetic = disable_if_any<is_eigen_arithmetic<Types>...>;
+using disable_if_any_eigen_arithmetic
+    = disable_if_any<is_eigen_arithmetic<Types>...>;
 
 // Checks if type is Eigen and scalar type is var
 template <typename T>
-struct is_eigen_var : std::integral_constant<bool, is_eigen<T>::value
+struct is_eigen_var
+    : std::integral_constant<bool, is_eigen<T>::value
                                        && is_var_container<T>::value> {};
 
 template <typename T>
@@ -543,7 +607,8 @@ using disable_if_any_eigen_var = disable_if_any<is_eigen_var<Types>...>;
 
 // Checks if type is Eigen and scalar type is fvar
 template <typename T>
-struct is_eigen_fvar : std::integral_constant<bool, is_eigen<T>::value
+struct is_eigen_fvar
+    : std::integral_constant<bool, is_eigen<T>::value
                                        && is_fvar_container<T>::value> {};
 
 template <typename T>
@@ -566,7 +631,8 @@ using disable_if_any_eigen_fvar = disable_if_any<is_eigen_fvar<Types>...>;
 
 // Checks if type is Eigen and scalar type is an autodiff type
 template <typename T>
-struct is_eigen_ad_type : std::integral_constant<bool, is_eigen<T>::value
+struct is_eigen_ad_type
+    : std::integral_constant<bool, is_eigen<T>::value
                                        && is_ad_type_container<T>::value> {};
 
 template <typename T>
@@ -589,41 +655,51 @@ using disable_if_any_eigen_ad_type = disable_if_any<is_eigen_ad_type<Types>...>;
 
 // Enable if for Eigen col vectors
 template <typename T>
-using enable_if_eigen_col_vector = std::enable_if_t<is_eigen_col_vector<T>::value>;
+using enable_if_eigen_col_vector
+    = std::enable_if_t<is_eigen_col_vector<T>::value>;
 
 template <typename T>
 using disable_if_eigen_col_vector = disable_if<is_eigen_col_vector<T>>;
 
 template <typename... Types>
-using enable_if_all_eigen_col_vector = enable_if_all<is_eigen_col_vector<Types>...>;
+using enable_if_all_eigen_col_vector
+    = enable_if_all<is_eigen_col_vector<Types>...>;
 
 template <typename... Types>
-using enable_if_any_eigen_col_vector = enable_if_any<is_eigen_col_vector<Types>...>;
+using enable_if_any_eigen_col_vector
+    = enable_if_any<is_eigen_col_vector<Types>...>;
 
 template <typename... Types>
-using disable_if_all_eigen_col_vector = disable_if_all<is_eigen_col_vector<Types>...>;
+using disable_if_all_eigen_col_vector
+    = disable_if_all<is_eigen_col_vector<Types>...>;
 
 template <typename... Types>
-using disable_if_any_eigen_col_vector = disable_if_any<is_eigen_col_vector<Types>...>;
+using disable_if_any_eigen_col_vector
+    = disable_if_any<is_eigen_col_vector<Types>...>;
 
 // Enable if for Eigen row vectors
 template <typename T>
-using enable_if_eigen_row_vector = std::enable_if_t<is_eigen_row_vector<T>::value>;
+using enable_if_eigen_row_vector
+    = std::enable_if_t<is_eigen_row_vector<T>::value>;
 
 template <typename T>
 using disable_if_eigen_row_vector = disable_if<is_eigen_row_vector<T>>;
 
 template <typename... Types>
-using enable_if_all_eigen_row_vector = enable_if_all<is_eigen_row_vector<Types>...>;
+using enable_if_all_eigen_row_vector
+    = enable_if_all<is_eigen_row_vector<Types>...>;
 
 template <typename... Types>
-using enable_if_any_eigen_row_vector = enable_if_any<is_eigen_row_vector<Types>...>;
+using enable_if_any_eigen_row_vector
+    = enable_if_any<is_eigen_row_vector<Types>...>;
 
 template <typename... Types>
-using disable_if_all_eigen_row_vector = disable_if_all<is_eigen_row_vector<Types>...>;
+using disable_if_all_eigen_row_vector
+    = disable_if_all<is_eigen_row_vector<Types>...>;
 
 template <typename... Types>
-using disable_if_any_eigen_row_vector = disable_if_any<is_eigen_row_vector<Types>...>;
+using disable_if_any_eigen_row_vector
+    = disable_if_any<is_eigen_row_vector<Types>...>;
 
 // Enable if eigen row or column vector
 template <typename T>
@@ -646,7 +722,8 @@ using disable_if_any_eigen_vector = disable_if_any<is_eigen_vector<Types>...>;
 
 // Check whether Eigen types satisfy a dot product
 template <typename T1, typename T2>
-struct is_dot_product : std::integral_constant<bool, is_eigen_row_vector<T1>::value
+struct is_dot_product
+    : std::integral_constant<bool, is_eigen_row_vector<T1>::value
                                        && is_eigen_col_vector<T2>::value> {};
 
 template <typename T1, typename T2>
@@ -659,7 +736,8 @@ namespace internal {
 // primary template for checking if eigen matrix rows match
 template <class T1, class T2, bool = is_eigen<T1>::value,
           bool = is_eigen<T2>::value>
-struct is_eigen_rows_match_impl : std::integral_constant<bool,
+struct is_eigen_rows_match_impl
+    : std::integral_constant<bool,
                              T1::RowsAtCompileTime == T2::RowsAtCompileTime> {};
 
 // if not eigen
@@ -680,7 +758,8 @@ struct is_eigen_rows_match : internal::is_eigen_rows_match_impl<T1, T2> {};
 
 // Enables for matching rows and columns
 template <typename T1, typename T2>
-using enable_if_eigen_rows_match = std::enable_if_t<is_eigen_rows_match<T1, T2>::value>;
+using enable_if_eigen_rows_match
+    = std::enable_if_t<is_eigen_rows_match<T1, T2>::value>;
 
 template <typename T1, typename T2>
 using disable_if_eigen_rows_match = disable_if<is_eigen_rows_match<T1, T2>>;
@@ -689,7 +768,8 @@ namespace internal {
 // primary template for checking if eigen matrix cols match
 template <class T1, class T2, bool = is_eigen<T1>::value,
           bool = is_eigen<T2>::value>
-struct is_eigen_cols_match_impl : std::integral_constant<bool,
+struct is_eigen_cols_match_impl
+    : std::integral_constant<bool,
                              T1::ColsAtCompileTime == T2::ColsAtCompileTime> {};
 
 // if not eigen
@@ -709,19 +789,22 @@ template <typename T1, typename T2>
 struct is_eigen_cols_match : internal::is_eigen_cols_match_impl<T1, T2> {};
 
 template <typename T1, typename T2>
-using enable_if_eigen_cols_match = std::enable_if_t<is_eigen_cols_match<T1, T2>::value>;
+using enable_if_eigen_cols_match
+    = std::enable_if_t<is_eigen_cols_match<T1, T2>::value>;
 
 template <typename T1, typename T2>
 using disable_if_eigen_cols_match = disable_if<is_eigen_cols_match<T1, T2>>;
 
 // primary template for checking if eigen matrix cols match
 template <class T1, class T2>
-struct is_eigen_dims_match : std::integral_constant<bool, is_eigen_cols_match<T1, T2>::value
+struct is_eigen_dims_match
+    : std::integral_constant<bool, is_eigen_cols_match<T1, T2>::value
                                        && is_eigen_rows_match<T1, T2>::value> {
 };
 
 template <typename T1, typename T2>
-using enable_if_eigen_dims_match = std::enable_if_t<is_eigen_dims_match<T1, T2>::value>;
+using enable_if_eigen_dims_match
+    = std::enable_if_t<is_eigen_dims_match<T1, T2>::value>;
 
 template <typename T1, typename T2>
 using disable_if_eigen_dims_match = disable_if<is_eigen_dims_match<T1, T2>>;
