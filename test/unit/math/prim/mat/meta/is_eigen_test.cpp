@@ -26,6 +26,4 @@ TEST(is_eigen, vector_of_RowVectorXd) {
   EXPECT_FALSE(stan::is_eigen<std::vector<Eigen::RowVectorXd>>::value);
 }
 
-TEST(is_eigen, arithmetic_type) {
-  EXPECT_FALSE(stan::is_eigen<double>::value);
-}
+TEST(is_eigen, arithmetic_type) { EXPECT_FALSE(stan::is_eigen<double>::value); }

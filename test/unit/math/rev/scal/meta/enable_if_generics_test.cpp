@@ -6,7 +6,6 @@
 
 // These are the is_* methods that check for var types
 
-
 // for testing that stan with just prim/scal does not know what fvar is.
 template <typename T>
 class fvar {};
@@ -53,7 +52,6 @@ TEST(is_check, is_contains_var) {
   EXPECT_FALSE(val);
   val = is_contains_var<Eigen::Matrix<fvar<fvar<var>>, -1, -1>>::value;
   EXPECT_FALSE(val);
-
 }
 
 TEST(is_check, is_contains_fvar) {
@@ -138,13 +136,12 @@ TEST(is_check, is_contains_stan_scalar) {
   EXPECT_FALSE(val);
   val = is_contains_stan_scalar<Eigen::Matrix<fvar<var>, -1, -1>>::value;
   EXPECT_FALSE(val);
-  val = is_contains_stan_scalar<Eigen::Matrix<fvar<fvar<double>>, -1, -1>>::value;
+  val = is_contains_stan_scalar<
+      Eigen::Matrix<fvar<fvar<double>>, -1, -1>>::value;
   EXPECT_FALSE(val);
   val = is_contains_stan_scalar<Eigen::Matrix<fvar<fvar<var>>, -1, -1>>::value;
   EXPECT_FALSE(val);
 }
-
-
 
 TEST(is_check, is_contains_ad_type) {
   using stan::is_contains_ad_type;
@@ -188,9 +185,7 @@ TEST(is_check, is_contains_ad_type) {
   EXPECT_FALSE(val);
   val = is_contains_ad_type<Eigen::Matrix<fvar<fvar<var>>, -1, -1>>::value;
   EXPECT_FALSE(val);
-
 }
-
 
 TEST(is_check, is_eigen_or_stan_scalar) {
   using stan::is_eigen_or_stan_scalar;
@@ -229,12 +224,12 @@ TEST(is_check, is_eigen_or_stan_scalar) {
   EXPECT_TRUE(val);
   val = is_eigen_or_stan_scalar<Eigen::Matrix<fvar<var>, -1, -1>>::value;
   EXPECT_TRUE(val);
-  val = is_eigen_or_stan_scalar<Eigen::Matrix<fvar<fvar<double>>, -1, -1>>::value;
+  val = is_eigen_or_stan_scalar<
+      Eigen::Matrix<fvar<fvar<double>>, -1, -1>>::value;
   EXPECT_TRUE(val);
   val = is_eigen_or_stan_scalar<Eigen::Matrix<fvar<fvar<var>>, -1, -1>>::value;
   EXPECT_TRUE(val);
 }
-
 
 TEST(is_check, is_eigen_arithmetic) {
   using stan::is_eigen_arithmetic;
@@ -278,9 +273,7 @@ TEST(is_check, is_eigen_arithmetic) {
   EXPECT_FALSE(val);
   val = is_eigen_arithmetic<Eigen::Matrix<fvar<fvar<var>>, -1, -1>>::value;
   EXPECT_FALSE(val);
-
 }
-
 
 TEST(is_check, is_eigen_var) {
   using stan::is_eigen_var;
@@ -324,7 +317,6 @@ TEST(is_check, is_eigen_var) {
   EXPECT_FALSE(val);
   val = is_eigen_var<Eigen::Matrix<fvar<fvar<var>>, -1, -1>>::value;
   EXPECT_FALSE(val);
-
 }
 
 TEST(is_check, is_eigen_fvar) {
@@ -369,5 +361,4 @@ TEST(is_check, is_eigen_fvar) {
   EXPECT_FALSE(val);
   val = is_eigen_fvar<Eigen::Matrix<fvar<fvar<var>>, -1, -1>>::value;
   EXPECT_FALSE(val);
-
 }

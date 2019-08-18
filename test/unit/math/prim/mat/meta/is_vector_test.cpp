@@ -20,7 +20,6 @@ TEST(MetaTraits, is_vector) {
   EXPECT_FALSE(is_vector<const temp_matrix_d>::value);
 }
 
-
 TEST(MetaTraits, is_eigen_vector_vector) {
   EXPECT_FALSE(stan::is_eigen_row_vector<std::vector<double>>::value);
   EXPECT_FALSE(stan::is_eigen_col_vector<std::vector<double>>::value);

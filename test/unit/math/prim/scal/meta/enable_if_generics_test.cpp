@@ -20,21 +20,24 @@ struct enable_if_any_tester : std::false_type {};
 template <typename T1, typename T2, typename = void>
 struct enable_if_all_tester : std::false_type {};
 
-
 template <typename T>
 struct disable_if_tester<T, stan::disable_if<T>> : std::true_type {};
 
 template <typename T1, typename T2>
-struct disable_if_all_tester<T1, T2, stan::disable_if_all<T1, T2>> : std::true_type {};
+struct disable_if_all_tester<T1, T2, stan::disable_if_all<T1, T2>>
+    : std::true_type {};
 
 template <typename T1, typename T2>
-struct disable_if_any_tester<T1, T2, stan::disable_if_any<T1, T2>> : std::true_type {};
+struct disable_if_any_tester<T1, T2, stan::disable_if_any<T1, T2>>
+    : std::true_type {};
 
 template <typename T1, typename T2>
-struct enable_if_any_tester<T1, T2, stan::enable_if_any<T1, T2>> : std::true_type {};
+struct enable_if_any_tester<T1, T2, stan::enable_if_any<T1, T2>>
+    : std::true_type {};
 
 template <typename T1, typename T2>
-struct enable_if_all_tester<T1, T2, stan::enable_if_all<T1, T2>> : std::true_type {};
+struct enable_if_all_tester<T1, T2, stan::enable_if_all<T1, T2>>
+    : std::true_type {};
 
 // for testing that stan with just prim/scal does not know what fvar is.
 template <typename T>
@@ -86,7 +89,6 @@ TEST(template_enablers, enable_if_any) {
   EXPECT_TRUE(val);
 }
 
-
 TEST(is_check, is_contains_arithmetic) {
   using stan::is_contains_arithmetic;
   class var {};
@@ -103,7 +105,6 @@ TEST(is_check, is_contains_arithmetic) {
   EXPECT_TRUE(val);
 }
 
-
 TEST(is_check, is_contains_floating_point) {
   using stan::is_contains_floating_point;
   auto val = is_contains_floating_point<double>::value;
@@ -118,7 +119,6 @@ TEST(is_check, is_contains_floating_point) {
   val = is_contains_floating_point<Eigen::Matrix<double, -1, 1>>::value;
   EXPECT_TRUE(val);
 }
-
 
 TEST(is_check, is_contains_var) {
   using stan::is_contains_var;
@@ -161,7 +161,6 @@ TEST(is_check, is_contains_var) {
   EXPECT_FALSE(val);
   val = is_contains_var<Eigen::Matrix<fvar<fvar<var>>, -1, -1>>::value;
   EXPECT_FALSE(val);
-
 }
 
 TEST(is_check, is_contains_fvar) {
@@ -207,7 +206,6 @@ TEST(is_check, is_contains_fvar) {
   EXPECT_FALSE(val);
 }
 
-
 TEST(is_check, is_contains_ad_type) {
   using stan::is_contains_ad_type;
 
@@ -249,7 +247,6 @@ TEST(is_check, is_contains_ad_type) {
   EXPECT_FALSE(val);
   val = is_contains_ad_type<Eigen::Matrix<fvar<fvar<var>>, -1, -1>>::value;
   EXPECT_FALSE(val);
-
 }
 
 TEST(is_check, is_eigen_arithmetic) {
@@ -293,9 +290,7 @@ TEST(is_check, is_eigen_arithmetic) {
   EXPECT_FALSE(val);
   val = is_eigen_arithmetic<Eigen::Matrix<fvar<fvar<var>>, -1, -1>>::value;
   EXPECT_FALSE(val);
-
 }
-
 
 TEST(is_check, is_eigen_var) {
   using stan::is_eigen_var;
@@ -338,7 +333,6 @@ TEST(is_check, is_eigen_var) {
   EXPECT_FALSE(val);
   val = is_eigen_var<Eigen::Matrix<fvar<fvar<var>>, -1, -1>>::value;
   EXPECT_FALSE(val);
-
 }
 
 TEST(is_check, is_eigen_fvar) {
@@ -382,7 +376,6 @@ TEST(is_check, is_eigen_fvar) {
   EXPECT_FALSE(val);
   val = is_eigen_fvar<Eigen::Matrix<fvar<fvar<var>>, -1, -1>>::value;
   EXPECT_FALSE(val);
-
 }
 
 TEST(is_check, is_contains_var_or_arithmetic) {
@@ -404,7 +397,6 @@ TEST(is_check, is_contains_var_or_arithmetic) {
   EXPECT_TRUE(val);
 }
 
-
 TEST(is_check, is_contains_stan_scalar) {
   using stan::is_contains_stan_scalar;
   class var {};
@@ -424,7 +416,6 @@ TEST(is_check, is_contains_stan_scalar) {
   val = is_contains_stan_scalar<Eigen::Matrix<double, -1, 1>>::value;
   EXPECT_TRUE(val);
 }
-
 
 TEST(is_check, is_eigen_or_stan_scalar) {
   using stan::is_eigen_or_stan_scalar;
@@ -462,16 +453,15 @@ TEST(is_check, is_eigen_or_stan_scalar) {
   EXPECT_TRUE(val);
   val = is_eigen_or_stan_scalar<Eigen::Matrix<fvar<var>, -1, -1>>::value;
   EXPECT_TRUE(val);
-  val = is_eigen_or_stan_scalar<Eigen::Matrix<fvar<fvar<double>>, -1, -1>>::value;
+  val = is_eigen_or_stan_scalar<
+      Eigen::Matrix<fvar<fvar<double>>, -1, -1>>::value;
   EXPECT_TRUE(val);
   val = is_eigen_or_stan_scalar<Eigen::Matrix<fvar<fvar<var>>, -1, -1>>::value;
   EXPECT_TRUE(val);
 }
 
-
 TEST(is_check, is_dot_product) {
   using stan::is_dot_product;
-
 
   using left_dot = typename Eigen::Matrix<double, 1, -1>;
   using right_dot = typename Eigen::Matrix<double, -1, 1>;
@@ -487,13 +477,10 @@ TEST(is_check, is_dot_product) {
   using full_mat = typename Eigen::Matrix<double, -1, -1>;
   val = is_dot_product<full_mat, right_dot>::value;
   EXPECT_FALSE(val);
-
 }
-
 
 TEST(is_check, is_eigen_rows_match) {
   using stan::is_eigen_rows_match;
-
 
   using left_dot = typename Eigen::Matrix<double, 1, -1>;
   using right_dot = typename Eigen::Matrix<double, -1, 1>;
@@ -506,13 +493,10 @@ TEST(is_check, is_eigen_rows_match) {
   using full_mat = typename Eigen::Matrix<double, -1, -1>;
   val = is_eigen_rows_match<full_mat, right_dot>::value;
   EXPECT_TRUE(val);
-
 }
-
 
 TEST(is_check, is_eigen_cols_match) {
   using stan::is_eigen_cols_match;
-
 
   using left_dot = typename Eigen::Matrix<double, 1, -1>;
   using right_dot = typename Eigen::Matrix<double, -1, 1>;
@@ -528,13 +512,10 @@ TEST(is_check, is_eigen_cols_match) {
 
   val = is_eigen_cols_match<full_mat, left_dot>::value;
   EXPECT_TRUE(val);
-
 }
-
 
 TEST(is_check, is_eigen_dims_match) {
   using stan::is_eigen_dims_match;
-
 
   using left_dot = typename Eigen::Matrix<double, 1, -1>;
   using right_dot = typename Eigen::Matrix<double, -1, 1>;
@@ -550,5 +531,4 @@ TEST(is_check, is_eigen_dims_match) {
 
   val = is_eigen_dims_match<left_dot, left_dot>::value;
   EXPECT_TRUE(val);
-
 }

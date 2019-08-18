@@ -11,8 +11,10 @@ struct is_eigen;
 
 // Checks whether decayed type is inherits from EigenBase
 template <typename T>
-struct is_eigen<T, std::enable_if_t<std::is_base_of<Eigen::EigenBase<std::decay_t<T>>,
-                std::decay_t<T>>::value>> : std::true_type {};
+struct is_eigen<
+    T, std::enable_if_t<std::is_base_of<Eigen::EigenBase<std::decay_t<T>>,
+                                        std::decay_t<T>>::value>>
+    : std::true_type {};
 
 }  // namespace stan
 #endif
