@@ -1,5 +1,6 @@
 #include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
+#include <vector>
 
 TEST(MetaTraits, is_vector) {
   using stan::is_vector;
