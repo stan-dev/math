@@ -32,7 +32,6 @@ struct is_std_vector : std::false_type {};
 template <typename T, typename = void>
 struct is_eigen_col_vector : std::false_type {};
 
-
 // Check whether type is an eigen row vector
 template <typename T, typename = void>
 struct is_eigen_row_vector : std::false_type {};
@@ -40,7 +39,6 @@ struct is_eigen_row_vector : std::false_type {};
 // Checks whether decayed type is an eigen vector
 template <typename T, typename = void>
 struct is_eigen_vector : std::false_type {};
-
 
 }  // namespace stan
 #endif
