@@ -64,7 +64,5 @@ struct is_eigen_vector
     : std::integral_constant<bool, is_eigen_col_vector<T>::value
                                        || is_eigen_row_vector<T>::value> {};
 
-
-
 }  // namespace stan
 #endif
