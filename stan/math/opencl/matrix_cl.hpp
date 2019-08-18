@@ -272,7 +272,8 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
   }
 
   template <typename Type>
-  using enable_if_eigen_base = std::enable_if_t<std::is_base_of<Eigen::EigenBase<Type>, std::decay_t<Type>>::value>;
+  using enable_if_eigen_base = std::enable_if_t<
+      std::is_base_of<Eigen::EigenBase<Type>, std::decay_t<Type>>::value>;
 
   /**
    * Constructor for the matrix_cl that
@@ -287,7 +288,8 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
    * matrices do not have matching dimensions
    */
   template <typename eigen_base, typename = enable_if_eigen_base<eigen_base>>
-  explicit matrix_cl(const eigen_base& A, matrix_cl_view partial_view = matrix_cl_view::Entire)
+  explicit matrix_cl(const eigen_base& A,
+                     matrix_cl_view partial_view = matrix_cl_view::Entire)
       : rows_(A.rows()), cols_(A.cols()), view_(partial_view) {
     if (this->size() == 0) {
       return;
