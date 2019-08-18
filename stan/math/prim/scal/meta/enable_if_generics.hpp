@@ -229,12 +229,10 @@ template <typename... Types>
 using enable_if_any_contains_var = enable_if_any<is_contains_var<Types>...>;
 
 template <typename... Types>
-using disable_if_all_contains_var
-    = disable_if_all<is_contains_var<Types>...>;
+using disable_if_all_contains_var = disable_if_all<is_contains_var<Types>...>;
 
 template <typename... Types>
-using disable_if_any_contains_var
-    = disable_if_any<is_contains_var<Types>...>;
+using disable_if_any_contains_var = disable_if_any<is_contains_var<Types>...>;
 
 // Check if type is a fvar
 template <typename T>
@@ -566,7 +564,8 @@ template <typename... Types>
 using disable_if_any_eigen_or_stan_scalar
     = disable_if_any<is_eigen_or_stan_scalar<Types>...>;
 
-// Checks if type is Eigen scalar type and arithmetic
+
+// Checks if type is Eigen and scalar type is arithmetic
 template <typename T>
 struct is_eigen_arithmetic
     : std::integral_constant<bool, is_eigen<T>::value
@@ -594,6 +593,84 @@ using disable_if_all_eigen_arithmetic
 template <typename... Types>
 using disable_if_any_eigen_arithmetic
     = disable_if_any<is_eigen_arithmetic<Types>...>;
+
+
+
+// Checks if type is Eigen and scalar type is var
+template <typename T>
+struct is_eigen_var
+    : std::integral_constant<bool, is_eigen<T>::value
+                                       && is_contains_var<T>::value> {};
+
+template <typename T>
+using enable_if_eigen_var = std::enable_if_t<is_eigen_var<T>::value>;
+
+template <typename T>
+using disable_if_eigen_var = disable_if<is_eigen_var<T>>;
+
+template <typename... Types>
+using enable_if_all_eigen_var = enable_if_all<is_eigen_var<Types>...>;
+
+template <typename... Types>
+using enable_if_any_eigen_var = enable_if_any<is_eigen_var<Types>...>;
+
+template <typename... Types>
+using disable_if_all_eigen_var = disable_if_all<is_eigen_var<Types>...>;
+
+template <typename... Types>
+using disable_if_any_eigen_var = disable_if_any<is_eigen_var<Types>...>;
+
+
+
+// Checks if type is Eigen and scalar type is fvar
+template <typename T>
+struct is_eigen_fvar
+    : std::integral_constant<bool, is_eigen<T>::value
+                                       && is_contains_fvar<T>::value> {};
+
+template <typename T>
+using enable_if_eigen_fvar = std::enable_if_t<is_eigen_fvar<T>::value>;
+
+template <typename T>
+using disable_if_eigen_fvar = disable_if<is_eigen_fvar<T>>;
+
+template <typename... Types>
+using enable_if_all_eigen_fvar = enable_if_all<is_eigen_fvar<Types>...>;
+
+template <typename... Types>
+using enable_if_any_eigen_fvar = enable_if_any<is_eigen_fvar<Types>...>;
+
+template <typename... Types>
+using disable_if_all_eigen_fvar = disable_if_all<is_eigen_fvar<Types>...>;
+
+template <typename... Types>
+using disable_if_any_eigen_fvar = disable_if_any<is_eigen_fvar<Types>...>;
+
+
+
+// Checks if type is Eigen and scalar type is an autodiff type
+template <typename T>
+struct is_eigen_ad_type
+    : std::integral_constant<bool, is_eigen<T>::value
+                                       && is_contains_ad_type<T>::value> {};
+
+template <typename T>
+using enable_if_eigen_ad_type = std::enable_if_t<is_eigen_ad_type<T>::value>;
+
+template <typename T>
+using disable_if_eigen_ad_type = disable_if<is_eigen_ad_type<T>>;
+
+template <typename... Types>
+using enable_if_all_eigen_ad_type = enable_if_all<is_eigen_ad_type<Types>...>;
+
+template <typename... Types>
+using enable_if_any_eigen_ad_type = enable_if_any<is_eigen_ad_type<Types>...>;
+
+template <typename... Types>
+using disable_if_all_eigen_ad_type = disable_if_all<is_eigen_ad_type<Types>...>;
+
+template <typename... Types>
+using disable_if_any_eigen_ad_type = disable_if_any<is_eigen_ad_type<Types>...>;
 
 // Enable if for Eigen col vectors
 template <typename T>
