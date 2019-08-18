@@ -6,7 +6,7 @@
 namespace stan {
 
 // Checks whether decayed type is inherits from EigenBase
-template <typename T, typename>
+template <typename T, typename = void>
 struct is_eigen : std::false_type {};
 
 }  // namespace stan

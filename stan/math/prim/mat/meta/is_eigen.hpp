@@ -2,12 +2,10 @@
 #define STAN_MATH_PRIM_MAT_META_IS_EIGEN_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/scal/meta/is_eigen.hpp>
 #include <type_traits>
 
 namespace stan {
-
-template <typename T, typename = void>
-struct is_eigen;
 
 // Checks whether decayed type is inherits from EigenBase
 template <typename T>
