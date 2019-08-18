@@ -271,6 +271,9 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
     }
   }
 
+  template <typename Type>
+  using enable_if_eigen_base = std::enable_if_t<std::is_base_of<Eigen::EigenBase<Type>, std::decay_t<Type>>::value>;
+
   /**
    * Constructor for the matrix_cl that
    * creates a copy of the Eigen matrix on the OpenCL device.
@@ -283,12 +286,10 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
    * @throw <code>std::system_error</code> if the
    * matrices do not have matching dimensions
    */
-  explicit matrix_cl(
-      const Eigen::Ref<const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>>&
-          A,
-      matrix_cl_view partial_view = matrix_cl_view::Entire)
+  template <typename eigen_base, typename = enable_if_eigen_base<eigen_base>>
+  explicit matrix_cl(const eigen_base& A, matrix_cl_view partial_view = matrix_cl_view::Entire)
       : rows_(A.rows()), cols_(A.cols()), view_(partial_view) {
-    if (size() == 0) {
+    if (this->size() == 0) {
       return;
     }
     cl::Context& ctx = opencl_context.context();
@@ -297,7 +298,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
       buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
       cl::Event transfer_event;
       queue.enqueueWriteBuffer(buffer_cl_, CL_FALSE, 0, sizeof(T) * A.size(),
-                               A.data(), NULL, &transfer_event);
+                               A.eval().data(), NULL, &transfer_event);
       this->add_write_event(transfer_event);
     } catch (const cl::Error& e) {
       check_opencl_error("matrix constructor", e);
