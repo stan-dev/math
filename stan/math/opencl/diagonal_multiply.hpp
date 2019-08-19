@@ -18,7 +18,7 @@ namespace math {
  * @return copy of the input matrix with the diagonal multiplied by scalar
  */
 template <typename T1, typename T2,
-          typename = AllArithmeticTypeContainer<T1, T2>>
+          typename = all_arithmetic_type_container<T1, T2>>
 inline matrix_cl<return_type_t<T1, T2>> diagonal_multiply(
     const matrix_cl<T1>& A, const T2 scalar) {
   matrix_cl<return_type_t<T1, T2>> B(A);

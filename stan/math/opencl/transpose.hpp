@@ -18,7 +18,7 @@ namespace math {
  * @return transposed input matrix
  *
  */
-template <typename T, typename = ArithmeticTypeContainer<T>>
+template <typename T, typename = arithmetic_type_container<T>>
 inline matrix_cl<T> transpose(const matrix_cl<T>& src) {
   matrix_cl<T> dst(src.cols(), src.rows(), transpose(src.view()));
   if (dst.size() == 0)

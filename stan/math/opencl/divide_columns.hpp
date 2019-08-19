@@ -27,7 +27,7 @@ namespace math {
  *
  */
 template <typename T1, typename T2,
-          typename = AllArithmeticTypeContainer<T1, T2>>
+          typename = all_arithmetic_type_container<T1, T2>>
 inline void divide_columns(const matrix_cl<T1>& A, const matrix_cl<T2>& B) {
   if (A.size() == 0 || B.size() == 0) {
     return;
@@ -54,7 +54,7 @@ inline void divide_columns(const matrix_cl<T1>& A, const matrix_cl<T2>& B) {
  *
  */
 template <typename T1, typename T2,
-          typename = AllArithmeticTypeContainer<T1, T2>>
+          typename = all_arithmetic_type_container<T1, T2>>
 inline void divide_columns(const matrix_cl<T1>& A, const T2& divisor) {
   if (A.size() == 0) {
     return;

@@ -16,7 +16,7 @@ template <typename T>
 inline void initialize(T& x, const T& v) {
   x = v;
 }
-template <typename T, typename V, typename = ArithmeticTypeContainer<V>>
+template <typename T, typename V, typename = arithmetic_type_container<V>>
 inline void initialize(T& x, V v) {
   x = v;
 }

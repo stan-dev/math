@@ -19,7 +19,7 @@ namespace math {
  * @return the identity matrix
  *
  */
-template <typename T, typename = ArithmeticTypeContainer<T>>
+template <typename T, typename = arithmetic_type_container<T>>
 inline matrix_cl<T> identity(int rows_cols) {
   matrix_cl<T> A(rows_cols, rows_cols, matrix_cl_view::Diagonal);
   if (rows_cols == 0) {
