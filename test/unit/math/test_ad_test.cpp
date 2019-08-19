@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <gtest/gtest.h>
 #include <limits>
 #include <vector>
 
@@ -9,8 +10,10 @@ TEST(test_unit_math_test_ad, test_ad_unary) {
   auto g = [](const auto& u) { return stan::math::inverse(u); };
   stan::test::expect_ad(g, x);
 
-  // need functor because can't infer template param F of expect_ad
-  // stan::test::expect_ad(inverse, x);  // won't compile
+  // Note:  the above is how tests need to be written;  the
+  // functor is required because the following won't compile
+  // because the template parameter F for expect_ad can't be deduced
+  //   stan::test::expect_ad(inverse, x);
 }
 
 TEST(test_unit_math_test_ad, test_ad_binary) {
@@ -81,4 +84,26 @@ TEST(test_ad, misthrow) {
   auto h = [](const auto& u) { return f_misthrow(u); };
   // include following line to show exception error behavior
   // stan::test::expect_ad(h, x);
+}
+
+template <typename T>
+T foo(const T& x) {
+  return x / 2;
+}
+
+double foo(const double& x) {
+  return x / 2;  // 2 * x;  // x / 2 will fail
+}
+
+double foo(const int& x) {
+  // include print to verify foo(int) is called
+  // std::cout << "GOOD int foo(" << x << ")" << std::endl;
+  // return x / 2;       // fails --- inconsistent with double version
+  return x / 2.0;  // passes
+}
+
+TEST(test_ad, integerGetsPassed) {
+  auto h = [](const auto& u) { return foo(u); };
+  stan::test::expect_ad(h, 3.0);  // passes for double
+  // stan::test::expect_ad(h, 3);  // fails
 }

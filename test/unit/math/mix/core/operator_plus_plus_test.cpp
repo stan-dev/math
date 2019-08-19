@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
 
-TEST(mathMixCore, opratorPlusPlusPre1) {
+TEST(mathMixCore, operatorPlusPlusPre1) {
+  // this functor tests that y is right value after operator
   auto f = [](const auto& x1) {
     auto y = x1;
     auto z = ++y;
@@ -8,7 +9,8 @@ TEST(mathMixCore, opratorPlusPlusPre1) {
   };
   stan::test::expect_common_unary(f);
 }
-TEST(mathMixCore, opratorPlusPlusPre2) {
+TEST(mathMixCore, operatorPlusPlusPre2) {
+  // this functor tests that value of expression has right value
   auto f = [](const auto& x1) {
     auto y = x1;
     auto z = ++y;
@@ -17,7 +19,8 @@ TEST(mathMixCore, opratorPlusPlusPre2) {
   stan::test::expect_common_unary(f);
 }
 
-TEST(mathMixCore, opratorPlusPlusPost1) {
+TEST(mathMixCore, operatorPlusPlusPost1) {
+  // this functor tests that y is right value after operator
   auto f = [](const auto& x1) {
     auto y = x1;
     auto z = y++;
@@ -26,7 +29,8 @@ TEST(mathMixCore, opratorPlusPlusPost1) {
   stan::test::expect_common_unary(f);
 }
 
-TEST(mathMixCore, opratorPlusPlusPost2) {
+TEST(mathMixCore, operatorPlusPlusPost2) {
+  // this functor tests that value of expression has right value
   auto f = [](const auto& x1) {
     auto y = x1;
     auto z = y++;

@@ -1,8 +1,10 @@
 #ifndef TEST_UNIT_MATH_TEST_AD_HPP
 #define TEST_UNIT_MATH_TEST_AD_HPP
 
+#include <test/unit/math/is_finite.hpp>
+#include <test/unit/math/expect_near_rel.hpp>
+#include <test/unit/math/serializer.hpp>
 #include <stan/math/mix/mat.hpp>
-#include <test/unit/math/util.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
 #include <string>
@@ -12,143 +14,61 @@ namespace stan {
 namespace test {
 
 /**
- * Return true if the specified value is finite.
+ * Simple struct to hold the complete set of tolerances used to test a
+ * function.  The default constructor uses default values for all
+ * tolerances.  These are 1e-8 for values, 1e-4 for first derivatives,
+ * 1e-3 for second derivatives, and 1e-2 for third derivatives.  The
+ * names begin with the functional being evaluated, include an `fvar`
+ * if the function is implemented using only forward mode, and end
+ * with the quantity being calculated; for exmaple,
+ * `hessian_fvar_grad_` is the gradient calculated by the `hessian`
+ * function using forward-mode autodiff.
  *
- * @param x value to test
- * @return true if value is finite
+ * `gradient_val_`: 1e-8;  `gradient_grad_`: 1e-4
+ *
+ * `gradient_fvar_val_`: 1e-8;  `gradient_fvar_grad_`: 1e-4
+ *
+ * `hessian_val_` : 1e-8; `hessian_grad_`: 1e-4; `hessian_hessian_`: 1e-3
+ *
+ * `hessian_fvar_val_` : 1e-8; `hessian_fvar_grad_`: 1e-4;
+ * `hessian_fvar_hessian_`: 1e-3
+ *
+ * `grad_hessian_val_` : 1e-8; `grad_hessian_hessian_`: 1e-3;
+ * `grad_hessian_grad_hessian_`: 1e-2
  */
-bool is_finite(double x) {
-  return !stan::math::is_inf(x) && !stan::math::is_nan(x);
-}
+struct ad_tolerances {
+  double gradient_val_;
+  double gradient_grad_;
+  double gradient_fvar_val_;
+  double gradient_fvar_grad_;
+  double hesssian_val_;
+  double hessian_grad_;
+  double hessian_hessian_;
+  double hessian_fvar_val_;
+  double hessian_fvar_grad_;
+  double hessian_fvar_hessian_;
+  double grad_hessian_val_;
+  double grad_hessian_hessian_;
+  double grad_hessian_grad_hessian_;
+  ad_tolerances()
+      : gradient_val_(1e-8),
+        gradient_grad_(1e-4),
 
-/**
- * Return true if all of the elements in the container are finite
- *
- * @tparam T scalar type
- * @tparam R row type
- * @tparam C col type
- * @param x container to test
- * @return true if all container values are finite
- */
-template <typename T, int R, int C>
-bool is_finite(const Eigen::Matrix<T, R, C>& x) {
-  for (int i = 0; i < x.size(); ++i)
-    if (!is_finite(x(i)))
-      return false;
-  return true;
-}
+        gradient_fvar_val_(1e-8),
+        gradient_fvar_grad_(1e-4),
 
-/**
- * Return true if all of the elements in the container are finite
- *
- * @tparam T contained type
- * @param x container to test
- * @return true if all container values are finite
- */
-template <typename T>
-bool is_finite(const std::vector<T>& x) {
-  for (size_t i = 0; i < x.size(); ++i)
-    if (!is_finite(x[i]))
-      return false;
-  return true;
-}
+        hesssian_val_(1e-8),
+        hessian_grad_(1e-4),
+        hessian_hessian_(1e-3),
 
-/**
- * Test that the specified values are within the specified tolerance
- * on relative error, and if not, fail the embedded google test.
- *
- * <p>Relative error is defined to be the error `u - v` rescaled by the
- * average absolute value,
- * `rel_err(u, v) = (u - v) / (0.5 * (abs(u) * + abs(v))).`
- *
- * <p>If both `u` and `v` are zero, the error is defined to be zero.
- * If only one of `u` or `v` is zero, the above definition always
- * yields 1.  This is not a useful test, so we instead test absolute
- * error in the case that one of the values is zero.
- *
- * @tparam T1 type of first argument
- * @tparam T2 type of second argument
- * @param msg failure message for reporting
- * @param x1 first argument
- * @param x2 second argument
- * @param tol relative tolerance
- */
-template <typename T1, typename T2>
-void expect_near_relative(const std::string& msg, const T1& x1, const T2& x2,
-                          double tol = 1e-8) {
-  using stan::math::fabs;
-  if (x1 == 0 && x2 == 0)
-    return;
-  if (x1 == 0 || x2 == 0) {
-    EXPECT_NEAR(x1, x2, tol) << "expect_near_relative(" << x1 << ", " << x2
-                             << ", tolerance = " << tol << ")"
-                             << "    in: " << msg << std::endl;
-    return;
-  }
-  auto avg = 0.5 * (fabs(x1) + fabs(x2));
-  auto relative_diff = (x1 - x2) / avg;
-  EXPECT_NEAR(0, relative_diff, tol)
-      << "expect_near_relative(" << x1 << ", " << x2 << ", tolerance = " << tol
-      << ")"
-      << "; relative diff = " << relative_diff << std::endl
-      << "    in: " << msg << std::endl;
-}
+        hessian_fvar_val_(1e-8),
+        hessian_fvar_grad_(1e-4),
+        hessian_fvar_hessian_(1e-3),
 
-/**
- * Test that scalars x1 and x2 are within the specified relative
- * tolerance, with identity behavior for infinite and NaN values.
- * Relative tolerance is defined in the documentation for
- * `expect_near_relative`.
- *
- * @tparam T1 type of first argument
- * @tparam T2 type of second argument
- * @param msg message indicating what is being tested to print in case
- * of error
- * @param x1 first argument to test
- * @param x2 second argument to test
- * @param tol relative tolerance
- */
-template <typename T1, typename T2>
-void expect_near(const std::string& msg, const T1& x1, const T2& x2,
-                 double tol = 1e-8) {
-  if (stan::math::is_nan(x1) || stan::math::is_nan(x2))
-    EXPECT_TRUE(stan::math::is_nan(x1) && stan::math::is_nan(x2))
-        << "expect_near(" << x1 << ", " << x2 << ")" << std::endl
-        << msg << std::endl;
-  else if (stan::math::is_inf(x1) || stan::math::is_inf(x2))
-    EXPECT_EQ(x1, x2) << "expect_near(" << x1 << ", " << x2 << ")" << std::endl
-                      << msg << std::endl;
-  else
-    expect_near_relative(msg, x1, x2, tol);
-}
-
-/**
- * Tests that matrices (or vectors) x1 and x2 are same size and
- * have near values up to specified relative tolerance, accounting for
- * infinite, not-a-number, and zero values as specified in
- * `expect_near_relative`.
- *
- * @tparam T type of scalars in matrix
- * @tparam R row specification of matrix
- * @tparam C column specification of the matrix
- * @param msg failure message
- * @param x1 first matrix to test
- * @param x2 second matrix to test
- * @param tol relative tolerance
- */
-template <typename T, int R, int C>
-void expect_near(const std::string& msg, const Eigen::Matrix<T, R, C>& x1,
-                 const Eigen::Matrix<T, R, C>& x2, double tol = 1e-8) {
-  EXPECT_EQ(x1.rows(), x2.rows()) << "expect_near rows expect_eq(" << x1.rows()
-                                  << ", " << x2.rows() << ")" << std::endl
-                                  << msg << std::endl;
-  EXPECT_EQ(x1.cols(), x2.cols()) << "expect_near cols expect_eq(" << x1.rows()
-                                  << ", " << x2.rows() << ")" << std::endl
-                                  << msg << std::endl;
-  std::string msg2 = "expect_near elt x1(i) = x2(i)\n" + msg;
-  for (int i = 0; i < x1.size(); ++i)
-    expect_near(msg2, x1(i), x2(i), tol);
-}
+        grad_hessian_val_(1e-8),
+        grad_hessian_hessian_(1e-3),
+        grad_hessian_grad_hessian_(1e-2) {}
+};
 
 /**
  * Tests that the specified function applied to the specified argument
@@ -173,13 +93,13 @@ void test_gradient(const F& f, const Eigen::VectorXd& x, double fx,
   Eigen::VectorXd grad_ad;
   double fx_ad = fx;
   stan::math::gradient<F>(f, x, fx_ad, grad_ad);
-  expect_near("test_gradient fx = fx_ad", fx, fx_ad, 1e-8);
+  expect_near_rel("test_gradient fx = fx_ad", fx, fx_ad, 1e-8);
   if (!test_derivs || !is_finite(x) || !is_finite(fx))
     return;
   Eigen::VectorXd grad_fd;
   double fx_fd;
   stan::math::finite_diff_gradient_auto(f, x, fx_fd, grad_fd);
-  expect_near("test gradient grad_fd == grad_ad", grad_fd, grad_ad, 1e-4);
+  expect_near_rel("test gradient grad_fd == grad_ad", grad_fd, grad_ad, 1e-4);
 }
 
 /**
@@ -210,13 +130,13 @@ void test_gradient_fvar(const F& f, const Eigen::VectorXd& x, double fx,
   Eigen::VectorXd grad_ad;
   double fx_ad = fx;
   stan::math::gradient<double, F>(f, x, fx_ad, grad_ad);
-  expect_near("gradient_fvar fx == fx_ad", fx, fx_ad, 1e-8);
+  expect_near_rel("gradient_fvar fx == fx_ad", fx, fx_ad, 1e-8);
   if (!test_derivs || !is_finite(x) || !is_finite(fx))
     return;
   Eigen::VectorXd grad_fd;
   double fx_fd;
   stan::math::finite_diff_gradient_auto(f, x, fx_fd, grad_fd);
-  expect_near("gradient_fvar grad_fd == grad_ad", grad_fd, grad_ad, 1e-4);
+  expect_near_rel("gradient_fvar grad_fd == grad_ad", grad_fd, grad_ad, 1e-4);
 }
 
 /**
@@ -248,15 +168,15 @@ void test_hessian_fvar(const F& f, const Eigen::VectorXd& x, double fx,
   Eigen::VectorXd grad_ad;
   Eigen::MatrixXd H_ad;
   stan::math::hessian<double, F>(f, x, fx_ad, grad_ad, H_ad);
-  expect_near("hessian_fvar fx == fx_ad", fx, fx_ad, 1e-8);
+  expect_near_rel("hessian_fvar fx == fx_ad", fx, fx_ad, 1e-8);
   if (!test_derivs || !is_finite(x) || !is_finite(fx))
     return;
   double fx_fd;
   Eigen::VectorXd grad_fd;
   Eigen::MatrixXd H_fd;
   stan::math::finite_diff_hessian_auto(f, x, fx_fd, grad_fd, H_fd);
-  expect_near("hessian fvar grad_fd == grad_ad", grad_fd, grad_ad, 1e-4);
-  expect_near("hessian fvar H_fd = H_ad", H_fd, H_ad, 1e-3);
+  expect_near_rel("hessian fvar grad_fd == grad_ad", grad_fd, grad_ad, 1e-4);
+  expect_near_rel("hessian fvar H_fd = H_ad", H_fd, H_ad, 1e-3);
 }
 
 /**
@@ -288,15 +208,15 @@ void test_hessian(const F& f, const Eigen::VectorXd& x, double fx,
   Eigen::VectorXd grad_ad;
   Eigen::MatrixXd H_ad;
   stan::math::hessian<F>(f, x, fx_ad, grad_ad, H_ad);
-  expect_near("hessian fx == fx_ad", fx, fx_ad, 1e-8);
+  expect_near_rel("hessian fx == fx_ad", fx, fx_ad, 1e-8);
   if (!test_derivs || !is_finite(x) || !is_finite(fx))
     return;
   double fx_fd;
   Eigen::VectorXd grad_fd;
   Eigen::MatrixXd H_fd;
   stan::math::finite_diff_hessian_auto(f, x, fx_fd, grad_fd, H_fd);
-  expect_near("hessian grad_fd = grad_ad", grad_fd, grad_ad, 1e-4);
-  expect_near("hessian grad_fd H_fd == H_ad", H_fd, H_ad, 1e-3);
+  expect_near_rel("hessian grad_fd = grad_ad", grad_fd, grad_ad, 1e-4);
+  expect_near_rel("hessian grad_fd H_fd == H_ad", H_fd, H_ad, 1e-3);
 }
 
 /**
@@ -328,18 +248,18 @@ void test_grad_hessian(const F& f, const Eigen::VectorXd& x, double fx,
   Eigen::MatrixXd H_ad;
   std::vector<Eigen::MatrixXd> grad_H_ad;
   stan::math::grad_hessian(f, x, fx_ad, H_ad, grad_H_ad);
-  expect_near("grad_hessian fx == fx_ad", fx, fx_ad, 1e-8);
+  expect_near_rel("grad_hessian fx == fx_ad", fx, fx_ad, 1e-8);
   if (!test_derivs || !is_finite(x) || !is_finite(fx))
     return;
   double fx_fd;
   Eigen::MatrixXd H_fd;
   std::vector<Eigen::MatrixXd> grad_H_fd;
   stan::math::finite_diff_grad_hessian_auto(f, x, fx_fd, H_fd, grad_H_fd);
-  expect_near("grad hessian H_fd == H_ad", H_fd, H_ad, 1e-3);
+  expect_near_rel("grad hessian H_fd == H_ad", H_fd, H_ad, 1e-3);
   EXPECT_EQ(x.size(), grad_H_fd.size());
   for (size_t i = 0; i < grad_H_fd.size(); ++i)
-    expect_near("grad hessian grad_H_fd[i] == grad_H_ad[i]", grad_H_fd[i],
-                grad_H_ad[i], 1e-2);
+    expect_near_rel("grad hessian grad_H_fd[i] == grad_H_ad[i]", grad_H_fd[i],
+                    grad_H_ad[i], 1e-2);
 }
 
 /**
@@ -402,8 +322,8 @@ void expect_throw(const F& f, const Eigen::VectorXd& x,
   }
 }
 
-template <typename F>
-void expect_all_throw(const F& f, const Eigen::VectorXd& x) {
+template <typename F, typename T>
+void expect_all_throw(const F& f, const T& x) {
   using stan::math::fvar;
   using stan::math::var;
   expect_throw<var>(f, x, "var");
@@ -448,6 +368,53 @@ void expect_ad_helper(const F& f, const H& h, const Eigen::VectorXd& x,
 }
 
 /**
+ * Test that the specified unary functor and arguments produce for
+ * every autodiff type the same value as the double-based version and
+ * the same derivatives as finite differences when the first (and
+ * only) argument is an autodiff variable.
+ *
+ * @tparam F type of functor to test
+ * @tparam T1 type of first argument with double-based scalar
+ * @param f functor to test
+ * @param x1 first argument
+ */
+template <typename F, typename T1>
+void expect_ad_v(const F& f, const T1& x1) {
+  auto h = [&](const int& i) {
+    return [&](const auto& v) {
+      auto ds = to_deserializer(v);
+      auto x1ds = ds.read(x1);
+      return serialize_return(f(x1ds))[i];
+    };
+  };
+  expect_ad_helper(f, h, serialize_args(x1), x1);
+}
+
+/**
+ * Tests that the function produces the same argument for the
+ * specified integer and the specified integer cast to double and also
+ * provides all the standard autodiff tests after casting the int to
+ * double.
+ *
+ * Implementation note:  This is declared as an overload rather than a
+ * specialization because C++1y prohibits partial template function
+ * specialization.
+ *
+ * @tparam F type of functor to test
+ * @param f functor to test
+ * @param x1 first argument
+ */
+template <typename F>
+void expect_ad_v(const F& f, const int& x1) {
+  // test function produces same value on integer and cast to double
+  double x1_dbl = static_cast<double>(x1);
+  expect_near_relative(f(x1), f(x1_dbl));
+
+  // test autodiff with integer cast to double
+  expect_ad_v(f, x1_dbl);
+}
+
+/**
  * Test that the specified binary functor and arguments produce for
  * every autodiff type the same value as the double-based version and
  * the same derivatives as finite differences when both arguments are
@@ -461,6 +428,7 @@ void expect_ad_helper(const F& f, const H& h, const Eigen::VectorXd& x,
  */
 template <typename F, typename T1, typename T2>
 void expect_ad_vv(const F& f, const T1& x1, const T2& x2) {
+  // neither x1 nor x2 are int
   auto h = [&](const int& i) {
     return [&](const auto& v) {
       auto ds = to_deserializer(v);
@@ -470,6 +438,56 @@ void expect_ad_vv(const F& f, const T1& x1, const T2& x2) {
     };
   };
   expect_ad_helper(f, h, serialize_args(x1, x2), x1, x2);
+}
+
+template <typename F, typename T1>
+void expect_ad_vv(const F& f, const T1& x1, const int& x2) {
+  double x2_dbl = static_cast<double>(x2);
+
+  // test value using int arg matches value with arg cast to double
+  expect_near_relative(f(x1, x2), f(x1, x2_dbl));
+
+  // test deriv at arg cast to double
+  expect_ad_vv(f, x1, x2_dbl);
+
+  // bind int and test deriv on remainder
+  auto f_x2 = [&](const auto& v) {
+    auto ds = to_deserializer(v);
+    auto x1ds = ds.read(x1);
+    return serialize_return(f(x1ds, x2));
+  };
+  expect_ad_v(f_x2, x1);
+}
+
+template <typename F, typename T2>
+void expect_ad_vv(const F& f, const int& x1, const T2& x2) {
+  // test value vs. cast to double
+  double x1_dbl = static_cast<double>(x1);
+  expect_near_relative(f(x1, x2), f(x1_dbl, x2));
+
+  // test deriv at arg cast to double
+  expect_ad_vv(f, x1_dbl, x2);
+
+  // bind int and test deriv on remainder
+  auto f_x1 = [&](const auto& v) {
+    auto ds = to_deserializer(v);
+    auto x2ds = ds.read(x2);
+    return serialize_return(f(x1, x2ds));
+  };
+  expect_ad_v(f_x1, x2);
+}
+
+template <typename F>
+void expect_ad_vv(const F& f, const int& x1, const int& x2) {
+  // test value vs. casts to double
+  double x1_dbl = static_cast<double>(x1);
+  double x2_dbl = static_cast<double>(x2);
+  expect_near_relative(f(x1_dbl, x2_dbl), f(x1, x2));
+
+  //  autodiff tests for all combinations of casts
+  expect_ad_vv(f, x1, x2_dbl);
+  expect_ad_vv(f, x1_dbl, x2);
+  expect_ad_vv(f, x1_dbl, x2_dbl);
 }
 
 /**
@@ -521,29 +539,6 @@ void expect_ad_dv(const F& f, const T1& x1, const T2& x2) {
     };
   };
   expect_ad_helper(f, h, serialize_args(x2), x1, x2);
-}
-
-/**
- * Test that the specified unary functor and arguments produce for
- * every autodiff type the same value as the double-based version and
- * the same derivatives as finite differences when the first (and
- * only) argument is an autodiff variable.
- *
- * @tparam F type of functor to test
- * @tparam T1 type of first argument with double-based scalar
- * @param f functor to test
- * @param x1 first argument
- */
-template <typename F, typename T1>
-void expect_ad_v(const F& f, const T1& x1) {
-  auto h = [&](const int& i) {
-    return [&](const auto& v) {
-      auto ds = to_deserializer(v);
-      auto x1ds = ds.read(x1);
-      return serialize_return(f(x1ds))[i];
-    };
-  };
-  expect_ad_helper(f, h, serialize_args(x1), x1);
 }
 
 /**
@@ -683,6 +678,9 @@ std::vector<double> common_args() {
   return result;
 }
 
+// TEST FUNCTIONS AFTER HERE
+// ===================================================================
+
 /**
  * Test that the specified polymorphic unary function produces the
  * same results, exceptions, and has derivatives consistent with
@@ -739,6 +737,9 @@ void expect_common_unary_vectorized(const F& f) {
     stan::test::expect_ad_vectorized(f, x1);
 }
 
+template <typename F>
+void expect_unary_vectorized(const ad_tolerances& tols, const F& f) {}
+
 /**
  * Base case for variadic function testing any number of arguments.
  * The base case always succeeds as there is nothing to test.
@@ -749,11 +750,18 @@ void expect_common_unary_vectorized(const F& f) {
 template <typename F>
 void expect_unary_vectorized(const F& f) {}
 
+template <typename F, typename T, typename... Ts>
+void expect_unary_vectorized(const ad_tolerances& tols, const F& f, T x,
+                             Ts... xs) {
+  stan::test::expect_ad_vectorized(f, x);
+  expect_unary_vectorized(tols, f, xs...);
+}
+
 /**
  * Recursive case for variadic unary vectorized function tests for the
  * specified argument and pack of arguments.
  *
- * <p>This test delegates to `expect_ad_vectorized(F, double)`; see that
+ * <p>This test delegates to `expect_ad_vectorized(F, T)`; see that
  * function's documentation and requirements on the type of functions.
  *
  * @tparam F type of function to test
@@ -765,8 +773,8 @@ void expect_unary_vectorized(const F& f) {}
  */
 template <typename F, typename T, typename... Ts>
 void expect_unary_vectorized(const F& f, T x, Ts... xs) {
-  stan::test::expect_ad_vectorized(f, x);
-  expect_unary_vectorized(f, xs...);
+  ad_tolerances tols;  // default tolerances
+  expect_unary_vectorized(tols, f, x, xs...);
 }
 
 /**
@@ -815,7 +823,7 @@ void expect_common_nonzero_unary_vectorized(const F& f) {
  * @param x2 second value being tested
  */
 template <typename F, typename T1, typename T2>
-void expect_values(const F& f, const T1& x1, const T2& x2) {
+void expect_comparison_vals(const F& f, const T1& x1, const T2& x2) {
   using stan::math::fvar;
   using stan::math::var;
   typedef var v;
@@ -846,6 +854,24 @@ void expect_values(const F& f, const T1& x1, const T2& x2) {
   EXPECT_EQ(f(x1, x2), f(x1, ffv(x2)));
 }
 
+template <typename F>
+void expect_vals(const F& f, int x1) {
+  using stan::math::fvar;
+  using stan::math::var;
+  typedef var v;
+  typedef fvar<double> fd;
+  typedef fvar<fvar<double>> ffd;
+  typedef fvar<var> fv;
+  typedef fvar<fvar<var>> ffv;
+
+  expect_near_relative(f(x1), f(static_cast<double>(x1)));
+  expect_near_relative(f(x1), f(v(x1)));
+  expect_near_relative(f(x1), f(fd(x1)));
+  expect_near_relative(f(x1), f(ffd(x1)));
+  expect_near_relative(f(x1), f(fv(x1)));
+  expect_near_relative(f(x1), f(ffv(x1)));
+}
+
 /**
  * Test that the specified polymorphic unary function produces the
  * same results and exceptions consistent with the primitive version
@@ -861,7 +887,7 @@ void expect_common_comparison(const F& f) {
   auto args = common_args();
   for (double x1 : args)
     for (double x2 : args)
-      expect_values(f, x1, x2);
+      expect_comparison_vals(f, x1, x2);
 }
 
 }  // namespace test
