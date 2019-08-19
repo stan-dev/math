@@ -11,7 +11,6 @@ class fvar {};
 // dummy var class
 class var {};
 
-
 // Note: Failure to find specialization is defined as "false"
 template <typename T, typename = void>
 struct disable_if_tester : std::false_type {};
@@ -64,7 +63,6 @@ struct enable_if_all_tester : std::false_type {};
 template <typename T1, typename T2>
 struct enable_if_all_tester<T1, T2, stan::enable_if_all<T1, T2>>
     : std::true_type {};
-
 
 TEST(template_enablers, enable_if_all) {
   auto val = enable_if_all_tester<std::false_type, std::false_type>::value;
