@@ -4,41 +4,6 @@
 #include <vector>
 #include <type_traits>
 
-// Note: Failure to find specialization is defined as "false"
-template <typename T, typename = void>
-struct disable_if_tester : std::false_type {};
-
-template <typename T1, typename T2, typename = void>
-struct disable_if_all_tester : std::false_type {};
-
-template <typename T1, typename T2, typename = void>
-struct disable_if_any_tester : std::false_type {};
-
-template <typename T1, typename T2, typename = void>
-struct enable_if_any_tester : std::false_type {};
-
-template <typename T1, typename T2, typename = void>
-struct enable_if_all_tester : std::false_type {};
-
-template <typename T>
-struct disable_if_tester<T, stan::disable_if<T>> : std::true_type {};
-
-template <typename T1, typename T2>
-struct disable_if_all_tester<T1, T2, stan::disable_if_all<T1, T2>>
-    : std::true_type {};
-
-template <typename T1, typename T2>
-struct disable_if_any_tester<T1, T2, stan::disable_if_any<T1, T2>>
-    : std::true_type {};
-
-template <typename T1, typename T2>
-struct enable_if_any_tester<T1, T2, stan::enable_if_any<T1, T2>>
-    : std::true_type {};
-
-template <typename T1, typename T2>
-struct enable_if_all_tester<T1, T2, stan::enable_if_all<T1, T2>>
-    : std::true_type {};
-
 // for testing that stan with just prim/scal does not know what fvar is.
 template <typename T>
 class fvar {};
@@ -46,12 +11,27 @@ class fvar {};
 // dummy var class
 class var {};
 
+
+// Note: Failure to find specialization is defined as "false"
+template <typename T, typename = void>
+struct disable_if_tester : std::false_type {};
+
+template <typename T>
+struct disable_if_tester<T, stan::disable_if<T>> : std::true_type {};
+
 TEST(template_enablers, disable_if) {
   auto val = disable_if_tester<std::false_type>::value;
   EXPECT_TRUE(val);
   val = disable_if_tester<std::true_type>::value;
   EXPECT_FALSE(val);
 }
+
+template <typename T1, typename T2, typename = void>
+struct disable_if_all_tester : std::false_type {};
+
+template <typename T1, typename T2>
+struct disable_if_all_tester<T1, T2, stan::disable_if_all<T1, T2>>
+    : std::true_type {};
 
 TEST(template_enablers, disable_if_all) {
   auto val = disable_if_all_tester<std::false_type, std::false_type>::value;
@@ -62,6 +42,13 @@ TEST(template_enablers, disable_if_all) {
   EXPECT_FALSE(val);
 }
 
+template <typename T1, typename T2, typename = void>
+struct disable_if_any_tester : std::false_type {};
+
+template <typename T1, typename T2>
+struct disable_if_any_tester<T1, T2, stan::disable_if_any<T1, T2>>
+    : std::true_type {};
+
 TEST(template_enablers, disable_if_any) {
   auto val = disable_if_any_tester<std::false_type, std::false_type>::value;
   EXPECT_TRUE(val);
@@ -71,6 +58,14 @@ TEST(template_enablers, disable_if_any) {
   EXPECT_TRUE(val);
 }
 
+template <typename T1, typename T2, typename = void>
+struct enable_if_all_tester : std::false_type {};
+
+template <typename T1, typename T2>
+struct enable_if_all_tester<T1, T2, stan::enable_if_all<T1, T2>>
+    : std::true_type {};
+
+
 TEST(template_enablers, enable_if_all) {
   auto val = enable_if_all_tester<std::false_type, std::false_type>::value;
   EXPECT_FALSE(val);
@@ -79,6 +74,13 @@ TEST(template_enablers, enable_if_all) {
   val = enable_if_all_tester<std::true_type, std::false_type>::value;
   EXPECT_FALSE(val);
 }
+
+template <typename T1, typename T2, typename = void>
+struct enable_if_any_tester : std::false_type {};
+
+template <typename T1, typename T2>
+struct enable_if_any_tester<T1, T2, stan::enable_if_any<T1, T2>>
+    : std::true_type {};
 
 TEST(template_enablers, enable_if_any) {
   auto val = enable_if_any_tester<std::false_type, std::false_type>::value;
