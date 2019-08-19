@@ -205,7 +205,8 @@ inline return_type_t<T1, T2> dot_product(const Eigen::Matrix<T1, R1, C1>& v1,
  * @param[in] length Length of both arrays.
  * @return Dot product of the arrays.
  */
-template <typename T1, typename T2, typename = enable_if_any_var_container<T1, T2>>
+template <typename T1, typename T2,
+          typename = enable_if_any_var_container<T1, T2>>
 inline return_type_t<T1, T2> dot_product(const T1* v1, const T2* v2,
                                          size_t length) {
   return var(new internal::dot_product_vari<T1, T2>(v1, v2, length));
@@ -219,7 +220,8 @@ inline return_type_t<T1, T2> dot_product(const T1* v1, const T2* v2,
  * @return Dot product of the vectors.
  * @throw std::domain_error if sizes of v1 and v2 do not match.
  */
-template <typename T1, typename T2, typename = enable_if_any_var_container<T1, T2>>
+template <typename T1, typename T2,
+          typename = enable_if_any_var_container<T1, T2>>
 inline return_type_t<T1, T2> dot_product(const std::vector<T1>& v1,
                                          const std::vector<T2>& v2) {
   check_matching_sizes("dot_product", "v1", v1, "v2", v2);
