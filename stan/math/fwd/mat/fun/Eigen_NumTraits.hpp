@@ -52,14 +52,12 @@ struct NumTraits<stan::math::fvar<T>> : GenericNumTraits<stan::math::fvar<T>> {
   static int digits10() { return std::numeric_limits<double>::digits10; }
 };
 
-namespace internal {
-
 /**
  * Scalar product traits specialization for Eigen for forward-mode
  * autodiff variables.
  */
-template <typename T>
-struct scalar_product_traits<stan::math::fvar<T>, double> {
+template <typename T, typename BinaryOp>
+struct ScalarBinaryOpTraits<stan::math::fvar<T>, double, BinaryOp> {
   typedef stan::math::fvar<T> ReturnType;
 };
 
@@ -67,11 +65,10 @@ struct scalar_product_traits<stan::math::fvar<T>, double> {
  * Scalar product traits specialization for Eigen for forward-mode
  * autodiff variables.
  */
-template <typename T>
-struct scalar_product_traits<double, stan::math::fvar<T>> {
+template <typename T, typename BinaryOp>
+struct ScalarBinaryOpTraits<double, stan::math::fvar<T>, BinaryOp> {
   typedef stan::math::fvar<T> ReturnType;
 };
-}  // namespace internal
 
 }  // namespace Eigen
 #endif

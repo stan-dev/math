@@ -3,6 +3,7 @@
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
 #include <cmath>
+#include <limits>
 #include <vector>
 
 using Eigen::Dynamic;
@@ -58,6 +59,23 @@ TEST(AgradRev, logSumExpMatrix) {
   Matrix<double, Dynamic, Dynamic> d(3, 2);
   d << -1, -2, -4, 5, 6, 4;
   test_log_sum_exp_matrix(d);
+
+  Matrix<double, Dynamic, 1> e(2);
+  e << 4.9, -std::numeric_limits<double>::infinity();
+  test_log_sum_exp_matrix(e);
+}
+
+TEST(AgradRev, logSumExpMatrixInf) {
+  var x(-std::numeric_limits<double>::infinity());
+  var y(-std::numeric_limits<double>::infinity());
+  Matrix<var, Dynamic, 1> mv(2);
+  mv[0] = x;
+  mv[1] = y;
+  var s = log_sum_exp(mv);
+  EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(), s.val());
+  AVEC v = createAVEC(x, y);
+  VEC grad_s;
+  EXPECT_NO_THROW(s.grad(v, grad_s));
 }
 
 TEST(AgradRevMatrix, check_varis_on_stack) {
