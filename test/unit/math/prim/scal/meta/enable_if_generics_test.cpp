@@ -38,7 +38,7 @@ TEST(template_enablers, disable_if_all) {
   val = disable_if_all_tester<std::true_type, std::true_type>::value;
   EXPECT_FALSE(val);
   val = disable_if_all_tester<std::true_type, std::false_type>::value;
-  EXPECT_FALSE(val);
+  EXPECT_TRUE(val);
 }
 
 template <typename T1, typename T2, typename = void>
@@ -54,7 +54,7 @@ TEST(template_enablers, disable_if_any) {
   val = disable_if_any_tester<std::true_type, std::true_type>::value;
   EXPECT_FALSE(val);
   val = disable_if_any_tester<std::true_type, std::false_type>::value;
-  EXPECT_TRUE(val);
+  EXPECT_FALSE(val);
 }
 
 template <typename T1, typename T2, typename = void>

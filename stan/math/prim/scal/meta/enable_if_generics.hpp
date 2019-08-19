@@ -48,7 +48,7 @@ using EnableIfAny = std::enable_if_t<math::disjunction<Checks...>::value>;
  * Returns a type void if all of the conditions are false.
  */
 template <class... Checks>
-using DisableIfAll = std::enable_if_t<!math::disjunction<Checks...>::value>;
+using DisableIfAll = std::enable_if_t<!math::conjunction<Checks...>::value>;
 
 /**
  * Template metaprogram for deducing if a method should be remove a
@@ -57,7 +57,7 @@ using DisableIfAll = std::enable_if_t<!math::disjunction<Checks...>::value>;
  * Returns a type void if any of the conditions are false.
  */
 template <class... Checks>
-using DisableIfAny = std::enable_if_t<!math::conjunction<Checks...>::value>;
+using DisableIfAny = std::enable_if_t<!math::disjunction<Checks...>::value>;
 
 // Check whether the decayed types are the same
 template <typename T, typename S>
