@@ -473,8 +473,8 @@ class multiply_mat_vari<Ta, 1, Ca, double, 1> : public vari {
  * @return Product of scalars
  */
 template <typename T1, typename T2,
-          typename = enable_if_all_var_or_arithmetic_container<T1, T2>,
-          typename = enable_if_any_var_container<T1, T2>>
+          typename = AllVarOrArithmeticTypeContainer<T1, T2>,
+          typename = AnyVarTypeContainer<T1, T2>>
 inline return_type_t<T1, T2> multiply(const T1& v, const T2& c) {
   return v * c;
 }
@@ -490,7 +490,7 @@ inline return_type_t<T1, T2> multiply(const T1& v, const T2& c) {
  * @return Product of scalar and matrix
  */
 template <typename T1, typename T2, int R2, int C2,
-          typename = enable_if_any_var_container<T1, T2>>
+          typename = AnyVarTypeContainer<T1, T2>>
 inline Eigen::Matrix<var, R2, C2> multiply(const T1& c,
                                            const Eigen::Matrix<T2, R2, C2>& m) {
   // TODO(trangucci) pull out to eliminate overpromotion of one side
@@ -509,7 +509,7 @@ inline Eigen::Matrix<var, R2, C2> multiply(const T1& c,
  * @return Product of scalar and matrix
  */
 template <typename T1, int R1, int C1, typename T2,
-          typename = enable_if_any_var_container<T1, T2>>
+          typename = AnyVarTypeContainer<T1, T2>>
 inline Eigen::Matrix<var, R1, C1> multiply(const Eigen::Matrix<T1, R1, C1>& m,
                                            const T2& c) {
   // TODO(trangucci) pull out to eliminate overpromotion of one side
@@ -530,7 +530,7 @@ inline Eigen::Matrix<var, R1, C1> multiply(const Eigen::Matrix<T1, R1, C1>& m,
  * @return Product of scalar and matrix.
  */
 template <typename Ta, int Ra, int Ca, typename Tb, int Cb,
-          typename = enable_if_any_var_container<Ta, Tb>>
+          typename = AnyVarTypeContainer<Ta, Tb>>
 inline Eigen::Matrix<var, Ra, Cb> multiply(const Eigen::Matrix<Ta, Ra, Ca>& A,
                                            const Eigen::Matrix<Tb, Ca, Cb>& B) {
   check_multiplicable("multiply", "A", A, "B", B);
@@ -558,7 +558,7 @@ inline Eigen::Matrix<var, Ra, Cb> multiply(const Eigen::Matrix<Ta, Ra, Ca>& A,
  * @return Scalar product of row vector and vector
  */
 template <typename Ta, int Ca, typename Tb,
-          typename = enable_if_any_var_container<Ta, Tb>>
+          typename = AnyVarTypeContainer<Ta, Tb>>
 inline var multiply(const Eigen::Matrix<Ta, 1, Ca>& A,
                     const Eigen::Matrix<Tb, Ca, 1>& B) {
   check_multiplicable("multiply", "A", A, "B", B);

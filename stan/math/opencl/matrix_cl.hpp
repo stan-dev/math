@@ -33,7 +33,7 @@ class matrix_cl {};
  * @tparam T an arithmetic type for the type stored in the OpenCL buffer.
  */
 template <typename T>
-class matrix_cl<T, enable_if_arithmetic<T>> {
+class matrix_cl<T, ArithmeticTypeContainer<T>> {
  private:
   cl::Buffer buffer_cl_;  // Holds the allocated memory on the device
   const int rows_;
@@ -50,7 +50,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
   template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper>
   void triangular_transpose();
 
-  void sub_block(const matrix_cl<T, enable_if_arithmetic<T>>& A, size_t A_i,
+  void sub_block(const matrix_cl<T, ArithmeticTypeContainer<T>>& A, size_t A_i,
                  size_t A_j, size_t this_i, size_t this_j, size_t nrows,
                  size_t ncols);
   int rows() const { return rows_; }
@@ -348,7 +348,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
   /**
    * Assign a \c matrix_cl of one arithmetic type to another
    */
-  template <typename U, typename = enable_if_arithmetic<U>>
+  template <typename U, typename = ArithmeticTypeContainer<U>>
   matrix_cl<T>& operator=(const matrix_cl<U>& a) {
     check_size_match("assignment of (OpenCL) matrices", "source.rows()",
                      a.rows(), "destination.rows()", rows());
@@ -363,10 +363,10 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
 };
 
 template <typename T>
-using matrix_cl_prim = matrix_cl<T, enable_if_arithmetic<T>>;
+using matrix_cl_prim = matrix_cl<T, ArithmeticTypeContainer<T>>;
 
 template <typename T>
-using matrix_cl_fp = matrix_cl<T, enable_if_floating_point<T>>;
+using matrix_cl_fp = matrix_cl<T, FloatingPointTypeContainer<T>>;
 
 }  // namespace math
 }  // namespace stan

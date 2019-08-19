@@ -46,7 +46,7 @@ class accumulator {
    * @tparam S Type of argument
    * @param x Value to add
    */
-  template <typename S, typename = enable_if_arithmetic<S>>
+  template <typename S, typename = ArithmeticTypeContainer<S>>
   void add(S x) {
     buf_.push_back(static_cast<T>(x));
   }
@@ -63,8 +63,8 @@ class accumulator {
    * @tparam S Type of argument
    * @param x Value to add
    */
-  template <typename S, typename = disable_if_arithmetic<S>,
-            typename = enable_if_same<S, T>>
+  template <typename S, typename = NotArithmeticTypeContainer<S>,
+            typename = SameType<S, T>>
   void add(const S& x) {
     buf_.push_back(x);
   }

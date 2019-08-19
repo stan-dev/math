@@ -16,7 +16,7 @@ template <typename T, typename = void>
 struct disable_if_tester : std::false_type {};
 
 template <typename T>
-struct disable_if_tester<T, stan::disable_if<T>> : std::true_type {};
+struct disable_if_tester<T, stan::DisableIf<T>> : std::true_type {};
 
 TEST(template_enablers, disable_if) {
   auto val = disable_if_tester<std::false_type>::value;
@@ -29,7 +29,7 @@ template <typename T1, typename T2, typename = void>
 struct disable_if_all_tester : std::false_type {};
 
 template <typename T1, typename T2>
-struct disable_if_all_tester<T1, T2, stan::disable_if_all<T1, T2>>
+struct disable_if_all_tester<T1, T2, stan::DisableIfAll<T1, T2>>
     : std::true_type {};
 
 TEST(template_enablers, disable_if_all) {
@@ -45,7 +45,7 @@ template <typename T1, typename T2, typename = void>
 struct disable_if_any_tester : std::false_type {};
 
 template <typename T1, typename T2>
-struct disable_if_any_tester<T1, T2, stan::disable_if_any<T1, T2>>
+struct disable_if_any_tester<T1, T2, stan::DisableIfAny<T1, T2>>
     : std::true_type {};
 
 TEST(template_enablers, disable_if_any) {
@@ -61,7 +61,7 @@ template <typename T1, typename T2, typename = void>
 struct enable_if_all_tester : std::false_type {};
 
 template <typename T1, typename T2>
-struct enable_if_all_tester<T1, T2, stan::enable_if_all<T1, T2>>
+struct enable_if_all_tester<T1, T2, stan::EnableIfAll<T1, T2>>
     : std::true_type {};
 
 TEST(template_enablers, enable_if_all) {
@@ -77,7 +77,7 @@ template <typename T1, typename T2, typename = void>
 struct enable_if_any_tester : std::false_type {};
 
 template <typename T1, typename T2>
-struct enable_if_any_tester<T1, T2, stan::enable_if_any<T1, T2>>
+struct enable_if_any_tester<T1, T2, stan::EnableIfAny<T1, T2>>
     : std::true_type {};
 
 TEST(template_enablers, enable_if_any) {
