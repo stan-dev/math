@@ -14,11 +14,9 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_scale>
-typename return_type<T_y, T_scale>::type rayleigh_lccdf(const T_y& y,
-                                                        const T_scale& sigma) {
+return_type_t<T_y, T_scale> rayleigh_lccdf(const T_y& y, const T_scale& sigma) {
   static const char* function = "rayleigh_lccdf";
-  typedef
-      typename stan::partials_return_type<T_y, T_scale>::type T_partials_return;
+  typedef partials_return_type_t<T_y, T_scale> T_partials_return;
 
   T_partials_return ccdf_log(0.0);
 
@@ -51,9 +49,9 @@ typename return_type<T_y, T_scale>::type rayleigh_lccdf(const T_y& y,
     if (include_summand<false, T_y, T_scale>::value)
       ccdf_log += -0.5 * y_sqr * inv_sigma_sqr;
 
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n] -= y_dbl * inv_sigma_sqr;
-    if (!is_constant_struct<T_scale>::value)
+    if (!is_constant_all<T_scale>::value)
       ops_partials.edge2_.partials_[n] += y_sqr * inv_sigma_sqr * inv_sigma[n];
   }
   return ops_partials.build(ccdf_log);

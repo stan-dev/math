@@ -18,10 +18,7 @@ class sum_eigen_v_vari : public sum_v_vari {
  protected:
   template <typename Derived>
   inline static double sum_of_val(const Eigen::DenseBase<Derived>& v) {
-    double result = 0;
-    for (int i = 0; i < v.size(); i++)
-      result += v(i).vi_->val_;
-    return result;
+    return Eigen::Ref<const matrix_v>(v).val().sum();
   }
 
  public:
@@ -29,11 +26,10 @@ class sum_eigen_v_vari : public sum_v_vari {
   explicit sum_eigen_v_vari(const Eigen::Matrix<var, R1, C1>& v1)
       : sum_v_vari(
             sum_of_val(v1),
-            reinterpret_cast<vari**>(ChainableStack::instance().memalloc_.alloc(
+            reinterpret_cast<vari**>(ChainableStack::instance_->memalloc_.alloc(
                 v1.size() * sizeof(vari*))),
             v1.size()) {
-    for (size_t i = 0; i < length_; i++)
-      v_[i] = v1(i).vi_;
+    Eigen::Map<matrix_vi>(v_, v1.rows(), v1.cols()) = v1.vi();
   }
 };
 

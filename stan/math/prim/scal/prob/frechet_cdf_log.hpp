@@ -11,8 +11,9 @@ namespace math {
  * @deprecated use <code>frechet_lcdf</code>
  */
 template <typename T_y, typename T_shape, typename T_scale>
-typename return_type<T_y, T_shape, T_scale>::type frechet_cdf_log(
-    const T_y& y, const T_shape& alpha, const T_scale& sigma) {
+return_type_t<T_y, T_shape, T_scale> frechet_cdf_log(const T_y& y,
+                                                     const T_shape& alpha,
+                                                     const T_scale& sigma) {
   return frechet_lcdf<T_y, T_shape, T_scale>(y, alpha, sigma);
 }
 

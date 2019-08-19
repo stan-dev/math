@@ -48,8 +48,7 @@ namespace math {
  * @return Beta function applied to the two values.
  */
 template <typename T1, typename T2>
-inline typename boost::math::tools::promote_args<T1, T2>::type beta(
-    const T1 a, const T2 b) {
+inline return_type_t<T1, T2> beta(const T1 a, const T2 b) {
   using std::exp;
   return exp(lgamma(a) + lgamma(b) - lgamma(a + b));
 }

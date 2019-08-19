@@ -1,6 +1,7 @@
 #include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
+#include <limits>
 
 TEST(AgradFwdLogSumExp, Fvar) {
   using stan::math::fvar;
@@ -23,6 +24,17 @@ TEST(AgradFwdLogSumExp, Fvar) {
   fvar<double> c = log_sum_exp(z, x);
   EXPECT_FLOAT_EQ(log_sum_exp(1.4, 0.5), c.val_);
   EXPECT_FLOAT_EQ(1.0 * exp(0.5) / (exp(0.5) + exp(1.4)), c.d_);
+
+  double ninf = -std::numeric_limits<double>::infinity();
+  fvar<double> w(-std::numeric_limits<double>::infinity(), 1.5);
+
+  fvar<double> d = log_sum_exp(w, ninf);
+  EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(), d.val_);
+  EXPECT_FLOAT_EQ(1.5, d.d_);
+
+  fvar<double> e = log_sum_exp(ninf, w);
+  EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(), e.val_);
+  EXPECT_FLOAT_EQ(1.5, e.d_);
 }
 
 TEST(AgradFwdLogSumExp, FvarFvarDouble) {

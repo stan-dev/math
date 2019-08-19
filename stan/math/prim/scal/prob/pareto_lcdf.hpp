@@ -16,10 +16,10 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_scale, typename T_shape>
-typename return_type<T_y, T_scale, T_shape>::type pareto_lcdf(
-    const T_y& y, const T_scale& y_min, const T_shape& alpha) {
-  typedef typename stan::partials_return_type<T_y, T_scale, T_shape>::type
-      T_partials_return;
+return_type_t<T_y, T_scale, T_shape> pareto_lcdf(const T_y& y,
+                                                 const T_scale& y_min,
+                                                 const T_shape& alpha) {
+  typedef partials_return_type_t<T_y, T_scale, T_shape> T_partials_return;
 
   if (size_zero(y, y_min, alpha))
     return 0.0;
@@ -68,13 +68,13 @@ typename return_type<T_y, T_scale, T_shape>::type pareto_lcdf(
 
     P += log(Pn);
 
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n]
           += alpha_dbl * y_min_inv_dbl * exp((alpha_dbl + 1) * log_dbl) / Pn;
-    if (!is_constant_struct<T_scale>::value)
+    if (!is_constant_all<T_scale>::value)
       ops_partials.edge2_.partials_[n]
           -= alpha_dbl * y_min_inv_dbl * exp(alpha_dbl * log_dbl) / Pn;
-    if (!is_constant_struct<T_shape>::value)
+    if (!is_constant_all<T_shape>::value)
       ops_partials.edge3_.partials_[n]
           -= exp(alpha_dbl * log_dbl) * log_dbl / Pn;
   }

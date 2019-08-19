@@ -16,12 +16,11 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
-typename return_type<T_y, T_loc, T_scale, T_shape>::type skew_normal_lcdf(
+return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lcdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& alpha) {
   static const char* function = "skew_normal_lcdf";
-  typedef
-      typename stan::partials_return_type<T_y, T_loc, T_scale, T_shape>::type
-          T_partials_return;
+  typedef partials_return_type_t<T_y, T_loc, T_scale, T_shape>
+      T_partials_return;
 
   T_partials_return cdf_log(0.0);
 
@@ -73,13 +72,13 @@ typename return_type<T_y, T_loc, T_scale, T_shape>::type skew_normal_lcdf(
     const T_partials_return rep_deriv
         = (-2.0 * deriv_owens + deriv_erfc) / cdf_log_;
 
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n] += rep_deriv;
-    if (!is_constant_struct<T_loc>::value)
+    if (!is_constant_all<T_loc>::value)
       ops_partials.edge2_.partials_[n] -= rep_deriv;
-    if (!is_constant_struct<T_scale>::value)
+    if (!is_constant_all<T_scale>::value)
       ops_partials.edge3_.partials_[n] -= rep_deriv * diff;
-    if (!is_constant_struct<T_shape>::value)
+    if (!is_constant_all<T_shape>::value)
       ops_partials.edge4_.partials_[n]
           += -2.0 * exp(-0.5 * diff_sq * (1.0 + alpha_dbl_sq))
              / ((1 + alpha_dbl_sq) * 2.0 * pi()) / cdf_log_;

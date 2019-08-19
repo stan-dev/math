@@ -47,11 +47,12 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_dof, typename T_loc,
           typename T_scale>
-typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_lpdf(
-    const T_y& y, const T_dof& nu, const T_loc& mu, const T_scale& sigma) {
+return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
+                                                         const T_dof& nu,
+                                                         const T_loc& mu,
+                                                         const T_scale& sigma) {
   static const char* function = "student_t_lpdf";
-  typedef typename stan::partials_return_type<T_y, T_dof, T_loc, T_scale>::type
-      T_partials_return;
+  typedef partials_return_type_t<T_y, T_dof, T_loc, T_scale> T_partials_return;
 
   if (size_zero(y, nu, mu, sigma))
     return 0.0;
@@ -95,11 +96,11 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_lpdf(
     }
   }
 
-  VectorBuilder<!is_constant_struct<T_dof>::value, T_partials_return, T_dof>
+  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
       digamma_half_nu(length(nu));
-  VectorBuilder<!is_constant_struct<T_dof>::value, T_partials_return, T_dof>
+  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
       digamma_half_nu_plus_half(length(nu));
-  if (!is_constant_struct<T_dof>::value) {
+  if (!is_constant_all<T_dof>::value) {
     for (size_t i = 0; i < length(nu); i++) {
       digamma_half_nu[i] = digamma(half_nu[i]);
       digamma_half_nu_plus_half[i] = digamma(half_nu[i] + 0.5);
@@ -154,13 +155,13 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_lpdf(
     if (include_summand<propto, T_y, T_dof, T_loc, T_scale>::value)
       logp -= (half_nu[n] + 0.5) * log1p_exp[n];
 
-    if (!is_constant_struct<T_y>::value) {
+    if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n]
           += -(half_nu[n] + 0.5) * 1.0
              / (1.0 + square_y_minus_mu_over_sigma__over_nu[n])
              * (2.0 * (y_dbl - mu_dbl) / square(sigma_dbl) / nu_dbl);
     }
-    if (!is_constant_struct<T_dof>::value) {
+    if (!is_constant_all<T_dof>::value) {
       const T_partials_return inv_nu = 1.0 / nu_dbl;
       ops_partials.edge2_.partials_[n]
           += 0.5 * digamma_half_nu_plus_half[n] - 0.5 * digamma_half_nu[n]
@@ -169,13 +170,13 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_lpdf(
                    * (1.0 / (1.0 + square_y_minus_mu_over_sigma__over_nu[n])
                       * square_y_minus_mu_over_sigma__over_nu[n] * inv_nu);
     }
-    if (!is_constant_struct<T_loc>::value) {
+    if (!is_constant_all<T_loc>::value) {
       ops_partials.edge3_.partials_[n]
           -= (half_nu[n] + 0.5)
              / (1.0 + square_y_minus_mu_over_sigma__over_nu[n])
              * (2.0 * (mu_dbl - y_dbl) / (sigma_dbl * sigma_dbl * nu_dbl));
     }
-    if (!is_constant_struct<T_scale>::value) {
+    if (!is_constant_all<T_scale>::value) {
       const T_partials_return inv_sigma = 1.0 / sigma_dbl;
       ops_partials.edge4_.partials_[n]
           += -inv_sigma
@@ -187,7 +188,7 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_lpdf(
 }
 
 template <typename T_y, typename T_dof, typename T_loc, typename T_scale>
-inline typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_lpdf(
+inline return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(
     const T_y& y, const T_dof& nu, const T_loc& mu, const T_scale& sigma) {
   return student_t_lpdf<false>(y, nu, mu, sigma);
 }

@@ -1,17 +1,10 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_CATEGORICAL_LOGIT_GLM_LPMF_HPP
 #define STAN_MATH_PRIM_MAT_PROB_CATEGORICAL_LOGIT_GLM_LPMF_HPP
 
-#include <stan/math/prim/mat/meta/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_consistent_size.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
-#include <stan/math/prim/scal/meta/as_array_or_scalar.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <Eigen/Core>
 
 namespace stan {
@@ -42,13 +35,13 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_x_scalar, int T_x_rows,
           typename T_alpha_scalar, typename T_beta_scalar>
-typename return_type<T_x_scalar, T_alpha_scalar, T_beta_scalar>::type
+return_type_t<T_x_scalar, T_alpha_scalar, T_beta_scalar>
 categorical_logit_glm_lpmf(
     const T_y& y, const Eigen::Matrix<T_x_scalar, T_x_rows, Eigen::Dynamic>& x,
     const Eigen::Matrix<T_alpha_scalar, Eigen::Dynamic, 1>& alpha,
     const Eigen::Matrix<T_beta_scalar, Eigen::Dynamic, Eigen::Dynamic>& beta) {
-  typedef typename stan::partials_return_type<
-      T_x_scalar, T_alpha_scalar, T_beta_scalar>::type T_partials_return;
+  typedef partials_return_type_t<T_x_scalar, T_alpha_scalar, T_beta_scalar>
+      T_partials_return;
   static const char* function = "categorical_logit_glm_lpmf";
 
   using Eigen::Array;
@@ -124,7 +117,7 @@ categorical_logit_glm_lpmf(
                         Matrix<T_beta_scalar, Dynamic, Dynamic>>
       ops_partials(x, alpha, beta);
 
-  if (!is_constant_struct<T_x_scalar>::value) {
+  if (!is_constant_all<T_x_scalar>::value) {
     if (T_x_rows == 1) {
       Array<double, 1, Dynamic> beta_y = beta_val.col(y_seq[0] - 1);
       for (int i = 1; i < N_instances; i++) {
@@ -149,11 +142,11 @@ categorical_logit_glm_lpmf(
       // inv_sum_exp_lin;
     }
   }
-  if (!is_constant_struct<T_alpha_scalar>::value
-      || !is_constant_struct<T_beta_scalar>::value) {
+  if (!is_constant_all<T_alpha_scalar>::value
+      || !is_constant_all<T_beta_scalar>::value) {
     Array<T_partials_return, T_x_rows, Dynamic> neg_softmax_lin
         = exp_lin.colwise() * -inv_sum_exp_lin;
-    if (!is_constant_struct<T_alpha_scalar>::value) {
+    if (!is_constant_all<T_alpha_scalar>::value) {
       if (T_x_rows == 1) {
         ops_partials.edge2_.partials_
             = neg_softmax_lin.colwise().sum() * N_instances;
@@ -164,7 +157,7 @@ categorical_logit_glm_lpmf(
         ops_partials.edge2_.partials_[y_seq[i] - 1] += 1;
       }
     }
-    if (!is_constant_struct<T_beta_scalar>::value) {
+    if (!is_constant_all<T_beta_scalar>::value) {
       Matrix<T_partials_return, Dynamic, Dynamic> beta_derivative;
       if (T_x_rows == 1) {
         beta_derivative
@@ -192,7 +185,7 @@ categorical_logit_glm_lpmf(
 
 template <typename T_y, typename T_x_scalar, int T_x_rows,
           typename T_alpha_scalar, typename T_beta_scalar>
-typename return_type<T_x_scalar, T_alpha_scalar, T_beta_scalar>::type
+return_type_t<T_x_scalar, T_alpha_scalar, T_beta_scalar>
 categorical_logit_glm_lpmf(
     const T_y& y, const Eigen::Matrix<T_x_scalar, T_x_rows, Eigen::Dynamic>& x,
     const Eigen::Matrix<T_alpha_scalar, Eigen::Dynamic, 1>& alpha,

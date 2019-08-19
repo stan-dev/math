@@ -20,7 +20,7 @@ namespace math {
  */
 template <typename T1, typename T2>
 struct append_return_type {
-  typedef typename return_type<T1, T2>::type type;
+  typedef return_type_t<T1, T2> type;
 };
 
 /**
@@ -53,7 +53,7 @@ struct append_return_type<int, int> {
  */
 template <typename T1, typename T2, int R, int C>
 struct append_return_type<Eigen::Matrix<T1, R, C>, Eigen::Matrix<T2, R, C> > {
-  typedef typename Eigen::Matrix<typename return_type<T1, T2>::type, R, C> type;
+  typedef typename Eigen::Matrix<return_type_t<T1, T2>, R, C> type;
 };
 
 /**

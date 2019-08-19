@@ -17,13 +17,12 @@ namespace math {
 
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
           typename T_inv_scale>
-typename return_type<T_y, T_loc, T_scale, T_inv_scale>::type
-exp_mod_normal_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma,
-                    const T_inv_scale& lambda) {
+return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
+    const T_y& y, const T_loc& mu, const T_scale& sigma,
+    const T_inv_scale& lambda) {
   static const char* function = "exp_mod_normal_lpdf";
-  typedef
-      typename stan::partials_return_type<T_y, T_loc, T_scale,
-                                          T_inv_scale>::type T_partials_return;
+  typedef partials_return_type_t<T_y, T_loc, T_scale, T_inv_scale>
+      T_partials_return;
 
   if (size_zero(y, mu, sigma, lambda))
     return 0.0;
@@ -81,20 +80,20 @@ exp_mod_normal_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma,
           / erfc((mu_dbl + lambda_dbl * sigma_dbl * sigma_dbl - y_dbl)
                  / (sigma_dbl * std::sqrt(2.0)));
 
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n]
           += -lambda_dbl + deriv_logerfc * -1.0 / (sigma_dbl * std::sqrt(2.0));
-    if (!is_constant_struct<T_loc>::value)
+    if (!is_constant_all<T_loc>::value)
       ops_partials.edge2_.partials_[n]
           += lambda_dbl + deriv_logerfc / (sigma_dbl * std::sqrt(2.0));
-    if (!is_constant_struct<T_scale>::value)
+    if (!is_constant_all<T_scale>::value)
       ops_partials.edge3_.partials_[n]
           += sigma_dbl * lambda_dbl * lambda_dbl
              + deriv_logerfc
                    * (-mu_dbl / (sigma_dbl * sigma_dbl * std::sqrt(2.0))
                       + lambda_dbl / std::sqrt(2.0)
                       + y_dbl / (sigma_dbl * sigma_dbl * std::sqrt(2.0)));
-    if (!is_constant_struct<T_inv_scale>::value)
+    if (!is_constant_all<T_inv_scale>::value)
       ops_partials.edge4_.partials_[n]
           += 1 / lambda_dbl + lambda_dbl * sigma_dbl * sigma_dbl + mu_dbl
              - y_dbl + deriv_logerfc * sigma_dbl / std::sqrt(2.0);
@@ -103,9 +102,9 @@ exp_mod_normal_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma,
 }
 
 template <typename T_y, typename T_loc, typename T_scale, typename T_inv_scale>
-inline typename return_type<T_y, T_loc, T_scale, T_inv_scale>::type
-exp_mod_normal_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma,
-                    const T_inv_scale& lambda) {
+inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
+    const T_y& y, const T_loc& mu, const T_scale& sigma,
+    const T_inv_scale& lambda) {
   return exp_mod_normal_lpdf<false>(y, mu, sigma, lambda);
 }
 

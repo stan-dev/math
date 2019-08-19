@@ -36,11 +36,9 @@ namespace math {
  * @tparam T_dof Type of degrees of freedom.
  */
 template <bool propto, typename T_y, typename T_dof>
-typename return_type<T_y, T_dof>::type inv_chi_square_lpdf(const T_y& y,
-                                                           const T_dof& nu) {
+return_type_t<T_y, T_dof> inv_chi_square_lpdf(const T_y& y, const T_dof& nu) {
   static const char* function = "inv_chi_square_lpdf";
-  typedef
-      typename stan::partials_return_type<T_y, T_dof>::type T_partials_return;
+  typedef partials_return_type_t<T_y, T_dof> T_partials_return;
 
   check_positive_finite(function, "Degrees of freedom parameter", nu);
   check_not_nan(function, "Random variable", y);
@@ -76,13 +74,13 @@ typename return_type<T_y, T_dof>::type inv_chi_square_lpdf(const T_y& y,
 
   VectorBuilder<include_summand<propto, T_dof>::value, T_partials_return, T_dof>
       lgamma_half_nu(length(nu));
-  VectorBuilder<!is_constant_struct<T_dof>::value, T_partials_return, T_dof>
+  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
       digamma_half_nu_over_two(length(nu));
   for (size_t i = 0; i < length(nu); i++) {
     T_partials_return half_nu = 0.5 * value_of(nu_vec[i]);
     if (include_summand<propto, T_dof>::value)
       lgamma_half_nu[i] = lgamma(half_nu);
-    if (!is_constant_struct<T_dof>::value)
+    if (!is_constant_all<T_dof>::value)
       digamma_half_nu_over_two[i] = digamma(half_nu) * 0.5;
   }
 
@@ -98,11 +96,11 @@ typename return_type<T_y, T_dof>::type inv_chi_square_lpdf(const T_y& y,
     if (include_summand<propto, T_y>::value)
       logp -= 0.5 * inv_y[n];
 
-    if (!is_constant_struct<T_y>::value) {
+    if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n]
           += -(half_nu + 1.0) * inv_y[n] + 0.5 * inv_y[n] * inv_y[n];
     }
-    if (!is_constant_struct<T_dof>::value) {
+    if (!is_constant_all<T_dof>::value) {
       ops_partials.edge2_.partials_[n] += NEG_LOG_TWO_OVER_TWO
                                           - digamma_half_nu_over_two[n]
                                           - 0.5 * log_y[n];
@@ -112,8 +110,8 @@ typename return_type<T_y, T_dof>::type inv_chi_square_lpdf(const T_y& y,
 }
 
 template <typename T_y, typename T_dof>
-inline typename return_type<T_y, T_dof>::type inv_chi_square_lpdf(
-    const T_y& y, const T_dof& nu) {
+inline return_type_t<T_y, T_dof> inv_chi_square_lpdf(const T_y& y,
+                                                     const T_dof& nu) {
   return inv_chi_square_lpdf<false>(y, nu);
 }
 

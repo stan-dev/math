@@ -12,10 +12,9 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_inv_scale>
-typename return_type<T_y, T_inv_scale>::type exponential_lccdf(
-    const T_y& y, const T_inv_scale& beta) {
-  typedef typename stan::partials_return_type<T_y, T_inv_scale>::type
-      T_partials_return;
+return_type_t<T_y, T_inv_scale> exponential_lccdf(const T_y& y,
+                                                  const T_inv_scale& beta) {
+  typedef partials_return_type_t<T_y, T_inv_scale> T_partials_return;
 
   static const char* function = "exponential_lccdf";
 
@@ -37,9 +36,9 @@ typename return_type<T_y, T_inv_scale>::type exponential_lccdf(
     const T_partials_return y_dbl = value_of(y_vec[n]);
     ccdf_log += -beta_dbl * y_dbl;
 
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n] -= beta_dbl;
-    if (!is_constant_struct<T_inv_scale>::value)
+    if (!is_constant_all<T_inv_scale>::value)
       ops_partials.edge2_.partials_[n] -= y_dbl;
   }
   return ops_partials.build(ccdf_log);

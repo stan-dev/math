@@ -40,11 +40,10 @@ namespace math {
  * @tparam T_inv_scale Type of inverse scale.
  */
 template <bool propto, typename T_y, typename T_inv_scale>
-typename return_type<T_y, T_inv_scale>::type exponential_lpdf(
-    const T_y& y, const T_inv_scale& beta) {
+return_type_t<T_y, T_inv_scale> exponential_lpdf(const T_y& y,
+                                                 const T_inv_scale& beta) {
   static const char* function = "exponential_lpdf";
-  typedef typename stan::partials_return_type<T_y, T_inv_scale>::type
-      T_partials_return;
+  typedef partials_return_type_t<T_y, T_inv_scale> T_partials_return;
 
   if (size_zero(y, beta))
     return 0.0;
@@ -78,16 +77,16 @@ typename return_type<T_y, T_inv_scale>::type exponential_lpdf(
     if (include_summand<propto, T_y, T_inv_scale>::value)
       logp -= beta_dbl * y_dbl;
 
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n] -= beta_dbl;
-    if (!is_constant_struct<T_inv_scale>::value)
+    if (!is_constant_all<T_inv_scale>::value)
       ops_partials.edge2_.partials_[n] += 1 / beta_dbl - y_dbl;
   }
   return ops_partials.build(logp);
 }
 
 template <typename T_y, typename T_inv_scale>
-inline typename return_type<T_y, T_inv_scale>::type exponential_lpdf(
+inline return_type_t<T_y, T_inv_scale> exponential_lpdf(
     const T_y& y, const T_inv_scale& beta) {
   return exponential_lpdf<false>(y, beta);
 }

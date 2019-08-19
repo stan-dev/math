@@ -32,11 +32,9 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_y, typename T_dof>
-typename return_type<T_y, T_dof>::type chi_square_cdf(const T_y& y,
-                                                      const T_dof& nu) {
+return_type_t<T_y, T_dof> chi_square_cdf(const T_y& y, const T_dof& nu) {
   static const char* function = "chi_square_cdf";
-  typedef
-      typename stan::partials_return_type<T_y, T_dof>::type T_partials_return;
+  typedef partials_return_type_t<T_y, T_dof> T_partials_return;
 
   T_partials_return cdf(1.0);
 
@@ -65,12 +63,12 @@ typename return_type<T_y, T_dof>::type chi_square_cdf(const T_y& y,
   using std::exp;
   using std::pow;
 
-  VectorBuilder<!is_constant_struct<T_dof>::value, T_partials_return, T_dof>
+  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
       gamma_vec(stan::length(nu));
-  VectorBuilder<!is_constant_struct<T_dof>::value, T_partials_return, T_dof>
+  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
       digamma_vec(stan::length(nu));
 
-  if (!is_constant_struct<T_dof>::value) {
+  if (!is_constant_all<T_dof>::value) {
     for (size_t i = 0; i < stan::length(nu); i++) {
       const T_partials_return alpha_dbl = value_of(nu_vec[i]) * 0.5;
       gamma_vec[i] = tgamma(alpha_dbl);
@@ -92,11 +90,11 @@ typename return_type<T_y, T_dof>::type chi_square_cdf(const T_y& y,
 
     cdf *= Pn;
 
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n] += beta_dbl * exp(-beta_dbl * y_dbl)
                                           * pow(beta_dbl * y_dbl, alpha_dbl - 1)
                                           / tgamma(alpha_dbl) / Pn;
-    if (!is_constant_struct<T_dof>::value)
+    if (!is_constant_all<T_dof>::value)
       ops_partials.edge2_.partials_[n]
           -= 0.5
              * grad_reg_inc_gamma(alpha_dbl, beta_dbl * y_dbl, gamma_vec[n],
@@ -104,11 +102,11 @@ typename return_type<T_y, T_dof>::type chi_square_cdf(const T_y& y,
              / Pn;
   }
 
-  if (!is_constant_struct<T_y>::value) {
+  if (!is_constant_all<T_y>::value) {
     for (size_t n = 0; n < stan::length(y); ++n)
       ops_partials.edge1_.partials_[n] *= cdf;
   }
-  if (!is_constant_struct<T_dof>::value) {
+  if (!is_constant_all<T_dof>::value) {
     for (size_t n = 0; n < stan::length(nu); ++n)
       ops_partials.edge2_.partials_[n] *= cdf;
   }

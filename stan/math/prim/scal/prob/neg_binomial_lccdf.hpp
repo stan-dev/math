@@ -19,11 +19,10 @@ namespace stan {
 namespace math {
 
 template <typename T_n, typename T_shape, typename T_inv_scale>
-typename return_type<T_shape, T_inv_scale>::type neg_binomial_lccdf(
+return_type_t<T_shape, T_inv_scale> neg_binomial_lccdf(
     const T_n& n, const T_shape& alpha, const T_inv_scale& beta) {
   static const char* function = "neg_binomial_lccdf";
-  typedef typename stan::partials_return_type<T_n, T_shape, T_inv_scale>::type
-      T_partials_return;
+  typedef partials_return_type_t<T_n, T_shape, T_inv_scale> T_partials_return;
 
   if (size_zero(n, alpha, beta))
     return 0.0;
@@ -53,14 +52,14 @@ typename return_type<T_shape, T_inv_scale>::type neg_binomial_lccdf(
       return ops_partials.build(0.0);
   }
 
-  VectorBuilder<!is_constant_struct<T_shape>::value, T_partials_return, T_shape>
+  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
       digammaN_vec(stan::length(alpha));
-  VectorBuilder<!is_constant_struct<T_shape>::value, T_partials_return, T_shape>
+  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
       digammaAlpha_vec(stan::length(alpha));
-  VectorBuilder<!is_constant_struct<T_shape>::value, T_partials_return, T_shape>
+  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
       digammaSum_vec(stan::length(alpha));
 
-  if (!is_constant_struct<T_shape>::value) {
+  if (!is_constant_all<T_shape>::value) {
     for (size_t i = 0; i < stan::length(alpha); i++) {
       const T_partials_return n_dbl = value_of(n_vec[i]);
       const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
@@ -87,7 +86,7 @@ typename return_type<T_shape, T_inv_scale>::type neg_binomial_lccdf(
 
     P += log(Pi);
 
-    if (!is_constant_struct<T_shape>::value) {
+    if (!is_constant_all<T_shape>::value) {
       T_partials_return g1 = 0;
       T_partials_return g2 = 0;
 
@@ -96,7 +95,7 @@ typename return_type<T_shape, T_inv_scale>::type neg_binomial_lccdf(
                         beta_func);
       ops_partials.edge1_.partials_[i] -= g1 / Pi;
     }
-    if (!is_constant_struct<T_inv_scale>::value)
+    if (!is_constant_all<T_inv_scale>::value)
       ops_partials.edge2_.partials_[i] -= d_dbl * pow(1 - p_dbl, n_dbl)
                                           * pow(p_dbl, alpha_dbl - 1)
                                           / beta_func / Pi;
