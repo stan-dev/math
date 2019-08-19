@@ -166,8 +166,7 @@ using FloatingPointTypeContainer
     = std::enable_if_t<is_floating_point_container<T>::value>;
 
 template <typename T>
-using NotFloatingPointTypeContainer
-    = DisableIf<is_floating_point_container<T>>;
+using NotFloatingPointTypeContainer = DisableIf<is_floating_point_container<T>>;
 
 template <typename... Types>
 using AllFloatingPointTypeContainer
@@ -267,12 +266,10 @@ template <typename... Types>
 using AnyFvarTypeContainer = EnableIfAny<is_fvar_container<Types>...>;
 
 template <typename... Types>
-using NotAllFvarTypeContainer
-    = DisableIfAll<is_fvar_container<Types>...>;
+using NotAllFvarTypeContainer = DisableIfAll<is_fvar_container<Types>...>;
 
 template <typename... Types>
-using NotAnyFvarTypeContainer
-    = DisableIfAny<is_fvar_container<Types>...>;
+using NotAnyFvarTypeContainer = DisableIfAny<is_fvar_container<Types>...>;
 
 template <typename T>
 struct is_ad_type
@@ -304,51 +301,41 @@ struct is_ad_type_container
           bool, is_ad_type<scalar_type_t<std::decay_t<T>>>::value> {};
 
 template <typename T>
-using AdTypeContainer
-    = std::enable_if_t<is_ad_type_container<T>::value>;
+using AdTypeContainer = std::enable_if_t<is_ad_type_container<T>::value>;
 
 template <typename T>
 using NotAdTypeContainer = DisableIf<is_ad_type_container<T>>;
 
 template <typename... Types>
-using AllAdTypeContainer
-    = EnableIfAll<is_ad_type_container<Types>...>;
+using AllAdTypeContainer = EnableIfAll<is_ad_type_container<Types>...>;
 
 template <typename... Types>
-using AnyAdTypeContainer
-    = EnableIfAny<is_ad_type_container<Types>...>;
+using AnyAdTypeContainer = EnableIfAny<is_ad_type_container<Types>...>;
 
 template <typename... Types>
-using NotAllAdTypeContainer
-    = DisableIfAll<is_ad_type_container<Types>...>;
+using NotAllAdTypeContainer = DisableIfAll<is_ad_type_container<Types>...>;
 
 template <typename... Types>
-using NotAnyAdTypeContainer
-    = DisableIfAny<is_ad_type_container<Types>...>;
+using NotAnyAdTypeContainer = DisableIfAny<is_ad_type_container<Types>...>;
 
 // Enables if type is var or arithmetic
 template <typename T>
-using VarOrArithmetic
-    = std::enable_if_t<is_var_or_arithmetic<T>::value>;
+using VarOrArithmetic = std::enable_if_t<is_var_or_arithmetic<T>::value>;
 
 template <typename T>
 using NotVarOrArithmetic = DisableIf<is_var_or_arithmetic<T>>;
 
 template <typename... Types>
-using AllVarOrArithmetic
-    = EnableIfAll<is_var_or_arithmetic<Types>...>;
+using AllVarOrArithmetic = EnableIfAll<is_var_or_arithmetic<Types>...>;
 
 template <typename... Types>
-using AnyVarOrArithmetic
-    = EnableIfAny<is_var_or_arithmetic<Types>...>;
+using AnyVarOrArithmetic = EnableIfAny<is_var_or_arithmetic<Types>...>;
 
 template <typename... Types>
-using NotAllVarOrArithmetic
-    = DisableIfAll<is_var_or_arithmetic<Types>...>;
+using NotAllVarOrArithmetic = DisableIfAll<is_var_or_arithmetic<Types>...>;
 
 template <typename... Types>
-using NotAnyVarOrArithmetic
-    = DisableIfAny<is_var_or_arithmetic<Types>...>;
+using NotAnyVarOrArithmetic = DisableIfAny<is_var_or_arithmetic<Types>...>;
 
 // Enables if type is var or arithmetic
 template <typename T>
@@ -403,8 +390,7 @@ template <typename... Types>
 using NotAllStanScalarType = DisableIfAll<is_stan_scalar<Types>...>;
 
 template <typename... Types>
-using NotAnyStanScalarType
-    = DisableIfAny<is_stan_scalar<Types>...>;
+using NotAnyStanScalarType = DisableIfAny<is_stan_scalar<Types>...>;
 
 // Check whether a type contains (or is) arithmetic, var, or fvar
 template <typename T>
@@ -416,8 +402,7 @@ using StanScalarTypeContainer
     = std::enable_if_t<is_stan_scalar_container<T>::value>;
 
 template <typename T>
-using NotStanScalarTypeContainer
-    = DisableIf<is_stan_scalar_container<T>>;
+using NotStanScalarTypeContainer = DisableIf<is_stan_scalar_container<T>>;
 
 template <typename... Types>
 using AllStanScalarTypeContainer
@@ -537,12 +522,10 @@ template <typename T>
 using NotEigenOrStanScalarType = DisableIf<is_eigen_or_stan_scalar<T>>;
 
 template <typename... Types>
-using AllEigenOrStanScalarType
-    = EnableIfAll<is_eigen_or_stan_scalar<Types>...>;
+using AllEigenOrStanScalarType = EnableIfAll<is_eigen_or_stan_scalar<Types>...>;
 
 template <typename... Types>
-using AnyEigenOrStanScalarType
-    = EnableIfAny<is_eigen_or_stan_scalar<Types>...>;
+using AnyEigenOrStanScalarType = EnableIfAny<is_eigen_or_stan_scalar<Types>...>;
 
 template <typename... Types>
 using NotAllEigenOrStanScalarType
@@ -559,27 +542,22 @@ struct is_eigen_arithmetic
                                        && is_arithmetic_container<T>::value> {};
 
 template <typename T>
-using EigenArithmetic
-    = std::enable_if_t<is_eigen_arithmetic<T>::value>;
+using EigenArithmetic = std::enable_if_t<is_eigen_arithmetic<T>::value>;
 
 template <typename T>
 using NotEigenArithmetic = DisableIf<is_eigen_arithmetic<T>>;
 
 template <typename... Types>
-using AllEigenArithmetic
-    = EnableIfAll<is_eigen_arithmetic<Types>...>;
+using AllEigenArithmetic = EnableIfAll<is_eigen_arithmetic<Types>...>;
 
 template <typename... Types>
-using AnyEigenArithmetic
-    = EnableIfAny<is_eigen_arithmetic<Types>...>;
+using AnyEigenArithmetic = EnableIfAny<is_eigen_arithmetic<Types>...>;
 
 template <typename... Types>
-using NotAllEigenArithmetic
-    = DisableIfAll<is_eigen_arithmetic<Types>...>;
+using NotAllEigenArithmetic = DisableIfAll<is_eigen_arithmetic<Types>...>;
 
 template <typename... Types>
-using NotAnyEigenArithmetic
-    = DisableIfAny<is_eigen_arithmetic<Types>...>;
+using NotAnyEigenArithmetic = DisableIfAny<is_eigen_arithmetic<Types>...>;
 
 // Checks if type is Eigen and scalar type is var
 template <typename T>
@@ -655,51 +633,41 @@ using NotAnyEigenAdType = DisableIfAny<is_eigen_ad_type<Types>...>;
 
 // Enable if for Eigen col vectors
 template <typename T>
-using Eigen_col_vector
-    = std::enable_if_t<is_eigen_col_vector<T>::value>;
+using Eigen_col_vector = std::enable_if_t<is_eigen_col_vector<T>::value>;
 
 template <typename T>
 using NotEigenColVector = DisableIf<is_eigen_col_vector<T>>;
 
 template <typename... Types>
-using AllEigenColVector
-    = EnableIfAll<is_eigen_col_vector<Types>...>;
+using AllEigenColVector = EnableIfAll<is_eigen_col_vector<Types>...>;
 
 template <typename... Types>
-using AnyEigenColVector
-    = EnableIfAny<is_eigen_col_vector<Types>...>;
+using AnyEigenColVector = EnableIfAny<is_eigen_col_vector<Types>...>;
 
 template <typename... Types>
-using NotAllEigenColVector
-    = DisableIfAll<is_eigen_col_vector<Types>...>;
+using NotAllEigenColVector = DisableIfAll<is_eigen_col_vector<Types>...>;
 
 template <typename... Types>
-using NotAnyEigenColVector
-    = DisableIfAny<is_eigen_col_vector<Types>...>;
+using NotAnyEigenColVector = DisableIfAny<is_eigen_col_vector<Types>...>;
 
 // Enable if for Eigen row vectors
 template <typename T>
-using EigenRowVector
-    = std::enable_if_t<is_eigen_row_vector<T>::value>;
+using EigenRowVector = std::enable_if_t<is_eigen_row_vector<T>::value>;
 
 template <typename T>
 using NotEigenRowVector = DisableIf<is_eigen_row_vector<T>>;
 
 template <typename... Types>
-using AllEigenRowVector
-    = EnableIfAll<is_eigen_row_vector<Types>...>;
+using AllEigenRowVector = EnableIfAll<is_eigen_row_vector<Types>...>;
 
 template <typename... Types>
-using AnyEigenRowVector
-    = EnableIfAny<is_eigen_row_vector<Types>...>;
+using AnyEigenRowVector = EnableIfAny<is_eigen_row_vector<Types>...>;
 
 template <typename... Types>
-using NotAllEigenRowVector
-    = DisableIfAll<is_eigen_row_vector<Types>...>;
+using NotAllEigenRowVector = DisableIfAll<is_eigen_row_vector<Types>...>;
 
 template <typename... Types>
-using NotAnyEigenRowVector
-    = DisableIfAny<is_eigen_row_vector<Types>...>;
+using NotAnyEigenRowVector = DisableIfAny<is_eigen_row_vector<Types>...>;
 
 // Enable if eigen row or column vector
 template <typename T>
@@ -758,8 +726,7 @@ struct is_eigen_rows_match : internal::is_eigen_rows_match_impl<T1, T2> {};
 
 // Enables for matching rows and columns
 template <typename T1, typename T2>
-using EigenRowsMatch
-    = std::enable_if_t<is_eigen_rows_match<T1, T2>::value>;
+using EigenRowsMatch = std::enable_if_t<is_eigen_rows_match<T1, T2>::value>;
 
 template <typename T1, typename T2>
 using NotEigenRowsMatch = DisableIf<is_eigen_rows_match<T1, T2>>;
@@ -789,8 +756,7 @@ template <typename T1, typename T2>
 struct is_eigen_cols_match : internal::is_eigen_cols_match_impl<T1, T2> {};
 
 template <typename T1, typename T2>
-using EigenColsMatch
-    = std::enable_if_t<is_eigen_cols_match<T1, T2>::value>;
+using EigenColsMatch = std::enable_if_t<is_eigen_cols_match<T1, T2>::value>;
 
 template <typename T1, typename T2>
 using NotEigenColsMatch = DisableIf<is_eigen_cols_match<T1, T2>>;
@@ -803,8 +769,7 @@ struct is_eigen_dims_match
 };
 
 template <typename T1, typename T2>
-using EigenDimsMatch
-    = std::enable_if_t<is_eigen_dims_match<T1, T2>::value>;
+using EigenDimsMatch = std::enable_if_t<is_eigen_dims_match<T1, T2>::value>;
 
 template <typename T1, typename T2>
 using NotEigenDimsMatch = DisableIf<is_eigen_dims_match<T1, T2>>;
