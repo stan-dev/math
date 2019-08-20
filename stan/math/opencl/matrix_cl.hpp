@@ -50,9 +50,9 @@ class matrix_cl<T, arithmetic_type_container<T>> {
   template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper>
   void triangular_transpose();
 
-  void sub_block(const matrix_cl<T, arithmetic_type_container<T>>& A, size_t A_i,
-                 size_t A_j, size_t this_i, size_t this_j, size_t nrows,
-                 size_t ncols);
+  void sub_block(const matrix_cl<T, arithmetic_type_container<T>>& A,
+                 size_t A_i, size_t A_j, size_t this_i, size_t this_j,
+                 size_t nrows, size_t ncols);
   int rows() const { return rows_; }
 
   int cols() const { return cols_; }
@@ -271,6 +271,10 @@ class matrix_cl<T, arithmetic_type_container<T>> {
     }
   }
 
+  template <typename Type>
+  using enable_if_eigen_base = std::enable_if_t<
+      std::is_base_of<Eigen::EigenBase<Type>, std::decay_t<Type>>::value>;
+
   /**
    * Constructor for the matrix_cl that
    * creates a copy of the Eigen matrix on the OpenCL device.
@@ -283,11 +287,11 @@ class matrix_cl<T, arithmetic_type_container<T>> {
    * @throw <code>std::system_error</code> if the
    * matrices do not have matching dimensions
    */
-  template <int R, int C>
-  explicit matrix_cl(const Eigen::Matrix<T, R, C>& A,
+  template <typename eigen_base, typename = enable_if_eigen_base<eigen_base>>
+  explicit matrix_cl(const eigen_base& A,
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
       : rows_(A.rows()), cols_(A.cols()), view_(partial_view) {
-    if (size() == 0) {
+    if (this->size() == 0) {
       return;
     }
     cl::Context& ctx = opencl_context.context();
@@ -296,7 +300,7 @@ class matrix_cl<T, arithmetic_type_container<T>> {
       buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
       cl::Event transfer_event;
       queue.enqueueWriteBuffer(buffer_cl_, CL_FALSE, 0, sizeof(T) * A.size(),
-                               A.data(), NULL, &transfer_event);
+                               A.eval().data(), NULL, &transfer_event);
       this->add_write_event(transfer_event);
     } catch (const cl::Error& e) {
       check_opencl_error("matrix constructor", e);
@@ -324,6 +328,35 @@ class matrix_cl<T, arithmetic_type_container<T>> {
       cl::Event transfer_event;
       queue.enqueueWriteBuffer(buffer_cl_, CL_FALSE, 0, sizeof(T) * A.size(),
                                A.data(), NULL, &transfer_event);
+      this->add_write_event(transfer_event);
+    } catch (const cl::Error& e) {
+      check_opencl_error("matrix constructor", e);
+    }
+  }
+
+  /**
+   * Construct from \c array of doubles with given rows and columns
+   *
+   * @param A array of doubles
+   * @param R Number of rows the matrix should have.
+   * @param C Number of columns the matrix should have.
+   * @param partial_view which part of the matrix is used
+   * @throw <code>std::system_error</code> if the
+   * matrices do not have matching dimensions
+   */
+  explicit matrix_cl(const double* A, const int& R, const int& C,
+                     matrix_cl_view partial_view = matrix_cl_view::Entire)
+      : rows_(R), cols_(C), view_(partial_view) {
+    if (size() == 0) {
+      return;
+    }
+    cl::Context& ctx = opencl_context.context();
+    cl::CommandQueue& queue = opencl_context.queue();
+    try {
+      buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * size());
+      cl::Event transfer_event;
+      queue.enqueueWriteBuffer(buffer_cl_, CL_FALSE, 0, sizeof(T) * size(), A,
+                               NULL, &transfer_event);
       this->add_write_event(transfer_event);
     } catch (const cl::Error& e) {
       check_opencl_error("matrix constructor", e);

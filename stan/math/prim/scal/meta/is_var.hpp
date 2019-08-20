@@ -9,8 +9,7 @@ namespace stan {
  * as the primitive scalar types cannot be a stan::math::var type.
  */
 template <typename T>
-struct is_var : std::false_type {
-};
+struct is_var : std::false_type {};
 
 }  // namespace stan
 #endif
