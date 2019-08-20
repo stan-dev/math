@@ -9,8 +9,7 @@ namespace stan {
 namespace internal {
 // FIXME(Steve): this is a stupid name
 template <typename T>
-using inherit_vector = std::vector<typename std::decay_t<T>::value_type,
-                                   typename std::decay_t<T>::allocator_type>;
+using inherit_vector = std::vector<typename std::decay_t<T>>;
 template <typename T>
 using is_same_vector
     = std::is_same<typename std::decay_t<T>, internal::inherit_vector<T>>;
