@@ -87,10 +87,9 @@ class mdivide_left_tri_vv_vari : public vari {
 
 #ifdef STAN_OPENCL
     if (M_ >= opencl_context.tuning_opts().tri_inverse_size_worth_transfer) {
-      matrix_d tmp_variRefC = Map<matrix_vi>(variRefC_, M_, N_).adj();
       matrix_cl<double> A_cl(A_, M_, M_, from_eigen_uplo_type(TriView));
       matrix_cl<double> C_cl(C_, M_, N_);
-      matrix_cl<double> variRefC_cl(tmp_variRefC);
+      matrix_cl<double> variRefC_cl(Map<matrix_vi>(variRefC_, M_, N_).adj());
       matrix_cl<double> adjB_cl = transpose(tri_inverse(A_cl)) * variRefC_cl;
       matrix_cl<double> adjA_cl = multiply(adjB_cl * transpose(C_cl), -1.0);
       adjA = from_matrix_cl(adjA_cl);
@@ -176,13 +175,11 @@ class mdivide_left_tri_dv_vari : public vari {
     using Eigen::Map;
 #ifdef STAN_OPENCL
     if (M_ >= opencl_context.tuning_opts().tri_inverse_size_worth_transfer) {
-      matrix_d tmp = Map<matrix_vi>(variRefC_, M_, N_).adj();
       matrix_cl<double> A_cl(A_, M_, M_, from_eigen_uplo_type(TriView));
-      matrix_cl<double> C_cl(tmp);
+      matrix_cl<double> C_cl(Map<matrix_vi>(variRefC_, M_, N_).adj());
       A_cl = transpose(tri_inverse(A_cl));
       matrix_cl<double> res_cl = A_cl * C_cl;
-      matrix_d ttmp = from_matrix_cl(res_cl);
-      Map<matrix_vi>(variRefB_, M_, N_).adj() += ttmp;
+      Map<matrix_vi>(variRefB_, M_, N_).adj() += from_matrix_cl(res_cl);
     } else {
 #endif
       Map<matrix_vi>(variRefB_, M_, N_).adj()
