@@ -85,20 +85,53 @@ class multiply_mat_vari : public vari {
     Map<matrix_d> Bd(Bd_, A_cols_, B_cols_);
     Ad = A.val();
     Bd = B.val();
-
+#ifdef STAN_OPENCL
+    if (Ad.rows() * Ad.cols() * Bd.cols()
+        > opencl_context.tuning_opts().multiply_dim_prod_worth_transfer) {
+      matrix_cl<double> Ad_cl(Ad);
+      matrix_cl<double> Bd_cl(Bd);
+      matrix_cl<double> variRefAB_cl = Ad_cl * Bd_cl;
+      matrix_d temp = from_matrix_cl(variRefAB_cl);
+      Map<matrix_vi>(variRefAB_, A_rows_, B_cols_)
+          = temp.unaryExpr([](double x) { return new vari(x, false); });
+    } else {
+      Map<matrix_vi>(variRefAB_, A_rows_, B_cols_)
+          = (Ad * Bd).unaryExpr([](double x) { return new vari(x, false); });
+    }
+#else
     Map<matrix_vi>(variRefAB_, A_rows_, B_cols_)
         = (Ad * Bd).unaryExpr([](double x) { return new vari(x, false); });
+#endif
   }
 
   virtual void chain() {
     using Eigen::Map;
     matrix_d adjAB(A_rows_, B_cols_);
-
     adjAB = Map<matrix_vi>(variRefAB_, A_rows_, B_cols_).adj();
+#ifdef STAN_OPENCL
+    if (A_rows_ * A_cols_ * B_cols_
+        > opencl_context.tuning_opts().multiply_dim_prod_worth_transfer) {
+      matrix_cl<double> adjAB_cl(adjAB);
+      matrix_cl<double> Ad_cl(Ad_, A_rows_, A_cols_);
+      matrix_cl<double> Bd_cl(Bd_, A_cols_, B_cols_);
+      matrix_cl<double> variRefA_cl = adjAB_cl * transpose(Bd_cl);
+      matrix_cl<double> variRefB_cl = transpose(Ad_cl) * adjAB_cl;
+      matrix_d temp_variRefA = from_matrix_cl(variRefA_cl);
+      matrix_d temp_variRefB = from_matrix_cl(variRefB_cl);
+      Map<matrix_vi>(variRefA_, A_rows_, A_cols_).adj() += temp_variRefA;
+      Map<matrix_vi>(variRefB_, A_cols_, B_cols_).adj() += temp_variRefB;
+    } else {
+      Map<matrix_vi>(variRefA_, A_rows_, A_cols_).adj()
+          += adjAB * Map<matrix_d>(Bd_, A_cols_, B_cols_).transpose();
+      Map<matrix_vi>(variRefB_, A_cols_, B_cols_).adj()
+          += Map<matrix_d>(Ad_, A_rows_, A_cols_).transpose() * adjAB;
+    }
+#else
     Map<matrix_vi>(variRefA_, A_rows_, A_cols_).adj()
         += adjAB * Map<matrix_d>(Bd_, A_cols_, B_cols_).transpose();
     Map<matrix_vi>(variRefB_, A_cols_, B_cols_).adj()
         += Map<matrix_d>(Ad_, A_rows_, A_cols_).transpose() * adjAB;
+#endif
   }
 };
 
@@ -238,17 +271,44 @@ class multiply_mat_vari<double, Ra, Ca, Tb, Cb> : public vari {
     Map<matrix_d> Bd(Bd_, A_cols_, B_cols_);
     Ad = A;
     Bd = B.val();
-
+#ifdef STAN_OPENCL
+    if (Ad.rows() * Ad.cols() * Bd.cols()
+        > opencl_context.tuning_opts().multiply_dim_prod_worth_transfer) {
+      matrix_cl<double> Ad_cl(Ad);
+      matrix_cl<double> Bd_cl(Bd);
+      matrix_cl<double> variRefAB_cl = Ad_cl * Bd_cl;
+      matrix_d temp = from_matrix_cl(variRefAB_cl);
+      Map<matrix_vi>(variRefAB_, A_rows_, B_cols_)
+          = temp.unaryExpr([](double x) { return new vari(x, false); });
+    } else {
+      Map<matrix_vi>(variRefAB_, A_rows_, B_cols_)
+          = (Ad * Bd).unaryExpr([](double x) { return new vari(x, false); });
+    }
+#else
     Map<matrix_vi>(variRefAB_, A_rows_, B_cols_)
         = (Ad * Bd).unaryExpr([](double x) { return new vari(x, false); });
+#endif
   }
 
   virtual void chain() {
     using Eigen::Map;
     matrix_d adjAB = Map<matrix_vi>(variRefAB_, A_rows_, B_cols_).adj();
-
+#ifdef STAN_OPENCL
+    if (A_rows_ * A_cols_ * B_cols_
+        > opencl_context.tuning_opts().multiply_dim_prod_worth_transfer) {
+      matrix_cl<double> adjAB_cl(adjAB);
+      matrix_cl<double> Ad_cl(Ad_, A_rows_, A_cols_);
+      matrix_cl<double> variRefB_cl = transpose(Ad_cl) * adjAB_cl;
+      matrix_d temp_variRefB = from_matrix_cl(variRefB_cl);
+      Map<matrix_vi>(variRefB_, A_cols_, B_cols_).adj() += temp_variRefB;
+    } else {
+      Map<matrix_vi>(variRefB_, A_cols_, B_cols_).adj()
+          += Map<matrix_d>(Ad_, A_rows_, A_cols_).transpose() * adjAB;
+    }
+#else
     Map<matrix_vi>(variRefB_, A_cols_, B_cols_).adj()
         += Map<matrix_d>(Ad_, A_rows_, A_cols_).transpose() * adjAB;
+#endif
   }
 };
 
@@ -381,17 +441,44 @@ class multiply_mat_vari<Ta, Ra, Ca, double, Cb> : public vari {
     Map<matrix_d> Bd(Bd_, A_cols_, B_cols_);
     Ad = A.val();
     Bd = B.val();
-
+#ifdef STAN_OPENCL
+    if (Ad.rows() * Ad.cols() * Bd.cols()
+        > opencl_context.tuning_opts().multiply_dim_prod_worth_transfer) {
+      matrix_cl<double> Ad_cl(Ad);
+      matrix_cl<double> Bd_cl(Bd);
+      matrix_cl<double> variRefAB_cl = Ad_cl * Bd_cl;
+      matrix_d temp = from_matrix_cl(variRefAB_cl);
+      Map<matrix_vi>(variRefAB_, A_rows_, B_cols_)
+          = temp.unaryExpr([](double x) { return new vari(x, false); });
+    } else {
+      Map<matrix_vi>(variRefAB_, A_rows_, B_cols_)
+          = (Ad * Bd).unaryExpr([](double x) { return new vari(x, false); });
+    }
+#else
     Map<matrix_vi>(variRefAB_, A_rows_, B_cols_)
         = (Ad * Bd).unaryExpr([](double x) { return new vari(x, false); });
+#endif
   }
 
   virtual void chain() {
     using Eigen::Map;
     matrix_d adjAB = Map<matrix_vi>(variRefAB_, A_rows_, B_cols_).adj();
-
+#ifdef STAN_OPENCL
+    if (A_rows_ * A_cols_ * B_cols_
+        > opencl_context.tuning_opts().multiply_dim_prod_worth_transfer) {
+      matrix_cl<double> adjAB_cl(adjAB);
+      matrix_cl<double> Bd_cl(Bd_, A_cols_, B_cols_);
+      matrix_cl<double> variRefA_cl = adjAB_cl * transpose(Bd_cl);
+      matrix_d temp_variRefA = from_matrix_cl(variRefA_cl);
+      Map<matrix_vi>(variRefA_, A_rows_, A_cols_).adj() += temp_variRefA;
+    } else {
+      Map<matrix_vi>(variRefA_, A_rows_, A_cols_).adj()
+          += adjAB * Map<matrix_d>(Bd_, A_cols_, B_cols_).transpose();
+    }
+#else
     Map<matrix_vi>(variRefA_, A_rows_, A_cols_).adj()
         += adjAB * Map<matrix_d>(Bd_, A_cols_, B_cols_).transpose();
+#endif
   }
 };
 

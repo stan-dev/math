@@ -2,7 +2,9 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
-
+#ifdef STAN_OPENCL
+#include <boost/random/mersenne_twister.hpp>
+#endif
 // multiply operates on two matrices A X B
 // A (n, m)
 // B (m, k)
@@ -1722,3 +1724,106 @@ TEST(AgradRevMatrix, check_varis_on_stack) {
   test::check_varis_on_stack(stan::math::multiply(s, value_of(s)));
   test::check_varis_on_stack(stan::math::multiply(value_of(s), s));
 }
+
+#ifdef STAN_OPENCL
+#define EXPECT_MATRIX_NEAR(A, B, DELTA) \
+  for (int i = 0; i < A.size(); i++)    \
+    EXPECT_NEAR(stan::math::value_of(A(i)), stan::math::value_of(B(i)), DELTA);
+
+boost::random::mt19937 rng;
+#define MULTIPLY_OPENCL_OVERRIDE 0
+#define MULTIPLY_CPU_OVERRIDE INT_MAX
+TEST(AgradRevMatrix, multiply_val_vv_cl) {
+  int temp = stan::math::opencl_context.tuning_opts()
+                 .multiply_dim_prod_worth_transfer;
+  using stan::math::matrix_d;
+  using stan::math::matrix_v;
+  using stan::math::multiply;
+  int size = 234;
+  matrix_v Av(size, size);
+  matrix_v Bv(size, size);
+  matrix_v C, C_cl;
+  for (int i = 0; i < size; i++) {
+    for (int j = 0; j < size; j++) {
+      Av(i, j) = stan::math::uniform_rng(-5, 5, rng);
+      Bv(i, j) = stan::math::uniform_rng(-5, 5, rng);
+    }
+  }
+  stan::math::opencl_context.tuning_opts().multiply_dim_prod_worth_transfer
+      = MULTIPLY_OPENCL_OVERRIDE;
+  C_cl = multiply(Av, Bv);
+  C_cl(0, 0).grad();
+  stan::math::opencl_context.tuning_opts().multiply_dim_prod_worth_transfer
+      = MULTIPLY_CPU_OVERRIDE;
+  C = multiply(Av, Bv);
+  C(0, 0).grad();
+  EXPECT_MATRIX_NEAR(C, C_cl, 1.0E-12);
+  EXPECT_MATRIX_NEAR(C.adj(), C_cl.adj(), 1.0E-12);
+  stan::math::recover_memory();
+  stan::math::opencl_context.tuning_opts().multiply_dim_prod_worth_transfer
+      = temp;
+}
+
+TEST(AgradRevMatrix, multiply_val_vd_cl) {
+  int temp = stan::math::opencl_context.tuning_opts()
+                 .multiply_dim_prod_worth_transfer;
+  using stan::math::matrix_d;
+  using stan::math::matrix_v;
+  using stan::math::multiply;
+  int size = 256;
+  matrix_v Av(size, size);
+  matrix_v Bd(size, size);
+  matrix_v C, C_cl;
+  for (int i = 0; i < size; i++) {
+    for (int j = 0; j < size; j++) {
+      Av(i, j) = stan::math::uniform_rng(-5, 5, rng);
+      Bd(i, j) = stan::math::uniform_rng(-5, 5, rng);
+    }
+  }
+  stan::math::opencl_context.tuning_opts().multiply_dim_prod_worth_transfer
+      = MULTIPLY_OPENCL_OVERRIDE;
+  C_cl = multiply(Av, Bd);
+  C_cl(0, 0).grad();
+  stan::math::opencl_context.tuning_opts().multiply_dim_prod_worth_transfer
+      = MULTIPLY_CPU_OVERRIDE;
+  C = multiply(Av, Bd);
+  C(0, 0).grad();
+  EXPECT_MATRIX_NEAR(C, C_cl, 1.0E-12);
+  EXPECT_MATRIX_NEAR(C.adj(), C_cl.adj(), 1.0E-12);
+  stan::math::recover_memory();
+  stan::math::opencl_context.tuning_opts().multiply_dim_prod_worth_transfer
+      = temp;
+}
+
+TEST(AgradRevMatrix, multiply_val_dv_cl) {
+  int temp = stan::math::opencl_context.tuning_opts()
+                 .multiply_dim_prod_worth_transfer;
+  using stan::math::matrix_d;
+  using stan::math::matrix_v;
+  using stan::math::multiply;
+  int size = 321;
+  matrix_v Ad(size, size);
+  matrix_v Bv(size, size);
+  matrix_v C, C_cl;
+  for (int i = 0; i < size; i++) {
+    for (int j = 0; j < size; j++) {
+      Ad(i, j) = stan::math::uniform_rng(-5, 5, rng);
+      Bv(i, j) = stan::math::uniform_rng(-5, 5, rng);
+    }
+  }
+  stan::math::opencl_context.tuning_opts().multiply_dim_prod_worth_transfer
+      = MULTIPLY_OPENCL_OVERRIDE;
+  C_cl = multiply(Ad, Bv);
+  C_cl(0, 0).grad();
+  stan::math::opencl_context.tuning_opts().multiply_dim_prod_worth_transfer
+      = MULTIPLY_CPU_OVERRIDE;
+  C = multiply(Ad, Bv);
+  C(0, 0).grad();
+  EXPECT_MATRIX_NEAR(C, C_cl, 1.0E-12);
+  EXPECT_MATRIX_NEAR(C.adj(), C_cl.adj(), 1.0E-12);
+  stan::math::recover_memory();
+  stan::math::opencl_context.tuning_opts().multiply_dim_prod_worth_transfer
+      = temp;
+}
+
+#endif
