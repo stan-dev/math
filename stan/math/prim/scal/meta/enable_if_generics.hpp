@@ -677,10 +677,10 @@ struct is_dot_product
                                        && is_eigen_col_vector<T2>::value> {};
 
 template <typename T1, typename T2>
-using dot_product = std::enable_if_t<is_dot_product<T1, T2>::value>;
+using eigen_dot_product = std::enable_if_t<is_dot_product<T1, T2>::value>;
 
 template <typename T1, typename T2>
-using not_dot_product = disable_if<is_dot_product<T1, T2>>;
+using not_eigen_dot_product = disable_if<is_dot_product<T1, T2>>;
 
 namespace internal {
 // primary template for checking if eigen matrix rows match
