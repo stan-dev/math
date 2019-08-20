@@ -10,7 +10,7 @@ namespace stan {
  * when instantiated with the stan::math::var type.
  */
 template <>
-struct is_var<stan::math::var> :std::true_type {};
+struct is_var<stan::math::var> : std::true_type {};
 
 }  // namespace stan
 #endif

@@ -166,7 +166,8 @@ using floating_point_type_container
     = std::enable_if_t<is_floating_point_container<T>::value>;
 
 template <typename T>
-using not_floating_point_type_container = disable_if<is_floating_point_container<T>>;
+using not_floating_point_type_container
+    = disable_if<is_floating_point_container<T>>;
 
 template <typename... Types>
 using all_floating_point_type_container
@@ -313,10 +314,12 @@ template <typename... Types>
 using any_ad_type_container = enable_if_any<is_ad_type_container<Types>...>;
 
 template <typename... Types>
-using not_all_ad_type_container = disable_if_all<is_ad_type_container<Types>...>;
+using not_all_ad_type_container
+    = disable_if_all<is_ad_type_container<Types>...>;
 
 template <typename... Types>
-using not_any_ad_type_container = disable_if_any<is_ad_type_container<Types>...>;
+using not_any_ad_type_container
+    = disable_if_any<is_ad_type_container<Types>...>;
 
 // Enables if type is var or arithmetic
 template <typename T>
@@ -332,10 +335,12 @@ template <typename... Types>
 using any_var_or_arithmetic = enable_if_any<is_var_or_arithmetic<Types>...>;
 
 template <typename... Types>
-using not_all_var_or_arithmetic = disable_if_all<is_var_or_arithmetic<Types>...>;
+using not_all_var_or_arithmetic
+    = disable_if_all<is_var_or_arithmetic<Types>...>;
 
 template <typename... Types>
-using not_any_var_or_arithmetic = disable_if_any<is_var_or_arithmetic<Types>...>;
+using not_any_var_or_arithmetic
+    = disable_if_any<is_var_or_arithmetic<Types>...>;
 
 // Enables if type is var or arithmetic
 template <typename T>
@@ -504,10 +509,12 @@ template <typename T>
 using not_eigen_or_stan_scalar_type = disable_if<is_eigen_or_stan_scalar<T>>;
 
 template <typename... Types>
-using all_eigen_or_stan_scalar_type = enable_if_all<is_eigen_or_stan_scalar<Types>...>;
+using all_eigen_or_stan_scalar_type
+    = enable_if_all<is_eigen_or_stan_scalar<Types>...>;
 
 template <typename... Types>
-using any_eigen_or_stan_scalar_type = enable_if_any<is_eigen_or_stan_scalar<Types>...>;
+using any_eigen_or_stan_scalar_type
+    = enable_if_any<is_eigen_or_stan_scalar<Types>...>;
 
 template <typename... Types>
 using not_all_eigen_or_stan_scalar_type

@@ -50,9 +50,9 @@ class matrix_cl<T, arithmetic_type_container<T>> {
   template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper>
   void triangular_transpose();
 
-  void sub_block(const matrix_cl<T, arithmetic_type_container<T>>& A, size_t A_i,
-                 size_t A_j, size_t this_i, size_t this_j, size_t nrows,
-                 size_t ncols);
+  void sub_block(const matrix_cl<T, arithmetic_type_container<T>>& A,
+                 size_t A_i, size_t A_j, size_t this_i, size_t this_j,
+                 size_t nrows, size_t ncols);
   int rows() const { return rows_; }
 
   int cols() const { return cols_; }
