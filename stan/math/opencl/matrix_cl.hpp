@@ -185,7 +185,6 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
     if (A.size() == 0)
       return;
     this->wait_for_read_write_events();
-    A.wait_for_write_events();
     cl::Context& ctx = opencl_context.context();
     cl::CommandQueue queue = opencl_context.queue();
     try {
@@ -353,7 +352,6 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
       return *this;
     view_ = a.view();
     this->wait_for_read_write_events();
-    a.wait_for_write_events();
     cl::CommandQueue queue = opencl_context.queue();
     try {
       cl::Event copy_event;
