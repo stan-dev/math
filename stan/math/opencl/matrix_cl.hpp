@@ -350,7 +350,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
     check_size_match("assignment of (OpenCL) matrices", "source.cols()",
                      a.cols(), "destination.cols()", cols());
     if (a.size() == 0)
-      return;
+      return *this;
     view_ = a.view();
     this->wait_for_read_write_events();
     a.wait_for_write_events();
