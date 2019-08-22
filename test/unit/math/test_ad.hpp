@@ -1,6 +1,7 @@
 #ifndef TEST_UNIT_MATH_TEST_AD_HPP
 #define TEST_UNIT_MATH_TEST_AD_HPP
 
+#include <test/unit/math/ad_tolerances.hpp>
 #include <test/unit/math/is_finite.hpp>
 #include <test/unit/math/expect_near_rel.hpp>
 #include <test/unit/math/serializer.hpp>
@@ -12,63 +13,7 @@
 
 namespace stan {
 namespace test {
-
-/**
- * Simple struct to hold the complete set of tolerances used to test a
- * function.  The default constructor uses default values for all
- * tolerances.  These are 1e-8 for values, 1e-4 for first derivatives,
- * 1e-3 for second derivatives, and 1e-2 for third derivatives.  The
- * names begin with the functional being evaluated, include an `fvar`
- * if the function is implemented using only forward mode, and end
- * with the quantity being calculated; for exmaple,
- * `hessian_fvar_grad_` is the gradient calculated by the `hessian`
- * function using forward-mode autodiff.
- *
- * `gradient_val_`: 1e-8;  `gradient_grad_`: 1e-4
- *
- * `gradient_fvar_val_`: 1e-8;  `gradient_fvar_grad_`: 1e-4
- *
- * `hessian_val_` : 1e-8; `hessian_grad_`: 1e-4; `hessian_hessian_`: 1e-3
- *
- * `hessian_fvar_val_` : 1e-8; `hessian_fvar_grad_`: 1e-4;
- * `hessian_fvar_hessian_`: 1e-3
- *
- * `grad_hessian_val_` : 1e-8; `grad_hessian_hessian_`: 1e-3;
- * `grad_hessian_grad_hessian_`: 1e-2
- */
-struct ad_tolerances {
-  double gradient_val_;
-  double gradient_grad_;
-  double gradient_fvar_val_;
-  double gradient_fvar_grad_;
-  double hesssian_val_;
-  double hessian_grad_;
-  double hessian_hessian_;
-  double hessian_fvar_val_;
-  double hessian_fvar_grad_;
-  double hessian_fvar_hessian_;
-  double grad_hessian_val_;
-  double grad_hessian_hessian_;
-  double grad_hessian_grad_hessian_;
-  ad_tolerances()
-      : gradient_val_(1e-8),
-        gradient_grad_(1e-4),
-
-        gradient_fvar_val_(1e-8),
-        gradient_fvar_grad_(1e-4),
-
-        hesssian_val_(1e-8),
-        hessian_grad_(1e-4),
-        hessian_hessian_(1e-3),
-
-        hessian_fvar_val_(1e-8),
-        hessian_fvar_grad_(1e-4),
-        hessian_fvar_hessian_(1e-3),
-
-        grad_hessian_val_(1e-8),
-        grad_hessian_hessian_(1e-3),
-        grad_hessian_grad_hessian_(1e-2) {}
-};
+namespace internal {
 
 /**
  * Tests that the specified function applied to the specified argument
@@ -322,15 +267,48 @@ void expect_throw(const F& f, const Eigen::VectorXd& x,
   }
 }
 
-template <typename F, typename T>
-void expect_all_throw(const F& f, const T& x) {
+/**
+ * Succeeds if the specified function applied to the specified
+ * argument throws an exception at every level of autodiff.
+ *
+ * @tparam F type of function
+ * @param f function to test
+ * @param x argument to test
+ */
+template <typename F>
+void expect_all_throw(const F& f, const Eigen::VectorXd& x) {
   using stan::math::fvar;
   using stan::math::var;
+  expect_throw<double>(f, x, "double");
   expect_throw<var>(f, x, "var");
   expect_throw<fvar<double>>(f, x, "fvar<double>");
   expect_throw<fvar<fvar<double>>>(f, x, "fvar<fvar<double>>");
   expect_throw<fvar<var>>(f, x, "fvar<var>");
   expect_throw<fvar<fvar<var>>>(f, x, "fvar<fvar<var>>");
+}
+
+/**
+ * Nucceeds if the specified function applied to the specified
+ * argument throws an exception at every level of autodiff.
+ *
+ * @tparam F type of function
+ * @param f function to evaluate
+ * @param x argument to evaluate
+ */
+template <typename F>
+void expect_all_throw(const F& f, double x1) {
+  auto h = [&](auto v) { return serialize_return(f(v(0))); };
+  Eigen::VectorXd x(1);
+  x << x1;
+  expect_all_throw(h, x);
+}
+
+template <typename F>
+void expect_all_throw(const F& f, double x1, double x2) {
+  auto h = [&](auto v) { return serialize_return(f(v(0), v(1))); };
+  Eigen::VectorXd x(2);
+  x << x1, x2;
+  expect_all_throw(h, x);
 }
 
 /**
@@ -346,21 +324,26 @@ void expect_all_throw(const F& f, const T& x) {
  * @tparam Ts type pack for arguments to original functor with double
  * scalar types
  * @param f functor to evaluate
- * @param h serialized functor taking an index and returning the function
+ * @param g serialized functor taking an Eigen vector and returning a
+ * serialized container of the original output
  * that returns that component of the original output
  * original output
  * @param x serialized input
  * @param xs sequence of arguments with double-based scalars
  */
-template <typename F, typename H, typename... Ts>
-void expect_ad_helper(const F& f, const H& h, const Eigen::VectorXd& x,
+template <typename F, typename G, typename... Ts>
+void expect_ad_helper(const F& f, const G& g, const Eigen::VectorXd& x,
                       Ts... xs) {
-  size_t result_size;
+  auto h = [&](const int i) { return [&](const auto& v) { return g(v)[i]; }; };
+  size_t result_size = 0;
   try {
-    auto y = f(xs...);
-    result_size = serialize<double>(y).size();
+    auto y1 = f(xs...);  // original types, including int
+    auto y2 = g(x);      // all int cast to double
+    auto y1_serial = serialize<double>(y1);
+    expect_near_rel("expect_ad_helper", y1_serial, y2, 1e-10);
+    result_size = y1_serial.size();
   } catch (...) {
-    expect_all_throw(h(0), x);
+    internal::expect_all_throw(h(0), x);
     return;
   }
   for (size_t i = 0; i < result_size; ++i)
@@ -369,50 +352,43 @@ void expect_ad_helper(const F& f, const H& h, const Eigen::VectorXd& x,
 
 /**
  * Test that the specified unary functor and arguments produce for
- * every autodiff type the same value as the double-based version and
- * the same derivatives as finite differences when the first (and
- * only) argument is an autodiff variable.
+ * every autodiff type the same value as the specified argument and
+ * the same derivatives as finite differences.
  *
  * @tparam F type of functor to test
- * @tparam T1 type of first argument with double-based scalar
+ * @tparam T type of first argument with double-based scalar
  * @param f functor to test
- * @param x1 first argument
+ * @param x argument to test
  */
-template <typename F, typename T1>
-void expect_ad_v(const F& f, const T1& x1) {
-  auto h = [&](const int& i) {
-    return [&](const auto& v) {
-      auto ds = to_deserializer(v);
-      auto x1ds = ds.read(x1);
-      return serialize_return(f(x1ds))[i];
-    };
+template <typename F, typename T>
+void expect_ad_v(const F& f, const T& x) {
+  auto g = [&](const auto& v) {
+    auto ds = to_deserializer(v);
+    auto xds = ds.read(x);
+    return serialize_return(f(xds));
   };
-  expect_ad_helper(f, h, serialize_args(x1), x1);
+  internal::expect_ad_helper(f, g, serialize_args(x), x);
 }
 
-/**
- * Tests that the function produces the same argument for the
- * specified integer and the specified integer cast to double and also
- * provides all the standard autodiff tests after casting the int to
- * double.
- *
- * Implementation note:  This is declared as an overload rather than a
- * specialization because C++1y prohibits partial template function
- * specialization.
- *
- * @tparam F type of functor to test
- * @param f functor to test
- * @param x1 first argument
- */
-template <typename F>
-void expect_ad_v(const F& f, const int& x1) {
-  // test function produces same value on integer and cast to double
-  double x1_dbl = static_cast<double>(x1);
-  expect_near_relative(f(x1), f(x1_dbl));
+// template <typename F>
+// void expect_ad_v(const F& f, int x) {
+//   double x_dbl = static_cast<double>(x);
 
-  // test autodiff with integer cast to double
-  expect_ad_v(f, x1_dbl);
-}
+//   // if f throws on int, must throw everywhere with double
+//   try {
+//     f(x);
+//   } catch (...) {
+//     expect_all_throw(f, x_dbl);
+//     return;
+//   }
+
+//   // values must be same with int and double
+//   expect_near_rel("expect_ad_v: int must produce same result as double cast",
+//                   f(x_dbl), f(x));
+
+//   // autodiff should work at double value
+//   expect_ad_v(f, x_dbl);
+// }
 
 /**
  * Test that the specified binary functor and arguments produce for
@@ -428,118 +404,87 @@ void expect_ad_v(const F& f, const int& x1) {
  */
 template <typename F, typename T1, typename T2>
 void expect_ad_vv(const F& f, const T1& x1, const T2& x2) {
-  // neither x1 nor x2 are int
-  auto h = [&](const int& i) {
-    return [&](const auto& v) {
-      auto ds = to_deserializer(v);
-      auto x1ds = ds.read(x1);
-      auto x2ds = ds.read(x2);
-      return serialize_return(f(x1ds, x2ds))[i];
-    };
-  };
-  expect_ad_helper(f, h, serialize_args(x1, x2), x1, x2);
-}
-
-template <typename F, typename T1>
-void expect_ad_vv(const F& f, const T1& x1, const int& x2) {
-  double x2_dbl = static_cast<double>(x2);
-
-  // test value using int arg matches value with arg cast to double
-  expect_near_relative(f(x1, x2), f(x1, x2_dbl));
-
-  // test deriv at arg cast to double
-  expect_ad_vv(f, x1, x2_dbl);
-
-  // bind int and test deriv on remainder
-  auto f_x2 = [&](const auto& v) {
+  // derivs w.r.t. x1 and x2
+  auto g = [&](const auto& v) {
     auto ds = to_deserializer(v);
     auto x1ds = ds.read(x1);
-    return serialize_return(f(x1ds, x2));
+    auto x2ds = ds.read(x2);
+    return serialize_return(f(x1ds, x2ds));
   };
-  expect_ad_v(f_x2, x1);
-}
+  internal::expect_ad_helper(f, g, serialize_args(x1, x2), x1, x2);
 
-template <typename F, typename T2>
-void expect_ad_vv(const F& f, const int& x1, const T2& x2) {
-  // test value vs. cast to double
-  double x1_dbl = static_cast<double>(x1);
-  expect_near_relative(f(x1, x2), f(x1_dbl, x2));
-
-  // test deriv at arg cast to double
-  expect_ad_vv(f, x1_dbl, x2);
-
-  // bind int and test deriv on remainder
-  auto f_x1 = [&](const auto& v) {
+  // x1 fixed
+  auto g2 = [&](const auto& v) {
     auto ds = to_deserializer(v);
     auto x2ds = ds.read(x2);
     return serialize_return(f(x1, x2ds));
   };
-  expect_ad_v(f_x1, x2);
+  internal::expect_ad_helper(f, g2, serialize_args(x2), x1, x2);
+
+  // x2 fixed
+  auto g3 = [&](const auto& v) {
+    auto ds = to_deserializer(v);
+    auto x1ds = ds.read(x1);
+    return serialize_return(f(x1ds, x2));
+  };
+  internal::expect_ad_helper(f, g3, serialize_args(x1), x1, x2);
 }
 
-template <typename F>
-void expect_ad_vv(const F& f, const int& x1, const int& x2) {
-  // test value vs. casts to double
-  double x1_dbl = static_cast<double>(x1);
-  double x2_dbl = static_cast<double>(x2);
-  expect_near_relative(f(x1_dbl, x2_dbl), f(x1, x2));
+// template <typename F, typename T1, typename T2>
+// void expect_ad_vv(const F& f, int x1, const T2& x2) {
+//   try {
+//     f(x1, x2);
+//   } catch (...) {
+//     expect_all_throw(f, x1, x2);
+//   }
 
-  //  autodiff tests for all combinations of casts
-  expect_ad_vv(f, x1, x2_dbl);
-  expect_ad_vv(f, x1_dbl, x2);
-  expect_ad_vv(f, x1_dbl, x2_dbl);
+//   double x1_dbl = static_cast<double>(x1);
+
+//   // expect same result with int or and cast to double
+//   expect_near_rel("expect_ad_vv", f(x1, x2), f(x1_dbl, x2));
+
+//   // expect autodiff to work at double value
+//   expect_ad_vv(f, x1_dbl, x2);
+
+//   // expect autodiff to work when binding int
+//   auto g = [&](const auto& u) { return f(x1, u); };
+//   expect_ad_v(g, x2);
+// }
+
+/**
+ * Return a sequence of common non-zero arguments.  This includes
+ * positive, negative, positive infinite, negative infinity, and
+ * not-a-number values, but does not include zero.
+ *
+ * @return non-zero arguments
+ */
+const std::vector<double>& common_nonzero_args() {
+  static const std::vector<double> common_nz_args{
+      -1.3,
+      0.49,
+      0.99,
+      1.01,
+      stan::math::positive_infinity(),
+      stan::math::negative_infinity(),
+      stan::math::not_a_number()};
+  return common_nz_args;
 }
 
 /**
- * Test that the specified binary functor and arguments produce for
- * every autodiff type the same value as the double-based version and
- * the same derivatives as finite differences when the first argument
- * is an autodiff variable and the second double-based.
+ * Return the sequence of common scalar arguments to test.  These
+ * include the values returned by `common_nonzero_args()` and zero.
  *
- * @tparam F type of functor to test
- * @tparam T1 type of first argument with double-based scalar
- * @tparam T2 type of second argument with double-based scalar
- * @param f functor to test
- * @param x1 first argument
- * @param x2 second argument
+ * @return sequence of common scalar arguments to test
  */
-template <typename F, typename T1, typename T2>
-void expect_ad_vd(const F& f, const T1& x1, const T2& x2) {
-  auto h = [&](const int& i) {
-    return [&](const auto& v) {
-      auto ds = to_deserializer(v);
-      auto x1ds = ds.read(x1);
-      return serialize_return(f(x1ds, x2))[i];
-    };
-  };
-  Eigen::VectorXd x = serialize_args(x1);
-  expect_ad_helper(f, h, serialize_args(x1), x1, x2);
+std::vector<double> common_args() {
+  auto result = common_nonzero_args();
+  result.push_back(0);
+  return result;
 }
+}  // namespace internal
 
-/**
- * Test that the specified binary functor and arguments produce for
- * every autodiff type the same value as the double-based version and
- * the same derivatives as finite differences when the second argument
- * is an autodiff variable and the first is double-based.
- *
- * @tparam F type of functor to test
- * @tparam T1 type of first argument with double-based scalar
- * @tparam T2 type of second argument with double-based scalar
- * @param f functor to test
- * @param x1 first argument
- * @param x2 second argument
- */
-template <typename F, typename T1, typename T2>
-void expect_ad_dv(const F& f, const T1& x1, const T2& x2) {
-  auto h = [&](const int& i) {
-    return [&](const auto& v) {
-      auto ds = to_deserializer(v);
-      auto x2ds = ds.read(x2);
-      return serialize_return(f(x1, x2ds))[i];
-    };
-  };
-  expect_ad_helper(f, h, serialize_args(x2), x1, x2);
-}
+// ======================== USER FACING AFTER HERE
+// ==================================
 
 /**
  * Test that the specified polymorphic unary functor produces autodiff
@@ -557,7 +502,7 @@ void expect_ad_dv(const F& f, const T1& x1, const T2& x2) {
  */
 template <typename F, typename T>
 void expect_ad(const F& f, const T& x) {
-  expect_ad_v(f, x);
+  internal::expect_ad_v(f, x);
 }
 
 /**
@@ -588,9 +533,7 @@ void expect_ad(const F& f, const T& x) {
  */
 template <typename F, typename T1, typename T2>
 void expect_ad(const F& f, const T1& x1, const T2& x2) {
-  expect_ad_vv(f, x1, x2);
-  expect_ad_vd(f, x1, x2);
-  expect_ad_dv(f, x1, x2);
+  internal::expect_ad_vv(f, x1, x2);
 }
 
 /**
@@ -650,38 +593,6 @@ void expect_ad_vectorized(const F& f, const T1& x1) {
 }
 
 /**
- * Return a sequence of common non-zero arguments.  This includes
- * positive, negative, positive infinite, negative infinity, and
- * not-a-number values, but does not include zero.
- *
- * @return non-zero arguments
- */
-std::vector<double> common_nonzero_args() {
-  return std::vector<double>{-1.3,
-                             0.49,
-                             0.99,
-                             1.01,
-                             stan::math::positive_infinity(),
-                             stan::math::negative_infinity(),
-                             stan::math::not_a_number()};
-}
-
-/**
- * Return the sequence of common scalar arguments to test.  These
- * include the values returned by `common_nonzero_args()` and zero.
- *
- * @return sequence of common scalar arguments to test
- */
-std::vector<double> common_args() {
-  auto result = common_nonzero_args();
-  result.push_back(0);
-  return result;
-}
-
-// TEST FUNCTIONS AFTER HERE
-// ===================================================================
-
-/**
  * Test that the specified polymorphic unary function produces the
  * same results, exceptions, and has derivatives consistent with
  * finite differences as returned by the primitive version of the
@@ -693,13 +604,13 @@ std::vector<double> common_args() {
  */
 template <typename F>
 void expect_common_unary(const F& f) {
-  auto args = common_args();
+  auto args = internal::common_args();
   for (double x1 : args)
     expect_ad(f, x1);
 }
 
 /**
- * Test that the specified polymorphic unary function produces the
+ * Test that the specified polymorphic binary function produces the
  * same results, exceptions, and has derivatives consistent with
  * finite differences as returned by the primitive version of the
  * function, when applied to all pairs of common arguments as defined
@@ -710,7 +621,7 @@ void expect_common_unary(const F& f) {
  */
 template <typename F>
 void expect_common_binary(const F& f) {
-  auto args = common_args();
+  auto args = internal::common_args();
   for (double x1 : args)
     for (double x2 : args)
       expect_ad(f, x1, x2);
@@ -732,13 +643,20 @@ void expect_common_binary(const F& f) {
  */
 template <typename F>
 void expect_common_unary_vectorized(const F& f) {
-  auto args = common_args();
+  auto args = internal::common_args();
   for (double x1 : args)
     stan::test::expect_ad_vectorized(f, x1);
 }
 
 template <typename F>
 void expect_unary_vectorized(const ad_tolerances& tols, const F& f) {}
+
+template <typename F, typename T, typename... Ts>
+void expect_unary_vectorized(const ad_tolerances& tols, const F& f, T x,
+                             Ts... xs) {
+  stan::test::expect_ad_vectorized(f, x);
+  expect_unary_vectorized(tols, f, xs...);
+}
 
 /**
  * Base case for variadic function testing any number of arguments.
@@ -749,13 +667,6 @@ void expect_unary_vectorized(const ad_tolerances& tols, const F& f) {}
  */
 template <typename F>
 void expect_unary_vectorized(const F& f) {}
-
-template <typename F, typename T, typename... Ts>
-void expect_unary_vectorized(const ad_tolerances& tols, const F& f, T x,
-                             Ts... xs) {
-  stan::test::expect_ad_vectorized(f, x);
-  expect_unary_vectorized(tols, f, xs...);
-}
 
 /**
  * Recursive case for variadic unary vectorized function tests for the
@@ -794,7 +705,7 @@ void expect_unary_vectorized(const F& f, T x, Ts... xs) {
  */
 template <typename F>
 void expect_common_nonzero_unary_vectorized(const F& f) {
-  auto args = common_nonzero_args();
+  auto args = internal::common_nonzero_args();
   for (double x1 : args)
     stan::test::expect_ad_vectorized(f, x1);
 }
@@ -823,7 +734,7 @@ void expect_common_nonzero_unary_vectorized(const F& f) {
  * @param x2 second value being tested
  */
 template <typename F, typename T1, typename T2>
-void expect_comparison_vals(const F& f, const T1& x1, const T2& x2) {
+void expect_comparison(const F& f, const T1& x1, const T2& x2) {
   using stan::math::fvar;
   using stan::math::var;
   typedef var v;
@@ -854,24 +765,6 @@ void expect_comparison_vals(const F& f, const T1& x1, const T2& x2) {
   EXPECT_EQ(f(x1, x2), f(x1, ffv(x2)));
 }
 
-template <typename F>
-void expect_vals(const F& f, int x1) {
-  using stan::math::fvar;
-  using stan::math::var;
-  typedef var v;
-  typedef fvar<double> fd;
-  typedef fvar<fvar<double>> ffd;
-  typedef fvar<var> fv;
-  typedef fvar<fvar<var>> ffv;
-
-  expect_near_relative(f(x1), f(static_cast<double>(x1)));
-  expect_near_relative(f(x1), f(v(x1)));
-  expect_near_relative(f(x1), f(fd(x1)));
-  expect_near_relative(f(x1), f(ffd(x1)));
-  expect_near_relative(f(x1), f(fv(x1)));
-  expect_near_relative(f(x1), f(ffv(x1)));
-}
-
 /**
  * Test that the specified polymorphic unary function produces the
  * same results and exceptions consistent with the primitive version
@@ -884,10 +777,10 @@ void expect_vals(const F& f, int x1) {
  */
 template <typename F>
 void expect_common_comparison(const F& f) {
-  auto args = common_args();
+  auto args = internal::common_args();
   for (double x1 : args)
     for (double x2 : args)
-      expect_comparison_vals(f, x1, x2);
+      expect_comparison(f, x1, x2);
 }
 
 }  // namespace test
