@@ -370,25 +370,25 @@ void expect_ad_v(const F& f, const T& x) {
   internal::expect_ad_helper(f, g, serialize_args(x), x);
 }
 
-// template <typename F>
-// void expect_ad_v(const F& f, int x) {
-//   double x_dbl = static_cast<double>(x);
+template <typename F>
+void expect_ad_v(const F& f, int x) {
+  double x_dbl = static_cast<double>(x);
 
-//   // if f throws on int, must throw everywhere with double
-//   try {
-//     f(x);
-//   } catch (...) {
-//     expect_all_throw(f, x_dbl);
-//     return;
-//   }
+  // if f throws on int, must throw everywhere with double
+  try {
+    f(x);
+  } catch (...) {
+    expect_all_throw(f, x_dbl);
+    return;
+  }
 
-//   // values must be same with int and double
-//   expect_near_rel("expect_ad_v: int must produce same result as double cast",
-//                   f(x_dbl), f(x));
+  // values must be same with int and double
+  expect_near_rel("expect_ad_v: int must produce same result as double cast",
+                  f(x_dbl), f(x));
 
-//   // autodiff should work at double value
-//   expect_ad_v(f, x_dbl);
-// }
+  // autodiff should work at double value
+  expect_ad_v(f, x_dbl);
+}
 
 /**
  * Test that the specified binary functor and arguments produce for
@@ -430,26 +430,71 @@ void expect_ad_vv(const F& f, const T1& x1, const T2& x2) {
   internal::expect_ad_helper(f, g3, serialize_args(x1), x1, x2);
 }
 
-// template <typename F, typename T1, typename T2>
-// void expect_ad_vv(const F& f, int x1, const T2& x2) {
-//   try {
-//     f(x1, x2);
-//   } catch (...) {
-//     expect_all_throw(f, x1, x2);
-//   }
+template <typename F, typename T2>
+void expect_ad_vv(const F& f, int x1, const T2& x2) {
+  try {
+    f(x1, x2);
+  } catch (...) {
+    expect_all_throw(f, x1, x2);
+    return;
+  }
 
-//   double x1_dbl = static_cast<double>(x1);
+  double x1_dbl = static_cast<double>(x1);
 
-//   // expect same result with int or and cast to double
-//   expect_near_rel("expect_ad_vv", f(x1, x2), f(x1_dbl, x2));
+  // expect same result with int or and cast to double
+  expect_near_rel("expect_ad_vv", f(x1, x2), f(x1_dbl, x2));
 
-//   // expect autodiff to work at double value
-//   expect_ad_vv(f, x1_dbl, x2);
+  // expect autodiff to work at double value
+  expect_ad_vv(f, x1_dbl, x2);
 
-//   // expect autodiff to work when binding int
-//   auto g = [&](const auto& u) { return f(x1, u); };
-//   expect_ad_v(g, x2);
-// }
+  // expect autodiff to work when binding int
+  auto g = [&](const auto& u) { return f(x1, u); };
+  expect_ad_v(g, x2);
+}
+
+template <typename F, typename T1>
+void expect_ad_vv(const F& f, const T1& x1, int x2) {
+  try {
+    f(x1, x2);
+  } catch (...) {
+    expect_all_throw(f, x1, x2);
+    return;
+  }
+
+  double x2_dbl = static_cast<double>(x2);
+
+  // expect same result with int or and cast to double
+  expect_near_rel("expect_ad_vv", f(x1, x2), f(x1, x2_dbl));
+
+  // expect autodiff to work at double value
+  expect_ad_vv(f, x1, x2_dbl);
+
+  // expect autodiff to work when binding int
+  auto g = [&](const auto& u) { return f(u, x2); };
+  expect_ad_v(g, x1);
+}
+
+template <typename F>
+void expect_ad_vv(const F& f, int x1, int x2) {
+  try {
+    f(x1, x2);
+  } catch (...) {
+    expect_all_throw(f, x1, x2);
+    return;
+  }
+
+  double x1_dbl = static_cast<double>(x2);
+  double x2_dbl = static_cast<double>(x2);
+
+  // expect same result with int or and cast to double
+  expect_near_rel("expect_ad_vv", f(x1, x2), f(x1_dbl, x2_dbl));
+
+  // expect autodiff to work at double values
+  // these take care of x1_dbl, x2_dbl case by delegation
+  // they also take care of binding int tests
+  expect_ad_vv(f, x1, x2_dbl);
+  expect_ad_vv(f, x1_dbl, x2);  // these both eval x1_dbl, x2_dbl case
+}
 
 /**
  * Return a sequence of common non-zero arguments.  This includes

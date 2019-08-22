@@ -88,22 +88,24 @@ TEST(test_ad, misthrow) {
 
 template <typename T>
 T foo(const T& x) {
+  // std::cout << "called foo(T)" << std::endl;
   return x / 2;
 }
 
-double foo(const double& x) {
-  return x / 2;  // 2 * x;  // x / 2 will fail
+double foo(double x) {
+  // std::cout << "called foo(double)" << std::endl;
+  return x / 2;
 }
 
-double foo(const int& x) {
-  // include print to verify foo(int) is called
-  // std::cout << "GOOD int foo(" << x << ")" << std::endl;
-  // return x / 2;       // fails --- inconsistent with double version
-  return x / 2.0;  // passes
+double foo(int x) {
+  // std::cout << "called foo(int)" << std::endl;
+  // return x / 2.0; // passes
+  // return x / 2;   // fails on odd numbers
+  return 2 * x;  // always fails
 }
 
 TEST(test_ad, integerGetsPassed) {
   auto h = [](const auto& u) { return foo(u); };
   stan::test::expect_ad(h, 3.0);  // passes for double
-  // stan::test::expect_ad(h, 3);  // fails
+  // stan::test::expect_ad(h, 3);    // fails
 }
