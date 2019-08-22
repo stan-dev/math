@@ -361,7 +361,7 @@ void expect_ad_helper(const F& f, const G& g, const Eigen::VectorXd& x,
  * @param x argument to test
  */
 template <typename F, typename T>
-void expect_ad_v(const F& f, const T& x) {
+void expect_ad_v(const ad_tolerances& tols, const F& f, const T& x) {
   auto g = [&](const auto& v) {
     auto ds = to_deserializer(v);
     auto xds = ds.read(x);
@@ -371,7 +371,7 @@ void expect_ad_v(const F& f, const T& x) {
 }
 
 template <typename F>
-void expect_ad_v(const F& f, int x) {
+void expect_ad_v(const ad_tolerances& tols, const F& f, int x) {
   double x_dbl = static_cast<double>(x);
 
   // if f throws on int, must throw everywhere with double
@@ -387,7 +387,7 @@ void expect_ad_v(const F& f, int x) {
                   f(x_dbl), f(x));
 
   // autodiff should work at double value
-  expect_ad_v(f, x_dbl);
+  expect_ad_v(tols, f, x_dbl);
 }
 
 /**
@@ -403,7 +403,8 @@ void expect_ad_v(const F& f, int x) {
  * @param x2 second argument
  */
 template <typename F, typename T1, typename T2>
-void expect_ad_vv(const F& f, const T1& x1, const T2& x2) {
+void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1,
+                  const T2& x2) {
   // derivs w.r.t. x1 and x2
   auto g = [&](const auto& v) {
     auto ds = to_deserializer(v);
@@ -431,7 +432,7 @@ void expect_ad_vv(const F& f, const T1& x1, const T2& x2) {
 }
 
 template <typename F, typename T2>
-void expect_ad_vv(const F& f, int x1, const T2& x2) {
+void expect_ad_vv(const ad_tolerances& tols, const F& f, int x1, const T2& x2) {
   try {
     f(x1, x2);
   } catch (...) {
@@ -445,15 +446,15 @@ void expect_ad_vv(const F& f, int x1, const T2& x2) {
   expect_near_rel("expect_ad_vv", f(x1, x2), f(x1_dbl, x2));
 
   // expect autodiff to work at double value
-  expect_ad_vv(f, x1_dbl, x2);
+  expect_ad_vv(tols, f, x1_dbl, x2);
 
   // expect autodiff to work when binding int
   auto g = [&](const auto& u) { return f(x1, u); };
-  expect_ad_v(g, x2);
+  expect_ad_v(tols, g, x2);
 }
 
 template <typename F, typename T1>
-void expect_ad_vv(const F& f, const T1& x1, int x2) {
+void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1, int x2) {
   try {
     f(x1, x2);
   } catch (...) {
@@ -467,15 +468,15 @@ void expect_ad_vv(const F& f, const T1& x1, int x2) {
   expect_near_rel("expect_ad_vv", f(x1, x2), f(x1, x2_dbl));
 
   // expect autodiff to work at double value
-  expect_ad_vv(f, x1, x2_dbl);
+  expect_ad_vv(tols, f, x1, x2_dbl);
 
   // expect autodiff to work when binding int
   auto g = [&](const auto& u) { return f(u, x2); };
-  expect_ad_v(g, x1);
+  expect_ad_v(tols, g, x1);
 }
 
 template <typename F>
-void expect_ad_vv(const F& f, int x1, int x2) {
+void expect_ad_vv(const ad_tolerances& tols, const F& f, int x1, int x2) {
   try {
     f(x1, x2);
   } catch (...) {
@@ -492,8 +493,8 @@ void expect_ad_vv(const F& f, int x1, int x2) {
   // expect autodiff to work at double values
   // these take care of x1_dbl, x2_dbl case by delegation
   // they also take care of binding int tests
-  expect_ad_vv(f, x1, x2_dbl);
-  expect_ad_vv(f, x1_dbl, x2);  // these both eval x1_dbl, x2_dbl case
+  expect_ad_vv(tols, f, x1, x2_dbl);
+  expect_ad_vv(tols, f, x1_dbl, x2);
 }
 
 /**
@@ -546,8 +547,13 @@ std::vector<double> common_args() {
  * @tparam T type of argument
  */
 template <typename F, typename T>
+void expect_ad(const ad_tolerances& tols, const F& f, const T& x) {
+  internal::expect_ad_v(tols, f, x);
+}
+template <typename F, typename T>
 void expect_ad(const F& f, const T& x) {
-  internal::expect_ad_v(f, x);
+  ad_tolerances tols;
+  expect_ad(tols, f, x);
 }
 
 /**
@@ -577,8 +583,15 @@ void expect_ad(const F& f, const T& x) {
  * @param x2 second argument to test
  */
 template <typename F, typename T1, typename T2>
+void expect_ad(const ad_tolerances& tols, const F& f, const T1& x1,
+               const T2& x2) {
+  internal::expect_ad_vv(tols, f, x1, x2);
+}
+
+template <typename F, typename T1, typename T2>
 void expect_ad(const F& f, const T1& x1, const T2& x2) {
-  internal::expect_ad_vv(f, x1, x2);
+  ad_tolerances tols;
+  expect_ad(tols, f, x1, x2);
 }
 
 /**
@@ -606,7 +619,7 @@ void expect_ad(const F& f, const T1& x1, const T2& x2) {
  * @param x1 value to test
  */
 template <typename F, typename T1>
-void expect_ad_vectorized(const F& f, const T1& x1) {
+void expect_ad_vectorized(const ad_tolerances& tols, const F& f, const T1& x1) {
   using Eigen::MatrixXd;
   using Eigen::RowVectorXd;
   using Eigen::VectorXd;
@@ -615,26 +628,34 @@ void expect_ad_vectorized(const F& f, const T1& x1) {
   typedef vector<vector<double>> vector2_dbl;
   typedef vector<vector<vector<double>>> vector3_dbl;
 
-  expect_ad(f, x1);
-  expect_ad(f, static_cast<double>(x1));
+  expect_ad(tols, f, x1);
+  expect_ad(tols, f, static_cast<double>(x1));
   for (int i = 0; i < 4; ++i)
-    expect_ad(f, VectorXd::Constant(i, x1).eval());
+    expect_ad(tols, f, VectorXd::Constant(i, x1).eval());
   for (int i = 0; i < 4; ++i)
-    expect_ad(f, RowVectorXd::Constant(i, x1).eval());
+    expect_ad(tols, f, RowVectorXd::Constant(i, x1).eval());
   for (int i = 0; i < 4; ++i)
-    expect_ad(f, MatrixXd::Constant(i, i, x1).eval());
+    expect_ad(tols, f, MatrixXd::Constant(i, i, x1).eval());
   for (size_t i = 0; i < 4; ++i)
-    expect_ad(f, vector_dbl(i, x1));
+    expect_ad(tols, f, vector_dbl(i, x1));
   for (size_t i = 0; i < 4; ++i)
-    expect_ad(f, vector<VectorXd>(i, VectorXd::Constant(i, x1).eval()));
+    expect_ad(tols, f, vector<VectorXd>(i, VectorXd::Constant(i, x1).eval()));
   for (size_t i = 0; i < 4; ++i)
-    expect_ad(f, vector<RowVectorXd>(i, RowVectorXd::Constant(i, x1).eval()));
+    expect_ad(tols, f,
+              vector<RowVectorXd>(i, RowVectorXd::Constant(i, x1).eval()));
   for (size_t i = 0; i < 3; ++i)
-    expect_ad(f, vector<MatrixXd>(i, MatrixXd::Constant(i, i, x1).eval()));
+    expect_ad(tols, f,
+              vector<MatrixXd>(i, MatrixXd::Constant(i, i, x1).eval()));
   for (int i = 0; i < 3; ++i)
-    expect_ad(f, vector2_dbl(i, vector_dbl(i, x1)));
+    expect_ad(tols, f, vector2_dbl(i, vector_dbl(i, x1)));
   for (int i = 0; i < 3; ++i)
-    expect_ad(f, vector3_dbl(i, vector2_dbl(i, vector_dbl(i, x1))));
+    expect_ad(tols, f, vector3_dbl(i, vector2_dbl(i, vector_dbl(i, x1))));
+}
+
+template <typename F, typename T1>
+void expect_ad_vectorized(const F& f, const T1& x1) {
+  ad_tolerances tols;
+  expect_ad_vectorized(tols, f, x1);
 }
 
 /**
@@ -676,7 +697,8 @@ void expect_common_binary(const F& f) {
  * Test that the specified vectorized unary function produces the same
  * results and exceptions, and has derivatives consistent with finite
  * differences as returned by the primitive version of the function
- * when applied to all common arguments as defined by `common_args`.
+ * when applied to all common arguments as defined by
+ * `common_args`. Uses default tolerances.
  *
  * <p>The function must be defined from scalars to scalars and from
  * containers to containers, always producing the same output type as
@@ -688,9 +710,10 @@ void expect_common_binary(const F& f) {
  */
 template <typename F>
 void expect_common_unary_vectorized(const F& f) {
+  ad_tolerances tols;
   auto args = internal::common_args();
   for (double x1 : args)
-    stan::test::expect_ad_vectorized(f, x1);
+    stan::test::expect_ad_vectorized(tols, f, x1);
 }
 
 template <typename F>
@@ -699,19 +722,9 @@ void expect_unary_vectorized(const ad_tolerances& tols, const F& f) {}
 template <typename F, typename T, typename... Ts>
 void expect_unary_vectorized(const ad_tolerances& tols, const F& f, T x,
                              Ts... xs) {
-  stan::test::expect_ad_vectorized(f, x);
+  stan::test::expect_ad_vectorized(tols, f, x);
   expect_unary_vectorized(tols, f, xs...);
 }
-
-/**
- * Base case for variadic function testing any number of arguments.
- * The base case always succeeds as there is nothing to test.
- *
- * @tparam F type of function to test
- * @param f function to test
- */
-template <typename F>
-void expect_unary_vectorized(const F& f) {}
 
 /**
  * Recursive case for variadic unary vectorized function tests for the
@@ -728,9 +741,9 @@ void expect_unary_vectorized(const F& f) {}
  * @param xs arguments to test
  */
 template <typename F, typename T, typename... Ts>
-void expect_unary_vectorized(const F& f, T x, Ts... xs) {
+void expect_unary_vectorized(const F& f, Ts... xs) {
   ad_tolerances tols;  // default tolerances
-  expect_unary_vectorized(tols, f, x, xs...);
+  expect_unary_vectorized(tols, f, xs...);
 }
 
 /**
@@ -738,7 +751,7 @@ void expect_unary_vectorized(const F& f, T x, Ts... xs) {
  * results and exceptions, and has derivatives consistent with finite
  * differences as returned by the primitive version of the function
  * when applied to all common non-zero arguments as defined by
- * `common_nonzero_args`.
+ * `common_nonzero_args`.   Uses default tolerances.
  *
  * <p>The function must be defined from scalars to scalars and from
  * containers to containers, always producing the same output type as
@@ -750,9 +763,10 @@ void expect_unary_vectorized(const F& f, T x, Ts... xs) {
  */
 template <typename F>
 void expect_common_nonzero_unary_vectorized(const F& f) {
+  ad_tolerances tols;
   auto args = internal::common_nonzero_args();
   for (double x1 : args)
-    stan::test::expect_ad_vectorized(f, x1);
+    stan::test::expect_unary_vectorized(tols, f, x1);
 }
 
 /**
