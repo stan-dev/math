@@ -109,3 +109,30 @@ TEST(test_ad, integerGetsPassed) {
   stan::test::expect_ad(h, 3.0);  // passes for double
   // stan::test::expect_ad(h, 3);    // fails
 }
+
+TEST(test_ad, expect_match_prim) {
+  using stan::test::expect_common_prim;
+  using stan::test::expect_match_prim;
+  // reference implementation
+  auto f = [](auto x) { return std::sin(x); };
+
+  // Stan math matches
+  auto g = [](auto x) { return stan::math::sin(x); };
+  expect_match_prim(f, g, 1.37);
+  expect_common_prim(f, g);
+
+  // won't match if sign is wrong
+  auto h = [](auto x) { return -std::sin(x); };
+  // expect_match_prim(f, h, 1);      // fails
+  // expect_common_prim(f, h);        // fails
+
+  // wont' match if throw conditions are different
+  auto j = [](auto x) {
+    if (x < 0)
+      throw std::runtime_error("boo");
+    return std::sin(x);
+  };
+  expect_match_prim(f, j, 1.37);  // ok if positive
+  // expect_match_prim(f, j, -1);  // fails
+  // expect_common_prim(f, j);     // fails
+}

@@ -758,7 +758,7 @@ void expect_unary_vectorized(const ad_tolerances& tols, const F& f, T x,
  * @param x argument to test
  * @param xs arguments to test
  */
-template <typename F, typename T, typename... Ts>
+template <typename F, typename... Ts>
 void expect_unary_vectorized(const F& f, Ts... xs) {
   ad_tolerances tols;  // default tolerances
   expect_unary_vectorized(tols, f, xs...);
@@ -858,6 +858,35 @@ void expect_common_comparison(const F& f) {
   for (double x1 : args)
     for (double x2 : args)
       expect_comparison(f, x1, x2);
+}
+
+template <typename F1, typename F2, typename T>
+void expect_match_prim(const F1& f1, const F2& f2, const T& x) {
+  try {
+    auto y1 = f1(x);
+    try {
+      auto y2 = f2(x);
+      // neither throw, so expect values to be the same
+      expect_near_rel("expect_match_prim", y1, y2);
+      SUCCEED() << "expect_match_prim: f1 and f2 return same values";
+    } catch (...) {
+      FAIL() << "expect_match_prim: f2 throws but f1 does not";
+    }
+  } catch (...) {
+    try {
+      f2(x);
+      FAIL() << "expect_match_prim: f1 throws but f2 does not";
+    } catch (...) {
+      SUCCEED() << "expect_match_prim: f1 and f2 both throw";
+      return;
+    }
+  }
+}
+
+template <typename F1, typename F2>
+void expect_common_prim(const F1& f1, const F2& f2) {
+  for (auto x : internal::common_args())
+    expect_match_prim(f1, f2, x);
 }
 
 }  // namespace test

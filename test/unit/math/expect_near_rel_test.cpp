@@ -1,6 +1,7 @@
 #include <test/unit/math/expect_near_rel.hpp>
 #include <stan/math.hpp>
 #include <gtest/gtest.h>
+#include <vector>
 
 TEST(testUnitMath, ExpectNearRelScalar) {
   using stan::test::expect_near_rel;
