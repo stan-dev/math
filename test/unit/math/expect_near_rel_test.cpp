@@ -31,8 +31,8 @@ TEST(testUnitMath, ExpectNearRelScalar) {
 }
 
 TEST(testUnitMath, ExpectNearRelMatrix) {
-  using stan::test::expect_near_rel;
   using Eigen::Matrix;
+  using stan::test::expect_near_rel;
   typedef Matrix<double, -1, 1> v_t;
   typedef Matrix<double, 1, -1> rv_t;
   typedef Matrix<double, -1, -1> m_t;
