@@ -2,8 +2,8 @@
 
 TEST(mathMixMatFun, trigamma) {
   using stan::math::trigamma;
-  using stan::test::expect_unary_vectorized;
   using stan::test::ad_tolerances;
+  using stan::test::expect_unary_vectorized;
 
   auto f = [](const auto& x1) { return trigamma(x1); };
 
