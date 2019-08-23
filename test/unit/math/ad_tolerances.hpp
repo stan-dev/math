@@ -32,7 +32,7 @@ struct ad_tolerances {
   double gradient_grad_;
   double gradient_fvar_val_;
   double gradient_fvar_grad_;
-  double hesssian_val_;
+  double hessian_val_;
   double hessian_grad_;
   double hessian_hessian_;
   double hessian_fvar_val_;
@@ -48,7 +48,7 @@ struct ad_tolerances {
         gradient_fvar_val_(1e-8),
         gradient_fvar_grad_(1e-4),
 
-        hesssian_val_(1e-8),
+        hessian_val_(1e-8),
         hessian_grad_(1e-4),
         hessian_hessian_(1e-3),
 
