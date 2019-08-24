@@ -388,6 +388,21 @@ void expect_ad_v(const ad_tolerances& tols, const F& f, const T& x) {
   internal::expect_ad_helper(tols, f, g, serialize_args(x), x);
 }
 
+/**
+ * Test that the specified unary functor and arguments produce for
+ * every autodiff type the same value as the specified argument and
+ * the same derivatives as finite differences.
+ *
+ * This is an overload of this function for integer arguments to make
+ * sure that if the integer version throws, so do all the autodiff
+ * versions and to test that autodiff works at the integer specified
+ * cast to a double.
+ *
+ * @tparam F type of functor to test
+ * @tparam T type of first argument with double-based scalar
+ * @param f functor to test
+ * @param x argument to test
+ */
 template <typename F>
 void expect_ad_v(const ad_tolerances& tols, const F& f, int x) {
   double x_dbl = static_cast<double>(x);
@@ -772,6 +787,46 @@ void expect_common_unary(const F& f) {
  * same results, exceptions, and has 1st-, 2nd-, and 3rd-order
  * derivatives consistent with finite differences as returned by the
  * primitive version of the function, when applied to all pairs of
+ * common integer and double argument combinations excluding zero.
+ *
+ * If the `disable_lhs_int` flag is set to `true` (it defauls to
+ * `false`), then integers will not be considered as first arguments.
+ * This is useful for testing assignment operators like `+=` and
+ * division operators like `/` where integer and real arguments
+ * produce different values.
+ *
+ * @tparam F type of polymorphic binary functor
+ * @param f functor to test
+ * @param disable_lhs_int if integer values should only be tested
+ * for second argments
+ */
+template <typename F>
+void expect_common_nonzero_binary(const F& f, bool disable_lhs_int = false) {
+  auto args = internal::common_nonzero_args();
+  auto int_args = internal::common_nonzero_int_args();
+  for (double x1 : args)
+    for (double x2 : args)
+      expect_ad(f, x1, x2);
+  for (double x1 : args)
+    for (int x2 : int_args)
+      expect_ad(f, x1, x2);
+
+  if (disable_lhs_int)
+    return;
+
+  for (int x1 : int_args)
+    for (double x2 : args)
+      expect_ad(f, x1, x2);
+  for (int x1 : int_args)
+    for (int x2 : int_args)
+      expect_ad(f, x1, x2);
+}
+
+/**
+ * Test that the specified polymorphic binary function produces the
+ * same results, exceptions, and has 1st-, 2nd-, and 3rd-order
+ * derivatives consistent with finite differences as returned by the
+ * primitive version of the function, when applied to all pairs of
  * common integer and double argument combinations.
  *
  * If the `disable_lhs_int` flag is set to `true` (it defauls to
@@ -1002,5 +1057,4 @@ void expect_common_prim(const F1& f1, const F2& f2) {
 
 }  // namespace test
 }  // namespace stan
-
 #endif
