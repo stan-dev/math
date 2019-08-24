@@ -545,246 +545,16 @@ std::vector<double> common_args() {
   result.push_back(0);
   return result;
 }
-}  // namespace internal
 
-// ======================== USER FACING AFTER HERE
-// ==================================
-
-/**
- * Test that the specified polymorphic unary functor produces autodiff
- * results consistent with values determined by double inputs and
- * derivatives consistent with finite differences of double inputs.
- *
- * <p>Tests condition where argument is an autodiff variable.  Tests
- * autodiff levels `rev`, `fvar<double>`, `fvar<fvar<double>>`,
- * `fvar<rev>`, and `fvar<fvar<rev>>`.
- *
- * <p>Invokes Google test framework to raise error if test fails.
- *
- * @tparam F type of functor to test
- * @tparam T type of argument
- */
-template <typename F, typename T>
-void expect_ad(const ad_tolerances& tols, const F& f, const T& x) {
-  internal::expect_ad_v(tols, f, x);
-}
-template <typename F, typename T>
-void expect_ad(const F& f, const T& x) {
-  ad_tolerances tols;
-  expect_ad(tols, f, x);
+std::vector<int> common_nonzero_int_args() {
+  static const std::vector<int> args{-1, 1};
+  return args;
 }
 
-/**
- * Test that the specified polymorphic binary functor produces autodiff
- * results consistent with values determined by double inputs and
- * derivatives consistent with finite differences of double inputs.
- *
- * <p>Comparison operations (`operator==`, `operator!=`, etc.) are
- * step functions when their inputs are equivalent, so their
- * derivatives are undefined and should not be tested via finite
- * differences.  The tests for derivatives can be turned off by
- * setting the final argument `is_comparison` to `true`; it takes a
- * default value of `false`.
- *
- * <p>Tests all three possible instantiations of autodiff variables:
- * first argument only, second argument only, and both arguments.
- * Tests autodiff levels `rev`, `fvar<double>`, `fvar<fvar<double>>`,
- * `fvar<rev>`, and `fvar<fvar<rev>>`.
- *
- * <p>Invokes Google test framework to raise error if test fails.
- *
- * @tparam F type of binary polymorphic functor to test
- * @tparam T1 type of double- or int-based first argument
- * @tparam T2 type of double- or int-based second argument
- * @param f functor to test
- * param x1 first argument to test
- * @param x2 second argument to test
- */
-template <typename F, typename T1, typename T2>
-void expect_ad(const ad_tolerances& tols, const F& f, const T1& x1,
-               const T2& x2) {
-  internal::expect_ad_vv(tols, f, x1, x2);
-}
-
-template <typename F, typename T1, typename T2>
-void expect_ad(const F& f, const T1& x1, const T2& x2) {
-  ad_tolerances tols;
-  expect_ad(tols, f, x1, x2);
-}
-
-/**
- * Test that the specified vectorized polymoprhic unary function
- * produces autodiff results consistent with values determined by
- * double in puts and derivatives consistent with finite differences
- * of double inputs.
- *
- * <p>Tests all three possible instantiations of autodiff variables:
- * first argument only, second argument only, and both arguments.
- * Tests autodiff levels `rev`, `fvar<double>`, `fvar<fvar<double>>`,
- * `fvar<rev>`, and `fvar<fvar<rev>>`.
- *
- * <p>Tests all vectorizations of the second argument, including
- * primitive (`double` or `int`), `std::vector<double>` and all of the
- * Eigen options, `Eigen::VectorXd`, `Eigen::RowVectorXd`, and
- * `Eigen::MatrixXd`.   The vectorization tests are carried out by
- * repeating the input multiple times.
-
- * <p>Invokes Google test framework to raise error if test fails.
- *
- * @tparam F type of poymorphic, vectorized functor to test
- * @tparam T1 type of first argument (integer or double)
- * @param f functor to test
- * @param x1 value to test
- */
-template <typename F, typename T1>
-void expect_ad_vectorized(const ad_tolerances& tols, const F& f, const T1& x1) {
-  using Eigen::MatrixXd;
-  using Eigen::RowVectorXd;
-  using Eigen::VectorXd;
-  using std::vector;
-  typedef vector<double> vector_dbl;
-  typedef vector<vector<double>> vector2_dbl;
-  typedef vector<vector<vector<double>>> vector3_dbl;
-
-  expect_ad(tols, f, x1);
-  expect_ad(tols, f, static_cast<double>(x1));
-  for (int i = 0; i < 4; ++i)
-    expect_ad(tols, f, VectorXd::Constant(i, x1).eval());
-  for (int i = 0; i < 4; ++i)
-    expect_ad(tols, f, RowVectorXd::Constant(i, x1).eval());
-  for (int i = 0; i < 4; ++i)
-    expect_ad(tols, f, MatrixXd::Constant(i, i, x1).eval());
-  for (size_t i = 0; i < 4; ++i)
-    expect_ad(tols, f, vector_dbl(i, x1));
-  for (size_t i = 0; i < 4; ++i)
-    expect_ad(tols, f, vector<VectorXd>(i, VectorXd::Constant(i, x1).eval()));
-  for (size_t i = 0; i < 4; ++i)
-    expect_ad(tols, f,
-              vector<RowVectorXd>(i, RowVectorXd::Constant(i, x1).eval()));
-  for (size_t i = 0; i < 3; ++i)
-    expect_ad(tols, f,
-              vector<MatrixXd>(i, MatrixXd::Constant(i, i, x1).eval()));
-  for (int i = 0; i < 3; ++i)
-    expect_ad(tols, f, vector2_dbl(i, vector_dbl(i, x1)));
-  for (int i = 0; i < 3; ++i)
-    expect_ad(tols, f, vector3_dbl(i, vector2_dbl(i, vector_dbl(i, x1))));
-}
-
-template <typename F, typename T1>
-void expect_ad_vectorized(const F& f, const T1& x1) {
-  ad_tolerances tols;
-  expect_ad_vectorized(tols, f, x1);
-}
-
-/**
- * Test that the specified polymorphic unary function produces the
- * same results, exceptions, and has derivatives consistent with
- * finite differences as returned by the primitive version of the
- * function, when applied to the common arguments as defined by
- * `common_args()`.
- *
- * @tparam F type of polymorphic unary functor
- * @param f unary functor to test
- */
-template <typename F>
-void expect_common_unary(const F& f) {
-  auto args = internal::common_args();
-  for (double x1 : args)
-    expect_ad(f, x1);
-}
-
-/**
- * Test that the specified polymorphic binary function produces the
- * same results, exceptions, and has derivatives consistent with
- * finite differences as returned by the primitive version of the
- * function, when applied to all pairs of common arguments as defined
- * by `common_args()`.
- *
- * @tparam F type of polymorphic binary functor
- * @param f functor to test
- */
-template <typename F>
-void expect_common_binary(const F& f) {
-  auto args = internal::common_args();
-  for (double x1 : args)
-    for (double x2 : args)
-      expect_ad(f, x1, x2);
-}
-
-/**
- * Test that the specified vectorized unary function produces the same
- * results and exceptions, and has derivatives consistent with finite
- * differences as returned by the primitive version of the function
- * when applied to all common arguments as defined by
- * `common_args`. Uses default tolerances.
- *
- * <p>The function must be defined from scalars to scalars and from
- * containers to containers, always producing the same output type as
- * input type.  The value for containers must be the same as applying
- * the scalar function elementwise.
- *
- * @tparam F type of functor to test
- * @param f functor to test
- */
-template <typename F>
-void expect_common_unary_vectorized(const F& f) {
-  ad_tolerances tols;
-  auto args = internal::common_args();
-  for (double x1 : args)
-    stan::test::expect_ad_vectorized(tols, f, x1);
-}
-
-template <typename F>
-void expect_unary_vectorized(const ad_tolerances& tols, const F& f) {}
-
-template <typename F, typename T, typename... Ts>
-void expect_unary_vectorized(const ad_tolerances& tols, const F& f, T x,
-                             Ts... xs) {
-  stan::test::expect_ad_vectorized(tols, f, x);
-  expect_unary_vectorized(tols, f, xs...);
-}
-
-/**
- * Recursive case for variadic unary vectorized function tests for the
- * specified argument and pack of arguments.
- *
- * <p>This test delegates to `expect_ad_vectorized(F, T)`; see that
- * function's documentation and requirements on the type of functions.
- *
- * @tparam F type of function to test
- * @tparam T type of first argument to test
- * @tparam Ts type of remaining arguments to test
- * @param f function to test
- * @param x argument to test
- * @param xs arguments to test
- */
-template <typename F, typename... Ts>
-void expect_unary_vectorized(const F& f, Ts... xs) {
-  ad_tolerances tols;  // default tolerances
-  expect_unary_vectorized(tols, f, xs...);
-}
-
-/**
- * Test that the specified vectorized unary function produces the same
- * results and exceptions, and has derivatives consistent with finite
- * differences as returned by the primitive version of the function
- * when applied to all common non-zero arguments as defined by
- * `common_nonzero_args`.   Uses default tolerances.
- *
- * <p>The function must be defined from scalars to scalars and from
- * containers to containers, always producing the same output type as
- * input type.  The value for containers must be the same as applying
- * the scalar function elementwise.
- *
- * @tparam F type of functor to test
- * @param f functor to test
- */
-template <typename F>
-void expect_common_nonzero_unary_vectorized(const F& f) {
-  ad_tolerances tols;
-  auto args = internal::common_nonzero_args();
-  for (double x1 : args)
-    stan::test::expect_unary_vectorized(tols, f, x1);
+std::vector<int> common_int_args() {
+  std::vector<int> args = common_nonzero_int_args();
+  args.push_back(0);
+  return args;
 }
 
 /**
@@ -842,12 +612,307 @@ void expect_comparison(const F& f, const T1& x1, const T2& x2) {
   EXPECT_EQ(f(x1, x2), f(x1, ffv(x2)));
 }
 
+}  // namespace internal
+
+/**
+ * Test that the specified polymorphic unary functor produces autodiff
+ * results consistent with values determined by double or integer
+ * inputs and 1st-, 2nd-, and 3rd-order derivatives consistent with
+ * finite differences of double inputs at the specified tolerances.
+ *
+ * @tparam F type of functor to test
+ * @tparam T type of argument
+ * @param tols tolerances for test
+ * @param f function to test
+ * @param x argument to test
+ */
+template <typename F, typename T>
+void expect_ad(const ad_tolerances& tols, const F& f, const T& x) {
+  internal::expect_ad_v(tols, f, x);
+}
+
+/**
+ * Test that the specified polymorphic unary functor produces autodiff
+ * results consistent with values determined by double or integer
+ * inputs and 1st-, 2nd-, and 3rd-order derivatives consistent with
+ * finite differences of double inputs at default tolerances.
+ *
+ * @tparam F type of functor to test
+ * @tparam T type of argument
+ * @param f function to test
+ * @param x argument to test
+ */
+template <typename F, typename T>
+void expect_ad(const F& f, const T& x) {
+  ad_tolerances tols;
+  expect_ad(tols, f, x);
+}
+
+/**
+ * Test that the specified binary function produces autodiff values
+ * and 1st-, 2nd-, and 3rd-order derivatives consistent with primitive
+ * int and double inputs and finite differences at the specified
+ * tolerances.
+ *
+ * @tparam F type of binary polymorphic functor to test
+ * @tparam T1 type of double- or int-based first argument
+ * @tparam T2 type of double- or int-based second argument
+ * @param tols tolerances for test
+ * @param f functor to test
+ * param x1 first argument to test
+ * @param x2 second argument to test
+ */
+template <typename F, typename T1, typename T2>
+void expect_ad(const ad_tolerances& tols, const F& f, const T1& x1,
+               const T2& x2) {
+  internal::expect_ad_vv(tols, f, x1, x2);
+}
+
+/**
+ * Test that the specified binary function produces autodiff values
+ * and derivatives consistent with primitive int and double inputs and
+ * finite differences.  Uses default tolerances.
+ *
+ * @tparam F type of binary polymorphic functor to test
+ * @tparam T1 type of double- or int-based first argument
+ * @tparam T2 type of double- or int-based second argument
+ * @param f functor to test
+ * param x1 first argument to test
+ * @param x2 second argument to test
+ */
+template <typename F, typename T1, typename T2>
+void expect_ad(const F& f, const T1& x1, const T2& x2) {
+  ad_tolerances tols;
+  expect_ad(tols, f, x1, x2);
+}
+
+/**
+ * Test that the specified vectorized polymoprhic unary function
+ * produces autodiff results consistent with values determined by
+ * double and integer inputs and 1st-, 2nd-, and 3rd-order derivatives
+ * consistent with finite differences of double inputs.
+ *
+ * @tparam F type of poymorphic, vectorized functor to test
+ * @tparam T1 type of first argument (integer or double)
+ * @param f functor to test
+ * @param x1 value to test
+ */
+template <typename F, typename T1>
+void expect_ad_vectorized(const ad_tolerances& tols, const F& f, const T1& x1) {
+  using Eigen::MatrixXd;
+  using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
+  using std::vector;
+  typedef vector<double> vector_dbl;
+  typedef vector<vector<double>> vector2_dbl;
+  typedef vector<vector<vector<double>>> vector3_dbl;
+
+  expect_ad(tols, f, x1);
+  expect_ad(tols, f, static_cast<double>(x1));
+  for (int i = 0; i < 4; ++i)
+    expect_ad(tols, f, VectorXd::Constant(i, x1).eval());
+  for (int i = 0; i < 4; ++i)
+    expect_ad(tols, f, RowVectorXd::Constant(i, x1).eval());
+  for (int i = 0; i < 4; ++i)
+    expect_ad(tols, f, MatrixXd::Constant(i, i, x1).eval());
+  for (size_t i = 0; i < 4; ++i)
+    expect_ad(tols, f, vector_dbl(i, x1));
+  for (size_t i = 0; i < 4; ++i)
+    expect_ad(tols, f, vector<VectorXd>(i, VectorXd::Constant(i, x1).eval()));
+  for (size_t i = 0; i < 4; ++i)
+    expect_ad(tols, f,
+              vector<RowVectorXd>(i, RowVectorXd::Constant(i, x1).eval()));
+  for (size_t i = 0; i < 3; ++i)
+    expect_ad(tols, f,
+              vector<MatrixXd>(i, MatrixXd::Constant(i, i, x1).eval()));
+  for (int i = 0; i < 3; ++i)
+    expect_ad(tols, f, vector2_dbl(i, vector_dbl(i, x1)));
+  for (int i = 0; i < 3; ++i)
+    expect_ad(tols, f, vector3_dbl(i, vector2_dbl(i, vector_dbl(i, x1))));
+}
+
+/**
+ * Test that the specified function has value and 1st-, 2nd-, and
+ * 3rd-order derivatives consistent with primitive values and finite
+ * differences using default tolerances.
+ *
+ * @tparam F type of function
+ * @tparam T type of argument
+ * @param f function to test
+ * @param x argument to test
+ */
+template <typename F, typename T>
+void expect_ad_vectorized(const F& f, const T& x) {
+  ad_tolerances tols;
+  expect_ad_vectorized(tols, f, x);
+}
+
 /**
  * Test that the specified polymorphic unary function produces the
- * same results and exceptions consistent with the primitive version
- * of the function, when applied to all pairs of common arguments as
- * defined by `common_args()`.  Derivatives are not tested, because
- * comparison operators return boolean values.
+ * same results, exceptions, and has 1st-, 2nd-, and 3rd-order
+ * derivatives consistent with finite differences as returned by the
+ * primitive version of the function, when applied to the common
+ * arguments.
+ *
+ * @tparam F type of polymorphic unary functor
+ * @param f unary functor to test
+ */
+template <typename F>
+void expect_common_unary(const F& f) {
+  auto args = internal::common_args();
+  for (double x1 : args)
+    expect_ad(f, x1);
+  auto int_args = internal::common_int_args();
+  for (int x1 : int_args)
+    expect_ad(f, x1);
+}
+
+/**
+ * Test that the specified polymorphic binary function produces the
+ * same results, exceptions, and has 1st-, 2nd-, and 3rd-order
+ * derivatives consistent with finite differences as returned by the
+ * primitive version of the function, when applied to all pairs of
+ * common integer and double argument combinations.
+ *
+ * @tparam F type of polymorphic binary functor
+ * @param f functor to test
+ */
+template <typename F>
+void expect_common_binary(const F& f) {
+  auto args = internal::common_args();
+  auto int_args = internal::common_int_args();
+  for (double x1 : args)
+    for (double x2 : args)
+      expect_ad(f, x1, x2);
+  for (int x1 : int_args)
+    for (double x2 : args)
+      expect_ad(f, x1, x2);
+  for (double x1 : args)
+    for (int x2 : int_args)
+      expect_ad(f, x1, x2);
+  for (int x1 : int_args)
+    for (int x2 : int_args)
+      expect_ad(f, x1, x2);
+}
+
+/**
+ * Test that the specified vectorized unary function produces the same
+ * results and exceptions, and has 1st-, 2nd-, and 3rd-order
+ * derivatives consistent with finite differences as returned by the
+ * primitive version of the function when applied to all common
+ * arguments.  Uses default tolerances.
+ *
+ * <p>The function must be defined from scalars to scalars and from
+ * containers to containers, always producing the same output type as
+ * input type.  The value for containers must be the same as applying
+ * the scalar function elementwise.
+ *
+ * @tparam F type of functor to test
+ * @param f functor to test
+ */
+template <typename F>
+void expect_common_unary_vectorized(const F& f) {
+  ad_tolerances tols;
+  auto args = internal::common_args();
+  for (double x1 : args)
+    stan::test::expect_ad_vectorized(tols, f, x1);
+  auto int_args = internal::common_int_args();
+  for (int x1 : args)
+    stan::test::expect_ad_vectorized(tols, f, x1);
+}
+
+namespace internal {
+/**
+ * Base case no-op to test no arguments.
+ *
+ * @tparam F type of function
+ * @param tols tolerances (ignored)
+ * @param f function to test (ignored)
+ */
+template <typename F>
+void expect_unary_vectorized_helper(const ad_tolerances& tols, const F& f) {}
+
+/**
+ * Test that the specified function produces values and derivatives
+ * consistent with the primitive version with finite for the specified
+ * value and values.
+ *
+ * @tparam F type of function
+ * @tparam T type of first argument
+ * @tparam Ts types of remaining arguments
+ * @param tols tolerances for tests
+ * @param f function to test
+ * @param x first value to test
+ * @param xs remaining values to test
+ */
+template <typename F, typename T, typename... Ts>
+void expect_unary_vectorized_helper(const ad_tolerances& tols, const F& f, T x,
+                                    Ts... xs) {
+  stan::test::expect_ad_vectorized(tols, f, x);
+  expect_unary_vectorized(tols, f, xs...);
+}
+}  // namespace internal
+
+/**
+ * Teset that the specified vectorized unary function has value and
+ * derivative behavior matching the primtive instantiation with finite
+ * differences.  Tests both scalar and container behavior.  Integer
+ * arguments will be preserved through to function calls.
+ *
+ * @tparam F type of function
+ * @tparam Ts types of arguments
+ * @param tols test relative tolerances
+ * @param f function to test
+ * @param xs arguments to test
+ */
+template <typename F, typename... Ts>
+void expect_unary_vectorized(const ad_tolerances& tols, const F& f, Ts... xs) {
+  internal::expect_unary_vectorized_helper(tols, f, xs...);
+}
+
+/**
+ * Test that the specified unary function produces derivatives and
+ * values for the specified values that are consistent with primitive
+ * values and finite differences.  Tests both scalars and containers.
+ *
+ * @tparam F type of function to test
+ * @tparam T type of first argument to test
+ * @tparam Ts type of remaining arguments to test
+ * @param f function to test
+ * @param x argument to test
+ * @param xs arguments to test
+ */
+template <typename F, typename... Ts>
+void expect_unary_vectorized(const F& f, Ts... xs) {
+  ad_tolerances tols;  // default tolerances
+  expect_unary_vectorized(tols, f, xs...);
+}
+
+/**
+ * Test that the specified vectorized unary function produces the same
+ * results and exceptions, and has derivatives consistent with finite
+ * differences as returned by the primitive version of the function
+ * when applied to all common non-zero integer and double arguments.
+ * This includes tests for standard vector and Eigen vector containers.
+ *
+ * @tparam F type of functor to test
+ * @param f functor to test
+ */
+template <typename F>
+void expect_common_nonzero_unary_vectorized(const F& f) {
+  ad_tolerances tols;
+  auto args = internal::common_nonzero_args();
+  for (double x : args)
+    stan::test::expect_unary_vectorized(tols, f, x);
+  auto int_args = internal::common_nonzero_int_args();
+  for (int x : int_args)
+    stan::test::expect_unary_vectorized(tols, f, x);
+}
+
+/**
+ * For all pairs of common arguments, test that primitive and all
+ * autodiff types return the same value. Tests integer and double
+ * arguments.
  *
  * @tparam F type of polymorphic binary functor
  * @param f functor to test
@@ -855,11 +920,33 @@ void expect_comparison(const F& f, const T1& x1, const T2& x2) {
 template <typename F>
 void expect_common_comparison(const F& f) {
   auto args = internal::common_args();
+  auto int_args = internal::common_int_args();
   for (double x1 : args)
     for (double x2 : args)
-      expect_comparison(f, x1, x2);
+      internal::expect_comparison(f, x1, x2);
+  for (int x1 : int_args)
+    for (double x2 : args)
+      internal::expect_comparison(f, x1, x2);
+  for (double x1 : args)
+    for (int x2 : int_args)
+      internal::expect_comparison(f, x1, x2);
+  for (int x1 : int_args)
+    for (int x2 : int_args)
+      internal::expect_comparison(f, x1, x2);
 }
 
+/**
+ * Test that the two specified functions either both throw or have the
+ * same return value for the specified argument.  If the argument is
+ * an intger, it will be passed through to the functions as such.
+ *
+ * @tparam F1 type of first function
+ * @tparam F2 type of second function
+ * @tparam T type of argument
+ * @param f1 first function to test
+ * @param f2 second function to test
+ * @param x argument to test
+ */
 template <typename F1, typename F2, typename T>
 void expect_match_prim(const F1& f1, const F2& f2, const T& x) {
   try {
@@ -883,9 +970,21 @@ void expect_match_prim(const F1& f1, const F2& f2, const T& x) {
   }
 }
 
+/**
+ * Test that the specified pair of functions either both throw or
+ * return the same value for common integer and double inputs
+ * including NaN and infinities.  Tests integer and double arguments.
+ *
+ * @tparam F1 type of first function
+ * @tparam F2 type of second function
+ * @param f1 first function to test
+ * @param f2 second function to test
+ */
 template <typename F1, typename F2>
 void expect_common_prim(const F1& f1, const F2& f2) {
-  for (auto x : internal::common_args())
+  for (double x : internal::common_args())
+    expect_match_prim(f1, f2, x);
+  for (int x : internal::common_int_args())
     expect_match_prim(f1, f2, x);
 }
 
