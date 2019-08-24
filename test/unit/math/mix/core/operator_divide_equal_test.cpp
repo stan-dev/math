@@ -7,5 +7,6 @@ TEST(mathMixCore, operatorDivideEqual) {
     y /= x2;
     return y;
   };
-  stan::test::expect_common_binary(f);
+  bool is_assignment = true;
+  stan::test::expect_common_binary(f, is_assignment);
 }

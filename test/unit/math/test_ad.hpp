@@ -774,21 +774,33 @@ void expect_common_unary(const F& f) {
  * primitive version of the function, when applied to all pairs of
  * common integer and double argument combinations.
  *
+ * If the `disable_lhs_int` flag is set to `true` (it defauls to
+ * `false`), then integers will not be considered as first arguments.
+ * This is useful for testing assignment operators like `+=` and
+ * division operators like `/` where integer and real arguments
+ * produce different values.
+ *
  * @tparam F type of polymorphic binary functor
  * @param f functor to test
+ * @param disable_lhs_int if integer values should only be tested
+ * for second argments
  */
 template <typename F>
-void expect_common_binary(const F& f) {
+void expect_common_binary(const F& f, bool disable_lhs_int = false) {
   auto args = internal::common_args();
   auto int_args = internal::common_int_args();
   for (double x1 : args)
     for (double x2 : args)
       expect_ad(f, x1, x2);
-  for (int x1 : int_args)
-    for (double x2 : args)
-      expect_ad(f, x1, x2);
   for (double x1 : args)
     for (int x2 : int_args)
+      expect_ad(f, x1, x2);
+
+  if (disable_lhs_int)
+    return;
+
+  for (int x1 : int_args)
+    for (double x2 : args)
       expect_ad(f, x1, x2);
   for (int x1 : int_args)
     for (int x2 : int_args)
