@@ -17,7 +17,7 @@ namespace math {
  * @return <code>true</code> iff <code>x1 &lt; x2</code>
  */
 template <typename T1, typename T2>
-inline int logical_lt(T1 x1, T2 x2) {
+inline bool logical_lt(T1 x1, T2 x2) {
   using std::isless;
   return isless(x1, x2);
 }

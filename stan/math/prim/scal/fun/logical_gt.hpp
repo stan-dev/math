@@ -17,7 +17,7 @@ namespace math {
  * @return <code>true</code> iff <code>x1 &gt; x2</code>
  */
 template <typename T1, typename T2>
-inline int logical_gt(const T1 x1, const T2 x2) {
+inline bool logical_gt(const T1 x1, const T2 x2) {
   using std::isgreater;
   return isgreater(x1, x2);
 }
