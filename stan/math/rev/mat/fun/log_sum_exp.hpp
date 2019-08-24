@@ -6,6 +6,7 @@
 #include <stan/math/rev/mat/fun/typedefs.hpp>
 #include <stan/math/prim/scal/fun/log_sum_exp.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <cmath>
 #include <limits>
 
 namespace stan {
@@ -19,6 +20,8 @@ namespace internal {
 template <int R, int C>
 inline double log_sum_exp_as_double(const Eigen::Matrix<var, R, C>& x) {
   const double max = x.val().maxCoeff();
+  if (!std::isfinite(max))
+    return max;
   return max + std::log((x.val().array() - max).exp().sum());
 }
 
