@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_SCAL_META_SCALAR_TYPE_HPP
 #define STAN_MATH_PRIM_SCAL_META_SCALAR_TYPE_HPP
 
-
 namespace stan {
 /**
  * Metaprogram structure to determine the base scalar type

@@ -19,7 +19,6 @@ namespace math {
 template <typename T, typename = void>
 struct index_type : std::integral_constant<int, 1> {};
 
-
 }  // namespace math
 }  // namespace stan
 

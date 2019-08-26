@@ -18,8 +18,8 @@ namespace stan {
  * @tparam T Type to test
  */
 template <typename T, typename = void>
-struct is_vector_like : std::integral_constant<bool, stan::is_vector<std::decay_t<T>>::value> {};
-
+struct is_vector_like
+    : std::integral_constant<bool, stan::is_vector<std::decay_t<T>>::value> {};
 
 }  // namespace stan
 #endif

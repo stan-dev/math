@@ -8,9 +8,12 @@
 namespace stan {
 
 namespace internal {
-  template <typename T>
-  struct is_eigen_base : std::integral_constant<bool, std::is_base_of<Eigen::EigenBase<std::decay_t<T>>, std::decay_t<T>>::value> {};
-}
+template <typename T>
+struct is_eigen_base
+    : std::integral_constant<bool,
+                             std::is_base_of<Eigen::EigenBase<std::decay_t<T>>,
+                                             std::decay_t<T>>::value> {};
+}  // namespace internal
 // Checks whether decayed type inherits from EigenBase
 template <typename T>
 struct is_eigen<T, std::enable_if_t<internal::is_eigen_base<T>::value>>

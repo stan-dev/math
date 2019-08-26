@@ -8,7 +8,6 @@
 
 namespace stan {
 
-
 namespace internal {
 
 // primary template for checking if eigen matrix is column vector

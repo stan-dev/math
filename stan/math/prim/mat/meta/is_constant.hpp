@@ -17,7 +17,8 @@ namespace stan {
  * @tparam C number of cols in the eigen Matrix
  */
 template <typename T>
-struct is_constant<T, std::enable_if_t<is_eigen<std::decay_t<T>>::value>> : std::integral_constant<bool, is_constant<typename T::Scalar>::value> {};
+struct is_constant<T, std::enable_if_t<is_eigen<std::decay_t<T>>::value>>
+    : std::integral_constant<bool, is_constant<typename T::Scalar>::value> {};
 
 }  // namespace stan
 #endif

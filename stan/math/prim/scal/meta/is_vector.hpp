@@ -10,7 +10,8 @@ struct is_vector : std::false_type {};
 
 // We do treat pointers as vectors
 template <typename T>
-struct is_vector<T, std::enable_if_t<std::is_pointer<T>::value>> : std::true_type {};
+struct is_vector<T, std::enable_if_t<std::is_pointer<T>::value>>
+    : std::true_type {};
 
 template <typename T, typename = void>
 struct is_std_vector : std::false_type {};

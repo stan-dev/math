@@ -13,7 +13,10 @@ struct scalar_type_helper_pre {
 
 template <typename T, typename T_container>
 struct scalar_type_helper_pre<true, T, T_container> {
-  typedef typename scalar_type_helper_pre<is_vector<scalar_type_t<T>>::value, scalar_type_t<T>, scalar_type_t<T_container>>::type type;
+  typedef
+      typename scalar_type_helper_pre<is_vector<scalar_type_t<T>>::value,
+                                      scalar_type_t<T>,
+                                      scalar_type_t<T_container>>::type type;
 };
 }  // namespace internal
 
@@ -25,7 +28,8 @@ struct scalar_type_helper_pre<true, T, T_container> {
  */
 template <typename T>
 struct scalar_type_pre {
-  typedef typename internal::scalar_type_helper_pre<is_vector<scalar_type_t<T>>::value, scalar_type_t<T>, T>::type type;
+  typedef typename internal::scalar_type_helper_pre<
+      is_vector<scalar_type_t<T>>::value, scalar_type_t<T>, T>::type type;
 };
 
 }  // namespace stan

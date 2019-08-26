@@ -20,7 +20,8 @@ namespace stan {
  * @tparam T Type being tested.
  */
 template <typename T, typename = void>
-struct is_constant : std::integral_constant<bool, std::is_convertible<T, double>::value> {};
+struct is_constant
+    : std::integral_constant<bool, std::is_convertible<T, double>::value> {};
 
 /**
  * Metaprogram defining an enum <code>value</code> which
