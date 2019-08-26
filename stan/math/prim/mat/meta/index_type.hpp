@@ -19,7 +19,7 @@ namespace math {
  */
 template <typename T>
 struct index_type<T, std::enable_if_t<is_eigen<T>::value>> {
-  typedef typename T::Index type;
+  typedef typename std::decay_t<T>::Index type;
 };
 
 }  // namespace math

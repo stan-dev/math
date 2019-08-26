@@ -16,7 +16,7 @@ namespace math {
  */
 template <typename T>
 struct index_type<T, std::enable_if_t<is_std_vector<std::decay_t<T>>::value>> {
-  typedef typename T::size_type type;
+  typedef typename std::decay_t<T>::size_type type;
 };
 
 }  // namespace math

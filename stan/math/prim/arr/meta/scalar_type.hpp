@@ -9,7 +9,7 @@
 namespace stan {
 template <typename T>
 struct scalar_type<T, std::enable_if_t<is_std_vector<std::decay_t<T>>::value>> {
-  typedef typename scalar_type<typename T::value_type>::type type;
+  typedef typename scalar_type<typename std::decay_t<T>::value_type>::type type;
 };
 
 }  // namespace stan

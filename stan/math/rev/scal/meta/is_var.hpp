@@ -10,8 +10,8 @@ namespace stan {
  * Defines a public enum named value and sets it to true(1)
  * when instantiated with the stan::math::var type.
  */
-template <>
-struct is_var<stan::math::var> : std::true_type {};
+template <typename T>
+struct is_var<T, std::enable_if_t<std::is_same<stan::math::var, std::decay_t<T>>::value>> : std::true_type {};
 
 }  // namespace stan
 #endif

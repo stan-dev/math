@@ -8,7 +8,7 @@ namespace stan {
  * Defines a public enum named value which is defined to be false
  * as the primitive scalar types cannot be a stan::math::var type.
  */
-template <typename T>
+template <typename T, typename = void>
 struct is_var : std::false_type {};
 
 }  // namespace stan

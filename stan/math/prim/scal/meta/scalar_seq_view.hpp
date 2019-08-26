@@ -11,7 +11,7 @@ namespace stan {
  * @tparam C the container type; will be the scalar type if wrapping a scalar
  * @tparam T the scalar type
  */
-template <typename C, typename T = scalar_type_t<C>>
+template <typename C, typename T = typename scalar_type<C>::type>
 class scalar_seq_view {
  public:
   explicit scalar_seq_view(const C& c) : c_(c) {}

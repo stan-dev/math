@@ -17,7 +17,7 @@ namespace stan {
  */
 template <typename T>
 struct scalar_type<T, std::enable_if_t<is_eigen<std::decay_t<T>>::value>> {
-  typedef typename scalar_type<typename T::Scalar>::type type;
+  typedef typename scalar_type<typename std::decay_t<T>::Scalar>::type type;
 };
 
 }  // namespace stan

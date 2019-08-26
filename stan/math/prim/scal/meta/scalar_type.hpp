@@ -23,7 +23,7 @@ struct scalar_type<T, std::enable_if_t<std::is_pointer<T>::value>> {
 };
 
 template <typename T>
-using scalar_type_t = typename scalar_type<T>::type;
+using scalar_type_t = typename scalar_type<std::decay_t<T>>::type;
 
 }  // namespace stan
 #endif
