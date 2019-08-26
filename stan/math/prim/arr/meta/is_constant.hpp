@@ -16,8 +16,8 @@ namespace stan {
  */
 template <typename T>
 struct is_constant<T, std::enable_if_t<is_std_vector<std::decay_t<T>>::value>>
-    : std::integral_constant<bool, is_constant<typename std::decay_t<T>::value_type>::value> {
-};
+    : std::integral_constant<
+          bool, is_constant<typename std::decay_t<T>::value_type>::value> {};
 
 }  // namespace stan
 #endif
