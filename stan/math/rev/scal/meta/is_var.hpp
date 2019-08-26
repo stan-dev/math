@@ -11,7 +11,9 @@ namespace stan {
  * when instantiated with the stan::math::var type.
  */
 template <typename T>
-struct is_var<T, std::enable_if_t<std::is_same<stan::math::var, std::decay_t<T>>::value>> : std::true_type {};
+struct is_var<
+    T, std::enable_if_t<std::is_same<stan::math::var, std::decay_t<T>>::value>>
+    : std::true_type {};
 
 }  // namespace stan
 #endif
