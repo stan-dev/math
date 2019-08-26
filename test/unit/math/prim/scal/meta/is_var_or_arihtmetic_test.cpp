@@ -22,5 +22,4 @@ TEST(MathMeta, is_var_or_arithmetic_simple) {
   temp = is_var_or_arithmetic<double, double, std::vector<double>, double,
                               std::vector<double>, std::string>::value;
   EXPECT_FALSE(temp);
-
 }
