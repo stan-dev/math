@@ -2,7 +2,6 @@
 #define STAN_MATH_FWD_SCAL_FUN_LDEXP_HPP
 
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/scal/fun/exp2.hpp>
 #include <stan/math/prim/scal/fun/ldexp.hpp>
 #include <cmath>
 
@@ -20,7 +19,7 @@ namespace math {
  */
 template <typename T>
 inline fvar<T> ldexp(const fvar<T>& a, int b) {
-  return fvar<T>(ldexp(a.val_, b), a.d_ * exp2(b));
+  return fvar<T>(ldexp(a.val_, b), ldexp(a.d_, b));
 }
 }  // namespace math
 }  // namespace stan
