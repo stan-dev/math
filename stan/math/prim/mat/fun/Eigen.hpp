@@ -1,6 +1,12 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_EIGEN_HPP
 #define STAN_MATH_PRIM_MAT_FUN_EIGEN_HPP
 
+#ifdef STAN_OPENCL
+#ifdef STAN_OPENCL_CACHE
+#include <CL/cl.hpp>
+#endif
+#endif
+
 #ifdef EIGEN_MATRIXBASE_PLUGIN
 #ifndef EIGEN_STAN_MATRIXBASE_PLUGIN
 #error "Stan uses Eigen's EIGEN_MATRIXBASE_PLUGIN macro. To use your own "

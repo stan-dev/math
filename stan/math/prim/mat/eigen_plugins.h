@@ -199,6 +199,12 @@ inline CwiseUnaryView<vi_Op, Derived>
 vi() { return CwiseUnaryView<vi_Op, Derived>(derived());
 }
 
+#ifdef STAN_OPENCL
+#ifdef STAN_OPENCL_CACHE
+mutable cl::Buffer opencl_buffer_;
+#endif
+#endif
+
 #define EIGEN_STAN_MATRIXBASE_PLUGIN
 
 #endif
