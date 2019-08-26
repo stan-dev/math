@@ -13,10 +13,14 @@ inline fvar<T> to_fvar(const T& x) {
 }
 
 template <typename T>
-inline const fvar<T>& to_fvar(const fvar<T>& x) { return x; }
+inline const fvar<T>& to_fvar(const fvar<T>& x) {
+  return x;
+}
 
 template <typename T>
-inline fvar<T>& to_fvar(fvar<T>& x) { return x; }
+inline fvar<T>& to_fvar(fvar<T>& x) {
+  return x;
+}
 
 }  // namespace math
 }  // namespace stan

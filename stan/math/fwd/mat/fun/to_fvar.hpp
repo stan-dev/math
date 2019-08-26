@@ -10,10 +10,14 @@ namespace stan {
 namespace math {
 
 template <int R, int C, typename T>
-inline const Eigen::Matrix<T, R, C> to_fvar(const Eigen::Matrix<T, R, C>& m) {return m;}
+inline const Eigen::Matrix<T, R, C> to_fvar(const Eigen::Matrix<T, R, C>& m) {
+  return m;
+}
 
 template <int R, int C, typename T>
-inline Eigen::Matrix<T, R, C>& to_fvar(Eigen::Matrix<T, R, C>& m) {return m;}
+inline Eigen::Matrix<T, R, C>& to_fvar(Eigen::Matrix<T, R, C>& m) {
+  return m;
+}
 
 template <int R, int C>
 inline Eigen::Matrix<fvar<double>, R, C> to_fvar(
