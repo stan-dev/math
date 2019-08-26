@@ -31,7 +31,7 @@ inline matrix_v to_var(const matrix_d& m) {
  * @param[in,out] m A matrix of automatic differentation variables.
  * @return The input matrix of automatic differentiation variables.
  */
- inline matrix_v& to_var(matrix_v& m) { return m; }
+inline matrix_v& to_var(matrix_v& m) { return m; }
 
 /**
  * Specialization of to_var for const matrices of vars
