@@ -31,7 +31,8 @@ inline std::vector<var> to_var(const std::vector<double>& v) {
  * @param[in] v A std::vector<var>
  * @return A std::vector<var>
  */
-inline std::vector<var> to_var(const std::vector<var>& v) { return v; }
+inline const std::vector<var>& to_var(const std::vector<var>& v) { return v; }
+inline std::vector<var>& to_var(std::vector<var>& v) { return v; }
 
 }  // namespace math
 }  // namespace stan

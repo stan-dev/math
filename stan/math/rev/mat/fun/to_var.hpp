@@ -31,7 +31,8 @@ inline matrix_v to_var(const matrix_d& m) {
  * @param[in] m A Matrix with automatic differentiation variables.
  * @return A Matrix with automatic differentiation variables.
  */
-inline matrix_v to_var(const matrix_v& m) { return m; }
+inline matrix_v& to_var(matrix_v& m) { return m; }
+inline const matrix_v& to_var(const matrix_v& m) { return m; }
 /**
  * Converts argument to an automatic differentiation variable.
  *
@@ -54,7 +55,8 @@ inline vector_v to_var(const vector_d& v) {
  * @return A Vector of automatic differentiation variables with
  *   values of v
  */
-inline vector_v to_var(const vector_v& v) { return v; }
+inline const vector_v& to_var(const vector_v& v) { return v; }
+inline vector_v& to_var(vector_v& v) { return v; }
 /**
  * Converts argument to an automatic differentiation variable.
  *
@@ -77,7 +79,8 @@ inline row_vector_v to_var(const row_vector_d& rv) {
  * @return A row vector with automatic differentiation variables
  *    with values of rv.
  */
-inline row_vector_v to_var(const row_vector_v& rv) { return rv; }
+inline const row_vector_v& to_var(const row_vector_v& rv) { return rv; }
+inline row_vector_v& to_var(row_vector_v& rv) { return rv; }
 
 }  // namespace math
 }  // namespace stan
