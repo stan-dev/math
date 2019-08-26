@@ -30,7 +30,7 @@ TEST(MathMatrixCL, matrix_cl_types_creation) {
 #ifdef STAN_OPENCL_CACHE
 TEST(MathMatrixCL, matrix_cl_cache) {
   using stan::math::matrix_cl;
-  Eigen::MatrixXd m(2,2);
+  Eigen::MatrixXd m(2, 2);
   m << 1, 2, 3, 4;
 
   const matrix_cl<double> m1_cl = matrix_cl<double>::constant(m);
