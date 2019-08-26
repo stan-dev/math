@@ -3,6 +3,7 @@
 
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/scal/meta/is_fvar.hpp>
+#include <type_traits>
 
 namespace stan {
 /**
@@ -10,9 +11,7 @@ namespace stan {
  * when instantiated with the stan::math::fvar type.
  */
 template <typename T>
-struct is_fvar<stan::math::fvar<T> > {
-  enum { value = true };
-};
+struct is_fvar<stan::math::fvar<T>> : std::true_type {};
 
 }  // namespace stan
 #endif

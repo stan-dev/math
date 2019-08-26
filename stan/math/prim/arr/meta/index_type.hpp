@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_ARR_META_INDEX_TYPE_HPP
 
 #include <stan/math/prim/scal/meta/index_type.hpp>
+#include <stan/math/prim/arr/meta/is_vector.hpp>
 #include <vector>
 
 namespace stan {
@@ -14,11 +15,8 @@ namespace math {
  * @tparam T type of elements in standard vector.
  */
 template <typename T>
-struct index_type<std::vector<T> > {
-  /**
-   * Typedef for index of standard vectors.
-   */
-  typedef typename std::vector<T>::size_type type;
+struct index_type<T, std::enable_if_t<is_std_vector<std::decay_t<T>>::value>> {
+  typedef typename T::size_type type;
 };
 
 }  // namespace math

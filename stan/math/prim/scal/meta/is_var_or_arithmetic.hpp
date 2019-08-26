@@ -14,12 +14,7 @@ namespace stan {
  * and false (0) otherwise.
  */
 template <typename T>
-struct is_var_or_arithmetic_type {
-  enum {
-    value = (is_var<typename scalar_type<T>::type>::value
-             || std::is_arithmetic<typename scalar_type<T>::type>::value)
-  };
-};
+struct is_var_or_arithmetic_type : std::integral_constant<bool, is_var<scalar_type_t<T>>::value || std::is_arithmetic<scalar_type_t<T>>::value> {};
 
 /**
  * Extends std::true_type if all the provided types are either var or

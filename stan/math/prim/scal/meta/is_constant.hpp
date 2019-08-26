@@ -19,14 +19,8 @@ namespace stan {
  *
  * @tparam T Type being tested.
  */
-template <typename T>
-struct is_constant {
-  /**
-   * A boolean constant with equal to <code>true</code> if the
-   * type parameter <code>T</code> is a mathematical constant.
-   */
-  enum { value = std::is_convertible<T, double>::value };
-};
+template <typename T, typename = void>
+struct is_constant : std::integral_constant<bool, std::is_convertible<T, double>::value> {};
 
 /**
  * Metaprogram defining an enum <code>value</code> which
