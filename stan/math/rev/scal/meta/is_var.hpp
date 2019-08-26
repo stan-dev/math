@@ -2,7 +2,7 @@
 #define STAN_MATH_REV_SCAL_META_IS_VAR_HPP
 
 #include <stan/math/prim/scal/meta/is_var.hpp>
-#include <stan/math/rev/core.hpp>
+#include <stan/math/rev/core/var.hpp>
 #include <type_traits>
 
 namespace stan {
