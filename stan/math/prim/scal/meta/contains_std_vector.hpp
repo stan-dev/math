@@ -11,9 +11,8 @@ namespace stan {
  * cannot be a scalar primitive type.
  * @tparam Ts Types to test
  */
- template <typename... Ts>
- using contains_std_vector = math::disjunction<is_std_vector<Ts>...>;
-
+template <typename... Ts>
+using contains_std_vector = math::disjunction<is_std_vector<Ts>...>;
 
 }  // namespace stan
 
