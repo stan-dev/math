@@ -75,31 +75,36 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
 
   if (include_summand<propto>::value) {
     for (size_t i = 0; i < size; i++) {
-        // normalizing constant
-        logp += binomial_coefficient_log(N_vec[i], n_vec[i]);
-        // log numerator - denominator
-       logp += lbeta(n_vec[i] + value_of(alpha_vec[i]), N_vec[i] - n_vec[i] + value_of(beta_vec[i])) -
-      lbeta(value_of(alpha_vec[i]), value_of(beta_vec[i]));
+      // normalizing constant
+      logp += binomial_coefficient_log(N_vec[i], n_vec[i]);
+      // log numerator - denominator
+      logp += lbeta(n_vec[i] + value_of(alpha_vec[i]),
+                    N_vec[i] - n_vec[i] + value_of(beta_vec[i]))
+              - lbeta(value_of(alpha_vec[i]), value_of(beta_vec[i]));
     }
   }
 
-  VectorBuilder<!is_constant_all<T_size1, T_size2>::value, T_partials, T_N, T_size1, T_size2>
+  VectorBuilder<!is_constant_all<T_size1, T_size2>::value, T_partials, T_N,
+                T_size1, T_size2>
       digamma_N_plus_alpha_plus_beta(size);
-  VectorBuilder<!is_constant_all<T_size1, T_size2>::value, T_partials, T_size1, T_size2>
+  VectorBuilder<!is_constant_all<T_size1, T_size2>::value, T_partials, T_size1,
+                T_size2>
       digamma_alpha_plus_beta(size);
   if (!is_constant_all<T_size1, T_size2>::value) {
     for (size_t i = 0; i < size; i++) {
       digamma_N_plus_alpha_plus_beta[i]
           = digamma(N_vec[i] + value_of(alpha_vec[i]) + value_of(beta_vec[i]));
-      digamma_alpha_plus_beta[i] = digamma(value_of(alpha_vec[i]) + value_of(beta_vec[i]));
+      digamma_alpha_plus_beta[i]
+          = digamma(value_of(alpha_vec[i]) + value_of(beta_vec[i]));
     }
   }
 
   if (!is_constant_all<T_size1>::value) {
     for (size_t i = 0; i < size; i++) {
-        ops_partials.edge1_.partials_[i]
-            += digamma(n_vec[i] + value_of(alpha_vec[i])) - digamma_N_plus_alpha_plus_beta[i]
-               + digamma_alpha_plus_beta[i] - digamma(value_of(alpha_vec[i]));
+      ops_partials.edge1_.partials_[i]
+          += digamma(n_vec[i] + value_of(alpha_vec[i]))
+             - digamma_N_plus_alpha_plus_beta[i] + digamma_alpha_plus_beta[i]
+             - digamma(value_of(alpha_vec[i]));
     }
   }
 

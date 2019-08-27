@@ -25,7 +25,8 @@ namespace stan {
 template <bool used, typename T1, typename T2, typename... Args>
 class VectorBuilder {
  private:
-  typedef VectorBuilderHelper<T1, used, contains_vector<T2, Args...>::value> helper;
+  typedef VectorBuilderHelper<T1, used, contains_vector<T2, Args...>::value>
+      helper;
 
  public:
   typedef typename helper::type type;
@@ -38,7 +39,6 @@ class VectorBuilder {
 
   inline type& data() { return mock_vec_.data(); }
   inline const type& data() const { return mock_vec_.data(); }
-
 };
 
 }  // namespace stan

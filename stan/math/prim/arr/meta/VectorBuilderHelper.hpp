@@ -11,7 +11,7 @@ namespace stan {
  * Template specialization for using a vector
  */
 template <typename T1>
-class VectorBuilderHelper<T1, true, true> { // When used and vector
+class VectorBuilderHelper<T1, true, true> {  // When used and vector
  private:
   std::vector<T1> x_;
 
