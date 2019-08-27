@@ -16,7 +16,7 @@ template <typename C, typename T = typename scalar_type<C>::type>
 class scalar_seq_view {
  public:
   explicit scalar_seq_view(C&& c) : c_(std::forward<C>(c)) {}
-  explicit scalar_seq_view(const C&& c) : c_(std::forward<const C>(c)) {}
+  explicit scalar_seq_view(const C& c) : c_(std::forward<const C>(c)) {}
 
   /**
    * Segfaults if out of bounds.
