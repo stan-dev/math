@@ -39,7 +39,6 @@ class VectorBuilder {
 
   inline auto&& data() { return mock_vec_.data(); }
   inline const auto&& data() const { return mock_vec_.data(); }
-
 };
 
 }  // namespace stan
