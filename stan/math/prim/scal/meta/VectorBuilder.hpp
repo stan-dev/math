@@ -33,11 +33,11 @@ class VectorBuilder {
 
   explicit VectorBuilder(size_t n) : mock_vec_(n) {}
 
-  T1& operator[](size_t i) { return mock_vec_[i]; }
-  const T1& operator[](size_t i) const { return mock_vec_[i]; }
+  auto&& operator[](size_t i) { return mock_vec_[i]; }
+  const auto&& operator[](size_t i) const { return mock_vec_[i]; }
 
-  inline type& data() { return mock_vec_.data(); }
-  inline const type& data() const { return mock_vec_.data(); }
+  inline auto&& data() { return mock_vec_.data(); }
+  inline const auto&& data() const { return mock_vec_.data(); }
 
 };
 
