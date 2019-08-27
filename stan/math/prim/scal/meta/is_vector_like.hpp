@@ -22,6 +22,7 @@ struct is_vector_like
     : std::integral_constant<bool, stan::is_vector<std::decay_t<T>>::value> {};
 
 template <typename T>
-struct is_vector_like<T, std::enable_if_t<std::is_pointer<T>::value>> : std::true_type {};
+struct is_vector_like<T, std::enable_if_t<std::is_pointer<T>::value>>
+    : std::true_type {};
 }  // namespace stan
 #endif
