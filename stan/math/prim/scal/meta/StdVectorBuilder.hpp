@@ -29,24 +29,23 @@ namespace stan {
  *      and operator[] throws a std::logic_error.
  *  @tparam T1 Type of vector to build
  */
-template <bool used, typename T1, typename T2, typename T3 = double,
-          typename T4 = double, typename T5 = double, typename T6 = double,
-          typename T7 = double>
+template <bool used, typename T1, typename T2, typename... Args>
 class StdVectorBuilder {
  private:
-  typedef VectorBuilderHelper<
-      T1, used, contains_std_vector<T2, T3, T4, T5, T6, T7>::value>
+  typedef VectorBuilderHelper<T1, used, contains_std_vector<T2, Args...>::value>
       helper;
 
  public:
   typedef typename helper::type type;
-  helper a;
+  helper mock_vec_;
 
-  explicit StdVectorBuilder(size_t n) : a(n) {}
+  explicit StdVectorBuilder(size_t n) : mock_vec_(n) {}
 
-  T1& operator[](size_t i) { return a[i]; }
+  T1& operator[](size_t i) { return mock_vec_[i]; }
+  const T1& operator[](size_t i) const { return mock_vec_[i]; }
 
-  inline type data() { return a.data(); }
+  inline type& data() { return mock_vec_.data(); }
+  inline const type& data() const { return mock_vec_.data(); }
 };
 
 }  // namespace stan

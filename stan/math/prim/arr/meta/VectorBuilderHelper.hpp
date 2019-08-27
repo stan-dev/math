@@ -11,7 +11,7 @@ namespace stan {
  * Template specialization for using a vector
  */
 template <typename T1>
-class VectorBuilderHelper<T1, true, true> {
+class VectorBuilderHelper<T1, true, true> { // When used and vector
  private:
   std::vector<T1> x_;
 
@@ -21,8 +21,9 @@ class VectorBuilderHelper<T1, true, true> {
   typedef std::vector<T1> type;
 
   T1& operator[](size_t i) { return x_[i]; }
-
+  const T1& operator[](size_t i) const { return x_[i]; }
   inline type& data() { return x_; }
+  inline const type& data() const { return x_; }
 };
 }  // namespace stan
 #endif

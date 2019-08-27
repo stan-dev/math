@@ -21,7 +21,7 @@ namespace stan {
  *  These values are mutable.
  */
 template <typename T1, bool used, bool is_vec>
-class VectorBuilderHelper {
+class VectorBuilderHelper { // Base class fails on accessors
  public:
   explicit VectorBuilderHelper(size_t /* n */) {}
 
@@ -37,17 +37,18 @@ class VectorBuilderHelper {
 };
 
 template <typename T1>
-class VectorBuilderHelper<T1, true, false> {
+class VectorBuilderHelper<T1, true, false> { // When it's used but not a vector
  private:
   T1 x_;
 
  public:
   explicit VectorBuilderHelper(size_t /* n */) : x_(0) {}
   T1& operator[](size_t /* i */) { return x_; }
-
+  const T1& operator[](size_t /* i */) const { return x_; }
   typedef T1 type;
 
   inline type& data() { return x_; }
+  inline const type& data() const { return x_; }
 };
 
 }  // namespace stan
