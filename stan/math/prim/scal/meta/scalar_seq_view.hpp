@@ -21,6 +21,7 @@ class scalar_seq_view {
    * @param i index
    * @return the element at the specified position in the container
    */
+  T& operator[](int i) { return c_[i]; }
   const T& operator[](int i) const { return c_[i]; }
 
   int size() const { return c_.size(); }
@@ -40,6 +41,7 @@ class scalar_seq_view<T, T> {
   explicit scalar_seq_view(const T& t) : t_(t) {}
 
   const T& operator[](int /* i */) const { return t_; }
+  T& operator[](int /* i */) { return t_; }
 
   int size() const { return 1; }
 
