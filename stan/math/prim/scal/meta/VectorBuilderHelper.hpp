@@ -42,7 +42,7 @@ class VectorBuilderHelper<T1, true, false> {  // When it's used but not a vector
   T1 x_{0};
 
  public:
-  explicit VectorBuilderHelper(size_t /* n */){}
+  explicit VectorBuilderHelper(size_t /* n */) {}
   auto&& operator[](size_t /* i */) { return x_; }
   const auto&& operator[](size_t /* i */) const { return x_; }
   typedef T1 type;
