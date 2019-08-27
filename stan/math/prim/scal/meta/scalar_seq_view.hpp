@@ -42,8 +42,8 @@ class scalar_seq_view<T, T> {
  public:
   explicit scalar_seq_view(const T& t) : t_(t) {}
 
-  const auto&& operator[](int /* i */) const { return t_; }
-  auto&& operator[](int /* i */) { return t_; }
+  const auto& operator[](int /* i */) const { return t_; }
+  auto& operator[](int /* i */) { return t_; }
 
   int size() const { return 1; }
 
