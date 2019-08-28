@@ -16,7 +16,6 @@ namespace stan {
 template <typename C, typename = void>
 class scalar_seq_view {
  public:
-
   template <typename K, typename = std::enable_if_t<std::is_same<
                             std::decay_t<C>, std::decay_t<K>>::value>>
   explicit scalar_seq_view(K&& c) : c_(std::forward<K>(c)) {}
