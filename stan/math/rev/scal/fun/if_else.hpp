@@ -32,7 +32,7 @@ inline var if_else(bool c, double y_true, const var& y_false) {
     return var(y_true);
   } else {
     return y_false;
-}
+  }
 }
 /**
  * If the specified condition is true, return the first variable,
@@ -48,7 +48,7 @@ inline var if_else(bool c, const var& y_true, double y_false) {
     return y_true;
   } else {
     return var(y_false);
-}
+  }
 }
 
 }  // namespace math

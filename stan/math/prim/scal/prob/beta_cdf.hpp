@@ -39,7 +39,7 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
 
   if (size_zero(y, alpha, beta)) {
     return 1.0;
-}
+  }
 
   static const char* function = "beta_cdf";
 
@@ -67,7 +67,7 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
   for (size_t i = 0; i < stan::length(y); i++) {
     if (value_of(y_vec[i]) <= 0) {
       return ops_partials.build(0.0);
-}
+    }
   }
 
   VectorBuilder<!is_constant_all<T_scale_succ, T_scale_fail>::value,
@@ -98,7 +98,7 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
     // The gradients are technically ill-defined, but treated as zero
     if (value_of(y_vec[n]) >= 1.0) {
       continue;
-}
+    }
 
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
@@ -111,36 +111,36 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n]
           += inc_beta_ddz(alpha_dbl, beta_dbl, y_dbl) / Pn;
-}
+    }
 
     if (!is_constant_all<T_scale_succ>::value) {
       ops_partials.edge2_.partials_[n]
           += inc_beta_dda(alpha_dbl, beta_dbl, y_dbl, digamma_alpha_vec[n],
                           digamma_sum_vec[n])
              / Pn;
-}
+    }
     if (!is_constant_all<T_scale_fail>::value) {
       ops_partials.edge3_.partials_[n]
           += inc_beta_ddb(alpha_dbl, beta_dbl, y_dbl, digamma_beta_vec[n],
                           digamma_sum_vec[n])
              / Pn;
-}
+    }
   }
 
   if (!is_constant_all<T_y>::value) {
     for (size_t n = 0; n < stan::length(y); ++n) {
       ops_partials.edge1_.partials_[n] *= P;
-}
+    }
   }
   if (!is_constant_all<T_scale_succ>::value) {
     for (size_t n = 0; n < stan::length(alpha); ++n) {
       ops_partials.edge2_.partials_[n] *= P;
-}
+    }
   }
   if (!is_constant_all<T_scale_fail>::value) {
     for (size_t n = 0; n < stan::length(beta); ++n) {
       ops_partials.edge3_.partials_[n] *= P;
-}
+    }
   }
 
   return ops_partials.build(P);

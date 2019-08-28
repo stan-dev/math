@@ -46,7 +46,7 @@ template <int R, int C>
 inline var sum(const Eigen::Matrix<var, R, C>& m) {
   if (m.size() == 0) {
     return 0.0;
-}
+  }
   return var(new sum_eigen_v_vari(m));
 }
 

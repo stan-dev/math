@@ -23,12 +23,12 @@ inline matrix_cl<return_type_t<T1, T2>> diagonal_multiply(
   matrix_cl<return_type_t<T1, T2>> B(A);
   if (B.size() == 0) {
     return B;
-}
+  }
   // For rectangular matrices
   int min_dim = B.rows();
   if (B.cols() < min_dim) {
     min_dim = B.cols();
-}
+  }
   try {
     opencl_kernels::scalar_mul_diagonal(cl::NDRange(min_dim), B, scalar,
                                         B.rows(), min_dim);

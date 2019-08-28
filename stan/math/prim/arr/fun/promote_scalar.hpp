@@ -35,7 +35,7 @@ struct promote_scalar_struct<T, std::vector<S> > {
     return_t y(x.size());
     for (idx_t i = 0; i < x.size(); ++i) {
       y[i] = promote_scalar_struct<T, S>::apply(x[i]);
-}
+    }
     return y;
   }
 };

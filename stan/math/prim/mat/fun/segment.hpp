@@ -52,7 +52,7 @@ std::vector<T> segment(const std::vector<T>& sv, size_t i, size_t n) {
   std::vector<T> s;
   for (size_t j = 0; j < n; ++j) {
     s.push_back(sv[i + j - 1]);
-}
+  }
   return s;
 }
 

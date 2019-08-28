@@ -23,7 +23,7 @@ inline matrix_cl<T> transpose(const matrix_cl<T>& src) {
   matrix_cl<T> dst(src.cols(), src.rows(), transpose(src.view()));
   if (dst.size() == 0) {
     return dst;
-}
+  }
   try {
     opencl_kernels::transpose(cl::NDRange(src.rows(), src.cols()), dst, src,
                               src.rows(), src.cols());

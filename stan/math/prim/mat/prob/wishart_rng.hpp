@@ -26,7 +26,7 @@ inline Eigen::MatrixXd wishart_rng(double nu, const Eigen::MatrixXd& S,
   for (int j = 0; j < k; ++j) {
     for (int i = 0; i < j; ++i) {
       B(i, j) = normal_rng(0, 1, rng);
-}
+    }
     B(j, j) = std::sqrt(chi_square_rng(nu - j, rng));
   }
   return crossprod(B * S.llt().matrixU());

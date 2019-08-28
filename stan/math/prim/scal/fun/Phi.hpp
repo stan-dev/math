@@ -37,7 +37,7 @@ inline double Phi(double x) {
     return 1;
   } else {
     return 0.5 * (1.0 + erf(INV_SQRT_2 * x));
-}
+  }
 }
 
 }  // namespace math

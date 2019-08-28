@@ -27,7 +27,7 @@ return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
 
   if (size_zero(n, alpha)) {
     return 0.0;
-}
+  }
 
   T_partials_return logp(0.0);
 
@@ -38,7 +38,7 @@ return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
 
   if (!include_summand<propto, T_log_rate>::value) {
     return 0.0;
-}
+  }
 
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_log_rate> alpha_vec(alpha);
@@ -48,14 +48,14 @@ return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
   for (size_t i = 0; i < size; i++) {
     if (std::numeric_limits<double>::infinity() == alpha_vec[i]) {
       return LOG_ZERO;
-}
-}
+    }
+  }
   for (size_t i = 0; i < size; i++) {
     if (-std::numeric_limits<double>::infinity() == alpha_vec[i]
         && n_vec[i] != 0) {
       return LOG_ZERO;
-}
-}
+    }
+  }
 
   operands_and_partials<T_log_rate> ops_partials(alpha);
 
@@ -66,23 +66,23 @@ return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
   for (size_t i = 0; i < length(alpha); i++) {
     if (include_summand<propto, T_log_rate>::value) {
       exp_alpha[i] = exp(value_of(alpha_vec[i]));
-}
-}
+    }
+  }
 
   for (size_t i = 0; i < size; i++) {
     if (!(alpha_vec[i] == -std::numeric_limits<double>::infinity()
           && n_vec[i] == 0)) {
       if (include_summand<propto>::value) {
         logp -= lgamma(n_vec[i] + 1.0);
-}
+      }
       if (include_summand<propto, T_log_rate>::value) {
         logp += n_vec[i] * value_of(alpha_vec[i]) - exp_alpha[i];
-}
+      }
     }
 
     if (!is_constant_all<T_log_rate>::value) {
       ops_partials.edge1_.partials_[i] += n_vec[i] - exp_alpha[i];
-}
+    }
   }
   return ops_partials.build(logp);
 }

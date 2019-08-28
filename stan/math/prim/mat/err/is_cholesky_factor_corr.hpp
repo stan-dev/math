@@ -27,12 +27,12 @@ inline bool is_cholesky_factor_corr(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
   if (!is_cholesky_factor(y)) {
     return false;
-}
+  }
   for (int i = 0; i < y.rows(); ++i) {
     Eigen::Matrix<T_y, Eigen::Dynamic, 1> y_i = y.row(i).transpose();
     if (!is_unit_vector(y_i)) {
       return false;
-}
+    }
   }
   return true;
 }

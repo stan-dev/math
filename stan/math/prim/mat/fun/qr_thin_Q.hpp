@@ -27,8 +27,8 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> qr_thin_Q(
   for (int i = 0; i < min_size; i++) {
     if (qr.matrixQR().coeff(i, i) < 0) {
       Q.col(i) *= -1.0;
-}
-}
+    }
+  }
   return Q;
 }
 

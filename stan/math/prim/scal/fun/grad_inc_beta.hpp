@@ -29,7 +29,7 @@ inline void grad_inc_beta(double& g1, double& g2, double a, double b,
   double dF2 = 0;
   if (C) {
     grad_2F1(dF1, dF2, a + b, 1.0, a + 1, z);
-}
+  }
   g1 = fma((c1 - inv(a)), c3, C * (dF1 + dF2));
   g2 = fma(c2, c3, C * dF1);
 }

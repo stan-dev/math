@@ -34,7 +34,7 @@ template <typename T>
 inline T min(const std::vector<T>& x) {
   if (x.size() == 0) {
     return std::numeric_limits<T>::infinity();
-}
+  }
   Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, 1>> m(&x[0], x.size());
   return m.minCoeff();
 }
@@ -49,7 +49,7 @@ template <typename T, int R, int C>
 inline T min(const Eigen::Matrix<T, R, C>& m) {
   if (m.size() == 0) {
     return std::numeric_limits<double>::infinity();
-}
+  }
   return m.minCoeff();
 }
 

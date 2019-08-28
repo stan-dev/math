@@ -37,7 +37,7 @@ class log_softmax_elt_vari : public vari {
         alpha_[m]->adj_ += adj_ * (1 - softmax_alpha_[m]);
       } else {
         alpha_[m]->adj_ -= adj_ * softmax_alpha_[m];
-}
+      }
     }
   }
 };
@@ -87,7 +87,7 @@ inline Eigen::Matrix<var, Eigen::Dynamic, 1> log_softmax(
     log_softmax_alpha(k) = var(new internal::log_softmax_elt_vari(
         log_softmax_alpha_d[k], alpha_vi_array, softmax_alpha_d_array, a_size,
         k));
-}
+  }
   return log_softmax_alpha;
 }
 

@@ -89,7 +89,7 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
   if (C_l > 1) {
     check_size_match(function, "Length of location variables ", N,
                      "Number of cutpoint vectors ", C_l);
-}
+  }
 
   int size_c_old = c_vec[0].size();
   for (int i = 1; i < C_l; i++) {
@@ -120,7 +120,7 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
   for (int n = 0; n < N; ++n) {
     if (C_l > 1) {
       c_dbl = value_of(c_vec[n]).template cast<T_partials_return>();
-}
+    }
     T_partials_return lam_dbl = value_of(lam_vec[n]);
 
     if (y_vec[n] == 1) {
@@ -129,11 +129,11 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
 
       if (!is_constant_all<T_loc>::value) {
         ops_partials.edge1_.partials_[n] -= d;
-}
+      }
 
       if (!is_constant_all<T_cut>::value) {
         ops_partials.edge2_.partials_vec_[n](0) += d;
-}
+      }
 
     } else if (y_vec[n] == K) {
       logp -= log1p_exp(c_dbl[K - 2] - lam_dbl);
@@ -141,11 +141,11 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
 
       if (!is_constant_all<T_loc>::value) {
         ops_partials.edge1_.partials_[n] = d;
-}
+      }
 
       if (!is_constant_all<T_cut>::value) {
         ops_partials.edge2_.partials_vec_[n](K - 2) -= d;
-}
+      }
 
     } else {
       T_partials_return d1
@@ -159,7 +159,7 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
 
       if (!is_constant_all<T_loc>::value) {
         ops_partials.edge1_.partials_[n] -= d1 + d2;
-}
+      }
 
       if (!is_constant_all<T_cut>::value) {
         ops_partials.edge2_.partials_vec_[n](y_vec[n] - 2) += d1;

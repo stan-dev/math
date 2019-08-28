@@ -27,7 +27,7 @@ inline return_type_t<T1, T2> fdim(T1 x, T2 y) {
   using std::numeric_limits;
   if (is_any_nan(x, y)) {
     return NOT_A_NUMBER;
-}
+  }
   return (x <= y) ? 0 : x - y;
 }
 

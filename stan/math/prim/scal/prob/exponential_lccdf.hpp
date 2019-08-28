@@ -21,7 +21,7 @@ return_type_t<T_y, T_inv_scale> exponential_lccdf(const T_y& y,
   T_partials_return ccdf_log(0.0);
   if (size_zero(y, beta)) {
     return ccdf_log;
-}
+  }
 
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
@@ -39,10 +39,10 @@ return_type_t<T_y, T_inv_scale> exponential_lccdf(const T_y& y,
 
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] -= beta_dbl;
-}
+    }
     if (!is_constant_all<T_inv_scale>::value) {
       ops_partials.edge2_.partials_[n] -= y_dbl;
-}
+    }
   }
   return ops_partials.build(ccdf_log);
 }

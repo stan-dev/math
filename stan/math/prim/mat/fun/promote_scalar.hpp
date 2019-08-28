@@ -32,7 +32,7 @@ struct promote_scalar_struct<T, Eigen::Matrix<S, -1, -1> > {
                                                                       x.cols());
     for (int i = 0; i < x.size(); ++i) {
       y(i) = promote_scalar_struct<T, S>::apply(x(i));
-}
+    }
     return y;
   }
 };
@@ -61,7 +61,7 @@ struct promote_scalar_struct<T, Eigen::Matrix<S, 1, -1> > {
                                                                      x.cols());
     for (int i = 0; i < x.size(); ++i) {
       y(i) = promote_scalar_struct<T, S>::apply(x(i));
-}
+    }
     return y;
   }
 };
@@ -90,7 +90,7 @@ struct promote_scalar_struct<T, Eigen::Matrix<S, -1, 1> > {
                                                                      x.cols());
     for (int i = 0; i < x.size(); ++i) {
       y(i) = promote_scalar_struct<T, S>::apply(x(i));
-}
+    }
     return y;
   }
 };

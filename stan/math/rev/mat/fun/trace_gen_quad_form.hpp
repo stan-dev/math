@@ -49,20 +49,20 @@ class trace_gen_quad_form_vari : public vari {
     Eigen::Matrix<double, Ra, Cb> BD;
     if (varB || varA) {
       BD.noalias() = B * D;
-}
+    }
     if (varB || varD) {
       AtB.noalias() = A.transpose() * B;
-}
+    }
 
     if (varB) {
       (*varB).adj() += adj * (A * BD + AtB * D.transpose());
-}
+    }
     if (varA) {
       (*varA).adj() += adj * (B * BD.transpose());
-}
+    }
     if (varD) {
       (*varD).adj() += adj * (B.transpose() * AtB);
-}
+    }
   }
 
  public:

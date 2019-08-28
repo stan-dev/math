@@ -29,7 +29,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
 
   if (size_zero(y, mu, sigma, alpha)) {
     return 0.0;
-}
+  }
 
   T_partials_return logp(0.0);
 
@@ -42,7 +42,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
 
   if (!include_summand<propto, T_y, T_loc, T_scale, T_shape>::value) {
     return 0.0;
-}
+  }
 
   operands_and_partials<T_y, T_loc, T_scale, T_shape> ops_partials(y, mu, sigma,
                                                                    alpha);
@@ -61,7 +61,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
     inv_sigma[i] = 1.0 / value_of(sigma_vec[i]);
     if (include_summand<propto, T_scale>::value) {
       log_sigma[i] = log(value_of(sigma_vec[i]));
-}
+    }
   }
 
   for (size_t n = 0; n < N; n++) {
@@ -76,16 +76,16 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
 
     if (include_summand<propto>::value) {
       logp -= 0.5 * log(2.0 * pi_dbl);
-}
+    }
     if (include_summand<propto, T_scale>::value) {
       logp -= log(sigma_dbl);
-}
+    }
     if (include_summand<propto, T_y, T_loc, T_scale>::value) {
       logp -= y_minus_mu_over_sigma * y_minus_mu_over_sigma / 2.0;
-}
+    }
     if (include_summand<propto, T_y, T_loc, T_scale, T_shape>::value) {
       logp += log(erfc(-alpha_dbl * y_minus_mu_over_sigma / std::sqrt(2.0)));
-}
+    }
 
     T_partials_return deriv_logerf
         = 2.0 / std::sqrt(pi_dbl)
@@ -96,23 +96,23 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
       ops_partials.edge1_.partials_[n]
           += -y_minus_mu_over_sigma / sigma_dbl
              + deriv_logerf * alpha_dbl / (sigma_dbl * std::sqrt(2.0));
-}
+    }
     if (!is_constant_all<T_loc>::value) {
       ops_partials.edge2_.partials_[n]
           += y_minus_mu_over_sigma / sigma_dbl
              + deriv_logerf * -alpha_dbl / (sigma_dbl * std::sqrt(2.0));
-}
+    }
     if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n]
           += -1.0 / sigma_dbl
              + y_minus_mu_over_sigma * y_minus_mu_over_sigma / sigma_dbl
              - deriv_logerf * y_minus_mu_over_sigma * alpha_dbl
                    / (sigma_dbl * std::sqrt(2.0));
-}
+    }
     if (!is_constant_all<T_shape>::value) {
       ops_partials.edge4_.partials_[n]
           += deriv_logerf * y_minus_mu_over_sigma / std::sqrt(2.0);
-}
+    }
   }
   return ops_partials.build(logp);
 }

@@ -26,7 +26,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lcdf(const T_n& n,
 
   if (size_zero(n, alpha, beta)) {
     return 0.0;
-}
+  }
 
   T_partials_return P(0.0);
 
@@ -51,7 +51,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lcdf(const T_n& n,
   for (size_t i = 0; i < stan::length(n); i++) {
     if (value_of(n_vec[i]) < 0) {
       return ops_partials.build(negative_infinity());
-}
+    }
   }
 
   VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
@@ -77,7 +77,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lcdf(const T_n& n,
     // The gradients are technically ill-defined, but treated as zero
     if (value_of(n_vec[i]) == std::numeric_limits<int>::max()) {
       return ops_partials.build(0.0);
-}
+    }
 
     const T_partials_return n_dbl = value_of(n_vec[i]);
     const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
@@ -102,7 +102,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lcdf(const T_n& n,
       ops_partials.edge2_.partials_[i] += d_dbl * pow(1 - p_dbl, n_dbl)
                                           * pow(p_dbl, alpha_dbl - 1)
                                           / beta_func / Pi;
-}
+    }
   }
 
   return ops_partials.build(P);

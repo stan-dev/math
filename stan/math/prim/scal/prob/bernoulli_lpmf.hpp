@@ -34,7 +34,7 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
 
   if (size_zero(n, theta)) {
     return 0.0;
-}
+  }
 
   T_partials_return logp(0.0);
 
@@ -46,7 +46,7 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
 
   if (!include_summand<propto, T_prob>::value) {
     return 0.0;
-}
+  }
 
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_prob> theta_vec(theta);
@@ -64,12 +64,12 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
       logp += N * log(theta_dbl);
       if (!is_constant_all<T_prob>::value) {
         ops_partials.edge1_.partials_[0] += N / theta_dbl;
-}
+      }
     } else if (sum == 0) {
       logp += N * log1m(theta_dbl);
       if (!is_constant_all<T_prob>::value) {
         ops_partials.edge1_.partials_[0] += N / (theta_dbl - 1);
-}
+      }
     } else {
       const T_partials_return log_theta = log(theta_dbl);
       const T_partials_return log1m_theta = log1m(theta_dbl);
@@ -91,14 +91,14 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
         logp += log(theta_dbl);
       } else {
         logp += log1m(theta_dbl);
-}
+      }
 
       if (!is_constant_all<T_prob>::value) {
         if (n_int == 1) {
           ops_partials.edge1_.partials_[n] += 1.0 / theta_dbl;
         } else {
           ops_partials.edge1_.partials_[n] += 1.0 / (theta_dbl - 1);
-}
+        }
       }
     }
   }

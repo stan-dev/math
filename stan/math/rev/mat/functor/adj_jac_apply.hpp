@@ -75,7 +75,7 @@ void build_y_adj(vari** y_vi, const std::array<int, size>& M,
   y_adj.resize(M[0]);
   for (size_t m = 0; m < y_adj.size(); ++m) {
     y_adj[m] = y_vi[m]->adj_;
-}
+  }
 }
 
 /**
@@ -92,7 +92,7 @@ void build_y_adj(vari** y_vi, const std::array<int, size>& M,
   y_adj.resize(M[0], M[1]);
   for (int m = 0; m < y_adj.size(); ++m) {
     y_adj(m) = y_vi[m]->adj_;
-}
+  }
 }
 
 /**
@@ -459,7 +459,7 @@ struct adj_jac_vari : public vari {
     if (is_var_[t]) {
       for (size_t n = 0; n < y_adj_jac.size(); ++n) {
         x_vis_[offsets_[t] + n]->adj_ += y_adj_jac[n];
-}
+      }
     }
 
     accumulate_adjoints(args...);

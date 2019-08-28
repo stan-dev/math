@@ -25,7 +25,7 @@ inline std::vector<double> value_of_rec(const std::vector<T>& x) {
   std::vector<double> result(size);
   for (size_t i = 0; i < size; i++) {
     result[i] = value_of_rec(x[i]);
-}
+  }
   return result;
 }
 

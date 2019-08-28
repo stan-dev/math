@@ -26,8 +26,8 @@ inline Eigen::Matrix<double, R, C> value_of_rec(
   for (int j = 0; j < M.cols(); j++) {
     for (int i = 0; i < M.rows(); i++) {
       Md(i, j) = value_of_rec(M(i, j));
-}
-}
+    }
+  }
   return Md;
 }
 

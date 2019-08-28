@@ -68,11 +68,11 @@ return_type_t<T_prob, T_prior_size> dirichlet_lpmf(const T_prob& theta,
 
   if (include_summand<propto, T_prior_size>::value) {
     lp += lgamma(alpha_dbl.sum()) - lgamma(alpha_dbl).sum();
-}
+  }
 
   if (include_summand<propto, T_prob, T_prior_size>::value) {
     lp += (theta_dbl.array().log() * (alpha_dbl.array() - 1.0)).sum();
-}
+  }
 
   T_partials_vec theta_deriv = (alpha_dbl.array() - 1.0) / theta_dbl.array();
 
@@ -83,11 +83,11 @@ return_type_t<T_prob, T_prior_size> dirichlet_lpmf(const T_prob& theta,
   operands_and_partials<T_prob, T_prior_size> ops_partials(theta, alpha);
   if (!is_constant_all<T_prob>::value) {
     ops_partials.edge1_.partials_ = theta_deriv;
-}
+  }
 
   if (!is_constant_all<T_prior_size>::value) {
     ops_partials.edge2_.partials_ = alpha_deriv;
-}
+  }
 
   return ops_partials.build(lp);
 }

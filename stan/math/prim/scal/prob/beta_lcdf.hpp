@@ -44,7 +44,7 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lcdf(
 
   if (size_zero(y, alpha, beta)) {
     return 0.0;
-}
+  }
 
   static const char* function = "beta_lcdf";
 
@@ -108,7 +108,7 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lcdf(
       ops_partials.edge1_.partials_[n] += pow(1 - y_dbl, beta_dbl - 1)
                                           * pow(y_dbl, alpha_dbl - 1)
                                           / betafunc_dbl / Pn;
-}
+    }
 
     T_partials_return g1 = 0;
     T_partials_return g2 = 0;
@@ -120,10 +120,10 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lcdf(
     }
     if (!is_constant_all<T_scale_succ>::value) {
       ops_partials.edge2_.partials_[n] += g1 / Pn;
-}
+    }
     if (!is_constant_all<T_scale_fail>::value) {
       ops_partials.edge3_.partials_[n] += g2 / Pn;
-}
+    }
   }
 
   return ops_partials.build(cdf_log);

@@ -70,13 +70,13 @@ inline void check_3F2_converges(const char* function, const T_a1& a1,
 
   if (is_polynomial && !is_undefined) {
     return;
-}
+  }
   if (fabs(z) < 1.0 && !is_undefined) {
     return;
-}
+  }
   if (fabs(z) == 1.0 && !is_undefined && b1 + b2 > a1 + a2 + a3) {
     return;
-}
+  }
 
   std::stringstream msg;
   msg << "called from function '" << function << "', "

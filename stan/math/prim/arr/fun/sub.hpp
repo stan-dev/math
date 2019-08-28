@@ -13,7 +13,7 @@ inline void sub(std::vector<double>& x, std::vector<double>& y,
   result.resize(x.size());
   for (size_t i = 0; i < x.size(); ++i) {
     result[i] = x[i] - y[i];
-}
+  }
 }
 
 }  // namespace math

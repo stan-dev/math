@@ -36,7 +36,7 @@ inline double log1m_inv_logit(double u) {
   using std::exp;
   if (u > 0.0) {
     return -u - log1p(exp(-u));  // prevent underflow
-}
+  }
   return -log1p(exp(u));
 }
 

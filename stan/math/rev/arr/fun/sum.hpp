@@ -20,7 +20,7 @@ class sum_v_vari : public vari {
     double result = 0;
     for (auto x : v) {
       result += x.val();
-}
+    }
     return result;
   }
 
@@ -35,7 +35,7 @@ class sum_v_vari : public vari {
         length_(v1.size()) {
     for (size_t i = 0; i < length_; i++) {
       v_[i] = v1[i].vi_;
-}
+    }
   }
 
   virtual void chain() {
@@ -54,7 +54,7 @@ class sum_v_vari : public vari {
 inline var sum(const std::vector<var>& m) {
   if (m.empty()) {
     return 0.0;
-}
+  }
   return var(new sum_v_vari(m));
 }
 
