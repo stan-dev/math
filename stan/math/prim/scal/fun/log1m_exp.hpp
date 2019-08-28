@@ -52,7 +52,7 @@ inline double log1m_exp(double a) {
     return log(-expm1(a));  // 0.693147 ~= log(2)
   } else {
     return log1m(exp(a));
-}
+  }
 }
 
 }  // namespace math

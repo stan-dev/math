@@ -142,7 +142,7 @@ struct apply_scalar_unary<F, std::vector<T> > {
     return_t fx(x.size());
     for (size_t i = 0; i < x.size(); ++i) {
       fx[i] = apply_scalar_unary<F, T>::apply(x[i]);
-}
+    }
     return fx;
   }
 };

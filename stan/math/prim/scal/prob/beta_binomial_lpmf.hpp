@@ -45,7 +45,7 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
 
   if (size_zero(n, N, alpha, beta)) {
     return 0.0;
-}
+  }
 
   T_partials_return logp(0.0);
   check_nonnegative(function, "Population size parameter", N);
@@ -58,7 +58,7 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
 
   if (!include_summand<propto, T_size1, T_size2>::value) {
     return 0.0;
-}
+  }
 
   operands_and_partials<T_size1, T_size2> ops_partials(alpha, beta);
 
@@ -71,7 +71,7 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
   for (size_t i = 0; i < size; i++) {
     if (n_vec[i] < 0 || n_vec[i] > N_vec[i]) {
       return ops_partials.build(LOG_ZERO);
-}
+    }
   }
 
   VectorBuilder<include_summand<propto>::value, T_partials_return, T_n, T_N>
@@ -79,8 +79,8 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
   for (size_t i = 0; i < max_size(N, n); i++) {
     if (include_summand<propto>::value) {
       normalizing_constant[i] = binomial_coefficient_log(N_vec[i], n_vec[i]);
-}
-}
+    }
+  }
 
   VectorBuilder<include_summand<propto, T_size1, T_size2>::value,
                 T_partials_return, T_n, T_N, T_size1, T_size2>
@@ -89,8 +89,8 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
     if (include_summand<propto, T_size1, T_size2>::value) {
       lbeta_numerator[i] = lbeta(n_vec[i] + value_of(alpha_vec[i]),
                                  N_vec[i] - n_vec[i] + value_of(beta_vec[i]));
-}
-}
+    }
+  }
 
   VectorBuilder<include_summand<propto, T_size1, T_size2>::value,
                 T_partials_return, T_size1, T_size2>
@@ -99,8 +99,8 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
     if (include_summand<propto, T_size1, T_size2>::value) {
       lbeta_denominator[i]
           = lbeta(value_of(alpha_vec[i]), value_of(beta_vec[i]));
-}
-}
+    }
+  }
 
   VectorBuilder<!is_constant_all<T_size1>::value, T_partials_return, T_n,
                 T_size1>
@@ -108,8 +108,8 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
   for (size_t i = 0; i < max_size(n, alpha); i++) {
     if (!is_constant_all<T_size1>::value) {
       digamma_n_plus_alpha[i] = digamma(n_vec[i] + value_of(alpha_vec[i]));
-}
-}
+    }
+  }
 
   VectorBuilder<!is_constant_all<T_size1, T_size2>::value, T_partials_return,
                 T_N, T_size1, T_size2>
@@ -118,8 +118,8 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
     if (!is_constant_all<T_size1, T_size2>::value) {
       digamma_N_plus_alpha_plus_beta[i]
           = digamma(N_vec[i] + value_of(alpha_vec[i]) + value_of(beta_vec[i]));
-}
-}
+    }
+  }
 
   VectorBuilder<!is_constant_all<T_size1, T_size2>::value, T_partials_return,
                 T_size1, T_size2>
@@ -128,44 +128,44 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
     if (!is_constant_all<T_size1, T_size2>::value) {
       digamma_alpha_plus_beta[i]
           = digamma(value_of(alpha_vec[i]) + value_of(beta_vec[i]));
-}
-}
+    }
+  }
 
   VectorBuilder<!is_constant_all<T_size1>::value, T_partials_return, T_size1>
       digamma_alpha(length(alpha));
   for (size_t i = 0; i < length(alpha); i++) {
     if (!is_constant_all<T_size1>::value) {
       digamma_alpha[i] = digamma(value_of(alpha_vec[i]));
-}
-}
+    }
+  }
 
   VectorBuilder<!is_constant_all<T_size2>::value, T_partials_return, T_size2>
       digamma_beta(length(beta));
   for (size_t i = 0; i < length(beta); i++) {
     if (!is_constant_all<T_size2>::value) {
       digamma_beta[i] = digamma(value_of(beta_vec[i]));
-}
-}
+    }
+  }
 
   for (size_t i = 0; i < size; i++) {
     if (include_summand<propto>::value) {
       logp += normalizing_constant[i];
-}
+    }
     if (include_summand<propto, T_size1, T_size2>::value) {
       logp += lbeta_numerator[i] - lbeta_denominator[i];
-}
+    }
 
     if (!is_constant_all<T_size1>::value) {
       ops_partials.edge1_.partials_[i]
           += digamma_n_plus_alpha[i] - digamma_N_plus_alpha_plus_beta[i]
              + digamma_alpha_plus_beta[i] - digamma_alpha[i];
-}
+    }
     if (!is_constant_all<T_size2>::value) {
       ops_partials.edge2_.partials_[i]
           += digamma(value_of(N_vec[i] - n_vec[i] + beta_vec[i]))
              - digamma_N_plus_alpha_plus_beta[i] + digamma_alpha_plus_beta[i]
              - digamma_beta[i];
-}
+    }
   }
   return ops_partials.build(logp);
 }

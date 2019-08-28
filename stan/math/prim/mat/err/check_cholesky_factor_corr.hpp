@@ -35,7 +35,7 @@ void check_cholesky_factor_corr(
   check_lower_triangular(function, name, y);
   for (int i = 0; i < y.rows(); ++i) {
     check_positive(function, name, y(i, i));
-}
+  }
   for (int i = 0; i < y.rows(); ++i) {
     Eigen::Matrix<T_y, Eigen::Dynamic, 1> y_i = y.row(i).transpose();
     check_unit_vector(function, name, y_i);

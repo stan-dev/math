@@ -30,11 +30,11 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> ordered_constrain(
   Matrix<T, Dynamic, 1> y(k);
   if (k == 0) {
     return y;
-}
+  }
   y[0] = x[0];
   for (size_type i = 1; i < k; ++i) {
     y[i] = y[i - 1] + exp(x[i]);
-}
+  }
   return y;
 }
 
@@ -60,7 +60,7 @@ inline Eigen::Matrix<T, Eigen::Dynamic, 1> ordered_constrain(
 
   for (size_type i = 1; i < x.size(); ++i) {
     lp += x(i);
-}
+  }
   return ordered_constrain(x);
 }
 

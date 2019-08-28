@@ -27,7 +27,7 @@ inline void print_stack(std::ostream& o) {
       << " : "
       << (static_cast<vari*>(ChainableStack::instance_->var_stack_[i]))->adj_
       << std::endl;
-}
+  }
 }
 
 }  // namespace math

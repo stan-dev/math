@@ -43,11 +43,11 @@ struct map_rect_reduce<F, var, var> {
         fx_v(i).grad();
         for (size_type j = 0; j < num_shared_params; ++j) {
           out(1 + j, i) = shared_params_v(j).vi_->adj_;
-}
+        }
         for (size_type j = 0; j < num_job_specific_params; ++j) {
           out(1 + num_shared_params + j, i)
               = job_specific_params_v(j).vi_->adj_;
-}
+        }
       }
       recover_memory_nested();
     } catch (const std::exception& e) {
@@ -84,7 +84,7 @@ struct map_rect_reduce<F, double, var> {
         fx_v(i).grad();
         for (size_type j = 0; j < num_job_specific_params; ++j) {
           out(1 + j, i) = job_specific_params_v(j).vi_->adj_;
-}
+        }
       }
       recover_memory_nested();
     } catch (const std::exception& e) {
@@ -121,7 +121,7 @@ struct map_rect_reduce<F, var, double> {
         fx_v(i).grad();
         for (size_type j = 0; j < num_shared_params; ++j) {
           out(1 + j, i) = shared_params_v(j).vi_->adj_;
-}
+        }
       }
       recover_memory_nested();
     } catch (const std::exception& e) {

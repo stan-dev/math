@@ -27,7 +27,7 @@ return_type_t<T_y, T_loc, T_scale> normal_lcdf(const T_y& y, const T_loc& mu,
   T_partials_return cdf_log(0.0);
   if (size_zero(y, mu, sigma)) {
     return cdf_log;
-}
+  }
 
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
@@ -61,7 +61,7 @@ return_type_t<T_y, T_loc, T_scale> normal_lcdf(const T_y& y, const T_loc& mu,
       one_p_erf = 2.0;
     } else {
       one_p_erf = 1.0 + erf(scaled_diff);
-}
+    }
 
     cdf_log += LOG_HALF + log(one_p_erf);
 
@@ -73,14 +73,14 @@ return_type_t<T_y, T_loc, T_scale> normal_lcdf(const T_y& y, const T_loc& mu,
                       / one_p_erf;
       if (!is_constant_all<T_y>::value) {
         ops_partials.edge1_.partials_[n] += rep_deriv_div_sigma;
-}
+      }
       if (!is_constant_all<T_loc>::value) {
         ops_partials.edge2_.partials_[n] -= rep_deriv_div_sigma;
-}
+      }
       if (!is_constant_all<T_scale>::value) {
         ops_partials.edge3_.partials_[n]
             -= rep_deriv_div_sigma * scaled_diff * SQRT_2;
-}
+      }
     }
   }
   return ops_partials.build(cdf_log);

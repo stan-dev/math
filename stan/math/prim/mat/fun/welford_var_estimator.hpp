@@ -35,7 +35,7 @@ class welford_var_estimator {
   void sample_variance(Eigen::VectorXd& var) {
     if (num_samples_ > 1) {
       var = m2_ / (num_samples_ - 1.0);
-}
+    }
   }
 
  protected:

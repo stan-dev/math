@@ -83,7 +83,7 @@ multi_student_t_rng(
     Eigen::VectorXd z(S.cols());
     for (int i = 0; i < S.cols(); i++) {
       z(i) = std::sqrt(w) * std_normal_rng();
-}
+    }
 
     output[n] = Eigen::VectorXd(mu_vec[n]) + llt_of_S.matrixL() * z;
   }

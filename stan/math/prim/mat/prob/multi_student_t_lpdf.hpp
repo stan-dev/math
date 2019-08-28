@@ -40,7 +40,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_lpdf(
 
   if (is_inf(nu)) {
     return multi_normal_log(y, mu, Sigma);
-}
+  }
 
   using Eigen::Matrix;
   using std::vector;
@@ -49,7 +49,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_lpdf(
   size_t number_of_mu = length_mvt(mu);
   if (number_of_y == 0 || number_of_mu == 0) {
     return 0;
-}
+  }
   check_consistent_sizes_mvt(function, "y", y, "mu", mu);
 
   vector_seq_view<T_y> y_vec(y);
@@ -106,7 +106,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_lpdf(
 
   if (size_y == 0) {
     return 0;
-}
+  }
 
   lp_type lp(0);
 
@@ -118,7 +118,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_lpdf(
 
   if (include_summand<propto>::value) {
     lp -= (0.5 * size_y) * LOG_PI * size_vec;
-}
+  }
 
   using Eigen::Array;
 
@@ -133,7 +133,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_lpdf(
           size_y);
       for (int j = 0; j < size_y; j++) {
         y_minus_mu(j) = y_vec[i](j) - mu_vec[i](j);
-}
+      }
       sum_lp_vec
           += log1p(trace_inv_quad_form_ldlt(ldlt_Sigma, y_minus_mu) / nu);
     }

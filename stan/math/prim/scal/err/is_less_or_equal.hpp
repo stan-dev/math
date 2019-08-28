@@ -24,7 +24,7 @@ inline bool is_less_or_equal(const T_y& y, const T_high& high) {
   for (size_t n = 0; n < stan::length(high); n++) {
     if (!(stan::get(y, n) <= high_vec[n])) {
       return false;
-}
+    }
   }
   return true;
 }

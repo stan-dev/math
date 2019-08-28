@@ -111,7 +111,7 @@ class ops_partials_edge<double, std::vector<Eigen::Matrix<var, R, C> > > {
   int size() {
     if (unlikely(this->operands_.size() == 0)) {
       return 0;
-}
+    }
     return this->operands_.size() * this->operands_[0].size();
   }
 };
@@ -153,7 +153,7 @@ class ops_partials_edge<double, std::vector<std::vector<var> > > {
   int size() {
     if (unlikely(this->operands_.size() == 0)) {
       return 0;
-}
+    }
     return this->operands_.size() * this->operands_[0].size();
   }
 };

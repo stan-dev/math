@@ -28,14 +28,14 @@ Eigen::Array<T, Eigen::Dynamic, 1> make_nu(const T& eta, size_t K) {
   T alpha2 = 2.0 * alpha;
   for (size_type j = 0; j < (K - 1); ++j) {
     nu(j) = alpha2;
-}
+  }
   size_t counter = K - 1;
   for (size_type i = 1; i < (K - 1); ++i) {
     alpha -= 0.5;
     alpha2 = 2.0 * alpha;
     for (size_type j = i + 1; j < K; ++j, ++counter) {
       nu(counter) = alpha2;
-}
+    }
   }
   return nu;
 }

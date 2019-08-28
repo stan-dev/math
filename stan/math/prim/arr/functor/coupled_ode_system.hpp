@@ -116,7 +116,7 @@ class coupled_ode_system<F, double, double> {
     std::vector<double> state(size_, 0.0);
     for (size_t n = 0; n < N_; n++) {
       state[n] = y0_dbl_[n];
-}
+    }
     return state;
   }
 };

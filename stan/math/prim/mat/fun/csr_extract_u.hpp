@@ -26,7 +26,7 @@ const std::vector<int> csr_extract_u(
   std::vector<int> u(A.outerSize() + 1);  // last entry is garbage.
   for (int nze = 0; nze <= A.outerSize(); ++nze) {
     u[nze] = *(A.outerIndexPtr() + nze) + stan::error_index::value;
-}
+  }
   return u;
 }
 

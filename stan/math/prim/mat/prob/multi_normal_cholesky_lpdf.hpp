@@ -55,7 +55,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
   size_t number_of_mu = length_mvt(mu);
   if (number_of_y == 0 || number_of_mu == 0) {
     return 0;
-}
+  }
   vector_seq_view<T_y> y_vec(y);
   vector_seq_view<T_loc> mu_vec(mu);
   const size_t size_vec = max_size_mvt(y, mu);
@@ -105,14 +105,14 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
 
   if (unlikely(size_y == 0)) {
     return T_return(0);
-}
+  }
 
   T_partials_return logp(0);
   operands_and_partials<T_y, T_loc, T_covar> ops_partials(y, mu, L);
 
   if (include_summand<propto>::value) {
     logp += NEG_LOG_SQRT_TWO_PI * size_y * size_vec;
-}
+  }
 
   const matrix_partials_t inv_L_dbl
       = mdivide_left_tri<Eigen::Lower>(value_of(L));
@@ -122,7 +122,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
       vector_partials_t y_minus_mu_dbl(size_y);
       for (int j = 0; j < size_y; j++) {
         y_minus_mu_dbl(j) = value_of(y_vec[i](j)) - value_of(mu_vec[i](j));
-}
+      }
 
       const row_vector_partials_t half
           = (inv_L_dbl.template triangularView<Eigen::Lower>() * y_minus_mu_dbl)
@@ -136,12 +136,12 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
       if (!is_constant_all<T_y>::value) {
         for (int j = 0; j < size_y; j++) {
           ops_partials.edge1_.partials_vec_[i](j) -= scaled_diff(j);
-}
+        }
       }
       if (!is_constant_all<T_loc>::value) {
         for (int j = 0; j < size_y; j++) {
           ops_partials.edge2_.partials_vec_[i](j) += scaled_diff(j);
-}
+        }
       }
       if (!is_constant_all<T_covar>::value) {
         ops_partials.edge3_.partials_ += scaled_diff * half;

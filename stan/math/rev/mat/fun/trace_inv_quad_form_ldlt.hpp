@@ -26,7 +26,7 @@ class trace_inv_quad_form_ldlt_impl : public chainable_alloc {
       C_.noalias() = Bd.transpose() * AinvB_;
     } else {
       value_ = (Bd.transpose() * AinvB_).trace();
-}
+    }
   }
   inline void initializeB(const Eigen::Matrix<double, R3, C3> &B, bool haveD) {
     AinvB_ = ldlt_.solve(B);
@@ -34,7 +34,7 @@ class trace_inv_quad_form_ldlt_impl : public chainable_alloc {
       C_.noalias() = B.transpose() * AinvB_;
     } else {
       value_ = (B.transpose() * AinvB_).trace();
-}
+    }
   }
 
   template <int R1, int C1>
@@ -96,7 +96,7 @@ class trace_inv_quad_form_ldlt_vari : public vari {
             * (impl->AinvB_ * impl->D_.transpose() * impl->AinvB_.transpose());
     } else {
       aA.noalias() = -adj * (impl->AinvB_ * impl->AinvB_.transpose());
-}
+    }
 
     impl->ldlt_.alloc_->variA_.adj() += aA;
   }
@@ -109,7 +109,7 @@ class trace_inv_quad_form_ldlt_vari : public vari {
       aB.noalias() = adj * impl->AinvB_ * (impl->D_ + impl->D_.transpose());
     } else {
       aB.noalias() = 2 * adj * impl->AinvB_;
-}
+    }
 
     impl->variB_.adj() += aB;
   }
@@ -130,7 +130,7 @@ class trace_inv_quad_form_ldlt_vari : public vari {
 
     if (impl_->Dtype_ == 1) {
       impl_->variD_.adj() += adj_ * impl_->C_;
-}
+    }
   }
 
   trace_inv_quad_form_ldlt_impl<T2, R2, C2, T3, R3, C3> *impl_;

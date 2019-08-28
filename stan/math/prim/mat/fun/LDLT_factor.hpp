@@ -83,16 +83,16 @@ class LDLT_factor {
   inline bool success() const {
     if (ldltP_->info() != Eigen::Success) {
       return false;
-}
+    }
     if (!(ldltP_->isPositive())) {
       return false;
-}
+    }
     vector_t ldltP_diag(ldltP_->vectorD());
     for (int i = 0; i < ldltP_diag.size(); ++i) {
       if (ldltP_diag(i) <= 0 || is_nan(ldltP_diag(i))) {
         return false;
-}
-}
+      }
+    }
     return true;
   }
 

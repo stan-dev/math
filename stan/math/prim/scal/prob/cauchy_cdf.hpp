@@ -36,7 +36,7 @@ return_type_t<T_y, T_loc, T_scale> cauchy_cdf(const T_y& y, const T_loc& mu,
 
   if (size_zero(y, mu, sigma)) {
     return 1.0;
-}
+  }
 
   static const char* function = "cauchy_cdf";
 
@@ -60,7 +60,7 @@ return_type_t<T_y, T_loc, T_scale> cauchy_cdf(const T_y& y, const T_loc& mu,
   for (size_t i = 0; i < stan::length(y); i++) {
     if (value_of(y_vec[i]) == -std::numeric_limits<double>::infinity()) {
       return ops_partials.build(0.0);
-}
+    }
   }
 
   using std::atan;
@@ -85,31 +85,31 @@ return_type_t<T_y, T_loc, T_scale> cauchy_cdf(const T_y& y, const T_loc& mu,
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n]
           += sigma_inv_dbl / (pi() * (1.0 + z * z) * Pn);
-}
+    }
     if (!is_constant_all<T_loc>::value) {
       ops_partials.edge2_.partials_[n]
           += -sigma_inv_dbl / (pi() * (1.0 + z * z) * Pn);
-}
+    }
     if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n]
           += -z * sigma_inv_dbl / (pi() * (1.0 + z * z) * Pn);
-}
+    }
   }
 
   if (!is_constant_all<T_y>::value) {
     for (size_t n = 0; n < stan::length(y); ++n) {
       ops_partials.edge1_.partials_[n] *= P;
-}
+    }
   }
   if (!is_constant_all<T_loc>::value) {
     for (size_t n = 0; n < stan::length(mu); ++n) {
       ops_partials.edge2_.partials_[n] *= P;
-}
+    }
   }
   if (!is_constant_all<T_scale>::value) {
     for (size_t n = 0; n < stan::length(sigma); ++n) {
       ops_partials.edge3_.partials_[n] *= P;
-}
+    }
   }
   return ops_partials.build(P);
 }

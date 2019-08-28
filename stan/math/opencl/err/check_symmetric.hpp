@@ -27,7 +27,7 @@ inline void check_symmetric(const char* function, const char* name,
                             const matrix_cl<T>& y) {
   if (y.size() == 0) {
     return;
-}
+  }
   check_square(function, name, y);
   try {
     int symmetric_flag = 1;

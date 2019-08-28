@@ -18,7 +18,7 @@ inline std::vector<T> to_array_1d(const Eigen::Matrix<T, R, C>& matrix) {
   std::vector<T> result(size);
   for (int i = 0; i < size; i++) {
     result[i] = datap[i];
-}
+  }
   return result;
 }
 
@@ -36,13 +36,13 @@ inline std::vector<typename scalar_type<T>::type> to_array_1d(
   size_t size2 = 0;
   if (size1 != 0) {
     size2 = x[0].size();
-}
+  }
   std::vector<T> y(size1 * size2);
   for (size_t i = 0, ij = 0; i < size1; i++) {
     for (size_t j = 0; j < size2; j++, ij++) {
       y[ij] = x[i][j];
-}
-}
+    }
+  }
   return to_array_1d(y);
 }
 

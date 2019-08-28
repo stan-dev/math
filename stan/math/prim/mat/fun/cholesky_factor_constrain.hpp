@@ -40,18 +40,18 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_factor_constrain(
   for (int m = 0; m < N; ++m) {
     for (int n = 0; n < m; ++n) {
       y(m, n) = x(pos++);
-}
+    }
     y(m, m) = exp(x(pos++));
     for (int n = m + 1; n < N; ++n) {
       y(m, n) = zero;
-}
+    }
   }
 
   for (int m = N; m < M; ++m) {
     for (int n = 0; n < N; ++n) {
       y(m, n) = x(pos++);
-}
-}
+    }
+  }
   return y;
 }
 

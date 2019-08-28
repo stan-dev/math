@@ -56,7 +56,7 @@ inline var fabs(const var& a) {
     return var(new vari(0));
   } else {
     return var(new precomp_v_vari(NOT_A_NUMBER, a.vi_, NOT_A_NUMBER));
-}
+  }
 }
 
 }  // namespace math

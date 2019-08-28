@@ -39,7 +39,7 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
 
   if (size_zero(y, mu, sigma)) {
     return 0.0;
-}
+  }
 
   T_partials_return logp(0.0);
   check_finite(function, "Random variable", y);
@@ -50,7 +50,7 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
 
   if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
     return 0.0;
-}
+  }
 
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_loc> mu_vec(mu);
@@ -70,13 +70,13 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
     const T_partials_return sigma_dbl = value_of(sigma_vec[i]);
     if (include_summand<propto, T_y, T_loc, T_scale>::value) {
       inv_sigma[i] = 1.0 / sigma_dbl;
-}
+    }
     if (include_summand<propto, T_scale>::value) {
       log_sigma[i] = log(value_of(sigma_vec[i]));
-}
+    }
     if (!is_constant_all<T_scale>::value) {
       inv_sigma_squared[i] = inv_sigma[i] * inv_sigma[i];
-}
+    }
   }
 
   for (size_t n = 0; n < N; n++) {
@@ -88,18 +88,18 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
 
     if (include_summand<propto>::value) {
       logp += NEG_LOG_TWO;
-}
+    }
     if (include_summand<propto, T_scale>::value) {
       logp -= log_sigma[n];
-}
+    }
     if (include_summand<propto, T_y, T_loc, T_scale>::value) {
       logp -= fabs_y_m_mu * inv_sigma[n];
-}
+    }
 
     T_partials_return sign_y_m_mu_times_inv_sigma(0);
     if (!is_constant_all<T_y, T_loc>::value) {
       sign_y_m_mu_times_inv_sigma = sign(y_m_mu) * inv_sigma[n];
-}
+    }
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] -= sign_y_m_mu_times_inv_sigma;
     }
@@ -109,7 +109,7 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
     if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n]
           += -inv_sigma[n] + fabs_y_m_mu * inv_sigma_squared[n];
-}
+    }
   }
   return ops_partials.build(logp);
 }

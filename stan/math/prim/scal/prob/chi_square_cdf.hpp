@@ -40,7 +40,7 @@ return_type_t<T_y, T_dof> chi_square_cdf(const T_y& y, const T_dof& nu) {
 
   if (size_zero(y, nu)) {
     return cdf;
-}
+  }
 
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
@@ -59,7 +59,7 @@ return_type_t<T_y, T_dof> chi_square_cdf(const T_y& y, const T_dof& nu) {
   for (size_t i = 0; i < stan::length(y); i++) {
     if (value_of(y_vec[i]) == 0) {
       return ops_partials.build(0.0);
-}
+    }
   }
 
   using std::exp;
@@ -83,7 +83,7 @@ return_type_t<T_y, T_dof> chi_square_cdf(const T_y& y, const T_dof& nu) {
     // The gradients are technically ill-defined, but treated as zero
     if (value_of(y_vec[n]) == std::numeric_limits<double>::infinity()) {
       continue;
-}
+    }
 
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return alpha_dbl = value_of(nu_vec[n]) * 0.5;
@@ -97,25 +97,25 @@ return_type_t<T_y, T_dof> chi_square_cdf(const T_y& y, const T_dof& nu) {
       ops_partials.edge1_.partials_[n] += beta_dbl * exp(-beta_dbl * y_dbl)
                                           * pow(beta_dbl * y_dbl, alpha_dbl - 1)
                                           / tgamma(alpha_dbl) / Pn;
-}
+    }
     if (!is_constant_all<T_dof>::value) {
       ops_partials.edge2_.partials_[n]
           -= 0.5
              * grad_reg_inc_gamma(alpha_dbl, beta_dbl * y_dbl, gamma_vec[n],
                                   digamma_vec[n])
              / Pn;
-}
+    }
   }
 
   if (!is_constant_all<T_y>::value) {
     for (size_t n = 0; n < stan::length(y); ++n) {
       ops_partials.edge1_.partials_[n] *= cdf;
-}
+    }
   }
   if (!is_constant_all<T_dof>::value) {
     for (size_t n = 0; n < stan::length(nu); ++n) {
       ops_partials.edge2_.partials_[n] *= cdf;
-}
+    }
   }
   return ops_partials.build(cdf);
 }

@@ -46,7 +46,7 @@ return_type_t<T_y, T_dof> inv_chi_square_lpdf(const T_y& y, const T_dof& nu) {
                          "Degrees of freedom parameter", nu);
   if (size_zero(y, nu)) {
     return 0;
-}
+  }
 
   T_partials_return logp(0);
 
@@ -57,8 +57,8 @@ return_type_t<T_y, T_dof> inv_chi_square_lpdf(const T_y& y, const T_dof& nu) {
   for (size_t n = 0; n < length(y); n++) {
     if (value_of(y_vec[n]) <= 0) {
       return LOG_ZERO;
-}
-}
+    }
+  }
 
   using std::log;
 
@@ -68,16 +68,16 @@ return_type_t<T_y, T_dof> inv_chi_square_lpdf(const T_y& y, const T_dof& nu) {
   for (size_t i = 0; i < length(y); i++) {
     if (include_summand<propto, T_y, T_dof>::value) {
       log_y[i] = log(value_of(y_vec[i]));
-}
-}
+    }
+  }
 
   VectorBuilder<include_summand<propto, T_y>::value, T_partials_return, T_y>
       inv_y(length(y));
   for (size_t i = 0; i < length(y); i++) {
     if (include_summand<propto, T_y>::value) {
       inv_y[i] = 1.0 / value_of(y_vec[i]);
-}
-}
+    }
+  }
 
   VectorBuilder<include_summand<propto, T_dof>::value, T_partials_return, T_dof>
       lgamma_half_nu(length(nu));
@@ -87,10 +87,10 @@ return_type_t<T_y, T_dof> inv_chi_square_lpdf(const T_y& y, const T_dof& nu) {
     T_partials_return half_nu = 0.5 * value_of(nu_vec[i]);
     if (include_summand<propto, T_dof>::value) {
       lgamma_half_nu[i] = lgamma(half_nu);
-}
+    }
     if (!is_constant_all<T_dof>::value) {
       digamma_half_nu_over_two[i] = digamma(half_nu) * 0.5;
-}
+    }
   }
 
   operands_and_partials<T_y, T_dof> ops_partials(y, nu);
@@ -100,13 +100,13 @@ return_type_t<T_y, T_dof> inv_chi_square_lpdf(const T_y& y, const T_dof& nu) {
 
     if (include_summand<propto, T_dof>::value) {
       logp += nu_dbl * NEG_LOG_TWO_OVER_TWO - lgamma_half_nu[n];
-}
+    }
     if (include_summand<propto, T_y, T_dof>::value) {
       logp -= (half_nu + 1.0) * log_y[n];
-}
+    }
     if (include_summand<propto, T_y>::value) {
       logp -= 0.5 * inv_y[n];
-}
+    }
 
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n]

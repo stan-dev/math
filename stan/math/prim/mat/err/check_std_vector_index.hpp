@@ -28,7 +28,7 @@ inline void check_std_vector_index(const char* function, const char* name,
   if (i >= static_cast<int>(stan::error_index::value)
       && i < static_cast<int>(y.size() + stan::error_index::value)) {
     return;
-}
+  }
 
   std::stringstream msg;
   msg << " for " << name;

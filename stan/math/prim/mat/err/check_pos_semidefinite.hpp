@@ -34,7 +34,7 @@ inline void check_pos_semidefinite(
 
   if (y.rows() == 1 && !(y(0, 0) >= 0.0)) {
     domain_error(function, name, "is not positive semi-definite.", "");
-}
+  }
 
   using Eigen::Dynamic;
   using Eigen::LDLT;
@@ -43,7 +43,7 @@ inline void check_pos_semidefinite(
   if (cholesky.info() != Eigen::Success
       || (cholesky.vectorD().array() < 0.0).any()) {
     domain_error(function, name, "is not positive semi-definite.", "");
-}
+  }
   check_not_nan(function, name, y);
 }
 
@@ -63,7 +63,7 @@ inline void check_pos_semidefinite(const char* function, const char* name,
   if (cholesky.info() != Eigen::Success
       || (cholesky.vectorD().array() < 0.0).any()) {
     domain_error(function, name, "is not positive semi-definite.", "");
-}
+  }
 }
 
 }  // namespace math

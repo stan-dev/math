@@ -51,14 +51,14 @@ class mdivide_left_tri_vv_vari : public vari {
       for (size_type j = 0; j < M_; j++) {
         for (size_type i = j; i < M_; i++) {
           variRefA_[pos++] = A(i, j).vi_;
-}
-}
+        }
+      }
     } else if (TriView == Eigen::Upper) {
       for (size_type j = 0; j < M_; j++) {
         for (size_type i = 0; i < j + 1; i++) {
           variRefA_[pos++] = A(i, j).vi_;
-}
-}
+        }
+      }
     }
 
     Map<matrix_d> c_map(C_, M_, N_);
@@ -113,14 +113,14 @@ class mdivide_left_tri_vv_vari : public vari {
       for (size_type j = 0; j < adjA.cols(); j++) {
         for (size_type i = j; i < adjA.rows(); i++) {
           variRefA_[pos++]->adj_ += adjA(i, j);
-}
-}
+        }
+      }
     } else if (TriView == Eigen::Upper) {
       for (size_type j = 0; j < adjA.cols(); j++) {
         for (size_type i = 0; i < j + 1; i++) {
           variRefA_[pos++]->adj_ += adjA(i, j);
-}
-}
+        }
+      }
     }
     Map<matrix_vi>(variRefB_, M_, N_).adj() += adjB;
   }
@@ -236,14 +236,14 @@ class mdivide_left_tri_vd_vari : public vari {
       for (size_type j = 0; j < M_; j++) {
         for (size_type i = j; i < M_; i++) {
           variRefA_[pos++] = A(i, j).vi_;
-}
-}
+        }
+      }
     } else if (TriView == Eigen::Upper) {
       for (size_type j = 0; j < M_; j++) {
         for (size_type i = 0; i < j + 1; i++) {
           variRefA_[pos++] = A(i, j).vi_;
-}
-}
+        }
+      }
     }
     Map<matrix_d> Ad(A_, M_, M_);
     Map<matrix_d> Cd(C_, M_, N_);
@@ -296,14 +296,14 @@ class mdivide_left_tri_vd_vari : public vari {
       for (size_type j = 0; j < adjA.cols(); j++) {
         for (size_type i = j; i < adjA.rows(); i++) {
           variRefA_[pos++]->adj_ += adjA(i, j);
-}
-}
+        }
+      }
     } else if (TriView == Eigen::Upper) {
       for (size_type j = 0; j < adjA.cols(); j++) {
         for (size_type i = 0; i < j + 1; i++) {
           variRefA_[pos++]->adj_ += adjA(i, j);
-}
-}
+        }
+      }
     }
   }
 };

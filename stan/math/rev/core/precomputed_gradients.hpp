@@ -60,7 +60,7 @@ class precomputed_gradients_vari : public vari {
                            "gradients", gradients);
     for (size_t i = 0; i < vars.size(); ++i) {
       varis_[i] = vars[i].vi_;
-}
+    }
     std::copy(gradients.begin(), gradients.end(), gradients_);
   }
 
@@ -71,7 +71,7 @@ class precomputed_gradients_vari : public vari {
   void chain() {
     for (size_t i = 0; i < size_; ++i) {
       varis_[i]->adj_ += adj_ * gradients_[i];
-}
+    }
   }
 };
 

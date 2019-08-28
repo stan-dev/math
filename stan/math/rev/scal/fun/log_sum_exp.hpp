@@ -30,7 +30,7 @@ class log_sum_exp_vd_vari : public op_vd_vari {
       avi_->adj_ += adj_;
     } else {
       avi_->adj_ += adj_ * calculate_chain(avi_->val_, val_);
-}
+    }
   }
 };
 class log_sum_exp_dv_vari : public op_dv_vari {
@@ -42,7 +42,7 @@ class log_sum_exp_dv_vari : public op_dv_vari {
       bvi_->adj_ += adj_;
     } else {
       bvi_->adj_ += adj_ * calculate_chain(bvi_->val_, val_);
-}
+    }
   }
 };
 

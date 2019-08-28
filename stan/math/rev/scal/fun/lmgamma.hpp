@@ -18,7 +18,7 @@ class lmgamma_dv_vari : public op_dv_vari {
     double deriv = 0;
     for (int i = 1; i < ad_ + 1; i++) {
       deriv += digamma(bvi_->val_ + (1.0 - i) / 2.0);
-}
+    }
     bvi_->adj_ += adj_ * deriv;
   }
 };

@@ -41,21 +41,21 @@ T inc_beta_dda(T a, T b, T z, T digamma_a, T digamma_ab) {
     if ((0.1 < z && z <= 0.75 && b > 500) || (0.01 < z && z <= 0.1 && b > 2500)
         || (0.001 < z && z <= 0.01 && b > 1e5)) {
       return -inc_beta_ddb(b, a, 1 - z, digamma_a, digamma_ab);
-}
-}
+    }
+  }
 
   if (z > 0.75 && a < 500) {
     return -inc_beta_ddb(b, a, 1 - z, digamma_a, digamma_ab);
-}
+  }
   if (z > 0.9 && a < 2500) {
     return -inc_beta_ddb(b, a, 1 - z, digamma_a, digamma_ab);
-}
+  }
   if (z > 0.99 && a < 1e5) {
     return -inc_beta_ddb(b, a, 1 - z, digamma_a, digamma_ab);
-}
+  }
   if (z > 0.999) {
     return -inc_beta_ddb(b, a, 1 - z, digamma_a, digamma_ab);
-}
+  }
 
   double threshold = 1e-10;
 
@@ -89,7 +89,7 @@ T inc_beta_dda(T a, T b, T z, T digamma_a, T digamma_ab) {
     if (k > 1e5) {
       domain_error("inc_beta_dda", "did not converge within 10000 iterations",
                    "", "");
-}
+    }
   }
   return inc_beta(a, b, z) * (log(z) + sum_numer / sum_denom);
 }

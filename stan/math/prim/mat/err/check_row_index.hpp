@@ -29,7 +29,7 @@ inline void check_row_index(const char* function, const char* name,
   if (i >= stan::error_index::value
       && i < static_cast<size_t>(y.rows()) + stan::error_index::value) {
     return;
-}
+  }
 
   std::stringstream msg;
   msg << " for rows of " << name;

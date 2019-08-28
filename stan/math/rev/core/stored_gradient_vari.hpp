@@ -41,7 +41,7 @@ class stored_gradient_vari : public vari {
   void chain() {
     for (size_t i = 0; i < size_; ++i) {
       dtrs_[i]->adj_ += adj_ * partials_[i];
-}
+    }
   }
 };
 

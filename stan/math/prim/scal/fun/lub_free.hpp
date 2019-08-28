@@ -48,10 +48,10 @@ inline return_type_t<T, L, U> lub_free(const T& y, const L& lb, const U& ub) {
   check_bounded<T, L, U>("lub_free", "Bounded variable", y, lb, ub);
   if (lb == NEGATIVE_INFTY) {
     return ub_free(y, ub);
-}
+  }
   if (ub == INFTY) {
     return lb_free(y, lb);
-}
+  }
   return logit((y - lb) / (ub - lb));
 }
 

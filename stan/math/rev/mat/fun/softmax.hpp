@@ -35,7 +35,7 @@ class softmax_op {
     auto y = softmax(alpha);
     for (int n = 0; n < N_; ++n) {
       y_[n] = y(n);
-}
+    }
     return y;
   }
 

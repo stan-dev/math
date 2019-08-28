@@ -47,7 +47,7 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> csr_to_dense_matrix(
                    u[m - 1] + csr_u_to_z(u, m - 1) - 1, "v", v.size());
   for (int i : v) {
     check_range("csr_to_dense_matrix", "v[]", n, i);
-}
+  }
 
   Matrix<T, Dynamic, Dynamic> result(m, n);
   result.setZero();

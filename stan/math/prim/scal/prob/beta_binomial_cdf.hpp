@@ -44,7 +44,7 @@ return_type_t<T_size1, T_size2> beta_binomial_cdf(const T_n& n, const T_N& N,
 
   if (size_zero(n, N, alpha, beta)) {
     return 1.0;
-}
+  }
 
   T_partials_return P(1.0);
 
@@ -72,7 +72,7 @@ return_type_t<T_size1, T_size2> beta_binomial_cdf(const T_n& n, const T_N& N,
   for (size_t i = 0; i < stan::length(n); i++) {
     if (value_of(n_vec[i]) <= 0) {
       return ops_partials.build(0.0);
-}
+    }
   }
 
   for (size_t i = 0; i < size; i++) {
@@ -133,12 +133,12 @@ return_type_t<T_size1, T_size2> beta_binomial_cdf(const T_n& n, const T_N& N,
   if (!is_constant_all<T_size1>::value) {
     for (size_t i = 0; i < stan::length(alpha); ++i) {
       ops_partials.edge1_.partials_[i] *= P;
-}
+    }
   }
   if (!is_constant_all<T_size2>::value) {
     for (size_t i = 0; i < stan::length(beta); ++i) {
       ops_partials.edge2_.partials_[i] *= P;
-}
+    }
   }
 
   return ops_partials.build(P);

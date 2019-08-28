@@ -46,15 +46,15 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> cov_matrix_free_lkj(
   if (!successful) {
     domain_error("cov_matrix_free_lkj", "factor_cov_matrix failed on y", "",
                  "");
-}
+  }
   Matrix<T, Dynamic, 1> x(k_choose_2 + k);
   size_type pos = 0;
   for (size_type i = 0; i < k_choose_2; ++i) {
     x[pos++] = cpcs[i];
-}
+  }
   for (size_type i = 0; i < k; ++i) {
     x[pos++] = sds[i];
-}
+  }
   return x;
 }
 

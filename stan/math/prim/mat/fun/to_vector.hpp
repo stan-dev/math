@@ -32,7 +32,7 @@ inline Eigen::Matrix<double, Eigen::Dynamic, 1> to_vector(
   Eigen::Matrix<double, Eigen::Dynamic, 1> result(R);
   for (int i = 0; i < R; i++) {
     result(i) = vec[i];
-}
+  }
   return result;
 }
 

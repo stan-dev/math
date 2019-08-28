@@ -42,7 +42,7 @@ namespace math {
 inline double log1m(double x) {
   if (!is_nan(x)) {
     check_less_or_equal("log1m", "x", x, 1);
-}
+  }
   return stan::math::log1p(-x);
 }
 

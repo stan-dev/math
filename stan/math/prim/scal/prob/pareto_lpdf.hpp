@@ -28,11 +28,11 @@ return_type_t<T_y, T_scale, T_shape> pareto_lpdf(const T_y& y,
                          y_min, "Shape parameter", alpha);
   if (size_zero(y, y_min, alpha)) {
     return 0;
-}
+  }
 
   if (!include_summand<propto, T_y, T_scale, T_shape>::value) {
     return 0;
-}
+  }
 
   T_partials_return logp(0);
 
@@ -44,7 +44,7 @@ return_type_t<T_y, T_scale, T_shape> pareto_lpdf(const T_y& y,
   for (size_t n = 0; n < N; n++) {
     if (y_vec[n] < y_min_vec[n]) {
       return LOG_ZERO;
-}
+    }
   }
 
   operands_and_partials<T_y, T_scale, T_shape> ops_partials(y, y_min, alpha);
@@ -55,7 +55,7 @@ return_type_t<T_y, T_scale, T_shape> pareto_lpdf(const T_y& y,
   if (include_summand<propto, T_y, T_shape>::value) {
     for (size_t n = 0; n < length(y); n++) {
       log_y[n] = log(value_of(y_vec[n]));
-}
+    }
   }
 
   VectorBuilder<!is_constant_all<T_y, T_shape>::value, T_partials_return, T_y>
@@ -63,7 +63,7 @@ return_type_t<T_y, T_scale, T_shape> pareto_lpdf(const T_y& y,
   if (!is_constant_all<T_y, T_shape>::value) {
     for (size_t n = 0; n < length(y); n++) {
       inv_y[n] = 1 / value_of(y_vec[n]);
-}
+    }
   }
 
   VectorBuilder<include_summand<propto, T_scale, T_shape>::value,
@@ -72,7 +72,7 @@ return_type_t<T_y, T_scale, T_shape> pareto_lpdf(const T_y& y,
   if (include_summand<propto, T_scale, T_shape>::value) {
     for (size_t n = 0; n < length(y_min); n++) {
       log_y_min[n] = log(value_of(y_min_vec[n]));
-}
+    }
   }
 
   VectorBuilder<include_summand<propto, T_shape>::value, T_partials_return,
@@ -81,31 +81,31 @@ return_type_t<T_y, T_scale, T_shape> pareto_lpdf(const T_y& y,
   if (include_summand<propto, T_shape>::value) {
     for (size_t n = 0; n < length(alpha); n++) {
       log_alpha[n] = log(value_of(alpha_vec[n]));
-}
+    }
   }
 
   for (size_t n = 0; n < N; n++) {
     const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
     if (include_summand<propto, T_shape>::value) {
       logp += log_alpha[n];
-}
+    }
     if (include_summand<propto, T_scale, T_shape>::value) {
       logp += alpha_dbl * log_y_min[n];
-}
+    }
     if (include_summand<propto, T_y, T_shape>::value) {
       logp -= alpha_dbl * log_y[n] + log_y[n];
-}
+    }
 
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] -= alpha_dbl * inv_y[n] + inv_y[n];
-}
+    }
     if (!is_constant_all<T_scale>::value) {
       ops_partials.edge2_.partials_[n] += alpha_dbl / value_of(y_min_vec[n]);
-}
+    }
     if (!is_constant_all<T_shape>::value) {
       ops_partials.edge3_.partials_[n]
           += 1 / alpha_dbl + log_y_min[n] - log_y[n];
-}
+    }
   }
   return ops_partials.build(logp);
 }

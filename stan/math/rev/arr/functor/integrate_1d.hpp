@@ -39,7 +39,7 @@ inline double gradient_of_f(const F &f, const double &x, const double &xc,
   try {
     for (size_t i = 0; i < theta_vals.size(); i++) {
       theta_var[i] = theta_vals[i];
-}
+    }
     var fx = f(x, xc, theta_var, x_r, x_i, &msgs);
     fx.grad();
     gradient = theta_var[n].adj();
@@ -129,7 +129,7 @@ inline return_type_t<T_a, T_b, T_theta> integrate_1d(
     if (is_inf(a)) {
       domain_error(function, "Integration endpoints are both", value_of(a), "",
                    "");
-}
+    }
     return var(0.0);
   } else {
     double integral = integrate(

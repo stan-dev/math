@@ -26,7 +26,7 @@ inline void check_diagonal_zeros(const char* function, const char* name,
                                  const matrix_cl<T>& y) {
   if (y.size() == 0) {
     return;
-}
+  }
   cl::CommandQueue cmd_queue = opencl_context.queue();
   cl::Context ctx = opencl_context.context();
   try {

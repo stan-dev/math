@@ -27,7 +27,7 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lcdf(const T_y& y, const T_loc& mu,
 
   if (size_zero(y, mu, sigma)) {
     return cdf_log;
-}
+  }
 
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
@@ -46,7 +46,7 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lcdf(const T_y& y, const T_loc& mu,
   for (size_t i = 0; i < stan::length(y); i++) {
     if (value_of(y_vec[i]) == 0.0) {
       return ops_partials.build(negative_infinity());
-}
+    }
   }
 
   const double log_half = std::log(0.5);
@@ -65,14 +65,14 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lcdf(const T_y& y, const T_loc& mu,
 
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] += rep_deriv / erfc_calc / y_dbl;
-}
+    }
     if (!is_constant_all<T_loc>::value) {
       ops_partials.edge2_.partials_[n] -= rep_deriv / erfc_calc;
-}
+    }
     if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n]
           -= rep_deriv * scaled_diff * SQRT_2 / erfc_calc;
-}
+    }
   }
   return ops_partials.build(cdf_log);
 }

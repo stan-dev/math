@@ -88,7 +88,7 @@ return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
 
   if (size_zero(y, alpha, beta, tau, delta)) {
     return 0.0;
-}
+  }
 
   typedef return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> T_return_type;
   T_return_type lp(0.0);
@@ -113,7 +113,7 @@ return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
   size_t N = std::max(max_size(y, alpha, beta), max_size(tau, delta));
   if (!N) {
     return 0.0;
-}
+  }
 
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_alpha> alpha_vec(alpha);
@@ -134,7 +134,7 @@ return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
 
   if (!include_summand<propto, T_y, T_alpha, T_tau, T_beta, T_delta>::value) {
     return 0;
-}
+  }
 
   for (size_t i = 0; i < N; i++) {
     typename scalar_type<T_beta>::type one_minus_beta = 1.0 - beta_vec[i];
@@ -176,14 +176,14 @@ return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
       for (k = -floor(tmp_expr1); k <= tmp_expr2; k++) {
         tmp += (one_minus_beta + 2.0 * k)
                * exp(-(square(one_minus_beta + 2.0 * k)) * 0.5 / x);
-}
+      }
       tmp = log(tmp) - LOG_TWO_OVER_TWO_PLUS_LOG_SQRT_PI - 1.5 * log_x;
     } else {         // if large t is better...
       K = ceil(kl);  // round to smallest integer meeting error
       for (k = 1; k <= K; ++k) {
         tmp += k * exp(-(square(k)) * (SQUARE_PI_OVER_TWO * x))
                * sin(k * pi() * one_minus_beta);
-}
+      }
       tmp = log(tmp) + TWO_TIMES_LOG_SQRT_PI;
     }
 

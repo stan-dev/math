@@ -64,7 +64,7 @@ class vari {
       ChainableStack::instance_->var_stack_.push_back(this);
     } else {
       ChainableStack::instance_->var_nochain_stack_.push_back(this);
-}
+    }
   }
 
   /**

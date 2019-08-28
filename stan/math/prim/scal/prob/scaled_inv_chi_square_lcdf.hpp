@@ -26,7 +26,7 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lcdf(
 
   if (size_zero(y, nu, s)) {
     return 0.0;
-}
+  }
 
   static const char* function = "scaled_inv_chi_square_lcdf";
 
@@ -52,7 +52,7 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lcdf(
   for (size_t i = 0; i < stan::length(y); i++) {
     if (value_of(y_vec[i]) == 0) {
       return ops_partials.build(negative_infinity());
-}
+    }
   }
 
   using std::exp;
@@ -97,7 +97,7 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lcdf(
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n]
           += half_nu_s2_overx_dbl * y_inv_dbl * gamma_p_deriv / Pn;
-}
+    }
     if (!is_constant_all<T_dof>::value) {
       ops_partials.edge2_.partials_[n]
           += (0.5
@@ -105,11 +105,11 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lcdf(
                                        gamma_vec[n], digamma_vec[n])
               - half_s2_overx_dbl * gamma_p_deriv)
              / Pn;
-}
+    }
     if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n]
           += -2.0 * half_nu_dbl * s_dbl * y_inv_dbl * gamma_p_deriv / Pn;
-}
+    }
   }
   return ops_partials.build(P);
 }

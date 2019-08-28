@@ -27,8 +27,8 @@ inline Eigen::Matrix<typename child_type<T>::type, R, C> value_of(
   for (int j = 0; j < M.cols(); j++) {
     for (int i = 0; i < M.rows(); i++) {
       Md(i, j) = value_of(M(i, j));
-}
-}
+    }
+  }
   return Md;
 }
 

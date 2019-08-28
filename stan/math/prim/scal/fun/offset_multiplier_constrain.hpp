@@ -45,7 +45,7 @@ inline return_type_t<T, M, S> offset_multiplier_constrain(const T& x,
   if (sigma == 1) {
     if (mu == 0) {
       return identity_constrain(x);
-}
+    }
     return mu + x;
   }
   check_positive_finite("offset_multiplier_constrain", "multiplier", sigma);
@@ -88,7 +88,7 @@ inline return_type_t<T, M, S> offset_multiplier_constrain(const T& x,
   if (sigma == 1) {
     if (mu == 0) {
       return identity_constrain(x);
-}
+    }
     return mu + x;
   }
   check_positive_finite("offset_multiplier_constrain", "multiplier", sigma);

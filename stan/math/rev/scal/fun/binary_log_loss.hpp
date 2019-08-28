@@ -63,7 +63,7 @@ inline var binary_log_loss(int y, const var& y_hat) {
     return var(new internal::binary_log_loss_0_vari(y_hat.vi_));
   } else {
     return var(new internal::binary_log_loss_1_vari(y_hat.vi_));
-}
+  }
 }
 
 }  // namespace math

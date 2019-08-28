@@ -66,12 +66,12 @@ categorical_logit_glm_lpmf(
 
   if (size_zero(y, x, beta)) {
     return 0;
-}
+  }
 
   if (!include_summand<propto, T_x_scalar, T_alpha_scalar,
                        T_beta_scalar>::value) {
     return 0;
-}
+  }
 
   const auto& x_val = value_of_rec(x);
   const auto& beta_val = value_of_rec(beta);

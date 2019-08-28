@@ -20,7 +20,7 @@ inline bool is_ordered(const std::vector<T_y>& y) {
   for (size_t n = 1; n < y.size(); ++n) {
     if (!(y[n] > y[n - 1])) {
       return false;
-}
+    }
   }
   return true;
 }

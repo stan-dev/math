@@ -90,7 +90,7 @@ class gp_exp_quad_cov_vari : public vari {
     }
     for (size_t i = 0; i < size_; ++i) {
       cov_diag_[i] = new vari(sigma_sq_d_, false);
-}
+    }
   }
 
   virtual void chain() {
@@ -183,7 +183,7 @@ class gp_exp_quad_cov_vari<T_x, double, T_l> : public vari {
     }
     for (size_t i = 0; i < size_; ++i) {
       cov_diag_[i] = new vari(sigma_sq_d_, false);
-}
+    }
   }
 
   virtual void chain() {
@@ -218,12 +218,12 @@ inline Eigen::Matrix<var, -1, -1> gp_exp_quad_cov(const std::vector<T_x> &x,
   size_t x_size = x.size();
   for (size_t i = 0; i < x_size; ++i) {
     check_not_nan("gp_exp_quad_cov", "x", x[i]);
-}
+  }
 
   Eigen::Matrix<var, -1, -1> cov(x_size, x_size);
   if (x_size == 0) {
     return cov;
-}
+  }
 
   gp_exp_quad_cov_vari<T_x, var, var> *baseVari
       = new gp_exp_quad_cov_vari<T_x, var, var>(x, sigma, length_scale);
@@ -262,12 +262,12 @@ inline Eigen::Matrix<var, -1, -1> gp_exp_quad_cov(const std::vector<T_x> &x,
   size_t x_size = x.size();
   for (size_t i = 0; i < x_size; ++i) {
     check_not_nan("gp_exp_quad_cov", "x", x[i]);
-}
+  }
 
   Eigen::Matrix<var, -1, -1> cov(x_size, x_size);
   if (x_size == 0) {
     return cov;
-}
+  }
 
   gp_exp_quad_cov_vari<T_x, double, var> *baseVari
       = new gp_exp_quad_cov_vari<T_x, double, var>(x, sigma, length_scale);

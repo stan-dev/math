@@ -35,7 +35,7 @@ class fmod_vd_vari : public op_vd_vari {
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
     } else {
       avi_->adj_ += adj_;
-}
+    }
   }
 };
 
