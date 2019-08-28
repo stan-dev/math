@@ -140,9 +140,11 @@ struct multi_gp_cholesky_fun {
     Matrix<T, Dynamic, 1> w(K_);
 
     int pos = 0;
-    for (int j = 0; j < N_; ++j)
-      for (int i = 0; i < K_; ++i)
+    for (int j = 0; j < N_; ++j) {
+      for (int i = 0; i < K_; ++i) {
         y(i, j) = x[pos++];
+}
+}
     for (int j = 0; j < N_; ++j) {
       for (int i = 0; i <= j; ++i) {
         Sigma(i, j) = x[pos++];
@@ -150,8 +152,9 @@ struct multi_gp_cholesky_fun {
       }
     }
     Matrix<T, Dynamic, Dynamic> L = Sigma.llt().matrixL();
-    for (int i = 0; i < K_; ++i)
+    for (int i = 0; i < K_; ++i) {
       w(i) = x[pos++];
+}
     return stan::math::multi_gp_cholesky_log<false>(y, L, w);
   }
 };

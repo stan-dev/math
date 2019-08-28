@@ -91,10 +91,12 @@ struct multi_normal_prec_fun {
     Matrix<T, Dynamic, 1> mu(K_);
     Matrix<T, Dynamic, Dynamic> Sigma(K_, K_);
     int pos = 0;
-    for (int i = 0; i < K_; ++i)
+    for (int i = 0; i < K_; ++i) {
       y(i) = x[pos++];
-    for (int i = 0; i < K_; ++i)
+}
+    for (int i = 0; i < K_; ++i) {
       mu(i) = x[pos++];
+}
     for (int j = 0; j < K_; ++j) {
       for (int i = 0; i <= j; ++i) {
         Sigma(i, j) = x[pos++];
@@ -148,10 +150,11 @@ struct vectorized_multi_normal_prec_fun {
                                                                 bool M = false,
                                                                 bool N = false)
       : K_(K), L_(L), dont_vectorize_y(M), dont_vectorize_mu(N) {
-    if ((dont_vectorize_y || dont_vectorize_mu) && L != 1)
+    if ((dont_vectorize_y || dont_vectorize_mu) && L != 1) {
       throw std::runtime_error(
           "attempt to disable vectorization with vector "
           "bigger than 1");
+}
   }
 
   template <typename T_y, typename T_mu, typename T_sigma>
@@ -164,14 +167,18 @@ struct vectorized_multi_normal_prec_fun {
         L_, Matrix<T_mu, is_row_vec_mu, is_row_vec_mu * -1>(K_));
     Matrix<T_sigma, Dynamic, Dynamic> Sigma(K_, K_);
     int pos = 0;
-    for (int i = 0; i < L_; ++i)
-      for (int j = 0; j < K_; ++j)
+    for (int i = 0; i < L_; ++i) {
+      for (int j = 0; j < K_; ++j) {
         y[i](j) = y_vec[pos++];
+}
+}
 
     pos = 0;
-    for (int i = 0; i < L_; ++i)
-      for (int j = 0; j < K_; ++j)
+    for (int i = 0; i < L_; ++i) {
+      for (int j = 0; j < K_; ++j) {
         mu[i](j) = mu_vec[pos++];
+}
+}
 
     pos = 0;
     for (int j = 0; j < K_; ++j) {
@@ -182,15 +189,17 @@ struct vectorized_multi_normal_prec_fun {
     }
 
     if (dont_vectorize_y) {
-      if (dont_vectorize_mu)
+      if (dont_vectorize_mu) {
         return stan::math::multi_normal_prec_log<false>(y[0], mu[0], Sigma);
-      else
+      } else {
         return stan::math::multi_normal_prec_log<false>(y[0], mu, Sigma);
+}
     } else {
-      if (dont_vectorize_mu)
+      if (dont_vectorize_mu) {
         return stan::math::multi_normal_prec_log<false>(y, mu[0], Sigma);
-      else
+      } else {
         return stan::math::multi_normal_prec_log<false>(y, mu, Sigma);
+}
     }
   }
 };
@@ -214,7 +223,7 @@ void test_all() {
     sigma_[3] = -2;
     sigma_[4] = 20;
     sigma_[5] = 56;
-    for (int ii = 0; ii < 2; ii++)
+    for (int ii = 0; ii < 2; ii++) {
       for (int jj = 0; jj < 2; jj++) {
         test_grad_multi_normal(
             vectorized_multi_normal_prec_fun<is_row_vec_y, is_row_vec_mu>(
@@ -249,6 +258,7 @@ void test_all() {
                 3, 1, ii, jj),
             get_vvar(y_), get_vvar(mu_), get_vvar(sigma_));
       }
+}
   }
 
   {
