@@ -26,8 +26,9 @@ MatrixType matrix_exp_pade(const MatrixType& arg) {
   MatrixType numer = U + V;
   MatrixType denom = -U + V;
   MatrixType pade_approximation = denom.partialPivLu().solve(numer);
-  for (int i = 0; i < squarings; ++i)
+  for (int i = 0; i < squarings; ++i) {
     pade_approximation *= pade_approximation;  // undo scaling by
+}
                                                // repeated squaring
   return pade_approximation;
 }

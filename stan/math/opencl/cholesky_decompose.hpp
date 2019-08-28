@@ -43,8 +43,9 @@ namespace math {
  */
 template <typename T, typename = enable_if_floating_point<T>>
 inline void cholesky_decompose(matrix_cl<T>& A) {
-  if (A.rows() == 0)
+  if (A.rows() == 0) {
     return;
+}
   // Repeats the blocked cholesky decomposition until the size of the remaining
   // submatrix is smaller or equal to the minimum blocks size
   // or a heuristic of 100.

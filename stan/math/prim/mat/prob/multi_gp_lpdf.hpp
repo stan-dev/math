@@ -57,8 +57,9 @@ return_type_t<T_y, T_covar, T_w> multi_gp_lpdf(
   check_positive_finite(function, "Kernel scales", w);
   check_finite(function, "Random variable", y);
 
-  if (y.rows() == 0)
+  if (y.rows() == 0) {
     return lp;
+}
 
   if (include_summand<propto>::value) {
     lp += NEG_LOG_SQRT_TWO_PI * y.rows() * y.cols();

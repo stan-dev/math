@@ -87,8 +87,9 @@ csr_matrix_times_vector(int m, int n,
   check_size_match("csr_matrix_times_vector", "w", w.size(), "v", v.size());
   check_size_match("csr_matrix_times_vector", "u/z",
                    u[m - 1] + csr_u_to_z(u, m - 1) - 1, "v", v.size());
-  for (int i : v)
+  for (int i : v) {
     check_range("csr_matrix_times_vector", "v[]", n, i);
+}
 
   Eigen::Matrix<result_t, Eigen::Dynamic, 1> result(m);
   result.setZero();

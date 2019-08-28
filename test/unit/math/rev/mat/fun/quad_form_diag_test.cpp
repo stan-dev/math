@@ -73,10 +73,12 @@ TEST(MathMatrix, quadFormDiagGrad_vv) {
   v << 1, 2, 3;
 
   std::vector<var> xs1;
-  for (int i = 0; i < 9; ++i)
+  for (int i = 0; i < 9; ++i) {
     xs1.push_back(m1(i));
-  for (int i = 0; i < 3; ++i)
+}
+  for (int i = 0; i < 3; ++i) {
     xs1.push_back(v(i));
+}
 
   Matrix<var, Dynamic, Dynamic> v_post_multipy_m1 = quad_form_diag(m1, v);
 
@@ -92,10 +94,12 @@ TEST(MathMatrix, quadFormDiagGrad_vv) {
   v_m << 1, 0, 0, 0, 2, 0, 0, 0, 3;
 
   std::vector<var> xs2;
-  for (int i = 0; i < 9; ++i)
+  for (int i = 0; i < 9; ++i) {
     xs2.push_back(m2(i));
-  for (int i = 0; i < 3; ++i)
+}
+  for (int i = 0; i < 3; ++i) {
     xs2.push_back(v_m(i, i));
+}
 
   Matrix<var, Dynamic, Dynamic> m_times_vm = multiply(v_m, multiply(m2, v_m));
 
@@ -104,8 +108,9 @@ TEST(MathMatrix, quadFormDiagGrad_vv) {
   norm2.grad(xs2, g2);
 
   EXPECT_EQ(g1.size(), g2.size());
-  for (size_t i = 0; i < g1.size(); ++i)
+  for (size_t i = 0; i < g1.size(); ++i) {
     EXPECT_FLOAT_EQ(g1[i], g2[i]);
+}
 }
 
 TEST(MathMatrix, quadFormDiagGrad_vd) {
@@ -116,8 +121,9 @@ TEST(MathMatrix, quadFormDiagGrad_vd) {
   v << 1, 2, 3;
 
   std::vector<var> xs1;
-  for (int i = 0; i < 9; ++i)
+  for (int i = 0; i < 9; ++i) {
     xs1.push_back(m1(i));
+}
 
   Matrix<var, Dynamic, Dynamic> m1_post_multipy_v = quad_form_diag(m1, v);
 
@@ -134,8 +140,9 @@ TEST(MathMatrix, quadFormDiagGrad_vd) {
   v_m << 1, 0, 0, 0, 2, 0, 0, 0, 3;
 
   std::vector<var> xs2;
-  for (int i = 0; i < 9; ++i)
+  for (int i = 0; i < 9; ++i) {
     xs2.push_back(m2(i));
+}
 
   Matrix<var, Dynamic, Dynamic> v_m_times_v_m
       = multiply(v_m, multiply(m2, v_m));
@@ -145,8 +152,9 @@ TEST(MathMatrix, quadFormDiagGrad_vd) {
   norm2.grad(xs2, g2);
 
   EXPECT_EQ(g1.size(), g2.size());
-  for (size_t i = 0; i < g1.size(); ++i)
+  for (size_t i = 0; i < g1.size(); ++i) {
     EXPECT_FLOAT_EQ(g1[i], g2[i]);
+}
 }
 
 TEST(MathMatrix, quadFormDiagGrad_dv) {
@@ -157,8 +165,9 @@ TEST(MathMatrix, quadFormDiagGrad_dv) {
   v << 1, 2, 3;
 
   std::vector<var> xs1;
-  for (int i = 0; i < 3; ++i)
+  for (int i = 0; i < 3; ++i) {
     xs1.push_back(v(i));
+}
 
   Matrix<var, Dynamic, Dynamic> m1_post_multipy_v = quad_form_diag(m1, v);
 
@@ -175,8 +184,9 @@ TEST(MathMatrix, quadFormDiagGrad_dv) {
   v_m << 1, 0, 0, 0, 2, 0, 0, 0, 3;
 
   std::vector<var> xs2;
-  for (int i = 0; i < 3; ++i)
+  for (int i = 0; i < 3; ++i) {
     xs2.push_back(v_m(i, i));
+}
 
   Matrix<var, Dynamic, Dynamic> v_m_times_v_m
       = multiply(v_m, multiply(m2, v_m));
@@ -186,8 +196,9 @@ TEST(MathMatrix, quadFormDiagGrad_dv) {
   norm2.grad(xs2, g2);
 
   EXPECT_EQ(g1.size(), g2.size());
-  for (size_t i = 0; i < g1.size(); ++i)
+  for (size_t i = 0; i < g1.size(); ++i) {
     EXPECT_FLOAT_EQ(g1[i], g2[i]);
+}
 }
 
 TEST(MathMatrix, quadFormDiagException) {

@@ -64,12 +64,14 @@ categorical_logit_glm_lpmf(
   check_bounded(function, "categorical outcome out of support", y, 1,
                 N_classes);
 
-  if (size_zero(y, x, beta))
+  if (size_zero(y, x, beta)) {
     return 0;
+}
 
   if (!include_summand<propto, T_x_scalar, T_alpha_scalar,
-                       T_beta_scalar>::value)
+                       T_beta_scalar>::value) {
     return 0;
+}
 
   const auto& x_val = value_of_rec(x);
   const auto& beta_val = value_of_rec(beta);

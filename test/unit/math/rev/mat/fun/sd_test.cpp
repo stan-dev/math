@@ -26,8 +26,9 @@ TEST(AgradRevMatrix, sd_eq) {
 
     EXPECT_EQ(size, grad.size());
     double analytic = std::sqrt(size) / size;
-    for (size_t j = 0; j < size; ++j)
+    for (size_t j = 0; j < size; ++j) {
       EXPECT_FLOAT_EQ(analytic, grad[j]);
+}
   }
 }
 
@@ -167,8 +168,9 @@ TEST(AgradRevMatrix, sdStdVector) {
 
   EXPECT_EQ(3U, grad1.size());
   EXPECT_EQ(3U, grad2.size());
-  for (size_t i = 0; i < 3; ++i)
+  for (size_t i = 0; i < 3; ++i) {
     EXPECT_FLOAT_EQ(grad2[i], grad1[i]);
+}
 }
 // used to validate analytic gradient definition at limit sd(x) -> 0
 
