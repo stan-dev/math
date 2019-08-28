@@ -3,7 +3,7 @@
 
 // TODO(Bob): <cstddef> replaces this ifdef in C++11, until then this
 //            is best we can do to get safe pointer casts to uints.
-#include <stdint.h>
+#include <cstdint>
 #include <stan/math/prim/meta.hpp>
 #include <cstdlib>
 #include <cstddef>
@@ -74,7 +74,7 @@ class stack_alloc {
   std::vector<char*> blocks_;  // storage for blocks,
                                // may be bigger than cur_block_
   std::vector<size_t> sizes_;  // could store initial & shift for others
-  size_t cur_block_;           // index into blocks_ for next alloc
+  size_t cur_block_{0};           // index into blocks_ for next alloc
   char* cur_block_end_;        // ptr to cur_block_ptr_ + sizes_[cur_block_]
   char* next_loc_;             // ptr to next available spot in cur
                                // block
@@ -131,7 +131,7 @@ class stack_alloc {
   explicit stack_alloc(size_t initial_nbytes = internal::DEFAULT_INITIAL_NBYTES)
       : blocks_(1, internal::eight_byte_aligned_malloc(initial_nbytes)),
         sizes_(1, initial_nbytes),
-        cur_block_(0),
+        
         cur_block_end_(blocks_[0] + initial_nbytes),
         next_loc_(blocks_[0]) {
     if (!blocks_[0]) {
@@ -279,10 +279,7 @@ class stack_alloc {
         return true;
 }
 }
-    if (ptr >= blocks_[cur_block_] && ptr < next_loc_) {
-      return true;
-}
-    return false;
+    return ptr >= blocks_[cur_block_] && ptr < next_loc_;
   }
 };
 

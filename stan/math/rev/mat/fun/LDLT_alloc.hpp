@@ -20,7 +20,7 @@ namespace math {
 template <int R, int C>
 class LDLT_alloc : public chainable_alloc {
  public:
-  LDLT_alloc() : N_(0) {}
+  LDLT_alloc()  = default;
   explicit LDLT_alloc(const Eigen::Matrix<var, R, C> &A) : N_(0) { compute(A); }
 
   /**
@@ -39,7 +39,7 @@ class LDLT_alloc : public chainable_alloc {
     return ldlt_.vectorD().array().log().sum();
   }
 
-  size_t N_;
+  size_t N_{0};
   Eigen::LDLT<Eigen::Matrix<double, R, C> > ldlt_;
   Eigen::Matrix<vari *, R, C> variA_;
 };

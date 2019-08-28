@@ -18,7 +18,11 @@ namespace math {
 template <typename Mtype>
 Mtype matrix_exp_2x2(const Mtype& A) {
   using T = typename Mtype::Scalar;
-  T a = A(0, 0), b = A(0, 1), c = A(1, 0), d = A(1, 1), delta;
+  T a = A(0, 0);
+  T b = A(0, 1);
+  T c = A(1, 0);
+  T d = A(1, 1);
+  T delta;
   delta = sqrt(square(a - d) + 4 * b * c);
 
   Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> B(2, 2);

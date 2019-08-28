@@ -103,7 +103,7 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, var> {
                   + edge5_.size();
     vari** varis
         = ChainableStack::instance_->memalloc_.alloc_array<vari*>(size);
-    double* partials
+    auto* partials
         = ChainableStack::instance_->memalloc_.alloc_array<double>(size);
     int idx = 0;
     edge1_.dump_operands(&varis[idx]);

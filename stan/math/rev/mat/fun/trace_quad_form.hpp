@@ -81,7 +81,7 @@ inline return_type_t<Ta, Tb> trace_quad_form(
   check_square("trace_quad_form", "A", A);
   check_multiplicable("trace_quad_form", "A", A, "B", B);
 
-  internal::trace_quad_form_vari_alloc<Ta, Ra, Ca, Tb, Rb, Cb>* baseVari
+  auto* baseVari
       = new internal::trace_quad_form_vari_alloc<Ta, Ra, Ca, Tb, Rb, Cb>(A, B);
 
   return var(

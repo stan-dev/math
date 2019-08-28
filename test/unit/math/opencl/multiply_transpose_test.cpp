@@ -68,7 +68,8 @@ TEST(AgradRevMatrix, multiply_transposed_small) {
 
 TEST(AgradRevMatrix, multiply_transposed_big) {
   using stan::math::multiply;
-  stan::math::matrix_d m2, m2_cl;
+  stan::math::matrix_d m2;
+  stan::math::matrix_d m2_cl;
 
   int size = 500;
   auto m1 = stan::math::matrix_d::Random(size, size).eval();
@@ -85,7 +86,8 @@ TEST(AgradRevMatrix, multiply_transposed_big) {
 
 TEST(AgradRevMatrix, multiply_transposed_big_non_square) {
   using stan::math::multiply;
-  stan::math::matrix_d m2, m2_cl;
+  stan::math::matrix_d m2;
+  stan::math::matrix_d m2_cl;
 
   int size_x = 200;
   int size_y = 500;
@@ -105,7 +107,8 @@ TEST(AgradRevMatrix, multiply_transposed_big_non_square) {
 
 TEST(AgradRevMatrix, multiply_transposed_big_x) {
   using stan::math::multiply;
-  stan::math::matrix_d m2, m2_cl;
+  stan::math::matrix_d m2;
+  stan::math::matrix_d m2_cl;
 
   int size_x = 200;
   int size_y = 50;

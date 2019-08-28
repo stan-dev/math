@@ -140,8 +140,11 @@ return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
     typename scalar_type<T_beta>::type one_minus_beta = 1.0 - beta_vec[i];
     typename scalar_type<T_alpha>::type alpha2 = square(alpha_vec[i]);
     T_return_type x = (y_vec[i] - tau_vec[i]) / alpha2;
-    T_return_type kl, ks, tmp = 0;
-    T_return_type k, K;
+    T_return_type kl;
+    T_return_type ks;
+    T_return_type tmp = 0;
+    T_return_type k;
+    T_return_type K;
     T_return_type sqrt_x = sqrt(x);
     T_return_type log_x = log(x);
     T_return_type one_over_pi_times_sqrt_x = 1.0 / pi() * sqrt_x;

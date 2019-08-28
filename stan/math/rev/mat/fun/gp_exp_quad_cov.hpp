@@ -225,7 +225,7 @@ inline Eigen::Matrix<var, -1, -1> gp_exp_quad_cov(const std::vector<T_x> &x,
     return cov;
 }
 
-  gp_exp_quad_cov_vari<T_x, var, var> *baseVari
+  auto *baseVari
       = new gp_exp_quad_cov_vari<T_x, var, var>(x, sigma, length_scale);
 
   size_t pos = 0;
@@ -269,7 +269,7 @@ inline Eigen::Matrix<var, -1, -1> gp_exp_quad_cov(const std::vector<T_x> &x,
     return cov;
 }
 
-  gp_exp_quad_cov_vari<T_x, double, var> *baseVari
+  auto *baseVari
       = new gp_exp_quad_cov_vari<T_x, double, var>(x, sigma, length_scale);
 
   size_t pos = 0;

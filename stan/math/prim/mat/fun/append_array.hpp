@@ -61,7 +61,8 @@ inline std::vector<T1> append_array(const std::vector<T1>& x,
   std::vector<T1> z;
 
   if (!x.empty() && !y.empty()) {
-    std::vector<int> xdims = dims(x), ydims = dims(y);
+    std::vector<int> xdims = dims(x);
+    std::vector<int> ydims = dims(y);
     check_matching_sizes("append_array", "dimension of x", xdims,
                          "dimension of y", ydims);
     for (size_t i = 1; i < xdims.size(); ++i) {

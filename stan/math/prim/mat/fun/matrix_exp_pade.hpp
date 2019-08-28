@@ -18,7 +18,8 @@ namespace math {
  */
 template <typename MatrixType>
 MatrixType matrix_exp_pade(const MatrixType& arg) {
-  MatrixType U, V;
+  MatrixType U;
+  MatrixType V;
   int squarings;
   Eigen::matrix_exp_computeUV<MatrixType>::run(arg, U, V, squarings, arg(0, 0));
   // Pade approximant is

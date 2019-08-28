@@ -124,7 +124,8 @@ class idas_forward_system : public idas_system<F, Tyy, Typ, Tpar> {
       try {
         stan::math::start_nested();
 
-        MatrixXd J, r;
+        MatrixXd J;
+        MatrixXd r;
         VectorXd f_val;
 
         auto fyy

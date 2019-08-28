@@ -61,8 +61,8 @@ void grad_F32(T* g, const T& a1, const T& a2, const T& a3, const T& b1,
   double log_t_new_sign = 1.0;
   double log_t_old_sign = 1.0;
   double log_g_old_sign[6];
-  for (int i = 0; i < 6; ++i) {
-    log_g_old_sign[i] = 1.0;
+  for (double & i : log_g_old_sign) {
+    i = 1.0;
 }
 
   for (int k = 0; k <= max_steps; ++k) {
@@ -124,7 +124,6 @@ void grad_F32(T* g, const T& a1, const T& a2, const T& a3, const T& b1,
   domain_error("grad_F32", "k (internal counter)", max_steps, "exceeded ",
                " iterations, hypergeometric function gradient "
                "did not converge.");
-  return;
 }
 
 }  // namespace math

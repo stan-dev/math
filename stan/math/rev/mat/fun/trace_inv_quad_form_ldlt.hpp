@@ -149,7 +149,7 @@ inline return_type_t<T2, T3> trace_inv_quad_form_ldlt(
     const LDLT_factor<T2, R2, C2> &A, const Eigen::Matrix<T3, R3, C3> &B) {
   check_multiplicable("trace_inv_quad_form_ldlt", "A", A, "B", B);
 
-  internal::trace_inv_quad_form_ldlt_impl<T2, R2, C2, T3, R3, C3> *impl_
+  auto *impl_
       = new internal::trace_inv_quad_form_ldlt_impl<T2, R2, C2, T3, R3, C3>(A,
                                                                             B);
 

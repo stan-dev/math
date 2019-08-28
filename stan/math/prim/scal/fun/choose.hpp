@@ -32,7 +32,7 @@ inline int choose(int n, int k) {
   if (k > n) {
     return 0;
 }
-  const double choices = boost::math::binomial_coefficient<double>(n, k);
+  const auto choices = boost::math::binomial_coefficient<double>(n, k);
   check_less_or_equal("choose", "n choose k", choices,
                       std::numeric_limits<int>::max());
   return static_cast<int>(std::round(choices));

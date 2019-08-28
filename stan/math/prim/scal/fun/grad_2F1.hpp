@@ -93,7 +93,6 @@ void grad_2F1(T& g_a1, T& g_b1, const T& a1, const T& a2, const T& b1,
   domain_error("grad_2F1", "k (internal counter)", max_steps, "exceeded ",
                " iterations, hypergeometric function gradient "
                "did not converge.");
-  return;
 }
 
 }  // namespace math

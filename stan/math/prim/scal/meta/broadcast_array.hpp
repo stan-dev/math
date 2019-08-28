@@ -31,7 +31,7 @@ class broadcast_array {
 template <typename T, typename S>
 class empty_broadcast_array {
  public:
-  empty_broadcast_array() {}
+  empty_broadcast_array() = default;
   /**
    * Not implemented so cannot be called.
    */

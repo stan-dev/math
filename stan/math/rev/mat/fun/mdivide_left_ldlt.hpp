@@ -15,7 +15,7 @@ namespace internal {
 template <int R1, int C1, int R2, int C2>
 class mdivide_left_ldlt_alloc : public chainable_alloc {
  public:
-  virtual ~mdivide_left_ldlt_alloc() {}
+  virtual ~mdivide_left_ldlt_alloc() = default;
 
   /**
    * This share_ptr is used to prevent copying the LDLT factorizations
@@ -181,7 +181,7 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_ldlt(
 
   check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);
 
-  internal::mdivide_left_ldlt_vv_vari<R1, C1, R2, C2> *baseVari
+  auto *baseVari
       = new internal::mdivide_left_ldlt_vv_vari<R1, C1, R2, C2>(A, b);
 
   res.vi() = Eigen::Map<matrix_vi>(baseVari->variRefC_, res.rows(), res.cols());
@@ -203,7 +203,7 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_ldlt(
 
   check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);
 
-  internal::mdivide_left_ldlt_vd_vari<R1, C1, R2, C2> *baseVari
+  auto *baseVari
       = new internal::mdivide_left_ldlt_vd_vari<R1, C1, R2, C2>(A, b);
 
   res.vi() = Eigen::Map<matrix_vi>(baseVari->variRefC_, res.rows(), res.cols());
@@ -225,7 +225,7 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_ldlt(
 
   check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);
 
-  internal::mdivide_left_ldlt_dv_vari<R1, C1, R2, C2> *baseVari
+  auto *baseVari
       = new internal::mdivide_left_ldlt_dv_vari<R1, C1, R2, C2>(A, b);
 
   res.vi() = Eigen::Map<matrix_vi>(baseVari->variRefC_, res.rows(), res.cols());

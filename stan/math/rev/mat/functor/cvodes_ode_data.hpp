@@ -112,7 +112,7 @@ class cvodes_ode_data {
    * ODE RHS passed to CVODES.
    */
   static int cv_rhs(realtype t, N_Vector y, N_Vector ydot, void* user_data) {
-    const ode_data* explicit_ode = static_cast<const ode_data*>(user_data);
+    const auto* explicit_ode = static_cast<const ode_data*>(user_data);
     explicit_ode->rhs(t, NV_DATA_S(y), NV_DATA_S(ydot));
     return 0;
   }
@@ -124,7 +124,7 @@ class cvodes_ode_data {
   static int cv_rhs_sens(int Ns, realtype t, N_Vector y, N_Vector ydot,
                          N_Vector* yS, N_Vector* ySdot, void* user_data,
                          N_Vector tmp1, N_Vector tmp2) {
-    const ode_data* explicit_ode = static_cast<const ode_data*>(user_data);
+    const auto* explicit_ode = static_cast<const ode_data*>(user_data);
     explicit_ode->rhs_sens(t, NV_DATA_S(y), yS, ySdot);
     return 0;
   }
@@ -138,7 +138,7 @@ class cvodes_ode_data {
   static int cv_jacobian_states(realtype t, N_Vector y, N_Vector fy,
                                 SUNMatrix J, void* user_data, N_Vector tmp1,
                                 N_Vector tmp2, N_Vector tmp3) {
-    const ode_data* explicit_ode = static_cast<const ode_data*>(user_data);
+    const auto* explicit_ode = static_cast<const ode_data*>(user_data);
     return explicit_ode->jacobian_states(t, NV_DATA_S(y), J);
   }
 

@@ -68,7 +68,7 @@ class LDLT_factor {
   typedef size_t size_type;
   typedef double value_type;
 
-  LDLT_factor() : N_(0), ldltP_(new ldlt_t()) {}
+  LDLT_factor() :  ldltP_(new ldlt_t()) {}
 
   explicit LDLT_factor(const matrix_t& A) : N_(0), ldltP_(new ldlt_t()) {
     compute(A);
@@ -120,7 +120,7 @@ class LDLT_factor {
   inline size_t rows() const { return N_; }
   inline size_t cols() const { return N_; }
 
-  size_t N_;
+  size_t N_{0};
   boost::shared_ptr<ldlt_t> ldltP_;
 };
 

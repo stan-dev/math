@@ -30,7 +30,7 @@ inline
   check_multiplicable("trace_gen_inv_quad_form_ldlt", "A", A, "B", B);
   check_multiplicable("trace_gen_inv_quad_form_ldlt", "B", B, "D", D);
 
-  internal::trace_inv_quad_form_ldlt_impl<T2, R2, C2, T3, R3, C3> *_impl
+  auto *_impl
       = new internal::trace_inv_quad_form_ldlt_impl<T2, R2, C2, T3, R3, C3>(
           D, A, B);
 

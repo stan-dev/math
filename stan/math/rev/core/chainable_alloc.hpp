@@ -18,7 +18,7 @@ class chainable_alloc {
   chainable_alloc() {
     ChainableStack::instance_->var_alloc_stack_.push_back(this);
   }
-  virtual ~chainable_alloc() {}
+  virtual ~chainable_alloc() = default;
 };
 
 }  // namespace math

@@ -95,7 +95,7 @@ inline var trace_gen_quad_form(const Eigen::Matrix<Td, Rd, Cd>& D,
   check_multiplicable("trace_gen_quad_form", "A", A, "B", B);
   check_multiplicable("trace_gen_quad_form", "B", B, "D", D);
 
-  internal::trace_gen_quad_form_vari_alloc<Td, Rd, Cd, Ta, Ra, Ca, Tb, Rb, Cb>*
+  auto*
       baseVari
       = new internal::trace_gen_quad_form_vari_alloc<Td, Rd, Cd, Ta, Ra, Ca, Tb,
                                                      Rb, Cb>(D, A, B);

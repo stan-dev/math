@@ -41,8 +41,8 @@ class map_rect_combine {
       ops_partials_t;
   std::vector<ops_partials_t> ops_partials_;
 
-  const std::size_t num_shared_operands_;
-  const std::size_t num_job_operands_;
+  const std::size_t num_shared_operands_{0};
+  const std::size_t num_job_operands_{0};
 
  public:
   typedef Eigen::Matrix<return_type_t<T_shared_param, T_job_param>,
@@ -50,7 +50,7 @@ class map_rect_combine {
       result_t;
 
   map_rect_combine()
-      : ops_partials_(), num_shared_operands_(0), num_job_operands_(0) {}
+      : ops_partials_() {}
   map_rect_combine(
       const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
       const std::vector<Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>&

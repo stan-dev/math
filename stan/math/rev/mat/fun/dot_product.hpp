@@ -67,11 +67,11 @@ class dot_product_vari : public vari {
     vd1.adj() += adj_ * vd2.val();
     vd2.adj() += adj_ * vd1.val();
   }
-  inline void chain(double* v1, vari** v2) {
+  inline void chain(const double* v1, vari** v2) {
     Eigen::Map<vector_vi>(v2, length_).adj()
         += adj_ * Eigen::Map<vector_d>(v1, length_);
   }
-  inline void chain(vari** v1, double* v2) {
+  inline void chain(vari** v1, const double* v2) {
     Eigen::Map<vector_vi>(v1, length_).adj()
         += adj_ * Eigen::Map<vector_d>(v2, length_);
   }

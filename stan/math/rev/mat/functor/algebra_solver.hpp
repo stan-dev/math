@@ -265,7 +265,7 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver(
   Fx fx(Fs(), f, value_of(x), value_of(y), dat, dat_int, msgs);
 
   // Construct vari
-  algebra_solver_vari<Fy, F, T2, Fx>* vi0
+  auto* vi0
       = new algebra_solver_vari<Fy, F, T2, Fx>(Fy(), f, value_of(x), y, dat,
                                                dat_int, theta_dbl, fx, msgs);
   Eigen::Matrix<var, Eigen::Dynamic, 1> theta(x.size());

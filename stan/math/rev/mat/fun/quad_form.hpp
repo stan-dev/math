@@ -106,7 +106,7 @@ quad_form(const Eigen::Matrix<Ta, Ra, Ca>& A,
   check_square("quad_form", "A", A);
   check_multiplicable("quad_form", "A", A, "B", B);
 
-  internal::quad_form_vari<Ta, Ra, Ca, Tb, Rb, Cb>* baseVari
+  auto* baseVari
       = new internal::quad_form_vari<Ta, Ra, Ca, Tb, Rb, Cb>(A, B);
 
   return baseVari->impl_->C_;
@@ -120,7 +120,7 @@ quad_form(const Eigen::Matrix<Ta, Ra, Ca>& A,
   check_square("quad_form", "A", A);
   check_multiplicable("quad_form", "A", A, "B", B);
 
-  internal::quad_form_vari<Ta, Ra, Ca, Tb, Rb, 1>* baseVari
+  auto* baseVari
       = new internal::quad_form_vari<Ta, Ra, Ca, Tb, Rb, 1>(A, B);
 
   return baseVari->impl_->C_(0, 0);

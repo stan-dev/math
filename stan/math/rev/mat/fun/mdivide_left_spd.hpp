@@ -17,7 +17,7 @@ namespace internal {
 template <int R1, int C1, int R2, int C2>
 class mdivide_left_spd_alloc : public chainable_alloc {
  public:
-  virtual ~mdivide_left_spd_alloc() {}
+  virtual ~mdivide_left_spd_alloc() = default;
 
   Eigen::LLT<Eigen::Matrix<double, R1, C1> > llt_;
   Eigen::Matrix<double, R2, C2> C_;
@@ -153,7 +153,7 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_spd(
   // expression graph to evaluate the adjoint, but is not needed
   // for the returned matrix.  Memory will be cleaned up with the
   // arena allocator.
-  internal::mdivide_left_spd_vv_vari<R1, C1, R2, C2> *baseVari
+  auto *baseVari
       = new internal::mdivide_left_spd_vv_vari<R1, C1, R2, C2>(A, b);
 
   res.vi() = Eigen::Map<matrix_vi>(&baseVari->variRefC_[0], b.rows(), b.cols());
@@ -173,7 +173,7 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_spd(
   // expression graph to evaluate the adjoint, but is not needed
   // for the returned matrix.  Memory will be cleaned up with the
   // arena allocator.
-  internal::mdivide_left_spd_vd_vari<R1, C1, R2, C2> *baseVari
+  auto *baseVari
       = new internal::mdivide_left_spd_vd_vari<R1, C1, R2, C2>(A, b);
 
   res.vi() = Eigen::Map<matrix_vi>(&baseVari->variRefC_[0], b.rows(), b.cols());
@@ -193,7 +193,7 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_spd(
   // expression graph to evaluate the adjoint, but is not needed
   // for the returned matrix.  Memory will be cleaned up with the
   // arena allocator.
-  internal::mdivide_left_spd_dv_vari<R1, C1, R2, C2> *baseVari
+  auto *baseVari
       = new internal::mdivide_left_spd_dv_vari<R1, C1, R2, C2>(A, b);
 
   res.vi() = Eigen::Map<matrix_vi>(&baseVari->variRefC_[0], b.rows(), b.cols());

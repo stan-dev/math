@@ -14,11 +14,11 @@ namespace math {
 
 namespace internal {
 class softmax_op {
-  int N_;
-  double* y_;  // Holds the results of the softmax
+  int N_{0};
+  double* y_{nullptr};  // Holds the results of the softmax
 
  public:
-  softmax_op() : N_(0), y_(NULL) {}
+  softmax_op()   = default;
 
   /*
    * Compute the softmax of the unconstrained input vector

@@ -36,7 +36,7 @@ class matrix_exp_action_handler {
  public:
   /* Constructor
    */
-  matrix_exp_action_handler() {}
+  matrix_exp_action_handler() = default;
 
   /* Perform the matrix exponential action exp(A*t)*B
    * @param [in] mat matrix A
@@ -53,7 +53,8 @@ class matrix_exp_action_handler {
       A(i, i) -= mu;
     }
 
-    int m{0}, s{0};
+    int m{0};
+    int s{0};
     set_approximation_parameter(A, t, m, s);
 
     Eigen::MatrixXd res(A.rows(), b.cols());

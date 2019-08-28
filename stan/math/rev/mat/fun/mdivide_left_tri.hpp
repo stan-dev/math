@@ -321,7 +321,7 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_tri(
   // expression graph to evaluate the adjoint, but is not needed
   // for the returned matrix.  Memory will be cleaned up with the
   // arena allocator.
-  internal::mdivide_left_tri_vv_vari<TriView, R1, C1, R2, C2> *baseVari
+  auto *baseVari
       = new internal::mdivide_left_tri_vv_vari<TriView, R1, C1, R2, C2>(A, b);
 
   res.vi()
@@ -342,7 +342,7 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_tri(
   // expression graph to evaluate the adjoint, but is not needed
   // for the returned matrix.  Memory will be cleaned up with the
   // arena allocator.
-  internal::mdivide_left_tri_dv_vari<TriView, R1, C1, R2, C2> *baseVari
+  auto *baseVari
       = new internal::mdivide_left_tri_dv_vari<TriView, R1, C1, R2, C2>(A, b);
 
   res.vi()
@@ -363,7 +363,7 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_tri(
   // expression graph to evaluate the adjoint, but is not needed
   // for the returned matrix.  Memory will be cleaned up with the
   // arena allocator.
-  internal::mdivide_left_tri_vd_vari<TriView, R1, C1, R2, C2> *baseVari
+  auto *baseVari
       = new internal::mdivide_left_tri_vd_vari<TriView, R1, C1, R2, C2>(A, b);
 
   res.vi()

@@ -185,7 +185,7 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left(
   // expression graph to evaluate the adjoint, but is not needed
   // for the returned matrix.  Memory will be cleaned up with the
   // arena allocator.
-  internal::mdivide_left_vv_vari<R1, C1, R2, C2> *baseVari
+  auto *baseVari
       = new internal::mdivide_left_vv_vari<R1, C1, R2, C2>(A, b);
 
   res.vi() = Eigen::Map<matrix_vi>(baseVari->variRefC_, res.rows(), res.cols());
@@ -206,7 +206,7 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left(
   // expression graph to evaluate the adjoint, but is not needed
   // for the returned matrix.  Memory will be cleaned up with the
   // arena allocator.
-  internal::mdivide_left_vd_vari<R1, C1, R2, C2> *baseVari
+  auto *baseVari
       = new internal::mdivide_left_vd_vari<R1, C1, R2, C2>(A, b);
 
   res.vi() = Eigen::Map<matrix_vi>(baseVari->variRefC_, res.rows(), res.cols());
@@ -227,7 +227,7 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left(
   // expression graph to evaluate the adjoint, but is not needed
   // for the returned matrix.  Memory will be cleaned up with the
   // arena allocator.
-  internal::mdivide_left_dv_vari<R1, C1, R2, C2> *baseVari
+  auto *baseVari
       = new internal::mdivide_left_dv_vari<R1, C1, R2, C2>(A, b);
 
   res.vi() = Eigen::Map<matrix_vi>(baseVari->variRefC_, res.rows(), res.cols());

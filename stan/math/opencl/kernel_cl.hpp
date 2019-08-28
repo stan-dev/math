@@ -215,7 +215,7 @@ inline const std::vector<cl::Event> select_events(
 inline auto compile_kernel(const char* name,
                            const std::vector<const char*>& sources,
                            std::map<std::string, int>& options) {
-  std::string kernel_opts = "";
+  std::string kernel_opts;
   for (auto&& comp_opts : options) {
     kernel_opts += std::string(" -D") + comp_opts.first + "="
                    + std::to_string(comp_opts.second);

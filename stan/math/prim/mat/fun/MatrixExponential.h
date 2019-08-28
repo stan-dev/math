@@ -197,13 +197,14 @@ namespace Eigen {
     } else {
       const double maxnorm = 5.371920351148152;
       frexp(value_of_rec(l1norm) / value_of_rec(maxnorm), &squarings);
-      if (squarings < 0) squarings = 0;
+      if (squarings < 0) { squarings = 0;
+}
       MatrixType A = arg.unaryExpr(MatrixExponentialScalingOp<T>(squarings));  
       matrix_exp_pade13(A, U, V);
     }
     }
   };
 
-}
+}  // namespace Eigen
 
 #endif

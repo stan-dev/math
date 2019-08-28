@@ -36,7 +36,7 @@ struct system_functor {
   /** stream message */
   std::ostream* msgs_;
 
-  system_functor() {}
+  system_functor() = default;
 
   system_functor(const F& f, const Eigen::Matrix<T0, Eigen::Dynamic, 1>& x,
                  const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,

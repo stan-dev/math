@@ -22,7 +22,7 @@ inline var calc_sd(size_t size, const var* dtrs) {
   using std::sqrt;
   vari** varis = reinterpret_cast<vari**>(
       ChainableStack::instance_->memalloc_.alloc(size * sizeof(vari*)));
-  double* partials = reinterpret_cast<double*>(
+  auto* partials = reinterpret_cast<double*>(
       ChainableStack::instance_->memalloc_.alloc(size * sizeof(double)));
   Eigen::Map<vector_vi> varis_map(varis, size);
   Eigen::Map<const vector_v> dtrs_map(dtrs, size);

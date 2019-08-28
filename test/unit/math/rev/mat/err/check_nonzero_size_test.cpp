@@ -20,10 +20,10 @@ TEST(AgradRevErrorHandlingMatrix, checkNonzeroSizeMatrix) {
                    std::invalid_argument, "y has size 0");
 
   std::vector<var> a;
-  a.push_back(3.0);
-  a.push_back(3.0);
-  a.push_back(3.0);
-  a.push_back(3.0);
+  a.emplace_back(3.0);
+  a.emplace_back(3.0);
+  a.emplace_back(3.0);
+  a.emplace_back(3.0);
 
   EXPECT_NO_THROW(stan::math::check_nonzero_size("checkNonzeroSize", "a", a));
 

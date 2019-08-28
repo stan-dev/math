@@ -36,8 +36,8 @@ template <typename T>
 class matrix_cl<T, enable_if_arithmetic<T>> {
  private:
   cl::Buffer buffer_cl_;  // Holds the allocated memory on the device
-  const int rows_;
-  const int cols_;
+  const int rows_{0};
+  const int cols_{0};
   matrix_cl_view view_;  // Holds info on if matrix is a special type
   mutable std::vector<cl::Event> write_events_;  // Tracks write jobs
   mutable std::vector<cl::Event> read_events_;   // Tracks reads
@@ -68,16 +68,14 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
    */
   inline void clear_write_events() const {
     write_events_.clear();
-    return;
-  }
+ }
 
   /**
    * Clear the read events from the event stacks.
    */
   inline void clear_read_events() const {
     read_events_.clear();
-    return;
-  }
+ }
 
   /**
    * Clear the write events from the event stacks.
@@ -85,8 +83,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
   inline void clear_read_write_events() const {
     read_events_.clear();
     write_events_.clear();
-    return;
-  }
+ }
 
   /**
    * Get the events from the event stacks.
@@ -146,8 +143,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
     queue.enqueueBarrierWithWaitList(&this->write_events(), &copy_event);
     copy_event.wait();
     write_events_.clear();
-    return;
-  }
+ }
 
   /**
    * Waits for the read events and clears the read event stack.
@@ -158,8 +154,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
     queue.enqueueBarrierWithWaitList(&this->read_events(), &copy_event);
     copy_event.wait();
     read_events_.clear();
-    return;
-  }
+ }
 
   /**
    * Waits for read and write events to finish and clears the read, write, and
@@ -173,12 +168,11 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
     copy_event.wait();
     read_events_.clear();
     write_events_.clear();
-    return;
-  }
+ }
 
   const cl::Buffer& buffer() const { return buffer_cl_; }
   cl::Buffer& buffer() { return buffer_cl_; }
-  matrix_cl() : rows_(0), cols_(0) {}
+  matrix_cl()  = default;
 
   matrix_cl(const matrix_cl<T>& A)
       : rows_(A.rows()), cols_(A.cols()), view_(A.view()) {
@@ -201,8 +195,8 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
     }
   }
 
-  matrix_cl(matrix_cl<T>&& A)
-      : buffer_cl_(A.buffer_cl_),
+  matrix_cl(matrix_cl<T>&& A) noexcept
+      : buffer_cl_(std::move(A.buffer_cl_)),
         rows_(A.rows_),
         cols_(A.cols_),
         view_(A.view_),
@@ -247,7 +241,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
       cl::Event write_event;
       queue.enqueueWriteBuffer(
           buffer_cl_, CL_FALSE, sizeof(double) * offset_size,
-          sizeof(double) * rows_, A[i].data(), NULL, &write_event);
+          sizeof(double) * rows_, A[i].data(), nullptr, &write_event);
       this->add_write_event(write_event);
     }
   } catch (const cl::Error& e) {
@@ -309,7 +303,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
       buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
       cl::Event transfer_event;
       queue.enqueueWriteBuffer(buffer_cl_, CL_FALSE, 0, sizeof(T) * A.size(),
-                               A.data(), NULL, &transfer_event);
+                               A.data(), nullptr, &transfer_event);
       this->add_write_event(transfer_event);
     } catch (const cl::Error& e) {
       check_opencl_error("matrix constructor", e);
@@ -336,7 +330,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
       buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
       cl::Event transfer_event;
       queue.enqueueWriteBuffer(buffer_cl_, CL_FALSE, 0, sizeof(T) * A.size(),
-                               A.data(), NULL, &transfer_event);
+                               A.data(), nullptr, &transfer_event);
       this->add_write_event(transfer_event);
     } catch (const cl::Error& e) {
       check_opencl_error("matrix constructor", e);
@@ -365,7 +359,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
       buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * size());
       cl::Event transfer_event;
       queue.enqueueWriteBuffer(buffer_cl_, CL_FALSE, 0, sizeof(T) * size(), A,
-                               NULL, &transfer_event);
+                      nullptr, &transfer_event);
       this->add_write_event(transfer_event);
     } catch (const cl::Error& e) {
       check_opencl_error("matrix constructor", e);
@@ -402,7 +396,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
   /**
    * Move a \c matrix_cl to another
    */
-  matrix_cl<T>& operator=(matrix_cl<T>&& a) {
+  matrix_cl<T>& operator=(matrix_cl<T>&& a) noexcept {
     check_size_match("move of (OpenCL) matrix", "source.rows()", a.rows(),
                      "destination.rows()", rows());
     check_size_match("move of (OpenCL) matrix", "source.cols()", a.cols(),

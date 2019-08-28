@@ -36,7 +36,7 @@ class ops_partials_edge {
  public:
   empty_broadcast_array<ViewElt, Op> partials_;
 
-  ops_partials_edge() {}
+  ops_partials_edge() = default;
   explicit ops_partials_edge(const Op& /* op */) {}
 
  private:

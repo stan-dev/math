@@ -153,9 +153,9 @@ struct adj_jac_vari : public vari {
 
   F f_;
   std::array<int, sizeof...(Targs)> offsets_;
-  vari** x_vis_;
+  vari** x_vis_{nullptr};
   std::array<int, internal::compute_dims<FReturnType>::value> M_;
-  vari** y_vi_;
+  vari** y_vi_{nullptr};
 
   /**
    * count_memory returns count (the first argument) + the number of varis used
@@ -321,9 +321,8 @@ struct adj_jac_vari : public vari {
   adj_jac_vari()
       : vari(std::numeric_limits<double>::quiet_NaN()),  // The val_ in this
                                                          // vari is unused
-        is_var_({{is_var<typename scalar_type<Targs>::type>::value...}}),
-        x_vis_(NULL),
-        y_vi_(NULL) {}
+        is_var_({{is_var<typename scalar_type<Targs>::type>::value...}})
+        {}
 
   /**
    * Return a var with a new vari holding the given value

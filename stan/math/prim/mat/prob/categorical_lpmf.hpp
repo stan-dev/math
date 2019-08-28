@@ -49,8 +49,8 @@ return_type_t<T_prob> categorical_lpmf(
 
   int lb = 1;
 
-  for (size_t i = 0; i < ns.size(); ++i) {
-    check_bounded(function, "element of outcome array", ns[i], lb,
+  for (int n : ns) {
+    check_bounded(function, "element of outcome array", n, lb,
                   theta.size());
 }
 
