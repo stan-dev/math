@@ -16,19 +16,16 @@ namespace stan {
 template <typename C, typename = void>
 class scalar_seq_view {
  public:
-  /* The template K is here because perfect forwarding
-   * depends on the constructors template.
-   */
-  template <typename K, typename = std::enable_if_t<std::is_same<std::decay_t<C>, std::decay_t<K>>::value>>
+
+  template <typename K, typename = std::enable_if_t<std::is_same<
+                            std::decay_t<C>, std::decay_t<K>>::value>>
   explicit scalar_seq_view(K&& c) : c_(std::forward<K>(c)) {}
-  template <typename K, typename = std::enable_if_t<std::is_same<std::decay_t<C>, std::decay_t<K>>::value>>
-  explicit scalar_seq_view(const K& c) : c_(c) {}  /**
+  /**
    * Segfaults if out of bounds.
    * @param i index
    * @return the element at the specified position in the container
    */
   auto&& operator[](int i) { return c_[i]; }
-  const auto&& operator[](int i) const { return c_[i]; }
 
   int size() const { return c_.size(); }
 
