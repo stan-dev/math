@@ -1,6 +1,8 @@
 
 .PHONY: clang-tidy
 clang-tidy:
-		$(eval clang_warnings:=$(shell find $(folder) -name '$(files).cpp' -exec clang-tidy {} -checks='*perf*' -header-filter='./stan/*' -- -std=c++1y -Wno-sign-compare -I lib/opencl_1.2.8  -O3  -I . -I lib/eigen_3.3.3 -I lib/boost_1.69.0 -I lib/sundials_4.1.0/include -I lib/gtest_1.8.1/include -I lib/gtest_1.8.1 -I lib/gtest_1.8.1/include -I lib/gtest_1.8.1 -DBOOST_RESULT_OF_USE_TR1 -DBOOST_NO_DECLTYPE -DBOOST_DISABLE_ASSERTS -DBOOST_PHOENIX_NO_VARIADIC_EXPRESSION -Wno-ignored-attributes  -DGTEST_USE_OWN_TR1_TUPLE -DGTEST_USE_OWN_TR1_TUPLE \; | echo))
-		@$(clang_warnings)
-		@exit $(if $(strip $(clang_warnings)),1,0)
+		find $(folder) -name '$(files).cpp' -exec clang-tidy {} -checks='*perf*,*modernize*,*misc*,*google*,*readability*' -header-filter='./stan/*' -- $(CXXFLAGS) $(LDFLAGS) $(LDLIBS) $(INC_GTEST) $(CXXFLAGS_GTEST) $(CPPFLAGS) \;
+
+.PHONY: clang-tidy-fix
+clang-tidy-fix:
+		find $(folder) -name '$(files).cpp' -exec clang-tidy {} -checks='*perf*,*modernize*,*misc*,*google*,*readability*' -header-filter='./stan/*' -fix -fix-errors -- $(CXXFLAGS) $(LDFLAGS) $(LDLIBS) $(INC_GTEST) $(CXXFLAGS_GTEST) $(CPPFLAGS) \;
