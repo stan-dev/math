@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_EIGEN_HPP
 
 #ifdef STAN_OPENCL
-#ifdef STAN_OPENCL_CACHE
+#ifndef STAN_OPENCL_NOCACHE
 #include <CL/cl.hpp>
 #endif
 #endif

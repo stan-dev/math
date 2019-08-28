@@ -27,7 +27,7 @@ TEST(MathMatrixCL, matrix_cl_types_creation) {
   test_matrix_creation<long double>();
 }
 
-#ifdef STAN_OPENCL_CACHE
+#ifndef STAN_OPENCL_NOCACHE
 TEST(MathMatrixCL, matrix_cl_cache) {
   using stan::math::matrix_cl;
   Eigen::MatrixXd m(2, 2);
@@ -44,6 +44,27 @@ TEST(MathMatrixCL, matrix_cl_cache) {
   EXPECT_EQ(mem_handle, m1_cl.buffer()());
   EXPECT_EQ(mem_handle, m2_cl.buffer()());
 }
+#else
+TEST(MathMatrixCL, matrix_cl_nocache) {
+  using stan::math::matrix_cl;
+  Eigen::MatrixXd m(2, 2);
+  m << 1, 2, 3, 4;
+
+  const matrix_cl<double> m1_cl = matrix_cl<double>::constant(m);
+  const matrix_cl<double> m2_cl = matrix_cl<double>::constant(m);
+
+  EXPECT_NE(m1_cl.buffer()(), m2_cl.buffer()());
+}
 #endif
 
+TEST(MathMatrixCL, matrix_cl_constructor_nocache) {
+  using stan::math::matrix_cl;
+  Eigen::MatrixXd m(2, 2);
+  m << 1, 2, 3, 4;
+
+  const matrix_cl<double> m1_cl(m);
+  const matrix_cl<double> m2_cl(m);
+
+  EXPECT_NE(m1_cl.buffer()(), m2_cl.buffer()());
+}
 #endif

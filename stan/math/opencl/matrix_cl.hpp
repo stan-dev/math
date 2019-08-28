@@ -180,6 +180,14 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
   cl::Buffer& buffer() { return buffer_cl_; }
   matrix_cl() : rows_(0), cols_(0) {}
 
+  /**
+   * Construct a matrix_cl<T> from an existing cl::Buffer object. The matrix directly uses given buffer - no copying is done.
+   *
+   * @param A the cl::Buffer object to construct the matrix from
+   * @param R number of rows
+   * @param C number of columns
+   * @param partial_view view of the matrix
+   */
   matrix_cl(cl::Buffer& A, const int R, const int C,
             matrix_cl_view partial_view = matrix_cl_view::Entire)
       : rows_(R), cols_(C), view_(partial_view) {
@@ -363,7 +371,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
   static matrix_cl<T> constant(const Eigen::Matrix<T, R, C>& A,
                                matrix_cl_view partial_view
                                = matrix_cl_view::Entire) {
-#ifdef STAN_OPENCL_CACHE
+#ifndef STAN_OPENCL_NOCACHE
     if (A.opencl_buffer_() != NULL) {
       return matrix_cl<T>(A.opencl_buffer_, A.rows(), A.cols(), partial_view);
     } else {

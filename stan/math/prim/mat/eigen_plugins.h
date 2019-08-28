@@ -200,7 +200,7 @@ vi() { return CwiseUnaryView<vi_Op, Derived>(derived());
 }
 
 #ifdef STAN_OPENCL
-#ifdef STAN_OPENCL_CACHE
+#ifndef STAN_OPENCL_NOCACHE
 mutable cl::Buffer opencl_buffer_;
 #endif
 #endif
