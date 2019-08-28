@@ -19,7 +19,7 @@ inline matrix_v multiply_lower_tri_self_transpose(const matrix_v& L) {
   matrix_v LLt(K, K);
   if (K == 0) {
     return LLt;
-}
+  }
   // if (K == 1) {
   //   LLt(0, 0) = L(0, 0) * L(0, 0);
   //   return LLt;
@@ -29,7 +29,7 @@ inline matrix_v multiply_lower_tri_self_transpose(const matrix_v& L) {
     Knz = (K - J) * J + (J * (J + 1)) / 2;
   } else {  // if (K < J)
     Knz = (K * (K + 1)) / 2;
-}
+  }
   vari** vs = reinterpret_cast<vari**>(
       ChainableStack::instance_->memalloc_.alloc(Knz * sizeof(vari*)));
   int pos = 0;
@@ -37,7 +37,7 @@ inline matrix_v multiply_lower_tri_self_transpose(const matrix_v& L) {
     for (int n = 0; n < ((J < (m + 1)) ? J : (m + 1)); ++n) {
       vs[pos++] = L(m, n).vi_;
     }
-}
+  }
   for (int m = 0, mpos = 0; m < K; ++m, mpos += (J < m) ? J : m) {
     LLt(m, m) = var(
         new internal::dot_self_vari(vs + mpos, (J < (m + 1)) ? J : (m + 1)));

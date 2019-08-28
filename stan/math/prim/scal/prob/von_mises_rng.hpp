@@ -78,7 +78,7 @@ inline typename VectorBuilder<true, double, T_loc, T_conc>::type von_mises_rng(
 
       if (!done) {
         done = std::log(Y / U2) + 1 - Y >= 0;
-}
+      }
     }
 
     double U3 = uniform_rng() - 0.5;

@@ -32,7 +32,7 @@ struct finite<Eigen::Matrix<T, R, C>, true> {
         if (!(boost::math::isfinite)(y(n))) {
           domain_error_vec(function, name, y, n, "is ",
                            ", but must be finite!");
-}
+        }
       }
     }
   }

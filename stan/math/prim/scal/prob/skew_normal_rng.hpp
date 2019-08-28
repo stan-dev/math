@@ -61,7 +61,7 @@ skew_normal_rng(const T_loc& mu, const T_scale& sigma, const T_shape& alpha,
 
     if (r2 > alpha_vec[n] * r1) {
       r1 = -r1;
-}
+    }
 
     output[n] = mu_vec[n] + sigma_vec[n] * r1;
   }

@@ -31,7 +31,7 @@ inline int categorical_rng(
   int b = 0;
   while (c > index(b, 0)) {
     b++;
-}
+  }
   return b + 1;
 }
 }  // namespace math

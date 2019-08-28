@@ -104,7 +104,7 @@ gaussian_dlm_obs_lpdf(
 
   if (size_zero(y)) {
     return 0;
-}
+  }
 
   T_lp lp(0);
   if (include_summand<propto>::value) {
@@ -260,7 +260,7 @@ gaussian_dlm_obs_lpdf(
 
   if (y.cols() == 0 || y.rows() == 0) {
     return 0;
-}
+  }
 
   T_lp lp(0);
   if (include_summand<propto>::value) {

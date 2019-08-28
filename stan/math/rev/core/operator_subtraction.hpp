@@ -35,7 +35,7 @@ class subtract_vd_vari : public op_vd_vari {
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
     } else {
       avi_->adj_ += adj_;
-}
+    }
   }
 };
 
@@ -47,7 +47,7 @@ class subtract_dv_vari : public op_dv_vari {
       bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
     } else {
       bvi_->adj_ -= adj_;
-}
+    }
   }
 };
 }  // namespace internal
@@ -108,7 +108,7 @@ inline var operator-(const var& a, const var& b) {
 inline var operator-(const var& a, double b) {
   if (b == 0.0) {
     return a;
-}
+  }
   return var(new internal::subtract_vd_vari(a.vi_, b));
 }
 

@@ -33,18 +33,18 @@ inline bool is_corr_matrix(
 
   if (!is_size_match(y.rows(), y.cols())) {
     return false;
-}
+  }
   if (!is_positive(y.rows())) {
     return false;
-}
+  }
   if (!is_pos_definite(y)) {
     return false;
-}
+  }
   if (is_symmetric(y)) {
     for (size_t k = 0; k < y.rows(); ++k) {
       if (!(fabs(y(k, k) - 1.0) <= CONSTRAINT_TOLERANCE)) {
         return false;
-}
+      }
     }
   }
   return true;

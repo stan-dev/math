@@ -34,7 +34,7 @@ return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
 
   if (size_zero(n, theta)) {
     return 0.0;
-}
+  }
 
   T_partials_return logp(0.0);
 
@@ -45,7 +45,7 @@ return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
 
   if (!include_summand<propto, T_prob>::value) {
     return 0.0;
-}
+  }
 
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_prob> theta_vec(theta);
@@ -67,7 +67,7 @@ return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
       logp += ntheta;
     } else {
       logp -= log1p(exp_m_ntheta);
-}
+    }
 
     if (!is_constant_all<T_prob>::value) {
       if (ntheta > cutoff) {
@@ -77,7 +77,7 @@ return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
       } else {
         ops_partials.edge1_.partials_[n]
             += sign * exp_m_ntheta / (exp_m_ntheta + 1);
-}
+      }
     }
   }
   return ops_partials.build(logp);

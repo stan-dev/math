@@ -34,7 +34,7 @@ inline int hypergeometric_rng(int N, int a, int b, RNG& rng) {
       max = mid;
     } else {
       min = mid + 1;
-}
+    }
   }
   return min + 1;
 }

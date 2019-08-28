@@ -19,7 +19,7 @@ inline matrix_d multiply_lower_tri_self_transpose(const matrix_d& L) {
   int K = L.rows();
   if (K == 0) {
     return L;
-}
+  }
   if (K == 1) {
     matrix_d result(1, 1);
     result(0) = square(L(0));  // first elt, so don't need double idx
@@ -33,7 +33,7 @@ inline matrix_d multiply_lower_tri_self_transpose(const matrix_d& L) {
     LLt(m, m) = Lt.col(m).head(k).squaredNorm();
     for (int n = (m + 1); n < K; ++n) {
       LLt(n, m) = LLt(m, n) = Lt.col(m).head(k).dot(Lt.col(n).head(k));
-}
+    }
   }
   return LLt;
 }

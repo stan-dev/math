@@ -28,7 +28,7 @@ return_type_t<T_y, T_loc, T_scale> lognormal_cdf(const T_y& y, const T_loc& mu,
 
   if (size_zero(y, mu, sigma)) {
     return cdf;
-}
+  }
 
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
@@ -47,7 +47,7 @@ return_type_t<T_y, T_loc, T_scale> lognormal_cdf(const T_y& y, const T_loc& mu,
   for (size_t i = 0; i < stan::length(y); i++) {
     if (value_of(y_vec[i]) == 0.0) {
       return ops_partials.build(0.0);
-}
+    }
   }
 
   for (size_t n = 0; n < N; n++) {
@@ -64,30 +64,30 @@ return_type_t<T_y, T_loc, T_scale> lognormal_cdf(const T_y& y, const T_loc& mu,
 
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] += rep_deriv / cdf_ / y_dbl;
-}
+    }
     if (!is_constant_all<T_loc>::value) {
       ops_partials.edge2_.partials_[n] -= rep_deriv / cdf_;
-}
+    }
     if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n]
           -= rep_deriv * scaled_diff * SQRT_2 / cdf_;
-}
+    }
   }
 
   if (!is_constant_all<T_y>::value) {
     for (size_t n = 0; n < stan::length(y); ++n) {
       ops_partials.edge1_.partials_[n] *= cdf;
-}
+    }
   }
   if (!is_constant_all<T_loc>::value) {
     for (size_t n = 0; n < stan::length(mu); ++n) {
       ops_partials.edge2_.partials_[n] *= cdf;
-}
+    }
   }
   if (!is_constant_all<T_scale>::value) {
     for (size_t n = 0; n < stan::length(sigma); ++n) {
       ops_partials.edge3_.partials_[n] *= cdf;
-}
+    }
   }
   return ops_partials.build(cdf);
 }

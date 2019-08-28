@@ -23,7 +23,7 @@ const Eigen::Matrix<T, Eigen::Dynamic, 1> csr_extract_w(
   w.setZero();
   for (int nze = 0; nze < A.nonZeros(); ++nze) {
     w[nze] = *(A.valuePtr() + nze);
-}
+  }
   return w;
 }
 

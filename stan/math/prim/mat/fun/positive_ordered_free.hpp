@@ -35,11 +35,11 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> positive_ordered_free(
   Matrix<T, Dynamic, 1> x(k);
   if (k == 0) {
     return x;
-}
+  }
   x[0] = log(y[0]);
   for (size_type i = 1; i < k; ++i) {
     x[i] = log(y[i] - y[i - 1]);
-}
+  }
   return x;
 }
 }  // namespace math

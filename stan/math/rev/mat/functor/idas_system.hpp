@@ -155,11 +155,11 @@ class idas_system {
         msgs_(msgs) {
     if (nv_yy_ == NULL || nv_yp_ == NULL) {
       throw std::runtime_error("N_VMake_Serial failed to allocate memory");
-}
+    }
 
     if (mem_ == NULL) {
       throw std::runtime_error("IDACreate failed to allocate memory");
-}
+    }
 
     static const char* caller = "idas_system";
     check_finite(caller, "initial state", yy0);
@@ -177,7 +177,7 @@ class idas_system {
 
     for (size_t i = 0; i < N_; ++i) {
       NV_Ith_S(id_, i) = eq_id[i];
-}
+    }
   }
 
   /**
@@ -325,7 +325,7 @@ class idas_system {
                          dae->msgs_);
       for (size_t i = 0; i < N; ++i) {
         NV_Ith_S(rr, i) = value_of(res[i]);
-}
+      }
 
       return 0;
     };

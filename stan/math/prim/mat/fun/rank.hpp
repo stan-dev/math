@@ -24,8 +24,8 @@ inline int rank(const C& v, int s) {
   for (typename index_type<C>::type i = 0; i < v.size(); ++i) {
     if (v[i] < v[s]) {
       ++count;
-}
-}
+    }
+  }
   return count;
 }
 

@@ -17,21 +17,21 @@ namespace internal {
 inline size_t fft_next_good_size(size_t N) {
   if (N <= 2) {
     return 2;
-}
+  }
   while (true) {
     size_t m = N;
     while ((m % 2) == 0) {
       m /= 2;
-}
+    }
     while ((m % 3) == 0) {
       m /= 3;
-}
+    }
     while ((m % 5) == 0) {
       m /= 5;
-}
+    }
     if (m <= 1) {
       return N;
-}
+    }
     N++;
   }
 }
@@ -75,12 +75,12 @@ void autocorrelation(const std::vector<T>& y, std::vector<T>& ac,
   T mean = stan::math::mean(y);
   for (size_t i = 0; i < N; i++) {
     centered_signal[i] -= mean;
-}
+  }
 
   fft.fwd(freqvec, centered_signal);
   for (size_t i = 0; i < Mt2; ++i) {
     freqvec[i] = complex<T>(norm(freqvec[i]), 0.0);
-}
+  }
 
   fft.inv(ac, freqvec);
   ac.resize(N);
@@ -91,7 +91,7 @@ void autocorrelation(const std::vector<T>& y, std::vector<T>& ac,
   T var = ac[0];
   for (size_t i = 0; i < N; ++i) {
     ac[i] /= var;
-}
+  }
 }
 
 /**
@@ -138,7 +138,7 @@ void autocorrelation(const Eigen::MatrixBase<DerivedA>& y,
 
   for (size_t i = 0; i < N; ++i) {
     ac_tmp(i) /= (N - i);
-}
+  }
 
   ac = ac_tmp.head(N).array() / ac_tmp(0);
 }

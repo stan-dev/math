@@ -45,7 +45,7 @@ inline double log1p_exp(double a) {
   // like log_sum_exp below with b=0.0; prevents underflow
   if (a > 0.0) {
     return a + log1p(exp(-a));
-}
+  }
   return log1p(exp(a));
 }
 

@@ -57,7 +57,7 @@ inline var sd(const std::vector<var>& v) {
   check_nonzero_size("sd", "v", v);
   if (v.size() == 1) {
     return 0;
-}
+  }
   return internal::calc_sd(v.size(), &v[0]);
 }
 
@@ -76,7 +76,7 @@ var sd(const Eigen::Matrix<var, R, C>& m) {
   check_nonzero_size("sd", "m", m);
   if (m.size() == 1) {
     return 0;
-}
+  }
   return internal::calc_sd(m.size(), &m(0));
 }
 

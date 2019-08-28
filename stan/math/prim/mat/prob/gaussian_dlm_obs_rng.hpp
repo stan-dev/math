@@ -46,7 +46,7 @@ inline Eigen::VectorXd multi_normal_semidefinite_rng(
   Eigen::VectorXd z(M);
   for (int i = 0; i < M; i++) {
     z(i) = stddev(i) * std_normal_rng();
-}
+  }
 
   Eigen::VectorXd Y
       = mu + (S_ldlt.transpositionsP().transpose() * (S_ldlt.matrixL() * z));
@@ -84,7 +84,7 @@ inline Eigen::VectorXd multi_normal_definite_rng(
   Eigen::VectorXd z(M);
   for (int i = 0; i < M; i++) {
     z(i) = std_normal_rng();
-}
+  }
 
   Eigen::VectorXd Y = mu + S_llt.matrixL() * z;
 

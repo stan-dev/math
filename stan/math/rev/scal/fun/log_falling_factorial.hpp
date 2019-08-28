@@ -40,7 +40,7 @@ class log_falling_factorial_vd_vari : public op_vd_vari {
     } else {
       avi_->adj_
           += adj_ * (digamma(avi_->val_ + 1) - digamma(avi_->val_ - bd_ + 1));
-}
+    }
   }
 };
 
@@ -53,7 +53,7 @@ class log_falling_factorial_dv_vari : public op_dv_vari {
       bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
     } else {
       bvi_->adj_ += adj_ * digamma(ad_ - bvi_->val_ + 1);
-}
+    }
   }
 };
 }  // namespace internal

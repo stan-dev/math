@@ -48,7 +48,7 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lccdf(const T_y& y,
 
   if (size_zero(y, mu, kappa)) {
     return 0.0;
-}
+  }
 
   T_partials_return ccdf_log(0.0);
 
@@ -114,7 +114,7 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lccdf(const T_y& y,
       ops_partials.edge1_.partials_[n] -= pow(1 - y_dbl, kappa_mukappa_dbl - 1)
                                           * pow(y_dbl, mukappa_dbl - 1)
                                           / betafunc_dbl / Pn;
-}
+    }
 
     T_partials_return g1 = 0;
     T_partials_return g2 = 0;
@@ -126,11 +126,11 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lccdf(const T_y& y,
     }
     if (!is_constant_all<T_loc>::value) {
       ops_partials.edge2_.partials_[n] -= kappa_dbl * (g1 - g2) / Pn;
-}
+    }
     if (!is_constant_all<T_prec>::value) {
       ops_partials.edge3_.partials_[n]
           -= (g1 * mu_dbl + g2 * (1 - mu_dbl)) / Pn;
-}
+    }
   }
   return ops_partials.build(ccdf_log);
 }

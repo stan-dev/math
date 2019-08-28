@@ -19,7 +19,7 @@ void stan_print(std::ostream* o, const std::vector<T>& x) {
   for (size_t i = 0; i < x.size(); ++i) {
     if (i > 0) {
       *o << ',';
-}
+    }
     stan_print(o, x[i]);
   }
   *o << ']';
@@ -31,7 +31,7 @@ void stan_print(std::ostream* o, const Eigen::Matrix<T, Eigen::Dynamic, 1>& x) {
   for (int i = 0; i < x.size(); ++i) {
     if (i > 0) {
       *o << ',';
-}
+    }
     stan_print(o, x(i));
   }
   *o << ']';
@@ -43,7 +43,7 @@ void stan_print(std::ostream* o, const Eigen::Matrix<T, 1, Eigen::Dynamic>& x) {
   for (int i = 0; i < x.size(); ++i) {
     if (i > 0) {
       *o << ',';
-}
+    }
     stan_print(o, x(i));
   }
   *o << ']';
@@ -56,12 +56,12 @@ void stan_print(std::ostream* o,
   for (int i = 0; i < x.rows(); ++i) {
     if (i > 0) {
       *o << ',';
-}
+    }
     *o << '[';
     for (int j = 0; j < x.row(i).size(); ++j) {
       if (j > 0) {
         *o << ',';
-}
+      }
       stan_print(o, x.row(i)(j));
     }
     *o << ']';

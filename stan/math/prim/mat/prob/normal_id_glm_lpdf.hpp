@@ -71,18 +71,18 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   if (is_vector<T_scale>::value) {
     check_consistent_sizes(function, "Vector of scale parameters", sigma,
                            "Vector of dependent variables", y);
-}
+  }
   if (is_vector<T_alpha>::value) {
     check_consistent_sizes(function, "Vector of intercepts", alpha,
                            "Vector of dependent variables", y);
-}
+  }
   if (size_zero(y, x, beta, sigma)) {
     return 0;
-}
+  }
 
   if (!include_summand<propto, T_y, T_x, T_alpha, T_beta, T_scale>::value) {
     return 0;
-}
+  }
 
   const auto &x_val = value_of_rec(x);
   const auto &beta_val = value_of_rec(beta);
@@ -127,7 +127,7 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
         ops_partials.edge3_.partials_ = mu_derivative;
       } else {
         ops_partials.edge3_.partials_[0] = sum(mu_derivative);
-}
+      }
     }
     if (!is_constant_all<T_scale>::value) {
       if (is_vector<T_scale>::value) {
@@ -162,17 +162,17 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   T_partials_return logp(0.0);
   if (include_summand<propto>::value) {
     logp += NEG_LOG_SQRT_TWO_PI * N;
-}
+  }
   if (include_summand<propto, T_scale>::value) {
     if (is_vector<T_scale>::value) {
       logp -= sum(log(sigma_val_vec));
     } else {
       logp -= N * log(as_scalar(sigma_val));
-}
+    }
   }
   if (include_summand<propto, T_y, T_x, T_alpha, T_beta, T_scale>::value) {
     logp -= 0.5 * y_minus_mu_over_sigma_squared_sum;
-}
+  }
   return ops_partials.build(logp);
 }
 

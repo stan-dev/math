@@ -25,7 +25,7 @@ return_type_t<T_y, T_loc, T_scale> logistic_lpdf(const T_y& y, const T_loc& mu,
 
   if (size_zero(y, mu, sigma)) {
     return 0.0;
-}
+  }
 
   T_partials_return logp(0.0);
 
@@ -37,7 +37,7 @@ return_type_t<T_y, T_loc, T_scale> logistic_lpdf(const T_y& y, const T_loc& mu,
 
   if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
     return 0.0;
-}
+  }
 
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
 
@@ -54,7 +54,7 @@ return_type_t<T_y, T_loc, T_scale> logistic_lpdf(const T_y& y, const T_loc& mu,
     inv_sigma[i] = 1.0 / value_of(sigma_vec[i]);
     if (include_summand<propto, T_scale>::value) {
       log_sigma[i] = log(value_of(sigma_vec[i]));
-}
+    }
   }
 
   VectorBuilder<!is_constant_all<T_loc>::value, T_partials_return, T_loc,
@@ -65,10 +65,10 @@ return_type_t<T_y, T_loc, T_scale> logistic_lpdf(const T_y& y, const T_loc& mu,
   if (!is_constant_all<T_loc>::value) {
     for (size_t n = 0; n < max_size(mu, sigma); n++) {
       exp_mu_div_sigma[n] = exp(value_of(mu_vec[n]) / value_of(sigma_vec[n]));
-}
+    }
     for (size_t n = 0; n < max_size(y, sigma); n++) {
       exp_y_div_sigma[n] = exp(value_of(y_vec[n]) / value_of(sigma_vec[n]));
-}
+    }
   }
 
   for (size_t n = 0; n < N; n++) {
@@ -80,40 +80,40 @@ return_type_t<T_y, T_loc, T_scale> logistic_lpdf(const T_y& y, const T_loc& mu,
     T_partials_return exp_m_y_minus_mu_div_sigma(0);
     if (include_summand<propto, T_y, T_loc, T_scale>::value) {
       exp_m_y_minus_mu_div_sigma = exp(-y_minus_mu_div_sigma);
-}
+    }
     T_partials_return inv_1p_exp_y_minus_mu_div_sigma(0);
     if (!is_constant_all<T_y, T_scale>::value) {
       inv_1p_exp_y_minus_mu_div_sigma = 1 / (1 + exp(y_minus_mu_div_sigma));
-}
+    }
 
     if (include_summand<propto, T_y, T_loc, T_scale>::value) {
       logp -= y_minus_mu_div_sigma;
-}
+    }
     if (include_summand<propto, T_scale>::value) {
       logp -= log_sigma[n];
-}
+    }
     if (include_summand<propto, T_y, T_loc, T_scale>::value) {
       logp -= 2.0 * log1p(exp_m_y_minus_mu_div_sigma);
-}
+    }
 
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n]
           += (2 * inv_1p_exp_y_minus_mu_div_sigma - 1) * inv_sigma[n];
-}
+    }
     if (!is_constant_all<T_loc>::value) {
       ops_partials.edge2_.partials_[n]
           += (1
               - 2 * exp_mu_div_sigma[n]
                     / (exp_mu_div_sigma[n] + exp_y_div_sigma[n]))
              * inv_sigma[n];
-}
+    }
     if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n]
           += ((1 - 2 * inv_1p_exp_y_minus_mu_div_sigma) * y_minus_mu
                   * inv_sigma[n]
               - 1)
              * inv_sigma[n];
-}
+    }
   }
   return ops_partials.build(logp);
 }

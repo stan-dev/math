@@ -56,7 +56,7 @@ exp_mod_normal_rng(const T_loc& mu, const T_scale& sigma,
   for (size_t n = 0; n < N; ++n) {
     output[n] = normal_rng(mu_vec[n], sigma_vec[n], rng)
                 + exponential_rng(lambda_vec[n], rng);
-}
+  }
 
   return output.data();
 }

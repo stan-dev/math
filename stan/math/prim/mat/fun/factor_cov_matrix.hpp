@@ -30,7 +30,7 @@ bool factor_cov_matrix(
   sds = Sigma.diagonal().array();
   if ((sds <= 0.0).any()) {
     return false;
-}
+  }
   sds = sds.sqrt();
 
   Eigen::DiagonalMatrix<T, Eigen::Dynamic> D(K);
@@ -44,7 +44,7 @@ bool factor_cov_matrix(
   ldlt = R.ldlt();
   if (!ldlt.isPositive()) {
     return false;
-}
+  }
   Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> U = ldlt.matrixU();
   factor_U(U, CPCs);
   return true;

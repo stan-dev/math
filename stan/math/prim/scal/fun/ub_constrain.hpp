@@ -34,7 +34,7 @@ inline return_type_t<T, U> ub_constrain(const T& x, const U& ub) {
   using std::exp;
   if (ub == INFTY) {
     return identity_constrain(x);
-}
+  }
   return ub - exp(x);
 }
 
@@ -66,7 +66,7 @@ inline return_type_t<T, U> ub_constrain(const T& x, const U& ub, T& lp) {
   using std::exp;
   if (ub == INFTY) {
     return identity_constrain(x, lp);
-}
+  }
   lp += x;
   return ub - exp(x);
 }

@@ -46,12 +46,12 @@ void grad_F32(T* g, const T& a1, const T& a2, const T& a3, const T& b1,
 
   for (int i = 0; i < 6; ++i) {
     g[i] = 0.0;
-}
+  }
 
   T log_g_old[6];
   for (auto& x : log_g_old) {
     x = NEGATIVE_INFTY;
-}
+  }
 
   T log_t_old = 0.0;
   T log_t_new = 0.0;
@@ -61,15 +61,15 @@ void grad_F32(T* g, const T& a1, const T& a2, const T& a3, const T& b1,
   double log_t_new_sign = 1.0;
   double log_t_old_sign = 1.0;
   double log_g_old_sign[6];
-  for (double & i : log_g_old_sign) {
+  for (double& i : log_g_old_sign) {
     i = 1.0;
-}
+  }
 
   for (int k = 0; k <= max_steps; ++k) {
     T p = (a1 + k) * (a2 + k) * (a3 + k) / ((b1 + k) * (b2 + k) * (1 + k));
     if (p == 0) {
       return;
-}
+    }
 
     log_t_new += log(fabs(p)) + log_z;
     log_t_new_sign = p >= 0.0 ? log_t_new_sign : -log_t_new_sign;
@@ -116,7 +116,7 @@ void grad_F32(T* g, const T& a1, const T& a2, const T& a3, const T& b1,
 
     if (log_t_new <= log(precision)) {
       return;  // implicit abs
-}
+    }
 
     log_t_old = log_t_new;
     log_t_old_sign = log_t_new_sign;

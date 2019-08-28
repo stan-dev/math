@@ -97,7 +97,7 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
       values(pos) = (K - k - 1) * log1m(square(CPCs(pos)));
       pos++;
     }
-}
+  }
 
   log_prob += 0.5 * sum(values);
   return read_corr_L(CPCs, K);

@@ -30,7 +30,7 @@ inline void check_consistent_size_mvt(const char* function, const char* name,
     size_x = 0;
     if (expected_size == 0) {
       return;
-}
+    }
   } else {
     size_t size_x = stan::length_mvt(x);
     bool x_contains_vectors = is_vector<
@@ -40,7 +40,7 @@ inline void check_consistent_size_mvt(const char* function, const char* name,
       return;
     } else if (expected_size == size_x) {
       return;
-}
+    }
   }
 
   std::stringstream msg;

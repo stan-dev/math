@@ -21,7 +21,7 @@ class gevv_vvv_vari : public vari {
     double result = 0;
     for (size_t i = 0; i < length; i++) {
       result += v1[i * stride1].vi_->val_ * v2[i * stride2].vi_->val_;
-}
+    }
     *dotprod = result;
     return alpha->vi_->val_ * result;
   }
@@ -38,10 +38,10 @@ class gevv_vvv_vari : public vari {
     v2_ = v1_ + length_;
     for (size_t i = 0; i < length_; i++) {
       v1_[i] = v1[i * stride1].vi_;
-}
+    }
     for (size_t i = 0; i < length_; i++) {
       v2_[i] = v2[i * stride2].vi_;
-}
+    }
   }
   virtual ~gevv_vvv_vari() = default;
   void chain() {

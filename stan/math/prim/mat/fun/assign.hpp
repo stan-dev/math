@@ -27,7 +27,7 @@ inline void print_mat_size(std::ostream& o) {
     o << "dynamically sized";
   } else {
     o << N;
-}
+  }
 }
 
 /**
@@ -110,7 +110,7 @@ inline void assign(Eigen::Matrix<T_lhs, R, C>& x,
   check_matching_dims("assign", "left-hand-side", x, "right-hand-side", y);
   for (int i = 0; i < x.size(); ++i) {
     assign(x(i), y(i));
-}
+  }
 }
 
 /**
@@ -145,8 +145,8 @@ inline void assign(Eigen::Block<T_lhs> x, const Eigen::Matrix<T, R, C>& y) {
   for (int n = 0; n < y.cols(); ++n) {
     for (int m = 0; m < y.rows(); ++m) {
       assign(x(m, n), y(m, n));
-}
-}
+    }
+  }
 }
 
 /**
@@ -173,7 +173,7 @@ inline void assign(std::vector<T_lhs>& x, const std::vector<T_rhs>& y) {
   check_matching_sizes("assign", "left-hand side", x, "right-hand side", y);
   for (size_t i = 0; i < x.size(); ++i) {
     assign(x[i], y[i]);
-}
+  }
 }
 
 }  // namespace math

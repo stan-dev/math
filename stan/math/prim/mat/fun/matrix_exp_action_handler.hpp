@@ -82,7 +82,7 @@ class matrix_exp_action_handler {
         B = F;
         if (conv) {
           break;
-}
+        }
       }
       res.col(col) = F;
     }  // loop b columns

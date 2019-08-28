@@ -22,7 +22,7 @@ inline double log_sum_exp_as_double(const Eigen::Matrix<var, R, C>& x) {
   const double max = x.val().maxCoeff();
   if (!std::isfinite(max)) {
     return max;
-}
+  }
   return max + std::log((x.val().array() - max).exp().sum());
 }
 

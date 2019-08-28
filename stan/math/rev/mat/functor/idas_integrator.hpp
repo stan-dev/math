@@ -84,19 +84,19 @@ class idas_integrator {
     if (rtol_ <= 0) {
       invalid_argument("idas_integrator", "relative tolerance,", rtol_, "",
                        ", must be greater than 0");
-}
+    }
     if (rtol_ > 1.0E-3) {
       invalid_argument("idas_integrator", "relative tolerance,", rtol_, "",
                        ", must be less than 1.0E-3");
-}
+    }
     if (atol_ <= 0) {
       invalid_argument("idas_integrator", "absolute tolerance,", atol_, "",
                        ", must be greater than 0");
-}
+    }
     if (max_num_steps_ <= 0) {
       invalid_argument("idas_integrator", "max_num_steps,", max_num_steps_, "",
                        ", must be greater than 0");
-}
+    }
   }
 
   /**
@@ -183,12 +183,12 @@ void idas_integrator::init_sensitivity(Dae& dae) {
     if (Dae::is_var_yy0) {
       for (size_t i = 0; i < n; ++i) {
         NV_Ith_S(yys[i], i) = 1.0;
-}
+      }
     }
     if (Dae::is_var_yp0) {
       for (size_t i = 0; i < n; ++i) {
         NV_Ith_S(yps[i + n], i) = 1.0;
-}
+      }
     }
     CHECK_IDAS_CALL(IDASensInit(mem, dae.ns(), IDA_SIMULTANEOUS,
                                 dae.sensitivity_residual(), yys, yps));

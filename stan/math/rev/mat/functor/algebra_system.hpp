@@ -59,7 +59,7 @@ struct system_functor {
       return f_(iv, y_, dat_, dat_int_, msgs_);
     } else {
       return f_(x_, iv, dat_, dat_int_, msgs_);
-}
+    }
   }
 };
 

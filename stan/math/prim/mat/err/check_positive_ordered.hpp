@@ -29,7 +29,7 @@ void check_positive_ordered(const char* function, const char* name,
 
   if (y.size() == 0) {
     return;
-}
+  }
 
   if (y[0] < 0) {
     std::ostringstream msg;

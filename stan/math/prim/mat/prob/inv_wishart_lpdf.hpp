@@ -70,7 +70,7 @@ return_type_t<T_y, T_dof, T_scale> inv_wishart_lpdf(
 
   if (include_summand<propto, T_dof>::value) {
     lp -= lmgamma(k, 0.5 * nu);
-}
+  }
   if (include_summand<propto, T_dof, T_scale>::value) {
     lp += 0.5 * nu * log_determinant_ldlt(ldlt_S);
   }
@@ -96,7 +96,7 @@ return_type_t<T_y, T_dof, T_scale> inv_wishart_lpdf(
   }
   if (include_summand<propto, T_dof, T_scale>::value) {
     lp += nu * k * NEG_LOG_TWO_OVER_TWO;
-}
+  }
   return lp;
 }
 

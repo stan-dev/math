@@ -19,14 +19,14 @@ inline double log_sum_exp_as_double(const std::vector<var>& x) {
   for (auto i : x) {
     if (i > max) {
       max = i.val();
-}
-}
+    }
+  }
   double sum = 0.0;
   for (auto i : x) {
     if (i != -numeric_limits<double>::infinity()) {
       sum += exp(i.val() - max);
-}
-}
+    }
+  }
   return max + log(sum);
 }
 

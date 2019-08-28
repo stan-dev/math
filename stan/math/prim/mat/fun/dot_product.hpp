@@ -35,7 +35,7 @@ inline double dot_product(const double *v1, const double *v2, size_t length) {
   double result = 0;
   for (size_t i = 0; i < length; i++) {
     result += v1[i] * v2[i];
-}
+  }
   return result;
 }
 /**

@@ -32,7 +32,7 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_right_tri(
     domain_error("mdivide_left_tri",
                  "triangular view must be Eigen::Lower or Eigen::Upper", "",
                  "");
-}
+  }
   return promote_common<Eigen::Matrix<T1, R2, C2>, Eigen::Matrix<T2, R2, C2> >(
              A)
       .template triangularView<TriView>()

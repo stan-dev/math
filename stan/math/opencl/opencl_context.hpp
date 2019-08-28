@@ -58,7 +58,7 @@ inline cl::size_t<3> to_size_t(const size_t (&values)[3]) {
   cl::size_t<3> s;
   for (size_t i = 0; i < 3; i++) {
     s[i] = values[i];
-}
+  }
   return s;
 }
 }  // namespace opencl
@@ -81,6 +81,7 @@ inline cl::size_t<3> to_size_t(const size_t (&values)[3]) {
  */
 class opencl_context_base {
   friend class opencl_context;
+
  public:
   opencl_context_base(opencl_context_base const&) = delete;
   void operator=(opencl_context_base const&) = delete;

@@ -310,15 +310,14 @@ gp_periodic_cov(const std::vector<T_x> &x, const var &sigma, const var &l,
   size_t x_size = x.size();
   for (size_t i = 0; i < x_size; ++i) {
     check_not_nan(fun, "element of x", x[i]);
-}
+  }
 
   Eigen::Matrix<var, -1, -1> cov(x_size, x_size);
   if (x_size == 0) {
     return cov;
-}
+  }
 
-  auto *baseVari
-      = new gp_periodic_cov_vari<T_x, var, var, var>(x, sigma, l, p);
+  auto *baseVari = new gp_periodic_cov_vari<T_x, var, var, var>(x, sigma, l, p);
 
   size_t pos = 0;
   for (size_t j = 0; j < x_size; ++j) {
@@ -364,12 +363,12 @@ gp_periodic_cov(const std::vector<T_x> &x, double sigma, const var &l,
   size_t x_size = x.size();
   for (size_t i = 0; i < x_size; ++i) {
     check_not_nan(fun, "element of x", x[i]);
-}
+  }
 
   Eigen::Matrix<var, -1, -1> cov(x_size, x_size);
   if (x_size == 0) {
     return cov;
-}
+  }
 
   auto *baseVari
       = new gp_periodic_cov_vari<T_x, double, var, var>(x, sigma, l, p);

@@ -23,7 +23,7 @@ return_type_t<T_rate> poisson_cdf(const T_n& n, const T_rate& lambda) {
 
   if (size_zero(n, lambda)) {
     return 1.0;
-}
+  }
 
   T_partials_return P(1.0);
 
@@ -46,7 +46,7 @@ return_type_t<T_rate> poisson_cdf(const T_n& n, const T_rate& lambda) {
   for (size_t i = 0; i < stan::length(n); i++) {
     if (value_of(n_vec[i]) < 0) {
       return ops_partials.build(0.0);
-}
+    }
   }
 
   for (size_t i = 0; i < size; i++) {
@@ -54,7 +54,7 @@ return_type_t<T_rate> poisson_cdf(const T_n& n, const T_rate& lambda) {
     // The gradients are technically ill-defined, but treated as zero
     if (value_of(n_vec[i]) == std::numeric_limits<int>::max()) {
       continue;
-}
+    }
 
     const T_partials_return n_dbl = value_of(n_vec[i]);
     const T_partials_return lambda_dbl = value_of(lambda_vec[i]);
@@ -65,13 +65,13 @@ return_type_t<T_rate> poisson_cdf(const T_n& n, const T_rate& lambda) {
     if (!is_constant_all<T_rate>::value) {
       ops_partials.edge1_.partials_[i]
           -= exp(-lambda_dbl) * pow(lambda_dbl, n_dbl) / tgamma(n_dbl + 1) / Pi;
-}
+    }
   }
 
   if (!is_constant_all<T_rate>::value) {
     for (size_t i = 0; i < stan::length(lambda); ++i) {
       ops_partials.edge1_.partials_[i] *= P;
-}
+    }
   }
   return ops_partials.build(P);
 }

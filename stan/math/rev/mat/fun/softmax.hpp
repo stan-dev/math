@@ -18,7 +18,7 @@ class softmax_op {
   double* y_{nullptr};  // Holds the results of the softmax
 
  public:
-  softmax_op()   = default;
+  softmax_op() = default;
 
   /*
    * Compute the softmax of the unconstrained input vector
@@ -35,7 +35,7 @@ class softmax_op {
     auto y = softmax(alpha);
     for (int n = 0; n < N_; ++n) {
       y_[n] = y(n);
-}
+    }
     return y;
   }
 

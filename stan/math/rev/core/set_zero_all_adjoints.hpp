@@ -14,10 +14,10 @@ namespace math {
 static void set_zero_all_adjoints() {
   for (auto &x : ChainableStack::instance_->var_stack_) {
     x->set_zero_adjoint();
-}
+  }
   for (auto &x : ChainableStack::instance_->var_nochain_stack_) {
     x->set_zero_adjoint();
-}
+  }
 }
 
 }  // namespace math

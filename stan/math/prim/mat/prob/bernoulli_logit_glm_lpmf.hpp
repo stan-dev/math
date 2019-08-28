@@ -66,15 +66,15 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
   if (is_vector<T_alpha>::value) {
     check_consistent_sizes(function, "Vector of intercepts", alpha,
                            "Vector of dependent variables", y);
-}
+  }
 
   if (size_zero(y, x, beta)) {
     return 0;
-}
+  }
 
   if (!include_summand<propto, T_x, T_alpha, T_beta>::value) {
     return 0;
-}
+  }
 
   T_partials_return logp(0);
   const auto &x_val = value_of_rec(x);
@@ -129,7 +129,7 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
         ops_partials.edge2_.partials_ = theta_derivative;
       } else {
         ops_partials.edge2_.partials_[0] = sum(theta_derivative);
-}
+      }
     }
   }
   return ops_partials.build(logp);

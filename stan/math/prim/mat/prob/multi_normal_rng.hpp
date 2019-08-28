@@ -74,7 +74,7 @@ multi_normal_rng(const T_loc& mu,
     Eigen::VectorXd z(S.cols());
     for (int i = 0; i < S.cols(); i++) {
       z(i) = std_normal_rng();
-}
+    }
 
     output[n] = Eigen::VectorXd(mu_vec[n]) + llt_of_S.matrixL() * z;
   }

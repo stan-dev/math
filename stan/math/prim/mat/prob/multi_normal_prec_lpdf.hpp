@@ -37,7 +37,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_prec_lpdf(
   size_t number_of_mu = length_mvt(mu);
   if (number_of_y == 0 || number_of_mu == 0) {
     return 0;
-}
+  }
   check_consistent_sizes_mvt(function, "y", y, "mu", mu);
 
   lp_type lp(0);
@@ -94,15 +94,15 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_prec_lpdf(
 
   if (size_y == 0) {
     return lp;
-}
+  }
 
   if (include_summand<propto, T_covar_elem>::value) {
     lp += 0.5 * log_determinant_ldlt(ldlt_Sigma) * size_vec;
-}
+  }
 
   if (include_summand<propto>::value) {
     lp += NEG_LOG_SQRT_TWO_PI * size_y * size_vec;
-}
+  }
 
   if (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
     lp_type sum_lp_vec(0.0);
@@ -111,7 +111,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_prec_lpdf(
           size_y);
       for (int j = 0; j < size_y; j++) {
         y_minus_mu(j) = y_vec[i](j) - mu_vec[i](j);
-}
+      }
       sum_lp_vec += trace_quad_form(Sigma, y_minus_mu);
     }
     lp -= 0.5 * sum_lp_vec;

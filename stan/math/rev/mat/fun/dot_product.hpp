@@ -106,7 +106,7 @@ class dot_product_vari : public vari {
           ChainableStack::instance_->memalloc_.alloc(length_ * sizeof(double)));
       for (size_t i = 0; i < length_; i++) {
         mem_d[i] = ind[i];
-}
+      }
     } else {
       mem_d = shared;
     }

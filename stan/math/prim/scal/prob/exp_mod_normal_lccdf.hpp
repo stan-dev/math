@@ -26,7 +26,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lccdf(
   T_partials_return ccdf_log(0.0);
   if (size_zero(y, mu, sigma, lambda)) {
     return ccdf_log;
-}
+  }
 
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
@@ -56,7 +56,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lccdf(
         return ops_partials.build(negative_infinity());
       } else {
         return ops_partials.build(0.0);
-}
+      }
     }
 
     const T_partials_return y_dbl = value_of(y_vec[n]);
@@ -91,11 +91,11 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lccdf(
 
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] -= (deriv_1 - deriv_2 + deriv_3) / ccdf_;
-}
+    }
     if (!is_constant_all<T_loc>::value) {
       ops_partials.edge2_.partials_[n]
           -= (-deriv_1 + deriv_2 - deriv_3) / ccdf_;
-}
+    }
     if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n]
           -= (-deriv_1 * v - deriv_3 * scaled_diff * SQRT_2
@@ -104,7 +104,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lccdf(
                            * (-lambda_dbl + scaled_diff * SQRT_2 / sigma_dbl)
                        - SQRT_2 * lambda_dbl))
              / ccdf_;
-}
+    }
     if (!is_constant_all<T_inv_scale>::value) {
       ops_partials.edge4_.partials_[n]
           -= exp(0.5 * v_sq - u)
@@ -113,7 +113,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lccdf(
                           * (v / SQRT_2 - scaled_diff))
                 - (v * sigma_dbl + mu_dbl - y_dbl) * erf_calc2)
              / ccdf_;
-}
+    }
   }
   return ops_partials.build(ccdf_log);
 }

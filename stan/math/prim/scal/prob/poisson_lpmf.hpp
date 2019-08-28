@@ -25,7 +25,7 @@ return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
 
   if (size_zero(n, lambda)) {
     return 0.0;
-}
+  }
 
   T_partials_return logp(0.0);
 
@@ -37,7 +37,7 @@ return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
 
   if (!include_summand<propto, T_rate>::value) {
     return 0.0;
-}
+  }
 
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_rate> lambda_vec(lambda);
@@ -46,13 +46,13 @@ return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
   for (size_t i = 0; i < size; i++) {
     if (is_inf(lambda_vec[i])) {
       return LOG_ZERO;
-}
-}
+    }
+  }
   for (size_t i = 0; i < size; i++) {
     if (lambda_vec[i] == 0 && n_vec[i] != 0) {
       return LOG_ZERO;
-}
-}
+    }
+  }
 
   operands_and_partials<T_rate> ops_partials(lambda);
 
@@ -60,17 +60,17 @@ return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
     if (!(lambda_vec[i] == 0 && n_vec[i] == 0)) {
       if (include_summand<propto>::value) {
         logp -= lgamma(n_vec[i] + 1.0);
-}
+      }
       if (include_summand<propto, T_rate>::value) {
         logp += multiply_log(n_vec[i], value_of(lambda_vec[i]))
                 - value_of(lambda_vec[i]);
-}
+      }
     }
 
     if (!is_constant_all<T_rate>::value) {
       ops_partials.edge1_.partials_[i]
           += n_vec[i] / value_of(lambda_vec[i]) - 1.0;
-}
+    }
   }
   return ops_partials.build(logp);
 }

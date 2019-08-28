@@ -23,7 +23,7 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
 
   if (size_zero(y, mu, kappa)) {
     return 0.0;
-}
+  }
 
   using std::log;
 
@@ -37,7 +37,7 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
 
   if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
     return logp;
-}
+  }
 
   const bool y_const = is_constant_all<T_y>::value;
   const bool mu_const = is_constant_all<T_loc>::value;
@@ -60,7 +60,7 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
     if (include_summand<propto, T_scale>::value) {
       log_bessel0[i]
           = log_modified_bessel_first_kind(0, value_of(kappa_vec[i]));
-}
+    }
   }
 
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, kappa);
@@ -75,34 +75,34 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
     T_partials_return bessel0 = 0;
     if (compute_bessel0) {
       bessel0 = modified_bessel_first_kind(0, kappa_dbl[n]);
-}
+    }
     T_partials_return bessel1 = 0;
     if (compute_bessel1) {
       bessel1 = modified_bessel_first_kind(-1, kappa_dbl[n]);
-}
+    }
     const T_partials_return kappa_sin = kappa_dbl[n] * sin(mu_dbl - y_dbl);
     const T_partials_return kappa_cos = kappa_dbl[n] * cos(mu_dbl - y_dbl);
 
     if (include_summand<propto>::value) {
       logp -= LOG_TWO_PI;
-}
+    }
     if (include_summand<propto, T_scale>::value) {
       logp -= log_bessel0[n];
-}
+    }
     if (include_summand<propto, T_y, T_loc, T_scale>::value) {
       logp += kappa_cos;
-}
+    }
 
     if (!y_const) {
       ops_partials.edge1_.partials_[n] += kappa_sin;
-}
+    }
     if (!mu_const) {
       ops_partials.edge2_.partials_[n] -= kappa_sin;
-}
+    }
     if (!kappa_const) {
       ops_partials.edge3_.partials_[n]
           += kappa_cos / kappa_dbl[n] - bessel1 / bessel0;
-}
+    }
   }
   return ops_partials.build(logp);
 }

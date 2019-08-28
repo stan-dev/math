@@ -204,7 +204,7 @@ inline double integrate_1d(
   if (a == b) {
     if (std::isinf(a)) {
       domain_error(function, "Integration endpoints are both", a, "", "");
-}
+    }
     return 0.0;
   } else {
     return integrate(
