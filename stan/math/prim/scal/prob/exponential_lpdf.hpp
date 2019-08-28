@@ -47,7 +47,7 @@ return_type_t<T_y, T_inv_scale> exponential_lpdf(const T_y& y,
 
   if (size_zero(y, beta)) {
     return 0.0;
-}
+  }
 
   using std::log;
 
@@ -67,8 +67,8 @@ return_type_t<T_y, T_inv_scale> exponential_lpdf(const T_y& y,
   for (size_t i = 0; i < length(beta); i++) {
     if (include_summand<propto, T_inv_scale>::value) {
       log_beta[i] = log(value_of(beta_vec[i]));
-}
-}
+    }
+  }
 
   operands_and_partials<T_y, T_inv_scale> ops_partials(y, beta);
 
@@ -77,17 +77,17 @@ return_type_t<T_y, T_inv_scale> exponential_lpdf(const T_y& y,
     const T_partials_return y_dbl = value_of(y_vec[n]);
     if (include_summand<propto, T_inv_scale>::value) {
       logp += log_beta[n];
-}
+    }
     if (include_summand<propto, T_y, T_inv_scale>::value) {
       logp -= beta_dbl * y_dbl;
-}
+    }
 
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] -= beta_dbl;
-}
+    }
     if (!is_constant_all<T_inv_scale>::value) {
       ops_partials.edge2_.partials_[n] += 1 / beta_dbl - y_dbl;
-}
+    }
   }
   return ops_partials.build(logp);
 }

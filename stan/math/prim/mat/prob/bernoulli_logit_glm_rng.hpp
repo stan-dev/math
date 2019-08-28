@@ -59,7 +59,7 @@ inline typename VectorBuilder<true, int, T_alpha>::type bernoulli_logit_glm_rng(
   Eigen::VectorXd beta_vector(M);
   for (int i = 0; i < M; ++i) {
     beta_vector[i] = beta_vec[i];
-}
+  }
 
   Eigen::VectorXd x_beta = x * beta_vector;
 

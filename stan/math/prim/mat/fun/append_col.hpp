@@ -49,14 +49,14 @@ append_col(const Eigen::Matrix<T1, R1, C1>& A,
   for (int j = 0; j < Acols; j++) {
     for (int i = 0; i < Arows; i++) {
       result(i, j) = A(i, j);
-}
-}
+    }
+  }
 
   for (int j = Acols, k = 0; k < Bcols; j++, k++) {
     for (int i = 0; i < Arows; i++) {
       result(i, j) = B(i, k);
-}
-}
+    }
+  }
   return result;
 }
 
@@ -88,10 +88,10 @@ inline Eigen::Matrix<return_type_t<T1, T2>, 1, Eigen::Dynamic> append_col(
   Matrix<return_type_t<T1, T2>, 1, Dynamic> result(Asize + Bsize);
   for (int i = 0; i < Asize; i++) {
     result(i) = A(i);
-}
+  }
   for (int i = 0, j = Asize; i < Bsize; i++, j++) {
     result(j) = B(i);
-}
+  }
   return result;
 }
 

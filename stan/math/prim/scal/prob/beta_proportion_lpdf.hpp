@@ -57,10 +57,10 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
                          mu, "Precision parameter", kappa);
   if (size_zero(y, mu, kappa)) {
     return 0;
-}
+  }
   if (!include_summand<propto, T_y, T_loc, T_prec>::value) {
     return 0;
-}
+  }
   T_partials_return logp(0);
 
   scalar_seq_view<T_y> y_vec(y);
@@ -73,7 +73,7 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
     const T_partials_return y_dbl = value_of(y_vec[n]);
     if (y_dbl < 0 || y_dbl > 1) {
       return LOG_ZERO;
-}
+    }
   }
 
   operands_and_partials<T_y, T_loc, T_prec> ops_partials(y, mu, kappa);
@@ -131,11 +131,11 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
   for (size_t n = 0; n < length(kappa); n++) {
     if (include_summand<propto, T_prec>::value) {
       lgamma_kappa[n] = lgamma(value_of(kappa_vec[n]));
-}
+    }
 
     if (!is_constant_all<T_prec>::value) {
       digamma_kappa[n] = digamma(value_of(kappa_vec[n]));
-}
+    }
   }
 
   for (size_t n = 0; n < N; n++) {
@@ -145,10 +145,10 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
 
     if (include_summand<propto, T_prec>::value) {
       logp += lgamma_kappa[n];
-}
+    }
     if (include_summand<propto, T_loc, T_prec>::value) {
       logp -= lgamma_mukappa[n] + lgamma_kappa_mukappa[n];
-}
+    }
     if (include_summand<propto, T_y, T_loc, T_prec>::value) {
       const T_partials_return mukappa_dbl = mu_dbl * kappa_dbl;
       logp += (mukappa_dbl - 1) * log_y[n]
@@ -166,12 +166,12 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
           += kappa_dbl
              * (digamma_kappa_mukappa[n] - digamma_mukappa[n] + log_y[n]
                 - log1m_y[n]);
-}
+    }
     if (!is_constant_all<T_prec>::value) {
       ops_partials.edge3_.partials_[n]
           += digamma_kappa[n] + mu_dbl * (log_y[n] - digamma_mukappa[n])
              + (1 - mu_dbl) * (log1m_y[n] - digamma_kappa_mukappa[n]);
-}
+    }
   }
   return ops_partials.build(logp);
 }

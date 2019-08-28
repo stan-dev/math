@@ -35,7 +35,7 @@ inline void check_cholesky_factor(
   for (int i = 0; i < y.cols(); ++i) {
     // FIXME:  should report row
     check_positive(function, name, y(i, i));
-}
+  }
 }
 
 }  // namespace math

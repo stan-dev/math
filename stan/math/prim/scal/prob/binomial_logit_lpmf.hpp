@@ -41,7 +41,7 @@ return_type_t<T_prob> binomial_logit_lpmf(const T_n& n, const T_N& N,
 
   if (size_zero(n, N, alpha)) {
     return 0.0;
-}
+  }
 
   T_partials_return logp = 0;
   check_bounded(function, "Successes variable", n, 0, N);
@@ -53,7 +53,7 @@ return_type_t<T_prob> binomial_logit_lpmf(const T_n& n, const T_N& N,
 
   if (!include_summand<propto, T_prob>::value) {
     return 0.0;
-}
+  }
 
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_N> N_vec(N);
@@ -65,25 +65,25 @@ return_type_t<T_prob> binomial_logit_lpmf(const T_n& n, const T_N& N,
   if (include_summand<propto>::value) {
     for (size_t i = 0; i < size; ++i) {
       logp += binomial_coefficient_log(N_vec[i], n_vec[i]);
-}
+    }
   }
 
   VectorBuilder<true, T_partials_return, T_prob> log_inv_logit_alpha(
       length(alpha));
   for (size_t i = 0; i < length(alpha); ++i) {
     log_inv_logit_alpha[i] = log_inv_logit(value_of(alpha_vec[i]));
-}
+  }
 
   VectorBuilder<true, T_partials_return, T_prob> log_inv_logit_neg_alpha(
       length(alpha));
   for (size_t i = 0; i < length(alpha); ++i) {
     log_inv_logit_neg_alpha[i] = log_inv_logit(-value_of(alpha_vec[i]));
-}
+  }
 
   for (size_t i = 0; i < size; ++i) {
     logp += n_vec[i] * log_inv_logit_alpha[i]
             + (N_vec[i] - n_vec[i]) * log_inv_logit_neg_alpha[i];
-}
+  }
 
   if (length(alpha) == 1) {
     T_partials_return temp1 = 0;
@@ -103,7 +103,7 @@ return_type_t<T_prob> binomial_logit_lpmf(const T_n& n, const T_N& N,
         ops_partials.edge1_.partials_[i]
             += n_vec[i] * inv_logit(-value_of(alpha_vec[i]))
                - (N_vec[i] - n_vec[i]) * inv_logit(value_of(alpha_vec[i]));
-}
+      }
     }
   }
 

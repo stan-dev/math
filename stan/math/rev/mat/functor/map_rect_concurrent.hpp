@@ -43,7 +43,7 @@ map_rect_concurrent(
     for (int i = start; i != end; i++) {
       chunk_f_out.push_back(ReduceF()(
           shared_params_dbl, value_of(job_params[i]), x_r[i], x_i[i], msgs));
-}
+    }
     return chunk_f_out;
   };
 
@@ -77,7 +77,7 @@ map_rect_concurrent(
     if (i == 0) {
       world_output.resize(chunk_result[0].rows(),
                           num_jobs * chunk_result[0].cols());
-}
+    }
 
     for (const auto& job_result : chunk_result) {
       const int num_job_outputs = job_result.cols();
@@ -86,7 +86,7 @@ map_rect_concurrent(
       if (world_output.cols() < offset + num_job_outputs) {
         world_output.conservativeResize(Eigen::NoChange,
                                         2 * (offset + num_job_outputs));
-}
+      }
 
       world_output.block(0, offset, world_output.rows(), num_job_outputs)
           = job_result;

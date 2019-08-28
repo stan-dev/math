@@ -104,7 +104,7 @@ class cvodes_ode_data {
     N_VDestroy_Serial(nv_state_);
     if (S_ > 0) {
       N_VDestroyVectorArray_Serial(nv_state_sens_, S_);
-}
+    }
   }
 
   /**
@@ -189,12 +189,12 @@ class cvodes_ode_data {
     for (std::size_t s = 0; s < S_; s++) {
       std::copy(NV_DATA_S(yS[s]), NV_DATA_S(yS[s]) + N_,
                 z.begin() + (s + 1) * N_);
-}
+    }
     coupled_ode_(z, dz_dt, t);
     for (std::size_t s = 0; s < S_; s++) {
       std::move(dz_dt.begin() + (s + 1) * N_, dz_dt.begin() + (s + 2) * N_,
                 NV_DATA_S(ySdot[s]));
-}
+    }
   }
 };
 

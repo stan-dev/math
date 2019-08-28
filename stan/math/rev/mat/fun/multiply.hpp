@@ -625,8 +625,7 @@ inline Eigen::Matrix<var, Ra, Cb> multiply(const Eigen::Matrix<Ta, Ra, Ca>& A,
   check_not_nan("multiply", "B", B);
 
   // Memory managed with the arena allocator.
-  auto* baseVari
-      = new multiply_mat_vari<Ta, Ra, Ca, Tb, Cb>(A, B);
+  auto* baseVari = new multiply_mat_vari<Ta, Ra, Ca, Tb, Cb>(A, B);
   Eigen::Matrix<var, Ra, Cb> AB_v(A.rows(), B.cols());
   AB_v.vi()
       = Eigen::Map<matrix_vi>(&baseVari->variRefAB_[0], A.rows(), B.cols());
@@ -653,8 +652,7 @@ inline var multiply(const Eigen::Matrix<Ta, 1, Ca>& A,
   check_not_nan("multiply", "B", B);
 
   // Memory managed with the arena allocator.
-  auto* baseVari
-      = new multiply_mat_vari<Ta, 1, Ca, Tb, 1>(A, B);
+  auto* baseVari = new multiply_mat_vari<Ta, 1, Ca, Tb, 1>(A, B);
   var AB_v;
   AB_v.vi_ = baseVari->variRefAB_;
   return AB_v;

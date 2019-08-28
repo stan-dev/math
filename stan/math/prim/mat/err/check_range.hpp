@@ -26,7 +26,7 @@ inline void check_range(const char* function, const char* name, int max,
   if ((index >= stan::error_index::value)
       && (index < max + stan::error_index::value)) {
     return;
-}
+  }
 
   std::stringstream msg;
   msg << "; index position = " << nested_level;
@@ -51,7 +51,7 @@ inline void check_range(const char* function, const char* name, int max,
   if ((index >= stan::error_index::value)
       && (index < max + stan::error_index::value)) {
     return;
-}
+  }
 
   out_of_range(function, max, index, error_msg);
 }
@@ -71,7 +71,7 @@ inline void check_range(const char* function, const char* name, int max,
   if ((index >= stan::error_index::value)
       && (index < max + stan::error_index::value)) {
     return;
-}
+  }
 
   out_of_range(function, max, index);
 }

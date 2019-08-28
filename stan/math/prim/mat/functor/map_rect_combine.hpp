@@ -49,8 +49,7 @@ class map_rect_combine {
                         Eigen::Dynamic, 1>
       result_t;
 
-  map_rect_combine()
-      : ops_partials_() {}
+  map_rect_combine() : ops_partials_() {}
   map_rect_combine(
       const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
       const std::vector<Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>&
@@ -61,7 +60,7 @@ class map_rect_combine {
     ops_partials_.reserve(job_params.size());
     for (const auto& job_param : job_params) {
       ops_partials_.emplace_back(shared_params, job_param);
-}
+    }
   }
 
   result_t operator()(const matrix_d& world_result,
@@ -78,12 +77,12 @@ class map_rect_combine {
         if (!is_constant_all<T_shared_param>::value) {
           ops_partials_[i].edge1_.partials_
               = world_result.block(1, ij, num_shared_operands_, 1);
-}
+        }
 
         if (!is_constant_all<T_job_param>::value) {
           ops_partials_[i].edge2_.partials_
               = world_result.block(offset_job_params, ij, num_job_operands_, 1);
-}
+        }
 
         out(ij) = ops_partials_[i].build(world_result(0, ij));
       }

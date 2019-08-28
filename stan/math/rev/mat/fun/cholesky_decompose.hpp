@@ -42,9 +42,9 @@ inline void set_lower_tri_coeff_ref(Eigen::Matrix<var, -1, -1>& L,
     }
     for (size_type k = 0; k < j; ++k) {
       L.coeffRef(k, j).vi_ = dummy;
+    }
+  }
 }
-  }
-  }
 }  // namespace internal
 class cholesky_block : public vari {
  public:
@@ -159,8 +159,8 @@ class cholesky_block : public vari {
     for (size_type j = 0; j < M_; ++j) {
       for (size_type i = j; i < M_; ++i) {
         vari_ref_A_[pos++]->adj_ += L_adj.coeffRef(i, j);
-}
-}
+      }
+    }
   }
 };
 
@@ -420,7 +420,7 @@ inline Eigen::Matrix<var, -1, -1> cholesky_decompose(
       }
       for (size_type k = 0; k < j; ++k) {
         L.coeffRef(k, j).vi_ = dummy;
-}
+      }
       accum += j;
       accum_i = accum;
     }

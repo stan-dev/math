@@ -37,7 +37,7 @@ void inverse_softmax(const Vector& simplex, Vector& y) {
   check_matching_sizes("inverse_softmax", "simplex", simplex, "y", y);
   for (size_t i = 0; i < simplex.size(); ++i) {
     y[i] = log(simplex[i]);
-}
+  }
 }
 
 }  // namespace math

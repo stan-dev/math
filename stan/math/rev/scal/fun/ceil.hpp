@@ -17,7 +17,7 @@ class ceil_vari : public op_v_vari {
   void chain() {
     if (unlikely(is_nan(avi_->val_))) {
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
-}
+    }
   }
 };
 }  // namespace internal

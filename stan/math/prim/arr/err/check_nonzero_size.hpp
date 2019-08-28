@@ -23,7 +23,7 @@ inline void check_nonzero_size(const char* function, const char* name,
                                const T_y& y) {
   if (y.size() > 0) {
     return;
-}
+  }
   invalid_argument(function, name, 0, "has size ",
                    ", but must have a non-zero size");
 }

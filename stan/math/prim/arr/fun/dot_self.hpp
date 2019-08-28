@@ -12,7 +12,7 @@ inline double dot_self(const std::vector<double>& x) {
   double sum = 0.0;
   for (double i : x) {
     sum += i * i;
-}
+  }
   return sum;
 }
 

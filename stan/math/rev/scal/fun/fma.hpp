@@ -67,7 +67,7 @@ class fma_vdd_vari : public op_vdd_vari {
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
     } else {
       avi_->adj_ += adj_ * bd_;
-}
+    }
   }
 };
 
@@ -80,7 +80,7 @@ class fma_ddv_vari : public op_ddv_vari {
       cvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
     } else {
       cvi_->adj_ += adj_;
-}
+    }
   }
 };
 }  // namespace internal

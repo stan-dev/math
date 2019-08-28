@@ -19,8 +19,8 @@ inline std::vector<std::vector<T> > to_array_2d(
   for (int i = 0, ij = 0; i < C; i++) {
     for (int j = 0; j < R; j++, ij++) {
       result[j][i] = datap[ij];
-}
-}
+    }
+  }
   return result;
 }
 

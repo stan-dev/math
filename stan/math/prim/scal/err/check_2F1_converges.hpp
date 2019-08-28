@@ -58,7 +58,7 @@ inline void check_2F1_converges(const char* function, const T_a1& a1,
   if (!is_undefined
       && (is_polynomial || fabs(z) < 1 || (fabs(z) == 1 && b1 > a1 + a2))) {
     return;
-}
+  }
 
   std::stringstream msg;
   msg << "called from function '" << function << "', "

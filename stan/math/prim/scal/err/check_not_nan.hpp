@@ -16,7 +16,7 @@ struct not_nan {
   static void check(const char* function, const char* name, const T_y& y) {
     if (is_nan(value_of_rec(y))) {
       domain_error(function, name, y, "is ", ", but must not be nan!");
-}
+    }
   }
 };
 
@@ -26,7 +26,7 @@ struct not_nan<T_y, true> {
     for (size_t n = 0; n < stan::length(y); n++) {
       if (is_nan(value_of_rec(stan::get(y, n)))) {
         domain_error_vec(function, name, y, n, "is ", ", but must not be nan!");
-}
+      }
     }
   }
 };

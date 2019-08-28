@@ -31,7 +31,7 @@ inline return_type_t<T, L> lb_free(const T& y, const L& lb) {
   using std::log;
   if (lb == NEGATIVE_INFTY) {
     return identity_free(y);
-}
+  }
   check_greater_or_equal("lb_free", "Lower bounded variable", y, lb);
   return log(y - lb);
 }

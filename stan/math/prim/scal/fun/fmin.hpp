@@ -20,10 +20,10 @@ template <typename T1, typename T2>
 inline return_type_t<T1, T2> fmin(const T1& x, const T2& y) {
   if (is_nan(x)) {
     return y;
-}
+  }
   if (is_nan(y)) {
     return x;
-}
+  }
   return y > x ? x : y;
 }
 

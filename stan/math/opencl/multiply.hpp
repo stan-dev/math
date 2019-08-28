@@ -117,7 +117,7 @@ inline matrix_cl<return_type_t<T1, T2>> multiply(const matrix_cl<T1>& A,
   matrix_cl<return_type_t<T1, T2>> temp(A.rows(), A.cols(), A.view());
   if (A.size() == 0) {
     return temp;
-}
+  }
   try {
     opencl_kernels::scalar_mul(cl::NDRange(A.rows(), A.cols()), temp, A, scalar,
                                A.rows(), A.cols(), A.view());

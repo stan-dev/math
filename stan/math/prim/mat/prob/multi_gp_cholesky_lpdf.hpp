@@ -52,7 +52,7 @@ return_type_t<T_y, T_covar, T_w> multi_gp_cholesky_lpdf(
 
   if (y.rows() == 0) {
     return 0;
-}
+  }
 
   T_lp lp(0);
   if (include_summand<propto>::value) {

@@ -48,13 +48,13 @@ template <typename T1, typename T2>
 inline return_type_t<T1, T2> log_sum_exp(const T2& a, const T1& b) {
   if (a == NEGATIVE_INFTY) {
     return b;
-}
+  }
   if (a == INFTY && b == INFTY) {
     return INFTY;
-}
+  }
   if (a > b) {
     return a + log1p_exp(b - a);
-}
+  }
   return b + log1p_exp(a - b);
 }
 

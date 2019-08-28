@@ -39,7 +39,7 @@ return_type_t<T_y, T_loc, T_scale> gumbel_cdf(const T_y& y, const T_loc& mu,
   T_partials_return cdf(1.0);
   if (size_zero(y, mu, beta)) {
     return cdf;
-}
+  }
 
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
@@ -67,29 +67,29 @@ return_type_t<T_y, T_loc, T_scale> gumbel_cdf(const T_y& y, const T_loc& mu,
 
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] += rep_deriv / cdf_;
-}
+    }
     if (!is_constant_all<T_loc>::value) {
       ops_partials.edge2_.partials_[n] -= rep_deriv / cdf_;
-}
+    }
     if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n] -= rep_deriv * scaled_diff / cdf_;
-}
+    }
   }
 
   if (!is_constant_all<T_y>::value) {
     for (size_t n = 0; n < stan::length(y); ++n) {
       ops_partials.edge1_.partials_[n] *= cdf;
-}
+    }
   }
   if (!is_constant_all<T_loc>::value) {
     for (size_t n = 0; n < stan::length(mu); ++n) {
       ops_partials.edge2_.partials_[n] *= cdf;
-}
+    }
   }
   if (!is_constant_all<T_scale>::value) {
     for (size_t n = 0; n < stan::length(beta); ++n) {
       ops_partials.edge3_.partials_[n] *= cdf;
-}
+    }
   }
   return ops_partials.build(cdf);
 }

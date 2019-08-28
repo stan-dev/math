@@ -20,7 +20,7 @@ TEST(prob_transform, corr_matrix_jacobian) {
   std::vector<var> x;
   for (int i = 0; i < X.size(); ++i) {
     x.push_back(X(i));
-}
+  }
   var lp = 0.0;
   Matrix<var, Dynamic, Dynamic> Sigma
       = stan::math::corr_matrix_constrain(X, K, lp);
@@ -28,8 +28,8 @@ TEST(prob_transform, corr_matrix_jacobian) {
   for (int m = 0; m < K; ++m) {
     for (int n = 0; n < m; ++n) {
       y.push_back(Sigma(m, n));
-}
-}
+    }
+  }
   EXPECT_EQ(K_choose_2, y.size());
 
   std::vector<std::vector<double> > j;
@@ -39,8 +39,8 @@ TEST(prob_transform, corr_matrix_jacobian) {
   for (int m = 0; m < J.rows(); ++m) {
     for (int n = 0; n < J.cols(); ++n) {
       J(m, n) = j[m][n];
-}
-}
+    }
+  }
 
   double log_abs_jacobian_det = log(fabs(determinant(J)));
   EXPECT_FLOAT_EQ(log_abs_jacobian_det, lp.val());

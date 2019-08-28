@@ -27,7 +27,7 @@ class multiply_log_vv_vari : public op_vv_vari {
         bvi_->adj_ += adj_ * std::numeric_limits<double>::infinity();
       } else {
         bvi_->adj_ += adj_ * avi_->val_ / bvi_->val_;
-}
+      }
     }
   }
 };
@@ -41,7 +41,7 @@ class multiply_log_vd_vari : public op_vd_vari {
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
     } else {
       avi_->adj_ += adj_ * log(bd_);
-}
+    }
   }
 };
 class multiply_log_dv_vari : public op_dv_vari {
@@ -53,7 +53,7 @@ class multiply_log_dv_vari : public op_dv_vari {
       bvi_->adj_ += adj_ * std::numeric_limits<double>::infinity();
     } else {
       bvi_->adj_ += adj_ * ad_ / bvi_->val_;
-}
+    }
   }
 };
 }  // namespace internal
@@ -100,7 +100,7 @@ inline var multiply_log(const var& a, double b) {
 inline var multiply_log(double a, const var& b) {
   if (a == 1.0) {
     return log(b);
-}
+  }
   return var(new internal::multiply_log_dv_vari(a, b.vi_));
 }
 

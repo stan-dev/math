@@ -15,7 +15,7 @@ inline var& var::operator+=(const var& b) {
 inline var& var::operator+=(double b) {
   if (b == 0.0) {
     return *this;
-}
+  }
   vi_ = new internal::add_vd_vari(vi_, b);
   return *this;
 }

@@ -56,7 +56,7 @@ return_type_t<T1, T2> grad_reg_inc_gamma(T1 a, T2 z, T1 g, T1 dig,
 
   if (is_any_nan(a, z, g, dig)) {
     return std::numeric_limits<TP>::quiet_NaN();
-}
+  }
 
   T2 l = log(z);
   if (z >= a && z >= 8) {
@@ -80,7 +80,7 @@ return_type_t<T1, T2> grad_reg_inc_gamma(T1 a, T2 z, T1 g, T1 dig,
 
       if (is_inf(delta)) {
         domain_error("grad_reg_inc_gamma", "is not converging", "", "");
-}
+      }
     }
 
     return gamma_q(a, z) * (l - dig) + exp(-z + (a - 1) * l) * S / g;
@@ -98,10 +98,10 @@ return_type_t<T1, T2> grad_reg_inc_gamma(T1 a, T2 z, T1 g, T1 dig,
       log_delta = log_s - multiply_log(2, k + a);
       if (is_inf(log_delta)) {
         domain_error("grad_reg_inc_gamma", "is not converging", "", "");
-}
+      }
       if (log_delta <= log(precision)) {
         return gamma_p(a, z) * (dig - l) + exp(a * l) * S / g;
-}
+      }
     }
     domain_error("grad_reg_inc_gamma", "k (internal counter)", max_steps,
                  "exceeded ",

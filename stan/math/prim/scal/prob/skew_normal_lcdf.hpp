@@ -26,7 +26,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lcdf(
 
   if (size_zero(y, mu, sigma, alpha)) {
     return cdf_log;
-}
+  }
 
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
@@ -75,18 +75,18 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lcdf(
 
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] += rep_deriv;
-}
+    }
     if (!is_constant_all<T_loc>::value) {
       ops_partials.edge2_.partials_[n] -= rep_deriv;
-}
+    }
     if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n] -= rep_deriv * diff;
-}
+    }
     if (!is_constant_all<T_shape>::value) {
       ops_partials.edge4_.partials_[n]
           += -2.0 * exp(-0.5 * diff_sq * (1.0 + alpha_dbl_sq))
              / ((1 + alpha_dbl_sq) * 2.0 * pi()) / cdf_log_;
-}
+    }
   }
   return ops_partials.build(cdf_log);
 }

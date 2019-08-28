@@ -44,7 +44,7 @@ return_type_t<T_size1, T_size2> beta_binomial_lccdf(const T_n& n, const T_N& N,
 
   if (size_zero(n, N, alpha, beta)) {
     return 0.0;
-}
+  }
 
   T_partials_return P(0.0);
 
@@ -73,7 +73,7 @@ return_type_t<T_size1, T_size2> beta_binomial_lccdf(const T_n& n, const T_N& N,
   for (size_t i = 0; i < stan::length(n); i++) {
     if (value_of(n_vec[i]) <= 0) {
       return ops_partials.build(0.0);
-}
+    }
   }
 
   for (size_t i = 0; i < size; i++) {

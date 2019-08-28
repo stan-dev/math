@@ -27,7 +27,7 @@ TEST(AgradRevMatrix, determinant) {
   EXPECT_EQ(g1.size(), g2.size());
   for (size_t i = 0; i < g1.size(); ++i) {
     EXPECT_FLOAT_EQ(g1[i], g2[i]);
-}
+  }
 }
 TEST(AgradRevMatrix, deteriminant_exception) {
   using stan::math::determinant;
@@ -69,8 +69,8 @@ TEST(AgradRevMatrix, determinant3by3) {
   for (int i = 0; i < 9; ++i) {
     for (int j = 0; j < 9; ++j) {
       Z(i, j) = i * j + 1;
-}
-}
+    }
+  }
   AVAR h = determinant(Z);
   // supresses set but not used warning
   h = h;

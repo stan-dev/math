@@ -66,16 +66,12 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
   /**
    * Clear the write events from the event stacks.
    */
-  inline void clear_write_events() const {
-    write_events_.clear();
- }
+  inline void clear_write_events() const { write_events_.clear(); }
 
   /**
    * Clear the read events from the event stacks.
    */
-  inline void clear_read_events() const {
-    read_events_.clear();
- }
+  inline void clear_read_events() const { read_events_.clear(); }
 
   /**
    * Clear the write events from the event stacks.
@@ -83,7 +79,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
   inline void clear_read_write_events() const {
     read_events_.clear();
     write_events_.clear();
- }
+  }
 
   /**
    * Get the events from the event stacks.
@@ -143,7 +139,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
     queue.enqueueBarrierWithWaitList(&this->write_events(), &copy_event);
     copy_event.wait();
     write_events_.clear();
- }
+  }
 
   /**
    * Waits for the read events and clears the read event stack.
@@ -154,7 +150,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
     queue.enqueueBarrierWithWaitList(&this->read_events(), &copy_event);
     copy_event.wait();
     read_events_.clear();
- }
+  }
 
   /**
    * Waits for read and write events to finish and clears the read, write, and
@@ -168,17 +164,17 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
     copy_event.wait();
     read_events_.clear();
     write_events_.clear();
- }
+  }
 
   const cl::Buffer& buffer() const { return buffer_cl_; }
   cl::Buffer& buffer() { return buffer_cl_; }
-  matrix_cl()  = default;
+  matrix_cl() = default;
 
   matrix_cl(const matrix_cl<T>& A)
       : rows_(A.rows()), cols_(A.cols()), view_(A.view()) {
     if (A.size() == 0) {
       return;
-}
+    }
     this->wait_for_read_write_events();
     cl::Context& ctx = opencl_context.context();
     cl::CommandQueue queue = opencl_context.queue();
@@ -221,7 +217,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
         cols_(A.size()) {
     if (this->size() == 0) {
       return;
-}
+    }
     cl::Context& ctx = opencl_context.context();
     cl::CommandQueue& queue = opencl_context.queue();
     // creates the OpenCL buffer to copy the Eigen
@@ -359,7 +355,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
       buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * size());
       cl::Event transfer_event;
       queue.enqueueWriteBuffer(buffer_cl_, CL_FALSE, 0, sizeof(T) * size(), A,
-                      nullptr, &transfer_event);
+                               nullptr, &transfer_event);
       this->add_write_event(transfer_event);
     } catch (const cl::Error& e) {
       check_opencl_error("matrix constructor", e);
@@ -376,7 +372,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
                      a.cols(), "destination.cols()", cols());
     if (a.size() == 0) {
       return *this;
-}
+    }
     view_ = a.view();
     this->wait_for_read_write_events();
     cl::CommandQueue queue = opencl_context.queue();

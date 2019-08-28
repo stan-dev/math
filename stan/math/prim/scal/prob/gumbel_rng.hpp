@@ -49,7 +49,7 @@ inline typename VectorBuilder<true, double, T_loc, T_scale>::type gumbel_rng(
   variate_generator<RNG&, uniform_01<> > uniform01_rng(rng, uniform_01<>());
   for (size_t n = 0; n < N; ++n) {
     output[n] = mu_vec[n] - beta_vec[n] * std::log(-std::log(uniform01_rng()));
-}
+  }
 
   return output.data();
 }

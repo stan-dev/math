@@ -27,9 +27,9 @@ TEST(AgradRevErrorHandlingMatrix, checkPosDefiniteMatrix_nan) {
       if (i >= j) {
         EXPECT_THROW(check_pos_semidefinite("checkPosDefiniteMatrix", "y", y),
                      std::domain_error);
-}
+      }
     }
-}
+  }
 
   y << 0, 0, 0, 0, 0, 0, 0, 0, 0;
   EXPECT_NO_THROW(check_pos_semidefinite("checkPosDefiniteMatrix", "y", y));

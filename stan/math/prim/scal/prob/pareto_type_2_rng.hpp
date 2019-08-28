@@ -60,7 +60,7 @@ pareto_type_2_rng(const T_loc& mu, const T_scale& lambda, const T_shape& alpha,
     output[n] = (std::pow(1.0 - uniform_rng(), -1.0 / alpha_vec[n]) - 1.0)
                     * lambda_vec[n]
                 + mu_vec[n];
-}
+  }
 
   return output.data();
 }

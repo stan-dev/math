@@ -58,7 +58,7 @@ inline Eigen::VectorXd dirichlet_rng(
     VectorXd theta(alpha.size());
     for (int i = 0; i < alpha.size(); ++i) {
       theta(i) = exp(log_y(i) - log_sum_y);
-}
+    }
     return theta;
   }
 

@@ -24,7 +24,7 @@ inline Eigen::Matrix<T, Eigen::Dynamic, 1> sub_col(
   check_row_index("sub_col", "i", m, i);
   if (nrows > 0) {
     check_row_index("sub_col", "i+nrows-1", m, i + nrows - 1);
-}
+  }
   check_column_index("sub_col", "j", m, j);
   return m.block(i - 1, j - 1, nrows, 1);
 }

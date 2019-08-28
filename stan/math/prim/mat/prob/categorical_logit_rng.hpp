@@ -42,7 +42,7 @@ inline int categorical_logit_rng(const Eigen::VectorXd& beta, RNG& rng) {
   int b = 0;
   while (c > index(b)) {
     b++;
-}
+  }
   return b + 1;
 }
 }  // namespace math

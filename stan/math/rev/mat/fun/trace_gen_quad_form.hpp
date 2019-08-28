@@ -49,20 +49,20 @@ class trace_gen_quad_form_vari : public vari {
     Eigen::Matrix<double, Ra, Cb> BD;
     if (varB || varA) {
       BD.noalias() = B * D;
-}
+    }
     if (varB || varD) {
       AtB.noalias() = A.transpose() * B;
-}
+    }
 
     if (varB) {
       (*varB).adj() += adj * (A * BD + AtB * D.transpose());
-}
+    }
     if (varA) {
       (*varA).adj() += adj * (B * BD.transpose());
-}
+    }
     if (varD) {
       (*varD).adj() += adj * (B.transpose() * AtB);
-}
+    }
   }
 
  public:
@@ -95,8 +95,7 @@ inline var trace_gen_quad_form(const Eigen::Matrix<Td, Rd, Cd>& D,
   check_multiplicable("trace_gen_quad_form", "A", A, "B", B);
   check_multiplicable("trace_gen_quad_form", "B", B, "D", D);
 
-  auto*
-      baseVari
+  auto* baseVari
       = new internal::trace_gen_quad_form_vari_alloc<Td, Rd, Cd, Ta, Ra, Ca, Tb,
                                                      Rb, Cb>(D, A, B);
 

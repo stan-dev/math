@@ -31,16 +31,16 @@ return_type_t<T_prob> multinomial_lpmf(
     double sum = 1.0;
     for (int n : ns) {
       sum += n;
-}
+    }
     lp += lgamma(sum);
     for (int n : ns) {
       lp -= lgamma(n + 1.0);
-}
+    }
   }
   if (include_summand<propto, T_prob>::value) {
     for (unsigned int i = 0; i < ns.size(); ++i) {
       lp += multiply_log(ns[i], theta[i]);
-}
+    }
   }
   return lp;
 }

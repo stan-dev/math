@@ -320,7 +320,7 @@ class var {
     g.resize(x.size());
     for (size_t i = 0; i < x.size(); ++i) {
       g[i] = x[i].vi_->adj_;
-}
+    }
   }
 
   /**
@@ -473,7 +473,7 @@ class var {
   friend std::ostream& operator<<(std::ostream& os, const var& v) {
     if (v.vi_ == nullptr) {
       return os << "uninitialized";
-}
+    }
     return os << v.val();
   }
 };

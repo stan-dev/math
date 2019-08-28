@@ -34,7 +34,7 @@ class add_vd_vari : public op_vd_vari {
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
     } else {
       avi_->adj_ += adj_;
-}
+    }
   }
 };
 }  // namespace internal
@@ -95,7 +95,7 @@ inline var operator+(const var& a, const var& b) {
 inline var operator+(const var& a, double b) {
   if (b == 0.0) {
     return a;
-}
+  }
   return var(new internal::add_vd_vari(a.vi_, b));
 }
 
@@ -113,7 +113,7 @@ inline var operator+(const var& a, double b) {
 inline var operator+(double a, const var& b) {
   if (a == 0.0) {
     return b;
-}
+  }
   return var(new internal::add_vd_vari(b.vi_, a));  // by symmetry
 }
 

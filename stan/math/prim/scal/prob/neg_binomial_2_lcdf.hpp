@@ -19,7 +19,7 @@ return_type_t<T_location, T_precision> neg_binomial_2_lcdf(
 
   if (size_zero(n, mu, phi)) {
     return 0.0;
-}
+  }
 
   static const char* function = "neg_binomial_2_lcdf";
   check_positive_finite(function, "Location parameter", mu);
@@ -38,7 +38,7 @@ return_type_t<T_location, T_precision> neg_binomial_2_lcdf(
       phi_mu(size_phi_mu);
   for (size_t i = 0; i < size_phi_mu; i++) {
     phi_mu[i] = phi_vec[i] / (phi_vec[i] + mu_vec[i]);
-}
+  }
 
   size_t size_n = length(n);
   VectorBuilder<true, return_type_t<T_n>, T_n> np1(size_n);
@@ -47,8 +47,8 @@ return_type_t<T_location, T_precision> neg_binomial_2_lcdf(
       return log(0.0);
     } else {
       np1[i] = n_vec[i] + 1.0;
-}
-}
+    }
+  }
 
   return beta_cdf_log(phi_mu.data(), phi, np1.data());
 }

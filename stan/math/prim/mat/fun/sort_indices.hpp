@@ -43,7 +43,7 @@ class index_comparator {
       return xs_[i - 1] < xs_[j - 1];
     } else {
       return xs_[i - 1] > xs_[j - 1];
-}
+    }
   }
 };
 
@@ -67,7 +67,7 @@ std::vector<int> sort_indices(const C& xs) {
   idxs.resize(size);
   for (idx_t i = 0; i < size; ++i) {
     idxs[i] = i + 1;
-}
+  }
   internal::index_comparator<ascending, C> comparator(xs);
   std::sort(idxs.begin(), idxs.end(), comparator);
   return idxs;

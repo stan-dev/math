@@ -29,13 +29,13 @@ inline void check_vector(const char* function, const char* name,
                          const Eigen::Matrix<T, R, C>& x) {
   if (R == 1) {
     return;
-}
+  }
   if (C == 1) {
     return;
-}
+  }
   if (x.rows() == 1 || x.cols() == 1) {
     return;
-}
+  }
 
   std::ostringstream msg;
   msg << ") has " << x.rows() << " rows and " << x.cols()

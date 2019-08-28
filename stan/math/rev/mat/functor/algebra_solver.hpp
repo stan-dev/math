@@ -55,12 +55,12 @@ struct algebra_solver_vari : public vari {
     using Eigen::MatrixXd;
     for (int i = 0; i < y.size(); ++i) {
       y_[i] = y(i).vi_;
-}
+    }
 
     theta_[0] = this;
     for (int i = 1; i < x.size(); ++i) {
       theta_[i] = new vari(theta_dbl(i), false);
-}
+    }
 
     // Compute the Jacobian and store in array, using the
     // implicit function theorem, i.e. Jx_y = Jf_y / Jf_x
@@ -75,8 +75,8 @@ struct algebra_solver_vari : public vari {
     for (int j = 0; j < y_size_; j++) {
       for (int i = 0; i < x_size_; i++) {
         y_[j]->adj_ += theta_[i]->adj_ * Jx_y_[j * x_size_ + i];
-}
-}
+      }
+    }
   }
 };
 
@@ -134,31 +134,31 @@ Eigen::VectorXd algebra_solver(
   check_nonzero_size("algebra_solver", "initial guess", x);
   for (int i = 0; i < x.size(); i++) {
     check_finite("algebra_solver", "initial guess", x(i));
-}
+  }
   for (int i = 0; i < y.size(); i++) {
     check_finite("algebra_solver", "parameter vector", y(i));
-}
+  }
   for (double i : dat) {
     check_finite("algebra_solver", "continuous data", i);
-}
+  }
   for (int x : dat_int) {
     check_finite("algebra_solver", "integer data", x);
-}
+  }
 
   if (relative_tolerance < 0) {
     invalid_argument("algebra_solver", "relative_tolerance,",
                      relative_tolerance, "",
                      ", must be greater than or equal to 0");
-}
+  }
   if (function_tolerance < 0) {
     invalid_argument("algebra_solver", "function_tolerance,",
                      function_tolerance, "",
                      ", must be greater than or equal to 0");
-}
+  }
   if (max_num_steps <= 0) {
     invalid_argument("algebra_solver", "max_num_steps,", max_num_steps, "",
                      ", must be greater than 0");
-}
+  }
 
   // Create functor for algebraic system
   typedef system_functor<F, double, double, true> Fs;
@@ -265,14 +265,13 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver(
   Fx fx(Fs(), f, value_of(x), value_of(y), dat, dat_int, msgs);
 
   // Construct vari
-  auto* vi0
-      = new algebra_solver_vari<Fy, F, T2, Fx>(Fy(), f, value_of(x), y, dat,
-                                               dat_int, theta_dbl, fx, msgs);
+  auto* vi0 = new algebra_solver_vari<Fy, F, T2, Fx>(
+      Fy(), f, value_of(x), y, dat, dat_int, theta_dbl, fx, msgs);
   Eigen::Matrix<var, Eigen::Dynamic, 1> theta(x.size());
   theta(0) = var(vi0->theta_[0]);
   for (int i = 1; i < x.size(); ++i) {
     theta(i) = var(vi0->theta_[i]);
-}
+  }
 
   return theta;
 }

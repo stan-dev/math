@@ -16,7 +16,7 @@ struct finite {
   static void check(const char* function, const char* name, const T_y& y) {
     if (!(boost::math::isfinite(value_of_rec(y)))) {
       domain_error(function, name, y, "is ", ", but must be finite!");
-}
+    }
   }
 };
 
@@ -26,7 +26,7 @@ struct finite<T_y, true> {
     for (size_t n = 0; n < stan::length(y); n++) {
       if (!(boost::math::isfinite(value_of_rec(stan::get(y, n))))) {
         domain_error_vec(function, name, y, n, "is ", ", but must be finite!");
-}
+      }
     }
   }
 };

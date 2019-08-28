@@ -41,7 +41,7 @@ template <typename T>
 inline int num_elements(const std::vector<T>& v) {
   if (v.size() == 0) {
     return 0;
-}
+  }
   return v.size() * num_elements(v[0]);
 }
 

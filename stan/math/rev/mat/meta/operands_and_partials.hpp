@@ -111,7 +111,7 @@ class ops_partials_edge<double, std::vector<Eigen::Matrix<var, R, C> > > {
   int size() {
     if (unlikely(this->operands_.size() == 0)) {
       return 0;
-}
+    }
     return this->operands_.size() * this->operands_[0].size();
   }
 };
@@ -136,7 +136,7 @@ class ops_partials_edge<double, std::vector<std::vector<var> > > {
 
   void dump_partials(double* partials) {
     int p_i = 0;
-    for (auto & i : this->partials_vec_) {
+    for (auto& i : this->partials_vec_) {
       for (size_t j = 0; j < i.size(); ++j, ++p_i) {
         partials[p_i] = i[j];
       }
@@ -144,7 +144,7 @@ class ops_partials_edge<double, std::vector<std::vector<var> > > {
   }
   void dump_operands(vari** varis) {
     int p_i = 0;
-    for (const auto & operand : this->operands_) {
+    for (const auto& operand : this->operands_) {
       for (size_t j = 0; j < operand.size(); ++j, ++p_i) {
         varis[p_i] = operand[j].vi_;
       }
@@ -153,7 +153,7 @@ class ops_partials_edge<double, std::vector<std::vector<var> > > {
   int size() {
     if (unlikely(this->operands_.size() == 0)) {
       return 0;
-}
+    }
     return this->operands_.size() * this->operands_[0].size();
   }
 };

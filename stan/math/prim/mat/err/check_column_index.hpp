@@ -32,7 +32,7 @@ inline void check_column_index(const char* function, const char* name,
   if (i >= stan::error_index::value
       && i < static_cast<size_t>(y.cols()) + stan::error_index::value) {
     return;
-}
+  }
 
   std::stringstream msg;
   msg << " for columns of " << name;

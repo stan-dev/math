@@ -39,7 +39,7 @@ return_type_t<T_y, T_loc, T_scale> gumbel_lpdf(const T_y& y, const T_loc& mu,
 
   if (size_zero(y, mu, beta)) {
     return 0.0;
-}
+  }
 
   T_partials_return logp(0.0);
 
@@ -51,7 +51,7 @@ return_type_t<T_y, T_loc, T_scale> gumbel_lpdf(const T_y& y, const T_loc& mu,
 
   if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
     return 0.0;
-}
+  }
 
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, beta);
 
@@ -68,7 +68,7 @@ return_type_t<T_y, T_loc, T_scale> gumbel_lpdf(const T_y& y, const T_loc& mu,
     inv_beta[i] = 1.0 / value_of(beta_vec[i]);
     if (include_summand<propto, T_scale>::value) {
       log_beta[i] = log(value_of(beta_vec[i]));
-}
+    }
   }
 
   for (size_t n = 0; n < N; n++) {
@@ -80,23 +80,23 @@ return_type_t<T_y, T_loc, T_scale> gumbel_lpdf(const T_y& y, const T_loc& mu,
 
     if (include_summand<propto, T_scale>::value) {
       logp -= log_beta[n];
-}
+    }
     if (include_summand<propto, T_y, T_loc, T_scale>::value) {
       logp += -y_minus_mu_over_beta - exp(-y_minus_mu_over_beta);
-}
+    }
 
     T_partials_return scaled_diff = inv_beta[n] * exp(-y_minus_mu_over_beta);
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] -= inv_beta[n] - scaled_diff;
-}
+    }
     if (!is_constant_all<T_loc>::value) {
       ops_partials.edge2_.partials_[n] += inv_beta[n] - scaled_diff;
-}
+    }
     if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n] += -inv_beta[n]
                                           + y_minus_mu_over_beta * inv_beta[n]
                                           - scaled_diff * y_minus_mu_over_beta;
-}
+    }
   }
   return ops_partials.build(logp);
 }

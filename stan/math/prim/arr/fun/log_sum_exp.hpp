@@ -31,15 +31,15 @@ inline double log_sum_exp(const std::vector<double>& x) {
   for (double xx : x) {
     if (xx > max) {
       max = xx;
-}
-}
+    }
+  }
 
   double sum = 0.0;
   for (double ii : x) {
     if (ii != -numeric_limits<double>::infinity()) {
       sum += exp(ii - max);
-}
-}
+    }
+  }
 
   return max + log(sum);
 }

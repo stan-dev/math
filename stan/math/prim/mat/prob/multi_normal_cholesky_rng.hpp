@@ -65,7 +65,7 @@ multi_normal_cholesky_rng(
     Eigen::VectorXd z(L.cols());
     for (int i = 0; i < L.cols(); i++) {
       z(i) = std_normal_rng();
-}
+    }
 
     output[n] = Eigen::VectorXd(mu_vec[n]) + L * z;
   }

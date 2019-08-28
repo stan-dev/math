@@ -166,7 +166,7 @@ map_rect(const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
 
   if (job_params_dims[0] == 0) {
     return return_t();
-}
+  }
 
 #ifdef STAN_MPI
   return internal::map_rect_mpi<call_id, F, T_shared_param, T_job_param>(

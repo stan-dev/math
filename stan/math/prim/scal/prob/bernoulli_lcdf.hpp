@@ -32,7 +32,7 @@ return_type_t<T_prob> bernoulli_lcdf(const T_n& n, const T_prob& theta) {
 
   if (size_zero(n, theta)) {
     return 0.0;
-}
+  }
 
   T_partials_return P(0.0);
 
@@ -53,7 +53,7 @@ return_type_t<T_prob> bernoulli_lcdf(const T_n& n, const T_prob& theta) {
   for (size_t i = 0; i < stan::length(n); i++) {
     if (value_of(n_vec[i]) < 0) {
       return ops_partials.build(negative_infinity());
-}
+    }
   }
 
   for (size_t i = 0; i < size; i++) {
@@ -61,7 +61,7 @@ return_type_t<T_prob> bernoulli_lcdf(const T_n& n, const T_prob& theta) {
     // The gradients are technically ill-defined, but treated as zero
     if (value_of(n_vec[i]) >= 1) {
       continue;
-}
+    }
 
     const T_partials_return Pi = 1 - value_of(theta_vec[i]);
 
@@ -69,7 +69,7 @@ return_type_t<T_prob> bernoulli_lcdf(const T_n& n, const T_prob& theta) {
 
     if (!is_constant_all<T_prob>::value) {
       ops_partials.edge1_.partials_[i] -= 1 / Pi;
-}
+    }
   }
 
   return ops_partials.build(P);

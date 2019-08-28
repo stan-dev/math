@@ -71,8 +71,8 @@ TEST(AgradRevMatrix, inverse_spd_inverse_spd_sum) {
   for (int i = 0; i < 4; ++i) {
     for (int j = 0; j < 4; ++j) {
       x.push_back(a(i, j));
-}
-}
+    }
+  }
 
   AVAR a_inv_inv_sum = sum(inverse_spd(inverse_spd(a)));
 

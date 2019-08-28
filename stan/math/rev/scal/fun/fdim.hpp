@@ -33,7 +33,7 @@ class fdim_vd_vari : public op_vd_vari {
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
     } else {
       avi_->adj_ += adj_;
-}
+    }
   }
 };
 
@@ -45,7 +45,7 @@ class fdim_dv_vari : public op_dv_vari {
       bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
     } else {
       bvi_->adj_ -= adj_;
-}
+    }
   }
 };
 }  // namespace internal

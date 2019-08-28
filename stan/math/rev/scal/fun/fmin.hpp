@@ -59,12 +59,12 @@ inline var fmin(const var& a, const var& b) {
     if (unlikely(is_nan(b))) {
       return var(new precomp_vv_vari(NOT_A_NUMBER, a.vi_, b.vi_, NOT_A_NUMBER,
                                      NOT_A_NUMBER));
-}
+    }
     return b;
   }
   if (unlikely(is_nan(b))) {
     return a;
-}
+  }
   return a < b ? a : b;
 }
 
@@ -86,12 +86,12 @@ inline var fmin(const var& a, double b) {
   if (unlikely(is_nan(a))) {
     if (unlikely(is_nan(b))) {
       return var(new precomp_v_vari(NOT_A_NUMBER, a.vi_, NOT_A_NUMBER));
-}
+    }
     return var(b);
   }
   if (unlikely(is_nan(b))) {
     return a;
-}
+  }
   return a <= b ? a : var(b);
 }
 
@@ -113,12 +113,12 @@ inline var fmin(double a, const var& b) {
   if (unlikely(is_nan(b))) {
     if (unlikely(is_nan(a))) {
       return var(new precomp_v_vari(NOT_A_NUMBER, b.vi_, NOT_A_NUMBER));
-}
+    }
     return var(a);
   }
   if (unlikely(is_nan(a))) {
     return b;
-}
+  }
   return b <= a ? b : var(a);
 }
 

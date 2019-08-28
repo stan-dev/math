@@ -95,7 +95,7 @@ struct coupled_ode_system<F, double, var> {
         msgs_(msgs) {
     for (const var& p : theta) {
       theta_nochain_.emplace_back(var(new vari(p.val(), false)));
-}
+    }
   }
 
   /**
@@ -138,7 +138,7 @@ struct coupled_ode_system<F, double, var> {
           const size_t offset = N_ + N_ * j;
           for (size_t k = 0; k < N_; k++) {
             temp_deriv += z[offset + k] * y_vars[k].adj();
-}
+          }
 
           dz_dt[offset + i] = temp_deriv;
         }
@@ -150,7 +150,7 @@ struct coupled_ode_system<F, double, var> {
         // on this.
         for (size_t j = 0; j < M_; ++j) {
           theta_nochain_[j].vi_->set_zero_adjoint();
-}
+        }
       }
     } catch (const std::exception& e) {
       recover_memory_nested();
@@ -185,7 +185,7 @@ struct coupled_ode_system<F, double, var> {
     std::vector<double> state(size_, 0.0);
     for (size_t n = 0; n < N_; n++) {
       state[n] = y0_dbl_[n];
-}
+    }
     return state;
   }
 };
@@ -296,7 +296,7 @@ struct coupled_ode_system<F, var, double> {
           const size_t offset = N_ + N_ * j;
           for (size_t k = 0; k < N_; k++) {
             temp_deriv += z[offset + k] * y_vars[k].adj();
-}
+          }
 
           dz_dt[offset + i] = temp_deriv;
         }
@@ -334,10 +334,10 @@ struct coupled_ode_system<F, var, double> {
     std::vector<double> initial(size_, 0.0);
     for (size_t i = 0; i < N_; i++) {
       initial[i] = value_of(y0_[i]);
-}
+    }
     for (size_t i = 0; i < N_; i++) {
       initial[N_ + i * N_ + i] = 1.0;
-}
+    }
     return initial;
   }
 };
@@ -430,7 +430,7 @@ struct coupled_ode_system<F, var, var> {
         msgs_(msgs) {
     for (const var& p : theta) {
       theta_nochain_.emplace_back(var(new vari(p.val(), false)));
-}
+    }
   }
 
   /**
@@ -473,7 +473,7 @@ struct coupled_ode_system<F, var, var> {
           const size_t offset = N_ + N_ * j;
           for (size_t k = 0; k < N_; k++) {
             temp_deriv += z[offset + k] * y_vars[k].adj();
-}
+          }
 
           dz_dt[offset + i] = temp_deriv;
         }
@@ -483,7 +483,7 @@ struct coupled_ode_system<F, var, var> {
           const size_t offset = N_ + N_ * N_ + N_ * j;
           for (size_t k = 0; k < N_; k++) {
             temp_deriv += z[offset + k] * y_vars[k].adj();
-}
+          }
 
           dz_dt[offset + i] = temp_deriv;
         }
@@ -495,7 +495,7 @@ struct coupled_ode_system<F, var, var> {
         // on this.
         for (size_t j = 0; j < M_; ++j) {
           theta_nochain_[j].vi_->set_zero_adjoint();
-}
+        }
       }
     } catch (const std::exception& e) {
       recover_memory_nested();
@@ -533,10 +533,10 @@ struct coupled_ode_system<F, var, var> {
     std::vector<double> initial(size_, 0.0);
     for (size_t i = 0; i < N_; i++) {
       initial[i] = value_of(y0_[i]);
-}
+    }
     for (size_t i = 0; i < N_; i++) {
       initial[N_ + i * N_ + i] = 1.0;
-}
+    }
     return initial;
   }
 };

@@ -27,7 +27,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lcdf(const T_y& y,
 
   if (size_zero(y, nu, mu, sigma)) {
     return 0.0;
-}
+  }
 
   static const char* function = "student_t_lcdf";
 
@@ -52,7 +52,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lcdf(const T_y& y,
   for (size_t i = 0; i < stan::length(y); i++) {
     if (value_of(y_vec[i]) == -std::numeric_limits<double>::infinity()) {
       return ops_partials.build(negative_infinity());
-}
+    }
   }
 
   using std::exp;
@@ -108,7 +108,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lcdf(const T_y& y,
       if (!is_constant_all<T_y>::value) {
         ops_partials.edge1_.partials_[n]
             += -zJacobian * d_ibeta * J * sigma_inv / Pn;
-}
+      }
 
       if (!is_constant_all<T_dof>::value) {
         T_partials_return g1 = 0;
@@ -125,11 +125,11 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lcdf(const T_y& y,
       if (!is_constant_all<T_loc>::value) {
         ops_partials.edge3_.partials_[n]
             += zJacobian * d_ibeta * J * sigma_inv / Pn;
-}
+      }
       if (!is_constant_all<T_scale>::value) {
         ops_partials.edge4_.partials_[n]
             += zJacobian * d_ibeta * J * sigma_inv * t / Pn;
-}
+      }
 
     } else {
       T_partials_return z
@@ -146,7 +146,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lcdf(const T_y& y,
       if (!is_constant_all<T_y>::value) {
         ops_partials.edge1_.partials_[n]
             += zJacobian * d_ibeta * J * sigma_inv / Pn;
-}
+      }
 
       if (!is_constant_all<T_dof>::value) {
         T_partials_return g1 = 0;
@@ -163,11 +163,11 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lcdf(const T_y& y,
       if (!is_constant_all<T_loc>::value) {
         ops_partials.edge3_.partials_[n]
             += -zJacobian * d_ibeta * J * sigma_inv / Pn;
-}
+      }
       if (!is_constant_all<T_scale>::value) {
         ops_partials.edge4_.partials_[n]
             += -zJacobian * d_ibeta * J * sigma_inv * t / Pn;
-}
+      }
     }
   }
   return ops_partials.build(P);

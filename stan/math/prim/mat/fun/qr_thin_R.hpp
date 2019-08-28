@@ -27,10 +27,10 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> qr_thin_R(
   for (int i = 0; i < min_size; i++) {
     for (int j = 0; j < i; j++) {
       R.coeffRef(i, j) = 0.0;
-}
+    }
     if (R(i, i) < 0) {
       R.row(i) *= -1.0;
-}
+    }
   }
   return R;
 }

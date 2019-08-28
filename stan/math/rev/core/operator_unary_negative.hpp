@@ -18,7 +18,7 @@ class neg_vari : public op_v_vari {
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
     } else {
       avi_->adj_ -= adj_;
-}
+    }
   }
 };
 }  // namespace internal
