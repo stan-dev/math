@@ -22,5 +22,8 @@ struct scalar_type<T*> {
   typedef typename scalar_type<T>::type type;
 };
 
+template <typename T>
+using scalar_type_t = typename scalar_type<T>::type;
+
 }  // namespace stan
 #endif

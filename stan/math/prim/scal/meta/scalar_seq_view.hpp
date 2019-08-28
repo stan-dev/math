@@ -13,11 +13,12 @@ namespace stan {
  * @tparam C the container type; will be the scalar type if wrapping a scalar
  * @tparam T the scalar type
  */
-template <typename C, typename T = typename scalar_type<C>::type>
+template <typename C, typename = void>
 class scalar_seq_view {
  public:
-  // The template K is here because perfect forwarding
-  // depends on the constructors template.
+  /* The template K is here because perfect forwarding
+   * depends on the constructors template.
+   */
   template <typename K, typename = std::enable_if_t<std::is_same<std::decay_t<C>, std::decay_t<K>>::value>>
   explicit scalar_seq_view(K&& c) : c_(std::forward<K>(c)) {}
   template <typename K, typename = std::enable_if_t<std::is_same<std::decay_t<C>, std::decay_t<K>>::value>>
@@ -38,12 +39,12 @@ class scalar_seq_view {
 /**
  * This specialization handles wrapping a scalar as if it were a sequence.
  *
- * @tparam T the scalar type
+ * @tparam C the storage type
  */
-template <typename T>
-class scalar_seq_view<T, T> {
+template <typename C>
+class scalar_seq_view<C, std::enable_if_t<std::is_same<C, scalar_type_t<C>>::value>> {
  public:
-  explicit scalar_seq_view(const T& t) : t_(t) {}
+  explicit scalar_seq_view(const C& t) : t_(t) {}
 
   const auto& operator[](int /* i */) const { return t_; }
   auto& operator[](int /* i */) { return t_; }
@@ -51,7 +52,7 @@ class scalar_seq_view<T, T> {
   int size() const { return 1; }
 
  private:
-  T t_;
+  C t_;
 };
 }  // namespace stan
 #endif
