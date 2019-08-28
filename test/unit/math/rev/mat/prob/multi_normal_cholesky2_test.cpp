@@ -28,18 +28,18 @@ struct multi_normal_cholesky_fun {
     int pos = 0;
     for (int i = 0; i < K_; ++i) {
       y(i) = x[pos++];
-}
+    }
     for (int i = 0; i < K_; ++i) {
       mu(i) = x[pos++];
-}
+    }
     // fill lower triangular by row
     for (int i = 0; i < K_; ++i) {
       for (int j = 0; j <= i; ++j) {
         L(i, j) = x[pos++];
-}
+      }
       for (int j = i + 1; j < K_; ++j) {
         L(i, j) = 0;
-}
+      }
     }
     return stan::math::multi_normal_cholesky_log<false>(y, mu, L);
     // can't test propto=true because finite diffs are
@@ -93,7 +93,7 @@ struct vectorized_multi_normal_cholesky_fun {
       throw std::runtime_error(
           "attempt to disable vectorization with vector "
           "bigger than 1");
-}
+    }
   }
 
   template <typename T_y, typename T_mu, typename T_sigma>
@@ -109,24 +109,24 @@ struct vectorized_multi_normal_cholesky_fun {
     for (int i = 0; i < L_; ++i) {
       for (int j = 0; j < K_; ++j) {
         y[i](j) = y_vec[pos++];
-}
-}
+      }
+    }
 
     pos = 0;
     for (int i = 0; i < L_; ++i) {
       for (int j = 0; j < K_; ++j) {
         mu[i](j) = mu_vec[pos++];
-}
-}
+      }
+    }
 
     pos = 0;
     for (int i = 0; i < K_; ++i) {
       for (int j = 0; j <= i; ++j) {
         L(i, j) = sigma_vec[pos++];
-}
+      }
       for (int j = i + 1; j < K_; ++j) {
         L(i, j) = 0;
-}
+      }
     }
 
     if (dont_vectorize_y) {
@@ -134,13 +134,13 @@ struct vectorized_multi_normal_cholesky_fun {
         return stan::math::multi_normal_cholesky_log<false>(y[0], mu[0], L);
       } else {
         return stan::math::multi_normal_cholesky_log<false>(y[0], mu, L);
-}
+      }
     } else {
       if (dont_vectorize_mu) {
         return stan::math::multi_normal_cholesky_log<false>(y, mu[0], L);
       } else {
         return stan::math::multi_normal_cholesky_log<false>(y, mu, L);
-}
+      }
     }
   }
 };
@@ -199,7 +199,7 @@ void test_all() {
                 3, 1, ii, jj),
             get_vvar(y_), get_vvar(mu_), get_vvar(sigma_));
       }
-}
+    }
   }
 
   {

@@ -160,10 +160,10 @@ struct multi_student_t_fun {
     int pos = 0;
     for (int i = 0; i < K_; ++i) {
       y(i) = x[pos++];
-}
+    }
     for (int i = 0; i < K_; ++i) {
       mu(i) = x[pos++];
-}
+    }
     for (int j = 0; j < K_; ++j) {
       for (int i = 0; i <= j; ++i) {
         Sigma(i, j) = x[pos++];
@@ -225,7 +225,7 @@ struct vectorized_multi_student_t_fun {
       throw std::runtime_error(
           "attempt to disable vectorization with vector "
           "bigger than 1");
-}
+    }
   }
 
   template <typename T_y, typename T_mu, typename T_sigma, typename T_nu>
@@ -241,15 +241,15 @@ struct vectorized_multi_student_t_fun {
     for (int i = 0; i < L_; ++i) {
       for (int j = 0; j < K_; ++j) {
         y[i](j) = y_vec[pos++];
-}
-}
+      }
+    }
 
     pos = 0;
     for (int i = 0; i < L_; ++i) {
       for (int j = 0; j < K_; ++j) {
         mu[i](j) = mu_vec[pos++];
-}
-}
+      }
+    }
 
     pos = 0;
     for (int j = 0; j < K_; ++j) {
@@ -264,13 +264,13 @@ struct vectorized_multi_student_t_fun {
         return stan::math::multi_student_t_log<false>(y[0], nu, mu[0], Sigma);
       } else {
         return stan::math::multi_student_t_log<false>(y[0], nu, mu, Sigma);
-}
+      }
     } else {
       if (dont_vectorize_mu) {
         return stan::math::multi_student_t_log<false>(y, nu, mu[0], Sigma);
       } else {
         return stan::math::multi_student_t_log<false>(y, nu, mu, Sigma);
-}
+      }
     }
   }
 };
@@ -361,7 +361,7 @@ void test_all() {
                                                                         ii, jj),
             get_vvar(y_), get_vvar(mu_), get_vvar(sigma_), var(5));
       }
-}
+    }
   }
 
   {
