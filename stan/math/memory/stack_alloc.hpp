@@ -3,8 +3,8 @@
 
 // TODO(Bob): <cstddef> replaces this ifdef in C++11, until then this
 //            is best we can do to get safe pointer casts to uints.
-#include <cstdint>
 #include <stan/math/prim/meta.hpp>
+#include <cstdint>
 #include <cstdlib>
 #include <cstddef>
 #include <sstream>
@@ -131,7 +131,7 @@ class stack_alloc {
   explicit stack_alloc(size_t initial_nbytes = internal::DEFAULT_INITIAL_NBYTES)
       : blocks_(1, internal::eight_byte_aligned_malloc(initial_nbytes)),
         sizes_(1, initial_nbytes),
-        
+
         cur_block_end_(blocks_[0] + initial_nbytes),
         next_loc_(blocks_[0]) {
     if (!blocks_[0]) {

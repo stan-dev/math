@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_GP_PERIODIC_COV_HPP
 #define STAN_MATH_PRIM_MAT_FUN_GP_PERIODIC_COV_HPP
 
-#include <cmath>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/distance.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
