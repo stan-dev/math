@@ -181,7 +181,8 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
   matrix_cl() : rows_(0), cols_(0) {}
 
   /**
-   * Construct a matrix_cl<T> from an existing cl::Buffer object. The matrix directly uses given buffer - no copying is done.
+   * Construct a matrix_cl<T> from an existing cl::Buffer object. The matrix
+   * directly uses given buffer - no copying is done.
    *
    * @param A the cl::Buffer object to construct the matrix from
    * @param R number of rows
