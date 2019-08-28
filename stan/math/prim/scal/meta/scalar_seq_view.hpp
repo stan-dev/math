@@ -39,7 +39,7 @@ class scalar_seq_view {
  * @tparam C the storage type
  */
 template <typename C>
-class scalar_seq_view<C, std::enable_if_t<std::is_same<C, scalar_type_t<C>>::value>> {
+class scalar_seq_view<C, std::enable_if_t<std::is_same<std::decay_t<C>, scalar_type_t<std::decay_t<C>>>::value>> {
  public:
   explicit scalar_seq_view(const C& t) : t_(t) {}
 
