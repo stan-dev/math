@@ -125,7 +125,7 @@ pipeline {
                         CppLint: { sh "make cpplint" },
                         Dependencies: { sh """#!/bin/bash
                             set -o pipefail
-                            python runChecks.py 2>&1 | tee dependencies.log""" } ,
+                            ./runChecks.py 2>&1 | tee dependencies.log""" } ,
                         Documentation: { sh "make doxygen" },
                     )
                 }
