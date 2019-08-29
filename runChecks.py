@@ -120,7 +120,7 @@ def main():
 
     if(len(errors) > 0):
         for e in errors:
-            print(e)
+            print(e, file=sys.stderr)
         sys.exit(1)
         
 if __name__ == "__main__":
