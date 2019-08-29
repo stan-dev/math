@@ -11,7 +11,7 @@ namespace test {
  * 1e-3 for second derivatives, and 1e-2 for third derivatives.  The
  * names begin with the functional being evaluated, include an `fvar`
  * if the function is implemented using only forward mode, and end
- * with the quantity being calculated; for exmaple,
+ * with the quantity being calculated; for example,
  * `hessian_fvar_grad_` is the gradient calculated by the `hessian`
  * function using forward-mode autodiff.
  *

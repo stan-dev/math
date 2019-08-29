@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
 #include <gtest/gtest.h>
 #include <limits>
+#include <type_traits>
 #include <vector>
 
 TEST(test_unit_math_test_ad, test_ad_unary) {
@@ -86,53 +87,222 @@ TEST(test_ad, misthrow) {
   // stan::test::expect_ad(h, x);
 }
 
-template <typename T>
-T foo(const T& x) {
-  // std::cout << "called foo(T)" << std::endl;
-  return x / 2;
-}
+struct foo_fun {
+  // must be static because operator() must be const
+  static int calls_int_;
+  static int calls_t_;
 
-double foo(double x) {
-  // std::cout << "called foo(double)" << std::endl;
-  return x / 2;
-}
+  template <typename T>
+  T operator()(const T& x) const {
+    ++foo_fun::calls_t_;
+    return x / 2;
+  }
 
-double foo(int x) {
-  // std::cout << "called foo(int)" << std::endl;
-  // return x / 2.0; // passes
-  // return x / 2;   // fails on odd numbers
-  return 2 * x;  // always fails
-}
+  double operator()(const int& x) const {
+    ++foo_fun::calls_int_;
+    // return x / 2;  // fails if x is odd
+    return x / 2.0;  // works for any x
+  }
+};
+
+// need these or it won't link
+int foo_fun::calls_int_ = -1;
+int foo_fun::calls_t_ = -1;
 
 TEST(test_ad, integerGetsPassed) {
-  auto h = [](const auto& u) { return foo(u); };
-  stan::test::expect_ad(h, 3.0);  // passes for double
-  // stan::test::expect_ad(h, 3);    // fails
+  // double arguments will not call int version
+  foo_fun h;
+  foo_fun::calls_int_ = 0;
+  foo_fun::calls_t_ = 0;
+  stan::test::expect_ad(h, 3.0);
+  EXPECT_EQ(0, foo_fun::calls_int_);
+  EXPECT_TRUE(foo_fun::calls_t_ > 0);
+
+  // int argument calls everything
+  foo_fun g;
+  foo_fun::calls_int_ = 0;
+  foo_fun::calls_t_ = 0;
+  stan::test::expect_ad(g, 3);
+  EXPECT_TRUE(foo_fun::calls_int_ > 0);
+  EXPECT_TRUE(foo_fun::calls_t_ > 0);
+
+  foo_fun::calls_int_ = 0;
+  foo_fun::calls_t_ = 0;
+  stan::test::expect_common_unary(g);
+  EXPECT_TRUE(foo_fun::calls_int_ > 0);
+  EXPECT_TRUE(foo_fun::calls_t_ > 0);
 }
 
-TEST(test_ad, expect_match_prim) {
-  using stan::test::expect_common_prim;
-  using stan::test::expect_match_prim;
-  // reference implementation
-  auto f = [](auto x) { return std::sin(x); };
+struct bar_fun {
+  // must be static because operator() must be const
+  static int calls_t_;
+  static int calls_int1_;
+  static int calls_int2_;
+  static int calls_int12_;
 
-  // Stan math matches
-  auto g = [](auto x) { return stan::math::sin(x); };
-  expect_match_prim(f, g, 1.37);
-  expect_common_prim(f, g);
+  static void reset() {
+    bar_fun::calls_t_ = 0;
+    bar_fun::calls_int1_ = 0;
+    bar_fun::calls_int2_ = 0;
+    bar_fun::calls_int12_ = 0;
+  }
 
-  // won't match if sign is wrong
-  auto h = [](auto x) { return -std::sin(x); };
-  // expect_match_prim(f, h, 1);      // fails
-  // expect_common_prim(f, h);        // fails
+  double operator()(int x, int y) const {
+    ++bar_fun::calls_int12_;
+    return this->operator()(static_cast<double>(x), static_cast<double>(y));
+  }
+  double operator()(int x, double y) const {
+    ++bar_fun::calls_int1_;
+    return x * y;
+  }
+  template <typename T>
+  T operator()(int x, const T& y) const {
+    ++bar_fun::calls_int1_;
+    return this->operator()(static_cast<double>(x), y);
+  }
 
-  // wont' match if throw conditions are different
-  auto j = [](auto x) {
-    if (x < 0)
-      throw std::runtime_error("boo");
-    return std::sin(x);
-  };
-  expect_match_prim(f, j, 1.37);  // ok if positive
-  // expect_match_prim(f, j, -1);  // fails
-  // expect_common_prim(f, j);     // fails
+  double operator()(double x, int y) const {
+    ++bar_fun::calls_int2_;
+    return x * y;
+  }
+  double operator()(double x, double y) const { return x * y; }
+  template <typename T>
+  T operator()(double x, const T& y) const {
+    return x * y;
+  }
+
+  template <typename T>
+  T operator()(const T& x, int y) const {
+    ++bar_fun::calls_int2_;
+    return this->operator()(x, static_cast<double>(y));
+  }
+  template <typename T>
+  T operator()(const T& x, double y) const {
+    ++bar_fun::calls_t_;
+    return x * y;
+  }
+  template <typename T1, typename T2>
+  typename boost::math::tools::promote_args<T1, T2>::type operator()(
+      const T1& x, const T2& y) const {
+    return x * y;
+  }
+};
+
+// need these or it won't link
+int bar_fun::calls_t_ = -1;
+int bar_fun::calls_int1_ = -1;
+int bar_fun::calls_int2_ = -1;
+int bar_fun::calls_int12_ = -1;
+
+TEST(testAd, integerGetsPassedBinary) {
+  bar_fun f;
+
+  bar_fun::reset();
+  stan::test::expect_ad(f, 3.0, 2.7);
+  EXPECT_TRUE(bar_fun::calls_t_ > 0);
+  EXPECT_EQ(bar_fun::calls_int1_, 0);
+  EXPECT_EQ(bar_fun::calls_int2_, 0);
+  EXPECT_EQ(bar_fun::calls_int12_, 0);
+
+  bar_fun::reset();
+  stan::test::expect_ad(f, 3, 2.7);
+  EXPECT_TRUE(bar_fun::calls_t_ > 0);
+  EXPECT_TRUE(bar_fun::calls_int1_ > 0);
+
+  bar_fun::reset();
+  stan::test::expect_ad(f, 2.7, 3);
+  EXPECT_TRUE(bar_fun::calls_t_ > 0);
+  EXPECT_TRUE(bar_fun::calls_int2_ > 0);
+
+  bar_fun::reset();
+  stan::test::expect_ad(f, 3, 4);
+  EXPECT_TRUE(bar_fun::calls_t_ > 0);
+  EXPECT_TRUE(bar_fun::calls_int12_ > 0);
+
+  bar_fun::reset();
+  stan::test::expect_common_binary(f);
+  EXPECT_TRUE(bar_fun::calls_t_ > 0);
+  EXPECT_TRUE(bar_fun::calls_int1_ > 0);
+  EXPECT_TRUE(bar_fun::calls_int2_ > 0);
+  EXPECT_TRUE(bar_fun::calls_int12_ > 0);
+}
+
+int baz_int = 0;
+int baz_double = 0;
+int baz_var = 0;
+int baz_fvar = 0;
+
+double baz(int x) {
+  ++baz_int;
+  return x / 2.0;
+}
+double baz(double x) {
+  ++baz_double;
+  return x / 2.0;
+}
+stan::math::var baz(const stan::math::var& x) {
+  ++baz_var;
+  return x / 2.0;
+}
+template <typename T>
+stan::math::fvar<T> baz(const stan::math::fvar<T>& x) {
+  ++baz_fvar;
+  return x / 2.0;
+}
+
+struct baz_fun {
+  template <typename T>
+  static inline T fun(const T& x) {
+    return baz(x);
+  }
+};
+
+template <typename T>
+inline typename stan::math::apply_scalar_unary<baz_fun, T>::return_t baz(
+    const T& x) {
+  return stan::math::apply_scalar_unary<baz_fun, T>::apply(x);
+}
+
+TEST(testAd, integerGetsPassedVectorized) {
+  auto h = [&](auto x) { return baz(x); };
+
+  baz_int = 0;
+  baz_double = 0;
+  baz_var = 0;
+  baz_fvar = 0;
+  stan::test::expect_ad_vectorized(h, 0.2);
+  EXPECT_EQ(0, baz_int);  // int doesn't get called
+  EXPECT_TRUE(baz_double > 0);
+  EXPECT_TRUE(baz_var > 0);
+  EXPECT_TRUE(baz_fvar > 0);
+
+  baz_int = 0;
+  baz_double = 0;
+  baz_var = 0;
+  baz_fvar = 0;
+  stan::test::expect_ad_vectorized(h, 1);
+  EXPECT_TRUE(baz_int > 0);  // int version gets called
+  EXPECT_TRUE(baz_double > 0);
+  EXPECT_TRUE(baz_var > 0);
+  EXPECT_TRUE(baz_fvar > 0);
+
+  baz_int = 0;
+  baz_double = 0;
+  baz_var = 0;
+  baz_fvar = 0;
+  stan::test::expect_common_unary_vectorized(h);
+  EXPECT_TRUE(baz_int > 0);  // int version gets called
+  EXPECT_TRUE(baz_double > 0);
+  EXPECT_TRUE(baz_var > 0);
+  EXPECT_TRUE(baz_fvar > 0);
+
+  baz_int = 0;
+  baz_double = 0;
+  baz_var = 0;
+  baz_fvar = 0;
+  stan::test::expect_common_nonzero_unary_vectorized(h);
+  EXPECT_TRUE(baz_int > 0);  // int version gets called
+  EXPECT_TRUE(baz_double > 0);
+  EXPECT_TRUE(baz_var > 0);
+  EXPECT_TRUE(baz_fvar > 0);
 }

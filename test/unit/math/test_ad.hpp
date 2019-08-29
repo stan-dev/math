@@ -476,7 +476,7 @@ void expect_ad_vv(const ad_tolerances& tols, const F& f, int x1, const T2& x2) {
   double x1_dbl = static_cast<double>(x1);
 
   // expect same result with int or and cast to double
-  expect_near_rel("expect_ad_vv", f(x1, x2), f(x1_dbl, x2));
+  expect_near_rel("expect_ad_vv(int, T2)", f(x1, x2), f(x1_dbl, x2));
 
   // expect autodiff to work at double value
   expect_ad_vv(tols, f, x1_dbl, x2);
@@ -498,7 +498,7 @@ void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1, int x2) {
   double x2_dbl = static_cast<double>(x2);
 
   // expect same result with int or and cast to double
-  expect_near_rel("expect_ad_vv", f(x1, x2), f(x1, x2_dbl));
+  expect_near_rel("expect_ad_vv(T1,int)", f(x1, x2), f(x1, x2_dbl));
 
   // expect autodiff to work at double value
   expect_ad_vv(tols, f, x1, x2_dbl);
@@ -517,11 +517,11 @@ void expect_ad_vv(const ad_tolerances& tols, const F& f, int x1, int x2) {
     return;
   }
 
-  double x1_dbl = static_cast<double>(x2);
+  double x1_dbl = static_cast<double>(x1);
   double x2_dbl = static_cast<double>(x2);
 
   // expect same result with int or and cast to double
-  expect_near_rel("expect_ad_vv", f(x1, x2), f(x1_dbl, x2_dbl));
+  expect_near_rel("expect_ad_vv(int, int)", f(x1, x2), f(x1_dbl, x2_dbl));
 
   // expect autodiff to work at double values
   // these take care of x1_dbl, x2_dbl case by delegation
@@ -850,10 +850,8 @@ void expect_common_binary(const F& f, bool disable_lhs_int = false) {
   for (double x1 : args)
     for (int x2 : int_args)
       expect_ad(f, x1, x2);
-
   if (disable_lhs_int)
     return;
-
   for (int x1 : int_args)
     for (double x2 : args)
       expect_ad(f, x1, x2);
