@@ -9,12 +9,19 @@ from __future__ import print_function
 import os
 import os.path
 import sys
-import glob
 import re
+import glob
 
 winsfx = ".exe"
 testsfx = "_test.cpp"
-
+def files_in_folder(folder):
+    files = []
+    for f in glob.glob(folder):
+        if os.path.isdir(f):
+            files += files_in_folder(f+os.sep+"**")
+        else:
+            files.append(f)
+    return files
 def grep_patterns(type, folder, patterns_and_messages, exclude_filters = []):
     """Checks the files in the provided folder for matches
     with any of the patterns. It returns an array of
@@ -23,33 +30,35 @@ def grep_patterns(type, folder, patterns_and_messages, exclude_filters = []):
     """
     errors = []
     folder.replace("/", os.sep)
-    files = glob.glob(folder+os.sep+"**", recursive=True)
-    filtered = []
-    # filter out files that match exclude filters
-    for exclude in exclude_filters:
-        exclude.replace("/", os.sep)
-        filtered += glob.glob(exclude, recursive=True)
-    files = [x for x in files if x not in filtered]
+    exclude_files = []
+    for excl in exclude_filters:
+        exclude_files += files_in_folder(excl)
+    files = files_in_folder(folder+os.sep+"**")
+    files = [x for x in files if x not in exclude_files]
     for f in files:
         if os.path.isfile(f):
             line_num = 0
             for line in open(f, "r"):
                 line_num += 1
-                # exclude comments
-                # exclude line starting with "/*" or " * " and
-                # if the matched patterns are behind "//"
+                
                 for p in patterns_and_messages:
+                    # exclude line starting with "/*" or " * " and
+                    # if the matched patterns are behind "//"
                     if not re.search("^ \* |^/\*", line) and not re.search(".*//.*"+p["pattern"], line) and re.search(p["pattern"], line):
                             errors.append(f + " at line " + str(line_num) + ":\n\t" + "[" + type + "] " + p["message"])
     return errors
 
 def check_non_test_files_in_test():
-    all_cpp = glob.glob("test/unit/*/**", recursive=True)
-    errors = ["Error: A .cpp file without the suffix " + testsfx + " in test/unit/*/*:\n\t" + x for x in all_cpp if x[-4:] == ".cpp" and x[-len(testsfx):] != testsfx]
+    path = "test/unit/"
+    cpp_exceptions = ["test/unit/multiple_translation_units1.cpp", "test/unit/multiple_translation_units2.cpp"]
+    all_cpp = [os.path.join(dp, f) for dp, dn, filenames in os.walk(path) for f in filenames]
+    # if the file is a .cpp file that doesnt end with _test.cpp and is not listed in cpp_exceptions
+    errors = ["Error: A .cpp file without the suffix " + testsfx + " in test/unit/*/*:\n\t" + x for x in all_cpp if x[-4:] == ".cpp" and x[-len(testsfx):] != testsfx and not x in cpp_exceptions]
     return errors
 
 def main():
     errors = []
+
     # Check for files inside stan/math/prim that contain stan/math/rev or stan/math/fwd
     prim_checks = [
         { "pattern" : '<stan/math/rev/', "message" : 'File includes a stan/math/rev header file.'},
@@ -113,7 +122,7 @@ def main():
     meta_checks = [
         { "pattern" : '<stan/math/.*/meta/.*hpp', "message" : 'File includes */meta/*.hpp header file. Should include meta.hpp'}
     ]
-    meta_exclude = ['stan/math/*/*/meta/*', 'stan/math/*/meta.hpp']
+    meta_exclude = ['stan/math/*/*/meta', 'stan/math/*/meta.hpp']
     errors += grep_patterns('meta', 'stan/math', meta_checks, meta_exclude)
 
     errors += check_non_test_files_in_test()
