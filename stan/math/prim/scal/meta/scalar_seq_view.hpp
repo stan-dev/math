@@ -14,9 +14,10 @@ namespace stan {
 template <typename C, typename T = typename scalar_type<C>::type>
 class scalar_seq_view {
  public:
- // Alias to check perf forwarded param and declared type are the same.
- template <typename Type1, typename Type2>
- using enable_if_same_container = std::enable_if_t<std::is_same<std::decay_t<Type1>, std::decay_t<Type2>>::value>;
+  // Alias to check perf forwarded param and declared type are the same.
+  template <typename Type1, typename Type2>
+  using enable_if_same_container = std::enable_if_t<
+      std::is_same<std::decay_t<Type1>, std::decay_t<Type2>>::value>;
 
   template <typename K, typename = enable_if_same_container<C, K>>
   explicit scalar_seq_view(K&& c) : c_(std::forward<K>(c)) {}
