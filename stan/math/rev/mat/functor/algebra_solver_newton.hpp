@@ -35,8 +35,11 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver_newton(
     long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
 
   Eigen::VectorXd theta_dbl
-    = kinsol_solve(f, x, value_of(y), dat, dat_int, 0,
+    = kinsol_solve(f, kinsol_J_f(), x, value_of(y), dat, dat_int, 0,
                    function_tolerance, max_num_steps);
+  // Eigen::VectorXd theta_dbl
+  //   = kinsol_solve(f, x, value_of(y), dat, dat_int, 0,
+  //                  function_tolerance, max_num_steps);
 
   typedef system_functor<F, double, double, false> Fy;
   typedef system_functor<F, double, double, true> Fs;

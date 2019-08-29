@@ -55,6 +55,15 @@ $(IDAS_TESTS) : $(LIBSUNDIALS)
 
 ############################################################
 #
+# KINSOL tests
+##
+
+ALGEBRA_SOLVER_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *algebra_solver*_test.cpp))
+$(ALGEBRA_SOLVER_TESTS) : $(LIBSUNDIALS)
+
+
+############################################################
+#
 # Target to verify header files within Stan has
 # enough include calls
 ##
