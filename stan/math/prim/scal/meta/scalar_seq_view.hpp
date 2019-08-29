@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/scal/meta/scalar_type.hpp>
 #include <type_traits>
+#include <utility>
 
 namespace stan {
 /**
