@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/mat/meta/append_return_type.hpp>
 #include <stan/math/prim/mat/fun/sum.hpp>
 #include <vector>
 #include <type_traits>

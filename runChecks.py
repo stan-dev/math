@@ -49,11 +49,9 @@ def grep_patterns(type, folder, patterns_and_messages, exclude_filters = []):
     return errors
 
 def check_non_test_files_in_test():
-    path = "test/unit/"
-    cpp_exceptions = ["test/unit/multiple_translation_units1.cpp", "test/unit/multiple_translation_units2.cpp"]
-    all_cpp = [os.path.join(dp, f) for dp, dn, filenames in os.walk(path) for f in filenames]
-    # if the file is a .cpp file that doesnt end with _test.cpp and is not listed in cpp_exceptions
-    errors = ["Error: A .cpp file without the suffix " + testsfx + " in test/unit/*/*:\n\t" + x for x in all_cpp if x[-4:] == ".cpp" and x[-len(testsfx):] != testsfx and not x in cpp_exceptions]
+    all_cpp = files_in_folder("test/unit/*/*")
+    # if the file is a .cpp file that doesnt end with _test.cpp
+    errors = ["Error: A .cpp file without the suffix " + testsfx + " in test/unit/*/*:\n\t" + x for x in all_cpp if x[-4:] == ".cpp" and x[-len(testsfx):] != testsfx]
     return errors
 
 def main():
