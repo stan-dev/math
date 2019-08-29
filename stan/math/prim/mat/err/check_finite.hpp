@@ -1,10 +1,11 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_CHECK_FINITE_HPP
 #define STAN_MATH_PRIM_MAT_ERR_CHECK_FINITE_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
-#include <Eigen/Dense>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 
 namespace stan {

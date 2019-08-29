@@ -1,10 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_ERR_DOMAIN_ERROR_VEC_HPP
 #define STAN_MATH_PRIM_SCAL_ERR_DOMAIN_ERROR_VEC_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
-#include <stan/math/prim/scal/meta/value_type.hpp>
-#include <stan/math/prim/scal/meta/error_index.hpp>
-#include <stan/math/prim/scal/meta/get.hpp>
 #include <sstream>
 #include <string>
 

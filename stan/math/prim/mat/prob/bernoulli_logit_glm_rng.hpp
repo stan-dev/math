@@ -1,14 +1,12 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_BERNOULLI_LOGIT_GLM_RNG_HPP
 #define STAN_MATH_PRIM_MAT_PROB_BERNOULLI_LOGIT_GLM_RNG_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_consistent_size.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/fun/inv_logit.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <boost/random/bernoulli_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <vector>

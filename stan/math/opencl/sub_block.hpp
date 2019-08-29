@@ -3,12 +3,14 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/opencl_context.hpp>
-#include <stan/math/opencl/constants.hpp>
+#include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/kernels/sub_block.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/scal/err/domain_error.hpp>
 #include <CL/cl.hpp>
 #include <vector>
+#include <algorithm>
 
 namespace stan {
 namespace math {
@@ -24,10 +26,10 @@ namespace math {
  * @param nrows the number of rows in the submatrix
  * @param ncols the number of columns in the submatrix
  */
-template <TriangularViewCL triangular_view>
-inline void matrix_cl::sub_block(const matrix_cl& A, size_t A_i, size_t A_j,
-                                 size_t this_i, size_t this_j, size_t nrows,
-                                 size_t ncols) try {
+template <typename T>
+inline void matrix_cl<T, enable_if_arithmetic<T>>::sub_block(
+    const matrix_cl<T, enable_if_arithmetic<T>>& A, size_t A_i, size_t A_j,
+    size_t this_i, size_t this_j, size_t nrows, size_t ncols) try {
   if (nrows == 0 || ncols == 0) {
     return;
   }
@@ -36,7 +38,7 @@ inline void matrix_cl::sub_block(const matrix_cl& A, size_t A_i, size_t A_j,
     domain_error("sub_block", "submatrix in *this", " is out of bounds", "");
   }
   cl::CommandQueue cmdQueue = opencl_context.queue();
-  if (triangular_view == TriangularViewCL::Entire) {
+  if (A.view() == matrix_cl_view::Entire) {
     cl::size_t<3> src_offset
         = opencl::to_size_t<3>({A_i * sizeof(double), A_j, 0});
     cl::size_t<3> dst_offset
@@ -57,7 +59,32 @@ inline void matrix_cl::sub_block(const matrix_cl& A, size_t A_i, size_t A_j,
   } else {
     opencl_kernels::sub_block(cl::NDRange(nrows, ncols), A, *this, A_i, A_j,
                               this_i, this_j, nrows, ncols, A.rows(), A.cols(),
-                              this->rows(), this->cols(), triangular_view);
+                              this->rows(), this->cols(), A.view());
+  }
+  // calculation of extreme sub- and super- diagonal written
+  const int diag_in_copy = A_i - A_j;
+  const int copy_low = contains_nonzero(A.view(), matrix_cl_view::Lower)
+                           ? 1 - nrows
+                           : diag_in_copy;
+  const int copy_high = contains_nonzero(A.view(), matrix_cl_view::Upper)
+                            ? ncols - 1
+                            : diag_in_copy;
+  const int start = this_j - this_i;
+
+  if (start + copy_low < 0) {
+    this->view_ = either(this->view_, matrix_cl_view::Lower);
+  } else if (this_i <= 1 && this_j == 0 && nrows + this_i >= rows_
+             && ncols >= std::min(rows_, cols_) - 1
+             && !contains_nonzero(A.view_, matrix_cl_view::Lower)) {
+    this->view_ = both(this->view_, matrix_cl_view::Upper);
+  }
+
+  if (start + copy_high > 0) {
+    this->view_ = either(this->view_, matrix_cl_view::Upper);
+  } else if (this_i == 0 && this_j <= 1 && ncols + this_j >= cols_
+             && nrows >= std::min(rows_, cols_) - 1
+             && !contains_nonzero(A.view_, matrix_cl_view::Upper)) {
+    this->view_ = both(this->view_, matrix_cl_view::Lower);
   }
 } catch (const cl::Error& e) {
   check_opencl_error("copy_submatrix", e);

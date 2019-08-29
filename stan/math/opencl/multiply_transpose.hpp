@@ -8,7 +8,8 @@
 #include <stan/math/opencl/zeros.hpp>
 #include <stan/math/opencl/sub_block.hpp>
 
-#include <Eigen/Dense>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
 
 namespace stan {
 namespace math {
@@ -21,8 +22,13 @@ namespace math {
  * @return the product of the input matrix and its transpose
  *
  */
-inline matrix_cl multiply_transpose(const matrix_cl& A) {
-  matrix_cl temp(A.rows(), A.rows());
+template <typename T, typename = enable_if_arithmetic<T>>
+inline matrix_cl<T> multiply_transpose(const matrix_cl<T>& A) {
+  matrix_cl<T> temp(A.rows(), A.rows(),
+                    A.view() == matrix_cl_view::Diagonal
+                        ? matrix_cl_view::Diagonal
+                        : matrix_cl_view::Entire);
+
   if (A.size() == 0)
     return temp;
   // padding the matrices so the dimensions are divisible with local

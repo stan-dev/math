@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_REV_MAT_FUNCTOR_CVODES_ODE_DATA_HPP
 #define STAN_MATH_REV_MAT_FUNCTOR_CVODES_ODE_DATA_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/arr/functor/coupled_ode_system.hpp>
-#include <stan/math/rev/scal/meta/is_var.hpp>
 #include <stan/math/rev/arr/functor/coupled_ode_system.hpp>
 #include <cvodes/cvodes.h>
 #include <sunmatrix/sunmatrix_dense.h>

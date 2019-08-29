@@ -4,6 +4,7 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernels/transpose.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
+#include <stan/math/prim/meta.hpp>
 
 #include <CL/cl.hpp>
 
@@ -17,8 +18,9 @@ namespace math {
  * @return transposed input matrix
  *
  */
-inline matrix_cl transpose(const matrix_cl& src) {
-  matrix_cl dst(src.cols(), src.rows());
+template <typename T, typename = enable_if_arithmetic<T>>
+inline matrix_cl<T> transpose(const matrix_cl<T>& src) {
+  matrix_cl<T> dst(src.cols(), src.rows(), transpose(src.view()));
   if (dst.size() == 0)
     return dst;
   try {

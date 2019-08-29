@@ -1,15 +1,14 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_COV_DOT_PROD_HPP
 #define STAN_MATH_PRIM_MAT_FUN_COV_DOT_PROD_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/dot_product.hpp>
 #include <stan/math/prim/mat/fun/dot_self.hpp>
-#include <stan/math/prim/mat/meta/length.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <vector>
 
 namespace stan {
@@ -37,8 +36,7 @@ namespace math {
  *   x is nan or infinite
  */
 template <typename T_x, typename T_sigma>
-Eigen::Matrix<typename return_type<T_x, T_sigma>::type, Eigen::Dynamic,
-              Eigen::Dynamic>
+Eigen::Matrix<return_type_t<T_x, T_sigma>, Eigen::Dynamic, Eigen::Dynamic>
 gp_dot_prod_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
                 const T_sigma &sigma) {
   check_not_nan("gp_dot_prod_cov", "sigma", sigma);
@@ -51,8 +49,7 @@ gp_dot_prod_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
     check_finite("gp_dot_prod_cov", "x", x[i]);
   }
 
-  Eigen::Matrix<typename stan::return_type<T_x, T_sigma>::type, Eigen::Dynamic,
-                Eigen::Dynamic>
+  Eigen::Matrix<return_type_t<T_x, T_sigma>, Eigen::Dynamic, Eigen::Dynamic>
       cov(x_size, x_size);
   if (x_size == 0)
     return cov;
@@ -93,8 +90,7 @@ gp_dot_prod_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
  *   x is nan or infinite
  */
 template <typename T_x, typename T_sigma>
-Eigen::Matrix<typename return_type<T_x, T_sigma>::type, Eigen::Dynamic,
-              Eigen::Dynamic>
+Eigen::Matrix<return_type_t<T_x, T_sigma>, Eigen::Dynamic, Eigen::Dynamic>
 gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma &sigma) {
   check_not_nan("gp_dot_prod_cov", "sigma", sigma);
   check_nonnegative("gp_dot_prod_cov", "sigma", sigma);
@@ -104,8 +100,7 @@ gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma &sigma) {
   check_not_nan("gp_dot_prod_cov", "x", x);
   check_finite("gp_dot_prod_cov", "x", x);
 
-  Eigen::Matrix<typename stan::return_type<T_x, T_sigma>::type, Eigen::Dynamic,
-                Eigen::Dynamic>
+  Eigen::Matrix<return_type_t<T_x, T_sigma>, Eigen::Dynamic, Eigen::Dynamic>
       cov(x_size, x_size);
   if (x_size == 0)
     return cov;
@@ -146,7 +141,7 @@ gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma &sigma) {
  *   or if x1 or x2 are nan or inf
  */
 template <typename T_x1, typename T_x2, typename T_sigma>
-Eigen::Matrix<typename return_type<T_x1, T_x2, T_sigma>::type, Eigen::Dynamic,
+Eigen::Matrix<return_type_t<T_x1, T_x2, T_sigma>, Eigen::Dynamic,
               Eigen::Dynamic>
 gp_dot_prod_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
                 const std::vector<Eigen::Matrix<T_x2, Eigen::Dynamic, 1>> &x2,
@@ -165,7 +160,7 @@ gp_dot_prod_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
     check_not_nan("gp_dot_prod_cov", "x2", x2[i]);
     check_finite("gp_dot_prod_cov", "x2", x2[i]);
   }
-  Eigen::Matrix<typename return_type<T_x1, T_x2, T_sigma>::type, Eigen::Dynamic,
+  Eigen::Matrix<return_type_t<T_x1, T_x2, T_sigma>, Eigen::Dynamic,
                 Eigen::Dynamic>
       cov(x1_size, x2_size);
 
@@ -205,7 +200,7 @@ gp_dot_prod_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
  *   or if x1 or x2 are nan or inf
  */
 template <typename T_x1, typename T_x2, typename T_sigma>
-Eigen::Matrix<typename return_type<T_x1, T_x2, T_sigma>::type, Eigen::Dynamic,
+Eigen::Matrix<return_type_t<T_x1, T_x2, T_sigma>, Eigen::Dynamic,
               Eigen::Dynamic>
 gp_dot_prod_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
                 const T_sigma &sigma) {
@@ -220,8 +215,8 @@ gp_dot_prod_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   check_not_nan("gp_dot_prod_cov", "x2", x2);
   check_finite("gp_dot_prod_cov", "x2", x2);
 
-  Eigen::Matrix<typename stan::return_type<T_x1, T_x2, T_sigma>::type,
-                Eigen::Dynamic, Eigen::Dynamic>
+  Eigen::Matrix<return_type_t<T_x1, T_x2, T_sigma>, Eigen::Dynamic,
+                Eigen::Dynamic>
       cov(x1_size, x2_size);
 
   if (x1_size == 0 || x2_size == 0)

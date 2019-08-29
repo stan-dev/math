@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_MULTI_GP_LPDF_HPP
 #define STAN_MATH_PRIM_MAT_PROB_MULTI_GP_LPDF_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/err/check_ldlt_factor.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
@@ -11,7 +12,6 @@
 #include <stan/math/prim/mat/fun/sum.hpp>
 #include <stan/math/prim/mat/fun/trace_gen_inv_quad_form_ldlt.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
 
 namespace stan {
 namespace math {
@@ -35,14 +35,12 @@ namespace math {
  * @tparam T_w Type of weight.
  */
 template <bool propto, typename T_y, typename T_covar, typename T_w>
-typename boost::math::tools::promote_args<T_y, T_covar, T_w>::type
-multi_gp_lpdf(
+return_type_t<T_y, T_covar, T_w> multi_gp_lpdf(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
     const Eigen::Matrix<T_covar, Eigen::Dynamic, Eigen::Dynamic>& Sigma,
     const Eigen::Matrix<T_w, Eigen::Dynamic, 1>& w) {
   static const char* function = "multi_gp_lpdf";
-  typedef
-      typename boost::math::tools::promote_args<T_y, T_covar, T_w>::type T_lp;
+  typedef return_type_t<T_y, T_covar, T_w> T_lp;
   T_lp lp(0.0);
 
   check_positive(function, "Kernel rows", Sigma.rows());
@@ -84,8 +82,7 @@ multi_gp_lpdf(
 }
 
 template <typename T_y, typename T_covar, typename T_w>
-inline typename boost::math::tools::promote_args<T_y, T_covar, T_w>::type
-multi_gp_lpdf(
+inline return_type_t<T_y, T_covar, T_w> multi_gp_lpdf(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
     const Eigen::Matrix<T_covar, Eigen::Dynamic, Eigen::Dynamic>& Sigma,
     const Eigen::Matrix<T_w, Eigen::Dynamic, 1>& w) {

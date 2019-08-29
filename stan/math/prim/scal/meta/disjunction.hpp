@@ -15,8 +15,7 @@ struct disjunction : std::false_type {};
 
 template <typename Cond, typename... Conds>
 struct disjunction<Cond, Conds...>
-    : std::conditional<Cond::value, std::true_type,
-                       disjunction<Conds...>>::type {};
+    : std::conditional_t<Cond::value, std::true_type, disjunction<Conds...>> {};
 
 }  // namespace math
 }  // namespace stan

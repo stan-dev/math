@@ -1,15 +1,11 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_WEIBULL_LCDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_WEIBULL_LCDF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <cmath>
 
 namespace stan {
@@ -30,10 +26,10 @@ namespace math {
  * @throw std::domain_error if y is negative, alpha sigma is nonpositive
  */
 template <typename T_y, typename T_shape, typename T_scale>
-typename return_type<T_y, T_shape, T_scale>::type weibull_lcdf(
-    const T_y& y, const T_shape& alpha, const T_scale& sigma) {
-  typedef typename stan::partials_return_type<T_y, T_shape, T_scale>::type
-      T_partials_return;
+return_type_t<T_y, T_shape, T_scale> weibull_lcdf(const T_y& y,
+                                                  const T_shape& alpha,
+                                                  const T_scale& sigma) {
+  typedef partials_return_type_t<T_y, T_shape, T_scale> T_partials_return;
 
   static const char* function = "weibull_lcdf";
 
@@ -65,11 +61,11 @@ typename return_type<T_y, T_shape, T_scale>::type weibull_lcdf(
     cdf_log += log(cdf_);
 
     const T_partials_return rep_deriv = pow_ / (1.0 / exp_ - 1.0);
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n] += rep_deriv * alpha_dbl / y_dbl;
-    if (!is_constant_struct<T_shape>::value)
+    if (!is_constant_all<T_shape>::value)
       ops_partials.edge2_.partials_[n] += rep_deriv * log(y_dbl / sigma_dbl);
-    if (!is_constant_struct<T_scale>::value)
+    if (!is_constant_all<T_scale>::value)
       ops_partials.edge3_.partials_[n] -= rep_deriv * alpha_dbl / sigma_dbl;
   }
   return ops_partials.build(cdf_log);

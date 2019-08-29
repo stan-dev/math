@@ -1,12 +1,15 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_GRAD_REG_INC_GAMMA_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_GRAD_REG_INC_GAMMA_HPP
 
-#include <stan/math/prim/scal/meta/return_type.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/fun/gamma_p.hpp>
 #include <stan/math/prim/scal/fun/gamma_q.hpp>
 #include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/fun/multiply_log.hpp>
+#include <stan/math/prim/scal/fun/is_any_nan.hpp>
 #include <cmath>
 #include <limits>
 
@@ -43,15 +46,15 @@ namespace math {
  (a-1)_k\right) \frac{1}{z^k} \end{array} \f]
  */
 template <typename T1, typename T2>
-typename return_type<T1, T2>::type grad_reg_inc_gamma(T1 a, T2 z, T1 g, T1 dig,
-                                                      double precision = 1e-6,
-                                                      int max_steps = 1e5) {
+return_type_t<T1, T2> grad_reg_inc_gamma(T1 a, T2 z, T1 g, T1 dig,
+                                         double precision = 1e-6,
+                                         int max_steps = 1e5) {
   using std::exp;
   using std::fabs;
   using std::log;
-  typedef typename return_type<T1, T2>::type TP;
+  typedef return_type_t<T1, T2> TP;
 
-  if (is_nan(a) || is_nan(z) || is_nan(g) || is_nan(dig))
+  if (is_any_nan(a, z, g, dig))
     return std::numeric_limits<TP>::quiet_NaN();
 
   T2 l = log(z);
@@ -85,12 +88,12 @@ typename return_type<T1, T2>::type grad_reg_inc_gamma(T1 a, T2 z, T1 g, T1 dig,
     TP log_s = 0.0;
     double s_sign = 1.0;
     T2 log_z = log(z);
-    TP log_delta = log_s - 2 * log(a);
+    TP log_delta = log_s - multiply_log(2, a);
     for (int k = 1; k <= max_steps; ++k) {
       S += s_sign >= 0.0 ? exp(log_delta) : -exp(log_delta);
       log_s += log_z - log(k);
       s_sign = -s_sign;
-      log_delta = log_s - 2 * log(k + a);
+      log_delta = log_s - multiply_log(2, k + a);
       if (is_inf(log_delta))
         domain_error("grad_reg_inc_gamma", "is not converging", "", "");
       if (log_delta <= log(precision))
@@ -99,7 +102,7 @@ typename return_type<T1, T2>::type grad_reg_inc_gamma(T1 a, T2 z, T1 g, T1 dig,
     domain_error("grad_reg_inc_gamma", "k (internal counter)", max_steps,
                  "exceeded ",
                  " iterations, gamma function gradient did not converge.");
-    return std::numeric_limits<TP>::infinity();
+    return INFTY;
   }
 }
 

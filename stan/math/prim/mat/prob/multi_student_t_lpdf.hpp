@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_MULTI_STUDENT_T_LPDF_HPP
 #define STAN_MATH_PRIM_MAT_PROB_MULTI_STUDENT_T_LPDF_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/err/check_consistent_sizes_mvt.hpp>
 #include <stan/math/prim/mat/err/check_ldlt_factor.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
-#include <stan/math/prim/mat/meta/vector_seq_view.hpp>
 #include <stan/math/prim/mat/prob/multi_normal_log.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
@@ -14,8 +14,6 @@
 #include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <stan/math/prim/scal/fun/log1p.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
-#include <stan/math/prim/scal/meta/length_mvt.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <cmath>
 #include <cstdlib>
 
@@ -30,12 +28,12 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_dof, typename T_loc,
           typename T_scale>
-typename return_type<T_y, T_dof, T_loc, T_scale>::type multi_student_t_lpdf(
+return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_lpdf(
     const T_y& y, const T_dof& nu, const T_loc& mu, const T_scale& Sigma) {
   static const char* function = "multi_student_t";
   using std::log;
   typedef typename scalar_type<T_scale>::type T_scale_elem;
-  typedef typename return_type<T_y, T_dof, T_loc, T_scale>::type lp_type;
+  typedef return_type_t<T_y, T_dof, T_loc, T_scale> lp_type;
 
   check_not_nan(function, "Degrees of freedom parameter", nu);
   check_positive(function, "Degrees of freedom parameter", nu);
@@ -127,8 +125,8 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type multi_student_t_lpdf(
   if (include_summand<propto, T_y, T_dof, T_loc, T_scale_elem>::value) {
     lp_type sum_lp_vec(0.0);
     for (size_t i = 0; i < size_vec; i++) {
-      Eigen::Matrix<typename return_type<T_y, T_loc>::type, Eigen::Dynamic, 1>
-          y_minus_mu(size_y);
+      Eigen::Matrix<return_type_t<T_y, T_loc>, Eigen::Dynamic, 1> y_minus_mu(
+          size_y);
       for (int j = 0; j < size_y; j++)
         y_minus_mu(j) = y_vec[i](j) - mu_vec[i](j);
       sum_lp_vec
@@ -140,9 +138,8 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type multi_student_t_lpdf(
 }
 
 template <typename T_y, typename T_dof, typename T_loc, typename T_scale>
-inline typename return_type<T_y, T_dof, T_loc, T_scale>::type
-multi_student_t_lpdf(const T_y& y, const T_dof& nu, const T_loc& mu,
-                     const T_scale& Sigma) {
+inline return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_lpdf(
+    const T_y& y, const T_dof& nu, const T_loc& mu, const T_scale& Sigma) {
   return multi_student_t_lpdf<false>(y, nu, mu, Sigma);
 }
 

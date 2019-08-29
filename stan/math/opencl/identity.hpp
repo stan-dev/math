@@ -2,8 +2,10 @@
 #define STAN_MATH_OPENCL_IDENTITY_HPP
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/matrix_cl.hpp>
+#include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/opencl/kernels/identity.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <CL/cl.hpp>
 
 namespace stan {
@@ -17,8 +19,9 @@ namespace math {
  * @return the identity matrix
  *
  */
-inline matrix_cl identity(int rows_cols) {
-  matrix_cl A(rows_cols, rows_cols);
+template <typename T, typename = enable_if_arithmetic<T>>
+inline matrix_cl<T> identity(int rows_cols) {
+  matrix_cl<T> A(rows_cols, rows_cols, matrix_cl_view::Diagonal);
   if (rows_cols == 0) {
     return A;
   }

@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_MULTI_GP_LOG_HPP
 #define STAN_MATH_PRIM_MAT_PROB_MULTI_GP_LOG_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/prob/multi_gp_lpdf.hpp>
 #include <boost/math/tools/promotion.hpp>
@@ -30,7 +31,7 @@ namespace math {
  * @tparam T_w Type of weight.
  */
 template <bool propto, typename T_y, typename T_covar, typename T_w>
-typename boost::math::tools::promote_args<T_y, T_covar, T_w>::type multi_gp_log(
+return_type_t<T_y, T_covar, T_w> multi_gp_log(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
     const Eigen::Matrix<T_covar, Eigen::Dynamic, Eigen::Dynamic>& Sigma,
     const Eigen::Matrix<T_w, Eigen::Dynamic, 1>& w) {
@@ -41,8 +42,7 @@ typename boost::math::tools::promote_args<T_y, T_covar, T_w>::type multi_gp_log(
  * @deprecated use <code>multi_gp_lpdf</code>
  */
 template <typename T_y, typename T_covar, typename T_w>
-inline typename boost::math::tools::promote_args<T_y, T_covar, T_w>::type
-multi_gp_log(
+inline return_type_t<T_y, T_covar, T_w> multi_gp_log(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
     const Eigen::Matrix<T_covar, Eigen::Dynamic, Eigen::Dynamic>& Sigma,
     const Eigen::Matrix<T_w, Eigen::Dynamic, 1>& w) {

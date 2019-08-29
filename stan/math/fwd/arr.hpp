@@ -2,8 +2,7 @@
 #define STAN_MATH_FWD_ARR_HPP
 
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/scal/meta/is_fvar.hpp>
-#include <stan/math/fwd/scal/meta/partials_type.hpp>
+#include <stan/math/fwd/meta.hpp>
 
 #include <stan/math/prim/arr.hpp>
 #include <stan/math/fwd/scal.hpp>

@@ -1,8 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUNCTOR_MAP_RECT_COMBINE_HPP
 #define STAN_MATH_PRIM_MAT_FUNCTOR_MAP_RECT_COMBINE_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/arr/fun/sum.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 
@@ -46,9 +45,8 @@ class map_rect_combine {
   const std::size_t num_job_operands_;
 
  public:
-  typedef Eigen::Matrix<
-      typename stan::return_type<T_shared_param, T_job_param>::type,
-      Eigen::Dynamic, 1>
+  typedef Eigen::Matrix<return_type_t<T_shared_param, T_job_param>,
+                        Eigen::Dynamic, 1>
       result_t;
 
   map_rect_combine()
@@ -69,19 +67,18 @@ class map_rect_combine {
                       const std::vector<int>& world_f_out) {
     const std::size_t num_jobs = world_f_out.size();
     const std::size_t offset_job_params
-        = is_constant_struct<T_shared_param>::value ? 1
-                                                    : 1 + num_shared_operands_;
+        = is_constant_all<T_shared_param>::value ? 1 : 1 + num_shared_operands_;
     const std::size_t size_world_f_out = sum(world_f_out);
 
     result_t out(size_world_f_out);
 
     for (std::size_t i = 0, ij = 0; i != num_jobs; ++i) {
       for (int j = 0; j != world_f_out[i]; ++j, ++ij) {
-        if (!is_constant_struct<T_shared_param>::value)
+        if (!is_constant_all<T_shared_param>::value)
           ops_partials_[i].edge1_.partials_
               = world_result.block(1, ij, num_shared_operands_, 1);
 
-        if (!is_constant_struct<T_job_param>::value)
+        if (!is_constant_all<T_job_param>::value)
           ops_partials_[i].edge2_.partials_
               = world_result.block(offset_job_params, ij, num_job_operands_, 1);
 

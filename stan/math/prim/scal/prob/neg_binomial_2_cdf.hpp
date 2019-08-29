@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_2_CDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_2_CDF_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
@@ -10,24 +11,17 @@
 #include <stan/math/prim/scal/fun/inc_beta_dda.hpp>
 #include <stan/math/prim/scal/fun/inc_beta_ddz.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <limits>
 
 namespace stan {
 namespace math {
 
 template <typename T_n, typename T_location, typename T_precision>
-typename return_type<T_location, T_precision>::type neg_binomial_2_cdf(
+return_type_t<T_location, T_precision> neg_binomial_2_cdf(
     const T_n& n, const T_location& mu, const T_precision& phi) {
   static const char* function = "neg_binomial_2_cdf";
-  typedef
-      typename stan::partials_return_type<T_n, T_location, T_precision>::type
-          T_partials_return;
+  typedef partials_return_type_t<T_n, T_location, T_precision>
+      T_partials_return;
 
   T_partials_return P(1.0);
   if (size_zero(n, mu, phi))
@@ -53,15 +47,15 @@ typename return_type<T_location, T_precision>::type neg_binomial_2_cdf(
       return ops_partials.build(0.0);
   }
 
-  VectorBuilder<!is_constant_struct<T_precision>::value, T_partials_return,
+  VectorBuilder<!is_constant_all<T_precision>::value, T_partials_return,
                 T_precision>
       digamma_phi_vec(stan::length(phi));
 
-  VectorBuilder<!is_constant_struct<T_precision>::value, T_partials_return,
+  VectorBuilder<!is_constant_all<T_precision>::value, T_partials_return,
                 T_precision>
       digamma_sum_vec(stan::length(phi));
 
-  if (!is_constant_struct<T_precision>::value) {
+  if (!is_constant_all<T_precision>::value) {
     for (size_t i = 0; i < stan::length(phi); i++) {
       const T_partials_return n_dbl = value_of(n_vec[i]);
       const T_partials_return phi_dbl = value_of(phi_vec[i]);
@@ -89,11 +83,11 @@ typename return_type<T_location, T_precision>::type neg_binomial_2_cdf(
 
     P *= P_i;
 
-    if (!is_constant_struct<T_location>::value)
+    if (!is_constant_all<T_location>::value)
       ops_partials.edge1_.partials_[i]
           += -inc_beta_ddz(phi_dbl, n_dbl + 1.0, p_dbl) * phi_dbl * d_dbl / P_i;
 
-    if (!is_constant_struct<T_precision>::value) {
+    if (!is_constant_all<T_precision>::value) {
       ops_partials.edge2_.partials_[i]
           += inc_beta_dda(phi_dbl, n_dbl + 1, p_dbl, digamma_phi_vec[i],
                           digamma_sum_vec[i])
@@ -102,12 +96,12 @@ typename return_type<T_location, T_precision>::type neg_binomial_2_cdf(
     }
   }
 
-  if (!is_constant_struct<T_location>::value) {
+  if (!is_constant_all<T_location>::value) {
     for (size_t i = 0; i < stan::length(mu); ++i)
       ops_partials.edge1_.partials_[i] *= P;
   }
 
-  if (!is_constant_struct<T_precision>::value) {
+  if (!is_constant_all<T_precision>::value) {
     for (size_t i = 0; i < stan::length(phi); ++i)
       ops_partials.edge2_.partials_[i] *= P;
   }

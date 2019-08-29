@@ -1,10 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_NORMAL_LCCDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_NORMAL_LCCDF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -12,8 +9,6 @@
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/meta/contains_nonconstant_struct.hpp>
-#include <stan/math/prim/scal/meta/max_size.hpp>
 #include <cmath>
 #include <limits>
 
@@ -21,11 +16,10 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_loc, typename T_scale>
-typename return_type<T_y, T_loc, T_scale>::type normal_lccdf(
-    const T_y& y, const T_loc& mu, const T_scale& sigma) {
+return_type_t<T_y, T_loc, T_scale> normal_lccdf(const T_y& y, const T_loc& mu,
+                                                const T_scale& sigma) {
   static const char* function = "normal_lccdf";
-  typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
-      T_partials_return;
+  typedef partials_return_type_t<T_y, T_loc, T_scale> T_partials_return;
 
   using std::exp;
   using std::log;
@@ -70,17 +64,17 @@ typename return_type<T_y, T_loc, T_scale>::type normal_lccdf(
 
     ccdf_log += log_half + log(one_m_erf);
 
-    if (contains_nonconstant_struct<T_y, T_loc, T_scale>::value) {
+    if (!is_constant_all<T_y, T_loc, T_scale>::value) {
       const T_partials_return rep_deriv_div_sigma
           = scaled_diff > 8.25 * INV_SQRT_2
                 ? std::numeric_limits<double>::infinity()
                 : SQRT_TWO_OVER_PI * exp(-scaled_diff * scaled_diff) / one_m_erf
                       / sigma_dbl;
-      if (!is_constant_struct<T_y>::value)
+      if (!is_constant_all<T_y>::value)
         ops_partials.edge1_.partials_[n] -= rep_deriv_div_sigma;
-      if (!is_constant_struct<T_loc>::value)
+      if (!is_constant_all<T_loc>::value)
         ops_partials.edge2_.partials_[n] += rep_deriv_div_sigma;
-      if (!is_constant_struct<T_scale>::value)
+      if (!is_constant_all<T_scale>::value)
         ops_partials.edge3_.partials_[n]
             += rep_deriv_div_sigma * scaled_diff * SQRT_2;
     }

@@ -1,20 +1,13 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_EXPONENTIAL_LPDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_EXPONENTIAL_LPDF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <cmath>
 
 namespace stan {
@@ -47,11 +40,10 @@ namespace math {
  * @tparam T_inv_scale Type of inverse scale.
  */
 template <bool propto, typename T_y, typename T_inv_scale>
-typename return_type<T_y, T_inv_scale>::type exponential_lpdf(
-    const T_y& y, const T_inv_scale& beta) {
+return_type_t<T_y, T_inv_scale> exponential_lpdf(const T_y& y,
+                                                 const T_inv_scale& beta) {
   static const char* function = "exponential_lpdf";
-  typedef typename stan::partials_return_type<T_y, T_inv_scale>::type
-      T_partials_return;
+  typedef partials_return_type_t<T_y, T_inv_scale> T_partials_return;
 
   if (size_zero(y, beta))
     return 0.0;
@@ -85,16 +77,16 @@ typename return_type<T_y, T_inv_scale>::type exponential_lpdf(
     if (include_summand<propto, T_y, T_inv_scale>::value)
       logp -= beta_dbl * y_dbl;
 
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n] -= beta_dbl;
-    if (!is_constant_struct<T_inv_scale>::value)
+    if (!is_constant_all<T_inv_scale>::value)
       ops_partials.edge2_.partials_[n] += 1 / beta_dbl - y_dbl;
   }
   return ops_partials.build(logp);
 }
 
 template <typename T_y, typename T_inv_scale>
-inline typename return_type<T_y, T_inv_scale>::type exponential_lpdf(
+inline return_type_t<T_y, T_inv_scale> exponential_lpdf(
     const T_y& y, const T_inv_scale& beta) {
   return exponential_lpdf<false>(y, beta);
 }

@@ -1,8 +1,11 @@
 #ifndef STAN_MATH_REV_MAT_FUN_SD_HPP
 #define STAN_MATH_REV_MAT_FUN_SD_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/mat/fun/typedefs.hpp>
+#include <stan/math/prim/scal/fun/inv_sqrt.hpp>
 #include <stan/math/rev/core.hpp>
 #include <cmath>
 #include <vector>
@@ -18,30 +21,25 @@ namespace internal {
 inline var calc_sd(size_t size, const var* dtrs) {
   using std::sqrt;
   vari** varis = reinterpret_cast<vari**>(
-      ChainableStack::instance().memalloc_.alloc(size * sizeof(vari*)));
-  for (size_t i = 0; i < size; ++i)
-    varis[i] = dtrs[i].vi_;
-  double sum = 0.0;
-  for (size_t i = 0; i < size; ++i)
-    sum += dtrs[i].vi_->val_;
-  double mean = sum / size;
-  double sum_of_squares = 0;
-  for (size_t i = 0; i < size; ++i) {
-    double diff = dtrs[i].vi_->val_ - mean;
-    sum_of_squares += diff * diff;
-  }
-  double variance = sum_of_squares / (size - 1);
-  double sd = sqrt(variance);
+      ChainableStack::instance_->memalloc_.alloc(size * sizeof(vari*)));
   double* partials = reinterpret_cast<double*>(
-      ChainableStack::instance().memalloc_.alloc(size * sizeof(double)));
+      ChainableStack::instance_->memalloc_.alloc(size * sizeof(double)));
+  Eigen::Map<vector_vi> varis_map(varis, size);
+  Eigen::Map<const vector_v> dtrs_map(dtrs, size);
+  Eigen::Map<vector_d> partials_map(partials, size);
+
+  double size_m1 = size - 1;
+  varis_map = dtrs_map.vi();
+  vector_d dtrs_val = dtrs_map.val();
+  double mean = dtrs_val.mean();
+  vector_d diff = dtrs_val.array() - mean;
+  double sum_of_squares = diff.squaredNorm();
+  double sd = sqrt(sum_of_squares / size_m1);
+
   if (sum_of_squares < 1e-20) {
-    double grad_limit = 1 / std::sqrt(static_cast<double>(size));
-    for (size_t i = 0; i < size; ++i)
-      partials[i] = grad_limit;
+    partials_map.fill(inv_sqrt(static_cast<double>(size)));
   } else {
-    double multiplier = 1 / (sd * (size - 1));
-    for (size_t i = 0; i < size; ++i)
-      partials[i] = multiplier * (dtrs[i].vi_->val_ - mean);
+    partials_map = diff.array() / (sd * size_m1);
   }
   return var(new stored_gradient_vari(sd, size, varis, partials));
 }

@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_ORDERED_LOGISTIC_RNG_HPP
 #define STAN_MATH_PRIM_MAT_PROB_ORDERED_LOGISTIC_RNG_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <stan/math/prim/scal/fun/inv_logit.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>

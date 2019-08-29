@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_FMAX_HPP
 #define STAN_MATH_REV_SCAL_FUN_FMAX_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/meta/likely.hpp>
 
 namespace stan {
 namespace math {

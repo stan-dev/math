@@ -1,8 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_SKEW_NORMAL_LPDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_SKEW_NORMAL_LPDF_HPP
 
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
@@ -11,11 +10,7 @@
 #include <stan/math/prim/scal/fun/erf.hpp>
 #include <stan/math/prim/scal/fun/erfc.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <cmath>
 
 namespace stan {
@@ -23,12 +18,11 @@ namespace math {
 
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
           typename T_shape>
-typename return_type<T_y, T_loc, T_scale, T_shape>::type skew_normal_lpdf(
+return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& alpha) {
   static const char* function = "skew_normal_lpdf";
-  typedef
-      typename stan::partials_return_type<T_y, T_loc, T_scale, T_shape>::type
-          T_partials_return;
+  typedef partials_return_type_t<T_y, T_loc, T_scale, T_shape>
+      T_partials_return;
 
   using std::exp;
   using std::log;
@@ -91,21 +85,21 @@ typename return_type<T_y, T_loc, T_scale, T_shape>::type skew_normal_lpdf(
           * exp(-alpha_dbl * y_minus_mu_over_sigma / std::sqrt(2.0) * alpha_dbl
                 * y_minus_mu_over_sigma / std::sqrt(2.0))
           / (1 + erf(alpha_dbl * y_minus_mu_over_sigma / std::sqrt(2.0)));
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n]
           += -y_minus_mu_over_sigma / sigma_dbl
              + deriv_logerf * alpha_dbl / (sigma_dbl * std::sqrt(2.0));
-    if (!is_constant_struct<T_loc>::value)
+    if (!is_constant_all<T_loc>::value)
       ops_partials.edge2_.partials_[n]
           += y_minus_mu_over_sigma / sigma_dbl
              + deriv_logerf * -alpha_dbl / (sigma_dbl * std::sqrt(2.0));
-    if (!is_constant_struct<T_scale>::value)
+    if (!is_constant_all<T_scale>::value)
       ops_partials.edge3_.partials_[n]
           += -1.0 / sigma_dbl
              + y_minus_mu_over_sigma * y_minus_mu_over_sigma / sigma_dbl
              - deriv_logerf * y_minus_mu_over_sigma * alpha_dbl
                    / (sigma_dbl * std::sqrt(2.0));
-    if (!is_constant_struct<T_shape>::value)
+    if (!is_constant_all<T_shape>::value)
       ops_partials.edge4_.partials_[n]
           += deriv_logerf * y_minus_mu_over_sigma / std::sqrt(2.0);
   }
@@ -113,9 +107,8 @@ typename return_type<T_y, T_loc, T_scale, T_shape>::type skew_normal_lpdf(
 }
 
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
-inline typename return_type<T_y, T_loc, T_scale, T_shape>::type
-skew_normal_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma,
-                 const T_shape& alpha) {
+inline return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
+    const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& alpha) {
   return skew_normal_lpdf<false>(y, mu, sigma, alpha);
 }
 

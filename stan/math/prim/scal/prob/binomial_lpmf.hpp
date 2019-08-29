@@ -1,9 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_BINOMIAL_LPMF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_BINOMIAL_LPMF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
@@ -13,9 +11,6 @@
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/binomial_coefficient_log.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 
 namespace stan {
 namespace math {
@@ -38,10 +33,9 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <bool propto, typename T_n, typename T_N, typename T_prob>
-typename return_type<T_prob>::type binomial_lpmf(const T_n& n, const T_N& N,
-                                                 const T_prob& theta) {
-  typedef typename stan::partials_return_type<T_n, T_N, T_prob>::type
-      T_partials_return;
+return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
+                                    const T_prob& theta) {
+  typedef partials_return_type_t<T_n, T_N, T_prob> T_partials_return;
 
   static const char* function = "binomial_lpmf";
 
@@ -87,13 +81,13 @@ typename return_type<T_prob>::type binomial_lpmf(const T_n& n, const T_N& N,
       temp1 += n_vec[i];
       temp2 += N_vec[i] - n_vec[i];
     }
-    if (!is_constant_struct<T_prob>::value) {
+    if (!is_constant_all<T_prob>::value) {
       ops_partials.edge1_.partials_[0]
           += temp1 / value_of(theta_vec[0])
              - temp2 / (1.0 - value_of(theta_vec[0]));
     }
   } else {
-    if (!is_constant_struct<T_prob>::value) {
+    if (!is_constant_all<T_prob>::value) {
       for (size_t i = 0; i < size; ++i)
         ops_partials.edge1_.partials_[i]
             += n_vec[i] / value_of(theta_vec[i])
@@ -105,9 +99,8 @@ typename return_type<T_prob>::type binomial_lpmf(const T_n& n, const T_N& N,
 }
 
 template <typename T_n, typename T_N, typename T_prob>
-inline typename return_type<T_prob>::type binomial_lpmf(const T_n& n,
-                                                        const T_N& N,
-                                                        const T_prob& theta) {
+inline return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
+                                           const T_prob& theta) {
   return binomial_lpmf<false>(n, N, theta);
 }
 

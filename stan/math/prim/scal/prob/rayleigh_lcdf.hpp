@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_RAYLEIGH_LCDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_RAYLEIGH_LCDF_HPP
 
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -9,23 +9,15 @@
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <cmath>
 
 namespace stan {
 namespace math {
 
 template <typename T_y, typename T_scale>
-typename return_type<T_y, T_scale>::type rayleigh_lcdf(const T_y& y,
-                                                       const T_scale& sigma) {
+return_type_t<T_y, T_scale> rayleigh_lcdf(const T_y& y, const T_scale& sigma) {
   static const char* function = "rayleigh_lcdf";
-  typedef
-      typename stan::partials_return_type<T_y, T_scale>::type T_partials_return;
+  typedef partials_return_type_t<T_y, T_scale> T_partials_return;
 
   using std::exp;
 
@@ -62,10 +54,10 @@ typename return_type<T_y, T_scale>::type rayleigh_lcdf(const T_y& y,
     if (include_summand<false, T_y, T_scale>::value)
       cdf_log += log1m(exp_val);
 
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n]
           += y_dbl * inv_sigma_sqr * exp_div_1m_exp;
-    if (!is_constant_struct<T_scale>::value)
+    if (!is_constant_all<T_scale>::value)
       ops_partials.edge2_.partials_[n]
           -= y_sqr * inv_sigma_sqr * inv_sigma[n] * exp_div_1m_exp;
   }

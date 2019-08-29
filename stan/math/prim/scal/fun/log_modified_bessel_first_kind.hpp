@@ -1,6 +1,7 @@
 //  Copyright (c) 2006 Xiaogang Zhang
 //  Copyright (c) 2007, 2017 John Maddock
 
+#include <stan/math/prim/meta.hpp>
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LOG_MODIFIED_BESSEL_FIRST_KIND_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LOG_MODIFIED_BESSEL_FIRST_KIND_HPP
 
@@ -16,7 +17,6 @@
 #include <stan/math/prim/scal/fun/log1p.hpp>
 #include <stan/math/prim/scal/fun/log1p_exp.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
-#include <limits>
 
 namespace stan {
 namespace math {
@@ -36,8 +36,8 @@ namespace math {
  * @return log of Bessel I function
  */
 template <typename T1, typename T2>
-inline typename boost::math::tools::promote_args<T1, T2, double>::type
-log_modified_bessel_first_kind(const T1 v, const T2 z) {
+inline return_type_t<T1, T2, double> log_modified_bessel_first_kind(
+    const T1 v, const T2 z) {
   check_not_nan("log_modified_bessel_first_kind", "first argument (order)", v);
   check_not_nan("log_modified_bessel_first_kind", "second argument (variable)",
                 z);
@@ -50,14 +50,14 @@ log_modified_bessel_first_kind(const T1 v, const T2 z) {
   using std::log;
   using std::sqrt;
 
-  typedef typename boost::math::tools::promote_args<T1, T2, double>::type T;
+  typedef return_type_t<T1, T2, double> T;
 
   if (z == 0) {
     if (v == 0)
       return 0.0;
     if (v > 0)
-      return -std::numeric_limits<T>::infinity();
-    return std::numeric_limits<T>::infinity();
+      return NEGATIVE_INFTY;
+    return INFTY;
   }
   if (is_inf(z))
     return z;
@@ -88,7 +88,7 @@ log_modified_bessel_first_kind(const T1 v, const T2 z) {
              6.27767773636292611e-16, 4.34709704153272287e-18,
              2.63417742690109154e-20, 1.13943037744822825e-22,
              9.07926920085624812e-25};
-      return log1p_exp(2 * log(z) - log(4.0)
+      return log1p_exp(multiply_log(2, z) - log(4.0)
                        + log(evaluate_polynomial(P, 0.25 * square(z))));
     }
     if (z < 500) {
@@ -107,14 +107,14 @@ log_modified_bessel_first_kind(const T1 v, const T2 z) {
              -4.49034849696138065e+13, 2.24155239966958995e+14,
              -8.13426467865659318e+14, 2.02391097391687777e+15,
              -3.08675715295370878e+15, 2.17587543863819074e+15};
-      return z + log(evaluate_polynomial(P, inv(z))) - 0.5 * log(z);
+      return z + log(evaluate_polynomial(P, inv(z))) - multiply_log(0.5, z);
     }
     // Max error in interpolated form : 2.437e-18
     // Max Error found at double precision = Poly : 1.216719e-16
     static const double P[] = {3.98942280401432905e-01, 4.98677850491434560e-02,
                                2.80506308916506102e-02, 2.92179096853915176e-02,
                                4.53371208762579442e-02};
-    return z + log(evaluate_polynomial(P, inv(z))) - 0.5 * log(z);
+    return z + log(evaluate_polynomial(P, inv(z))) - multiply_log(0.5, z);
   }
   if (v == 1) {  // WARNING: will not autodiff for v = 1 correctly
     // modified from Boost's bessel_i1_imp in the double precision case
@@ -134,7 +134,7 @@ log_modified_bessel_first_kind(const T1 v, const T2 z) {
              1.332898928162290861e-23};
       T a = square(z) * 0.25;
       T Q[3] = {1, 0.5, evaluate_polynomial(P, a)};
-      return log(z) + log(evaluate_polynomial(Q, a)) - log(2.0);
+      return log(z) + log(evaluate_polynomial(Q, a)) - LOG_2;
     }
     if (z < 500) {
       // Max error in interpolated form: 1.796e-16
@@ -152,7 +152,7 @@ log_modified_bessel_first_kind(const T1 v, const T2 z) {
              4.614040809616582764e+13,  -2.298849639457172489e+14,
              8.325554073334618015e+14,  -2.067285045778906105e+15,
              3.146401654361325073e+15,  -2.213318202179221945e+15};
-      return z + log(evaluate_polynomial(P, inv(z))) - 0.5 * log(z);
+      return z + log(evaluate_polynomial(P, inv(z))) - multiply_log(0.5, z);
     }
     // Max error in interpolated form: 1.320e-19
     // Max Error found at double precision = Poly: 7.065357e-17
@@ -160,15 +160,12 @@ log_modified_bessel_first_kind(const T1 v, const T2 z) {
         = {3.989422804014314820e-01, -1.496033551467584157e-01,
            -4.675105322571775911e-02, -4.090421597376992892e-02,
            -5.843630344778927582e-02};
-    return z + log(evaluate_polynomial(P, inv(z))) - 0.5 * log(z);
+    return z + log(evaluate_polynomial(P, inv(z))) - multiply_log(0.5, z);
   }
   if (z > 100) {
     // Boost does something like this in asymptotic_bessel_i_large_x
-    T lim = (square(v) + 2.5) / (2 * z);
-    lim *= lim;
-    lim *= lim;
-    lim /= 24;
-    if (lim < (std::numeric_limits<double>::epsilon() * 10)) {
+    T lim = pow((square(v) + 2.5) / (2 * z), 3) / 24;
+    if (lim < (EPSILON * 10)) {
       T s = 1;
       T mu = 4 * square(v);
       T ex = 8 * z;
@@ -186,9 +183,8 @@ log_modified_bessel_first_kind(const T1 v, const T2 z) {
     }
   }
 
-  typename boost::math::tools::promote_args<T2>::type log_half_z = log(0.5 * z);
-  typename boost::math::tools::promote_args<T1>::type lgam
-      = v > -1 ? lgamma(v + 1.0) : 0;
+  return_type_t<T2> log_half_z = log(0.5 * z);
+  return_type_t<T1> lgam = v > -1 ? lgamma(v + 1.0) : 0;
   T lcons = (2.0 + v) * log_half_z;
   T out;
   if (v > -1) {
