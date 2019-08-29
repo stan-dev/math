@@ -47,8 +47,8 @@ class VectorBuilderHelper<T1, true, false> {  // When it's used but not a vector
   const auto&& operator[](size_t /* i */) const { return x_; }
   typedef T1 type;
 
-  inline auto& data() { return x_; }
-  inline const auto& data() const { return x_; }
+  inline auto&& data() { return x_; }
+  inline const auto&& data() const { return x_; }
 };
 
 }  // namespace stan

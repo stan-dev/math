@@ -2,8 +2,6 @@
 #define STAN_MATH_PRIM_SCAL_META_SCALAR_SEQ_VIEW_HPP
 
 #include <stan/math/prim/scal/meta/scalar_type.hpp>
-#include <utility>
-#include <type_traits>
 
 namespace stan {
 /**
@@ -13,18 +11,22 @@ namespace stan {
  * @tparam C the container type; will be the scalar type if wrapping a scalar
  * @tparam T the scalar type
  */
-template <typename C, typename = void>
+template <typename C, typename T = typename scalar_type<C>::type>
 class scalar_seq_view {
  public:
-  template <typename K, typename = std::enable_if_t<std::is_same<
-                            std::decay_t<C>, std::decay_t<K>>::value>>
+ // Alias to check perf forwarded param and declared type are the same.
+ template <typename Type1, typename Type2>
+ using enable_if_same_container = std::enable_if_t<std::is_same<std::decay_t<Type1>, std::decay_t<Type2>>::value>;
+
+  template <typename K, typename = enable_if_same_container<C, K>>
   explicit scalar_seq_view(K&& c) : c_(std::forward<K>(c)) {}
+
   /**
    * Segfaults if out of bounds.
    * @param i index
    * @return the element at the specified position in the container
    */
-  auto&& operator[](int i) { return c_[i]; }
+  const T& operator[](int i) const { return c_[i]; }
 
   int size() const { return c_.size(); }
 
@@ -35,22 +37,20 @@ class scalar_seq_view {
 /**
  * This specialization handles wrapping a scalar as if it were a sequence.
  *
- * @tparam C the storage type
+ * @tparam T the scalar type
  */
-template <typename C>
-class scalar_seq_view<
-    C, std::enable_if_t<std::is_same<std::decay_t<C>,
-                                     scalar_type_t<std::decay_t<C>>>::value>> {
+template <typename T>
+class scalar_seq_view<T, T> {
  public:
-  explicit scalar_seq_view(const C& t) : t_(t) {}
+  explicit scalar_seq_view(const T& t) : t_(t) {}
 
-  const auto& operator[](int /* i */) const { return t_; }
-  auto& operator[](int /* i */) { return t_; }
+  const T& operator[](int /* i */) const { return t_; }
+  T& operator[](int /* i */) { return t_; }
 
   int size() const { return 1; }
 
  private:
-  C t_;
+  T t_;
 };
 }  // namespace stan
 #endif
