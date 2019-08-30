@@ -15,13 +15,13 @@ namespace math {
  *
  * Returns a var variable with the input value.
  *
- * @param[in] v A std::vector<double>
+ * @param[in] x A std::vector<double>
  * @return A std::vector<var> with the values set
  */
-inline std::vector<var> to_var(const std::vector<double>& v) {
-  std::vector<var> var_vector(v.size());
-  for (size_t n = 0; n < v.size(); n++)
-    var_vector[n] = v[n];
+inline std::vector<var> to_var(const std::vector<double>& x) {
+  std::vector<var> var_vector(x.size());
+  for (size_t n = 0; n < x.size(); n++)
+    var_vector[n] = x[n];
   return var_vector;
 }
 
@@ -30,13 +30,13 @@ inline std::vector<var> to_var(const std::vector<double>& v) {
  *
  * Returns the var variable from the input
  *
- * @param[in] v A std::vector<var>
+ * @param[in] x A std::vector<var>
  * @return The input std::vector<var>
  */
 template <typename T, enable_if_std_vector<T>...,
           enable_if_var<scalar_type_t<T>>...>
-inline auto&& to_var(T&& v) {
-  return std::forward<T>(v);
+inline auto&& to_var(T&& x) {
+  return std::forward<T>(x);
 }
 
 }  // namespace math

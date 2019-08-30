@@ -16,13 +16,13 @@ namespace math {
  *
  * Returns a var variable with the input value.
  *
- * @param[in] m A Matrix with scalars
+ * @param[in] x A Matrix with scalars
  * @return A Matrix with automatic differentiation variables
  */
 template <typename T, enable_if_eigen<T>...,
           enable_if_var<scalar_type_decay_t<T>>...>
-inline auto&& to_var(T&& m) {
-  return std::forward<T>(m);
+inline auto&& to_var(T&& x) {
+  return std::forward<T>(x);
 }
 
 /**
@@ -30,11 +30,11 @@ inline auto&& to_var(T&& m) {
  *
  * Returns a var variable with the input value.
  *
- * @param[in] m A Matrix with scalars
+ * @param[in] x A Matrix with scalars
  * @return A Matrix with automatic differentiation variables
  */
-inline matrix_v to_var(const matrix_d& m) {
-  matrix_v m_v = m;
+inline matrix_v to_var(const matrix_d& x) {
+  matrix_v m_v = x;
   return m_v;
 }
 
@@ -43,12 +43,12 @@ inline matrix_v to_var(const matrix_d& m) {
  *
  * Returns a var variable with the input value.
  *
- * @param[in] v A Vector of scalars
+ * @param[in] x A Vector of scalars
  * @return A Vector of automatic differentiation variables with
- *   values of v
+ *   values of x
  */
-inline vector_v to_var(const vector_d& v) {
-  vector_v v_v = v;
+inline vector_v to_var(const vector_d& x) {
+  vector_v v_v = x;
   return v_v;
 }
 
@@ -57,12 +57,12 @@ inline vector_v to_var(const vector_d& v) {
  *
  * Returns a var variable with the input value.
  *
- * @param[in] rv A row vector of scalars
+ * @param[in] x A row vector of scalars
  * @return A row vector of automatic differentation variables with
- *   values of rv.
+ *   values of x.
  */
-inline row_vector_v to_var(const row_vector_d& rv) {
-  row_vector_v rv_v = rv;
+inline row_vector_v to_var(const row_vector_d& x) {
+  row_vector_v rv_v = x;
   return rv_v;
 }
 
