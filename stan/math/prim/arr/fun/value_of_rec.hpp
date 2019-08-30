@@ -20,12 +20,11 @@ namespace math {
  * @param[in] x std::vector to be converted
  * @return std::vector of values
  **/
- template <typename T, enable_if_std_vector<T>* = nullptr,
-           enable_if_arithmetic<scalar_type_decay_t<T>>* = nullptr>
+template <typename T, enable_if_std_vector<T>* = nullptr,
+          enable_if_arithmetic<scalar_type_decay_t<T>>* = nullptr>
 inline auto&& value_of_rec(T&& x) {
   return std::forward<T>(x);
 }
-
 
 }  // namespace math
 }  // namespace stan

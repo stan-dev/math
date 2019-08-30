@@ -59,10 +59,9 @@ struct apply_scalar_unary {
    */
   template <typename K, enable_if_eigen<T>* = nullptr>
   static inline auto apply(K&& x) {
-    return x.unaryExpr(
-        [](auto&& x_iter) {
-          return apply_scalar_unary<F, scalar_t>::apply(x_iter);
-        });
+    return x.unaryExpr([](auto&& x_iter) {
+      return apply_scalar_unary<F, scalar_t>::apply(x_iter);
+    });
   }
 };
 
@@ -89,7 +88,9 @@ struct apply_scalar_unary<F, double> {
    * @return Result of applying F to the scalar.
    */
   template <typename K, enable_if_arithmetic<std::decay_t<K>>* = nullptr>
-  static inline auto apply(K&& x) { return F::fun(std::forward<K>(x)); }
+  static inline auto apply(K&& x) {
+    return F::fun(std::forward<K>(x));
+  }
 };
 
 /**
@@ -129,7 +130,7 @@ struct apply_scalar_unary<F, int> {
  * @tparam T Type of element contained in standard vector.
  */
 template <typename F, typename T>
-struct apply_scalar_unary<F, std::vector<T> > {
+struct apply_scalar_unary<F, std::vector<T>> {
   /**
    * Return type, which is calculated recursively as a standard
    * vector of the return type of the contained type T.
@@ -146,13 +147,14 @@ struct apply_scalar_unary<F, std::vector<T> > {
    * @return Elementwise application of F to the elements of the
    * container.
    */
-  template <typename K, enable_if_vector<K>* = nullptr, enable_if_same<typename std::decay_t<K>::value_type, std::decay_t<T>>* = nullptr>
+  template <typename K, enable_if_vector<K>* = nullptr,
+            enable_if_same<typename std::decay_t<K>::value_type,
+                           std::decay_t<T>>* = nullptr>
   static inline auto apply(K&& x) {
     return_t fx(x.size());
-    std::transform(std::forward<K>(x).begin(), std::forward<K>(x).end(),
-     fx.begin(), [](auto&& x_iter) {
-      return apply_scalar_unary<F, T>::apply(x_iter);
-    });
+    std::transform(
+        std::forward<K>(x).begin(), std::forward<K>(x).end(), fx.begin(),
+        [](auto&& x_iter) { return apply_scalar_unary<F, T>::apply(x_iter); });
     return fx;
   }
 };
