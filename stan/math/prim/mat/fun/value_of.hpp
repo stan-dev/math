@@ -21,7 +21,7 @@ namespace math {
  */
 template <typename T, enable_if_eigen<T>* = nullptr,
           enable_if_arithmetic<scalar_type_t<T>>* = nullptr>
-inline const auto& value_of(T&& x) {
+inline auto&& value_of(T&& x) {
   return x;
 }
 }  // namespace math
