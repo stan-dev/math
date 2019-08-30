@@ -31,5 +31,23 @@ template <typename... Types>
 using enable_if_any_not_eigen
     = std::enable_if_t<!math::disjunction<is_eigen<Types>...>::value>;
 
+template <typename T>
+using eigen_type = enable_if_eigen<std::decay_t<T>>;
+
+template <typename T>
+using not_eigen_type = enable_if_not_eigen<std::decay_t<T>>;
+
+template <typename... Types>
+using all_eigen_type = enable_if_all_eigen<std::decay_t<Types>...>;
+
+template <typename... Types>
+using any_eigen_type = enable_if_any_eigen<std::decay_t<Types>...>;
+
+template <typename... Types>
+using not_all_eigen_type = enable_if_all_not_eigen<std::decay_t<Types>...>;
+
+template <typename... Types>
+using not_any_eigen_type = enable_if_any_not_eigen<std::decay_t<Types>...>;
+
 }  // namespace stan
 #endif

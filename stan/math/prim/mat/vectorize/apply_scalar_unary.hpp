@@ -57,7 +57,7 @@ struct apply_scalar_unary {
    * @return Componentwise application of the function specified
    * by F to the specified matrix.
    */
-  template <typename K, enable_if_eigen<T>* = nullptr>
+  template <typename K, eigen_type<K>...>
   static inline auto apply(K&& x) {
     return x.unaryExpr([](auto&& x_iter) {
       return apply_scalar_unary<F, scalar_t>::apply(x_iter);
@@ -87,7 +87,7 @@ struct apply_scalar_unary<F, double> {
    * @param x Argument scalar.
    * @return Result of applying F to the scalar.
    */
-  template <typename K, enable_if_arithmetic<std::decay_t<K>>* = nullptr>
+  template <typename K, arithmetic_type<K>...>
   static inline auto apply(K&& x) {
     return F::fun(std::forward<K>(x));
   }
@@ -147,9 +147,8 @@ struct apply_scalar_unary<F, std::vector<T>> {
    * @return Elementwise application of F to the elements of the
    * container.
    */
-  template <typename K, enable_if_vector<K>* = nullptr,
-            enable_if_same<typename std::decay_t<K>::value_type,
-                           std::decay_t<T>>* = nullptr>
+  template <typename K, std_vector_type<K>...,
+            same_type<scalar_type_decay_t<K>, std::decay_t<T>>...>
   static inline auto apply(K&& x) {
     return_t fx(x.size());
     std::transform(

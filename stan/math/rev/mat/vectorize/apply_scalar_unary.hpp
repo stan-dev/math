@@ -28,7 +28,7 @@ struct apply_scalar_unary<F, var> {
    * @param x Argument variable.
    * @return Function applied to the variable.
    */
-  template <typename K, enable_if_var<std::decay_t<K>>* = nullptr>
+  template <typename K, enable_if_var<std::decay_t<K>>...>
   static inline auto apply(K&& x) {
     return F::fun(std::forward<K>(x));
   }

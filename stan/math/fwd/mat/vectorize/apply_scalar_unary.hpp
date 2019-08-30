@@ -2,9 +2,10 @@
 #define STAN_MATH_FWD_MAT_VECTORIZE_APPLY_SCALAR_UNARY_HPP
 
 #include <stan/math/fwd/meta.hpp>
+#include <stan/math/fwd/core/fvar.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
-#include <stan/math/fwd/core/fvar.hpp>
+#include <utility>
 
 namespace stan {
 namespace math {
@@ -33,7 +34,7 @@ struct apply_scalar_unary<F, fvar<T>> {
    * @param x Argument variable.
    * @return Function applied to the variable.
    */
-  template <typename K, enable_if_fvar<std::decay_t<K>>* = nullptr>
+  template <typename K, enable_if_fvar<std::decay_t<K>>...>
   static inline auto apply(K&& x) {
     return F::fun(std::forward<K>(x));
   }

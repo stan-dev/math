@@ -21,14 +21,14 @@ namespace math {
  * @param x Specified matrix.
  * @return Specified matrix.
  */
-template <typename T, enable_if_eigen<T>* = nullptr,
-          enable_if_floating_point<scalar_type_decay_t<T>>* = nullptr>
+template <typename T, enable_if_eigen<T>...,
+          enable_if_floating_point<scalar_type_decay_t<T>>...>
 inline auto&& value_of(T&& x) {
   return std::forward<T>(x);
 }
 
-template <typename T, enable_if_eigen<T>* = nullptr,
-          enable_if_same<int, scalar_type_decay_t<T>>* = nullptr>
+template <typename T, enable_if_eigen<T>...,
+          enable_if_arithmetic<scalar_type_decay_t<T>>..., enable_if_not_floating_point<scalar_type_decay_t<T>>...>
 inline auto value_of(T&& x) {
   return (x.template cast<double>()).eval();
 }

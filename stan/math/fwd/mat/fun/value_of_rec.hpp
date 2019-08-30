@@ -22,8 +22,8 @@ namespace math {
  * @param[in] x Matrix to be converted
  * @return Matrix of values
  **/
-template <typename T, enable_if_eigen<T>* = nullptr,
-          enable_if_fvar<scalar_type_decay_t<T>>* = nullptr>
+template <typename T, enable_if_eigen<T>...,
+          enable_if_fvar<scalar_type_decay_t<T>>...>
 inline auto value_of_rec(T&& x) {
   return value_of_rec(std::forward<T>(x).val().eval()).eval();
 }

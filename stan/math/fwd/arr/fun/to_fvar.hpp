@@ -3,6 +3,9 @@
 
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/scal/fun/to_fvar.hpp>
+#include <stan/math/fwd/meta.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <utility>
 #include <vector>
 
 namespace stan {
@@ -25,28 +28,17 @@ inline std::vector<fvar<T>> to_fvar(const std::vector<T>& v,
   return x;
 }
 
-/**
- * Specialization of to_fvar for const fvar input
- *
- * @tparam The inner type of the fvar.
- * @param[in,out] v A vector of forward automatic differentiation variable.
- * @return The input vector of forward automatic differentiation variable.
- */
-template <typename T>
-inline const std::vector<fvar<T>>& to_fvar(const std::vector<fvar<T>>& v) {
-  return v;
-}
 
 /**
- * Specialization of to_fvar for non-const fvar input
+ * Specialization of to_fvar for fvar input
  *
  * @tparam The inner type of the fvar.
  * @param[in,out] v A vector of forward automatic differentiation variable.
  * @return The input vector of forward automatic differentiation variable.
  */
-template <typename T>
-inline std::vector<fvar<T>>& to_fvar(std::vector<fvar<T>>& v) {
-  return v;
+ template <typename T, enable_if_vector<T>..., enable_if_fvar<scalar_type_decay_t<T>>...>
+inline auto&& to_fvar(T&& x) {
+  return std::forward<T>(x);
 }
 
 }  // namespace math

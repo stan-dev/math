@@ -5,8 +5,8 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <utility>
 #include <type_traits>
+#include <utility>
 
 namespace stan {
 namespace math {
@@ -24,7 +24,7 @@ namespace math {
  * @param x Variable.
  * @return Value of variable.
  */
-template <typename T, enable_if_var<std::decay_t<T>>* = nullptr>
+template <typename T, enable_if_var<std::decay_t<T>>...>
 inline auto&& value_of(T&& x) {
   return std::forward<T>(x).vi_->val_;
 }

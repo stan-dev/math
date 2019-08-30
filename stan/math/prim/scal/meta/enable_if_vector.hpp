@@ -32,5 +32,23 @@ template <typename... Types>
 using enable_if_any_not_vector = std::enable_if_t<
     !math::disjunction<is_vector<std::decay_t<Types>>...>::value>;
 
+template <typename T>
+using vector_type = enable_if_vector<std::decay_t<T>>;
+
+template <typename T>
+using not_vector_type = enable_if_not_vector<std::decay_t<T>>;
+
+template <typename... Types>
+using all_vector_type = enable_if_all_vector<std::decay_t<Types>...>;
+
+template <typename... Types>
+using any_vector_type = enable_if_any_vector<std::decay_t<Types>...>;
+
+template <typename... Types>
+using not_all_vector_type = enable_if_all_not_vector<std::decay_t<Types>...>;
+
+template <typename... Types>
+using not_any_vector_type = enable_if_any_not_vector<std::decay_t<Types>...>;
+
 }  // namespace stan
 #endif

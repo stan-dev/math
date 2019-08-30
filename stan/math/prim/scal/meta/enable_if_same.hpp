@@ -22,5 +22,18 @@ template <typename T, typename... Types>
 using enable_if_all_not_same
     = std::enable_if_t<!math::conjunction<std::is_same<T, Types>...>::value>;
 
+template <typename T, typename S>
+using same_type = enable_if_same<std::decay_t<T>, std::decay_t<S>>;
+
+template <typename T, typename S>
+using not_same_type = enable_if_not_same<std::decay_t<T>, std::decay_t<S>>;
+
+template <typename T, typename... Types>
+using all_same_type = enable_if_all_same<std::decay_t<T>, std::decay_t<Types>...>;
+
+template <typename T, typename... Types>
+using not_all_same_type = enable_if_all_not_same<std::decay_t<T>, std::decay_t<Types>...>;
+
+
 }  // namespace stan
 #endif

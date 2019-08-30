@@ -20,7 +20,7 @@ namespace math {
  * @param x Variable.
  * @return Value of variable.
  */
-template <typename T, enable_if_fvar<std::decay_t<T>>* = nullptr>
+template <typename T, enable_if_fvar<std::decay_t<T>>...>
 inline auto&& value_of_rec(T&& x) {
   return value_of_rec(std::forward<T>(x).val_);
 }

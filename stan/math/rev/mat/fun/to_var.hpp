@@ -19,28 +19,23 @@ namespace math {
  * @param[in] m A Matrix with scalars
  * @return A Matrix with automatic differentiation variables
  */
+template <typename T, enable_if_eigen<T>..., enable_if_var<scalar_type_decay_t<T>>...>
+inline auto&& to_var(T&& m) {
+  return std::forward<T>(m);
+}
+
+/**
+ * Converts argument to an automatic differentiation variable.
+ *
+ * Returns a var variable with the input value.
+ *
+ * @param[in] m A Matrix with scalars
+ * @return A Matrix with automatic differentiation variables
+ */
 inline matrix_v to_var(const matrix_d& m) {
   matrix_v m_v = m;
   return m_v;
 }
-
-/**
- * Specialization of to_var for non-const matrices of vars
- *
- *
- * @param[in,out] m A matrix of automatic differentation variables.
- * @return The input matrix of automatic differentiation variables.
- */
-inline matrix_v& to_var(matrix_v& m) { return m; }
-
-/**
- * Specialization of to_var for const matrices of vars
- *
- *
- * @param[in,out] m A matrix of automatic differentation variables.
- * @return The input matrix of automatic differentiation variables.
- */
-inline const matrix_v& to_var(const matrix_v& m) { return m; }
 
 /**
  * Converts argument to an automatic differentiation variable.
@@ -56,23 +51,6 @@ inline vector_v to_var(const vector_d& v) {
   return v_v;
 }
 
-/**
- * Specialization of to_var for const column vector of vars
- *
- *
- * @param[in,out] v A column vector of automatic differentation variables.
- * @return The input column vector of automatic differentiation variables.
- */
-inline const vector_v& to_var(const vector_v& v) { return v; }
-
-/**
- * Specialization of to_var for non-const column vector of vars
- *
- *
- * @param[in,out] v A column vector of automatic differentation variables.
- * @return The input column vector of automatic differentiation variables.
- */
-inline vector_v& to_var(vector_v& v) { return v; }
 
 /**
  * Converts argument to an automatic differentiation variable.
@@ -87,24 +65,6 @@ inline row_vector_v to_var(const row_vector_d& rv) {
   row_vector_v rv_v = rv;
   return rv_v;
 }
-
-/**
- * Specialization of to_var for const row vector of vars
- *
- *
- * @param[in,out] rv A column vector of automatic differentation variables.
- * @return The input row vector of automatic differentiation variables.
- */
-inline const row_vector_v& to_var(const row_vector_v& rv) { return rv; }
-
-/**
- * Specialization of to_var for non-const row vector of vars
- *
- *
- * @param[in,out] rv A column vector of automatic differentation variables.
- * @return The input row vector of automatic differentiation variables.
- */
-inline row_vector_v& to_var(row_vector_v& rv) { return rv; }
 
 }  // namespace math
 }  // namespace stan

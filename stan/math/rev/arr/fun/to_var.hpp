@@ -3,6 +3,8 @@
 
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/fun/to_var.hpp>
+#include <stan/math/rev/meta.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <vector>
 
 namespace stan {
@@ -24,24 +26,15 @@ inline std::vector<var> to_var(const std::vector<double>& v) {
 }
 
 /**
- * Specialization of to_var to for const input vector of var
+ * Specialization of to_var to pass through pre-constructed vars.
  *
- * Returns a var variable from the input
- *
- * @param[in] v A std::vector<var>
- * @return The input std::vector<var>
- */
-inline const std::vector<var>& to_var(const std::vector<var>& v) { return v; }
-
-/**
- * Specialization of to_var to for non-const input vector of var
- *
- * Returns a var variable from the input
+ * Returns the var variable from the input
  *
  * @param[in] v A std::vector<var>
  * @return The input std::vector<var>
  */
-inline std::vector<var>& to_var(std::vector<var>& v) { return v; }
+template <typename T, enable_if_std_vector<T>..., enable_if_var<scalar_type_t<T>>...>
+inline auto&& to_var(T&& v) { return std::forward<T>(v); }
 
 }  // namespace math
 }  // namespace stan
