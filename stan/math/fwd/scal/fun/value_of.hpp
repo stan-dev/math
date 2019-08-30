@@ -19,7 +19,7 @@ namespace math {
  */
 template <typename T, enable_if_fvar<std::decay_t<T>>* = nullptr>
 inline auto&& value_of(T&& x) {
-  return value_of(std::forward<T>(x).val_);
+  return std::forward<T>(x).val_;
 }
 
 }  // namespace math

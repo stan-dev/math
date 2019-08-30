@@ -25,7 +25,7 @@ namespace math {
 template <typename T, enable_if_eigen<T>* = nullptr,
           enable_if_fvar<scalar_type_decay_t<T>>* = nullptr>
 inline auto value_of(T&& x) {
-  return value_of(std::forward<T>(x).val().eval()).eval();
+  return std::forward<T>(x).val().eval();
 }
 
 }  // namespace math

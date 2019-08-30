@@ -8,5 +8,8 @@ struct partials_type {
   typedef T type;
 };
 
+template <typename... Args>
+using partials_type_t = typename partials_type<Args...>::type;
+
 }  // namespace stan
 #endif
