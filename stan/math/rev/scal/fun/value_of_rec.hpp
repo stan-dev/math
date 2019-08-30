@@ -13,12 +13,12 @@ namespace math {
 /**
  * Return the value of the specified variable.
  *
- * @param v Variable.
+ * @param x Variable.
  * @return Value of variable.
  */
 template <typename T, enable_if_var<std::decay_t<T>>* = nullptr>
-inline auto&& value_of_rec(T&& v) {
-  return v.vi_->val_;
+inline auto&& value_of_rec(T&& x) {
+  return x.vi_->val_;
 }
 
 }  // namespace math

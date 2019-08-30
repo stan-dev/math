@@ -19,12 +19,12 @@ namespace math {
  * <code>var</code> even if the function is not
  * referred to by namespace because of argument-dependent lookup.
  *
- * @param v Variable.
+ * @param x Variable.
  * @return Value of variable.
  */
 template <typename T, enable_if_var<std::decay_t<T>>* = nullptr>
-inline auto&& value_of(T&& v) {
-  return v.vi_->val_;
+inline auto&& value_of(T&& x) {
+  return x.vi_->val_;
 }
 
 }  // namespace math
