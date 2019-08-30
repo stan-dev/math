@@ -28,9 +28,7 @@ template <typename T, enable_if_std_vector<T>* = nullptr,
 inline auto value_of(T&& x) {
   std::vector<partials_type_t<scalar_type_decay_t<T>>> result(x.size());
   std::transform(std::forward<T>(x).begin(), std::forward<T>(x).end(),
-   result.begin(), [](auto&& x) {
-    return x.val_;
-  });
+                 result.begin(), [](auto&& x) { return x.val_; });
   return result;
 }
 
