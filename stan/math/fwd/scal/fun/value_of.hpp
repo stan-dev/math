@@ -3,6 +3,8 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/scal/fun/value_of.hpp>
 
 namespace stan {
 namespace math {
@@ -10,12 +12,12 @@ namespace math {
 /**
  * Return the value of the specified variable.
  *
- * @param v Variable.
+ * @param x Variable.
  * @return Value of variable.
  */
-template <typename T>
-inline T value_of(const fvar<T>& v) {
-  return v.val_;
+template <typename T, enable_if_fvar<std::decay_t<T>>* = nullptr>
+inline auto&& value_of(T&& x) {
+  return value_of(x.val_);
 }
 
 }  // namespace math
