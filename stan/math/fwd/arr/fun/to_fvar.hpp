@@ -28,7 +28,6 @@ inline std::vector<fvar<T>> to_fvar(const std::vector<T>& v,
   return x;
 }
 
-
 /**
  * Specialization of to_fvar for fvar input
  *
@@ -36,7 +35,8 @@ inline std::vector<fvar<T>> to_fvar(const std::vector<T>& v,
  * @param[in,out] v A vector of forward automatic differentiation variable.
  * @return The input vector of forward automatic differentiation variable.
  */
- template <typename T, enable_if_vector<T>..., enable_if_fvar<scalar_type_decay_t<T>>...>
+template <typename T, enable_if_vector<T>...,
+          enable_if_fvar<scalar_type_decay_t<T>>...>
 inline auto&& to_fvar(T&& x) {
   return std::forward<T>(x);
 }

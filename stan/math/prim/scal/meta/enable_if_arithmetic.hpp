@@ -44,10 +44,12 @@ template <typename... Types>
 using any_arithmetic_type = enable_if_any_arithmetic<std::decay_t<Types>...>;
 
 template <typename... Types>
-using not_all_arithmetic_type = enable_if_all_not_arithmetic<std::decay_t<Types>...>;
+using not_all_arithmetic_type
+    = enable_if_all_not_arithmetic<std::decay_t<Types>...>;
 
 template <typename... Types>
-using not_any_arithmetic_type = enable_if_any_not_arithmetic<std::decay_t<Types>...>;
+using not_any_arithmetic_type
+    = enable_if_any_not_arithmetic<std::decay_t<Types>...>;
 
 }  // namespace stan
 #endif

@@ -28,7 +28,8 @@ inline auto&& value_of(T&& x) {
 }
 
 template <typename T, enable_if_eigen<T>...,
-          enable_if_arithmetic<scalar_type_decay_t<T>>..., enable_if_not_floating_point<scalar_type_decay_t<T>>...>
+          enable_if_arithmetic<scalar_type_decay_t<T>>...,
+          enable_if_not_floating_point<scalar_type_decay_t<T>>...>
 inline auto value_of(T&& x) {
   return (x.template cast<double>()).eval();
 }

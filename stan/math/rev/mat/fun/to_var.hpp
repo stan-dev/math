@@ -19,7 +19,8 @@ namespace math {
  * @param[in] m A Matrix with scalars
  * @return A Matrix with automatic differentiation variables
  */
-template <typename T, enable_if_eigen<T>..., enable_if_var<scalar_type_decay_t<T>>...>
+template <typename T, enable_if_eigen<T>...,
+          enable_if_var<scalar_type_decay_t<T>>...>
 inline auto&& to_var(T&& m) {
   return std::forward<T>(m);
 }
@@ -50,7 +51,6 @@ inline vector_v to_var(const vector_d& v) {
   vector_v v_v = v;
   return v_v;
 }
-
 
 /**
  * Converts argument to an automatic differentiation variable.

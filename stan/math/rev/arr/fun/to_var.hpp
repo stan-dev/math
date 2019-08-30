@@ -33,8 +33,11 @@ inline std::vector<var> to_var(const std::vector<double>& v) {
  * @param[in] v A std::vector<var>
  * @return The input std::vector<var>
  */
-template <typename T, enable_if_std_vector<T>..., enable_if_var<scalar_type_t<T>>...>
-inline auto&& to_var(T&& v) { return std::forward<T>(v); }
+template <typename T, enable_if_std_vector<T>...,
+          enable_if_var<scalar_type_t<T>>...>
+inline auto&& to_var(T&& v) {
+  return std::forward<T>(v);
+}
 
 }  // namespace math
 }  // namespace stan

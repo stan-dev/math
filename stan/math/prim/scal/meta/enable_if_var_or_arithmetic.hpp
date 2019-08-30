@@ -33,23 +33,28 @@ template <typename... Types>
 using enable_if_any_not_var_or_arithmetic = std::enable_if_t<
     !math::disjunction<is_var_or_arithmetic<Types>...>::value>;
 
-    template <typename T>
-    using var_or_arithmetic_type = enable_if_var_or_arithmetic<std::decay_t<T>>;
+template <typename T>
+using var_or_arithmetic_type = enable_if_var_or_arithmetic<std::decay_t<T>>;
 
-    template <typename T>
-    using not_var_or_arithmetic_type = enable_if_not_var_or_arithmetic<std::decay_t<T>>;
+template <typename T>
+using not_var_or_arithmetic_type
+    = enable_if_not_var_or_arithmetic<std::decay_t<T>>;
 
-    template <typename... Types>
-    using all_var_or_arithmetic_type = enable_if_all_var_or_arithmetic<std::decay_t<Types>...>;
+template <typename... Types>
+using all_var_or_arithmetic_type
+    = enable_if_all_var_or_arithmetic<std::decay_t<Types>...>;
 
-    template <typename... Types>
-    using any_var_or_arithmetic_type = enable_if_any_var_or_arithmetic<std::decay_t<Types>...>;
+template <typename... Types>
+using any_var_or_arithmetic_type
+    = enable_if_any_var_or_arithmetic<std::decay_t<Types>...>;
 
-    template <typename... Types>
-    using not_all_var_or_arithmetic_type = enable_if_all_not_var_or_arithmetic<std::decay_t<Types>...>;
+template <typename... Types>
+using not_all_var_or_arithmetic_type
+    = enable_if_all_not_var_or_arithmetic<std::decay_t<Types>...>;
 
-    template <typename... Types>
-    using not_any_var_or_arithmetic_type = enable_if_any_not_var_or_arithmetic<std::decay_t<Types>...>;
+template <typename... Types>
+using not_any_var_or_arithmetic_type
+    = enable_if_any_not_var_or_arithmetic<std::decay_t<Types>...>;
 
 }  // namespace stan
 #endif

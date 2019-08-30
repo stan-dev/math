@@ -46,10 +46,12 @@ template <typename... Types>
 using any_std_vector_type = enable_if_any_std_vector<std::decay_t<Types>...>;
 
 template <typename... Types>
-using not_all_std_vector_type = enable_if_all_not_std_vector<std::decay_t<Types>...>;
+using not_all_std_vector_type
+    = enable_if_all_not_std_vector<std::decay_t<Types>...>;
 
 template <typename... Types>
-using not_any_std_vector_type = enable_if_any_not_std_vector<std::decay_t<Types>...>;
+using not_any_std_vector_type
+    = enable_if_any_not_std_vector<std::decay_t<Types>...>;
 
 }  // namespace stan
 #endif

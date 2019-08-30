@@ -27,8 +27,10 @@ inline var to_var(double x) { return var(x); }
  * @param[in,out] x An automatic differentiation variable.
  * @return The input automatic differentiation variable.
  */
- template <typename T, enable_if_var<std::decay_t<T>>...>
- inline auto&& to_var(T&& m) { return std::forward<T>(m); }
+template <typename T, enable_if_var<std::decay_t<T>>...>
+inline auto&& to_var(T&& m) {
+  return std::forward<T>(m);
+}
 
 }  // namespace math
 }  // namespace stan
