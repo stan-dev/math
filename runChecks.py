@@ -13,6 +13,7 @@ import glob
 
 winsfx = ".exe"
 testsfx = "_test.cpp"
+
 def files_in_folder(folder):
     files = []
     for f in glob.glob(folder):
@@ -21,6 +22,7 @@ def files_in_folder(folder):
         else:
             files.append(f)
     return files
+
 def grep_patterns(type, folder, patterns_and_messages, exclude_filters = []):
     """Checks the files in the provided folder for matches
     with any of the patterns. It returns an array of
@@ -37,14 +39,27 @@ def grep_patterns(type, folder, patterns_and_messages, exclude_filters = []):
     for filepath in files:
         if os.path.isfile(filepath):
             line_num = 0
+            multi_line_comment = False
+            old_state_multi_line_comment = False
             with open(filepath, "r") as f:
                 for line in f:
-                    line_num += 1                
-                    for p in patterns_and_messages:
-                        # exclude line starting with "/*" or " * " and
-                        # if the matched patterns are behind "//"
-                        if not re.search("^ \* |^/\*", line) and not re.search(".*//.*"+p["pattern"], line) and re.search(p["pattern"], line):
-                                errors.append(filepath + " at line " + str(line_num) + ":\n\t" + "[" + type + "] " + p["message"])
+                    line_num += 1
+                    # exclude multi line comments
+                    if multi_line_comment:
+                        if re.search("\*/", line):
+                            multi_line_comment = False
+                    else:
+                        if re.search("/\*", line):
+                            multi_line_comment = True
+                    # parse the first line in a multi line comment for rare and weird case of
+                    # "pattern /*""
+                    if not multi_line_comment or (multi_line_comment and not old_state_multi_line_comment):
+                        for p in patterns_and_messages:
+                            # cover the edge cases where matched patterns 
+                            # are behind "//", "/*" or before "*/"
+                            if not re.search(".*"+p["pattern"]+".*\*/.*", line) and not re.search(".*/\*.*"+p["pattern"], line) and not re.search(".*//.*"+p["pattern"], line) and re.search(p["pattern"], line):
+                                    errors.append(filepath + " at line " + str(line_num) + ":\n\t" + "[" + type + "] " + p["message"])
+                    old_state_multi_line_comment = multi_line_comment
     return errors
 
 def check_non_test_files_in_test():
