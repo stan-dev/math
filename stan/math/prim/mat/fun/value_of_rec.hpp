@@ -18,10 +18,11 @@ namespace math {
  * @param x Specified matrix.
  * @return Specified matrix.
  */
- template <typename T, enable_if_eigen<T>* = nullptr, enable_if_arithmetic<scalar_type_t<T>>* = nullptr>
- inline const auto&& value_of_rec(T&& x) {
-   return x;
- }
+template <typename T, enable_if_eigen<T>* = nullptr,
+          enable_if_arithmetic<scalar_type_t<T>>* = nullptr>
+inline const auto&& value_of_rec(T&& x) {
+  return x;
+}
 }  // namespace math
 }  // namespace stan
 

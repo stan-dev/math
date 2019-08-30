@@ -9,7 +9,6 @@
 namespace stan {
 namespace math {
 
-
 /**
  * Convert a matrix of type T to a matrix of doubles.
  *
@@ -22,11 +21,11 @@ namespace math {
  * @param[in] x Matrix to be converted
  * @return Matrix of values
  **/
-template <typename T, enable_if_eigen<T>* = nullptr, enable_if_var<scalar_type_t<T>>* = nullptr>
+template <typename T, enable_if_eigen<T>* = nullptr,
+          enable_if_var<scalar_type_t<T>>* = nullptr>
 inline auto value_of_rec(T&& x) {
   return x.val().eval();
 }
-
 
 }  // namespace math
 }  // namespace stan

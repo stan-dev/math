@@ -8,7 +8,6 @@
 namespace stan {
 namespace math {
 
-
 /**
  * Return the specified argument.
  *
@@ -20,7 +19,8 @@ namespace math {
  * @param x Specified matrix.
  * @return Specified matrix.
  */
-template <typename T, enable_if_eigen<T>* = nullptr, enable_if_arithmetic<scalar_type_t<T>>* = nullptr>
+template <typename T, enable_if_eigen<T>* = nullptr,
+          enable_if_arithmetic<scalar_type_t<T>>* = nullptr>
 inline const auto& value_of(T&& x) {
   return x;
 }
