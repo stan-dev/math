@@ -191,9 +191,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
    */
   matrix_cl(cl::Buffer& A, const int R, const int C,
             matrix_cl_view partial_view = matrix_cl_view::Entire)
-      : rows_(R), cols_(C), view_(partial_view) {
-    buffer_cl_ = A;
-  }
+      : buffer_cl_(A), rows_(R), cols_(C), view_(partial_view) {}
 
   matrix_cl(const matrix_cl<T>& A)
       : rows_(A.rows()), cols_(A.cols()), view_(A.view()) {
