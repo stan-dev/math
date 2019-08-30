@@ -20,19 +20,19 @@ namespace math {
  * @param[in] x std::vector to be converted
  * @return std::vector of values
  **/
- template <typename T, enable_if_std_vector<T>* = nullptr,
-           enable_if_floating_point<scalar_type_decay_t<T>>* = nullptr>
- inline auto&& value_of(T&& x) {
-   return std::forward<T>(x);
- }
+template <typename T, enable_if_std_vector<T>* = nullptr,
+          enable_if_floating_point<scalar_type_decay_t<T>>* = nullptr>
+inline auto&& value_of(T&& x) {
+  return std::forward<T>(x);
+}
 
- template <typename T, enable_if_std_vector<T>* = nullptr,
-           enable_if_same<int, scalar_type_decay_t<T>>* = nullptr>
- inline auto value_of(T&& x) {
-   std::vector<double> x_dbl(x.size());
-   std::copy(x.begin(), x.end(), x_dbl.begin());
-   return x_dbl;
- }
+template <typename T, enable_if_std_vector<T>* = nullptr,
+          enable_if_same<int, scalar_type_decay_t<T>>* = nullptr>
+inline auto value_of(T&& x) {
+  std::vector<double> x_dbl(x.size());
+  std::copy(x.begin(), x.end(), x_dbl.begin());
+  return x_dbl;
+}
 
 }  // namespace math
 }  // namespace stan
