@@ -17,12 +17,14 @@ TEST(MathMatrix, simple_Eq) {
   using stan::math::var;
 
   int n_x = 2, n_y = 3;
+  bool is_newton;
+
   for (int k = 0; k < n_x; k++) {
     Eigen::Matrix<var, Eigen::Dynamic, 1> y(n_y);
     y << 5, 4, 2;
 
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta
-        = simple_eq_test(simple_eq_functor(), y);
+        = simple_eq_test(simple_eq_functor(), y, 0);
 
     Eigen::MatrixXd J(n_x, n_y);
     J << 4, 5, 0, 0, 0, 1;
@@ -39,9 +41,9 @@ TEST(MathMatrix, simple_Eq) {
 TEST(MathMatrix, simple_Eq_dbl) {
   Eigen::VectorXd y(3);
   y << 5, 4, 2;
-  Eigen::VectorXd theta = simple_eq_test(simple_eq_functor(), y);
+  Eigen::VectorXd theta = simple_eq_test(simple_eq_functor(), y, 0);
 }
-
+/*
 TEST(MathMatrix, simple_Eq_tuned) {
   using stan::math::var;
 
@@ -353,4 +355,4 @@ TEST(MathMatrix, simple_Eq_newton) {
     for (int i = 0; i < n_y; i++)
       EXPECT_EQ(J(k, i), g[i]);
   }
-}
+}  */

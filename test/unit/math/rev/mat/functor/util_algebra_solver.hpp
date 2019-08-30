@@ -1,12 +1,38 @@
 #include <gtest/gtest.h>
 #include <stan/math/rev/mat/functor/algebra_solver.hpp>
+#include <stan/math/rev/mat/functor/algebra_solver_newton.hpp>
 #include <test/unit/util.hpp>
 #include <sstream>
 #include <vector>
 #include <limits>
 #include <string>
 
-/* define algebraic functions which get solved */
+/* wrapper function that either calls the dogleg or the algebraic solver. */
+template <typename F, typename T1, typename T2>
+Eigen::Matrix<T2, Eigen::Dynamic, 1> general_algebra_solver(
+  bool is_newton,
+  const F& f, const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
+  const Eigen::Matrix<T2, Eigen::Dynamic, 1>& y,
+  const std::vector<double>& dat, const std::vector<int>& dat_int,
+  std::ostream* msgs = nullptr, double relative_tolerance = 1e-10,
+  double function_tolerance = 1e-6,
+  long int max_num_steps = 1e+3)  {  // NOLINT(runtime/int)
+
+  using stan::math::algebra_solver;
+  using stan::math::algebra_solver_newton;
+
+  Eigen::Matrix<T2, Eigen::Dynamic, 1> theta;
+  if (is_newton) 
+    theta = algebra_solver_newton(f, x, y, dat, dat_int, msgs,
+                                  relative_tolerance, function_tolerance,
+                                  max_num_steps);
+  else theta = algebra_solver(f, x, y, dat, dat_int, msgs,
+                              relative_tolerance, function_tolerance,
+                              max_num_steps);
+  return theta;
+}
+
+/* define algebraic functions which get solved. */
 
 struct simple_eq_functor {
   template <typename T0, typename T1>
@@ -111,9 +137,11 @@ struct degenerate_eq_functor {
 template <typename F, typename T>
 Eigen::Matrix<T, Eigen::Dynamic, 1> simple_eq_test(
     const F& f, const Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
+    bool is_newton = 0,
     bool tuning = false, double rel_tol = 1e-10, double fun_tol = 1e-6,
     int32_t max_steps = 1e+3) {
   using stan::math::algebra_solver;
+  using stan::math::algebra_solver_newton;
   using stan::math::var;
 
   int n_x = 2;
@@ -125,10 +153,12 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> simple_eq_test(
   Eigen::Matrix<T, Eigen::Dynamic, 1> theta;
 
   if (tuning == false)
-    theta = algebra_solver(f, x, y, dummy_dat, dummy_dat_int);
+    theta = general_algebra_solver(is_newton, f, x, y,
+                                   dummy_dat, dummy_dat_int);
   else
-    theta = algebra_solver(f, x, y, dummy_dat, dummy_dat_int, 0, rel_tol,
-                           fun_tol, max_steps);
+    theta = general_algebra_solver(is_newton, f, x, y, 
+                                   dummy_dat, dummy_dat_int, 0, 
+                                   rel_tol, fun_tol, max_steps);
 
   EXPECT_EQ(20, theta(0));
   EXPECT_EQ(2, theta(1));

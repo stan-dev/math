@@ -17,13 +17,33 @@
 namespace stan {
 namespace math {
 
+/**
+ * Return the solution to the specified system of algebraic
+ * equations given an initial guess, and parameters and data,
+ * which get passed into the algebraic system.
+ * 
+ * Use Kinsol's Newton solver.
+ */
+template <typename F, typename T>
+Eigen::VectorXd algebra_solver_newton(
+  const F&f, const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
+  const Eigen::VectorXd& y, const std::vector<double>& dat,
+  const std::vector<int>& dat_int, std::ostream* msgs = nullptr,
+  double relative_tolerance = 1e-10, double function_tolerance = 1e-6,
+  long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
+  
+  return kinsol_solve(f, kinsol_J_f(), x, value_of(y), dat, dat_int, 0,
+                      function_tolerance, max_num_steps);
+  }
 
 /**
  * Return the solution to the specified system of algebraic
  * equations given an initial guess, and parameters and data,
  * which get passed into the algebraic system.
+ * 
+ * Overload for case where theta is a vector of parameters.
+ * 
  * Use Kinsol's Newton solver.
- *
  */
 template <typename F, typename T1, typename T2>
 Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver_newton(
@@ -35,8 +55,13 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver_newton(
     long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
 
   Eigen::VectorXd theta_dbl
-    = kinsol_solve(f, kinsol_J_f(), x, value_of(y), dat, dat_int, 0,
-                   function_tolerance, max_num_steps);
+    = algebra_solver_newton(f, x, value_of(y), dat, dat_int,
+                            msgs, relative_tolerance,
+                            function_tolerance, max_num_steps);
+
+  // Eigen::VectorXd theta_dbl
+  //   = kinsol_solve(f, kinsol_J_f(), x, value_of(y), dat, dat_int, 0,
+  //                  function_tolerance, max_num_steps);
   // Eigen::VectorXd theta_dbl
   //   = kinsol_solve(f, x, value_of(y), dat, dat_int, 0,
   //                  function_tolerance, max_num_steps);
