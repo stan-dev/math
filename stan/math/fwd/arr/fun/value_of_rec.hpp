@@ -21,17 +21,15 @@ namespace math {
  * @param[in] x std::vector to be converted
  * @return std::vector of values
  **/
- template <typename T, enable_if_std_vector<T>* = nullptr,
-           enable_if_fvar<scalar_type_decay_t<T>>* = nullptr>
+template <typename T, enable_if_std_vector<T>* = nullptr,
+          enable_if_fvar<scalar_type_decay_t<T>>* = nullptr>
 inline auto value_of_rec(T&& x) {
   std::vector<double> result(x.size());
-  std::transform(std::forward<T>(x).begin(), std::forward<T>(x).end(),
-   result.begin(), [](auto&& x) -> auto&& {
-    return value_of_rec(x.val_);
-  });
+  std::transform(
+      std::forward<T>(x).begin(), std::forward<T>(x).end(),
+      result.begin(), [](auto&& x) -> auto&& { return value_of_rec(x.val_); });
   return result;
 }
-
 
 }  // namespace math
 }  // namespace stan

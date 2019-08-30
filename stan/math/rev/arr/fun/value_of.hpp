@@ -22,16 +22,14 @@ namespace math {
  * @return std::vector of values
  **/
 template <typename T, enable_if_std_vector<T>* = nullptr,
-           enable_if_var<scalar_type_decay_t<T>>* = nullptr>
+          enable_if_var<scalar_type_decay_t<T>>* = nullptr>
 inline auto value_of(T&& x) {
   std::vector<double> result(x.size());
-  std::transform(std::forward<T>(x).begin(), std::forward<T>(x).end(),
-   result.begin(), [](auto&& x) -> auto&& {
-    return x.vi_->val_;
-  });
+  std::transform(
+      std::forward<T>(x).begin(), std::forward<T>(x).end(),
+      result.begin(), [](auto&& x) -> auto&& { return x.vi_->val_; });
   return result;
 }
-
 
 }  // namespace math
 }  // namespace stan

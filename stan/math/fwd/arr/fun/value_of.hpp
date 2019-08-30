@@ -23,8 +23,8 @@ namespace math {
  * @param[in] x std::vector to be converted
  * @return std::vector of values
  **/
- template <typename T, enable_if_std_vector<T>* = nullptr,
-           enable_if_fvar<scalar_type_decay_t<T>>* = nullptr>
+template <typename T, enable_if_std_vector<T>* = nullptr,
+          enable_if_fvar<scalar_type_decay_t<T>>* = nullptr>
 inline auto value_of(T&& x) {
   std::vector<partials_type_t<scalar_type_decay_t<T>>> result(x.size());
   std::transform(std::forward<T>(x).begin(), std::forward<T>(x).end(),
@@ -33,7 +33,6 @@ inline auto value_of(T&& x) {
   });
   return result;
 }
-
 
 }  // namespace math
 }  // namespace stan

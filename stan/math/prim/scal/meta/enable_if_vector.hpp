@@ -13,23 +13,24 @@ template <typename T>
 using enable_if_vector = std::enable_if_t<is_vector<std::decay_t<T>>::value>;
 
 template <typename... Types>
-using enable_if_all_vector
-    = std::enable_if_t<math::conjunction<is_vector<std::decay_t<Types>>...>::value>;
+using enable_if_all_vector = std::enable_if_t<
+    math::conjunction<is_vector<std::decay_t<Types>>...>::value>;
 
 template <typename... Types>
-using enable_if_any_vector
-    = std::enable_if_t<math::disjunction<is_vector<std::decay_t<Types>>...>::value>;
+using enable_if_any_vector = std::enable_if_t<
+    math::disjunction<is_vector<std::decay_t<Types>>...>::value>;
 
 template <typename T>
-using enable_if_not_vector = std::enable_if_t<!is_vector<std::decay_t<T>>::value>;
+using enable_if_not_vector
+    = std::enable_if_t<!is_vector<std::decay_t<T>>::value>;
 
 template <typename... Types>
-using enable_if_all_not_vector
-    = std::enable_if_t<!math::conjunction<is_vector<std::decay_t<Types>>...>::value>;
+using enable_if_all_not_vector = std::enable_if_t<
+    !math::conjunction<is_vector<std::decay_t<Types>>...>::value>;
 
 template <typename... Types>
-using enable_if_any_not_vector
-    = std::enable_if_t<!math::disjunction<is_vector<std::decay_t<Types>>...>::value>;
+using enable_if_any_not_vector = std::enable_if_t<
+    !math::disjunction<is_vector<std::decay_t<Types>>...>::value>;
 
 }  // namespace stan
 #endif
