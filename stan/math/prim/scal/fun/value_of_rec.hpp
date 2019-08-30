@@ -23,10 +23,16 @@ namespace math {
  * @param x Scalar to convert to double.
  * @return Value of scalar cast to a double.
  */
-template <typename T, enable_if_arithmetic<std::decay_t<T>>* = nullptr>
+template <typename T, enable_if_floating_point<std::decay_t<T>>* = nullptr>
 inline auto&& value_of_rec(T&& x) {
-  return std::forward<T>(x);
+ return std::forward<T>(x);
 }
+
+template <typename T, enable_if_same<int, std::decay_t<T>>* = nullptr>
+inline auto value_of_rec(T&& x) {
+ return static_cast<double>(x);
+}
+
 
 }  // namespace math
 }  // namespace stan

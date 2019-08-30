@@ -22,10 +22,17 @@ namespace math {
  * @return Specified matrix.
  */
 template <typename T, enable_if_eigen<T>* = nullptr,
-          enable_if_arithmetic<scalar_type_decay_t<T>>* = nullptr>
+          enable_if_floating_point<scalar_type_decay_t<T>>* = nullptr>
 inline auto&& value_of(T&& x) {
   return std::forward<T>(x);
 }
+
+template <typename T, enable_if_eigen<T>* = nullptr,
+          enable_if_same<int, scalar_type_decay_t<T>>* = nullptr>
+inline auto value_of(T&& x) {
+  return (x.template cast<double>()).eval();
+}
+
 }  // namespace math
 }  // namespace stan
 
