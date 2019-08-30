@@ -295,7 +295,8 @@ TEST(AgradPartialsVari, OperandsAndPartialsMultivarMixed) {
   o4.edge3_.partials_vec_[0] += d_vec2;
 
 #if defined(STAN_OPENCL) && !defined(STAN_OPENCL_NOCACHE)
-  EXPECT_EQ(2 * sizeof(d_vec1) + 6 * sizeof(&v_vec) - sizeof(cl::Buffer), sizeof(o4));
+  EXPECT_EQ(2 * sizeof(d_vec1) + 6 * sizeof(&v_vec) - sizeof(cl::Buffer),
+            sizeof(o4));
 #else
   // 2 partials stdvecs, 4 pointers to edges, 2 pointers to operands
   // vecs
