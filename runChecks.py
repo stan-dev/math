@@ -7,7 +7,6 @@ Replacement for test-math-dependencies target in Makefile.
 
 from __future__ import print_function
 import os
-import os.path
 import sys
 import re
 import glob
@@ -18,7 +17,7 @@ def files_in_folder(folder):
     files = []
     for f in glob.glob(folder):
         if os.path.isdir(f):
-            files += files_in_folder(f+os.sep+"**")
+            files.extend(files_in_folder(f+os.sep+"**"))
         else:
             files.append(f)
     return files
@@ -32,31 +31,30 @@ def grep_patterns(type, folder, patterns_and_messages, exclude_filters = []):
     folder.replace("/", os.sep)
     exclude_files = []
     for excl in exclude_filters:
-        exclude_files += files_in_folder(excl)
+        exclude_files.extend(files_in_folder(excl))
     files = files_in_folder(folder+os.sep+"**")
     files = [x for x in files if x not in exclude_files]
-    for f in files:
-        if os.path.isfile(f):
+    for filepath in files:
+        if os.path.isfile(filepath):
             line_num = 0
-            for line in open(f, "r"):
-                line_num += 1
-                
-                for p in patterns_and_messages:
-                    # exclude line starting with "/*" or " * " and
-                    # if the matched patterns are behind "//"
-                    if not re.search("^ \* |^/\*", line) and not re.search(".*//.*"+p["pattern"], line) and re.search(p["pattern"], line):
-                            errors.append(f + " at line " + str(line_num) + ":\n\t" + "[" + type + "] " + p["message"])
+            with open(filepath, "r") as f:
+                for line in f:
+                    line_num += 1                
+                    for p in patterns_and_messages:
+                        # exclude line starting with "/*" or " * " and
+                        # if the matched patterns are behind "//"
+                        if not re.search("^ \* |^/\*", line) and not re.search(".*//.*"+p["pattern"], line) and re.search(p["pattern"], line):
+                                errors.append(filepath + " at line " + str(line_num) + ":\n\t" + "[" + type + "] " + p["message"])
     return errors
 
 def check_non_test_files_in_test():
-    all_cpp = files_in_folder("test/unit/*/*")
+    all_cpp = files_in_folder("test/unit/math/")
     # if the file is a .cpp file that doesnt end with _test.cpp
-    errors = ["Error: A .cpp file without the suffix " + testsfx + " in test/unit/*/*:\n\t" + x for x in all_cpp if x[-4:] == ".cpp" and x[-len(testsfx):] != testsfx]
+    errors = ["Error: A .cpp file without the suffix " + testsfx + " in test/unit/*/*:\n\t" + x for x in all_cpp if os.path.splitext(x)[1] == ".cpp" and x[-len(testsfx):] != testsfx]
     return errors
 
 def main():
     errors = []
-
     # Check for files inside stan/math/prim that contain stan/math/rev or stan/math/fwd
     prim_checks = [
         { "pattern" : '<stan/math/rev/', "message" : 'File includes a stan/math/rev header file.'},
@@ -65,7 +63,7 @@ def main():
         { "pattern" : 'stan::math::fvar', "message" : 'File uses stan::math::fvar.'},
         { "pattern" : '<stan/math/mix/', "message" : 'File includes a stan/math/mix header file.'}
     ]
-    errors += grep_patterns('prim', 'stan/math/prim', prim_checks)
+    errors.extend(grep_patterns('prim', 'stan/math/prim', prim_checks))
     
     # Check for files inside stan/math/rev that contain stan/math/fwd or stan/math/mix
     rev_checks = [
@@ -73,7 +71,7 @@ def main():
         { "pattern" : 'stan::math::fvar', "message" : 'File uses stan::math::fvar.'},
         { "pattern" : '<stan/math/mix/', "message" : 'File includes a stan/math/mix header file.'}
     ]
-    errors += grep_patterns('rev', 'stan/math/rev', rev_checks)
+    errors.extend(grep_patterns('rev', 'stan/math/rev', rev_checks))
 
     # Check for files inside stan/math/*/scal that contain stan/math/*/arr or stan/math/*/mat
     scal_checks = [
@@ -84,7 +82,7 @@ def main():
         { "pattern" : '<Eigen', "message" : 'File includes an Eigen header.'},
         { "pattern" : 'Eigen::', "message" : 'File uses Eigen.'}
     ]
-    errors += grep_patterns('scal', 'stan/math/*/scal', scal_checks)
+    errors.extend(grep_patterns('scal', 'stan/math/*/scal', scal_checks))
 
     # Check for files inside stan/math/*/arr that contain stan/math/*/mat or Eigen
     arr_checks = [
@@ -92,40 +90,40 @@ def main():
         { "pattern" : '<Eigen', "message" : 'File includes an Eigen header.'},
         { "pattern" : 'Eigen::', "message" : 'File uses Eigen.'}
     ]    
-    errors += grep_patterns('arr', 'stan/math/*/arr', arr_checks)
+    errors.extend(grep_patterns('arr', 'stan/math/*/arr', arr_checks))
 
     # Check to make sure we use C++14 constructs in stan/math
     cpp14_checks = [
         { "pattern" : 'boost::is_unsigned<', "message" : 'File uses boost::is_unsigned instead of std::is_unsigned.'},
-        { "pattern" : '<boost/type_traits/is_unsigned>',\
-            "message" : 'File includes <boost/type_traits/is_unsigned.hpp> instead of <type_traits>.'},
+        { "pattern" : '<boost/type_traits/is_unsigned>',
+          "message" : 'File includes <boost/type_traits/is_unsigned.hpp> instead of <type_traits>.'},
         { "pattern" : 'boost::is_arithmetic<', "message" : 'File uses boost::is_arithmetic instead of std::is_arithmetic.'},
-        { "pattern" : '<boost/type_traits/is_arithmetic.hpp>',\
-            "message" : 'File includes <boost/type_traits/is_unsigned.hpp> instead of <type_traits>.'},
+        { "pattern" : '<boost/type_traits/is_arithmetic.hpp>',
+          "message" : 'File includes <boost/type_traits/is_unsigned.hpp> instead of <type_traits>.'},
         { "pattern" : 'boost::is_convertible<', "message" : 'File uses boost::is_convertible instead of std::is_convertible.'},
-        { "pattern" : '<boost/type_traits/is_convertible.hpp>',\
-            "message" : 'File includes <boost/type_traits/is_convertible.hpp> instead of <type_traits>.'},
+        { "pattern" : '<boost/type_traits/is_convertible.hpp>',
+          "message" : 'File includes <boost/type_traits/is_convertible.hpp> instead of <type_traits>.'},
         { "pattern" : 'boost::is_same<', "message" : 'File uses boost::is_same instead of std::is_same.'},
-        { "pattern" : '<boost/type_traits/is_same.hpp>',\
-            "message" : 'File includes <boost/type_traits/is_same.hpp> instead of <type_traits>.'},
+        { "pattern" : '<boost/type_traits/is_same.hpp>',
+          "message" : 'File includes <boost/type_traits/is_same.hpp> instead of <type_traits>.'},
         { "pattern" : 'boost::enable_if_c<', "message" : 'File uses boost::enable_if_c instead of std::enable_if.'},
         { "pattern" : 'boost::enable_if<', "message" : 'File uses boost::enable_if instead of std::enable_if.'},
         { "pattern" : 'boost::disable_if<', "message" : 'File uses boost::disable_if instead of std::enable_if.'},
-        { "pattern" : '<boost/utility/enable_if.hpp>',\
-            "message" : 'Replace \<boost/utility/enable_if.hpp\> with \<type_traits\>.'}
+        { "pattern" : '<boost/utility/enable_if.hpp>',
+          "message" : 'Replace \<boost/utility/enable_if.hpp\> with \<type_traits\>.'}
     ]    
-    errors += grep_patterns('C++14', 'stan/math', cpp14_checks)
+    errors.extend(grep_patterns('C++14', 'stan/math', cpp14_checks))
     
     # Check for includes of stan/math/*/meta/*.hpp inside stan/math, excluding meta.hpp files and the /meta subfolder
     meta_checks = [
         { "pattern" : '<stan/math/.*/meta/.*hpp', "message" : 'File includes */meta/*.hpp header file. Should include meta.hpp'}
     ]
     meta_exclude = ['stan/math/*/*/meta', 'stan/math/*/meta.hpp']
-    errors += grep_patterns('meta', 'stan/math', meta_checks, meta_exclude)
+    errors.extend(grep_patterns('meta', 'stan/math', meta_checks, meta_exclude))
 
-    errors += check_non_test_files_in_test()
+    errors.extend(check_non_test_files_in_test())
 
-    if(len(errors) > 0):
+    if errors:
         for e in errors:
             print(e, file=sys.stderr)
         sys.exit(1)
