@@ -3,8 +3,6 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/fwd/meta.hpp>
-#include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/mat/fun/value_of_rec.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/value_of_rec.hpp>
 
