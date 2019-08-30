@@ -18,7 +18,7 @@ namespace math {
  */
 template <typename T, enable_if_var<std::decay_t<T>>* = nullptr>
 inline auto&& value_of_rec(T&& x) {
-  return std::forward<T>(x.vi_->val_);
+  return x.vi_->val_;
 }
 
 }  // namespace math
