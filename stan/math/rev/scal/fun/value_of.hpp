@@ -4,7 +4,7 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/mat/fun/value_of.hpp>
+#include <stan/math/prim/scal/fun/value_of.hpp>
 #include <type_traits>
 
 namespace stan {
@@ -24,7 +24,7 @@ namespace math {
  * @return Value of variable.
  */
 template <typename T, enable_if_var<std::decay_t<T>>* = nullptr>
-inline auto&& value_of(T&& x) {
+inline auto& value_of(T&& x) {
   return x.vi_->val_;
 }
 
