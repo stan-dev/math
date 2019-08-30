@@ -4,6 +4,7 @@
 #include <stan/math/prim/scal/meta/VectorBuilderHelper.hpp>
 #include <stdexcept>
 #include <vector>
+#include <utility>
 
 namespace stan {
 
@@ -16,7 +17,7 @@ class VectorBuilderHelper<T1, true, true> {  // When used and vector
   std::vector<T1> x_;
 
  public:
-  explicit VectorBuilderHelper(size_t n) : x_(n) {}
+  explicit VectorBuilderHelper(size_t n) : x_(std::move(n)) {}
 
   typedef std::vector<T1> type;
 

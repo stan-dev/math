@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/scal/meta/VectorBuilderHelper.hpp>
 #include <stan/math/prim/scal/meta/contains_vector.hpp>
+#include <utility>
 
 namespace stan {
 
@@ -32,13 +33,13 @@ class VectorBuilder {
   typedef typename helper::type type;
   helper mock_vec_;
 
-  explicit VectorBuilder(size_t n) : mock_vec_(n) {}
+  explicit VectorBuilder(size_t n) : mock_vec_(std::move(n)) {}
 
-  auto& operator[](size_t i) { return mock_vec_[i]; }
-  const auto& operator[](size_t i) const { return mock_vec_[i]; }
+  auto&& operator[](size_t i) { return mock_vec_[i]; }
+  const auto&& operator[](size_t i) const { return mock_vec_[i]; }
 
-  inline auto& data() { return mock_vec_.data(); }
-  inline const auto& data() const { return mock_vec_.data(); }
+  inline auto&& data() { return mock_vec_.data(); }
+  inline const auto&& data() const { return mock_vec_.data(); }
 };
 
 }  // namespace stan

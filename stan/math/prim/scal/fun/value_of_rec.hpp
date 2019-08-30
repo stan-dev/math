@@ -2,6 +2,9 @@
 #define STAN_MATH_PRIM_SCAL_FUN_VALUE_OF_REC_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <type_traits>
+#include <utility>
+
 namespace stan {
 namespace math {
 
@@ -20,26 +23,11 @@ namespace math {
  * @param x Scalar to convert to double.
  * @return Value of scalar cast to a double.
  */
-template <typename T>
-inline double value_of_rec(const T x) {
-  return static_cast<double>(x);
+template <typename T, enable_if_arithmetic<std::decay_t<T>>* = nullptr>
+inline auto&& value_of_rec(T&& x) {
+  return std::forward<T>(x);
 }
 
-/**
- * Return the specified argument.
- *
- * <p>See <code>value_of(T)</code> for a polymorphic
- * implementation using static casts.
- *
- * <p>This inline pass-through no-op should be compiled away.
- *
- * @param x Specified value.
- * @return Specified value.
- */
-template <>
-inline double value_of_rec<double>(double x) {
-  return x;
-}
 
 }  // namespace math
 }  // namespace stan
