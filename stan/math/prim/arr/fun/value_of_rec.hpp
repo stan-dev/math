@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/value_of_rec.hpp>
+#include <algorithm>
 #include <vector>
 #include <cstddef>
 #include <utility>

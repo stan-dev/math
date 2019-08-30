@@ -3,9 +3,10 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
+#include <algorithm>
 #include <vector>
-#include <cstddef>
 #include <utility>
+#include <cstddef>
 
 namespace stan {
 namespace math {
