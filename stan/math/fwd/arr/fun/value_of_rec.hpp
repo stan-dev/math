@@ -27,7 +27,7 @@ inline auto value_of_rec(T&& x) {
   std::vector<double> result(x.size());
   std::transform(
       std::forward<T>(x).begin(), std::forward<T>(x).end(),
-      result.begin(), [](auto&& x) -> auto&& { return value_of_rec(x.val_); });
+      result.begin(), [](auto&& x) { return value_of_rec(x.val_); });
   return result;
 }
 

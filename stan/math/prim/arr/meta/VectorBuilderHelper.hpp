@@ -21,10 +21,10 @@ class VectorBuilderHelper<T1, true, true> {  // When used and vector
 
   typedef std::vector<T1> type;
 
-  auto&& operator[](size_t i) { return x_[i]; }
-  const auto&& operator[](size_t i) const { return x_[i]; }
-  inline auto&& data() { return x_; }
-  inline const auto&& data() const { return x_; }
+  auto& operator[](size_t i) { return x_[i]; }
+  const auto& operator[](size_t i) const { return x_[i]; }
+  inline auto& data() { return x_; }
+  inline const auto& data() const { return x_; }
 };
 }  // namespace stan
 #endif
