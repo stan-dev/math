@@ -1,11 +1,12 @@
-#ifndef STAN_MATH_PRIM_ARR_FUN_VALUE_OF_REC_HPP
-#define STAN_MATH_PRIM_ARR_FUN_VALUE_OF_REC_HPP
+#ifndef STAN_MATH_REV_ARR_FUN_VALUE_OF_HPP
+#define STAN_MATH_REV_ARR_FUN_VALUE_OF_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/value_of_rec.hpp>
+#include <algorithm>
+#include <utility>
 #include <vector>
 #include <cstddef>
-#include <utility>
 
 namespace stan {
 namespace math {
@@ -20,10 +21,15 @@ namespace math {
  * @param[in] x std::vector to be converted
  * @return std::vector of values
  **/
- template <typename T, enable_if_std_vector<T>* = nullptr,
-           enable_if_arithmetic<scalar_type_decay_t<T>>* = nullptr>
-inline auto&& value_of_rec(T&& x) {
-  return std::forward<T>(x);
+template <typename T, enable_if_std_vector<T>* = nullptr,
+           enable_if_var<scalar_type_decay_t<T>>* = nullptr>
+inline auto value_of(T&& x) {
+  std::vector<double> result(x.size());
+  std::transform(std::forward<T>(x).begin(), std::forward<T>(x).end(),
+   result.begin(), [](auto&& x) -> auto&& {
+    return x.vi_->val_;
+  });
+  return result;
 }
 
 

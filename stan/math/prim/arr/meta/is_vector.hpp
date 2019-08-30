@@ -19,5 +19,18 @@ struct is_vector<std::vector<T> > {
   enum { value = 1 };
   typedef T type;
 };
+
+template <typename T>
+struct is_std_vector<const T> {
+  enum { value = is_vector<T>::value };
+  typedef T type;
+};
+
+template <typename T>
+struct is_std_vector<std::vector<T> > {
+  enum { value = 1 };
+  typedef T type;
+};
+
 }  // namespace stan
 #endif

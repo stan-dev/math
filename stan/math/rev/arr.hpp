@@ -7,6 +7,8 @@
 #include <stan/math/prim/arr.hpp>
 #include <stan/math/rev/scal.hpp>
 
+#include <stan/math/rev/arr/fun/value_of.hpp>
+#include <stan/math/rev/arr/fun/value_of_rec.hpp>
 #include <stan/math/rev/arr/fun/log_sum_exp.hpp>
 #include <stan/math/rev/arr/fun/to_var.hpp>
 #include <stan/math/rev/arr/functor/coupled_ode_system.hpp>

@@ -30,11 +30,7 @@ TEST(MathFunctions, value_of_int_return_type_short_circuit) {
   EXPECT_FALSE((std::is_same<decltype(stan::math::value_of(a)),
                              std::vector<int>>::value));
   EXPECT_FALSE((std::is_same<decltype(stan::math::value_of(a)),
-                             std::vector<int>&>::value));
-  EXPECT_FALSE((std::is_same<decltype(stan::math::value_of(a)),
                              const std::vector<int>>::value));
-  EXPECT_TRUE((std::is_same<decltype(stan::math::value_of(a)),
-                            const std::vector<int>&>::value));
 }
 
 TEST(MathFunctions, value_of_double_return_type_short_circuit) {
@@ -42,9 +38,5 @@ TEST(MathFunctions, value_of_double_return_type_short_circuit) {
   EXPECT_FALSE((std::is_same<decltype(stan::math::value_of(a)),
                              std::vector<double>>::value));
   EXPECT_FALSE((std::is_same<decltype(stan::math::value_of(a)),
-                             std::vector<double>&>::value));
-  EXPECT_FALSE((std::is_same<decltype(stan::math::value_of(a)),
                              const std::vector<double>>::value));
-  EXPECT_TRUE((std::is_same<decltype(stan::math::value_of(a)),
-                            const std::vector<double>&>::value));
 }

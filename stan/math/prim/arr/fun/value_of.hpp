@@ -5,55 +5,28 @@
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <vector>
 #include <cstddef>
+#include <utility>
 
 namespace stan {
 namespace math {
 
 /**
- * Convert a std::vector of type T to a std::vector of
- * child_type<T>::type.
+ * Convert a std::vector of type T to a std::vector of doubles.
+ *
+ * T must implement value_of_rec. See
+ * test/math/fwd/mat/fun/value_of_rec.cpp for fvar and var usage.
  *
  * @tparam T Scalar type in std::vector
  * @param[in] x std::vector to be converted
  * @return std::vector of values
  **/
-template <typename T>
-inline std::vector<typename child_type<T>::type> value_of(
-    const std::vector<T>& x) {
-  size_t size = x.size();
-  std::vector<typename child_type<T>::type> result(size);
-  for (size_t i = 0; i < size; i++)
-    result[i] = value_of(x[i]);
-  return result;
+ template <typename T, enable_if_std_vector<T>* = nullptr,
+           enable_if_arithmetic<scalar_type_decay_t<T>>* = nullptr>
+inline auto&& value_of(T&& x) {
+  return std::forward<T>(x);
 }
 
-/**
- * Return the specified argument.
- *
- * <p>See <code>value_of(T)</code> for a polymorphic
- * implementation using static casts.
- *
- * <p>This inline pass-through no-op should be compiled away.
- *
- * @param x Specified std::vector.
- * @return Specified std::vector.
- */
-inline const std::vector<double>& value_of(const std::vector<double>& x) {
-  return x;
-}
 
-/**
- * Return the specified argument.
- *
- * <p>See <code>value_of(T)</code> for a polymorphic
- * implementation using static casts.
- *
- * <p>This inline pass-through no-op should be compiled away.
- *
- * @param x Specified std::vector.
- * @return Specified std::vector.
- */
-inline const std::vector<int>& value_of(const std::vector<int>& x) { return x; }
 
 }  // namespace math
 }  // namespace stan

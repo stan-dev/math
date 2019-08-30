@@ -11,5 +11,12 @@ struct is_vector {
   enum { value = 0 };
   typedef T type;
 };
+
+template <typename T>
+struct is_std_vector {
+  enum { value = 0 };
+  typedef T type;
+};
+
 }  // namespace stan
 #endif

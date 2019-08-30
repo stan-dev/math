@@ -2,6 +2,10 @@
 #define STAN_MATH_PRIM_MAT_VECTORIZE_APPLY_SCALAR_UNARY_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <algorithm>
+#include <type_traits>
+#include <utility>
 #include <vector>
 
 namespace stan {
@@ -53,9 +57,12 @@ struct apply_scalar_unary {
    * @return Componentwise application of the function specified
    * by F to the specified matrix.
    */
-  static inline return_t apply(const T& x) {
+  template <typename K, enable_if_eigen<T>* = nullptr>
+  static inline auto apply(K&& x) {
     return x.unaryExpr(
-        [](scalar_t x) { return apply_scalar_unary<F, scalar_t>::apply(x); });
+        [](auto&& x_iter) {
+          return apply_scalar_unary<F, scalar_t>::apply(x_iter);
+        });
   }
 };
 
@@ -81,7 +88,8 @@ struct apply_scalar_unary<F, double> {
    * @param x Argument scalar.
    * @return Result of applying F to the scalar.
    */
-  static inline return_t apply(double x) { return F::fun(x); }
+  template <typename K, enable_if_arithmetic<std::decay_t<K>>* = nullptr>
+  static inline auto apply(K&& x) { return F::fun(std::forward<K>(x)); }
 };
 
 /**
@@ -138,10 +146,13 @@ struct apply_scalar_unary<F, std::vector<T> > {
    * @return Elementwise application of F to the elements of the
    * container.
    */
-  static inline return_t apply(const std::vector<T>& x) {
+  template <typename K, enable_if_vector<K>* = nullptr, enable_if_same<typename std::decay_t<K>::value_type, std::decay_t<T>>* = nullptr>
+  static inline auto apply(K&& x) {
     return_t fx(x.size());
-    for (size_t i = 0; i < x.size(); ++i)
-      fx[i] = apply_scalar_unary<F, T>::apply(x[i]);
+    std::transform(std::forward<K>(x).begin(), std::forward<K>(x).end(),
+     fx.begin(), [](auto&& x_iter) {
+      return apply_scalar_unary<F, T>::apply(x_iter);
+    });
     return fx;
   }
 };

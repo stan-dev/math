@@ -28,7 +28,8 @@ struct apply_scalar_unary<F, var> {
    * @param x Argument variable.
    * @return Function applied to the variable.
    */
-  static inline return_t apply(const var& x) { return F::fun(x); }
+  template <typename K, enable_if_var<std::decay_t<K>>* = nullptr>
+  static inline auto apply(K&& x) { return F::fun(std::forward<K>(x)); }
 };
 
 }  // namespace math
