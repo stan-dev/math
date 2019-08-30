@@ -148,9 +148,7 @@ ordered_logistic_glm_lpmf(
                         Eigen::Matrix<T_beta_scalar, Eigen::Dynamic, 1>,
                         Eigen::Matrix<T_cuts_scalar, Eigen::Dynamic, 1>>
       ops_partials(x, beta, cuts);
-  if (!is_constant_struct<T_x_scalar>::value
-      || !is_constant_struct<T_beta_scalar>::value
-      || !is_constant_struct<T_cuts_scalar>::value) {
+  if (!is_constant_all<T_x_scalar, T_beta_scalar, T_cuts_scalar>::value) {
     Array<double, Dynamic, 1> exp_m_cut1 = exp(-cut1);
     Array<double, Dynamic, 1> exp_m_cut2 = exp(-cut2);
     Array<double, Dynamic, 1> exp_cuts_diff = exp(cuts_y2 - cuts_y1);
@@ -161,10 +159,9 @@ ordered_logistic_glm_lpmf(
         = 1 / (1 - exp_cuts_diff)
           - (cut1 > 0).select(exp_m_cut1 / (1 + exp_m_cut1),
                               1 / (1 + exp(cut1)));
-    if (!is_constant_struct<T_x_scalar>::value
-        || !is_constant_struct<T_beta_scalar>::value) {
+    if (!is_constant_all<T_x_scalar, T_beta_scalar>::value) {
       Matrix<double, 1, Dynamic> location_derivative = d1 - d2;
-      if (!is_constant_struct<T_x_scalar>::value) {
+      if (!is_constant_all<T_x_scalar>::value) {
         if (T_x_rows == 1) {
           ops_partials.edge1_.partials_
               = beta_val_vec * location_derivative.sum();
@@ -173,7 +170,7 @@ ordered_logistic_glm_lpmf(
               = (beta_val_vec * location_derivative).transpose();
         }
       }
-      if (!is_constant_struct<T_beta_scalar>::value) {
+      if (!is_constant_all<T_beta_scalar>::value) {
         if (T_x_rows == 1) {
           ops_partials.edge2_.partials_
               = (location_derivative * x_val.replicate(N_instances, 1))
@@ -184,7 +181,7 @@ ordered_logistic_glm_lpmf(
         }
       }
     }
-    if (!is_constant_struct<T_cuts_scalar>::value) {
+    if (!is_constant_all<T_cuts_scalar>::value) {
       for (int i = 0; i < N_instances; i++) {
         int c = y_seq[i];
         if (c != N_classes) {
