@@ -26,11 +26,9 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch.
  */
 template <bool propto, typename T_n, typename T_prob>
-typename return_type<T_prob>::type bernoulli_logit_lpmf(const T_n& n,
-                                                        const T_prob& theta) {
+return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
   static const char* function = "bernoulli_logit_lpmf";
-  typedef
-      typename stan::partials_return_type<T_n, T_prob>::type T_partials_return;
+  typedef partials_return_type_t<T_n, T_prob> T_partials_return;
 
   using std::exp;
 
@@ -68,7 +66,7 @@ typename return_type<T_prob>::type bernoulli_logit_lpmf(const T_n& n,
     else
       logp -= log1p(exp_m_ntheta);
 
-    if (!is_constant_struct<T_prob>::value) {
+    if (!is_constant_all<T_prob>::value) {
       if (ntheta > cutoff)
         ops_partials.edge1_.partials_[n] -= exp_m_ntheta;
       else if (ntheta < -cutoff)
@@ -82,8 +80,8 @@ typename return_type<T_prob>::type bernoulli_logit_lpmf(const T_n& n,
 }
 
 template <typename T_n, typename T_prob>
-inline typename return_type<T_prob>::type bernoulli_logit_lpmf(
-    const T_n& n, const T_prob& theta) {
+inline return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n,
+                                                  const T_prob& theta) {
   return bernoulli_logit_lpmf<false>(n, theta);
 }
 

@@ -43,13 +43,12 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_s, typename T_n, typename T_loc,
           typename T_scale>
-typename return_type<T_y, T_s, T_loc, T_scale>::type normal_sufficient_lpdf(
+return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
     const T_y& y_bar, const T_s& s_squared, const T_n& n_obs, const T_loc& mu,
     const T_scale& sigma) {
   static const char* function = "normal_sufficient_lpdf";
-  typedef
-      typename stan::partials_return_type<T_y, T_s, T_n, T_loc, T_scale>::type
-          T_partials_return;
+  typedef partials_return_type_t<T_y, T_s, T_n, T_loc, T_scale>
+      T_partials_return;
 
   using std::log;
 
@@ -109,17 +108,17 @@ typename return_type<T_y, T_s, T_loc, T_scale>::type normal_sufficient_lpdf(
     logp -= cons_expr / (2 * sigma_squared);
 
     // gradients
-    if (!is_constant_struct<T_y>::value || !is_constant_struct<T_loc>::value) {
+    if (!is_constant_all<T_y, T_loc>::value) {
       const T_partials_return common_derivative
           = n_obs_dbl * (mu_dbl - y_bar_dbl) / sigma_squared;
-      if (!is_constant_struct<T_y>::value)
+      if (!is_constant_all<T_y>::value)
         ops_partials.edge1_.partials_[i] += common_derivative;
-      if (!is_constant_struct<T_loc>::value)
+      if (!is_constant_all<T_loc>::value)
         ops_partials.edge3_.partials_[i] -= common_derivative;
     }
-    if (!is_constant_struct<T_s>::value)
+    if (!is_constant_all<T_s>::value)
       ops_partials.edge2_.partials_[i] -= 0.5 / sigma_squared;
-    if (!is_constant_struct<T_scale>::value)
+    if (!is_constant_all<T_scale>::value)
       ops_partials.edge4_.partials_[i]
           += cons_expr / pow(sigma_dbl, 3) - n_obs_dbl / sigma_dbl;
   }
@@ -128,9 +127,9 @@ typename return_type<T_y, T_s, T_loc, T_scale>::type normal_sufficient_lpdf(
 
 template <typename T_y, typename T_s, typename T_n, typename T_loc,
           typename T_scale>
-inline typename return_type<T_y, T_s, T_loc, T_scale>::type
-normal_sufficient_lpdf(const T_y& y_bar, const T_s& s_squared, const T_n& n_obs,
-                       const T_loc& mu, const T_scale& sigma) {
+inline return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
+    const T_y& y_bar, const T_s& s_squared, const T_n& n_obs, const T_loc& mu,
+    const T_scale& sigma) {
   return normal_sufficient_lpdf<false>(y_bar, s_squared, n_obs, mu, sigma);
 }
 

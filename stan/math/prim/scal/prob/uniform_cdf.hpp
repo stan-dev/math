@@ -13,12 +13,10 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_low, typename T_high>
-typename return_type<T_y, T_low, T_high>::type uniform_cdf(const T_y& y,
-                                                           const T_low& alpha,
-                                                           const T_high& beta) {
+return_type_t<T_y, T_low, T_high> uniform_cdf(const T_y& y, const T_low& alpha,
+                                              const T_high& beta) {
   static const char* function = "uniform_cdf";
-  typedef typename stan::partials_return_type<T_y, T_low, T_high>::type
-      T_partials_return;
+  typedef partials_return_type_t<T_y, T_low, T_high> T_partials_return;
 
   if (size_zero(y, alpha, beta))
     return 1.0;
@@ -53,24 +51,24 @@ typename return_type<T_y, T_low, T_high>::type uniform_cdf(const T_y& y,
 
     cdf *= cdf_;
 
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n] += 1.0 / b_min_a / cdf_;
-    if (!is_constant_struct<T_low>::value)
+    if (!is_constant_all<T_low>::value)
       ops_partials.edge2_.partials_[n]
           += (y_dbl - beta_dbl) / b_min_a / b_min_a / cdf_;
-    if (!is_constant_struct<T_high>::value)
+    if (!is_constant_all<T_high>::value)
       ops_partials.edge3_.partials_[n] -= 1.0 / b_min_a;
   }
 
-  if (!is_constant_struct<T_y>::value) {
+  if (!is_constant_all<T_y>::value) {
     for (size_t n = 0; n < stan::length(y); ++n)
       ops_partials.edge1_.partials_[n] *= cdf;
   }
-  if (!is_constant_struct<T_low>::value) {
+  if (!is_constant_all<T_low>::value) {
     for (size_t n = 0; n < stan::length(alpha); ++n)
       ops_partials.edge2_.partials_[n] *= cdf;
   }
-  if (!is_constant_struct<T_high>::value) {
+  if (!is_constant_all<T_high>::value) {
     for (size_t n = 0; n < stan::length(beta); ++n)
       ops_partials.edge3_.partials_[n] *= cdf;
   }

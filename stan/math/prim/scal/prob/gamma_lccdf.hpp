@@ -20,13 +20,13 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_shape, typename T_inv_scale>
-typename return_type<T_y, T_shape, T_inv_scale>::type gamma_lccdf(
-    const T_y& y, const T_shape& alpha, const T_inv_scale& beta) {
+return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(const T_y& y,
+                                                     const T_shape& alpha,
+                                                     const T_inv_scale& beta) {
   if (size_zero(y, alpha, beta))
     return 0.0;
 
-  typedef typename stan::partials_return_type<T_y, T_shape, T_inv_scale>::type
-      T_partials_return;
+  typedef partials_return_type_t<T_y, T_shape, T_inv_scale> T_partials_return;
 
   static const char* function = "gamma_lccdf";
 
@@ -57,12 +57,12 @@ typename return_type<T_y, T_shape, T_inv_scale>::type gamma_lccdf(
   using std::log;
   using std::pow;
 
-  VectorBuilder<!is_constant_struct<T_shape>::value, T_partials_return, T_shape>
+  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
       gamma_vec(stan::length(alpha));
-  VectorBuilder<!is_constant_struct<T_shape>::value, T_partials_return, T_shape>
+  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
       digamma_vec(stan::length(alpha));
 
-  if (!is_constant_struct<T_shape>::value) {
+  if (!is_constant_all<T_shape>::value) {
     for (size_t i = 0; i < stan::length(alpha); i++) {
       const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
       gamma_vec[i] = tgamma(alpha_dbl);
@@ -84,16 +84,16 @@ typename return_type<T_y, T_shape, T_inv_scale>::type gamma_lccdf(
 
     P += log(Pn);
 
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n] -= beta_dbl * exp(-beta_dbl * y_dbl)
                                           * pow(beta_dbl * y_dbl, alpha_dbl - 1)
                                           / tgamma(alpha_dbl) / Pn;
-    if (!is_constant_struct<T_shape>::value)
+    if (!is_constant_all<T_shape>::value)
       ops_partials.edge2_.partials_[n]
           += grad_reg_inc_gamma(alpha_dbl, beta_dbl * y_dbl, gamma_vec[n],
                                 digamma_vec[n])
              / Pn;
-    if (!is_constant_struct<T_inv_scale>::value)
+    if (!is_constant_all<T_inv_scale>::value)
       ops_partials.edge3_.partials_[n] -= y_dbl * exp(-beta_dbl * y_dbl)
                                           * pow(beta_dbl * y_dbl, alpha_dbl - 1)
                                           / tgamma(alpha_dbl) / Pn;

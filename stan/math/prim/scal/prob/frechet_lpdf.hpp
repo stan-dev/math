@@ -22,11 +22,11 @@ namespace math {
 // Frechet(y|alpha, sigma)     [y > 0;  alpha > 0;  sigma > 0]
 // FIXME: document
 template <bool propto, typename T_y, typename T_shape, typename T_scale>
-typename return_type<T_y, T_shape, T_scale>::type frechet_lpdf(
-    const T_y& y, const T_shape& alpha, const T_scale& sigma) {
+return_type_t<T_y, T_shape, T_scale> frechet_lpdf(const T_y& y,
+                                                  const T_shape& alpha,
+                                                  const T_scale& sigma) {
   static const char* function = "frechet_lpdf";
-  typedef typename stan::partials_return_type<T_y, T_shape, T_scale>::type
-      T_partials_return;
+  typedef partials_return_type_t<T_y, T_shape, T_scale> T_partials_return;
   using std::log;
   check_positive(function, "Random variable", y);
   check_positive_finite(function, "Shape parameter", alpha);
@@ -96,17 +96,17 @@ typename return_type<T_y, T_shape, T_scale>::type frechet_lpdf(
     if (include_summand<propto, T_y, T_shape, T_scale>::value)
       logp -= sigma_div_y_pow_alpha[n];
 
-    if (!is_constant_struct<T_y>::value) {
+    if (!is_constant_all<T_y>::value) {
       const T_partials_return inv_y_dbl = value_of(inv_y[n]);
       ops_partials.edge1_.partials_[n]
           += -(alpha_dbl + 1.0) * inv_y_dbl
              + alpha_dbl * sigma_div_y_pow_alpha[n] * inv_y_dbl;
     }
-    if (!is_constant_struct<T_shape>::value)
+    if (!is_constant_all<T_shape>::value)
       ops_partials.edge2_.partials_[n]
           += 1.0 / alpha_dbl
              + (1.0 - sigma_div_y_pow_alpha[n]) * (log_sigma[n] - log_y[n]);
-    if (!is_constant_struct<T_scale>::value)
+    if (!is_constant_all<T_scale>::value)
       ops_partials.edge3_.partials_[n] += alpha_dbl / value_of(sigma_vec[n])
                                           * (1 - sigma_div_y_pow_alpha[n]);
   }
@@ -114,8 +114,9 @@ typename return_type<T_y, T_shape, T_scale>::type frechet_lpdf(
 }
 
 template <typename T_y, typename T_shape, typename T_scale>
-inline typename return_type<T_y, T_shape, T_scale>::type frechet_lpdf(
-    const T_y& y, const T_shape& alpha, const T_scale& sigma) {
+inline return_type_t<T_y, T_shape, T_scale> frechet_lpdf(const T_y& y,
+                                                         const T_shape& alpha,
+                                                         const T_scale& sigma) {
   return frechet_lpdf<false>(y, alpha, sigma);
 }
 

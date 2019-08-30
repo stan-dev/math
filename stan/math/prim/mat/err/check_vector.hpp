@@ -6,6 +6,7 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <sstream>
 #include <string>
+#include <typeinfo>
 
 namespace stan {
 namespace math {

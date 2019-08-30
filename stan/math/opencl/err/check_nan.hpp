@@ -2,9 +2,10 @@
 #define STAN_MATH_OPENCL_ERR_CHECK_NAN_HPP
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/matrix_cl.hpp>
-#include <stan/math/opencl/kernels/check_nan.hpp>
-#include <stan/math/opencl/constants.hpp>
+#include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/copy.hpp>
+#include <stan/math/opencl/kernels/check_nan.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 
 #include <vector>
@@ -21,17 +22,18 @@ namespace math {
  * @throw <code>std::domain_error</code> if
  *    any element of the matrix is <code>NaN</code>.
  */
+template <typename T, typename = enable_if_floating_point<T>>
 inline void check_nan(const char* function, const char* name,
-                      const matrix_cl& y) {
+                      const matrix_cl<T>& y) {
   if (y.size() == 0)
     return;
   try {
     int nan_flag = 0;
-    matrix_cl nan_chk(1, 1);
+    matrix_cl<int> nan_chk(1, 1);
     nan_chk = to_matrix_cl(nan_flag);
     opencl_kernels::check_nan(cl::NDRange(y.rows(), y.cols()), y, nan_chk,
                               y.rows(), y.cols());
-    nan_flag = from_matrix_cl<int>(nan_chk);
+    nan_flag = from_matrix_cl_error_code(nan_chk);
     if (nan_flag) {
       domain_error(function, name, "has NaN values", "");
     }

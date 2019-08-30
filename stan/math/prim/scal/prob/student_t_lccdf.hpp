@@ -19,10 +19,9 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_dof, typename T_loc, typename T_scale>
-typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_lccdf(
+return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lccdf(
     const T_y& y, const T_dof& nu, const T_loc& mu, const T_scale& sigma) {
-  typedef typename stan::partials_return_type<T_y, T_dof, T_loc, T_scale>::type
-      T_partials_return;
+  typedef partials_return_type_t<T_y, T_dof, T_loc, T_scale> T_partials_return;
 
   if (size_zero(y, nu, mu, sigma))
     return 0.0;
@@ -58,14 +57,14 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_lccdf(
 
   T_partials_return digammaHalf = 0;
 
-  VectorBuilder<!is_constant_struct<T_dof>::value, T_partials_return, T_dof>
+  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
       digamma_vec(stan::length(nu));
-  VectorBuilder<!is_constant_struct<T_dof>::value, T_partials_return, T_dof>
+  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
       digammaNu_vec(stan::length(nu));
-  VectorBuilder<!is_constant_struct<T_dof>::value, T_partials_return, T_dof>
+  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
       digammaNuPlusHalf_vec(stan::length(nu));
 
-  if (!is_constant_struct<T_dof>::value) {
+  if (!is_constant_all<T_dof>::value) {
     digammaHalf = digamma(0.5);
 
     for (size_t i = 0; i < stan::length(nu); i++) {
@@ -102,11 +101,11 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_lccdf(
 
       P += log(Pn);
 
-      if (!is_constant_struct<T_y>::value)
+      if (!is_constant_all<T_y>::value)
         ops_partials.edge1_.partials_[n]
             += zJacobian * d_ibeta * J * sigma_inv / Pn;
 
-      if (!is_constant_struct<T_dof>::value) {
+      if (!is_constant_all<T_dof>::value) {
         T_partials_return g1 = 0;
         T_partials_return g2 = 0;
 
@@ -118,10 +117,10 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_lccdf(
             -= zJacobian * (d_ibeta * (r / t) * (r / t) + 0.5 * g1) / Pn;
       }
 
-      if (!is_constant_struct<T_loc>::value)
+      if (!is_constant_all<T_loc>::value)
         ops_partials.edge3_.partials_[n]
             -= zJacobian * d_ibeta * J * sigma_inv / Pn;
-      if (!is_constant_struct<T_scale>::value)
+      if (!is_constant_all<T_scale>::value)
         ops_partials.edge4_.partials_[n]
             -= zJacobian * d_ibeta * J * sigma_inv * t / Pn;
 
@@ -137,11 +136,11 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_lccdf(
 
       P += log(Pn);
 
-      if (!is_constant_struct<T_y>::value)
+      if (!is_constant_all<T_y>::value)
         ops_partials.edge1_.partials_[n]
             -= zJacobian * d_ibeta * J * sigma_inv / Pn;
 
-      if (!is_constant_struct<T_dof>::value) {
+      if (!is_constant_all<T_dof>::value) {
         T_partials_return g1 = 0;
         T_partials_return g2 = 0;
 
@@ -153,10 +152,10 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_lccdf(
             -= zJacobian * (-d_ibeta * (r / t) * (r / t) + 0.5 * g2) / Pn;
       }
 
-      if (!is_constant_struct<T_loc>::value)
+      if (!is_constant_all<T_loc>::value)
         ops_partials.edge3_.partials_[n]
             += zJacobian * d_ibeta * J * sigma_inv / Pn;
-      if (!is_constant_struct<T_scale>::value)
+      if (!is_constant_all<T_scale>::value)
         ops_partials.edge4_.partials_[n]
             += zJacobian * d_ibeta * J * sigma_inv * t / Pn;
     }

@@ -37,11 +37,10 @@ namespace math {
  * @tparam T_high Type of upper bound.
  */
 template <bool propto, typename T_y, typename T_low, typename T_high>
-typename return_type<T_y, T_low, T_high>::type uniform_lpdf(
-    const T_y& y, const T_low& alpha, const T_high& beta) {
+return_type_t<T_y, T_low, T_high> uniform_lpdf(const T_y& y, const T_low& alpha,
+                                               const T_high& beta) {
   static const char* function = "uniform_lpdf";
-  typedef typename stan::partials_return_type<T_y, T_low, T_high>::type
-      T_partials_return;
+  typedef partials_return_type_t<T_y, T_low, T_high> T_partials_return;
 
   using std::log;
 
@@ -92,17 +91,18 @@ typename return_type<T_y, T_low, T_high>::type uniform_lpdf(
     if (include_summand<propto, T_low, T_high>::value)
       logp -= log_beta_minus_alpha[n];
 
-    if (!is_constant_struct<T_low>::value)
+    if (!is_constant_all<T_low>::value)
       ops_partials.edge2_.partials_[n] += inv_beta_minus_alpha[n];
-    if (!is_constant_struct<T_high>::value)
+    if (!is_constant_all<T_high>::value)
       ops_partials.edge3_.partials_[n] -= inv_beta_minus_alpha[n];
   }
   return ops_partials.build(logp);
 }
 
 template <typename T_y, typename T_low, typename T_high>
-inline typename return_type<T_y, T_low, T_high>::type uniform_lpdf(
-    const T_y& y, const T_low& alpha, const T_high& beta) {
+inline return_type_t<T_y, T_low, T_high> uniform_lpdf(const T_y& y,
+                                                      const T_low& alpha,
+                                                      const T_high& beta) {
   return uniform_lpdf<false>(y, alpha, beta);
 }
 

@@ -7,12 +7,13 @@
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/mat/fun/typedefs.hpp>
+#include <stan/math/prim/mat/fun/typedefs.hpp>
 
 namespace stan {
 namespace math {
 
 namespace internal {
-template <int TriView, int R1, int C1, int R2, int C2>
+template <Eigen::UpLoType TriView, int R1, int C1, int R2, int C2>
 class mdivide_left_tri_vv_vari : public vari {
  public:
   int M_;  // A.rows() = A.cols() = B.rows()
@@ -44,7 +45,6 @@ class mdivide_left_tri_vv_vari : public vari {
             ChainableStack::instance_->memalloc_.alloc(sizeof(vari *) * B.rows()
                                                        * B.cols()))) {
     using Eigen::Map;
-    using Eigen::Matrix;
 
     size_t pos = 0;
     if (TriView == Eigen::Lower) {
@@ -57,58 +57,54 @@ class mdivide_left_tri_vv_vari : public vari {
           variRefA_[pos++] = A(i, j).vi_;
     }
 
-    pos = 0;
-    for (size_type j = 0; j < M_; j++) {
-      for (size_type i = 0; i < M_; i++) {
-        A_[pos++] = A(i, j).val();
-      }
+    Map<matrix_d> c_map(C_, M_, N_);
+    Map<matrix_d> a_map(A_, M_, M_);
+    a_map = A.val();
+    c_map = B.val();
+    Map<matrix_vi>(variRefB_, M_, N_) = B.vi();
+#ifdef STAN_OPENCL
+    if (A.rows()
+        >= opencl_context.tuning_opts().tri_inverse_size_worth_transfer) {
+      matrix_cl<double> A_cl(a_map, from_eigen_uplo_type(TriView));
+      matrix_cl<double> C_cl(c_map);
+      C_cl = tri_inverse(A_cl) * C_cl;
+      c_map = from_matrix_cl(C_cl);
+    } else {
+#endif
+      c_map = a_map.template triangularView<TriView>().solve(c_map);
+#ifdef STAN_OPENCL
     }
+#endif
 
-    pos = 0;
-    for (size_type j = 0; j < N_; j++) {
-      for (size_type i = 0; i < M_; i++) {
-        variRefB_[pos] = B(i, j).vi_;
-        C_[pos++] = B(i, j).val();
-      }
-    }
-
-    Matrix<double, R1, C2> C(M_, N_);
-    C = Map<Matrix<double, R1, C2> >(C_, M_, N_);
-
-    C = Map<Matrix<double, R1, C1> >(A_, M_, M_)
-            .template triangularView<TriView>()
-            .solve(C);
-
-    pos = 0;
-    for (size_type j = 0; j < N_; j++) {
-      for (size_type i = 0; i < M_; i++) {
-        C_[pos] = C(i, j);
-        variRefC_[pos] = new vari(C_[pos], false);
-        pos++;
-      }
-    }
+    Map<matrix_vi>(variRefC_, M_, N_)
+        = c_map.unaryExpr([](double x) { return new vari(x, false); });
   }
 
   virtual void chain() {
     using Eigen::Map;
-    using Eigen::Matrix;
-    Matrix<double, R1, C1> adjA(M_, M_);
-    Matrix<double, R2, C2> adjB(M_, N_);
-    Matrix<double, R1, C2> adjC(M_, N_);
+    matrix_d adjA;
+    matrix_d adjB;
 
+#ifdef STAN_OPENCL
+    if (M_ >= opencl_context.tuning_opts().tri_inverse_size_worth_transfer) {
+      matrix_cl<double> A_cl(A_, M_, M_, from_eigen_uplo_type(TriView));
+      matrix_cl<double> C_cl(C_, M_, N_);
+      matrix_cl<double> variRefC_cl(Map<matrix_vi>(variRefC_, M_, N_).adj());
+      matrix_cl<double> adjB_cl = transpose(tri_inverse(A_cl)) * variRefC_cl;
+      matrix_cl<double> adjA_cl = multiply(adjB_cl * transpose(C_cl), -1.0);
+      adjA = from_matrix_cl(adjA_cl);
+      adjB = from_matrix_cl(adjB_cl);
+    } else {
+#endif
+      adjB = Map<matrix_d>(A_, M_, M_)
+                 .template triangularView<TriView>()
+                 .transpose()
+                 .solve(Map<matrix_vi>(variRefC_, M_, N_).adj());
+      adjA = -adjB * Map<matrix_d>(C_, M_, N_).transpose();
+#ifdef STAN_OPENCL
+    }
+#endif
     size_t pos = 0;
-    for (size_type j = 0; j < adjC.cols(); j++)
-      for (size_type i = 0; i < adjC.rows(); i++)
-        adjC(i, j) = variRefC_[pos++]->adj_;
-
-    adjB = Map<Matrix<double, R1, C1> >(A_, M_, M_)
-               .template triangularView<TriView>()
-               .transpose()
-               .solve(adjC);
-    adjA.noalias()
-        = -adjB * Map<Matrix<double, R1, C2> >(C_, M_, N_).transpose();
-
-    pos = 0;
     if (TriView == Eigen::Lower) {
       for (size_type j = 0; j < adjA.cols(); j++)
         for (size_type i = j; i < adjA.rows(); i++)
@@ -118,15 +114,11 @@ class mdivide_left_tri_vv_vari : public vari {
         for (size_type i = 0; i < j + 1; i++)
           variRefA_[pos++]->adj_ += adjA(i, j);
     }
-
-    pos = 0;
-    for (size_type j = 0; j < adjB.cols(); j++)
-      for (size_type i = 0; i < adjB.rows(); i++)
-        variRefB_[pos++]->adj_ += adjB(i, j);
+    Map<matrix_vi>(variRefB_, M_, N_).adj() += adjB;
   }
 };
 
-template <int TriView, int R1, int C1, int R2, int C2>
+template <Eigen::UpLoType TriView, int R1, int C1, int R2, int C2>
 class mdivide_left_tri_dv_vari : public vari {
  public:
   int M_;  // A.rows() = A.cols() = B.rows()
@@ -154,64 +146,54 @@ class mdivide_left_tri_dv_vari : public vari {
             ChainableStack::instance_->memalloc_.alloc(sizeof(vari *) * B.rows()
                                                        * B.cols()))) {
     using Eigen::Map;
-    using Eigen::Matrix;
 
-    size_t pos = 0;
-    for (size_type j = 0; j < M_; j++) {
-      for (size_type i = 0; i < M_; i++) {
-        A_[pos++] = A(i, j);
-      }
+    Map<matrix_d>(A_, M_, M_) = A;
+    Map<matrix_vi>(variRefB_, M_, N_) = B.vi();
+    Map<matrix_d> c_map(C_, M_, N_);
+    c_map = B.val();
+
+#ifdef STAN_OPENCL
+    if (A.rows()
+        >= opencl_context.tuning_opts().tri_inverse_size_worth_transfer) {
+      matrix_cl<double> A_cl(A, from_eigen_uplo_type(TriView));
+      matrix_cl<double> C_cl(c_map);
+      C_cl = tri_inverse(A_cl) * C_cl;
+      c_map = from_matrix_cl(C_cl);
+    } else {
+#endif
+      c_map = Map<matrix_d>(A_, M_, M_)
+                  .template triangularView<TriView>()
+                  .solve(c_map);
+#ifdef STAN_OPENCL
     }
-
-    pos = 0;
-    for (size_type j = 0; j < N_; j++) {
-      for (size_type i = 0; i < M_; i++) {
-        variRefB_[pos] = B(i, j).vi_;
-        C_[pos++] = B(i, j).val();
-      }
-    }
-
-    Matrix<double, R1, C2> C(M_, N_);
-    C = Map<Matrix<double, R1, C2> >(C_, M_, N_);
-
-    C = Map<Matrix<double, R1, C1> >(A_, M_, M_)
-            .template triangularView<TriView>()
-            .solve(C);
-
-    pos = 0;
-    for (size_type j = 0; j < N_; j++) {
-      for (size_type i = 0; i < M_; i++) {
-        C_[pos] = C(i, j);
-        variRefC_[pos] = new vari(C_[pos], false);
-        pos++;
-      }
-    }
+#endif
+    Map<matrix_vi>(variRefC_, M_, N_)
+        = c_map.unaryExpr([](double x) { return new vari(x, false); });
   }
 
   virtual void chain() {
     using Eigen::Map;
-    using Eigen::Matrix;
-    Matrix<double, R2, C2> adjB(M_, N_);
-    Matrix<double, R1, C2> adjC(M_, N_);
-
-    size_t pos = 0;
-    for (size_type j = 0; j < adjC.cols(); j++)
-      for (size_type i = 0; i < adjC.rows(); i++)
-        adjC(i, j) = variRefC_[pos++]->adj_;
-
-    adjB = Map<Matrix<double, R1, C1> >(A_, M_, M_)
-               .template triangularView<TriView>()
-               .transpose()
-               .solve(adjC);
-
-    pos = 0;
-    for (size_type j = 0; j < adjB.cols(); j++)
-      for (size_type i = 0; i < adjB.rows(); i++)
-        variRefB_[pos++]->adj_ += adjB(i, j);
+#ifdef STAN_OPENCL
+    if (M_ >= opencl_context.tuning_opts().tri_inverse_size_worth_transfer) {
+      matrix_cl<double> A_cl(A_, M_, M_, from_eigen_uplo_type(TriView));
+      matrix_cl<double> C_cl(Map<matrix_vi>(variRefC_, M_, N_).adj());
+      A_cl = transpose(tri_inverse(A_cl));
+      matrix_cl<double> res_cl = A_cl * C_cl;
+      Map<matrix_vi>(variRefB_, M_, N_).adj() += from_matrix_cl(res_cl);
+    } else {
+#endif
+      Map<matrix_vi>(variRefB_, M_, N_).adj()
+          += Map<matrix_d>(A_, M_, M_)
+                 .template triangularView<TriView>()
+                 .transpose()
+                 .solve(Map<matrix_vi>(variRefC_, M_, N_).adj());
+#ifdef STAN_OPENCL
+    }
+#endif
   }
 };
 
-template <int TriView, int R1, int C1, int R2, int C2>
+template <Eigen::UpLoType TriView, int R1, int C1, int R2, int C2>
 class mdivide_left_tri_vd_vari : public vari {
  public:
   int M_;  // A.rows() = A.cols() = B.rows()
@@ -251,27 +233,23 @@ class mdivide_left_tri_vd_vari : public vari {
         for (size_type i = 0; i < j + 1; i++)
           variRefA_[pos++] = A(i, j).vi_;
     }
-
-    pos = 0;
-    for (size_type j = 0; j < M_; j++) {
-      for (size_type i = 0; i < M_; i++) {
-        A_[pos++] = A(i, j).val();
-      }
+    Map<matrix_d> Ad(A_, M_, M_);
+    Map<matrix_d> Cd(C_, M_, N_);
+    Ad = A.val();
+#ifdef STAN_OPENCL
+    if (M_ >= opencl_context.tuning_opts().tri_inverse_size_worth_transfer) {
+      matrix_cl<double> A_cl(Ad, from_eigen_uplo_type(TriView));
+      matrix_cl<double> B_cl(B);
+      B_cl = tri_inverse(A_cl) * B_cl;
+      Cd = from_matrix_cl(B_cl);
+    } else {
+#endif
+      Cd = Ad.template triangularView<TriView>().solve(B);
+#ifdef STAN_OPENCL
     }
-
-    Matrix<double, R1, C2> C(M_, N_);
-    C = Map<Matrix<double, R1, C1> >(A_, M_, M_)
-            .template triangularView<TriView>()
-            .solve(B);
-
-    pos = 0;
-    for (size_type j = 0; j < N_; j++) {
-      for (size_type i = 0; i < M_; i++) {
-        C_[pos] = C(i, j);
-        variRefC_[pos] = new vari(C_[pos], false);
-        pos++;
-      }
-    }
+#endif
+    Map<matrix_vi>(variRefC_, M_, N_)
+        = Cd.unaryExpr([](double x) { return new vari(x, false); });
   }
 
   virtual void chain() {
@@ -280,19 +258,28 @@ class mdivide_left_tri_vd_vari : public vari {
     Matrix<double, R1, C1> adjA(M_, M_);
     Matrix<double, R1, C2> adjC(M_, N_);
 
+    adjC = Map<matrix_vi>(variRefC_, M_, N_).adj();
+#ifdef STAN_OPENCL
+    if (M_ >= opencl_context.tuning_opts().tri_inverse_size_worth_transfer) {
+      matrix_cl<double> A_cl(A_, M_, M_, from_eigen_uplo_type(TriView));
+      matrix_cl<double> C_cl(C_, M_, N_);
+      matrix_cl<double> adjC_cl(adjC);
+      A_cl = transpose(tri_inverse(A_cl));
+      matrix_cl<double> adjA_cl
+          = multiply(A_cl * (adjC_cl * transpose(C_cl)), -1.0);
+      adjA = from_matrix_cl(adjA_cl);
+    } else {
+#endif
+      adjA.noalias()
+          = -Map<Matrix<double, R1, C1> >(A_, M_, M_)
+                 .template triangularView<TriView>()
+                 .transpose()
+                 .solve(adjC
+                        * Map<Matrix<double, R1, C2> >(C_, M_, N_).transpose());
+#ifdef STAN_OPENCL
+    }
+#endif
     size_t pos = 0;
-    for (size_type j = 0; j < adjC.cols(); j++)
-      for (size_type i = 0; i < adjC.rows(); i++)
-        adjC(i, j) = variRefC_[pos++]->adj_;
-
-    adjA.noalias()
-        = -Map<Matrix<double, R1, C1> >(A_, M_, M_)
-               .template triangularView<TriView>()
-               .transpose()
-               .solve(adjC
-                      * Map<Matrix<double, R1, C2> >(C_, M_, N_).transpose());
-
-    pos = 0;
     if (TriView == Eigen::Lower) {
       for (size_type j = 0; j < adjA.cols(); j++)
         for (size_type i = j; i < adjA.rows(); i++)
@@ -306,7 +293,7 @@ class mdivide_left_tri_vd_vari : public vari {
 };
 }  // namespace internal
 
-template <int TriView, int R1, int C1, int R2, int C2>
+template <Eigen::UpLoType TriView, int R1, int C1, int R2, int C2>
 inline Eigen::Matrix<var, R1, C2> mdivide_left_tri(
     const Eigen::Matrix<var, R1, C1> &A, const Eigen::Matrix<var, R2, C2> &b) {
   Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
@@ -321,14 +308,12 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_tri(
   internal::mdivide_left_tri_vv_vari<TriView, R1, C1, R2, C2> *baseVari
       = new internal::mdivide_left_tri_vv_vari<TriView, R1, C1, R2, C2>(A, b);
 
-  size_t pos = 0;
-  for (size_type j = 0; j < res.cols(); j++)
-    for (size_type i = 0; i < res.rows(); i++)
-      res(i, j).vi_ = baseVari->variRefC_[pos++];
+  res.vi()
+      = Eigen::Map<matrix_vi>(&(baseVari->variRefC_[0]), b.rows(), b.cols());
 
   return res;
 }
-template <int TriView, int R1, int C1, int R2, int C2>
+template <Eigen::UpLoType TriView, int R1, int C1, int R2, int C2>
 inline Eigen::Matrix<var, R1, C2> mdivide_left_tri(
     const Eigen::Matrix<double, R1, C1> &A,
     const Eigen::Matrix<var, R2, C2> &b) {
@@ -344,14 +329,12 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_tri(
   internal::mdivide_left_tri_dv_vari<TriView, R1, C1, R2, C2> *baseVari
       = new internal::mdivide_left_tri_dv_vari<TriView, R1, C1, R2, C2>(A, b);
 
-  size_t pos = 0;
-  for (size_type j = 0; j < res.cols(); j++)
-    for (size_type i = 0; i < res.rows(); i++)
-      res(i, j).vi_ = baseVari->variRefC_[pos++];
+  res.vi()
+      = Eigen::Map<matrix_vi>(&(baseVari->variRefC_[0]), b.rows(), b.cols());
 
   return res;
 }
-template <int TriView, int R1, int C1, int R2, int C2>
+template <Eigen::UpLoType TriView, int R1, int C1, int R2, int C2>
 inline Eigen::Matrix<var, R1, C2> mdivide_left_tri(
     const Eigen::Matrix<var, R1, C1> &A,
     const Eigen::Matrix<double, R2, C2> &b) {
@@ -367,10 +350,8 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_tri(
   internal::mdivide_left_tri_vd_vari<TriView, R1, C1, R2, C2> *baseVari
       = new internal::mdivide_left_tri_vd_vari<TriView, R1, C1, R2, C2>(A, b);
 
-  size_t pos = 0;
-  for (size_type j = 0; j < res.cols(); j++)
-    for (size_type i = 0; i < res.rows(); i++)
-      res(i, j).vi_ = baseVari->variRefC_[pos++];
+  res.vi()
+      = Eigen::Map<matrix_vi>(&(baseVari->variRefC_[0]), b.rows(), b.cols());
 
   return res;
 }

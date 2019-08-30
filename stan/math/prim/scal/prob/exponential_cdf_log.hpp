@@ -11,8 +11,8 @@ namespace math {
  * @deprecated use <code>exponential_lcdf</code>
  */
 template <typename T_y, typename T_inv_scale>
-typename return_type<T_y, T_inv_scale>::type exponential_cdf_log(
-    const T_y& y, const T_inv_scale& beta) {
+return_type_t<T_y, T_inv_scale> exponential_cdf_log(const T_y& y,
+                                                    const T_inv_scale& beta) {
   return exponential_lcdf<T_y, T_inv_scale>(y, beta);
 }
 

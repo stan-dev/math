@@ -28,11 +28,11 @@ namespace math {
  * @throw std::domain_error if y is negative, alpha sigma is nonpositive
  */
 template <bool propto, typename T_y, typename T_shape, typename T_scale>
-typename return_type<T_y, T_shape, T_scale>::type weibull_lpdf(
-    const T_y& y, const T_shape& alpha, const T_scale& sigma) {
+return_type_t<T_y, T_shape, T_scale> weibull_lpdf(const T_y& y,
+                                                  const T_shape& alpha,
+                                                  const T_scale& sigma) {
   static const char* function = "weibull_lpdf";
-  typedef typename stan::partials_return_type<T_y, T_shape, T_scale>::type
-      T_partials_return;
+  typedef partials_return_type_t<T_y, T_shape, T_scale> T_partials_return;
 
   using std::log;
   check_finite(function, "Random variable", y);
@@ -107,17 +107,17 @@ typename return_type<T_y, T_shape, T_scale>::type weibull_lpdf(
     if (include_summand<propto, T_y, T_shape, T_scale>::value)
       logp -= y_div_sigma_pow_alpha[n];
 
-    if (!is_constant_struct<T_y>::value) {
+    if (!is_constant_all<T_y>::value) {
       const T_partials_return inv_y = 1.0 / value_of(y_vec[n]);
       ops_partials.edge1_.partials_[n]
           += (alpha_dbl - 1.0) * inv_y
              - alpha_dbl * y_div_sigma_pow_alpha[n] * inv_y;
     }
-    if (!is_constant_struct<T_shape>::value)
+    if (!is_constant_all<T_shape>::value)
       ops_partials.edge2_.partials_[n]
           += 1.0 / alpha_dbl
              + (1.0 - y_div_sigma_pow_alpha[n]) * (log_y[n] - log_sigma[n]);
-    if (!is_constant_struct<T_scale>::value)
+    if (!is_constant_all<T_scale>::value)
       ops_partials.edge3_.partials_[n]
           += alpha_dbl * inv_sigma[n] * (y_div_sigma_pow_alpha[n] - 1.0);
   }
@@ -125,8 +125,9 @@ typename return_type<T_y, T_shape, T_scale>::type weibull_lpdf(
 }
 
 template <typename T_y, typename T_shape, typename T_scale>
-inline typename return_type<T_y, T_shape, T_scale>::type weibull_lpdf(
-    const T_y& y, const T_shape& alpha, const T_scale& sigma) {
+inline return_type_t<T_y, T_shape, T_scale> weibull_lpdf(const T_y& y,
+                                                         const T_shape& alpha,
+                                                         const T_scale& sigma) {
   return weibull_lpdf<false>(y, alpha, sigma);
 }
 

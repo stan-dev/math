@@ -19,7 +19,7 @@ namespace math {
 // NegBinomial(n|eta, phi)  [phi > 0;  n >= 0]
 template <bool propto, typename T_n, typename T_log_location,
           typename T_precision>
-typename return_type<T_log_location, T_precision>::type neg_binomial_2_log_lpmf(
+return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
     const T_n& n, const T_log_location& eta, const T_precision& phi) {
   typedef
       typename stan::partials_return_type<T_n, T_log_location,
@@ -87,10 +87,10 @@ typename return_type<T_log_location, T_precision>::type neg_binomial_2_log_lpmf(
     if (include_summand<propto, T_precision>::value)
       logp += lgamma(n_plus_phi[i]);
 
-    if (!is_constant_struct<T_log_location>::value)
+    if (!is_constant_all<T_log_location>::value)
       ops_partials.edge1_.partials_[i]
           += n_vec[i] - n_plus_phi[i] / (phi__[i] / exp(eta__[i]) + 1.0);
-    if (!is_constant_struct<T_precision>::value)
+    if (!is_constant_all<T_precision>::value)
       ops_partials.edge2_.partials_[i]
           += 1.0 - n_plus_phi[i] / (exp(eta__[i]) + phi__[i]) + log_phi[i]
              - logsumexp_eta_logphi[i] - digamma(phi__[i])
@@ -100,9 +100,8 @@ typename return_type<T_log_location, T_precision>::type neg_binomial_2_log_lpmf(
 }
 
 template <typename T_n, typename T_log_location, typename T_precision>
-inline typename return_type<T_log_location, T_precision>::type
-neg_binomial_2_log_lpmf(const T_n& n, const T_log_location& eta,
-                        const T_precision& phi) {
+inline return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
+    const T_n& n, const T_log_location& eta, const T_precision& phi) {
   return neg_binomial_2_log_lpmf<false>(n, eta, phi);
 }
 }  // namespace math

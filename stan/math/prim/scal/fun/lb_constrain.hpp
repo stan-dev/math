@@ -4,8 +4,8 @@
 #include <stan/math/prim/meta.hpp>
 #include <boost/math/tools/promotion.hpp>
 #include <stan/math/prim/scal/fun/identity_constrain.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <cmath>
-#include <limits>
 
 namespace stan {
 namespace math {
@@ -30,10 +30,9 @@ namespace math {
  * @return lower bound constrained value correspdonding to inputs
  */
 template <typename T, typename L>
-inline typename boost::math::tools::promote_args<T, L>::type lb_constrain(
-    const T& x, const L& lb) {
+inline return_type_t<T, L> lb_constrain(const T& x, const L& lb) {
   using std::exp;
-  if (lb == -std::numeric_limits<double>::infinity())
+  if (lb == NEGATIVE_INFTY)
     return identity_constrain(x);
   return exp(x) + lb;
 }
@@ -55,10 +54,9 @@ inline typename boost::math::tools::promote_args<T, L>::type lb_constrain(
  * @return lower-bound constrained value corresponding to inputs
  */
 template <typename T, typename L>
-inline typename boost::math::tools::promote_args<T, L>::type lb_constrain(
-    const T& x, const L& lb, T& lp) {
+inline return_type_t<T, L> lb_constrain(const T& x, const L& lb, T& lp) {
   using std::exp;
-  if (lb == -std::numeric_limits<double>::infinity())
+  if (lb == NEGATIVE_INFTY)
     return identity_constrain(x, lp);
   lp += x;
   return exp(x) + lb;

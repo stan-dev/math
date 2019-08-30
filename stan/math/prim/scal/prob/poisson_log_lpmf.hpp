@@ -17,10 +17,9 @@ namespace math {
 
 // PoissonLog(n|alpha)  [n >= 0]   = Poisson(n|exp(alpha))
 template <bool propto, typename T_n, typename T_log_rate>
-typename return_type<T_log_rate>::type poisson_log_lpmf(
-    const T_n& n, const T_log_rate& alpha) {
-  typedef typename stan::partials_return_type<T_n, T_log_rate>::type
-      T_partials_return;
+return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
+                                           const T_log_rate& alpha) {
+  typedef partials_return_type_t<T_n, T_log_rate> T_partials_return;
 
   static const char* function = "poisson_log_lpmf";
 
@@ -71,15 +70,15 @@ typename return_type<T_log_rate>::type poisson_log_lpmf(
         logp += n_vec[i] * value_of(alpha_vec[i]) - exp_alpha[i];
     }
 
-    if (!is_constant_struct<T_log_rate>::value)
+    if (!is_constant_all<T_log_rate>::value)
       ops_partials.edge1_.partials_[i] += n_vec[i] - exp_alpha[i];
   }
   return ops_partials.build(logp);
 }
 
 template <typename T_n, typename T_log_rate>
-inline typename return_type<T_log_rate>::type poisson_log_lpmf(
-    const T_n& n, const T_log_rate& alpha) {
+inline return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
+                                                  const T_log_rate& alpha) {
   return poisson_log_lpmf<false>(n, alpha);
 }
 

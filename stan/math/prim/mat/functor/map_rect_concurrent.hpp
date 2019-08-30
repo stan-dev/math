@@ -4,7 +4,6 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 
-#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/err/invalid_argument.hpp>
 #include <boost/lexical_cast.hpp>
 
@@ -69,8 +68,7 @@ inline int get_num_threads(int num_jobs) {
 
 template <int call_id, typename F, typename T_shared_param,
           typename T_job_param>
-Eigen::Matrix<typename stan::return_type<T_shared_param, T_job_param>::type,
-              Eigen::Dynamic, 1>
+Eigen::Matrix<return_type_t<T_shared_param, T_job_param>, Eigen::Dynamic, 1>
 map_rect_concurrent(
     const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
     const std::vector<Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>&

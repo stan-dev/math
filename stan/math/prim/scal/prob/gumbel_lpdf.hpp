@@ -29,11 +29,10 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
-typename return_type<T_y, T_loc, T_scale>::type gumbel_lpdf(
-    const T_y& y, const T_loc& mu, const T_scale& beta) {
+return_type_t<T_y, T_loc, T_scale> gumbel_lpdf(const T_y& y, const T_loc& mu,
+                                               const T_scale& beta) {
   static const char* function = "gumbel_lpdf";
-  typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
-      T_partials_return;
+  typedef partials_return_type_t<T_y, T_loc, T_scale> T_partials_return;
 
   using std::exp;
   using std::log;
@@ -82,11 +81,11 @@ typename return_type<T_y, T_loc, T_scale>::type gumbel_lpdf(
       logp += -y_minus_mu_over_beta - exp(-y_minus_mu_over_beta);
 
     T_partials_return scaled_diff = inv_beta[n] * exp(-y_minus_mu_over_beta);
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n] -= inv_beta[n] - scaled_diff;
-    if (!is_constant_struct<T_loc>::value)
+    if (!is_constant_all<T_loc>::value)
       ops_partials.edge2_.partials_[n] += inv_beta[n] - scaled_diff;
-    if (!is_constant_struct<T_scale>::value)
+    if (!is_constant_all<T_scale>::value)
       ops_partials.edge3_.partials_[n] += -inv_beta[n]
                                           + y_minus_mu_over_beta * inv_beta[n]
                                           - scaled_diff * y_minus_mu_over_beta;
@@ -95,8 +94,9 @@ typename return_type<T_y, T_loc, T_scale>::type gumbel_lpdf(
 }
 
 template <typename T_y, typename T_loc, typename T_scale>
-inline typename return_type<T_y, T_loc, T_scale>::type gumbel_lpdf(
-    const T_y& y, const T_loc& mu, const T_scale& beta) {
+inline return_type_t<T_y, T_loc, T_scale> gumbel_lpdf(const T_y& y,
+                                                      const T_loc& mu,
+                                                      const T_scale& beta) {
   return gumbel_lpdf<false>(y, mu, beta);
 }
 

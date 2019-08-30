@@ -15,11 +15,10 @@ namespace math {
 
 // Logistic(y|mu, sigma)    [sigma > 0]
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
-typename return_type<T_y, T_loc, T_scale>::type logistic_lpdf(
-    const T_y& y, const T_loc& mu, const T_scale& sigma) {
+return_type_t<T_y, T_loc, T_scale> logistic_lpdf(const T_y& y, const T_loc& mu,
+                                                 const T_scale& sigma) {
   static const char* function = "logistic_lpdf";
-  typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
-      T_partials_return;
+  typedef partials_return_type_t<T_y, T_loc, T_scale> T_partials_return;
 
   using std::exp;
   using std::log;
@@ -55,13 +54,12 @@ typename return_type<T_y, T_loc, T_scale>::type logistic_lpdf(
       log_sigma[i] = log(value_of(sigma_vec[i]));
   }
 
-  VectorBuilder<!is_constant_struct<T_loc>::value, T_partials_return, T_loc,
+  VectorBuilder<!is_constant_all<T_loc>::value, T_partials_return, T_loc,
                 T_scale>
       exp_mu_div_sigma(max_size(mu, sigma));
-  VectorBuilder<!is_constant_struct<T_loc>::value, T_partials_return, T_y,
-                T_scale>
+  VectorBuilder<!is_constant_all<T_loc>::value, T_partials_return, T_y, T_scale>
       exp_y_div_sigma(max_size(y, sigma));
-  if (!is_constant_struct<T_loc>::value) {
+  if (!is_constant_all<T_loc>::value) {
     for (size_t n = 0; n < max_size(mu, sigma); n++)
       exp_mu_div_sigma[n] = exp(value_of(mu_vec[n]) / value_of(sigma_vec[n]));
     for (size_t n = 0; n < max_size(y, sigma); n++)
@@ -78,7 +76,7 @@ typename return_type<T_y, T_loc, T_scale>::type logistic_lpdf(
     if (include_summand<propto, T_y, T_loc, T_scale>::value)
       exp_m_y_minus_mu_div_sigma = exp(-y_minus_mu_div_sigma);
     T_partials_return inv_1p_exp_y_minus_mu_div_sigma(0);
-    if (contains_nonconstant_struct<T_y, T_scale>::value)
+    if (!is_constant_all<T_y, T_scale>::value)
       inv_1p_exp_y_minus_mu_div_sigma = 1 / (1 + exp(y_minus_mu_div_sigma));
 
     if (include_summand<propto, T_y, T_loc, T_scale>::value)
@@ -88,16 +86,16 @@ typename return_type<T_y, T_loc, T_scale>::type logistic_lpdf(
     if (include_summand<propto, T_y, T_loc, T_scale>::value)
       logp -= 2.0 * log1p(exp_m_y_minus_mu_div_sigma);
 
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value)
       ops_partials.edge1_.partials_[n]
           += (2 * inv_1p_exp_y_minus_mu_div_sigma - 1) * inv_sigma[n];
-    if (!is_constant_struct<T_loc>::value)
+    if (!is_constant_all<T_loc>::value)
       ops_partials.edge2_.partials_[n]
           += (1
               - 2 * exp_mu_div_sigma[n]
                     / (exp_mu_div_sigma[n] + exp_y_div_sigma[n]))
              * inv_sigma[n];
-    if (!is_constant_struct<T_scale>::value)
+    if (!is_constant_all<T_scale>::value)
       ops_partials.edge3_.partials_[n]
           += ((1 - 2 * inv_1p_exp_y_minus_mu_div_sigma) * y_minus_mu
                   * inv_sigma[n]
@@ -108,8 +106,9 @@ typename return_type<T_y, T_loc, T_scale>::type logistic_lpdf(
 }
 
 template <typename T_y, typename T_loc, typename T_scale>
-inline typename return_type<T_y, T_loc, T_scale>::type logistic_lpdf(
-    const T_y& y, const T_loc& mu, const T_scale& sigma) {
+inline return_type_t<T_y, T_loc, T_scale> logistic_lpdf(const T_y& y,
+                                                        const T_loc& mu,
+                                                        const T_scale& sigma) {
   return logistic_lpdf<false>(y, mu, sigma);
 }
 

@@ -5,7 +5,7 @@
 #include <stan/math/rev/core/vv_vari.hpp>
 #include <stan/math/rev/core/vd_vari.hpp>
 #include <stan/math/rev/core/dv_vari.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <stan/math/prim/scal/fun/is_any_nan.hpp>
 #include <limits>
 
 namespace stan {
@@ -18,7 +18,7 @@ class divide_vv_vari : public op_vv_vari {
   divide_vv_vari(vari* avi, vari* bvi)
       : op_vv_vari(avi->val_ / bvi->val_, avi, bvi) {}
   void chain() {
-    if (unlikely(is_nan(avi_->val_) || is_nan(bvi_->val_))) {
+    if (unlikely(is_any_nan(avi_->val_, bvi_->val_))) {
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
       bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
     } else {
@@ -32,7 +32,7 @@ class divide_vd_vari : public op_vd_vari {
  public:
   divide_vd_vari(vari* avi, double b) : op_vd_vari(avi->val_ / b, avi, b) {}
   void chain() {
-    if (unlikely(is_nan(avi_->val_) || is_nan(bd_)))
+    if (unlikely(is_any_nan(avi_->val_, bd_)))
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
     else
       avi_->adj_ += adj_ / bd_;

@@ -36,11 +36,11 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_n, typename T_N, typename T_size1, typename T_size2>
-typename return_type<T_size1, T_size2>::type beta_binomial_lcdf(
-    const T_n& n, const T_N& N, const T_size1& alpha, const T_size2& beta) {
+return_type_t<T_size1, T_size2> beta_binomial_lcdf(const T_n& n, const T_N& N,
+                                                   const T_size1& alpha,
+                                                   const T_size2& beta) {
   static const char* function = "beta_binomial_lcdf";
-  typedef typename stan::partials_return_type<T_n, T_N, T_size1, T_size2>::type
-      T_partials_return;
+  typedef partials_return_type_t<T_n, T_N, T_size1, T_size2> T_partials_return;
 
   if (size_zero(n, N, alpha, beta))
     return 0.0;
@@ -108,19 +108,19 @@ typename return_type<T_size1, T_size2>::type beta_binomial_lcdf(
     T_partials_return digammaOne = 0;
     T_partials_return digammaTwo = 0;
 
-    if (contains_nonconstant_struct<T_size1, T_size2>::value) {
+    if (!is_constant_all<T_size1, T_size2>::value) {
       digammaOne = digamma(mu + nu);
       digammaTwo = digamma(alpha_dbl + beta_dbl);
       grad_F32(dF, (T_partials_return)1, mu, -N_dbl + n_dbl + 1, n_dbl + 2,
                1 - nu, (T_partials_return)1);
     }
-    if (!is_constant_struct<T_size1>::value) {
+    if (!is_constant_all<T_size1>::value) {
       const T_partials_return g = -C
                                   * (digamma(mu) - digammaOne + dF[1] / F
                                      - digamma(alpha_dbl) + digammaTwo);
       ops_partials.edge1_.partials_[i] += g / Pi;
     }
-    if (!is_constant_struct<T_size2>::value) {
+    if (!is_constant_all<T_size2>::value) {
       const T_partials_return g = -C
                                   * (digamma(nu) - digammaOne - dF[4] / F
                                      - digamma(beta_dbl) + digammaTwo);

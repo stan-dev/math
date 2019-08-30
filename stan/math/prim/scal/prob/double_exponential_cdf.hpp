@@ -27,11 +27,10 @@ namespace math {
  *  or sigma is nonpositive
  */
 template <typename T_y, typename T_loc, typename T_scale>
-typename return_type<T_y, T_loc, T_scale>::type double_exponential_cdf(
+return_type_t<T_y, T_loc, T_scale> double_exponential_cdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma) {
   static const char* function = "double_exponential_cdf";
-  typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
-      T_partials_return;
+  typedef partials_return_type_t<T_y, T_loc, T_scale> T_partials_return;
 
   if (size_zero(y, mu, sigma))
     return 1.0;
@@ -73,20 +72,20 @@ typename return_type<T_y, T_loc, T_scale>::type double_exponential_cdf(
     const T_partials_return inv_sigma = 1.0 / sigma_dbl;
 
     if (y_dbl < mu_dbl) {
-      if (!is_constant_struct<T_y>::value)
+      if (!is_constant_all<T_y>::value)
         ops_partials.edge1_.partials_[n] += inv_sigma * cdf;
-      if (!is_constant_struct<T_loc>::value)
+      if (!is_constant_all<T_loc>::value)
         ops_partials.edge2_.partials_[n] -= inv_sigma * cdf;
-      if (!is_constant_struct<T_scale>::value)
+      if (!is_constant_all<T_scale>::value)
         ops_partials.edge3_.partials_[n] -= scaled_diff * inv_sigma * cdf;
     } else {
       const T_partials_return rep_deriv
           = cdf * inv_sigma / (2.0 * exp_scaled_diff - 1.0);
-      if (!is_constant_struct<T_y>::value)
+      if (!is_constant_all<T_y>::value)
         ops_partials.edge1_.partials_[n] += rep_deriv;
-      if (!is_constant_struct<T_loc>::value)
+      if (!is_constant_all<T_loc>::value)
         ops_partials.edge2_.partials_[n] -= rep_deriv;
-      if (!is_constant_struct<T_scale>::value)
+      if (!is_constant_all<T_scale>::value)
         ops_partials.edge3_.partials_[n] -= rep_deriv * scaled_diff;
     }
   }

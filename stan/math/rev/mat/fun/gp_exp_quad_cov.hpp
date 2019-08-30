@@ -206,12 +206,11 @@ class gp_exp_quad_cov_vari<T_x, double, T_l> : public vari {
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
  */
-template <typename T_x>
-inline typename std::enable_if<
-    std::is_same<typename scalar_type<T_x>::type, double>::value,
-    Eigen::Matrix<var, -1, -1>>::type
-gp_exp_quad_cov(const std::vector<T_x> &x, const var &sigma,
-                const var &length_scale) {
+template <typename T_x,
+          typename = enable_if_arithmetic<typename scalar_type<T_x>::type>>
+inline Eigen::Matrix<var, -1, -1> gp_exp_quad_cov(const std::vector<T_x> &x,
+                                                  const var &sigma,
+                                                  const var &length_scale) {
   check_positive("gp_exp_quad_cov", "sigma", sigma);
   check_positive("gp_exp_quad_cov", "length_scale", length_scale);
   size_t x_size = x.size();
@@ -249,12 +248,11 @@ gp_exp_quad_cov(const std::vector<T_x> &x, const var &sigma,
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
  */
-template <typename T_x>
-inline typename std::enable_if<
-    std::is_same<typename scalar_type<T_x>::type, double>::value,
-    Eigen::Matrix<var, -1, -1>>::type
-gp_exp_quad_cov(const std::vector<T_x> &x, double sigma,
-                const var &length_scale) {
+template <typename T_x,
+          typename = enable_if_arithmetic<typename scalar_type<T_x>::type>>
+inline Eigen::Matrix<var, -1, -1> gp_exp_quad_cov(const std::vector<T_x> &x,
+                                                  double sigma,
+                                                  const var &length_scale) {
   check_positive("gp_exp_quad_cov", "marginal variance", sigma);
   check_positive("gp_exp_quad_cov", "length-scale", length_scale);
   size_t x_size = x.size();

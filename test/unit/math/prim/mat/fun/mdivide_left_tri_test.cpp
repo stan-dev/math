@@ -2,10 +2,7 @@
 #include <gtest/gtest.h>
 
 #ifdef STAN_OPENCL
-#include <stan/math/opencl/opencl_context.hpp>
-#include <stan/math/opencl/multiply.hpp>
-#include <stan/math/opencl/copy.hpp>
-#include <stan/math/opencl/tri_inverse.hpp>
+#include <stan/math/opencl/opencl.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #endif
 
