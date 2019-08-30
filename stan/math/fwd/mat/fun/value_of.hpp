@@ -5,6 +5,7 @@
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/value_of_rec.hpp>
+#include <utility>
 
 namespace stan {
 namespace math {
@@ -22,9 +23,9 @@ namespace math {
  * @return Matrix of values
  **/
 template <typename T, enable_if_eigen<T>* = nullptr,
-          enable_if_fvar<scalar_type_t<std::decay_t<T>>>* = nullptr>
+          enable_if_fvar<scalar_type_decay_t<T>>* = nullptr>
 inline auto value_of(T&& x) {
-  return value_of(x.val().eval()).eval();
+  return value_of(std::forward<T>(x).val().eval()).eval();
 }
 
 }  // namespace math

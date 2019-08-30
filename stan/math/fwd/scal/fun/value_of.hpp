@@ -5,6 +5,8 @@
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
+#include <type_traits>
+#include <utility>
 
 namespace stan {
 namespace math {
@@ -17,7 +19,7 @@ namespace math {
  */
 template <typename T, enable_if_fvar<std::decay_t<T>>* = nullptr>
 inline auto&& value_of(T&& x) {
-  return value_of(x.val_);
+  return value_of(std::forward<T>(x).val_);
 }
 
 }  // namespace math

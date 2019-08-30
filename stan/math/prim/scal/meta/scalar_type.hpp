@@ -25,5 +25,8 @@ struct scalar_type<T*> {
 template <typename T>
 using scalar_type_t = typename scalar_type<T>::type;
 
+template <typename T>
+using scalar_type_decay_t = typename scalar_type<std::decay_t<T>>::type;
+
 }  // namespace stan
 #endif

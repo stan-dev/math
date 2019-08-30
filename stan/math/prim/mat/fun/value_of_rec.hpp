@@ -1,8 +1,10 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_VALUE_OF_REC_HPP
 #define STAN_MATH_PRIM_MAT_FUN_VALUE_OF_REC_HPP
 
-#include <stan/math/prim/scal/fun/value_of_rec.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/scal/fun/value_of_rec.hpp>
+#include <utility>
 
 namespace stan {
 namespace math {
@@ -19,9 +21,9 @@ namespace math {
  * @return Specified matrix.
  */
 template <typename T, enable_if_eigen<T>* = nullptr,
-          enable_if_arithmetic<scalar_type_t<T>>* = nullptr>
+          enable_if_arithmetic<scalar_type_decay_t<T>>* = nullptr>
 inline auto&& value_of_rec(T&& x) {
-  return x;
+  return std::forward<T>(x);
 }
 }  // namespace math
 }  // namespace stan

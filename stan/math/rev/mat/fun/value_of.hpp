@@ -5,6 +5,7 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
+#include <utility>
 
 namespace stan {
 namespace math {
@@ -22,9 +23,9 @@ namespace math {
  * @return Matrix of values
  **/
 template <typename T, enable_if_eigen<T>* = nullptr,
-          enable_if_var<scalar_type_t<T>>* = nullptr>
+          enable_if_var<scalar_type_decay_t<T>>* = nullptr>
 inline auto value_of(T&& x) {
-  return x.val().eval();
+  return std::forward<T>(x).val().eval();
 }
 
 }  // namespace math
