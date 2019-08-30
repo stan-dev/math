@@ -17,7 +17,9 @@ namespace math {
  * @return Value of variable.
  */
 template <typename T, enable_if_var<std::decay_t<T>>* = nullptr>
-inline auto&& value_of_rec(T&& v) { return v.vi_->val_; }
+inline auto&& value_of_rec(T&& v) {
+  return v.vi_->val_;
+}
 
 }  // namespace math
 }  // namespace stan

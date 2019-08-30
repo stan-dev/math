@@ -28,7 +28,6 @@ inline auto&& value_of(T&& x) {
   return std::forward<T>(x);
 }
 
-
 }  // namespace math
 }  // namespace stan
 #endif
