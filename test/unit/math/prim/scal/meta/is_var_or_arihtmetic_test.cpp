@@ -4,8 +4,8 @@
 #include <vector>
 
 TEST(MathMeta, is_var_or_arithmetic_simple) {
-  using stan::is_var_or_arithmetic;
   using stan::is_all_var_or_arithmetic;
+  using stan::is_var_or_arithmetic;
   EXPECT_TRUE(stan::is_var_or_arithmetic<double>::value);
   EXPECT_FALSE(stan::is_var_or_arithmetic<double&>::value);
   EXPECT_FALSE(stan::is_var_or_arithmetic<std::vector<double>>::value);
@@ -18,6 +18,6 @@ TEST(MathMeta, is_var_or_arithmetic_simple) {
   temp = is_all_var_or_arithmetic<double, std::vector<double>>::value;
   EXPECT_FALSE(temp);
   temp = is_all_var_or_arithmetic<double, double, std::vector<double>, double,
-                              std::vector<double>, double&>::value;
+                                  std::vector<double>, double&>::value;
   EXPECT_FALSE(temp);
 }

@@ -14,13 +14,13 @@ namespace stan {
  * and false (0) otherwise.
  */
 template <typename T>
-struct is_var_or_arithmetic : std::integral_constant<bool,
- is_var<T>::value || std::is_arithmetic<T>::value>{};
+struct is_var_or_arithmetic
+    : std::integral_constant<bool, is_var<T>::value
+                                       || std::is_arithmetic<T>::value> {};
 
 // Helper Class to check if all input types are var or arithmetic
 template <typename... T>
-using is_all_var_or_arithmetic
-    = math::conjunction<is_var_or_arithmetic<T>...>;
+using is_all_var_or_arithmetic = math::conjunction<is_var_or_arithmetic<T>...>;
 
 }  // namespace stan
 #endif
