@@ -11,20 +11,18 @@ namespace stan {
 namespace math {
 
 /**
- * Convert a matrix of type T to a matrix of doubles.
+ * Convert a matrix of fvar to a matrix of doubles.
  *
- * T must implement value_of. See
- * test/math/fwd/mat/fun/value_of.cpp for fvar and var usage.
+ * T must implement value_of_rec. See
+ * test/math/fwd/mat/fun/value_of_rec.cpp for fvar and var usage.
  *
- * @tparam T Scalar type in matrix
- * @tparam R Rows of matrix
- * @tparam C Columns of matrix
+ * @tparam T Type of Eigen matrix
  * @param[in] x Matrix to be converted
  * @return Matrix of values
  **/
 template <typename T, require_eigen_fvar<T>...>
 inline auto value_of_rec(T&& x) {
-  return value_of_rec(std::forward<T>(x).val().eval()).eval();
+  return value_of_rec(std::forward<decltype(x.val())>(x.val())).eval();
 }
 
 }  // namespace math

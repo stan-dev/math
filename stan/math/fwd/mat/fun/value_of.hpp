@@ -11,14 +11,12 @@ namespace stan {
 namespace math {
 
 /**
- * Convert a matrix of type T to a matrix of doubles.
+ * Convert a matrix of type T to a matrix of partial types.
  *
  * T must implement value_of. See
  * test/math/fwd/mat/fun/value_of.cpp for fvar and var usage.
  *
- * @tparam T Scalar type in matrix
- * @tparam R Rows of matrix
- * @tparam C Columns of matrix
+ * @tparam T Matrix type
  * @param[in] x Matrix to be converted
  * @return Matrix of values
  **/

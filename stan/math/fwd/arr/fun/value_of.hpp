@@ -14,14 +14,14 @@ namespace stan {
 namespace math {
 
 /**
- * Convert a std::vector of type T to a std::vector of doubles.
+ * Convert a std::vector of type T to a std::vector of the partial type.
  *
  * T must implement value_of_rec. See
  * test/math/fwd/mat/fun/value_of_rec.cpp for fvar and var usage.
  *
  * @tparam T Scalar type in std::vector
  * @param[in] x std::vector to be converted
- * @return std::vector of values
+ * @return std::vector of partial type.
  **/
 template <typename T, require_std_vector_fvar<T>...>
 inline auto value_of(T&& x) {

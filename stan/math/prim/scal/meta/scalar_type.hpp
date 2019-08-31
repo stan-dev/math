@@ -13,13 +13,13 @@ namespace stan {
  *
  * @tparam T Type of object.
  */
-template <typename T>
+template <typename T, typename = void>
 struct scalar_type {
   typedef T type;
 };
 
 template <typename T>
-struct scalar_type<T*> {
+struct scalar_type<T, std::enable_if_t<std::is_pointer<T>::value>> {
   typedef typename scalar_type<T>::type type;
 };
 
