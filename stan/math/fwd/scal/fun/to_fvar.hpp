@@ -9,20 +9,27 @@
 namespace stan {
 namespace math {
 
+/**
+ * Convert var or arithmetic to fvar.
+ *
+ * @tparam T The type to become the partial type of the fvar.
+ * @param[in,out] x An automatic differentation variable or arithmetic type.
+ * @return The input forward automatic differentiation variables.
+ */
 template <typename T, require_var_or_arithmetic<T>...>
 inline fvar<T> to_fvar(const T& x) {
   return fvar<T>(x);
 }
 
 /**
- * Specialization of to_fvar for const fvars
+ * Specialization of to_fvar for input fvars
  *
  *
- * @param[in,out] x A forward automatic differentation variables.
- * @return The input forward automatic differentiation variables.
+ * @param[in,out] x A forward automatic differentation variable.
+ * @return The input forward automatic differentiation variable.
  */
 template <typename T, require_fvar<T>...>
-inline const auto& to_fvar(T&& x) {
+inline const auto&& to_fvar(T&& x) {
   return std::forward<T>(x);
 }
 

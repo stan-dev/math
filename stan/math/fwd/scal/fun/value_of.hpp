@@ -12,10 +12,10 @@ namespace stan {
 namespace math {
 
 /**
- * Return the value of the specified variable.
- *
- * @param x Variable.
- * @return Value of variable.
+ * Return partial type for an fvar.
+ * @tparam T The type of fvar.
+ * @param x The fvar.
+ * @return inner partial type of fvar.
  */
 template <typename T, require_fvar<T>...>
 inline auto&& value_of(T&& x) {

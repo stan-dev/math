@@ -15,14 +15,12 @@ struct is_vector<const T> {
   typedef T type;
 };
 template <typename T>
-struct is_vector<std::vector<T> > {
-  enum { value = 1 };
+struct is_vector<std::vector<T>> : std::true_type {
   typedef T type;
 };
 
 template <typename T>
-struct is_std_vector<std::vector<T>> {
-  enum { value = 1 };
+struct is_std_vector<std::vector<T>> : std::true_type {
   typedef T type;
 };
 

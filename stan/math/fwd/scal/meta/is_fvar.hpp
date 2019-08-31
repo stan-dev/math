@@ -6,13 +6,10 @@
 
 namespace stan {
 /**
- * Defines a public enum named value and sets it to true(1)
- * when instantiated with the stan::math::fvar type.
+ * Specialization of is_fvar with a member value indicating the type is fvar.
  */
 template <typename T>
-struct is_fvar<stan::math::fvar<T> > {
-  enum { value = true };
-};
+struct is_fvar<stan::math::fvar<T>> : std::true_type {};
 
 }  // namespace stan
 #endif

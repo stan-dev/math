@@ -12,12 +12,12 @@ namespace stan {
 namespace math {
 
 /**
- * Return the value of the specified variable.
+ * Return the value of an fvar.
  *
  * T must implement value_of_rec.
  *
  * @tparam T Scalar type
- * @param x Variable.
+ * @param x An fvar.
  * @return Value of variable.
  */
 template <typename T, require_fvar<T>...>
