@@ -48,7 +48,6 @@
 #include <stan/math/prim/scal/meta/enable_if_eigen.hpp>
 #include <stan/math/prim/scal/meta/enable_if_eigen_floating_point.hpp>
 #include <stan/math/prim/scal/meta/enable_if_eigen_arithmetic.hpp>
-#include <stan/math/prim/scal/meta/enable_if_eigen.hpp>
 #include <stan/math/prim/scal/meta/enable_if_same.hpp>
 #include <stan/math/prim/scal/meta/enable_if_scalar.hpp>
 #include <stan/math/prim/scal/meta/enable_if_std_vector.hpp>
