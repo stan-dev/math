@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_META_ENABLE_IF_EIGEN_ARITHMETIC_HPP
 
 #include <stan/math/prim/scal/meta/is_eigen.hpp>
+#include <stan/math/prim/scal/meta/scalar_type.hpp>
 #include <stan/math/prim/scal/meta/conjunction.hpp>
 #include <stan/math/prim/scal/meta/disjunction.hpp>
 
