@@ -19,7 +19,9 @@ namespace stan {
  * @tparam T Type to test
  */
 template <typename T>
-struct is_vector_like : std::integral_constant<bool, stan::is_vector<T>::value || is_eigen<T>::value> {};
+struct is_vector_like
+    : std::integral_constant<bool, stan::is_vector<T>::value
+                                       || is_eigen<T>::value> {};
 
 /**
  * Template metaprogram indicates whether a type is vector_like.
@@ -47,7 +49,8 @@ struct is_vector_like<T*> : std::true_type {};
  * @tparam T Type to test
  */
 template <typename T>
-struct is_vector_like<const T> : std::integral_constant<bool, stan::is_vector_like<T>::value> {};
+struct is_vector_like<const T>
+    : std::integral_constant<bool, stan::is_vector_like<T>::value> {};
 
 }  // namespace stan
 #endif

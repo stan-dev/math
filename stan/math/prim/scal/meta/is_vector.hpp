@@ -40,7 +40,9 @@ struct is_eigen_vector
                                        || is_eigen_row_vector<T>::value> {};
 
 template <typename T>
-struct is_vector : std::integral_constant<bool, is_eigen_vector<T>::value || is_std_vector<T>::value> {};
+struct is_vector
+    : std::integral_constant<bool, is_eigen_vector<T>::value
+                                       || is_std_vector<T>::value> {};
 
 }  // namespace stan
 #endif
