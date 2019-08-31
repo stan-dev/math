@@ -28,7 +28,7 @@ inline auto&& value_of_rec(T&& x) {
   return std::forward<T>(x);
 }
 
-template <typename T,require_arithmetic<T>..., not_floating_point_type<T>...>
+template <typename T, require_arithmetic<T>..., not_floating_point_type<T>...>
 inline auto value_of_rec(T&& x) {
   return static_cast<double>(x);
 }

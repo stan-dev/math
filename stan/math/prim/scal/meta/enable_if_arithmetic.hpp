@@ -60,7 +60,6 @@ using require_not_all = std::enable_if_t<!math::conjunction<Checks...>::value>;
 template <class... Checks>
 using require_not_any = std::enable_if_t<!math::disjunction<Checks...>::value>;
 
-
 template <typename T>
 using require_arithmetic = require_base<std::is_arithmetic<std::decay_t<T>>>;
 
@@ -68,17 +67,20 @@ template <typename T>
 using require_not_arithmetic = require_not<std::is_arithmetic<std::decay_t<T>>>;
 
 template <typename... Types>
-using require_all_arithmetic = require_all<std::is_arithmetic<std::decay_t<Types>>...>;
+using require_all_arithmetic
+    = require_all<std::is_arithmetic<std::decay_t<Types>>...>;
 
 template <typename... Types>
-using require_any_arithmetic = require_any<std::is_arithmetic<std::decay_t<Types>>...>;
+using require_any_arithmetic
+    = require_any<std::is_arithmetic<std::decay_t<Types>>...>;
 
 template <typename... Types>
-using require_not_all_arithmetic = require_not_all<std::is_arithmetic<std::decay_t<Types>>...>;
+using require_not_all_arithmetic
+    = require_not_all<std::is_arithmetic<std::decay_t<Types>>...>;
 
 template <typename... Types>
-using require_not_any_arithmetic = require_not_any<std::is_arithmetic<std::decay_t<Types>>...>;
-
+using require_not_any_arithmetic
+    = require_not_any<std::is_arithmetic<std::decay_t<Types>>...>;
 
 }  // namespace stan
 #endif
