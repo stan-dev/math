@@ -35,9 +35,6 @@ namespace math {
  * @tparam F Type of function to apply.
  * @tparam T Type of argument to which function is applied.
  */
-template <typename T>
-class TD;
-
 template <typename F, typename T, typename = void>
 struct apply_scalar_unary {
   static inline auto apply(const T& x) {}
