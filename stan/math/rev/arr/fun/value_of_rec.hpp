@@ -24,9 +24,8 @@ namespace math {
 template <typename T, require_std_vector_var<T>...>
 inline auto value_of_rec(T&& x) {
   std::vector<double> result(x.size());
-  std::transform(
-      std::forward<T>(x).begin(), std::forward<T>(x).end(),
-      result.begin(), [](auto&& x) { return x.vi_->val_; });
+  std::transform(std::forward<T>(x).begin(), std::forward<T>(x).end(),
+                 result.begin(), [](auto&& x) { return x.vi_->val_; });
   return result;
 }
 
