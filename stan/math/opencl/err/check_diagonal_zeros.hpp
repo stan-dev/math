@@ -21,7 +21,7 @@ namespace math {
  * @throw <code>std::domain_error</code> if
  *    any diagonal element of the matrix is zero.
  */
-template <typename T, typename = enable_if_arithmetic<T>>
+template <typename T, typename = require_arithmetic<T>>
 inline void check_diagonal_zeros(const char* function, const char* name,
                                  const matrix_cl<T>& y) {
   if (y.size() == 0)

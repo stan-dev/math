@@ -28,7 +28,7 @@ inline auto&& value_of(T&& x) {
   return std::forward<T>(x);
 }
 
-template <typename T, enable_if_arithmetic<T>...,
+template <typename T, require_arithmetic<T>...,
           enable_if_not_double_or_int<T>...>
 inline double value_of(const T& x) {
   return static_cast<double>(x);

@@ -81,7 +81,7 @@ struct apply_scalar_unary<F, T, eigen_type<T>> {
  * @tparam F Type of function defining static apply function.
  */
 template <typename F, typename T>
-struct apply_scalar_unary<F, T, arithmetic_type<T>> {
+struct apply_scalar_unary<F, T,require_arithmetic<T>> {
   /**
    * The return type, double.
    */
@@ -111,7 +111,7 @@ struct apply_scalar_unary<F, T, arithmetic_type<T>> {
    * @param x Argument scalar.
    * @return Result of applying F to the scalar.
    */
-  template <typename K, arithmetic_type<K>..., not_floating_point_type<K>...>
+  template <typename K,require_arithmetic<K>..., not_floating_point_type<K>...>
   static inline auto apply(K&& x) {
     return F::fun(std::move(static_cast<double>(x)));
   }
@@ -131,7 +131,8 @@ template <typename F, typename T>
 struct apply_scalar_unary<F, T, std_vector_type<T>> {
   using scalar_t = typename std::decay_t<T>::value_type;
   typedef typename std::vector<typename apply_scalar_unary<F, scalar_t>::return_t>
-      return_t;  /**
+      return_t;
+  /**
    * Apply the function specified by F elementwise to the
    * specified argument.  This is defined recursively through this
    * class applied to elements of type T.

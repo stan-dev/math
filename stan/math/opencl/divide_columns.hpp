@@ -26,7 +26,7 @@ namespace math {
  * input matrices do not have matching dimensions
  *
  */
-template <typename T1, typename T2, typename = enable_if_all_arithmetic<T1, T2>>
+template <typename T1, typename T2, typename = require_all_arithmetic<T1, T2>>
 inline void divide_columns(const matrix_cl<T1>& A, const matrix_cl<T2>& B) {
   if (A.size() == 0 || B.size() == 0) {
     return;
@@ -52,7 +52,7 @@ inline void divide_columns(const matrix_cl<T1>& A, const matrix_cl<T2>& B) {
  * @return element-wise division of \c A by \c divisor.
  *
  */
-template <typename T1, typename T2, typename = enable_if_all_arithmetic<T1, T2>>
+template <typename T1, typename T2, typename = require_all_arithmetic<T1, T2>>
 inline void divide_columns(const matrix_cl<T1>& A, const T2& divisor) {
   if (A.size() == 0) {
     return;

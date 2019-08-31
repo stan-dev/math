@@ -22,7 +22,7 @@ namespace math {
  * @return Product of matrix and scalar.
  */
 template <int R, int C, typename T1, typename T2,
-          typename = enable_if_all_arithmetic<T1, T2>>
+          typename = require_all_arithmetic<T1, T2>>
 inline Eigen::Matrix<return_type_t<T1, T2>, R, C> multiply(
     const Eigen::Matrix<T1, R, C>& m, T2 c) {
   return c * m;
@@ -37,7 +37,7 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R, C> multiply(
  * @return Product of scalar and matrix.
  */
 template <int R, int C, typename T1, typename T2,
-          typename = enable_if_all_arithmetic<T1, T2>>
+          typename = require_all_arithmetic<T1, T2>>
 inline Eigen::Matrix<return_type_t<T1, T2>, R, C> multiply(
     T1 c, const Eigen::Matrix<T2, R, C>& m) {
   return c * m;
@@ -54,7 +54,7 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R, C> multiply(
  *   the number of rows of m2.
  */
 template <int R1, int C1, int R2, int C2, typename T1, typename T2,
-          typename = enable_if_all_arithmetic<T1, T2>>
+          typename = require_all_arithmetic<T1, T2>>
 inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> multiply(
     const Eigen::Matrix<T1, R1, C1>& m1, const Eigen::Matrix<T2, R2, C2>& m2) {
   check_multiplicable("multiply", "m1", m1, "m2", m2);
@@ -83,7 +83,7 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> multiply(
  * @throw std::domain_error if rv and v are not the same size.
  */
 template <int C1, int R2, typename T1, typename T2,
-          typename = enable_if_all_arithmetic<T1, T2>>
+          typename = require_all_arithmetic<T1, T2>>
 inline return_type_t<T1, T2> multiply(const Eigen::Matrix<T1, 1, C1>& rv,
                                       const Eigen::Matrix<T2, R2, 1>& v) {
   check_matching_sizes("multiply", "rv", rv, "v", v);
@@ -98,7 +98,7 @@ inline return_type_t<T1, T2> multiply(const Eigen::Matrix<T1, 1, C1>& rv,
  * @param c Scalar.
  * @return Product of matrix and scalar.
  */
-template <typename T1, typename T2, typename = enable_if_all_arithmetic<T1, T2>>
+template <typename T1, typename T2, typename = require_all_arithmetic<T1, T2>>
 inline return_type_t<T1, T2> multiply(T1 m, T2 c) {
   return c * m;
 }

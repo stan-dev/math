@@ -18,7 +18,7 @@ namespace math {
  * @return transposed input matrix
  *
  */
-template <typename T, typename = enable_if_arithmetic<T>>
+template <typename T, typename = require_arithmetic<T>>
 inline matrix_cl<T> transpose(const matrix_cl<T>& src) {
   matrix_cl<T> dst(src.cols(), src.rows(), transpose(src.view()));
   if (dst.size() == 0)

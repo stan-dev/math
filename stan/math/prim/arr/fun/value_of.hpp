@@ -28,7 +28,7 @@ inline auto&& value_of(T&& x) {
 }
 
 template <typename T, enable_if_std_vector<T>...,
-          enable_if_arithmetic<scalar_type_decay_t<T>>...,
+          require_arithmetic<scalar_type_decay_t<T>>...,
           enable_if_not_double_or_int<scalar_type_decay_t<T>>...>
 inline auto value_of(T&& x) {
   std::vector<double> x_dbl(x.size());

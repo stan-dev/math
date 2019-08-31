@@ -148,7 +148,7 @@ class cov_exp_quad_vari<T_x, double, T_l> : public vari {
  * @deprecated use <code>gp_exp_quad_cov_vari</code>
  */
 template <typename T_x,
-          typename = enable_if_arithmetic<typename scalar_type<T_x>::type>>
+          typename = require_arithmetic<typename scalar_type<T_x>::type>>
 inline Eigen::Matrix<var, -1, -1> cov_exp_quad(const std::vector<T_x>& x,
                                                const var& sigma, const var& l) {
   return gp_exp_quad_cov(x, sigma, l);
@@ -158,7 +158,7 @@ inline Eigen::Matrix<var, -1, -1> cov_exp_quad(const std::vector<T_x>& x,
  * @deprecated use <code>gp_exp_quad_cov_vari</code>
  */
 template <typename T_x,
-          typename = enable_if_arithmetic<typename scalar_type<T_x>::type>>
+          typename = require_arithmetic<typename scalar_type<T_x>::type>>
 inline Eigen::Matrix<var, -1, -1> cov_exp_quad(const std::vector<T_x>& x,
                                                double sigma, const var& l) {
   return gp_exp_quad_cov(x, sigma, l);

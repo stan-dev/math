@@ -23,7 +23,7 @@ namespace math {
  * @return Squared distance between elements of x.
  */
 template <typename T1, typename T2, typename T3,
-          typename = enable_if_all_arithmetic<T1, T2, T3>>
+          typename = require_all_arithmetic<T1, T2, T3>>
 inline matrix_cl<return_type_t<T1, T2, T3>> gp_exp_quad_cov(
     const matrix_cl<T1>& x, const T2 sigma, const T3 length_scale) {
   matrix_cl<return_type_t<T1, T2, T3>> res(x.cols(), x.cols());
@@ -55,7 +55,7 @@ inline matrix_cl<return_type_t<T1, T2, T3>> gp_exp_quad_cov(
  * @return Squared distance between elements of x and y.
  */
 template <typename T1, typename T2, typename T3, typename T4,
-          typename = enable_if_all_arithmetic<T1, T2, T3, T4>>
+          typename = require_all_arithmetic<T1, T2, T3, T4>>
 inline matrix_cl<return_type_t<T1, T2, T3, T4>> gp_exp_quad_cov(
     const matrix_cl<T1>& x, const matrix_cl<T2>& y, const T3 sigma,
     const T4 length_scale) {
