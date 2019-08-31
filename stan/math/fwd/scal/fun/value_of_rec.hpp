@@ -22,7 +22,7 @@ namespace math {
  */
 template <typename T, require_fvar<T>...>
 inline auto&& value_of_rec(T&& x) {
-  return value_of_rec(std::forward<decltype(x.val_)>(x.val_));
+  return value_of_rec(std::forward<T>(x).val_);
 }
 
 }  // namespace math
