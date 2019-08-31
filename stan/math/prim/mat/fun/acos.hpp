@@ -15,9 +15,9 @@ namespace math {
  */
 struct acos_fun {
   template <typename T>
-  static inline T fun(const T& x) {
+  static inline T fun(T&& x) {
     using std::acos;
-    return acos(x);
+    return acos(std::forward<T>(x));
   }
 };
 
@@ -28,8 +28,8 @@ struct acos_fun {
  * @return Arc cosine of each variable in the container, in radians.
  */
 template <typename T>
-inline typename apply_scalar_unary<acos_fun, T>::return_t acos(const T& x) {
-  return apply_scalar_unary<acos_fun, T>::apply(x);
+inline typename apply_scalar_unary<acos_fun, T>::return_t acos(T&& x) {
+  return apply_scalar_unary<acos_fun, T>::apply(std::forward<T>(x));
 }
 
 }  // namespace math

@@ -46,8 +46,7 @@ struct apply_scalar_unary {
    * Return type for applying the function elementwise to a matrix
    * expression template of type T.
    */
-  typedef Eigen::Matrix<scalar_t, T::RowsAtCompileTime, T::ColsAtCompileTime>
-      return_t;
+  typedef typename T::PlainObject return_t;
 
   /**
    * Return the result of applying the function defined by the
@@ -59,7 +58,7 @@ struct apply_scalar_unary {
    */
   template <typename K, eigen_type<K>...>
   static inline auto apply(K&& x) {
-    return x.unaryExpr([](auto&& x_iter) {
+    return std::forward<K>(x).unaryExpr([](auto&& x_iter) {
       return apply_scalar_unary<F, scalar_t>::apply(x_iter);
     });
   }
@@ -77,7 +76,7 @@ struct apply_scalar_unary<F, double> {
    * The return type, double.
    */
   typedef double return_t;
-
+  typedef double scalar_t;
   /**
    * Apply the function specified by F to the specified argument.
    * This is defined through a direct application of
@@ -87,7 +86,7 @@ struct apply_scalar_unary<F, double> {
    * @param x Argument scalar.
    * @return Result of applying F to the scalar.
    */
-  template <typename K, arithmetic_type<K>...>
+  template <typename K, floating_point_type<K>...>
   static inline auto apply(K&& x) {
     return F::fun(std::forward<K>(x));
   }
@@ -107,7 +106,7 @@ struct apply_scalar_unary<F, int> {
    * The return type, double.
    */
   typedef double return_t;
-
+  typedef double scalar_t;
   /**
    * Apply the function specified by F to the specified argument.
    * This is defined through a direct application of
@@ -135,9 +134,8 @@ struct apply_scalar_unary<F, std::vector<T>> {
    * Return type, which is calculated recursively as a standard
    * vector of the return type of the contained type T.
    */
-  typedef typename std::vector<typename apply_scalar_unary<F, T>::return_t>
-      return_t;
-
+  typedef typename std::vector<typename apply_scalar_unary<F, T>::return_t> return_t;
+  typedef T scalar_t;
   /**
    * Apply the function specified by F elementwise to the
    * specified argument.  This is defined recursively through this
@@ -147,8 +145,7 @@ struct apply_scalar_unary<F, std::vector<T>> {
    * @return Elementwise application of F to the elements of the
    * container.
    */
-  template <typename K, std_vector_type<K>...,
-            same_type<scalar_type_decay_t<K>, std::decay_t<T>>...>
+  template <typename K, std_vector_type<K>...>
   static inline auto apply(K&& x) {
     return_t fx(x.size());
     std::transform(
