@@ -23,13 +23,13 @@ namespace math {
  * @param x scalar to convert to double
  * @return value of scalar cast to double
  */
-template <typename T, enable_if_double_or_int<std::decay_t<T>>...>
+template <typename T, require_double_or_int<std::decay_t<T>>...>
 inline auto&& value_of(T&& x) {
   return std::forward<T>(x);
 }
 
 template <typename T, require_arithmetic<T>...,
-          enable_if_not_double_or_int<T>...>
+          require_not_double_or_int<T>...>
 inline double value_of(const T& x) {
   return static_cast<double>(x);
 }

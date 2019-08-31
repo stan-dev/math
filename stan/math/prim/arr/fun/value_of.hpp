@@ -22,14 +22,14 @@ namespace math {
  * @return std::vector of values
  **/
 template <typename T, enable_if_std_vector<T>...,
-          enable_if_double_or_int<scalar_type_decay_t<T>>...>
+          require_double_or_int<scalar_type_decay_t<T>>...>
 inline auto&& value_of(T&& x) {
   return std::forward<T>(x);
 }
 
 template <typename T, enable_if_std_vector<T>...,
           require_arithmetic<scalar_type_decay_t<T>>...,
-          enable_if_not_double_or_int<scalar_type_decay_t<T>>...>
+          require_not_double_or_int<scalar_type_decay_t<T>>...>
 inline auto value_of(T&& x) {
   std::vector<double> x_dbl(x.size());
   std::copy(x.begin(), x.end(), x_dbl.begin());
