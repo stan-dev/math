@@ -29,7 +29,8 @@ template <typename T>
 using is_var_or_arithmetic = is_var_or_arithmetic_type<T>;
 
 template <typename... T>
-using is_all_var_or_arithmetic = math::conjunction<is_var_or_arithmetic_type<T>...>;
+using is_all_var_or_arithmetic
+    = math::conjunction<is_var_or_arithmetic_type<T>...>;
 
 }  // namespace stan
 #endif

@@ -16,7 +16,6 @@ namespace stan {
 template <typename C, typename T = typename scalar_type<C>::type>
 class scalar_seq_view {
  public:
-
   template <typename K, typename = require_same<C, K>>
   explicit scalar_seq_view(K&& c) : c_(std::forward<K>(c)) {}
 

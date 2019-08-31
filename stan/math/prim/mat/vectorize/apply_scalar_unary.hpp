@@ -108,7 +108,8 @@ struct apply_scalar_unary<F, T, require_arithmetic<T>> {
    * @param x Argument scalar.
    * @return Result of applying F to the scalar.
    */
-  template <typename K, require_arithmetic<K>..., require_not_floating_point<K>...>
+  template <typename K, require_arithmetic<K>...,
+            require_not_floating_point<K>...>
   static inline auto apply(K&& x) {
     return F::fun(std::move(static_cast<double>(x)));
   }

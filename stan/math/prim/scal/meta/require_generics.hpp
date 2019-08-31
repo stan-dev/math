@@ -103,13 +103,16 @@ template <typename T>
 using require_double_or_int = require_base<is_double_or_int<std::decay_t<T>>>;
 
 template <typename T>
-using require_not_double_or_int = require_not<is_double_or_int<std::decay_t<T>>>;
+using require_not_double_or_int
+    = require_not<is_double_or_int<std::decay_t<T>>>;
 
 template <typename... Types>
-using require_all_double_or_int = require_all<is_double_or_int<std::decay_t<Types>>...>;
+using require_all_double_or_int
+    = require_all<is_double_or_int<std::decay_t<Types>>...>;
 
 template <typename... Types>
-using require_any_double_or_int = require_any<is_double_or_int<std::decay_t<Types>>...>;
+using require_any_double_or_int
+    = require_any<is_double_or_int<std::decay_t<Types>>...>;
 
 template <typename... Types>
 using require_all_not_double_or_int
