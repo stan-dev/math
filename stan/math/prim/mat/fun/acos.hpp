@@ -15,9 +15,9 @@ namespace math {
  */
 struct acos_fun {
   template <typename T>
-  static inline T fun(T&& x) {
+  static inline T fun(const T& x) {
     using std::acos;
-    return acos(std::forward<T>(x));
+    return acos(x);
   }
 };
 

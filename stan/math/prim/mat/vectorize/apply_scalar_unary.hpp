@@ -35,19 +35,29 @@ namespace math {
  * @tparam F Type of function to apply.
  * @tparam T Type of argument to which function is applied.
  */
-template <typename F, typename T>
+ template<typename T>
+ class TD;
+
+template <typename F, typename T, typename = void>
 struct apply_scalar_unary {
+  static inline auto apply(const T& x) {
+  }
+};
+
+
+template <typename F, typename T>
+struct apply_scalar_unary<F, T, eigen_type<T>> {
   /**
    * Type of underlying scalar for the matrix type T.
    */
-  typedef typename Eigen::internal::traits<T>::Scalar scalar_t;
+  typedef typename std::decay_t<T>::Scalar scalar_t;
 
   /**
    * Return type for applying the function elementwise to a matrix
    * expression template of type T.
    */
-  typedef typename T::PlainObject return_t;
-
+  typedef Eigen::Matrix<scalar_t, std::decay_t<T>::RowsAtCompileTime, std::decay_t<T>::ColsAtCompileTime>
+      return_t;
   /**
    * Return the result of applying the function defined by the
    * template parameter F to the specified matrix argument.
@@ -60,7 +70,7 @@ struct apply_scalar_unary {
   static inline auto apply(K&& x) {
     return std::forward<K>(x).unaryExpr([](auto&& x_iter) {
       return apply_scalar_unary<F, scalar_t>::apply(x_iter);
-    });
+    }).eval();
   }
 };
 
@@ -70,8 +80,8 @@ struct apply_scalar_unary {
  *
  * @tparam F Type of function defining static apply function.
  */
-template <typename F>
-struct apply_scalar_unary<F, double> {
+template <typename F, typename T>
+struct apply_scalar_unary<F, T, arithmetic_type<T>> {
   /**
    * The return type, double.
    */
@@ -87,26 +97,11 @@ struct apply_scalar_unary<F, double> {
    * @return Result of applying F to the scalar.
    */
   template <typename K, floating_point_type<K>...>
-  static inline auto apply(K&& x) {
+  static inline double apply(K&& x) {
     return F::fun(std::forward<K>(x));
   }
-};
 
-/**
- * Template specialization for vectorized functions applying to
- * integer arguments.  Although the argument is integer, the
- * return type is specified as double.  This allows promotion of
- * integers to doubles in vectorized functions, or in containers.
- *
- * @tparam F Type of function defining static apply function.
- */
-template <typename F>
-struct apply_scalar_unary<F, int> {
-  /**
-   * The return type, double.
-   */
-  typedef double return_t;
-  typedef double scalar_t;
+
   /**
    * Apply the function specified by F to the specified argument.
    * This is defined through a direct application of
@@ -116,8 +111,12 @@ struct apply_scalar_unary<F, int> {
    * @param x Argument scalar.
    * @return Result of applying F to the scalar.
    */
-  static inline return_t apply(int x) { return F::fun(static_cast<double>(x)); }
+  template <typename K, arithmetic_type<K>..., not_floating_point_type<K>...>
+  static inline auto apply(K&& x) {
+    return F::fun(std::move(static_cast<double>(x)));
+  }
 };
+
 
 /**
  * Template specialization for vectorized functions applying to
@@ -129,15 +128,10 @@ struct apply_scalar_unary<F, int> {
  * @tparam T Type of element contained in standard vector.
  */
 template <typename F, typename T>
-struct apply_scalar_unary<F, std::vector<T>> {
-  /**
-   * Return type, which is calculated recursively as a standard
-   * vector of the return type of the contained type T.
-   */
-  typedef typename std::vector<typename apply_scalar_unary<F, T>::return_t>
-      return_t;
-  typedef T scalar_t;
-  /**
+struct apply_scalar_unary<F, T, std_vector_type<T>> {
+  using scalar_t = typename std::decay_t<T>::value_type;
+  typedef typename std::vector<typename apply_scalar_unary<F, scalar_t>::return_t>
+      return_t;  /**
    * Apply the function specified by F elementwise to the
    * specified argument.  This is defined recursively through this
    * class applied to elements of type T.
@@ -151,7 +145,7 @@ struct apply_scalar_unary<F, std::vector<T>> {
     return_t fx(x.size());
     std::transform(
         std::forward<K>(x).begin(), std::forward<K>(x).end(), fx.begin(),
-        [](auto&& x_iter) { return apply_scalar_unary<F, T>::apply(x_iter); });
+        [](auto&& x_iter) { return apply_scalar_unary<F, scalar_t>::apply(x_iter); });
     return fx;
   }
 };

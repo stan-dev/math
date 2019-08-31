@@ -21,12 +21,12 @@ namespace math {
  * autodiff variable.
  */
 template <typename F, typename T>
-struct apply_scalar_unary<F, fvar<T>> {
+struct apply_scalar_unary<F, T, fvar_type<T>> {
   /**
    * Function return type, which is same as the argument type for
    * the function, <code>fvar&lt;T&gt;</code>.
    */
-  typedef fvar<T> return_t;
+  typedef T return_t;
 
   /**
    * Apply the function specified by F to the specified argument.

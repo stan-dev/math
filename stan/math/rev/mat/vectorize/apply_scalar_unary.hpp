@@ -15,12 +15,12 @@ namespace math {
  *
  * @tparam F Type of function to apply.
  */
-template <typename F>
-struct apply_scalar_unary<F, var> {
+template <typename F, typename T>
+struct apply_scalar_unary<F, T, var_type<T>> {
   /**
    * Function return type, which is <code>var</code>.
    */
-  typedef var return_t;
+  typedef T return_t;
 
   /**
    * Apply the function specified by F to the specified argument.
