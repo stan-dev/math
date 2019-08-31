@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_META_IS_VECTOR_LIKE_HPP
 
 #include <stan/math/prim/scal/meta/is_vector.hpp>
+#include <type_traits>
 
 namespace stan {
 
@@ -18,9 +19,7 @@ namespace stan {
  * @tparam T Type to test
  */
 template <typename T>
-struct is_vector_like {
-  enum { value = stan::is_vector<T>::value };
-};
+struct is_vector_like : std::integral_constant<bool, stan::is_vector<T>::value || is_eigen<T>::value> {};
 
 /**
  * Template metaprogram indicates whether a type is vector_like.
@@ -33,9 +32,7 @@ struct is_vector_like {
  * @tparam T Type to test
  */
 template <typename T>
-struct is_vector_like<T*> {
-  enum { value = true };
-};
+struct is_vector_like<T*> : std::true_type {};
 
 /**
  * Template metaprogram indicates whether a type is vector_like.
@@ -50,8 +47,7 @@ struct is_vector_like<T*> {
  * @tparam T Type to test
  */
 template <typename T>
-struct is_vector_like<const T> {
-  enum { value = stan::is_vector_like<T>::value };
-};
+struct is_vector_like<const T> : std::integral_constant<bool, stan::is_vector_like<T>::value> {};
+
 }  // namespace stan
 #endif

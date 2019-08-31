@@ -3,6 +3,7 @@
 
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/scal/meta/is_fvar.hpp>
+#include <type_traits>
 
 namespace stan {
 
