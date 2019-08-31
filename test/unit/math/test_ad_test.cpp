@@ -116,21 +116,21 @@ TEST(test_ad, integerGetsPassed) {
   foo_fun::calls_t_ = 0;
   stan::test::expect_ad(h, 3.0);
   EXPECT_EQ(0, foo_fun::calls_int_);
-  EXPECT_TRUE(foo_fun::calls_t_ > 0);
+  EXPECT_GT(foo_fun::calls_t_, 0);
 
   // int argument calls everything
   foo_fun g;
   foo_fun::calls_int_ = 0;
   foo_fun::calls_t_ = 0;
   stan::test::expect_ad(g, 3);
-  EXPECT_TRUE(foo_fun::calls_int_ > 0);
-  EXPECT_TRUE(foo_fun::calls_t_ > 0);
+  EXPECT_GT(foo_fun::calls_int_, 0);
+  EXPECT_GT(foo_fun::calls_t_, 0);
 
   foo_fun::calls_int_ = 0;
   foo_fun::calls_t_ = 0;
   stan::test::expect_common_unary(g);
-  EXPECT_TRUE(foo_fun::calls_int_ > 0);
-  EXPECT_TRUE(foo_fun::calls_t_ > 0);
+  EXPECT_GT(foo_fun::calls_int_, 0);
+  EXPECT_GT(foo_fun::calls_t_, 0);
 }
 
 struct bar_fun {
@@ -199,32 +199,32 @@ TEST(testAd, integerGetsPassedBinary) {
 
   bar_fun::reset();
   stan::test::expect_ad(f, 3.0, 2.7);
-  EXPECT_TRUE(bar_fun::calls_t_ > 0);
+  EXPECT_GT(bar_fun::calls_t_, 0);
   EXPECT_EQ(bar_fun::calls_int1_, 0);
   EXPECT_EQ(bar_fun::calls_int2_, 0);
   EXPECT_EQ(bar_fun::calls_int12_, 0);
 
   bar_fun::reset();
   stan::test::expect_ad(f, 3, 2.7);
-  EXPECT_TRUE(bar_fun::calls_t_ > 0);
-  EXPECT_TRUE(bar_fun::calls_int1_ > 0);
+  EXPECT_GT(bar_fun::calls_t_, 0);
+  EXPECT_GT(bar_fun::calls_int1_, 0);
 
   bar_fun::reset();
   stan::test::expect_ad(f, 2.7, 3);
-  EXPECT_TRUE(bar_fun::calls_t_ > 0);
-  EXPECT_TRUE(bar_fun::calls_int2_ > 0);
+  EXPECT_GT(bar_fun::calls_t_, 0);
+  EXPECT_GT(bar_fun::calls_int2_, 0);
 
   bar_fun::reset();
   stan::test::expect_ad(f, 3, 4);
-  EXPECT_TRUE(bar_fun::calls_t_ > 0);
-  EXPECT_TRUE(bar_fun::calls_int12_ > 0);
+  EXPECT_GT(bar_fun::calls_t_, 0);
+  EXPECT_GT(bar_fun::calls_int12_, 0);
 
   bar_fun::reset();
   stan::test::expect_common_binary(f);
-  EXPECT_TRUE(bar_fun::calls_t_ > 0);
-  EXPECT_TRUE(bar_fun::calls_int1_ > 0);
-  EXPECT_TRUE(bar_fun::calls_int2_ > 0);
-  EXPECT_TRUE(bar_fun::calls_int12_ > 0);
+  EXPECT_GT(bar_fun::calls_t_, 0);
+  EXPECT_GT(bar_fun::calls_int1_, 0);
+  EXPECT_GT(bar_fun::calls_int2_, 0);
+  EXPECT_GT(bar_fun::calls_int12_, 0);
 }
 
 int baz_int = 0;
@@ -272,37 +272,37 @@ TEST(testAd, integerGetsPassedVectorized) {
   baz_fvar = 0;
   stan::test::expect_ad_vectorized(h, 0.2);
   EXPECT_EQ(0, baz_int);  // int doesn't get called
-  EXPECT_TRUE(baz_double > 0);
-  EXPECT_TRUE(baz_var > 0);
-  EXPECT_TRUE(baz_fvar > 0);
+  EXPECT_GT(baz_double, 0);
+  EXPECT_GT(baz_var, 0);
+  EXPECT_GT(baz_fvar, 0);
 
   baz_int = 0;
   baz_double = 0;
   baz_var = 0;
   baz_fvar = 0;
   stan::test::expect_ad_vectorized(h, 1);
-  EXPECT_TRUE(baz_int > 0);  // int version gets called
-  EXPECT_TRUE(baz_double > 0);
-  EXPECT_TRUE(baz_var > 0);
-  EXPECT_TRUE(baz_fvar > 0);
+  EXPECT_GT(baz_int, 0);  // int version gets called
+  EXPECT_GT(baz_double, 0);
+  EXPECT_GT(baz_var, 0);
+  EXPECT_GT(baz_fvar, 0);
 
   baz_int = 0;
   baz_double = 0;
   baz_var = 0;
   baz_fvar = 0;
   stan::test::expect_common_unary_vectorized(h);
-  EXPECT_TRUE(baz_int > 0);  // int version gets called
-  EXPECT_TRUE(baz_double > 0);
-  EXPECT_TRUE(baz_var > 0);
-  EXPECT_TRUE(baz_fvar > 0);
+  EXPECT_GT(baz_int, 0);  // int version gets called
+  EXPECT_GT(baz_double, 0);
+  EXPECT_GT(baz_var, 0);
+  EXPECT_GT(baz_fvar, 0);
 
   baz_int = 0;
   baz_double = 0;
   baz_var = 0;
   baz_fvar = 0;
   stan::test::expect_common_nonzero_unary_vectorized(h);
-  EXPECT_TRUE(baz_int > 0);  // int version gets called
-  EXPECT_TRUE(baz_double > 0);
-  EXPECT_TRUE(baz_var > 0);
-  EXPECT_TRUE(baz_fvar > 0);
+  EXPECT_GT(baz_int, 0);  // int version gets called
+  EXPECT_GT(baz_double, 0);
+  EXPECT_GT(baz_var, 0);
+  EXPECT_GT(baz_fvar, 0);
 }
