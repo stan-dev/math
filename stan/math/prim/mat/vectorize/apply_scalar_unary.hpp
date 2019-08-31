@@ -35,15 +35,13 @@ namespace math {
  * @tparam F Type of function to apply.
  * @tparam T Type of argument to which function is applied.
  */
- template<typename T>
- class TD;
+template <typename T>
+class TD;
 
 template <typename F, typename T, typename = void>
 struct apply_scalar_unary {
-  static inline auto apply(const T& x) {
-  }
+  static inline auto apply(const T& x) {}
 };
-
 
 template <typename F, typename T>
 struct apply_scalar_unary<F, T, eigen_type<T>> {
@@ -56,7 +54,8 @@ struct apply_scalar_unary<F, T, eigen_type<T>> {
    * Return type for applying the function elementwise to a matrix
    * expression template of type T.
    */
-  typedef Eigen::Matrix<scalar_t, std::decay_t<T>::RowsAtCompileTime, std::decay_t<T>::ColsAtCompileTime>
+  typedef Eigen::Matrix<scalar_t, std::decay_t<T>::RowsAtCompileTime,
+                        std::decay_t<T>::ColsAtCompileTime>
       return_t;
   /**
    * Return the result of applying the function defined by the
@@ -68,9 +67,11 @@ struct apply_scalar_unary<F, T, eigen_type<T>> {
    */
   template <typename K, eigen_type<K>...>
   static inline auto apply(K&& x) {
-    return std::forward<K>(x).unaryExpr([](auto&& x_iter) {
-      return apply_scalar_unary<F, scalar_t>::apply(x_iter);
-    }).eval();
+    return std::forward<K>(x)
+        .unaryExpr([](auto&& x_iter) {
+          return apply_scalar_unary<F, scalar_t>::apply(x_iter);
+        })
+        .eval();
   }
 };
 
@@ -101,7 +102,6 @@ struct apply_scalar_unary<F, T, arithmetic_type<T>> {
     return F::fun(std::forward<K>(x));
   }
 
-
   /**
    * Apply the function specified by F to the specified argument.
    * This is defined through a direct application of
@@ -117,7 +117,6 @@ struct apply_scalar_unary<F, T, arithmetic_type<T>> {
   }
 };
 
-
 /**
  * Template specialization for vectorized functions applying to
  * standard vector containers.  The lowest-level scalar type of
@@ -130,22 +129,24 @@ struct apply_scalar_unary<F, T, arithmetic_type<T>> {
 template <typename F, typename T>
 struct apply_scalar_unary<F, T, std_vector_type<T>> {
   using scalar_t = typename std::decay_t<T>::value_type;
-  typedef typename std::vector<typename apply_scalar_unary<F, scalar_t>::return_t>
-      return_t;  /**
-   * Apply the function specified by F elementwise to the
-   * specified argument.  This is defined recursively through this
-   * class applied to elements of type T.
-   *
-   * @param x Argument container.
-   * @return Elementwise application of F to the elements of the
-   * container.
-   */
+  typedef
+      typename std::vector<typename apply_scalar_unary<F, scalar_t>::return_t>
+          return_t; /**
+                     * Apply the function specified by F elementwise to the
+                     * specified argument.  This is defined recursively through
+                     * this class applied to elements of type T.
+                     *
+                     * @param x Argument container.
+                     * @return Elementwise application of F to the elements of
+                     * the container.
+                     */
   template <typename K, std_vector_type<K>...>
   static inline auto apply(K&& x) {
     return_t fx(x.size());
-    std::transform(
-        std::forward<K>(x).begin(), std::forward<K>(x).end(), fx.begin(),
-        [](auto&& x_iter) { return apply_scalar_unary<F, scalar_t>::apply(x_iter); });
+    std::transform(std::forward<K>(x).begin(), std::forward<K>(x).end(),
+                   fx.begin(), [](auto&& x_iter) {
+                     return apply_scalar_unary<F, scalar_t>::apply(x_iter);
+                   });
     return fx;
   }
 };
