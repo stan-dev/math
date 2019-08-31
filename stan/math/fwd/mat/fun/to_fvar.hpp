@@ -9,7 +9,6 @@
 namespace stan {
 namespace math {
 
-
 /**
  * Specialization of to_fvar for matrices of fvars
  *
@@ -21,7 +20,6 @@ template <typename T, require_eigen_fvar<T>...>
 inline auto&& to_fvar(T&& x) {
   return std::forward<T>(x);
 }
-
 
 template <int R, int C>
 inline Eigen::Matrix<fvar<double>, R, C> to_fvar(
