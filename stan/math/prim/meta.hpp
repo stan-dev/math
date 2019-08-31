@@ -42,15 +42,6 @@
 #include <stan/math/prim/scal/meta/contains_vector.hpp>
 #include <stan/math/prim/scal/meta/error_index.hpp>
 #include <stan/math/prim/scal/meta/require_generics.hpp>
-#include <stan/math/prim/scal/meta/enable_if_floating_point.hpp>
-#include <stan/math/prim/scal/meta/enable_if_fvar.hpp>
-#include <stan/math/prim/scal/meta/enable_if_eigen.hpp>
-#include <stan/math/prim/scal/meta/enable_if_same.hpp>
-#include <stan/math/prim/scal/meta/enable_if_scalar.hpp>
-#include <stan/math/prim/scal/meta/enable_if_std_vector.hpp>
-#include <stan/math/prim/scal/meta/enable_if_var.hpp>
-#include <stan/math/prim/scal/meta/enable_if_var_or_arithmetic.hpp>
-#include <stan/math/prim/scal/meta/enable_if_vector.hpp>
 #include <stan/math/prim/scal/meta/get.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/index_type.hpp>

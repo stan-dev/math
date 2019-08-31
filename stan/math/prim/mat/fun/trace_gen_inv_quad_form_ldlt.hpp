@@ -20,7 +20,7 @@ namespace math {
  * where D is a square matrix and the LDLT_factor of A is provided.
  */
 template <typename T1, typename T2, typename T3, int R1, int C1, int R2, int C2,
-          int R3, int C3, typename = enable_if_any_not_var<T1, T2, T3>>
+          int R3, int C3, typename = require_any_not_var<T1, T2, T3>>
 inline return_type_t<T1, T2, T3> trace_gen_inv_quad_form_ldlt(
     const Eigen::Matrix<T1, R1, C1> &D, const LDLT_factor<T2, R2, C2> &A,
     const Eigen::Matrix<T3, R3, C3> &B) {

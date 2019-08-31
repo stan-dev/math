@@ -21,7 +21,7 @@ namespace math {
  * autodiff variable.
  */
 template <typename F, typename T>
-struct apply_scalar_unary<F, T, fvar_type<T>> {
+struct apply_scalar_unary<F, T, require_fvar<T>> {
   /**
    * Function return type, which is same as the argument type for
    * the function, <code>fvar&lt;T&gt;</code>.
@@ -34,7 +34,7 @@ struct apply_scalar_unary<F, T, fvar_type<T>> {
    * @param x Argument variable.
    * @return Function applied to the variable.
    */
-  template <typename K, enable_if_fvar<std::decay_t<K>>...>
+  template <typename K, require_fvar<std::decay_t<K>>...>
   static inline auto apply(K&& x) {
     return F::fun(std::forward<K>(x));
   }

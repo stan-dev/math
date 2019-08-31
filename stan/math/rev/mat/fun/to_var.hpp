@@ -19,8 +19,7 @@ namespace math {
  * @param[in] x A Matrix with scalars
  * @return A Matrix with automatic differentiation variables
  */
-template <typename T, enable_if_eigen<T>...,
-          enable_if_var<scalar_type_decay_t<T>>...>
+template <typename T, require_eigen_fvar<T>...>
 inline auto&& to_var(T&& x) {
   return std::forward<T>(x);
 }

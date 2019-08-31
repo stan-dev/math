@@ -33,8 +33,7 @@ inline std::vector<var> to_var(const std::vector<double>& x) {
  * @param[in] x A std::vector<var>
  * @return The input std::vector<var>
  */
-template <typename T, enable_if_std_vector<T>...,
-          enable_if_var<scalar_type_t<T>>...>
+template <typename T, require_std_vector_var<T>...>
 inline auto&& to_var(T&& x) {
   return std::forward<T>(x);
 }

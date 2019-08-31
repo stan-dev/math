@@ -64,7 +64,7 @@ class accumulator {
    * @param x Value to add
    */
   template <typename S, typename = require_not_arithmetic<S>,
-            typename = enable_if_same<S, T>>
+            typename = require_same<S, T>>
   void add(const S& x) {
     buf_.push_back(x);
   }

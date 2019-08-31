@@ -16,8 +16,7 @@ namespace math {
  * @param[in] c Specified scalar.
  * @return Vector divided by the scalar.
  */
-template <typename T1, typename T2, int R, int C,
-          typename = enable_if_any_var<T1, T2>>
+template <typename T1, typename T2, int R, int C, require_any_var<T1, T2>...>
 inline Eigen::Matrix<var, R, C> divide(const Eigen::Matrix<T1, R, C>& v,
                                        const T2& c) {
   return to_var(v) / to_var(c);

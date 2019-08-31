@@ -41,7 +41,7 @@ struct apply_scalar_unary {
 };
 
 template <typename F, typename T>
-struct apply_scalar_unary<F, T, eigen_type<T>> {
+struct apply_scalar_unary<F, T, require_eigen<T>> {
   /**
    * Type of underlying scalar for the matrix type T.
    */
@@ -62,7 +62,7 @@ struct apply_scalar_unary<F, T, eigen_type<T>> {
    * @return Componentwise application of the function specified
    * by F to the specified matrix.
    */
-  template <typename K, eigen_type<K>...>
+  template <typename K, require_eigen<K>...>
   static inline auto apply(K&& x) {
     return std::forward<K>(x)
         .unaryExpr([](auto&& x_iter) {
@@ -94,7 +94,7 @@ struct apply_scalar_unary<F, T, require_arithmetic<T>> {
    * @param x Argument scalar.
    * @return Result of applying F to the scalar.
    */
-  template <typename K, floating_point_type<K>...>
+  template <typename K, require_floating_point<K>...>
   static inline double apply(K&& x) {
     return F::fun(std::forward<K>(x));
   }
@@ -108,7 +108,7 @@ struct apply_scalar_unary<F, T, require_arithmetic<T>> {
    * @param x Argument scalar.
    * @return Result of applying F to the scalar.
    */
-  template <typename K, require_arithmetic<K>..., not_floating_point_type<K>...>
+  template <typename K, require_arithmetic<K>..., require_not_floating_point<K>...>
   static inline auto apply(K&& x) {
     return F::fun(std::move(static_cast<double>(x)));
   }
@@ -124,7 +124,7 @@ struct apply_scalar_unary<F, T, require_arithmetic<T>> {
  * @tparam T Type of element contained in standard vector.
  */
 template <typename F, typename T>
-struct apply_scalar_unary<F, T, std_vector_type<T>> {
+struct apply_scalar_unary<F, T, require_std_vector<T>> {
   using scalar_t = typename std::decay_t<T>::value_type;
   typedef
       typename std::vector<typename apply_scalar_unary<F, scalar_t>::return_t>
@@ -138,7 +138,7 @@ struct apply_scalar_unary<F, T, std_vector_type<T>> {
    * @return Elementwise application of F to the elements of the
    * container.
    */
-  template <typename K, std_vector_type<K>...>
+  template <typename K, require_std_vector<K>...>
   static inline auto apply(K&& x) {
     return_t fx(x.size());
     std::transform(std::forward<K>(x).begin(), std::forward<K>(x).end(),

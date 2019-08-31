@@ -23,8 +23,7 @@ namespace math {
  * @param[in] x std::vector to be converted
  * @return std::vector of values
  **/
-template <typename T, enable_if_std_vector<T>...,
-          enable_if_fvar<scalar_type_decay_t<T>>...>
+template <typename T, require_std_vector_fvar<T>...>
 inline auto value_of(T&& x) {
   std::vector<partials_type_t<scalar_type_decay_t<T>>> result(x.size());
   std::transform(std::forward<T>(x).begin(), std::forward<T>(x).end(),

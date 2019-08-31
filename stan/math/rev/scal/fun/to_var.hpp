@@ -27,7 +27,7 @@ inline var to_var(double x) { return var(x); }
  * @param[in,out] x An automatic differentiation variable.
  * @return The input automatic differentiation variable.
  */
-template <typename T, enable_if_var<std::decay_t<T>>...>
+template <typename T, require_var<std::decay_t<T>>...>
 inline auto&& to_var(T&& x) {
   return std::forward<T>(x);
 }

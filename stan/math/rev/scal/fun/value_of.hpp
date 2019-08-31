@@ -24,7 +24,7 @@ namespace math {
  * @param x Variable.
  * @return Value of variable.
  */
-template <typename T, enable_if_var<std::decay_t<T>>...>
+template <typename T, require_var<T>...>
 inline auto&& value_of(T&& x) {
   return std::forward<T>(x).vi_->val_;
 }

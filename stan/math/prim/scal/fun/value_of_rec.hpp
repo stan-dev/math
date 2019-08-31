@@ -23,12 +23,12 @@ namespace math {
  * @param x Scalar to convert to double.
  * @return Value of scalar cast to a double.
  */
-template <typename T, floating_point_type<T>...>
+template <typename T, require_floating_point<T>...>
 inline auto&& value_of_rec(T&& x) {
   return std::forward<T>(x);
 }
 
-template <typename T, require_arithmetic<T>..., not_floating_point_type<T>...>
+template <typename T, require_arithmetic<T>..., require_not_floating_point<T>...>
 inline auto value_of_rec(T&& x) {
   return static_cast<double>(x);
 }

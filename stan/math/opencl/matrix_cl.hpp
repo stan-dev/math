@@ -488,7 +488,7 @@ template <typename T>
 using matrix_cl_prim = matrix_cl<T, require_arithmetic<T>>;
 
 template <typename T>
-using matrix_cl_fp = matrix_cl<T, enable_if_floating_point<T>>;
+using matrix_cl_fp = matrix_cl<T, require_floating_point<T>>;
 
 }  // namespace math
 }  // namespace stan

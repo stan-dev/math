@@ -16,7 +16,7 @@ namespace math {
  * @tparam F Type of function to apply.
  */
 template <typename F, typename T>
-struct apply_scalar_unary<F, T, var_type<T>> {
+struct apply_scalar_unary<F, T, require_var<T>> {
   /**
    * Function return type, which is <code>var</code>.
    */
@@ -28,7 +28,7 @@ struct apply_scalar_unary<F, T, var_type<T>> {
    * @param x Argument variable.
    * @return Function applied to the variable.
    */
-  template <typename K, enable_if_var<std::decay_t<K>>...>
+  template <typename K, require_var<std::decay_t<K>>...>
   static inline auto apply(K&& x) {
     return F::fun(std::forward<K>(x));
   }

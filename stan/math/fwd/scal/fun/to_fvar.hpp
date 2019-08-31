@@ -9,9 +9,7 @@
 namespace stan {
 namespace math {
 
-template <typename T,
-          std::enable_if_t<is_var<std::decay_t<T>>::value
-                           || std::is_arithmetic<std::decay_t<T>>::value>...>
+template <typename T, require_var_or_arithmetic<T>...>
 inline fvar<T> to_fvar(const T& x) {
   return fvar<T>(x);
 }
@@ -23,7 +21,7 @@ inline fvar<T> to_fvar(const T& x) {
  * @param[in,out] x A forward automatic differentation variables.
  * @return The input forward automatic differentiation variables.
  */
-template <typename T, fvar_type<T>...>
+template <typename T, require_fvar<T>...>
 inline const auto& to_fvar(T&& x) {
   return std::forward<T>(x);
 }
