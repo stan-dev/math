@@ -24,7 +24,7 @@ inline fvar<T> to_fvar(const T& x) {
  * @return The input forward automatic differentiation variables.
  */
 template <typename T, fvar_type<T>...>
-inline const auto&& to_fvar(T&& x) {
+inline const auto& to_fvar(T&& x) {
   return std::forward<T>(x);
 }
 

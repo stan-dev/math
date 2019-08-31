@@ -36,7 +36,7 @@ inline Eigen::Matrix<T, R, C>& to_fvar(Eigen::Matrix<T, R, C>& x) {
 template <int R, int C>
 inline Eigen::Matrix<fvar<double>, R, C> to_fvar(
     const Eigen::Matrix<double, R, C>& x) {
-  Eigen::Matrix<fvar<double>, R, C> m_fd(m.rows(), m.cols());
+  Eigen::Matrix<fvar<double>, R, C> m_fd(x.rows(), x.cols());
   for (int i = 0; i < x.size(); ++i)
     m_fd(i) = x(i);
   return m_fd;
