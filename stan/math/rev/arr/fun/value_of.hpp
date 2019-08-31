@@ -26,7 +26,7 @@ inline auto value_of(T&& x) {
   std::vector<double> result(x.size());
   std::transform(
       std::forward<T>(x).begin(), std::forward<T>(x).end(),
-      result.begin(), [](auto&& x) -> auto&& { return x.vi_->val_; });
+      result.begin(), [](auto&& x) { return x.vi_->val_; });
   return result;
 }
 

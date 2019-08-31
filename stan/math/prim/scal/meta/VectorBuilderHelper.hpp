@@ -43,8 +43,8 @@ class VectorBuilderHelper<T1, true, false> {  // When it's used but not a vector
 
  public:
   explicit VectorBuilderHelper(size_t /* n */) {}
-  auto&& operator[](size_t /* i */) { return x_; }
-  const auto&& operator[](size_t /* i */) const { return x_; }
+  auto& operator[](size_t /* i */) { return x_; }
+  const auto& operator[](size_t /* i */) const { return x_; }
   typedef T1 type;
 
   inline auto& data() { return x_; }
