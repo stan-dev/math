@@ -6,7 +6,6 @@
 
 namespace stan {
 
-
 /**
  * Specialization of is_fvar with a member value indicating the type is fvar.
  */
