@@ -17,7 +17,6 @@ namespace stan {
 template <bool B>
 using bool_constant = std::integral_constant<bool, B>;
 
-
 /**
  * If condition is true, template is enabled
  */
@@ -61,7 +60,6 @@ using require_all_not = std::enable_if_t<!math::conjunction<Checks...>::value>;
 template <class... Checks>
 using require_any_not = std::enable_if_t<!math::disjunction<Checks...>::value>;
 
-
 // Checks for arithmetic types
 template <typename T>
 using require_arithmetic = require_base<std::is_arithmetic<std::decay_t<T>>>;
@@ -70,17 +68,20 @@ template <typename T>
 using require_not_arithmetic = require_not<std::is_arithmetic<std::decay_t<T>>>;
 
 template <typename... Types>
-using require_all_arithmetic = require_all<std::is_arithmetic<std::decay_t<Types>>...>;
+using require_all_arithmetic
+    = require_all<std::is_arithmetic<std::decay_t<Types>>...>;
 
 template <typename... Types>
-using require_any_arithmetic = require_any<std::is_arithmetic<std::decay_t<Types>>...>;
+using require_any_arithmetic
+    = require_any<std::is_arithmetic<std::decay_t<Types>>...>;
 
 template <typename... Types>
-using require_all_not_arithmetic = require_all_not<std::is_arithmetic<std::decay_t<Types>>...>;
+using require_all_not_arithmetic
+    = require_all_not<std::is_arithmetic<std::decay_t<Types>>...>;
 
 template <typename... Types>
-using require_any_not_arithmetic = require_any_not<std::is_arithmetic<std::decay_t<Types>>...>;
-
+using require_any_not_arithmetic
+    = require_any_not<std::is_arithmetic<std::decay_t<Types>>...>;
 
 /**
  * Checks if decayed type is a double or integer
@@ -88,8 +89,9 @@ using require_any_not_arithmetic = require_any_not<std::is_arithmetic<std::decay
  */
 template <typename T>
 struct is_double_or_int
-    : bool_constant<math::disjunction<std::is_same<double, std::decay_t<T>>, std::is_same<int, std::decay_t<T>>>::value> {};
-
+    : bool_constant<
+          math::disjunction<std::is_same<double, std::decay_t<T>>,
+                            std::is_same<int, std::decay_t<T>>>::value> {};
 
 template <typename T>
 using require_double_or_int = require_base<is_double_or_int<T>>;
@@ -104,17 +106,23 @@ template <typename... Types>
 using require_any_double_or_int = require_any<is_double_or_int<Types>...>;
 
 template <typename... Types>
-using require_all_not_double_or_int = require_all_not<is_double_or_int<Types>...>;
+using require_all_not_double_or_int
+    = require_all_not<is_double_or_int<Types>...>;
 
 template <typename... Types>
-using require_any_not_double_or_int = require_any_not<is_double_or_int<Types>...>;
+using require_any_not_double_or_int
+    = require_any_not<is_double_or_int<Types>...>;
 
 /**
- * Meta struct to check if type is eigen if scalar type passes a conditional test
+ * Meta struct to check if type is eigen if scalar type passes a conditional
+ * test
  * @tparam The type to check
  */
 template <class Check, template <class> class CheckType>
-struct is_eigen_and_scalar_type : bool_constant<math::conjunction<is_eigen<std::decay_t<Check>>, CheckType<scalar_type_decay_t<Check>>>::value> {};
+struct is_eigen_and_scalar_type
+    : bool_constant<
+          math::conjunction<is_eigen<std::decay_t<Check>>,
+                            CheckType<scalar_type_decay_t<Check>>>::value> {};
 
 /**
  * Enable if type is eigen and scalar is arithmetic
@@ -136,35 +144,43 @@ template <typename... Types>
 using require_any_eigen_arithmetic = require_any<is_eigen_arithmetic<Types>...>;
 
 template <typename... Types>
-using require_not_all_eigen_arithmetic = require_all_not<is_eigen_arithmetic<Types>...>;
+using require_not_all_eigen_arithmetic
+    = require_all_not<is_eigen_arithmetic<Types>...>;
 
 template <typename... Types>
-using require_not_any_eigen_arithmetic = require_any_not<is_eigen_arithmetic<Types>...>;
+using require_not_any_eigen_arithmetic
+    = require_any_not<is_eigen_arithmetic<Types>...>;
 
 /**
  * Enable if type is eigen and scalar is floating point
  * @tparam The type to check
  */
 template <typename T>
-struct is_eigen_floating_point : is_eigen_and_scalar_type<T, std::is_floating_point> {};
+struct is_eigen_floating_point
+    : is_eigen_and_scalar_type<T, std::is_floating_point> {};
 
 template <typename T>
 using require_eigen_floating_point = require_base<is_eigen_floating_point<T>>;
 
 template <typename T>
-using require_not_eigen_floating_point = require_not<is_eigen_floating_point<T>>;
+using require_not_eigen_floating_point
+    = require_not<is_eigen_floating_point<T>>;
 
 template <typename... Types>
-using require_all_eigen_floating_point = require_all<is_eigen_floating_point<Types>...>;
+using require_all_eigen_floating_point
+    = require_all<is_eigen_floating_point<Types>...>;
 
 template <typename... Types>
-using require_any_eigen_floating_point = require_any<is_eigen_floating_point<Types>...>;
+using require_any_eigen_floating_point
+    = require_any<is_eigen_floating_point<Types>...>;
 
 template <typename... Types>
-using require_not_all_eigen_floating_point = require_all_not<is_eigen_floating_point<Types>...>;
+using require_not_all_eigen_floating_point
+    = require_all_not<is_eigen_floating_point<Types>...>;
 
 template <typename... Types>
-using require_not_any_eigen_floating_point = require_any_not<is_eigen_floating_point<Types>...>;
+using require_not_any_eigen_floating_point
+    = require_any_not<is_eigen_floating_point<Types>...>;
 
 /**
  * Enable if type is eigen and scalar is var
@@ -217,51 +233,67 @@ template <typename... Types>
 using require_not_any_eigen_fvar = require_any_not<is_eigen_fvar<Types>...>;
 
 template <class Check, template <class> class CheckType>
-struct is_std_vector_and_scalar_type : bool_constant<math::conjunction<is_std_vector<std::decay_t<Check>>, CheckType<scalar_type_decay_t<std::decay_t<Check>>>>::value> {};
+struct is_std_vector_and_scalar_type
+    : bool_constant<math::conjunction<
+          is_std_vector<std::decay_t<Check>>,
+          CheckType<scalar_type_decay_t<std::decay_t<Check>>>>::value> {};
 
 // Check if a type is std_vector with arithmetic underlying type
 template <typename T>
-struct is_std_vector_arithmetic : is_std_vector_and_scalar_type<T, std::is_arithmetic> {};
+struct is_std_vector_arithmetic
+    : is_std_vector_and_scalar_type<T, std::is_arithmetic> {};
 
 template <typename T>
 using require_std_vector_arithmetic = require_base<is_std_vector_arithmetic<T>>;
 
 template <typename T>
-using require_not_std_vector_arithmetic = require_not<is_std_vector_arithmetic<T>>;
+using require_not_std_vector_arithmetic
+    = require_not<is_std_vector_arithmetic<T>>;
 
 template <typename... Types>
-using require_all_std_vector_arithmetic = require_all<is_std_vector_arithmetic<Types>...>;
+using require_all_std_vector_arithmetic
+    = require_all<is_std_vector_arithmetic<Types>...>;
 
 template <typename... Types>
-using require_any_std_vector_arithmetic = require_any<is_std_vector_arithmetic<Types>...>;
+using require_any_std_vector_arithmetic
+    = require_any<is_std_vector_arithmetic<Types>...>;
 
 template <typename... Types>
-using require_not_all_std_vector_arithmetic = require_all_not<is_std_vector_arithmetic<Types>...>;
+using require_not_all_std_vector_arithmetic
+    = require_all_not<is_std_vector_arithmetic<Types>...>;
 
 template <typename... Types>
-using require_not_any_std_vector_arithmetic = require_any_not<is_std_vector_arithmetic<Types>...>;
+using require_not_any_std_vector_arithmetic
+    = require_any_not<is_std_vector_arithmetic<Types>...>;
 
 // Check if a type is std_vector with floating point underlying type
 template <typename T>
-struct is_std_vector_floating_point : is_std_vector_and_scalar_type<T, std::is_floating_point> {};
+struct is_std_vector_floating_point
+    : is_std_vector_and_scalar_type<T, std::is_floating_point> {};
 
 template <typename T>
-using require_std_vector_floating_point = require_base<is_std_vector_floating_point<T>>;
+using require_std_vector_floating_point
+    = require_base<is_std_vector_floating_point<T>>;
 
 template <typename T>
-using require_not_std_vector_floating_point = require_not<is_std_vector_floating_point<T>>;
+using require_not_std_vector_floating_point
+    = require_not<is_std_vector_floating_point<T>>;
 
 template <typename... Types>
-using require_all_std_vector_floating_point = require_all<is_std_vector_floating_point<Types>...>;
+using require_all_std_vector_floating_point
+    = require_all<is_std_vector_floating_point<Types>...>;
 
 template <typename... Types>
-using require_any_std_vector_floating_point = require_any<is_std_vector_floating_point<Types>...>;
+using require_any_std_vector_floating_point
+    = require_any<is_std_vector_floating_point<Types>...>;
 
 template <typename... Types>
-using require_not_all_std_vector_floating_point = require_all_not<is_std_vector_floating_point<Types>...>;
+using require_not_all_std_vector_floating_point
+    = require_all_not<is_std_vector_floating_point<Types>...>;
 
 template <typename... Types>
-using require_not_any_std_vector_floating_point = require_any_not<is_std_vector_floating_point<Types>...>;
+using require_not_any_std_vector_floating_point
+    = require_any_not<is_std_vector_floating_point<Types>...>;
 
 // Check if a type is std_vector with floatingpoint underlying type
 template <typename T>
@@ -280,10 +312,12 @@ template <typename... Types>
 using require_any_std_vector_var = require_any<is_std_vector_var<Types>...>;
 
 template <typename... Types>
-using require_not_all_std_vector_var = require_all_not<is_std_vector_var<Types>...>;
+using require_not_all_std_vector_var
+    = require_all_not<is_std_vector_var<Types>...>;
 
 template <typename... Types>
-using require_not_any_std_vector_var = require_any_not<is_std_vector_var<Types>...>;
+using require_not_any_std_vector_var
+    = require_any_not<is_std_vector_var<Types>...>;
 
 // Check if a type is std_vector with floatingpoint underlying type
 template <typename T>
@@ -302,10 +336,12 @@ template <typename... Types>
 using require_any_std_vector_fvar = require_any<is_std_vector_fvar<Types>...>;
 
 template <typename... Types>
-using require_not_all_std_vector_fvar = require_all_not<is_std_vector_fvar<Types>...>;
+using require_not_all_std_vector_fvar
+    = require_all_not<is_std_vector_fvar<Types>...>;
 
 template <typename... Types>
-using require_not_any_std_vector_fvar = require_any_not<is_std_vector_fvar<Types>...>;
+using require_not_any_std_vector_fvar
+    = require_any_not<is_std_vector_fvar<Types>...>;
 
 }  // namespace stan
 #endif
