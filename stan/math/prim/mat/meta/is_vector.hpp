@@ -8,9 +8,9 @@
 
 namespace stan {
 
-
 template <typename T>
-struct is_vector<T, std::enable_if_t<is_eigen_vector<T>::value>> : std::true_type {
+struct is_vector<T, std::enable_if_t<is_eigen_vector<T>::value>>
+    : std::true_type {
   typedef T type;
 };
 
