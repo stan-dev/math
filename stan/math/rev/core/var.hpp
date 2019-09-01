@@ -159,7 +159,7 @@ class var {
    *
    * @param x Value of the variable.
    */
-  var(uint64_t x) // NOLINT
+  var(uint64_t x)  // NOLINT
       : vi_(new vari(static_cast<double>(x))) {}
 
   /**
