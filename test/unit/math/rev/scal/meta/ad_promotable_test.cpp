@@ -1,4 +1,4 @@
-#include <stan/math/rev/scal/meta/ad_promotable.hpp>
+#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
 #include <string>
 

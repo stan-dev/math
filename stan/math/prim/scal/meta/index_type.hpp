@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_META_INDEX_TYPE_HPP
 #define STAN_MATH_PRIM_SCAL_META_INDEX_TYPE_HPP
 
+#include <type_traits>
+
 namespace stan {
 namespace math {
 
@@ -14,19 +16,21 @@ namespace math {
  *
  * tparam T type of container.
  */
-template <typename T>
+template <typename T, typename = void>
 struct index_type {};
 
 /**
- * Template class for metaprogram to compute the type of indexes
- * used in a constant container type.
+ * Specialization of index_type for pointers.
  *
- * @tparam T type of container without const modifier.
+ * tparam T type of container.
  */
 template <typename T>
-struct index_type<const T> {
-  typedef typename index_type<T>::type type;
+struct index_type <T, std::enable_if_t<std::is_pointer<T>::value>> {
+  using type = int;
 };
+
+template <typename T>
+using index_type_t = typename index_type<T>::type;
 
 }  // namespace math
 }  // namespace stan

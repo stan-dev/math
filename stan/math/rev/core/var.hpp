@@ -150,6 +150,24 @@ class var {
    *
    * @param x Value of the variable.
    */
+  var(long long x) : vi_(new vari(static_cast<double>(x))) {}  // NOLINT
+
+  /**
+   * Construct a variable from the specified arithmetic argument
+   * by constructing a new <code>vari</code> with the argument
+   * cast to <code>double</code>, and a zero adjoint.
+   *
+   * @param x Value of the variable.
+   */
+  var(unsigned long long x) : vi_(new vari(static_cast<double>(x))) {}  // NOLINT
+
+  /**
+   * Construct a variable from the specified arithmetic argument
+   * by constructing a new <code>vari</code> with the argument
+   * cast to <code>double</code>, and a zero adjoint.
+   *
+   * @param x Value of the variable.
+   */
   var(unsigned char x)  // NOLINT(runtime/explicit)
       : vi_(new vari(static_cast<double>(x))) {}
 

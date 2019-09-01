@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
-#include <stan/math/fwd/meta.hpp>
 #include <ostream>
 
 namespace stan {
@@ -49,6 +48,10 @@ struct fvar {
    */
   T d_;
 
+  /**
+   * The Type inside of the fvar.
+   */
+  using Scalar = T;
   /**
    * Return the value of this variable.
    *
