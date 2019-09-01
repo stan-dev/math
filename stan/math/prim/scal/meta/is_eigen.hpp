@@ -11,5 +11,8 @@ namespace stan {
 template <typename T, typename = void>
 struct is_eigen : std::false_type {};
 
+template<class T>
+constexpr bool is_eigen_v = is_eigen<T>::value;
+
 }  // namespace stan
 #endif

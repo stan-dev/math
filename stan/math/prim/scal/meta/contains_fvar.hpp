@@ -16,5 +16,8 @@ namespace stan {
 template <typename... T>
 using contains_fvar = math::disjunction<is_fvar<scalar_type_t<T>>...>;
 
+template<class... T>
+constexpr bool is_contains_fvar_v = contains_fvar<T...>::value;
+
 }  // namespace stan
 #endif

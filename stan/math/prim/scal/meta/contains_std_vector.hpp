@@ -12,6 +12,9 @@ namespace stan {
  */
 template <typename... Ts>
 using contains_std_vector = math::disjunction<is_std_vector<Ts>...>;
+
+template<class... T>
+constexpr bool is_contains_std_vector_v = contains_std_vector<T...>::value;
 }  // namespace stan
 
 #endif

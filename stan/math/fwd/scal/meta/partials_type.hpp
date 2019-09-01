@@ -9,7 +9,7 @@
 namespace stan {
 
 template <typename T>
-struct partials_type<T, std::enable_if_t<is_fvar<std::decay_t<T>>::value>> {
+struct partials_type<T, std::enable_if_t<is_fvar_v<std::decay_t<T>>>> {
   using type = typename std::decay_t<T>::Scalar;
 };
 

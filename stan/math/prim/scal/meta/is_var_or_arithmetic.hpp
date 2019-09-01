@@ -26,5 +26,8 @@ struct is_var_or_arithmetic_type
 template <typename... T>
 using is_var_or_arithmetic = math::conjunction<is_var_or_arithmetic_type<T>...>;
 
+template<class... T>
+constexpr bool is_var_or_arithmetic_v = is_var_or_arithmetic<T...>::value;
+
 }  // namespace stan
 #endif

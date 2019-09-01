@@ -13,7 +13,7 @@ namespace stan {
  * @tparam T type of matrix.
  */
 template <typename T>
-struct scalar_type<T, std::enable_if_t<is_eigen<T>::value>> {
+struct scalar_type<T, std::enable_if_t<is_eigen_v<T>>> {
   using type = scalar_type_t<typename std::decay_t<T>::Scalar>;
 };
 }  // namespace stan

@@ -17,6 +17,9 @@ template <typename T, typename... Ts>
 struct conjunction<T, Ts...>
     : std::conditional_t<T::value, conjunction<Ts...>, std::false_type> {};
 
+template<class... T>
+constexpr bool conjunction_v = conjunction<T...>::value;
+
 }  // namespace math
 }  // namespace stan
 #endif

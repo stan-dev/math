@@ -13,12 +13,15 @@ namespace stan {
 template <typename T, typename = void>
 struct is_std_vector : std::false_type {};
 
+template<class T>
+constexpr bool is_std_vector_v = is_std_vector<T>::value;
+
 namespace internal {
 /**
  * Underlying implimentation for detecting if an Eigen Matrix is a column
  * vector.
  */
-template <typename T, bool = is_eigen<T>::value>
+template <typename T, bool = is_eigen_v<T>>
 struct is_eigen_col_vector_impl
     : bool_constant<std::decay_t<T>::RowsAtCompileTime == 1> {};
 
@@ -66,13 +69,19 @@ struct is_eigen_row_vector : internal::is_eigen_row_vector_impl<T> {};
 template <typename T>
 struct is_eigen_vector : bool_constant<is_eigen_col_vector<T>::value || is_eigen_row_vector<T>::value> {};
 
+template<class T>
+constexpr bool is_eigen_vector_v = is_eigen_vector<T>::value;
+
 /**
  * If the input type T is either an eigen matrix with 1 column or 1 row at
  * compile time or a standard vector, this has a static member with a value
  * of true. Else this has a static member with a value of false.
  */
 template <typename T>
-struct is_vector : bool_constant<is_eigen_vector<T>::value || is_std_vector<T>::value> {};
+struct is_vector : bool_constant<is_eigen_vector_v<T> || is_std_vector_v<T>> {};
+
+template<class T>
+constexpr bool is_vector_v = is_vector<T>::value;
 
 }  // namespace stan
 #endif

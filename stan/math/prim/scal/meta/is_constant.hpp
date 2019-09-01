@@ -32,5 +32,11 @@ struct is_constant : bool_constant<std::is_convertible<T, double>::value> {};
 template <typename... T>
 using is_constant_all = math::conjunction<is_constant<T>...>;
 
+template<class T>
+constexpr bool is_constant_v = is_constant<T>::value;
+
+template<class... T>
+constexpr bool is_constant_all_v = is_constant_all<T...>::value;
+
 }  // namespace stan
 #endif
