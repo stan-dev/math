@@ -67,7 +67,8 @@ struct is_eigen_row_vector : internal::is_eigen_row_vector_impl<T> {};
  * member with a value of false.
  */
 template <typename T>
-struct is_eigen_vector : bool_constant<is_eigen_col_vector<T>::value || is_eigen_row_vector<T>::value> {};
+struct is_eigen_vector : bool_constant<is_eigen_col_vector<T>::value
+                                       || is_eigen_row_vector<T>::value> {};
 
 template<class T>
 constexpr bool is_eigen_vector_v = is_eigen_vector<T>::value;
