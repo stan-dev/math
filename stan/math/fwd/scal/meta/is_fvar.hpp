@@ -7,17 +7,19 @@
 
 namespace stan {
 
-  namespace internal {
-  template <typename T>
-  struct is_fvar_impl : std::false_type {};
+namespace internal {
+template <typename T>
+struct is_fvar_impl : std::false_type {};
 
-  template <typename T>
-  struct is_fvar_impl<math::fvar<T>> : std::true_type {};
+template <typename T>
+struct is_fvar_impl<math::fvar<T>> : std::true_type {};
 
-  }
+}  // namespace internal
 
-  template <typename T>
-  struct is_fvar<T, std::enable_if_t<internal::is_fvar_impl<std::decay_t<T>>::value>> : std::true_type {};
+template <typename T>
+struct is_fvar<T,
+               std::enable_if_t<internal::is_fvar_impl<std::decay_t<T>>::value>>
+    : std::true_type {};
 
 }  // namespace stan
 #endif

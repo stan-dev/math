@@ -8,7 +8,8 @@
 
 namespace stan {
 /**
- * Specialization of scalar_type for vector to recursivly return the inner scalar type.
+ * Specialization of scalar_type for vector to recursivly return the inner
+ * scalar type.
  */
 template <typename T>
 struct scalar_type<T, std::enable_if_t<is_std_vector<T>::value>> {

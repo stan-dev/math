@@ -34,8 +34,9 @@ namespace math {
  * extend the applicabiity of the function to an arbitrary number of types.
  */
 template <bool propto, typename T = double, typename... T_pack>
-struct include_summand : bool_constant<(!stan::is_constant_all<scalar_type_t<T>>::value || include_summand<propto, T_pack...>::value)>{};
-
+struct include_summand
+    : bool_constant<(!stan::is_constant_all<scalar_type_t<T>>::value
+                     || include_summand<propto, T_pack...>::value)> {};
 
 /**
  * <code>true</code> if a term with the specified propto
@@ -43,7 +44,10 @@ struct include_summand : bool_constant<(!stan::is_constant_all<scalar_type_t<T>>
  * calculation.
  */
 template <bool propto, typename T>
-struct include_summand<propto, T> : bool_constant<(!propto || !stan::is_constant_all<typename scalar_type<T>::type>::value)> {};
+struct include_summand<propto, T>
+    : bool_constant<(
+          !propto
+          || !stan::is_constant_all<typename scalar_type<T>::type>::value)> {};
 
 }  // namespace math
 

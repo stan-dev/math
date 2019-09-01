@@ -25,8 +25,7 @@ namespace stan {
 template <bool used, typename T1, typename... Args>
 class VectorBuilder {
  private:
-  typedef VectorBuilderHelper<T1, used, contains_vector<Args...>::value>
-      helper;
+  typedef VectorBuilderHelper<T1, used, contains_vector<Args...>::value> helper;
 
  public:
   typedef typename helper::type type;

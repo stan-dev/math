@@ -19,7 +19,8 @@ struct is_eigen_base
 }  // namespace internal
 
 /*
- * Checks whether type T is derived from EigenBase. If true this will have a static member function named value with a type of true, else value is false.
+ * Checks whether type T is derived from EigenBase. If true this will have a
+ * static member function named value with a type of true, else value is false.
  */
 template <typename T>
 struct is_eigen<T, std::enable_if_t<internal::is_eigen_base<T>::value>>

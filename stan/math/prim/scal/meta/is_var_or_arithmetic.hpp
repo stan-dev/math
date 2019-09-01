@@ -15,8 +15,9 @@ namespace stan {
  * and false (0) otherwise.
  */
 template <typename T>
-struct is_var_or_arithmetic_type : bool_constant<(is_var<scalar_type_t<T>>::value
-         || std::is_arithmetic<scalar_type_t<T>>::value)> {};
+struct is_var_or_arithmetic_type
+    : bool_constant<(is_var<scalar_type_t<T>>::value
+                     || std::is_arithmetic<scalar_type_t<T>>::value)> {};
 
 /**
  * Extends std::true_type if all the provided types are either var or

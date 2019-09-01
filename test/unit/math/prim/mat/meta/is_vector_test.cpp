@@ -22,5 +22,4 @@ TEST(MetaTraits, is_vector) {
   EXPECT_FALSE(is_vector<const temp_matrix_d>::value);
   EXPECT_FALSE(is_vector<const temp_matrix_d&>::value);
   EXPECT_FALSE(is_vector<double*>::value);
-
 }

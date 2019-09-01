@@ -16,8 +16,9 @@ namespace math {
  * @tparam To target type
  */
 template <typename From, typename To, typename = void>
-struct ad_promotable : bool_constant<std::is_convertible<std::decay_t<From>, std::decay_t<To>>::value> {};
-
+struct ad_promotable
+    : bool_constant<
+          std::is_convertible<std::decay_t<From>, std::decay_t<To>>::value> {};
 
 }  // namespace math
 }  // namespace stan

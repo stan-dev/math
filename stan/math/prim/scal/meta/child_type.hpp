@@ -3,7 +3,6 @@
 
 #include <type_traits>
 
-
 namespace stan {
 namespace math {
 
@@ -18,7 +17,7 @@ namespace math {
  */
 template <typename T>
 struct child_type {
-  using type =  double;
+  using type = double;
 };
 
 /**

@@ -41,7 +41,8 @@ class scalar_seq_view<C, std::enable_if_t<is_vector_like<C>::value>> {
  * @tparam T the scalar type
  */
 template <typename C>
-class scalar_seq_view<C, std::enable_if_t<std::is_same<std::decay_t<C>, scalar_type_decay_t<C>>::value>> {
+class scalar_seq_view<C, std::enable_if_t<std::is_same<
+                             std::decay_t<C>, scalar_type_decay_t<C>>::value>> {
  public:
   explicit scalar_seq_view(const C& t) : t_(t) {}
 

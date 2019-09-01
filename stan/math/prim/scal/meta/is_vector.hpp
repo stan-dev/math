@@ -15,10 +15,12 @@ struct is_std_vector : std::false_type {};
 
 namespace internal {
 /**
- * Underlying implimentation for detecting if an Eigen Matrix is a column vector.
+ * Underlying implimentation for detecting if an Eigen Matrix is a column
+ * vector.
  */
 template <typename T, bool = is_eigen<T>::value>
-struct is_eigen_col_vector_impl : bool_constant<std::decay_t<T>::RowsAtCompileTime == 1> {};
+struct is_eigen_col_vector_impl
+    : bool_constant<std::decay_t<T>::RowsAtCompileTime == 1> {};
 
 /**
  * Specialization for when type is not an eigen vector.
@@ -42,21 +44,24 @@ struct is_eigen_row_vector_impl<T, false> : std::false_type {};
 
 /**
  * If the input type T is an eigen matrix with 1 row at compile time this
- * returns a static member with a value of true. Else this returns a static member with a value of false.
+ * returns a static member with a value of true. Else this returns a static
+ * member with a value of false.
  */
 template <typename T>
 struct is_eigen_col_vector : internal::is_eigen_col_vector_impl<T> {};
 
 /**
  * If the input type T is an eigen matrix with 1 column at compile time this
- * returns a static member with a value of true. Else this returns a static member with a value of false.
+ * returns a static member with a value of true. Else this returns a static
+ * member with a value of false.
  */
 template <typename T>
 struct is_eigen_row_vector : internal::is_eigen_row_vector_impl<T> {};
 
 /**
- * If the input type T is an eigen matrix with 1 column or 1 row at compile time this
- * returns a static member with a value of true. Else this returns a static member with a value of false.
+ * If the input type T is an eigen matrix with 1 column or 1 row at compile time
+ * this returns a static member with a value of true. Else this returns a static
+ * member with a value of false.
  */
 template <typename T>
 struct is_eigen_vector
@@ -64,9 +69,10 @@ struct is_eigen_vector
                                        || is_eigen_row_vector<T>::value> {};
 
 /**
-* If the input type T is either an eigen matrix with 1 column or 1 row or at compile time  or a standard vector, this
-* returns a static member with a value of true. Else this returns a static member with a value of false.
-*/
+ * If the input type T is either an eigen matrix with 1 column or 1 row or at
+ * compile time  or a standard vector, this returns a static member with a value
+ * of true. Else this returns a static member with a value of false.
+ */
 template <typename T>
 struct is_vector
     : std::integral_constant<bool, is_eigen_vector<T>::value

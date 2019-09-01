@@ -33,7 +33,7 @@ namespace stan {
 template <typename T, typename... T_pack>
 struct partials_return_type {
   using type = promote_args_t<double, partials_type_t<scalar_type_t<T>>,
-      typename partials_return_type<T_pack...>::type>;
+                              typename partials_return_type<T_pack...>::type>;
 };
 
 template <typename T>

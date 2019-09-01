@@ -18,7 +18,8 @@ struct value_type {
 };
 
 /**
- * Specialization for pointers returns the underlying value the pointer is pointing to.
+ * Specialization for pointers returns the underlying value the pointer is
+ * pointing to.
  */
 template <typename T>
 struct value_type<T, std::enable_if_t<std::is_pointer<T>::value>> {

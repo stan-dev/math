@@ -32,7 +32,8 @@ namespace stan {
 
 template <typename T, typename... Types_pack>
 struct return_type {
-  using type = promote_args_t<double, scalar_type_t<T>,typename return_type<Types_pack...>::type>;
+  using type = promote_args_t<double, scalar_type_t<T>,
+                              typename return_type<Types_pack...>::type>;
 };
 
 template <typename T>

@@ -11,5 +11,5 @@ namespace stan {
 template <typename... Args>
 using promote_args_t = typename boost::math::tools::promote_args<Args...>::type;
 
-}
+}  // namespace stan
 #endif

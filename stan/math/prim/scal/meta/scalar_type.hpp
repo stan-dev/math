@@ -22,8 +22,10 @@ struct scalar_type_base {
  * @tparam T the type to clean and return.
  */
 template <typename T>
-struct scalar_type_base<T, std::enable_if_t<std::is_const<T>::value || std::is_pointer<T>::value>> {
-  using type = typename scalar_type_base<std::remove_pointer_t<std::remove_cv_t<T>>>::type;
+struct scalar_type_base<
+    T, std::enable_if_t<std::is_const<T>::value || std::is_pointer<T>::value>> {
+  using type = typename scalar_type_base<
+      std::remove_pointer_t<std::remove_cv_t<T>>>::type;
 };
 
 /**

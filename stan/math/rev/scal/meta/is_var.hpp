@@ -10,7 +10,9 @@ namespace stan {
  * Specialization for checking if value of T is a var.
  */
 template <typename T>
-struct is_var<T, std::enable_if_t<std::is_same<math::var, std::decay_t<T>>::value>> : std::true_type{};
+struct is_var<T,
+              std::enable_if_t<std::is_same<math::var, std::decay_t<T>>::value>>
+    : std::true_type {};
 
 }  // namespace stan
 #endif

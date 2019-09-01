@@ -25,7 +25,7 @@ struct index_type {};
  * tparam T type of container.
  */
 template <typename T>
-struct index_type <T, std::enable_if_t<std::is_pointer<T>::value>> {
+struct index_type<T, std::enable_if_t<std::is_pointer<T>::value>> {
   using type = int;
 };
 
