@@ -20,7 +20,7 @@ struct ad_promotable
     : bool_constant<
           std::is_convertible<std::decay_t<From>, std::decay_t<To>>::value> {};
 
-template<class To, class From>
+template <class To, class From>
 constexpr bool ad_promotable_v = ad_promotable<To, From>::value;
 
 }  // namespace math

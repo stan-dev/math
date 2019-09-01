@@ -25,7 +25,7 @@ struct is_vector_like
     : bool_constant<stan::is_vector_v<T> || std::is_pointer<T>::value
                     || is_eigen_v<T>> {};
 
-template<class T>
+template <class T>
 constexpr bool is_vector_like_v = is_vector_like<T>::value;
 
 }  // namespace stan

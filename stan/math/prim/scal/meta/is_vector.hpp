@@ -13,7 +13,7 @@ namespace stan {
 template <typename T, typename = void>
 struct is_std_vector : std::false_type {};
 
-template<class T>
+template <class T>
 constexpr bool is_std_vector_v = is_std_vector<T>::value;
 
 namespace internal {
@@ -70,7 +70,7 @@ template <typename T>
 struct is_eigen_vector : bool_constant<is_eigen_col_vector<T>::value
                                        || is_eigen_row_vector<T>::value> {};
 
-template<class T>
+template <class T>
 constexpr bool is_eigen_vector_v = is_eigen_vector<T>::value;
 
 /**
@@ -81,7 +81,7 @@ constexpr bool is_eigen_vector_v = is_eigen_vector<T>::value;
 template <typename T>
 struct is_vector : bool_constant<is_eigen_vector_v<T> || is_std_vector_v<T>> {};
 
-template<class T>
+template <class T>
 constexpr bool is_vector_v = is_vector<T>::value;
 
 }  // namespace stan
