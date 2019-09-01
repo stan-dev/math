@@ -150,7 +150,7 @@ class var {
    *
    * @param x Value of the variable.
    */
-  var(int64_t x) : vi_(new vari(static_cast<double>(x))) {}  // NOLINT
+  var(long long x) : vi_(new vari(static_cast<double>(x))) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -159,7 +159,7 @@ class var {
    *
    * @param x Value of the variable.
    */
-  var(uint64_t x) // NOLINT
+  var(unsigned long long x)  // NOLINT
       : vi_(new vari(static_cast<double>(x))) {}
 
   /**
