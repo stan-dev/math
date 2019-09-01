@@ -14,7 +14,7 @@ namespace math {
  * @tparam T type of elements in standard vector.
  */
 template <typename T>
-struct index_type<std::vector<T> > {
+struct index_type<std::vector<T>> {
   /**
    * Typedef for index of standard vectors.
    */

@@ -17,7 +17,7 @@ class VectorBuilderHelper<T1, true, true> {  // When used and vector
   std::vector<T1> x_;
 
  public:
-  explicit VectorBuilderHelper(size_t n) : x_(std::move(n)) {}
+  explicit VectorBuilderHelper(size_t n) : x_(n) {}
 
   typedef std::vector<T1> type;
 

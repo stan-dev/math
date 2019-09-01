@@ -13,7 +13,7 @@ namespace stan {
  * @tparam type of the elements in the std::vector
  */
 template <typename T>
-struct is_constant<std::vector<T> > {
+struct is_constant<std::vector<T>> {
   enum { value = is_constant<T>::value };
 };
 

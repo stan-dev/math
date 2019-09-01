@@ -33,7 +33,7 @@ class VectorBuilder {
   typedef typename helper::type type;
   helper mock_vec_;
 
-  explicit VectorBuilder(size_t n) : mock_vec_(std::move(n)) {}
+  explicit VectorBuilder(size_t n) : mock_vec_(n) {}
 
   auto&& operator[](size_t i) { return mock_vec_[i]; }
   const auto&& operator[](size_t i) const { return mock_vec_[i]; }

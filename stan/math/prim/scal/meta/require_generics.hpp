@@ -87,6 +87,7 @@ using not_all_same_type
  * - Var or Arithmetic
  * - Fvar
  * - Var or Fvar
+ * - Arithmetic Var or Fvar
  */
 
 /**
@@ -256,6 +257,34 @@ using require_all_not_var_or_fvar = require_all_not<is_var_or_fvar<Types>...>;
 
 template <typename... Types>
 using require_any_not_var_or_fvar = require_any_not<is_var_or_fvar<Types>...>;
+
+/**
+ * Checks if decayed type is a var, fvar, or arithmetic
+ * @tparam The type to check
+ */
+template <typename T>
+struct is_stan_scalar
+    : bool_constant<math::disjunction<is_var<std::decay_t<T>>,
+                                      is_fvar<std::decay_t<T>>,
+                                      std::is_arithmetic<std::decay_t<T>>>::value> {};
+
+template <typename T>
+using require_stan_scalar = require_base<is_stan_scalar<T>>;
+
+template <typename T>
+using require_not_stan_scalar = require_not<is_stan_scalar<T>>;
+
+template <typename... Types>
+using require_all_stan_scalar = require_all<is_stan_scalar<Types>...>;
+
+template <typename... Types>
+using require_any_stan_scalar = require_any<is_stan_scalar<Types>...>;
+
+template <typename... Types>
+using require_all_not_stan_scalar = require_all_not<is_stan_scalar<Types>...>;
+
+template <typename... Types>
+using require_any_not_stan_scalar = require_any_not<is_stan_scalar<Types>...>;
 
 /**
  * Below are enablers for std_vector based matrices and scalar types of

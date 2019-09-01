@@ -50,9 +50,9 @@ return_type_t<T_y, T_shape, T_scale> inv_gamma_lpdf(const T_y& y,
     return 0;
 
   T_partials_return logp(0);
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_shape> alpha_vec(alpha);
-  scalar_seq_view<T_scale> beta_vec(beta);
+  const scalar_seq_view<T_y> y_vec(y);
+  const scalar_seq_view<T_shape> alpha_vec(alpha);
+  const scalar_seq_view<T_scale> beta_vec(beta);
 
   for (size_t n = 0; n < length(y); n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
@@ -60,7 +60,7 @@ return_type_t<T_y, T_shape, T_scale> inv_gamma_lpdf(const T_y& y,
       return LOG_ZERO;
   }
 
-  size_t N = max_size(y, alpha, beta);
+  auto N = max_size(y, alpha, beta);
   operands_and_partials<T_y, T_shape, T_scale> ops_partials(y, alpha, beta);
 
   using std::log;
