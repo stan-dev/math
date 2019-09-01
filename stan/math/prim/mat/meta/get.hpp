@@ -8,7 +8,8 @@ namespace stan {
 
 template <typename T, require_eigen<T>...>
 inline auto&& get(T&& m, size_t n) {
-  return std::forward<decltype(m.coeff(static_cast<int>(n)))>(m.coeff(static_cast<int>(n)));
+  return std::forward<decltype(m.coeff(static_cast<int>(n)))>(
+      m.coeff(static_cast<int>(n)));
 }
 
 }  // namespace stan

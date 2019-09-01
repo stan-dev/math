@@ -264,9 +264,9 @@ using require_any_not_var_or_fvar = require_any_not<is_var_or_fvar<Types>...>;
  */
 template <typename T>
 struct is_stan_scalar
-    : bool_constant<math::disjunction<is_var<std::decay_t<T>>,
-                                      is_fvar<std::decay_t<T>>,
-                                      std::is_arithmetic<std::decay_t<T>>>::value> {};
+    : bool_constant<
+          math::disjunction<is_var<std::decay_t<T>>, is_fvar<std::decay_t<T>>,
+                            std::is_arithmetic<std::decay_t<T>>>::value> {};
 
 template <typename T>
 using require_stan_scalar = require_base<is_stan_scalar<T>>;
