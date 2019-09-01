@@ -14,9 +14,7 @@ namespace stan {
  * is constant, false otherwise. This is used in
  * the is_constant_all metaprogram.
  *
- * @tparam T type of the elements in the Eigen Matrix
- * @tparam R number of rows in the Eigen Matrix
- * @tparam C number of cols in the eigen Matrix
+ * @tparam T type of the Eigen Matrix
  */
 template <typename T>
 struct is_constant<T, std::enable_if_t<is_eigen<T>::value>>

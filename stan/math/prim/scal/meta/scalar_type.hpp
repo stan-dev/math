@@ -8,9 +8,9 @@ namespace stan {
 
 /**
  * End of recursion to determine base scalar type of a type
+ * The underlying base scalar type. If T is not a container then this
+ * has a static member nameed type with the type T.
  * @tparam T the type.
- * @return The underlying base scalar type. If T is not a container then this
- * returns T
  */
 template <typename T, typename = void>
 struct scalar_type_base {
@@ -32,7 +32,7 @@ struct scalar_type_base<
  * Metaprogram structure to determine the base scalar type
  * of a template argument.
  *
- * <p>This base class should be specialized for structured types.
+ * <p>This base class should be specialized for structured types.</p>
  *
  * @tparam T Type of object.
  */

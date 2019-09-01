@@ -10,8 +10,7 @@ namespace stan {
 namespace internal {
 
 /**
- * This underlying implimentation is used when none of the type is not an std
- * vectors.
+ * This underlying implimentation is used when the type is not an std vector.
  */
 template <typename T>
 struct is_std_vector_impl : std::false_type {};

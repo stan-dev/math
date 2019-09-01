@@ -66,11 +66,11 @@ inline typename VectorBuilder<true, int, T_alpha>::type bernoulli_logit_glm_rng(
 
   VectorBuilder<true, int, T_alpha> output(M);
 
-  for (size_t n = 0; n < M; ++n) {
-    double theta_n = alpha_vec[n] + x_beta(n);
+  for (size_t m = 0; m < M; ++m) {
+    double theta_m = alpha_vec[m] + x_beta(m);
     variate_generator<RNG &, bernoulli_distribution<>> bernoulli_rng(
-        rng, bernoulli_distribution<>(inv_logit(theta_n)));
-    output[n] = bernoulli_rng();
+        rng, bernoulli_distribution<>(inv_logit(theta_m)));
+    output[m] = bernoulli_rng();
   }
 
   return output.data();

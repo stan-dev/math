@@ -14,8 +14,6 @@ namespace math {
  * Eigen matrix, vector, or row vector.
  *
  * @tparam T type of matrix.
- * @tparam R number of rows for matrix.
- * @tparam C number of columns for matrix.
  */
 template <typename T>
 struct value_type<T, std::enable_if_t<is_eigen<T>::value>> {

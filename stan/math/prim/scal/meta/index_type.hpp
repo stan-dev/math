@@ -14,7 +14,7 @@ namespace math {
  * all implement a typedef <code>type</code> for the type of the
  * index given container <code>T</code>.
  *
- * tparam T type of container.
+ * @tparam T type of container.
  */
 template <typename T, typename = void>
 struct index_type {};
@@ -22,7 +22,7 @@ struct index_type {};
 /**
  * Specialization of index_type for pointers.
  *
- * tparam T type of container.
+ * @tparam T type of container.
  */
 template <typename T>
 struct index_type<T, std::enable_if_t<std::is_pointer<T>::value>> {

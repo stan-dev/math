@@ -11,8 +11,6 @@ namespace stan {
  * values stored in an Eigen matrix.
  *
  * @tparam T type of matrix.
- * @tparam R number of rows for matrix.
- * @tparam C number of columns for matrix.
  */
 template <typename T>
 struct scalar_type<T, std::enable_if_t<is_eigen<T>::value>> {
