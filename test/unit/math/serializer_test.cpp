@@ -39,8 +39,9 @@ TEST(testUnitMathSerializer, serializer_deserializer) {
   EXPECT_EQ(-10, y(0));
   EXPECT_EQ(-20, y(1));
   Eigen::RowVectorXd z = d.read(Eigen::RowVectorXd(3));
-  EXPECT_EQ(-10, z(0));
-  EXPECT_EQ(-20, z(1));
+  EXPECT_EQ(101, z(0));
+  EXPECT_EQ(102, z(1));
+  EXPECT_EQ(103, z(2));
   Eigen::MatrixXd u = d.read(Eigen::MatrixXd(3, 2));
   EXPECT_EQ(1, u(0, 0));
   EXPECT_EQ(2, u(0, 1));
