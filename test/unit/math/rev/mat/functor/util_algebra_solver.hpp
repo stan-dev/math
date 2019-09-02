@@ -7,7 +7,7 @@
 #include <limits>
 #include <string>
 
-/* wrapper function that either calls the dogleg or the algebraic solver. */
+/* wrapper function that either calls the dogleg or the newton solver. */
 template <typename F, typename T1, typename T2>
 Eigen::Matrix<T2, Eigen::Dynamic, 1> general_algebra_solver(
   bool is_newton,
@@ -21,14 +21,17 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> general_algebra_solver(
   using stan::math::algebra_solver;
   using stan::math::algebra_solver_newton;
 
-  Eigen::Matrix<T2, Eigen::Dynamic, 1> theta;
-  if (is_newton) 
-    theta = algebra_solver_newton(f, x, y, dat, dat_int, msgs,
-                                  relative_tolerance, function_tolerance,
-                                  max_num_steps);
-  else theta = algebra_solver(f, x, y, dat, dat_int, msgs,
-                              relative_tolerance, function_tolerance,
-                              max_num_steps);
+  Eigen::Matrix<T2, Eigen::Dynamic, 1>
+    theta = (is_newton) ? 
+                         algebra_solver_newton(f, x, y, dat, dat_int, msgs,
+                                               relative_tolerance,
+                                               function_tolerance,
+                                               max_num_steps)
+                        :
+                         algebra_solver(f, x, y, dat, dat_int, msgs,
+                                        relative_tolerance,
+                                        function_tolerance,
+                                        max_num_steps);
   return theta;
 }
 

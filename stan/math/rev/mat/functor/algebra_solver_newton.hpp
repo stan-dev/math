@@ -33,9 +33,7 @@ Eigen::VectorXd algebra_solver_newton(
   long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
 
   return kinsol_solve(f, x, value_of(y), dat, dat_int, 0,
-                      function_tolerance, max_num_steps);
-  // return kinsol_solve(f, kinsol_J_f(), x, value_of(y), dat, dat_int, 0,
-  //                     function_tolerance, max_num_steps);
+                      function_tolerance, max_num_steps, 1e-3);
   }
 
 /**

@@ -12,6 +12,8 @@
 // Every test exists in duplicate to test the case
 // where y (the auxiliary parameters) are passed as
 // data (double type) or parameters (var types).
+// Within each of these tests, the dogleg and the Newton
+// solver are tested.
 
 TEST(MathMatrix, simple_Eq) {
   using stan::math::var;
@@ -19,29 +21,31 @@ TEST(MathMatrix, simple_Eq) {
   int n_x = 2, n_y = 3;
   bool is_newton;
 
-  for (int k = 0; k < n_x; k++) {
-    Eigen::Matrix<var, Eigen::Dynamic, 1> y(n_y);
-    y << 5, 4, 2;
+  for (int is_newton = 0; is_newton <= 1; is_newton++) {
+    for (int k = 0; k < n_x; k++) {
+      Eigen::Matrix<var, Eigen::Dynamic, 1> y(n_y);
+      y << 5, 4, 2;
 
-    Eigen::Matrix<var, Eigen::Dynamic, 1> theta
-        = simple_eq_test(simple_eq_functor(), y, 0);
+      Eigen::Matrix<var, Eigen::Dynamic, 1> theta
+        = simple_eq_test(simple_eq_functor(), y, is_newton);
 
-    Eigen::MatrixXd J(n_x, n_y);
-    J << 4, 5, 0, 0, 0, 1;
+      Eigen::MatrixXd J(n_x, n_y);
+      J << 4, 5, 0, 0, 0, 1;
 
-    AVEC y_vec = createAVEC(y(0), y(1), y(2));
-    VEC g;
-    theta(k).grad(y_vec, g);
+      AVEC y_vec = createAVEC(y(0), y(1), y(2));
+      VEC g;
+      theta(k).grad(y_vec, g);
 
-    for (int i = 0; i < n_y; i++)
-      EXPECT_EQ(J(k, i), g[i]);
+      for (int i = 0; i < n_y; i++) EXPECT_EQ(J(k, i), g[i]);
+    }
   }
 }
 
 TEST(MathMatrix, simple_Eq_dbl) {
   Eigen::VectorXd y(3);
   y << 5, 4, 2;
-  Eigen::VectorXd theta = simple_eq_test(simple_eq_functor(), y, 0);
+  for (int is_newton = 0; is_newton <= 1; is_newton++)
+    Eigen::VectorXd theta = simple_eq_test(simple_eq_functor(), y, is_newton);
 }
 /*
 TEST(MathMatrix, simple_Eq_tuned) {
