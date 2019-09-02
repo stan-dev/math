@@ -154,7 +154,7 @@ private:
   }
 
   /**
-   * Calculate the Jacobian of the system function with respect to x.
+   * Calculate the Jacobian of the system function with respect to x
    * using the method specified by J_f_.
    * By default, J_f is constructed as a method that computes the
    * Jacobian with reverse-mode autodiff.

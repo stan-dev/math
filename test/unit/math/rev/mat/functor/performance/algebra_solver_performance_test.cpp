@@ -21,6 +21,8 @@
 #include <random>
 
 /* THIS TEST USES NEWTON's SOLVER, NOT POWELL's METHOD */
+// TO DO: add a read_data function, to read in data for tests, as was done for
+// the Laplace tests.
 
 /*
 TEST(MathMatrix, performance_test)  {
@@ -34,6 +36,7 @@ TEST(MathMatrix, performance_test)  {
   using stan::math::var;
   using stan::math::rep_vector;
   using stan::math::algebra_solver;
+  using stan::math::algebra_solver_newton;
   using stan::math::start_nested;
   using stan::math::set_zero_all_adjoints_nested;
   using stan::math::recover_memory_nested;
@@ -77,7 +80,24 @@ TEST(MathMatrix, performance_test)  {
     init = rep_vector(500, 2 * n);  // initial guess
 
     Matrix<double, Dynamic, Dynamic> J;
-    
+
+    // solve the algebraic equation and measure time
+    // (no differentiation)
+    // VectorXd theta_dbl(2 + 2 * n);
+    // theta_dbl(0) = 0.5;
+    // theta_dbl(1) = 0.2;
+    // for (int l = 2; l < theta_dbl.size(); l++) theta_dbl(l) = alpha_dbl[l - 2];
+    // 
+    // start = std::chrono::system_clock::now();
+    // VectorXd 
+    //   steady_state_dbl = algebra_solver_newton(oneCpt_functor(),
+    //                                            init, theta_dbl,
+    //                                            dat, n_patients);
+    // end = std::chrono::system_clock::now();
+    // elapsed_seconds = end - start;
+    // time = elapsed_seconds.count();
+    // std::cout << "time: " << time << " s" << std::endl
+    //           << "solution: " << steady_state_dbl.transpose() << std::endl;
 
     for (int j = 0; j <100; j++) {
       if (!measure_jacobian_time_only) 
@@ -205,6 +225,7 @@ struct inla_functor2 {
   }
 };
 
+/*
 TEST(MathMatrix, optimization_inla) {
   using std::vector;
   using stan::math::var;
@@ -307,11 +328,96 @@ TEST(MathMatrix, optimization_inla) {
     EXPECT_FLOAT_EQ(solver_gradient(k, 0), g[0]);
     EXPECT_FLOAT_EQ(solver_gradient(k, 1), g[1]);
   }
+}  */
+
+
+TEST(MathMatrix, peformance_test_inla_dbl) {
+  // TO DO -- remove code redundant to this test and the next one.
+  using stan::math::algebra_solver;
+  using stan::math::algebra_solver_newton;
+  using Eigen::VectorXd;
+  using std::vector;
+  
+  
+  std::string solver = "newton";
+
+  int dim_phi = 2;
+  VectorXd phi(dim_phi);
+  phi << 0.5, 0.9;
+  bool space_matters = true;
+  
+  // tuning parameter for the Powell solver
+  double rel_tol = 1e-12;
+  double ftol = 1e-6;
+  int max_num_steps = 1e4;
+  
+  std::string working_directory = "test/unit/math/rev/mat/functor/performance/";
+  
+  auto start = std::chrono::system_clock::now();
+  auto end = std::chrono::system_clock::now();
+  std::chrono::duration<double> elapsed_seconds;
+  int dim_theta = 100;
+
+  Eigen::VectorXd n_samples(dim_theta);
+  Eigen::VectorXd sums(dim_theta);
+
+  // read data from csv file to work out n_samples and sums.
+  std::ifstream input_data;
+  std::string dim_theta_string = std::to_string(dim_theta);
+  std::string file_m = working_directory + "data_cpp/m_" +
+    dim_theta_string + ".csv";
+  std::string file_sums = working_directory + "data_cpp/sums_" +
+    dim_theta_string + ".csv";
+
+  input_data.open(file_m);
+  double buffer = 0.0;
+  for (int n = 0; n < dim_theta; ++n) {
+    input_data >> buffer;
+    n_samples(n) = buffer;
+  }
+  input_data.close();
+
+  input_data.open(file_sums);
+  buffer = 0.0;
+  for (int n = 0; n < dim_theta; ++n) {
+    input_data >> buffer;
+    sums(n) = buffer;
+  }
+  input_data.close();
+
+  // solve algebraic equation
+  VectorXd theta_0 = VectorXd::Zero(dim_theta);
+  theta_0(1) = 5;
+
+  vector<double> dat(dim_theta * 2);
+  for (int i = 0; i < dim_theta; i++) dat[i] = n_samples(i);
+  for (int i = 0; i < dim_theta; i++) dat[dim_theta + i] = sums(i);
+  vector<int> dat_int;
+  
+  start = std::chrono::system_clock::now();
+
+  VectorXd theta;
+  if (solver == "newton") {
+    theta = algebra_solver_newton(inla_functor(), theta_0, phi,
+                                  dat, dat_int);
+  } else {
+    theta = algebra_solver(inla_functor(), theta_0, phi,
+                           dat, dat_int, 0, rel_tol, ftol, max_num_steps);
+  }
+  
+  end = std::chrono::system_clock::now();
+  elapsed_seconds = end - start;
+  
+  std::cout << "theta: " << theta.transpose() << std::endl
+            << "time: " << elapsed_seconds.count() << std::endl;
 }
 
 /*
 TEST(MathMatrix, performance_test_inla)  {
   // performance test for INLA problem with Poisson GLM.
+  // NOTE: the Jacobian times are not reliable, because the Jacobian matrix
+  // is computed when the vari class gets constructed, not when the chain()
+  // method is called.
   using stan::math::var;
   using stan::math::append_row;
   using std::vector;
@@ -322,7 +428,7 @@ TEST(MathMatrix, performance_test_inla)  {
   using stan::math::head;
   using stan::math::tail;
 
-  std::string solver = "powell";
+  std::string solver = "newton";
 
   int dim_phi = 2;
   Eigen::VectorXd phi(dim_phi);
@@ -331,9 +437,8 @@ TEST(MathMatrix, performance_test_inla)  {
 
   int n_dimensions = 5;
   Eigen::VectorXd dimensions(n_dimensions);
-  // dimensions << 10, 20, 50, 100, 500;
-  dimensions << 10, 20, 20, 20, 500;
-  
+  dimensions << 10, 20, 50, 100, 500;
+
   // tuning parameter for the Powell solver
   double rel_tol = 1e-12;
   double ftol = 1e-6;
@@ -350,7 +455,7 @@ TEST(MathMatrix, performance_test_inla)  {
 
   // Note: the last tier, with dim = 500 takes 20 minutes to run,
   // so it's best to leave that out.
-  for (int k = 0; k < n_dimensions; k++) {
+  for (int k = 0; k < n_dimensions - 1; k++) {
 
     std::cout << "Dimension: " << dimensions(k) << std::endl;
 
@@ -432,9 +537,9 @@ TEST(MathMatrix, performance_test_inla)  {
     for (size_t i = 0; i < g.size(); i++) std::cout << g[i] << " ";
     std::cout << std::endl << std::endl;
   }
-}  */
+} */
 
-
+/*
 TEST(MathMatrix, performance_test_inla2)  {
   // simple test for INLA problem with Poisson GLM.
   // This time precompute the precision matrix.
@@ -556,6 +661,4 @@ TEST(MathMatrix, performance_test_inla2)  {
     for (size_t i = 0; i < g.size(); i++) std::cout << g[i] << " ";
     std::cout << std::endl << std::endl;
   }
-}
-
-
+}  */

@@ -22,21 +22,23 @@ namespace math {
    * . . .
    * @param[in] function_tolerance determines how small ||f(x)|| needs to be.
    * @param[in] max_num_steps maximum number of iterations.
-   * @param[in] global_line_search does the solver use a global line search?
-   *            If equal to KIN_NONE, no, if KIN_LINESEARCH, yes.
-   * @param[in] steps_eval_jacobian maximum number of steps before the
-   *            Jacobian gets recomputed. Note that Kinsol's default is 10.
-   *            If equal to 1, the algorithm computes exact Newton steps.
    * @param[in] scaling_step_tol if a Newton step is smaller than the scaling
    *            step tolerance, the code breaks, assuming the solver is no
    *            longer making significant progress (i.e. is stuck).
+   * @param[in] custom_jacobian. If 0, use Kinsol's quotient differentiation to
+   *            do the linear solve. If 1, either use reverse-mode autodiff, or
+   *            a method specified by the user.
    * @param[in] J_f user supplied method for computing the Jacobian of f
    *            w.r.t x. Defaults to reverse mode autodiff.
+   * @param[in] steps_eval_jacobian maximum number of steps before the
+   *            Jacobian gets recomputed. Note that Kinsol's default is 10.
+   *            If equal to 1, the algorithm computes exact Newton steps.
+   * @param[in] global_line_search does the solver use a global line search?
+   *            If equal to KIN_NONE, no, if KIN_LINESEARCH, yes.  
    */
-  template <typename F1, typename F2>
+  template <typename F1, typename F2 = kinsol_J_f>
   Eigen::VectorXd 
   kinsol_solve(const F1& f,
-               const F2& J_f,
                const Eigen::VectorXd& x,
                const Eigen::VectorXd& y,
                const std::vector<double>& dat,
@@ -45,6 +47,8 @@ namespace math {
                double function_tolerance = 1e-6,
                long int max_num_steps = 1e+3,
                double scaling_step_tol = 1e-3,
+               bool custom_jacobian = 0,
+               const F2& J_f = kinsol_J_f(),
                int steps_eval_jacobian = 10,
                int global_line_search = KIN_LINESEARCH) {
     int N = x.size();
@@ -77,7 +81,11 @@ namespace math {
 
     // construct Linear solver
     flag = KINSetLinearSolver(kinsol_memory, kinsol_data.LS_, kinsol_data.J_);
-    flag = KINSetJacFn(kinsol_memory, &system_data::kinsol_jacobian);
+
+    // FOR TESTS: comment this out to use Kinsol's default methods for Jacobian,
+    // i.e. finite differentiation.
+    if (!custom_jacobian) flag = KINSetJacFn(kinsol_memory, 0);
+    else flag = KINSetJacFn(kinsol_memory, &system_data::kinsol_jacobian);
 
     // TO DO - a better way to do this conversion.
     N_Vector nv_x = N_VNew_Serial(N);
