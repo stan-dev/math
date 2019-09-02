@@ -22,8 +22,9 @@ TEST(MetaTraits, ScalarSeqViewDouble) {
 
   EXPECT_EQ(1, sv.size());
 
-  double* d_point;
-  d_point = (double*)malloc(sizeof(double) * 2);
+
+  double *d_point;
+  d_point = static_cast<double*>(malloc(sizeof(double) * 2));
   d_point[0] = 69.0;
   d_point[1] = 420.0;
 
