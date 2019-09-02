@@ -27,7 +27,7 @@ static const char* normal_id_glm_kernel_code = STRINGIFY(
      * @param[out] y_minus_mu_over_sigma_squared_sum intermediate variable used
      * in the model
      * @param[out] sigma_derivative derivative with respect to sigma
-     * @param[out] partially summed logarithm of sigma (1 value per work group)
+     * @param[out] log_sigma_sum partially summed logarithm of sigma (1 value per work group)
      * @param N number of cases
      * @param M number of attributes
      * @param is_alpha_vector 0 or 1 - whether alpha is a vector (alternatively
@@ -144,8 +144,8 @@ static const char* normal_id_glm_kernel_code = STRINGIFY(
 // \endcond
 
 /**
- * See the docs for \link kernels/bernoulli_logit_glm_lpmf.hpp
- * bernoulli_logit_glm() \endlink
+ * See the docs for \link kernels/normal_id_glm_lpdf.hpp
+ * normal_id_glm() \endlink
  */
 const kernel_cl<in_buffer, in_buffer, in_buffer, in_buffer, in_buffer,
                 out_buffer, out_buffer, out_buffer, out_buffer, out_buffer, int,

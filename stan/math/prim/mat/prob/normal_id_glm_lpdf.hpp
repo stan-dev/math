@@ -213,9 +213,9 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
         ops_partials.edge4_.partials_ = mu_derivative.transpose() * x_val;
       }
       if (!is_constant_all<T_alpha>::value) {
-        if (is_vector<T_alpha>::value)
+        if (is_vector<T_alpha>::value) {
           ops_partials.edge3_.partials_ = mu_derivative;
-        else {
+        } else {
           ops_partials.edge3_.partials_[0] = sum(mu_derivative);
         }
       }
