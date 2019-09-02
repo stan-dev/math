@@ -69,9 +69,9 @@ inline matrix_cl<T> to_matrix_cl(const Eigen::Matrix<T, R, C>& src) {
  * @param src source matrix on the OpenCL device
  * @return Eigen matrix with a copy of the data in the source matrix
  */
-template <int R = Eigen::Dynamic, int C=Eigen::Dynamic, typename T, typename = enable_if_arithmetic<T>>
-inline Eigen::Matrix<T, R, C> from_matrix_cl(
-    const matrix_cl<T>& src) {
+template <int R = Eigen::Dynamic, int C = Eigen::Dynamic, typename T,
+          typename = enable_if_arithmetic<T>>
+inline Eigen::Matrix<T, R, C> from_matrix_cl(const matrix_cl<T>& src) {
   Eigen::Matrix<T, R, C> dst(src.rows(), src.cols());
   if (src.size() == 0) {
     return dst;
