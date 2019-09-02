@@ -45,17 +45,15 @@ static const char* normal_id_glm_kernel_code = STRINGIFY(
      * needs to be computed
      */
     __kernel void normal_id_glm(
-        __global double* mu_derivative_glob,
-        __global double* mu_derivative_sum,
+        __global double* mu_derivative_glob, __global double* mu_derivative_sum,
         __global double* y_minus_mu_over_sigma_squared_sum,
         __global double* sigma_derivative, __global double* log_sigma_sum,
         const __global double* y_glob, const __global double* x,
         const __global double* alpha, const __global double* beta,
-        const __global double* sigma_glob,
-        const int N, const int M, const int is_alpha_vector,
-        const int is_sigma_vector, const int need_mu_derivative,
-        const int need_mu_derivative_sum, const int need_sigma_derivative,
-        const int need_log_sigma_sum) {
+        const __global double* sigma_glob, const int N, const int M,
+        const int is_alpha_vector, const int is_sigma_vector,
+        const int need_mu_derivative, const int need_mu_derivative_sum,
+        const int need_sigma_derivative, const int need_log_sigma_sum) {
       const int gid = get_global_id(0);
       const int lid = get_local_id(0);
       const int lsize = get_local_size(0);
