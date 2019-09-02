@@ -23,7 +23,7 @@ namespace stan {
 template <typename T>
 struct is_vector_like
     : bool_constant<stan::is_vector<T>::value || std::is_pointer<T>::value
-                    || is_eigen<T>::value> {};
+                    || is_eigen<T>::value || std::is_array<T>::value> {};
 
 }  // namespace stan
 #endif
