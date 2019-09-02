@@ -18,7 +18,6 @@ TEST(MetaTraits, ScalarSeqViewArray) {
   EXPECT_FLOAT_EQ(v_const[0], sv_const[0]);
   EXPECT_FLOAT_EQ(v_const[1], sv_const[1]);
 
-
   const vector<double>& v_const_ref{2.2, 0.001};
   scalar_seq_view<const vector<double> > sv_const_ref(v_const_ref);
   EXPECT_FLOAT_EQ(v_const_ref[0], sv_const_ref[0]);
