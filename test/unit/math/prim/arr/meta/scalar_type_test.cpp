@@ -28,7 +28,8 @@ TEST(MetaTraits, ScalarTypeArrayConstConst) {
 
   test::expect_same_type<double const*,
                          scalar_type<const vector<double const*>>::type>();
-  test::expect_same_type<int const*, scalar_type<const vector<int const*>>::type>();
+  test::expect_same_type<int const*,
+                         scalar_type<const vector<int const*>>::type>();
   test::expect_same_type<
       double const*, scalar_type<const vector<vector<double const*>>>::type>();
 }
