@@ -73,12 +73,12 @@ class inverse_vari : public vari {
  * @param m Specified matrix.
  * @return Inverse of the matrix.
  */
-inline matrix_v inverse(const matrix_v& m) {
+inline matrix_v inverse(const matrix_v &m) {
   check_square("inverse", "m", m);
   matrix_v res(m.rows(), m.cols());
   internal::inverse_vari *baseVari = new internal::inverse_vari(m);
-  res.vi() = Eigen::Map<matrix_vi>(
-      baseVari->vari_ref_A_inv_, res.rows(), res.cols());
+  res.vi() = Eigen::Map<matrix_vi>(baseVari->vari_ref_A_inv_, res.rows(),
+                                   res.cols());
   return res;
 }
 
