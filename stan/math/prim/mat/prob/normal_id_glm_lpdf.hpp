@@ -10,9 +10,11 @@
 #include <stan/math/prim/scal/fun/sum.hpp>
 #include <stan/math/prim/arr/fun/value_of_rec.hpp>
 
+#ifdef STAN_OPENCL
 #include <stan/math/opencl/kernels/normal_id_glm_lpdf.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/multiply.hpp>
+#endif
 
 #include <cmath>
 
@@ -140,10 +142,10 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
 
     try {
       opencl_kernels::normal_id_glm(
-          cl::NDRange(local_size * wgs), cl::NDRange(local_size), y_cl, x_cl,
-          alpha_cl, beta_cl, sigma_cl, mu_derivative_cl, mu_derivative_sum_cl,
+          cl::NDRange(local_size * wgs), cl::NDRange(local_size),  mu_derivative_cl, mu_derivative_sum_cl,
           y_minus_mu_over_sigma_squared_sum_cl, sigma_derivative_cl,
-          log_sigma_sum_cl, N, M, length(alpha) != 1, length(sigma) != 1,
+          log_sigma_sum_cl, y_cl, x_cl,
+          alpha_cl, beta_cl, sigma_cl,N, M, length(alpha) != 1, length(sigma) != 1,
           need_mu_derivative, need_mu_derivative_sum, need_sigma_derivative,
           need_log_sigma_sum);
     } catch (const cl::Error &e) {

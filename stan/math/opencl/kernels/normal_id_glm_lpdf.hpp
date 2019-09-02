@@ -45,12 +45,13 @@ static const char* normal_id_glm_kernel_code = STRINGIFY(
      * needs to be computed
      */
     __kernel void normal_id_glm(
-        const __global double* y_glob, const __global double* x,
-        const __global double* alpha, const __global double* beta,
-        const __global double* sigma_glob, __global double* mu_derivative_glob,
+        __global double* mu_derivative_glob,
         __global double* mu_derivative_sum,
         __global double* y_minus_mu_over_sigma_squared_sum,
         __global double* sigma_derivative, __global double* log_sigma_sum,
+        const __global double* y_glob, const __global double* x,
+        const __global double* alpha, const __global double* beta,
+        const __global double* sigma_glob,
         const int N, const int M, const int is_alpha_vector,
         const int is_sigma_vector, const int need_mu_derivative,
         const int need_mu_derivative_sum, const int need_sigma_derivative,
@@ -151,7 +152,7 @@ static const char* normal_id_glm_kernel_code = STRINGIFY(
 const kernel_cl<in_buffer, in_buffer, in_buffer, in_buffer, in_buffer,
                 out_buffer, out_buffer, out_buffer, out_buffer, out_buffer, int,
                 int, int, int, int, int, int, int>
-    normal_id_glm("normal_id_glm", {normal_id_glm_kernel_code},
+    normal_id_glm("normal_id_glm", normal_id_glm_kernel_code,
                   {{"REDUCTION_STEP_SIZE", 4}, {"LOCAL_SIZE_", 64}});
 
 }  // namespace opencl_kernels
@@ -159,4 +160,4 @@ const kernel_cl<in_buffer, in_buffer, in_buffer, in_buffer, in_buffer,
 }  // namespace stan
 
 #endif
-#endif  // STAN_MATH_OPENCL_KERNELS_NORMAL_ID_GLM_LPDF_HPP
+#endif
