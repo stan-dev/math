@@ -19,12 +19,12 @@ TEST(MathMeta, primitive) {
 
   EXPECT_TRUE((is_eigen<const Eigen::Matrix<double, -1, -1>>::value));
   EXPECT_TRUE((is_eigen<Eigen::SparseMatrix<double>&>::value));
-  EXPECT_TRUE((is_eigen<Eigen::MatrixBase<Eigen::Matrix<double, -1, -1>>&&>::value));
+  EXPECT_TRUE(
+      (is_eigen<Eigen::MatrixBase<Eigen::Matrix<double, -1, -1>>&&>::value));
 
   Eigen::Matrix<double, -1, -1> a;
   Eigen::Matrix<double, -1, -1> b;
 
   EXPECT_TRUE((is_eigen<decltype(a * b)>::value));
   EXPECT_TRUE((is_eigen<decltype(a * b + a.transpose())>::value));
-
 }

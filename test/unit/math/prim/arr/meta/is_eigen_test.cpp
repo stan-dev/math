@@ -12,8 +12,8 @@ TEST(MathMeta, primitive) {
 
   EXPECT_FALSE((is_eigen<std::vector<double>>::value));
 
-
   EXPECT_FALSE((is_eigen<Eigen::Matrix<double, -1, -1>>::value));
   EXPECT_FALSE((is_eigen<Eigen::SparseMatrix<double>>::value));
-  EXPECT_FALSE((is_eigen<Eigen::MatrixBase<Eigen::Matrix<double, -1, -1>>>::value));
+  EXPECT_FALSE(
+      (is_eigen<Eigen::MatrixBase<Eigen::Matrix<double, -1, -1>>>::value));
 }

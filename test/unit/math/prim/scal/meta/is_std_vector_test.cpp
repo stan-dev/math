@@ -21,12 +21,12 @@ TEST(MathMeta, is_std_vector) {
 
   EXPECT_FALSE((is_std_vector<const Eigen::Matrix<double, -1, -1>>::value));
   EXPECT_FALSE((is_std_vector<Eigen::SparseMatrix<double>&>::value));
-  EXPECT_FALSE((is_std_vector<Eigen::MatrixBase<Eigen::Matrix<double, -1, -1>>&&>::value));
+  EXPECT_FALSE((is_std_vector<
+                Eigen::MatrixBase<Eigen::Matrix<double, -1, -1>>&&>::value));
 
   Eigen::Matrix<double, -1, -1> a;
   Eigen::Matrix<double, -1, -1> b;
 
   EXPECT_FALSE((is_std_vector<decltype(a * b)>::value));
   EXPECT_FALSE((is_std_vector<decltype(a * b + a.transpose())>::value));
-
 }

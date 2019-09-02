@@ -73,7 +73,8 @@ struct is_eigen_vector : bool_constant<is_eigen_col_vector<T>::value
  * of true. Else this has a static member with a value of false.
  */
 template <typename T>
-struct is_vector : bool_constant<is_eigen_vector<T>::value || is_std_vector<T>::value> {};
+struct is_vector
+    : bool_constant<is_eigen_vector<T>::value || is_std_vector<T>::value> {};
 
 }  // namespace stan
 #endif

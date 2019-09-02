@@ -7,15 +7,14 @@
 
 namespace stan {
 
-
-
 namespace internal {
 /*
  * Underlying implimenation to check if a type is derived from EigenBase
  */
 template <typename T>
 struct is_eigen_base
-    : std::integral_constant<bool, std::is_base_of<Eigen::EigenBase<T>, T>::value> {};
+    : std::integral_constant<bool,
+                             std::is_base_of<Eigen::EigenBase<T>, T>::value> {};
 
 template <typename T>
 struct is_eigen_base<Eigen::DenseBase<T>> : std::true_type {};
@@ -33,7 +32,8 @@ struct is_eigen_base<Eigen::EigenBase<T>> : std::true_type {};
  * static member function named value with a type of true, else value is false.
  */
 template <typename T>
-struct is_eigen<T, std::enable_if_t<internal::is_eigen_base<std::decay_t<T>>::value>>
+struct is_eigen<
+    T, std::enable_if_t<internal::is_eigen_base<std::decay_t<T>>::value>>
     : std::true_type {};
 
 }  // namespace stan
