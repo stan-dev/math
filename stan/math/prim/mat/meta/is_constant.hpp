@@ -17,8 +17,8 @@ namespace stan {
  * @tparam T type of the Eigen Matrix
  */
 template <typename T>
-struct is_constant<T, std::enable_if_t<is_eigen_v<T>>>
-    : bool_constant<is_constant_v<typename std::decay_t<T>::Scalar>> {};
+struct is_constant<T, std::enable_if_t<is_eigen<T>::value>>
+    : bool_constant<is_constant<typename std::decay_t<T>::Scalar>::value> {};
 
 }  // namespace stan
 #endif

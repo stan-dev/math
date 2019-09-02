@@ -16,7 +16,7 @@ namespace math {
  * @tparam T type of elements in standard vector.
  */
 template <typename T>
-struct index_type<T, std::enable_if_t<is_std_vector_v<T>>> {
+struct index_type<T, std::enable_if_t<is_std_vector<T>::value>> {
   using type = typename std::decay_t<T>::size_type;
 };
 

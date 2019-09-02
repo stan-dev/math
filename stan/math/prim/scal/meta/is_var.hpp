@@ -11,8 +11,5 @@ namespace stan {
 template <typename T, typename = void>
 struct is_var : std::false_type {};
 
-template<class T>
-constexpr bool is_var_v = is_var<T>::value;
-
 }  // namespace stan
 #endif

@@ -15,7 +15,7 @@ namespace math {
  * @tparam T type of elements in standard vector.
  */
 template <typename T>
-struct value_type<T, std::enable_if_t<is_std_vector_v<T>>> {
+struct value_type<T, std::enable_if_t<is_std_vector<T>::value>> {
   using type = typename std::decay_t<T>::value_type;
 };
 

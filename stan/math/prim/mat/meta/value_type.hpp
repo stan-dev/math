@@ -16,7 +16,7 @@ namespace math {
  * @tparam T type of matrix.
  */
 template <typename T>
-struct value_type<T, std::enable_if_t<is_eigen_v<T>>> {
+struct value_type<T, std::enable_if_t<is_eigen<T>::value>> {
   using type = typename std::decay_t<T>::Scalar;
 };
 

@@ -16,8 +16,8 @@ namespace stan {
  * @tparam type of the elements in the std::vector
  */
 template <typename T>
-struct is_constant<T, std::enable_if_t<is_std_vector_v<T>>>
-    : bool_constant<is_constant_v<typename std::decay_t<T>::value_type>> {
+struct is_constant<T, std::enable_if_t<is_std_vector<T>::value>>
+    : bool_constant<is_constant<typename std::decay_t<T>::value_type>::value> {
 };
 
 }  // namespace stan
