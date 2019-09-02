@@ -327,6 +327,28 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
     }
   }
 
+    /**
+     * Constructor for the matrix_cl that
+     * creates a copy of a scalar on the OpenCL device.
+     * Regardless of `partial_view`, whole matrix is stored.
+     *
+     * @param A the scalar
+     * @param partial_view which part of the matrix is used
+     */
+  explicit matrix_cl(const T A, matrix_cl_view partial_view = matrix_cl_view::Diagonal): rows_(1), cols_(1), view_(partial_view) {
+    cl::Context& ctx = opencl_context.context();
+    cl::CommandQueue& queue = opencl_context.queue();
+    try {
+      buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T));
+      cl::Event transfer_event;
+      queue.enqueueWriteBuffer(buffer_cl_, CL_FALSE, 0, sizeof(T),
+                               &A, NULL, &transfer_event);
+      this->add_write_event(transfer_event);
+    } catch (const cl::Error& e) {
+      check_opencl_error("matrix constructor", e);
+    }
+  }
+
   /**
    * Construct from \c std::vector with given rows and columns
    *
@@ -382,6 +404,20 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
     return matrix_cl<T>(A, partial_view);
 #endif
   }
+
+    /**
+   * Constructs a const matrix_cl that contains a copy of the Eigen matrix on
+   * the OpenCL device. \c Eigen \c Map can not be cached.
+   *
+   * @tparam R row type of input matrix
+   * @tparam C column type of input matrix
+   * @param A the \c Eigen \c Map
+   * @param partial_view which part of the matrix is used
+   */
+    template <int R, int C>
+    static matrix_cl<T> constant(const Eigen::Map<const Eigen::Matrix<T, R, C>>& A, matrix_cl_view partial_view = matrix_cl_view::Entire) {
+      return matrix_cl<T>(A, partial_view);
+    }
 
   /**
    * Constructs a const matrix_cl that contains a single value on the OpenCL

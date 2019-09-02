@@ -205,6 +205,9 @@ class opencl_context_base {
     // used in math/prim/mat/fun/mdivide_left_tri
     // and math/rev/mat/fun/mdivide_left_tri
     int tri_inverse_size_worth_transfer = 100;
+    // Used in stan/math/prim/mat/prob/normal_id_glm_lpdf
+    double normal_id_glm_coeff1 = 5.89929748e-07;
+    double normal_id_glm_coeff2 = 3.23325415e-06;
   } tuning_opts_;
 
   static opencl_context_base& getInstance() {
