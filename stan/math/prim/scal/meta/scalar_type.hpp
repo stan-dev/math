@@ -18,17 +18,6 @@ struct scalar_type_base {
 };
 
 /**
- * Recursivly goes through array attributes until base type is found
- * @tparam T the type to clean and return.
- */
-template <typename T>
-struct scalar_type_base<
-    T, std::enable_if_t<std::is_const<T>::value || std::is_pointer<T>::value>> {
-  using type = typename scalar_type_base<
-      std::remove_pointer_t<std::remove_cv_t<T>>>::type;
-};
-
-/**
  * Metaprogram structure to determine the base scalar type
  * of a template argument.
  *
@@ -38,7 +27,7 @@ struct scalar_type_base<
  */
 template <typename T, typename = void>
 struct scalar_type {
-  using type = typename scalar_type_base<T>::type;
+  using type = typename scalar_type_base<std::remove_cv_t<T>>::type;
 };
 
 template <typename T>
