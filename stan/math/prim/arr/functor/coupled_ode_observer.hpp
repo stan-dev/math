@@ -28,9 +28,10 @@ namespace math {
  */
 template <typename F, typename T1, typename T2, typename T_t0, typename T_ts>
 struct coupled_ode_observer {
-  using return_t = return_type_t<T1, T2, T_t0,T_ts>;
+  using return_t = return_type_t<T1, T2, T_t0, T_ts>;
 
-  using ops_partials_t = operands_and_partials<std::vector<T1>, std::vector<T2>, T_t0, T_ts>;
+  using ops_partials_t
+      = operands_and_partials<std::vector<T1>, std::vector<T2>, T_t0, T_ts>;
 
   const F& f_;
   const std::vector<T1>& y0_;
