@@ -167,14 +167,16 @@ class mpi_parallel_call {
   using result_t = typename CombineF::result_t;
 
   // local caches which hold local slices of data
-  using cache_x_r = internal::mpi_parallel_call_cache<call_id, 1,
-                                            std::vector<std::vector<double>>>;
-  using cache_x_i = internal::mpi_parallel_call_cache<call_id, 2,
-                                            std::vector<std::vector<int>>>;
-  using cache_f_out = internal::mpi_parallel_call_cache<call_id, 3,
-   std::vector<int>>;
-  using cache_chunks = internal::mpi_parallel_call_cache<call_id, 4,
-   std::vector<int>>;
+  using cache_x_r
+      = internal::mpi_parallel_call_cache<call_id, 1,
+                                          std::vector<std::vector<double>>>;
+  using cache_x_i
+      = internal::mpi_parallel_call_cache<call_id, 2,
+                                          std::vector<std::vector<int>>>;
+  using cache_f_out
+      = internal::mpi_parallel_call_cache<call_id, 3, std::vector<int>>;
+  using cache_chunks
+      = internal::mpi_parallel_call_cache<call_id, 4, std::vector<int>>;
 
   // # of outputs for given call_id+ReduceF+CombineF case
   static int num_outputs_per_job_;
@@ -509,8 +511,9 @@ class mpi_parallel_call {
    */
   template <int meta_cache_id>
   vector_d broadcast_vector(const vector_d& data) {
-    using meta_cache = internal::mpi_parallel_call_cache<call_id, meta_cache_id,
-                                              std::vector<size_type>>;
+    using meta_cache
+        = internal::mpi_parallel_call_cache<call_id, meta_cache_id,
+                                            std::vector<size_type>>;
     const std::vector<size_type>& data_size
         = broadcast_array_1d_cached<meta_cache>({data.size()});
 
