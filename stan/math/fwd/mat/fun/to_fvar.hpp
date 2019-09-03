@@ -9,8 +9,27 @@
 namespace stan {
 namespace math {
 
+/**
+ * Specialization of to_fvar for const matrices of fvars
+ *
+ *
+ * @param[in,out] m A matrix of forward automatic differentation variables.
+ * @return The input matrix of forward automatic differentiation variables.
+ */
 template <int R, int C, typename T>
-inline Eigen::Matrix<T, R, C> to_fvar(const Eigen::Matrix<T, R, C>& m) {
+inline const Eigen::Matrix<T, R, C>& to_fvar(const Eigen::Matrix<T, R, C>& m) {
+  return m;
+}
+
+/**
+ * Specialization of to_fvar for non-const matrices of fvars
+ *
+ *
+ * @param[in,out] m A matrix of forward automatic differentation variables.
+ * @return The input matrix of forward automatic differentiation variables.
+ */
+template <int R, int C, typename T>
+inline Eigen::Matrix<T, R, C>& to_fvar(Eigen::Matrix<T, R, C>& m) {
   return m;
 }
 

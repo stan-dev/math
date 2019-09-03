@@ -3,6 +3,10 @@
 #include <gtest/gtest.h>
 #include <vector>
 
+#if defined(STAN_OPENCL) && !defined(STAN_OPENCL_NOCACHE)
+#include <CL/cl.hpp>
+#endif
+
 TEST(AgradPartialsVari, OperandsAndPartialsScal) {
   using stan::math::operands_and_partials;
   using stan::math::var;
@@ -290,9 +294,14 @@ TEST(AgradPartialsVari, OperandsAndPartialsMultivarMixed) {
   o4.edge1_.partials_vec_[0] += d_vec1;
   o4.edge3_.partials_vec_[0] += d_vec2;
 
+#if defined(STAN_OPENCL) && !defined(STAN_OPENCL_NOCACHE)
+  EXPECT_EQ(2 * sizeof(d_vec1) + 6 * sizeof(&v_vec) - sizeof(cl::Buffer),
+            sizeof(o4));
+#else
   // 2 partials stdvecs, 4 pointers to edges, 2 pointers to operands
   // vecs
   EXPECT_EQ(2 * sizeof(d_vec1) + 6 * sizeof(&v_vec), sizeof(o4));
+#endif
 
   std::vector<double> grad;
   var v = o4.build(10.0);
