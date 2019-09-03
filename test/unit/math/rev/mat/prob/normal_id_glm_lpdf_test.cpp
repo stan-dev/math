@@ -8,17 +8,9 @@ using Eigen::Dynamic;
 using Eigen::Matrix;
 using stan::math::var;
 
-void set_tuning_opts_to_use_gpu() {
-#ifdef STAN_OPENCL
-  stan::math::opencl_context.tuning_opts().normal_id_glm_coeff1 = 1;
-  stan::math::opencl_context.tuning_opts().normal_id_glm_coeff2 = 1;
-#endif
-}
-
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.
 TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_doubles) {
-  set_tuning_opts_to_use_gpu();
   Matrix<double, Dynamic, 1> y(3, 1);
   y << 51, 32, 12;
   Matrix<double, Dynamic, Dynamic> x(3, 2);
@@ -39,7 +31,6 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_doubles) {
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.
 TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_doubles_rand) {
-  set_tuning_opts_to_use_gpu();
   for (size_t ii = 0; ii < 200; ii++) {
     Matrix<double, Dynamic, 1> y(3, 1);
     for (size_t i = 0; i < 3; i++) {
@@ -68,7 +59,6 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_doubles_rand) {
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives.
 TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars) {
-  set_tuning_opts_to_use_gpu();
   Matrix<var, Dynamic, 1> y(3, 1);
   y << 14, 32, 21;
   Matrix<var, Dynamic, Dynamic> x(3, 2);
@@ -128,7 +118,6 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars) {
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives.
 TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_rand) {
-  set_tuning_opts_to_use_gpu();
   for (size_t ii = 0; ii < 42; ii++) {
     Matrix<double, Dynamic, 1> yreal = Matrix<double, Dynamic, 1>::Random(3, 1);
     Matrix<double, Dynamic, Dynamic> xreal
@@ -191,7 +180,6 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_rand) {
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives, in case beta is a scalar.
 TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_rand_scal_beta) {
-  set_tuning_opts_to_use_gpu();
   for (size_t ii = 0; ii < 42; ii++) {
     Matrix<double, Dynamic, 1> yreal = Matrix<double, Dynamic, 1>::Random(3, 1);
     Matrix<double, Dynamic, Dynamic> xreal
@@ -246,7 +234,6 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_rand_scal_beta) {
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives.
 TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_varying_intercept) {
-  set_tuning_opts_to_use_gpu();
   for (size_t ii = 0; ii < 42; ii++) {
     Matrix<double, Dynamic, 1> yreal = Matrix<double, Dynamic, 1>::Random(3, 1);
     Matrix<double, Dynamic, Dynamic> xreal
@@ -311,7 +298,6 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_varying_intercept) {
 //  from existing primitives.
 TEST(ProbDistributionsNormalIdGLM,
      glm_matches_normal_id_varying_intercept_and_scale) {
-  set_tuning_opts_to_use_gpu();
   for (size_t ii = 0; ii < 42; ii++) {
     Matrix<double, Dynamic, 1> yreal = Matrix<double, Dynamic, 1>::Random(3, 1);
     Matrix<double, Dynamic, Dynamic> xreal
@@ -377,7 +363,6 @@ TEST(ProbDistributionsNormalIdGLM,
 
 //  We check that we can instantiate all different interface types.
 TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_interface_types) {
-  set_tuning_opts_to_use_gpu();
   double value = 0;
   double value2 = 0;
 
@@ -418,7 +403,6 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_interface_types) {
 
 //  We check that the right errors are thrown.
 TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_error_checking) {
-  set_tuning_opts_to_use_gpu();
   int N = 3;
   int M = 2;
   int W = 4;

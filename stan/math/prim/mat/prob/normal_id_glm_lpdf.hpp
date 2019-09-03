@@ -111,136 +111,129 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   // template parameters
 
 #ifdef STAN_OPENCL
-  bool use_opencl = N * M * opencl_context.tuning_opts().normal_id_glm_coeff1
-                        + N * opencl_context.tuning_opts().normal_id_glm_coeff2
-                    > 1;
-  if (use_opencl) {
-    const int local_size
-        = opencl_kernels::normal_id_glm.make_functor.get_opts().at(
-            "LOCAL_SIZE_");
-    const int wgs = (N + local_size - 1) / local_size;
+  const int local_size
+      = opencl_kernels::normal_id_glm.make_functor.get_opts().at(
+          "LOCAL_SIZE_");
+  const int wgs = (N + local_size - 1) / local_size;
 
-    const matrix_cl<double> y_cl = matrix_cl<double>::constant(y_val_vec);
-    const matrix_cl<double> x_cl = matrix_cl<double>::constant(x_val);
-    matrix_cl<double> beta_cl(beta_val_vec);
-    matrix_cl<double> alpha_cl(alpha_val_vec);
-    matrix_cl<double> sigma_cl(sigma_val_vec);
+  const matrix_cl<double> y_cl = matrix_cl<double>::constant(y_val_vec);
+  const matrix_cl<double> x_cl = matrix_cl<double>::constant(x_val);
+  matrix_cl<double> beta_cl(beta_val_vec);
+  matrix_cl<double> alpha_cl(alpha_val_vec);
+  matrix_cl<double> sigma_cl(sigma_val_vec);
 
-    const bool need_mu_derivative
-        = !is_constant_all<T_y, T_x, T_beta, T_alpha>::value;
-    matrix_cl<double> mu_derivative_cl(need_mu_derivative ? N : 0, 1);
-    const bool need_mu_derivative_sum
-        = !is_constant_all<T_alpha>::value && !is_vector<T_alpha>::value;
-    matrix_cl<double> mu_derivative_sum_cl(need_mu_derivative_sum ? wgs : 0, 1);
-    matrix_cl<double> y_minus_mu_over_sigma_squared_sum_cl(wgs, 1);
-    const bool need_sigma_derivative
-        = !is_constant_all<T_scale>::value && is_vector<T_scale>::value;
-    matrix_cl<double> sigma_derivative_cl(need_sigma_derivative ? N : 0, 1);
-    const bool need_log_sigma_sum
-        = include_summand<propto, T_scale>::value && is_vector<T_scale>::value;
-    matrix_cl<double> log_sigma_sum_cl(need_log_sigma_sum ? wgs : 0, 1);
+  const bool need_mu_derivative
+      = !is_constant_all<T_y, T_x, T_beta, T_alpha>::value;
+  matrix_cl<double> mu_derivative_cl(need_mu_derivative ? N : 0, 1);
+  const bool need_mu_derivative_sum
+      = !is_constant_all<T_alpha>::value && !is_vector<T_alpha>::value;
+  matrix_cl<double> mu_derivative_sum_cl(need_mu_derivative_sum ? wgs : 0, 1);
+  matrix_cl<double> y_minus_mu_over_sigma_squared_sum_cl(wgs, 1);
+  const bool need_sigma_derivative
+      = !is_constant_all<T_scale>::value && is_vector<T_scale>::value;
+  matrix_cl<double> sigma_derivative_cl(need_sigma_derivative ? N : 0, 1);
+  const bool need_log_sigma_sum
+      = include_summand<propto, T_scale>::value && is_vector<T_scale>::value;
+  matrix_cl<double> log_sigma_sum_cl(need_log_sigma_sum ? wgs : 0, 1);
 
-    try {
-      opencl_kernels::normal_id_glm(
-          cl::NDRange(local_size * wgs), cl::NDRange(local_size),
-          mu_derivative_cl, mu_derivative_sum_cl,
-          y_minus_mu_over_sigma_squared_sum_cl, sigma_derivative_cl,
-          log_sigma_sum_cl, y_cl, x_cl, alpha_cl, beta_cl, sigma_cl, N, M,
-          length(alpha) != 1, length(sigma) != 1, need_mu_derivative,
-          need_mu_derivative_sum, need_sigma_derivative, need_log_sigma_sum);
-    } catch (const cl::Error &e) {
-      check_opencl_error(function, e);
+  try {
+    opencl_kernels::normal_id_glm(
+        cl::NDRange(local_size * wgs), cl::NDRange(local_size),
+        mu_derivative_cl, mu_derivative_sum_cl,
+        y_minus_mu_over_sigma_squared_sum_cl, sigma_derivative_cl,
+        log_sigma_sum_cl, y_cl, x_cl, alpha_cl, beta_cl, sigma_cl, N, M,
+        length(alpha) != 1, length(sigma) != 1, need_mu_derivative,
+        need_mu_derivative_sum, need_sigma_derivative, need_log_sigma_sum);
+  } catch (const cl::Error &e) {
+    check_opencl_error(function, e);
+  }
+  y_minus_mu_over_sigma_squared_sum
+      = sum(from_matrix_cl(y_minus_mu_over_sigma_squared_sum_cl));
+
+  if (!is_constant_all<T_y, T_x>::value
+      || (!is_constant_all<T_alpha>::value && is_vector<T_alpha>::value)) {
+    Matrix<T_partials_return, Dynamic, 1> mu_derivative
+        = from_matrix_cl(mu_derivative_cl);
+    if (!is_constant_all<T_y>::value) {
+      ops_partials.edge1_.partials_ = -mu_derivative;
     }
-    y_minus_mu_over_sigma_squared_sum
-        = sum(from_matrix_cl(y_minus_mu_over_sigma_squared_sum_cl));
-
-    if (!is_constant_all<T_y, T_x>::value
-        || (!is_constant_all<T_alpha>::value && is_vector<T_alpha>::value)) {
-      Matrix<T_partials_return, Dynamic, 1> mu_derivative
-          = from_matrix_cl(mu_derivative_cl);
-      if (!is_constant_all<T_y>::value) {
-        ops_partials.edge1_.partials_ = -mu_derivative;
-      }
-      if (!is_constant_all<T_alpha>::value && is_vector<T_alpha>::value) {
-        ops_partials.edge3_.partials_ = std::move(mu_derivative);
-      }
+    if (!is_constant_all<T_alpha>::value && is_vector<T_alpha>::value) {
+      ops_partials.edge3_.partials_ = std::move(mu_derivative);
     }
-    if (!is_constant_all<T_alpha>::value && !is_vector<T_alpha>::value) {
-      ops_partials.edge3_.partials_[0]
-          = sum(from_matrix_cl(mu_derivative_sum_cl));
+  }
+  if (!is_constant_all<T_alpha>::value && !is_vector<T_alpha>::value) {
+    ops_partials.edge3_.partials_[0]
+        = sum(from_matrix_cl(mu_derivative_sum_cl));
+  }
+  if (!is_constant_all<T_x>::value) {
+    const matrix_cl<double> beta_transpose_cl(
+        beta_cl.buffer(), 1, beta_cl.rows());  // transposition of a vector
+                                               // can be done without copying
+    ops_partials.edge2_.partials_
+        = from_matrix_cl(mu_derivative_cl * beta_transpose_cl);
+  }
+  if (!is_constant_all<T_beta>::value) {
+    const matrix_cl<double> mu_derivative_transpose_cl(
+        mu_derivative_cl.buffer(), 1,
+        mu_derivative_cl.rows());  // transposition of a vector can be done
+                                   // without copying
+    ops_partials.edge4_.partials_
+        = from_matrix_cl<1, Dynamic>(mu_derivative_transpose_cl * x_cl);
+  }
+  if (!is_constant_all<T_scale>::value) {
+    if (is_vector<T_scale>::value) {
+      ops_partials.edge5_.partials_
+          = from_matrix_cl<Dynamic, 1>(sigma_derivative_cl);
+    } else {
+      ops_partials.edge5_.partials_[0]
+          = (y_minus_mu_over_sigma_squared_sum - N) * as_scalar(inv_sigma);
+    }
+  }
+#else
+  y_minus_mu_over_sigma = x_val * beta_val_vec;
+  y_minus_mu_over_sigma
+      = (as_array_or_scalar(y_val_vec) - y_minus_mu_over_sigma
+         - as_array_or_scalar(alpha_val_vec))
+        * inv_sigma;
+
+  if (!(is_constant_all<T_y, T_x, T_beta, T_alpha>::value)) {
+    Matrix<T_partials_return, Dynamic, 1> mu_derivative
+        = inv_sigma * y_minus_mu_over_sigma;
+    if (!is_constant_all<T_y>::value) {
+      ops_partials.edge1_.partials_ = -mu_derivative;
     }
     if (!is_constant_all<T_x>::value) {
-      const matrix_cl<double> beta_transpose_cl(
-          beta_cl.buffer(), 1, beta_cl.rows());  // transposition of a vector
-                                                 // can be done without copying
       ops_partials.edge2_.partials_
-          = from_matrix_cl(mu_derivative_cl * beta_transpose_cl);
+          = (beta_val_vec * mu_derivative.transpose()).transpose();
     }
     if (!is_constant_all<T_beta>::value) {
-      const matrix_cl<double> mu_derivative_transpose_cl(
-          mu_derivative_cl.buffer(), 1,
-          mu_derivative_cl.rows());  // transposition of a vector can be done
-                                     // without copying
-      ops_partials.edge4_.partials_
-          = from_matrix_cl<1, Dynamic>(mu_derivative_transpose_cl * x_cl);
+      ops_partials.edge4_.partials_ = mu_derivative.transpose() * x_val;
+    }
+    if (!is_constant_all<T_alpha>::value) {
+      if (is_vector<T_alpha>::value) {
+        ops_partials.edge3_.partials_ = mu_derivative;
+      } else {
+        ops_partials.edge3_.partials_[0] = sum(mu_derivative);
+      }
     }
     if (!is_constant_all<T_scale>::value) {
       if (is_vector<T_scale>::value) {
+        Array<T_partials_return, Dynamic, 1> y_minus_mu_over_sigma_squared
+            = y_minus_mu_over_sigma * y_minus_mu_over_sigma;
+        y_minus_mu_over_sigma_squared_sum
+            = sum(y_minus_mu_over_sigma_squared);
         ops_partials.edge5_.partials_
-            = from_matrix_cl<Dynamic, 1>(sigma_derivative_cl);
+            = (y_minus_mu_over_sigma_squared - 1) * inv_sigma;
       } else {
+        y_minus_mu_over_sigma_squared_sum
+            = sum(y_minus_mu_over_sigma * y_minus_mu_over_sigma);
         ops_partials.edge5_.partials_[0]
             = (y_minus_mu_over_sigma_squared_sum - N) * as_scalar(inv_sigma);
       }
     }
   } else {
-#endif
-    y_minus_mu_over_sigma = x_val * beta_val_vec;
-    y_minus_mu_over_sigma
-        = (as_array_or_scalar(y_val_vec) - y_minus_mu_over_sigma
-           - as_array_or_scalar(alpha_val_vec))
-          * inv_sigma;
-
-    if (!(is_constant_all<T_y, T_x, T_beta, T_alpha>::value)) {
-      Matrix<T_partials_return, Dynamic, 1> mu_derivative
-          = inv_sigma * y_minus_mu_over_sigma;
-      if (!is_constant_all<T_y>::value) {
-        ops_partials.edge1_.partials_ = -mu_derivative;
-      }
-      if (!is_constant_all<T_x>::value) {
-        ops_partials.edge2_.partials_
-            = (beta_val_vec * mu_derivative.transpose()).transpose();
-      }
-      if (!is_constant_all<T_beta>::value) {
-        ops_partials.edge4_.partials_ = mu_derivative.transpose() * x_val;
-      }
-      if (!is_constant_all<T_alpha>::value) {
-        if (is_vector<T_alpha>::value) {
-          ops_partials.edge3_.partials_ = mu_derivative;
-        } else {
-          ops_partials.edge3_.partials_[0] = sum(mu_derivative);
-        }
-      }
-      if (!is_constant_all<T_scale>::value) {
-        if (is_vector<T_scale>::value) {
-          Array<T_partials_return, Dynamic, 1> y_minus_mu_over_sigma_squared
-              = y_minus_mu_over_sigma * y_minus_mu_over_sigma;
-          y_minus_mu_over_sigma_squared_sum
-              = sum(y_minus_mu_over_sigma_squared);
-          ops_partials.edge5_.partials_
-              = (y_minus_mu_over_sigma_squared - 1) * inv_sigma;
-        } else {
-          y_minus_mu_over_sigma_squared_sum
-              = sum(y_minus_mu_over_sigma * y_minus_mu_over_sigma);
-          ops_partials.edge5_.partials_[0]
-              = (y_minus_mu_over_sigma_squared_sum - N) * as_scalar(inv_sigma);
-        }
-      }
-    } else {
-      y_minus_mu_over_sigma_squared_sum
-          = sum(y_minus_mu_over_sigma * y_minus_mu_over_sigma);
-    }
-#ifdef STAN_OPENCL
+    y_minus_mu_over_sigma_squared_sum
+        = sum(y_minus_mu_over_sigma * y_minus_mu_over_sigma);
   }
 #endif
 
