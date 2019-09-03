@@ -112,8 +112,7 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
 
 #ifdef STAN_OPENCL
   const int local_size
-      = opencl_kernels::normal_id_glm.make_functor.get_opts().at(
-          "LOCAL_SIZE_");
+      = opencl_kernels::normal_id_glm.make_functor.get_opts().at("LOCAL_SIZE_");
   const int wgs = (N + local_size - 1) / local_size;
 
   const matrix_cl<double> y_cl = matrix_cl<double>::constant(y_val_vec);
@@ -191,10 +190,9 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   }
 #else
   y_minus_mu_over_sigma = x_val * beta_val_vec;
-  y_minus_mu_over_sigma
-      = (as_array_or_scalar(y_val_vec) - y_minus_mu_over_sigma
-         - as_array_or_scalar(alpha_val_vec))
-        * inv_sigma;
+  y_minus_mu_over_sigma = (as_array_or_scalar(y_val_vec) - y_minus_mu_over_sigma
+                           - as_array_or_scalar(alpha_val_vec))
+                          * inv_sigma;
 
   if (!(is_constant_all<T_y, T_x, T_beta, T_alpha>::value)) {
     Matrix<T_partials_return, Dynamic, 1> mu_derivative
@@ -220,8 +218,7 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
       if (is_vector<T_scale>::value) {
         Array<T_partials_return, Dynamic, 1> y_minus_mu_over_sigma_squared
             = y_minus_mu_over_sigma * y_minus_mu_over_sigma;
-        y_minus_mu_over_sigma_squared_sum
-            = sum(y_minus_mu_over_sigma_squared);
+        y_minus_mu_over_sigma_squared_sum = sum(y_minus_mu_over_sigma_squared);
         ops_partials.edge5_.partials_
             = (y_minus_mu_over_sigma_squared - 1) * inv_sigma;
       } else {
