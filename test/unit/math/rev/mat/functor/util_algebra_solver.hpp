@@ -81,7 +81,7 @@ struct non_linear_eq_functor {
     Eigen::Matrix<scalar, Eigen::Dynamic, 1> z(3);
     z(0) = x(2) - y(2);
     z(1) = x(0) * x(1) - y(0) * y(1);
-    z(2) = (x(2) / x(0) + y(2) / y(0));
+    z(2) = x(2) / x(0) + y(2) / y(0);
     return z;
   }
 };
@@ -140,7 +140,7 @@ struct degenerate_eq_functor {
 template <typename F, typename T>
 Eigen::Matrix<T, Eigen::Dynamic, 1> simple_eq_test(
     const F& f, const Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
-    bool is_newton = 0,
+    bool is_newton = false,
     bool tuning = false, double rel_tol = 1e-10, double fun_tol = 1e-6,
     int32_t max_steps = 1e+3) {
   using stan::math::algebra_solver;
@@ -171,7 +171,8 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> simple_eq_test(
 
 template <typename F, typename T>
 Eigen::Matrix<T, Eigen::Dynamic, 1> non_linear_eq_test(
-    const F& f, const Eigen::Matrix<T, Eigen::Dynamic, 1>& y) {
+    const F& f, const Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
+    bool is_newton = false) {
   using stan::math::algebra_solver;
   using stan::math::var;
 
@@ -183,7 +184,8 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> non_linear_eq_test(
 
   Eigen::Matrix<T, Eigen::Dynamic, 1> theta;
 
-  theta = algebra_solver(f, x, y, dummy_dat, dummy_dat_int);
+  theta = general_algebra_solver(is_newton, f, x, y,
+                                 dummy_dat, dummy_dat_int);
 
   return theta;
 }
@@ -296,11 +298,12 @@ inline void max_num_steps_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y) {
 
 template <typename T>
 inline Eigen::Matrix<T, Eigen::Dynamic, 1> degenerate_test(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& y, const Eigen::VectorXd& x) {
-  using stan::math::algebra_solver;
+    const Eigen::Matrix<T, Eigen::Dynamic, 1>& y, const Eigen::VectorXd& x,
+    bool is_newton = 0) {
 
   std::vector<double> dat;
   std::vector<int> dat_int;
 
-  return algebra_solver(degenerate_eq_functor(), x, y, dat, dat_int);
+  return general_algebra_solver(is_newton, degenerate_eq_functor(), x, y,
+                                dat, dat_int);
 }

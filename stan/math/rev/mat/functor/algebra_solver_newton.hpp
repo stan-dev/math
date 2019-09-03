@@ -32,7 +32,7 @@ Eigen::VectorXd algebra_solver_newton(
   double relative_tolerance = 1e-10, double function_tolerance = 1e-6,
   long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
 
-  return kinsol_solve(f, x, value_of(y), dat, dat_int, 0,
+  return kinsol_solve(f, value_of(x), y, dat, dat_int, 0,
                       function_tolerance, max_num_steps, 1e-3);
   }
 

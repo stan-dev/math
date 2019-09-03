@@ -47,7 +47,7 @@ namespace math {
                double function_tolerance = 1e-6,
                long int max_num_steps = 1e+3,
                double scaling_step_tol = 1e-3,
-               bool custom_jacobian = 0,
+               bool custom_jacobian = 1,  // TEST - should be 0.
                const F2& J_f = kinsol_J_f(),
                int steps_eval_jacobian = 10,
                int global_line_search = KIN_LINESEARCH) {
