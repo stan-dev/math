@@ -28,7 +28,7 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> ordered_free(
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::log;
-  typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
+  using size_type = typename index_type<Matrix<T, Dynamic, 1> >::type;
 
   size_type k = y.size();
   Matrix<T, Dynamic, 1> x(k);

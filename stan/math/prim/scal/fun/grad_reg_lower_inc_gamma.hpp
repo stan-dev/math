@@ -109,7 +109,7 @@ return_type_t<T1, T2> grad_reg_lower_inc_gamma(const T1& a, const T2& z,
   using std::exp;
   using std::log;
   using std::pow;
-  typedef return_type_t<T1, T2> TP;
+  using TP = return_type_t<T1, T2>;
 
   if (is_any_nan(a, z)) {
     return std::numeric_limits<TP>::quiet_NaN();

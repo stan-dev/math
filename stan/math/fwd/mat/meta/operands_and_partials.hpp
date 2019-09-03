@@ -15,7 +15,7 @@ template <typename Dx>
 class ops_partials_edge<Dx, std::vector<fvar<Dx> > > {
  public:
   using Op = std::vector<fvar<Dx> >;
-  typedef Eigen::Matrix<Dx, -1, 1> partials_t;
+  using partials_t = Eigen::Matrix<Dx, -1, 1>;
   partials_t partials_;                       // For univariate use-cases
   broadcast_array<partials_t> partials_vec_;  // For multivariate
   explicit ops_partials_edge(const Op& ops)
@@ -40,8 +40,8 @@ class ops_partials_edge<Dx, std::vector<fvar<Dx> > > {
 template <typename Dx, int R, int C>
 class ops_partials_edge<Dx, Eigen::Matrix<fvar<Dx>, R, C> > {
  public:
-  typedef Eigen::Matrix<Dx, R, C> partials_t;
-  typedef Eigen::Matrix<fvar<Dx>, R, C> Op;
+  using partials_t = Eigen::Matrix<Dx, R, C>;
+  using Op = Eigen::Matrix<fvar<Dx>, R, C>;
   partials_t partials_;                       // For univariate use-cases
   broadcast_array<partials_t> partials_vec_;  // For multivariate
   explicit ops_partials_edge(const Op& ops)
@@ -67,8 +67,8 @@ class ops_partials_edge<Dx, Eigen::Matrix<fvar<Dx>, R, C> > {
 template <typename Dx, int R, int C>
 class ops_partials_edge<Dx, std::vector<Eigen::Matrix<fvar<Dx>, R, C> > > {
  public:
-  typedef std::vector<Eigen::Matrix<fvar<Dx>, R, C> > Op;
-  typedef Eigen::Matrix<Dx, -1, -1> partial_t;
+  using Op = std::vector<Eigen::Matrix<fvar<Dx>, R, C> >;
+  using partial_t = Eigen::Matrix<Dx, -1, -1>;
   std::vector<partial_t> partials_vec_;
   explicit ops_partials_edge(const Op& ops)
       : partials_vec_(ops.size()), operands_(ops) {

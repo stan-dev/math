@@ -52,7 +52,7 @@ return_type_t<T1, T2> grad_reg_inc_gamma(T1 a, T2 z, T1 g, T1 dig,
   using std::exp;
   using std::fabs;
   using std::log;
-  typedef return_type_t<T1, T2> TP;
+  using TP = return_type_t<T1, T2>;
 
   if (is_any_nan(a, z, g, dig)) {
     return std::numeric_limits<TP>::quiet_NaN();

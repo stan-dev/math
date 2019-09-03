@@ -17,7 +17,7 @@ namespace math {
  */
 template <typename T, int R, int C>
 struct index_type<Eigen::Matrix<T, R, C> > {
-  typedef typename Eigen::Matrix<T, R, C>::Index type;
+  using type = typename Eigen::Matrix<T, R, C>::Index;
 };
 
 }  // namespace math

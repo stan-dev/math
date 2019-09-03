@@ -24,7 +24,7 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> ordered_constrain(
   using Eigen::Matrix;
   using std::exp;
 
-  typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
+  using size_type = typename index_type<Matrix<T, Dynamic, 1> >::type;
 
   size_type k = x.size();
   Matrix<T, Dynamic, 1> y(k);
@@ -56,7 +56,7 @@ inline Eigen::Matrix<T, Eigen::Dynamic, 1> ordered_constrain(
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
-  typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
+  using size_type = typename index_type<Matrix<T, Dynamic, 1> >::type;
 
   for (size_type i = 1; i < x.size(); ++i) {
     lp += x(i);

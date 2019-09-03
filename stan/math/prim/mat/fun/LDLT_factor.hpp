@@ -62,8 +62,8 @@ namespace math {
 template <typename T, int R, int C>
 class LDLT_factor {
  public:
-  typedef Eigen::Matrix<T, Eigen::Dynamic, 1> vector_t;
-  typedef Eigen::Matrix<T, R, C> matrix_t;
+  using vector_t = Eigen::Matrix<T, Eigen::Dynamic, 1>;
+  using matrix_t = Eigen::Matrix<T, R, C>;
   using ldlt_t = Eigen::LDLT<matrix_t>;
   using size_type = size_t;
   using value_type = double;

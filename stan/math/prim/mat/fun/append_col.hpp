@@ -178,7 +178,7 @@ inline Eigen::Matrix<return_type_t<T1, T2>, 1, Eigen::Dynamic> append_col(
     const T1& A, const Eigen::Matrix<T2, R, C>& B) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  typedef return_type_t<T1, T2> return_type;
+  using return_type = return_type_t<T1, T2>;
 
   Matrix<return_type, 1, Dynamic> result(B.size() + 1);
   result << A, B.template cast<return_type>();
@@ -204,7 +204,7 @@ inline Eigen::Matrix<return_type_t<T1, T2>, 1, Eigen::Dynamic> append_col(
     const Eigen::Matrix<T1, R, C>& A, const T2& B) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  typedef return_type_t<T1, T2> return_type;
+  using return_type = return_type_t<T1, T2>;
 
   Matrix<return_type, 1, Dynamic> result(A.size() + 1);
   result << A.template cast<return_type>(), B;

@@ -41,7 +41,7 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> corr_matrix_constrain(
     typename math::index_type<Eigen::Matrix<T, Eigen::Dynamic, 1> >::type k) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
+  using size_type = typename index_type<Matrix<T, Dynamic, 1> >::type;
 
   size_type k_choose_2 = (k * (k - 1)) / 2;
   check_size_match("cov_matrix_constrain", "x.size()", x.size(), "k_choose_2",
@@ -80,7 +80,7 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> corr_matrix_constrain(
   using Eigen::Array;
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
+  using size_type = typename index_type<Matrix<T, Dynamic, 1> >::type;
 
   size_type k_choose_2 = (k * (k - 1)) / 2;
   check_size_match("cov_matrix_constrain", "x.size()", x.size(), "k_choose_2",

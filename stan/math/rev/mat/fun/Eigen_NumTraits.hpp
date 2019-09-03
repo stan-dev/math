@@ -202,7 +202,7 @@ struct general_matrix_matrix_product<Index, stan::math::var, LhsStorageOrder,
   using RhsScalar = stan::math::var;
   using ResScalar = stan::math::var;
 
-  typedef gebp_traits<RhsScalar, LhsScalar> Traits;
+  using Traits = gebp_traits<RhsScalar, LhsScalar>;
 
   typedef const_blas_data_mapper<stan::math::var, Index, LhsStorageOrder>
       LhsMapper;

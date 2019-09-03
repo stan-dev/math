@@ -46,7 +46,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
   using T_partials_return = partials_return_type_t<T_y, T_loc, T_covar>;
   typedef Eigen::Matrix<T_partials_return, Eigen::Dynamic, Eigen::Dynamic>
       matrix_partials_t;
-  typedef Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1> vector_partials_t;
+  using vector_partials_t = Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1>;
   typedef Eigen::Matrix<T_partials_return, 1, Eigen::Dynamic>
       row_vector_partials_t;
 

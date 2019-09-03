@@ -64,7 +64,7 @@ struct algebra_solver_vari : public vari {
 
     // Compute the Jacobian and store in array, using the
     // implicit function theorem, i.e. Jx_y = Jf_y / Jf_x
-    typedef hybrj_functor_solver<Fs, F, double, double> f_y;
+    using f_y = hybrj_functor_solver<Fs, F, double, double>;
     Map<MatrixXd>(&Jx_y_[0], x_size_, y_size_)
         = -mdivide_left(fx.get_jacobian(theta_dbl),
                         f_y(fs, f, theta_dbl, value_of(y), dat, dat_int, msgs)
@@ -161,8 +161,8 @@ Eigen::VectorXd algebra_solver(
   }
 
   // Create functor for algebraic system
-  typedef system_functor<F, double, double, true> Fs;
-  typedef hybrj_functor_solver<Fs, F, double, double> Fx;
+  using Fs = system_functor<F, double, double, true>;
+  using Fx = hybrj_functor_solver<Fs, F, double, double>;
   Fx fx(Fs(), f, value_of(x), y, dat, dat_int, msgs);
   Eigen::HybridNonLinearSolver<Fx> solver(fx);
 
@@ -255,13 +255,13 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver(
       = algebra_solver(f, x, value_of(y), dat, dat_int, 0, relative_tolerance,
                        function_tolerance, max_num_steps);
 
-  typedef system_functor<F, double, double, false> Fy;
+  using Fy = system_functor<F, double, double, false>;
 
   // TODO(charlesm93): a similar object gets constructed inside
   // the call to algebra_solver. Cache the previous result
   // and use it here (if possible).
-  typedef system_functor<F, double, double, true> Fs;
-  typedef hybrj_functor_solver<Fs, F, double, double> Fx;
+  using Fs = system_functor<F, double, double, true>;
+  using Fx = hybrj_functor_solver<Fs, F, double, double>;
   Fx fx(Fs(), f, value_of(x), value_of(y), dat, dat_int, msgs);
 
   // Construct vari
