@@ -7,7 +7,7 @@ misc_excludes=,-misc-non-private-member-variables-in-classes,-misc-unused-parame
 google_excludes=,-google-runtime-references,-google-global-names-in-headers,-google-build-using-namespace,-google-runtime-int
 things_we_should_look_at=,-google-readability-casting,-google-explicit-constructor,-modernize-use-using,-modernize-pass-by-value,-readability-implicit-bool-conversion,-readability-const-return-type,-readability-avoid-const-params-in-decls,-modernize-return-braced-init-list,-modernize-use-using
 tidy_checks?= $(tidy_base_checks) $(modern_excludes) $(readability_excludes) $(misc_excludes) $(google_excludes) $(things_we_should_look_at)
-files= *
+files?= *
 
 .PHONY: clang-tidy
 clang-tidy:
