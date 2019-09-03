@@ -8,16 +8,16 @@ google_excludes=,-google-runtime-references,-google-global-names-in-headers,-goo
 things_we_should_look_at=,-google-readability-casting,-google-explicit-constructor,-modernize-use-using,-modernize-pass-by-value,-readability-implicit-bool-conversion,-readability-const-return-type,-readability-avoid-const-params-in-decls,-modernize-return-braced-init-list,-modernize-use-using
 tidy_checks?= $(tidy_base_checks) $(modern_excludes) $(readability_excludes) $(misc_excludes) $(google_excludes) $(things_we_should_look_at)
 files?= *
-
+folder?= ./test/unit/*
 .PHONY: clang-tidy
 clang-tidy:
-		find $(folder) -path './test/unit/*' -wholename '*$(files).cpp' -exec clang-tidy {} \
+		find $(folder) -path './test/unit/*' -wholename '*$(files).cpp' -type f | xargs -I {} clang-tidy "{}" \
 		 -checks='$(tidy_checks)' -format-style='file' -header-filter='./stan/*' \
-		 -- $(CXXFLAGS) $(LDFLAGS) $(LDLIBS) $(INC_GTEST) $(CXXFLAGS_GTEST) $(CPPFLAGS) \;
+		 -- $(CXXFLAGS) $(LDFLAGS) $(LDLIBS) $(INC_GTEST) $(CXXFLAGS_GTEST) $(CPPFLAGS)
 
 .PHONY: clang-tidy-fix
 clang-tidy-fix:
-		find $(folder) -path './test/unit/*' -wholename '*$(files).cpp' -exec clang-tidy {} \
+		find $(folder) -path './test/unit/*' -wholename '*$(files).cpp' -type f | xargs -I {} clang-tidy "{}" \
 		 -checks='$(tidy_checks)' -format-style='file' -header-filter='./stan/*' \
 		 -fix -export-fixes="./.clang-fixes.log" \
-		 -- $(CXXFLAGS) $(LDFLAGS) $(LDLIBS) $(INC_GTEST) $(CXXFLAGS_GTEST) $(CPPFLAGS) \;
+		 -- $(CXXFLAGS) $(LDFLAGS) $(LDLIBS) $(INC_GTEST) $(CXXFLAGS_GTEST) $(CPPFLAGS)
