@@ -17,7 +17,7 @@ namespace math {
 template <typename T_y, typename T_scale>
 return_type_t<T_y, T_scale> rayleigh_lcdf(const T_y& y, const T_scale& sigma) {
   static const char* function = "rayleigh_lcdf";
-  typedef partials_return_type_t<T_y, T_scale> T_partials_return;
+  using T_partials_return = partials_return_type_t<T_y, T_scale>;
 
   using std::exp;
 

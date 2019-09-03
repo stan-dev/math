@@ -20,7 +20,7 @@ return_type_t<T_covar, T_shape> lkj_corr_cholesky_lpdf(
 
   using boost::math::tools::promote_args;
 
-  typedef return_type_t<T_covar, T_shape> lp_ret;
+  using lp_ret = return_type_t<T_covar, T_shape>;
   lp_ret lp(0.0);
   check_positive(function, "Shape parameter", eta);
   check_lower_triangular(function, "Random variable", L);

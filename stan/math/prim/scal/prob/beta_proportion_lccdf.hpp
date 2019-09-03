@@ -42,7 +42,7 @@ template <typename T_y, typename T_loc, typename T_prec>
 return_type_t<T_y, T_loc, T_prec> beta_proportion_lccdf(const T_y& y,
                                                         const T_loc& mu,
                                                         const T_prec& kappa) {
-  typedef partials_return_type_t<T_y, T_loc, T_prec> T_partials_return;
+  using T_partials_return = partials_return_type_t<T_y, T_loc, T_prec>;
 
   static const char* function = "beta_proportion_lccdf";
 

@@ -19,7 +19,7 @@ template <bool propto, typename T_y, typename T_loc, typename T_scale>
 return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
                                                   T_scale const& kappa) {
   static char const* const function = "von_mises_lpdf";
-  typedef partials_return_type_t<T_y, T_loc, T_scale> T_partials_return;
+  using T_partials_return = partials_return_type_t<T_y, T_loc, T_scale>;
 
   if (size_zero(y, mu, kappa)) {
     return 0.0;

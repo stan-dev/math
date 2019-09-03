@@ -42,8 +42,8 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
     const T_y& y, const T_loc& mu, const T_covar& L) {
   static const char* function = "multi_normal_cholesky_lpdf";
   using T_covar_elem = typename scalar_type<T_covar>::type;
-  typedef return_type_t<T_y, T_loc, T_covar> T_return;
-  typedef partials_return_type_t<T_y, T_loc, T_covar> T_partials_return;
+  using T_return = return_type_t<T_y, T_loc, T_covar>;
+  using T_partials_return = partials_return_type_t<T_y, T_loc, T_covar>;
   typedef Eigen::Matrix<T_partials_return, Eigen::Dynamic, Eigen::Dynamic>
       matrix_partials_t;
   typedef Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1> vector_partials_t;

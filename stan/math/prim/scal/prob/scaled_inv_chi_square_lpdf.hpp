@@ -40,7 +40,7 @@ template <bool propto, typename T_y, typename T_dof, typename T_scale>
 return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
     const T_y& y, const T_dof& nu, const T_scale& s) {
   static const char* function = "scaled_inv_chi_square_lpdf";
-  typedef partials_return_type_t<T_y, T_dof, T_scale> T_partials_return;
+  using T_partials_return = partials_return_type_t<T_y, T_dof, T_scale>;
 
   check_not_nan(function, "Random variable", y);
   check_positive_finite(function, "Degrees of freedom parameter", nu);

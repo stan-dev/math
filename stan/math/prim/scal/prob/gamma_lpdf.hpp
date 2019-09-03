@@ -43,7 +43,7 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
                                                     const T_shape& alpha,
                                                     const T_inv_scale& beta) {
   static const char* function = "gamma_lpdf";
-  typedef partials_return_type_t<T_y, T_shape, T_inv_scale> T_partials_return;
+  using T_partials_return = partials_return_type_t<T_y, T_shape, T_inv_scale>;
 
   if (size_zero(y, alpha, beta)) {
     return 0.0;

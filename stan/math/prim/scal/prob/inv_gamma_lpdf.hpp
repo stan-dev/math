@@ -36,7 +36,7 @@ return_type_t<T_y, T_shape, T_scale> inv_gamma_lpdf(const T_y& y,
                                                     const T_shape& alpha,
                                                     const T_scale& beta) {
   static const char* function = "inv_gamma_lpdf";
-  typedef partials_return_type_t<T_y, T_shape, T_scale> T_partials_return;
+  using T_partials_return = partials_return_type_t<T_y, T_shape, T_scale>;
 
   check_not_nan(function, "Random variable", y);
   check_positive_finite(function, "Shape parameter", alpha);

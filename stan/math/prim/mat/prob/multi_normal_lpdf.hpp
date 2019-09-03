@@ -22,7 +22,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
                                                      const T_covar& Sigma) {
   static const char* function = "multi_normal_lpdf";
   using T_covar_elem = typename scalar_type<T_covar>::type;
-  typedef return_type_t<T_y, T_loc, T_covar> lp_type;
+  using lp_type = return_type_t<T_y, T_loc, T_covar>;
 
   using Eigen::Dynamic;
 

@@ -19,7 +19,7 @@ return_type_t<T_y, T_loc, T_scale> lognormal_cdf(const T_y& y, const T_loc& mu,
                                                  const T_scale& sigma) {
   static const char* function = "lognormal_cdf";
 
-  typedef partials_return_type_t<T_y, T_loc, T_scale> T_partials_return;
+  using T_partials_return = partials_return_type_t<T_y, T_loc, T_scale>;
 
   T_partials_return cdf = 1.0;
 

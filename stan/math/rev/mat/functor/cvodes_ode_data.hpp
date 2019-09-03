@@ -36,7 +36,7 @@ class cvodes_ode_data {
   std::ostream* msgs_;
   const size_t S_;
 
-  typedef cvodes_ode_data<F, T_initial, T_param> ode_data;
+  using ode_data = cvodes_ode_data<F, T_initial, T_param>;
   using initial_var = stan::is_var<T_initial>;
   using param_var = stan::is_var<T_param>;
 

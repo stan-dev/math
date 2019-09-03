@@ -69,7 +69,7 @@ struct append_return_type<Eigen::Matrix<T1, R, C>, Eigen::Matrix<T2, R, C> > {
  */
 template <typename T1, typename T2>
 struct append_return_type<std::vector<T1>, std::vector<T2> > {
-  typedef typename std::vector<typename append_return_type<T1, T2>::type> type;
+  using type = typename std::vector<typename append_return_type<T1, T2>::type>;
 };
 }  // namespace math
 }  // namespace stan

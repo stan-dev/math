@@ -41,9 +41,9 @@ template <typename T_theta, typename T_lam>
 return_type_t<T_theta, T_lam> log_mix(const T_theta& theta,
                                       const T_lam& lambda) {
   static const char* function = "log_mix";
-  typedef partials_return_type_t<T_theta, T_lam> T_partials_return;
+  using T_partials_return = partials_return_type_t<T_theta, T_lam>;
 
-  typedef typename Eigen::Matrix<T_partials_return, -1, 1> T_partials_vec;
+  using T_partials_vec = typename Eigen::Matrix<T_partials_return, -1, 1>;
 
   const int N = length(theta);
 
@@ -125,11 +125,11 @@ return_type_t<T_theta, std::vector<Eigen::Matrix<T_lam, R, C> > > log_mix(
       T_theta, std::vector<Eigen::Matrix<T_lam, R, C> > >::type
       T_partials_return;
 
-  typedef typename Eigen::Matrix<T_partials_return, -1, 1> T_partials_vec;
+  using T_partials_vec = typename Eigen::Matrix<T_partials_return, -1, 1>;
 
-  typedef typename Eigen::Matrix<T_partials_return, -1, -1> T_partials_mat;
+  using T_partials_mat = typename Eigen::Matrix<T_partials_return, -1, -1>;
 
-  typedef typename std::vector<Eigen::Matrix<T_lam, R, C> > T_lamvec_type;
+  using T_lamvec_type = typename std::vector<Eigen::Matrix<T_lam, R, C> >;
 
   const int N = length(lambda);
   const int M = theta.size();
@@ -219,9 +219,9 @@ return_type_t<T_theta, std::vector<std::vector<T_lam> > > log_mix(
   typedef typename stan::partials_return_type<
       T_theta, std::vector<std::vector<T_lam> > >::type T_partials_return;
 
-  typedef typename Eigen::Matrix<T_partials_return, -1, 1> T_partials_vec;
+  using T_partials_vec = typename Eigen::Matrix<T_partials_return, -1, 1>;
 
-  typedef typename Eigen::Matrix<T_partials_return, -1, -1> T_partials_mat;
+  using T_partials_mat = typename Eigen::Matrix<T_partials_return, -1, -1>;
 
   using T_lamvec_type = typename std::vector<std::vector<T_lam> >;
 
