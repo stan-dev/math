@@ -178,25 +178,25 @@ TEST(MathMatrix, nonLinearEq_dbl) {
     EXPECT_FLOAT_EQ(y(2), theta(2));
   }
 }
-/*
+
 TEST(MathMatrix, error_conditions) {
   using stan::math::var;
 
   int n_y = 2;
   Eigen::Matrix<var, Eigen::Dynamic, 1> y(n_y);
   y << 4, 6;
-
-  error_conditions_test(non_linear_eq_functor(), y);
+  for (int is_newton = 0; is_newton <= 1; is_newton ++)
+    error_conditions_test(non_linear_eq_functor(), y, is_newton);
 }
 
 TEST(MathMatrix, error_conditions_dbl) {
   int n_y = 2;
   Eigen::VectorXd y(n_y);
   y << 4, 6;
-
-  error_conditions_test(non_linear_eq_functor(), y);
+  for (int is_newton = 0; is_newton <= 1; is_newton++)
+    error_conditions_test(non_linear_eq_functor(), y, is_newton);
 }
-
+/*
 TEST(MathMatrix, unsolvable) {
   using stan::math::var;
 

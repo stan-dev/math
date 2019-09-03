@@ -5,6 +5,7 @@
 #include <stan/math/prim/mat/fun/to_vector.hpp>
 #include <stan/math/rev/mat/functor/kinsol_data.hpp>
 #include <stan/math/rev/mat/functor/algebra_system.hpp>
+#include <stan/math/prim/mat/err/check_flag.hpp>
 
 #include <kinsol/kinsol.h>
 #include <sunmatrix/sunmatrix_dense.h>
@@ -15,6 +16,7 @@
 
 namespace stan {
 namespace math {
+
   /**
    * Return the solution to the specified algebraic system,
    * given an initial guess.
@@ -57,16 +59,21 @@ namespace math {
 
     void* kinsol_memory = KINCreate();
 
-    int flag;  // TO DO -- replace with a checkflag procedure
-    flag = KINInit(kinsol_memory, &system_data::kinsol_f_system,
-                   kinsol_data.nv_x_);
+    check_flag(KINInit(kinsol_memory, &system_data::kinsol_f_system,
+                       kinsol_data.nv_x_), "KINInit");
 
-    // TO DO - construct a set option procedure
+    // flag = KINInit(kinsol_memory, &system_data::kinsol_f_system,
+    //                kinsol_data.nv_x_);
+
     N_Vector scaling = N_VNew_Serial(N);
     N_VConst_Serial(1.0, scaling);  // no scaling
-    flag = KINSetFuncNormTol(kinsol_memory, function_tolerance);
-    flag = KINSetScaledStepTol(kinsol_memory, scaling_step_tol);
-    flag = KINSetMaxSetupCalls(kinsol_memory, steps_eval_jacobian);
+
+    check_flag(KINSetFuncNormTol(kinsol_memory, function_tolerance),
+               "KINSetFuncNormTol");
+    check_flag(KINSetScaledStepTol(kinsol_memory, scaling_step_tol),
+               "KINSetScaledStepTol");
+    check_flag(KINSetMaxSetupCalls(kinsol_memory, steps_eval_jacobian),
+               "KINSetMaxSetupCalls");
 
     // FIX ME
     // The default value is 1000 * ||u_0||_D where ||u_0|| is the initial guess.
@@ -74,35 +81,43 @@ namespace math {
     // If the norm is non-zero, use kinsol's default (accessed with 0),
     // else use the dimension of x -- CHECK - find optimal length.
     double max_newton_step = (x.norm() == 0) ? x.size() : 0;
-    flag = KINSetMaxNewtonStep(kinsol_memory, max_newton_step);  // scaled length of Newton step
-
-    flag = KINSetUserData(kinsol_memory,
-                          reinterpret_cast<void*>(&kinsol_data));
+    check_flag(KINSetMaxNewtonStep(kinsol_memory, max_newton_step),
+               "KINSetMaxNewtonStep");
+    check_flag(KINSetUserData(kinsol_memory,
+                              reinterpret_cast<void*>(&kinsol_data)),
+                 "KINSetUserData");
 
     // construct Linear solver
-    flag = KINSetLinearSolver(kinsol_memory, kinsol_data.LS_, kinsol_data.J_);
+    check_flag(KINSetLinearSolver(kinsol_memory, kinsol_data.LS_,
+                                  kinsol_data.J_),
+               "KINSetLinearSolver");
 
     // FOR TESTS: comment this out to use Kinsol's default methods for Jacobian,
     // i.e. finite differentiation.
-    if (!custom_jacobian) flag = KINSetJacFn(kinsol_memory, 0);
-    else flag = KINSetJacFn(kinsol_memory, &system_data::kinsol_jacobian);
+    if (custom_jacobian) check_flag(KINSetJacFn(kinsol_memory, 
+                                    &system_data::kinsol_jacobian),
+        "KINSetJacFn");
+
+    // if (!custom_jacobian) flag = KINSetJacFn(kinsol_memory, 0);
+    // else flag = KINSetJacFn(kinsol_memory, &system_data::kinsol_jacobian);
 
     // TO DO - a better way to do this conversion.
     N_Vector nv_x = N_VNew_Serial(N);
     realtype* nv_x_data = N_VGetArrayPointer_Serial(nv_x);
     for (int i = 0; i < N; i++) nv_x_data[i] = x(i);
 
-    flag = KINSol(kinsol_memory, nv_x,
-                  global_line_search, scaling, scaling);
+    check_flag(KINSol(kinsol_memory, nv_x,
+                      global_line_search, scaling, scaling),
+               "KINSol");
 
     // TO DO - return an exception when the flag is negative.
     // std::cout << "Kinsol flag: " << flag << std::endl;
-    if (flag < 0) {
-      std::ostringstream message;
-      message << "lgp_solver: the kinsol solver encounter an error"
-              << " with flag = " << flag;
-      throw boost::math::evaluation_error(message.str());
-    }
+    // if (flag < 0) {
+    //   std::ostringstream message;
+    //   message << "lgp_solver: the kinsol solver encounter an error"
+    //           << " with flag = " << flag;
+    //   throw boost::math::evaluation_error(message.str());
+    // }
 
     // keep track of how many iterations are used.
     // Useful when running tests.
