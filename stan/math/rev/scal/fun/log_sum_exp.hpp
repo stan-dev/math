@@ -26,10 +26,11 @@ class log_sum_exp_vd_vari : public op_vd_vari {
   log_sum_exp_vd_vari(vari* avi, double b)
       : op_vd_vari(log_sum_exp(avi->val_, b), avi, b) {}
   void chain() {
-    if (val_ == NEGATIVE_INFTY)
+    if (val_ == NEGATIVE_INFTY) {
       avi_->adj_ += adj_;
-    else
+    } else {
       avi_->adj_ += adj_ * calculate_chain(avi_->val_, val_);
+    }
   }
 };
 class log_sum_exp_dv_vari : public op_dv_vari {
@@ -37,10 +38,11 @@ class log_sum_exp_dv_vari : public op_dv_vari {
   log_sum_exp_dv_vari(double a, vari* bvi)
       : op_dv_vari(log_sum_exp(a, bvi->val_), a, bvi) {}
   void chain() {
-    if (val_ == NEGATIVE_INFTY)
+    if (val_ == NEGATIVE_INFTY) {
       bvi_->adj_ += adj_;
-    else
+    } else {
       bvi_->adj_ += adj_ * calculate_chain(bvi_->val_, val_);
+    }
   }
 };
 
@@ -50,19 +52,19 @@ class log_sum_exp_dv_vari : public op_dv_vari {
  * Returns the log sum of exponentials.
  */
 inline var log_sum_exp(const var& a, const var& b) {
-  return var(new internal::log_sum_exp_vv_vari(a.vi_, b.vi_));
+  return {new internal::log_sum_exp_vv_vari(a.vi_, b.vi_)};
 }
 /**
  * Returns the log sum of exponentials.
  */
 inline var log_sum_exp(const var& a, double b) {
-  return var(new internal::log_sum_exp_vd_vari(a.vi_, b));
+  return {new internal::log_sum_exp_vd_vari(a.vi_, b)};
 }
 /**
  * Returns the log sum of exponentials.
  */
 inline var log_sum_exp(double a, const var& b) {
-  return var(new internal::log_sum_exp_dv_vari(a, b.vi_));
+  return {new internal::log_sum_exp_dv_vari(a, b.vi_)};
 }
 
 }  // namespace math

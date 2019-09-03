@@ -102,8 +102,9 @@ gaussian_dlm_obs_lpdf(
   check_pos_definite(function, "C0", C0);
   check_finite(function, "C0", C0);
 
-  if (size_zero(y))
+  if (size_zero(y)) {
     return 0;
+  }
 
   T_lp lp(0);
   if (include_summand<propto>::value) {
@@ -257,8 +258,9 @@ gaussian_dlm_obs_lpdf(
   check_finite(function, "C0", C0);
   check_not_nan(function, "C0", C0);
 
-  if (y.cols() == 0 || y.rows() == 0)
+  if (y.cols() == 0 || y.rows() == 0) {
     return 0;
+  }
 
   T_lp lp(0);
   if (include_summand<propto>::value) {

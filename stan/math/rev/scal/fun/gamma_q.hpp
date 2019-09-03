@@ -48,15 +48,15 @@ class gamma_q_dv_vari : public op_dv_vari {
 }  // namespace internal
 
 inline var gamma_q(const var& a, const var& b) {
-  return var(new internal::gamma_q_vv_vari(a.vi_, b.vi_));
+  return {new internal::gamma_q_vv_vari(a.vi_, b.vi_)};
 }
 
 inline var gamma_q(const var& a, double b) {
-  return var(new internal::gamma_q_vd_vari(a.vi_, b));
+  return {new internal::gamma_q_vd_vari(a.vi_, b)};
 }
 
 inline var gamma_q(double a, const var& b) {
-  return var(new internal::gamma_q_dv_vari(a, b.vi_));
+  return {new internal::gamma_q_dv_vari(a, b.vi_)};
 }
 
 }  // namespace math

@@ -24,7 +24,7 @@ class modified_bessel_first_kind_dv_vari : public op_dv_vari {
 }  // namespace internal
 
 inline var modified_bessel_first_kind(int v, const var& a) {
-  return var(new internal::modified_bessel_first_kind_dv_vari(v, a.vi_));
+  return {new internal::modified_bessel_first_kind_dv_vari(v, a.vi_)};
 }
 
 }  // namespace math

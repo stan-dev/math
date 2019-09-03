@@ -15,8 +15,9 @@ class ceil_vari : public op_v_vari {
  public:
   explicit ceil_vari(vari* avi) : op_v_vari(std::ceil(avi->val_), avi) {}
   void chain() {
-    if (unlikely(is_nan(avi_->val_)))
+    if (unlikely(is_nan(avi_->val_))) {
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
+    }
   }
 };
 }  // namespace internal
@@ -55,7 +56,7 @@ class ceil_vari : public op_v_vari {
  * @param a Input variable.
  * @return Ceiling of the variable.
  */
-inline var ceil(const var& a) { return var(new internal::ceil_vari(a.vi_)); }
+inline var ceil(const var& a) { return {new internal::ceil_vari(a.vi_)}; }
 
 }  // namespace math
 }  // namespace stan

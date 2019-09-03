@@ -25,11 +25,12 @@ TEST(ProbDistributionsInvWishart, fvar_var) {
   double dof = 4.0;
   double log_p = log(2.008407e-08);
 
-  for (int i = 0; i < 3; i++)
+  for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++) {
       Y(i, j).d_ = 1.0;
       Sigma(i, j).d_ = 1.0;
     }
+  }
 
   EXPECT_NEAR(log_p, stan::math::inv_wishart_log(Y, dof, Sigma).val_.val(),
               0.01);
@@ -52,11 +53,12 @@ TEST(ProbDistributionsInvWishart, fvar_fvar_var) {
   double dof = 4.0;
   double log_p = log(2.008407e-08);
 
-  for (int i = 0; i < 3; i++)
+  for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++) {
       Y(i, j).d_ = 1.0;
       Sigma(i, j).d_ = 1.0;
     }
+  }
 
   EXPECT_NEAR(log_p, stan::math::inv_wishart_log(Y, dof, Sigma).val_.val_.val(),
               0.01);

@@ -69,15 +69,15 @@ class log_inv_logit_diff_dv_vari : public op_dv_vari {
 }  // namespace internal
 
 inline var log_inv_logit_diff(const var& a, double b) {
-  return var(new internal::log_inv_logit_diff_vd_vari(a.vi_, b));
+  return {new internal::log_inv_logit_diff_vd_vari(a.vi_, b)};
 }
 
 inline var log_inv_logit_diff(const var& a, const var& b) {
-  return var(new internal::log_inv_logit_diff_vv_vari(a.vi_, b.vi_));
+  return {new internal::log_inv_logit_diff_vv_vari(a.vi_, b.vi_)};
 }
 
 inline var log_inv_logit_diff(double a, const var& b) {
-  return var(new internal::log_inv_logit_diff_dv_vari(a, b.vi_));
+  return {new internal::log_inv_logit_diff_dv_vari(a, b.vi_)};
 }
 
 }  // namespace math

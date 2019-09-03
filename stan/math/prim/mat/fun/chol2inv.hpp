@@ -27,8 +27,9 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> chol2inv(
   check_lower_triangular("chol2inv", "L", L);
   int K = L.rows();
   typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> matrix_t;
-  if (K == 0)
+  if (K == 0) {
     return L;
+  }
   if (K == 1) {
     matrix_t X(1, 1);
     X.coeffRef(0) = inv_square(L.coeff(0));

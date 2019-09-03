@@ -70,21 +70,25 @@ TEST_F(StanAgradRevOde, initial_state_dv) {
   std::vector<double> y0_d(N, 0.0);
   std::vector<var> theta_v(M, 0.0);
 
-  for (size_t n = 0; n < N; n++)
+  for (size_t n = 0; n < N; n++) {
     y0_d[n] = n + 1;
-  for (size_t m = 0; m < M; m++)
+  }
+  for (size_t m = 0; m < M; m++) {
     theta_v[m] = 10 * (m + 1);
+  }
 
   coupled_ode_system<mock_ode_functor, double, var> coupled_system_dv(
       base_ode, y0_d, theta_v, x, x_int, &msgs);
 
   std::vector<double> state = coupled_system_dv.initial_state();
-  for (size_t n = 0; n < N; n++)
+  for (size_t n = 0; n < N; n++) {
     EXPECT_FLOAT_EQ(y0_d[n], state[n])
         << "we don't need derivatives of y0; "
         << "initial state gets the initial values";
-  for (size_t n = N; n < state.size(); n++)
+  }
+  for (size_t n = N; n < state.size(); n++) {
     EXPECT_FLOAT_EQ(0.0, state[n]);
+  }
 }
 TEST_F(StanAgradRevOde, size_dv) {
   using stan::math::coupled_ode_system;
@@ -222,10 +226,12 @@ TEST_F(StanAgradRevOde, initial_state_vd) {
   std::vector<var> y0_v(N, 0.0);
   std::vector<double> theta_d(M, 0.0);
 
-  for (size_t n = 0; n < N; n++)
+  for (size_t n = 0; n < N; n++) {
     y0_v[n] = n + 1;
-  for (size_t m = 0; m < M; m++)
+  }
+  for (size_t m = 0; m < M; m++) {
     theta_d[m] = 10 * (m + 1);
+  }
 
   coupled_ode_system<mock_ode_functor, var, double> coupled_system_vd(
       base_ode, y0_v, theta_d, x, x_int, &msgs);
@@ -233,11 +239,14 @@ TEST_F(StanAgradRevOde, initial_state_vd) {
   std::vector<double> state;
 
   state = coupled_system_vd.initial_state();
-  for (size_t n = 0; n < N; n++)
+  for (size_t n = 0; n < N; n++) {
     EXPECT_FLOAT_EQ(n + 1, state[n]);
-  for (size_t i = 0; i < N; i++)
-    for (size_t j = 0; j < N; j++)
+  }
+  for (size_t i = 0; i < N; i++) {
+    for (size_t j = 0; j < N; j++) {
       EXPECT_FLOAT_EQ(i == j ? 1.0 : 0.0, state[N + i + j * N]);
+    }
+  }
 }
 TEST_F(StanAgradRevOde, size_vd) {
   using stan::math::coupled_ode_system;
@@ -383,22 +392,28 @@ TEST_F(StanAgradRevOde, initial_state_vv) {
   std::vector<var> y0_v(N, 0.0);
   std::vector<var> theta_v(M, 0.0);
 
-  for (size_t n = 0; n < N; n++)
+  for (size_t n = 0; n < N; n++) {
     y0_v[n] = n + 1;
-  for (size_t m = 0; m < M; m++)
+  }
+  for (size_t m = 0; m < M; m++) {
     theta_v[m] = 10 * (m + 1);
+  }
 
   coupled_ode_system<mock_ode_functor, var, var> coupled_system_vv(
       base_ode, y0_v, theta_v, x, x_int, &msgs);
 
   std::vector<double> state = coupled_system_vv.initial_state();
-  for (size_t n = 0; n < N; n++)
+  for (size_t n = 0; n < N; n++) {
     EXPECT_FLOAT_EQ(n + 1, state[n]);
-  for (size_t i = 0; i < N; i++)
-    for (size_t j = 0; j < N; j++)
+  }
+  for (size_t i = 0; i < N; i++) {
+    for (size_t j = 0; j < N; j++) {
       EXPECT_FLOAT_EQ(i == j ? 1.0 : 0.0, state[N + i + j * N]);
-  for (size_t n = N + N * N; n < N + N * N + N * M; n++)
+    }
+  }
+  for (size_t n = N + N * N; n < N + N * N + N * M; n++) {
     EXPECT_FLOAT_EQ(0.0, state[n]);
+  }
 }
 TEST_F(StanAgradRevOde, size_vv) {
   using stan::math::coupled_ode_system;

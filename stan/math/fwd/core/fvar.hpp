@@ -85,8 +85,9 @@ struct fvar {
    * @param[in] v value
    */
   fvar(const T& v) : val_(v), d_(0.0) {  // NOLINT(runtime/explicit)
-    if (unlikely(is_nan(v)))
+    if (unlikely(is_nan(v))) {
       d_ = v;
+    }
   }
 
   /**
@@ -101,10 +102,12 @@ struct fvar {
    */
   template <typename V>
   fvar(const V& v,
-       typename std::enable_if<ad_promotable<V, T>::value>::type* dummy = 0)
+       typename std::enable_if<ad_promotable<V, T>::value>::type* dummy
+       = nullptr)
       : val_(v), d_(0.0) {
-    if (unlikely(is_nan(v)))
+    if (unlikely(is_nan(v))) {
       d_ = v;
+    }
   }
 
   /**
@@ -120,8 +123,9 @@ struct fvar {
    */
   template <typename V, typename D>
   fvar(const V& v, const D& d) : val_(v), d_(d) {
-    if (unlikely(is_nan(v)))
+    if (unlikely(is_nan(v))) {
       d_ = v;
+    }
   }
 
   /**

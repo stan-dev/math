@@ -53,8 +53,9 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
   using std::log;
 
   // check if any vectors are zero length
-  if (size_zero(y_bar, s_squared, n_obs, mu, sigma))
+  if (size_zero(y_bar, s_squared, n_obs, mu, sigma)) {
     return 0.0;
+  }
 
   // set up return value accumulator
   T_partials_return logp(0.0);
@@ -74,8 +75,9 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
                          s_squared, "Number of observations", n_obs,
                          "Location parameter", mu, "Scale parameter", sigma);
   // check if no variables are involved and prop-to
-  if (!include_summand<propto, T_y, T_s, T_loc, T_scale>::value)
+  if (!include_summand<propto, T_y, T_s, T_loc, T_scale>::value) {
     return 0.0;
+  }
 
   // set up template expressions wrapping scalars into vector views
   operands_and_partials<T_y, T_s, T_loc, T_scale> ops_partials(y_bar, s_squared,
@@ -96,11 +98,13 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
     const T_partials_return sigma_dbl = value_of(sigma_vec[i]);
     const T_partials_return sigma_squared = pow(sigma_dbl, 2);
 
-    if (include_summand<propto>::value)
+    if (include_summand<propto>::value) {
       logp += NEG_LOG_SQRT_TWO_PI * n_obs_dbl;
+    }
 
-    if (include_summand<propto, T_scale>::value)
+    if (include_summand<propto, T_scale>::value) {
       logp -= n_obs_dbl * log(sigma_dbl);
+    }
 
     const T_partials_return cons_expr
         = (s_squared_dbl + n_obs_dbl * pow(y_bar_dbl - mu_dbl, 2));
@@ -111,16 +115,20 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
     if (!is_constant_all<T_y, T_loc>::value) {
       const T_partials_return common_derivative
           = n_obs_dbl * (mu_dbl - y_bar_dbl) / sigma_squared;
-      if (!is_constant_all<T_y>::value)
+      if (!is_constant_all<T_y>::value) {
         ops_partials.edge1_.partials_[i] += common_derivative;
-      if (!is_constant_all<T_loc>::value)
+      }
+      if (!is_constant_all<T_loc>::value) {
         ops_partials.edge3_.partials_[i] -= common_derivative;
+      }
     }
-    if (!is_constant_all<T_s>::value)
+    if (!is_constant_all<T_s>::value) {
       ops_partials.edge2_.partials_[i] -= 0.5 / sigma_squared;
-    if (!is_constant_all<T_scale>::value)
+    }
+    if (!is_constant_all<T_scale>::value) {
       ops_partials.edge4_.partials_[i]
           += cons_expr / pow(sigma_dbl, 3) - n_obs_dbl / sigma_dbl;
+    }
   }
   return ops_partials.build(logp);
 }

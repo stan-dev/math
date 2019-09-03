@@ -36,8 +36,9 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lcdf(
 
   T_partials_return cdf_log(0.0);
 
-  if (size_zero(y, mu, sigma))
+  if (size_zero(y, mu, sigma)) {
     return cdf_log;
+  }
 
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
@@ -65,22 +66,28 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lcdf(
     if (y_dbl < mu_dbl) {
       cdf_log += log_half + scaled_diff;
 
-      if (!is_constant_all<T_y>::value)
+      if (!is_constant_all<T_y>::value) {
         ops_partials.edge1_.partials_[n] += inv_sigma;
-      if (!is_constant_all<T_loc>::value)
+      }
+      if (!is_constant_all<T_loc>::value) {
         ops_partials.edge2_.partials_[n] -= inv_sigma;
-      if (!is_constant_all<T_scale>::value)
+      }
+      if (!is_constant_all<T_scale>::value) {
         ops_partials.edge3_.partials_[n] -= scaled_diff * inv_sigma;
+      }
     } else {
       cdf_log += log1m(0.5 * exp(-scaled_diff));
 
       const T_partials_return rep_deriv = 1.0 / (2.0 * exp(scaled_diff) - 1.0);
-      if (!is_constant_all<T_y>::value)
+      if (!is_constant_all<T_y>::value) {
         ops_partials.edge1_.partials_[n] += rep_deriv * inv_sigma;
-      if (!is_constant_all<T_loc>::value)
+      }
+      if (!is_constant_all<T_loc>::value) {
         ops_partials.edge2_.partials_[n] -= rep_deriv * inv_sigma;
-      if (!is_constant_all<T_scale>::value)
+      }
+      if (!is_constant_all<T_scale>::value) {
         ops_partials.edge3_.partials_[n] -= rep_deriv * scaled_diff * inv_sigma;
+      }
     }
   }
   return ops_partials.build(cdf_log);

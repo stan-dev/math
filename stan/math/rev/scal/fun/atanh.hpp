@@ -56,7 +56,7 @@ class atanh_vari : public op_v_vari {
    * @throw std::domain_error if a < -1 or a > 1
    */
 inline var atanh(const var& a) {
-  return var(new internal::atanh_vari(atanh(a.val()), a.vi_));
+  return {new internal::atanh_vari(atanh(a.val()), a.vi_)};
 }
 
 }  // namespace math

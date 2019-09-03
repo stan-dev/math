@@ -202,8 +202,9 @@ inline double integrate_1d(
   check_less_or_equal(function, "lower limit", a, b);
 
   if (a == b) {
-    if (std::isinf(a))
+    if (std::isinf(a)) {
       domain_error(function, "Integration endpoints are both", a, "", "");
+    }
     return 0.0;
   } else {
     return integrate(

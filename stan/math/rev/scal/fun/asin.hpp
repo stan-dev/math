@@ -54,7 +54,7 @@ class asin_vari : public op_v_vari {
  * @param a Variable in range [-1, 1].
  * @return Arc sine of variable, in radians.
  */
-inline var asin(const var& a) { return var(new internal::asin_vari(a.vi_)); }
+inline var asin(const var& a) { return {new internal::asin_vari(a.vi_)}; }
 
 }  // namespace math
 }  // namespace stan

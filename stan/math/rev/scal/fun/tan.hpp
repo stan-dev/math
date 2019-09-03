@@ -43,7 +43,7 @@ class tan_vari : public op_v_vari {
  * @param a Variable for radians of angle.
  * @return Tangent of variable.
  */
-inline var tan(const var& a) { return var(new internal::tan_vari(a.vi_)); }
+inline var tan(const var& a) { return {new internal::tan_vari(a.vi_)}; }
 
 }  // namespace math
 }  // namespace stan

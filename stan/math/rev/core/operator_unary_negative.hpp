@@ -14,10 +14,11 @@ class neg_vari : public op_v_vari {
  public:
   explicit neg_vari(vari* avi) : op_v_vari(-(avi->val_), avi) {}
   void chain() {
-    if (unlikely(is_nan(avi_->val_)))
+    if (unlikely(is_nan(avi_->val_))) {
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
-    else
+    } else {
       avi_->adj_ -= adj_;
+    }
   }
 };
 }  // namespace internal
@@ -46,9 +47,7 @@ class neg_vari : public op_v_vari {
  * @param a Argument variable.
  * @return Negation of variable.
  */
-inline var operator-(const var& a) {
-  return var(new internal::neg_vari(a.vi_));
-}
+inline var operator-(const var& a) { return {new internal::neg_vari(a.vi_)}; }
 
 }  // namespace math
 }  // namespace stan

@@ -35,7 +35,7 @@ class inv_vari : public op_v_vari {
    \f]
  *
  */
-inline var inv(const var& a) { return var(new internal::inv_vari(a.vi_)); }
+inline var inv(const var& a) { return {new internal::inv_vari(a.vi_)}; }
 
 }  // namespace math
 }  // namespace stan

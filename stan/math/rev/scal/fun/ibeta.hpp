@@ -206,7 +206,7 @@ class ibeta_ddv_vari : public op_ddv_vari {
  * @throws if any argument is NaN.
  */
 inline var ibeta(const var& a, const var& b, const var& x) {
-  return var(new internal::ibeta_vvv_vari(a.vi_, b.vi_, x.vi_));
+  return {new internal::ibeta_vvv_vari(a.vi_, b.vi_, x.vi_)};
 }
 
 }  // namespace math

@@ -34,7 +34,7 @@ class inv_cloglog_vari : public op_v_vari {
  * argument.
  */
 inline var inv_cloglog(const var& a) {
-  return var(new internal::inv_cloglog_vari(a.vi_));
+  return {new internal::inv_cloglog_vari(a.vi_)};
 }
 
 }  // namespace math

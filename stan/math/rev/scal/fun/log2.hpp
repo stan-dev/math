@@ -47,7 +47,7 @@ class log2_vari : public op_v_vari {
  * @param a Specified variable.
  * @return Base 2 logarithm of the variable.
  */
-inline var log2(const var& a) { return var(new internal::log2_vari(a.vi_)); }
+inline var log2(const var& a) { return {new internal::log2_vari(a.vi_)}; }
 
 }  // namespace math
 }  // namespace stan

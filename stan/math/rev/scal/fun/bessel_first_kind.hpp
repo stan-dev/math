@@ -23,7 +23,7 @@ class bessel_first_kind_dv_vari : public op_dv_vari {
 }  // namespace internal
 
 inline var bessel_first_kind(int v, const var& a) {
-  return var(new internal::bessel_first_kind_dv_vari(v, a.vi_));
+  return {new internal::bessel_first_kind_dv_vari(v, a.vi_)};
 }
 
 }  // namespace math

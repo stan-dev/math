@@ -44,7 +44,7 @@ class sqrt_vari : public op_v_vari {
  * @param a Variable whose square root is taken.
  * @return Square root of variable.
  */
-inline var sqrt(const var& a) { return var(new internal::sqrt_vari(a.vi_)); }
+inline var sqrt(const var& a) { return {new internal::sqrt_vari(a.vi_)}; }
 
 }  // namespace math
 }  // namespace stan

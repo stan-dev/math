@@ -21,7 +21,7 @@ void sho_value_test(F harm_osc, std::vector<double>& y0, double t0,
 
   std::vector<std::vector<var>> ode_res_vd = stan::math::integrate_ode_rk45(
       harm_osc, promote_scalar<T_y0>(y0), t0, ts,
-      promote_scalar<T_theta>(theta), x, x_int, 0);
+      promote_scalar<T_theta>(theta), x, x_int, nullptr);
   EXPECT_NEAR(0.995029, ode_res_vd[0][0].val(), 1e-5);
   EXPECT_NEAR(-0.0990884, ode_res_vd[0][1].val(), 1e-5);
 
@@ -41,8 +41,9 @@ void sho_finite_diff_test(double t0) {
   y0.push_back(0.0);
 
   std::vector<double> ts;
-  for (int i = 0; i < 100; i++)
+  for (int i = 0; i < 100; i++) {
     ts.push_back(t0 + 0.1 * (i + 1));
+  }
 
   std::vector<double> x;
   std::vector<int> x_int;
@@ -69,8 +70,9 @@ void sho_data_finite_diff_test(double t0) {
   y0.push_back(0.0);
 
   std::vector<double> ts;
-  for (int i = 0; i < 100; i++)
+  for (int i = 0; i < 100; i++) {
     ts.push_back(t0 + 0.1 * (i + 1));
+  }
 
   std::vector<double> x(3, 1);
   std::vector<int> x_int(2, 0);
@@ -115,8 +117,9 @@ TEST(StanAgradRevOde_integrate_ode_rk45, lorenz_finite_diff) {
   std::vector<double> x;
   std::vector<int> x_int;
 
-  for (int i = 0; i < 100; i++)
+  for (int i = 0; i < 100; i++) {
     ts.push_back(0.1 * (i + 1));
+  }
 
   test_ode(lorenz, t0, ts, y0, theta, x, x_int, 1e-8, 1e-1);
 }
@@ -131,8 +134,9 @@ TEST(StanAgradRevOde_integrate_ode_rk45, time_steps_as_param) {
   std::vector<double> theta{0.15, 0.25};
   std::vector<double> y0{1.0, 0.0};
   std::vector<stan::math::var> ts;
-  for (int i = 0; i < 100; i++)
+  for (int i = 0; i < 100; i++) {
     ts.push_back(t0 + 0.1 * (i + 1));
+  }
   std::vector<double> x;
   std::vector<int> x_int;
   std::vector<stan::math::var> y0v = to_var(y0);
@@ -179,15 +183,16 @@ TEST(StanAgradRevOde_integrate_ode_rk45, time_steps_as_param_AD) {
   const double t0 = 0.0;
   const int nt = 100;  // nb. of time steps
   const int ns = 2;    // nb. of states
-  std::ostream* msgs = NULL;
+  std::ostream* msgs = nullptr;
 
   forced_harm_osc_ode_fun ode;
 
   std::vector<double> theta{0.15, 0.25};
   std::vector<double> y0{1.0, 0.0};
   std::vector<stan::math::var> ts;
-  for (int i = 0; i < nt; i++)
+  for (int i = 0; i < nt; i++) {
     ts.push_back(t0 + 0.1 * (i + 1));
+  }
 
   std::vector<double> x;
   std::vector<int> x_int;
@@ -234,15 +239,16 @@ TEST(StanAgradRevOde_integrate_ode_rk45, t0_as_param_AD) {
   const double t0 = 0.0;
   const int nt = 100;  // nb. of time steps
   const int ns = 2;    // nb. of states
-  std::ostream* msgs = NULL;
+  std::ostream* msgs = nullptr;
 
   harm_osc_ode_fun ode;
 
   std::vector<double> theta{0.15};
   std::vector<double> y0{1.0, 0.0};
   std::vector<double> ts;
-  for (int i = 0; i < nt; i++)
+  for (int i = 0; i < nt; i++) {
     ts.push_back(t0 + 0.1 * (i + 1));
+  }
 
   std::vector<double> x;
   std::vector<int> x_int;

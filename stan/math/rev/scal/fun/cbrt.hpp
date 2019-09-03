@@ -42,7 +42,7 @@ class cbrt_vari : public op_v_vari {
  * @param a Specified variable.
  * @return Cube root of the variable.
  */
-inline var cbrt(const var& a) { return var(new internal::cbrt_vari(a.vi_)); }
+inline var cbrt(const var& a) { return {new internal::cbrt_vari(a.vi_)}; }
 
 }  // namespace math
 }  // namespace stan

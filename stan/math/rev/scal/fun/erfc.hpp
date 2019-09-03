@@ -56,7 +56,7 @@ class erfc_vari : public op_v_vari {
  * @param a The variable.
  * @return Complementary error function applied to the variable.
  */
-inline var erfc(const var& a) { return var(new internal::erfc_vari(a.vi_)); }
+inline var erfc(const var& a) { return {new internal::erfc_vari(a.vi_)}; }
 
 }  // namespace math
 }  // namespace stan

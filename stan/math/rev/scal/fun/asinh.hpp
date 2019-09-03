@@ -53,7 +53,7 @@ class asinh_vari : public op_v_vari {
  * @return Inverse hyperbolic sine of the variable.
  */
 inline var asinh(const var& a) {
-  return var(new internal::asinh_vari(asinh(a.val()), a.vi_));
+  return {new internal::asinh_vari(asinh(a.val()), a.vi_)};
 }
 
 }  // namespace math

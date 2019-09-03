@@ -38,7 +38,7 @@ class inv_sqrt_vari : public op_v_vari {
  *
  */
 inline var inv_sqrt(const var& a) {
-  return var(new internal::inv_sqrt_vari(a.vi_));
+  return {new internal::inv_sqrt_vari(a.vi_)};
 }
 
 }  // namespace math

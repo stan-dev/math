@@ -14,7 +14,7 @@ namespace internal {
 template <typename Dx>
 class ops_partials_edge<Dx, std::vector<fvar<Dx> > > {
  public:
-  typedef std::vector<fvar<Dx> > Op;
+  using Op = std::vector<fvar<Dx> >;
   typedef Eigen::Matrix<Dx, -1, 1> partials_t;
   partials_t partials_;                       // For univariate use-cases
   broadcast_array<partials_t> partials_vec_;  // For multivariate
@@ -96,8 +96,8 @@ class ops_partials_edge<Dx, std::vector<Eigen::Matrix<fvar<Dx>, R, C> > > {
 template <typename Dx>
 class ops_partials_edge<Dx, std::vector<std::vector<fvar<Dx> > > > {
  public:
-  typedef std::vector<std::vector<fvar<Dx> > > Op;
-  typedef std::vector<Dx> partial_t;
+  using Op = std::vector<std::vector<fvar<Dx> > >;
+  using partial_t = std::vector<Dx>;
   std::vector<partial_t> partials_vec_;
   explicit ops_partials_edge(const Op& ops)
       : partials_vec_(length(ops)), operands_(ops) {

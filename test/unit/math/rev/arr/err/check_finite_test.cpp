@@ -12,8 +12,9 @@ TEST(AgradRevErrorHandlingScalar, CheckFiniteVarCheckVectorized) {
   const char* function = "check_finite";
   vector<var> a;
 
-  for (int i = 0; i < N; ++i)
+  for (int i = 0; i < N; ++i) {
     a.push_back(var(i));
+  }
 
   size_t stack_size = stan::math::ChainableStack::instance_->var_stack_.size();
 

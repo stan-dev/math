@@ -23,7 +23,7 @@ class falling_factorial_vd_vari : public op_vd_vari {
 }  // namespace internal
 
 inline var falling_factorial(const var& a, int b) {
-  return var(new internal::falling_factorial_vd_vari(a.vi_, b));
+  return {new internal::falling_factorial_vd_vari(a.vi_, b)};
 }
 
 }  // namespace math

@@ -24,9 +24,11 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> qr_Q(
   qr.compute(m);
   matrix_t Q = qr.householderQ();
   const int min_size = std::min(m.rows(), m.cols());
-  for (int i = 0; i < min_size; i++)
-    if (qr.matrixQR().coeff(i, i) < 0)
+  for (int i = 0; i < min_size; i++) {
+    if (qr.matrixQR().coeff(i, i) < 0) {
       Q.col(i) *= -1.0;
+    }
+  }
   return Q;
 }
 

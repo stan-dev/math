@@ -35,8 +35,9 @@ TEST_F(StanRevOde, observe_states_dvdd) {
   double t0 = 0;
   int T = 10;
   std::vector<double> ts(T);
-  for (int t = 0; t < T; t++)
+  for (int t = 0; t < T; t++) {
     ts[t] = t;
+  }
 
   stan::math::coupled_ode_observer<mock_ode_functor, double, var, double,
                                    double>
@@ -46,19 +47,22 @@ TEST_F(StanRevOde, observe_states_dvdd) {
   std::vector<std::vector<double>> ys_coupled(T);
   for (size_t t = 0; t < T; t++) {
     std::vector<double> coupled_state(coupled_system.size(), 0.0);
-    for (size_t n = 0; n < coupled_system.size(); n++)
+    for (size_t n = 0; n < coupled_system.size(); n++) {
       coupled_state[n] = ++k;
+    }
     ys_coupled[t] = coupled_state;
     observer(coupled_state, ts[0]);
   }
 
   EXPECT_EQ(T, y.size());
-  for (size_t t = 0; t < T; t++)
+  for (size_t t = 0; t < T; t++) {
     EXPECT_EQ(2U, y[t].size());
+  }
 
   for (size_t t = 0; t < T; t++) {
-    for (size_t n = 0; n < 2; n++)
+    for (size_t n = 0; n < 2; n++) {
       EXPECT_FLOAT_EQ(ys_coupled[t][n], y[t][n].val());
+    }
     for (size_t n = 0; n < 2; n++) {
       y[t][n].grad();
       EXPECT_FLOAT_EQ(ys_coupled[t][2 + n], theta[0].adj());
@@ -87,8 +91,9 @@ TEST_F(StanRevOde, observe_states_vddd) {
   double t0 = 0;
   int T = 10;
   std::vector<double> ts(T);
-  for (int t = 0; t < T; t++)
+  for (int t = 0; t < T; t++) {
     ts[t] = t;
+  }
 
   stan::math::coupled_ode_observer<mock_ode_functor, var, double, double,
                                    double>
@@ -98,15 +103,17 @@ TEST_F(StanRevOde, observe_states_vddd) {
   std::vector<std::vector<double>> ys_coupled(T);
   for (size_t t = 0; t < T; t++) {
     std::vector<double> coupled_state(coupled_system.size(), 0.0);
-    for (size_t n = 0; n < coupled_system.size(); n++)
+    for (size_t n = 0; n < coupled_system.size(); n++) {
       coupled_state[n] = ++k;
+    }
     ys_coupled[t] = coupled_state;
     observer(coupled_state, ts[t]);
   }
 
   EXPECT_EQ(T, y.size());
-  for (size_t t = 0; t < T; t++)
+  for (size_t t = 0; t < T; t++) {
     EXPECT_EQ(2U, y[t].size());
+  }
 
   for (size_t t = 0; t < T; t++) {
     for (size_t n = 0; n < 2; n++) {
@@ -141,8 +148,9 @@ TEST_F(StanRevOde, observe_states_vvdd) {
   double t0 = 0;
   int T = 10;
   std::vector<double> ts(T);
-  for (int t = 0; t < T; t++)
+  for (int t = 0; t < T; t++) {
     ts[t] = t;
+  }
 
   stan::math::coupled_ode_observer<harm_osc_ode_fun, var, var, double, double>
       observer(harm_osc, y0, theta, t0, ts, x, x_int, &msgs, y);
@@ -151,19 +159,22 @@ TEST_F(StanRevOde, observe_states_vvdd) {
   std::vector<std::vector<double>> ys_coupled(T);
   for (size_t t = 0; t < T; t++) {
     std::vector<double> coupled_state(coupled_system.size(), 0.0);
-    for (size_t n = 0; n < coupled_system.size(); n++)
+    for (size_t n = 0; n < coupled_system.size(); n++) {
       coupled_state[n] = ++k;
+    }
     ys_coupled[t] = coupled_state;
     observer(coupled_state, ts[t]);
   }
 
   EXPECT_EQ(T, y.size());
-  for (size_t t = 0; t < T; t++)
+  for (size_t t = 0; t < T; t++) {
     EXPECT_EQ(2U, y[t].size());
+  }
 
   for (size_t t = 0; t < T; t++) {
-    for (size_t n = 0; n < 2; n++)
+    for (size_t n = 0; n < 2; n++) {
       EXPECT_FLOAT_EQ(ys_coupled[t][n], y[t][n].val());
+    }
 
     for (size_t n = 0; n < 2; n++) {
       y[t][n].grad();
@@ -195,8 +206,9 @@ TEST_F(StanRevOde, observe_states_ddvd) {
   var t0 = 0;
   int T = 10;
   std::vector<double> ts(T);
-  for (int t = 0; t < T; t++)
+  for (int t = 0; t < T; t++) {
     ts[t] = t;
+  }
 
   stan::math::coupled_ode_observer<mock_ode_functor, double, double, var,
                                    double>
@@ -206,19 +218,22 @@ TEST_F(StanRevOde, observe_states_ddvd) {
   std::vector<std::vector<double>> ys_coupled(T);
   for (size_t t = 0; t < T; t++) {
     std::vector<double> coupled_state(coupled_system.size(), 0.0);
-    for (size_t n = 0; n < coupled_system.size(); n++)
+    for (size_t n = 0; n < coupled_system.size(); n++) {
       coupled_state[n] = ++k;
+    }
     ys_coupled[t] = coupled_state;
     observer(coupled_state, ts[0]);
   }
 
   EXPECT_EQ(T, y.size());
-  for (size_t t = 0; t < T; t++)
+  for (size_t t = 0; t < T; t++) {
     EXPECT_EQ(2U, y[t].size());
+  }
 
   for (size_t t = 0; t < T; t++) {
-    for (size_t n = 0; n < 2; n++)
+    for (size_t n = 0; n < 2; n++) {
       EXPECT_FLOAT_EQ(ys_coupled[t][n], y[t][n].val());
+    }
     for (size_t n = 0; n < 2; n++) {
       y[t][n].grad();
       EXPECT_FLOAT_EQ(0.0, t0.adj());
@@ -247,8 +262,9 @@ TEST_F(StanRevOde, observe_states_dddv) {
   double t0 = 0;
   int T = 10;
   std::vector<var> ts(T);
-  for (int t = 0; t < T; t++)
+  for (int t = 0; t < T; t++) {
     ts[t] = t;
+  }
 
   stan::math::coupled_ode_observer<harm_osc_ode_fun, double, double, double,
                                    var>
@@ -258,19 +274,22 @@ TEST_F(StanRevOde, observe_states_dddv) {
   std::vector<std::vector<double>> ys_coupled(T);
   for (size_t t = 0; t < T; t++) {
     std::vector<double> coupled_state(coupled_system.size(), 0.0);
-    for (size_t n = 0; n < coupled_system.size(); n++)
+    for (size_t n = 0; n < coupled_system.size(); n++) {
       coupled_state[n] = ++k;
+    }
     ys_coupled[t] = coupled_state;
     observer(coupled_state, value_of(ts[t]));
   }
 
   EXPECT_EQ(T, y.size());
-  for (size_t t = 0; t < T; t++)
+  for (size_t t = 0; t < T; t++) {
     EXPECT_EQ(2U, y[t].size());
+  }
 
   for (size_t t = 0; t < T; t++) {
-    for (size_t n = 0; n < 2; n++)
+    for (size_t n = 0; n < 2; n++) {
       EXPECT_FLOAT_EQ(ys_coupled[t][n], y[t][n].val());
+    }
 
     std::vector<double> yt(2);
     yt[0] = ys_coupled[t][0];

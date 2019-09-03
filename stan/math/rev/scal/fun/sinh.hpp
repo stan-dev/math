@@ -42,7 +42,7 @@ class sinh_vari : public op_v_vari {
  * @param a Variable.
  * @return Hyperbolic sine of variable.
  */
-inline var sinh(const var& a) { return var(new internal::sinh_vari(a.vi_)); }
+inline var sinh(const var& a) { return {new internal::sinh_vari(a.vi_)}; }
 
 }  // namespace math
 }  // namespace stan

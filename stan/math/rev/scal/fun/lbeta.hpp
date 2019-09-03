@@ -62,7 +62,7 @@ class lbeta_dv_vari : public op_dv_vari {
  * @return Result of log beta function
  */
 inline var lbeta(const var& a, const var& b) {
-  return var(new internal::lbeta_vv_vari(a.vi_, b.vi_));
+  return {new internal::lbeta_vv_vari(a.vi_, b.vi_)};
 }
 
 /*
@@ -81,7 +81,7 @@ inline var lbeta(const var& a, const var& b) {
  * @return Result of log beta function
  */
 inline var lbeta(const var& a, double b) {
-  return var(new internal::lbeta_vd_vari(a.vi_, b));
+  return {new internal::lbeta_vd_vari(a.vi_, b)};
 }
 
 /*
@@ -100,7 +100,7 @@ inline var lbeta(const var& a, double b) {
  * @return Result of log beta function
  */
 inline var lbeta(double a, const var& b) {
-  return var(new internal::lbeta_dv_vari(a, b.vi_));
+  return {new internal::lbeta_dv_vari(a, b.vi_)};
 }
 
 }  // namespace math

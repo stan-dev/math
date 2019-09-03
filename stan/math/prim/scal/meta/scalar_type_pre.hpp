@@ -8,7 +8,7 @@ namespace stan {
 namespace internal {
 template <bool is_vec, typename T, typename T_container>
 struct scalar_type_helper_pre {
-  typedef T_container type;
+  using type = T_container;
 };
 
 template <typename T, typename T_container>

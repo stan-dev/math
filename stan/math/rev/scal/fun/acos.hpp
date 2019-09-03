@@ -54,7 +54,7 @@ class acos_vari : public op_v_vari {
  * @param a Variable in range [-1, 1].
  * @return Arc cosine of variable, in radians.
  */
-inline var acos(const var& a) { return var(new internal::acos_vari(a.vi_)); }
+inline var acos(const var& a) { return {new internal::acos_vari(a.vi_)}; }
 
 }  // namespace math
 }  // namespace stan

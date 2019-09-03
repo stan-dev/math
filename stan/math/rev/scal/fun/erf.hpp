@@ -55,7 +55,7 @@ class erf_vari : public op_v_vari {
  * @param a The variable.
  * @return Error function applied to the variable.
  */
-inline var erf(const var& a) { return var(new internal::erf_vari(a.vi_)); }
+inline var erf(const var& a) { return {new internal::erf_vari(a.vi_)}; }
 
 }  // namespace math
 }  // namespace stan

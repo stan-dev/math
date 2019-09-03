@@ -64,9 +64,9 @@ class LDLT_factor {
  public:
   typedef Eigen::Matrix<T, Eigen::Dynamic, 1> vector_t;
   typedef Eigen::Matrix<T, R, C> matrix_t;
-  typedef Eigen::LDLT<matrix_t> ldlt_t;
-  typedef size_t size_type;
-  typedef double value_type;
+  using ldlt_t = Eigen::LDLT<matrix_t>;
+  using size_type = size_t;
+  using value_type = double;
 
   LDLT_factor() : N_(0), ldltP_(new ldlt_t()) {}
 
@@ -81,14 +81,18 @@ class LDLT_factor {
   }
 
   inline bool success() const {
-    if (ldltP_->info() != Eigen::Success)
+    if (ldltP_->info() != Eigen::Success) {
       return false;
-    if (!(ldltP_->isPositive()))
+    }
+    if (!(ldltP_->isPositive())) {
       return false;
+    }
     vector_t ldltP_diag(ldltP_->vectorD());
-    for (int i = 0; i < ldltP_diag.size(); ++i)
-      if (ldltP_diag(i) <= 0 || is_nan(ldltP_diag(i)))
+    for (int i = 0; i < ldltP_diag.size(); ++i) {
+      if (ldltP_diag(i) <= 0 || is_nan(ldltP_diag(i))) {
         return false;
+      }
+    }
     return true;
   }
 

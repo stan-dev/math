@@ -34,7 +34,7 @@ struct append_return_type {
  */
 template <>
 struct append_return_type<int, int> {
-  typedef int type;
+  using type = int;
 };
 
 /**

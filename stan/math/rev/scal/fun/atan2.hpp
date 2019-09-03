@@ -59,7 +59,7 @@ class atan2_dv_vari : public op_dv_vari {
  * @return The arc tangent of the fraction, in radians.
  */
 inline var atan2(const var& a, const var& b) {
-  return var(new internal::atan2_vv_vari(a.vi_, b.vi_));
+  return {new internal::atan2_vv_vari(a.vi_, b.vi_)};
 }
 
 /**
@@ -75,7 +75,7 @@ inline var atan2(const var& a, const var& b) {
  * @return The arc tangent of the fraction, in radians.
  */
 inline var atan2(const var& a, double b) {
-  return var(new internal::atan2_vd_vari(a.vi_, b));
+  return {new internal::atan2_vd_vari(a.vi_, b)};
 }
 
 /**
@@ -115,7 +115,7 @@ inline var atan2(const var& a, double b) {
  * @return The arc tangent of the fraction, in radians.
  */
 inline var atan2(double a, const var& b) {
-  return var(new internal::atan2_dv_vari(a, b.vi_));
+  return {new internal::atan2_dv_vari(a, b.vi_)};
 }
 
 }  // namespace math

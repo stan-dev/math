@@ -30,7 +30,7 @@ class log1m_exp_v_vari : public op_v_vari {
  * argument.
  */
 inline var log1m_exp(const var& x) {
-  return var(new internal::log1m_exp_v_vari(x.vi_));
+  return {new internal::log1m_exp_v_vari(x.vi_)};
 }
 
 }  // namespace math

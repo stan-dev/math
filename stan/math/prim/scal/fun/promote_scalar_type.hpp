@@ -17,7 +17,7 @@ struct promote_scalar_type {
   /**
    * The promoted type.
    */
-  typedef T type;
+  using type = T;
 };
 
 }  // namespace math

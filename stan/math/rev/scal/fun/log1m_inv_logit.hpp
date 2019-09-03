@@ -18,8 +18,8 @@ namespace math {
  * @return log of one minus the inverse logit of the argument
  */
 inline var log1m_inv_logit(const var& u) {
-  return var(
-      new precomp_v_vari(log1m_inv_logit(u.val()), u.vi_, -inv_logit(u.val())));
+  return {
+      new precomp_v_vari(log1m_inv_logit(u.val()), u.vi_, -inv_logit(u.val()))};
 }
 
 }  // namespace math

@@ -61,7 +61,7 @@ class Phi_vari : public op_v_vari {
  * @param a Variable argument.
  * @return The unit normal cdf evaluated at the specified argument.
  */
-inline var Phi(const var& a) { return var(new internal::Phi_vari(a.vi_)); }
+inline var Phi(const var& a) { return {new internal::Phi_vari(a.vi_)}; }
 
 }  // namespace math
 }  // namespace stan

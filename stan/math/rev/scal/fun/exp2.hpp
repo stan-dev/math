@@ -43,7 +43,7 @@ class exp2_vari : public op_v_vari {
  * @param a The variable.
  * @return Two to the power of the specified variable.
  */
-inline var exp2(const var& a) { return var(new internal::exp2_vari(a.vi_)); }
+inline var exp2(const var& a) { return {new internal::exp2_vari(a.vi_)}; }
 
 }  // namespace math
 }  // namespace stan

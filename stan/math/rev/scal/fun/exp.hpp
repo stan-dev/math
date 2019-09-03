@@ -38,7 +38,7 @@ class exp_vari : public op_v_vari {
  * @param a Variable to exponentiate.
  * @return Exponentiated variable.
  */
-inline var exp(const var& a) { return var(new internal::exp_vari(a.vi_)); }
+inline var exp(const var& a) { return {new internal::exp_vari(a.vi_)}; }
 
 }  // namespace math
 }  // namespace stan

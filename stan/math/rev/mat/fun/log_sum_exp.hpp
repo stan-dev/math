@@ -20,8 +20,9 @@ namespace internal {
 template <int R, int C>
 inline double log_sum_exp_as_double(const Eigen::Matrix<var, R, C>& x) {
   const double max = x.val().maxCoeff();
-  if (!std::isfinite(max))
+  if (!std::isfinite(max)) {
     return max;
+  }
   return max + std::log((x.val().array() - max).exp().sum());
 }
 
@@ -44,7 +45,7 @@ class log_sum_exp_matrix_vari : public op_matrix_vari {
  */
 template <int R, int C>
 inline var log_sum_exp(const Eigen::Matrix<var, R, C>& x) {
-  return var(new internal::log_sum_exp_matrix_vari(x));
+  return {new internal::log_sum_exp_matrix_vari(x)};
 }
 
 }  // namespace math

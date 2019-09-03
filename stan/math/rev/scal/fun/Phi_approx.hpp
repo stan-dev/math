@@ -49,7 +49,7 @@ inline var Phi_approx(const var& a) {
   double av_cubed = av * av_squared;
   double f = inv_logit(0.07056 * av_cubed + 1.5976 * av);
   double da = f * (1 - f) * (3.0 * 0.07056 * av_squared + 1.5976);
-  return var(new precomp_v_vari(f, a.vi_, da));
+  return {new precomp_v_vari(f, a.vi_, da)};
 }
 
 }  // namespace math

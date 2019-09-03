@@ -32,7 +32,7 @@ class VectorBuilder {
       helper;
 
  public:
-  typedef typename helper::type type;
+  using type = typename helper::type;
   helper a;
 
   explicit VectorBuilder(size_t n) : a(n) {}

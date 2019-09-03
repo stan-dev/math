@@ -43,7 +43,7 @@ class sin_vari : public op_v_vari {
  * @param a Variable for radians of angle.
  * @return Sine of variable.
  */
-inline var sin(const var& a) { return var(new internal::sin_vari(a.vi_)); }
+inline var sin(const var& a) { return {new internal::sin_vari(a.vi_)}; }
 
 }  // namespace math
 }  // namespace stan

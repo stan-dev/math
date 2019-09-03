@@ -14,8 +14,9 @@ TEST(ProbDistributionsLkjCorr, fvar_var) {
   Eigen::Matrix<fvar<var>, Eigen::Dynamic, Eigen::Dynamic> Sigma(K, K);
   Sigma.setZero();
   Sigma.diagonal().setOnes();
-  for (int i = 0; i < K * K; i++)
+  for (int i = 0; i < K * K; i++) {
     Sigma(i).d_ = 1.0;
+  }
   fvar<var> eta = stan::math::uniform_rng(0, 2, rng);
   fvar<var> f = stan::math::do_lkj_constant(eta, K);
   EXPECT_FLOAT_EQ(f.val_.val(),
@@ -36,8 +37,9 @@ TEST(ProbDistributionsLkjCorrCholesky, fvar_var) {
   Eigen::Matrix<fvar<var>, Eigen::Dynamic, Eigen::Dynamic> Sigma(K, K);
   Sigma.setZero();
   Sigma.diagonal().setOnes();
-  for (int i = 0; i < K * K; i++)
+  for (int i = 0; i < K * K; i++) {
     Sigma(i).d_ = 1.0;
+  }
   fvar<var> eta = stan::math::uniform_rng(0, 2, rng);
   fvar<var> f = stan::math::do_lkj_constant(eta, K);
   EXPECT_FLOAT_EQ(f.val_.val(),
@@ -59,8 +61,9 @@ TEST(ProbDistributionsLkjCorr, fvar_fvar_var) {
   Eigen::Matrix<fvar<fvar<var> >, Eigen::Dynamic, Eigen::Dynamic> Sigma(K, K);
   Sigma.setZero();
   Sigma.diagonal().setOnes();
-  for (int i = 0; i < K * K; i++)
+  for (int i = 0; i < K * K; i++) {
     Sigma(i).d_.val_ = 1.0;
+  }
   fvar<fvar<var> > eta = stan::math::uniform_rng(0, 2, rng);
   fvar<fvar<var> > f = stan::math::do_lkj_constant(eta, K);
   EXPECT_FLOAT_EQ(f.val_.val_.val(),
@@ -83,8 +86,9 @@ TEST(ProbDistributionsLkjCorrCholesky, fvar_fvar_var) {
   Eigen::Matrix<fvar<fvar<var> >, Eigen::Dynamic, Eigen::Dynamic> Sigma(K, K);
   Sigma.setZero();
   Sigma.diagonal().setOnes();
-  for (int i = 0; i < K * K; i++)
+  for (int i = 0; i < K * K; i++) {
     Sigma(i).d_.val_ = 1.0;
+  }
   fvar<fvar<var> > eta = stan::math::uniform_rng(0, 2, rng);
   fvar<fvar<var> > f = stan::math::do_lkj_constant(eta, K);
   EXPECT_FLOAT_EQ(

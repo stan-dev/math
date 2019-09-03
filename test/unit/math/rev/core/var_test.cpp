@@ -201,8 +201,9 @@ struct gradable {
     std::vector<double> g;
     f_.grad(x_, g);
     EXPECT_EQ(g_expected_.size(), static_cast<int>(g.size()));
-    for (int i = 0; i < g_expected_.size(); ++i)
+    for (int i = 0; i < g_expected_.size(); ++i) {
       EXPECT_FLOAT_EQ(g_expected_(i), g[i]);
+    }
   }
 };
 
@@ -220,10 +221,12 @@ gradable setup_quad_form() {
   S << 7, 11, 13, 17, 19, 23, 29, 31, 37;
 
   vector<var> x;
-  for (int i = 0; i < u.size(); ++i)
+  for (int i = 0; i < u.size(); ++i) {
     x.push_back(u(i));
-  for (int i = 0; i < S.size(); ++i)
+  }
+  for (int i = 0; i < S.size(); ++i) {
     x.push_back(S(i));
+  }
 
   var f = quad_form(S, u);
 

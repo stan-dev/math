@@ -12,17 +12,17 @@ namespace stan {
 template <typename T>
 struct is_vector<Eigen::Matrix<T, Eigen::Dynamic, 1> > {
   enum { value = 1 };
-  typedef T type;
+  using type = T;
 };
 template <typename T>
 struct is_vector<Eigen::Matrix<T, 1, Eigen::Dynamic> > {
   enum { value = 1 };
-  typedef T type;
+  using type = T;
 };
 template <typename T>
 struct is_vector<Eigen::Block<T> > {
   enum { value = 1 };
-  typedef T type;
+  using type = T;
 };
 }  // namespace stan
 #endif

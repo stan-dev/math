@@ -48,7 +48,7 @@ class log10_vari : public op_v_vari {
  * @param a Variable whose log is taken.
  * @return Base 10 log of variable.
  */
-inline var log10(const var& a) { return var(new internal::log10_vari(a.vi_)); }
+inline var log10(const var& a) { return {new internal::log10_vari(a.vi_)}; }
 
 }  // namespace math
 }  // namespace stan

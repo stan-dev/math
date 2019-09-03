@@ -43,7 +43,7 @@ class cosh_vari : public op_v_vari {
  * @param a Variable.
  * @return Hyperbolic cosine of variable.
  */
-inline var cosh(const var& a) { return var(new internal::cosh_vari(a.vi_)); }
+inline var cosh(const var& a) { return {new internal::cosh_vari(a.vi_)}; }
 
 }  // namespace math
 }  // namespace stan

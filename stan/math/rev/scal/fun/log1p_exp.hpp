@@ -22,7 +22,7 @@ class log1p_exp_v_vari : public op_v_vari {
  * variable.
  */
 inline var log1p_exp(const var& a) {
-  return var(new internal::log1p_exp_v_vari(a.vi_));
+  return {new internal::log1p_exp_v_vari(a.vi_)};
 }
 
 }  // namespace math

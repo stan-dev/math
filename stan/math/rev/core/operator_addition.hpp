@@ -30,10 +30,11 @@ class add_vd_vari : public op_vd_vari {
  public:
   add_vd_vari(vari* avi, double b) : op_vd_vari(avi->val_ + b, avi, b) {}
   void chain() {
-    if (unlikely(is_any_nan(avi_->val_, bd_)))
+    if (unlikely(is_any_nan(avi_->val_, bd_))) {
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
-    else
+    } else {
       avi_->adj_ += adj_;
+    }
   }
 };
 }  // namespace internal
@@ -77,7 +78,7 @@ class add_vd_vari : public op_vd_vari {
  * @return Variable result of adding two variables.
  */
 inline var operator+(const var& a, const var& b) {
-  return var(new internal::add_vv_vari(a.vi_, b.vi_));
+  return {new internal::add_vv_vari(a.vi_, b.vi_)};
 }
 
 /**
@@ -92,9 +93,10 @@ inline var operator+(const var& a, const var& b) {
  * @return Result of adding variable and scalar.
  */
 inline var operator+(const var& a, double b) {
-  if (b == 0.0)
+  if (b == 0.0) {
     return a;
-  return var(new internal::add_vd_vari(a.vi_, b));
+  }
+  return {new internal::add_vd_vari(a.vi_, b)};
 }
 
 /**
@@ -109,9 +111,10 @@ inline var operator+(const var& a, double b) {
  * @return Result of adding variable and scalar.
  */
 inline var operator+(double a, const var& b) {
-  if (a == 0.0)
+  if (a == 0.0) {
     return b;
-  return var(new internal::add_vd_vari(b.vi_, a));  // by symmetry
+  }
+  return {new internal::add_vd_vari(b.vi_, a)};  // by symmetry
 }
 
 }  // namespace math

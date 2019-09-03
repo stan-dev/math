@@ -24,7 +24,7 @@ class squared_distance_vv_vari : public vari {
   inline static double var_squared_distance(
       const Eigen::Matrix<var, R1, C1>& v1,
       const Eigen::Matrix<var, R2, C2>& v2) {
-    typedef typename index_type<matrix_v>::type idx_t;
+    using idx_t = typename index_type<matrix_v>::type;
 
     return (Eigen::Ref<const vector_v>(v1).val()
             - Eigen::Ref<const vector_v>(v2).val())
@@ -61,7 +61,7 @@ class squared_distance_vd_vari : public vari {
   inline static double var_squared_distance(
       const Eigen::Matrix<var, R1, C1>& v1,
       const Eigen::Matrix<double, R2, C2>& v2) {
-    typedef typename index_type<matrix_d>::type idx_t;
+    using idx_t = typename index_type<matrix_d>::type;
 
     return (Eigen::Ref<const vector_v>(v1).val()
             - Eigen::Ref<const vector_d>(v2))
@@ -94,7 +94,7 @@ inline var squared_distance(const Eigen::Matrix<var, R1, C1>& v1,
   check_vector("squared_distance", "v1", v1);
   check_vector("squared_distance", "v2", v2);
   check_matching_sizes("squared_distance", "v1", v1, "v2", v2);
-  return var(new internal::squared_distance_vv_vari(v1, v2));
+  return {new internal::squared_distance_vv_vari(v1, v2)};
 }
 template <int R1, int C1, int R2, int C2>
 inline var squared_distance(const Eigen::Matrix<var, R1, C1>& v1,
@@ -102,7 +102,7 @@ inline var squared_distance(const Eigen::Matrix<var, R1, C1>& v1,
   check_vector("squared_distance", "v1", v1);
   check_vector("squared_distance", "v2", v2);
   check_matching_sizes("squared_distance", "v1", v1, "v2", v2);
-  return var(new internal::squared_distance_vd_vari(v1, v2));
+  return {new internal::squared_distance_vd_vari(v1, v2)};
 }
 template <int R1, int C1, int R2, int C2>
 inline var squared_distance(const Eigen::Matrix<double, R1, C1>& v1,
@@ -110,7 +110,7 @@ inline var squared_distance(const Eigen::Matrix<double, R1, C1>& v1,
   check_vector("squared_distance", "v1", v1);
   check_vector("squared_distance", "v2", v2);
   check_matching_sizes("squared_distance", "v1", v1, "v2", v2);
-  return var(new internal::squared_distance_vd_vari(v2, v1));
+  return {new internal::squared_distance_vd_vari(v2, v1)};
 }
 
 }  // namespace math

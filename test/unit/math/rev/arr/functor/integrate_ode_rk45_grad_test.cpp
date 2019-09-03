@@ -44,8 +44,9 @@ class sho_functor {
   operator()(const T0& t_in, const std::vector<T1>& y_in,
              const std::vector<T2>& theta, const std::vector<double>& x,
              const std::vector<int>& x_int, std::ostream* msgs) const {
-    if (y_in.size() != 2)
+    if (y_in.size() != 2) {
       throw std::domain_error("Functor called with inconsistent state");
+    }
 
     std::vector<typename stan::return_type<T1, T2>::type> f;
     f.push_back(y_in.at(1));
@@ -76,7 +77,7 @@ class test_functor_double_var_1 {
     std::vector<int> data_int;
 
     std::vector<std::vector<T> > ys = stan::math::integrate_ode_rk45(
-        sho, y0, t0, ts, theta, data, data_int, 0);
+        sho, y0, t0, ts, theta, data, data_int, nullptr);
 
     return ys[0][0];
   }
@@ -103,7 +104,7 @@ class test_functor_double_var_2 {
     std::vector<int> data_int;
 
     std::vector<std::vector<T> > ys = stan::math::integrate_ode_rk45(
-        sho, y0, t0, ts, theta, data, data_int, 0);
+        sho, y0, t0, ts, theta, data, data_int, nullptr);
 
     return ys[0][1];
   }
@@ -154,7 +155,7 @@ class test_functor_var_double_1 {
     std::vector<int> data_int;
 
     std::vector<std::vector<T> > ys = stan::math::integrate_ode_rk45(
-        sho, y0, t0, ts, theta, data, data_int, 0);
+        sho, y0, t0, ts, theta, data, data_int, nullptr);
 
     return ys[0][0];
   }
@@ -181,7 +182,7 @@ class test_functor_var_double_2 {
     std::vector<int> data_int;
 
     std::vector<std::vector<T> > ys = stan::math::integrate_ode_rk45(
-        sho, y0, t0, ts, theta, data, data_int, 0);
+        sho, y0, t0, ts, theta, data, data_int, nullptr);
 
     return ys[0][1];
   }
@@ -232,7 +233,7 @@ class test_functor_var_var_1 {
     std::vector<int> data_int;
 
     std::vector<std::vector<T> > ys = stan::math::integrate_ode_rk45(
-        sho, y0, t0, ts, theta, data, data_int, 0);
+        sho, y0, t0, ts, theta, data, data_int, nullptr);
 
     return ys[0][0];
   }
@@ -259,7 +260,7 @@ class test_functor_var_var_2 {
     std::vector<int> data_int;
 
     std::vector<std::vector<T> > ys = stan::math::integrate_ode_rk45(
-        sho, y0, t0, ts, theta, data, data_int, 0);
+        sho, y0, t0, ts, theta, data, data_int, nullptr);
 
     return ys[0][1];
   }

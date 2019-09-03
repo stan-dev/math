@@ -43,7 +43,7 @@ class hypot_vd_vari : public op_v_vari {
  * @return Length of hypoteneuse.
  */
 inline var hypot(const var& a, const var& b) {
-  return var(new internal::hypot_vv_vari(a.vi_, b.vi_));
+  return {new internal::hypot_vv_vari(a.vi_, b.vi_)};
 }
 
 /**
@@ -59,7 +59,7 @@ inline var hypot(const var& a, const var& b) {
  * @return Length of hypoteneuse.
  */
 inline var hypot(const var& a, double b) {
-  return var(new internal::hypot_vd_vari(a.vi_, b));
+  return {new internal::hypot_vd_vari(a.vi_, b)};
 }
 
 /**
@@ -102,7 +102,7 @@ inline var hypot(const var& a, double b) {
  * @return Length of hypoteneuse.
  */
 inline var hypot(double a, const var& b) {
-  return var(new internal::hypot_vd_vari(b.vi_, a));
+  return {new internal::hypot_vd_vari(b.vi_, a)};
 }
 
 }  // namespace math

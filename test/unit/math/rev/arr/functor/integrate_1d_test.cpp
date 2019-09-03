@@ -214,17 +214,19 @@ void test_derivatives(const F &f, double a, double b,
     T_a a_(a);
     T_b b_(b);
     std::vector<T_theta> thetas_(thetas.size());
-    for (size_t i = 0; i < thetas.size(); ++i)
+    for (size_t i = 0; i < thetas.size(); ++i) {
       thetas_[i] = thetas[i];
+    }
 
     var integral = stan::math::integrate_1d(f, a_, b_, thetas_, x_r, x_i, msgs,
                                             tolerance);
     integral.grad();
     EXPECT_LE(std::abs(val - integral.val()), tolerance);
     if (stan::is_var<T_theta>::value) {
-      for (size_t i = 0; i < grad.size(); ++i)
+      for (size_t i = 0; i < grad.size(); ++i) {
         EXPECT_LE(std::abs(grad[i] - get_adjoint_if_var(thetas_[i])),
                   tolerance);
+      }
     }
     if (stan::is_var<T_a>::value) {
       EXPECT_LE(std::abs(d_a - get_adjoint_if_var(a_)), tolerance);

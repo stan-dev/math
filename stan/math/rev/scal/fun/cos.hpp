@@ -43,7 +43,7 @@ class cos_vari : public op_v_vari {
  * @param a Variable for radians of angle.
  * @return Cosine of variable.
  */
-inline var cos(const var& a) { return var(new internal::cos_vari(a.vi_)); }
+inline var cos(const var& a) { return {new internal::cos_vari(a.vi_)}; }
 
 }  // namespace math
 }  // namespace stan

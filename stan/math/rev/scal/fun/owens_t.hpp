@@ -62,7 +62,7 @@ class owens_t_dv_vari : public op_dv_vari {
  * @return The Owen's T function.
  */
 inline var owens_t(const var& h, const var& a) {
-  return var(new internal::owens_t_vv_vari(h.vi_, a.vi_));
+  return {new internal::owens_t_vv_vari(h.vi_, a.vi_)};
 }
 
 /**
@@ -76,7 +76,7 @@ inline var owens_t(const var& h, const var& a) {
  * @return The Owen's T function.
  */
 inline var owens_t(const var& h, double a) {
-  return var(new internal::owens_t_vd_vari(h.vi_, a));
+  return {new internal::owens_t_vd_vari(h.vi_, a)};
 }
 
 /**
@@ -90,7 +90,7 @@ inline var owens_t(const var& h, double a) {
  * @return The Owen's T function.
  */
 inline var owens_t(double h, const var& a) {
-  return var(new internal::owens_t_dv_vari(h, a.vi_));
+  return {new internal::owens_t_dv_vari(h, a.vi_)};
 }
 
 }  // namespace math

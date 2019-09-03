@@ -19,8 +19,9 @@ TEST(ProbDistributionsMultiNormalPrec, fvar_var) {
   for (int i = 0; i < 3; i++) {
     y(i).d_ = 1.0;
     mu(i).d_ = 1.0;
-    for (int j = 0; j < 3; j++)
+    for (int j = 0; j < 3; j++) {
       Sigma(i, j).d_ = 1.0;
+    }
   }
 
   Matrix<fvar<var>, Dynamic, Dynamic> L = Sigma.inverse();
@@ -44,8 +45,9 @@ TEST(ProbDistributionsMultiNormalPrec, fvar_fvar_var) {
   for (int i = 0; i < 3; i++) {
     y(i).d_.val_ = 1.0;
     mu(i).d_.val_ = 1.0;
-    for (int j = 0; j < 3; j++)
+    for (int j = 0; j < 3; j++) {
       Sigma(i, j).d_.val_ = 1.0;
+    }
   }
 
   Matrix<fvar<fvar<var> >, Dynamic, Dynamic> L = Sigma.inverse();

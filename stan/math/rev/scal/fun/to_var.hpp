@@ -15,7 +15,7 @@ namespace math {
  * @param[in] x A scalar value
  * @return An automatic differentiation variable with the input value.
  */
-inline var to_var(double x) { return var(x); }
+inline var to_var(double x) { return {x}; }
 
 /**
  * Converts argument to an automatic differentiation variable.

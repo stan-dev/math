@@ -41,8 +41,9 @@ void test_log_mix_vvv(double theta, double lambda1, double lambda2) {
 
   EXPECT_FLOAT_EQ(val2, val1);
   EXPECT_EQ(g2.size(), g.size());
-  for (size_t i = 0; i < g2.size(); ++i)
+  for (size_t i = 0; i < g2.size(); ++i) {
     EXPECT_FLOAT_EQ(g2[i], g[i]) << "failed on " << i << std::endl;
+  }
 
   var theta_v3 = 2.0;
   EXPECT_THROW(log_mix(theta_v3, lambda1_v, lambda2_v), std::domain_error);
@@ -82,8 +83,9 @@ void test_log_mix_vv_ex_lam_2(double theta, double lambda1, double lambda2) {
 
   EXPECT_FLOAT_EQ(val2, val1);
   EXPECT_EQ(g2.size(), g.size());
-  for (size_t i = 0; i < g2.size(); ++i)
+  for (size_t i = 0; i < g2.size(); ++i) {
     EXPECT_FLOAT_EQ(g2[i], g[i]) << "failed on " << i << std::endl;
+  }
 
   var theta_v3 = 2.0;
   EXPECT_THROW(log_mix(theta_v3, lambda1_v, lambda2), std::domain_error);
@@ -123,8 +125,9 @@ void test_log_mix_vv_ex_lam_1(double theta, double lambda1, double lambda2) {
 
   EXPECT_FLOAT_EQ(val2, val1);
   EXPECT_EQ(g2.size(), g.size());
-  for (size_t i = 0; i < g2.size(); ++i)
+  for (size_t i = 0; i < g2.size(); ++i) {
     EXPECT_FLOAT_EQ(g2[i], g[i]) << "failed on " << i << std::endl;
+  }
 
   var theta_v3 = 2.0;
   EXPECT_THROW(log_mix(theta_v3, lambda1, lambda2_v), std::domain_error);
@@ -164,8 +167,9 @@ void test_log_mix_vv_ex_theta(double theta, double lambda1, double lambda2) {
 
   EXPECT_FLOAT_EQ(val2, val1);
   EXPECT_EQ(g2.size(), g.size());
-  for (size_t i = 0; i < g2.size(); ++i)
+  for (size_t i = 0; i < g2.size(); ++i) {
     EXPECT_FLOAT_EQ(g2[i], g[i]) << "failed on " << i << std::endl;
+  }
 
   EXPECT_THROW(log_mix(2.0, lambda1_v, lambda2_v), std::domain_error);
   stan::math::recover_memory();
@@ -200,8 +204,9 @@ void test_log_mix_v_theta(double theta, double lambda1, double lambda2) {
 
   EXPECT_FLOAT_EQ(val2, val1);
   EXPECT_EQ(g2.size(), g.size());
-  for (size_t i = 0; i < g2.size(); ++i)
+  for (size_t i = 0; i < g2.size(); ++i) {
     EXPECT_FLOAT_EQ(g2[i], g[i]) << "failed on " << i << std::endl;
+  }
 
   var theta_v3 = 2.0;
   EXPECT_THROW(log_mix(theta_v3, lambda1, lambda2), std::domain_error);
@@ -237,8 +242,9 @@ void test_log_mix_v_lam_1(double theta, double lambda1, double lambda2) {
 
   EXPECT_FLOAT_EQ(val2, val1);
   EXPECT_EQ(g2.size(), g.size());
-  for (size_t i = 0; i < g2.size(); ++i)
+  for (size_t i = 0; i < g2.size(); ++i) {
     EXPECT_FLOAT_EQ(g2[i], g[i]) << "failed on " << i << std::endl;
+  }
 
   EXPECT_THROW(log_mix(2.0, lambda1_v, lambda2), std::domain_error);
   stan::math::recover_memory();
@@ -273,8 +279,9 @@ void test_log_mix_v_lam_2(double theta, double lambda1, double lambda2) {
 
   EXPECT_FLOAT_EQ(val2, val1);
   EXPECT_EQ(g2.size(), g.size());
-  for (size_t i = 0; i < g2.size(); ++i)
+  for (size_t i = 0; i < g2.size(); ++i) {
     EXPECT_FLOAT_EQ(g2[i], g[i]) << "failed on " << i << std::endl;
+  }
 
   EXPECT_THROW(log_mix(2.0, lambda1, lambda2_v), std::domain_error);
   stan::math::recover_memory();

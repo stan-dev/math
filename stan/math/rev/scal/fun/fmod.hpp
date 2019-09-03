@@ -31,10 +31,11 @@ class fmod_vd_vari : public op_vd_vari {
   fmod_vd_vari(vari* avi, double b)
       : op_vd_vari(std::fmod(avi->val_, b), avi, b) {}
   void chain() {
-    if (unlikely(is_any_nan(avi_->val_, bd_)))
+    if (unlikely(is_any_nan(avi_->val_, bd_))) {
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
-    else
+    } else {
       avi_->adj_ += adj_;
+    }
   }
 };
 
@@ -97,7 +98,7 @@ class fmod_dv_vari : public op_dv_vari {
  * by the second.
  */
 inline var fmod(const var& a, const var& b) {
-  return var(new internal::fmod_vv_vari(a.vi_, b.vi_));
+  return {new internal::fmod_vv_vari(a.vi_, b.vi_)};
 }
 
 /**
@@ -114,7 +115,7 @@ inline var fmod(const var& a, const var& b) {
  * the second scalar.
  */
 inline var fmod(const var& a, double b) {
-  return var(new internal::fmod_vd_vari(a.vi_, b));
+  return {new internal::fmod_vd_vari(a.vi_, b)};
 }
 
 /**
@@ -131,7 +132,7 @@ inline var fmod(const var& a, double b) {
  * the second variable.
  */
 inline var fmod(double a, const var& b) {
-  return var(new internal::fmod_dv_vari(a, b.vi_));
+  return {new internal::fmod_dv_vari(a, b.vi_)};
 }
 
 }  // namespace math

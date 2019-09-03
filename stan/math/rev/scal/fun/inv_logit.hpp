@@ -30,7 +30,7 @@ class inv_logit_vari : public op_v_vari {
  * @return Inverse logit of argument.
  */
 inline var inv_logit(const var& a) {
-  return var(new internal::inv_logit_vari(a.vi_));
+  return {new internal::inv_logit_vari(a.vi_)};
 }
 
 }  // namespace math

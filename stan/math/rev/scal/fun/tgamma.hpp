@@ -53,9 +53,7 @@ class tgamma_vari : public op_v_vari {
  * @param a Argument to function.
  * @return The Gamma function applied to the specified argument.
  */
-inline var tgamma(const var& a) {
-  return var(new internal::tgamma_vari(a.vi_));
-}
+inline var tgamma(const var& a) { return {new internal::tgamma_vari(a.vi_)}; }
 
 }  // namespace math
 }  // namespace stan

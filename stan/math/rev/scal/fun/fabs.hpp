@@ -48,14 +48,15 @@ namespace math {
  * @return Absolute value of variable.
  */
 inline var fabs(const var& a) {
-  if (a.val() > 0.0)
+  if (a.val() > 0.0) {
     return a;
-  else if (a.val() < 0.0)
-    return var(new internal::neg_vari(a.vi_));
-  else if (a.val() == 0)
-    return var(new vari(0));
-  else
-    return var(new precomp_v_vari(NOT_A_NUMBER, a.vi_, NOT_A_NUMBER));
+  } else if (a.val() < 0.0) {
+    return {new internal::neg_vari(a.vi_)};
+  } else if (a.val() == 0) {
+    return {new vari(0)};
+  } else {
+    return {new precomp_v_vari(NOT_A_NUMBER, a.vi_, NOT_A_NUMBER)};
+  }
 }
 
 }  // namespace math

@@ -16,7 +16,7 @@ namespace math {
 
 template <typename T>
 struct child_type {
-  typedef double type;
+  using type = double;
 };
 
 /**
@@ -31,7 +31,7 @@ struct child_type {
 
 template <template <typename> class T_struct, typename T_child>
 struct child_type<T_struct<T_child> > {
-  typedef T_child type;
+  using type = T_child;
 };
 
 }  // namespace math

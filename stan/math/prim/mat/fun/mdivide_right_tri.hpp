@@ -28,10 +28,11 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_right_tri(
     const Eigen::Matrix<T1, R1, C1> &b, const Eigen::Matrix<T2, R2, C2> &A) {
   check_square("mdivide_right_tri", "A", A);
   check_multiplicable("mdivide_right_tri", "b", b, "A", A);
-  if (TriView != Eigen::Lower && TriView != Eigen::Upper)
+  if (TriView != Eigen::Lower && TriView != Eigen::Upper) {
     domain_error("mdivide_left_tri",
                  "triangular view must be Eigen::Lower or Eigen::Upper", "",
                  "");
+  }
   return promote_common<Eigen::Matrix<T1, R2, C2>, Eigen::Matrix<T2, R2, C2> >(
              A)
       .template triangularView<TriView>()

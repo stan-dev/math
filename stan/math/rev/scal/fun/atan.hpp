@@ -46,7 +46,7 @@ class atan_vari : public op_v_vari {
  * @param a Variable in range [-1, 1].
  * @return Arc tangent of variable, in radians.
  */
-inline var atan(const var& a) { return var(new internal::atan_vari(a.vi_)); }
+inline var atan(const var& a) { return {new internal::atan_vari(a.vi_)}; }
 
 }  // namespace math
 }  // namespace stan

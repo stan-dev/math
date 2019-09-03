@@ -26,7 +26,7 @@ class log1m_vari : public op_v_vari {
  * @param a The variable.
  * @return The variable representing log of 1 minus the variable.
  */
-inline var log1m(const var& a) { return var(new internal::log1m_vari(a.vi_)); }
+inline var log1m(const var& a) { return {new internal::log1m_vari(a.vi_)}; }
 
 }  // namespace math
 }  // namespace stan

@@ -66,7 +66,7 @@ class dot_self_vari : public vari {
 template <int R, int C>
 inline var dot_self(const Eigen::Matrix<var, R, C>& v) {
   check_vector("dot_self", "v", v);
-  return var(new internal::dot_self_vari(v));
+  return {new internal::dot_self_vari(v)};
 }
 
 }  // namespace math

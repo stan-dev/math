@@ -67,7 +67,7 @@ class beta_dv_vari : public op_dv_vari {
  * @return Result of beta function
  */
 inline var beta(const var& a, const var& b) {
-  return var(new internal::beta_vv_vari(a.vi_, b.vi_));
+  return {new internal::beta_vv_vari(a.vi_, b.vi_)};
 }
 
 /*
@@ -89,7 +89,7 @@ inline var beta(const var& a, const var& b) {
  * @return Result of beta function
  */
 inline var beta(const var& a, double b) {
-  return var(new internal::beta_vd_vari(a.vi_, b));
+  return {new internal::beta_vd_vari(a.vi_, b)};
 }
 
 /*
@@ -111,7 +111,7 @@ inline var beta(const var& a, double b) {
  * @return Result of beta function
  */
 inline var beta(double a, const var& b) {
-  return var(new internal::beta_dv_vari(a, b.vi_));
+  return {new internal::beta_dv_vari(a, b.vi_)};
 }
 
 }  // namespace math

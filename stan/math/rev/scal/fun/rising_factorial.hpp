@@ -23,7 +23,7 @@ class rising_factorial_vd_vari : public op_vd_vari {
 }  // namespace internal
 
 inline var rising_factorial(const var& a, int b) {
-  return var(new internal::rising_factorial_vd_vari(a.vi_, b));
+  return {new internal::rising_factorial_vd_vari(a.vi_, b)};
 }
 }  // namespace math
 }  // namespace stan

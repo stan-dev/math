@@ -31,10 +31,11 @@ class subtract_vd_vari : public op_vd_vari {
  public:
   subtract_vd_vari(vari* avi, double b) : op_vd_vari(avi->val_ - b, avi, b) {}
   void chain() {
-    if (unlikely(is_any_nan(avi_->val_, bd_)))
+    if (unlikely(is_any_nan(avi_->val_, bd_))) {
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
-    else
+    } else {
       avi_->adj_ += adj_;
+    }
   }
 };
 
@@ -42,10 +43,11 @@ class subtract_dv_vari : public op_dv_vari {
  public:
   subtract_dv_vari(double a, vari* bvi) : op_dv_vari(a - bvi->val_, a, bvi) {}
   void chain() {
-    if (unlikely(is_any_nan(ad_, bvi_->val_)))
+    if (unlikely(is_any_nan(ad_, bvi_->val_))) {
       bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
-    else
+    } else {
       bvi_->adj_ -= adj_;
+    }
   }
 };
 }  // namespace internal
@@ -89,7 +91,7 @@ class subtract_dv_vari : public op_dv_vari {
  * the first.
  */
 inline var operator-(const var& a, const var& b) {
-  return var(new internal::subtract_vv_vari(a.vi_, b.vi_));
+  return {new internal::subtract_vv_vari(a.vi_, b.vi_)};
 }
 
 /**
@@ -104,9 +106,10 @@ inline var operator-(const var& a, const var& b) {
  * @return Result of subtracting the scalar from the variable.
  */
 inline var operator-(const var& a, double b) {
-  if (b == 0.0)
+  if (b == 0.0) {
     return a;
-  return var(new internal::subtract_vd_vari(a.vi_, b));
+  }
+  return {new internal::subtract_vd_vari(a.vi_, b)};
 }
 
 /**
@@ -121,7 +124,7 @@ inline var operator-(const var& a, double b) {
  * @return Result of sutracting a variable from a scalar.
  */
 inline var operator-(double a, const var& b) {
-  return var(new internal::subtract_dv_vari(a, b.vi_));
+  return {new internal::subtract_dv_vari(a, b.vi_)};
 }
 
 }  // namespace math

@@ -46,7 +46,7 @@ class tanh_vari : public op_v_vari {
  * @param a Variable.
  * @return Hyperbolic tangent of variable.
  */
-inline var tanh(const var& a) { return var(new internal::tanh_vari(a.vi_)); }
+inline var tanh(const var& a) { return {new internal::tanh_vari(a.vi_)}; }
 
 }  // namespace math
 }  // namespace stan

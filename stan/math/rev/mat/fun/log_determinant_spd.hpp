@@ -48,8 +48,7 @@ inline var log_determinant_spd(const Eigen::Matrix<var, R, C>& m) {
       = ChainableStack::instance_->memalloc_.alloc_array<double>(m.size());
   Eigen::Map<matrix_d>(gradients, m.rows(), m.cols()) = m_d;
 
-  return var(
-      new precomputed_gradients_vari(val, m.size(), operands, gradients));
+  return {new precomputed_gradients_vari(val, m.size(), operands, gradients)};
 }
 
 }  // namespace math

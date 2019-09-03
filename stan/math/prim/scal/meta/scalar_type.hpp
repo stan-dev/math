@@ -14,12 +14,12 @@ namespace stan {
  */
 template <typename T>
 struct scalar_type {
-  typedef T type;
+  using type = T;
 };
 
 template <typename T>
 struct scalar_type<T*> {
-  typedef typename scalar_type<T>::type type;
+  using type = typename scalar_type<T>::type;
 };
 
 }  // namespace stan

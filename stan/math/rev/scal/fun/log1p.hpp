@@ -26,7 +26,7 @@ class log1p_vari : public op_v_vari {
  * @param a The variable.
  * @return The log of 1 plus the variable.
  */
-inline var log1p(const var& a) { return var(new internal::log1p_vari(a.vi_)); }
+inline var log1p(const var& a) { return {new internal::log1p_vari(a.vi_)}; }
 
 }  // namespace math
 }  // namespace stan
