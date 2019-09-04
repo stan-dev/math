@@ -147,8 +147,8 @@ static const char* normal_id_glm_kernel_code = STRINGIFY(
  * See the docs for \link kernels/normal_id_glm_lpdf.hpp
  * normal_id_glm() \endlink
  */
-const kernel_cl<in_buffer, in_buffer, in_buffer, in_buffer, in_buffer,
-                out_buffer, out_buffer, out_buffer, out_buffer, out_buffer, int,
+const kernel_cl<out_buffer, out_buffer, out_buffer, out_buffer, out_buffer,
+                in_buffer, in_buffer, in_buffer, in_buffer, in_buffer, int,
                 int, int, int, int, int, int, int>
     normal_id_glm("normal_id_glm", normal_id_glm_kernel_code,
                   {{"REDUCTION_STEP_SIZE", 4}, {"LOCAL_SIZE_", 64}});
