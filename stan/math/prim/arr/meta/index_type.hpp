@@ -2,6 +2,8 @@
 #define STAN_MATH_PRIM_ARR_META_INDEX_TYPE_HPP
 
 #include <stan/math/prim/scal/meta/index_type.hpp>
+#include <stan/math/fwd/arr/fun/log_sum_exp.hpp>
+#include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <vector>
 
 namespace stan {

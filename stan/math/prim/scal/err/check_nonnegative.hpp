@@ -4,7 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/err/domain_error_vec.hpp>
-#include <type_traits>
+#include <boost/type_traits/is_unsigned.hpp>
 
 namespace stan {
 namespace math {
@@ -15,7 +15,7 @@ struct nonnegative {
   static void check(const char* function, const char* name, const T_y& y) {
     // have to use not is_unsigned. is_signed will be false
     // floating point types that have no unsigned versions.
-    if (!std::is_unsigned<T_y>::value && !(y >= 0))
+    if (!boost::is_unsigned<T_y>::value && !(y >= 0))
       domain_error(function, name, y, "is ", ", but must be >= 0!");
   }
 };
