@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const char *transpose_kernel_code = STRINGIFY(
+static const std::string transpose_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Takes the transpose of the matrix on the OpenCL device.

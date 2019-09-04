@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const char *is_symmetric_kernel_code = STRINGIFY(
+static const std::string is_symmetric_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Check if the <code>matrix_cl</code> is symmetric

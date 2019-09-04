@@ -10,7 +10,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const char *sub_block_kernel_code = STRINGIFY(
+static const std::string sub_block_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Copies a submatrix of the source matrix to

@@ -10,7 +10,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const char *subtract_kernel_code = STRINGIFY(
+static const std::string subtract_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Matrix subtraction on the OpenCL device

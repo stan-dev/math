@@ -7,7 +7,7 @@
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/prim/meta.hpp>
 
-#include <CL/cl.hpp>
+#include <cl.hpp>
 
 namespace stan {
 namespace math {

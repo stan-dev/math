@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const char* unpack_kernel_code = STRINGIFY(
+static const std::string  unpack_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Unpacks a packed triangular matrix to a flat

@@ -10,7 +10,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const char *add_kernel_code = STRINGIFY(
+static const std::string add_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Matrix addition on the OpenCL device
@@ -60,7 +60,7 @@ const kernel_cl<out_buffer, in_buffer, in_buffer, int, int, matrix_cl_view,
                 matrix_cl_view>
     add("add", {indexing_helpers, view_kernel_helpers, add_kernel_code});
 // \cond
-static const char *add_batch_kernel_code = STRINGIFY(
+static const std::string add_batch_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Sums a batch of matrices. Buffer A contains

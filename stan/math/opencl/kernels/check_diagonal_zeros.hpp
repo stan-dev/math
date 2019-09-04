@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const char *is_zero_on_diagonal_kernel_code = STRINGIFY(
+static const std::string is_zero_on_diagonal_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Check if the <code>matrix_cl</code> has zeros on the diagonal
