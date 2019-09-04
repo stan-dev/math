@@ -87,7 +87,7 @@ def check_non_test_files_in_test():
     errors = [
         "Error: A .cpp file without the suffix "
         + testsfx
-        + " in test/unit/*/*:\n\t"
+        + " in test/unit/math/:\n\t"
         + x
         for x in all_cpp
         if os.path.splitext(x)[1] == ".cpp" and x[-len(testsfx) :] != testsfx
