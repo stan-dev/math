@@ -283,11 +283,10 @@ void inline unsolvable_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y) {
 }
 
 template <typename T>
-inline void max_num_steps_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y) {
-  using stan::math::algebra_solver;
-
-  Eigen::VectorXd x(2);
-  x << 1, 1;
+inline void max_num_steps_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
+                               bool is_newton = 0) {
+  Eigen::VectorXd x(3);
+  x << 1, 1, 1;
   std::vector<double> dat;
   std::vector<int> dat_int;
 
@@ -299,8 +298,10 @@ inline void max_num_steps_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y) {
           << " exceeded.";
   std::string msg = err_msg.str();
   EXPECT_THROW_MSG(
-      algebra_solver(unsolvable_eq_functor(), x, y, dat, dat_int, 0,
-                     relative_tolerance, function_tolerance, max_num_steps),
+      general_algebra_solver(is_newton, non_linear_eq_functor(),
+                             x, y, dat, dat_int, 0,
+                             relative_tolerance, function_tolerance,
+                             max_num_steps),
       boost::math::evaluation_error, msg);
 }
 

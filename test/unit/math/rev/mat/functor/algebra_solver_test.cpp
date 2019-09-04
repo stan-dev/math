@@ -190,9 +190,9 @@ TEST(MathMatrix, error_conditions) {
 }
 
 TEST(MathMatrix, error_conditions_dbl) {
-  int n_y = 2;
+  int n_y = 3;
   Eigen::VectorXd y(n_y);
-  y << 4, 6;
+  y << 4, 6, 3;
   for (int is_newton = 0; is_newton <= 1; is_newton++)
     error_conditions_test(non_linear_eq_functor(), y, is_newton);
 }
@@ -211,22 +211,24 @@ TEST(MathMatrix, unsolvable_dbl) {
   y << 1, 1;
 
   unsolvable_test(y);
-}
+} */
 
 TEST(MathMatrix, max_num_steps) {
   using stan::math::var;
 
-  Eigen::Matrix<var, Eigen::Dynamic, 1> y(2);
-  y << 1, 1;
-  max_num_steps_test(y);
+  for (int is_newton = 0; is_newton <= 1; is_newton++) {
+    Eigen::Matrix<var, Eigen::Dynamic, 1> y(3);
+    y << 1, 1, 1;
+    max_num_steps_test(y, is_newton);
+  }
 }
 
 TEST(MathMatrix, max_num_steps_dbl) {
-  Eigen::VectorXd y(2);
-  y << 1, 1;
+  Eigen::VectorXd y(3);
+  y << 1, 1, 1;
   max_num_steps_test(y);
 }
-*/
+
 TEST(MathMatrix, degenerate) {
   using stan::math::algebra_solver;
   using stan::math::sum;

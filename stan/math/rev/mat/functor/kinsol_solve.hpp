@@ -96,28 +96,16 @@ namespace math {
     // i.e. finite differentiation.
     if (custom_jacobian) check_flag(KINSetJacFn(kinsol_memory, 
                                     &system_data::kinsol_jacobian),
-        "KINSetJacFn");
-
-    // if (!custom_jacobian) flag = KINSetJacFn(kinsol_memory, 0);
-    // else flag = KINSetJacFn(kinsol_memory, &system_data::kinsol_jacobian);
+                                    "KINSetJacFn");
 
     // TO DO - a better way to do this conversion.
     N_Vector nv_x = N_VNew_Serial(N);
     realtype* nv_x_data = N_VGetArrayPointer_Serial(nv_x);
     for (int i = 0; i < N; i++) nv_x_data[i] = x(i);
 
-    check_flag(KINSol(kinsol_memory, nv_x,
-                      global_line_search, scaling, scaling),
-               "KINSol");
-
-    // TO DO - return an exception when the flag is negative.
-    // std::cout << "Kinsol flag: " << flag << std::endl;
-    // if (flag < 0) {
-    //   std::ostringstream message;
-    //   message << "lgp_solver: the kinsol solver encounter an error"
-    //           << " with flag = " << flag;
-    //   throw boost::math::evaluation_error(message.str());
-    // }
+    check_flag_kinsol(KINSol(kinsol_memory, nv_x,
+                             global_line_search, scaling, scaling),
+                      max_num_steps);
 
     // keep track of how many iterations are used.
     // Useful when running tests.

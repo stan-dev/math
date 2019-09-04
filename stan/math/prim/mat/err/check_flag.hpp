@@ -6,12 +6,32 @@ namespace math {
 
 // TO DO (charlesm93): use this function inside cvodes
 // integrator.
+/** 
+ * Throws an exception when a Sundial function fails 
+ * (i.e. returns a negative flag)
+ */
 inline void check_flag(int flag, const char* func_name) {
   if (flag < 0) {
     std::ostringstream ss;
     ss << func_name << " failed with error flag " << flag;
     throw std::runtime_error(ss.str());
   }
+}
+
+/**
+ * Throws an exception message when the function KINSol()
+ * (call to the solver) fails. When the exception is caused
+ * by a tuning parameter the user controls, gives a specific
+ * error.
+ */
+inline void check_flag_kinsol(int flag, long int max_num_steps) {
+  if (flag == -6) {
+    std::ostringstream ss;
+    ss << "algebra_solver: max number of iterations: "
+       << max_num_steps
+       << " exceeded.";
+    throw boost::math::evaluation_error(ss.str());
+  } else if (flag < 0) check_flag(flag, "algebra_solver");
 }
 
 }  // namespace math
