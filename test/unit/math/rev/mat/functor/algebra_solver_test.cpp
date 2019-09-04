@@ -196,22 +196,36 @@ TEST(MathMatrix, error_conditions_dbl) {
   for (int is_newton = 0; is_newton <= 1; is_newton++)
     error_conditions_test(non_linear_eq_functor(), y, is_newton);
 }
-/*
-TEST(MathMatrix, unsolvable) {
+
+TEST(MathMatrix, unsolvable_dogleg) {
   using stan::math::var;
 
   Eigen::Matrix<var, Eigen::Dynamic, 1> y(2);
-  y << 1, 1;  // should be positive
+  y << 1, 1;
 
   unsolvable_test(y);
 }
 
-TEST(MathMatrix, unsolvable_dbl) {
+TEST(MathMatrix, unsolvable_dogleg_dbl) {
   Eigen::VectorXd y(2);
   y << 1, 1;
 
   unsolvable_test(y);
-} */
+}
+
+TEST(MathMatrix, unsolvable_flag_newton) {
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y(2);
+  y << 1, 1;
+
+  unsolvable_flag_test(y);
+}
+
+TEST(MathMatrix, unsolvable_flag_newton_dbl) {
+  Eigen::VectorXd y(2);
+  y << 1, 1;
+
+  unsolvable_flag_test(y);
+}
 
 TEST(MathMatrix, max_num_steps) {
   using stan::math::var;

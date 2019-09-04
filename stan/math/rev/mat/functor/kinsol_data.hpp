@@ -14,19 +14,6 @@
 namespace stan {
 namespace math {
 
-// const std::vector<double> x_vec(x, x + N_);
-// // CHECK - is the best way of constructing the Jacobian
-// system_functor<F, double, double, 1>
-//   system(f_, x_, y_, dat_, dat_int_, msgs_);
-// Eigen::VectorXd fx;
-// Eigen::MatrixXd Jac;
-// jacobian(system, to_vector(x_vec), fx, Jac);
-// 
-// std::vector<double> jacobian_x = std::vector<double>(N_ * N_);
-// Eigen::Map<Eigen::MatrixXd>(&jacobian_x[0], N_, N_) = Jac;
-// 
-// std::move(jacobian_x.begin(), jacobian_x.end(), SM_DATA_D(J));
-
 /**
  * Default Jacobian builder using autodiff.
  */

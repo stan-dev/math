@@ -202,12 +202,12 @@ inline void error_conditions_test(
   std::vector<double> dat;
   std::vector<int> dat_int;
 
-  // std::stringstream err_msg;
-  // err_msg << "algebra_solver: size of the algebraic system's output (2) "
-  //         << "and size of the vector of unknowns, x, (3) must match in size";
-  // std::string msg = err_msg.str();
-  // EXPECT_THROW_MSG(algebra_solver(non_square_eq_functor(), x, y, dat, dat_int),
-  //                  std::invalid_argument, msg);
+  std::stringstream err_msg;
+  err_msg << "algebra_solver: size of the algebraic system's output (2) "
+          << "and size of the vector of unknowns, x, (3) must match in size";
+  std::string msg = err_msg.str();
+  EXPECT_THROW_MSG(algebra_solver(non_square_eq_functor(), x, y, dat, dat_int),
+                   std::invalid_argument, msg);
 
   Eigen::VectorXd x_bad(static_cast<Eigen::VectorXd::Index>(0));
   std::stringstream err_msg2;
@@ -258,9 +258,8 @@ inline void error_conditions_test(
 }
 
 template <typename T>
-void inline unsolvable_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y) {
-  using stan::math::algebra_solver;
-
+void inline unsolvable_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
+                            bool is_newton = 0) {
   Eigen::VectorXd x(2);
   x << 1, 1;
   std::vector<double> dat;
@@ -277,9 +276,26 @@ void inline unsolvable_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y) {
           << " the max_num_steps.";
   std::string msg = err_msg.str();
   EXPECT_THROW_MSG(
-      algebra_solver(unsolvable_eq_functor(), x, y, dat, dat_int, 0,
-                     relative_tolerance, function_tolerance, max_num_steps),
+      general_algebra_solver(is_newton, unsolvable_eq_functor(), x, y,
+                             dat, dat_int, 0, relative_tolerance,
+                             function_tolerance, max_num_steps),
       boost::math::evaluation_error, msg);
+}
+
+template <typename T>
+void inline unsolvable_flag_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
+                                 bool is_newton = 1) {
+  Eigen::VectorXd x(2);
+  x << 1, 1;
+  std::vector<double> dat;
+  std::vector<int> dat_int;
+  std::stringstream err_msg;
+  err_msg << "algebra_solver failed with error flag -11.";
+  std::string msg = err_msg.str();
+  EXPECT_THROW_MSG(
+    general_algebra_solver(is_newton, unsolvable_eq_functor(), x, y,
+                           dat, dat_int),
+    boost::math::evaluation_error, msg);
 }
 
 template <typename T>

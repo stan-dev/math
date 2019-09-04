@@ -36,6 +36,10 @@ Eigen::VectorXd algebra_solver_newton(
                        relative_tolerance, function_tolerance,
                        max_num_steps);
 
+  check_matching_sizes("algebra_solver", "the algebraic system's output",
+                       value_of(f(x, y, dat, dat_int, msgs)),
+                       "the vector of unknowns, x,", x);
+
   return kinsol_solve(f, value_of(x), y, dat, dat_int, 0,
                       function_tolerance, max_num_steps, 1e-3);
   }
