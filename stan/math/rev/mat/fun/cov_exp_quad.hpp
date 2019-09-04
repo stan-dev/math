@@ -3,7 +3,6 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/fwd/core.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
 #include <stan/math/rev/mat/fun/gp_exp_quad_cov.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>

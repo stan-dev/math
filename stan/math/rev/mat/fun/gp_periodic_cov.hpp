@@ -350,7 +350,7 @@ gp_periodic_cov(const std::vector<T_x> &x, const var &sigma, const var &l,
  *   x is nan or infinite
  */
 template <typename T_x>
-inline typename boost::enable_if<
+inline typename std::enable_if<
     std::is_same<typename scalar_type<T_x>::type, double>::value,
     Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>>::type
 gp_periodic_cov(const std::vector<T_x> &x, double sigma, const var &l,

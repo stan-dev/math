@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_SCAL_ERR_CHECK_SIZE_MATCH_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/meta/as_scalar.hpp>
 #include <stan/math/prim/scal/err/invalid_argument.hpp>
 #include <sstream>
 #include <string>

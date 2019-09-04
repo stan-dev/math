@@ -8,7 +8,6 @@
 #include <stan/math/prim/arr/err/check_matching_sizes.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/mix/mat/fun/typedefs.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <type_traits>
