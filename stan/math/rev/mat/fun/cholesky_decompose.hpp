@@ -51,7 +51,7 @@ class cholesky_block : public vari {
  public:
   int M_;
   int block_size_;
-  typedef Eigen::Block<Eigen::MatrixXd> Block_;
+  using Block_ = Eigen::Block<Eigen::MatrixXd>;
   vari** vari_ref_A_;
   vari** vari_ref_L_;
 

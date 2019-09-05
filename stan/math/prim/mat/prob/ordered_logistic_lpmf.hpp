@@ -74,8 +74,8 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
                                                   const T_cut& c) {
   static const char* function = "ordered_logistic";
 
-  typedef partials_return_type_t<T_loc, T_cut> T_partials_return;
-  typedef typename Eigen::Matrix<T_partials_return, -1, 1> T_partials_vec;
+  using T_partials_return = partials_return_type_t<T_loc, T_cut>;
+  using T_partials_vec = typename Eigen::Matrix<T_partials_return, -1, 1>;
 
   scalar_seq_view<T_loc> lam_vec(lambda);
   scalar_seq_view<T_y> y_vec(y);

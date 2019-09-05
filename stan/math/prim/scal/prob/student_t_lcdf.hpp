@@ -23,7 +23,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lcdf(const T_y& y,
                                                          const T_dof& nu,
                                                          const T_loc& mu,
                                                          const T_scale& sigma) {
-  typedef partials_return_type_t<T_y, T_dof, T_loc, T_scale> T_partials_return;
+  using T_partials_return = partials_return_type_t<T_y, T_dof, T_loc, T_scale>;
 
   if (size_zero(y, nu, mu, sigma)) {
     return 0.0;

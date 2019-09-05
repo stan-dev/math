@@ -80,8 +80,8 @@ class cvodes_integrator {
             std::ostream* msgs, double relative_tolerance,
             double absolute_tolerance,
             long int max_num_steps) {  // NOLINT(runtime/int)
-    typedef stan::is_var<T_initial> initial_var;
-    typedef stan::is_var<T_param> param_var;
+    using initial_var = stan::is_var<T_initial>;
+    using param_var = stan::is_var<T_param>;
 
     const char* fun = "integrate_ode_cvodes";
 
@@ -114,7 +114,7 @@ class cvodes_integrator {
     const size_t M = theta.size();
     const size_t S = (initial_var::value ? N : 0) + (param_var::value ? M : 0);
 
-    typedef cvodes_ode_data<F, T_initial, T_param> ode_data;
+    using ode_data = cvodes_ode_data<F, T_initial, T_param>;
     ode_data cvodes_data(f, y0, theta, x, x_int, msgs);
 
     void* cvodes_mem = CVodeCreate(Lmm);

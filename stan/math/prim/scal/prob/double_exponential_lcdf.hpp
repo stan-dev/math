@@ -32,7 +32,7 @@ template <typename T_y, typename T_loc, typename T_scale>
 return_type_t<T_y, T_loc, T_scale> double_exponential_lcdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma) {
   static const char* function = "double_exponential_lcdf";
-  typedef partials_return_type_t<T_y, T_loc, T_scale> T_partials_return;
+  using T_partials_return = partials_return_type_t<T_y, T_loc, T_scale>;
 
   T_partials_return cdf_log(0.0);
 

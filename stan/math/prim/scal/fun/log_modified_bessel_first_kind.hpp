@@ -50,7 +50,7 @@ inline return_type_t<T1, T2, double> log_modified_bessel_first_kind(
   using std::log;
   using std::sqrt;
 
-  typedef return_type_t<T1, T2, double> T;
+  using T = return_type_t<T1, T2, double>;
 
   if (z == 0) {
     if (v == 0) {

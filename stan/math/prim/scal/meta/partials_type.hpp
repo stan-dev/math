@@ -5,7 +5,7 @@ namespace stan {
 
 template <typename T>
 struct partials_type {
-  typedef T type;
+  using type = T;
 };
 
 }  // namespace stan

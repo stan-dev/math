@@ -23,7 +23,7 @@ template <typename T_y, typename T_shape, typename T_scale>
 return_type_t<T_y, T_shape, T_scale> frechet_lccdf(const T_y& y,
                                                    const T_shape& alpha,
                                                    const T_scale& sigma) {
-  typedef partials_return_type_t<T_y, T_shape, T_scale> T_partials_return;
+  using T_partials_return = partials_return_type_t<T_y, T_shape, T_scale>;
 
   static const char* function = "frechet_lccdf";
 

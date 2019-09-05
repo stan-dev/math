@@ -8,7 +8,7 @@ namespace stan {
 
 template <>
 struct partials_type<stan::math::var> {
-  typedef double type;
+  using type = double;
 };
 
 }  // namespace stan

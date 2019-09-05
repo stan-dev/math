@@ -9,7 +9,7 @@ namespace stan {
 template <typename T>
 struct is_vector {
   enum { value = 0 };
-  typedef T type;
+  using type = T;
 };
 }  // namespace stan
 #endif

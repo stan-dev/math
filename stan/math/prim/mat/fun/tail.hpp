@@ -61,7 +61,7 @@ inline Eigen::Matrix<T, 1, Eigen::Dynamic> tail(
  */
 template <typename T>
 std::vector<T> tail(const std::vector<T>& sv, size_t n) {
-  typedef typename index_type<std::vector<T> >::type idx_t;
+  using idx_t = typename index_type<std::vector<T> >::type;
   if (n != 0) {
     check_std_vector_index("tail", "n", sv, n);
   }

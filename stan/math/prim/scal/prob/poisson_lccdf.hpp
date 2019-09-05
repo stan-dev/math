@@ -18,7 +18,7 @@ namespace math {
 template <typename T_n, typename T_rate>
 return_type_t<T_rate> poisson_lccdf(const T_n& n, const T_rate& lambda) {
   static const char* function = "poisson_lccdf";
-  typedef partials_return_type_t<T_n, T_rate> T_partials_return;
+  using T_partials_return = partials_return_type_t<T_n, T_rate>;
 
   if (size_zero(n, lambda)) {
     return 0.0;

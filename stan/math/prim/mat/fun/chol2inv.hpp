@@ -26,7 +26,7 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> chol2inv(
   check_square("chol2inv", "L", L);
   check_lower_triangular("chol2inv", "L", L);
   int K = L.rows();
-  typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> matrix_t;
+  using matrix_t = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
   if (K == 0) {
     return L;
   }

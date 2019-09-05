@@ -18,7 +18,7 @@ namespace math {
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> qr_Q(
     const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& m) {
-  typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> matrix_t;
+  using matrix_t = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
   check_nonzero_size("qr_Q", "m", m);
   Eigen::HouseholderQR<matrix_t> qr(m.rows(), m.cols());
   qr.compute(m);

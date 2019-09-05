@@ -38,7 +38,7 @@ namespace math {
 template <bool propto, typename T_y, typename T_dof>
 return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
   static const char* function = "chi_square_lpdf";
-  typedef partials_return_type_t<T_y, T_dof> T_partials_return;
+  using T_partials_return = partials_return_type_t<T_y, T_dof>;
 
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);

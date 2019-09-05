@@ -21,8 +21,8 @@ template <bool propto, typename T_y, typename T_loc, typename T_covar>
 return_type_t<T_y, T_loc, T_covar> multi_normal_prec_lpdf(
     const T_y& y, const T_loc& mu, const T_covar& Sigma) {
   static const char* function = "multi_normal_prec_lpdf";
-  typedef typename scalar_type<T_covar>::type T_covar_elem;
-  typedef return_type_t<T_y, T_loc, T_covar> lp_type;
+  using T_covar_elem = typename scalar_type<T_covar>::type;
+  using lp_type = return_type_t<T_y, T_loc, T_covar>;
 
   check_positive(function, "Precision matrix rows", Sigma.rows());
   check_symmetric(function, "Precision matrix", Sigma);

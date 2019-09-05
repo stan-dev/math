@@ -17,7 +17,7 @@ namespace math {
  */
 template <typename T, int R, int C>
 struct value_type<Eigen::Matrix<T, R, C> > {
-  typedef T type;
+  using type = T;
 };
 
 }  // namespace math

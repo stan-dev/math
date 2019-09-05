@@ -25,7 +25,7 @@ struct index_type {};
  */
 template <typename T>
 struct index_type<const T> {
-  typedef typename index_type<T>::type type;
+  using type = typename index_type<T>::type;
 };
 
 }  // namespace math

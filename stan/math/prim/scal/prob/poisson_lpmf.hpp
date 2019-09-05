@@ -19,7 +19,7 @@ namespace math {
 // Poisson(n|lambda)  [lambda > 0;  n >= 0]
 template <bool propto, typename T_n, typename T_rate>
 return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
-  typedef partials_return_type_t<T_n, T_rate> T_partials_return;
+  using T_partials_return = partials_return_type_t<T_n, T_rate>;
 
   static const char* function = "poisson_lpmf";
 

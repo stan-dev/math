@@ -31,7 +31,7 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> simplex_free(
   using Eigen::Matrix;
   using std::log;
 
-  typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
+  using size_type = typename index_type<Matrix<T, Dynamic, 1>>::type;
 
   check_simplex("stan::math::simplex_free", "Simplex variable", x);
   int Km1 = x.size() - 1;

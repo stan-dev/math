@@ -19,7 +19,7 @@ struct value_type<std::vector<T> > {
    * Type of value stored in a standard vector with type
    * <code>T</code> entries.
    */
-  typedef T type;
+  using type = T;
 };
 
 }  // namespace math

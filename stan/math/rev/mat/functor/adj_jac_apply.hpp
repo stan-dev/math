@@ -322,8 +322,8 @@ struct adj_jac_vari : public vari {
       : vari(std::numeric_limits<double>::quiet_NaN()),  // The val_ in this
                                                          // vari is unused
         is_var_({{is_var<typename scalar_type<Targs>::type>::value...}}),
-        x_vis_(NULL),
-        y_vi_(NULL) {}
+        x_vis_(nullptr),
+        y_vi_(nullptr) {}
 
   /**
    * Return a var with a new vari holding the given value

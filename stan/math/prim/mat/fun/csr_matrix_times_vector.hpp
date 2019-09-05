@@ -78,7 +78,7 @@ csr_matrix_times_vector(int m, int n,
                         const Eigen::Matrix<T1, Eigen::Dynamic, 1>& w,
                         const std::vector<int>& v, const std::vector<int>& u,
                         const Eigen::Matrix<T2, Eigen::Dynamic, 1>& b) {
-  typedef return_type_t<T1, T2> result_t;
+  using result_t = return_type_t<T1, T2>;
 
   check_positive("csr_matrix_times_vector", "m", m);
   check_positive("csr_matrix_times_vector", "n", n);

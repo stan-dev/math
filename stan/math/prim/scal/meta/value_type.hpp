@@ -25,7 +25,7 @@ struct value_type {};
  */
 template <typename T>
 struct value_type<const T> {
-  typedef typename value_type<T>::type type;
+  using type = typename value_type<T>::type;
 };
 
 }  // namespace math

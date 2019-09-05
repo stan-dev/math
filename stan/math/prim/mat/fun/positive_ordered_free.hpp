@@ -27,7 +27,7 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> positive_ordered_free(
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::log;
-  typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
+  using size_type = typename index_type<Matrix<T, Dynamic, 1>>::type;
 
   check_positive_ordered("stan::math::positive_ordered_free",
                          "Positive ordered variable", y);

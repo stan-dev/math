@@ -22,12 +22,12 @@ struct dot_product_store_type;
 
 template <>
 struct dot_product_store_type<var> {
-  typedef vari** type;
+  using type = vari**;
 };
 
 template <>
 struct dot_product_store_type<double> {
-  typedef double* type;
+  using type = double*;
 };
 
 template <typename T1, typename T2>

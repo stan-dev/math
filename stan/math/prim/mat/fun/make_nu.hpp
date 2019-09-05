@@ -19,7 +19,7 @@ Eigen::Array<T, Eigen::Dynamic, 1> make_nu(const T& eta, size_t K) {
   using Eigen::Array;
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
+  using size_type = typename index_type<Matrix<T, Dynamic, 1>>::type;
 
   // Best (1978) implies nu = 2 * alpha for the dof in a t
   // distribution that generates a beta variate on (-1, 1)

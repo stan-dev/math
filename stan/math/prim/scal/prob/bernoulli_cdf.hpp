@@ -27,7 +27,7 @@ namespace math {
 template <typename T_n, typename T_prob>
 return_type_t<T_prob> bernoulli_cdf(const T_n& n, const T_prob& theta) {
   static const char* function = "bernoulli_cdf";
-  typedef partials_return_type_t<T_n, T_prob> T_partials_return;
+  using T_partials_return = partials_return_type_t<T_n, T_prob>;
 
   if (size_zero(n, theta)) {
     return 1.0;

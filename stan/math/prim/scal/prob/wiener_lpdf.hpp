@@ -90,7 +90,7 @@ return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
     return 0.0;
   }
 
-  typedef return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> T_return_type;
+  using T_return_type = return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta>;
   T_return_type lp(0.0);
 
   check_not_nan(function, "Random variable", y);

@@ -31,7 +31,7 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cov_matrix_constrain(
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::exp;
-  typedef typename index_type<Matrix<T, Dynamic, Dynamic> >::type index_t;
+  using index_t = typename index_type<Matrix<T, Dynamic, Dynamic>>::type;
 
   Matrix<T, Dynamic, Dynamic> L(K, K);
   check_size_match("cov_matrix_constrain", "x.size()", x.size(),
@@ -71,7 +71,7 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cov_matrix_constrain(
   using Eigen::Matrix;
   using std::exp;
   using std::log;
-  typedef typename index_type<Matrix<T, Dynamic, Dynamic> >::type index_t;
+  using index_t = typename index_type<Matrix<T, Dynamic, Dynamic>>::type;
   check_size_match("cov_matrix_constrain", "x.size()", x.size(),
                    "K + (K choose 2)", (K * (K + 1)) / 2);
   Matrix<T, Dynamic, Dynamic> L(K, K);

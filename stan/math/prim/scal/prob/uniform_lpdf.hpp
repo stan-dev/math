@@ -40,7 +40,7 @@ template <bool propto, typename T_y, typename T_low, typename T_high>
 return_type_t<T_y, T_low, T_high> uniform_lpdf(const T_y& y, const T_low& alpha,
                                                const T_high& beta) {
   static const char* function = "uniform_lpdf";
-  typedef partials_return_type_t<T_y, T_low, T_high> T_partials_return;
+  using T_partials_return = partials_return_type_t<T_y, T_low, T_high>;
 
   using std::log;
 

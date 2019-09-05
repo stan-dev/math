@@ -39,7 +39,7 @@ class StdVectorBuilder {
       helper;
 
  public:
-  typedef typename helper::type type;
+  using type = typename helper::type;
   helper a;
 
   explicit StdVectorBuilder(size_t n) : a(n) {}
