@@ -3,7 +3,6 @@
 #ifdef STAN_OPENCL
 
 #include <string>
-#include <string>
 
 namespace stan {
 namespace math {
