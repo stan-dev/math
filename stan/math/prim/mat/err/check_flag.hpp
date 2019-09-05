@@ -24,7 +24,7 @@ inline void check_flag(int flag, const char* func_name) {
  * by a tuning parameter the user controls, gives a specific
  * error.
  */
-inline void check_flag_kinsol(int flag, long int max_num_steps) {
+inline void check_flag_kinsol(int flag, int64 max_num_steps) {
   std::ostringstream ss;
   if (flag == -6) {
     ss << "algebra_solver: max number of iterations: "

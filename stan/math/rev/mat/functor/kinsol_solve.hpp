@@ -55,7 +55,7 @@ namespace math {
    *        negative flag after attempting to solve the equation.
    */
   template <typename F1, typename F2 = kinsol_J_f>
-  Eigen::VectorXd 
+  Eigen::VectorXd
   kinsol_solve(const F1& f,
                const Eigen::VectorXd& x,
                const Eigen::VectorXd& y,
@@ -64,7 +64,7 @@ namespace math {
                std::ostream* msgs = nullptr,
                double scaling_step_tol = 1e-3,
                double function_tolerance = 1e-6,
-               long int max_num_steps = 1e+3,
+               int64 max_num_steps = 1e+3,
                bool custom_jacobian = 1,
                const F2& J_f = kinsol_J_f(),
                int steps_eval_jacobian = 10,
@@ -105,7 +105,7 @@ namespace math {
                                   kinsol_data.J_),
                "KINSetLinearSolver");
 
-    if (custom_jacobian) check_flag(KINSetJacFn(kinsol_memory, 
+    if (custom_jacobian) check_flag(KINSetJacFn(kinsol_memory,
                                     &system_data::kinsol_jacobian),
                                     "KINSetJacFn");
 

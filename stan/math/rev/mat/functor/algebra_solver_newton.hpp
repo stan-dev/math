@@ -62,7 +62,6 @@ Eigen::VectorXd algebra_solver_newton(
   const std::vector<int>& dat_int, std::ostream* msgs = nullptr,
   double scaling_step_size = 1e-3, double function_tolerance = 1e-6,
   long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
-
   algebra_solver_check(x, y, dat, dat_int, function_tolerance,
                        max_num_steps);
 

@@ -90,7 +90,7 @@ public:
   }
 
   /* Implements the user-defined function passed to KINSOL. */
-  static int kinsol_f_system (N_Vector x, N_Vector f, void *user_data) {
+  static int kinsol_f_system(N_Vector x, N_Vector f, void *user_data) {
     const system_data* explicit_system
       = static_cast<const system_data*>(user_data);
     explicit_system->f_system(NV_DATA_S(x), NV_DATA_S(f));
@@ -109,9 +109,9 @@ public:
    * See https://computation.llnl.gov/sites/default/files/public/kin_guide-dev.pdf,
    * page 55.
    */
-  static int kinsol_jacobian (N_Vector x, N_Vector f,
-                              SUNMatrix J, void *user_data,
-                              N_Vector tmp1, N_Vector tmp2) {
+  static int kinsol_jacobian(N_Vector x, N_Vector f,
+                             SUNMatrix J, void *user_data,
+                             N_Vector tmp1, N_Vector tmp2) {
     const system_data* explicit_system
       = static_cast<const system_data*>(user_data);
     return explicit_system->jacobian_states(NV_DATA_S(x), J);
