@@ -27,7 +27,7 @@ TEST(MathMatrix, simple_Eq) {
       y << 5, 4, 2;
 
       Eigen::Matrix<var, Eigen::Dynamic, 1> theta
-        = simple_eq_test(simple_eq_functor(), y, is_newton);
+          = simple_eq_test(simple_eq_functor(), y, is_newton);
 
       Eigen::MatrixXd J(n_x, n_y);
       J << 4, 5, 0, 0, 0, 1;
@@ -36,7 +36,8 @@ TEST(MathMatrix, simple_Eq) {
       VEC g;
       theta(k).grad(y_vec, g);
 
-      for (int i = 0; i < n_y; i++) EXPECT_EQ(J(k, i), g[i]);
+      for (int i = 0; i < n_y; i++)
+        EXPECT_EQ(J(k, i), g[i]);
     }
   }
 }
@@ -56,12 +57,12 @@ TEST(MathMatrix, simple_Eq_tuned) {
     for (int k = 0; k < n_x; k++) {
       Eigen::Matrix<var, Eigen::Dynamic, 1> y(n_y);
       y << 5, 4, 2;
-      double  scale_step = 1e-3, xtol = 1e-6, ftol = 1e-6;
+      double scale_step = 1e-3, xtol = 1e-6, ftol = 1e-6;
       int maxfev = 1e+4;
 
       Eigen::Matrix<var, Eigen::Dynamic, 1> theta
-          = simple_eq_test(simple_eq_functor(), y, is_newton,
-                           true, scale_step, xtol, ftol, maxfev);
+          = simple_eq_test(simple_eq_functor(), y, is_newton, true, scale_step,
+                           xtol, ftol, maxfev);
 
       Eigen::MatrixXd J(n_x, n_y);
       J << 4, 5, 0, 0, 0, 1;
@@ -85,8 +86,8 @@ TEST(MathMatrix, simple_Eq_tuned_dbl) {
 
   for (int is_newton = 0; is_newton <= 1; is_newton++) {
     Eigen::VectorXd theta
-        = simple_eq_test(simple_eq_functor(), y, is_newton,
-                         true, scale_step, xtol, ftol, maxfev);
+        = simple_eq_test(simple_eq_functor(), y, is_newton, true, scale_step,
+                         xtol, ftol, maxfev);
   }
 }
 
@@ -126,9 +127,8 @@ TEST(MathMatrix, simple_Eq_init_is_para) {
   std::vector<int> dat_int;
 
   for (int is_newton = 0; is_newton < 1; is_newton++) {
-  Eigen::VectorXd theta
-      = general_algebra_solver(is_newton, simple_eq_functor(), x, y,
-                               dat, dat_int);
+    Eigen::VectorXd theta = general_algebra_solver(
+        is_newton, simple_eq_functor(), x, y, dat, dat_int);
     EXPECT_EQ(20, theta(0));
     EXPECT_EQ(2, theta(1));
   }
@@ -170,8 +170,8 @@ TEST(MathMatrix, nonLinearEq_dbl) {
   y << 4, 6, 3;
 
   for (int is_newton = 0; is_newton <= 1; is_newton++) {
-    Eigen::VectorXd
-      theta = non_linear_eq_test(non_linear_eq_functor(), y, is_newton);
+    Eigen::VectorXd theta
+        = non_linear_eq_test(non_linear_eq_functor(), y, is_newton);
 
     EXPECT_FLOAT_EQ(-y(0), theta(0));
     EXPECT_FLOAT_EQ(-y(1), theta(1));
@@ -185,7 +185,7 @@ TEST(MathMatrix, error_conditions) {
   int n_y = 2;
   Eigen::Matrix<var, Eigen::Dynamic, 1> y(n_y);
   y << 4, 6;
-  for (int is_newton = 0; is_newton <= 1; is_newton ++)
+  for (int is_newton = 0; is_newton <= 1; is_newton++)
     error_conditions_test(non_linear_eq_functor(), y, is_newton);
 }
 
@@ -259,8 +259,8 @@ TEST(MathMatrix, degenerate) {
       y << 5, 8;
       Eigen::VectorXd x(2);
       x << 10, 1;  // Initial Guess
-      Eigen::Matrix<var, Eigen::Dynamic, 1>
-        theta = degenerate_test(y, x, is_newton);
+      Eigen::Matrix<var, Eigen::Dynamic, 1> theta
+          = degenerate_test(y, x, is_newton);
       EXPECT_FLOAT_EQ(8, theta(0).val());
       EXPECT_FLOAT_EQ(8, theta(1).val());
 
@@ -284,13 +284,13 @@ TEST(MathMatrix, degenerate) {
       y << 5, 8;
       Eigen::VectorXd x(2);
       x << 1, 1;  // Initial Guess
-      Eigen::Matrix<var, Eigen::Dynamic, 1>
-        theta = degenerate_test(y, x, is_newton);
+      Eigen::Matrix<var, Eigen::Dynamic, 1> theta
+          = degenerate_test(y, x, is_newton);
       EXPECT_FLOAT_EQ(5, theta(0).val());
       EXPECT_FLOAT_EQ(5, theta(0).val());
 
-    Eigen::MatrixXd J(n_x, n_y);
-    J << 1, 0, 1, 0;
+      Eigen::MatrixXd J(n_x, n_y);
+      J << 1, 0, 1, 0;
 
       AVEC y_vec = createAVEC(y(0), y(1));
       VEC g;

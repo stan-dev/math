@@ -22,10 +22,10 @@ namespace math {
  * equations given an initial guess, and parameters and data,
  * which get passed into the algebraic system. Use the
  * KINSOL solver from the SUNDIALS suite.
- * 
+ *
  * The user can also specify the scaled step size, the function
  * tolerance, and the maximum number of steps.
- * 
+ *
  * @tparam F type of equation system function.
  * @tparam T type of initial guess vector.
  * @param[in] f Functor that evaluated the system of equations.
@@ -57,25 +57,23 @@ namespace math {
  */
 template <typename F, typename T>
 Eigen::VectorXd algebra_solver_newton(
-  const F&f, const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
-  const Eigen::VectorXd& y, const std::vector<double>& dat,
-  const std::vector<int>& dat_int, std::ostream* msgs = nullptr,
-  double scaling_step_size = 1e-3, double function_tolerance = 1e-6,
-  long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
-  algebra_solver_check(x, y, dat, dat_int, function_tolerance,
-                       max_num_steps);
+    const F& f, const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
+    const Eigen::VectorXd& y, const std::vector<double>& dat,
+    const std::vector<int>& dat_int, std::ostream* msgs = nullptr,
+    double scaling_step_size = 1e-3, double function_tolerance = 1e-6,
+    long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
+  algebra_solver_check(x, y, dat, dat_int, function_tolerance, max_num_steps);
 
   if (scaling_step_size < 0)
-    invalid_argument("algebra_solver", "scaling_step_size,",
-                     scaling_step_size, "",
-                     ", must be greater than or equal to 0");
+    invalid_argument("algebra_solver", "scaling_step_size,", scaling_step_size,
+                     "", ", must be greater than or equal to 0");
 
   check_matching_sizes("algebra_solver", "the algebraic system's output",
                        value_of(f(x, y, dat, dat_int, msgs)),
                        "the vector of unknowns, x,", x);
 
-  return kinsol_solve(f, value_of(x), y, dat, dat_int, 0,
-                      scaling_step_size, function_tolerance, max_num_steps);
+  return kinsol_solve(f, value_of(x), y, dat, dat_int, 0, scaling_step_size,
+                      function_tolerance, max_num_steps);
 }
 
 /**
@@ -83,15 +81,15 @@ Eigen::VectorXd algebra_solver_newton(
  * equations given an initial guess, and parameters and data,
  * which get passed into the algebraic system. Use the
  * KINSOL solver from the SUNDIALS suite.
- * 
+ *
  * The user can also specify the scaled step size, the function
  * tolerance, and the maximum number of steps.
- * 
+ *
  * Overload the previous definition to handle the case where y
  * is a vector of parameters (var). The overload calls the
  * algebraic solver defined above and builds a vari object on
  * top, using the algebra_solver_vari class.
- * 
+ *
  * @tparam F type of equation system function.
  * @tparam T type of initial guess vector.
  * @param[in] f Functor that evaluated the system of equations.
@@ -131,10 +129,9 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver_newton(
     double function_tolerance = 1e-6,
     long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
 
-  Eigen::VectorXd theta_dbl
-    = algebra_solver_newton(f, x, value_of(y), dat, dat_int,
-                            msgs, relative_tolerance,
-                            function_tolerance, max_num_steps);
+  Eigen::VectorXd theta_dbl = algebra_solver_newton(
+      f, x, value_of(y), dat, dat_int, msgs, relative_tolerance,
+      function_tolerance, max_num_steps);
 
   typedef system_functor<F, double, double, false> Fy;
   typedef system_functor<F, double, double, true> Fs;
@@ -143,8 +140,8 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver_newton(
 
   // Construct vari
   algebra_solver_vari<Fy, F, T2, Fx>* vi0
-    = new algebra_solver_vari<Fy, F, T2, Fx>(Fy(), f, value_of(x), y, dat,
-                                             dat_int, theta_dbl, fx, msgs);
+      = new algebra_solver_vari<Fy, F, T2, Fx>(Fy(), f, value_of(x), y, dat,
+                                               dat_int, theta_dbl, fx, msgs);
   Eigen::Matrix<var, Eigen::Dynamic, 1> theta(x.size());
   theta(0) = var(vi0->theta_[0]);
   for (int i = 1; i < x.size(); ++i)
