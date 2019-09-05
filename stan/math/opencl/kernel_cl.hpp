@@ -284,16 +284,7 @@ class kernel_functor {
 template <typename... Args>
 struct kernel_cl {
   const kernel_functor<internal::to_const_buffer_t<Args>&...> make_functor;
-  /**
-   * Creates functor for kernels that only need access to defining
-   *  the global work size.
-   * @param name The name for the kernel
-   * @param source A string literal containing the code for the kernel.
-   * @param options The values of macros to be passed at compile time.
-   */
-  kernel_cl(const char* name, std::string source,
-            const std::map<std::string, int>& options = {})
-      : make_functor(name, {source}, options) {}
+
   /**
    * Creates functor for kernels that only need access to defining
    *  the global work size.

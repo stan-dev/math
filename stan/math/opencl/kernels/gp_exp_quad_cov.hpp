@@ -48,7 +48,7 @@ static const std::string gp_exp_quad_cov_kernel_code = STRINGIFY(
  * See the docs for \link kernels/gp_exp_quad_cov.hpp gp_exp_quad_cov() \endlink
  */
 const kernel_cl<in_buffer, out_buffer, double, double, int, int>
-    gp_exp_quad_cov("gp_exp_quad_cov", gp_exp_quad_cov_kernel_code, {});
+    gp_exp_quad_cov("gp_exp_quad_cov", {gp_exp_quad_cov_kernel_code});
 
 // \cond
 static const std::string gp_exp_quad_cov_cross_kernel_code = STRINGIFY(
@@ -94,8 +94,7 @@ static const std::string gp_exp_quad_cov_cross_kernel_code = STRINGIFY(
  * \endlink
  */
 const kernel_cl<in_buffer, in_buffer, out_buffer, double, double, int, int, int>
-    gp_exp_quad_cov_cross("gp_exp_quad_cov_cross",
-                          gp_exp_quad_cov_cross_kernel_code, {});
+    gp_exp_quad_cov_cross("gp_exp_quad_cov_cross", {gp_exp_quad_cov_cross_kernel_code});
 
 }  // namespace opencl_kernels
 }  // namespace math
