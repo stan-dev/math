@@ -65,7 +65,7 @@ Eigen::VectorXd algebra_solver_newton(
 
   algebra_solver_check(x, y, dat, dat_int, function_tolerance,
                        max_num_steps);
-  
+
   if (scaling_step_size < 0)
     invalid_argument("algebra_solver", "scaling_step_size,",
                      scaling_step_size, "",
@@ -77,7 +77,7 @@ Eigen::VectorXd algebra_solver_newton(
 
   return kinsol_solve(f, value_of(x), y, dat, dat_int, 0,
                       scaling_step_size, function_tolerance, max_num_steps);
-  }
+}
 
 /**
  * Return the solution to the specified system of algebraic
@@ -109,7 +109,8 @@ Eigen::VectorXd algebra_solver_newton(
  *            longer making significant progress (i.e. is stuck)
  * @param[in] function_tolerance determines whether roots are acceptable.
  * @param[in] max_num_steps  maximum number of function evaluations.
- *  * @throw <code>std::invalid_argument</code> if x has size zero.
+ * @return theta Vector of solutions to the system of equations.
+ * @throw <code>std::invalid_argument</code> if x has size zero.
  * @throw <code>std::invalid_argument</code> if x has non-finite elements.
  * @throw <code>std::invalid_argument</code> if y has non-finite elements.
  * @throw <code>std::invalid_argument</code> if dat has non-finite elements.

@@ -15,7 +15,7 @@ namespace stan {
 namespace math {
 
 /**
- * Default Jacobian builder using autodiff.
+ * Default Jacobian builder using revser-mode autodiff.
  */
 struct kinsol_J_f {
   template <typename F>
@@ -46,15 +46,10 @@ struct kinsol_J_f {
 /**
  * KINSOL algebraic system data holder.
  * Based on cvodes_ode_data.
- * (EXPERIMENTAL)
  *
  * @tparam F1 functor type for system function.
  * @tparam F2 functor type for jacobian function. Default is 0.
  *         If 0, use rev mode autodiff to compute the Jacobian.
- *
- * CHECK -- do we need a flexible mode for the parameters?
- * CHECK -- should F2 be made into a default template parameter? And
- *          if so, how?
  */
 template <typename F1, typename F2>
 class kinsol_system_data {
@@ -74,9 +69,7 @@ public:
   SUNMatrix J_;
   SUNLinearSolver LS_;
 
-  /**
-   * Constructor
-   */
+  /* Constructor */
   kinsol_system_data(const F1& f,
                      const F2& J_f,
                      const Eigen::VectorXd& x,
@@ -86,19 +79,17 @@ public:
                      std::ostream* msgs)
     : f_(f), J_f_(J_f), x_(x), y_(y), dat_(dat), dat_int_(dat_int),
       msgs_(msgs), N_(x.size()),
-      nv_x_(N_VMake_Serial(N_, &to_array_1d(x_)[0])),  // FIX ME - wrap eigen directly
+      nv_x_(N_VMake_Serial(N_, &to_array_1d(x_)[0])),
       J_(SUNDenseMatrix(N_, N_)),
       LS_(SUNLinSol_Dense(nv_x_, J_)) { }
 
   ~ kinsol_system_data() {
-      N_VDestroy_Serial(nv_x_);  // FIX ME - will remove this. See above comment.
+      N_VDestroy_Serial(nv_x_);
       SUNLinSolFree(LS_);
       SUNMatDestroy(J_);
   }
 
-  /**
-   * Implements the user-defined function passed to KINSOL.
-   */
+  /* Implements the user-defined function passed to KINSOL. */
   static int kinsol_f_system (N_Vector x, N_Vector f, void *user_data) {
     const system_data* explicit_system
       = static_cast<const system_data*>(user_data);
@@ -109,7 +100,7 @@ public:
 
   /**
    * Implements the function of type CVDlsJacFn which is the user-defined
-   * callbacks for KINSOL to calculate the jacobian of the root function.
+   * callbacks for KINSOL to calculate the jacobian of the system.
    * The Jacobian is stored in column major format.
    * 
    * REMARK - tmp1 and tmp2 are pointers to memory allocated for variables
@@ -130,8 +121,6 @@ private:
   /**
    * Calculates the root function, using the user-supplied functor
    * for a given value of x.
-   * 
-   * CHECK -- do the above without converting types?
    */
   inline void f_system(const double x[], double f[]) const {
     const std::vector<double> x_vec(x, x + N_);
