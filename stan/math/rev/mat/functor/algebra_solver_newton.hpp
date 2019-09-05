@@ -124,12 +124,12 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver_newton(
     const F& f, const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
     const Eigen::Matrix<T2, Eigen::Dynamic, 1>& y,
     const std::vector<double>& dat, const std::vector<int>& dat_int,
-    std::ostream* msgs = nullptr, double relative_tolerance = 1e-10,
+    std::ostream* msgs = nullptr, double scaling_step_size = 1e-3,
     double function_tolerance = 1e-6,
     long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
 
   Eigen::VectorXd theta_dbl = algebra_solver_newton(
-      f, x, value_of(y), dat, dat_int, msgs, relative_tolerance,
+      f, x, value_of(y), dat, dat_int, msgs, scaling_step_size,
       function_tolerance, max_num_steps);
 
   typedef system_functor<F, double, double, false> Fy;
