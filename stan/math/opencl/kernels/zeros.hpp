@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const std::string  zeros_kernel_code = STRINGIFY(
+static const std::string zeros_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Stores zeros in the matrix on the OpenCL device.
