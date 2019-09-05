@@ -10,6 +10,15 @@ namespace math {
 // function acting as a child structure.
 
 /**
+ * Create an Eigen vector whose elements are all ones.
+ */
+Eigen::VectorXd init_one(int n) {
+  Eigen::VectorXd ones(n);
+  for (int i = 0; i < n; i++) ones(i) = 1;
+  return ones;
+}
+
+/**
  * A structure to compute the log density, first, second,
  * and third-order derivatives for a log poisson likelihood
  * whith multiple groups.
@@ -21,11 +30,20 @@ struct diff_poisson_log {
   Eigen::VectorXd n_samples_;
   /* The sum of counts in each group. */
   Eigen::VectorXd sums_;
+  /* exposure, i.e. off-set term for the latent variable. */
+  Eigen::VectorXd exposure_;
 
   diff_poisson_log(const Eigen::VectorXd& n_samples,
                    const Eigen::VectorXd& sums)
-    : n_samples_(n_samples), sums_(sums) { }
+    : n_samples_(n_samples), sums_(sums) {
+    exposure_ = init_one(sums_.size());
+  }
 
+  diff_poisson_log(const Eigen::VectorXd& n_samples,
+                   const Eigen::VectorXd& sums,
+                   const Eigen::VectorXd& exposure)
+    : n_samples_(n_samples), sums_(sums), exposure_(exposure) { }
+  
   /**
    * Return the log density.
    * @tparam T type of the log poisson parameter.
@@ -40,7 +58,8 @@ struct diff_poisson_log {
       factorial_term += lgamma(sums_(i) + 1);
 
     return - factorial_term
-      + theta.dot(sums_) - exp(theta).dot(n_samples_);
+      + (exposure_.cwiseProduct(theta)).dot(sums_) -
+        exp(exposure_.cwiseProduct(theta)).dot(n_samples_);
   }
 
   /**
@@ -58,12 +77,15 @@ struct diff_poisson_log {
   void diff (const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta,
              Eigen::Matrix<T, Eigen::Dynamic, 1>& gradient,
              Eigen::Matrix<T, Eigen::Dynamic, 1>& hessian) const {
-    hessian = - n_samples_.cwiseProduct(exp(theta));
-    gradient = sums_ + hessian;
+    Eigen::Matrix<T, Eigen::Dynamic, 1>
+      common_term = - n_samples_.cwiseProduct(exposure_)
+                        .cwiseProduct(exp(theta.cwiseProduct(exposure_)));
+    hessian = common_term.cwiseProduct(exposure_);
+    gradient = sums_.cwiseProduct(exposure_) + common_term;
   }
 
   /**
-   * Returns the third derivative tensor. Because it is (cubic) diagonal,
+   * Returns the third derivative tensor. Because it is ("cubic") diagonal,
    * the object is stored in a vector.
    * @tparam T type of the log poisson parameter.
    * @param[in] theta log poisson parameters for each group.
@@ -73,7 +95,10 @@ struct diff_poisson_log {
   template <typename T>
   Eigen::Matrix<T, Eigen::Dynamic, 1>
   third_diff(const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta) const {
-    return - n_samples_.cwiseProduct(exp(theta));
+    return - n_samples_.cwiseProduct(exp(theta.cwiseProduct(exposure_)))
+                       .cwiseProduct(exposure_)
+                       .cwiseProduct(exposure_)
+                       .cwiseProduct(exposure_);
   }
 };
 
