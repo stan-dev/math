@@ -10,7 +10,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const std::string  matrix_multiply_kernel_code = STRINGIFY(
+static const std::string matrix_multiply_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Matrix multiplication on the OpenCL device
@@ -173,7 +173,7 @@ const kernel_cl<in_buffer, in_buffer, out_buffer, int, int, int, matrix_cl_view,
                     {{"THREAD_BLOCK_SIZE", 32}, {"WORK_PER_THREAD", 8}});
 
 // \cond
-static const std::string  matrix_vector_multiply_kernel_code = STRINGIFY(
+static const std::string matrix_vector_multiply_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Matrix-vector multiplication R=A*B on the OpenCL device
@@ -217,7 +217,7 @@ const kernel_cl<in_buffer, in_buffer, out_buffer, int, int, matrix_cl_view,
                             matrix_vector_multiply_kernel_code});
 
 // \cond
-static const std::string  row_vector_matrix_multiply_kernel_code = STRINGIFY(
+static const std::string row_vector_matrix_multiply_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Row vector-matrix multiplication R=A*B on the OpenCL device
