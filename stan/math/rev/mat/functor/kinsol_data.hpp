@@ -19,14 +19,11 @@ namespace math {
  */
 struct kinsol_J_f {
   template <typename F>
-  inline int
-  operator() (const F& f,
-              const Eigen::VectorXd& x,
-              const Eigen::VectorXd& y,
-              const std::vector<double>& dat,
-              const std::vector<int>& dat_int,
-              std::ostream* msgs,
-              const double x_sun[], SUNMatrix J) const {
+  inline int operator()(const F& f, const Eigen::VectorXd& x,
+                        const Eigen::VectorXd& y,
+                        const std::vector<double>& dat,
+                        const std::vector<int>& dat_int, std::ostream* msgs,
+                        const double x_sun[], SUNMatrix J) const {
     size_t N = x.size();
     const std::vector<double> x_vec(x_sun, x_sun + N);
     system_functor<F, double, double, 1> system(f, x, y, dat, dat_int, msgs);
@@ -64,35 +61,37 @@ class kinsol_system_data {
 
   typedef kinsol_system_data<F1, F2> system_data;
 
-public:
+ public:
   N_Vector nv_x_;
   SUNMatrix J_;
   SUNLinearSolver LS_;
 
   /* Constructor */
-  kinsol_system_data(const F1& f,
-                     const F2& J_f,
-                     const Eigen::VectorXd& x,
-                     const Eigen::VectorXd& y,
-                     const std::vector<double>& dat,
-                     const std::vector<int>& dat_int,
-                     std::ostream* msgs)
-    : f_(f), J_f_(J_f), x_(x), y_(y), dat_(dat), dat_int_(dat_int),
-      msgs_(msgs), N_(x.size()),
-      nv_x_(N_VMake_Serial(N_, &to_array_1d(x_)[0])),
-      J_(SUNDenseMatrix(N_, N_)),
-      LS_(SUNLinSol_Dense(nv_x_, J_)) { }
+  kinsol_system_data(const F1& f, const F2& J_f, const Eigen::VectorXd& x,
+                     const Eigen::VectorXd& y, const std::vector<double>& dat,
+                     const std::vector<int>& dat_int, std::ostream* msgs)
+      : f_(f),
+        J_f_(J_f),
+        x_(x),
+        y_(y),
+        dat_(dat),
+        dat_int_(dat_int),
+        msgs_(msgs),
+        N_(x.size()),
+        nv_x_(N_VMake_Serial(N_, &to_array_1d(x_)[0])),
+        J_(SUNDenseMatrix(N_, N_)),
+        LS_(SUNLinSol_Dense(nv_x_, J_)) {}
 
   ~kinsol_system_data() {
-     N_VDestroy_Serial(nv_x_);
-     SUNLinSolFree(LS_);
-     SUNMatDestroy(J_);
+    N_VDestroy_Serial(nv_x_);
+    SUNLinSolFree(LS_);
+    SUNMatDestroy(J_);
   }
 
   /* Implements the user-defined function passed to KINSOL. */
-  static int kinsol_f_system(N_Vector x, N_Vector f, void *user_data) {
+  static int kinsol_f_system(N_Vector x, N_Vector f, void* user_data) {
     const system_data* explicit_system
-      = static_cast<const system_data*>(user_data);
+        = static_cast<const system_data*>(user_data);
     explicit_system->f_system(NV_DATA_S(x), NV_DATA_S(f));
 
     return 0;
@@ -102,22 +101,22 @@ public:
    * Implements the function of type CVDlsJacFn which is the user-defined
    * callbacks for KINSOL to calculate the jacobian of the system.
    * The Jacobian is stored in column major format.
-   * 
+   *
    * REMARK - tmp1 and tmp2 are pointers to memory allocated for variables
    * of type N_Vector which can be used by KINJacFN (the function which
    * computes the Jacobian) as temporary storage or work space.
-   * See https://computation.llnl.gov/sites/default/files/public/kin_guide-dev.pdf,
+   * See
+   * https://computation.llnl.gov/sites/default/files/public/kin_guide-dev.pdf,
    * page 55.
    */
-  static int kinsol_jacobian(N_Vector x, N_Vector f,
-                             SUNMatrix J, void *user_data,
-                             N_Vector tmp1, N_Vector tmp2) {
+  static int kinsol_jacobian(N_Vector x, N_Vector f, SUNMatrix J,
+                             void* user_data, N_Vector tmp1, N_Vector tmp2) {
     const system_data* explicit_system
-      = static_cast<const system_data*>(user_data);
+        = static_cast<const system_data*>(user_data);
     return explicit_system->jacobian_states(NV_DATA_S(x), J);
   }
 
-private:
+ private:
   /**
    * Calculates the root function, using the user-supplied functor
    * for a given value of x.
@@ -125,7 +124,7 @@ private:
   inline void f_system(const double x[], double f[]) const {
     const std::vector<double> x_vec(x, x + N_);
     const std::vector<double>& f_vec
-      = to_array_1d(f_(to_vector(x_vec), y_, dat_, dat_int_, msgs_));
+        = to_array_1d(f_(to_vector(x_vec), y_, dat_, dat_int_, msgs_));
     std::move(f_vec.begin(), f_vec.end(), f);
   }
 

@@ -2,6 +2,7 @@
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/opencl/opencl_context.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
+#include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/sub_block.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
@@ -26,4 +27,44 @@ TEST(MathMatrixCL, matrix_cl_types_creation) {
   test_matrix_creation<long double>();
 }
 
+#ifndef STAN_OPENCL_NOCACHE
+TEST(MathMatrixCL, matrix_cl_cache) {
+  using stan::math::matrix_cl;
+  Eigen::MatrixXd m(2, 2);
+  m << 1, 2, 3, 4;
+
+  const matrix_cl<double> m1_cl = matrix_cl<double>::constant(m);
+
+  cl_mem mem_handle = m.opencl_buffer_();
+  EXPECT_EQ(mem_handle, m1_cl.buffer()());
+
+  const matrix_cl<double> m2_cl = matrix_cl<double>::constant(m);
+
+  EXPECT_EQ(mem_handle, m.opencl_buffer_());
+  EXPECT_EQ(mem_handle, m1_cl.buffer()());
+  EXPECT_EQ(mem_handle, m2_cl.buffer()());
+}
+#else
+TEST(MathMatrixCL, matrix_cl_nocache) {
+  using stan::math::matrix_cl;
+  Eigen::MatrixXd m(2, 2);
+  m << 1, 2, 3, 4;
+
+  const matrix_cl<double> m1_cl = matrix_cl<double>::constant(m);
+  const matrix_cl<double> m2_cl = matrix_cl<double>::constant(m);
+
+  EXPECT_NE(m1_cl.buffer()(), m2_cl.buffer()());
+}
+#endif
+
+TEST(MathMatrixCL, matrix_cl_constructor_nocache) {
+  using stan::math::matrix_cl;
+  Eigen::MatrixXd m(2, 2);
+  m << 1, 2, 3, 4;
+
+  const matrix_cl<double> m1_cl(m);
+  const matrix_cl<double> m2_cl(m);
+
+  EXPECT_NE(m1_cl.buffer()(), m2_cl.buffer()());
+}
 #endif

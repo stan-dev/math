@@ -78,8 +78,8 @@ struct algebra_solver_vari : public vari {
  * which get passed into the algebraic system.
  * Use Powell's dogleg solver.
  *
- * The user can also specify the relative tolerance 
- * (xtol in Eigen's code), the function tolerance, 
+ * The user can also specify the relative tolerance
+ * (xtol in Eigen's code), the function tolerance,
  * and the maximum number of steps (maxfev in Eigen's code).
  *
  * Throw an exception if the norm of f(x), where f is the
@@ -125,8 +125,7 @@ Eigen::VectorXd algebra_solver(
     const std::vector<int>& dat_int, std::ostream* msgs = nullptr,
     double relative_tolerance = 1e-10, double function_tolerance = 1e-6,
     long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
-  algebra_solver_check(x, y, dat, dat_int,
-                       function_tolerance, max_num_steps);
+  algebra_solver_check(x, y, dat, dat_int, function_tolerance, max_num_steps);
 
   if (relative_tolerance < 0)
     invalid_argument("algebra_solver", "relative_tolerance,",
@@ -179,8 +178,8 @@ Eigen::VectorXd algebra_solver(
  * which get passed into the algebraic system.
  * Use Powell's dogleg solver.
  *
- * The user can also specify the relative tolerance 
- * (xtol in Eigen's code), the function tolerance, 
+ * The user can also specify the relative tolerance
+ * (xtol in Eigen's code), the function tolerance,
  * and the maximum number of steps (maxfev in Eigen's code).
  *
  * Overload the previous definition to handle the case where y

@@ -6,8 +6,8 @@ namespace math {
 
 // TO DO (charlesm93): use this function inside cvodes
 // integrator.
-/** 
- * Throws an exception when a Sundial function fails 
+/**
+ * Throws an exception when a Sundial function fails
  * (i.e. returns a negative flag)
  */
 inline void check_flag(int flag, const char* func_name) {
@@ -28,8 +28,7 @@ inline void check_flag_kinsol(int flag,
                               long int max_num_steps) {  // NOLINT(runtime/int)
   std::ostringstream ss;
   if (flag == -6) {
-    ss << "algebra_solver: max number of iterations: "
-       << max_num_steps
+    ss << "algebra_solver: max number of iterations: " << max_num_steps
        << " exceeded.";
     throw boost::math::evaluation_error(ss.str());
   } else if (flag < 0) {
