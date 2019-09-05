@@ -5,12 +5,13 @@
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/opencl/buffer_types.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
+#include <string>
 
 namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const char *scalar_mul_kernel_code = STRINGIFY(
+static const std::string scalar_mul_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Multiplication of the matrix A with a scalar

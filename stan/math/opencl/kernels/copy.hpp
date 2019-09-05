@@ -5,12 +5,13 @@
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/opencl/buffer_types.hpp>
 #include <algorithm>
+#include <string>
 
 namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const char *copy_kernel_code = STRINGIFY(
+static const std::string copy_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Copy one matrix to another
