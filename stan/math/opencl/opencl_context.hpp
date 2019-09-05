@@ -22,8 +22,7 @@
 #include <vector>
 #include <cmath>
 #include <cerrno>
-#include <string>
-
+// 
 /**
  *  @file stan/math/opencl/opencl_context.hpp
  *  @brief Initialization for OpenCL:

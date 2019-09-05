@@ -3,6 +3,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 #include <fstream>
+#include <string>
 
 TEST(MathGpu, getInfo) {
   cl::Context cl = stan::math::opencl_context.context();
