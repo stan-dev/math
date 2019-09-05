@@ -11,5 +11,4 @@ TEST(MathMeta, primitive) {
   EXPECT_FALSE((is_eigen<int>::value));
 
   EXPECT_FALSE((is_eigen<std::vector<double>>::value));
-
 }

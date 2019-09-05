@@ -7,5 +7,4 @@ TEST(MathMeta, primitive) {
   EXPECT_FALSE((is_eigen<bool>::value));
   EXPECT_FALSE((is_eigen<double>::value));
   EXPECT_FALSE((is_eigen<int>::value));
-
 }
