@@ -9,7 +9,7 @@
 #include <stan/math/prim/arr/fun/vec_concat.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
-#include <CL/cl.hpp>
+#include <cl.hpp>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -202,7 +202,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
     cl::Context& ctx = opencl_context.context();
     cl::CommandQueue queue = opencl_context.queue();
     try {
-      buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * size());
+      buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * this->size());
       cl::Event cstr_event;
       queue.enqueueCopyBuffer(A.buffer(), this->buffer(), 0, 0,
                               A.size() * sizeof(T), &A.write_events(),

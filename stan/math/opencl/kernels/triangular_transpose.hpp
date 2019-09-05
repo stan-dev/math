@@ -4,12 +4,13 @@
 
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/opencl/buffer_types.hpp>
+#include <string>
 
 namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const char* triangular_transpose_kernel_code = STRINGIFY(
+static const std::string triangular_transpose_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Copies a lower/upper triangular of a matrix to it's upper/lower.

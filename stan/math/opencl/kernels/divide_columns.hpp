@@ -4,12 +4,13 @@
 
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/opencl/buffer_types.hpp>
+#include <string>
 
 namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const char *divide_columns_kernel_code = STRINGIFY(
+static const std::string divide_columns_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Takes vector A and divides columns vector in A element-wise by the values
@@ -36,7 +37,7 @@ const kernel_cl<out_buffer, in_buffer, int> divide_columns_vec(
     "divide_columns_vec", {indexing_helpers, divide_columns_kernel_code});
 
 // \cond
-static const char *divide_column_scalar_kernel_code = STRINGIFY(
+static const std::string divide_column_scalar_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Performs element-wise division on \c A
