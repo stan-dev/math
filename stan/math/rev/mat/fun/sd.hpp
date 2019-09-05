@@ -55,8 +55,9 @@ inline var calc_sd(size_t size, const var* dtrs) {
  */
 inline var sd(const std::vector<var>& v) {
   check_nonzero_size("sd", "v", v);
-  if (v.size() == 1)
+  if (v.size() == 1) {
     return 0;
+  }
   return internal::calc_sd(v.size(), &v[0]);
 }
 
@@ -73,8 +74,9 @@ inline var sd(const std::vector<var>& v) {
 template <int R, int C>
 var sd(const Eigen::Matrix<var, R, C>& m) {
   check_nonzero_size("sd", "m", m);
-  if (m.size() == 1)
+  if (m.size() == 1) {
     return 0;
+  }
   return internal::calc_sd(m.size(), &m(0));
 }
 

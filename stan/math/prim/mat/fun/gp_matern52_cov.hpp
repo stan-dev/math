@@ -49,11 +49,13 @@ gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
   Eigen::Matrix<return_type_t<T_x, T_s, T_l>, Eigen::Dynamic, Eigen::Dynamic>
       cov(x_size, x_size);
 
-  if (x_size == 0)
+  if (x_size == 0) {
     return cov;
+  }
 
-  for (size_t n = 0; n < x_size; ++n)
+  for (size_t n = 0; n < x_size; ++n) {
     check_not_nan("gp_matern52_cov", "x", x[n]);
+  }
 
   check_positive_finite("gp_matern52_cov", "magnitude", sigma);
   check_positive_finite("gp_matern52_cov", "length scale", length_scale);
@@ -110,12 +112,14 @@ gp_matern52_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
   size_t x_size = x.size();
   Eigen::Matrix<return_type_t<T_x, T_s, T_l>, Eigen::Dynamic, Eigen::Dynamic>
       cov(x_size, x_size);
-  if (x_size == 0)
+  if (x_size == 0) {
     return cov;
+  }
 
   size_t l_size = length_scale.size();
-  for (size_t n = 0; n < x_size; ++n)
+  for (size_t n = 0; n < x_size; ++n) {
     check_not_nan("gp_matern52_cov", "x", x[n]);
+  }
 
   check_positive_finite("gp_matern52_cov", "magnitude", sigma);
   check_positive_finite("gp_matern52_cov", "length scale", length_scale);
@@ -179,13 +183,16 @@ gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
                 Eigen::Dynamic>
       cov(x1_size, x2_size);
 
-  if (x1_size == 0 || x2_size == 0)
+  if (x1_size == 0 || x2_size == 0) {
     return cov;
+  }
 
-  for (size_t n = 0; n < x1_size; ++n)
+  for (size_t n = 0; n < x1_size; ++n) {
     check_not_nan("gp_matern52_cov", "x1", x1[n]);
-  for (size_t n = 0; n < x2_size; ++n)
+  }
+  for (size_t n = 0; n < x2_size; ++n) {
     check_not_nan("gp_matern52_cov", "x1", x2[n]);
+  }
 
   check_positive_finite("gp_matern52_cov", "magnitude", sigma);
   check_positive_finite("gp_matern52_cov", "length scale", length_scale);
@@ -247,15 +254,18 @@ gp_matern52_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
                 Eigen::Dynamic>
       cov(x1_size, x2_size);
 
-  if (x1_size == 0 || x2_size == 0)
+  if (x1_size == 0 || x2_size == 0) {
     return cov;
+  }
 
   size_t l_size = length_scale.size();
 
-  for (size_t n = 0; n < x1_size; ++n)
+  for (size_t n = 0; n < x1_size; ++n) {
     check_not_nan("gp_matern52_cov", "x1", x1[n]);
-  for (size_t n = 0; n < x2_size; ++n)
+  }
+  for (size_t n = 0; n < x2_size; ++n) {
     check_not_nan("gp_matern52_cov", "x1", x2[n]);
+  }
 
   check_positive_finite("gp_matern52_cov", "magnitude", sigma);
   check_positive_finite("gp_matern52_cov", "length scale", length_scale);

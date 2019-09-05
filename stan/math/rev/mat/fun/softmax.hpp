@@ -33,8 +33,9 @@ class softmax_op {
     y_ = ChainableStack::instance_->memalloc_.alloc_array<double>(N_);
 
     auto y = softmax(alpha);
-    for (int n = 0; n < N_; ++n)
+    for (int n = 0; n < N_; ++n) {
       y_[n] = y(n);
+    }
     return y;
   }
 

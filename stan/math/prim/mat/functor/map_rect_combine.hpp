@@ -59,8 +59,9 @@ class map_rect_combine {
         num_shared_operands_(shared_params.rows()),
         num_job_operands_(dims(job_params)[1]) {
     ops_partials_.reserve(job_params.size());
-    for (const auto& job_param : job_params)
+    for (const auto& job_param : job_params) {
       ops_partials_.emplace_back(shared_params, job_param);
+    }
   }
 
   result_t operator()(const matrix_d& world_result,
@@ -74,13 +75,15 @@ class map_rect_combine {
 
     for (std::size_t i = 0, ij = 0; i != num_jobs; ++i) {
       for (int j = 0; j != world_f_out[i]; ++j, ++ij) {
-        if (!is_constant_all<T_shared_param>::value)
+        if (!is_constant_all<T_shared_param>::value) {
           ops_partials_[i].edge1_.partials_
               = world_result.block(1, ij, num_shared_operands_, 1);
+        }
 
-        if (!is_constant_all<T_job_param>::value)
+        if (!is_constant_all<T_job_param>::value) {
           ops_partials_[i].edge2_.partials_
               = world_result.block(offset_job_params, ij, num_job_operands_, 1);
+        }
 
         out(ij) = ops_partials_[i].build(world_result(0, ij));
       }

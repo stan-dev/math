@@ -20,16 +20,18 @@ inline fvar<T> log_sum_exp(const fvar<T>& x1, const fvar<T>& x2) {
 template <typename T>
 inline fvar<T> log_sum_exp(double x1, const fvar<T>& x2) {
   using std::exp;
-  if (x1 == NEGATIVE_INFTY)
+  if (x1 == NEGATIVE_INFTY) {
     return fvar<T>(x2.val_, x2.d_);
+  }
   return fvar<T>(log_sum_exp(x1, x2.val_), x2.d_ / (exp(x1 - x2.val_) + 1));
 }
 
 template <typename T>
 inline fvar<T> log_sum_exp(const fvar<T>& x1, double x2) {
   using std::exp;
-  if (x2 == NEGATIVE_INFTY)
+  if (x2 == NEGATIVE_INFTY) {
     return fvar<T>(x1.val_, x1.d_);
+  }
   return fvar<T>(log_sum_exp(x1.val_, x2), x1.d_ / (1 + exp(x2 - x1.val_)));
 }
 

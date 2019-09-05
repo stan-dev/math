@@ -69,8 +69,9 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
   const auto size = max_size(n, N, alpha, beta);
 
   for (size_t i = 0; i < size; i++) {
-    if (n_vec[i] < 0 || n_vec[i] > N_vec[i])
+    if (n_vec[i] < 0 || n_vec[i] > N_vec[i]) {
       return ops_partials.build(LOG_ZERO);
+    }
   }
 
   if (include_summand<propto>::value) {

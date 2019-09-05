@@ -56,13 +56,15 @@ return_type_t<T_theta, T_lam> log_mix(const T_theta& theta,
 
   scalar_seq_view<T_theta> theta_vec(theta);
   T_partials_vec theta_dbl(N);
-  for (int n = 0; n < N; ++n)
+  for (int n = 0; n < N; ++n) {
     theta_dbl[n] = value_of(theta_vec[n]);
+  }
 
   scalar_seq_view<T_lam> lam_vec(lambda);
   T_partials_vec lam_dbl(N);
-  for (int n = 0; n < N; ++n)
+  for (int n = 0; n < N; ++n) {
     lam_dbl[n] = value_of(lam_vec[n]);
+  }
 
   T_partials_return logp = log_sum_exp((log(theta_dbl) + lam_dbl).eval());
 
@@ -73,13 +75,15 @@ return_type_t<T_theta, T_lam> log_mix(const T_theta& theta,
 
   operands_and_partials<T_theta, T_lam> ops_partials(theta, lambda);
   if (!is_constant_all<T_theta>::value) {
-    for (int n = 0; n < N; ++n)
+    for (int n = 0; n < N; ++n) {
       ops_partials.edge1_.partials_[n] = theta_deriv[n];
+    }
   }
 
   if (!is_constant_all<T_lam>::value) {
-    for (int n = 0; n < N; ++n)
+    for (int n = 0; n < N; ++n) {
       ops_partials.edge2_.partials_[n] = lam_deriv[n];
+    }
   }
 
   return ops_partials.build(logp);
@@ -141,20 +145,24 @@ return_type_t<T_theta, std::vector<Eigen::Matrix<T_lam, R, C> > > log_mix(
 
   scalar_seq_view<T_theta> theta_vec(theta);
   T_partials_vec theta_dbl(M);
-  for (int m = 0; m < M; ++m)
+  for (int m = 0; m < M; ++m) {
     theta_dbl[m] = value_of(theta_vec[m]);
+  }
 
   T_partials_mat lam_dbl(M, N);
   vector_seq_view<T_lamvec_type> lam_vec(lambda);
-  for (int n = 0; n < N; ++n)
-    for (int m = 0; m < M; ++m)
+  for (int n = 0; n < N; ++n) {
+    for (int m = 0; m < M; ++m) {
       lam_dbl(m, n) = value_of(lam_vec[n][m]);
+    }
+  }
 
   T_partials_mat logp_tmp = log(theta_dbl).replicate(1, N) + lam_dbl;
 
   T_partials_vec logp(N);
-  for (int n = 0; n < N; ++n)
+  for (int n = 0; n < N; ++n) {
     logp[n] = log_sum_exp(logp_tmp.col(n).eval());
+  }
 
   operands_and_partials<T_theta, T_lamvec_type> ops_partials(theta, lambda);
 
@@ -163,14 +171,16 @@ return_type_t<T_theta, std::vector<Eigen::Matrix<T_lam, R, C> > > log_mix(
         = (lam_dbl - logp.transpose().replicate(M, 1))
               .unaryExpr([](T_partials_return x) { return exp(x); });
     if (!is_constant_all<T_theta>::value) {
-      for (int m = 0; m < M; ++m)
+      for (int m = 0; m < M; ++m) {
         ops_partials.edge1_.partials_[m] = derivs.row(m).sum();
+      }
     }
 
     if (!is_constant_all<T_lam>::value) {
-      for (int n = 0; n < N; ++n)
+      for (int n = 0; n < N; ++n) {
         ops_partials.edge2_.partials_vec_[n]
             = derivs.col(n).cwiseProduct(theta_dbl);
+      }
     }
   }
   return ops_partials.build(logp.sum());
@@ -229,38 +239,46 @@ return_type_t<T_theta, std::vector<std::vector<T_lam> > > log_mix(
 
   scalar_seq_view<T_theta> theta_vec(theta);
   T_partials_vec theta_dbl(M);
-  for (int m = 0; m < M; ++m)
+  for (int m = 0; m < M; ++m) {
     theta_dbl[m] = value_of(theta_vec[m]);
+  }
 
   T_partials_mat lam_dbl(M, N);
-  for (int n = 0; n < N; ++n)
-    for (int m = 0; m < M; ++m)
+  for (int n = 0; n < N; ++n) {
+    for (int m = 0; m < M; ++m) {
       lam_dbl(m, n) = value_of(lambda[n][m]);
+    }
+  }
 
   T_partials_mat logp_tmp = log(theta_dbl).replicate(1, N) + lam_dbl;
 
   T_partials_vec logp(N);
-  for (int n = 0; n < N; ++n)
+  for (int n = 0; n < N; ++n) {
     logp[n] = log_sum_exp(logp_tmp.col(n).eval());
+  }
 
   T_partials_mat derivs
       = (lam_dbl - logp.transpose().replicate(M, 1))
             .unaryExpr([](T_partials_return x) { return exp(x); });
 
   T_partials_mat lam_deriv(M, N);
-  for (int n = 0; n < N; ++n)
+  for (int n = 0; n < N; ++n) {
     lam_deriv.col(n) = derivs.col(n).cwiseProduct(theta_dbl);
+  }
 
   operands_and_partials<T_theta, T_lamvec_type> ops_partials(theta, lambda);
   if (!is_constant_all<T_theta>::value) {
-    for (int m = 0; m < M; ++m)
+    for (int m = 0; m < M; ++m) {
       ops_partials.edge1_.partials_[m] = derivs.row(m).sum();
+    }
   }
 
   if (!is_constant_all<T_lam>::value) {
-    for (int n = 0; n < N; ++n)
-      for (int m = 0; m < M; ++m)
+    for (int n = 0; n < N; ++n) {
+      for (int m = 0; m < M; ++m) {
         ops_partials.edge2_.partials_vec_[n][m] = lam_deriv(m, n);
+      }
+    }
   }
   return ops_partials.build(logp.sum());
 }

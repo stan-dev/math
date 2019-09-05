@@ -21,8 +21,9 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lccdf(
   typedef partials_return_type_t<T_y, T_loc, T_scale, T_shape>
       T_partials_return;
 
-  if (size_zero(y, mu, lambda, alpha))
+  if (size_zero(y, mu, lambda, alpha)) {
     return 0.0;
+  }
 
   static const char* function = "pareto_type_2_lccdf";
 
@@ -68,11 +69,13 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lccdf(
 
     ccdf_log[i] = -alpha_dbl * log_temp;
 
-    if (!is_constant_all<T_y, T_loc, T_scale, T_shape>::value)
+    if (!is_constant_all<T_y, T_loc, T_scale, T_shape>::value) {
       a_over_lambda_plus_y[i] = alpha_dbl / (y_dbl - mu_dbl + lambda_dbl);
+    }
 
-    if (!is_constant_all<T_shape>::value)
+    if (!is_constant_all<T_shape>::value) {
       log_1p_y_over_lambda[i] = log_temp;
+    }
   }
 
   for (size_t n = 0; n < N; n++) {
@@ -82,15 +85,19 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lccdf(
 
     P += ccdf_log[n];
 
-    if (!is_constant_all<T_y>::value)
+    if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] -= a_over_lambda_plus_y[n];
-    if (!is_constant_all<T_loc>::value)
+    }
+    if (!is_constant_all<T_loc>::value) {
       ops_partials.edge2_.partials_[n] += a_over_lambda_plus_y[n];
-    if (!is_constant_all<T_scale>::value)
+    }
+    if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n]
           += a_over_lambda_plus_y[n] * (y_dbl - mu_dbl) / lambda_dbl;
-    if (!is_constant_all<T_shape>::value)
+    }
+    if (!is_constant_all<T_shape>::value) {
       ops_partials.edge4_.partials_[n] -= log_1p_y_over_lambda[n];
+    }
   }
   return ops_partials.build(P);
 }

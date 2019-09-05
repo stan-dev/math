@@ -11,8 +11,9 @@ namespace math {
 template <typename T>
 inline std::vector<fvar<T>> to_fvar(const std::vector<T>& v) {
   std::vector<fvar<T>> x(v.size());
-  for (size_t i = 0; i < v.size(); ++i)
+  for (size_t i = 0; i < v.size(); ++i) {
     x[i] = T(v[i]);
+  }
   return x;
 }
 
@@ -20,8 +21,9 @@ template <typename T>
 inline std::vector<fvar<T>> to_fvar(const std::vector<T>& v,
                                     const std::vector<T>& d) {
   std::vector<fvar<T>> x(v.size());
-  for (size_t i = 0; i < v.size(); ++i)
+  for (size_t i = 0; i < v.size(); ++i) {
     x[i] = fvar<T>(v[i], d[i]);
+  }
   return x;
 }
 

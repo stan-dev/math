@@ -79,8 +79,9 @@ class matrix_exp_action_handler {
         }
         F *= eta;
         B = F;
-        if (conv)
+        if (conv) {
           break;
+        }
       }
       res.col(col) = F;
     }  // loop b columns

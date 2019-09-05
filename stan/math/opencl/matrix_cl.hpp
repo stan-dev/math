@@ -195,8 +195,9 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
 
   matrix_cl(const matrix_cl<T>& A)
       : rows_(A.rows()), cols_(A.cols()), view_(A.view()) {
-    if (A.size() == 0)
+    if (A.size() == 0) {
       return;
+    }
     this->wait_for_read_write_events();
     cl::Context& ctx = opencl_context.context();
     cl::CommandQueue queue = opencl_context.queue();
@@ -237,8 +238,9 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
   explicit matrix_cl(const std::vector<Eigen::Matrix<T, R, C>>& A) try
       : rows_(A.empty() ? 0 : A[0].size()),
         cols_(A.size()) {
-    if (this->size() == 0)
+    if (this->size() == 0) {
       return;
+    }
     cl::Context& ctx = opencl_context.context();
     cl::CommandQueue& queue = opencl_context.queue();
     // creates the OpenCL buffer to copy the Eigen
@@ -432,8 +434,9 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
                      a.rows(), "destination.rows()", rows());
     check_size_match("assignment of (OpenCL) matrices", "source.cols()",
                      a.cols(), "destination.cols()", cols());
-    if (a.size() == 0)
+    if (a.size() == 0) {
       return *this;
+    }
     view_ = a.view();
     this->wait_for_read_write_events();
     cl::CommandQueue queue = opencl_context.queue();

@@ -21,3 +21,11 @@ clang-tidy-fix:
 		 -checks='$(tidy_checks)' -format-style='file' -header-filter='./stan/*' \
 		 -fix -export-fixes="./.clang-fixes.log" \
 		 -- $(CXXFLAGS) $(LDFLAGS) $(LDLIBS) $(INC_GTEST) $(CXXFLAGS_GTEST) $(CPPFLAGS)
+
+.PHONY: clang-tidy-cleanup
+clang-tidy-cleanup:
+		find $(folder) -path './test/unit/*' -wholename '*$(files).cpp' -type f | xargs -I {} clang-tidy "{}" \
+		 -checks='readability-braces-around-statements' \
+		 -format-style='file' -header-filter='./stan/*' \
+		 -fix -export-fixes="./.clang-fixes.log" \
+		 -- $(CXXFLAGS) $(LDFLAGS) $(LDLIBS) $(INC_GTEST) $(CXXFLAGS_GTEST) $(CPPFLAGS)

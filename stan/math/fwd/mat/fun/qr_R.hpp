@@ -19,10 +19,12 @@ Eigen::Matrix<fvar<T>, Eigen::Dynamic, Eigen::Dynamic> qr_R(
   qr.compute(m);
   matrix_fwd_t R = qr.matrixQR().topLeftCorner(m.rows(), m.cols());
   for (int i = 0; i < R.rows(); i++) {
-    for (int j = 0; j < i; j++)
+    for (int j = 0; j < i; j++) {
       R(i, j) = 0.0;
-    if (i < R.cols() && R(i, i) < 0.0)
+    }
+    if (i < R.cols() && R(i, i) < 0.0) {
       R.row(i) *= -1.0;
+    }
   }
   return R;
 }

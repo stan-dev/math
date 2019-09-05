@@ -97,15 +97,18 @@ class cvodes_integrator {
     check_nonzero_size(fun, "initial state", y0);
     check_ordered(fun, "times", ts_dbl);
     check_less(fun, "initial time", t0_dbl, ts_dbl[0]);
-    if (relative_tolerance <= 0)
+    if (relative_tolerance <= 0) {
       invalid_argument("integrate_ode_cvodes", "relative_tolerance,",
                        relative_tolerance, "", ", must be greater than 0");
-    if (absolute_tolerance <= 0)
+    }
+    if (absolute_tolerance <= 0) {
       invalid_argument("integrate_ode_cvodes", "absolute_tolerance,",
                        absolute_tolerance, "", ", must be greater than 0");
-    if (max_num_steps <= 0)
+    }
+    if (max_num_steps <= 0) {
       invalid_argument("integrate_ode_cvodes", "max_num_steps,", max_num_steps,
                        "", ", must be greater than 0");
+    }
 
     const size_t N = y0.size();
     const size_t M = theta.size();
@@ -115,8 +118,9 @@ class cvodes_integrator {
     ode_data cvodes_data(f, y0, theta, x, x_int, msgs);
 
     void* cvodes_mem = CVodeCreate(Lmm);
-    if (cvodes_mem == nullptr)
+    if (cvodes_mem == nullptr) {
       throw std::runtime_error("CVodeCreate failed to allocate memory");
+    }
 
     const size_t coupled_size = cvodes_data.coupled_ode_.size();
 
@@ -164,10 +168,11 @@ class cvodes_integrator {
       double t_init = t0_dbl;
       for (size_t n = 0; n < ts.size(); ++n) {
         double t_final = ts_dbl[n];
-        if (t_final != t_init)
+        if (t_final != t_init) {
           cvodes_check_flag(CVode(cvodes_mem, t_final, cvodes_data.nv_state_,
                                   &t_init, CV_NORMAL),
                             "CVode");
+        }
         if (S > 0) {
           cvodes_check_flag(
               CVodeGetSens(cvodes_mem, &t_init, cvodes_data.nv_state_sens_),

@@ -33,8 +33,9 @@ struct promote_scalar_struct<T, std::vector<S> > {
     typedef std::vector<typename promote_scalar_type<T, S>::type> return_t;
     typedef typename index_type<return_t>::type idx_t;
     return_t y(x.size());
-    for (idx_t i = 0; i < x.size(); ++i)
+    for (idx_t i = 0; i < x.size(); ++i) {
       y[i] = promote_scalar_struct<T, S>::apply(x[i]);
+    }
     return y;
   }
 };
