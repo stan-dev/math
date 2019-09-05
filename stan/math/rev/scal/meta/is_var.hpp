@@ -7,7 +7,7 @@
 
 namespace stan {
 /**
- * Specialization for checking if value of T is a var.
+ * Specialization for checking if value of T minus cv qualifier is a var.
  */
 template <typename T>
 struct is_var<T,

@@ -6,7 +6,7 @@
 TEST(MathMeta, is_var_or_arithmetic_simple) {
   using stan::is_var_or_arithmetic;
   EXPECT_TRUE(stan::is_var_or_arithmetic<double>::value);
-  EXPECT_TRUE(stan::is_var_or_arithmetic<double>::value);
+  EXPECT_TRUE(stan::is_var_or_arithmetic<double&>::value);
   EXPECT_FALSE(stan::is_var_or_arithmetic<std::vector<double const*>>::value);
 
   EXPECT_FALSE(stan::is_var_or_arithmetic<int&>::value);

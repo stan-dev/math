@@ -15,4 +15,7 @@ TEST(MathMeta, is_var_or_arithmetic_simple) {
   temp = is_var_or_arithmetic<std::vector<stan::math::var>, stan::math::var,
                               std::vector<stan::math::var const*>>::value;
   EXPECT_FALSE(temp);
+  temp = is_var_or_arithmetic<std::vector<stan::math::var>, stan::math::var,
+                              std::vector<stan::math::var>>::value;
+  EXPECT_TRUE(temp);
 }
