@@ -170,7 +170,7 @@ TEST(MathMatrix, nonLinearEq_dbl) {
   y << 4, 6, 3;
 
   for (int is_newton = 0; is_newton <= 1; is_newton++) {
-    Eigen::VectorXd 
+    Eigen::VectorXd
       theta = non_linear_eq_test(non_linear_eq_functor(), y, is_newton);
 
     EXPECT_FLOAT_EQ(-y(0), theta(0));
@@ -261,7 +261,7 @@ TEST(MathMatrix, degenerate) {
       y << 5, 8;
       Eigen::VectorXd x(2);
       x << 10, 1;  // Initial Guess
-      Eigen::Matrix<var, Eigen::Dynamic, 1> 
+      Eigen::Matrix<var, Eigen::Dynamic, 1>
         theta = degenerate_test(y, x, is_newton);
       EXPECT_FLOAT_EQ(8, theta(0).val());
       EXPECT_FLOAT_EQ(8, theta(1).val());
@@ -286,7 +286,7 @@ TEST(MathMatrix, degenerate) {
       y << 5, 8;
       Eigen::VectorXd x(2);
       x << 1, 1;  // Initial Guess
-      Eigen::Matrix<var, Eigen::Dynamic, 1> 
+      Eigen::Matrix<var, Eigen::Dynamic, 1>
         theta = degenerate_test(y, x, is_newton);
       EXPECT_FLOAT_EQ(5, theta(0).val());
       EXPECT_FLOAT_EQ(5, theta(0).val());

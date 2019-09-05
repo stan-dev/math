@@ -83,10 +83,10 @@ public:
       J_(SUNDenseMatrix(N_, N_)),
       LS_(SUNLinSol_Dense(nv_x_, J_)) { }
 
-  ~ kinsol_system_data() {
-      N_VDestroy_Serial(nv_x_);
-      SUNLinSolFree(LS_);
-      SUNMatDestroy(J_);
+  ~kinsol_system_data() {
+     N_VDestroy_Serial(nv_x_);
+     SUNLinSolFree(LS_);
+     SUNMatDestroy(J_);
   }
 
   /* Implements the user-defined function passed to KINSOL. */

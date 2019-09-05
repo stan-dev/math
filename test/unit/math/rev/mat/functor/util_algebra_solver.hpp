@@ -19,12 +19,11 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> general_algebra_solver(
   double scaling_step_size = 1e-3,
   double function_tolerance = 1e-6,
   long int max_num_steps = 1e+3)  {  // NOLINT(runtime/int)
-
   using stan::math::algebra_solver;
   using stan::math::algebra_solver_newton;
 
   Eigen::Matrix<T2, Eigen::Dynamic, 1>
-    theta = (is_newton) ? 
+    theta = (is_newton) ?
                          algebra_solver_newton(f, x, y, dat, dat_int, msgs,
                                                scaling_step_size,
                                                function_tolerance,
@@ -143,7 +142,7 @@ template <typename F, typename T>
 Eigen::Matrix<T, Eigen::Dynamic, 1> simple_eq_test(
     const F& f, const Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
     bool is_newton = false,
-    bool tuning = false, 
+    bool tuning = false,
     double scale_step = 1e-3, double rel_tol = 1e-10, double fun_tol = 1e-6,
     int32_t max_steps = 1e+3) {
   using stan::math::algebra_solver;
@@ -162,8 +161,8 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> simple_eq_test(
     theta = general_algebra_solver(is_newton, f, x, y,
                                    dummy_dat, dummy_dat_int);
   else
-    theta = general_algebra_solver(is_newton, f, x, y, 
-                                   dummy_dat, dummy_dat_int, 0, 
+    theta = general_algebra_solver(is_newton, f, x, y,
+                                   dummy_dat, dummy_dat_int, 0,
                                    scale_step, rel_tol, fun_tol, max_steps);
 
   EXPECT_EQ(20, theta(0));
@@ -214,7 +213,7 @@ inline void error_conditions_test(
   err_msg2 << "algebra_solver: initial guess has size 0, but "
            << "must have a non-zero size";
   std::string msg2 = err_msg2.str();
-  EXPECT_THROW_MSG(general_algebra_solver(is_newton, f, x_bad, y, 
+  EXPECT_THROW_MSG(general_algebra_solver(is_newton, f, x_bad, y,
                                           dat, dat_int),
                    std::invalid_argument, msg2);
 
