@@ -20,9 +20,40 @@ namespace math {
 /**
  * Return the solution to the specified system of algebraic
  * equations given an initial guess, and parameters and data,
- * which get passed into the algebraic system.
+ * which get passed into the algebraic system. Use the
+ * KINSOL solver from the SUNDIALS suite.
  * 
- * Use Kinsol's Newton solver.
+ * The user can also specify the scaled step size, the function
+ * tolerance, and the maximum number of steps.
+ * 
+ * @tparam F type of equation system function.
+ * @tparam T type of initial guess vector.
+ * @param[in] f Functor that evaluated the system of equations.
+ * @param[in] x Vector of starting values.
+ * @param[in] y Parameter vector for the equation system. The function
+ *            is overloaded to treat y as a vector of doubles or of a
+ *            a template type T.
+ * @param[in] dat Continuous data vector for the equation system.
+ * @param[in] dat_int Integer data vector for the equation system.
+ * @param[in, out] msgs The print stream for warning messages.
+ * @param[in] scaling_step_size Scaled-step stopping tolerance. If
+ *            a Newton step is smaller than the scaling step
+ *            tolerance, the code breaks, assuming the solver is no
+ *            longer making significant progress (i.e. is stuck)
+ * @param[in] function_tolerance determines whether roots are acceptable.
+ * @param[in] max_num_steps  maximum number of function evaluations.
+ *  * @throw <code>std::invalid_argument</code> if x has size zero.
+ * @throw <code>std::invalid_argument</code> if x has non-finite elements.
+ * @throw <code>std::invalid_argument</code> if y has non-finite elements.
+ * @throw <code>std::invalid_argument</code> if dat has non-finite elements.
+ * @throw <code>std::invalid_argument</code> if dat_int has non-finite elements.
+ * @throw <code>std::invalid_argument</code> if scaled_step_size is strictly
+ * negative.
+ * @throw <code>std::invalid_argument</code> if function_tolerance is strictly
+ * negative.
+ * @throw <code>std::invalid_argument</code> if max_num_steps is not positive.
+ * @throw <code>boost::math::evaluation_error</code> (which is a subclass of
+ * <code>std::runtime_error</code>) if solver exceeds max_num_steps.
  */
 template <typename F, typename T>
 Eigen::VectorXd algebra_solver_newton(
@@ -51,11 +82,45 @@ Eigen::VectorXd algebra_solver_newton(
 /**
  * Return the solution to the specified system of algebraic
  * equations given an initial guess, and parameters and data,
- * which get passed into the algebraic system.
+ * which get passed into the algebraic system. Use the
+ * KINSOL solver from the SUNDIALS suite.
  * 
- * Overload for case where theta is a vector of parameters.
+ * The user can also specify the scaled step size, the function
+ * tolerance, and the maximum number of steps.
  * 
- * Use Kinsol's Newton solver.
+ * Overload the previous definition to handle the case where y
+ * is a vector of parameters (var). The overload calls the
+ * algebraic solver defined above and builds a vari object on
+ * top, using the algebra_solver_vari class.
+ * 
+ * @tparam F type of equation system function.
+ * @tparam T type of initial guess vector.
+ * @param[in] f Functor that evaluated the system of equations.
+ * @param[in] x Vector of starting values.
+ * @param[in] y Parameter vector for the equation system. The function
+ *            is overloaded to treat y as a vector of doubles or of a
+ *            a template type T.
+ * @param[in] dat Continuous data vector for the equation system.
+ * @param[in] dat_int Integer data vector for the equation system.
+ * @param[in, out] msgs The print stream for warning messages.
+ * @param[in] scaling_step_size Scaled-step stopping tolerance. If
+ *            a Newton step is smaller than the scaling step
+ *            tolerance, the code breaks, assuming the solver is no
+ *            longer making significant progress (i.e. is stuck)
+ * @param[in] function_tolerance determines whether roots are acceptable.
+ * @param[in] max_num_steps  maximum number of function evaluations.
+ *  * @throw <code>std::invalid_argument</code> if x has size zero.
+ * @throw <code>std::invalid_argument</code> if x has non-finite elements.
+ * @throw <code>std::invalid_argument</code> if y has non-finite elements.
+ * @throw <code>std::invalid_argument</code> if dat has non-finite elements.
+ * @throw <code>std::invalid_argument</code> if dat_int has non-finite elements.
+ * @throw <code>std::invalid_argument</code> if scaled_step_size is strictly
+ * negative.
+ * @throw <code>std::invalid_argument</code> if function_tolerance is strictly
+ * negative.
+ * @throw <code>std::invalid_argument</code> if max_num_steps is not positive.
+ * @throw <code>boost::math::evaluation_error</code> (which is a subclass of
+ * <code>std::runtime_error</code>) if solver exceeds max_num_steps.
  */
 template <typename F, typename T1, typename T2>
 Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver_newton(
