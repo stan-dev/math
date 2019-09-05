@@ -25,7 +25,7 @@ clang-tidy-fix:
 .PHONY: clang-tidy-cleanup
 clang-tidy-cleanup:
 		find $(folder) -path './test/unit/*' -wholename '*$(files).cpp' -type f | xargs -I {} clang-tidy "{}" \
-		 -checks='readability-braces-around-statements' \
+		 -checks='modernize-use-nullptr, modernize-use-using' \
 		 -format-style='file' -header-filter='./stan/*' \
 		 -fix -export-fixes="./.clang-fixes.log" \
 		 -- $(CXXFLAGS) $(LDFLAGS) $(LDLIBS) $(INC_GTEST) $(CXXFLAGS_GTEST) $(CPPFLAGS)
