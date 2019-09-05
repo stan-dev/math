@@ -7,7 +7,6 @@
 #include <stan/math/rev/mat/functor/algebra_solver.hpp>
 #include <stan/math/rev/mat/functor/kinsol_solve.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/scal/meta/is_var.hpp>
 
 #include <unsupported/Eigen/NonLinearOptimization>
 #include <iostream>
