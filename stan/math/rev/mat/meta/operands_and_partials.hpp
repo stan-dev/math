@@ -13,7 +13,7 @@ namespace math {
 namespace internal {
 // Vectorized Univariate
 template <>
-class ops_partials_edge<double, std::vector<var> > {
+class ops_partials_edge<double, std::vector<var>> {
  public:
   using Op = std::vector<var>;
   using partials_t = Eigen::VectorXd;
@@ -43,7 +43,7 @@ class ops_partials_edge<double, std::vector<var> > {
 };
 
 template <int R, int C>
-class ops_partials_edge<double, Eigen::Matrix<var, R, C> > {
+class ops_partials_edge<double, Eigen::Matrix<var, R, C>> {
  public:
   using Op = Eigen::Matrix<var, R, C>;
   using partials_t = Eigen::Matrix<double, R, C>;
@@ -75,7 +75,7 @@ class ops_partials_edge<double, Eigen::Matrix<var, R, C> > {
 // SPECIALIZATIONS FOR MULTIVARIATE VECTORIZATIONS
 // (i.e. nested containers)
 template <int R, int C>
-class ops_partials_edge<double, std::vector<Eigen::Matrix<var, R, C> > > {
+class ops_partials_edge<double, std::vector<Eigen::Matrix<var, R, C>>> {
  public:
   using Op = std::vector<Eigen::Matrix<var, R, C>>;
   using partial_t = Eigen::Matrix<double, -1, -1>;
@@ -117,9 +117,9 @@ class ops_partials_edge<double, std::vector<Eigen::Matrix<var, R, C> > > {
 };
 
 template <>
-class ops_partials_edge<double, std::vector<std::vector<var> > > {
+class ops_partials_edge<double, std::vector<std::vector<var>>> {
  public:
-  using Op = std::vector<std::vector<var> >;
+  using Op = std::vector<std::vector<var>>;
   using partial_t = std::vector<double>;
   std::vector<partial_t> partials_vec_;
   explicit ops_partials_edge(const Op& ops)

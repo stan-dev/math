@@ -6,7 +6,6 @@
 using Eigen::Dynamic;
 using Eigen::Matrix;
 using stan::math::log_softmax;
-using stan::math::log_softmax;
 
 TEST(ProbDistributionsCategoricalLogit, fvar_double) {
   using stan::math::fvar;

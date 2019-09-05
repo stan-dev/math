@@ -117,13 +117,12 @@ return_type_t<T_theta, T_lam> log_mix(const T_theta& theta,
  * @return log mixture of densities in specified proportion
  */
 template <typename T_theta, typename T_lam, int R, int C>
-return_type_t<T_theta, std::vector<Eigen::Matrix<T_lam, R, C> > > log_mix(
+return_type_t<T_theta, std::vector<Eigen::Matrix<T_lam, R, C>>> log_mix(
     const T_theta& theta,
-    const std::vector<Eigen::Matrix<T_lam, R, C> >& lambda) {
+    const std::vector<Eigen::Matrix<T_lam, R, C>>& lambda) {
   static const char* function = "log_mix";
   typedef typename stan::partials_return_type<
-      T_theta, std::vector<Eigen::Matrix<T_lam, R, C> > >::type
-      T_partials_return;
+      T_theta, std::vector<Eigen::Matrix<T_lam, R, C>>>::type T_partials_return;
 
   using T_partials_vec = typename Eigen::Matrix<T_partials_return, -1, 1>;
 
@@ -213,17 +212,17 @@ return_type_t<T_theta, std::vector<Eigen::Matrix<T_lam, R, C> > > log_mix(
  * @return log mixture of densities in specified proportion
  */
 template <typename T_theta, typename T_lam>
-return_type_t<T_theta, std::vector<std::vector<T_lam> > > log_mix(
-    const T_theta& theta, const std::vector<std::vector<T_lam> >& lambda) {
+return_type_t<T_theta, std::vector<std::vector<T_lam>>> log_mix(
+    const T_theta& theta, const std::vector<std::vector<T_lam>>& lambda) {
   static const char* function = "log_mix";
   typedef typename stan::partials_return_type<
-      T_theta, std::vector<std::vector<T_lam> > >::type T_partials_return;
+      T_theta, std::vector<std::vector<T_lam>>>::type T_partials_return;
 
   using T_partials_vec = typename Eigen::Matrix<T_partials_return, -1, 1>;
 
   using T_partials_mat = typename Eigen::Matrix<T_partials_return, -1, -1>;
 
-  using T_lamvec_type = typename std::vector<std::vector<T_lam> >;
+  using T_lamvec_type = typename std::vector<std::vector<T_lam>>;
 
   const int N = length(lambda);
   const int M = theta.size();

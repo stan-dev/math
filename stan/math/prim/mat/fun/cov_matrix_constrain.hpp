@@ -27,7 +27,7 @@ namespace math {
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cov_matrix_constrain(
     const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
-    typename math::index_type<Eigen::Matrix<T, Eigen::Dynamic, 1> >::type K) {
+    typename math::index_type<Eigen::Matrix<T, Eigen::Dynamic, 1>>::type K) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::exp;
@@ -65,7 +65,7 @@ template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cov_matrix_constrain(
     const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
     typename math::index_type<
-        Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >::type K,
+        Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>>::type K,
     T& lp) {
   using Eigen::Dynamic;
   using Eigen::Matrix;

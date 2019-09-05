@@ -12,9 +12,9 @@ namespace math {
 namespace internal {
 // Vectorized Univariate
 template <typename Dx>
-class ops_partials_edge<Dx, std::vector<fvar<Dx> > > {
+class ops_partials_edge<Dx, std::vector<fvar<Dx>>> {
  public:
-  using Op = std::vector<fvar<Dx> >;
+  using Op = std::vector<fvar<Dx>>;
   using partials_t = Eigen::Matrix<Dx, -1, 1>;
   partials_t partials_;                       // For univariate use-cases
   broadcast_array<partials_t> partials_vec_;  // For multivariate
@@ -38,7 +38,7 @@ class ops_partials_edge<Dx, std::vector<fvar<Dx> > > {
 };
 
 template <typename Dx, int R, int C>
-class ops_partials_edge<Dx, Eigen::Matrix<fvar<Dx>, R, C> > {
+class ops_partials_edge<Dx, Eigen::Matrix<fvar<Dx>, R, C>> {
  public:
   using partials_t = Eigen::Matrix<Dx, R, C>;
   using Op = Eigen::Matrix<fvar<Dx>, R, C>;
@@ -65,7 +65,7 @@ class ops_partials_edge<Dx, Eigen::Matrix<fvar<Dx>, R, C> > {
 
 // Multivariate; vectors of eigen types
 template <typename Dx, int R, int C>
-class ops_partials_edge<Dx, std::vector<Eigen::Matrix<fvar<Dx>, R, C> > > {
+class ops_partials_edge<Dx, std::vector<Eigen::Matrix<fvar<Dx>, R, C>>> {
  public:
   using Op = std::vector<Eigen::Matrix<fvar<Dx>, R, C>>;
   using partial_t = Eigen::Matrix<Dx, -1, -1>;
@@ -94,9 +94,9 @@ class ops_partials_edge<Dx, std::vector<Eigen::Matrix<fvar<Dx>, R, C> > > {
 };
 
 template <typename Dx>
-class ops_partials_edge<Dx, std::vector<std::vector<fvar<Dx> > > > {
+class ops_partials_edge<Dx, std::vector<std::vector<fvar<Dx>>>> {
  public:
-  using Op = std::vector<std::vector<fvar<Dx> > >;
+  using Op = std::vector<std::vector<fvar<Dx>>>;
   using partial_t = std::vector<Dx>;
   std::vector<partial_t> partials_vec_;
   explicit ops_partials_edge(const Op& ops)

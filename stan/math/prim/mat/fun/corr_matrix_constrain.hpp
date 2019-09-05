@@ -38,7 +38,7 @@ namespace math {
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> corr_matrix_constrain(
     const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
-    typename math::index_type<Eigen::Matrix<T, Eigen::Dynamic, 1> >::type k) {
+    typename math::index_type<Eigen::Matrix<T, Eigen::Dynamic, 1>>::type k) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using size_type = typename index_type<Matrix<T, Dynamic, 1>>::type;
@@ -75,7 +75,7 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> corr_matrix_constrain(
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> corr_matrix_constrain(
     const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
-    typename math::index_type<Eigen::Matrix<T, Eigen::Dynamic, 1> >::type k,
+    typename math::index_type<Eigen::Matrix<T, Eigen::Dynamic, 1>>::type k,
     T& lp) {
   using Eigen::Array;
   using Eigen::Dynamic;

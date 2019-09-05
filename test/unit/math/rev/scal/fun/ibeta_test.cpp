@@ -7,7 +7,6 @@
 
 TEST(AgradRev, ibeta_vvv) {
   using stan::math::ibeta;
-  using stan::math::ibeta;
   using stan::math::var;
 
   using boost::math::ibeta_derivative;
@@ -38,7 +37,6 @@ TEST(AgradRev, ibeta_vvv) {
 }
 TEST(AgradRev, ibeta_vvd) {
   using stan::math::ibeta;
-  using stan::math::ibeta;
   using stan::math::var;
 
   using boost::math::ibeta_derivative;
@@ -66,7 +64,6 @@ TEST(AgradRev, ibeta_vvd) {
   EXPECT_FLOAT_EQ(0.02507405, grad_f[1]);
 }
 TEST(AgradRev, ibeta_vdv) {
-  using stan::math::ibeta;
   using stan::math::ibeta;
   using stan::math::var;
 
@@ -96,7 +93,6 @@ TEST(AgradRev, ibeta_vdv) {
 }
 TEST(AgradRev, ibeta_vdd) {
   using stan::math::ibeta;
-  using stan::math::ibeta;
   using stan::math::var;
 
   using boost::math::ibeta_derivative;
@@ -122,7 +118,6 @@ TEST(AgradRev, ibeta_vdd) {
   EXPECT_FLOAT_EQ(-0.03737671, grad_f[0]);
 }
 TEST(AgradRev, ibeta_dvv) {
-  using stan::math::ibeta;
   using stan::math::ibeta;
   using stan::math::var;
 
@@ -152,7 +147,6 @@ TEST(AgradRev, ibeta_dvv) {
 }
 TEST(AgradRev, ibeta_dvd) {
   using stan::math::ibeta;
-  using stan::math::ibeta;
   using stan::math::var;
 
   using boost::math::ibeta_derivative;
@@ -178,7 +172,6 @@ TEST(AgradRev, ibeta_dvd) {
   EXPECT_FLOAT_EQ(0.02507405, grad_f[0]);
 }
 TEST(AgradRev, ibeta_ddv) {
-  using stan::math::ibeta;
   using stan::math::ibeta;
   using stan::math::var;
 

@@ -669,7 +669,6 @@ TEST(AgradRevMatrix, multiply_scalar_matrix_vc) {
 TEST(AgradRevMatrix, multiply_vector_int) {
   // test namespace resolution
   using stan::math::multiply;
-  using stan::math::multiply;
   using stan::math::vector_d;
   using stan::math::vector_v;
 
