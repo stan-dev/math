@@ -162,7 +162,7 @@ void algebra_solver_check(
     const Eigen::VectorXd y,
     const std::vector<double>& dat,
     const std::vector<int>& dat_int,
-    double relative_tolerance, double function_tolerance,
+    double function_tolerance,
     long int max_num_steps) {  // NOLINT(runtime/int)
   check_nonzero_size("algebra_solver", "initial guess", x);
   for (int i = 0; i < x.size(); i++)
@@ -174,10 +174,6 @@ void algebra_solver_check(
   for (int x : dat_int)
     check_finite("algebra_solver", "integer data", x);
 
-  if (relative_tolerance < 0)
-    invalid_argument("algebra_solver", "relative_tolerance,",
-                     relative_tolerance, "",
-                     ", must be greater than or equal to 0");
   if (function_tolerance < 0)
     invalid_argument("algebra_solver", "function_tolerance,",
                      function_tolerance, "",

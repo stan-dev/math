@@ -56,12 +56,12 @@ TEST(MathMatrix, simple_Eq_tuned) {
     for (int k = 0; k < n_x; k++) {
       Eigen::Matrix<var, Eigen::Dynamic, 1> y(n_y);
       y << 5, 4, 2;
-      double xtol = 1e-6, ftol = 1e-6;
+      double  scale_step = 1e-3, xtol = 1e-6, ftol = 1e-6;
       int maxfev = 1e+4;
 
       Eigen::Matrix<var, Eigen::Dynamic, 1> theta
           = simple_eq_test(simple_eq_functor(), y, is_newton,
-                           true, xtol, ftol, maxfev);
+                           true, scale_step, xtol, ftol, maxfev);
 
       Eigen::MatrixXd J(n_x, n_y);
       J << 4, 5, 0, 0, 0, 1;
@@ -80,13 +80,13 @@ TEST(MathMatrix, simple_Eq_tuned_dbl) {
   int n_y = 3;
   Eigen::VectorXd y(n_y);
   y << 5, 4, 2;
-  double xtol = 1e-6, ftol = 1e-6;
+  double scale_step = 1e-3, xtol = 1e-6, ftol = 1e-6;
   int maxfev = 1e+4;
 
   for (int is_newton = 0; is_newton <= 1; is_newton++) {
     Eigen::VectorXd theta
         = simple_eq_test(simple_eq_functor(), y, is_newton,
-                         true, xtol, ftol, maxfev);
+                         true, scale_step, xtol, ftol, maxfev);
   }
 }
 
@@ -185,8 +185,10 @@ TEST(MathMatrix, error_conditions) {
   int n_y = 2;
   Eigen::Matrix<var, Eigen::Dynamic, 1> y(n_y);
   y << 4, 6;
-  for (int is_newton = 0; is_newton <= 1; is_newton ++)
+  for (int is_newton = 0; is_newton <= 1; is_newton ++) {
+    std::cout << "is_newton = " << is_newton << std::endl;
     error_conditions_test(non_linear_eq_functor(), y, is_newton);
+  }
 }
 
 TEST(MathMatrix, error_conditions_dbl) {

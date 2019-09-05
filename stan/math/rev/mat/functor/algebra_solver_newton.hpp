@@ -29,19 +29,23 @@ Eigen::VectorXd algebra_solver_newton(
   const F&f, const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
   const Eigen::VectorXd& y, const std::vector<double>& dat,
   const std::vector<int>& dat_int, std::ostream* msgs = nullptr,
-  double relative_tolerance = 1e-10, double function_tolerance = 1e-6,
+  double scaling_step_size = 1e-3, double function_tolerance = 1e-6,
   long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
 
-  algebra_solver_check(x, y, dat, dat_int,
-                       relative_tolerance, function_tolerance,
+  algebra_solver_check(x, y, dat, dat_int, function_tolerance,
                        max_num_steps);
+  
+  if (scaling_step_size < 0)
+    invalid_argument("algebra_solver", "scaling_step_size,",
+                     scaling_step_size, "",
+                     ", must be greater than or equal to 0");
 
   check_matching_sizes("algebra_solver", "the algebraic system's output",
                        value_of(f(x, y, dat, dat_int, msgs)),
                        "the vector of unknowns, x,", x);
 
   return kinsol_solve(f, value_of(x), y, dat, dat_int, 0,
-                      function_tolerance, max_num_steps, 1e-3);
+                      scaling_step_size, function_tolerance, max_num_steps);
   }
 
 /**

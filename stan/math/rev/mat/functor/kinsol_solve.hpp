@@ -46,9 +46,9 @@ namespace math {
                const std::vector<double>& dat,
                const std::vector<int>& dat_int,
                std::ostream* msgs = nullptr,
+               double scaling_step_tol = 1e-3,
                double function_tolerance = 1e-6,
                long int max_num_steps = 1e+3,
-               double scaling_step_tol = 1e-3,
                bool custom_jacobian = 1,  // TEST - should be 0.
                const F2& J_f = kinsol_J_f(),
                int steps_eval_jacobian = 10,

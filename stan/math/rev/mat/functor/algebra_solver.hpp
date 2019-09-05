@@ -126,7 +126,12 @@ Eigen::VectorXd algebra_solver(
     double relative_tolerance = 1e-10, double function_tolerance = 1e-6,
     long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
   algebra_solver_check(x, y, dat, dat_int, 
-                       relative_tolerance, function_tolerance, max_num_steps);
+                       function_tolerance, max_num_steps);
+
+  if (relative_tolerance < 0)
+    invalid_argument("algebra_solver", "relative_tolerance,",
+                     relative_tolerance, "",
+                     ", must be greater than or equal to 0");
 
   // Create functor for algebraic system
   typedef system_functor<F, double, double, true> Fs;
