@@ -64,7 +64,7 @@ namespace math {
                std::ostream* msgs = nullptr,
                double scaling_step_tol = 1e-3,
                double function_tolerance = 1e-6,
-               int64 max_num_steps = 1e+3,
+               long int max_num_steps = 1e+3,  // NOLINT(runtime/int)
                bool custom_jacobian = 1,
                const F2& J_f = kinsol_J_f(),
                int steps_eval_jacobian = 10,

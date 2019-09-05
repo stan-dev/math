@@ -185,10 +185,8 @@ TEST(MathMatrix, error_conditions) {
   int n_y = 2;
   Eigen::Matrix<var, Eigen::Dynamic, 1> y(n_y);
   y << 4, 6;
-  for (int is_newton = 0; is_newton <= 1; is_newton ++) {
-    std::cout << "is_newton = " << is_newton << std::endl;
+  for (int is_newton = 0; is_newton <= 1; is_newton ++)
     error_conditions_test(non_linear_eq_functor(), y, is_newton);
-  }
 }
 
 TEST(MathMatrix, error_conditions_dbl) {
