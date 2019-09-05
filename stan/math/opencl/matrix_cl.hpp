@@ -335,7 +335,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
    * @param A the scalar
    * @param partial_view which part of the matrix is used
    */
-  explicit matrix_cl(const T A,
+  explicit matrix_cl(const T& A,
                      matrix_cl_view partial_view = matrix_cl_view::Diagonal)
       : rows_(1), cols_(1), view_(partial_view) {
     cl::Context& ctx = opencl_context.context();
