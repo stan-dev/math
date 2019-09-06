@@ -11,13 +11,13 @@ namespace stan {
 
 /**
  * Defines a static member value which is defined to be true (1)
- * if the type is either var or an aritmetic type
- * and false (0) otherwise.
+ * if the unqualified cv of type T or if a container it's underlying type
+   is either var or an aritmetic type and false (0) otherwise.
  */
 template <typename T>
 struct is_var_or_arithmetic_type
-    : bool_constant<(is_var<scalar_type_t<T>>::value
-                     || std::is_arithmetic<scalar_type_t<T>>::value)> {};
+    : bool_constant<(is_var<scalar_type_t<std::decay_t<T>>>::value
+                     || std::is_arithmetic<scalar_type_t<std::decay_t<T>>>::value)> {};
 
 /**
  * Extends std::true_type if all the provided types are either var or
