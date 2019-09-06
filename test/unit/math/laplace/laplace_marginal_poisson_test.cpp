@@ -13,7 +13,6 @@
 
 TEST(laplace, likelihood_differentiation) {
   using stan::math::diff_poisson_log;
-  using stan::math::var;
   using stan::math::to_vector;
 
   Eigen::VectorXd theta(2);
@@ -37,7 +36,37 @@ TEST(laplace, likelihood_differentiation) {
   EXPECT_FLOAT_EQ(-2.718282, third_tensor(1));
 }
 
-TEST(laplace, lg_poisson_dim_2) {
+TEST(laplace, likelihood_differentiation2) {
+  // Test exposure argument
+  using stan::math::diff_poisson_log;
+  using stan::math::to_vector;
+  
+  Eigen::VectorXd theta(2);
+  theta << 1, 1;
+  std::vector<int> n_samples = {1, 1};
+  std::vector<int> sums = {1, 0};
+  std::vector<double> exposure = {0.5, 2};
+  
+  diff_poisson_log diff_functor(to_vector(n_samples),
+                                to_vector(sums),
+                                to_vector(exposure));
+
+  double log_density = diff_functor.log_likelihood(theta);
+  Eigen::VectorXd gradient, hessian;
+  diff_functor.diff(theta, gradient, hessian);
+  Eigen::VectorXd third_tensor = diff_functor.third_diff(theta);
+
+  EXPECT_FLOAT_EQ(-8.537777, log_density);
+  EXPECT_FLOAT_EQ(-0.3243606, gradient(0));
+  EXPECT_FLOAT_EQ(-14.77811, gradient(1));
+  EXPECT_FLOAT_EQ(-0.4121803, hessian(0));
+  EXPECT_FLOAT_EQ(-29.55622, hessian(1));
+  EXPECT_FLOAT_EQ(-0.2060902, third_tensor(0));
+  EXPECT_FLOAT_EQ(-59.11245, third_tensor(1));
+  
+}
+
+TEST(laplace, poisson_lgm_dim2) {
   using stan::math::laplace_marginal_poisson;
   using stan::math::var;
   using stan::math::to_vector;

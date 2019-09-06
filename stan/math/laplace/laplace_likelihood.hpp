@@ -43,7 +43,7 @@ struct diff_poisson_log {
                    const Eigen::VectorXd& sums,
                    const Eigen::VectorXd& exposure)
     : n_samples_(n_samples), sums_(sums), exposure_(exposure) { }
-  
+
   /**
    * Return the log density.
    * @tparam T type of the log poisson parameter.

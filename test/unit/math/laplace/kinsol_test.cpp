@@ -287,7 +287,7 @@ TEST(matrix, kinsol5) {
   //  4. lgp solver using kinsol
   //  5. lgp solver using custom
   //  6. gp solver using algorithm 3.1
-  std::vector<bool> evaluate_solver = {0, 0, 0, 1, 1, 1};
+  std::vector<bool> evaluate_solver = {0, 1, 1, 1, 1, 1};
 
   // using stan::math::algebra_solver_newton;
   using stan::math::kinsol_solve;
@@ -409,7 +409,7 @@ TEST(matrix, kinsol5) {
   // gp solver using R & W's algorithm 3.1.
   using stan::math::gp_newton_solver;
   using stan::math::diff_poisson_log;
-  using stan::math::spatial_covariance;
+  // using stan::math::spatial_covariance;
 
   std::vector<Eigen::VectorXd> x_dummy;
   Eigen::VectorXd theta_gp;
