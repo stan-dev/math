@@ -16,8 +16,9 @@ namespace stan {
  */
 template <typename T>
 struct is_var_or_arithmetic_type
-    : bool_constant<(is_var<scalar_type_t<std::decay_t<T>>>::value
-                     || std::is_arithmetic<scalar_type_t<std::decay_t<T>>>::value)> {};
+    : bool_constant<(
+          is_var<scalar_type_t<std::decay_t<T>>>::value
+          || std::is_arithmetic<scalar_type_t<std::decay_t<T>>>::value)> {};
 
 /**
  * Extends std::true_type if all the provided types are either var or
