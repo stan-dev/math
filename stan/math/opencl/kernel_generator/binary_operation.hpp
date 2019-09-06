@@ -167,7 +167,7 @@ class addition__ : public binary_operation<addition__<T_a, T_b>, T_a, T_b> {
    */
   addition__(T_a&& a, T_b&& b)
       : binary_operation<addition__<T_a, T_b>, T_a, T_b>(
-          std::forward<T_a>(a), std::forward<T_b>(b), "+") {}
+            std::forward<T_a>(a), std::forward<T_b>(b), "+") {}
 };
 
 /**
@@ -202,7 +202,7 @@ class subtraction__
    */
   subtraction__(T_a&& a, T_b&& b)
       : binary_operation<subtraction__<T_a, T_b>, T_a, T_b>(
-          std::forward<T_a>(a), std::forward<T_b>(b), "-") {}
+            std::forward<T_a>(a), std::forward<T_b>(b), "-") {}
 };
 
 /**
@@ -238,7 +238,7 @@ class elewise_multiplication__
    */
   elewise_multiplication__(T_a&& a, T_b&& b)
       : binary_operation<elewise_multiplication__<T_a, T_b>, T_a, T_b>(
-          std::forward<T_a>(a), std::forward<T_b>(b), "*") {}
+            std::forward<T_a>(a), std::forward<T_b>(b), "*") {}
 
   /**
    * View of a matrix that would be the result of evaluating this expression.
@@ -329,7 +329,7 @@ class elewise_division__
    */
   elewise_division__(T_a&& a, T_b&& b)
       : binary_operation<elewise_division__<T_a, T_b>, T_a, T_b>(
-          std::forward<T_a>(a), std::forward<T_b>(b), "/") {}
+            std::forward<T_a>(a), std::forward<T_b>(b), "/") {}
 
   /**
    * View of a matrix that would be the result of evaluating this expression.
