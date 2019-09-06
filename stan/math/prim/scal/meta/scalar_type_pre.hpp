@@ -1,3 +1,4 @@
+// This is not used anywhere. Should it be deleted?
 #ifndef STAN_MATH_PRIM_SCAL_META_SCALAR_TYPE_PRE_HPP
 #define STAN_MATH_PRIM_SCAL_META_SCALAR_TYPE_PRE_HPP
 
@@ -8,7 +9,7 @@ namespace stan {
 namespace internal {
 template <bool is_vec, typename T, typename T_container>
 struct scalar_type_helper_pre {
-  typedef T_container type;
+  using type = T_container;
 };
 
 template <typename T, typename T_container>

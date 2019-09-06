@@ -112,13 +112,13 @@ return_type_t<T_y, T_shape, T_scale> inv_gamma_lpdf(const T_y& y,
     if (include_summand<propto, T_y, T_scale>::value)
       logp -= beta_dbl * inv_y[n];
 
-    if (!is_constant_all<typename is_vector<T_y>::type>::value)
+    if (!is_constant_all<scalar_type_t<T_y>>::value)
       ops_partials.edge1_.partials_[n]
           += -(alpha_dbl + 1) * inv_y[n] + beta_dbl * inv_y[n] * inv_y[n];
-    if (!is_constant_all<typename is_vector<T_shape>::type>::value)
+    if (!is_constant_all<scalar_type_t<T_shape>>::value)
       ops_partials.edge2_.partials_[n]
           += -digamma_alpha[n] + log_beta[n] - log_y[n];
-    if (!is_constant_all<typename is_vector<T_scale>::type>::value)
+    if (!is_constant_all<scalar_type_t<T_scale>>::value)
       ops_partials.edge3_.partials_[n] += alpha_dbl / beta_dbl - inv_y[n];
   }
   return ops_partials.build(logp);

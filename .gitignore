@@ -77,3 +77,9 @@ lib/boost_*/user-config.jam
 
 # clang-tidy output
 .clang-fixes.log
+
+# Clang compilation database
+compile_commands.json
+
+# Visual Studio Project Setup
+.vscode/*
