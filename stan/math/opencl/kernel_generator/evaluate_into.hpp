@@ -5,6 +5,8 @@
 #include <stan/math/opencl/kernel_generator/as_operation.hpp>
 #include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
 #include <utility>
+#include <string>
+#include <set>
 
 namespace stan {
 namespace math {
@@ -31,7 +33,7 @@ void operation<Derived, ReturnScalar>::evaluate_into(T_lhs&& lhs) const {
   kernel_parts parts = derived().generate(ng, generated, "i", "j");
   kernel_parts out_parts = lhs_expression.generate_lhs(ng, generated, "i", "j");
   std::string src = "kernel void calculate(" + parts.args +
-                   out_parts.args.substr(0,out_parts.args.size()-2) + "){\n"
+                   out_parts.args.substr(0, out_parts.args.size() - 2) + "){\n"
                    "int i = get_global_id(0);"
                    "int j = get_global_id(1);\n" + parts.body + out_parts.body
                    + " = " + var_name + ";}";

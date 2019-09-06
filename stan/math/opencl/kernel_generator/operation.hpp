@@ -10,7 +10,6 @@
 #include <CL/cl.hpp>
 #include <string>
 #include <map>
-#include <set>
 
 namespace stan {
 namespace math {
