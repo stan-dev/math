@@ -10,12 +10,11 @@ using Eigen::MatrixXd;
 using Eigen::MatrixXi;
 using stan::math::matrix_cl;
 
-
 #define EXPECT_MATRIX_NEAR(A, B, DELTA) \
   for (int i = 0; i < A.size(); i++)    \
     EXPECT_NEAR(A(i), B(i), DELTA);
 
-TEST(MathMatrixCL, reuse_expression){
+TEST(MathMatrixCL, reuse_expression) {
   MatrixXd m1(3, 3);
   m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
   MatrixXd m2(3, 3);
@@ -29,12 +28,12 @@ TEST(MathMatrixCL, reuse_expression){
   MatrixXd res = stan::math::from_matrix_cl(res_cl);
 
   auto tmp_eig = m1.array() + 0.1234 + m2.array();
-  MatrixXd res_eig = (tmp_eig - 6)*tmp_eig;
+  MatrixXd res_eig = (tmp_eig - 6) * tmp_eig;
 
-  EXPECT_MATRIX_NEAR(res_eig,res,1e-9);
+  EXPECT_MATRIX_NEAR(res_eig, res, 1e-9);
 }
 
-TEST(MathMatrixCL, reuse_kernel){
+TEST(MathMatrixCL, reuse_kernel) {
   MatrixXd m1(3, 3);
   m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
   MatrixXd m2(3, 3);

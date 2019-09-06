@@ -10,7 +10,7 @@ using Eigen::MatrixXd;
 using Eigen::MatrixXi;
 using stan::math::matrix_cl;
 
-TEST(MathMatrixCL, scalar_test){
+TEST(MathMatrixCL, scalar_test) {
   MatrixXd m1(3, 3);
   m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
 

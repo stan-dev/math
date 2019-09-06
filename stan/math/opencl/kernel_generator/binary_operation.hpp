@@ -26,16 +26,27 @@ namespace math {
  * @tparam T_a type of first argument
  * @tparam T_b type of second argument
  */
-template<typename Derived, typename T_a, typename T_b>
-class binary_operation : public operation<Derived, typename std::common_type<typename std::remove_reference_t<T_a>::ReturnScalar, typename std::remove_reference_t<T_b>::ReturnScalar>::type> {
-public:
-  static_assert(std::is_base_of<operation_base,std::remove_reference_t<T_a>>::value, "binary_operation: a must be an operation!");
-  static_assert(std::is_base_of<operation_base,std::remove_reference_t<T_b>>::value, "binary_operation: b must be an operation!");
+template <typename Derived, typename T_a, typename T_b>
+class binary_operation
+    : public operation<
+          Derived,
+          typename std::common_type<
+              typename std::remove_reference_t<T_a>::ReturnScalar,
+              typename std::remove_reference_t<T_b>::ReturnScalar>::type> {
+ public:
+  static_assert(
+      std::is_base_of<operation_base, std::remove_reference_t<T_a>>::value,
+      "binary_operation: a must be an operation!");
+  static_assert(
+      std::is_base_of<operation_base, std::remove_reference_t<T_b>>::value,
+      "binary_operation: b must be an operation!");
 
-  using ReturnScalar = typename std::common_type<typename std::remove_reference_t<T_a>::ReturnScalar, typename std::remove_reference_t<T_b>::ReturnScalar>::type;
+  using ReturnScalar = typename std::common_type<
+      typename std::remove_reference_t<T_a>::ReturnScalar,
+      typename std::remove_reference_t<T_b>::ReturnScalar>::type;
   using base = operation<Derived, ReturnScalar>;
-  using base::var_name;
   using base::instance;
+  using base::var_name;
 
   /**
    * Constructor
@@ -43,14 +54,17 @@ public:
    * @param b sedond argument
    * @param op operation
    */
-  binary_operation(T_a&& a, T_b&& b, const std::string& op) : a_(std::forward<T_a>(a)), b_(std::forward<T_b>(b)), op_(op) {
-      const std::string function = "binary_operator" + op;
-      if(a.rows()!=base::dynamic && b.rows()!=base::dynamic) {
-        check_size_match(function.c_str(), "Rows of ", "a", a.rows(), "rows of ", "b", b.rows());
-      }
-      if(a.cols()!=base::dynamic && b.cols()!=base::dynamic) {
-        check_size_match(function.c_str(), "Columns of ", "a", a.cols(), "columns of ", "b", b.cols());
-      }
+  binary_operation(T_a&& a, T_b&& b, const std::string& op)
+      : a_(std::forward<T_a>(a)), b_(std::forward<T_b>(b)), op_(op) {
+    const std::string function = "binary_operator" + op;
+    if (a.rows() != base::dynamic && b.rows() != base::dynamic) {
+      check_size_match(function.c_str(), "Rows of ", "a", a.rows(), "rows of ",
+                       "b", b.rows());
+    }
+    if (a.cols() != base::dynamic && b.cols() != base::dynamic) {
+      check_size_match(function.c_str(), "Columns of ", "a", a.cols(),
+                       "columns of ", "b", b.cols());
+    }
   }
 
   /**
@@ -61,30 +75,36 @@ public:
    * @param j column index variable name
    * @return part of kernel with code for this and nested expressions
    */
-  inline kernel_parts generate(name_generator& ng, std::set<int>& generated, const std::string& i, const std::string& j) const{
-    if(generated.count(instance)==0) {
+  inline kernel_parts generate(name_generator& ng, std::set<int>& generated,
+                               const std::string& i,
+                               const std::string& j) const {
+    if (generated.count(instance) == 0) {
       kernel_parts a_parts = a_.generate(ng, generated, i, j);
       kernel_parts b_parts = b_.generate(ng, generated, i, j);
       generated.insert(instance);
       var_name = ng.generate();
       kernel_parts res;
-      res.body = a_parts.body + b_parts.body + type_str<ReturnScalar>::name + " " + var_name + " = " + a_.var_name + op_ + b_.var_name + ";\n";
+      res.body = a_parts.body + b_parts.body + type_str<ReturnScalar>::name
+                 + " " + var_name + " = " + a_.var_name + op_ + b_.var_name
+                 + ";\n";
       res.args = a_parts.args + b_parts.args;
       return res;
-    }
-    else{
+    } else {
       return {};
     }
   }
 
   /**
    * Sets kernel arguments for this and nested expressions.
-   * @param[in,out] generated set of expressions that already set their kernel arguments
+   * @param[in,out] generated set of expressions that already set their kernel
+   * arguments
    * @param kernel kernel to set arguments on
-   * @param[in,out] arg_num consecutive number of the first argument to set. This is incremented for each argument set by this function.
+   * @param[in,out] arg_num consecutive number of the first argument to set.
+   * This is incremented for each argument set by this function.
    */
-  inline void set_args(std::set<int>& generated, cl::Kernel& kernel, int& arg_num) const{
-    if(generated.count(instance)==0) {
+  inline void set_args(std::set<int>& generated, cl::Kernel& kernel,
+                       int& arg_num) const {
+    if (generated.count(instance) == 0) {
       generated.insert(instance);
       a_.set_args(generated, kernel, arg_num);
       b_.set_args(generated, kernel, arg_num);
@@ -95,25 +115,27 @@ public:
    * Adds event for any matrices used by this or nested expressions.
    * @param e the event to add
    */
-  inline void add_event(cl::Event& e) const{
+  inline void add_event(cl::Event& e) const {
     a_.add_event(e);
     b_.add_event(e);
   }
 
   /**
-   * Number of rows of a matrix that would be the result of evaluating this expression.
+   * Number of rows of a matrix that would be the result of evaluating this
+   * expression.
    * @return number of rows
    */
-  inline int rows() const{
+  inline int rows() const {
     int a_rows = a_.rows();
     return a_rows == base::dynamic ? b_.rows() : a_rows;
   }
 
   /**
-   * Number of columns of a matrix that would be the result of evaluating this expression.
+   * Number of columns of a matrix that would be the result of evaluating this
+   * expression.
    * @return number of columns
    */
-  inline int cols() const{
+  inline int cols() const {
     int a_cols = a_.cols();
     return a_cols == base::dynamic ? b_.cols() : a_cols;
   }
@@ -122,11 +144,9 @@ public:
    * View of a matrix that would be the result of evaluating this expression.
    * @return view
    */
-  inline matrix_cl_view view() const{
-    return either(a_.view(), b_.view());
-  }
+  inline matrix_cl_view view() const { return either(a_.view(), b_.view()); }
 
-protected:
+ protected:
   T_a a_;
   T_b b_;
   std::string op_;
@@ -137,15 +157,17 @@ protected:
  * @tparam T_a type of first expression
  * @tparam T_b type of second expression
  */
-template<typename T_a, typename T_b>
+template <typename T_a, typename T_b>
 class addition__ : public binary_operation<addition__<T_a, T_b>, T_a, T_b> {
-public:
+ public:
   /**
    * Constructor.
    * @param a first expression
    * @param b second expression
    */
-  addition__(T_a&& a, T_b&& b) : binary_operation<addition__<T_a, T_b>, T_a, T_b>(std::forward<T_a>(a),std::forward<T_b>(b),"+") {}
+  addition__(T_a&& a, T_b&& b)
+      : binary_operation<addition__<T_a, T_b>, T_a, T_b>(
+          std::forward<T_a>(a), std::forward<T_b>(b), "+") {}
 };
 
 /**
@@ -156,9 +178,12 @@ public:
  * @param b second argument
  * @return Addition of given expressions
  */
-template<typename T_a, typename T_b, typename = enable_if_all_valid_expressions<T_a, T_b>>
-inline addition__<as_operation_t<T_a>,as_operation_t<T_b>> operator+(T_a&& a, T_b&& b) {
-  return {as_operation(std::forward<T_a>(a)), as_operation(std::forward<T_b>(b))};
+template <typename T_a, typename T_b,
+          typename = enable_if_all_valid_expressions<T_a, T_b>>
+inline addition__<as_operation_t<T_a>, as_operation_t<T_b>> operator+(T_a&& a,
+                                                                      T_b&& b) {
+  return {as_operation(std::forward<T_a>(a)),
+          as_operation(std::forward<T_b>(b))};
 }
 
 /**
@@ -166,15 +191,18 @@ inline addition__<as_operation_t<T_a>,as_operation_t<T_b>> operator+(T_a&& a, T_
  * @tparam T_a type of first expression
  * @tparam T_b type of second expression
  */
-template<typename T_a, typename T_b>
-class subtraction__ : public binary_operation<subtraction__<T_a, T_b>, T_a, T_b> {
-public:
+template <typename T_a, typename T_b>
+class subtraction__
+    : public binary_operation<subtraction__<T_a, T_b>, T_a, T_b> {
+ public:
   /**
- * Constructor.
- * @param a first expression
- * @param b second expression
- */
-  subtraction__(T_a&& a, T_b&& b) : binary_operation<subtraction__<T_a, T_b>, T_a, T_b>(std::forward<T_a>(a),std::forward<T_b>(b),"-") {}
+   * Constructor.
+   * @param a first expression
+   * @param b second expression
+   */
+  subtraction__(T_a&& a, T_b&& b)
+      : binary_operation<subtraction__<T_a, T_b>, T_a, T_b>(
+          std::forward<T_a>(a), std::forward<T_b>(b), "-") {}
 };
 
 /**
@@ -185,9 +213,12 @@ public:
  * @param b second expression
  * @return Subtraction of given expressions
  */
-template<typename T_a, typename T_b, typename = enable_if_all_valid_expressions<T_a, T_b>>
-inline subtraction__<as_operation_t<T_a>,as_operation_t<T_b>> operator-(T_a&& a, T_b&& b){
-  return {as_operation(std::forward<T_a>(a)), as_operation(std::forward<T_b>(b))};
+template <typename T_a, typename T_b,
+          typename = enable_if_all_valid_expressions<T_a, T_b>>
+inline subtraction__<as_operation_t<T_a>, as_operation_t<T_b>> operator-(
+    T_a&& a, T_b&& b) {
+  return {as_operation(std::forward<T_a>(a)),
+          as_operation(std::forward<T_b>(b))};
 }
 
 /**
@@ -195,21 +226,25 @@ inline subtraction__<as_operation_t<T_a>,as_operation_t<T_b>> operator-(T_a&& a,
  * @tparam T_a type of first expression
  * @tparam T_b type of second expression
  */
-template<typename T_a, typename T_b, typename = enable_if_all_valid_expressions<T_a, T_b>>
-class elewise_multiplication__ : public binary_operation<elewise_multiplication__<T_a, T_b>, T_a, T_b> {
-public:
+template <typename T_a, typename T_b,
+          typename = enable_if_all_valid_expressions<T_a, T_b>>
+class elewise_multiplication__
+    : public binary_operation<elewise_multiplication__<T_a, T_b>, T_a, T_b> {
+ public:
   /**
-  * Constructor.
-  * @param a first expression
-  * @param b second expression
-  */
-  elewise_multiplication__(T_a&& a, T_b&& b) : binary_operation<elewise_multiplication__<T_a, T_b>, T_a, T_b>(std::forward<T_a>(a),std::forward<T_b>(b),"*") {}
+   * Constructor.
+   * @param a first expression
+   * @param b second expression
+   */
+  elewise_multiplication__(T_a&& a, T_b&& b)
+      : binary_operation<elewise_multiplication__<T_a, T_b>, T_a, T_b>(
+          std::forward<T_a>(a), std::forward<T_b>(b), "*") {}
 
   /**
- * View of a matrix that would be the result of evaluating this expression.
- * @return view
- */
-  inline matrix_cl_view view()  const{
+   * View of a matrix that would be the result of evaluating this expression.
+   * @return view
+   */
+  inline matrix_cl_view view() const {
     using base = binary_operation<elewise_multiplication__<T_a, T_b>, T_a, T_b>;
     return both(base::a_.view(), base::b_.view());
   }
@@ -223,9 +258,11 @@ public:
  * @param b second expression
  * @return Element-wise multiplication of given expressions
  */
-template<typename T_a, typename T_b>
-inline elewise_multiplication__<as_operation_t<T_a>,as_operation_t<T_b>> elewise_multiplication(T_a&& a, T_b&& b) {
-  return {as_operation(std::forward<T_a>(a)), as_operation(std::forward<T_b>(b))};
+template <typename T_a, typename T_b>
+inline elewise_multiplication__<as_operation_t<T_a>, as_operation_t<T_b>>
+elewise_multiplication(T_a&& a, T_b&& b) {
+  return {as_operation(std::forward<T_a>(a)),
+          as_operation(std::forward<T_b>(b))};
 }
 
 /**
@@ -236,9 +273,12 @@ inline elewise_multiplication__<as_operation_t<T_a>,as_operation_t<T_b>> elewise
  * @param b expression
  * @return Multiplication of given arguments
  */
-template<typename T_a, typename T_b, typename = enable_if_arithmetic<T_a>, typename = enable_if_all_valid_expressions<T_b>>
-inline elewise_multiplication__<scalar__<T_a>,as_operation_t<T_b>> operator*(T_a&& a, T_b&& b) {
-  return {as_operation(std::forward<T_a>(a)), as_operation(std::forward<T_b>(b))};
+template <typename T_a, typename T_b, typename = enable_if_arithmetic<T_a>,
+          typename = enable_if_all_valid_expressions<T_b>>
+inline elewise_multiplication__<scalar__<T_a>, as_operation_t<T_b>> operator*(
+    T_a&& a, T_b&& b) {
+  return {as_operation(std::forward<T_a>(a)),
+          as_operation(std::forward<T_b>(b))};
 }
 
 /**
@@ -249,22 +289,27 @@ inline elewise_multiplication__<scalar__<T_a>,as_operation_t<T_b>> operator*(T_a
  * @param b scalar
  * @return Multiplication of given arguments
  */
-template<typename T_a, typename T_b, typename = enable_if_all_valid_expressions<T_a>, typename = enable_if_arithmetic<T_b>>
-inline elewise_multiplication__<as_operation_t<T_a>,scalar__<T_b>> operator*(T_a&& a, const T_b b) {
+template <typename T_a, typename T_b,
+          typename = enable_if_all_valid_expressions<T_a>,
+          typename = enable_if_arithmetic<T_b>>
+inline elewise_multiplication__<as_operation_t<T_a>, scalar__<T_b>> operator*(
+    T_a&& a, const T_b b) {
   return {as_operation(std::forward<T_a>(a)), as_operation(b)};
 }
 
 /**
- * Matrix multiplication of two kernel generator expressions. Evaluates both expressions before calculating the matrix product.
+ * Matrix multiplication of two kernel generator expressions. Evaluates both
+ * expressions before calculating the matrix product.
  * @tparam T_a type of first expression
  * @tparam T_b type of second expression
  * @param a first expression
  * @param b second expression
  * @return Matrix product of given arguments
  */
-template<typename T_a, typename T_b, typename = enable_if_all_valid_expressions_and_none_scalar<T_a, T_b>>
-inline matrix_cl<double> operator*(const T_a& a, const T_b& b){
-  //no need for perfect forwarding as operations are evaluated
+template <typename T_a, typename T_b,
+          typename = enable_if_all_valid_expressions_and_none_scalar<T_a, T_b>>
+inline matrix_cl<double> operator*(const T_a& a, const T_b& b) {
+  // no need for perfect forwarding as operations are evaluated
   return as_operation(a).eval() * as_operation(b).eval();
 }
 
@@ -273,21 +318,24 @@ inline matrix_cl<double> operator*(const T_a& a, const T_b& b){
  * @tparam T_a type of first expression
  * @tparam T_b type of second expression
  */
-template<typename T_a, typename T_b>
-class elewise_division__ : public binary_operation<elewise_division__<T_a, T_b>, T_a, T_b> {
-public:
+template <typename T_a, typename T_b>
+class elewise_division__
+    : public binary_operation<elewise_division__<T_a, T_b>, T_a, T_b> {
+ public:
   /**
-  * Constructor.
-  * @param a first expression
-  * @param b second expression
-  */
-  elewise_division__(T_a&& a, T_b&& b) : binary_operation<elewise_division__<T_a, T_b>, T_a, T_b>(std::forward<T_a>(a),std::forward<T_b>(b),"/") {}
+   * Constructor.
+   * @param a first expression
+   * @param b second expression
+   */
+  elewise_division__(T_a&& a, T_b&& b)
+      : binary_operation<elewise_division__<T_a, T_b>, T_a, T_b>(
+          std::forward<T_a>(a), std::forward<T_b>(b), "/") {}
 
   /**
- * View of a matrix that would be the result of evaluating this expression.
- * @return view
- */
-  inline matrix_cl_view view()  const{
+   * View of a matrix that would be the result of evaluating this expression.
+   * @return view
+   */
+  inline matrix_cl_view view() const {
     using base = binary_operation<elewise_division__<T_a, T_b>, T_a, T_b>;
     return either(base::a_.view(), invert(base::b_.view()));
   }
@@ -301,12 +349,15 @@ public:
  * @param b second expression
  * @return Element-wise division of given expressions
  */
-template<typename T_a, typename T_b, typename = enable_if_all_valid_expressions<T_a, T_b>>
-inline elewise_division__<as_operation_t<T_a>,as_operation_t<T_b>> elewise_division(T_a&& a, T_b&& b) {
-  return {as_operation(std::forward<T_a>(a)), as_operation(std::forward<T_b>(b))};
+template <typename T_a, typename T_b,
+          typename = enable_if_all_valid_expressions<T_a, T_b>>
+inline elewise_division__<as_operation_t<T_a>, as_operation_t<T_b>>
+elewise_division(T_a&& a, T_b&& b) {
+  return {as_operation(std::forward<T_a>(a)),
+          as_operation(std::forward<T_b>(b))};
 }
 
-}
-}
+}  // namespace math
+}  // namespace stan
 #endif
 #endif

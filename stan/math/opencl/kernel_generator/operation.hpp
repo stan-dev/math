@@ -26,10 +26,10 @@ struct kernel_parts {
  * Base of all kernel generator operation. Needed for common instance counting.
  */
 class operation_base {
-public:
+ public:
   operation_base() : instance(instance_counter++) {}
 
-protected:
+ protected:
   static int instance_counter;
   int instance;
 };
@@ -41,9 +41,9 @@ int operation_base::instance_counter = 0;
  * @tparam Derived derived type
  * @tparam ReturnScalar scalar type of the  result
  */
-template<typename Derived, typename ReturnScalar>
+template <typename Derived, typename ReturnScalar>
 class operation : public operation_base {
-public:
+ public:
   static const int dynamic = -1;
 
   /**
@@ -51,27 +51,27 @@ public:
    * @return Result of the expression.
    */
   matrix_cl<ReturnScalar> eval() const {
-    matrix_cl<ReturnScalar> res(derived().rows(), derived().cols(), derived().view());
+    matrix_cl<ReturnScalar> res(derived().rows(), derived().cols(),
+                                derived().view());
     this->evaluate_into(res);
     return res;
   }
 
   /**
-   * Convecting to \c matrix_cl evaluates the expression. Used when assigning to a \c matrix_cl.
+   * Convecting to \c matrix_cl evaluates the expression. Used when assigning to
+   * a \c matrix_cl.
    */
-  operator matrix_cl<ReturnScalar>() const {
-    return derived().eval();
-  }
+  operator matrix_cl<ReturnScalar>() const { return derived().eval(); }
 
   /**
    * Evaluates the expression into given left-hand-side expression.
    * @tparam T_lhs type of the Left-hand-side expression
    * @param lhs Left-hand-side expression
    */
-  template<typename T_lhs>
+  template <typename T_lhs>
   inline void evaluate_into(T_lhs&& lhs) const;
 
-protected:
+ protected:
   mutable std::string var_name;
   static std::map<std::string, cl::Kernel> kernel_cache;
 
@@ -79,9 +79,7 @@ protected:
    * Casts the instance into its derived type.
    * @return \c this cast into derived type
    */
-  inline Derived& derived() {
-    return *static_cast<Derived*>(this);
-  }
+  inline Derived& derived() { return *static_cast<Derived*>(this); }
 
   /**
    * Casts the instance into its derived type.
@@ -92,11 +90,12 @@ protected:
   }
 };
 
-template<typename Derived, typename ReturnScalar>
-std::map<std::string, cl::Kernel> operation<Derived, ReturnScalar>::kernel_cache;
+template <typename Derived, typename ReturnScalar>
+std::map<std::string, cl::Kernel>
+    operation<Derived, ReturnScalar>::kernel_cache;
 
-}
-}
+}  // namespace math
+}  // namespace stan
 
 #endif
 #endif
