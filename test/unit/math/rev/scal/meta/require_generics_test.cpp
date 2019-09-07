@@ -2,6 +2,7 @@
 #include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 #include <type_traits>
+#include <string>
 
 ////////////////////////////////
 /**

@@ -322,7 +322,7 @@ using require_container_t
     = require_t<container_type_check_base<ContainerCheck, TypeCheck, Check...>>;
 
 /**
- * Std vector
+ * std vector
  */
 template <template <class...> class TypeCheck, class... Check>
 struct is_std_vector_check
@@ -353,7 +353,7 @@ using require_not_all_std_vector_t
     = require_not_all_t<is_std_vector_check<TypeCheck, Check>...>;
 
 /**
- * Std vector
+ * Vectors
  */
 template <template <class...> class TypeCheck, class... Check>
 struct is_vector_check
@@ -383,7 +383,7 @@ using require_not_all_vector_t
     = require_not_all_t<is_vector_check<TypeCheck, Check>...>;
 
 /**
- * Std vector
+ * Vector Like
  */
 template <template <class...> class TypeCheck, class... Check>
 struct is_vector_like_check
@@ -414,7 +414,7 @@ using require_not_all_vector_like_t
     = require_not_all_t<is_vector_like_check<TypeCheck, Check>...>;
 
 /**
- * Std vector
+ * Eigen
  */
 template <template <class...> class TypeCheck, class... Check>
 struct is_eigen_check

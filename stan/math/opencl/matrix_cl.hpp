@@ -38,6 +38,7 @@ class matrix_cl<T, require_arithmetic<T>> {
   matrix_cl_view view_;  // Holds info on if matrix is a special type
   mutable std::vector<cl::Event> write_events_;  // Tracks write jobs
   mutable std::vector<cl::Event> read_events_;   // Tracks reads
+
  public:
   using Scalar = T;
   typedef T type;
@@ -210,7 +211,7 @@ class matrix_cl<T, require_arithmetic<T>> {
     }
   }
   template <typename Mat, require_matrix_cl_t<std::is_arithmetic, Mat>...>
-  matrix_cl(Mat&& A)
+  explicit matrix_cl(Mat&& A)
       : buffer_cl_(std::forward<decltype(A.buffer_cl_)>(A.buffer_cl_)),
         rows_(A.rows_),
         cols_(A.cols_),

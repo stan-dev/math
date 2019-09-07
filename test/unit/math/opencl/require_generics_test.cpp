@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <gtest/gtest.h>
 #include <type_traits>
+#include <string>
 
 /**
  * Require matrix_cl
