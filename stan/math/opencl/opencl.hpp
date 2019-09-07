@@ -20,6 +20,7 @@
 #include <stan/math/opencl/scalar_type.hpp>
 #include <stan/math/opencl/triangular_transpose.hpp>
 #include <stan/math/opencl/transpose.hpp>
+#include <stan/math/opencl/value_type.hpp>
 #include <stan/math/opencl/zeros.hpp>
 
 #include <stan/math/opencl/err/check_diagonal_zeros.hpp>

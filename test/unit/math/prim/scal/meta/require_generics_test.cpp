@@ -382,6 +382,7 @@ TEST(requires, not_any_arithmetic_test) {
   EXPECT_FALSE((require_not_any_arithmetic_tester<int, int, int>::value));
 }
 
+
 ////////////////////////////////
 /**
  * Require var_or_arithmetic
@@ -396,7 +397,7 @@ struct require_var_or_arithmetic_tester<T1, stan::require_var_or_arithmetic<T1>>
 TEST(requires, var_or_arithmetic_test) {
   EXPECT_FALSE((require_var_or_arithmetic_tester<std::string>::value));
   EXPECT_TRUE((require_var_or_arithmetic_tester<double>::value));
-  EXPECT_FALSE((require_var_or_arithmetic_tester<int>::value));
+  EXPECT_TRUE((require_var_or_arithmetic_tester<int>::value));
 }
 
 /**
@@ -412,7 +413,7 @@ struct require_not_var_or_arithmetic_tester<
 TEST(requires, not_var_or_arithmetic_test) {
   EXPECT_TRUE((require_not_var_or_arithmetic_tester<std::string>::value));
   EXPECT_FALSE((require_not_var_or_arithmetic_tester<double>::value));
-  EXPECT_TRUE((require_not_var_or_arithmetic_tester<int>::value));
+  EXPECT_FALSE((require_not_var_or_arithmetic_tester<int>::value));
 }
 
 /**
@@ -431,7 +432,7 @@ TEST(requires, all_var_or_arithmetic_test) {
                                                      double>::value));
   EXPECT_TRUE(
       (require_all_var_or_arithmetic_tester<double, double, double>::value));
-  EXPECT_FALSE((require_all_var_or_arithmetic_tester<int, int, int>::value));
+  EXPECT_TRUE((require_all_var_or_arithmetic_tester<int, int, int>::value));
 }
 
 /**
@@ -450,7 +451,7 @@ TEST(requires, not_all_var_or_arithmetic_test) {
                                                         double>::value));
   EXPECT_FALSE((
       require_not_all_var_or_arithmetic_tester<double, double, double>::value));
-  EXPECT_TRUE((require_not_all_var_or_arithmetic_tester<int, int, int>::value));
+  EXPECT_FALSE((require_not_all_var_or_arithmetic_tester<int, int, int>::value));
 }
 
 /**
@@ -469,7 +470,7 @@ TEST(requires, any_var_or_arithmetic_test) {
                                                      std::string>::value));
   EXPECT_TRUE((require_any_var_or_arithmetic_tester<double, std::string,
                                                     double>::value));
-  EXPECT_FALSE((require_any_var_or_arithmetic_tester<int, int, int>::value));
+  EXPECT_TRUE((require_any_var_or_arithmetic_tester<int, int, int>::value));
 }
 
 /**
@@ -489,118 +490,5 @@ TEST(requires, not_any_var_or_arithmetic_test) {
                                                 std::string>::value));
   EXPECT_FALSE((
       require_not_any_var_or_arithmetic_tester<double, double, double>::value));
-  EXPECT_TRUE((require_not_any_var_or_arithmetic_tester<int, int, int>::value));
-}
-
-/**
- * require var or arithmetic
- */
-////////////////////////////////
-/**
- * Require var_or_arithmetic
- */
-template <typename T1, typename = void>
-struct require_var_or_arithmetic_tester : std::false_type {};
-
-template <typename T1>
-struct require_var_or_arithmetic_tester<T1, stan::require_var_or_arithmetic<T1>>
-    : std::true_type {};
-
-TEST(requires, var_or_arithmetic_test) {
-  EXPECT_FALSE((require_var_or_arithmetic_tester<std::string>::value));
-  EXPECT_TRUE((require_var_or_arithmetic_tester<double>::value));
-  EXPECT_FALSE((require_var_or_arithmetic_tester<int>::value));
-}
-
-/**
- * Require not var_or_arithmetic
- */
-template <typename T1, typename = void>
-struct require_not_var_or_arithmetic_tester : std::false_type {};
-
-template <typename T1>
-struct require_not_var_or_arithmetic_tester<
-    T1, stan::require_not_var_or_arithmetic<T1>> : std::true_type {};
-
-TEST(requires, not_var_or_arithmetic_test) {
-  EXPECT_TRUE((require_not_var_or_arithmetic_tester<std::string>::value));
-  EXPECT_FALSE((require_not_var_or_arithmetic_tester<double>::value));
-  EXPECT_TRUE((require_not_var_or_arithmetic_tester<int>::value));
-}
-
-/**
- * Require all var_or_arithmetic
- */
-template <typename T1, typename T2, typename T3, typename = void>
-struct require_all_var_or_arithmetic_tester : std::false_type {};
-
-template <typename T1, typename T2, typename T3>
-struct require_all_var_or_arithmetic_tester<
-    T1, T2, T3, stan::require_all_var_or_arithmetic<T1, T2, T3>>
-    : std::true_type {};
-
-TEST(requires, all_var_or_arithmetic_test) {
-  EXPECT_FALSE((require_all_var_or_arithmetic_tester<double, std::string,
-                                                     double>::value));
-  EXPECT_TRUE(
-      (require_all_var_or_arithmetic_tester<double, double, double>::value));
-  EXPECT_FALSE((require_all_var_or_arithmetic_tester<int, int, int>::value));
-}
-
-/**
- * Require Not all var_or_arithmetic
- */
-template <typename T1, typename T2, typename T3, typename = void>
-struct require_not_all_var_or_arithmetic_tester : std::false_type {};
-
-template <typename T1, typename T2, typename T3>
-struct require_not_all_var_or_arithmetic_tester<
-    T1, T2, T3, stan::require_not_all_var_or_arithmetic<T1, T2, T3>>
-    : std::true_type {};
-
-TEST(requires, not_all_var_or_arithmetic_test) {
-  EXPECT_TRUE((require_not_all_var_or_arithmetic_tester<double, std::string,
-                                                        double>::value));
-  EXPECT_FALSE((
-      require_not_all_var_or_arithmetic_tester<double, double, double>::value));
-  EXPECT_TRUE((require_not_all_var_or_arithmetic_tester<int, int, int>::value));
-}
-
-/**
- * Require any var_or_arithmetic
- */
-template <typename T1, typename T2, typename T3, typename = void>
-struct require_any_var_or_arithmetic_tester : std::false_type {};
-
-template <typename T1, typename T2, typename T3>
-struct require_any_var_or_arithmetic_tester<
-    T1, T2, T3, stan::require_any_var_or_arithmetic<T1, T2, T3>>
-    : std::true_type {};
-
-TEST(requires, any_var_or_arithmetic_test) {
-  EXPECT_FALSE((require_any_var_or_arithmetic_tester<std::string, std::string,
-                                                     std::string>::value));
-  EXPECT_TRUE((require_any_var_or_arithmetic_tester<double, std::string,
-                                                    double>::value));
-  EXPECT_FALSE((require_any_var_or_arithmetic_tester<int, int, int>::value));
-}
-
-/**
- * Require Not any var_or_arithmetic
- */
-template <typename T1, typename T2, typename T3, typename = void>
-struct require_not_any_var_or_arithmetic_tester : std::false_type {};
-
-template <typename T1, typename T2, typename T3>
-struct require_not_any_var_or_arithmetic_tester<
-    T1, T2, T3, stan::require_not_any_var_or_arithmetic<T1, T2, T3>>
-    : std::true_type {};
-
-TEST(requires, not_any_var_or_arithmetic_test) {
-  EXPECT_TRUE(
-      (require_not_any_var_or_arithmetic_tester<std::string, std::string,
-                                                std::string>::value));
-  EXPECT_FALSE((
-      require_not_any_var_or_arithmetic_tester<double, double, double>::value));
-  EXPECT_TRUE((require_not_any_var_or_arithmetic_tester<int, int, int>::value));
+  EXPECT_FALSE((require_not_any_var_or_arithmetic_tester<int, int, int>::value));
 }
