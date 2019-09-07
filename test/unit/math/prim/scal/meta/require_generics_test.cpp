@@ -382,7 +382,6 @@ TEST(requires, not_any_arithmetic_test) {
   EXPECT_FALSE((require_not_any_arithmetic_tester<int, int, int>::value));
 }
 
-
 ////////////////////////////////
 /**
  * Require var_or_arithmetic
@@ -451,7 +450,8 @@ TEST(requires, not_all_var_or_arithmetic_test) {
                                                         double>::value));
   EXPECT_FALSE((
       require_not_all_var_or_arithmetic_tester<double, double, double>::value));
-  EXPECT_FALSE((require_not_all_var_or_arithmetic_tester<int, int, int>::value));
+  EXPECT_FALSE(
+      (require_not_all_var_or_arithmetic_tester<int, int, int>::value));
 }
 
 /**
@@ -490,5 +490,6 @@ TEST(requires, not_any_var_or_arithmetic_test) {
                                                 std::string>::value));
   EXPECT_FALSE((
       require_not_any_var_or_arithmetic_tester<double, double, double>::value));
-  EXPECT_FALSE((require_not_any_var_or_arithmetic_tester<int, int, int>::value));
+  EXPECT_FALSE(
+      (require_not_any_var_or_arithmetic_tester<int, int, int>::value));
 }

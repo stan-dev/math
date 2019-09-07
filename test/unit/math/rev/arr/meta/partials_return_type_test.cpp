@@ -3,8 +3,8 @@
 #include <vector>
 
 TEST(MetaTraits, partials_return_type) {
-  using stan::partials_return_type;
   using stan::math::var;
+  using stan::partials_return_type;
 
   partials_return_type<double, stan::math::var,
                        std::vector<stan::math::var> >::type g(5.0);

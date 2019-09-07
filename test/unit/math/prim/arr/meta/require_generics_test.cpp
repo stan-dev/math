@@ -392,17 +392,18 @@ struct require_vector_like_tester : std::false_type {};
 
 template <template <class> class TypeCheck, class Check>
 struct require_vector_like_tester<TypeCheck, Check,
-                             stan::require_vector_like_t<TypeCheck, Check>>
+                                  stan::require_vector_like_t<TypeCheck, Check>>
     : std::true_type {};
 
 TEST(requires, vector_like_test) {
-  EXPECT_FALSE((require_vector_like_tester<std::is_floating_point, double>::value));
-  EXPECT_TRUE(
-      (require_vector_like_tester<std::is_arithmetic, std::vector<double>>::value));
+  EXPECT_FALSE(
+      (require_vector_like_tester<std::is_floating_point, double>::value));
+  EXPECT_TRUE((require_vector_like_tester<std::is_arithmetic,
+                                          std::vector<double>>::value));
   EXPECT_TRUE((require_vector_like_tester<std::is_floating_point,
-                                     std::vector<double>>::value));
+                                          std::vector<double>>::value));
   EXPECT_FALSE((require_vector_like_tester<std::is_floating_point,
-                                      std::vector<std::string>>::value));
+                                           std::vector<std::string>>::value));
 }
 
 /**
@@ -412,19 +413,20 @@ template <template <class> class TypeCheck, class Check, typename = void>
 struct require_not_vector_like_tester : std::false_type {};
 
 template <template <class> class TypeCheck, class Check>
-struct require_not_vector_like_tester<TypeCheck, Check,
-                                 stan::require_not_vector_like_t<TypeCheck, Check>>
+struct require_not_vector_like_tester<
+    TypeCheck, Check, stan::require_not_vector_like_t<TypeCheck, Check>>
     : std::true_type {};
 
 TEST(requires, not_vector_like_test) {
   EXPECT_TRUE(
       (require_not_vector_like_tester<std::is_floating_point, double>::value));
   EXPECT_FALSE((require_not_vector_like_tester<std::is_arithmetic,
-                                          std::vector<double>>::value));
+                                               std::vector<double>>::value));
   EXPECT_FALSE((require_not_vector_like_tester<std::is_floating_point,
-                                          std::vector<double>>::value));
-  EXPECT_TRUE((require_not_vector_like_tester<std::is_floating_point,
-                                         std::vector<std::string>>::value));
+                                               std::vector<double>>::value));
+  EXPECT_TRUE(
+      (require_not_vector_like_tester<std::is_floating_point,
+                                      std::vector<std::string>>::value));
 }
 
 ///////
@@ -439,23 +441,25 @@ struct require_any_vector_like_tester : std::false_type {};
 template <template <class> class TypeCheck, class Check1, class Check2>
 struct require_any_vector_like_tester<
     TypeCheck, Check1, Check2,
-    stan::require_any_vector_like_t<TypeCheck, Check1, Check2>> : std::true_type {};
+    stan::require_any_vector_like_t<TypeCheck, Check1, Check2>>
+    : std::true_type {};
 
 TEST(requires, any_vector_like_test) {
-  EXPECT_TRUE(
-      (require_any_vector_like_tester<std::is_floating_point, std::vector<double>,
-                                 std::vector<double>>::value));
+  EXPECT_TRUE((require_any_vector_like_tester<std::is_floating_point,
+                                              std::vector<double>,
+                                              std::vector<double>>::value));
   EXPECT_TRUE((require_any_vector_like_tester<std::is_floating_point, double,
-                                         std::vector<double>>::value));
+                                              std::vector<double>>::value));
+  EXPECT_TRUE(
+      (require_any_vector_like_tester<std::is_floating_point,
+                                      std::vector<double>, double>::value));
   EXPECT_TRUE((require_any_vector_like_tester<std::is_floating_point,
-                                         std::vector<double>, double>::value));
-  EXPECT_TRUE((require_any_vector_like_tester<std::is_floating_point,
-                                         std::vector<std::string>,
-                                         std::vector<double>>::value));
+                                              std::vector<std::string>,
+                                              std::vector<double>>::value));
   EXPECT_FALSE((require_any_vector_like_tester<std::is_floating_point, int,
-                                          std::string>::value));
-  EXPECT_FALSE(
-      (require_any_vector_like_tester<std::is_arithmetic, double, double>::value));
+                                               std::string>::value));
+  EXPECT_FALSE((require_any_vector_like_tester<std::is_arithmetic, double,
+                                               double>::value));
 }
 
 ////////
@@ -474,21 +478,24 @@ struct require_not_any_vector_like_tester<
     : std::true_type {};
 
 TEST(requires, not_any_vector_like_test) {
-  EXPECT_FALSE((
-      require_not_any_vector_like_tester<std::is_floating_point, std::vector<double>,
-                                    std::vector<double>>::value));
-  EXPECT_FALSE((require_not_any_vector_like_tester<std::is_floating_point, double,
-                                              std::vector<double>>::value));
   EXPECT_FALSE(
       (require_not_any_vector_like_tester<std::is_floating_point,
-                                     std::vector<double>, double>::value));
-  EXPECT_FALSE((require_not_any_vector_like_tester<std::is_floating_point,
-                                              std::vector<std::string>,
-                                              std::vector<double>>::value));
+                                          std::vector<double>,
+                                          std::vector<double>>::value));
+  EXPECT_FALSE(
+      (require_not_any_vector_like_tester<std::is_floating_point, double,
+                                          std::vector<double>>::value));
+  EXPECT_FALSE(
+      (require_not_any_vector_like_tester<std::is_floating_point,
+                                          std::vector<double>, double>::value));
+  EXPECT_FALSE(
+      (require_not_any_vector_like_tester<std::is_floating_point,
+                                          std::vector<std::string>,
+                                          std::vector<double>>::value));
   EXPECT_TRUE((require_not_any_vector_like_tester<std::is_floating_point, int,
-                                             std::string>::value));
+                                                  std::string>::value));
   EXPECT_TRUE((require_not_any_vector_like_tester<std::is_arithmetic, double,
-                                             double>::value));
+                                                  double>::value));
 }
 
 /////
@@ -503,23 +510,25 @@ struct require_all_vector_like_tester : std::false_type {};
 template <template <class> class TypeCheck, class Check1, class Check2>
 struct require_all_vector_like_tester<
     TypeCheck, Check1, Check2,
-    stan::require_all_vector_like_t<TypeCheck, Check1, Check2>> : std::true_type {};
+    stan::require_all_vector_like_t<TypeCheck, Check1, Check2>>
+    : std::true_type {};
 
 TEST(requires, all_vector_like_test) {
-  EXPECT_TRUE(
-      (require_all_vector_like_tester<std::is_floating_point, std::vector<double>,
-                                 std::vector<double>>::value));
+  EXPECT_TRUE((require_all_vector_like_tester<std::is_floating_point,
+                                              std::vector<double>,
+                                              std::vector<double>>::value));
   EXPECT_FALSE((require_all_vector_like_tester<std::is_floating_point, double,
-                                          std::vector<double>>::value));
-  EXPECT_FALSE((require_all_vector_like_tester<std::is_floating_point,
-                                          std::vector<double>, double>::value));
-  EXPECT_FALSE((require_all_vector_like_tester<std::is_floating_point,
-                                          std::vector<std::string>,
-                                          std::vector<double>>::value));
-  EXPECT_FALSE((require_all_vector_like_tester<std::is_floating_point, int,
-                                          std::string>::value));
+                                               std::vector<double>>::value));
   EXPECT_FALSE(
-      (require_all_vector_like_tester<std::is_arithmetic, double, double>::value));
+      (require_all_vector_like_tester<std::is_floating_point,
+                                      std::vector<double>, double>::value));
+  EXPECT_FALSE((require_all_vector_like_tester<std::is_floating_point,
+                                               std::vector<std::string>,
+                                               std::vector<double>>::value));
+  EXPECT_FALSE((require_all_vector_like_tester<std::is_floating_point, int,
+                                               std::string>::value));
+  EXPECT_FALSE((require_all_vector_like_tester<std::is_arithmetic, double,
+                                               double>::value));
 }
 
 /**
@@ -536,19 +545,21 @@ struct require_not_all_vector_like_tester<
     : std::true_type {};
 
 TEST(requires, not_all_vector_like_test) {
-  EXPECT_FALSE((
-      require_not_all_vector_like_tester<std::is_floating_point, std::vector<double>,
-                                    std::vector<double>>::value));
-  EXPECT_TRUE((require_not_all_vector_like_tester<std::is_floating_point, double,
-                                             std::vector<double>>::value));
+  EXPECT_FALSE(
+      (require_not_all_vector_like_tester<std::is_floating_point,
+                                          std::vector<double>,
+                                          std::vector<double>>::value));
+  EXPECT_TRUE(
+      (require_not_all_vector_like_tester<std::is_floating_point, double,
+                                          std::vector<double>>::value));
   EXPECT_TRUE(
       (require_not_all_vector_like_tester<std::is_floating_point,
-                                     std::vector<double>, double>::value));
+                                          std::vector<double>, double>::value));
   EXPECT_TRUE((require_not_all_vector_like_tester<std::is_floating_point,
-                                             std::vector<std::string>,
-                                             std::vector<double>>::value));
+                                                  std::vector<std::string>,
+                                                  std::vector<double>>::value));
   EXPECT_TRUE((require_not_all_vector_like_tester<std::is_floating_point, int,
-                                             std::string>::value));
+                                                  std::string>::value));
   EXPECT_TRUE((require_not_all_vector_like_tester<std::is_arithmetic, double,
-                                             double>::value));
+                                                  double>::value));
 }
