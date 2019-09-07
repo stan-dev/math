@@ -50,9 +50,9 @@ return_type_t<T_y, T_dof, T_scale> inv_wishart_lpdf(
     const Eigen::Matrix<T_scale, Eigen::Dynamic, Eigen::Dynamic>& S) {
   static const char* function = "inv_wishart_lpdf";
 
+  using boost::math::tools::promote_args;
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using boost::math::tools::promote_args;
 
   typename index_type<Matrix<T_scale, Dynamic, Dynamic> >::type k = S.rows();
   return_type_t<T_y, T_dof, T_scale> lp(0.0);

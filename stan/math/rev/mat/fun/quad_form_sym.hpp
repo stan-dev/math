@@ -13,10 +13,10 @@
 namespace stan {
 namespace math {
 
-template <typename Ta, int Ra, int Ca, typename Tb, int Rb, int Cb, require_any_var<Ta, Tb>...>
-inline Eigen::Matrix<var, Cb, Cb>
-quad_form_sym(const Eigen::Matrix<Ta, Ra, Ca>& A,
-              const Eigen::Matrix<Tb, Rb, Cb>& B) {
+template <typename Ta, int Ra, int Ca, typename Tb, int Rb, int Cb,
+          require_any_var<Ta, Tb>...>
+inline Eigen::Matrix<var, Cb, Cb> quad_form_sym(
+    const Eigen::Matrix<Ta, Ra, Ca>& A, const Eigen::Matrix<Tb, Rb, Cb>& B) {
   check_square("quad_form", "A", A);
   check_symmetric("quad_form_sym", "A", A);
   check_multiplicable("quad_form_sym", "A", A, "B", B);
@@ -27,10 +27,10 @@ quad_form_sym(const Eigen::Matrix<Ta, Ra, Ca>& A,
   return baseVari->impl_->C_;
 }
 
-template <typename Ta, int Ra, int Ca, typename Tb, int Rb, require_any_var<Ta, Tb>...>
-inline var
-quad_form_sym(const Eigen::Matrix<Ta, Ra, Ca>& A,
-              const Eigen::Matrix<Tb, Rb, 1>& B) {
+template <typename Ta, int Ra, int Ca, typename Tb, int Rb,
+          require_any_var<Ta, Tb>...>
+inline var quad_form_sym(const Eigen::Matrix<Ta, Ra, Ca>& A,
+                         const Eigen::Matrix<Tb, Rb, 1>& B) {
   check_square("quad_form", "A", A);
   check_symmetric("quad_form_sym", "A", A);
   check_multiplicable("quad_form_sym", "A", A, "B", B);

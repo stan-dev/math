@@ -24,7 +24,6 @@
 namespace stan {
 namespace math {
 
-
 /**
  * Represents a matrix on the OpenCL device.
  *
@@ -40,7 +39,7 @@ class matrix_cl<T, require_arithmetic<T>> {
   mutable std::vector<cl::Event> write_events_;  // Tracks write jobs
   mutable std::vector<cl::Event> read_events_;   // Tracks reads
  public:
-   using Scalar = T;
+  using Scalar = T;
   typedef T type;
   // Forward declare the methods that work in place on the matrix
   template <matrix_cl_view matrix_view = matrix_cl_view::Entire>
@@ -232,9 +231,8 @@ class matrix_cl<T, require_arithmetic<T>> {
    * matrices do not have matching dimensions
    */
   template <typename Vec, require_std_vector_t<is_eigen, Vec>...>
-  explicit matrix_cl(Vec&& A) try
-      : rows_(A.empty() ? 0 : A[0].size()),
-        cols_(A.size()) {
+  explicit matrix_cl(Vec&& A) try : rows_(A.empty() ? 0 : A[0].size()),
+                                    cols_(A.size()) {
     if (this->size() == 0)
       return;
     cl::Context& ctx = opencl_context.context();
@@ -305,8 +303,8 @@ class matrix_cl<T, require_arithmetic<T>> {
    * matrices do not have matching dimensions
    */
   template <typename Mat, require_eigen_t<std::is_arithmetic, Mat>...>
-  explicit matrix_cl(Mat && A,
-      matrix_cl_view partial_view = matrix_cl_view::Entire)
+  explicit matrix_cl(Mat&& A,
+                     matrix_cl_view partial_view = matrix_cl_view::Entire)
       : rows_(A.rows()), cols_(A.cols()), view_(partial_view) {
     if (size() == 0) {
       return;
@@ -334,8 +332,7 @@ class matrix_cl<T, require_arithmetic<T>> {
    * matrices do not have matching dimensions
    */
   template <typename Vec, require_std_vector_t<std::is_arithmetic, Vec>...>
-  explicit matrix_cl(Vec&& A, const int& R, const int& C)
-      : rows_(R), cols_(C) {
+  explicit matrix_cl(Vec&& A, const int& R, const int& C) : rows_(R), cols_(C) {
     if (size() == 0) {
       return;
     }
@@ -365,9 +362,8 @@ class matrix_cl<T, require_arithmetic<T>> {
    * @param partial_view which part of the matrix is used
    */
   template <typename Mat, require_eigen_t<std::is_arithmetic, Mat>...>
-  static matrix_cl<T> constant(Mat& A,
-                               matrix_cl_view partial_view
-                               = matrix_cl_view::Entire) {
+  static matrix_cl<T> constant(Mat& A, matrix_cl_view partial_view
+                                       = matrix_cl_view::Entire) {
 #ifndef STAN_OPENCL_NOCACHE
     if (A.opencl_buffer_() != NULL) {
       return matrix_cl<T>(A.opencl_buffer_, A.rows(), A.cols(), partial_view);

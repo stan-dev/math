@@ -62,7 +62,6 @@ return_type_t<T_size1, T_size2> beta_binomial_lccdf(const T_n& n, const T_N& N,
   size_t size = max_size(n, N, alpha, beta);
 
   using std::exp;
-  using std::exp;
   using std::log;
 
   operands_and_partials<T_size1, T_size2> ops_partials(alpha, beta);

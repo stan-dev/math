@@ -2,8 +2,8 @@
 #include <gtest/gtest.h>
 
 TEST(MetaTraits, VectorBuilder_false_false) {
-  using stan::VectorBuilder;
   using stan::length;
+  using stan::VectorBuilder;
 
   double a_double(1);
 
@@ -13,8 +13,8 @@ TEST(MetaTraits, VectorBuilder_false_false) {
 }
 
 TEST(MetaTraits, VectorBuilder_true_false) {
-  using stan::VectorBuilder;
   using stan::length;
+  using stan::VectorBuilder;
 
   double a_double(1);
 

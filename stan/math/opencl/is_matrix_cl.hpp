@@ -8,14 +8,14 @@
 namespace stan {
 
 namespace math {
-  // Dummy class to instantiate matrix_cl to enable for specific types.
-  template <typename T, typename = void>
-  class matrix_cl {
-  public:
-    using Scalar = T;
-    using type = T;
-  };
-}
+// Dummy class to instantiate matrix_cl to enable for specific types.
+template <typename T, typename = void>
+class matrix_cl {
+ public:
+  using Scalar = T;
+  using type = T;
+};
+}  // namespace math
 
 namespace internal {
 
@@ -45,30 +45,35 @@ struct is_matrix_cl<
     T, std::enable_if_t<internal::is_matrix_cl_impl<std::decay_t<T>>::value>>
     : std::true_type {};
 
-
 /**
  * matrix_cl
  */
 template <template <class...> class TypeCheck, class... Check>
-struct is_matrix_cl_check : container_type_check_base<is_matrix_cl, TypeCheck, Check...> {};
+struct is_matrix_cl_check
+    : container_type_check_base<is_matrix_cl, TypeCheck, Check...> {};
 
 template <template <class...> class TypeCheck, class... Check>
 using require_matrix_cl_t = require_t<is_matrix_cl_check<TypeCheck, Check...>>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_not_matrix_cl_t = require_not_t<is_matrix_cl_check<TypeCheck, Check...>>;
+using require_not_matrix_cl_t
+    = require_not_t<is_matrix_cl_check<TypeCheck, Check...>>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_any_matrix_cl_t = require_any_t<is_matrix_cl_check<TypeCheck, Check>...>;
+using require_any_matrix_cl_t
+    = require_any_t<is_matrix_cl_check<TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_not_any_matrix_cl_t = require_not_any_t<is_matrix_cl_check<TypeCheck, Check>...>;
+using require_not_any_matrix_cl_t
+    = require_not_any_t<is_matrix_cl_check<TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_all_matrix_cl_t = require_all_t<is_matrix_cl_check<TypeCheck, Check>...>;
+using require_all_matrix_cl_t
+    = require_all_t<is_matrix_cl_check<TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_not_all_matrix_cl_t = require_not_all_t<is_matrix_cl_check<TypeCheck, Check>...>;
+using require_not_all_matrix_cl_t
+    = require_not_all_t<is_matrix_cl_check<TypeCheck, Check>...>;
 
 }  // namespace stan
 #endif
