@@ -75,7 +75,7 @@ class trace_quad_form_vari : public vari {
 }  // namespace internal
 
 template <typename Ta, int Ra, int Ca, typename Tb, int Rb, int Cb,
-          typename = enable_if_any_var<Ta, Tb>>
+          typename = require_any_var<Ta, Tb>>
 inline return_type_t<Ta, Tb> trace_quad_form(
     const Eigen::Matrix<Ta, Ra, Ca>& A, const Eigen::Matrix<Tb, Rb, Cb>& B) {
   check_square("trace_quad_form", "A", A);

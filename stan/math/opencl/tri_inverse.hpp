@@ -36,7 +36,7 @@ namespace math {
  * @throw <code>std::invalid_argument</code> if the matrix
  *    is not square
  */
-template <typename T, typename = enable_if_floating_point<T>>
+template <typename T, typename = require_floating_point<T>>
 inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
   check_triangular("tri_inverse (OpenCL)", "A", A);
   check_square("tri_inverse (OpenCL)", "A", A);

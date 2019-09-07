@@ -7,7 +7,6 @@
 #include <type_traits>
 
 namespace stan {
-namespace math {
 
 /**
  * Template metaprogram defining the type of values stored in an
@@ -20,7 +19,6 @@ struct value_type<T, std::enable_if_t<is_eigen<T>::value>> {
   using type = typename std::decay_t<T>::Scalar;
 };
 
-}  // namespace math
 
 }  // namespace stan
 

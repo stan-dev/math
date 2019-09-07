@@ -22,7 +22,7 @@ namespace math {
  * @throw <code>std::domain_error</code> if
  *    any element of the matrix is <code>NaN</code>.
  */
-template <typename T, typename = enable_if_floating_point<T>>
+template <typename T, typename = require_floating_point<T>>
 inline void check_nan(const char* function, const char* name,
                       const matrix_cl<T>& y) {
   if (y.size() == 0)

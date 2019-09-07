@@ -28,7 +28,7 @@ namespace math {
  *
  */
 template <matrix_cl_view matrix_view = matrix_cl_view::Entire, typename T,
-          typename = enable_if_arithmetic<T>>
+          typename = require_arithmetic<T>>
 inline matrix_cl<T> copy_triangular(const matrix_cl<T>& src) {
   if (src.size() == 0 || src.size() == 1) {
     matrix_cl<T> dst(src);

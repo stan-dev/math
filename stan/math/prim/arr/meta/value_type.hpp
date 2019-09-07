@@ -6,7 +6,6 @@
 #include <vector>
 
 namespace stan {
-namespace math {
 
 /**
  * Template metaprogram class to compute the type of values stored
@@ -19,6 +18,5 @@ struct value_type<T, std::enable_if_t<is_std_vector<T>::value>> {
   using type = typename std::decay_t<T>::value_type;
 };
 
-}  // namespace math
 }  // namespace stan
 #endif

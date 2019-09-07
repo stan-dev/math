@@ -39,12 +39,6 @@
 #include <stan/math/prim/scal/meta/contains_std_vector.hpp>
 #include <stan/math/prim/scal/meta/contains_vector.hpp>
 #include <stan/math/prim/scal/meta/error_index.hpp>
-#include <stan/math/prim/scal/meta/enable_if_arithmetic.hpp>
-#include <stan/math/prim/scal/meta/enable_if_floating_point.hpp>
-#include <stan/math/prim/scal/meta/enable_if_same.hpp>
-#include <stan/math/prim/scal/meta/enable_if_scalar.hpp>
-#include <stan/math/prim/scal/meta/enable_if_var.hpp>
-#include <stan/math/prim/scal/meta/enable_if_var_or_arithmetic.hpp>
 #include <stan/math/prim/scal/meta/get.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/index_type.hpp>
@@ -64,6 +58,7 @@
 #include <stan/math/prim/scal/meta/partials_return_type.hpp>
 #include <stan/math/prim/scal/meta/partials_type.hpp>
 #include <stan/math/prim/scal/meta/promote_args.hpp>
+#include <stan/math/prim/scal/meta/require_generics.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/meta/scalar_type.hpp>

@@ -16,7 +16,7 @@ template <typename T>
 inline void initialize(T& x, const T& v) {
   x = v;
 }
-template <typename T, typename V, typename = enable_if_arithmetic<V>>
+template <typename T, typename V, typename = require_arithmetic<V>>
 inline void initialize(T& x, V v) {
   x = v;
 }

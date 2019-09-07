@@ -27,8 +27,8 @@ namespace math {
  * @param ncols the number of columns in the submatrix
  */
 template <typename T>
-inline void matrix_cl<T, enable_if_arithmetic<T>>::sub_block(
-    const matrix_cl<T, enable_if_arithmetic<T>>& A, size_t A_i, size_t A_j,
+inline void matrix_cl<T, require_arithmetic<T>>::sub_block(
+    const matrix_cl<T, require_arithmetic<T>>& A, size_t A_i, size_t A_j,
     size_t this_i, size_t this_j, size_t nrows, size_t ncols) try {
   if (nrows == 0 || ncols == 0) {
     return;

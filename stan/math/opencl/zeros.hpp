@@ -26,7 +26,7 @@ namespace math {
  */
 template <typename T>
 template <matrix_cl_view matrix_view>
-inline void matrix_cl<T, enable_if_arithmetic<T>>::zeros() try {
+inline void matrix_cl<T, require_arithmetic<T>>::zeros() try {
   if (size() == 0)
     return;
   this->view_ = both(this->view_, invert(matrix_view));

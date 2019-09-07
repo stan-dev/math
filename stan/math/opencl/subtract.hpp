@@ -27,7 +27,7 @@ namespace math {
  * input matrices do not have matching dimensions.
  *
  */
-template <typename T1, typename T2, typename = enable_if_all_arithmetic<T1, T2>>
+template <typename T1, typename T2, typename = require_all_arithmetic<T1, T2>>
 inline matrix_cl<return_type_t<T1, T2>> subtract(const matrix_cl<T1>& A,
                                                  const matrix_cl<T2>& B) {
   check_matching_dims("subtract ((OpenCL))", "A", A, "B", B);
@@ -60,7 +60,7 @@ inline matrix_cl<return_type_t<T1, T2>> subtract(const matrix_cl<T1>& A,
  * input matrices do not have matching dimensions.
  *
  */
-template <typename T1, typename T2, typename = enable_if_all_arithmetic<T1, T2>>
+template <typename T1, typename T2, typename = require_all_arithmetic<T1, T2>>
 inline auto operator-(const matrix_cl<T1>& A, const matrix_cl<T2>& B) {
   return subtract(A, B);
 }
