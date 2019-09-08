@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_META_CHILD_TYPE_HPP
 #define STAN_MATH_PRIM_SCAL_META_CHILD_TYPE_HPP
 
+#include <type_traits>
+
 namespace stan {
 namespace math {
 
@@ -13,7 +15,6 @@ namespace math {
  *
  * @tparam T type of container.
  */
-
 template <typename T>
 struct child_type {
   using type = double;
@@ -28,9 +29,8 @@ struct child_type {
  * @tparam T_struct type of parent.
  * @tparam T_child type of child type.
  */
-
 template <template <typename> class T_struct, typename T_child>
-struct child_type<T_struct<T_child> > {
+struct child_type<T_struct<T_child>> {
   using type = T_child;
 };
 

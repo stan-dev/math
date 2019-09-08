@@ -1,3 +1,4 @@
+// This is not used anywhere. Should it be deleted?
 #ifndef STAN_MATH_PRIM_SCAL_META_SCALAR_TYPE_PRE_HPP
 #define STAN_MATH_PRIM_SCAL_META_SCALAR_TYPE_PRE_HPP
 
