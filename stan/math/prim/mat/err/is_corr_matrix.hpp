@@ -28,8 +28,8 @@ namespace math {
 template <typename T_y>
 inline bool is_corr_matrix(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
-  typedef typename index_type<
-      Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> >::type size_t;
+  using size_t = typename index_type<
+      Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>>::type;
 
   if (!is_size_match(y.rows(), y.cols())) {
     return false;

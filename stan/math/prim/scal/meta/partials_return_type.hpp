@@ -42,7 +42,7 @@ struct partials_return_type<T> {
 };
 
 template <typename... Args>
-using partials_return_type_t = typename partials_return_type<Args...>::type;
+using partials_return_t = typename partials_return_type<Args...>::type;
 
 }  // namespace stan
 #endif

@@ -35,19 +35,17 @@ namespace internal {
  */
 template <typename F, typename T_shared_param, typename T_job_param>
 class map_rect_combine {
-  typedef operands_and_partials<
-      Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>,
-      Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>
-      ops_partials_t;
+  using ops_partials_t
+      = operands_and_partials<Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>,
+                              Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>;
   std::vector<ops_partials_t> ops_partials_;
 
   const std::size_t num_shared_operands_;
   const std::size_t num_job_operands_;
 
  public:
-  typedef Eigen::Matrix<return_type_t<T_shared_param, T_job_param>,
-                        Eigen::Dynamic, 1>
-      result_t;
+  using result_t = Eigen::Matrix<return_type_t<T_shared_param, T_job_param>,
+                                 Eigen::Dynamic, 1>;
 
   map_rect_combine()
       : ops_partials_(), num_shared_operands_(0), num_job_operands_(0) {}

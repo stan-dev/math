@@ -25,7 +25,7 @@ namespace math {
 template <bool propto, typename T_y>
 return_type_t<T_y> std_normal_lpdf(const T_y& y) {
   static const char* function = "std_normal_lpdf";
-  using T_partials_return = partials_return_type_t<T_y>;
+  using T_partials_return = partials_return_t<T_y>;
 
   if (size_zero(y)) {
     return 0.0;

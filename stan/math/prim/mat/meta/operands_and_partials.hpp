@@ -55,8 +55,8 @@ class ops_partials_edge<ViewElt, std::vector<Eigen::Matrix<Op, R, C>>> {
 template <typename Op, typename ViewElt>
 class ops_partials_edge<ViewElt, std::vector<std::vector<Op>>> {
  public:
-  typedef empty_broadcast_array<ViewElt, std::vector<std::vector<Op>>>
-      partials_t;
+  using partials_t
+      = empty_broadcast_array<ViewElt, std::vector<std::vector<Op>>>;
   partials_t partials_;
   empty_broadcast_array<partials_t, std::vector<std::vector<Op>>> partials_vec_;
   ops_partials_edge() {}

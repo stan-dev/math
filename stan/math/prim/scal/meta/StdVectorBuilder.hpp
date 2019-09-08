@@ -34,9 +34,9 @@ template <bool used, typename T1, typename T2, typename T3 = double,
           typename T7 = double>
 class StdVectorBuilder {
  private:
-  typedef VectorBuilderHelper<
-      T1, used, contains_std_vector<T2, T3, T4, T5, T6, T7>::value>
-      helper;
+  using helper
+      = VectorBuilderHelper<T1, used,
+                            contains_std_vector<T2, T3, T4, T5, T6, T7>::value>;
 
  public:
   using type = typename helper::type;

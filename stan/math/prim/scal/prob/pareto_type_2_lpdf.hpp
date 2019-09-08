@@ -22,8 +22,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
     const T_y& y, const T_loc& mu, const T_scale& lambda,
     const T_shape& alpha) {
   static const char* function = "pareto_type_2_lpdf";
-  typedef partials_return_type_t<T_y, T_loc, T_scale, T_shape>
-      T_partials_return;
+  using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_shape>;
 
   using std::log;
 

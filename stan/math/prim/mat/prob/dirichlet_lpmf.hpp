@@ -50,7 +50,7 @@ return_type_t<T_prob, T_prior_size> dirichlet_lpmf(const T_prob& theta,
                                                    const T_prior_size& alpha) {
   static const char* function = "dirichlet_lpmf";
 
-  using T_partials_return = partials_return_type_t<T_prob, T_prior_size>;
+  using T_partials_return = partials_return_t<T_prob, T_prior_size>;
   using T_partials_vec = typename Eigen::Matrix<T_partials_return, -1, 1>;
 
   check_consistent_sizes(function, "probabilities", theta, "prior sample sizes",

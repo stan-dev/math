@@ -20,8 +20,7 @@ template <typename T_n, typename T_location, typename T_precision>
 return_type_t<T_location, T_precision> neg_binomial_2_cdf(
     const T_n& n, const T_location& mu, const T_precision& phi) {
   static const char* function = "neg_binomial_2_cdf";
-  typedef partials_return_type_t<T_n, T_location, T_precision>
-      T_partials_return;
+  using T_partials_return = partials_return_t<T_n, T_location, T_precision>;
 
   T_partials_return P(1.0);
   if (size_zero(n, mu, phi)) {

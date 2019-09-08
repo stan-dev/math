@@ -204,10 +204,10 @@ struct general_matrix_matrix_product<Index, stan::math::var, LhsStorageOrder,
 
   using Traits = gebp_traits<RhsScalar, LhsScalar>;
 
-  typedef const_blas_data_mapper<stan::math::var, Index, LhsStorageOrder>
-      LhsMapper;
-  typedef const_blas_data_mapper<stan::math::var, Index, RhsStorageOrder>
-      RhsMapper;
+  using LhsMapper
+      = const_blas_data_mapper<stan::math::var, Index, LhsStorageOrder>;
+  using RhsMapper
+      = const_blas_data_mapper<stan::math::var, Index, RhsStorageOrder>;
 
   EIGEN_DONT_INLINE
   static void run(Index rows, Index cols, Index depth, const LhsScalar* lhs,

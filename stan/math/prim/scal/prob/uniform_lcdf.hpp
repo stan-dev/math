@@ -18,7 +18,7 @@ template <typename T_y, typename T_low, typename T_high>
 return_type_t<T_y, T_low, T_high> uniform_lcdf(const T_y& y, const T_low& alpha,
                                                const T_high& beta) {
   static const char* function = "uniform_lcdf";
-  using T_partials_return = partials_return_type_t<T_y, T_low, T_high>;
+  using T_partials_return = partials_return_t<T_y, T_low, T_high>;
 
   using std::log;
 

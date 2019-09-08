@@ -21,8 +21,7 @@ template <bool propto, typename T_y, typename T_loc, typename T_scale,
 return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& alpha) {
   static const char* function = "skew_normal_lpdf";
-  typedef partials_return_type_t<T_y, T_loc, T_scale, T_shape>
-      T_partials_return;
+  using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_shape>;
 
   using std::exp;
   using std::log;

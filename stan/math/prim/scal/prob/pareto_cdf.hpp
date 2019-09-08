@@ -18,7 +18,7 @@ template <typename T_y, typename T_scale, typename T_shape>
 return_type_t<T_y, T_scale, T_shape> pareto_cdf(const T_y& y,
                                                 const T_scale& y_min,
                                                 const T_shape& alpha) {
-  using T_partials_return = partials_return_type_t<T_y, T_scale, T_shape>;
+  using T_partials_return = partials_return_t<T_y, T_scale, T_shape>;
 
   if (size_zero(y, y_min, alpha)) {
     return 1.0;

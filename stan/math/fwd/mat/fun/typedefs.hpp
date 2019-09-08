@@ -8,12 +8,12 @@
 namespace stan {
 namespace math {
 
-typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>::Index size_type;
+using size_type = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>::Index;
 
 using matrix_fd = Eigen::Matrix<fvar<double>, Eigen::Dynamic, Eigen::Dynamic>;
 
-typedef Eigen::Matrix<fvar<fvar<double> >, Eigen::Dynamic, Eigen::Dynamic>
-    matrix_ffd;
+using matrix_ffd
+    = Eigen::Matrix<fvar<fvar<double> >, Eigen::Dynamic, Eigen::Dynamic>;
 
 using vector_fd = Eigen::Matrix<fvar<double>, Eigen::Dynamic, 1>;
 

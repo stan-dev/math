@@ -22,7 +22,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lcdf(const T_n& n,
                                                       const T_shape& alpha,
                                                       const T_inv_scale& beta) {
   static const char* function = "neg_binomial_lcdf";
-  using T_partials_return = partials_return_type_t<T_n, T_shape, T_inv_scale>;
+  using T_partials_return = partials_return_t<T_n, T_shape, T_inv_scale>;
 
   if (size_zero(n, alpha, beta)) {
     return 0.0;

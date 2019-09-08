@@ -26,7 +26,7 @@ return_type_t<T_y, T_shape, T_scale> frechet_lpdf(const T_y& y,
                                                   const T_shape& alpha,
                                                   const T_scale& sigma) {
   static const char* function = "frechet_lpdf";
-  using T_partials_return = partials_return_type_t<T_y, T_shape, T_scale>;
+  using T_partials_return = partials_return_t<T_y, T_shape, T_scale>;
   using std::log;
   check_positive(function, "Random variable", y);
   check_positive_finite(function, "Shape parameter", alpha);

@@ -28,7 +28,7 @@ namespace math {
 template <bool propto, typename T_n, typename T_prob>
 return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
   static const char* function = "bernoulli_logit_lpmf";
-  using T_partials_return = partials_return_type_t<T_n, T_prob>;
+  using T_partials_return = partials_return_t<T_n, T_prob>;
 
   using std::exp;
 

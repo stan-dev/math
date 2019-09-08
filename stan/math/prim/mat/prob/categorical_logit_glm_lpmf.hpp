@@ -40,8 +40,8 @@ categorical_logit_glm_lpmf(
     const T_y& y, const Eigen::Matrix<T_x_scalar, T_x_rows, Eigen::Dynamic>& x,
     const Eigen::Matrix<T_alpha_scalar, Eigen::Dynamic, 1>& alpha,
     const Eigen::Matrix<T_beta_scalar, Eigen::Dynamic, Eigen::Dynamic>& beta) {
-  typedef partials_return_type_t<T_x_scalar, T_alpha_scalar, T_beta_scalar>
-      T_partials_return;
+  using T_partials_return
+      = partials_return_t<T_x_scalar, T_alpha_scalar, T_beta_scalar>;
   static const char* function = "categorical_logit_glm_lpmf";
 
   using Eigen::Array;

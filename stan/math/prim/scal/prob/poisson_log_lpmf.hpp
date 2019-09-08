@@ -19,7 +19,7 @@ namespace math {
 template <bool propto, typename T_n, typename T_log_rate>
 return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
                                            const T_log_rate& alpha) {
-  using T_partials_return = partials_return_type_t<T_n, T_log_rate>;
+  using T_partials_return = partials_return_t<T_n, T_log_rate>;
 
   static const char* function = "poisson_log_lpmf";
 

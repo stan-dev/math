@@ -19,7 +19,7 @@ return_type_t<T_y, T_low, T_high> uniform_lccdf(const T_y& y,
                                                 const T_low& alpha,
                                                 const T_high& beta) {
   static const char* function = "uniform_lccdf";
-  using T_partials_return = partials_return_type_t<T_y, T_low, T_high>;
+  using T_partials_return = partials_return_t<T_y, T_low, T_high>;
 
   using std::log;
 

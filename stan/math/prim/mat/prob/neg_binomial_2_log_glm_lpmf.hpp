@@ -57,24 +57,22 @@ return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
     const T_y& y, const T_x& x, const T_alpha& alpha, const T_beta& beta,
     const T_precision& phi) {
   static const char* function = "neg_binomial_2_log_glm_lpmf";
-  typedef partials_return_type_t<T_y, T_x, T_alpha, T_beta, T_precision>
-      T_partials_return;
-  typedef typename std::conditional_t<
+  using T_partials_return
+      = partials_return_t<T_y, T_x, T_alpha, T_beta, T_precision>;
+  using T_precision_val = typename std::conditional_t<
       is_vector<T_precision>::value,
-      Eigen::Array<partials_return_type_t<T_precision>, -1, 1>,
-      partials_return_type_t<T_precision>>
-      T_precision_val;
-  typedef typename std::conditional_t<
+      Eigen::Array<partials_return_t<T_precision>, -1, 1>,
+      partials_return_t<T_precision>>;
+  using T_sum_val = typename std::conditional_t<
       is_vector<T_y>::value || is_vector<T_precision>::value,
-      Eigen::Array<partials_return_type_t<T_y, T_precision>, -1, 1>,
-      partials_return_type_t<T_y, T_precision>>
-      T_sum_val;
+      Eigen::Array<partials_return_t<T_y, T_precision>, -1, 1>,
+      partials_return_t<T_y, T_precision>>;
 
   using Eigen::Array;
   using Eigen::Dynamic;
-  using Eigen::Matrix;
   using Eigen::exp;
   using Eigen::log1p;
+  using Eigen::Matrix;
 
   const size_t N = x.rows();
   const size_t M = x.cols();

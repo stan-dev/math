@@ -43,7 +43,7 @@ template <bool propto, typename T_y, typename T_inv_scale>
 return_type_t<T_y, T_inv_scale> exponential_lpdf(const T_y& y,
                                                  const T_inv_scale& beta) {
   static const char* function = "exponential_lpdf";
-  using T_partials_return = partials_return_type_t<T_y, T_inv_scale>;
+  using T_partials_return = partials_return_t<T_y, T_inv_scale>;
 
   if (size_zero(y, beta)) {
     return 0.0;

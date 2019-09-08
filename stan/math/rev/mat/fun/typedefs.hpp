@@ -8,7 +8,7 @@
 namespace stan {
 namespace math {
 
-typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>::Index size_type;
+using size_type = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>::Index;
 
 /**
  * The type of a matrix holding <code>var</code>

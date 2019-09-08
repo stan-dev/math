@@ -4,8 +4,8 @@
 TEST(MetaTraits, VectorBuilderHelper_false_false) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using stan::VectorBuilderHelper;
   using stan::length;
+  using stan::VectorBuilderHelper;
 
   Matrix<double, Dynamic, 1> a_vector(4);
   Matrix<double, 1, Dynamic> a_row_vector(5);
@@ -22,8 +22,8 @@ TEST(MetaTraits, VectorBuilderHelper_false_false) {
 TEST(MetaTraits, VectorBuilderHelper_true_false) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using stan::VectorBuilderHelper;
   using stan::length;
+  using stan::VectorBuilderHelper;
 
   Matrix<double, Dynamic, 1> a_vector(4);
   Matrix<double, 1, Dynamic> a_row_vector(5);

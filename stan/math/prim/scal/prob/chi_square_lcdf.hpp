@@ -35,7 +35,7 @@ namespace math {
 template <typename T_y, typename T_dof>
 return_type_t<T_y, T_dof> chi_square_lcdf(const T_y& y, const T_dof& nu) {
   static const char* function = "chi_square_lcdf";
-  using T_partials_return = partials_return_type_t<T_y, T_dof>;
+  using T_partials_return = partials_return_t<T_y, T_dof>;
 
   T_partials_return cdf_log(0.0);
 

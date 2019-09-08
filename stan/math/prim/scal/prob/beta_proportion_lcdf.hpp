@@ -43,7 +43,7 @@ template <typename T_y, typename T_loc, typename T_prec>
 return_type_t<T_y, T_loc, T_prec> beta_proportion_lcdf(const T_y& y,
                                                        const T_loc& mu,
                                                        const T_prec& kappa) {
-  using T_partials_return = partials_return_type_t<T_y, T_loc, T_prec>;
+  using T_partials_return = partials_return_t<T_y, T_loc, T_prec>;
 
   if (size_zero(y, mu, kappa)) {
     return 0.0;

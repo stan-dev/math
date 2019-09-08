@@ -42,8 +42,8 @@ struct apply_scalar_unary {
    * Return type for applying the function elementwise to a matrix
    * expression template of type T.
    */
-  typedef Eigen::Matrix<scalar_t, T::RowsAtCompileTime, T::ColsAtCompileTime>
-      return_t;
+  using return_t
+      = Eigen::Matrix<scalar_t, T::RowsAtCompileTime, T::ColsAtCompileTime>;
 
   /**
    * Return the result of applying the function defined by the
@@ -126,8 +126,8 @@ struct apply_scalar_unary<F, std::vector<T> > {
    * Return type, which is calculated recursively as a standard
    * vector of the return type of the contained type T.
    */
-  typedef typename std::vector<typename apply_scalar_unary<F, T>::return_t>
-      return_t;
+  using return_t =
+      typename std::vector<typename apply_scalar_unary<F, T>::return_t>;
 
   /**
    * Apply the function specified by F elementwise to the

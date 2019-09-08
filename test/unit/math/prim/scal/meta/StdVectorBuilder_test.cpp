@@ -2,8 +2,8 @@
 #include <gtest/gtest.h>
 
 TEST(MetaTraits, StdVectorBuilder_false_false) {
-  using stan::StdVectorBuilder;
   using stan::length;
+  using stan::StdVectorBuilder;
 
   double a_double(1);
 
@@ -13,8 +13,8 @@ TEST(MetaTraits, StdVectorBuilder_false_false) {
 }
 
 TEST(MetaTraits, StdVectorBuilder_true_false) {
-  using stan::StdVectorBuilder;
   using stan::length;
+  using stan::StdVectorBuilder;
 
   double a_double(1);
 
@@ -28,8 +28,8 @@ TEST(MetaTraits, StdVectorBuilder_true_false) {
 }
 
 TEST(MetaTraits, StdVectorBuilder_type_check) {
-  using stan::StdVectorBuilder;
   using stan::contains_std_vector;
+  using stan::StdVectorBuilder;
 
   bool r
       = contains_std_vector<StdVectorBuilder<true, double, int>::type>::value;

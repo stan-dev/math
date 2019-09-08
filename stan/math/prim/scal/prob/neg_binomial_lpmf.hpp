@@ -22,7 +22,7 @@ template <bool propto, typename T_n, typename T_shape, typename T_inv_scale>
 return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
                                                       const T_shape& alpha,
                                                       const T_inv_scale& beta) {
-  using T_partials_return = partials_return_type_t<T_n, T_shape, T_inv_scale>;
+  using T_partials_return = partials_return_t<T_n, T_shape, T_inv_scale>;
 
   static const char* function = "neg_binomial_lpmf";
 

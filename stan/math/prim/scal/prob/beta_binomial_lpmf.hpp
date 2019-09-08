@@ -41,7 +41,7 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
                                                    const T_size1& alpha,
                                                    const T_size2& beta) {
   static const char* function = "beta_binomial_lpmf";
-  using T_partials = partials_return_type_t<T_size1, T_size2>;
+  using T_partials = partials_return_t<T_size1, T_size2>;
 
   if (size_zero(n, N, alpha, beta)) {
     return 0.0;

@@ -20,8 +20,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lccdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma,
     const T_inv_scale& lambda) {
   static const char* function = "exp_mod_normal_lccdf";
-  typedef partials_return_type_t<T_y, T_loc, T_scale, T_inv_scale>
-      T_partials_return;
+  using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_inv_scale>;
 
   T_partials_return ccdf_log(0.0);
   if (size_zero(y, mu, sigma, lambda)) {

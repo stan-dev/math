@@ -47,11 +47,11 @@ template <bool propto, typename T_y, typename T_x, typename T_alpha,
 return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
     const T_y &y, const T_x &x, const T_alpha &alpha, const T_beta &beta) {
   static const char *function = "bernoulli_logit_glm_lpmf";
-  using T_partials_return = partials_return_type_t<T_y, T_x, T_alpha, T_beta>;
-  typedef typename std::conditional_t<
-      is_vector<T_y>::value, Eigen::Matrix<partials_return_type_t<T_y>, -1, 1>,
-      partials_return_type_t<T_y>>
-      T_y_val;
+  using T_partials_return = partials_return_t<T_y, T_x, T_alpha, T_beta>;
+  using T_y_val =
+      typename std::conditional_t<is_vector<T_y>::value,
+                                  Eigen::Matrix<partials_return_t<T_y>, -1, 1>,
+                                  partials_return_t<T_y>>;
 
   using Eigen::Dynamic;
   using Eigen::Matrix;

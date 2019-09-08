@@ -39,8 +39,7 @@ namespace math {
 template <typename T_y, typename T_scale_succ, typename T_scale_fail>
 return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lccdf(
     const T_y& y, const T_scale_succ& alpha, const T_scale_fail& beta) {
-  typedef partials_return_type_t<T_y, T_scale_succ, T_scale_fail>
-      T_partials_return;
+  using T_partials_return = partials_return_t<T_y, T_scale_succ, T_scale_fail>;
 
   if (size_zero(y, alpha, beta)) {
     return 0.0;

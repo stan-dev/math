@@ -45,7 +45,7 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
                                                        const T_prec& kappa) {
   static const char* function = "beta_proportion_lpdf";
 
-  using T_partials_return = partials_return_type_t<T_y, T_loc, T_prec>;
+  using T_partials_return = partials_return_t<T_y, T_loc, T_prec>;
   using std::log;
   check_positive(function, "Location parameter", mu);
   check_less_or_equal(function, "Location parameter", mu, 1.0);

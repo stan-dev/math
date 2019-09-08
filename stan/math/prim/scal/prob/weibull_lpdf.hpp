@@ -32,7 +32,7 @@ return_type_t<T_y, T_shape, T_scale> weibull_lpdf(const T_y& y,
                                                   const T_shape& alpha,
                                                   const T_scale& sigma) {
   static const char* function = "weibull_lpdf";
-  using T_partials_return = partials_return_type_t<T_y, T_shape, T_scale>;
+  using T_partials_return = partials_return_t<T_y, T_shape, T_scale>;
 
   using std::log;
   check_finite(function, "Random variable", y);

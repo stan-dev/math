@@ -33,8 +33,8 @@ namespace math {
 template <typename T_prob>
 void check_simplex(const char* function, const char* name,
                    const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
-  typedef typename index_type<Eigen::Matrix<T_prob, Eigen::Dynamic, 1> >::type
-      size_t;
+  using size_t =
+      typename index_type<Eigen::Matrix<T_prob, Eigen::Dynamic, 1> >::type;
 
   check_nonzero_size(function, name, theta);
   if (!(fabs(1.0 - theta.sum()) <= CONSTRAINT_TOLERANCE)) {

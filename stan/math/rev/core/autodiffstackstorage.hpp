@@ -87,8 +87,8 @@ namespace math {
  */
 template <typename ChainableT, typename ChainableAllocT>
 struct AutodiffStackSingleton {
-  typedef AutodiffStackSingleton<ChainableT, ChainableAllocT>
-      AutodiffStackSingleton_t;
+  using AutodiffStackSingleton_t
+      = AutodiffStackSingleton<ChainableT, ChainableAllocT>;
 
   AutodiffStackSingleton() : own_instance_(init()) {}
   ~AutodiffStackSingleton() {

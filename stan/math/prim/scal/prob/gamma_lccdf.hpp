@@ -27,7 +27,7 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(const T_y& y,
     return 0.0;
   }
 
-  using T_partials_return = partials_return_type_t<T_y, T_shape, T_inv_scale>;
+  using T_partials_return = partials_return_t<T_y, T_shape, T_inv_scale>;
 
   static const char* function = "gamma_lccdf";
 

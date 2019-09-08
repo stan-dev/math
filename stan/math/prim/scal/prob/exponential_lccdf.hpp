@@ -14,7 +14,7 @@ namespace math {
 template <typename T_y, typename T_inv_scale>
 return_type_t<T_y, T_inv_scale> exponential_lccdf(const T_y& y,
                                                   const T_inv_scale& beta) {
-  using T_partials_return = partials_return_type_t<T_y, T_inv_scale>;
+  using T_partials_return = partials_return_t<T_y, T_inv_scale>;
 
   static const char* function = "exponential_lccdf";
 

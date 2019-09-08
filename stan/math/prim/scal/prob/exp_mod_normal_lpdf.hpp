@@ -21,8 +21,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma,
     const T_inv_scale& lambda) {
   static const char* function = "exp_mod_normal_lpdf";
-  typedef partials_return_type_t<T_y, T_loc, T_scale, T_inv_scale>
-      T_partials_return;
+  using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_inv_scale>;
 
   if (size_zero(y, mu, sigma, lambda)) {
     return 0.0;
