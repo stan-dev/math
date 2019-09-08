@@ -3,8 +3,8 @@
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
 
-using stan::partials_return_type;
 using stan::math::fvar;
+using stan::partials_return_type;
 
 TEST(MetaTraits, PartialsReturnTypeFvarDouble) {
   test::expect_same_type<double, partials_return_type<fvar<double> >::type>();
