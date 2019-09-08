@@ -4,7 +4,7 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <gtest/gtest.h>
-#include <CL/cl.hpp>
+#include <cl.hpp>
 #include <algorithm>
 #include <vector>
 

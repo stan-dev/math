@@ -74,3 +74,12 @@ lib/boost_*/stage/
 lib/boost_*/tools/build/*
 !lib/boost_*/tools/build/src*
 lib/boost_*/user-config.jam
+
+# clang-tidy output
+.clang-fixes.log
+
+# Clang compilation database
+compile_commands.json
+
+# Visual Studio Project Setup
+.vscode/*
