@@ -9,7 +9,7 @@
 
 namespace test {
 
-  template <typename Mat, stan::require_eigen_t<stan::is_var, Mat>...>
+template <typename Mat, stan::require_eigen_t<stan::is_var, Mat>...>
 void check_varis_on_stack(Mat&& x) {
   x.eval();
   for (int j = 0; j < x.cols(); ++j)
