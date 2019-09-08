@@ -1,9 +1,20 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LGAMMA_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LGAMMA_HPP
 
+/*
+ * The lgamma implementation in stan-math is based on either the
+ * reentrant safe lgamma_r implementation from C or the
+ * boost::math::lgamma implementation. The reentrant safe lgamma_r
+ * implementation is preferred as it is faster when compared to the
+ * boost version. However, the reentrant safe lgamma_r C function is
+ * not available with MinGW compilers used on Windows. Therefore, the
+ * boost version is used on Windows with MinGW compilers as fall
+ * back. For details on the speed evaluations, please refer to
+ * https://github.com/stan-dev/math/pull/1255 .
+ */
 #if !__MINGW32__
 // _REENTRANT must be defined during compilation to ensure that cmath
-// exports reentrant safe lgamma_r version.
+// exports the reentrant safe lgamma_r version.
 #if !_REENTRANT
 #error \
     "stan-math requires _REENTRANT being defined during compilation" \
@@ -11,8 +22,8 @@
 #endif
 #include <cmath>
 #else
-// MinGW does not provide the reentrant lgamma_r such that we fall
-// back to boost.
+// MinGW compilers on Windows do not provide the reentrant lgamma_r
+// such that we fall back to boost whenever we are on MinGW.
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/boost_policy.hpp>
 #include <boost/math/special_functions/gamma.hpp>
@@ -44,10 +55,6 @@ namespace math {
    \end{cases}
 \f]
 *
-* Note: Please refer to https://github.com/stan-dev/math/pull/1255 for
-* requirement to use different implementations on Windows MINGW32 and
-* other OSs.
-*
 * @param x argument
 * @return natural logarithm of the gamma function applied to
 * argument
@@ -66,10 +73,6 @@ inline double lgamma(double x) {
 /**
  * Return the natural logarithm of the gamma function applied
  * to the specified argument.
- *
- * Note: Please refer to https://github.com/stan-dev/math/pull/1255 for
- * requirement to use different implementations on Windows MINGW32 and
- * other OSs.
  *
  * @param x argument
  * @return natural logarithm of the gamma function applied to

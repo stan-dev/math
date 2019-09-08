@@ -15,11 +15,14 @@ TEST(MathFunctions, lgamma_nan) {
   // up to boost 1.70.0 the boost::math::lgamma return NaN for large
   // arguments (large is greater than sqrt(largest double of 1E308)
   // when used with the stan::math::boost_policy_t which avoids
-  // propagation of double to long double. See
-  // https://github.com/boostorg/math/issues/242 for this.  Since
-  // boost::math::lgamma is used inst stan-math we need to make sure
-  // that the appropiate boost is available by testing for a finite
-  // return for a large argument.
+  // propagation of input arguments from double to long double
+  // internally to boost::math::lgamma. See
+  // https://github.com/boostorg/math/issues/242 for this. The
+  // stan::math::lgamma implementation is based on the
+  // boost::math::lgamma only when MinGW compilers are used. Thus, to
+  // ensure that boost::math::lgamma contains the needed bugfixes we
+  // test here specifically the boost::math::lgamma by testing for a
+  // finite return for a large argument.
   EXPECT_PRED1(boost::math::isnormal<double>,
                boost::math::lgamma(1.0E50, stan::math::boost_policy_t()));
 }

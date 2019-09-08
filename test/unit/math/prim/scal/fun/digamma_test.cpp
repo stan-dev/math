@@ -16,7 +16,5 @@ TEST(MathFunctions, digamma_nan) {
 
   EXPECT_PRED1(boost::math::isnan<double>, stan::math::digamma(-1));
 
-  // see comments in test/unit/math/prim/scal/fun/lgamma_test.cpp
-  EXPECT_PRED1(boost::math::isnormal<double>,
-               boost::math::digamma(1.0E50, stan::math::boost_policy_t()));
+  EXPECT_PRED1(boost::math::isnormal<double>, stan::math::digamma(1.0E50));
 }
