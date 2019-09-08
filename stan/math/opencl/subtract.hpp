@@ -7,7 +7,7 @@
 #include <stan/math/opencl/err/check_matching_dims.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <CL/cl.hpp>
+#include <cl.hpp>
 
 namespace stan {
 namespace math {

@@ -14,7 +14,7 @@
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/opencl/kernels/cholesky_decompose.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <CL/cl.hpp>
+#include <cl.hpp>
 #include <algorithm>
 #include <cmath>
 

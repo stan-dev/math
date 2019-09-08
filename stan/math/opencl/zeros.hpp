@@ -10,7 +10,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 
-#include <CL/cl.hpp>
+#include <cl.hpp>
 
 namespace stan {
 namespace math {

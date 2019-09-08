@@ -1,6 +1,7 @@
 #include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/fwd/scal/fun/nan_util.hpp>
+#include <limits>
 
 TEST(AgradFwdLogDiffExp, Fvar) {
   using stan::math::fvar;
@@ -25,6 +26,26 @@ TEST(AgradFwdLogDiffExp, Fvar) {
   fvar<double> c = log_diff_exp(z, y);
   EXPECT_FLOAT_EQ(log_diff_exp(1.1, 0.5), c.val_);
   EXPECT_FLOAT_EQ(2 / (1 - exp(1.1 - 0.5)), c.d_);
+
+  double ninf = -std::numeric_limits<double>::infinity();
+  fvar<double> d = log_diff_exp(x, ninf);
+  EXPECT_FLOAT_EQ(x.val_, d.val_);
+  EXPECT_FLOAT_EQ(1.0, d.d_);
+
+  fvar<double> e = log_diff_exp(x, 1.2);
+  EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(), e.val_);
+  EXPECT_FLOAT_EQ(+std::numeric_limits<double>::infinity(), e.d_);
+
+  fvar<double> w(-std::numeric_limits<double>::infinity());
+  w.d_ = 1.0;
+
+  fvar<double> g = log_diff_exp(w, ninf);
+  EXPECT_FLOAT_EQ(w.val_, g.val_);
+  EXPECT_FLOAT_EQ(1.0, g.d_);
+
+  fvar<double> f = log_diff_exp(0.5, y);
+  EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(), f.val_);
+  EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(), f.d_);
 }
 
 TEST(AgradFwdLogDiffExp, AgradFvar_exception) {
