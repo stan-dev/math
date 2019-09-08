@@ -24,7 +24,7 @@ inline bool is_symmetric(
     return false;
   }
 
-  using size_t = typename index_type<
+  using size_type = typename index_type<
       Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>>::type;
 
   size_type k = y.rows();
