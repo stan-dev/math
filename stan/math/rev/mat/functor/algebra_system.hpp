@@ -55,10 +55,11 @@ struct system_functor {
   template <typename T>
   inline Eigen::Matrix<T, Eigen::Dynamic, 1> operator()(
       const Eigen::Matrix<T, Eigen::Dynamic, 1>& iv) const {
-    if (x_is_iv)
+    if (x_is_iv) {
       return f_(iv, y_, dat_, dat_int_, msgs_);
-    else
+    } else {
       return f_(x_, iv, dat_, dat_int_, msgs_);
+    }
   }
 };
 

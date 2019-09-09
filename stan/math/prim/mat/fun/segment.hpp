@@ -50,8 +50,9 @@ std::vector<T> segment(const std::vector<T>& sv, size_t i, size_t n) {
                         static_cast<size_t>(sv.size()));
   }
   std::vector<T> s;
-  for (size_t j = 0; j < n; ++j)
+  for (size_t j = 0; j < n; ++j) {
     s.push_back(sv[i + j - 1]);
+  }
   return s;
 }
 

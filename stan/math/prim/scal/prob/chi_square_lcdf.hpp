@@ -35,12 +35,13 @@ namespace math {
 template <typename T_y, typename T_dof>
 return_type_t<T_y, T_dof> chi_square_lcdf(const T_y& y, const T_dof& nu) {
   static const char* function = "chi_square_lcdf";
-  typedef partials_return_type_t<T_y, T_dof> T_partials_return;
+  using T_partials_return = partials_return_t<T_y, T_dof>;
 
   T_partials_return cdf_log(0.0);
 
-  if (size_zero(y, nu))
+  if (size_zero(y, nu)) {
     return cdf_log;
+  }
 
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
@@ -57,8 +58,9 @@ return_type_t<T_y, T_dof> chi_square_lcdf(const T_y& y, const T_dof& nu) {
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
   for (size_t i = 0; i < stan::length(y); i++) {
-    if (value_of(y_vec[i]) == 0)
+    if (value_of(y_vec[i]) == 0) {
       return ops_partials.build(negative_infinity());
+    }
   }
 
   using std::exp;
@@ -81,8 +83,9 @@ return_type_t<T_y, T_dof> chi_square_lcdf(const T_y& y, const T_dof& nu) {
   for (size_t n = 0; n < N; n++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
-    if (value_of(y_vec[n]) == std::numeric_limits<double>::infinity())
+    if (value_of(y_vec[n]) == std::numeric_limits<double>::infinity()) {
       return ops_partials.build(0.0);
+    }
 
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return alpha_dbl = value_of(nu_vec[n]) * 0.5;
@@ -92,16 +95,18 @@ return_type_t<T_y, T_dof> chi_square_lcdf(const T_y& y, const T_dof& nu) {
 
     cdf_log += log(Pn);
 
-    if (!is_constant_all<T_y>::value)
+    if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] += beta_dbl * exp(-beta_dbl * y_dbl)
                                           * pow(beta_dbl * y_dbl, alpha_dbl - 1)
                                           / tgamma(alpha_dbl) / Pn;
-    if (!is_constant_all<T_dof>::value)
+    }
+    if (!is_constant_all<T_dof>::value) {
       ops_partials.edge2_.partials_[n]
           -= 0.5
              * grad_reg_inc_gamma(alpha_dbl, beta_dbl * y_dbl, gamma_vec[n],
                                   digamma_vec[n])
              / Pn;
+    }
   }
   return ops_partials.build(cdf_log);
 }

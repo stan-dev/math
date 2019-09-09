@@ -21,8 +21,9 @@ namespace math {
  */
 template <typename T, typename S>
 void fill(std::vector<T>& x, const S& y) {
-  for (typename std::vector<T>::size_type i = 0; i < x.size(); ++i)
+  for (typename std::vector<T>::size_type i = 0; i < x.size(); ++i) {
     fill(x[i], y);
+  }
 }
 
 }  // namespace math

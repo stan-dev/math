@@ -43,8 +43,9 @@ inline return_type_t<T, L, S> offset_multiplier_free(const T& y, const L& mu,
                                                      const S& sigma) {
   check_finite("offset_multiplier_free", "offset", mu);
   if (sigma == 1) {
-    if (mu == 0)
+    if (mu == 0) {
       return identity_free(y);
+    }
     return y - mu;
   }
   check_positive_finite("offset_multiplier_free", "multiplier", sigma);

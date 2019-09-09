@@ -28,14 +28,18 @@ inline double log_sum_exp(const std::vector<double>& x) {
   using std::log;
   using std::numeric_limits;
   double max = -numeric_limits<double>::infinity();
-  for (double xx : x)
-    if (xx > max)
+  for (double xx : x) {
+    if (xx > max) {
       max = xx;
+    }
+  }
 
   double sum = 0.0;
-  for (size_t ii = 0; ii < x.size(); ii++)
-    if (x[ii] != -numeric_limits<double>::infinity())
+  for (size_t ii = 0; ii < x.size(); ii++) {
+    if (x[ii] != -numeric_limits<double>::infinity()) {
       sum += exp(x[ii] - max);
+    }
+  }
 
   return max + log(sum);
 }

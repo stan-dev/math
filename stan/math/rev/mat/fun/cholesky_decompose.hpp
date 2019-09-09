@@ -40,8 +40,9 @@ inline void set_lower_tri_coeff_ref(Eigen::Matrix<var, -1, -1>& L,
     for (size_type i = j; i < L.cols(); ++i) {
       L.coeffRef(i, j).vi_ = vari_ref[pos++];
     }
-    for (size_type k = 0; k < j; ++k)
+    for (size_type k = 0; k < j; ++k) {
       L.coeffRef(k, j).vi_ = dummy;
+    }
   }
   return;
 }
@@ -50,7 +51,7 @@ class cholesky_block : public vari {
  public:
   int M_;
   int block_size_;
-  typedef Eigen::Block<Eigen::MatrixXd> Block_;
+  using Block_ = Eigen::Block<Eigen::MatrixXd>;
   vari** vari_ref_A_;
   vari** vari_ref_L_;
 
@@ -156,9 +157,11 @@ class cholesky_block : public vari {
       D_adj.triangularView<StrictlyUpper>().setZero();
     }
     pos = 0;
-    for (size_type j = 0; j < M_; ++j)
-      for (size_type i = j; i < M_; ++i)
+    for (size_type j = 0; j < M_; ++j) {
+      for (size_type i = j; i < M_; ++i) {
         vari_ref_A_[pos++]->adj_ += L_adj.coeffRef(i, j);
+      }
+    }
   }
 };
 
@@ -416,8 +419,9 @@ inline Eigen::Matrix<var, -1, -1> cholesky_decompose(
         size_t pos = j + accum_i;
         L.coeffRef(i, j).vi_ = baseVari->vari_ref_L_[pos];
       }
-      for (size_type k = 0; k < j; ++k)
+      for (size_type k = 0; k < j; ++k) {
         L.coeffRef(k, j).vi_ = dummy;
+      }
       accum += j;
       accum_i = accum;
     }

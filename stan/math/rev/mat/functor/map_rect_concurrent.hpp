@@ -26,8 +26,8 @@ map_rect_concurrent(
         job_params,
     const std::vector<std::vector<double>>& x_r,
     const std::vector<std::vector<int>>& x_i, std::ostream* msgs) {
-  typedef map_rect_reduce<F, T_shared_param, T_job_param> ReduceF;
-  typedef map_rect_combine<F, T_shared_param, T_job_param> CombineF;
+  using ReduceF = map_rect_reduce<F, T_shared_param, T_job_param>;
+  using CombineF = map_rect_combine<F, T_shared_param, T_job_param>;
 
   const int num_jobs = job_params.size();
   const vector_d shared_params_dbl = value_of(shared_params);
@@ -40,9 +40,10 @@ map_rect_concurrent(
     const int end = start + size;
     std::vector<matrix_d> chunk_f_out;
     chunk_f_out.reserve(size);
-    for (int i = start; i != end; i++)
+    for (int i = start; i != end; i++) {
       chunk_f_out.push_back(ReduceF()(
           shared_params_dbl, value_of(job_params[i]), x_r[i], x_i[i], msgs));
+    }
     return chunk_f_out;
   };
 
@@ -73,17 +74,19 @@ map_rect_concurrent(
   int offset = 0;
   for (std::size_t i = 0; i < futures.size(); ++i) {
     const std::vector<matrix_d>& chunk_result = futures[i].get();
-    if (i == 0)
+    if (i == 0) {
       world_output.resize(chunk_result[0].rows(),
                           num_jobs * chunk_result[0].cols());
+    }
 
     for (const auto& job_result : chunk_result) {
       const int num_job_outputs = job_result.cols();
       world_f_out.push_back(num_job_outputs);
 
-      if (world_output.cols() < offset + num_job_outputs)
+      if (world_output.cols() < offset + num_job_outputs) {
         world_output.conservativeResize(Eigen::NoChange,
                                         2 * (offset + num_job_outputs));
+      }
 
       world_output.block(0, offset, world_output.rows(), num_job_outputs)
           = job_result;

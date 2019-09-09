@@ -20,24 +20,27 @@ return_type_t<T_covar, T_shape> lkj_corr_cholesky_lpdf(
 
   using boost::math::tools::promote_args;
 
-  typedef return_type_t<T_covar, T_shape> lp_ret;
+  using lp_ret = return_type_t<T_covar, T_shape>;
   lp_ret lp(0.0);
   check_positive(function, "Shape parameter", eta);
   check_lower_triangular(function, "Random variable", L);
 
   const unsigned int K = L.rows();
-  if (K == 0)
+  if (K == 0) {
     return 0.0;
+  }
 
-  if (include_summand<propto, T_shape>::value)
+  if (include_summand<propto, T_shape>::value) {
     lp += do_lkj_constant(eta, K);
+  }
   if (include_summand<propto, T_covar, T_shape>::value) {
     const int Km1 = K - 1;
     Eigen::Matrix<T_covar, Eigen::Dynamic, 1> log_diagonals
         = L.diagonal().tail(Km1).array().log();
     Eigen::Matrix<lp_ret, Eigen::Dynamic, 1> values(Km1);
-    for (int k = 0; k < Km1; k++)
+    for (int k = 0; k < Km1; k++) {
       values(k) = (Km1 - k - 1) * log_diagonals(k);
+    }
     if ((eta == 1.0)
         && stan::is_constant_all<typename stan::scalar_type<T_shape> >::value) {
       lp += sum(values);

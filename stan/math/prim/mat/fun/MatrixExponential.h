@@ -38,7 +38,7 @@ namespace Eigen {
     return ldexp(x, -m_squarings);
     }
 
-    typedef std::complex<RealScalar> ComplexScalar;
+    using ComplexScalar = std::complex<RealScalar>;
 
     /** \brief Scale a matrix coefficient.
      *
@@ -63,8 +63,9 @@ namespace Eigen {
   template <typename MatrixType>
   void matrix_exp_pade3(const MatrixType &A, MatrixType &U, MatrixType &V)
   {  
-    using Eigen::internal::traits; 
-    typedef typename Eigen::NumTraits<typename traits<MatrixType>::Scalar>::Real RealScalar;  
+    using Eigen::internal::traits;
+    using RealScalar =
+        typename Eigen::NumTraits<typename traits<MatrixType>::Scalar>::Real;
     const RealScalar b[] = {120.L, 60.L, 12.L, 1.L};
     const MatrixType A2 = A * A;
     const MatrixType tmp = b[3] * A2 + b[1] * MatrixType::Identity(A.rows(), A.cols());  
@@ -79,8 +80,9 @@ namespace Eigen {
    */
   template <typename MatrixType>
   void matrix_exp_pade5(const MatrixType &A, MatrixType &U, MatrixType &V)
-  {  
-    typedef typename Eigen::NumTraits<typename Eigen::internal::traits<MatrixType>::Scalar>::Real RealScalar;  
+  {
+    using RealScalar = typename Eigen::NumTraits<
+        typename Eigen::internal::traits<MatrixType>::Scalar>::Real;
     const RealScalar b[] = {30240.L, 15120.L, 3360.L, 420.L, 30.L, 1.L};
     const MatrixType A2 = A * A;
     const MatrixType A4 = A2 * A2;
@@ -97,8 +99,9 @@ namespace Eigen {
   template <typename MatrixType>
   void matrix_exp_pade7(const MatrixType &A, MatrixType &U, MatrixType &V)
   {  
-    using Eigen::internal::traits; 
-    typedef typename Eigen::NumTraits<typename traits<MatrixType>::Scalar>::Real RealScalar; 
+    using Eigen::internal::traits;
+    using RealScalar =
+        typename Eigen::NumTraits<typename traits<MatrixType>::Scalar>::Real;
     const RealScalar b[] = {17297280.L, 8648640.L, 1995840.L, 277200.L, 25200.L, 1512.L, 56.L, 1.L};  
     const MatrixType A2 = A * A;
     const MatrixType A4 = A2 * A2;
@@ -117,8 +120,9 @@ namespace Eigen {
   template <typename MatrixType>
   void matrix_exp_pade9(const MatrixType &A, MatrixType &U, MatrixType &V)
   {  
-    using Eigen::internal::traits; 
-    typedef typename Eigen::NumTraits<typename traits<MatrixType>::Scalar>::Real RealScalar;  
+    using Eigen::internal::traits;
+    using RealScalar =
+        typename Eigen::NumTraits<typename traits<MatrixType>::Scalar>::Real;
     const RealScalar b[] = {17643225600.L, 8821612800.L, 2075673600.L, 302702400.L, 30270240.L,  
     2162160.L, 110880.L, 3960.L, 90.L, 1.L};
     const MatrixType A2 = A * A;
@@ -139,8 +143,9 @@ namespace Eigen {
   template <typename MatrixType>
   void matrix_exp_pade13(const MatrixType &A, MatrixType &U, MatrixType &V)  
   {  
-    using Eigen::internal::traits; 
-    typedef typename Eigen::NumTraits<typename traits<MatrixType>::Scalar>::Real RealScalar;  
+    using Eigen::internal::traits;
+    using RealScalar =
+        typename Eigen::NumTraits<typename traits<MatrixType>::Scalar>::Real;
     const RealScalar b[] = {64764752532480000.L, 32382376266240000.L, 7771770303897600.L,  
     1187353796428800.L, 129060195264000.L, 10559470521600.L, 670442572800.L,  
     33522128640.L, 1323241920.L, 40840800.L, 960960.L, 16380.L, 182.L, 1.L};  
@@ -197,7 +202,9 @@ namespace Eigen {
     } else {
       const double maxnorm = 5.371920351148152;
       frexp(value_of_rec(l1norm) / value_of_rec(maxnorm), &squarings);
-      if (squarings < 0) squarings = 0;
+      if (squarings < 0) {
+        squarings = 0;
+      }
       MatrixType A = arg.unaryExpr(MatrixExponentialScalingOp<T>(squarings));  
       matrix_exp_pade13(A, U, V);
     }

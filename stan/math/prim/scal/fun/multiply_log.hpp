@@ -50,8 +50,9 @@ namespace math {
 template <typename T_a, typename T_b>
 inline return_type_t<T_a, T_b> multiply_log(const T_a a, const T_b b) {
   using std::log;
-  if (b == 0.0 && a == 0.0)
+  if (b == 0.0 && a == 0.0) {
     return 0.0;
+  }
   return a * log(b);
 }
 
