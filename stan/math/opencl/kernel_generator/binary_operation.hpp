@@ -69,18 +69,18 @@ class binary_operation
 
   /**
    * generates kernel code for this and nested expressions.
-   * @param ng name generator for this kernel
    * @param[in,out] generated set of already generated operations
+   * @param ng name generator for this kernel
    * @param i row index variable name
    * @param j column index variable name
    * @return part of kernel with code for this and nested expressions
    */
-  inline kernel_parts generate(name_generator& ng, std::set<int>& generated,
+  inline kernel_parts generate(std::set<int>& generated, name_generator& ng,
                                const std::string& i,
                                const std::string& j) const {
     if (generated.count(instance) == 0) {
-      kernel_parts a_parts = a_.generate(ng, generated, i, j);
-      kernel_parts b_parts = b_.generate(ng, generated, i, j);
+      kernel_parts a_parts = a_.generate(generated, ng, i, j);
+      kernel_parts b_parts = b_.generate(generated, ng, i, j);
       generated.insert(instance);
       var_name = ng.generate();
       kernel_parts res;

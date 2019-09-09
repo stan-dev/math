@@ -42,13 +42,13 @@ class load__
 
   /**
    * generates kernel code for this expression.
-   * @param ng name generator for this kernel
    * @param[in,out] generated set of already generated operations
+   * @param ng name generator for this kernel
    * @param i row index variable name
    * @param j column index variable name
    * @return part of kernel with code for this and nested expressions
    */
-  inline kernel_parts generate(name_generator& ng, std::set<int>& generated,
+  inline kernel_parts generate(std::set<int>& generated, name_generator& ng,
                                const std::string& i,
                                const std::string& j) const {
     if (generated.count(instance) == 0) {
@@ -79,7 +79,7 @@ class load__
    * @param j column index variable name
    * @return part of kernel with code for this expressions
    */
-  inline kernel_parts generate_lhs(name_generator& ng, std::set<int>& generated,
+  inline kernel_parts generate_lhs(std::set<int>& generated, name_generator& ng,
                                    const std::string& i,
                                    const std::string& j) const {
     kernel_parts res;

@@ -31,8 +31,8 @@ void operation<Derived, ReturnScalar>::evaluate_into(T_lhs&& lhs) const {
   }
   name_generator ng;
   std::set<int> generated;
-  kernel_parts parts = derived().generate(ng, generated, "i", "j");
-  kernel_parts out_parts = lhs_expression.generate_lhs(ng, generated, "i", "j");
+  kernel_parts parts = derived().generate(generated, ng, "i", "j");
+  kernel_parts out_parts = lhs_expression.generate_lhs(generated, ng, "i", "j");
   std::string src = "kernel void calculate(" + parts.args +
                    out_parts.args.substr(0, out_parts.args.size() - 2) + "){\n"
                    "int i = get_global_id(0);"
