@@ -1,5 +1,6 @@
 #ifndef STAN_MATH_OPENCL_KERNEL_GENERATOR_EVALUATE_INTO_HPP
 #define STAN_MATH_OPENCL_KERNEL_GENERATOR_EVALUATE_INTO_HPP
+#ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_generator/operation.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation.hpp>
@@ -63,4 +64,5 @@ void operation<Derived, ReturnScalar>::evaluate_into(T_lhs&& lhs) const {
 }  // namespace math
 }  // namespace stan
 
+#endif
 #endif
