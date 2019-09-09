@@ -7,7 +7,7 @@
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernel_cl.hpp>
-#include <CL/cl.hpp>
+#include <cl.hpp>
 #include <string>
 #include <map>
 

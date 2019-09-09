@@ -5,6 +5,7 @@
 #include <stan/math/opencl/kernel_generator/operation.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation.hpp>
 #include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
+#include <cl.hpp>
 #include <utility>
 #include <string>
 #include <set>
