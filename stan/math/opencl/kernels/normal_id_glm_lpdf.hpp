@@ -24,8 +24,8 @@ static const char* normal_id_glm_kernel_code = STRINGIFY(
      * @param[out] mu_derivative_glob intermediate variable used in the model
      * @param[out] mu_derivative_sum partially summed mu_derivative_glob (1
      * value per work group)
-     * @param[out] y_minus_mu_over_sigma_squared_sum intermediate variable used
-     * in the model
+     * @param[out] y_minus_mu_over_sigma_squared_sum Partial sum of squares of
+     * y, scaled by expected mean and given variance.
      * @param[out] sigma_derivative derivative with respect to sigma
      * @param[out] log_sigma_sum partially summed logarithm of sigma (1 value
      * per work group)
