@@ -31,7 +31,7 @@ namespace math {
  * @param[in] dat Continuous data vector for the equation system.
  * @param[in] dat_int Integer data vector for the equation system.
  * @param[in, out] msgs The print stream for warning messages.
- * @param[in] scaling_step_size Scaled-step stopping tolerance. If
+ * @param[in] scaling_step_tol Scaled-step stopping tolerance. If
  *            a Newton step is smaller than the scaling step
  *            tolerance, the code breaks, assuming the solver is no
  *            longer making significant progress (i.e. is stuck)
