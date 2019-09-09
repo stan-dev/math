@@ -4,7 +4,7 @@
 #include <vector>
 
 #if defined(STAN_OPENCL) && !defined(STAN_OPENCL_NOCACHE)
-#include <CL/cl.hpp>
+#include <cl.hpp>
 #endif
 
 TEST(AgradPartialsVari, OperandsAndPartialsScal) {
