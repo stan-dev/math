@@ -150,7 +150,7 @@ static const char* normal_id_glm_kernel_code = STRINGIFY(
 const kernel_cl<out_buffer, out_buffer, out_buffer, out_buffer, out_buffer,
                 in_buffer, in_buffer, in_buffer, in_buffer, in_buffer, int, int,
                 int, int, int, int, int, int>
-    normal_id_glm("normal_id_glm", normal_id_glm_kernel_code,
+    normal_id_glm("normal_id_glm", {normal_id_glm_kernel_code},
                   {{"REDUCTION_STEP_SIZE", 4}, {"LOCAL_SIZE_", 64}});
 
 }  // namespace opencl_kernels
