@@ -65,10 +65,12 @@ namespace math {
    * if z is at a pole of the function
  */
 inline double gamma_p(double z, double a) {
-  if (is_nan(z))
+  if (is_nan(z)) {
     return not_a_number();
-  if (is_nan(a))
+  }
+  if (is_nan(a)) {
     return not_a_number();
+  }
   check_positive("gamma_p", "first argument (z)", z);
   check_nonnegative("gamma_p", "second argument (a)", a);
   return boost::math::gamma_p(z, a, boost_policy_t());

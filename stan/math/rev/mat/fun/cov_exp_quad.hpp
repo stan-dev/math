@@ -62,8 +62,9 @@ class cov_exp_quad_vari : public vari {
         ++pos;
       }
     }
-    for (size_t i = 0; i < size_; ++i)
+    for (size_t i = 0; i < size_; ++i) {
       cov_diag_[i] = new vari(sigma_sq_d_, false);
+    }
   }
 
   virtual void chain() {
@@ -129,8 +130,9 @@ class cov_exp_quad_vari<T_x, double, T_l> : public vari {
         ++pos;
       }
     }
-    for (size_t i = 0; i < size_; ++i)
+    for (size_t i = 0; i < size_; ++i) {
       cov_diag_[i] = new vari(sigma_sq_d_, false);
+    }
   }
 
   virtual void chain() {

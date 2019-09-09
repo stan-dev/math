@@ -25,15 +25,17 @@ namespace math {
 template <bool propto, typename T_y>
 return_type_t<T_y> std_normal_lpdf(const T_y& y) {
   static const char* function = "std_normal_lpdf";
-  typedef partials_return_type_t<T_y> T_partials_return;
+  using T_partials_return = partials_return_t<T_y>;
 
-  if (size_zero(y))
+  if (size_zero(y)) {
     return 0.0;
+  }
 
   check_not_nan(function, "Random variable", y);
 
-  if (!include_summand<propto, T_y>::value)
+  if (!include_summand<propto, T_y>::value) {
     return 0.0;
+  }
 
   operands_and_partials<T_y> ops_partials(y);
   scalar_seq_view<T_y> y_vec(y);
@@ -41,12 +43,14 @@ return_type_t<T_y> std_normal_lpdf(const T_y& y) {
   for (size_t n = 0; n < length(y); n++) {
     const T_partials_return y_val = value_of(y_vec[n]);
     logp += y_val * y_val;
-    if (!is_constant_all<T_y>::value)
+    if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] -= y_val;
+    }
   }
   logp *= -0.5;
-  if (include_summand<propto>::value)
+  if (include_summand<propto>::value) {
     logp += NEG_LOG_SQRT_TWO_PI * length(y);
+  }
   return ops_partials.build(logp);
 }
 

@@ -40,8 +40,8 @@ categorical_logit_glm_lpmf(
     const T_y& y, const Eigen::Matrix<T_x_scalar, T_x_rows, Eigen::Dynamic>& x,
     const Eigen::Matrix<T_alpha_scalar, Eigen::Dynamic, 1>& alpha,
     const Eigen::Matrix<T_beta_scalar, Eigen::Dynamic, Eigen::Dynamic>& beta) {
-  typedef partials_return_type_t<T_x_scalar, T_alpha_scalar, T_beta_scalar>
-      T_partials_return;
+  using T_partials_return
+      = partials_return_t<T_x_scalar, T_alpha_scalar, T_beta_scalar>;
   static const char* function = "categorical_logit_glm_lpmf";
 
   using Eigen::Array;
@@ -64,12 +64,14 @@ categorical_logit_glm_lpmf(
   check_bounded(function, "categorical outcome out of support", y, 1,
                 N_classes);
 
-  if (size_zero(y, x, beta))
+  if (size_zero(y, x, beta)) {
     return 0;
+  }
 
   if (!include_summand<propto, T_x_scalar, T_alpha_scalar,
-                       T_beta_scalar>::value)
+                       T_beta_scalar>::value) {
     return 0;
+  }
 
   const auto& x_val = value_of_rec(x);
   const auto& beta_val = value_of_rec(beta);
@@ -80,10 +82,9 @@ categorical_logit_glm_lpmf(
   Array<T_partials_return, T_x_rows, Dynamic> lin
       = (x_val * beta_val).rowwise() + alpha_val_vec;
   Array<T_partials_return, T_x_rows, 1> lin_max
-      = lin.rowwise()
-            .maxCoeff();  // This is used to prevent overflow when
-                          // calculating softmax/log_sum_exp and similar
-                          // expressions
+      = lin.rowwise().maxCoeff();  // This is used to prevent overflow when
+                                   // calculating softmax/log_sum_exp and
+                                   // similar expressions
   Array<T_partials_return, T_x_rows, Dynamic> exp_lin
       = exp(lin.colwise() - lin_max);
   Array<T_partials_return, T_x_rows, 1> inv_sum_exp_lin

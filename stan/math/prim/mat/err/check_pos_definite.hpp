@@ -29,13 +29,15 @@ inline void check_pos_definite(const char* function, const char* name,
                                const Eigen::Matrix<T_y, -1, -1>& y) {
   check_symmetric(function, name, y);
   check_positive(function, name, "rows", y.rows());
-  if (y.rows() == 1 && !(y(0, 0) > CONSTRAINT_TOLERANCE))
+  if (y.rows() == 1 && !(y(0, 0) > CONSTRAINT_TOLERANCE)) {
     domain_error(function, name, "is not positive definite.", "");
+  }
 
   Eigen::LDLT<Eigen::MatrixXd> cholesky = value_of_rec(y).ldlt();
   if (cholesky.info() != Eigen::Success || !cholesky.isPositive()
-      || (cholesky.vectorD().array() <= 0.0).any())
+      || (cholesky.vectorD().array() <= 0.0).any()) {
     domain_error(function, name, "is not positive definite.", "");
+  }
   check_not_nan(function, name, y);
 }
 
@@ -53,8 +55,9 @@ template <typename Derived>
 inline void check_pos_definite(const char* function, const char* name,
                                const Eigen::LDLT<Derived>& cholesky) {
   if (cholesky.info() != Eigen::Success || !cholesky.isPositive()
-      || !(cholesky.vectorD().array() > 0.0).all())
+      || !(cholesky.vectorD().array() > 0.0).all()) {
     domain_error(function, "LDLT decomposition of", " failed", name);
+  }
 }
 
 /**
@@ -72,8 +75,9 @@ template <typename Derived>
 inline void check_pos_definite(const char* function, const char* name,
                                const Eigen::LLT<Derived>& cholesky) {
   if (cholesky.info() != Eigen::Success
-      || !(cholesky.matrixLLT().diagonal().array() > 0.0).all())
+      || !(cholesky.matrixLLT().diagonal().array() > 0.0).all()) {
     domain_error(function, "Matrix", " is not positive definite", name);
+  }
 }
 
 }  // namespace math

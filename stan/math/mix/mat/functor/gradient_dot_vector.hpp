@@ -16,8 +16,9 @@ void gradient_dot_vector(const F& f,
                          T1& grad_fx_dot_v) {
   using Eigen::Matrix;
   Matrix<fvar<T1>, Eigen::Dynamic, 1> x_fvar(x.size());
-  for (int i = 0; i < x.size(); ++i)
+  for (int i = 0; i < x.size(); ++i) {
     x_fvar(i) = fvar<T1>(x(i), v(i));
+  }
   fvar<T1> fx_fvar = f(x_fvar);
   fx = fx_fvar.val_;
   grad_fx_dot_v = fx_fvar.d_;

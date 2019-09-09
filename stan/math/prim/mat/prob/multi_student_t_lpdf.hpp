@@ -32,22 +32,24 @@ return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_lpdf(
     const T_y& y, const T_dof& nu, const T_loc& mu, const T_scale& Sigma) {
   static const char* function = "multi_student_t";
   using std::log;
-  typedef typename scalar_type<T_scale>::type T_scale_elem;
-  typedef return_type_t<T_y, T_dof, T_loc, T_scale> lp_type;
+  using T_scale_elem = typename scalar_type<T_scale>::type;
+  using lp_type = return_type_t<T_y, T_dof, T_loc, T_scale>;
 
   check_not_nan(function, "Degrees of freedom parameter", nu);
   check_positive(function, "Degrees of freedom parameter", nu);
 
-  if (is_inf(nu))
+  if (is_inf(nu)) {
     return multi_normal_log(y, mu, Sigma);
+  }
 
   using Eigen::Matrix;
   using std::vector;
 
   size_t number_of_y = length_mvt(y);
   size_t number_of_mu = length_mvt(mu);
-  if (number_of_y == 0 || number_of_mu == 0)
+  if (number_of_y == 0 || number_of_mu == 0) {
     return 0;
+  }
   check_consistent_sizes_mvt(function, "y", y, "mu", mu);
 
   vector_seq_view<T_y> y_vec(y);
@@ -102,8 +104,9 @@ return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_lpdf(
   LDLT_factor<T_scale_elem, Eigen::Dynamic, Eigen::Dynamic> ldlt_Sigma(Sigma);
   check_ldlt_factor(function, "LDLT_Factor of scale parameter", ldlt_Sigma);
 
-  if (size_y == 0)
+  if (size_y == 0) {
     return 0;
+  }
 
   lp_type lp(0);
 
@@ -113,8 +116,9 @@ return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_lpdf(
     lp -= (0.5 * size_y) * log(nu) * size_vec;
   }
 
-  if (include_summand<propto>::value)
+  if (include_summand<propto>::value) {
     lp -= (0.5 * size_y) * LOG_PI * size_vec;
+  }
 
   using Eigen::Array;
 
@@ -127,8 +131,9 @@ return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_lpdf(
     for (size_t i = 0; i < size_vec; i++) {
       Eigen::Matrix<return_type_t<T_y, T_loc>, Eigen::Dynamic, 1> y_minus_mu(
           size_y);
-      for (int j = 0; j < size_y; j++)
+      for (int j = 0; j < size_y; j++) {
         y_minus_mu(j) = y_vec[i](j) - mu_vec[i](j);
+      }
       sum_lp_vec
           += log1p(trace_inv_quad_form_ldlt(ldlt_Sigma, y_minus_mu) / nu);
     }

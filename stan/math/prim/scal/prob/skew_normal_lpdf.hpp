@@ -21,14 +21,14 @@ template <bool propto, typename T_y, typename T_loc, typename T_scale,
 return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& alpha) {
   static const char* function = "skew_normal_lpdf";
-  typedef partials_return_type_t<T_y, T_loc, T_scale, T_shape>
-      T_partials_return;
+  using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_shape>;
 
   using std::exp;
   using std::log;
 
-  if (size_zero(y, mu, sigma, alpha))
+  if (size_zero(y, mu, sigma, alpha)) {
     return 0.0;
+  }
 
   T_partials_return logp(0.0);
 
@@ -39,8 +39,9 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma, "Shape paramter", alpha);
 
-  if (!include_summand<propto, T_y, T_loc, T_scale, T_shape>::value)
+  if (!include_summand<propto, T_y, T_loc, T_scale, T_shape>::value) {
     return 0.0;
+  }
 
   operands_and_partials<T_y, T_loc, T_scale, T_shape> ops_partials(y, mu, sigma,
                                                                    alpha);
@@ -57,8 +58,9 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
       log_sigma(length(sigma));
   for (size_t i = 0; i < length(sigma); i++) {
     inv_sigma[i] = 1.0 / value_of(sigma_vec[i]);
-    if (include_summand<propto, T_scale>::value)
+    if (include_summand<propto, T_scale>::value) {
       log_sigma[i] = log(value_of(sigma_vec[i]));
+    }
   }
 
   for (size_t n = 0; n < N; n++) {
@@ -71,37 +73,45 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
         = (y_dbl - mu_dbl) * inv_sigma[n];
     const double pi_dbl = pi();
 
-    if (include_summand<propto>::value)
+    if (include_summand<propto>::value) {
       logp -= 0.5 * log(2.0 * pi_dbl);
-    if (include_summand<propto, T_scale>::value)
+    }
+    if (include_summand<propto, T_scale>::value) {
       logp -= log(sigma_dbl);
-    if (include_summand<propto, T_y, T_loc, T_scale>::value)
+    }
+    if (include_summand<propto, T_y, T_loc, T_scale>::value) {
       logp -= y_minus_mu_over_sigma * y_minus_mu_over_sigma / 2.0;
-    if (include_summand<propto, T_y, T_loc, T_scale, T_shape>::value)
+    }
+    if (include_summand<propto, T_y, T_loc, T_scale, T_shape>::value) {
       logp += log(erfc(-alpha_dbl * y_minus_mu_over_sigma / std::sqrt(2.0)));
+    }
 
     T_partials_return deriv_logerf
         = 2.0 / std::sqrt(pi_dbl)
           * exp(-alpha_dbl * y_minus_mu_over_sigma / std::sqrt(2.0) * alpha_dbl
                 * y_minus_mu_over_sigma / std::sqrt(2.0))
           / (1 + erf(alpha_dbl * y_minus_mu_over_sigma / std::sqrt(2.0)));
-    if (!is_constant_all<T_y>::value)
+    if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n]
           += -y_minus_mu_over_sigma / sigma_dbl
              + deriv_logerf * alpha_dbl / (sigma_dbl * std::sqrt(2.0));
-    if (!is_constant_all<T_loc>::value)
+    }
+    if (!is_constant_all<T_loc>::value) {
       ops_partials.edge2_.partials_[n]
           += y_minus_mu_over_sigma / sigma_dbl
              + deriv_logerf * -alpha_dbl / (sigma_dbl * std::sqrt(2.0));
-    if (!is_constant_all<T_scale>::value)
+    }
+    if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n]
           += -1.0 / sigma_dbl
              + y_minus_mu_over_sigma * y_minus_mu_over_sigma / sigma_dbl
              - deriv_logerf * y_minus_mu_over_sigma * alpha_dbl
                    / (sigma_dbl * std::sqrt(2.0));
-    if (!is_constant_all<T_shape>::value)
+    }
+    if (!is_constant_all<T_shape>::value) {
       ops_partials.edge4_.partials_[n]
           += deriv_logerf * y_minus_mu_over_sigma / std::sqrt(2.0);
+    }
   }
   return ops_partials.build(logp);
 }

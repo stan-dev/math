@@ -40,10 +40,11 @@ return_type_t<T_size1, T_size2> beta_binomial_lccdf(const T_n& n, const T_N& N,
                                                     const T_size1& alpha,
                                                     const T_size2& beta) {
   static const char* function = "beta_binomial_lccdf";
-  typedef partials_return_type_t<T_n, T_N, T_size1, T_size2> T_partials_return;
+  using T_partials_return = partials_return_t<T_n, T_N, T_size1, T_size2>;
 
-  if (size_zero(n, N, alpha, beta))
+  if (size_zero(n, N, alpha, beta)) {
     return 0.0;
+  }
 
   T_partials_return P(0.0);
 
@@ -62,7 +63,6 @@ return_type_t<T_size1, T_size2> beta_binomial_lccdf(const T_n& n, const T_N& N,
   size_t size = max_size(n, N, alpha, beta);
 
   using std::exp;
-  using std::exp;
   using std::log;
 
   operands_and_partials<T_size1, T_size2> ops_partials(alpha, beta);
@@ -70,8 +70,9 @@ return_type_t<T_size1, T_size2> beta_binomial_lccdf(const T_n& n, const T_N& N,
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as neg infinity
   for (size_t i = 0; i < stan::length(n); i++) {
-    if (value_of(n_vec[i]) <= 0)
+    if (value_of(n_vec[i]) <= 0) {
       return ops_partials.build(0.0);
+    }
   }
 
   for (size_t i = 0; i < size; i++) {

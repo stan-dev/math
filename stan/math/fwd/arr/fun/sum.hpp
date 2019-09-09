@@ -18,8 +18,9 @@ namespace math {
  */
 template <typename T>
 inline fvar<T> sum(const std::vector<fvar<T> >& m) {
-  if (m.size() == 0)
+  if (m.size() == 0) {
     return 0.0;
+  }
   std::vector<T> vals(m.size());
   std::vector<T> tans(m.size());
   for (size_t i = 0; i < m.size(); ++i) {

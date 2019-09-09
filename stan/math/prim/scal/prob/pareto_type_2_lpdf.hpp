@@ -22,13 +22,13 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
     const T_y& y, const T_loc& mu, const T_scale& lambda,
     const T_shape& alpha) {
   static const char* function = "pareto_type_2_lpdf";
-  typedef partials_return_type_t<T_y, T_loc, T_scale, T_shape>
-      T_partials_return;
+  using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_shape>;
 
   using std::log;
 
-  if (size_zero(y, mu, lambda, alpha))
+  if (size_zero(y, mu, lambda, alpha)) {
     return 0.0;
+  }
 
   T_partials_return logp(0.0);
 
@@ -39,8 +39,9 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
   check_consistent_sizes(function, "Random variable", y, "Scale parameter",
                          lambda, "Shape parameter", alpha);
 
-  if (!include_summand<propto, T_y, T_loc, T_scale, T_shape>::value)
+  if (!include_summand<propto, T_y, T_loc, T_scale, T_shape>::value) {
     return 0.0;
+  }
 
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_loc> mu_vec(mu);
@@ -55,32 +56,36 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
                 T_partials_return, T_y, T_loc, T_scale>
       log1p_scaled_diff(N);
   if (include_summand<propto, T_y, T_loc, T_scale, T_shape>::value) {
-    for (size_t n = 0; n < N; n++)
+    for (size_t n = 0; n < N; n++) {
       log1p_scaled_diff[n] = log1p((value_of(y_vec[n]) - value_of(mu_vec[n]))
                                    / value_of(lambda_vec[n]));
+    }
   }
 
   VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
                 T_scale>
       log_lambda(length(lambda));
   if (include_summand<propto, T_scale>::value) {
-    for (size_t n = 0; n < length(lambda); n++)
+    for (size_t n = 0; n < length(lambda); n++) {
       log_lambda[n] = log(value_of(lambda_vec[n]));
+    }
   }
 
   VectorBuilder<include_summand<propto, T_shape>::value, T_partials_return,
                 T_shape>
       log_alpha(length(alpha));
   if (include_summand<propto, T_shape>::value) {
-    for (size_t n = 0; n < length(alpha); n++)
+    for (size_t n = 0; n < length(alpha); n++) {
       log_alpha[n] = log(value_of(alpha_vec[n]));
+    }
   }
 
   VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
       inv_alpha(length(alpha));
   if (!is_constant_all<T_shape>::value) {
-    for (size_t n = 0; n < length(alpha); n++)
+    for (size_t n = 0; n < length(alpha); n++) {
       inv_alpha[n] = 1 / value_of(alpha_vec[n]);
+    }
   }
 
   for (size_t n = 0; n < N; n++) {
@@ -93,22 +98,29 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
     const T_partials_return alpha_div_sum = alpha_dbl / sum_dbl;
     const T_partials_return deriv_1_2 = inv_sum + alpha_div_sum;
 
-    if (include_summand<propto, T_shape>::value)
+    if (include_summand<propto, T_shape>::value) {
       logp += log_alpha[n];
-    if (include_summand<propto, T_scale>::value)
+    }
+    if (include_summand<propto, T_scale>::value) {
       logp -= log_lambda[n];
-    if (include_summand<propto, T_y, T_scale, T_shape>::value)
+    }
+    if (include_summand<propto, T_y, T_scale, T_shape>::value) {
       logp -= (alpha_dbl + 1.0) * log1p_scaled_diff[n];
+    }
 
-    if (!is_constant_all<T_y>::value)
+    if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] -= deriv_1_2;
-    if (!is_constant_all<T_loc>::value)
+    }
+    if (!is_constant_all<T_loc>::value) {
       ops_partials.edge2_.partials_[n] += deriv_1_2;
-    if (!is_constant_all<T_scale>::value)
+    }
+    if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n]
           -= alpha_div_sum * (mu_dbl - y_dbl) / lambda_dbl + inv_sum;
-    if (!is_constant_all<T_shape>::value)
+    }
+    if (!is_constant_all<T_shape>::value) {
       ops_partials.edge4_.partials_[n] += inv_alpha[n] - log1p_scaled_diff[n];
+    }
   }
   return ops_partials.build(logp);
 }

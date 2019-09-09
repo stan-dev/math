@@ -45,22 +45,26 @@ inline return_type_t<T, L, U> lub_constrain(const T& x, const L& lb,
                                             const U& ub) {
   using std::exp;
   check_less("lub_constrain", "lb", lb, ub);
-  if (lb == NEGATIVE_INFTY)
+  if (lb == NEGATIVE_INFTY) {
     return ub_constrain(x, ub);
-  if (ub == INFTY)
+  }
+  if (ub == INFTY) {
     return lb_constrain(x, lb);
+  }
 
   T inv_logit_x;
   if (x > 0) {
     inv_logit_x = inv_logit(x);
     // Prevent x from reaching one unless it really really should.
-    if ((x < INFTY) && (inv_logit_x == 1))
+    if ((x < INFTY) && (inv_logit_x == 1)) {
       inv_logit_x = 1 - 1e-15;
+    }
   } else {
     inv_logit_x = inv_logit(x);
     // Prevent x from reaching zero unless it really really should.
-    if ((x > NEGATIVE_INFTY) && (inv_logit_x == 0))
+    if ((x > NEGATIVE_INFTY) && (inv_logit_x == 0)) {
       inv_logit_x = 1e-15;
+    }
   }
   return fma((ub - lb), inv_logit_x, lb);
 }
@@ -112,25 +116,29 @@ inline return_type_t<T, L, U> lub_constrain(const T& x, const L& lb,
   using std::exp;
   using std::log;
   check_less("lub_constrain", "lb", lb, ub);
-  if (lb == NEGATIVE_INFTY)
+  if (lb == NEGATIVE_INFTY) {
     return ub_constrain(x, ub, lp);
-  if (ub == INFTY)
+  }
+  if (ub == INFTY) {
     return lb_constrain(x, lb, lp);
+  }
   T inv_logit_x;
   if (x > 0) {
     T exp_minus_x = exp(-x);
     inv_logit_x = inv_logit(x);
     lp += log(ub - lb) - x - 2 * log1p(exp_minus_x);
     // Prevent x from reaching one unless it really really should.
-    if ((x < INFTY) && (inv_logit_x == 1))
+    if ((x < INFTY) && (inv_logit_x == 1)) {
       inv_logit_x = 1 - 1e-15;
+    }
   } else {
     T exp_x = exp(x);
     inv_logit_x = inv_logit(x);
     lp += log(ub - lb) + x - 2 * log1p(exp_x);
     // Prevent x from reaching zero unless it really really should.
-    if ((x > NEGATIVE_INFTY) && (inv_logit_x == 0))
+    if ((x > NEGATIVE_INFTY) && (inv_logit_x == 0)) {
       inv_logit_x = 1e-15;
+    }
   }
   return fma((ub - lb), inv_logit_x, lb);
 }
