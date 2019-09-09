@@ -30,10 +30,11 @@ template <typename T_y, typename T_loc, typename T_scale>
 return_type_t<T_y, T_loc, T_scale> double_exponential_cdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma) {
   static const char* function = "double_exponential_cdf";
-  typedef partials_return_type_t<T_y, T_loc, T_scale> T_partials_return;
+  using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
 
-  if (size_zero(y, mu, sigma))
+  if (size_zero(y, mu, sigma)) {
     return 1.0;
+  }
 
   using std::exp;
 
@@ -57,10 +58,11 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_cdf(
     const T_partials_return scaled_diff = (y_dbl - mu_dbl) / (sigma_dbl);
     const T_partials_return exp_scaled_diff = exp(scaled_diff);
 
-    if (y_dbl < mu_dbl)
+    if (y_dbl < mu_dbl) {
       cdf *= exp_scaled_diff * 0.5;
-    else
+    } else {
       cdf *= 1.0 - 0.5 / exp_scaled_diff;
+    }
   }
 
   for (size_t n = 0; n < N; n++) {
@@ -72,21 +74,27 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_cdf(
     const T_partials_return inv_sigma = 1.0 / sigma_dbl;
 
     if (y_dbl < mu_dbl) {
-      if (!is_constant_all<T_y>::value)
+      if (!is_constant_all<T_y>::value) {
         ops_partials.edge1_.partials_[n] += inv_sigma * cdf;
-      if (!is_constant_all<T_loc>::value)
+      }
+      if (!is_constant_all<T_loc>::value) {
         ops_partials.edge2_.partials_[n] -= inv_sigma * cdf;
-      if (!is_constant_all<T_scale>::value)
+      }
+      if (!is_constant_all<T_scale>::value) {
         ops_partials.edge3_.partials_[n] -= scaled_diff * inv_sigma * cdf;
+      }
     } else {
       const T_partials_return rep_deriv
           = cdf * inv_sigma / (2.0 * exp_scaled_diff - 1.0);
-      if (!is_constant_all<T_y>::value)
+      if (!is_constant_all<T_y>::value) {
         ops_partials.edge1_.partials_[n] += rep_deriv;
-      if (!is_constant_all<T_loc>::value)
+      }
+      if (!is_constant_all<T_loc>::value) {
         ops_partials.edge2_.partials_[n] -= rep_deriv;
-      if (!is_constant_all<T_scale>::value)
+      }
+      if (!is_constant_all<T_scale>::value) {
         ops_partials.edge3_.partials_[n] -= rep_deriv * scaled_diff;
+      }
     }
   }
   return ops_partials.build(cdf);

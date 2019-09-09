@@ -36,10 +36,11 @@ template <bool propto, typename T_y, typename T_loc, typename T_scale>
 return_type_t<T_y, T_loc, T_scale> cauchy_lpdf(const T_y& y, const T_loc& mu,
                                                const T_scale& sigma) {
   static const char* function = "cauchy_lpdf";
-  typedef partials_return_type_t<T_y, T_loc, T_scale> T_partials_return;
+  using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
 
-  if (size_zero(y, mu, sigma))
+  if (size_zero(y, mu, sigma)) {
     return 0.0;
+  }
 
   T_partials_return logp(0.0);
 
@@ -49,8 +50,9 @@ return_type_t<T_y, T_loc, T_scale> cauchy_lpdf(const T_y& y, const T_loc& mu,
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma);
 
-  if (!include_summand<propto, T_y, T_loc, T_scale>::value)
+  if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
     return 0.0;
+  }
 
   using std::log;
 
@@ -85,23 +87,29 @@ return_type_t<T_y, T_loc, T_scale> cauchy_lpdf(const T_y& y, const T_loc& mu,
     const T_partials_return y_minus_mu_over_sigma_squared
         = y_minus_mu_over_sigma * y_minus_mu_over_sigma;
 
-    if (include_summand<propto>::value)
+    if (include_summand<propto>::value) {
       logp += NEG_LOG_PI;
-    if (include_summand<propto, T_scale>::value)
+    }
+    if (include_summand<propto, T_scale>::value) {
       logp -= log_sigma[n];
-    if (include_summand<propto, T_y, T_loc, T_scale>::value)
+    }
+    if (include_summand<propto, T_y, T_loc, T_scale>::value) {
       logp -= log1p(y_minus_mu_over_sigma_squared);
+    }
 
-    if (!is_constant_all<T_y>::value)
+    if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n]
           -= 2 * y_minus_mu / (sigma_squared[n] + y_minus_mu_squared);
-    if (!is_constant_all<T_loc>::value)
+    }
+    if (!is_constant_all<T_loc>::value) {
       ops_partials.edge2_.partials_[n]
           += 2 * y_minus_mu / (sigma_squared[n] + y_minus_mu_squared);
-    if (!is_constant_all<T_scale>::value)
+    }
+    if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n]
           += (y_minus_mu_squared - sigma_squared[n]) * inv_sigma[n]
              / (sigma_squared[n] + y_minus_mu_squared);
+    }
   }
   return ops_partials.build(logp);
 }

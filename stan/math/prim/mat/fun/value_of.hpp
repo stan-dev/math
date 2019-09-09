@@ -24,9 +24,11 @@ template <typename T, int R, int C>
 inline Eigen::Matrix<typename child_type<T>::type, R, C> value_of(
     const Eigen::Matrix<T, R, C>& M) {
   Eigen::Matrix<typename child_type<T>::type, R, C> Md(M.rows(), M.cols());
-  for (int j = 0; j < M.cols(); j++)
-    for (int i = 0; i < M.rows(); i++)
+  for (int j = 0; j < M.cols(); j++) {
+    for (int i = 0; i < M.rows(); i++) {
       Md(i, j) = value_of(M(i, j));
+    }
+  }
   return Md;
 }
 

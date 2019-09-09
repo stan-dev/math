@@ -58,7 +58,6 @@ class AgradCdfChiSquare : public AgradCdfTest {
       const T_y& y, const T_dof& nu, const T2&, const T3&, const T4&,
       const T5&) {
     using stan::math::gamma_p;
-    using stan::math::gamma_p;
 
     return gamma_p(nu * 0.5, y * 0.5);
   }

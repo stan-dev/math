@@ -22,8 +22,9 @@ inline std::vector<typename child_type<T>::type> value_of(
     const std::vector<T>& x) {
   size_t size = x.size();
   std::vector<typename child_type<T>::type> result(size);
-  for (size_t i = 0; i < size; i++)
+  for (size_t i = 0; i < size; i++) {
     result[i] = value_of(x[i]);
+  }
   return result;
 }
 

@@ -19,12 +19,13 @@ return_type_t<T_y, T_low, T_high> uniform_lccdf(const T_y& y,
                                                 const T_low& alpha,
                                                 const T_high& beta) {
   static const char* function = "uniform_lccdf";
-  typedef partials_return_type_t<T_y, T_low, T_high> T_partials_return;
+  using T_partials_return = partials_return_t<T_y, T_low, T_high>;
 
   using std::log;
 
-  if (size_zero(y, alpha, beta))
+  if (size_zero(y, alpha, beta)) {
     return 0.0;
+  }
 
   T_partials_return ccdf_log(0.0);
   check_not_nan(function, "Random variable", y);
@@ -42,10 +43,12 @@ return_type_t<T_y, T_low, T_high> uniform_lccdf(const T_y& y,
 
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
-    if (y_dbl < value_of(alpha_vec[n]) || y_dbl > value_of(beta_vec[n]))
+    if (y_dbl < value_of(alpha_vec[n]) || y_dbl > value_of(beta_vec[n])) {
       return 0.0;
-    if (y_dbl == value_of(beta_vec[n]))
+    }
+    if (y_dbl == value_of(beta_vec[n])) {
       return LOG_ZERO;
+    }
   }
 
   operands_and_partials<T_y, T_low, T_high> ops_partials(y, alpha, beta);
@@ -58,14 +61,17 @@ return_type_t<T_y, T_low, T_high> uniform_lccdf(const T_y& y,
 
     ccdf_log += log(ccdf_log_);
 
-    if (!is_constant_all<T_y>::value)
+    if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] -= 1.0 / b_min_a / ccdf_log_;
-    if (!is_constant_all<T_low>::value)
+    }
+    if (!is_constant_all<T_low>::value) {
       ops_partials.edge2_.partials_[n]
           -= (y_dbl - beta_dbl) / b_min_a / b_min_a / ccdf_log_;
-    if (!is_constant_all<T_high>::value)
+    }
+    if (!is_constant_all<T_high>::value) {
       ops_partials.edge3_.partials_[n]
           += (y_dbl - alpha_dbl) / b_min_a / b_min_a / ccdf_log_;
+    }
   }
   return ops_partials.build(ccdf_log);
 }

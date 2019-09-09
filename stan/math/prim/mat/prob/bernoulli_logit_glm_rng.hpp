@@ -46,31 +46,32 @@ inline typename VectorBuilder<true, int, T_alpha>::type bernoulli_logit_glm_rng(
 
   static const char *function = "bernoulli_logit_glm_rng";
 
-  const size_t N = x.col(0).size();
-  const size_t M = x.row(0).size();
+  const size_t N = x.row(0).size();
+  const size_t M = x.col(0).size();
 
   check_finite(function, "Matrix of independent variables", x);
   check_finite(function, "Weight vector", beta);
   check_finite(function, "Intercept", alpha);
-  check_consistent_size(function, "Weight vector", beta, M);
-  check_consistent_size(function, "Vector of intercepts", alpha, N);
+  check_consistent_size(function, "Weight vector", beta, N);
+  check_consistent_size(function, "Vector of intercepts", alpha, M);
 
   scalar_seq_view<T_beta> beta_vec(beta);
-  Eigen::VectorXd beta_vector(M);
-  for (int i = 0; i < M; ++i)
+  Eigen::VectorXd beta_vector(N);
+  for (int i = 0; i < N; ++i) {
     beta_vector[i] = beta_vec[i];
+  }
 
   Eigen::VectorXd x_beta = x * beta_vector;
 
   scalar_seq_view<T_alpha> alpha_vec(alpha);
 
-  VectorBuilder<true, int, T_alpha> output(N);
+  VectorBuilder<true, int, T_alpha> output(M);
 
-  for (size_t n = 0; n < N; ++n) {
-    double theta_n = alpha_vec[n] + x_beta(n);
+  for (size_t m = 0; m < M; ++m) {
+    double theta_m = alpha_vec[m] + x_beta(m);
     variate_generator<RNG &, bernoulli_distribution<>> bernoulli_rng(
-        rng, bernoulli_distribution<>(inv_logit(theta_n)));
-    output[n] = bernoulli_rng();
+        rng, bernoulli_distribution<>(inv_logit(theta_m)));
+    output[m] = bernoulli_rng();
   }
 
   return output.data();

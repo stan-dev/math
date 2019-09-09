@@ -17,7 +17,7 @@
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/arr/fun/vec_concat.hpp>
 
-#include <CL/cl.hpp>
+#include <cl.hpp>
 #include <algorithm>
 #include <iostream>
 #include <type_traits>
@@ -162,7 +162,7 @@ inline matrix_cl<T> packed_copy(const std::vector<T>& src, int rows) {
     cl::Event packed_event;
     const cl::CommandQueue queue = opencl_context.queue();
     queue.enqueueWriteBuffer(packed.buffer(), CL_FALSE, 0,
-                             sizeof(T) * packed_size, src.data(), NULL,
+                             sizeof(T) * packed_size, src.data(), nullptr,
                              &packed_event);
     packed.add_write_event(packed_event);
     stan::math::opencl_kernels::unpack(cl::NDRange(dst.rows(), dst.rows()), dst,
