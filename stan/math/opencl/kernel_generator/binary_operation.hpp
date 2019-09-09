@@ -54,7 +54,7 @@ class binary_operation
    * @param b sedond argument
    * @param op operation
    */
-  binary_operation(T_a&& a, T_b&& b, const std::string& op) //NOLINT
+  binary_operation(T_a&& a, T_b&& b, const std::string& op)  //NOLINT
       : a_(std::forward<T_a>(a)), b_(std::forward<T_b>(b)), op_(op) {
     const std::string function = "binary_operator" + op;
     if (a.rows() != base::dynamic && b.rows() != base::dynamic) {
@@ -165,7 +165,7 @@ class addition__ : public binary_operation<addition__<T_a, T_b>, T_a, T_b> {
    * @param a first expression
    * @param b second expression
    */
-  addition__(T_a&& a, T_b&& b) //NOLINT
+  addition__(T_a&& a, T_b&& b)  //NOLINT
       : binary_operation<addition__<T_a, T_b>, T_a, T_b>(
             std::forward<T_a>(a), std::forward<T_b>(b), "+") {}
 };
@@ -180,8 +180,8 @@ class addition__ : public binary_operation<addition__<T_a, T_b>, T_a, T_b> {
  */
 template <typename T_a, typename T_b,
           typename = enable_if_all_valid_expressions<T_a, T_b>>
-inline addition__<as_operation_t<T_a>, as_operation_t<T_b>>
-operator+(T_a&& a, T_b&& b) { //NOLINT
+inline addition__<as_operation_t<T_a>, as_operation_t<T_b>> operator+(
+    T_a&& a, T_b&& b) {  // NOLINT
   return {as_operation(std::forward<T_a>(a)),
           as_operation(std::forward<T_b>(b))};
 }
@@ -200,7 +200,7 @@ class subtraction__
    * @param a first expression
    * @param b second expression
    */
-  subtraction__(T_a&& a, T_b&& b) //NOLINT
+  subtraction__(T_a&& a, T_b&& b)  //NOLINT
       : binary_operation<subtraction__<T_a, T_b>, T_a, T_b>(
             std::forward<T_a>(a), std::forward<T_b>(b), "-") {}
 };
@@ -216,7 +216,7 @@ class subtraction__
 template <typename T_a, typename T_b,
           typename = enable_if_all_valid_expressions<T_a, T_b>>
 inline subtraction__<as_operation_t<T_a>, as_operation_t<T_b>> operator-(
-    T_a&& a, T_b&& b) { //NOLINT
+    T_a&& a, T_b&& b) {  //NOLINT
   return {as_operation(std::forward<T_a>(a)),
           as_operation(std::forward<T_b>(b))};
 }
@@ -236,7 +236,7 @@ class elewise_multiplication__
    * @param a first expression
    * @param b second expression
    */
-  elewise_multiplication__(T_a&& a, T_b&& b) //NOLINT
+  elewise_multiplication__(T_a&& a, T_b&& b)  //NOLINT
       : binary_operation<elewise_multiplication__<T_a, T_b>, T_a, T_b>(
             std::forward<T_a>(a), std::forward<T_b>(b), "*") {}
 
@@ -260,7 +260,7 @@ class elewise_multiplication__
  */
 template <typename T_a, typename T_b>
 inline elewise_multiplication__<as_operation_t<T_a>, as_operation_t<T_b>>
-elewise_multiplication(T_a&& a, T_b&& b) { //NOLINT
+elewise_multiplication(T_a&& a, T_b&& b) {  //NOLINT
   return {as_operation(std::forward<T_a>(a)),
           as_operation(std::forward<T_b>(b))};
 }
@@ -275,8 +275,8 @@ elewise_multiplication(T_a&& a, T_b&& b) { //NOLINT
  */
 template <typename T_a, typename T_b, typename = enable_if_arithmetic<T_a>,
           typename = enable_if_all_valid_expressions<T_b>>
-inline elewise_multiplication__<scalar__<T_a>, as_operation_t<T_b>>
-operator*(T_a&& a, T_b&& b) { //NOLINT
+inline elewise_multiplication__<scalar__<T_a>, as_operation_t<T_b>> operator*(
+    T_a&& a, T_b&& b) {  // NOLINT
   return {as_operation(std::forward<T_a>(a)),
           as_operation(std::forward<T_b>(b))};
 }
@@ -292,8 +292,8 @@ operator*(T_a&& a, T_b&& b) { //NOLINT
 template <typename T_a, typename T_b,
           typename = enable_if_all_valid_expressions<T_a>,
           typename = enable_if_arithmetic<T_b>>
-inline elewise_multiplication__<as_operation_t<T_a>, scalar__<T_b>>
-operator*(T_a&& a, const T_b b) { //NOLINT
+inline elewise_multiplication__<as_operation_t<T_a>, scalar__<T_b>> operator*(
+    T_a&& a, const T_b b) {  // NOLINT
   return {as_operation(std::forward<T_a>(a)), as_operation(b)};
 }
 
@@ -327,7 +327,7 @@ class elewise_division__
    * @param a first expression
    * @param b second expression
    */
-  elewise_division__(T_a&& a, T_b&& b) //NOLINT
+  elewise_division__(T_a&& a, T_b&& b)  //NOLINT
       : binary_operation<elewise_division__<T_a, T_b>, T_a, T_b>(
             std::forward<T_a>(a), std::forward<T_b>(b), "/") {}
 
@@ -352,7 +352,7 @@ class elewise_division__
 template <typename T_a, typename T_b,
           typename = enable_if_all_valid_expressions<T_a, T_b>>
 inline elewise_division__<as_operation_t<T_a>, as_operation_t<T_b>>
-elewise_division(T_a&& a, T_b&& b) { //NOLINT
+elewise_division(T_a&& a, T_b&& b) {  //NOLINT
   return {as_operation(std::forward<T_a>(a)),
           as_operation(std::forward<T_b>(b))};
 }
