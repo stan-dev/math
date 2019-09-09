@@ -2,7 +2,10 @@
 #define STAN_MATH_PRIM_MAT_META_IS_CONSTANT_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/mat/meta/is_eigen.hpp>
+#include <stan/math/prim/scal/meta/bool_constant.hpp>
 #include <stan/math/prim/scal/meta/is_constant.hpp>
+#include <type_traits>
 
 namespace stan {
 /**
@@ -11,26 +14,11 @@ namespace stan {
  * is constant, false otherwise. This is used in
  * the is_constant_all metaprogram.
  *
- * @tparam T type of the elements in the Eigen Matrix
- * @tparam R number of rows in the Eigen Matrix
- * @tparam C number of cols in the eigen Matrix
- */
-template <typename T, int R, int C>
-struct is_constant<Eigen::Matrix<T, R, C> > {
-  enum { value = is_constant<T>::value };
-};
-
-/**
- * Defines a public enum named value and sets it to true
- * if the type of the elements in the provided Eigen Block
- * is constant, false otherwise. This is used in
- * the is_constant_all metaprogram.
- * @tparam type of the elements in the Eigen Block
+ * @tparam T type of the Eigen Matrix
  */
 template <typename T>
-struct is_constant<Eigen::Block<T> > {
-  enum { value = is_constant<T>::value };
-};
+struct is_constant<T, std::enable_if_t<is_eigen<T>::value>>
+    : bool_constant<is_constant<typename std::decay_t<T>::Scalar>::value> {};
 
 }  // namespace stan
 #endif
