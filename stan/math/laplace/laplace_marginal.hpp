@@ -90,6 +90,9 @@ namespace math {
         throw boost::math::evaluation_error(message.str());
       }
 
+      // TEST
+      std::cout << theta.transpose() << std::endl;
+
       // Compute variable a.
       VectorXd hessian;
       diff_likelihood.diff(theta, l_grad, hessian);

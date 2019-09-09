@@ -45,24 +45,24 @@ TEST(laplace, likelihood_differentiation2) {
   theta << 1, 1;
   std::vector<int> n_samples = {1, 1};
   std::vector<int> sums = {1, 0};
-  std::vector<double> exposure = {0.5, 2};
+  std::vector<double> log_exposure = {log(0.5), log(2)};
   
   diff_poisson_log diff_functor(to_vector(n_samples),
                                 to_vector(sums),
-                                to_vector(exposure));
+                                to_vector(log_exposure));
 
   double log_density = diff_functor.log_likelihood(theta);
   Eigen::VectorXd gradient, hessian;
   diff_functor.diff(theta, gradient, hessian);
   Eigen::VectorXd third_tensor = diff_functor.third_diff(theta);
 
-  EXPECT_FLOAT_EQ(-8.537777, log_density);
-  EXPECT_FLOAT_EQ(-0.3243606, gradient(0));
-  EXPECT_FLOAT_EQ(-14.77811, gradient(1));
-  EXPECT_FLOAT_EQ(-0.4121803, hessian(0));
-  EXPECT_FLOAT_EQ(-29.55622, hessian(1));
-  EXPECT_FLOAT_EQ(-0.2060902, third_tensor(0));
-  EXPECT_FLOAT_EQ(-59.11245, third_tensor(1));
+  EXPECT_FLOAT_EQ(-6.488852, log_density);
+  EXPECT_FLOAT_EQ(-0.3591409, gradient(0));
+  EXPECT_FLOAT_EQ(-5.4365637, gradient(1));
+  EXPECT_FLOAT_EQ(-1.359141, hessian(0));
+  EXPECT_FLOAT_EQ(-5.436564, hessian(1));
+  EXPECT_FLOAT_EQ(-1.359141, third_tensor(0));
+  EXPECT_FLOAT_EQ(-5.436564, third_tensor(1));
   
 }
 
@@ -94,6 +94,12 @@ TEST(laplace, poisson_lgm_dim2) {
 
   squared_kernel_functor K;
   var target = laplace_marginal_poisson(theta_0, phi, x, n_samples, sums);
+
+  // Test with exposure argument
+  // Eigen::VectorXd exposure(2);
+  // exposure << 1, 1;
+  // var target = laplace_marginal_poisson(theta_0, phi, x, n_samples, sums,
+  //                                       exposure);
 
   // How to test this? The best way would be to generate a few
   // benchmarks using gpstuff.

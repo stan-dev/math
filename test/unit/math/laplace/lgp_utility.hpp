@@ -61,7 +61,6 @@ struct spatial_covariance {
 };
 
 struct squared_kernel_functor {
-  
   template <typename T1, typename T2>
   Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic>
   operator() (const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,
@@ -181,7 +180,7 @@ void read_in_data (int dim_theta,
   }
 }
 
-// Function to read data from Aki's experiment
+// Overload function to read data from Aki's experiment
 // using a logistic and latent Gaussian process.
 void read_in_data (int dim_theta,
                    int n_observations,
@@ -215,6 +214,29 @@ void read_in_data (int dim_theta,
   for (int n = 0; n < dim_theta; ++n) {
     input_data >> buffer;
     y[n] = buffer;
+  }
+  input_data.close();
+}
+
+// Overload function to read in disease mapping data.
+// Same as above, but in addition include an exposure term.
+void read_in_data(int dim_theta,
+                  int dim_observations,
+                  std::string data_directory,
+                  std::vector<double>& x1,
+                  std::vector<double>& x2,
+                  std::vector<int>& y,
+                  Eigen::VectorXd& ye) {
+  read_in_data(dim_theta, dim_observations, data_directory, x1, x2, y);
+
+  std::ifstream input_data;
+  std::string file_ye = data_directory + "ye.csv";
+
+  input_data.open(file_ye);
+  double buffer = 0.0;
+  for (int n = 0; n < dim_theta; ++n) {
+    input_data >> buffer;
+    ye(n) = buffer;
   }
   input_data.close();
 }

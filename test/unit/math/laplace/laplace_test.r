@@ -32,3 +32,33 @@ b = W %*% theta + gradient
 a = b - W_root %*% solve(t(L), solve(L, W_root %*% K %*% b))
 
 x <- c(1, 1)
+
+#####################################################################
+# log density and derivatives for poisson log model with exposure 
+# term.
+
+theta <- c(1, 1)
+n_samples <- c(1, 1)
+sums <- c(1, 0)
+exposure <- c(0.5, 2)
+eta <- log(exposure)
+
+# log density
+sum(-log(factorial(sums)) + (theta + eta) * sums 
+      - n_samples * exp(theta + eta))
+# -7.488852
+
+# gradient
+sums - n_samples * exp(theta + eta)
+# -0.3591409 -5.4365637
+
+# diagonal hessian
+- n_samples * exp(theta + eta)
+# -1.359141 -5.436564
+
+# diagonal third-order derivative tenssor
+- n_samples * exp(theta + eta)
+# -1.359141 -5.436564
+
+
+

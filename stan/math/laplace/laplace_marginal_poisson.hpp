@@ -48,6 +48,24 @@ namespace math {
        tolerance, max_num_steps);
   }
 
+  // Overload function to take in exposure argument.
+  template <typename T0, typename T1>
+  T1 laplace_marginal_poisson
+               (const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,
+                const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,
+                const std::vector<Eigen::VectorXd>& x,
+                const std::vector<int>& n_samples,
+                const std::vector<int>& y,
+                // const K& covariance-function
+                const Eigen::VectorXd& exposure,
+                double tolerance = 1e-6,
+                long int max_num_steps = 100) {
+    return laplace_marginal_density(theta_0, phi, x,
+       diff_poisson_log(to_vector(n_samples), to_vector(y), exposure),
+       sqr_exp_kernel_functor(),
+       tolerance, max_num_steps);
+  }
+
 }  // namespace math
 }  // namespace stan
 

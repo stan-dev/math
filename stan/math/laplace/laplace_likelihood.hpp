@@ -12,11 +12,11 @@ namespace math {
 /**
  * Create an Eigen vector whose elements are all ones.
  */
-Eigen::VectorXd init_one(int n) {
-  Eigen::VectorXd ones(n);
-  for (int i = 0; i < n; i++) ones(i) = 1;
-  return ones;
-}
+// Eigen::VectorXd init_one(int n) {
+//   Eigen::VectorXd ones(n);
+//   for (int i = 0; i < n; i++) ones(i) = 1;
+//   return ones;
+// }
 
 /**
  * A structure to compute the log density, first, second,
@@ -31,18 +31,18 @@ struct diff_poisson_log {
   /* The sum of counts in each group. */
   Eigen::VectorXd sums_;
   /* exposure, i.e. off-set term for the latent variable. */
-  Eigen::VectorXd exposure_;
+  Eigen::VectorXd log_exposure_;
 
   diff_poisson_log(const Eigen::VectorXd& n_samples,
                    const Eigen::VectorXd& sums)
     : n_samples_(n_samples), sums_(sums) {
-    exposure_ = init_one(sums_.size());
+    log_exposure_ = Eigen::VectorXd::Zero(sums.size());
   }
 
   diff_poisson_log(const Eigen::VectorXd& n_samples,
                    const Eigen::VectorXd& sums,
-                   const Eigen::VectorXd& exposure)
-    : n_samples_(n_samples), sums_(sums), exposure_(exposure) { }
+                   const Eigen::VectorXd& log_exposure)
+    : n_samples_(n_samples), sums_(sums), log_exposure_(log_exposure) { }
 
   /**
    * Return the log density.
@@ -56,10 +56,10 @@ struct diff_poisson_log {
     double factorial_term = 0;
     for (int i = 0; i < sums_.size(); i++)
       factorial_term += lgamma(sums_(i) + 1);
+    Eigen::Matrix<T, Eigen::Dynamic, 1> shifted_mean = theta + log_exposure_;
 
     return - factorial_term
-      + (exposure_.cwiseProduct(theta)).dot(sums_) -
-        exp(exposure_.cwiseProduct(theta)).dot(n_samples_);
+      + (shifted_mean).dot(sums_) - n_samples_.dot(exp(shifted_mean));
   }
 
   /**
@@ -78,10 +78,10 @@ struct diff_poisson_log {
              Eigen::Matrix<T, Eigen::Dynamic, 1>& gradient,
              Eigen::Matrix<T, Eigen::Dynamic, 1>& hessian) const {
     Eigen::Matrix<T, Eigen::Dynamic, 1>
-      common_term = - n_samples_.cwiseProduct(exposure_)
-                        .cwiseProduct(exp(theta.cwiseProduct(exposure_)));
-    hessian = common_term.cwiseProduct(exposure_);
-    gradient = sums_.cwiseProduct(exposure_) + common_term;
+      common_term = n_samples_.cwiseProduct(exp(theta + log_exposure_));
+
+    gradient = sums_ - common_term;
+    hessian = - common_term;
   }
 
   /**
@@ -95,10 +95,7 @@ struct diff_poisson_log {
   template <typename T>
   Eigen::Matrix<T, Eigen::Dynamic, 1>
   third_diff(const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta) const {
-    return - n_samples_.cwiseProduct(exp(theta.cwiseProduct(exposure_)))
-                       .cwiseProduct(exposure_)
-                       .cwiseProduct(exposure_)
-                       .cwiseProduct(exposure_);
+    return -n_samples_.cwiseProduct(exp(theta + log_exposure_));
   }
 };
 
