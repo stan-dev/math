@@ -68,8 +68,9 @@ return_type_t<T_y, T_dof, T_scale> inv_wishart_lpdf(
   LDLT_factor<T_scale, Eigen::Dynamic, Eigen::Dynamic> ldlt_S(S);
   check_ldlt_factor(function, "LDLT_Factor of scale parameter", ldlt_S);
 
-  if (include_summand<propto, T_dof>::value)
+  if (include_summand<propto, T_dof>::value) {
     lp -= lmgamma(k, 0.5 * nu);
+  }
   if (include_summand<propto, T_dof, T_scale>::value) {
     lp += 0.5 * nu * log_determinant_ldlt(ldlt_S);
   }
@@ -93,8 +94,9 @@ return_type_t<T_y, T_dof, T_scale> inv_wishart_lpdf(
                 S.template selfadjointView<Eigen::Lower>())));
     lp -= 0.5 * trace(Winv_S);
   }
-  if (include_summand<propto, T_dof, T_scale>::value)
+  if (include_summand<propto, T_dof, T_scale>::value) {
     lp += nu * k * NEG_LOG_TWO_OVER_TWO;
+  }
   return lp;
 }
 

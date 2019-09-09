@@ -50,8 +50,8 @@ return_type_t<T_prob, T_prior_size> dirichlet_lpmf(const T_prob& theta,
                                                    const T_prior_size& alpha) {
   static const char* function = "dirichlet_lpmf";
 
-  typedef partials_return_type_t<T_prob, T_prior_size> T_partials_return;
-  typedef typename Eigen::Matrix<T_partials_return, -1, 1> T_partials_vec;
+  using T_partials_return = partials_return_t<T_prob, T_prior_size>;
+  using T_partials_vec = typename Eigen::Matrix<T_partials_return, -1, 1>;
 
   check_consistent_sizes(function, "probabilities", theta, "prior sample sizes",
                          alpha);
@@ -66,11 +66,13 @@ return_type_t<T_prob, T_prior_size> dirichlet_lpmf(const T_prob& theta,
 
   T_partials_return lp(0.0);
 
-  if (include_summand<propto, T_prior_size>::value)
+  if (include_summand<propto, T_prior_size>::value) {
     lp += lgamma(alpha_dbl.sum()) - lgamma(alpha_dbl).sum();
+  }
 
-  if (include_summand<propto, T_prob, T_prior_size>::value)
+  if (include_summand<propto, T_prob, T_prior_size>::value) {
     lp += (theta_dbl.array().log() * (alpha_dbl.array() - 1.0)).sum();
+  }
 
   T_partials_vec theta_deriv = (alpha_dbl.array() - 1.0) / theta_dbl.array();
 
@@ -79,11 +81,13 @@ return_type_t<T_prob, T_prior_size> dirichlet_lpmf(const T_prob& theta,
                                + theta_dbl.array().log();
 
   operands_and_partials<T_prob, T_prior_size> ops_partials(theta, alpha);
-  if (!is_constant_all<T_prob>::value)
+  if (!is_constant_all<T_prob>::value) {
     ops_partials.edge1_.partials_ = theta_deriv;
+  }
 
-  if (!is_constant_all<T_prior_size>::value)
+  if (!is_constant_all<T_prior_size>::value) {
     ops_partials.edge2_.partials_ = alpha_deriv;
+  }
 
   return ops_partials.build(lp);
 }

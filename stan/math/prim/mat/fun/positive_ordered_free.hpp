@@ -27,17 +27,19 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> positive_ordered_free(
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::log;
-  typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
+  using size_type = typename index_type<Matrix<T, Dynamic, 1>>::type;
 
   check_positive_ordered("stan::math::positive_ordered_free",
                          "Positive ordered variable", y);
   size_type k = y.size();
   Matrix<T, Dynamic, 1> x(k);
-  if (k == 0)
+  if (k == 0) {
     return x;
+  }
   x[0] = log(y[0]);
-  for (size_type i = 1; i < k; ++i)
+  for (size_type i = 1; i < k; ++i) {
     x[i] = log(y[i] - y[i - 1]);
+  }
   return x;
 }
 }  // namespace math

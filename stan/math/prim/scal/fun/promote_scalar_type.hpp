@@ -17,8 +17,11 @@ struct promote_scalar_type {
   /**
    * The promoted type.
    */
-  typedef T type;
+  using type = T;
 };
+
+template <typename T, typename S>
+using promote_scalar_t = typename promote_scalar_type<T, S>::type;
 
 }  // namespace math
 }  // namespace stan

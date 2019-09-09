@@ -18,19 +18,22 @@ namespace math {
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> qr_R(
     const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& m) {
-  typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> matrix_t;
+  using matrix_t = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
   check_nonzero_size("qr_R", "m", m);
   Eigen::HouseholderQR<matrix_t> qr(m.rows(), m.cols());
   qr.compute(m);
   matrix_t R = qr.matrixQR();
-  if (m.rows() > m.cols())
+  if (m.rows() > m.cols()) {
     R.bottomRows(m.rows() - m.cols()).setZero();
+  }
   const int min_size = std::min(m.rows(), m.cols());
   for (int i = 0; i < min_size; i++) {
-    for (int j = 0; j < i; j++)
+    for (int j = 0; j < i; j++) {
       R.coeffRef(i, j) = 0.0;
-    if (R(i, i) < 0)
+    }
+    if (R(i, i) < 0) {
       R.row(i) *= -1.0;
+    }
   }
   return R;
 }

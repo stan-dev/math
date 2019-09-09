@@ -18,9 +18,9 @@ namespace Eigen {
  */
 template <>
 struct NumTraits<stan::math::var> : GenericNumTraits<stan::math::var> {
-  typedef stan::math::var Real;
-  typedef stan::math::var NonInteger;
-  typedef stan::math::var Nested;
+  using Real = stan::math::var;
+  using NonInteger = stan::math::var;
+  using Nested = stan::math::var;
 
   /**
    * Return the precision for <code>stan::math::var</code> delegates
@@ -85,7 +85,7 @@ struct NumTraits<stan::math::var> : GenericNumTraits<stan::math::var> {
  */
 template <typename BinaryOp>
 struct ScalarBinaryOpTraits<stan::math::var, double, BinaryOp> {
-  typedef stan::math::var ReturnType;
+  using ReturnType = stan::math::var;
 };
 
 /**
@@ -94,7 +94,7 @@ struct ScalarBinaryOpTraits<stan::math::var, double, BinaryOp> {
  */
 template <typename BinaryOp>
 struct ScalarBinaryOpTraits<double, stan::math::var, BinaryOp> {
-  typedef stan::math::var ReturnType;
+  using ReturnType = stan::math::var;
 };
 
 namespace internal {
@@ -104,7 +104,7 @@ namespace internal {
  */
 template <>
 struct remove_all<stan::math::vari*> {
-  typedef stan::math::vari* type;
+  using type = stan::math::vari*;
 };
 
 /**
@@ -123,9 +123,9 @@ template <typename Index, typename LhsMapper, bool ConjugateLhs,
 struct general_matrix_vector_product<Index, stan::math::var, LhsMapper,
                                      ColMajor, ConjugateLhs, stan::math::var,
                                      RhsMapper, ConjugateRhs, Version> {
-  typedef stan::math::var LhsScalar;
-  typedef stan::math::var RhsScalar;
-  typedef stan::math::var ResScalar;
+  using LhsScalar = stan::math::var;
+  using RhsScalar = stan::math::var;
+  using ResScalar = stan::math::var;
   enum { LhsStorageOrder = ColMajor };
 
   EIGEN_DONT_INLINE static void run(Index rows, Index cols,
@@ -158,9 +158,9 @@ template <typename Index, typename LhsMapper, bool ConjugateLhs,
 struct general_matrix_vector_product<Index, stan::math::var, LhsMapper,
                                      RowMajor, ConjugateLhs, stan::math::var,
                                      RhsMapper, ConjugateRhs, Version> {
-  typedef stan::math::var LhsScalar;
-  typedef stan::math::var RhsScalar;
-  typedef stan::math::var ResScalar;
+  using LhsScalar = stan::math::var;
+  using RhsScalar = stan::math::var;
+  using ResScalar = stan::math::var;
   enum { LhsStorageOrder = RowMajor };
 
   EIGEN_DONT_INLINE static void run(Index rows, Index cols,
@@ -198,16 +198,16 @@ template <typename Index, int LhsStorageOrder, bool ConjugateLhs,
 struct general_matrix_matrix_product<Index, stan::math::var, LhsStorageOrder,
                                      ConjugateLhs, stan::math::var,
                                      RhsStorageOrder, ConjugateRhs, ColMajor> {
-  typedef stan::math::var LhsScalar;
-  typedef stan::math::var RhsScalar;
-  typedef stan::math::var ResScalar;
+  using LhsScalar = stan::math::var;
+  using RhsScalar = stan::math::var;
+  using ResScalar = stan::math::var;
 
-  typedef gebp_traits<RhsScalar, LhsScalar> Traits;
+  using Traits = gebp_traits<RhsScalar, LhsScalar>;
 
-  typedef const_blas_data_mapper<stan::math::var, Index, LhsStorageOrder>
-      LhsMapper;
-  typedef const_blas_data_mapper<stan::math::var, Index, RhsStorageOrder>
-      RhsMapper;
+  using LhsMapper
+      = const_blas_data_mapper<stan::math::var, Index, LhsStorageOrder>;
+  using RhsMapper
+      = const_blas_data_mapper<stan::math::var, Index, RhsStorageOrder>;
 
   EIGEN_DONT_INLINE
   static void run(Index rows, Index cols, Index depth, const LhsScalar* lhs,

@@ -65,8 +65,9 @@ return_type_t<T_y, T_Mu, T_Sigma, T_D> matrix_normal_prec_lpdf(
   check_finite(function, "Location parameter", Mu);
   check_finite(function, "Random variable", y);
 
-  if (include_summand<propto>::value)
+  if (include_summand<propto>::value) {
     lp += NEG_LOG_SQRT_TWO_PI * y.cols() * y.rows();
+  }
 
   if (include_summand<propto, T_Sigma>::value) {
     lp += log_determinant_ldlt(ldlt_Sigma) * (0.5 * y.rows());

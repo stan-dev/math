@@ -24,8 +24,9 @@ return_type_t<T_prob> categorical_logit_lpmf(
                 beta.size());
   check_finite(function, "log odds parameter", beta);
 
-  if (!include_summand<propto, T_prob>::value)
+  if (!include_summand<propto, T_prob>::value) {
     return 0.0;
+  }
 
   // FIXME:  wasteful vs. creating term (n-1) if not vectorized
   return beta(n - 1) - log_sum_exp(beta);  // == log_softmax(beta)(n-1);
@@ -43,23 +44,27 @@ return_type_t<T_prob> categorical_logit_lpmf(
     const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& beta) {
   static const char* function = "categorical_logit_lpmf";
 
-  for (const auto& x : ns)
+  for (const auto& x : ns) {
     check_bounded(function, "categorical outcome out of support", x, 1,
                   beta.size());
+  }
   check_finite(function, "log odds parameter", beta);
 
-  if (!include_summand<propto, T_prob>::value)
+  if (!include_summand<propto, T_prob>::value) {
     return 0.0;
+  }
 
-  if (ns.empty())
+  if (ns.empty()) {
     return 0.0;
+  }
 
   Eigen::Matrix<T_prob, Eigen::Dynamic, 1> log_softmax_beta = log_softmax(beta);
 
   // FIXME:  replace with more efficient sum()
   Eigen::Matrix<return_type_t<T_prob>, Eigen::Dynamic, 1> results(ns.size());
-  for (size_t i = 0; i < ns.size(); ++i)
+  for (size_t i = 0; i < ns.size(); ++i) {
     results[i] = log_softmax_beta(ns[i] - 1);
+  }
   return sum(results);
 }
 

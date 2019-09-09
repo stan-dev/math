@@ -448,8 +448,6 @@ TEST(AgradMixMatrixMdivideRightSPD, fv_exceptions) {
   using stan::math::matrix_fv;
   using stan::math::mdivide_right_spd;
   using stan::math::row_vector_d;
-  using stan::math::row_vector_d;
-  using stan::math::row_vector_fv;
   using stan::math::row_vector_fv;
 
   matrix_fv fv1(3, 3), fv2(4, 4);
@@ -1389,8 +1387,6 @@ TEST(AgradMixMatrixMdivideRightSPD, ffv_exceptions) {
   using stan::math::matrix_ffv;
   using stan::math::mdivide_right_spd;
   using stan::math::row_vector_d;
-  using stan::math::row_vector_d;
-  using stan::math::row_vector_ffv;
   using stan::math::row_vector_ffv;
 
   matrix_ffv fv1(3, 3), fv2(4, 4);

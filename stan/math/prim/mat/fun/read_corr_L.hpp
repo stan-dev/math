@@ -92,11 +92,12 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
   // no need to abs() because this Jacobian determinant
   // is strictly positive (and triangular)
   // see inverse of Jacobian in equation 11 of LKJ paper
-  for (size_t k = 1; k <= (K - 2); k++)
+  for (size_t k = 1; k <= (K - 2); k++) {
     for (size_t i = k + 1; i <= K; i++) {
       values(pos) = (K - k - 1) * log1m(square(CPCs(pos)));
       pos++;
     }
+  }
 
   log_prob += 0.5 * sum(values);
   return read_corr_L(CPCs, K);

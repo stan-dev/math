@@ -10,7 +10,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 
-#include <CL/cl.hpp>
+#include <cl.hpp>
 
 namespace stan {
 namespace math {
@@ -27,8 +27,9 @@ namespace math {
 template <typename T>
 template <matrix_cl_view matrix_view>
 inline void matrix_cl<T, enable_if_arithmetic<T>>::zeros() try {
-  if (size() == 0)
+  if (size() == 0) {
     return;
+  }
   this->view_ = both(this->view_, invert(matrix_view));
   cl::CommandQueue cmdQueue = opencl_context.queue();
   opencl_kernels::zeros(cl::NDRange(this->rows(), this->cols()), *this,

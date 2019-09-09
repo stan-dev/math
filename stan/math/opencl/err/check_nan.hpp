@@ -25,8 +25,9 @@ namespace math {
 template <typename T, typename = enable_if_floating_point<T>>
 inline void check_nan(const char* function, const char* name,
                       const matrix_cl<T>& y) {
-  if (y.size() == 0)
+  if (y.size() == 0) {
     return;
+  }
   try {
     int nan_flag = 0;
     matrix_cl<int> nan_chk(1, 1);

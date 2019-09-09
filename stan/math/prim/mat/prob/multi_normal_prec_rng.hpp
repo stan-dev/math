@@ -76,8 +76,9 @@ multi_normal_prec_rng(const T_loc &mu, const Eigen::MatrixXd &S, RNG &rng) {
 
   for (size_t n = 0; n < N; ++n) {
     Eigen::VectorXd z(S.cols());
-    for (int i = 0; i < S.cols(); i++)
+    for (int i = 0; i < S.cols(); i++) {
       z(i) = std_normal_rng();
+    }
 
     output[n] = Eigen::VectorXd(mu_vec[n]) + llt_of_S.matrixU().solve(z);
   }

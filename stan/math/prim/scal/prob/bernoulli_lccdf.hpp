@@ -28,10 +28,11 @@ namespace math {
 template <typename T_n, typename T_prob>
 return_type_t<T_prob> bernoulli_lccdf(const T_n& n, const T_prob& theta) {
   static const char* function = "bernoulli_lccdf";
-  typedef partials_return_type_t<T_n, T_prob> T_partials_return;
+  using T_partials_return = partials_return_t<T_n, T_prob>;
 
-  if (size_zero(n, theta))
+  if (size_zero(n, theta)) {
     return 0.0;
+  }
 
   T_partials_return P(0.0);
 
@@ -50,8 +51,9 @@ return_type_t<T_prob> bernoulli_lccdf(const T_n& n, const T_prob& theta) {
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
   for (size_t i = 0; i < stan::length(n); i++) {
-    if (value_of(n_vec[i]) < 0)
+    if (value_of(n_vec[i]) < 0) {
       return ops_partials.build(0.0);
+    }
   }
 
   for (size_t i = 0; i < size; i++) {
@@ -64,8 +66,9 @@ return_type_t<T_prob> bernoulli_lccdf(const T_n& n, const T_prob& theta) {
 
       P += log(Pi);
 
-      if (!is_constant_all<T_prob>::value)
+      if (!is_constant_all<T_prob>::value) {
         ops_partials.edge1_.partials_[i] += 1 / Pi;
+      }
     }
   }
 

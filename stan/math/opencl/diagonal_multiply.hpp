@@ -21,12 +21,14 @@ template <typename T1, typename T2, typename = enable_if_all_arithmetic<T1, T2>>
 inline matrix_cl<return_type_t<T1, T2>> diagonal_multiply(
     const matrix_cl<T1>& A, const T2 scalar) {
   matrix_cl<return_type_t<T1, T2>> B(A);
-  if (B.size() == 0)
+  if (B.size() == 0) {
     return B;
+  }
   // For rectangular matrices
   int min_dim = B.rows();
-  if (B.cols() < min_dim)
+  if (B.cols() < min_dim) {
     min_dim = B.cols();
+  }
   try {
     opencl_kernels::scalar_mul_diagonal(cl::NDRange(min_dim), B, scalar,
                                         B.rows(), min_dim);
