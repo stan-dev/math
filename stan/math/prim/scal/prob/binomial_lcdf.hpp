@@ -36,10 +36,11 @@ template <typename T_n, typename T_N, typename T_prob>
 return_type_t<T_prob> binomial_lcdf(const T_n& n, const T_N& N,
                                     const T_prob& theta) {
   static const char* function = "binomial_lcdf";
-  typedef partials_return_type_t<T_n, T_N, T_prob> T_partials_return;
+  using T_partials_return = partials_return_t<T_n, T_N, T_prob>;
 
-  if (size_zero(n, N, theta))
+  if (size_zero(n, N, theta)) {
     return 0.0;
+  }
 
   T_partials_return P(0.0);
 
@@ -65,8 +66,9 @@ return_type_t<T_prob> binomial_lcdf(const T_n& n, const T_N& N,
   // The gradients are technically ill-defined,
   // but treated as negative infinity
   for (size_t i = 0; i < stan::length(n); i++) {
-    if (value_of(n_vec[i]) < 0)
+    if (value_of(n_vec[i]) < 0) {
       return ops_partials.build(negative_infinity());
+    }
   }
 
   for (size_t i = 0; i < size; i++) {
@@ -84,10 +86,11 @@ return_type_t<T_prob> binomial_lcdf(const T_n& n, const T_N& N,
 
     P += log(Pi);
 
-    if (!is_constant_all<T_prob>::value)
+    if (!is_constant_all<T_prob>::value) {
       ops_partials.edge1_.partials_[i]
           -= pow(theta_dbl, n_dbl) * pow(1 - theta_dbl, N_dbl - n_dbl - 1)
              / betafunc / Pi;
+    }
   }
   return ops_partials.build(P);
 }

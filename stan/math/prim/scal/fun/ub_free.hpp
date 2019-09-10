@@ -36,8 +36,9 @@ namespace math {
 template <typename T, typename U>
 inline return_type_t<T, U> ub_free(const T& y, const U& ub) {
   using std::log;
-  if (ub == INFTY)
+  if (ub == INFTY) {
     return identity_free(y);
+  }
   check_less_or_equal("ub_free", "Upper bounded variable", y, ub);
   return log(ub - y);
 }

@@ -29,8 +29,9 @@ inline matrix_cl<T> multiply_transpose(const matrix_cl<T>& A) {
                         ? matrix_cl_view::Diagonal
                         : matrix_cl_view::Entire);
 
-  if (A.size() == 0)
+  if (A.size() == 0) {
     return temp;
+  }
   // padding the matrices so the dimensions are divisible with local
   // improves performance becasuse we can omit if statements in the
   // multiply kernel

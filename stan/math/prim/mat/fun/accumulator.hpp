@@ -80,8 +80,9 @@ class accumulator {
    */
   template <typename S, int R, int C>
   void add(const Eigen::Matrix<S, R, C>& m) {
-    for (int i = 0; i < m.size(); ++i)
+    for (int i = 0; i < m.size(); ++i) {
       this->add(m(i));
+    }
   }
 
   /**
@@ -95,8 +96,9 @@ class accumulator {
    */
   template <typename S>
   void add(const std::vector<S>& xs) {
-    for (size_t i = 0; i < xs.size(); ++i)
+    for (size_t i = 0; i < xs.size(); ++i) {
       this->add(xs[i]);
+    }
   }
 
   /**

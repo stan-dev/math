@@ -14,13 +14,14 @@ namespace math {
 template <typename T_y, typename T_inv_scale>
 return_type_t<T_y, T_inv_scale> exponential_lccdf(const T_y& y,
                                                   const T_inv_scale& beta) {
-  typedef partials_return_type_t<T_y, T_inv_scale> T_partials_return;
+  using T_partials_return = partials_return_t<T_y, T_inv_scale>;
 
   static const char* function = "exponential_lccdf";
 
   T_partials_return ccdf_log(0.0);
-  if (size_zero(y, beta))
+  if (size_zero(y, beta)) {
     return ccdf_log;
+  }
 
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
@@ -36,10 +37,12 @@ return_type_t<T_y, T_inv_scale> exponential_lccdf(const T_y& y,
     const T_partials_return y_dbl = value_of(y_vec[n]);
     ccdf_log += -beta_dbl * y_dbl;
 
-    if (!is_constant_all<T_y>::value)
+    if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] -= beta_dbl;
-    if (!is_constant_all<T_inv_scale>::value)
+    }
+    if (!is_constant_all<T_inv_scale>::value) {
       ops_partials.edge2_.partials_[n] -= y_dbl;
+    }
   }
   return ops_partials.build(ccdf_log);
 }

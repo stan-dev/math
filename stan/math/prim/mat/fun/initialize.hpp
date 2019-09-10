@@ -22,13 +22,15 @@ inline void initialize(T& x, V v) {
 }
 template <typename T, int R, int C, typename V>
 inline void initialize(Eigen::Matrix<T, R, C>& x, const V& v) {
-  for (int i = 0; i < x.size(); ++i)
+  for (int i = 0; i < x.size(); ++i) {
     initialize(x(i), v);
+  }
 }
 template <typename T, typename V>
 inline void initialize(std::vector<T>& x, const V& v) {
-  for (size_t i = 0; i < x.size(); ++i)
+  for (size_t i = 0; i < x.size(); ++i) {
     initialize(x[i], v);
+  }
 }
 
 }  // namespace math

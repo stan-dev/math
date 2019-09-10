@@ -33,12 +33,13 @@ template <typename T_y, typename T_loc, typename T_scale>
 return_type_t<T_y, T_loc, T_scale> double_exponential_lccdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma) {
   static const char* function = "double_exponential_lccdf";
-  typedef partials_return_type_t<T_y, T_loc, T_scale> T_partials_return;
+  using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
 
   T_partials_return ccdf_log(0.0);
 
-  if (size_zero(y, mu, sigma))
+  if (size_zero(y, mu, sigma)) {
     return ccdf_log;
+  }
 
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
@@ -67,21 +68,27 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lccdf(
       ccdf_log += log1m(0.5 * exp(scaled_diff));
 
       const T_partials_return rep_deriv = 1.0 / (2.0 * exp(-scaled_diff) - 1.0);
-      if (!is_constant_all<T_y>::value)
+      if (!is_constant_all<T_y>::value) {
         ops_partials.edge1_.partials_[n] -= rep_deriv * inv_sigma;
-      if (!is_constant_all<T_loc>::value)
+      }
+      if (!is_constant_all<T_loc>::value) {
         ops_partials.edge2_.partials_[n] += rep_deriv * inv_sigma;
-      if (!is_constant_all<T_scale>::value)
+      }
+      if (!is_constant_all<T_scale>::value) {
         ops_partials.edge3_.partials_[n] += rep_deriv * scaled_diff * inv_sigma;
+      }
     } else {
       ccdf_log += log_half - scaled_diff;
 
-      if (!is_constant_all<T_y>::value)
+      if (!is_constant_all<T_y>::value) {
         ops_partials.edge1_.partials_[n] -= inv_sigma;
-      if (!is_constant_all<T_loc>::value)
+      }
+      if (!is_constant_all<T_loc>::value) {
         ops_partials.edge2_.partials_[n] += inv_sigma;
-      if (!is_constant_all<T_scale>::value)
+      }
+      if (!is_constant_all<T_scale>::value) {
         ops_partials.edge3_.partials_[n] += scaled_diff * inv_sigma;
+      }
     }
   }
   return ops_partials.build(ccdf_log);

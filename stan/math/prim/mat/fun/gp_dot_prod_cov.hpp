@@ -51,8 +51,9 @@ gp_dot_prod_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
 
   Eigen::Matrix<return_type_t<T_x, T_sigma>, Eigen::Dynamic, Eigen::Dynamic>
       cov(x_size, x_size);
-  if (x_size == 0)
+  if (x_size == 0) {
     return cov;
+  }
 
   T_sigma sigma_sq = square(sigma);
 
@@ -102,8 +103,9 @@ gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma &sigma) {
 
   Eigen::Matrix<return_type_t<T_x, T_sigma>, Eigen::Dynamic, Eigen::Dynamic>
       cov(x_size, x_size);
-  if (x_size == 0)
+  if (x_size == 0) {
     return cov;
+  }
 
   T_sigma sigma_sq = square(sigma);
 
@@ -164,8 +166,9 @@ gp_dot_prod_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
                 Eigen::Dynamic>
       cov(x1_size, x2_size);
 
-  if (x1_size == 0 || x2_size == 0)
+  if (x1_size == 0 || x2_size == 0) {
     return cov;
+  }
 
   T_sigma sigma_sq = square(sigma);
 
@@ -219,8 +222,9 @@ gp_dot_prod_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
                 Eigen::Dynamic>
       cov(x1_size, x2_size);
 
-  if (x1_size == 0 || x2_size == 0)
+  if (x1_size == 0 || x2_size == 0) {
     return cov;
+  }
 
   T_sigma sigma_sq = square(sigma);
 

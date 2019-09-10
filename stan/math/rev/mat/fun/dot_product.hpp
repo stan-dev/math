@@ -22,12 +22,12 @@ struct dot_product_store_type;
 
 template <>
 struct dot_product_store_type<var> {
-  typedef vari** type;
+  using type = vari**;
 };
 
 template <>
 struct dot_product_store_type<double> {
-  typedef double* type;
+  using type = double*;
 };
 
 template <typename T1, typename T2>
@@ -104,8 +104,9 @@ class dot_product_vari : public vari {
     if (shared == nullptr) {
       mem_d = reinterpret_cast<double*>(
           ChainableStack::instance_->memalloc_.alloc(length_ * sizeof(double)));
-      for (size_t i = 0; i < length_; i++)
+      for (size_t i = 0; i < length_; i++) {
         mem_d[i] = ind[i];
+      }
     } else {
       mem_d = shared;
     }
