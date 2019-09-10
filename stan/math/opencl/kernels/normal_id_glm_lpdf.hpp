@@ -71,9 +71,9 @@ static const char* normal_id_glm_kernel_code = STRINGIFY(
         }
         double sigma = sigma_glob[gid * is_sigma_vector];
         double inv_sigma = 1 / sigma;
-        y_minus_mu_over_sigma = (y[gid] - y_minus_mu_over_sigma
-                                 - alpha[gid * is_alpha_vector])
-                                * inv_sigma;
+        y_minus_mu_over_sigma
+            = (y[gid] - y_minus_mu_over_sigma - alpha[gid * is_alpha_vector])
+              * inv_sigma;
         mu_derivative = inv_sigma * y_minus_mu_over_sigma;
         if (need_mu_derivative) {
           mu_derivative_glob[gid] = mu_derivative;
