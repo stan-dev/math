@@ -235,9 +235,10 @@ class matrix_cl<T, require_arithmetic<T>> {
   template <typename Vec, require_std_vector_t<is_eigen, Vec>...>
   explicit matrix_cl(Vec&& A) try : rows_(A.empty() ? 0 : A[0].size()),
                                     cols_(A.size()) {
-    if (this->size() == 0)
-      return;
+  if (this->size() == 0) {
+    return;
   }
+
   cl::Context& ctx = opencl_context.context();
   cl::CommandQueue& queue = opencl_context.queue();
   // creates the OpenCL buffer to copy the Eigen
@@ -366,6 +367,7 @@ explicit matrix_cl(Vec&& A, const int& R, const int& C) : rows_(R), cols_(C) {
 template <typename Mat, require_eigen_t<std::is_arithmetic, Mat>...>
 static matrix_cl<T> constant(Mat& A, matrix_cl_view partial_view
                                      = matrix_cl_view::Entire) {
+                                       printf("\nThis was used\n");
 #ifndef STAN_OPENCL_NOCACHE
   if (A.opencl_buffer_() != NULL) {
     return matrix_cl<T>(A.opencl_buffer_, A.rows(), A.cols(), partial_view);
@@ -423,21 +425,24 @@ explicit matrix_cl(const double* A, const int& R, const int& C,
 /**
  * Assign a matrix_cl from one place to another
  */
-template <typename Mat, require_matrix_cl_t<std::is_arithmetic, Mat>...>
-matrix_cl<T>& operator=(Mat&& a) {
-  check_size_match("move of (OpenCL) matrix", "source.rows()", a.rows(),
-                   "destination.rows()", this->rows());
-  check_size_match("move of (OpenCL) matrix", "source.cols()", a.cols(),
-                   "destination.cols()", this->cols());
-  // Need to wait for all of matrices events before destroying old buffer
-  this->wait_for_read_write_events();
-  a.wait_for_read_write_events();
-  buffer_cl_ = std::forward<decltype(a.buffer_cl_)>(a.buffer_cl_);
-  view_ = std::forward<decltype(a.view_)>(a.view_);
-  write_events_ = std::forward<decltype(a.write_events_)>(a.write_events_);
-  read_events_ = std::forward<decltype(a.read_events_)>(a.read_events_);
-  return *this;
-}
+ template <typename Mat, require_matrix_cl_t<std::is_arithmetic, Mat>...>
+ matrix_cl<T>& operator=(Mat&& a) {
+   check_size_match("move of (OpenCL) matrix", "source.rows()", a.rows(),
+                    "destination.rows()", this->rows());
+   check_size_match("move of (OpenCL) matrix", "source.cols()", a.cols(),
+                    "destination.cols()", this->cols());
+    // Need to wait for all of matrices events before destroying old buffer
+    this->wait_for_read_write_events();
+    // If it's an lvalue we will make copies
+    if (std::is_rvalue_reference<Mat>::value) {
+      a.wait_for_read_write_events();
+    }
+   buffer_cl_ = std::forward<decltype(a.buffer_cl_)>(a.buffer_cl_);
+   view_ = std::forward<decltype(a.view_)>(a.view_);
+   write_events_ = std::forward<decltype(a.write_events_)>(a.write_events_);
+   read_events_ = std::forward<decltype(a.read_events_)>(a.read_events_);
+   return *this;
+ }
 
 /**
  * Assign a \c matrix_cl of one arithmetic type to another

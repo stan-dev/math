@@ -27,9 +27,9 @@ namespace math {
 template <typename T>
 template <matrix_cl_view matrix_view>
 inline void matrix_cl<T, require_arithmetic<T>>::zeros() try {
-  if (size() == 0)
+  if (size() == 0) {
     return;
-}
+  }
 this->view_ = both(this->view_, invert(matrix_view));
 cl::CommandQueue cmdQueue = opencl_context.queue();
 opencl_kernels::zeros(cl::NDRange(this->rows(), this->cols()), *this,
