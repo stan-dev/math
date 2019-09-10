@@ -16,7 +16,7 @@ static const char* normal_id_glm_kernel_code = STRINGIFY(
      * with Normal distribution and identity link function.
      *
      * Must be run with at least N threads and local size equal to LOCAL_SIZE_.
-     * @param[in] y_glob vector parameter
+     * @param[in] y vector parameter
      * @param[in] x design matrix
      * @param[in] alpha intercept (in log odds)
      * @param[in] beta weight vector
@@ -48,7 +48,7 @@ static const char* normal_id_glm_kernel_code = STRINGIFY(
         __global double* mu_derivative_glob, __global double* mu_derivative_sum,
         __global double* y_minus_mu_over_sigma_squared_sum,
         __global double* sigma_derivative, __global double* log_sigma_sum,
-        const __global double* y_glob, const __global double* x,
+        const __global double* y, const __global double* x,
         const __global double* alpha, const __global double* beta,
         const __global double* sigma_glob, const int N, const int M,
         const int is_alpha_vector, const int is_sigma_vector,
@@ -71,7 +71,7 @@ static const char* normal_id_glm_kernel_code = STRINGIFY(
         }
         double sigma = sigma_glob[gid * is_sigma_vector];
         double inv_sigma = 1 / sigma;
-        y_minus_mu_over_sigma = (y_glob[gid] - y_minus_mu_over_sigma
+        y_minus_mu_over_sigma = (y[gid] - y_minus_mu_over_sigma
                                  - alpha[gid * is_alpha_vector])
                                 * inv_sigma;
         mu_derivative = inv_sigma * y_minus_mu_over_sigma;
