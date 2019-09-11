@@ -14,7 +14,7 @@ namespace math {
 template <typename T_y, typename T_loc, typename T_scale>
 auto normal_cdf_log(T_y&& y, T_loc&& mu, T_scale&& sigma) {
   return normal_lcdf(std::forward<T_y>(y), std::forward<T_loc>(mu),
-                     std::forward<T_scale>(sigma));
+                            std::forward<T_scale>(sigma));
 }
 
 }  // namespace math
