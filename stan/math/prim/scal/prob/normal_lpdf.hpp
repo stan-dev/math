@@ -35,7 +35,7 @@ namespace math {
  * @throw std::domain_error if the scale is not positive.
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
-auto normal_lpdf(T_y&& y, T_loc&& mu, T_scale&& sigma) {  // NOLINT
+auto normal_lpdf(T_y&& y, T_loc&& mu, T_scale&& sigma) {
   static const char* function = "normal_lpdf";
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
 
