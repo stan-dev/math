@@ -2,9 +2,6 @@
 #define STAN_MATH_PRIM_SCAL_FUN_VALUE_OF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <utility>
-#include <type_traits>
-
 namespace stan {
 namespace math {
 
@@ -23,8 +20,8 @@ namespace math {
  * @param x scalar to convert to double
  * @return value of scalar cast to double
  */
-template <typename T, typename = void>
-inline double value_of(const T& x) {
+template <typename T>
+inline double value_of(const T x) {
   return static_cast<double>(x);
 }
 
@@ -39,11 +36,23 @@ inline double value_of(const T& x) {
  * @param x value
  * @return input value
  */
-template <typename T, std::enable_if_t<std::is_arithmetic<T>::value>...>
-inline auto&& value_of(T&& x) {
-  return std::forward<T>(x);
+template <>
+inline double value_of<double>(double x) {
+  return x;
 }
 
+/**
+ * Return the specified argument.
+ *
+ * <p>See <code>value_of(T)</code> for a polymorphic
+ * implementation using static casts.
+ *
+ * <p>This inline pass-through no-op should be compiled away.
+ *
+ * @param x value
+ * @return input value
+ */
+inline int value_of(int x) { return x; }
 
 }  // namespace math
 }  // namespace stan

@@ -3,9 +3,6 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/meta/broadcast_array.hpp>
-#include <stan/math/prim/mat/meta/is_eigen.hpp>
-#include <stan/math/prim/mat/meta/value_type.hpp>
-#include <stan/math/prim/arr/meta/is_vector.hpp>
 #include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/meta/return_type.hpp>
 #include <vector>
@@ -17,14 +14,14 @@ namespace internal {
 /* This class will be used for both multivariate (nested container)
    operands_and_partials edges as well as for the univariate case.
  */
-template <typename ViewElt, typename Op>
-class ops_partials_edge<ViewElt, Op, std::enable_if_t<is_eigen<Op>::value && std::is_arithmetic<std::decay_t<value_type_t<Op>>>::value>> {
+template <typename Op, typename ViewElt, int R, int C>
+class ops_partials_edge<ViewElt, Eigen::Matrix<Op, R, C>> {
  public:
-  using partials_t = empty_broadcast_array<ViewElt, Op>;
+  using partials_t = empty_broadcast_array<ViewElt, Eigen::Matrix<Op, R, C>>;
   partials_t partials_;
-  empty_broadcast_array<partials_t, Op> partials_vec_;
+  empty_broadcast_array<partials_t, Eigen::Matrix<Op, R, C>> partials_vec_;
   ops_partials_edge() {}
-  explicit ops_partials_edge(const Op& /* ops */) {}
+  explicit ops_partials_edge(const Eigen::Matrix<Op, R, C>& /* ops */) {}
 
  private:
   template <typename, typename, typename, typename, typename, typename>
@@ -36,22 +33,17 @@ class ops_partials_edge<ViewElt, Op, std::enable_if_t<is_eigen<Op>::value && std
   int size() const { return 0; }
 };
 
-template <typename ViewElt, typename Op>
-class ops_partials_edge<
-    ViewElt, Op,
-    std::enable_if_t<is_std_vector<Op>::value
-                     && is_eigen<value_type_t<Op>>::value && std::is_arithmetic<std::decay_t<value_type_t<value_type_t<Op>>>>::value>> {
+template <typename Op, typename ViewElt, int R, int C>
+class ops_partials_edge<ViewElt, std::vector<Eigen::Matrix<Op, R, C>>> {
  public:
-  using vector_scalar = value_type_t<Op>;
-  using eigen_matrix = value_type_t<Op>;
-  using partials_t = empty_broadcast_array<ViewElt, eigen_matrix>;
-  empty_broadcast_array<partials_t, eigen_matrix> partials_vec_;
+  using partials_t = empty_broadcast_array<ViewElt, Eigen::Matrix<Op, R, C>>;
+  empty_broadcast_array<partials_t, Eigen::Matrix<Op, R, C>> partials_vec_;
   ops_partials_edge() {}
-  explicit ops_partials_edge(const Op& /* ops */) {}
+  explicit ops_partials_edge(
+      const std::vector<Eigen::Matrix<Op, R, C>>& /* ops */) {}
 
  private:
-  template <typename, typename, typename, typename, typename, typename,
-            typename>
+  template <typename, typename, typename, typename, typename, typename>
   friend class stan::math::operands_and_partials;
 
   void dump_partials(double* /* partials */) const {}  // reverse mode
@@ -60,23 +52,18 @@ class ops_partials_edge<
   int size() const { return 0; }
 };
 
-template <typename ViewElt, typename Op>
-class ops_partials_edge<
-    ViewElt, Op,
-    std::enable_if_t<is_std_vector<Op>::value
-                     && is_std_vector<value_type_t<Op>>::value && std::is_arithmetic<std::decay_t<value_type_t<value_type_t<Op>>>>::value>> {
+template <typename Op, typename ViewElt>
+class ops_partials_edge<ViewElt, std::vector<std::vector<Op>>> {
  public:
-  using vector_scalar = value_type_t<Op>;
-  using inner_vector_scalar = value_type_t<value_type_t<Op>>;
-  using partials_t = empty_broadcast_array<ViewElt, Op>;
+  using partials_t
+      = empty_broadcast_array<ViewElt, std::vector<std::vector<Op>>>;
   partials_t partials_;
-  empty_broadcast_array<partials_t, Op> partials_vec_;
+  empty_broadcast_array<partials_t, std::vector<std::vector<Op>>> partials_vec_;
   ops_partials_edge() {}
-  explicit ops_partials_edge(const Op& /* ops */) {}
+  explicit ops_partials_edge(const std::vector<std::vector<Op>>& /* ops */) {}
 
  private:
-  template <typename, typename, typename, typename, typename, typename,
-            typename>
+  template <typename, typename, typename, typename, typename, typename>
   friend class stan::math::operands_and_partials;
 
   void dump_partials(double* /* partials */) const {}  // reverse mode
