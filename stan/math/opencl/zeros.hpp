@@ -30,16 +30,16 @@ inline void matrix_cl<T, require_arithmetic<T>>::zeros() try {
   if (size() == 0) {
     return;
   }
-this->view_ = both(this->view_, invert(matrix_view));
-cl::CommandQueue cmdQueue = opencl_context.queue();
-opencl_kernels::zeros(cl::NDRange(this->rows(), this->cols()), *this,
-                      this->rows(), this->cols(), matrix_view);
+  this->view_ = both(this->view_, invert(matrix_view));
+  cl::CommandQueue cmdQueue = opencl_context.queue();
+  opencl_kernels::zeros(cl::NDRange(this->rows(), this->cols()), *this,
+                        this->rows(), this->cols(), matrix_view);
 }  // namespace math
 catch (const cl::Error& e) {
   check_opencl_error("zeros", e);
 }
 
-}  // namespace stan
+}  // namespace math
 }  // namespace stan
 
 #endif
