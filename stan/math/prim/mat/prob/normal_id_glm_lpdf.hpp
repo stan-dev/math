@@ -101,18 +101,18 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
 
   T_scale_val inv_sigma = 1 / as_array_or_scalar(sigma_val_vec);
   Matrix<T_partials_return, Dynamic, 1> y_minus_mu_over_sigma_mat(N);
-  auto y_minus_mu_over_sigma = y_minus_mu_over_sigma_mat.array();
+  auto y_scaled = y_minus_mu_over_sigma_mat.array();
 
   operands_and_partials<T_y, T_x, T_alpha, T_beta, T_scale> ops_partials(
       y, x, alpha, beta, sigma);
 
-  double y_minus_mu_over_sigma_squared_sum;  // the most efficient way to
+  double y_scaled_sq_sum;  // the most efficient way to
   // calculate this depends on
   // template parameters
 
 #ifdef STAN_OPENCL
   const int local_size
-      = opencl_kernels::normal_id_glm.make_functor.get_opts().at("LOCAL_SIZE_");
+      = opencl_kernels::normal_id_glm.get_option("LOCAL_SIZE_");
   const int wgs = (N + local_size - 1) / local_size;
 
   const matrix_cl<double> y_cl = matrix_cl<double>::constant(y_val_vec);
@@ -146,8 +146,7 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   } catch (const cl::Error &e) {
     check_opencl_error(function, e);
   }
-  y_minus_mu_over_sigma_squared_sum
-      = sum(from_matrix_cl(y_minus_mu_over_sigma_squared_sum_cl));
+  y_scaled_sq_sum = sum(from_matrix_cl(y_minus_mu_over_sigma_squared_sum_cl));
 
   if (!is_constant_all<T_y, T_x>::value
       || (!is_constant_all<T_alpha>::value && is_vector<T_alpha>::value)) {
@@ -160,7 +159,7 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
       ops_partials.edge3_.partials_ = std::move(mu_derivative);
     }
   }
-  if (!is_constant_all<T_alpha>::value && !is_vector<T_alpha>::value) {
+  if (need_mu_derivative_sum) {
     ops_partials.edge3_.partials_[0]
         = sum(from_matrix_cl(mu_derivative_sum_cl));
   }
@@ -185,18 +184,17 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
           = from_matrix_cl<Dynamic, 1>(sigma_derivative_cl);
     } else {
       ops_partials.edge5_.partials_[0]
-          = (y_minus_mu_over_sigma_squared_sum - N) * as_scalar(inv_sigma);
+          = (y_scaled_sq_sum - N) * as_scalar(inv_sigma);
     }
   }
 #else
-  y_minus_mu_over_sigma = x_val * beta_val_vec;
-  y_minus_mu_over_sigma = (as_array_or_scalar(y_val_vec) - y_minus_mu_over_sigma
-                           - as_array_or_scalar(alpha_val_vec))
-                          * inv_sigma;
+  y_scaled = x_val * beta_val_vec;
+  y_scaled = (as_array_or_scalar(y_val_vec) - y_scaled
+              - as_array_or_scalar(alpha_val_vec))
+             * inv_sigma;
 
   if (!(is_constant_all<T_y, T_x, T_beta, T_alpha>::value)) {
-    Matrix<T_partials_return, Dynamic, 1> mu_derivative
-        = inv_sigma * y_minus_mu_over_sigma;
+    Matrix<T_partials_return, Dynamic, 1> mu_derivative = inv_sigma * y_scaled;
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_ = -mu_derivative;
     }
@@ -216,32 +214,26 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
     }
     if (!is_constant_all<T_scale>::value) {
       if (is_vector<T_scale>::value) {
-        Array<T_partials_return, Dynamic, 1> y_minus_mu_over_sigma_squared
-            = y_minus_mu_over_sigma * y_minus_mu_over_sigma;
-        y_minus_mu_over_sigma_squared_sum = sum(y_minus_mu_over_sigma_squared);
-        ops_partials.edge5_.partials_
-            = (y_minus_mu_over_sigma_squared - 1) * inv_sigma;
+        Array<T_partials_return, Dynamic, 1> y_scaled_sq = y_scaled * y_scaled;
+        y_scaled_sq_sum = sum(y_scaled_sq);
+        ops_partials.edge5_.partials_ = (y_scaled_sq - 1) * inv_sigma;
       } else {
-        y_minus_mu_over_sigma_squared_sum
-            = sum(y_minus_mu_over_sigma * y_minus_mu_over_sigma);
+        y_scaled_sq_sum = sum(y_scaled * y_scaled);
         ops_partials.edge5_.partials_[0]
-            = (y_minus_mu_over_sigma_squared_sum - N) * as_scalar(inv_sigma);
+            = (y_scaled_sq_sum - N) * as_scalar(inv_sigma);
       }
     }
   } else {
-    y_minus_mu_over_sigma_squared_sum
-        = sum(y_minus_mu_over_sigma * y_minus_mu_over_sigma);
+    y_scaled_sq_sum = sum(y_scaled * y_scaled);
   }
 #endif
 
-  if (!std::isfinite(y_minus_mu_over_sigma_squared_sum)) {
+  if (!std::isfinite(y_scaled_sq_sum)) {
     check_finite(function, "Vector of dependent variables", y);
     check_finite(function, "Weight vector", beta);
     check_finite(function, "Intercept", alpha);
-    check_finite(function, "Matrix of independent variables",
-                 y_minus_mu_over_sigma_squared_sum);  // if all other checks
-                                                      // passed this will only
-                                                      // fail if x is not finite
+    // if all other checks passed, next will only fail if x is not finite
+    check_finite(function, "Matrix of independent variables", y_scaled_sq_sum);
   }
 
   // Compute log probability.
@@ -255,7 +247,7 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
       logp -= N * log(as_scalar(sigma_val));
   }
   if (include_summand<propto, T_y, T_x, T_alpha, T_beta, T_scale>::value)
-    logp -= 0.5 * y_minus_mu_over_sigma_squared_sum;
+    logp -= 0.5 * y_scaled_sq_sum;
   return ops_partials.build(logp);
 }
 
