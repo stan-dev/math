@@ -16,8 +16,9 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_loc, typename T_scale>
-inline return_type_t<T_y, T_loc, T_scale> normal_lccdf(const T_y& y, const T_loc& mu,
-                                                const T_scale& sigma) {
+inline return_type_t<T_y, T_loc, T_scale> normal_lccdf(const T_y& y,
+                                                       const T_loc& mu,
+                                                       const T_scale& sigma) {
   static const char* function = "normal_lccdf";
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
 
