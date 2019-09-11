@@ -10,6 +10,7 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <cmath>
+#include <utility>
 
 namespace stan {
 namespace math {
@@ -29,8 +30,7 @@ namespace math {
  * @tparam T_scale Type of standard deviation paramater.
  */
 template <typename T_y, typename T_loc, typename T_scale>
-return_type_t<T_y, T_loc, T_scale> normal_cdf(const T_y& y, const T_loc& mu,
-                                              const T_scale& sigma) {
+auto normal_cdf(T_y&& y, T_loc&& mu, T_scale&& sigma) {
   static const char* function = "normal_cdf";
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
 
@@ -51,17 +51,17 @@ return_type_t<T_y, T_loc, T_scale> normal_cdf(const T_y& y, const T_loc& mu,
 
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_loc> mu_vec(mu);
-  scalar_seq_view<T_scale> sigma_vec(sigma);
-  size_t N = max_size(y, mu, sigma);
+  const size_t N = max_size(y, mu, sigma);
+  const scalar_seq_view<T_y> y_vec(std::forward<T_y>(y));
+  const scalar_seq_view<T_loc> mu_vec(std::forward<T_loc>(mu));
+  const scalar_seq_view<T_scale> sigma_vec(std::forward<T_scale>(sigma));
   const double SQRT_TWO_OVER_PI = std::sqrt(2.0 / pi());
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return mu_dbl = value_of(mu_vec[n]);
-    const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
-    const T_partials_return scaled_diff
+    const auto y_dbl = value_of(y_vec[n]);
+    const auto mu_dbl = value_of(mu_vec[n]);
+    const auto sigma_dbl = value_of(sigma_vec[n]);
+    const auto scaled_diff
         = (y_dbl - mu_dbl) / (sigma_dbl * SQRT_2);
     T_partials_return cdf_;
     if (scaled_diff < -37.5 * INV_SQRT_2) {
