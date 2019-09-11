@@ -246,7 +246,11 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   }
   if (include_summand<propto, T_scale>::value) {
     if (is_vector<T_scale>::value) {
+#ifdef STAN_OPENCL
+      logp -= sum(from_matrix_cl(log_sigma_sum_cl));
+#else
       logp -= sum(log(sigma_val_vec));
+#endif
     } else {
       logp -= N * log(as_scalar(sigma_val));
     }
