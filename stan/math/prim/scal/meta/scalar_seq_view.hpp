@@ -44,11 +44,10 @@ class scalar_seq_view<C, require_vector_like_t<is_stan_scalar, C>> {
  * @tparam T the scalar type
  */
 template <typename C>
-class scalar_seq_view<
-    C, require_not_vector_like_t<is_stan_scalar, C>> {
+class scalar_seq_view<C, require_not_vector_like_t<is_stan_scalar, C>> {
  public:
-   template <typename CC, require_same<C, std::decay_t<CC>>...>
-   explicit scalar_seq_view(CC&& c) : t_(std::forward<CC>(c)) {}
+  template <typename CC, require_same<C, std::decay_t<CC>>...>
+  explicit scalar_seq_view(CC&& c) : t_(std::forward<CC>(c)) {}
 
   auto&& operator[](int /* i */) const { return t_; }
   auto&& operator[](int /* i */) { return t_; }

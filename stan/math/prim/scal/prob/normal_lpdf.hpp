@@ -64,7 +64,9 @@ auto normal_lpdf(T_y&& y, T_loc&& mu, T_scale&& sigma) {
   const scalar_seq_view<T_scale> sigma_vec(std::forward<T_scale>(sigma));
 
   VectorBuilder<true, T_partials_return, T_scale> inv_sigma(sigma_size);
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return, T_scale> log_sigma(sigma_size);
+  VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
+                T_scale>
+      log_sigma(sigma_size);
   for (size_t i = 0; i < sigma_size; i++) {
     if (include_summand<propto, T_scale>::value) {
       log_sigma[i] = log(value_of(sigma_vec[i]));

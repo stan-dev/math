@@ -12,13 +12,10 @@ TEST(ProbNormal, log_matches_lpdf) {
                   (stan::math::normal_log<true>(y, mu, sigma)));
   EXPECT_FLOAT_EQ((stan::math::normal_lpdf<false>(y, mu, sigma)),
                   (stan::math::normal_log<false>(y, mu, sigma)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::normal_lpdf<true>(y, mu, sigma)),
-      (stan::math::normal_log<true>(y, mu, sigma)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::normal_lpdf<false>(y, mu, sigma)),
-      (stan::math::normal_log<false>(y, mu, sigma)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::normal_lpdf(y, mu, sigma)),
-      (stan::math::normal_log(y, mu, sigma)));
+  EXPECT_FLOAT_EQ((stan::math::normal_lpdf<true>(y, mu, sigma)),
+                  (stan::math::normal_log<true>(y, mu, sigma)));
+  EXPECT_FLOAT_EQ((stan::math::normal_lpdf<false>(y, mu, sigma)),
+                  (stan::math::normal_log<false>(y, mu, sigma)));
+  EXPECT_FLOAT_EQ((stan::math::normal_lpdf(y, mu, sigma)),
+                  (stan::math::normal_log(y, mu, sigma)));
 }
