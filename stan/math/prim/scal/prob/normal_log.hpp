@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/prob/normal_lpdf.hpp>
-#include <utility>
 
 namespace stan {
 namespace math {
@@ -30,17 +29,19 @@ namespace math {
  * @tparam T_loc Type of location parameter.
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
-inline auto normal_log(T_y&& y, T_loc&& mu, T_scale&& sigma) {
-  return normal_lpdf<propto>(std::forward<T_y>(y),
-   std::forward<T_loc>(mu), std::forward<T_scale>(sigma));
+return_type_t<T_y, T_loc, T_scale> normal_log(const T_y& y, const T_loc& mu,
+                                              const T_scale& sigma) {
+  return normal_lpdf<propto, T_y, T_loc, T_scale>(y, mu, sigma);
 }
 
 /**
  * @deprecated use <code>normal_lpdf</code>
  */
 template <typename T_y, typename T_loc, typename T_scale>
-inline auto normal_log(T_y&& y, T_loc&& mu, T_scale&& sigma) {
-  return normal_lpdf(std::forward<T_y>(y), std::forward<T_loc>(mu), std::forward<T_scale>(sigma));
+inline return_type_t<T_y, T_loc, T_scale> normal_log(const T_y& y,
+                                                     const T_loc& mu,
+                                                     const T_scale& sigma) {
+  return normal_lpdf<T_y, T_loc, T_scale>(y, mu, sigma);
 }
 
 }  // namespace math

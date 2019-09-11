@@ -10,7 +10,6 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <cmath>
-#include <utility>
 
 namespace stan {
 namespace math {
@@ -35,7 +34,8 @@ namespace math {
  * @throw std::domain_error if the scale is not positive.
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
-auto normal_lpdf(T_y&& y, T_loc&& mu, T_scale&& sigma) {
+return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y, const T_loc& mu,
+                                               const T_scale& sigma) {
   static const char* function = "normal_lpdf";
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
 
@@ -57,28 +57,31 @@ auto normal_lpdf(T_y&& y, T_loc&& mu, T_scale&& sigma) {
   }
 
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
-  const auto sigma_size = length(sigma);
-  const size_t N = max_size(y, mu, sigma);
-  const scalar_seq_view<T_y> y_vec(std::forward<T_y>(y));
-  const scalar_seq_view<T_loc> mu_vec(std::forward<T_loc>(mu));
-  const scalar_seq_view<T_scale> sigma_vec(std::forward<T_scale>(sigma));
 
-  VectorBuilder<true, T_partials_return, T_scale> inv_sigma(sigma_size);
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return, T_scale> log_sigma(sigma_size);
-  for (size_t i = 0; i < sigma_size; i++) {
+  scalar_seq_view<T_y> y_vec(y);
+  scalar_seq_view<T_loc> mu_vec(mu);
+  scalar_seq_view<T_scale> sigma_vec(sigma);
+  size_t N = max_size(y, mu, sigma);
+
+  VectorBuilder<true, T_partials_return, T_scale> inv_sigma(length(sigma));
+  VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
+                T_scale>
+      log_sigma(length(sigma));
+  for (size_t i = 0; i < length(sigma); i++) {
+    inv_sigma[i] = 1.0 / value_of(sigma_vec[i]);
     if (include_summand<propto, T_scale>::value) {
       log_sigma[i] = log(value_of(sigma_vec[i]));
-    } else {
-      inv_sigma[i] = 1.0 / value_of(sigma_vec[i]);
     }
   }
 
   for (size_t n = 0; n < N; n++) {
-    const auto y_dbl = value_of(y_vec[n]);
-    const auto mu_dbl = value_of(mu_vec[n]);
+    const T_partials_return y_dbl = value_of(y_vec[n]);
+    const T_partials_return mu_dbl = value_of(mu_vec[n]);
 
-    const auto y_scaled = (y_dbl - mu_dbl) * inv_sigma[n];
-    const auto y_scaled_sq = y_scaled * y_scaled;
+    const T_partials_return y_minus_mu_over_sigma
+        = (y_dbl - mu_dbl) * inv_sigma[n];
+    const T_partials_return y_minus_mu_over_sigma_squared
+        = y_minus_mu_over_sigma * y_minus_mu_over_sigma;
 
     static double NEGATIVE_HALF = -0.5;
 
@@ -89,10 +92,10 @@ auto normal_lpdf(T_y&& y, T_loc&& mu, T_scale&& sigma) {
       logp -= log_sigma[n];
     }
     if (include_summand<propto, T_y, T_loc, T_scale>::value) {
-      logp += NEGATIVE_HALF * y_scaled_sq;
+      logp += NEGATIVE_HALF * y_minus_mu_over_sigma_squared;
     }
 
-    T_partials_return scaled_diff = inv_sigma[n] * y_scaled;
+    T_partials_return scaled_diff = inv_sigma[n] * y_minus_mu_over_sigma;
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] -= scaled_diff;
     }
@@ -101,16 +104,17 @@ auto normal_lpdf(T_y&& y, T_loc&& mu, T_scale&& sigma) {
     }
     if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n]
-          += -inv_sigma[n] + inv_sigma[n] * y_scaled_sq;
+          += -inv_sigma[n] + inv_sigma[n] * y_minus_mu_over_sigma_squared;
     }
   }
   return ops_partials.build(logp);
 }
 
 template <typename T_y, typename T_loc, typename T_scale>
-inline auto normal_lpdf(T_y&& y, T_loc&& mu, T_scale&& sigma) {
-  return normal_lpdf<false>(std::forward<T_y>(y), std::forward<T_loc>(mu),
-                            std::forward<T_scale>(sigma));
+inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y,
+                                                      const T_loc& mu,
+                                                      const T_scale& sigma) {
+  return normal_lpdf<false>(y, mu, sigma);
 }
 
 }  // namespace math

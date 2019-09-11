@@ -7,7 +7,6 @@
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <utility>
 
 namespace stan {
 namespace math {
@@ -31,7 +30,8 @@ namespace math {
  * sizes
  */
 template <typename T_loc, typename T_scale, class RNG>
-inline auto normal_rng(T_loc&& mu, T_scale&& sigma, RNG&& rng) {
+inline typename VectorBuilder<true, double, T_loc, T_scale>::type normal_rng(
+    const T_loc& mu, const T_scale& sigma, RNG& rng) {
   using boost::normal_distribution;
   using boost::variate_generator;
   static const char* function = "normal_rng";
@@ -41,14 +41,14 @@ inline auto normal_rng(T_loc&& mu, T_scale&& sigma, RNG&& rng) {
   check_consistent_sizes(function, "Location parameter", mu, "Scale Parameter",
                          sigma);
 
-  const size_t N = max_size(mu, sigma);
-  const scalar_seq_view<T_loc> mu_vec(std::forward<T_loc>(mu));
-  const scalar_seq_view<T_scale> sigma_vec(std::forward<T_scale>(sigma));
+  scalar_seq_view<T_loc> mu_vec(mu);
+  scalar_seq_view<T_scale> sigma_vec(sigma);
+  size_t N = max_size(mu, sigma);
   VectorBuilder<true, double, T_loc, T_scale> output(N);
 
   for (size_t n = 0; n < N; ++n) {
     variate_generator<RNG&, normal_distribution<> > norm_rng(
-        std::forward<RNG>(rng), normal_distribution<>(mu_vec[n], sigma_vec[n]));
+        rng, normal_distribution<>(mu_vec[n], sigma_vec[n]));
     output[n] = norm_rng();
   }
 
