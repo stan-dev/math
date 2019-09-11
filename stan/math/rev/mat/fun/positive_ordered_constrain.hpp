@@ -33,8 +33,9 @@ class positive_ordered_constrain_op {
     N_ = x.size();
 
     Eigen::Matrix<double, Eigen::Dynamic, 1> y(N_);
-    if (N_ == 0)
+    if (N_ == 0) {
       return y;
+    }
 
     exp_x_ = ChainableStack::instance_->memalloc_.alloc_array<double>(N_);
 

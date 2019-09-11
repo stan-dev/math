@@ -27,8 +27,9 @@ struct promote_elements<Eigen::Matrix<T, R, C>, Eigen::Matrix<S, R, C> > {
   inline static Eigen::Matrix<T, R, C> promote(
       const Eigen::Matrix<S, R, C>& u) {
     Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> t(u.rows(), u.cols());
-    for (int i = 0; i < u.size(); ++i)
+    for (int i = 0; i < u.size(); ++i) {
       t(i) = promote_elements<T, S>::promote(u(i));
+    }
     return t;
   }
 };

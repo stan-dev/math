@@ -42,12 +42,13 @@ template <typename T_y, typename T_loc, typename T_prec>
 return_type_t<T_y, T_loc, T_prec> beta_proportion_lccdf(const T_y& y,
                                                         const T_loc& mu,
                                                         const T_prec& kappa) {
-  typedef partials_return_type_t<T_y, T_loc, T_prec> T_partials_return;
+  using T_partials_return = partials_return_t<T_y, T_loc, T_prec>;
 
   static const char* function = "beta_proportion_lccdf";
 
-  if (size_zero(y, mu, kappa))
+  if (size_zero(y, mu, kappa)) {
     return 0.0;
+  }
 
   T_partials_return ccdf_log(0.0);
 
@@ -109,10 +110,11 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lccdf(const T_y& y,
 
     ccdf_log += log(Pn);
 
-    if (!is_constant_all<T_y>::value)
+    if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] -= pow(1 - y_dbl, kappa_mukappa_dbl - 1)
                                           * pow(y_dbl, mukappa_dbl - 1)
                                           / betafunc_dbl / Pn;
+    }
 
     T_partials_return g1 = 0;
     T_partials_return g2 = 0;
@@ -122,11 +124,13 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lccdf(const T_y& y,
                         digamma_mukappa[n], digamma_kappa_mukappa[n],
                         digamma_kappa[n], betafunc_dbl);
     }
-    if (!is_constant_all<T_loc>::value)
+    if (!is_constant_all<T_loc>::value) {
       ops_partials.edge2_.partials_[n] -= kappa_dbl * (g1 - g2) / Pn;
-    if (!is_constant_all<T_prec>::value)
+    }
+    if (!is_constant_all<T_prec>::value) {
       ops_partials.edge3_.partials_[n]
           -= (g1 * mu_dbl + g2 * (1 - mu_dbl)) / Pn;
+    }
   }
   return ops_partials.build(ccdf_log);
 }

@@ -57,18 +57,16 @@ return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
     const T_y& y, const T_x& x, const T_alpha& alpha, const T_beta& beta,
     const T_precision& phi) {
   static const char* function = "neg_binomial_2_log_glm_lpmf";
-  typedef partials_return_type_t<T_y, T_x, T_alpha, T_beta, T_precision>
-      T_partials_return;
-  typedef typename std::conditional_t<
+  using T_partials_return
+      = partials_return_t<T_y, T_x, T_alpha, T_beta, T_precision>;
+  using T_precision_val = typename std::conditional_t<
       is_vector<T_precision>::value,
-      Eigen::Array<partials_return_type_t<T_precision>, -1, 1>,
-      partials_return_type_t<T_precision>>
-      T_precision_val;
-  typedef typename std::conditional_t<
+      Eigen::Array<partials_return_t<T_precision>, -1, 1>,
+      partials_return_t<T_precision>>;
+  using T_sum_val = typename std::conditional_t<
       is_vector<T_y>::value || is_vector<T_precision>::value,
-      Eigen::Array<partials_return_type_t<T_y, T_precision>, -1, 1>,
-      partials_return_type_t<T_y, T_precision>>
-      T_sum_val;
+      Eigen::Array<partials_return_t<T_y, T_precision>, -1, 1>,
+      partials_return_t<T_y, T_precision>>;
 
   using Eigen::Array;
   using Eigen::Dynamic;
@@ -85,18 +83,22 @@ return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
   check_positive_finite(function, "Precision parameter", phi);
   check_consistent_size(function, "Vector of dependent variables", y, N);
   check_consistent_size(function, "Weight vector", beta, M);
-  if (is_vector<T_precision>::value)
+  if (is_vector<T_precision>::value) {
     check_consistent_sizes(function, "Vector of precision parameters", phi,
                            "Vector of dependent variables", y);
-  if (is_vector<T_alpha>::value)
+  }
+  if (is_vector<T_alpha>::value) {
     check_consistent_sizes(function, "Vector of intercepts", alpha,
                            "Vector of dependent variables", y);
+  }
 
-  if (size_zero(y, x, beta, phi))
+  if (size_zero(y, x, beta, phi)) {
     return 0;
+  }
 
-  if (!include_summand<propto, T_x, T_alpha, T_beta, T_precision>::value)
+  if (!include_summand<propto, T_x, T_alpha, T_beta, T_precision>::value) {
     return 0;
+  }
 
   T_partials_return logp(0);
   const auto& x_val = value_of_rec(x);
@@ -131,18 +133,21 @@ return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
   if (include_summand<propto, T_precision>::value) {
     if (is_vector<T_precision>::value) {
       scalar_seq_view<decltype(phi_val)> phi_vec(phi_val);
-      for (size_t n = 0; n < N; ++n)
+      for (size_t n = 0; n < N; ++n) {
         logp += multiply_log(phi_vec[n], phi_vec[n]) - lgamma(phi_vec[n]);
+      }
     } else {
       logp += N
               * (multiply_log(as_scalar(phi_val), as_scalar(phi_val))
                  - lgamma(as_scalar(phi_val)));
     }
   }
-  if (include_summand<propto, T_x, T_alpha, T_beta, T_precision>::value)
+  if (include_summand<propto, T_x, T_alpha, T_beta, T_precision>::value) {
     logp -= sum(y_plus_phi * logsumexp_theta_logphi);
-  if (include_summand<propto, T_x, T_alpha, T_beta>::value)
+  }
+  if (include_summand<propto, T_x, T_alpha, T_beta>::value) {
     logp += sum(y_arr * theta);
+  }
   if (include_summand<propto, T_precision>::value) {
     logp += sum(lgamma(y_plus_phi));
   }
@@ -163,10 +168,11 @@ return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
             = (beta_val_vec * theta_derivative.transpose()).transpose();
       }
       if (!is_constant_all<T_alpha>::value) {
-        if (is_vector<T_alpha>::value)
+        if (is_vector<T_alpha>::value) {
           ops_partials.edge2_.partials_ = theta_derivative;
-        else
+        } else {
           ops_partials.edge2_.partials_[0] = sum(theta_derivative);
+        }
       }
     }
     if (!is_constant_all<T_precision>::value) {

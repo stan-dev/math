@@ -40,8 +40,9 @@ inline int categorical_logit_rng(const Eigen::VectorXd& beta, RNG& rng) {
 
   double c = uniform01_rng();
   int b = 0;
-  while (c > index(b))
+  while (c > index(b)) {
     b++;
+  }
   return b + 1;
 }
 }  // namespace math

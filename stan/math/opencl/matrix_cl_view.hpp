@@ -18,7 +18,7 @@ enum class matrix_cl_view { Diagonal = 0, Lower = 1, Upper = 2, Entire = 3 };
  */
 inline const matrix_cl_view either(const matrix_cl_view left_view,
                                    const matrix_cl_view right_view) {
-  typedef typename std::underlying_type<matrix_cl_view>::type underlying;
+  using underlying = typename std::underlying_type<matrix_cl_view>::type;
   return static_cast<matrix_cl_view>(static_cast<underlying>(left_view)
                                      | static_cast<underlying>(right_view));
 }
@@ -31,7 +31,7 @@ inline const matrix_cl_view either(const matrix_cl_view left_view,
  */
 inline const matrix_cl_view both(const matrix_cl_view left_view,
                                  const matrix_cl_view right_view) {
-  typedef typename std::underlying_type<matrix_cl_view>::type underlying;
+  using underlying = typename std::underlying_type<matrix_cl_view>::type;
   return static_cast<matrix_cl_view>(static_cast<underlying>(left_view)
                                      & static_cast<underlying>(right_view));
 }
@@ -69,7 +69,7 @@ inline const matrix_cl_view transpose(const matrix_cl_view view) {
  * @return inverted view
  */
 inline const matrix_cl_view invert(const matrix_cl_view view) {
-  typedef typename std::underlying_type<matrix_cl_view>::type underlying;
+  using underlying = typename std::underlying_type<matrix_cl_view>::type;
   return static_cast<matrix_cl_view>(
       static_cast<underlying>(matrix_cl_view::Entire)
       & ~static_cast<underlying>(view));

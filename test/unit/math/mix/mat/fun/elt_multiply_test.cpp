@@ -8,7 +8,6 @@ TEST(AgradMixMatrixEltMultiply, fv_vec_vv_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
   using stan::math::vector_fv;
-  using stan::math::vector_fv;
 
   fvar<var> a(2.0, 1.0);
   fvar<var> b(5.0, 1.0);
@@ -38,7 +37,6 @@ TEST(AgradMixMatrixEltMultiply, fv_vec_vv_2ndDeriv) {
   using stan::math::elt_multiply;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::vector_fv;
   using stan::math::vector_fv;
 
   fvar<var> a(2.0, 1.0);
@@ -599,7 +597,6 @@ TEST(AgradMixMatrixEltMultiply, ffv_vec_vv_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
   using stan::math::vector_ffv;
-  using stan::math::vector_ffv;
 
   fvar<fvar<var> > a(2.0, 1.0);
   fvar<fvar<var> > b(5.0, 1.0);
@@ -631,7 +628,6 @@ TEST(AgradMixMatrixEltMultiply, ffv_vec_vv_2ndDeriv_1) {
   using stan::math::fvar;
   using stan::math::var;
   using stan::math::vector_ffv;
-  using stan::math::vector_ffv;
 
   fvar<fvar<var> > a(2.0, 1.0);
   fvar<fvar<var> > b(5.0, 1.0);
@@ -659,7 +655,6 @@ TEST(AgradMixMatrixEltMultiply, ffv_vec_vv_2ndDeriv_2) {
   using stan::math::fvar;
   using stan::math::var;
   using stan::math::vector_ffv;
-  using stan::math::vector_ffv;
 
   fvar<fvar<var> > a(2.0, 1.0);
   fvar<fvar<var> > b(5.0, 1.0);
@@ -686,7 +681,6 @@ TEST(AgradMixMatrixEltMultiply, ffv_vec_vv_3rdDeriv) {
   using stan::math::elt_multiply;
   using stan::math::fvar;
   using stan::math::var;
-  using stan::math::vector_ffv;
   using stan::math::vector_ffv;
 
   fvar<fvar<var> > a(2.0, 1.0);

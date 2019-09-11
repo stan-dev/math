@@ -77,7 +77,6 @@ TEST(AgradRev, log_sum_exp_vector) {
 
 TEST(AgradRev, log_sum_exp_vec_1) {
   using stan::math::log_sum_exp;
-  using stan::math::log_sum_exp;
   AVAR a(5.0);
   AVEC as = createAVEC(a);
   AVEC x = createAVEC(a);
@@ -90,7 +89,6 @@ TEST(AgradRev, log_sum_exp_vec_1) {
 }
 
 TEST(AgradRev, log_sum_exp_vec_2) {
-  using stan::math::log_sum_exp;
   using stan::math::log_sum_exp;
   AVAR a(5.0);
   AVAR b(-7.0);
@@ -119,7 +117,6 @@ TEST(AgradRev, log_sum_exp_vec_2) {
 }
 
 TEST(AgradRev, log_sum_exp_vec_3) {
-  using stan::math::log_sum_exp;
   using stan::math::log_sum_exp;
   AVAR a(5.0);
   AVAR b(-7.0);

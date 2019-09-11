@@ -33,8 +33,8 @@ namespace math {
 template <typename T_prob>
 void check_simplex(const char* function, const char* name,
                    const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
-  typedef typename index_type<Eigen::Matrix<T_prob, Eigen::Dynamic, 1> >::type
-      size_t;
+  using size_type =
+      typename index_type<Eigen::Matrix<T_prob, Eigen::Dynamic, 1> >::type;
 
   check_nonzero_size(function, name, theta);
   if (!(fabs(1.0 - theta.sum()) <= CONSTRAINT_TOLERANCE)) {
@@ -46,7 +46,7 @@ void check_simplex(const char* function, const char* name,
     std::string msg_str(msg.str());
     domain_error(function, name, 1.0, msg_str.c_str());
   }
-  for (size_t n = 0; n < theta.size(); n++) {
+  for (size_type n = 0; n < theta.size(); n++) {
     if (!(theta[n] >= 0)) {
       std::ostringstream msg;
       msg << "is not a valid simplex. " << name << "["

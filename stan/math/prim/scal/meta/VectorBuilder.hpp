@@ -25,10 +25,10 @@ namespace stan {
 template <bool used, typename T1, typename... Args>
 class VectorBuilder {
  private:
-  typedef VectorBuilderHelper<T1, used, contains_vector<Args...>::value> helper;
+  using helper = VectorBuilderHelper<T1, used, contains_vector<Args...>::value>;
 
  public:
-  typedef typename helper::type type;
+  using type = typename helper::type;
   helper a;
 
   explicit VectorBuilder(size_t n) : a(n) {}

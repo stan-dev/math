@@ -33,10 +33,11 @@ class log_softmax_elt_vari : public vari {
         idx_(idx) {}
   void chain() {
     for (int m = 0; m < size_; ++m) {
-      if (m == idx_)
+      if (m == idx_) {
         alpha_[m]->adj_ += adj_ * (1 - softmax_alpha_[m]);
-      else
+      } else {
         alpha_[m]->adj_ -= adj_ * softmax_alpha_[m];
+      }
     }
   }
 };
@@ -82,10 +83,11 @@ inline Eigen::Matrix<var, Eigen::Dynamic, 1> log_softmax(
   Eigen::Map<vector_d>(softmax_alpha_d_array, a_size) = softmax_alpha_d;
 
   vector_v log_softmax_alpha(a_size);
-  for (int k = 0; k < a_size; ++k)
+  for (int k = 0; k < a_size; ++k) {
     log_softmax_alpha(k) = var(new internal::log_softmax_elt_vari(
         log_softmax_alpha_d[k], alpha_vi_array, softmax_alpha_d_array, a_size,
         k));
+  }
   return log_softmax_alpha;
 }
 

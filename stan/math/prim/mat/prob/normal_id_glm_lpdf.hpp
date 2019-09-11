@@ -57,13 +57,12 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
     const T_y &y, const T_x &x, const T_alpha &alpha, const T_beta &beta,
     const T_scale &sigma) {
   static const char *function = "normal_id_glm_lpdf";
-  typedef partials_return_type_t<T_y, T_x, T_alpha, T_beta, T_scale>
-      T_partials_return;
-  typedef typename std::conditional_t<
+  using T_partials_return
+      = partials_return_t<T_y, T_x, T_alpha, T_beta, T_scale>;
+  using T_scale_val = typename std::conditional_t<
       is_vector<T_scale>::value,
-      Eigen::Array<partials_return_type_t<T_scale>, -1, 1>,
-      partials_return_type_t<T_scale>>
-      T_scale_val;
+      Eigen::Array<partials_return_t<T_scale>, -1, 1>,
+      partials_return_t<T_scale>>;
 
   using Eigen::Array;
   using Eigen::Dynamic;
@@ -76,17 +75,21 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   check_positive_finite(function, "Scale vector", sigma);
   check_consistent_size(function, "Vector of dependent variables", y, N);
   check_consistent_size(function, "Weight vector", beta, M);
-  if (is_vector<T_scale>::value)
+  if (is_vector<T_scale>::value) {
     check_consistent_sizes(function, "Vector of scale parameters", sigma,
                            "Vector of dependent variables", y);
-  if (is_vector<T_alpha>::value)
+  }
+  if (is_vector<T_alpha>::value) {
     check_consistent_sizes(function, "Vector of intercepts", alpha,
                            "Vector of dependent variables", y);
-  if (size_zero(y, x, beta, sigma))
+  }
+  if (size_zero(y, x, beta, sigma)) {
     return 0;
+  }
 
-  if (!include_summand<propto, T_y, T_x, T_alpha, T_beta, T_scale>::value)
+  if (!include_summand<propto, T_y, T_x, T_alpha, T_beta, T_scale>::value) {
     return 0;
+  }
 
   const auto &x_val = value_of_rec(x);
   const auto &beta_val = value_of_rec(beta);
@@ -238,16 +241,19 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
 
   // Compute log probability.
   T_partials_return logp(0.0);
-  if (include_summand<propto>::value)
+  if (include_summand<propto>::value) {
     logp += NEG_LOG_SQRT_TWO_PI * N;
-  if (include_summand<propto, T_scale>::value) {
-    if (is_vector<T_scale>::value)
-      logp -= sum(log(sigma_val_vec));
-    else
-      logp -= N * log(as_scalar(sigma_val));
   }
-  if (include_summand<propto, T_y, T_x, T_alpha, T_beta, T_scale>::value)
+  if (include_summand<propto, T_scale>::value) {
+    if (is_vector<T_scale>::value) {
+      logp -= sum(log(sigma_val_vec));
+    } else {
+      logp -= N * log(as_scalar(sigma_val));
+    }
+  }
+  if (include_summand<propto, T_y, T_x, T_alpha, T_beta, T_scale>::value) {
     logp -= 0.5 * y_scaled_sq_sum;
+  }
   return ops_partials.build(logp);
 }
 
