@@ -4,6 +4,7 @@
 #include <stan/math/prim/scal/meta/scalar_type.hpp>
 #include <stan/math/prim/scal/meta/is_vector_like.hpp>
 #include <type_traits>
+#include <utility>
 
 namespace stan {
 /**
@@ -20,15 +21,16 @@ template <typename C>
 class scalar_seq_view<
     C, std::enable_if_t<is_vector_like<std::decay_t<C>>::value>> {
  public:
-  explicit scalar_seq_view(const C& c) : c_(c) {}
+  template <typename CC>
+  explicit scalar_seq_view(CC&& c) : c_(std::forward<CC>(c)) {}
 
   /**
    * Segfaults if out of bounds.
    * @param i index
    * @return the element at the specified position in the container
    */
-  auto& operator[](int i) const { return c_[i]; }
-  auto& operator[](int i) { return c_[i]; }
+  auto&& operator[](int i) const { return c_[i]; }
+  auto&& operator[](int i) { return c_[i]; }
 
   int size() const { return c_.size(); }
 
@@ -45,10 +47,11 @@ template <typename C>
 class scalar_seq_view<
     C, std::enable_if_t<!is_vector_like<std::decay_t<C>>::value>> {
  public:
-  explicit scalar_seq_view(const C& t) : t_(t) {}
+  template <typename CC>
+  explicit scalar_seq_view(CC&& t) : t_(std::forward<CC>(t)) {}
 
-  auto& operator[](int /* i */) const { return t_; }
-  auto& operator[](int /* i */) { return t_; }
+  auto&& operator[](int /* i */) const { return t_; }
+  auto&& operator[](int /* i */) { return t_; }
 
   int size() const { return 1; }
 

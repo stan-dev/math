@@ -181,8 +181,8 @@ TEST(AgradRevMatrix, trace_quad_form_ldlt_mat_grad_vv) {
 }
 
 TEST(AgradRevMatrix, trace_quad_form_ldlt_vv_basic) {
-  using stan::math::LDLT_factor;
   using stan::math::inverse;
+  using stan::math::LDLT_factor;
   using stan::math::matrix_d;
   using stan::math::matrix_v;
   using stan::math::multiply;
@@ -238,8 +238,8 @@ TEST(AgradRevMatrix, trace_quad_form_ldlt_vv_basic) {
 }
 
 TEST(AgradRevMatrix, trace_quad_form_ldlt_vd_basic) {
-  using stan::math::LDLT_factor;
   using stan::math::inverse;
+  using stan::math::LDLT_factor;
   using stan::math::matrix_d;
   using stan::math::matrix_v;
   using stan::math::trace;
@@ -291,8 +291,8 @@ TEST(AgradRevMatrix, trace_quad_form_ldlt_vd_basic) {
 }
 
 TEST(AgradRevMatrix, trace_quad_form_ldlt_dv_basic) {
-  using stan::math::LDLT_factor;
   using stan::math::inverse;
+  using stan::math::LDLT_factor;
   using stan::math::matrix_d;
   using stan::math::matrix_v;
   using stan::math::trace;

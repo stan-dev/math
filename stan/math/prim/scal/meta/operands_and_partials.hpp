@@ -8,7 +8,8 @@ namespace stan {
 namespace math {
 template <typename Op1 = double, typename Op2 = double, typename Op3 = double,
           typename Op4 = double, typename Op5 = double,
-          typename T_return_type = return_type_t<Op1, Op2, Op3, Op4, Op5>>
+          typename T_return_type = return_type_t<Op1, Op2, Op3, Op4, Op5>,
+          typename = void>
 class operands_and_partials;  // Forward declaration
 
 namespace internal {
@@ -31,7 +32,7 @@ namespace internal {
  * @tparam ViewElt the type we expect to be at partials_[i]
  * @tparam Op the type of the operand
  */
-template <typename ViewElt, typename Op>
+template <typename ViewElt, typename Op, typename = void>
 class ops_partials_edge {
  public:
   empty_broadcast_array<ViewElt, Op> partials_;
@@ -40,7 +41,8 @@ class ops_partials_edge {
   explicit ops_partials_edge(const Op& /* op */) {}
 
  private:
-  template <typename, typename, typename, typename, typename, typename>
+  template <typename, typename, typename, typename, typename, typename,
+            typename>
   friend class stan::math::operands_and_partials;
 
   void dump_partials(ViewElt* /* partials */) const {}  // reverse mode
@@ -85,7 +87,7 @@ class ops_partials_edge {
  *   promotion of Op1..Op4
  */
 template <typename Op1, typename Op2, typename Op3, typename Op4, typename Op5,
-          typename T_return_type>
+          typename T_return_type, typename>
 class operands_and_partials {
  public:
   explicit operands_and_partials(const Op1& /* op1 */) {}

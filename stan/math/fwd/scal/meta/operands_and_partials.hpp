@@ -4,25 +4,33 @@
 #include <stan/math/prim/scal/meta/broadcast_array.hpp>
 #include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/fwd/core/fvar.hpp>
+#include <stan/math/fwd/scal/meta/is_fvar.hpp>
+#include <stan/math/fwd/scal/meta/value_type.hpp>
+#include <type_traits>
 
 namespace stan {
 namespace math {
 namespace internal {
-template <typename Dx>
-class ops_partials_edge<Dx, fvar<Dx> > {
+template <typename ViewElt, typename Op>
+class ops_partials_edge<
+    ViewElt, Op,
+    std::enable_if_t<is_fvar<Op>::value
+                     && std::is_same<std::decay_t<ViewElt>,
+                                     std::decay_t<value_type_t<Op>>>::value>> {
  public:
-  using Op = fvar<Dx>;
+  using Dx = value_type_t<Op>;
   Dx partial_;
-  broadcast_array<Dx> partials_;
+  broadcast_array<ViewElt> partials_;
   explicit ops_partials_edge(const Op& op)
       : partial_(0), partials_(partial_), operand_(op) {}
 
  private:
-  template <typename, typename, typename, typename, typename, typename>
+  template <typename, typename, typename, typename, typename, typename,
+            typename>
   friend class stan::math::operands_and_partials;
-  const Op& operand_;
+  Op operand_;
 
-  Dx dx() { return this->partials_[0] * this->operand_.d_; }
+  ViewElt dx() { return this->partials_[0] * this->operand_.d_; }
 };
 }  // namespace internal
 
@@ -63,15 +71,16 @@ class ops_partials_edge<Dx, fvar<Dx> > {
  *   Op1 -- Op5
  */
 template <typename Op1, typename Op2, typename Op3, typename Op4, typename Op5,
-          typename Dx>
-class operands_and_partials<Op1, Op2, Op3, Op4, Op5, fvar<Dx> > {
+          typename T_return_type>  // fvar<Dx>
+class operands_and_partials<Op1, Op2, Op3, Op4, Op5, T_return_type,
+                            std::enable_if_t<is_fvar<T_return_type>::value>> {
  public:
+  using Dx = value_type_t<T_return_type>;
   internal::ops_partials_edge<Dx, Op1> edge1_;
   internal::ops_partials_edge<Dx, Op2> edge2_;
   internal::ops_partials_edge<Dx, Op3> edge3_;
   internal::ops_partials_edge<Dx, Op4> edge4_;
   internal::ops_partials_edge<Dx, Op5> edge5_;
-  using T_return_type = fvar<Dx>;
   explicit operands_and_partials(const Op1& o1) : edge1_(o1) {}
   operands_and_partials(const Op1& o1, const Op2& o2)
       : edge1_(o1), edge2_(o2) {}

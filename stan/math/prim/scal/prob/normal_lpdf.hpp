@@ -34,18 +34,17 @@ namespace math {
  * @throw std::domain_error if the scale is not positive.
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
-return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y, const T_loc& mu,
-                                               const T_scale& sigma) {
+inline auto normal_lpdf(T_y&& y, T_loc&& mu, T_scale&& sigma) {
   static const char* function = "normal_lpdf";
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
 
   using std::log;
 
+  T_partials_return logp(0.0);
   if (size_zero(y, mu, sigma)) {
-    return 0.0;
+    return logp;
   }
 
-  T_partials_return logp(0.0);
 
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
@@ -53,27 +52,28 @@ return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y, const T_loc& mu,
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma);
   if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
-    return 0.0;
+    return logp;
   }
 
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
-
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_loc> mu_vec(mu);
-  scalar_seq_view<T_scale> sigma_vec(sigma);
-  size_t N = max_size(y, mu, sigma);
 
   VectorBuilder<true, T_partials_return, T_scale> inv_sigma(length(sigma));
   VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
                 T_scale>
       log_sigma(length(sigma));
+
+  const size_t N = max_size(y, mu, sigma);
+  const scalar_seq_view<T_y> y_vec(std::forward<T_y>(y));
+  const scalar_seq_view<T_loc> mu_vec(std::forward<T_loc>(mu));
+  const scalar_seq_view<T_scale> sigma_vec(std::forward<T_scale>(sigma));
+
   for (size_t i = 0; i < length(sigma); i++) {
     inv_sigma[i] = 1.0 / value_of(sigma_vec[i]);
     if (include_summand<propto, T_scale>::value) {
       log_sigma[i] = log(value_of(sigma_vec[i]));
     }
   }
-
+  static double NEGATIVE_HALF = -0.5;
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return mu_dbl = value_of(mu_vec[n]);
@@ -82,8 +82,6 @@ return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y, const T_loc& mu,
         = (y_dbl - mu_dbl) * inv_sigma[n];
     const T_partials_return y_minus_mu_over_sigma_squared
         = y_minus_mu_over_sigma * y_minus_mu_over_sigma;
-
-    static double NEGATIVE_HALF = -0.5;
 
     if (include_summand<propto>::value) {
       logp += NEG_LOG_SQRT_TWO_PI;
@@ -111,10 +109,9 @@ return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y, const T_loc& mu,
 }
 
 template <typename T_y, typename T_loc, typename T_scale>
-inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y,
-                                                      const T_loc& mu,
-                                                      const T_scale& sigma) {
-  return normal_lpdf<false>(y, mu, sigma);
+inline auto normal_lpdf(T_y&& y, T_loc&& mu, T_scale&& sigma) {
+  return normal_lpdf<false>(std::forward<T_y>(y), std::forward<T_loc>(mu),
+   std::forward<T_scale>(sigma));
 }
 
 }  // namespace math

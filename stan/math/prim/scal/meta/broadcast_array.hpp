@@ -6,15 +6,19 @@
 namespace stan {
 namespace math {
 namespace internal {
-template <typename T>
+template <typename T, typename = void>
 class broadcast_array {
  private:
-  T& prim_;
+  T prim_;
 
  public:
-  explicit broadcast_array(T& prim) : prim_(prim) {}
+   template <typename T1, typename T2>
+   using is_same_op = std::is_same<std::decay_t<T1>, std::decay_t<T2>>;
 
-  T& operator[](int /*i*/) { return prim_; }
+  template <typename T1, typename = std::enable_if_t<is_same_op<T, T1>::value>>
+  explicit broadcast_array(T1&& prim) : prim_(std::forward<T1>(prim)) {}
+
+  auto&& operator[](int /*i*/) { return prim_; }
 
   /**
    * We can assign any right hand side which allows for indexing to a
@@ -22,20 +26,20 @@ class broadcast_array {
    * gets assigned. The most common use-case should be where the rhs is some
    * container of length 1.
    */
-  template <typename Y>
-  void operator=(const Y& m) {
-    prim_ = m[0];
+  template <typename Y, typename = std::enable_if_t<is_same_op<T, Y>::value>>
+  void operator=(Y&& m) {
+    prim_ = std::forward<decltype(m[0])>(m[0]);
   }
 };
 
-template <typename T, typename S>
+template <typename ViewElt, typename OpElt, typename = void>
 class empty_broadcast_array {
  public:
   empty_broadcast_array() {}
   /**
    * Not implemented so cannot be called.
    */
-  T& operator[](int /*i*/);
+  ViewElt& operator[](int /*i*/);
 
   /**
    * Not implemented so cannot be called.

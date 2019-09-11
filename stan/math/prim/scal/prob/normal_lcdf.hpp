@@ -16,8 +16,7 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_loc, typename T_scale>
-return_type_t<T_y, T_loc, T_scale> normal_lcdf(const T_y& y, const T_loc& mu,
-                                               const T_scale& sigma) {
+inline auto normal_lcdf(T_y&& y, T_loc&& mu, T_scale&& sigma) {
   static const char* function = "normal_lcdf";
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
 
@@ -38,10 +37,10 @@ return_type_t<T_y, T_loc, T_scale> normal_lcdf(const T_y& y, const T_loc& mu,
 
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_loc> mu_vec(mu);
-  scalar_seq_view<T_scale> sigma_vec(sigma);
-  size_t N = max_size(y, mu, sigma);
+  const size_t N = max_size(y, mu, sigma);
+  const scalar_seq_view<T_y> y_vec(std::forward<T_y>(y));
+  const scalar_seq_view<T_loc> mu_vec(std::forward<T_loc>(mu));
+  const scalar_seq_view<T_scale> sigma_vec(std::forward<T_scale>(sigma));
 
   const double SQRT_TWO_OVER_PI = std::sqrt(2.0 / pi());
   for (size_t n = 0; n < N; n++) {
