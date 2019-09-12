@@ -44,7 +44,7 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_x_scalar, int T_x_rows,
           typename T_beta_scalar, typename T_cuts_scalar>
-typename stan::return_type<T_x_scalar, T_beta_scalar, T_cuts_scalar>::type
+typename stan::return_type_t<T_x_scalar, T_beta_scalar, T_cuts_scalar>
 ordered_logistic_glm_lpmf(
     const T_y& y, const Eigen::Matrix<T_x_scalar, T_x_rows, Eigen::Dynamic>& x,
     const Eigen::Matrix<T_beta_scalar, Eigen::Dynamic, 1>& beta,
@@ -58,8 +58,9 @@ ordered_logistic_glm_lpmf(
 
   typedef typename partials_return_type<T_y, T_x_scalar, T_beta_scalar,
                                         T_cuts_scalar>::type T_partials_return;
-  typedef typename std::conditional<T_x_rows == 1, double,
-                                    Array<double, Dynamic, 1>>::type T_location;
+  typedef typename std::conditional_t<T_x_rows == 1, double,
+                                      Array<double, Dynamic, 1>>
+      T_location;
 
   static const char* function = "ordered_logistic_glm_lpmf";
 
@@ -83,7 +84,6 @@ ordered_logistic_glm_lpmf(
   if (!include_summand<propto, T_x_scalar, T_beta_scalar, T_cuts_scalar>::value)
     return 0;
 
-  T_partials_return logp(0);
   const auto& x_val = value_of_rec(x);
   const auto& beta_val = value_of_rec(beta);
   const auto& cuts_val = value_of_rec(cuts);
@@ -122,6 +122,7 @@ ordered_logistic_glm_lpmf(
   auto m_log_1p_exp_m_cut2
       = (cut2 <= 0.0).select(cut2, 0) - (-cut2.abs()).exp().log1p();
 
+  T_partials_return logp(0);
   if (is_vector<T_y>::value) {
     Eigen::Map<const Eigen::Matrix<int, Eigen::Dynamic, 1>> y_vec(&y_seq[0],
                                                                   y_seq.size());
@@ -198,7 +199,7 @@ ordered_logistic_glm_lpmf(
 
 template <typename T_y, typename T_x_scalar, int T_x_rows,
           typename T_beta_scalar, typename T_cuts_scalar>
-typename stan::return_type<T_x_scalar, T_beta_scalar, T_cuts_scalar>::type
+typename stan::return_type_t<T_x_scalar, T_beta_scalar, T_cuts_scalar>
 ordered_logistic_glm_lpmf(
     const T_y& y, const Eigen::Matrix<T_x_scalar, T_x_rows, Eigen::Dynamic>& x,
     const Eigen::Matrix<T_beta_scalar, Eigen::Dynamic, 1>& beta,
