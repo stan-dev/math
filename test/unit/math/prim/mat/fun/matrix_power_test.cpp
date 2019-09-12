@@ -1,6 +1,5 @@
 #include <stan/math/prim/mat.hpp>
 #include <test/unit/math/prim/mat/fun/expect_matrix_eq.hpp>
-#include <test/unit/math/test_ad.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathMatrixPower, matrix_power_two_by_two) {
@@ -59,19 +58,4 @@ TEST(MathMatrixPower, matrix_power_invalid) {
 
   EXPECT_THROW(matrix_power(not_square, 2), std::invalid_argument);
   EXPECT_THROW(matrix_power(good, -2), std::invalid_argument);
-}
-
-TEST(mathMixCore, matrix_power) {
-  using stan::math::matrix_power;
-
-  auto f = [](const auto& x1) {
-             int size = 3;
-             typedef T = auto;
-             Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> M = Eigen::Matrix<auto, Eigen::Dynamic, Eigen::Dynamic>::Random(size, size);
-             M(1, 1) = x1;
-             int exponent = 3;
-             Eigen::Matrix<auto, Eigen::Dynamic, Eigen::Dynamic> result = matrix_power(M, exponent);
-             return result(1, 1);
-           };
-  stan::test::expect_common_unary(f);
 }

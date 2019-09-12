@@ -4,7 +4,6 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/scal/err/invalid_argument.hpp>
-#include <vector>
 
 namespace stan {
 namespace math {
@@ -26,8 +25,18 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> matrix_power(
   Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> result
       = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>::Identity(M.rows(),
                                                                    M.rows());
-  for (int i = 0; i < n; i++)
-    result *= M;
+  int nn = n;
+  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> MM = M;
+
+  while (nn > 0) {
+    if (nn % 2 == 1) {
+      result = result * MM;
+      --nn;
+    }
+    MM = MM * MM;
+    nn /= 2;
+  }
+
   return result;
 }
 
