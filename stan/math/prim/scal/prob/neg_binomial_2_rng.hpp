@@ -47,8 +47,8 @@ neg_binomial_2_rng(const T_loc& mu, const T_prec& phi, RNG& rng) {
   check_consistent_sizes(function, "Location parameter", mu,
                          "Precision parameter", phi);
 
-  scalar_seq_view<T_loc> mu_vec(mu);
-  scalar_seq_view<T_prec> phi_vec(phi);
+  const scalar_seq_view<T_loc> mu_vec(mu);
+  const scalar_seq_view<T_prec> phi_vec(phi);
   size_t N = max_size(mu, phi);
   VectorBuilder<true, int, T_loc, T_prec> output(N);
 

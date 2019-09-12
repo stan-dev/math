@@ -38,7 +38,7 @@ inline auto std_normal_lpdf(const T_y& y) {
   }
 
   operands_and_partials<T_y> ops_partials(y);
-  scalar_seq_view<T_y> y_vec(y);
+  const scalar_seq_view<T_y> y_vec(y);
   T_partials logp(0.0);
   for (size_t n = 0; n < length(y); n++) {
     const T_partials y_val = value_of(y_vec[n]);

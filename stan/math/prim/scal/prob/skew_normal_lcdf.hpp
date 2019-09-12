@@ -42,10 +42,10 @@ inline auto skew_normal_lcdf(const T_y& y, const T_loc& mu,
   using std::exp;
   using std::log;
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_loc> mu_vec(mu);
-  scalar_seq_view<T_scale> sigma_vec(sigma);
-  scalar_seq_view<T_shape> alpha_vec(alpha);
+  const scalar_seq_view<T_y> y_vec(y);
+  const scalar_seq_view<T_loc> mu_vec(mu);
+  const scalar_seq_view<T_scale> sigma_vec(sigma);
+  const scalar_seq_view<T_shape> alpha_vec(alpha);
   size_t N = max_size(y, mu, sigma, alpha);
   const double SQRT_TWO_OVER_PI = std::sqrt(2.0 / pi());
 

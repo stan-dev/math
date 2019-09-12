@@ -70,10 +70,10 @@ inline auto student_t_lpdf(const T_y& y, const T_dof& nu, const T_loc& mu,
     return T_partials(0.0);
   }
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_dof> nu_vec(nu);
-  scalar_seq_view<T_loc> mu_vec(mu);
-  scalar_seq_view<T_scale> sigma_vec(sigma);
+  const scalar_seq_view<T_y> y_vec(y);
+  const scalar_seq_view<T_dof> nu_vec(nu);
+  const scalar_seq_view<T_loc> mu_vec(mu);
+  const scalar_seq_view<T_scale> sigma_vec(sigma);
   size_t N = max_size(y, nu, mu, sigma);
 
   using std::log;

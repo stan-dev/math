@@ -41,8 +41,8 @@ inline typename VectorBuilder<true, double, T_shape, T_scale>::type pareto_rng(
   check_consistent_sizes(function, "Scale Parameter", y_min, "Shape parameter",
                          alpha);
 
-  scalar_seq_view<T_scale> y_min_vec(y_min);
-  scalar_seq_view<T_shape> alpha_vec(alpha);
+  const scalar_seq_view<T_scale> y_min_vec(y_min);
+  const scalar_seq_view<T_shape> alpha_vec(alpha);
   size_t N = max_size(y_min, alpha);
   VectorBuilder<true, double, T_scale, T_shape> output(N);
 

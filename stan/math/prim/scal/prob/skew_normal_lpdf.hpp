@@ -46,10 +46,10 @@ inline auto skew_normal_lpdf(const T_y& y, const T_loc& mu,
   operands_and_partials<T_y, T_loc, T_scale, T_shape> ops_partials(y, mu, sigma,
                                                                    alpha);
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_loc> mu_vec(mu);
-  scalar_seq_view<T_scale> sigma_vec(sigma);
-  scalar_seq_view<T_shape> alpha_vec(alpha);
+  const scalar_seq_view<T_y> y_vec(y);
+  const scalar_seq_view<T_loc> mu_vec(mu);
+  const scalar_seq_view<T_scale> sigma_vec(sigma);
+  const scalar_seq_view<T_shape> alpha_vec(alpha);
   size_t N = max_size(y, mu, sigma, alpha);
 
   VectorBuilder<true, T_partials, T_scale> inv_sigma(length(sigma));

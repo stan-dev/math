@@ -82,11 +82,11 @@ inline auto normal_sufficient_lpdf(const T_y& y_bar, const T_s& s_squared,
   operands_and_partials<T_y, T_s, T_loc, T_scale> ops_partials(y_bar, s_squared,
                                                                mu, sigma);
 
-  scalar_seq_view<const T_y> y_bar_vec(y_bar);
-  scalar_seq_view<const T_s> s_squared_vec(s_squared);
-  scalar_seq_view<const T_n> n_obs_vec(n_obs);
-  scalar_seq_view<const T_loc> mu_vec(mu);
-  scalar_seq_view<const T_scale> sigma_vec(sigma);
+  const scalar_seq_view<const T_y> y_bar_vec(y_bar);
+  const scalar_seq_view<const T_s> s_squared_vec(s_squared);
+  const scalar_seq_view<const T_n> n_obs_vec(n_obs);
+  const scalar_seq_view<const T_loc> mu_vec(mu);
+  const scalar_seq_view<const T_scale> sigma_vec(sigma);
   size_t N = max_size(y_bar, s_squared, n_obs, mu, sigma);
 
   for (size_t i = 0; i < N; i++) {

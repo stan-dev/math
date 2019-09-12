@@ -39,8 +39,8 @@ inline auto poisson_log_lpmf(const T_n& n, const T_log_rate& alpha) {
     return T_partials(0.0);
   }
 
-  scalar_seq_view<T_n> n_vec(n);
-  scalar_seq_view<T_log_rate> alpha_vec(alpha);
+  const scalar_seq_view<T_n> n_vec(n);
+  const scalar_seq_view<T_log_rate> alpha_vec(alpha);
   size_t size = max_size(n, alpha);
 
   // FIXME: first loop size of alpha_vec, second loop if-ed for size==1

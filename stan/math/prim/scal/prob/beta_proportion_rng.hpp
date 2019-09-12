@@ -41,8 +41,8 @@ beta_proportion_rng(const T_loc &mu, const T_prec &kappa, RNG &rng) {
   check_consistent_sizes(function, "Location parameter", mu,
                          "Precision parameter", kappa);
 
-  scalar_seq_view<T_loc> mu_vec(mu);
-  scalar_seq_view<T_prec> kappa_vec(kappa);
+  const scalar_seq_view<T_loc> mu_vec(mu);
+  const scalar_seq_view<T_prec> kappa_vec(kappa);
   size_t N = max_size(mu, kappa);
   VectorBuilder<true, double, T_loc, T_prec> output(N);
 

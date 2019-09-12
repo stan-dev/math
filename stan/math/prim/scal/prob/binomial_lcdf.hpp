@@ -50,9 +50,9 @@ inline auto binomial_lcdf(const T_n& n, const T_N& N, const T_prob& theta) {
                          "Population size parameter", N,
                          "Probability parameter", theta);
 
-  scalar_seq_view<T_n> n_vec(n);
-  scalar_seq_view<T_N> N_vec(N);
-  scalar_seq_view<T_prob> theta_vec(theta);
+  const scalar_seq_view<T_n> n_vec(n);
+  const scalar_seq_view<T_N> N_vec(N);
+  const scalar_seq_view<T_prob> theta_vec(theta);
   size_t size = max_size(n, N, theta);
 
   using std::exp;

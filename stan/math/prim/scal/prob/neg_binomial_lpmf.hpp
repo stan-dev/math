@@ -42,9 +42,9 @@ inline auto neg_binomial_lpmf(const T_n& n, const T_shape& alpha,
 
   using std::log;
 
-  scalar_seq_view<T_n> n_vec(n);
-  scalar_seq_view<T_shape> alpha_vec(alpha);
-  scalar_seq_view<T_inv_scale> beta_vec(beta);
+  const scalar_seq_view<T_n> n_vec(n);
+  const scalar_seq_view<T_shape> alpha_vec(alpha);
+  const scalar_seq_view<T_inv_scale> beta_vec(beta);
   size_t size = max_size(n, alpha, beta);
 
   operands_and_partials<T_shape, T_inv_scale> ops_partials(alpha, beta);

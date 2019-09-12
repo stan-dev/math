@@ -46,9 +46,9 @@ student_t_rng(const T_deg& nu, const T_loc& mu, const T_scale& sigma,
   check_consistent_sizes(function, "Degrees of freedom parameter", nu,
                          "Location parameter", mu, "Scale Parameter", sigma);
 
-  scalar_seq_view<T_deg> nu_vec(nu);
-  scalar_seq_view<T_loc> mu_vec(mu);
-  scalar_seq_view<T_scale> sigma_vec(sigma);
+  const scalar_seq_view<T_deg> nu_vec(nu);
+  const scalar_seq_view<T_loc> mu_vec(mu);
+  const scalar_seq_view<T_scale> sigma_vec(sigma);
   size_t N = max_size(nu, mu, sigma);
   VectorBuilder<true, double, T_deg, T_loc, T_scale> output(N);
 

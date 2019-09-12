@@ -34,9 +34,9 @@ inline auto uniform_lcdf(const T_y& y, const T_low& alpha, const T_high& beta) {
                          "Lower bound parameter", alpha,
                          "Upper bound parameter", beta);
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_low> alpha_vec(alpha);
-  scalar_seq_view<T_high> beta_vec(beta);
+  const scalar_seq_view<T_y> y_vec(y);
+  const scalar_seq_view<T_low> alpha_vec(alpha);
+  const scalar_seq_view<T_high> beta_vec(beta);
   size_t N = max_size(y, alpha, beta);
 
   operands_and_partials<T_y, T_low, T_high> ops_partials(y, alpha, beta);

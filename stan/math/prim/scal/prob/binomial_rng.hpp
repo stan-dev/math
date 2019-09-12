@@ -41,8 +41,8 @@ inline typename VectorBuilder<true, int, T_N, T_theta>::type binomial_rng(
   check_consistent_sizes(function, "Population size parameter", N,
                          "Probability Parameter", theta);
 
-  scalar_seq_view<T_N> N_vec(N);
-  scalar_seq_view<T_theta> theta_vec(theta);
+  const scalar_seq_view<T_N> N_vec(N);
+  const scalar_seq_view<T_theta> theta_vec(theta);
   size_t M = max_size(N, theta);
   VectorBuilder<true, int, T_N, T_theta> output(M);
 

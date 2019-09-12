@@ -33,8 +33,8 @@ inline auto rayleigh_lccdf(const T_y& y, const T_scale& sigma) {
 
   operands_and_partials<T_y, T_scale> ops_partials(y, sigma);
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_scale> sigma_vec(sigma);
+  const scalar_seq_view<T_y> y_vec(y);
+  const scalar_seq_view<T_scale> sigma_vec(sigma);
   size_t N = max_size(y, sigma);
 
   VectorBuilder<true, T_partials, T_scale> inv_sigma(length(sigma));

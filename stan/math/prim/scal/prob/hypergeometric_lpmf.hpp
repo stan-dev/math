@@ -25,10 +25,10 @@ auto hypergeometric_lpmf(const T_n& n, const T_N& N, const T_a& a,
     return logp;
   }
 
-  scalar_seq_view<T_n> n_vec(n);
-  scalar_seq_view<T_N> N_vec(N);
-  scalar_seq_view<T_a> a_vec(a);
-  scalar_seq_view<T_b> b_vec(b);
+  const scalar_seq_view<T_n> n_vec(n);
+  const scalar_seq_view<T_N> N_vec(N);
+  const scalar_seq_view<T_a> a_vec(a);
+  const scalar_seq_view<T_b> b_vec(b);
   size_t size = max_size(n, N, a, b);
 
   check_bounded(function, "Successes variable", n, 0, a);

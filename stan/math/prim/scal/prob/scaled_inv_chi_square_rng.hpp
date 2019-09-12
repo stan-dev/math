@@ -43,8 +43,8 @@ scaled_inv_chi_square_rng(const T_deg& nu, const T_scale& s, RNG& rng) {
   check_consistent_sizes(function, "Location parameter", nu, "Scale Parameter",
                          s);
 
-  scalar_seq_view<T_deg> nu_vec(nu);
-  scalar_seq_view<T_scale> s_vec(s);
+  const scalar_seq_view<T_deg> nu_vec(nu);
+  const scalar_seq_view<T_scale> s_vec(s);
   size_t N = max_size(nu, s);
   VectorBuilder<true, double, T_deg, T_scale> output(N);
 

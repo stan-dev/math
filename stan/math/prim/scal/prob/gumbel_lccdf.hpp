@@ -50,9 +50,9 @@ inline auto gumbel_lccdf(const T_y& y, const T_loc& mu, const T_scale& beta) {
 
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, beta);
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_loc> mu_vec(mu);
-  scalar_seq_view<T_scale> beta_vec(beta);
+  const scalar_seq_view<T_y> y_vec(y);
+  const scalar_seq_view<T_loc> mu_vec(mu);
+  const scalar_seq_view<T_scale> beta_vec(beta);
   size_t N = max_size(y, mu, beta);
 
   for (size_t n = 0; n < N; n++) {

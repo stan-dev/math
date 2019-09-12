@@ -46,8 +46,8 @@ inline typename VectorBuilder<true, double, T_alpha, T_beta>::type uniform_rng(
                          "Upper bound parameter", beta);
   check_greater(function, "Upper bound parameter", beta, alpha);
 
-  scalar_seq_view<T_alpha> alpha_vec(alpha);
-  scalar_seq_view<T_beta> beta_vec(beta);
+  const scalar_seq_view<T_alpha> alpha_vec(alpha);
+  const scalar_seq_view<T_beta> beta_vec(beta);
   size_t N = max_size(alpha, beta);
   VectorBuilder<true, double, T_alpha, T_beta> output(N);
 

@@ -48,10 +48,10 @@ inline auto exp_mod_normal_lpdf(const T_y& y, const T_loc& mu,
   operands_and_partials<T_y, T_loc, T_scale, T_inv_scale> ops_partials(
       y, mu, sigma, lambda);
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_loc> mu_vec(mu);
-  scalar_seq_view<T_scale> sigma_vec(sigma);
-  scalar_seq_view<T_inv_scale> lambda_vec(lambda);
+  const scalar_seq_view<T_y> y_vec(y);
+  const scalar_seq_view<T_loc> mu_vec(mu);
+  const scalar_seq_view<T_scale> sigma_vec(sigma);
+  const scalar_seq_view<T_inv_scale> lambda_vec(lambda);
   size_t N = max_size(y, mu, sigma, lambda);
 
   for (size_t n = 0; n < N; n++) {

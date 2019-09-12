@@ -35,7 +35,7 @@ inline typename VectorBuilder<true, int, T_theta>::type bernoulli_rng(
   check_finite(function, "Probability parameter", theta);
   check_bounded(function, "Probability parameter", theta, 0.0, 1.0);
 
-  scalar_seq_view<T_theta> theta_vec(theta);
+  const scalar_seq_view<T_theta> theta_vec(theta);
   size_t N = length(theta);
   VectorBuilder<true, int, T_theta> output(N);
 

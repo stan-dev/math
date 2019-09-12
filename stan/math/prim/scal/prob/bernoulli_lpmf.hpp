@@ -48,8 +48,8 @@ inline auto bernoulli_lpmf(const T_n& n, const T_prob& theta) {
     return T_partials(0.0);
   }
 
-  scalar_seq_view<T_n> n_vec(n);
-  scalar_seq_view<T_prob> theta_vec(theta);
+  const scalar_seq_view<T_n> n_vec(n);
+  const scalar_seq_view<T_prob> theta_vec(theta);
   size_t N = max_size(n, theta);
   operands_and_partials<T_prob> ops_partials(theta);
 

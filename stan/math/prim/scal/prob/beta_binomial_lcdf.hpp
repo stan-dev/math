@@ -55,10 +55,10 @@ inline auto beta_binomial_lcdf(const T_n& n, const T_N& N, const T_size1& alpha,
                          "First prior sample size parameter", alpha,
                          "Second prior sample size parameter", beta);
 
-  scalar_seq_view<T_n> n_vec(n);
-  scalar_seq_view<T_N> N_vec(N);
-  scalar_seq_view<T_size1> alpha_vec(alpha);
-  scalar_seq_view<T_size2> beta_vec(beta);
+  const scalar_seq_view<T_n> n_vec(n);
+  const scalar_seq_view<T_N> N_vec(N);
+  const scalar_seq_view<T_size1> alpha_vec(alpha);
+  const scalar_seq_view<T_size2> beta_vec(beta);
   size_t size = max_size(n, N, alpha, beta);
 
   using std::exp;

@@ -55,9 +55,9 @@ inline auto cauchy_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
 
   using std::log;
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_loc> mu_vec(mu);
-  scalar_seq_view<T_scale> sigma_vec(sigma);
+  const scalar_seq_view<T_y> y_vec(y);
+  const scalar_seq_view<T_loc> mu_vec(mu);
+  const scalar_seq_view<T_scale> sigma_vec(sigma);
   size_t N = max_size(y, mu, sigma);
 
   VectorBuilder<true, T_partials, T_scale> inv_sigma(length(sigma));

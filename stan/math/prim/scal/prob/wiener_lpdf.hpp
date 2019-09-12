@@ -114,11 +114,11 @@ inline auto wiener_lpdf(const T_y& y, const T_alpha& alpha, const T_tau& tau,
     return lp;
   }
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_alpha> alpha_vec(alpha);
-  scalar_seq_view<T_beta> beta_vec(beta);
-  scalar_seq_view<T_tau> tau_vec(tau);
-  scalar_seq_view<T_delta> delta_vec(delta);
+  const scalar_seq_view<T_y> y_vec(y);
+  const scalar_seq_view<T_alpha> alpha_vec(alpha);
+  const scalar_seq_view<T_beta> beta_vec(beta);
+  const scalar_seq_view<T_tau> tau_vec(tau);
+  const scalar_seq_view<T_delta> delta_vec(delta);
 
   size_t N_y_tau = max_size(y, tau);
   for (size_t i = 0; i < N_y_tau; ++i) {

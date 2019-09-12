@@ -41,8 +41,8 @@ inline typename VectorBuilder<true, double, T_loc, T_scale>::type gumbel_rng(
   check_consistent_sizes(function, "Location parameter", mu, "Scale Parameter",
                          beta);
 
-  scalar_seq_view<T_loc> mu_vec(mu);
-  scalar_seq_view<T_scale> beta_vec(beta);
+  const scalar_seq_view<T_loc> mu_vec(mu);
+  const scalar_seq_view<T_scale> beta_vec(beta);
   size_t N = max_size(mu, beta);
   VectorBuilder<true, double, T_loc, T_scale> output(N);
 

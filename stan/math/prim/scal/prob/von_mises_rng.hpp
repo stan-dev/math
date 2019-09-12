@@ -54,8 +54,8 @@ inline typename VectorBuilder<true, double, T_loc, T_conc>::type von_mises_rng(
   check_consistent_sizes(function, "Location parameter", mu,
                          "Concentration Parameter", kappa);
 
-  scalar_seq_view<T_loc> mu_vec(mu);
-  scalar_seq_view<T_conc> kappa_vec(kappa);
+  const scalar_seq_view<T_loc> mu_vec(mu);
+  const scalar_seq_view<T_conc> kappa_vec(kappa);
   size_t N = max_size(mu, kappa);
   VectorBuilder<true, double, T_loc, T_conc> output(N);
 

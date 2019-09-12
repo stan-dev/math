@@ -32,8 +32,8 @@ inline auto poisson_lcdf(const T_n& n, const T_rate& lambda) {
   check_consistent_sizes(function, "Random variable", n, "Rate parameter",
                          lambda);
 
-  scalar_seq_view<T_n> n_vec(n);
-  scalar_seq_view<T_rate> lambda_vec(lambda);
+  const scalar_seq_view<T_n> n_vec(n);
+  const scalar_seq_view<T_rate> lambda_vec(lambda);
   size_t size = max_size(n, lambda);
 
   using std::exp;

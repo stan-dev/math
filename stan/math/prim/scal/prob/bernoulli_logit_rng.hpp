@@ -33,7 +33,7 @@ inline typename VectorBuilder<true, int, T_t>::type bernoulli_logit_rng(
   check_finite("bernoulli_logit_rng", "Logit transformed probability parameter",
                t);
 
-  scalar_seq_view<T_t> t_vec(t);
+  const scalar_seq_view<T_t> t_vec(t);
   size_t N = length(t);
   VectorBuilder<true, int, T_t> output(N);
 

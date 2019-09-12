@@ -33,9 +33,9 @@ inline auto pareto_lpdf(const T_y& y, const T_scale& y_min,
   check_consistent_sizes(function, "Random variable", y, "Scale parameter",
                          y_min, "Shape parameter", alpha);
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_scale> y_min_vec(y_min);
-  scalar_seq_view<T_shape> alpha_vec(alpha);
+  const scalar_seq_view<T_y> y_vec(y);
+  const scalar_seq_view<T_scale> y_min_vec(y_min);
+  const scalar_seq_view<T_shape> alpha_vec(alpha);
   size_t N = max_size(y, y_min, alpha);
 
   for (size_t n = 0; n < N; n++) {

@@ -34,9 +34,9 @@ inline auto neg_binomial_lcdf(const T_n& n, const T_shape& alpha,
   check_consistent_sizes(function, "Failures variable", n, "Shape parameter",
                          alpha, "Inverse scale parameter", beta);
 
-  scalar_seq_view<T_n> n_vec(n);
-  scalar_seq_view<T_shape> alpha_vec(alpha);
-  scalar_seq_view<T_inv_scale> beta_vec(beta);
+  const scalar_seq_view<T_n> n_vec(n);
+  const scalar_seq_view<T_shape> alpha_vec(alpha);
+  const scalar_seq_view<T_inv_scale> beta_vec(beta);
   size_t size = max_size(n, alpha, beta);
 
   using std::exp;

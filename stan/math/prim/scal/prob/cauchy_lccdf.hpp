@@ -47,9 +47,9 @@ inline auto cauchy_lccdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale Parameter", sigma);
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_loc> mu_vec(mu);
-  scalar_seq_view<T_scale> sigma_vec(sigma);
+  const scalar_seq_view<T_y> y_vec(y);
+  const scalar_seq_view<T_loc> mu_vec(mu);
+  const scalar_seq_view<T_scale> sigma_vec(sigma);
   size_t N = max_size(y, mu, sigma);
 
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);

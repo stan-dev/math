@@ -42,10 +42,10 @@ inline auto pareto_type_2_lpdf(const T_y& y, const T_loc& mu,
     return T_partials(0.0);
   }
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_loc> mu_vec(mu);
-  scalar_seq_view<T_scale> lambda_vec(lambda);
-  scalar_seq_view<T_shape> alpha_vec(alpha);
+  const scalar_seq_view<T_y> y_vec(y);
+  const scalar_seq_view<T_loc> mu_vec(mu);
+  const scalar_seq_view<T_scale> lambda_vec(lambda);
+  const scalar_seq_view<T_shape> alpha_vec(alpha);
   size_t N = max_size(y, mu, lambda, alpha);
 
   operands_and_partials<T_y, T_loc, T_scale, T_shape> ops_partials(

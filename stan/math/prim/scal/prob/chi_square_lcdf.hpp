@@ -49,8 +49,8 @@ inline auto chi_square_lcdf(const T_y& y, const T_dof& nu) {
   check_consistent_sizes(function, "Random variable", y,
                          "Degrees of freedom parameter", nu);
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_dof> nu_vec(nu);
+  const scalar_seq_view<T_y> y_vec(y);
+  const scalar_seq_view<T_dof> nu_vec(nu);
   size_t N = max_size(y, nu);
 
   operands_and_partials<T_y, T_dof> ops_partials(y, nu);

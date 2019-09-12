@@ -60,9 +60,9 @@ inline auto uniform_lpdf(const T_y& y, const T_low& alpha, const T_high& beta) {
     return T_partials(0.0);
   }
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_low> alpha_vec(alpha);
-  scalar_seq_view<T_high> beta_vec(beta);
+  const scalar_seq_view<T_y> y_vec(y);
+  const scalar_seq_view<T_low> alpha_vec(alpha);
+  const scalar_seq_view<T_high> beta_vec(beta);
   size_t N = max_size(y, alpha, beta);
 
   for (size_t n = 0; n < N; n++) {

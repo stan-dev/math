@@ -38,10 +38,10 @@ inline auto pareto_type_2_lcdf(const T_y& y, const T_loc& mu,
   check_consistent_sizes(function, "Random variable", y, "Scale parameter",
                          lambda, "Shape parameter", alpha);
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_loc> mu_vec(mu);
-  scalar_seq_view<T_scale> lambda_vec(lambda);
-  scalar_seq_view<T_shape> alpha_vec(alpha);
+  const scalar_seq_view<T_y> y_vec(y);
+  const scalar_seq_view<T_loc> mu_vec(mu);
+  const scalar_seq_view<T_scale> lambda_vec(lambda);
+  const scalar_seq_view<T_shape> alpha_vec(alpha);
   size_t N = max_size(y, mu, lambda, alpha);
 
   operands_and_partials<T_y, T_loc, T_scale, T_shape> ops_partials(

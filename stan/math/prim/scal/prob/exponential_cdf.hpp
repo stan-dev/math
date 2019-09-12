@@ -43,8 +43,8 @@ inline auto exponential_cdf(const T_y& y, const T_inv_scale& beta) {
 
   operands_and_partials<T_y, T_inv_scale> ops_partials(y, beta);
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_inv_scale> beta_vec(beta);
+  const scalar_seq_view<T_y> y_vec(y);
+  const scalar_seq_view<T_inv_scale> beta_vec(beta);
   size_t N = max_size(y, beta);
   for (size_t n = 0; n < N; n++) {
     const T_partials beta_dbl = value_of(beta_vec[n]);

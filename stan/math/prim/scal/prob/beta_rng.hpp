@@ -43,8 +43,8 @@ inline typename VectorBuilder<true, double, T_shape1, T_shape2>::type beta_rng(
   check_consistent_sizes(function, "First shape parameter", alpha,
                          "Second shape Parameter", beta);
 
-  scalar_seq_view<T_shape1> alpha_vec(alpha);
-  scalar_seq_view<T_shape2> beta_vec(beta);
+  const scalar_seq_view<T_shape1> alpha_vec(alpha);
+  const scalar_seq_view<T_shape2> beta_vec(beta);
   size_t N = max_size(alpha, beta);
   VectorBuilder<true, double, T_shape1, T_shape2> output(N);
 

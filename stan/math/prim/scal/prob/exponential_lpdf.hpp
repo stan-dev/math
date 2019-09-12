@@ -56,8 +56,8 @@ inline auto exponential_lpdf(const T_y& y, const T_inv_scale& beta) {
   check_consistent_sizes(function, "Random variable", y,
                          "Inverse scale parameter", beta);
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_inv_scale> beta_vec(beta);
+  const scalar_seq_view<T_y> y_vec(y);
+  const scalar_seq_view<T_inv_scale> beta_vec(beta);
   size_t N = max_size(y, beta);
 
   VectorBuilder<include_summand<propto, T_inv_scale>::value, T_partials,

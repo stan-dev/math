@@ -46,9 +46,9 @@ inline auto neg_binomial_2_log_lpmf(const T_n& n, const T_log_location& eta,
   using std::exp;
   using std::log;
 
-  scalar_seq_view<T_n> n_vec(n);
-  scalar_seq_view<T_log_location> eta_vec(eta);
-  scalar_seq_view<T_precision> phi_vec(phi);
+  const scalar_seq_view<T_n> n_vec(n);
+  const scalar_seq_view<T_log_location> eta_vec(eta);
+  const scalar_seq_view<T_precision> phi_vec(phi);
   size_t size = max_size(n, eta, phi);
 
   operands_and_partials<T_log_location, T_precision> ops_partials(eta, phi);

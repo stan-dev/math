@@ -39,9 +39,9 @@ inline auto inv_gamma_lcdf(const T_y& y, const T_shape& alpha,
   check_consistent_sizes(function, "Random variable", y, "Shape parameter",
                          alpha, "Scale Parameter", beta);
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_shape> alpha_vec(alpha);
-  scalar_seq_view<T_scale> beta_vec(beta);
+  const scalar_seq_view<T_y> y_vec(y);
+  const scalar_seq_view<T_shape> alpha_vec(alpha);
+  const scalar_seq_view<T_scale> beta_vec(beta);
   size_t N = max_size(y, alpha, beta);
 
   operands_and_partials<T_y, T_shape, T_scale> ops_partials(y, alpha, beta);

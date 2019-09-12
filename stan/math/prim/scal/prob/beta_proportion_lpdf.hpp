@@ -62,9 +62,9 @@ inline auto beta_proportion_lpdf(const T_y& y, const T_loc& mu,
   }
   T_partials logp(0);
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_loc> mu_vec(mu);
-  scalar_seq_view<T_prec> kappa_vec(kappa);
+  const scalar_seq_view<T_y> y_vec(y);
+  const scalar_seq_view<T_loc> mu_vec(mu);
+  const scalar_seq_view<T_prec> kappa_vec(kappa);
   size_t N = max_size(y, mu, kappa);
   size_t N_mukappa = max_size(mu, kappa);
 

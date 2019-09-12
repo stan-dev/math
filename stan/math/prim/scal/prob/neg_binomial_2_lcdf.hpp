@@ -28,9 +28,9 @@ inline auto neg_binomial_2_lcdf(const T_n& n, const T_location& mu,
   check_consistent_sizes(function, "Random variable", n, "Location parameter",
                          mu, "Precision Parameter", phi);
 
-  scalar_seq_view<T_n> n_vec(n);
-  scalar_seq_view<T_location> mu_vec(mu);
-  scalar_seq_view<T_precision> phi_vec(phi);
+  const scalar_seq_view<T_n> n_vec(n);
+  const scalar_seq_view<T_location> mu_vec(mu);
+  const scalar_seq_view<T_precision> phi_vec(phi);
 
   size_t size_phi_mu = max_size(mu, phi);
   VectorBuilder<true, return_type_t<T_location, T_precision>, T_location,

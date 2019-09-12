@@ -55,9 +55,9 @@ inline auto binomial_logit_lpmf(const T_n& n, const T_N& N,
     return T_partials(0.0);
   }
 
-  scalar_seq_view<T_n> n_vec(n);
-  scalar_seq_view<T_N> N_vec(N);
-  scalar_seq_view<T_prob> alpha_vec(alpha);
+  const scalar_seq_view<T_n> n_vec(n);
+  const scalar_seq_view<T_N> N_vec(N);
+  const scalar_seq_view<T_prob> alpha_vec(alpha);
   size_t size = max_size(n, N, alpha);
 
   operands_and_partials<T_prob> ops_partials(alpha);

@@ -48,9 +48,9 @@ pareto_type_2_rng(const T_loc& mu, const T_scale& lambda, const T_shape& alpha,
   check_consistent_sizes(function, "Location parameter", mu, "Scale Parameter",
                          lambda, "Shape Parameter", alpha);
 
-  scalar_seq_view<T_loc> mu_vec(mu);
-  scalar_seq_view<T_scale> lambda_vec(lambda);
-  scalar_seq_view<T_shape> alpha_vec(alpha);
+  const scalar_seq_view<T_loc> mu_vec(mu);
+  const scalar_seq_view<T_scale> lambda_vec(lambda);
+  const scalar_seq_view<T_shape> alpha_vec(alpha);
   size_t N = max_size(mu, lambda, alpha);
   VectorBuilder<true, double, T_loc, T_scale, T_shape> output(N);
 

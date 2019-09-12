@@ -33,9 +33,9 @@ inline auto neg_binomial_2_cdf(const T_n& n, const T_location& mu,
   check_consistent_sizes(function, "Random variable", n, "Location parameter",
                          mu, "Precision Parameter", phi);
 
-  scalar_seq_view<T_n> n_vec(n);
-  scalar_seq_view<T_location> mu_vec(mu);
-  scalar_seq_view<T_precision> phi_vec(phi);
+  const scalar_seq_view<T_n> n_vec(n);
+  const scalar_seq_view<T_location> mu_vec(mu);
+  const scalar_seq_view<T_precision> phi_vec(phi);
   size_t size = max_size(n, mu, phi);
 
   operands_and_partials<T_location, T_precision> ops_partials(mu, phi);

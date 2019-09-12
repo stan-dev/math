@@ -42,9 +42,9 @@ inline auto frechet_lpdf(const T_y& y, const T_shape& alpha,
 
   T_partials logp(0);
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_shape> alpha_vec(alpha);
-  scalar_seq_view<T_scale> sigma_vec(sigma);
+  const scalar_seq_view<T_y> y_vec(y);
+  const scalar_seq_view<T_shape> alpha_vec(alpha);
+  const scalar_seq_view<T_scale> sigma_vec(sigma);
   size_t N = max_size(y, alpha, sigma);
 
   VectorBuilder<include_summand<propto, T_shape>::value, T_partials,

@@ -41,9 +41,9 @@ inline auto frechet_lccdf(const T_y& y, const T_shape& alpha,
 
   using std::exp;
   using std::log;
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_scale> sigma_vec(sigma);
-  scalar_seq_view<T_shape> alpha_vec(alpha);
+  const scalar_seq_view<T_y> y_vec(y);
+  const scalar_seq_view<T_scale> sigma_vec(sigma);
+  const scalar_seq_view<T_shape> alpha_vec(alpha);
   size_t N = max_size(y, sigma, alpha);
 
   for (size_t n = 0; n < N; n++) {

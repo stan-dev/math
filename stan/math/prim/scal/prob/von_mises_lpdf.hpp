@@ -47,9 +47,9 @@ inline auto von_mises_lpdf(T_y const& y, T_loc const& mu,
   const bool compute_bessel1 = !kappa_const;
   const double TWO_PI = 2.0 * pi();
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_loc> mu_vec(mu);
-  scalar_seq_view<T_scale> kappa_vec(kappa);
+  const scalar_seq_view<T_y> y_vec(y);
+  const scalar_seq_view<T_loc> mu_vec(mu);
+  const scalar_seq_view<T_scale> kappa_vec(kappa);
 
   VectorBuilder<true, T_partials, T_scale> kappa_dbl(length(kappa));
   VectorBuilder<include_summand<propto, T_scale>::value, T_partials,

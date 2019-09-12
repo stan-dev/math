@@ -50,8 +50,8 @@ inline auto inv_chi_square_lpdf(const T_y& y, const T_dof& nu) {
 
   T_partials logp(0);
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_dof> nu_vec(nu);
+  const scalar_seq_view<T_y> y_vec(y);
+  const scalar_seq_view<T_dof> nu_vec(nu);
   size_t N = max_size(y, nu);
 
   for (size_t n = 0; n < length(y); n++) {

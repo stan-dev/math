@@ -61,9 +61,9 @@ inline auto beta_proportion_lcdf(const T_y& y, const T_loc& mu,
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Precision parameter", kappa);
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_loc> mu_vec(mu);
-  scalar_seq_view<T_prec> kappa_vec(kappa);
+  const scalar_seq_view<T_y> y_vec(y);
+  const scalar_seq_view<T_loc> mu_vec(mu);
+  const scalar_seq_view<T_prec> kappa_vec(kappa);
   size_t N = max_size(y, mu, kappa);
 
   operands_and_partials<T_y, T_loc, T_prec> ops_partials(y, mu, kappa);

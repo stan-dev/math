@@ -41,8 +41,8 @@ inv_gamma_rng(const T_shape& alpha, const T_scale& beta, RNG& rng) {
   check_consistent_sizes(function, "Shape parameter", alpha, "Scale Parameter",
                          beta);
 
-  scalar_seq_view<T_shape> alpha_vec(alpha);
-  scalar_seq_view<T_scale> beta_vec(beta);
+  const scalar_seq_view<T_shape> alpha_vec(alpha);
+  const scalar_seq_view<T_scale> beta_vec(beta);
   size_t N = max_size(alpha, beta);
   VectorBuilder<true, double, T_shape, T_scale> output(N);
 

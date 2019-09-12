@@ -58,9 +58,9 @@ inline auto beta_lcdf(const T_y& y, const T_scale_succ& alpha,
                          "First shape parameter", alpha,
                          "Second shape parameter", beta);
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_scale_succ> alpha_vec(alpha);
-  scalar_seq_view<T_scale_fail> beta_vec(beta);
+  const scalar_seq_view<T_y> y_vec(y);
+  const scalar_seq_view<T_scale_succ> alpha_vec(alpha);
+  const scalar_seq_view<T_scale_fail> beta_vec(beta);
   size_t N = max_size(y, alpha, beta);
 
   operands_and_partials<T_y, T_scale_succ, T_scale_fail> ops_partials(y, alpha,

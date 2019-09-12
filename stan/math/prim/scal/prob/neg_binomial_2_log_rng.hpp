@@ -47,8 +47,8 @@ neg_binomial_2_log_rng(const T_loc& eta, const T_inv& phi, RNG& rng) {
   check_consistent_sizes(function, "Log-location parameter", eta,
                          "Inverse dispersion parameter", phi);
 
-  scalar_seq_view<T_loc> eta_vec(eta);
-  scalar_seq_view<T_inv> phi_vec(phi);
+  const scalar_seq_view<T_loc> eta_vec(eta);
+  const scalar_seq_view<T_inv> phi_vec(phi);
   size_t N = max_size(eta, phi);
   VectorBuilder<true, int, T_loc, T_inv> output(N);
 
