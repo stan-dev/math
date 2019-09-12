@@ -44,7 +44,7 @@ inline auto scaled_inv_chi_square_lcdf(const T_y& y, const T_dof& nu,
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_dof> nu_vec(nu);
   const scalar_seq_view<T_scale> s_vec(s);
-  size_t N = max_size(y, nu, s);
+  const size_t N = max_size(y, nu, s);
 
   operands_and_partials<T_y, T_dof, T_scale> ops_partials(y, nu, s);
 

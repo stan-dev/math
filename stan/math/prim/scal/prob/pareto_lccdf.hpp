@@ -42,7 +42,7 @@ inline auto pareto_lccdf(const T_y& y, const T_scale& y_min,
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_scale> y_min_vec(y_min);
   const scalar_seq_view<T_shape> alpha_vec(alpha);
-  size_t N = max_size(y, y_min, alpha);
+  const size_t N = max_size(y, y_min, alpha);
 
   operands_and_partials<T_y, T_scale, T_shape> ops_partials(y, y_min, alpha);
 

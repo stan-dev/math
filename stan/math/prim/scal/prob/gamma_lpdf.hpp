@@ -72,7 +72,7 @@ inline auto gamma_lpdf(const T_y& y, const T_shape& alpha,
     }
   }
 
-  size_t N = max_size(y, alpha, beta);
+  const size_t N = max_size(y, alpha, beta);
   operands_and_partials<T_y, T_shape, T_inv_scale> ops_partials(y, alpha, beta);
 
   using std::log;

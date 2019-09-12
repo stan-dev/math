@@ -65,7 +65,7 @@ inline auto von_mises_lpdf(T_y const& y, T_loc const& mu,
 
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, kappa);
 
-  size_t N = max_size(y, mu, kappa);
+  const size_t N = max_size(y, mu, kappa);
 
   for (size_t n = 0; n < N; n++) {
     const T_partials y_ = value_of(y_vec[n]);

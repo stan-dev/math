@@ -42,7 +42,7 @@ inline auto logistic_lccdf(const T_y& y, const T_loc& mu,
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_loc> mu_vec(mu);
   const scalar_seq_view<T_scale> sigma_vec(sigma);
-  size_t N = max_size(y, mu, sigma);
+  const size_t N = max_size(y, mu, sigma);
 
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
 

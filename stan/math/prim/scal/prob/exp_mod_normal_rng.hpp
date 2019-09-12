@@ -50,7 +50,7 @@ exp_mod_normal_rng(const T_loc& mu, const T_scale& sigma,
   const scalar_seq_view<T_loc> mu_vec(mu);
   const scalar_seq_view<T_scale> sigma_vec(sigma);
   const scalar_seq_view<T_inv_scale> lambda_vec(lambda);
-  size_t N = max_size(mu, sigma, lambda);
+  const size_t N = max_size(mu, sigma, lambda);
   VectorBuilder<true, double, T_loc, T_scale, T_inv_scale> output(N);
 
   for (size_t n = 0; n < N; ++n) {

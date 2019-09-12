@@ -41,7 +41,7 @@ inline auto rayleigh_lpdf(const T_y& y, const T_scale& sigma) {
 
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_scale> sigma_vec(sigma);
-  size_t N = max_size(y, sigma);
+  const size_t N = max_size(y, sigma);
 
   VectorBuilder<true, T_partials, T_scale> inv_sigma(length(sigma));
   VectorBuilder<include_summand<propto, T_scale>::value, T_partials, T_scale>

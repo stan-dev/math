@@ -42,7 +42,7 @@ inline typename VectorBuilder<true, double, T_shape, T_scale>::type frechet_rng(
 
   const scalar_seq_view<T_shape> alpha_vec(alpha);
   const scalar_seq_view<T_scale> sigma_vec(sigma);
-  size_t N = max_size(alpha, sigma);
+  const size_t N = max_size(alpha, sigma);
   VectorBuilder<true, double, T_shape, T_scale> output(N);
 
   for (size_t n = 0; n < N; ++n) {

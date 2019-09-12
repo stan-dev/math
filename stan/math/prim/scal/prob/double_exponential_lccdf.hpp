@@ -57,7 +57,7 @@ inline auto double_exponential_lccdf(const T_y& y, const T_loc& mu,
   const scalar_seq_view<T_loc> mu_vec(mu);
   const scalar_seq_view<T_scale> sigma_vec(sigma);
   const double log_half = std::log(0.5);
-  size_t N = max_size(y, mu, sigma);
+  const size_t N = max_size(y, mu, sigma);
 
   for (size_t n = 0; n < N; n++) {
     const T_partials y_dbl = value_of(y_vec[n]);

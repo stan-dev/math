@@ -21,7 +21,7 @@ inline auto pareto_type_2_cdf(const T_y& y, const T_loc& mu,
   using T_return = return_type_t<T_y, T_loc, T_scale, T_shape>;
 
   if (size_zero(y, mu, lambda, alpha)) {
-    return 1.0;
+    return T_return(1.0);
   }
 
   static const char* function = "pareto_type_2_cdf";
@@ -42,7 +42,7 @@ inline auto pareto_type_2_cdf(const T_y& y, const T_loc& mu,
   const scalar_seq_view<T_loc> mu_vec(mu);
   const scalar_seq_view<T_scale> lambda_vec(lambda);
   const scalar_seq_view<T_shape> alpha_vec(alpha);
-  size_t N = max_size(y, mu, lambda, alpha);
+  const size_t N = max_size(y, mu, lambda, alpha);
 
   operands_and_partials<T_y, T_loc, T_scale, T_shape> ops_partials(
       y, mu, lambda, alpha);

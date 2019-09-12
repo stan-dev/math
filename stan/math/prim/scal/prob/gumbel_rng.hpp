@@ -43,7 +43,7 @@ inline typename VectorBuilder<true, double, T_loc, T_scale>::type gumbel_rng(
 
   const scalar_seq_view<T_loc> mu_vec(mu);
   const scalar_seq_view<T_scale> beta_vec(beta);
-  size_t N = max_size(mu, beta);
+  const size_t N = max_size(mu, beta);
   VectorBuilder<true, double, T_loc, T_scale> output(N);
 
   variate_generator<RNG&, uniform_01<> > uniform01_rng(rng, uniform_01<>());

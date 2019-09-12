@@ -23,7 +23,7 @@ inline auto poisson_cdf(const T_n& n, const T_rate& lambda) {
   using T_return = return_type_t<T_n, T_rate>;
 
   if (size_zero(n, lambda)) {
-    return 1.0;
+    return T_return(1.0);
   }
 
   T_partials P(1.0);

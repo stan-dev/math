@@ -43,7 +43,7 @@ inline typename VectorBuilder<true, double, T_loc, T_scale>::type logistic_rng(
 
   const scalar_seq_view<T_loc> mu_vec(mu);
   const scalar_seq_view<T_scale> sigma_vec(sigma);
-  size_t N = max_size(mu, sigma);
+  const size_t N = max_size(mu, sigma);
   VectorBuilder<true, double, T_loc, T_scale> output(N);
 
   variate_generator<RNG&, exponential_distribution<> > exp_rng(

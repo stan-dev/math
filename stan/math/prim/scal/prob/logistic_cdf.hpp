@@ -22,7 +22,7 @@ inline auto logistic_cdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
   using T_return = return_type_t<T_y, T_loc, T_scale>;
 
   if (size_zero(y, mu, sigma)) {
-    return 1.0;
+    return T_return(1.0);
   }
 
   static const char* function = "logistic_cdf";
@@ -40,7 +40,7 @@ inline auto logistic_cdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_loc> mu_vec(mu);
   const scalar_seq_view<T_scale> sigma_vec(sigma);
-  size_t N = max_size(y, mu, sigma);
+  const size_t N = max_size(y, mu, sigma);
 
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
 

@@ -41,11 +41,11 @@ namespace math {
 template <typename T_y, typename T_shape, typename T_inv_scale>
 inline auto gamma_cdf(const T_y& y, const T_shape& alpha,
                       const T_inv_scale& beta) {
-  if (size_zero(y, alpha, beta)) {
-    return 1.0;
-  }
   using T_partials = partials_return_t<T_y, T_shape, T_inv_scale>;
   using T_return = return_type_t<T_y, T_shape, T_inv_scale>;
+  if (size_zero(y, alpha, beta)) {
+    return T_return(1.0);
+  }
 
   static const char* function = "gamma_cdf";
 
@@ -64,7 +64,7 @@ inline auto gamma_cdf(const T_y& y, const T_shape& alpha,
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_shape> alpha_vec(alpha);
   const scalar_seq_view<T_inv_scale> beta_vec(beta);
-  size_t N = max_size(y, alpha, beta);
+  const size_t N = max_size(y, alpha, beta);
 
   operands_and_partials<T_y, T_shape, T_inv_scale> ops_partials(y, alpha, beta);
 

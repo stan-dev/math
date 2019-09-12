@@ -43,7 +43,7 @@ beta_proportion_rng(const T_loc &mu, const T_prec &kappa, RNG &rng) {
 
   const scalar_seq_view<T_loc> mu_vec(mu);
   const scalar_seq_view<T_prec> kappa_vec(kappa);
-  size_t N = max_size(mu, kappa);
+  const size_t N = max_size(mu, kappa);
   VectorBuilder<true, double, T_loc, T_prec> output(N);
 
   for (size_t n = 0; n < N; ++n) {

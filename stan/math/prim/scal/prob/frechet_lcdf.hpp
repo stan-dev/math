@@ -44,7 +44,7 @@ inline auto frechet_lcdf(const T_y& y, const T_shape& alpha,
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_scale> sigma_vec(sigma);
   const scalar_seq_view<T_shape> alpha_vec(alpha);
-  size_t N = max_size(y, sigma, alpha);
+  const size_t N = max_size(y, sigma, alpha);
   for (size_t n = 0; n < N; n++) {
     const T_partials y_dbl = value_of(y_vec[n]);
     const T_partials sigma_dbl = value_of(sigma_vec[n]);

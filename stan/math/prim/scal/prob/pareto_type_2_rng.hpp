@@ -51,7 +51,7 @@ pareto_type_2_rng(const T_loc& mu, const T_scale& lambda, const T_shape& alpha,
   const scalar_seq_view<T_loc> mu_vec(mu);
   const scalar_seq_view<T_scale> lambda_vec(lambda);
   const scalar_seq_view<T_shape> alpha_vec(alpha);
-  size_t N = max_size(mu, lambda, alpha);
+  const size_t N = max_size(mu, lambda, alpha);
   VectorBuilder<true, double, T_loc, T_scale, T_shape> output(N);
 
   variate_generator<RNG&, uniform_real_distribution<> > uniform_rng(

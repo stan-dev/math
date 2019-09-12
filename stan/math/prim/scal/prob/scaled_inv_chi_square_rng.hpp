@@ -45,7 +45,7 @@ scaled_inv_chi_square_rng(const T_deg& nu, const T_scale& s, RNG& rng) {
 
   const scalar_seq_view<T_deg> nu_vec(nu);
   const scalar_seq_view<T_scale> s_vec(s);
-  size_t N = max_size(nu, s);
+  const size_t N = max_size(nu, s);
   VectorBuilder<true, double, T_deg, T_scale> output(N);
 
   for (size_t n = 0; n < N; ++n) {

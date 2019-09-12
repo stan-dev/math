@@ -46,7 +46,7 @@ inline auto skew_normal_cdf(const T_y& y, const T_loc& mu, const T_scale& sigma,
   const scalar_seq_view<T_loc> mu_vec(mu);
   const scalar_seq_view<T_scale> sigma_vec(sigma);
   const scalar_seq_view<T_shape> alpha_vec(alpha);
-  size_t N = max_size(y, mu, sigma, alpha);
+  const size_t N = max_size(y, mu, sigma, alpha);
   const double SQRT_TWO_OVER_PI = std::sqrt(2.0 / pi());
 
   for (size_t n = 0; n < N; n++) {

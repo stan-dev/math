@@ -38,7 +38,7 @@ inline typename VectorBuilder<true, int, T_rate>::type poisson_rng(
   check_less(function, "Rate parameter", lambda, POISSON_MAX_RATE);
 
   const scalar_seq_view<T_rate> lambda_vec(lambda);
-  size_t N = length(lambda);
+  const size_t N = length(lambda);
   VectorBuilder<true, int, T_rate> output(N);
 
   for (size_t n = 0; n < N; ++n) {

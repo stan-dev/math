@@ -37,7 +37,7 @@ inline auto inv_chi_square_cdf(const T_y& y, const T_dof& nu) {
   using T_return = return_type_t<T_y, T_dof>;
 
   if (size_zero(y, nu)) {
-    return 1.0;
+    return T_return(1.0);
   }
 
   static const char* function = "inv_chi_square_cdf";
@@ -52,7 +52,7 @@ inline auto inv_chi_square_cdf(const T_y& y, const T_dof& nu) {
 
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_dof> nu_vec(nu);
-  size_t N = max_size(y, nu);
+  const size_t N = max_size(y, nu);
 
   operands_and_partials<T_y, T_dof> ops_partials(y, nu);
 

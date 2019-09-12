@@ -51,7 +51,7 @@ inline auto chi_square_cdf(const T_y& y, const T_dof& nu) {
 
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_dof> nu_vec(nu);
-  size_t N = max_size(y, nu);
+  const size_t N = max_size(y, nu);
 
   operands_and_partials<T_y, T_dof> ops_partials(y, nu);
 

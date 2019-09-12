@@ -48,7 +48,7 @@ inline auto exp_mod_normal_lccdf(const T_y& y, const T_loc& mu,
   const scalar_seq_view<T_loc> mu_vec(mu);
   const scalar_seq_view<T_scale> sigma_vec(sigma);
   const scalar_seq_view<T_inv_scale> lambda_vec(lambda);
-  size_t N = max_size(y, mu, sigma, lambda);
+  const size_t N = max_size(y, mu, sigma, lambda);
   const double sqrt_pi = std::sqrt(pi());
   for (size_t n = 0; n < N; n++) {
     if (is_inf(y_vec[n])) {

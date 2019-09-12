@@ -36,7 +36,7 @@ inline typename VectorBuilder<true, int, T_rate>::type poisson_log_rng(
   check_less(function, "Log rate parameter", alpha, POISSON_MAX_LOG_RATE);
 
   const scalar_seq_view<T_rate> alpha_vec(alpha);
-  size_t N = length(alpha);
+  const size_t N = length(alpha);
   VectorBuilder<true, int, T_rate> output(N);
 
   for (size_t n = 0; n < N; ++n) {

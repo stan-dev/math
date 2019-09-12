@@ -43,7 +43,7 @@ inline auto beta_binomial_cdf(const T_n& n, const T_N& N, const T_size1& alpha,
   using T_return = return_type_t<T_n, T_N, T_size1, T_size2>;
 
   if (size_zero(n, N, alpha, beta)) {
-    return 1.0;
+    return T_return(1.0);
   }
 
   T_partials P(1.0);

@@ -66,7 +66,7 @@ inline auto beta_lpdf(const T_y& y, const T_scale_succ& alpha,
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_scale_succ> alpha_vec(alpha);
   const scalar_seq_view<T_scale_fail> beta_vec(beta);
-  size_t N = max_size(y, alpha, beta);
+  const size_t N = max_size(y, alpha, beta);
 
   for (size_t n = 0; n < N; n++) {
     const T_partials y_dbl = value_of(y_vec[n]);

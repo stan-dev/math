@@ -19,7 +19,7 @@ inline auto uniform_cdf(const T_y& y, const T_low& alpha, const T_high& beta) {
   using T_return = return_type_t<T_y, T_low, T_high>;
 
   if (size_zero(y, alpha, beta)) {
-    return 1.0;
+    return T_return(1.0);
   }
 
   T_partials cdf(1.0);
@@ -34,7 +34,7 @@ inline auto uniform_cdf(const T_y& y, const T_low& alpha, const T_high& beta) {
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_low> alpha_vec(alpha);
   const scalar_seq_view<T_high> beta_vec(beta);
-  size_t N = max_size(y, alpha, beta);
+  const size_t N = max_size(y, alpha, beta);
 
   for (size_t n = 0; n < N; n++) {
     const T_partials y_dbl = value_of(y_vec[n]);

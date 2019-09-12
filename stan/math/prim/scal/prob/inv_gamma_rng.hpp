@@ -43,7 +43,7 @@ inv_gamma_rng(const T_shape& alpha, const T_scale& beta, RNG& rng) {
 
   const scalar_seq_view<T_shape> alpha_vec(alpha);
   const scalar_seq_view<T_scale> beta_vec(beta);
-  size_t N = max_size(alpha, beta);
+  const size_t N = max_size(alpha, beta);
   VectorBuilder<true, double, T_shape, T_scale> output(N);
 
   for (size_t n = 0; n < N; ++n) {

@@ -24,7 +24,7 @@ inline auto student_t_cdf(const T_y& y, const T_dof& nu, const T_loc& mu,
   using T_return = return_type_t<T_y, T_dof, T_loc, T_scale>;
 
   if (size_zero(y, nu, mu, sigma)) {
-    return 1.0;
+    return T_return(1.0);
   }
 
   static const char* function = "student_t_cdf";
@@ -40,7 +40,7 @@ inline auto student_t_cdf(const T_y& y, const T_dof& nu, const T_loc& mu,
   const scalar_seq_view<T_dof> nu_vec(nu);
   const scalar_seq_view<T_loc> mu_vec(mu);
   const scalar_seq_view<T_scale> sigma_vec(sigma);
-  size_t N = max_size(y, nu, mu, sigma);
+  const size_t N = max_size(y, nu, mu, sigma);
 
   operands_and_partials<T_y, T_dof, T_loc, T_scale> ops_partials(y, nu, mu,
                                                                  sigma);

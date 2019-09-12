@@ -45,7 +45,7 @@ inline typename VectorBuilder<true, double, T_shape1, T_shape2>::type beta_rng(
 
   const scalar_seq_view<T_shape1> alpha_vec(alpha);
   const scalar_seq_view<T_shape2> beta_vec(beta);
-  size_t N = max_size(alpha, beta);
+  const size_t N = max_size(alpha, beta);
   VectorBuilder<true, double, T_shape1, T_shape2> output(N);
 
   variate_generator<RNG &, uniform_real_distribution<>> uniform_rng(

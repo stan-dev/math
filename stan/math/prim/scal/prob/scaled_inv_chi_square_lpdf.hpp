@@ -59,7 +59,7 @@ inline auto scaled_inv_chi_square_lpdf(const T_y& y, const T_dof& nu,
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_dof> nu_vec(nu);
   const scalar_seq_view<T_scale> s_vec(s);
-  size_t N = max_size(y, nu, s);
+  const size_t N = max_size(y, nu, s);
 
   for (size_t n = 0; n < N; n++) {
     if (value_of(y_vec[n]) <= 0) {

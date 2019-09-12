@@ -24,7 +24,7 @@ inline auto neg_binomial_cdf(const T_n& n, const T_shape& alpha,
   using T_return = return_type_t<T_n, T_shape, T_inv_scale>;
 
   if (size_zero(n, alpha, beta)) {
-    return 1.0;
+    return T_return(1.0);
   }
 
   T_partials P(1.0);

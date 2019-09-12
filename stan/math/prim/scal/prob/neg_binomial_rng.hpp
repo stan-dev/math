@@ -50,7 +50,7 @@ inline typename VectorBuilder<true, int, T_shape, T_inv>::type neg_binomial_rng(
 
   const scalar_seq_view<T_shape> alpha_vec(alpha);
   const scalar_seq_view<T_inv> beta_vec(beta);
-  size_t N = max_size(alpha, beta);
+  const size_t N = max_size(alpha, beta);
   VectorBuilder<true, int, T_shape, T_inv> output(N);
 
   for (size_t n = 0; n < N; ++n) {

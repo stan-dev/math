@@ -50,7 +50,7 @@ inline auto bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
 
   const scalar_seq_view<T_n> n_vec(n);
   const scalar_seq_view<T_prob> theta_vec(theta);
-  size_t N = max_size(n, theta);
+  const size_t N = max_size(n, theta);
   operands_and_partials<T_prob> ops_partials(theta);
 
   for (size_t n = 0; n < N; n++) {

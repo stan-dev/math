@@ -62,7 +62,7 @@ inline auto beta_lccdf(const T_y& y, const T_scale_succ& alpha,
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_scale_succ> alpha_vec(alpha);
   const scalar_seq_view<T_scale_fail> beta_vec(beta);
-  size_t N = max_size(y, alpha, beta);
+  const size_t N = max_size(y, alpha, beta);
 
   operands_and_partials<T_y, T_scale_succ, T_scale_fail> ops_partials(y, alpha,
                                                                       beta);

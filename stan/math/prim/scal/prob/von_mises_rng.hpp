@@ -56,7 +56,7 @@ inline typename VectorBuilder<true, double, T_loc, T_conc>::type von_mises_rng(
 
   const scalar_seq_view<T_loc> mu_vec(mu);
   const scalar_seq_view<T_conc> kappa_vec(kappa);
-  size_t N = max_size(mu, kappa);
+  const size_t N = max_size(mu, kappa);
   VectorBuilder<true, double, T_loc, T_conc> output(N);
 
   variate_generator<RNG&, uniform_real_distribution<> > uniform_rng(

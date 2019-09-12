@@ -109,7 +109,7 @@ inline auto wiener_lpdf(const T_y& y, const T_alpha& alpha, const T_tau& tau,
                          alpha, "A-priori bias", beta, "Nondecision time", tau,
                          "Drift rate", delta);
 
-  size_t N = std::max(max_size(y, alpha, beta), max_size(tau, delta));
+  const size_t N = std::max(max_size(y, alpha, beta), max_size(tau, delta));
   if (!N) {
     return lp;
   }
@@ -120,7 +120,7 @@ inline auto wiener_lpdf(const T_y& y, const T_alpha& alpha, const T_tau& tau,
   const scalar_seq_view<T_tau> tau_vec(tau);
   const scalar_seq_view<T_delta> delta_vec(delta);
 
-  size_t N_y_tau = max_size(y, tau);
+  const size_t N_y_tau = max_size(y, tau);
   for (size_t i = 0; i < N_y_tau; ++i) {
     if (y_vec[i] <= tau_vec[i]) {
       std::stringstream msg;

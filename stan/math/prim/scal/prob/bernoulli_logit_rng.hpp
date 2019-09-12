@@ -34,7 +34,7 @@ inline typename VectorBuilder<true, int, T_t>::type bernoulli_logit_rng(
                t);
 
   const scalar_seq_view<T_t> t_vec(t);
-  size_t N = length(t);
+  const size_t N = length(t);
   VectorBuilder<true, int, T_t> output(N);
 
   for (size_t n = 0; n < N; ++n) {
