@@ -20,12 +20,12 @@ inline auto exp_mod_normal_lcdf(const T_y& y, const T_loc& mu,
                                 const T_scale& sigma,
                                 const T_inv_scale& lambda) {
   static const char* function = "exp_mod_normal_lcdf";
-  typedef typename stan::partials_return_type<T_y, T_loc, T_scale,
-                                              T_inv_scale>::type T_partials;
+  using T_partials =  partials_return_t<T_y, T_loc, T_scale>;
+  using T_return =  return_type_t<T_y, T_loc, T_scale>;
 
   T_partials cdf_log(0.0);
   if (size_zero(y, mu, sigma, lambda)) {
-    return cdf_log;
+    return T_return(0.0);
   }
 
   check_not_nan(function, "Random variable", y);

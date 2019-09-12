@@ -41,7 +41,7 @@ inline auto chi_square_lcdf(const T_y& y, const T_dof& nu) {
   T_partials cdf_log(0.0);
 
   if (size_zero(y, nu)) {
-    return cdf_log;
+    return T_return(0.0);
   }
 
   check_not_nan(function, "Random variable", y);

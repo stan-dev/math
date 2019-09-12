@@ -89,7 +89,7 @@ inline auto wiener_lpdf(const T_y& y, const T_alpha& alpha, const T_tau& tau,
   using T_return = return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta>;
   T_partials lp(0.0);
   if (size_zero(y, alpha, beta, tau, delta)) {
-    return lp;
+    return T_return(lp);
   }
 
   check_not_nan(function, "Random variable", y);
@@ -111,7 +111,7 @@ inline auto wiener_lpdf(const T_y& y, const T_alpha& alpha, const T_tau& tau,
 
   const size_t N = std::max(max_size(y, alpha, beta), max_size(tau, delta));
   if (!N) {
-    return lp;
+    return T_return(lp);
   }
 
   const scalar_seq_view<T_y> y_vec(y);
@@ -132,7 +132,7 @@ inline auto wiener_lpdf(const T_y& y, const T_alpha& alpha, const T_tau& tau,
   }
 
   if (!include_summand<propto, T_y, T_alpha, T_tau, T_beta, T_delta>::value) {
-    return lp;
+    return T_return(lp);
   }
 
   for (size_t i = 0; i < N; i++) {
@@ -190,7 +190,7 @@ inline auto wiener_lpdf(const T_y& y, const T_alpha& alpha, const T_tau& tau,
     lp += delta_vec[i] * alpha_vec[i] * one_minus_beta
           - square(delta_vec[i]) * x * alpha2 / 2.0 - log(alpha2) + tmp;
   }
-  return lp;
+  return T_return(lp);
 }
 
 template <typename T_y, typename T_alpha, typename T_tau, typename T_beta,

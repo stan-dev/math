@@ -27,7 +27,7 @@ inline auto lognormal_lccdf(const T_y& y, const T_loc& mu,
   using std::log;
 
   if (size_zero(y, mu, sigma)) {
-    return ccdf_log;
+    return T_return(0.0);
   }
 
   check_not_nan(function, "Random variable", y);

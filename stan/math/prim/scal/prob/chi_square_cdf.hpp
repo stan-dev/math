@@ -40,7 +40,7 @@ inline auto chi_square_cdf(const T_y& y, const T_dof& nu) {
   T_partials cdf(1.0);
 
   if (size_zero(y, nu)) {
-    return cdf;
+    return T_return(0.0);
   }
 
   check_not_nan(function, "Random variable", y);

@@ -23,7 +23,7 @@ auto hypergeometric_lpmf(const T_n& n, const T_N& N, const T_a& a,
   double logp(0.0);
 
   if (size_zero(n, N, a, b) || !include_summand<propto>::value) {
-    return logp;
+    return T_return(0.0);
   }
 
   const scalar_seq_view<T_n> n_vec(n);
@@ -49,7 +49,7 @@ auto hypergeometric_lpmf(const T_n& n, const T_N& N, const T_a& a,
             + math::binomial_coefficient_log(b_vec[i], N_vec[i] - n_vec[i])
             - math::binomial_coefficient_log(a_vec[i] + b_vec[i], N_vec[i]);
   }
-  return logp;
+  return T_return(logp);
 }
 
 template <typename T_n, typename T_N, typename T_a, typename T_b>

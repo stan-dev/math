@@ -38,7 +38,7 @@ inline auto gumbel_cdf(const T_y& y, const T_loc& mu, const T_scale& beta) {
 
   T_partials cdf(1.0);
   if (size_zero(y, mu, beta)) {
-    return cdf;
+    return T_return(0.0);
   }
 
   check_not_nan(function, "Random variable", y);

@@ -20,7 +20,7 @@ inline auto exponential_lccdf(const T_y& y, const T_inv_scale& beta) {
 
   T_partials ccdf_log(0.0);
   if (size_zero(y, beta)) {
-    return ccdf_log;
+    return T_return(0.0);
   }
 
   check_not_nan(function, "Random variable", y);

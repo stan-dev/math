@@ -39,7 +39,7 @@ inline auto beta_cdf(const T_y& y, const T_scale_succ& alpha,
   T_partials P(1.0);
 
   if (size_zero(y, alpha, beta)) {
-    return P;
+    return T_return(1.0);
   }
 
   static const char* function = "beta_cdf";

@@ -45,7 +45,7 @@ inline auto neg_binomial_2_lcdf(const T_n& n, const T_location& mu,
   VectorBuilder<true, return_type_t<T_n>, T_n> np1(size_n);
   for (size_t i = 0; i < size_n; i++) {
     if (n_vec[i] < 0) {
-      return log(0.0);
+      return T_return(log(0.0));
     } else {
       np1[i] = n_vec[i] + 1.0;
     }

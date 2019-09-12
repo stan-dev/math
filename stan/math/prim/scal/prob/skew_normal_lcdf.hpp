@@ -25,7 +25,7 @@ inline auto skew_normal_lcdf(const T_y& y, const T_loc& mu,
   T_partials cdf_log(0.0);
 
   if (size_zero(y, mu, sigma, alpha)) {
-    return cdf_log;
+    return T_return(0.0);
   }
 
   check_not_nan(function, "Random variable", y);
