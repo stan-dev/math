@@ -129,12 +129,11 @@ Eigen::VectorXd algebra_solver(
     const std::vector<int>& dat_int, std::ostream* msgs = nullptr,
     double relative_tolerance = 1e-10, double function_tolerance = 1e-6,
     long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
-  algebra_solver_check(x, y, dat, dat_int, function_tolerance, max_num_steps);
-
-  if (relative_tolerance < 0) {
-    invalid_argument("algebra_solver", "relative_tolerance,",
-                     relative_tolerance, "",
-                     ", must be greater than or equal to 0");
+    algebra_solver_check(x, y, dat, dat_int, function_tolerance, max_num_steps);
+    if (relative_tolerance < 0)
+      invalid_argument("algebra_solver", "relative_tolerance,",
+                       function_tolerance, "",
+                       ", must be greater than or equal to 0");
 
     // Create functor for algebraic system
     using Fs = system_functor<F, double, double, true>;

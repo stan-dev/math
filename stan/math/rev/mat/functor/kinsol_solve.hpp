@@ -41,7 +41,7 @@ namespace math {
  *            jacobian for the Newton step, namely Quotient Difference
  *            (finite difference). If 1, use reverse-mode AD, unless
  *            the user specifies their own method.
- * @param[in] J_F A functor that computes the Jacobian for the Newton step.
+ * @param[in] J_f A functor that computes the Jacobian for the Newton step.
  *            Defaults to reverse-mode AD.
  * @param[in] steps_eval_jacobian Maximum number of steps before the
  *            Jacobian gets recomputed. Note that Kinsol's default is 10.
