@@ -11,9 +11,8 @@ namespace math {
  * @deprecated use <code>logistic_lccdf</code>
  */
 template <typename T_y, typename T_loc, typename T_scale>
-return_type_t<T_y, T_loc, T_scale> logistic_ccdf_log(const T_y& y,
-                                                     const T_loc& mu,
-                                                     const T_scale& sigma) {
+inline auto logistic_ccdf_log(const T_y& y, const T_loc& mu,
+                              const T_scale& sigma) {
   return logistic_lccdf<T_y, T_loc, T_scale>(y, mu, sigma);
 }
 

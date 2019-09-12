@@ -30,12 +30,12 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_y, typename T_loc, typename T_scale>
-return_type_t<T_y, T_loc, T_scale> double_exponential_lccdf(
-    const T_y& y, const T_loc& mu, const T_scale& sigma) {
+inline auto double_exponential_lccdf(const T_y& y, const T_loc& mu,
+                                     const T_scale& sigma) {
   static const char* function = "double_exponential_lccdf";
-  using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
+  using T_partials = partials_return_t<T_y, T_loc, T_scale>;
 
-  T_partials_return ccdf_log(0.0);
+  T_partials ccdf_log(0.0);
 
   if (size_zero(y, mu, sigma)) {
     return ccdf_log;
@@ -59,15 +59,15 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lccdf(
   size_t N = max_size(y, mu, sigma);
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return mu_dbl = value_of(mu_vec[n]);
-    const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
-    const T_partials_return scaled_diff = (y_dbl - mu_dbl) / sigma_dbl;
-    const T_partials_return inv_sigma = 1.0 / sigma_dbl;
+    const T_partials y_dbl = value_of(y_vec[n]);
+    const T_partials mu_dbl = value_of(mu_vec[n]);
+    const T_partials sigma_dbl = value_of(sigma_vec[n]);
+    const T_partials scaled_diff = (y_dbl - mu_dbl) / sigma_dbl;
+    const T_partials inv_sigma = 1.0 / sigma_dbl;
     if (y_dbl < mu_dbl) {
       ccdf_log += log1m(0.5 * exp(scaled_diff));
 
-      const T_partials_return rep_deriv = 1.0 / (2.0 * exp(-scaled_diff) - 1.0);
+      const T_partials rep_deriv = 1.0 / (2.0 * exp(-scaled_diff) - 1.0);
       if (!is_constant_all<T_y>::value) {
         ops_partials.edge1_.partials_[n] -= rep_deriv * inv_sigma;
       }

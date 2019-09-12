@@ -40,12 +40,11 @@ namespace math {
  * @tparam T_prec Type of prior precision.
  */
 template <bool propto, typename T_y, typename T_loc, typename T_prec>
-return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
-                                                       const T_loc& mu,
-                                                       const T_prec& kappa) {
+inline auto beta_proportion_lpdf(const T_y& y, const T_loc& mu,
+                                 const T_prec& kappa) {
   static const char* function = "beta_proportion_lpdf";
 
-  using T_partials_return = partials_return_t<T_y, T_loc, T_prec>;
+  using T_partials = partials_return_t<T_y, T_loc, T_prec>;
   using std::log;
   check_positive(function, "Location parameter", mu);
   check_less_or_equal(function, "Location parameter", mu, 1.0);
@@ -56,12 +55,12 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Precision parameter", kappa);
   if (size_zero(y, mu, kappa)) {
-    return 0;
+    return T_partials(0);
   }
   if (!include_summand<propto, T_y, T_loc, T_prec>::value) {
-    return 0;
+    return T_partials(0);
   }
-  T_partials_return logp(0);
+  T_partials logp(0);
 
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_loc> mu_vec(mu);
@@ -70,19 +69,19 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
   size_t N_mukappa = max_size(mu, kappa);
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
+    const T_partials y_dbl = value_of(y_vec[n]);
     if (y_dbl < 0 || y_dbl > 1) {
-      return LOG_ZERO;
+      return T_partials(LOG_ZERO);
     }
   }
 
   operands_and_partials<T_y, T_loc, T_prec> ops_partials(y, mu, kappa);
 
   VectorBuilder<include_summand<propto, T_y, T_loc, T_prec>::value,
-                T_partials_return, T_y>
+                T_partials, T_y>
       log_y(length(y));
   VectorBuilder<include_summand<propto, T_y, T_loc, T_prec>::value,
-                T_partials_return, T_y>
+                T_partials, T_y>
       log1m_y(length(y));
 
   for (size_t n = 0; n < length(y); n++) {
@@ -93,22 +92,22 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
   }
 
   VectorBuilder<include_summand<propto, T_loc, T_prec>::value,
-                T_partials_return, T_loc, T_prec>
+                T_partials, T_loc, T_prec>
       lgamma_mukappa(N_mukappa);
   VectorBuilder<include_summand<propto, T_loc, T_prec>::value,
-                T_partials_return, T_loc, T_prec>
+                T_partials, T_loc, T_prec>
       lgamma_kappa_mukappa(N_mukappa);
-  VectorBuilder<!is_constant_all<T_loc, T_prec>::value, T_partials_return,
+  VectorBuilder<!is_constant_all<T_loc, T_prec>::value, T_partials,
                 T_loc, T_prec>
       digamma_mukappa(N_mukappa);
-  VectorBuilder<!is_constant_all<T_loc, T_prec>::value, T_partials_return,
+  VectorBuilder<!is_constant_all<T_loc, T_prec>::value, T_partials,
                 T_loc, T_prec>
       digamma_kappa_mukappa(N_mukappa);
 
   for (size_t n = 0; n < N_mukappa; n++) {
-    const T_partials_return mukappa_dbl
+    const T_partials mukappa_dbl
         = value_of(mu_vec[n]) * value_of(kappa_vec[n]);
-    const T_partials_return kappa_mukappa_dbl
+    const T_partials kappa_mukappa_dbl
         = value_of(kappa_vec[n]) - mukappa_dbl;
 
     if (include_summand<propto, T_loc, T_prec>::value) {
@@ -122,10 +121,10 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
     }
   }
 
-  VectorBuilder<include_summand<propto, T_prec>::value, T_partials_return,
+  VectorBuilder<include_summand<propto, T_prec>::value, T_partials,
                 T_prec>
       lgamma_kappa(length(kappa));
-  VectorBuilder<!is_constant_all<T_prec>::value, T_partials_return, T_prec>
+  VectorBuilder<!is_constant_all<T_prec>::value, T_partials, T_prec>
       digamma_kappa(length(kappa));
 
   for (size_t n = 0; n < length(kappa); n++) {
@@ -139,9 +138,9 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
   }
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return mu_dbl = value_of(mu_vec[n]);
-    const T_partials_return kappa_dbl = value_of(kappa_vec[n]);
+    const T_partials y_dbl = value_of(y_vec[n]);
+    const T_partials mu_dbl = value_of(mu_vec[n]);
+    const T_partials kappa_dbl = value_of(kappa_vec[n]);
 
     if (include_summand<propto, T_prec>::value) {
       logp += lgamma_kappa[n];
@@ -150,13 +149,13 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
       logp -= lgamma_mukappa[n] + lgamma_kappa_mukappa[n];
     }
     if (include_summand<propto, T_y, T_loc, T_prec>::value) {
-      const T_partials_return mukappa_dbl = mu_dbl * kappa_dbl;
+      const T_partials mukappa_dbl = mu_dbl * kappa_dbl;
       logp += (mukappa_dbl - 1) * log_y[n]
               + (kappa_dbl - mukappa_dbl - 1) * log1m_y[n];
     }
 
     if (!is_constant_all<T_y>::value) {
-      const T_partials_return mukappa_dbl = mu_dbl * kappa_dbl;
+      const T_partials mukappa_dbl = mu_dbl * kappa_dbl;
       ops_partials.edge1_.partials_[n]
           += (mukappa_dbl - 1) / y_dbl
              + (kappa_dbl - mukappa_dbl - 1) / (y_dbl - 1);
@@ -177,8 +176,8 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
 }
 
 template <typename T_y, typename T_loc, typename T_prec>
-inline return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(
-    const T_y& y, const T_loc& mu, const T_prec& kappa) {
+inline auto beta_proportion_lpdf(const T_y& y, const T_loc& mu,
+                                 const T_prec& kappa) {
   return beta_proportion_lpdf<false>(y, mu, kappa);
 }
 

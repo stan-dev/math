@@ -11,8 +11,8 @@ namespace math {
  * @deprecated use <code>cauchy_lcdf</code>
  */
 template <typename T_y, typename T_loc, typename T_scale>
-return_type_t<T_y, T_loc, T_scale> cauchy_cdf_log(const T_y& y, const T_loc& mu,
-                                                  const T_scale& sigma) {
+inline auto cauchy_cdf_log(const T_y& y, const T_loc& mu,
+                           const T_scale& sigma) {
   return cauchy_lcdf<T_y, T_loc, T_scale>(y, mu, sigma);
 }
 

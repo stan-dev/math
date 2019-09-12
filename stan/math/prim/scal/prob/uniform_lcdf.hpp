@@ -15,18 +15,17 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_low, typename T_high>
-return_type_t<T_y, T_low, T_high> uniform_lcdf(const T_y& y, const T_low& alpha,
-                                               const T_high& beta) {
+inline auto uniform_lcdf(const T_y& y, const T_low& alpha, const T_high& beta) {
   static const char* function = "uniform_lcdf";
-  using T_partials_return = partials_return_t<T_y, T_low, T_high>;
+  using T_partials = partials_return_t<T_y, T_low, T_high>;
 
   using std::log;
 
   if (size_zero(y, alpha, beta)) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
-  T_partials_return cdf_log(0.0);
+  T_partials cdf_log(0.0);
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Lower bound parameter", alpha);
   check_finite(function, "Upper bound parameter", beta);
@@ -43,7 +42,7 @@ return_type_t<T_y, T_low, T_high> uniform_lcdf(const T_y& y, const T_low& alpha,
   operands_and_partials<T_y, T_low, T_high> ops_partials(y, alpha, beta);
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
+    const T_partials y_dbl = value_of(y_vec[n]);
     if (y_dbl < value_of(alpha_vec[n]) || y_dbl > value_of(beta_vec[n])) {
       return negative_infinity();
     }
@@ -53,11 +52,11 @@ return_type_t<T_y, T_low, T_high> uniform_lcdf(const T_y& y, const T_low& alpha,
   }
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
-    const T_partials_return beta_dbl = value_of(beta_vec[n]);
-    const T_partials_return b_min_a = beta_dbl - alpha_dbl;
-    const T_partials_return cdf_log_ = (y_dbl - alpha_dbl) / b_min_a;
+    const T_partials y_dbl = value_of(y_vec[n]);
+    const T_partials alpha_dbl = value_of(alpha_vec[n]);
+    const T_partials beta_dbl = value_of(beta_vec[n]);
+    const T_partials b_min_a = beta_dbl - alpha_dbl;
+    const T_partials cdf_log_ = (y_dbl - alpha_dbl) / b_min_a;
 
     cdf_log += log(cdf_log_);
 

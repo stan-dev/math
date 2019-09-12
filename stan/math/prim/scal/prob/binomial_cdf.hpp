@@ -32,16 +32,15 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_n, typename T_N, typename T_prob>
-return_type_t<T_prob> binomial_cdf(const T_n& n, const T_N& N,
-                                   const T_prob& theta) {
+inline auto binomial_cdf(const T_n& n, const T_N& N, const T_prob& theta) {
   static const char* function = "binomial_cdf";
-  using T_partials_return = partials_return_t<T_n, T_N, T_prob>;
+  using T_partials = partials_return_t<T_n, T_N, T_prob>;
 
   if (size_zero(n, N, theta)) {
     return 1.0;
   }
 
-  T_partials_return P(1.0);
+  T_partials P(1.0);
 
   check_nonnegative(function, "Population size parameter", N);
   check_finite(function, "Probability parameter", theta);
@@ -75,11 +74,11 @@ return_type_t<T_prob> binomial_cdf(const T_n& n, const T_N& N,
       continue;
     }
 
-    const T_partials_return n_dbl = value_of(n_vec[i]);
-    const T_partials_return N_dbl = value_of(N_vec[i]);
-    const T_partials_return theta_dbl = value_of(theta_vec[i]);
-    const T_partials_return betafunc = beta(N_dbl - n_dbl, n_dbl + 1);
-    const T_partials_return Pi
+    const T_partials n_dbl = value_of(n_vec[i]);
+    const T_partials N_dbl = value_of(N_vec[i]);
+    const T_partials theta_dbl = value_of(theta_vec[i]);
+    const T_partials betafunc = beta(N_dbl - n_dbl, n_dbl + 1);
+    const T_partials Pi
         = inc_beta(N_dbl - n_dbl, n_dbl + 1, 1 - theta_dbl);
 
     P *= Pi;

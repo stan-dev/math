@@ -33,16 +33,15 @@ namespace math {
  * @tparam T_scale Type of scale.
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
-return_type_t<T_y, T_loc, T_scale> cauchy_lpdf(const T_y& y, const T_loc& mu,
-                                               const T_scale& sigma) {
+inline auto cauchy_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
   static const char* function = "cauchy_lpdf";
-  using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
+  using T_partials = partials_return_t<T_y, T_loc, T_scale>;
 
   if (size_zero(y, mu, sigma)) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
-  T_partials_return logp(0.0);
+  T_partials logp(0.0);
 
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
@@ -51,7 +50,7 @@ return_type_t<T_y, T_loc, T_scale> cauchy_lpdf(const T_y& y, const T_loc& mu,
                          mu, "Scale parameter", sigma);
 
   if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
   using std::log;
@@ -61,13 +60,13 @@ return_type_t<T_y, T_loc, T_scale> cauchy_lpdf(const T_y& y, const T_loc& mu,
   scalar_seq_view<T_scale> sigma_vec(sigma);
   size_t N = max_size(y, mu, sigma);
 
-  VectorBuilder<true, T_partials_return, T_scale> inv_sigma(length(sigma));
-  VectorBuilder<true, T_partials_return, T_scale> sigma_squared(length(sigma));
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
+  VectorBuilder<true, T_partials, T_scale> inv_sigma(length(sigma));
+  VectorBuilder<true, T_partials, T_scale> sigma_squared(length(sigma));
+  VectorBuilder<include_summand<propto, T_scale>::value, T_partials,
                 T_scale>
       log_sigma(length(sigma));
   for (size_t i = 0; i < length(sigma); i++) {
-    const T_partials_return sigma_dbl = value_of(sigma_vec[i]);
+    const T_partials sigma_dbl = value_of(sigma_vec[i]);
     inv_sigma[i] = 1.0 / sigma_dbl;
     sigma_squared[i] = sigma_dbl * sigma_dbl;
     if (include_summand<propto, T_scale>::value) {
@@ -78,13 +77,13 @@ return_type_t<T_y, T_loc, T_scale> cauchy_lpdf(const T_y& y, const T_loc& mu,
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return mu_dbl = value_of(mu_vec[n]);
+    const T_partials y_dbl = value_of(y_vec[n]);
+    const T_partials mu_dbl = value_of(mu_vec[n]);
 
-    const T_partials_return y_minus_mu = y_dbl - mu_dbl;
-    const T_partials_return y_minus_mu_squared = y_minus_mu * y_minus_mu;
-    const T_partials_return y_minus_mu_over_sigma = y_minus_mu * inv_sigma[n];
-    const T_partials_return y_minus_mu_over_sigma_squared
+    const T_partials y_minus_mu = y_dbl - mu_dbl;
+    const T_partials y_minus_mu_squared = y_minus_mu * y_minus_mu;
+    const T_partials y_minus_mu_over_sigma = y_minus_mu * inv_sigma[n];
+    const T_partials y_minus_mu_over_sigma_squared
         = y_minus_mu_over_sigma * y_minus_mu_over_sigma;
 
     if (include_summand<propto>::value) {
@@ -115,9 +114,7 @@ return_type_t<T_y, T_loc, T_scale> cauchy_lpdf(const T_y& y, const T_loc& mu,
 }
 
 template <typename T_y, typename T_loc, typename T_scale>
-inline return_type_t<T_y, T_loc, T_scale> cauchy_lpdf(const T_y& y,
-                                                      const T_loc& mu,
-                                                      const T_scale& sigma) {
+inline auto cauchy_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
   return cauchy_lpdf<false>(y, mu, sigma);
 }
 

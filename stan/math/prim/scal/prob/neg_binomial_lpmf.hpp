@@ -19,18 +19,17 @@ namespace math {
 
 // NegBinomial(n|alpha, beta)  [alpha > 0;  beta > 0;  n >= 0]
 template <bool propto, typename T_n, typename T_shape, typename T_inv_scale>
-return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
-                                                      const T_shape& alpha,
-                                                      const T_inv_scale& beta) {
-  using T_partials_return = partials_return_t<T_n, T_shape, T_inv_scale>;
+inline auto neg_binomial_lpmf(const T_n& n, const T_shape& alpha,
+                              const T_inv_scale& beta) {
+  using T_partials = partials_return_t<T_n, T_shape, T_inv_scale>;
 
   static const char* function = "neg_binomial_lpmf";
 
   if (size_zero(n, alpha, beta)) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
-  T_partials_return logp(0.0);
+  T_partials logp(0.0);
   check_nonnegative(function, "Failures variable", n);
   check_positive_finite(function, "Shape parameter", alpha);
   check_positive_finite(function, "Inverse scale parameter", beta);
@@ -38,7 +37,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
                          alpha, "Inverse scale parameter", beta);
 
   if (!include_summand<propto, T_shape, T_inv_scale>::value) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
   using std::log;
@@ -51,23 +50,23 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
   operands_and_partials<T_shape, T_inv_scale> ops_partials(alpha, beta);
 
   size_t len_ab = max_size(alpha, beta);
-  VectorBuilder<true, T_partials_return, T_shape, T_inv_scale> lambda(len_ab);
+  VectorBuilder<true, T_partials, T_shape, T_inv_scale> lambda(len_ab);
   for (size_t i = 0; i < len_ab; ++i) {
     lambda[i] = value_of(alpha_vec[i]) / value_of(beta_vec[i]);
   }
 
-  VectorBuilder<true, T_partials_return, T_inv_scale> log1p_beta(length(beta));
+  VectorBuilder<true, T_partials, T_inv_scale> log1p_beta(length(beta));
   for (size_t i = 0; i < length(beta); ++i) {
     log1p_beta[i] = log1p(value_of(beta_vec[i]));
   }
 
-  VectorBuilder<true, T_partials_return, T_inv_scale> log_beta_m_log1p_beta(
+  VectorBuilder<true, T_partials, T_inv_scale> log_beta_m_log1p_beta(
       length(beta));
   for (size_t i = 0; i < length(beta); ++i) {
     log_beta_m_log1p_beta[i] = log(value_of(beta_vec[i])) - log1p_beta[i];
   }
 
-  VectorBuilder<true, T_partials_return, T_inv_scale, T_shape>
+  VectorBuilder<true, T_partials, T_inv_scale, T_shape>
       alpha_times_log_beta_over_1p_beta(len_ab);
   for (size_t i = 0; i < len_ab; ++i) {
     alpha_times_log_beta_over_1p_beta[i]
@@ -75,7 +74,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
           * log(value_of(beta_vec[i]) / (1.0 + value_of(beta_vec[i])));
   }
 
-  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
+  VectorBuilder<!is_constant_all<T_shape>::value, T_partials, T_shape>
       digamma_alpha(length(alpha));
   if (!is_constant_all<T_shape>::value) {
     for (size_t i = 0; i < length(alpha); ++i) {
@@ -83,7 +82,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
     }
   }
 
-  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return,
+  VectorBuilder<!is_constant_all<T_shape>::value, T_partials,
                 T_inv_scale>
       log_beta(length(beta));
   if (!is_constant_all<T_shape>::value) {
@@ -92,7 +91,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
     }
   }
 
-  VectorBuilder<!is_constant_all<T_inv_scale>::value, T_partials_return,
+  VectorBuilder<!is_constant_all<T_inv_scale>::value, T_partials,
                 T_shape, T_inv_scale>
       lambda_m_alpha_over_1p_beta(len_ab);
   if (!is_constant_all<T_inv_scale>::value) {
@@ -147,8 +146,8 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
 }
 
 template <typename T_n, typename T_shape, typename T_inv_scale>
-inline return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(
-    const T_n& n, const T_shape& alpha, const T_inv_scale& beta) {
+inline auto neg_binomial_lpmf(const T_n& n, const T_shape& alpha,
+                              const T_inv_scale& beta) {
   return neg_binomial_lpmf<false>(n, alpha, beta);
 }
 

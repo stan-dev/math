@@ -36,17 +36,16 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_n, typename T_N, typename T_size1, typename T_size2>
-return_type_t<T_size1, T_size2> beta_binomial_cdf(const T_n& n, const T_N& N,
-                                                  const T_size1& alpha,
-                                                  const T_size2& beta) {
+inline auto beta_binomial_cdf(const T_n& n, const T_N& N, const T_size1& alpha,
+                              const T_size2& beta) {
   static const char* function = "beta_binomial_cdf";
-  using T_partials_return = partials_return_t<T_n, T_N, T_size1, T_size2>;
+  using T_partials = partials_return_t<T_n, T_N, T_size1, T_size2>;
 
   if (size_zero(n, N, alpha, beta)) {
     return 1.0;
   }
 
-  T_partials_return P(1.0);
+  T_partials P(1.0);
 
   check_nonnegative(function, "Population size parameter", N);
   check_positive_finite(function, "First prior sample size parameter", alpha);
@@ -81,19 +80,19 @@ return_type_t<T_size1, T_size2> beta_binomial_cdf(const T_n& n, const T_N& N,
       continue;
     }
 
-    const T_partials_return n_dbl = value_of(n_vec[i]);
-    const T_partials_return N_dbl = value_of(N_vec[i]);
-    const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
-    const T_partials_return beta_dbl = value_of(beta_vec[i]);
+    const T_partials n_dbl = value_of(n_vec[i]);
+    const T_partials N_dbl = value_of(N_vec[i]);
+    const T_partials alpha_dbl = value_of(alpha_vec[i]);
+    const T_partials beta_dbl = value_of(beta_vec[i]);
 
-    const T_partials_return mu = alpha_dbl + n_dbl + 1;
-    const T_partials_return nu = beta_dbl + N_dbl - n_dbl - 1;
+    const T_partials mu = alpha_dbl + n_dbl + 1;
+    const T_partials nu = beta_dbl + N_dbl - n_dbl - 1;
 
-    const T_partials_return F
-        = F32((T_partials_return)1, mu, -N_dbl + n_dbl + 1, n_dbl + 2, 1 - nu,
-              (T_partials_return)1);
+    const T_partials F
+        = F32((T_partials)1, mu, -N_dbl + n_dbl + 1, n_dbl + 2, 1 - nu,
+              (T_partials)1);
 
-    T_partials_return C = lgamma(nu) - lgamma(N_dbl - n_dbl);
+    T_partials C = lgamma(nu) - lgamma(N_dbl - n_dbl);
     C += lgamma(mu) - lgamma(n_dbl + 2);
     C += lgamma(N_dbl + 2) - lgamma(N_dbl + alpha_dbl + beta_dbl);
     C = exp(C);
@@ -101,28 +100,28 @@ return_type_t<T_size1, T_size2> beta_binomial_cdf(const T_n& n, const T_N& N,
     C *= F / stan::math::beta(alpha_dbl, beta_dbl);
     C /= N_dbl + 1;
 
-    const T_partials_return Pi = 1 - C;
+    const T_partials Pi = 1 - C;
 
     P *= Pi;
 
-    T_partials_return dF[6];
-    T_partials_return digammaOne = 0;
-    T_partials_return digammaTwo = 0;
+    T_partials dF[6];
+    T_partials digammaOne = 0;
+    T_partials digammaTwo = 0;
 
     if (!is_constant_all<T_size1, T_size2>::value) {
       digammaOne = digamma(mu + nu);
       digammaTwo = digamma(alpha_dbl + beta_dbl);
-      grad_F32(dF, (T_partials_return)1, mu, -N_dbl + n_dbl + 1, n_dbl + 2,
-               1 - nu, (T_partials_return)1);
+      grad_F32(dF, (T_partials)1, mu, -N_dbl + n_dbl + 1, n_dbl + 2,
+               1 - nu, (T_partials)1);
     }
     if (!is_constant_all<T_size1>::value) {
-      const T_partials_return g = -C
+      const T_partials g = -C
                                   * (digamma(mu) - digammaOne + dF[1] / F
                                      - digamma(alpha_dbl) + digammaTwo);
       ops_partials.edge1_.partials_[i] += g / Pi;
     }
     if (!is_constant_all<T_size2>::value) {
-      const T_partials_return g = -C
+      const T_partials g = -C
                                   * (digamma(nu) - digammaOne - dF[4] / F
                                      - digamma(beta_dbl) + digammaTwo);
       ops_partials.edge2_.partials_[i] += g / Pi;

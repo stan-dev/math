@@ -39,11 +39,11 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_scale_succ,
           typename T_scale_fail>
-return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
-    const T_y& y, const T_scale_succ& alpha, const T_scale_fail& beta) {
+inline auto beta_lpdf(const T_y& y, const T_scale_succ& alpha,
+                      const T_scale_fail& beta) {
   static const char* function = "beta_lpdf";
 
-  using T_partials_return = partials_return_t<T_y, T_scale_succ, T_scale_fail>;
+  using T_partials = partials_return_t<T_y, T_scale_succ, T_scale_fail>;
   using std::log;
   check_positive_finite(function, "First shape parameter", alpha);
   check_positive_finite(function, "Second shape parameter", beta);
@@ -55,22 +55,22 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
   check_less_or_equal(function, "Random variable", y, 1);
 
   if (size_zero(y, alpha, beta)) {
-    return 0;
+    return T_partials(0);
   }
   if (!include_summand<propto, T_y, T_scale_succ, T_scale_fail>::value) {
-    return 0;
+    return T_partials(0);
   }
 
-  T_partials_return logp(0);
+  T_partials logp(0);
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_scale_succ> alpha_vec(alpha);
   scalar_seq_view<T_scale_fail> beta_vec(beta);
   size_t N = max_size(y, alpha, beta);
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
+    const T_partials y_dbl = value_of(y_vec[n]);
     if (y_dbl < 0 || y_dbl > 1) {
-      return LOG_ZERO;
+      return T_partials(LOG_ZERO);
     }
   }
 
@@ -78,10 +78,10 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
                                                                       beta);
 
   VectorBuilder<include_summand<propto, T_y, T_scale_succ>::value,
-                T_partials_return, T_y>
+                T_partials, T_y>
       log_y(length(y));
   VectorBuilder<include_summand<propto, T_y, T_scale_fail>::value,
-                T_partials_return, T_y>
+                T_partials, T_y>
       log1m_y(length(y));
 
   for (size_t n = 0; n < length(y); n++) {
@@ -93,10 +93,10 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
     }
   }
 
-  VectorBuilder<include_summand<propto, T_scale_succ>::value, T_partials_return,
+  VectorBuilder<include_summand<propto, T_scale_succ>::value, T_partials,
                 T_scale_succ>
       lgamma_alpha(length(alpha));
-  VectorBuilder<!is_constant_all<T_scale_succ>::value, T_partials_return,
+  VectorBuilder<!is_constant_all<T_scale_succ>::value, T_partials,
                 T_scale_succ>
       digamma_alpha(length(alpha));
   for (size_t n = 0; n < length(alpha); n++) {
@@ -108,10 +108,10 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
     }
   }
 
-  VectorBuilder<include_summand<propto, T_scale_fail>::value, T_partials_return,
+  VectorBuilder<include_summand<propto, T_scale_fail>::value, T_partials,
                 T_scale_fail>
       lgamma_beta(length(beta));
-  VectorBuilder<!is_constant_all<T_scale_fail>::value, T_partials_return,
+  VectorBuilder<!is_constant_all<T_scale_fail>::value, T_partials,
                 T_scale_fail>
       digamma_beta(length(beta));
 
@@ -125,15 +125,15 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
   }
 
   VectorBuilder<include_summand<propto, T_scale_succ, T_scale_fail>::value,
-                T_partials_return, T_scale_succ, T_scale_fail>
+                T_partials, T_scale_succ, T_scale_fail>
       lgamma_alpha_beta(max_size(alpha, beta));
 
   VectorBuilder<!is_constant_all<T_scale_succ, T_scale_fail>::value,
-                T_partials_return, T_scale_succ, T_scale_fail>
+                T_partials, T_scale_succ, T_scale_fail>
       digamma_alpha_beta(max_size(alpha, beta));
 
   for (size_t n = 0; n < max_size(alpha, beta); n++) {
-    const T_partials_return alpha_beta
+    const T_partials alpha_beta
         = value_of(alpha_vec[n]) + value_of(beta_vec[n]);
     if (include_summand<propto, T_scale_succ, T_scale_fail>::value) {
       lgamma_alpha_beta[n] = lgamma(alpha_beta);
@@ -144,9 +144,9 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
   }
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
-    const T_partials_return beta_dbl = value_of(beta_vec[n]);
+    const T_partials y_dbl = value_of(y_vec[n]);
+    const T_partials alpha_dbl = value_of(alpha_vec[n]);
+    const T_partials beta_dbl = value_of(beta_vec[n]);
 
     if (include_summand<propto, T_scale_succ, T_scale_fail>::value) {
       logp += lgamma_alpha_beta[n];
@@ -181,8 +181,8 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
 }
 
 template <typename T_y, typename T_scale_succ, typename T_scale_fail>
-inline return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
-    const T_y& y, const T_scale_succ& alpha, const T_scale_fail& beta) {
+inline auto beta_lpdf(const T_y& y, const T_scale_succ& alpha,
+                      const T_scale_fail& beta) {
   return beta_lpdf<false>(y, alpha, beta);
 }
 

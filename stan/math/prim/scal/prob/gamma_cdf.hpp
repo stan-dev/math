@@ -39,20 +39,19 @@ namespace math {
  * @tparam T_inv_scale Type of inverse scale.
  */
 template <typename T_y, typename T_shape, typename T_inv_scale>
-return_type_t<T_y, T_shape, T_inv_scale> gamma_cdf(const T_y& y,
-                                                   const T_shape& alpha,
-                                                   const T_inv_scale& beta) {
+inline auto gamma_cdf(const T_y& y, const T_shape& alpha,
+                      const T_inv_scale& beta) {
   if (size_zero(y, alpha, beta)) {
     return 1.0;
   }
-  using T_partials_return = partials_return_t<T_y, T_shape, T_inv_scale>;
+  using T_partials = partials_return_t<T_y, T_shape, T_inv_scale>;
 
   static const char* function = "gamma_cdf";
 
   using boost::math::tools::promote_args;
   using std::exp;
 
-  T_partials_return P(1.0);
+  T_partials P(1.0);
 
   check_positive_finite(function, "Shape parameter", alpha);
   check_positive_finite(function, "Inverse scale parameter", beta);
@@ -79,14 +78,14 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_cdf(const T_y& y,
   using std::exp;
   using std::pow;
 
-  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
+  VectorBuilder<!is_constant_all<T_shape>::value, T_partials, T_shape>
       gamma_vec(stan::length(alpha));
-  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
+  VectorBuilder<!is_constant_all<T_shape>::value, T_partials, T_shape>
       digamma_vec(stan::length(alpha));
 
   if (!is_constant_all<T_shape>::value) {
     for (size_t i = 0; i < stan::length(alpha); i++) {
-      const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
+      const T_partials alpha_dbl = value_of(alpha_vec[i]);
       gamma_vec[i] = tgamma(alpha_dbl);
       digamma_vec[i] = digamma(alpha_dbl);
     }
@@ -99,11 +98,11 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_cdf(const T_y& y,
       continue;
     }
 
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
-    const T_partials_return beta_dbl = value_of(beta_vec[n]);
+    const T_partials y_dbl = value_of(y_vec[n]);
+    const T_partials alpha_dbl = value_of(alpha_vec[n]);
+    const T_partials beta_dbl = value_of(beta_vec[n]);
 
-    const T_partials_return Pn = gamma_p(alpha_dbl, beta_dbl * y_dbl);
+    const T_partials Pn = gamma_p(alpha_dbl, beta_dbl * y_dbl);
 
     P *= Pn;
 

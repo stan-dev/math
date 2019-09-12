@@ -23,25 +23,25 @@ namespace math {
  * @throw std::domain_error if any scalar is nan.
  */
 template <bool propto, typename T_y>
-return_type_t<T_y> std_normal_lpdf(const T_y& y) {
+inline auto std_normal_lpdf(const T_y& y) {
   static const char* function = "std_normal_lpdf";
-  using T_partials_return = partials_return_t<T_y>;
+  using T_partials = partials_return_t<T_y>;
 
   if (size_zero(y)) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
   check_not_nan(function, "Random variable", y);
 
   if (!include_summand<propto, T_y>::value) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
   operands_and_partials<T_y> ops_partials(y);
   scalar_seq_view<T_y> y_vec(y);
-  T_partials_return logp(0.0);
+  T_partials logp(0.0);
   for (size_t n = 0; n < length(y); n++) {
-    const T_partials_return y_val = value_of(y_vec[n]);
+    const T_partials y_val = value_of(y_vec[n]);
     logp += y_val * y_val;
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] -= y_val;
@@ -55,7 +55,7 @@ return_type_t<T_y> std_normal_lpdf(const T_y& y) {
 }
 
 template <typename T_y>
-inline return_type_t<T_y> std_normal_lpdf(const T_y& y) {
+inline auto std_normal_lpdf(const T_y& y) {
   return std_normal_lpdf<false>(y);
 }
 

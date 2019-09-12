@@ -30,17 +30,16 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_y, typename T_loc, typename T_scale>
-return_type_t<T_y, T_loc, T_scale> cauchy_lcdf(const T_y& y, const T_loc& mu,
-                                               const T_scale& sigma) {
-  using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
+inline auto cauchy_lcdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
+  using T_partials = partials_return_t<T_y, T_loc, T_scale>;
 
   if (size_zero(y, mu, sigma)) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
   static const char* function = "cauchy_lcdf";
 
-  T_partials_return cdf_log(0.0);
+  T_partials cdf_log(0.0);
 
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
@@ -59,17 +58,17 @@ return_type_t<T_y, T_loc, T_scale> cauchy_lcdf(const T_y& y, const T_loc& mu,
   using std::log;
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return mu_dbl = value_of(mu_vec[n]);
-    const T_partials_return sigma_inv_dbl = 1.0 / value_of(sigma_vec[n]);
-    const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
+    const T_partials y_dbl = value_of(y_vec[n]);
+    const T_partials mu_dbl = value_of(mu_vec[n]);
+    const T_partials sigma_inv_dbl = 1.0 / value_of(sigma_vec[n]);
+    const T_partials sigma_dbl = value_of(sigma_vec[n]);
 
-    const T_partials_return z = (y_dbl - mu_dbl) * sigma_inv_dbl;
+    const T_partials z = (y_dbl - mu_dbl) * sigma_inv_dbl;
 
-    const T_partials_return Pn = atan(z) / pi() + 0.5;
+    const T_partials Pn = atan(z) / pi() + 0.5;
     cdf_log += log(Pn);
 
-    const T_partials_return rep_deriv
+    const T_partials rep_deriv
         = 1.0 / (pi() * Pn * (z * z * sigma_dbl + sigma_dbl));
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] += rep_deriv;

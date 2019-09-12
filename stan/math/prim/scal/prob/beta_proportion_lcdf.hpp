@@ -40,18 +40,17 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_y, typename T_loc, typename T_prec>
-return_type_t<T_y, T_loc, T_prec> beta_proportion_lcdf(const T_y& y,
-                                                       const T_loc& mu,
-                                                       const T_prec& kappa) {
-  using T_partials_return = partials_return_t<T_y, T_loc, T_prec>;
+inline auto beta_proportion_lcdf(const T_y& y, const T_loc& mu,
+                                 const T_prec& kappa) {
+  using T_partials = partials_return_t<T_y, T_loc, T_prec>;
 
   if (size_zero(y, mu, kappa)) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
   static const char* function = "beta_proportion_lcdf";
 
-  T_partials_return cdf_log(0.0);
+  T_partials cdf_log(0.0);
 
   check_positive(function, "Location parameter", mu);
   check_less_or_equal(function, "Location parameter", mu, 1.0);
@@ -73,21 +72,21 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lcdf(const T_y& y,
   using std::log;
   using std::pow;
 
-  VectorBuilder<!is_constant_all<T_loc, T_prec>::value, T_partials_return,
+  VectorBuilder<!is_constant_all<T_loc, T_prec>::value, T_partials,
                 T_loc, T_prec>
       digamma_mukappa(max_size(mu, kappa));
-  VectorBuilder<!is_constant_all<T_loc, T_prec>::value, T_partials_return,
+  VectorBuilder<!is_constant_all<T_loc, T_prec>::value, T_partials,
                 T_loc, T_prec>
       digamma_kappa_mukappa(max_size(mu, kappa));
-  VectorBuilder<!is_constant_all<T_loc, T_prec>::value, T_partials_return,
+  VectorBuilder<!is_constant_all<T_loc, T_prec>::value, T_partials,
                 T_prec>
       digamma_kappa(length(kappa));
 
   if (!is_constant_all<T_loc, T_prec>::value) {
     for (size_t i = 0; i < max_size(mu, kappa); i++) {
-      const T_partials_return mukappa_dbl
+      const T_partials mukappa_dbl
           = value_of(mu_vec[i]) * value_of(kappa_vec[i]);
-      const T_partials_return kappa_mukappa_dbl
+      const T_partials kappa_mukappa_dbl
           = value_of(kappa_vec[i]) - mukappa_dbl;
 
       digamma_mukappa[i] = digamma(mukappa_dbl);
@@ -100,13 +99,13 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lcdf(const T_y& y,
   }
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return mu_dbl = value_of(mu_vec[n]);
-    const T_partials_return kappa_dbl = value_of(kappa_vec[n]);
-    const T_partials_return mukappa_dbl = mu_dbl * kappa_dbl;
-    const T_partials_return kappa_mukappa_dbl = kappa_dbl - mukappa_dbl;
-    const T_partials_return betafunc_dbl = beta(mukappa_dbl, kappa_mukappa_dbl);
-    const T_partials_return Pn
+    const T_partials y_dbl = value_of(y_vec[n]);
+    const T_partials mu_dbl = value_of(mu_vec[n]);
+    const T_partials kappa_dbl = value_of(kappa_vec[n]);
+    const T_partials mukappa_dbl = mu_dbl * kappa_dbl;
+    const T_partials kappa_mukappa_dbl = kappa_dbl - mukappa_dbl;
+    const T_partials betafunc_dbl = beta(mukappa_dbl, kappa_mukappa_dbl);
+    const T_partials Pn
         = inc_beta(mukappa_dbl, kappa_mukappa_dbl, y_dbl);
 
     cdf_log += log(Pn);
@@ -117,8 +116,8 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lcdf(const T_y& y,
                                           / betafunc_dbl / Pn;
     }
 
-    T_partials_return g1 = 0;
-    T_partials_return g2 = 0;
+    T_partials g1 = 0;
+    T_partials g2 = 0;
 
     if (!is_constant_all<T_loc, T_prec>::value) {
       grad_reg_inc_beta(g1, g2, mukappa_dbl, kappa_mukappa_dbl, y_dbl,

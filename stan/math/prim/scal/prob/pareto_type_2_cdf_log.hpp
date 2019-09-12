@@ -11,9 +11,8 @@ namespace math {
  * @deprecated use <code>pareto_type_2_lcdf</code>
  */
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
-return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_cdf_log(
-    const T_y& y, const T_loc& mu, const T_scale& lambda,
-    const T_shape& alpha) {
+inline auto pareto_type_2_cdf_log(const T_y& y, const T_loc& mu,
+                                  const T_scale& lambda, const T_shape& alpha) {
   return pareto_type_2_lcdf<T_y, T_loc, T_scale, T_shape>(y, mu, lambda, alpha);
 }
 

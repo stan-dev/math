@@ -29,14 +29,13 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_y, typename T_loc, typename T_scale>
-return_type_t<T_y, T_loc, T_scale> gumbel_cdf(const T_y& y, const T_loc& mu,
-                                              const T_scale& beta) {
+inline auto gumbel_cdf(const T_y& y, const T_loc& mu, const T_scale& beta) {
   static const char* function = "gumbel_cdf";
-  using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
+  using T_partials = partials_return_t<T_y, T_loc, T_scale>;
 
   using std::exp;
 
-  T_partials_return cdf(1.0);
+  T_partials cdf(1.0);
   if (size_zero(y, mu, beta)) {
     return cdf;
   }
@@ -56,13 +55,13 @@ return_type_t<T_y, T_loc, T_scale> gumbel_cdf(const T_y& y, const T_loc& mu,
   size_t N = max_size(y, mu, beta);
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return mu_dbl = value_of(mu_vec[n]);
-    const T_partials_return beta_dbl = value_of(beta_vec[n]);
-    const T_partials_return scaled_diff = (y_dbl - mu_dbl) / beta_dbl;
-    const T_partials_return rep_deriv
+    const T_partials y_dbl = value_of(y_vec[n]);
+    const T_partials mu_dbl = value_of(mu_vec[n]);
+    const T_partials beta_dbl = value_of(beta_vec[n]);
+    const T_partials scaled_diff = (y_dbl - mu_dbl) / beta_dbl;
+    const T_partials rep_deriv
         = exp(-scaled_diff - exp(-scaled_diff)) / beta_dbl;
-    const T_partials_return cdf_ = exp(-exp(-scaled_diff));
+    const T_partials cdf_ = exp(-exp(-scaled_diff));
     cdf *= cdf_;
 
     if (!is_constant_all<T_y>::value) {

@@ -11,7 +11,7 @@ namespace math {
  * @deprecated use <code>rayleigh_lpdf</code>
  */
 template <bool propto, typename T_y, typename T_scale>
-return_type_t<T_y, T_scale> rayleigh_log(const T_y& y, const T_scale& sigma) {
+inline auto rayleigh_log(const T_y& y, const T_scale& sigma) {
   return rayleigh_lpdf<propto, T_y, T_scale>(y, sigma);
 }
 
@@ -19,8 +19,7 @@ return_type_t<T_y, T_scale> rayleigh_log(const T_y& y, const T_scale& sigma) {
  * @deprecated use <code>rayleigh_lpdf</code>
  */
 template <typename T_y, typename T_scale>
-inline return_type_t<T_y, T_scale> rayleigh_log(const T_y& y,
-                                                const T_scale& sigma) {
+inline auto rayleigh_log(const T_y& y, const T_scale& sigma) {
   return rayleigh_lpdf<T_y, T_scale>(y, sigma);
 }
 

@@ -17,10 +17,10 @@ namespace math {
 
 // LogNormal(y|mu, sigma)  [y >= 0;  sigma > 0]
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
-return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
-                                                  const T_scale& sigma) {
+inline auto lognormal_lpdf(const T_y& y, const T_loc& mu,
+                           const T_scale& sigma) {
   static const char* function = "lognormal_lpdf";
-  using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
+  using T_partials = partials_return_t<T_y, T_loc, T_scale>;
 
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
@@ -29,10 +29,10 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma);
   if (size_zero(y, mu, sigma)) {
-    return 0;
+    return T_partials(0);
   }
 
-  T_partials_return logp(0);
+  T_partials logp(0);
 
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_loc> mu_vec(mu);
@@ -41,7 +41,7 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
 
   for (size_t n = 0; n < length(y); n++) {
     if (value_of(y_vec[n]) <= 0) {
-      return LOG_ZERO;
+      return T_partials(LOG_ZERO);
     }
   }
 
@@ -49,7 +49,7 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
 
   using std::log;
 
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
+  VectorBuilder<include_summand<propto, T_scale>::value, T_partials,
                 T_scale>
       log_sigma(length(sigma));
   if (include_summand<propto, T_scale>::value) {
@@ -59,10 +59,10 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
   }
 
   VectorBuilder<include_summand<propto, T_y, T_loc, T_scale>::value,
-                T_partials_return, T_scale>
+                T_partials, T_scale>
       inv_sigma(length(sigma));
   VectorBuilder<include_summand<propto, T_y, T_loc, T_scale>::value,
-                T_partials_return, T_scale>
+                T_partials, T_scale>
       inv_sigma_sq(length(sigma));
   if (include_summand<propto, T_y, T_loc, T_scale>::value) {
     for (size_t n = 0; n < length(sigma); n++) {
@@ -76,7 +76,7 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
   }
 
   VectorBuilder<include_summand<propto, T_y, T_loc, T_scale>::value,
-                T_partials_return, T_y>
+                T_partials, T_y>
       log_y(length(y));
   if (include_summand<propto, T_y, T_loc, T_scale>::value) {
     for (size_t n = 0; n < length(y); n++) {
@@ -84,7 +84,7 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
     }
   }
 
-  VectorBuilder<!is_constant_all<T_y>::value, T_partials_return, T_y> inv_y(
+  VectorBuilder<!is_constant_all<T_y>::value, T_partials, T_y> inv_y(
       length(y));
   if (!is_constant_all<T_y>::value) {
     for (size_t n = 0; n < length(y); n++) {
@@ -97,15 +97,15 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
   }
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return mu_dbl = value_of(mu_vec[n]);
+    const T_partials mu_dbl = value_of(mu_vec[n]);
 
-    T_partials_return logy_m_mu(0);
+    T_partials logy_m_mu(0);
     if (include_summand<propto, T_y, T_loc, T_scale>::value) {
       logy_m_mu = log_y[n] - mu_dbl;
     }
 
-    T_partials_return logy_m_mu_sq = logy_m_mu * logy_m_mu;
-    T_partials_return logy_m_mu_div_sigma(0);
+    T_partials logy_m_mu_sq = logy_m_mu * logy_m_mu;
+    T_partials logy_m_mu_div_sigma(0);
     if (!is_constant_all<T_y, T_loc, T_scale>::value) {
       logy_m_mu_div_sigma = logy_m_mu * inv_sigma_sq[n];
     }
@@ -135,9 +135,8 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
 }
 
 template <typename T_y, typename T_loc, typename T_scale>
-inline return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y,
-                                                         const T_loc& mu,
-                                                         const T_scale& sigma) {
+inline auto lognormal_lpdf(const T_y& y, const T_loc& mu,
+                           const T_scale& sigma) {
   return lognormal_lpdf<false>(y, mu, sigma);
 }
 

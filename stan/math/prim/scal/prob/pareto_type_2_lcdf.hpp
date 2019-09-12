@@ -16,20 +16,19 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
-return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lcdf(
-    const T_y& y, const T_loc& mu, const T_scale& lambda,
-    const T_shape& alpha) {
-  using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_shape>;
+inline auto pareto_type_2_lcdf(const T_y& y, const T_loc& mu,
+                               const T_scale& lambda, const T_shape& alpha) {
+  using T_partials = partials_return_t<T_y, T_loc, T_scale, T_shape>;
 
   if (size_zero(y, mu, lambda, alpha)) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
   static const char* function = "pareto_type_2_lcdf";
 
   using std::log;
 
-  T_partials_return P(0.0);
+  T_partials P(0.0);
 
   check_greater_or_equal(function, "Random variable", y, mu);
   check_not_nan(function, "Random variable", y);
@@ -48,21 +47,21 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lcdf(
   operands_and_partials<T_y, T_loc, T_scale, T_shape> ops_partials(
       y, mu, lambda, alpha);
 
-  VectorBuilder<true, T_partials_return, T_y, T_loc, T_scale, T_shape> cdf_log(
+  VectorBuilder<true, T_partials, T_y, T_loc, T_scale, T_shape> cdf_log(
       N);
 
-  VectorBuilder<true, T_partials_return, T_y, T_loc, T_scale, T_shape>
+  VectorBuilder<true, T_partials, T_y, T_loc, T_scale, T_shape>
       inv_p1_pow_alpha_minus_one(N);
 
-  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_y, T_loc,
+  VectorBuilder<!is_constant_all<T_shape>::value, T_partials, T_y, T_loc,
                 T_scale, T_shape>
       log_1p_y_over_lambda(N);
 
   for (size_t i = 0; i < N; i++) {
-    const T_partials_return temp = 1.0
+    const T_partials temp = 1.0
                                    + (value_of(y_vec[i]) - value_of(mu_vec[i]))
                                          / value_of(lambda_vec[i]);
-    const T_partials_return p1_pow_alpha = pow(temp, value_of(alpha_vec[i]));
+    const T_partials p1_pow_alpha = pow(temp, value_of(alpha_vec[i]));
     cdf_log[i] = log1m(1.0 / p1_pow_alpha);
 
     inv_p1_pow_alpha_minus_one[i] = 1.0 / (p1_pow_alpha - 1.0);
@@ -73,12 +72,12 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lcdf(
   }
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return mu_dbl = value_of(mu_vec[n]);
-    const T_partials_return lambda_dbl = value_of(lambda_vec[n]);
-    const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
+    const T_partials y_dbl = value_of(y_vec[n]);
+    const T_partials mu_dbl = value_of(mu_vec[n]);
+    const T_partials lambda_dbl = value_of(lambda_vec[n]);
+    const T_partials alpha_dbl = value_of(alpha_vec[n]);
 
-    const T_partials_return grad_1_2 = alpha_dbl * inv_p1_pow_alpha_minus_one[n]
+    const T_partials grad_1_2 = alpha_dbl * inv_p1_pow_alpha_minus_one[n]
                                        / (lambda_dbl - mu_dbl + y_dbl);
 
     P += cdf_log[n];

@@ -26,17 +26,17 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch.
  */
 template <bool propto, typename T_n, typename T_prob>
-return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
+inline auto bernoulli_lpmf(const T_n& n, const T_prob& theta) {
   static const char* function = "bernoulli_lpmf";
-  using T_partials_return = partials_return_t<T_n, T_prob>;
+  using T_partials = partials_return_t<T_n, T_prob>;
 
   using std::log;
 
   if (size_zero(n, theta)) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
-  T_partials_return logp(0.0);
+  T_partials logp(0.0);
 
   check_bounded(function, "n", n, 0, 1);
   check_finite(function, "Probability parameter", theta);
@@ -45,7 +45,7 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
                          "Probability parameter", theta);
 
   if (!include_summand<propto, T_prob>::value) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
   scalar_seq_view<T_n> n_vec(n);
@@ -58,7 +58,7 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
     for (size_t n = 0; n < N; n++) {
       sum += value_of(n_vec[n]);
     }
-    const T_partials_return theta_dbl = value_of(theta_vec[0]);
+    const T_partials theta_dbl = value_of(theta_vec[0]);
     // avoid nans when sum == N or sum == 0
     if (sum == N) {
       logp += N * log(theta_dbl);
@@ -71,8 +71,8 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
         ops_partials.edge1_.partials_[0] += N / (theta_dbl - 1);
       }
     } else {
-      const T_partials_return log_theta = log(theta_dbl);
-      const T_partials_return log1m_theta = log1m(theta_dbl);
+      const T_partials log_theta = log(theta_dbl);
+      const T_partials log1m_theta = log1m(theta_dbl);
 
       logp += sum * log_theta;
       logp += (N - sum) * log1m_theta;
@@ -85,7 +85,7 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
   } else {
     for (size_t n = 0; n < N; n++) {
       const int n_int = value_of(n_vec[n]);
-      const T_partials_return theta_dbl = value_of(theta_vec[n]);
+      const T_partials theta_dbl = value_of(theta_vec[n]);
 
       if (n_int == 1) {
         logp += log(theta_dbl);
@@ -106,7 +106,7 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
 }
 
 template <typename T_y, typename T_prob>
-inline return_type_t<T_prob> bernoulli_lpmf(const T_y& n, const T_prob& theta) {
+inline auto bernoulli_lpmf(const T_y& n, const T_prob& theta) {
   return bernoulli_lpmf<false>(n, theta);
 }
 

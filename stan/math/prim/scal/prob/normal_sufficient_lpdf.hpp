@@ -43,21 +43,21 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_s, typename T_n, typename T_loc,
           typename T_scale>
-return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
-    const T_y& y_bar, const T_s& s_squared, const T_n& n_obs, const T_loc& mu,
-    const T_scale& sigma) {
+inline auto normal_sufficient_lpdf(const T_y& y_bar, const T_s& s_squared,
+                                   const T_n& n_obs, const T_loc& mu,
+                                   const T_scale& sigma) {
   static const char* function = "normal_sufficient_lpdf";
-  using T_partials_return = partials_return_t<T_y, T_s, T_n, T_loc, T_scale>;
+  using T_partials = partials_return_t<T_y, T_s, T_n, T_loc, T_scale>;
 
   using std::log;
 
   // check if any vectors are zero length
   if (size_zero(y_bar, s_squared, n_obs, mu, sigma)) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
   // set up return value accumulator
-  T_partials_return logp(0.0);
+  T_partials logp(0.0);
 
   // validate args (here done over var, which should be OK)
   check_finite(function, "Location parameter sufficient statistic", y_bar);
@@ -75,7 +75,7 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
                          "Location parameter", mu, "Scale parameter", sigma);
   // check if no variables are involved and prop-to
   if (!include_summand<propto, T_y, T_s, T_loc, T_scale>::value) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
   // set up template expressions wrapping scalars into vector views
@@ -90,12 +90,12 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
   size_t N = max_size(y_bar, s_squared, n_obs, mu, sigma);
 
   for (size_t i = 0; i < N; i++) {
-    const T_partials_return y_bar_dbl = value_of(y_bar_vec[i]);
-    const T_partials_return s_squared_dbl = value_of(s_squared_vec[i]);
-    const T_partials_return n_obs_dbl = n_obs_vec[i];
-    const T_partials_return mu_dbl = value_of(mu_vec[i]);
-    const T_partials_return sigma_dbl = value_of(sigma_vec[i]);
-    const T_partials_return sigma_squared = pow(sigma_dbl, 2);
+    const T_partials y_bar_dbl = value_of(y_bar_vec[i]);
+    const T_partials s_squared_dbl = value_of(s_squared_vec[i]);
+    const T_partials n_obs_dbl = n_obs_vec[i];
+    const T_partials mu_dbl = value_of(mu_vec[i]);
+    const T_partials sigma_dbl = value_of(sigma_vec[i]);
+    const T_partials sigma_squared = pow(sigma_dbl, 2);
 
     if (include_summand<propto>::value) {
       logp += NEG_LOG_SQRT_TWO_PI * n_obs_dbl;
@@ -105,14 +105,14 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
       logp -= n_obs_dbl * log(sigma_dbl);
     }
 
-    const T_partials_return cons_expr
+    const T_partials cons_expr
         = (s_squared_dbl + n_obs_dbl * pow(y_bar_dbl - mu_dbl, 2));
 
     logp -= cons_expr / (2 * sigma_squared);
 
     // gradients
     if (!is_constant_all<T_y, T_loc>::value) {
-      const T_partials_return common_derivative
+      const T_partials common_derivative
           = n_obs_dbl * (mu_dbl - y_bar_dbl) / sigma_squared;
       if (!is_constant_all<T_y>::value) {
         ops_partials.edge1_.partials_[i] += common_derivative;
@@ -134,9 +134,9 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
 
 template <typename T_y, typename T_s, typename T_n, typename T_loc,
           typename T_scale>
-inline return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
-    const T_y& y_bar, const T_s& s_squared, const T_n& n_obs, const T_loc& mu,
-    const T_scale& sigma) {
+inline auto normal_sufficient_lpdf(const T_y& y_bar, const T_s& s_squared,
+                                   const T_n& n_obs, const T_loc& mu,
+                                   const T_scale& sigma) {
   return normal_sufficient_lpdf<false>(y_bar, s_squared, n_obs, mu, sigma);
 }
 

@@ -11,8 +11,7 @@ namespace math {
  * @deprecated use <code>rayleigh_lcdf</code>
  */
 template <typename T_y, typename T_scale>
-return_type_t<T_y, T_scale> rayleigh_cdf_log(const T_y& y,
-                                             const T_scale& sigma) {
+inline auto rayleigh_cdf_log(const T_y& y, const T_scale& sigma) {
   return rayleigh_lcdf<T_y, T_scale>(y, sigma);
 }
 

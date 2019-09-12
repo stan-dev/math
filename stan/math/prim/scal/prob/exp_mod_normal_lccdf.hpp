@@ -16,13 +16,13 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_loc, typename T_scale, typename T_inv_scale>
-return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lccdf(
-    const T_y& y, const T_loc& mu, const T_scale& sigma,
-    const T_inv_scale& lambda) {
+inline auto exp_mod_normal_lccdf(const T_y& y, const T_loc& mu,
+                                 const T_scale& sigma,
+                                 const T_inv_scale& lambda) {
   static const char* function = "exp_mod_normal_lccdf";
-  using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_inv_scale>;
+  using T_partials = partials_return_t<T_y, T_loc, T_scale, T_inv_scale>;
 
-  T_partials_return ccdf_log(0.0);
+  T_partials ccdf_log(0.0);
   if (size_zero(y, mu, sigma, lambda)) {
     return ccdf_log;
   }
@@ -58,32 +58,32 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lccdf(
       }
     }
 
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return mu_dbl = value_of(mu_vec[n]);
-    const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
-    const T_partials_return lambda_dbl = value_of(lambda_vec[n]);
-    const T_partials_return u = lambda_dbl * (y_dbl - mu_dbl);
-    const T_partials_return v = lambda_dbl * sigma_dbl;
-    const T_partials_return v_sq = v * v;
-    const T_partials_return scaled_diff
+    const T_partials y_dbl = value_of(y_vec[n]);
+    const T_partials mu_dbl = value_of(mu_vec[n]);
+    const T_partials sigma_dbl = value_of(sigma_vec[n]);
+    const T_partials lambda_dbl = value_of(lambda_vec[n]);
+    const T_partials u = lambda_dbl * (y_dbl - mu_dbl);
+    const T_partials v = lambda_dbl * sigma_dbl;
+    const T_partials v_sq = v * v;
+    const T_partials scaled_diff
         = (y_dbl - mu_dbl) / (SQRT_2 * sigma_dbl);
-    const T_partials_return scaled_diff_sq = scaled_diff * scaled_diff;
-    const T_partials_return erf_calc1 = 0.5 * (1 + erf(u / (v * SQRT_2)));
-    const T_partials_return erf_calc2
+    const T_partials scaled_diff_sq = scaled_diff * scaled_diff;
+    const T_partials erf_calc1 = 0.5 * (1 + erf(u / (v * SQRT_2)));
+    const T_partials erf_calc2
         = 0.5 * (1 + erf(u / (v * SQRT_2) - v / SQRT_2));
 
-    const T_partials_return deriv_1
+    const T_partials deriv_1
         = lambda_dbl * exp(0.5 * v_sq - u) * erf_calc2;
-    const T_partials_return deriv_2
+    const T_partials deriv_2
         = SQRT_2 / sqrt_pi * 0.5
           * exp(0.5 * v_sq
                 - (-scaled_diff + (v / SQRT_2)) * (-scaled_diff + (v / SQRT_2))
                 - u)
           / sigma_dbl;
-    const T_partials_return deriv_3
+    const T_partials deriv_3
         = SQRT_2 / sqrt_pi * 0.5 * exp(-scaled_diff_sq) / sigma_dbl;
 
-    const T_partials_return ccdf_
+    const T_partials ccdf_
         = 1.0 - erf_calc1 + exp(-u + v_sq * 0.5) * (erf_calc2);
 
     ccdf_log += log(ccdf_);

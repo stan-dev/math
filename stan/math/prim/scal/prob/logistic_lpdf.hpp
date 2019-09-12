@@ -15,19 +15,18 @@ namespace math {
 
 // Logistic(y|mu, sigma)    [sigma > 0]
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
-return_type_t<T_y, T_loc, T_scale> logistic_lpdf(const T_y& y, const T_loc& mu,
-                                                 const T_scale& sigma) {
+inline auto logistic_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
   static const char* function = "logistic_lpdf";
-  using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
+  using T_partials = partials_return_t<T_y, T_loc, T_scale>;
 
   using std::exp;
   using std::log;
 
   if (size_zero(y, mu, sigma)) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
-  T_partials_return logp(0.0);
+  T_partials logp(0.0);
 
   check_finite(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
@@ -36,7 +35,7 @@ return_type_t<T_y, T_loc, T_scale> logistic_lpdf(const T_y& y, const T_loc& mu,
                          mu, "Scale parameter", sigma);
 
   if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
@@ -46,8 +45,8 @@ return_type_t<T_y, T_loc, T_scale> logistic_lpdf(const T_y& y, const T_loc& mu,
   scalar_seq_view<T_scale> sigma_vec(sigma);
   size_t N = max_size(y, mu, sigma);
 
-  VectorBuilder<true, T_partials_return, T_scale> inv_sigma(length(sigma));
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
+  VectorBuilder<true, T_partials, T_scale> inv_sigma(length(sigma));
+  VectorBuilder<include_summand<propto, T_scale>::value, T_partials,
                 T_scale>
       log_sigma(length(sigma));
   for (size_t i = 0; i < length(sigma); i++) {
@@ -57,10 +56,10 @@ return_type_t<T_y, T_loc, T_scale> logistic_lpdf(const T_y& y, const T_loc& mu,
     }
   }
 
-  VectorBuilder<!is_constant_all<T_loc>::value, T_partials_return, T_loc,
+  VectorBuilder<!is_constant_all<T_loc>::value, T_partials, T_loc,
                 T_scale>
       exp_mu_div_sigma(max_size(mu, sigma));
-  VectorBuilder<!is_constant_all<T_loc>::value, T_partials_return, T_y, T_scale>
+  VectorBuilder<!is_constant_all<T_loc>::value, T_partials, T_y, T_scale>
       exp_y_div_sigma(max_size(y, sigma));
   if (!is_constant_all<T_loc>::value) {
     for (size_t n = 0; n < max_size(mu, sigma); n++) {
@@ -72,16 +71,16 @@ return_type_t<T_y, T_loc, T_scale> logistic_lpdf(const T_y& y, const T_loc& mu,
   }
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return mu_dbl = value_of(mu_vec[n]);
+    const T_partials y_dbl = value_of(y_vec[n]);
+    const T_partials mu_dbl = value_of(mu_vec[n]);
 
-    const T_partials_return y_minus_mu = y_dbl - mu_dbl;
-    const T_partials_return y_minus_mu_div_sigma = y_minus_mu * inv_sigma[n];
-    T_partials_return exp_m_y_minus_mu_div_sigma(0);
+    const T_partials y_minus_mu = y_dbl - mu_dbl;
+    const T_partials y_minus_mu_div_sigma = y_minus_mu * inv_sigma[n];
+    T_partials exp_m_y_minus_mu_div_sigma(0);
     if (include_summand<propto, T_y, T_loc, T_scale>::value) {
       exp_m_y_minus_mu_div_sigma = exp(-y_minus_mu_div_sigma);
     }
-    T_partials_return inv_1p_exp_y_minus_mu_div_sigma(0);
+    T_partials inv_1p_exp_y_minus_mu_div_sigma(0);
     if (!is_constant_all<T_y, T_scale>::value) {
       inv_1p_exp_y_minus_mu_div_sigma = 1 / (1 + exp(y_minus_mu_div_sigma));
     }
@@ -119,9 +118,7 @@ return_type_t<T_y, T_loc, T_scale> logistic_lpdf(const T_y& y, const T_loc& mu,
 }
 
 template <typename T_y, typename T_loc, typename T_scale>
-inline return_type_t<T_y, T_loc, T_scale> logistic_lpdf(const T_y& y,
-                                                        const T_loc& mu,
-                                                        const T_scale& sigma) {
+inline auto logistic_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
   return logistic_lpdf<false>(y, mu, sigma);
 }
 

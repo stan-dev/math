@@ -29,7 +29,7 @@ namespace math {
  * @tparam T_dof Type of degrees of freedom.
  */
 template <bool propto, typename T_y, typename T_dof>
-return_type_t<T_y, T_dof> chi_square_log(const T_y& y, const T_dof& nu) {
+inline auto chi_square_log(const T_y& y, const T_dof& nu) {
   return chi_square_lpdf<propto, T_y, T_dof>(y, nu);
 }
 
@@ -37,7 +37,7 @@ return_type_t<T_y, T_dof> chi_square_log(const T_y& y, const T_dof& nu) {
  * @deprecated use <code>chi_square_lpdf</code>
  */
 template <typename T_y, typename T_dof>
-inline return_type_t<T_y, T_dof> chi_square_log(const T_y& y, const T_dof& nu) {
+inline auto chi_square_log(const T_y& y, const T_dof& nu) {
   return chi_square_lpdf<T_y, T_dof>(y, nu);
 }
 

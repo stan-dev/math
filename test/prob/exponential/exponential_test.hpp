@@ -71,8 +71,8 @@ class AgradDistributionsExponential : public AgradDistributionTest {
       const T_y& y, const T_inv_scale& beta, const T2&, const T3&, const T4&,
       const T5&) {
     using boost::math::lgamma;
-    using stan::math::NEG_LOG_TWO_OVER_TWO;
     using stan::math::multiply_log;
+    using stan::math::NEG_LOG_TWO_OVER_TWO;
 
     return log(beta) - beta * y;
   }

@@ -15,10 +15,9 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
-return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_cdf(
-    const T_y& y, const T_loc& mu, const T_scale& lambda,
-    const T_shape& alpha) {
-  using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_shape>;
+inline auto pareto_type_2_cdf(const T_y& y, const T_loc& mu,
+                              const T_scale& lambda, const T_shape& alpha) {
+  using T_partials = partials_return_t<T_y, T_loc, T_scale, T_shape>;
 
   if (size_zero(y, mu, lambda, alpha)) {
     return 1.0;
@@ -28,7 +27,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_cdf(
 
   using std::log;
 
-  T_partials_return P(1.0);
+  T_partials P(1.0);
 
   check_greater_or_equal(function, "Random variable", y, mu);
   check_not_nan(function, "Random variable", y);
@@ -47,21 +46,21 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_cdf(
   operands_and_partials<T_y, T_loc, T_scale, T_shape> ops_partials(
       y, mu, lambda, alpha);
 
-  VectorBuilder<true, T_partials_return, T_y, T_loc, T_scale, T_shape>
+  VectorBuilder<true, T_partials, T_y, T_loc, T_scale, T_shape>
       p1_pow_alpha(N);
 
-  VectorBuilder<!is_constant_all<T_y, T_loc, T_scale>::value, T_partials_return,
+  VectorBuilder<!is_constant_all<T_y, T_loc, T_scale>::value, T_partials,
                 T_y, T_loc, T_scale, T_shape>
       grad_1_2(N);
 
-  VectorBuilder<!is_constant_all<T_shape, T_y>::value, T_partials_return, T_y,
+  VectorBuilder<!is_constant_all<T_shape, T_y>::value, T_partials, T_y,
                 T_loc, T_scale, T_shape>
       grad_3(N);
 
   for (size_t i = 0; i < N; i++) {
-    const T_partials_return lambda_dbl = value_of(lambda_vec[i]);
-    const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
-    const T_partials_return temp
+    const T_partials lambda_dbl = value_of(lambda_vec[i]);
+    const T_partials alpha_dbl = value_of(alpha_vec[i]);
+    const T_partials temp
         = 1 + (value_of(y_vec[i]) - value_of(mu_vec[i])) / lambda_dbl;
     p1_pow_alpha[i] = pow(temp, -alpha_dbl);
 
@@ -75,11 +74,11 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_cdf(
   }
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return mu_dbl = value_of(mu_vec[n]);
-    const T_partials_return lambda_dbl = value_of(lambda_vec[n]);
+    const T_partials y_dbl = value_of(y_vec[n]);
+    const T_partials mu_dbl = value_of(mu_vec[n]);
+    const T_partials lambda_dbl = value_of(lambda_vec[n]);
 
-    const T_partials_return Pn = 1.0 - p1_pow_alpha[n];
+    const T_partials Pn = 1.0 - p1_pow_alpha[n];
 
     P *= Pn;
 

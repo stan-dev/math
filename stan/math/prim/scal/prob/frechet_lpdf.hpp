@@ -22,11 +22,10 @@ namespace math {
 // Frechet(y|alpha, sigma)     [y > 0;  alpha > 0;  sigma > 0]
 // FIXME: document
 template <bool propto, typename T_y, typename T_shape, typename T_scale>
-return_type_t<T_y, T_shape, T_scale> frechet_lpdf(const T_y& y,
-                                                  const T_shape& alpha,
-                                                  const T_scale& sigma) {
+inline auto frechet_lpdf(const T_y& y, const T_shape& alpha,
+                         const T_scale& sigma) {
   static const char* function = "frechet_lpdf";
-  using T_partials_return = partials_return_t<T_y, T_shape, T_scale>;
+  using T_partials = partials_return_t<T_y, T_shape, T_scale>;
   using std::log;
   check_positive(function, "Random variable", y);
   check_positive_finite(function, "Shape parameter", alpha);
@@ -35,20 +34,20 @@ return_type_t<T_y, T_shape, T_scale> frechet_lpdf(const T_y& y,
                          alpha, "Scale parameter", sigma);
 
   if (size_zero(y, alpha, sigma)) {
-    return 0;
+    return T_partials(0);
   }
   if (!include_summand<propto, T_y, T_shape, T_scale>::value) {
-    return 0;
+    return T_partials(0);
   }
 
-  T_partials_return logp(0);
+  T_partials logp(0);
 
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_shape> alpha_vec(alpha);
   scalar_seq_view<T_scale> sigma_vec(sigma);
   size_t N = max_size(y, alpha, sigma);
 
-  VectorBuilder<include_summand<propto, T_shape>::value, T_partials_return,
+  VectorBuilder<include_summand<propto, T_shape>::value, T_partials,
                 T_shape>
       log_alpha(length(alpha));
   for (size_t i = 0; i < length(alpha); i++) {
@@ -57,7 +56,7 @@ return_type_t<T_y, T_shape, T_scale> frechet_lpdf(const T_y& y,
     }
   }
 
-  VectorBuilder<include_summand<propto, T_y, T_shape>::value, T_partials_return,
+  VectorBuilder<include_summand<propto, T_y, T_shape>::value, T_partials,
                 T_y>
       log_y(length(y));
   for (size_t i = 0; i < length(y); i++) {
@@ -67,7 +66,7 @@ return_type_t<T_y, T_shape, T_scale> frechet_lpdf(const T_y& y,
   }
 
   VectorBuilder<include_summand<propto, T_shape, T_scale>::value,
-                T_partials_return, T_scale>
+                T_partials, T_scale>
       log_sigma(length(sigma));
   for (size_t i = 0; i < length(sigma); i++) {
     if (include_summand<propto, T_shape, T_scale>::value) {
@@ -76,7 +75,7 @@ return_type_t<T_y, T_shape, T_scale> frechet_lpdf(const T_y& y,
   }
 
   VectorBuilder<include_summand<propto, T_y, T_shape, T_scale>::value,
-                T_partials_return, T_y>
+                T_partials, T_y>
       inv_y(length(y));
   for (size_t i = 0; i < length(y); i++) {
     if (include_summand<propto, T_y, T_shape, T_scale>::value) {
@@ -85,11 +84,11 @@ return_type_t<T_y, T_shape, T_scale> frechet_lpdf(const T_y& y,
   }
 
   VectorBuilder<include_summand<propto, T_y, T_shape, T_scale>::value,
-                T_partials_return, T_y, T_shape, T_scale>
+                T_partials, T_y, T_shape, T_scale>
       sigma_div_y_pow_alpha(N);
   for (size_t i = 0; i < N; i++) {
     if (include_summand<propto, T_y, T_shape, T_scale>::value) {
-      const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
+      const T_partials alpha_dbl = value_of(alpha_vec[i]);
       sigma_div_y_pow_alpha[i]
           = pow(inv_y[i] * value_of(sigma_vec[i]), alpha_dbl);
     }
@@ -97,7 +96,7 @@ return_type_t<T_y, T_shape, T_scale> frechet_lpdf(const T_y& y,
 
   operands_and_partials<T_y, T_shape, T_scale> ops_partials(y, alpha, sigma);
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
+    const T_partials alpha_dbl = value_of(alpha_vec[n]);
     if (include_summand<propto, T_shape>::value) {
       logp += log_alpha[n];
     }
@@ -112,7 +111,7 @@ return_type_t<T_y, T_shape, T_scale> frechet_lpdf(const T_y& y,
     }
 
     if (!is_constant_all<T_y>::value) {
-      const T_partials_return inv_y_dbl = value_of(inv_y[n]);
+      const T_partials inv_y_dbl = value_of(inv_y[n]);
       ops_partials.edge1_.partials_[n]
           += -(alpha_dbl + 1.0) * inv_y_dbl
              + alpha_dbl * sigma_div_y_pow_alpha[n] * inv_y_dbl;
@@ -131,9 +130,8 @@ return_type_t<T_y, T_shape, T_scale> frechet_lpdf(const T_y& y,
 }
 
 template <typename T_y, typename T_shape, typename T_scale>
-inline return_type_t<T_y, T_shape, T_scale> frechet_lpdf(const T_y& y,
-                                                         const T_shape& alpha,
-                                                         const T_scale& sigma) {
+inline auto frechet_lpdf(const T_y& y, const T_shape& alpha,
+                         const T_scale& sigma) {
   return frechet_lpdf<false>(y, alpha, sigma);
 }
 

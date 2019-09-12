@@ -16,15 +16,14 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_loc, typename T_scale>
-return_type_t<T_y, T_loc, T_scale> normal_lccdf(const T_y& y, const T_loc& mu,
-                                                const T_scale& sigma) {
+inline auto normal_lccdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
   static const char* function = "normal_lccdf";
-  using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
+  using T_partials = partials_return_t<T_y, T_loc, T_scale>;
 
   using std::exp;
   using std::log;
 
-  T_partials_return ccdf_log(0.0);
+  T_partials ccdf_log(0.0);
   if (size_zero(y, mu, sigma)) {
     return ccdf_log;
   }
@@ -46,14 +45,14 @@ return_type_t<T_y, T_loc, T_scale> normal_lccdf(const T_y& y, const T_loc& mu,
 
   const double SQRT_TWO_OVER_PI = std::sqrt(2.0 / pi());
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return mu_dbl = value_of(mu_vec[n]);
-    const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
+    const T_partials y_dbl = value_of(y_vec[n]);
+    const T_partials mu_dbl = value_of(mu_vec[n]);
+    const T_partials sigma_dbl = value_of(sigma_vec[n]);
 
-    const T_partials_return scaled_diff
+    const T_partials scaled_diff
         = (y_dbl - mu_dbl) / (sigma_dbl * SQRT_2);
 
-    T_partials_return one_m_erf;
+    T_partials one_m_erf;
     if (scaled_diff < -37.5 * INV_SQRT_2) {
       one_m_erf = 2.0;
     } else if (scaled_diff < -5.0 * INV_SQRT_2) {
@@ -67,7 +66,7 @@ return_type_t<T_y, T_loc, T_scale> normal_lccdf(const T_y& y, const T_loc& mu,
     ccdf_log += log_half + log(one_m_erf);
 
     if (!is_constant_all<T_y, T_loc, T_scale>::value) {
-      const T_partials_return rep_deriv_div_sigma
+      const T_partials rep_deriv_div_sigma
           = scaled_diff > 8.25 * INV_SQRT_2
                 ? std::numeric_limits<double>::infinity()
                 : SQRT_TWO_OVER_PI * exp(-scaled_diff * scaled_diff) / one_m_erf

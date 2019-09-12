@@ -19,19 +19,17 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_dof, typename T_loc, typename T_scale>
-return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lcdf(const T_y& y,
-                                                         const T_dof& nu,
-                                                         const T_loc& mu,
-                                                         const T_scale& sigma) {
-  using T_partials_return = partials_return_t<T_y, T_dof, T_loc, T_scale>;
+inline auto student_t_lcdf(const T_y& y, const T_dof& nu, const T_loc& mu,
+                           const T_scale& sigma) {
+  using T_partials = partials_return_t<T_y, T_dof, T_loc, T_scale>;
 
   if (size_zero(y, nu, mu, sigma)) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
   static const char* function = "student_t_lcdf";
 
-  T_partials_return P(0.0);
+  T_partials P(0.0);
 
   check_not_nan(function, "Random variable", y);
   check_positive_finite(function, "Degrees of freedom parameter", nu);
@@ -59,20 +57,20 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lcdf(const T_y& y,
   using std::log;
   using std::pow;
 
-  T_partials_return digammaHalf = 0;
+  T_partials digammaHalf = 0;
 
-  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
+  VectorBuilder<!is_constant_all<T_dof>::value, T_partials, T_dof>
       digamma_vec(stan::length(nu));
-  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
+  VectorBuilder<!is_constant_all<T_dof>::value, T_partials, T_dof>
       digammaNu_vec(stan::length(nu));
-  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
+  VectorBuilder<!is_constant_all<T_dof>::value, T_partials, T_dof>
       digammaNuPlusHalf_vec(stan::length(nu));
 
   if (!is_constant_all<T_dof>::value) {
     digammaHalf = digamma(0.5);
 
     for (size_t i = 0; i < stan::length(nu); i++) {
-      const T_partials_return nu_dbl = value_of(nu_vec[i]);
+      const T_partials nu_dbl = value_of(nu_vec[i]);
 
       digammaNu_vec[i] = digamma(0.5 * nu_dbl);
       digammaNuPlusHalf_vec[i] = digamma(0.5 + 0.5 * nu_dbl);
@@ -86,21 +84,21 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lcdf(const T_y& y,
       continue;
     }
 
-    const T_partials_return sigma_inv = 1.0 / value_of(sigma_vec[n]);
-    const T_partials_return t
+    const T_partials sigma_inv = 1.0 / value_of(sigma_vec[n]);
+    const T_partials t
         = (value_of(y_vec[n]) - value_of(mu_vec[n])) * sigma_inv;
-    const T_partials_return nu_dbl = value_of(nu_vec[n]);
-    const T_partials_return q = nu_dbl / (t * t);
-    const T_partials_return r = 1.0 / (1.0 + q);
-    const T_partials_return J = 2 * r * r * q / t;
-    const T_partials_return betaNuHalf = beta(0.5, 0.5 * nu_dbl);
-    T_partials_return zJacobian = t > 0 ? -0.5 : 0.5;
+    const T_partials nu_dbl = value_of(nu_vec[n]);
+    const T_partials q = nu_dbl / (t * t);
+    const T_partials r = 1.0 / (1.0 + q);
+    const T_partials J = 2 * r * r * q / t;
+    const T_partials betaNuHalf = beta(0.5, 0.5 * nu_dbl);
+    T_partials zJacobian = t > 0 ? -0.5 : 0.5;
 
     if (q < 2) {
-      T_partials_return z
-          = inc_beta(0.5 * nu_dbl, (T_partials_return)0.5, 1.0 - r);
-      const T_partials_return Pn = t > 0 ? 1.0 - 0.5 * z : 0.5 * z;
-      const T_partials_return d_ibeta
+      T_partials z
+          = inc_beta(0.5 * nu_dbl, (T_partials)0.5, 1.0 - r);
+      const T_partials Pn = t > 0 ? 1.0 - 0.5 * z : 0.5 * z;
+      const T_partials d_ibeta
           = pow(r, -0.5) * pow(1.0 - r, 0.5 * nu_dbl - 1) / betaNuHalf;
 
       P += log(Pn);
@@ -111,10 +109,10 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lcdf(const T_y& y,
       }
 
       if (!is_constant_all<T_dof>::value) {
-        T_partials_return g1 = 0;
-        T_partials_return g2 = 0;
+        T_partials g1 = 0;
+        T_partials g2 = 0;
 
-        grad_reg_inc_beta(g1, g2, 0.5 * nu_dbl, (T_partials_return)0.5, 1.0 - r,
+        grad_reg_inc_beta(g1, g2, 0.5 * nu_dbl, (T_partials)0.5, 1.0 - r,
                           digammaNu_vec[n], digammaHalf,
                           digammaNuPlusHalf_vec[n], betaNuHalf);
 
@@ -132,13 +130,13 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lcdf(const T_y& y,
       }
 
     } else {
-      T_partials_return z
-          = 1.0 - inc_beta((T_partials_return)0.5, 0.5 * nu_dbl, r);
+      T_partials z
+          = 1.0 - inc_beta((T_partials)0.5, 0.5 * nu_dbl, r);
       zJacobian *= -1;
 
-      const T_partials_return Pn = t > 0 ? 1.0 - 0.5 * z : 0.5 * z;
+      const T_partials Pn = t > 0 ? 1.0 - 0.5 * z : 0.5 * z;
 
-      T_partials_return d_ibeta
+      T_partials d_ibeta
           = pow(1.0 - r, 0.5 * nu_dbl - 1) * pow(r, -0.5) / betaNuHalf;
 
       P += log(Pn);
@@ -149,10 +147,10 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lcdf(const T_y& y,
       }
 
       if (!is_constant_all<T_dof>::value) {
-        T_partials_return g1 = 0;
-        T_partials_return g2 = 0;
+        T_partials g1 = 0;
+        T_partials g2 = 0;
 
-        grad_reg_inc_beta(g1, g2, (T_partials_return)0.5, 0.5 * nu_dbl, r,
+        grad_reg_inc_beta(g1, g2, (T_partials)0.5, 0.5 * nu_dbl, r,
                           digammaHalf, digammaNu_vec[n],
                           digammaNuPlusHalf_vec[n], betaNuHalf);
 

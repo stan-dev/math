@@ -16,13 +16,12 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_scale, typename T_shape>
-return_type_t<T_y, T_scale, T_shape> pareto_lccdf(const T_y& y,
-                                                  const T_scale& y_min,
-                                                  const T_shape& alpha) {
-  using T_partials_return = partials_return_t<T_y, T_scale, T_shape>;
+inline auto pareto_lccdf(const T_y& y, const T_scale& y_min,
+                         const T_shape& alpha) {
+  using T_partials = partials_return_t<T_y, T_scale, T_shape>;
 
   if (size_zero(y, y_min, alpha)) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
   static const char* function = "pareto_lccdf";
@@ -30,7 +29,7 @@ return_type_t<T_y, T_scale, T_shape> pareto_lccdf(const T_y& y,
   using std::exp;
   using std::log;
 
-  T_partials_return P(0.0);
+  T_partials P(0.0);
 
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
@@ -61,10 +60,10 @@ return_type_t<T_y, T_scale, T_shape> pareto_lccdf(const T_y& y,
       return ops_partials.build(negative_infinity());
     }
 
-    const T_partials_return log_dbl
+    const T_partials log_dbl
         = log(value_of(y_min_vec[n]) / value_of(y_vec[n]));
-    const T_partials_return y_min_inv_dbl = 1.0 / value_of(y_min_vec[n]);
-    const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
+    const T_partials y_min_inv_dbl = 1.0 / value_of(y_min_vec[n]);
+    const T_partials alpha_dbl = value_of(alpha_vec[n]);
 
     P += alpha_dbl * log_dbl;
 

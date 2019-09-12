@@ -18,16 +18,16 @@ namespace math {
 
 // Poisson(n|lambda)  [lambda > 0;  n >= 0]
 template <bool propto, typename T_n, typename T_rate>
-return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
-  using T_partials_return = partials_return_t<T_n, T_rate>;
+inline auto poisson_lpmf(const T_n& n, const T_rate& lambda) {
+  using T_partials = partials_return_t<T_n, T_rate>;
 
   static const char* function = "poisson_lpmf";
 
   if (size_zero(n, lambda)) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
-  T_partials_return logp(0.0);
+  T_partials logp(0.0);
 
   check_nonnegative(function, "Random variable", n);
   check_not_nan(function, "Rate parameter", lambda);
@@ -36,7 +36,7 @@ return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
                          lambda);
 
   if (!include_summand<propto, T_rate>::value) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
   scalar_seq_view<T_n> n_vec(n);
@@ -45,12 +45,12 @@ return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
 
   for (size_t i = 0; i < size; i++) {
     if (is_inf(lambda_vec[i])) {
-      return LOG_ZERO;
+      return T_partials(LOG_ZERO);
     }
   }
   for (size_t i = 0; i < size; i++) {
     if (lambda_vec[i] == 0 && n_vec[i] != 0) {
-      return LOG_ZERO;
+      return T_partials(LOG_ZERO);
     }
   }
 
@@ -76,7 +76,7 @@ return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
 }
 
 template <typename T_n, typename T_rate>
-inline return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
+inline auto poisson_lpmf(const T_n& n, const T_rate& lambda) {
   return poisson_lpmf<false>(n, lambda);
 }
 

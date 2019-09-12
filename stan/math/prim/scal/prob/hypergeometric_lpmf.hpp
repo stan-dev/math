@@ -15,12 +15,14 @@ namespace math {
 // n: #white balls drawn;  N: #balls drawn;
 // a: #white balls;  b: #black balls
 template <bool propto, typename T_n, typename T_N, typename T_a, typename T_b>
-double hypergeometric_lpmf(const T_n& n, const T_N& N, const T_a& a,
+auto hypergeometric_lpmf(const T_n& n, const T_N& N, const T_a& a,
                            const T_b& b) {
   static const char* function = "hypergeometric_lpmf";
+  using T_partials = partials_return_t<T_n, T_N, T_a, T_b>;
+  double logp(0.0);
 
-  if (size_zero(n, N, a, b)) {
-    return 0.0;
+  if (size_zero(n, N, a, b) || !include_summand<propto>::value) {
+    return logp;
   }
 
   scalar_seq_view<T_n> n_vec(n);
@@ -29,7 +31,6 @@ double hypergeometric_lpmf(const T_n& n, const T_N& N, const T_a& a,
   scalar_seq_view<T_b> b_vec(b);
   size_t size = max_size(n, N, a, b);
 
-  double logp(0.0);
   check_bounded(function, "Successes variable", n, 0, a);
   check_greater(function, "Draws parameter", N, n);
   for (size_t i = 0; i < size; i++) {
@@ -41,10 +42,6 @@ double hypergeometric_lpmf(const T_n& n, const T_N& N, const T_a& a,
   check_consistent_sizes(function, "Successes variable", n, "Draws parameter",
                          N, "Successes in population parameter", a,
                          "Failures in population parameter", b);
-
-  if (!include_summand<propto>::value) {
-    return 0.0;
-  }
 
   for (size_t i = 0; i < size; i++) {
     logp += math::binomial_coefficient_log(a_vec[i], n_vec[i])

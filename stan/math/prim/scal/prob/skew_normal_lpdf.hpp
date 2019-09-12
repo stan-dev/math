@@ -18,19 +18,19 @@ namespace math {
 
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
           typename T_shape>
-return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
-    const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& alpha) {
+inline auto skew_normal_lpdf(const T_y& y, const T_loc& mu,
+                             const T_scale& sigma, const T_shape& alpha) {
   static const char* function = "skew_normal_lpdf";
-  using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_shape>;
+  using T_partials = partials_return_t<T_y, T_loc, T_scale, T_shape>;
 
   using std::exp;
   using std::log;
 
   if (size_zero(y, mu, sigma, alpha)) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
-  T_partials_return logp(0.0);
+  T_partials logp(0.0);
 
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
@@ -40,7 +40,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
                          mu, "Scale parameter", sigma, "Shape paramter", alpha);
 
   if (!include_summand<propto, T_y, T_loc, T_scale, T_shape>::value) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
   operands_and_partials<T_y, T_loc, T_scale, T_shape> ops_partials(y, mu, sigma,
@@ -52,8 +52,8 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
   scalar_seq_view<T_shape> alpha_vec(alpha);
   size_t N = max_size(y, mu, sigma, alpha);
 
-  VectorBuilder<true, T_partials_return, T_scale> inv_sigma(length(sigma));
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
+  VectorBuilder<true, T_partials, T_scale> inv_sigma(length(sigma));
+  VectorBuilder<include_summand<propto, T_scale>::value, T_partials,
                 T_scale>
       log_sigma(length(sigma));
   for (size_t i = 0; i < length(sigma); i++) {
@@ -64,12 +64,12 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
   }
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return mu_dbl = value_of(mu_vec[n]);
-    const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
-    const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
+    const T_partials y_dbl = value_of(y_vec[n]);
+    const T_partials mu_dbl = value_of(mu_vec[n]);
+    const T_partials sigma_dbl = value_of(sigma_vec[n]);
+    const T_partials alpha_dbl = value_of(alpha_vec[n]);
 
-    const T_partials_return y_minus_mu_over_sigma
+    const T_partials y_minus_mu_over_sigma
         = (y_dbl - mu_dbl) * inv_sigma[n];
     const double pi_dbl = pi();
 
@@ -86,7 +86,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
       logp += log(erfc(-alpha_dbl * y_minus_mu_over_sigma / std::sqrt(2.0)));
     }
 
-    T_partials_return deriv_logerf
+    T_partials deriv_logerf
         = 2.0 / std::sqrt(pi_dbl)
           * exp(-alpha_dbl * y_minus_mu_over_sigma / std::sqrt(2.0) * alpha_dbl
                 * y_minus_mu_over_sigma / std::sqrt(2.0))
@@ -117,8 +117,8 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
 }
 
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
-inline return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
-    const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& alpha) {
+inline auto skew_normal_lpdf(const T_y& y, const T_loc& mu,
+                             const T_scale& sigma, const T_shape& alpha) {
   return skew_normal_lpdf<false>(y, mu, sigma, alpha);
 }
 

@@ -17,12 +17,12 @@ namespace stan {
 namespace math {
 
 template <typename T_n, typename T_location, typename T_precision>
-return_type_t<T_location, T_precision> neg_binomial_2_cdf(
-    const T_n& n, const T_location& mu, const T_precision& phi) {
+inline auto neg_binomial_2_cdf(const T_n& n, const T_location& mu,
+                               const T_precision& phi) {
   static const char* function = "neg_binomial_2_cdf";
-  using T_partials_return = partials_return_t<T_n, T_location, T_precision>;
+  using T_partials = partials_return_t<T_n, T_location, T_precision>;
 
-  T_partials_return P(1.0);
+  T_partials P(1.0);
   if (size_zero(n, mu, phi)) {
     return P;
   }
@@ -48,18 +48,18 @@ return_type_t<T_location, T_precision> neg_binomial_2_cdf(
     }
   }
 
-  VectorBuilder<!is_constant_all<T_precision>::value, T_partials_return,
+  VectorBuilder<!is_constant_all<T_precision>::value, T_partials,
                 T_precision>
       digamma_phi_vec(stan::length(phi));
 
-  VectorBuilder<!is_constant_all<T_precision>::value, T_partials_return,
+  VectorBuilder<!is_constant_all<T_precision>::value, T_partials,
                 T_precision>
       digamma_sum_vec(stan::length(phi));
 
   if (!is_constant_all<T_precision>::value) {
     for (size_t i = 0; i < stan::length(phi); i++) {
-      const T_partials_return n_dbl = value_of(n_vec[i]);
-      const T_partials_return phi_dbl = value_of(phi_vec[i]);
+      const T_partials n_dbl = value_of(n_vec[i]);
+      const T_partials phi_dbl = value_of(phi_vec[i]);
 
       digamma_phi_vec[i] = digamma(phi_dbl);
       digamma_sum_vec[i] = digamma(n_dbl + phi_dbl + 1);
@@ -73,15 +73,15 @@ return_type_t<T_location, T_precision> neg_binomial_2_cdf(
       return ops_partials.build(1.0);
     }
 
-    const T_partials_return n_dbl = value_of(n_vec[i]);
-    const T_partials_return mu_dbl = value_of(mu_vec[i]);
-    const T_partials_return phi_dbl = value_of(phi_vec[i]);
+    const T_partials n_dbl = value_of(n_vec[i]);
+    const T_partials mu_dbl = value_of(mu_vec[i]);
+    const T_partials phi_dbl = value_of(phi_vec[i]);
 
-    const T_partials_return p_dbl = phi_dbl / (mu_dbl + phi_dbl);
-    const T_partials_return d_dbl
+    const T_partials p_dbl = phi_dbl / (mu_dbl + phi_dbl);
+    const T_partials d_dbl
         = 1.0 / ((mu_dbl + phi_dbl) * (mu_dbl + phi_dbl));
 
-    const T_partials_return P_i = inc_beta(phi_dbl, n_dbl + 1.0, p_dbl);
+    const T_partials P_i = inc_beta(phi_dbl, n_dbl + 1.0, p_dbl);
 
     P *= P_i;
 

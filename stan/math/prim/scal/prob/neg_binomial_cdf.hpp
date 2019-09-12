@@ -17,17 +17,16 @@ namespace stan {
 namespace math {
 
 template <typename T_n, typename T_shape, typename T_inv_scale>
-return_type_t<T_shape, T_inv_scale> neg_binomial_cdf(const T_n& n,
-                                                     const T_shape& alpha,
-                                                     const T_inv_scale& beta) {
+inline auto neg_binomial_cdf(const T_n& n, const T_shape& alpha,
+                             const T_inv_scale& beta) {
   static const char* function = "neg_binomial_cdf";
-  using T_partials_return = partials_return_t<T_n, T_shape, T_inv_scale>;
+  using T_partials = partials_return_t<T_n, T_shape, T_inv_scale>;
 
   if (size_zero(n, alpha, beta)) {
     return 1.0;
   }
 
-  T_partials_return P(1.0);
+  T_partials P(1.0);
 
   check_positive_finite(function, "Shape parameter", alpha);
   check_positive_finite(function, "Inverse scale parameter", beta);
@@ -49,16 +48,16 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_cdf(const T_n& n,
     }
   }
 
-  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
+  VectorBuilder<!is_constant_all<T_shape>::value, T_partials, T_shape>
       digamma_alpha_vec(stan::length(alpha));
 
-  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
+  VectorBuilder<!is_constant_all<T_shape>::value, T_partials, T_shape>
       digamma_sum_vec(stan::length(alpha));
 
   if (!is_constant_all<T_shape>::value) {
     for (size_t i = 0; i < stan::length(alpha); i++) {
-      const T_partials_return n_dbl = value_of(n_vec[i]);
-      const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
+      const T_partials n_dbl = value_of(n_vec[i]);
+      const T_partials alpha_dbl = value_of(alpha_vec[i]);
 
       digamma_alpha_vec[i] = digamma(alpha_dbl);
       digamma_sum_vec[i] = digamma(n_dbl + alpha_dbl + 1);
@@ -72,14 +71,14 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_cdf(const T_n& n,
       return ops_partials.build(1.0);
     }
 
-    const T_partials_return n_dbl = value_of(n_vec[i]);
-    const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
-    const T_partials_return beta_dbl = value_of(beta_vec[i]);
+    const T_partials n_dbl = value_of(n_vec[i]);
+    const T_partials alpha_dbl = value_of(alpha_vec[i]);
+    const T_partials beta_dbl = value_of(beta_vec[i]);
 
-    const T_partials_return p_dbl = beta_dbl / (1.0 + beta_dbl);
-    const T_partials_return d_dbl = 1.0 / ((1.0 + beta_dbl) * (1.0 + beta_dbl));
+    const T_partials p_dbl = beta_dbl / (1.0 + beta_dbl);
+    const T_partials d_dbl = 1.0 / ((1.0 + beta_dbl) * (1.0 + beta_dbl));
 
-    const T_partials_return P_i = inc_beta(alpha_dbl, n_dbl + 1.0, p_dbl);
+    const T_partials P_i = inc_beta(alpha_dbl, n_dbl + 1.0, p_dbl);
 
     P *= P_i;
 

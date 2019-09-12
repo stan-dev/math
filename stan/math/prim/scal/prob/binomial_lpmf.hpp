@@ -33,17 +33,16 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <bool propto, typename T_n, typename T_N, typename T_prob>
-return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
-                                    const T_prob& theta) {
-  using T_partials_return = partials_return_t<T_n, T_N, T_prob>;
+inline auto binomial_lpmf(const T_n& n, const T_N& N, const T_prob& theta) {
+  using T_partials = partials_return_t<T_n, T_N, T_prob>;
 
   static const char* function = "binomial_lpmf";
 
   if (size_zero(n, N, theta)) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
-  T_partials_return logp = 0;
+  T_partials logp = 0;
   check_bounded(function, "Successes variable", n, 0, N);
   check_nonnegative(function, "Population size parameter", N);
   check_finite(function, "Probability parameter", theta);
@@ -53,7 +52,7 @@ return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
                          "Probability parameter", theta);
 
   if (!include_summand<propto, T_prob>::value) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
   scalar_seq_view<T_n> n_vec(n);
@@ -69,7 +68,7 @@ return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
     }
   }
 
-  VectorBuilder<true, T_partials_return, T_prob> log1m_theta(length(theta));
+  VectorBuilder<true, T_partials, T_prob> log1m_theta(length(theta));
   for (size_t i = 0; i < length(theta); ++i) {
     log1m_theta[i] = log1m(value_of(theta_vec[i]));
   }
@@ -80,8 +79,8 @@ return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
   }
 
   if (length(theta) == 1) {
-    T_partials_return temp1 = 0;
-    T_partials_return temp2 = 0;
+    T_partials temp1 = 0;
+    T_partials temp2 = 0;
     for (size_t i = 0; i < size; ++i) {
       temp1 += n_vec[i];
       temp2 += N_vec[i] - n_vec[i];
@@ -105,8 +104,7 @@ return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
 }
 
 template <typename T_n, typename T_N, typename T_prob>
-inline return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
-                                           const T_prob& theta) {
+inline auto binomial_lpmf(const T_n& n, const T_N& N, const T_prob& theta) {
   return binomial_lpmf<false>(n, N, theta);
 }
 

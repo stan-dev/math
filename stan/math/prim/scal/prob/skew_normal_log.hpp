@@ -12,8 +12,8 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
           typename T_shape>
-return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_log(
-    const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& alpha) {
+inline auto skew_normal_log(const T_y& y, const T_loc& mu, const T_scale& sigma,
+                            const T_shape& alpha) {
   return skew_normal_lpdf<propto, T_y, T_loc, T_scale, T_shape>(y, mu, sigma,
                                                                 alpha);
 }
@@ -22,8 +22,8 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_log(
  * @deprecated use <code>skew_normal_lpdf</code>
  */
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
-inline return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_log(
-    const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& alpha) {
+inline auto skew_normal_log(const T_y& y, const T_loc& mu, const T_scale& sigma,
+                            const T_shape& alpha) {
   return skew_normal_lpdf<T_y, T_loc, T_scale, T_shape>(y, mu, sigma, alpha);
 }
 

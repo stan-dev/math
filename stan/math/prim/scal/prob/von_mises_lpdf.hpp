@@ -16,18 +16,18 @@ namespace stan {
 namespace math {
 
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
-return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
-                                                  T_scale const& kappa) {
+inline auto von_mises_lpdf(T_y const& y, T_loc const& mu,
+                           T_scale const& kappa) {
   static char const* const function = "von_mises_lpdf";
-  using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
+  using T_partials = partials_return_t<T_y, T_loc, T_scale>;
 
   if (size_zero(y, mu, kappa)) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
   using std::log;
 
-  T_partials_return logp = 0.0;
+  T_partials logp = 0.0;
 
   check_finite(function, "Random variable", y);
   check_finite(function, "Location paramter", mu);
@@ -51,8 +51,8 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
   scalar_seq_view<T_loc> mu_vec(mu);
   scalar_seq_view<T_scale> kappa_vec(kappa);
 
-  VectorBuilder<true, T_partials_return, T_scale> kappa_dbl(length(kappa));
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
+  VectorBuilder<true, T_partials, T_scale> kappa_dbl(length(kappa));
+  VectorBuilder<include_summand<propto, T_scale>::value, T_partials,
                 T_scale>
       log_bessel0(length(kappa));
   for (size_t i = 0; i < length(kappa); i++) {
@@ -68,20 +68,20 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
   size_t N = max_size(y, mu, kappa);
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_ = value_of(y_vec[n]);
-    const T_partials_return y_dbl = y_ - floor(y_ / TWO_PI) * TWO_PI;
-    const T_partials_return mu_dbl = value_of(mu_vec[n]);
+    const T_partials y_ = value_of(y_vec[n]);
+    const T_partials y_dbl = y_ - floor(y_ / TWO_PI) * TWO_PI;
+    const T_partials mu_dbl = value_of(mu_vec[n]);
 
-    T_partials_return bessel0 = 0;
+    T_partials bessel0 = 0;
     if (compute_bessel0) {
       bessel0 = modified_bessel_first_kind(0, kappa_dbl[n]);
     }
-    T_partials_return bessel1 = 0;
+    T_partials bessel1 = 0;
     if (compute_bessel1) {
       bessel1 = modified_bessel_first_kind(-1, kappa_dbl[n]);
     }
-    const T_partials_return kappa_sin = kappa_dbl[n] * sin(mu_dbl - y_dbl);
-    const T_partials_return kappa_cos = kappa_dbl[n] * cos(mu_dbl - y_dbl);
+    const T_partials kappa_sin = kappa_dbl[n] * sin(mu_dbl - y_dbl);
+    const T_partials kappa_cos = kappa_dbl[n] * cos(mu_dbl - y_dbl);
 
     if (include_summand<propto>::value) {
       logp -= LOG_TWO_PI;
@@ -108,9 +108,8 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
 }
 
 template <typename T_y, typename T_loc, typename T_scale>
-inline return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y,
-                                                         T_loc const& mu,
-                                                         T_scale const& kappa) {
+inline auto von_mises_lpdf(T_y const& y, T_loc const& mu,
+                           T_scale const& kappa) {
   return von_mises_lpdf<false>(y, mu, kappa);
 }
 

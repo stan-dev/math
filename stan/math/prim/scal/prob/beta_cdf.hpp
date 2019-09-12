@@ -32,17 +32,17 @@ namespace math {
  * @tparam T_scale_fail Type of beta.
  */
 template <typename T_y, typename T_scale_succ, typename T_scale_fail>
-return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
-    const T_y& y, const T_scale_succ& alpha, const T_scale_fail& beta) {
-  using T_partials_return = partials_return_t<T_y, T_scale_succ, T_scale_fail>;
+inline auto beta_cdf(const T_y& y, const T_scale_succ& alpha,
+                     const T_scale_fail& beta) {
+  using T_partials = partials_return_t<T_y, T_scale_succ, T_scale_fail>;
+  T_partials P(1.0);
 
   if (size_zero(y, alpha, beta)) {
-    return 1.0;
+    return P;
   }
 
   static const char* function = "beta_cdf";
 
-  T_partials_return P(1.0);
 
   check_positive_finite(function, "First shape parameter", alpha);
   check_positive_finite(function, "Second shape parameter", beta);
@@ -70,21 +70,21 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
   }
 
   VectorBuilder<!is_constant_all<T_scale_succ, T_scale_fail>::value,
-                T_partials_return, T_scale_succ, T_scale_fail>
+                T_partials, T_scale_succ, T_scale_fail>
       digamma_alpha_vec(max_size(alpha, beta));
 
   VectorBuilder<!is_constant_all<T_scale_succ, T_scale_fail>::value,
-                T_partials_return, T_scale_succ, T_scale_fail>
+                T_partials, T_scale_succ, T_scale_fail>
       digamma_beta_vec(max_size(alpha, beta));
 
   VectorBuilder<!is_constant_all<T_scale_succ, T_scale_fail>::value,
-                T_partials_return, T_scale_succ, T_scale_fail>
+                T_partials, T_scale_succ, T_scale_fail>
       digamma_sum_vec(max_size(alpha, beta));
 
   if (!is_constant_all<T_scale_succ, T_scale_fail>::value) {
     for (size_t n = 0; n < N; n++) {
-      const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
-      const T_partials_return beta_dbl = value_of(beta_vec[n]);
+      const T_partials alpha_dbl = value_of(alpha_vec[n]);
+      const T_partials beta_dbl = value_of(beta_vec[n]);
 
       digamma_alpha_vec[n] = digamma(alpha_dbl);
       digamma_beta_vec[n] = digamma(beta_dbl);
@@ -99,11 +99,11 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
       continue;
     }
 
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
-    const T_partials_return beta_dbl = value_of(beta_vec[n]);
+    const T_partials y_dbl = value_of(y_vec[n]);
+    const T_partials alpha_dbl = value_of(alpha_vec[n]);
+    const T_partials beta_dbl = value_of(beta_vec[n]);
 
-    const T_partials_return Pn = inc_beta(alpha_dbl, beta_dbl, y_dbl);
+    const T_partials Pn = inc_beta(alpha_dbl, beta_dbl, y_dbl);
 
     P *= Pn;
 

@@ -25,15 +25,14 @@ namespace math {
  * @tparam T_inv_scale Type of inverse scale.
  */
 template <typename T_y, typename T_inv_scale>
-return_type_t<T_y, T_inv_scale> exponential_cdf(const T_y& y,
-                                                const T_inv_scale& beta) {
-  using T_partials_return = partials_return_t<T_y, T_inv_scale>;
+inline auto exponential_cdf(const T_y& y, const T_inv_scale& beta) {
+  using T_partials = partials_return_t<T_y, T_inv_scale>;
 
   static const char* function = "exponential_cdf";
 
   using std::exp;
 
-  T_partials_return cdf(1.0);
+  T_partials cdf(1.0);
   if (size_zero(y, beta)) {
     return cdf;
   }
@@ -48,19 +47,19 @@ return_type_t<T_y, T_inv_scale> exponential_cdf(const T_y& y,
   scalar_seq_view<T_inv_scale> beta_vec(beta);
   size_t N = max_size(y, beta);
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return beta_dbl = value_of(beta_vec[n]);
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return one_m_exp = 1.0 - exp(-beta_dbl * y_dbl);
+    const T_partials beta_dbl = value_of(beta_vec[n]);
+    const T_partials y_dbl = value_of(y_vec[n]);
+    const T_partials one_m_exp = 1.0 - exp(-beta_dbl * y_dbl);
 
     cdf *= one_m_exp;
   }
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return beta_dbl = value_of(beta_vec[n]);
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return one_m_exp = 1.0 - exp(-beta_dbl * y_dbl);
+    const T_partials beta_dbl = value_of(beta_vec[n]);
+    const T_partials y_dbl = value_of(y_vec[n]);
+    const T_partials one_m_exp = 1.0 - exp(-beta_dbl * y_dbl);
 
-    T_partials_return rep_deriv = exp(-beta_dbl * y_dbl) / one_m_exp;
+    T_partials rep_deriv = exp(-beta_dbl * y_dbl) / one_m_exp;
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] += rep_deriv * beta_dbl * cdf;
     }

@@ -18,19 +18,18 @@ namespace math {
 // pareto_type_2(y|lambda, alpha)  [y >= 0;  lambda > 0;  alpha > 0]
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
           typename T_shape>
-return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
-    const T_y& y, const T_loc& mu, const T_scale& lambda,
-    const T_shape& alpha) {
+inline auto pareto_type_2_lpdf(const T_y& y, const T_loc& mu,
+                               const T_scale& lambda, const T_shape& alpha) {
   static const char* function = "pareto_type_2_lpdf";
-  using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_shape>;
+  using T_partials = partials_return_t<T_y, T_loc, T_scale, T_shape>;
 
   using std::log;
 
   if (size_zero(y, mu, lambda, alpha)) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
-  T_partials_return logp(0.0);
+  T_partials logp(0.0);
 
   check_greater_or_equal(function, "Random variable", y, mu);
   check_not_nan(function, "Random variable", y);
@@ -40,7 +39,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
                          lambda, "Shape parameter", alpha);
 
   if (!include_summand<propto, T_y, T_loc, T_scale, T_shape>::value) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
   scalar_seq_view<T_y> y_vec(y);
@@ -53,7 +52,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
       y, mu, lambda, alpha);
 
   VectorBuilder<include_summand<propto, T_y, T_loc, T_scale, T_shape>::value,
-                T_partials_return, T_y, T_loc, T_scale>
+                T_partials, T_y, T_loc, T_scale>
       log1p_scaled_diff(N);
   if (include_summand<propto, T_y, T_loc, T_scale, T_shape>::value) {
     for (size_t n = 0; n < N; n++) {
@@ -62,7 +61,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
     }
   }
 
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
+  VectorBuilder<include_summand<propto, T_scale>::value, T_partials,
                 T_scale>
       log_lambda(length(lambda));
   if (include_summand<propto, T_scale>::value) {
@@ -71,7 +70,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
     }
   }
 
-  VectorBuilder<include_summand<propto, T_shape>::value, T_partials_return,
+  VectorBuilder<include_summand<propto, T_shape>::value, T_partials,
                 T_shape>
       log_alpha(length(alpha));
   if (include_summand<propto, T_shape>::value) {
@@ -80,7 +79,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
     }
   }
 
-  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
+  VectorBuilder<!is_constant_all<T_shape>::value, T_partials, T_shape>
       inv_alpha(length(alpha));
   if (!is_constant_all<T_shape>::value) {
     for (size_t n = 0; n < length(alpha); n++) {
@@ -89,14 +88,14 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
   }
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return mu_dbl = value_of(mu_vec[n]);
-    const T_partials_return lambda_dbl = value_of(lambda_vec[n]);
-    const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
-    const T_partials_return sum_dbl = lambda_dbl + y_dbl - mu_dbl;
-    const T_partials_return inv_sum = 1.0 / sum_dbl;
-    const T_partials_return alpha_div_sum = alpha_dbl / sum_dbl;
-    const T_partials_return deriv_1_2 = inv_sum + alpha_div_sum;
+    const T_partials y_dbl = value_of(y_vec[n]);
+    const T_partials mu_dbl = value_of(mu_vec[n]);
+    const T_partials lambda_dbl = value_of(lambda_vec[n]);
+    const T_partials alpha_dbl = value_of(alpha_vec[n]);
+    const T_partials sum_dbl = lambda_dbl + y_dbl - mu_dbl;
+    const T_partials inv_sum = 1.0 / sum_dbl;
+    const T_partials alpha_div_sum = alpha_dbl / sum_dbl;
+    const T_partials deriv_1_2 = inv_sum + alpha_div_sum;
 
     if (include_summand<propto, T_shape>::value) {
       logp += log_alpha[n];
@@ -126,9 +125,8 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
 }
 
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
-inline return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
-    const T_y& y, const T_loc& mu, const T_scale& lambda,
-    const T_shape& alpha) {
+inline auto pareto_type_2_lpdf(const T_y& y, const T_loc& mu,
+                               const T_scale& lambda, const T_shape& alpha) {
   return pareto_type_2_lpdf<false>(y, mu, lambda, alpha);
 }
 

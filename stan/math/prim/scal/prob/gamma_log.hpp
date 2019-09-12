@@ -33,9 +33,8 @@ namespace math {
  * @tparam T_inv_scale Type of inverse scale.
  */
 template <bool propto, typename T_y, typename T_shape, typename T_inv_scale>
-return_type_t<T_y, T_shape, T_inv_scale> gamma_log(const T_y& y,
-                                                   const T_shape& alpha,
-                                                   const T_inv_scale& beta) {
+inline auto gamma_log(const T_y& y, const T_shape& alpha,
+                      const T_inv_scale& beta) {
   return gamma_lpdf<propto, T_y, T_shape, T_inv_scale>(y, alpha, beta);
 }
 
@@ -43,8 +42,8 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_log(const T_y& y,
  * @deprecated use <code>gamma_lpdf</code>
  */
 template <typename T_y, typename T_shape, typename T_inv_scale>
-inline return_type_t<T_y, T_shape, T_inv_scale> gamma_log(
-    const T_y& y, const T_shape& alpha, const T_inv_scale& beta) {
+inline auto gamma_log(const T_y& y, const T_shape& alpha,
+                      const T_inv_scale& beta) {
   return gamma_lpdf<T_y, T_shape, T_inv_scale>(y, alpha, beta);
 }
 

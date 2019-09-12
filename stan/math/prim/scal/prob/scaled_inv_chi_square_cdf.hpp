@@ -32,10 +32,9 @@ namespace math {
  * @tparam T_dof Type of degrees of freedom.
  */
 template <typename T_y, typename T_dof, typename T_scale>
-return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_cdf(const T_y& y,
-                                                             const T_dof& nu,
-                                                             const T_scale& s) {
-  using T_partials_return = partials_return_t<T_y, T_dof, T_scale>;
+inline auto scaled_inv_chi_square_cdf(const T_y& y, const T_dof& nu,
+                                      const T_scale& s) {
+  using T_partials = partials_return_t<T_y, T_dof, T_scale>;
 
   if (size_zero(y, nu, s)) {
     return 1.0;
@@ -43,7 +42,7 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_cdf(const T_y& y,
 
   static const char* function = "scaled_inv_chi_square_cdf";
 
-  T_partials_return P(1.0);
+  T_partials P(1.0);
 
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
@@ -71,14 +70,14 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_cdf(const T_y& y,
   using std::exp;
   using std::pow;
 
-  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
+  VectorBuilder<!is_constant_all<T_dof>::value, T_partials, T_dof>
       gamma_vec(stan::length(nu));
-  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
+  VectorBuilder<!is_constant_all<T_dof>::value, T_partials, T_dof>
       digamma_vec(stan::length(nu));
 
   if (!is_constant_all<T_dof>::value) {
     for (size_t i = 0; i < stan::length(nu); i++) {
-      const T_partials_return half_nu_dbl = 0.5 * value_of(nu_vec[i]);
+      const T_partials half_nu_dbl = 0.5 * value_of(nu_vec[i]);
       gamma_vec[i] = tgamma(half_nu_dbl);
       digamma_vec[i] = digamma(half_nu_dbl);
     }
@@ -91,16 +90,16 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_cdf(const T_y& y,
       continue;
     }
 
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return y_inv_dbl = 1.0 / y_dbl;
-    const T_partials_return half_nu_dbl = 0.5 * value_of(nu_vec[n]);
-    const T_partials_return s_dbl = value_of(s_vec[n]);
-    const T_partials_return half_s2_overx_dbl = 0.5 * s_dbl * s_dbl * y_inv_dbl;
-    const T_partials_return half_nu_s2_overx_dbl
+    const T_partials y_dbl = value_of(y_vec[n]);
+    const T_partials y_inv_dbl = 1.0 / y_dbl;
+    const T_partials half_nu_dbl = 0.5 * value_of(nu_vec[n]);
+    const T_partials s_dbl = value_of(s_vec[n]);
+    const T_partials half_s2_overx_dbl = 0.5 * s_dbl * s_dbl * y_inv_dbl;
+    const T_partials half_nu_s2_overx_dbl
         = 2.0 * half_nu_dbl * half_s2_overx_dbl;
 
-    const T_partials_return Pn = gamma_q(half_nu_dbl, half_nu_s2_overx_dbl);
-    const T_partials_return gamma_p_deriv
+    const T_partials Pn = gamma_q(half_nu_dbl, half_nu_s2_overx_dbl);
+    const T_partials gamma_p_deriv
         = exp(-half_nu_s2_overx_dbl)
           * pow(half_nu_s2_overx_dbl, half_nu_dbl - 1) / tgamma(half_nu_dbl);
 

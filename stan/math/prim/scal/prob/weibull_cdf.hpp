@@ -26,10 +26,9 @@ namespace math {
  * @throw std::domain_error if y is negative, alpha sigma is nonpositive
  */
 template <typename T_y, typename T_shape, typename T_scale>
-return_type_t<T_y, T_shape, T_scale> weibull_cdf(const T_y& y,
-                                                 const T_shape& alpha,
-                                                 const T_scale& sigma) {
-  using T_partials_return = partials_return_t<T_y, T_shape, T_scale>;
+inline auto weibull_cdf(const T_y& y, const T_shape& alpha,
+                        const T_scale& sigma) {
+  using T_partials = partials_return_t<T_y, T_shape, T_scale>;
 
   static const char* function = "weibull_cdf";
 
@@ -40,7 +39,7 @@ return_type_t<T_y, T_shape, T_scale> weibull_cdf(const T_y& y,
     return 1.0;
   }
 
-  T_partials_return cdf(1.0);
+  T_partials cdf(1.0);
   check_nonnegative(function, "Random variable", y);
   check_positive_finite(function, "Shape parameter", alpha);
   check_positive_finite(function, "Scale parameter", sigma);
@@ -52,16 +51,16 @@ return_type_t<T_y, T_shape, T_scale> weibull_cdf(const T_y& y,
   scalar_seq_view<T_shape> alpha_vec(alpha);
   size_t N = max_size(y, sigma, alpha);
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
-    const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
-    const T_partials_return pow_ = pow(y_dbl / sigma_dbl, alpha_dbl);
-    const T_partials_return exp_ = exp(-pow_);
-    const T_partials_return cdf_ = 1.0 - exp_;
+    const T_partials y_dbl = value_of(y_vec[n]);
+    const T_partials sigma_dbl = value_of(sigma_vec[n]);
+    const T_partials alpha_dbl = value_of(alpha_vec[n]);
+    const T_partials pow_ = pow(y_dbl / sigma_dbl, alpha_dbl);
+    const T_partials exp_ = exp(-pow_);
+    const T_partials cdf_ = 1.0 - exp_;
 
     cdf *= cdf_;
 
-    const T_partials_return rep_deriv = exp_ * pow_ / cdf_;
+    const T_partials rep_deriv = exp_ * pow_ / cdf_;
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] += rep_deriv * alpha_dbl / y_dbl;
     }

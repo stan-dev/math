@@ -16,12 +16,12 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
-return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lcdf(
-    const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& alpha) {
+inline auto skew_normal_lcdf(const T_y& y, const T_loc& mu,
+                             const T_scale& sigma, const T_shape& alpha) {
   static const char* function = "skew_normal_lcdf";
-  using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_shape>;
+  using T_partials = partials_return_t<T_y, T_loc, T_scale, T_shape>;
 
-  T_partials_return cdf_log(0.0);
+  T_partials cdf_log(0.0);
 
   if (size_zero(y, mu, sigma, alpha)) {
     return cdf_log;
@@ -50,26 +50,26 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lcdf(
   const double SQRT_TWO_OVER_PI = std::sqrt(2.0 / pi());
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return mu_dbl = value_of(mu_vec[n]);
-    const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
-    const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
-    const T_partials_return alpha_dbl_sq = alpha_dbl * alpha_dbl;
-    const T_partials_return diff = (y_dbl - mu_dbl) / sigma_dbl;
-    const T_partials_return diff_sq = diff * diff;
-    const T_partials_return scaled_diff = diff / SQRT_2;
-    const T_partials_return scaled_diff_sq = diff_sq * 0.5;
-    const T_partials_return cdf_log_
+    const T_partials y_dbl = value_of(y_vec[n]);
+    const T_partials mu_dbl = value_of(mu_vec[n]);
+    const T_partials sigma_dbl = value_of(sigma_vec[n]);
+    const T_partials alpha_dbl = value_of(alpha_vec[n]);
+    const T_partials alpha_dbl_sq = alpha_dbl * alpha_dbl;
+    const T_partials diff = (y_dbl - mu_dbl) / sigma_dbl;
+    const T_partials diff_sq = diff * diff;
+    const T_partials scaled_diff = diff / SQRT_2;
+    const T_partials scaled_diff_sq = diff_sq * 0.5;
+    const T_partials cdf_log_
         = 0.5 * erfc(-scaled_diff) - 2 * owens_t(diff, alpha_dbl);
 
     cdf_log += log(cdf_log_);
 
-    const T_partials_return deriv_erfc
+    const T_partials deriv_erfc
         = SQRT_TWO_OVER_PI * 0.5 * exp(-scaled_diff_sq) / sigma_dbl;
-    const T_partials_return deriv_owens
+    const T_partials deriv_owens
         = erf(alpha_dbl * scaled_diff) * exp(-scaled_diff_sq) / SQRT_TWO_OVER_PI
           / (-2.0 * pi()) / sigma_dbl;
-    const T_partials_return rep_deriv
+    const T_partials rep_deriv
         = (-2.0 * deriv_owens + deriv_erfc) / cdf_log_;
 
     if (!is_constant_all<T_y>::value) {

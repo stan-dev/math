@@ -67,9 +67,8 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_alpha, typename T_tau,
           typename T_beta, typename T_delta>
-return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
-    const T_y& y, const T_alpha& alpha, const T_tau& tau, const T_beta& beta,
-    const T_delta& delta) {
+inline auto wiener_lpdf(const T_y& y, const T_alpha& alpha, const T_tau& tau,
+                        const T_beta& beta, const T_delta& delta) {
   static const char* function = "wiener_lpdf";
 
   using std::exp;
@@ -86,12 +85,12 @@ return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
   static const double SQUARE_PI_OVER_TWO = square(pi()) * 0.5;
   static const double TWO_TIMES_LOG_SQRT_PI = 2.0 * LOG_SQRT_PI;
 
+  using T_partials = partials_return_t<T_y, T_alpha, T_tau, T_beta, T_delta>;
+  T_partials lp(0.0);
   if (size_zero(y, alpha, beta, tau, delta)) {
-    return 0.0;
+    return lp;
   }
 
-  using T_return_type = return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta>;
-  T_return_type lp(0.0);
 
   check_not_nan(function, "Random variable", y);
   check_not_nan(function, "Boundary separation", alpha);
@@ -112,7 +111,7 @@ return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
 
   size_t N = std::max(max_size(y, alpha, beta), max_size(tau, delta));
   if (!N) {
-    return 0.0;
+    return lp;
   }
 
   scalar_seq_view<T_y> y_vec(y);
@@ -133,18 +132,18 @@ return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
   }
 
   if (!include_summand<propto, T_y, T_alpha, T_tau, T_beta, T_delta>::value) {
-    return 0;
+    return lp;
   }
 
   for (size_t i = 0; i < N; i++) {
     typename scalar_type<T_beta>::type one_minus_beta = 1.0 - beta_vec[i];
     typename scalar_type<T_alpha>::type alpha2 = square(alpha_vec[i]);
-    T_return_type x = (y_vec[i] - tau_vec[i]) / alpha2;
-    T_return_type kl, ks, tmp = 0;
-    T_return_type k, K;
-    T_return_type sqrt_x = sqrt(x);
-    T_return_type log_x = log(x);
-    T_return_type one_over_pi_times_sqrt_x = 1.0 / pi() * sqrt_x;
+    T_partials x = (y_vec[i] - tau_vec[i]) / alpha2;
+    T_partials kl, ks, tmp = 0;
+    T_partials k, K;
+    T_partials sqrt_x = sqrt(x);
+    T_partials log_x = log(x);
+    T_partials one_over_pi_times_sqrt_x = 1.0 / pi() * sqrt_x;
 
     // calculate number of terms needed for large t:
     // if error threshold is set low enough
@@ -158,21 +157,21 @@ return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
     }
     // calculate number of terms needed for small t:
     // if error threshold is set low enough
-    T_return_type tmp_expr0
+    T_partials tmp_expr0
         = TWO_TIMES_SQRT_2_TIMES_SQRT_PI_TIMES_WIENER_ERR * sqrt_x;
     if (tmp_expr0 < 1) {
       // compute bound
       ks = 2.0 + sqrt_x * sqrt(-2 * log(tmp_expr0));
       // ensure boundary conditions are met
-      T_return_type sqrt_x_plus_one = sqrt_x + 1.0;
+      T_partials sqrt_x_plus_one = sqrt_x + 1.0;
       ks = (ks > sqrt_x_plus_one) ? ks : sqrt_x_plus_one;
     } else {     // if error threshold was set too high
       ks = 2.0;  // minimal kappa for that case
     }
     if (ks < kl) {   // small t
       K = ceil(ks);  // round to smallest integer meeting error
-      T_return_type tmp_expr1 = (K - 1.0) / 2.0;
-      T_return_type tmp_expr2 = ceil(tmp_expr1);
+      T_partials tmp_expr1 = (K - 1.0) / 2.0;
+      T_partials tmp_expr2 = ceil(tmp_expr1);
       for (k = -floor(tmp_expr1); k <= tmp_expr2; k++) {
         tmp += (one_minus_beta + 2.0 * k)
                * exp(-(square(one_minus_beta + 2.0 * k)) * 0.5 / x);
@@ -196,9 +195,8 @@ return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
 
 template <typename T_y, typename T_alpha, typename T_tau, typename T_beta,
           typename T_delta>
-inline return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
-    const T_y& y, const T_alpha& alpha, const T_tau& tau, const T_beta& beta,
-    const T_delta& delta) {
+inline auto wiener_lpdf(const T_y& y, const T_alpha& alpha, const T_tau& tau,
+                        const T_beta& beta, const T_delta& delta) {
   return wiener_lpdf<false>(y, alpha, tau, beta, delta);
 }
 

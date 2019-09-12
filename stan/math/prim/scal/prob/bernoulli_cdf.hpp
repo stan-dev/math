@@ -25,15 +25,15 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch.
  */
 template <typename T_n, typename T_prob>
-return_type_t<T_prob> bernoulli_cdf(const T_n& n, const T_prob& theta) {
+inline auto bernoulli_cdf(const T_n& n, const T_prob& theta) {
   static const char* function = "bernoulli_cdf";
-  using T_partials_return = partials_return_t<T_n, T_prob>;
+  using T_partials = partials_return_t<T_n, T_prob>;
+  T_partials P(1.0);
 
   if (size_zero(n, theta)) {
-    return 1.0;
+    return T_partials(1.0);
   }
 
-  T_partials_return P(1.0);
 
   check_finite(function, "Probability parameter", theta);
   check_bounded(function, "Probability parameter", theta, 0.0, 1.0);
@@ -61,7 +61,7 @@ return_type_t<T_prob> bernoulli_cdf(const T_n& n, const T_prob& theta) {
       continue;
     }
 
-    const T_partials_return Pi = 1 - value_of(theta_vec[i]);
+    const T_partials Pi = 1 - value_of(theta_vec[i]);
 
     P *= Pi;
 

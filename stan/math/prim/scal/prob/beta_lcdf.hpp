@@ -37,17 +37,17 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_y, typename T_scale_succ, typename T_scale_fail>
-return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lcdf(
-    const T_y& y, const T_scale_succ& alpha, const T_scale_fail& beta) {
-  using T_partials_return = partials_return_t<T_y, T_scale_succ, T_scale_fail>;
+inline auto beta_lcdf(const T_y& y, const T_scale_succ& alpha,
+                      const T_scale_fail& beta) {
+  using T_partials = partials_return_t<T_y, T_scale_succ, T_scale_fail>;
 
   if (size_zero(y, alpha, beta)) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
   static const char* function = "beta_lcdf";
 
-  T_partials_return cdf_log(0.0);
+  T_partials cdf_log(0.0);
 
   check_positive_finite(function, "First shape parameter", alpha);
   check_positive_finite(function, "Second shape parameter", beta);
@@ -71,21 +71,21 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lcdf(
   using std::pow;
 
   VectorBuilder<!is_constant_all<T_scale_succ, T_scale_fail>::value,
-                T_partials_return, T_scale_succ, T_scale_fail>
+                T_partials, T_scale_succ, T_scale_fail>
       digamma_alpha_vec(max_size(alpha, beta));
 
   VectorBuilder<!is_constant_all<T_scale_succ, T_scale_fail>::value,
-                T_partials_return, T_scale_succ, T_scale_fail>
+                T_partials, T_scale_succ, T_scale_fail>
       digamma_beta_vec(max_size(alpha, beta));
 
   VectorBuilder<!is_constant_all<T_scale_succ, T_scale_fail>::value,
-                T_partials_return, T_scale_succ, T_scale_fail>
+                T_partials, T_scale_succ, T_scale_fail>
       digamma_sum_vec(max_size(alpha, beta));
 
   if (!is_constant_all<T_scale_succ, T_scale_fail>::value) {
     for (size_t i = 0; i < max_size(alpha, beta); i++) {
-      const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
-      const T_partials_return beta_dbl = value_of(beta_vec[i]);
+      const T_partials alpha_dbl = value_of(alpha_vec[i]);
+      const T_partials beta_dbl = value_of(beta_vec[i]);
 
       digamma_alpha_vec[i] = digamma(alpha_dbl);
       digamma_beta_vec[i] = digamma(beta_dbl);
@@ -94,12 +94,12 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lcdf(
   }
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
-    const T_partials_return beta_dbl = value_of(beta_vec[n]);
-    const T_partials_return betafunc_dbl
+    const T_partials y_dbl = value_of(y_vec[n]);
+    const T_partials alpha_dbl = value_of(alpha_vec[n]);
+    const T_partials beta_dbl = value_of(beta_vec[n]);
+    const T_partials betafunc_dbl
         = stan::math::beta(alpha_dbl, beta_dbl);
-    const T_partials_return Pn = inc_beta(alpha_dbl, beta_dbl, y_dbl);
+    const T_partials Pn = inc_beta(alpha_dbl, beta_dbl, y_dbl);
 
     cdf_log += log(Pn);
 
@@ -109,8 +109,8 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lcdf(
                                           / betafunc_dbl / Pn;
     }
 
-    T_partials_return g1 = 0;
-    T_partials_return g2 = 0;
+    T_partials g1 = 0;
+    T_partials g2 = 0;
 
     if (!is_constant_all<T_scale_succ, T_scale_fail>::value) {
       grad_reg_inc_beta(g1, g2, alpha_dbl, beta_dbl, y_dbl,

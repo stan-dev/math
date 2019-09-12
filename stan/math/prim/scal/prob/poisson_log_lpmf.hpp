@@ -17,19 +17,18 @@ namespace math {
 
 // PoissonLog(n|alpha)  [n >= 0]   = Poisson(n|exp(alpha))
 template <bool propto, typename T_n, typename T_log_rate>
-return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
-                                           const T_log_rate& alpha) {
-  using T_partials_return = partials_return_t<T_n, T_log_rate>;
+inline auto poisson_log_lpmf(const T_n& n, const T_log_rate& alpha) {
+  using T_partials = partials_return_t<T_n, T_log_rate>;
 
   static const char* function = "poisson_log_lpmf";
 
   using std::exp;
 
   if (size_zero(n, alpha)) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
-  T_partials_return logp(0.0);
+  T_partials logp(0.0);
 
   check_nonnegative(function, "Random variable", n);
   check_not_nan(function, "Log rate parameter", alpha);
@@ -37,7 +36,7 @@ return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
                          alpha);
 
   if (!include_summand<propto, T_log_rate>::value) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
   scalar_seq_view<T_n> n_vec(n);
@@ -47,20 +46,20 @@ return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
   // FIXME: first loop size of alpha_vec, second loop if-ed for size==1
   for (size_t i = 0; i < size; i++) {
     if (std::numeric_limits<double>::infinity() == alpha_vec[i]) {
-      return LOG_ZERO;
+      return T_partials(LOG_ZERO);
     }
   }
   for (size_t i = 0; i < size; i++) {
     if (-std::numeric_limits<double>::infinity() == alpha_vec[i]
         && n_vec[i] != 0) {
-      return LOG_ZERO;
+      return T_partials(LOG_ZERO);
     }
   }
 
   operands_and_partials<T_log_rate> ops_partials(alpha);
 
   // FIXME: cache value_of for alpha_vec?  faster if only one?
-  VectorBuilder<include_summand<propto, T_log_rate>::value, T_partials_return,
+  VectorBuilder<include_summand<propto, T_log_rate>::value, T_partials,
                 T_log_rate>
       exp_alpha(length(alpha));
   for (size_t i = 0; i < length(alpha); i++) {
@@ -88,8 +87,7 @@ return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
 }
 
 template <typename T_n, typename T_log_rate>
-inline return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
-                                                  const T_log_rate& alpha) {
+inline auto poisson_log_lpmf(const T_n& n, const T_log_rate& alpha) {
   return poisson_log_lpmf<false>(n, alpha);
 }
 

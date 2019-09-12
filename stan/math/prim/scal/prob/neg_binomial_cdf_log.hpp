@@ -11,8 +11,8 @@ namespace math {
  * @deprecated use <code>neg_binomial_lcdf</code>
  */
 template <typename T_n, typename T_shape, typename T_inv_scale>
-return_type_t<T_shape, T_inv_scale> neg_binomial_cdf_log(
-    const T_n& n, const T_shape& alpha, const T_inv_scale& beta) {
+inline auto neg_binomial_cdf_log(const T_n& n, const T_shape& alpha,
+                                 const T_inv_scale& beta) {
   return neg_binomial_lcdf<T_n, T_shape, T_inv_scale>(n, alpha, beta);
 }
 

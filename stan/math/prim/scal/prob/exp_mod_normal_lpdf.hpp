@@ -17,17 +17,17 @@ namespace math {
 
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
           typename T_inv_scale>
-return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
-    const T_y& y, const T_loc& mu, const T_scale& sigma,
-    const T_inv_scale& lambda) {
+inline auto exp_mod_normal_lpdf(const T_y& y, const T_loc& mu,
+                                const T_scale& sigma,
+                                const T_inv_scale& lambda) {
   static const char* function = "exp_mod_normal_lpdf";
-  using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_inv_scale>;
+  using T_partials = partials_return_t<T_y, T_loc, T_scale, T_inv_scale>;
 
   if (size_zero(y, mu, sigma, lambda)) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
-  T_partials_return logp(0.0);
+  T_partials logp(0.0);
 
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
@@ -38,7 +38,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
                          lambda);
 
   if (!include_summand<propto, T_y, T_loc, T_scale, T_inv_scale>::value) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
   using std::exp;
@@ -55,12 +55,12 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
   size_t N = max_size(y, mu, sigma, lambda);
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return mu_dbl = value_of(mu_vec[n]);
-    const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
-    const T_partials_return lambda_dbl = value_of(lambda_vec[n]);
+    const T_partials y_dbl = value_of(y_vec[n]);
+    const T_partials mu_dbl = value_of(mu_vec[n]);
+    const T_partials sigma_dbl = value_of(sigma_vec[n]);
+    const T_partials lambda_dbl = value_of(lambda_vec[n]);
 
-    const T_partials_return pi_dbl = boost::math::constants::pi<double>();
+    const T_partials pi_dbl = boost::math::constants::pi<double>();
 
     if (include_summand<propto>::value) {
       logp -= log(2.0);
@@ -75,7 +75,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
                          / (sqrt(2.0) * sigma_dbl)));
     }
 
-    const T_partials_return deriv_logerfc
+    const T_partials deriv_logerfc
         = -2.0 / sqrt(pi_dbl)
           * exp(-(mu_dbl + lambda_dbl * sigma_dbl * sigma_dbl - y_dbl)
                 / (std::sqrt(2.0) * sigma_dbl)
@@ -110,9 +110,9 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
 }
 
 template <typename T_y, typename T_loc, typename T_scale, typename T_inv_scale>
-inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
-    const T_y& y, const T_loc& mu, const T_scale& sigma,
-    const T_inv_scale& lambda) {
+inline auto exp_mod_normal_lpdf(const T_y& y, const T_loc& mu,
+                                const T_scale& sigma,
+                                const T_inv_scale& lambda) {
   return exp_mod_normal_lpdf<false>(y, mu, sigma, lambda);
 }
 

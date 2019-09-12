@@ -16,12 +16,11 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_loc, typename T_scale>
-return_type_t<T_y, T_loc, T_scale> logistic_lcdf(const T_y& y, const T_loc& mu,
-                                                 const T_scale& sigma) {
-  using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
+inline auto logistic_lcdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
+  using T_partials = partials_return_t<T_y, T_loc, T_scale>;
 
   if (size_zero(y, mu, sigma)) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
   static const char* function = "logistic_lcdf";
@@ -29,7 +28,7 @@ return_type_t<T_y, T_loc, T_scale> logistic_lcdf(const T_y& y, const T_loc& mu,
   using std::exp;
   using std::log;
 
-  T_partials_return P(0.0);
+  T_partials P(0.0);
 
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
@@ -59,12 +58,12 @@ return_type_t<T_y, T_loc, T_scale> logistic_lcdf(const T_y& y, const T_loc& mu,
       continue;
     }
 
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return mu_dbl = value_of(mu_vec[n]);
-    const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
-    const T_partials_return sigma_inv_vec = 1.0 / value_of(sigma_vec[n]);
+    const T_partials y_dbl = value_of(y_vec[n]);
+    const T_partials mu_dbl = value_of(mu_vec[n]);
+    const T_partials sigma_dbl = value_of(sigma_vec[n]);
+    const T_partials sigma_inv_vec = 1.0 / value_of(sigma_vec[n]);
 
-    const T_partials_return Pn
+    const T_partials Pn
         = 1.0 / (1.0 + exp(-(y_dbl - mu_dbl) * sigma_inv_vec));
     P += log(Pn);
 

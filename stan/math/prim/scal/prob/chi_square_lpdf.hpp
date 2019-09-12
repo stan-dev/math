@@ -36,9 +36,9 @@ namespace math {
  * @tparam T_dof Type of degrees of freedom.
  */
 template <bool propto, typename T_y, typename T_dof>
-return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
+inline auto chi_square_lpdf(const T_y& y, const T_dof& nu) {
   static const char* function = "chi_square_lpdf";
-  using T_partials_return = partials_return_t<T_y, T_dof>;
+  using T_partials = partials_return_t<T_y, T_dof>;
 
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
@@ -46,10 +46,10 @@ return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
   check_consistent_sizes(function, "Random variable", y,
                          "Degrees of freedom parameter", nu);
   if (size_zero(y, nu)) {
-    return 0;
+    return T_partials(0);
   }
 
-  T_partials_return logp(0);
+  T_partials logp(0);
 
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_dof> nu_vec(nu);
@@ -57,17 +57,17 @@ return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
 
   for (size_t n = 0; n < length(y); n++) {
     if (value_of(y_vec[n]) < 0) {
-      return LOG_ZERO;
+      return T_partials(LOG_ZERO);
     }
   }
 
   if (!include_summand<propto, T_y, T_dof>::value) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
   using std::log;
 
-  VectorBuilder<include_summand<propto, T_y, T_dof>::value, T_partials_return,
+  VectorBuilder<include_summand<propto, T_y, T_dof>::value, T_partials,
                 T_y>
       log_y(length(y));
   for (size_t i = 0; i < length(y); i++) {
@@ -76,7 +76,7 @@ return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
     }
   }
 
-  VectorBuilder<include_summand<propto, T_y>::value, T_partials_return, T_y>
+  VectorBuilder<include_summand<propto, T_y>::value, T_partials, T_y>
       inv_y(length(y));
   for (size_t i = 0; i < length(y); i++) {
     if (include_summand<propto, T_y>::value) {
@@ -84,13 +84,13 @@ return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
     }
   }
 
-  VectorBuilder<include_summand<propto, T_dof>::value, T_partials_return, T_dof>
+  VectorBuilder<include_summand<propto, T_dof>::value, T_partials, T_dof>
       lgamma_half_nu(length(nu));
-  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
+  VectorBuilder<!is_constant_all<T_dof>::value, T_partials, T_dof>
       digamma_half_nu_over_two(length(nu));
 
   for (size_t i = 0; i < length(nu); i++) {
-    T_partials_return half_nu = 0.5 * value_of(nu_vec[i]);
+    T_partials half_nu = 0.5 * value_of(nu_vec[i]);
     if (include_summand<propto, T_dof>::value) {
       lgamma_half_nu[i] = lgamma(half_nu);
     }
@@ -102,10 +102,10 @@ return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
   operands_and_partials<T_y, T_dof> ops_partials(y, nu);
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return half_y = 0.5 * y_dbl;
-    const T_partials_return nu_dbl = value_of(nu_vec[n]);
-    const T_partials_return half_nu = 0.5 * nu_dbl;
+    const T_partials y_dbl = value_of(y_vec[n]);
+    const T_partials half_y = 0.5 * y_dbl;
+    const T_partials nu_dbl = value_of(nu_vec[n]);
+    const T_partials half_nu = 0.5 * nu_dbl;
     if (include_summand<propto, T_dof>::value) {
       logp += nu_dbl * NEG_LOG_TWO_OVER_TWO - lgamma_half_nu[n];
     }
@@ -129,8 +129,7 @@ return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
 }
 
 template <typename T_y, typename T_dof>
-inline return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y,
-                                                 const T_dof& nu) {
+inline auto chi_square_lpdf(const T_y& y, const T_dof& nu) {
   return chi_square_lpdf<false>(y, nu);
 }
 

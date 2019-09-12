@@ -33,17 +33,17 @@ namespace math {
  * @throw std::invalid_argument if vector sizes do not match
  */
 template <bool propto, typename T_n, typename T_N, typename T_prob>
-return_type_t<T_prob> binomial_logit_lpmf(const T_n& n, const T_N& N,
-                                          const T_prob& alpha) {
-  using T_partials_return = partials_return_t<T_n, T_N, T_prob>;
+inline auto binomial_logit_lpmf(const T_n& n, const T_N& N,
+                                const T_prob& alpha) {
+  using T_partials = partials_return_t<T_n, T_N, T_prob>;
 
   static const char* function = "binomial_logit_lpmf";
 
   if (size_zero(n, N, alpha)) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
-  T_partials_return logp = 0;
+  T_partials logp = 0;
   check_bounded(function, "Successes variable", n, 0, N);
   check_nonnegative(function, "Population size parameter", N);
   check_finite(function, "Probability parameter", alpha);
@@ -52,7 +52,7 @@ return_type_t<T_prob> binomial_logit_lpmf(const T_n& n, const T_N& N,
                          "Probability parameter", alpha);
 
   if (!include_summand<propto, T_prob>::value) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
   scalar_seq_view<T_n> n_vec(n);
@@ -68,13 +68,13 @@ return_type_t<T_prob> binomial_logit_lpmf(const T_n& n, const T_N& N,
     }
   }
 
-  VectorBuilder<true, T_partials_return, T_prob> log_inv_logit_alpha(
+  VectorBuilder<true, T_partials, T_prob> log_inv_logit_alpha(
       length(alpha));
   for (size_t i = 0; i < length(alpha); ++i) {
     log_inv_logit_alpha[i] = log_inv_logit(value_of(alpha_vec[i]));
   }
 
-  VectorBuilder<true, T_partials_return, T_prob> log_inv_logit_neg_alpha(
+  VectorBuilder<true, T_partials, T_prob> log_inv_logit_neg_alpha(
       length(alpha));
   for (size_t i = 0; i < length(alpha); ++i) {
     log_inv_logit_neg_alpha[i] = log_inv_logit(-value_of(alpha_vec[i]));
@@ -86,8 +86,8 @@ return_type_t<T_prob> binomial_logit_lpmf(const T_n& n, const T_N& N,
   }
 
   if (length(alpha) == 1) {
-    T_partials_return temp1 = 0;
-    T_partials_return temp2 = 0;
+    T_partials temp1 = 0;
+    T_partials temp2 = 0;
     for (size_t i = 0; i < size; ++i) {
       temp1 += n_vec[i];
       temp2 += N_vec[i] - n_vec[i];
@@ -111,8 +111,8 @@ return_type_t<T_prob> binomial_logit_lpmf(const T_n& n, const T_N& N,
 }
 
 template <typename T_n, typename T_N, typename T_prob>
-inline return_type_t<T_prob> binomial_logit_lpmf(const T_n& n, const T_N& N,
-                                                 const T_prob& alpha) {
+inline auto binomial_logit_lpmf(const T_n& n, const T_N& N,
+                                const T_prob& alpha) {
   return binomial_logit_lpmf<false>(n, N, alpha);
 }
 

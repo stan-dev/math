@@ -18,17 +18,16 @@ namespace stan {
 namespace math {
 
 template <typename T_n, typename T_shape, typename T_inv_scale>
-return_type_t<T_shape, T_inv_scale> neg_binomial_lcdf(const T_n& n,
-                                                      const T_shape& alpha,
-                                                      const T_inv_scale& beta) {
+inline auto neg_binomial_lcdf(const T_n& n, const T_shape& alpha,
+                              const T_inv_scale& beta) {
   static const char* function = "neg_binomial_lcdf";
-  using T_partials_return = partials_return_t<T_n, T_shape, T_inv_scale>;
+  using T_partials = partials_return_t<T_n, T_shape, T_inv_scale>;
 
   if (size_zero(n, alpha, beta)) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
-  T_partials_return P(0.0);
+  T_partials P(0.0);
 
   check_positive_finite(function, "Shape parameter", alpha);
   check_positive_finite(function, "Inverse scale parameter", beta);
@@ -54,17 +53,17 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lcdf(const T_n& n,
     }
   }
 
-  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
+  VectorBuilder<!is_constant_all<T_shape>::value, T_partials, T_shape>
       digammaN_vec(stan::length(alpha));
-  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
+  VectorBuilder<!is_constant_all<T_shape>::value, T_partials, T_shape>
       digammaAlpha_vec(stan::length(alpha));
-  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
+  VectorBuilder<!is_constant_all<T_shape>::value, T_partials, T_shape>
       digammaSum_vec(stan::length(alpha));
 
   if (!is_constant_all<T_shape>::value) {
     for (size_t i = 0; i < stan::length(alpha); i++) {
-      const T_partials_return n_dbl = value_of(n_vec[i]);
-      const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
+      const T_partials n_dbl = value_of(n_vec[i]);
+      const T_partials alpha_dbl = value_of(alpha_vec[i]);
 
       digammaN_vec[i] = digamma(n_dbl + 1);
       digammaAlpha_vec[i] = digamma(alpha_dbl);
@@ -79,19 +78,19 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lcdf(const T_n& n,
       return ops_partials.build(0.0);
     }
 
-    const T_partials_return n_dbl = value_of(n_vec[i]);
-    const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
-    const T_partials_return beta_dbl = value_of(beta_vec[i]);
-    const T_partials_return p_dbl = beta_dbl / (1.0 + beta_dbl);
-    const T_partials_return d_dbl = 1.0 / ((1.0 + beta_dbl) * (1.0 + beta_dbl));
-    const T_partials_return Pi = inc_beta(alpha_dbl, n_dbl + 1.0, p_dbl);
-    const T_partials_return beta_func = stan::math::beta(n_dbl + 1, alpha_dbl);
+    const T_partials n_dbl = value_of(n_vec[i]);
+    const T_partials alpha_dbl = value_of(alpha_vec[i]);
+    const T_partials beta_dbl = value_of(beta_vec[i]);
+    const T_partials p_dbl = beta_dbl / (1.0 + beta_dbl);
+    const T_partials d_dbl = 1.0 / ((1.0 + beta_dbl) * (1.0 + beta_dbl));
+    const T_partials Pi = inc_beta(alpha_dbl, n_dbl + 1.0, p_dbl);
+    const T_partials beta_func = stan::math::beta(n_dbl + 1, alpha_dbl);
 
     P += log(Pi);
 
     if (!is_constant_all<T_shape>::value) {
-      T_partials_return g1 = 0;
-      T_partials_return g2 = 0;
+      T_partials g1 = 0;
+      T_partials g2 = 0;
 
       grad_reg_inc_beta(g1, g2, alpha_dbl, n_dbl + 1, p_dbl,
                         digammaAlpha_vec[i], digammaN_vec[i], digammaSum_vec[i],

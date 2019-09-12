@@ -17,15 +17,15 @@ namespace math {
 
 // Poisson CDF
 template <typename T_n, typename T_rate>
-return_type_t<T_rate> poisson_cdf(const T_n& n, const T_rate& lambda) {
+inline auto poisson_cdf(const T_n& n, const T_rate& lambda) {
   static const char* function = "poisson_cdf";
-  using T_partials_return = partials_return_t<T_n, T_rate>;
+  using T_partials = partials_return_t<T_n, T_rate>;
 
   if (size_zero(n, lambda)) {
     return 1.0;
   }
 
-  T_partials_return P(1.0);
+  T_partials P(1.0);
 
   check_not_nan(function, "Rate parameter", lambda);
   check_nonnegative(function, "Rate parameter", lambda);
@@ -56,9 +56,9 @@ return_type_t<T_rate> poisson_cdf(const T_n& n, const T_rate& lambda) {
       continue;
     }
 
-    const T_partials_return n_dbl = value_of(n_vec[i]);
-    const T_partials_return lambda_dbl = value_of(lambda_vec[i]);
-    const T_partials_return Pi = gamma_q(n_dbl + 1, lambda_dbl);
+    const T_partials n_dbl = value_of(n_vec[i]);
+    const T_partials lambda_dbl = value_of(lambda_vec[i]);
+    const T_partials Pi = gamma_q(n_dbl + 1, lambda_dbl);
 
     P *= Pi;
 

@@ -26,15 +26,15 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch.
  */
 template <typename T_n, typename T_prob>
-return_type_t<T_prob> bernoulli_lcdf(const T_n& n, const T_prob& theta) {
+inline auto bernoulli_lcdf(const T_n& n, const T_prob& theta) {
   static const char* function = "bernoulli_lcdf";
-  using T_partials_return = partials_return_t<T_n, T_prob>;
+  using T_partials = partials_return_t<T_n, T_prob>;
 
   if (size_zero(n, theta)) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
-  T_partials_return P(0.0);
+  T_partials P(0.0);
 
   check_finite(function, "Probability parameter", theta);
   check_bounded(function, "Probability parameter", theta, 0.0, 1.0);
@@ -63,7 +63,7 @@ return_type_t<T_prob> bernoulli_lcdf(const T_n& n, const T_prob& theta) {
       continue;
     }
 
-    const T_partials_return Pi = 1 - value_of(theta_vec[i]);
+    const T_partials Pi = 1 - value_of(theta_vec[i]);
 
     P += log(Pi);
 

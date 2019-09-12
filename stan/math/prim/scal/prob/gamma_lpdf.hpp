@@ -39,17 +39,16 @@ namespace math {
  * @tparam T_inv_scale Type of inverse scale.
  */
 template <bool propto, typename T_y, typename T_shape, typename T_inv_scale>
-return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
-                                                    const T_shape& alpha,
-                                                    const T_inv_scale& beta) {
+inline auto gamma_lpdf(const T_y& y, const T_shape& alpha,
+                       const T_inv_scale& beta) {
   static const char* function = "gamma_lpdf";
-  using T_partials_return = partials_return_t<T_y, T_shape, T_inv_scale>;
+  using T_partials = partials_return_t<T_y, T_shape, T_inv_scale>;
 
   if (size_zero(y, alpha, beta)) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
-  T_partials_return logp(0.0);
+  T_partials logp(0.0);
 
   check_not_nan(function, "Random variable", y);
   check_positive_finite(function, "Shape parameter", alpha);
@@ -58,7 +57,7 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
                          alpha, "Inverse scale parameter", beta);
 
   if (!include_summand<propto, T_y, T_shape, T_inv_scale>::value) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
   scalar_seq_view<T_y> y_vec(y);
@@ -66,9 +65,9 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
   scalar_seq_view<T_inv_scale> beta_vec(beta);
 
   for (size_t n = 0; n < length(y); n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
+    const T_partials y_dbl = value_of(y_vec[n]);
     if (y_dbl < 0) {
-      return LOG_ZERO;
+      return T_partials(LOG_ZERO);
     }
   }
 
@@ -77,7 +76,7 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
 
   using std::log;
 
-  VectorBuilder<include_summand<propto, T_y, T_shape>::value, T_partials_return,
+  VectorBuilder<include_summand<propto, T_y, T_shape>::value, T_partials,
                 T_y>
       log_y(length(y));
   if (include_summand<propto, T_y, T_shape>::value) {
@@ -88,10 +87,10 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
     }
   }
 
-  VectorBuilder<include_summand<propto, T_shape>::value, T_partials_return,
+  VectorBuilder<include_summand<propto, T_shape>::value, T_partials,
                 T_shape>
       lgamma_alpha(length(alpha));
-  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
+  VectorBuilder<!is_constant_all<T_shape>::value, T_partials, T_shape>
       digamma_alpha(length(alpha));
   for (size_t n = 0; n < length(alpha); n++) {
     if (include_summand<propto, T_shape>::value) {
@@ -103,7 +102,7 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
   }
 
   VectorBuilder<include_summand<propto, T_shape, T_inv_scale>::value,
-                T_partials_return, T_inv_scale>
+                T_partials, T_inv_scale>
       log_beta(length(beta));
   if (include_summand<propto, T_shape, T_inv_scale>::value) {
     for (size_t n = 0; n < length(beta); n++) {
@@ -112,9 +111,9 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
   }
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
-    const T_partials_return beta_dbl = value_of(beta_vec[n]);
+    const T_partials y_dbl = value_of(y_vec[n]);
+    const T_partials alpha_dbl = value_of(alpha_vec[n]);
+    const T_partials beta_dbl = value_of(beta_vec[n]);
 
     if (include_summand<propto, T_shape>::value) {
       logp -= lgamma_alpha[n];
@@ -144,8 +143,8 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
 }
 
 template <typename T_y, typename T_shape, typename T_inv_scale>
-inline return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(
-    const T_y& y, const T_shape& alpha, const T_inv_scale& beta) {
+inline auto gamma_lpdf(const T_y& y, const T_shape& alpha,
+                       const T_inv_scale& beta) {
   return gamma_lpdf<false>(y, alpha, beta);
 }
 

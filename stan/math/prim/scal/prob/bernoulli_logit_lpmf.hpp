@@ -26,17 +26,17 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch.
  */
 template <bool propto, typename T_n, typename T_prob>
-return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
+inline auto bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
   static const char* function = "bernoulli_logit_lpmf";
-  using T_partials_return = partials_return_t<T_n, T_prob>;
+  using T_partials = partials_return_t<T_n, T_prob>;
 
   using std::exp;
 
   if (size_zero(n, theta)) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
-  T_partials_return logp(0.0);
+  T_partials logp(0.0);
 
   check_bounded(function, "n", n, 0, 1);
   check_not_nan(function, "Logit transformed probability parameter", theta);
@@ -44,7 +44,7 @@ return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
                          "Probability parameter", theta);
 
   if (!include_summand<propto, T_prob>::value) {
-    return 0.0;
+    return T_partials(0.0);
   }
 
   scalar_seq_view<T_n> n_vec(n);
@@ -53,11 +53,11 @@ return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
   operands_and_partials<T_prob> ops_partials(theta);
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return theta_dbl = value_of(theta_vec[n]);
+    const T_partials theta_dbl = value_of(theta_vec[n]);
 
     const int sign = 2 * n_vec[n] - 1;
-    const T_partials_return ntheta = sign * theta_dbl;
-    const T_partials_return exp_m_ntheta = exp(-ntheta);
+    const T_partials ntheta = sign * theta_dbl;
+    const T_partials exp_m_ntheta = exp(-ntheta);
 
     // Handle extreme values gracefully using Taylor approximations.
     static const double cutoff = 20.0;
@@ -84,8 +84,7 @@ return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
 }
 
 template <typename T_n, typename T_prob>
-inline return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n,
-                                                  const T_prob& theta) {
+inline auto bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
   return bernoulli_logit_lpmf<false>(n, theta);
 }
 

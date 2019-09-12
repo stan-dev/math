@@ -32,8 +32,8 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_y, typename T_dof>
-return_type_t<T_y, T_dof> inv_chi_square_cdf(const T_y& y, const T_dof& nu) {
-  using T_partials_return = partials_return_t<T_y, T_dof>;
+inline auto inv_chi_square_cdf(const T_y& y, const T_dof& nu) {
+  using T_partials = partials_return_t<T_y, T_dof>;
 
   if (size_zero(y, nu)) {
     return 1.0;
@@ -41,7 +41,7 @@ return_type_t<T_y, T_dof> inv_chi_square_cdf(const T_y& y, const T_dof& nu) {
 
   static const char* function = "inv_chi_square_cdf";
 
-  T_partials_return P(1.0);
+  T_partials P(1.0);
 
   check_positive_finite(function, "Degrees of freedom parameter", nu);
   check_not_nan(function, "Random variable", y);
@@ -66,14 +66,14 @@ return_type_t<T_y, T_dof> inv_chi_square_cdf(const T_y& y, const T_dof& nu) {
   using std::exp;
   using std::pow;
 
-  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
+  VectorBuilder<!is_constant_all<T_dof>::value, T_partials, T_dof>
       gamma_vec(stan::length(nu));
-  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
+  VectorBuilder<!is_constant_all<T_dof>::value, T_partials, T_dof>
       digamma_vec(stan::length(nu));
 
   if (!is_constant_all<T_dof>::value) {
     for (size_t i = 0; i < stan::length(nu); i++) {
-      const T_partials_return nu_dbl = value_of(nu_vec[i]);
+      const T_partials nu_dbl = value_of(nu_vec[i]);
       gamma_vec[i] = tgamma(0.5 * nu_dbl);
       digamma_vec[i] = digamma(0.5 * nu_dbl);
     }
@@ -86,11 +86,11 @@ return_type_t<T_y, T_dof> inv_chi_square_cdf(const T_y& y, const T_dof& nu) {
       continue;
     }
 
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return y_inv_dbl = 1.0 / y_dbl;
-    const T_partials_return nu_dbl = value_of(nu_vec[n]);
+    const T_partials y_dbl = value_of(y_vec[n]);
+    const T_partials y_inv_dbl = 1.0 / y_dbl;
+    const T_partials nu_dbl = value_of(nu_vec[n]);
 
-    const T_partials_return Pn = gamma_q(0.5 * nu_dbl, 0.5 * y_inv_dbl);
+    const T_partials Pn = gamma_q(0.5 * nu_dbl, 0.5 * y_inv_dbl);
 
     P *= Pn;
 

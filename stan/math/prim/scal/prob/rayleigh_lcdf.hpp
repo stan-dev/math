@@ -15,13 +15,13 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_scale>
-return_type_t<T_y, T_scale> rayleigh_lcdf(const T_y& y, const T_scale& sigma) {
+inline auto rayleigh_lcdf(const T_y& y, const T_scale& sigma) {
   static const char* function = "rayleigh_lcdf";
-  using T_partials_return = partials_return_t<T_y, T_scale>;
+  using T_partials = partials_return_t<T_y, T_scale>;
 
   using std::exp;
 
-  T_partials_return cdf_log(0.0);
+  T_partials cdf_log(0.0);
 
   if (size_zero(y, sigma)) {
     return cdf_log;
@@ -40,17 +40,17 @@ return_type_t<T_y, T_scale> rayleigh_lcdf(const T_y& y, const T_scale& sigma) {
   scalar_seq_view<T_scale> sigma_vec(sigma);
   size_t N = max_size(y, sigma);
 
-  VectorBuilder<true, T_partials_return, T_scale> inv_sigma(length(sigma));
+  VectorBuilder<true, T_partials, T_scale> inv_sigma(length(sigma));
   for (size_t i = 0; i < length(sigma); i++) {
     inv_sigma[i] = 1.0 / value_of(sigma_vec[i]);
   }
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return y_sqr = y_dbl * y_dbl;
-    const T_partials_return inv_sigma_sqr = inv_sigma[n] * inv_sigma[n];
-    const T_partials_return exp_val = exp(-0.5 * y_sqr * inv_sigma_sqr);
-    const T_partials_return exp_div_1m_exp = exp_val / (1.0 - exp_val);
+    const T_partials y_dbl = value_of(y_vec[n]);
+    const T_partials y_sqr = y_dbl * y_dbl;
+    const T_partials inv_sigma_sqr = inv_sigma[n] * inv_sigma[n];
+    const T_partials exp_val = exp(-0.5 * y_sqr * inv_sigma_sqr);
+    const T_partials exp_div_1m_exp = exp_val / (1.0 - exp_val);
 
     if (include_summand<false, T_y, T_scale>::value) {
       cdf_log += log1m(exp_val);
