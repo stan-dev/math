@@ -117,8 +117,7 @@ inline auto student_t_lpdf(const T_y& y, const T_dof& nu, const T_loc& mu,
     }
   }
 
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials,
-                T_scale>
+  VectorBuilder<include_summand<propto, T_scale>::value, T_partials, T_scale>
       log_sigma(length(sigma));
   for (size_t i = 0; i < length(sigma); i++) {
     if (include_summand<propto, T_scale>::value) {

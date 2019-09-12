@@ -78,8 +78,7 @@ inline auto binomial_cdf(const T_n& n, const T_N& N, const T_prob& theta) {
     const T_partials N_dbl = value_of(N_vec[i]);
     const T_partials theta_dbl = value_of(theta_vec[i]);
     const T_partials betafunc = beta(N_dbl - n_dbl, n_dbl + 1);
-    const T_partials Pi
-        = inc_beta(N_dbl - n_dbl, n_dbl + 1, 1 - theta_dbl);
+    const T_partials Pi = inc_beta(N_dbl - n_dbl, n_dbl + 1, 1 - theta_dbl);
 
     P *= Pi;
 

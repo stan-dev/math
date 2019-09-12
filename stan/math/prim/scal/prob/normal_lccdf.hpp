@@ -49,8 +49,7 @@ inline auto normal_lccdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
     const T_partials mu_dbl = value_of(mu_vec[n]);
     const T_partials sigma_dbl = value_of(sigma_vec[n]);
 
-    const T_partials scaled_diff
-        = (y_dbl - mu_dbl) / (sigma_dbl * SQRT_2);
+    const T_partials scaled_diff = (y_dbl - mu_dbl) / (sigma_dbl * SQRT_2);
 
     T_partials one_m_erf;
     if (scaled_diff < -37.5 * INV_SQRT_2) {

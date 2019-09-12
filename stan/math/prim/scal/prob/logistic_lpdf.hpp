@@ -46,8 +46,7 @@ inline auto logistic_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
   size_t N = max_size(y, mu, sigma);
 
   VectorBuilder<true, T_partials, T_scale> inv_sigma(length(sigma));
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials,
-                T_scale>
+  VectorBuilder<include_summand<propto, T_scale>::value, T_partials, T_scale>
       log_sigma(length(sigma));
   for (size_t i = 0; i < length(sigma); i++) {
     inv_sigma[i] = 1.0 / value_of(sigma_vec[i]);
@@ -56,8 +55,7 @@ inline auto logistic_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
     }
   }
 
-  VectorBuilder<!is_constant_all<T_loc>::value, T_partials, T_loc,
-                T_scale>
+  VectorBuilder<!is_constant_all<T_loc>::value, T_partials, T_loc, T_scale>
       exp_mu_div_sigma(max_size(mu, sigma));
   VectorBuilder<!is_constant_all<T_loc>::value, T_partials, T_y, T_scale>
       exp_y_div_sigma(max_size(y, sigma));

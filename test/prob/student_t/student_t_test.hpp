@@ -85,8 +85,8 @@ class AgradDistributionsStudentT : public AgradDistributionTest {
   log_prob_function(const T_y& y, const T_dof& nu, const T_loc& mu,
                     const T_scale& sigma, const T4&, const T5&) {
     using boost::math::lgamma;
-    using stan::math::log1p;
     using stan::math::NEG_LOG_SQRT_PI;
+    using stan::math::log1p;
     using stan::math::square;
     using std::log;
 

@@ -59,8 +59,7 @@ inline auto weibull_lpdf(const T_y& y, const T_shape& alpha,
     }
   }
 
-  VectorBuilder<include_summand<propto, T_shape>::value, T_partials,
-                T_shape>
+  VectorBuilder<include_summand<propto, T_shape>::value, T_partials, T_shape>
       log_alpha(length(alpha));
   for (size_t i = 0; i < length(alpha); i++) {
     if (include_summand<propto, T_shape>::value) {
@@ -68,8 +67,7 @@ inline auto weibull_lpdf(const T_y& y, const T_shape& alpha,
     }
   }
 
-  VectorBuilder<include_summand<propto, T_y, T_shape>::value, T_partials,
-                T_y>
+  VectorBuilder<include_summand<propto, T_y, T_shape>::value, T_partials, T_y>
       log_y(length(y));
   for (size_t i = 0; i < length(y); i++) {
     if (include_summand<propto, T_y, T_shape>::value) {
@@ -77,8 +75,8 @@ inline auto weibull_lpdf(const T_y& y, const T_shape& alpha,
     }
   }
 
-  VectorBuilder<include_summand<propto, T_shape, T_scale>::value,
-                T_partials, T_scale>
+  VectorBuilder<include_summand<propto, T_shape, T_scale>::value, T_partials,
+                T_scale>
       log_sigma(length(sigma));
   for (size_t i = 0; i < length(sigma); i++) {
     if (include_summand<propto, T_shape, T_scale>::value) {

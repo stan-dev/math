@@ -46,15 +46,14 @@ inline auto pareto_type_2_cdf(const T_y& y, const T_loc& mu,
   operands_and_partials<T_y, T_loc, T_scale, T_shape> ops_partials(
       y, mu, lambda, alpha);
 
-  VectorBuilder<true, T_partials, T_y, T_loc, T_scale, T_shape>
-      p1_pow_alpha(N);
+  VectorBuilder<true, T_partials, T_y, T_loc, T_scale, T_shape> p1_pow_alpha(N);
 
-  VectorBuilder<!is_constant_all<T_y, T_loc, T_scale>::value, T_partials,
-                T_y, T_loc, T_scale, T_shape>
+  VectorBuilder<!is_constant_all<T_y, T_loc, T_scale>::value, T_partials, T_y,
+                T_loc, T_scale, T_shape>
       grad_1_2(N);
 
-  VectorBuilder<!is_constant_all<T_shape, T_y>::value, T_partials, T_y,
-                T_loc, T_scale, T_shape>
+  VectorBuilder<!is_constant_all<T_shape, T_y>::value, T_partials, T_y, T_loc,
+                T_scale, T_shape>
       grad_3(N);
 
   for (size_t i = 0; i < N; i++) {

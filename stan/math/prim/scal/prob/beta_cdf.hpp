@@ -43,7 +43,6 @@ inline auto beta_cdf(const T_y& y, const T_scale_succ& alpha,
 
   static const char* function = "beta_cdf";
 
-
   check_positive_finite(function, "First shape parameter", alpha);
   check_positive_finite(function, "Second shape parameter", beta);
   check_not_nan(function, "Random variable", y);
@@ -69,16 +68,16 @@ inline auto beta_cdf(const T_y& y, const T_scale_succ& alpha,
     }
   }
 
-  VectorBuilder<!is_constant_all<T_scale_succ, T_scale_fail>::value,
-                T_partials, T_scale_succ, T_scale_fail>
+  VectorBuilder<!is_constant_all<T_scale_succ, T_scale_fail>::value, T_partials,
+                T_scale_succ, T_scale_fail>
       digamma_alpha_vec(max_size(alpha, beta));
 
-  VectorBuilder<!is_constant_all<T_scale_succ, T_scale_fail>::value,
-                T_partials, T_scale_succ, T_scale_fail>
+  VectorBuilder<!is_constant_all<T_scale_succ, T_scale_fail>::value, T_partials,
+                T_scale_succ, T_scale_fail>
       digamma_beta_vec(max_size(alpha, beta));
 
-  VectorBuilder<!is_constant_all<T_scale_succ, T_scale_fail>::value,
-                T_partials, T_scale_succ, T_scale_fail>
+  VectorBuilder<!is_constant_all<T_scale_succ, T_scale_fail>::value, T_partials,
+                T_scale_succ, T_scale_fail>
       digamma_sum_vec(max_size(alpha, beta));
 
   if (!is_constant_all<T_scale_succ, T_scale_fail>::value) {

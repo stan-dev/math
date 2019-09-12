@@ -88,9 +88,8 @@ inline auto beta_binomial_cdf(const T_n& n, const T_N& N, const T_size1& alpha,
     const T_partials mu = alpha_dbl + n_dbl + 1;
     const T_partials nu = beta_dbl + N_dbl - n_dbl - 1;
 
-    const T_partials F
-        = F32((T_partials)1, mu, -N_dbl + n_dbl + 1, n_dbl + 2, 1 - nu,
-              (T_partials)1);
+    const T_partials F = F32((T_partials)1, mu, -N_dbl + n_dbl + 1, n_dbl + 2,
+                             1 - nu, (T_partials)1);
 
     T_partials C = lgamma(nu) - lgamma(N_dbl - n_dbl);
     C += lgamma(mu) - lgamma(n_dbl + 2);
@@ -111,19 +110,19 @@ inline auto beta_binomial_cdf(const T_n& n, const T_N& N, const T_size1& alpha,
     if (!is_constant_all<T_size1, T_size2>::value) {
       digammaOne = digamma(mu + nu);
       digammaTwo = digamma(alpha_dbl + beta_dbl);
-      grad_F32(dF, (T_partials)1, mu, -N_dbl + n_dbl + 1, n_dbl + 2,
-               1 - nu, (T_partials)1);
+      grad_F32(dF, (T_partials)1, mu, -N_dbl + n_dbl + 1, n_dbl + 2, 1 - nu,
+               (T_partials)1);
     }
     if (!is_constant_all<T_size1>::value) {
       const T_partials g = -C
-                                  * (digamma(mu) - digammaOne + dF[1] / F
-                                     - digamma(alpha_dbl) + digammaTwo);
+                           * (digamma(mu) - digammaOne + dF[1] / F
+                              - digamma(alpha_dbl) + digammaTwo);
       ops_partials.edge1_.partials_[i] += g / Pi;
     }
     if (!is_constant_all<T_size2>::value) {
       const T_partials g = -C
-                                  * (digamma(nu) - digammaOne - dF[4] / F
-                                     - digamma(beta_dbl) + digammaTwo);
+                           * (digamma(nu) - digammaOne - dF[4] / F
+                              - digamma(beta_dbl) + digammaTwo);
       ops_partials.edge2_.partials_[i] += g / Pi;
     }
   }

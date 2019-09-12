@@ -48,12 +48,10 @@ inline auto neg_binomial_2_cdf(const T_n& n, const T_location& mu,
     }
   }
 
-  VectorBuilder<!is_constant_all<T_precision>::value, T_partials,
-                T_precision>
+  VectorBuilder<!is_constant_all<T_precision>::value, T_partials, T_precision>
       digamma_phi_vec(stan::length(phi));
 
-  VectorBuilder<!is_constant_all<T_precision>::value, T_partials,
-                T_precision>
+  VectorBuilder<!is_constant_all<T_precision>::value, T_partials, T_precision>
       digamma_sum_vec(stan::length(phi));
 
   if (!is_constant_all<T_precision>::value) {
@@ -78,8 +76,7 @@ inline auto neg_binomial_2_cdf(const T_n& n, const T_location& mu,
     const T_partials phi_dbl = value_of(phi_vec[i]);
 
     const T_partials p_dbl = phi_dbl / (mu_dbl + phi_dbl);
-    const T_partials d_dbl
-        = 1.0 / ((mu_dbl + phi_dbl) * (mu_dbl + phi_dbl));
+    const T_partials d_dbl = 1.0 / ((mu_dbl + phi_dbl) * (mu_dbl + phi_dbl));
 
     const T_partials P_i = inc_beta(phi_dbl, n_dbl + 1.0, p_dbl);
 

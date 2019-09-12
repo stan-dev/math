@@ -70,10 +70,10 @@ inline auto scaled_inv_chi_square_cdf(const T_y& y, const T_dof& nu,
   using std::exp;
   using std::pow;
 
-  VectorBuilder<!is_constant_all<T_dof>::value, T_partials, T_dof>
-      gamma_vec(stan::length(nu));
-  VectorBuilder<!is_constant_all<T_dof>::value, T_partials, T_dof>
-      digamma_vec(stan::length(nu));
+  VectorBuilder<!is_constant_all<T_dof>::value, T_partials, T_dof> gamma_vec(
+      stan::length(nu));
+  VectorBuilder<!is_constant_all<T_dof>::value, T_partials, T_dof> digamma_vec(
+      stan::length(nu));
 
   if (!is_constant_all<T_dof>::value) {
     for (size_t i = 0; i < stan::length(nu); i++) {

@@ -68,8 +68,8 @@ inline auto scaled_inv_chi_square_lpdf(const T_y& y, const T_dof& nu,
 
   using std::log;
 
-  VectorBuilder<include_summand<propto, T_dof, T_y, T_scale>::value,
-                T_partials, T_dof>
+  VectorBuilder<include_summand<propto, T_dof, T_y, T_scale>::value, T_partials,
+                T_dof>
       half_nu(length(nu));
   for (size_t i = 0; i < length(nu); i++) {
     if (include_summand<propto, T_dof, T_y, T_scale>::value) {
@@ -77,8 +77,7 @@ inline auto scaled_inv_chi_square_lpdf(const T_y& y, const T_dof& nu,
     }
   }
 
-  VectorBuilder<include_summand<propto, T_dof, T_y>::value, T_partials,
-                T_y>
+  VectorBuilder<include_summand<propto, T_dof, T_y>::value, T_partials, T_y>
       log_y(length(y));
   for (size_t i = 0; i < length(y); i++) {
     if (include_summand<propto, T_dof, T_y>::value) {
@@ -86,8 +85,8 @@ inline auto scaled_inv_chi_square_lpdf(const T_y& y, const T_dof& nu,
     }
   }
 
-  VectorBuilder<include_summand<propto, T_dof, T_y, T_scale>::value,
-                T_partials, T_y>
+  VectorBuilder<include_summand<propto, T_dof, T_y, T_scale>::value, T_partials,
+                T_y>
       inv_y(length(y));
   for (size_t i = 0; i < length(y); i++) {
     if (include_summand<propto, T_dof, T_y, T_scale>::value) {
@@ -95,8 +94,8 @@ inline auto scaled_inv_chi_square_lpdf(const T_y& y, const T_dof& nu,
     }
   }
 
-  VectorBuilder<include_summand<propto, T_dof, T_scale>::value,
-                T_partials, T_scale>
+  VectorBuilder<include_summand<propto, T_dof, T_scale>::value, T_partials,
+                T_scale>
       log_s(length(s));
   for (size_t i = 0; i < length(s); i++) {
     if (include_summand<propto, T_dof, T_scale>::value) {

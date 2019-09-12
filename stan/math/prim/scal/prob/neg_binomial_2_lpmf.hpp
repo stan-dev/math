@@ -66,8 +66,8 @@ inline auto neg_binomial_2_lpmf(const T_n& n, const T_location& mu,
     log_phi[i] = log(phi__[i]);
   }
 
-  VectorBuilder<true, T_partials, T_location, T_precision>
-      log_mu_plus_phi(len_ep);
+  VectorBuilder<true, T_partials, T_location, T_precision> log_mu_plus_phi(
+      len_ep);
   for (size_t i = 0; i < len_ep; ++i) {
     log_mu_plus_phi[i] = log(mu__[i] + phi__[i]);
   }

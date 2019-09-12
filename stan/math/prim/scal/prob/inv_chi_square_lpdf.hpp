@@ -62,8 +62,7 @@ inline auto inv_chi_square_lpdf(const T_y& y, const T_dof& nu) {
 
   using std::log;
 
-  VectorBuilder<include_summand<propto, T_y, T_dof>::value, T_partials,
-                T_y>
+  VectorBuilder<include_summand<propto, T_y, T_dof>::value, T_partials, T_y>
       log_y(length(y));
   for (size_t i = 0; i < length(y); i++) {
     if (include_summand<propto, T_y, T_dof>::value) {
@@ -71,8 +70,8 @@ inline auto inv_chi_square_lpdf(const T_y& y, const T_dof& nu) {
     }
   }
 
-  VectorBuilder<include_summand<propto, T_y>::value, T_partials, T_y>
-      inv_y(length(y));
+  VectorBuilder<include_summand<propto, T_y>::value, T_partials, T_y> inv_y(
+      length(y));
   for (size_t i = 0; i < length(y); i++) {
     if (include_summand<propto, T_y>::value) {
       inv_y[i] = 1.0 / value_of(y_vec[i]);

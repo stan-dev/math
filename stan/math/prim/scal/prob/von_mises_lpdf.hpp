@@ -52,8 +52,7 @@ inline auto von_mises_lpdf(T_y const& y, T_loc const& mu,
   const scalar_seq_view<T_scale> kappa_vec(kappa);
 
   VectorBuilder<true, T_partials, T_scale> kappa_dbl(length(kappa));
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials,
-                T_scale>
+  VectorBuilder<include_summand<propto, T_scale>::value, T_partials, T_scale>
       log_bessel0(length(kappa));
   for (size_t i = 0; i < length(kappa); i++) {
     kappa_dbl[i] = value_of(kappa_vec[i]);

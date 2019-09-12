@@ -58,13 +58,12 @@ inline auto double_exponential_lpdf(const T_y& y, const T_loc& mu,
   size_t N = max_size(y, mu, sigma);
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
 
-  VectorBuilder<include_summand<propto, T_y, T_loc, T_scale>::value,
-                T_partials, T_scale>
+  VectorBuilder<include_summand<propto, T_y, T_loc, T_scale>::value, T_partials,
+                T_scale>
       inv_sigma(length(sigma));
   VectorBuilder<!is_constant_all<T_scale>::value, T_partials, T_scale>
       inv_sigma_squared(length(sigma));
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials,
-                T_scale>
+  VectorBuilder<include_summand<propto, T_scale>::value, T_partials, T_scale>
       log_sigma(length(sigma));
   for (size_t i = 0; i < length(sigma); i++) {
     const T_partials sigma_dbl = value_of(sigma_vec[i]);

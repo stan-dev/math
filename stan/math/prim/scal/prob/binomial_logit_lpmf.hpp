@@ -68,8 +68,7 @@ inline auto binomial_logit_lpmf(const T_n& n, const T_N& N,
     }
   }
 
-  VectorBuilder<true, T_partials, T_prob> log_inv_logit_alpha(
-      length(alpha));
+  VectorBuilder<true, T_partials, T_prob> log_inv_logit_alpha(length(alpha));
   for (size_t i = 0; i < length(alpha); ++i) {
     log_inv_logit_alpha[i] = log_inv_logit(value_of(alpha_vec[i]));
   }

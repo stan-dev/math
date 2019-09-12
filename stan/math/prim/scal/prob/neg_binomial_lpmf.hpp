@@ -82,8 +82,7 @@ inline auto neg_binomial_lpmf(const T_n& n, const T_shape& alpha,
     }
   }
 
-  VectorBuilder<!is_constant_all<T_shape>::value, T_partials,
-                T_inv_scale>
+  VectorBuilder<!is_constant_all<T_shape>::value, T_partials, T_inv_scale>
       log_beta(length(beta));
   if (!is_constant_all<T_shape>::value) {
     for (size_t i = 0; i < length(beta); ++i) {
@@ -91,8 +90,8 @@ inline auto neg_binomial_lpmf(const T_n& n, const T_shape& alpha,
     }
   }
 
-  VectorBuilder<!is_constant_all<T_inv_scale>::value, T_partials,
-                T_shape, T_inv_scale>
+  VectorBuilder<!is_constant_all<T_inv_scale>::value, T_partials, T_shape,
+                T_inv_scale>
       lambda_m_alpha_over_1p_beta(len_ab);
   if (!is_constant_all<T_inv_scale>::value) {
     for (size_t i = 0; i < len_ab; ++i) {

@@ -34,7 +34,6 @@ inline auto bernoulli_cdf(const T_n& n, const T_prob& theta) {
     return T_partials(1.0);
   }
 
-
   check_finite(function, "Probability parameter", theta);
   check_bounded(function, "Probability parameter", theta, 0.0, 1.0);
   check_consistent_sizes(function, "Random variable", n,

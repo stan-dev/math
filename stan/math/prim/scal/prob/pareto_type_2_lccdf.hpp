@@ -46,8 +46,7 @@ inline auto pareto_type_2_lccdf(const T_y& y, const T_loc& mu,
   operands_and_partials<T_y, T_loc, T_scale, T_shape> ops_partials(
       y, mu, lambda, alpha);
 
-  VectorBuilder<true, T_partials, T_y, T_loc, T_scale, T_shape> ccdf_log(
-      N);
+  VectorBuilder<true, T_partials, T_y, T_loc, T_scale, T_shape> ccdf_log(N);
 
   VectorBuilder<!is_constant_all<T_y, T_loc, T_scale, T_shape>::value,
                 T_partials, T_y, T_loc, T_scale, T_shape>

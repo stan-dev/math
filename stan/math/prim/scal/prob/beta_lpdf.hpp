@@ -77,11 +77,11 @@ inline auto beta_lpdf(const T_y& y, const T_scale_succ& alpha,
   operands_and_partials<T_y, T_scale_succ, T_scale_fail> ops_partials(y, alpha,
                                                                       beta);
 
-  VectorBuilder<include_summand<propto, T_y, T_scale_succ>::value,
-                T_partials, T_y>
+  VectorBuilder<include_summand<propto, T_y, T_scale_succ>::value, T_partials,
+                T_y>
       log_y(length(y));
-  VectorBuilder<include_summand<propto, T_y, T_scale_fail>::value,
-                T_partials, T_y>
+  VectorBuilder<include_summand<propto, T_y, T_scale_fail>::value, T_partials,
+                T_y>
       log1m_y(length(y));
 
   for (size_t n = 0; n < length(y); n++) {
@@ -96,8 +96,7 @@ inline auto beta_lpdf(const T_y& y, const T_scale_succ& alpha,
   VectorBuilder<include_summand<propto, T_scale_succ>::value, T_partials,
                 T_scale_succ>
       lgamma_alpha(length(alpha));
-  VectorBuilder<!is_constant_all<T_scale_succ>::value, T_partials,
-                T_scale_succ>
+  VectorBuilder<!is_constant_all<T_scale_succ>::value, T_partials, T_scale_succ>
       digamma_alpha(length(alpha));
   for (size_t n = 0; n < length(alpha); n++) {
     if (include_summand<propto, T_scale_succ>::value) {
@@ -111,8 +110,7 @@ inline auto beta_lpdf(const T_y& y, const T_scale_succ& alpha,
   VectorBuilder<include_summand<propto, T_scale_fail>::value, T_partials,
                 T_scale_fail>
       lgamma_beta(length(beta));
-  VectorBuilder<!is_constant_all<T_scale_fail>::value, T_partials,
-                T_scale_fail>
+  VectorBuilder<!is_constant_all<T_scale_fail>::value, T_partials, T_scale_fail>
       digamma_beta(length(beta));
 
   for (size_t n = 0; n < length(beta); n++) {
@@ -128,8 +126,8 @@ inline auto beta_lpdf(const T_y& y, const T_scale_succ& alpha,
                 T_partials, T_scale_succ, T_scale_fail>
       lgamma_alpha_beta(max_size(alpha, beta));
 
-  VectorBuilder<!is_constant_all<T_scale_succ, T_scale_fail>::value,
-                T_partials, T_scale_succ, T_scale_fail>
+  VectorBuilder<!is_constant_all<T_scale_succ, T_scale_fail>::value, T_partials,
+                T_scale_succ, T_scale_fail>
       digamma_alpha_beta(max_size(alpha, beta));
 
   for (size_t n = 0; n < max_size(alpha, beta); n++) {

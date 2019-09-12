@@ -91,7 +91,6 @@ inline auto wiener_lpdf(const T_y& y, const T_alpha& alpha, const T_tau& tau,
     return lp;
   }
 
-
   check_not_nan(function, "Random variable", y);
   check_not_nan(function, "Boundary separation", alpha);
   check_not_nan(function, "A-priori bias", beta);

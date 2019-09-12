@@ -63,8 +63,7 @@ inline auto logistic_lcdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
     const T_partials sigma_dbl = value_of(sigma_vec[n]);
     const T_partials sigma_inv_vec = 1.0 / value_of(sigma_vec[n]);
 
-    const T_partials Pn
-        = 1.0 / (1.0 + exp(-(y_dbl - mu_dbl) * sigma_inv_vec));
+    const T_partials Pn = 1.0 / (1.0 + exp(-(y_dbl - mu_dbl) * sigma_inv_vec));
     P += log(Pn);
 
     if (!is_constant_all<T_y>::value) {

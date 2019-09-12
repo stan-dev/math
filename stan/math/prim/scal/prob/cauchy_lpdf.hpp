@@ -62,8 +62,7 @@ inline auto cauchy_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
 
   VectorBuilder<true, T_partials, T_scale> inv_sigma(length(sigma));
   VectorBuilder<true, T_partials, T_scale> sigma_squared(length(sigma));
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials,
-                T_scale>
+  VectorBuilder<include_summand<propto, T_scale>::value, T_partials, T_scale>
       log_sigma(length(sigma));
   for (size_t i = 0; i < length(sigma); i++) {
     const T_partials sigma_dbl = value_of(sigma_vec[i]);

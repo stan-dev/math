@@ -27,7 +27,6 @@ inline auto gamma_lccdf(const T_y& y, const T_shape& alpha,
     return T_partials(0.0);
   }
 
-
   static const char* function = "gamma_lccdf";
 
   T_partials P(0.0);

@@ -63,8 +63,7 @@ inline auto normal_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
   size_t N = max_size(y, mu, sigma);
 
   VectorBuilder<true, T_partials, T_scale> inv_sigma(length(sigma));
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials,
-                T_scale>
+  VectorBuilder<include_summand<propto, T_scale>::value, T_partials, T_scale>
       log_sigma(length(sigma));
   for (size_t i = 0; i < length(sigma); i++) {
     inv_sigma[i] = 1.0 / value_of(sigma_vec[i]);
@@ -77,8 +76,7 @@ inline auto normal_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
     const T_partials y_dbl = value_of(y_vec[n]);
     const T_partials mu_dbl = value_of(mu_vec[n]);
 
-    const T_partials y_minus_mu_over_sigma
-        = (y_dbl - mu_dbl) * inv_sigma[n];
+    const T_partials y_minus_mu_over_sigma = (y_dbl - mu_dbl) * inv_sigma[n];
     const T_partials y_minus_mu_over_sigma_squared
         = y_minus_mu_over_sigma * y_minus_mu_over_sigma;
 

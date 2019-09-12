@@ -16,7 +16,7 @@ namespace math {
 // a: #white balls;  b: #black balls
 template <bool propto, typename T_n, typename T_N, typename T_a, typename T_b>
 auto hypergeometric_lpmf(const T_n& n, const T_N& N, const T_a& a,
-                           const T_b& b) {
+                         const T_b& b) {
   static const char* function = "hypergeometric_lpmf";
   using T_partials = partials_return_t<T_n, T_N, T_a, T_b>;
   double logp(0.0);

@@ -53,8 +53,7 @@ inline auto skew_normal_lpdf(const T_y& y, const T_loc& mu,
   size_t N = max_size(y, mu, sigma, alpha);
 
   VectorBuilder<true, T_partials, T_scale> inv_sigma(length(sigma));
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials,
-                T_scale>
+  VectorBuilder<include_summand<propto, T_scale>::value, T_partials, T_scale>
       log_sigma(length(sigma));
   for (size_t i = 0; i < length(sigma); i++) {
     inv_sigma[i] = 1.0 / value_of(sigma_vec[i]);
@@ -69,8 +68,7 @@ inline auto skew_normal_lpdf(const T_y& y, const T_loc& mu,
     const T_partials sigma_dbl = value_of(sigma_vec[n]);
     const T_partials alpha_dbl = value_of(alpha_vec[n]);
 
-    const T_partials y_minus_mu_over_sigma
-        = (y_dbl - mu_dbl) * inv_sigma[n];
+    const T_partials y_minus_mu_over_sigma = (y_dbl - mu_dbl) * inv_sigma[n];
     const double pi_dbl = pi();
 
     if (include_summand<propto>::value) {

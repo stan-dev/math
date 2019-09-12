@@ -47,8 +47,7 @@ inline auto pareto_type_2_lcdf(const T_y& y, const T_loc& mu,
   operands_and_partials<T_y, T_loc, T_scale, T_shape> ops_partials(
       y, mu, lambda, alpha);
 
-  VectorBuilder<true, T_partials, T_y, T_loc, T_scale, T_shape> cdf_log(
-      N);
+  VectorBuilder<true, T_partials, T_y, T_loc, T_scale, T_shape> cdf_log(N);
 
   VectorBuilder<true, T_partials, T_y, T_loc, T_scale, T_shape>
       inv_p1_pow_alpha_minus_one(N);
@@ -59,8 +58,8 @@ inline auto pareto_type_2_lcdf(const T_y& y, const T_loc& mu,
 
   for (size_t i = 0; i < N; i++) {
     const T_partials temp = 1.0
-                                   + (value_of(y_vec[i]) - value_of(mu_vec[i]))
-                                         / value_of(lambda_vec[i]);
+                            + (value_of(y_vec[i]) - value_of(mu_vec[i]))
+                                  / value_of(lambda_vec[i]);
     const T_partials p1_pow_alpha = pow(temp, value_of(alpha_vec[i]));
     cdf_log[i] = log1m(1.0 / p1_pow_alpha);
 
@@ -78,7 +77,7 @@ inline auto pareto_type_2_lcdf(const T_y& y, const T_loc& mu,
     const T_partials alpha_dbl = value_of(alpha_vec[n]);
 
     const T_partials grad_1_2 = alpha_dbl * inv_p1_pow_alpha_minus_one[n]
-                                       / (lambda_dbl - mu_dbl + y_dbl);
+                                / (lambda_dbl - mu_dbl + y_dbl);
 
     P += cdf_log[n];
 

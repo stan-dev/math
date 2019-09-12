@@ -61,8 +61,7 @@ inline auto pareto_type_2_lpdf(const T_y& y, const T_loc& mu,
     }
   }
 
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials,
-                T_scale>
+  VectorBuilder<include_summand<propto, T_scale>::value, T_partials, T_scale>
       log_lambda(length(lambda));
   if (include_summand<propto, T_scale>::value) {
     for (size_t n = 0; n < length(lambda); n++) {
@@ -70,8 +69,7 @@ inline auto pareto_type_2_lpdf(const T_y& y, const T_loc& mu,
     }
   }
 
-  VectorBuilder<include_summand<propto, T_shape>::value, T_partials,
-                T_shape>
+  VectorBuilder<include_summand<propto, T_shape>::value, T_partials, T_shape>
       log_alpha(length(alpha));
   if (include_summand<propto, T_shape>::value) {
     for (size_t n = 0; n < length(alpha); n++) {

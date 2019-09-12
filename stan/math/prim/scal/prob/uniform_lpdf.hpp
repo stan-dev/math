@@ -72,8 +72,8 @@ inline auto uniform_lpdf(const T_y& y, const T_low& alpha, const T_high& beta) {
     }
   }
 
-  VectorBuilder<include_summand<propto, T_low, T_high>::value,
-                T_partials, T_low, T_high>
+  VectorBuilder<include_summand<propto, T_low, T_high>::value, T_partials,
+                T_low, T_high>
       inv_beta_minus_alpha(max_size(alpha, beta));
   for (size_t i = 0; i < max_size(alpha, beta); i++) {
     if (include_summand<propto, T_low, T_high>::value) {
@@ -82,8 +82,8 @@ inline auto uniform_lpdf(const T_y& y, const T_low& alpha, const T_high& beta) {
     }
   }
 
-  VectorBuilder<include_summand<propto, T_low, T_high>::value,
-                T_partials, T_low, T_high>
+  VectorBuilder<include_summand<propto, T_low, T_high>::value, T_partials,
+                T_low, T_high>
       log_beta_minus_alpha(max_size(alpha, beta));
   for (size_t i = 0; i < max_size(alpha, beta); i++) {
     if (include_summand<propto, T_low, T_high>::value) {

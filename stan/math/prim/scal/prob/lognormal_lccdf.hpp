@@ -55,8 +55,7 @@ inline auto lognormal_lccdf(const T_y& y, const T_loc& mu,
     const T_partials y_dbl = value_of(y_vec[n]);
     const T_partials mu_dbl = value_of(mu_vec[n]);
     const T_partials sigma_dbl = value_of(sigma_vec[n]);
-    const T_partials scaled_diff
-        = (log(y_dbl) - mu_dbl) / (sigma_dbl * SQRT_2);
+    const T_partials scaled_diff = (log(y_dbl) - mu_dbl) / (sigma_dbl * SQRT_2);
     const T_partials rep_deriv
         = SQRT_2 / sqrt_pi * exp(-scaled_diff * scaled_diff) / sigma_dbl;
 

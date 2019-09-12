@@ -60,8 +60,7 @@ inline auto gumbel_lpdf(const T_y& y, const T_loc& mu, const T_scale& beta) {
   size_t N = max_size(y, mu, beta);
 
   VectorBuilder<true, T_partials, T_scale> inv_beta(length(beta));
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials,
-                T_scale>
+  VectorBuilder<include_summand<propto, T_scale>::value, T_partials, T_scale>
       log_beta(length(beta));
   for (size_t i = 0; i < length(beta); i++) {
     inv_beta[i] = 1.0 / value_of(beta_vec[i]);
@@ -74,8 +73,7 @@ inline auto gumbel_lpdf(const T_y& y, const T_loc& mu, const T_scale& beta) {
     const T_partials y_dbl = value_of(y_vec[n]);
     const T_partials mu_dbl = value_of(mu_vec[n]);
 
-    const T_partials y_minus_mu_over_beta
-        = (y_dbl - mu_dbl) * inv_beta[n];
+    const T_partials y_minus_mu_over_beta = (y_dbl - mu_dbl) * inv_beta[n];
 
     if (include_summand<propto, T_scale>::value) {
       logp -= log_beta[n];

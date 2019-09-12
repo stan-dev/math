@@ -59,8 +59,7 @@ inline auto pareto_cdf(const T_y& y, const T_scale& y_min,
       continue;
     }
 
-    const T_partials log_dbl
-        = log(value_of(y_min_vec[n]) / value_of(y_vec[n]));
+    const T_partials log_dbl = log(value_of(y_min_vec[n]) / value_of(y_vec[n]));
     const T_partials y_min_inv_dbl = 1.0 / value_of(y_min_vec[n]);
     const T_partials alpha_dbl = value_of(alpha_vec[n]);
 

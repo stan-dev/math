@@ -76,8 +76,7 @@ inline auto gamma_lpdf(const T_y& y, const T_shape& alpha,
 
   using std::log;
 
-  VectorBuilder<include_summand<propto, T_y, T_shape>::value, T_partials,
-                T_y>
+  VectorBuilder<include_summand<propto, T_y, T_shape>::value, T_partials, T_y>
       log_y(length(y));
   if (include_summand<propto, T_y, T_shape>::value) {
     for (size_t n = 0; n < length(y); n++) {
@@ -87,8 +86,7 @@ inline auto gamma_lpdf(const T_y& y, const T_shape& alpha,
     }
   }
 
-  VectorBuilder<include_summand<propto, T_shape>::value, T_partials,
-                T_shape>
+  VectorBuilder<include_summand<propto, T_shape>::value, T_partials, T_shape>
       lgamma_alpha(length(alpha));
   VectorBuilder<!is_constant_all<T_shape>::value, T_partials, T_shape>
       digamma_alpha(length(alpha));
