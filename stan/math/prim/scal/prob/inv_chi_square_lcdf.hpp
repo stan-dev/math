@@ -35,9 +35,10 @@ namespace math {
 template <typename T_y, typename T_dof>
 inline auto inv_chi_square_lcdf(const T_y& y, const T_dof& nu) {
   using T_partials = partials_return_t<T_y, T_dof>;
+  using T_return = return_type_t<T_y, T_dof>;
 
   if (size_zero(y, nu)) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   static const char* function = "inv_chi_square_lcdf";
@@ -68,10 +69,10 @@ inline auto inv_chi_square_lcdf(const T_y& y, const T_dof& nu) {
   using std::log;
   using std::pow;
 
-  VectorBuilder<!is_constant_all<T_dof>::value, T_partials, T_dof>
-      gamma_vec(stan::length(nu));
-  VectorBuilder<!is_constant_all<T_dof>::value, T_partials, T_dof>
-      digamma_vec(stan::length(nu));
+  VectorBuilder<!is_constant_all<T_dof>::value, T_partials, T_dof> gamma_vec(
+      stan::length(nu));
+  VectorBuilder<!is_constant_all<T_dof>::value, T_partials, T_dof> digamma_vec(
+      stan::length(nu));
 
   if (!is_constant_all<T_dof>::value) {
     for (size_t i = 0; i < stan::length(nu); i++) {

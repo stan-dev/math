@@ -22,11 +22,12 @@ inline auto pareto_type_2_lpdf(const T_y& y, const T_loc& mu,
                                const T_scale& lambda, const T_shape& alpha) {
   static const char* function = "pareto_type_2_lpdf";
   using T_partials = partials_return_t<T_y, T_loc, T_scale, T_shape>;
+  using T_return = return_type_t<T_y, T_loc, T_scale, T_shape>;
 
   using std::log;
 
   if (size_zero(y, mu, lambda, alpha)) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   T_partials logp(0.0);
@@ -39,7 +40,7 @@ inline auto pareto_type_2_lpdf(const T_y& y, const T_loc& mu,
                          lambda, "Shape parameter", alpha);
 
   if (!include_summand<propto, T_y, T_loc, T_scale, T_shape>::value) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   const scalar_seq_view<T_y> y_vec(y);
@@ -61,8 +62,7 @@ inline auto pareto_type_2_lpdf(const T_y& y, const T_loc& mu,
     }
   }
 
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials,
-                T_scale>
+  VectorBuilder<include_summand<propto, T_scale>::value, T_partials, T_scale>
       log_lambda(length(lambda));
   if (include_summand<propto, T_scale>::value) {
     for (size_t n = 0; n < length(lambda); n++) {
@@ -70,8 +70,7 @@ inline auto pareto_type_2_lpdf(const T_y& y, const T_loc& mu,
     }
   }
 
-  VectorBuilder<include_summand<propto, T_shape>::value, T_partials,
-                T_shape>
+  VectorBuilder<include_summand<propto, T_shape>::value, T_partials, T_shape>
       log_alpha(length(alpha));
   if (include_summand<propto, T_shape>::value) {
     for (size_t n = 0; n < length(alpha); n++) {

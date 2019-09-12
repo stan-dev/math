@@ -36,11 +36,12 @@ template <bool propto, typename T_n, typename T_N, typename T_prob>
 inline auto binomial_logit_lpmf(const T_n& n, const T_N& N,
                                 const T_prob& alpha) {
   using T_partials = partials_return_t<T_n, T_N, T_prob>;
+  using T_return = return_type_t<T_n, T_N, T_prob>;
 
   static const char* function = "binomial_logit_lpmf";
 
   if (size_zero(n, N, alpha)) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   T_partials logp = 0;
@@ -52,7 +53,7 @@ inline auto binomial_logit_lpmf(const T_n& n, const T_N& N,
                          "Probability parameter", alpha);
 
   if (!include_summand<propto, T_prob>::value) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   const scalar_seq_view<T_n> n_vec(n);
@@ -68,8 +69,7 @@ inline auto binomial_logit_lpmf(const T_n& n, const T_N& N,
     }
   }
 
-  VectorBuilder<true, T_partials, T_prob> log_inv_logit_alpha(
-      length(alpha));
+  VectorBuilder<true, T_partials, T_prob> log_inv_logit_alpha(length(alpha));
   for (size_t i = 0; i < length(alpha); ++i) {
     log_inv_logit_alpha[i] = log_inv_logit(value_of(alpha_vec[i]));
   }

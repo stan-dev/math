@@ -33,12 +33,13 @@ inline auto double_exponential_lpdf(const T_y& y, const T_loc& mu,
                                     const T_scale& sigma) {
   static const char* function = "double_exponential_lpdf";
   using T_partials = partials_return_t<T_y, T_loc, T_scale>;
+  using T_return = return_type_t<T_y, T_loc, T_scale>;
 
   using std::fabs;
   using std::log;
 
   if (size_zero(y, mu, sigma)) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   T_partials logp(0.0);
@@ -49,7 +50,7 @@ inline auto double_exponential_lpdf(const T_y& y, const T_loc& mu,
                          mu, "Shape parameter", sigma);
 
   if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   const scalar_seq_view<T_y> y_vec(y);
@@ -58,13 +59,12 @@ inline auto double_exponential_lpdf(const T_y& y, const T_loc& mu,
   size_t N = max_size(y, mu, sigma);
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
 
-  VectorBuilder<include_summand<propto, T_y, T_loc, T_scale>::value,
-                T_partials, T_scale>
+  VectorBuilder<include_summand<propto, T_y, T_loc, T_scale>::value, T_partials,
+                T_scale>
       inv_sigma(length(sigma));
   VectorBuilder<!is_constant_all<T_scale>::value, T_partials, T_scale>
       inv_sigma_squared(length(sigma));
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials,
-                T_scale>
+  VectorBuilder<include_summand<propto, T_scale>::value, T_partials, T_scale>
       log_sigma(length(sigma));
   for (size_t i = 0; i < length(sigma); i++) {
     const T_partials sigma_dbl = value_of(sigma_vec[i]);

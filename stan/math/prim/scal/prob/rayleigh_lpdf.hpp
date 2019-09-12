@@ -17,11 +17,12 @@ template <bool propto, typename T_y, typename T_scale>
 inline auto rayleigh_lpdf(const T_y& y, const T_scale& sigma) {
   static const char* function = "rayleigh_lpdf";
   using T_partials = partials_return_t<T_y, T_scale>;
+  using T_return = return_type_t<T_y, T_scale>;
 
   using std::log;
 
   if (size_zero(y, sigma)) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   T_partials logp(0.0);
@@ -33,7 +34,7 @@ inline auto rayleigh_lpdf(const T_y& y, const T_scale& sigma) {
                          sigma);
 
   if (!include_summand<propto, T_y, T_scale>::value) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   operands_and_partials<T_y, T_scale> ops_partials(y, sigma);
@@ -43,8 +44,7 @@ inline auto rayleigh_lpdf(const T_y& y, const T_scale& sigma) {
   size_t N = max_size(y, sigma);
 
   VectorBuilder<true, T_partials, T_scale> inv_sigma(length(sigma));
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials,
-                T_scale>
+  VectorBuilder<include_summand<propto, T_scale>::value, T_partials, T_scale>
       log_sigma(length(sigma));
   for (size_t i = 0; i < length(sigma); i++) {
     inv_sigma[i] = 1.0 / value_of(sigma_vec[i]);

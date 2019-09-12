@@ -14,8 +14,7 @@ template <bool propto, typename T_y, typename T_loc, typename T_scale,
           typename T_shape>
 inline auto pareto_type_2_log(const T_y& y, const T_loc& mu,
                               const T_scale& lambda, const T_shape& alpha) {
-  return pareto_type_2_lpdf<propto>(y, mu, lambda,
-                                                                  alpha);
+  return pareto_type_2_lpdf<propto>(y, mu, lambda, alpha);
 }
 
 /**

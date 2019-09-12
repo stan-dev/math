@@ -31,6 +31,7 @@ inline auto double_exponential_cdf(const T_y& y, const T_loc& mu,
                                    const T_scale& sigma) {
   static const char* function = "double_exponential_cdf";
   using T_partials = partials_return_t<T_y, T_loc, T_scale>;
+  using T_return = return_type_t<T_y, T_loc, T_scale>;
 
   if (size_zero(y, mu, sigma)) {
     return 1.0;

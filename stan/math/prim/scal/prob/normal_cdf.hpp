@@ -32,14 +32,11 @@ template <typename T_y, typename T_loc, typename T_scale>
 inline auto normal_cdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
   static const char* function = "normal_cdf";
   using T_partials = partials_return_t<T_y, T_loc, T_scale>;
+  using T_return = return_type_t<T_y, T_loc, T_scale>;
 
   using std::exp;
 
   T_partials cdf(1.0);
-
-  if (size_zero(y, mu, sigma)) {
-    return cdf;
-  }
 
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
@@ -49,6 +46,9 @@ inline auto normal_cdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
                          mu, "Scale parameter", sigma);
 
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
+  if (size_zero(y, mu, sigma)) {
+    return ops_partials.build(cdf);
+  }
 
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_loc> mu_vec(mu);
@@ -60,8 +60,7 @@ inline auto normal_cdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
     const T_partials y_dbl = value_of(y_vec[n]);
     const T_partials mu_dbl = value_of(mu_vec[n]);
     const T_partials sigma_dbl = value_of(sigma_vec[n]);
-    const T_partials scaled_diff
-        = (y_dbl - mu_dbl) / (sigma_dbl * SQRT_2);
+    const T_partials scaled_diff = (y_dbl - mu_dbl) / (sigma_dbl * SQRT_2);
     T_partials cdf_;
     if (scaled_diff < -37.5 * INV_SQRT_2) {
       cdf_ = 0.0;
@@ -76,11 +75,11 @@ inline auto normal_cdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
     cdf *= cdf_;
 
     if (!is_constant_all<T_y, T_loc, T_scale>::value) {
-      const T_partials rep_deriv
-          = (scaled_diff < -37.5 * INV_SQRT_2)
-                ? 0.0
-                : SQRT_TWO_OVER_PI * 0.5 * exp(-scaled_diff * scaled_diff)
-                      / cdf_ / sigma_dbl;
+      const T_partials rep_deriv = (scaled_diff < -37.5 * INV_SQRT_2)
+                                       ? 0.0
+                                       : SQRT_TWO_OVER_PI * 0.5
+                                             * exp(-scaled_diff * scaled_diff)
+                                             / cdf_ / sigma_dbl;
       if (!is_constant_all<T_y>::value) {
         ops_partials.edge1_.partials_[n] += rep_deriv;
       }

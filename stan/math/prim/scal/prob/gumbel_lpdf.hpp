@@ -32,12 +32,13 @@ template <bool propto, typename T_y, typename T_loc, typename T_scale>
 inline auto gumbel_lpdf(const T_y& y, const T_loc& mu, const T_scale& beta) {
   static const char* function = "gumbel_lpdf";
   using T_partials = partials_return_t<T_y, T_loc, T_scale>;
+  using T_return = return_type_t<T_y, T_loc, T_scale>;
 
   using std::exp;
   using std::log;
 
   if (size_zero(y, mu, beta)) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   T_partials logp(0.0);
@@ -49,7 +50,7 @@ inline auto gumbel_lpdf(const T_y& y, const T_loc& mu, const T_scale& beta) {
                          mu, "Scale parameter", beta);
 
   if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, beta);
@@ -60,8 +61,7 @@ inline auto gumbel_lpdf(const T_y& y, const T_loc& mu, const T_scale& beta) {
   size_t N = max_size(y, mu, beta);
 
   VectorBuilder<true, T_partials, T_scale> inv_beta(length(beta));
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials,
-                T_scale>
+  VectorBuilder<include_summand<propto, T_scale>::value, T_partials, T_scale>
       log_beta(length(beta));
   for (size_t i = 0; i < length(beta); i++) {
     inv_beta[i] = 1.0 / value_of(beta_vec[i]);
@@ -74,8 +74,7 @@ inline auto gumbel_lpdf(const T_y& y, const T_loc& mu, const T_scale& beta) {
     const T_partials y_dbl = value_of(y_vec[n]);
     const T_partials mu_dbl = value_of(mu_vec[n]);
 
-    const T_partials y_minus_mu_over_beta
-        = (y_dbl - mu_dbl) * inv_beta[n];
+    const T_partials y_minus_mu_over_beta = (y_dbl - mu_dbl) * inv_beta[n];
 
     if (include_summand<propto, T_scale>::value) {
       logp -= log_beta[n];

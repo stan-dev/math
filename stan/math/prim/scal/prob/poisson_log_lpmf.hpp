@@ -19,13 +19,14 @@ namespace math {
 template <bool propto, typename T_n, typename T_log_rate>
 inline auto poisson_log_lpmf(const T_n& n, const T_log_rate& alpha) {
   using T_partials = partials_return_t<T_n, T_log_rate>;
+  using T_return = return_type_t<T_n, T_log_rate>;
 
   static const char* function = "poisson_log_lpmf";
 
   using std::exp;
 
   if (size_zero(n, alpha)) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   T_partials logp(0.0);
@@ -36,7 +37,7 @@ inline auto poisson_log_lpmf(const T_n& n, const T_log_rate& alpha) {
                          alpha);
 
   if (!include_summand<propto, T_log_rate>::value) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   const scalar_seq_view<T_n> n_vec(n);
@@ -46,13 +47,13 @@ inline auto poisson_log_lpmf(const T_n& n, const T_log_rate& alpha) {
   // FIXME: first loop size of alpha_vec, second loop if-ed for size==1
   for (size_t i = 0; i < size; i++) {
     if (std::numeric_limits<double>::infinity() == alpha_vec[i]) {
-      return T_partials(LOG_ZERO);
+      return T_return(LOG_ZERO);
     }
   }
   for (size_t i = 0; i < size; i++) {
     if (-std::numeric_limits<double>::infinity() == alpha_vec[i]
         && n_vec[i] != 0) {
-      return T_partials(LOG_ZERO);
+      return T_return(LOG_ZERO);
     }
   }
 

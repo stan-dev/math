@@ -45,6 +45,7 @@ inline auto beta_proportion_lpdf(const T_y& y, const T_loc& mu,
   static const char* function = "beta_proportion_lpdf";
 
   using T_partials = partials_return_t<T_y, T_loc, T_prec>;
+  using T_return = return_type_t<T_y, T_loc, T_prec>;
   using std::log;
   check_positive(function, "Location parameter", mu);
   check_less_or_equal(function, "Location parameter", mu, 1.0);
@@ -55,10 +56,10 @@ inline auto beta_proportion_lpdf(const T_y& y, const T_loc& mu,
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Precision parameter", kappa);
   if (size_zero(y, mu, kappa)) {
-    return T_partials(0);
+    return T_return(0);
   }
   if (!include_summand<propto, T_y, T_loc, T_prec>::value) {
-    return T_partials(0);
+    return T_return(0);
   }
   T_partials logp(0);
 
@@ -71,17 +72,17 @@ inline auto beta_proportion_lpdf(const T_y& y, const T_loc& mu,
   for (size_t n = 0; n < N; n++) {
     const T_partials y_dbl = value_of(y_vec[n]);
     if (y_dbl < 0 || y_dbl > 1) {
-      return T_partials(LOG_ZERO);
+      return T_return(LOG_ZERO);
     }
   }
 
   operands_and_partials<T_y, T_loc, T_prec> ops_partials(y, mu, kappa);
 
-  VectorBuilder<include_summand<propto, T_y, T_loc, T_prec>::value,
-                T_partials, T_y>
+  VectorBuilder<include_summand<propto, T_y, T_loc, T_prec>::value, T_partials,
+                T_y>
       log_y(length(y));
-  VectorBuilder<include_summand<propto, T_y, T_loc, T_prec>::value,
-                T_partials, T_y>
+  VectorBuilder<include_summand<propto, T_y, T_loc, T_prec>::value, T_partials,
+                T_y>
       log1m_y(length(y));
 
   for (size_t n = 0; n < length(y); n++) {
@@ -91,24 +92,22 @@ inline auto beta_proportion_lpdf(const T_y& y, const T_loc& mu,
     }
   }
 
-  VectorBuilder<include_summand<propto, T_loc, T_prec>::value,
-                T_partials, T_loc, T_prec>
+  VectorBuilder<include_summand<propto, T_loc, T_prec>::value, T_partials,
+                T_loc, T_prec>
       lgamma_mukappa(N_mukappa);
-  VectorBuilder<include_summand<propto, T_loc, T_prec>::value,
-                T_partials, T_loc, T_prec>
+  VectorBuilder<include_summand<propto, T_loc, T_prec>::value, T_partials,
+                T_loc, T_prec>
       lgamma_kappa_mukappa(N_mukappa);
-  VectorBuilder<!is_constant_all<T_loc, T_prec>::value, T_partials,
-                T_loc, T_prec>
+  VectorBuilder<!is_constant_all<T_loc, T_prec>::value, T_partials, T_loc,
+                T_prec>
       digamma_mukappa(N_mukappa);
-  VectorBuilder<!is_constant_all<T_loc, T_prec>::value, T_partials,
-                T_loc, T_prec>
+  VectorBuilder<!is_constant_all<T_loc, T_prec>::value, T_partials, T_loc,
+                T_prec>
       digamma_kappa_mukappa(N_mukappa);
 
   for (size_t n = 0; n < N_mukappa; n++) {
-    const T_partials mukappa_dbl
-        = value_of(mu_vec[n]) * value_of(kappa_vec[n]);
-    const T_partials kappa_mukappa_dbl
-        = value_of(kappa_vec[n]) - mukappa_dbl;
+    const T_partials mukappa_dbl = value_of(mu_vec[n]) * value_of(kappa_vec[n]);
+    const T_partials kappa_mukappa_dbl = value_of(kappa_vec[n]) - mukappa_dbl;
 
     if (include_summand<propto, T_loc, T_prec>::value) {
       lgamma_mukappa[n] = lgamma(mukappa_dbl);
@@ -121,8 +120,7 @@ inline auto beta_proportion_lpdf(const T_y& y, const T_loc& mu,
     }
   }
 
-  VectorBuilder<include_summand<propto, T_prec>::value, T_partials,
-                T_prec>
+  VectorBuilder<include_summand<propto, T_prec>::value, T_partials, T_prec>
       lgamma_kappa(length(kappa));
   VectorBuilder<!is_constant_all<T_prec>::value, T_partials, T_prec>
       digamma_kappa(length(kappa));

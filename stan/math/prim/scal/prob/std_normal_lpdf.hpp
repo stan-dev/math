@@ -26,15 +26,16 @@ template <bool propto, typename T_y>
 inline auto std_normal_lpdf(const T_y& y) {
   static const char* function = "std_normal_lpdf";
   using T_partials = partials_return_t<T_y>;
+  using T_return = return_type_t<T_y>;
 
   if (size_zero(y)) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   check_not_nan(function, "Random variable", y);
 
   if (!include_summand<propto, T_y>::value) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   operands_and_partials<T_y> ops_partials(y);

@@ -19,9 +19,10 @@ template <typename T_y, typename T_scale, typename T_shape>
 inline auto pareto_lccdf(const T_y& y, const T_scale& y_min,
                          const T_shape& alpha) {
   using T_partials = partials_return_t<T_y, T_scale, T_shape>;
+  using T_return = return_type_t<T_y, T_scale, T_shape>;
 
   if (size_zero(y, y_min, alpha)) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   static const char* function = "pareto_lccdf";
@@ -60,8 +61,7 @@ inline auto pareto_lccdf(const T_y& y, const T_scale& y_min,
       return ops_partials.build(negative_infinity());
     }
 
-    const T_partials log_dbl
-        = log(value_of(y_min_vec[n]) / value_of(y_vec[n]));
+    const T_partials log_dbl = log(value_of(y_min_vec[n]) / value_of(y_vec[n]));
     const T_partials y_min_inv_dbl = 1.0 / value_of(y_min_vec[n]);
     const T_partials alpha_dbl = value_of(alpha_vec[n]);
 

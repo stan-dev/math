@@ -20,6 +20,7 @@ template <typename T_n, typename T_rate>
 inline auto poisson_cdf(const T_n& n, const T_rate& lambda) {
   static const char* function = "poisson_cdf";
   using T_partials = partials_return_t<T_n, T_rate>;
+  using T_return = return_type_t<T_n, T_rate>;
 
   if (size_zero(n, lambda)) {
     return 1.0;

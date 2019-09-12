@@ -20,9 +20,10 @@ inline auto von_mises_lpdf(T_y const& y, T_loc const& mu,
                            T_scale const& kappa) {
   static char const* const function = "von_mises_lpdf";
   using T_partials = partials_return_t<T_y, T_loc, T_scale>;
+  using T_return = return_type_t<T_y, T_loc, T_scale>;
 
   if (size_zero(y, mu, kappa)) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   using std::log;
@@ -36,7 +37,7 @@ inline auto von_mises_lpdf(T_y const& y, T_loc const& mu,
                          mu, "Scale parameter", kappa);
 
   if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
-    return logp;
+    return T_return(0.0);
   }
 
   const bool y_const = is_constant_all<T_y>::value;
@@ -52,8 +53,7 @@ inline auto von_mises_lpdf(T_y const& y, T_loc const& mu,
   const scalar_seq_view<T_scale> kappa_vec(kappa);
 
   VectorBuilder<true, T_partials, T_scale> kappa_dbl(length(kappa));
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials,
-                T_scale>
+  VectorBuilder<include_summand<propto, T_scale>::value, T_partials, T_scale>
       log_bessel0(length(kappa));
   for (size_t i = 0; i < length(kappa); i++) {
     kappa_dbl[i] = value_of(kappa_vec[i]);

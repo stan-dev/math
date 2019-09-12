@@ -19,13 +19,14 @@ inline auto pareto_lpdf(const T_y& y, const T_scale& y_min,
                         const T_shape& alpha) {
   static const char* function = "pareto_lpdf";
   using T_partials = partials_return_t<T_y, T_scale, T_shape>;
+  using T_return = return_type_t<T_y, T_scale, T_shape>;
   T_partials logp(0);
   using std::log;
   if (size_zero(y, y_min, alpha)) {
-    return logp;
+    return T_return(0.0);
   }
   if (!include_summand<propto, T_y, T_scale, T_shape>::value) {
-    return logp;
+    return T_return(0.0);
   }
   check_not_nan(function, "Random variable", y);
   check_positive_finite(function, "Scale parameter", y_min);
@@ -40,15 +41,13 @@ inline auto pareto_lpdf(const T_y& y, const T_scale& y_min,
 
   for (size_t n = 0; n < N; n++) {
     if (y_vec[n] < y_min_vec[n]) {
-      T_partials log_z(LOG_ZERO);
-      return log_z;
+      return T_return(LOG_ZERO);
     }
   }
 
   operands_and_partials<T_y, T_scale, T_shape> ops_partials(y, y_min, alpha);
 
-  VectorBuilder<include_summand<propto, T_y, T_shape>::value, T_partials,
-                T_y>
+  VectorBuilder<include_summand<propto, T_y, T_shape>::value, T_partials, T_y>
       log_y(length(y));
   if (include_summand<propto, T_y, T_shape>::value) {
     for (size_t n = 0; n < length(y); n++) {
@@ -56,16 +55,16 @@ inline auto pareto_lpdf(const T_y& y, const T_scale& y_min,
     }
   }
 
-  VectorBuilder<!is_constant_all<T_y, T_shape>::value, T_partials, T_y>
-      inv_y(length(y));
+  VectorBuilder<!is_constant_all<T_y, T_shape>::value, T_partials, T_y> inv_y(
+      length(y));
   if (!is_constant_all<T_y, T_shape>::value) {
     for (size_t n = 0; n < length(y); n++) {
       inv_y[n] = 1 / value_of(y_vec[n]);
     }
   }
 
-  VectorBuilder<include_summand<propto, T_scale, T_shape>::value,
-                T_partials, T_scale>
+  VectorBuilder<include_summand<propto, T_scale, T_shape>::value, T_partials,
+                T_scale>
       log_y_min(length(y_min));
   if (include_summand<propto, T_scale, T_shape>::value) {
     for (size_t n = 0; n < length(y_min); n++) {
@@ -73,8 +72,7 @@ inline auto pareto_lpdf(const T_y& y, const T_scale& y_min,
     }
   }
 
-  VectorBuilder<include_summand<propto, T_shape>::value, T_partials,
-                T_shape>
+  VectorBuilder<include_summand<propto, T_shape>::value, T_partials, T_shape>
       log_alpha(length(alpha));
   if (include_summand<propto, T_shape>::value) {
     for (size_t n = 0; n < length(alpha); n++) {

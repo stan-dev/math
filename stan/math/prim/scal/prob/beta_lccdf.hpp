@@ -40,9 +40,10 @@ template <typename T_y, typename T_scale_succ, typename T_scale_fail>
 inline auto beta_lccdf(const T_y& y, const T_scale_succ& alpha,
                        const T_scale_fail& beta) {
   using T_partials = partials_return_t<T_y, T_scale_succ, T_scale_fail>;
+  using T_return = return_type_t<T_y, T_scale_succ, T_scale_fail>;
 
   if (size_zero(y, alpha, beta)) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   static const char* function = "beta_lccdf";
@@ -70,14 +71,14 @@ inline auto beta_lccdf(const T_y& y, const T_scale_succ& alpha,
   using std::log;
   using std::pow;
 
-  VectorBuilder<!is_constant_all<T_scale_succ, T_scale_fail>::value,
-                T_partials, T_scale_succ, T_scale_fail>
+  VectorBuilder<!is_constant_all<T_scale_succ, T_scale_fail>::value, T_partials,
+                T_scale_succ, T_scale_fail>
       digamma_alpha_vec(max_size(alpha, beta));
-  VectorBuilder<!is_constant_all<T_scale_succ, T_scale_fail>::value,
-                T_partials, T_scale_succ, T_scale_fail>
+  VectorBuilder<!is_constant_all<T_scale_succ, T_scale_fail>::value, T_partials,
+                T_scale_succ, T_scale_fail>
       digamma_beta_vec(max_size(alpha, beta));
-  VectorBuilder<!is_constant_all<T_scale_succ, T_scale_fail>::value,
-                T_partials, T_scale_succ, T_scale_fail>
+  VectorBuilder<!is_constant_all<T_scale_succ, T_scale_fail>::value, T_partials,
+                T_scale_succ, T_scale_fail>
       digamma_sum_vec(max_size(alpha, beta));
 
   if (!is_constant_all<T_scale_succ, T_scale_fail>::value) {
@@ -95,8 +96,7 @@ inline auto beta_lccdf(const T_y& y, const T_scale_succ& alpha,
     const T_partials y_dbl = value_of(y_vec[n]);
     const T_partials alpha_dbl = value_of(alpha_vec[n]);
     const T_partials beta_dbl = value_of(beta_vec[n]);
-    const T_partials betafunc_dbl
-        = stan::math::beta(alpha_dbl, beta_dbl);
+    const T_partials betafunc_dbl = stan::math::beta(alpha_dbl, beta_dbl);
 
     const T_partials Pn = 1.0 - inc_beta(alpha_dbl, beta_dbl, y_dbl);
 

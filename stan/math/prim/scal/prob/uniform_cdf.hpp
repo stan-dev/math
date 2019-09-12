@@ -16,6 +16,7 @@ template <typename T_y, typename T_low, typename T_high>
 inline auto uniform_cdf(const T_y& y, const T_low& alpha, const T_high& beta) {
   static const char* function = "uniform_cdf";
   using T_partials = partials_return_t<T_y, T_low, T_high>;
+  using T_return = return_type_t<T_y, T_low, T_high>;
 
   if (size_zero(y, alpha, beta)) {
     return 1.0;
@@ -38,7 +39,7 @@ inline auto uniform_cdf(const T_y& y, const T_low& alpha, const T_high& beta) {
   for (size_t n = 0; n < N; n++) {
     const T_partials y_dbl = value_of(y_vec[n]);
     if (y_dbl < value_of(alpha_vec[n]) || y_dbl > value_of(beta_vec[n])) {
-      return T_partials(0.0);
+      return T_return(0.0);
     }
   }
 

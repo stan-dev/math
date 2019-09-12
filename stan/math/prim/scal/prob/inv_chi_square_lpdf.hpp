@@ -39,13 +39,14 @@ template <bool propto, typename T_y, typename T_dof>
 inline auto inv_chi_square_lpdf(const T_y& y, const T_dof& nu) {
   static const char* function = "inv_chi_square_lpdf";
   using T_partials = partials_return_t<T_y, T_dof>;
+  using T_return = return_type_t<T_y, T_dof>;
 
   check_positive_finite(function, "Degrees of freedom parameter", nu);
   check_not_nan(function, "Random variable", y);
   check_consistent_sizes(function, "Random variable", y,
                          "Degrees of freedom parameter", nu);
   if (size_zero(y, nu)) {
-    return T_partials(0);
+    return T_return(0);
   }
 
   T_partials logp(0);
@@ -56,14 +57,13 @@ inline auto inv_chi_square_lpdf(const T_y& y, const T_dof& nu) {
 
   for (size_t n = 0; n < length(y); n++) {
     if (value_of(y_vec[n]) <= 0) {
-      return T_partials(LOG_ZERO);
+      return T_return(LOG_ZERO);
     }
   }
 
   using std::log;
 
-  VectorBuilder<include_summand<propto, T_y, T_dof>::value, T_partials,
-                T_y>
+  VectorBuilder<include_summand<propto, T_y, T_dof>::value, T_partials, T_y>
       log_y(length(y));
   for (size_t i = 0; i < length(y); i++) {
     if (include_summand<propto, T_y, T_dof>::value) {
@@ -71,8 +71,8 @@ inline auto inv_chi_square_lpdf(const T_y& y, const T_dof& nu) {
     }
   }
 
-  VectorBuilder<include_summand<propto, T_y>::value, T_partials, T_y>
-      inv_y(length(y));
+  VectorBuilder<include_summand<propto, T_y>::value, T_partials, T_y> inv_y(
+      length(y));
   for (size_t i = 0; i < length(y); i++) {
     if (include_summand<propto, T_y>::value) {
       inv_y[i] = 1.0 / value_of(y_vec[i]);

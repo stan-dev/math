@@ -48,12 +48,13 @@ inline auto normal_sufficient_lpdf(const T_y& y_bar, const T_s& s_squared,
                                    const T_scale& sigma) {
   static const char* function = "normal_sufficient_lpdf";
   using T_partials = partials_return_t<T_y, T_s, T_n, T_loc, T_scale>;
+  using T_return = return_type_t<T_y, T_s, T_n, T_loc, T_scale>;
 
   using std::log;
 
   // check if any vectors are zero length
   if (size_zero(y_bar, s_squared, n_obs, mu, sigma)) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   // set up return value accumulator
@@ -75,7 +76,7 @@ inline auto normal_sufficient_lpdf(const T_y& y_bar, const T_s& s_squared,
                          "Location parameter", mu, "Scale parameter", sigma);
   // check if no variables are involved and prop-to
   if (!include_summand<propto, T_y, T_s, T_loc, T_scale>::value) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   // set up template expressions wrapping scalars into vector views

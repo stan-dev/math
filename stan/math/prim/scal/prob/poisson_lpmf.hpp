@@ -20,11 +20,12 @@ namespace math {
 template <bool propto, typename T_n, typename T_rate>
 inline auto poisson_lpmf(const T_n& n, const T_rate& lambda) {
   using T_partials = partials_return_t<T_n, T_rate>;
+  using T_return = return_type_t<T_n, T_rate>;
 
   static const char* function = "poisson_lpmf";
 
   if (size_zero(n, lambda)) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   T_partials logp(0.0);
@@ -36,7 +37,7 @@ inline auto poisson_lpmf(const T_n& n, const T_rate& lambda) {
                          lambda);
 
   if (!include_summand<propto, T_rate>::value) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   const scalar_seq_view<T_n> n_vec(n);
@@ -45,12 +46,12 @@ inline auto poisson_lpmf(const T_n& n, const T_rate& lambda) {
 
   for (size_t i = 0; i < size; i++) {
     if (is_inf(lambda_vec[i])) {
-      return T_partials(LOG_ZERO);
+      return T_return(LOG_ZERO);
     }
   }
   for (size_t i = 0; i < size; i++) {
     if (lambda_vec[i] == 0 && n_vec[i] != 0) {
-      return T_partials(LOG_ZERO);
+      return T_return(LOG_ZERO);
     }
   }
 

@@ -51,9 +51,10 @@ inline auto student_t_lpdf(const T_y& y, const T_dof& nu, const T_loc& mu,
                            const T_scale& sigma) {
   static const char* function = "student_t_lpdf";
   using T_partials = partials_return_t<T_y, T_dof, T_loc, T_scale>;
+  using T_return = return_type_t<T_y, T_dof, T_loc, T_scale>;
 
   if (size_zero(y, nu, mu, sigma)) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   T_partials logp(0.0);
@@ -67,7 +68,7 @@ inline auto student_t_lpdf(const T_y& y, const T_dof& nu, const T_loc& mu,
                          "Location parameter", mu, "Scale parameter", sigma);
 
   if (!include_summand<propto, T_y, T_dof, T_loc, T_scale>::value) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   const scalar_seq_view<T_y> y_vec(y);
@@ -117,8 +118,7 @@ inline auto student_t_lpdf(const T_y& y, const T_dof& nu, const T_loc& mu,
     }
   }
 
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials,
-                T_scale>
+  VectorBuilder<include_summand<propto, T_scale>::value, T_partials, T_scale>
       log_sigma(length(sigma));
   for (size_t i = 0; i < length(sigma); i++) {
     if (include_summand<propto, T_scale>::value) {

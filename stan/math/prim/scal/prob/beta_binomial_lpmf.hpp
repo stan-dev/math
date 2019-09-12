@@ -41,9 +41,10 @@ inline auto beta_binomial_lpmf(const T_n& n, const T_N& N, const T_size1& alpha,
                                const T_size2& beta) {
   static const char* function = "beta_binomial_lpmf";
   using T_partials = partials_return_t<T_size1, T_size2>;
+  using T_return = return_type_t<T_size1, T_size2>;
 
   if (size_zero(n, N, alpha, beta)) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   T_partials logp(0.0);
@@ -56,7 +57,7 @@ inline auto beta_binomial_lpmf(const T_n& n, const T_N& N, const T_size1& alpha,
                          "Second prior sample size parameter", beta);
 
   if (!include_summand<propto, T_size1, T_size2>::value) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   operands_and_partials<T_size1, T_size2> ops_partials(alpha, beta);

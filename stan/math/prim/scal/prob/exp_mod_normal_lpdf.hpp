@@ -22,9 +22,10 @@ inline auto exp_mod_normal_lpdf(const T_y& y, const T_loc& mu,
                                 const T_inv_scale& lambda) {
   static const char* function = "exp_mod_normal_lpdf";
   using T_partials = partials_return_t<T_y, T_loc, T_scale, T_inv_scale>;
+  using T_return = return_type_t<T_y, T_loc, T_scale, T_inv_scale>;
 
   if (size_zero(y, mu, sigma, lambda)) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   T_partials logp(0.0);
@@ -38,7 +39,7 @@ inline auto exp_mod_normal_lpdf(const T_y& y, const T_loc& mu,
                          lambda);
 
   if (!include_summand<propto, T_y, T_loc, T_scale, T_inv_scale>::value) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   using std::exp;

@@ -19,13 +19,14 @@ template <typename T_y, typename T_loc, typename T_scale>
 inline auto normal_lcdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
   static const char* function = "normal_lcdf";
   using T_partials = partials_return_t<T_y, T_loc, T_scale>;
+  using T_return = return_type_t<T_y, T_loc, T_scale>;
 
   using std::exp;
   using std::log;
 
   T_partials cdf_log(0.0);
   if (size_zero(y, mu, sigma)) {
-    return cdf_log;
+    return T_return(0.0);
   }
 
   check_not_nan(function, "Random variable", y);
@@ -48,8 +49,7 @@ inline auto normal_lcdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
     const T_partials mu_dbl = value_of(mu_vec[n]);
     const T_partials sigma_dbl = value_of(sigma_vec[n]);
 
-    const T_partials scaled_diff
-        = (y_dbl - mu_dbl) / (sigma_dbl * SQRT_2);
+    const T_partials scaled_diff = (y_dbl - mu_dbl) / (sigma_dbl * SQRT_2);
 
     T_partials one_p_erf;
     if (scaled_diff < -37.5 * INV_SQRT_2) {

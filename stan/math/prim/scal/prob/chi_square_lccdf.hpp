@@ -36,6 +36,7 @@ template <typename T_y, typename T_dof>
 inline auto chi_square_lccdf(const T_y& y, const T_dof& nu) {
   static const char* function = "chi_square_lccdf";
   using T_partials = partials_return_t<T_y, T_dof>;
+  using T_return = return_type_t<T_y, T_dof>;
 
   T_partials ccdf_log(0.0);
 
@@ -67,10 +68,10 @@ inline auto chi_square_lccdf(const T_y& y, const T_dof& nu) {
   using std::log;
   using std::pow;
 
-  VectorBuilder<!is_constant_all<T_dof>::value, T_partials, T_dof>
-      gamma_vec(stan::length(nu));
-  VectorBuilder<!is_constant_all<T_dof>::value, T_partials, T_dof>
-      digamma_vec(stan::length(nu));
+  VectorBuilder<!is_constant_all<T_dof>::value, T_partials, T_dof> gamma_vec(
+      stan::length(nu));
+  VectorBuilder<!is_constant_all<T_dof>::value, T_partials, T_dof> digamma_vec(
+      stan::length(nu));
 
   if (!is_constant_all<T_dof>::value) {
     for (size_t i = 0; i < stan::length(nu); i++) {

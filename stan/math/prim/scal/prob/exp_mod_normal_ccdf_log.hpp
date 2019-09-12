@@ -14,8 +14,7 @@ template <typename T_y, typename T_loc, typename T_scale, typename T_inv_scale>
 inline auto exp_mod_normal_ccdf_log(const T_y& y, const T_loc& mu,
                                     const T_scale& sigma,
                                     const T_inv_scale& lambda) {
-  return exp_mod_normal_lccdf(y, mu, sigma,
-                                                                lambda);
+  return exp_mod_normal_lccdf(y, mu, sigma, lambda);
 }
 
 }  // namespace math

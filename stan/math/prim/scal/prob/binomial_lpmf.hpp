@@ -35,11 +35,12 @@ namespace math {
 template <bool propto, typename T_n, typename T_N, typename T_prob>
 inline auto binomial_lpmf(const T_n& n, const T_N& N, const T_prob& theta) {
   using T_partials = partials_return_t<T_n, T_N, T_prob>;
+  using T_return = return_type_t<T_n, T_N, T_prob>;
 
   static const char* function = "binomial_lpmf";
 
   if (size_zero(n, N, theta)) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   T_partials logp = 0;
@@ -52,7 +53,7 @@ inline auto binomial_lpmf(const T_n& n, const T_N& N, const T_prob& theta) {
                          "Probability parameter", theta);
 
   if (!include_summand<propto, T_prob>::value) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   const scalar_seq_view<T_n> n_vec(n);

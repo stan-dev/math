@@ -21,14 +21,13 @@ template <bool propto, typename T_n, typename T_log_location,
           typename T_precision>
 inline auto neg_binomial_2_log_lpmf(const T_n& n, const T_log_location& eta,
                                     const T_precision& phi) {
-  typedef
-      typename stan::partials_return_type<T_n, T_log_location,
-                                          T_precision>::type T_partials;
+  using T_partials = partials_return_t<T_n, T_log_location, T_precision>;
+  using T_return = return_type_t<T_n, T_log_location, T_precision>;
 
   static const char* function = "neg_binomial_2_log_lpmf";
 
   if (size_zero(n, eta, phi)) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   T_partials logp(0.0);
@@ -40,7 +39,7 @@ inline auto neg_binomial_2_log_lpmf(const T_n& n, const T_log_location& eta,
                          phi);
 
   if (!include_summand<propto, T_log_location, T_precision>::value) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   using std::exp;

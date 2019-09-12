@@ -17,8 +17,9 @@ inline auto neg_binomial_2_lcdf(const T_n& n, const T_location& mu,
                                 const T_precision& phi) {
   using std::log;
   using T_partials = partials_return_t<T_n, T_location, T_precision>;
+  using T_return = return_type_t<T_n, T_location, T_precision>;
   if (size_zero(n, mu, phi)) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   static const char* function = "neg_binomial_2_lcdf";

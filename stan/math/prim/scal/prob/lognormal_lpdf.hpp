@@ -21,6 +21,7 @@ inline auto lognormal_lpdf(const T_y& y, const T_loc& mu,
                            const T_scale& sigma) {
   static const char* function = "lognormal_lpdf";
   using T_partials = partials_return_t<T_y, T_loc, T_scale>;
+  using T_return = return_type_t<T_y, T_loc, T_scale>;
 
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
@@ -29,7 +30,7 @@ inline auto lognormal_lpdf(const T_y& y, const T_loc& mu,
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma);
   if (size_zero(y, mu, sigma)) {
-    return T_partials(0);
+    return T_return(0);
   }
 
   T_partials logp(0);
@@ -41,7 +42,7 @@ inline auto lognormal_lpdf(const T_y& y, const T_loc& mu,
 
   for (size_t n = 0; n < length(y); n++) {
     if (value_of(y_vec[n]) <= 0) {
-      return T_partials(LOG_ZERO);
+      return T_return(LOG_ZERO);
     }
   }
 
@@ -49,8 +50,7 @@ inline auto lognormal_lpdf(const T_y& y, const T_loc& mu,
 
   using std::log;
 
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials,
-                T_scale>
+  VectorBuilder<include_summand<propto, T_scale>::value, T_partials, T_scale>
       log_sigma(length(sigma));
   if (include_summand<propto, T_scale>::value) {
     for (size_t n = 0; n < length(sigma); n++) {
@@ -58,11 +58,11 @@ inline auto lognormal_lpdf(const T_y& y, const T_loc& mu,
     }
   }
 
-  VectorBuilder<include_summand<propto, T_y, T_loc, T_scale>::value,
-                T_partials, T_scale>
+  VectorBuilder<include_summand<propto, T_y, T_loc, T_scale>::value, T_partials,
+                T_scale>
       inv_sigma(length(sigma));
-  VectorBuilder<include_summand<propto, T_y, T_loc, T_scale>::value,
-                T_partials, T_scale>
+  VectorBuilder<include_summand<propto, T_y, T_loc, T_scale>::value, T_partials,
+                T_scale>
       inv_sigma_sq(length(sigma));
   if (include_summand<propto, T_y, T_loc, T_scale>::value) {
     for (size_t n = 0; n < length(sigma); n++) {
@@ -75,8 +75,8 @@ inline auto lognormal_lpdf(const T_y& y, const T_loc& mu,
     }
   }
 
-  VectorBuilder<include_summand<propto, T_y, T_loc, T_scale>::value,
-                T_partials, T_y>
+  VectorBuilder<include_summand<propto, T_y, T_loc, T_scale>::value, T_partials,
+                T_y>
       log_y(length(y));
   if (include_summand<propto, T_y, T_loc, T_scale>::value) {
     for (size_t n = 0; n < length(y); n++) {
@@ -84,8 +84,7 @@ inline auto lognormal_lpdf(const T_y& y, const T_loc& mu,
     }
   }
 
-  VectorBuilder<!is_constant_all<T_y>::value, T_partials, T_y> inv_y(
-      length(y));
+  VectorBuilder<!is_constant_all<T_y>::value, T_partials, T_y> inv_y(length(y));
   if (!is_constant_all<T_y>::value) {
     for (size_t n = 0; n < length(y); n++) {
       inv_y[n] = 1 / value_of(y_vec[n]);

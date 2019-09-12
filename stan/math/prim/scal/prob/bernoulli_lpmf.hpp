@@ -29,11 +29,12 @@ template <bool propto, typename T_n, typename T_prob>
 inline auto bernoulli_lpmf(const T_n& n, const T_prob& theta) {
   static const char* function = "bernoulli_lpmf";
   using T_partials = partials_return_t<T_n, T_prob>;
+  using T_return = return_type_t<T_n, T_prob>;
 
   using std::log;
 
   if (size_zero(n, theta)) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   T_partials logp(0.0);
@@ -45,7 +46,7 @@ inline auto bernoulli_lpmf(const T_n& n, const T_prob& theta) {
                          "Probability parameter", theta);
 
   if (!include_summand<propto, T_prob>::value) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   const scalar_seq_view<T_n> n_vec(n);

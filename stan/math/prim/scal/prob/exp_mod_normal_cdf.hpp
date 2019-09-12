@@ -20,9 +20,8 @@ inline auto exp_mod_normal_cdf(const T_y& y, const T_loc& mu,
                                const T_scale& sigma,
                                const T_inv_scale& lambda) {
   static const char* function = "exp_mod_normal_cdf";
-  typedef
-      typename stan::partials_return_type<T_y, T_loc, T_scale,
-                                          T_inv_scale>::type T_partials;
+  typedef typename stan::partials_return_type<T_y, T_loc, T_scale,
+                                              T_inv_scale>::type T_partials;
 
   T_partials cdf(1.0);
   if (size_zero(y, mu, sigma, lambda)) {
@@ -64,13 +63,10 @@ inline auto exp_mod_normal_cdf(const T_y& y, const T_loc& mu,
     const T_partials u = lambda_dbl * (y_dbl - mu_dbl);
     const T_partials v = lambda_dbl * sigma_dbl;
     const T_partials v_sq = v * v;
-    const T_partials scaled_diff
-        = (y_dbl - mu_dbl) / (SQRT_2 * sigma_dbl);
+    const T_partials scaled_diff = (y_dbl - mu_dbl) / (SQRT_2 * sigma_dbl);
     const T_partials scaled_diff_sq = scaled_diff * scaled_diff;
-    const T_partials erf_calc
-        = 0.5 * (1 + erf(-v / SQRT_2 + scaled_diff));
-    const T_partials deriv_1
-        = lambda_dbl * exp(0.5 * v_sq - u) * erf_calc;
+    const T_partials erf_calc = 0.5 * (1 + erf(-v / SQRT_2 + scaled_diff));
+    const T_partials deriv_1 = lambda_dbl * exp(0.5 * v_sq - u) * erf_calc;
     const T_partials deriv_2
         = SQRT_2 / sqrt_pi * 0.5
           * exp(0.5 * v_sq

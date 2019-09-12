@@ -43,9 +43,10 @@ inline auto gamma_lpdf(const T_y& y, const T_shape& alpha,
                        const T_inv_scale& beta) {
   static const char* function = "gamma_lpdf";
   using T_partials = partials_return_t<T_y, T_shape, T_inv_scale>;
+  using T_return = return_type_t<T_y, T_shape, T_inv_scale>;
 
   if (size_zero(y, alpha, beta)) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   T_partials logp(0.0);
@@ -57,7 +58,7 @@ inline auto gamma_lpdf(const T_y& y, const T_shape& alpha,
                          alpha, "Inverse scale parameter", beta);
 
   if (!include_summand<propto, T_y, T_shape, T_inv_scale>::value) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   const scalar_seq_view<T_y> y_vec(y);
@@ -67,7 +68,7 @@ inline auto gamma_lpdf(const T_y& y, const T_shape& alpha,
   for (size_t n = 0; n < length(y); n++) {
     const T_partials y_dbl = value_of(y_vec[n]);
     if (y_dbl < 0) {
-      return T_partials(LOG_ZERO);
+      return T_return(LOG_ZERO);
     }
   }
 
@@ -76,8 +77,7 @@ inline auto gamma_lpdf(const T_y& y, const T_shape& alpha,
 
   using std::log;
 
-  VectorBuilder<include_summand<propto, T_y, T_shape>::value, T_partials,
-                T_y>
+  VectorBuilder<include_summand<propto, T_y, T_shape>::value, T_partials, T_y>
       log_y(length(y));
   if (include_summand<propto, T_y, T_shape>::value) {
     for (size_t n = 0; n < length(y); n++) {
@@ -87,8 +87,7 @@ inline auto gamma_lpdf(const T_y& y, const T_shape& alpha,
     }
   }
 
-  VectorBuilder<include_summand<propto, T_shape>::value, T_partials,
-                T_shape>
+  VectorBuilder<include_summand<propto, T_shape>::value, T_partials, T_shape>
       lgamma_alpha(length(alpha));
   VectorBuilder<!is_constant_all<T_shape>::value, T_partials, T_shape>
       digamma_alpha(length(alpha));

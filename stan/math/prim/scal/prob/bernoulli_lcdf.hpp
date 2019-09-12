@@ -29,9 +29,10 @@ template <typename T_n, typename T_prob>
 inline auto bernoulli_lcdf(const T_n& n, const T_prob& theta) {
   static const char* function = "bernoulli_lcdf";
   using T_partials = partials_return_t<T_n, T_prob>;
+  using T_return = return_type_t<T_n, T_prob>;
 
   if (size_zero(n, theta)) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   T_partials P(0.0);

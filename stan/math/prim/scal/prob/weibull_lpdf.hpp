@@ -32,6 +32,7 @@ inline auto weibull_lpdf(const T_y& y, const T_shape& alpha,
                          const T_scale& sigma) {
   static const char* function = "weibull_lpdf";
   using T_partials = partials_return_t<T_y, T_shape, T_scale>;
+  using T_return = return_type_t<T_y, T_shape, T_scale>;
 
   using std::log;
   check_finite(function, "Random variable", y);
@@ -40,10 +41,10 @@ inline auto weibull_lpdf(const T_y& y, const T_shape& alpha,
   check_consistent_sizes(function, "Random variable", y, "Shape parameter",
                          alpha, "Scale parameter", sigma);
   if (size_zero(y, alpha, sigma)) {
-    return T_partials(0);
+    return T_return(0);
   }
   if (!include_summand<propto, T_y, T_shape, T_scale>::value) {
-    return T_partials(0);
+    return T_return(0);
   }
 
   T_partials logp(0);
@@ -55,12 +56,11 @@ inline auto weibull_lpdf(const T_y& y, const T_shape& alpha,
   for (size_t n = 0; n < N; n++) {
     const T_partials y_dbl = value_of(y_vec[n]);
     if (y_dbl < 0) {
-      return T_partials(LOG_ZERO);
+      return T_return(LOG_ZERO);
     }
   }
 
-  VectorBuilder<include_summand<propto, T_shape>::value, T_partials,
-                T_shape>
+  VectorBuilder<include_summand<propto, T_shape>::value, T_partials, T_shape>
       log_alpha(length(alpha));
   for (size_t i = 0; i < length(alpha); i++) {
     if (include_summand<propto, T_shape>::value) {
@@ -68,8 +68,7 @@ inline auto weibull_lpdf(const T_y& y, const T_shape& alpha,
     }
   }
 
-  VectorBuilder<include_summand<propto, T_y, T_shape>::value, T_partials,
-                T_y>
+  VectorBuilder<include_summand<propto, T_y, T_shape>::value, T_partials, T_y>
       log_y(length(y));
   for (size_t i = 0; i < length(y); i++) {
     if (include_summand<propto, T_y, T_shape>::value) {
@@ -77,8 +76,8 @@ inline auto weibull_lpdf(const T_y& y, const T_shape& alpha,
     }
   }
 
-  VectorBuilder<include_summand<propto, T_shape, T_scale>::value,
-                T_partials, T_scale>
+  VectorBuilder<include_summand<propto, T_shape, T_scale>::value, T_partials,
+                T_scale>
       log_sigma(length(sigma));
   for (size_t i = 0; i < length(sigma); i++) {
     if (include_summand<propto, T_shape, T_scale>::value) {

@@ -28,12 +28,12 @@ template <typename T_n, typename T_prob>
 inline auto bernoulli_cdf(const T_n& n, const T_prob& theta) {
   static const char* function = "bernoulli_cdf";
   using T_partials = partials_return_t<T_n, T_prob>;
+  using T_return = return_type_t<T_n, T_prob>;
   T_partials P(1.0);
 
   if (size_zero(n, theta)) {
-    return T_partials(1.0);
+    return T_return(1.0);
   }
-
 
   check_finite(function, "Probability parameter", theta);
   check_bounded(function, "Probability parameter", theta, 0.0, 1.0);

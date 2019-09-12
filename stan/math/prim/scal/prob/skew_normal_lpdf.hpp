@@ -22,12 +22,13 @@ inline auto skew_normal_lpdf(const T_y& y, const T_loc& mu,
                              const T_scale& sigma, const T_shape& alpha) {
   static const char* function = "skew_normal_lpdf";
   using T_partials = partials_return_t<T_y, T_loc, T_scale, T_shape>;
+  using T_return = return_type_t<T_y, T_loc, T_scale, T_shape>;
 
   using std::exp;
   using std::log;
 
   if (size_zero(y, mu, sigma, alpha)) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   T_partials logp(0.0);
@@ -40,7 +41,7 @@ inline auto skew_normal_lpdf(const T_y& y, const T_loc& mu,
                          mu, "Scale parameter", sigma, "Shape paramter", alpha);
 
   if (!include_summand<propto, T_y, T_loc, T_scale, T_shape>::value) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   operands_and_partials<T_y, T_loc, T_scale, T_shape> ops_partials(y, mu, sigma,
@@ -53,8 +54,7 @@ inline auto skew_normal_lpdf(const T_y& y, const T_loc& mu,
   size_t N = max_size(y, mu, sigma, alpha);
 
   VectorBuilder<true, T_partials, T_scale> inv_sigma(length(sigma));
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials,
-                T_scale>
+  VectorBuilder<include_summand<propto, T_scale>::value, T_partials, T_scale>
       log_sigma(length(sigma));
   for (size_t i = 0; i < length(sigma); i++) {
     inv_sigma[i] = 1.0 / value_of(sigma_vec[i]);
@@ -69,8 +69,7 @@ inline auto skew_normal_lpdf(const T_y& y, const T_loc& mu,
     const T_partials sigma_dbl = value_of(sigma_vec[n]);
     const T_partials alpha_dbl = value_of(alpha_vec[n]);
 
-    const T_partials y_minus_mu_over_sigma
-        = (y_dbl - mu_dbl) * inv_sigma[n];
+    const T_partials y_minus_mu_over_sigma = (y_dbl - mu_dbl) * inv_sigma[n];
     const double pi_dbl = pi();
 
     if (include_summand<propto>::value) {

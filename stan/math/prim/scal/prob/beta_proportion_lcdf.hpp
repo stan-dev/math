@@ -43,9 +43,10 @@ template <typename T_y, typename T_loc, typename T_prec>
 inline auto beta_proportion_lcdf(const T_y& y, const T_loc& mu,
                                  const T_prec& kappa) {
   using T_partials = partials_return_t<T_y, T_loc, T_prec>;
+  using T_return = return_type_t<T_y, T_loc, T_prec>;
 
   if (size_zero(y, mu, kappa)) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   static const char* function = "beta_proportion_lcdf";
@@ -72,22 +73,20 @@ inline auto beta_proportion_lcdf(const T_y& y, const T_loc& mu,
   using std::log;
   using std::pow;
 
-  VectorBuilder<!is_constant_all<T_loc, T_prec>::value, T_partials,
-                T_loc, T_prec>
-      digamma_mukappa(max_size(mu, kappa));
-  VectorBuilder<!is_constant_all<T_loc, T_prec>::value, T_partials,
-                T_loc, T_prec>
-      digamma_kappa_mukappa(max_size(mu, kappa));
-  VectorBuilder<!is_constant_all<T_loc, T_prec>::value, T_partials,
+  VectorBuilder<!is_constant_all<T_loc, T_prec>::value, T_partials, T_loc,
                 T_prec>
+      digamma_mukappa(max_size(mu, kappa));
+  VectorBuilder<!is_constant_all<T_loc, T_prec>::value, T_partials, T_loc,
+                T_prec>
+      digamma_kappa_mukappa(max_size(mu, kappa));
+  VectorBuilder<!is_constant_all<T_loc, T_prec>::value, T_partials, T_prec>
       digamma_kappa(length(kappa));
 
   if (!is_constant_all<T_loc, T_prec>::value) {
     for (size_t i = 0; i < max_size(mu, kappa); i++) {
       const T_partials mukappa_dbl
           = value_of(mu_vec[i]) * value_of(kappa_vec[i]);
-      const T_partials kappa_mukappa_dbl
-          = value_of(kappa_vec[i]) - mukappa_dbl;
+      const T_partials kappa_mukappa_dbl = value_of(kappa_vec[i]) - mukappa_dbl;
 
       digamma_mukappa[i] = digamma(mukappa_dbl);
       digamma_kappa_mukappa[i] = digamma(kappa_mukappa_dbl);
@@ -105,8 +104,7 @@ inline auto beta_proportion_lcdf(const T_y& y, const T_loc& mu,
     const T_partials mukappa_dbl = mu_dbl * kappa_dbl;
     const T_partials kappa_mukappa_dbl = kappa_dbl - mukappa_dbl;
     const T_partials betafunc_dbl = beta(mukappa_dbl, kappa_mukappa_dbl);
-    const T_partials Pn
-        = inc_beta(mukappa_dbl, kappa_mukappa_dbl, y_dbl);
+    const T_partials Pn = inc_beta(mukappa_dbl, kappa_mukappa_dbl, y_dbl);
 
     cdf_log += log(Pn);
 

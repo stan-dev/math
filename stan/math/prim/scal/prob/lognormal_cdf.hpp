@@ -19,6 +19,7 @@ inline auto lognormal_cdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
   static const char* function = "lognormal_cdf";
 
   using T_partials = partials_return_t<T_y, T_loc, T_scale>;
+  using T_return = return_type_t<T_y, T_loc, T_scale>;
 
   T_partials cdf = 1.0;
 
@@ -53,8 +54,7 @@ inline auto lognormal_cdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
     const T_partials y_dbl = value_of(y_vec[n]);
     const T_partials mu_dbl = value_of(mu_vec[n]);
     const T_partials sigma_dbl = value_of(sigma_vec[n]);
-    const T_partials scaled_diff
-        = (log(y_dbl) - mu_dbl) / (sigma_dbl * SQRT_2);
+    const T_partials scaled_diff = (log(y_dbl) - mu_dbl) / (sigma_dbl * SQRT_2);
     const T_partials rep_deriv
         = SQRT_2 * 0.5 / sqrt_pi * exp(-scaled_diff * scaled_diff) / sigma_dbl;
 

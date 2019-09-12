@@ -17,6 +17,7 @@ template <typename T_y, typename T_scale>
 inline auto rayleigh_lccdf(const T_y& y, const T_scale& sigma) {
   static const char* function = "rayleigh_lccdf";
   using T_partials = partials_return_t<T_y, T_scale>;
+  using T_return = return_type_t<T_y, T_scale>;
 
   T_partials ccdf_log(0.0);
 

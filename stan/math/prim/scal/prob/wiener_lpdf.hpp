@@ -86,11 +86,11 @@ inline auto wiener_lpdf(const T_y& y, const T_alpha& alpha, const T_tau& tau,
   static const double TWO_TIMES_LOG_SQRT_PI = 2.0 * LOG_SQRT_PI;
 
   using T_partials = partials_return_t<T_y, T_alpha, T_tau, T_beta, T_delta>;
+  using T_return = return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta>;
   T_partials lp(0.0);
   if (size_zero(y, alpha, beta, tau, delta)) {
     return lp;
   }
-
 
   check_not_nan(function, "Random variable", y);
   check_not_nan(function, "Boundary separation", alpha);

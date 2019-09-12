@@ -26,6 +26,7 @@ inline auto frechet_lpdf(const T_y& y, const T_shape& alpha,
                          const T_scale& sigma) {
   static const char* function = "frechet_lpdf";
   using T_partials = partials_return_t<T_y, T_shape, T_scale>;
+  using T_return = return_type_t<T_y, T_shape, T_scale>;
   using std::log;
   check_positive(function, "Random variable", y);
   check_positive_finite(function, "Shape parameter", alpha);
@@ -34,10 +35,10 @@ inline auto frechet_lpdf(const T_y& y, const T_shape& alpha,
                          alpha, "Scale parameter", sigma);
 
   if (size_zero(y, alpha, sigma)) {
-    return T_partials(0);
+    return T_return(0);
   }
   if (!include_summand<propto, T_y, T_shape, T_scale>::value) {
-    return T_partials(0);
+    return T_return(0);
   }
 
   T_partials logp(0);
@@ -47,8 +48,7 @@ inline auto frechet_lpdf(const T_y& y, const T_shape& alpha,
   const scalar_seq_view<T_scale> sigma_vec(sigma);
   size_t N = max_size(y, alpha, sigma);
 
-  VectorBuilder<include_summand<propto, T_shape>::value, T_partials,
-                T_shape>
+  VectorBuilder<include_summand<propto, T_shape>::value, T_partials, T_shape>
       log_alpha(length(alpha));
   for (size_t i = 0; i < length(alpha); i++) {
     if (include_summand<propto, T_shape>::value) {
@@ -56,8 +56,7 @@ inline auto frechet_lpdf(const T_y& y, const T_shape& alpha,
     }
   }
 
-  VectorBuilder<include_summand<propto, T_y, T_shape>::value, T_partials,
-                T_y>
+  VectorBuilder<include_summand<propto, T_y, T_shape>::value, T_partials, T_y>
       log_y(length(y));
   for (size_t i = 0; i < length(y); i++) {
     if (include_summand<propto, T_y, T_shape>::value) {
@@ -65,8 +64,8 @@ inline auto frechet_lpdf(const T_y& y, const T_shape& alpha,
     }
   }
 
-  VectorBuilder<include_summand<propto, T_shape, T_scale>::value,
-                T_partials, T_scale>
+  VectorBuilder<include_summand<propto, T_shape, T_scale>::value, T_partials,
+                T_scale>
       log_sigma(length(sigma));
   for (size_t i = 0; i < length(sigma); i++) {
     if (include_summand<propto, T_shape, T_scale>::value) {

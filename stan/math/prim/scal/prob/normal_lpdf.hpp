@@ -37,11 +37,12 @@ template <bool propto, typename T_y, typename T_loc, typename T_scale>
 inline auto normal_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
   static const char* function = "normal_lpdf";
   using T_partials = partials_return_t<T_y, T_loc, T_scale>;
+  using T_return = return_type_t<T_y, T_loc, T_scale>;
 
   using std::log;
 
   if (size_zero(y, mu, sigma)) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   T_partials logp(0.0);
@@ -52,7 +53,7 @@ inline auto normal_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma);
   if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
@@ -63,8 +64,7 @@ inline auto normal_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
   size_t N = max_size(y, mu, sigma);
 
   VectorBuilder<true, T_partials, T_scale> inv_sigma(length(sigma));
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials,
-                T_scale>
+  VectorBuilder<include_summand<propto, T_scale>::value, T_partials, T_scale>
       log_sigma(length(sigma));
   for (size_t i = 0; i < length(sigma); i++) {
     inv_sigma[i] = 1.0 / value_of(sigma_vec[i]);
@@ -77,8 +77,7 @@ inline auto normal_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
     const T_partials y_dbl = value_of(y_vec[n]);
     const T_partials mu_dbl = value_of(mu_vec[n]);
 
-    const T_partials y_minus_mu_over_sigma
-        = (y_dbl - mu_dbl) * inv_sigma[n];
+    const T_partials y_minus_mu_over_sigma = (y_dbl - mu_dbl) * inv_sigma[n];
     const T_partials y_minus_mu_over_sigma_squared
         = y_minus_mu_over_sigma * y_minus_mu_over_sigma;
 

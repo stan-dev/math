@@ -19,6 +19,7 @@ namespace math {
 template <typename T_y, typename T_loc, typename T_scale>
 inline auto logistic_cdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
   using T_partials = partials_return_t<T_y, T_loc, T_scale>;
+  using T_return = return_type_t<T_y, T_loc, T_scale>;
 
   if (size_zero(y, mu, sigma)) {
     return 1.0;
@@ -63,8 +64,7 @@ inline auto logistic_cdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
     const T_partials sigma_dbl = value_of(sigma_vec[n]);
     const T_partials sigma_inv_vec = 1.0 / value_of(sigma_vec[n]);
 
-    const T_partials Pn
-        = 1.0 / (1.0 + exp(-(y_dbl - mu_dbl) * sigma_inv_vec));
+    const T_partials Pn = 1.0 / (1.0 + exp(-(y_dbl - mu_dbl) * sigma_inv_vec));
 
     P *= Pn;
 

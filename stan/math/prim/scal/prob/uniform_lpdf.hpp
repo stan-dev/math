@@ -40,11 +40,12 @@ template <bool propto, typename T_y, typename T_low, typename T_high>
 inline auto uniform_lpdf(const T_y& y, const T_low& alpha, const T_high& beta) {
   static const char* function = "uniform_lpdf";
   using T_partials = partials_return_t<T_y, T_low, T_high>;
+  using T_return = return_type_t<T_y, T_low, T_high>;
 
   using std::log;
 
   if (size_zero(y, alpha, beta)) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   T_partials logp(0.0);
@@ -57,7 +58,7 @@ inline auto uniform_lpdf(const T_y& y, const T_low& alpha, const T_high& beta) {
                          "Upper bound parameter", beta);
 
   if (!include_summand<propto, T_y, T_low, T_high>::value) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   const scalar_seq_view<T_y> y_vec(y);
@@ -68,12 +69,12 @@ inline auto uniform_lpdf(const T_y& y, const T_low& alpha, const T_high& beta) {
   for (size_t n = 0; n < N; n++) {
     const T_partials y_dbl = value_of(y_vec[n]);
     if (y_dbl < value_of(alpha_vec[n]) || y_dbl > value_of(beta_vec[n])) {
-      return T_partials(LOG_ZERO);
+      return T_return(LOG_ZERO);
     }
   }
 
-  VectorBuilder<include_summand<propto, T_low, T_high>::value,
-                T_partials, T_low, T_high>
+  VectorBuilder<include_summand<propto, T_low, T_high>::value, T_partials,
+                T_low, T_high>
       inv_beta_minus_alpha(max_size(alpha, beta));
   for (size_t i = 0; i < max_size(alpha, beta); i++) {
     if (include_summand<propto, T_low, T_high>::value) {
@@ -82,8 +83,8 @@ inline auto uniform_lpdf(const T_y& y, const T_low& alpha, const T_high& beta) {
     }
   }
 
-  VectorBuilder<include_summand<propto, T_low, T_high>::value,
-                T_partials, T_low, T_high>
+  VectorBuilder<include_summand<propto, T_low, T_high>::value, T_partials,
+                T_low, T_high>
       log_beta_minus_alpha(max_size(alpha, beta));
   for (size_t i = 0; i < max_size(alpha, beta); i++) {
     if (include_summand<propto, T_low, T_high>::value) {

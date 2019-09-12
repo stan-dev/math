@@ -32,6 +32,7 @@ template <typename T_y, typename T_loc, typename T_scale>
 inline auto gumbel_lcdf(const T_y& y, const T_loc& mu, const T_scale& beta) {
   static const char* function = "gumbel_lcdf";
   using T_partials = partials_return_t<T_y, T_loc, T_scale>;
+  using T_return = return_type_t<T_y, T_loc, T_scale>;
 
   using std::exp;
 

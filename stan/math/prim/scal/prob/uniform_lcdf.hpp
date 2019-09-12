@@ -18,11 +18,12 @@ template <typename T_y, typename T_low, typename T_high>
 inline auto uniform_lcdf(const T_y& y, const T_low& alpha, const T_high& beta) {
   static const char* function = "uniform_lcdf";
   using T_partials = partials_return_t<T_y, T_low, T_high>;
+  using T_return = return_type_t<T_y, T_low, T_high>;
 
   using std::log;
 
   if (size_zero(y, alpha, beta)) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   T_partials cdf_log(0.0);

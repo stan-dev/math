@@ -20,6 +20,7 @@ inline auto skew_normal_lcdf(const T_y& y, const T_loc& mu,
                              const T_scale& sigma, const T_shape& alpha) {
   static const char* function = "skew_normal_lcdf";
   using T_partials = partials_return_t<T_y, T_loc, T_scale, T_shape>;
+  using T_return = return_type_t<T_y, T_loc, T_scale, T_shape>;
 
   T_partials cdf_log(0.0);
 
@@ -66,11 +67,10 @@ inline auto skew_normal_lcdf(const T_y& y, const T_loc& mu,
 
     const T_partials deriv_erfc
         = SQRT_TWO_OVER_PI * 0.5 * exp(-scaled_diff_sq) / sigma_dbl;
-    const T_partials deriv_owens
-        = erf(alpha_dbl * scaled_diff) * exp(-scaled_diff_sq) / SQRT_TWO_OVER_PI
-          / (-2.0 * pi()) / sigma_dbl;
-    const T_partials rep_deriv
-        = (-2.0 * deriv_owens + deriv_erfc) / cdf_log_;
+    const T_partials deriv_owens = erf(alpha_dbl * scaled_diff)
+                                   * exp(-scaled_diff_sq) / SQRT_TWO_OVER_PI
+                                   / (-2.0 * pi()) / sigma_dbl;
+    const T_partials rep_deriv = (-2.0 * deriv_owens + deriv_erfc) / cdf_log_;
 
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] += rep_deriv;

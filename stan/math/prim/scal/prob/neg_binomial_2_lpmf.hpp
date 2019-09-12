@@ -21,11 +21,12 @@ template <bool propto, typename T_n, typename T_location, typename T_precision>
 inline auto neg_binomial_2_lpmf(const T_n& n, const T_location& mu,
                                 const T_precision& phi) {
   using T_partials = partials_return_t<T_n, T_location, T_precision>;
+  using T_return = return_type_t<T_n, T_location, T_precision>;
 
   static const char* function = "neg_binomial_2_lpmf";
 
   if (size_zero(n, mu, phi)) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   T_partials logp(0.0);
@@ -36,7 +37,7 @@ inline auto neg_binomial_2_lpmf(const T_n& n, const T_location& mu,
                          mu, "Precision parameter", phi);
 
   if (!include_summand<propto, T_location, T_precision>::value) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   using std::log;
@@ -66,8 +67,8 @@ inline auto neg_binomial_2_lpmf(const T_n& n, const T_location& mu,
     log_phi[i] = log(phi__[i]);
   }
 
-  VectorBuilder<true, T_partials, T_location, T_precision>
-      log_mu_plus_phi(len_ep);
+  VectorBuilder<true, T_partials, T_location, T_precision> log_mu_plus_phi(
+      len_ep);
   for (size_t i = 0; i < len_ep; ++i) {
     log_mu_plus_phi[i] = log(mu__[i] + phi__[i]);
   }

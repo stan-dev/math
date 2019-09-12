@@ -18,9 +18,10 @@ template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
 inline auto pareto_type_2_lccdf(const T_y& y, const T_loc& mu,
                                 const T_scale& lambda, const T_shape& alpha) {
   using T_partials = partials_return_t<T_y, T_loc, T_scale, T_shape>;
+  using T_return = return_type_t<T_y, T_loc, T_scale, T_shape>;
 
   if (size_zero(y, mu, lambda, alpha)) {
-    return T_partials(0.0);
+    return T_return(0.0);
   }
 
   static const char* function = "pareto_type_2_lccdf";
@@ -46,8 +47,7 @@ inline auto pareto_type_2_lccdf(const T_y& y, const T_loc& mu,
   operands_and_partials<T_y, T_loc, T_scale, T_shape> ops_partials(
       y, mu, lambda, alpha);
 
-  VectorBuilder<true, T_partials, T_y, T_loc, T_scale, T_shape> ccdf_log(
-      N);
+  VectorBuilder<true, T_partials, T_y, T_loc, T_scale, T_shape> ccdf_log(N);
 
   VectorBuilder<!is_constant_all<T_y, T_loc, T_scale, T_shape>::value,
                 T_partials, T_y, T_loc, T_scale, T_shape>
