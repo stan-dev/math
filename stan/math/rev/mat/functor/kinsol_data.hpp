@@ -3,6 +3,8 @@
 
 #include <stan/math/prim/mat/fun/to_array_1d.hpp>
 #include <stan/math/prim/mat/fun/to_vector.hpp>
+#include <stan/math/rev/mat/functor/algebra_system.hpp>
+#include <stan/math/rev/mat/functor/jacobian.hpp>
 
 #include <kinsol/kinsol.h>
 #include <sunmatrix/sunmatrix_dense.h>

@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_REV_MAT_FUNCTOR_CHECK_FLAG_HPP
 #define STAN_MATH_REV_MAT_FUNCTOR_CHECK_FLAG_HPP
 
+#include <stan/math/prim/meta.hpp>
+
 namespace stan {
 namespace math {
 
@@ -30,10 +32,10 @@ inline void check_flag_kinsol(int flag,
   if (flag == -6) {
     ss << "algebra_solver: max number of iterations: " << max_num_steps
        << " exceeded.";
-    throw boost::math::evaluation_error(ss.str());
+    throw std::runtime_error(ss.str());
   } else if (flag < 0) {
     ss << "algebra_solver failed with error flag " << flag << ".";
-    throw boost::math::evaluation_error(ss.str());
+    throw std::runtime_error(ss.str());
   }
 }
 

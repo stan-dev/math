@@ -272,7 +272,7 @@ void inline unsolvable_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
       general_algebra_solver(is_newton, unsolvable_eq_functor(), x, y, dat,
                              dat_int, 0, relative_tolerance, scaling_step_size,
                              function_tolerance, max_num_steps),
-      boost::math::evaluation_error, msg);
+       std::runtime_error, msg);
 }
 
 template <typename T>
@@ -287,7 +287,7 @@ void inline unsolvable_flag_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
   std::string msg = err_msg.str();
   EXPECT_THROW_MSG(general_algebra_solver(is_newton, unsolvable_eq_functor(), x,
                                           y, dat, dat_int),
-                   boost::math::evaluation_error, msg);
+                   std::runtime_error, msg);
 }
 
 template <typename T>
@@ -310,7 +310,7 @@ inline void max_num_steps_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
       general_algebra_solver(is_newton, non_linear_eq_functor(), x, y, dat,
                              dat_int, 0, scaling_step, relative_tolerance,
                              function_tolerance, max_num_steps),
-      boost::math::evaluation_error, msg);
+                             std::runtime_error, msg);
 }
 
 template <typename T>
