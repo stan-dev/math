@@ -12,7 +12,7 @@ namespace math {
  */
 template <bool propto, typename T_n, typename T_prob>
 inline auto bernoulli_logit_log(const T_n& n, const T_prob& theta) {
-  return bernoulli_logit_lpmf<propto, T_n, T_prob>(n, theta);
+  return bernoulli_logit_lpmf<propto>(n, theta);
 }
 
 /**
@@ -20,7 +20,7 @@ inline auto bernoulli_logit_log(const T_n& n, const T_prob& theta) {
  */
 template <typename T_n, typename T_prob>
 inline auto bernoulli_logit_log(const T_n& n, const T_prob& theta) {
-  return bernoulli_logit_lpmf<T_n, T_prob>(n, theta);
+  return bernoulli_logit_lpmf(n, theta);
 }
 
 }  // namespace math

@@ -30,7 +30,7 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_dof>
 inline auto chi_square_log(const T_y& y, const T_dof& nu) {
-  return chi_square_lpdf<propto, T_y, T_dof>(y, nu);
+  return chi_square_lpdf<propto>(y, nu);
 }
 
 /**
@@ -38,7 +38,7 @@ inline auto chi_square_log(const T_y& y, const T_dof& nu) {
  */
 template <typename T_y, typename T_dof>
 inline auto chi_square_log(const T_y& y, const T_dof& nu) {
-  return chi_square_lpdf<T_y, T_dof>(y, nu);
+  return chi_square_lpdf(y, nu);
 }
 
 }  // namespace math

@@ -32,7 +32,7 @@ template <bool propto, typename T_y, typename T_alpha, typename T_tau,
           typename T_beta, typename T_delta>
 inline auto wiener_log(const T_y& y, const T_alpha& alpha, const T_tau& tau,
                        const T_beta& beta, const T_delta& delta) {
-  return wiener_lpdf<propto, T_y, T_alpha, T_tau, T_beta, T_delta>(
+  return wiener_lpdf<propto>(
       y, alpha, tau, beta, delta);
 }
 
@@ -43,7 +43,7 @@ template <typename T_y, typename T_alpha, typename T_tau, typename T_beta,
           typename T_delta>
 inline auto wiener_log(const T_y& y, const T_alpha& alpha, const T_tau& tau,
                        const T_beta& beta, const T_delta& delta) {
-  return wiener_lpdf<T_y, T_alpha, T_tau, T_beta, T_delta>(y, alpha, tau, beta,
+  return wiener_lpdf(y, alpha, tau, beta,
                                                            delta);
 }
 

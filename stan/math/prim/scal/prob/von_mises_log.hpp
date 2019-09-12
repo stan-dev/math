@@ -12,7 +12,7 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
 inline auto von_mises_log(T_y const& y, T_loc const& mu, T_scale const& kappa) {
-  return von_mises_lpdf<propto, T_y, T_loc, T_scale>(y, mu, kappa);
+  return von_mises_lpdf<propto>(y, mu, kappa);
 }
 
 /**
@@ -20,7 +20,7 @@ inline auto von_mises_log(T_y const& y, T_loc const& mu, T_scale const& kappa) {
  */
 template <typename T_y, typename T_loc, typename T_scale>
 inline auto von_mises_log(T_y const& y, T_loc const& mu, T_scale const& kappa) {
-  return von_mises_lpdf<T_y, T_loc, T_scale>(y, mu, kappa);
+  return von_mises_lpdf(y, mu, kappa);
 }
 
 }  // namespace math

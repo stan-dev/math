@@ -13,7 +13,7 @@ namespace math {
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
 inline auto double_exponential_log(const T_y& y, const T_loc& mu,
                                    const T_scale& sigma) {
-  return double_exponential_lpdf<propto, T_y, T_loc, T_scale>(y, mu, sigma);
+  return double_exponential_lpdf<propto>(y, mu, sigma);
 }
 
 /**
@@ -22,7 +22,7 @@ inline auto double_exponential_log(const T_y& y, const T_loc& mu,
 template <typename T_y, typename T_loc, typename T_scale>
 inline auto double_exponential_log(const T_y& y, const T_loc& mu,
                                    const T_scale& sigma) {
-  return double_exponential_lpdf<T_y, T_loc, T_scale>(y, mu, sigma);
+  return double_exponential_lpdf(y, mu, sigma);
 }
 
 }  // namespace math

@@ -13,7 +13,7 @@ namespace math {
 template <typename T_y, typename T_scale, typename T_shape>
 inline auto pareto_ccdf_log(const T_y& y, const T_scale& y_min,
                             const T_shape& alpha) {
-  return pareto_lccdf<T_y, T_scale, T_shape>(y, y_min, alpha);
+  return pareto_lccdf(y, y_min, alpha);
 }
 
 }  // namespace math

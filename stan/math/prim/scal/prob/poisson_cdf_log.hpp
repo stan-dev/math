@@ -12,7 +12,7 @@ namespace math {
  */
 template <typename T_n, typename T_rate>
 inline auto poisson_cdf_log(const T_n& n, const T_rate& lambda) {
-  return poisson_lcdf<T_n, T_rate>(n, lambda);
+  return poisson_lcdf(n, lambda);
 }
 
 }  // namespace math

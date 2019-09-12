@@ -33,7 +33,7 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_low, typename T_high>
 inline auto uniform_log(const T_y& y, const T_low& alpha, const T_high& beta) {
-  return uniform_lpdf<propto, T_y, T_low, T_high>(y, alpha, beta);
+  return uniform_lpdf<propto>(y, alpha, beta);
 }
 
 /**
@@ -41,7 +41,7 @@ inline auto uniform_log(const T_y& y, const T_low& alpha, const T_high& beta) {
  */
 template <typename T_y, typename T_low, typename T_high>
 inline auto uniform_log(const T_y& y, const T_low& alpha, const T_high& beta) {
-  return uniform_lpdf<T_y, T_low, T_high>(y, alpha, beta);
+  return uniform_lpdf(y, alpha, beta);
 }
 
 }  // namespace math

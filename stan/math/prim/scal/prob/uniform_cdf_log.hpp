@@ -13,7 +13,7 @@ namespace math {
 template <typename T_y, typename T_low, typename T_high>
 inline auto uniform_cdf_log(const T_y& y, const T_low& alpha,
                             const T_high& beta) {
-  return uniform_lcdf<T_y, T_low, T_high>(y, alpha, beta);
+  return uniform_lcdf(y, alpha, beta);
 }
 
 }  // namespace math

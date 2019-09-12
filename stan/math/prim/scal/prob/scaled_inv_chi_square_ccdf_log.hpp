@@ -13,7 +13,7 @@ namespace math {
 template <typename T_y, typename T_dof, typename T_scale>
 inline auto scaled_inv_chi_square_ccdf_log(const T_y& y, const T_dof& nu,
                                            const T_scale& s) {
-  return scaled_inv_chi_square_lccdf<T_y, T_dof, T_scale>(y, nu, s);
+  return scaled_inv_chi_square_lccdf(y, nu, s);
 }
 
 }  // namespace math

@@ -13,7 +13,7 @@ namespace math {
 template <typename T_y, typename T_shape, typename T_scale>
 inline auto weibull_ccdf_log(const T_y& y, const T_shape& alpha,
                              const T_scale& sigma) {
-  return weibull_lccdf<T_y, T_shape, T_scale>(y, alpha, sigma);
+  return weibull_lccdf(y, alpha, sigma);
 }
 
 }  // namespace math

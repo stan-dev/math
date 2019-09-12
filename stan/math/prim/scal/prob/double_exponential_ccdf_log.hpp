@@ -13,7 +13,7 @@ namespace math {
 template <typename T_y, typename T_loc, typename T_scale>
 inline auto double_exponential_ccdf_log(const T_y& y, const T_loc& mu,
                                         const T_scale& sigma) {
-  return double_exponential_lccdf<T_y, T_loc, T_scale>(y, mu, sigma);
+  return double_exponential_lccdf(y, mu, sigma);
 }
 
 }  // namespace math

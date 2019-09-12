@@ -41,7 +41,7 @@ template <bool propto, typename T_y, typename T_dof, typename T_loc,
           typename T_scale>
 inline auto student_t_log(const T_y& y, const T_dof& nu, const T_loc& mu,
                           const T_scale& sigma) {
-  return student_t_lpdf<propto, T_y, T_dof, T_loc, T_scale>(y, nu, mu, sigma);
+  return student_t_lpdf<propto>(y, nu, mu, sigma);
 }
 
 /**
@@ -50,7 +50,7 @@ inline auto student_t_log(const T_y& y, const T_dof& nu, const T_loc& mu,
 template <typename T_y, typename T_dof, typename T_loc, typename T_scale>
 inline auto student_t_log(const T_y& y, const T_dof& nu, const T_loc& mu,
                           const T_scale& sigma) {
-  return student_t_lpdf<T_y, T_dof, T_loc, T_scale>(y, nu, mu, sigma);
+  return student_t_lpdf(y, nu, mu, sigma);
 }
 
 }  // namespace math

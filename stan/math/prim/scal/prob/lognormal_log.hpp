@@ -12,7 +12,7 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
 inline auto lognormal_log(const T_y& y, const T_loc& mu, const T_scale& sigma) {
-  return lognormal_lpdf<propto, T_y, T_loc, T_scale>(y, mu, sigma);
+  return lognormal_lpdf<propto>(y, mu, sigma);
 }
 
 /**
@@ -20,7 +20,7 @@ inline auto lognormal_log(const T_y& y, const T_loc& mu, const T_scale& sigma) {
  */
 template <typename T_y, typename T_loc, typename T_scale>
 inline auto lognormal_log(const T_y& y, const T_loc& mu, const T_scale& sigma) {
-  return lognormal_lpdf<T_y, T_loc, T_scale>(y, mu, sigma);
+  return lognormal_lpdf(y, mu, sigma);
 }
 
 }  // namespace math

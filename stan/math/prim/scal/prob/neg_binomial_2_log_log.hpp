@@ -14,7 +14,7 @@ template <bool propto, typename T_n, typename T_log_location,
           typename T_precision>
 inline auto neg_binomial_2_log_log(const T_n& n, const T_log_location& eta,
                                    const T_precision& phi) {
-  return neg_binomial_2_log_lpmf<propto, T_n, T_log_location, T_precision>(
+  return neg_binomial_2_log_lpmf<propto>(
       n, eta, phi);
 }
 
@@ -24,7 +24,7 @@ inline auto neg_binomial_2_log_log(const T_n& n, const T_log_location& eta,
 template <typename T_n, typename T_log_location, typename T_precision>
 inline auto neg_binomial_2_log_log(const T_n& n, const T_log_location& eta,
                                    const T_precision& phi) {
-  return neg_binomial_2_log_lpmf<T_n, T_log_location, T_precision>(n, eta, phi);
+  return neg_binomial_2_log_lpmf(n, eta, phi);
 }
 }  // namespace math
 }  // namespace stan

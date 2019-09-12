@@ -12,7 +12,7 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_scale>
 inline auto rayleigh_log(const T_y& y, const T_scale& sigma) {
-  return rayleigh_lpdf<propto, T_y, T_scale>(y, sigma);
+  return rayleigh_lpdf<propto>(y, sigma);
 }
 
 /**
@@ -20,7 +20,7 @@ inline auto rayleigh_log(const T_y& y, const T_scale& sigma) {
  */
 template <typename T_y, typename T_scale>
 inline auto rayleigh_log(const T_y& y, const T_scale& sigma) {
-  return rayleigh_lpdf<T_y, T_scale>(y, sigma);
+  return rayleigh_lpdf(y, sigma);
 }
 
 }  // namespace math

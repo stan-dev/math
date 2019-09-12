@@ -12,7 +12,7 @@ namespace math {
  */
 template <typename T_y, typename T_inv_scale>
 inline auto exponential_cdf_log(const T_y& y, const T_inv_scale& beta) {
-  return exponential_lcdf<T_y, T_inv_scale>(y, beta);
+  return exponential_lcdf(y, beta);
 }
 
 }  // namespace math

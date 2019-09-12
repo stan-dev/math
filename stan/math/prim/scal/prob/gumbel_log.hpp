@@ -12,7 +12,7 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
 inline auto gumbel_log(const T_y& y, const T_loc& mu, const T_scale& beta) {
-  return gumbel_lpdf<propto, T_y, T_loc, T_scale>(y, mu, beta);
+  return gumbel_lpdf<propto>(y, mu, beta);
 }
 
 /**
@@ -20,7 +20,7 @@ inline auto gumbel_log(const T_y& y, const T_loc& mu, const T_scale& beta) {
  */
 template <typename T_y, typename T_loc, typename T_scale>
 inline auto gumbel_log(const T_y& y, const T_loc& mu, const T_scale& beta) {
-  return gumbel_lpdf<T_y, T_loc, T_scale>(y, mu, beta);
+  return gumbel_lpdf(y, mu, beta);
 }
 
 }  // namespace math

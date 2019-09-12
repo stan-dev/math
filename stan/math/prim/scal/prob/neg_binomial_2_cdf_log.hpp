@@ -13,7 +13,7 @@ namespace math {
 template <typename T_n, typename T_location, typename T_precision>
 inline auto neg_binomial_2_cdf_log(const T_n& n, const T_location& mu,
                                    const T_precision& phi) {
-  return neg_binomial_2_lcdf<T_n, T_location, T_precision>(n, mu, phi);
+  return neg_binomial_2_lcdf(n, mu, phi);
 }
 
 }  // namespace math

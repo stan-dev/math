@@ -33,7 +33,7 @@ namespace math {
 template <bool propto, typename T_y, typename T_loc, typename T_prec>
 inline auto beta_proportion_log(const T_y& y, const T_loc& mu,
                                 const T_prec& kappa) {
-  return beta_proportion_lpdf<propto, T_y, T_loc, T_prec>(y, mu, kappa);
+  return beta_proportion_lpdf<propto>(y, mu, kappa);
 }
 
 /**
@@ -42,7 +42,7 @@ inline auto beta_proportion_log(const T_y& y, const T_loc& mu,
 template <typename T_y, typename T_loc, typename T_prec>
 inline auto beta_proportion_log(const T_y& y, const T_loc& mu,
                                 const T_prec& kappa) {
-  return beta_proportion_lpdf<T_y, T_loc, T_prec>(y, mu, kappa);
+  return beta_proportion_lpdf(y, mu, kappa);
 }
 
 }  // namespace math

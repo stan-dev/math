@@ -13,7 +13,7 @@ namespace math {
 template <typename T_y, typename T_shape, typename T_scale>
 inline auto inv_gamma_ccdf_log(const T_y& y, const T_shape& alpha,
                                const T_scale& beta) {
-  return inv_gamma_lccdf<T_y, T_shape, T_scale>(y, alpha, beta);
+  return inv_gamma_lccdf(y, alpha, beta);
 }
 
 }  // namespace math

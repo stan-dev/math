@@ -35,7 +35,7 @@ namespace math {
 template <bool propto, typename T_y, typename T_shape, typename T_inv_scale>
 inline auto gamma_log(const T_y& y, const T_shape& alpha,
                       const T_inv_scale& beta) {
-  return gamma_lpdf<propto, T_y, T_shape, T_inv_scale>(y, alpha, beta);
+  return gamma_lpdf<propto>(y, alpha, beta);
 }
 
 /**
@@ -44,7 +44,7 @@ inline auto gamma_log(const T_y& y, const T_shape& alpha,
 template <typename T_y, typename T_shape, typename T_inv_scale>
 inline auto gamma_log(const T_y& y, const T_shape& alpha,
                       const T_inv_scale& beta) {
-  return gamma_lpdf<T_y, T_shape, T_inv_scale>(y, alpha, beta);
+  return gamma_lpdf(y, alpha, beta);
 }
 
 }  // namespace math

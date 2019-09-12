@@ -13,7 +13,7 @@ namespace math {
 template <bool propto, typename T_y, typename T_shape, typename T_scale>
 inline auto frechet_log(const T_y& y, const T_shape& alpha,
                         const T_scale& sigma) {
-  return frechet_lpdf<propto, T_y, T_shape, T_scale>(y, alpha, sigma);
+  return frechet_lpdf<propto>(y, alpha, sigma);
 }
 
 /**
@@ -22,7 +22,7 @@ inline auto frechet_log(const T_y& y, const T_shape& alpha,
 template <typename T_y, typename T_shape, typename T_scale>
 inline auto frechet_log(const T_y& y, const T_shape& alpha,
                         const T_scale& sigma) {
-  return frechet_lpdf<T_y, T_shape, T_scale>(y, alpha, sigma);
+  return frechet_lpdf(y, alpha, sigma);
 }
 
 }  // namespace math

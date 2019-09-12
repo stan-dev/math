@@ -12,7 +12,7 @@ namespace math {
  */
 template <typename T_y, typename T_loc, typename T_scale>
 inline auto gumbel_cdf_log(const T_y& y, const T_loc& mu, const T_scale& beta) {
-  return gumbel_lcdf<T_y, T_loc, T_scale>(y, mu, beta);
+  return gumbel_lcdf(y, mu, beta);
 }
 
 }  // namespace math

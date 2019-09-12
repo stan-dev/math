@@ -12,7 +12,7 @@ namespace math {
  */
 template <typename T_n, typename T_prob>
 inline auto bernoulli_ccdf_log(const T_n& n, const T_prob& theta) {
-  return bernoulli_lccdf<T_n, T_prob>(n, theta);
+  return bernoulli_lccdf(n, theta);
 }
 }  // namespace math
 }  // namespace stan

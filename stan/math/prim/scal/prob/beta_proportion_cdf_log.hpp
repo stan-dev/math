@@ -32,7 +32,7 @@ namespace math {
 template <typename T_y, typename T_loc, typename T_prec>
 inline auto beta_proportion_cdf_log(const T_y& y, const T_loc& mu,
                                     const T_prec& kappa) {
-  return beta_proportion_lcdf<T_y, T_loc, T_prec>(y, mu, kappa);
+  return beta_proportion_lcdf(y, mu, kappa);
 }
 
 }  // namespace math

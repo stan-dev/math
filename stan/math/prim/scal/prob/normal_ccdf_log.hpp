@@ -13,7 +13,7 @@ namespace math {
 template <typename T_y, typename T_loc, typename T_scale>
 inline auto normal_ccdf_log(const T_y& y, const T_loc& mu,
                             const T_scale& sigma) {
-  return normal_lccdf<T_y, T_loc, T_scale>(y, mu, sigma);
+  return normal_lccdf(y, mu, sigma);
 }
 
 }  // namespace math

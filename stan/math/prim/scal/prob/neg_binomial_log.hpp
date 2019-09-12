@@ -13,7 +13,7 @@ namespace math {
 template <bool propto, typename T_n, typename T_shape, typename T_inv_scale>
 inline auto neg_binomial_log(const T_n& n, const T_shape& alpha,
                              const T_inv_scale& beta) {
-  return neg_binomial_lpmf<propto, T_n, T_shape, T_inv_scale>(n, alpha, beta);
+  return neg_binomial_lpmf<propto>(n, alpha, beta);
 }
 
 /**
@@ -22,7 +22,7 @@ inline auto neg_binomial_log(const T_n& n, const T_shape& alpha,
 template <typename T_n, typename T_shape, typename T_inv_scale>
 inline auto neg_binomial_log(const T_n& n, const T_shape& alpha,
                              const T_inv_scale& beta) {
-  return neg_binomial_lpmf<T_n, T_shape, T_inv_scale>(n, alpha, beta);
+  return neg_binomial_lpmf(n, alpha, beta);
 }
 
 }  // namespace math

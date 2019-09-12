@@ -12,7 +12,7 @@ namespace math {
  */
 template <typename T_y, typename T_scale>
 inline auto rayleigh_cdf_log(const T_y& y, const T_scale& sigma) {
-  return rayleigh_lcdf<T_y, T_scale>(y, sigma);
+  return rayleigh_lcdf(y, sigma);
 }
 
 }  // namespace math

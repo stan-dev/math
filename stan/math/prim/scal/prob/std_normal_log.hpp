@@ -23,7 +23,7 @@ namespace math {
  */
 template <bool propto, typename T_y>
 inline auto std_normal_log(const T_y& y) {
-  return std_normal_lpdf<propto, T_y>(y);
+  return std_normal_lpdf<propto>(y);
 }
 
 /**
@@ -31,7 +31,7 @@ inline auto std_normal_log(const T_y& y) {
  */
 template <typename T_y>
 inline auto std_normal_log(const T_y& y) {
-  return std_normal_lpdf<T_y>(y);
+  return std_normal_lpdf(y);
 }
 
 }  // namespace math
