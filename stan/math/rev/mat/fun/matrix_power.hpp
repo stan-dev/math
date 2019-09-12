@@ -23,7 +23,7 @@ class matrix_product_vari : public vari {
   double* result_;
   vari** adjMRef_;
   vari** adjResultRef_;
-  std::vector<Eigen::MatrixXd> Mds;
+  std::vector<Eigen::Matrix<double, R, C> > Mds;
 
   explicit matrix_product_vari(const Eigen::Matrix<var, R, C>& M, const int n)
       : vari(0.0),
@@ -40,11 +40,11 @@ class matrix_product_vari : public vari {
         adjResultRef_(
             reinterpret_cast<vari**>(ChainableStack::instance_->memalloc_.alloc(
                 sizeof(vari*) * M.rows() * M.cols()))) {
-    Eigen::Map<Eigen::MatrixXd>(M_, rows_, cols_) = M.val();
+    Eigen::Map<Eigen::Matrix<double, R, C> >(M_, rows_, cols_) = M.val();
     Eigen::Map<matrix_vi>(adjMRef_, rows_, cols_) = M.vi();
     Eigen::Map<matrix_d> Md(M_, rows_, cols_);
     Eigen::Map<matrix_d> resultd(result_, rows_, cols_);
-    resultd = Eigen::MatrixXd::Identity(rows_, cols_);
+    resultd = Eigen::Matrix<double, R, C>::Identity(rows_, cols_);
     for (int i = 0; i < n; i++) {
       Mds.push_back(resultd);
       resultd *= Md;
@@ -57,13 +57,28 @@ class matrix_product_vari : public vari {
     int n = Mds.size();
     if (n == 0)
       return;
+    if (n == 1) {
+      Eigen::Map<matrix_vi>(adjMRef_, rows_, cols_).adj()
+          = Eigen::Map<matrix_vi>(adjResultRef_, rows_, cols_).adj();
+      return;
+    }
     for (int i = 0; i < rows_; i++) {
       for (int j = 0; j < cols_; j++) {
-        Eigen::MatrixXd X = Eigen::MatrixXd::Zero(rows_, cols_);
-        X(i, j) = 1.0;
-        Eigen::MatrixXd S = Eigen::MatrixXd::Zero(rows_, cols_);
-        for (int nn = 0; nn < n; nn++) {
-          S += Mds[nn] * X * Mds[n - nn - 1];
+        double dijdkl = 0.0;
+        Eigen::Matrix<double, R, C> S
+            = Eigen::Matrix<double, R, C>::Zero(rows_, cols_);
+        for (int l = 0; l < cols_; l++) {
+          S(i, l) += Mds[n - 1](j, l);
+        }
+        for (int nn = 1; nn < n - 1; nn++) {
+          for (int k = 0; k < rows_; k++) {
+            for (int l = 0; l < cols_; l++) {
+              S(k, l) += Mds[nn](k, i) * Mds[n - nn - 1](j, l);
+            }
+          }
+        }
+        for (int k = 0; k < rows_; k++) {
+          S(k, j) += Mds[n - 1](k, i);
         }
         Eigen::Map<matrix_vi>(adjMRef_, rows_, cols_).adj()(i, j)
             += (S.array()
@@ -77,28 +92,34 @@ class matrix_product_vari : public vari {
 };
 
 }  // namespace internal
-   /**
-    * Returns the nth power of the specific matrix.
-    *
-    * @param M A square matrix.
-    * @param n Exponent.
-    * @return nth power of M. M^n = M * ... * M.
-    * @throw std::invalid_argument if the exponent is negative or the matrix is not
-    * square.
-    */
-inline Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> matrix_power(
-    const Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>& M, const int n) {
+
+/**
+ * Returns the nth power of the specific matrix.
+ *
+ * @tparam R Number of rows in matrix.
+ * @tparam C Number of columns in matrix.
+ * @param M A square matrix.
+ * @param n Exponent.
+ * @return nth power of M. M^n = M * ... * M.
+ * @throw std::domain_error if the matrix contains NaNs or infinities.
+ * @throw std::invalid_argument if the exponent is negative or the matrix is not
+ * square.
+ */
+template <int R, int C>
+inline Eigen::Matrix<var, R, C> matrix_power(const Eigen::Matrix<var, R, C>& M,
+                                             const int n) {
   check_square("matrix_power", "M", M);
   if (n < 0)
     invalid_argument("matrix_power", "n", n, "is ", ", but must be >= 0!");
-
-  internal::matrix_product_vari<Eigen::Dynamic, Eigen::Dynamic>* baseVari
-      = new internal::matrix_product_vari<Eigen::Dynamic, Eigen::Dynamic>(M, n);
-
-  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> result(M.rows(), M.cols());
+  if (M.rows() == 0)
+    invalid_argument("matrix_power", "M.rows()", M.rows(), "is ",
+                     ", but must be > 0!");
+  check_finite("matrix_power", "M", M);
+  internal::matrix_product_vari<R, C>* baseVari
+      = new internal::matrix_product_vari<R, C>(M, n);
+  Eigen::Matrix<var, R, C> result(M.rows(), M.cols());
   result.vi()
       = Eigen::Map<matrix_vi>(baseVari->adjResultRef_, M.rows(), M.cols());
-
   return result;
 }
 
