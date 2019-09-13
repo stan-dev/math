@@ -34,7 +34,6 @@ inline auto double_exponential_lpdf(const T_y& y, const T_loc& mu,
   using T_partials = partials_return_t<T_y, T_loc, T_scale>;
   T_partials logp(0.0);
 
-
   using std::fabs;
   using std::log;
 

@@ -31,7 +31,6 @@ inline auto weibull_cdf(const T_y& y, const T_shape& alpha,
   using T_partials = partials_return_t<T_y, T_shape, T_scale>;
   T_partials cdf(1.0);
 
-
   static const char* function = "weibull_cdf";
 
   using std::exp;

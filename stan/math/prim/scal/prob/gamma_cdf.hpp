@@ -44,7 +44,6 @@ inline auto gamma_cdf(const T_y& y, const T_shape& alpha,
   using T_partials = partials_return_t<T_y, T_shape, T_inv_scale>;
   T_partials P(1.0);
 
-
   using boost::math::tools::promote_args;
   using std::exp;
   using std::pow;

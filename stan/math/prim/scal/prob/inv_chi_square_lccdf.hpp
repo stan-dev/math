@@ -37,7 +37,6 @@ inline auto inv_chi_square_lccdf(const T_y& y, const T_dof& nu) {
   using T_partials = partials_return_t<T_y, T_dof>;
   T_partials P(0.0);
 
-
   static const char* function = "inv_chi_square_lccdf";
   check_positive_finite(function, "Degrees of freedom parameter", nu);
   check_not_nan(function, "Random variable", y);

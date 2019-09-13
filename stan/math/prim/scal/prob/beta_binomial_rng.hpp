@@ -31,7 +31,6 @@ namespace math {
 template <typename T_N, typename T_shape1, typename T_shape2, class RNG>
 inline auto beta_binomial_rng(const T_N &N, const T_shape1 &alpha,
                               const T_shape2 &beta, RNG &rng) {
-
   static const char *function = "beta_binomial_rng";
   check_nonnegative(function, "Population size parameter", N);
   check_positive_finite(function, "First prior sample size parameter", alpha);

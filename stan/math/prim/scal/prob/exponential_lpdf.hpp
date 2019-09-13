@@ -44,7 +44,6 @@ inline auto exponential_lpdf(const T_y& y, const T_inv_scale& beta) {
   using T_partials = partials_return_t<T_y, T_inv_scale>;
   T_partials logp(0.0);
 
-
   using std::log;
 
   static const char* function = "exponential_lpdf";
