@@ -39,7 +39,7 @@ inline auto bernoulli_lccdf(const T_n& n, const T_prob& theta) {
 
   const scalar_seq_view<T_n> n_vec(n);
   const scalar_seq_view<T_prob> theta_vec(theta);
-  size_t size = max_size(n, theta);
+  const size_t size = max_size(n, theta);
 
   operands_and_partials<T_prob> ops_partials(theta);
   if (size_zero(n, theta)) {

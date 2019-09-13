@@ -32,7 +32,7 @@ template <typename T_y, typename T_loc, typename T_scale>
 inline auto gumbel_lccdf(const T_y& y, const T_loc& mu, const T_scale& beta) {
   using T_partials = partials_return_t<T_y, T_loc, T_scale>;
   T_partials ccdf_log(0.0);
-  using T_return = return_type_t<T_y, T_loc, T_scale>;
+
 
   using std::exp;
   using std::log;

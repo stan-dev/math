@@ -39,9 +39,9 @@ template <bool propto, typename T_n, typename T_N, typename T_size1,
           typename T_size2>
 inline auto beta_binomial_lpmf(const T_n& n, const T_N& N, const T_size1& alpha,
                                const T_size2& beta) {
-  static const char* function = "beta_binomial_lpmf";
   using T_partials = partials_return_t<T_size1, T_size2>;
   T_partials logp(0.0);
+  static const char* function = "beta_binomial_lpmf";
   check_nonnegative(function, "Population size parameter", N);
   check_positive_finite(function, "First prior sample size parameter", alpha);
   check_positive_finite(function, "Second prior sample size parameter", beta);

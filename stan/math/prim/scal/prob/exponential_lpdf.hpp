@@ -43,7 +43,7 @@ template <bool propto, typename T_y, typename T_inv_scale>
 inline auto exponential_lpdf(const T_y& y, const T_inv_scale& beta) {
   using T_partials = partials_return_t<T_y, T_inv_scale>;
   T_partials logp(0.0);
-  using T_return = return_type_t<T_y, T_inv_scale>;
+
 
   using std::log;
 

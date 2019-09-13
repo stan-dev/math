@@ -20,7 +20,7 @@ inline auto uniform_lccdf(const T_y& y, const T_low& alpha,
   static const char* function = "uniform_lccdf";
   using T_partials = partials_return_t<T_y, T_low, T_high>;
   T_partials ccdf_log(0.0);
-  using T_return = return_type_t<T_y, T_low, T_high>;
+
 
   using std::log;
 

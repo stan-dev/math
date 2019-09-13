@@ -22,7 +22,6 @@ inline auto exp_mod_normal_lpdf(const T_y& y, const T_loc& mu,
                                 const T_inv_scale& lambda) {
   using T_partials = partials_return_t<T_y, T_loc, T_scale, T_inv_scale>;
   T_partials logp(0.0);
-  using T_return = return_type_t<T_y, T_loc, T_scale, T_inv_scale>;
   using std::exp;
   using std::log;
   using std::sqrt;
@@ -50,12 +49,12 @@ inline auto exp_mod_normal_lpdf(const T_y& y, const T_loc& mu,
   }
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials y_dbl = value_of(y_vec[n]);
-    const T_partials mu_dbl = value_of(mu_vec[n]);
-    const T_partials sigma_dbl = value_of(sigma_vec[n]);
-    const T_partials lambda_dbl = value_of(lambda_vec[n]);
+    const auto y_dbl = value_of(y_vec[n]);
+    const auto mu_dbl = value_of(mu_vec[n]);
+    const auto sigma_dbl = value_of(sigma_vec[n]);
+    const auto lambda_dbl = value_of(lambda_vec[n]);
 
-    const T_partials pi_dbl = boost::math::constants::pi<double>();
+    const auto pi_dbl = boost::math::constants::pi<double>();
 
     if (include_summand<propto>::value) {
       logp -= log(2.0);
@@ -70,7 +69,7 @@ inline auto exp_mod_normal_lpdf(const T_y& y, const T_loc& mu,
                          / (sqrt(2.0) * sigma_dbl)));
     }
 
-    const T_partials deriv_logerfc
+    const auto deriv_logerfc
         = -2.0 / sqrt(pi_dbl)
           * exp(-(mu_dbl + lambda_dbl * sigma_dbl * sigma_dbl - y_dbl)
                 / (std::sqrt(2.0) * sigma_dbl)

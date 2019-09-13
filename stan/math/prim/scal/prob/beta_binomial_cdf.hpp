@@ -54,7 +54,7 @@ inline auto beta_binomial_cdf(const T_n& n, const T_N& N, const T_size1& alpha,
   const scalar_seq_view<T_N> N_vec(N);
   const scalar_seq_view<T_size1> alpha_vec(alpha);
   const scalar_seq_view<T_size2> beta_vec(beta);
-  size_t size = max_size(n, N, alpha, beta);
+  const size_t size = max_size(n, N, alpha, beta);
 
   using std::exp;
 

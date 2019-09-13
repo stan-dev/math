@@ -22,7 +22,7 @@ inline auto exp_mod_normal_lccdf(const T_y& y, const T_loc& mu,
   static const char* function = "exp_mod_normal_lccdf";
   using T_partials = partials_return_t<T_y, T_loc, T_scale, T_inv_scale>;
   T_partials ccdf_log(0.0);
-  using T_return = return_type_t<T_y, T_loc, T_scale, T_inv_scale>;
+
 
   using std::exp;
   using std::log;

@@ -23,7 +23,7 @@ inline auto neg_binomial_lcdf(const T_n& n, const T_shape& alpha,
   static const char* function = "neg_binomial_lcdf";
   using T_partials = partials_return_t<T_n, T_shape, T_inv_scale>;
   T_partials P(0.0);
-  using T_return = return_type_t<T_n, T_shape, T_inv_scale>;
+
   using std::exp;
   using std::log;
   using std::pow;

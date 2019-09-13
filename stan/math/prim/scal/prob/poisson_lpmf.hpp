@@ -21,7 +21,7 @@ template <bool propto, typename T_n, typename T_rate>
 inline auto poisson_lpmf(const T_n& n, const T_rate& lambda) {
   using T_partials = partials_return_t<T_n, T_rate>;
   T_partials logp(0.0);
-  using T_return = return_type_t<T_n, T_rate>;
+
 
   static const char* function = "poisson_lpmf";
   check_nonnegative(function, "Random variable", n);

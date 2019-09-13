@@ -44,7 +44,6 @@ inline auto beta_proportion_lpdf(const T_y& y, const T_loc& mu,
                                  const T_prec& kappa) {
   using T_partials = partials_return_t<T_y, T_loc, T_prec>;
   T_partials logp(0);
-  using T_return = return_type_t<T_y, T_loc, T_prec>;
   using std::log;
 
   static const char* function = "beta_proportion_lpdf";

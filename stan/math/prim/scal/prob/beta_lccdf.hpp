@@ -42,7 +42,6 @@ inline auto beta_lccdf(const T_y& y, const T_scale_succ& alpha,
   using T_partials = partials_return_t<T_y, T_scale_succ, T_scale_fail>;
   T_partials ccdf_log(0.0);
   static const char* function = "beta_lccdf";
-
   check_positive_finite(function, "First shape parameter", alpha);
   check_positive_finite(function, "Second shape parameter", beta);
   check_not_nan(function, "Random variable", y);

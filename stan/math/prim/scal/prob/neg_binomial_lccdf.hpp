@@ -22,7 +22,7 @@ template <typename T_n, typename T_shape, typename T_inv_scale>
 inline auto neg_binomial_lccdf(const T_n& n, const T_shape& alpha,
                                const T_inv_scale& beta) {
   using T_partials = partials_return_t<T_n, T_shape, T_inv_scale>;
-  using T_return = return_type_t<T_n, T_shape, T_inv_scale>;
+
   T_partials P(0.0);
   using std::exp;
   using std::log;

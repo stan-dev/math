@@ -19,9 +19,8 @@ template <typename T_y, typename T_loc, typename T_scale, typename T_inv_scale>
 inline auto exp_mod_normal_lcdf(const T_y& y, const T_loc& mu,
                                 const T_scale& sigma,
                                 const T_inv_scale& lambda) {
-  using T_partials = partials_return_t<T_y, T_loc, T_scale>;
+  using T_partials = partials_return_t<T_y, T_loc, T_scale, T_inv_scale>;
   T_partials cdf_log(0.0);
-  using T_return = return_type_t<T_y, T_loc, T_scale>;
   using std::exp;
   using std::log;
 
@@ -56,29 +55,29 @@ inline auto exp_mod_normal_lcdf(const T_y& y, const T_loc& mu,
       }
     }
 
-    const T_partials y_dbl = value_of(y_vec[n]);
-    const T_partials mu_dbl = value_of(mu_vec[n]);
-    const T_partials sigma_dbl = value_of(sigma_vec[n]);
-    const T_partials lambda_dbl = value_of(lambda_vec[n]);
-    const T_partials u = lambda_dbl * (y_dbl - mu_dbl);
-    const T_partials v = lambda_dbl * sigma_dbl;
-    const T_partials v_sq = v * v;
-    const T_partials scaled_diff = (y_dbl - mu_dbl) / (SQRT_2 * sigma_dbl);
-    const T_partials scaled_diff_sq = scaled_diff * scaled_diff;
-    const T_partials erf_calc1 = 0.5 * (1 + erf(u / (v * SQRT_2)));
-    const T_partials erf_calc2 = 0.5 * (1 + erf(u / (v * SQRT_2) - v / SQRT_2));
-    const T_partials deriv_1 = lambda_dbl * exp(0.5 * v_sq - u) * erf_calc2;
-    const T_partials deriv_2
+    const auto y_dbl = value_of(y_vec[n]);
+    const auto mu_dbl = value_of(mu_vec[n]);
+    const auto sigma_dbl = value_of(sigma_vec[n]);
+    const auto lambda_dbl = value_of(lambda_vec[n]);
+    const auto u = lambda_dbl * (y_dbl - mu_dbl);
+    const auto v = lambda_dbl * sigma_dbl;
+    const auto v_sq = v * v;
+    const auto scaled_diff = (y_dbl - mu_dbl) / (SQRT_2 * sigma_dbl);
+    const auto scaled_diff_sq = scaled_diff * scaled_diff;
+    const auto erf_calc1 = 0.5 * (1 + erf(u / (v * SQRT_2)));
+    const auto erf_calc2 = 0.5 * (1 + erf(u / (v * SQRT_2) - v / SQRT_2));
+    const auto deriv_1 = lambda_dbl * exp(0.5 * v_sq - u) * erf_calc2;
+    const auto deriv_2
         = SQRT_2 / sqrt_pi * 0.5
           * exp(0.5 * v_sq
                 - (-scaled_diff + (v / SQRT_2)) * (-scaled_diff + (v / SQRT_2))
                 - u)
           / sigma_dbl;
-    const T_partials deriv_3
+    const auto deriv_3
         = SQRT_2 / sqrt_pi * 0.5 * exp(-scaled_diff_sq) / sigma_dbl;
 
-    const T_partials denom = erf_calc1 - erf_calc2 * exp(0.5 * v_sq - u);
-    const T_partials cdf_ = erf_calc1 - exp(-u + v_sq * 0.5) * (erf_calc2);
+    const auto denom = erf_calc1 - erf_calc2 * exp(0.5 * v_sq - u);
+    const auto cdf_ = erf_calc1 - exp(-u + v_sq * 0.5) * (erf_calc2);
 
     cdf_log += log(cdf_);
 

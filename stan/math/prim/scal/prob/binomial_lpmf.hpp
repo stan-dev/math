@@ -36,7 +36,6 @@ template <bool propto, typename T_n, typename T_N, typename T_prob>
 inline auto binomial_lpmf(const T_n& n, const T_N& N, const T_prob& theta) {
   using T_partials = partials_return_t<T_n, T_N, T_prob>;
   T_partials logp = 0;
-  using T_return = return_type_t<T_n, T_N, T_prob>;
 
   static const char* function = "binomial_lpmf";
   check_bounded(function, "Successes variable", n, 0, N);

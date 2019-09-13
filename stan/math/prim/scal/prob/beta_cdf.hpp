@@ -36,10 +36,8 @@ inline auto beta_cdf(const T_y& y, const T_scale_succ& alpha,
                      const T_scale_fail& beta) {
   using T_partials = partials_return_t<T_y, T_scale_succ, T_scale_fail>;
   T_partials P(1.0);
-  using T_return = return_type_t<T_y, T_scale_succ, T_scale_fail>;
 
   static const char* function = "beta_cdf";
-
   check_positive_finite(function, "First shape parameter", alpha);
   check_positive_finite(function, "Second shape parameter", beta);
   check_not_nan(function, "Random variable", y);

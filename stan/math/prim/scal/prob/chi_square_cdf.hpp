@@ -35,7 +35,7 @@ template <typename T_y, typename T_dof>
 inline auto chi_square_cdf(const T_y& y, const T_dof& nu) {
   using T_partials = partials_return_t<T_y, T_dof>;
   T_partials cdf(1.0);
-  using T_return = return_type_t<T_y, T_dof>;
+
   using std::exp;
   using std::pow;
 
@@ -67,14 +67,6 @@ inline auto chi_square_cdf(const T_y& y, const T_dof& nu) {
   VectorBuilder<!is_constant_all<T_dof>::value, T_partials, T_dof> digamma_vec(
       stan::length(nu));
 
-  if (!is_constant_all<T_dof>::value) {
-    for (size_t i = 0; i < stan::length(nu); i++) {
-      const T_partials alpha_dbl = value_of(nu_vec[i]) * 0.5;
-      gamma_vec[i] = tgamma(alpha_dbl);
-      digamma_vec[i] = digamma(alpha_dbl);
-    }
-  }
-
   for (size_t n = 0; n < N; n++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
@@ -82,8 +74,8 @@ inline auto chi_square_cdf(const T_y& y, const T_dof& nu) {
       continue;
     }
 
-    const T_partials y_dbl = value_of(y_vec[n]);
     const T_partials alpha_dbl = value_of(nu_vec[n]) * 0.5;
+    const T_partials y_dbl = value_of(y_vec[n]);
     const T_partials beta_dbl = 0.5;
 
     const T_partials Pn = gamma_p(alpha_dbl, beta_dbl * y_dbl);
@@ -96,10 +88,12 @@ inline auto chi_square_cdf(const T_y& y, const T_dof& nu) {
                                           / tgamma(alpha_dbl) / Pn;
     }
     if (!is_constant_all<T_dof>::value) {
+      const T_partials gamma_val = tgamma(alpha_dbl);
+      const T_partials digamma_val = digamma(alpha_dbl);
       ops_partials.edge2_.partials_[n]
           -= 0.5
-             * grad_reg_inc_gamma(alpha_dbl, beta_dbl * y_dbl, gamma_vec[n],
-                                  digamma_vec[n])
+             * grad_reg_inc_gamma(alpha_dbl, beta_dbl * y_dbl, gamma_val,
+                                  digamma_val)
              / Pn;
     }
   }

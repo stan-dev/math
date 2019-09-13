@@ -51,7 +51,7 @@ inline auto student_t_lpdf(const T_y& y, const T_dof& nu, const T_loc& mu,
                            const T_scale& sigma) {
   using T_partials = partials_return_t<T_y, T_dof, T_loc, T_scale>;
   T_partials logp(0.0);
-  using T_return = return_type_t<T_y, T_dof, T_loc, T_scale>;
+
   using std::log;
 
   static const char* function = "student_t_lpdf";

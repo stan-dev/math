@@ -21,7 +21,7 @@ inline auto neg_binomial_cdf(const T_n& n, const T_shape& alpha,
                              const T_inv_scale& beta) {
   using T_partials = partials_return_t<T_n, T_shape, T_inv_scale>;
   T_partials P(1.0);
-  using T_return = return_type_t<T_n, T_shape, T_inv_scale>;
+
 
   static const char* function = "neg_binomial_cdf";
   check_positive_finite(function, "Shape parameter", alpha);

@@ -21,7 +21,7 @@ inline auto neg_binomial_2_cdf(const T_n& n, const T_location& mu,
                                const T_precision& phi) {
   using T_partials = partials_return_t<T_n, T_location, T_precision>;
   T_partials P(1.0);
-  using T_return = return_type_t<T_n, T_location, T_precision>;
+
 
   static const char* function = "neg_binomial_2_cdf";
   check_positive_finite(function, "Location parameter", mu);

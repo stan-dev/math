@@ -21,7 +21,7 @@ inline auto exp_mod_normal_cdf(const T_y& y, const T_loc& mu,
                                const T_inv_scale& lambda) {
   using T_partials = partials_return_t<T_y, T_loc, T_scale, T_inv_scale>;
   T_partials cdf(1.0);
-  using T_return = return_type_t<T_y, T_loc, T_scale, T_inv_scale>;
+
   using std::exp;
 
   static const char* function = "exp_mod_normal_cdf";

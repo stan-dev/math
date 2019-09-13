@@ -23,7 +23,7 @@ inline auto neg_binomial_2_log_lpmf(const T_n& n, const T_log_location& eta,
                                     const T_precision& phi) {
   using T_partials = partials_return_t<T_n, T_log_location, T_precision>;
   T_partials logp(0.0);
-  using T_return = return_type_t<T_n, T_log_location, T_precision>;
+
   using std::exp;
   using std::log;
 

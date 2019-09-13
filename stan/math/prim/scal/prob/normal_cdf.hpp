@@ -33,7 +33,7 @@ inline auto normal_cdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
   static const char* function = "normal_cdf";
   using T_partials = partials_return_t<T_y, T_loc, T_scale>;
   T_partials cdf(1.0);
-  using T_return = return_type_t<T_y, T_loc, T_scale>;
+
   using std::exp;
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);

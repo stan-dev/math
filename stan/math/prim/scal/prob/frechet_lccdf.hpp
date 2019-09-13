@@ -24,7 +24,7 @@ inline auto frechet_lccdf(const T_y& y, const T_shape& alpha,
                           const T_scale& sigma) {
   using T_partials = partials_return_t<T_y, T_shape, T_scale>;
   T_partials ccdf_log(0.0);
-  using T_return = return_type_t<T_y, T_shape, T_scale>;
+
 
   using boost::math::tools::promote_args;
   using std::exp;

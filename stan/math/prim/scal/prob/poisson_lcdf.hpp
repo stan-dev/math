@@ -32,7 +32,7 @@ inline auto poisson_lcdf(const T_n& n, const T_rate& lambda) {
   const scalar_seq_view<T_n> n_vec(n);
   const scalar_seq_view<T_rate> lambda_vec(lambda);
   operands_and_partials<T_rate> ops_partials(lambda);
-  size_t size = max_size(n, lambda);
+  const size_t size = max_size(n, lambda);
   if (size_zero(n, lambda)) {
     return ops_partials.build(P);
   }

@@ -36,7 +36,6 @@ inline auto beta_rng(const T_shape1 &alpha, const T_shape2 &beta, RNG &rng) {
   using boost::random::gamma_distribution;
   using boost::random::uniform_real_distribution;
   static const char *function = "beta_rng";
-
   check_positive_finite(function, "First shape parameter", alpha);
   check_positive_finite(function, "Second shape parameter", beta);
   check_consistent_sizes(function, "First shape parameter", alpha,

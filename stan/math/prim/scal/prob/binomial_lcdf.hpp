@@ -34,10 +34,13 @@ namespace math {
  */
 template <typename T_n, typename T_N, typename T_prob>
 inline auto binomial_lcdf(const T_n& n, const T_N& N, const T_prob& theta) {
-  static const char* function = "binomial_lcdf";
   using T_partials = partials_return_t<T_n, T_N, T_prob>;
   T_partials P(0.0);
+  using std::exp;
+  using std::log;
+  using std::pow;
 
+  static const char* function = "binomial_lcdf";
   check_nonnegative(function, "Population size parameter", N);
   check_finite(function, "Probability parameter", theta);
   check_bounded(function, "Probability parameter", theta, 0.0, 1.0);
@@ -48,11 +51,7 @@ inline auto binomial_lcdf(const T_n& n, const T_N& N, const T_prob& theta) {
   const scalar_seq_view<T_n> n_vec(n);
   const scalar_seq_view<T_N> N_vec(N);
   const scalar_seq_view<T_prob> theta_vec(theta);
-  size_t size = max_size(n, N, theta);
-
-  using std::exp;
-  using std::log;
-  using std::pow;
+  const size_t size = max_size(n, N, theta);
 
   operands_and_partials<T_prob> ops_partials(theta);
   if (size_zero(n, N, theta)) {

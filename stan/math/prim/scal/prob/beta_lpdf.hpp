@@ -43,7 +43,6 @@ inline auto beta_lpdf(const T_y& y, const T_scale_succ& alpha,
                       const T_scale_fail& beta) {
   using T_partials = partials_return_t<T_y, T_scale_succ, T_scale_fail>;
   T_partials logp(0);
-  using T_return = return_type_t<T_y, T_scale_succ, T_scale_fail>;
   using std::log;
 
   static const char* function = "beta_lpdf";
