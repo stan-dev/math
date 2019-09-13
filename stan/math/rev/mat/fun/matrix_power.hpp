@@ -1,13 +1,14 @@
 #ifndef STAN_MATH_REV_MAT_FUN_MATRIX_POWER_HPP
 #define STAN_MATH_REV_MAT_FUN_MATRIX_POWER_HPP
 
+#include <stan/math/prim/scal/err/invalid_argument.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/mat/fun/typedefs.hpp>
+#include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/err/check_square.hpp>
-#include <stan/math/prim/scal/err/invalid_argument.hpp>
+#include <stan/math/rev/mat/fun/typedefs.hpp>
 #include <vector>
-#include <iostream>
 
 namespace stan {
 namespace math {
@@ -15,76 +16,115 @@ namespace math {
 namespace internal {
 
 template <int R, int C>
-class matrix_product_vari : public vari {
+class matrix_product_vari_n0 : public vari {
+ public:
+  double* Mn_;
+  vari** adjMnRef_;
+
+  explicit matrix_product_vari_n0(const Eigen::Matrix<var, R, C>& M)
+      : vari(0.0),
+        Mn_(reinterpret_cast<double*>(
+            ChainableStack::instance_->memalloc_.alloc(sizeof(double) * M.rows()
+                                                       * M.cols()))),
+        adjMnRef_(
+            reinterpret_cast<vari**>(ChainableStack::instance_->memalloc_.alloc(
+                sizeof(vari*) * M.rows() * M.cols()))) {
+    Eigen::Map<matrix_d> Mnd(Mn_, M.rows(), M.cols());
+    Mnd = Eigen::Matrix<double, R, C>::Identity(M.rows(), M.cols());
+    Eigen::Map<matrix_vi>(adjMnRef_, M.rows(), M.cols())
+        = Mnd.unaryExpr([](double x) { return new vari(x, false); });
+  }
+
+  virtual void chain() { return; }
+};
+
+template <int R, int C>
+class matrix_product_vari_n1 : public vari {
  public:
   int rows_;
   int cols_;
   double* M_;
-  double* result_;
   vari** adjMRef_;
-  vari** adjResultRef_;
-  std::vector<Eigen::Matrix<double, R, C> > Mds;
+  vari** adjMnRef_;
 
-  explicit matrix_product_vari(const Eigen::Matrix<var, R, C>& M, const int n)
+  explicit matrix_product_vari_n1(const Eigen::Matrix<var, R, C>& M)
       : vari(0.0),
         rows_(M.rows()),
         cols_(M.cols()),
         M_(reinterpret_cast<double*>(ChainableStack::instance_->memalloc_.alloc(
             sizeof(double) * M.rows() * M.cols()))),
-        result_(reinterpret_cast<double*>(
-            ChainableStack::instance_->memalloc_.alloc(sizeof(double) * M.rows()
-                                                       * M.cols()))),
         adjMRef_(
             reinterpret_cast<vari**>(ChainableStack::instance_->memalloc_.alloc(
                 sizeof(vari*) * M.rows() * M.cols()))),
-        adjResultRef_(
+        adjMnRef_(
             reinterpret_cast<vari**>(ChainableStack::instance_->memalloc_.alloc(
                 sizeof(vari*) * M.rows() * M.cols()))) {
-    Eigen::Map<Eigen::Matrix<double, R, C> >(M_, rows_, cols_) = M.val();
     Eigen::Map<matrix_vi>(adjMRef_, rows_, cols_) = M.vi();
-    Eigen::Map<matrix_d> Md(M_, rows_, cols_);
-    Eigen::Map<matrix_d> resultd(result_, rows_, cols_);
-    resultd = Eigen::Matrix<double, R, C>::Identity(rows_, cols_);
-    for (int i = 0; i < n; i++) {
-      Mds.push_back(resultd);
-      resultd *= Md;
-    }
-    Eigen::Map<matrix_vi>(adjResultRef_, rows_, cols_)
-        = resultd.unaryExpr([](double x) { return new vari(x, false); });
+    Eigen::Map<matrix_d> Md(M_, M.rows(), M.cols());
+    Md = M.val();
+    Eigen::Map<matrix_vi>(adjMnRef_, M.rows(), M.cols())
+        = Md.unaryExpr([](double x) { return new vari(x, false); });
   }
 
   virtual void chain() {
-    int n = Mds.size();
-    if (n == 0)
-      return;
-    if (n == 1) {
-      Eigen::Map<matrix_vi>(adjMRef_, rows_, cols_).adj()
-          = Eigen::Map<matrix_vi>(adjResultRef_, rows_, cols_).adj();
-      return;
+    Eigen::Map<matrix_vi>(adjMRef_, rows_, cols_).adj()
+        = Eigen::Map<matrix_vi>(adjMnRef_, rows_, cols_).adj();
+  }
+};
+
+template <int R, int C>
+class matrix_product_vari : public vari {
+ public:
+  int rows_;
+  int cols_;
+  vari** adjMRef_;
+  vari** adjMnRef_;
+  std::vector<Eigen::Matrix<double, R, C> > Mds;  // M, M^2, ..., M^(n-1), M^n.
+  int n;
+
+  explicit matrix_product_vari(const Eigen::Matrix<var, R, C>& M, const int n)
+      : vari(0.0),
+        rows_(M.rows()),
+        cols_(M.cols()),
+        adjMRef_(
+            reinterpret_cast<vari**>(ChainableStack::instance_->memalloc_.alloc(
+                sizeof(vari*) * M.rows() * M.cols()))),
+        adjMnRef_(
+            reinterpret_cast<vari**>(ChainableStack::instance_->memalloc_.alloc(
+                sizeof(vari*) * M.rows() * M.cols()))),
+        n(n) {
+    Mds.resize(n);
+    Mds[0] = M.val();
+    Eigen::Map<matrix_vi>(adjMRef_, rows_, cols_) = M.vi();
+    for (int i = 1; i < n; i++) {
+      Mds[i] = Mds[i - 1] * Mds[0];
     }
+    Eigen::Map<matrix_vi>(adjMnRef_, rows_, cols_)
+        = Mds[n - 1].unaryExpr([](double x) { return new vari(x, false); });
+  }
+
+  virtual void chain() {
     for (int i = 0; i < rows_; i++) {
       for (int j = 0; j < cols_; j++) {
         double dijdkl = 0.0;
         Eigen::Matrix<double, R, C> S
             = Eigen::Matrix<double, R, C>::Zero(rows_, cols_);
         for (int l = 0; l < cols_; l++) {
-          S(i, l) += Mds[n - 1](j, l);
+          S(i, l) += Mds[n - 2](j, l);
         }
         for (int nn = 1; nn < n - 1; nn++) {
           for (int k = 0; k < rows_; k++) {
             for (int l = 0; l < cols_; l++) {
-              S(k, l) += Mds[nn](k, i) * Mds[n - nn - 1](j, l);
+              S(k, l) += Mds[nn - 1](k, i) * Mds[n - nn - 2](j, l);
             }
           }
         }
         for (int k = 0; k < rows_; k++) {
-          S(k, j) += Mds[n - 1](k, i);
+          S(k, j) += Mds[n - 2](k, i);
         }
         Eigen::Map<matrix_vi>(adjMRef_, rows_, cols_).adj()(i, j)
             += (S.array()
-                * Eigen::Map<matrix_vi>(adjResultRef_, rows_, cols_)
-                      .adj()
-                      .array())
+                * Eigen::Map<matrix_vi>(adjMnRef_, rows_, cols_).adj().array())
                    .sum();
       }
     }
@@ -115,12 +155,25 @@ inline Eigen::Matrix<var, R, C> matrix_power(const Eigen::Matrix<var, R, C>& M,
     invalid_argument("matrix_power", "M.rows()", M.rows(), "is ",
                      ", but must be > 0!");
   check_finite("matrix_power", "M", M);
-  internal::matrix_product_vari<R, C>* baseVari
-      = new internal::matrix_product_vari<R, C>(M, n);
-  Eigen::Matrix<var, R, C> result(M.rows(), M.cols());
-  result.vi()
-      = Eigen::Map<matrix_vi>(baseVari->adjResultRef_, M.rows(), M.cols());
-  return result;
+  if (n == 0) {
+    internal::matrix_product_vari_n0<R, C>* baseVari
+        = new internal::matrix_product_vari_n0<R, C>(M);
+    Eigen::Matrix<var, R, C> Mn(M.rows(), M.cols());
+    Mn.vi() = Eigen::Map<matrix_vi>(baseVari->adjMnRef_, M.rows(), M.cols());
+    return Mn;
+  } else if (n == 1) {
+    internal::matrix_product_vari_n1<R, C>* baseVari
+        = new internal::matrix_product_vari_n1<R, C>(M);
+    Eigen::Matrix<var, R, C> Mn(M.rows(), M.cols());
+    Mn.vi() = Eigen::Map<matrix_vi>(baseVari->adjMnRef_, M.rows(), M.cols());
+    return Mn;
+  } else {
+    internal::matrix_product_vari<R, C>* baseVari
+        = new internal::matrix_product_vari<R, C>(M, n);
+    Eigen::Matrix<var, R, C> Mn(M.rows(), M.cols());
+    Mn.vi() = Eigen::Map<matrix_vi>(baseVari->adjMnRef_, M.rows(), M.cols());
+    return Mn;
+  }
 }
 
 }  // namespace math
