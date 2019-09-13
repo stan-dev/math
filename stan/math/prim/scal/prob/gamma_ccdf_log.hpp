@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/prob/gamma_lccdf.hpp>
-#include <utility>
 
 namespace stan {
 namespace math {
@@ -12,9 +11,9 @@ namespace math {
  * @deprecated use <code>gamma_lccdf</code>
  */
 template <typename T_y, typename T_shape, typename T_inv_scale>
-inline auto gamma_ccdf_log(T_y&& y, T_shape&& alpha,
-                           T_inv_scale&& beta) {
-  return gamma_lccdf(std::forward<T_y>(y), std::forward<T_shape>(alpha), std::forward<T_inv_scale>(beta));
+inline auto gamma_ccdf_log(const T_y& y, const T_shape& alpha,
+                           const T_inv_scale& beta) {
+  return gamma_lccdf(y, alpha, beta);
 }
 
 }  // namespace math

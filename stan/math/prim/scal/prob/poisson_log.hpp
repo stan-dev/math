@@ -11,7 +11,7 @@ namespace math {
  * @deprecated use <code>poisson_lpmf</code>
  */
 template <bool propto, typename T_n, typename T_rate>
-inline auto poisson_log(T_n&& n, T_rate&& lambda) {
+inline auto poisson_log(const T_n& n, const T_rate& lambda) {
   return poisson_lpmf<propto>(n, lambda);
 }
 
@@ -19,7 +19,7 @@ inline auto poisson_log(T_n&& n, T_rate&& lambda) {
  * @deprecated use <code>poisson_lpmf</code>
  */
 template <typename T_n, typename T_rate>
-inline auto poisson_log(T_n&& n, T_rate&& lambda) {
+inline auto poisson_log(const T_n& n, const T_rate& lambda) {
   return poisson_lpmf(n, lambda);
 }
 

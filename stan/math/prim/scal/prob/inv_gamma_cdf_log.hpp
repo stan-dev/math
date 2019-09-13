@@ -11,8 +11,8 @@ namespace math {
  * @deprecated use <code>inv_gamma_lcdf</code>
  */
 template <typename T_y, typename T_shape, typename T_scale>
-inline auto inv_gamma_cdf_log(T_y&& y, T_shape&& alpha,
-                              T_scale&& beta) {
+inline auto inv_gamma_cdf_log(const T_y& y, const T_shape& alpha,
+                              const T_scale& beta) {
   return inv_gamma_lcdf(y, alpha, beta);
 }
 

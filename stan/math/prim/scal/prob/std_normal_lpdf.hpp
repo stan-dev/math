@@ -23,7 +23,7 @@ namespace math {
  * @throw std::domain_error if any scalar is nan.
  */
 template <bool propto, typename T_y>
-inline auto std_normal_lpdf(T_y&& y) {
+inline auto std_normal_lpdf(const T_y& y) {
   using T_partials = partials_return_t<T_y>;
   T_partials logp(0.0);
 
@@ -53,7 +53,7 @@ inline auto std_normal_lpdf(T_y&& y) {
 }
 
 template <typename T_y>
-inline auto std_normal_lpdf(T_y&& y) {
+inline auto std_normal_lpdf(const T_y& y) {
   return std_normal_lpdf<false>(y);
 }
 

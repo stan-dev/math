@@ -15,7 +15,7 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_low, typename T_high>
-inline auto uniform_lcdf(T_y&& y, T_low&& alpha, T_high&& beta) {
+inline auto uniform_lcdf(const T_y& y, const T_low& alpha, const T_high& beta) {
   static const char* function = "uniform_lcdf";
   using T_partials = partials_return_t<T_y, T_low, T_high>;
   T_partials cdf_log(0.0);
@@ -33,14 +33,14 @@ inline auto uniform_lcdf(T_y&& y, T_low&& alpha, T_high&& beta) {
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_low> alpha_vec(alpha);
   const scalar_seq_view<T_high> beta_vec(beta);
-  const auto N = max_size(y, alpha, beta);
+  const size_t N = max_size(y, alpha, beta);
 
   operands_and_partials<T_y, T_low, T_high> ops_partials(y, alpha, beta);
   if (size_zero(y, alpha, beta)) {
     return ops_partials.build(cdf_log);
   }
   for (size_t n = 0; n < N; n++) {
-    const auto y_dbl = value_of(y_vec[n]);
+    const T_partials y_dbl = value_of(y_vec[n]);
     if (y_dbl < value_of(alpha_vec[n]) || y_dbl > value_of(beta_vec[n])) {
       return negative_infinity();
     }
@@ -50,11 +50,11 @@ inline auto uniform_lcdf(T_y&& y, T_low&& alpha, T_high&& beta) {
   }
 
   for (size_t n = 0; n < N; n++) {
-    const auto y_dbl = value_of(y_vec[n]);
-    const auto alpha_dbl = value_of(alpha_vec[n]);
-    const auto beta_dbl = value_of(beta_vec[n]);
-    const auto b_min_a = beta_dbl - alpha_dbl;
-    const auto cdf_log_ = (y_dbl - alpha_dbl) / b_min_a;
+    const T_partials y_dbl = value_of(y_vec[n]);
+    const T_partials alpha_dbl = value_of(alpha_vec[n]);
+    const T_partials beta_dbl = value_of(beta_vec[n]);
+    const T_partials b_min_a = beta_dbl - alpha_dbl;
+    const T_partials cdf_log_ = (y_dbl - alpha_dbl) / b_min_a;
 
     cdf_log += log(cdf_log_);
 

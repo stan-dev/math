@@ -34,8 +34,8 @@ namespace math {
  * sizes
  */
 template <typename T_loc, typename T_inv, class RNG>
-inline auto neg_binomial_2_log_rng(T_loc&& eta, T_inv&& phi,
-                                   RNG&& rng) {
+inline auto neg_binomial_2_log_rng(const T_loc& eta, const T_inv& phi,
+                                   RNG& rng) {
   using boost::gamma_distribution;
   using boost::random::poisson_distribution;
   using boost::variate_generator;

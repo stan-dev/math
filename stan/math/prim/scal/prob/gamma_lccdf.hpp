@@ -20,8 +20,8 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_shape, typename T_inv_scale>
-inline auto gamma_lccdf(T_y&& y, T_shape&& alpha,
-                        T_inv_scale&& beta) {
+inline auto gamma_lccdf(const T_y& y, const T_shape& alpha,
+                        const T_inv_scale& beta) {
   using T_partials = partials_return_t<T_y, T_shape, T_inv_scale>;
   T_partials P(0.0);
 
@@ -40,7 +40,7 @@ inline auto gamma_lccdf(T_y&& y, T_shape&& alpha,
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_shape> alpha_vec(alpha);
   const scalar_seq_view<T_inv_scale> beta_vec(beta);
-  const auto N = max_size(y, alpha, beta);
+  const size_t N = max_size(y, alpha, beta);
   operands_and_partials<T_y, T_shape, T_inv_scale> ops_partials(y, alpha, beta);
   if (size_zero(y, alpha, beta)) {
     return ops_partials.build(P);
@@ -74,11 +74,11 @@ inline auto gamma_lccdf(T_y&& y, T_shape&& alpha,
       return ops_partials.build(negative_infinity());
     }
 
-    const auto y_dbl = value_of(y_vec[n]);
-    const auto alpha_dbl = value_of(alpha_vec[n]);
-    const auto beta_dbl = value_of(beta_vec[n]);
+    const T_partials y_dbl = value_of(y_vec[n]);
+    const T_partials alpha_dbl = value_of(alpha_vec[n]);
+    const T_partials beta_dbl = value_of(beta_vec[n]);
 
-    const auto Pn = gamma_q(alpha_dbl, beta_dbl * y_dbl);
+    const T_partials Pn = gamma_q(alpha_dbl, beta_dbl * y_dbl);
 
     P += log(Pn);
 

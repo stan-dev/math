@@ -11,8 +11,8 @@ namespace math {
  * @deprecated use <code>gumbel_lccdf</code>
  */
 template <typename T_y, typename T_loc, typename T_scale>
-inline auto gumbel_ccdf_log(T_y&& y, T_loc&& mu,
-                            T_scale&& beta) {
+inline auto gumbel_ccdf_log(const T_y& y, const T_loc& mu,
+                            const T_scale& beta) {
   return gumbel_lccdf(y, mu, beta);
 }
 

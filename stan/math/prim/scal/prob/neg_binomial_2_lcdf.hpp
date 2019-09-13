@@ -13,8 +13,8 @@ namespace stan {
 namespace math {
 
 template <typename T_n, typename T_location, typename T_precision>
-inline auto neg_binomial_2_lcdf(T_n&& n, T_location&& mu,
-                                T_precision&& phi) {
+inline auto neg_binomial_2_lcdf(const T_n& n, const T_location& mu,
+                                const T_precision& phi) {
   using std::log;
   using T_partials = partials_return_t<T_n, T_location, T_precision>;
   using T_return = return_type_t<T_n, T_location, T_precision>;

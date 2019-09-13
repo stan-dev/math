@@ -15,8 +15,8 @@ namespace math {
 
 // Pareto(y|y_m, alpha)  [y > y_m;  y_m > 0;  alpha > 0]
 template <bool propto, typename T_y, typename T_scale, typename T_shape>
-inline auto pareto_lpdf(T_y&& y, T_scale&& y_min,
-                        T_shape&& alpha) {
+inline auto pareto_lpdf(const T_y& y, const T_scale& y_min,
+                        const T_shape& alpha) {
   static const char* function = "pareto_lpdf";
   using T_partials = partials_return_t<T_y, T_scale, T_shape>;
 
@@ -107,8 +107,8 @@ inline auto pareto_lpdf(T_y&& y, T_scale&& y_min,
 }
 
 template <typename T_y, typename T_scale, typename T_shape>
-inline auto pareto_lpdf(T_y&& y, T_scale&& y_min,
-                        T_shape&& alpha) {
+inline auto pareto_lpdf(const T_y& y, const T_scale& y_min,
+                        const T_shape& alpha) {
   return pareto_lpdf<false>(y, y_min, alpha);
 }
 

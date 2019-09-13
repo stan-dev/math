@@ -17,8 +17,8 @@ namespace stan {
 namespace math {
 
 template <typename T_n, typename T_location, typename T_precision>
-inline auto neg_binomial_2_cdf(T_n&& n, T_location&& mu,
-                               T_precision&& phi) {
+inline auto neg_binomial_2_cdf(const T_n& n, const T_location& mu,
+                               const T_precision& phi) {
   using T_partials = partials_return_t<T_n, T_location, T_precision>;
   T_partials P(1.0);
 

@@ -111,8 +111,7 @@ class operands_and_partials {
    * @param value the return value of the function we are compressing
    * @return the value with its derivative
    */
-  template <typename T, typename = std::enable_if_t<std::is_arithmetic<std::decay_t<T>>::value>>
-  T_return_type build(T&& value) { return std::forward<T>(value); }
+  T_return_type build(double value) { return value; }
 
   // These will always be 0 size base template instantiations (above).
   internal::ops_partials_edge<double, Op1> edge1_;

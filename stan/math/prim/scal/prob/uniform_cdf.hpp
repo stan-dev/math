@@ -13,7 +13,7 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_low, typename T_high>
-inline auto uniform_cdf(T_y&& y, T_low&& alpha, T_high&& beta) {
+inline auto uniform_cdf(const T_y& y, const T_low& alpha, const T_high& beta) {
   static const char* function = "uniform_cdf";
   using T_partials = partials_return_t<T_y, T_low, T_high>;
   T_partials cdf(1.0);
@@ -29,25 +29,25 @@ inline auto uniform_cdf(T_y&& y, T_low&& alpha, T_high&& beta) {
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_low> alpha_vec(alpha);
   const scalar_seq_view<T_high> beta_vec(beta);
-  const auto N = max_size(y, alpha, beta);
+  const size_t N = max_size(y, alpha, beta);
   operands_and_partials<T_y, T_low, T_high> ops_partials(y, alpha, beta);
   if (size_zero(y, alpha, beta)) {
     return ops_partials.build(cdf);
   }
 
   for (size_t n = 0; n < N; n++) {
-    const auto y_dbl = value_of(y_vec[n]);
+    const T_partials y_dbl = value_of(y_vec[n]);
     if (y_dbl < value_of(alpha_vec[n]) || y_dbl > value_of(beta_vec[n])) {
       return ops_partials.build(T_partials(0.0));
     }
   }
 
   for (size_t n = 0; n < N; n++) {
-    const auto y_dbl = value_of(y_vec[n]);
-    const auto alpha_dbl = value_of(alpha_vec[n]);
-    const auto beta_dbl = value_of(beta_vec[n]);
-    const auto b_min_a = beta_dbl - alpha_dbl;
-    const auto cdf_ = (y_dbl - alpha_dbl) / b_min_a;
+    const T_partials y_dbl = value_of(y_vec[n]);
+    const T_partials alpha_dbl = value_of(alpha_vec[n]);
+    const T_partials beta_dbl = value_of(beta_vec[n]);
+    const T_partials b_min_a = beta_dbl - alpha_dbl;
+    const T_partials cdf_ = (y_dbl - alpha_dbl) / b_min_a;
 
     cdf *= cdf_;
 

@@ -16,8 +16,8 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
-inline auto skew_normal_lcdf(T_y&& y, T_loc&& mu,
-                             T_scale&& sigma, T_shape&& alpha) {
+inline auto skew_normal_lcdf(const T_y& y, const T_loc& mu,
+                             const T_scale& sigma, const T_shape& alpha) {
   static const char* function = "skew_normal_lcdf";
   using T_partials = partials_return_t<T_y, T_loc, T_scale, T_shape>;
   T_partials cdf_log(0.0);

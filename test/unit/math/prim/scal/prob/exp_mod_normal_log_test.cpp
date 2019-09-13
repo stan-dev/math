@@ -15,18 +15,18 @@ TEST(ProbExpModNormal, log_matches_lpmf) {
       (stan::math::exp_mod_normal_lpdf<false>(y, mu, lambda, sigma)),
       (stan::math::exp_mod_normal_log<false>(y, mu, lambda, sigma)));
   EXPECT_FLOAT_EQ(
-      (stan::math::exp_mod_normal_lpdf<true>(
+      (stan::math::exp_mod_normal_lpdf<true, double, double, double, double>(
           y, mu, lambda, sigma)),
-      (stan::math::exp_mod_normal_log<true>(
+      (stan::math::exp_mod_normal_log<true, double, double, double, double>(
           y, mu, lambda, sigma)));
   EXPECT_FLOAT_EQ(
-      (stan::math::exp_mod_normal_lpdf<false>(
+      (stan::math::exp_mod_normal_lpdf<false, double, double, double, double>(
           y, mu, lambda, sigma)),
-      (stan::math::exp_mod_normal_log<false>(
+      (stan::math::exp_mod_normal_log<false, double, double, double, double>(
           y, mu, lambda, sigma)));
   EXPECT_FLOAT_EQ(
-      (stan::math::exp_mod_normal_lpdf(
+      (stan::math::exp_mod_normal_lpdf<double, double, double, double>(
           y, mu, lambda, sigma)),
-      (stan::math::exp_mod_normal_log(
+      (stan::math::exp_mod_normal_log<double, double, double, double>(
           y, mu, lambda, sigma)));
 }

@@ -1,6 +1,6 @@
 #ifndef STAN_MATH_PRIM_SCAL_META_PARTIALS_TYPE_HPP
 #define STAN_MATH_PRIM_SCAL_META_PARTIALS_TYPE_HPP
-#include <type_traits>
+
 namespace stan {
 
 /**
@@ -10,14 +10,14 @@ namespace stan {
  */
 template <typename T, typename = void>
 struct partials_type {
-  using type = std::remove_cv_t<T>;
+  using type = T;
 };
 
 /**
  * Helper alias for accessing the partial type.
  */
 template <typename T>
-using partials_type_t = std::decay_t<typename partials_type<T>::type>;
+using partials_type_t = typename partials_type<T>::type;
 
 }  // namespace stan
 #endif

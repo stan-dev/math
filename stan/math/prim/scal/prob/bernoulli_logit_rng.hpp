@@ -25,7 +25,7 @@ namespace math {
  * is not finite
  */
 template <typename T_t, class RNG>
-inline auto bernoulli_logit_rng(T_t&& t, RNG&& rng) {
+inline auto bernoulli_logit_rng(const T_t& t, RNG& rng) {
   using boost::bernoulli_distribution;
   using boost::variate_generator;
 

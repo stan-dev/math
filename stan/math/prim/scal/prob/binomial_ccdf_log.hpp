@@ -11,7 +11,7 @@ namespace math {
  * @deprecated use <code>binomial_lccdf</code>
  */
 template <typename T_n, typename T_N, typename T_prob>
-inline auto binomial_ccdf_log(T_n&& n, T_N&& N, T_prob&& theta) {
+inline auto binomial_ccdf_log(const T_n& n, const T_N& N, const T_prob& theta) {
   return binomial_lccdf(n, N, theta);
 }
 

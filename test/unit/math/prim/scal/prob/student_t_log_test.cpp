@@ -14,17 +14,17 @@ TEST(ProbStudentT, log_matches_lpdf) {
   EXPECT_FLOAT_EQ((stan::math::student_t_lpdf<false>(y, nu, mu, sigma)),
                   (stan::math::student_t_log<false>(y, nu, mu, sigma)));
   EXPECT_FLOAT_EQ(
-      (stan::math::student_t_lpdf<true>(
+      (stan::math::student_t_lpdf<true, double, double, double, double>(
           y, nu, mu, sigma)),
-      (stan::math::student_t_log<true>(
+      (stan::math::student_t_log<true, double, double, double, double>(
           y, nu, mu, sigma)));
   EXPECT_FLOAT_EQ(
-      (stan::math::student_t_lpdf<false>(
+      (stan::math::student_t_lpdf<false, double, double, double, double>(
           y, nu, mu, sigma)),
-      (stan::math::student_t_log<false>(
+      (stan::math::student_t_log<false, double, double, double, double>(
           y, nu, mu, sigma)));
-  EXPECT_FLOAT_EQ((stan::math::student_t_lpdf(
+  EXPECT_FLOAT_EQ((stan::math::student_t_lpdf<double, double, double, double>(
                       y, nu, mu, sigma)),
-                  (stan::math::student_t_log(
+                  (stan::math::student_t_log<double, double, double, double>(
                       y, nu, mu, sigma)));
 }

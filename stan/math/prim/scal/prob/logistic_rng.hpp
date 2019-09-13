@@ -30,7 +30,7 @@ namespace math {
  * sizes
  */
 template <typename T_loc, typename T_scale, class RNG>
-inline auto logistic_rng(T_loc&& mu, T_scale&& sigma, RNG&& rng) {
+inline auto logistic_rng(const T_loc& mu, const T_scale& sigma, RNG& rng) {
   using boost::random::exponential_distribution;
   using boost::variate_generator;
   static const char* function = "logistic_rng";

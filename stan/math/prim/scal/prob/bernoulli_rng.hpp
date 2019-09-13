@@ -25,7 +25,7 @@ namespace math {
  * greater than one.
  */
 template <typename T_theta, class RNG>
-inline auto bernoulli_rng(T_theta&& theta, RNG&& rng) {
+inline auto bernoulli_rng(const T_theta& theta, RNG& rng) {
   using boost::bernoulli_distribution;
   using boost::variate_generator;
 

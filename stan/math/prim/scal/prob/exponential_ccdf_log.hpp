@@ -11,7 +11,7 @@ namespace math {
  * @deprecated use <code>exponential_lccdf</code>
  */
 template <typename T_y, typename T_inv_scale>
-inline auto exponential_ccdf_log(T_y&& y, T_inv_scale&& beta) {
+inline auto exponential_ccdf_log(const T_y& y, const T_inv_scale& beta) {
   return exponential_lccdf(y, beta);
 }
 

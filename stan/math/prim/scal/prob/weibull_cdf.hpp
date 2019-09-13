@@ -26,10 +26,10 @@ namespace math {
  * @throw std::domain_error if y is negative, alpha sigma is nonpositive
  */
 template <typename T_y, typename T_shape, typename T_scale>
-inline auto weibull_cdf(T_y&& y, T_shape&& alpha,
-                        T_scale&& sigma) {
-  using T_partial = partials_return_t<T_y, T_shape, T_scale>;
-  T_partial cdf(1.0);
+inline auto weibull_cdf(const T_y& y, const T_shape& alpha,
+                        const T_scale& sigma) {
+  using T_partials = partials_return_t<T_y, T_shape, T_scale>;
+  T_partials cdf(1.0);
 
 
   static const char* function = "weibull_cdf";
@@ -51,16 +51,16 @@ inline auto weibull_cdf(T_y&& y, T_shape&& alpha,
   const scalar_seq_view<T_shape> alpha_vec(alpha);
   const size_t N = max_size(y, sigma, alpha);
   for (size_t n = 0; n < N; n++) {
-    const auto y_dbl = value_of(y_vec[n]);
-    const auto sigma_dbl = value_of(sigma_vec[n]);
-    const auto alpha_dbl = value_of(alpha_vec[n]);
-    const auto pow_ = pow(y_dbl / sigma_dbl, alpha_dbl);
-    const auto exp_ = exp(-pow_);
-    const auto cdf_ = 1.0 - exp_;
+    const T_partials y_dbl = value_of(y_vec[n]);
+    const T_partials sigma_dbl = value_of(sigma_vec[n]);
+    const T_partials alpha_dbl = value_of(alpha_vec[n]);
+    const T_partials pow_ = pow(y_dbl / sigma_dbl, alpha_dbl);
+    const T_partials exp_ = exp(-pow_);
+    const T_partials cdf_ = 1.0 - exp_;
 
     cdf *= cdf_;
 
-    const auto rep_deriv = exp_ * pow_ / cdf_;
+    const T_partials rep_deriv = exp_ * pow_ / cdf_;
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] += rep_deriv * alpha_dbl / y_dbl;
     }

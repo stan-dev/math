@@ -18,7 +18,7 @@ namespace math {
 
 // Poisson(n|lambda)  [lambda > 0;  n >= 0]
 template <bool propto, typename T_n, typename T_rate>
-inline auto poisson_lpmf(T_n&& n, T_rate&& lambda) {
+inline auto poisson_lpmf(const T_n& n, const T_rate& lambda) {
   using T_partials = partials_return_t<T_n, T_rate>;
   T_partials logp(0.0);
 
@@ -63,7 +63,7 @@ inline auto poisson_lpmf(T_n&& n, T_rate&& lambda) {
 }
 
 template <typename T_n, typename T_rate>
-inline auto poisson_lpmf(T_n&& n, T_rate&& lambda) {
+inline auto poisson_lpmf(const T_n& n, const T_rate& lambda) {
   return poisson_lpmf<false>(n, lambda);
 }
 

@@ -33,7 +33,7 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_y, typename T_dof>
-inline auto chi_square_lcdf(T_y&& y, T_dof&& nu) {
+inline auto chi_square_lcdf(const T_y& y, const T_dof& nu) {
   using T_partials = partials_return_t<T_y, T_dof>;
   T_partials cdf_log(0.0);
 

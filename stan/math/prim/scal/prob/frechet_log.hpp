@@ -11,8 +11,8 @@ namespace math {
  * @deprecated use <code>frechet_lpdf</code>
  */
 template <bool propto, typename T_y, typename T_shape, typename T_scale>
-inline auto frechet_log(T_y&& y, T_shape&& alpha,
-                        T_scale&& sigma) {
+inline auto frechet_log(const T_y& y, const T_shape& alpha,
+                        const T_scale& sigma) {
   return frechet_lpdf<propto>(y, alpha, sigma);
 }
 
@@ -20,8 +20,8 @@ inline auto frechet_log(T_y&& y, T_shape&& alpha,
  * @deprecated use <code>frechet_lpdf</code>
  */
 template <typename T_y, typename T_shape, typename T_scale>
-inline auto frechet_log(T_y&& y, T_shape&& alpha,
-                        T_scale&& sigma) {
+inline auto frechet_log(const T_y& y, const T_shape& alpha,
+                        const T_scale& sigma) {
   return frechet_lpdf(y, alpha, sigma);
 }
 

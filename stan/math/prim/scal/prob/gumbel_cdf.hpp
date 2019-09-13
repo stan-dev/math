@@ -29,7 +29,7 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_y, typename T_loc, typename T_scale>
-inline auto gumbel_cdf(T_y&& y, T_loc&& mu, T_scale&& beta) {
+inline auto gumbel_cdf(const T_y& y, const T_loc& mu, const T_scale& beta) {
   static const char* function = "gumbel_cdf";
   using T_partials = partials_return_t<T_y, T_loc, T_scale>;
   T_partials cdf(1.0);

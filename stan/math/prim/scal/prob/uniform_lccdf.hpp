@@ -15,8 +15,8 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_low, typename T_high>
-inline auto uniform_lccdf(T_y&& y, T_low&& alpha,
-                          T_high&& beta) {
+inline auto uniform_lccdf(const T_y& y, const T_low& alpha,
+                          const T_high& beta) {
   static const char* function = "uniform_lccdf";
   using T_partials = partials_return_t<T_y, T_low, T_high>;
   T_partials ccdf_log(0.0);

@@ -12,8 +12,8 @@ namespace math {
  */
 template <bool propto, typename T_n, typename T_N, typename T_size1,
           typename T_size2>
-inline auto beta_binomial_log(T_n&& n, T_N&& N, T_size1&& alpha,
-                              T_size2&& beta) {
+inline auto beta_binomial_log(const T_n& n, const T_N& N, const T_size1& alpha,
+                              const T_size2& beta) {
   return beta_binomial_lpmf<propto>(n, N, alpha, beta);
 }
 
@@ -21,8 +21,8 @@ inline auto beta_binomial_log(T_n&& n, T_N&& N, T_size1&& alpha,
  * @deprecated use <code>beta_binomial_lpmf</code>
  */
 template <typename T_n, typename T_N, typename T_size1, typename T_size2>
-inline auto beta_binomial_log(T_n&& n, T_N&& N, T_size1&& alpha,
-                              T_size2&& beta) {
+inline auto beta_binomial_log(const T_n& n, const T_N& N, const T_size1& alpha,
+                              const T_size2& beta) {
   return beta_binomial_lpmf(n, N, alpha, beta);
 }
 

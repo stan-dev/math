@@ -15,7 +15,7 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_scale>
-inline auto rayleigh_cdf(T_y&& y, T_scale&& sigma) {
+inline auto rayleigh_cdf(const T_y& y, const T_scale& sigma) {
   static const char* function = "rayleigh_cdf";
   using T_partials = partials_return_t<T_y, T_scale>;
   T_partials cdf(1.0);

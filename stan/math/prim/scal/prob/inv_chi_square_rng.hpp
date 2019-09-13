@@ -24,7 +24,7 @@ namespace math {
  * @throw std::domain_error if nu is nonpositive
  */
 template <typename T_deg, class RNG>
-inline auto inv_chi_square_rng(T_deg&& nu, RNG&& rng) {
+inline auto inv_chi_square_rng(const T_deg& nu, RNG& rng) {
   using boost::random::chi_squared_distribution;
   using boost::variate_generator;
 

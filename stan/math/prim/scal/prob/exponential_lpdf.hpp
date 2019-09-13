@@ -40,7 +40,7 @@ namespace math {
  * @tparam T_inv_scale Type of inverse scale.
  */
 template <bool propto, typename T_y, typename T_inv_scale>
-inline auto exponential_lpdf(T_y&& y, T_inv_scale&& beta) {
+inline auto exponential_lpdf(const T_y& y, const T_inv_scale& beta) {
   using T_partials = partials_return_t<T_y, T_inv_scale>;
   T_partials logp(0.0);
 
@@ -91,7 +91,7 @@ inline auto exponential_lpdf(T_y&& y, T_inv_scale&& beta) {
 }
 
 template <typename T_y, typename T_inv_scale>
-inline auto exponential_lpdf(T_y&& y, T_inv_scale&& beta) {
+inline auto exponential_lpdf(const T_y& y, const T_inv_scale& beta) {
   return exponential_lpdf<false>(y, beta);
 }
 

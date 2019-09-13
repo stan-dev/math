@@ -12,7 +12,6 @@
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
 #include <cmath>
-#include <utility>
 
 namespace stan {
 namespace math {
@@ -40,8 +39,8 @@ namespace math {
  * @tparam T_inv_scale Type of inverse scale.
  */
 template <bool propto, typename T_y, typename T_shape, typename T_inv_scale>
-inline auto gamma_lpdf(T_y&& y, T_shape&& alpha,
-                       T_inv_scale&& beta) {
+inline auto gamma_lpdf(const T_y& y, const T_shape& alpha,
+                       const T_inv_scale& beta) {
   using T_partials = partials_return_t<T_y, T_shape, T_inv_scale>;
   T_partials logp(0.0);
 
@@ -57,8 +56,8 @@ inline auto gamma_lpdf(T_y&& y, T_shape&& alpha,
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_shape> alpha_vec(alpha);
   const scalar_seq_view<T_inv_scale> beta_vec(beta);
-  const auto N = max_size(y, alpha, beta);
-  const auto size_y = length(y);
+  const size_t N = max_size(y, alpha, beta);
+  const size_t size_y = length(y);
   operands_and_partials<T_y, T_shape, T_inv_scale> ops_partials(y, alpha, beta);
   if (!include_summand<propto, T_y, T_shape, T_inv_scale>::value) {
     return ops_partials.build(logp);
@@ -67,9 +66,9 @@ inline auto gamma_lpdf(T_y&& y, T_shape&& alpha,
   }
   T_partials log_beta = 0;
   for (size_t n = 0; n < N; n++) {
-    const auto y_dbl = value_of(y_vec[n]);
-    const auto alpha_dbl = value_of(alpha_vec[n]);
-    const auto beta_dbl = value_of(beta_vec[n]);
+    const T_partials y_dbl = value_of(y_vec[n]);
+    const T_partials alpha_dbl = value_of(alpha_vec[n]);
+    const T_partials beta_dbl = value_of(beta_vec[n]);
     T_partials log_y = 0;
     if (y_dbl < 0) {
       return ops_partials.build(T_partials(LOG_ZERO));
@@ -96,7 +95,7 @@ inline auto gamma_lpdf(T_y&& y, T_shape&& alpha,
       ops_partials.edge1_.partials_[n] += (alpha_dbl - 1) / y_dbl - beta_dbl;
     }
     if (!is_constant_all<T_shape>::value) {
-      const auto digamma_alpha = digamma(alpha_dbl);
+      const T_partials digamma_alpha = digamma(alpha_dbl);
       ops_partials.edge2_.partials_[n] += -digamma_alpha + log_beta + log_y;
     }
     if (!is_constant_all<T_inv_scale>::value) {
@@ -107,9 +106,9 @@ inline auto gamma_lpdf(T_y&& y, T_shape&& alpha,
 }
 
 template <typename T_y, typename T_shape, typename T_inv_scale>
-inline auto gamma_lpdf(T_y&& y, T_shape&& alpha,
-                       T_inv_scale&& beta) {
-  return gamma_lpdf<false>(std::forward<T_y>(y), std::forward<T_shape>(alpha), std::forward<T_inv_scale>(beta));
+inline auto gamma_lpdf(const T_y& y, const T_shape& alpha,
+                       const T_inv_scale& beta) {
+  return gamma_lpdf<false>(y, alpha, beta);
 }
 
 }  // namespace math

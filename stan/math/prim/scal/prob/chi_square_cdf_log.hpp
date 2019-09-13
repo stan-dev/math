@@ -11,7 +11,7 @@ namespace math {
  * @deprecated use <code>chi_square_lcdf</code>
  */
 template <typename T_y, typename T_dof>
-inline auto chi_square_cdf_log(T_y&& y, T_dof&& nu) {
+inline auto chi_square_cdf_log(const T_y& y, const T_dof& nu) {
   return chi_square_lcdf(y, nu);
 }
 

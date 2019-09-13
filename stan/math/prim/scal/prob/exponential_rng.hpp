@@ -23,7 +23,7 @@ namespace math {
  * @throw std::domain_error if beta is nonpositive
  */
 template <typename T_inv, class RNG>
-inline auto exponential_rng(T_inv&& beta, RNG&& rng) {
+inline auto exponential_rng(const T_inv& beta, RNG& rng) {
   using boost::exponential_distribution;
   using boost::variate_generator;
 

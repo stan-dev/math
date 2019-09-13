@@ -7,6 +7,6 @@ TEST(ProbChiSquare, cdf_log_matches_lcdf) {
 
   EXPECT_FLOAT_EQ((stan::math::chi_square_lcdf(y, nu)),
                   (stan::math::chi_square_cdf_log(y, nu)));
-  EXPECT_FLOAT_EQ((stan::math::chi_square_lcdf(y, nu)),
-                  (stan::math::chi_square_cdf_log(y, nu)));
+  EXPECT_FLOAT_EQ((stan::math::chi_square_lcdf<double, double>(y, nu)),
+                  (stan::math::chi_square_cdf_log<double, double>(y, nu)));
 }

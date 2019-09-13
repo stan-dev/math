@@ -26,7 +26,7 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch.
  */
 template <typename T_n, typename T_prob>
-inline auto bernoulli_lccdf(T_n&& n, T_prob&& theta) {
+inline auto bernoulli_lccdf(const T_n& n, const T_prob& theta) {
   using T_partials = partials_return_t<T_n, T_prob>;
   T_partials P(0.0);
   using std::log;

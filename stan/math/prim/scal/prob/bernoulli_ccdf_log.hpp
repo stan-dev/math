@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/prob/bernoulli_lccdf.hpp>
-#include <utility>
 
 namespace stan {
 namespace math {
@@ -12,8 +11,8 @@ namespace math {
  * @deprecated use <code>bernoulli_lccdf</code>
  */
 template <typename T_n, typename T_prob>
-inline auto bernoulli_ccdf_log(T_n&& n, T_prob&& theta) {
-  return bernoulli_lccdf(std::forward<T_n>(n), std::forward<T_prob>(theta));
+inline auto bernoulli_ccdf_log(const T_n& n, const T_prob& theta) {
+  return bernoulli_lccdf(n, theta);
 }
 }  // namespace math
 }  // namespace stan

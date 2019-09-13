@@ -30,8 +30,8 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_y, typename T_loc, typename T_prec>
-inline auto beta_proportion_cdf_log(T_y&& y, T_loc&& mu,
-                                    T_prec&& kappa) {
+inline auto beta_proportion_cdf_log(const T_y& y, const T_loc& mu,
+                                    const T_prec& kappa) {
   return beta_proportion_lcdf(y, mu, kappa);
 }
 

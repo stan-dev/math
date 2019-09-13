@@ -11,7 +11,7 @@ namespace math {
  * @deprecated use <code>poisson_lccdf</code>
  */
 template <typename T_n, typename T_rate>
-inline auto poisson_ccdf_log(T_n&& n, T_rate&& lambda) {
+inline auto poisson_ccdf_log(const T_n& n, const T_rate& lambda) {
   return poisson_lccdf(n, lambda);
 }
 

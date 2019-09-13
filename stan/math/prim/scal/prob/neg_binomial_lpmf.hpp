@@ -13,15 +13,14 @@
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <cmath>
-#include <utility>
 
 namespace stan {
 namespace math {
 
 // NegBinomial(n|alpha, beta)  [alpha > 0;  beta > 0;  n >= 0]
 template <bool propto, typename T_n, typename T_shape, typename T_inv_scale>
-inline auto neg_binomial_lpmf(T_n&& n, T_shape&& alpha,
-                              T_inv_scale&& beta) {
+inline auto neg_binomial_lpmf(const T_n& n, const T_shape& alpha,
+                              const T_inv_scale& beta) {
   using T_partials = partials_return_t<T_n, T_shape, T_inv_scale>;
   T_partials logp(0.0);
 
@@ -46,14 +45,65 @@ inline auto neg_binomial_lpmf(T_n&& n, T_shape&& alpha,
     return ops_partials.build(logp);
   }
 
+  const size_t len_ab = max_size(alpha, beta);
+  VectorBuilder<true, T_partials, T_shape, T_inv_scale> lambda(len_ab);
+  for (size_t i = 0; i < len_ab; ++i) {
+    lambda[i] = value_of(alpha_vec[i]) / value_of(beta_vec[i]);
+  }
+
+  VectorBuilder<true, T_partials, T_inv_scale> log1p_beta(length(beta));
+  for (size_t i = 0; i < length(beta); ++i) {
+    log1p_beta[i] = log1p(value_of(beta_vec[i]));
+  }
+
+  VectorBuilder<true, T_partials, T_inv_scale> log_beta_m_log1p_beta(
+      length(beta));
+  for (size_t i = 0; i < length(beta); ++i) {
+    log_beta_m_log1p_beta[i] = log(value_of(beta_vec[i])) - log1p_beta[i];
+  }
+
+  VectorBuilder<true, T_partials, T_inv_scale, T_shape>
+      alpha_times_log_beta_over_1p_beta(len_ab);
+  for (size_t i = 0; i < len_ab; ++i) {
+    alpha_times_log_beta_over_1p_beta[i]
+        = value_of(alpha_vec[i])
+          * log(value_of(beta_vec[i]) / (1.0 + value_of(beta_vec[i])));
+  }
+
+  VectorBuilder<!is_constant_all<T_shape>::value, T_partials, T_shape>
+      digamma_alpha(length(alpha));
+  if (!is_constant_all<T_shape>::value) {
+    for (size_t i = 0; i < length(alpha); ++i) {
+      digamma_alpha[i] = digamma(value_of(alpha_vec[i]));
+    }
+  }
+
+  VectorBuilder<!is_constant_all<T_shape>::value, T_partials, T_inv_scale>
+      log_beta(length(beta));
+  if (!is_constant_all<T_shape>::value) {
+    for (size_t i = 0; i < length(beta); ++i) {
+      log_beta[i] = log(value_of(beta_vec[i]));
+    }
+  }
+
+  VectorBuilder<!is_constant_all<T_inv_scale>::value, T_partials, T_shape,
+                T_inv_scale>
+      lambda_m_alpha_over_1p_beta(len_ab);
+  if (!is_constant_all<T_inv_scale>::value) {
+    for (size_t i = 0; i < len_ab; ++i) {
+      lambda_m_alpha_over_1p_beta[i]
+          = lambda[i]
+            - (value_of(alpha_vec[i]) / (1.0 + value_of(beta_vec[i])));
+    }
+  }
+
   for (size_t i = 0; i < size; i++) {
-    auto lambda = value_of(alpha_vec[i]) / value_of(beta_vec[i]);
     if (alpha_vec[i] > 1e10) {  // reduces numerically to Poisson
       if (include_summand<propto>::value) {
         logp -= lgamma(n_vec[i] + 1.0);
       }
       if (include_summand<propto, T_shape, T_inv_scale>::value) {
-        logp += multiply_log(n_vec[i], lambda) - lambda;
+        logp += multiply_log(n_vec[i], lambda[i]) - lambda[i];
       }
 
       if (!is_constant_all<T_shape>::value) {
@@ -62,7 +112,7 @@ inline auto neg_binomial_lpmf(T_n&& n, T_shape&& alpha,
       }
       if (!is_constant_all<T_inv_scale>::value) {
         ops_partials.edge2_.partials_[i]
-            += (lambda - n_vec[i]) / value_of(beta_vec[i]);
+            += (lambda[i] - n_vec[i]) / value_of(beta_vec[i]);
       }
     } else {  // standard density definition
       if (include_summand<propto, T_shape>::value) {
@@ -71,28 +121,18 @@ inline auto neg_binomial_lpmf(T_n&& n, T_shape&& alpha,
               n_vec[i] + value_of(alpha_vec[i]) - 1.0, n_vec[i]);
         }
       }
-      auto log1p_beta = log1p(value_of(beta_vec[i]));
-
       if (include_summand<propto, T_shape, T_inv_scale>::value) {
-        auto alpha_times_log_beta_over_1p_beta
-            = value_of(alpha_vec[i])
-              * log(value_of(beta_vec[i]) / (1.0 + value_of(beta_vec[i])));
-        logp += alpha_times_log_beta_over_1p_beta - n_vec[i] * log1p_beta;
+        logp += alpha_times_log_beta_over_1p_beta[i] - n_vec[i] * log1p_beta[i];
       }
 
       if (!is_constant_all<T_shape>::value) {
-        auto digamma_alpha = digamma(value_of(alpha_vec[i]));
-        auto log_beta_m_log1p_beta = log(value_of(beta_vec[i])) - log1p_beta;
         ops_partials.edge1_.partials_[i]
-            += digamma(value_of(alpha_vec[i]) + n_vec[i]) - digamma_alpha
-               + log_beta_m_log1p_beta;
+            += digamma(value_of(alpha_vec[i]) + n_vec[i]) - digamma_alpha[i]
+               + log_beta_m_log1p_beta[i];
       }
       if (!is_constant_all<T_inv_scale>::value) {
-        auto lambda_m_alpha_over_1p_beta
-            = lambda
-              - (value_of(alpha_vec[i]) / (1.0 + value_of(beta_vec[i])));
         ops_partials.edge2_.partials_[i]
-            += lambda_m_alpha_over_1p_beta
+            += lambda_m_alpha_over_1p_beta[i]
                - n_vec[i] / (value_of(beta_vec[i]) + 1.0);
       }
     }
@@ -101,9 +141,9 @@ inline auto neg_binomial_lpmf(T_n&& n, T_shape&& alpha,
 }
 
 template <typename T_n, typename T_shape, typename T_inv_scale>
-inline auto neg_binomial_lpmf(T_n&& n, T_shape&& alpha,
-                              T_inv_scale&& beta) {
-  return neg_binomial_lpmf<false>(std::forward<T_n>(n), std::forward<T_shape>(alpha), std::forward<T_inv_scale>(beta));
+inline auto neg_binomial_lpmf(const T_n& n, const T_shape& alpha,
+                              const T_inv_scale& beta) {
+  return neg_binomial_lpmf<false>(n, alpha, beta);
 }
 
 }  // namespace math

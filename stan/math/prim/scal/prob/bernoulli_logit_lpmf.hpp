@@ -9,7 +9,6 @@
 #include <stan/math/prim/scal/fun/log1p.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <cmath>
-#include <utility>
 
 namespace stan {
 namespace math {
@@ -27,7 +26,7 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch.
  */
 template <bool propto, typename T_n, typename T_prob>
-inline auto bernoulli_logit_lpmf(T_n&& n, T_prob&& theta) {
+inline auto bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
   static const char* function = "bernoulli_logit_lpmf";
   using T_partials = partials_return_t<T_n, T_prob>;
   T_partials logp(0.0);
@@ -81,8 +80,8 @@ inline auto bernoulli_logit_lpmf(T_n&& n, T_prob&& theta) {
 }
 
 template <typename T_n, typename T_prob>
-inline auto bernoulli_logit_lpmf(T_n&& n, T_prob&& theta) {
-  return bernoulli_logit_lpmf<false>(std::forward<T_n>(n), std::forward<T_prob>(theta));
+inline auto bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
+  return bernoulli_logit_lpmf<false>(n, theta);
 }
 
 }  // namespace math

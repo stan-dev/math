@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/prob/neg_binomial_lpmf.hpp>
-#include <utility>
+
 namespace stan {
 namespace math {
 
@@ -11,18 +11,18 @@ namespace math {
  * @deprecated use <code>neg_binomial_lpmf</code>
  */
 template <bool propto, typename T_n, typename T_shape, typename T_inv_scale>
-inline auto neg_binomial_log(T_n&& n, T_shape&& alpha,
-                             T_inv_scale&& beta) {
-  return neg_binomial_lpmf<propto>(std::forward<T_n>(n), std::forward<T_shape>(alpha), std::forward<T_inv_scale>(beta));
+inline auto neg_binomial_log(const T_n& n, const T_shape& alpha,
+                             const T_inv_scale& beta) {
+  return neg_binomial_lpmf<propto>(n, alpha, beta);
 }
 
 /**
  * @deprecated use <code>neg_binomial_lpmf</code>
  */
 template <typename T_n, typename T_shape, typename T_inv_scale>
-inline auto neg_binomial_log(T_n&& n, T_shape&& alpha,
-                             T_inv_scale&& beta) {
-  return neg_binomial_lpmf(std::forward<T_n>(n), std::forward<T_shape>(alpha), std::forward<T_inv_scale>(beta));
+inline auto neg_binomial_log(const T_n& n, const T_shape& alpha,
+                             const T_inv_scale& beta) {
+  return neg_binomial_lpmf(n, alpha, beta);
 }
 
 }  // namespace math

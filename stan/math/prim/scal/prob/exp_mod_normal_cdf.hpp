@@ -16,9 +16,9 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_loc, typename T_scale, typename T_inv_scale>
-inline auto exp_mod_normal_cdf(T_y&& y, T_loc&& mu,
-                               T_scale&& sigma,
-                               T_inv_scale&& lambda) {
+inline auto exp_mod_normal_cdf(const T_y& y, const T_loc& mu,
+                               const T_scale& sigma,
+                               const T_inv_scale& lambda) {
   using T_partials = partials_return_t<T_y, T_loc, T_scale, T_inv_scale>;
   T_partials cdf(1.0);
 

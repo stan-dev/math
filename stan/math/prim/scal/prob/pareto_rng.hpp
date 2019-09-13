@@ -29,7 +29,7 @@ namespace math {
  * sizes
  */
 template <typename T_shape, typename T_scale, class RNG>
-inline auto pareto_rng(T_scale&& y_min, T_shape&& alpha, RNG&& rng) {
+inline auto pareto_rng(const T_scale& y_min, const T_shape& alpha, RNG& rng) {
   using boost::exponential_distribution;
   using boost::variate_generator;
 
