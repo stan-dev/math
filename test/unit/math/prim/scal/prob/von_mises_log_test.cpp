@@ -12,10 +12,13 @@ TEST(ProbVonMises, log_matches_lpdf) {
                   (stan::math::von_mises_log<true>(y, mu, kappa)));
   EXPECT_FLOAT_EQ((stan::math::von_mises_lpdf<false>(y, mu, kappa)),
                   (stan::math::von_mises_log<false>(y, mu, kappa)));
-  EXPECT_FLOAT_EQ((stan::math::von_mises_lpdf<true>(y, mu, kappa)),
-                  (stan::math::von_mises_log<true>(y, mu, kappa)));
-  EXPECT_FLOAT_EQ((stan::math::von_mises_lpdf<false>(y, mu, kappa)),
-                  (stan::math::von_mises_log<false>(y, mu, kappa)));
-  EXPECT_FLOAT_EQ((stan::math::von_mises_lpdf(y, mu, kappa)),
-                  (stan::math::von_mises_log(y, mu, kappa)));
+  EXPECT_FLOAT_EQ(
+      (stan::math::von_mises_lpdf<true>(y, mu, kappa)),
+      (stan::math::von_mises_log<true>(y, mu, kappa)));
+  EXPECT_FLOAT_EQ(
+      (stan::math::von_mises_lpdf<false>(y, mu, kappa)),
+      (stan::math::von_mises_log<false>(y, mu, kappa)));
+  EXPECT_FLOAT_EQ(
+      (stan::math::von_mises_lpdf(y, mu, kappa)),
+      (stan::math::von_mises_log(y, mu, kappa)));
 }

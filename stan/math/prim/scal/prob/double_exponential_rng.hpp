@@ -31,9 +31,10 @@ namespace math {
  * sizes
  */
 template <typename T_loc, typename T_scale, class RNG>
-inline auto double_exponential_rng(T_loc&& mu, T_scale&& sigma, RNG&& rng) {
-  using boost::variate_generator;
+inline auto double_exponential_rng(T_loc&& mu, T_scale&& sigma,
+                                   RNG&& rng) {
   using boost::random::uniform_real_distribution;
+  using boost::variate_generator;
   static const char* function = "double_exponential_rng";
 
   check_finite(function, "Location parameter", mu);

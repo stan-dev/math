@@ -67,15 +67,14 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_alpha, typename T_tau,
           typename T_beta, typename T_delta>
-inline auto wiener_lpdf(T_y&& y, T_alpha&& alpha, T_tau&& tau, T_beta&& beta,
+inline auto wiener_lpdf(T_y&& y,T_alpha&& alpha,T_tau&& tau, T_beta&& beta,
                         T_delta&& delta) {
   static const char* function = "wiener_lpdf";
 
   using std::exp;
   using std::log;
   using std::pow;
-  using T_return_type
-      = std::decay_t<return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta>>;
+  using T_return_type = std::decay_t<return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta>>;
   T_return_type lp(0.0);
 
   static const double WIENER_ERR = 0.000001;
@@ -91,6 +90,7 @@ inline auto wiener_lpdf(T_y&& y, T_alpha&& alpha, T_tau&& tau, T_beta&& beta,
   if (size_zero(y, alpha, beta, tau, delta)) {
     return lp;
   }
+
 
   check_not_nan(function, "Random variable", y);
   check_not_nan(function, "Boundary separation", alpha);
@@ -195,12 +195,11 @@ inline auto wiener_lpdf(T_y&& y, T_alpha&& alpha, T_tau&& tau, T_beta&& beta,
 
 template <typename T_y, typename T_alpha, typename T_tau, typename T_beta,
           typename T_delta>
-inline auto wiener_lpdf(T_y&& y, T_alpha&& alpha, T_tau&& tau, T_beta&& beta,
-                        T_delta&& delta) {
+inline auto wiener_lpdf(T_y&& y, T_alpha&& alpha, T_tau&& tau,
+                        T_beta&& beta, T_delta&& delta) {
   return wiener_lpdf<false>(std::forward<T_y>(y), std::forward<T_alpha>(alpha),
-                            std::forward<T_tau>(tau),
-                            std::forward<T_beta>(beta),
-                            std::forward<T_delta>(delta));
+   std::forward<T_tau>(tau), std::forward<T_beta>(beta),
+   std::forward<T_delta>(delta));
 }
 
 }  // namespace math

@@ -20,7 +20,8 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_dof, typename T_scale>
-inline auto scaled_inv_chi_square_lcdf(T_y&& y, T_dof&& nu, T_scale&& s) {
+inline auto scaled_inv_chi_square_lcdf(T_y&& y, T_dof&& nu,
+                                       T_scale&& s) {
   using T_partials = partials_return_t<T_y, T_dof, T_scale>;
   T_partials P(0.0);
 

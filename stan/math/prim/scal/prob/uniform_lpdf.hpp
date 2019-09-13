@@ -106,8 +106,7 @@ inline auto uniform_lpdf(T_y&& y, T_low&& alpha, T_high&& beta) {
 
 template <typename T_y, typename T_low, typename T_high>
 inline auto uniform_lpdf(T_y&& y, T_low&& alpha, T_high&& beta) {
-  return uniform_lpdf<false>(std::forward<T_y>(y), std::forward<T_low>(alpha),
-                             std::forward<T_high>(beta));
+  return uniform_lpdf<false>(std::forward<T_y>(y), std::forward<T_low>(alpha), std::forward<T_high>(beta));
 }
 
 }  // namespace math

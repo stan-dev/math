@@ -20,7 +20,8 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_shape, typename T_inv_scale>
-inline auto gamma_lcdf(T_y&& y, T_shape&& alpha, T_inv_scale&& beta) {
+inline auto gamma_lcdf(T_y&& y, T_shape&& alpha,
+                       T_inv_scale&& beta) {
   using T_partials = partials_return_t<T_y, T_shape, T_inv_scale>;
   T_partials P(0.0);
 

@@ -11,8 +11,8 @@ namespace math {
  * @deprecated use <code>beta_binomial_lccdf</code>
  */
 template <typename T_n, typename T_N, typename T_size1, typename T_size2>
-inline auto beta_binomial_ccdf_log(T_n&& n, T_N&& N, T_size1&& alpha,
-                                   T_size2&& beta) {
+inline auto beta_binomial_ccdf_log(T_n&& n, T_N&& N,
+                                   T_size1&& alpha, T_size2&& beta) {
   return beta_binomial_lccdf(n, N, alpha, beta);
 }
 

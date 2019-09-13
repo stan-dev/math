@@ -11,10 +11,12 @@ TEST(ProbInvChiSquare, log_matches_lpdf) {
                   (stan::math::inv_chi_square_log<true>(y, nu)));
   EXPECT_FLOAT_EQ((stan::math::inv_chi_square_lpdf<false>(y, nu)),
                   (stan::math::inv_chi_square_log<false>(y, nu)));
-  EXPECT_FLOAT_EQ((stan::math::inv_chi_square_lpdf<true>(y, nu)),
-                  (stan::math::inv_chi_square_log<true>(y, nu)));
-  EXPECT_FLOAT_EQ((stan::math::inv_chi_square_lpdf<false>(y, nu)),
-                  (stan::math::inv_chi_square_log<false>(y, nu)));
+  EXPECT_FLOAT_EQ(
+      (stan::math::inv_chi_square_lpdf<true>(y, nu)),
+      (stan::math::inv_chi_square_log<true>(y, nu)));
+  EXPECT_FLOAT_EQ(
+      (stan::math::inv_chi_square_lpdf<false>(y, nu)),
+      (stan::math::inv_chi_square_log<false>(y, nu)));
   EXPECT_FLOAT_EQ((stan::math::inv_chi_square_lpdf(y, nu)),
                   (stan::math::inv_chi_square_log(y, nu)));
 }

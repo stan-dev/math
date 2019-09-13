@@ -31,7 +31,8 @@ namespace math {
  * @tparam T_prec Type of prior precision.
  */
 template <bool propto, typename T_y, typename T_loc, typename T_prec>
-inline auto beta_proportion_log(T_y&& y, T_loc&& mu, T_prec&& kappa) {
+inline auto beta_proportion_log(T_y&& y, T_loc&& mu,
+                                T_prec&& kappa) {
   return beta_proportion_lpdf<propto>(y, mu, kappa);
 }
 
@@ -39,7 +40,8 @@ inline auto beta_proportion_log(T_y&& y, T_loc&& mu, T_prec&& kappa) {
  * @deprecated use <code>beta_proportion_lpdf</code>
  */
 template <typename T_y, typename T_loc, typename T_prec>
-inline auto beta_proportion_log(T_y&& y, T_loc&& mu, T_prec&& kappa) {
+inline auto beta_proportion_log(T_y&& y, T_loc&& mu,
+                                T_prec&& kappa) {
   return beta_proportion_lpdf(y, mu, kappa);
 }
 

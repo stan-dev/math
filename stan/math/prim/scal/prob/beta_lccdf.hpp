@@ -37,7 +37,8 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_y, typename T_scale_succ, typename T_scale_fail>
-inline auto beta_lccdf(T_y&& y, T_scale_succ&& alpha, T_scale_fail&& beta) {
+inline auto beta_lccdf(T_y&& y, T_scale_succ&& alpha,
+                       T_scale_fail&& beta) {
   using T_partials = partials_return_t<T_y, T_scale_succ, T_scale_fail>;
   T_partials ccdf_log(0.0);
   static const char* function = "beta_lccdf";

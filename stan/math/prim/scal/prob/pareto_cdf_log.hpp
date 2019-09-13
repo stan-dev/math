@@ -11,7 +11,8 @@ namespace math {
  * @deprecated use <code>pareto_lcdf</code>
  */
 template <typename T_y, typename T_scale, typename T_shape>
-inline auto pareto_cdf_log(T_y&& y, T_scale&& y_min, T_shape&& alpha) {
+inline auto pareto_cdf_log(T_y&& y, T_scale&& y_min,
+                           T_shape&& alpha) {
   return pareto_lcdf(y, y_min, alpha);
 }
 

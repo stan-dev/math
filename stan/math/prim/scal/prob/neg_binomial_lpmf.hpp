@@ -20,7 +20,8 @@ namespace math {
 
 // NegBinomial(n|alpha, beta)  [alpha > 0;  beta > 0;  n >= 0]
 template <bool propto, typename T_n, typename T_shape, typename T_inv_scale>
-inline auto neg_binomial_lpmf(T_n&& n, T_shape&& alpha, T_inv_scale&& beta) {
+inline auto neg_binomial_lpmf(T_n&& n, T_shape&& alpha,
+                              T_inv_scale&& beta) {
   using T_partials = partials_return_t<T_n, T_shape, T_inv_scale>;
   T_partials logp(0.0);
 
@@ -88,7 +89,8 @@ inline auto neg_binomial_lpmf(T_n&& n, T_shape&& alpha, T_inv_scale&& beta) {
       }
       if (!is_constant_all<T_inv_scale>::value) {
         auto lambda_m_alpha_over_1p_beta
-            = lambda - (value_of(alpha_vec[i]) / (1.0 + value_of(beta_vec[i])));
+            = lambda
+              - (value_of(alpha_vec[i]) / (1.0 + value_of(beta_vec[i])));
         ops_partials.edge2_.partials_[i]
             += lambda_m_alpha_over_1p_beta
                - n_vec[i] / (value_of(beta_vec[i]) + 1.0);
@@ -99,10 +101,9 @@ inline auto neg_binomial_lpmf(T_n&& n, T_shape&& alpha, T_inv_scale&& beta) {
 }
 
 template <typename T_n, typename T_shape, typename T_inv_scale>
-inline auto neg_binomial_lpmf(T_n&& n, T_shape&& alpha, T_inv_scale&& beta) {
-  return neg_binomial_lpmf<false>(std::forward<T_n>(n),
-                                  std::forward<T_shape>(alpha),
-                                  std::forward<T_inv_scale>(beta));
+inline auto neg_binomial_lpmf(T_n&& n, T_shape&& alpha,
+                              T_inv_scale&& beta) {
+  return neg_binomial_lpmf<false>(std::forward<T_n>(n), std::forward<T_shape>(alpha), std::forward<T_inv_scale>(beta));
 }
 
 }  // namespace math

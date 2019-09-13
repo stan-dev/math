@@ -14,10 +14,19 @@ TEST(ProbWiener, log_matches_lpdf) {
                   (stan::math::wiener_log<true>(y, alpha, tau, beta, delta)));
   EXPECT_FLOAT_EQ((stan::math::wiener_lpdf<false>(y, alpha, tau, beta, delta)),
                   (stan::math::wiener_log<false>(y, alpha, tau, beta, delta)));
-  EXPECT_FLOAT_EQ((stan::math::wiener_lpdf<true>(y, alpha, tau, beta, delta)),
-                  (stan::math::wiener_log<true>(y, alpha, tau, beta, delta)));
-  EXPECT_FLOAT_EQ((stan::math::wiener_lpdf<false>(y, alpha, tau, beta, delta)),
-                  (stan::math::wiener_log<false>(y, alpha, tau, beta, delta)));
-  EXPECT_FLOAT_EQ((stan::math::wiener_lpdf(y, alpha, tau, beta, delta)),
-                  (stan::math::wiener_log(y, alpha, tau, beta, delta)));
+  EXPECT_FLOAT_EQ(
+      (stan::math::wiener_lpdf<true>(
+          y, alpha, tau, beta, delta)),
+      (stan::math::wiener_log<true>(
+          y, alpha, tau, beta, delta)));
+  EXPECT_FLOAT_EQ(
+      (stan::math::wiener_lpdf<false>(
+          y, alpha, tau, beta, delta)),
+      (stan::math::wiener_log<false>(
+          y, alpha, tau, beta, delta)));
+  EXPECT_FLOAT_EQ(
+      (stan::math::wiener_lpdf(
+          y, alpha, tau, beta, delta)),
+      (stan::math::wiener_log(
+          y, alpha, tau, beta, delta)));
 }

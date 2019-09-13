@@ -11,7 +11,8 @@ namespace math {
  * @deprecated use <code>hypergeometric_lpmf</code>
  */
 template <bool propto, typename T_n, typename T_N, typename T_a, typename T_b>
-double hypergeometric_log(T_n&& n, T_N&& N, T_a&& a, T_b&& b) {
+double hypergeometric_log(T_n&& n, T_N&& N, T_a&& a,
+                          T_b&& b) {
   return hypergeometric_lpmf<propto>(n, N, a, b);
 }
 
@@ -19,7 +20,8 @@ double hypergeometric_log(T_n&& n, T_N&& N, T_a&& a, T_b&& b) {
  * @deprecated use <code>hypergeometric_lpmf</code>
  */
 template <typename T_n, typename T_N, typename T_a, typename T_b>
-inline double hypergeometric_log(T_n&& n, T_N&& N, T_a&& a, T_b&& b) {
+inline double hypergeometric_log(T_n&& n, T_N&& N, T_a&& a,
+                                 T_b&& b) {
   return hypergeometric_lpmf(n, N, a, b);
 }
 

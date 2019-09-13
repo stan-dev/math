@@ -19,7 +19,8 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_dof, typename T_loc, typename T_scale>
-inline auto student_t_lccdf(T_y&& y, T_dof&& nu, T_loc&& mu, T_scale&& sigma) {
+inline auto student_t_lccdf(T_y&& y, T_dof&& nu, T_loc&& mu,
+                            T_scale&& sigma) {
   using T_partials = partials_return_t<T_y, T_dof, T_loc, T_scale>;
   T_partials P(0.0);
   static const char* function = "student_t_lccdf";

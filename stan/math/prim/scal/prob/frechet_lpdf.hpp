@@ -22,7 +22,8 @@ namespace math {
 // Frechet(y|alpha, sigma)     [y > 0;  alpha > 0;  sigma > 0]
 // FIXME: document
 template <bool propto, typename T_y, typename T_shape, typename T_scale>
-inline auto frechet_lpdf(T_y&& y, T_shape&& alpha, T_scale&& sigma) {
+inline auto frechet_lpdf(T_y&& y, T_shape&& alpha,
+                         T_scale&& sigma) {
   using T_partials = partials_return_t<T_y, T_shape, T_scale>;
   T_partials logp(0);
 
@@ -126,7 +127,8 @@ inline auto frechet_lpdf(T_y&& y, T_shape&& alpha, T_scale&& sigma) {
 }
 
 template <typename T_y, typename T_shape, typename T_scale>
-inline auto frechet_lpdf(T_y&& y, T_shape&& alpha, T_scale&& sigma) {
+inline auto frechet_lpdf(T_y&& y, T_shape&& alpha,
+                         T_scale&& sigma) {
   return frechet_lpdf<false>(y, alpha, sigma);
 }
 

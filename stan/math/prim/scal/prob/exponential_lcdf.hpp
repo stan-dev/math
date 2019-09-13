@@ -17,6 +17,7 @@ inline auto exponential_lcdf(T_y&& y, T_inv_scale&& beta) {
   using T_partials = partials_return_t<T_y, T_inv_scale>;
   T_partials cdf_log(0.0);
 
+
   using std::exp;
   using std::log;
 

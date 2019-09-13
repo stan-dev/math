@@ -12,10 +12,13 @@ TEST(ProbGumbel, log_matches_lpdf) {
                   (stan::math::gumbel_log<true>(y, mu, sigma)));
   EXPECT_FLOAT_EQ((stan::math::gumbel_lpdf<false>(y, mu, sigma)),
                   (stan::math::gumbel_log<false>(y, mu, sigma)));
-  EXPECT_FLOAT_EQ((stan::math::gumbel_lpdf<true>(y, mu, sigma)),
-                  (stan::math::gumbel_log<true>(y, mu, sigma)));
-  EXPECT_FLOAT_EQ((stan::math::gumbel_lpdf<false>(y, mu, sigma)),
-                  (stan::math::gumbel_log<false>(y, mu, sigma)));
-  EXPECT_FLOAT_EQ((stan::math::gumbel_lpdf(y, mu, sigma)),
-                  (stan::math::gumbel_log(y, mu, sigma)));
+  EXPECT_FLOAT_EQ(
+      (stan::math::gumbel_lpdf<true>(y, mu, sigma)),
+      (stan::math::gumbel_log<true>(y, mu, sigma)));
+  EXPECT_FLOAT_EQ(
+      (stan::math::gumbel_lpdf<false>(y, mu, sigma)),
+      (stan::math::gumbel_log<false>(y, mu, sigma)));
+  EXPECT_FLOAT_EQ(
+      (stan::math::gumbel_lpdf(y, mu, sigma)),
+      (stan::math::gumbel_log(y, mu, sigma)));
 }

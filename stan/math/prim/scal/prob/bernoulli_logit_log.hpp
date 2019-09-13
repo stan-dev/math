@@ -13,8 +13,7 @@ namespace math {
  */
 template <bool propto, typename T_n, typename T_prob>
 inline auto bernoulli_logit_log(T_n&& n, T_prob&& theta) {
-  return bernoulli_logit_lpmf<propto>(std::forward<T_n>(n),
-                                      std::forward<T_prob>(theta));
+  return bernoulli_logit_lpmf<propto>(std::forward<T_n>(n), std::forward<T_prob>(theta));
 }
 
 /**
@@ -22,8 +21,7 @@ inline auto bernoulli_logit_log(T_n&& n, T_prob&& theta) {
  */
 template <typename T_n, typename T_prob>
 inline auto bernoulli_logit_log(T_n&& n, T_prob&& theta) {
-  return bernoulli_logit_lpmf(std::forward<T_n>(n),
-                              std::forward<T_prob>(theta));
+  return bernoulli_logit_lpmf(std::forward<T_n>(n), std::forward<T_prob>(theta));
 }
 
 }  // namespace math

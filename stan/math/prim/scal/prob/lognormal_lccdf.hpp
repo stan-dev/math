@@ -15,7 +15,8 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_loc, typename T_scale>
-inline auto lognormal_lccdf(T_y&& y, T_loc&& mu, T_scale&& sigma) {
+inline auto lognormal_lccdf(T_y&& y, T_loc&& mu,
+                            T_scale&& sigma) {
   using T_partials = partials_return_t<T_y, T_loc, T_scale>;
   T_partials ccdf_log = 0.0;
 

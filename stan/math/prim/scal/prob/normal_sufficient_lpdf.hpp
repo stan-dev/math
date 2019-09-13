@@ -43,8 +43,9 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_s, typename T_n, typename T_loc,
           typename T_scale>
-inline auto normal_sufficient_lpdf(T_y&& y_bar, T_s&& s_squared, T_n&& n_obs,
-                                   T_loc&& mu, T_scale&& sigma) {
+inline auto normal_sufficient_lpdf(T_y&& y_bar, T_s&& s_squared,
+                                   T_n&& n_obs, T_loc&& mu,
+                                   T_scale&& sigma) {
   using T_partials = partials_return_t<T_y, T_s, T_n, T_loc, T_scale>;
   // set up return value accumulator
   T_partials logp(0.0);
@@ -129,8 +130,9 @@ inline auto normal_sufficient_lpdf(T_y&& y_bar, T_s&& s_squared, T_n&& n_obs,
 
 template <typename T_y, typename T_s, typename T_n, typename T_loc,
           typename T_scale>
-inline auto normal_sufficient_lpdf(T_y&& y_bar, T_s&& s_squared, T_n&& n_obs,
-                                   T_loc&& mu, T_scale&& sigma) {
+inline auto normal_sufficient_lpdf(T_y&& y_bar, T_s&& s_squared,
+                                   T_n&& n_obs, T_loc&& mu,
+                                   T_scale&& sigma) {
   return normal_sufficient_lpdf<false>(y_bar, s_squared, n_obs, mu, sigma);
 }
 

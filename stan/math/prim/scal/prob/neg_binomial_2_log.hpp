@@ -11,7 +11,8 @@ namespace math {
  * @deprecated use <code>neg_binomial_2_lpmf</code>
  */
 template <bool propto, typename T_n, typename T_location, typename T_precision>
-inline auto neg_binomial_2_log(T_n&& n, T_location&& mu, T_precision&& phi) {
+inline auto neg_binomial_2_log(T_n&& n, T_location&& mu,
+                               T_precision&& phi) {
   return neg_binomial_2_lpmf<propto>(n, mu, phi);
 }
 
@@ -19,7 +20,8 @@ inline auto neg_binomial_2_log(T_n&& n, T_location&& mu, T_precision&& phi) {
  * @deprecated use <code>neg_binomial_2_lpmf</code>
  */
 template <typename T_n, typename T_location, typename T_precision>
-inline auto neg_binomial_2_log(T_n&& n, T_location&& mu, T_precision&& phi) {
+inline auto neg_binomial_2_log(T_n&& n, T_location&& mu,
+                               T_precision&& phi) {
   return neg_binomial_2_lpmf(n, mu, phi);
 }
 

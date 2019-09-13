@@ -47,7 +47,8 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_dof, typename T_loc,
           typename T_scale>
-inline auto student_t_lpdf(T_y&& y, T_dof&& nu, T_loc&& mu, T_scale&& sigma) {
+inline auto student_t_lpdf(T_y&& y, T_dof&& nu, T_loc&& mu,
+                           T_scale&& sigma) {
   using T_partials = partials_return_t<T_y, T_dof, T_loc, T_scale>;
   T_partials logp(0.0);
 
@@ -141,7 +142,8 @@ inline auto student_t_lpdf(T_y&& y, T_dof&& nu, T_loc&& mu, T_scale&& sigma) {
 }
 
 template <typename T_y, typename T_dof, typename T_loc, typename T_scale>
-inline auto student_t_lpdf(T_y&& y, T_dof&& nu, T_loc&& mu, T_scale&& sigma) {
+inline auto student_t_lpdf(T_y&& y, T_dof&& nu, T_loc&& mu,
+                           T_scale&& sigma) {
   return student_t_lpdf<false>(y, nu, mu, sigma);
 }
 

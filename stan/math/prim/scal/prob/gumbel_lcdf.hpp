@@ -33,6 +33,7 @@ inline auto gumbel_lcdf(T_y&& y, T_loc&& mu, T_scale&& beta) {
   using T_partials = partials_return_t<T_y, T_loc, T_scale>;
   T_partials cdf_log(0.0);
 
+
   using std::exp;
   static const char* function = "gumbel_lcdf";
   check_not_nan(function, "Random variable", y);
