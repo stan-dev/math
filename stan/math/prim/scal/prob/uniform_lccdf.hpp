@@ -21,7 +21,6 @@ inline auto uniform_lccdf(const T_y& y, const T_low& alpha,
   using T_partials = partials_return_t<T_y, T_low, T_high>;
   T_partials ccdf_log(0.0);
 
-
   using std::log;
 
   check_not_nan(function, "Random variable", y);

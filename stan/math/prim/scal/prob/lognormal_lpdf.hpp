@@ -22,7 +22,6 @@ inline auto lognormal_lpdf(const T_y& y, const T_loc& mu,
   using T_partials = partials_return_t<T_y, T_loc, T_scale>;
   T_partials logp(0);
 
-
   using std::log;
   static const char* function = "lognormal_lpdf";
   check_not_nan(function, "Random variable", y);

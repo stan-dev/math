@@ -20,7 +20,6 @@ inline auto pareto_cdf(const T_y& y, const T_scale& y_min,
   using T_partials = partials_return_t<T_y, T_scale, T_shape>;
   T_partials P(1.0);
 
-
   using std::exp;
   using std::log;
 
