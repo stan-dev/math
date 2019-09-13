@@ -20,45 +20,32 @@ namespace math {
 template <bool propto, typename T_n, typename T_rate>
 inline auto poisson_lpmf(const T_n& n, const T_rate& lambda) {
   using T_partials = partials_return_t<T_n, T_rate>;
+  T_partials logp(0.0);
   using T_return = return_type_t<T_n, T_rate>;
 
   static const char* function = "poisson_lpmf";
-
-  if (size_zero(n, lambda)) {
-    return T_return(0.0);
-  }
-
-  T_partials logp(0.0);
-
   check_nonnegative(function, "Random variable", n);
   check_not_nan(function, "Rate parameter", lambda);
   check_nonnegative(function, "Rate parameter", lambda);
   check_consistent_sizes(function, "Random variable", n, "Rate parameter",
                          lambda);
 
-  if (!include_summand<propto, T_rate>::value) {
-    return T_return(0.0);
-  }
-
   const scalar_seq_view<T_n> n_vec(n);
   const scalar_seq_view<T_rate> lambda_vec(lambda);
-  size_t size = max_size(n, lambda);
+  const size_t size = max_size(n, lambda);
+  operands_and_partials<T_rate> ops_partials(lambda);
+  if (!include_summand<propto, T_rate>::value) {
+    return ops_partials.build(logp);
+  } else if (size_zero(n, lambda)) {
+    return ops_partials.build(logp);
+  }
 
   for (size_t i = 0; i < size; i++) {
     if (is_inf(lambda_vec[i])) {
-      return T_return(LOG_ZERO);
-    }
-  }
-  for (size_t i = 0; i < size; i++) {
-    if (lambda_vec[i] == 0 && n_vec[i] != 0) {
-      return T_return(LOG_ZERO);
-    }
-  }
-
-  operands_and_partials<T_rate> ops_partials(lambda);
-
-  for (size_t i = 0; i < size; i++) {
-    if (!(lambda_vec[i] == 0 && n_vec[i] == 0)) {
+      return ops_partials.build(T_partials(LOG_ZERO));
+    } else if (lambda_vec[i] == 0 && n_vec[i] != 0) {
+      return ops_partials.build(T_partials(LOG_ZERO));
+    } else if (!(lambda_vec[i] == 0 && n_vec[i] == 0)) {
       if (include_summand<propto>::value) {
         logp -= lgamma(n_vec[i] + 1.0);
       }
@@ -67,7 +54,6 @@ inline auto poisson_lpmf(const T_n& n, const T_rate& lambda) {
                 - value_of(lambda_vec[i]);
       }
     }
-
     if (!is_constant_all<T_rate>::value) {
       ops_partials.edge1_.partials_[i]
           += n_vec[i] / value_of(lambda_vec[i]) - 1.0;

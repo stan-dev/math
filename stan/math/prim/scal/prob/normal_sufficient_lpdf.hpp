@@ -46,21 +46,14 @@ template <bool propto, typename T_y, typename T_s, typename T_n, typename T_loc,
 inline auto normal_sufficient_lpdf(const T_y& y_bar, const T_s& s_squared,
                                    const T_n& n_obs, const T_loc& mu,
                                    const T_scale& sigma) {
-  static const char* function = "normal_sufficient_lpdf";
   using T_partials = partials_return_t<T_y, T_s, T_n, T_loc, T_scale>;
-  using T_return = return_type_t<T_y, T_s, T_n, T_loc, T_scale>;
-
-  using std::log;
-
-  // check if any vectors are zero length
-  if (size_zero(y_bar, s_squared, n_obs, mu, sigma)) {
-    return T_return(0.0);
-  }
-
   // set up return value accumulator
   T_partials logp(0.0);
 
+  using std::log;
+
   // validate args (here done over var, which should be OK)
+  static const char* function = "normal_sufficient_lpdf";
   check_finite(function, "Location parameter sufficient statistic", y_bar);
   check_finite(function, "Scale parameter sufficient statistic", s_squared);
   check_nonnegative(function, "Scale parameter sufficient statistic",
@@ -74,14 +67,16 @@ inline auto normal_sufficient_lpdf(const T_y& y_bar, const T_s& s_squared,
                          y_bar, "Scale parameter sufficient statistic",
                          s_squared, "Number of observations", n_obs,
                          "Location parameter", mu, "Scale parameter", sigma);
-  // check if no variables are involved and prop-to
-  if (!include_summand<propto, T_y, T_s, T_loc, T_scale>::value) {
-    return T_return(0.0);
-  }
 
   // set up template expressions wrapping scalars into vector views
   operands_and_partials<T_y, T_s, T_loc, T_scale> ops_partials(y_bar, s_squared,
                                                                mu, sigma);
+  // check if no variables are involved and prop-to
+  if (!include_summand<propto, T_y, T_s, T_loc, T_scale>::value) {
+    return ops_partials.build(logp);
+  } else if (size_zero(y_bar, s_squared, n_obs, mu, sigma)) {
+    return ops_partials.build(logp);
+  }
 
   const scalar_seq_view<const T_y> y_bar_vec(y_bar);
   const scalar_seq_view<const T_s> s_squared_vec(s_squared);

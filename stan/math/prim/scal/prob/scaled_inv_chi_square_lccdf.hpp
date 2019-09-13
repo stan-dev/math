@@ -23,16 +23,8 @@ template <typename T_y, typename T_dof, typename T_scale>
 inline auto scaled_inv_chi_square_lccdf(const T_y& y, const T_dof& nu,
                                         const T_scale& s) {
   using T_partials = partials_return_t<T_y, T_dof, T_scale>;
-  using T_return = return_type_t<T_y, T_dof, T_scale>;
-
-  if (size_zero(y, nu, s)) {
-    return T_return(0.0);
-  }
-
-  static const char* function = "scaled_inv_chi_square_lccdf";
-
   T_partials P(0.0);
-
+  static const char* function = "scaled_inv_chi_square_lccdf";
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
   check_positive_finite(function, "Degrees of freedom parameter", nu);
@@ -47,12 +39,15 @@ inline auto scaled_inv_chi_square_lccdf(const T_y& y, const T_dof& nu,
   const size_t N = max_size(y, nu, s);
 
   operands_and_partials<T_y, T_dof, T_scale> ops_partials(y, nu, s);
+  if (size_zero(y, nu, s)) {
+    return ops_partials.build(P);
+  }
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
   for (size_t i = 0; i < stan::length(y); i++) {
     if (value_of(y_vec[i]) == 0) {
-      return ops_partials.build(0.0);
+      return ops_partials.build(P);
     }
   }
 

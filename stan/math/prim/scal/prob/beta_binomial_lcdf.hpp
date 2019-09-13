@@ -40,12 +40,6 @@ inline auto beta_binomial_lcdf(const T_n& n, const T_N& N, const T_size1& alpha,
                                const T_size2& beta) {
   static const char* function = "beta_binomial_lcdf";
   using T_partials = partials_return_t<T_n, T_N, T_size1, T_size2>;
-  using T_return = return_type_t<T_n, T_N, T_size1, T_size2>;
-
-  if (size_zero(n, N, alpha, beta)) {
-    return T_return(0.0);
-  }
-
   T_partials P(0.0);
 
   check_nonnegative(function, "Population size parameter", N);
@@ -66,6 +60,9 @@ inline auto beta_binomial_lcdf(const T_n& n, const T_N& N, const T_size1& alpha,
   using std::log;
 
   operands_and_partials<T_size1, T_size2> ops_partials(alpha, beta);
+  if (size_zero(n, N, alpha, beta)) {
+    return ops_partials.build(P);
+  }
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as neg infinity
@@ -91,8 +88,8 @@ inline auto beta_binomial_lcdf(const T_n& n, const T_N& N, const T_size1& alpha,
     const T_partials nu = beta_dbl + N_dbl - n_dbl - 1;
 
     T_partials F;
-    F = F32((T_partials)1, mu, -N_dbl + n_dbl + 1, n_dbl + 2, 1 - nu,
-            (T_partials)1);
+    F = F32(T_partials(1.0), mu, -N_dbl + n_dbl + 1, n_dbl + 2, 1 - nu,
+            T_partials(1.0));
 
     T_partials C = lgamma(nu) - lgamma(N_dbl - n_dbl);
     C += lgamma(mu) - lgamma(n_dbl + 2);

@@ -19,18 +19,10 @@ template <typename T_y, typename T_scale, typename T_shape>
 inline auto pareto_lcdf(const T_y& y, const T_scale& y_min,
                         const T_shape& alpha) {
   using T_partials = partials_return_t<T_y, T_scale, T_shape>;
-  using T_return = return_type_t<T_y, T_scale, T_shape>;
-
-  if (size_zero(y, y_min, alpha)) {
-    return T_return(0.0);
-  }
-
+  T_partials P(0.0);
   static const char* function = "pareto_lcdf";
-
   using std::exp;
   using std::log;
-
-  T_partials P(0.0);
 
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
@@ -45,6 +37,9 @@ inline auto pareto_lcdf(const T_y& y, const T_scale& y_min,
   const size_t N = max_size(y, y_min, alpha);
 
   operands_and_partials<T_y, T_scale, T_shape> ops_partials(y, y_min, alpha);
+  if (size_zero(y, y_min, alpha)) {
+    return ops_partials.build(P);
+  }
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
@@ -58,7 +53,7 @@ inline auto pareto_lcdf(const T_y& y, const T_scale& y_min,
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
     if (value_of(y_vec[n]) == std::numeric_limits<double>::infinity()) {
-      return ops_partials.build(0.0);
+      return ops_partials.build(T_partials(0.0));
     }
 
     const T_partials log_dbl = log(value_of(y_min_vec[n]) / value_of(y_vec[n]));

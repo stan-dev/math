@@ -36,13 +36,9 @@ template <bool propto, typename T_y, typename T_loc, typename T_scale>
 inline auto cauchy_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
   static const char* function = "cauchy_lpdf";
   using T_partials = partials_return_t<T_y, T_loc, T_scale>;
-  using T_return = return_type_t<T_y, T_loc, T_scale>;
-
-  if (size_zero(y, mu, sigma)) {
-    return T_return(0.0);
-  }
-
   T_partials logp(0.0);
+  using T_return = return_type_t<T_y, T_loc, T_scale>;
+  using std::log;
 
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
@@ -50,39 +46,26 @@ inline auto cauchy_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma);
 
-  if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
-    return T_return(0.0);
-  }
-
-  using std::log;
-
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_loc> mu_vec(mu);
   const scalar_seq_view<T_scale> sigma_vec(sigma);
   const size_t N = max_size(y, mu, sigma);
-
-  VectorBuilder<true, T_partials, T_scale> inv_sigma(length(sigma));
-  VectorBuilder<true, T_partials, T_scale> sigma_squared(length(sigma));
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials, T_scale>
-      log_sigma(length(sigma));
-  for (size_t i = 0; i < length(sigma); i++) {
-    const T_partials sigma_dbl = value_of(sigma_vec[i]);
-    inv_sigma[i] = 1.0 / sigma_dbl;
-    sigma_squared[i] = sigma_dbl * sigma_dbl;
-    if (include_summand<propto, T_scale>::value) {
-      log_sigma[i] = log(sigma_dbl);
-    }
-  }
-
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
+  if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
+    return ops_partials.build(logp);
+  } else if (size_zero(y, mu, sigma)) {
+    return ops_partials.build(logp);
+  }
 
   for (size_t n = 0; n < N; n++) {
     const T_partials y_dbl = value_of(y_vec[n]);
     const T_partials mu_dbl = value_of(mu_vec[n]);
-
+    const T_partials sigma_dbl = value_of(sigma_vec[n]);
+    const T_partials inv_sigma = 1.0 / sigma_dbl;
+    const T_partials sigma_squared = sigma_dbl * sigma_dbl;
     const T_partials y_minus_mu = y_dbl - mu_dbl;
     const T_partials y_minus_mu_squared = y_minus_mu * y_minus_mu;
-    const T_partials y_minus_mu_over_sigma = y_minus_mu * inv_sigma[n];
+    const T_partials y_minus_mu_over_sigma = y_minus_mu * inv_sigma;
     const T_partials y_minus_mu_over_sigma_squared
         = y_minus_mu_over_sigma * y_minus_mu_over_sigma;
 
@@ -90,7 +73,7 @@ inline auto cauchy_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
       logp += NEG_LOG_PI;
     }
     if (include_summand<propto, T_scale>::value) {
-      logp -= log_sigma[n];
+      logp -= log(sigma_dbl);
     }
     if (include_summand<propto, T_y, T_loc, T_scale>::value) {
       logp -= log1p(y_minus_mu_over_sigma_squared);
@@ -98,16 +81,16 @@ inline auto cauchy_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
 
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n]
-          -= 2 * y_minus_mu / (sigma_squared[n] + y_minus_mu_squared);
+          -= 2 * y_minus_mu / (sigma_squared + y_minus_mu_squared);
     }
     if (!is_constant_all<T_loc>::value) {
       ops_partials.edge2_.partials_[n]
-          += 2 * y_minus_mu / (sigma_squared[n] + y_minus_mu_squared);
+          += 2 * y_minus_mu / (sigma_squared + y_minus_mu_squared);
     }
     if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n]
-          += (y_minus_mu_squared - sigma_squared[n]) * inv_sigma[n]
-             / (sigma_squared[n] + y_minus_mu_squared);
+          += (y_minus_mu_squared - sigma_squared) * inv_sigma
+             / (sigma_squared + y_minus_mu_squared);
     }
   }
   return ops_partials.build(logp);

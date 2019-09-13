@@ -25,8 +25,8 @@ TEST(ProbDistributions, ordered_probit_vals) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
-  using stan::math::Phi;
   using stan::math::ordered_probit_log;
+  using stan::math::Phi;
 
   int K = 5;
   Matrix<double, Dynamic, 1> c(K - 1);
@@ -51,8 +51,8 @@ TEST(ProbDistributions, ordered_probit_vals_2) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
-  using stan::math::Phi;
   using stan::math::ordered_probit_log;
+  using stan::math::Phi;
 
   int K = 3;
   Matrix<double, Dynamic, 1> c(K - 1);

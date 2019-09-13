@@ -21,36 +21,30 @@ template <bool propto, typename T_n, typename T_location, typename T_precision>
 inline auto neg_binomial_2_lpmf(const T_n& n, const T_location& mu,
                                 const T_precision& phi) {
   using T_partials = partials_return_t<T_n, T_location, T_precision>;
+  T_partials logp(0.0);
   using T_return = return_type_t<T_n, T_location, T_precision>;
+  using std::log;
 
   static const char* function = "neg_binomial_2_lpmf";
-
-  if (size_zero(n, mu, phi)) {
-    return T_return(0.0);
-  }
-
-  T_partials logp(0.0);
   check_nonnegative(function, "Failures variable", n);
   check_positive_finite(function, "Location parameter", mu);
   check_positive_finite(function, "Precision parameter", phi);
   check_consistent_sizes(function, "Failures variable", n, "Location parameter",
                          mu, "Precision parameter", phi);
 
-  if (!include_summand<propto, T_location, T_precision>::value) {
-    return T_return(0.0);
-  }
-
-  using std::log;
-
   const scalar_seq_view<T_n> n_vec(n);
   const scalar_seq_view<T_location> mu_vec(mu);
   const scalar_seq_view<T_precision> phi_vec(phi);
-  size_t size = max_size(n, mu, phi);
-
+  const size_t size = max_size(n, mu, phi);
   operands_and_partials<T_location, T_precision> ops_partials(mu, phi);
+  if (!include_summand<propto, T_location, T_precision>::value) {
+    return ops_partials.build(logp);
+  } else if (size_zero(n, mu, phi)) {
+    return ops_partials.build(logp);
+  }
 
-  size_t len_ep = max_size(mu, phi);
-  size_t len_np = max_size(n, phi);
+  const size_t len_ep = max_size(mu, phi);
+  const size_t len_np = max_size(n, phi);
 
   VectorBuilder<true, T_partials, T_location> mu__(length(mu));
   for (size_t i = 0, size = length(mu); i < size; ++i) {

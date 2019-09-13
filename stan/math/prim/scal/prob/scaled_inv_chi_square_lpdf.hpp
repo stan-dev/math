@@ -41,7 +41,7 @@ inline auto scaled_inv_chi_square_lpdf(const T_y& y, const T_dof& nu,
                                        const T_scale& s) {
   static const char* function = "scaled_inv_chi_square_lpdf";
   using T_partials = partials_return_t<T_y, T_dof, T_scale>;
-  using T_return = return_type_t<T_y, T_dof, T_scale>;
+  T_partials logp(0);
 
   check_not_nan(function, "Random variable", y);
   check_positive_finite(function, "Degrees of freedom parameter", nu);
@@ -49,21 +49,22 @@ inline auto scaled_inv_chi_square_lpdf(const T_y& y, const T_dof& nu,
   check_consistent_sizes(function, "Random variable", y,
                          "Degrees of freedom parameter", nu, "Scale parameter",
                          s);
-  if (size_zero(y, nu, s)) {
-    return T_return(0);
-  }
-  if (!include_summand<propto, T_y, T_dof, T_scale>::value) {
-    return T_return(0);
-  }
-  T_partials logp(0);
+
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_dof> nu_vec(nu);
   const scalar_seq_view<T_scale> s_vec(s);
   const size_t N = max_size(y, nu, s);
 
+  operands_and_partials<T_y, T_dof, T_scale> ops_partials(y, nu, s);
+  if (!include_summand<propto, T_y, T_dof, T_scale>::value) {
+    return ops_partials.build(logp);
+  } else if (size_zero(y, nu, s)) {
+    return ops_partials.build(logp);
+  }
+
   for (size_t n = 0; n < N; n++) {
     if (value_of(y_vec[n]) <= 0) {
-      return T_return(LOG_ZERO);
+      return ops_partials.build(T_partials(LOG_ZERO));
     }
   }
 
@@ -122,7 +123,6 @@ inline auto scaled_inv_chi_square_lpdf(const T_y& y, const T_dof& nu,
     }
   }
 
-  operands_and_partials<T_y, T_dof, T_scale> ops_partials(y, nu, s);
   for (size_t n = 0; n < N; n++) {
     const T_partials s_dbl = value_of(s_vec[n]);
     const T_partials nu_dbl = value_of(nu_vec[n]);

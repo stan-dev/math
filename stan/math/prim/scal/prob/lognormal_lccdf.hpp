@@ -17,40 +17,34 @@ namespace math {
 template <typename T_y, typename T_loc, typename T_scale>
 inline auto lognormal_lccdf(const T_y& y, const T_loc& mu,
                             const T_scale& sigma) {
-  static const char* function = "lognormal_lccdf";
   using T_partials = partials_return_t<T_y, T_loc, T_scale>;
-  using T_return = return_type_t<T_y, T_loc, T_scale>;
-
   T_partials ccdf_log = 0.0;
-
+  using T_return = return_type_t<T_y, T_loc, T_scale>;
   using std::exp;
   using std::log;
 
-  if (size_zero(y, mu, sigma)) {
-    return T_return(0.0);
-  }
-
+  static const char* function = "lognormal_lccdf";
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
   check_positive_finite(function, "Scale parameter", sigma);
 
-  operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
-
+  const double log_half = std::log(0.5);
+  const double sqrt_pi = std::sqrt(pi());
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_loc> mu_vec(mu);
   const scalar_seq_view<T_scale> sigma_vec(sigma);
   const size_t N = max_size(y, mu, sigma);
-
-  const double sqrt_pi = std::sqrt(pi());
+  operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
+  if (size_zero(y, mu, sigma)) {
+    return ops_partials.build(ccdf_log);
+  }
 
   for (size_t i = 0; i < stan::length(y); i++) {
     if (value_of(y_vec[i]) == 0.0) {
-      return ops_partials.build(0.0);
+      return ops_partials.build(ccdf_log);
     }
   }
-
-  const double log_half = std::log(0.5);
 
   for (size_t n = 0; n < N; n++) {
     const T_partials y_dbl = value_of(y_vec[n]);

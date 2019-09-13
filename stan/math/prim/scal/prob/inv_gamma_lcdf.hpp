@@ -23,16 +23,14 @@ template <typename T_y, typename T_shape, typename T_scale>
 inline auto inv_gamma_lcdf(const T_y& y, const T_shape& alpha,
                            const T_scale& beta) {
   using T_partials = partials_return_t<T_y, T_shape, T_scale>;
+  T_partials P(0.0);
   using T_return = return_type_t<T_y, T_shape, T_scale>;
 
-  if (size_zero(y, alpha, beta)) {
-    return T_return(0.0);
-  }
+  using std::exp;
+  using std::log;
+  using std::pow;
 
   static const char* function = "inv_gamma_lcdf";
-
-  T_partials P(0.0);
-
   check_positive_finite(function, "Shape parameter", alpha);
   check_positive_finite(function, "Scale parameter", beta);
   check_not_nan(function, "Random variable", y);
@@ -46,18 +44,17 @@ inline auto inv_gamma_lcdf(const T_y& y, const T_shape& alpha,
   const size_t N = max_size(y, alpha, beta);
 
   operands_and_partials<T_y, T_shape, T_scale> ops_partials(y, alpha, beta);
+  if (size_zero(y, alpha, beta)) {
+    return ops_partials.build(P);
+  }
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
   for (size_t i = 0; i < stan::length(y); i++) {
     if (value_of(y_vec[i]) == 0) {
-      return ops_partials.build(negative_infinity());
+      return ops_partials.build(T_partials(negative_infinity()));
     }
   }
-
-  using std::exp;
-  using std::log;
-  using std::pow;
 
   VectorBuilder<!is_constant_all<T_shape>::value, T_partials, T_shape>
       gamma_vec(stan::length(alpha));

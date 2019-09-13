@@ -40,12 +40,6 @@ inline auto beta_binomial_cdf(const T_n& n, const T_N& N, const T_size1& alpha,
                               const T_size2& beta) {
   static const char* function = "beta_binomial_cdf";
   using T_partials = partials_return_t<T_n, T_N, T_size1, T_size2>;
-  using T_return = return_type_t<T_n, T_N, T_size1, T_size2>;
-
-  if (size_zero(n, N, alpha, beta)) {
-    return T_return(1.0);
-  }
-
   T_partials P(1.0);
 
   check_nonnegative(function, "Population size parameter", N);
@@ -65,12 +59,15 @@ inline auto beta_binomial_cdf(const T_n& n, const T_N& N, const T_size1& alpha,
   using std::exp;
 
   operands_and_partials<T_size1, T_size2> ops_partials(alpha, beta);
+  if (size_zero(n, N, alpha, beta)) {
+    return ops_partials.build(P);
+  }
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
   for (size_t i = 0; i < stan::length(n); i++) {
     if (value_of(n_vec[i]) <= 0) {
-      return ops_partials.build(0.0);
+      return ops_partials.build(T_partials(0.0));
     }
   }
 
@@ -89,8 +86,8 @@ inline auto beta_binomial_cdf(const T_n& n, const T_N& N, const T_size1& alpha,
     const T_partials mu = alpha_dbl + n_dbl + 1;
     const T_partials nu = beta_dbl + N_dbl - n_dbl - 1;
 
-    const T_partials F = F32((T_partials)1, mu, -N_dbl + n_dbl + 1, n_dbl + 2,
-                             1 - nu, (T_partials)1);
+    const T_partials F = F32(T_partials(1.0), mu, -N_dbl + n_dbl + 1, n_dbl + 2,
+                             1 - nu, T_partials(1.0));
 
     T_partials C = lgamma(nu) - lgamma(N_dbl - n_dbl);
     C += lgamma(mu) - lgamma(n_dbl + 2);
@@ -111,8 +108,8 @@ inline auto beta_binomial_cdf(const T_n& n, const T_N& N, const T_size1& alpha,
     if (!is_constant_all<T_size1, T_size2>::value) {
       digammaOne = digamma(mu + nu);
       digammaTwo = digamma(alpha_dbl + beta_dbl);
-      grad_F32(dF, (T_partials)1, mu, -N_dbl + n_dbl + 1, n_dbl + 2, 1 - nu,
-               (T_partials)1);
+      grad_F32(dF, T_partials(1.0), mu, -N_dbl + n_dbl + 1, n_dbl + 2, 1 - nu,
+               T_partials(1.0));
     }
     if (!is_constant_all<T_size1>::value) {
       const T_partials g = -C

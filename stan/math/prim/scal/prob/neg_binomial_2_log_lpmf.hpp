@@ -22,15 +22,12 @@ template <bool propto, typename T_n, typename T_log_location,
 inline auto neg_binomial_2_log_lpmf(const T_n& n, const T_log_location& eta,
                                     const T_precision& phi) {
   using T_partials = partials_return_t<T_n, T_log_location, T_precision>;
+  T_partials logp(0.0);
   using T_return = return_type_t<T_n, T_log_location, T_precision>;
+  using std::exp;
+  using std::log;
 
   static const char* function = "neg_binomial_2_log_lpmf";
-
-  if (size_zero(n, eta, phi)) {
-    return T_return(0.0);
-  }
-
-  T_partials logp(0.0);
   check_nonnegative(function, "Failures variable", n);
   check_finite(function, "Log location parameter", eta);
   check_positive_finite(function, "Precision parameter", phi);
@@ -38,22 +35,19 @@ inline auto neg_binomial_2_log_lpmf(const T_n& n, const T_log_location& eta,
                          "Log location parameter", eta, "Precision parameter",
                          phi);
 
-  if (!include_summand<propto, T_log_location, T_precision>::value) {
-    return T_return(0.0);
-  }
-
-  using std::exp;
-  using std::log;
-
   const scalar_seq_view<T_n> n_vec(n);
   const scalar_seq_view<T_log_location> eta_vec(eta);
   const scalar_seq_view<T_precision> phi_vec(phi);
-  size_t size = max_size(n, eta, phi);
+  const size_t size = max_size(n, eta, phi);
+  const size_t len_ep = max_size(eta, phi);
+  const size_t len_np = max_size(n, phi);
 
   operands_and_partials<T_log_location, T_precision> ops_partials(eta, phi);
-
-  size_t len_ep = max_size(eta, phi);
-  size_t len_np = max_size(n, phi);
+  if (!include_summand<propto, T_log_location, T_precision>::value) {
+    return ops_partials.build(logp);
+  } else if (size_zero(n, eta, phi)) {
+    return ops_partials.build(logp);
+  }
 
   VectorBuilder<true, T_partials, T_log_location> eta__(length(eta));
   for (size_t i = 0, size = length(eta); i < size; ++i) {

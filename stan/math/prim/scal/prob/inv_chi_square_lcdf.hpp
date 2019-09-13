@@ -35,16 +35,13 @@ namespace math {
 template <typename T_y, typename T_dof>
 inline auto inv_chi_square_lcdf(const T_y& y, const T_dof& nu) {
   using T_partials = partials_return_t<T_y, T_dof>;
+  T_partials P(0.0);
   using T_return = return_type_t<T_y, T_dof>;
-
-  if (size_zero(y, nu)) {
-    return T_return(0.0);
-  }
+  using std::exp;
+  using std::log;
+  using std::pow;
 
   static const char* function = "inv_chi_square_lcdf";
-
-  T_partials P(0.0);
-
   check_positive_finite(function, "Degrees of freedom parameter", nu);
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
@@ -56,18 +53,17 @@ inline auto inv_chi_square_lcdf(const T_y& y, const T_dof& nu) {
   const size_t N = max_size(y, nu);
 
   operands_and_partials<T_y, T_dof> ops_partials(y, nu);
+  if (size_zero(y, nu)) {
+    return ops_partials.build(P);
+  }
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
   for (size_t i = 0; i < stan::length(y); i++) {
     if (value_of(y_vec[i]) == 0) {
-      return ops_partials.build(negative_infinity());
+      return ops_partials.build(T_partials(negative_infinity()));
     }
   }
-
-  using std::exp;
-  using std::log;
-  using std::pow;
 
   VectorBuilder<!is_constant_all<T_dof>::value, T_partials, T_dof> gamma_vec(
       stan::length(nu));

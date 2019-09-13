@@ -27,16 +27,11 @@ namespace math {
  */
 template <typename T_n, typename T_prob>
 inline auto bernoulli_lccdf(const T_n& n, const T_prob& theta) {
-  static const char* function = "bernoulli_lccdf";
   using T_partials = partials_return_t<T_n, T_prob>;
-  using T_return = return_type_t<T_n, T_prob>;
-
-  if (size_zero(n, theta)) {
-    return T_return(0.0);
-  }
-
   T_partials P(0.0);
+  using std::log;
 
+  static const char* function = "bernoulli_lccdf";
   check_finite(function, "Probability parameter", theta);
   check_bounded(function, "Probability parameter", theta, 0.0, 1.0);
   check_consistent_sizes(function, "Random variable", n,
@@ -46,14 +41,16 @@ inline auto bernoulli_lccdf(const T_n& n, const T_prob& theta) {
   const scalar_seq_view<T_prob> theta_vec(theta);
   size_t size = max_size(n, theta);
 
-  using std::log;
   operands_and_partials<T_prob> ops_partials(theta);
+  if (size_zero(n, theta)) {
+    return ops_partials.build(P);
+  }
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
   for (size_t i = 0; i < stan::length(n); i++) {
     if (value_of(n_vec[i]) < 0) {
-      return ops_partials.build(0.0);
+      return ops_partials.build(P);
     }
   }
 

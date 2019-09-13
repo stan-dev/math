@@ -19,18 +19,11 @@ namespace math {
 template <typename T_y, typename T_loc, typename T_scale>
 inline auto logistic_cdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
   using T_partials = partials_return_t<T_y, T_loc, T_scale>;
+  T_partials P(1.0);
   using T_return = return_type_t<T_y, T_loc, T_scale>;
-
-  if (size_zero(y, mu, sigma)) {
-    return T_return(1.0);
-  }
-
-  static const char* function = "logistic_cdf";
-
   using std::exp;
 
-  T_partials P(1.0);
-
+  static const char* function = "logistic_cdf";
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
   check_positive_finite(function, "Scale parameter", sigma);
@@ -43,12 +36,15 @@ inline auto logistic_cdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
   const size_t N = max_size(y, mu, sigma);
 
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
+  if (size_zero(y, mu, sigma)) {
+    return ops_partials.build(T_partials(1.0));
+  }
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
   for (size_t i = 0; i < stan::length(y); i++) {
     if (value_of(y_vec[i]) == -std::numeric_limits<double>::infinity()) {
-      return ops_partials.build(0.0);
+      return ops_partials.build(T_partials(0.0));
     }
   }
 

@@ -22,16 +22,9 @@ template <typename T_y, typename T_dof, typename T_loc, typename T_scale>
 inline auto student_t_lcdf(const T_y& y, const T_dof& nu, const T_loc& mu,
                            const T_scale& sigma) {
   using T_partials = partials_return_t<T_y, T_dof, T_loc, T_scale>;
-  using T_return = return_type_t<T_y, T_dof, T_loc, T_scale>;
-
-  if (size_zero(y, nu, mu, sigma)) {
-    return T_return(0.0);
-  }
-
-  static const char* function = "student_t_lcdf";
-
   T_partials P(0.0);
 
+  static const char* function = "student_t_lcdf";
   check_not_nan(function, "Random variable", y);
   check_positive_finite(function, "Degrees of freedom parameter", nu);
   check_finite(function, "Location parameter", mu);
@@ -45,7 +38,9 @@ inline auto student_t_lcdf(const T_y& y, const T_dof& nu, const T_loc& mu,
 
   operands_and_partials<T_y, T_dof, T_loc, T_scale> ops_partials(y, nu, mu,
                                                                  sigma);
-
+  if (size_zero(y, nu, mu, sigma)) {
+    return ops_partials.build(P);
+  }
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
   for (size_t i = 0; i < stan::length(y); i++) {

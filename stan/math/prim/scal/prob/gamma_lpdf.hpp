@@ -41,87 +41,51 @@ namespace math {
 template <bool propto, typename T_y, typename T_shape, typename T_inv_scale>
 inline auto gamma_lpdf(const T_y& y, const T_shape& alpha,
                        const T_inv_scale& beta) {
-  static const char* function = "gamma_lpdf";
   using T_partials = partials_return_t<T_y, T_shape, T_inv_scale>;
-  using T_return = return_type_t<T_y, T_shape, T_inv_scale>;
-
-  if (size_zero(y, alpha, beta)) {
-    return T_return(0.0);
-  }
-
   T_partials logp(0.0);
+  using T_return = return_type_t<T_y, T_shape, T_inv_scale>;
+  using std::log;
 
+  static const char* function = "gamma_lpdf";
   check_not_nan(function, "Random variable", y);
   check_positive_finite(function, "Shape parameter", alpha);
   check_positive_finite(function, "Inverse scale parameter", beta);
   check_consistent_sizes(function, "Random variable", y, "Shape parameter",
                          alpha, "Inverse scale parameter", beta);
 
-  if (!include_summand<propto, T_y, T_shape, T_inv_scale>::value) {
-    return T_return(0.0);
-  }
-
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_shape> alpha_vec(alpha);
   const scalar_seq_view<T_inv_scale> beta_vec(beta);
-
-  for (size_t n = 0; n < length(y); n++) {
-    const T_partials y_dbl = value_of(y_vec[n]);
-    if (y_dbl < 0) {
-      return T_return(LOG_ZERO);
-    }
-  }
-
   const size_t N = max_size(y, alpha, beta);
+  const size_t size_y = length(y);
   operands_and_partials<T_y, T_shape, T_inv_scale> ops_partials(y, alpha, beta);
-
-  using std::log;
-
-  VectorBuilder<include_summand<propto, T_y, T_shape>::value, T_partials, T_y>
-      log_y(length(y));
-  if (include_summand<propto, T_y, T_shape>::value) {
-    for (size_t n = 0; n < length(y); n++) {
-      if (value_of(y_vec[n]) > 0) {
-        log_y[n] = log(value_of(y_vec[n]));
-      }
-    }
+  if (!include_summand<propto, T_y, T_shape, T_inv_scale>::value) {
+    return ops_partials.build(logp);
+  } else if (size_zero(y, alpha, beta)) {
+    return ops_partials.build(logp);
   }
-
-  VectorBuilder<include_summand<propto, T_shape>::value, T_partials, T_shape>
-      lgamma_alpha(length(alpha));
-  VectorBuilder<!is_constant_all<T_shape>::value, T_partials, T_shape>
-      digamma_alpha(length(alpha));
-  for (size_t n = 0; n < length(alpha); n++) {
-    if (include_summand<propto, T_shape>::value) {
-      lgamma_alpha[n] = lgamma(value_of(alpha_vec[n]));
-    }
-    if (!is_constant_all<T_shape>::value) {
-      digamma_alpha[n] = digamma(value_of(alpha_vec[n]));
-    }
-  }
-
-  VectorBuilder<include_summand<propto, T_shape, T_inv_scale>::value,
-                T_partials, T_inv_scale>
-      log_beta(length(beta));
-  if (include_summand<propto, T_shape, T_inv_scale>::value) {
-    for (size_t n = 0; n < length(beta); n++) {
-      log_beta[n] = log(value_of(beta_vec[n]));
-    }
-  }
-
+  T_partials log_beta = 0;
   for (size_t n = 0; n < N; n++) {
     const T_partials y_dbl = value_of(y_vec[n]);
     const T_partials alpha_dbl = value_of(alpha_vec[n]);
     const T_partials beta_dbl = value_of(beta_vec[n]);
-
+    T_partials log_y = 0;
+    if (y_dbl < 0) {
+      return ops_partials.build(T_partials(LOG_ZERO));
+    }
     if (include_summand<propto, T_shape>::value) {
-      logp -= lgamma_alpha[n];
+      const T_partials lgamma_alpha = lgamma(alpha_dbl);
+      logp -= lgamma_alpha;
     }
     if (include_summand<propto, T_shape, T_inv_scale>::value) {
-      logp += alpha_dbl * log_beta[n];
+      log_beta = log(beta_dbl);
+      logp += alpha_dbl * log_beta;
     }
     if (include_summand<propto, T_y, T_shape>::value) {
-      logp += (alpha_dbl - 1.0) * log_y[n];
+      if (y_dbl > 0) {
+        log_y = log(y_dbl);
+      }
+      logp += (alpha_dbl - 1.0) * log_y;
     }
     if (include_summand<propto, T_y, T_inv_scale>::value) {
       logp -= beta_dbl * y_dbl;
@@ -131,8 +95,9 @@ inline auto gamma_lpdf(const T_y& y, const T_shape& alpha,
       ops_partials.edge1_.partials_[n] += (alpha_dbl - 1) / y_dbl - beta_dbl;
     }
     if (!is_constant_all<T_shape>::value) {
+      const T_partials digamma_alpha = digamma(alpha_dbl);
       ops_partials.edge2_.partials_[n]
-          += -digamma_alpha[n] + log_beta[n] + log_y[n];
+          += -digamma_alpha + log_beta + log_y;
     }
     if (!is_constant_all<T_inv_scale>::value) {
       ops_partials.edge3_.partials_[n] += alpha_dbl / beta_dbl - y_dbl;

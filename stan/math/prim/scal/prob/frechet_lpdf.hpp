@@ -24,29 +24,28 @@ namespace math {
 template <bool propto, typename T_y, typename T_shape, typename T_scale>
 inline auto frechet_lpdf(const T_y& y, const T_shape& alpha,
                          const T_scale& sigma) {
-  static const char* function = "frechet_lpdf";
   using T_partials = partials_return_t<T_y, T_shape, T_scale>;
+  T_partials logp(0);
   using T_return = return_type_t<T_y, T_shape, T_scale>;
   using std::log;
+
+  static const char* function = "frechet_lpdf";
   check_positive(function, "Random variable", y);
   check_positive_finite(function, "Shape parameter", alpha);
   check_positive_finite(function, "Scale parameter", sigma);
   check_consistent_sizes(function, "Random variable", y, "Shape parameter",
                          alpha, "Scale parameter", sigma);
 
-  if (size_zero(y, alpha, sigma)) {
-    return T_return(0);
-  }
-  if (!include_summand<propto, T_y, T_shape, T_scale>::value) {
-    return T_return(0);
-  }
-
-  T_partials logp(0);
-
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_shape> alpha_vec(alpha);
   const scalar_seq_view<T_scale> sigma_vec(sigma);
   const size_t N = max_size(y, alpha, sigma);
+  operands_and_partials<T_y, T_shape, T_scale> ops_partials(y, alpha, sigma);
+  if (!include_summand<propto, T_y, T_shape, T_scale>::value) {
+    return ops_partials.build(logp);
+  } else if (size_zero(y, alpha, sigma)) {
+    return ops_partials.build(logp);
+  }
 
   VectorBuilder<include_summand<propto, T_shape>::value, T_partials, T_shape>
       log_alpha(length(alpha));
@@ -93,7 +92,6 @@ inline auto frechet_lpdf(const T_y& y, const T_shape& alpha,
     }
   }
 
-  operands_and_partials<T_y, T_shape, T_scale> ops_partials(y, alpha, sigma);
   for (size_t n = 0; n < N; n++) {
     const T_partials alpha_dbl = value_of(alpha_vec[n]);
     if (include_summand<propto, T_shape>::value) {

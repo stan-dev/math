@@ -16,35 +16,30 @@ namespace math {
 // Logistic(y|mu, sigma)    [sigma > 0]
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
 inline auto logistic_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
-  static const char* function = "logistic_lpdf";
   using T_partials = partials_return_t<T_y, T_loc, T_scale>;
+  T_partials logp(0.0);
   using T_return = return_type_t<T_y, T_loc, T_scale>;
 
   using std::exp;
   using std::log;
 
-  if (size_zero(y, mu, sigma)) {
-    return T_return(0.0);
-  }
-
-  T_partials logp(0.0);
-
+  static const char* function = "logistic_lpdf";
   check_finite(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
   check_positive_finite(function, "Scale parameter", sigma);
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma);
 
-  if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
-    return T_return(0.0);
-  }
-
-  operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
-
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_loc> mu_vec(mu);
   const scalar_seq_view<T_scale> sigma_vec(sigma);
   const size_t N = max_size(y, mu, sigma);
+  operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
+  if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
+    return ops_partials.build(logp);
+  } else if (size_zero(y, mu, sigma)) {
+    return ops_partials.build(logp);
+  }
 
   VectorBuilder<true, T_partials, T_scale> inv_sigma(length(sigma));
   VectorBuilder<include_summand<propto, T_scale>::value, T_partials, T_scale>

@@ -40,14 +40,8 @@ template <bool propto, typename T_y, typename T_low, typename T_high>
 inline auto uniform_lpdf(const T_y& y, const T_low& alpha, const T_high& beta) {
   static const char* function = "uniform_lpdf";
   using T_partials = partials_return_t<T_y, T_low, T_high>;
-  using T_return = return_type_t<T_y, T_low, T_high>;
 
   using std::log;
-
-  if (size_zero(y, alpha, beta)) {
-    return T_return(0.0);
-  }
-
   T_partials logp(0.0);
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Lower bound parameter", alpha);
@@ -57,19 +51,21 @@ inline auto uniform_lpdf(const T_y& y, const T_low& alpha, const T_high& beta) {
                          "Lower bound parameter", alpha,
                          "Upper bound parameter", beta);
 
-  if (!include_summand<propto, T_y, T_low, T_high>::value) {
-    return T_return(0.0);
-  }
-
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_low> alpha_vec(alpha);
   const scalar_seq_view<T_high> beta_vec(beta);
   const size_t N = max_size(y, alpha, beta);
+  operands_and_partials<T_y, T_low, T_high> ops_partials(y, alpha, beta);
+  if (!include_summand<propto, T_y, T_low, T_high>::value) {
+    return ops_partials.build(logp);
+  } else if (size_zero(y, alpha, beta)) {
+    return ops_partials.build(logp);
+  }
 
   for (size_t n = 0; n < N; n++) {
     const T_partials y_dbl = value_of(y_vec[n]);
     if (y_dbl < value_of(alpha_vec[n]) || y_dbl > value_of(beta_vec[n])) {
-      return T_return(LOG_ZERO);
+      return ops_partials.build(T_partials(LOG_ZERO));
     }
   }
 
@@ -93,7 +89,6 @@ inline auto uniform_lpdf(const T_y& y, const T_low& alpha, const T_high& beta) {
     }
   }
 
-  operands_and_partials<T_y, T_low, T_high> ops_partials(y, alpha, beta);
   for (size_t n = 0; n < N; n++) {
     if (include_summand<propto, T_low, T_high>::value) {
       logp -= log_beta_minus_alpha[n];

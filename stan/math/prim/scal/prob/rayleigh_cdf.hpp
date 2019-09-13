@@ -18,15 +18,9 @@ template <typename T_y, typename T_scale>
 inline auto rayleigh_cdf(const T_y& y, const T_scale& sigma) {
   static const char* function = "rayleigh_cdf";
   using T_partials = partials_return_t<T_y, T_scale>;
-  using T_return = return_type_t<T_y, T_scale>;
-
-  using std::exp;
-
   T_partials cdf(1.0);
 
-  if (size_zero(y, sigma)) {
-    return T_return(1.0);
-  }
+  using std::exp;
 
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
@@ -36,6 +30,9 @@ inline auto rayleigh_cdf(const T_y& y, const T_scale& sigma) {
                          sigma);
 
   operands_and_partials<T_y, T_scale> ops_partials(y, sigma);
+  if (size_zero(y, sigma)) {
+    return ops_partials.build(cdf);
+  }
 
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_scale> sigma_vec(sigma);

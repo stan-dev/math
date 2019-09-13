@@ -18,18 +18,10 @@ template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
 inline auto pareto_type_2_cdf(const T_y& y, const T_loc& mu,
                               const T_scale& lambda, const T_shape& alpha) {
   using T_partials = partials_return_t<T_y, T_loc, T_scale, T_shape>;
-  using T_return = return_type_t<T_y, T_loc, T_scale, T_shape>;
-
-  if (size_zero(y, mu, lambda, alpha)) {
-    return T_return(1.0);
-  }
-
-  static const char* function = "pareto_type_2_cdf";
-
+  T_partials P(1.0);
   using std::log;
 
-  T_partials P(1.0);
-
+  static const char* function = "pareto_type_2_cdf";
   check_greater_or_equal(function, "Random variable", y, mu);
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
@@ -46,6 +38,10 @@ inline auto pareto_type_2_cdf(const T_y& y, const T_loc& mu,
 
   operands_and_partials<T_y, T_loc, T_scale, T_shape> ops_partials(
       y, mu, lambda, alpha);
+
+  if (size_zero(y, mu, lambda, alpha)) {
+    return ops_partials.build(P);
+  }
 
   VectorBuilder<true, T_partials, T_y, T_loc, T_scale, T_shape> p1_pow_alpha(N);
 

@@ -37,42 +37,37 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_dof>
 inline auto chi_square_lpdf(const T_y& y, const T_dof& nu) {
-  static const char* function = "chi_square_lpdf";
   using T_partials = partials_return_t<T_y, T_dof>;
+  T_partials logp(0);
   using T_return = return_type_t<T_y, T_dof>;
+  using std::log;
 
+  static const char* function = "chi_square_lpdf";
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
   check_positive_finite(function, "Degrees of freedom parameter", nu);
   check_consistent_sizes(function, "Random variable", y,
                          "Degrees of freedom parameter", nu);
-  if (size_zero(y, nu)) {
-    return T_return(0);
-  }
-
-  T_partials logp(0);
 
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_dof> nu_vec(nu);
   const size_t N = max_size(y, nu);
-
-  for (size_t n = 0; n < length(y); n++) {
-    if (value_of(y_vec[n]) < 0) {
-      return T_return(LOG_ZERO);
-    }
-  }
-
+  const size_t size_y = length(y);
+  operands_and_partials<T_y, T_dof> ops_partials(y, nu);
   if (!include_summand<propto, T_y, T_dof>::value) {
-    return T_return(0.0);
+    return ops_partials.build(logp);
+  } else if (size_zero(y, nu)) {
+    return ops_partials.build(logp);
   }
-
-  using std::log;
 
   VectorBuilder<include_summand<propto, T_y, T_dof>::value, T_partials, T_y>
-      log_y(length(y));
-  for (size_t i = 0; i < length(y); i++) {
+      log_y(size_y);
+  for (size_t i = 0; i < size_y; i++) {
     if (include_summand<propto, T_y, T_dof>::value) {
       log_y[i] = log(value_of(y_vec[i]));
+    }
+    if (value_of(y_vec[i]) < 0) {
+      return ops_partials.build(T_partials(LOG_ZERO));
     }
   }
 
@@ -98,8 +93,6 @@ inline auto chi_square_lpdf(const T_y& y, const T_dof& nu) {
       digamma_half_nu_over_two[i] = digamma(half_nu) * 0.5;
     }
   }
-
-  operands_and_partials<T_y, T_dof> ops_partials(y, nu);
 
   for (size_t n = 0; n < N; n++) {
     const T_partials y_dbl = value_of(y_vec[n]);

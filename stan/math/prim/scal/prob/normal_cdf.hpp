@@ -32,12 +32,9 @@ template <typename T_y, typename T_loc, typename T_scale>
 inline auto normal_cdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
   static const char* function = "normal_cdf";
   using T_partials = partials_return_t<T_y, T_loc, T_scale>;
-  using T_return = return_type_t<T_y, T_loc, T_scale>;
-
-  using std::exp;
-
   T_partials cdf(1.0);
-
+  using T_return = return_type_t<T_y, T_loc, T_scale>;
+  using std::exp;
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
   check_not_nan(function, "Scale parameter", sigma);
@@ -45,16 +42,15 @@ inline auto normal_cdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma);
 
-  operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
-  if (size_zero(y, mu, sigma)) {
-    return ops_partials.build(cdf);
-  }
-
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_loc> mu_vec(mu);
   const scalar_seq_view<T_scale> sigma_vec(sigma);
   const size_t N = max_size(y, mu, sigma);
   const double SQRT_TWO_OVER_PI = std::sqrt(2.0 / pi());
+  operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
+  if (size_zero(y, mu, sigma)) {
+    return ops_partials.build(cdf);
+  }
 
   for (size_t n = 0; n < N; n++) {
     const T_partials y_dbl = value_of(y_vec[n]);

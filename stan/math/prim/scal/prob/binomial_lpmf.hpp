@@ -35,15 +35,10 @@ namespace math {
 template <bool propto, typename T_n, typename T_N, typename T_prob>
 inline auto binomial_lpmf(const T_n& n, const T_N& N, const T_prob& theta) {
   using T_partials = partials_return_t<T_n, T_N, T_prob>;
+  T_partials logp = 0;
   using T_return = return_type_t<T_n, T_N, T_prob>;
 
   static const char* function = "binomial_lpmf";
-
-  if (size_zero(n, N, theta)) {
-    return T_return(0.0);
-  }
-
-  T_partials logp = 0;
   check_bounded(function, "Successes variable", n, 0, N);
   check_nonnegative(function, "Population size parameter", N);
   check_finite(function, "Probability parameter", theta);
@@ -52,21 +47,21 @@ inline auto binomial_lpmf(const T_n& n, const T_N& N, const T_prob& theta) {
                          "Population size parameter", N,
                          "Probability parameter", theta);
 
-  if (!include_summand<propto, T_prob>::value) {
-    return T_return(0.0);
-  }
-
   const scalar_seq_view<T_n> n_vec(n);
   const scalar_seq_view<T_N> N_vec(N);
   const scalar_seq_view<T_prob> theta_vec(theta);
-  size_t size = max_size(n, N, theta);
-
+  const size_t size = max_size(n, N, theta);
   operands_and_partials<T_prob> ops_partials(theta);
 
   if (include_summand<propto>::value) {
     for (size_t i = 0; i < size; ++i) {
       logp += binomial_coefficient_log(N_vec[i], n_vec[i]);
     }
+  }
+  if (!include_summand<propto, T_prob>::value) {
+    return ops_partials.build(logp);
+  } else if (size_zero(n, N, theta)) {
+    return ops_partials.build(logp);
   }
 
   VectorBuilder<true, T_partials, T_prob> log1m_theta(length(theta));
@@ -100,7 +95,6 @@ inline auto binomial_lpmf(const T_n& n, const T_N& N, const T_prob& theta) {
       }
     }
   }
-
   return ops_partials.build(logp);
 }
 

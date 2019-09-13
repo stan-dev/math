@@ -19,15 +19,12 @@ template <typename T_y, typename T_loc, typename T_scale, typename T_inv_scale>
 inline auto exp_mod_normal_cdf(const T_y& y, const T_loc& mu,
                                const T_scale& sigma,
                                const T_inv_scale& lambda) {
-  static const char* function = "exp_mod_normal_cdf";
   using T_partials = partials_return_t<T_y, T_loc, T_scale, T_inv_scale>;
-  using T_return = return_type_t<T_y, T_loc, T_scale, T_inv_scale>;
-
   T_partials cdf(1.0);
-  if (size_zero(y, mu, sigma, lambda)) {
-    return T_return(1.0);
-  }
+  using T_return = return_type_t<T_y, T_loc, T_scale, T_inv_scale>;
+  using std::exp;
 
+  static const char* function = "exp_mod_normal_cdf";
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
   check_not_nan(function, "Scale parameter", sigma);
@@ -38,21 +35,22 @@ inline auto exp_mod_normal_cdf(const T_y& y, const T_loc& mu,
                          mu, "Scale parameter", sigma, "Inv_scale paramter",
                          lambda);
 
-  operands_and_partials<T_y, T_loc, T_scale, T_inv_scale> ops_partials(
-      y, mu, sigma, lambda);
-
-  using std::exp;
-
+  const double sqrt_pi = std::sqrt(pi());
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_loc> mu_vec(mu);
   const scalar_seq_view<T_scale> sigma_vec(sigma);
   const scalar_seq_view<T_inv_scale> lambda_vec(lambda);
   const size_t N = max_size(y, mu, sigma, lambda);
-  const double sqrt_pi = std::sqrt(pi());
+  operands_and_partials<T_y, T_loc, T_scale, T_inv_scale> ops_partials(
+      y, mu, sigma, lambda);
+  if (size_zero(y, mu, sigma, lambda)) {
+    return ops_partials.build(cdf);
+  }
+
   for (size_t n = 0; n < N; n++) {
     if (is_inf(y_vec[n])) {
       if (y_vec[n] < 0.0) {
-        return ops_partials.build(0.0);
+        return ops_partials.build(T_partials(0.0));
       }
     }
 

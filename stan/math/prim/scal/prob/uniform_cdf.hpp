@@ -16,13 +16,8 @@ template <typename T_y, typename T_low, typename T_high>
 inline auto uniform_cdf(const T_y& y, const T_low& alpha, const T_high& beta) {
   static const char* function = "uniform_cdf";
   using T_partials = partials_return_t<T_y, T_low, T_high>;
-  using T_return = return_type_t<T_y, T_low, T_high>;
-
-  if (size_zero(y, alpha, beta)) {
-    return T_return(1.0);
-  }
-
   T_partials cdf(1.0);
+
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Lower bound parameter", alpha);
   check_finite(function, "Upper bound parameter", beta);
@@ -35,15 +30,18 @@ inline auto uniform_cdf(const T_y& y, const T_low& alpha, const T_high& beta) {
   const scalar_seq_view<T_low> alpha_vec(alpha);
   const scalar_seq_view<T_high> beta_vec(beta);
   const size_t N = max_size(y, alpha, beta);
+  operands_and_partials<T_y, T_low, T_high> ops_partials(y, alpha, beta);
+  if (size_zero(y, alpha, beta)) {
+    return ops_partials.build(cdf);
+  }
 
   for (size_t n = 0; n < N; n++) {
     const T_partials y_dbl = value_of(y_vec[n]);
     if (y_dbl < value_of(alpha_vec[n]) || y_dbl > value_of(beta_vec[n])) {
-      return T_return(0.0);
+      return ops_partials.build(T_partials(0.0));
     }
   }
 
-  operands_and_partials<T_y, T_low, T_high> ops_partials(y, alpha, beta);
   for (size_t n = 0; n < N; n++) {
     const T_partials y_dbl = value_of(y_vec[n]);
     const T_partials alpha_dbl = value_of(alpha_vec[n]);

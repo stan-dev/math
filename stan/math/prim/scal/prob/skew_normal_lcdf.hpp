@@ -20,13 +20,7 @@ inline auto skew_normal_lcdf(const T_y& y, const T_loc& mu,
                              const T_scale& sigma, const T_shape& alpha) {
   static const char* function = "skew_normal_lcdf";
   using T_partials = partials_return_t<T_y, T_loc, T_scale, T_shape>;
-  using T_return = return_type_t<T_y, T_loc, T_scale, T_shape>;
-
   T_partials cdf_log(0.0);
-
-  if (size_zero(y, mu, sigma, alpha)) {
-    return T_return(0.0);
-  }
 
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
@@ -40,6 +34,9 @@ inline auto skew_normal_lcdf(const T_y& y, const T_loc& mu,
   operands_and_partials<T_y, T_loc, T_scale, T_shape> ops_partials(y, mu, sigma,
                                                                    alpha);
 
+  if (size_zero(y, mu, sigma, alpha)) {
+    return ops_partials.build(cdf_log);
+  }
   using std::exp;
   using std::log;
 

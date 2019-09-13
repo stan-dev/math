@@ -22,17 +22,10 @@ inline auto skew_normal_lpdf(const T_y& y, const T_loc& mu,
                              const T_scale& sigma, const T_shape& alpha) {
   static const char* function = "skew_normal_lpdf";
   using T_partials = partials_return_t<T_y, T_loc, T_scale, T_shape>;
-  using T_return = return_type_t<T_y, T_loc, T_scale, T_shape>;
+  T_partials logp(0.0);
 
   using std::exp;
   using std::log;
-
-  if (size_zero(y, mu, sigma, alpha)) {
-    return T_return(0.0);
-  }
-
-  T_partials logp(0.0);
-
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
   check_finite(function, "Shape parameter", alpha);
@@ -40,18 +33,18 @@ inline auto skew_normal_lpdf(const T_y& y, const T_loc& mu,
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma, "Shape paramter", alpha);
 
-  if (!include_summand<propto, T_y, T_loc, T_scale, T_shape>::value) {
-    return T_return(0.0);
-  }
-
-  operands_and_partials<T_y, T_loc, T_scale, T_shape> ops_partials(y, mu, sigma,
-                                                                   alpha);
-
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_loc> mu_vec(mu);
   const scalar_seq_view<T_scale> sigma_vec(sigma);
   const scalar_seq_view<T_shape> alpha_vec(alpha);
   const size_t N = max_size(y, mu, sigma, alpha);
+  operands_and_partials<T_y, T_loc, T_scale, T_shape> ops_partials(y, mu, sigma,
+                                                                   alpha);
+  if (!include_summand<propto, T_y, T_loc, T_scale, T_shape>::value) {
+    return ops_partials.build(logp);
+  } else if (size_zero(y, mu, sigma, alpha)) {
+    return ops_partials.build(logp);
+  }
 
   VectorBuilder<true, T_partials, T_scale> inv_sigma(length(sigma));
   VectorBuilder<include_summand<propto, T_scale>::value, T_partials, T_scale>

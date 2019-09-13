@@ -34,16 +34,14 @@ namespace math {
  */
 template <typename T_y, typename T_dof>
 inline auto chi_square_lcdf(const T_y& y, const T_dof& nu) {
-  static const char* function = "chi_square_lcdf";
   using T_partials = partials_return_t<T_y, T_dof>;
-  using T_return = return_type_t<T_y, T_dof>;
-
   T_partials cdf_log(0.0);
+  using T_return = return_type_t<T_y, T_dof>;
+  using std::exp;
+  using std::log;
+  using std::pow;
 
-  if (size_zero(y, nu)) {
-    return T_return(0.0);
-  }
-
+  static const char* function = "chi_square_lcdf";
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
   check_positive_finite(function, "Degrees of freedom parameter", nu);
@@ -55,57 +53,37 @@ inline auto chi_square_lcdf(const T_y& y, const T_dof& nu) {
   const size_t N = max_size(y, nu);
 
   operands_and_partials<T_y, T_dof> ops_partials(y, nu);
-
-  // Explicit return for extreme values
-  // The gradients are technically ill-defined, but treated as zero
-  for (size_t i = 0; i < stan::length(y); i++) {
-    if (value_of(y_vec[i]) == 0) {
-      return ops_partials.build(negative_infinity());
-    }
-  }
-
-  using std::exp;
-  using std::log;
-  using std::pow;
-
-  VectorBuilder<!is_constant_all<T_dof>::value, T_partials, T_dof> gamma_vec(
-      stan::length(nu));
-  VectorBuilder<!is_constant_all<T_dof>::value, T_partials, T_dof> digamma_vec(
-      stan::length(nu));
-
-  if (!is_constant_all<T_dof>::value) {
-    for (size_t i = 0; i < stan::length(nu); i++) {
-      const T_partials alpha_dbl = value_of(nu_vec[i]) * 0.5;
-      gamma_vec[i] = tgamma(alpha_dbl);
-      digamma_vec[i] = digamma(alpha_dbl);
-    }
+  if (size_zero(y, nu)) {
+    return ops_partials.build(cdf_log);
   }
 
   for (size_t n = 0; n < N; n++) {
-    // Explicit results for extreme values
-    // The gradients are technically ill-defined, but treated as zero
-    if (value_of(y_vec[n]) == std::numeric_limits<double>::infinity()) {
-      return ops_partials.build(0.0);
-    }
-
     const T_partials y_dbl = value_of(y_vec[n]);
     const T_partials alpha_dbl = value_of(nu_vec[n]) * 0.5;
     const T_partials beta_dbl = 0.5;
-
     const T_partials Pn = gamma_p(alpha_dbl, beta_dbl * y_dbl);
+    // Explicit results for extreme values
+    // The gradients are technically ill-defined, but treated as zero
+    if (y_dbl == std::numeric_limits<double>::infinity()) {
+      return ops_partials.build(T_partials(0.0));
+    }
+    if (y_dbl == 0) {
+      return ops_partials.build(negative_infinity());
+    }
 
     cdf_log += log(Pn);
-
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] += beta_dbl * exp(-beta_dbl * y_dbl)
                                           * pow(beta_dbl * y_dbl, alpha_dbl - 1)
                                           / tgamma(alpha_dbl) / Pn;
     }
     if (!is_constant_all<T_dof>::value) {
+      const T_partials gamma_dbl = tgamma(alpha_dbl);
+      const T_partials digamma_dbl = digamma(alpha_dbl);
       ops_partials.edge2_.partials_[n]
           -= 0.5
-             * grad_reg_inc_gamma(alpha_dbl, beta_dbl * y_dbl, gamma_vec[n],
-                                  digamma_vec[n])
+             * grad_reg_inc_gamma(alpha_dbl, beta_dbl * y_dbl, gamma_dbl,
+                                  digamma_dbl)
              / Pn;
     }
   }

@@ -35,12 +35,6 @@ template <typename T_n, typename T_N, typename T_prob>
 inline auto binomial_cdf(const T_n& n, const T_N& N, const T_prob& theta) {
   static const char* function = "binomial_cdf";
   using T_partials = partials_return_t<T_n, T_N, T_prob>;
-  using T_return = return_type_t<T_n, T_N, T_prob>;
-
-  if (size_zero(n, N, theta)) {
-    return T_return(1.0);
-  }
-
   T_partials P(1.0);
 
   check_nonnegative(function, "Population size parameter", N);
@@ -59,12 +53,15 @@ inline auto binomial_cdf(const T_n& n, const T_N& N, const T_prob& theta) {
   using std::pow;
 
   operands_and_partials<T_prob> ops_partials(theta);
+  if (size_zero(n, N, theta)) {
+    return ops_partials.build(P);
+  }
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
   for (size_t i = 0; i < stan::length(n); i++) {
     if (value_of(n_vec[i]) < 0) {
-      return ops_partials.build(0.0);
+      return ops_partials.build(T_partials(0.0));
     }
   }
 

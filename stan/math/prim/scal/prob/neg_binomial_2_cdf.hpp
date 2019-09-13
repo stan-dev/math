@@ -19,15 +19,11 @@ namespace math {
 template <typename T_n, typename T_location, typename T_precision>
 inline auto neg_binomial_2_cdf(const T_n& n, const T_location& mu,
                                const T_precision& phi) {
-  static const char* function = "neg_binomial_2_cdf";
   using T_partials = partials_return_t<T_n, T_location, T_precision>;
+  T_partials P(1.0);
   using T_return = return_type_t<T_n, T_location, T_precision>;
 
-  T_partials P(1.0);
-  if (size_zero(n, mu, phi)) {
-    return P;
-  }
-
+  static const char* function = "neg_binomial_2_cdf";
   check_positive_finite(function, "Location parameter", mu);
   check_positive_finite(function, "Precision parameter", phi);
   check_not_nan(function, "Random variable", n);
@@ -37,15 +33,18 @@ inline auto neg_binomial_2_cdf(const T_n& n, const T_location& mu,
   const scalar_seq_view<T_n> n_vec(n);
   const scalar_seq_view<T_location> mu_vec(mu);
   const scalar_seq_view<T_precision> phi_vec(phi);
-  size_t size = max_size(n, mu, phi);
-
+  const size_t size = max_size(n, mu, phi);
   operands_and_partials<T_location, T_precision> ops_partials(mu, phi);
+
+  if (size_zero(n, mu, phi)) {
+    return ops_partials.build(P);
+  }
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
   for (size_t i = 0; i < stan::length(n); i++) {
     if (value_of(n_vec[i]) < 0) {
-      return ops_partials.build(0.0);
+      return ops_partials.build(T_partials(0.0));
     }
   }
 
@@ -69,7 +68,7 @@ inline auto neg_binomial_2_cdf(const T_n& n, const T_location& mu,
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
     if (value_of(n_vec[i]) == std::numeric_limits<int>::max()) {
-      return ops_partials.build(1.0);
+      return ops_partials.build(T_partials(1.0));
     }
 
     const T_partials n_dbl = value_of(n_vec[i]);

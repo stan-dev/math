@@ -42,18 +42,14 @@ template <typename T_y, typename T_shape, typename T_inv_scale>
 inline auto gamma_cdf(const T_y& y, const T_shape& alpha,
                       const T_inv_scale& beta) {
   using T_partials = partials_return_t<T_y, T_shape, T_inv_scale>;
+  T_partials P(1.0);
   using T_return = return_type_t<T_y, T_shape, T_inv_scale>;
-  if (size_zero(y, alpha, beta)) {
-    return T_return(1.0);
-  }
-
-  static const char* function = "gamma_cdf";
 
   using boost::math::tools::promote_args;
   using std::exp;
+  using std::pow;
 
-  T_partials P(1.0);
-
+  static const char* function = "gamma_cdf";
   check_positive_finite(function, "Shape parameter", alpha);
   check_positive_finite(function, "Inverse scale parameter", beta);
   check_not_nan(function, "Random variable", y);
@@ -67,17 +63,17 @@ inline auto gamma_cdf(const T_y& y, const T_shape& alpha,
   const size_t N = max_size(y, alpha, beta);
 
   operands_and_partials<T_y, T_shape, T_inv_scale> ops_partials(y, alpha, beta);
+  if (size_zero(y, alpha, beta)) {
+    return ops_partials.build(P);
+  }
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
   for (size_t i = 0; i < stan::length(y); i++) {
     if (value_of(y_vec[i]) == 0) {
-      return ops_partials.build(0.0);
+      return ops_partials.build(T_partials(0.0));
     }
   }
-
-  using std::exp;
-  using std::pow;
 
   VectorBuilder<!is_constant_all<T_shape>::value, T_partials, T_shape>
       gamma_vec(stan::length(alpha));

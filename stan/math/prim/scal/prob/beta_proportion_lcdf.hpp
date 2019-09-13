@@ -43,16 +43,12 @@ template <typename T_y, typename T_loc, typename T_prec>
 inline auto beta_proportion_lcdf(const T_y& y, const T_loc& mu,
                                  const T_prec& kappa) {
   using T_partials = partials_return_t<T_y, T_loc, T_prec>;
-  using T_return = return_type_t<T_y, T_loc, T_prec>;
-
-  if (size_zero(y, mu, kappa)) {
-    return T_return(0.0);
-  }
+  T_partials cdf_log(0.0);
+  using std::exp;
+  using std::log;
+  using std::pow;
 
   static const char* function = "beta_proportion_lcdf";
-
-  T_partials cdf_log(0.0);
-
   check_positive(function, "Location parameter", mu);
   check_less_or_equal(function, "Location parameter", mu, 1.0);
   check_positive_finite(function, "Precision parameter", kappa);
@@ -66,12 +62,10 @@ inline auto beta_proportion_lcdf(const T_y& y, const T_loc& mu,
   const scalar_seq_view<T_loc> mu_vec(mu);
   const scalar_seq_view<T_prec> kappa_vec(kappa);
   const size_t N = max_size(y, mu, kappa);
-
   operands_and_partials<T_y, T_loc, T_prec> ops_partials(y, mu, kappa);
-
-  using std::exp;
-  using std::log;
-  using std::pow;
+  if (size_zero(y, mu, kappa)) {
+    return ops_partials.build(cdf_log);
+  }
 
   VectorBuilder<!is_constant_all<T_loc, T_prec>::value, T_partials, T_loc,
                 T_prec>

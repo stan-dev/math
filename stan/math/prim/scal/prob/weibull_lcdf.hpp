@@ -29,23 +29,21 @@ template <typename T_y, typename T_shape, typename T_scale>
 inline auto weibull_lcdf(const T_y& y, const T_shape& alpha,
                          const T_scale& sigma) {
   using T_partials = partials_return_t<T_y, T_shape, T_scale>;
-  using T_return = return_type_t<T_y, T_shape, T_scale>;
+  T_partials cdf_log(0.0);
 
   static const char* function = "weibull_lcdf";
 
   using std::exp;
   using std::log;
 
-  if (size_zero(y, alpha, sigma)) {
-    return T_return(0.0);
-  }
-
-  T_partials cdf_log(0.0);
   check_nonnegative(function, "Random variable", y);
   check_positive_finite(function, "Shape parameter", alpha);
   check_positive_finite(function, "Scale parameter", sigma);
 
   operands_and_partials<T_y, T_shape, T_scale> ops_partials(y, alpha, sigma);
+  if (size_zero(y, alpha, sigma)) {
+    return ops_partials.build(cdf_log);
+  }
 
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_scale> sigma_vec(sigma);

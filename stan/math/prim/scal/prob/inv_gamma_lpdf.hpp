@@ -34,39 +34,36 @@ namespace math {
 template <bool propto, typename T_y, typename T_shape, typename T_scale>
 inline auto inv_gamma_lpdf(const T_y& y, const T_shape& alpha,
                            const T_scale& beta) {
-  static const char* function = "inv_gamma_lpdf";
   using T_partials = partials_return_t<T_y, T_shape, T_scale>;
+  T_partials logp(0);
   using T_return = return_type_t<T_y, T_shape, T_scale>;
+  using std::log;
 
+  static const char* function = "inv_gamma_lpdf";
   check_not_nan(function, "Random variable", y);
   check_positive_finite(function, "Shape parameter", alpha);
   check_positive_finite(function, "Scale parameter", beta);
   check_consistent_sizes(function, "Random variable", y, "Shape parameter",
                          alpha, "Scale parameter", beta);
-  if (size_zero(y, alpha, beta)) {
-    return T_return(0);
-  }
 
-  if (!include_summand<propto, T_y, T_shape, T_scale>::value) {
-    return T_return(0);
-  }
-
-  T_partials logp(0);
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_shape> alpha_vec(alpha);
   const scalar_seq_view<T_scale> beta_vec(beta);
+  const size_t N = max_size(y, alpha, beta);
+  operands_and_partials<T_y, T_shape, T_scale> ops_partials(y, alpha, beta);
 
   for (size_t n = 0; n < length(y); n++) {
     const T_partials y_dbl = value_of(y_vec[n]);
     if (y_dbl <= 0) {
-      return T_return(LOG_ZERO);
+      return ops_partials.build(T_partials(LOG_ZERO));
     }
   }
 
-  const size_t N = max_size(y, alpha, beta);
-  operands_and_partials<T_y, T_shape, T_scale> ops_partials(y, alpha, beta);
-
-  using std::log;
+  if (!include_summand<propto, T_y, T_shape, T_scale>::value) {
+    return ops_partials.build(logp);
+  } else if (size_zero(y, alpha, beta)) {
+    return ops_partials.build(logp);
+  }
 
   VectorBuilder<include_summand<propto, T_y, T_shape>::value, T_partials, T_y>
       log_y(length(y));

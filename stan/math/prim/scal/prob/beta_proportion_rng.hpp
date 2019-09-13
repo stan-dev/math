@@ -31,8 +31,8 @@ namespace math {
  * sizes
  */
 template <typename T_loc, typename T_prec, class RNG>
-inline typename VectorBuilder<true, double, T_loc, T_prec>::type
-beta_proportion_rng(const T_loc &mu, const T_prec &kappa, RNG &rng) {
+inline auto beta_proportion_rng(const T_loc &mu, const T_prec &kappa,
+                                RNG &rng) {
   static const char *function = "beta_proportion_rng";
 
   check_positive(function, "Location parameter", mu);

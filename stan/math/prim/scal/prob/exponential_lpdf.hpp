@@ -41,17 +41,13 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_inv_scale>
 inline auto exponential_lpdf(const T_y& y, const T_inv_scale& beta) {
-  static const char* function = "exponential_lpdf";
   using T_partials = partials_return_t<T_y, T_inv_scale>;
+  T_partials logp(0.0);
   using T_return = return_type_t<T_y, T_inv_scale>;
-
-  if (size_zero(y, beta)) {
-    return T_return(0.0);
-  }
 
   using std::log;
 
-  T_partials logp(0.0);
+  static const char* function = "exponential_lpdf";
   check_nonnegative(function, "Random variable", y);
   check_positive_finite(function, "Inverse scale parameter", beta);
   check_consistent_sizes(function, "Random variable", y,
@@ -60,6 +56,10 @@ inline auto exponential_lpdf(const T_y& y, const T_inv_scale& beta) {
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_inv_scale> beta_vec(beta);
   const size_t N = max_size(y, beta);
+  operands_and_partials<T_y, T_inv_scale> ops_partials(y, beta);
+  if (size_zero(y, beta)) {
+    return ops_partials.build(logp);
+  }
 
   VectorBuilder<include_summand<propto, T_inv_scale>::value, T_partials,
                 T_inv_scale>
@@ -69,8 +69,6 @@ inline auto exponential_lpdf(const T_y& y, const T_inv_scale& beta) {
       log_beta[i] = log(value_of(beta_vec[i]));
     }
   }
-
-  operands_and_partials<T_y, T_inv_scale> ops_partials(y, beta);
 
   for (size_t n = 0; n < N; n++) {
     const T_partials beta_dbl = value_of(beta_vec[n]);

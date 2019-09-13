@@ -41,11 +41,12 @@ template <bool propto, typename T_y, typename T_scale_succ,
           typename T_scale_fail>
 inline auto beta_lpdf(const T_y& y, const T_scale_succ& alpha,
                       const T_scale_fail& beta) {
-  static const char* function = "beta_lpdf";
-
   using T_partials = partials_return_t<T_y, T_scale_succ, T_scale_fail>;
+  T_partials logp(0);
   using T_return = return_type_t<T_y, T_scale_succ, T_scale_fail>;
   using std::log;
+
+  static const char* function = "beta_lpdf";
   check_positive_finite(function, "First shape parameter", alpha);
   check_positive_finite(function, "Second shape parameter", beta);
   check_not_nan(function, "Random variable", y);
@@ -55,28 +56,23 @@ inline auto beta_lpdf(const T_y& y, const T_scale_succ& alpha,
   check_nonnegative(function, "Random variable", y);
   check_less_or_equal(function, "Random variable", y, 1);
 
-  if (size_zero(y, alpha, beta)) {
-    return T_return(0);
-  }
-  if (!include_summand<propto, T_y, T_scale_succ, T_scale_fail>::value) {
-    return T_return(0);
-  }
-
-  T_partials logp(0);
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_scale_succ> alpha_vec(alpha);
   const scalar_seq_view<T_scale_fail> beta_vec(beta);
   const size_t N = max_size(y, alpha, beta);
-
+  operands_and_partials<T_y, T_scale_succ, T_scale_fail> ops_partials(y, alpha,
+                                                                      beta);
+  if (!include_summand<propto, T_y, T_scale_succ, T_scale_fail>::value) {
+    return ops_partials.build(logp);
+  } else if (size_zero(y, alpha, beta)) {
+    return ops_partials.build(logp);
+  }
   for (size_t n = 0; n < N; n++) {
     const T_partials y_dbl = value_of(y_vec[n]);
     if (y_dbl < 0 || y_dbl > 1) {
-      return T_return(LOG_ZERO);
+      return ops_partials.build(T_partials(LOG_ZERO));
     }
   }
-
-  operands_and_partials<T_y, T_scale_succ, T_scale_fail> ops_partials(y, alpha,
-                                                                      beta);
 
   VectorBuilder<include_summand<propto, T_y, T_scale_succ>::value, T_partials,
                 T_y>

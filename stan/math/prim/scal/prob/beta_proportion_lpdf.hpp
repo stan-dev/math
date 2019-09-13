@@ -42,11 +42,12 @@ namespace math {
 template <bool propto, typename T_y, typename T_loc, typename T_prec>
 inline auto beta_proportion_lpdf(const T_y& y, const T_loc& mu,
                                  const T_prec& kappa) {
-  static const char* function = "beta_proportion_lpdf";
-
   using T_partials = partials_return_t<T_y, T_loc, T_prec>;
+  T_partials logp(0);
   using T_return = return_type_t<T_y, T_loc, T_prec>;
   using std::log;
+
+  static const char* function = "beta_proportion_lpdf";
   check_positive(function, "Location parameter", mu);
   check_less_or_equal(function, "Location parameter", mu, 1.0);
   check_positive_finite(function, "Precision parameter", kappa);
@@ -55,29 +56,25 @@ inline auto beta_proportion_lpdf(const T_y& y, const T_loc& mu,
   check_less_or_equal(function, "Random variable", y, 1.0);
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Precision parameter", kappa);
-  if (size_zero(y, mu, kappa)) {
-    return T_return(0);
-  }
-  if (!include_summand<propto, T_y, T_loc, T_prec>::value) {
-    return T_return(0);
-  }
-  T_partials logp(0);
 
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_loc> mu_vec(mu);
   const scalar_seq_view<T_prec> kappa_vec(kappa);
   const size_t N = max_size(y, mu, kappa);
   const size_t N_mukappa = max_size(mu, kappa);
+  operands_and_partials<T_y, T_loc, T_prec> ops_partials(y, mu, kappa);
+  if (!include_summand<propto, T_y, T_loc, T_prec>::value) {
+    return ops_partials.build(logp);
+  } else if (size_zero(y, mu, kappa)) {
+    return ops_partials.build(logp);
+  }
 
   for (size_t n = 0; n < N; n++) {
     const T_partials y_dbl = value_of(y_vec[n]);
     if (y_dbl < 0 || y_dbl > 1) {
-      return T_return(LOG_ZERO);
+      return ops_partials.build(T_partials(LOG_ZERO));
     }
   }
-
-  operands_and_partials<T_y, T_loc, T_prec> ops_partials(y, mu, kappa);
-
   VectorBuilder<include_summand<propto, T_y, T_loc, T_prec>::value, T_partials,
                 T_y>
       log_y(length(y));

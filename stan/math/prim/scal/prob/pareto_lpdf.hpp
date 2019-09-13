@@ -22,12 +22,7 @@ inline auto pareto_lpdf(const T_y& y, const T_scale& y_min,
   using T_return = return_type_t<T_y, T_scale, T_shape>;
   T_partials logp(0);
   using std::log;
-  if (size_zero(y, y_min, alpha)) {
-    return T_return(0.0);
-  }
-  if (!include_summand<propto, T_y, T_scale, T_shape>::value) {
-    return T_return(0.0);
-  }
+
   check_not_nan(function, "Random variable", y);
   check_positive_finite(function, "Scale parameter", y_min);
   check_positive_finite(function, "Shape parameter", alpha);
@@ -38,14 +33,19 @@ inline auto pareto_lpdf(const T_y& y, const T_scale& y_min,
   const scalar_seq_view<T_scale> y_min_vec(y_min);
   const scalar_seq_view<T_shape> alpha_vec(alpha);
   const size_t N = max_size(y, y_min, alpha);
+  operands_and_partials<T_y, T_scale, T_shape> ops_partials(y, y_min, alpha);
+
+  if (!include_summand<propto, T_y, T_scale, T_shape>::value) {
+    return ops_partials.build(logp);
+  } else if (size_zero(y, y_min, alpha)) {
+    return ops_partials.build(logp);
+  }
 
   for (size_t n = 0; n < N; n++) {
     if (y_vec[n] < y_min_vec[n]) {
-      return T_return(LOG_ZERO);
+      return ops_partials.build(T_partials(LOG_ZERO));
     }
   }
-
-  operands_and_partials<T_y, T_scale, T_shape> ops_partials(y, y_min, alpha);
 
   VectorBuilder<include_summand<propto, T_y, T_shape>::value, T_partials, T_y>
       log_y(length(y));

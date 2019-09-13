@@ -23,13 +23,11 @@ namespace math {
  * @throw std::domain_error if sigma is nonpositive
  */
 template <typename T_scale, class RNG>
-inline typename VectorBuilder<true, double, T_scale>::type rayleigh_rng(
-    const T_scale& sigma, RNG& rng) {
-  using boost::random::uniform_real_distribution;
+inline auto rayleigh_rng(const T_scale& sigma, RNG& rng) {
   using boost::variate_generator;
+  using boost::random::uniform_real_distribution;
 
   static const char* function = "rayleigh_rng";
-
   check_positive_finite(function, "Scale parameter", sigma);
 
   const scalar_seq_view<T_scale> sigma_vec(sigma);

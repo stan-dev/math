@@ -40,15 +40,8 @@ template <typename T_y, typename T_scale_succ, typename T_scale_fail>
 inline auto beta_lccdf(const T_y& y, const T_scale_succ& alpha,
                        const T_scale_fail& beta) {
   using T_partials = partials_return_t<T_y, T_scale_succ, T_scale_fail>;
-  using T_return = return_type_t<T_y, T_scale_succ, T_scale_fail>;
-
-  if (size_zero(y, alpha, beta)) {
-    return T_return(0.0);
-  }
-
-  static const char* function = "beta_lccdf";
-
   T_partials ccdf_log(0.0);
+  static const char* function = "beta_lccdf";
 
   check_positive_finite(function, "First shape parameter", alpha);
   check_positive_finite(function, "Second shape parameter", beta);
@@ -66,6 +59,9 @@ inline auto beta_lccdf(const T_y& y, const T_scale_succ& alpha,
 
   operands_and_partials<T_y, T_scale_succ, T_scale_fail> ops_partials(y, alpha,
                                                                       beta);
+  if (size_zero(y, alpha, beta)) {
+    return ops_partials.build(ccdf_log);
+  }
 
   using std::exp;
   using std::log;

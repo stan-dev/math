@@ -17,18 +17,14 @@ namespace math {
 
 template <typename T_y, typename T_loc, typename T_scale>
 inline auto normal_lcdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
-  static const char* function = "normal_lcdf";
   using T_partials = partials_return_t<T_y, T_loc, T_scale>;
+  T_partials cdf_log(0.0);
   using T_return = return_type_t<T_y, T_loc, T_scale>;
 
   using std::exp;
   using std::log;
 
-  T_partials cdf_log(0.0);
-  if (size_zero(y, mu, sigma)) {
-    return T_return(0.0);
-  }
-
+  static const char* function = "normal_lcdf";
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
   check_not_nan(function, "Scale parameter", sigma);
@@ -36,14 +32,16 @@ inline auto normal_lcdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma);
 
-  operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
-
+  const double SQRT_TWO_OVER_PI = std::sqrt(2.0 / pi());
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_loc> mu_vec(mu);
   const scalar_seq_view<T_scale> sigma_vec(sigma);
   const size_t N = max_size(y, mu, sigma);
+  operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
+  if (size_zero(y, mu, sigma)) {
+    return ops_partials.build(cdf_log);
+  }
 
-  const double SQRT_TWO_OVER_PI = std::sqrt(2.0 / pi());
   for (size_t n = 0; n < N; n++) {
     const T_partials y_dbl = value_of(y_vec[n]);
     const T_partials mu_dbl = value_of(mu_vec[n]);

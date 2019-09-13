@@ -42,15 +42,9 @@ template <typename T_y, typename T_loc, typename T_prec>
 inline auto beta_proportion_lccdf(const T_y& y, const T_loc& mu,
                                   const T_prec& kappa) {
   using T_partials = partials_return_t<T_y, T_loc, T_prec>;
-  using T_return = return_type_t<T_y, T_loc, T_prec>;
+  T_partials ccdf_log(0.0);
 
   static const char* function = "beta_proportion_lccdf";
-
-  if (size_zero(y, mu, kappa)) {
-    return T_return(0.0);
-  }
-
-  T_partials ccdf_log(0.0);
 
   check_positive(function, "Location parameter", mu);
   check_less_or_equal(function, "Location parameter", mu, 1.0);
@@ -67,6 +61,9 @@ inline auto beta_proportion_lccdf(const T_y& y, const T_loc& mu,
   const size_t N = max_size(y, mu, kappa);
 
   operands_and_partials<T_y, T_loc, T_prec> ops_partials(y, mu, kappa);
+  if (size_zero(y, mu, kappa)) {
+    return ops_partials.build(ccdf_log);
+  }
 
   using std::exp;
   using std::log;

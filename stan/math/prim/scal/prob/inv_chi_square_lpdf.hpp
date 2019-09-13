@@ -37,31 +37,30 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_dof>
 inline auto inv_chi_square_lpdf(const T_y& y, const T_dof& nu) {
-  static const char* function = "inv_chi_square_lpdf";
   using T_partials = partials_return_t<T_y, T_dof>;
+  T_partials logp(0);
   using T_return = return_type_t<T_y, T_dof>;
+  using std::log;
 
+  static const char* function = "inv_chi_square_lpdf";
   check_positive_finite(function, "Degrees of freedom parameter", nu);
   check_not_nan(function, "Random variable", y);
   check_consistent_sizes(function, "Random variable", y,
                          "Degrees of freedom parameter", nu);
-  if (size_zero(y, nu)) {
-    return T_return(0);
-  }
-
-  T_partials logp(0);
 
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_dof> nu_vec(nu);
   const size_t N = max_size(y, nu);
+  operands_and_partials<T_y, T_dof> ops_partials(y, nu);
 
+  if (size_zero(y, nu)) {
+    return ops_partials.build(logp);
+  }
   for (size_t n = 0; n < length(y); n++) {
     if (value_of(y_vec[n]) <= 0) {
-      return T_return(LOG_ZERO);
+      return ops_partials.build(T_partials(LOG_ZERO));
     }
   }
-
-  using std::log;
 
   VectorBuilder<include_summand<propto, T_y, T_dof>::value, T_partials, T_y>
       log_y(length(y));
@@ -93,7 +92,6 @@ inline auto inv_chi_square_lpdf(const T_y& y, const T_dof& nu) {
     }
   }
 
-  operands_and_partials<T_y, T_dof> ops_partials(y, nu);
   for (size_t n = 0; n < N; n++) {
     const T_partials nu_dbl = value_of(nu_vec[n]);
     const T_partials half_nu = 0.5 * nu_dbl;

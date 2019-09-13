@@ -32,16 +32,11 @@ namespace math {
 template <typename T_y, typename T_loc, typename T_scale>
 inline auto cauchy_cdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
   using T_partials = partials_return_t<T_y, T_loc, T_scale>;
+  T_partials P(1.0);
   using T_return = return_type_t<T_y, T_loc, T_scale>;
-
-  if (size_zero(y, mu, sigma)) {
-    return T_return(1.0);
-  }
+  using std::atan;
 
   static const char* function = "cauchy_cdf";
-
-  T_partials P(1.0);
-
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
   check_positive_finite(function, "Scale parameter", sigma);
@@ -52,18 +47,18 @@ inline auto cauchy_cdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
   const scalar_seq_view<T_loc> mu_vec(mu);
   const scalar_seq_view<T_scale> sigma_vec(sigma);
   const size_t N = max_size(y, mu, sigma);
-
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
+  if (size_zero(y, mu, sigma)) {
+    return ops_partials.build(P);
+  }
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
   for (size_t i = 0; i < stan::length(y); i++) {
     if (value_of(y_vec[i]) == -std::numeric_limits<double>::infinity()) {
-      return ops_partials.build(0.0);
+      return ops_partials.build(T_partials(0.0));
     }
   }
-
-  using std::atan;
 
   for (size_t n = 0; n < N; n++) {
     // Explicit results for extreme values

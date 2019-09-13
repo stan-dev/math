@@ -23,29 +23,26 @@ template <typename T_y, typename T_shape, typename T_scale>
 inline auto frechet_lccdf(const T_y& y, const T_shape& alpha,
                           const T_scale& sigma) {
   using T_partials = partials_return_t<T_y, T_shape, T_scale>;
+  T_partials ccdf_log(0.0);
   using T_return = return_type_t<T_y, T_shape, T_scale>;
 
-  static const char* function = "frechet_lccdf";
-
   using boost::math::tools::promote_args;
+  using std::exp;
+  using std::log;
 
-  if (size_zero(y, alpha, sigma)) {
-    return T_return(0.0);
-  }
-
-  T_partials ccdf_log(0.0);
+  static const char* function = "frechet_lccdf";
   check_positive(function, "Random variable", y);
   check_positive_finite(function, "Shape parameter", alpha);
   check_positive_finite(function, "Scale parameter", sigma);
 
-  operands_and_partials<T_y, T_shape, T_scale> ops_partials(y, alpha, sigma);
-
-  using std::exp;
-  using std::log;
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_scale> sigma_vec(sigma);
   const scalar_seq_view<T_shape> alpha_vec(alpha);
   const size_t N = max_size(y, sigma, alpha);
+  operands_and_partials<T_y, T_shape, T_scale> ops_partials(y, alpha, sigma);
+  if (size_zero(y, alpha, sigma)) {
+    return ops_partials.build(ccdf_log);
+  }
 
   for (size_t n = 0; n < N; n++) {
     const T_partials y_dbl = value_of(y_vec[n]);

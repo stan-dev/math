@@ -18,15 +18,10 @@ template <typename T_y, typename T_low, typename T_high>
 inline auto uniform_lcdf(const T_y& y, const T_low& alpha, const T_high& beta) {
   static const char* function = "uniform_lcdf";
   using T_partials = partials_return_t<T_y, T_low, T_high>;
-  using T_return = return_type_t<T_y, T_low, T_high>;
+  T_partials cdf_log(0.0);
 
   using std::log;
 
-  if (size_zero(y, alpha, beta)) {
-    return T_return(0.0);
-  }
-
-  T_partials cdf_log(0.0);
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Lower bound parameter", alpha);
   check_finite(function, "Upper bound parameter", beta);
@@ -41,14 +36,16 @@ inline auto uniform_lcdf(const T_y& y, const T_low& alpha, const T_high& beta) {
   const size_t N = max_size(y, alpha, beta);
 
   operands_and_partials<T_y, T_low, T_high> ops_partials(y, alpha, beta);
-
+  if (size_zero(y, alpha, beta)) {
+    return ops_partials.build(cdf_log);
+  }
   for (size_t n = 0; n < N; n++) {
     const T_partials y_dbl = value_of(y_vec[n]);
     if (y_dbl < value_of(alpha_vec[n]) || y_dbl > value_of(beta_vec[n])) {
       return negative_infinity();
     }
     if (y_dbl == value_of(beta_vec[n])) {
-      return ops_partials.build(0.0);
+      return ops_partials.build(cdf_log);
     }
   }
 

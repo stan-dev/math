@@ -35,12 +35,8 @@ template <typename T_y, typename T_scale_succ, typename T_scale_fail>
 inline auto beta_cdf(const T_y& y, const T_scale_succ& alpha,
                      const T_scale_fail& beta) {
   using T_partials = partials_return_t<T_y, T_scale_succ, T_scale_fail>;
-  using T_return = return_type_t<T_y, T_scale_succ, T_scale_fail>;
   T_partials P(1.0);
-
-  if (size_zero(y, alpha, beta)) {
-    return T_return(1.0);
-  }
+  using T_return = return_type_t<T_y, T_scale_succ, T_scale_fail>;
 
   static const char* function = "beta_cdf";
 
@@ -60,12 +56,15 @@ inline auto beta_cdf(const T_y& y, const T_scale_succ& alpha,
 
   operands_and_partials<T_y, T_scale_succ, T_scale_fail> ops_partials(y, alpha,
                                                                       beta);
+  if (size_zero(y, alpha, beta)) {
+    return ops_partials.build(P);
+  }
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
   for (size_t i = 0; i < stan::length(y); i++) {
     if (value_of(y_vec[i]) <= 0) {
-      return ops_partials.build(0.0);
+      return ops_partials.build(T_partials(0.0));
     }
   }
 

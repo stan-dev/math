@@ -36,9 +36,8 @@ namespace math {
  * sizes
  */
 template <typename T_loc, typename T_scale, typename T_inv_scale, class RNG>
-inline typename VectorBuilder<true, double, T_loc, T_scale, T_inv_scale>::type
-exp_mod_normal_rng(const T_loc& mu, const T_scale& sigma,
-                   const T_inv_scale& lambda, RNG& rng) {
+inline auto exp_mod_normal_rng(const T_loc& mu, const T_scale& sigma,
+                               const T_inv_scale& lambda, RNG& rng) {
   static const char* function = "exp_mod_normal_rng";
 
   check_finite(function, "Location parameter", mu);

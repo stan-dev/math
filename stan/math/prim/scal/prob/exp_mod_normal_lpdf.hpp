@@ -20,16 +20,14 @@ template <bool propto, typename T_y, typename T_loc, typename T_scale,
 inline auto exp_mod_normal_lpdf(const T_y& y, const T_loc& mu,
                                 const T_scale& sigma,
                                 const T_inv_scale& lambda) {
-  static const char* function = "exp_mod_normal_lpdf";
   using T_partials = partials_return_t<T_y, T_loc, T_scale, T_inv_scale>;
-  using T_return = return_type_t<T_y, T_loc, T_scale, T_inv_scale>;
-
-  if (size_zero(y, mu, sigma, lambda)) {
-    return T_return(0.0);
-  }
-
   T_partials logp(0.0);
+  using T_return = return_type_t<T_y, T_loc, T_scale, T_inv_scale>;
+  using std::exp;
+  using std::log;
+  using std::sqrt;
 
+  static const char* function = "exp_mod_normal_lpdf";
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
   check_positive_finite(function, "Inv_scale parameter", lambda);
@@ -38,22 +36,18 @@ inline auto exp_mod_normal_lpdf(const T_y& y, const T_loc& mu,
                          mu, "Scale parameter", sigma, "Inv_scale paramter",
                          lambda);
 
-  if (!include_summand<propto, T_y, T_loc, T_scale, T_inv_scale>::value) {
-    return T_return(0.0);
-  }
-
-  using std::exp;
-  using std::log;
-  using std::sqrt;
-
-  operands_and_partials<T_y, T_loc, T_scale, T_inv_scale> ops_partials(
-      y, mu, sigma, lambda);
-
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_loc> mu_vec(mu);
   const scalar_seq_view<T_scale> sigma_vec(sigma);
   const scalar_seq_view<T_inv_scale> lambda_vec(lambda);
   const size_t N = max_size(y, mu, sigma, lambda);
+  operands_and_partials<T_y, T_loc, T_scale, T_inv_scale> ops_partials(
+      y, mu, sigma, lambda);
+  if (!include_summand<propto, T_y, T_loc, T_scale, T_inv_scale>::value) {
+    return ops_partials.build(logp);
+  } else if (size_zero(y, mu, sigma, lambda)) {
+    return ops_partials.build(logp);
+  }
 
   for (size_t n = 0; n < N; n++) {
     const T_partials y_dbl = value_of(y_vec[n]);

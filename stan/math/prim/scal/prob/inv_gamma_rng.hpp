@@ -29,10 +29,9 @@ namespace math {
  * sizes
  */
 template <typename T_shape, typename T_scale, class RNG>
-inline typename VectorBuilder<true, double, T_shape, T_scale>::type
-inv_gamma_rng(const T_shape& alpha, const T_scale& beta, RNG& rng) {
-  using boost::random::gamma_distribution;
+inline auto inv_gamma_rng(const T_shape& alpha, const T_scale& beta, RNG& rng) {
   using boost::variate_generator;
+  using boost::random::gamma_distribution;
 
   static const char* function = "inv_gamma_rng";
 

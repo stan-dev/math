@@ -20,29 +20,27 @@ auto hypergeometric_lpmf(const T_n& n, const T_N& N, const T_a& a,
   static const char* function = "hypergeometric_lpmf";
   using T_partials = partials_return_t<T_n, T_N, T_a, T_b>;
   using T_return = return_type_t<T_n, T_N, T_a, T_b>;
-  double logp(0.0);
+  T_partials logp(0.0);
 
-  if (size_zero(n, N, a, b) || !include_summand<propto>::value) {
-    return T_return(0.0);
-  }
-
+  check_bounded(function, "Successes variable", n, 0, a);
+  check_greater(function, "Draws parameter", N, n);
+  check_consistent_sizes(function, "Successes variable", n, "Draws parameter",
+                         N, "Successes in population parameter", a,
+                         "Failures in population parameter", b);
   const scalar_seq_view<T_n> n_vec(n);
   const scalar_seq_view<T_N> N_vec(N);
   const scalar_seq_view<T_a> a_vec(a);
   const scalar_seq_view<T_b> b_vec(b);
-  size_t size = max_size(n, N, a, b);
-
-  check_bounded(function, "Successes variable", n, 0, a);
-  check_greater(function, "Draws parameter", N, n);
+  const size_t size = max_size(n, N, a, b);
+  if (!include_summand<propto>::value || size_zero(n, N, a, b)) {
+    return T_return(logp);
+  }
   for (size_t i = 0; i < size; i++) {
     check_bounded(function, "Draws parameter minus successes variable",
                   N_vec[i] - n_vec[i], 0, b_vec[i]);
     check_bounded(function, "Draws parameter", N_vec[i], 0,
                   a_vec[i] + b_vec[i]);
   }
-  check_consistent_sizes(function, "Successes variable", n, "Draws parameter",
-                         N, "Successes in population parameter", a,
-                         "Failures in population parameter", b);
 
   for (size_t i = 0; i < size; i++) {
     logp += math::binomial_coefficient_log(a_vec[i], n_vec[i])

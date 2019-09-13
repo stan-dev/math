@@ -26,10 +26,9 @@ namespace math {
  * @throw std::domain_error if lambda is nonpositive
  */
 template <typename T_rate, class RNG>
-inline typename VectorBuilder<true, int, T_rate>::type poisson_rng(
-    const T_rate& lambda, RNG& rng) {
-  using boost::random::poisson_distribution;
+inline auto poisson_rng(const T_rate& lambda, RNG& rng) {
   using boost::variate_generator;
+  using boost::random::poisson_distribution;
 
   static const char* function = "poisson_rng";
 

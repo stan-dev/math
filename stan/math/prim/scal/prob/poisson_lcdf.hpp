@@ -20,14 +20,10 @@ template <typename T_n, typename T_rate>
 inline auto poisson_lcdf(const T_n& n, const T_rate& lambda) {
   static const char* function = "poisson_lcdf";
   using T_partials = partials_return_t<T_n, T_rate>;
-  using T_return = return_type_t<T_n, T_rate>;
-
-  if (size_zero(n, lambda)) {
-    return T_return(0.0);
-  }
-
   T_partials P(0.0);
 
+  using std::exp;
+  using std::log;
   check_not_nan(function, "Rate parameter", lambda);
   check_nonnegative(function, "Rate parameter", lambda);
   check_consistent_sizes(function, "Random variable", n, "Rate parameter",
@@ -35,12 +31,11 @@ inline auto poisson_lcdf(const T_n& n, const T_rate& lambda) {
 
   const scalar_seq_view<T_n> n_vec(n);
   const scalar_seq_view<T_rate> lambda_vec(lambda);
-  size_t size = max_size(n, lambda);
-
-  using std::exp;
-  using std::log;
-
   operands_and_partials<T_rate> ops_partials(lambda);
+  size_t size = max_size(n, lambda);
+  if (size_zero(n, lambda)) {
+    return ops_partials.build(P);
+  }
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as neg infinity

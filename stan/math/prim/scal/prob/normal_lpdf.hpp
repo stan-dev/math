@@ -37,63 +37,48 @@ template <bool propto, typename T_y, typename T_loc, typename T_scale>
 inline auto normal_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
   static const char* function = "normal_lpdf";
   using T_partials = partials_return_t<T_y, T_loc, T_scale>;
-  using T_return = return_type_t<T_y, T_loc, T_scale>;
-
-  using std::log;
-
-  if (size_zero(y, mu, sigma)) {
-    return T_return(0.0);
-  }
-
   T_partials logp(0.0);
+  using std::log;
 
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
   check_positive(function, "Scale parameter", sigma);
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma);
-  if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
-    return T_return(0.0);
-  }
 
-  operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
-
+  static double NEGATIVE_HALF = -0.5;
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_loc> mu_vec(mu);
   const scalar_seq_view<T_scale> sigma_vec(sigma);
   const size_t N = max_size(y, mu, sigma);
-
-  VectorBuilder<true, T_partials, T_scale> inv_sigma(length(sigma));
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials, T_scale>
-      log_sigma(length(sigma));
-  for (size_t i = 0; i < length(sigma); i++) {
-    inv_sigma[i] = 1.0 / value_of(sigma_vec[i]);
-    if (include_summand<propto, T_scale>::value) {
-      log_sigma[i] = log(value_of(sigma_vec[i]));
-    }
+  const size_t size_sigma = length(sigma);
+  operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
+  if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
+    return ops_partials.build(logp);
+  } else if (size_zero(y, mu, sigma)) {
+    return ops_partials.build(logp);
   }
 
   for (size_t n = 0; n < N; n++) {
+    const auto inv_sigma = 1.0 / value_of(sigma_vec[n]);
     const T_partials y_dbl = value_of(y_vec[n]);
     const T_partials mu_dbl = value_of(mu_vec[n]);
 
-    const T_partials y_minus_mu_over_sigma = (y_dbl - mu_dbl) * inv_sigma[n];
+    const T_partials y_minus_mu_over_sigma = (y_dbl - mu_dbl) * inv_sigma;
     const T_partials y_minus_mu_over_sigma_squared
         = y_minus_mu_over_sigma * y_minus_mu_over_sigma;
-
-    static double NEGATIVE_HALF = -0.5;
 
     if (include_summand<propto>::value) {
       logp += NEG_LOG_SQRT_TWO_PI;
     }
     if (include_summand<propto, T_scale>::value) {
-      logp -= log_sigma[n];
+      logp -= log(value_of(sigma_vec[n]));
     }
     if (include_summand<propto, T_y, T_loc, T_scale>::value) {
       logp += NEGATIVE_HALF * y_minus_mu_over_sigma_squared;
     }
 
-    T_partials scaled_diff = inv_sigma[n] * y_minus_mu_over_sigma;
+    const T_partials scaled_diff = inv_sigma * y_minus_mu_over_sigma;
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] -= scaled_diff;
     }
@@ -102,7 +87,7 @@ inline auto normal_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
     }
     if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n]
-          += -inv_sigma[n] + inv_sigma[n] * y_minus_mu_over_sigma_squared;
+          += -inv_sigma + inv_sigma * y_minus_mu_over_sigma_squared;
     }
   }
   return ops_partials.build(logp);

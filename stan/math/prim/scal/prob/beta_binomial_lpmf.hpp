@@ -41,12 +41,6 @@ inline auto beta_binomial_lpmf(const T_n& n, const T_N& N, const T_size1& alpha,
                                const T_size2& beta) {
   static const char* function = "beta_binomial_lpmf";
   using T_partials = partials_return_t<T_size1, T_size2>;
-  using T_return = return_type_t<T_size1, T_size2>;
-
-  if (size_zero(n, N, alpha, beta)) {
-    return T_return(0.0);
-  }
-
   T_partials logp(0.0);
   check_nonnegative(function, "Population size parameter", N);
   check_positive_finite(function, "First prior sample size parameter", alpha);
@@ -56,21 +50,21 @@ inline auto beta_binomial_lpmf(const T_n& n, const T_N& N, const T_size1& alpha,
                          "First prior sample size parameter", alpha,
                          "Second prior sample size parameter", beta);
 
-  if (!include_summand<propto, T_size1, T_size2>::value) {
-    return T_return(0.0);
-  }
-
-  operands_and_partials<T_size1, T_size2> ops_partials(alpha, beta);
-
   const scalar_seq_view<T_n> n_vec(n);
   const scalar_seq_view<T_N> N_vec(N);
   const scalar_seq_view<T_size1> alpha_vec(alpha);
   const scalar_seq_view<T_size2> beta_vec(beta);
   const auto size = max_size(n, N, alpha, beta);
+  operands_and_partials<T_size1, T_size2> ops_partials(alpha, beta);
+  if (!include_summand<propto, T_size1, T_size2>::value) {
+    return ops_partials.build(logp);
+  } else if (size_zero(n, N, alpha, beta)) {
+    return ops_partials.build(T_partials(0.0));
+  }
 
   for (size_t i = 0; i < size; i++) {
     if (n_vec[i] < 0 || n_vec[i] > N_vec[i]) {
-      return ops_partials.build(LOG_ZERO);
+      return ops_partials.build(T_partials(LOG_ZERO));
     }
   }
 

@@ -26,15 +26,10 @@ namespace math {
  */
 template <typename T_n, typename T_prob>
 inline auto bernoulli_cdf(const T_n& n, const T_prob& theta) {
-  static const char* function = "bernoulli_cdf";
   using T_partials = partials_return_t<T_n, T_prob>;
-  using T_return = return_type_t<T_n, T_prob>;
   T_partials P(1.0);
 
-  if (size_zero(n, theta)) {
-    return T_return(1.0);
-  }
-
+  static const char* function = "bernoulli_cdf";
   check_finite(function, "Probability parameter", theta);
   check_bounded(function, "Probability parameter", theta, 0.0, 1.0);
   check_consistent_sizes(function, "Random variable", n,
@@ -42,34 +37,30 @@ inline auto bernoulli_cdf(const T_n& n, const T_prob& theta) {
 
   const scalar_seq_view<T_n> n_vec(n);
   const scalar_seq_view<T_prob> theta_vec(theta);
-  size_t size = max_size(n, theta);
-
+  const size_t size = max_size(n, theta);
   operands_and_partials<T_prob> ops_partials(theta);
-
-  // Explicit return for extreme values
-  // The gradients are technically ill-defined, but treated as zero
-  for (size_t i = 0; i < stan::length(n); i++) {
-    if (value_of(n_vec[i]) < 0) {
-      return ops_partials.build(0.0);
-    }
+  if (size_zero(n, theta)) {
+    return ops_partials.build(P);
   }
 
   for (size_t i = 0; i < size; i++) {
+    const auto n_val = value_of(n_vec[i]);
+    // Explicit return for extreme values
+    // The gradients are technically ill-defined, but treated as zero
+    if (n_val < 0) {
+      return ops_partials.build(T_partials(1.0));
+    }
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
-    if (value_of(n_vec[i]) >= 1) {
+    if (n_val >= 1) {
       continue;
     }
-
     const T_partials Pi = 1 - value_of(theta_vec[i]);
-
     P *= Pi;
-
     if (!is_constant_all<T_prob>::value) {
       ops_partials.edge1_.partials_[i] += -1 / Pi;
     }
   }
-
   if (!is_constant_all<T_prob>::value) {
     for (size_t i = 0; i < stan::length(theta); ++i) {
       ops_partials.edge1_.partials_[i] *= P;

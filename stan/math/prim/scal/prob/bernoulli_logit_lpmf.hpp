@@ -29,29 +29,24 @@ template <bool propto, typename T_n, typename T_prob>
 inline auto bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
   static const char* function = "bernoulli_logit_lpmf";
   using T_partials = partials_return_t<T_n, T_prob>;
-  using T_return = return_type_t<T_n, T_prob>;
+  T_partials logp(0.0);
 
   using std::exp;
-
-  if (size_zero(n, theta)) {
-    return T_return(0.0);
-  }
-
-  T_partials logp(0.0);
 
   check_bounded(function, "n", n, 0, 1);
   check_not_nan(function, "Logit transformed probability parameter", theta);
   check_consistent_sizes(function, "Random variable", n,
                          "Probability parameter", theta);
 
-  if (!include_summand<propto, T_prob>::value) {
-    return T_return(0.0);
-  }
-
   const scalar_seq_view<T_n> n_vec(n);
   const scalar_seq_view<T_prob> theta_vec(theta);
   const size_t N = max_size(n, theta);
   operands_and_partials<T_prob> ops_partials(theta);
+  if (!include_summand<propto, T_prob>::value) {
+    return ops_partials.build(logp);
+  } else if (size_zero(n, theta)) {
+    return ops_partials.build(logp);
+  }
 
   for (size_t n = 0; n < N; n++) {
     const T_partials theta_dbl = value_of(theta_vec[n]);

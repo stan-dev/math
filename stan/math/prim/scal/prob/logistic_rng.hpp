@@ -30,10 +30,9 @@ namespace math {
  * sizes
  */
 template <typename T_loc, typename T_scale, class RNG>
-inline typename VectorBuilder<true, double, T_loc, T_scale>::type logistic_rng(
-    const T_loc& mu, const T_scale& sigma, RNG& rng) {
-  using boost::random::exponential_distribution;
+inline auto logistic_rng(const T_loc& mu, const T_scale& sigma, RNG& rng) {
   using boost::variate_generator;
+  using boost::random::exponential_distribution;
   static const char* function = "logistic_rng";
 
   check_finite(function, "Location parameter", mu);

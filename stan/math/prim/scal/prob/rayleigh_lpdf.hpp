@@ -17,15 +17,9 @@ template <bool propto, typename T_y, typename T_scale>
 inline auto rayleigh_lpdf(const T_y& y, const T_scale& sigma) {
   static const char* function = "rayleigh_lpdf";
   using T_partials = partials_return_t<T_y, T_scale>;
-  using T_return = return_type_t<T_y, T_scale>;
+  T_partials logp(0.0);
 
   using std::log;
-
-  if (size_zero(y, sigma)) {
-    return T_return(0.0);
-  }
-
-  T_partials logp(0.0);
 
   check_not_nan(function, "Random variable", y);
   check_positive(function, "Scale parameter", sigma);
@@ -33,15 +27,15 @@ inline auto rayleigh_lpdf(const T_y& y, const T_scale& sigma) {
   check_consistent_sizes(function, "Random variable", y, "Scale parameter",
                          sigma);
 
-  if (!include_summand<propto, T_y, T_scale>::value) {
-    return T_return(0.0);
-  }
-
-  operands_and_partials<T_y, T_scale> ops_partials(y, sigma);
-
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_scale> sigma_vec(sigma);
   const size_t N = max_size(y, sigma);
+  operands_and_partials<T_y, T_scale> ops_partials(y, sigma);
+  if (!include_summand<propto, T_y, T_scale>::value) {
+    return ops_partials.build(logp);
+  } else if (size_zero(y, sigma)) {
+    return ops_partials.build(logp);
+  }
 
   VectorBuilder<true, T_partials, T_scale> inv_sigma(length(sigma));
   VectorBuilder<include_summand<propto, T_scale>::value, T_partials, T_scale>

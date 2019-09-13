@@ -49,16 +49,12 @@ template <bool propto, typename T_y, typename T_dof, typename T_loc,
           typename T_scale>
 inline auto student_t_lpdf(const T_y& y, const T_dof& nu, const T_loc& mu,
                            const T_scale& sigma) {
-  static const char* function = "student_t_lpdf";
   using T_partials = partials_return_t<T_y, T_dof, T_loc, T_scale>;
-  using T_return = return_type_t<T_y, T_dof, T_loc, T_scale>;
-
-  if (size_zero(y, nu, mu, sigma)) {
-    return T_return(0.0);
-  }
-
   T_partials logp(0.0);
+  using T_return = return_type_t<T_y, T_dof, T_loc, T_scale>;
+  using std::log;
 
+  static const char* function = "student_t_lpdf";
   check_not_nan(function, "Random variable", y);
   check_positive_finite(function, "Degrees of freedom parameter", nu);
   check_finite(function, "Location parameter", mu);
@@ -67,132 +63,80 @@ inline auto student_t_lpdf(const T_y& y, const T_dof& nu, const T_loc& mu,
                          "Degrees of freedom parameter", nu,
                          "Location parameter", mu, "Scale parameter", sigma);
 
-  if (!include_summand<propto, T_y, T_dof, T_loc, T_scale>::value) {
-    return T_return(0.0);
-  }
-
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_dof> nu_vec(nu);
   const scalar_seq_view<T_loc> mu_vec(mu);
   const scalar_seq_view<T_scale> sigma_vec(sigma);
   const size_t N = max_size(y, nu, mu, sigma);
 
-  using std::log;
-
-  VectorBuilder<include_summand<propto, T_y, T_dof, T_loc, T_scale>::value,
-                T_partials, T_dof>
-      half_nu(length(nu));
-  for (size_t i = 0; i < length(nu); i++) {
-    if (include_summand<propto, T_y, T_dof, T_loc, T_scale>::value) {
-      half_nu[i] = 0.5 * value_of(nu_vec[i]);
-    }
-  }
-
-  VectorBuilder<include_summand<propto, T_dof>::value, T_partials, T_dof>
-      lgamma_half_nu(length(nu));
-  VectorBuilder<include_summand<propto, T_dof>::value, T_partials, T_dof>
-      lgamma_half_nu_plus_half(length(nu));
-  if (include_summand<propto, T_dof>::value) {
-    for (size_t i = 0; i < length(nu); i++) {
-      lgamma_half_nu[i] = lgamma(half_nu[i]);
-      lgamma_half_nu_plus_half[i] = lgamma(half_nu[i] + 0.5);
-    }
-  }
-
-  VectorBuilder<!is_constant_all<T_dof>::value, T_partials, T_dof>
-      digamma_half_nu(length(nu));
-  VectorBuilder<!is_constant_all<T_dof>::value, T_partials, T_dof>
-      digamma_half_nu_plus_half(length(nu));
-  if (!is_constant_all<T_dof>::value) {
-    for (size_t i = 0; i < length(nu); i++) {
-      digamma_half_nu[i] = digamma(half_nu[i]);
-      digamma_half_nu_plus_half[i] = digamma(half_nu[i] + 0.5);
-    }
-  }
-
-  VectorBuilder<include_summand<propto, T_dof>::value, T_partials, T_dof>
-      log_nu(length(nu));
-  for (size_t i = 0; i < length(nu); i++) {
-    if (include_summand<propto, T_dof>::value) {
-      log_nu[i] = log(value_of(nu_vec[i]));
-    }
-  }
-
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials, T_scale>
-      log_sigma(length(sigma));
-  for (size_t i = 0; i < length(sigma); i++) {
-    if (include_summand<propto, T_scale>::value) {
-      log_sigma[i] = log(value_of(sigma_vec[i]));
-    }
-  }
-
-  VectorBuilder<include_summand<propto, T_y, T_dof, T_loc, T_scale>::value,
-                T_partials, T_y, T_dof, T_loc, T_scale>
-      square_y_minus_mu_over_sigma__over_nu(N);
-
-  VectorBuilder<include_summand<propto, T_y, T_dof, T_loc, T_scale>::value,
-                T_partials, T_y, T_dof, T_loc, T_scale>
-      log1p_exp(N);
-
-  for (size_t i = 0; i < N; i++) {
-    if (include_summand<propto, T_y, T_dof, T_loc, T_scale>::value) {
-      const T_partials y_dbl = value_of(y_vec[i]);
-      const T_partials mu_dbl = value_of(mu_vec[i]);
-      const T_partials sigma_dbl = value_of(sigma_vec[i]);
-      const T_partials nu_dbl = value_of(nu_vec[i]);
-      square_y_minus_mu_over_sigma__over_nu[i]
-          = square((y_dbl - mu_dbl) / sigma_dbl) / nu_dbl;
-      log1p_exp[i] = log1p(square_y_minus_mu_over_sigma__over_nu[i]);
-    }
-  }
-
   operands_and_partials<T_y, T_dof, T_loc, T_scale> ops_partials(y, nu, mu,
                                                                  sigma);
+
+  if (!include_summand<propto, T_y, T_dof, T_loc, T_scale>::value) {
+    return ops_partials.build(T_partials(0.0));
+  } else if (size_zero(y, nu, mu, sigma)) {
+    return ops_partials.build(T_partials(0.0));
+  }
+
+  T_partials square_y_minus_mu_over_sigma__over_nu = 0;
+  T_partials log1p_exp = 0;
+  T_partials half_nu = 0;
   for (size_t n = 0; n < N; n++) {
     const T_partials y_dbl = value_of(y_vec[n]);
     const T_partials mu_dbl = value_of(mu_vec[n]);
     const T_partials sigma_dbl = value_of(sigma_vec[n]);
     const T_partials nu_dbl = value_of(nu_vec[n]);
+    if (include_summand<propto, T_y, T_dof, T_loc, T_scale>::value) {
+      half_nu = 0.5 * value_of(nu_dbl);
+      square_y_minus_mu_over_sigma__over_nu
+          = square((y_dbl - mu_dbl) / sigma_dbl) / nu_dbl;
+      log1p_exp = log1p(square_y_minus_mu_over_sigma__over_nu);
+    }
     if (include_summand<propto>::value) {
       logp += NEG_LOG_SQRT_PI;
     }
     if (include_summand<propto, T_dof>::value) {
-      logp += lgamma_half_nu_plus_half[n] - lgamma_half_nu[n] - 0.5 * log_nu[n];
+      const T_partials lgamma_half_nu = lgamma(half_nu);
+      const T_partials lgamma_half_nu_plus_half = lgamma(half_nu + 0.5);
+      logp += lgamma_half_nu_plus_half - lgamma_half_nu - 0.5 * log(nu_dbl);
     }
     if (include_summand<propto, T_scale>::value) {
-      logp -= log_sigma[n];
+      logp -= log(sigma_dbl);
     }
     if (include_summand<propto, T_y, T_dof, T_loc, T_scale>::value) {
-      logp -= (half_nu[n] + 0.5) * log1p_exp[n];
+      logp -= (half_nu + 0.5) * log1p_exp;
     }
 
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n]
-          += -(half_nu[n] + 0.5) * 1.0
-             / (1.0 + square_y_minus_mu_over_sigma__over_nu[n])
+          += -(half_nu + 0.5) * 1.0
+             / (1.0 + square_y_minus_mu_over_sigma__over_nu)
              * (2.0 * (y_dbl - mu_dbl) / square(sigma_dbl) / nu_dbl);
     }
     if (!is_constant_all<T_dof>::value) {
       const T_partials inv_nu = 1.0 / nu_dbl;
+      const T_partials digamma_half_nu = digamma(half_nu);
+      const T_partials digamma_half_nu_plus_half = digamma(half_nu + 0.5);
+
       ops_partials.edge2_.partials_[n]
-          += 0.5 * digamma_half_nu_plus_half[n] - 0.5 * digamma_half_nu[n]
-             - 0.5 * inv_nu - 0.5 * log1p_exp[n]
-             + (half_nu[n] + 0.5)
-                   * (1.0 / (1.0 + square_y_minus_mu_over_sigma__over_nu[n])
-                      * square_y_minus_mu_over_sigma__over_nu[n] * inv_nu);
+          += 0.5 * digamma_half_nu_plus_half - 0.5 * digamma_half_nu
+             - 0.5 * inv_nu - 0.5 * log1p_exp
+             + (half_nu + 0.5)
+                   * (1.0 / (1.0 + square_y_minus_mu_over_sigma__over_nu)
+                      * square_y_minus_mu_over_sigma__over_nu * inv_nu);
     }
     if (!is_constant_all<T_loc>::value) {
       ops_partials.edge3_.partials_[n]
-          -= (half_nu[n] + 0.5)
-             / (1.0 + square_y_minus_mu_over_sigma__over_nu[n])
+          -= (half_nu + 0.5)
+             / (1.0 + square_y_minus_mu_over_sigma__over_nu)
              * (2.0 * (mu_dbl - y_dbl) / (sigma_dbl * sigma_dbl * nu_dbl));
     }
     if (!is_constant_all<T_scale>::value) {
       const T_partials inv_sigma = 1.0 / sigma_dbl;
       ops_partials.edge4_.partials_[n]
           += -inv_sigma
-             + (nu_dbl + 1.0) / (1.0 + square_y_minus_mu_over_sigma__over_nu[n])
-                   * (square_y_minus_mu_over_sigma__over_nu[n] * inv_sigma);
+             + (nu_dbl + 1.0) / (1.0 + square_y_minus_mu_over_sigma__over_nu)
+                   * (square_y_minus_mu_over_sigma__over_nu * inv_sigma);
     }
   }
   return ops_partials.build(logp);

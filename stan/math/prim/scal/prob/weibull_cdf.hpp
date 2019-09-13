@@ -29,6 +29,7 @@ template <typename T_y, typename T_shape, typename T_scale>
 inline auto weibull_cdf(const T_y& y, const T_shape& alpha,
                         const T_scale& sigma) {
   using T_partials = partials_return_t<T_y, T_shape, T_scale>;
+  T_partials cdf(1.0);
   using T_return = return_type_t<T_y, T_shape, T_scale>;
 
   static const char* function = "weibull_cdf";
@@ -36,16 +37,14 @@ inline auto weibull_cdf(const T_y& y, const T_shape& alpha,
   using std::exp;
   using std::log;
 
-  if (size_zero(y, alpha, sigma)) {
-    return T_return(1.0);
-  }
-
-  T_partials cdf(1.0);
   check_nonnegative(function, "Random variable", y);
   check_positive_finite(function, "Shape parameter", alpha);
   check_positive_finite(function, "Scale parameter", sigma);
 
   operands_and_partials<T_y, T_shape, T_scale> ops_partials(y, alpha, sigma);
+  if (size_zero(y, alpha, sigma)) {
+    return ops_partials.build(cdf);
+  }
 
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_scale> sigma_vec(sigma);

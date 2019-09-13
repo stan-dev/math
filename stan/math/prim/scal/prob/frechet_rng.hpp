@@ -28,10 +28,9 @@ namespace math {
  * sizes
  */
 template <typename T_shape, typename T_scale, class RNG>
-inline typename VectorBuilder<true, double, T_shape, T_scale>::type frechet_rng(
-    const T_shape& alpha, const T_scale& sigma, RNG& rng) {
-  using boost::random::weibull_distribution;
+inline auto frechet_rng(const T_shape& alpha, const T_scale& sigma, RNG& rng) {
   using boost::variate_generator;
+  using boost::random::weibull_distribution;
 
   static const char* function = "frechet_rng";
 

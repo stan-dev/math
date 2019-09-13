@@ -33,16 +33,13 @@ namespace math {
  */
 template <typename T_y, typename T_dof>
 inline auto chi_square_cdf(const T_y& y, const T_dof& nu) {
-  static const char* function = "chi_square_cdf";
   using T_partials = partials_return_t<T_y, T_dof>;
-  using T_return = return_type_t<T_y, T_dof>;
-
   T_partials cdf(1.0);
+  using T_return = return_type_t<T_y, T_dof>;
+  using std::exp;
+  using std::pow;
 
-  if (size_zero(y, nu)) {
-    return T_return(0.0);
-  }
-
+  static const char* function = "chi_square_cdf";
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
   check_positive_finite(function, "Degrees of freedom parameter", nu);
@@ -52,19 +49,18 @@ inline auto chi_square_cdf(const T_y& y, const T_dof& nu) {
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_dof> nu_vec(nu);
   const size_t N = max_size(y, nu);
-
   operands_and_partials<T_y, T_dof> ops_partials(y, nu);
+  if (size_zero(y, nu)) {
+    return ops_partials.build(T_partials(0.0));
+  }
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
   for (size_t i = 0; i < stan::length(y); i++) {
     if (value_of(y_vec[i]) == 0) {
-      return ops_partials.build(0.0);
+      return ops_partials.build(T_partials(0.0));
     }
   }
-
-  using std::exp;
-  using std::pow;
 
   VectorBuilder<!is_constant_all<T_dof>::value, T_partials, T_dof> gamma_vec(
       stan::length(nu));

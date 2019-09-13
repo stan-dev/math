@@ -18,9 +18,6 @@ inline auto neg_binomial_2_lccdf(const T_n& n, const T_location& mu,
                                  const T_precision& phi) {
   using T_partials = partials_return_t<T_n, T_location, T_precision>;
   using T_return = return_type_t<T_n, T_location, T_precision>;
-  if (size_zero(n, mu, phi)) {
-    return T_return(0.0);
-  }
 
   static const char* function = "neg_binomial_2_lccdf";
   check_positive_finite(function, "Location parameter", mu);
@@ -31,8 +28,11 @@ inline auto neg_binomial_2_lccdf(const T_n& n, const T_location& mu,
 
   const scalar_seq_view<T_location> mu_vec(mu);
   const scalar_seq_view<T_precision> phi_vec(phi);
+  const size_t size_beta = max_size(mu, phi);
 
-  size_t size_beta = max_size(mu, phi);
+  if (size_zero(n, mu, phi)) {
+    return T_return(0.0);
+  }
 
   VectorBuilder<true, return_type_t<T_location, T_precision>, T_location,
                 T_precision>

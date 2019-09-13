@@ -18,15 +18,9 @@ template <typename T_y, typename T_scale>
 inline auto rayleigh_lcdf(const T_y& y, const T_scale& sigma) {
   static const char* function = "rayleigh_lcdf";
   using T_partials = partials_return_t<T_y, T_scale>;
-  using T_return = return_type_t<T_y, T_scale>;
-
-  using std::exp;
-
   T_partials cdf_log(0.0);
 
-  if (size_zero(y, sigma)) {
-    return T_return(0.0);
-  }
+  using std::exp;
 
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
@@ -35,11 +29,13 @@ inline auto rayleigh_lcdf(const T_y& y, const T_scale& sigma) {
   check_consistent_sizes(function, "Random variable", y, "Scale parameter",
                          sigma);
 
-  operands_and_partials<T_y, T_scale> ops_partials(y, sigma);
-
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_scale> sigma_vec(sigma);
   const size_t N = max_size(y, sigma);
+  operands_and_partials<T_y, T_scale> ops_partials(y, sigma);
+  if (size_zero(y, sigma)) {
+    return ops_partials.build(cdf_log);
+  }
 
   VectorBuilder<true, T_partials, T_scale> inv_sigma(length(sigma));
   for (size_t i = 0; i < length(sigma); i++) {

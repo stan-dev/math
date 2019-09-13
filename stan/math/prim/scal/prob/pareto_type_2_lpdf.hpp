@@ -22,15 +22,8 @@ inline auto pareto_type_2_lpdf(const T_y& y, const T_loc& mu,
                                const T_scale& lambda, const T_shape& alpha) {
   static const char* function = "pareto_type_2_lpdf";
   using T_partials = partials_return_t<T_y, T_loc, T_scale, T_shape>;
-  using T_return = return_type_t<T_y, T_loc, T_scale, T_shape>;
-
-  using std::log;
-
-  if (size_zero(y, mu, lambda, alpha)) {
-    return T_return(0.0);
-  }
-
   T_partials logp(0.0);
+  using std::log;
 
   check_greater_or_equal(function, "Random variable", y, mu);
   check_not_nan(function, "Random variable", y);
@@ -38,10 +31,6 @@ inline auto pareto_type_2_lpdf(const T_y& y, const T_loc& mu,
   check_positive_finite(function, "Shape parameter", alpha);
   check_consistent_sizes(function, "Random variable", y, "Scale parameter",
                          lambda, "Shape parameter", alpha);
-
-  if (!include_summand<propto, T_y, T_loc, T_scale, T_shape>::value) {
-    return T_return(0.0);
-  }
 
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_loc> mu_vec(mu);
@@ -51,6 +40,11 @@ inline auto pareto_type_2_lpdf(const T_y& y, const T_loc& mu,
 
   operands_and_partials<T_y, T_loc, T_scale, T_shape> ops_partials(
       y, mu, lambda, alpha);
+  if (!include_summand<propto, T_y, T_loc, T_scale, T_shape>::value) {
+    return ops_partials.build(logp);
+  } else if (size_zero(y, mu, lambda, alpha)) {
+    return ops_partials.build(logp);
+  }
 
   VectorBuilder<include_summand<propto, T_y, T_loc, T_scale, T_shape>::value,
                 T_partials, T_y, T_loc, T_scale>
