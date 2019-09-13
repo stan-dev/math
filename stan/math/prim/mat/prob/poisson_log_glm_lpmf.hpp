@@ -85,9 +85,9 @@ return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
 
   const auto& x_val = value_of_rec(x);
 #ifdef STAN_OPENCL
-  const auto &y_val = value_of(y);
+  const auto& y_val = value_of(y);
 #else
-  const auto &y_val = value_of_rec(y);
+  const auto& y_val = value_of_rec(y);
 #endif
   const auto& beta_val = value_of_rec(beta);
   const auto& alpha_val = value_of_rec(alpha);
@@ -98,7 +98,8 @@ return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
 
   operands_and_partials<T_x, T_alpha, T_beta> ops_partials(x, alpha, beta);
 #ifdef STAN_OPENCL
-  const int local_size = opencl_kernels::poisson_log_glm.get_option("LOCAL_SIZE_");
+  const int local_size
+      = opencl_kernels::poisson_log_glm.get_option("LOCAL_SIZE_");
   const int wgs = (N + local_size - 1) / local_size;
 
   const matrix_cl<int> y_cl = matrix_cl<int>::constant(y_val_vec);
@@ -113,12 +114,11 @@ return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
   matrix_cl<double> logp_cl((need_logp1 || need_logp2) ? wgs : 0, 1);
 
   try {
-    opencl_kernels::poisson_log_glm(cl::NDRange(local_size * wgs), cl::NDRange(local_size),
-                                    theta_derivative_cl, theta_derivative_sum_cl, logp_cl,
-                                    y_cl, x_cl, alpha_cl, beta_cl,
-                                    N, M, length(alpha) != 1, need_logp1, need_logp2);
-  }
-  catch (const cl::Error& e) {
+    opencl_kernels::poisson_log_glm(
+        cl::NDRange(local_size * wgs), cl::NDRange(local_size),
+        theta_derivative_cl, theta_derivative_sum_cl, logp_cl, y_cl, x_cl,
+        alpha_cl, beta_cl, N, M, length(alpha) != 1, need_logp1, need_logp2);
+  } catch (const cl::Error& e) {
     check_opencl_error(function, e);
   }
   Matrix<T_partials_return, Dynamic, 1> theta_derivative_partial_sum(wgs);
@@ -138,18 +138,27 @@ return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
 
   // Compute the necessary derivatives.
   if (!is_constant_all<T_x>::value) {
-    matrix_cl<double> beta_transpose_cl(beta_cl.buffer(), 1, beta_cl.rows()); //transposition of a vector can be done without copying
-    ops_partials.edge1_.partials_ = from_matrix_cl(theta_derivative_cl * beta_transpose_cl);
+    matrix_cl<double> beta_transpose_cl(
+        beta_cl.buffer(), 1,
+        beta_cl
+            .rows());  // transposition of a vector can be done without copying
+    ops_partials.edge1_.partials_
+        = from_matrix_cl(theta_derivative_cl * beta_transpose_cl);
   }
   if (!is_constant_all<T_alpha>::value) {
     if (is_vector<T_alpha>::value)
-      ops_partials.edge2_.partials_ = from_matrix_cl<Dynamic,1>(theta_derivative_cl);
+      ops_partials.edge2_.partials_
+          = from_matrix_cl<Dynamic, 1>(theta_derivative_cl);
     else
       ops_partials.edge2_.partials_[0] = theta_derivative_sum;
   }
   if (!is_constant_all<T_beta>::value) {
-    matrix_cl<double> theta_derivative_transpose_cl(theta_derivative_cl.buffer(), 1, theta_derivative_cl.rows()); //transposition of a vector can be done without copying
-    ops_partials.edge3_.partials_ = from_matrix_cl<1,Dynamic>(theta_derivative_transpose_cl * x_cl);
+    matrix_cl<double> theta_derivative_transpose_cl(
+        theta_derivative_cl.buffer(), 1,
+        theta_derivative_cl
+            .rows());  // transposition of a vector can be done without copying
+    ops_partials.edge3_.partials_
+        = from_matrix_cl<1, Dynamic>(theta_derivative_transpose_cl * x_cl);
   }
 #else
   check_nonnegative(function, "Vector of dependent variables", y);

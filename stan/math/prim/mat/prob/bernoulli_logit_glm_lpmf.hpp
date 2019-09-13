@@ -17,7 +17,6 @@
 #include <stan/math/opencl/kernels/bernoulli_logit_glm_lpmf.hpp>
 #endif
 
-
 #include <cmath>
 
 namespace stan {
@@ -99,7 +98,8 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
 
   operands_and_partials<T_x, T_alpha, T_beta> ops_partials(x, alpha, beta);
 #ifdef STAN_OPENCL
-  const int local_size = opencl_kernels::bernoulli_logit_glm.get_option("LOCAL_SIZE_");
+  const int local_size
+      = opencl_kernels::bernoulli_logit_glm.get_option("LOCAL_SIZE_");
   const int wgs = (N + local_size - 1) / local_size;
 
   const matrix_cl<int> y_cl = matrix_cl<int>::constant(y_val_vec);
@@ -108,25 +108,27 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
   matrix_cl<double> alpha_cl(alpha_val_vec);
 
   matrix_cl<double> logp_cl(wgs, 1);
-  const bool need_theta_derivative = !is_constant_all<T_beta, T_x, T_alpha>::value;
+  const bool need_theta_derivative
+      = !is_constant_all<T_beta, T_x, T_alpha>::value;
   matrix_cl<double> theta_derivative_cl(need_theta_derivative ? N : 0, 1);
-  const bool need_theta_derivative_sum = need_theta_derivative && !is_vector<T_alpha>::value;
-  matrix_cl<double> theta_derivative_sum_cl(need_theta_derivative_sum ? wgs : 0, 1);
+  const bool need_theta_derivative_sum
+      = need_theta_derivative && !is_vector<T_alpha>::value;
+  matrix_cl<double> theta_derivative_sum_cl(need_theta_derivative_sum ? wgs : 0,
+                                            1);
 
   try {
-    opencl_kernels::bernoulli_logit_glm(cl::NDRange(local_size * wgs), cl::NDRange(local_size),
-                                        logp_cl, theta_derivative_cl, theta_derivative_sum_cl,
-                                        y_cl, x_cl, alpha_cl, beta_cl,
-                                        N, M, length(alpha) != 1, need_theta_derivative, need_theta_derivative_sum);
-  }
-  catch (const cl::Error& e) {
+    opencl_kernels::bernoulli_logit_glm(
+        cl::NDRange(local_size * wgs), cl::NDRange(local_size), logp_cl,
+        theta_derivative_cl, theta_derivative_sum_cl, y_cl, x_cl, alpha_cl,
+        beta_cl, N, M, length(alpha) != 1, need_theta_derivative,
+        need_theta_derivative_sum);
+  } catch (const cl::Error &e) {
     check_opencl_error(function, e);
   }
 
   Eigen::VectorXd logp_partial_sum(wgs);
   logp_partial_sum = from_matrix_cl(logp_cl);
   logp += sum(logp_partial_sum);
-
 
   if (!std::isfinite(logp)) {
     check_bounded(function, "Vector of dependent variables", y, 0, 1);
@@ -136,20 +138,29 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
   }
   // Compute the necessary derivatives.
   if (!is_constant_all<T_x>::value) {
-    matrix_cl<double> beta_transpose_cl(beta_cl.buffer(), 1, beta_cl.rows()); //transposition of a vector can be done without copying
-    ops_partials.edge1_.partials_  = from_matrix_cl(theta_derivative_cl * beta_transpose_cl);
+    matrix_cl<double> beta_transpose_cl(
+        beta_cl.buffer(), 1,
+        beta_cl
+            .rows());  // transposition of a vector can be done without copying
+    ops_partials.edge1_.partials_
+        = from_matrix_cl(theta_derivative_cl * beta_transpose_cl);
   }
   if (!is_constant_all<T_alpha>::value) {
     if (is_vector<T_alpha>::value) {
-      ops_partials.edge2_.partials_ = std::move(from_matrix_cl<Dynamic,1>(theta_derivative_cl));
-    }
-    else {
-      ops_partials.edge2_.partials_[0] = sum(from_matrix_cl(theta_derivative_sum_cl));
+      ops_partials.edge2_.partials_
+          = std::move(from_matrix_cl<Dynamic, 1>(theta_derivative_cl));
+    } else {
+      ops_partials.edge2_.partials_[0]
+          = sum(from_matrix_cl(theta_derivative_sum_cl));
     }
   }
   if (!is_constant_all<T_beta>::value) {
-    matrix_cl<double> theta_derivative_transpose_cl(theta_derivative_cl.buffer(), 1, theta_derivative_cl.rows()); //transposition of a vector can be done without copying
-    ops_partials.edge3_.partials_ = from_matrix_cl<1,Dynamic>(theta_derivative_transpose_cl * x_cl);
+    matrix_cl<double> theta_derivative_transpose_cl(
+        theta_derivative_cl.buffer(), 1,
+        theta_derivative_cl
+            .rows());  // transposition of a vector can be done without copying
+    ops_partials.edge3_.partials_
+        = from_matrix_cl<1, Dynamic>(theta_derivative_transpose_cl * x_cl);
   }
 #else
   check_bounded(function, "Vector of dependent variables", y, 0, 1);
