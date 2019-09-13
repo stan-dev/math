@@ -70,9 +70,9 @@ return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
 
   using Eigen::Array;
   using Eigen::Dynamic;
+  using Eigen::Matrix;
   using Eigen::exp;
   using Eigen::log1p;
-  using Eigen::Matrix;
 
   const size_t N = x.rows();
   const size_t M = x.cols();

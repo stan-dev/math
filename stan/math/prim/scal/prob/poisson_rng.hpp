@@ -27,8 +27,8 @@ namespace math {
  */
 template <typename T_rate, class RNG>
 inline auto poisson_rng(T_rate&& lambda, RNG&& rng) {
-  using boost::variate_generator;
   using boost::random::poisson_distribution;
+  using boost::variate_generator;
 
   static const char* function = "poisson_rng";
 
