@@ -37,8 +37,8 @@ namespace math {
  */
 template <bool propto, typename T_n, typename T_N, typename T_size1,
           typename T_size2>
-inline auto beta_binomial_lpmf(const T_n& n, const T_N& N, const T_size1& alpha,
-                               const T_size2& beta) {
+inline auto beta_binomial_lpmf(T_n&& n, T_N&& N, T_size1&& alpha,
+                               T_size2&& beta) {
   using T_partials = partials_return_t<T_size1, T_size2>;
   T_partials logp(0.0);
   static const char* function = "beta_binomial_lpmf";
@@ -116,8 +116,8 @@ inline auto beta_binomial_lpmf(const T_n& n, const T_N& N, const T_size1& alpha,
 }
 
 template <typename T_n, typename T_N, typename T_size1, typename T_size2>
-inline auto beta_binomial_lpmf(const T_n& n, const T_N& N, const T_size1& alpha,
-                               const T_size2& beta) {
+inline auto beta_binomial_lpmf(T_n&& n, T_N&& N, T_size1&& alpha,
+                               T_size2&& beta) {
   return beta_binomial_lpmf<false>(n, N, alpha, beta);
 }
 

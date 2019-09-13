@@ -32,8 +32,8 @@ namespace math {
  * @tparam T_dof Type of degrees of freedom.
  */
 template <typename T_y, typename T_dof, typename T_scale>
-inline auto scaled_inv_chi_square_cdf(const T_y& y, const T_dof& nu,
-                                      const T_scale& s) {
+inline auto scaled_inv_chi_square_cdf(T_y&& y, T_dof&& nu,
+                                      T_scale&& s) {
   using T_partials = partials_return_t<T_y, T_dof, T_scale>;
   T_partials P(1.0);
 

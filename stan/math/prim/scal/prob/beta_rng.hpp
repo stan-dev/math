@@ -31,7 +31,7 @@ namespace math {
  * sizes
  */
 template <typename T_shape1, typename T_shape2, class RNG>
-inline auto beta_rng(const T_shape1 &alpha, const T_shape2 &beta, RNG &rng) {
+inline auto beta_rng(T_shape1 &&alpha, T_shape2 &&beta, RNG&& rng) {
   using boost::random::gamma_distribution;
   using boost::random::uniform_real_distribution;
   using boost::variate_generator;

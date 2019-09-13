@@ -30,7 +30,7 @@ namespace math {
  * sizes
  */
 template <typename T_loc, typename T_scale, class RNG>
-inline auto cauchy_rng(const T_loc& mu, const T_scale& sigma, RNG& rng) {
+inline auto cauchy_rng(T_loc&& mu, T_scale&& sigma, RNG&& rng) {
   using boost::random::cauchy_distribution;
   using boost::variate_generator;
   static const char* function = "cauchy_rng";

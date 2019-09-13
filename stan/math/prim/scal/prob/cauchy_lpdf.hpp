@@ -11,6 +11,7 @@
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/log1p.hpp>
 #include <cmath>
+#include <utility>
 
 namespace stan {
 namespace math {
@@ -33,7 +34,7 @@ namespace math {
  * @tparam T_scale Type of scale.
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
-inline auto cauchy_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
+inline auto cauchy_lpdf(T_y&& y, T_loc&& mu, T_scale&& sigma) {
   static const char* function = "cauchy_lpdf";
   using T_partials = partials_return_t<T_y, T_loc, T_scale>;
   T_partials logp(0.0);
@@ -97,8 +98,8 @@ inline auto cauchy_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
 }
 
 template <typename T_y, typename T_loc, typename T_scale>
-inline auto cauchy_lpdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
-  return cauchy_lpdf<false>(y, mu, sigma);
+inline auto cauchy_lpdf(T_y&& y, T_loc&& mu, T_scale&& sigma) {
+  return cauchy_lpdf<false>(std::forward<T_y>(y), std::forward<T_loc>(mu), std::forward<T_scale>(sigma));
 }
 
 }  // namespace math

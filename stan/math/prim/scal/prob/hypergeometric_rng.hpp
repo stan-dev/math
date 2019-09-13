@@ -12,7 +12,7 @@ namespace stan {
 namespace math {
 
 template <class RNG>
-inline int hypergeometric_rng(int N, int a, int b, RNG& rng) {
+inline int hypergeometric_rng(int N, int a, int b, RNG&& rng) {
   using boost::math::hypergeometric_distribution;
   using boost::variate_generator;
 

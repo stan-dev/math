@@ -24,7 +24,7 @@ namespace math {
  * @throw std::domain_error if alpha is nonfinite
  */
 template <typename T_rate, class RNG>
-inline auto poisson_log_rng(const T_rate& alpha, RNG& rng) {
+inline auto poisson_log_rng(T_rate&& alpha, RNG&& rng) {
   using boost::random::poisson_distribution;
   using boost::variate_generator;
 

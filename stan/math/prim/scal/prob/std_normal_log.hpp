@@ -22,7 +22,7 @@ namespace math {
  * @throw std::domain_error if any scalar is nan.
  */
 template <bool propto, typename T_y>
-inline auto std_normal_log(const T_y& y) {
+inline auto std_normal_log(T_y&& y) {
   return std_normal_lpdf<propto>(y);
 }
 
@@ -30,7 +30,7 @@ inline auto std_normal_log(const T_y& y) {
  * @deprecated use <code>std_normal_lpdf</code>
  */
 template <typename T_y>
-inline auto std_normal_log(const T_y& y) {
+inline auto std_normal_log(T_y&& y) {
   return std_normal_lpdf(y);
 }
 

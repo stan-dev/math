@@ -23,7 +23,7 @@ namespace math {
  * @throw std::domain_error if sigma is nonpositive
  */
 template <typename T_scale, class RNG>
-inline auto rayleigh_rng(const T_scale& sigma, RNG& rng) {
+inline auto rayleigh_rng(T_scale&& sigma, RNG&& rng) {
   using boost::random::uniform_real_distribution;
   using boost::variate_generator;
 

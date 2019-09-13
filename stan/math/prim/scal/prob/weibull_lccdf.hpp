@@ -26,8 +26,8 @@ namespace math {
  * @throw std::domain_error if y is negative, alpha sigma is nonpositive
  */
 template <typename T_y, typename T_shape, typename T_scale>
-inline auto weibull_lccdf(const T_y& y, const T_shape& alpha,
-                          const T_scale& sigma) {
+inline auto weibull_lccdf(T_y&& y, T_shape&& alpha,
+                          T_scale&& sigma) {
   using T_partials = partials_return_t<T_y, T_shape, T_scale>;
 
   T_partials ccdf_log(0.0);
@@ -50,10 +50,10 @@ inline auto weibull_lccdf(const T_y& y, const T_shape& alpha,
   const scalar_seq_view<T_shape> alpha_vec(alpha);
   const size_t N = max_size(y, sigma, alpha);
   for (size_t n = 0; n < N; n++) {
-    const T_partials y_dbl = value_of(y_vec[n]);
-    const T_partials sigma_dbl = value_of(sigma_vec[n]);
-    const T_partials alpha_dbl = value_of(alpha_vec[n]);
-    const T_partials pow_ = pow(y_dbl / sigma_dbl, alpha_dbl);
+    const auto y_dbl = value_of(y_vec[n]);
+    const auto sigma_dbl = value_of(sigma_vec[n]);
+    const auto alpha_dbl = value_of(alpha_vec[n]);
+    const auto pow_ = pow(y_dbl / sigma_dbl, alpha_dbl);
 
     ccdf_log -= pow_;
 

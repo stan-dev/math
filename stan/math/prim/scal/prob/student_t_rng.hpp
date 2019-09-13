@@ -33,8 +33,8 @@ namespace math {
  * sizes
  */
 template <typename T_deg, typename T_loc, typename T_scale, class RNG>
-inline auto student_t_rng(const T_deg& nu, const T_loc& mu,
-                          const T_scale& sigma, RNG& rng) {
+inline auto student_t_rng(T_deg&& nu, T_loc&& mu,
+                          T_scale&& sigma, RNG&& rng) {
   using boost::random::student_t_distribution;
   using boost::variate_generator;
   static const char* function = "student_t_rng";

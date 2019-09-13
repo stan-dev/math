@@ -31,7 +31,7 @@ namespace math {
  * sizes
  */
 template <typename T_loc, typename T_prec, class RNG>
-inline auto beta_proportion_rng(const T_loc &mu, const T_prec &kappa,
+inline auto beta_proportion_rng(T_loc &&mu, T_prec &&kappa,
                                 RNG &rng) {
 
   static const char *function = "beta_proportion_rng";

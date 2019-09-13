@@ -11,9 +11,9 @@ namespace math {
  * @deprecated use <code>neg_binomial_lccdf</code>
  */
 template <typename T_n, typename T_shape, typename T_inv_scale>
-inline auto neg_binomial_ccdf_log(const T_n& n, const T_shape& alpha,
-                                  const T_inv_scale& beta) {
-  return neg_binomial_lccdf(n, alpha, beta);
+inline auto neg_binomial_ccdf_log(T_n&& n, T_shape&& alpha,
+                                  T_inv_scale&& beta) {
+  return neg_binomial_lccdf(std::forward<T_n>(n), std::forward<T_shape>(alpha), std::forward<T_inv_scale>(beta));
 }
 
 }  // namespace math

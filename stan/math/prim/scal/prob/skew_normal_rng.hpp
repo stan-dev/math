@@ -34,8 +34,8 @@ namespace math {
  * sizes
  */
 template <typename T_loc, typename T_scale, typename T_shape, class RNG>
-inline auto skew_normal_rng(const T_loc& mu, const T_scale& sigma,
-                            const T_shape& alpha, RNG& rng) {
+inline auto skew_normal_rng(T_loc&& mu, T_scale&& sigma,
+                            T_shape&& alpha, RNG&& rng) {
   using boost::random::normal_distribution;
   using boost::variate_generator;
   static const char* function = "skew_normal_rng";

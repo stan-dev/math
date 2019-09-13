@@ -10,6 +10,7 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <cmath>
+#include <utility>
 
 namespace stan {
 namespace math {
@@ -30,7 +31,7 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_y, typename T_loc, typename T_scale>
-inline auto cauchy_lccdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
+inline auto cauchy_lccdf(T_y&& y, T_loc&& mu, T_scale&& sigma) {
   using T_partials = partials_return_t<T_y, T_loc, T_scale>;
   T_partials ccdf_log(0.0);
   using std::atan;
@@ -46,23 +47,23 @@ inline auto cauchy_lccdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
   const scalar_seq_view<T_y> y_vec(y);
   const scalar_seq_view<T_loc> mu_vec(mu);
   const scalar_seq_view<T_scale> sigma_vec(sigma);
-  const size_t N = max_size(y, mu, sigma);
+  const auto N = max_size(y, mu, sigma);
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
   if (size_zero(y, mu, sigma)) {
     return ops_partials.build(ccdf_log);
   }
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials y_dbl = value_of(y_vec[n]);
-    const T_partials mu_dbl = value_of(mu_vec[n]);
-    const T_partials sigma_inv_dbl = 1.0 / value_of(sigma_vec[n]);
-    const T_partials sigma_dbl = value_of(sigma_vec[n]);
-    const T_partials z = (y_dbl - mu_dbl) * sigma_inv_dbl;
+    const auto y_dbl = value_of(y_vec[n]);
+    const auto mu_dbl = value_of(mu_vec[n]);
+    const auto sigma_inv_dbl = 1.0 / value_of(sigma_vec[n]);
+    const auto sigma_dbl = value_of(sigma_vec[n]);
+    const auto z = (y_dbl - mu_dbl) * sigma_inv_dbl;
 
-    const T_partials Pn = 0.5 - atan(z) / pi();
+    const auto Pn = 0.5 - atan(z) / pi();
     ccdf_log += log(Pn);
 
-    const T_partials rep_deriv
+    const auto rep_deriv
         = 1.0 / (Pn * pi() * (z * z * sigma_dbl + sigma_dbl));
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] -= rep_deriv;

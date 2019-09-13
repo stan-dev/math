@@ -9,7 +9,7 @@ TEST(ProbBetaProportion, cdf_log_matches_lcdf) {
   EXPECT_FLOAT_EQ((stan::math::beta_proportion_lcdf(y, mu, kappa)),
                   (stan::math::beta_proportion_cdf_log(y, mu, kappa)));
   EXPECT_FLOAT_EQ(
-      (stan::math::beta_proportion_lcdf<double, double, double>(y, mu, kappa)),
-      (stan::math::beta_proportion_cdf_log<double, double, double>(y, mu,
+      (stan::math::beta_proportion_lcdf(y, mu, kappa)),
+      (stan::math::beta_proportion_cdf_log(y, mu,
                                                                    kappa)));
 }

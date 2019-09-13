@@ -33,8 +33,8 @@ namespace math {
  * @throw std::invalid_argument if vector sizes do not match
  */
 template <bool propto, typename T_n, typename T_N, typename T_prob>
-inline auto binomial_logit_lpmf(const T_n& n, const T_N& N,
-                                const T_prob& alpha) {
+inline auto binomial_logit_lpmf(T_n&& n, T_N&& N,
+                                T_prob&& alpha) {
   using T_partials = partials_return_t<T_n, T_N, T_prob>;
   T_partials logp = 0;
 
@@ -105,8 +105,8 @@ inline auto binomial_logit_lpmf(const T_n& n, const T_N& N,
 }
 
 template <typename T_n, typename T_N, typename T_prob>
-inline auto binomial_logit_lpmf(const T_n& n, const T_N& N,
-                                const T_prob& alpha) {
+inline auto binomial_logit_lpmf(T_n&& n, T_N&& N,
+                                T_prob&& alpha) {
   return binomial_logit_lpmf<false>(n, N, alpha);
 }
 

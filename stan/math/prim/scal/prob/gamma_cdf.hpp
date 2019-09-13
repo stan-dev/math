@@ -39,8 +39,8 @@ namespace math {
  * @tparam T_inv_scale Type of inverse scale.
  */
 template <typename T_y, typename T_shape, typename T_inv_scale>
-inline auto gamma_cdf(const T_y& y, const T_shape& alpha,
-                      const T_inv_scale& beta) {
+inline auto gamma_cdf(T_y&& y, T_shape&& alpha,
+                      T_inv_scale&& beta) {
   using T_partials = partials_return_t<T_y, T_shape, T_inv_scale>;
   T_partials P(1.0);
 

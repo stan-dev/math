@@ -32,16 +32,16 @@ namespace math {
  * @tparam T_high Type of upper bound.
  */
 template <bool propto, typename T_y, typename T_low, typename T_high>
-inline auto uniform_log(const T_y& y, const T_low& alpha, const T_high& beta) {
-  return uniform_lpdf<propto>(y, alpha, beta);
+inline auto uniform_log(T_y&& y, T_low&& alpha, T_high&& beta) {
+  return uniform_lpdf<propto>(std::forward<T_y>(y), std::forward<T_low>(alpha), std::forward<T_high>(beta));
 }
 
 /**
  * @deprecated use <code>uniform_lpdf</code>
  */
 template <typename T_y, typename T_low, typename T_high>
-inline auto uniform_log(const T_y& y, const T_low& alpha, const T_high& beta) {
-  return uniform_lpdf(y, alpha, beta);
+inline auto uniform_log(T_y&& y, T_low&& alpha, T_high&& beta) {
+  return uniform_lpdf(std::forward<T_y>(y), std::forward<T_low>(alpha), std::forward<T_high>(beta));
 }
 
 }  // namespace math

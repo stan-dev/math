@@ -16,7 +16,7 @@ namespace stan {
 namespace math {
 
 template <typename T_n, typename T_rate>
-inline auto poisson_lccdf(const T_n& n, const T_rate& lambda) {
+inline auto poisson_lccdf(T_n&& n, T_rate&& lambda) {
   static const char* function = "poisson_lccdf";
   using T_partials = partials_return_t<T_n, T_rate>;
   T_partials P(0.0);

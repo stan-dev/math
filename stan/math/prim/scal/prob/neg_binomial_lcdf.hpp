@@ -18,8 +18,8 @@ namespace stan {
 namespace math {
 
 template <typename T_n, typename T_shape, typename T_inv_scale>
-inline auto neg_binomial_lcdf(const T_n& n, const T_shape& alpha,
-                              const T_inv_scale& beta) {
+inline auto neg_binomial_lcdf(T_n&& n, T_shape&& alpha,
+                              T_inv_scale&& beta) {
   static const char* function = "neg_binomial_lcdf";
   using T_partials = partials_return_t<T_n, T_shape, T_inv_scale>;
   T_partials P(0.0);

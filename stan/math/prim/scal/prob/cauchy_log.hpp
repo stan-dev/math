@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/prob/cauchy_lpdf.hpp>
+#include <utility>
 
 namespace stan {
 namespace math {
@@ -27,16 +28,16 @@ namespace math {
  * @tparam T_scale Type of scale.
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
-inline auto cauchy_log(const T_y& y, const T_loc& mu, const T_scale& sigma) {
-  return cauchy_lpdf<propto>(y, mu, sigma);
+inline auto cauchy_log(T_y&& y, T_loc&& mu, T_scale&& sigma) {
+  return cauchy_lpdf<propto>(std::forward<T_y>(y), std::forward<T_loc>(mu), std::forward<T_scale>(sigma));
 }
 
 /**
  * @deprecated use <code>cauchy_lpdf</code>
  */
 template <typename T_y, typename T_loc, typename T_scale>
-inline auto cauchy_log(const T_y& y, const T_loc& mu, const T_scale& sigma) {
-  return cauchy_lpdf(y, mu, sigma);
+inline auto cauchy_log(T_y&& y, T_loc&& mu, T_scale&& sigma) {
+  return cauchy_lpdf(std::forward<T_y>(y), std::forward<T_loc>(mu), std::forward<T_scale>(sigma));
 }
 
 }  // namespace math

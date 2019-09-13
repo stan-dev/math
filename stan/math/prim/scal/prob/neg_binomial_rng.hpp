@@ -34,8 +34,8 @@ namespace math {
  * sizes
  */
 template <typename T_shape, typename T_inv, class RNG>
-inline auto neg_binomial_rng(const T_shape& alpha, const T_inv& beta,
-                             RNG& rng) {
+inline auto neg_binomial_rng(T_shape&& alpha, T_inv&& beta,
+                             RNG&& rng) {
   using boost::gamma_distribution;
   using boost::random::poisson_distribution;
   using boost::variate_generator;

@@ -11,7 +11,7 @@ namespace math {
  * @deprecated use <code>binomial_lpmf</code>
  */
 template <bool propto, typename T_n, typename T_N, typename T_prob>
-inline auto binomial_log(const T_n& n, const T_N& N, const T_prob& theta) {
+inline auto binomial_log(T_n&& n, T_N&& N, T_prob&& theta) {
   return binomial_lpmf<propto>(n, N, theta);
 }
 
@@ -19,7 +19,7 @@ inline auto binomial_log(const T_n& n, const T_N& N, const T_prob& theta) {
  * @deprecated use <code>binomial_lpmf</code>
  */
 template <typename T_n, typename T_N, typename T_prob>
-inline auto binomial_log(const T_n& n, const T_N& N, const T_prob& theta) {
+inline auto binomial_log(T_n&& n, T_N&& N, T_prob&& theta) {
   return binomial_lpmf(n, N, theta);
 }
 

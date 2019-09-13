@@ -32,7 +32,7 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_n, typename T_N, typename T_prob>
-inline auto binomial_cdf(const T_n& n, const T_N& N, const T_prob& theta) {
+inline auto binomial_cdf(T_n&& n, T_N&& N, T_prob&& theta) {
   using T_partials = partials_return_t<T_n, T_N, T_prob>;
   T_partials P(1.0);
 

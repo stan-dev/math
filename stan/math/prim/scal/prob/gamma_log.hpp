@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/prob/gamma_lpdf.hpp>
+#include <utility>
 
 namespace stan {
 namespace math {
@@ -33,18 +34,18 @@ namespace math {
  * @tparam T_inv_scale Type of inverse scale.
  */
 template <bool propto, typename T_y, typename T_shape, typename T_inv_scale>
-inline auto gamma_log(const T_y& y, const T_shape& alpha,
-                      const T_inv_scale& beta) {
-  return gamma_lpdf<propto>(y, alpha, beta);
+inline auto gamma_log(T_y&& y, T_shape&& alpha,
+                      T_inv_scale&& beta) {
+  return gamma_lpdf<propto>(std::forward<T_y>(y), std::forward<T_shape>(alpha), std::forward<T_inv_scale>(beta));
 }
 
 /**
  * @deprecated use <code>gamma_lpdf</code>
  */
 template <typename T_y, typename T_shape, typename T_inv_scale>
-inline auto gamma_log(const T_y& y, const T_shape& alpha,
-                      const T_inv_scale& beta) {
-  return gamma_lpdf(y, alpha, beta);
+inline auto gamma_log(T_y&& y, T_shape&& alpha,
+                      T_inv_scale&& beta) {
+  return gamma_lpdf(std::forward<T_y>(y), std::forward<T_shape>(alpha), std::forward<T_inv_scale>(beta));
 }
 
 }  // namespace math

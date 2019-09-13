@@ -33,7 +33,7 @@ namespace math {
  * sizes
  */
 template <typename T_alpha, typename T_beta, class RNG>
-inline auto uniform_rng(const T_alpha& alpha, const T_beta& beta, RNG& rng) {
+inline auto uniform_rng(T_alpha&& alpha, T_beta&& beta, RNG&& rng) {
   using boost::random::uniform_real_distribution;
   using boost::variate_generator;
 

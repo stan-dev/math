@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/prob/cauchy_lccdf.hpp>
+#include <utility>
 
 namespace stan {
 namespace math {
@@ -11,9 +12,9 @@ namespace math {
  * @deprecated use <code>cauchy_lccdf</code>
  */
 template <typename T_y, typename T_loc, typename T_scale>
-inline auto cauchy_ccdf_log(const T_y& y, const T_loc& mu,
-                            const T_scale& sigma) {
-  return cauchy_lccdf(y, mu, sigma);
+inline auto cauchy_ccdf_log(T_y&& y, T_loc&& mu,
+                            T_scale&& sigma) {
+  return cauchy_lccdf(std::forward<T_y>(y), std::forward<T_loc>(mu), std::forward<T_scale>(sigma));
 }
 
 }  // namespace math

@@ -7,6 +7,6 @@ TEST(ProbRayleigh, cdf_log_matches_lcdf) {
 
   EXPECT_FLOAT_EQ((stan::math::rayleigh_lcdf(y, sigma)),
                   (stan::math::rayleigh_cdf_log(y, sigma)));
-  EXPECT_FLOAT_EQ((stan::math::rayleigh_lcdf<double, double>(y, sigma)),
-                  (stan::math::rayleigh_cdf_log<double, double>(y, sigma)));
+  EXPECT_FLOAT_EQ((stan::math::rayleigh_lcdf(y, sigma)),
+                  (stan::math::rayleigh_cdf_log(y, sigma)));
 }

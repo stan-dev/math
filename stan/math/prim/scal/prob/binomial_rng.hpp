@@ -29,7 +29,7 @@ namespace math {
  * @throw std::domain_error if theta is not a valid probability
  */
 template <typename T_N, typename T_theta, class RNG>
-inline auto binomial_rng(const T_N& N, const T_theta& theta, RNG& rng) {
+inline auto binomial_rng(T_N&& N, T_theta&& theta, RNG&& rng) {
   using boost::binomial_distribution;
   using boost::variate_generator;
 

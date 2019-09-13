@@ -14,7 +14,7 @@ namespace stan {
 namespace math {
 
 template <bool propto, typename T_y, typename T_scale>
-inline auto rayleigh_lpdf(const T_y& y, const T_scale& sigma) {
+inline auto rayleigh_lpdf(T_y&& y, T_scale&& sigma) {
   static const char* function = "rayleigh_lpdf";
   using T_partials = partials_return_t<T_y, T_scale>;
   T_partials logp(0.0);
@@ -73,7 +73,7 @@ inline auto rayleigh_lpdf(const T_y& y, const T_scale& sigma) {
 }
 
 template <typename T_y, typename T_scale>
-inline auto rayleigh_lpdf(const T_y& y, const T_scale& sigma) {
+inline auto rayleigh_lpdf(T_y&& y, T_scale&& sigma) {
   return rayleigh_lpdf<false>(y, sigma);
 }
 

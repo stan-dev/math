@@ -30,9 +30,10 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_alpha, typename T_tau,
           typename T_beta, typename T_delta>
-inline auto wiener_log(const T_y& y, const T_alpha& alpha, const T_tau& tau,
-                       const T_beta& beta, const T_delta& delta) {
-  return wiener_lpdf<propto>(y, alpha, tau, beta, delta);
+inline auto wiener_log(T_y&& y, T_alpha&& alpha, T_tau&& tau,
+                       T_beta&& beta, T_delta&& delta) {
+  return wiener_lpdf<propto>(std::forward<T_y>(y), std::forward<T_alpha>(alpha),
+   std::forward<T_tau>(tau), std::forward<T_beta>(beta), std::forward<T_delta>(delta));
 }
 
 /**
@@ -40,9 +41,10 @@ inline auto wiener_log(const T_y& y, const T_alpha& alpha, const T_tau& tau,
  */
 template <typename T_y, typename T_alpha, typename T_tau, typename T_beta,
           typename T_delta>
-inline auto wiener_log(const T_y& y, const T_alpha& alpha, const T_tau& tau,
-                       const T_beta& beta, const T_delta& delta) {
-  return wiener_lpdf(y, alpha, tau, beta, delta);
+inline auto wiener_log(T_y&& y, T_alpha&& alpha, T_tau&& tau,
+                       T_beta&& beta, T_delta&& delta) {
+  return wiener_lpdf(std::forward<T_y>(y), std::forward<T_alpha>(alpha),
+   std::forward<T_tau>(tau), std::forward<T_beta>(beta), std::forward<T_delta>(delta));
 }
 
 }  // namespace math

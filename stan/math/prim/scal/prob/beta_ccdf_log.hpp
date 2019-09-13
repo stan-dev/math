@@ -11,8 +11,8 @@ namespace math {
  * @deprecated use <code>beta_lccdf</code>
  */
 template <typename T_y, typename T_scale_succ, typename T_scale_fail>
-inline auto beta_ccdf_log(const T_y& y, const T_scale_succ& alpha,
-                          const T_scale_fail& beta) {
+inline auto beta_ccdf_log(T_y&& y, T_scale_succ&& alpha,
+                          T_scale_fail&& beta) {
   return beta_lccdf(y, alpha, beta);
 }
 

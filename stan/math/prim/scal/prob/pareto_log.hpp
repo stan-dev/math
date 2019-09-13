@@ -11,8 +11,8 @@ namespace math {
  * @deprecated use <code>pareto_lpdf</code>
  */
 template <bool propto, typename T_y, typename T_scale, typename T_shape>
-inline auto pareto_log(const T_y& y, const T_scale& y_min,
-                       const T_shape& alpha) {
+inline auto pareto_log(T_y&& y, T_scale&& y_min,
+                       T_shape&& alpha) {
   return pareto_lpdf<propto>(y, y_min, alpha);
 }
 
@@ -20,8 +20,8 @@ inline auto pareto_log(const T_y& y, const T_scale& y_min,
  * @deprecated use <code>pareto_lpdf</code>
  */
 template <typename T_y, typename T_scale, typename T_shape>
-inline auto pareto_log(const T_y& y, const T_scale& y_min,
-                       const T_shape& alpha) {
+inline auto pareto_log(T_y&& y, T_scale&& y_min,
+                       T_shape&& alpha) {
   return pareto_lpdf(y, y_min, alpha);
 }
 

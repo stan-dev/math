@@ -29,7 +29,7 @@ namespace math {
  * @tparam T_scale Type of standard deviation paramater.
  */
 template <typename T_y, typename T_loc, typename T_scale>
-inline auto normal_cdf(const T_y& y, const T_loc& mu, const T_scale& sigma) {
+inline auto normal_cdf(T_y&& y, T_loc&& mu, T_scale&& sigma) {
   static const char* function = "normal_cdf";
   using T_partials = partials_return_t<T_y, T_loc, T_scale>;
   T_partials cdf(1.0);
