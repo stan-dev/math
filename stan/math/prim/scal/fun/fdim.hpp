@@ -18,10 +18,11 @@ namespace math {
  * @param y Second value.
  * @return max(x- y, 0)
  */
-template <typename T1, typename T2>
-inline return_type_t<T1, T2> fdim(T1 x, T2 y) {
+template <typename T1, typename T2,
+          typename = enable_if_all_arithmetic<T1, T2>>
+inline auto fdim(T1&& x, T2&& y) {
   using std::fdim;
-  return fdim(x, y);
+  return fdim(std::forward<T1>(x), std::forward<T2>(y));
 }
 
 }  // namespace math

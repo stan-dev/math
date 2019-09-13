@@ -20,10 +20,12 @@ namespace math {
  * @return The product of the first two arguments plus the third
  * argument.
  */
-template <typename T1, typename T2, typename T3>
-inline return_type_t<T1, T2, T3> fma(const T1& x, const T2& y, const T3& z) {
+template <typename T1, typename T2, typename T3,
+          typename = enable_if_all_arithmetic<T1, T2, T3>>
+inline auto fma(T1&& x, T2&& y, T3&& z) {
   using std::fma;
-  return fma(x, y, z);
+  return fma(std::forward<T1>(x), std::forward<T2>(y),
+             std::forward<T3>(z));
 }
 
 }  // namespace math

@@ -18,21 +18,10 @@ namespace math {
  * @param y argument.
  * @return exponent base 2 of argument.
  */
-inline double exp2(double y) {
+template <typename T, typename = enable_if_arithmetic<T>>
+inline double exp2(T&& y) {
   using std::exp2;
-  return exp2(y);
-}
-
-/**
- * Return the exponent base 2 of the specified argument (C99,
- * C++11).
- *
- * @param y argument
- * @return exponent base 2 of argument
- */
-inline double exp2(int y) {
-  using std::exp2;
-  return exp2(y);
+  return exp2(std::forward<T>(y));
 }
 
 }  // namespace math

@@ -18,21 +18,10 @@ namespace math {
  * @param[in] u argument
  * @return base two logarithm of argument
  */
-inline double log2(double u) {
+template <typename T, typename = enable_if_arithmetic<T>>
+inline double log2(T&& y) {
   using std::log2;
-  return log2(u);
-}
-
-/**
- * Return the base two logarithm of the specified argument.  This
- * version is required to disambiguate <code>log2(int)</code>.
- *
- * @param[in] u argument
- * @return base two logarithm of argument
- */
-inline double log2(int u) {
-  using std::log2;
-  return log2(u);
+  return log2(std::forward<T>(y));
 }
 
 /**

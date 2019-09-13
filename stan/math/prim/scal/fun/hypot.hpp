@@ -19,10 +19,11 @@ namespace math {
  * @return Length of hypoteneuse of right triangle with opposite
  * and adjacent side lengths x and y.
  */
-template <typename T1, typename T2>
-inline return_type_t<T1, T2> hypot(const T1& x, const T2& y) {
+template <typename T1, typename T2,
+          typename = enable_if_all_arithmetic<T1, T2>>
+inline auto hypot(T1&& x, T2&& y) {
   using std::hypot;
-  return hypot(x, y);
+  return hypot(std::forward<T1>(x), std::forward<T2>(y));
 }
 
 }  // namespace math

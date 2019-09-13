@@ -15,10 +15,11 @@ namespace math {
  * @param y Second argument.
  * @return maximum of x or y and if one is NaN return the other
  */
-template <typename T1, typename T2>
-inline return_type_t<T1, T2> fmax(const T1& x, const T2& y) {
+template <typename T1, typename T2,
+          typename = enable_if_all_arithmetic<T1, T2>>
+inline auto fmax(T1&& x, T2&& y) {
   using std::fmax;
-  return fmax(x, y);
+  return fmax(std::forward<T1>(x), std::forward<T2>(y));
 }
 
 }  // namespace math
