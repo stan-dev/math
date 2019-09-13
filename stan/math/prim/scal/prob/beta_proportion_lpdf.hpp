@@ -40,8 +40,7 @@ namespace math {
  * @tparam T_prec Type of prior precision.
  */
 template <bool propto, typename T_y, typename T_loc, typename T_prec>
-inline auto beta_proportion_lpdf(T_y&& y, T_loc&& mu,
-                                 T_prec&& kappa) {
+inline auto beta_proportion_lpdf(T_y&& y, T_loc&& mu, T_prec&& kappa) {
   using T_partials = partials_return_t<T_y, T_loc, T_prec>;
   T_partials logp(0);
   using std::log;
@@ -170,8 +169,7 @@ inline auto beta_proportion_lpdf(T_y&& y, T_loc&& mu,
 }
 
 template <typename T_y, typename T_loc, typename T_prec>
-inline auto beta_proportion_lpdf(T_y&& y, T_loc&& mu,
-                                 T_prec&& kappa) {
+inline auto beta_proportion_lpdf(T_y&& y, T_loc&& mu, T_prec&& kappa) {
   return beta_proportion_lpdf<false>(y, mu, kappa);
 }
 

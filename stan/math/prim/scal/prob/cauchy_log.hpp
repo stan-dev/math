@@ -29,7 +29,8 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
 inline auto cauchy_log(T_y&& y, T_loc&& mu, T_scale&& sigma) {
-  return cauchy_lpdf<propto>(std::forward<T_y>(y), std::forward<T_loc>(mu), std::forward<T_scale>(sigma));
+  return cauchy_lpdf<propto>(std::forward<T_y>(y), std::forward<T_loc>(mu),
+                             std::forward<T_scale>(sigma));
 }
 
 /**
@@ -37,7 +38,8 @@ inline auto cauchy_log(T_y&& y, T_loc&& mu, T_scale&& sigma) {
  */
 template <typename T_y, typename T_loc, typename T_scale>
 inline auto cauchy_log(T_y&& y, T_loc&& mu, T_scale&& sigma) {
-  return cauchy_lpdf(std::forward<T_y>(y), std::forward<T_loc>(mu), std::forward<T_scale>(sigma));
+  return cauchy_lpdf(std::forward<T_y>(y), std::forward<T_loc>(mu),
+                     std::forward<T_scale>(sigma));
 }
 
 }  // namespace math

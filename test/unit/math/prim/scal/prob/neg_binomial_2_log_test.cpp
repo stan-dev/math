@@ -185,17 +185,10 @@ TEST(ProbNegBinomial2, log_matches_lpmf) {
                   (stan::math::neg_binomial_2_log<true>(y, mu, phi)));
   EXPECT_FLOAT_EQ((stan::math::neg_binomial_2_lpmf<false>(y, mu, phi)),
                   (stan::math::neg_binomial_2_log<false>(y, mu, phi)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::neg_binomial_2_lpmf<true>(y, mu,
-                                                                     phi)),
-      (stan::math::neg_binomial_2_log<true>(y, mu,
-                                                                    phi)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::neg_binomial_2_lpmf<false>(y, mu,
-                                                                      phi)),
-      (stan::math::neg_binomial_2_log<false>(y, mu,
-                                                                     phi)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::neg_binomial_2_lpmf(y, mu, phi)),
-      (stan::math::neg_binomial_2_log(y, mu, phi)));
+  EXPECT_FLOAT_EQ((stan::math::neg_binomial_2_lpmf<true>(y, mu, phi)),
+                  (stan::math::neg_binomial_2_log<true>(y, mu, phi)));
+  EXPECT_FLOAT_EQ((stan::math::neg_binomial_2_lpmf<false>(y, mu, phi)),
+                  (stan::math::neg_binomial_2_log<false>(y, mu, phi)));
+  EXPECT_FLOAT_EQ((stan::math::neg_binomial_2_lpmf(y, mu, phi)),
+                  (stan::math::neg_binomial_2_log(y, mu, phi)));
 }

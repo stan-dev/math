@@ -31,8 +31,8 @@ namespace math {
  */
 template <typename T_loc, typename T_scale, class RNG>
 inline auto cauchy_rng(T_loc&& mu, T_scale&& sigma, RNG&& rng) {
-  using boost::random::cauchy_distribution;
   using boost::variate_generator;
+  using boost::random::cauchy_distribution;
   static const char* function = "cauchy_rng";
 
   check_finite(function, "Location parameter", mu);

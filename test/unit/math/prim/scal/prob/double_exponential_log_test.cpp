@@ -12,18 +12,10 @@ TEST(ProbDoubleExponential, log_matches_lpdf) {
                   (stan::math::double_exponential_log<true>(y, mu, sigma)));
   EXPECT_FLOAT_EQ((stan::math::double_exponential_lpdf<false>(y, mu, sigma)),
                   (stan::math::double_exponential_log<false>(y, mu, sigma)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::double_exponential_lpdf<true>(
-          y, mu, sigma)),
-      (stan::math::double_exponential_log<true>(
-          y, mu, sigma)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::double_exponential_lpdf<false>(
-          y, mu, sigma)),
-      (stan::math::double_exponential_log<false>(
-          y, mu, sigma)));
-  EXPECT_FLOAT_EQ((stan::math::double_exponential_lpdf(
-                      y, mu, sigma)),
-                  (stan::math::double_exponential_log(
-                      y, mu, sigma)));
+  EXPECT_FLOAT_EQ((stan::math::double_exponential_lpdf<true>(y, mu, sigma)),
+                  (stan::math::double_exponential_log<true>(y, mu, sigma)));
+  EXPECT_FLOAT_EQ((stan::math::double_exponential_lpdf<false>(y, mu, sigma)),
+                  (stan::math::double_exponential_log<false>(y, mu, sigma)));
+  EXPECT_FLOAT_EQ((stan::math::double_exponential_lpdf(y, mu, sigma)),
+                  (stan::math::double_exponential_log(y, mu, sigma)));
 }

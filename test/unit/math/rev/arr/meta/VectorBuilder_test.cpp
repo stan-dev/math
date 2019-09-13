@@ -3,8 +3,8 @@
 #include <vector>
 
 TEST(MetaTraits, VectorBuilder_false_true) {
-  using stan::VectorBuilder;
   using stan::length;
+  using stan::VectorBuilder;
   using stan::math::var;
   using std::vector;
 
@@ -21,8 +21,8 @@ TEST(MetaTraits, VectorBuilder_false_true) {
 }
 
 TEST(MetaTraits, VectorBuilder_true_true) {
-  using stan::VectorBuilder;
   using stan::length;
+  using stan::VectorBuilder;
   using stan::math::var;
   using std::vector;
 

@@ -12,8 +12,7 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
           typename T_inv_scale>
-inline auto exp_mod_normal_log(T_y&& y, T_loc&& mu,
-                               T_scale&& sigma,
+inline auto exp_mod_normal_log(T_y&& y, T_loc&& mu, T_scale&& sigma,
                                T_inv_scale&& lambda) {
   return exp_mod_normal_lpdf<propto>(y, mu, sigma, lambda);
 }
@@ -22,8 +21,7 @@ inline auto exp_mod_normal_log(T_y&& y, T_loc&& mu,
  * @deprecated use <code>exp_mod_normal_lpdf</code>
  */
 template <typename T_y, typename T_loc, typename T_scale, typename T_inv_scale>
-inline auto exp_mod_normal_log(T_y&& y, T_loc&& mu,
-                               T_scale&& sigma,
+inline auto exp_mod_normal_log(T_y&& y, T_loc&& mu, T_scale&& sigma,
                                T_inv_scale&& lambda) {
   return exp_mod_normal_lpdf(y, mu, sigma, lambda);
 }

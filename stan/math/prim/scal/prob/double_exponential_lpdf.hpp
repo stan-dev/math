@@ -29,11 +29,9 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
-inline auto double_exponential_lpdf(T_y&& y, T_loc&& mu,
-                                    T_scale&& sigma) {
+inline auto double_exponential_lpdf(T_y&& y, T_loc&& mu, T_scale&& sigma) {
   using T_partials = partials_return_t<T_y, T_loc, T_scale>;
   T_partials logp(0.0);
-
 
   using std::fabs;
   using std::log;
@@ -112,8 +110,7 @@ inline auto double_exponential_lpdf(T_y&& y, T_loc&& mu,
 }
 
 template <typename T_y, typename T_loc, typename T_scale>
-inline auto double_exponential_lpdf(T_y&& y, T_loc&& mu,
-                                    T_scale&& sigma) {
+inline auto double_exponential_lpdf(T_y&& y, T_loc&& mu, T_scale&& sigma) {
   return double_exponential_lpdf<false>(y, mu, sigma);
 }
 

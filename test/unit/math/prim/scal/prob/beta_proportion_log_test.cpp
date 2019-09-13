@@ -12,17 +12,10 @@ TEST(ProbBetaProportion, log_matches_lpdf) {
                   (stan::math::beta_proportion_log<true>(y, mu, kappa)));
   EXPECT_FLOAT_EQ((stan::math::beta_proportion_lpdf<false>(y, mu, kappa)),
                   (stan::math::beta_proportion_log<false>(y, mu, kappa)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::beta_proportion_lpdf<true>(y, mu,
-                                                                      kappa)),
-      (stan::math::beta_proportion_log<true>(y, mu,
-                                                                     kappa)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::beta_proportion_lpdf<false>(y, mu,
-                                                                       kappa)),
-      (stan::math::beta_proportion_log<false>(y, mu,
-                                                                      kappa)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::beta_proportion_lpdf(y, mu, kappa)),
-      (stan::math::beta_proportion_log(y, mu, kappa)));
+  EXPECT_FLOAT_EQ((stan::math::beta_proportion_lpdf<true>(y, mu, kappa)),
+                  (stan::math::beta_proportion_log<true>(y, mu, kappa)));
+  EXPECT_FLOAT_EQ((stan::math::beta_proportion_lpdf<false>(y, mu, kappa)),
+                  (stan::math::beta_proportion_log<false>(y, mu, kappa)));
+  EXPECT_FLOAT_EQ((stan::math::beta_proportion_lpdf(y, mu, kappa)),
+                  (stan::math::beta_proportion_log(y, mu, kappa)));
 }

@@ -8,7 +8,6 @@ TEST(ProbNegBinomial, cdf_log_matches_lcdf) {
 
   EXPECT_FLOAT_EQ((stan::math::neg_binomial_lcdf(y, alpha, beta)),
                   (stan::math::neg_binomial_cdf_log(y, alpha, beta)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::neg_binomial_lcdf(y, alpha, beta)),
-      (stan::math::neg_binomial_cdf_log(y, alpha, beta)));
+  EXPECT_FLOAT_EQ((stan::math::neg_binomial_lcdf(y, alpha, beta)),
+                  (stan::math::neg_binomial_cdf_log(y, alpha, beta)));
 }

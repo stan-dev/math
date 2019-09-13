@@ -31,8 +31,7 @@ namespace math {
  * @tparam T_dof Type of degrees of freedom.
  */
 template <bool propto, typename T_y, typename T_dof, typename T_scale>
-inline auto scaled_inv_chi_square_log(T_y&& y, T_dof&& nu,
-                                      T_scale&& s) {
+inline auto scaled_inv_chi_square_log(T_y&& y, T_dof&& nu, T_scale&& s) {
   return scaled_inv_chi_square_lpdf<propto>(y, nu, s);
 }
 
@@ -40,8 +39,7 @@ inline auto scaled_inv_chi_square_log(T_y&& y, T_dof&& nu,
  * @deprecated use <code>scaled_inv_chi_square_lpdf</code>
  */
 template <typename T_y, typename T_dof, typename T_scale>
-inline auto scaled_inv_chi_square_log(T_y&& y, T_dof&& nu,
-                                      T_scale&& s) {
+inline auto scaled_inv_chi_square_log(T_y&& y, T_dof&& nu, T_scale&& s) {
   return scaled_inv_chi_square_lpdf(y, nu, s);
 }
 

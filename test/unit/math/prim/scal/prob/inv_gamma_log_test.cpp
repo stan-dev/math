@@ -12,15 +12,10 @@ TEST(ProbInvGamma, log_matches_lpdf) {
                   (stan::math::inv_gamma_log<true>(y, alpha, beta)));
   EXPECT_FLOAT_EQ((stan::math::inv_gamma_lpdf<false>(y, alpha, beta)),
                   (stan::math::inv_gamma_log<false>(y, alpha, beta)));
-  EXPECT_FLOAT_EQ((stan::math::inv_gamma_lpdf<true>(
-                      y, alpha, beta)),
-                  (stan::math::inv_gamma_log<true>(
-                      y, alpha, beta)));
-  EXPECT_FLOAT_EQ((stan::math::inv_gamma_lpdf<false>(
-                      y, alpha, beta)),
-                  (stan::math::inv_gamma_log<false>(
-                      y, alpha, beta)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::inv_gamma_lpdf(y, alpha, beta)),
-      (stan::math::inv_gamma_log(y, alpha, beta)));
+  EXPECT_FLOAT_EQ((stan::math::inv_gamma_lpdf<true>(y, alpha, beta)),
+                  (stan::math::inv_gamma_log<true>(y, alpha, beta)));
+  EXPECT_FLOAT_EQ((stan::math::inv_gamma_lpdf<false>(y, alpha, beta)),
+                  (stan::math::inv_gamma_log<false>(y, alpha, beta)));
+  EXPECT_FLOAT_EQ((stan::math::inv_gamma_lpdf(y, alpha, beta)),
+                  (stan::math::inv_gamma_log(y, alpha, beta)));
 }

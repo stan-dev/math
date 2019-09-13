@@ -13,19 +13,10 @@ TEST(ProbBetaBinomial, log_matches_lpmf) {
                   (stan::math::beta_binomial_log<true>(n, N, alpha, beta)));
   EXPECT_FLOAT_EQ((stan::math::beta_binomial_lpmf<false>(n, N, alpha, beta)),
                   (stan::math::beta_binomial_log<false>(n, N, alpha, beta)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::beta_binomial_lpmf<true>(
-          n, N, alpha, beta)),
-      (stan::math::beta_binomial_log<true>(
-          n, N, alpha, beta)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::beta_binomial_lpmf<false>(
-          n, N, alpha, beta)),
-      (stan::math::beta_binomial_log<false>(
-          n, N, alpha, beta)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::beta_binomial_lpmf(
-          n, N, alpha, beta)),
-      (stan::math::beta_binomial_log(
-          n, N, alpha, beta)));
+  EXPECT_FLOAT_EQ((stan::math::beta_binomial_lpmf<true>(n, N, alpha, beta)),
+                  (stan::math::beta_binomial_log<true>(n, N, alpha, beta)));
+  EXPECT_FLOAT_EQ((stan::math::beta_binomial_lpmf<false>(n, N, alpha, beta)),
+                  (stan::math::beta_binomial_log<false>(n, N, alpha, beta)));
+  EXPECT_FLOAT_EQ((stan::math::beta_binomial_lpmf(n, N, alpha, beta)),
+                  (stan::math::beta_binomial_log(n, N, alpha, beta)));
 }

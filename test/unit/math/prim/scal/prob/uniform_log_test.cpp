@@ -12,13 +12,10 @@ TEST(ProbUniform, log_matches_lpdf) {
                   (stan::math::uniform_log<true>(y, alpha, beta)));
   EXPECT_FLOAT_EQ((stan::math::uniform_lpdf<false>(y, alpha, beta)),
                   (stan::math::uniform_log<false>(y, alpha, beta)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::uniform_lpdf<true>(y, alpha, beta)),
-      (stan::math::uniform_log<true>(y, alpha, beta)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::uniform_lpdf<false>(y, alpha, beta)),
-      (stan::math::uniform_log<false>(y, alpha, beta)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::uniform_lpdf(y, alpha, beta)),
-      (stan::math::uniform_log(y, alpha, beta)));
+  EXPECT_FLOAT_EQ((stan::math::uniform_lpdf<true>(y, alpha, beta)),
+                  (stan::math::uniform_log<true>(y, alpha, beta)));
+  EXPECT_FLOAT_EQ((stan::math::uniform_lpdf<false>(y, alpha, beta)),
+                  (stan::math::uniform_log<false>(y, alpha, beta)));
+  EXPECT_FLOAT_EQ((stan::math::uniform_lpdf(y, alpha, beta)),
+                  (stan::math::uniform_log(y, alpha, beta)));
 }

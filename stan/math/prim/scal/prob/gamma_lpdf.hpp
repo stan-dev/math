@@ -40,8 +40,7 @@ namespace math {
  * @tparam T_inv_scale Type of inverse scale.
  */
 template <bool propto, typename T_y, typename T_shape, typename T_inv_scale>
-inline auto gamma_lpdf(T_y&& y, T_shape&& alpha,
-                       T_inv_scale&& beta) {
+inline auto gamma_lpdf(T_y&& y, T_shape&& alpha, T_inv_scale&& beta) {
   using T_partials = partials_return_t<T_y, T_shape, T_inv_scale>;
   T_partials logp(0.0);
 
@@ -107,9 +106,9 @@ inline auto gamma_lpdf(T_y&& y, T_shape&& alpha,
 }
 
 template <typename T_y, typename T_shape, typename T_inv_scale>
-inline auto gamma_lpdf(T_y&& y, T_shape&& alpha,
-                       T_inv_scale&& beta) {
-  return gamma_lpdf<false>(std::forward<T_y>(y), std::forward<T_shape>(alpha), std::forward<T_inv_scale>(beta));
+inline auto gamma_lpdf(T_y&& y, T_shape&& alpha, T_inv_scale&& beta) {
+  return gamma_lpdf<false>(std::forward<T_y>(y), std::forward<T_shape>(alpha),
+                           std::forward<T_inv_scale>(beta));
 }
 
 }  // namespace math

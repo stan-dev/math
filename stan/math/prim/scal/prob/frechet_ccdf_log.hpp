@@ -11,8 +11,7 @@ namespace math {
  * @deprecated use <code>frechet_lccdf</code>
  */
 template <typename T_y, typename T_shape, typename T_scale>
-inline auto frechet_ccdf_log(T_y&& y, T_shape&& alpha,
-                             T_scale&& sigma) {
+inline auto frechet_ccdf_log(T_y&& y, T_shape&& alpha, T_scale&& sigma) {
   return frechet_lccdf(y, alpha, sigma);
 }
 

@@ -26,8 +26,7 @@ namespace math {
  * @throw std::domain_error if y is negative, alpha sigma is nonpositive
  */
 template <typename T_y, typename T_shape, typename T_scale>
-inline auto weibull_lccdf(T_y&& y, T_shape&& alpha,
-                          T_scale&& sigma) {
+inline auto weibull_lccdf(T_y&& y, T_shape&& alpha, T_scale&& sigma) {
   using T_partials = partials_return_t<T_y, T_shape, T_scale>;
 
   T_partials ccdf_log(0.0);

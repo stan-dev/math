@@ -8,7 +8,6 @@ TEST(ProbInvGamma, ccdf_log_matches_lccdf) {
 
   EXPECT_FLOAT_EQ((stan::math::inv_gamma_lccdf(y, alpha, beta)),
                   (stan::math::inv_gamma_ccdf_log(y, alpha, beta)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::inv_gamma_lccdf(y, alpha, beta)),
-      (stan::math::inv_gamma_ccdf_log(y, alpha, beta)));
+  EXPECT_FLOAT_EQ((stan::math::inv_gamma_lccdf(y, alpha, beta)),
+                  (stan::math::inv_gamma_ccdf_log(y, alpha, beta)));
 }

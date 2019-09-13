@@ -82,7 +82,8 @@ inline auto bernoulli_logit_lpmf(T_n&& n, T_prob&& theta) {
 
 template <typename T_n, typename T_prob>
 inline auto bernoulli_logit_lpmf(T_n&& n, T_prob&& theta) {
-  return bernoulli_logit_lpmf<false>(std::forward<T_n>(n), std::forward<T_prob>(theta));
+  return bernoulli_logit_lpmf<false>(std::forward<T_n>(n),
+                                     std::forward<T_prob>(theta));
 }
 
 }  // namespace math

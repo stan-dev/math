@@ -28,8 +28,7 @@ namespace math {
  * @throw std::domain_error if y is negative, alpha sigma is nonpositive
  */
 template <bool propto, typename T_y, typename T_shape, typename T_scale>
-inline auto weibull_lpdf(T_y&& y, T_shape&& alpha,
-                         T_scale&& sigma) {
+inline auto weibull_lpdf(T_y&& y, T_shape&& alpha, T_scale&& sigma) {
   static const char* function = "weibull_lpdf";
   using T_partials = partials_return_t<T_y, T_shape, T_scale>;
   T_partials logp(0);
@@ -139,9 +138,9 @@ inline auto weibull_lpdf(T_y&& y, T_shape&& alpha,
 }
 
 template <typename T_y, typename T_shape, typename T_scale>
-inline auto weibull_lpdf(T_y&& y, T_shape&& alpha,
-                         T_scale&& sigma) {
-  return weibull_lpdf<false>(std::forward<T_y>(y), std::forward<T_shape>(alpha), std::forward<T_scale>(sigma));
+inline auto weibull_lpdf(T_y&& y, T_shape&& alpha, T_scale&& sigma) {
+  return weibull_lpdf<false>(std::forward<T_y>(y), std::forward<T_shape>(alpha),
+                             std::forward<T_scale>(sigma));
 }
 
 }  // namespace math

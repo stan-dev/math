@@ -11,8 +11,7 @@ namespace math {
  * @deprecated use <code>scaled_inv_chi_square_lcdf</code>
  */
 template <typename T_y, typename T_dof, typename T_scale>
-inline auto scaled_inv_chi_square_cdf_log(T_y&& y, T_dof&& nu,
-                                          T_scale&& s) {
+inline auto scaled_inv_chi_square_cdf_log(T_y&& y, T_dof&& nu, T_scale&& s) {
   return scaled_inv_chi_square_lcdf(y, nu, s);
 }
 

@@ -26,8 +26,7 @@ namespace math {
  * @tparam T_scale Type of scale.
  */
 template <bool propto, typename T_y, typename T_shape, typename T_scale>
-inline auto inv_gamma_log(T_y&& y, T_shape&& alpha,
-                          T_scale&& beta) {
+inline auto inv_gamma_log(T_y&& y, T_shape&& alpha, T_scale&& beta) {
   return inv_gamma_lpdf<propto>(y, alpha, beta);
 }
 
@@ -35,8 +34,7 @@ inline auto inv_gamma_log(T_y&& y, T_shape&& alpha,
  * @deprecated use <code>inv_gamma_lpdf</code>
  */
 template <typename T_y, typename T_shape, typename T_scale>
-inline auto inv_gamma_log(T_y&& y, T_shape&& alpha,
-                          T_scale&& beta) {
+inline auto inv_gamma_log(T_y&& y, T_shape&& alpha, T_scale&& beta) {
   return inv_gamma_lpdf(y, alpha, beta);
 }
 

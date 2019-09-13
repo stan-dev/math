@@ -8,7 +8,6 @@ TEST(ProbUniform, ccdf_log_matches_lccdf) {
 
   EXPECT_FLOAT_EQ((stan::math::uniform_lccdf(y, alpha, beta)),
                   (stan::math::uniform_ccdf_log(y, alpha, beta)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::uniform_lccdf(y, alpha, beta)),
-      (stan::math::uniform_ccdf_log(y, alpha, beta)));
+  EXPECT_FLOAT_EQ((stan::math::uniform_lccdf(y, alpha, beta)),
+                  (stan::math::uniform_ccdf_log(y, alpha, beta)));
 }

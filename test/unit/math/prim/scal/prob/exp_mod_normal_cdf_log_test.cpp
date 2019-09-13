@@ -9,9 +9,6 @@ TEST(ProbFoo, cdf_log_matches_lcdf) {
 
   EXPECT_FLOAT_EQ((stan::math::exp_mod_normal_lcdf(y, mu, lambda, sigma)),
                   (stan::math::exp_mod_normal_cdf_log(y, mu, lambda, sigma)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::exp_mod_normal_lcdf(
-          y, mu, lambda, sigma)),
-      (stan::math::exp_mod_normal_cdf_log(
-          y, mu, lambda, sigma)));
+  EXPECT_FLOAT_EQ((stan::math::exp_mod_normal_lcdf(y, mu, lambda, sigma)),
+                  (stan::math::exp_mod_normal_cdf_log(y, mu, lambda, sigma)));
 }

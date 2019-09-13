@@ -19,7 +19,6 @@ inline auto lognormal_cdf(T_y&& y, T_loc&& mu, T_scale&& sigma) {
   using T_partials = partials_return_t<T_y, T_loc, T_scale>;
   T_partials cdf = 1.0;
 
-
   using std::exp;
   using std::log;
 

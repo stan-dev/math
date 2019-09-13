@@ -15,11 +15,9 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_scale, typename T_shape>
-inline auto pareto_cdf(T_y&& y, T_scale&& y_min,
-                       T_shape&& alpha) {
+inline auto pareto_cdf(T_y&& y, T_scale&& y_min, T_shape&& alpha) {
   using T_partials = partials_return_t<T_y, T_scale, T_shape>;
   T_partials P(1.0);
-
 
   using std::exp;
   using std::log;

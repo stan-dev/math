@@ -11,8 +11,7 @@ namespace math {
  * @deprecated use <code>exp_mod_normal_lccdf</code>
  */
 template <typename T_y, typename T_loc, typename T_scale, typename T_inv_scale>
-inline auto exp_mod_normal_ccdf_log(T_y&& y, T_loc&& mu,
-                                    T_scale&& sigma,
+inline auto exp_mod_normal_ccdf_log(T_y&& y, T_loc&& mu, T_scale&& sigma,
                                     T_inv_scale&& lambda) {
   return exp_mod_normal_lccdf(y, mu, sigma, lambda);
 }

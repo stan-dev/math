@@ -33,7 +33,6 @@ inline auto gumbel_lccdf(T_y&& y, T_loc&& mu, T_scale&& beta) {
   using T_partials = partials_return_t<T_y, T_loc, T_scale>;
   T_partials ccdf_log(0.0);
 
-
   using std::exp;
   using std::log;
 

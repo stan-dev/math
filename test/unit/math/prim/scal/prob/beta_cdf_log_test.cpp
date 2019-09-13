@@ -8,7 +8,6 @@ TEST(ProbBeta, cdf_log_matches_lcdf) {
 
   EXPECT_FLOAT_EQ((stan::math::beta_lcdf(y, alpha, beta)),
                   (stan::math::beta_cdf_log(y, alpha, beta)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::beta_lcdf(y, alpha, beta)),
-      (stan::math::beta_cdf_log(y, alpha, beta)));
+  EXPECT_FLOAT_EQ((stan::math::beta_lcdf(y, alpha, beta)),
+                  (stan::math::beta_cdf_log(y, alpha, beta)));
 }

@@ -8,7 +8,6 @@ TEST(ProbFrechet, cdf_log_matches_lcdf) {
 
   EXPECT_FLOAT_EQ((stan::math::frechet_lcdf(y, alpha, sigma)),
                   (stan::math::frechet_cdf_log(y, alpha, sigma)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::frechet_lcdf(y, alpha, sigma)),
-      (stan::math::frechet_cdf_log(y, alpha, sigma)));
+  EXPECT_FLOAT_EQ((stan::math::frechet_lcdf(y, alpha, sigma)),
+                  (stan::math::frechet_cdf_log(y, alpha, sigma)));
 }

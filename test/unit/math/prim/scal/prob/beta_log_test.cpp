@@ -12,13 +12,10 @@ TEST(ProbBeta, log_matches_lpdf) {
                   (stan::math::beta_log<true>(y, alpha, beta)));
   EXPECT_FLOAT_EQ((stan::math::beta_lpdf<false>(y, alpha, beta)),
                   (stan::math::beta_log<false>(y, alpha, beta)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::beta_lpdf<true>(y, alpha, beta)),
-      (stan::math::beta_log<true>(y, alpha, beta)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::beta_lpdf<false>(y, alpha, beta)),
-      (stan::math::beta_log<false>(y, alpha, beta)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::beta_lpdf(y, alpha, beta)),
-      (stan::math::beta_log(y, alpha, beta)));
+  EXPECT_FLOAT_EQ((stan::math::beta_lpdf<true>(y, alpha, beta)),
+                  (stan::math::beta_log<true>(y, alpha, beta)));
+  EXPECT_FLOAT_EQ((stan::math::beta_lpdf<false>(y, alpha, beta)),
+                  (stan::math::beta_log<false>(y, alpha, beta)));
+  EXPECT_FLOAT_EQ((stan::math::beta_lpdf(y, alpha, beta)),
+                  (stan::math::beta_log(y, alpha, beta)));
 }

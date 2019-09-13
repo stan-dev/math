@@ -20,11 +20,9 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_shape, typename T_scale>
-inline auto frechet_cdf(T_y&& y, T_shape&& alpha,
-                        T_scale&& sigma) {
+inline auto frechet_cdf(T_y&& y, T_shape&& alpha, T_scale&& sigma) {
   using T_partials = partials_return_t<T_y, T_shape, T_scale>;
   T_partials cdf(1.0);
-
 
   using boost::math::tools::promote_args;
   using std::exp;

@@ -8,7 +8,6 @@ TEST(ProbWeibull, cdf_log_matches_lcdf) {
 
   EXPECT_FLOAT_EQ((stan::math::weibull_lcdf(y, alpha, sigma)),
                   (stan::math::weibull_cdf_log(y, alpha, sigma)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::weibull_lcdf(y, alpha, sigma)),
-      (stan::math::weibull_cdf_log(y, alpha, sigma)));
+  EXPECT_FLOAT_EQ((stan::math::weibull_lcdf(y, alpha, sigma)),
+                  (stan::math::weibull_cdf_log(y, alpha, sigma)));
 }

@@ -18,8 +18,8 @@ namespace math {
 // pareto_type_2(y|lambda, alpha)  [y >= 0;  lambda > 0;  alpha > 0]
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
           typename T_shape>
-inline auto pareto_type_2_lpdf(T_y&& y, T_loc&& mu,
-                               T_scale&& lambda, T_shape&& alpha) {
+inline auto pareto_type_2_lpdf(T_y&& y, T_loc&& mu, T_scale&& lambda,
+                               T_shape&& alpha) {
   static const char* function = "pareto_type_2_lpdf";
   using T_partials = partials_return_t<T_y, T_loc, T_scale, T_shape>;
   T_partials logp(0.0);
@@ -118,8 +118,8 @@ inline auto pareto_type_2_lpdf(T_y&& y, T_loc&& mu,
 }
 
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
-inline auto pareto_type_2_lpdf(T_y&& y, T_loc&& mu,
-                               T_scale&& lambda, T_shape&& alpha) {
+inline auto pareto_type_2_lpdf(T_y&& y, T_loc&& mu, T_scale&& lambda,
+                               T_shape&& alpha) {
   return pareto_type_2_lpdf<false>(y, mu, lambda, alpha);
 }
 

@@ -64,8 +64,7 @@ inline auto cauchy_lcdf(T_y&& y, T_loc&& mu, T_scale&& sigma) {
     const auto Pn = atan(z) / pi() + 0.5;
     cdf_log += log(Pn);
 
-    const auto rep_deriv
-        = 1.0 / (pi() * Pn * (z * z * sigma_dbl + sigma_dbl));
+    const auto rep_deriv = 1.0 / (pi() * Pn * (z * z * sigma_dbl + sigma_dbl));
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] += rep_deriv;
     }

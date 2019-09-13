@@ -18,8 +18,7 @@ namespace math {
 
 // NegBinomial(n|mu, phi)  [mu >= 0; phi > 0;  n >= 0]
 template <bool propto, typename T_n, typename T_location, typename T_precision>
-inline auto neg_binomial_2_lpmf(T_n&& n, T_location&& mu,
-                                T_precision&& phi) {
+inline auto neg_binomial_2_lpmf(T_n&& n, T_location&& mu, T_precision&& phi) {
   using T_partials = partials_return_t<T_n, T_location, T_precision>;
   T_partials logp(0.0);
 
@@ -108,8 +107,7 @@ inline auto neg_binomial_2_lpmf(T_n&& n, T_location&& mu,
 }
 
 template <typename T_n, typename T_location, typename T_precision>
-inline auto neg_binomial_2_lpmf(T_n&& n, T_location&& mu,
-                                T_precision&& phi) {
+inline auto neg_binomial_2_lpmf(T_n&& n, T_location&& mu, T_precision&& phi) {
   return neg_binomial_2_lpmf<false>(n, mu, phi);
 }
 

@@ -22,7 +22,6 @@ inline auto poisson_lpmf(T_n&& n, T_rate&& lambda) {
   using T_partials = partials_return_t<T_n, T_rate>;
   T_partials logp(0.0);
 
-
   static const char* function = "poisson_lpmf";
   check_nonnegative(function, "Random variable", n);
   check_not_nan(function, "Rate parameter", lambda);

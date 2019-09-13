@@ -8,7 +8,6 @@ TEST(ProbCauchy, ccdf_log_matches_lcdf) {
 
   EXPECT_FLOAT_EQ((stan::math::cauchy_lccdf(y, mu, sigma)),
                   (stan::math::cauchy_ccdf_log(y, mu, sigma)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::cauchy_lccdf(y, mu, sigma)),
-      (stan::math::cauchy_ccdf_log(y, mu, sigma)));
+  EXPECT_FLOAT_EQ((stan::math::cauchy_lccdf(y, mu, sigma)),
+                  (stan::math::cauchy_ccdf_log(y, mu, sigma)));
 }

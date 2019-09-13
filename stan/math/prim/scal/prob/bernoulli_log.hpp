@@ -13,7 +13,8 @@ namespace math {
  */
 template <bool propto, typename T_n, typename T_prob>
 inline auto bernoulli_log(T_n&& n, T_prob&& theta) {
-  return bernoulli_lpmf<propto>(std::forward<T_n>(n), std::forward<T_prob>(theta));
+  return bernoulli_lpmf<propto>(std::forward<T_n>(n),
+                                std::forward<T_prob>(theta));
 }
 
 /**

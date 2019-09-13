@@ -12,13 +12,10 @@ TEST(ProbLogistic, log_matches_lpdf) {
                   (stan::math::logistic_log<true>(y, mu, sigma)));
   EXPECT_FLOAT_EQ((stan::math::logistic_lpdf<false>(y, mu, sigma)),
                   (stan::math::logistic_log<false>(y, mu, sigma)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::logistic_lpdf<true>(y, mu, sigma)),
-      (stan::math::logistic_log<true>(y, mu, sigma)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::logistic_lpdf<false>(y, mu, sigma)),
-      (stan::math::logistic_log<false>(y, mu, sigma)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::logistic_lpdf(y, mu, sigma)),
-      (stan::math::logistic_log(y, mu, sigma)));
+  EXPECT_FLOAT_EQ((stan::math::logistic_lpdf<true>(y, mu, sigma)),
+                  (stan::math::logistic_log<true>(y, mu, sigma)));
+  EXPECT_FLOAT_EQ((stan::math::logistic_lpdf<false>(y, mu, sigma)),
+                  (stan::math::logistic_log<false>(y, mu, sigma)));
+  EXPECT_FLOAT_EQ((stan::math::logistic_lpdf(y, mu, sigma)),
+                  (stan::math::logistic_log(y, mu, sigma)));
 }
