@@ -46,6 +46,12 @@ inline Eigen::Matrix<T, R, C> matrix_power(const Eigen::Matrix<T, R, C> &M,
   return result;
 }
 
+template <typename T, int R, int C>
+inline Eigen::Matrix<T, R, C> operator^(const Eigen::Matrix<T, R, C> &M,
+                                        const int n) {
+  return matrix_power(M, n);
+}
+
 }  // namespace math
 }  // namespace stan
 #endif

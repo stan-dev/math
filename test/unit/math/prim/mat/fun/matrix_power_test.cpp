@@ -80,3 +80,14 @@ TEST(MathMatrixPower, matrix_power_prim_invalid) {
   good(0, 0) = ninf;
   EXPECT_THROW(matrix_power(good, 2), std::domain_error);
 }
+
+TEST(MathMatrixPower, matrix_power_operator) {
+  using stan::math::operator^;
+
+  Eigen::MatrixXd M(2, 2);
+  M << 1.0, 2.0, 3.0, 4.0;
+  Eigen::MatrixXd M2(2, 2);
+  M2 << 7.0, 10.0, 15.0, 22.0;
+
+  expect_matrix_eq(M2, M ^ 2);
+}
