@@ -30,8 +30,8 @@ namespace math {
  */
 template <typename T_shape, typename T_scale, class RNG>
 inline auto inv_gamma_rng(const T_shape& alpha, const T_scale& beta, RNG& rng) {
-  using boost::variate_generator;
   using boost::random::gamma_distribution;
+  using boost::variate_generator;
 
   static const char* function = "inv_gamma_rng";
 

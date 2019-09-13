@@ -96,8 +96,7 @@ inline auto gamma_lpdf(const T_y& y, const T_shape& alpha,
     }
     if (!is_constant_all<T_shape>::value) {
       const T_partials digamma_alpha = digamma(alpha_dbl);
-      ops_partials.edge2_.partials_[n]
-          += -digamma_alpha + log_beta + log_y;
+      ops_partials.edge2_.partials_[n] += -digamma_alpha + log_beta + log_y;
     }
     if (!is_constant_all<T_inv_scale>::value) {
       ops_partials.edge3_.partials_[n] += alpha_dbl / beta_dbl - y_dbl;
