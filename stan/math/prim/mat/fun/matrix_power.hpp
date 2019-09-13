@@ -9,14 +9,14 @@
 namespace stan {
 namespace math {
 /**
- * Returns the nth power of the specific matrix.
+ * Returns the nth power of the specific matrix. M^n = M * M * ... * M.
  *
- * @tparam T Type of elements in the matrix.
- * @tparam R Number of rows in matrix.
- * @tparam C Number of columns in matrix.
- * @param M A square matrix.
- * @param n Exponent.
- * @return nth power of M. M^n = M * ... * M.
+ * @tparam T type of elements in the matrix
+ * @tparam R number of rows in matrix
+ * @tparam C number of columns in matrix
+ * @param[in] M a square matrix
+ * @param[in] n exponent
+ * @return nth power of M
  * @throw std::domain_error if the matrix contains NaNs or infinities.
  * @throw std::invalid_argument if the exponent is negative or the matrix is not
  * square.
