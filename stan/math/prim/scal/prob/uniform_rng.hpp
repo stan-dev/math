@@ -34,8 +34,8 @@ namespace math {
  */
 template <typename T_alpha, typename T_beta, class RNG>
 inline auto uniform_rng(T_alpha&& alpha, T_beta&& beta, RNG&& rng) {
-  using boost::random::uniform_real_distribution;
   using boost::variate_generator;
+  using boost::random::uniform_real_distribution;
 
   static const char* function = "uniform_rng";
 

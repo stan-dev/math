@@ -25,8 +25,8 @@ namespace math {
  */
 template <typename T_deg, class RNG>
 inline auto inv_chi_square_rng(T_deg&& nu, RNG&& rng) {
-  using boost::random::chi_squared_distribution;
   using boost::variate_generator;
+  using boost::random::chi_squared_distribution;
 
   static const char* function = "inv_chi_square_rng";
 

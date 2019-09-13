@@ -36,8 +36,8 @@ namespace math {
 template <typename T_loc, typename T_prec, class RNG>
 inline auto neg_binomial_2_rng(T_loc&& mu, T_prec&& phi, RNG&& rng) {
   using boost::gamma_distribution;
-  using boost::random::poisson_distribution;
   using boost::variate_generator;
+  using boost::random::poisson_distribution;
 
   static const char* function = "neg_binomial_2_rng";
 
