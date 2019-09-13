@@ -33,8 +33,8 @@ namespace math {
 template <typename T_deg, typename T_scale, class RNG>
 inline auto scaled_inv_chi_square_rng(const T_deg& nu, const T_scale& s,
                                       RNG& rng) {
-  using boost::variate_generator;
   using boost::random::chi_squared_distribution;
+  using boost::variate_generator;
 
   static const char* function = "scaled_inv_chi_square_rng";
 

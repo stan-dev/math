@@ -85,7 +85,8 @@ inline auto lognormal_lpdf(const T_y& y, const T_loc& mu,
     }
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] -= (1 + logy_m_mu_div_sigma) *  (1 / y_val);
+      ops_partials.edge1_.partials_[n]
+          -= (1 + logy_m_mu_div_sigma) * (1 / y_val);
     }
     if (!is_constant_all<T_loc>::value) {
       ops_partials.edge2_.partials_[n] += logy_m_mu_div_sigma;

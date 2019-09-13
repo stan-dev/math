@@ -44,8 +44,8 @@ namespace math {
  */
 template <typename T_loc, typename T_conc, class RNG>
 inline auto von_mises_rng(const T_loc& mu, const T_conc& kappa, RNG& rng) {
-  using boost::variate_generator;
   using boost::random::uniform_real_distribution;
+  using boost::variate_generator;
   static const char* function = "von_mises_rng";
 
   check_finite(function, "mean", mu);

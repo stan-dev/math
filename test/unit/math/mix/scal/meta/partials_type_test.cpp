@@ -2,9 +2,9 @@
 #include <gtest/gtest.h>
 
 TEST(MetaTraits, partials_type) {
-  using stan::partials_type;
   using stan::math::fvar;
   using stan::math::var;
+  using stan::partials_type;
 
   stan::partials_type<fvar<fvar<var> > >::type d(7.0, 1.0);
   EXPECT_EQ(7.0, d.val_.val());

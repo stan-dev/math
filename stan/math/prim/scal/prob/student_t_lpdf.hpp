@@ -127,8 +127,7 @@ inline auto student_t_lpdf(const T_y& y, const T_dof& nu, const T_loc& mu,
     }
     if (!is_constant_all<T_loc>::value) {
       ops_partials.edge3_.partials_[n]
-          -= (half_nu + 0.5)
-             / (1.0 + square_y_minus_mu_over_sigma__over_nu)
+          -= (half_nu + 0.5) / (1.0 + square_y_minus_mu_over_sigma__over_nu)
              * (2.0 * (mu_dbl - y_dbl) / (sigma_dbl * sigma_dbl * nu_dbl));
     }
     if (!is_constant_all<T_scale>::value) {

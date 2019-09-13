@@ -37,8 +37,8 @@ namespace math {
 template <typename T_loc, typename T_scale, typename T_shape, class RNG>
 inline auto pareto_type_2_rng(const T_loc& mu, const T_scale& lambda,
                               const T_shape& alpha, RNG& rng) {
-  using boost::variate_generator;
   using boost::random::uniform_real_distribution;
+  using boost::variate_generator;
   static const char* function = "pareto_type_2_rng";
 
   check_finite(function, "Location parameter", mu);
