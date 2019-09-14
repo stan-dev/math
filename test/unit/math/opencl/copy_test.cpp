@@ -9,18 +9,20 @@
 #include <vector>
 
 TEST(MathMatrixGPU, copy_destroyed) {
+  using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
-  using Eigen::Dynamic;
-  using stan::math::matrix_cl;
   using stan::math::from_matrix_cl;
-  int N=100;
-  MatrixXd a = MatrixXd::Random(N,N);
-  MatrixXd b = MatrixXd::Random(N,N);
-  matrix_cl<double> c_cl(a+b); //the problem
-  MatrixXd w = a - b; //attempt to scramble the memory that was used by the temporary
+  using stan::math::matrix_cl;
+  int N = 100;
+  MatrixXd a = MatrixXd::Random(N, N);
+  MatrixXd b = MatrixXd::Random(N, N);
+  matrix_cl<double> c_cl(a + b);  // the problem
+  MatrixXd w
+      = a - b;  // attempt to scramble the memory that was used by the temporary
 
-  //make compiler think a and b were changed, so second sum can not be optimized away
+  // make compiler think a and b were changed, so second sum can not be
+  // optimized away
   volatile int i = 19;
   volatile double no_opt = a(i);
   a(i) = no_opt;
@@ -29,7 +31,7 @@ TEST(MathMatrixGPU, copy_destroyed) {
 
   MatrixXd correct = a + b;
   MatrixXd result = from_matrix_cl(c_cl);
-  for(int i=0;i<N*N;i++){
+  for (int i = 0; i < N * N; i++) {
     EXPECT_EQ(result(i), correct(i));
   }
   no_opt = w.array().sum();
