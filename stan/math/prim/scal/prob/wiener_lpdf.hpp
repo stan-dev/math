@@ -87,7 +87,7 @@ inline auto wiener_lpdf(const T_y& y, const T_alpha& alpha, const T_tau& tau,
 
   using T_partials = partials_return_t<T_y, T_alpha, T_tau, T_beta, T_delta>;
   using T_return = return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta>;
-  T_partials lp(0.0);
+  T_return lp(0.0);
   if (size_zero(y, alpha, beta, tau, delta)) {
     return T_return(lp);
   }
@@ -138,12 +138,12 @@ inline auto wiener_lpdf(const T_y& y, const T_alpha& alpha, const T_tau& tau,
   for (size_t i = 0; i < N; i++) {
     typename scalar_type<T_beta>::type one_minus_beta = 1.0 - beta_vec[i];
     typename scalar_type<T_alpha>::type alpha2 = square(alpha_vec[i]);
-    T_partials x = (y_vec[i] - tau_vec[i]) / alpha2;
-    T_partials kl, ks, tmp = 0;
-    T_partials k, K;
-    T_partials sqrt_x = sqrt(x);
-    T_partials log_x = log(x);
-    T_partials one_over_pi_times_sqrt_x = 1.0 / pi() * sqrt_x;
+    T_return x = (y_vec[i] - tau_vec[i]) / alpha2;
+    T_return kl, ks, tmp = 0;
+    T_return k, K;
+    T_return sqrt_x = sqrt(x);
+    T_return log_x = log(x);
+    T_return one_over_pi_times_sqrt_x = 1.0 / pi() * sqrt_x;
 
     // calculate number of terms needed for large t:
     // if error threshold is set low enough
@@ -157,21 +157,21 @@ inline auto wiener_lpdf(const T_y& y, const T_alpha& alpha, const T_tau& tau,
     }
     // calculate number of terms needed for small t:
     // if error threshold is set low enough
-    T_partials tmp_expr0
+    T_return tmp_expr0
         = TWO_TIMES_SQRT_2_TIMES_SQRT_PI_TIMES_WIENER_ERR * sqrt_x;
     if (tmp_expr0 < 1) {
       // compute bound
       ks = 2.0 + sqrt_x * sqrt(-2 * log(tmp_expr0));
       // ensure boundary conditions are met
-      T_partials sqrt_x_plus_one = sqrt_x + 1.0;
+      T_return sqrt_x_plus_one = sqrt_x + 1.0;
       ks = (ks > sqrt_x_plus_one) ? ks : sqrt_x_plus_one;
     } else {     // if error threshold was set too high
       ks = 2.0;  // minimal kappa for that case
     }
     if (ks < kl) {   // small t
       K = ceil(ks);  // round to smallest integer meeting error
-      T_partials tmp_expr1 = (K - 1.0) / 2.0;
-      T_partials tmp_expr2 = ceil(tmp_expr1);
+      T_return tmp_expr1 = (K - 1.0) / 2.0;
+      T_return tmp_expr2 = ceil(tmp_expr1);
       for (k = -floor(tmp_expr1); k <= tmp_expr2; k++) {
         tmp += (one_minus_beta + 2.0 * k)
                * exp(-(square(one_minus_beta + 2.0 * k)) * 0.5 / x);
