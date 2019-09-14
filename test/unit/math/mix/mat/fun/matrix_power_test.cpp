@@ -1,6 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <test/unit/math/test_ad.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 
 TEST(MathMatrixPower, ad_tests) {
   using Eigen::MatrixXd;

@@ -1,6 +1,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <test/unit/math/prim/mat/fun/expect_matrix_eq.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 
 TEST(MathMatrixPower, two_by_two) {
   using stan::math::matrix_power;
