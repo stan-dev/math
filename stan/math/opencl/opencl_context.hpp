@@ -101,8 +101,10 @@ class opencl_context_base {
       if (device_properties & CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE) {
         command_queue_ = cl::CommandQueue(
             context_, device_, CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE, nullptr);
+            block_reads_ = CL_FALSE;
       } else {
         command_queue_ = cl::CommandQueue(context_, device_, 0, nullptr);
+        block_reads_= CL_TRUE;
       }
       int thread_block_size_sqrt
           = static_cast<int>(sqrt(static_cast<double>(max_thread_block_size_)));
@@ -144,7 +146,7 @@ class opencl_context_base {
   std::string device_name_;          // The name of OpenCL device
   size_t max_thread_block_size_;  // The maximum size of a block of workers on
                                   // the device
-
+  bool block_reads_; // Whether to use out of order execution.
   // Holds Default parameter values for each Kernel.
   using map_base_opts = std::map<std::string, int>;
   map_base_opts base_opts_
@@ -369,6 +371,10 @@ class opencl_context {
    */
   inline std::vector<cl::Platform> platform() {
     return {opencl_context_base::getInstance().platform_};
+  }
+
+  inline bool& in_order() {
+    return opencl_context_base::getInstance().block_reads_;
   }
 };
 static opencl_context opencl_context;

@@ -18,8 +18,8 @@ TEST(MathMatrixGPU, copy_destroyed) {
   MatrixXd a = MatrixXd::Random(N, N);
   MatrixXd b = MatrixXd::Random(N, N);
   matrix_cl<double> c_cl(a + b);  // the problem
-  MatrixXd w
-      = a - b;  // attempt to scramble the memory that was used by the temporary
+  // attempt to scramble the memory that was used by the temporary
+  MatrixXd w = a - b;
 
   // make compiler think a and b were changed, so second sum can not be
   // optimized away

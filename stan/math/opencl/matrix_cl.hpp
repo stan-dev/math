@@ -10,10 +10,11 @@
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <cl.hpp>
+#include <algorithm>
 #include <iostream>
 #include <string>
+#include <type_traits>
 #include <vector>
-#include <algorithm>
 
 /**
  *  @file stan/math/opencl/matrix_cl.hpp
@@ -259,7 +260,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
        */
       cl::Event write_event;
       queue.enqueueWriteBuffer(
-          buffer_cl_, CL_FALSE, sizeof(double) * offset_size,
+          buffer_cl_, opencl_context.in_order(), sizeof(double) * offset_size,
           sizeof(double) * rows_, A[i].data(), nullptr, &write_event);
       this->add_write_event(write_event);
     }
@@ -308,12 +309,11 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
    * @throw <code>std::system_error</code> if the
    * matrices do not have matching dimensions
    */
-  explicit matrix_cl(
-      const Eigen::Ref<const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>>&
-          A,
+  template <typename Mat, typename = std::enable_if_t<is_eigen<Mat>::value>>
+  explicit matrix_cl(Mat&& A,
       matrix_cl_view partial_view = matrix_cl_view::Entire)
       : rows_(A.rows()), cols_(A.cols()), view_(partial_view) {
-    if (size() == 0) {
+    if (this->size() == 0) {
       return;
     }
     cl::Context& ctx = opencl_context.context();
@@ -321,8 +321,8 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
     try {
       buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
       cl::Event transfer_event;
-      queue.enqueueWriteBuffer(buffer_cl_, CL_FALSE, 0, sizeof(T) * A.size(),
-                               A.data(), nullptr, &transfer_event);
+      queue.enqueueWriteBuffer(buffer_cl_, opencl_context.in_order(), 0, sizeof(T) * A.size(),
+                               A.eval().data(), nullptr, &transfer_event);
       this->add_write_event(transfer_event);
     } catch (const cl::Error& e) {
       check_opencl_error("matrix constructor", e);
@@ -348,7 +348,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
     try {
       buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
       cl::Event transfer_event;
-      queue.enqueueWriteBuffer(buffer_cl_, CL_FALSE, 0, sizeof(T) * A.size(),
+      queue.enqueueWriteBuffer(buffer_cl_, opencl_context.in_order(), 0, sizeof(T) * A.size(),
                                A.data(), nullptr, &transfer_event);
       this->add_write_event(transfer_event);
     } catch (const cl::Error& e) {
@@ -418,7 +418,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
     try {
       buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * size());
       cl::Event transfer_event;
-      queue.enqueueWriteBuffer(buffer_cl_, CL_FALSE, 0, sizeof(T) * size(), A,
+      queue.enqueueWriteBuffer(buffer_cl_, opencl_context.in_order(), 0, sizeof(T) * size(), A,
                                NULL, &transfer_event);
       this->add_write_event(transfer_event);
     } catch (const cl::Error& e) {
