@@ -42,7 +42,7 @@ inline auto uniform_lcdf(const T_y& y, const T_low& alpha, const T_high& beta) {
   for (size_t n = 0; n < N; n++) {
     const T_partials y_dbl = value_of(y_vec[n]);
     if (y_dbl < value_of(alpha_vec[n]) || y_dbl > value_of(beta_vec[n])) {
-      return negative_infinity();
+      return ops_partials.build(T_partials(negative_infinity());
     }
     if (y_dbl == value_of(beta_vec[n])) {
       return ops_partials.build(cdf_log);
