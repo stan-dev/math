@@ -72,7 +72,7 @@ inline auto scaled_inv_chi_square_lccdf(const T_y& y, const T_dof& nu,
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
     if (value_of(y_vec[n]) == std::numeric_limits<double>::infinity()) {
-      return ops_partials.build(negative_infinity());
+      return ops_partials.build(T_partials(negative_infinity()));
     }
 
     const T_partials y_dbl = value_of(y_vec[n]);

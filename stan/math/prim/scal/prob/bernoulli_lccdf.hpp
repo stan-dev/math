@@ -58,7 +58,7 @@ inline auto bernoulli_lccdf(const T_n& n, const T_prob& theta) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
     if (value_of(n_vec[i]) >= 1) {
-      return ops_partials.build(negative_infinity());
+      return ops_partials.build(T_partials(negative_infinity()));
     } else {
       const T_partials Pi = value_of(theta_vec[i]);
 

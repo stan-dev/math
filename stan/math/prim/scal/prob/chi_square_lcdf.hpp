@@ -68,7 +68,7 @@ inline auto chi_square_lcdf(const T_y& y, const T_dof& nu) {
       return ops_partials.build(T_partials(0.0));
     }
     if (y_dbl == 0) {
-      return ops_partials.build(negative_infinity());
+      return ops_partials.build(T_partials(negative_infinity()));
     }
 
     cdf_log += log(Pn);

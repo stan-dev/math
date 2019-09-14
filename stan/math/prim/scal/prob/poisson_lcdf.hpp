@@ -41,7 +41,7 @@ inline auto poisson_lcdf(const T_n& n, const T_rate& lambda) {
   // The gradients are technically ill-defined, but treated as neg infinity
   for (size_t i = 0; i < stan::length(n); i++) {
     if (value_of(n_vec[i]) < 0) {
-      return ops_partials.build(negative_infinity());
+      return ops_partials.build(T_partials(negative_infinity()));
     }
   }
 

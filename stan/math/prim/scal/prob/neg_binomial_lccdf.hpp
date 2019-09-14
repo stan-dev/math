@@ -74,7 +74,7 @@ inline auto neg_binomial_lccdf(const T_n& n, const T_shape& alpha,
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
     if (value_of(n_vec[i]) == std::numeric_limits<int>::max()) {
-      return ops_partials.build(negative_infinity());
+      return ops_partials.build(T_partials(negative_infinity()));
     }
 
     const T_partials n_dbl = value_of(n_vec[i]);

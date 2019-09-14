@@ -72,7 +72,7 @@ inline auto binomial_lccdf(const T_n& n, const T_N& N, const T_prob& theta) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
     if (value_of(n_vec[i]) >= value_of(N_vec[i])) {
-      return ops_partials.build(negative_infinity());
+      return ops_partials.build(T_partials(negative_infinity()));
     }
     const T_partials n_dbl = value_of(n_vec[i]);
     const T_partials N_dbl = value_of(N_vec[i]);

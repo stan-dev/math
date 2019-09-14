@@ -49,7 +49,7 @@ inline auto scaled_inv_chi_square_lcdf(const T_y& y, const T_dof& nu,
   // The gradients are technically ill-defined, but treated as zero
   for (size_t i = 0; i < stan::length(y); i++) {
     if (value_of(y_vec[i]) == 0) {
-      return ops_partials.build(negative_infinity());
+      return ops_partials.build(T_partials(negative_infinity()));
     }
   }
 

@@ -49,7 +49,7 @@ inline auto bernoulli_lcdf(const T_n& n, const T_prob& theta) {
   // The gradients are technically ill-defined, but treated as zero
   for (size_t i = 0; i < stan::length(n); i++) {
     if (value_of(n_vec[i]) < 0) {
-      return ops_partials.build(negative_infinity());
+      return ops_partials.build(T_partials(negative_infinity()));
     }
   }
 
