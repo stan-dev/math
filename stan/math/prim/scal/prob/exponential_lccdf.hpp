@@ -16,7 +16,6 @@ inline auto exponential_lccdf(const T_y& y, const T_inv_scale& beta) {
   using T_partials = partials_return_t<T_y, T_inv_scale>;
   T_partials ccdf_log(0.0);
 
-
   static const char* function = "exponential_lccdf";
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);

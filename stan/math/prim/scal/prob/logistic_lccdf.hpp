@@ -22,7 +22,6 @@ inline auto logistic_lccdf(const T_y& y, const T_loc& mu,
   using T_partials = partials_return_t<T_y, T_loc, T_scale>;
   T_partials P(0.0);
 
-
   using std::exp;
   using std::log;
 
