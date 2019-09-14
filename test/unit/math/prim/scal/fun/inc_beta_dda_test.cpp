@@ -53,7 +53,7 @@ TEST(MathFunctions, inc_beta_dda) {
   EXPECT_FLOAT_EQ(0.0, inc_beta_dda(large_a, large_b, small_z, digamma(large_a),
                                     digamma(large_a + large_b)))
       << "reasonable values for a, b, x";
-  EXPECT_FLOAT_EQ(-4.0856207e-14,
+  EXPECT_FLOAT_EQ(-4.2743586e-14,
                   inc_beta_dda(large_a, large_b, mid_z, digamma(large_a),
                                digamma(large_a + large_b)))
       << "reasonable values for a, b, x";
