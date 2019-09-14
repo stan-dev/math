@@ -24,18 +24,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-  template<class, class = void>
-  struct is_eigen_expression_impl : std::true_type
-  { };
-  template<class T>
-  struct is_eigen_expression_impl<T, decltype((void)(T::d_))> : std::false_type
-  { };
-}
-
-template <typename T>
-struct is_eigen_expression : internal::is_eigen_expression_impl<T> {};
-
 // Dummy class to instantiate matrix_cl to enable for specific types.
 template <typename T, typename = void>
 class matrix_cl {};
@@ -309,22 +297,23 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
     }
   }
 
-  template <typename Mat, typename = void>
+  template <typename Mat, std::enable_if_t<is_eigen_matrix<std::decay_t<Mat>>::value>...>
   void setup_buffer(Mat&& A) {
     cl::Context& ctx = opencl_context.context();
     cl::CommandQueue& queue = opencl_context.queue();
-    buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
+    this->buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
     cl::Event transfer_event;
     queue.enqueueWriteBuffer(buffer_cl_, opencl_context.in_order(), 0,
                              sizeof(T) * A.size(), A.data(), nullptr,
                              &transfer_event);
     this->add_write_event(transfer_event);
   }
-  template <typename Mat, std::enable_if_t<is_eigen_expression<Mat>::value>...>
+
+  template <typename Mat, std::enable_if_t<!is_eigen_matrix<std::decay_t<Mat>>::value>...>
   void setup_buffer(Mat&& A) {
     cl::Context& ctx = opencl_context.context();
     cl::CommandQueue& queue = opencl_context.queue();
-    buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
+    this->buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
     cl::Event transfer_event;
     queue.enqueueWriteBuffer(buffer_cl_, opencl_context.in_order(), 0,
                              sizeof(T) * A.size(), A.eval().data(), nullptr,
@@ -352,7 +341,9 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
       return;
     }
     try {
-      setup_buffer(A);
+//      std::cout << "\n" << is_eigen_matrix<Mat>::value << "\n";
+//      std::cout << "\n" << is_eigen_matrix<Eigen::MatrixXd>::value << "\n";
+    setup_buffer(A);
     } catch (const cl::Error& e) {
       check_opencl_error("matrix constructor", e);
     }

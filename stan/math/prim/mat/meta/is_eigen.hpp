@@ -36,5 +36,25 @@ struct is_eigen<
     T, std::enable_if_t<internal::is_eigen_base<std::decay_t<T>>::value>>
     : std::true_type {};
 
+namespace internal {
+  template<typename... Ts> struct make_void { typedef void type;};
+  template<typename... Ts> using void_t = typename make_void<Ts...>::type;
+
+  template<class, class = void>
+  struct is_eigen_matrix_impl : std::false_type
+  { };
+  template<class T>
+  struct is_eigen_matrix_impl<T, void_t<typename T::Matrix()>> : std::true_type
+  { };
+
+  template<class T>
+  struct is_eigen_matrix_impl<T, void_t<typename T::SparseMatrix()>> : std::true_type
+  { };
+
+}
+
+template <typename T>
+struct is_eigen_matrix : internal::is_eigen_matrix_impl<std::decay_t<T>> {};
+
 }  // namespace stan
 #endif

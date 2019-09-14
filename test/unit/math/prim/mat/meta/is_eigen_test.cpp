@@ -28,3 +28,28 @@ TEST(MathMeta, primitive) {
   EXPECT_TRUE((is_eigen<decltype(a * b)>::value));
   EXPECT_TRUE((is_eigen<decltype(a * b + a.transpose())>::value));
 }
+
+TEST(MathMeta, expression) {
+  using stan::is_eigen_matrix;
+  EXPECT_FALSE((is_eigen_matrix<bool>::value));
+  EXPECT_FALSE((is_eigen_matrix<double>::value));
+  EXPECT_FALSE((is_eigen_matrix<int>::value));
+
+  EXPECT_FALSE((is_eigen_matrix<std::vector<double>>::value));
+
+  EXPECT_FALSE((is_eigen_matrix<Eigen::EigenBase<Eigen::MatrixXd>>::value));
+  EXPECT_TRUE((is_eigen_matrix<Eigen::Matrix<double, -1, -1>>::value));
+  EXPECT_TRUE((is_eigen_matrix<Eigen::SparseMatrix<double>>::value));
+  EXPECT_FALSE((is_eigen_matrix<Eigen::MatrixBase<Eigen::MatrixXd>>::value));
+
+  EXPECT_TRUE((is_eigen_matrix<const Eigen::Matrix<double, -1, -1>>::value));
+  EXPECT_TRUE((is_eigen_matrix<Eigen::SparseMatrix<double>&>::value));
+  EXPECT_FALSE(
+      (is_eigen_matrix<Eigen::MatrixBase<Eigen::Matrix<double, -1, -1>>&&>::value));
+
+  Eigen::Matrix<double, -1, -1> a;
+  Eigen::Matrix<double, -1, -1> b;
+
+  EXPECT_FALSE((is_eigen_matrix<decltype(a * b)>::value));
+  EXPECT_FALSE((is_eigen_matrix<decltype(a * b + a.transpose())>::value));
+}
