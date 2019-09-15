@@ -19,6 +19,7 @@ static const std::string constants_kernel_code = STRINGIFY(
      * the whole matrix.
      *
      * @param[out] A matrix
+     * @param val value to replicate in the matrix
      * @param rows Number of rows for matrix A
      * @param cols Number of columns for matrix A
      * @param view_A triangular part of matrix A to use

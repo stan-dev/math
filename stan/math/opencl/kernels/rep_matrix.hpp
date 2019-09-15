@@ -20,8 +20,10 @@ static const std::string rep_matrix_kernel_code = STRINGIFY(
      *
      * @param[out] A result matrix
      * @param[in] B input matrix (1x1, vector or row_vector)
-     * @param rows Number of rows for matrix A
-     * @param cols Number of columns for matrix A
+     * @param A_rows Number of rows for matrix A
+     * @param A_cols Number of columns for matrix A
+     * @param B_rows Number of rows for matrix B
+     * @param B_cols Number of columns for matrix B
      * @param view_A triangular part of matrix A to use
      *
      * @note Code is a string held in <code>rep_matrix_kernel_code.</code>
