@@ -96,14 +96,14 @@ Eigen::VectorXd kinsol_solve(
       "KINSetUserData");
 
   // construct Linear solver
-  check_flag_sundials(KINSetLinearSolver(kinsol_memory, kinsol_data.LS_,
-                                         kinsol_data.J_),
-                      "KINSetLinearSolver");
+  check_flag_sundials(
+      KINSetLinearSolver(kinsol_memory, kinsol_data.LS_, kinsol_data.J_),
+      "KINSetLinearSolver");
 
   if (custom_jacobian)
-    check_flag_sundials(KINSetJacFn(kinsol_memory,
-                                    &system_data::kinsol_jacobian),
-                        "KINSetJacFn");
+    check_flag_sundials(
+        KINSetJacFn(kinsol_memory, &system_data::kinsol_jacobian),
+        "KINSetJacFn");
 
   N_Vector nv_x = N_VNew_Serial(N);
   realtype* nv_x_data = N_VGetArrayPointer_Serial(nv_x);

@@ -133,7 +133,7 @@ class cvodes_integrator {
 
     try {
       check_flag_sundials(CVodeInit(cvodes_mem, &ode_data::cv_rhs, t0_dbl,
-                                  cvodes_data.nv_state_),
+                                    cvodes_data.nv_state_),
                           "CVodeInit");
 
       // Assign pointer to this as user data
@@ -171,7 +171,7 @@ class cvodes_integrator {
         double t_final = ts_dbl[n];
         if (t_final != t_init) {
           check_flag_sundials(CVode(cvodes_mem, t_final, cvodes_data.nv_state_,
-                                  &t_init, CV_NORMAL),
+                                    &t_init, CV_NORMAL),
                               "CVode");
         }
         if (S > 0) {
