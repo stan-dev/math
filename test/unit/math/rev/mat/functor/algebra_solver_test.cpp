@@ -1,5 +1,5 @@
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/mat/functor/algebra_solver.hpp>
+#include <stan/math/rev/mat/functor/algebra_solver_powell.hpp>
 #include <stan/math/rev/mat/functor/algebra_solver_newton.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/functor/util_algebra_solver.hpp>
@@ -47,6 +47,41 @@ TEST(MathMatrix, simple_Eq_dbl) {
   y << 5, 4, 2;
   for (int is_newton = 0; is_newton <= 1; is_newton++)
     Eigen::VectorXd theta = simple_eq_test(simple_eq_functor(), y, is_newton);
+}
+
+TEST(MathMatrix, simple_eq_unsuported) {
+  using stan::math::algebra_solver;
+  using stan::math::var;
+
+  int n_x = 2, n_y = 3;
+  Eigen::VectorXd x(n_x);
+  x << 1, 1;  // initial guess
+  std::vector<double> dummy_dat;
+  std::vector<int> dummy_dat_int;
+  double rel_tol = 1e-10;
+  double fun_tol = 1e-6;
+  int32_t max_steps = 1e+3;
+
+  for (int k = 0; k < n_x; k++) {
+    Eigen::Matrix<var, Eigen::Dynamic, 1> y(n_y);
+    y << 5, 4, 2;
+
+    Eigen::Matrix<var, Eigen::Dynamic, 1> theta
+      = algebra_solver(simple_eq_functor(), x, y, dummy_dat, dummy_dat_int,
+                       0, rel_tol, fun_tol, max_steps);
+
+    EXPECT_EQ(20, theta(0));
+    EXPECT_EQ(2, theta(1));
+
+    Eigen::MatrixXd J(n_x, n_y);
+    J << 4, 5, 0, 0, 0, 1;
+
+    AVEC y_vec = createAVEC(y(0), y(1), y(2));
+    VEC g;
+    theta(k).grad(y_vec, g);
+
+    for (int i = 0; i < n_y; i++) EXPECT_EQ(J(k, i), g[i]);
+  }
 }
 
 TEST(MathMatrix, simple_Eq_tuned) {
@@ -244,7 +279,7 @@ TEST(MathMatrix, max_num_steps_dbl) {
 }
 
 TEST(MathMatrix, degenerate) {
-  using stan::math::algebra_solver;
+  using stan::math::algebra_solver_powell;
   using stan::math::sum;
   using stan::math::var;
 
@@ -303,7 +338,7 @@ TEST(MathMatrix, degenerate) {
 }
 
 TEST(MathMatrix, degenerate_dbl) {
-  using stan::math::algebra_solver;
+  using stan::math::algebra_solver_powell;
   using stan::math::var;
 
   // This first initial guess produces the

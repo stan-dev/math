@@ -4,7 +4,7 @@
 #include <stan/math/prim/mat/fun/mdivide_left.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/rev/mat/functor/algebra_system.hpp>
-#include <stan/math/rev/mat/functor/algebra_solver.hpp>
+#include <stan/math/rev/mat/functor/algebra_solver_powell.hpp>
 #include <stan/math/rev/mat/functor/kinsol_solve.hpp>
 #include <stan/math/rev/core.hpp>
 

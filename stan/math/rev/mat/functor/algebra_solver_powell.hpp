@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_REV_MAT_FUNCTOR_ALGEBRA_SOLVER_HPP
-#define STAN_MATH_REV_MAT_FUNCTOR_ALGEBRA_SOLVER_HPP
+#ifndef STAN_MATH_REV_MAT_FUNCTOR_ALGEBRA_SOLVER_POWELL_HPP
+#define STAN_MATH_REV_MAT_FUNCTOR_ALGEBRA_SOLVER_POWELL_HPP
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/mat/functor/algebra_system.hpp>
@@ -123,7 +123,7 @@ struct algebra_solver_vari : public vari {
  * function tolerance.
  */
 template <typename F, typename T>
-Eigen::VectorXd algebra_solver(
+Eigen::VectorXd algebra_solver_powell(
     const F& f, const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
     const Eigen::VectorXd& y, const std::vector<double>& dat,
     const std::vector<int>& dat_int, std::ostream* msgs = nullptr,
@@ -222,7 +222,7 @@ Eigen::VectorXd algebra_solver(
  * function tolerance.
  */
 template <typename F, typename T1, typename T2>
-Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver(
+Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver_powell(
     const F& f, const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
     const Eigen::Matrix<T2, Eigen::Dynamic, 1>& y,
     const std::vector<double>& dat, const std::vector<int>& dat_int,
@@ -230,8 +230,9 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver(
     double function_tolerance = 1e-6,
     long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
   Eigen::VectorXd theta_dbl
-      = algebra_solver(f, x, value_of(y), dat, dat_int, 0, relative_tolerance,
-                       function_tolerance, max_num_steps);
+      = algebra_solver_powell(f, x, value_of(y), dat, dat_int, 0,
+                              relative_tolerance, function_tolerance,
+                              max_num_steps);
 
   using Fy = system_functor<F, double, double, false>;
 
@@ -254,6 +255,63 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver(
 
   return theta;
 }
+
+/**
+ * Return the solution to the specified system of algebraic
+ * equations given an initial guess, and parameters and data,
+ * which get passed into the algebraic system.
+ * Use Powell's dogleg solver.
+ *
+ * The user can also specify the relative tolerance
+ * (xtol in Eigen's code), the function tolerance,
+ * and the maximum number of steps (maxfev in Eigen's code).
+ * 
+ * Signature to maintain backward compatibility.
+ *
+ * @tparam F type of equation system function.
+ * @tparam T1  Type of elements in x vector.
+ * @tparam T2  Type of elements in y vector.
+ * @param[in] f Functor that evaluates the system of equations.
+ * @param[in] x Vector of starting values (initial guess).
+ * @param[in] y parameter vector for the equation system.
+ * @param[in] dat continuous data vector for the equation system.
+ * @param[in] dat_int integer data vector for the equation system.
+ * @param[in, out] msgs the print stream for warning messages.
+ * @param[in] relative_tolerance determines the convergence criteria
+ *            for the solution.
+ * @param[in] function_tolerance determines whether roots are acceptable.
+ * @param[in] max_num_steps  maximum number of function evaluations.
+ * @return theta Vector of solutions to the system of equations.
+ * @throw <code>std::invalid_argument</code> if x has size zero.
+ * @throw <code>std::invalid_argument</code> if x has non-finite elements.
+ * @throw <code>std::invalid_argument</code> if y has non-finite elements.
+ * @throw <code>std::invalid_argument</code> if dat has non-finite elements.
+ * @throw <code>std::invalid_argument</code> if dat_int has non-finite
+ * elements.
+ * @throw <code>std::invalid_argument</code> if relative_tolerance is strictly
+ * negative.
+ * @throw <code>std::invalid_argument</code> if function_tolerance is strictly
+ * negative.
+ * @throw <code>std::invalid_argument</code> if max_num_steps is not positive.
+ * @throw <code>boost::math::evaluation_error</code> (which is a subclass of
+ * <code>std::runtime_error</code>) if solver exceeds max_num_steps.
+ * @throw <code>boost::math::evaluation_error</code> (which is a subclass of
+ * <code>std::runtime_error</code>) if the norm of the solution exceeds the
+ * function tolerance.
+ */
+template <typename F, typename T1, typename T2>
+Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver(
+    const F& f, const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
+    const Eigen::Matrix<T2, Eigen::Dynamic, 1>& y,
+    const std::vector<double>& dat, const std::vector<int>& dat_int,
+    std::ostream* msgs = nullptr, double relative_tolerance = 1e-10,
+    double function_tolerance = 1e-6,
+    long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
+  return algebra_solver_powell(f, x, y, dat, dat_int, msgs,
+                               relative_tolerance, function_tolerance,
+                               max_num_steps);
+}
+
 }  // namespace math
 }  // namespace stan
 
