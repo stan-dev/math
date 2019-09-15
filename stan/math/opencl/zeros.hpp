@@ -33,7 +33,7 @@ inline void matrix_cl<T, enable_if_arithmetic<T>>::zeros() try {
   this->view_ = both(this->view_, invert(matrix_view));
   cl::CommandQueue cmdQueue = opencl_context.queue();
   opencl_kernels::constants(cl::NDRange(this->rows(), this->cols()), *this, 0.0,
-                        this->rows(), this->cols(), matrix_view);
+                            this->rows(), this->cols(), matrix_view);
 } catch (const cl::Error& e) {
   check_opencl_error("zeros", e);
 }

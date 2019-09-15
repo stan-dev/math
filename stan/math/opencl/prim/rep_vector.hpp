@@ -10,7 +10,7 @@
 namespace stan {
 namespace math {
 /**
- * Creates a matrix_cl representing a vector 
+ * Creates a matrix_cl representing a vector
  * by replicating the value of the only element
  * in the input 1x1 matrix_cl.
  *
@@ -35,8 +35,8 @@ inline matrix_cl<double> rep_vector(const matrix_cl<T>& x, int m) {
   }
   check_mat_size_one("rep_vector (OpenCL)", "x", x);
   try {
-    opencl_kernels::rep_matrix(cl::NDRange(A.rows(), A.cols()), A, x,
-                             A.rows(), A.cols(), x.rows(), x.cols(), A.view());
+    opencl_kernels::rep_matrix(cl::NDRange(A.rows(), A.cols()), A, x, A.rows(),
+                               A.cols(), x.rows(), x.cols(), A.view());
   } catch (cl::Error& e) {
     check_opencl_error("rep_vector", e);
   }

@@ -22,13 +22,13 @@ static const std::string constants_kernel_code = STRINGIFY(
      * @param rows Number of rows for matrix A
      * @param cols Number of columns for matrix A
      * @param view_A triangular part of matrix A to use
-     * 
+     *
      * @note Code is a <code>const char*</code> held in
      * <code>constant_kernel_code.</code>
      * This kernel uses the helper macros available in helpers.cl.
      */
     __kernel void constants(__global double* A, double val, unsigned int rows,
-                        unsigned int cols, unsigned int view_A) {
+                            unsigned int cols, unsigned int view_A) {
       const int i = get_global_id(0);
       const int j = get_global_id(1);
       if (i < rows && j < cols) {
@@ -46,7 +46,8 @@ static const std::string constants_kernel_code = STRINGIFY(
  * See the docs for \link kernels/constants.hpp constants() \endlink
  */
 const kernel_cl<out_buffer, double, int, int, matrix_cl_view> constants(
-    "constants", {indexing_helpers, view_kernel_helpers, constants_kernel_code});
+    "constants",
+    {indexing_helpers, view_kernel_helpers, constants_kernel_code});
 
 }  // namespace opencl_kernels
 }  // namespace math

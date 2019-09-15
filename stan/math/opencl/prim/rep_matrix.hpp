@@ -39,8 +39,8 @@ inline matrix_cl<double> rep_matrix(const matrix_cl<T>& x, int n, int m) {
   }
   check_mat_size_one("rep_matrix (OpenCL)", "x", x);
   try {
-    opencl_kernels::rep_matrix(cl::NDRange(A.rows(), A.cols()), A, x,
-                             A.rows(), A.cols(), x.rows(), x.cols(), A.view());
+    opencl_kernels::rep_matrix(cl::NDRange(A.rows(), A.cols()), A, x, A.rows(),
+                               A.cols(), x.rows(), x.cols(), A.view());
   } catch (cl::Error& e) {
     check_opencl_error("rep_matrix", e);
   }
@@ -74,14 +74,13 @@ inline matrix_cl<double> rep_matrix(const matrix_cl<T>& x, int m) {
   check_mat_not_size_one("rep_matrix (OpenCL)", "x", x);
   check_vector("rep_matrix (OpenCL)", "x", x);
   try {
-    opencl_kernels::rep_matrix(cl::NDRange(A.rows(), A.cols()), A, x,
-                             A.rows(), A.cols(), x.rows(), x.cols(), A.view());
+    opencl_kernels::rep_matrix(cl::NDRange(A.rows(), A.cols()), A, x, A.rows(),
+                               A.cols(), x.rows(), x.cols(), A.view());
   } catch (cl::Error& e) {
     check_opencl_error("rep_matrix", e);
   }
   return A;
 }
-
 
 }  // namespace math
 }  // namespace stan

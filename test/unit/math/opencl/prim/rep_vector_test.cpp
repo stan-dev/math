@@ -6,17 +6,17 @@
 #include <gtest/gtest.h>
 #include <algorithm>
 
-#define EXPECT_MATRIX_EQ(A, B) \
-  for (int i = 0; i < A.size(); i++)    \
+#define EXPECT_MATRIX_EQ(A, B)       \
+  for (int i = 0; i < A.size(); i++) \
     EXPECT_EQ(A(i), B(i));
 
 TEST(MathMatrixCL, rep_v_exception_pass) {
-  stan::math::matrix_cl<double> a(2,2);
+  stan::math::matrix_cl<double> a(2, 2);
   EXPECT_THROW(stan::math::rep_vector(a, 5), std::invalid_argument);
   EXPECT_THROW(stan::math::rep_vector(a, -1), std::domain_error);
-  stan::math::matrix_cl<double> b(1,1);
+  stan::math::matrix_cl<double> b(1, 1);
   EXPECT_THROW(stan::math::rep_vector(b, -1), std::domain_error);
-  stan::math::matrix_cl<double> c(1,0);
+  stan::math::matrix_cl<double> c(1, 0);
   EXPECT_THROW(stan::math::rep_vector(c, 5), std::invalid_argument);
 
   EXPECT_NO_THROW(stan::math::rep_vector(b, 0));
@@ -31,7 +31,7 @@ TEST(MathMatrixCL, rep_rv_value_check) {
 
   stan::math::matrix_d m1 = stan::math::rep_vector(val, 1);
   stan::math::matrix_cl<double> m1_cl = stan::math::rep_vector(m0_cl, 1);
-  stan::math::matrix_d m1_cl_res = stan::math::from_matrix_cl(m1_cl);  
+  stan::math::matrix_d m1_cl_res = stan::math::from_matrix_cl(m1_cl);
   EXPECT_EQ(m1.rows(), m1_cl_res.rows());
   EXPECT_EQ(m1.cols(), m1_cl_res.cols());
   EXPECT_MATRIX_EQ(m1, m1_cl_res);
@@ -41,7 +41,7 @@ TEST(MathMatrixCL, rep_rv_value_check) {
 
   stan::math::matrix_d m2 = stan::math::rep_vector(val00, 7);
   stan::math::matrix_cl<double> m2_cl = stan::math::rep_vector(m00_cl, 7);
-  stan::math::matrix_d m2_cl_res = stan::math::from_matrix_cl(m2_cl);  
+  stan::math::matrix_d m2_cl_res = stan::math::from_matrix_cl(m2_cl);
   EXPECT_EQ(m2.rows(), m2_cl_res.rows());
   EXPECT_EQ(m2.cols(), m2_cl_res.cols());
   EXPECT_MATRIX_EQ(m2, m2_cl_res);
