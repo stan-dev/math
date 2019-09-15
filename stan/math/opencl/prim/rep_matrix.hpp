@@ -25,6 +25,8 @@ namespace math {
  *
  * @throw <code>domain_error</code> if the
  * requested dimensions are negative
+ * @throw <code>invalid_argument</code> if input
+ * element is not a matrix_cl of size 1
  *
  */
 template <typename T, typename = enable_if_all_arithmetic<T>>
@@ -35,9 +37,7 @@ inline matrix_cl<double> rep_matrix(const matrix_cl<T>& x, int n, int m) {
   if (A.size() == 0) {
     return A;
   }
-  if (x.size() != 1) {
-    check_mat_size_one("rep_matrix (OpenCL)", "x", x);
-  }
+  check_mat_size_one("rep_matrix (OpenCL)", "x", x);
   try {
     opencl_kernels::rep_matrix(cl::NDRange(A.rows(), A.cols()), A, x,
                              A.rows(), A.cols(), x.rows(), x.cols(), A.view());

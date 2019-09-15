@@ -14,7 +14,9 @@
 #include <stan/math/opencl/multiply.hpp>
 #include <stan/math/opencl/multiply_transpose.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
-#include <stan/math/opencl/rep_matrix.hpp>
+#include <stan/math/opencl/prim/rep_matrix.hpp>
+#include <stan/math/opencl/prim/rep_row_vector.hpp>
+#include <stan/math/opencl/prim/rep_vector.hpp>
 #include <stan/math/opencl/sub_block.hpp>
 #include <stan/math/opencl/subtract.hpp>
 #include <stan/math/opencl/triangular_transpose.hpp>
