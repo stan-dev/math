@@ -235,19 +235,19 @@ inline void error_conditions_test(const F& f,
   if (!is_newton) {
     EXPECT_THROW_MSG(general_algebra_solver(is_newton, f, x, y, dat, dat_int, 0,
                                             -1, 1e-3, 1e-6, 1e+3),
-                     std::invalid_argument, "relative_tolerance");
+                     std::domain_error, "relative_tolerance");
   }
   if (is_newton) {
     EXPECT_THROW_MSG(general_algebra_solver(is_newton, f, x, y, dat, dat_int, 0,
                                             1e-10, -1, 1e-6, 1e+3),
-                     std::invalid_argument, "scaling_step_size");
+                     std::domain_error, "scaling_step_size");
   }
   EXPECT_THROW_MSG(general_algebra_solver(is_newton, f, x, y, dat, dat_int, 0,
                                           1e-10, 1e-3, -1, 1e+3),
-                   std::invalid_argument, "function_tolerance");
+                   std::domain_error, "function_tolerance");
   EXPECT_THROW_MSG(general_algebra_solver(is_newton, f, x, y, dat, dat_int, 0,
                                           1e-10, 1e-3, 1e-6, -1),
-                   std::invalid_argument, "max_num_steps");
+                   std::domain_error, "max_num_steps");
 }
 
 template <typename T>

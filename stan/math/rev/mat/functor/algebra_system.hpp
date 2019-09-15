@@ -8,6 +8,8 @@
 #include <stan/math/prim/scal/err/check_consistent_size.hpp>
 #include <stan/math/prim/arr/err/check_matching_sizes.hpp>
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
+#include <stan/math/prim/scal/err/check_nonnegative.hpp>
+#include <stan/math/prim/scal/err/check_positive.hpp>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -174,13 +176,9 @@ void algebra_solver_check(const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
   for (int x : dat_int)
     check_finite("algebra_solver", "integer data", x);
 
-  if (function_tolerance < 0)
-    invalid_argument("algebra_solver", "function_tolerance,",
-                     function_tolerance, "",
-                     ", must be greater than or equal to 0");
-  if (max_num_steps <= 0)
-    invalid_argument("algebra_solver", "max_num_steps,", max_num_steps, "",
-                     ", must be greater than 0");
+  check_nonnegative("algebra_solver", "function_tolerance",
+                    function_tolerance);
+  check_positive("algebra_solver", "max_num_steps", max_num_steps);
 }
 
 }  // namespace math

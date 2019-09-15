@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/mat/fun/mdivide_left.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
+#include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/rev/mat/functor/algebra_system.hpp>
 #include <stan/math/rev/mat/functor/algebra_solver_powell.hpp>
 #include <stan/math/rev/mat/functor/kinsol_solve.hpp>
@@ -62,10 +63,7 @@ Eigen::VectorXd algebra_solver_newton(
     double scaling_step_size = 1e-3, double function_tolerance = 1e-6,
     long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
   algebra_solver_check(x, y, dat, dat_int, function_tolerance, max_num_steps);
-
-  if (scaling_step_size < 0)
-    invalid_argument("algebra_solver", "scaling_step_size,", scaling_step_size,
-                     "", ", must be greater than or equal to 0");
+  check_nonnegative("algebra_solver", "scaling_step_size", scaling_step_size);
 
   check_matching_sizes("algebra_solver", "the algebraic system's output",
                        value_of(f(x, y, dat, dat_int, msgs)),

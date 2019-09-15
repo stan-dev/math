@@ -2,10 +2,11 @@
 #define STAN_MATH_REV_MAT_FUNCTOR_ALGEBRA_SOLVER_POWELL_HPP
 
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/rev/core.hpp>
 #include <stan/math/rev/mat/functor/algebra_system.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left.hpp>
-#include <stan/math/rev/core.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
+#include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <unsupported/Eigen/NonLinearOptimization>
 #include <iostream>
 #include <string>
@@ -130,10 +131,11 @@ Eigen::VectorXd algebra_solver_powell(
     double relative_tolerance = 1e-10, double function_tolerance = 1e-6,
     long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
   algebra_solver_check(x, y, dat, dat_int, function_tolerance, max_num_steps);
-  if (relative_tolerance < 0)
-    invalid_argument("algebra_solver", "relative_tolerance,",
-                     function_tolerance, "",
-                     ", must be greater than or equal to 0");
+  check_nonnegative("alegbra_solver", "relative_tolerance", relative_tolerance);
+  // if (relative_tolerance < 0)
+  //   invalid_argument("algebra_solver", "relative_tolerance,",
+  //                    function_tolerance, "",
+  //                    ", must be greater than or equal to 0");
 
   // Create functor for algebraic system
   using Fs = system_functor<F, double, double, true>;
