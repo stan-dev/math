@@ -118,8 +118,8 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
       = opencl_kernels::normal_id_glm.get_option("LOCAL_SIZE_");
   const int wgs = (N + local_size - 1) / local_size;
 
-  const matrix_cl<double> y_cl = matrix_cl<double>::constant(y_val_vec);
-  const matrix_cl<double> x_cl = matrix_cl<double>::constant(x_val);
+  const matrix_cl<double> y_cl(y_val_vec);
+  const matrix_cl<double> x_cl(x_val);
   matrix_cl<double> beta_cl(beta_val_vec);
   matrix_cl<double> alpha_cl(alpha_val_vec);
   matrix_cl<double> sigma_cl(sigma_val_vec);
