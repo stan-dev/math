@@ -19,10 +19,11 @@ namespace math {
 template <typename T_y, typename T_loc, typename T_scale>
 return_type_t<T_y, T_loc, T_scale> logistic_cdf(const T_y& y, const T_loc& mu,
                                                 const T_scale& sigma) {
-  typedef partials_return_type_t<T_y, T_loc, T_scale> T_partials_return;
+  using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
 
-  if (size_zero(y, mu, sigma))
+  if (size_zero(y, mu, sigma)) {
     return 1.0;
+  }
 
   static const char* function = "logistic_cdf";
 
@@ -46,8 +47,9 @@ return_type_t<T_y, T_loc, T_scale> logistic_cdf(const T_y& y, const T_loc& mu,
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
   for (size_t i = 0; i < stan::length(y); i++) {
-    if (value_of(y_vec[i]) == -std::numeric_limits<double>::infinity())
+    if (value_of(y_vec[i]) == -std::numeric_limits<double>::infinity()) {
       return ops_partials.build(0.0);
+    }
   }
 
   for (size_t n = 0; n < N; n++) {
@@ -67,29 +69,35 @@ return_type_t<T_y, T_loc, T_scale> logistic_cdf(const T_y& y, const T_loc& mu,
 
     P *= Pn;
 
-    if (!is_constant_all<T_y>::value)
+    if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n]
           += exp(logistic_log(y_dbl, mu_dbl, sigma_dbl)) / Pn;
-    if (!is_constant_all<T_loc>::value)
+    }
+    if (!is_constant_all<T_loc>::value) {
       ops_partials.edge2_.partials_[n]
           += -exp(logistic_log(y_dbl, mu_dbl, sigma_dbl)) / Pn;
-    if (!is_constant_all<T_scale>::value)
+    }
+    if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n]
           += -(y_dbl - mu_dbl) * sigma_inv_vec
              * exp(logistic_log(y_dbl, mu_dbl, sigma_dbl)) / Pn;
+    }
   }
 
   if (!is_constant_all<T_y>::value) {
-    for (size_t n = 0; n < stan::length(y); ++n)
+    for (size_t n = 0; n < stan::length(y); ++n) {
       ops_partials.edge1_.partials_[n] *= P;
+    }
   }
   if (!is_constant_all<T_loc>::value) {
-    for (size_t n = 0; n < stan::length(mu); ++n)
+    for (size_t n = 0; n < stan::length(mu); ++n) {
       ops_partials.edge2_.partials_[n] *= P;
+    }
   }
   if (!is_constant_all<T_scale>::value) {
-    for (size_t n = 0; n < stan::length(sigma); ++n)
+    for (size_t n = 0; n < stan::length(sigma); ++n) {
       ops_partials.edge3_.partials_[n] *= P;
+    }
   }
   return ops_partials.build(P);
 }

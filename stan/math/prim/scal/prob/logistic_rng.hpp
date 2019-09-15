@@ -48,8 +48,9 @@ inline typename VectorBuilder<true, double, T_loc, T_scale>::type logistic_rng(
 
   variate_generator<RNG&, exponential_distribution<> > exp_rng(
       rng, exponential_distribution<>(1));
-  for (size_t n = 0; n < N; ++n)
+  for (size_t n = 0; n < N; ++n) {
     output[n] = mu_vec[n] - sigma_vec[n] * std::log(exp_rng() / exp_rng());
+  }
 
   return output.data();
 }

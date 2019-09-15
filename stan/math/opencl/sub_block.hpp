@@ -8,7 +8,7 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
-#include <CL/cl.hpp>
+#include <cl.hpp>
 #include <vector>
 #include <algorithm>
 
@@ -39,12 +39,9 @@ inline void matrix_cl<T, enable_if_arithmetic<T>>::sub_block(
   }
   cl::CommandQueue cmdQueue = opencl_context.queue();
   if (A.view() == matrix_cl_view::Entire) {
-    cl::size_t<3> src_offset
-        = opencl::to_size_t<3>({A_i * sizeof(double), A_j, 0});
-    cl::size_t<3> dst_offset
-        = opencl::to_size_t<3>({this_i * sizeof(double), this_j, 0});
-    cl::size_t<3> size
-        = opencl::to_size_t<3>({nrows * sizeof(double), ncols, 1});
+    std::array<size_t, 3> src_offset({A_i * sizeof(double), A_j, 0});
+    std::array<size_t, 3> dst_offset({this_i * sizeof(double), this_j, 0});
+    std::array<size_t, 3> size({nrows * sizeof(double), ncols, 1});
     std::vector<cl::Event> kernel_events
         = vec_concat(A.write_events(), this->read_write_events());
     cl::Event copy_event;

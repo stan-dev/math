@@ -9,7 +9,7 @@
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/opencl/kernels/helpers.hpp>
 #include <stan/math/prim/arr/fun/vec_concat.hpp>
-#include <CL/cl.hpp>
+#include <cl.hpp>
 #include <algorithm>
 #include <map>
 #include <string>
@@ -213,22 +213,15 @@ inline const std::vector<cl::Event> select_events(
  * @param options The values of macros to be passed at compile time.
  */
 inline auto compile_kernel(const char* name,
-                           const std::vector<const char*>& sources,
+                           const std::vector<std::string>& sources,
                            std::map<std::string, int>& options) {
   std::string kernel_opts = "";
   for (auto&& comp_opts : options) {
     kernel_opts += std::string(" -D") + comp_opts.first + "="
                    + std::to_string(comp_opts.second);
   }
-  std::string kernel_source;
-  for (auto&& source : sources) {
-    kernel_source.append(source);
-  }
-  cl::Program program;
+  cl::Program program(opencl_context.context(), sources);
   try {
-    cl::Program::Sources src(1, std::make_pair(kernel_source.c_str(),
-                                               strlen(kernel_source.c_str())));
-    program = cl::Program(opencl_context.context(), src);
     program.build({opencl_context.device()}, kernel_opts.c_str());
 
     return cl::Kernel(program, name);
@@ -263,7 +256,7 @@ class kernel_functor {
    * @param sources A std::vector of strings containing the code for the kernel.
    * @param options The values of macros to be passed at compile time.
    */
-  kernel_functor(const char* name, const std::vector<const char*>& sources,
+  kernel_functor(const char* name, const std::vector<std::string>& sources,
                  const std::map<std::string, int>& options) {
     auto base_opts = opencl_context.base_opts();
     for (auto& it : options) {
@@ -275,7 +268,7 @@ class kernel_functor {
     opts_ = base_opts;
   }
 
-  auto operator()() const { return cl::make_kernel<Args...>(kernel_); }
+  auto operator()() const { return cl::KernelFunctor<Args...>(kernel_); }
 
   /**
    * @return The options that the kernel was compiled with.
@@ -291,16 +284,7 @@ class kernel_functor {
 template <typename... Args>
 struct kernel_cl {
   const kernel_functor<internal::to_const_buffer_t<Args>&...> make_functor;
-  /**
-   * Creates functor for kernels that only need access to defining
-   *  the global work size.
-   * @param name The name for the kernel
-   * @param source A string literal containing the code for the kernel.
-   * @param options The values of macros to be passed at compile time.
-   */
-  kernel_cl(const char* name, const char* source,
-            const std::map<std::string, int>& options = {})
-      : make_functor(name, {source}, options) {}
+
   /**
    * Creates functor for kernels that only need access to defining
    *  the global work size.
@@ -308,7 +292,7 @@ struct kernel_cl {
    * @param sources A std::vector of strings containing the code for the kernel.
    * @param options The values of macros to be passed at compile time.
    */
-  kernel_cl(const char* name, const std::vector<const char*>& sources,
+  kernel_cl(const char* name, const std::vector<std::string>& sources,
             const std::map<std::string, int>& options = {})
       : make_functor(name, sources, options) {}
   /**
@@ -352,6 +336,15 @@ struct kernel_cl {
     cl::Event kern_event = f(eargs, internal::get_kernel_args(args)...);
     internal::assign_events<Args...>(kern_event, args...);
     return kern_event;
+  }
+
+  /**
+   * Retrieves an option used for compiling the kernel.
+   * @param option_name which option to retrieve
+   * @return option value
+   */
+  int get_option(const std::string option_name) const {
+    return make_functor.get_opts().at(option_name);
   }
 };
 

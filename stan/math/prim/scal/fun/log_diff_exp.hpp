@@ -46,8 +46,9 @@ namespace math {
  */
 template <typename T1, typename T2>
 inline return_type_t<T1, T2> log_diff_exp(const T1 x, const T2 y) {
-  if (x <= y)
+  if (x <= y) {
     return (x < INFTY && x == y) ? NEGATIVE_INFTY : NOT_A_NUMBER;
+  }
   return x + log1m_exp(y - x);
 }
 

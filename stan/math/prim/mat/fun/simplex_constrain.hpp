@@ -31,7 +31,7 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> simplex_constrain(
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::log;
-  typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
+  using size_type = typename index_type<Matrix<T, Dynamic, 1>>::type;
 
   int Km1 = y.size();
   Matrix<T, Dynamic, 1> x(Km1 + 1);
@@ -65,7 +65,7 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> simplex_constrain(
   using Eigen::Matrix;
   using std::log;
 
-  typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
+  using size_type = typename index_type<Matrix<T, Dynamic, 1>>::type;
 
   int Km1 = y.size();  // K = Km1 + 1
   Matrix<T, Dynamic, 1> x(Km1 + 1);

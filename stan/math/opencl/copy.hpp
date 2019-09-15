@@ -17,7 +17,7 @@
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/arr/fun/vec_concat.hpp>
 
-#include <CL/cl.hpp>
+#include <cl.hpp>
 #include <algorithm>
 #include <iostream>
 #include <type_traits>
@@ -69,10 +69,10 @@ inline matrix_cl<T> to_matrix_cl(const Eigen::Matrix<T, R, C>& src) {
  * @param src source matrix on the OpenCL device
  * @return Eigen matrix with a copy of the data in the source matrix
  */
-template <typename T, typename = enable_if_arithmetic<T>>
-inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> from_matrix_cl(
-    const matrix_cl<T>& src) {
-  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> dst(src.rows(), src.cols());
+template <int R = Eigen::Dynamic, int C = Eigen::Dynamic, typename T,
+          typename = enable_if_arithmetic<T>>
+inline Eigen::Matrix<T, R, C> from_matrix_cl(const matrix_cl<T>& src) {
+  Eigen::Matrix<T, R, C> dst(src.rows(), src.cols());
   if (src.size() == 0) {
     return dst;
   }
@@ -162,7 +162,7 @@ inline matrix_cl<T> packed_copy(const std::vector<T>& src, int rows) {
     cl::Event packed_event;
     const cl::CommandQueue queue = opencl_context.queue();
     queue.enqueueWriteBuffer(packed.buffer(), CL_FALSE, 0,
-                             sizeof(T) * packed_size, src.data(), NULL,
+                             sizeof(T) * packed_size, src.data(), nullptr,
                              &packed_event);
     packed.add_write_event(packed_event);
     stan::math::opencl_kernels::unpack(cl::NDRange(dst.rows(), dst.rows()), dst,

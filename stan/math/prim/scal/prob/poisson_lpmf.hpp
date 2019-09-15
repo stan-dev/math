@@ -19,12 +19,13 @@ namespace math {
 // Poisson(n|lambda)  [lambda > 0;  n >= 0]
 template <bool propto, typename T_n, typename T_rate>
 return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
-  typedef partials_return_type_t<T_n, T_rate> T_partials_return;
+  using T_partials_return = partials_return_t<T_n, T_rate>;
 
   static const char* function = "poisson_lpmf";
 
-  if (size_zero(n, lambda))
+  if (size_zero(n, lambda)) {
     return 0.0;
+  }
 
   T_partials_return logp(0.0);
 
@@ -34,34 +35,42 @@ return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
   check_consistent_sizes(function, "Random variable", n, "Rate parameter",
                          lambda);
 
-  if (!include_summand<propto, T_rate>::value)
+  if (!include_summand<propto, T_rate>::value) {
     return 0.0;
+  }
 
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_rate> lambda_vec(lambda);
   size_t size = max_size(n, lambda);
 
-  for (size_t i = 0; i < size; i++)
-    if (is_inf(lambda_vec[i]))
+  for (size_t i = 0; i < size; i++) {
+    if (is_inf(lambda_vec[i])) {
       return LOG_ZERO;
-  for (size_t i = 0; i < size; i++)
-    if (lambda_vec[i] == 0 && n_vec[i] != 0)
+    }
+  }
+  for (size_t i = 0; i < size; i++) {
+    if (lambda_vec[i] == 0 && n_vec[i] != 0) {
       return LOG_ZERO;
+    }
+  }
 
   operands_and_partials<T_rate> ops_partials(lambda);
 
   for (size_t i = 0; i < size; i++) {
     if (!(lambda_vec[i] == 0 && n_vec[i] == 0)) {
-      if (include_summand<propto>::value)
+      if (include_summand<propto>::value) {
         logp -= lgamma(n_vec[i] + 1.0);
-      if (include_summand<propto, T_rate>::value)
+      }
+      if (include_summand<propto, T_rate>::value) {
         logp += multiply_log(n_vec[i], value_of(lambda_vec[i]))
                 - value_of(lambda_vec[i]);
+      }
     }
 
-    if (!is_constant_all<T_rate>::value)
+    if (!is_constant_all<T_rate>::value) {
       ops_partials.edge1_.partials_[i]
           += n_vec[i] / value_of(lambda_vec[i]) - 1.0;
+    }
   }
   return ops_partials.build(logp);
 }

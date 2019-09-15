@@ -40,7 +40,7 @@ return_type_t<T_y, T_covar, T_w> multi_gp_lpdf(
     const Eigen::Matrix<T_covar, Eigen::Dynamic, Eigen::Dynamic>& Sigma,
     const Eigen::Matrix<T_w, Eigen::Dynamic, 1>& w) {
   static const char* function = "multi_gp_lpdf";
-  typedef return_type_t<T_y, T_covar, T_w> T_lp;
+  using T_lp = return_type_t<T_y, T_covar, T_w>;
   T_lp lp(0.0);
 
   check_positive(function, "Kernel rows", Sigma.rows());
@@ -57,8 +57,9 @@ return_type_t<T_y, T_covar, T_w> multi_gp_lpdf(
   check_positive_finite(function, "Kernel scales", w);
   check_finite(function, "Random variable", y);
 
-  if (y.rows() == 0)
+  if (y.rows() == 0) {
     return lp;
+  }
 
   if (include_summand<propto>::value) {
     lp += NEG_LOG_SQRT_TWO_PI * y.rows() * y.cols();

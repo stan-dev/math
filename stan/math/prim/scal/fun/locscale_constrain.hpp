@@ -40,8 +40,9 @@ inline return_type_t<T, M, S> locscale_constrain(const T& x, const M& mu,
                                                  const S& sigma) {
   check_finite("locscale_constrain", "location", mu);
   if (sigma == 1) {
-    if (mu == 0)
+    if (mu == 0) {
       return identity_constrain(x);
+    }
     return mu + x;
   }
   check_positive_finite("locscale_constrain", "scale", sigma);
@@ -80,8 +81,9 @@ inline return_type_t<T, M, S> locscale_constrain(const T& x, const M& mu,
   using std::log;
   check_finite("locscale_constrain", "location", mu);
   if (sigma == 1) {
-    if (mu == 0)
+    if (mu == 0) {
       return identity_constrain(x);
+    }
     return mu + x;
   }
   check_positive_finite("locscale_constrain", "scale", sigma);

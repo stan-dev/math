@@ -23,10 +23,11 @@ namespace math {
  */
 template <typename T1, typename T2>
 inline return_type_t<T1, T2> fdim(T1 x, T2 y) {
-  typedef return_type_t<T1, T2> return_t;
+  using return_t = return_type_t<T1, T2>;
   using std::numeric_limits;
-  if (is_any_nan(x, y))
+  if (is_any_nan(x, y)) {
     return NOT_A_NUMBER;
+  }
   return (x <= y) ? 0 : x - y;
 }
 
