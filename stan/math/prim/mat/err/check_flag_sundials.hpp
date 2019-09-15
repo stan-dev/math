@@ -1,18 +1,16 @@
-#ifndef STAN_MATH_REV_MAT_FUNCTOR_CHECK_FLAG_HPP
-#define STAN_MATH_REV_MAT_FUNCTOR_CHECK_FLAG_HPP
+#ifndef STAN_MATH_PRIM_MAT_ERR_CHECK_FLAG_SUNDIALS_HPP
+#define STAN_MATH_PRIM_MAT_ERR_CHECK_FLAG_SUNDIALS_HPP
 
 #include <stan/math/prim/meta.hpp>
 
 namespace stan {
 namespace math {
 
-// TO DO (charlesm93): use this function inside cvodes
-// integrator.
 /**
  * Throws an exception when a Sundial function fails
  * (i.e. returns a negative flag)
  */
-inline void check_flag(int flag, const char* func_name) {
+inline void check_flag_sundials(int flag, const char* func_name) {
   if (flag < 0) {
     std::ostringstream ss;
     ss << func_name << " failed with error flag " << flag << ".";

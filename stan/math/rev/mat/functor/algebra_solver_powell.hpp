@@ -266,7 +266,8 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver_powell(
  * (xtol in Eigen's code), the function tolerance,
  * and the maximum number of steps (maxfev in Eigen's code).
  * 
- * Signature to maintain backward compatibility.
+ * Signature to maintain backward compatibility, will be removed
+ * in the future.
  *
  * @tparam F type of equation system function.
  * @tparam T1  Type of elements in x vector.

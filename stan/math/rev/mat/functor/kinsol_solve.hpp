@@ -5,7 +5,7 @@
 #include <stan/math/prim/mat/fun/to_vector.hpp>
 #include <stan/math/rev/mat/functor/kinsol_data.hpp>
 #include <stan/math/rev/mat/functor/algebra_system.hpp>
-#include <stan/math/prim/mat/err/check_flag.hpp>
+#include <stan/math/prim/mat/err/check_flag_sundials.hpp>
 
 #include <kinsol/kinsol.h>
 #include <sunmatrix/sunmatrix_dense.h>
@@ -69,19 +69,19 @@ Eigen::VectorXd kinsol_solve(
 
   void* kinsol_memory = KINCreate();
 
-  check_flag(
+  check_flag_sundials(
       KINInit(kinsol_memory, &system_data::kinsol_f_system, kinsol_data.nv_x_),
       "KINInit");
 
   N_Vector scaling = N_VNew_Serial(N);
   N_VConst_Serial(1.0, scaling);  // no scaling
 
-  check_flag(KINSetFuncNormTol(kinsol_memory, function_tolerance),
-             "KINSetFuncNormTol");
-  check_flag(KINSetScaledStepTol(kinsol_memory, scaling_step_tol),
-             "KINSetScaledStepTol");
-  check_flag(KINSetMaxSetupCalls(kinsol_memory, steps_eval_jacobian),
-             "KINSetMaxSetupCalls");
+  check_flag_sundials(KINSetFuncNormTol(kinsol_memory, function_tolerance),
+                      "KINSetFuncNormTol");
+  check_flag_sundials(KINSetScaledStepTol(kinsol_memory, scaling_step_tol),
+                      "KINSetScaledStepTol");
+  check_flag_sundials(KINSetMaxSetupCalls(kinsol_memory, steps_eval_jacobian),
+                      "KINSetMaxSetupCalls");
 
   // CHECK
   // The default value is 1000 * ||u_0||_D where ||u_0|| is the initial guess.
@@ -89,19 +89,21 @@ Eigen::VectorXd kinsol_solve(
   // If the norm is non-zero, use kinsol's default (accessed with 0),
   // else use the dimension of x -- CHECK - find optimal length.
   double max_newton_step = (x.norm() == 0) ? x.size() : 0;
-  check_flag(KINSetMaxNewtonStep(kinsol_memory, max_newton_step),
-             "KINSetMaxNewtonStep");
-  check_flag(
+  check_flag_sundials(KINSetMaxNewtonStep(kinsol_memory, max_newton_step),
+                      "KINSetMaxNewtonStep");
+  check_flag_sundials(
       KINSetUserData(kinsol_memory, reinterpret_cast<void*>(&kinsol_data)),
       "KINSetUserData");
 
   // construct Linear solver
-  check_flag(KINSetLinearSolver(kinsol_memory, kinsol_data.LS_, kinsol_data.J_),
-             "KINSetLinearSolver");
+  check_flag_sundials(KINSetLinearSolver(kinsol_memory, kinsol_data.LS_,
+                                         kinsol_data.J_),
+                      "KINSetLinearSolver");
 
   if (custom_jacobian)
-    check_flag(KINSetJacFn(kinsol_memory, &system_data::kinsol_jacobian),
-               "KINSetJacFn");
+    check_flag_sundials(KINSetJacFn(kinsol_memory,
+                                    &system_data::kinsol_jacobian),
+                        "KINSetJacFn");
 
   N_Vector nv_x = N_VNew_Serial(N);
   realtype* nv_x_data = N_VGetArrayPointer_Serial(nv_x);
