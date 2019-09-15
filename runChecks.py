@@ -16,6 +16,10 @@ testsfx = "_test.cpp"
 
 
 def files_in_folder(folder):
+    """Returns a list of files in the folder and all
+    its subfolders recursively. The folder can be
+    written with wildcards as with the Unix find command.
+    """
     files = []
     for f in glob.glob(folder):
         if os.path.isdir(f):
@@ -30,6 +34,12 @@ def grep_patterns(type, folder, patterns_and_messages, exclude_filters=[]):
     with any of the patterns. It returns an array of
     messages and the provided type with
     the line number. This check ignores comments.
+    @param type: type or group of the check, listed with the error
+    @param folder: folder in which to check for the pattern
+    @param patterns_and_messages: a list of patterns and messages that 
+        are printed if the pattern is matched
+    @param exclude_filter a list of files or folder that are excluded from
+        the check
     """
     errors = []
     folder.replace("/", os.sep)
@@ -85,11 +95,7 @@ def check_non_test_files_in_test():
     all_cpp = files_in_folder("test/unit/math/")
     # if the file is a .cpp file that doesnt end with _test.cpp
     errors = [
-        x
-        + ":\n\t A .cpp file without the "
-        + testsfx
-        + " suffix in test/unit/math/"
-        
+        x + ":\n\t A .cpp file without the " + testsfx + " suffix in test/unit/math/"
         for x in all_cpp
         if os.path.splitext(x)[1] == ".cpp" and x[-len(testsfx) :] != testsfx
     ]
@@ -229,13 +235,15 @@ def main():
             "message": "Replace std::lgamma with reentrant safe version boost::math::lgamma or lgamma_r on supporting platforms.",
         }
     ]
-    errors.extend(grep_patterns("thread-reentrant-safe", "stan/math", thread_safe_checks))
+    errors.extend(
+        grep_patterns("thread-reentrant-safe", "stan/math", thread_safe_checks)
+    )
 
     errors.extend(check_non_test_files_in_test())
 
     if errors:
         for e in errors:
-            print (e, file=sys.stderr)
+            print(e, file=sys.stderr)
         sys.exit(1)
 
 
