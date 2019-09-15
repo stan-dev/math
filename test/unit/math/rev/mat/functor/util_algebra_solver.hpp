@@ -16,17 +16,16 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> general_algebra_solver(
     std::ostream* msgs = nullptr, double relative_tolerance = 1e-10,
     double scaling_step_size = 1e-3, double function_tolerance = 1e-6,
     long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
-  using stan::math::algebra_solver_powell;
   using stan::math::algebra_solver_newton;
+  using stan::math::algebra_solver_powell;
 
   Eigen::Matrix<T2, Eigen::Dynamic, 1> theta
-      = (is_newton)
-            ? algebra_solver_newton(f, x, y, dat, dat_int, msgs,
-                                    scaling_step_size, function_tolerance,
-                                    max_num_steps)
-            : algebra_solver_powell(f, x, y, dat, dat_int, msgs,
-                                    relative_tolerance, function_tolerance,
-                                    max_num_steps);
+      = (is_newton) ? algebra_solver_newton(f, x, y, dat, dat_int, msgs,
+                                            scaling_step_size,
+                                            function_tolerance, max_num_steps)
+                    : algebra_solver_powell(f, x, y, dat, dat_int, msgs,
+                                            relative_tolerance,
+                                            function_tolerance, max_num_steps);
   return theta;
 }
 
@@ -137,8 +136,8 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> simple_eq_test(
     const F& f, const Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
     bool is_newton = false, bool tuning = false, double scale_step = 1e-3,
     double rel_tol = 1e-10, double fun_tol = 1e-6, int32_t max_steps = 1e+3) {
-  using stan::math::algebra_solver_powell;
   using stan::math::algebra_solver_newton;
+  using stan::math::algebra_solver_powell;
   using stan::math::var;
 
   int n_x = 2;
@@ -195,9 +194,9 @@ inline void error_conditions_test(const F& f,
   err_msg << "algebra_solver: size of the algebraic system's output (2) "
           << "and size of the vector of unknowns, x, (3) must match in size";
   std::string msg = err_msg.str();
-  EXPECT_THROW_MSG(algebra_solver_powell(non_square_eq_functor(), x, y,
-                                         dat, dat_int),
-                   std::invalid_argument, msg);
+  EXPECT_THROW_MSG(
+      algebra_solver_powell(non_square_eq_functor(), x, y, dat, dat_int),
+      std::invalid_argument, msg);
 
   Eigen::VectorXd x_bad(static_cast<Eigen::VectorXd::Index>(0));
   std::stringstream err_msg2;

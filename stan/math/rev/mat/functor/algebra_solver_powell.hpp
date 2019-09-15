@@ -229,10 +229,9 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver_powell(
     std::ostream* msgs = nullptr, double relative_tolerance = 1e-10,
     double function_tolerance = 1e-6,
     long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
-  Eigen::VectorXd theta_dbl
-      = algebra_solver_powell(f, x, value_of(y), dat, dat_int, 0,
-                              relative_tolerance, function_tolerance,
-                              max_num_steps);
+  Eigen::VectorXd theta_dbl = algebra_solver_powell(
+      f, x, value_of(y), dat, dat_int, 0, relative_tolerance,
+      function_tolerance, max_num_steps);
 
   using Fy = system_functor<F, double, double, false>;
 
@@ -308,9 +307,8 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver(
     std::ostream* msgs = nullptr, double relative_tolerance = 1e-10,
     double function_tolerance = 1e-6,
     long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
-  return algebra_solver_powell(f, x, y, dat, dat_int, msgs,
-                               relative_tolerance, function_tolerance,
-                               max_num_steps);
+  return algebra_solver_powell(f, x, y, dat, dat_int, msgs, relative_tolerance,
+                               function_tolerance, max_num_steps);
 }
 
 }  // namespace math
