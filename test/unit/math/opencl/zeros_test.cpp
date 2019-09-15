@@ -37,16 +37,16 @@ TEST(MathMatrixCL, zero_m_value_check) {
   EXPECT_EQ(0, m0_dst(1, 1));
 
   m0_dst = stan::math::from_matrix_cl(m_lower);
-  EXPECT_EQ(2, m0_dst(0, 0));
+  EXPECT_EQ(0, m0_dst(0, 0));
   EXPECT_EQ(2, m0_dst(0, 1));
   EXPECT_EQ(0, m0_dst(1, 0));
-  EXPECT_EQ(2, m0_dst(1, 1));
+  EXPECT_EQ(0, m0_dst(1, 1));
 
   m0_dst = stan::math::from_matrix_cl(m_upper);
-  EXPECT_EQ(2, m0_dst(0, 0));
+  EXPECT_EQ(0, m0_dst(0, 0));
   EXPECT_EQ(0, m0_dst(0, 1));
   EXPECT_EQ(2, m0_dst(1, 0));
-  EXPECT_EQ(2, m0_dst(1, 1));
+  EXPECT_EQ(0, m0_dst(1, 1));
 }
 
 #endif
