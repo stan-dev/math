@@ -222,6 +222,15 @@ def main():
     meta_exclude = ["stan/math/*/*/meta", "stan/math/*/meta.hpp"]
     errors.extend(grep_patterns("meta", "stan/math", meta_checks, meta_exclude))
 
+    #  Check that we do not use non-reentrant safe functions from std
+    thread_safe_checks = [
+        {
+            "pattern": "std::lgamma",
+            "message": "Replace std::lgamma with reentrant safe version boost::math::lgamma or lgamma_r on supporting platforms.",
+        }
+    ]
+    errors.extend(grep_patterns("thread-reentrant-safe", "stan/math", thread_safe_checks))
+
     errors.extend(check_non_test_files_in_test())
 
     if errors:
