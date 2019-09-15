@@ -266,7 +266,7 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver_powell(
  * The user can also specify the relative tolerance
  * (xtol in Eigen's code), the function tolerance,
  * and the maximum number of steps (maxfev in Eigen's code).
- * 
+ *
  * Signature to maintain backward compatibility, will be removed
  * in the future.
  *
