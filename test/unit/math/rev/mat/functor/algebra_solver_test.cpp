@@ -67,8 +67,8 @@ TEST(MathMatrix, simple_eq_unsuported) {
     y << 5, 4, 2;
 
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta
-      = algebra_solver(simple_eq_functor(), x, y, dummy_dat, dummy_dat_int,
-                       0, rel_tol, fun_tol, max_steps);
+        = algebra_solver(simple_eq_functor(), x, y, dummy_dat, dummy_dat_int, 0,
+                         rel_tol, fun_tol, max_steps);
 
     EXPECT_EQ(20, theta(0));
     EXPECT_EQ(2, theta(1));
@@ -80,7 +80,8 @@ TEST(MathMatrix, simple_eq_unsuported) {
     VEC g;
     theta(k).grad(y_vec, g);
 
-    for (int i = 0; i < n_y; i++) EXPECT_EQ(J(k, i), g[i]);
+    for (int i = 0; i < n_y; i++)
+      EXPECT_EQ(J(k, i), g[i]);
   }
 }
 
