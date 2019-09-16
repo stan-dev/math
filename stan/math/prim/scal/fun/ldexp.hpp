@@ -16,8 +16,7 @@ namespace math {
  * @param[in] b an integer that is the exponent
  * @return product of a times 2 to the power b
  */
-template <typename T1, typename T2,
-          typename = enable_if_all_arithmetic<T1, T2>>
+template <typename T1, typename T2, typename = enable_if_all_arithmetic<T1, T2>>
 inline auto ldexp(T1&& a, T2&& b) {
   using std::ldexp;
   return ldexp(std::forward<T1>(a), std::forward<T2>(b));
