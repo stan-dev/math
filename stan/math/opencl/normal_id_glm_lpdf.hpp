@@ -27,10 +27,6 @@ namespace math {
  * The idea is that normal_id_glm_lpdf(y, x, alpha, beta, sigma) should
  * compute a more efficient version of normal_lpdf(y, alpha + x * beta, sigma)
  * by using analytically simplified gradients.
- * @tparam T_y type of vector of dependent variables (labels);
- * @tparam T_x type of the matrix of independent variables (features); this
- * should be an Eigen::Matrix type whose number of rows should match the
- * length of y and whose number of columns should match the length of beta
  * @tparam T_alpha type of the intercept(s);
  * this can be a vector (of the same length as y) of intercepts or a single
  * value (for models with constant intercept);
