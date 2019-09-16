@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 
 /**
- * Returns the product of a (the significand) and
+ * Returns the product of a (the significand) times
  * 2 to power b (the exponent).
  *
  * @tparam T Scalar type of significand
