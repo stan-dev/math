@@ -297,7 +297,8 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
     }
   }
 
-  template <typename Mat, std::enable_if_t<is_eigen_matrix<std::decay_t<Mat>>::value>...>
+  template <typename Mat,
+            std::enable_if_t<is_eigen_matrix<std::decay_t<Mat>>::value>...>
   void setup_buffer(Mat&& A) {
     cl::Context& ctx = opencl_context.context();
     cl::CommandQueue& queue = opencl_context.queue();
@@ -309,7 +310,8 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
     this->add_write_event(transfer_event);
   }
 
-  template <typename Mat, std::enable_if_t<!is_eigen_matrix<std::decay_t<Mat>>::value>...>
+  template <typename Mat,
+            std::enable_if_t<!is_eigen_matrix<std::decay_t<Mat>>::value>...>
   void setup_buffer(Mat&& A) {
     cl::Context& ctx = opencl_context.context();
     cl::CommandQueue& queue = opencl_context.queue();
@@ -341,9 +343,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
       return;
     }
     try {
-//      std::cout << "\n" << is_eigen_matrix<Mat>::value << "\n";
-//      std::cout << "\n" << is_eigen_matrix<Eigen::MatrixXd>::value << "\n";
-    setup_buffer(A);
+      setup_buffer(A);
     } catch (const cl::Error& e) {
       check_opencl_error("matrix constructor", e);
     }

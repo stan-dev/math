@@ -52,8 +52,9 @@ inline matrix_cl<T> to_matrix_cl(const Eigen::Matrix<T, R, C>& src) {
      */
     cl::Event copy_event;
     const cl::CommandQueue& queue = opencl_context.queue();
-    queue.enqueueWriteBuffer(dst.buffer(), opencl_context.in_order(), 0, sizeof(T) * dst.size(),
-                             src.data(), &dst.write_events(), &copy_event);
+    queue.enqueueWriteBuffer(dst.buffer(), opencl_context.in_order(), 0,
+                             sizeof(T) * dst.size(), src.data(),
+                             &dst.write_events(), &copy_event);
     dst.add_write_event(copy_event);
   } catch (const cl::Error& e) {
     check_opencl_error("copy Eigen->(OpenCL)", e);
@@ -226,8 +227,8 @@ inline T from_matrix_cl_error_code(const matrix_cl<T>& src) {
   try {
     cl::Event copy_event;
     const cl::CommandQueue queue = opencl_context.queue();
-    queue.enqueueReadBuffer(src.buffer(), opencl_context.in_order(), 0, sizeof(T), &dst,
-                            &src.write_events(), &copy_event);
+    queue.enqueueReadBuffer(src.buffer(), opencl_context.in_order(), 0,
+                            sizeof(T), &dst, &src.write_events(), &copy_event);
     copy_event.wait();
     src.clear_write_events();
   } catch (const cl::Error& e) {
@@ -252,8 +253,8 @@ inline matrix_cl<T> to_matrix_cl(const T& src) {
   try {
     cl::Event copy_event;
     const cl::CommandQueue queue = opencl_context.queue();
-    queue.enqueueWriteBuffer(dst.buffer(), opencl_context.in_order(), 0, sizeof(T), &src,
-                             &dst.write_events(), &copy_event);
+    queue.enqueueWriteBuffer(dst.buffer(), opencl_context.in_order(), 0,
+                             sizeof(T), &src, &dst.write_events(), &copy_event);
     dst.add_write_event(copy_event);
   } catch (const cl::Error& e) {
     check_opencl_error("to_matrix_cl (OpenCL)->(OpenCL)", e);
