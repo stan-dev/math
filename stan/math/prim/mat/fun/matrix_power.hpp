@@ -31,10 +31,8 @@ inline Eigen::Matrix<T, R, C> matrix_power(const Eigen::Matrix<T, R, C> &M,
     invalid_argument("matrix_power", "M.rows()", M.rows(), "is ",
                      ", but must be > 0!");
   check_finite("matrix_power", "M", M);
-  Eigen::Matrix<T, R, C> I
-      = Eigen::Matrix<T, R, C>::Identity(M.rows(), M.cols());
   if (n == 0)
-    return I;
+    return Eigen::Matrix<T, R, C>::Identity(M.rows(), M.cols());
   Eigen::Matrix<T, R, C> result = M;
   Eigen::Matrix<T, R, C> MM = M;
   for (int nn = n - 1; nn > 0; nn /= 2) {
