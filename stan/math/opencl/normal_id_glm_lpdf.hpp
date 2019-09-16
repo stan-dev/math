@@ -35,8 +35,8 @@ namespace math {
  * @tparam T_scale type of the (positive) scale(s);
  * this can be a vector (of the same length as y, for heteroskedasticity)
  * or a scalar.
- * @param y vector parameter
- * @param x design matrix
+ * @param y_cl vector parameter on OpenCL device
+ * @param x_cl design matrix on OpenCL device
  * @param alpha intercept (in log odds)
  * @param beta weight vector
  * @param sigma (Sequence of) scale parameters for the normal
