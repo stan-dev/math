@@ -44,8 +44,8 @@ TEST(MathMeta, expression) {
 
   EXPECT_TRUE((is_eigen_matrix<const Eigen::Matrix<double, -1, -1>>::value));
   EXPECT_TRUE((is_eigen_matrix<Eigen::SparseMatrix<double>&>::value));
-  EXPECT_FALSE(
-      (is_eigen_matrix<Eigen::MatrixBase<Eigen::Matrix<double, -1, -1>>&&>::value));
+  EXPECT_FALSE((is_eigen_matrix<
+                Eigen::MatrixBase<Eigen::Matrix<double, -1, -1>>&&>::value));
 
   Eigen::Matrix<double, -1, -1> a;
   Eigen::Matrix<double, -1, -1> b;
