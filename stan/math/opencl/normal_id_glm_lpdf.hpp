@@ -2,7 +2,6 @@
 #define STAN_MATH_OPENCL_NORMAL_ID_GLM_LPDF_HPP
 #ifdef STAN_OPENCL
 
-
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
@@ -51,14 +50,12 @@ namespace math {
  * @throw std::domain_error if the scale is not positive.
  * @throw std::invalid_argument if container sizes mismatch.
  */
-template <bool propto, typename T_alpha,
-          typename T_beta, typename T_scale>
+template <bool propto, typename T_alpha, typename T_beta, typename T_scale>
 return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
-    const matrix_cl<double> &y_cl, const matrix_cl<double> &x_cl, const T_alpha &alpha, const T_beta &beta,
-    const T_scale &sigma) {
+    const matrix_cl<double> &y_cl, const matrix_cl<double> &x_cl,
+    const T_alpha &alpha, const T_beta &beta, const T_scale &sigma) {
   static const char *function = "normal_id_glm_lpdf(OpenCL)";
-  using T_partials_return
-      = partials_return_t<T_alpha, T_beta, T_scale>;
+  using T_partials_return = partials_return_t<T_alpha, T_beta, T_scale>;
   using T_scale_val = typename std::conditional_t<
       is_vector<T_scale>::value,
       Eigen::Array<partials_return_t<T_scale>, -1, 1>,
@@ -73,13 +70,16 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   const size_t M = x_cl.cols();
 
   check_positive_finite(function, "Scale vector", sigma);
-  check_size_match(function, "Rows of ", "x_cl", N, "rows of ", "y_cl", y_cl.rows());
+  check_size_match(function, "Rows of ", "x_cl", N, "rows of ", "y_cl",
+                   y_cl.rows());
   check_consistent_size(function, "Weight vector", beta, M);
   if (is_vector<T_scale>::value) {
-    check_size_match(function, "Rows of ", "y_cl", N, "size of ", "sigma", length(sigma));
+    check_size_match(function, "Rows of ", "y_cl", N, "size of ", "sigma",
+                     length(sigma));
   }
   if (is_vector<T_alpha>::value) {
-    check_size_match(function, "Rows of ", "y_cl", N, "size of ", "alpha", length(alpha));
+    check_size_match(function, "Rows of ", "y_cl", N, "size of ", "alpha",
+                     length(alpha));
   }
 
   if (!include_summand<propto, T_alpha, T_beta, T_scale>::value) {
@@ -106,8 +106,7 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   matrix_cl<double> alpha_cl(alpha_val_vec);
   matrix_cl<double> sigma_cl(sigma_val_vec);
 
-  const bool need_mu_derivative
-      = !is_constant_all<T_beta, T_alpha>::value;
+  const bool need_mu_derivative = !is_constant_all<T_beta, T_alpha>::value;
   matrix_cl<double> mu_derivative_cl(need_mu_derivative ? N : 0, 1);
   const bool need_mu_derivative_sum
       = !is_constant_all<T_alpha>::value && !is_vector<T_alpha>::value;
@@ -131,13 +130,15 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   } catch (const cl::Error &e) {
     check_opencl_error(function, e);
   }
-  double y_scaled_sq_sum = sum(from_matrix_cl(y_minus_mu_over_sigma_squared_sum_cl));
+  double y_scaled_sq_sum
+      = sum(from_matrix_cl(y_minus_mu_over_sigma_squared_sum_cl));
 
-  operands_and_partials<T_alpha, T_beta, T_scale> ops_partials(
-      alpha, beta, sigma);
+  operands_and_partials<T_alpha, T_beta, T_scale> ops_partials(alpha, beta,
+                                                               sigma);
 
   if (!is_constant_all<T_alpha>::value && is_vector<T_alpha>::value) {
-    ops_partials.edge1_.partials_ = from_matrix_cl<Dynamic, 1>(mu_derivative_cl);
+    ops_partials.edge1_.partials_
+        = from_matrix_cl<Dynamic, 1>(mu_derivative_cl);
   }
   if (need_mu_derivative_sum) {
     ops_partials.edge1_.partials_[0]
@@ -162,7 +163,8 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   }
 
   if (!std::isfinite(y_scaled_sq_sum)) {
-    check_finite(function, "Vector of dependent variables", from_matrix_cl(y_cl));
+    check_finite(function, "Vector of dependent variables",
+                 from_matrix_cl(y_cl));
     check_finite(function, "Weight vector", beta);
     check_finite(function, "Intercept", alpha);
     // if all other checks passed, next will only fail if x is not finite
@@ -189,13 +191,13 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
 
 template <typename T_alpha, typename T_beta, typename T_scale>
 inline return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
-    const matrix_cl<double> &y, const matrix_cl<double> &x, const T_alpha &alpha, const T_beta &beta,
-    const T_scale &sigma) {
+    const matrix_cl<double> &y, const matrix_cl<double> &x,
+    const T_alpha &alpha, const T_beta &beta, const T_scale &sigma) {
   return normal_id_glm_lpdf<false>(y, x, alpha, beta, sigma);
 }
 
-}
-}
+}  // namespace math
+}  // namespace stan
 
 #endif
 #endif
