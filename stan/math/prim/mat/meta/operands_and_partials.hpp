@@ -17,7 +17,7 @@ namespace internal {
 template <typename Op, typename ViewElt, int R, int C>
 class ops_partials_edge<ViewElt, Eigen::Matrix<Op, R, C>> {
  public:
-  typedef empty_broadcast_array<ViewElt, Eigen::Matrix<Op, R, C>> partials_t;
+  using partials_t = empty_broadcast_array<ViewElt, Eigen::Matrix<Op, R, C>>;
   partials_t partials_;
   empty_broadcast_array<partials_t, Eigen::Matrix<Op, R, C>> partials_vec_;
   ops_partials_edge() {}
@@ -36,7 +36,7 @@ class ops_partials_edge<ViewElt, Eigen::Matrix<Op, R, C>> {
 template <typename Op, typename ViewElt, int R, int C>
 class ops_partials_edge<ViewElt, std::vector<Eigen::Matrix<Op, R, C>>> {
  public:
-  typedef empty_broadcast_array<ViewElt, Eigen::Matrix<Op, R, C>> partials_t;
+  using partials_t = empty_broadcast_array<ViewElt, Eigen::Matrix<Op, R, C>>;
   empty_broadcast_array<partials_t, Eigen::Matrix<Op, R, C>> partials_vec_;
   ops_partials_edge() {}
   explicit ops_partials_edge(
@@ -55,8 +55,8 @@ class ops_partials_edge<ViewElt, std::vector<Eigen::Matrix<Op, R, C>>> {
 template <typename Op, typename ViewElt>
 class ops_partials_edge<ViewElt, std::vector<std::vector<Op>>> {
  public:
-  typedef empty_broadcast_array<ViewElt, std::vector<std::vector<Op>>>
-      partials_t;
+  using partials_t
+      = empty_broadcast_array<ViewElt, std::vector<std::vector<Op>>>;
   partials_t partials_;
   empty_broadcast_array<partials_t, std::vector<std::vector<Op>>> partials_vec_;
   ops_partials_edge() {}

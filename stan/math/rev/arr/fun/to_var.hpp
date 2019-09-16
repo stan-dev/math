@@ -18,8 +18,9 @@ namespace math {
  */
 inline std::vector<var> to_var(const std::vector<double>& v) {
   std::vector<var> var_vector(v.size());
-  for (size_t n = 0; n < v.size(); n++)
+  for (size_t n = 0; n < v.size(); n++) {
     var_vector[n] = v[n];
+  }
   return var_vector;
 }
 

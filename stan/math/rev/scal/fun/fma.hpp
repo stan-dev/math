@@ -63,10 +63,11 @@ class fma_vdd_vari : public op_vdd_vari {
   fma_vdd_vari(vari* avi, double b, double c)
       : op_vdd_vari(fma(avi->val_, b, c), avi, b, c) {}
   void chain() {
-    if (unlikely(is_any_nan(avi_->val_, bd_, cd_)))
+    if (unlikely(is_any_nan(avi_->val_, bd_, cd_))) {
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
-    else
+    } else {
       avi_->adj_ += adj_ * bd_;
+    }
   }
 };
 
@@ -75,10 +76,11 @@ class fma_ddv_vari : public op_ddv_vari {
   fma_ddv_vari(double a, double b, vari* cvi)
       : op_ddv_vari(fma(a, b, cvi->val_), a, b, cvi) {}
   void chain() {
-    if (unlikely(is_any_nan(cvi_->val_, ad_, bd_)))
+    if (unlikely(is_any_nan(cvi_->val_, ad_, bd_))) {
       cvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
-    else
+    } else {
       cvi_->adj_ += adj_;
+    }
   }
 };
 }  // namespace internal

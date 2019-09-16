@@ -22,8 +22,9 @@ inline return_type_t<T1, T2> divide(const T1& x, const T2& y) {
 }
 
 inline int divide(int x, int y) {
-  if (unlikely(y == 0))
+  if (unlikely(y == 0)) {
     domain_error("divide", "denominator is", y, "");
+  }
   return x / y;
 }
 

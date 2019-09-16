@@ -28,12 +28,13 @@ namespace math {
 template <bool propto, typename T_n, typename T_prob>
 return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
   static const char* function = "bernoulli_logit_lpmf";
-  typedef partials_return_type_t<T_n, T_prob> T_partials_return;
+  using T_partials_return = partials_return_t<T_n, T_prob>;
 
   using std::exp;
 
-  if (size_zero(n, theta))
+  if (size_zero(n, theta)) {
     return 0.0;
+  }
 
   T_partials_return logp(0.0);
 
@@ -42,8 +43,9 @@ return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
   check_consistent_sizes(function, "Random variable", n,
                          "Probability parameter", theta);
 
-  if (!include_summand<propto, T_prob>::value)
+  if (!include_summand<propto, T_prob>::value) {
     return 0.0;
+  }
 
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_prob> theta_vec(theta);
@@ -59,21 +61,23 @@ return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
 
     // Handle extreme values gracefully using Taylor approximations.
     static const double cutoff = 20.0;
-    if (ntheta > cutoff)
+    if (ntheta > cutoff) {
       logp -= exp_m_ntheta;
-    else if (ntheta < -cutoff)
+    } else if (ntheta < -cutoff) {
       logp += ntheta;
-    else
+    } else {
       logp -= log1p(exp_m_ntheta);
+    }
 
     if (!is_constant_all<T_prob>::value) {
-      if (ntheta > cutoff)
+      if (ntheta > cutoff) {
         ops_partials.edge1_.partials_[n] -= exp_m_ntheta;
-      else if (ntheta < -cutoff)
+      } else if (ntheta < -cutoff) {
         ops_partials.edge1_.partials_[n] += sign;
-      else
+      } else {
         ops_partials.edge1_.partials_[n]
             += sign * exp_m_ntheta / (exp_m_ntheta + 1);
+      }
     }
   }
   return ops_partials.build(logp);

@@ -3,7 +3,6 @@
 
 using stan::math::fvar;
 using stan::math::log_sum_exp;
-using stan::math::log_sum_exp;
 
 TEST(AgradFwdMatrixLogSumExp, vector_fd) {
   using stan::math::vector_fd;

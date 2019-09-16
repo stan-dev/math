@@ -21,9 +21,11 @@ inline int rank(const C& v, int s) {
   check_range("rank", "v", v.size(), s);
   --s;  // adjust for indexing by one
   int count = 0;
-  for (typename index_type<C>::type i = 0; i < v.size(); ++i)
-    if (v[i] < v[s])
+  for (typename index_type<C>::type i = 0; i < v.size(); ++i) {
+    if (v[i] < v[s]) {
       ++count;
+    }
+  }
   return count;
 }
 

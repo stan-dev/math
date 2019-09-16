@@ -42,17 +42,20 @@ gp_exponential_cov(const std::vector<T_x> &x, const T_s &sigma,
   size_t x_size = size_of(x);
   Eigen::Matrix<return_type_t<T_x, T_s, T_l>, Eigen::Dynamic, Eigen::Dynamic>
       cov(x_size, x_size);
-  if (x_size == 0)
+  if (x_size == 0) {
     return cov;
+  }
 
   const char *function = "gp_exponential_cov";
   size_t x_obs_size = size_of(x[0]);
-  for (size_t i = 0; i < x_size; ++i)
+  for (size_t i = 0; i < x_size; ++i) {
     check_size_match(function, "x row", x_obs_size, "x's other row",
                      size_of(x[i]));
+  }
 
-  for (size_t i = 0; i < x_size; ++i)
+  for (size_t i = 0; i < x_size; ++i) {
     check_not_nan(function, "x", x[i]);
+  }
 
   check_positive_finite(function, "magnitude", sigma);
   check_positive_finite(function, "length scale", length_scale);
@@ -97,12 +100,14 @@ gp_exponential_cov(const std::vector<Eigen::Matrix<T_x, -1, 1>> &x,
   size_t x_size = size_of(x);
   Eigen::Matrix<return_type_t<T_x, T_s, T_l>, Eigen::Dynamic, Eigen::Dynamic>
       cov(x_size, x_size);
-  if (x_size == 0)
+  if (x_size == 0) {
     return cov;
+  }
 
   const char *function = "gp_exponential_cov";
-  for (size_t n = 0; n < x_size; ++n)
+  for (size_t n = 0; n < x_size; ++n) {
     check_not_nan(function, "x", x[n]);
+  }
 
   check_positive_finite(function, "magnitude", sigma);
   check_positive_finite(function, "length scale", length_scale);
@@ -159,22 +164,27 @@ gp_exponential_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   Eigen::Matrix<return_type_t<T_x1, T_x2, T_s, T_l>, Eigen::Dynamic,
                 Eigen::Dynamic>
       cov(x1_size, x2_size);
-  if (x1_size == 0 || x2_size == 0)
+  if (x1_size == 0 || x2_size == 0) {
     return cov;
+  }
 
   const char *function = "gp_exponential_cov";
   size_t x1_obs_size = size_of(x1[0]);
-  for (size_t i = 0; i < x1_size; ++i)
+  for (size_t i = 0; i < x1_size; ++i) {
     check_size_match(function, "x1's row", x1_obs_size, "x1's other row",
                      size_of(x1[i]));
-  for (size_t i = 0; i < x2_size; ++i)
+  }
+  for (size_t i = 0; i < x2_size; ++i) {
     check_size_match(function, "x1's row", x1_obs_size, "x2's other row",
                      size_of(x2[i]));
+  }
 
-  for (size_t n = 0; n < x1_size; ++n)
+  for (size_t n = 0; n < x1_size; ++n) {
     check_not_nan(function, "x1", x1[n]);
-  for (size_t n = 0; n < x2_size; ++n)
+  }
+  for (size_t n = 0; n < x2_size; ++n) {
     check_not_nan(function, "x2", x2[n]);
+  }
 
   check_positive_finite(function, "magnitude", sigma);
   check_positive_finite(function, "length scale", length_scale);
@@ -225,24 +235,29 @@ gp_exponential_cov(const std::vector<Eigen::Matrix<T_x1, -1, 1>> &x1,
   Eigen::Matrix<return_type_t<T_x1, T_x2, T_s, T_l>, Eigen::Dynamic,
                 Eigen::Dynamic>
       cov(x1_size, x2_size);
-  if (x1_size == 0 || x2_size == 0)
+  if (x1_size == 0 || x2_size == 0) {
     return cov;
+  }
 
   const char *function = "gp_exponential_cov";
-  for (size_t n = 0; n < x1_size; ++n)
+  for (size_t n = 0; n < x1_size; ++n) {
     check_not_nan(function, "x1", x1[n]);
-  for (size_t n = 0; n < x2_size; ++n)
+  }
+  for (size_t n = 0; n < x2_size; ++n) {
     check_not_nan(function, "x2", x2[n]);
+  }
 
   check_positive_finite(function, "magnitude", sigma);
   check_positive_finite(function, "length scale", length_scale);
 
-  for (size_t i = 0; i < x1_size; ++i)
+  for (size_t i = 0; i < x1_size; ++i) {
     check_size_match(function, "x1's row", size_of(x1[i]),
                      "number of length scales", l_size);
-  for (size_t i = 0; i < x2_size; ++i)
+  }
+  for (size_t i = 0; i < x2_size; ++i) {
     check_size_match(function, "x2's row", size_of(x2[i]),
                      "number of length scales", l_size);
+  }
 
   T_s sigma_sq = square(sigma);
   T_l temp;

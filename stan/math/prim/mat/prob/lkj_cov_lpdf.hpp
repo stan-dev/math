@@ -34,9 +34,11 @@ return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_lpdf(
   check_positive(function, "Shape parameter", eta);
   check_finite(function, "Location parameter", mu);
   check_finite(function, "Scale parameter", sigma);
-  for (int m = 0; m < y.rows(); ++m)
-    for (int n = 0; n < y.cols(); ++n)
+  for (int m = 0; m < y.rows(); ++m) {
+    for (int n = 0; n < y.cols(); ++n) {
       check_finite(function, "Covariance matrix", y(m, n));
+    }
+  }
 
   const unsigned int K = y.rows();
   const Eigen::Array<T_y, Eigen::Dynamic, 1> sds = y.diagonal().array().sqrt();

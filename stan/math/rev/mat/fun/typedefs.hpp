@@ -8,43 +8,43 @@
 namespace stan {
 namespace math {
 
-typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>::Index size_type;
+using size_type = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>::Index;
 
 /**
  * The type of a matrix holding <code>var</code>
  * values.
  */
-typedef Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> matrix_v;
+using matrix_v = Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>;
 
 /**
  * The type of a (column) vector holding <code>var</code>
  * values.
  */
-typedef Eigen::Matrix<var, Eigen::Dynamic, 1> vector_v;
+using vector_v = Eigen::Matrix<var, Eigen::Dynamic, 1>;
 
 /**
  * The type of a row vector holding <code>var</code>
  * values.
  */
-typedef Eigen::Matrix<var, 1, Eigen::Dynamic> row_vector_v;
+using row_vector_v = Eigen::Matrix<var, 1, Eigen::Dynamic>;
 
 /**
  * The type of a matrix holding <code>vari*</code>
  * values.
  */
-typedef Eigen::Matrix<vari*, Eigen::Dynamic, Eigen::Dynamic> matrix_vi;
+using matrix_vi = Eigen::Matrix<vari*, Eigen::Dynamic, Eigen::Dynamic>;
 
 /**
  * The type of a (column) vector holding <code>vari*</code>
  * values.
  */
-typedef Eigen::Matrix<vari*, Eigen::Dynamic, 1> vector_vi;
+using vector_vi = Eigen::Matrix<vari*, Eigen::Dynamic, 1>;
 
 /**
  * The type of a row vector holding <code>vari*</code>
  * values.
  */
-typedef Eigen::Matrix<vari*, 1, Eigen::Dynamic> row_vector_vi;
+using row_vector_vi = Eigen::Matrix<vari*, 1, Eigen::Dynamic>;
 
 }  // namespace math
 }  // namespace stan

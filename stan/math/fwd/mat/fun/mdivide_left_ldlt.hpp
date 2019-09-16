@@ -26,11 +26,12 @@ inline Eigen::Matrix<fvar<T2>, R1, C2> mdivide_left_ldlt(
 
   Eigen::Matrix<T2, R2, C2> b_val(b.rows(), b.cols());
   Eigen::Matrix<T2, R2, C2> b_der(b.rows(), b.cols());
-  for (int i = 0; i < b.rows(); i++)
+  for (int i = 0; i < b.rows(); i++) {
     for (int j = 0; j < b.cols(); j++) {
       b_val(i, j) = b(i, j).val_;
       b_der(i, j) = b(i, j).d_;
     }
+  }
 
   return to_fvar(mdivide_left_ldlt(A, b_val), mdivide_left_ldlt(A, b_der));
 }

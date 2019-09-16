@@ -43,7 +43,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
   mutable std::vector<cl::Event> read_events_;   // Tracks reads
 
  public:
-  typedef T type;
+  using type = T;
   // Forward declare the methods that work in place on the matrix
   template <matrix_cl_view matrix_view = matrix_cl_view::Entire>
   void zeros();
@@ -195,8 +195,9 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
 
   matrix_cl(const matrix_cl<T>& A)
       : rows_(A.rows()), cols_(A.cols()), view_(A.view()) {
-    if (A.size() == 0)
+    if (A.size() == 0) {
       return;
+    }
     this->wait_for_read_write_events();
     cl::Context& ctx = opencl_context.context();
     cl::CommandQueue queue = opencl_context.queue();
@@ -237,8 +238,9 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
   explicit matrix_cl(const std::vector<Eigen::Matrix<T, R, C>>& A) try
       : rows_(A.empty() ? 0 : A[0].size()),
         cols_(A.size()) {
-    if (this->size() == 0)
+    if (this->size() == 0) {
       return;
+    }
     cl::Context& ctx = opencl_context.context();
     cl::CommandQueue& queue = opencl_context.queue();
     // creates the OpenCL buffer to copy the Eigen
@@ -258,7 +260,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
       cl::Event write_event;
       queue.enqueueWriteBuffer(
           buffer_cl_, CL_FALSE, sizeof(double) * offset_size,
-          sizeof(double) * rows_, A[i].data(), NULL, &write_event);
+          sizeof(double) * rows_, A[i].data(), nullptr, &write_event);
       this->add_write_event(write_event);
     }
   } catch (const cl::Error& e) {
@@ -320,7 +322,31 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
       buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
       cl::Event transfer_event;
       queue.enqueueWriteBuffer(buffer_cl_, CL_FALSE, 0, sizeof(T) * A.size(),
-                               A.data(), NULL, &transfer_event);
+                               A.data(), nullptr, &transfer_event);
+      this->add_write_event(transfer_event);
+    } catch (const cl::Error& e) {
+      check_opencl_error("matrix constructor", e);
+    }
+  }
+
+  /**
+   * Constructor for the matrix_cl that
+   * creates a copy of a scalar on the OpenCL device.
+   * Regardless of `partial_view`, whole matrix is stored.
+   *
+   * @param A the scalar
+   * @param partial_view which part of the matrix is used
+   */
+  explicit matrix_cl(const T& A,
+                     matrix_cl_view partial_view = matrix_cl_view::Diagonal)
+      : rows_(1), cols_(1), view_(partial_view) {
+    cl::Context& ctx = opencl_context.context();
+    cl::CommandQueue& queue = opencl_context.queue();
+    try {
+      buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T));
+      cl::Event transfer_event;
+      queue.enqueueWriteBuffer(buffer_cl_, CL_FALSE, 0, sizeof(T), &A, NULL,
+                               &transfer_event);
       this->add_write_event(transfer_event);
     } catch (const cl::Error& e) {
       check_opencl_error("matrix constructor", e);
@@ -347,52 +373,11 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
       buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
       cl::Event transfer_event;
       queue.enqueueWriteBuffer(buffer_cl_, CL_FALSE, 0, sizeof(T) * A.size(),
-                               A.data(), NULL, &transfer_event);
+                               A.data(), nullptr, &transfer_event);
       this->add_write_event(transfer_event);
     } catch (const cl::Error& e) {
       check_opencl_error("matrix constructor", e);
     }
-  }
-
-  /**
-   * Constructs a const matrix_cl that contains a copy of the Eigen matrix on
-   * the OpenCL device. If the matrix already has a cached copy on the device,
-   * the cache is used and no copying is done. Changing the resulting matrix_cl
-   * would change cache, so do not do it! If changes are needed a copy must be
-   * made.
-   *
-   * @tparam R row type of input matrix
-   * @tparam C column type of input matrix
-   * @param A the Eigen matrix
-   * @param partial_view which part of the matrix is used
-   */
-  template <int R, int C>
-  static matrix_cl<T> constant(const Eigen::Matrix<T, R, C>& A,
-                               matrix_cl_view partial_view
-                               = matrix_cl_view::Entire) {
-#ifndef STAN_OPENCL_NOCACHE
-    if (A.opencl_buffer_() != NULL) {
-      return matrix_cl<T>(A.opencl_buffer_, A.rows(), A.cols(), partial_view);
-    } else {
-      matrix_cl<T> res(A, partial_view);
-      A.opencl_buffer_ = res.buffer();
-      return res;
-    }
-#else
-    return matrix_cl<T>(A, partial_view);
-#endif
-  }
-
-  /**
-   * Constructs a const matrix_cl that contains a single value on the OpenCL
-   * device.
-   *
-   * @param A the value
-   * @param partial_view which part of the matrix is used
-   */
-  static matrix_cl<T> constant(T A, matrix_cl_view partial_view
-                                    = matrix_cl_view::Entire) {
-    return matrix_cl<T>(A);
   }
 
   /**
@@ -432,8 +417,9 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
                      a.rows(), "destination.rows()", rows());
     check_size_match("assignment of (OpenCL) matrices", "source.cols()",
                      a.cols(), "destination.cols()", cols());
-    if (a.size() == 0)
+    if (a.size() == 0) {
       return *this;
+    }
     view_ = a.view();
     this->wait_for_read_write_events();
     cl::CommandQueue queue = opencl_context.queue();

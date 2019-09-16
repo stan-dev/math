@@ -33,8 +33,9 @@ class welford_covar_estimator {
   void sample_mean(Eigen::VectorXd& mean) { mean = m_; }
 
   void sample_covariance(Eigen::MatrixXd& covar) {
-    if (num_samples_ > 1)
+    if (num_samples_ > 1) {
       covar = m2_ / (num_samples_ - 1.0);
+    }
   }
 
  protected:

@@ -19,8 +19,9 @@ inline void dims(const Eigen::Matrix<T, R, C>& x, std::vector<int>& result) {
 template <typename T>
 inline void dims(const std::vector<T>& x, std::vector<int>& result) {
   result.push_back(x.size());
-  if (x.size() > 0)
+  if (x.size() > 0) {
     dims(x[0], result);
+  }
 }
 
 template <typename T>
