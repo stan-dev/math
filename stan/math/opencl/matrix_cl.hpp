@@ -382,63 +382,6 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
   }
 
   /**
-   * Constructs a const matrix_cl that contains a copy of the Eigen matrix on
-   * the OpenCL device. If the matrix already has a cached copy on the device,
-   * the cache is used and no copying is done. Changing the resulting matrix_cl
-   * would change cache, so do not do it! If changes are needed a copy must be
-   * made.
-   *
-   * @tparam R row type of input matrix
-   * @tparam C column type of input matrix
-   * @param A the Eigen matrix
-   * @param partial_view which part of the matrix is used
-   */
-  template <int R, int C>
-  static matrix_cl<T> constant(const Eigen::Matrix<T, R, C>& A,
-                               matrix_cl_view partial_view
-                               = matrix_cl_view::Entire) {
-#ifndef STAN_OPENCL_NOCACHE
-    if (A.opencl_buffer_() != NULL) {
-      return matrix_cl<T>(A.opencl_buffer_, A.rows(), A.cols(), partial_view);
-    } else {
-      matrix_cl<T> res(A, partial_view);
-      A.opencl_buffer_ = res.buffer();
-      return res;
-    }
-#else
-    return matrix_cl<T>(A, partial_view);
-#endif
-  }
-
-  /**
-   * Constructs a const matrix_cl that contains a copy of the Eigen matrix on
-   * the OpenCL device. \c Eigen \c Map can not be cached.
-   *
-   * @tparam R row type of input matrix
-   * @tparam C column type of input matrix
-   * @param A the \c Eigen \c Map
-   * @param partial_view which part of the matrix is used
-   */
-  template <int R, int C>
-  static matrix_cl<T> constant(
-      const Eigen::Map<const Eigen::Matrix<T, R, C>>& A,
-      matrix_cl_view partial_view = matrix_cl_view::Entire) {
-    return matrix_cl<T>(A, partial_view);
-  }
-
-  /**
-   * Constructs a const matrix_cl that contains a single value on the OpenCL
-   * device.
-   *
-   * @param A the value
-   * @param partial_view which part of the matrix is used
-   */
-  static matrix_cl<T> constant(T A, matrix_cl_view partial_view
-                                    = matrix_cl_view::Entire) {
-    return matrix_cl<T>(A);
-  }
-
-  /**
    * Construct from \c array of doubles with given rows and columns
    *
    * @param A array of doubles
