@@ -5,11 +5,13 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
+#include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/mat/fun/value_of_rec.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/sum.hpp>
 #include <stan/math/prim/arr/fun/value_of_rec.hpp>
+#include <stan/math/prim/mat/prob/normal_id_glm_lpdf.hpp>
 
 #include <stan/math/opencl/kernels/normal_id_glm_lpdf.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
@@ -24,9 +26,8 @@ namespace math {
  * Returns the log PDF of the Generalized Linear Model (GLM)
  * with Normal distribution and id link function.
  * If containers are supplied, returns the log sum of the probabilities.
- * The idea is that normal_id_glm_lpdf(y, x, alpha, beta, sigma) should
- * compute a more efficient version of normal_lpdf(y, alpha + x * beta, sigma)
- * by using analytically simplified gradients.
+ * This is a specialization of the GLM in prim/mar/prob/normal_id_glm_lpdf.hpp
+ * that is implemented in OpenCL.
  * @tparam T_alpha type of the intercept(s);
  * this can be a vector (of the same length as y) of intercepts or a single
  * value (for models with constant intercept);
@@ -79,6 +80,10 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   }
 
   if (!include_summand<propto, T_alpha, T_beta, T_scale>::value) {
+    return 0;
+  }
+
+  if(N==0 || M==0){
     return 0;
   }
 
