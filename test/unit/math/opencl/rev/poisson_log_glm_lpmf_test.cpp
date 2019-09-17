@@ -2,6 +2,7 @@
 #include <stan/math.hpp>
 #include <stan/math/opencl/poisson_log_glm_lpmf.hpp>
 #include <gtest/gtest.h>
+#include <test/unit/math/expect_near_rel.hpp>
 #include <vector>
 
 using Eigen::Array;
@@ -10,6 +11,7 @@ using Eigen::Matrix;
 using stan::math::matrix_cl;
 using stan::math::var;
 using std::vector;
+using stan::test::expect_near_rel;
 
 TEST(ProbDistributionsPoissonLogGLM, error_checking) {
   double eps = 1e-9;
@@ -88,9 +90,9 @@ TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_small_simple) {
   matrix_cl<double> x_cl(x);
   matrix_cl<int> y_cl(y, N, 1);
 
-  EXPECT_FLOAT_EQ(stan::math::poisson_log_glm_lpmf(y_cl, x_cl, alpha, beta),
+  expect_near_rel("",stan::math::poisson_log_glm_lpmf(y_cl, x_cl, alpha, beta),
                   stan::math::poisson_log_glm_lpmf(y, x, alpha, beta));
-  EXPECT_FLOAT_EQ(
+  expect_near_rel("",
       stan::math::poisson_log_glm_lpmf<true>(y_cl, x_cl, alpha, beta),
       stan::math::poisson_log_glm_lpmf<true>(y, x, alpha, beta));
 
@@ -105,12 +107,10 @@ TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_small_simple) {
 
   (res1 + res2).grad();
 
-  EXPECT_FLOAT_EQ(res1.val(), res2.val());
+  expect_near_rel("",res1.val(), res2.val());
 
-  EXPECT_FLOAT_EQ(alpha_var1.adj(), alpha_var2.adj());
-  for (int i = 0; i < M; i++) {
-    EXPECT_NEAR(beta_var1[i].adj(), beta_var2[i].adj(), eps);
-  }
+  expect_near_rel("",alpha_var1.adj(), alpha_var2.adj());
+  expect_near_rel("",beta_var1.adj().eval(), beta_var2.adj().eval());
 }
 
 TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_zero_rows) {
@@ -127,9 +127,9 @@ TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_zero_rows) {
   matrix_cl<double> x_cl(x);
   matrix_cl<int> y_cl(y, N, 1);
 
-  EXPECT_FLOAT_EQ(stan::math::poisson_log_glm_lpmf(y_cl, x_cl, alpha, beta),
+  expect_near_rel("",stan::math::poisson_log_glm_lpmf(y_cl, x_cl, alpha, beta),
                   stan::math::poisson_log_glm_lpmf(y, x, alpha, beta));
-  EXPECT_FLOAT_EQ(
+  expect_near_rel("",
       stan::math::poisson_log_glm_lpmf<true>(y_cl, x_cl, alpha, beta),
       stan::math::poisson_log_glm_lpmf<true>(y, x, alpha, beta));
 
@@ -144,12 +144,10 @@ TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_zero_rows) {
 
   (res1 + res2).grad();
 
-  EXPECT_FLOAT_EQ(res1.val(), res2.val());
+  expect_near_rel("",res1.val(), res2.val());
 
-  EXPECT_FLOAT_EQ(alpha_var1.adj(), alpha_var2.adj());
-  for (int i = 0; i < M; i++) {
-    EXPECT_NEAR(beta_var1[i].adj(), beta_var2[i].adj(), eps);
-  }
+  expect_near_rel("",alpha_var1.adj(), alpha_var2.adj());
+  expect_near_rel("",beta_var1.adj().eval(), beta_var2.adj().eval());
 }
 
 TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_zero_cols) {
@@ -165,9 +163,9 @@ TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_zero_cols) {
   matrix_cl<double> x_cl(x);
   matrix_cl<int> y_cl(y, N, 1);
 
-  EXPECT_FLOAT_EQ(stan::math::poisson_log_glm_lpmf(y_cl, x_cl, alpha, beta),
+  expect_near_rel("",stan::math::poisson_log_glm_lpmf(y_cl, x_cl, alpha, beta),
                   stan::math::poisson_log_glm_lpmf(y, x, alpha, beta));
-  EXPECT_FLOAT_EQ(
+  expect_near_rel("",
       stan::math::poisson_log_glm_lpmf<true>(y_cl, x_cl, alpha, beta),
       stan::math::poisson_log_glm_lpmf<true>(y, x, alpha, beta));
 
@@ -182,12 +180,10 @@ TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_zero_cols) {
 
   (res1 + res2).grad();
 
-  EXPECT_FLOAT_EQ(res1.val(), res2.val());
+  expect_near_rel("",res1.val(), res2.val());
 
-  EXPECT_FLOAT_EQ(alpha_var1.adj(), alpha_var2.adj());
-  for (int i = 0; i < M; i++) {
-    EXPECT_NEAR(beta_var1[i].adj(), beta_var2[i].adj(), eps);
-  }
+  expect_near_rel("",alpha_var1.adj(), alpha_var2.adj());
+  expect_near_rel("",beta_var1.adj().eval(), beta_var2.adj().eval());
 }
 
 TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_small_vector_alpha) {
@@ -206,9 +202,9 @@ TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_small_vector_alpha) {
   matrix_cl<double> x_cl(x);
   matrix_cl<int> y_cl(y, N, 1);
 
-  EXPECT_FLOAT_EQ(stan::math::poisson_log_glm_lpmf(y_cl, x_cl, alpha, beta),
+  expect_near_rel("",stan::math::poisson_log_glm_lpmf(y_cl, x_cl, alpha, beta),
                   stan::math::poisson_log_glm_lpmf(y, x, alpha, beta));
-  EXPECT_FLOAT_EQ(
+  expect_near_rel("",
       stan::math::poisson_log_glm_lpmf<true>(y_cl, x_cl, alpha, beta),
       stan::math::poisson_log_glm_lpmf<true>(y, x, alpha, beta));
 
@@ -223,14 +219,9 @@ TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_small_vector_alpha) {
 
   (res1 + res2).grad();
 
-  EXPECT_FLOAT_EQ(res1.val(), res2.val());
-
-  for (int i = 0; i < M; i++) {
-    EXPECT_NEAR(beta_var1[i].adj(), beta_var2[i].adj(), eps);
-  }
-  for (int i = 0; i < N; i++) {
-    EXPECT_NEAR(alpha_var1[i].adj(), alpha_var2[i].adj(), eps);
-  }
+  expect_near_rel("",res1.val(), res2.val());
+  expect_near_rel("",beta_var1.adj().eval(), beta_var2.adj().eval());
+  expect_near_rel("",alpha_var1.adj().eval(), alpha_var2.adj().eval());
 }
 
 TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_big) {
@@ -250,9 +241,9 @@ TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_big) {
   matrix_cl<double> x_cl(x);
   matrix_cl<int> y_cl(y, N, 1);
 
-  EXPECT_FLOAT_EQ(stan::math::poisson_log_glm_lpmf(y_cl, x_cl, alpha, beta),
+  expect_near_rel("",stan::math::poisson_log_glm_lpmf(y_cl, x_cl, alpha, beta),
                   stan::math::poisson_log_glm_lpmf(y, x, alpha, beta));
-  EXPECT_FLOAT_EQ(stan::math::poisson_log_glm_lpmf(y_cl, x_cl, alpha, beta),
+  expect_near_rel("",stan::math::poisson_log_glm_lpmf(y_cl, x_cl, alpha, beta),
                   stan::math::poisson_log_glm_lpmf(y, x, alpha, beta));
 
   Matrix<var, Dynamic, 1> beta_var1 = beta;
@@ -267,14 +258,10 @@ TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_big) {
 
   (res1 + res2).grad();
 
-  EXPECT_FLOAT_EQ(res1.val(), res2.val());
+  expect_near_rel("",res1.val(), res2.val());
 
-  for (int i = 0; i < M; i++) {
-    EXPECT_NEAR(beta_var1[i].adj(), beta_var2[i].adj(), eps);
-  }
-  for (int i = 0; i < N; i++) {
-    EXPECT_NEAR(alpha_var1[i].adj(), alpha_var2[i].adj(), eps);
-  }
+  expect_near_rel("",beta_var1.adj().eval(), beta_var2.adj().eval());
+  expect_near_rel("",alpha_var1.adj().eval(), alpha_var2.adj().eval());
 }
 
 #endif
