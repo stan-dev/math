@@ -362,8 +362,9 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
    * @throw <code>std::system_error</code> if the
    * matrices do not have matching dimensions
    */
-  explicit matrix_cl(const std::vector<T>& A, const int& R, const int& C)
-      : rows_(R), cols_(C) {
+  explicit matrix_cl(const std::vector<T>& A, const int& R, const int& C,
+      matrix_cl_view partial_view = matrix_cl_view::Entire)
+      : rows_(R), cols_(C), view_(partial_view) {
     if (size() == 0) {
       return;
     }
