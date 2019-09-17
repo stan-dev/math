@@ -47,6 +47,8 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
   // Forward declare the methods that work in place on the matrix
   template <matrix_cl_view matrix_view = matrix_cl_view::Entire>
   void zeros();
+  template <matrix_cl_view matrix_view = matrix_cl_view::Entire>
+  void zeros_strict_tri();
   template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper>
   void triangular_transpose();
 

@@ -38,6 +38,39 @@ inline void matrix_cl<T, enable_if_arithmetic<T>>::zeros() try {
   check_opencl_error("zeros", e);
 }
 
+/**
+ * Stores zeros in the stricts triangular part (excluding the diagonal)
+ * of a matrix on the OpenCL device.
+ * Supports writing zeroes to the lower and upper triangular.
+ * Throws if used with the Entire matrix_cl_view.
+ *
+ * @tparam view Specifies if zeros are assigned to
+ * the lower triangular or upper triangular. The
+ * value must be of type matrix_cl_view
+ *
+ * @throw <code>std::invalid_argument</code> if the
+ * matrix_view parameter is Entire.
+ */
+template <typename T>
+template <matrix_cl_view matrix_view>
+inline void matrix_cl<T, enable_if_arithmetic<T>>::zeros_strict_tri() try {
+  if (matrix_view == matrix_cl_view::Entire) {
+    invalid_argument(
+        "zeros_strict_tri", "matrix_view",
+        "matrix_cl_view::Entire is not a valid template parameter value", "");
+  }
+  if (size() == 0) {
+    return;
+  }
+  this->view_ = both(this->view_, invert(matrix_view));
+  cl::CommandQueue cmdQueue = opencl_context.queue();
+  opencl_kernels::constants_strict_tri(cl::NDRange(this->rows(), this->cols()),
+                                       *this, 0.0, this->rows(), this->cols(),
+                                       matrix_view);
+} catch (const cl::Error& e) {
+  check_opencl_error("zeros", e);
+}
+
 }  // namespace math
 }  // namespace stan
 
