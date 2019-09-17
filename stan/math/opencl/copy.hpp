@@ -88,7 +88,7 @@ inline Eigen::Matrix<T, R, C> from_matrix_cl(const matrix_cl<T>& src) {
     cl::Event copy_event;
     const cl::CommandQueue queue = opencl_context.queue();
     queue.enqueueReadBuffer(src.buffer(), CL_FALSE, 0,
-                            sizeof(double) * dst.size(), dst.data(),
+                            sizeof(T) * dst.size(), dst.data(),
                             &src.write_events(), &copy_event);
     copy_event.wait();
     src.clear_write_events();
