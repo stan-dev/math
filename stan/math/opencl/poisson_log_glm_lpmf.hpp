@@ -10,12 +10,11 @@
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/mat/fun/value_of_rec.hpp>
 #include <stan/math/prim/arr/fun/value_of_rec.hpp>
-#include <cmath>
-#include <limits>
-
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/prim/arr/fun/value_of.hpp>
 #include <stan/math/opencl/kernels/poisson_log_glm_lpmf.hpp>
+#include <cmath>
+#include <limits>
 
 namespace stan {
 namespace math {
@@ -30,8 +29,8 @@ namespace math {
  * value (for models with constant intercept);
  * @tparam T_beta type of the weight vector;
  * this can also be a single value;
- * @param y positive integer vector parameter on OpenCL device
- * @param x design matrix on OpenCL device
+ * @param y_cl positive integer vector parameter on OpenCL device
+ * @param x_cl design matrix on OpenCL device
  * @param alpha intercept (in log odds)
  * @param beta weight vector
  * @return log probability or log sum of probabilities
