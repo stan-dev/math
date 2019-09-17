@@ -43,7 +43,8 @@ namespace math {
 
 template <bool propto, typename T_alpha, typename T_beta>
 return_type_t<T_alpha, T_beta> bernoulli_logit_glm_lpmf(
-    const matrix_cl<int>& y_cl, const matrix_cl<double>& x_cl, const T_alpha& alpha, const T_beta& beta) {
+    const matrix_cl<int> &y_cl, const matrix_cl<double> &x_cl,
+    const T_alpha &alpha, const T_beta &beta) {
   static const char *function = "bernoulli_logit_glm_lpmf(OpenCL)";
   using T_partials_return = partials_return_t<T_alpha, T_beta>;
 
@@ -84,8 +85,7 @@ return_type_t<T_alpha, T_beta> bernoulli_logit_glm_lpmf(
   matrix_cl<double> alpha_cl(alpha_val_vec);
 
   matrix_cl<double> logp_cl(wgs, 1);
-  const bool need_theta_derivative
-      = !is_constant_all<T_beta, T_alpha>::value;
+  const bool need_theta_derivative = !is_constant_all<T_beta, T_alpha>::value;
   matrix_cl<double> theta_derivative_cl(need_theta_derivative ? N : 0, 1);
   const bool need_theta_derivative_sum
       = need_theta_derivative && !is_vector<T_alpha>::value;
@@ -107,10 +107,12 @@ return_type_t<T_alpha, T_beta> bernoulli_logit_glm_lpmf(
   logp += sum(logp_partial_sum);
 
   if (!std::isfinite(logp)) {
-    check_bounded(function, "Vector of dependent variables", from_matrix_cl(y_cl), 0, 1);
+    check_bounded(function, "Vector of dependent variables",
+                  from_matrix_cl(y_cl), 0, 1);
     check_finite(function, "Weight vector", beta);
     check_finite(function, "Intercept", alpha);
-    check_finite(function, "Matrix of independent variables", from_matrix_cl(x_cl));
+    check_finite(function, "Matrix of independent variables",
+                 from_matrix_cl(x_cl));
   }
 
   operands_and_partials<T_alpha, T_beta> ops_partials(alpha, beta);
@@ -137,7 +139,8 @@ return_type_t<T_alpha, T_beta> bernoulli_logit_glm_lpmf(
 
 template <typename T_alpha, typename T_beta>
 inline return_type_t<T_beta, T_alpha> bernoulli_logit_glm_lpmf(
-    const matrix_cl<int> &y, const matrix_cl<double> &x, const T_alpha &alpha, const T_beta &beta) {
+    const matrix_cl<int> &y, const matrix_cl<double> &x, const T_alpha &alpha,
+    const T_beta &beta) {
   return bernoulli_logit_glm_lpmf<false>(y, x, alpha, beta);
 }
 

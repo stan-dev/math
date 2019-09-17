@@ -88,7 +88,6 @@ return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
   const auto& beta_val_vec = as_column_vector_or_scalar(beta_val);
   const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val);
 
-
   Matrix<T_partials_return, Dynamic, 1> theta = x_val * beta_val_vec;
   theta.array() += as_array_or_scalar(alpha_val_vec);
 

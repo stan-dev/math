@@ -40,10 +40,9 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch.
  */
 template <bool propto, typename T_alpha, typename T_beta>
-return_type_t<T_alpha, T_beta> poisson_log_glm_lpmf(const matrix_cl<int>& y_cl,
-                                                         const matrix_cl<double>& x_cl,
-                                                         const T_alpha& alpha,
-                                                         const T_beta& beta) {
+return_type_t<T_alpha, T_beta> poisson_log_glm_lpmf(
+    const matrix_cl<int>& y_cl, const matrix_cl<double>& x_cl,
+    const T_alpha& alpha, const T_beta& beta) {
   static const char* function = "poisson_log_glm_lpmf(OpenCL)";
   using T_partials_return = partials_return_t<T_alpha, T_beta>;
 
@@ -61,7 +60,7 @@ return_type_t<T_alpha, T_beta> poisson_log_glm_lpmf(const matrix_cl<int>& y_cl,
     check_size_match(function, "Rows of ", "y_cl", N, "size of ", "alpha",
                      length(alpha));
   }
-  if (N==0 || M==0) {
+  if (N == 0 || M == 0) {
     return 0;
   }
 
@@ -107,10 +106,12 @@ return_type_t<T_alpha, T_beta> poisson_log_glm_lpmf(const matrix_cl<int>& y_cl,
     logp += sum(logp_partial_sum);
   }
   if (!std::isfinite(theta_derivative_sum)) {
-    check_nonnegative(function, "Vector of dependent variables", from_matrix_cl(y_cl));
+    check_nonnegative(function, "Vector of dependent variables",
+                      from_matrix_cl(y_cl));
     check_finite(function, "Weight vector", beta);
     check_finite(function, "Intercept", alpha);
-    check_finite(function, "Matrix of independent variables", from_matrix_cl(x_cl));
+    check_finite(function, "Matrix of independent variables",
+                 from_matrix_cl(x_cl));
   }
 
   operands_and_partials<T_alpha, T_beta> ops_partials(alpha, beta);
@@ -135,7 +136,8 @@ return_type_t<T_alpha, T_beta> poisson_log_glm_lpmf(const matrix_cl<int>& y_cl,
 
 template <typename T_alpha, typename T_beta>
 inline return_type_t<T_alpha, T_beta> poisson_log_glm_lpmf(
-    const matrix_cl<int>& y, const matrix_cl<double>& x, const T_alpha& alpha, const T_beta& beta) {
+    const matrix_cl<int>& y, const matrix_cl<double>& x, const T_alpha& alpha,
+    const T_beta& beta) {
   return poisson_log_glm_lpmf<false>(y, x, alpha, beta);
 }
 }  // namespace math
