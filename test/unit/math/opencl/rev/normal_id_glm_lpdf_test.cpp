@@ -113,11 +113,11 @@ TEST(ProbDistributionsNormalIdGLM, gpu_matches_cpu_small_simple) {
   matrix_cl<double> x_cl(x);
   matrix_cl<double> y_cl(y);
 
-  expect_near_rel("",
-      stan::math::normal_id_glm_lpdf(y_cl, x_cl, alpha, beta, sigma),
+  expect_near_rel(
+      "", stan::math::normal_id_glm_lpdf(y_cl, x_cl, alpha, beta, sigma),
       stan::math::normal_id_glm_lpdf(y, x, alpha, beta, sigma));
-  expect_near_rel("",
-      stan::math::normal_id_glm_lpdf<true>(y_cl, x_cl, alpha, beta, sigma),
+  expect_near_rel(
+      "", stan::math::normal_id_glm_lpdf<true>(y_cl, x_cl, alpha, beta, sigma),
       stan::math::normal_id_glm_lpdf<true>(y, x, alpha, beta, sigma));
 
   Matrix<var, Dynamic, 1> beta_var1 = beta;
@@ -134,10 +134,10 @@ TEST(ProbDistributionsNormalIdGLM, gpu_matches_cpu_small_simple) {
 
   (res1 + res2).grad();
 
-  expect_near_rel("",res1.val(), res2.val());
+  expect_near_rel("", res1.val(), res2.val());
 
-  expect_near_rel("",alpha_var1.adj(), alpha_var2.adj());
-  expect_near_rel("",sigma_var1.adj(), sigma_var2.adj());
+  expect_near_rel("", alpha_var1.adj(), alpha_var2.adj());
+  expect_near_rel("", sigma_var1.adj(), sigma_var2.adj());
   expect_near_rel("", beta_var1.adj().eval(), beta_var2.adj().eval());
 }
 
@@ -156,11 +156,11 @@ TEST(ProbDistributionsNormalIdGLM, gpu_matches_cpu_zero_rows) {
   matrix_cl<double> x_cl(x);
   matrix_cl<double> y_cl(y);
 
-  expect_near_rel("",
-      stan::math::normal_id_glm_lpdf(y_cl, x_cl, alpha, beta, sigma),
+  expect_near_rel(
+      "", stan::math::normal_id_glm_lpdf(y_cl, x_cl, alpha, beta, sigma),
       stan::math::normal_id_glm_lpdf(y, x, alpha, beta, sigma));
-  expect_near_rel("",
-      stan::math::normal_id_glm_lpdf<true>(y_cl, x_cl, alpha, beta, sigma),
+  expect_near_rel(
+      "", stan::math::normal_id_glm_lpdf<true>(y_cl, x_cl, alpha, beta, sigma),
       stan::math::normal_id_glm_lpdf<true>(y, x, alpha, beta, sigma));
 
   Matrix<var, Dynamic, 1> beta_var1 = beta;
@@ -177,10 +177,10 @@ TEST(ProbDistributionsNormalIdGLM, gpu_matches_cpu_zero_rows) {
 
   (res1 + res2).grad();
 
-  expect_near_rel("",res1.val(), res2.val());
+  expect_near_rel("", res1.val(), res2.val());
 
-  expect_near_rel("",alpha_var1.adj(), alpha_var2.adj());
-  expect_near_rel("",sigma_var1.adj(), sigma_var2.adj());
+  expect_near_rel("", alpha_var1.adj(), alpha_var2.adj());
+  expect_near_rel("", sigma_var1.adj(), sigma_var2.adj());
   expect_near_rel("", beta_var1.adj().eval(), beta_var2.adj().eval());
 }
 
@@ -199,11 +199,11 @@ TEST(ProbDistributionsNormalIdGLM, gpu_matches_cpu_zero_cols) {
   matrix_cl<double> x_cl(x);
   matrix_cl<double> y_cl(y);
 
-  expect_near_rel("",
-      stan::math::normal_id_glm_lpdf(y_cl, x_cl, alpha, beta, sigma),
+  expect_near_rel(
+      "", stan::math::normal_id_glm_lpdf(y_cl, x_cl, alpha, beta, sigma),
       stan::math::normal_id_glm_lpdf(y, x, alpha, beta, sigma));
-  expect_near_rel("",
-      stan::math::normal_id_glm_lpdf<true>(y_cl, x_cl, alpha, beta, sigma),
+  expect_near_rel(
+      "", stan::math::normal_id_glm_lpdf<true>(y_cl, x_cl, alpha, beta, sigma),
       stan::math::normal_id_glm_lpdf<true>(y, x, alpha, beta, sigma));
 
   Matrix<var, Dynamic, 1> beta_var1 = beta;
@@ -220,10 +220,10 @@ TEST(ProbDistributionsNormalIdGLM, gpu_matches_cpu_zero_cols) {
 
   (res1 + res2).grad();
 
-  expect_near_rel("",res1.val(), res2.val());
+  expect_near_rel("", res1.val(), res2.val());
 
-  expect_near_rel("",alpha_var1.adj(), alpha_var2.adj());
-  expect_near_rel("",sigma_var1.adj(), sigma_var2.adj());
+  expect_near_rel("", alpha_var1.adj(), alpha_var2.adj());
+  expect_near_rel("", sigma_var1.adj(), sigma_var2.adj());
   expect_near_rel("", beta_var1.adj().eval(), beta_var2.adj().eval());
 }
 
@@ -246,11 +246,11 @@ TEST(ProbDistributionsNormalIdGLM, gpu_matches_cpu_small_vector_alpha_sigma) {
   matrix_cl<double> x_cl(x);
   matrix_cl<double> y_cl(y);
 
-  expect_near_rel("",
-      stan::math::normal_id_glm_lpdf(y_cl, x_cl, alpha, beta, sigma),
+  expect_near_rel(
+      "", stan::math::normal_id_glm_lpdf(y_cl, x_cl, alpha, beta, sigma),
       stan::math::normal_id_glm_lpdf(y, x, alpha, beta, sigma));
-  expect_near_rel("",
-      stan::math::normal_id_glm_lpdf<true>(y_cl, x_cl, alpha, beta, sigma),
+  expect_near_rel(
+      "", stan::math::normal_id_glm_lpdf<true>(y_cl, x_cl, alpha, beta, sigma),
       stan::math::normal_id_glm_lpdf<true>(y, x, alpha, beta, sigma));
 
   Matrix<var, Dynamic, 1> beta_var1 = beta;
@@ -267,7 +267,7 @@ TEST(ProbDistributionsNormalIdGLM, gpu_matches_cpu_small_vector_alpha_sigma) {
 
   (res1 + res2).grad();
 
-  expect_near_rel("",res1.val(), res2.val());
+  expect_near_rel("", res1.val(), res2.val());
 
   expect_near_rel("", beta_var1.adj().eval(), beta_var2.adj().eval());
   expect_near_rel("", alpha_var1.adj().eval(), alpha_var2.adj().eval());
@@ -290,11 +290,11 @@ TEST(ProbDistributionsNormalIdGLM, gpu_matches_cpu_big) {
   matrix_cl<double> x_cl(x);
   matrix_cl<double> y_cl(y);
 
-  expect_near_rel("",
-      stan::math::normal_id_glm_lpdf(y_cl, x_cl, alpha, beta, sigma),
+  expect_near_rel(
+      "", stan::math::normal_id_glm_lpdf(y_cl, x_cl, alpha, beta, sigma),
       stan::math::normal_id_glm_lpdf(y, x, alpha, beta, sigma));
-  expect_near_rel("",
-      stan::math::normal_id_glm_lpdf(y_cl, x_cl, alpha, beta, sigma),
+  expect_near_rel(
+      "", stan::math::normal_id_glm_lpdf(y_cl, x_cl, alpha, beta, sigma),
       stan::math::normal_id_glm_lpdf(y, x, alpha, beta, sigma));
 
   Matrix<var, Dynamic, 1> beta_var1 = beta;
@@ -311,7 +311,7 @@ TEST(ProbDistributionsNormalIdGLM, gpu_matches_cpu_big) {
 
   (res1 + res2).grad();
 
-  expect_near_rel("",res1.val(), res2.val());
+  expect_near_rel("", res1.val(), res2.val());
   expect_near_rel("", beta_var1.adj().eval(), beta_var2.adj().eval());
   expect_near_rel("", alpha_var1.adj().eval(), alpha_var2.adj().eval());
   expect_near_rel("", sigma_var1.adj().eval(), sigma_var2.adj().eval());
