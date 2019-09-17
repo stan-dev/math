@@ -36,8 +36,8 @@ template <typename T>
 class matrix_cl<T, enable_if_arithmetic<T>> {
  private:
   cl::Buffer buffer_cl_;  // Holds the allocated memory on the device
-  const int rows_;
-  const int cols_;
+  int rows_;
+  int cols_;
   matrix_cl_view view_;  // Holds info on if matrix is a special type
   mutable std::vector<cl::Event> write_events_;  // Tracks write jobs
   mutable std::vector<cl::Event> read_events_;   // Tracks reads
@@ -413,14 +413,12 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
    * Assign a \c matrix_cl to another
    */
   matrix_cl<T>& operator=(const matrix_cl<T>& a) {
-    check_size_match("assignment of (OpenCL) matrices", "source.rows()",
-                     a.rows(), "destination.rows()", rows());
-    check_size_match("assignment of (OpenCL) matrices", "source.cols()",
-                     a.cols(), "destination.cols()", cols());
     if (a.size() == 0) {
       return *this;
     }
     view_ = a.view();
+    rows_ = a.rows();
+    cols_ = a.cols();
     this->wait_for_read_write_events();
     cl::CommandQueue queue = opencl_context.queue();
     try {
@@ -440,16 +438,14 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
    * Move a \c matrix_cl to another
    */
   matrix_cl<T>& operator=(matrix_cl<T>&& a) {
-    check_size_match("move of (OpenCL) matrix", "source.rows()", a.rows(),
-                     "destination.rows()", rows());
-    check_size_match("move of (OpenCL) matrix", "source.cols()", a.cols(),
-                     "destination.cols()", cols());
     // Need to wait for all of matrices events before destroying old buffer
     this->wait_for_read_write_events();
     buffer_cl_ = a.buffer();
     view_ = a.view();
     write_events_ = std::move(a.write_events_);
     read_events_ = std::move(a.read_events_);
+    rows_ = a.rows();
+    cols_ = a.cols();
     return *this;
   }
 
@@ -458,14 +454,12 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
    */
   template <typename U, typename = enable_if_arithmetic<U>>
   matrix_cl<T>& operator=(const matrix_cl<U>& a) {
-    check_size_match("assignment of (OpenCL) matrices", "source.rows()",
-                     a.rows(), "destination.rows()", rows());
-    check_size_match("assignment of (OpenCL) matrices", "source.cols()",
-                     a.cols(), "destination.cols()", cols());
     // Need to wait for all of matrices events before destroying old buffer
     this->wait_for_read_write_events();
     buffer_cl_ = a.buffer();
     view_ = a.view();
+    rows_ = a.rows();
+    cols_ = a.cols();
     return *this;
   }
 };
