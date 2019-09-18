@@ -112,9 +112,9 @@ class kinsol_system_data {
    */
   static int kinsol_jacobian(N_Vector x, N_Vector f, SUNMatrix J,
                              void* user_data, N_Vector tmp1, N_Vector tmp2) {
-    const system_data* explicit_system
-        = static_cast<const system_data*>(user_data);
-    return explicit_system->jacobian_states(NV_DATA_S(x), J);
+    return
+      static_cast<const system_data*>(user_data)->
+        jacobian_states(NV_DATA_S(x), J);
   }
 
  private:
