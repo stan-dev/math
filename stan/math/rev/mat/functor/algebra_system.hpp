@@ -176,8 +176,7 @@ void algebra_solver_check(const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
   for (int x : dat_int)
     check_finite("algebra_solver", "integer data", x);
 
-  check_nonnegative("algebra_solver", "function_tolerance",
-                    function_tolerance);
+  check_nonnegative("algebra_solver", "function_tolerance", function_tolerance);
   check_positive("algebra_solver", "max_num_steps", max_num_steps);
 }
 
