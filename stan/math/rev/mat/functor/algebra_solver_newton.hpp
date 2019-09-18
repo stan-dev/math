@@ -61,7 +61,7 @@ Eigen::VectorXd algebra_solver_newton(
     const Eigen::VectorXd& y, const std::vector<double>& dat,
     const std::vector<int>& dat_int, std::ostream* msgs = nullptr,
     double scaling_step_size = 1e-3, double function_tolerance = 1e-6,
-    long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
+    long int max_num_steps = 200) {  // NOLINT(runtime/int)
   algebra_solver_check(x, y, dat, dat_int, function_tolerance, max_num_steps);
   check_nonnegative("algebra_solver", "scaling_step_size", scaling_step_size);
 
@@ -124,7 +124,7 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver_newton(
     const std::vector<double>& dat, const std::vector<int>& dat_int,
     std::ostream* msgs = nullptr, double scaling_step_size = 1e-3,
     double function_tolerance = 1e-6,
-    long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
+    long int max_num_steps = 200) {  // NOLINT(runtime/int)
 
   Eigen::VectorXd theta_dbl = algebra_solver_newton(
       f, x, value_of(y), dat, dat_int, msgs, scaling_step_size,

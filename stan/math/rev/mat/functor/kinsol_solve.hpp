@@ -60,7 +60,7 @@ Eigen::VectorXd kinsol_solve(
     const std::vector<double>& dat, const std::vector<int>& dat_int,
     std::ostream* msgs = nullptr, double scaling_step_tol = 1e-3,
     double function_tolerance = 1e-6,
-    long int max_num_steps = 1e+3,  // NOLINT(runtime/int)
+    long int max_num_steps = 200,  // NOLINT(runtime/int)
     bool custom_jacobian = 1, const F2& J_f = kinsol_J_f(),
     int steps_eval_jacobian = 10, int global_line_search = KIN_LINESEARCH) {
   int N = x.size();
@@ -76,6 +76,8 @@ Eigen::VectorXd kinsol_solve(
   N_Vector scaling = N_VNew_Serial(N);
   N_VConst_Serial(1.0, scaling);  // no scaling
 
+  check_flag_sundials(KINSetNumMaxIters(kinsol_memory, max_num_steps),
+                      "KINSetNumMaxIters");
   check_flag_sundials(KINSetFuncNormTol(kinsol_memory, function_tolerance),
                       "KINSetFuncNormTol");
   check_flag_sundials(KINSetScaledStepTol(kinsol_memory, scaling_step_tol),
@@ -92,7 +94,7 @@ Eigen::VectorXd kinsol_solve(
   check_flag_sundials(KINSetMaxNewtonStep(kinsol_memory, max_newton_step),
                       "KINSetMaxNewtonStep");
   check_flag_sundials(
-      KINSetUserData(kinsol_memory, reinterpret_cast<void*>(&kinsol_data)),
+      KINSetUserData(kinsol_memory, static_cast<void*>(&kinsol_data)),
       "KINSetUserData");
 
   // construct Linear solver
@@ -119,6 +121,7 @@ Eigen::VectorXd kinsol_solve(
   Eigen::VectorXd x_solution(N);
   for (int i = 0; i < N; i++)
     x_solution(i) = nv_x_data[i];
+  // TO DO (charlesm93): destroy N_Vector_S
 
   return x_solution;
 }
