@@ -93,7 +93,17 @@ class kinsol_system_data {
   static int kinsol_f_system(N_Vector x, N_Vector f, void* user_data) {
     const system_data* explicit_system
         = static_cast<const system_data*>(user_data);
-    explicit_system->f_system(NV_DATA_S(x), NV_DATA_S(f));
+
+    Eigen::VectorXd x_eigen
+      = Eigen::Map<Eigen::VectorXd>(NV_DATA_S(x), explicit_system->N_);
+
+    Eigen::Map<Eigen::VectorXd>(N_VGetArrayPointer(f),
+                                explicit_system->N_)
+      =  explicit_system->f_(x_eigen,
+                             explicit_system->y_,
+                             explicit_system->dat_,
+                             explicit_system->dat_int_,
+                             explicit_system->msgs_);
 
     return 0;
   }
@@ -110,33 +120,18 @@ class kinsol_system_data {
    * https://computation.llnl.gov/sites/default/files/public/kin_guide-dev.pdf,
    * page 55.
    */
-  static int kinsol_jacobian(N_Vector x, N_Vector f, SUNMatrix J,
-                             void* user_data, N_Vector tmp1, N_Vector tmp2) {
+   static int kinsol_jacobian(N_Vector x, N_Vector f, SUNMatrix J,
+                              void* user_data, N_Vector tmp1, N_Vector tmp2) {
+    const system_data* explicit_system
+        = static_cast<const system_data*>(user_data);
     return
-      static_cast<const system_data*>(user_data)->
-        jacobian_states(NV_DATA_S(x), J);
-  }
-
- private:
-  /**
-   * Calculates the root function, using the user-supplied functor
-   * for a given value of x.
-   */
-  inline void f_system(const double x[], double f[]) const {
-    const std::vector<double> x_vec(x, x + N_);
-    const std::vector<double>& f_vec
-        = to_array_1d(f_(to_vector(x_vec), y_, dat_, dat_int_, msgs_));
-    std::move(f_vec.begin(), f_vec.end(), f);
-  }
-
-  /**
-   * Calculate the Jacobian of the system function with respect to x
-   * using the method specified by J_f_.
-   * By default, J_f is constructed as a method that computes the
-   * Jacobian with reverse-mode autodiff.
-   */
-  inline int jacobian_states(const double x[], SUNMatrix J) const {
-    return J_f_(f_, x_, y_, dat_, dat_int_, msgs_, x, J);
+      explicit_system->J_f_(explicit_system->f_,
+                            explicit_system->x_,
+                            explicit_system->y_,
+                            explicit_system->dat_,
+                            explicit_system->dat_int_,
+                            explicit_system->msgs_,
+                            NV_DATA_S(x), J);
   }
 };
 
