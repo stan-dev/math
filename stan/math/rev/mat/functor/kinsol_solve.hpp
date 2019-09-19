@@ -108,9 +108,8 @@ Eigen::VectorXd kinsol_solve(
         "KINSetJacFn");
 
   N_Vector nv_x = N_VNew_Serial(N);
-  realtype* nv_x_data = N_VGetArrayPointer_Serial(nv_x);
   for (int i = 0; i < N; i++)
-    nv_x_data[i] = x(i);
+    NV_Ith_S(nv_x, i) = x(i);
 
   check_flag_kinsol(
       KINSol(kinsol_memory, nv_x, global_line_search, scaling, scaling),
@@ -120,8 +119,10 @@ Eigen::VectorXd kinsol_solve(
 
   Eigen::VectorXd x_solution(N);
   for (int i = 0; i < N; i++)
-    x_solution(i) = nv_x_data[i];
-  // TO DO (charlesm93): destroy N_Vector_S
+    x_solution(i) = NV_Ith_S(nv_x, i);
+
+  N_VDestroy(nv_x);
+  N_VDestroy(scaling);
 
   return x_solution;
 }
