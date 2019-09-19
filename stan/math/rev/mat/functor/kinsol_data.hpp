@@ -95,15 +95,12 @@ class kinsol_system_data {
         = static_cast<const system_data*>(user_data);
 
     Eigen::VectorXd x_eigen
-      = Eigen::Map<Eigen::VectorXd>(NV_DATA_S(x), explicit_system->N_);
+        = Eigen::Map<Eigen::VectorXd>(NV_DATA_S(x), explicit_system->N_);
 
-    Eigen::Map<Eigen::VectorXd>(N_VGetArrayPointer(f),
-                                explicit_system->N_)
-      =  explicit_system->f_(x_eigen,
-                             explicit_system->y_,
-                             explicit_system->dat_,
-                             explicit_system->dat_int_,
-                             explicit_system->msgs_);
+    Eigen::Map<Eigen::VectorXd>(N_VGetArrayPointer(f), explicit_system->N_)
+        = explicit_system->f_(x_eigen, explicit_system->y_,
+                              explicit_system->dat_, explicit_system->dat_int_,
+                              explicit_system->msgs_);
 
     return 0;
   }
@@ -120,18 +117,14 @@ class kinsol_system_data {
    * https://computation.llnl.gov/sites/default/files/public/kin_guide-dev.pdf,
    * page 55.
    */
-   static int kinsol_jacobian(N_Vector x, N_Vector f, SUNMatrix J,
-                              void* user_data, N_Vector tmp1, N_Vector tmp2) {
+  static int kinsol_jacobian(N_Vector x, N_Vector f, SUNMatrix J,
+                             void* user_data, N_Vector tmp1, N_Vector tmp2) {
     const system_data* explicit_system
         = static_cast<const system_data*>(user_data);
-    return
-      explicit_system->J_f_(explicit_system->f_,
-                            explicit_system->x_,
-                            explicit_system->y_,
-                            explicit_system->dat_,
-                            explicit_system->dat_int_,
-                            explicit_system->msgs_,
-                            NV_DATA_S(x), J);
+    return explicit_system->J_f_(explicit_system->f_, explicit_system->x_,
+                                 explicit_system->y_, explicit_system->dat_,
+                                 explicit_system->dat_int_,
+                                 explicit_system->msgs_, NV_DATA_S(x), J);
   }
 };
 
