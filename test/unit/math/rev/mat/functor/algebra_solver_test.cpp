@@ -9,377 +9,320 @@
 #include <fstream>
 #include <vector>
 
-// Every test exists in duplicate to test the case
+// Every test exists in four verions for the cases
 // where y (the auxiliary parameters) are passed as
-// data (double type) or parameters (var types).
-// Within each of these tests, the dogleg and the Newton
-// solver are tested.
+// data (double type) or parameters (var types),
+// and the cases where the solver is based on Powell's
+// or Newton's method.
 
-TEST(MathMatrix, simple_Eq) {
-  using stan::math::var;
+class algebra_solver_simple_eq_test : public ::testing::Test {
+protected:
+  void SetUp() override {
+    n_x = 2;
+    n_y = 3;
 
-  int n_x = 2, n_y = 3;
-  bool is_newton;
+    y_dbl = stan::math::to_vector({5, 4, 2});
+    Eigen::MatrixXd J_(n_x, n_y);
+    J_ <<  4, 5, 0, 0, 0, 1;
+    J = J_;
 
-  for (int is_newton = 0; is_newton <= 1; is_newton++) {
-    for (int k = 0; k < n_x; k++) {
-      Eigen::Matrix<var, Eigen::Dynamic, 1> y(n_y);
-      y << 5, 4, 2;
-
-      Eigen::Matrix<var, Eigen::Dynamic, 1> theta
-          = simple_eq_test(simple_eq_functor(), y, is_newton);
-
-      Eigen::MatrixXd J(n_x, n_y);
-      J << 4, 5, 0, 0, 0, 1;
-
-      AVEC y_vec = createAVEC(y(0), y(1), y(2));
-      VEC g;
-      theta(k).grad(y_vec, g);
-
-      for (int i = 0; i < n_y; i++)
-        EXPECT_EQ(J(k, i), g[i]);
-    }
+    x_var = stan::math::to_vector({1, 1});
   }
-}
 
-TEST(MathMatrix, simple_Eq_dbl) {
-  Eigen::VectorXd y(3);
-  y << 5, 4, 2;
-  for (int is_newton = 0; is_newton <= 1; is_newton++)
-    Eigen::VectorXd theta = simple_eq_test(simple_eq_functor(), y, is_newton);
-}
+  int n_x;
+  int n_y;
+  Eigen::VectorXd y_dbl;
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> x_var;
+  std::vector<double> dat;
+  std::vector<int> dat_int;
+  double scale_step = 1e-3;
+  double xtol = 1e-6;
+  double ftol = 1e-3;
+  int maxfev = 1e+2;
 
-TEST(MathMatrix, simple_eq_unsuported) {
-  using stan::math::algebra_solver;
-  using stan::math::var;
+  Eigen::MatrixXd J;
+};
 
-  int n_x = 2, n_y = 3;
-  Eigen::VectorXd x(n_x);
-  x << 1, 1;  // initial guess
-  std::vector<double> dummy_dat;
+class algebra_solver_simple_eq_nopara_test : public ::testing::Test {
+protected:
+  void SetUp() override {
+    x = stan::math::to_vector({1, 1});
+  }
+
+  int n_x = 2;
+  Eigen::VectorXd x;
+  std::vector<double> dat = {5, 4, 2};
+  Eigen::VectorXd y_dummy;
   std::vector<int> dummy_dat_int;
-  double rel_tol = 1e-10;
-  double fun_tol = 1e-6;
-  int32_t max_steps = 1e+3;
+};
 
+class algebra_solver_non_linear_eq_test : public ::testing::Test {
+protected:
+  void SetUp() override {
+    y_dbl = stan::math::to_vector({4, 6, 3});
+    Eigen::MatrixXd J_(n_x, n_y);
+    J_ <<  -1, 0, 0, 0, -1, 0, 0, 0, 1;
+    J = J_;
+  }
+  int n_x = 3;
+  int n_y = 3;
+  double err = 1e-11;
+
+  Eigen::VectorXd y_dbl;
+  Eigen::MatrixXd J;
+};
+
+class error_message_test : public ::testing::Test {
+protected:
+  void SetUp() override {
+    y_2 = stan::math::to_vector({4, 6});
+    y_3 = stan::math::to_vector({4, 6, 3});
+  }
+
+  Eigen::VectorXd y_2;
+  Eigen::VectorXd y_3;
+};
+
+class max_steps_test : public ::testing::Test {
+protected:
+  void SetUp() override {
+    y = stan::math::to_vector({1, 1, 1});
+    y_var = stan::math::to_vector({1, 1, 1});
+  }
+
+  Eigen::VectorXd y;
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y_var;
+};
+
+class degenerate_eq_test : public ::testing::Test {
+protected:
+  void SetUp() override {
+    using stan::math::to_vector;
+    y_dbl = to_vector({5, 8});
+    y_scale = to_vector({5, 100});
+    x_guess_1 = to_vector({10, 1});
+    x_guess_2 = to_vector({1, 1});
+    x_guess_3 = to_vector({5, 100});
+
+    Eigen::MatrixXd J_(n_x, n_y);
+    J_ <<  0, 1, 0, 1;
+    J1 = J_;
+    J_ << 1, 0, 1, 0;
+    J2 = J_;
+  }
+
+  int n_x = 2;
+  int n_y = 2;
+  double tolerance = 1e-10;
+  Eigen::VectorXd y_dbl;
+  Eigen::VectorXd y_scale;
+  Eigen::VectorXd x_guess_1;
+  Eigen::VectorXd x_guess_2;
+  Eigen::VectorXd x_guess_3;
+  Eigen::MatrixXd J1;
+  Eigen::MatrixXd J2;
+};
+
+//////////////////////////////////////////////////////////////////////////
+// Tests for powell solver.
+
+TEST_F(algebra_solver_simple_eq_test, powell) {
+  using stan::math::var;
+  bool is_newton = false;
   for (int k = 0; k < n_x; k++) {
-    Eigen::Matrix<var, Eigen::Dynamic, 1> y(n_y);
-    y << 5, 4, 2;
+    Eigen::Matrix<var, Eigen::Dynamic, 1> y = y_dbl;
 
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta
-        = algebra_solver(simple_eq_functor(), x, y, dummy_dat, dummy_dat_int, 0,
-                         rel_tol, fun_tol, max_steps);
-
-    EXPECT_EQ(20, theta(0));
-    EXPECT_EQ(2, theta(1));
-
-    Eigen::MatrixXd J(n_x, n_y);
-    J << 4, 5, 0, 0, 0, 1;
+      = simple_eq_test(simple_eq_functor(), y, is_newton);
 
     AVEC y_vec = createAVEC(y(0), y(1), y(2));
     VEC g;
     theta(k).grad(y_vec, g);
 
-    for (int i = 0; i < n_y; i++)
-      EXPECT_EQ(J(k, i), g[i]);
+    for (int i = 0; i < n_y; i++) EXPECT_EQ(J(k, i), g[i]);
   }
 }
 
-TEST(MathMatrix, simple_Eq_tuned) {
+TEST_F(algebra_solver_simple_eq_test, powell_tuned) {
   using stan::math::var;
+  bool is_newton = false;
+  for (int k = 0; k < n_x; k++) {
+    Eigen::Matrix<var, Eigen::Dynamic, 1> y = y_dbl;
 
-  int n_x = 2, n_y = 3;
-  for (int is_newton = 0; is_newton <= 1; is_newton++) {
-    for (int k = 0; k < n_x; k++) {
-      Eigen::Matrix<var, Eigen::Dynamic, 1> y(n_y);
-      y << 5, 4, 2;
-      double scale_step = 1e-3, xtol = 1e-6, ftol = 1e-6;
-      int maxfev = 1e+4;
-
-      Eigen::Matrix<var, Eigen::Dynamic, 1> theta
-          = simple_eq_test(simple_eq_functor(), y, is_newton, true, scale_step,
-                           xtol, ftol, maxfev);
-
-      Eigen::MatrixXd J(n_x, n_y);
-      J << 4, 5, 0, 0, 0, 1;
+    Eigen::Matrix<var, Eigen::Dynamic, 1>
+      theta = simple_eq_test(simple_eq_functor(), y,
+                             is_newton, true, scale_step,
+                             xtol, ftol, maxfev);
 
       AVEC y_vec = createAVEC(y(0), y(1), y(2));
       VEC g;
       theta(k).grad(y_vec, g);
 
-      for (int i = 0; i < n_y; i++)
-        EXPECT_EQ(J(k, i), g[i]);
-    }
-  }
+      for (int i = 0; i < n_y; i++) EXPECT_EQ(J(k, i), g[i]);
+   }
 }
 
-TEST(MathMatrix, simple_Eq_tuned_dbl) {
-  int n_y = 3;
-  Eigen::VectorXd y(n_y);
-  y << 5, 4, 2;
-  double scale_step = 1e-3, xtol = 1e-6, ftol = 1e-6;
-  int maxfev = 1e+4;
-
-  for (int is_newton = 0; is_newton <= 1; is_newton++) {
-    Eigen::VectorXd theta
-        = simple_eq_test(simple_eq_functor(), y, is_newton, true, scale_step,
-                         xtol, ftol, maxfev);
-  }
+TEST_F(algebra_solver_simple_eq_test, powell_dbl) {
+  bool is_newton = false;
+  Eigen::VectorXd
+    theta = simple_eq_test(simple_eq_functor(), y_dbl, is_newton);
 }
 
-TEST(MathMatrix, simple_Eq_nopara) {
-  std::vector<double> dat(3);
-  dat[0] = 5;
-  dat[1] = 4;
-  dat[2] = 2;
-
-  int n_x = 2;
-  Eigen::VectorXd x(n_x);
-  x << 1, 1;  // initial guess
-  Eigen::VectorXd y_dummy;
-  std::vector<int> dummy_dat_int;
-
-  // Eigen::Matrix<double, Eigen::Dynamic, 1> theta;
-  Eigen::VectorXd theta;
-
-  for (int is_newton = 0; is_newton <= 1; is_newton++) {
-    theta = general_algebra_solver(is_newton, simple_eq_functor_nopara(), x,
-                                   y_dummy, dat, dummy_dat_int);
-    EXPECT_EQ(20, theta(0));
-    EXPECT_EQ(2, theta(1));
-  }
+TEST_F(algebra_solver_simple_eq_test, powell_tuned_dbl) {
+  bool is_newton = false;
+  Eigen::VectorXd
+    theta = simple_eq_test(simple_eq_functor(), y_dbl, is_newton,
+                           true, scale_step, xtol, ftol, maxfev);
 }
 
-TEST(MathMatrix, simple_Eq_init_is_para) {
+TEST_F(algebra_solver_simple_eq_nopara_test, powell) {
+  using stan::math::algebra_solver_powell;
+  Eigen::VectorXd
+    theta = algebra_solver_powell(simple_eq_functor_nopara(),
+                                  x, y_dummy, dat, dummy_dat_int);
+  EXPECT_EQ(20, theta(0));
+  EXPECT_EQ(2, theta(1));
+}
+
+TEST_F(algebra_solver_simple_eq_test, powell_init_is_para) {
+  using stan::math::algebra_solver_powell;
+  Eigen::VectorXd
+    theta = algebra_solver_powell(simple_eq_functor(), x_var, y_dbl,
+                                  dat, dat_int);
+  EXPECT_EQ(20, theta(0));
+  EXPECT_EQ(2, theta(1));
+}
+
+TEST_F(algebra_solver_non_linear_eq_test, powell) {
   using stan::math::var;
-  Eigen::VectorXd y(3);
-  y << 5, 4, 2;
+  bool is_newton = false;
+  for (int k = 0; k < n_x; k++) {
+    Eigen::Matrix<var, Eigen::Dynamic, 1> y = y_dbl;
+    Eigen::Matrix<var, Eigen::Dynamic, 1> theta
+      = non_linear_eq_test(non_linear_eq_functor(), y, is_newton);
 
-  int n_x = 2;
-  Eigen::Matrix<var, Eigen::Dynamic, 1> x(n_x);
-  x << 1, 1;
+    EXPECT_FLOAT_EQ(-y(0).val(), theta(0).val());
+    EXPECT_FLOAT_EQ(-y(1).val(), theta(1).val());
+    EXPECT_FLOAT_EQ(y(2).val(), theta(2).val());
 
-  std::vector<double> dat;
-  std::vector<int> dat_int;
+    AVEC y_vec = createAVEC(y(0), y(1), y(2));
+    VEC g;
+    theta(k).grad(y_vec, g);
 
-  for (int is_newton = 0; is_newton < 1; is_newton++) {
-    Eigen::VectorXd theta = general_algebra_solver(
-        is_newton, simple_eq_functor(), x, y, dat, dat_int);
-    EXPECT_EQ(20, theta(0));
-    EXPECT_EQ(2, theta(1));
+    for (int i = 0; i < n_y; i++) EXPECT_NEAR(J(k, i), g[i], err);
   }
 }
 
-TEST(MathMatrix, non_linear_eq) {
+TEST_F(algebra_solver_non_linear_eq_test, powell_dbl) {
+  bool is_newton = false;
+  Eigen::VectorXd theta
+    = non_linear_eq_test(non_linear_eq_functor(), y_dbl, is_newton);
+  EXPECT_FLOAT_EQ(-y_dbl(0), theta(0));
+  EXPECT_FLOAT_EQ(-y_dbl(1), theta(1));
+  EXPECT_FLOAT_EQ(y_dbl(2), theta(2));
+}
+
+TEST_F(error_message_test, powell) {
   using stan::math::var;
-
-  int n_x = 3, n_y = 3;
-  for (int is_newton = 0; is_newton <= 1; is_newton++) {
-    for (int k = 0; k < n_x; k++) {
-      Eigen::Matrix<var, Eigen::Dynamic, 1> y(n_y);
-      y << 4, 6, 3;
-
-      Eigen::Matrix<var, Eigen::Dynamic, 1> theta
-          = non_linear_eq_test(non_linear_eq_functor(), y, is_newton);
-
-      EXPECT_FLOAT_EQ(-y(0).val(), theta(0).val());
-      EXPECT_FLOAT_EQ(-y(1).val(), theta(1).val());
-      EXPECT_FLOAT_EQ(y(2).val(), theta(2).val());
-
-      Eigen::MatrixXd J(n_x, n_y);
-      J << -1, 0, 0, 0, -1, 0, 0, 0, 1;
-
-      AVEC y_vec = createAVEC(y(0), y(1), y(2));
-      VEC g;
-      theta(k).grad(y_vec, g);
-
-      double err = 1e-11;
-      for (int i = 0; i < n_y; i++)
-        EXPECT_NEAR(J(k, i), g[i], err);
-    }
-  }
+  bool is_newton = false;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> y = y_2;
+  error_conditions_test(non_linear_eq_functor(), y, is_newton);
 }
 
-TEST(MathMatrix, nonLinearEq_dbl) {
-  int n_y = 3;
-  Eigen::VectorXd y(n_y);
-  y << 4, 6, 3;
-
-  for (int is_newton = 0; is_newton <= 1; is_newton++) {
-    Eigen::VectorXd theta
-        = non_linear_eq_test(non_linear_eq_functor(), y, is_newton);
-
-    EXPECT_FLOAT_EQ(-y(0), theta(0));
-    EXPECT_FLOAT_EQ(-y(1), theta(1));
-    EXPECT_FLOAT_EQ(y(2), theta(2));
-  }
+TEST_F(error_message_test, powell_dbl) {
+  bool is_newton = false;
+  error_conditions_test(non_linear_eq_functor(), y_3, is_newton);
 }
 
-TEST(MathMatrix, error_conditions) {
+TEST(unsolvable_test, powell) {
   using stan::math::var;
-
-  int n_y = 2;
-  Eigen::Matrix<var, Eigen::Dynamic, 1> y(n_y);
-  y << 4, 6;
-  for (int is_newton = 0; is_newton <= 1; is_newton++)
-    error_conditions_test(non_linear_eq_functor(), y, is_newton);
-}
-
-TEST(MathMatrix, error_conditions_dbl) {
-  int n_y = 3;
-  Eigen::VectorXd y(n_y);
-  y << 4, 6, 3;
-  for (int is_newton = 0; is_newton <= 1; is_newton++)
-    error_conditions_test(non_linear_eq_functor(), y, is_newton);
-}
-
-TEST(MathMatrix, unsolvable_dogleg) {
-  using stan::math::var;
-
   Eigen::Matrix<var, Eigen::Dynamic, 1> y(2);
   y << 1, 1;
-
   unsolvable_test(y);
 }
 
-TEST(MathMatrix, unsolvable_dogleg_dbl) {
+TEST(unsolvable_test, powell_dbl) {
   Eigen::VectorXd y(2);
   y << 1, 1;
-
   unsolvable_test(y);
 }
 
-TEST(MathMatrix, unsolvable_flag_newton) {
-  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y(2);
-  y << 1, 1;
-
-  unsolvable_flag_test(y);
+TEST_F(max_steps_test, powell) {
+  bool is_newton = false;
+  max_num_steps_test(y_var, is_newton);
 }
 
-TEST(MathMatrix, unsolvable_flag_newton_dbl) {
-  Eigen::VectorXd y(2);
-  y << 1, 1;
-
-  unsolvable_flag_test(y);
+TEST_F(max_steps_test, powell_dbl) {
+  bool is_newton = false;
+  max_num_steps_test(y, is_newton);
 }
 
-TEST(MathMatrix, max_num_steps) {
-  using stan::math::var;
-
-  for (int is_newton = 0; is_newton <= 1; is_newton++) {
-    Eigen::Matrix<var, Eigen::Dynamic, 1> y(3);
-    y << 1, 1, 1;
-    max_num_steps_test(y, is_newton);
-  }
-}
-
-TEST(MathMatrix, max_num_steps_dbl) {
-  Eigen::VectorXd y(3);
-  y << 1, 1, 1;
-  max_num_steps_test(y);
-}
-
-TEST(MathMatrix, degenerate) {
+TEST_F(degenerate_eq_test, powell) {
   using stan::math::algebra_solver_powell;
   using stan::math::sum;
   using stan::math::var;
 
-  int n_x = 2, n_y = 2;
-  double tolerance = 1e-10;
-
   // This first initial guess produces the
   // solution x = {8, 8}
-  for (int is_newton = 0; is_newton <= 1; is_newton++) {
+  bool is_newton = false;
     for (int k = 0; k < n_x; k++) {
-      Eigen::Matrix<var, Eigen::Dynamic, 1> y(2);
-      y << 5, 8;
-      Eigen::VectorXd x(2);
-      x << 10, 1;  // Initial Guess
+      Eigen::Matrix<var, Eigen::Dynamic, 1> y = y_dbl;
       Eigen::Matrix<var, Eigen::Dynamic, 1> theta
-          = degenerate_test(y, x, is_newton);
+        = degenerate_test(y, x_guess_1, is_newton);
       EXPECT_FLOAT_EQ(8, theta(0).val());
       EXPECT_FLOAT_EQ(8, theta(1).val());
 
-      Eigen::MatrixXd J(n_x, n_y);
-      J << 0, 1, 0, 1;
-
       AVEC y_vec = createAVEC(y(0), y(1));
       VEC g;
       theta(k).grad(y_vec, g);
 
       for (int l = 0; l < n_y; l++)
-        EXPECT_NEAR(J(k, l), g[l], tolerance);
+        EXPECT_NEAR(J1(k, l), g[l], tolerance);
     }
-  }
 
   // This next initial guess produces the
   // solution x = {5, 5}
-  for (int is_newton = 0; is_newton <= 1; is_newton++) {
     for (int k = 0; k < 1; k++) {
-      Eigen::Matrix<var, Eigen::Dynamic, 1> y(2);
-      y << 5, 8;
-      Eigen::VectorXd x(2);
-      x << 1, 1;  // Initial Guess
+      Eigen::Matrix<var, Eigen::Dynamic, 1> y = y_dbl;
       Eigen::Matrix<var, Eigen::Dynamic, 1> theta
-          = degenerate_test(y, x, is_newton);
+        = degenerate_test(y, x_guess_2, is_newton);
       EXPECT_FLOAT_EQ(5, theta(0).val());
       EXPECT_FLOAT_EQ(5, theta(0).val());
-
-      Eigen::MatrixXd J(n_x, n_y);
-      J << 1, 0, 1, 0;
 
       AVEC y_vec = createAVEC(y(0), y(1));
       VEC g;
       theta(k).grad(y_vec, g);
 
       for (int l = 0; l < n_y; l++)
-        EXPECT_NEAR(J(k, l), g[l], tolerance);
+        EXPECT_NEAR(J2(k, l), g[l], tolerance);
     }
-  }
 }
 
-TEST(MathMatrix, degenerate_dbl) {
-  using stan::math::algebra_solver_powell;
-  using stan::math::var;
+TEST_F(degenerate_eq_test, powell_dbl) {
+  bool is_newton = false;
 
   // This first initial guess produces the
   // solution x = {8, 8}
-  Eigen::VectorXd y(2);
-  y << 5, 8;
-  Eigen::VectorXd x(2);
-  x << 10, 1;  // Initial Guess
-  Eigen::VectorXd theta;
-  for (int is_newton = 0; is_newton <= 1; is_newton++) {
-    theta = degenerate_test(y, x, is_newton);
-    EXPECT_FLOAT_EQ(8, theta(0));
-    EXPECT_FLOAT_EQ(8, theta(1));
-  }
+  Eigen::VectorXd theta = degenerate_test(y_dbl, x_guess_1, is_newton);
+  EXPECT_FLOAT_EQ(8, theta(0));
+  EXPECT_FLOAT_EQ(8, theta(1));
 
   // This next initial guess produces the
   // solution x = {5, 5}
-  x << 1, 1;  // Initial Guess
-  for (int is_newton = 0; is_newton <= 1; is_newton++) {
-    theta = degenerate_test(y, x, is_newton);
-    EXPECT_FLOAT_EQ(5, theta(0));
-    EXPECT_FLOAT_EQ(5, theta(1));
-  }
+  theta = degenerate_test(y_dbl, x_guess_2, is_newton);
+  EXPECT_FLOAT_EQ(5, theta(0));
+  EXPECT_FLOAT_EQ(5, theta(1));
 
   // See if the initial guess determines neighborhood of the
-  // solution, when solutions have different scales.
-  y << 5, 100;
-  x << 1, 1;  // initial guess
-  theta = degenerate_test(y, x);
-  for (int is_newton = 0; is_newton <= 1; is_newton++) {
-    EXPECT_FLOAT_EQ(5, theta(0));
-    EXPECT_FLOAT_EQ(5, theta(1));
-  }
+  // solution, when solutions have different scales,
+  // using y_scale.
+  theta = degenerate_test(y_scale, x_guess_2, is_newton);
+  EXPECT_FLOAT_EQ(5, theta(0));
+  EXPECT_FLOAT_EQ(5, theta(1));
 
-  x << 120, 120;  // Initial guess
-  for (int is_newton = 0; is_newton <= 1; is_newton++) {
-    theta = degenerate_test(y, x);
-    EXPECT_FLOAT_EQ(100, theta(0));
-    EXPECT_FLOAT_EQ(100, theta(1));
-  }
+  theta = degenerate_test(y_scale, x_guess_3, is_newton);
+  EXPECT_FLOAT_EQ(100, theta(0));
+  EXPECT_FLOAT_EQ(100, theta(1));
 }
 
 // unit test to demo issue #696
@@ -399,4 +342,208 @@ TEST(MathMatrix, system_functor_constructor) {
   system_functor<int, double, double, true> fs(f, x, y, dat, dat_int, msgs);
 
   EXPECT_EQ(fs.f_, f);
+}
+//////////////////////////////////////////////////////////////////////////
+// Tests for newton solver.
+
+TEST_F(algebra_solver_simple_eq_test, newton) {
+  using stan::math::var;
+  bool is_newton = true;
+  for (int k = 0; k < n_x; k++) {
+    Eigen::Matrix<var, Eigen::Dynamic, 1> y = y_dbl;
+
+    Eigen::Matrix<var, Eigen::Dynamic, 1> theta
+      = simple_eq_test(simple_eq_functor(), y, is_newton);
+
+    AVEC y_vec = createAVEC(y(0), y(1), y(2));
+    VEC g;
+    theta(k).grad(y_vec, g);
+
+    for (int i = 0; i < n_y; i++) EXPECT_EQ(J(k, i), g[i]);
+  }
+}
+
+TEST_F(algebra_solver_simple_eq_test, newton_tuned) {
+  using stan::math::var;
+  bool is_newton = false;
+  for (int k = 0; k < n_x; k++) {
+    Eigen::Matrix<var, Eigen::Dynamic, 1> y = y_dbl;
+
+    Eigen::Matrix<var, Eigen::Dynamic, 1>
+      theta = simple_eq_test(simple_eq_functor(), y,
+                             is_newton, true, scale_step,
+                             xtol, ftol, maxfev);
+
+    AVEC y_vec = createAVEC(y(0), y(1), y(2));
+    VEC g;
+    theta(k).grad(y_vec, g);
+
+    for (int i = 0; i < n_y; i++) EXPECT_EQ(J(k, i), g[i]);
+  }
+}
+
+TEST_F(algebra_solver_simple_eq_test, newton_dbl) {
+  bool is_newton = true;
+  Eigen::VectorXd
+    theta = simple_eq_test(simple_eq_functor(), y_dbl, is_newton);
+}
+
+TEST_F(algebra_solver_simple_eq_test, newton_tuned_dbl) {
+  bool is_newton = true;
+  Eigen::VectorXd
+    theta = simple_eq_test(simple_eq_functor(), y_dbl, is_newton,
+                           true, scale_step, xtol, ftol, maxfev);
+}
+
+TEST_F(algebra_solver_simple_eq_nopara_test, newton) {
+  using stan::math::algebra_solver_newton;
+  Eigen::VectorXd
+    theta = algebra_solver_newton(simple_eq_functor_nopara(),
+                                  x, y_dummy, dat, dummy_dat_int);
+  EXPECT_EQ(20, theta(0));
+  EXPECT_EQ(2, theta(1));
+}
+
+TEST_F(algebra_solver_simple_eq_test, newton_init_is_para) {
+  using stan::math::algebra_solver_newton;
+  Eigen::VectorXd
+    theta = algebra_solver_newton(simple_eq_functor(), x_var, y_dbl,
+                                  dat, dat_int);
+  EXPECT_EQ(20, theta(0));
+  EXPECT_EQ(2, theta(1));
+}
+
+TEST_F(algebra_solver_non_linear_eq_test, newton) {
+  using stan::math::var;
+  bool is_newton = true;
+  for (int k = 0; k < n_x; k++) {
+    Eigen::Matrix<var, Eigen::Dynamic, 1> y = y_dbl;
+    Eigen::Matrix<var, Eigen::Dynamic, 1> theta
+      = non_linear_eq_test(non_linear_eq_functor(), y, is_newton);
+
+    EXPECT_FLOAT_EQ(-y(0).val(), theta(0).val());
+    EXPECT_FLOAT_EQ(-y(1).val(), theta(1).val());
+    EXPECT_FLOAT_EQ(y(2).val(), theta(2).val());
+
+    AVEC y_vec = createAVEC(y(0), y(1), y(2));
+    VEC g;
+    theta(k).grad(y_vec, g);
+
+    for (int i = 0; i < n_y; i++) EXPECT_NEAR(J(k, i), g[i], err);
+  }
+}
+
+TEST_F(algebra_solver_non_linear_eq_test, newton_dbl) {
+  bool is_newton = true;
+  Eigen::VectorXd theta
+    = non_linear_eq_test(non_linear_eq_functor(), y_dbl, is_newton);
+  EXPECT_FLOAT_EQ(-y_dbl(0), theta(0));
+  EXPECT_FLOAT_EQ(-y_dbl(1), theta(1));
+  EXPECT_FLOAT_EQ(y_dbl(2), theta(2));
+}
+
+TEST_F(error_message_test, newton) {
+  using stan::math::var;
+  bool is_newton = true;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> y = y_2;
+  error_conditions_test(non_linear_eq_functor(), y, is_newton);
+}
+
+TEST_F(error_message_test, newton_dbl) {
+  bool is_newton = true;
+  error_conditions_test(non_linear_eq_functor(), y_3, is_newton);
+}
+
+TEST_F(max_steps_test, newton) {
+  bool is_newton = true;
+  max_num_steps_test(y_var, is_newton);
+}
+
+TEST_F(max_steps_test, newton_dbl) {
+  bool is_newton = true;
+  max_num_steps_test(y, is_newton);
+}
+
+TEST(MathMatrix, unsolvable_flag_newton) {
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y(2);
+  y << 1, 1;
+
+  unsolvable_flag_test(y);
+}
+
+TEST(MathMatrix, unsolvable_flag_newton_dbl) {
+  Eigen::VectorXd y(2);
+  y << 1, 1;
+
+  unsolvable_flag_test(y);
+}
+
+TEST_F(degenerate_eq_test, newton) {
+  using stan::math::algebra_solver_powell;
+  using stan::math::sum;
+  using stan::math::var;
+
+  // This first initial guess produces the
+  // solution x = {8, 8}
+  bool is_newton = true;
+  for (int k = 0; k < n_x; k++) {
+    Eigen::Matrix<var, Eigen::Dynamic, 1> y = y_dbl;
+    Eigen::Matrix<var, Eigen::Dynamic, 1> theta
+      = degenerate_test(y, x_guess_1, is_newton);
+    EXPECT_FLOAT_EQ(8, theta(0).val());
+    EXPECT_FLOAT_EQ(8, theta(1).val());
+
+    AVEC y_vec = createAVEC(y(0), y(1));
+    VEC g;
+    theta(k).grad(y_vec, g);
+
+    for (int l = 0; l < n_y; l++)
+      EXPECT_NEAR(J1(k, l), g[l], tolerance);
+  }
+
+  // This next initial guess produces the
+  // solution x = {5, 5}
+  for (int k = 0; k < 1; k++) {
+    Eigen::Matrix<var, Eigen::Dynamic, 1> y = y_dbl;
+    Eigen::Matrix<var, Eigen::Dynamic, 1> theta
+      = degenerate_test(y, x_guess_2, is_newton);
+    EXPECT_FLOAT_EQ(5, theta(0).val());
+    EXPECT_FLOAT_EQ(5, theta(0).val());
+
+    AVEC y_vec = createAVEC(y(0), y(1));
+    VEC g;
+    theta(k).grad(y_vec, g);
+
+    for (int l = 0; l < n_y; l++)
+      EXPECT_NEAR(J2(k, l), g[l], tolerance);
+  }
+}
+
+TEST_F(degenerate_eq_test, newton_dbl) {
+  bool is_newton = true;
+
+  // This first initial guess produces the
+  // solution x = {8, 8}
+  Eigen::VectorXd theta = degenerate_test(y_dbl, x_guess_1, is_newton);
+  EXPECT_FLOAT_EQ(8, theta(0));
+  EXPECT_FLOAT_EQ(8, theta(1));
+
+  // This next initial guess produces the
+  // solution x = {5, 5}
+  theta = degenerate_test(y_dbl, x_guess_2, is_newton);
+  EXPECT_FLOAT_EQ(5, theta(0));
+  EXPECT_FLOAT_EQ(5, theta(1));
+
+  // See if the initial guess determines neighborhood of the
+  // solution, when solutions have different scales,
+  // using y_scale.
+  // theta = degenerate_test(y_scale, x_guess_2, is_newton);
+  // EXPECT_FLOAT_EQ(5, theta(0));
+  // EXPECT_FLOAT_EQ(5, theta(1));
+  //
+  // theta = degenerate_test(y_scale, x_guess_3, is_newton);
+  // EXPECT_FLOAT_EQ(100, theta(0));
+  // EXPECT_FLOAT_EQ(100, theta(1));
+  //
+  // NOTE: causes Newton solver to send a flag -11 error.
 }
