@@ -13,7 +13,7 @@
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/kernels/normal_id_glm_lpdf.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
-#include <stan/math/opencl/multiply.hpp>
+#include <stan/math/opencl/prim/multiply.hpp>
 #endif
 
 #include <cmath>

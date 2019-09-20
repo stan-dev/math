@@ -3,7 +3,6 @@
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
-#include <stan/math/opencl/multiply.hpp>
 #include <stan/math/opencl/multiply_transpose.hpp>
 #include <stan/math/opencl/tri_inverse.hpp>
 #include <stan/math/opencl/sub_block.hpp>
@@ -12,6 +11,7 @@
 #include <stan/math/opencl/err/check_nan.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/opencl/kernels/cholesky_decompose.hpp>
+#include <stan/math/opencl/prim/multiply.hpp>
 #include <stan/math/opencl/prim/subtract.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <cl.hpp>
