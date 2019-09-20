@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_OPENCL_KERNELS_CONSTANTS_HPP
-#define STAN_MATH_OPENCL_KERNELS_CONSTANTS_HPP
+#ifndef STAN_MATH_OPENCL_KERNELS_FILL_HPP
+#define STAN_MATH_OPENCL_KERNELS_FILL_HPP
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_cl.hpp>
@@ -11,7 +11,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const std::string constants_kernel_code = STRINGIFY(
+static const std::string fill_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Stores constant in the matrix on the OpenCL device.
@@ -25,16 +25,16 @@ static const std::string constants_kernel_code = STRINGIFY(
      * @param view_A triangular part of matrix A to use
      *
      * @note Code is a <code>const char*</code> held in
-     * <code>constant_kernel_code.</code>
+     * <code>fill_kernel_code.</code>
      * This kernel uses the helper macros available in helpers.cl.
      */
-    __kernel void constants(__global double* A, double val, unsigned int rows,
-                            unsigned int cols, unsigned int view_A) {
+    __kernel void fill(__global double* A, double val, unsigned int rows,
+                       unsigned int cols, unsigned int view_A) {
       const int i = get_global_id(0);
       const int j = get_global_id(1);
       if (i < rows && j < cols) {
         if ((contains_nonzero(view_A, LOWER) && j <= i)
-            || (contains_nonzero(view_A, UPPER) && j >= i)) {
+            || (contains_nonzero(view_A, UPPER) && j >= i) || i == j) {
           A(i, j) = val;
         }
       }
@@ -44,14 +44,13 @@ static const std::string constants_kernel_code = STRINGIFY(
 // \endcond
 
 /**
- * See the docs for \link kernels/constants.hpp constants() \endlink
+ * See the docs for \link kernels/fill.hpp fill() \endlink
  */
-const kernel_cl<out_buffer, double, int, int, matrix_cl_view> constants(
-    "constants",
-    {indexing_helpers, view_kernel_helpers, constants_kernel_code});
+const kernel_cl<out_buffer, double, int, int, matrix_cl_view> fill(
+    "fill", {indexing_helpers, view_kernel_helpers, fill_kernel_code});
 
 // \cond
-static const std::string constants_strict_tri_kernel_code = STRINGIFY(
+static const std::string fill_strict_tri_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Stores constant in the triangular part of a matrix
@@ -66,12 +65,12 @@ static const std::string constants_strict_tri_kernel_code = STRINGIFY(
      * @param view_A triangular part of matrix A to use
      *
      * @note Code is a <code>const char*</code> held in
-     * <code>constant_kernel_code.</code>
+     * <code>fill_strict_tri_kernel_code.</code>
      * This kernel uses the helper macros available in helpers.cl.
      */
-    __kernel void constants_strict_tri(__global double* A, double val,
-                                       unsigned int rows, unsigned int cols,
-                                       unsigned int view_A) {
+    __kernel void fill_strict_tri(__global double* A, double val,
+                                  unsigned int rows, unsigned int cols,
+                                  unsigned int view_A) {
       const int i = get_global_id(0);
       const int j = get_global_id(1);
       if (i < rows && j < cols) {
@@ -86,12 +85,12 @@ static const std::string constants_strict_tri_kernel_code = STRINGIFY(
 // \endcond
 
 /**
- * See the docs for \link kernels/constants.hpp constants_strict_tri() \endlink
+ * See the docs for \link kernels/fill.hpp fill_strict_tri_kernel_code()
+ * \endlink
  */
-const kernel_cl<out_buffer, double, int, int, matrix_cl_view>
-    constants_strict_tri("constants_strict_tri",
-                         {indexing_helpers, view_kernel_helpers,
-                          constants_strict_tri_kernel_code});
+const kernel_cl<out_buffer, double, int, int, matrix_cl_view> fill_strict_tri(
+    "fill_strict_tri",
+    {indexing_helpers, view_kernel_helpers, fill_strict_tri_kernel_code});
 
 }  // namespace opencl_kernels
 }  // namespace math

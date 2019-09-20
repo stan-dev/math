@@ -6,7 +6,7 @@
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
-#include <stan/math/opencl/kernels/constants.hpp>
+#include <stan/math/opencl/kernels/fill.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 
@@ -32,8 +32,8 @@ inline void matrix_cl<T, enable_if_arithmetic<T>>::zeros() try {
   }
   this->view_ = both(this->view_, invert(matrix_view));
   cl::CommandQueue cmdQueue = opencl_context.queue();
-  opencl_kernels::constants(cl::NDRange(this->rows(), this->cols()), *this, 0.0,
-                            this->rows(), this->cols(), matrix_view);
+  opencl_kernels::fill(cl::NDRange(this->rows(), this->cols()), *this, 0.0,
+                       this->rows(), this->cols(), matrix_view);
 } catch (const cl::Error& e) {
   check_opencl_error("zeros", e);
 }
@@ -59,16 +59,21 @@ inline void matrix_cl<T, enable_if_arithmetic<T>>::zeros_strict_tri() try {
         "zeros_strict_tri", "matrix_view",
         "matrix_cl_view::Entire is not a valid template parameter value", "");
   }
+  if (matrix_view == matrix_cl_view::Diagonal) {
+    invalid_argument(
+        "zeros_strict_tri", "matrix_view",
+        "matrix_cl_view::Diagonal is not a valid template parameter value", "");
+  }
   if (size() == 0) {
     return;
   }
   this->view_ = both(this->view_, invert(matrix_view));
   cl::CommandQueue cmdQueue = opencl_context.queue();
-  opencl_kernels::constants_strict_tri(cl::NDRange(this->rows(), this->cols()),
-                                       *this, 0.0, this->rows(), this->cols(),
-                                       matrix_view);
+  opencl_kernels::fill_strict_tri(cl::NDRange(this->rows(), this->cols()),
+                                  *this, 0.0, this->rows(), this->cols(),
+                                  matrix_view);
 } catch (const cl::Error& e) {
-  check_opencl_error("zeros", e);
+  check_opencl_error("zeros_strict_tri", e);
 }
 
 }  // namespace math
