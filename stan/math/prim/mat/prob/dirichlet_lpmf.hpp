@@ -65,7 +65,7 @@ return_type_t<T_prob, T_prior_size> dirichlet_lpmf(const T_prob& theta,
   const size_t t_length = max_size_mvt(theta, alpha);
 
   check_consistent_sizes(function, "probabilities", theta_vec[0],
-                         "prior sample sizes",alpha_vec[0]);
+                         "prior sample sizes", alpha_vec[0]);
 
   for (size_t t = 0; t < t_length; t++) {
     check_positive(function, "prior sample sizes", alpha_vec[t]);
@@ -117,7 +117,6 @@ return_type_t<T_prob, T_prior_size> dirichlet_lpmf(const T_prob& theta,
   }
 
   return ops_partials.build(lp);
-
 }
 
 template <typename T_prob, typename T_prior_size>
