@@ -18,10 +18,16 @@ TEST(ProbDistributions, fvar_var) {
     theta(i).d_ = 1.0;
     alpha(i).d_ = 1.0;
   }
+  std::vector<Matrix<fvar<var>, Dynamic, 1>> tvec{theta, theta};
+  std::vector<Matrix<fvar<var>, Dynamic, 1>> avec{alpha, alpha};
 
   EXPECT_FLOAT_EQ(0.6931472,
                   stan::math::dirichlet_log(theta, alpha).val_.val());
   EXPECT_FLOAT_EQ(0.99344212, stan::math::dirichlet_log(theta, alpha).d_.val());
+
+  EXPECT_FLOAT_EQ(0.6931472 * 2,
+                  stan::math::dirichlet_log(tvec, alpha).val_.val());
+  EXPECT_FLOAT_EQ(0.99344212 * 2, stan::math::dirichlet_log(tvec, alpha).d_.val());
 
   Matrix<fvar<var>, Dynamic, 1> theta2(4, 1);
   theta2 << 0.01, 0.01, 0.8, 0.18;

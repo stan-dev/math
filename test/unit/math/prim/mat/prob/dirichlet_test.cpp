@@ -11,9 +11,14 @@ using Eigen::VectorXd;
 TEST(ProbDistributions, Dirichlet) {
   Matrix<double, Dynamic, 1> theta(3, 1);
   theta << 0.2, 0.3, 0.5;
+  std::vector<Matrix<double, Dynamic, 1>> tvec{theta, theta};
   Matrix<double, Dynamic, 1> alpha(3, 1);
   alpha << 1.0, 1.0, 1.0;
+  std::vector<Matrix<double, Dynamic, 1>> avec{alpha, alpha};
   EXPECT_FLOAT_EQ(0.6931472, stan::math::dirichlet_log(theta, alpha));
+  EXPECT_FLOAT_EQ(0.6931472 * 2, stan::math::dirichlet_log(tvec, alpha));
+  EXPECT_FLOAT_EQ(0.6931472 * 2, stan::math::dirichlet_log(theta, avec));
+  EXPECT_FLOAT_EQ(0.6931472 * 2, stan::math::dirichlet_log(tvec, avec));
 
   Matrix<double, Dynamic, 1> theta2(4, 1);
   theta2 << 0.01, 0.01, 0.8, 0.18;
