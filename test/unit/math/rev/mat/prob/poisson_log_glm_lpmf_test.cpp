@@ -258,7 +258,7 @@ TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_interface_types) {
   double value2 = 0;
 
   int i = 1;
-  std::vector<double> vi = {{1, 0}};
+  std::vector<int> vi = {{1, 0}};
   double d = 1.0;
   std::vector<double> vd = {{1.0, 2.0}};
   Eigen::VectorXd ev(2);
