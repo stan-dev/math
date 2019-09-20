@@ -359,11 +359,13 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
    * @param A Standard vector
    * @param R Number of rows the matrix should have.
    * @param C Number of columns the matrix should have.
+   * @param partial_view which part of the matrix is used
    * @throw <code>std::system_error</code> if the
    * matrices do not have matching dimensions
    */
-  explicit matrix_cl(const std::vector<T>& A, const int& R, const int& C)
-      : rows_(R), cols_(C) {
+  explicit matrix_cl(const std::vector<T>& A, const int& R, const int& C,
+                     matrix_cl_view partial_view = matrix_cl_view::Entire)
+      : rows_(R), cols_(C), view_(partial_view) {
     if (size() == 0) {
       return;
     }
