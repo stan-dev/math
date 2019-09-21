@@ -70,7 +70,7 @@ return_type_t<T_prob, T_prior_size> dirichlet_lpmf(const T_prob& theta,
   for (size_t t = 0; t < t_length; t++) {
     check_positive(function, "prior sample sizes", alpha_vec[t]);
     check_simplex(function, "probabilities", theta_vec[t]);
-}
+  }
 
   const size_t t_size = theta_vec[0].size();
 
@@ -88,7 +88,8 @@ return_type_t<T_prob, T_prior_size> dirichlet_lpmf(const T_prob& theta,
 
   if (include_summand<propto, T_prior_size>::value) {
     lp += (lgamma(alpha_dbl.colwise().sum())
-            - lgamma(alpha_dbl).colwise().sum()).sum();
+           - lgamma(alpha_dbl).colwise().sum())
+              .sum();
   }
 
   if (include_summand<propto, T_prob, T_prior_size>::value) {
@@ -102,8 +103,8 @@ return_type_t<T_prob, T_prior_size> dirichlet_lpmf(const T_prob& theta,
     T_partials_mat alpha_deriv(t_size, t_length);
     for (size_t t = 0; t < t_length; t++)
       alpha_deriv.col(t) = digamma(alpha_dbl.col(t).sum())
-                                 - digamma(alpha_dbl).col(t).array()
-                                 + theta_dbl.col(t).array().log();
+                           - digamma(alpha_dbl).col(t).array()
+                           + theta_dbl.col(t).array().log();
 
     if (!is_constant_all<T_prob>::value) {
       for (size_t t = 0; t < t_length; t++)
@@ -111,8 +112,8 @@ return_type_t<T_prob, T_prior_size> dirichlet_lpmf(const T_prob& theta,
     }
 
     if (!is_constant_all<T_prior_size>::value) {
-    for (size_t t = 0; t < t_length; t++)
-      ops_partials.edge2_.partials_vec_[t] += alpha_deriv.col(t);
+      for (size_t t = 0; t < t_length; t++)
+        ops_partials.edge2_.partials_vec_[t] += alpha_deriv.col(t);
     }
   }
 
