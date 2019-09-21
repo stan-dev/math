@@ -17,6 +17,7 @@
 #include <stan/math/opencl/zeros.hpp>
 
 #include <stan/math/opencl/prim/add.hpp>
+#include <stan/math/opencl/prim/cholesky_decompose.hpp>
 #include <stan/math/opencl/prim/divide_columns.hpp>
 #include <stan/math/opencl/prim/gp_exp_quad_cov.hpp>
 #include <stan/math/opencl/prim/multiply.hpp>
