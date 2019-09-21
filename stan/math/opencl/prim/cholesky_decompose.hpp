@@ -16,7 +16,7 @@ namespace math {
  * square root) of the specified square, symmetric matrix on the OpenCL device.
  * The return value \f$L\f$ will be a lower-traingular matrix such that the
  * original matrix \f$A\f$ is given by <p>\f$A = L \times L^T\f$.
- * @param m Input square matrix
+ * @param A Input square matrix
  * @return Square root of matrix.
  * @throw std::domain_error if m is not a symmetric matrix or
  *   if m is not positive definite (if m has more than 0 elements)

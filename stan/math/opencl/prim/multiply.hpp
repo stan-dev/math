@@ -99,8 +99,8 @@ inline matrix_cl<return_type_t<T1, T2>> operator*(const matrix_cl<T1>& A,
  *
  * @tparam T1 type of elements in the matrix
  * @tparam T2 type of scalar
- * @param A A matrix or scalar
- * @param B A matrix or scalar
+ * @param B input matrix
+ * @param scalar input scalar
  * @return the product of the first and second arguments
  *
  * @throw <code>std::invalid_argument</code> if the
@@ -116,8 +116,8 @@ inline matrix_cl<return_type_t<T1, T2>> operator*(const matrix_cl<T1>& B,
  *
  * @tparam T1 type of scalar
  * @tparam T2 type of elements in the matrix
- * @param A A matrix or scalar
- * @param B A matrix or scalar
+ * @param scalar input scalar
+ * @param B input matrix
  * @return the product of the first and second arguments
  *
  * @throw <code>std::invalid_argument</code> if the
