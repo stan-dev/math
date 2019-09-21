@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_OPENCL_DIVIDE_COLUMNS_HPP
-#define STAN_MATH_OPENCL_DIVIDE_COLUMNS_HPP
+#ifndef STAN_MATH_OPENCL_PRIM_DIVIDE_COLUMNS_HPP
+#define STAN_MATH_OPENCL_PRIM_DIVIDE_COLUMNS_HPP
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernels/divide_columns.hpp>
