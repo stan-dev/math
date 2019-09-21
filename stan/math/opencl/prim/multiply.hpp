@@ -18,6 +18,8 @@ namespace math {
  * Multiplies the specified matrix on the OpenCL device
  * with the specified scalar.
  *
+ * @tparam T1 type of elements in the matrix
+ * @tparam T2 type of scalar
  * @param A matrix
  * @param scalar scalar
  * @return matrix multipled with scalar
@@ -41,7 +43,9 @@ inline matrix_cl<return_type_t<T1, T2>> multiply(const matrix_cl<T1>& A,
 /**
  * Multiplies the specified matrix on the OpenCL device
  * with the specified scalar.
- *
+ * 
+ * @tparam T1 type of scalar
+ * @tparam T2 type of elements in the matrix
  * @param scalar scalar
  * @param A matrix
  * @return matrix multipled with scalar
@@ -57,6 +61,8 @@ inline matrix_cl<return_type_t<T1, T2>> multiply(const T1 scalar,
  *
  * Computes the matrix multiplication C[M, K] = A[M, N] x B[N, K]
  *
+ * @tparam T1 type of elements in matrix A
+ * @tparam T2 type of elements in matrix B
  * @param A first matrix
  * @param B second matrix
  * @return the product of the first and second matrix
@@ -71,10 +77,11 @@ inline matrix_cl<return_type_t<T1, T2>> multiply(const matrix_cl<T1>& A,
 }
 
 /**
- * Templated product operator for OpenCL matrices.
+ * Templated product operator for a OpenCL matrices.
  *
  * Computes the matrix multiplication C[M, K] = A[M, N] x B[N, K].
- *
+ * @tparam T1 type of elements in matrix A
+ * @tparam T2 type of elements in matrix B
  * @param A A matrix or scalar
  * @param B A matrix or scalar
  * @return the product of the first and second arguments
@@ -87,11 +94,35 @@ inline matrix_cl<return_type_t<T1, T2>> operator*(const matrix_cl<T1>& A,
                                                   const matrix_cl<T2>& B) {
   return opencl::multiply(A, B);
 }
+/**
+ * Templated product operator for an OpenCL matrix and a scalar.
+ *
+ * @tparam T1 type of elements in the matrix
+ * @tparam T2 type of scalar
+ * @param A A matrix or scalar
+ * @param B A matrix or scalar
+ * @return the product of the first and second arguments
+ *
+ * @throw <code>std::invalid_argument</code> if the
+ *   number of columns in A and rows in B do not match
+ */
 template <typename T1, typename T2, typename = enable_if_all_arithmetic<T1, T2>>
 inline matrix_cl<return_type_t<T1, T2>> operator*(const matrix_cl<T1>& B,
                                                   const T2 scalar) {
   return multiply(B, scalar);
 }
+/**
+ * Templated product operator for an OpenCL matrix and a scalar.
+ *
+ * @tparam T1 type of scalar
+ * @tparam T2 type of elements in the matrix
+ * @param A A matrix or scalar
+ * @param B A matrix or scalar
+ * @return the product of the first and second arguments
+ *
+ * @throw <code>std::invalid_argument</code> if the
+ *   number of columns in A and rows in B do not match
+ */
 template <typename T1, typename T2, typename = enable_if_all_arithmetic<T1, T2>>
 inline matrix_cl<return_type_t<T1, T2>> operator*(const T1 scalar,
                                                   const matrix_cl<T2>& B) {
