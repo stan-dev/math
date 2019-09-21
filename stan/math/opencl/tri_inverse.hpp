@@ -8,12 +8,12 @@
 #include <stan/math/opencl/kernels/inv_lower_tri_multiply.hpp>
 #include <stan/math/opencl/kernels/neg_rect_lower_tri_multiply.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
-#include <stan/math/opencl/transpose.hpp>
 #include <stan/math/opencl/identity.hpp>
 #include <stan/math/opencl/err/check_square.hpp>
 #include <stan/math/opencl/err/check_triangular.hpp>
 #include <stan/math/opencl/sub_block.hpp>
 #include <stan/math/opencl/zeros.hpp>
+#include <stan/math/opencl/prim/transpose.hpp>
 #include <stan/math/prim/meta.hpp>
 
 #include <string>

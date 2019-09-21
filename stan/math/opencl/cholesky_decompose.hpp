@@ -6,13 +6,13 @@
 #include <stan/math/opencl/multiply_transpose.hpp>
 #include <stan/math/opencl/tri_inverse.hpp>
 #include <stan/math/opencl/sub_block.hpp>
-#include <stan/math/opencl/transpose.hpp>
 #include <stan/math/opencl/err/check_diagonal_zeros.hpp>
 #include <stan/math/opencl/err/check_nan.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/opencl/kernels/cholesky_decompose.hpp>
 #include <stan/math/opencl/prim/multiply.hpp>
 #include <stan/math/opencl/prim/subtract.hpp>
+#include <stan/math/opencl/prim/transpose.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <cl.hpp>
 #include <algorithm>
@@ -20,6 +20,7 @@
 
 namespace stan {
 namespace math {
+namespace opencl {
 /**
  * Performs an in-place of the the lower-triangular Cholesky factor (i.e.,
  * matrix square root) of the specified square, symmetric matrix. The return
@@ -91,7 +92,7 @@ inline void cholesky_decompose(matrix_cl<T>& A) {
   A.sub_block(L_22, 0, 0, block, block, block_subset, block_subset);
   A.view(matrix_cl_view::Lower);
 }
-
+}  // namespace opencl
 }  // namespace math
 }  // namespace stan
 
