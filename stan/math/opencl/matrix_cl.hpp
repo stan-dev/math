@@ -422,6 +422,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
     rows_ = a.rows();
     cols_ = a.cols();
     this->wait_for_read_write_events();
+    buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
     cl::CommandQueue queue = opencl_context.queue();
     try {
       cl::Event copy_event;
