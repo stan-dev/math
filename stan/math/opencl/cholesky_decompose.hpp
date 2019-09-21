@@ -22,15 +22,15 @@ namespace stan {
 namespace math {
 namespace opencl {
 /**
- * Performs an in-place computation of the lower-triangular Cholesky factor (i.e.,
- * matrix square root) of the specified square, symmetric matrix. The return
- * value \f$L\f$ will be a lower-traingular matrix such that the original matrix
- * \f$A\f$ is given by <p>\f$A = L \times L^T\f$. The Cholesky decomposition is
- * computed using an OpenCL kernel. This algorithm is recursive. The matrix is
- * subset into a matrix of size <code>A.rows() / 4</code>, and if the submatrix
- * size is less than 50 or <code>min_block</code> then the cholesky
- * decomposition on the OpenCL device is computed using that submatrix. If the
- * submatrix is greater than 50 or <code>min_block</code> then
+ * Performs an in-place computation of the lower-triangular Cholesky factor
+ * (i.e., matrix square root) of the specified square, symmetric matrix. The
+ * return value \f$L\f$ will be a lower-traingular matrix such that the original
+ * matrix \f$A\f$ is given by <p>\f$A = L \times L^T\f$. The Cholesky
+ * decomposition is computed using an OpenCL kernel. This algorithm is
+ * recursive. The matrix is subset into a matrix of size <code>A.rows() /
+ * 4</code>, and if the submatrix size is less than 50 or <code>min_block</code>
+ * then the cholesky decomposition on the OpenCL device is computed using that
+ * submatrix. If the submatrix is greater than 50 or <code>min_block</code> then
  * <code>cholesky_decompose</code> is run again on a submatrix with size equal
  * to <code>submat.rows() / 4</code>. Once the Cholesky Decomposition is
  * computed, the full matrix cholesky is created by propogating the cholesky

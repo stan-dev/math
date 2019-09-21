@@ -101,8 +101,8 @@ inline matrix_cl<return_type_t<T1, T2>> multiply(const matrix_cl<T1>& A,
   }
   return temp;
 }
-} // namespace opencl
-} // namespace math
-} // namespace stan
+}  // namespace opencl
+}  // namespace math
+}  // namespace stan
 #endif
 #endif

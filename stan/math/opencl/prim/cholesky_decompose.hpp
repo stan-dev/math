@@ -23,21 +23,21 @@ namespace math {
  */
 template <typename T, typename = enable_if_floating_point<T>>
 inline matrix_cl<T> cholesky_decompose(matrix_cl<T>& A) {
-    check_square("cholesky_decompose", "A", A);
-    check_symmetric("cholesky_decompose", "A", A);
-    matrix_cl<T> res = copy_cl(A);
-    if (res.rows() == 0) {
-        return res;
-    }
-    opencl::cholesky_decompose(res);
-    // check_pos_definite on matrix_cl is check_nan + check_diagonal_zeros
-    check_nan("cholesky_decompose (OpenCL)", "A", res);
-    check_diagonal_zeros("cholesky_decompose (OpenCL)", "A", res);
-    // TODO(Rok): replace the below two lines with
-    // res.zeros_stric_tri<matrix_cl_view::Lower>();
-    // once that is merged
-    res.view(matrix_cl_view::Lower);
-    return copy_triangular(res);
+  check_square("cholesky_decompose", "A", A);
+  check_symmetric("cholesky_decompose", "A", A);
+  matrix_cl<T> res = copy_cl(A);
+  if (res.rows() == 0) {
+    return res;
+  }
+  opencl::cholesky_decompose(res);
+  // check_pos_definite on matrix_cl is check_nan + check_diagonal_zeros
+  check_nan("cholesky_decompose (OpenCL)", "A", res);
+  check_diagonal_zeros("cholesky_decompose (OpenCL)", "A", res);
+  // TODO(Rok): replace the below two lines with
+  // res.zeros_stric_tri<matrix_cl_view::Lower>();
+  // once that is merged
+  res.view(matrix_cl_view::Lower);
+  return copy_triangular(res);
 }
 }  // namespace math
 }  // namespace stan

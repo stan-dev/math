@@ -43,7 +43,7 @@ inline matrix_cl<return_type_t<T1, T2>> multiply(const matrix_cl<T1>& A,
 /**
  * Multiplies the specified matrix on the OpenCL device
  * with the specified scalar.
- * 
+ *
  * @tparam T1 type of scalar
  * @tparam T2 type of elements in the matrix
  * @param scalar scalar
