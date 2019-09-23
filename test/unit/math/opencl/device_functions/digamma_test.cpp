@@ -4,6 +4,7 @@
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/expect_near_rel.hpp>
+#include <string>
 
 static const std::string test_kernel_code
     = STRINGIFY(__kernel void test(__global double *B, __global double *A) {
