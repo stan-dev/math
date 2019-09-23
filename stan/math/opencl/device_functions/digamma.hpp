@@ -67,8 +67,9 @@ static const std::string digamma_device_function = STRINGIFY(
         // in boost: result += digamma_imp_1_2(x, t);
         const float Y = 0.99558162689208984F;
 
-        const double root1 = (double)1569415565 / 1073741824uL; // NOLINT
-        const double root2 = (double)381566830 / 1073741824uL / 1073741824uL; // NOLINT
+        const double root1 = (double)1569415565 / 1073741824uL;  // NOLINT
+        const double root2
+            = (double)381566830 / 1073741824uL / 1073741824uL;  // NOLINT
         const double root3 = 0.9016312093258695918615325266959189453125e-19;
 
         const double P[6] = {0.25479851061131551,   -0.32555031186804491,
