@@ -131,9 +131,9 @@ return_type_t<T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
 
   try {
     opencl_kernels::neg_binomial_2_log_glm(
-        cl::NDRange(local_size * wgs), cl::NDRange(local_size), y_cl, x_cl,
-        alpha_cl, beta_cl, phi_cl, logp_cl, theta_derivative_cl,
-        theta_derivative_sum_cl, phi_derivative_cl, N, M, length(alpha) != 1,
+        cl::NDRange(local_size * wgs), cl::NDRange(local_size), logp_cl,
+        theta_derivative_cl, theta_derivative_sum_cl, phi_derivative_cl, y_cl,
+        x_cl, alpha_cl, beta_cl, phi_cl, N, M, length(alpha) != 1,
         length(phi) != 1, need_theta_derivative, need_theta_derivative_sum,
         need_phi_derivative, need_phi_derivative_sum, need_logp1, need_logp2,
         need_logp3, need_logp4, need_logp5);

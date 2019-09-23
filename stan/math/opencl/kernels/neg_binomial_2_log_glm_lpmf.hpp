@@ -18,23 +18,30 @@ static const char* neg_binomial_2_log_glm_kernel_code = STRINGIFY(
      * with Negative-Binomial-2 distribution and log link function.
      *
      * Must be run with at least N threads and local size equal to LOCAL_SIZE_.
-     * @param[in] y_glob failures count vector parameter
-     * @param[in] x design matrix
-     * @param[in] alpha intercept (in log odds)
-     * @param[in] beta weight vector
-     * @param[in] phi_glob (vector of) precision parameter(s)
      * @param[out] logp_glob partially summed log probabilty (1 value per work
      * group)
      * @param[out] theta_derivative_glob intermediate variable used in the model
      * @param[out] theta_derivative_sum partially summed theta_derivative_glob
      * (1 value per work group)
      * @param[out] phi_derivative_glob derivative with respect to phi
+     * @param[in] y_glob failures count vector parameter
+     * @param[in] x design matrix
+     * @param[in] alpha intercept (in log odds)
+     * @param[in] beta weight vector
+     * @param[in] phi_glob (vector of) precision parameter(s)
      * @param N number of cases
      * @param M number of attributes
      * @param is_alpha_vector 0 or 1 - whether alpha is a vector (alternatively
      * it is a scalar)
      * @param is_phi_vector 0 or 1 - whether phi is a vector (alternatively it
      * is a scalar)
+     * @param need_theta_derivative whether theta_derivative needs to be
+     * computed
+     * @param need_theta_derivative_sum whether theta_derivative_sum needs to be
+     * computed
+     * @param need_phi_derivative whether phi_derivative needs to be computed
+     * @param need_phi_derivative_sum whether phi_derivative_sum needs to be
+     * computed
      * @param need_logp1 interpreted as boolean - whether first part logp_glob
      * needs to be computed
      * @param need_logp2 interpreted as boolean - whether second part logp_glob
@@ -47,17 +54,17 @@ static const char* neg_binomial_2_log_glm_kernel_code = STRINGIFY(
      * needs to be computed
      */
     __kernel void neg_binomial_2_log_glm(
-        const __global int* y_glob, const __global double* x,
-        const __global double* alpha, const __global double* beta,
-        const __global double* phi_glob, __global double* logp_glob,
-        __global double* theta_derivative_glob,
+        __global double* logp_glob, __global double* theta_derivative_glob,
         __global double* theta_derivative_sum,
-        __global double* phi_derivative_glob, const int N, const int M,
-        const int is_alpha_vector, const int is_phi_vector,
-        const int need_theta_derivative, const int need_theta_derivative_sum,
-        const int need_phi_derivative, const int need_phi_derivative_sum,
-        const int need_logp1, const int need_logp2, const int need_logp3,
-        const int need_logp4, const int need_logp5) {
+        __global double* phi_derivative_glob, const __global int* y_glob,
+        const __global double* x, const __global double* alpha,
+        const __global double* beta, const __global double* phi_glob,
+        const int N, const int M, const int is_alpha_vector,
+        const int is_phi_vector, const int need_theta_derivative,
+        const int need_theta_derivative_sum, const int need_phi_derivative,
+        const int need_phi_derivative_sum, const int need_logp1,
+        const int need_logp2, const int need_logp3, const int need_logp4,
+        const int need_logp5) {
       const int gid = get_global_id(0);
       const int lid = get_local_id(0);
       const int lsize = get_local_size(0);
@@ -185,9 +192,9 @@ static const char* neg_binomial_2_log_glm_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/subtract.hpp subtract() \endlink
  */
-const kernel_cl<in_buffer, in_buffer, in_buffer, in_buffer, in_buffer,
-                out_buffer, out_buffer, out_buffer, out_buffer, int, int, int,
-                int, int, int, int, int, int, int, int, int, int>
+const kernel_cl<out_buffer, out_buffer, out_buffer, out_buffer, in_buffer,
+                in_buffer, in_buffer, in_buffer, in_buffer, int, int, int, int,
+                int, int, int, int, int, int, int, int, int>
     neg_binomial_2_log_glm("neg_binomial_2_log_glm",
                            {digamma_device_function,
                             neg_binomial_2_log_glm_kernel_code},
