@@ -2,7 +2,6 @@
 #define STAN_MATH_OPENCL_NEG_BINOMIAL_2_LOG_GLM_LPMF_HPP
 #ifdef STAN_OPENCL
 
-
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
@@ -32,8 +31,8 @@ namespace math {
  * neg_binomial_2_log_lpmf(y, alpha + x * beta, phi) by using analytically
  * simplified gradients.
  * If containers are supplied, returns the log sum of the probabilities.
- * This is an overload of the GLM in prim/mar/prob/neg_binomial_2_log_glm_lpdf.hpp
- * that is implemented in OpenCL.
+ * This is an overload of the GLM in
+ * prim/mar/prob/neg_binomial_2_log_glm_lpdf.hpp that is implemented in OpenCL.
  * @tparam T_alpha type of the intercept(s);
  * this can be a vector (of the same length as y) of intercepts or a single
  * value (for models with constant intercept);
@@ -55,8 +54,8 @@ namespace math {
  */
 template <bool propto, typename T_alpha, typename T_beta, typename T_precision>
 return_type_t<T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
-    const matrix_cl<int>& y_cl, const matrix_cl<double>& x_cl, const T_alpha& alpha, const T_beta& beta,
-    const T_precision& phi) {
+    const matrix_cl<int>& y_cl, const matrix_cl<double>& x_cl,
+    const T_alpha& alpha, const T_beta& beta, const T_precision& phi) {
   static const char* function = "neg_binomial_2_log_glm_lpmf(OpenCL)";
   using T_partials_return = partials_return_t<T_alpha, T_beta, T_precision>;
 
@@ -101,7 +100,8 @@ return_type_t<T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
 
   const auto& phi_arr = as_array_or_scalar(phi_val_vec);
 
-  const int local_size = opencl_kernels::neg_binomial_2_log_glm.get_option("LOCAL_SIZE_");
+  const int local_size
+      = opencl_kernels::neg_binomial_2_log_glm.get_option("LOCAL_SIZE_");
   const int wgs = (N + local_size - 1) / local_size;
 
   const matrix_cl<double> beta_cl(beta_val_vec);
@@ -110,28 +110,34 @@ return_type_t<T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
 
   const bool need_theta_derivative = !is_constant_all<T_beta, T_alpha>::value;
   matrix_cl<double> theta_derivative_cl(need_theta_derivative ? N : 0, 1);
-  const bool need_theta_derivative_sum = need_theta_derivative && !is_vector<T_alpha>::value;
+  const bool need_theta_derivative_sum
+      = need_theta_derivative && !is_vector<T_alpha>::value;
   matrix_cl<double> theta_derivative_sum_cl(wgs, 1);
   const bool need_phi_derivative_sum = !is_vector<T_alpha>::value;
-  const bool need_phi_derivative = !is_constant_all<T_precision>::value || need_phi_derivative_sum;
-  matrix_cl<double> phi_derivative_cl(need_phi_derivative ? (need_phi_derivative_sum ? wgs : N) : 0, 1);
+  const bool need_phi_derivative
+      = !is_constant_all<T_precision>::value || need_phi_derivative_sum;
+  matrix_cl<double> phi_derivative_cl(
+      need_phi_derivative ? (need_phi_derivative_sum ? wgs : N) : 0, 1);
   const bool need_logp1 = include_summand<propto>::value;
-  const bool need_logp2 = include_summand<propto, T_precision>::value && is_vector<T_precision>::value;
-  const bool need_logp3 = include_summand<propto, T_alpha, T_beta, T_precision>::value;
+  const bool need_logp2 = include_summand<propto, T_precision>::value
+                          && is_vector<T_precision>::value;
+  const bool need_logp3
+      = include_summand<propto, T_alpha, T_beta, T_precision>::value;
   const bool need_logp4 = include_summand<propto, T_alpha, T_beta>::value;
   const bool need_logp5 = include_summand<propto, T_precision>::value;
-  const bool need_logp = need_logp1 || need_logp2 || need_logp3 || need_logp4 || need_logp5;
+  const bool need_logp
+      = need_logp1 || need_logp2 || need_logp3 || need_logp4 || need_logp5;
   matrix_cl<double> logp_cl(need_logp ? wgs : 0, 1);
 
   try {
-    opencl_kernels::neg_binomial_2_log_glm(cl::NDRange(local_size * wgs), cl::NDRange(local_size),
-                                           y_cl, x_cl, alpha_cl, beta_cl, phi_cl,
-                                           logp_cl, theta_derivative_cl, theta_derivative_sum_cl, phi_derivative_cl,
-                                           N, M, length(alpha) != 1, length(phi) != 1,
-                                           need_theta_derivative, need_theta_derivative_sum, need_phi_derivative, need_phi_derivative_sum,
-                                           need_logp1, need_logp2, need_logp3, need_logp4, need_logp5);
-  }
-  catch (const cl::Error& e) {
+    opencl_kernels::neg_binomial_2_log_glm(
+        cl::NDRange(local_size * wgs), cl::NDRange(local_size), y_cl, x_cl,
+        alpha_cl, beta_cl, phi_cl, logp_cl, theta_derivative_cl,
+        theta_derivative_sum_cl, phi_derivative_cl, N, M, length(alpha) != 1,
+        length(phi) != 1, need_theta_derivative, need_theta_derivative_sum,
+        need_phi_derivative, need_phi_derivative_sum, need_logp1, need_logp2,
+        need_logp3, need_logp4, need_logp5);
+  } catch (const cl::Error& e) {
     check_opencl_error(function, e);
   }
 
@@ -147,42 +153,49 @@ return_type_t<T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
     logp += logp_sum;
   }
 
-  if (include_summand<propto, T_precision>::value && !is_vector<T_precision>::value) {
+  if (include_summand<propto, T_precision>::value
+      && !is_vector<T_precision>::value) {
     logp += N
             * (multiply_log(as_scalar(phi_val), as_scalar(phi_val))
                - lgamma(as_scalar(phi_val)));
   }
 
-  operands_and_partials<T_alpha, T_beta, T_precision> ops_partials(alpha, beta, phi);
+  operands_and_partials<T_alpha, T_beta, T_precision> ops_partials(alpha, beta,
+                                                                   phi);
   // Compute the necessary derivatives.
-  if(!is_constant_all<T_alpha>::value) {
+  if (!is_constant_all<T_alpha>::value) {
     if (is_vector<T_alpha>::value) {
-      ops_partials.edge1_.partials_ = from_matrix_cl<Dynamic, 1>(theta_derivative_cl);
-    }
-    else {
-      ops_partials.edge1_.partials_[0] = sum(from_matrix_cl<Dynamic, 1>(theta_derivative_sum_cl));
+      ops_partials.edge1_.partials_
+          = from_matrix_cl<Dynamic, 1>(theta_derivative_cl);
+    } else {
+      ops_partials.edge1_.partials_[0]
+          = sum(from_matrix_cl<Dynamic, 1>(theta_derivative_sum_cl));
     }
   }
   if (!is_constant_all<T_beta>::value) {
-    matrix_cl<double> theta_derivative_transpose_cl(theta_derivative_cl.buffer(), 1, theta_derivative_cl.rows()); //transposition of a vector can be done without copying
-    ops_partials.edge2_.partials_ = from_matrix_cl<1,Dynamic>(theta_derivative_transpose_cl * x_cl);
+    matrix_cl<double> theta_derivative_transpose_cl(
+        theta_derivative_cl.buffer(), 1,
+        theta_derivative_cl
+            .rows());  // transposition of a vector can be done without copying
+    ops_partials.edge2_.partials_
+        = from_matrix_cl<1, Dynamic>(theta_derivative_transpose_cl * x_cl);
   }
   if (!is_constant_all<T_precision>::value) {
     if (is_vector<T_precision>::value) {
-      ops_partials.edge3_.partials_ = std::move(from_matrix_cl<Dynamic,1>(phi_derivative_cl));
-    }
-    else {
-      ops_partials.edge3_.partials_[0] = sum(from_matrix_cl<Dynamic,1>(phi_derivative_cl));
+      ops_partials.edge3_.partials_
+          = std::move(from_matrix_cl<Dynamic, 1>(phi_derivative_cl));
+    } else {
+      ops_partials.edge3_.partials_[0]
+          = sum(from_matrix_cl<Dynamic, 1>(phi_derivative_cl));
     }
   }
   return ops_partials.build(logp);
 }
 
-template <typename T_alpha, typename T_beta,
-    typename T_precision>
-inline return_type_t<T_alpha, T_beta, T_precision>
-neg_binomial_2_log_glm_lpmf(const matrix_cl<int>& y, const matrix_cl<double>& x, const T_alpha& alpha,
-                            const T_beta& beta, const T_precision& phi) {
+template <typename T_alpha, typename T_beta, typename T_precision>
+inline return_type_t<T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
+    const matrix_cl<int>& y, const matrix_cl<double>& x, const T_alpha& alpha,
+    const T_beta& beta, const T_precision& phi) {
   return neg_binomial_2_log_glm_lpmf<false>(y, x, alpha, beta, phi);
 }
 
