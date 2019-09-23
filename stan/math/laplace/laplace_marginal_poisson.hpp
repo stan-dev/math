@@ -61,7 +61,7 @@ namespace math {
                 double tolerance = 1e-6,
                 long int max_num_steps = 100) {
     return laplace_marginal_density(theta_0, phi, x,
-       diff_poisson_log(to_vector(n_samples), to_vector(y), exposure),
+       diff_poisson_log(to_vector(n_samples), to_vector(y), log(exposure)),
        sqr_exp_kernel_functor(),
        tolerance, max_num_steps);
   }
