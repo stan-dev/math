@@ -22,10 +22,10 @@ namespace math {
  *
  * @tparam T_alpha_scalar type of scalar in the intercept vector
  * @tparam T_beta_scalar type of a scalar in the matrix of weights
- * @param y a scalar or vector of classes. If it is a scalar it will be
+ * @param y_cl a scalar or vector of classes. If it is a scalar it will be
  * broadcast - used for all instances. Values should be between 1 and number of
  * classes, including endpoints.
- * @param x design matrix or row vector. This overload does not support
+ * @param x_cl design matrix or row vector. This overload does not support
  * broadcasting of a row vector x!
  * @param alpha intercept vector (in log odds)
  * @param beta weight matrix

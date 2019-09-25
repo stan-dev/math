@@ -15,8 +15,7 @@ static const std::string test_kernel_code
 const stan::math::opencl_kernels::kernel_cl<
     stan::math::opencl_kernels::out_buffer,
     stan::math::opencl_kernels::in_buffer>
-    log1m_exp("test", std::vector<std::string>{
-                          stan::math::opencl_kernels::log1m_exp_device_function,
+    log1m_exp("test", {stan::math::opencl_kernels::log1m_exp_device_function,
                           test_kernel_code});
 
 TEST(MathMatrixCL, log1m_exp) {

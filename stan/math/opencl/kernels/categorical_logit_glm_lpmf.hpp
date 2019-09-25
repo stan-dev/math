@@ -144,7 +144,7 @@ static const std::string categorical_logit_glm_kernel_code = STRINGIFY(
 // \endcond
 
 /**
- * See the docs for \link kernels/categorical_logit_glm.hpp
+ * See the docs for \link kernels/categorical_logit_glm_lpmf.hpp
  * categorical_logit_glm() \endlink
  */
 const kernel_cl<out_buffer, out_buffer, out_buffer, out_buffer, out_buffer,
@@ -198,11 +198,11 @@ static const std::string categorical_logit_glm_beta_derivative_kernel_code
           }
         }
         // \cond
-    );
+);
 // \endcond
 
 /**
- * See the docs for \link kernels/categorical_logit_glm.hpp
+ * See the docs for \link kernels/categorical_logit_glm_lpmf.hpp
  * categorical_logit_glm_beta_derivative() \endlink
  */
 const kernel_cl<in_out_buffer, in_out_buffer, in_buffer, in_buffer, int, int,

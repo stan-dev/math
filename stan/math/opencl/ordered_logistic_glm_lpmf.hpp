@@ -12,10 +12,9 @@
 #include <stan/math/prim/arr/err/check_ordered.hpp>
 #include <stan/math/prim/mat/fun/log1m_exp.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <cmath>
-
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernels/ordered_logistic_glm_lpmf.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -29,10 +28,10 @@ namespace math {
  *
  * @tparam T_beta_scalar type of a scalar in the vector of weights
  * @tparam T_cuts_scalar type of a scalar in the vector of cutpoints
- * @param y a scalar or vector of classes on OpenCL device. If it is a scalar it
+ * @param y_cl a scalar or vector of classes on OpenCL device. If it is a scalar it
  * will be broadcast - used for all instances. Values should be between 1 and
  * number of classes, including endpoints.
- * @param x design matrix or row vector on OpenCL device. This overload does not
+ * @param x_cl design matrix or row vector on OpenCL device. This overload does not
  * support broadcasting of a row vector x!
  * @param beta weight vector
  * @param cuts cutpoints vector

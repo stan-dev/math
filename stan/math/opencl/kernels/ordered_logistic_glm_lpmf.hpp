@@ -174,7 +174,7 @@ static const char* ordered_logistic_glm_kernel_code = STRINGIFY(
 // \endcond
 
 /**
- * See the docs for \link kernels/ordered_logistic_glm.hpp
+ * See the docs for \link kernels/ordered_logistic_glm_lpmf.hpp
  * ordered_logistic_glm() \endlink
  */
 const kernel_cl<out_buffer, out_buffer, out_buffer, out_buffer, in_buffer,
