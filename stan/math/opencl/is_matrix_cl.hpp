@@ -64,16 +64,16 @@ using require_any_matrix_cl_t
     = require_any_t<is_matrix_cl_check<TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_not_any_matrix_cl_t
-    = require_not_any_t<is_matrix_cl_check<TypeCheck, Check>...>;
+using require_any_not_matrix_cl_t
+    = require_any_not_t<is_matrix_cl_check<TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
 using require_all_matrix_cl_t
     = require_all_t<is_matrix_cl_check<TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_not_all_matrix_cl_t
-    = require_not_all_t<is_matrix_cl_check<TypeCheck, Check>...>;
+using require_all_not_matrix_cl_t
+    = require_all_not_t<is_matrix_cl_check<TypeCheck, Check>...>;
 
 }  // namespace stan
 #endif

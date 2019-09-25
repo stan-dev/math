@@ -92,30 +92,30 @@ TEST(requires, any_matrix_cl_test) {
  */
 template <template <class> class TypeCheck, class Check1, class Check2,
           typename = void>
-struct require_not_any_matrix_cl_tester : std::false_type {};
+struct require_any_not_matrix_cl_tester : std::false_type {};
 
 template <template <class> class TypeCheck, class Check1, class Check2>
-struct require_not_any_matrix_cl_tester<
+struct require_any_not_matrix_cl_tester<
     TypeCheck, Check1, Check2,
-    stan::require_not_any_matrix_cl_t<TypeCheck, Check1, Check2>>
+    stan::require_any_not_matrix_cl_t<TypeCheck, Check1, Check2>>
     : std::true_type {};
 
 TEST(requires, not_any_matrix_cl_test) {
   using stan::math::matrix_cl;
-  EXPECT_FALSE((require_not_any_matrix_cl_tester<std::is_floating_point,
+  EXPECT_FALSE((require_any_not_matrix_cl_tester<std::is_floating_point,
                                                  matrix_cl<double>,
                                                  matrix_cl<double>>::value));
-  EXPECT_FALSE((require_not_any_matrix_cl_tester<std::is_floating_point, double,
+  EXPECT_FALSE((require_any_not_matrix_cl_tester<std::is_floating_point, double,
                                                  matrix_cl<double>>::value));
   EXPECT_FALSE(
-      (require_not_any_matrix_cl_tester<std::is_floating_point,
+      (require_any_not_matrix_cl_tester<std::is_floating_point,
                                         matrix_cl<double>, double>::value));
-  EXPECT_FALSE((require_not_any_matrix_cl_tester<std::is_floating_point,
+  EXPECT_FALSE((require_any_not_matrix_cl_tester<std::is_floating_point,
                                                  matrix_cl<std::string>,
                                                  matrix_cl<double>>::value));
-  EXPECT_TRUE((require_not_any_matrix_cl_tester<std::is_floating_point, int,
+  EXPECT_TRUE((require_any_not_matrix_cl_tester<std::is_floating_point, int,
                                                 std::string>::value));
-  EXPECT_TRUE((require_not_any_matrix_cl_tester<std::is_arithmetic, double,
+  EXPECT_TRUE((require_any_not_matrix_cl_tester<std::is_arithmetic, double,
                                                 double>::value));
 }
 
@@ -158,30 +158,30 @@ TEST(requires, all_matrix_cl_test) {
  */
 template <template <class> class TypeCheck, class Check1, class Check2,
           typename = void>
-struct require_not_all_matrix_cl_tester : std::false_type {};
+struct require_all_not_matrix_cl_tester : std::false_type {};
 
 template <template <class> class TypeCheck, class Check1, class Check2>
-struct require_not_all_matrix_cl_tester<
+struct require_all_not_matrix_cl_tester<
     TypeCheck, Check1, Check2,
-    stan::require_not_all_matrix_cl_t<TypeCheck, Check1, Check2>>
+    stan::require_all_not_matrix_cl_t<TypeCheck, Check1, Check2>>
     : std::true_type {};
 
 TEST(requires, not_all_matrix_cl_test) {
   using stan::math::matrix_cl;
-  EXPECT_FALSE((require_not_all_matrix_cl_tester<std::is_floating_point,
+  EXPECT_FALSE((require_all_not_matrix_cl_tester<std::is_floating_point,
                                                  matrix_cl<double>,
                                                  matrix_cl<double>>::value));
-  EXPECT_TRUE((require_not_all_matrix_cl_tester<std::is_floating_point, double,
+  EXPECT_TRUE((require_all_not_matrix_cl_tester<std::is_floating_point, double,
                                                 matrix_cl<double>>::value));
   EXPECT_TRUE(
-      (require_not_all_matrix_cl_tester<std::is_floating_point,
+      (require_all_not_matrix_cl_tester<std::is_floating_point,
                                         matrix_cl<double>, double>::value));
-  EXPECT_TRUE((require_not_all_matrix_cl_tester<std::is_floating_point,
+  EXPECT_TRUE((require_all_not_matrix_cl_tester<std::is_floating_point,
                                                 matrix_cl<std::string>,
                                                 matrix_cl<double>>::value));
-  EXPECT_TRUE((require_not_all_matrix_cl_tester<std::is_floating_point, int,
+  EXPECT_TRUE((require_all_not_matrix_cl_tester<std::is_floating_point, int,
                                                 std::string>::value));
-  EXPECT_TRUE((require_not_all_matrix_cl_tester<std::is_arithmetic, double,
+  EXPECT_TRUE((require_all_not_matrix_cl_tester<std::is_arithmetic, double,
                                                 double>::value));
 }
 #endif  // STAN_OPENCL

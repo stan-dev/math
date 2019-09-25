@@ -336,6 +336,15 @@ struct kernel_cl {
     internal::assign_events<Args...>(kern_event, args...);
     return kern_event;
   }
+
+  /**
+   * Retrieves an option used for compiling the kernel.
+   * @param option_name which option to retrieve
+   * @return option value
+   */
+  int get_option(const std::string option_name) const {
+    return make_functor.get_opts().at(option_name);
+  }
 };
 
 }  // namespace opencl_kernels

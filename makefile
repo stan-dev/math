@@ -42,13 +42,13 @@ help:
 	@echo '  To run a single header test, add "-test" to the end of the file name.'
 	@echo '  Example: make stan/math/constants.hpp-test'
 	@echo ''
-	@echo '  - test-math-dependencies : walks through all the header files and indicates'
-	@echo '      when the math dependencies are violated. Dependencies should follow:'
-	@echo '      * rev -> prim'
-	@echo '      * fwd -> prim'
-	@echo '      * mix -> {rev, fwd, prim}'
-	@echo '      * within {prim, rev, fwd, mix}: mat -> arr -> scal'
-	@echo '      * only include {prim, rev, fwd, mix}/meta.hpp from the meta subfolders'
+	@echo '  - test-math-dependencies : walks through all the header files and indicates'	
+	@echo '      when the math dependencies are violated. Dependencies should follow:'	
+	@echo '      * rev -> prim'	
+	@echo '      * fwd -> prim'	
+	@echo '      * mix -> {rev, fwd, prim}'	
+	@echo '      * within {prim, rev, fwd, mix}: mat -> arr -> scal'	
+	@echo '      * only include {prim, rev, fwd, mix}/meta.hpp from the meta subfolders'	
 	@echo ''
 	@echo '  Cpplint'
 	@echo '  - cpplint       : runs cpplint.py on source files. requires python 2.7.'
@@ -120,6 +120,9 @@ clean-deps:
 
 clean-all: clean clean-doxygen clean-deps clean-libraries
 
+.PHONY: test-math-dependencies	
+test-math-dependencies:
+	@python runChecks.py
 ##
 # Debug target that allows you to print a variable
 ##

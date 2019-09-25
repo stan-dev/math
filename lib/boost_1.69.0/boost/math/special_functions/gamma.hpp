@@ -277,7 +277,11 @@ T lgamma_imp(T z, const Policy& pol, const Lanczos& l, int* sign = 0)
       T zgh = static_cast<T>(z + Lanczos::g() - boost::math::constants::half<T>());
       result = log(zgh) - 1;
       result *= z - 0.5f;
-      result += log(Lanczos::lanczos_sum_expG_scaled(z));
+      //
+      // Only add on the lanczos sum part if we're going to need it:
+      //
+      if(result * tools::epsilon<T>() < 20)
+        result += log(Lanczos::lanczos_sum_expG_scaled(z));
    }
 
    if(sign)

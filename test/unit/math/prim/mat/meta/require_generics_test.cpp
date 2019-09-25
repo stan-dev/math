@@ -89,33 +89,33 @@ TEST(requires, any_eigen_test) {
  */
 template <template <class> class TypeCheck, class Check1, class Check2,
           typename = void>
-struct require_not_any_eigen_tester : std::false_type {};
+struct require_any_not_eigen_tester : std::false_type {};
 
 template <template <class> class TypeCheck, class Check1, class Check2>
-struct require_not_any_eigen_tester<
+struct require_any_not_eigen_tester<
     TypeCheck, Check1, Check2,
-    stan::require_not_any_eigen_t<TypeCheck, Check1, Check2>> : std::true_type {
+    stan::require_any_not_eigen_t<TypeCheck, Check1, Check2>> : std::true_type {
 };
 
 TEST(requires, not_any_eigen_test) {
   EXPECT_FALSE(
-      (require_not_any_eigen_tester<std::is_floating_point,
+      (require_any_not_eigen_tester<std::is_floating_point,
                                     Eigen::Matrix<double, -1, -1>,
                                     Eigen::Matrix<double, -1, -1>>::value));
   EXPECT_FALSE(
-      (require_not_any_eigen_tester<std::is_floating_point, double,
+      (require_any_not_eigen_tester<std::is_floating_point, double,
                                     Eigen::Matrix<double, -1, -1>>::value));
-  EXPECT_FALSE((require_not_any_eigen_tester<std::is_floating_point,
+  EXPECT_FALSE((require_any_not_eigen_tester<std::is_floating_point,
                                              Eigen::Matrix<double, -1, -1>,
                                              double>::value));
   EXPECT_FALSE(
-      (require_not_any_eigen_tester<std::is_floating_point,
+      (require_any_not_eigen_tester<std::is_floating_point,
                                     Eigen::Matrix<std::string, -1, -1>,
                                     Eigen::Matrix<double, -1, -1>>::value));
-  EXPECT_TRUE((require_not_any_eigen_tester<std::is_floating_point, int,
+  EXPECT_TRUE((require_any_not_eigen_tester<std::is_floating_point, int,
                                             std::string>::value));
   EXPECT_TRUE((
-      require_not_any_eigen_tester<std::is_arithmetic, double, double>::value));
+      require_any_not_eigen_tester<std::is_arithmetic, double, double>::value));
 }
 
 /////
@@ -157,33 +157,33 @@ TEST(requires, all_eigen_test) {
  */
 template <template <class> class TypeCheck, class Check1, class Check2,
           typename = void>
-struct require_not_all_eigen_tester : std::false_type {};
+struct require_all_not_eigen_tester : std::false_type {};
 
 template <template <class> class TypeCheck, class Check1, class Check2>
-struct require_not_all_eigen_tester<
+struct require_all_not_eigen_tester<
     TypeCheck, Check1, Check2,
-    stan::require_not_all_eigen_t<TypeCheck, Check1, Check2>> : std::true_type {
+    stan::require_all_not_eigen_t<TypeCheck, Check1, Check2>> : std::true_type {
 };
 
 TEST(requires, not_all_eigen_test) {
   EXPECT_FALSE(
-      (require_not_all_eigen_tester<std::is_floating_point,
+      (require_all_not_eigen_tester<std::is_floating_point,
                                     Eigen::Matrix<double, -1, -1>,
                                     Eigen::Matrix<double, -1, -1>>::value));
   EXPECT_TRUE(
-      (require_not_all_eigen_tester<std::is_floating_point, double,
+      (require_all_not_eigen_tester<std::is_floating_point, double,
                                     Eigen::Matrix<double, -1, -1>>::value));
-  EXPECT_TRUE((require_not_all_eigen_tester<std::is_floating_point,
+  EXPECT_TRUE((require_all_not_eigen_tester<std::is_floating_point,
                                             Eigen::Matrix<double, -1, -1>,
                                             double>::value));
   EXPECT_TRUE(
-      (require_not_all_eigen_tester<std::is_floating_point,
+      (require_all_not_eigen_tester<std::is_floating_point,
                                     Eigen::Matrix<std::string, -1, -1>,
                                     Eigen::Matrix<double, -1, -1>>::value));
-  EXPECT_TRUE((require_not_all_eigen_tester<std::is_floating_point, int,
+  EXPECT_TRUE((require_all_not_eigen_tester<std::is_floating_point, int,
                                             std::string>::value));
   EXPECT_TRUE((
-      require_not_all_eigen_tester<std::is_arithmetic, double, double>::value));
+      require_all_not_eigen_tester<std::is_arithmetic, double, double>::value));
 }
 
 /**
@@ -279,31 +279,31 @@ TEST(requires, any_eigen_vector_test) {
  */
 template <template <class> class TypeCheck, class Check1, class Check2,
           typename = void>
-struct require_not_any_eigen_vector_tester : std::false_type {};
+struct require_any_not_eigen_vector_tester : std::false_type {};
 
 template <template <class> class TypeCheck, class Check1, class Check2>
-struct require_not_any_eigen_vector_tester<
+struct require_any_not_eigen_vector_tester<
     TypeCheck, Check1, Check2,
-    stan::require_not_any_eigen_vector_t<TypeCheck, Check1, Check2>>
+    stan::require_any_not_eigen_vector_t<TypeCheck, Check1, Check2>>
     : std::true_type {};
 
 TEST(requires, not_any_eigen_vector_test) {
-  EXPECT_FALSE((require_not_any_eigen_vector_tester<
+  EXPECT_FALSE((require_any_not_eigen_vector_tester<
                 std::is_floating_point, Eigen::Matrix<double, 1, -1>,
                 Eigen::Matrix<double, 1, -1>>::value));
-  EXPECT_FALSE((require_not_any_eigen_vector_tester<
+  EXPECT_FALSE((require_any_not_eigen_vector_tester<
                 std::is_floating_point, double,
                 Eigen::Matrix<double, 1, -1>>::value));
   EXPECT_FALSE(
-      (require_not_any_eigen_vector_tester<std::is_floating_point,
+      (require_any_not_eigen_vector_tester<std::is_floating_point,
                                            Eigen::Matrix<double, 1, -1>,
                                            double>::value));
-  EXPECT_FALSE((require_not_any_eigen_vector_tester<
+  EXPECT_FALSE((require_any_not_eigen_vector_tester<
                 std::is_floating_point, Eigen::Matrix<std::string, 1, -1>,
                 Eigen::Matrix<double, 1, -1>>::value));
-  EXPECT_TRUE((require_not_any_eigen_vector_tester<std::is_floating_point, int,
+  EXPECT_TRUE((require_any_not_eigen_vector_tester<std::is_floating_point, int,
                                                    std::string>::value));
-  EXPECT_TRUE((require_not_any_eigen_vector_tester<std::is_arithmetic, double,
+  EXPECT_TRUE((require_any_not_eigen_vector_tester<std::is_arithmetic, double,
                                                    double>::value));
 }
 
@@ -348,29 +348,29 @@ TEST(requires, all_eigen_vector_test) {
  */
 template <template <class> class TypeCheck, class Check1, class Check2,
           typename = void>
-struct require_not_all_eigen_vector_tester : std::false_type {};
+struct require_all_not_eigen_vector_tester : std::false_type {};
 
 template <template <class> class TypeCheck, class Check1, class Check2>
-struct require_not_all_eigen_vector_tester<
+struct require_all_not_eigen_vector_tester<
     TypeCheck, Check1, Check2,
-    stan::require_not_all_eigen_vector_t<TypeCheck, Check1, Check2>>
+    stan::require_all_not_eigen_vector_t<TypeCheck, Check1, Check2>>
     : std::true_type {};
 
 TEST(requires, not_all_eigen_vector_test) {
-  EXPECT_FALSE((require_not_all_eigen_vector_tester<
+  EXPECT_FALSE((require_all_not_eigen_vector_tester<
                 std::is_floating_point, Eigen::Matrix<double, 1, -1>,
                 Eigen::Matrix<double, 1, -1>>::value));
-  EXPECT_TRUE((require_not_all_eigen_vector_tester<
+  EXPECT_TRUE((require_all_not_eigen_vector_tester<
                std::is_floating_point, double,
                Eigen::Matrix<double, 1, -1>>::value));
-  EXPECT_TRUE((require_not_all_eigen_vector_tester<std::is_floating_point,
+  EXPECT_TRUE((require_all_not_eigen_vector_tester<std::is_floating_point,
                                                    Eigen::Matrix<double, 1, -1>,
                                                    double>::value));
-  EXPECT_TRUE((require_not_all_eigen_vector_tester<
+  EXPECT_TRUE((require_all_not_eigen_vector_tester<
                std::is_floating_point, Eigen::Matrix<std::string, 1, -1>,
                Eigen::Matrix<double, 1, -1>>::value));
-  EXPECT_TRUE((require_not_all_eigen_vector_tester<std::is_floating_point, int,
+  EXPECT_TRUE((require_all_not_eigen_vector_tester<std::is_floating_point, int,
                                                    std::string>::value));
-  EXPECT_TRUE((require_not_all_eigen_vector_tester<std::is_arithmetic, double,
+  EXPECT_TRUE((require_all_not_eigen_vector_tester<std::is_arithmetic, double,
                                                    double>::value));
 }

@@ -37,35 +37,35 @@ TEST(requires, not_test) {
  * Require all not
  */
 template <typename T1, typename T2, typename = void>
-struct require_not_all_tester : std::false_type {};
+struct require_all_not_tester : std::false_type {};
 
 template <typename T1, typename T2>
-struct require_not_all_tester<T1, T2, stan::require_not_all_t<T1, T2>>
+struct require_all_not_tester<T1, T2, stan::require_all_not_t<T1, T2>>
     : std::true_type {};
 
 TEST(requires, not_all_test) {
   EXPECT_TRUE(
-      (require_not_all_tester<std::false_type, std::false_type>::value));
-  EXPECT_FALSE((require_not_all_tester<std::true_type, std::true_type>::value));
-  EXPECT_TRUE((require_not_all_tester<std::true_type, std::false_type>::value));
+      (require_all_not_tester<std::false_type, std::false_type>::value));
+  EXPECT_FALSE((require_all_not_tester<std::true_type, std::true_type>::value));
+  EXPECT_TRUE((require_all_not_tester<std::true_type, std::false_type>::value));
 }
 
 /**
  * Require any not
  */
 template <typename T1, typename T2, typename = void>
-struct require_not_any_tester : std::false_type {};
+struct require_any_not_tester : std::false_type {};
 
 template <typename T1, typename T2>
-struct require_not_any_tester<T1, T2, stan::require_not_any_t<T1, T2>>
+struct require_any_not_tester<T1, T2, stan::require_any_not_t<T1, T2>>
     : std::true_type {};
 
 TEST(requires, not_any_test) {
   EXPECT_TRUE(
-      (require_not_any_tester<std::false_type, std::false_type>::value));
-  EXPECT_FALSE((require_not_any_tester<std::true_type, std::true_type>::value));
+      (require_any_not_tester<std::false_type, std::false_type>::value));
+  EXPECT_FALSE((require_any_not_tester<std::true_type, std::true_type>::value));
   EXPECT_FALSE(
-      (require_not_any_tester<std::true_type, std::false_type>::value));
+      (require_any_not_tester<std::true_type, std::false_type>::value));
 }
 
 /**
@@ -152,17 +152,17 @@ TEST(requires, all_same_test) {
  * Require Not all same
  */
 template <typename T1, typename T2, typename T3, typename = void>
-struct require_not_all_same_tester : std::false_type {};
+struct require_all_not_same_tester : std::false_type {};
 
 template <typename T1, typename T2, typename T3>
-struct require_not_all_same_tester<T1, T2, T3,
-                                   stan::require_not_all_same<T1, T2, T3>>
+struct require_all_not_same_tester<T1, T2, T3,
+                                   stan::require_all_not_same<T1, T2, T3>>
     : std::true_type {};
 
 TEST(requires, not_all_same_test) {
-  EXPECT_TRUE((require_not_all_same_tester<double, int, double>::value));
-  EXPECT_FALSE((require_not_all_same_tester<double, double, double>::value));
-  EXPECT_FALSE((require_not_all_same_tester<int, int, int>::value));
+  EXPECT_TRUE((require_all_not_same_tester<double, int, double>::value));
+  EXPECT_FALSE((require_all_not_same_tester<double, double, double>::value));
+  EXPECT_FALSE((require_all_not_same_tester<int, int, int>::value));
 }
 
 ////////////////////////////////
@@ -221,19 +221,19 @@ TEST(requires, all_double_or_int_test) {
  * Require Not all double_or_int
  */
 template <typename T1, typename T2, typename T3, typename = void>
-struct require_not_all_double_or_int_tester : std::false_type {};
+struct require_all_not_double_or_int_tester : std::false_type {};
 
 template <typename T1, typename T2, typename T3>
-struct require_not_all_double_or_int_tester<
-    T1, T2, T3, stan::require_not_all_double_or_int<T1, T2, T3>>
+struct require_all_not_double_or_int_tester<
+    T1, T2, T3, stan::require_all_not_double_or_int<T1, T2, T3>>
     : std::true_type {};
 
 TEST(requires, not_all_double_or_int_test) {
-  EXPECT_TRUE((require_not_all_double_or_int_tester<double, std::string,
+  EXPECT_TRUE((require_all_not_double_or_int_tester<double, std::string,
                                                     double>::value));
   EXPECT_FALSE(
-      (require_not_all_double_or_int_tester<double, double, double>::value));
-  EXPECT_FALSE((require_not_all_double_or_int_tester<int, int, int>::value));
+      (require_all_not_double_or_int_tester<double, double, double>::value));
+  EXPECT_FALSE((require_all_not_double_or_int_tester<int, int, int>::value));
 }
 
 /**
@@ -259,19 +259,19 @@ TEST(requires, any_double_or_int_test) {
  * Require Not any double_or_int
  */
 template <typename T1, typename T2, typename T3, typename = void>
-struct require_not_any_double_or_int_tester : std::false_type {};
+struct require_any_not_double_or_int_tester : std::false_type {};
 
 template <typename T1, typename T2, typename T3>
-struct require_not_any_double_or_int_tester<
-    T1, T2, T3, stan::require_not_any_double_or_int<T1, T2, T3>>
+struct require_any_not_double_or_int_tester<
+    T1, T2, T3, stan::require_any_not_double_or_int<T1, T2, T3>>
     : std::true_type {};
 
 TEST(requires, not_any_double_or_int_test) {
-  EXPECT_TRUE((require_not_any_double_or_int_tester<std::string, std::string,
+  EXPECT_TRUE((require_any_not_double_or_int_tester<std::string, std::string,
                                                     std::string>::value));
   EXPECT_FALSE(
-      (require_not_any_double_or_int_tester<double, double, double>::value));
-  EXPECT_FALSE((require_not_any_double_or_int_tester<int, int, int>::value));
+      (require_any_not_double_or_int_tester<double, double, double>::value));
+  EXPECT_FALSE((require_any_not_double_or_int_tester<int, int, int>::value));
 }
 
 ////////////////////////////////
@@ -329,19 +329,19 @@ TEST(requires, all_arithmetic_test) {
  * Require Not all arithmetic
  */
 template <typename T1, typename T2, typename T3, typename = void>
-struct require_not_all_arithmetic_tester : std::false_type {};
+struct require_all_not_arithmetic_tester : std::false_type {};
 
 template <typename T1, typename T2, typename T3>
-struct require_not_all_arithmetic_tester<
-    T1, T2, T3, stan::require_not_all_arithmetic<T1, T2, T3>> : std::true_type {
+struct require_all_not_arithmetic_tester<
+    T1, T2, T3, stan::require_all_not_arithmetic<T1, T2, T3>> : std::true_type {
 };
 
 TEST(requires, not_all_arithmetic_test) {
   EXPECT_TRUE(
-      (require_not_all_arithmetic_tester<double, std::string, double>::value));
+      (require_all_not_arithmetic_tester<double, std::string, double>::value));
   EXPECT_FALSE(
-      (require_not_all_arithmetic_tester<double, double, double>::value));
-  EXPECT_FALSE((require_not_all_arithmetic_tester<int, int, int>::value));
+      (require_all_not_arithmetic_tester<double, double, double>::value));
+  EXPECT_FALSE((require_all_not_arithmetic_tester<int, int, int>::value));
 }
 
 /**
@@ -367,19 +367,19 @@ TEST(requires, any_arithmetic_test) {
  * Require Not any arithmetic
  */
 template <typename T1, typename T2, typename T3, typename = void>
-struct require_not_any_arithmetic_tester : std::false_type {};
+struct require_any_not_arithmetic_tester : std::false_type {};
 
 template <typename T1, typename T2, typename T3>
-struct require_not_any_arithmetic_tester<
-    T1, T2, T3, stan::require_not_any_arithmetic<T1, T2, T3>> : std::true_type {
+struct require_any_not_arithmetic_tester<
+    T1, T2, T3, stan::require_any_not_arithmetic<T1, T2, T3>> : std::true_type {
 };
 
 TEST(requires, not_any_arithmetic_test) {
-  EXPECT_TRUE((require_not_any_arithmetic_tester<std::string, std::string,
+  EXPECT_TRUE((require_any_not_arithmetic_tester<std::string, std::string,
                                                  std::string>::value));
   EXPECT_FALSE(
-      (require_not_any_arithmetic_tester<double, double, double>::value));
-  EXPECT_FALSE((require_not_any_arithmetic_tester<int, int, int>::value));
+      (require_any_not_arithmetic_tester<double, double, double>::value));
+  EXPECT_FALSE((require_any_not_arithmetic_tester<int, int, int>::value));
 }
 
 ////////////////////////////////
@@ -438,20 +438,20 @@ TEST(requires, all_var_or_arithmetic_test) {
  * Require Not all var_or_arithmetic
  */
 template <typename T1, typename T2, typename T3, typename = void>
-struct require_not_all_var_or_arithmetic_tester : std::false_type {};
+struct require_all_not_var_or_arithmetic_tester : std::false_type {};
 
 template <typename T1, typename T2, typename T3>
-struct require_not_all_var_or_arithmetic_tester<
-    T1, T2, T3, stan::require_not_all_var_or_arithmetic<T1, T2, T3>>
+struct require_all_not_var_or_arithmetic_tester<
+    T1, T2, T3, stan::require_all_not_var_or_arithmetic<T1, T2, T3>>
     : std::true_type {};
 
 TEST(requires, not_all_var_or_arithmetic_test) {
-  EXPECT_TRUE((require_not_all_var_or_arithmetic_tester<double, std::string,
+  EXPECT_TRUE((require_all_not_var_or_arithmetic_tester<double, std::string,
                                                         double>::value));
   EXPECT_FALSE((
-      require_not_all_var_or_arithmetic_tester<double, double, double>::value));
+      require_all_not_var_or_arithmetic_tester<double, double, double>::value));
   EXPECT_FALSE(
-      (require_not_all_var_or_arithmetic_tester<int, int, int>::value));
+      (require_all_not_var_or_arithmetic_tester<int, int, int>::value));
 }
 
 /**
@@ -477,19 +477,19 @@ TEST(requires, any_var_or_arithmetic_test) {
  * Require Not any var_or_arithmetic
  */
 template <typename T1, typename T2, typename T3, typename = void>
-struct require_not_any_var_or_arithmetic_tester : std::false_type {};
+struct require_any_not_var_or_arithmetic_tester : std::false_type {};
 
 template <typename T1, typename T2, typename T3>
-struct require_not_any_var_or_arithmetic_tester<
-    T1, T2, T3, stan::require_not_any_var_or_arithmetic<T1, T2, T3>>
+struct require_any_not_var_or_arithmetic_tester<
+    T1, T2, T3, stan::require_any_not_var_or_arithmetic<T1, T2, T3>>
     : std::true_type {};
 
 TEST(requires, not_any_var_or_arithmetic_test) {
   EXPECT_TRUE(
-      (require_not_any_var_or_arithmetic_tester<std::string, std::string,
+      (require_any_not_var_or_arithmetic_tester<std::string, std::string,
                                                 std::string>::value));
   EXPECT_FALSE((
-      require_not_any_var_or_arithmetic_tester<double, double, double>::value));
+      require_any_not_var_or_arithmetic_tester<double, double, double>::value));
   EXPECT_FALSE(
-      (require_not_any_var_or_arithmetic_tester<int, int, int>::value));
+      (require_any_not_var_or_arithmetic_tester<int, int, int>::value));
 }
