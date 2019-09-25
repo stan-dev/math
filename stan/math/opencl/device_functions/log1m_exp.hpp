@@ -11,17 +11,17 @@ namespace opencl_kernels {
 static const std::string log1m_exp_device_function = STRINGIFY(
     // \endcond
     /**
- * Calculates the natural logarithm of one minus the exponential
- * of the specified value without overflow,
- *
- * <p><code>log1m_exp(x) = log(1-exp(x))</code>
- *
- * This function is only defined for x < 0
- *
- * @param[in] a Argument.
- * @return natural logarithm of one minus the exponential of the
- * argument.
- *
+     * Calculates the natural logarithm of one minus the exponential
+     * of the specified value without overflow,
+     *
+     * <p><code>log1m_exp(x) = log(1-exp(x))</code>
+     *
+     * This function is only defined for x < 0
+     *
+     * @param[in] a Argument.
+     * @return natural logarithm of one minus the exponential of the
+     * argument.
+     *
      */
     double log1m_exp(double a) {
       if (a > -0.693147)
@@ -33,9 +33,9 @@ static const std::string log1m_exp_device_function = STRINGIFY(
 );
 // \endcond
 
-}
-}
-}
+}  // namespace opencl_kernels
+}  // namespace math
+}  // namespace stan
 
 #endif
 #endif

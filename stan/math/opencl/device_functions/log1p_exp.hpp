@@ -11,14 +11,14 @@ namespace opencl_kernels {
 static const std::string log1p_exp_device_function = STRINGIFY(
     // \endcond
     /**
- * Calculates the log of 1 plus the exponential of the specified
- * value without overflow.
- *
- * <p><code>log1p_exp(x) = log(1+exp(x))</code>
- *
- * @param[in] a Argument.
- * @return natural logarithm of one plus the exponential of the
- * argument.
+     * Calculates the log of 1 plus the exponential of the specified
+     * value without overflow.
+     *
+     * <p><code>log1p_exp(x) = log(1+exp(x))</code>
+     *
+     * @param[in] a Argument.
+     * @return natural logarithm of one plus the exponential of the
+     * argument.
      */
     double log1p_exp(double a) {
       // prevents underflow
@@ -28,9 +28,9 @@ static const std::string log1p_exp_device_function = STRINGIFY(
 );
 // \endcond
 
-}
-}
-}
+}  // namespace opencl_kernels
+}  // namespace math
+}  // namespace stan
 
 #endif
 #endif

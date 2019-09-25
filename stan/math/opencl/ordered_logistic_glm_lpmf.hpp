@@ -29,10 +29,11 @@ namespace math {
  *
  * @tparam T_beta_scalar type of a scalar in the vector of weights
  * @tparam T_cuts_scalar type of a scalar in the vector of cutpoints
- * @param y a scalar or vector of classes on OpenCL device. If it is a scalar it will be
- * broadcast - used for all instances. Values should be between 1 and number of
- * classes, including endpoints.
- * @param x design matrix or row vector on OpenCL device. This overload does not support broadcasting of a row vector x!
+ * @param y a scalar or vector of classes on OpenCL device. If it is a scalar it
+ * will be broadcast - used for all instances. Values should be between 1 and
+ * number of classes, including endpoints.
+ * @param x design matrix or row vector on OpenCL device. This overload does not
+ * support broadcasting of a row vector x!
  * @param beta weight vector
  * @param cuts cutpoints vector
  * @return log probability
@@ -52,7 +53,8 @@ ordered_logistic_glm_lpmf(
   using Eigen::Matrix;
   using Eigen::VectorXd;
   using std::isfinite;
-  using T_partials_return = typename partials_return_type<T_beta_scalar, T_cuts_scalar>::type;
+  using T_partials_return =
+      typename partials_return_type<T_beta_scalar, T_cuts_scalar>::type;
 
   static const char* function = "ordered_logistic_glm_lpmf";
 
@@ -60,14 +62,14 @@ ordered_logistic_glm_lpmf(
   const size_t N_attributes = x_cl.cols();
   const size_t N_classes = length(cuts) + 1;
 
-  if (y_cl.size()!=1) {
-    check_size_match(function, "Rows of ", "x_cl", N_instances, "rows of ", "y_cl",
-                     y_cl.size());
+  if (y_cl.size() != 1) {
+    check_size_match(function, "Rows of ", "x_cl", N_instances, "rows of ",
+                     "y_cl", y_cl.size());
   }
   check_consistent_size(function, "Weight vector", beta, N_attributes);
   check_ordered(function, "Cut-points", cuts);
-  if(N_classes>1) {
-    if(N_classes>2) {
+  if (N_classes > 1) {
+    if (N_classes > 2) {
       check_finite(function, "Final cut-point", cuts[N_classes - 2]);
     }
     check_finite(function, "First cut-point", cuts[0]);
@@ -108,10 +110,10 @@ ordered_logistic_glm_lpmf(
 
   try {
     opencl_kernels::ordered_logistic_glm(
-        cl::NDRange(local_size * wgs), cl::NDRange(local_size), location_sum_cl, logp_cl, location_derivative_cl,
-        cuts_derivative_cl, y_cl, x_cl,
-        beta_cl, cuts_cl, N_instances, N_attributes, N_classes, y_cl.size() != 1,
-        need_location_derivative, need_cuts_derivative);
+        cl::NDRange(local_size * wgs), cl::NDRange(local_size), location_sum_cl,
+        logp_cl, location_derivative_cl, cuts_derivative_cl, y_cl, x_cl,
+        beta_cl, cuts_cl, N_instances, N_attributes, N_classes,
+        y_cl.size() != 1, need_location_derivative, need_cuts_derivative);
   } catch (const cl::Error& e) {
     check_opencl_error(function, e);
   }
@@ -120,7 +122,8 @@ ordered_logistic_glm_lpmf(
 
   if (!std::isfinite(sum(from_matrix_cl(location_sum_cl)))) {
     check_finite(function, "Weight vector", beta);
-    check_bounded(function, "Vector of dependent variables", from_matrix_cl(y_cl), 1, N_classes);
+    check_bounded(function, "Vector of dependent variables",
+                  from_matrix_cl(y_cl), 1, N_classes);
     check_finite(function, "Matrix of independent variables",
                  from_matrix_cl(x_cl));
   }
@@ -145,8 +148,8 @@ ordered_logistic_glm_lpmf(
   return ordered_logistic_glm_lpmf<false>(y, x, beta, cuts);
 }
 
-}
-}
+}  // namespace math
+}  // namespace stan
 
 #endif
 #endif
