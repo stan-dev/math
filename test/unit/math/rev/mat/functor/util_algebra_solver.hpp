@@ -314,6 +314,7 @@ inline void max_num_steps_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
       std::runtime_error, msg);
 }
 
+
 template <typename T>
 inline Eigen::Matrix<T, Eigen::Dynamic, 1> degenerate_test(
     const Eigen::Matrix<T, Eigen::Dynamic, 1>& y, const Eigen::VectorXd& x,
@@ -324,3 +325,4 @@ inline Eigen::Matrix<T, Eigen::Dynamic, 1> degenerate_test(
   return general_algebra_solver(is_newton, degenerate_eq_functor(), x, y, dat,
                                 dat_int);
 }
+
