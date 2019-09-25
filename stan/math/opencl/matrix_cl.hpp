@@ -360,8 +360,8 @@ class matrix_cl<T, require_arithmetic<T>> {
    * @throw <code>std::system_error</code> if the
    * matrices do not have matching dimensions
    */
-template <typename Vec, require_std_vector_t<std::is_arithmetic, Vec>...>
-explicit matrix_cl(Vec&& A, const int& R, const int& C,
+  template <typename Vec, require_std_vector_t<std::is_arithmetic, Vec>...>
+  explicit matrix_cl(Vec&& A, const int& R, const int& C,
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
       : rows_(R), cols_(C), view_(partial_view) {
     if (size() == 0) {
@@ -412,8 +412,8 @@ explicit matrix_cl(Vec&& A, const int& R, const int& C,
   /**
    * Assign a \c matrix_cl to another
    */
-   template <typename Mat, require_matrix_cl_t<std::is_arithmetic, Mat>...>
-   matrix_cl<T>& operator=(Mat&& a) {
+  template <typename Mat, require_matrix_cl_t<std::is_arithmetic, Mat>...>
+  matrix_cl<T>& operator=(Mat&& a) {
     if (a.size() == 0) {
       return *this;
     }
