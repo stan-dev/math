@@ -14,7 +14,8 @@ namespace stan {
 namespace math {
 /**
  * Creates a matrix_cl by replicating the value of
- * the only element in the input 1x1 matrix_cl.
+ * the only element in the input 1x1 matrix_cl. The
+ * element must be of arithmetic type.
  *
  * @tparam T type of elements in the input matrix
  * @param x the input 1x1 matrix_cl
@@ -30,14 +31,14 @@ namespace math {
  *
  */
 template <typename T, typename = enable_if_all_arithmetic<T>>
-inline matrix_cl<double> rep_matrix(const matrix_cl<T>& x, int n, int m) {
+inline matrix_cl<T> rep_matrix(const matrix_cl<T>& x, int n, int m) {
   check_nonnegative("rep_matrix (OpenCL)", "rows", n);
   check_nonnegative("rep_matrix (OpenCL)", "cols", m);
-  matrix_cl<double> A(n, m);
+  check_mat_size_one("rep_matrix (OpenCL)", "x", x);
+  matrix_cl<T> A(n, m);
   if (A.size() == 0) {
     return A;
   }
-  check_mat_size_one("rep_matrix (OpenCL)", "x", x);
   try {
     opencl_kernels::rep_matrix(cl::NDRange(A.rows(), A.cols()), A, x, A.rows(),
                                A.cols(), x.rows(), x.cols(), A.view());
@@ -49,7 +50,8 @@ inline matrix_cl<double> rep_matrix(const matrix_cl<T>& x, int n, int m) {
 
 /**
  * Creates a matrix_cl by replicating the input
- * vector or row_vector.
+ * vector or row_vector.  The elements of the
+ * vector or row_vector must be of arithmetic type.
  *
  * @tparam T type of elements in the input matrix
  * @param x the input matrix_cl (vector or row_vector)
@@ -63,16 +65,16 @@ inline matrix_cl<double> rep_matrix(const matrix_cl<T>& x, int n, int m) {
  *
  */
 template <typename T, typename = enable_if_all_arithmetic<T>>
-inline matrix_cl<double> rep_matrix(const matrix_cl<T>& x, int m) {
+inline matrix_cl<T> rep_matrix(const matrix_cl<T>& x, int m) {
   check_nonnegative("rep_matrix (OpenCL)", "rows/columns", m);
+  check_mat_not_size_one("rep_matrix (OpenCL)", "x", x);
+  check_vector("rep_matrix (OpenCL)", "x", x);
   const int N = x.rows() == 1 ? m : x.rows();
   const int M = x.cols() == 1 ? m : x.cols();
-  matrix_cl<double> A(N, M);
+  matrix_cl<T> A(N, M);
   if (A.size() == 0) {
     return A;
   }
-  check_mat_not_size_one("rep_matrix (OpenCL)", "x", x);
-  check_vector("rep_matrix (OpenCL)", "x", x);
   try {
     opencl_kernels::rep_matrix(cl::NDRange(A.rows(), A.cols()), A, x, A.rows(),
                                A.cols(), x.rows(), x.cols(), A.view());

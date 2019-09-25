@@ -27,13 +27,13 @@ namespace math {
  *
  */
 template <typename T, typename = enable_if_all_arithmetic<T>>
-inline matrix_cl<double> rep_row_vector(const matrix_cl<T>& x, int m) {
+inline matrix_cl<T> rep_row_vector(const matrix_cl<T>& x, int m) {
   check_nonnegative("rep_row_vector (OpenCL)", "elements", m);
-  matrix_cl<double> A(1, m);
+  check_mat_size_one("rep_row_vector (OpenCL)", "x", x);
+  matrix_cl<T> A(1, m);
   if (A.size() == 0) {
     return A;
   }
-  check_mat_size_one("rep_row_vector (OpenCL)", "x", x);
   try {
     opencl_kernels::rep_matrix(cl::NDRange(A.rows(), A.cols()), A, x, A.rows(),
                                A.cols(), x.rows(), x.cols(), A.view());
