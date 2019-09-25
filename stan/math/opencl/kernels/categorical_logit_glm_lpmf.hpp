@@ -198,7 +198,7 @@ static const std::string categorical_logit_glm_beta_derivative_kernel_code
           }
         }
         // \cond
-);
+    );
 // \endcond
 
 /**

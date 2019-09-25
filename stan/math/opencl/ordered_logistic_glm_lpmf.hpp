@@ -28,11 +28,11 @@ namespace math {
  *
  * @tparam T_beta_scalar type of a scalar in the vector of weights
  * @tparam T_cuts_scalar type of a scalar in the vector of cutpoints
- * @param y_cl a scalar or vector of classes on OpenCL device. If it is a scalar it
- * will be broadcast - used for all instances. Values should be between 1 and
+ * @param y_cl a scalar or vector of classes on OpenCL device. If it is a scalar
+ * it will be broadcast - used for all instances. Values should be between 1 and
  * number of classes, including endpoints.
- * @param x_cl design matrix or row vector on OpenCL device. This overload does not
- * support broadcasting of a row vector x!
+ * @param x_cl design matrix or row vector on OpenCL device. This overload does
+ * not support broadcasting of a row vector x!
  * @param beta weight vector
  * @param cuts cutpoints vector
  * @return log probability

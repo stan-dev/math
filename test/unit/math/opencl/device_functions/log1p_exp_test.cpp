@@ -16,7 +16,7 @@ const stan::math::opencl_kernels::kernel_cl<
     stan::math::opencl_kernels::out_buffer,
     stan::math::opencl_kernels::in_buffer>
     log1p_exp("test", {stan::math::opencl_kernels::log1p_exp_device_function,
-                          test_kernel_code});
+                       test_kernel_code});
 
 TEST(MathMatrixCL, log1p_exp) {
   Eigen::VectorXd a = Eigen::VectorXd::Random(1000).array() * 0.9999;
