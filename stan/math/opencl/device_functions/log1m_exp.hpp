@@ -3,10 +3,14 @@
 #ifdef STAN_OPENCL
 #include <string>
 
+namespace stan {
+namespace math {
+namespace opencl_kernels {
+
 // \cond
 static const std::string log1m_exp_device_function = STRINGIFY(
-// \endcond
-/**
+    // \endcond
+    /**
  * Calculates the natural logarithm of one minus the exponential
  * of the specified value without overflow,
  *
@@ -18,16 +22,20 @@ static const std::string log1m_exp_device_function = STRINGIFY(
  * @return natural logarithm of one minus the exponential of the
  * argument.
  *
- */
-        double log1m_exp(double a){
-          if (a > -0.693147)
-            return log(-expm1(a));  // 0.693147 ~= log(2)
-          else
-            return log1p(-exp(a));
-        }
-// \cond
+     */
+    double log1m_exp(double a) {
+      if (a > -0.693147)
+        return log(-expm1(a));  // 0.693147 ~= log(2)
+      else
+        return log1p(-exp(a));
+    }
+    // \cond
 );
 // \endcond
+
+}
+}
+}
 
 #endif
 #endif
