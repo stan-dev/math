@@ -263,9 +263,8 @@ TEST_F(degenerate_eq_test, powell_guess1) {
   // solution x = {8, 8}
   for (int k = 0; k < n_x; k++) {
     Eigen::Matrix<var, Eigen::Dynamic, 1> y = y_dbl;
-    Eigen::Matrix<var, Eigen::Dynamic, 1> theta
-      = algebra_solver_powell(degenerate_eq_functor(), x_guess_1,
-                              y, dat, dat_int);
+    Eigen::Matrix<var, Eigen::Dynamic, 1> theta = algebra_solver_powell(
+        degenerate_eq_functor(), x_guess_1, y, dat, dat_int);
     EXPECT_FLOAT_EQ(8, theta(0).val());
     EXPECT_FLOAT_EQ(8, theta(1).val());
 
@@ -287,8 +286,8 @@ TEST_F(degenerate_eq_test, powell_guess2) {
     Eigen::Matrix<var, Eigen::Dynamic, 1> y = y_dbl;
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta
 <<<<<<< HEAD
-      = algebra_solver_powell(degenerate_eq_functor(), x_guess_2,
-                              y, dat, dat_int);
+        = algebra_solver_powell(degenerate_eq_functor(), x_guess_2, y, dat,
+                                dat_int);
     EXPECT_FLOAT_EQ(5, theta(0).val());
     EXPECT_FLOAT_EQ(5, theta(0).val());
 
@@ -307,9 +306,8 @@ TEST_F(degenerate_eq_test, powell_guess1_dbl) {
   // This first initial guess produces the
   // solution x = {8, 8}
 
-  Eigen::VectorXd
-    theta = algebra_solver_powell(degenerate_eq_functor(), x_guess_1,
-                                  y_dbl, dat, dat_int);
+  Eigen::VectorXd theta = algebra_solver_powell(degenerate_eq_functor(),
+                                                x_guess_1, y_dbl, dat, dat_int);
   EXPECT_FLOAT_EQ(8, theta(0));
   EXPECT_FLOAT_EQ(8, theta(1));
 }
@@ -319,9 +317,8 @@ TEST_F(degenerate_eq_test, powell_guess2_dbl) {
   // This next initial guess produces the
   // solution x = {5, 5}
 
-  Eigen::VectorXd
-    theta = algebra_solver_powell(degenerate_eq_functor(), x_guess_2,
-                                  y_dbl, dat, dat_int);
+  Eigen::VectorXd theta = algebra_solver_powell(degenerate_eq_functor(),
+                                                x_guess_2, y_dbl, dat, dat_int);
   EXPECT_FLOAT_EQ(5, theta(0));
   EXPECT_FLOAT_EQ(5, theta(1));
 }
@@ -334,9 +331,8 @@ TEST_F(degenerate_eq_test, powell_guess2_dbl) {
 TEST_F(degenerate_eq_test, powell_guess2_scale_dbl) {
   using stan::math::algebra_solver_powell;
 
-  Eigen::VectorXd
-    theta = algebra_solver_powell(degenerate_eq_functor(), x_guess_2,
-                                  y_scale, dat, dat_int);
+  Eigen::VectorXd theta = algebra_solver_powell(
+      degenerate_eq_functor(), x_guess_2, y_scale, dat, dat_int);
   EXPECT_FLOAT_EQ(5, theta(0));
   EXPECT_FLOAT_EQ(5, theta(1));
 }
@@ -344,9 +340,8 @@ TEST_F(degenerate_eq_test, powell_guess2_scale_dbl) {
 TEST_F(degenerate_eq_test, powell_guess_saddle_point_dbl) {
   using stan::math::algebra_solver_powell;
 
-  Eigen::VectorXd
-    theta = algebra_solver_powell(degenerate_eq_functor(), x_guess_3,
-                                  y_scale, dat, dat_int);
+  Eigen::VectorXd theta = algebra_solver_powell(
+      degenerate_eq_functor(), x_guess_3, y_scale, dat, dat_int);
   EXPECT_FLOAT_EQ(100, theta(0));
   EXPECT_FLOAT_EQ(100, theta(1));
 }
@@ -511,9 +506,8 @@ TEST_F(degenerate_eq_test, newton_guess1) {
   // solution x = {8, 8}
   for (int k = 0; k < n_x; k++) {
     Eigen::Matrix<var, Eigen::Dynamic, 1> y = y_dbl;
-    Eigen::Matrix<var, Eigen::Dynamic, 1> theta
-      = algebra_solver_newton(degenerate_eq_functor(), x_guess_1,
-                              y, dat, dat_int);
+    Eigen::Matrix<var, Eigen::Dynamic, 1> theta = algebra_solver_newton(
+        degenerate_eq_functor(), x_guess_1, y, dat, dat_int);
     EXPECT_FLOAT_EQ(8, theta(0).val());
     EXPECT_FLOAT_EQ(8, theta(1).val());
 
@@ -535,8 +529,8 @@ TEST_F(degenerate_eq_test, newton_guess2) {
     Eigen::Matrix<var, Eigen::Dynamic, 1> y = y_dbl;
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta
 <<<<<<< HEAD
-      = algebra_solver_newton(degenerate_eq_functor(), x_guess_2,
-                              y, dat, dat_int);
+        = algebra_solver_newton(degenerate_eq_functor(), x_guess_2, y, dat,
+                                dat_int);
     EXPECT_FLOAT_EQ(5, theta(0).val());
     EXPECT_FLOAT_EQ(5, theta(0).val());
 
@@ -555,9 +549,8 @@ TEST_F(degenerate_eq_test, newton_guess1_dbl) {
   // This first initial guess produces the
   // solution x = {8, 8}
 
-  Eigen::VectorXd
-    theta = algebra_solver_newton(degenerate_eq_functor(), x_guess_1,
-                                  y_dbl, dat, dat_int);
+  Eigen::VectorXd theta = algebra_solver_newton(degenerate_eq_functor(),
+                                                x_guess_1, y_dbl, dat, dat_int);
   EXPECT_FLOAT_EQ(8, theta(0));
   EXPECT_FLOAT_EQ(8, theta(1));
 }
@@ -567,9 +560,8 @@ TEST_F(degenerate_eq_test, newton_guess2_dbl) {
   // This next initial guess produces the
   // solution x = {5, 5}
 
-  Eigen::VectorXd
-    theta = algebra_solver_newton(degenerate_eq_functor(), x_guess_2,
-                                  y_dbl, dat, dat_int);
+  Eigen::VectorXd theta = algebra_solver_newton(degenerate_eq_functor(),
+                                                x_guess_2, y_dbl, dat, dat_int);
   EXPECT_FLOAT_EQ(5, theta(0));
   EXPECT_FLOAT_EQ(5, theta(1));
 }
@@ -582,9 +574,8 @@ TEST_F(degenerate_eq_test, newton_guess2_dbl) {
 TEST_F(degenerate_eq_test, newton_guess2_scale_dbl) {
   using stan::math::algebra_solver_newton;
 
-  Eigen::VectorXd
-    theta = algebra_solver_newton(degenerate_eq_functor(), x_guess_2,
-                                  y_scale, dat, dat_int);
+  Eigen::VectorXd theta = algebra_solver_newton(
+      degenerate_eq_functor(), x_guess_2, y_scale, dat, dat_int);
   EXPECT_FLOAT_EQ(5, theta(0));
   EXPECT_FLOAT_EQ(5, theta(1));
 }
@@ -592,9 +583,8 @@ TEST_F(degenerate_eq_test, newton_guess2_scale_dbl) {
 TEST_F(degenerate_eq_test, newton_guess_saddle_point_dbl) {
   using stan::math::algebra_solver_newton;
 
-  Eigen::VectorXd
-    theta = algebra_solver_newton(degenerate_eq_functor(), x_guess_3,
-                                  y_scale, dat, dat_int);
+  Eigen::VectorXd theta = algebra_solver_newton(
+      degenerate_eq_functor(), x_guess_3, y_scale, dat, dat_int);
   EXPECT_FLOAT_EQ(100, theta(0));
   EXPECT_FLOAT_EQ(100, theta(1));
 }
