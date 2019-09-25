@@ -426,7 +426,6 @@ explicit matrix_cl(Vec&& A, const int& R, const int& C,
     read_events_ = std::forward<decltype(a.read_events_)>(a.read_events_);
     return *this;
   }
-
 };  // namespace math
 
 template <typename T>
