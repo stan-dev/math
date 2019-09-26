@@ -20,7 +20,8 @@ static const char* neg_binomial_2_log_glm_kernel_code = STRINGIFY(
      * Must be run with at least N threads and local size equal to LOCAL_SIZE_.
      * @param[out] logp_global partially summed log probabilty (1 value per work
      * group)
-     * @param[out] theta_derivative_global intermediate variable used in the model
+     * @param[out] theta_derivative_global intermediate variable used in the
+     * model
      * @param[out] theta_derivative_sum partially summed theta_derivative_global
      * (1 value per work group)
      * @param[out] phi_derivative_global derivative with respect to phi
@@ -44,12 +45,12 @@ static const char* neg_binomial_2_log_glm_kernel_code = STRINGIFY(
      * computed
      * @param need_logp1 interpreted as boolean - whether first part logp_global
      * needs to be computed
-     * @param need_logp2 interpreted as boolean - whether second part logp_global
-     * needs to be computed
+     * @param need_logp2 interpreted as boolean - whether second part
+     * logp_global needs to be computed
      * @param need_logp3 interpreted as boolean - whether third part logp_global
      * needs to be computed
-     * @param need_logp4 interpreted as boolean - whether fourth part logp_global
-     * needs to be computed
+     * @param need_logp4 interpreted as boolean - whether fourth part
+     * logp_global needs to be computed
      * @param need_logp5 interpreted as boolean - whether fifth part logp_global
      * needs to be computed
      */
