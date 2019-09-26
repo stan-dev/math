@@ -178,6 +178,7 @@ class matrix_cl<T, require_arithmetic<T>> {
   const cl::Buffer& buffer() const { return buffer_cl_; }
   cl::Buffer& buffer() { return buffer_cl_; }
 
+  matrix_cl() {}
   /**
    * Construct a matrix_cl<T> from an existing cl::Buffer object. The matrix
    * directly uses given buffer - no copying is done.
