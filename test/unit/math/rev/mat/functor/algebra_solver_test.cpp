@@ -285,9 +285,8 @@ TEST_F(degenerate_eq_test, powell_guess2) {
   // solution x = {5, 5}
   for (int k = 0; k < 1; k++) {
     Eigen::Matrix<var, Eigen::Dynamic, 1> y = y_dbl;
-    Eigen::Matrix<var, Eigen::Dynamic, 1> theta
-      = algebra_solver_powell(degenerate_eq_functor(), x_guess_2,
-                              y, dat, dat_int);
+    Eigen::Matrix<var, Eigen::Dynamic, 1> theta = algebra_solver_powell(
+        degenerate_eq_functor(), x_guess_2, y, dat, dat_int);
     EXPECT_FLOAT_EQ(5, theta(0).val());
     EXPECT_FLOAT_EQ(5, theta(0).val());
 
@@ -527,9 +526,8 @@ TEST_F(degenerate_eq_test, newton_guess2) {
   // solution x = {5, 5}
   for (int k = 0; k < 1; k++) {
     Eigen::Matrix<var, Eigen::Dynamic, 1> y = y_dbl;
-    Eigen::Matrix<var, Eigen::Dynamic, 1> theta
-      = algebra_solver_newton(degenerate_eq_functor(), x_guess_2,
-                              y, dat, dat_int);
+    Eigen::Matrix<var, Eigen::Dynamic, 1> theta = algebra_solver_newton(
+        degenerate_eq_functor(), x_guess_2, y, dat, dat_int);
     EXPECT_FLOAT_EQ(5, theta(0).val());
     EXPECT_FLOAT_EQ(5, theta(0).val());
 
@@ -587,8 +585,7 @@ TEST_F(degenerate_eq_test, newton_guess_saddle_point_dbl) {
   err_msg << "algebra_solver failed with error flag -11.";
   std::string msg = err_msg.str();
 
-  EXPECT_THROW_MSG(
-    algebra_solver_newton(degenerate_eq_functor(), x_guess_3,
-                          y_scale, dat, dat_int),
-    std::runtime_error, msg);
+  EXPECT_THROW_MSG(algebra_solver_newton(degenerate_eq_functor(), x_guess_3,
+                                         y_scale, dat, dat_int),
+                   std::runtime_error, msg);
 }
