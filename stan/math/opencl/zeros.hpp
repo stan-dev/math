@@ -34,8 +34,7 @@ inline void matrix_cl<T, require_arithmetic<T>>::zeros() try {
   cl::CommandQueue cmdQueue = opencl_context.queue();
   opencl_kernels::zeros(cl::NDRange(this->rows(), this->cols()), *this,
                         this->rows(), this->cols(), matrix_view);
-}  // namespace math
-catch (const cl::Error& e) {
+} catch (const cl::Error& e) {
   check_opencl_error("zeros", e);
 }
 

@@ -33,9 +33,10 @@ template <typename T>
 class matrix_cl<T, require_arithmetic<T>> {
  private:
   cl::Buffer buffer_cl_;  // Holds the allocated memory on the device
-  int rows_;
-  int cols_;
-  matrix_cl_view view_;  // Holds info on if matrix is a special type
+  int rows_{0};
+  int cols_{0};
+  // Holds info on if matrix is a special type
+  matrix_cl_view view_{matrix_cl_view::Entire};
   mutable std::vector<cl::Event> write_events_;  // Tracks write jobs
   mutable std::vector<cl::Event> read_events_;   // Tracks reads
 
@@ -176,7 +177,6 @@ class matrix_cl<T, require_arithmetic<T>> {
 
   const cl::Buffer& buffer() const { return buffer_cl_; }
   cl::Buffer& buffer() { return buffer_cl_; }
-  matrix_cl() : rows_(0), cols_(0) {}
 
   /**
    * Construct a matrix_cl<T> from an existing cl::Buffer object. The matrix
@@ -211,14 +211,14 @@ class matrix_cl<T, require_arithmetic<T>> {
       check_opencl_error("copy (OpenCL)->(OpenCL)", e);
     }
   }
-  template <typename Mat, require_matrix_cl_t<std::is_arithmetic, Mat>...>
-  explicit matrix_cl(Mat&& A)
-      : buffer_cl_(std::forward<decltype(A.buffer_cl_)>(A.buffer_cl_)),
+
+  explicit matrix_cl(matrix_cl<T>&& A)
+      : buffer_cl_(std::move(A.buffer_cl_)),
         rows_(A.rows_),
         cols_(A.cols_),
         view_(A.view_),
-        write_events_(std::forward<decltype(A.write_events_)>(A.write_events_)),
-        read_events_(std::forward<decltype(A.read_events_)>(A.read_events_)) {}
+        write_events_(std::move(A.write_events_)),
+        read_events_(std::move(A.read_events_)) {}
 
   /**
    * Constructor for the matrix_cl that
@@ -412,8 +412,7 @@ class matrix_cl<T, require_arithmetic<T>> {
   /**
    * Assign a \c matrix_cl to another
    */
-  template <typename Mat, require_matrix_cl_t<std::is_arithmetic, Mat>...>
-  matrix_cl<T>& operator=(Mat&& a) {
+  matrix_cl<T>& operator=(matrix_cl<T>&& a) {
     if (a.size() == 0) {
       return *this;
     }
@@ -421,9 +420,26 @@ class matrix_cl<T, require_arithmetic<T>> {
     rows_ = a.rows();
     cols_ = a.cols();
     this->wait_for_read_write_events();
-    buffer_cl_ = std::forward<decltype(a.buffer_cl_)>(a.buffer_cl_);
-    write_events_ = std::forward<decltype(a.write_events_)>(a.write_events_);
-    read_events_ = std::forward<decltype(a.read_events_)>(a.read_events_);
+    buffer_cl_ = std::move(a.buffer_cl_);
+    write_events_ = std::move(a.write_events_);
+    read_events_ = std::move(a.read_events_);
+    return *this;
+  }
+
+  /**
+   * Assign a \c matrix_cl to another
+   */
+  matrix_cl<T>& operator=(const matrix_cl<T>& a) {
+    if (a.size() == 0) {
+      return *this;
+    }
+    view_ = a.view();
+    rows_ = a.rows();
+    cols_ = a.cols();
+    this->wait_for_read_write_events();
+    buffer_cl_ = a.buffer_cl_;
+    write_events_ = a.write_events_;
+    read_events_ = a.read_events_;
     return *this;
   }
 };  // namespace math
