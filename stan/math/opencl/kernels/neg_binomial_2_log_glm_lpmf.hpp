@@ -18,17 +18,17 @@ static const char* neg_binomial_2_log_glm_kernel_code = STRINGIFY(
      * with Negative-Binomial-2 distribution and log link function.
      *
      * Must be run with at least N threads and local size equal to LOCAL_SIZE_.
-     * @param[out] logp_glob partially summed log probabilty (1 value per work
+     * @param[out] logp_global partially summed log probabilty (1 value per work
      * group)
-     * @param[out] theta_derivative_glob intermediate variable used in the model
-     * @param[out] theta_derivative_sum partially summed theta_derivative_glob
+     * @param[out] theta_derivative_global intermediate variable used in the model
+     * @param[out] theta_derivative_sum partially summed theta_derivative_global
      * (1 value per work group)
-     * @param[out] phi_derivative_glob derivative with respect to phi
-     * @param[in] y_glob failures count vector parameter
+     * @param[out] phi_derivative_global derivative with respect to phi
+     * @param[in] y_global failures count vector parameter
      * @param[in] x design matrix
      * @param[in] alpha intercept (in log odds)
      * @param[in] beta weight vector
-     * @param[in] phi_glob (vector of) precision parameter(s)
+     * @param[in] phi_global (vector of) precision parameter(s)
      * @param N number of cases
      * @param M number of attributes
      * @param is_alpha_vector 0 or 1 - whether alpha is a vector (alternatively
@@ -42,23 +42,23 @@ static const char* neg_binomial_2_log_glm_kernel_code = STRINGIFY(
      * @param need_phi_derivative whether phi_derivative needs to be computed
      * @param need_phi_derivative_sum whether phi_derivative_sum needs to be
      * computed
-     * @param need_logp1 interpreted as boolean - whether first part logp_glob
+     * @param need_logp1 interpreted as boolean - whether first part logp_global
      * needs to be computed
-     * @param need_logp2 interpreted as boolean - whether second part logp_glob
+     * @param need_logp2 interpreted as boolean - whether second part logp_global
      * needs to be computed
-     * @param need_logp3 interpreted as boolean - whether third part logp_glob
+     * @param need_logp3 interpreted as boolean - whether third part logp_global
      * needs to be computed
-     * @param need_logp4 interpreted as boolean - whether fourth part logp_glob
+     * @param need_logp4 interpreted as boolean - whether fourth part logp_global
      * needs to be computed
-     * @param need_logp5 interpreted as boolean - whether fifth part logp_glob
+     * @param need_logp5 interpreted as boolean - whether fifth part logp_global
      * needs to be computed
      */
     __kernel void neg_binomial_2_log_glm(
-        __global double* logp_glob, __global double* theta_derivative_glob,
+        __global double* logp_global, __global double* theta_derivative_global,
         __global double* theta_derivative_sum,
-        __global double* phi_derivative_glob, const __global int* y_glob,
+        __global double* phi_derivative_global, const __global int* y_global,
         const __global double* x, const __global double* alpha,
-        const __global double* beta, const __global double* phi_glob,
+        const __global double* beta, const __global double* phi_global,
         const int N, const int M, const int is_alpha_vector,
         const int is_phi_vector, const int need_theta_derivative,
         const int need_theta_derivative_sum, const int need_phi_derivative,
@@ -82,8 +82,8 @@ static const char* neg_binomial_2_log_glm_kernel_code = STRINGIFY(
         for (int i = 0, j = 0; i < M; i++, j += N) {
           theta += x[j + gid] * beta[i];
         }
-        double phi = phi_glob[gid * is_phi_vector];
-        double y = y_glob[gid];
+        double phi = phi_global[gid * is_phi_vector];
+        double y = y_global[gid];
         if (!isfinite(theta) || y < 0 || !isfinite(phi)) {
           logp = NAN;
         }
@@ -117,14 +117,14 @@ static const char* neg_binomial_2_log_glm_kernel_code = STRINGIFY(
         double theta_exp = exp(theta);
         theta_derivative = y - theta_exp * y_plus_phi / (theta_exp + phi);
         if (need_theta_derivative) {
-          theta_derivative_glob[gid] = theta_derivative;
+          theta_derivative_global[gid] = theta_derivative;
         }
         if (need_phi_derivative) {
           phi_derivative = 1 - y_plus_phi / (theta_exp + phi) + log_phi
                            - logsumexp_theta_logphi + digamma(y_plus_phi)
                            - digamma(phi);
           if (!need_phi_derivative_sum) {
-            phi_derivative_glob[gid] = phi_derivative;
+            phi_derivative_global[gid] = phi_derivative;
           }
         }
       }
@@ -144,7 +144,7 @@ static const char* neg_binomial_2_log_glm_kernel_code = STRINGIFY(
         barrier(CLK_LOCAL_MEM_FENCE);
       }
       if (lid == 0) {
-        logp_glob[wgid] = res_loc[0];
+        logp_global[wgid] = res_loc[0];
       }
 
       if (need_theta_derivative_sum) {
@@ -181,7 +181,7 @@ static const char* neg_binomial_2_log_glm_kernel_code = STRINGIFY(
           barrier(CLK_LOCAL_MEM_FENCE);
         }
         if (lid == 0) {
-          phi_derivative_glob[wgid] = res_loc[0];
+          phi_derivative_global[wgid] = res_loc[0];
         }
       }
     }

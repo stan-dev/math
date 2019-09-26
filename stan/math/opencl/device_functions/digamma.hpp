@@ -12,8 +12,10 @@ namespace opencl_kernels {
 static const std::string digamma_device_function = STRINGIFY(
     // \endcond
     /**
-     * Caldulates the digamma function - derivative of logarithm of gamma. This
-     * implementation is based on one from boost 1.69.0.
+     * Calculates the digamma function - derivative of logarithm of gamma. This
+     * implementation is based on one from boost 1.69.0:
+     * https://www.boost.org/doc/libs/1_69_0/boost/math/special_functions/digamma.hpp.
+     *
      * @param x point at which to calculate digamma
      * @return digamma(x)
      */
