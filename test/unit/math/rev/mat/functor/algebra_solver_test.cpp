@@ -8,6 +8,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <string>
 
 // Every test exists in four verions for the cases
 // where y (the auxiliary parameters) are passed as
@@ -286,7 +287,6 @@ TEST_F(degenerate_eq_test, powell_guess2) {
   for (int k = 0; k < 1; k++) {
     Eigen::Matrix<var, Eigen::Dynamic, 1> y = y_dbl;
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta
-<<<<<<< HEAD
       = algebra_solver_powell(degenerate_eq_functor(), x_guess_2,
                               y, dat, dat_int);
     EXPECT_FLOAT_EQ(5, theta(0).val());
@@ -534,7 +534,6 @@ TEST_F(degenerate_eq_test, newton_guess2) {
   for (int k = 0; k < 1; k++) {
     Eigen::Matrix<var, Eigen::Dynamic, 1> y = y_dbl;
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta
-<<<<<<< HEAD
       = algebra_solver_newton(degenerate_eq_functor(), x_guess_2,
                               y, dat, dat_int);
     EXPECT_FLOAT_EQ(5, theta(0).val());
@@ -590,11 +589,15 @@ TEST_F(degenerate_eq_test, newton_guess2_scale_dbl) {
 }
 
 TEST_F(degenerate_eq_test, newton_guess_saddle_point_dbl) {
+  // Newton solver fails this test because the initial point is
+  // a saddle point.
   using stan::math::algebra_solver_newton;
+  std::stringstream err_msg;
+  err_msg << "algebra_solver failed with error flag -11.";
+  std::string msg = err_msg.str();
 
-  Eigen::VectorXd
-    theta = algebra_solver_newton(degenerate_eq_functor(), x_guess_3,
-                                  y_scale, dat, dat_int);
-  EXPECT_FLOAT_EQ(100, theta(0));
-  EXPECT_FLOAT_EQ(100, theta(1));
+  EXPECT_THROW_MSG(
+    algebra_solver_newton(degenerate_eq_functor(), x_guess_3,
+                          y_scale, dat, dat_int),
+    std::runtime_error, msg);
 }
