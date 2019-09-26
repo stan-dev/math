@@ -144,9 +144,5 @@ TEST(ErrorHandlingScalarCL, check_m_invalid_matrix_view) {
                std::invalid_argument);
   EXPECT_NO_THROW(check_invalid_matrix_view(function, "m", m,
                                             stan::math::matrix_cl_view::Lower));
-  // EXPECT_NO_THROW(check_invalid_matrix_view(function, "mm_ok0", mm_ok0));
-  // EXPECT_NO_THROW(check_invalid_matrix_view(function, "mm_ok33", mm_ok33));
-  // EXPECT_THROW(check_invalid_matrix_view(function, "mm_fail", mm_fail),
-  //              std::invalid_argument);
 }
 #endif

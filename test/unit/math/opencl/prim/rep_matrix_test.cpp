@@ -21,8 +21,8 @@ TEST(MathMatrixCL, rep_matrix_size_one_exception_pass) {
   EXPECT_NO_THROW(stan::math::rep_matrix(b, 0, 2));
   EXPECT_NO_THROW(stan::math::rep_matrix(b, 5, 0));
 
-  EXPECT_NO_THROW(stan::math::rep_matrix(a, 5, 0));
-  EXPECT_NO_THROW(stan::math::rep_matrix(c, 5, 0));
+  EXPECT_THROW(stan::math::rep_matrix(a, 5, 0), std::invalid_argument);
+  EXPECT_THROW(stan::math::rep_matrix(c, 5, 0), std::invalid_argument);
 }
 
 TEST(MathMatrixCL, rep_matrix_size_one_value_check) {
@@ -77,7 +77,7 @@ TEST(MathMatrixCL, rep_matrix_v_rv_exception_pass) {
   stan::math::matrix_cl<double> c(1, 0);
   EXPECT_NO_THROW(stan::math::rep_matrix(c, 5));
   stan::math::matrix_cl<double> d(0, 5);
-  EXPECT_NO_THROW(stan::math::rep_matrix(d, 6));
+  EXPECT_THROW(stan::math::rep_matrix(d, 6), std::invalid_argument);
 }
 
 TEST(MathMatrixCL, rep_matrix_v_value_check) {
