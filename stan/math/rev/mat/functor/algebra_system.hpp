@@ -167,10 +167,8 @@ void algebra_solver_check(const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
                           double function_tolerance,
                           long int max_num_steps) {  // NOLINT(runtime/int)
   check_nonzero_size("algebra_solver", "initial guess", x);
-  for (int i = 0; i < x.size(); i++)
-    check_finite("algebra_solver", "initial guess", x(i));
-  for (int i = 0; i < y.size(); i++)
-    check_finite("algebra_solver", "parameter vector", y(i));
+  check_finite("algebra_solver", "initial guess", x);
+  check_finite("algebra_solver", "parameter vector", y);
   for (double i : dat)
     check_finite("algebra_solver", "continuous data", i);
   for (int x : dat_int)

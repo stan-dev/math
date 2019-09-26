@@ -386,7 +386,7 @@ TEST_F(algebra_solver_simple_eq_test, newton) {
 
 TEST_F(algebra_solver_simple_eq_test, newton_tuned) {
   using stan::math::var;
-  bool is_newton = false;
+  bool is_newton = true;
   for (int k = 0; k < n_x; k++) {
     Eigen::Matrix<var, Eigen::Dynamic, 1> y = y_dbl;
 

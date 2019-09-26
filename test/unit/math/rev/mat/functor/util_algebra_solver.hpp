@@ -212,7 +212,7 @@ inline void error_conditions_test(const F& f,
   EXPECT_THROW_MSG(
       general_algebra_solver(is_newton, f, x_bad_inf, y, dat, dat_int),
       std::domain_error,
-      "algebra_solver: initial guess is inf, but must "
+      "algebra_solver: initial guess[1] is inf, but must "
       "be finite!");
 
   typedef Eigen::Matrix<T, Eigen::Dynamic, 1> matrix;
@@ -221,7 +221,7 @@ inline void error_conditions_test(const F& f,
   EXPECT_THROW_MSG(
       general_algebra_solver(is_newton, f, x, y_bad_inf, dat, dat_int),
       std::domain_error,
-      "algebra_solver: parameter vector is inf, but must "
+      "algebra_solver: parameter vector[1] is inf, but must "
       "be finite!");
 
   std::vector<double> dat_bad_inf(1);
@@ -312,15 +312,4 @@ inline void max_num_steps_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
                              dat_int, 0, scaling_step, relative_tolerance,
                              function_tolerance, max_num_steps),
       std::runtime_error, msg);
-}
-
-template <typename T>
-inline Eigen::Matrix<T, Eigen::Dynamic, 1> degenerate_test(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& y, const Eigen::VectorXd& x,
-    bool is_newton = 0) {
-  std::vector<double> dat;
-  std::vector<int> dat_int;
-
-  return general_algebra_solver(is_newton, degenerate_eq_functor(), x, y, dat,
-                                dat_int);
 }
