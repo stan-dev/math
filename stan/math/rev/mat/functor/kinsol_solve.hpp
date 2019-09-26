@@ -67,8 +67,6 @@ Eigen::VectorXd kinsol_solve(
   typedef kinsol_system_data<F1, F2> system_data;
   system_data kinsol_data(f, J_f, x, y, dat, dat_int, msgs);
 
-  // void* kinsol_memory = KINCreate();
-
   check_flag_sundials(
       KINInit(kinsol_data.kinsol_memory_,
               &system_data::kinsol_f_system, kinsol_data.nv_x_),
@@ -115,8 +113,6 @@ Eigen::VectorXd kinsol_solve(
   check_flag_kinsol(
       KINSol(kinsol_data.kinsol_memory_, nv_x, global_line_search,
              scaling, scaling), max_num_steps);
-
-  // KINFree(&kinsol_memory);
 
   Eigen::VectorXd x_solution(N);
   for (int i = 0; i < N; i++)
