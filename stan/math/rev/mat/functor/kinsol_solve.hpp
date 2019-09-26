@@ -67,23 +67,24 @@ Eigen::VectorXd kinsol_solve(
   typedef kinsol_system_data<F1, F2> system_data;
   system_data kinsol_data(f, J_f, x, y, dat, dat_int, msgs);
 
-  void* kinsol_memory = KINCreate();
+  // void* kinsol_memory = KINCreate();
 
   check_flag_sundials(
-      KINInit(kinsol_memory, &system_data::kinsol_f_system, kinsol_data.nv_x_),
+      KINInit(kinsol_data.kinsol_memory_,
+              &system_data::kinsol_f_system, kinsol_data.nv_x_),
       "KINInit");
 
   N_Vector scaling = N_VNew_Serial(N);
   N_VConst_Serial(1.0, scaling);  // no scaling
 
-  check_flag_sundials(KINSetNumMaxIters(kinsol_memory, max_num_steps),
-                      "KINSetNumMaxIters");
-  check_flag_sundials(KINSetFuncNormTol(kinsol_memory, function_tolerance),
-                      "KINSetFuncNormTol");
-  check_flag_sundials(KINSetScaledStepTol(kinsol_memory, scaling_step_tol),
-                      "KINSetScaledStepTol");
-  check_flag_sundials(KINSetMaxSetupCalls(kinsol_memory, steps_eval_jacobian),
-                      "KINSetMaxSetupCalls");
+  check_flag_sundials(KINSetNumMaxIters(kinsol_data.kinsol_memory_,
+                      max_num_steps), "KINSetNumMaxIters");
+  check_flag_sundials(KINSetFuncNormTol(kinsol_data.kinsol_memory_,
+                      function_tolerance), "KINSetFuncNormTol");
+  check_flag_sundials(KINSetScaledStepTol(kinsol_data.kinsol_memory_,
+                      scaling_step_tol), "KINSetScaledStepTol");
+  check_flag_sundials(KINSetMaxSetupCalls(kinsol_data.kinsol_memory_,
+                      steps_eval_jacobian), "KINSetMaxSetupCalls");
 
   // CHECK
   // The default value is 1000 * ||u_0||_D where ||u_0|| is the initial guess.
@@ -91,31 +92,31 @@ Eigen::VectorXd kinsol_solve(
   // If the norm is non-zero, use kinsol's default (accessed with 0),
   // else use the dimension of x -- CHECK - find optimal length.
   double max_newton_step = (x.norm() == 0) ? x.size() : 0;
-  check_flag_sundials(KINSetMaxNewtonStep(kinsol_memory, max_newton_step),
-                      "KINSetMaxNewtonStep");
+  check_flag_sundials(KINSetMaxNewtonStep(kinsol_data.kinsol_memory_,
+                      max_newton_step), "KINSetMaxNewtonStep");
   check_flag_sundials(
-      KINSetUserData(kinsol_memory, static_cast<void*>(&kinsol_data)),
-      "KINSetUserData");
+      KINSetUserData(kinsol_data.kinsol_memory_,
+                     static_cast<void*>(&kinsol_data)), "KINSetUserData");
 
   // construct Linear solver
   check_flag_sundials(
-      KINSetLinearSolver(kinsol_memory, kinsol_data.LS_, kinsol_data.J_),
-      "KINSetLinearSolver");
+      KINSetLinearSolver(kinsol_data.kinsol_memory_, kinsol_data.LS_,
+                         kinsol_data.J_), "KINSetLinearSolver");
 
   if (custom_jacobian)
     check_flag_sundials(
-        KINSetJacFn(kinsol_memory, &system_data::kinsol_jacobian),
-        "KINSetJacFn");
+        KINSetJacFn(kinsol_data.kinsol_memory_,
+                    &system_data::kinsol_jacobian), "KINSetJacFn");
 
   N_Vector nv_x = N_VNew_Serial(N);
   for (int i = 0; i < N; i++)
     NV_Ith_S(nv_x, i) = x(i);
 
   check_flag_kinsol(
-      KINSol(kinsol_memory, nv_x, global_line_search, scaling, scaling),
-      max_num_steps);
+      KINSol(kinsol_data.kinsol_memory_, nv_x, global_line_search,
+             scaling, scaling), max_num_steps);
 
-  KINFree(&kinsol_memory);
+  // KINFree(&kinsol_memory);
 
   Eigen::VectorXd x_solution(N);
   for (int i = 0; i < N; i++)

@@ -66,6 +66,7 @@ class kinsol_system_data {
   N_Vector nv_x_;
   SUNMatrix J_;
   SUNLinearSolver LS_;
+  void* kinsol_memory_;
 
   /* Constructor */
   kinsol_system_data(const F1& f, const F2& J_f, const Eigen::VectorXd& x,
@@ -81,12 +82,14 @@ class kinsol_system_data {
         N_(x.size()),
         nv_x_(N_VMake_Serial(N_, &to_array_1d(x_)[0])),
         J_(SUNDenseMatrix(N_, N_)),
-        LS_(SUNLinSol_Dense(nv_x_, J_)) {}
+        LS_(SUNLinSol_Dense(nv_x_, J_)),
+        kinsol_memory_(KINCreate()) {}
 
   ~kinsol_system_data() {
     N_VDestroy_Serial(nv_x_);
     SUNLinSolFree(LS_);
     SUNMatDestroy(J_);
+    KINFree(&kinsol_memory_);
   }
 
   /* Implements the user-defined function passed to KINSOL. */
