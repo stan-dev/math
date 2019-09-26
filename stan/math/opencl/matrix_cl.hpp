@@ -258,7 +258,7 @@ class matrix_cl<T, require_arithmetic<T>> {
       cl::Event write_event;
       queue.enqueueWriteBuffer(
           buffer_cl_, CL_FALSE, sizeof(double) * offset_size,
-          sizeof(double) * rows_, A[i].eval().data(), nullptr, &write_event);
+          sizeof(double) * rows_, A[i].data(), nullptr, &write_event);
       this->add_write_event(write_event);
     }
   } catch (const cl::Error& e) {
@@ -319,7 +319,7 @@ class matrix_cl<T, require_arithmetic<T>> {
       buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
       cl::Event transfer_event;
       queue.enqueueWriteBuffer(buffer_cl_, CL_FALSE, 0, sizeof(T) * A.size(),
-                               A.eval().data(), nullptr, &transfer_event);
+                               A.data(), nullptr, &transfer_event);
       this->add_write_event(transfer_event);
     } catch (const cl::Error& e) {
       check_opencl_error("matrix constructor", e);
