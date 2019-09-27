@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_MAT_FUNCTOR_ALGEBRA_SYSTEM_HPP
 #define STAN_MATH_REV_MAT_FUNCTOR_ALGEBRA_SYSTEM_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/mat/functor/jacobian.hpp>
 #include <iostream>
@@ -54,10 +55,11 @@ struct system_functor {
   template <typename T>
   inline Eigen::Matrix<T, Eigen::Dynamic, 1> operator()(
       const Eigen::Matrix<T, Eigen::Dynamic, 1>& iv) const {
-    if (x_is_iv)
+    if (x_is_iv) {
       return f_(iv, y_, dat_, dat_int_, msgs_);
-    else
+    } else {
       return f_(x_, iv, dat_, dat_int_, msgs_);
+    }
   }
 };
 

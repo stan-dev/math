@@ -1,12 +1,10 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_LOGISTIC_RNG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_LOGISTIC_RNG_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/meta/max_size.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <boost/random/exponential_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 
@@ -50,8 +48,9 @@ inline typename VectorBuilder<true, double, T_loc, T_scale>::type logistic_rng(
 
   variate_generator<RNG&, exponential_distribution<> > exp_rng(
       rng, exponential_distribution<>(1));
-  for (size_t n = 0; n < N; ++n)
+  for (size_t n = 0; n < N; ++n) {
     output[n] = mu_vec[n] - sigma_vec[n] * std::log(exp_rng() / exp_rng());
+  }
 
   return output.data();
 }

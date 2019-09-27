@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_BINARY_LOG_LOSS_HPP
 #define STAN_MATH_REV_SCAL_FUN_BINARY_LOG_LOSS_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/fun/log1p.hpp>
 
@@ -58,10 +59,11 @@ class binary_log_loss_0_vari : public op_v_vari {
  * @return Log loss of response versus reference value.
  */
 inline var binary_log_loss(int y, const var& y_hat) {
-  if (y == 0)
+  if (y == 0) {
     return var(new internal::binary_log_loss_0_vari(y_hat.vi_));
-  else
+  } else {
     return var(new internal::binary_log_loss_1_vari(y_hat.vi_));
+  }
 }
 
 }  // namespace math

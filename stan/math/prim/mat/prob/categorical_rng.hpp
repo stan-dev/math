@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_CATEGORICAL_RNG_HPP
 #define STAN_MATH_PRIM_MAT_PROB_CATEGORICAL_RNG_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <stan/math/prim/mat/err/check_simplex.hpp>
@@ -28,8 +29,9 @@ inline int categorical_rng(
 
   double c = uniform01_rng();
   int b = 0;
-  while (c > index(b, 0))
+  while (c > index(b, 0)) {
     b++;
+  }
   return b + 1;
 }
 }  // namespace math

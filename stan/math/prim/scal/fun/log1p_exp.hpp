@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LOG1P_EXP_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LOG1P_EXP_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/log1p.hpp>
 #include <cmath>
 
@@ -42,8 +43,9 @@ namespace math {
 inline double log1p_exp(double a) {
   using std::exp;
   // like log_sum_exp below with b=0.0; prevents underflow
-  if (a > 0.0)
+  if (a > 0.0) {
     return a + log1p(exp(-a));
+  }
   return log1p(exp(a));
 }
 

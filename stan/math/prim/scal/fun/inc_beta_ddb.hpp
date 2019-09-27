@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_INC_BETA_DDB_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_INC_BETA_DDB_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
 #include <stan/math/prim/scal/fun/inc_beta_dda.hpp>
@@ -37,42 +38,49 @@ T inc_beta_dda(T a, T b, T z, T digamma_a, T digamma_ab);
 template <typename T>
 T inc_beta_ddb(T a, T b, T z, T digamma_b, T digamma_ab) {
   using std::log;
+  using std::pow;
 
-  if (b > a)
+  if (b > a) {
     if ((0.1 < z && z <= 0.75 && b > 500) || (0.01 < z && z <= 0.1 && b > 2500)
-        || (0.001 < z && z <= 0.01 && b > 1e5))
+        || (0.001 < z && z <= 0.01 && b > 1e5)) {
       return -inc_beta_dda(b, a, 1 - z, digamma_b, digamma_ab);
+    }
+  }
 
   if ((z > 0.75 && a < 500) || (z > 0.9 && a < 2500) || (z > 0.99 && a < 1e5)
-      || (z > 0.999))
+      || (z > 0.999)) {
     return -inc_beta_dda(b, a, 1 - z, digamma_b, digamma_ab);
+  }
 
   double threshold = 1e-10;
 
+  const T a_plus_b = a + b;
+  const T a_plus_1 = a + 1;
+
   // Common prefactor to regularize numerator and denomentator
-  T prefactor = (a + 1) / (a + b);
-  prefactor = prefactor * prefactor * prefactor;
+  T prefactor = pow(a_plus_1 / a_plus_b, 3);
 
   T sum_numer = digamma_ab * prefactor;
   T sum_denom = prefactor;
 
-  T summand = prefactor * z * (a + b) / (a + 1);
+  T summand = prefactor * z * a_plus_b / a_plus_1;
 
   T k = 1;
-  digamma_ab += 1.0 / (a + b);
+  digamma_ab += inv(a_plus_b);
 
   while (fabs(summand) > threshold) {
     sum_numer += digamma_ab * summand;
     sum_denom += summand;
 
-    summand *= (1 + (a + b) / k) * (1 + k) / (1 + (a + 1) / k);
-    digamma_ab += 1.0 / (a + b + k);
+    summand *= (1 + (a_plus_b) / k) * (1 + k) / (1 + a_plus_1 / k);
+    digamma_ab += inv(a_plus_b + k);
     ++k;
     summand *= z / k;
 
-    if (k > 1e5)
+    if (k > 1e5) {
       domain_error("inc_beta_ddb", "did not converge within 100000 iterations",
                    "", "");
+    }
   }
 
   return inc_beta(a, b, z) * (log(1 - z) - digamma_b + sum_numer / sum_denom);

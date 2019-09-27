@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_ARR_FUN_PROMOTE_SCALAR_TYPE_HPP
 #define STAN_MATH_PRIM_ARR_FUN_PROMOTE_SCALAR_TYPE_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/promote_scalar_type.hpp>
 #include <vector>
 
@@ -20,7 +21,7 @@ struct promote_scalar_type<T, std::vector<S> > {
   /**
    * The promoted type.
    */
-  typedef std::vector<typename promote_scalar_type<T, S>::type> type;
+  using type = std::vector<typename promote_scalar_type<T, S>::type>;
 };
 
 }  // namespace math

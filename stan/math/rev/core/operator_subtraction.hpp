@@ -5,7 +5,7 @@
 #include <stan/math/rev/core/vv_vari.hpp>
 #include <stan/math/rev/core/vd_vari.hpp>
 #include <stan/math/rev/core/dv_vari.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <stan/math/prim/scal/fun/is_any_nan.hpp>
 #include <limits>
 
 namespace stan {
@@ -17,7 +17,7 @@ class subtract_vv_vari : public op_vv_vari {
   subtract_vv_vari(vari* avi, vari* bvi)
       : op_vv_vari(avi->val_ - bvi->val_, avi, bvi) {}
   void chain() {
-    if (unlikely(is_nan(avi_->val_) || is_nan(bvi_->val_))) {
+    if (unlikely(is_any_nan(avi_->val_, bvi_->val_))) {
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
       bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
     } else {
@@ -31,10 +31,11 @@ class subtract_vd_vari : public op_vd_vari {
  public:
   subtract_vd_vari(vari* avi, double b) : op_vd_vari(avi->val_ - b, avi, b) {}
   void chain() {
-    if (unlikely(is_nan(avi_->val_) || is_nan(bd_)))
+    if (unlikely(is_any_nan(avi_->val_, bd_))) {
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
-    else
+    } else {
       avi_->adj_ += adj_;
+    }
   }
 };
 
@@ -42,10 +43,11 @@ class subtract_dv_vari : public op_dv_vari {
  public:
   subtract_dv_vari(double a, vari* bvi) : op_dv_vari(a - bvi->val_, a, bvi) {}
   void chain() {
-    if (unlikely(is_nan(ad_) || is_nan(bvi_->val_)))
+    if (unlikely(is_any_nan(ad_, bvi_->val_))) {
       bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
-    else
+    } else {
       bvi_->adj_ -= adj_;
+    }
   }
 };
 }  // namespace internal
@@ -104,8 +106,9 @@ inline var operator-(const var& a, const var& b) {
  * @return Result of subtracting the scalar from the variable.
  */
 inline var operator-(const var& a, double b) {
-  if (b == 0.0)
+  if (b == 0.0) {
     return a;
+  }
   return var(new internal::subtract_vd_vari(a.vi_, b));
 }
 

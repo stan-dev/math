@@ -118,7 +118,6 @@ TEST(AgradFwdBinomialCoefficientLog, FvarVar_FvarVar_2ndDeriv) {
 
 TEST(AgradFwdBinomialCoefficientLog, FvarFvarVar_FvarFvarVar_1stDeriv) {
   using stan::math::binomial_coefficient_log;
-  using stan::math::binomial_coefficient_log;
   using stan::math::fvar;
   using stan::math::var;
 
@@ -145,7 +144,6 @@ TEST(AgradFwdBinomialCoefficientLog, FvarFvarVar_FvarFvarVar_1stDeriv) {
 }
 TEST(AgradFwdBinomialCoefficientLog, FvarFvarVar_Double_1stDeriv) {
   using stan::math::binomial_coefficient_log;
-  using stan::math::binomial_coefficient_log;
   using stan::math::fvar;
   using stan::math::var;
 
@@ -168,7 +166,6 @@ TEST(AgradFwdBinomialCoefficientLog, FvarFvarVar_Double_1stDeriv) {
   EXPECT_FLOAT_EQ(0.69289774, g[0]);
 }
 TEST(AgradFwdBinomialCoefficientLog, Double_FvarFvarVar_1stDeriv) {
-  using stan::math::binomial_coefficient_log;
   using stan::math::binomial_coefficient_log;
   using stan::math::fvar;
   using stan::math::var;
@@ -193,7 +190,6 @@ TEST(AgradFwdBinomialCoefficientLog, Double_FvarFvarVar_1stDeriv) {
 }
 
 TEST(AgradFwdBinomialCoefficientLog, FvarFvarVar_FvarFvarVar_2ndDeriv_x) {
-  using stan::math::binomial_coefficient_log;
   using stan::math::binomial_coefficient_log;
   using stan::math::fvar;
   using stan::math::var;
@@ -221,7 +217,6 @@ TEST(AgradFwdBinomialCoefficientLog, FvarFvarVar_FvarFvarVar_2ndDeriv_x) {
 }
 TEST(AgradFwdBinomialCoefficientLog, FvarFvarVar_FvarFvarVar_2ndDeriv_y) {
   using stan::math::binomial_coefficient_log;
-  using stan::math::binomial_coefficient_log;
   using stan::math::fvar;
   using stan::math::var;
 
@@ -248,7 +243,6 @@ TEST(AgradFwdBinomialCoefficientLog, FvarFvarVar_FvarFvarVar_2ndDeriv_y) {
 }
 TEST(AgradFwdBinomialCoefficientLog, Double_FvarFvarVar_2ndDeriv) {
   using stan::math::binomial_coefficient_log;
-  using stan::math::binomial_coefficient_log;
   using stan::math::fvar;
   using stan::math::var;
 
@@ -272,7 +266,6 @@ TEST(AgradFwdBinomialCoefficientLog, Double_FvarFvarVar_2ndDeriv) {
 }
 TEST(AgradFwdBinomialCoefficientLog, FvarFvarVar_Double_2ndDeriv) {
   using stan::math::binomial_coefficient_log;
-  using stan::math::binomial_coefficient_log;
   using stan::math::fvar;
   using stan::math::var;
 
@@ -295,7 +288,6 @@ TEST(AgradFwdBinomialCoefficientLog, FvarFvarVar_Double_2ndDeriv) {
   EXPECT_FLOAT_EQ(-0.00049862863648177515, g[0]);
 }
 TEST(AgradFwdBinomialCoefficientLog, FvarFvarVar_FvarFvarVar_3rdDeriv) {
-  using stan::math::binomial_coefficient_log;
   using stan::math::binomial_coefficient_log;
   using stan::math::fvar;
   using stan::math::var;
@@ -323,7 +315,6 @@ TEST(AgradFwdBinomialCoefficientLog, FvarFvarVar_FvarFvarVar_3rdDeriv) {
 }
 TEST(AgradFwdBinomialCoefficientLog, Double_FvarFvarVar_3rdDeriv) {
   using stan::math::binomial_coefficient_log;
-  using stan::math::binomial_coefficient_log;
   using stan::math::fvar;
   using stan::math::var;
 
@@ -347,7 +338,6 @@ TEST(AgradFwdBinomialCoefficientLog, Double_FvarFvarVar_3rdDeriv) {
   EXPECT_NEAR(0, g[0], 1e-8);
 }
 TEST(AgradFwdBinomialCoefficientLog, FvarFvarVar_Double_3rdDeriv) {
-  using stan::math::binomial_coefficient_log;
   using stan::math::binomial_coefficient_log;
   using stan::math::fvar;
   using stan::math::var;

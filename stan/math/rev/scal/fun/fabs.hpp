@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_FABS_HPP
 #define STAN_MATH_REV_SCAL_FUN_FABS_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 
@@ -47,14 +48,15 @@ namespace math {
  * @return Absolute value of variable.
  */
 inline var fabs(const var& a) {
-  if (a.val() > 0.0)
+  if (a.val() > 0.0) {
     return a;
-  else if (a.val() < 0.0)
+  } else if (a.val() < 0.0) {
     return var(new internal::neg_vari(a.vi_));
-  else if (a.val() == 0)
+  } else if (a.val() == 0) {
     return var(new vari(0));
-  else
+  } else {
     return var(new precomp_v_vari(NOT_A_NUMBER, a.vi_, NOT_A_NUMBER));
+  }
 }
 
 }  // namespace math

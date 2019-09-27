@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_BOOST_ISFINITE_HPP
 #define STAN_MATH_REV_SCAL_FUN_BOOST_ISFINITE_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <stan/math/rev/core.hpp>
 

@@ -1,17 +1,12 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_EXPONENTIAL_CDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_EXPONENTIAL_CDF_HPP
 
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <cmath>
 
 namespace stan {
@@ -30,18 +25,18 @@ namespace math {
  * @tparam T_inv_scale Type of inverse scale.
  */
 template <typename T_y, typename T_inv_scale>
-typename return_type<T_y, T_inv_scale>::type exponential_cdf(
-    const T_y& y, const T_inv_scale& beta) {
-  typedef typename stan::partials_return_type<T_y, T_inv_scale>::type
-      T_partials_return;
+return_type_t<T_y, T_inv_scale> exponential_cdf(const T_y& y,
+                                                const T_inv_scale& beta) {
+  using T_partials_return = partials_return_t<T_y, T_inv_scale>;
 
   static const char* function = "exponential_cdf";
 
   using std::exp;
 
   T_partials_return cdf(1.0);
-  if (size_zero(y, beta))
+  if (size_zero(y, beta)) {
     return cdf;
+  }
 
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
@@ -66,10 +61,12 @@ typename return_type<T_y, T_inv_scale>::type exponential_cdf(
     const T_partials_return one_m_exp = 1.0 - exp(-beta_dbl * y_dbl);
 
     T_partials_return rep_deriv = exp(-beta_dbl * y_dbl) / one_m_exp;
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] += rep_deriv * beta_dbl * cdf;
-    if (!is_constant_struct<T_inv_scale>::value)
+    }
+    if (!is_constant_all<T_inv_scale>::value) {
       ops_partials.edge2_.partials_[n] += rep_deriv * y_dbl * cdf;
+    }
   }
   return ops_partials.build(cdf);
 }

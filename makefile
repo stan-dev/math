@@ -19,6 +19,7 @@ include make/dependencies                 # rules for generating dependencies
 include make/libraries
 include make/tests
 include make/cpplint
+include make/clang-tidy
 
 .PHONY: help
 help:
@@ -47,6 +48,7 @@ help:
 	@echo '      * fwd -> prim'
 	@echo '      * mix -> {rev, fwd, prim}'
 	@echo '      * within {prim, rev, fwd, mix}: mat -> arr -> scal'
+	@echo '      * only include {prim, rev, fwd, mix}/meta.hpp from the meta subfolders'
 	@echo ''
 	@echo '  Cpplint'
 	@echo '  - cpplint       : runs cpplint.py on source files. requires python 2.7.'
@@ -54,6 +56,22 @@ help:
 	@echo '                      CPPLINT = $(CPPLINT)'
 	@echo '                    To set the version of python 2, set the PYTHON2 variable:'
 	@echo '                      PYTHON2 = $(PYTHON2)'
+	@echo ''
+	@echo ' Clang Tidy'
+	@echo ' - clang-tidy     : runs the clang-tidy makefile over the test suite.'
+	@echo '                    Options:'
+	@echo '                     files: (Optional) regex for file names to include in the check'
+	@echo '                      Default runs all the tests in unit'
+	@echo '                     tidy_checks: (Optional) A set of checks'
+	@echo '                      Default runs a hand picked selection of tests'
+	@echo ''
+	@echo '     Example: This runs clang-tidy over all the multiply tests in prim'
+	@echo ''
+	@echo '     make clang-tidy files=*prim*multiply*'
+	@echo ''
+	@echo ' - clang-tidy-fix : same as above but runs with the -fix flag.'
+	@echo '                    For automated fixes, outputs a yaml named'
+	@echo '                    .clang-fixes.yml'
 	@echo ''
 	@echo 'Documentation:'
 	@echo '  Doxygen'

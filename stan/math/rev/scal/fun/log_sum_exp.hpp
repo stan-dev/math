@@ -1,8 +1,10 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_LOG_SUM_EXP_HPP
 #define STAN_MATH_REV_SCAL_FUN_LOG_SUM_EXP_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/fun/calculate_chain.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/log_sum_exp.hpp>
 
 namespace stan {
@@ -23,13 +25,25 @@ class log_sum_exp_vd_vari : public op_vd_vari {
  public:
   log_sum_exp_vd_vari(vari* avi, double b)
       : op_vd_vari(log_sum_exp(avi->val_, b), avi, b) {}
-  void chain() { avi_->adj_ += adj_ * calculate_chain(avi_->val_, val_); }
+  void chain() {
+    if (val_ == NEGATIVE_INFTY) {
+      avi_->adj_ += adj_;
+    } else {
+      avi_->adj_ += adj_ * calculate_chain(avi_->val_, val_);
+    }
+  }
 };
 class log_sum_exp_dv_vari : public op_dv_vari {
  public:
   log_sum_exp_dv_vari(double a, vari* bvi)
       : op_dv_vari(log_sum_exp(a, bvi->val_), a, bvi) {}
-  void chain() { bvi_->adj_ += adj_ * calculate_chain(bvi_->val_, val_); }
+  void chain() {
+    if (val_ == NEGATIVE_INFTY) {
+      bvi_->adj_ += adj_;
+    } else {
+      bvi_->adj_ += adj_ * calculate_chain(bvi_->val_, val_);
+    }
+  }
 };
 
 }  // namespace internal

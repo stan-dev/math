@@ -1,10 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_MULTI_NORMAL_CHOLESKY_RNG_HPP
 #define STAN_MATH_PRIM_MAT_PROB_MULTI_NORMAL_CHOLESKY_RNG_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/mat/meta/vector_seq_view.hpp>
-#include <stan/math/prim/scal/meta/StdVectorBuilder.hpp>
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 
@@ -64,8 +63,9 @@ multi_normal_cholesky_rng(
 
   for (size_t n = 0; n < N; ++n) {
     Eigen::VectorXd z(L.cols());
-    for (int i = 0; i < L.cols(); i++)
+    for (int i = 0; i < L.cols(); i++) {
       z(i) = std_normal_rng();
+    }
 
     output[n] = Eigen::VectorXd(mu_vec[n]) + L * z;
   }

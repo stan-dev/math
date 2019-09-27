@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_ERR_CHECK_3F2_CONVERGES_HPP
 #define STAN_MATH_PRIM_SCAL_ERR_CHECK_3F2_CONVERGES_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/fun/is_nonpositive_integer.hpp>
 #include <stan/math/prim/scal/fun/value_of_rec.hpp>
@@ -67,12 +68,15 @@ inline void check_3F2_converges(const char* function, const T_a1& a1,
   bool is_undefined = (is_nonpositive_integer(b1) && fabs(b1) <= num_terms)
                       || (is_nonpositive_integer(b2) && fabs(b2) <= num_terms);
 
-  if (is_polynomial && !is_undefined)
+  if (is_polynomial && !is_undefined) {
     return;
-  if (fabs(z) < 1.0 && !is_undefined)
+  }
+  if (fabs(z) < 1.0 && !is_undefined) {
     return;
-  if (fabs(z) == 1.0 && !is_undefined && b1 + b2 > a1 + a2 + a3)
+  }
+  if (fabs(z) == 1.0 && !is_undefined && b1 + b2 > a1 + a2 + a3) {
     return;
+  }
 
   std::stringstream msg;
   msg << "called from function '" << function << "', "

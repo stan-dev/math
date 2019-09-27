@@ -1,13 +1,12 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_MULTI_STUDENT_T_RNG_HPP
 #define STAN_MATH_PRIM_MAT_PROB_MULTI_STUDENT_T_RNG_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 #include <stan/math/prim/mat/err/check_pos_definite.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
-#include <stan/math/prim/mat/meta/vector_seq_view.hpp>
-#include <stan/math/prim/scal/meta/StdVectorBuilder.hpp>
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/gamma_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
@@ -82,8 +81,9 @@ multi_student_t_rng(
   double w = 1.0 / gamma_rng();
   for (size_t n = 0; n < N; ++n) {
     Eigen::VectorXd z(S.cols());
-    for (int i = 0; i < S.cols(); i++)
+    for (int i = 0; i < S.cols(); i++) {
       z(i) = std::sqrt(w) * std_normal_rng();
+    }
 
     output[n] = Eigen::VectorXd(mu_vec[n]) + llt_of_S.matrixL() * z;
   }

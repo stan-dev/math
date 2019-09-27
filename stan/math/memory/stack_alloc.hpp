@@ -4,7 +4,7 @@
 // TODO(Bob): <cstddef> replaces this ifdef in C++11, until then this
 //            is best we can do to get safe pointer casts to uints.
 #include <stdint.h>
-#include <stan/math/prim/scal/meta/likely.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <cstdlib>
 #include <cstddef>
 #include <sstream>
@@ -37,8 +37,9 @@ const size_t DEFAULT_INITIAL_NBYTES = 1 << 16;  // 64KB
 // big fun to inline, but only called twice
 inline char* eight_byte_aligned_malloc(size_t size) {
   char* ptr = static_cast<char*>(malloc(size));
-  if (!ptr)
+  if (!ptr) {
     return ptr;  // malloc failed to alloc
+  }
   if (!is_aligned(ptr, 8U)) {
     std::stringstream s;
     s << "invalid alignment to 8 bytes, ptr="
@@ -94,17 +95,20 @@ class stack_alloc {
     char* result;
     ++cur_block_;
     // Find the next block (if any) containing at least len bytes.
-    while ((cur_block_ < blocks_.size()) && (sizes_[cur_block_] < len))
+    while ((cur_block_ < blocks_.size()) && (sizes_[cur_block_] < len)) {
       ++cur_block_;
+    }
     // Allocate a new block if necessary.
     if (unlikely(cur_block_ >= blocks_.size())) {
       // New block should be max(2*size of last block, len) bytes.
       size_t newsize = sizes_.back() * 2;
-      if (newsize < len)
+      if (newsize < len) {
         newsize = len;
+      }
       blocks_.push_back(internal::eight_byte_aligned_malloc(newsize));
-      if (!blocks_.back())
+      if (!blocks_.back()) {
         throw std::bad_alloc();
+      }
       sizes_.push_back(newsize);
     }
     result = blocks_[cur_block_];
@@ -130,8 +134,9 @@ class stack_alloc {
         cur_block_(0),
         cur_block_end_(blocks_[0] + initial_nbytes),
         next_loc_(blocks_[0]) {
-    if (!blocks_[0])
+    if (!blocks_[0]) {
       throw std::bad_alloc();  // no msg allowed in bad_alloc ctor
+    }
   }
 
   /**
@@ -142,9 +147,11 @@ class stack_alloc {
    */
   ~stack_alloc() {
     // free ALL blocks
-    for (auto& block : blocks_)
-      if (block)
+    for (auto& block : blocks_) {
+      if (block) {
         free(block);
+      }
+    }
   }
 
   /**
@@ -164,8 +171,9 @@ class stack_alloc {
     char* result = next_loc_;
     next_loc_ += len;
     // Occasionally, we have to switch blocks.
-    if (unlikely(next_loc_ >= cur_block_end_))
+    if (unlikely(next_loc_ >= cur_block_end_)) {
       result = move_to_next_block(len);
+    }
     return reinterpret_cast<void*>(result);
   }
 
@@ -208,8 +216,9 @@ class stack_alloc {
    * recover memory back to the last start_nested call.
    */
   inline void recover_nested() {
-    if (unlikely(nested_cur_blocks_.empty()))
+    if (unlikely(nested_cur_blocks_.empty())) {
       recover_all();
+    }
 
     cur_block_ = nested_cur_blocks_.back();
     nested_cur_blocks_.pop_back();
@@ -228,9 +237,11 @@ class stack_alloc {
    */
   inline void free_all() {
     // frees all BUT the first (index 0) block
-    for (size_t i = 1; i < blocks_.size(); ++i)
-      if (blocks_[i])
+    for (size_t i = 1; i < blocks_.size(); ++i) {
+      if (blocks_[i]) {
         free(blocks_[i]);
+      }
+    }
     sizes_.resize(1);
     blocks_.resize(1);
     recover_all();
@@ -263,11 +274,14 @@ class stack_alloc {
    *    false otherwise.
    */
   inline bool in_stack(const void* ptr) const {
-    for (size_t i = 0; i < cur_block_; ++i)
-      if (ptr >= blocks_[i] && ptr < blocks_[i] + sizes_[i])
+    for (size_t i = 0; i < cur_block_; ++i) {
+      if (ptr >= blocks_[i] && ptr < blocks_[i] + sizes_[i]) {
         return true;
-    if (ptr >= blocks_[cur_block_] && ptr < next_loc_)
+      }
+    }
+    if (ptr >= blocks_[cur_block_] && ptr < next_loc_) {
       return true;
+    }
     return false;
   }
 };

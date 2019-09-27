@@ -1,24 +1,14 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_BERNOULLI_LOGIT_GLM_LPMF_HPP
 #define STAN_MATH_PRIM_MAT_PROB_BERNOULLI_LOGIT_GLM_LPMF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/mat/fun/value_of_rec.hpp>
 #include <stan/math/prim/arr/fun/value_of_rec.hpp>
-#include <stan/math/prim/scal/meta/as_array_or_scalar.hpp>
-#include <stan/math/prim/scal/meta/as_scalar.hpp>
-#include <stan/math/prim/mat/meta/as_scalar.hpp>
-#include <stan/math/prim/arr/meta/as_scalar.hpp>
-#include <stan/math/prim/mat/meta/as_column_vector_or_scalar.hpp>
-#include <stan/math/prim/scal/meta/as_column_vector_or_scalar.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
-#include <stan/math/prim/mat/meta/is_vector.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <cmath>
 
@@ -54,15 +44,14 @@ namespace math {
 
 template <bool propto, typename T_y, typename T_x, typename T_alpha,
           typename T_beta>
-typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
+return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
     const T_y &y, const T_x &x, const T_alpha &alpha, const T_beta &beta) {
   static const char *function = "bernoulli_logit_glm_lpmf";
-  typedef typename partials_return_type<T_y, T_x, T_alpha, T_beta>::type
-      T_partials_return;
-  typedef typename std::conditional<
-      is_vector<T_y>::value,
-      Eigen::Matrix<typename partials_return_type<T_y>::type, -1, 1>,
-      typename partials_return_type<T_y>::type>::type T_y_val;
+  using T_partials_return = partials_return_t<T_y, T_x, T_alpha, T_beta>;
+  using T_y_val =
+      typename std::conditional_t<is_vector<T_y>::value,
+                                  Eigen::Matrix<partials_return_t<T_y>, -1, 1>,
+                                  partials_return_t<T_y>>;
 
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -74,15 +63,18 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
   check_bounded(function, "Vector of dependent variables", y, 0, 1);
   check_consistent_size(function, "Vector of dependent variables", y, N);
   check_consistent_size(function, "Weight vector", beta, M);
-  if (is_vector<T_alpha>::value)
+  if (is_vector<T_alpha>::value) {
     check_consistent_sizes(function, "Vector of intercepts", alpha,
                            "Vector of dependent variables", y);
+  }
 
-  if (size_zero(y, x, beta))
+  if (size_zero(y, x, beta)) {
     return 0;
+  }
 
-  if (!include_summand<propto, T_x, T_alpha, T_beta>::value)
+  if (!include_summand<propto, T_x, T_alpha, T_beta>::value) {
     return 0;
+  }
 
   T_partials_return logp(0);
   const auto &x_val = value_of_rec(x);
@@ -117,8 +109,7 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
 
   // Compute the necessary derivatives.
   operands_and_partials<T_x, T_alpha, T_beta> ops_partials(x, alpha, beta);
-  if (!is_constant_struct<T_beta>::value || !is_constant_struct<T_x>::value
-      || !is_constant_struct<T_alpha>::value) {
+  if (!is_constant_all<T_beta, T_x, T_alpha>::value) {
     Matrix<T_partials_return, Dynamic, 1> theta_derivative
         = (ytheta > cutoff)
               .select(-exp_m_ytheta,
@@ -126,27 +117,27 @@ typename return_type<T_x, T_alpha, T_beta>::type bernoulli_logit_glm_lpmf(
                           .select(as_array_or_scalar(signs),
                                   as_array_or_scalar(signs) * exp_m_ytheta
                                       / (exp_m_ytheta + 1)));
-    if (!is_constant_struct<T_beta>::value) {
+    if (!is_constant_all<T_beta>::value) {
       ops_partials.edge3_.partials_ = x_val.transpose() * theta_derivative;
     }
-    if (!is_constant_struct<T_x>::value) {
+    if (!is_constant_all<T_x>::value) {
       ops_partials.edge1_.partials_
           = (beta_val_vec * theta_derivative.transpose()).transpose();
     }
-    if (!is_constant_struct<T_alpha>::value) {
-      if (is_vector<T_alpha>::value)
+    if (!is_constant_all<T_alpha>::value) {
+      if (is_vector<T_alpha>::value) {
         ops_partials.edge2_.partials_ = theta_derivative;
-      else
+      } else {
         ops_partials.edge2_.partials_[0] = sum(theta_derivative);
+      }
     }
   }
   return ops_partials.build(logp);
 }
 
 template <typename T_y, typename T_x, typename T_alpha, typename T_beta>
-inline typename return_type<T_x, T_beta, T_alpha>::type
-bernoulli_logit_glm_lpmf(const T_y &y, const T_x &x, const T_alpha &alpha,
-                         const T_beta &beta) {
+inline return_type_t<T_x, T_beta, T_alpha> bernoulli_logit_glm_lpmf(
+    const T_y &y, const T_x &x, const T_alpha &alpha, const T_beta &beta) {
   return bernoulli_logit_glm_lpmf<false>(y, x, alpha, beta);
 }
 }  // namespace math

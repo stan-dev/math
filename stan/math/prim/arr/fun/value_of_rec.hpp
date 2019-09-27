@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_ARR_FUN_VALUE_OF_REC_HPP
 #define STAN_MATH_PRIM_ARR_FUN_VALUE_OF_REC_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/value_of_rec.hpp>
 #include <vector>
 #include <cstddef>
@@ -22,8 +23,9 @@ template <typename T>
 inline std::vector<double> value_of_rec(const std::vector<T>& x) {
   size_t size = x.size();
   std::vector<double> result(size);
-  for (size_t i = 0; i < size; i++)
+  for (size_t i = 0; i < size; i++) {
     result[i] = value_of_rec(x[i]);
+  }
   return result;
 }
 

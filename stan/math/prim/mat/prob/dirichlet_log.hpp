@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_DIRICHLET_LOG_HPP
 #define STAN_MATH_PRIM_MAT_PROB_DIRICHLET_LOG_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/prob/dirichlet_lpmf.hpp>
 #include <boost/math/tools/promotion.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
@@ -28,8 +29,8 @@ namespace math {
  * @tparam T_prior_size Type of prior sample sizes.
  */
 template <bool propto, typename T_prob, typename T_prior_size>
-typename return_type<T_prob, T_prior_size>::type dirichlet_log(
-    const T_prob& theta, const T_prior_size& alpha) {
+return_type_t<T_prob, T_prior_size> dirichlet_log(const T_prob& theta,
+                                                  const T_prior_size& alpha) {
   return dirichlet_lpmf<propto, T_prob, T_prior_size>(theta, alpha);
 }
 
@@ -37,8 +38,8 @@ typename return_type<T_prob, T_prior_size>::type dirichlet_log(
  * @deprecated use <code>dirichlet_lpmf</code>
  */
 template <typename T_prob, typename T_prior_size>
-typename return_type<T_prob, T_prior_size>::type dirichlet_log(
-    const T_prob& theta, const T_prior_size& alpha) {
+return_type_t<T_prob, T_prior_size> dirichlet_log(const T_prob& theta,
+                                                  const T_prior_size& alpha) {
   return dirichlet_lpmf<T_prob, T_prior_size>(theta, alpha);
 }
 

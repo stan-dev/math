@@ -1,12 +1,11 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_CHECK_SIMPLEX_HPP
 #define STAN_MATH_PRIM_MAT_ERR_CHECK_SIMPLEX_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/err/constraint_tolerance.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/meta/index_type.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
-#include <stan/math/prim/scal/meta/error_index.hpp>
 #include <sstream>
 #include <string>
 
@@ -34,8 +33,8 @@ namespace math {
 template <typename T_prob>
 void check_simplex(const char* function, const char* name,
                    const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
-  typedef typename index_type<Eigen::Matrix<T_prob, Eigen::Dynamic, 1> >::type
-      size_t;
+  using size_type =
+      typename index_type<Eigen::Matrix<T_prob, Eigen::Dynamic, 1> >::type;
 
   check_nonzero_size(function, name, theta);
   if (!(fabs(1.0 - theta.sum()) <= CONSTRAINT_TOLERANCE)) {
@@ -47,7 +46,7 @@ void check_simplex(const char* function, const char* name,
     std::string msg_str(msg.str());
     domain_error(function, name, 1.0, msg_str.c_str());
   }
-  for (size_t n = 0; n < theta.size(); n++) {
+  for (size_type n = 0; n < theta.size(); n++) {
     if (!(theta[n] >= 0)) {
       std::ostringstream msg;
       msg << "is not a valid simplex. " << name << "["

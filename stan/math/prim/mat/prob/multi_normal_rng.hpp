@@ -1,12 +1,11 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_MULTI_NORMAL_RNG_HPP
 #define STAN_MATH_PRIM_MAT_PROB_MULTI_NORMAL_RNG_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/mat/err/check_pos_definite.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
-#include <stan/math/prim/mat/meta/vector_seq_view.hpp>
-#include <stan/math/prim/scal/meta/StdVectorBuilder.hpp>
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 
@@ -73,8 +72,9 @@ multi_normal_rng(const T_loc& mu,
 
   for (size_t n = 0; n < N; ++n) {
     Eigen::VectorXd z(S.cols());
-    for (int i = 0; i < S.cols(); i++)
+    for (int i = 0; i < S.cols(); i++) {
       z(i) = std_normal_rng();
+    }
 
     output[n] = Eigen::VectorXd(mu_vec[n]) + llt_of_S.matrixL() * z;
   }

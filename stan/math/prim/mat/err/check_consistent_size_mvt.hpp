@@ -1,9 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_ERR_CHECK_CONSISTENT_SIZE_MVT_HPP
 #define STAN_MATH_PRIM_SCAL_ERR_CHECK_CONSISTENT_SIZE_MVT_HPP
 
-#include <stan/math/prim/mat/meta/length.hpp>
-#include <stan/math/prim/mat/meta/length_mvt.hpp>
-#include <stan/math/prim/mat/meta/is_vector.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/invalid_argument.hpp>
 #include <sstream>
 #include <string>
@@ -30,17 +28,19 @@ inline void check_consistent_size_mvt(const char* function, const char* name,
 
   if (length(x) == 0) {
     size_x = 0;
-    if (expected_size == 0)
+    if (expected_size == 0) {
       return;
+    }
   } else {
     size_t size_x = stan::length_mvt(x);
     bool x_contains_vectors = is_vector<
         typename std::remove_reference<decltype(x[0])>::type>::value;
 
-    if (!x_contains_vectors)
+    if (!x_contains_vectors) {
       return;
-    else if (expected_size == size_x)
+    } else if (expected_size == size_x) {
       return;
+    }
   }
 
   std::stringstream msg;

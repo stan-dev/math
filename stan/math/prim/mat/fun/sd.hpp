@@ -17,11 +17,11 @@ namespace math {
  * @return Sample variance of vector.
  */
 template <typename T>
-inline typename boost::math::tools::promote_args<T>::type sd(
-    const std::vector<T>& v) {
+inline return_type_t<T> sd(const std::vector<T>& v) {
   check_nonzero_size("sd", "v", v);
-  if (v.size() == 1)
+  if (v.size() == 1) {
     return 0.0;
+  }
   return sqrt(variance(v));
 }
 
@@ -32,11 +32,11 @@ inline typename boost::math::tools::promote_args<T>::type sd(
  * @return Sample variance.
  */
 template <typename T, int R, int C>
-inline typename boost::math::tools::promote_args<T>::type sd(
-    const Eigen::Matrix<T, R, C>& m) {
+inline return_type_t<T> sd(const Eigen::Matrix<T, R, C>& m) {
   check_nonzero_size("sd", "m", m);
-  if (m.size() == 1)
+  if (m.size() == 1) {
     return 0.0;
+  }
   return sqrt(variance(m));
 }
 

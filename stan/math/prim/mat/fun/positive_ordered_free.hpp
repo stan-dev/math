@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_POSITIVE_ORDERED_FREE_HPP
 #define STAN_MATH_PRIM_MAT_FUN_POSITIVE_ORDERED_FREE_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/err/check_positive_ordered.hpp>
-#include <stan/math/prim/mat/meta/index_type.hpp>
 #include <cmath>
 
 namespace stan {
@@ -27,17 +27,19 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> positive_ordered_free(
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::log;
-  typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
+  using size_type = typename index_type<Matrix<T, Dynamic, 1>>::type;
 
   check_positive_ordered("stan::math::positive_ordered_free",
                          "Positive ordered variable", y);
   size_type k = y.size();
   Matrix<T, Dynamic, 1> x(k);
-  if (k == 0)
+  if (k == 0) {
     return x;
+  }
   x[0] = log(y[0]);
-  for (size_type i = 1; i < k; ++i)
+  for (size_type i = 1; i < k; ++i) {
     x[i] = log(y[i] - y[i - 1]);
+  }
   return x;
 }
 }  // namespace math
