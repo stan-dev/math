@@ -234,7 +234,7 @@ class matrix_cl<T, require_arithmetic<T>> {
    * matrices do not have matching dimensions
    */
   template <typename Vec, require_std_vector_vt<is_eigen, Vec>...,
-  require_std_vector_st<std::is_arithmetic, Vec>...>
+            require_std_vector_st<std::is_arithmetic, Vec>...>
   explicit matrix_cl(Vec&& A) try : rows_(A.empty() ? 0 : A[0].size()),
                                     cols_(A.size()) {
     if (this->size() == 0) {
@@ -258,9 +258,10 @@ class matrix_cl<T, require_arithmetic<T>> {
        * on the device until we are sure that the data
        * is finished transfering
        */
-      queue.enqueueWriteBuffer(
-          buffer_cl_, CL_FALSE, sizeof(double) * offset_size,
-          sizeof(double) * rows_, A[i].data(), &this->read_events(), &write_event);
+      queue.enqueueWriteBuffer(buffer_cl_, CL_FALSE,
+                               sizeof(double) * offset_size,
+                               sizeof(double) * rows_, A[i].data(),
+                               &this->read_events(), &write_event);
     }
     this->add_write_event(write_event);
   } catch (const cl::Error& e) {
@@ -344,8 +345,8 @@ class matrix_cl<T, require_arithmetic<T>> {
     try {
       buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T));
       cl::Event transfer_event;
-      queue.enqueueWriteBuffer(buffer_cl_, CL_FALSE, 0, sizeof(T), &A, &this->read_events(),
-                               &transfer_event);
+      queue.enqueueWriteBuffer(buffer_cl_, CL_FALSE, 0, sizeof(T), &A,
+                               &this->read_events(), &transfer_event);
       this->add_write_event(transfer_event);
     } catch (const cl::Error& e) {
       check_opencl_error("matrix constructor", e);

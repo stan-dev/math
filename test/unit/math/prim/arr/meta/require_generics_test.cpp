@@ -5,12 +5,12 @@
 #include <string>
 
 TEST(requires, container_type_test) {
-  EXPECT_FALSE(
-      (stan::container_value_type_check_base<stan::is_vector, std::is_floating_point,
-                                       std::string>::value));
+  EXPECT_FALSE((stan::container_value_type_check_base<
+                stan::is_vector, std::is_floating_point, std::string>::value));
   EXPECT_TRUE(
-      (stan::container_value_type_check_base<stan::is_vector, std::is_floating_point,
-                                       std::vector<double>>::value));
+      (stan::container_value_type_check_base<stan::is_vector,
+                                             std::is_floating_point,
+                                             std::vector<double>>::value));
 }
 
 ////////////////////////////////
@@ -387,8 +387,8 @@ template <template <class> class TypeCheck, class Check, typename = void>
 struct require_vector_like_tester : std::false_type {};
 
 template <template <class> class TypeCheck, class Check>
-struct require_vector_like_tester<TypeCheck, Check,
-                                  stan::require_vector_like_vt<TypeCheck, Check>>
+struct require_vector_like_tester<
+    TypeCheck, Check, stan::require_vector_like_vt<TypeCheck, Check>>
     : std::true_type {};
 
 TEST(requires, vector_like_test) {

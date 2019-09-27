@@ -64,8 +64,8 @@ struct require_any_matrix_cl_tester : std::false_type {};
 template <template <class> class TypeCheck, class Check1, class Check2>
 struct require_any_matrix_cl_tester<
     TypeCheck, Check1, Check2,
-    stan::require_any_matrix_cl_vt<TypeCheck, Check1, Check2>> : std::true_type {
-};
+    stan::require_any_matrix_cl_vt<TypeCheck, Check1, Check2>>
+    : std::true_type {};
 
 TEST(requires, any_matrix_cl_test) {
   using stan::math::matrix_cl;
@@ -131,8 +131,8 @@ struct require_all_matrix_cl_tester : std::false_type {};
 template <template <class> class TypeCheck, class Check1, class Check2>
 struct require_all_matrix_cl_tester<
     TypeCheck, Check1, Check2,
-    stan::require_all_matrix_cl_vt<TypeCheck, Check1, Check2>> : std::true_type {
-};
+    stan::require_all_matrix_cl_vt<TypeCheck, Check1, Check2>>
+    : std::true_type {};
 
 TEST(requires, all_matrix_cl_test) {
   using stan::math::matrix_cl;

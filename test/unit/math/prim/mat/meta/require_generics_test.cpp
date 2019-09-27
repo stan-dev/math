@@ -94,8 +94,8 @@ struct require_any_not_eigen_tester : std::false_type {};
 template <template <class> class TypeCheck, class Check1, class Check2>
 struct require_any_not_eigen_tester<
     TypeCheck, Check1, Check2,
-    stan::require_any_not_eigen_vt<TypeCheck, Check1, Check2>> : std::true_type {
-};
+    stan::require_any_not_eigen_vt<TypeCheck, Check1, Check2>>
+    : std::true_type {};
 
 TEST(requires, not_any_eigen_test) {
   EXPECT_FALSE(
@@ -162,8 +162,8 @@ struct require_all_not_eigen_tester : std::false_type {};
 template <template <class> class TypeCheck, class Check1, class Check2>
 struct require_all_not_eigen_tester<
     TypeCheck, Check1, Check2,
-    stan::require_all_not_eigen_vt<TypeCheck, Check1, Check2>> : std::true_type {
-};
+    stan::require_all_not_eigen_vt<TypeCheck, Check1, Check2>>
+    : std::true_type {};
 
 TEST(requires, not_all_eigen_test) {
   EXPECT_FALSE(
