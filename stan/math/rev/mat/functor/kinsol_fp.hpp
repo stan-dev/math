@@ -95,8 +95,8 @@ namespace math {
     void kinsol_solve_fp(Eigen::VectorXd& x,
                          KinsolFixedPointEnv<F>& env, 
                          double f_tol,
-                         long int max_num_steps) {
-      const int anderson_depth = 3;
+                         long int max_num_steps,
+                         int anderson_depth) {
       size_t N = env.N_;
       void* mem = env.mem_;
 
@@ -112,8 +112,7 @@ namespace math {
       check_flag_sundials(KINSetUserData(mem, static_cast<void*>(&env)),
                           "KINSetUserData");
 
-      check_flag_kinsol(KINSol(mem, env.nv_x_, KIN_FP, env.nv_u_scal_, env.nv_f_scal_),
-                        max_num_steps);
+      KINSol(mem, env.nv_x_, KIN_FP, env.nv_u_scal_, env.nv_f_scal_);
 
       long int nniter;
       double norm;
@@ -131,9 +130,10 @@ namespace math {
           const Eigen::Matrix<double, -1, 1>& y,
           KinsolFixedPointEnv<F>& env,
           double f_tol,
-          long int max_num_steps) {
+          long int max_num_steps,
+          int anderson_depth) {
       Eigen::VectorXd xd(stan::math::value_of(x));
-      kinsol_solve_fp(xd, env, f_tol, max_num_steps);
+      kinsol_solve_fp(xd, env, f_tol, max_num_steps, anderson_depth);
       return xd;
     }
 
@@ -143,13 +143,14 @@ namespace math {
           const Eigen::Matrix<stan::math::var, -1, 1>& y,
           KinsolFixedPointEnv<F>& env,
           double f_tol,
-          long int max_num_steps) {
+          long int max_num_steps,
+          int anderson_depth) {
       using stan::math::value_of;
       using stan::math::var;
 
       // FP solution
       Eigen::VectorXd xd(value_of(x));
-      kinsol_solve_fp(xd, env, f_tol, max_num_steps);
+      kinsol_solve_fp(xd, env, f_tol, max_num_steps, anderson_depth);
 
       auto g = [&env](const Eigen::Matrix<var, -1, 1>& par_) {
         Eigen::Matrix<var, -1, 1> x_(par_.head(env.N_));
@@ -157,17 +158,20 @@ namespace math {
         return env.f_(x_, y_, env.x_r_, env.x_i_, env.msgs_);
       };
 
-      std::vector<stan::math::var> theta(x.size() + y.size());
-      std::transform(x.data(), x.data() + x.size(), theta.begin(),
-                     [](const T1& xi){return value_of(xi);});
-      std::transform(y.data(), y.data() + y.size(), theta.begin() + x.size(),
-                     [](const T1& yi){return value_of(yi);});
+      Eigen::VectorXd theta(x.size() + y.size());
+      for (int i = 0; i < env.N_; ++i) {
+        theta(i) = xd(i);
+      }
+      for (int i = 0; i < env.M_; ++i) {
+        theta(i + env.N_) = env.y_(i);
+      }
       Eigen::Matrix<double, -1, 1> fx;
       Eigen::Matrix<double, -1, -1> J;
       stan::math::jacobian(g, theta, fx, J);
       Eigen::MatrixXd A(J.block(0, 0, env.N_, env.N_));
-      Eigen::MatrixXd b(J.block(env.N_, 0, env.M_, env.N_));
-      Eigen::MatrixXd Jxy = A.transpose().colPivHouseholderQr().solve(b.transpose());
+      Eigen::MatrixXd b(J.block(0, env.N_, env.N_, env.M_));
+      A = Eigen::MatrixXd::Identity(env.N_, env.N_) - A;
+      Eigen::MatrixXd Jxy = A.colPivHouseholderQr().solve(b);
       std::vector<double> gradients(env.M_);
       Eigen::Matrix<var, -1, 1> x_sol_var(env.N_);
       for (int i = 0; i < env.N_; ++i) {
