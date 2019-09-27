@@ -39,11 +39,7 @@ If this is in the file `/path/to/foo/foo.cpp`, then you can compile and run this
 
 ```
 > cd /path/to/foo
-<<<<<<< HEAD
-> clang++ -std=c++1y -I /path/to/stan-math -I /path/to/Eigen -I /path/to/boost -I /path/to/sundials -I /path/to/tbb foo.cpp
-=======
-> clang++ -std=c++1y -I /path/to/stan-math -I /path/to/Eigen -I /path/to/boost -I /path/to/sundials -D_REENTRANT foo.cpp
->>>>>>> develop
+> clang++ -std=c++1y -I /path/to/stan-math -I /path/to/Eigen -I /path/to/boost -I /path/to/sundials -I /path/to/tbb  -D_REENTRANT  foo.cpp
 > ./a.out
 log normal(1 | 2, 3)=-2.07311
 ```
