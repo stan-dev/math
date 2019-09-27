@@ -12,6 +12,7 @@
 # 1. Remove the old version of TBB.
 # 2. Modify makefiles and README with new version numbers
 # 3. Unpack the new TBB version.
+# 4. Prune the TBB folder
 #
 # This script should be run from the lib/ folder and the argument should be the
 # in the form tbb-<version>.gz file.
@@ -73,7 +74,7 @@ echo "New version:  $tbb_version"
 # 1. Remove the old version of TBB.
 git rm -r tbb_${tbb_old_version}/
 rm -rf tbb_${tbb_old_version}/
-git commit -m "upgrading to tbb version ${tbb_version}; removing old tbb library"
+git commit -m "upgrading to TBB version ${tbb_version}; removing old TBB library"
 
 # 2. Modify makefiles and README with new version number
 # if the versions are the same we are only trimming files
@@ -83,14 +84,20 @@ sed -i -e "s|lib/tbb_${tbb_old_version}|lib/tbb_${tbb_version}|g" ../README.md .
 sed -i -e "s|TBB (version ${tbb_old_version})|TBB (version ${tbb_version})|g" ../README.md
 rm -f ../README.md*-e ../make/*-e
 git add -u ../README.md ../make/*
-git commit -m "upgrading to tbb version ${tbb_version}; modifying with new version number"
+git commit -m "upgrading to TBB version ${tbb_version}; modifying with new version number"
 
 fi
 # 3. Unpack the new TBB version.
 tar xvzf $tbb_filename
 mv tbb-${tbb_version} tbb_${tbb_version}
 git add tbb_${tbb_version}
-git commit -m "upgrading to tbb version ${tbb_version}; adding unmodified tbb library"
+git commit -m "upgrading to TBB version ${tbb_version}; adding unmodified TBB library"
+
+# 4. Prune TBB
+cd tbb_${tbb_version}
+
+git rm -rf examples/*
+git commit -m "upgrading to TBB version ${tbb_version}; pruning files"
 
 cat <<EOF
 
