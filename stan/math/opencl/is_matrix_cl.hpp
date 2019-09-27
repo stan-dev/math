@@ -49,31 +49,64 @@ struct is_matrix_cl<
  * matrix_cl
  */
 template <template <class...> class TypeCheck, class... Check>
-struct is_matrix_cl_check
-    : container_type_check_base<is_matrix_cl, TypeCheck, Check...> {};
+struct is_matrix_cl_value_check
+    : container_value_type_check_base<is_matrix_cl, TypeCheck, Check...> {};
 
 template <template <class...> class TypeCheck, class... Check>
-using require_matrix_cl_t = require_t<is_matrix_cl_check<TypeCheck, Check...>>;
+using require_matrix_cl_vt = require_t<is_matrix_cl_value_check<TypeCheck, Check...>>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_not_matrix_cl_t
-    = require_not_t<is_matrix_cl_check<TypeCheck, Check...>>;
+using require_not_matrix_cl_vt
+    = require_not_t<is_matrix_cl_value_check<TypeCheck, Check...>>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_any_matrix_cl_t
-    = require_any_t<is_matrix_cl_check<TypeCheck, Check>...>;
+using require_any_matrix_cl_vt
+    = require_any_t<is_matrix_cl_value_check<TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_any_not_matrix_cl_t
-    = require_any_not_t<is_matrix_cl_check<TypeCheck, Check>...>;
+using require_any_not_matrix_cl_vt
+    = require_any_not_t<is_matrix_cl_value_check<TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_all_matrix_cl_t
-    = require_all_t<is_matrix_cl_check<TypeCheck, Check>...>;
+using require_all_matrix_cl_vt
+    = require_all_t<is_matrix_cl_value_check<TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_all_not_matrix_cl_t
-    = require_all_not_t<is_matrix_cl_check<TypeCheck, Check>...>;
+using require_all_not_matrix_cl_vt
+    = require_all_not_t<is_matrix_cl_value_check<TypeCheck, Check>...>;
+
+// Scalar Check
+
+/**
+ * matrix_cl
+ */
+template <template <class...> class TypeCheck, class... Check>
+struct is_matrix_cl_scalar_check
+    : container_scalar_type_check_base<is_matrix_cl, TypeCheck, Check...> {};
+
+template <template <class...> class TypeCheck, class... Check>
+using require_matrix_cl_st = require_t<is_matrix_cl_scalar_check<TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_not_matrix_cl_st
+    = require_not_t<is_matrix_cl_scalar_check<TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_matrix_cl_st
+    = require_any_t<is_matrix_cl_scalar_check<TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_not_matrix_cl_st
+    = require_any_not_t<is_matrix_cl_scalar_check<TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_matrix_cl_st
+    = require_all_t<is_matrix_cl_scalar_check<TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_not_matrix_cl_st
+    = require_all_not_t<is_matrix_cl_scalar_check<TypeCheck, Check>...>;
+
 
 }  // namespace stan
 #endif

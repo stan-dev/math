@@ -6,15 +6,11 @@
 
 TEST(requires, container_type_test) {
   EXPECT_FALSE(
-      (stan::container_type_check_base<stan::is_vector, std::is_floating_point,
+      (stan::container_value_type_check_base<stan::is_vector, std::is_floating_point,
                                        std::string>::value));
   EXPECT_TRUE(
-      (stan::container_type_check_base<stan::is_vector, std::is_floating_point,
+      (stan::container_value_type_check_base<stan::is_vector, std::is_floating_point,
                                        std::vector<double>>::value));
-  /** TODO(Steve): Discuss Below
-   * EXPECT_TRUE((stan::container_type_check_base<std::is_pointer,
-   * std::is_floating_point, double[]>::value));
-   */
 }
 
 ////////////////////////////////
@@ -29,7 +25,7 @@ template <template <class> class ContainerCheck,
           template <class> class TypeCheck, class Check>
 struct require_container_tester<
     ContainerCheck, TypeCheck, Check,
-    stan::require_container_t<ContainerCheck, TypeCheck, Check>>
+    stan::require_container_vt<ContainerCheck, TypeCheck, Check>>
     : std::true_type {};
 
 TEST(requires, generic_container_type_test) {
@@ -48,7 +44,7 @@ struct require_std_vector_tester : std::false_type {};
 
 template <template <class> class TypeCheck, class Check>
 struct require_std_vector_tester<TypeCheck, Check,
-                                 stan::require_std_vector_t<TypeCheck, Check>>
+                                 stan::require_std_vector_vt<TypeCheck, Check>>
     : std::true_type {};
 
 TEST(requires, std_vector_test) {
@@ -70,7 +66,7 @@ struct require_not_std_vector_tester : std::false_type {};
 
 template <template <class> class TypeCheck, class Check>
 struct require_not_std_vector_tester<
-    TypeCheck, Check, stan::require_not_std_vector_t<TypeCheck, Check>>
+    TypeCheck, Check, stan::require_not_std_vector_vt<TypeCheck, Check>>
     : std::true_type {};
 
 TEST(requires, not_std_vector_test) {
@@ -96,7 +92,7 @@ struct require_any_std_vector_tester : std::false_type {};
 template <template <class> class TypeCheck, class Check1, class Check2>
 struct require_any_std_vector_tester<
     TypeCheck, Check1, Check2,
-    stan::require_any_std_vector_t<TypeCheck, Check1, Check2>>
+    stan::require_any_std_vector_vt<TypeCheck, Check1, Check2>>
     : std::true_type {};
 
 TEST(requires, any_std_vector_test) {
@@ -129,7 +125,7 @@ struct require_any_not_std_vector_tester : std::false_type {};
 template <template <class> class TypeCheck, class Check1, class Check2>
 struct require_any_not_std_vector_tester<
     TypeCheck, Check1, Check2,
-    stan::require_any_not_std_vector_t<TypeCheck, Check1, Check2>>
+    stan::require_any_not_std_vector_vt<TypeCheck, Check1, Check2>>
     : std::true_type {};
 
 TEST(requires, not_any_std_vector_test) {
@@ -163,7 +159,7 @@ struct require_all_std_vector_tester : std::false_type {};
 template <template <class> class TypeCheck, class Check1, class Check2>
 struct require_all_std_vector_tester<
     TypeCheck, Check1, Check2,
-    stan::require_all_std_vector_t<TypeCheck, Check1, Check2>>
+    stan::require_all_std_vector_vt<TypeCheck, Check1, Check2>>
     : std::true_type {};
 
 TEST(requires, all_std_vector_test) {
@@ -194,7 +190,7 @@ struct require_all_not_std_vector_tester : std::false_type {};
 template <template <class> class TypeCheck, class Check1, class Check2>
 struct require_all_not_std_vector_tester<
     TypeCheck, Check1, Check2,
-    stan::require_all_not_std_vector_t<TypeCheck, Check1, Check2>>
+    stan::require_all_not_std_vector_vt<TypeCheck, Check1, Check2>>
     : std::true_type {};
 
 TEST(requires, not_all_std_vector_test) {
@@ -223,7 +219,7 @@ struct require_vector_tester : std::false_type {};
 
 template <template <class> class TypeCheck, class Check>
 struct require_vector_tester<TypeCheck, Check,
-                             stan::require_vector_t<TypeCheck, Check>>
+                             stan::require_vector_vt<TypeCheck, Check>>
     : std::true_type {};
 
 TEST(requires, vector_test) {
@@ -244,7 +240,7 @@ struct require_not_vector_tester : std::false_type {};
 
 template <template <class> class TypeCheck, class Check>
 struct require_not_vector_tester<TypeCheck, Check,
-                                 stan::require_not_vector_t<TypeCheck, Check>>
+                                 stan::require_not_vector_vt<TypeCheck, Check>>
     : std::true_type {};
 
 TEST(requires, not_vector_test) {
@@ -270,7 +266,7 @@ struct require_any_vector_tester : std::false_type {};
 template <template <class> class TypeCheck, class Check1, class Check2>
 struct require_any_vector_tester<
     TypeCheck, Check1, Check2,
-    stan::require_any_vector_t<TypeCheck, Check1, Check2>> : std::true_type {};
+    stan::require_any_vector_vt<TypeCheck, Check1, Check2>> : std::true_type {};
 
 TEST(requires, any_vector_test) {
   EXPECT_TRUE(
@@ -301,7 +297,7 @@ struct require_any_not_vector_tester : std::false_type {};
 template <template <class> class TypeCheck, class Check1, class Check2>
 struct require_any_not_vector_tester<
     TypeCheck, Check1, Check2,
-    stan::require_any_not_vector_t<TypeCheck, Check1, Check2>>
+    stan::require_any_not_vector_vt<TypeCheck, Check1, Check2>>
     : std::true_type {};
 
 TEST(requires, not_any_vector_test) {
@@ -334,7 +330,7 @@ struct require_all_vector_tester : std::false_type {};
 template <template <class> class TypeCheck, class Check1, class Check2>
 struct require_all_vector_tester<
     TypeCheck, Check1, Check2,
-    stan::require_all_vector_t<TypeCheck, Check1, Check2>> : std::true_type {};
+    stan::require_all_vector_vt<TypeCheck, Check1, Check2>> : std::true_type {};
 
 TEST(requires, all_vector_test) {
   EXPECT_TRUE(
@@ -363,7 +359,7 @@ struct require_all_not_vector_tester : std::false_type {};
 template <template <class> class TypeCheck, class Check1, class Check2>
 struct require_all_not_vector_tester<
     TypeCheck, Check1, Check2,
-    stan::require_all_not_vector_t<TypeCheck, Check1, Check2>>
+    stan::require_all_not_vector_vt<TypeCheck, Check1, Check2>>
     : std::true_type {};
 
 TEST(requires, not_all_vector_test) {
@@ -392,7 +388,7 @@ struct require_vector_like_tester : std::false_type {};
 
 template <template <class> class TypeCheck, class Check>
 struct require_vector_like_tester<TypeCheck, Check,
-                                  stan::require_vector_like_t<TypeCheck, Check>>
+                                  stan::require_vector_like_vt<TypeCheck, Check>>
     : std::true_type {};
 
 TEST(requires, vector_like_test) {
@@ -414,7 +410,7 @@ struct require_not_vector_like_tester : std::false_type {};
 
 template <template <class> class TypeCheck, class Check>
 struct require_not_vector_like_tester<
-    TypeCheck, Check, stan::require_not_vector_like_t<TypeCheck, Check>>
+    TypeCheck, Check, stan::require_not_vector_like_vt<TypeCheck, Check>>
     : std::true_type {};
 
 TEST(requires, not_vector_like_test) {
@@ -441,7 +437,7 @@ struct require_any_vector_like_tester : std::false_type {};
 template <template <class> class TypeCheck, class Check1, class Check2>
 struct require_any_vector_like_tester<
     TypeCheck, Check1, Check2,
-    stan::require_any_vector_like_t<TypeCheck, Check1, Check2>>
+    stan::require_any_vector_like_vt<TypeCheck, Check1, Check2>>
     : std::true_type {};
 
 TEST(requires, any_vector_like_test) {
@@ -474,7 +470,7 @@ struct require_any_not_vector_like_tester : std::false_type {};
 template <template <class> class TypeCheck, class Check1, class Check2>
 struct require_any_not_vector_like_tester<
     TypeCheck, Check1, Check2,
-    stan::require_any_not_vector_like_t<TypeCheck, Check1, Check2>>
+    stan::require_any_not_vector_like_vt<TypeCheck, Check1, Check2>>
     : std::true_type {};
 
 TEST(requires, not_any_vector_like_test) {
@@ -510,7 +506,7 @@ struct require_all_vector_like_tester : std::false_type {};
 template <template <class> class TypeCheck, class Check1, class Check2>
 struct require_all_vector_like_tester<
     TypeCheck, Check1, Check2,
-    stan::require_all_vector_like_t<TypeCheck, Check1, Check2>>
+    stan::require_all_vector_like_vt<TypeCheck, Check1, Check2>>
     : std::true_type {};
 
 TEST(requires, all_vector_like_test) {
@@ -541,7 +537,7 @@ struct require_all_not_vector_like_tester : std::false_type {};
 template <template <class> class TypeCheck, class Check1, class Check2>
 struct require_all_not_vector_like_tester<
     TypeCheck, Check1, Check2,
-    stan::require_all_not_vector_like_t<TypeCheck, Check1, Check2>>
+    stan::require_all_not_vector_like_vt<TypeCheck, Check1, Check2>>
     : std::true_type {};
 
 TEST(requires, not_all_vector_like_test) {

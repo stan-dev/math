@@ -305,7 +305,7 @@ using require_any_not_stan_scalar = require_any_not_t<is_stan_scalar<Types>...>;
  */
 template <template <class...> class ContainerCheck,
           template <class...> class TypeCheck, class... Check>
-using container_type_check_base = bool_constant<
+using container_value_type_check_base = bool_constant<
     math::conjunction<ContainerCheck<std::decay_t<Check>>...,
                       TypeCheck<value_type_t<Check>>...>::value>;
 
@@ -314,163 +314,349 @@ using container_type_check_base = bool_constant<
  * test.
  * @tparam ContainerCheck Templated struct or alias that wraps a static constant
  * value called type. Used to check the container satisfies a particular type
- * check. used like template <typename T, require_container_t<is_std_vector,
+ * check. used like template <typename T, require_container_vt<is_std_vector,
  * is_var, T>...>
  */
 template <template <class...> class ContainerCheck,
           template <class...> class TypeCheck, class... Check>
-using require_container_t
-    = require_t<container_type_check_base<ContainerCheck, TypeCheck, Check...>>;
+using require_container_vt
+    = require_t<container_value_type_check_base<ContainerCheck, TypeCheck, Check...>>;
 
 /**
  * std vector
  */
 template <template <class...> class TypeCheck, class... Check>
-struct is_std_vector_check
-    : container_type_check_base<is_std_vector, TypeCheck, Check...> {};
+struct is_std_vector_value_check
+    : container_value_type_check_base<is_std_vector, TypeCheck, Check...> {};
 
 template <template <class...> class TypeCheck, class... Check>
-using require_std_vector_t
-    = require_t<is_std_vector_check<TypeCheck, Check...>>;
+using require_std_vector_vt
+    = require_t<is_std_vector_value_check<TypeCheck, Check...>>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_not_std_vector_t
-    = require_not_t<is_std_vector_check<TypeCheck, Check...>>;
+using require_not_std_vector_vt
+    = require_not_t<is_std_vector_value_check<TypeCheck, Check...>>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_any_std_vector_t
-    = require_any_t<is_std_vector_check<TypeCheck, Check>...>;
+using require_any_std_vector_vt
+    = require_any_t<is_std_vector_value_check<TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_any_not_std_vector_t
-    = require_any_not_t<is_std_vector_check<TypeCheck, Check>...>;
+using require_any_not_std_vector_vt
+    = require_any_not_t<is_std_vector_value_check<TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_all_std_vector_t
-    = require_all_t<is_std_vector_check<TypeCheck, Check>...>;
+using require_all_std_vector_vt
+    = require_all_t<is_std_vector_value_check<TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_all_not_std_vector_t
-    = require_all_not_t<is_std_vector_check<TypeCheck, Check>...>;
+using require_all_not_std_vector_vt
+    = require_all_not_t<is_std_vector_value_check<TypeCheck, Check>...>;
 
 /**
  * Vectors
  */
 template <template <class...> class TypeCheck, class... Check>
-struct is_vector_check
-    : container_type_check_base<is_vector, TypeCheck, Check...> {};
+struct is_vector_value_check
+    : container_value_type_check_base<is_vector, TypeCheck, Check...> {};
 
 template <template <class...> class TypeCheck, class... Check>
-using require_vector_t = require_t<is_vector_check<TypeCheck, Check...>>;
+using require_vector_vt = require_t<is_vector_value_check<TypeCheck, Check...>>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_not_vector_t
-    = require_not_t<is_vector_check<TypeCheck, Check...>>;
+using require_not_vector_vt
+    = require_not_t<is_vector_value_check<TypeCheck, Check...>>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_any_vector_t
-    = require_any_t<is_vector_check<TypeCheck, Check>...>;
+using require_any_vector_vt
+    = require_any_t<is_vector_value_check<TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_any_not_vector_t
-    = require_any_not_t<is_vector_check<TypeCheck, Check>...>;
+using require_any_not_vector_vt
+    = require_any_not_t<is_vector_value_check<TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_all_vector_t
-    = require_all_t<is_vector_check<TypeCheck, Check>...>;
+using require_all_vector_vt
+    = require_all_t<is_vector_value_check<TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_all_not_vector_t
-    = require_all_not_t<is_vector_check<TypeCheck, Check>...>;
+using require_all_not_vector_vt
+    = require_all_not_t<is_vector_value_check<TypeCheck, Check>...>;
 
 /**
  * Vector Like
  */
 template <template <class...> class TypeCheck, class... Check>
-struct is_vector_like_check
-    : container_type_check_base<is_vector_like, TypeCheck, Check...> {};
+struct is_vector_like_value_check
+    : container_value_type_check_base<is_vector_like, TypeCheck, Check...> {};
 
 template <template <class...> class TypeCheck, class... Check>
-using require_vector_like_t
-    = require_t<is_vector_like_check<TypeCheck, Check...>>;
+using require_vector_like_vt
+    = require_t<is_vector_like_value_check<TypeCheck, Check...>>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_not_vector_like_t
-    = require_not_t<is_vector_like_check<TypeCheck, Check...>>;
+using require_not_vector_like_vt
+    = require_not_t<is_vector_like_value_check<TypeCheck, Check...>>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_any_vector_like_t
-    = require_any_t<is_vector_like_check<TypeCheck, Check>...>;
+using require_any_vector_like_vt
+    = require_any_t<is_vector_like_value_check<TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_any_not_vector_like_t
-    = require_any_not_t<is_vector_like_check<TypeCheck, Check>...>;
+using require_any_not_vector_like_vt
+    = require_any_not_t<is_vector_like_value_check<TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_all_vector_like_t
-    = require_all_t<is_vector_like_check<TypeCheck, Check>...>;
+using require_all_vector_like_vt
+    = require_all_t<is_vector_like_value_check<TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_all_not_vector_like_t
-    = require_all_not_t<is_vector_like_check<TypeCheck, Check>...>;
+using require_all_not_vector_like_vt
+    = require_all_not_t<is_vector_like_value_check<TypeCheck, Check>...>;
 
 /**
  * Eigen
  */
 template <template <class...> class TypeCheck, class... Check>
-struct is_eigen_check
-    : container_type_check_base<is_eigen, TypeCheck, Check...> {};
+struct is_eigen_value_check
+    : container_value_type_check_base<is_eigen, TypeCheck, Check...> {};
 
 template <template <class...> class TypeCheck, class... Check>
-using require_eigen_t = require_t<is_eigen_check<TypeCheck, Check...>>;
+using require_eigen_vt = require_t<is_eigen_value_check<TypeCheck, Check...>>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_not_eigen_t = require_not_t<is_eigen_check<TypeCheck, Check...>>;
+using require_not_eigen_vt = require_not_t<is_eigen_value_check<TypeCheck, Check...>>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_any_eigen_t = require_any_t<is_eigen_check<TypeCheck, Check>...>;
+using require_any_eigen_vt = require_any_t<is_eigen_value_check<TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_any_not_eigen_t
-    = require_any_not_t<is_eigen_check<TypeCheck, Check>...>;
+using require_any_not_eigen_vt
+    = require_any_not_t<is_eigen_value_check<TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_all_eigen_t = require_all_t<is_eigen_check<TypeCheck, Check>...>;
+using require_all_eigen_vt = require_all_t<is_eigen_value_check<TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_all_not_eigen_t
-    = require_all_not_t<is_eigen_check<TypeCheck, Check>...>;
+using require_all_not_eigen_vt
+    = require_all_not_t<is_eigen_value_check<TypeCheck, Check>...>;
 
 /**
  * Std vector
  */
 template <template <class...> class TypeCheck, class... Check>
-struct is_eigen_vector_check
-    : container_type_check_base<is_eigen_vector, TypeCheck, Check...> {};
+struct is_eigen_vector_value_check
+    : container_value_type_check_base<is_eigen_vector, TypeCheck, Check...> {};
 
 template <template <class...> class TypeCheck, class... Check>
-using require_eigen_vector_t
-    = require_t<is_eigen_vector_check<TypeCheck, Check...>>;
+using require_eigen_vector_vt
+    = require_t<is_eigen_vector_value_check<TypeCheck, Check...>>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_not_eigen_vector_t
-    = require_not_t<is_eigen_vector_check<TypeCheck, Check...>>;
+using require_not_eigen_vector_vt
+    = require_not_t<is_eigen_vector_value_check<TypeCheck, Check...>>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_any_eigen_vector_t
-    = require_any_t<is_eigen_vector_check<TypeCheck, Check>...>;
+using require_any_eigen_vector_vt
+    = require_any_t<is_eigen_vector_value_check<TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_any_not_eigen_vector_t
-    = require_any_not_t<is_eigen_vector_check<TypeCheck, Check>...>;
+using require_any_not_eigen_vector_vt
+    = require_any_not_t<is_eigen_vector_value_check<TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_all_eigen_vector_t
-    = require_all_t<is_eigen_vector_check<TypeCheck, Check>...>;
+using require_all_eigen_vector_vt
+    = require_all_t<is_eigen_vector_value_check<TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_all_not_eigen_vector_t
-    = require_all_not_t<is_eigen_vector_check<TypeCheck, Check>...>;
+using require_all_not_eigen_vector_vt
+    = require_all_not_t<is_eigen_vector_value_check<TypeCheck, Check>...>;
+
+/**
+ * Container Scalar check
+ */
+
+ /**
+  * Used as the base for checking whether a type is a container with
+  * an underlying scalar type
+  *
+  * @tparam ContainerCheck Templated struct or alias that wraps a static constant
+  * scalar called type. Used to check the container satisfies a particular type
+  * check.
+  * @tparam CheckType Templated struct or alias that wraps a static constant
+  * scalar called type. Used to check the container's underlying type satisfies a
+  * particular type check.
+  *
+  */
+ template <template <class...> class ContainerCheck,
+           template <class...> class TypeCheck, class... Check>
+ using container_scalar_type_check_base = bool_constant<
+     math::conjunction<ContainerCheck<std::decay_t<Check>>...,
+                       TypeCheck<scalar_type_t<Check>>...>::value>;
+
+ /**
+  * Check a templated type to see if it and it's inner type pass a condiational
+  * test.
+  * @tparam ContainerCheck Templated struct or alias that wraps a static constant
+  * scalar called type. Used to check the container satisfies a particular type
+  * check. used like template <typename T, require_container_st<is_std_vector,
+  * is_var, T>...>
+  */
+ template <template <class...> class ContainerCheck,
+           template <class...> class TypeCheck, class... Check>
+ using require_container_st
+     = require_t<container_scalar_type_check_base<ContainerCheck, TypeCheck, Check...>>;
+
+ /**
+  * std vector
+  */
+ template <template <class...> class TypeCheck, class... Check>
+ struct is_std_vector_scalar_check
+     : container_scalar_type_check_base<is_std_vector, TypeCheck, Check...> {};
+
+ template <template <class...> class TypeCheck, class... Check>
+ using require_std_vector_st
+     = require_t<is_std_vector_scalar_check<TypeCheck, Check...>>;
+
+ template <template <class...> class TypeCheck, class... Check>
+ using require_not_std_vector_st
+     = require_not_t<is_std_vector_scalar_check<TypeCheck, Check...>>;
+
+ template <template <class...> class TypeCheck, class... Check>
+ using require_any_std_vector_st
+     = require_any_t<is_std_vector_scalar_check<TypeCheck, Check>...>;
+
+ template <template <class...> class TypeCheck, class... Check>
+ using require_any_not_std_vector_st
+     = require_any_not_t<is_std_vector_scalar_check<TypeCheck, Check>...>;
+
+ template <template <class...> class TypeCheck, class... Check>
+ using require_all_std_vector_st
+     = require_all_t<is_std_vector_scalar_check<TypeCheck, Check>...>;
+
+ template <template <class...> class TypeCheck, class... Check>
+ using require_all_not_std_vector_st
+     = require_all_not_t<is_std_vector_scalar_check<TypeCheck, Check>...>;
+
+ /**
+  * Vectors
+  */
+ template <template <class...> class TypeCheck, class... Check>
+ struct is_vector_scalar_check
+     : container_scalar_type_check_base<is_vector, TypeCheck, Check...> {};
+
+ template <template <class...> class TypeCheck, class... Check>
+ using require_vector_st = require_t<is_vector_scalar_check<TypeCheck, Check...>>;
+
+ template <template <class...> class TypeCheck, class... Check>
+ using require_not_vector_st
+     = require_not_t<is_vector_scalar_check<TypeCheck, Check...>>;
+
+ template <template <class...> class TypeCheck, class... Check>
+ using require_any_vector_st
+     = require_any_t<is_vector_scalar_check<TypeCheck, Check>...>;
+
+ template <template <class...> class TypeCheck, class... Check>
+ using require_any_not_vector_st
+     = require_any_not_t<is_vector_scalar_check<TypeCheck, Check>...>;
+
+ template <template <class...> class TypeCheck, class... Check>
+ using require_all_vector_st
+     = require_all_t<is_vector_scalar_check<TypeCheck, Check>...>;
+
+ template <template <class...> class TypeCheck, class... Check>
+ using require_all_not_vector_st
+     = require_all_not_t<is_vector_scalar_check<TypeCheck, Check>...>;
+
+ /**
+  * Vector Like
+  */
+ template <template <class...> class TypeCheck, class... Check>
+ struct is_vector_like_scalar_check
+     : container_scalar_type_check_base<is_vector_like, TypeCheck, Check...> {};
+
+ template <template <class...> class TypeCheck, class... Check>
+ using require_vector_like_st
+     = require_t<is_vector_like_scalar_check<TypeCheck, Check...>>;
+
+ template <template <class...> class TypeCheck, class... Check>
+ using require_not_vector_like_st
+     = require_not_t<is_vector_like_scalar_check<TypeCheck, Check...>>;
+
+ template <template <class...> class TypeCheck, class... Check>
+ using require_any_vector_like_st
+     = require_any_t<is_vector_like_scalar_check<TypeCheck, Check>...>;
+
+ template <template <class...> class TypeCheck, class... Check>
+ using require_any_not_vector_like_st
+     = require_any_not_t<is_vector_like_scalar_check<TypeCheck, Check>...>;
+
+ template <template <class...> class TypeCheck, class... Check>
+ using require_all_vector_like_st
+     = require_all_t<is_vector_like_scalar_check<TypeCheck, Check>...>;
+
+ template <template <class...> class TypeCheck, class... Check>
+ using require_all_not_vector_like_st
+     = require_all_not_t<is_vector_like_scalar_check<TypeCheck, Check>...>;
+
+ /**
+  * Eigen
+  */
+ template <template <class...> class TypeCheck, class... Check>
+ struct is_eigen_scalar_check
+     : container_scalar_type_check_base<is_eigen, TypeCheck, Check...> {};
+
+ template <template <class...> class TypeCheck, class... Check>
+ using require_eigen_st = require_t<is_eigen_scalar_check<TypeCheck, Check...>>;
+
+ template <template <class...> class TypeCheck, class... Check>
+ using require_not_eigen_st = require_not_t<is_eigen_scalar_check<TypeCheck, Check...>>;
+
+ template <template <class...> class TypeCheck, class... Check>
+ using require_any_eigen_st = require_any_t<is_eigen_scalar_check<TypeCheck, Check>...>;
+
+ template <template <class...> class TypeCheck, class... Check>
+ using require_any_not_eigen_st
+     = require_any_not_t<is_eigen_scalar_check<TypeCheck, Check>...>;
+
+ template <template <class...> class TypeCheck, class... Check>
+ using require_all_eigen_st = require_all_t<is_eigen_scalar_check<TypeCheck, Check>...>;
+
+ template <template <class...> class TypeCheck, class... Check>
+ using require_all_not_eigen_st
+     = require_all_not_t<is_eigen_scalar_check<TypeCheck, Check>...>;
+
+ /**
+  * Std vector
+  */
+ template <template <class...> class TypeCheck, class... Check>
+ struct is_eigen_vector_scalar_check
+     : container_scalar_type_check_base<is_eigen_vector, TypeCheck, Check...> {};
+
+ template <template <class...> class TypeCheck, class... Check>
+ using require_eigen_vector_st
+     = require_t<is_eigen_vector_scalar_check<TypeCheck, Check...>>;
+
+ template <template <class...> class TypeCheck, class... Check>
+ using require_not_eigen_vector_st
+     = require_not_t<is_eigen_vector_scalar_check<TypeCheck, Check...>>;
+
+ template <template <class...> class TypeCheck, class... Check>
+ using require_any_eigen_vector_st
+     = require_any_t<is_eigen_vector_scalar_check<TypeCheck, Check>...>;
+
+ template <template <class...> class TypeCheck, class... Check>
+ using require_any_not_eigen_vector_st
+     = require_any_not_t<is_eigen_vector_scalar_check<TypeCheck, Check>...>;
+
+ template <template <class...> class TypeCheck, class... Check>
+ using require_all_eigen_vector_st
+     = require_all_t<is_eigen_vector_scalar_check<TypeCheck, Check>...>;
+
+ template <template <class...> class TypeCheck, class... Check>
+ using require_all_not_eigen_vector_st
+     = require_all_not_t<is_eigen_vector_scalar_check<TypeCheck, Check>...>;
+
 
 }  // namespace stan
 #endif
