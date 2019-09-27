@@ -414,9 +414,6 @@ class matrix_cl<T, require_arithmetic<T>> {
    * Assign a \c matrix_cl to another
    */
   matrix_cl<T>& operator=(matrix_cl<T>&& a) {
-    if (a.size() == 0) {
-      return *this;
-    }
     view_ = a.view();
     rows_ = a.rows();
     cols_ = a.cols();
@@ -431,16 +428,12 @@ class matrix_cl<T, require_arithmetic<T>> {
    * Assign a \c matrix_cl to another
    */
   matrix_cl<T>& operator=(const matrix_cl<T>& a) {
-    if (a.size() == 0) {
-      return *this;
-    }
     view_ = a.view();
     rows_ = a.rows();
     cols_ = a.cols();
-    this->wait_for_read_write_events();
-    buffer_cl_ = a.buffer_cl_;
-    write_events_ = a.write_events_;
-    read_events_ = a.read_events_;
+    cl::Context& ctx = opencl_context.context();
+    cl::CommandQueue queue = opencl_context.queue();
+    this->buffer_cl_ = a.buffer_cl_;
     return *this;
   }
 };  // namespace math
