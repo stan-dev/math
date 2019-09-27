@@ -19,7 +19,8 @@ namespace math {
 using boost_policy_t = boost::math::policies::policy<
     boost::math::policies::overflow_error<
         boost::math::policies::errno_on_error>,
-    boost::math::policies::pole_error<boost::math::policies::errno_on_error>>;
+    boost::math::policies::pole_error<boost::math::policies::errno_on_error>,
+    boost::math::policies::promote_double<false> >;
 
 }  // namespace math
 }  // namespace stan

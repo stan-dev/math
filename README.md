@@ -39,7 +39,11 @@ If this is in the file `/path/to/foo/foo.cpp`, then you can compile and run this
 
 ```
 > cd /path/to/foo
+<<<<<<< HEAD
 > clang++ -std=c++1y -I /path/to/stan-math -I /path/to/Eigen -I /path/to/boost -I /path/to/sundials -I /path/to/tbb foo.cpp
+=======
+> clang++ -std=c++1y -I /path/to/stan-math -I /path/to/Eigen -I /path/to/boost -I /path/to/sundials -D_REENTRANT foo.cpp
+>>>>>>> develop
 > ./a.out
 log normal(1 | 2, 3)=-2.07311
 ```
@@ -55,7 +59,7 @@ The `-I` includes provide paths pointing to the five necessary includes:
 Note that the paths should *not* include the final directories `stan`, `Eigen`, or `boost` on the paths.  An example of a real instantiation:
 
 ```
-clang++ -std=c++1y -I ~/stan-dev/math -I ~/stan-dev/math/lib/eigen_3.3.3/ -I ~/stan-dev/math/lib/boost_1.66.0/ -I ~/stan-dev/math/lib/sundials_4.1.0/include -I ~/stan-dev/math/lib/tbb_2019_U6/include foo.cpp
+clang++ -std=c++1y -I ~/stan-dev/math -I ~/stan-dev/math/lib/eigen_3.3.3/ -I ~/stan-dev/math/lib/boost_1.69.0/ -I ~/stan-dev/math/lib/sundials_4.1.0/include  -I ~/stan-dev/math/lib/tbb_2019_U6/include -D_REENTRANT foo.cpp
 ```
 
 The following directories all exist below the links given to `-I`: `~/stan-dev/math/stan` and `~/stan-dev/math/lib/eigen_3.3.3/Eigen` and `~stan-dev/math/lib/boost_1.69.0/boost` and `~stan-dev/math/lib/sundials_4.1.0/include` and `~/stan-dev/math/lib/tbb_2019_U6/include`.
