@@ -431,9 +431,19 @@ class matrix_cl<T, require_arithmetic<T>> {
     this->view_ = a.view();
     this->rows_ = a.rows();
     this->cols_ = a.cols();
-    this->buffer_cl_ = a.buffer_cl_;
-    this->write_events_ = a.write_events_;
-    this->read_events_ = a.read_events_;
+    cl::Context& ctx = opencl_context.context();
+    cl::CommandQueue queue = opencl_context.queue();
+    try {
+      buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * this->size());
+      cl::Event cstr_event;
+      queue.enqueueCopyBuffer(a.buffer(), this->buffer(), 0, 0,
+                              a.size() * sizeof(T), &a.write_events(),
+                              &cstr_event);
+      this->add_write_event(cstr_event);
+      a.add_read_event(cstr_event);
+    } catch (const cl::Error& e) {
+      check_opencl_error("copy (OpenCL)->(OpenCL)", e);
+    }
     return *this;
   }
 };  // namespace math

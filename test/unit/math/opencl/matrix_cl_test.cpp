@@ -3,6 +3,7 @@
 #include <stan/math/opencl/opencl_context.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/copy.hpp>
+#include <stan/math/opencl/zeros.hpp>
 #include <stan/math/opencl/sub_block.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
@@ -38,7 +39,9 @@ TEST(MathMatrixCL, assignment) {
     Eigen::Matrix<double, 2, 2> mat_local_1;
     mat_local_1 << 1, 2, 3, 4;
     matrix_cl<double> mat1_local_cl(mat_local_1);
+    matrix_cl<double> mat2_local_cl(mat_local_1);
     mat2_cl = mat1_local_cl;
+    mat1_local_cl.template zeros<stan::math::matrix_cl_view::Entire>();
   }
   Eigen::Matrix<double, 2, 2> mat_2_fromcl = stan::math::from_matrix_cl(mat2_cl);
   // Make sure mat_2_from_cl matches the local scoped values

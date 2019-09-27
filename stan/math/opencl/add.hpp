@@ -58,6 +58,7 @@ template <typename T1, typename T2, typename = require_all_arithmetic<T1, T2>>
 inline auto operator+(const matrix_cl<T1>& A, const matrix_cl<T2>& B) {
   return add(A, B);
 }
+
 }  // namespace math
 }  // namespace stan
 
