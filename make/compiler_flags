@@ -181,18 +181,32 @@ endif
 # Setup Intel TBB
 #
 # Sets up TBB CXXFLAGS_TBB and LDFLAGS_TBB to compile and link to TBB
+#
+# The tbbmalloc and tbbmalloc_proxy libraries are optionally included
+# as targets. By default these are included whenever STAN_THREADS is
+# set and they are left out otherwise. This behavior can be altered by
+# explicitly setting the TBB_LIBRARIES variable which should contain
+# "tbb" or "tbb tbbmalloc tbbmalloc_proxy". Setting the TBB_LIBRARIES
+# variable overrides the default.
 
 TBB_ABSOLUTE_PATH = $(abspath $(TBB))
 
+ifneq (,$(findstring STAN_THREADS,$(CXXFLAGS)))
+  TBB_LIBRARIES ?= tbb tbbmalloc tbbmalloc_proxy 
+else
+  TBB_LIBRARIES ?= tbb
+endif
+
 ifeq ($(OS),Windows_NT)
-  TBB_TARGETS ?= $(addsuffix $(LIBRARY_SUFFIX),$(TBB)/lib/tbb $(TBB)/lib/tbbmalloc $(TBB)/lib/tbbmalloc_proxy)
+  TBB_TARGETS ?= $(addsuffix $(LIBRARY_SUFFIX),$(addprefix $(TBB/lib/),$(TBB_LIBRARIES)))
 endif
 ifeq ($(OS),Darwin)
-  TBB_TARGETS ?= $(addsuffix $(LIBRARY_SUFFIX),$(TBB)/lib/libtbb $(TBB)/lib/libtbbmalloc $(TBB)/lib/libtbbmalloc_proxy)
+  TBB_TARGETS ?= $(addsuffix $(LIBRARY_SUFFIX),$(addprefix $(TBB)/lib/lib,$(TBB_LIBRARIES)))
 endif
 ifeq ($(OS),Linux)
-  TBB_TARGETS ?= $(addsuffix $(LIBRARY_SUFFIX).2,$(TBB)/lib/libtbb $(TBB)/lib/libtbbmalloc $(TBB)/lib/libtbbmalloc_proxy)
+  TBB_TARGETS ?= $(addsuffix $(LIBRARY_SUFFIX).2,$(addprefix $(TBB)/lib/lib,$(TBB_LIBRARIES)))
 endif
+
 
 CXXFLAGS_TBB ?= -I $(TBB)/include
 LDFLAGS_TBB ?= -Wl,-L,"$(TBB_ABSOLUTE_PATH)/lib" -Wl,-rpath,"$(TBB_ABSOLUTE_PATH)/lib"
