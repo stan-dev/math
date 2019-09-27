@@ -19,8 +19,8 @@ TEST(MathMatrixCL, rep_rv_exception_pass) {
   EXPECT_THROW(stan::math::rep_row_vector(c, 5), std::invalid_argument);
 
   EXPECT_NO_THROW(stan::math::rep_row_vector(b, 0));
-  EXPECT_NO_THROW(stan::math::rep_row_vector(a, 0));
-  EXPECT_NO_THROW(stan::math::rep_row_vector(c, 0));
+  EXPECT_THROW(stan::math::rep_row_vector(a, 0), std::invalid_argument);
+  EXPECT_THROW(stan::math::rep_row_vector(c, 0), std::invalid_argument);
   EXPECT_NO_THROW(stan::math::rep_row_vector(b, 1));
 }
 

@@ -20,8 +20,8 @@ TEST(MathMatrixCL, rep_v_exception_pass) {
   EXPECT_THROW(stan::math::rep_vector(c, 5), std::invalid_argument);
 
   EXPECT_NO_THROW(stan::math::rep_vector(b, 0));
-  EXPECT_NO_THROW(stan::math::rep_vector(a, 0));
-  EXPECT_NO_THROW(stan::math::rep_vector(c, 0));
+  EXPECT_THROW(stan::math::rep_vector(a, 0), std::invalid_argument);
+  EXPECT_THROW(stan::math::rep_vector(c, 0), std::invalid_argument);
   EXPECT_NO_THROW(stan::math::rep_vector(b, 1));
 }
 
