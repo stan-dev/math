@@ -22,9 +22,9 @@ namespace math {
  */
 template <typename T1, typename T2, typename T3,
           typename = enable_if_all_arithmetic<T1, T2, T3>>
-inline auto fma(T1&& x, T2&& y, T3&& z) {
+inline double fma(T1 x, T2 y, T3 z) {
   using std::fma;
-  return fma(std::forward<T1>(x), std::forward<T2>(y), std::forward<T3>(z));
+  return fma(x, y, z);
 }
 
 }  // namespace math

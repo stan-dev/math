@@ -16,9 +16,9 @@ namespace math {
  * @return maximum of x or y and if one is NaN return the other
  */
 template <typename T1, typename T2, typename = enable_if_all_arithmetic<T1, T2>>
-inline auto fmax(T1&& x, T2&& y) {
+inline double fmax(T1 x, T2 y) {
   using std::fmax;
-  return fmax(std::forward<T1>(x), std::forward<T2>(y));
+  return fmax(x, y);
 }
 
 }  // namespace math

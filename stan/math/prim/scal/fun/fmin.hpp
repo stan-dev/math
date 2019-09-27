@@ -16,9 +16,9 @@ namespace math {
  * @return Minimum of x or y and if one is NaN return the other
  */
 template <typename T1, typename T2, typename = enable_if_all_arithmetic<T1, T2>>
-inline auto fmin(T1&& x, T2&& y) {
+inline double fmin(T1 x, T2 y) {
   using std::fmin;
-  return fmin(std::forward<T1>(x), std::forward<T2>(y));
+  return fmin(x, y);
 }
 
 }  // namespace math

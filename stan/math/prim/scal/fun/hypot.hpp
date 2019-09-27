@@ -20,9 +20,9 @@ namespace math {
  * and adjacent side lengths x and y.
  */
 template <typename T1, typename T2, typename = enable_if_all_arithmetic<T1, T2>>
-inline auto hypot(T1&& x, T2&& y) {
+inline double hypot(T1 x, T2 y) {
   using std::hypot;
-  return hypot(std::forward<T1>(x), std::forward<T2>(y));
+  return hypot(x, y);
 }
 
 }  // namespace math

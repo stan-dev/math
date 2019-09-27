@@ -19,9 +19,9 @@ namespace math {
  * @return base two logarithm of argument
  */
 template <typename T, typename = enable_if_arithmetic<T>>
-inline double log2(T&& u) {
+inline double log2(T u) {
   using std::log2;
-  return log2(std::forward<T>(u));
+  return log2(u);
 }
 
 /**

@@ -19,9 +19,9 @@ namespace math {
  * @return max(x- y, 0)
  */
 template <typename T1, typename T2, typename = enable_if_all_arithmetic<T1, T2>>
-inline auto fdim(T1&& x, T2&& y) {
+inline double fdim(T1 x, T2 y) {
   using std::fdim;
-  return fdim(std::forward<T1>(x), std::forward<T2>(y));
+  return fdim(x, y);
 }
 
 }  // namespace math
