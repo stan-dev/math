@@ -221,3 +221,29 @@ TEST_F(FP_2d_func_test, gradient) {
     }    
   }
 }
+
+TEST_F(FP_2d_func_test, gradient_with_var_init_point) {
+  KinsolFixedPointEnv<FP_2d_func> env(f, x, y, x_r, x_i, msgs,
+                                      u_scale, f_scale);
+  FixedPointSolver<KinsolFixedPointEnv<FP_2d_func>, FixedPointADJac> fp;
+  double f_tol = 1.e-12;
+  int max_num_steps = 100;
+  Eigen::Matrix<var, -1, 1> yp(to_var(y));
+  Eigen::Matrix<var, -1, 1> xp(to_var(x));
+
+  Eigen::Matrix<var, -1, 1> x_sol = fp.solve(xp, yp, env, f_tol, max_num_steps);
+  EXPECT_NEAR(value_of(x_sol(0)), 0.7861518, 1e-5);
+  EXPECT_NEAR(value_of(x_sol(1)), 0.6180333, 1e-5);
+
+  double fx;
+  Eigen::VectorXd grad_fx;
+  for (int i = 0; i < env.N_; ++i) {
+    stan::math::set_zero_all_adjoints();
+    x_sol(i).grad();
+    auto f_fd = fd_functor(i);
+    finite_diff_gradient_auto(f_fd, y, fx, grad_fx);
+    for (int j = 0; j < env.M_; ++j) {
+      EXPECT_FLOAT_EQ(grad_fx(j), yp(j).adj());
+    }
+  }
+}
