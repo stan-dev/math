@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_COMMON_TYPE_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_COMMON_TYPE_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <boost/math/tools/promotion.hpp>
 
 namespace stan {
@@ -22,7 +23,7 @@ namespace math {
  */
 template <typename T1, typename T2>
 struct common_type {
-  typedef typename boost::math::tools::promote_args<T1, T2>::type type;
+  using type = return_type_t<T1, T2>;
 };
 
 }  // namespace math

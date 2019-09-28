@@ -1,9 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_ERR_IS_LESS_OR_EQUAL_HPP
 #define STAN_MATH_PRIM_SCAL_ERR_IS_LESS_OR_EQUAL_HPP
 
-#include <stan/math/prim/scal/meta/get.hpp>
-#include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
+#include <stan/math/prim/meta.hpp>
 
 namespace stan {
 namespace math {
@@ -24,8 +22,9 @@ template <typename T_y, typename T_high>
 inline bool is_less_or_equal(const T_y& y, const T_high& high) {
   scalar_seq_view<T_high> high_vec(high);
   for (size_t n = 0; n < stan::length(high); n++) {
-    if (!(stan::get(y, n) <= high_vec[n]))
+    if (!(stan::get(y, n) <= high_vec[n])) {
       return false;
+    }
   }
   return true;
 }

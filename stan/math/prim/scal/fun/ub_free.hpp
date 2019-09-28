@@ -1,10 +1,11 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_UB_FREE_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_UB_FREE_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/identity_free.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
 #include <boost/math/tools/promotion.hpp>
-#include <cmath>
 #include <limits>
 
 namespace stan {
@@ -33,11 +34,11 @@ namespace math {
  *   than the upper bound.
  */
 template <typename T, typename U>
-inline typename boost::math::tools::promote_args<T, U>::type ub_free(
-    const T& y, const U& ub) {
+inline return_type_t<T, U> ub_free(const T& y, const U& ub) {
   using std::log;
-  if (ub == std::numeric_limits<double>::infinity())
+  if (ub == INFTY) {
     return identity_free(y);
+  }
   check_less_or_equal("ub_free", "Upper bounded variable", y, ub);
   return log(ub - y);
 }

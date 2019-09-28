@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUNCTOR_MAP_RECT_HPP
 #define STAN_MATH_PRIM_MAT_FUNCTOR_MAP_RECT_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/arr/err/check_matching_sizes.hpp>
 #include <stan/math/prim/mat/fun/dims.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
@@ -87,7 +88,7 @@ namespace math {
  * with signature
  *
  * template <typename T1, typename T2>
- * Eigen::Matrix<typename stan::return_type<T1, T2>::type, Eigen::Dynamic, 1>
+ * Eigen::Matrix<return_type_t<T1, T2>, Eigen::Dynamic, 1>
  * operator()(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& eta,
  *            const Eigen::Matrix<T2, Eigen::Dynamic, 1>& theta,
  *            const std::vector<double>& x_r, const std::vector<int>& x_i,
@@ -118,8 +119,7 @@ namespace math {
 
 template <int call_id, typename F, typename T_shared_param,
           typename T_job_param>
-Eigen::Matrix<typename stan::return_type<T_shared_param, T_job_param>::type,
-              Eigen::Dynamic, 1>
+Eigen::Matrix<return_type_t<T_shared_param, T_job_param>, Eigen::Dynamic, 1>
 map_rect(const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
          const std::vector<Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>&
              job_params,
@@ -127,10 +127,8 @@ map_rect(const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
          const std::vector<std::vector<int>>& x_i,
          std::ostream* msgs = nullptr) {
   static const char* function = "map_rect";
-  typedef Eigen::Matrix<
-      typename stan::return_type<T_shared_param, T_job_param>::type,
-      Eigen::Dynamic, 1>
-      return_t;
+  using return_t = Eigen::Matrix<return_type_t<T_shared_param, T_job_param>,
+                                 Eigen::Dynamic, 1>;
 
   check_matching_sizes(function, "job parameters", job_params, "real data",
                        x_r);
@@ -165,8 +163,9 @@ map_rect(const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
                      size_x_i);
   }
 
-  if (job_params_dims[0] == 0)
+  if (job_params_dims[0] == 0) {
     return return_t();
+  }
 
 #ifdef STAN_MPI
   return internal::map_rect_mpi<call_id, F, T_shared_param, T_job_param>(

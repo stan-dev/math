@@ -1,8 +1,7 @@
 #ifndef STAN_MATH_REV_ARR_FUNCTOR_COUPLED_ODE_SYSTEM_HPP
 #define STAN_MATH_REV_ARR_FUNCTOR_COUPLED_ODE_SYSTEM_HPP
 
-#include <stan/math/prim/arr/meta/get.hpp>
-#include <stan/math/prim/arr/meta/length.hpp>
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/arr/functor/coupled_ode_system.hpp>
 #include <stan/math/prim/arr/fun/value_of.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
@@ -94,8 +93,9 @@ struct coupled_ode_system<F, double, var> {
         M_(theta.size()),
         size_(N_ + N_ * M_),
         msgs_(msgs) {
-    for (const var& p : theta)
+    for (const var& p : theta) {
       theta_nochain_.emplace_back(var(new vari(p.val(), false)));
+    }
   }
 
   /**
@@ -136,8 +136,9 @@ struct coupled_ode_system<F, double, var> {
           // dy1_dt, dy2_dt, dy1_da, dy2_da, dy1_db, dy2_db
           double temp_deriv = theta_nochain_[j].adj();
           const size_t offset = N_ + N_ * j;
-          for (size_t k = 0; k < N_; k++)
+          for (size_t k = 0; k < N_; k++) {
             temp_deriv += z[offset + k] * y_vars[k].adj();
+          }
 
           dz_dt[offset + i] = temp_deriv;
         }
@@ -147,8 +148,9 @@ struct coupled_ode_system<F, double, var> {
         // reset to zero by the last call. This is done as a separate step here.
         // See efficiency note above on template specalization for more details
         // on this.
-        for (size_t j = 0; j < M_; ++j)
+        for (size_t j = 0; j < M_; ++j) {
           theta_nochain_[j].vi_->set_zero_adjoint();
+        }
       }
     } catch (const std::exception& e) {
       recover_memory_nested();
@@ -181,8 +183,9 @@ struct coupled_ode_system<F, double, var> {
    */
   std::vector<double> initial_state() const {
     std::vector<double> state(size_, 0.0);
-    for (size_t n = 0; n < N_; n++)
+    for (size_t n = 0; n < N_; n++) {
       state[n] = y0_dbl_[n];
+    }
     return state;
   }
 };
@@ -201,7 +204,7 @@ struct coupled_ode_system<F, double, var> {
  * initial conditions with respect to the first base system equation:
  * \f[
  *  \frac{d x_{N + n}}{dt}
- *  = \frac{d}{dt} \frac{\partial x_1}{\partial \y0_m}
+ *  = \frac{d}{dt} \frac{\partial x_1}{\partial y0_m}
  * \f]
  * for \f$ n \in {1, \ldots, N} \f$].
  *
@@ -291,8 +294,9 @@ struct coupled_ode_system<F, var, double> {
           // dy2_d{y0_b}
           double temp_deriv = 0;
           const size_t offset = N_ + N_ * j;
-          for (size_t k = 0; k < N_; k++)
+          for (size_t k = 0; k < N_; k++) {
             temp_deriv += z[offset + k] * y_vars[k].adj();
+          }
 
           dz_dt[offset + i] = temp_deriv;
         }
@@ -328,10 +332,12 @@ struct coupled_ode_system<F, var, double> {
    */
   std::vector<double> initial_state() const {
     std::vector<double> initial(size_, 0.0);
-    for (size_t i = 0; i < N_; i++)
+    for (size_t i = 0; i < N_; i++) {
       initial[i] = value_of(y0_[i]);
-    for (size_t i = 0; i < N_; i++)
+    }
+    for (size_t i = 0; i < N_; i++) {
       initial[N_ + i * N_ + i] = 1.0;
+    }
     return initial;
   }
 };
@@ -422,8 +428,9 @@ struct coupled_ode_system<F, var, var> {
         M_(theta.size()),
         size_(N_ + N_ * (N_ + M_)),
         msgs_(msgs) {
-    for (const var& p : theta)
+    for (const var& p : theta) {
       theta_nochain_.emplace_back(var(new vari(p.val(), false)));
+    }
   }
 
   /**
@@ -464,8 +471,9 @@ struct coupled_ode_system<F, var, var> {
           // dy1_dt, dy2_dt, dy1_da, dy2_da, dy1_db, dy2_db
           double temp_deriv = 0;
           const size_t offset = N_ + N_ * j;
-          for (size_t k = 0; k < N_; k++)
+          for (size_t k = 0; k < N_; k++) {
             temp_deriv += z[offset + k] * y_vars[k].adj();
+          }
 
           dz_dt[offset + i] = temp_deriv;
         }
@@ -473,8 +481,9 @@ struct coupled_ode_system<F, var, var> {
         for (size_t j = 0; j < M_; j++) {
           double temp_deriv = theta_nochain_[j].adj();
           const size_t offset = N_ + N_ * N_ + N_ * j;
-          for (size_t k = 0; k < N_; k++)
+          for (size_t k = 0; k < N_; k++) {
             temp_deriv += z[offset + k] * y_vars[k].adj();
+          }
 
           dz_dt[offset + i] = temp_deriv;
         }
@@ -484,8 +493,9 @@ struct coupled_ode_system<F, var, var> {
         // reset to zero by the last call. This is done as a separate step here.
         // See efficiency note above on template specalization for more details
         // on this.
-        for (size_t j = 0; j < M_; ++j)
+        for (size_t j = 0; j < M_; ++j) {
           theta_nochain_[j].vi_->set_zero_adjoint();
+        }
       }
     } catch (const std::exception& e) {
       recover_memory_nested();
@@ -521,10 +531,12 @@ struct coupled_ode_system<F, var, var> {
    */
   std::vector<double> initial_state() const {
     std::vector<double> initial(size_, 0.0);
-    for (size_t i = 0; i < N_; i++)
+    for (size_t i = 0; i < N_; i++) {
       initial[i] = value_of(y0_[i]);
-    for (size_t i = 0; i < N_; i++)
+    }
+    for (size_t i = 0; i < N_; i++) {
       initial[N_ + i * N_ + i] = 1.0;
+    }
     return initial;
   }
 };

@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_REV_MAT_FUNCTOR_IDAS_INTEGRATOR_HPP
 #define STAN_MATH_REV_MAT_FUNCTOR_IDAS_INTEGRATOR_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/scal/err/check_less.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/arr/err/check_ordered.hpp>
-#include <stan/math/rev/scal/meta/is_var.hpp>
 #include <stan/math/rev/mat/functor/idas_forward_system.hpp>
 #include <idas/idas.h>
 #include <sunmatrix/sunmatrix_dense.h>
@@ -81,18 +81,22 @@ class idas_integrator {
   idas_integrator(const double rtol, const double atol,
                   const int64_t max_num_steps = IDAS_MAX_STEPS)
       : rtol_(rtol), atol_(atol), max_num_steps_(max_num_steps) {
-    if (rtol_ <= 0)
+    if (rtol_ <= 0) {
       invalid_argument("idas_integrator", "relative tolerance,", rtol_, "",
                        ", must be greater than 0");
-    if (rtol_ > 1.0E-3)
+    }
+    if (rtol_ > 1.0E-3) {
       invalid_argument("idas_integrator", "relative tolerance,", rtol_, "",
                        ", must be less than 1.0E-3");
-    if (atol_ <= 0)
+    }
+    if (atol_ <= 0) {
       invalid_argument("idas_integrator", "absolute tolerance,", atol_, "",
                        ", must be greater than 0");
-    if (max_num_steps_ <= 0)
+    }
+    if (max_num_steps_ <= 0) {
       invalid_argument("idas_integrator", "max_num_steps,", max_num_steps_, "",
                        ", must be greater than 0");
+    }
   }
 
   /**
@@ -177,12 +181,14 @@ void idas_integrator::init_sensitivity(Dae& dae) {
     auto n = dae.n();
 
     if (Dae::is_var_yy0) {
-      for (size_t i = 0; i < n; ++i)
+      for (size_t i = 0; i < n; ++i) {
         NV_Ith_S(yys[i], i) = 1.0;
+      }
     }
     if (Dae::is_var_yp0) {
-      for (size_t i = 0; i < n; ++i)
+      for (size_t i = 0; i < n; ++i) {
         NV_Ith_S(yps[i + n], i) = 1.0;
+      }
     }
     CHECK_IDAS_CALL(IDASensInit(mem, dae.ns(), IDA_SIMULTANEOUS,
                                 dae.sensitivity_residual(), yys, yps));

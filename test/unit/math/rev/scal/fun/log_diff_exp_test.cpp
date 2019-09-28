@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
+#include <limits>
 
 TEST(AgradRev, log_diff_exp_vv) {
   AVAR a = 5.0;
@@ -53,6 +54,25 @@ TEST(AgradRev, log_diff_exp_vd) {
   EXPECT_FLOAT_EQ(
       std::exp(1000.0 - (std::log(std::exp(0.0) - std::exp(-999.0)) + 1000)),
       grad_f[0]);
+
+  // negative infinity
+  a = 5.0;
+  b = 5.0;
+  f = log_diff_exp(a, b);
+  EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(), f.val());
+
+  x = createAVEC(a);
+  f.grad(x, grad_f);
+  EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), grad_f[0]);
+
+  a = -std::numeric_limits<double>::infinity();
+  b = -std::numeric_limits<double>::infinity();
+  f = log_diff_exp(a, b);
+  EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(), f.val());
+
+  x = createAVEC(a);
+  f.grad(x, grad_f);
+  EXPECT_FLOAT_EQ(1.0, grad_f[0]);
 }
 
 TEST(AgradRev, log_diff_exp_dv) {
@@ -76,6 +96,16 @@ TEST(AgradRev, log_diff_exp_dv) {
   f.grad(x, grad_f);
   // 1/(1-exp(1000-10)) explodes to 1/-inf = 0
   EXPECT_FLOAT_EQ(0, grad_f[0]);
+
+  // negative infinity
+  a = 5.0;
+  b = 5.0;
+  f = log_diff_exp(a, b);
+  EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(), f.val());
+
+  x = createAVEC(b);
+  f.grad(x, grad_f);
+  EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(), grad_f[0]);
 }
 
 void test_log_diff_exp_2_vv(double a_val, double b_val) {

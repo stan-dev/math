@@ -1,6 +1,7 @@
 #ifdef STAN_MPI
 
 #ifndef STAN_MATH_PRIM_MAT_FUNCTOR_MPI_PARALLEL_CALL_HPP
+#include <stan/math/prim/meta.hpp>
 #define STAN_MATH_PRIM_MAT_FUNCTOR_MPI_PARALLEL_CALL_HPP
 
 #include <stan/math/prim/arr/functor/mpi_cluster.hpp>
@@ -42,7 +43,7 @@ class mpi_parallel_call_cache {
   static bool is_valid_;
 
  public:
-  typedef const T cache_t;
+  using cache_t = const T;
 
   mpi_parallel_call_cache() = delete;
   mpi_parallel_call_cache(const mpi_parallel_call_cache<call_id, member, T>&)
@@ -163,19 +164,19 @@ class mpi_parallel_call {
   const std::size_t world_size_ = world_.size();
   std::unique_lock<std::mutex> cluster_lock_;
 
-  typedef typename CombineF::result_t result_t;
+  using result_t = typename CombineF::result_t;
 
   // local caches which hold local slices of data
-  typedef internal::mpi_parallel_call_cache<call_id, 1,
-                                            std::vector<std::vector<double>>>
-      cache_x_r;
-  typedef internal::mpi_parallel_call_cache<call_id, 2,
-                                            std::vector<std::vector<int>>>
-      cache_x_i;
-  typedef internal::mpi_parallel_call_cache<call_id, 3, std::vector<int>>
-      cache_f_out;
-  typedef internal::mpi_parallel_call_cache<call_id, 4, std::vector<int>>
-      cache_chunks;
+  using cache_x_r
+      = internal::mpi_parallel_call_cache<call_id, 1,
+                                          std::vector<std::vector<double>>>;
+  using cache_x_i
+      = internal::mpi_parallel_call_cache<call_id, 2,
+                                          std::vector<std::vector<int>>>;
+  using cache_f_out
+      = internal::mpi_parallel_call_cache<call_id, 3, std::vector<int>>;
+  using cache_chunks
+      = internal::mpi_parallel_call_cache<call_id, 4, std::vector<int>>;
 
   // # of outputs for given call_id+ReduceF+CombineF case
   static int num_outputs_per_job_;
@@ -510,9 +511,9 @@ class mpi_parallel_call {
    */
   template <int meta_cache_id>
   vector_d broadcast_vector(const vector_d& data) {
-    typedef internal::mpi_parallel_call_cache<call_id, meta_cache_id,
-                                              std::vector<size_type>>
-        meta_cache;
+    using meta_cache
+        = internal::mpi_parallel_call_cache<call_id, meta_cache_id,
+                                            std::vector<size_type>>;
     const std::vector<size_type>& data_size
         = broadcast_array_1d_cached<meta_cache>({data.size()});
 
@@ -538,9 +539,9 @@ class mpi_parallel_call {
    */
   template <int meta_cache_id>
   matrix_d scatter_matrix(const matrix_d& data) {
-    typedef internal::mpi_parallel_call_cache<call_id, meta_cache_id,
-                                              std::vector<size_type>>
-        meta_cache;
+    using meta_cache
+        = internal::mpi_parallel_call_cache<call_id, meta_cache_id,
+                                            std::vector<size_type>>;
     const std::vector<size_type>& dims
         = broadcast_array_1d_cached<meta_cache>({data.rows(), data.cols()});
     const size_type rows = dims[0];

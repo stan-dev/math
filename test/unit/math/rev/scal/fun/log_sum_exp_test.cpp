@@ -4,6 +4,7 @@
 #include <test/unit/math/rev/scal/fun/util.hpp>
 #include <test/unit/math/rev/arr/fun/util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
+#include <limits>
 
 TEST(AgradRev, log_sum_exp_vv) {
   AVAR a = 5.0;
@@ -54,6 +55,16 @@ TEST(AgradRev, log_sum_exp_vd) {
   EXPECT_FLOAT_EQ(
       std::exp(1000.0 - (std::log(std::exp(0.0) + std::exp(-999.0)) + 1000)),
       grad_f[0]);
+
+  // negative infinity example
+  a = -std::numeric_limits<double>::infinity();
+  b = -std::numeric_limits<double>::infinity();
+  f = log_sum_exp(a, b);
+  EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(), f.val());
+
+  x = createAVEC(a);
+  f.grad(x, grad_f);
+  EXPECT_FLOAT_EQ(1.0, grad_f[0]);
 }
 TEST(AgradRev, log_sum_exp_dv) {
   double a = 5.0;
@@ -77,6 +88,16 @@ TEST(AgradRev, log_sum_exp_dv) {
   EXPECT_FLOAT_EQ(
       std::exp(1000.0 - (std::log(std::exp(0.0) + std::exp(-999.0)) + 1000)),
       grad_f[0]);
+
+  // negative infinity example
+  a = -std::numeric_limits<double>::infinity();
+  b = -std::numeric_limits<double>::infinity();
+  f = log_sum_exp(a, b);
+  EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(), f.val());
+
+  x = createAVEC(b);
+  f.grad(x, grad_f);
+  EXPECT_FLOAT_EQ(1.0, grad_f[0]);
 }
 
 void test_log_sum_exp_2_vv(double a_val, double b_val) {

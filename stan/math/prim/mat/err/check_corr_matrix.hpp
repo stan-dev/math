@@ -1,14 +1,13 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_CHECK_CORR_MATRIX_HPP
 #define STAN_MATH_PRIM_MAT_ERR_CHECK_CORR_MATRIX_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/mat/err/check_pos_definite.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/meta/index_type.hpp>
-#include <stan/math/prim/scal/meta/error_index.hpp>
 #include <sstream>
 #include <string>
 
@@ -36,15 +35,15 @@ template <typename T_y>
 inline void check_corr_matrix(
     const char* function, const char* name,
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
-  typedef typename index_type<
-      Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> >::type size_t;
+  using size_type = typename index_type<
+      Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> >::type;
 
   check_size_match(function, "Rows of correlation matrix", y.rows(),
                    "columns of correlation matrix", y.cols());
   check_positive(function, name, "rows", y.rows());
   check_symmetric(function, "y", y);
 
-  for (size_t k = 0; k < y.rows(); ++k) {
+  for (size_type k = 0; k < y.rows(); ++k) {
     if (!(fabs(y(k, k) - 1.0) <= CONSTRAINT_TOLERANCE)) {
       std::ostringstream msg;
       msg << "is not a valid correlation matrix. " << name << "("

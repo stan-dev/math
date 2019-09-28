@@ -10,13 +10,13 @@ TEST(MathGpu, transpose_size_zero) {
   stan::math::row_vector_d rv0;
   stan::math::matrix_d m0;
 
-  stan::math::matrix_cl v00(v0);
-  stan::math::matrix_cl rv00(rv0);
-  stan::math::matrix_cl m00(m0);
+  stan::math::matrix_cl<double> v00(v0);
+  stan::math::matrix_cl<double> rv00(rv0);
+  stan::math::matrix_cl<double> m00(m0);
 
-  stan::math::matrix_cl v00_dst(v0.cols(), v0.rows());
-  stan::math::matrix_cl rv00_dst(rv0.cols(), rv0.rows());
-  stan::math::matrix_cl m00_dst(m0.cols(), m0.rows());
+  stan::math::matrix_cl<double> v00_dst(v0.cols(), v0.rows());
+  stan::math::matrix_cl<double> rv00_dst(rv0.cols(), rv0.rows());
+  stan::math::matrix_cl<double> m00_dst(m0.cols(), m0.rows());
 
   using stan::math::transpose;
   EXPECT_NO_THROW(transpose(v00));
@@ -38,13 +38,13 @@ TEST(MathGpu, transpose) {
   v0 << 1, 2, 3;
   rv0 << 1, 2, 3;
   m0 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
-  stan::math::matrix_cl v00(v0);
-  stan::math::matrix_cl rv00(rv0);
-  stan::math::matrix_cl m00(m0);
+  stan::math::matrix_cl<double> v00(v0);
+  stan::math::matrix_cl<double> rv00(rv0);
+  stan::math::matrix_cl<double> m00(m0);
 
-  stan::math::matrix_cl v00_dst(v0.cols(), v0.rows());
-  stan::math::matrix_cl rv00_dst(rv0.cols(), rv0.rows());
-  stan::math::matrix_cl m00_dst(m0.cols(), m0.rows());
+  stan::math::matrix_cl<double> v00_dst(v0.cols(), v0.rows());
+  stan::math::matrix_cl<double> rv00_dst(rv0.cols(), rv0.rows());
+  stan::math::matrix_cl<double> m00_dst(m0.cols(), m0.rows());
 
   using stan::math::transpose;
   v00_dst = transpose(v00);

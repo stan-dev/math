@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_REV_MAT_FUN_TRACE_QUAD_FORM_HPP
 #define STAN_MATH_REV_MAT_FUN_TRACE_QUAD_FORM_HPP
 
+#include <stan/math/rev/meta.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
@@ -41,19 +43,13 @@ class trace_quad_form_vari : public vari {
   static inline void chainA(Eigen::Matrix<var, Ra, Ca>& A,
                             const Eigen::Matrix<double, Rb, Cb>& Bd,
                             double adjC) {
-    Eigen::Matrix<double, Ra, Ca> adjA(adjC * Bd * Bd.transpose());
-    for (int j = 0; j < A.cols(); j++)
-      for (int i = 0; i < A.rows(); i++)
-        A(i, j).vi_->adj_ += adjA(i, j);
+    A.adj() += adjC * Bd * Bd.transpose();
   }
   static inline void chainB(Eigen::Matrix<var, Rb, Cb>& B,
                             const Eigen::Matrix<double, Ra, Ca>& Ad,
                             const Eigen::Matrix<double, Rb, Cb>& Bd,
                             double adjC) {
-    Eigen::Matrix<double, Ra, Ca> adjB(adjC * (Ad + Ad.transpose()) * Bd);
-    for (int j = 0; j < B.cols(); j++)
-      for (int i = 0; i < B.rows(); i++)
-        B(i, j).vi_->adj_ += adjB(i, j);
+    B.adj() += adjC * (Ad + Ad.transpose()) * Bd;
   }
 
   inline void chainAB(Eigen::Matrix<Ta, Ra, Ca>& A,
@@ -78,11 +74,10 @@ class trace_quad_form_vari : public vari {
 };
 }  // namespace internal
 
-template <typename Ta, int Ra, int Ca, typename Tb, int Rb, int Cb>
-inline typename std::enable_if<
-    std::is_same<Ta, var>::value || std::is_same<Tb, var>::value, var>::type
-trace_quad_form(const Eigen::Matrix<Ta, Ra, Ca>& A,
-                const Eigen::Matrix<Tb, Rb, Cb>& B) {
+template <typename Ta, int Ra, int Ca, typename Tb, int Rb, int Cb,
+          typename = enable_if_any_var<Ta, Tb>>
+inline return_type_t<Ta, Tb> trace_quad_form(
+    const Eigen::Matrix<Ta, Ra, Ca>& A, const Eigen::Matrix<Tb, Rb, Cb>& B) {
   check_square("trace_quad_form", "A", A);
   check_multiplicable("trace_quad_form", "A", A, "B", B);
 

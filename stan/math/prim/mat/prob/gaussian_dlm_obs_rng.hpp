@@ -1,16 +1,15 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_GAUSSIAN_DLM_OBS_RNG_HPP
 #define STAN_MATH_PRIM_MAT_PROB_GAUSSIAN_DLM_OBS_RNG_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/err/check_cov_matrix.hpp>
 #include <stan/math/prim/mat/err/check_pos_definite.hpp>
 #include <stan/math/prim/mat/err/check_pos_semidefinite.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/meta/vector_seq_view.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
-#include <stan/math/prim/scal/meta/StdVectorBuilder.hpp>
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <vector>
@@ -45,8 +44,9 @@ inline Eigen::VectorXd multi_normal_semidefinite_rng(
   Eigen::VectorXd stddev = S_ldlt.vectorD().array().sqrt().matrix();
   size_t M = S_ldlt.vectorD().size();
   Eigen::VectorXd z(M);
-  for (int i = 0; i < M; i++)
+  for (int i = 0; i < M; i++) {
     z(i) = stddev(i) * std_normal_rng();
+  }
 
   Eigen::VectorXd Y
       = mu + (S_ldlt.transpositionsP().transpose() * (S_ldlt.matrixL() * z));
@@ -82,8 +82,9 @@ inline Eigen::VectorXd multi_normal_definite_rng(
 
   size_t M = S_llt.matrixL().rows();
   Eigen::VectorXd z(M);
-  for (int i = 0; i < M; i++)
+  for (int i = 0; i < M; i++) {
     z(i) = std_normal_rng();
+  }
 
   Eigen::VectorXd Y = mu + S_llt.matrixL() * z;
 

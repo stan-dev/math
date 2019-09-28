@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_FRECHET_LCCDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_FRECHET_LCCDF_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <boost/random/weibull_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -13,31 +13,25 @@
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <cmath>
 
 namespace stan {
 namespace math {
 
 template <typename T_y, typename T_shape, typename T_scale>
-typename return_type<T_y, T_shape, T_scale>::type frechet_lccdf(
-    const T_y& y, const T_shape& alpha, const T_scale& sigma) {
-  typedef typename stan::partials_return_type<T_y, T_shape, T_scale>::type
-      T_partials_return;
+return_type_t<T_y, T_shape, T_scale> frechet_lccdf(const T_y& y,
+                                                   const T_shape& alpha,
+                                                   const T_scale& sigma) {
+  using T_partials_return = partials_return_t<T_y, T_shape, T_scale>;
 
   static const char* function = "frechet_lccdf";
 
   using boost::math::tools::promote_args;
 
-  if (size_zero(y, alpha, sigma))
+  if (size_zero(y, alpha, sigma)) {
     return 0.0;
+  }
 
   T_partials_return ccdf_log(0.0);
   check_positive(function, "Random variable", y);
@@ -63,12 +57,15 @@ typename return_type<T_y, T_shape, T_scale>::type frechet_lccdf(
     ccdf_log += log1m(exp_);
 
     const T_partials_return rep_deriv_ = pow_ / (1.0 / exp_ - 1);
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] -= alpha_dbl / y_dbl * rep_deriv_;
-    if (!is_constant_struct<T_shape>::value)
+    }
+    if (!is_constant_all<T_shape>::value) {
       ops_partials.edge2_.partials_[n] -= log(y_dbl / sigma_dbl) * rep_deriv_;
-    if (!is_constant_struct<T_scale>::value)
+    }
+    if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n] += alpha_dbl / sigma_dbl * rep_deriv_;
+    }
   }
   return ops_partials.build(ccdf_log);
 }

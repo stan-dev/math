@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LOG1M_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LOG1M_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/log1p.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
@@ -39,8 +40,9 @@ namespace math {
  * @throw <code>std::overflow_error</code> If the computation overflows.
  */
 inline double log1m(double x) {
-  if (!is_nan(x))
+  if (!is_nan(x)) {
     check_less_or_equal("log1m", "x", x, 1);
+  }
   return stan::math::log1p(-x);
 }
 

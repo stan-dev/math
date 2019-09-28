@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_MAT_FUN_LDLT_FACTOR_HPP
 #define STAN_MATH_REV_MAT_FUN_LDLT_FACTOR_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/mat/fun/LDLT_alloc.hpp>
 #include <stan/math/prim/mat/fun/LDLT_factor.hpp>
@@ -122,8 +123,8 @@ class LDLT_factor<var, R, C> {
   inline size_t rows() const { return alloc_->N_; }
   inline size_t cols() const { return alloc_->N_; }
 
-  typedef size_t size_type;
-  typedef var value_type;
+  using size_type = size_t;
+  using value_type = var;
 
   /**
    * The LDLT_alloc object actually contains the factorization but is

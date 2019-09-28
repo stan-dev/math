@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_COV_MATRIX_FREE_HPP
 #define STAN_MATH_PRIM_MAT_FUN_COV_MATRIX_FREE_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/meta/index_type.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <cmath>
@@ -41,8 +41,9 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> cov_matrix_free(
 
   using std::log;
   int K = y.rows();
-  for (int k = 0; k < K; ++k)
+  for (int k = 0; k < K; ++k) {
     check_positive("cov_matrix_free", "y", y(k, k));
+  }
   Eigen::Matrix<T, Eigen::Dynamic, 1> x((K * (K + 1)) / 2);
   // FIXME: see Eigen LDLT for rank-revealing version -- use that
   // even if less efficient?
@@ -51,8 +52,9 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> cov_matrix_free(
   Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> L = llt.matrixL();
   int i = 0;
   for (int m = 0; m < K; ++m) {
-    for (int n = 0; n < m; ++n)
+    for (int n = 0; n < m; ++n) {
       x(i++) = L(m, n);
+    }
     x(i++) = log(L(m, m));
   }
   return x;

@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_IS_CHOLESKY_FACTOR_HPP
 #define STAN_MATH_PRIM_MAT_ERR_IS_CHOLESKY_FACTOR_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/is_positive.hpp>
 #include <stan/math/prim/mat/err/is_lower_triangular.hpp>

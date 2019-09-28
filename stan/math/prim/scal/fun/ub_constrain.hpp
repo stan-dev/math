@@ -1,10 +1,11 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_UB_CONSTRAIN_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_UB_CONSTRAIN_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <boost/math/tools/promotion.hpp>
 #include <stan/math/prim/scal/fun/identity_constrain.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <cmath>
-#include <limits>
 
 namespace stan {
 namespace math {
@@ -29,11 +30,11 @@ namespace math {
  * @return scalar constrained to have upper bound
  */
 template <typename T, typename U>
-inline typename boost::math::tools::promote_args<T, U>::type ub_constrain(
-    const T& x, const U& ub) {
+inline return_type_t<T, U> ub_constrain(const T& x, const U& ub) {
   using std::exp;
-  if (ub == std::numeric_limits<double>::infinity())
+  if (ub == INFTY) {
     return identity_constrain(x);
+  }
   return ub - exp(x);
 }
 
@@ -61,11 +62,11 @@ inline typename boost::math::tools::promote_args<T, U>::type ub_constrain(
  * @return scalar constrained to have upper bound
  */
 template <typename T, typename U>
-inline typename boost::math::tools::promote_args<T, U>::type ub_constrain(
-    const T& x, const U& ub, T& lp) {
+inline return_type_t<T, U> ub_constrain(const T& x, const U& ub, T& lp) {
   using std::exp;
-  if (ub == std::numeric_limits<double>::infinity())
+  if (ub == INFTY) {
     return identity_constrain(x, lp);
+  }
   lp += x;
   return ub - exp(x);
 }

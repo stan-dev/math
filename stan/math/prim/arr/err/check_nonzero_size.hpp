@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_ERR_CHECK_NONZERO_SIZE_HPP
 #define STAN_MATH_PRIM_SCAL_ERR_CHECK_NONZERO_SIZE_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/invalid_argument.hpp>
 
 namespace stan {
@@ -20,8 +21,9 @@ namespace math {
 template <typename T_y>
 inline void check_nonzero_size(const char* function, const char* name,
                                const T_y& y) {
-  if (y.size() > 0)
+  if (y.size() > 0) {
     return;
+  }
   invalid_argument(function, name, 0, "has size ",
                    ", but must have a non-zero size");
 }

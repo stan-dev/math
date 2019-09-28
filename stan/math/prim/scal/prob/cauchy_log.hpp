@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_CAUCHY_LOG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_CAUCHY_LOG_HPP
 
-#include <stan/math/prim/scal/meta/return_type.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/prob/cauchy_lpdf.hpp>
 
 namespace stan {
@@ -27,8 +27,8 @@ namespace math {
  * @tparam T_scale Type of scale.
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
-typename return_type<T_y, T_loc, T_scale>::type cauchy_log(
-    const T_y& y, const T_loc& mu, const T_scale& sigma) {
+return_type_t<T_y, T_loc, T_scale> cauchy_log(const T_y& y, const T_loc& mu,
+                                              const T_scale& sigma) {
   return cauchy_lpdf<propto, T_y, T_loc, T_scale>(y, mu, sigma);
 }
 
@@ -36,8 +36,9 @@ typename return_type<T_y, T_loc, T_scale>::type cauchy_log(
  * @deprecated use <code>cauchy_lpdf</code>
  */
 template <typename T_y, typename T_loc, typename T_scale>
-inline typename return_type<T_y, T_loc, T_scale>::type cauchy_log(
-    const T_y& y, const T_loc& mu, const T_scale& sigma) {
+inline return_type_t<T_y, T_loc, T_scale> cauchy_log(const T_y& y,
+                                                     const T_loc& mu,
+                                                     const T_scale& sigma) {
   return cauchy_lpdf<T_y, T_loc, T_scale>(y, mu, sigma);
 }
 

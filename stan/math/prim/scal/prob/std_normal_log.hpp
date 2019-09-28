@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_STD_NORMAL_LOG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_STD_NORMAL_LOG_HPP
 
-#include <stan/math/prim/scal/meta/return_type.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/prob/std_normal_lpdf.hpp>
 
 namespace stan {
@@ -22,7 +22,7 @@ namespace math {
  * @throw std::domain_error if any scalar is nan.
  */
 template <bool propto, typename T_y>
-typename return_type<T_y>::type std_normal_log(const T_y& y) {
+return_type_t<T_y> std_normal_log(const T_y& y) {
   return std_normal_lpdf<propto, T_y>(y);
 }
 
@@ -30,7 +30,7 @@ typename return_type<T_y>::type std_normal_log(const T_y& y) {
  * @deprecated use <code>std_normal_lpdf</code>
  */
 template <typename T_y>
-inline typename return_type<T_y>::type std_normal_log(const T_y& y) {
+inline return_type_t<T_y> std_normal_log(const T_y& y) {
   return std_normal_lpdf<T_y>(y);
 }
 

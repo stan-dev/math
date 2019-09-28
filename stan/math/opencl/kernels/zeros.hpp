@@ -4,12 +4,13 @@
 
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/opencl/buffer_types.hpp>
+#include <string>
 
 namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const char* zeros_kernel_code = STRINGIFY(
+static const std::string zeros_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Stores zeros in the matrix on the OpenCL device.
@@ -33,11 +34,8 @@ static const char* zeros_kernel_code = STRINGIFY(
       int i = get_global_id(0);
       int j = get_global_id(1);
       if (i < rows && j < cols) {
-        if (part == LOWER && j < i) {
-          A(i, j) = 0;
-        } else if (part == UPPER && j > i) {
-          A(i, j) = 0;
-        } else if (part == ENTIRE) {
+        if ((part == LOWER && j < i) || (part == UPPER && j > i)
+            || (part == ENTIRE)) {
           A(i, j) = 0;
         }
       }
@@ -49,7 +47,7 @@ static const char* zeros_kernel_code = STRINGIFY(
 /**
  * See the docs for \link kernels/zeros.hpp zeros() \endlink
  */
-const kernel_cl<out_buffer, int, int, TriangularViewCL> zeros(
+const kernel_cl<out_buffer, int, int, matrix_cl_view> zeros(
     "zeros", {indexing_helpers, zeros_kernel_code});
 
 }  // namespace opencl_kernels

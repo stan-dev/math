@@ -4,7 +4,7 @@
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/vv_vari.hpp>
 #include <stan/math/rev/core/vd_vari.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <stan/math/prim/scal/fun/is_any_nan.hpp>
 #include <limits>
 
 namespace stan {
@@ -16,7 +16,7 @@ class add_vv_vari : public op_vv_vari {
   add_vv_vari(vari* avi, vari* bvi)
       : op_vv_vari(avi->val_ + bvi->val_, avi, bvi) {}
   void chain() {
-    if (unlikely(is_nan(avi_->val_) || is_nan(bvi_->val_))) {
+    if (unlikely(is_any_nan(avi_->val_, bvi_->val_))) {
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
       bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
     } else {
@@ -30,10 +30,11 @@ class add_vd_vari : public op_vd_vari {
  public:
   add_vd_vari(vari* avi, double b) : op_vd_vari(avi->val_ + b, avi, b) {}
   void chain() {
-    if (unlikely(is_nan(avi_->val_) || is_nan(bd_)))
+    if (unlikely(is_any_nan(avi_->val_, bd_))) {
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
-    else
+    } else {
       avi_->adj_ += adj_;
+    }
   }
 };
 }  // namespace internal
@@ -92,8 +93,9 @@ inline var operator+(const var& a, const var& b) {
  * @return Result of adding variable and scalar.
  */
 inline var operator+(const var& a, double b) {
-  if (b == 0.0)
+  if (b == 0.0) {
     return a;
+  }
   return var(new internal::add_vd_vari(a.vi_, b));
 }
 
@@ -109,8 +111,9 @@ inline var operator+(const var& a, double b) {
  * @return Result of adding variable and scalar.
  */
 inline var operator+(double a, const var& b) {
-  if (a == 0.0)
+  if (a == 0.0) {
     return b;
+  }
   return var(new internal::add_vd_vari(b.vi_, a));  // by symmetry
 }
 

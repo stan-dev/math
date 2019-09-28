@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_ERR_CHECK_CONSISTENT_SIZE_HPP
 #define STAN_MATH_PRIM_SCAL_ERR_CHECK_CONSISTENT_SIZE_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/invalid_argument.hpp>
-#include <stan/math/prim/scal/meta/size_of.hpp>
 #include <sstream>
 #include <string>
 
@@ -23,8 +23,9 @@ template <typename T>
 inline void check_consistent_size(const char* function, const char* name,
                                   const T& x, size_t expected_size) {
   if (!is_vector<T>::value
-      || (is_vector<T>::value && expected_size == stan::size_of(x)))
+      || (is_vector<T>::value && expected_size == stan::size_of(x))) {
     return;
+  }
 
   std::stringstream msg;
   msg << ", expecting dimension = " << expected_size

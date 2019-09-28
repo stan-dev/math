@@ -1,7 +1,9 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_INV_PHI_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_INV_PHI_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/fun/Phi.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
@@ -26,10 +28,12 @@ namespace math {
 inline double inv_Phi(double p) {
   check_bounded("inv_Phi", "Probability variable", p, 0, 1);
 
-  if (p < 8e-311)
+  if (p < 8e-311) {
     return NEGATIVE_INFTY;
-  if (p == 1)
+  }
+  if (p == 1) {
     return INFTY;
+  }
 
   static const double a[6]
       = {-3.969683028665376e+01, 2.209460984245205e+02,  -2.759285104469687e+02,
@@ -49,7 +53,7 @@ inline double inv_Phi(double p) {
   double x;
   if ((p_low <= p) && (p <= p_high)) {
     double q = p - 0.5;
-    double r = q * q;
+    double r = square(q);
     x = (((((a[0] * r + a[1]) * r + a[2]) * r + a[3]) * r + a[4]) * r + a[5])
         * q
         / (((((b[0] * r + b[1]) * r + b[2]) * r + b[3]) * r + b[4]) * r + 1.0);
@@ -65,7 +69,7 @@ inline double inv_Phi(double p) {
 
   if (x < 37.6) {  // gradient blows up past here
     double e = Phi(x) - p;
-    double u = e * SQRT_2_TIMES_SQRT_PI * std::exp(0.5 * x * x);
+    double u = e * SQRT_2_TIMES_SQRT_PI * std::exp(0.5 * square(x));
     x -= u / (1.0 + 0.5 * x * u);
   }
 

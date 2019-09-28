@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_IS_CORR_MATRIX_HPP
 #define STAN_MATH_PRIM_MAT_ERR_IS_CORR_MATRIX_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/err/constraint_tolerance.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/meta/index_type.hpp>
 #include <stan/math/prim/mat/err/is_pos_definite.hpp>
 #include <stan/math/prim/mat/err/is_symmetric.hpp>
 #include <stan/math/prim/scal/err/is_positive.hpp>
@@ -28,19 +28,23 @@ namespace math {
 template <typename T_y>
 inline bool is_corr_matrix(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
-  typedef typename index_type<
-      Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> >::type size_t;
+  using size_type
+      = index_type_t<Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>>;
 
-  if (!is_size_match(y.rows(), y.cols()))
+  if (!is_size_match(y.rows(), y.cols())) {
     return false;
-  if (!is_positive(y.rows()))
+  }
+  if (!is_positive(y.rows())) {
     return false;
-  if (!is_pos_definite(y))
+  }
+  if (!is_pos_definite(y)) {
     return false;
+  }
   if (is_symmetric(y)) {
-    for (size_t k = 0; k < y.rows(); ++k) {
-      if (!(fabs(y(k, k) - 1.0) <= CONSTRAINT_TOLERANCE))
+    for (size_type k = 0; k < y.rows(); ++k) {
+      if (!(fabs(y(k, k) - 1.0) <= CONSTRAINT_TOLERANCE)) {
         return false;
+      }
     }
   }
   return true;

@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_FWD_SCAL_FUN_GRAD_INC_BETA_HPP
 #define STAN_MATH_FWD_SCAL_FUN_GRAD_INC_BETA_HPP
 
+#include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/scal/fun/log.hpp>
 #include <stan/math/fwd/scal/fun/log1m.hpp>
 #include <stan/math/fwd/scal/fun/beta.hpp>
@@ -40,8 +41,9 @@ void grad_inc_beta(fvar<T>& g1, fvar<T>& g2, fvar<T> a, fvar<T> b, fvar<T> z) {
   fvar<T> dF1 = 0;
   fvar<T> dF2 = 0;
 
-  if (value_of(value_of(C)))
+  if (value_of(value_of(C))) {
     grad_2F1(dF1, dF2, a + b, fvar<T>(1.0), a + 1, z);
+  }
 
   g1 = (c1 - 1.0 / a) * c3 + C * (dF1 + dF2);
   g2 = c2 * c3 + C * dF1;

@@ -1,15 +1,13 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_VON_MISES_RNG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_VON_MISES_RNG_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_greater.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/meta/max_size.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 
@@ -78,8 +76,9 @@ inline typename VectorBuilder<true, double, T_loc, T_conc>::type von_mises_rng(
       double U2 = uniform_rng();
       done = Y * (2 - Y) - U2 > 0;
 
-      if (!done)
+      if (!done) {
         done = std::log(Y / U2) + 1 - Y >= 0;
+      }
     }
 
     double U3 = uniform_rng() - 0.5;

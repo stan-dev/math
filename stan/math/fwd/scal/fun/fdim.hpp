@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_FWD_SCAL_FUN_FDIM_HPP
 #define STAN_MATH_FWD_SCAL_FUN_FDIM_HPP
 
+#include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/scal/fun/fdim.hpp>
 
@@ -18,10 +19,11 @@ namespace math {
  */
 template <typename T>
 inline fvar<T> fdim(const fvar<T>& x, const fvar<T>& y) {
-  if (x.val_ < y.val_)
+  if (x.val_ < y.val_) {
     return fvar<T>(fdim(x.val_, y.val_), 0);
-  else
+  } else {
     return fvar<T>(fdim(x.val_, y.val_), x.d_ - y.d_);
+  }
 }
 
 /**
@@ -35,10 +37,11 @@ inline fvar<T> fdim(const fvar<T>& x, const fvar<T>& y) {
  */
 template <typename T>
 inline fvar<T> fdim(const fvar<T>& x, double y) {
-  if (x.val_ < y)
+  if (x.val_ < y) {
     return fvar<T>(fdim(x.val_, y), 0);
-  else
+  } else {
     return fvar<T>(fdim(x.val_, y), x.d_);
+  }
 }
 
 /**
@@ -52,10 +55,11 @@ inline fvar<T> fdim(const fvar<T>& x, double y) {
  */
 template <typename T>
 inline fvar<T> fdim(double x, const fvar<T>& y) {
-  if (x < y.val_)
+  if (x < y.val_) {
     return fvar<T>(fdim(x, y.val_), 0);
-  else
+  } else {
     return fvar<T>(fdim(x, y.val_), -y.d_);
+  }
 }
 
 }  // namespace math

@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_GRAD_INC_BETA_HPP
 #define STAN_MATH_REV_SCAL_FUN_GRAD_INC_BETA_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/fun/beta.hpp>
 #include <stan/math/prim/scal/fun/grad_2F1.hpp>
@@ -40,8 +41,9 @@ inline void grad_inc_beta(var& g1, var& g2, const var& a, const var& b,
   var C = exp(a * c1 + b * c2) / a;
   var dF1 = 0;
   var dF2 = 0;
-  if (value_of(value_of(C)))
+  if (value_of(value_of(C))) {
     grad_2F1(dF1, dF2, a + b, var(1.0), a + 1, z);
+  }
   g1 = (c1 - 1.0 / a) * c3 + C * (dF1 + dF2);
   g2 = c2 * c3 + C * dF1;
 }
