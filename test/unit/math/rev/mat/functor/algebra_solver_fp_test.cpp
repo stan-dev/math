@@ -14,6 +14,7 @@
 
 using stan::math::KinsolFixedPointEnv;
 using stan::math::FixedPointSolver;
+using stan::math::FixedPointADJac;
 using stan::math::value_of;
 using stan::math::var;
 using stan::math::to_var;
@@ -70,7 +71,7 @@ struct FP_exp_func_test : public ::testing::Test {
       (const Eigen::VectorXd& y_) {
       KinsolFixedPointEnv<FP_exp_func> env(f, x, y_, x_r, x_i, msgs,
                                            u_scale, f_scale);    
-      FixedPointSolver fp;
+      FixedPointSolver<KinsolFixedPointEnv<FP_exp_func>, FixedPointADJac> fp;
       double f_tol = 1.e-12;
       int max_num_steps = 100;
       return fp.solve(x, y_, env, f_tol, max_num_steps)(0);
@@ -136,7 +137,7 @@ struct FP_2d_func_test : public ::testing::Test {
       (const Eigen::VectorXd& y_) {
       KinsolFixedPointEnv<FP_2d_func> env(f, x, y_, x_r, x_i, msgs,
                                            u_scale, f_scale);    
-      FixedPointSolver fp;
+      FixedPointSolver<KinsolFixedPointEnv<FP_2d_func>, FixedPointADJac> fp;
       double f_tol = 1.e-12;
       int max_num_steps = 100;
       return fp.solve(x, y_, env, f_tol, max_num_steps)(i);
@@ -148,7 +149,7 @@ struct FP_2d_func_test : public ::testing::Test {
 TEST_F(FP_exp_func_test, solve) {
   KinsolFixedPointEnv<FP_exp_func> env(f, x, y, x_r, x_i, msgs,
                                        u_scale, f_scale);
-  FixedPointSolver fp;
+  FixedPointSolver<KinsolFixedPointEnv<FP_exp_func>, FixedPointADJac> fp;
   double f_tol = 1.e-12;
   int max_num_steps = 100;
   {
@@ -167,7 +168,7 @@ TEST_F(FP_exp_func_test, solve) {
 TEST_F(FP_2d_func_test, solve) {
   KinsolFixedPointEnv<FP_2d_func> env(f, x, y, x_r, x_i, msgs,
                                       u_scale, f_scale);
-  FixedPointSolver fp;
+  FixedPointSolver<KinsolFixedPointEnv<FP_2d_func>, FixedPointADJac> fp;
   double f_tol = 1.e-12;
   int max_num_steps = 100;
   Eigen::Matrix<double, -1, 1> res = fp.solve(x, y, env, f_tol, max_num_steps);
@@ -178,7 +179,7 @@ TEST_F(FP_2d_func_test, solve) {
 TEST_F(FP_exp_func_test, gradient) {
   KinsolFixedPointEnv<FP_exp_func> env(f, x, y, x_r, x_i, msgs,
                                        u_scale, f_scale);
-  FixedPointSolver fp;
+  FixedPointSolver<KinsolFixedPointEnv<FP_exp_func>, FixedPointADJac> fp;
   double f_tol = 1.e-12;
   int max_num_steps = 100;
   Eigen::Matrix<var, -1, 1> yp(to_var(y));
@@ -199,7 +200,7 @@ TEST_F(FP_exp_func_test, gradient) {
 TEST_F(FP_2d_func_test, gradient) {
   KinsolFixedPointEnv<FP_2d_func> env(f, x, y, x_r, x_i, msgs,
                                       u_scale, f_scale);
-  FixedPointSolver fp;
+  FixedPointSolver<KinsolFixedPointEnv<FP_2d_func>, FixedPointADJac> fp;
   double f_tol = 1.e-12;
   int max_num_steps = 100;
   Eigen::Matrix<var, -1, 1> yp(to_var(y));

@@ -89,9 +89,93 @@ namespace math {
     }
   };
 
-  struct FixedPointSolver {
+  /*
+   * Given the solution, we want to calculate jacobian wrt
+   * the params. This functor does that using AD.
+   */
+  struct FixedPointADJac {
 
-    template <typename F>
+    /*
+     * Calculate Jacobian Jxy.
+     *
+     * @tparam F RHS functor type
+     * @param x fixed point solution
+     * @param y RHS parameters
+     * @param env KINSOL working envionment
+     */
+    template<typename F>
+    inline Eigen::Matrix<stan::math::var, -1, 1>
+    operator()(const Eigen::VectorXd& x,
+               const Eigen::Matrix<stan::math::var, -1, 1>& y,
+               KinsolFixedPointEnv<F>& env) {
+      using stan::math::var;
+      using stan::math::to_array_1d;
+      using stan::math::precomputed_gradients;
+
+      auto g = [&env](const Eigen::Matrix<var, -1, 1>& par_) {
+        Eigen::Matrix<var, -1, 1> x_(par_.head(env.N_));
+        Eigen::Matrix<var, -1, 1> y_(par_.tail(env.M_));
+        return env.f_(x_, y_, env.x_r_, env.x_i_, env.msgs_);
+      };
+
+      Eigen::VectorXd theta(x.size() + y.size());
+      for (int i = 0; i < env.N_; ++i) {
+        theta(i) = x(i);
+      }
+      for (int i = 0; i < env.M_; ++i) {
+        theta(i + env.N_) = env.y_(i);
+      }
+      Eigen::Matrix<double, -1, 1> fx;
+      Eigen::Matrix<double, -1, -1> J;
+      stan::math::jacobian(g, theta, fx, J);
+      Eigen::MatrixXd A(J.block(0, 0, env.N_, env.N_));
+      Eigen::MatrixXd b(J.block(0, env.N_, env.N_, env.M_));
+      A = Eigen::MatrixXd::Identity(env.N_, env.N_) - A;
+      Eigen::MatrixXd Jxy = A.colPivHouseholderQr().solve(b);
+      std::vector<double> gradients(env.M_);
+      Eigen::Matrix<var, -1, 1> x_sol(env.N_);
+      std::vector<stan::math::var> yv(to_array_1d(y));
+      for (int i = 0; i < env.N_; ++i) {
+        gradients = to_array_1d(Eigen::VectorXd(Jxy.row(i)));
+        x_sol[i] = precomputed_gradients(x(i), yv, gradients);
+      }
+      return x_sol;
+    }
+  };
+
+  /*
+   * Fixed point solver for problem of form
+   * 
+   * x = F(x; theta)
+   *
+   * with x as unkowns and theta parameters.
+   *
+   * The solution for FP iteration
+   * doesn't involve derivatives but only data types.
+   *
+   * @tparam fp_env_type solver envionment setup
+   * @tparam fp_jac_type functor type for calculating the jacobian
+   */
+  template<typename fp_env_type, typename fp_jac_type>
+  struct FixedPointSolver;
+
+  /*
+   * Specialization for fixed point solver when using KINSOL.
+   *
+   * @tparam F RHS functor for fixed point iteration.
+   * @tparam fp_jac_type functor type for calculating the jacobian
+   */
+  template<typename F, typename fp_jac_type>
+  struct FixedPointSolver<KinsolFixedPointEnv<F>, fp_jac_type> {
+
+    /*
+     * Solve FP using KINSOL
+     *
+     * @param x initial point and final solution.
+     * @param env KINSOL solution envionment
+     * @param f_tol Function tolenrance
+     * @param max_num_steps max nb. of iterations.
+     */
     void kinsol_solve_fp(Eigen::VectorXd& x,
                          KinsolFixedPointEnv<F>& env, 
                          double f_tol,
@@ -126,7 +210,17 @@ namespace math {
       }
     }
 
-    template <typename F, typename T1>
+    /*
+     * Solve data-only FP problem so no need to calculate jacobian.
+     * @tparam T1 type of init point of iterations
+     *
+     * @param x initial point and final solution.
+     * @param y RHS functor parameters
+     * @param env KINSOL solution envionment
+     * @param f_tol Function tolenrance
+     * @param max_num_steps max nb. of iterations.
+     */
+    template <typename T1>
     Eigen::Matrix<double, -1, 1>
     solve(const Eigen::Matrix<T1, -1, 1>& x,
           const Eigen::Matrix<double, -1, 1>& y,
@@ -138,7 +232,18 @@ namespace math {
       return xd;
     }
 
-    template <typename F, typename T1>
+
+    /*
+     * Solve FP problem and calculate jacobian.
+     * @tparam T1 type of init point of iterations
+     *
+     * @param x initial point and final solution.
+     * @param y RHS functor parameters
+     * @param env KINSOL solution envionment
+     * @param f_tol Function tolenrance
+     * @param max_num_steps max nb. of iterations.
+     */
+    template <typename T1>
     Eigen::Matrix<stan::math::var, -1, 1>
     solve(const Eigen::Matrix<T1, -1, 1>& x,
           const Eigen::Matrix<stan::math::var, -1, 1>& y,
@@ -152,33 +257,8 @@ namespace math {
       Eigen::VectorXd xd(value_of(x));
       kinsol_solve_fp(xd, env, f_tol, max_num_steps);
 
-      auto g = [&env](const Eigen::Matrix<var, -1, 1>& par_) {
-        Eigen::Matrix<var, -1, 1> x_(par_.head(env.N_));
-        Eigen::Matrix<var, -1, 1> y_(par_.tail(env.M_));
-        return env.f_(x_, y_, env.x_r_, env.x_i_, env.msgs_);
-      };
-
-      Eigen::VectorXd theta(x.size() + y.size());
-      for (int i = 0; i < env.N_; ++i) {
-        theta(i) = xd(i);
-      }
-      for (int i = 0; i < env.M_; ++i) {
-        theta(i + env.N_) = env.y_(i);
-      }
-      Eigen::Matrix<double, -1, 1> fx;
-      Eigen::Matrix<double, -1, -1> J;
-      stan::math::jacobian(g, theta, fx, J);
-      Eigen::MatrixXd A(J.block(0, 0, env.N_, env.N_));
-      Eigen::MatrixXd b(J.block(0, env.N_, env.N_, env.M_));
-      A = Eigen::MatrixXd::Identity(env.N_, env.N_) - A;
-      Eigen::MatrixXd Jxy = A.colPivHouseholderQr().solve(b);
-      std::vector<double> gradients(env.M_);
-      Eigen::Matrix<var, -1, 1> x_sol_var(env.N_);
-      for (int i = 0; i < env.N_; ++i) {
-        gradients = stan::math::to_array_1d(Eigen::VectorXd(Jxy.row(i)));
-        x_sol_var[i] = stan::math::precomputed_gradients(xd(i), stan::math::to_array_1d(y), gradients);
-      }
-      return x_sol_var;
+      fp_jac_type jac_sol;
+      return jac_sol(xd, y, env);
     }
   };
 }
