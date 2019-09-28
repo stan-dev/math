@@ -1,6 +1,6 @@
 #ifdef STAN_OPENCL
 #include <stan/math.hpp>
-#include <stan/math/opencl/device_functions/log1p_exp.hpp>
+#include <stan/math/opencl/kernels/device_functions/log1p_exp.hpp>
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/expect_near_rel.hpp>
@@ -24,6 +24,19 @@ TEST(MathMatrixCL, log1p_exp) {
   stan::math::matrix_cl<double> a_cl(a);
   stan::math::matrix_cl<double> res_cl(1000, 1);
   log1p_exp(cl::NDRange(1000), res_cl, a_cl);
+  Eigen::VectorXd res = stan::math::from_matrix_cl<-1, 1>(res_cl);
+
+  stan::test::expect_near_rel("log1p_exp (OpenCL)", res,
+                              stan::math::log1p_exp(a));
+}
+
+TEST(MathMatrixCL, log1p_exp_edge_cases) {
+  Eigen::VectorXd a(3);
+  a << 10000, -10000, NAN;
+
+  stan::math::matrix_cl<double> a_cl(a);
+  stan::math::matrix_cl<double> res_cl(3, 1);
+  log1p_exp(cl::NDRange(3), res_cl, a_cl);
   Eigen::VectorXd res = stan::math::from_matrix_cl<-1, 1>(res_cl);
 
   stan::test::expect_near_rel("log1p_exp (OpenCL)", res,

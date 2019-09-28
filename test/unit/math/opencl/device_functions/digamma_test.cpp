@@ -1,6 +1,6 @@
 #ifdef STAN_OPENCL
 #include <stan/math.hpp>
-#include <stan/math/opencl/device_functions/digamma.hpp>
+#include <stan/math/opencl/kernels/device_functions/digamma.hpp>
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/expect_near_rel.hpp>

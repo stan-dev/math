@@ -3,8 +3,8 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_cl.hpp>
-#include <stan/math/opencl/device_functions/log1m_exp.hpp>
-#include <stan/math/opencl/device_functions/log1p_exp.hpp>
+#include <stan/math/opencl/kernels/device_functions/log1m_exp.hpp>
+#include <stan/math/opencl/kernels/device_functions/log1p_exp.hpp>
 
 namespace stan {
 namespace math {
