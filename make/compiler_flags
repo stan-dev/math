@@ -198,7 +198,7 @@ else
 endif
 
 ifeq ($(OS),Windows_NT)
-  TBB_TARGETS ?= $(addsuffix $(LIBRARY_SUFFIX),$(addprefix $(TBB/lib/),$(TBB_LIBRARIES)))
+  TBB_TARGETS ?= $(addsuffix $(LIBRARY_SUFFIX),$(addprefix $(TBB)/lib/,$(TBB_LIBRARIES)))
 endif
 ifeq ($(OS),Darwin)
   TBB_TARGETS ?= $(addsuffix $(LIBRARY_SUFFIX),$(addprefix $(TBB)/lib/lib,$(TBB_LIBRARIES)))
