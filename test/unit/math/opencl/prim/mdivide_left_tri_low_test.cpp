@@ -44,7 +44,7 @@ void mdivide_left_tri_low_Ab_test(int size) {
     }
     m1(i, 0) = stan::math::uniform_rng(-5, 5, rng);
   }
-  // for the CPU version for comparison
+  // force the CPU version for comparison
   stan::math::opencl_context.tuning_opts().tri_inverse_size_worth_transfer
       = size * 2;
   stan::math::matrix_d m1_cpu = stan::math::mdivide_left_tri_low(m1, m1);
@@ -73,7 +73,7 @@ void mdivide_left_tri_low_A_test(int size) {
   }
   stan::math::matrix_d m1_cpu(size, size);
   stan::math::matrix_d m1_cl(size, size);
-  // for the CPU version for comparison
+  // force the CPU version for comparison
   stan::math::opencl_context.tuning_opts().tri_inverse_size_worth_transfer
       = size * 2;
   m1_cpu = stan::math::mdivide_left_tri_low(m1);

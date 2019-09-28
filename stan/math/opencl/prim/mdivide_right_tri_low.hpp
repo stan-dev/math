@@ -10,12 +10,11 @@ namespace stan {
 namespace math {
 
 /**
- * Returns the solution of the system Ax=b when A is lower triangular.
- * @tparam T1 type of elements in A
- * @tparam T2 type of elements in b
- * @param A Triangular matrix.
+ * Returns the solution of the system Ax=b where A is a
+ * lower triangular matrix.
+ * @param A Matrix.
  * @param b Right hand side matrix or vector.
- * @return x = A^-1 b, solution of the linear system.
+ * @return x = b * tri(A)^-1, solution of the linear system.
  * @throws std::domain_error if A is not square or the rows of b don't
  * match the size of A.
  */

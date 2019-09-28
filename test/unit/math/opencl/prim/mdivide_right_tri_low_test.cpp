@@ -43,7 +43,7 @@ void mdivide_right_tri_low_Ab_test(int size) {
       m1(i, j) = 0.0;
     }
   }
-  // for the CPU version for comparison
+  // force the CPU version for comparison
   stan::math::opencl_context.tuning_opts().tri_inverse_size_worth_transfer
       = size * 2;
   stan::math::matrix_d m1_cpu = stan::math::mdivide_right_tri_low(m1, m1);

@@ -28,6 +28,15 @@ inline matrix_cl<return_type_t<T1, T2>> mdivide_left_tri_low(
   return tri_inverse<matrix_cl_view::Lower>(A) * b;
 }
 
+/**
+ * Returns the solution of the system Ax=b when A is triangular and b=I.
+ * @tparam T type of elements in A
+ * @tparam R1 number of rows in A
+ * @tparam C1 number of columns in A
+ * @param A Triangular matrix.
+ * @return x = A^-1 .
+ * @throws std::domain_error if A is not square
+ */
 template <typename T, typename = enable_if_all_floating_point<T>>
 inline matrix_cl<T> mdivide_left_tri_low(const matrix_cl<T>& A) {
   check_square("mdivide_left_tri_low", "A", A);
