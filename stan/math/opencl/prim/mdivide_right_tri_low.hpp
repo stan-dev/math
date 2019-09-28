@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_OPENCL_PRIM_MDIVIDE_LEFT_TRI_LOW_HPP
-#define STAN_MATH_OPENCL_PRIM_MDIVIDE_LEFT_TRI_LOW_HPP
+#ifndef STAN_MATH_OPENCL_PRIM_MDIVIDE_RIGHT_TRI_LOW_HPP
+#define STAN_MATH_OPENCL_PRIM_MDIVIDE_RIGHT_TRI_LOW_HPP
 
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
@@ -21,17 +21,11 @@ namespace math {
  */
 template <typename T1, typename T2,
           typename = enable_if_all_floating_point<T1, T2>>
-inline matrix_cl<return_type_t<T1, T2>> mdivide_left_tri_low(
-    const matrix_cl<T1>& A, const matrix_cl<T2>& b) {
-  check_square("mdivide_left_tri_low", "A", A);
-  check_multiplicable("mdivide_left_tri_low", "A", A, "b", b);
-  return tri_inverse<matrix_cl_view::Lower>(A) * b;
-}
-
-template <typename T, typename = enable_if_all_floating_point<T>>
-inline matrix_cl<T> mdivide_left_tri_low(const matrix_cl<T>& A) {
-  check_square("mdivide_left_tri_low", "A", A);
-  return tri_inverse<matrix_cl_view::Lower>(A);
+inline matrix_cl<return_type_t<T1, T2>> mdivide_right_tri_low(
+    const matrix_cl<T2>& b, const matrix_cl<T1>& A) {
+  check_square("mdivide_right_tri_low (OpenCL)", "A", A);
+  check_multiplicable("mdivide_right_tri_low (OpenCL)", "b", b, "A", A);
+  return b * tri_inverse<matrix_cl_view::Lower>(A);
 }
 
 }  // namespace math
