@@ -9,15 +9,15 @@ endif
 
 ## Set OS specific library filename extensions
 ifeq ($(OS),Windows_NT)
-  LIBRARY_SUFFIX := .dll
+  LIBRARY_SUFFIX ?= .dll
 endif
 
 ifeq ($(OS),Darwin)
-  LIBRARY_SUFFIX := .dylib
+  LIBRARY_SUFFIX ?= .dylib
 endif
 
 ifeq ($(OS),Linux)
-  LIBRARY_SUFFIX := .so
+  LIBRARY_SUFFIX ?= .so
 endif
 
 ## Set default compiler

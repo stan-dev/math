@@ -4,7 +4,13 @@ The <b>Stan Math Library</b> is a C++, reverse-mode automatic differentiation li
 
 Licensing
 ---------
-The Stan Math Library is licensed under the [new BSD license](LICENSE.md).
+The Stan Math Library is licensed under the [new BSD
+license](LICENSE.md). The Stan Math Library depends on the Intel TBB
+library which is licensed under the Apache 2.0 from Intel. Note that
+the Apache 2.0 license is incompatible with GPL-2 licensed code if
+distributed as a unitary binary. You may refer to the Apache 2.0
+evaluation page on the [Stan Math
+wiki](https://github.com/stan-dev/math/wiki/Apache-2.0-License-Evaluation).
 
 Required Libraries
 ------------------
