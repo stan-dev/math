@@ -95,10 +95,12 @@ namespace math {
     void kinsol_solve_fp(Eigen::VectorXd& x,
                          KinsolFixedPointEnv<F>& env, 
                          double f_tol,
-                         long int max_num_steps,
-                         int anderson_depth) {
-      size_t N = env.N_;
+                         long int max_num_steps) {
+      int N = env.N_;
       void* mem = env.mem_;
+
+      const int default_anderson_depth = 4;
+      int anderson_depth = std::min(N, default_anderson_depth);
 
       check_flag_sundials(KINSetNumMaxIters(mem, max_num_steps),
                           "KINSetNumMaxIters");
@@ -130,10 +132,9 @@ namespace math {
           const Eigen::Matrix<double, -1, 1>& y,
           KinsolFixedPointEnv<F>& env,
           double f_tol,
-          long int max_num_steps,
-          int anderson_depth) {
+          long int max_num_steps) {
       Eigen::VectorXd xd(stan::math::value_of(x));
-      kinsol_solve_fp(xd, env, f_tol, max_num_steps, anderson_depth);
+      kinsol_solve_fp(xd, env, f_tol, max_num_steps);
       return xd;
     }
 
@@ -143,14 +144,13 @@ namespace math {
           const Eigen::Matrix<stan::math::var, -1, 1>& y,
           KinsolFixedPointEnv<F>& env,
           double f_tol,
-          long int max_num_steps,
-          int anderson_depth) {
+          long int max_num_steps) {
       using stan::math::value_of;
       using stan::math::var;
 
       // FP solution
       Eigen::VectorXd xd(value_of(x));
-      kinsol_solve_fp(xd, env, f_tol, max_num_steps, anderson_depth);
+      kinsol_solve_fp(xd, env, f_tol, max_num_steps);
 
       auto g = [&env](const Eigen::Matrix<var, -1, 1>& par_) {
         Eigen::Matrix<var, -1, 1> x_(par_.head(env.N_));
