@@ -1,6 +1,6 @@
 #ifndef STAN_MATH_OPENCL_PRIM_MDIVIDE_RIGHT_TRI_LOW_HPP
 #define STAN_MATH_OPENCL_PRIM_MDIVIDE_RIGHT_TRI_LOW_HPP
-
+#ifdef STAN_OPENCL
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
@@ -29,4 +29,5 @@ inline matrix_cl<return_type_t<T1, T2>> mdivide_right_tri_low(
 
 }  // namespace math
 }  // namespace stan
+#endif
 #endif
