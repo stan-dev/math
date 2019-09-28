@@ -20,21 +20,21 @@ namespace math {
  * match the size of A.
  */
 template <typename T1, typename T2, typename = enable_if_all_arithmetic<T1, T2>>
-inline matrix_cl<return_type_t<T1, T2>> mdivide_left_tri_low(const matrix_cl<T1>& A,
-                                                 const matrix_cl<T2>& b) {
-    check_square("mdivide_left_tri_low", "A", A);
-    check_multiplicable("mdivide_left_tri_low", "A", A, "b", b);
-    return tri_inverse<matrix_cl_view::Lower>(A) * b;
+inline matrix_cl<return_type_t<T1, T2>> mdivide_left_tri_low(
+    const matrix_cl<T1>& A, const matrix_cl<T2>& b) {
+  check_square("mdivide_left_tri_low", "A", A);
+  check_multiplicable("mdivide_left_tri_low", "A", A, "b", b);
+  return tri_inverse<matrix_cl_view::Lower>(A) * b;
 }
 
 template <typename T1, typename T2, typename = enable_if_all_arithmetic<T1, T2>>
-inline matrix_cl<return_type_t<T1, T2>> mdivide_left_tri_low(const matrix_cl<T1>& A,
-                                                 const matrix_cl<T2>& b) {
+inline matrix_cl<return_type_t<T1, T2>> mdivide_left_tri_low(
+    const matrix_cl<T1>& A, const matrix_cl<T2>& b) {
     const Eigen::Matrix<T, R1, C1> &A) {
-    check_square("mdivide_left_tri_low", "A", A);
-    return tri_inverse<matrix_cl_view::Lower>(A);
-}
+      check_square("mdivide_left_tri_low", "A", A);
+      return tri_inverse<matrix_cl_view::Lower>(A);
+    }
 
 }  // namespace math
-}  // namespace stan
+}  // namespace math
 #endif

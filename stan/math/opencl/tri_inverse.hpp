@@ -36,17 +36,18 @@ namespace math {
  * @throw <code>std::invalid_argument</code> if the matrix
  *    is not square
  */
-template <matrix_cl_view matrix_view = matrix_cl_view::Entire, typename T, typename = enable_if_floating_point<T>>
+template <matrix_cl_view matrix_view = matrix_cl_view::Entire, typename T,
+          typename = enable_if_floating_point<T>>
 inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
   // if the triangular view is not specified use the triangularity of
-  // the input matrix 
-  if(matrix_view == matrix_cl_view::Entire || matrix_view == matrix_cl_view::Diagonal) {
+  // the input matrix
+  if (matrix_view == matrix_cl_view::Entire
+      || matrix_view == matrix_cl_view::Diagonal) {
     matrix_cl_view tri_view = A.view();
   } else {
     matrix_cl_view tri_view = matrix_view;
   }
-  matrix_cl_view tri_view
-  check_triangular("tri_inverse (OpenCL)", "A", A);
+  matrix_cl_view tri_view check_triangular("tri_inverse (OpenCL)", "A", A);
   check_square("tri_inverse (OpenCL)", "A", A);
 
   int thread_block_2D_dim = 32;
