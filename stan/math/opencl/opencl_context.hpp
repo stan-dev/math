@@ -106,6 +106,7 @@ class opencl_context_base {
         command_queue_ = cl::CommandQueue(context_, device_, 0, nullptr);
         block_reads_ = CL_TRUE;
       }
+      block_writes_ = CL_TRUE;
       int thread_block_size_sqrt
           = static_cast<int>(sqrt(static_cast<double>(max_thread_block_size_)));
       // Does a compile time check of the maximum allowed
@@ -146,7 +147,8 @@ class opencl_context_base {
   std::string device_name_;          // The name of OpenCL device
   size_t max_thread_block_size_;  // The maximum size of a block of workers on
                                   // the device
-  bool block_reads_;              // Whether to use out of order execution.
+  bool block_reads_;              // Whether to use out of order execution on reads.
+  bool block_writes_;              // Whether to use out of order execution on writes.
   // Holds Default parameter values for each Kernel.
   using map_base_opts = std::map<std::string, int>;
   map_base_opts base_opts_
@@ -372,8 +374,14 @@ class opencl_context {
   inline std::vector<cl::Platform> platform() {
     return {opencl_context_base::getInstance().platform_};
   }
+  /**
+   * Return a bool representing whether the write to the OpenCL device are blocking
+   */
+  inline bool write_in_order() {
+    return opencl_context_base::getInstance().block_writes_;
+  }
 
-  inline bool& in_order() {
+  inline bool read_in_order() {
     return opencl_context_base::getInstance().block_reads_;
   }
 };
