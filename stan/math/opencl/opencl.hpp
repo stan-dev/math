@@ -21,6 +21,7 @@
 
 #include <stan/math/opencl/prim/add.hpp>
 #include <stan/math/opencl/prim/bernoulli_logit_glm_lpmf.hpp>
+#include <stan/math/opencl/prim/categorical_logit_glm_lpmf.hpp>
 #include <stan/math/opencl/prim/cholesky_decompose.hpp>
 #include <stan/math/opencl/prim/divide_columns.hpp>
 #include <stan/math/opencl/prim/gp_exp_quad_cov.hpp>
@@ -29,7 +30,9 @@
 #include <stan/math/opencl/prim/multiply.hpp>
 #include <stan/math/opencl/prim/neg_binomial_2_log_glm_lpmf.hpp>
 #include <stan/math/opencl/prim/normal_id_glm_lpdf.hpp>
+#include <stan/math/opencl/prim/ordered_logistic_glm_lpmf.hpp>
 #include <stan/math/opencl/prim/poisson_log_glm_lpmf.hpp>
+
 #include <stan/math/opencl/prim/subtract.hpp>
 #include <stan/math/opencl/prim/transpose.hpp>
 
