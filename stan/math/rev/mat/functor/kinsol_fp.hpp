@@ -286,12 +286,15 @@ namespace math {
   };
 
   /**
-   * Return the solution to the specified system of algebraic
-   * equations given an initial guess, and parameters and data,
-   * which get passed into the algebraic system. Use the
+   * Return a fixed pointer to the specified system of algebraic
+   * equations of form
+   *
+   * x = F(x; theta)
+   *
+   * given an initial guess x, and parameters theta and data. Use the
    * KINSOL solver from the SUNDIALS suite.
    *
-   * The user can also specify the scaled step size, the function
+   * The user can also specify the scaling controls, the function
    * tolerance, and the maximum number of steps.
    *
    * @tparam F type of equation system function.
@@ -301,15 +304,13 @@ namespace math {
    * @param[in] y Parameter vector for the equation system. The function
    *            is overloaded to treat y as a vector of doubles or of a
    *            a template type T.
-   * @param[in] dat Continuous data vector for the equation system.
-   * @param[in] dat_int Integer data vector for the equation system.
+   * @param[in] x_r Continuous data vector for the equation system.
+   * @param[in] x_i Integer data vector for the equation system.
    * @param[in, out] msgs The print stream for warning messages.
-   * @param[in] scaling_step_size Scaled-step stopping tolerance. If
-   *            a Newton step is smaller than the scaling step
-   *            tolerance, the code breaks, assuming the solver is no
-   *            longer making significant progress (i.e. is stuck)
-   * @param[in] function_tolerance determines whether roots are acceptable.
-   * @param[in] max_num_steps  maximum number of function evaluations.
+   * @param[in] u_scale scaling vector for solution
+   * @param[in] f_scale scaling vector for residual
+   * @param[in] f_tol determines whether roots are acceptable.
+   * @param[in] max_num_steps maximum number of function evaluations.
    *  * @throw <code>std::invalid_argument</code> if x has size zero.
    * @throw <code>std::invalid_argument</code> if x has non-finite elements.
    * @throw <code>std::invalid_argument</code> if y has non-finite elements.
