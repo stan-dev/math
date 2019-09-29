@@ -147,8 +147,8 @@ class opencl_context_base {
   std::string device_name_;          // The name of OpenCL device
   size_t max_thread_block_size_;  // The maximum size of a block of workers on
                                   // the device
-  bool block_reads_;              // Whether to use out of order execution on reads.
-  bool block_writes_;              // Whether to use out of order execution on writes.
+  bool block_reads_;   // Whether to use out of order execution on reads.
+  bool block_writes_;  // Whether to use out of order execution on writes.
   // Holds Default parameter values for each Kernel.
   using map_base_opts = std::map<std::string, int>;
   map_base_opts base_opts_
@@ -375,14 +375,16 @@ class opencl_context {
     return {opencl_context_base::getInstance().platform_};
   }
   /**
-   * Return a bool representing whether the write to the OpenCL device are blocking
+   * Return a bool representing whether the write to the OpenCL device are
+   * blocking
    */
   inline bool write_in_order() {
     return opencl_context_base::getInstance().block_writes_;
   }
 
   /**
-   * Return a bool representing whether the reads from the OpenCL device are blocking
+   * Return a bool representing whether the reads from the OpenCL device are
+   * blocking
    */
   inline bool read_in_order() {
     return opencl_context_base::getInstance().block_reads_;
