@@ -11,7 +11,6 @@
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/rev/mat/functor/algebra_system.hpp>
 #include <stan/math/rev/mat/functor/kinsol_data.hpp>
-#include <stan/math/rev/mat/functor/algebra_system.hpp>
 #include <stan/math/prim/mat/err/check_flag_sundials.hpp>
 
 #include <kinsol/kinsol.h>
@@ -22,6 +21,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <algorithm>
 
 namespace stan {
 namespace math {
@@ -67,8 +67,7 @@ namespace math {
         mem_(KINCreate()),
         nv_x_(N_VNew_Serial(N_)),
         nv_u_scal_(N_VNew_Serial(N_)),
-        nv_f_scal_(N_VNew_Serial(N_))
-    {
+        nv_f_scal_(N_VNew_Serial(N_)) {
       for (int i = 0; i < N_; ++i) {
         NV_Ith_S(nv_x_, i) = stan::math::value_of(x(i));
         NV_Ith_S(nv_u_scal_, i) = u_scale[i];
@@ -95,8 +94,7 @@ namespace math {
         mem_(KINCreate()),
         nv_x_(N_VNew_Serial(N_)),
         nv_u_scal_(N_VNew_Serial(N_)),
-        nv_f_scal_(N_VNew_Serial(N_))
-    {
+        nv_f_scal_(N_VNew_Serial(N_)) {
       for (int i = 0; i < N_; ++i) {
         NV_Ith_S(nv_x_, i) = stan::math::value_of(x(i));
         NV_Ith_S(nv_u_scal_, i) = u_scale[i];
@@ -126,7 +124,6 @@ namespace math {
    * the params. This functor does that using AD.
    */
   struct FixedPointADJac {
-
     /*
      * Calculate Jacobian Jxy.
      *
@@ -199,7 +196,6 @@ namespace math {
    */
   template<typename F, typename fp_jac_type>
   struct FixedPointSolver<KinsolFixedPointEnv<F>, fp_jac_type> {
-
     /*
      * Solve FP using KINSOL
      *
@@ -209,9 +205,9 @@ namespace math {
      * @param max_num_steps max nb. of iterations.
      */
     void kinsol_solve_fp(Eigen::VectorXd& x,
-                         KinsolFixedPointEnv<F>& env, 
+                         KinsolFixedPointEnv<F>& env,
                          double f_tol,
-                         long int max_num_steps) {
+                         int max_num_steps) {
       int N = env.N_;
       void* mem = env.mem_;
 
@@ -222,20 +218,16 @@ namespace math {
                           "KINSetNumMaxIters");
       check_flag_sundials(KINSetMAA(mem, anderson_depth),
                           "KINSetMAA");
-      check_flag_sundials(KINInit(mem, &env.kinsol_f_system, env.nv_x_), "KINInit");
-
+      check_flag_sundials(KINInit(mem, &env.kinsol_f_system, env.nv_x_),
+                          "KINInit");
       check_flag_sundials(KINSetFuncNormTol(mem, f_tol),
                           "KINSetFuncNormTol");
-
       check_flag_sundials(KINSetUserData(mem, static_cast<void*>(&env)),
                           "KINSetUserData");
 
-      KINSol(mem, env.nv_x_, KIN_FP, env.nv_u_scal_, env.nv_f_scal_);
-
-      long int nniter;
-      double norm;
-      KINGetNumNonlinSolvIters(mem, &nniter);
-      KINGetFuncNorm(mem, &norm);
+      check_flag_sundials(KINSol(mem, env.nv_x_, KIN_FP,
+                                 env.nv_u_scal_, env.nv_f_scal_),
+                          "KINSol");
 
       for (int i = 0; i < N; ++i) {
         x(i) = NV_Ith_S(env.nv_x_, i);
@@ -258,7 +250,7 @@ namespace math {
           const Eigen::Matrix<double, -1, 1>& y,
           KinsolFixedPointEnv<F>& env,
           double f_tol,
-          long int max_num_steps) {
+          int max_num_steps) {
       Eigen::VectorXd xd(stan::math::value_of(x));
       kinsol_solve_fp(xd, env, f_tol, max_num_steps);
       return xd;
@@ -280,7 +272,7 @@ namespace math {
           const Eigen::Matrix<stan::math::var, -1, 1>& y,
           KinsolFixedPointEnv<F>& env,
           double f_tol,
-          long int max_num_steps) {
+          int max_num_steps) {
       using stan::math::value_of;
       using stan::math::var;
 
@@ -342,7 +334,7 @@ namespace math {
                     const std::vector<double>& f_scale,
                     std::ostream* msgs = nullptr,
                     double f_tol = 1e-6,
-                    long int max_num_steps = 200) {  // NOLINT(runtime/int)
+                    int max_num_steps = 200) {  // NOLINT(runtime/int)
     algebra_solver_check(x, y, x_r, x_i, f_tol, max_num_steps);
     check_nonnegative("algebra_solver", "u_scale", u_scale);
     check_nonnegative("algebra_solver", "f_scale", f_scale);

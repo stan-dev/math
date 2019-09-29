@@ -71,7 +71,7 @@ struct FP_exp_func_test : public ::testing::Test {
     auto f_fd = [this, i]
       (const Eigen::VectorXd& y_) {
       KinsolFixedPointEnv<FP_exp_func> env(f, x, y_, x_r, x_i, msgs,
-                                           u_scale, f_scale);    
+                                           u_scale, f_scale);
       FixedPointSolver<KinsolFixedPointEnv<FP_exp_func>, FixedPointADJac> fp;
       double f_tol = 1.e-12;
       int max_num_steps = 100;
@@ -91,7 +91,6 @@ struct FP_exp_func_test : public ::testing::Test {
  *
  */
 struct FP_2d_func_test : public ::testing::Test {
-
   /*
    * RHS functor
    */
@@ -137,7 +136,7 @@ struct FP_2d_func_test : public ::testing::Test {
     auto f_fd = [this, i]
       (const Eigen::VectorXd& y_) {
       KinsolFixedPointEnv<FP_2d_func> env(f, x, y_, x_r, x_i, msgs,
-                                           u_scale, f_scale);    
+                                           u_scale, f_scale);
       FixedPointSolver<KinsolFixedPointEnv<FP_2d_func>, FixedPointADJac> fp;
       double f_tol = 1.e-12;
       int max_num_steps = 100;
@@ -154,16 +153,16 @@ TEST_F(FP_exp_func_test, solve) {
   double f_tol = 1.e-12;
   int max_num_steps = 100;
   {
-    Eigen::Matrix<double, -1, 1> res = fp.solve(x, y, env, f_tol, max_num_steps);
+    Eigen::Matrix<double, -1, 1> res = fp.solve(x, y, env, f_tol, max_num_steps); // NOLINT
     EXPECT_FLOAT_EQ(res(0), 0.567143290409);
   }
 
   {
     x(0) = 0.1;
     y(0) = 0.8;
-    Eigen::Matrix<double, -1, 1> res = fp.solve(x, y, env, f_tol, max_num_steps);
+    Eigen::Matrix<double, -1, 1> res = fp.solve(x, y, env, f_tol, max_num_steps); // NOLINT
     EXPECT_FLOAT_EQ(res(0), 0.612584823501);
-  }  
+  }
 }
 
 TEST_F(FP_2d_func_test, solve) {
@@ -172,7 +171,7 @@ TEST_F(FP_2d_func_test, solve) {
   FixedPointSolver<KinsolFixedPointEnv<FP_2d_func>, FixedPointADJac> fp;
   double f_tol = 1.e-12;
   int max_num_steps = 100;
-  Eigen::Matrix<double, -1, 1> res = fp.solve(x, y, env, f_tol, max_num_steps);
+  Eigen::Matrix<double, -1, 1> res = fp.solve(x, y, env, f_tol, max_num_steps); // NOLINT
   EXPECT_NEAR(res(0), 0.7861518, 1e-5);
   EXPECT_NEAR(res(1), 0.6180333, 1e-5);
 }
@@ -187,7 +186,7 @@ TEST_F(FP_exp_func_test, gradient) {
 
   x(0) = 0.1;
   y(0) = 0.8;
-  Eigen::Matrix<var, -1, 1> x_sol = fp.solve(x, yp, env, f_tol, max_num_steps);
+  Eigen::Matrix<var, -1, 1> x_sol = fp.solve(x, yp, env, f_tol, max_num_steps); // NOLINT
   EXPECT_FLOAT_EQ(value_of(x_sol(0)), 0.612584823501);
   stan::math::set_zero_all_adjoints();
   x_sol(0).grad();
@@ -206,10 +205,10 @@ TEST_F(FP_2d_func_test, gradient) {
   int max_num_steps = 100;
   Eigen::Matrix<var, -1, 1> yp(to_var(y));
 
-  Eigen::Matrix<var, -1, 1> x_sol = fp.solve(x, yp, env, f_tol, max_num_steps);
+  Eigen::Matrix<var, -1, 1> x_sol = fp.solve(x, yp, env, f_tol, max_num_steps); // NOLINT
   EXPECT_NEAR(value_of(x_sol(0)), 0.7861518, 1e-5);
   EXPECT_NEAR(value_of(x_sol(1)), 0.6180333, 1e-5);
-  
+
   double fx;
   Eigen::VectorXd grad_fx;
   for (int i = 0; i < env.N_; ++i) {
@@ -219,7 +218,7 @@ TEST_F(FP_2d_func_test, gradient) {
     finite_diff_gradient_auto(f_fd, y, fx, grad_fx);
     for (int j = 0; j < env.M_; ++j) {
       EXPECT_FLOAT_EQ(grad_fx(j), yp(j).adj());
-    }    
+    }
   }
 }
 
