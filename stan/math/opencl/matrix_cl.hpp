@@ -297,32 +297,6 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
     }
   }
 
-  template <typename Mat,
-            std::enable_if_t<is_eigen_matrix<std::decay_t<Mat>>::value>...>
-  void setup_buffer(Mat&& A) {
-    cl::Context& ctx = opencl_context.context();
-    cl::CommandQueue& queue = opencl_context.queue();
-    this->buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
-    cl::Event transfer_event;
-    queue.enqueueWriteBuffer(buffer_cl_, opencl_context.write_in_order(), 0,
-                             sizeof(T) * A.size(), A.data(), nullptr,
-                             &transfer_event);
-    this->add_write_event(transfer_event);
-  }
-
-  template <typename Mat,
-            std::enable_if_t<!is_eigen_matrix<std::decay_t<Mat>>::value>...>
-  void setup_buffer(Mat&& A) {
-    cl::Context& ctx = opencl_context.context();
-    cl::CommandQueue& queue = opencl_context.queue();
-    this->buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
-    cl::Event transfer_event;
-    queue.enqueueWriteBuffer(buffer_cl_, opencl_context.write_in_order(), 0,
-                             sizeof(T) * A.size(), A.eval().data(), nullptr,
-                             &transfer_event);
-    this->add_write_event(transfer_event);
-  }
-
   /**
    * Constructor for the matrix_cl that
    * creates a copy of the Eigen matrix on the OpenCL device.
@@ -335,15 +309,21 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
    * @throw <code>std::system_error</code> if the
    * matrices do not have matching dimensions
    */
-  template <typename Mat, typename = std::enable_if_t<is_eigen<Mat>::value>>
-  explicit matrix_cl(Mat&& A,  //  NOLINT
-                     matrix_cl_view partial_view = matrix_cl_view::Entire)
-      : rows_(A.rows()), cols_(A.cols()), view_(partial_view) {
-    if (this->size() == 0) {
+  explicit matrix_cl(
+    const Eigen::Ref<const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>> &A,
+          matrix_cl_view partial_view = matrix_cl_view::Entire)
+                      : rows_(A.rows()), cols_(A.cols()), view_(partial_view) {
+    if (size() == 0) {
       return;
     }
+    cl::Context& ctx = opencl_context.context();
+    cl::CommandQueue& queue = opencl_context.queue();
     try {
-      setup_buffer(A);
+      buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
+      cl::Event transfer_event;
+      queue.enqueueWriteBuffer(buffer_cl_, CL_FALSE, 0, sizeof(T) * A.size(),
+                              A.data(), nullptr, &transfer_event);
+      this->add_write_event(transfer_event);
     } catch (const cl::Error& e) {
       check_opencl_error("matrix constructor", e);
     }
