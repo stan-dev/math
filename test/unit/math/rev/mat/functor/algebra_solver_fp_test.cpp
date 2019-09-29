@@ -15,6 +15,7 @@
 using stan::math::KinsolFixedPointEnv;
 using stan::math::FixedPointSolver;
 using stan::math::FixedPointADJac;
+using stan::math::algebra_solver_fp;
 using stan::math::value_of;
 using stan::math::var;
 using stan::math::to_var;
@@ -243,6 +244,38 @@ TEST_F(FP_2d_func_test, gradient_with_var_init_point) {
     auto f_fd = fd_functor(i);
     finite_diff_gradient_auto(f_fd, y, fx, grad_fx);
     for (int j = 0; j < env.M_; ++j) {
+      EXPECT_FLOAT_EQ(grad_fx(j), yp(j).adj());
+    }
+  }
+}
+
+TEST_F(FP_2d_func_test, algebra_solver_fp) {
+  double f_tol = 1.e-12;
+  int max_num_steps = 100;
+
+  Eigen::Matrix<double, -1, 1> xd =
+    algebra_solver_fp(f, x, y, x_r, x_i, u_scale, f_scale, 0, f_tol, max_num_steps); // NOLINT
+  EXPECT_NEAR(xd(0), 0.7861518, 1e-5);
+  EXPECT_NEAR(xd(1), 0.6180333, 1e-5);
+
+
+  Eigen::Matrix<var, -1, 1> yp(to_var(y));
+  Eigen::Matrix<var, -1, 1> xp(to_var(x));
+  Eigen::Matrix<var, -1, 1> xv =
+    algebra_solver_fp(f, xp, yp, x_r, x_i, u_scale, f_scale, 0, f_tol, max_num_steps); // NOLINT
+  EXPECT_NEAR(value_of(xv(0)), 0.7861518, 1e-5);
+  EXPECT_NEAR(value_of(xv(1)), 0.6180333, 1e-5);
+
+  double fx;
+  Eigen::VectorXd grad_fx;
+  const int N = x.size();
+  const int M = y.size();
+  for (int i = 0; i < N; ++i) {
+    stan::math::set_zero_all_adjoints();
+    xv(i).grad();
+    auto f_fd = fd_functor(i);
+    finite_diff_gradient_auto(f_fd, y, fx, grad_fx);
+    for (int j = 0; j < M; ++j) {
       EXPECT_FLOAT_EQ(grad_fx(j), yp(j).adj());
     }
   }

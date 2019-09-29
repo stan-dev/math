@@ -6,6 +6,7 @@
 #include <stan/math/prim/mat/fun/to_array_1d.hpp>
 #include <stan/math/prim/mat/fun/to_vector.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
+#include <stan/math/rev/scal/fun/value_of.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/rev/mat/functor/algebra_system.hpp>
@@ -35,6 +36,7 @@ namespace math {
   template <typename F>
   struct KinsolFixedPointEnv {
     const F& f_;
+    const Eigen::VectorXd y_dummy;
     const Eigen::VectorXd& y_;
     const size_t N_;
     const size_t M_;
@@ -47,13 +49,15 @@ namespace math {
     N_Vector nv_u_scal_;
     N_Vector nv_f_scal_;
 
-    /* Constructor */
-    KinsolFixedPointEnv(const F& f, const Eigen::VectorXd& x,
+    /* Constructor when @y is data */
+    template<typename T>
+    KinsolFixedPointEnv(const F& f, const Eigen::Matrix<T, -1, 1>& x,
                        const Eigen::VectorXd& y, const std::vector<double>& x_r,
                        const std::vector<int>& x_i, std::ostream* msgs,
                        const std::vector<double>& u_scale,
                        const std::vector<double>& f_scale)
       : f_(f),
+        y_dummy(),
         y_(y),
         x_r_(x_r),
         x_i_(x_i),
@@ -66,7 +70,35 @@ namespace math {
         nv_f_scal_(N_VNew_Serial(N_))
     {
       for (int i = 0; i < N_; ++i) {
-        NV_Ith_S(nv_x_, i) = x(i);
+        NV_Ith_S(nv_x_, i) = stan::math::value_of(x(i));
+        NV_Ith_S(nv_u_scal_, i) = u_scale[i];
+        NV_Ith_S(nv_f_scal_, i) = f_scale[i];
+      }
+    }
+
+    /* Constructor when @y is param */
+    template<typename T>
+    KinsolFixedPointEnv(const F& f, const Eigen::Matrix<T, -1, 1>& x,
+                        const Eigen::Matrix<stan::math::var, -1, 1>& y,
+                        const std::vector<double>& x_r,
+                        const std::vector<int>& x_i, std::ostream* msgs,
+                        const std::vector<double>& u_scale,
+                        const std::vector<double>& f_scale)
+      : f_(f),
+        y_dummy(stan::math::value_of(y)),
+        y_(y_dummy),
+        x_r_(x_r),
+        x_i_(x_i),
+        msgs_(msgs),
+        N_(x.size()),
+        M_(y.size()),
+        mem_(KINCreate()),
+        nv_x_(N_VNew_Serial(N_)),
+        nv_u_scal_(N_VNew_Serial(N_)),
+        nv_f_scal_(N_VNew_Serial(N_))
+    {
+      for (int i = 0; i < N_; ++i) {
+        NV_Ith_S(nv_x_, i) = stan::math::value_of(x(i));
         NV_Ith_S(nv_u_scal_, i) = u_scale[i];
         NV_Ith_S(nv_f_scal_, i) = f_scale[i];
       }
@@ -232,7 +264,6 @@ namespace math {
       return xd;
     }
 
-
     /*
      * Solve FP problem and calculate jacobian.
      * @tparam T1 type of init point of iterations
@@ -261,6 +292,69 @@ namespace math {
       return jac_sol(xd, y, env);
     }
   };
+
+  /**
+   * Return the solution to the specified system of algebraic
+   * equations given an initial guess, and parameters and data,
+   * which get passed into the algebraic system. Use the
+   * KINSOL solver from the SUNDIALS suite.
+   *
+   * The user can also specify the scaled step size, the function
+   * tolerance, and the maximum number of steps.
+   *
+   * @tparam F type of equation system function.
+   * @tparam T type of initial guess vector.
+   * @param[in] f Functor that evaluated the system of equations.
+   * @param[in] x Vector of starting values.
+   * @param[in] y Parameter vector for the equation system. The function
+   *            is overloaded to treat y as a vector of doubles or of a
+   *            a template type T.
+   * @param[in] dat Continuous data vector for the equation system.
+   * @param[in] dat_int Integer data vector for the equation system.
+   * @param[in, out] msgs The print stream for warning messages.
+   * @param[in] scaling_step_size Scaled-step stopping tolerance. If
+   *            a Newton step is smaller than the scaling step
+   *            tolerance, the code breaks, assuming the solver is no
+   *            longer making significant progress (i.e. is stuck)
+   * @param[in] function_tolerance determines whether roots are acceptable.
+   * @param[in] max_num_steps  maximum number of function evaluations.
+   *  * @throw <code>std::invalid_argument</code> if x has size zero.
+   * @throw <code>std::invalid_argument</code> if x has non-finite elements.
+   * @throw <code>std::invalid_argument</code> if y has non-finite elements.
+   * @throw <code>std::invalid_argument</code> if dat has non-finite elements.
+   * @throw <code>std::invalid_argument</code> if dat_int has non-finite elements.
+   * @throw <code>std::invalid_argument</code> if scaled_step_size is strictly
+   * negative.
+   * @throw <code>std::invalid_argument</code> if function_tolerance is strictly
+   * negative.
+   * @throw <code>std::invalid_argument</code> if max_num_steps is not positive.
+   * @throw <code>boost::math::evaluation_error</code> (which is a subclass of
+   * <code>std::runtime_error</code>) if solver exceeds max_num_steps.
+   */
+  template <typename F, typename T1, typename T2>
+  Eigen::Matrix<T2, -1, 1>
+  algebra_solver_fp(const F& f,
+                    const Eigen::Matrix<T1, -1, 1>& x,
+                    const Eigen::Matrix<T2, -1, 1>& y,
+                    const std::vector<double>& x_r,
+                    const std::vector<int>& x_i,
+                    const std::vector<double>& u_scale,
+                    const std::vector<double>& f_scale,
+                    std::ostream* msgs = nullptr,
+                    double f_tol = 1e-6,
+                    long int max_num_steps = 200) {  // NOLINT(runtime/int)
+    algebra_solver_check(x, y, x_r, x_i, f_tol, max_num_steps);
+    check_nonnegative("algebra_solver", "u_scale", u_scale);
+    check_nonnegative("algebra_solver", "f_scale", f_scale);
+    check_matching_sizes("algebra_solver", "the algebraic system's output",
+                         value_of(f(x, y, x_r, x_i, msgs)),
+                         "the vector of unknowns, x,", x);
+
+    KinsolFixedPointEnv<F> env(f, x, y, x_r, x_i, msgs, u_scale, f_scale); // NOLINT
+    FixedPointSolver<KinsolFixedPointEnv<F>, FixedPointADJac> fp;
+    return fp.solve(x, y, env, f_tol, max_num_steps);
+  }
+
 }
 }
 
