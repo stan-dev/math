@@ -381,6 +381,9 @@ class opencl_context {
     return opencl_context_base::getInstance().block_writes_;
   }
 
+  /**
+   * Return a bool representing whether the reads from the OpenCL device are blocking
+   */
   inline bool read_in_order() {
     return opencl_context_base::getInstance().block_reads_;
   }
