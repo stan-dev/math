@@ -325,7 +325,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
     try {
       buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
       cl::Event transfer_event;
-      queue.enqueueWriteBuffer(buffer_cl_, CL_FALSE, 0, sizeof(T) * A.size(),
+      queue.enqueueWriteBuffer(buffer_cl_, opencl_context.write_in_order(), 0, sizeof(T) * A.size(),
                                A.data(), nullptr, &transfer_event);
       this->add_write_event(transfer_event);
     } catch (const cl::Error& e) {
