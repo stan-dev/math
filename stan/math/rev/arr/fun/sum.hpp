@@ -3,7 +3,9 @@
 
 #include <stan/math/rev/core.hpp>
 #include <algorithm>
+#include <numeric>
 #include <vector>
+
 namespace stan {
 namespace math {
 

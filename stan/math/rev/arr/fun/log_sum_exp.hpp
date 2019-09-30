@@ -4,9 +4,10 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/fun/calculate_chain.hpp>
 #include <stan/math/prim/arr/fun/log_sum_exp.hpp>
-#include <vector>
-#include <limits>
 #include <algorithm>
+#include <limits>
+#include <numeric>
+#include <vector>
 
 namespace stan {
 namespace math {
