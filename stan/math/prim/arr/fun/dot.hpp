@@ -3,8 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <vector>
-#include <cstddef>
 #include <numeric>
+#include <cstddef>
 
 namespace stan {
 namespace math {
