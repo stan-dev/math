@@ -16,9 +16,9 @@ using stan::math::FixedPointSolver;
 using stan::math::KinsolFixedPointEnv;
 using stan::math::algebra_solver_fp;
 using stan::math::finite_diff_gradient_auto;
+using stan::math::to_array_1d;
 using stan::math::to_var;
 using stan::math::value_of;
-using stan::math::to_array_1d;
 using stan::math::var;
 
 /*
@@ -181,20 +181,23 @@ struct FP_degenerated_func_test : public ::testing::Test {
   void SetUp() { stan::math::recover_memory(); }
 
   FP_degenerated_func_test()
-    : f(),
-      x(stan::math::to_vector(std::vector<double>{5.0, 100.0})),
-      y(stan::math::to_vector(std::vector<double>{5.0, 100.0})),
-      x_r(),
-      x_i(),
-      msgs(nullptr),
-      u_scale{1.0, 1.0},
-      f_scale{1.0, 1.0} {}
+      : f(),
+        x(stan::math::to_vector(std::vector<double>{5.0, 100.0})),
+        y(stan::math::to_vector(std::vector<double>{5.0, 100.0})),
+        x_r(),
+        x_i(),
+        msgs(nullptr),
+        u_scale{1.0, 1.0},
+        f_scale{1.0, 1.0} {}
 
   auto fd_functor(int i) {
     auto f_fd = [this, i](const Eigen::VectorXd& y_) {
-      KinsolFixedPointEnv<FP_degenerated_func> env(f, x, y_, x_r, x_i, msgs, u_scale,  // NOLINT
-                                                        f_scale);
-      FixedPointSolver<KinsolFixedPointEnv<FP_degenerated_func>, FixedPointADJac> fp;  // NOLINT
+      KinsolFixedPointEnv<FP_degenerated_func> env(f, x, y_, x_r, x_i, msgs,
+                                                   u_scale,  // NOLINT
+                                                   f_scale);
+      FixedPointSolver<KinsolFixedPointEnv<FP_degenerated_func>,
+                       FixedPointADJac>
+          fp;  // NOLINT
       double f_tol = 1.e-12;
       int max_num_steps = 100;
       return fp.solve(x, y_, env, f_tol, max_num_steps)(i);
@@ -232,8 +235,8 @@ struct FP_direct_prod_func_test : public ::testing::Test {
       for (size_t i = m; i < n - m; ++i) {
         z(i) = 1.0;
         for (int j = 0; j < m; ++j) {
-          z(i) *= stan::math::exp(-y(i-j) * x(i-j));
-          z(i) *= stan::math::exp(-y(i+j) * x(i+j));
+          z(i) *= stan::math::exp(-y(i - j) * x(i - j));
+          z(i) *= stan::math::exp(-y(i + j) * x(i + j));
         }
       }
       for (size_t i = 0; i < m; ++i) {
@@ -281,26 +284,29 @@ struct FP_direct_prod_func_test : public ::testing::Test {
   void SetUp() { stan::math::recover_memory(); }
 
   FP_direct_prod_func_test()
-    : f(),
-      f_newton(),
-      n(400),
-      x(stan::math::to_vector(std::vector<double>(n, 0.2))),
-      y(stan::math::to_vector(std::vector<double>(n, 1.0))),
-      x_r(),
-      x_i(),
-      msgs(nullptr),
-      u_scale(n, 1.0),
-      f_scale(n, 1.0) {
+      : f(),
+        f_newton(),
+        n(400),
+        x(stan::math::to_vector(std::vector<double>(n, 0.2))),
+        y(stan::math::to_vector(std::vector<double>(n, 1.0))),
+        x_r(),
+        x_i(),
+        msgs(nullptr),
+        u_scale(n, 1.0),
+        f_scale(n, 1.0) {
     for (int i = 0; i < n; ++i) {
-      y(i) = 1.0/n + i * 1.0/n;
+      y(i) = 1.0 / n + i * 1.0 / n;
     }
   }
 
   auto fd_functor(int i) {
     auto f_fd = [this, i](const Eigen::VectorXd& y_) {
-      KinsolFixedPointEnv<FP_direct_prod_func> env(f, x, y_, x_r, x_i, msgs, u_scale,  // NOLINT
-                                                        f_scale);
-      FixedPointSolver<KinsolFixedPointEnv<FP_direct_prod_func>, FixedPointADJac> fp;  // NOLINT
+      KinsolFixedPointEnv<FP_direct_prod_func> env(f, x, y_, x_r, x_i, msgs,
+                                                   u_scale,  // NOLINT
+                                                   f_scale);
+      FixedPointSolver<KinsolFixedPointEnv<FP_direct_prod_func>,
+                       FixedPointADJac>
+          fp;  // NOLINT
       double f_tol = 1.e-12;
       int max_num_steps = 100;
       return fp.solve(x, y_, env, f_tol, max_num_steps)(i);
@@ -453,7 +459,7 @@ TEST_F(FP_degenerated_func_test, algebra_solver_fp) {
   int max_num_steps = 100;
 
   Eigen::Matrix<double, -1, 1> xd = algebra_solver_fp(
-      f, x, y, x_r, x_i, u_scale, f_scale, 0, f_tol, max_num_steps);  // NOLINT  
+      f, x, y, x_r, x_i, u_scale, f_scale, 0, f_tol, max_num_steps);  // NOLINT
   EXPECT_FLOAT_EQ(xd(0), 5.0);
   EXPECT_FLOAT_EQ(xd(1), 5.0);
 
@@ -484,10 +490,10 @@ TEST_F(FP_direct_prod_func_test, algebra_solver_fp) {
   int max_num_steps = 100;
 
   Eigen::Matrix<var, -1, 1> yp(to_var(y));
-  Eigen::Matrix<var, -1, 1> xv_fp =
-    algebra_solver_fp(f, x, yp, x_r, x_i, u_scale, f_scale, 0, f_tol, max_num_steps);  // NOLINT
-  Eigen::Matrix<var, -1, 1> xv_newton =
-    algebra_solver_newton(f_newton, x, yp, x_r, x_i, 0, 1.e-3, f_tol, max_num_steps);  // NOLINT
+  Eigen::Matrix<var, -1, 1> xv_fp = algebra_solver_fp(
+      f, x, yp, x_r, x_i, u_scale, f_scale, 0, f_tol, max_num_steps);  // NOLINT
+  Eigen::Matrix<var, -1, 1> xv_newton = algebra_solver_newton(
+      f_newton, x, yp, x_r, x_i, 0, 1.e-3, f_tol, max_num_steps);  // NOLINT
   for (int i = 0; i < n; ++i) {
     EXPECT_FLOAT_EQ(value_of(xv_fp(i)), value_of(xv_newton(i)));
   }
