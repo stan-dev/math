@@ -58,13 +58,13 @@ class vari {
    * @param x Value of the constructed variable.
    */
   explicit vari(double x) : val_(x) {
-    ChainableStack::instance_->var_stack_.push_back(this);
+    ChainableStack::instance_->var_stack_.emplace_back(this);
   }
   vari(double x, bool stacked) : val_(x), stacked_(stacked) {
     if (stacked) {
-      ChainableStack::instance_->var_stack_.push_back(this);
+      ChainableStack::instance_->var_stack_.emplace_back(this);
     } else {
-      ChainableStack::instance_->var_nochain_stack_.push_back(this);
+      ChainableStack::instance_->var_nochain_stack_.emplace_back(this);
     }
   }
 
@@ -83,7 +83,7 @@ class vari {
    * Vari default constructor assumes the var goes on the stack tape
    */
   vari() {
-    ChainableStack::instance_->var_stack_.push_back(this);
+    ChainableStack::instance_->var_stack_.emplace_back(this);
   };
 
   /**
@@ -92,9 +92,9 @@ class vari {
    */
   explicit vari(const vari& x) : val_(x.val_), adj_(x.adj_), stacked_(x.stacked_) {
     if (this->stacked_) {
-      ChainableStack::instance_->var_stack_.push_back(this);
+      ChainableStack::instance_->var_stack_.emplace_back(this);
     } else {
-      ChainableStack::instance_->var_nochain_stack_.push_back(this);
+      ChainableStack::instance_->var_nochain_stack_.emplace_back(this);
     }
   }
 
@@ -107,9 +107,9 @@ class vari {
     // Adjoint is const and cannot be assigned to
     this->adj_ = x.adj_;
     if (x.stacked_ && !this->stacked_) {
-      ChainableStack::instance_->var_stack_.push_back(this);
+      ChainableStack::instance_->var_stack_.emplace_back(this);
     } else if (!x.stacked_ && this->stacked_) {
-      ChainableStack::instance_->var_nochain_stack_.push_back(this);
+      ChainableStack::instance_->var_nochain_stack_.emplace_back(this);
     }
     this->stacked_ = x.stacked_;
     return *this;
@@ -124,9 +124,9 @@ class vari {
    */
   explicit vari(vari&& x) noexcept : val_(x.val_), adj_(x.adj_), stacked_(x.stacked_) {
     if (this->stacked_) {
-      ChainableStack::instance_->var_stack_.push_back(std::move(this));
+      ChainableStack::instance_->var_stack_.emplace_back(std::move(this));
     } else {
-      ChainableStack::instance_->var_nochain_stack_.push_back(std::move(this));
+      ChainableStack::instance_->var_nochain_stack_.emplace_back(std::move(this));
     }
   }
 
@@ -141,9 +141,9 @@ class vari {
     // Adjoint is const and cannot be assigned to
     this->adj_ = x.adj_;
     if (x.stacked_ && !this->stacked_) {
-      ChainableStack::instance_->var_stack_.push_back(std::move(this));
+      ChainableStack::instance_->var_stack_.emplace_back(std::move(this));
     } else if (!x.stacked_ && this->stacked_) {
-      ChainableStack::instance_->var_nochain_stack_.push_back(std::move(this));
+      ChainableStack::instance_->var_nochain_stack_.emplace_back(std::move(this));
     }
     this->stacked_ = x.stacked_;
     return *this;
