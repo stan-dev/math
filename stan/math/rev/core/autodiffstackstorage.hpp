@@ -99,14 +99,14 @@ struct AutodiffStackSingleton {
   }
   explicit AutodiffStackSingleton(AutodiffStackSingleton_t const &) = delete;
   AutodiffStackSingleton &operator=(const AutodiffStackSingleton_t &) = delete;
-  explicit AutodiffStackSingleton(AutodiffStackSingleton_t&&) = delete;
-  AutodiffStackSingleton &operator=(AutodiffStackSingleton_t&&) = delete;
+  explicit AutodiffStackSingleton(AutodiffStackSingleton_t &&) = delete;
+  AutodiffStackSingleton &operator=(AutodiffStackSingleton_t &&) = delete;
 
   struct AutodiffStackStorage {
     AutodiffStackStorage &operator=(const AutodiffStackStorage &) = delete;
-    AutodiffStackStorage &operator=(AutodiffStackStorage&&) = delete;
-    AutodiffStackStorage(const AutodiffStackStorage&) = delete;
-    AutodiffStackStorage(AutodiffStackStorage&&) = delete;
+    AutodiffStackStorage &operator=(AutodiffStackStorage &&) = delete;
+    AutodiffStackStorage(const AutodiffStackStorage &) = delete;
+    AutodiffStackStorage(AutodiffStackStorage &&) = delete;
     AutodiffStackStorage() = default;
     std::vector<ChainableT *> var_stack_;
     std::vector<ChainableT *> var_nochain_stack_;

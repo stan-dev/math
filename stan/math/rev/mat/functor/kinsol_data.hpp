@@ -97,7 +97,6 @@ class kinsol_system_data {
   explicit kinsol_system_data(const kinsol_system_data&) = default;
   kinsol_system_data& operator=(const kinsol_system_data&) = default;
 
-
   /* Implements the user-defined function passed to KINSOL. */
   static int kinsol_f_system(N_Vector x, N_Vector f, void* user_data) {
     const system_data* explicit_system

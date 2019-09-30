@@ -76,7 +76,6 @@ class idas_forward_system : public idas_system<F, Tyy, Typ, Tpar> {
   explicit idas_forward_system(const idas_forward_system&) = default;
   idas_forward_system& operator=(const idas_forward_system&) = default;
 
-
   /**
    * return N_Vector pointer array of sensitivity
    */
