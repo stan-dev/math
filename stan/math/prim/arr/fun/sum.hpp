@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <cstddef>
 #include <vector>
+#include <algorithm>
 #include <numeric>
 
 namespace stan {

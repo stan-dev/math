@@ -2,10 +2,12 @@
 #define STAN_MATH_PRIM_ARR_FUN_LOG_SUM_EXP_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <cmath>
-#include <cstdlib>
+#include <algorithm>
+#include <numeric>
 #include <limits>
 #include <vector>
+#include <cmath>
+#include <cstdlib>
 
 namespace stan {
 namespace math {

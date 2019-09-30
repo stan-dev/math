@@ -2,8 +2,8 @@
 #define STAN_MATH_REV_ARR_FUN_SUM_HPP
 
 #include <stan/math/rev/core.hpp>
+#include <algorithm>
 #include <vector>
-
 namespace stan {
 namespace math {
 
