@@ -265,7 +265,7 @@ class opencl_context {
     int device_id = 0;
 
     msg << "Number of Platforms: " << all_platforms.size() << "\n";
-    for (auto plat_iter : all_platforms) {
+    for (const auto& plat_iter : all_platforms) {
       cl::Platform platform(plat_iter);
 
       msg << "Platform ID: " << platform_id++ << "\n";
@@ -277,7 +277,7 @@ class opencl_context {
         std::vector<cl::Device> all_devices;
         platform.getDevices(CL_DEVICE_TYPE_ALL, &all_devices);
 
-        for (auto device_iter : all_devices) {
+        for (const auto& device_iter : all_devices) {
           cl::Device device(device_iter);
 
           msg << "\tDevice " << device_id++ << ": "

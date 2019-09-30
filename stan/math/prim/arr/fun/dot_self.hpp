@@ -9,11 +9,7 @@ namespace stan {
 namespace math {
 
 inline double dot_self(const std::vector<double>& x) {
-  double sum = 0.0;
-  for (double i : x) {
-    sum += i * i;
-  }
-  return sum;
+  return std::inner_product(x.begin(), x.end(), x.begin(), 0.0);
 }
 
 }  // namespace math

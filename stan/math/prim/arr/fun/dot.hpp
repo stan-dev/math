@@ -4,16 +4,13 @@
 #include <stan/math/prim/meta.hpp>
 #include <vector>
 #include <cstddef>
+#include <numeric>
 
 namespace stan {
 namespace math {
 
 inline double dot(const std::vector<double>& x, const std::vector<double>& y) {
-  double sum = 0.0;
-  for (size_t i = 0; i < x.size(); ++i) {
-    sum += x[i] * y[i];
-  }
-  return sum;
+  return std::inner_product(x.begin(), x.end(), y.begin(), 0.0);
 }
 
 }  // namespace math

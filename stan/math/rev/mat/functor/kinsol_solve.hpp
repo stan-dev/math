@@ -61,7 +61,7 @@ Eigen::VectorXd kinsol_solve(
     std::ostream* msgs = nullptr, double scaling_step_tol = 1e-3,
     double function_tolerance = 1e-6,
     long int max_num_steps = 200,  // NOLINT(runtime/int)
-    bool custom_jacobian = 1, const F2& J_f = kinsol_J_f(),
+    bool custom_jacobian = true, const F2& J_f = kinsol_J_f(),
     int steps_eval_jacobian = 10, int global_line_search = KIN_LINESEARCH) {
   int N = x.size();
   typedef kinsol_system_data<F1, F2> system_data;
@@ -113,7 +113,7 @@ Eigen::VectorXd kinsol_solve(
 
   N_Vector nv_x = N_VNew_Serial(N);
   for (int i = 0; i < N; i++) {
-    NV_Ith_S(nv_x, i) = x(i);
+    NV_Ith_S(nv_x, i) = x.coeffRef(i);
   }
 
   check_flag_kinsol(KINSol(kinsol_data.kinsol_memory_, nv_x, global_line_search,
@@ -122,7 +122,7 @@ Eigen::VectorXd kinsol_solve(
 
   Eigen::VectorXd x_solution(N);
   for (int i = 0; i < N; i++) {
-    x_solution(i) = NV_Ith_S(nv_x, i);
+    x_solution.coeffRef(i) = NV_Ith_S(nv_x, i);
   }
 
   N_VDestroy(nv_x);

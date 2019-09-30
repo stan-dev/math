@@ -27,21 +27,12 @@ inline double log_sum_exp(const std::vector<double>& x) {
   using std::exp;
   using std::log;
   using std::numeric_limits;
-  double max = -numeric_limits<double>::infinity();
-  for (double xx : x) {
-    if (xx > max) {
-      max = xx;
-    }
-  }
-
-  double sum = 0.0;
-  for (size_t ii = 0; ii < x.size(); ii++) {
-    if (x[ii] != -numeric_limits<double>::infinity()) {
-      sum += exp(x[ii] - max);
-    }
-  }
-
-  return max + log(sum);
+  double max_val = *std::max_element(x.begin(), x.end());
+  double sum = std::accumulate(x.begin(), x.end(), 0.0,
+  [&max_val](auto& acc, auto&& x_i) {
+    return acc + exp(x_i - max_val);
+  });
+  return max_val + log(sum);
 }
 
 }  // namespace math

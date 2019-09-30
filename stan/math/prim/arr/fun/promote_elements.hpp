@@ -27,11 +27,7 @@ struct promote_elements<std::vector<T>, std::vector<S> > {
    * @returns vector of type T
    */
   inline static std::vector<T> promote(const std::vector<S>& u) {
-    std::vector<T> t;
-    t.reserve(u.size());
-    for (size_t i = 0; i < u.size(); ++i) {
-      t.push_back(promote_elements<T, S>::promote(u[i]));
-    }
+    std::vector<T> t({u.data(), u.data() + u.size()});
     return t;
   }
 };

@@ -6,6 +6,7 @@
 #include <stan/math/prim/arr/fun/log_sum_exp.hpp>
 #include <vector>
 #include <limits>
+#include <algorithm>
 
 namespace stan {
 namespace math {
@@ -15,19 +16,12 @@ inline double log_sum_exp_as_double(const std::vector<var>& x) {
   using std::exp;
   using std::log;
   using std::numeric_limits;
-  double max = -numeric_limits<double>::infinity();
-  for (size_t i = 0; i < x.size(); ++i) {
-    if (x[i] > max) {
-      max = x[i].val();
-    }
-  }
-  double sum = 0.0;
-  for (size_t i = 0; i < x.size(); ++i) {
-    if (x[i] != -numeric_limits<double>::infinity()) {
-      sum += exp(x[i].val() - max);
-    }
-  }
-  return max + log(sum);
+  double max_val = std::max_element(x.begin(), x.end())->val();
+  double sum = std::accumulate(x.begin(), x.end(), 0.0,
+  [&max_val](auto& acc, auto&& x_i) {
+    return acc + exp(x_i.val() - max_val);
+  });
+  return max_val + log(sum);
 }
 
 class log_sum_exp_vector_vari : public op_vector_vari {
