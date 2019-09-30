@@ -82,11 +82,7 @@ class vari {
   /**
    * Vari default constructor assumes the var goes on the stack tape
    */
-<<<<<<< HEAD
   vari() { ChainableStack::instance_->var_stack_.emplace_back(this); }
-=======
-  vari() { ChainableStack::instance_->var_stack_.emplace_back(this); };
->>>>>>> 5277f39098712cf25452dfed653e8878ba5acd2e
 
   /**
    * Copy constructor
