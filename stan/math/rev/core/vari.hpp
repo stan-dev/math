@@ -124,9 +124,9 @@ class vari {
    */
   explicit vari(vari&& x) noexcept : val_(x.val_), adj_(x.adj_), stacked_(x.stacked_) {
     if (this->stacked_) {
-      ChainableStack::instance_->var_stack_.emplace_back(std::move(this));
+      ChainableStack::instance_->var_stack_.emplace_back(this);
     } else {
-      ChainableStack::instance_->var_nochain_stack_.emplace_back(std::move(this));
+      ChainableStack::instance_->var_nochain_stack_.emplace_back(this);
     }
   }
 
