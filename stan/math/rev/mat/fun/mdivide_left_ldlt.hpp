@@ -16,6 +16,12 @@ template <int R1, int C1, int R2, int C2>
 class mdivide_left_ldlt_alloc : public chainable_alloc {
  public:
   virtual ~mdivide_left_ldlt_alloc() {}
+  explicit mdivide_left_ldlt_alloc() = default;
+  explicit mdivide_left_ldlt_alloc(mdivide_left_ldlt_alloc&&) = default;
+  mdivide_left_ldlt_alloc& operator=(mdivide_left_ldlt_alloc&&) = default;
+  explicit mdivide_left_ldlt_alloc(const mdivide_left_ldlt_alloc&) = default;
+  mdivide_left_ldlt_alloc& operator=(const mdivide_left_ldlt_alloc&) = default;
+
 
   /**
    * This share_ptr is used to prevent copying the LDLT factorizations

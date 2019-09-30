@@ -97,10 +97,17 @@ struct AutodiffStackSingleton {
       instance_ = nullptr;
     }
   }
+  explicit AutodiffStackSingleton(AutodiffStackSingleton_t const &) = delete;
+  AutodiffStackSingleton &operator=(const AutodiffStackSingleton_t &) = delete;
+  explicit AutodiffStackSingleton(AutodiffStackSingleton_t&&) = delete;
+  AutodiffStackSingleton &operator=(AutodiffStackSingleton_t&&) = delete;
 
   struct AutodiffStackStorage {
     AutodiffStackStorage &operator=(const AutodiffStackStorage &) = delete;
-
+    AutodiffStackStorage &operator=(AutodiffStackStorage&&) = delete;
+    AutodiffStackStorage(const AutodiffStackStorage&) = delete;
+    AutodiffStackStorage(AutodiffStackStorage&&) = delete;
+    AutodiffStackStorage() = default;
     std::vector<ChainableT *> var_stack_;
     std::vector<ChainableT *> var_nochain_stack_;
     std::vector<ChainableAllocT *> var_alloc_stack_;
@@ -111,9 +118,6 @@ struct AutodiffStackSingleton {
     std::vector<size_t> nested_var_nochain_stack_sizes_;
     std::vector<size_t> nested_var_alloc_stack_starts_;
   };
-
-  explicit AutodiffStackSingleton(AutodiffStackSingleton_t const &) = delete;
-  AutodiffStackSingleton &operator=(const AutodiffStackSingleton_t &) = delete;
 
   static STAN_THREADS_DEF AutodiffStackStorage *instance_;
 

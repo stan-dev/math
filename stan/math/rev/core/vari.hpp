@@ -4,6 +4,7 @@
 #include <stan/math/rev/core/chainable_alloc.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
 #include <ostream>
+#include <utility>
 
 namespace stan {
 namespace math {
@@ -35,13 +36,14 @@ class vari {
   /**
    * The value of this variable.
    */
-  const double val_;
+  const double val_{0.0};
 
   /**
    * The adjoint of this variable, which is the partial derivative
    * of this variable with respect to the root variable.
    */
-  double adj_;
+  double adj_{0.0};
+  bool stacked_{false};
 
   /**
    * Construct a variable implementation from a value.  The
@@ -55,11 +57,10 @@ class vari {
    *
    * @param x Value of the constructed variable.
    */
-  explicit vari(double x) : val_(x), adj_(0.0) {
+  explicit vari(double x) : val_(x) {
     ChainableStack::instance_->var_stack_.push_back(this);
   }
-
-  vari(double x, bool stacked) : val_(x), adj_(0.0) {
+  vari(double x, bool stacked) : val_(x), stacked_(stacked) {
     if (stacked) {
       ChainableStack::instance_->var_stack_.push_back(this);
     } else {
@@ -77,6 +78,76 @@ class vari {
   virtual ~vari() {
     // this will never get called
   }
+
+  /**
+   * Vari default constructor assumes the var goes on the stack tape
+   */
+  vari() {
+    ChainableStack::instance_->var_stack_.push_back(this);
+  };
+
+  /**
+   * Copy constructor
+   * @param x vari to be copied
+   */
+  explicit vari(const vari& x) : val_(x.val_), adj_(x.adj_), stacked_(x.stacked_) {
+    if (this->stacked_) {
+      ChainableStack::instance_->var_stack_.push_back(this);
+    } else {
+      ChainableStack::instance_->var_nochain_stack_.push_back(this);
+    }
+  }
+
+  /**
+   * Copy assignment
+   * @param x vari to be assigned by copies of it's elements
+   */
+  vari& operator=(const vari& x) {
+    //this->val_ = x.val_;
+    // Adjoint is const and cannot be assigned to
+    this->adj_ = x.adj_;
+    if (x.stacked_ && !this->stacked_) {
+      ChainableStack::instance_->var_stack_.push_back(this);
+    } else if (!x.stacked_ && this->stacked_) {
+      ChainableStack::instance_->var_nochain_stack_.push_back(this);
+    }
+    this->stacked_ = x.stacked_;
+    return *this;
+
+  }
+
+  /**
+   * Move constructor
+   * @param x vari to be assigned
+   * Note: Because these members are 'plain old data' copies will be as fast as
+   * moves while still leaving 'moved' from objects in a valid and coherent state.
+   */
+  explicit vari(vari&& x) noexcept : val_(x.val_), adj_(x.adj_), stacked_(x.stacked_) {
+    if (this->stacked_) {
+      ChainableStack::instance_->var_stack_.push_back(std::move(this));
+    } else {
+      ChainableStack::instance_->var_nochain_stack_.push_back(std::move(this));
+    }
+  }
+
+  /**
+   * Move constructor
+   * @param x vari to be assigned
+   * Note: Because these members are plain old data copies will be as fast as
+   * moves will still leaving 'moved' from object in a valid and coherent state.
+   */
+  vari& operator=(vari&& x) noexcept {
+    //this->val_ = x.val_;
+    // Adjoint is const and cannot be assigned to
+    this->adj_ = x.adj_;
+    if (x.stacked_ && !this->stacked_) {
+      ChainableStack::instance_->var_stack_.push_back(std::move(this));
+    } else if (!x.stacked_ && this->stacked_) {
+      ChainableStack::instance_->var_nochain_stack_.push_back(std::move(this));
+    }
+    this->stacked_ = x.stacked_;
+    return *this;
+  };
 
   /**
    * Apply the chain rule to this variable based on the variables

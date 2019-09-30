@@ -91,6 +91,12 @@ class kinsol_system_data {
     SUNMatDestroy(J_);
     KINFree(&kinsol_memory_);
   }
+  kinsol_system_data() = default;
+  explicit kinsol_system_data(kinsol_system_data&&) = default;
+  kinsol_system_data& operator=(kinsol_system_data&&) = default;
+  explicit kinsol_system_data(const kinsol_system_data&) = default;
+  kinsol_system_data& operator=(const kinsol_system_data&) = default;
+
 
   /* Implements the user-defined function passed to KINSOL. */
   static int kinsol_f_system(N_Vector x, N_Vector f, void* user_data) {

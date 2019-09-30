@@ -106,6 +106,12 @@ class cvodes_ode_data {
       N_VDestroyVectorArray_Serial(nv_state_sens_, S_);
     }
   }
+  cvodes_ode_data() = default;
+  explicit cvodes_ode_data(cvodes_ode_data&&) = default;
+  cvodes_ode_data& operator=(cvodes_ode_data&&) = default;
+  explicit cvodes_ode_data(const cvodes_ode_data&) = default;
+  cvodes_ode_data& operator=(const cvodes_ode_data&) = default;
+
 
   /**
    * Implements the function of type CVRhsFn which is the user-defined

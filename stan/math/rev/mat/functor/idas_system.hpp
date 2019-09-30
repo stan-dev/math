@@ -190,6 +190,12 @@ class idas_system {
     N_VDestroy_Serial(id_);
     IDAFree(&mem_);
   }
+  idas_system() = default;
+  explicit idas_system(idas_system&&) = default;
+  idas_system& operator=(idas_system&&) = default;
+  explicit idas_system(const idas_system&) = default;
+  idas_system& operator=(const idas_system&) = default;
+
 
   /**
    * return reference to current N_Vector of unknown variable

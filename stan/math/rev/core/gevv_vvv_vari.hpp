@@ -44,6 +44,12 @@ class gevv_vvv_vari : public vari {
     }
   }
   virtual ~gevv_vvv_vari() {}
+  gevv_vvv_vari() = default;
+  explicit gevv_vvv_vari(gevv_vvv_vari&&) = default;
+  gevv_vvv_vari& operator=(gevv_vvv_vari&&) = default;
+  explicit gevv_vvv_vari(const gevv_vvv_vari&) = default;
+  gevv_vvv_vari& operator=(const gevv_vvv_vari&) = default;
+
   void chain() {
     const double adj_alpha = adj_ * alpha_->val_;
     for (size_t i = 0; i < length_; i++) {

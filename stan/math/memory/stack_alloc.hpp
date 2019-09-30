@@ -153,6 +153,10 @@ class stack_alloc {
       }
     }
   }
+  stack_alloc(stack_alloc&&) = default;
+  stack_alloc& operator=(stack_alloc&&) = default;
+  stack_alloc(const stack_alloc&) = default;
+  stack_alloc& operator=(const stack_alloc&) = default;
 
   /**
    * Return a newly allocated block of memory of the appropriate

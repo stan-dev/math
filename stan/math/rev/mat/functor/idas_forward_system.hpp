@@ -70,6 +70,12 @@ class idas_forward_system : public idas_system<F, Tyy, Typ, Tpar> {
       N_VDestroyVectorArray_Serial(this->nv_yps_, this->ns_);
     }
   }
+  idas_forward_system() = default;
+  explicit idas_forward_system(idas_forward_system&&) = default;
+  idas_forward_system& operator=(idas_forward_system&&) = default;
+  explicit idas_forward_system(const idas_forward_system&) = default;
+  idas_forward_system& operator=(const idas_forward_system&) = default;
+
 
   /**
    * return N_Vector pointer array of sensitivity
