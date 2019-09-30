@@ -28,10 +28,9 @@ inline double log_sum_exp(const std::vector<double>& x) {
   using std::log;
   using std::numeric_limits;
   double max_val = *std::max_element(x.begin(), x.end());
-  double sum = std::accumulate(x.begin(), x.end(), 0.0,
-  [&max_val](auto& acc, auto&& x_i) {
-    return acc + exp(x_i - max_val);
-  });
+  double sum = std::accumulate(
+      x.begin(), x.end(), 0.0,
+      [&max_val](auto& acc, auto&& x_i) { return acc + exp(x_i - max_val); });
   return max_val + log(sum);
 }
 
