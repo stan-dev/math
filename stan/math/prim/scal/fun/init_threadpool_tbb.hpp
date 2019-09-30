@@ -66,8 +66,8 @@ inline bool init_threadpool_tbb(bool use_env = true,
         const int env_max_threads
             = boost::lexical_cast<int>(env_stan_num_threads);
         if (env_max_threads > 0)
-          tbb_max_threads = env_num_threads;
-        else if (env_num_threads == -1)
+          tbb_max_threads = env_max_threads;
+        else if (env_max_threads == -1)
           tbb_max_threads = tbb::task_scheduler_init::automatic;
         else
           invalid_argument("init_threadpool_tbb", "STAN_NUM_THREADS",
