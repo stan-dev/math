@@ -30,7 +30,7 @@ namespace math {
 template <int Lmm>
 class cvodes_integrator {
  public:
-  cvodes_integrator() {}
+  cvodes_integrator() = default;
 
   /**
    * Return the solutions for the specified system of ordinary

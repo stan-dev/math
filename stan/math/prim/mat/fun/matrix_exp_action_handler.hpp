@@ -36,7 +36,7 @@ class matrix_exp_action_handler {
  public:
   /* Constructor
    */
-  matrix_exp_action_handler() {}
+  matrix_exp_action_handler() = default;
 
   /* Perform the matrix exponential action exp(A*t)*B
    * @param [in] mat matrix A

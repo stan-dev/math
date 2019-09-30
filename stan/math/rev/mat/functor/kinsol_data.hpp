@@ -33,9 +33,11 @@ struct kinsol_J_f {
     Eigen::MatrixXd Jac;
     jacobian(system, to_vector(x_vec), fx, Jac);
 
-    for (int i = 0; i < Jac.rows(); i++)
-      for (int j = 0; j < Jac.cols(); j++)
+    for (int i = 0; i < Jac.rows(); i++) {
+      for (int j = 0; j < Jac.cols(); j++) {
         SM_ELEMENT_D(J, i, j) = Jac(i, j);
+      }
+    }
 
     return 0;
   }

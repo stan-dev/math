@@ -20,7 +20,7 @@ class ops_partials_edge<ViewElt, Eigen::Matrix<Op, R, C>> {
   using partials_t = empty_broadcast_array<ViewElt, Eigen::Matrix<Op, R, C>>;
   partials_t partials_;
   empty_broadcast_array<partials_t, Eigen::Matrix<Op, R, C>> partials_vec_;
-  ops_partials_edge() {}
+  ops_partials_edge() = default;
   explicit ops_partials_edge(const Eigen::Matrix<Op, R, C>& /* ops */) {}
 
  private:
@@ -38,7 +38,7 @@ class ops_partials_edge<ViewElt, std::vector<Eigen::Matrix<Op, R, C>>> {
  public:
   using partials_t = empty_broadcast_array<ViewElt, Eigen::Matrix<Op, R, C>>;
   empty_broadcast_array<partials_t, Eigen::Matrix<Op, R, C>> partials_vec_;
-  ops_partials_edge() {}
+  ops_partials_edge() = default;
   explicit ops_partials_edge(
       const std::vector<Eigen::Matrix<Op, R, C>>& /* ops */) {}
 
@@ -59,7 +59,7 @@ class ops_partials_edge<ViewElt, std::vector<std::vector<Op>>> {
       = empty_broadcast_array<ViewElt, std::vector<std::vector<Op>>>;
   partials_t partials_;
   empty_broadcast_array<partials_t, std::vector<std::vector<Op>>> partials_vec_;
-  ops_partials_edge() {}
+  ops_partials_edge() = default;
   explicit ops_partials_edge(const std::vector<std::vector<Op>>& /* ops */) {}
 
  private:

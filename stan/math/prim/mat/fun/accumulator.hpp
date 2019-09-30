@@ -34,7 +34,7 @@ class accumulator {
   /**
    * Destroy an accumulator.
    */
-  ~accumulator() {}
+  ~accumulator() = default;
 
   /**
    * Add the specified arithmetic type value to the buffer after

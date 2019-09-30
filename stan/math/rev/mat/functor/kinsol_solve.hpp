@@ -105,22 +105,25 @@ Eigen::VectorXd kinsol_solve(
                                          kinsol_data.LS_, kinsol_data.J_),
                       "KINSetLinearSolver");
 
-  if (custom_jacobian)
+  if (custom_jacobian) {
     check_flag_sundials(
         KINSetJacFn(kinsol_data.kinsol_memory_, &system_data::kinsol_jacobian),
         "KINSetJacFn");
+  }
 
   N_Vector nv_x = N_VNew_Serial(N);
-  for (int i = 0; i < N; i++)
+  for (int i = 0; i < N; i++) {
     NV_Ith_S(nv_x, i) = x(i);
+  }
 
   check_flag_kinsol(KINSol(kinsol_data.kinsol_memory_, nv_x, global_line_search,
                            scaling, scaling),
                     max_num_steps);
 
   Eigen::VectorXd x_solution(N);
-  for (int i = 0; i < N; i++)
+  for (int i = 0; i < N; i++) {
     x_solution(i) = NV_Ith_S(nv_x, i);
+  }
 
   N_VDestroy(nv_x);
   N_VDestroy(scaling);

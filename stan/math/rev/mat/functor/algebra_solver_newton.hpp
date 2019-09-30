@@ -141,8 +141,9 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver_newton(
                                                dat_int, theta_dbl, fx, msgs);
   Eigen::Matrix<var, Eigen::Dynamic, 1> theta(x.size());
   theta(0) = var(vi0->theta_[0]);
-  for (int i = 1; i < x.size(); ++i)
+  for (int i = 1; i < x.size(); ++i) {
     theta(i) = var(vi0->theta_[i]);
+  }
 
   return theta;
 }
