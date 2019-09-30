@@ -24,7 +24,7 @@ void test_log_sum_exp(const std::vector<double>& as) {
 
 TEST(MathFunctions, log_sum_exp) {
   using stan::math::log_sum_exp;
-  std::vector<double> as;
+  std::vector<double> as{0};
   test_log_sum_exp(as);
   as.push_back(0.0);
   test_log_sum_exp(as);
