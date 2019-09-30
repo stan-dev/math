@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_INIT_THREADPOOL_TBB_HPP
 #define STAN_MATH_PRIM_SCAL_INIT_THREADPOOL_TBB_HPP
 
+// TODO(SW): remove STAN_THREADS guard once Intel TBB is fully
+// mandatory
 #ifdef STAN_THREADS
 
 #include <stan/math/prim/scal/err/invalid_argument.hpp>

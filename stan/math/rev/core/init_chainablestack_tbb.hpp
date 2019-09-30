@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_REV_CORE_INIT_CHAINABLESTACK_TBB_HPP
 #define STAN_MATH_REV_CORE_INIT_CHAINABLESTACK_TBB_HPP
 
+// TODO(SW): remove STAN_THREADS guard once Intel TBB is fully
+// mandatory
 #ifdef STAN_THREADS
 
 #include <stan/math/rev/core/chainablestack.hpp>
