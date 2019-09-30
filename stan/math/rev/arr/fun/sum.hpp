@@ -17,10 +17,9 @@ class sum_v_vari : public vari {
   size_t length_;
 
   inline static double sum_of_val(const std::vector<var>& v) {
-    double result = std::accumulate(x.begin(), x.end(), 0.0,
-     [](auto& acc, auto&& x_i) {
-       return acc + x_i.val();
-     });
+    double result = std::accumulate(
+        x.begin(), x.end(), 0.0,
+        [](auto& acc, auto&& x_i) { return acc + x_i.val(); });
     return result;
   }
 
