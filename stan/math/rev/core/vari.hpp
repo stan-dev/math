@@ -84,7 +84,7 @@ class vari {
    */
   vari() {
     ChainableStack::instance_->var_stack_.emplace_back(this);
-  };
+  }
 
   /**
    * Copy constructor

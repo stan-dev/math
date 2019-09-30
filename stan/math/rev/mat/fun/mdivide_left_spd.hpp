@@ -18,7 +18,7 @@ template <int R1, int C1, int R2, int C2>
 class mdivide_left_spd_alloc : public chainable_alloc {
  public:
    virtual ~mdivide_left_spd_alloc() {}
-  explicit mdivide_left_spd_alloc() = default;
+  mdivide_left_spd_alloc() = default;
   explicit mdivide_left_spd_alloc(mdivide_left_spd_alloc&&) = default;
   mdivide_left_spd_alloc& operator=(mdivide_left_spd_alloc&&) = default;
   explicit mdivide_left_spd_alloc(const mdivide_left_spd_alloc&) = default;
