@@ -1,7 +1,7 @@
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/mat/functor/algebra_solver_powell.hpp>
-#include <stan/math/rev/mat/functor/algebra_solver_newton.hpp>
-#include <stan/math/rev/mat/functor/kinsol_fp.hpp>
+// #include <stan/math/rev/mat/functor/algebra_solver_powell.hpp>
+// #include <stan/math/rev/mat/functor/algebra_solver_newton.hpp>
+#include <stan/math/rev/mat/functor/algebra_solver_fp.hpp>
 #include <stan/math/prim/mat/functor/finite_diff_gradient_auto.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/functor/util_algebra_solver.hpp>
@@ -11,6 +11,7 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <limits>
 
 using stan::math::KinsolFixedPointEnv;
 using stan::math::FixedPointSolver;
@@ -81,8 +82,6 @@ struct FP_exp_func_test : public ::testing::Test {
   }
 };
 
-
-
 /*
  * Solve eq
  * 
@@ -102,7 +101,6 @@ struct FP_2d_func_test : public ::testing::Test {
                const std::vector<double>& x_r, const std::vector<int>& x_i,
                std::ostream* pstream__) const {
       using scalar = typename stan::return_type<T0, T1>::type;
-      // using stan::math::pow;
       Eigen::Matrix<scalar, Eigen::Dynamic, 1> z(2);
       z(0) = y(0) * sqrt(x(1));
       z(1) = y(1) * sqrt(y(2) - x(0) * x(0));
@@ -277,5 +275,80 @@ TEST_F(FP_2d_func_test, algebra_solver_fp) {
     for (int j = 0; j < M; ++j) {
       EXPECT_FLOAT_EQ(grad_fx(j), yp(j).adj());
     }
+  }
+}
+
+TEST_F(FP_2d_func_test, exception_handling) {
+  double f_tol = 1.e-12;
+  int max_num_steps = 4;
+
+  {
+    std::stringstream err_msg;
+    err_msg << "algebra_solver: max number of iterations: 4 exceeded.";
+    std::string msg = err_msg.str();
+    EXPECT_THROW_MSG(algebra_solver_fp(f, x, y, x_r, x_i, u_scale, f_scale, 0, f_tol, max_num_steps), // NOLINT
+                     std::runtime_error, msg);
+  }
+
+  {
+    std::stringstream err_msg;
+    err_msg << "algebra_solver: initial guess has size 0";
+    std::string msg = err_msg.str();
+    x = Eigen::VectorXd();
+    EXPECT_THROW_MSG(algebra_solver_fp(f, x, y, x_r, x_i, u_scale, f_scale, 0, f_tol, max_num_steps), // NOLINT
+                     std::invalid_argument, msg);
+    x = Eigen::VectorXd(2);
+    x << 0.1, 0.1;
+  }
+
+  {
+    std::stringstream err_msg;
+    err_msg << "algebra_solver: continuous data[1] is inf";
+    std::string msg = err_msg.str();
+    x_r.push_back(std::numeric_limits<double>::infinity());
+    EXPECT_THROW_MSG(algebra_solver_fp(f, x, y, x_r, x_i, u_scale, f_scale, 0, f_tol, max_num_steps), // NOLINT
+                     std::domain_error, msg);
+    x_r.clear();
+  }
+
+  {
+    std::stringstream err_msg;
+    err_msg << "algebra_solver: u_scale[1] is -1, but must be >= 0";
+    std::string msg = err_msg.str();
+    u_scale[0] = -1.0;
+    EXPECT_THROW_MSG(algebra_solver_fp(f, x, y, x_r, x_i, u_scale, f_scale, 0, f_tol, max_num_steps), // NOLINT
+                     std::domain_error, msg);
+    u_scale[0] = 1.0;
+  }
+
+  {
+    std::stringstream err_msg;
+    err_msg << "algebra_solver: f_scale[1] is -1, but must be >= 0";
+    std::string msg = err_msg.str();
+    f_scale[0] = -1.0;
+    EXPECT_THROW_MSG(algebra_solver_fp(f, x, y, x_r, x_i, u_scale, f_scale, 0, f_tol, max_num_steps), // NOLINT
+                     std::domain_error, msg);
+    f_scale[0] = 1.0;
+  }
+
+  {
+    std::stringstream err_msg;
+    err_msg << "algebra_solver: function_tolerance is -0.1, but must be >= 0";
+    std::string msg = err_msg.str();
+    f_tol = -0.1;
+    EXPECT_THROW_MSG(algebra_solver_fp(f, x, y, x_r, x_i, u_scale, f_scale, 0, f_tol, max_num_steps), // NOLINT
+                     std::domain_error, msg);
+    f_tol = 1.e-8;
+  }
+
+  {
+    std::stringstream err_msg;
+    err_msg << "algebra_solver: size of the algebraic system's output";
+    std::string msg = err_msg.str();
+    x = Eigen::VectorXd::Zero(4);
+    EXPECT_THROW_MSG(algebra_solver_fp(f, x, y, x_r, x_i, u_scale, f_scale, 0, f_tol, max_num_steps), // NOLINT
+                     std::invalid_argument, msg);
+    x = Eigen::VectorXd(2);
+    x << 0.1, 0.1;
   }
 }

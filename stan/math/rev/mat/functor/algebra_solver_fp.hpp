@@ -225,9 +225,9 @@ namespace math {
       check_flag_sundials(KINSetUserData(mem, static_cast<void*>(&env)),
                           "KINSetUserData");
 
-      check_flag_sundials(KINSol(mem, env.nv_x_, KIN_FP,
-                                 env.nv_u_scal_, env.nv_f_scal_),
-                          "KINSol");
+      check_flag_kinsol(KINSol(mem, env.nv_x_, KIN_FP,
+                               env.nv_u_scal_, env.nv_f_scal_),
+                        max_num_steps);
 
       for (int i = 0; i < N; ++i) {
         x(i) = NV_Ith_S(env.nv_x_, i);
@@ -334,7 +334,7 @@ namespace math {
                     const std::vector<double>& u_scale,
                     const std::vector<double>& f_scale,
                     std::ostream* msgs = nullptr,
-                    double f_tol = 1e-6,
+                    double f_tol = 1e-8,
                     int max_num_steps = 200) {  // NOLINT(runtime/int)
     algebra_solver_check(x, y, x_r, x_i, f_tol, max_num_steps);
     check_nonnegative("algebra_solver", "u_scale", u_scale);
