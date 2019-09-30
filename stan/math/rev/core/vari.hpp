@@ -82,15 +82,20 @@ class vari {
   /**
    * Vari default constructor assumes the var goes on the stack tape
    */
+<<<<<<< HEAD
   vari() {
     ChainableStack::instance_->var_stack_.emplace_back(this);
   }
+=======
+  vari() { ChainableStack::instance_->var_stack_.emplace_back(this); };
+>>>>>>> 5277f39098712cf25452dfed653e8878ba5acd2e
 
   /**
    * Copy constructor
    * @param x vari to be copied
    */
-  explicit vari(const vari& x) : val_(x.val_), adj_(x.adj_), stacked_(x.stacked_) {
+  explicit vari(const vari& x)
+      : val_(x.val_), adj_(x.adj_), stacked_(x.stacked_) {
     if (this->stacked_) {
       ChainableStack::instance_->var_stack_.emplace_back(this);
     } else {
@@ -104,7 +109,7 @@ class vari {
    */
   vari& operator=(const vari& x) {
     // Val is const and cannot be assigned to
-    //this->val_ = x.val_;
+    // this->val_ = x.val_;
     this->adj_ = x.adj_;
     if (x.stacked_ && !this->stacked_) {
       ChainableStack::instance_->var_stack_.emplace_back(this);
@@ -113,16 +118,17 @@ class vari {
     }
     this->stacked_ = x.stacked_;
     return *this;
-
   }
 
   /**
    * Move constructor
    * @param x vari to be assigned
    * Note: Because these members are 'plain old data' copies will be as fast as
-   * moves while still leaving 'moved' from objects in a valid and coherent state.
+   * moves while still leaving 'moved' from objects in a valid and coherent
+   * state.
    */
-  explicit vari(vari&& x) noexcept : val_(x.val_), adj_(x.adj_), stacked_(x.stacked_) {
+  explicit vari(vari&& x) noexcept
+      : val_(x.val_), adj_(x.adj_), stacked_(x.stacked_) {
     if (this->stacked_) {
       ChainableStack::instance_->var_stack_.emplace_back(this);
     } else {
@@ -138,12 +144,13 @@ class vari {
    */
   vari& operator=(vari&& x) noexcept {
     // Val is const and cannot be assigned to
-    //this->val_ = x.val_;
+    // this->val_ = x.val_;
     this->adj_ = x.adj_;
     if (x.stacked_ && !this->stacked_) {
       ChainableStack::instance_->var_stack_.emplace_back(std::move(this));
     } else if (!x.stacked_ && this->stacked_) {
-      ChainableStack::instance_->var_nochain_stack_.emplace_back(std::move(this));
+      ChainableStack::instance_->var_nochain_stack_.emplace_back(
+          std::move(this));
     }
     this->stacked_ = x.stacked_;
     return *this;

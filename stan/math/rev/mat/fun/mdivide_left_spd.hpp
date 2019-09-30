@@ -17,12 +17,12 @@ namespace internal {
 template <int R1, int C1, int R2, int C2>
 class mdivide_left_spd_alloc : public chainable_alloc {
  public:
-   virtual ~mdivide_left_spd_alloc() {}
+  virtual ~mdivide_left_spd_alloc() {}
   mdivide_left_spd_alloc() = default;
-  explicit mdivide_left_spd_alloc(mdivide_left_spd_alloc&&) = default;
-  mdivide_left_spd_alloc& operator=(mdivide_left_spd_alloc&&) = default;
-  explicit mdivide_left_spd_alloc(const mdivide_left_spd_alloc&) = default;
-  mdivide_left_spd_alloc& operator=(const mdivide_left_spd_alloc&) = default;
+  explicit mdivide_left_spd_alloc(mdivide_left_spd_alloc &&) = default;
+  mdivide_left_spd_alloc &operator=(mdivide_left_spd_alloc &&) = default;
+  explicit mdivide_left_spd_alloc(const mdivide_left_spd_alloc &) = default;
+  mdivide_left_spd_alloc &operator=(const mdivide_left_spd_alloc &) = default;
 
   Eigen::LLT<Eigen::Matrix<double, R1, C1> > llt_;
   Eigen::Matrix<double, R2, C2> C_;

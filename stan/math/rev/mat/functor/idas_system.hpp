@@ -196,7 +196,6 @@ class idas_system {
   explicit idas_system(const idas_system&) = default;
   idas_system& operator=(const idas_system&) = default;
 
-
   /**
    * return reference to current N_Vector of unknown variable
    *

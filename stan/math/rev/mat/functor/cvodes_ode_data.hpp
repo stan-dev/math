@@ -112,7 +112,6 @@ class cvodes_ode_data {
   explicit cvodes_ode_data(const cvodes_ode_data&) = default;
   cvodes_ode_data& operator=(const cvodes_ode_data&) = default;
 
-
   /**
    * Implements the function of type CVRhsFn which is the user-defined
    * ODE RHS passed to CVODES.
