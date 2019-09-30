@@ -14,6 +14,7 @@
 #include <unordered_map>
 #include <thread>
 #include <utility>
+#include <tuple>
 
 namespace stan {
 namespace math {
@@ -33,10 +34,15 @@ struct ad_tape_observer : public tbb::task_scheduler_observer {
   void on_scheduler_entry(bool worker) {
     std::lock_guard<std::mutex> cout_lock(cout_mutex);
     const std::thread::id thread_id = std::this_thread::get_id();
-    if (ad_tape_.find(thread_id) != ad_tape_.end()) {
+    if (ad_tape_.find(thread_id) == ad_tape_.end()) {
       std::cout << "Initialising a thread AD tape." << std::endl;
-      ad_tape_.emplace(std::pair<const std::thread::id, ChainableStack>{
-          thread_id, ChainableStack()});
+      std::unordered_map<std::thread::id, ChainableStack*>::iterator
+          insert_elem;
+      bool status = false;
+      std::tie(insert_elem, status)
+          = ad_tape_.emplace(std::pair<const std::thread::id, ChainableStack*>{
+              thread_id, nullptr});
+      insert_elem->second = new ChainableStack();
     }
     if (worker)
       std::cout << "a worker thread is joining to do some work." << std::endl;
@@ -46,7 +52,10 @@ struct ad_tape_observer : public tbb::task_scheduler_observer {
 
   void on_scheduler_exit(bool worker) {
     std::lock_guard<std::mutex> cout_lock(cout_mutex);
-    ad_tape_.erase(std::this_thread::get_id());
+    const std::thread::id thread_id = std::this_thread::get_id();
+    auto elem = ad_tape_.find(std::this_thread::get_id());
+    delete elem->second;
+    ad_tape_.erase(elem);
     if (worker)
       std::cout << "a worker thread is finished to do some work." << std::endl;
     else
@@ -54,7 +63,7 @@ struct ad_tape_observer : public tbb::task_scheduler_observer {
   }
 
  private:
-  std::unordered_map<std::thread::id, ChainableStack> ad_tape_;
+  std::unordered_map<std::thread::id, ChainableStack*> ad_tape_;
 };
 
 namespace {

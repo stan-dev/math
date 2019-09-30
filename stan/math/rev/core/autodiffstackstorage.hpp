@@ -112,6 +112,7 @@ struct AutodiffStackSingleton {
     std::vector<size_t> nested_var_alloc_stack_starts_;
   };
 
+  explicit AutodiffStackSingleton(AutodiffStackSingleton_t const &) = delete;
   AutodiffStackSingleton &operator=(const AutodiffStackSingleton_t &) = delete;
 
   static STAN_THREADS_DEF AutodiffStackStorage *instance_;

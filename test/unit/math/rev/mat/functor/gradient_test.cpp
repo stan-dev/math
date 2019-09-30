@@ -1,5 +1,9 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+
+#include <tbb/parallel_for.h>
+#include <tbb/blocked_range.h>
+
 #include <stdexcept>
 #include <vector>
 #include <thread>
@@ -32,7 +36,7 @@ TEST(AgradAutoDiff, gradient) {
 }
 
 // test threaded AD if enabled
-TEST(AgradAutoDiff, gradient_threaded) {
+TEST(AgradAutoDiff, gradient_threaded_tbb) {
   fun1 f;
   Matrix<double, Dynamic, 1> x_ref(2);
   x_ref << 5, 7;
@@ -46,7 +50,7 @@ TEST(AgradAutoDiff, gradient_threaded) {
   EXPECT_FLOAT_EQ(x_ref(0) * x_ref(0) + 3 * 2 * x_ref(1), grad_fx_ref(1));
 
   auto thread_job = [&](double x1, double x2) {
-    stan::math::ChainableStack thread_instance;
+    // stan::math::ChainableStack thread_instance;
     double fx;
     VectorXd x_local(2);
     x_local << x1, x2;
@@ -59,37 +63,18 @@ TEST(AgradAutoDiff, gradient_threaded) {
   };
 
   // schedule a bunch of jobs which all do the same
-  std::vector<std::future<VectorXd>> ad_futures_ref;
+  std::vector<VectorXd> ad_ref(100);
+
+  using tbb::blocked_range;
+
+  tbb::parallel_for(blocked_range<std::size_t>(0, 100),
+                    [&](const blocked_range<size_t>& r) {
+                      for (std::size_t i = r.begin(); i != r.end(); ++i)
+                        ad_ref[i] = thread_job(x_ref(0), x_ref(1));
+                    });
 
   for (std::size_t i = 0; i < 100; i++) {
-    // the use pattern in stan-math will be to defer the first job in
-    // order to make the main thread do some work which is why we
-    // alter the execution policy here
-    ad_futures_ref.emplace_back(std::async(i == 0 ? std::launch::deferred
-#ifndef STAN_THREADS
-                                                  : std::launch::deferred,
-#else
-                                                  : std::launch::async,
-#endif
-                                           thread_job, x_ref(0), x_ref(1)));
-  }
-
-  // and schedule a bunch of jobs which all do different things (all
-  // at the same time)
-  std::vector<std::future<VectorXd>> ad_futures_local;
-
-  for (std::size_t i = 0; i < 100; i++) {
-    ad_futures_local.emplace_back(std::async(i == 0 ? std::launch::deferred
-#ifndef STAN_THREADS
-                                                    : std::launch::deferred,
-#else
-                                                    : std::launch::async,
-#endif
-                                             thread_job, 1.0 * i, 2.0 * i));
-  }
-
-  for (std::size_t i = 0; i < 100; i++) {
-    const VectorXd& ad_result = ad_futures_ref[i].get();
+    const VectorXd& ad_result = ad_ref[i];
     double fx_job = ad_result(0);
     VectorXd grad_fx_job = ad_result.tail(ad_result.size() - 1);
 
@@ -99,8 +84,19 @@ TEST(AgradAutoDiff, gradient_threaded) {
     EXPECT_FLOAT_EQ(grad_fx_ref(1), grad_fx_job(1));
   }
 
+  // and schedule a bunch of jobs which all do different things (all
+  // at the same time)
+  std::vector<VectorXd> ad_local(100);
+
+  std::cout << "running parallel ad_local" << std::endl;
+  tbb::parallel_for(blocked_range<std::size_t>(0, 100),
+                    [&](const blocked_range<size_t>& r) {
+                      for (std::size_t i = r.begin(); i != r.end(); ++i)
+                        ad_local[i] = thread_job(1.0 * i, 2.0 * i);
+                    });
+
   for (std::size_t i = 0; i < 100; i++) {
-    const VectorXd& ad_result = ad_futures_local[i].get();
+    const VectorXd& ad_result = ad_local[i];
     double fx_job = ad_result(0);
     VectorXd x_local(2);
     x_local << 1.0 * i, 2.0 * i;
