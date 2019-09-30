@@ -32,3 +32,10 @@ TEST(intel_tbb_init, incorrect_env_values) {
   EXPECT_THROW_MSG(stan::math::init_threadpool_tbb(true), std::invalid_argument,
                    "must be positive or -1");
 }
+
+// TODO:
+// - add test where use_env is used correctly...needs to be done
+//   in another file.
+// - test stack_size argument being set
+// - test that active status is false if we init before another
+// task_scheduler_init
