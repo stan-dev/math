@@ -103,8 +103,8 @@ class vari {
    * @param x vari to be assigned by copies of it's elements
    */
   vari& operator=(const vari& x) {
+    // Val is const and cannot be assigned to
     //this->val_ = x.val_;
-    // Adjoint is const and cannot be assigned to
     this->adj_ = x.adj_;
     if (x.stacked_ && !this->stacked_) {
       ChainableStack::instance_->var_stack_.emplace_back(this);
@@ -137,8 +137,8 @@ class vari {
    * moves will still leaving 'moved' from object in a valid and coherent state.
    */
   vari& operator=(vari&& x) noexcept {
+    // Val is const and cannot be assigned to
     //this->val_ = x.val_;
-    // Adjoint is const and cannot be assigned to
     this->adj_ = x.adj_;
     if (x.stacked_ && !this->stacked_) {
       ChainableStack::instance_->var_stack_.emplace_back(std::move(this));
