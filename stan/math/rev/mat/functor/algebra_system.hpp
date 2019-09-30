@@ -159,7 +159,7 @@ struct hybrj_functor_solver : nlo_functor<double> {
   Eigen::VectorXd get_value(const Eigen::VectorXd& iv) const { return fs_(iv); }
 };
 
-  template <typename T1, typename T2>
+template <typename T1, typename T2>
 void algebra_solver_check(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
                           const Eigen::Matrix<T2, Eigen::Dynamic, 1> y,
                           const std::vector<double>& dat,

@@ -13,18 +13,18 @@
 #include <string>
 #include <limits>
 
-using stan::math::KinsolFixedPointEnv;
-using stan::math::FixedPointSolver;
 using stan::math::FixedPointADJac;
+using stan::math::FixedPointSolver;
+using stan::math::KinsolFixedPointEnv;
 using stan::math::algebra_solver_fp;
+using stan::math::finite_diff_gradient_auto;
+using stan::math::to_var;
 using stan::math::value_of;
 using stan::math::var;
-using stan::math::to_var;
-using stan::math::finite_diff_gradient_auto;
 
 /*
  * Solve eq
- * 
+ *
  * $x \times \exp{x} - 1 = 0$
  *
  */
@@ -58,21 +58,19 @@ struct FP_exp_func_test : public ::testing::Test {
   void SetUp() { stan::math::recover_memory(); }
 
   FP_exp_func_test()
-    : f(),
-      x(stan::math::to_vector(std::vector<double>{0.5})),
-      y(stan::math::to_vector(std::vector<double>{1.0})),
-      x_r(),
-      x_i(),
-      msgs(nullptr),
-      u_scale{1.0},
-      f_scale{1.0}
-  {}
+      : f(),
+        x(stan::math::to_vector(std::vector<double>{0.5})),
+        y(stan::math::to_vector(std::vector<double>{1.0})),
+        x_r(),
+        x_i(),
+        msgs(nullptr),
+        u_scale{1.0},
+        f_scale{1.0} {}
 
   auto fd_functor(int i) {
-    auto f_fd = [this, i]
-      (const Eigen::VectorXd& y_) {
-      KinsolFixedPointEnv<FP_exp_func> env(f, x, y_, x_r, x_i, msgs,
-                                           u_scale, f_scale);
+    auto f_fd = [this, i](const Eigen::VectorXd& y_) {
+      KinsolFixedPointEnv<FP_exp_func> env(f, x, y_, x_r, x_i, msgs, u_scale,
+                                           f_scale);
       FixedPointSolver<KinsolFixedPointEnv<FP_exp_func>, FixedPointADJac> fp;
       double f_tol = 1.e-12;
       int max_num_steps = 100;
@@ -84,7 +82,7 @@ struct FP_exp_func_test : public ::testing::Test {
 
 /*
  * Solve eq
- * 
+ *
  * x2 = x1^2
  * x1^2 + x2^2 = 1
  *
@@ -120,21 +118,19 @@ struct FP_2d_func_test : public ::testing::Test {
   void SetUp() { stan::math::recover_memory(); }
 
   FP_2d_func_test()
-    : f(),
-      x(stan::math::to_vector(std::vector<double>{0.1, 0.1})),
-      y(stan::math::to_vector(std::vector<double>{1.0, 1.0, 1.0})),
-      x_r(),
-      x_i(),
-      msgs(nullptr),
-      u_scale{1.0, 1.0},
-      f_scale{1.0, 1.0}
-  {}
+      : f(),
+        x(stan::math::to_vector(std::vector<double>{0.1, 0.1})),
+        y(stan::math::to_vector(std::vector<double>{1.0, 1.0, 1.0})),
+        x_r(),
+        x_i(),
+        msgs(nullptr),
+        u_scale{1.0, 1.0},
+        f_scale{1.0, 1.0} {}
 
   auto fd_functor(int i) {
-    auto f_fd = [this, i]
-      (const Eigen::VectorXd& y_) {
-      KinsolFixedPointEnv<FP_2d_func> env(f, x, y_, x_r, x_i, msgs,
-                                           u_scale, f_scale);
+    auto f_fd = [this, i](const Eigen::VectorXd& y_) {
+      KinsolFixedPointEnv<FP_2d_func> env(f, x, y_, x_r, x_i, msgs, u_scale,
+                                          f_scale);
       FixedPointSolver<KinsolFixedPointEnv<FP_2d_func>, FixedPointADJac> fp;
       double f_tol = 1.e-12;
       int max_num_steps = 100;
@@ -145,38 +141,41 @@ struct FP_2d_func_test : public ::testing::Test {
 };
 
 TEST_F(FP_exp_func_test, solve) {
-  KinsolFixedPointEnv<FP_exp_func> env(f, x, y, x_r, x_i, msgs,
-                                       u_scale, f_scale);
+  KinsolFixedPointEnv<FP_exp_func> env(f, x, y, x_r, x_i, msgs, u_scale,
+                                       f_scale);
   FixedPointSolver<KinsolFixedPointEnv<FP_exp_func>, FixedPointADJac> fp;
   double f_tol = 1.e-12;
   int max_num_steps = 100;
   {
-    Eigen::Matrix<double, -1, 1> res = fp.solve(x, y, env, f_tol, max_num_steps); // NOLINT
+    Eigen::Matrix<double, -1, 1> res
+        = fp.solve(x, y, env, f_tol, max_num_steps);  // NOLINT
     EXPECT_FLOAT_EQ(res(0), 0.567143290409);
   }
 
   {
     x(0) = 0.1;
     y(0) = 0.8;
-    Eigen::Matrix<double, -1, 1> res = fp.solve(x, y, env, f_tol, max_num_steps); // NOLINT
+    Eigen::Matrix<double, -1, 1> res
+        = fp.solve(x, y, env, f_tol, max_num_steps);  // NOLINT
     EXPECT_FLOAT_EQ(res(0), 0.612584823501);
   }
 }
 
 TEST_F(FP_2d_func_test, solve) {
-  KinsolFixedPointEnv<FP_2d_func> env(f, x, y, x_r, x_i, msgs,
-                                      u_scale, f_scale);
+  KinsolFixedPointEnv<FP_2d_func> env(f, x, y, x_r, x_i, msgs, u_scale,
+                                      f_scale);
   FixedPointSolver<KinsolFixedPointEnv<FP_2d_func>, FixedPointADJac> fp;
   double f_tol = 1.e-12;
   int max_num_steps = 100;
-  Eigen::Matrix<double, -1, 1> res = fp.solve(x, y, env, f_tol, max_num_steps); // NOLINT
+  Eigen::Matrix<double, -1, 1> res
+      = fp.solve(x, y, env, f_tol, max_num_steps);  // NOLINT
   EXPECT_NEAR(res(0), 0.7861518, 1e-5);
   EXPECT_NEAR(res(1), 0.6180333, 1e-5);
 }
 
 TEST_F(FP_exp_func_test, gradient) {
-  KinsolFixedPointEnv<FP_exp_func> env(f, x, y, x_r, x_i, msgs,
-                                       u_scale, f_scale);
+  KinsolFixedPointEnv<FP_exp_func> env(f, x, y, x_r, x_i, msgs, u_scale,
+                                       f_scale);
   FixedPointSolver<KinsolFixedPointEnv<FP_exp_func>, FixedPointADJac> fp;
   double f_tol = 1.e-12;
   int max_num_steps = 100;
@@ -184,7 +183,8 @@ TEST_F(FP_exp_func_test, gradient) {
 
   x(0) = 0.1;
   y(0) = 0.8;
-  Eigen::Matrix<var, -1, 1> x_sol = fp.solve(x, yp, env, f_tol, max_num_steps); // NOLINT
+  Eigen::Matrix<var, -1, 1> x_sol
+      = fp.solve(x, yp, env, f_tol, max_num_steps);  // NOLINT
   EXPECT_FLOAT_EQ(value_of(x_sol(0)), 0.612584823501);
   stan::math::set_zero_all_adjoints();
   x_sol(0).grad();
@@ -196,14 +196,15 @@ TEST_F(FP_exp_func_test, gradient) {
 }
 
 TEST_F(FP_2d_func_test, gradient) {
-  KinsolFixedPointEnv<FP_2d_func> env(f, x, y, x_r, x_i, msgs,
-                                      u_scale, f_scale);
+  KinsolFixedPointEnv<FP_2d_func> env(f, x, y, x_r, x_i, msgs, u_scale,
+                                      f_scale);
   FixedPointSolver<KinsolFixedPointEnv<FP_2d_func>, FixedPointADJac> fp;
   double f_tol = 1.e-12;
   int max_num_steps = 100;
   Eigen::Matrix<var, -1, 1> yp(to_var(y));
 
-  Eigen::Matrix<var, -1, 1> x_sol = fp.solve(x, yp, env, f_tol, max_num_steps); // NOLINT
+  Eigen::Matrix<var, -1, 1> x_sol
+      = fp.solve(x, yp, env, f_tol, max_num_steps);  // NOLINT
   EXPECT_NEAR(value_of(x_sol(0)), 0.7861518, 1e-5);
   EXPECT_NEAR(value_of(x_sol(1)), 0.6180333, 1e-5);
 
@@ -221,8 +222,8 @@ TEST_F(FP_2d_func_test, gradient) {
 }
 
 TEST_F(FP_2d_func_test, gradient_with_var_init_point) {
-  KinsolFixedPointEnv<FP_2d_func> env(f, x, y, x_r, x_i, msgs,
-                                      u_scale, f_scale);
+  KinsolFixedPointEnv<FP_2d_func> env(f, x, y, x_r, x_i, msgs, u_scale,
+                                      f_scale);
   FixedPointSolver<KinsolFixedPointEnv<FP_2d_func>, FixedPointADJac> fp;
   double f_tol = 1.e-12;
   int max_num_steps = 100;
@@ -250,16 +251,16 @@ TEST_F(FP_2d_func_test, algebra_solver_fp) {
   double f_tol = 1.e-12;
   int max_num_steps = 100;
 
-  Eigen::Matrix<double, -1, 1> xd =
-    algebra_solver_fp(f, x, y, x_r, x_i, u_scale, f_scale, 0, f_tol, max_num_steps); // NOLINT
+  Eigen::Matrix<double, -1, 1> xd = algebra_solver_fp(
+      f, x, y, x_r, x_i, u_scale, f_scale, 0, f_tol, max_num_steps);  // NOLINT
   EXPECT_NEAR(xd(0), 0.7861518, 1e-5);
   EXPECT_NEAR(xd(1), 0.6180333, 1e-5);
 
-
   Eigen::Matrix<var, -1, 1> yp(to_var(y));
   Eigen::Matrix<var, -1, 1> xp(to_var(x));
-  Eigen::Matrix<var, -1, 1> xv =
-    algebra_solver_fp(f, xp, yp, x_r, x_i, u_scale, f_scale, 0, f_tol, max_num_steps); // NOLINT
+  Eigen::Matrix<var, -1, 1> xv
+      = algebra_solver_fp(f, xp, yp, x_r, x_i, u_scale, f_scale, 0, f_tol,
+                          max_num_steps);  // NOLINT
   EXPECT_NEAR(value_of(xv(0)), 0.7861518, 1e-5);
   EXPECT_NEAR(value_of(xv(1)), 0.6180333, 1e-5);
 
@@ -286,7 +287,8 @@ TEST_F(FP_2d_func_test, exception_handling) {
     std::stringstream err_msg;
     err_msg << "algebra_solver: max number of iterations: 4 exceeded.";
     std::string msg = err_msg.str();
-    EXPECT_THROW_MSG(algebra_solver_fp(f, x, y, x_r, x_i, u_scale, f_scale, 0, f_tol, max_num_steps), // NOLINT
+    EXPECT_THROW_MSG(algebra_solver_fp(f, x, y, x_r, x_i, u_scale, f_scale, 0,
+                                       f_tol, max_num_steps),  // NOLINT
                      std::runtime_error, msg);
   }
 
@@ -295,7 +297,8 @@ TEST_F(FP_2d_func_test, exception_handling) {
     err_msg << "algebra_solver: initial guess has size 0";
     std::string msg = err_msg.str();
     x = Eigen::VectorXd();
-    EXPECT_THROW_MSG(algebra_solver_fp(f, x, y, x_r, x_i, u_scale, f_scale, 0, f_tol, max_num_steps), // NOLINT
+    EXPECT_THROW_MSG(algebra_solver_fp(f, x, y, x_r, x_i, u_scale, f_scale, 0,
+                                       f_tol, max_num_steps),  // NOLINT
                      std::invalid_argument, msg);
     x = Eigen::VectorXd(2);
     x << 0.1, 0.1;
@@ -306,7 +309,8 @@ TEST_F(FP_2d_func_test, exception_handling) {
     err_msg << "algebra_solver: continuous data[1] is inf";
     std::string msg = err_msg.str();
     x_r.push_back(std::numeric_limits<double>::infinity());
-    EXPECT_THROW_MSG(algebra_solver_fp(f, x, y, x_r, x_i, u_scale, f_scale, 0, f_tol, max_num_steps), // NOLINT
+    EXPECT_THROW_MSG(algebra_solver_fp(f, x, y, x_r, x_i, u_scale, f_scale, 0,
+                                       f_tol, max_num_steps),  // NOLINT
                      std::domain_error, msg);
     x_r.clear();
   }
@@ -316,7 +320,8 @@ TEST_F(FP_2d_func_test, exception_handling) {
     err_msg << "algebra_solver: u_scale[1] is -1, but must be >= 0";
     std::string msg = err_msg.str();
     u_scale[0] = -1.0;
-    EXPECT_THROW_MSG(algebra_solver_fp(f, x, y, x_r, x_i, u_scale, f_scale, 0, f_tol, max_num_steps), // NOLINT
+    EXPECT_THROW_MSG(algebra_solver_fp(f, x, y, x_r, x_i, u_scale, f_scale, 0,
+                                       f_tol, max_num_steps),  // NOLINT
                      std::domain_error, msg);
     u_scale[0] = 1.0;
   }
@@ -326,7 +331,8 @@ TEST_F(FP_2d_func_test, exception_handling) {
     err_msg << "algebra_solver: f_scale[1] is -1, but must be >= 0";
     std::string msg = err_msg.str();
     f_scale[0] = -1.0;
-    EXPECT_THROW_MSG(algebra_solver_fp(f, x, y, x_r, x_i, u_scale, f_scale, 0, f_tol, max_num_steps), // NOLINT
+    EXPECT_THROW_MSG(algebra_solver_fp(f, x, y, x_r, x_i, u_scale, f_scale, 0,
+                                       f_tol, max_num_steps),  // NOLINT
                      std::domain_error, msg);
     f_scale[0] = 1.0;
   }
@@ -336,7 +342,8 @@ TEST_F(FP_2d_func_test, exception_handling) {
     err_msg << "algebra_solver: function_tolerance is -0.1, but must be >= 0";
     std::string msg = err_msg.str();
     f_tol = -0.1;
-    EXPECT_THROW_MSG(algebra_solver_fp(f, x, y, x_r, x_i, u_scale, f_scale, 0, f_tol, max_num_steps), // NOLINT
+    EXPECT_THROW_MSG(algebra_solver_fp(f, x, y, x_r, x_i, u_scale, f_scale, 0,
+                                       f_tol, max_num_steps),  // NOLINT
                      std::domain_error, msg);
     f_tol = 1.e-8;
   }
@@ -346,7 +353,8 @@ TEST_F(FP_2d_func_test, exception_handling) {
     err_msg << "algebra_solver: size of the algebraic system's output";
     std::string msg = err_msg.str();
     x = Eigen::VectorXd::Zero(4);
-    EXPECT_THROW_MSG(algebra_solver_fp(f, x, y, x_r, x_i, u_scale, f_scale, 0, f_tol, max_num_steps), // NOLINT
+    EXPECT_THROW_MSG(algebra_solver_fp(f, x, y, x_r, x_i, u_scale, f_scale, 0,
+                                       f_tol, max_num_steps),  // NOLINT
                      std::invalid_argument, msg);
     x = Eigen::VectorXd(2);
     x << 0.1, 0.1;
