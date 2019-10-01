@@ -8,34 +8,19 @@
 #include <tbb/task_arena.h>
 
 TEST(intel_tbb_init, check_status) {
+  set_n_threads(-1);
   const bool tbb_init = stan::math::init_threadpool_tbb();
+#ifdef STAN_THREADS
   EXPECT_TRUE(tbb_init);
 
-  EXPECT_EQ(tbb::task_scheduler_init::default_num_threads(),
+  EXPECT_EQ(std::thread::hardware_concurrency(),
             tbb::this_task_arena::max_concurrency());
-}
-
-TEST(intel_tbb_init, incorrect_env_values) {
-  set_n_threads("abc");
-  EXPECT_THROW_MSG(stan::math::init_threadpool_tbb(true), std::invalid_argument,
-                   "positive number or -1");
-
-  set_n_threads("1c");
-  EXPECT_THROW_MSG(stan::math::init_threadpool_tbb(true), std::invalid_argument,
-                   "positive number or -1");
-
-  set_n_threads("-2");
-  EXPECT_THROW_MSG(stan::math::init_threadpool_tbb(true), std::invalid_argument,
-                   "must be positive or -1");
-
-  set_n_threads("0");
-  EXPECT_THROW_MSG(stan::math::init_threadpool_tbb(true), std::invalid_argument,
-                   "must be positive or -1");
+#else
+  EXPECT_FALSE(tbb_init);
+#endif
 }
 
 // TODO:
-// - add test where use_env is used correctly...needs to be done
-//   in another file.
 // - test stack_size argument being set
 // - test that active status is false if we init before another
 // task_scheduler_init
