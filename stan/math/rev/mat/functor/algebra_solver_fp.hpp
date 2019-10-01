@@ -35,11 +35,12 @@ namespace math {
  */
 template <typename F>
 struct KinsolFixedPointEnv {
-  const F& f_;                      ///< RHS functor
-  const Eigen::VectorXd y_dummy;    ///< val of params for @c y_ to refer to when params are @c var type // NOLINT
-  const Eigen::VectorXd& y_;        ///< ref to val of params
-  const size_t N_;                  ///< system size
-  const size_t M_;                  ///< nb. of params
+  const F& f_;                    ///< RHS functor
+  const Eigen::VectorXd y_dummy;  ///< val of params for @c y_ to refer to when
+                                  ///< params are @c var type // NOLINT
+  const Eigen::VectorXd& y_;      ///< ref to val of params
+  const size_t N_;                ///< system size
+  const size_t M_;                ///< nb. of params
   const std::vector<double>& x_r_;  ///< real data
   const std::vector<int>& x_i_;     ///< integer data
   std::ostream* msgs_;              ///< messege stream

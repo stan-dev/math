@@ -209,8 +209,8 @@ struct FP_degenerated_func_test : public ::testing::Test {
 /*
  * Solve a large system of size $n$ with $m=n$ parameters $y$, $i=1\dots m$:
  *
- * f(x_i) = e^{y_{i-10}x_{i-10}}\dots e^{y_{i+10}x_{i+10}}, \forall i=10\dots n-10 // NOLINT
- * f(x_i) = e^{y_{i}x_{i}}, \forall i<10 \text{ or } i > n-10
+ * f(x_i) = e^{y_{i-10}x_{i-10}}\dots e^{y_{i+10}x_{i+10}}, \forall i=10\dots
+ * n-10 // NOLINT f(x_i) = e^{y_{i}x_{i}}, \forall i<10 \text{ or } i > n-10
  *
  */
 struct FP_direct_prod_func_test : public ::testing::Test {
