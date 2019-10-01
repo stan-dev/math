@@ -9,7 +9,7 @@
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <cl.hpp>
 #include <string>
-#include <map>
+#include <set>
 
 namespace stan {
 namespace math {
@@ -72,7 +72,10 @@ class operation : public operation_base {
 
  protected:
   mutable std::string var_name;
-  static std::map<std::string, cl::Kernel> kernel_cache;
+  template<typename T_lhs>
+  struct cache {
+    static cl::Kernel kernel;
+  };
 
   /**
    * Casts the instance into its derived type.
@@ -87,11 +90,14 @@ class operation : public operation_base {
   inline const Derived& derived() const {
     return *static_cast<const Derived*>(this);
   }
+
+  template<typename... T_results>
+  friend class results__;
 };
 
-template <typename Derived, typename ReturnScalar>
-std::map<std::string, cl::Kernel>
-    operation<Derived, ReturnScalar>::kernel_cache;
+template<typename Derived, typename ReturnScalar>
+template<typename T_lhs>
+cl::Kernel operation<Derived, ReturnScalar>::cache<T_lhs>::kernel;
 
 }  // namespace math
 }  // namespace stan
