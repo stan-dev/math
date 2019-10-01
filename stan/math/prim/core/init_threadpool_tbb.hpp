@@ -65,6 +65,13 @@ inline int get_num_threads() {
 
 }  // namespace internal
 
+// TODO(wds15): get rid of this typedef once the TBB is mandatory
+#ifdef STAN_THREADS
+typedef tbb::stack_size_type stack_size_type;
+#else
+typedef std::size_t stack_size_type;
+#endif
+
 /**
  * Initialize the Intel TBB threadpool and global scheduler through
  * the tbb::task_scheduler_init object. In case an instance of the
@@ -87,7 +94,7 @@ inline int get_num_threads() {
  * @throws std::runtime_error if the value of STAN_NUM_THREADS env. variable
  * is invalid
  */
-inline bool init_threadpool_tbb(tbb::stack_size_type stack_size = 0) {
+inline bool init_threadpool_tbb(stack_size_type stack_size = 0) {
 #ifdef STAN_THREADS
   int tbb_max_threads = internal::get_num_threads();
 
