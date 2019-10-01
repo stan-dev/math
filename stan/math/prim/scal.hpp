@@ -66,6 +66,7 @@
 #include <stan/math/prim/scal/fun/fmin.hpp>
 #include <stan/math/prim/scal/fun/gamma_p.hpp>
 #include <stan/math/prim/scal/fun/gamma_q.hpp>
+#include <stan/math/prim/scal/fun/get_num_threads.hpp>
 #include <stan/math/prim/scal/fun/grad_2F1.hpp>
 #include <stan/math/prim/scal/fun/grad_F32.hpp>
 #include <stan/math/prim/scal/fun/grad_inc_beta.hpp>
