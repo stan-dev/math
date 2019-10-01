@@ -20,7 +20,7 @@ TEST(intel_tbb_init, check_status) {
 #endif
 }
 
-// TODO:
+// TODO(wds15):
 // - test stack_size argument being set
 // - test that active status is false if we init before another
 // task_scheduler_init
