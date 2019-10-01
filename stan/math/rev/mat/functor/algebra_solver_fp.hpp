@@ -27,22 +27,22 @@ namespace stan {
 namespace math {
 
 /**
- * KINSOL algebraic system data holder.
+ * KINSOL algebraic system data holder that handles
+ * construction & destruction of SUNDIALS data, as well as
+ * auxiliary data that will be used for functor evaluation.
  *
- * @tparam F1 functor type for system function.
- * @tparam F2 functor type for jacobian function. Default is 0.
- *         If 0, use rev mode autodiff to compute the Jacobian.
+ * @tparam F functor type for system function.
  */
 template <typename F>
 struct KinsolFixedPointEnv {
-  const F& f_;
-  const Eigen::VectorXd y_dummy;
-  const Eigen::VectorXd& y_;
-  const size_t N_;
-  const size_t M_;
-  const std::vector<double>& x_r_;
-  const std::vector<int>& x_i_;
-  std::ostream* msgs_;
+  const F& f_;                      ///< RHS functor
+  const Eigen::VectorXd y_dummy;    ///< val of params for @c y_ to refer to when params are @c var type // NOLINT
+  const Eigen::VectorXd& y_;        ///< ref to val of params
+  const size_t N_;                  ///< system size
+  const size_t M_;                  ///< nb. of params
+  const std::vector<double>& x_r_;  ///< real data
+  const std::vector<int>& x_i_;     ///< integer data
+  std::ostream* msgs_;              ///< messege stream
 
   void* mem_;
   N_Vector nv_x_;
@@ -120,8 +120,21 @@ struct KinsolFixedPointEnv {
 };
 
 /*
- * Given the solution, we want to calculate jacobian wrt
- * the params. This functor does that using AD.
+ * Calculate Jacobian Jxy(Jacobian of unkonwn x w.r.t. the * param y)
+ * given the solution. Specifically, for
+ *
+ *  x - f(x, y) = 0
+ *
+ * we have (Jpq = Jacobian matrix dq/dq)
+ *
+ * Jxy - Jfx * Jxy = Jfy
+ *
+ * therefore Jxy can be solved from system
+ *
+ * (I - Jfx) * Jxy = Jfy
+ *
+ * Jfx and Jfy are obtained through one AD evaluation of f
+ * w.r.t combined vector [x, y].
  */
 struct FixedPointADJac {
   /*
@@ -130,7 +143,7 @@ struct FixedPointADJac {
    * @tparam F RHS functor type
    * @param x fixed point solution
    * @param y RHS parameters
-   * @param env KINSOL working envionment
+   * @param env KINSOL working envionment, see doc for @c KinsolFixedPointEnv.
    */
   template <typename F>
   inline Eigen::Matrix<stan::math::var, -1, 1> operator()(
@@ -154,10 +167,10 @@ struct FixedPointADJac {
       theta(i + env.N_) = env.y_(i);
     }
     Eigen::Matrix<double, -1, 1> fx;
-    Eigen::Matrix<double, -1, -1> J;
-    stan::math::jacobian(g, theta, fx, J);
-    Eigen::MatrixXd A(J.block(0, 0, env.N_, env.N_));
-    Eigen::MatrixXd b(J.block(0, env.N_, env.N_, env.M_));
+    Eigen::Matrix<double, -1, -1> J_theta;
+    stan::math::jacobian(g, theta, fx, J_theta);
+    Eigen::MatrixXd A(J_theta.block(0, 0, env.N_, env.N_));
+    Eigen::MatrixXd b(J_theta.block(0, env.N_, env.N_, env.M_));
     A = Eigen::MatrixXd::Identity(env.N_, env.N_) - A;
     Eigen::MatrixXd Jxy = A.colPivHouseholderQr().solve(b);
     std::vector<double> gradients(env.M_);
@@ -181,8 +194,14 @@ struct FixedPointADJac {
  * The solution for FP iteration
  * doesn't involve derivatives but only data types.
  *
- * @tparam fp_env_type solver envionment setup
- * @tparam fp_jac_type functor type for calculating the jacobian
+ * @tparam fp_env_type solver environment setup that handles
+ *                     workspace & auxiliary data encapsulation & RAII, namely
+ *                     the work environment. Currently only support KINSOL's
+ *                     dense matrix.
+ * @tparam fp_jac_type functor type for calculating the
+ *                     jacobian. Currently only support @c
+ *                     FixedPointADJac that obtain dense Jacobian
+ *                     through QR decomposition.
  */
 template <typename fp_env_type, typename fp_jac_type>
 struct FixedPointSolver;
@@ -268,8 +287,7 @@ struct FixedPointSolver<KinsolFixedPointEnv<F>, fp_jac_type> {
     using stan::math::var;
 
     // FP solution
-    Eigen::VectorXd xd(value_of(x));
-    kinsol_solve_fp(xd, env, f_tol, max_num_steps);
+    Eigen::VectorXd xd(solve(x, Eigen::VectorXd(), env, f_tol, max_num_steps));
 
     fp_jac_type jac_sol;
     return jac_sol(xd, y, env);
@@ -298,9 +316,15 @@ struct FixedPointSolver<KinsolFixedPointEnv<F>, fp_jac_type> {
  * @param[in] x_r Continuous data vector for the equation system.
  * @param[in] x_i Integer data vector for the equation system.
  * @param[in, out] msgs The print stream for warning messages.
- * @param[in] u_scale scaling vector for solution
- * @param[in] f_scale scaling vector for residual
- * @param[in] f_tol determines whether roots are acceptable.
+ * @param[in] u_scale diagonal scaling matrix elements Du
+ *                    such that Du*x has all components roughly the same
+ *                    magnitude when x is close to a solution.
+ *                    (ref. KINSOL user guide chap.2 sec. "Scaling")
+ * @param[in] f_scale diagonal scaling matrix elements such
+ *                    that Df*(x-f(x)) has all components roughly the same
+ *                    magnitude when x is not too close to a solution.
+ *                    (ref. KINSOL user guide chap.2 sec. "Scaling")
+ * @param[in] f_tol Function-norm stopping tolerance.
  * @param[in] max_num_steps maximum number of function evaluations.
  *  * @throw <code>std::invalid_argument</code> if x has size zero.
  * @throw <code>std::invalid_argument</code> if x has non-finite elements.

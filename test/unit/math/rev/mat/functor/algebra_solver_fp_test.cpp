@@ -24,7 +24,7 @@ using stan::math::var;
 /*
  * Solve eq
  *
- * $x \times \exp{x} - 1 = 0$
+ * $x \times \exp{x} - y = 0$
  *
  */
 struct FP_exp_func_test : public ::testing::Test {
@@ -82,8 +82,8 @@ struct FP_exp_func_test : public ::testing::Test {
 /*
  * Solve eq
  *
- * x2 = x1^2
- * x1^2 + x2^2 = 1
+ * x2 = (x1/y1)^2
+ * x1^2 + (x2/y2)^2 = y3
  *
  */
 struct FP_2d_func_test : public ::testing::Test {
@@ -338,8 +338,8 @@ TEST_F(FP_2d_func_test, solve) {
   int max_num_steps = 100;
   Eigen::Matrix<double, -1, 1> res
       = fp.solve(x, y, env, f_tol, max_num_steps);  // NOLINT
-  EXPECT_NEAR(res(0), 0.7861518, 1e-5);
-  EXPECT_NEAR(res(1), 0.6180333, 1e-5);
+  EXPECT_FLOAT_EQ(res(0), 0.7861513777574);
+  EXPECT_FLOAT_EQ(res(1), 0.6180339887499);
 }
 
 TEST_F(FP_exp_func_test, gradient) {
@@ -374,8 +374,8 @@ TEST_F(FP_2d_func_test, gradient) {
 
   Eigen::Matrix<var, -1, 1> x_sol
       = fp.solve(x, yp, env, f_tol, max_num_steps);  // NOLINT
-  EXPECT_NEAR(value_of(x_sol(0)), 0.7861518, 1e-5);
-  EXPECT_NEAR(value_of(x_sol(1)), 0.6180333, 1e-5);
+  EXPECT_FLOAT_EQ(value_of(x_sol(0)), 0.7861513777574);
+  EXPECT_FLOAT_EQ(value_of(x_sol(1)), 0.6180339887499);
 
   double fx;
   Eigen::VectorXd grad_fx;
@@ -400,8 +400,8 @@ TEST_F(FP_2d_func_test, gradient_with_var_init_point) {
   Eigen::Matrix<var, -1, 1> xp(to_var(x));
 
   Eigen::Matrix<var, -1, 1> x_sol = fp.solve(xp, yp, env, f_tol, max_num_steps);
-  EXPECT_NEAR(value_of(x_sol(0)), 0.7861518, 1e-5);
-  EXPECT_NEAR(value_of(x_sol(1)), 0.6180333, 1e-5);
+  EXPECT_FLOAT_EQ(value_of(x_sol(0)), 0.7861513777574);
+  EXPECT_FLOAT_EQ(value_of(x_sol(1)), 0.6180339887499);
 
   double fx;
   Eigen::VectorXd grad_fx;
@@ -422,16 +422,15 @@ TEST_F(FP_2d_func_test, algebra_solver_fp) {
 
   Eigen::Matrix<double, -1, 1> xd = algebra_solver_fp(
       f, x, y, x_r, x_i, u_scale, f_scale, 0, f_tol, max_num_steps);  // NOLINT
-  EXPECT_NEAR(xd(0), 0.7861518, 1e-5);
-  EXPECT_NEAR(xd(1), 0.6180333, 1e-5);
+  EXPECT_FLOAT_EQ(xd(0), 0.7861513777574);
+  EXPECT_FLOAT_EQ(xd(1), 0.6180339887499);
 
   Eigen::Matrix<var, -1, 1> yp(to_var(y));
-  Eigen::Matrix<var, -1, 1> xp(to_var(x));
   Eigen::Matrix<var, -1, 1> xv
-      = algebra_solver_fp(f, xp, yp, x_r, x_i, u_scale, f_scale, 0, f_tol,
+      = algebra_solver_fp(f, x, yp, x_r, x_i, u_scale, f_scale, 0, f_tol,
                           max_num_steps);  // NOLINT
-  EXPECT_NEAR(value_of(xv(0)), 0.7861518, 1e-5);
-  EXPECT_NEAR(value_of(xv(1)), 0.6180333, 1e-5);
+  EXPECT_FLOAT_EQ(value_of(xv(0)), 0.7861513777574);
+  EXPECT_FLOAT_EQ(value_of(xv(1)), 0.6180339887499);
 
   double fx;
   Eigen::VectorXd grad_fx;
