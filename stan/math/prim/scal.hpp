@@ -79,7 +79,6 @@
 #include <stan/math/prim/scal/fun/identity_free.hpp>
 #include <stan/math/prim/scal/fun/if_else.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
-#include <stan/math/prim/scal/fun/init_threadpool_tbb.hpp>
 #include <stan/math/prim/scal/fun/int_step.hpp>
 #include <stan/math/prim/scal/fun/inv.hpp>
 #include <stan/math/prim/scal/fun/inv_cloglog.hpp>
