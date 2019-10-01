@@ -4,8 +4,6 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 
-#include <stan/math/prim/scal/fun/get_num_threads.hpp>
-
 #include <vector>
 
 namespace stan {

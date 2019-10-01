@@ -47,7 +47,7 @@ map_rect_concurrent(
     return chunk_f_out;
   };
 
-  int num_threads = get_num_threads(num_jobs);
+  int num_threads = std::min(get_num_threads(), num_jobs);
   int num_jobs_per_thread = num_jobs / num_threads;
   futures.emplace_back(
       std::async(std::launch::deferred, execute_chunk, 0, num_jobs_per_thread));

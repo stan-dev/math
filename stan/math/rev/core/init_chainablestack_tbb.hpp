@@ -19,51 +19,47 @@
 namespace stan {
 namespace math {
 
-static std::mutex cout_mutex;
+/**
+ * TBB observer object which is a callback hook called whenever a new
+ * thread enters the threadpool managed by the TBB. This hook ensures
+ * that each worker thread has an initialized AD tape ready for use.
+ */
+class ad_tape_observer : public tbb::task_scheduler_observer {
+  using ad_map = std::unordered_map<std::thread::id, ChainableStack*>;
 
-// initialize AD tape for TBB threads
-struct ad_tape_observer : public tbb::task_scheduler_observer {
-  ad_tape_observer() : tbb::task_scheduler_observer(), ad_tape_() {
-    std::cout << "Observer constructing..." << std::endl;
-    observe(true);  // activate the observer
-    std::cout << "Observer created" << std::endl;
+ public:
+  ad_tape_observer() : tbb::task_scheduler_observer(), thread_tape_map_() {
+    observe(true);  // activates the observer
   }
 
-  ~ad_tape_observer() { std::cout << "Observer destructed" << std::endl; }
+  ~ad_tape_observer() {
+    for (auto& elem : thread_tape_map_) {
+      delete elem.second;
+    }
+    thread_tape_map_.clear();
+  }
 
   void on_scheduler_entry(bool worker) {
-    std::lock_guard<std::mutex> cout_lock(cout_mutex);
     const std::thread::id thread_id = std::this_thread::get_id();
-    if (ad_tape_.find(thread_id) == ad_tape_.end()) {
-      std::cout << "Initialising a thread AD tape." << std::endl;
-      std::unordered_map<std::thread::id, ChainableStack*>::iterator
-          insert_elem;
+    if (thread_tape_map_.find(thread_id) == thread_tape_map_.end()) {
+      ad_map::iterator insert_elem;
       bool status = false;
       std::tie(insert_elem, status)
-          = ad_tape_.emplace(std::pair<const std::thread::id, ChainableStack*>{
-              thread_id, nullptr});
+          = thread_tape_map_.emplace(ad_map::value_type{thread_id, nullptr});
       insert_elem->second = new ChainableStack();
     }
-    if (worker)
-      std::cout << "a worker thread is joining to do some work." << std::endl;
-    else
-      std::cout << "the main thread is joining to do some work." << std::endl;
   }
 
   void on_scheduler_exit(bool worker) {
-    std::lock_guard<std::mutex> cout_lock(cout_mutex);
-    const std::thread::id thread_id = std::this_thread::get_id();
-    auto elem = ad_tape_.find(std::this_thread::get_id());
-    delete elem->second;
-    ad_tape_.erase(elem);
-    if (worker)
-      std::cout << "a worker thread is finished to do some work." << std::endl;
-    else
-      std::cout << "the main thread is finished to do some work." << std::endl;
+    auto elem = thread_tape_map_.find(std::this_thread::get_id());
+    if (elem != thread_tape_map_.end()) {
+      delete elem->second;
+      thread_tape_map_.erase(elem);
+    }
   }
 
  private:
-  std::unordered_map<std::thread::id, ChainableStack*> ad_tape_;
+  ad_map thread_tape_map_;
 };
 
 namespace {

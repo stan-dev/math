@@ -1,8 +1,10 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 
+#ifdef STAN_THREADS
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
+#endif
 
 #include <stdexcept>
 #include <vector>
@@ -121,6 +123,7 @@ TEST(AgradAutoDiff, gradient_threaded) {
 }
 
 // test threaded AD through the Intel TBB
+#ifdef STAN_THREADS
 TEST(AgradAutoDiff, gradient_threaded_tbb) {
   fun1 f;
   Matrix<double, Dynamic, 1> x_ref(2);
@@ -172,7 +175,6 @@ TEST(AgradAutoDiff, gradient_threaded_tbb) {
   // at the same time)
   std::vector<VectorXd> ad_local(100);
 
-  std::cout << "running parallel ad_local" << std::endl;
   tbb::parallel_for(blocked_range<std::size_t>(0, 100),
                     [&](const blocked_range<size_t>& r) {
                       for (std::size_t i = r.begin(); i != r.end(); ++i)
@@ -195,6 +197,7 @@ TEST(AgradAutoDiff, gradient_threaded_tbb) {
                     grad_fx_job(1));
   }
 }
+#endif
 
 stan::math::var sum_and_throw(const Matrix<stan::math::var, Dynamic, 1>& x) {
   stan::math::var y = 0;
