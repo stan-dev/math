@@ -689,7 +689,6 @@ class AgradCdfTestFixture : public ::testing::Test {
 
   void test_lower_bound() {
     using stan::math::value_of;
-    using stan::math::value_of;
     const size_t N_REPEAT = 3;
     vector<double> expected_cdf;
     vector<vector<double> > parameters;
@@ -726,7 +725,6 @@ class AgradCdfTestFixture : public ::testing::Test {
   }
 
   void test_upper_bound() {
-    using stan::math::value_of;
     using stan::math::value_of;
     const size_t N_REPEAT = 3;
     vector<double> expected_cdf;

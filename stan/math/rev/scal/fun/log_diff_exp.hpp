@@ -26,10 +26,11 @@ class log_diff_exp_vd_vari : public op_vd_vari {
   log_diff_exp_vd_vari(vari* avi, double b)
       : op_vd_vari(log_diff_exp(avi->val_, b), avi, b) {}
   void chain() {
-    if (val_ == NEGATIVE_INFTY)
+    if (val_ == NEGATIVE_INFTY) {
       avi_->adj_ += (bd_ == NEGATIVE_INFTY) ? adj_ : adj_ * INFTY;
-    else
+    } else {
       avi_->adj_ += adj_ * calculate_chain(avi_->val_, val_);
+    }
   }
 };
 class log_diff_exp_dv_vari : public op_dv_vari {
@@ -37,10 +38,11 @@ class log_diff_exp_dv_vari : public op_dv_vari {
   log_diff_exp_dv_vari(double a, vari* bvi)
       : op_dv_vari(log_diff_exp(a, bvi->val_), a, bvi) {}
   void chain() {
-    if (val_ == NEGATIVE_INFTY)
+    if (val_ == NEGATIVE_INFTY) {
       bvi_->adj_ -= adj_ * INFTY;
-    else
+    } else {
       bvi_->adj_ -= adj_ / expm1(ad_ - bvi_->val_);
+    }
   }
 };
 }  // namespace internal

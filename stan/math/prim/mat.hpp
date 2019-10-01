@@ -316,6 +316,7 @@
 #include <stan/math/prim/mat/prob/normal_id_glm_log.hpp>
 #include <stan/math/prim/mat/prob/normal_id_glm_lpdf.hpp>
 #include <stan/math/prim/mat/prob/ordered_logistic_log.hpp>
+#include <stan/math/prim/mat/prob/ordered_logistic_glm_lpmf.hpp>
 #include <stan/math/prim/mat/prob/ordered_logistic_lpmf.hpp>
 #include <stan/math/prim/mat/prob/ordered_logistic_rng.hpp>
 #include <stan/math/prim/mat/prob/ordered_probit_log.hpp>

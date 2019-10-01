@@ -32,13 +32,14 @@ template <typename T_y, typename T_loc, typename T_scale>
 return_type_t<T_y, T_loc, T_scale> gumbel_lcdf(const T_y& y, const T_loc& mu,
                                                const T_scale& beta) {
   static const char* function = "gumbel_lcdf";
-  typedef partials_return_type_t<T_y, T_loc, T_scale> T_partials_return;
+  using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
 
   using std::exp;
 
   T_partials_return cdf_log(0.0);
-  if (size_zero(y, mu, beta))
+  if (size_zero(y, mu, beta)) {
     return cdf_log;
+  }
 
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
@@ -62,12 +63,15 @@ return_type_t<T_y, T_loc, T_scale> gumbel_lcdf(const T_y& y, const T_loc& mu,
     const T_partials_return rep_deriv = exp(-scaled_diff) / beta_dbl;
     cdf_log -= exp(-scaled_diff);
 
-    if (!is_constant_all<T_y>::value)
+    if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] += rep_deriv;
-    if (!is_constant_all<T_loc>::value)
+    }
+    if (!is_constant_all<T_loc>::value) {
       ops_partials.edge2_.partials_[n] -= rep_deriv;
-    if (!is_constant_all<T_scale>::value)
+    }
+    if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n] -= rep_deriv * scaled_diff;
+    }
   }
   return ops_partials.build(cdf_log);
 }

@@ -99,7 +99,7 @@ inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
   // set the padded part of the matrix and the upper triangular to zeros
   inv_padded.sub_block(zero_mat, 0, 0, inv_mat.rows(), 0, zero_mat.rows(),
                        zero_mat.cols());
-  inv_padded.template zeros<stan::math::matrix_cl_view::Upper>();
+  inv_padded.template zeros_strict_tri<stan::math::matrix_cl_view::Upper>();
   if (parts == 1) {
     inv_mat.sub_block(inv_padded, 0, 0, 0, 0, inv_mat.rows(), inv_mat.rows());
     if (A.view() == matrix_cl_view::Upper) {
@@ -139,7 +139,7 @@ inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
     // set the padded part and upper diagonal to zeros
     inv_padded.sub_block(zero_mat, 0, 0, inv_mat.rows(), 0, zero_mat.rows(),
                          zero_mat.cols());
-    inv_padded.template zeros<stan::math::matrix_cl_view::Upper>();
+    inv_padded.template zeros_strict_tri<stan::math::matrix_cl_view::Upper>();
   }
   // un-pad and return
   inv_mat.sub_block(inv_padded, 0, 0, 0, 0, inv_mat.rows(), inv_mat.rows());

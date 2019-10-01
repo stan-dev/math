@@ -45,10 +45,12 @@ append_row(const Eigen::Matrix<T1, R1, C1>& A,
 
   Matrix<return_type_t<T1, T2>, Dynamic, Dynamic> result(Arows + Brows, Acols);
   for (int j = 0; j < Acols; j++) {
-    for (int i = 0; i < Arows; i++)
+    for (int i = 0; i < Arows; i++) {
       result(i, j) = A(i, j);
-    for (int i = Arows, k = 0; k < Brows; i++, k++)
+    }
+    for (int i = Arows, k = 0; k < Brows; i++, k++) {
       result(i, j) = B(k, j);
+    }
   }
   return result;
 }
@@ -77,10 +79,12 @@ inline Eigen::Matrix<return_type_t<T1, T2>, Eigen::Dynamic, 1> append_row(
   int Asize = A.size();
   int Bsize = B.size();
   Matrix<return_type_t<T1, T2>, 1, Dynamic> result(Asize + Bsize);
-  for (int i = 0; i < Asize; i++)
+  for (int i = 0; i < Asize; i++) {
     result(i) = A(i);
-  for (int i = 0, j = Asize; i < Bsize; i++, j++)
+  }
+  for (int i = 0, j = Asize; i < Bsize; i++, j++) {
     result(j) = B(i);
+  }
   return result;
 }
 
@@ -165,7 +169,7 @@ inline Eigen::Matrix<return_type_t<T1, T2>, Eigen::Dynamic, 1> append_row(
     const T1& A, const Eigen::Matrix<T2, R, C>& B) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  typedef return_type_t<T1, T2> return_type;
+  using return_type = return_type_t<T1, T2>;
 
   Matrix<return_type, Dynamic, 1> result(B.size() + 1);
   result << A, B.template cast<return_type>();
@@ -190,7 +194,7 @@ inline Eigen::Matrix<return_type_t<T1, T2>, Eigen::Dynamic, 1> append_row(
     const Eigen::Matrix<T1, R, C>& A, const T2& B) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  typedef return_type_t<T1, T2> return_type;
+  using return_type = return_type_t<T1, T2>;
 
   Matrix<return_type, Dynamic, 1> result(A.size() + 1);
   result << A.template cast<return_type>(), B;

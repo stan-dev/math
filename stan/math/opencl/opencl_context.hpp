@@ -146,7 +146,7 @@ class opencl_context_base {
                                   // the device
 
   // Holds Default parameter values for each Kernel.
-  typedef std::map<std::string, int> map_base_opts;
+  using map_base_opts = std::map<std::string, int>;
   map_base_opts base_opts_
       = {{"LOWER", static_cast<int>(matrix_cl_view::Lower)},
          {"UPPER", static_cast<int>(matrix_cl_view::Upper)},

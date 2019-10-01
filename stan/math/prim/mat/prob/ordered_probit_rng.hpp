@@ -22,8 +22,9 @@ inline int ordered_probit_rng(double eta, const Eigen::VectorXd& c, RNG& rng) {
 
   Eigen::VectorXd cut(c.rows() + 1);
   cut(0) = 1 - Phi(eta - c(0));
-  for (int j = 1; j < c.rows(); j++)
+  for (int j = 1; j < c.rows(); j++) {
     cut(j) = Phi(eta - c(j - 1)) - Phi(eta - c(j));
+  }
   cut(c.rows()) = Phi(eta - c(c.rows() - 1));
 
   return categorical_rng(cut, rng);

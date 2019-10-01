@@ -39,11 +39,11 @@ namespace math {
 template <typename T_y, typename T_scale_succ, typename T_scale_fail>
 return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lccdf(
     const T_y& y, const T_scale_succ& alpha, const T_scale_fail& beta) {
-  typedef partials_return_type_t<T_y, T_scale_succ, T_scale_fail>
-      T_partials_return;
+  using T_partials_return = partials_return_t<T_y, T_scale_succ, T_scale_fail>;
 
-  if (size_zero(y, alpha, beta))
+  if (size_zero(y, alpha, beta)) {
     return 0.0;
+  }
 
   static const char* function = "beta_lccdf";
 
@@ -102,10 +102,11 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lccdf(
 
     ccdf_log += log(Pn);
 
-    if (!is_constant_all<T_y>::value)
+    if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] -= pow(1 - y_dbl, beta_dbl - 1)
                                           * pow(y_dbl, alpha_dbl - 1)
                                           / betafunc_dbl / Pn;
+    }
 
     T_partials_return g1 = 0;
     T_partials_return g2 = 0;
@@ -115,10 +116,12 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lccdf(
                         digamma_alpha_vec[n], digamma_beta_vec[n],
                         digamma_sum_vec[n], betafunc_dbl);
     }
-    if (!is_constant_all<T_scale_succ>::value)
+    if (!is_constant_all<T_scale_succ>::value) {
       ops_partials.edge2_.partials_[n] -= g1 / Pn;
-    if (!is_constant_all<T_scale_fail>::value)
+    }
+    if (!is_constant_all<T_scale_fail>::value) {
       ops_partials.edge3_.partials_[n] -= g2 / Pn;
+    }
   }
   return ops_partials.build(ccdf_log);
 }
