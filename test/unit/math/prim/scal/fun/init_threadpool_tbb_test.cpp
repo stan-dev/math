@@ -1,4 +1,4 @@
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim/core.hpp>
 
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
@@ -13,7 +13,7 @@ TEST(intel_tbb_init, check_status) {
 #ifdef STAN_THREADS
   EXPECT_TRUE(tbb_init);
 
-  EXPECT_EQ(std::thread::hardware_concurrency(),
+  EXPECT_EQ(tbb::task_scheduler_init::default_num_threads(),
             tbb::this_task_arena::max_concurrency());
 #else
   EXPECT_FALSE(tbb_init);
