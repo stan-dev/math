@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LOGICAL_LTE_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LOGICAL_LTE_HPP
 
-#include <stan/math/prim/meta.hpp>
 namespace stan {
 namespace math {
 
@@ -16,7 +15,7 @@ namespace math {
  * @return <code>true</code> iff <code>x1 &lt;= x2</code>
  */
 template <typename T1, typename T2>
-inline int logical_lte(const T1 x1, const T2 x2) {
+inline bool logical_lte(const T1 x1, const T2 x2) {
   return x1 <= x2;
 }
 

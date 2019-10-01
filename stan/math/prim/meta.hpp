@@ -45,6 +45,7 @@
 #include <stan/math/prim/scal/meta/enable_if_scalar.hpp>
 #include <stan/math/prim/scal/meta/enable_if_var.hpp>
 #include <stan/math/prim/scal/meta/enable_if_var_or_arithmetic.hpp>
+#include <stan/math/prim/scal/meta/enable_if_vector_like.hpp>
 #include <stan/math/prim/scal/meta/get.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/index_type.hpp>
