@@ -207,14 +207,10 @@ struct FP_degenerated_func_test : public ::testing::Test {
 };
 
 /*
- * Find root (x1, x2) of
+ * Solve a large system of size $n$ with $m=n$ parameters $y$, $i=1\dots m$:
  *
- * 0 = (x1 - y1)(x2 - y2)
- * 0 = (x1 - y2)(x2 - y1)
- *
- * by finding fixed point
- * x1 = y1 + (x1 - y1)y2/x2
- * x2 = y1 + (x2 - y1)y2/x1
+ * f(x_i) = e^{y_{i-10}x_{i-10}}\dots e^{y_{i+10}x_{i+10}}, \forall i=10\dots n-10 // NOLINT
+ * f(x_i) = e^{y_{i}x_{i}}, \forall i<10 \text{ or } i > n-10
  *
  */
 struct FP_direct_prod_func_test : public ::testing::Test {
