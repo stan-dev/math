@@ -39,7 +39,8 @@ void operation<Derived, ReturnScalar>::evaluate_into(T_lhs&& lhs) const {
       kernel_parts out_parts
           = lhs_expression.generate_lhs(generated, ng, "i", "j");
       std::string src = "kernel void calculate(" + parts.args +
-                       out_parts.args.substr(0, out_parts.args.size() - 2) + "){\n"
+                       out_parts.args.substr(0, out_parts.args.size() - 2) +
+                       "){\n"
                        "int i = get_global_id(0);"
                        "int j = get_global_id(1);\n"
                         + parts.body +
