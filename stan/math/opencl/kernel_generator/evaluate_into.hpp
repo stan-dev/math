@@ -33,17 +33,19 @@ void operation<Derived, ReturnScalar>::evaluate_into(T_lhs&& lhs) const {
   }
   try {
     std::set<int> generated;
-    if(cache::kernel() == NULL){
+    if (cache::kernel() == NULL) {
       name_generator ng;
       kernel_parts parts = derived().generate(generated, ng, "i", "j");
-      kernel_parts out_parts = lhs_expression.generate_lhs(generated, ng, "i", "j");
+      kernel_parts out_parts
+          = lhs_expression.generate_lhs(generated, ng, "i", "j");
       std::string src = "kernel void calculate(" + parts.args + out_parts.args.substr(0, out_parts.args.size() - 2) + "){\n"
                        "int i = get_global_id(0);"
                        "int j = get_global_id(1);\n"
                         + parts.body +
                         out_parts.body + " = " + var_name + ";}";
       auto opts = opencl_context.base_opts();
-      cache::kernel = opencl_kernels::compile_kernel("calculate", {view_kernel_helpers, src.c_str()}, opts);
+      cache::kernel = opencl_kernels::compile_kernel(
+          "calculate", {view_kernel_helpers, src.c_str()}, opts);
       generated.clear();
     }
     int arg_num = 0;
@@ -51,7 +53,9 @@ void operation<Derived, ReturnScalar>::evaluate_into(T_lhs&& lhs) const {
     lhs_expression.set_args(generated, cache::kernel, arg_num);
 
     cl::Event e;
-    opencl_context.queue().enqueueNDRangeKernel(cache::kernel, cl::NullRange, cl::NDRange(n_rows, n_cols), cl::NullRange, nullptr, &e);
+    opencl_context.queue().enqueueNDRangeKernel(cache::kernel, cl::NullRange,
+                                                cl::NDRange(n_rows, n_cols),
+                                                cl::NullRange, nullptr, &e);
     derived().add_event(e);
     lhs_expression.add_write_event(e);
   } catch (cl::Error e) {

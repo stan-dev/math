@@ -72,7 +72,7 @@ class operation : public operation_base {
 
  protected:
   mutable std::string var_name;
-  template<typename T_lhs>
+  template <typename T_lhs>
   struct cache {
     static cl::Kernel kernel;
   };
@@ -91,12 +91,12 @@ class operation : public operation_base {
     return *static_cast<const Derived*>(this);
   }
 
-  template<typename... T_results>
+  template <typename... T_results>
   friend class results__;
 };
 
-template<typename Derived, typename ReturnScalar>
-template<typename T_lhs>
+template <typename Derived, typename ReturnScalar>
+template <typename T_lhs>
 cl::Kernel operation<Derived, ReturnScalar>::cache<T_lhs>::kernel;
 
 }  // namespace math
