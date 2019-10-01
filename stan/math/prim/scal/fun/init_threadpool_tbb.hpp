@@ -36,7 +36,8 @@ namespace math {
  */
 inline bool init_threadpool_tbb(tbb::stack_size_type stack_size = 0) {
 #ifdef STAN_THREADS
-  int tbb_max_threads = internal::get_num_threads(tbb::task_scheduler_init::default_num_threads());
+  int tbb_max_threads = internal::get_num_threads(
+      tbb::task_scheduler_init::default_num_threads());
 
   static tbb::task_scheduler_init tbb_scheduler(tbb_max_threads, stack_size);
 

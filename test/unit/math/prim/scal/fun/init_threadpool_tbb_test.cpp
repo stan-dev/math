@@ -16,7 +16,7 @@ TEST(intel_tbb_init, check_status) {
   EXPECT_EQ(std::thread::hardware_concurrency(),
             tbb::this_task_arena::max_concurrency());
 #else
-    EXPECT_FALSE(tbb_init);
+  EXPECT_FALSE(tbb_init);
 #endif
 }
 
