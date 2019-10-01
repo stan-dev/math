@@ -4,33 +4,33 @@
 #include <string>
 
 /**
- * Require base
- * Note: Failure to find specialization is defined as "false"
- */
-template <typename T, typename = void>
-struct require_tester : std::false_type {};
+* Require base generic tester
+*/
+template <template <class> class Check, typename T1, typename = void>
+struct unary_require_tester_impl : std::false_type {};
 
-template <typename T>
-struct require_tester<T, stan::require_t<T>> : std::true_type {};
+template <template <class> class Check, typename T1>
+struct unary_require_tester_impl<Check, T1, decltype((void)(Check<T1>()))> : std::true_type {};
+
+template <template <class> class Check, typename T = void, typename... Types>
+struct unary_require_tester {
+ static const bool value = (unary_require_tester_impl<Check, T>::value && unary_require_tester<Check, Types...>::value);
+};
+
+template <template <class> class Check>
+struct unary_require_tester<Check, void> : std::true_type {} ;
 
 TEST(requires, t_test) {
-  EXPECT_TRUE((require_tester<std::true_type>::value));
-  EXPECT_FALSE((require_tester<std::false_type>::value));
+  using stan::require_t;
+  EXPECT_TRUE((unary_require_tester<require_t, std::true_type>::value));
+  EXPECT_FALSE((unary_require_tester<require_t, std::false_type>::value));
 }
 
-/**
- * Require not
- * Note: Failure to find specialization is defined as "false"
- */
-template <typename T, typename = void>
-struct require_not_tester : std::false_type {};
-
-template <typename T>
-struct require_not_tester<T, stan::require_not_t<T>> : std::true_type {};
 
 TEST(requires, not_test) {
-  EXPECT_TRUE((require_not_tester<std::false_type>::value));
-  EXPECT_FALSE((require_not_tester<std::true_type>::value));
+  using stan::require_not_t;
+  EXPECT_TRUE((unary_require_tester<require_not_t, std::false_type>::value));
+  EXPECT_FALSE((unary_require_tester<require_not_t, std::true_type>::value));
 }
 
 /**
@@ -110,6 +110,7 @@ template <typename T1, typename T2>
 struct require_same_tester<T1, T2, stan::require_same<T1, T2>>
     : std::true_type {};
 
+
 TEST(requires, same_test) {
   EXPECT_FALSE((require_same_tester<double, int>::value));
   EXPECT_TRUE((require_same_tester<double, double>::value));
@@ -165,37 +166,19 @@ TEST(requires, not_all_same_test) {
   EXPECT_FALSE((require_all_not_same_tester<int, int, int>::value));
 }
 
-////////////////////////////////
 /**
  * Require double_or_int
  */
-template <typename T1, typename = void>
-struct require_double_or_int_tester : std::false_type {};
-
-template <typename T1>
-struct require_double_or_int_tester<T1, stan::require_double_or_int<T1>>
-    : std::true_type {};
-
 TEST(requires, double_or_int_test) {
-  EXPECT_FALSE((require_double_or_int_tester<std::string>::value));
-  EXPECT_TRUE((require_double_or_int_tester<double>::value));
-  EXPECT_TRUE((require_double_or_int_tester<int>::value));
+  using stan::require_double_or_int;
+  EXPECT_FALSE((unary_require_tester<require_double_or_int, std::string>::value));
+  EXPECT_TRUE((unary_require_tester<require_double_or_int, double, int>::value));
 }
 
-/**
- * Require not double_or_int
- */
-template <typename T1, typename = void>
-struct require_not_double_or_int_tester : std::false_type {};
-
-template <typename T1>
-struct require_not_double_or_int_tester<T1, stan::require_not_double_or_int<T1>>
-    : std::true_type {};
-
 TEST(requires, not_double_or_int_test) {
-  EXPECT_TRUE((require_not_double_or_int_tester<std::string>::value));
-  EXPECT_FALSE((require_not_double_or_int_tester<double>::value));
-  EXPECT_FALSE((require_not_double_or_int_tester<int>::value));
+  using stan::require_not_double_or_int;
+  EXPECT_TRUE((unary_require_tester<require_not_double_or_int, std::string>::value));
+  EXPECT_FALSE((unary_require_tester<require_not_double_or_int, double, int>::value));
 }
 
 /**
@@ -274,37 +257,20 @@ TEST(requires, not_any_double_or_int_test) {
   EXPECT_FALSE((require_any_not_double_or_int_tester<int, int, int>::value));
 }
 
-////////////////////////////////
-/**
- * Require arithmetic
- */
-template <typename T1, typename = void>
-struct require_arithmetic_tester : std::false_type {};
-
-template <typename T1>
-struct require_arithmetic_tester<T1, stan::require_arithmetic<T1>>
-    : std::true_type {};
+// Require arithmetic
 
 TEST(requires, arithmetic_test) {
-  EXPECT_FALSE((require_arithmetic_tester<std::string>::value));
-  EXPECT_TRUE((require_arithmetic_tester<double>::value));
-  EXPECT_TRUE((require_arithmetic_tester<int>::value));
+  using stan::require_arithmetic;
+  EXPECT_FALSE((unary_require_tester<require_arithmetic, std::string>::value));
+  EXPECT_TRUE((unary_require_tester<require_arithmetic, double, int>::value));
 }
 
-/**
- * Require not arithmetic
- */
-template <typename T1, typename = void>
-struct require_not_arithmetic_tester : std::false_type {};
-
-template <typename T1>
-struct require_not_arithmetic_tester<T1, stan::require_not_arithmetic<T1>>
-    : std::true_type {};
+// Require not arithmetic
 
 TEST(requires, not_arithmetic_test) {
-  EXPECT_TRUE((require_not_arithmetic_tester<std::string>::value));
-  EXPECT_FALSE((require_not_arithmetic_tester<double>::value));
-  EXPECT_FALSE((require_not_arithmetic_tester<int>::value));
+  using stan::require_not_arithmetic;
+  EXPECT_TRUE((unary_require_tester<require_not_arithmetic, std::string>::value));
+  EXPECT_FALSE((unary_require_tester<require_not_arithmetic, double, int>::value));
 }
 
 /**
@@ -382,37 +348,20 @@ TEST(requires, not_any_arithmetic_test) {
   EXPECT_FALSE((require_any_not_arithmetic_tester<int, int, int>::value));
 }
 
-////////////////////////////////
-/**
- * Require var_or_arithmetic
- */
-template <typename T1, typename = void>
-struct require_var_or_arithmetic_tester : std::false_type {};
-
-template <typename T1>
-struct require_var_or_arithmetic_tester<T1, stan::require_var_or_arithmetic<T1>>
-    : std::true_type {};
+//  Require var_or_arithmetic
 
 TEST(requires, var_or_arithmetic_test) {
-  EXPECT_FALSE((require_var_or_arithmetic_tester<std::string>::value));
-  EXPECT_TRUE((require_var_or_arithmetic_tester<double>::value));
-  EXPECT_TRUE((require_var_or_arithmetic_tester<int>::value));
+  using stan::require_var_or_arithmetic;
+  EXPECT_FALSE((unary_require_tester<require_var_or_arithmetic, std::string>::value));
+  EXPECT_TRUE((unary_require_tester<require_var_or_arithmetic, double, int>::value));
 }
 
-/**
- * Require not var_or_arithmetic
- */
-template <typename T1, typename = void>
-struct require_not_var_or_arithmetic_tester : std::false_type {};
-
-template <typename T1>
-struct require_not_var_or_arithmetic_tester<
-    T1, stan::require_not_var_or_arithmetic<T1>> : std::true_type {};
+// Require not var or arithmetic
 
 TEST(requires, not_var_or_arithmetic_test) {
-  EXPECT_TRUE((require_not_var_or_arithmetic_tester<std::string>::value));
-  EXPECT_FALSE((require_not_var_or_arithmetic_tester<double>::value));
-  EXPECT_FALSE((require_not_var_or_arithmetic_tester<int>::value));
+  using stan::require_not_var_or_arithmetic;
+  EXPECT_TRUE((unary_require_tester<require_not_var_or_arithmetic, std::string>::value));
+  EXPECT_FALSE((unary_require_tester<require_not_var_or_arithmetic, double, int>::value));
 }
 
 /**
