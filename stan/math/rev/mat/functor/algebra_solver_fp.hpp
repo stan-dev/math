@@ -35,19 +35,30 @@ namespace math {
  */
 template <typename F>
 struct KinsolFixedPointEnv {
-  const F& f_;                    ///< RHS functor
-  const Eigen::VectorXd y_dummy;  ///< val of params for @c y_ to refer to when
-                                  ///< params are @c var type // NOLINT
-  const Eigen::VectorXd& y_;      ///< ref to val of params
-  const size_t N_;                ///< system size
-  const size_t M_;                ///< nb. of params
-  const std::vector<double>& x_r_;  ///< real data
-  const std::vector<int>& x_i_;     ///< integer data
-  std::ostream* msgs_;              ///< messege stream
-
+  /** RHS functor. */
+  const F& f_;
+  /** val of params for @c y_ to refer to when
+   params are @c var type */
+  const Eigen::VectorXd y_dummy;
+  /** ref to val of params */
+  const Eigen::VectorXd& y_;
+  /** system size */
+  const size_t N_;
+  /** nb. of params */
+  const size_t M_;
+  /** real data */
+  const std::vector<double>& x_r_;
+  /** integer data */
+  const std::vector<int>& x_i_;
+  /** messege stream */
+  std::ostream* msgs_;
+  /** KINSOL memory block */
   void* mem_;
+  /** NVECTOR for unknowns */
   N_Vector nv_x_;
+  /** NVECTOR for scaling u */
   N_Vector nv_u_scal_;
+  /** NVECTOR for scaling f */
   N_Vector nv_f_scal_;
 
   /* Constructor when @y is data */
@@ -308,7 +319,9 @@ struct FixedPointSolver<KinsolFixedPointEnv<F>, fp_jac_type> {
  * tolerance, and the maximum number of steps.
  *
  * @tparam F type of equation system function.
- * @tparam T type of initial guess vector.
+ * @tparam T type of initial guess vector. The final soluton
+ *           type doesn't depend on initial guess type,
+ *           but we allow initial guess to be either data or param.
  * @param[in] f Functor that evaluated the system of equations.
  * @param[in] x Vector of starting values.
  * @param[in] y Parameter vector for the equation system. The function
