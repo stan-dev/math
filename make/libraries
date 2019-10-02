@@ -123,11 +123,21 @@ ifeq (,$(TBB_CC))
   $(error "Need to set TBB_CC to C compiler command for non-standard compiler other than gcc or clang.")
 endif
 
-$(TBB)/lib/tbb.def: $(TBB)/lib/tbbmalloc.def
+tbb-make-check:
+	@if [[ $(OS) == Windows_NT ]]; then \
+		if ! [[ $(MAKE) =~ mingw32 ]]; then \
+			echo "Error: Please use mingw32-make on Windows. This is packaged with RTools, for example." \
+			exit 1 \
+		fi \
+	fi
+
+.PHONY: tbb-make-check
+
+$(TBB)/lib/tbb.def: tbb-make-check $(TBB)/lib/tbbmalloc.def
 	@mkdir -p $(TBB)/lib
 	tbb_root="$(TBB_ABSOLUTE_PATH)" CXX="$(CXX)" CC="$(TBB_CC)" LDFLAGS="$(LDFLAGS_TBB)" $(MAKE) -C $(TBB)/lib -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbb" compiler=$(TBB_CXX_TYPE) cfg=release
 
-$(TBB)/lib/tbbmalloc.def:
+$(TBB)/lib/tbbmalloc.def: tbb-make-check
 	@mkdir -p $(TBB)/lib
 	tbb_root="$(TBB_ABSOLUTE_PATH)" CXX="$(CXX)" CC="$(TBB_CC)" LDFLAGS="$(LDFLAGS_TBB)" $(MAKE) -C $(TBB)/lib -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbbmalloc" compiler=$(TBB_CXX_TYPE) cfg=release malloc
 
