@@ -126,8 +126,8 @@ endif
 tbb-make-check:
 	@if [[ $(OS) == Windows_NT ]]; then \
 		if ! [[ $(MAKE) =~ mingw32 ]]; then \
-			echo "Error: Please use mingw32-make on Windows. This is packaged with RTools, for example." \
-			exit 1 \
+			echo "Error: Please use mingw32-make on Windows. This is packaged with RTools, for example."; \
+			exit 1; \
 		fi \
 	fi
 
