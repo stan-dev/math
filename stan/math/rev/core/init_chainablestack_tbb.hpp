@@ -34,8 +34,8 @@ class ad_tape_observer : public tbb::task_scheduler_observer {
 
  public:
   ad_tape_observer() : tbb::task_scheduler_observer(), thread_tape_map_() {
-    on_scheduler_entry(true); // register current process
-    observe(true);            // activates the observer
+    on_scheduler_entry(true);  // register current process
+    observe(true);             // activates the observer
   }
 
   void on_scheduler_entry(bool worker) {
