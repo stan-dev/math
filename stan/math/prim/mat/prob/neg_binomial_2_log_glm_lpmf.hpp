@@ -77,10 +77,6 @@ return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
   const size_t N = x.rows();
   const size_t M = x.cols();
 
-  check_nonnegative(function, "Failures variables", y);
-  check_finite(function, "Weight vector", beta);
-  check_finite(function, "Intercept", alpha);
-  check_positive_finite(function, "Precision parameter", phi);
   check_consistent_size(function, "Vector of dependent variables", y, N);
   check_consistent_size(function, "Weight vector", beta, M);
   if (is_vector<T_precision>::value) {
@@ -91,6 +87,10 @@ return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
     check_consistent_sizes(function, "Vector of intercepts", alpha,
                            "Vector of dependent variables", y);
   }
+  check_nonnegative(function, "Failures variables", y);
+  check_finite(function, "Weight vector", beta);
+  check_finite(function, "Intercept", alpha);
+  check_positive_finite(function, "Precision parameter", phi);
 
   if (size_zero(y, x, beta, phi)) {
     return 0;
@@ -115,7 +115,7 @@ return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
   const auto& y_arr = as_array_or_scalar(y_val_vec);
   const auto& phi_arr = as_array_or_scalar(phi_val_vec);
 
-  Array<T_partials_return, Dynamic, 1> theta = value_of(x) * beta_val_vec;
+  Array<T_partials_return, Dynamic, 1> theta = x_val * beta_val_vec;
   theta += as_array_or_scalar(alpha_val_vec);
   check_finite(function, "Matrix of independent variables", theta);
   T_precision_val log_phi = log(phi_arr);
@@ -169,7 +169,7 @@ return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
       }
       if (!is_constant_all<T_alpha>::value) {
         if (is_vector<T_alpha>::value) {
-          ops_partials.edge2_.partials_ = theta_derivative;
+          ops_partials.edge2_.partials_ = std::move(theta_derivative);
         } else {
           ops_partials.edge2_.partials_[0] = sum(theta_derivative);
         }
