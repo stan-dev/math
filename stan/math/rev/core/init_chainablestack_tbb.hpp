@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_REV_CORE_INIT_CHAINABLESTACK_TBB_HPP
 #define STAN_MATH_REV_CORE_INIT_CHAINABLESTACK_TBB_HPP
 
-// TODO(SW): remove STAN_THREADS guard once Intel TBB is fully
+// TODO(wds15): remove STAN_THREADS guard once Intel TBB is fully
 // mandatory
 #ifdef STAN_THREADS
 
@@ -20,23 +20,22 @@ namespace stan {
 namespace math {
 
 /**
- * TBB observer object which is a callback hook called whenever a new
- * thread enters the threadpool managed by the TBB. This hook ensures
- * that each worker thread has an initialized AD tape ready for use.
+ * TBB observer object which is a callback hook called whenever the
+ * TBB scheduler adds a new thread to the TBB managed threadpool. This
+ * hook ensures that each worker thread has an initialized AD tape
+ * ready for use.
+ *
+ * Refer to https://software.intel.com/en-us/node/506314 for details
+ * on the observer concept.
  */
 class ad_tape_observer : public tbb::task_scheduler_observer {
-  using ad_map = std::unordered_map<std::thread::id, ChainableStack*>;
+  using stack_ptr = std::unique_ptr<ChainableStack>;
+  using ad_map = std::unordered_map<std::thread::id, stack_ptr>;
 
  public:
   ad_tape_observer() : tbb::task_scheduler_observer(), thread_tape_map_() {
-    observe(true);  // activates the observer
-  }
-
-  ~ad_tape_observer() {
-    for (auto& elem : thread_tape_map_) {
-      delete elem.second;
-    }
-    thread_tape_map_.clear();
+    on_scheduler_entry(true); // register current process
+    observe(true);            // activates the observer
   }
 
   void on_scheduler_entry(bool worker) {
@@ -46,14 +45,13 @@ class ad_tape_observer : public tbb::task_scheduler_observer {
       bool status = false;
       std::tie(insert_elem, status)
           = thread_tape_map_.emplace(ad_map::value_type{thread_id, nullptr});
-      insert_elem->second = new ChainableStack();
+      insert_elem->second = stack_ptr(new ChainableStack());
     }
   }
 
   void on_scheduler_exit(bool worker) {
     auto elem = thread_tape_map_.find(std::this_thread::get_id());
     if (elem != thread_tape_map_.end()) {
-      delete elem->second;
       thread_tape_map_.erase(elem);
     }
   }
@@ -64,7 +62,7 @@ class ad_tape_observer : public tbb::task_scheduler_observer {
 
 namespace {
 
-static ad_tape_observer global_observer;
+ad_tape_observer global_observer;
 
 }  // namespace
 }  // namespace math
