@@ -9,9 +9,12 @@ def runTests(String testPath) {
 }
 
 def runTestsWin(String testPath) {
-    bat "runTests.py -j${env.PARALLEL} ${testPath} --make-only"
-    try { bat "runTests.py -j${env.PARALLEL} ${testPath}" }
-    finally { junit 'test/**/*.xml' }
+    withEnv(['PATH+TBB=${env.PWD}/lib/tbb_2019_U8/lib']) {
+       bat "echo $PATH"
+       bat "runTests.py -j${env.PARALLEL} ${testPath} --make-only"
+       try { bat "runTests.py -j${env.PARALLEL} ${testPath}" }
+       finally { junit 'test/**/*.xml' }
+    }
 }
 
 def deleteDirWin() {
