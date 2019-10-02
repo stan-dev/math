@@ -152,6 +152,7 @@ pipeline {
             }
             post { always { deleteDir() } }
         }
+/*
         stage('Always-run tests part 1') {
             parallel {
                 stage('Linux Unit with MPI') {
@@ -181,8 +182,10 @@ pipeline {
                 }
             }
         }
+*/
         stage('Always-run tests part 2') {
             parallel {
+/*
                 stage('Distribution tests') {
                     agent { label "distribution-tests" }
                     steps {
@@ -210,6 +213,7 @@ pipeline {
                             }
                     }
                 }
+*/
                 stage('Threading tests') {
                     agent any
                     steps {
