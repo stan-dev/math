@@ -142,7 +142,6 @@ pipeline {
                 }
             }
         }
-/*
         stage('Headers check') {
             agent any
             steps {
@@ -153,8 +152,6 @@ pipeline {
             }
             post { always { deleteDir() } }
         }
-*/
-/*
         stage('Always-run tests part 1') {
             parallel {
                 stage('Linux Unit with MPI') {
@@ -184,10 +181,8 @@ pipeline {
                 }
             }
         }
-*/
         stage('Always-run tests part 2') {
             parallel {
-/*
                 stage('Distribution tests') {
                     agent { label "distribution-tests" }
                     steps {
@@ -215,7 +210,6 @@ pipeline {
                             }
                     }
                 }
-*/
                 stage('Threading tests') {
                     agent any
                     steps {
@@ -229,7 +223,6 @@ pipeline {
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
-/*
                 stage('Windows Headers & Unit') {
                     agent { label 'windows' }
                     steps {
@@ -239,7 +232,6 @@ pipeline {
                         runTestsWin("test/unit")
                     }
                 }
-*/
                 stage('Windows Threading') {
                     agent { label 'windows' }
                     steps {
