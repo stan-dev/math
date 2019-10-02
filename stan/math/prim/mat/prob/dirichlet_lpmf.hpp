@@ -82,8 +82,6 @@ return_type_t<T_prob, T_prior_size> dirichlet_lpmf(const T_prob& theta,
   for (size_t t = 0; t < t_length; t++)
     alpha_dbl.col(t) = value_of(alpha_vec[t]);
 
-  T_partials_mat alpha_m_1 = (alpha_dbl.array() - 1.0);
-
   T_partials_return lp(0.0);
 
   if (include_summand<propto, T_prior_size>::value) {
@@ -92,31 +90,26 @@ return_type_t<T_prob, T_prior_size> dirichlet_lpmf(const T_prob& theta,
               .sum();
   }
 
+  const auto& alpha_m_1 = (alpha_dbl.array() - 1.0);
+  const auto& theta_log = theta_dbl.array().log();
+
   if (include_summand<propto, T_prob, T_prior_size>::value) {
-    lp += (theta_dbl.array().log() * alpha_m_1.array()).sum();
+    lp += (theta_log * alpha_m_1).sum();
   }
 
   operands_and_partials<T_prob, T_prior_size> ops_partials(theta, alpha);
-  if (!is_constant_all<T_prob, T_prior_size>::value) {
-    T_partials_mat theta_deriv = alpha_m_1.array() / theta_dbl.array();
-
-    T_partials_mat alpha_deriv(t_size, t_length);
+  if (!is_constant_all<T_prob>::value) {
+    const auto& theta_deriv = (alpha_m_1 / theta_dbl.array()).matrix();
     for (size_t t = 0; t < t_length; t++)
-      alpha_deriv.col(t) = digamma(alpha_dbl.col(t).sum())
-                           - digamma(alpha_dbl).col(t).array()
-                           + theta_dbl.col(t).array().log();
-
-    if (!is_constant_all<T_prob>::value) {
-      for (size_t t = 0; t < t_length; t++)
-        ops_partials.edge1_.partials_vec_[t] += theta_deriv.col(t);
-    }
-
-    if (!is_constant_all<T_prior_size>::value) {
-      for (size_t t = 0; t < t_length; t++)
-        ops_partials.edge2_.partials_vec_[t] += alpha_deriv.col(t);
-    }
+      ops_partials.edge1_.partials_vec_[t] += theta_deriv.col(t);
   }
 
+  if (!is_constant_all<T_prior_size>::value) {
+    for (size_t t = 0; t < t_length; t++)
+      ops_partials.edge2_.partials_vec_[t]
+        += (digamma(alpha_dbl.col(t).sum()) - digamma(alpha_dbl).col(t).array()
+               + theta_log.col(t)).matrix();
+  }
   return ops_partials.build(lp);
 }
 
