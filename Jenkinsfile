@@ -227,6 +227,7 @@ pipeline {
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
+/*
                 stage('Windows Headers & Unit') {
                     agent { label 'windows' }
                     steps {
@@ -236,6 +237,7 @@ pipeline {
                         runTestsWin("test/unit")
                     }
                 }
+*/
                 stage('Windows Threading') {
                     agent { label 'windows' }
                     steps {
