@@ -4,8 +4,10 @@
 #include <test/unit/util.hpp>
 #include <test/unit/math/prim/mat/functor/utils_threads.hpp>
 
+#ifdef STAN_THREADS
 #include <tbb/task_scheduler_init.h>
 #include <tbb/task_arena.h>
+#endif
 
 TEST(intel_tbb_init, check_status) {
   set_n_threads(-1);
