@@ -80,36 +80,36 @@ TEST(requires, var_or_fvar_any_not_test) {
 TEST(requires, stan_scalar_test) {
   using stan::math::fvar;
   using stan::test::require_autodiff_checker;
-  require_autodiff_checker<stan::require_stan_scalar_tfvar<double>,
+  require_autodiff_checker<stan::require_stan_scalar_t, fvar<double>,
                            fvar<double>>::unary();
 }
 TEST(requires, stan_scalar_not_test) {
   using stan::math::fvar;
   using stan::test::require_autodiff_checker;
-  require_autodiff_checker<stan::require_not_stan_scalar_tfvar<double>,
+  require_autodiff_checker<stan::require_not_stan_scalar_t, fvar<double>,
                            fvar<double>>::not_unary();
 }
 TEST(requires, stan_scalar_all_test) {
   using stan::math::fvar;
   using stan::test::require_autodiff_checker;
-  require_autodiff_checker<stan::require_all_stan_scalar_tfvar<double>,
+  require_autodiff_checker<stan::require_all_stan_scalar_t, fvar<double>,
                            fvar<double>>::all();
 }
 TEST(requires, stan_scalar_all_not_test) {
   using stan::math::fvar;
   using stan::test::require_autodiff_checker;
-  require_autodiff_checker<stan::require_all_not_stan_scalar_tfvar<double>,
+  require_autodiff_checker<stan::require_all_not_stan_scalar_t, fvar<double>,
                            fvar<double>>::all_not();
 }
 TEST(requires, stan_scalar_any_test) {
   using stan::math::fvar;
   using stan::test::require_autodiff_checker;
-  require_autodiff_checker<stan::require_any_stan_scalar_tfvar<double>,
+  require_autodiff_checker<stan::require_any_stan_scalar_t, fvar<double>,
                            fvar<double>>::any();
 }
 TEST(requires, stan_scalar_any_not_test) {
   using stan::math::fvar;
   using stan::test::require_autodiff_checker;
-  require_autodiff_checker<stan::require_any_not_stan_scalar_tfvar<double>,
+  require_autodiff_checker<stan::require_any_not_stan_scalar_t, fvar<double>,
                            fvar<double>>::any_not();
 }
