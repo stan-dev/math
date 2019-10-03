@@ -40,11 +40,9 @@ namespace internal {
 template <typename T>
 struct is_eigen_matrix_impl : std::false_type {};
 template <typename T, int R, int C>
-struct is_eigen_matrix_impl<Eigen::Matrix<T, R, C>> : std::true_type {
-};
+struct is_eigen_matrix_impl<Eigen::Matrix<T, R, C>> : std::true_type {};
 template <typename T>
-struct is_eigen_matrix_impl<Eigen::SparseMatrix<T>> : std::true_type {
-};
+struct is_eigen_matrix_impl<Eigen::SparseMatrix<T>> : std::true_type {};
 
 }  // namespace internal
 
