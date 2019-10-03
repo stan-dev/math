@@ -65,7 +65,7 @@ TEST(requires, any_test) {
 
 // Test same
 TEST(requires, same_test) {
-  using stan::require_same;
+  using stan::require_same_t;
   using stan::test::variadic_require_tester;
   EXPECT_FALSE(
       (variadic_require_tester<stan::require_same_t, double, int>::value));
@@ -75,7 +75,7 @@ TEST(requires, same_test) {
 }
 
 TEST(requires, not_same_test) {
-  using stan::require_not_same;
+  using stan::require_not_same_t;
   using stan::test::variadic_require_tester;
   EXPECT_TRUE(
       (variadic_require_tester<require_not_same_t, double, int>::value));
@@ -85,7 +85,7 @@ TEST(requires, not_same_test) {
 }
 
 TEST(requires, all_same_test) {
-  using stan::require_all_same;
+  using stan::require_all_same_t;
   using stan::test::variadic_require_tester;
   EXPECT_FALSE((variadic_require_tester<require_all_same_t, double, std::string,
                                         double>::value));
@@ -96,7 +96,7 @@ TEST(requires, all_same_test) {
 }
 
 TEST(requires, all_not_same_test) {
-  using stan::require_all_not_same;
+  using stan::require_all_not_same_t;
   using stan::test::variadic_require_tester;
   EXPECT_TRUE((variadic_require_tester<require_all_not_same_t, double, int,
                                        double>::value));
