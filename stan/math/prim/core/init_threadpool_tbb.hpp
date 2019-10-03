@@ -2,12 +2,13 @@
 #define STAN_MATH_PRIM_CORE_INIT_THREADPOOL_TBB_HPP
 
 #include <stan/math/prim/scal/err/invalid_argument.hpp>
+
 #include <boost/lexical_cast.hpp>
+
+#include <tbb/task_scheduler_init.h>
 
 #include <cstdlib>
 #include <thread>
-
-#include <tbb/task_scheduler_init.h>
 
 namespace stan {
 namespace math {
