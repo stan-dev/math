@@ -229,7 +229,7 @@ inline void error_conditions_test(const F& f,
   EXPECT_THROW_MSG(
       general_algebra_solver(is_newton, f, x, y, dat_bad_inf, dat_int),
       std::domain_error,
-      "algebra_solver: continuous data is inf, but must "
+      "algebra_solver: continuous data[1] is inf, but must "
       "be finite!");
 
   if (!is_newton) {
