@@ -9,7 +9,7 @@ def runTests(String testPath) {
 }
 
 def runTestsWin(String testPath) {
-    withEnv(['PATH+TBB=./lib/tbb_2019_U8/lib']) {
+    withEnv(['PATH+TBB=./lib/tbb']) {
        bat "echo $PATH"
        bat "runTests.py -j${env.PARALLEL} ${testPath} --make-only"
        try { bat "runTests.py -j${env.PARALLEL} ${testPath}" }
