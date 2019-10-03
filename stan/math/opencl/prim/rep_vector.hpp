@@ -26,7 +26,7 @@ namespace math {
  * element is not a matrix_cl of size 1
  *
  */
-template <typename T, typename = enable_if_all_arithmetic<T>>
+template <typename T, typename = require_arithmetic<T>>
 inline matrix_cl<T> rep_vector(const matrix_cl<T>& x, int m) {
   check_nonnegative("rep_vector (OpenCL)", "elements", m);
   check_mat_size_one("rep_vector (OpenCL)", "x", x);

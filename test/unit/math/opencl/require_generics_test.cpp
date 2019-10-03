@@ -100,7 +100,7 @@ struct require_any_not_matrix_cl_tester<
     stan::require_any_not_matrix_cl_vt<TypeCheck, Check1, Check2>>
     : std::true_type {};
 
-TEST(requires, not_any_matrix_cl_test) {
+TEST(requires, any_not_matrix_cl_test) {
   using stan::math::matrix_cl;
   EXPECT_FALSE((require_any_not_matrix_cl_tester<std::is_floating_point,
                                                  matrix_cl<double>,
@@ -166,7 +166,7 @@ struct require_all_not_matrix_cl_tester<
     stan::require_all_not_matrix_cl_vt<TypeCheck, Check1, Check2>>
     : std::true_type {};
 
-TEST(requires, not_all_matrix_cl_test) {
+TEST(requires, all_not_matrix_cl_test) {
   using stan::math::matrix_cl;
   EXPECT_FALSE((require_all_not_matrix_cl_tester<std::is_floating_point,
                                                  matrix_cl<double>,

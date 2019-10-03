@@ -1,376 +1,276 @@
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat.hpp>
+#include <test/unit/math/require_util.hpp>
 #include <gtest/gtest.h>
 #include <type_traits>
 #include <string>
 
-/**
- * Require eigen
- */
-template <template <class> class TypeCheck, class Check, typename = void>
-struct require_eigen_tester : std::false_type {};
+template <typename T>
+using eigen_x = Eigen::Matrix<T, -1, -1>;
 
-template <template <class> class TypeCheck, class Check>
-struct require_eigen_tester<TypeCheck, Check,
-                            stan::require_eigen_vt<TypeCheck, Check>>
-    : std::true_type {};
-
-TEST(requires, eigen_test) {
-  EXPECT_FALSE((require_eigen_tester<std::is_floating_point, double>::value));
-  EXPECT_TRUE((require_eigen_tester<std::is_arithmetic,
-                                    Eigen::Matrix<double, -1, -1>>::value));
-  EXPECT_TRUE((require_eigen_tester<std::is_floating_point,
-                                    Eigen::Matrix<double, -1, -1>>::value));
-  EXPECT_FALSE(
-      (require_eigen_tester<std::is_floating_point,
-                            Eigen::Matrix<std::string, -1, -1>>::value));
+TEST(require_vt, eigen_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_eigen_vt, eigen_x>::unary<std::is_floating_point>();
+}
+TEST(require_vt, not_eigen_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_not_eigen_vt, eigen_x>::not_unary<std::is_floating_point>();
+}
+TEST(require_vt, all_eigen_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_all_eigen_vt, eigen_x>::all<std::is_floating_point>();
+}
+TEST(require_vt, all_not_eigen_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_all_not_eigen_vt, eigen_x>::all_not<std::is_floating_point>();
+}
+TEST(require_vt, any_eigen_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_any_eigen_vt, eigen_x>::any<std::is_floating_point>();
+}
+TEST(require_vt, any_not_eigen_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_any_not_eigen_vt, eigen_x>::any_not<std::is_floating_point>();
 }
 
-/**
- * Require not eigen
- */
-template <template <class> class TypeCheck, class Check, typename = void>
-struct require_not_eigen_tester : std::false_type {};
+template <typename T>
+using eigen_vector_x = Eigen::Matrix<T, 1, -1>;
 
-template <template <class> class TypeCheck, class Check>
-struct require_not_eigen_tester<TypeCheck, Check,
-                                stan::require_not_eigen_vt<TypeCheck, Check>>
-    : std::true_type {};
-
-TEST(requires, not_eigen_test) {
-  EXPECT_TRUE(
-      (require_not_eigen_tester<std::is_floating_point, double>::value));
-  EXPECT_FALSE(
-      (require_not_eigen_tester<std::is_arithmetic,
-                                Eigen::Matrix<double, -1, -1>>::value));
-  EXPECT_FALSE(
-      (require_not_eigen_tester<std::is_floating_point,
-                                Eigen::Matrix<double, -1, -1>>::value));
-  EXPECT_TRUE(
-      (require_not_eigen_tester<std::is_floating_point,
-                                Eigen::Matrix<std::string, -1, -1>>::value));
+TEST(require_vt, eigen_vector_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_eigen_vector_vt, eigen_vector_x>::unary<std::is_floating_point>();
+}
+TEST(require_vt, not_eigen_vector_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_not_eigen_vector_vt, eigen_vector_x>::not_unary<std::is_floating_point>();
+}
+TEST(require_vt, all_eigen_vector_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_all_eigen_vector_vt, eigen_vector_x>::all<std::is_floating_point>();
+}
+TEST(require_vt, all_not_eigen_vector_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_all_not_eigen_vector_vt, eigen_vector_x>::all_not<std::is_floating_point>();
+}
+TEST(require_vt, any_eigen_vector_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_any_eigen_vector_vt, eigen_vector_x>::any<std::is_floating_point>();
+}
+TEST(require_vt, any_not_eigen_vector_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_any_not_eigen_vector_vt, eigen_vector_x>::any_not<std::is_floating_point>();
 }
 
-///////
+template <typename T>
+using eigen_eigen_x = Eigen::Matrix<Eigen::Matrix<T, -1, -1>, -1, -1>;
 
-/**
- * Require all eigen
- */
-template <template <class> class TypeCheck, class Check1, class Check2,
-          typename = void>
-struct require_any_eigen_tester : std::false_type {};
-
-template <template <class> class TypeCheck, class Check1, class Check2>
-struct require_any_eigen_tester<
-    TypeCheck, Check1, Check2,
-    stan::require_any_eigen_vt<TypeCheck, Check1, Check2>> : std::true_type {};
-
-TEST(requires, any_eigen_test) {
-  EXPECT_TRUE((require_any_eigen_tester<std::is_floating_point,
-                                        Eigen::Matrix<double, -1, -1>,
-                                        Eigen::Matrix<double, -1, -1>>::value));
-  EXPECT_TRUE((require_any_eigen_tester<std::is_floating_point, double,
-                                        Eigen::Matrix<double, -1, -1>>::value));
-  EXPECT_TRUE(
-      (require_any_eigen_tester<std::is_floating_point,
-                                Eigen::Matrix<double, -1, -1>, double>::value));
-  EXPECT_TRUE((require_any_eigen_tester<std::is_floating_point,
-                                        Eigen::Matrix<std::string, -1, -1>,
-                                        Eigen::Matrix<double, -1, -1>>::value));
-  EXPECT_FALSE((require_any_eigen_tester<std::is_floating_point, int,
-                                         std::string>::value));
-  EXPECT_FALSE(
-      (require_any_eigen_tester<std::is_arithmetic, double, double>::value));
+TEST(require_container_vt, eigen_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_eigen_vt, eigen_eigen_x>::unary<stan::is_eigen>();
+}
+TEST(require_container_vt, not_eigen_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_not_eigen_vt, eigen_eigen_x>::not_unary<stan::is_eigen>();
+}
+TEST(require_container_vt, all_eigen_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_all_eigen_vt, eigen_eigen_x>::all<stan::is_eigen>();
+}
+TEST(require_container_vt, all_not_eigen_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_all_not_eigen_vt, eigen_eigen_x>::all_not<stan::is_eigen>();
+}
+TEST(require_container_vt, any_eigen_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_any_eigen_vt, eigen_eigen_x>::any<stan::is_eigen>();
+}
+TEST(require_container_vt, any_not_eigen_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_any_not_eigen_vt, eigen_eigen_x>::any_not<stan::is_eigen>();
 }
 
-////////
 
-/**
- * Require all eigen
- */
-template <template <class> class TypeCheck, class Check1, class Check2,
-          typename = void>
-struct require_any_not_eigen_tester : std::false_type {};
-
-template <template <class> class TypeCheck, class Check1, class Check2>
-struct require_any_not_eigen_tester<
-    TypeCheck, Check1, Check2,
-    stan::require_any_not_eigen_vt<TypeCheck, Check1, Check2>>
-    : std::true_type {};
-
-TEST(requires, not_any_eigen_test) {
-  EXPECT_FALSE(
-      (require_any_not_eigen_tester<std::is_floating_point,
-                                    Eigen::Matrix<double, -1, -1>,
-                                    Eigen::Matrix<double, -1, -1>>::value));
-  EXPECT_FALSE(
-      (require_any_not_eigen_tester<std::is_floating_point, double,
-                                    Eigen::Matrix<double, -1, -1>>::value));
-  EXPECT_FALSE((require_any_not_eigen_tester<std::is_floating_point,
-                                             Eigen::Matrix<double, -1, -1>,
-                                             double>::value));
-  EXPECT_FALSE(
-      (require_any_not_eigen_tester<std::is_floating_point,
-                                    Eigen::Matrix<std::string, -1, -1>,
-                                    Eigen::Matrix<double, -1, -1>>::value));
-  EXPECT_TRUE((require_any_not_eigen_tester<std::is_floating_point, int,
-                                            std::string>::value));
-  EXPECT_TRUE((
-      require_any_not_eigen_tester<std::is_arithmetic, double, double>::value));
+TEST(require_st, eigen_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_eigen_st, eigen_eigen_x>::unary<std::is_floating_point>();
+}
+TEST(require_st, not_eigen_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_not_eigen_st, eigen_eigen_x>::not_unary<std::is_floating_point>();
+}
+TEST(require_st, all_eigen_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_all_eigen_st, eigen_eigen_x>::all<std::is_floating_point>();
+}
+TEST(require_st, all_not_eigen_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_all_not_eigen_st, eigen_eigen_x>::all_not<std::is_floating_point>();
+}
+TEST(require_st, any_eigen_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_any_eigen_st, eigen_eigen_x>::any<std::is_floating_point>();
+}
+TEST(require_st, any_not_eigen_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_any_not_eigen_st, eigen_eigen_x>::any_not<std::is_floating_point>();
 }
 
-/////
+template <typename T>
+using eigen_eigen_vector_x = Eigen::Matrix<Eigen::Matrix<T, 1, -1>, 1, -1>;
 
-/**
- * Require all eigen
- */
-template <template <class> class TypeCheck, class Check1, class Check2,
-          typename = void>
-struct require_all_eigen_tester : std::false_type {};
-
-template <template <class> class TypeCheck, class Check1, class Check2>
-struct require_all_eigen_tester<
-    TypeCheck, Check1, Check2,
-    stan::require_all_eigen_vt<TypeCheck, Check1, Check2>> : std::true_type {};
-
-TEST(requires, all_eigen_test) {
-  EXPECT_TRUE((require_all_eigen_tester<std::is_floating_point,
-                                        Eigen::Matrix<double, -1, -1>,
-                                        Eigen::Matrix<double, -1, -1>>::value));
-  EXPECT_FALSE(
-      (require_all_eigen_tester<std::is_floating_point, double,
-                                Eigen::Matrix<double, -1, -1>>::value));
-  EXPECT_FALSE(
-      (require_all_eigen_tester<std::is_floating_point,
-                                Eigen::Matrix<double, -1, -1>, double>::value));
-  EXPECT_FALSE(
-      (require_all_eigen_tester<std::is_floating_point,
-                                Eigen::Matrix<std::string, -1, -1>,
-                                Eigen::Matrix<double, -1, -1>>::value));
-  EXPECT_FALSE((require_all_eigen_tester<std::is_floating_point, int,
-                                         std::string>::value));
-  EXPECT_FALSE(
-      (require_all_eigen_tester<std::is_arithmetic, double, double>::value));
+TEST(require_container_vt, eigen_vector_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_eigen_vector_vt, eigen_eigen_vector_x>::unary<stan::is_vector>();
+}
+TEST(require_container_vt, not_eigen_vector_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_not_eigen_vector_vt, eigen_eigen_vector_x>::not_unary<stan::is_vector>();
+}
+TEST(require_container_vt, all_eigen_vector_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_all_eigen_vector_vt, eigen_eigen_vector_x>::all<stan::is_vector>();
+}
+TEST(require_container_vt, all_not_eigen_vector_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_all_not_eigen_vector_vt, eigen_eigen_vector_x>::all_not<stan::is_vector>();
+}
+TEST(require_container_vt, any_eigen_vector_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_any_eigen_vector_vt, eigen_eigen_vector_x>::any<stan::is_vector>();
+}
+TEST(require_container_vt, any_not_eigen_vector_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_any_not_eigen_vector_vt, eigen_eigen_vector_x>::any_not<stan::is_vector>();
 }
 
-/**
- * Require all not eigen
- */
-template <template <class> class TypeCheck, class Check1, class Check2,
-          typename = void>
-struct require_all_not_eigen_tester : std::false_type {};
-
-template <template <class> class TypeCheck, class Check1, class Check2>
-struct require_all_not_eigen_tester<
-    TypeCheck, Check1, Check2,
-    stan::require_all_not_eigen_vt<TypeCheck, Check1, Check2>>
-    : std::true_type {};
-
-TEST(requires, not_all_eigen_test) {
-  EXPECT_FALSE(
-      (require_all_not_eigen_tester<std::is_floating_point,
-                                    Eigen::Matrix<double, -1, -1>,
-                                    Eigen::Matrix<double, -1, -1>>::value));
-  EXPECT_TRUE(
-      (require_all_not_eigen_tester<std::is_floating_point, double,
-                                    Eigen::Matrix<double, -1, -1>>::value));
-  EXPECT_TRUE((require_all_not_eigen_tester<std::is_floating_point,
-                                            Eigen::Matrix<double, -1, -1>,
-                                            double>::value));
-  EXPECT_TRUE(
-      (require_all_not_eigen_tester<std::is_floating_point,
-                                    Eigen::Matrix<std::string, -1, -1>,
-                                    Eigen::Matrix<double, -1, -1>>::value));
-  EXPECT_TRUE((require_all_not_eigen_tester<std::is_floating_point, int,
-                                            std::string>::value));
-  EXPECT_TRUE((
-      require_all_not_eigen_tester<std::is_arithmetic, double, double>::value));
+TEST(require_st, eigen_vector_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_eigen_vector_st, eigen_eigen_vector_x>::unary<std::is_floating_point>();
+}
+TEST(require_st, not_eigen_vector_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_not_eigen_vector_st, eigen_eigen_vector_x>::not_unary<std::is_floating_point>();
+}
+TEST(require_st, all_eigen_vector_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_all_eigen_vector_st, eigen_eigen_vector_x>::all<std::is_floating_point>();
+}
+TEST(require_st, all_not_eigen_vector_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_all_not_eigen_vector_st, eigen_eigen_vector_x>::all_not<std::is_floating_point>();
+}
+TEST(require_st, any_eigen_vector_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_any_eigen_vector_st, eigen_eigen_vector_x>::any<std::is_floating_point>();
+}
+TEST(require_st, any_not_eigen_vector_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_any_not_eigen_vector_st, eigen_eigen_vector_x>::any_not<std::is_floating_point>();
 }
 
-/**
- * Require eigen vector
- */
-template <template <class> class TypeCheck, class Check, typename = void>
-struct require_eigen_vector_tester : std::false_type {};
 
-template <template <class> class TypeCheck, class Check>
-struct require_eigen_vector_tester<
-    TypeCheck, Check, stan::require_eigen_vector_vt<TypeCheck, Check>>
-    : std::true_type {};
+template <typename T>
+using eigen_std_vector_x = Eigen::Matrix<std::vector<T>, 1, -1>;
 
-TEST(requires, eigen_vector_test) {
-  EXPECT_FALSE(
-      (require_eigen_vector_tester<std::is_floating_point, double>::value));
-  EXPECT_TRUE(
-      (require_eigen_vector_tester<std::is_arithmetic,
-                                   Eigen::Matrix<double, 1, -1>>::value));
-  EXPECT_TRUE(
-      (require_eigen_vector_tester<std::is_floating_point,
-                                   Eigen::Matrix<double, 1, -1>>::value));
-  EXPECT_FALSE(
-      (require_eigen_vector_tester<std::is_floating_point,
-                                   Eigen::Matrix<std::string, 1, -1>>::value));
+TEST(require_container_vt, eigen_std_vector_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_eigen_vector_vt, eigen_std_vector_x>::unary<stan::is_std_vector>();
+}
+TEST(require_container_vt, not_eigen_std_vector_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_not_eigen_vector_vt, eigen_std_vector_x>::not_unary<stan::is_std_vector>();
+}
+TEST(require_container_vt, all_eigen_std_vector_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_all_eigen_vector_vt, eigen_std_vector_x>::all<stan::is_std_vector>();
+}
+TEST(require_container_vt, all_not_eigen_std_vector_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_all_not_eigen_vector_vt, eigen_std_vector_x>::all_not<stan::is_std_vector>();
+}
+TEST(require_container_vt, any_eigen_std_vector_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_any_eigen_vector_vt, eigen_std_vector_x>::any<stan::is_std_vector>();
+}
+TEST(require_container_vt, any_not_eigen_std_vector_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_any_not_eigen_vector_vt, eigen_std_vector_x>::any_not<stan::is_std_vector>();
 }
 
-/**
- * Require not eigen
- */
-template <template <class> class TypeCheck, class Check, typename = void>
-struct require_not_eigen_vector_tester : std::false_type {};
-
-template <template <class> class TypeCheck, class Check>
-struct require_not_eigen_vector_tester<
-    TypeCheck, Check, stan::require_not_eigen_vector_vt<TypeCheck, Check>>
-    : std::true_type {};
-
-TEST(requires, not_eigen_vector_test) {
-  EXPECT_TRUE(
-      (require_not_eigen_vector_tester<std::is_floating_point, double>::value));
-  EXPECT_FALSE(
-      (require_not_eigen_vector_tester<std::is_arithmetic,
-                                       Eigen::Matrix<double, 1, -1>>::value));
-  EXPECT_FALSE(
-      (require_not_eigen_vector_tester<std::is_floating_point,
-                                       Eigen::Matrix<double, 1, -1>>::value));
-  EXPECT_TRUE(
-      (require_not_eigen_vector_tester<
-          std::is_floating_point, Eigen::Matrix<std::string, 1, -1>>::value));
+TEST(require_st, eigen_std_vector_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_eigen_vector_st, eigen_std_vector_x>::unary<std::is_floating_point>();
+}
+TEST(require_st, not_eigen_std_vector_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_not_eigen_vector_st, eigen_std_vector_x>::not_unary<std::is_floating_point>();
+}
+TEST(require_st, all_eigen_std_vector_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_all_eigen_vector_st, eigen_std_vector_x>::all<std::is_floating_point>();
+}
+TEST(require_st, all_not_eigen_std_vector_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_all_not_eigen_vector_st, eigen_std_vector_x>::all_not<std::is_floating_point>();
+}
+TEST(require_st, any_eigen_std_vector_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_any_eigen_vector_st, eigen_std_vector_x>::any<std::is_floating_point>();
+}
+TEST(require_st, any_not_eigen_std_vector_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_any_not_eigen_vector_st, eigen_std_vector_x>::any_not<std::is_floating_point>();
 }
 
-///////
+template <typename T>
+using std_vector_eigen_x = std::vector<Eigen::Matrix<T, -1, -1>>;
 
-/**
- * Require all eigen
- */
-template <template <class> class TypeCheck, class Check1, class Check2,
-          typename = void>
-struct require_any_eigen_vector_tester : std::false_type {};
-
-template <template <class> class TypeCheck, class Check1, class Check2>
-struct require_any_eigen_vector_tester<
-    TypeCheck, Check1, Check2,
-    stan::require_any_eigen_vector_vt<TypeCheck, Check1, Check2>>
-    : std::true_type {};
-
-TEST(requires, any_eigen_vector_test) {
-  EXPECT_TRUE(
-      (require_any_eigen_vector_tester<std::is_floating_point,
-                                       Eigen::Matrix<double, 1, -1>,
-                                       Eigen::Matrix<double, 1, -1>>::value));
-  EXPECT_TRUE(
-      (require_any_eigen_vector_tester<std::is_floating_point, double,
-                                       Eigen::Matrix<double, 1, -1>>::value));
-  EXPECT_TRUE((require_any_eigen_vector_tester<std::is_floating_point,
-                                               Eigen::Matrix<double, 1, -1>,
-                                               double>::value));
-  EXPECT_TRUE(
-      (require_any_eigen_vector_tester<std::is_floating_point,
-                                       Eigen::Matrix<std::string, 1, -1>,
-                                       Eigen::Matrix<double, 1, -1>>::value));
-  EXPECT_FALSE((require_any_eigen_vector_tester<std::is_floating_point, int,
-                                                std::string>::value));
-  EXPECT_FALSE((require_any_eigen_vector_tester<std::is_arithmetic, double,
-                                                double>::value));
+TEST(require_container_vt, std_vector_eigen_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_std_vector_vt, std_vector_eigen_x>::unary<stan::is_eigen>();
+}
+TEST(require_container_vt, not_std_vector_eigen_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_not_std_vector_vt, std_vector_eigen_x>::not_unary<stan::is_eigen>();
+}
+TEST(require_container_vt, all_std_vector_eigen_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_all_std_vector_vt, std_vector_eigen_x>::all<stan::is_eigen>();
+}
+TEST(require_container_vt, all_not_std_vector_eigen_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_all_not_std_vector_vt, std_vector_eigen_x>::all_not<stan::is_eigen>();
+}
+TEST(require_container_vt, any_std_vector_eigen_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_any_std_vector_vt, std_vector_eigen_x>::any<stan::is_eigen>();
+}
+TEST(require_container_vt, any_not_std_vector_eigen_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_any_not_std_vector_vt, std_vector_eigen_x>::any_not<stan::is_eigen>();
 }
 
-////////
-
-/**
- * Require all eigen
- */
-template <template <class> class TypeCheck, class Check1, class Check2,
-          typename = void>
-struct require_any_not_eigen_vector_tester : std::false_type {};
-
-template <template <class> class TypeCheck, class Check1, class Check2>
-struct require_any_not_eigen_vector_tester<
-    TypeCheck, Check1, Check2,
-    stan::require_any_not_eigen_vector_vt<TypeCheck, Check1, Check2>>
-    : std::true_type {};
-
-TEST(requires, not_any_eigen_vector_test) {
-  EXPECT_FALSE((require_any_not_eigen_vector_tester<
-                std::is_floating_point, Eigen::Matrix<double, 1, -1>,
-                Eigen::Matrix<double, 1, -1>>::value));
-  EXPECT_FALSE((require_any_not_eigen_vector_tester<
-                std::is_floating_point, double,
-                Eigen::Matrix<double, 1, -1>>::value));
-  EXPECT_FALSE(
-      (require_any_not_eigen_vector_tester<std::is_floating_point,
-                                           Eigen::Matrix<double, 1, -1>,
-                                           double>::value));
-  EXPECT_FALSE((require_any_not_eigen_vector_tester<
-                std::is_floating_point, Eigen::Matrix<std::string, 1, -1>,
-                Eigen::Matrix<double, 1, -1>>::value));
-  EXPECT_TRUE((require_any_not_eigen_vector_tester<std::is_floating_point, int,
-                                                   std::string>::value));
-  EXPECT_TRUE((require_any_not_eigen_vector_tester<std::is_arithmetic, double,
-                                                   double>::value));
+TEST(require_st, std_vector_eigen_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_std_vector_st, std_vector_eigen_x>::unary<std::is_floating_point>();
 }
-
-/////
-
-/**
- * Require all eigen
- */
-template <template <class> class TypeCheck, class Check1, class Check2,
-          typename = void>
-struct require_all_eigen_vector_tester : std::false_type {};
-
-template <template <class> class TypeCheck, class Check1, class Check2>
-struct require_all_eigen_vector_tester<
-    TypeCheck, Check1, Check2,
-    stan::require_all_eigen_vector_vt<TypeCheck, Check1, Check2>>
-    : std::true_type {};
-
-TEST(requires, all_eigen_vector_test) {
-  EXPECT_TRUE(
-      (require_all_eigen_vector_tester<std::is_floating_point,
-                                       Eigen::Matrix<double, 1, -1>,
-                                       Eigen::Matrix<double, 1, -1>>::value));
-  EXPECT_FALSE(
-      (require_all_eigen_vector_tester<std::is_floating_point, double,
-                                       Eigen::Matrix<double, 1, -1>>::value));
-  EXPECT_FALSE((require_all_eigen_vector_tester<std::is_floating_point,
-                                                Eigen::Matrix<double, 1, -1>,
-                                                double>::value));
-  EXPECT_FALSE(
-      (require_all_eigen_vector_tester<std::is_floating_point,
-                                       Eigen::Matrix<std::string, 1, -1>,
-                                       Eigen::Matrix<double, 1, -1>>::value));
-  EXPECT_FALSE((require_all_eigen_vector_tester<std::is_floating_point, int,
-                                                std::string>::value));
-  EXPECT_FALSE((require_all_eigen_vector_tester<std::is_arithmetic, double,
-                                                double>::value));
+TEST(require_st, not_std_vector_eigen_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_not_std_vector_st, std_vector_eigen_x>::not_unary<std::is_floating_point>();
 }
-
-/**
- * Require all not eigen
- */
-template <template <class> class TypeCheck, class Check1, class Check2,
-          typename = void>
-struct require_all_not_eigen_vector_tester : std::false_type {};
-
-template <template <class> class TypeCheck, class Check1, class Check2>
-struct require_all_not_eigen_vector_tester<
-    TypeCheck, Check1, Check2,
-    stan::require_all_not_eigen_vector_vt<TypeCheck, Check1, Check2>>
-    : std::true_type {};
-
-TEST(requires, not_all_eigen_vector_test) {
-  EXPECT_FALSE((require_all_not_eigen_vector_tester<
-                std::is_floating_point, Eigen::Matrix<double, 1, -1>,
-                Eigen::Matrix<double, 1, -1>>::value));
-  EXPECT_TRUE((require_all_not_eigen_vector_tester<
-               std::is_floating_point, double,
-               Eigen::Matrix<double, 1, -1>>::value));
-  EXPECT_TRUE((require_all_not_eigen_vector_tester<std::is_floating_point,
-                                                   Eigen::Matrix<double, 1, -1>,
-                                                   double>::value));
-  EXPECT_TRUE((require_all_not_eigen_vector_tester<
-               std::is_floating_point, Eigen::Matrix<std::string, 1, -1>,
-               Eigen::Matrix<double, 1, -1>>::value));
-  EXPECT_TRUE((require_all_not_eigen_vector_tester<std::is_floating_point, int,
-                                                   std::string>::value));
-  EXPECT_TRUE((require_all_not_eigen_vector_tester<std::is_arithmetic, double,
-                                                   double>::value));
+TEST(require_st, all_std_vector_eigen_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_all_std_vector_st, std_vector_eigen_x>::all<std::is_floating_point>();
+}
+TEST(require_st, all_not_std_vector_eigen_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_all_not_std_vector_st, std_vector_eigen_x>::all_not<std::is_floating_point>();
+}
+TEST(require_st, any_std_vector_eigen_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_any_std_vector_st, std_vector_eigen_x>::any<std::is_floating_point>();
+}
+TEST(require_st, any_not_std_vector_eigen_test) {
+  using stan::test::require_container_checker;
+  require_container_checker<stan::require_any_not_std_vector_st, std_vector_eigen_x>::any_not<std::is_floating_point>();
 }
