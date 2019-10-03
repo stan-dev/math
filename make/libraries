@@ -133,29 +133,30 @@ tbb-make-check:
 
 .PHONY: tbb-make-check
 
-$(TBB)/lib/tbb.def: tbb-make-check $(TBB)/lib/tbbmalloc.def
-	@mkdir -p $(TBB)/lib
-	tbb_root="$(TBB_ABSOLUTE_PATH)" CXX="$(CXX)" CC="$(TBB_CC)" LDFLAGS="$(LDFLAGS_TBB)" $(MAKE) -C $(TBB)/lib -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbb" compiler=$(TBB_CXX_TYPE) cfg=release
+$(TBB_BIN)/tbb.def: tbb-make-check $(TBB_BIN)/tbbmalloc.def
+	@mkdir -p $(TBB_BIN)
+	touch $(TBB_BIN)/version_$(notdir $(TBB))
+	tbb_root="$(TBB_ABSOLUTE_PATH)" CXX="$(CXX)" CC="$(TBB_CC)" LDFLAGS="$(LDFLAGS_TBB)" $(MAKE) -C $(TBB_BIN) -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbb" compiler=$(TBB_CXX_TYPE) cfg=release
 
-$(TBB)/lib/tbbmalloc.def: tbb-make-check
-	@mkdir -p $(TBB)/lib
-	tbb_root="$(TBB_ABSOLUTE_PATH)" CXX="$(CXX)" CC="$(TBB_CC)" LDFLAGS="$(LDFLAGS_TBB)" $(MAKE) -C $(TBB)/lib -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbbmalloc" compiler=$(TBB_CXX_TYPE) cfg=release malloc
+$(TBB_BIN)/tbbmalloc.def: tbb-make-check
+	@mkdir -p $(TBB_BIN)
+	tbb_root="$(TBB_ABSOLUTE_PATH)" CXX="$(CXX)" CC="$(TBB_CC)" LDFLAGS="$(LDFLAGS_TBB)" $(MAKE) -C $(TBB_BIN) -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbbmalloc" compiler=$(TBB_CXX_TYPE) cfg=release malloc
 
-$(TBB)/lib/libtbb.dylib: $(TBB)/lib/tbb.def
-$(TBB)/lib/libtbbmalloc.dylib: $(TBB)/lib/tbbmalloc.def
-$(TBB)/lib/libtbbmalloc_proxy.dylib: $(TBB)/lib/tbbmalloc.def
+$(TBB_BIN)/libtbb.dylib: $(TBB_BIN)/tbb.def
+$(TBB_BIN)/libtbbmalloc.dylib: $(TBB_BIN)/tbbmalloc.def
+$(TBB_BIN)/libtbbmalloc_proxy.dylib: $(TBB_BIN)/tbbmalloc.def
 
-$(TBB)/lib/libtbb.so.2: $(TBB)/lib/tbb.def
-$(TBB)/lib/libtbbmalloc.so.2: $(TBB)/lib/tbbmalloc.def
-$(TBB)/lib/libtbbmalloc_proxy.so.2: $(TBB)/lib/tbbmalloc.def
+$(TBB_BIN)/libtbb.so.2: $(TBB_BIN)/tbb.def
+$(TBB_BIN)/libtbbmalloc.so.2: $(TBB_BIN)/tbbmalloc.def
+$(TBB_BIN)/libtbbmalloc_proxy.so.2: $(TBB_BIN)/tbbmalloc.def
 
-$(TBB)/lib/tbb.dll: $(TBB)/lib/tbb.def
-$(TBB)/lib/tbbmalloc.dll: $(TBB)/lib/tbbmalloc.def
-$(TBB)/lib/tbbmalloc_proxy.dll: $(TBB)/lib/tbbmalloc.def
+$(TBB_BIN)/tbb.dll: $(TBB_BIN)/tbb.def
+$(TBB_BIN)/tbbmalloc.dll: $(TBB_BIN)/tbbmalloc.def
+$(TBB_BIN)/tbbmalloc_proxy.dll: $(TBB_BIN)/tbbmalloc.def
 
 clean-tbb:
 	@echo '  cleaning Intel TBB targets'
-	$(RM) -rf $(TBB)/lib
+	$(RM) -rf $(TBB_BIN)
 
 ############################################################
 # MPI build rules

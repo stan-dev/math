@@ -189,6 +189,8 @@ endif
 # "tbb" or "tbb tbbmalloc tbbmalloc_proxy". Setting the TBB_LIBRARIES
 # variable overrides the default.
 
+TBB_BIN ?= lib/tbb
+TBB_BIN_ABSOLUTE_PATH = $(abspath $(TBB_BIN))
 TBB_ABSOLUTE_PATH = $(abspath $(TBB))
 
 ifneq (,$(findstring STAN_THREADS,$(CXXFLAGS)))
@@ -198,18 +200,18 @@ else
 endif
 
 ifeq ($(OS),Windows_NT)
-  TBB_TARGETS ?= $(addsuffix $(LIBRARY_SUFFIX),$(addprefix $(TBB)/lib/,$(TBB_LIBRARIES)))
+  TBB_TARGETS ?= $(addsuffix $(LIBRARY_SUFFIX),$(addprefix $(TBB_BIN)/,$(TBB_LIBRARIES)))
 endif
 ifeq ($(OS),Darwin)
-  TBB_TARGETS ?= $(addsuffix $(LIBRARY_SUFFIX),$(addprefix $(TBB)/lib/lib,$(TBB_LIBRARIES)))
+  TBB_TARGETS ?= $(addsuffix $(LIBRARY_SUFFIX),$(addprefix $(TBB_BIN)/lib,$(TBB_LIBRARIES)))
 endif
 ifeq ($(OS),Linux)
-  TBB_TARGETS ?= $(addsuffix $(LIBRARY_SUFFIX).2,$(addprefix $(TBB)/lib/lib,$(TBB_LIBRARIES)))
+  TBB_TARGETS ?= $(addsuffix $(LIBRARY_SUFFIX).2,$(addprefix $(TBB_BIN)/lib,$(TBB_LIBRARIES)))
 endif
 
 
 CXXFLAGS_TBB ?= -I $(TBB)/include
-LDFLAGS_TBB ?= -Wl,-L,"$(TBB_ABSOLUTE_PATH)/lib" -Wl,-rpath,"$(TBB_ABSOLUTE_PATH)/lib"
+LDFLAGS_TBB ?= -Wl,-L,"$(TBB_BIN_ABSOLUTE_PATH)" -Wl,-rpath,"$(TBB_BIN_ABSOLUTE_PATH)"
 LDLIBS_TBB ?= 
 
 
