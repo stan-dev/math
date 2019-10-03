@@ -480,6 +480,18 @@ TEST_F(FP_degenerated_func_test, algebra_solver_fp) {
   }
 }
 
+TEST_F(FP_degenerated_func_test, scaling_vector_as_params) {
+  double f_tol = 1.e-12;
+  int max_num_steps = 100;
+
+  std::vector<stan::math::var> u_scale_v(to_var(u_scale));
+  std::vector<stan::math::var> f_scale_v(to_var(f_scale));
+  Eigen::Matrix<double, -1, 1> xd = algebra_solver_fp(
+      f, x, y, x_r, x_i, u_scale, f_scale, 0, f_tol, max_num_steps);  // NOLINT
+  EXPECT_FLOAT_EQ(xd(0), 5.0);
+  EXPECT_FLOAT_EQ(xd(1), 5.0);
+}
+
 TEST_F(FP_direct_prod_func_test, algebra_solver_fp) {
   double f_tol = 1.e-12;
   int max_num_steps = 100;

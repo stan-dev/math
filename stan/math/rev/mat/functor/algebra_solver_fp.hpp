@@ -62,12 +62,12 @@ struct KinsolFixedPointEnv {
   N_Vector nv_f_scal_;
 
   /* Constructor when @y is data */
-  template <typename T>
+  template <typename T, typename T_u, typename T_f>
   KinsolFixedPointEnv(const F& f, const Eigen::Matrix<T, -1, 1>& x,
                       const Eigen::VectorXd& y, const std::vector<double>& x_r,
                       const std::vector<int>& x_i, std::ostream* msgs,
-                      const std::vector<double>& u_scale,
-                      const std::vector<double>& f_scale)
+                      const std::vector<T_u>& u_scale,
+                      const std::vector<T_f>& f_scale)
       : f_(f),
         y_dummy(),
         y_(y),
@@ -82,19 +82,19 @@ struct KinsolFixedPointEnv {
         nv_f_scal_(N_VNew_Serial(N_)) {
     for (int i = 0; i < N_; ++i) {
       NV_Ith_S(nv_x_, i) = stan::math::value_of(x(i));
-      NV_Ith_S(nv_u_scal_, i) = u_scale[i];
-      NV_Ith_S(nv_f_scal_, i) = f_scale[i];
+      NV_Ith_S(nv_u_scal_, i) = stan::math::value_of(u_scale[i]);
+      NV_Ith_S(nv_f_scal_, i) = stan::math::value_of(f_scale[i]);
     }
   }
 
   /* Constructor when @y is param */
-  template <typename T>
+  template <typename T, typename T_u, typename T_f>
   KinsolFixedPointEnv(const F& f, const Eigen::Matrix<T, -1, 1>& x,
                       const Eigen::Matrix<stan::math::var, -1, 1>& y,
                       const std::vector<double>& x_r,
                       const std::vector<int>& x_i, std::ostream* msgs,
-                      const std::vector<double>& u_scale,
-                      const std::vector<double>& f_scale)
+                      const std::vector<T_u>& u_scale,
+                      const std::vector<T_f>& f_scale)
       : f_(f),
         y_dummy(stan::math::value_of(y)),
         y_(y_dummy),
@@ -109,8 +109,8 @@ struct KinsolFixedPointEnv {
         nv_f_scal_(N_VNew_Serial(N_)) {
     for (int i = 0; i < N_; ++i) {
       NV_Ith_S(nv_x_, i) = stan::math::value_of(x(i));
-      NV_Ith_S(nv_u_scal_, i) = u_scale[i];
-      NV_Ith_S(nv_f_scal_, i) = f_scale[i];
+      NV_Ith_S(nv_u_scal_, i) = stan::math::value_of(u_scale[i]);
+      NV_Ith_S(nv_f_scal_, i) = stan::math::value_of(f_scale[i]);
     }
   }
 
@@ -322,6 +322,14 @@ struct FixedPointSolver<KinsolFixedPointEnv<F>, fp_jac_type> {
  * @tparam T type of initial guess vector. The final soluton
  *           type doesn't depend on initial guess type,
  *           but we allow initial guess to be either data or param.
+ * @tparam T_u type of scaling vector for unknowns. We allow
+ *             it to be @c var because scaling could be parameter
+ *             dependent. Internally these params are converted to data
+ *             because scaling is applied.
+ * @tparam T_f type of scaling vector for residual. We allow
+ *             it to be @c var because scaling could be parameter
+ *             dependent. Internally these params are converted to data
+ *             because scaling is applied.
  * @param[in] f Functor that evaluated the system of equations.
  * @param[in] x Vector of starting values.
  * @param[in] y Parameter vector for the equation system. The function
@@ -353,12 +361,13 @@ struct FixedPointSolver<KinsolFixedPointEnv<F>, fp_jac_type> {
  * @throw <code>boost::math::evaluation_error</code> (which is a subclass of
  * <code>std::runtime_error</code>) if solver exceeds max_num_steps.
  */
-template <typename F, typename T1, typename T2>
+  template <typename F, typename T1, typename T2, typename T_u, typename T_f>
 Eigen::Matrix<T2, -1, 1> algebra_solver_fp(
     const F& f, const Eigen::Matrix<T1, -1, 1>& x,
     const Eigen::Matrix<T2, -1, 1>& y, const std::vector<double>& x_r,
-    const std::vector<int>& x_i, const std::vector<double>& u_scale,
-    const std::vector<double>& f_scale, std::ostream* msgs = nullptr,
+    const std::vector<int>& x_i,
+    const std::vector<T_u>& u_scale,
+    const std::vector<T_f>& f_scale, std::ostream* msgs = nullptr,
     double f_tol = 1e-8,
     int max_num_steps = 200) {  // NOLINT(runtime/int)
   algebra_solver_check(x, y, x_r, x_i, f_tol, max_num_steps);
