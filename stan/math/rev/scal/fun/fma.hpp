@@ -145,8 +145,7 @@ inline var fma(const var& a, const var& b, Tc&& c) {
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
 template <typename Ta, typename Tb, typename Tc,
-          typename = require_arithmetic<Tb>,
-          typename = require_all_var<Ta, Tc>>
+          typename = require_arithmetic<Tb>, typename = require_all_var<Ta, Tc>>
 inline var fma(Ta&& a, Tb&& b, Tc&& c) {
   return var(new internal::fma_vdv_vari(a.vi_, b, c.vi_));
 }
