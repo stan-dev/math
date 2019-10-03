@@ -39,7 +39,8 @@ TEST(MathMeta, expression) {
 
   EXPECT_FALSE((is_eigen_matrix<Eigen::EigenBase<Eigen::MatrixXd>>::value));
   EXPECT_TRUE((is_eigen_matrix<Eigen::Matrix<double, -1, -1>>::value));
-  EXPECT_TRUE((is_eigen_matrix<Eigen::SparseMatrix<double>>::value));
+  Eigen::SparseMatrix<double> sparse_mat;
+  EXPECT_TRUE((is_eigen_matrix<decltype(sparse_mat)>::value));
   EXPECT_FALSE((is_eigen_matrix<Eigen::MatrixBase<Eigen::MatrixXd>>::value));
 
   EXPECT_TRUE((is_eigen_matrix<const Eigen::Matrix<double, -1, -1>>::value));

@@ -13,7 +13,7 @@ ifeq (default,$(origin CXX))
     CXX := clang++
   endif
   ifeq ($(OS),Linux)
-    CXX := g++
+    CXX := clang++
   endif
   ifeq ($(OS),Windows_NT)
     CXX := g++
@@ -133,6 +133,8 @@ ifeq ($(OS),Linux)
   endif
 endif
 
+## makes reentrant version lgamma_r available from cmath
+CXXFLAGS_OS += -D_REENTRANT
 
 ################################################################################
 # Setup OpenCL

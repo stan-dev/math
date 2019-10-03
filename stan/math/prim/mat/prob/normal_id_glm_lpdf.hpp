@@ -9,6 +9,13 @@
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/sum.hpp>
 #include <stan/math/prim/arr/fun/value_of_rec.hpp>
+
+#ifdef STAN_OPENCL
+#include <stan/math/opencl/kernels/normal_id_glm_lpdf.hpp>
+#include <stan/math/opencl/matrix_cl.hpp>
+#include <stan/math/opencl/multiply.hpp>
+#endif
+
 #include <cmath>
 
 namespace stan {
@@ -60,6 +67,7 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   using Eigen::Array;
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using Eigen::VectorXd;
 
   const size_t N = x.rows();
   const size_t M = x.cols();
@@ -95,22 +103,23 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   const auto &y_val_vec = as_column_vector_or_scalar(y_val);
 
   T_scale_val inv_sigma = 1 / as_array_or_scalar(sigma_val_vec);
+  Matrix<T_partials_return, Dynamic, 1> y_minus_mu_over_sigma_mat(N);
+  auto y_scaled = y_minus_mu_over_sigma_mat.array();
 
-  Array<T_partials_return, Dynamic, 1> y_minus_mu_over_sigma
-      = x_val * beta_val_vec;
-  y_minus_mu_over_sigma = (as_array_or_scalar(y_val_vec) - y_minus_mu_over_sigma
-                           - as_array_or_scalar(alpha_val_vec))
-                          * inv_sigma;
+  double y_scaled_sq_sum;  // the most efficient way to
+  // calculate this depends on
+  // template parameters
 
-  // Compute the derivatives.
+  y_scaled = x_val * beta_val_vec;
+  y_scaled = (as_array_or_scalar(y_val_vec) - y_scaled
+              - as_array_or_scalar(alpha_val_vec))
+             * inv_sigma;
+
   operands_and_partials<T_y, T_x, T_alpha, T_beta, T_scale> ops_partials(
       y, x, alpha, beta, sigma);
-  double y_minus_mu_over_sigma_squared_sum;  // the most efficient way to
-                                             // calculate this depends on
-                                             // template parameters
-  if (!is_constant_all<T_y, T_x, T_beta, T_alpha>::value) {
-    Matrix<T_partials_return, Dynamic, 1> mu_derivative
-        = inv_sigma * y_minus_mu_over_sigma;
+
+  if (!(is_constant_all<T_y, T_x, T_beta, T_alpha>::value)) {
+    Matrix<T_partials_return, Dynamic, 1> mu_derivative = inv_sigma * y_scaled;
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_ = -mu_derivative;
     }
@@ -130,31 +139,25 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
     }
     if (!is_constant_all<T_scale>::value) {
       if (is_vector<T_scale>::value) {
-        Array<T_partials_return, Dynamic, 1> y_minus_mu_over_sigma_squared
-            = y_minus_mu_over_sigma * y_minus_mu_over_sigma;
-        y_minus_mu_over_sigma_squared_sum = sum(y_minus_mu_over_sigma_squared);
-        ops_partials.edge5_.partials_
-            = (y_minus_mu_over_sigma_squared - 1) * inv_sigma;
+        Array<T_partials_return, Dynamic, 1> y_scaled_sq = y_scaled * y_scaled;
+        y_scaled_sq_sum = sum(y_scaled_sq);
+        ops_partials.edge5_.partials_ = (y_scaled_sq - 1) * inv_sigma;
       } else {
-        y_minus_mu_over_sigma_squared_sum
-            = sum(y_minus_mu_over_sigma * y_minus_mu_over_sigma);
+        y_scaled_sq_sum = sum(y_scaled * y_scaled);
         ops_partials.edge5_.partials_[0]
-            = (y_minus_mu_over_sigma_squared_sum - N) * as_scalar(inv_sigma);
+            = (y_scaled_sq_sum - N) * as_scalar(inv_sigma);
       }
     }
   } else {
-    y_minus_mu_over_sigma_squared_sum
-        = sum(y_minus_mu_over_sigma * y_minus_mu_over_sigma);
+    y_scaled_sq_sum = sum(y_scaled * y_scaled);
   }
 
-  if (!std::isfinite(y_minus_mu_over_sigma_squared_sum)) {
+  if (!std::isfinite(y_scaled_sq_sum)) {
     check_finite(function, "Vector of dependent variables", y);
     check_finite(function, "Weight vector", beta);
     check_finite(function, "Intercept", alpha);
-    check_finite(function, "Matrix of independent variables",
-                 y_minus_mu_over_sigma_squared_sum);  // if all other checks
-                                                      // passed this will only
-                                                      // fail if x is not finite
+    // if all other checks passed, next will only fail if x is not finite
+    check_finite(function, "Matrix of independent variables", y_scaled_sq_sum);
   }
 
   // Compute log probability.
@@ -170,7 +173,7 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
     }
   }
   if (include_summand<propto, T_y, T_x, T_alpha, T_beta, T_scale>::value) {
-    logp -= 0.5 * y_minus_mu_over_sigma_squared_sum;
+    logp -= 0.5 * y_scaled_sq_sum;
   }
   return ops_partials.build(logp);
 }

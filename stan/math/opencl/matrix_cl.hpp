@@ -37,8 +37,8 @@ template <typename T>
 class matrix_cl<T, enable_if_arithmetic<T>> {
  private:
   cl::Buffer buffer_cl_;  // Holds the allocated memory on the device
-  const int rows_;
-  const int cols_;
+  int rows_;
+  int cols_;
   matrix_cl_view view_;  // Holds info on if matrix is a special type
   mutable std::vector<cl::Event> write_events_;  // Tracks write jobs
   mutable std::vector<cl::Event> read_events_;   // Tracks reads
@@ -48,6 +48,8 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
   // Forward declare the methods that work in place on the matrix
   template <matrix_cl_view matrix_view = matrix_cl_view::Entire>
   void zeros();
+  template <matrix_cl_view matrix_view = matrix_cl_view::Entire>
+  void zeros_strict_tri();
   template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper>
   void triangular_transpose();
 
@@ -350,16 +352,42 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
   }
 
   /**
+   * Constructor for the matrix_cl that
+   * creates a copy of a scalar on the OpenCL device.
+   * Regardless of `partial_view`, whole matrix is stored.
+   *
+   * @param A the scalar
+   * @param partial_view which part of the matrix is used
+   */
+  explicit matrix_cl(const T& A,
+                     matrix_cl_view partial_view = matrix_cl_view::Diagonal)
+      : rows_(1), cols_(1), view_(partial_view) {
+    cl::Context& ctx = opencl_context.context();
+    cl::CommandQueue& queue = opencl_context.queue();
+    try {
+      buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T));
+      cl::Event transfer_event;
+      queue.enqueueWriteBuffer(buffer_cl_, CL_FALSE, 0, sizeof(T), &A, NULL,
+                               &transfer_event);
+      this->add_write_event(transfer_event);
+    } catch (const cl::Error& e) {
+      check_opencl_error("matrix constructor", e);
+    }
+  }
+
+  /**
    * Construct from \c std::vector with given rows and columns
    *
    * @param A Standard vector
    * @param R Number of rows the matrix should have.
    * @param C Number of columns the matrix should have.
+   * @param partial_view which part of the matrix is used
    * @throw <code>std::system_error</code> if the
    * matrices do not have matching dimensions
    */
-  explicit matrix_cl(const std::vector<T>& A, const int& R, const int& C)
-      : rows_(R), cols_(C) {
+  explicit matrix_cl(const std::vector<T>& A, const int& R, const int& C,
+                     matrix_cl_view partial_view = matrix_cl_view::Entire)
+      : rows_(R), cols_(C), view_(partial_view) {
     if (size() == 0) {
       return;
     }
@@ -375,47 +403,6 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
     } catch (const cl::Error& e) {
       check_opencl_error("matrix constructor", e);
     }
-  }
-
-  /**
-   * Constructs a const matrix_cl that contains a copy of the Eigen matrix on
-   * the OpenCL device. If the matrix already has a cached copy on the device,
-   * the cache is used and no copying is done. Changing the resulting matrix_cl
-   * would change cache, so do not do it! If changes are needed a copy must be
-   * made.
-   *
-   * @tparam R row type of input matrix
-   * @tparam C column type of input matrix
-   * @param A the Eigen matrix
-   * @param partial_view which part of the matrix is used
-   */
-  template <int R, int C>
-  static matrix_cl<T> constant(const Eigen::Matrix<T, R, C>& A,
-                               matrix_cl_view partial_view
-                               = matrix_cl_view::Entire) {
-#ifndef STAN_OPENCL_NOCACHE
-    if (A.opencl_buffer_() != NULL) {
-      return matrix_cl<T>(A.opencl_buffer_, A.rows(), A.cols(), partial_view);
-    } else {
-      matrix_cl<T> res(A, partial_view);
-      A.opencl_buffer_ = res.buffer();
-      return res;
-    }
-#else
-    return matrix_cl<T>(A, partial_view);
-#endif
-  }
-
-  /**
-   * Constructs a const matrix_cl that contains a single value on the OpenCL
-   * device.
-   *
-   * @param A the value
-   * @param partial_view which part of the matrix is used
-   */
-  static matrix_cl<T> constant(T A, matrix_cl_view partial_view
-                                    = matrix_cl_view::Entire) {
-    return matrix_cl<T>(A);
   }
 
   /**
@@ -451,14 +438,12 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
    * Assign a \c matrix_cl to another
    */
   matrix_cl<T>& operator=(const matrix_cl<T>& a) {
-    check_size_match("assignment of (OpenCL) matrices", "source.rows()",
-                     a.rows(), "destination.rows()", rows());
-    check_size_match("assignment of (OpenCL) matrices", "source.cols()",
-                     a.cols(), "destination.cols()", cols());
     if (a.size() == 0) {
       return *this;
     }
     view_ = a.view();
+    rows_ = a.rows();
+    cols_ = a.cols();
     this->wait_for_read_write_events();
     cl::CommandQueue queue = opencl_context.queue();
     try {
@@ -478,16 +463,14 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
    * Move a \c matrix_cl to another
    */
   matrix_cl<T>& operator=(matrix_cl<T>&& a) {
-    check_size_match("move of (OpenCL) matrix", "source.rows()", a.rows(),
-                     "destination.rows()", rows());
-    check_size_match("move of (OpenCL) matrix", "source.cols()", a.cols(),
-                     "destination.cols()", cols());
     // Need to wait for all of matrices events before destroying old buffer
     this->wait_for_read_write_events();
     buffer_cl_ = a.buffer();
     view_ = a.view();
     write_events_ = std::move(a.write_events_);
     read_events_ = std::move(a.read_events_);
+    rows_ = a.rows();
+    cols_ = a.cols();
     return *this;
   }
 
@@ -496,14 +479,12 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
    */
   template <typename U, typename = enable_if_arithmetic<U>>
   matrix_cl<T>& operator=(const matrix_cl<U>& a) {
-    check_size_match("assignment of (OpenCL) matrices", "source.rows()",
-                     a.rows(), "destination.rows()", rows());
-    check_size_match("assignment of (OpenCL) matrices", "source.cols()",
-                     a.cols(), "destination.cols()", cols());
     // Need to wait for all of matrices events before destroying old buffer
     this->wait_for_read_write_events();
     buffer_cl_ = a.buffer();
     view_ = a.view();
+    rows_ = a.rows();
+    cols_ = a.cols();
     return *this;
   }
 };
