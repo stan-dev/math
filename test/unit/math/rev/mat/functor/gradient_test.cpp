@@ -1,10 +1,8 @@
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 
-#ifdef STAN_THREADS
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
-#endif
 
 #include <stdexcept>
 #include <vector>
@@ -122,7 +120,7 @@ TEST(AgradAutoDiff, gradient_threaded) {
   }
 }
 
-// test threaded AD through the Intel TBB
+// test threaded AD through the Intel TBB whenever threading is used
 #ifdef STAN_THREADS
 TEST(AgradAutoDiff, gradient_threaded_tbb) {
   fun1 f;

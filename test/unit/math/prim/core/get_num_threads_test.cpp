@@ -1,5 +1,3 @@
-#ifdef STAN_THREADS
-
 #include <stan/math/prim/core/init_threadpool_tbb.hpp>
 
 #include <gtest/gtest.h>
@@ -35,5 +33,3 @@ TEST(get_num_threads, incorrect_values) {
   EXPECT_THROW_MSG(stan::math::internal::get_num_threads(),
                    std::invalid_argument, "must be positive or -1");
 }
-
-#endif

@@ -6,7 +6,6 @@
 #include <stan/math/rev/core/chainable_alloc.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
 #include <stan/math/rev/core/init_chainablestack.hpp>
-#include <stan/math/rev/core/init_chainablestack_tbb.hpp>
 #include <stan/math/rev/core/ddv_vari.hpp>
 #include <stan/math/rev/core/dv_vari.hpp>
 #include <stan/math/rev/core/dvd_vari.hpp>
