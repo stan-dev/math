@@ -44,8 +44,7 @@ TEST(requires, var_or_fvar_test) {
 TEST(requires, var_or_fvar_not_test) {
   using stan::math::var;
   using stan::test::require_scal_checker;
-  require_scal_checker<stan::require_not_var_or_fvar_t, var,
-                           var>::not_unary();
+  require_scal_checker<stan::require_not_var_or_fvar_t, var, var>::not_unary();
 }
 TEST(requires, var_or_fvar_all_test) {
   using stan::math::var;
@@ -56,7 +55,7 @@ TEST(requires, var_or_fvar_all_not_test) {
   using stan::math::var;
   using stan::test::require_scal_checker;
   require_scal_checker<stan::require_all_not_var_or_fvar_t, var,
-                           var>::all_not();
+                       var>::all_not();
 }
 TEST(requires, var_or_fvar_any_test) {
   using stan::math::var;
@@ -67,7 +66,7 @@ TEST(requires, var_or_fvar_any_not_test) {
   using stan::math::var;
   using stan::test::require_scal_checker;
   require_scal_checker<stan::require_any_not_var_or_fvar_t, var,
-                           var>::any_not();
+                       var>::any_not();
 }
 
 TEST(requires, stan_scalar_test) {
@@ -78,8 +77,7 @@ TEST(requires, stan_scalar_test) {
 TEST(requires, stan_scalar_not_test) {
   using stan::math::var;
   using stan::test::require_scal_checker;
-  require_scal_checker<stan::require_not_stan_scalar_t, var,
-                           var>::not_unary();
+  require_scal_checker<stan::require_not_stan_scalar_t, var, var>::not_unary();
 }
 TEST(requires, stan_scalar_all_test) {
   using stan::math::var;
@@ -90,7 +88,7 @@ TEST(requires, stan_scalar_all_not_test) {
   using stan::math::var;
   using stan::test::require_scal_checker;
   require_scal_checker<stan::require_all_not_stan_scalar_t, var,
-                           var>::all_not();
+                       var>::all_not();
 }
 TEST(requires, stan_scalar_any_test) {
   using stan::math::var;
@@ -101,5 +99,5 @@ TEST(requires, stan_scalar_any_not_test) {
   using stan::math::var;
   using stan::test::require_scal_checker;
   require_scal_checker<stan::require_any_not_stan_scalar_t, var,
-                           var>::any_not();
+                       var>::any_not();
 }

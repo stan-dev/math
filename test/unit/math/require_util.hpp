@@ -279,7 +279,6 @@ struct require_container_checker {
   }
 };
 
-
 }  // namespace test
 }  // namespace stan
 

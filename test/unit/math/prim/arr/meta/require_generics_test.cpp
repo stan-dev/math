@@ -38,34 +38,50 @@ TEST(requires, generic_container_type_test) {
 
 TEST(requires, std_vector_t_test) {
   using stan::test::require_scal_checker;
-  require_scal_checker<stan::require_std_vector_t, std::vector<double>>::unary();
-  require_scal_checker<stan::require_not_std_vector_t, std::vector<double>, std::vector<double>>::not_unary();
-  require_scal_checker<stan::require_all_std_vector_t, std::vector<double>, std::vector<double>>::all();
-  require_scal_checker<stan::require_all_not_std_vector_t, std::vector<double>, std::vector<double>>::all_not();
-  require_scal_checker<stan::require_any_std_vector_t, std::vector<double>, std::vector<double>>::any();
-  require_scal_checker<stan::require_any_not_std_vector_t, std::vector<double>, std::vector<double>>::any_not();
+  require_scal_checker<stan::require_std_vector_t,
+                       std::vector<double>>::unary();
+  require_scal_checker<stan::require_not_std_vector_t, std::vector<double>,
+                       std::vector<double>>::not_unary();
+  require_scal_checker<stan::require_all_std_vector_t, std::vector<double>,
+                       std::vector<double>>::all();
+  require_scal_checker<stan::require_all_not_std_vector_t, std::vector<double>,
+                       std::vector<double>>::all_not();
+  require_scal_checker<stan::require_any_std_vector_t, std::vector<double>,
+                       std::vector<double>>::any();
+  require_scal_checker<stan::require_any_not_std_vector_t, std::vector<double>,
+                       std::vector<double>>::any_not();
 }
 
 TEST(requires, vector_t_test) {
   using stan::test::require_scal_checker;
   require_scal_checker<stan::require_vector_t, std::vector<double>>::unary();
-  require_scal_checker<stan::require_not_vector_t, std::vector<double>, std::vector<double>>::not_unary();
-  require_scal_checker<stan::require_all_vector_t, std::vector<double>, std::vector<double>>::all();
-  require_scal_checker<stan::require_all_not_vector_t, std::vector<double>, std::vector<double>>::all_not();
-  require_scal_checker<stan::require_any_vector_t, std::vector<double>, std::vector<double>>::any();
-  require_scal_checker<stan::require_any_not_vector_t, std::vector<double>, std::vector<double>>::any_not();
+  require_scal_checker<stan::require_not_vector_t, std::vector<double>,
+                       std::vector<double>>::not_unary();
+  require_scal_checker<stan::require_all_vector_t, std::vector<double>,
+                       std::vector<double>>::all();
+  require_scal_checker<stan::require_all_not_vector_t, std::vector<double>,
+                       std::vector<double>>::all_not();
+  require_scal_checker<stan::require_any_vector_t, std::vector<double>,
+                       std::vector<double>>::any();
+  require_scal_checker<stan::require_any_not_vector_t, std::vector<double>,
+                       std::vector<double>>::any_not();
 }
 
 TEST(requires, vector_like_t_test) {
   using stan::test::require_scal_checker;
-  require_scal_checker<stan::require_vector_like_t, std::vector<double>>::unary();
-  require_scal_checker<stan::require_not_vector_like_t, std::vector<double>, std::vector<double>>::not_unary();
-  require_scal_checker<stan::require_all_vector_like_t, std::vector<double>, std::vector<double>>::all();
-  require_scal_checker<stan::require_all_not_vector_like_t, std::vector<double>, std::vector<double>>::all_not();
-  require_scal_checker<stan::require_any_vector_like_t, std::vector<double>, std::vector<double>>::any();
-  require_scal_checker<stan::require_any_not_vector_like_t, std::vector<double>, std::vector<double>>::any_not();
+  require_scal_checker<stan::require_vector_like_t,
+                       std::vector<double>>::unary();
+  require_scal_checker<stan::require_not_vector_like_t, std::vector<double>,
+                       std::vector<double>>::not_unary();
+  require_scal_checker<stan::require_all_vector_like_t, std::vector<double>,
+                       std::vector<double>>::all();
+  require_scal_checker<stan::require_all_not_vector_like_t, std::vector<double>,
+                       std::vector<double>>::all_not();
+  require_scal_checker<stan::require_any_vector_like_t, std::vector<double>,
+                       std::vector<double>>::any();
+  require_scal_checker<stan::require_any_not_vector_like_t, std::vector<double>,
+                       std::vector<double>>::any_not();
 }
-
 
 TEST(requires, std_vector_vt_test) {
   using stan::test::require_container_checker;
