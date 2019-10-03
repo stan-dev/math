@@ -45,23 +45,23 @@ struct is_matrix_cl<
     T, std::enable_if_t<internal::is_matrix_cl_impl<std::decay_t<T>>::value>>
     : std::true_type {};
 
-    template <typename T>
-    using require_matrix_cl_t = require_t<is_matrix_cl<T>>;
+template <typename T>
+using require_matrix_cl_t = require_t<is_matrix_cl<T>>;
 
-    template <typename T>
-    using require_not_matrix_cl_t = require_not_t<is_matrix_cl<T>>;
+template <typename T>
+using require_not_matrix_cl_t = require_not_t<is_matrix_cl<T>>;
 
-    template <typename... Types>
-    using require_all_matrix_cl_t = require_all_t<is_matrix_cl<Types>...>;
+template <typename... Types>
+using require_all_matrix_cl_t = require_all_t<is_matrix_cl<Types>...>;
 
-    template <typename... Types>
-    using require_any_matrix_cl_t = require_any_t<is_matrix_cl<Types>...>;
+template <typename... Types>
+using require_any_matrix_cl_t = require_any_t<is_matrix_cl<Types>...>;
 
-    template <typename... Types>
-    using require_all_not_matrix_cl_t = require_all_not_t<is_matrix_cl<Types>...>;
+template <typename... Types>
+using require_all_not_matrix_cl_t = require_all_not_t<is_matrix_cl<Types>...>;
 
-    template <typename... Types>
-    using require_any_not_matrix_cl_t = require_any_not_t<is_matrix_cl<Types>...>;
+template <typename... Types>
+using require_any_not_matrix_cl_t = require_any_not_t<is_matrix_cl<Types>...>;
 
 /**
  * matrix_cl

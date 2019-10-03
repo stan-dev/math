@@ -77,7 +77,8 @@ TEST(requires, same_test) {
 TEST(requires, not_same_test) {
   using stan::require_not_same;
   using stan::test::variadic_require_tester;
-  EXPECT_TRUE((variadic_require_tester<require_not_same_t, double, int>::value));
+  EXPECT_TRUE(
+      (variadic_require_tester<require_not_same_t, double, int>::value));
   EXPECT_FALSE(
       (variadic_require_tester<require_not_same_t, double, double>::value));
   EXPECT_FALSE((variadic_require_tester<require_not_same_t, int, int>::value));

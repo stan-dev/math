@@ -644,7 +644,8 @@ inline Eigen::Matrix<var, Ra, Cb> multiply(const Eigen::Matrix<Ta, Ra, Ca>& A,
  * @param[in] B Column vector
  * @return Scalar product of row vector and vector
  */
-template <typename Ta, int Ca, typename Tb, typename = require_any_var_t<Ta, Tb>>
+template <typename Ta, int Ca, typename Tb,
+          typename = require_any_var_t<Ta, Tb>>
 inline var multiply(const Eigen::Matrix<Ta, 1, Ca>& A,
                     const Eigen::Matrix<Tb, Ca, 1>& B) {
   check_multiplicable("multiply", "A", A, "B", B);

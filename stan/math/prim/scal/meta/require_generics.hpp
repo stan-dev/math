@@ -64,11 +64,12 @@ using require_any_not_t
 
 // Enablers for two types of the same value
 template <typename T, typename S>
-using require_same_t = require_t<std::is_same<std::decay_t<T>, std::decay_t<S>>>;
+using require_same_t
+    = require_t<std::is_same<std::decay_t<T>, std::decay_t<S>>>;
 
 template <typename T, typename S>
 using require_not_same_t
-= require_not_t<std::is_same<std::decay_t<T>, std::decay_t<S>>>;
+    = require_not_t<std::is_same<std::decay_t<T>, std::decay_t<S>>>;
 
 template <typename T, typename... Types>
 using require_all_same_t
@@ -227,10 +228,12 @@ template <typename... Types>
 using require_any_fvar_t = require_any_t<is_fvar<std::decay_t<Types>>...>;
 
 template <typename... Types>
-using require_all_not_fvar_t = require_all_not_t<is_fvar<std::decay_t<Types>>...>;
+using require_all_not_fvar_t
+    = require_all_not_t<is_fvar<std::decay_t<Types>>...>;
 
 template <typename... Types>
-using require_any_not_fvar_t = require_any_not_t<is_fvar<std::decay_t<Types>>...>;
+using require_any_not_fvar_t
+    = require_any_not_t<is_fvar<std::decay_t<Types>>...>;
 
 /**
  * Checks if decayed type is a var or fvar
@@ -254,10 +257,12 @@ template <typename... Types>
 using require_any_var_or_fvar_t = require_any_t<is_var_or_fvar<Types>...>;
 
 template <typename... Types>
-using require_all_not_var_or_fvar_t = require_all_not_t<is_var_or_fvar<Types>...>;
+using require_all_not_var_or_fvar_t
+    = require_all_not_t<is_var_or_fvar<Types>...>;
 
 template <typename... Types>
-using require_any_not_var_or_fvar_t = require_any_not_t<is_var_or_fvar<Types>...>;
+using require_any_not_var_or_fvar_t
+    = require_any_not_t<is_var_or_fvar<Types>...>;
 
 /**
  * Checks if decayed type is a var, fvar, or arithmetic
@@ -282,105 +287,110 @@ template <typename... Types>
 using require_any_stan_scalar_t = require_any_t<is_stan_scalar<Types>...>;
 
 template <typename... Types>
-using require_all_not_stan_scalar_t = require_all_not_t<is_stan_scalar<Types>...>;
+using require_all_not_stan_scalar_t
+    = require_all_not_t<is_stan_scalar<Types>...>;
 
 template <typename... Types>
-using require_any_not_stan_scalar_t = require_any_not_t<is_stan_scalar<Types>...>;
+using require_any_not_stan_scalar_t
+    = require_any_not_t<is_stan_scalar<Types>...>;
 
 /**
  * Requires for containers
  */
 
- template <typename T>
- using require_std_vector_t = require_t<is_std_vector<T>>;
+template <typename T>
+using require_std_vector_t = require_t<is_std_vector<T>>;
 
- template <typename T>
- using require_not_std_vector_t = require_not_t<is_std_vector<T>>;
+template <typename T>
+using require_not_std_vector_t = require_not_t<is_std_vector<T>>;
 
- template <typename... Types>
- using require_all_std_vector_t = require_all_t<is_std_vector<Types>...>;
+template <typename... Types>
+using require_all_std_vector_t = require_all_t<is_std_vector<Types>...>;
 
- template <typename... Types>
- using require_any_std_vector_t = require_any_t<is_std_vector<Types>...>;
+template <typename... Types>
+using require_any_std_vector_t = require_any_t<is_std_vector<Types>...>;
 
- template <typename... Types>
- using require_all_not_std_vector_t = require_all_not_t<is_std_vector<Types>...>;
+template <typename... Types>
+using require_all_not_std_vector_t = require_all_not_t<is_std_vector<Types>...>;
 
- template <typename... Types>
- using require_any_not_std_vector_t = require_any_not_t<is_std_vector<Types>...>;
+template <typename... Types>
+using require_any_not_std_vector_t = require_any_not_t<is_std_vector<Types>...>;
 
- template <typename T>
- using require_vector_t = require_t<is_vector<T>>;
+template <typename T>
+using require_vector_t = require_t<is_vector<T>>;
 
- template <typename T>
- using require_not_vector_t = require_not_t<is_vector<T>>;
+template <typename T>
+using require_not_vector_t = require_not_t<is_vector<T>>;
 
- template <typename... Types>
- using require_all_vector_t = require_all_t<is_vector<Types>...>;
+template <typename... Types>
+using require_all_vector_t = require_all_t<is_vector<Types>...>;
 
- template <typename... Types>
- using require_any_vector_t = require_any_t<is_vector<Types>...>;
+template <typename... Types>
+using require_any_vector_t = require_any_t<is_vector<Types>...>;
 
- template <typename... Types>
- using require_all_not_vector_t = require_all_not_t<is_vector<Types>...>;
+template <typename... Types>
+using require_all_not_vector_t = require_all_not_t<is_vector<Types>...>;
 
- template <typename... Types>
- using require_any_not_vector_t = require_any_not_t<is_vector<Types>...>;
+template <typename... Types>
+using require_any_not_vector_t = require_any_not_t<is_vector<Types>...>;
 
- template <typename T>
- using require_eigen_t = require_t<is_eigen<T>>;
+template <typename T>
+using require_eigen_t = require_t<is_eigen<T>>;
 
- template <typename T>
- using require_not_eigen_t = require_not_t<is_eigen<T>>;
+template <typename T>
+using require_not_eigen_t = require_not_t<is_eigen<T>>;
 
- template <typename... Types>
- using require_all_eigen_t = require_all_t<is_eigen<Types>...>;
+template <typename... Types>
+using require_all_eigen_t = require_all_t<is_eigen<Types>...>;
 
- template <typename... Types>
- using require_any_eigen_t = require_any_t<is_eigen<Types>...>;
+template <typename... Types>
+using require_any_eigen_t = require_any_t<is_eigen<Types>...>;
 
- template <typename... Types>
- using require_all_not_eigen_t = require_all_not_t<is_eigen<Types>...>;
+template <typename... Types>
+using require_all_not_eigen_t = require_all_not_t<is_eigen<Types>...>;
 
- template <typename... Types>
- using require_any_not_eigen_t = require_any_not_t<is_eigen<Types>...>;
+template <typename... Types>
+using require_any_not_eigen_t = require_any_not_t<is_eigen<Types>...>;
 
- template <typename T>
- using require_eigen_vector_t = require_t<is_eigen_vector<T>>;
+template <typename T>
+using require_eigen_vector_t = require_t<is_eigen_vector<T>>;
 
- template <typename T>
- using require_not_eigen_vector_t = require_not_t<is_eigen_vector<T>>;
+template <typename T>
+using require_not_eigen_vector_t = require_not_t<is_eigen_vector<T>>;
 
- template <typename... Types>
- using require_all_eigen_vector_t = require_all_t<is_eigen_vector<Types>...>;
+template <typename... Types>
+using require_all_eigen_vector_t = require_all_t<is_eigen_vector<Types>...>;
 
- template <typename... Types>
- using require_any_eigen_vector_t = require_any_t<is_eigen_vector<Types>...>;
+template <typename... Types>
+using require_any_eigen_vector_t = require_any_t<is_eigen_vector<Types>...>;
 
- template <typename... Types>
- using require_all_not_eigen_vector_t = require_all_not_t<is_eigen_vector<Types>...>;
+template <typename... Types>
+using require_all_not_eigen_vector_t
+    = require_all_not_t<is_eigen_vector<Types>...>;
 
- template <typename... Types>
- using require_any_not_eigen_vector_t = require_any_not_t<is_eigen_vector<Types>...>;
+template <typename... Types>
+using require_any_not_eigen_vector_t
+    = require_any_not_t<is_eigen_vector<Types>...>;
 
- template <typename T>
- using require_vector_like_t = require_t<is_vector_like<T>>;
+template <typename T>
+using require_vector_like_t = require_t<is_vector_like<T>>;
 
- template <typename T>
- using require_not_vector_like_t = require_not_t<is_vector_like<T>>;
+template <typename T>
+using require_not_vector_like_t = require_not_t<is_vector_like<T>>;
 
- template <typename... Types>
- using require_all_vector_like_t = require_all_t<is_vector_like<Types>...>;
+template <typename... Types>
+using require_all_vector_like_t = require_all_t<is_vector_like<Types>...>;
 
- template <typename... Types>
- using require_any_vector_like_t = require_any_t<is_vector_like<Types>...>;
+template <typename... Types>
+using require_any_vector_like_t = require_any_t<is_vector_like<Types>...>;
 
- template <typename... Types>
- using require_all_not_vector_like_t = require_all_not_t<is_vector_like<Types>...>;
+template <typename... Types>
+using require_all_not_vector_like_t
+    = require_all_not_t<is_vector_like<Types>...>;
 
- template <typename... Types>
- using require_any_not_vector_like_t = require_any_not_t<is_vector_like<Types>...>;
-
+template <typename... Types>
+using require_any_not_vector_like_t
+    = require_any_not_t<is_vector_like<Types>...>;
 
 /**
  * Used as the base for checking whether a type is a container with
