@@ -5,6 +5,7 @@
 #include <stan/math/prim/mat/meta/is_eigen.hpp>
 #include <stan/math/prim/scal/meta/bool_constant.hpp>
 #include <stan/math/prim/scal/meta/is_constant.hpp>
+#include <stan/math/prim/scal/meta/require_generics.hpp>
 #include <type_traits>
 
 namespace stan {
@@ -17,7 +18,7 @@ namespace stan {
  * @tparam T type of the Eigen Matrix
  */
 template <typename T>
-struct is_constant<T, std::enable_if_t<is_eigen<T>::value>>
+struct is_constant<T, require_eigen<T>>
     : bool_constant<is_constant<typename std::decay_t<T>::Scalar>::value> {};
 
 }  // namespace stan

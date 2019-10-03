@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/arr/meta/is_vector.hpp>
 #include <stan/math/prim/scal/meta/index_type.hpp>
+#include <stan/math/prim/scal/meta/require_generics.hpp>
 #include <type_traits>
 #include <vector>
 
@@ -16,7 +17,7 @@ namespace math {
  * @tparam T type of elements in standard vector.
  */
 template <typename T>
-struct index_type<T, std::enable_if_t<is_std_vector<T>::value>> {
+struct index_type<T, require_std_vector<T>> {
   using type = typename std::decay_t<T>::size_type;
 };
 

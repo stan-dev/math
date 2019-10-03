@@ -16,7 +16,7 @@ namespace math {
  * @param[in] b an integer that is the exponent
  * @return product of a times 2 to the power b
  */
-template <typename T1, typename = enable_if_arithmetic<T1>>
+template <typename T1, typename = require_arithmetic<T1>>
 inline double ldexp(T1 a, int b) {
   using std::ldexp;
   return ldexp(a, b);

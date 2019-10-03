@@ -35,7 +35,7 @@ struct exp2_fun {
  * @param x Container.
  * @return Elementwise exp2 of members of container.
  */
-template <typename T, typename = enable_if_vector_like<T>>
+template <typename T, typename = require_vector_like<T>>
 inline typename apply_scalar_unary<exp2_fun, T>::return_t exp2(const T& x) {
   return apply_scalar_unary<exp2_fun, T>::apply(x);
 }

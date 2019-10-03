@@ -4,6 +4,7 @@
 #include <stan/math/prim/arr/meta/is_vector.hpp>
 #include <stan/math/prim/scal/meta/bool_constant.hpp>
 #include <stan/math/prim/scal/meta/is_constant.hpp>
+#include <stan/math/prim/scal/meta/require_generics.hpp>
 #include <type_traits>
 #include <vector>
 
@@ -16,7 +17,7 @@ namespace stan {
  * @tparam type of the elements in the std::vector
  */
 template <typename T>
-struct is_constant<T, std::enable_if_t<is_std_vector<T>::value>>
+struct is_constant<T, require_std_vector<T>>
     : bool_constant<is_constant<typename std::decay_t<T>::value_type>::value> {
 };
 

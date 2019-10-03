@@ -15,7 +15,7 @@ namespace math {
  * @param y Second argument.
  * @return maximum of x or y and if one is NaN return the other
  */
-template <typename T1, typename T2, typename = enable_if_all_arithmetic<T1, T2>>
+template <typename T1, typename T2, typename = require_all_arithmetic<T1, T2>>
 inline double fmax(T1 x, T2 y) {
   using std::fmax;
   return fmax(x, y);

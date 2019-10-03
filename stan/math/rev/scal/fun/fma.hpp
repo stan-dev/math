@@ -123,7 +123,7 @@ inline var fma(const var& a, const var& b, const var& c) {
  * @param c Summand.
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
-template <typename Tc, typename = enable_if_arithmetic<Tc>>
+template <typename Tc, typename = require_arithmetic<Tc>>
 inline var fma(const var& a, const var& b, Tc&& c) {
   return var(new internal::fma_vvd_vari(a.vi_, b.vi_, c));
 }
@@ -145,8 +145,8 @@ inline var fma(const var& a, const var& b, Tc&& c) {
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
 template <typename Ta, typename Tb, typename Tc,
-          typename = enable_if_arithmetic<Tb>,
-          typename = enable_if_all_var<Ta, Tc>>
+          typename = require_arithmetic<Tb>,
+          typename = require_all_var<Ta, Tc>>
 inline var fma(Ta&& a, Tb&& b, Tc&& c) {
   return var(new internal::fma_vdv_vari(a.vi_, b, c.vi_));
 }
@@ -169,7 +169,7 @@ inline var fma(Ta&& a, Tb&& b, Tc&& c) {
  * @param c Summand.
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
-template <typename Tb, typename Tc, typename = enable_if_all_arithmetic<Tb, Tc>>
+template <typename Tb, typename Tc, typename = require_all_arithmetic<Tb, Tc>>
 inline var fma(const var& a, Tb&& b, Tc&& c) {
   return var(new internal::fma_vdd_vari(a.vi_, b, c));
 }
@@ -188,7 +188,7 @@ inline var fma(const var& a, Tb&& b, Tc&& c) {
  * @param c Summand.
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
-template <typename Ta, typename Tc, typename = enable_if_all_arithmetic<Ta, Tc>>
+template <typename Ta, typename Tc, typename = require_all_arithmetic<Ta, Tc>>
 inline var fma(Ta&& a, const var& b, Tc&& c) {
   return var(new internal::fma_vdd_vari(b.vi_, a, c));
 }
@@ -207,7 +207,7 @@ inline var fma(Ta&& a, const var& b, Tc&& c) {
  * @param c Summand.
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
-template <typename Ta, typename Tb, typename = enable_if_all_arithmetic<Ta, Tb>>
+template <typename Ta, typename Tb, typename = require_all_arithmetic<Ta, Tb>>
 inline var fma(Ta&& a, Tb&& b, const var& c) {
   return var(new internal::fma_ddv_vari(a, b, c.vi_));
 }
@@ -228,7 +228,7 @@ inline var fma(Ta&& a, Tb&& b, const var& c) {
  * @param c Summand.
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
-template <typename Ta, typename = enable_if_arithmetic<Ta>>
+template <typename Ta, typename = require_arithmetic<Ta>>
 inline var fma(Ta&& a, const var& b, const var& c) {
   return var(new internal::fma_vdv_vari(b.vi_, a, c.vi_));  // a-b symmetry
 }
