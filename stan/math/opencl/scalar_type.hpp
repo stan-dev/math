@@ -9,7 +9,7 @@
 namespace stan {
 
 template <typename T>
-struct scalar_type<T, require_matrix_cl<T>> {
+struct scalar_type<T, require_matrix_cl_t<T>> {
   using type = typename scalar_type<typename T::Scalar>::type;
 };
 }  // namespace stan

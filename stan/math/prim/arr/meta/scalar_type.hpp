@@ -13,7 +13,7 @@ namespace stan {
  * scalar type.
  */
 template <typename T>
-struct scalar_type<T, require_std_vector<T>> {
+struct scalar_type<T, require_std_vector_t<T>> {
   using type = scalar_type_t<typename std::decay_t<T>::value_type>;
 };
 

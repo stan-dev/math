@@ -68,70 +68,70 @@ TEST(requires, same_test) {
   using stan::require_same;
   using stan::test::variadic_require_tester;
   EXPECT_FALSE(
-      (variadic_require_tester<stan::require_same, double, int>::value));
+      (variadic_require_tester<stan::require_same_t, double, int>::value));
   EXPECT_TRUE(
-      (variadic_require_tester<stan::require_same, double, double>::value));
-  EXPECT_TRUE((variadic_require_tester<stan::require_same, int, int>::value));
+      (variadic_require_tester<stan::require_same_t, double, double>::value));
+  EXPECT_TRUE((variadic_require_tester<stan::require_same_t, int, int>::value));
 }
 
 TEST(requires, not_same_test) {
   using stan::require_not_same;
   using stan::test::variadic_require_tester;
-  EXPECT_TRUE((variadic_require_tester<require_not_same, double, int>::value));
+  EXPECT_TRUE((variadic_require_tester<require_not_same_t, double, int>::value));
   EXPECT_FALSE(
-      (variadic_require_tester<require_not_same, double, double>::value));
-  EXPECT_FALSE((variadic_require_tester<require_not_same, int, int>::value));
+      (variadic_require_tester<require_not_same_t, double, double>::value));
+  EXPECT_FALSE((variadic_require_tester<require_not_same_t, int, int>::value));
 }
 
 TEST(requires, all_same_test) {
   using stan::require_all_same;
   using stan::test::variadic_require_tester;
-  EXPECT_FALSE((variadic_require_tester<require_all_same, double, std::string,
+  EXPECT_FALSE((variadic_require_tester<require_all_same_t, double, std::string,
                                         double>::value));
-  EXPECT_TRUE((variadic_require_tester<require_all_same, double, double,
+  EXPECT_TRUE((variadic_require_tester<require_all_same_t, double, double,
                                        double>::value));
   EXPECT_TRUE(
-      (variadic_require_tester<require_all_same, int, int, int>::value));
+      (variadic_require_tester<require_all_same_t, int, int, int>::value));
 }
 
 TEST(requires, all_not_same_test) {
   using stan::require_all_not_same;
   using stan::test::variadic_require_tester;
-  EXPECT_TRUE((variadic_require_tester<require_all_not_same, double, int,
+  EXPECT_TRUE((variadic_require_tester<require_all_not_same_t, double, int,
                                        double>::value));
-  EXPECT_FALSE((variadic_require_tester<require_all_not_same, double, double,
+  EXPECT_FALSE((variadic_require_tester<require_all_not_same_t, double, double,
                                         double>::value));
   EXPECT_FALSE(
-      (variadic_require_tester<require_all_not_same, int, int, int>::value));
+      (variadic_require_tester<require_all_not_same_t, int, int, int>::value));
 }
 
 // Double or Int
 TEST(requires, double_or_int_test) {
   using stan::test::require_scal_checker;
-  require_scal_checker<stan::require_double_or_int>::unary();
-  require_scal_checker<stan::require_not_double_or_int>::not_unary();
-  require_scal_checker<stan::require_all_double_or_int>::all();
-  require_scal_checker<stan::require_all_not_double_or_int>::all_not();
-  require_scal_checker<stan::require_any_double_or_int>::any();
-  require_scal_checker<stan::require_any_not_double_or_int>::any_not();
+  require_scal_checker<stan::require_double_or_int_t>::unary();
+  require_scal_checker<stan::require_not_double_or_int_t>::not_unary();
+  require_scal_checker<stan::require_all_double_or_int_t>::all();
+  require_scal_checker<stan::require_all_not_double_or_int_t>::all_not();
+  require_scal_checker<stan::require_any_double_or_int_t>::any();
+  require_scal_checker<stan::require_any_not_double_or_int_t>::any_not();
 }
 
 TEST(requires, arithmetic_test) {
   using stan::test::require_scal_checker;
-  require_scal_checker<stan::require_arithmetic>::unary();
-  require_scal_checker<stan::require_not_arithmetic>::not_unary();
-  require_scal_checker<stan::require_all_arithmetic>::all();
-  require_scal_checker<stan::require_all_not_arithmetic>::all_not();
-  require_scal_checker<stan::require_any_arithmetic>::any();
-  require_scal_checker<stan::require_any_not_arithmetic>::any_not();
+  require_scal_checker<stan::require_arithmetic_t>::unary();
+  require_scal_checker<stan::require_not_arithmetic_t>::not_unary();
+  require_scal_checker<stan::require_all_arithmetic_t>::all();
+  require_scal_checker<stan::require_all_not_arithmetic_t>::all_not();
+  require_scal_checker<stan::require_any_arithmetic_t>::any();
+  require_scal_checker<stan::require_any_not_arithmetic_t>::any_not();
 }
 
 TEST(requires, var_or_arithmetic_test) {
   using stan::test::require_scal_checker;
-  require_scal_checker<stan::require_var_or_arithmetic>::unary();
-  require_scal_checker<stan::require_not_var_or_arithmetic>::not_unary();
-  require_scal_checker<stan::require_all_var_or_arithmetic>::all();
-  require_scal_checker<stan::require_all_not_var_or_arithmetic>::all_not();
-  require_scal_checker<stan::require_any_var_or_arithmetic>::any();
-  require_scal_checker<stan::require_any_not_var_or_arithmetic>::any_not();
+  require_scal_checker<stan::require_var_or_arithmetic_t>::unary();
+  require_scal_checker<stan::require_not_var_or_arithmetic_t>::not_unary();
+  require_scal_checker<stan::require_all_var_or_arithmetic_t>::all();
+  require_scal_checker<stan::require_all_not_var_or_arithmetic_t>::all_not();
+  require_scal_checker<stan::require_any_var_or_arithmetic_t>::any();
+  require_scal_checker<stan::require_any_not_var_or_arithmetic_t>::any_not();
 }

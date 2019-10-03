@@ -18,7 +18,7 @@ namespace math {
  * @param y argument.
  * @return exponent base 2 of argument.
  */
-template <typename T, typename = require_arithmetic<T>>
+template <typename T, typename = require_arithmetic_t<T>>
 inline double exp2(T y) {
   using std::exp2;
   return exp2(y);

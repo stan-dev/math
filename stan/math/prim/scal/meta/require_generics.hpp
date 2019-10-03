@@ -64,18 +64,18 @@ using require_any_not_t
 
 // Enablers for two types of the same value
 template <typename T, typename S>
-using require_same = require_t<std::is_same<std::decay_t<T>, std::decay_t<S>>>;
+using require_same_t = require_t<std::is_same<std::decay_t<T>, std::decay_t<S>>>;
 
 template <typename T, typename S>
-using require_not_same
-    = require_not_t<std::is_same<std::decay_t<T>, std::decay_t<S>>>;
+using require_not_same_t
+= require_not_t<std::is_same<std::decay_t<T>, std::decay_t<S>>>;
 
 template <typename T, typename... Types>
-using require_all_same
+using require_all_same_t
     = require_all_t<std::is_same<std::decay_t<T>, std::decay_t<Types>>...>;
 
 template <typename T, typename... Types>
-using require_all_not_same
+using require_all_not_same_t
     = require_all_not_t<std::is_same<std::decay_t<T>, std::decay_t<Types>>...>;
 
 /**
@@ -101,136 +101,136 @@ struct is_double_or_int
                             std::is_same<int, std::decay_t<T>>>::value> {};
 
 template <typename T>
-using require_double_or_int = require_t<is_double_or_int<std::decay_t<T>>>;
+using require_double_or_int_t = require_t<is_double_or_int<std::decay_t<T>>>;
 
 template <typename T>
-using require_not_double_or_int
+using require_not_double_or_int_t
     = require_not_t<is_double_or_int<std::decay_t<T>>>;
 
 template <typename... Types>
-using require_all_double_or_int
+using require_all_double_or_int_t
     = require_all_t<is_double_or_int<std::decay_t<Types>>...>;
 
 template <typename... Types>
-using require_any_double_or_int
+using require_any_double_or_int_t
     = require_any_t<is_double_or_int<std::decay_t<Types>>...>;
 
 template <typename... Types>
-using require_all_not_double_or_int
+using require_all_not_double_or_int_t
     = require_all_not_t<is_double_or_int<std::decay_t<Types>>...>;
 
 template <typename... Types>
-using require_any_not_double_or_int
+using require_any_not_double_or_int_t
     = require_any_not_t<is_double_or_int<std::decay_t<Types>>...>;
 
 // Checks for arithmetic types
 template <typename T>
-using require_arithmetic = require_t<std::is_arithmetic<std::decay_t<T>>>;
+using require_arithmetic_t = require_t<std::is_arithmetic<std::decay_t<T>>>;
 
 template <typename T>
-using require_not_arithmetic
+using require_not_arithmetic_t
     = require_not_t<std::is_arithmetic<std::decay_t<T>>>;
 
 template <typename... Types>
-using require_all_arithmetic
+using require_all_arithmetic_t
     = require_all_t<std::is_arithmetic<std::decay_t<Types>>...>;
 
 template <typename... Types>
-using require_any_arithmetic
+using require_any_arithmetic_t
     = require_any_t<std::is_arithmetic<std::decay_t<Types>>...>;
 
 template <typename... Types>
-using require_all_not_arithmetic
+using require_all_not_arithmetic_t
     = require_all_not_t<std::is_arithmetic<std::decay_t<Types>>...>;
 
 template <typename... Types>
-using require_any_not_arithmetic
+using require_any_not_arithmetic_t
     = require_any_not_t<std::is_arithmetic<std::decay_t<Types>>...>;
 
 // Checks for floating_point types
 template <typename T>
-using require_floating_point
+using require_floating_point_t
     = require_t<std::is_floating_point<std::decay_t<T>>>;
 
 template <typename T>
-using require_not_floating_point
+using require_not_floating_point_t
     = require_not_t<std::is_floating_point<std::decay_t<T>>>;
 
 template <typename... Types>
-using require_all_floating_point
+using require_all_floating_point_t
     = require_all_t<std::is_floating_point<std::decay_t<Types>>...>;
 
 template <typename... Types>
-using require_any_floating_point
+using require_any_floating_point_t
     = require_any_t<std::is_floating_point<std::decay_t<Types>>...>;
 
 template <typename... Types>
-using require_all_not_floating_point
+using require_all_not_floating_point_t
     = require_all_not_t<std::is_floating_point<std::decay_t<Types>>...>;
 
 template <typename... Types>
-using require_any_not_floating_point
+using require_any_not_floating_point_t
     = require_any_not_t<std::is_floating_point<std::decay_t<Types>>...>;
 
 template <typename T>
-using require_var = require_t<is_var<std::decay_t<T>>>;
+using require_var_t = require_t<is_var<std::decay_t<T>>>;
 
 template <typename T>
-using require_not_var = require_not_t<is_var<std::decay_t<T>>>;
+using require_not_var_t = require_not_t<is_var<std::decay_t<T>>>;
 
 template <typename... Types>
-using require_all_var = require_all_t<is_var<std::decay_t<Types>>...>;
+using require_all_var_t = require_all_t<is_var<std::decay_t<Types>>...>;
 
 template <typename... Types>
-using require_any_var = require_any_t<is_var<std::decay_t<Types>>...>;
+using require_any_var_t = require_any_t<is_var<std::decay_t<Types>>...>;
 
 template <typename... Types>
-using require_all_not_var = require_all_not_t<is_var<std::decay_t<Types>>...>;
+using require_all_not_var_t = require_all_not_t<is_var<std::decay_t<Types>>...>;
 
 template <typename... Types>
-using require_any_not_var = require_any_not_t<is_var<std::decay_t<Types>>...>;
+using require_any_not_var_t = require_any_not_t<is_var<std::decay_t<Types>>...>;
 
 template <typename T>
-using require_var_or_arithmetic
+using require_var_or_arithmetic_t
     = require_t<is_var_or_arithmetic<std::decay_t<T>>>;
 
 template <typename T>
-using require_not_var_or_arithmetic
+using require_not_var_or_arithmetic_t
     = require_not_t<is_var_or_arithmetic<std::decay_t<T>>>;
 
 template <typename... Types>
-using require_all_var_or_arithmetic
+using require_all_var_or_arithmetic_t
     = require_all_t<is_var_or_arithmetic<std::decay_t<Types>>...>;
 
 template <typename... Types>
-using require_any_var_or_arithmetic
+using require_any_var_or_arithmetic_t
     = require_any_t<is_var_or_arithmetic<std::decay_t<Types>>...>;
 
 template <typename... Types>
-using require_all_not_var_or_arithmetic
+using require_all_not_var_or_arithmetic_t
     = require_all_not_t<is_var_or_arithmetic<std::decay_t<Types>>...>;
 
 template <typename... Types>
-using require_any_not_var_or_arithmetic
+using require_any_not_var_or_arithmetic_t
     = require_any_not_t<is_var_or_arithmetic<std::decay_t<Types>>...>;
 
 template <typename T>
-using require_fvar = require_t<is_fvar<std::decay_t<T>>>;
+using require_fvar_t = require_t<is_fvar<std::decay_t<T>>>;
 
 template <typename T>
-using require_not_fvar = require_not_t<is_fvar<std::decay_t<T>>>;
+using require_not_fvar_t = require_not_t<is_fvar<std::decay_t<T>>>;
 
 template <typename... Types>
-using require_all_fvar = require_all_t<is_fvar<std::decay_t<Types>>...>;
+using require_all_fvar_t = require_all_t<is_fvar<std::decay_t<Types>>...>;
 
 template <typename... Types>
-using require_any_fvar = require_any_t<is_fvar<std::decay_t<Types>>...>;
+using require_any_fvar_t = require_any_t<is_fvar<std::decay_t<Types>>...>;
 
 template <typename... Types>
-using require_all_not_fvar = require_all_not_t<is_fvar<std::decay_t<Types>>...>;
+using require_all_not_fvar_t = require_all_not_t<is_fvar<std::decay_t<Types>>...>;
 
 template <typename... Types>
-using require_any_not_fvar = require_any_not_t<is_fvar<std::decay_t<Types>>...>;
+using require_any_not_fvar_t = require_any_not_t<is_fvar<std::decay_t<Types>>...>;
 
 /**
  * Checks if decayed type is a var or fvar
@@ -242,22 +242,22 @@ struct is_var_or_fvar
                                       is_fvar<std::decay_t<T>>>::value> {};
 
 template <typename T>
-using require_var_or_fvar = require_t<is_var_or_fvar<T>>;
+using require_var_or_fvar_t = require_t<is_var_or_fvar<T>>;
 
 template <typename T>
-using require_not_var_or_fvar = require_not_t<is_var_or_fvar<T>>;
+using require_not_var_or_fvar_t = require_not_t<is_var_or_fvar<T>>;
 
 template <typename... Types>
-using require_all_var_or_fvar = require_all_t<is_var_or_fvar<Types>...>;
+using require_all_var_or_fvar_t = require_all_t<is_var_or_fvar<Types>...>;
 
 template <typename... Types>
-using require_any_var_or_fvar = require_any_t<is_var_or_fvar<Types>...>;
+using require_any_var_or_fvar_t = require_any_t<is_var_or_fvar<Types>...>;
 
 template <typename... Types>
-using require_all_not_var_or_fvar = require_all_not_t<is_var_or_fvar<Types>...>;
+using require_all_not_var_or_fvar_t = require_all_not_t<is_var_or_fvar<Types>...>;
 
 template <typename... Types>
-using require_any_not_var_or_fvar = require_any_not_t<is_var_or_fvar<Types>...>;
+using require_any_not_var_or_fvar_t = require_any_not_t<is_var_or_fvar<Types>...>;
 
 /**
  * Checks if decayed type is a var, fvar, or arithmetic
@@ -270,26 +270,117 @@ struct is_stan_scalar
                             std::is_arithmetic<std::decay_t<T>>>::value> {};
 
 template <typename T>
-using require_stan_scalar = require_t<is_stan_scalar<T>>;
+using require_stan_scalar_t = require_t<is_stan_scalar<T>>;
 
 template <typename T>
-using require_not_stan_scalar = require_not_t<is_stan_scalar<T>>;
+using require_not_stan_scalar_t = require_not_t<is_stan_scalar<T>>;
 
 template <typename... Types>
-using require_all_stan_scalar = require_all_t<is_stan_scalar<Types>...>;
+using require_all_stan_scalar_t = require_all_t<is_stan_scalar<Types>...>;
 
 template <typename... Types>
-using require_any_stan_scalar = require_any_t<is_stan_scalar<Types>...>;
+using require_any_stan_scalar_t = require_any_t<is_stan_scalar<Types>...>;
 
 template <typename... Types>
-using require_all_not_stan_scalar = require_all_not_t<is_stan_scalar<Types>...>;
+using require_all_not_stan_scalar_t = require_all_not_t<is_stan_scalar<Types>...>;
 
 template <typename... Types>
-using require_any_not_stan_scalar = require_any_not_t<is_stan_scalar<Types>...>;
+using require_any_not_stan_scalar_t = require_any_not_t<is_stan_scalar<Types>...>;
 
 /**
  * Requires for containers
  */
+
+ template <typename T>
+ using require_std_vector_t = require_t<is_std_vector<T>>;
+
+ template <typename T>
+ using require_not_std_vector_t = require_not_t<is_std_vector<T>>;
+
+ template <typename... Types>
+ using require_all_std_vector_t = require_all_t<is_std_vector<Types>...>;
+
+ template <typename... Types>
+ using require_any_std_vector_t = require_any_t<is_std_vector<Types>...>;
+
+ template <typename... Types>
+ using require_all_not_std_vector_t = require_all_not_t<is_std_vector<Types>...>;
+
+ template <typename... Types>
+ using require_any_not_std_vector_t = require_any_not_t<is_std_vector<Types>...>;
+
+ template <typename T>
+ using require_vector_t = require_t<is_vector<T>>;
+
+ template <typename T>
+ using require_not_vector_t = require_not_t<is_vector<T>>;
+
+ template <typename... Types>
+ using require_all_vector_t = require_all_t<is_vector<Types>...>;
+
+ template <typename... Types>
+ using require_any_vector_t = require_any_t<is_vector<Types>...>;
+
+ template <typename... Types>
+ using require_all_not_vector_t = require_all_not_t<is_vector<Types>...>;
+
+ template <typename... Types>
+ using require_any_not_vector_t = require_any_not_t<is_vector<Types>...>;
+
+ template <typename T>
+ using require_eigen_t = require_t<is_eigen<T>>;
+
+ template <typename T>
+ using require_not_eigen_t = require_not_t<is_eigen<T>>;
+
+ template <typename... Types>
+ using require_all_eigen_t = require_all_t<is_eigen<Types>...>;
+
+ template <typename... Types>
+ using require_any_eigen_t = require_any_t<is_eigen<Types>...>;
+
+ template <typename... Types>
+ using require_all_not_eigen_t = require_all_not_t<is_eigen<Types>...>;
+
+ template <typename... Types>
+ using require_any_not_eigen_t = require_any_not_t<is_eigen<Types>...>;
+
+ template <typename T>
+ using require_eigen_vector_t = require_t<is_eigen_vector<T>>;
+
+ template <typename T>
+ using require_not_eigen_vector_t = require_not_t<is_eigen_vector<T>>;
+
+ template <typename... Types>
+ using require_all_eigen_vector_t = require_all_t<is_eigen_vector<Types>...>;
+
+ template <typename... Types>
+ using require_any_eigen_vector_t = require_any_t<is_eigen_vector<Types>...>;
+
+ template <typename... Types>
+ using require_all_not_eigen_vector_t = require_all_not_t<is_eigen_vector<Types>...>;
+
+ template <typename... Types>
+ using require_any_not_eigen_vector_t = require_any_not_t<is_eigen_vector<Types>...>;
+
+ template <typename T>
+ using require_vector_like_t = require_t<is_vector_like<T>>;
+
+ template <typename T>
+ using require_not_vector_like_t = require_not_t<is_vector_like<T>>;
+
+ template <typename... Types>
+ using require_all_vector_like_t = require_all_t<is_vector_like<Types>...>;
+
+ template <typename... Types>
+ using require_any_vector_like_t = require_any_t<is_vector_like<Types>...>;
+
+ template <typename... Types>
+ using require_all_not_vector_like_t = require_all_not_t<is_vector_like<Types>...>;
+
+ template <typename... Types>
+ using require_any_not_vector_like_t = require_any_not_t<is_vector_like<Types>...>;
+
 
 /**
  * Used as the base for checking whether a type is a container with

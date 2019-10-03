@@ -12,7 +12,7 @@ namespace stan {
  * Specialization of partials type returns double if input type is a double.
  */
 template <typename T>
-struct partials_type<T, require_var<T>> {
+struct partials_type<T, require_var_t<T>> {
   using type = typename std::decay_t<T>::Scalar;
 };
 

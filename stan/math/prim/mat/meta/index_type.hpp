@@ -17,7 +17,7 @@ namespace math {
  * @tparam T type of matrix.
  */
 template <typename T>
-struct index_type<T, require_eigen<T>> {
+struct index_type<T, require_eigen_t<T>> {
   using type = typename std::decay_t<T>::Index;
 };
 

@@ -30,7 +30,7 @@ namespace math {
  * @tparam T an arithmetic type for the type stored in the OpenCL buffer.
  */
 template <typename T>
-class matrix_cl<T, require_arithmetic<T>> {
+class matrix_cl<T, require_arithmetic_t<T>> {
  private:
   cl::Buffer buffer_cl_;  // Holds the allocated memory on the device
   int rows_{0};
@@ -51,7 +51,7 @@ class matrix_cl<T, require_arithmetic<T>> {
   template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper>
   void triangular_transpose();
 
-  void sub_block(const matrix_cl<T, require_arithmetic<T>>& A, size_t A_i,
+  void sub_block(const matrix_cl<T, require_arithmetic_t<T>>& A, size_t A_i,
                  size_t A_j, size_t this_i, size_t this_j, size_t nrows,
                  size_t ncols);
   int rows() const { return rows_; }
@@ -395,7 +395,7 @@ class matrix_cl<T, require_arithmetic<T>> {
    * @throw <code>std::system_error</code> if the
    * matrices do not have matching dimensions
    */
-  template <typename U, require_same<T, U>...>
+  template <typename U, require_same_t<T, U>...>
   explicit matrix_cl(const U* A, const int& R, const int& C,
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
       : rows_(R), cols_(C), view_(partial_view) {
@@ -454,10 +454,10 @@ class matrix_cl<T, require_arithmetic<T>> {
 };  // namespace math
 
 template <typename T>
-using matrix_cl_prim = matrix_cl<T, require_arithmetic<T>>;
+using matrix_cl_prim = matrix_cl<T, require_arithmetic_t<T>>;
 
 template <typename T>
-using matrix_cl_fp = matrix_cl<T, require_floating_point<T>>;
+using matrix_cl_fp = matrix_cl<T, require_floating_point_t<T>>;
 
 }  // namespace math
 }  // namespace stan

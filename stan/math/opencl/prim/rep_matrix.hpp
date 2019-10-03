@@ -30,7 +30,7 @@ namespace math {
  * element is not a matrix_cl of size 1
  *
  */
-template <typename T, typename = require_arithmetic<T>>
+template <typename T, typename = require_arithmetic_t<T>>
 inline matrix_cl<T> rep_matrix(const matrix_cl<T>& x, int n, int m) {
   check_nonnegative("rep_matrix (OpenCL)", "rows", n);
   check_nonnegative("rep_matrix (OpenCL)", "cols", m);
@@ -64,7 +64,7 @@ inline matrix_cl<T> rep_matrix(const matrix_cl<T>& x, int n, int m) {
  * requested dimensions are negative
  *
  */
-template <typename T, typename = require_arithmetic<T>>
+template <typename T, typename = require_arithmetic_t<T>>
 inline matrix_cl<T> rep_matrix(const matrix_cl<T>& x, int m) {
   check_nonnegative("rep_matrix (OpenCL)", "rows/columns", m);
   check_mat_not_size_one("rep_matrix (OpenCL)", "x", x);

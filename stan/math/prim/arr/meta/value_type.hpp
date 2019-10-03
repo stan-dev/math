@@ -15,7 +15,7 @@ namespace stan {
  * @tparam T type of elements in standard vector.
  */
 template <typename T>
-struct value_type<T, require_std_vector<T>> {
+struct value_type<T, require_std_vector_t<T>> {
   using type = typename std::decay_t<T>::value_type;
 };
 

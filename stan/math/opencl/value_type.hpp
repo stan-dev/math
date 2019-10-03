@@ -9,7 +9,7 @@
 namespace stan {
 
 template <typename T>
-struct value_type<T, require_matrix_cl<T>> {
+struct value_type<T, require_matrix_cl_t<T>> {
   using type = typename std::decay_t<T>::Scalar;
 };
 }  // namespace stan

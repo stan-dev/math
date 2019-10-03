@@ -14,7 +14,7 @@ namespace stan {
 namespace math {
 
 template <typename Ta, int Ra, int Ca, typename Tb, int Rb, int Cb,
-          require_any_var<Ta, Tb>...>
+          require_any_var_t<Ta, Tb>...>
 inline Eigen::Matrix<var, Cb, Cb> quad_form_sym(
     const Eigen::Matrix<Ta, Ra, Ca>& A, const Eigen::Matrix<Tb, Rb, Cb>& B) {
   check_square("quad_form", "A", A);
@@ -28,7 +28,7 @@ inline Eigen::Matrix<var, Cb, Cb> quad_form_sym(
 }
 
 template <typename Ta, int Ra, int Ca, typename Tb, int Rb,
-          require_any_var<Ta, Tb>...>
+          require_any_var_t<Ta, Tb>...>
 inline var quad_form_sym(const Eigen::Matrix<Ta, Ra, Ca>& A,
                          const Eigen::Matrix<Tb, Rb, 1>& B) {
   check_square("quad_form", "A", A);

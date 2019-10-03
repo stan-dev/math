@@ -111,7 +111,7 @@ inline void assign_event(const cl::Event& e,
   helper.set(e, m);
 }
 
-template <typename T, require_same<T, cl::Event>...>
+template <typename T, require_same_t<T, cl::Event>...>
 inline void assign_events(const T&) {}
 
 /**
