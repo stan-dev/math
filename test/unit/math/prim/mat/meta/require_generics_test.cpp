@@ -4,6 +4,7 @@
 #include <gtest/gtest.h>
 #include <type_traits>
 #include <string>
+#include <vector>
 
 template <typename T>
 using eigen_x = Eigen::Matrix<T, -1, -1>;
