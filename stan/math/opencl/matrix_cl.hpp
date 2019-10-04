@@ -299,6 +299,26 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
     }
   }
 
+  template <typename Mat, std::enable_if_t<is_eigen_matrix<Mat>::value>...>
+  inline void write_buffer_(Mat&& A) {
+    cl::Event transfer_event;
+    cl::CommandQueue& queue = opencl_context.queue();
+    queue.enqueueWriteBuffer(this->buffer_cl_, opencl_context.in_order(), 0,
+                             sizeof(T) * A.size(), A.data(), nullptr,
+                             &transfer_event);
+    this->add_write_event(transfer_event);
+  }
+
+  template <typename Mat, std::enable_if_t<!is_eigen_matrix<Mat>::value || std::is_rvalue_reference<Mat>::value>...>
+  inline void write_buffer_(Mat&& A) {
+    cl::Event transfer_event;
+    cl::CommandQueue& queue = opencl_context.queue();
+    queue.enqueueWriteBuffer(this->buffer_cl_, opencl_context.in_order(), 0,
+                             sizeof(T) * A.size(), A.eval().data(), nullptr,
+                             &transfer_event);
+    this->add_write_event(transfer_event);
+  }
+
   /**
    * Constructor for the matrix_cl that
    * creates a copy of the Eigen matrix on the OpenCL device.
@@ -311,26 +331,20 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
    * @throw <code>std::system_error</code> if the
    * matrices do not have matching dimensions
    */
-  explicit matrix_cl(
-      const Eigen::Ref<const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>>&
-          A,
-      matrix_cl_view partial_view = matrix_cl_view::Entire)
+  template <typename Mat, std::enable_if_t<is_eigen<Mat>::value>...>
+  explicit matrix_cl(Mat&& A, matrix_cl_view partial_view = matrix_cl_view::Entire)
       : rows_(A.rows()), cols_(A.cols()), view_(partial_view) {
     if (size() == 0) {
       return;
     }
     cl::Context& ctx = opencl_context.context();
-    cl::CommandQueue& queue = opencl_context.queue();
     try {
       buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
-      cl::Event transfer_event;
-      queue.enqueueWriteBuffer(buffer_cl_, opencl_context.in_order(), 0,
-                               sizeof(T) * A.size(), A.data(), nullptr,
-                               &transfer_event);
-      this->add_write_event(transfer_event);
-    } catch (const cl::Error& e) {
-      check_opencl_error("matrix constructor", e);
-    }
+      write_buffer_(std::forward<Mat>(A));
+  } catch (const cl::Error& e) {
+    check_opencl_error("matrix constructor", e);
+  }
+
   }
 
   /**
@@ -349,7 +363,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
     try {
       buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T));
       cl::Event transfer_event;
-      queue.enqueueWriteBuffer(buffer_cl_, CL_FALSE, 0, sizeof(T), &A, NULL,
+      queue.enqueueWriteBuffer(buffer_cl_, CL_FALSE, 0, sizeof(T), &A, nullptr,
                                &transfer_event);
       this->add_write_event(transfer_event);
     } catch (const cl::Error& e) {
@@ -409,7 +423,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
       buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * size());
       cl::Event transfer_event;
       queue.enqueueWriteBuffer(buffer_cl_, opencl_context.in_order(), 0,
-                               sizeof(T) * size(), A, NULL, &transfer_event);
+                               sizeof(T) * size(), A, nullptr, &transfer_event);
       this->add_write_event(transfer_event);
     } catch (const cl::Error& e) {
       check_opencl_error("matrix constructor", e);
