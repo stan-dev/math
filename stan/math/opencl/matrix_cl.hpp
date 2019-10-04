@@ -261,8 +261,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
        * on the device until we are sure that the data
        * is finished transfering
        */
-      queue.enqueueWriteBuffer(buffer_cl_, CL_FALSE,
-                               sizeof(T) * offset_size,
+      queue.enqueueWriteBuffer(buffer_cl_, CL_FALSE, sizeof(T) * offset_size,
                                sizeof(T) * rows_, A[i].data(),
                                &this->read_events(), &write_event);
     }
