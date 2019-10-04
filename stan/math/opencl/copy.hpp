@@ -162,8 +162,8 @@ inline matrix_cl<T> packed_copy(const std::vector<T>& src, int rows) {
     matrix_cl<T> packed(packed_size, 1);
     cl::Event packed_event;
     const cl::CommandQueue queue = opencl_context.queue();
-    queue.enqueueWriteBuffer(packed.buffer(), opencl_context.in_order(),
-                             0, sizeof(T) * packed_size, src.data(), nullptr,
+    queue.enqueueWriteBuffer(packed.buffer(), opencl_context.in_order(), 0,
+                             sizeof(T) * packed_size, src.data(), nullptr,
                              &packed_event);
     packed.add_write_event(packed_event);
     stan::math::opencl_kernels::unpack(cl::NDRange(dst.rows(), dst.rows()), dst,
