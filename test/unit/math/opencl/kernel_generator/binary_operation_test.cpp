@@ -164,4 +164,36 @@ TEST(MathMatrixCL, matrix_multiplication_in_expression_test) {
   EXPECT_MATRIX_NEAR(res, correct, 1e-9);
 }
 
+TEST(MathMatrixCL, reuse_expression) {
+  std::string expected_kernel_src = "kernel void calculate(__global double* var1_global, int var1_rows, int var1_view, __global double* var2_global, int var2_rows, int var2_view, __global double* var5_global, int var5_rows, int var5_view){\n"
+        "int i = get_global_id(0);\n"
+        "int j = get_global_id(1);\n"
+        "double var1 = 0; if (!((!contains_nonzero(var1_view, LOWER) && j < i) || (!contains_nonzero(var1_view, UPPER) && j > i))) {var1 = var1_global[i + var1_rows * j];}\n"
+        "double var2 = 0; if (!((!contains_nonzero(var2_view, LOWER) && j < i) || (!contains_nonzero(var2_view, UPPER) && j > i))) {var2 = var2_global[i + var2_rows * j];}\n"
+        "double var3 = var1+var2;\n"
+        "double var4 = var3*var3;\n"
+        "var5_global[i + var5_rows * j] = var4;}";
+  MatrixXd m1(3, 3);
+  m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
+  MatrixXd m2(3, 3);
+  m2 << 10, 100, 1000, 0, -10, -12, 2, 4, 8;
+
+  matrix_cl<double> m1_cl(m1);
+  matrix_cl<double> m2_cl(m2);
+  auto tmp = m1_cl + m2_cl;
+  auto tmp2 = stan::math::elewise_multiplication(tmp, tmp);
+  matrix_cl<double> res_cl;
+  std::string kernel_src = tmp2.get_kernel_source_for_evaluating_into(res_cl);
+  EXPECT_EQ(expected_kernel_src, kernel_src);
+
+  res_cl = tmp2;
+
+  MatrixXd res = stan::math::from_matrix_cl(res_cl);
+
+  auto tmp_eig = m1.array() + m2.array();
+  MatrixXd res_eig = tmp_eig * tmp_eig;
+
+  EXPECT_MATRIX_NEAR(res_eig, res, 1e-9);
+}
+
 #endif
