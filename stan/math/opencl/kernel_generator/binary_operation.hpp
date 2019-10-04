@@ -45,7 +45,6 @@ class binary_operation
       typename std::remove_reference_t<T_a>::ReturnScalar,
       typename std::remove_reference_t<T_b>::ReturnScalar>::type;
   using base = operation<Derived, ReturnScalar>;
-  using base::instance;
   using base::var_name;
 
   /**
@@ -75,13 +74,13 @@ class binary_operation
    * @param j column index variable name
    * @return part of kernel with code for this and nested expressions
    */
-  inline kernel_parts generate(std::set<int>& generated, name_generator& ng,
+  inline kernel_parts generate(std::set<const void*>& generated, name_generator& ng,
                                const std::string& i,
                                const std::string& j) const {
-    if (generated.count(instance) == 0) {
+    if (generated.count(this) == 0) {
       kernel_parts a_parts = a_.generate(generated, ng, i, j);
       kernel_parts b_parts = b_.generate(generated, ng, i, j);
-      generated.insert(instance);
+      generated.insert(this);
       var_name = ng.generate();
       kernel_parts res;
       res.body = a_parts.body + b_parts.body + type_str<ReturnScalar>::name
@@ -102,10 +101,10 @@ class binary_operation
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
-  inline void set_args(std::set<int>& generated, cl::Kernel& kernel,
+  inline void set_args(std::set<const void*>& generated, cl::Kernel& kernel,
                        int& arg_num) const {
-    if (generated.count(instance) == 0) {
-      generated.insert(instance);
+    if (generated.count(this) == 0) {
+      generated.insert(this);
       a_.set_args(generated, kernel, arg_num);
       b_.set_args(generated, kernel, arg_num);
     }

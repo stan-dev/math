@@ -25,7 +25,6 @@ class scalar__ : public operation<scalar__<T>, T> {
                 "std::is_arithmetic<T> must be true for scalars!");
   using ReturnScalar = T;
   using base = operation<scalar__<T>, T>;
-  using base::instance;
   using base::var_name;
 
   /**
@@ -42,11 +41,11 @@ class scalar__ : public operation<scalar__<T>, T> {
    * @param j column index variable name
    * @return part of kernel with code for this and nested expressions
    */
-  inline kernel_parts generate(std::set<int>& generated, name_generator& ng,
+  inline kernel_parts generate(std::set<const void*>& generated, name_generator& ng,
                                const std::string& i,
                                const std::string& j) const {
-    if (generated.count(instance) == 0) {
-      generated.insert(instance);
+    if (generated.count(this) == 0) {
+      generated.insert(this);
       var_name = ng.generate();
       kernel_parts res;
       res.args = type_str<T>::name + " " + var_name + ", ";
@@ -64,7 +63,7 @@ class scalar__ : public operation<scalar__<T>, T> {
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
-  inline void set_args(std::set<int>& generated, cl::Kernel& kernel,
+  inline void set_args(std::set<const void*>& generated, cl::Kernel& kernel,
                        int& arg_num) const {
     kernel.setArg(arg_num++, a_);
   }

@@ -15,7 +15,7 @@ template <typename Derived, typename ReturnScalar>
 template <typename T_lhs>
 std::string operation<Derived, ReturnScalar>::get_kernel_source_for_evaluating_into(const T_lhs& lhs) const {
   auto lhs_expression = as_operation(lhs);
-  std::set<int> generated;
+  std::set<const void*> generated;
   name_generator ng;
   kernel_parts parts = derived().generate(generated, ng, "i", "j");
   kernel_parts out_parts

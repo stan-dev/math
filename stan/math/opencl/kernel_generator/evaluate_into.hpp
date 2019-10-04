@@ -38,7 +38,7 @@ void operation<Derived, ReturnScalar>::evaluate_into(const T_lhs& lhs) const {
           "calculate", {view_kernel_helpers, src.c_str()}, opts);
     }
     int arg_num = 0;
-    std::set<int> generated;
+    std::set<const void*> generated;
     derived().set_args(generated, cache::kernel, arg_num);
     lhs_expression.set_args(generated, cache::kernel, arg_num);
 

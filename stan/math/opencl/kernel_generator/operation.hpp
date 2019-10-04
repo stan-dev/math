@@ -24,16 +24,7 @@ struct kernel_parts {
 /**
  * Base of all kernel generator operation. Needed for common instance counting.
  */
-class operation_base {
- public:
-  operation_base() : instance(instance_counter++) {}
-
- protected:
-  static int instance_counter;
-  int instance;
-};
-
-int operation_base::instance_counter = 0;
+class operation_base {};
 
 /**
  * Base for all kernel generator operations.
