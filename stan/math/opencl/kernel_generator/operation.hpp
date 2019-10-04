@@ -62,12 +62,14 @@ class operation : public operation_base {
   inline void evaluate_into(const T_lhs& lhs) const;
 
   template <typename T_lhs>
-  inline std::string get_kernel_source_for_evaluating_into(const T_lhs& lhs) const;
+  inline std::string get_kernel_source_for_evaluating_into(
+      const T_lhs& lhs) const;
 
   template <typename T_lhs>
   struct cache {
     static cl::Kernel kernel;
   };
+
  protected:
   mutable std::string var_name;
 

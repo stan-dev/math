@@ -41,8 +41,8 @@ class scalar__ : public operation<scalar__<T>, T> {
    * @param j column index variable name
    * @return part of kernel with code for this and nested expressions
    */
-  inline kernel_parts generate(std::set<const void*>& generated, name_generator& ng,
-                               const std::string& i,
+  inline kernel_parts generate(std::set<const void*>& generated,
+                               name_generator& ng, const std::string& i,
                                const std::string& j) const {
     if (generated.count(this) == 0) {
       generated.insert(this);
