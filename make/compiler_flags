@@ -13,7 +13,7 @@ ifeq (default,$(origin CXX))
     CXX := clang++
   endif
   ifeq ($(OS),Linux)
-    CXX := clang++
+    CXX := g++
   endif
   ifeq ($(OS),Windows_NT)
     CXX := g++
