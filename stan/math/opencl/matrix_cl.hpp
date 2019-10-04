@@ -236,7 +236,8 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * matrices do not have matching dimensions
    */
   template <typename Vec, require_std_vector_vt<is_eigen, Vec>...,
-            require_std_vector_st<std::is_arithmetic, Vec>...>
+            require_std_vector_st<std::is_arithmetic, Vec>...,
+            require_same_t<value_type_t<Vec>, T>...>
   explicit matrix_cl(Vec&& A) try : rows_(A.empty() ? 0 : A[0].size()),
                                     cols_(A.size()) {
     if (this->size() == 0) {
@@ -261,8 +262,8 @@ class matrix_cl<T, require_arithmetic_t<T>> {
        * is finished transfering
        */
       queue.enqueueWriteBuffer(buffer_cl_, CL_FALSE,
-                               sizeof(double) * offset_size,
-                               sizeof(double) * rows_, A[i].data(),
+                               sizeof(T) * offset_size,
+                               sizeof(T) * rows_, A[i].data(),
                                &this->read_events(), &write_event);
     }
     this->add_write_event(write_event);

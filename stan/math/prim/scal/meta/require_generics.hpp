@@ -62,15 +62,23 @@ template <class... Checks>
 using require_any_not_t
     = std::enable_if_t<!math::disjunction<Checks...>::value>;
 
-// Enablers for two types of the same value
+/**
+ * Require both types to be the same
+ */
 template <typename T, typename S>
 using require_same_t
     = require_t<std::is_same<std::decay_t<T>, std::decay_t<S>>>;
 
+/**
+ * Require both types to not be the same
+ */
 template <typename T, typename S>
 using require_not_same_t
     = require_not_t<std::is_same<std::decay_t<T>, std::decay_t<S>>>;
 
+/**
+ * Require both types to not be the same
+ */
 template <typename T, typename... Types>
 using require_all_same_t
     = require_all_t<std::is_same<std::decay_t<T>, std::decay_t<Types>>...>;
