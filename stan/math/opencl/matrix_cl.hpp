@@ -309,7 +309,9 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
     this->add_write_event(transfer_event);
   }
 
-  template <typename Mat, std::enable_if_t<!is_eigen_matrix<Mat>::value || std::is_rvalue_reference<Mat>::value>...>
+  template <typename Mat,
+            std::enable_if_t<!is_eigen_matrix<Mat>::value
+                             || std::is_rvalue_reference<Mat>::value>...>
   inline void write_buffer_(Mat&& A) {
     cl::Event transfer_event;
     cl::CommandQueue& queue = opencl_context.queue();
@@ -332,7 +334,8 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
    * matrices do not have matching dimensions
    */
   template <typename Mat, std::enable_if_t<is_eigen<Mat>::value>...>
-  explicit matrix_cl(Mat&& A, matrix_cl_view partial_view = matrix_cl_view::Entire)
+  explicit matrix_cl(Mat&& A,
+                     matrix_cl_view partial_view = matrix_cl_view::Entire)
       : rows_(A.rows()), cols_(A.cols()), view_(partial_view) {
     if (size() == 0) {
       return;
@@ -341,10 +344,9 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
     try {
       buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
       write_buffer_(std::forward<Mat>(A));
-  } catch (const cl::Error& e) {
-    check_opencl_error("matrix constructor", e);
-  }
-
+    } catch (const cl::Error& e) {
+      check_opencl_error("matrix constructor", e);
+    }
   }
 
   /**
