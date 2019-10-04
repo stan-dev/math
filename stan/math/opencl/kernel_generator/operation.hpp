@@ -68,14 +68,17 @@ class operation : public operation_base {
    * @param lhs Left-hand-side expression
    */
   template <typename T_lhs>
-  inline void evaluate_into(T_lhs&& lhs) const;
+  inline void evaluate_into(const T_lhs& lhs) const;
 
- protected:
-  mutable std::string var_name;
+  template <typename T_lhs>
+  inline std::string get_kernel_source_for_evaluating_into(const T_lhs& lhs) const;
+
   template <typename T_lhs>
   struct cache {
     static cl::Kernel kernel;
   };
+ protected:
+  mutable std::string var_name;
 
   /**
    * Casts the instance into its derived type.
@@ -105,4 +108,5 @@ cl::Kernel operation<Derived, ReturnScalar>::cache<T_lhs>::kernel;
 #endif
 #endif
 
+#include <stan/math/opencl/kernel_generator/get_kernel_source_for_evaluating_into.hpp>
 #include <stan/math/opencl/kernel_generator/evaluate_into.hpp>

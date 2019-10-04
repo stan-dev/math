@@ -6,7 +6,6 @@
 #include <stan/math/opencl/kernel_generator/as_operation.hpp>
 #include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
 #include <cl.hpp>
-#include <utility>
 #include <string>
 #include <set>
 
@@ -15,10 +14,10 @@ namespace math {
 
 template <typename Derived, typename ReturnScalar>
 template <typename T_lhs>
-void operation<Derived, ReturnScalar>::evaluate_into(T_lhs&& lhs) const {
+void operation<Derived, ReturnScalar>::evaluate_into(const T_lhs& lhs) const {
   using enable = enable_if_all_valid_expressions<T_lhs>;
   using cache = operation<Derived, ReturnScalar>::cache<T_lhs>;
-  auto lhs_expression = as_operation(std::forward<T_lhs>(lhs));
+  const auto& lhs_expression = as_operation(lhs);
 
   int n_rows = derived().rows();
   int n_cols = derived().cols();
@@ -32,25 +31,14 @@ void operation<Derived, ReturnScalar>::evaluate_into(T_lhs&& lhs) const {
                      "lhs_expression", lhs_expression.cols());
   }
   try {
-    std::set<int> generated;
     if (cache::kernel() == NULL) {
-      name_generator ng;
-      kernel_parts parts = derived().generate(generated, ng, "i", "j");
-      kernel_parts out_parts
-          = lhs_expression.generate_lhs(generated, ng, "i", "j");
-      std::string src = "kernel void calculate(" + parts.args +
-                       out_parts.args.substr(0, out_parts.args.size() - 2) +
-                       "){\n"
-                       "int i = get_global_id(0);"
-                       "int j = get_global_id(1);\n"
-                        + parts.body +
-                        out_parts.body + " = " + var_name + ";}";
+      std::string src = get_kernel_source_for_evaluating_into(lhs);
       auto opts = opencl_context.base_opts();
       cache::kernel = opencl_kernels::compile_kernel(
           "calculate", {view_kernel_helpers, src.c_str()}, opts);
-      generated.clear();
     }
     int arg_num = 0;
+    std::set<int> generated;
     derived().set_args(generated, cache::kernel, arg_num);
     lhs_expression.set_args(generated, cache::kernel, arg_num);
 
