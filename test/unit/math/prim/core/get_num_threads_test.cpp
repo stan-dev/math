@@ -12,8 +12,8 @@ TEST(get_num_threads, correct_values) {
   EXPECT_EQ(stan::math::internal::get_num_threads(), 4);
 
   set_n_threads("-1");
-  EXPECT_GE(stan::math::internal::get_num_threads(),
-            tbb::task_scheduler_init::default_num_threads());
+  EXPECT_EQ(stan::math::internal::get_num_threads(),
+            std::thread::hardware_concurrency());
 }
 
 TEST(get_num_threads, incorrect_values) {
