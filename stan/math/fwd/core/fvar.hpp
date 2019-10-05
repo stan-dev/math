@@ -53,6 +53,7 @@ struct fvar {
    * The Type inside of the fvar.
    */
   using Scalar = T;
+
   /**
    * Return the value of this variable.
    *
@@ -79,28 +80,6 @@ struct fvar {
    * @param[in] x variable to be copied
    */
   fvar(const fvar<T>& x) : val_(x.val_), d_(x.d_) {}
-
-  // /**
-  //  * Construct a forward variable with the specified value and
-  //  * zero tangent.
-  //  *
-  //  * @tparam V type of value (must be assignable to the value and
-  //  *   tangent type T)
-  //  * @param[in] v value
-  // fvar(const T& v) : val_(v), d_(0) { } // NOLINT(runtime/explicit)
-
-  //  * Construct a forward variable with the specified value and
-  //  * zero tangent.
-  //  *
-  //  * @tparam V type of value (must be assignable to T)
-  //  * @param[in] v value
-  //  * @param[in] dummy value given by default with enable-if metaprogramming
-  // template <typename V>
-  // fvar(const V& v,
-  //      typename std::enable_if<ad_promotable<V, T>::value>::type* dummy
-  //      = nullptr)
-  //     : val_(v), d_(0) {
-  // }
 
   /**
    * Construct a forward variable with the specified value and
