@@ -6,10 +6,9 @@
 #include <tbb/task_scheduler_observer.h>
 
 #include <mutex>
-#include <iostream>
 #include <unordered_map>
-#include <thread>
 #include <utility>
+#include <thread>
 #include <tuple>
 
 namespace stan {
@@ -35,6 +34,7 @@ class ad_tape_observer : public tbb::task_scheduler_observer {
   }
 
   void on_scheduler_entry(bool worker) {
+    std::lock_guard<std::mutex> thread_tape_map_lock(thread_tape_map_mutex_);
     const std::thread::id thread_id = std::this_thread::get_id();
     if (thread_tape_map_.find(thread_id) == thread_tape_map_.end()) {
       ad_map::iterator insert_elem;
@@ -46,6 +46,7 @@ class ad_tape_observer : public tbb::task_scheduler_observer {
   }
 
   void on_scheduler_exit(bool worker) {
+    std::lock_guard<std::mutex> thread_tape_map_lock(thread_tape_map_mutex_);
     auto elem = thread_tape_map_.find(std::this_thread::get_id());
     if (elem != thread_tape_map_.end()) {
       thread_tape_map_.erase(elem);
@@ -54,6 +55,7 @@ class ad_tape_observer : public tbb::task_scheduler_observer {
 
  private:
   ad_map thread_tape_map_;
+  std::mutex thread_tape_map_mutex_;
 };
 
 namespace {
