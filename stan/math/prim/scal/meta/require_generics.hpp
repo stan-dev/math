@@ -91,51 +91,56 @@ using require_any_not_same_t
  * Require both types to be the same
  */
 template <typename T, typename S>
-using require_same_st
-    = require_t<std::is_same<scalar_type_t<std::decay_t<T>>, scalar_type_t<std::decay_t<S>>>>;
+using require_same_st = require_t<std::is_same<scalar_type_t<std::decay_t<T>>,
+                                               scalar_type_t<std::decay_t<S>>>>;
 
 /**
  * Require both types to not be the same
  */
 template <typename T, typename S>
 using require_not_same_st
-    = require_not_t<std::is_same<scalar_type_t<std::decay_t<T>>, scalar_type_t<std::decay_t<S>>>>;
+    = require_not_t<std::is_same<scalar_type_t<std::decay_t<T>>,
+                                 scalar_type_t<std::decay_t<S>>>>;
 
 /**
  * Require both types to not be the same
  */
 template <typename T, typename... Types>
 using require_all_same_st
-    = require_all_t<std::is_same<scalar_type_t<std::decay_t<T>>, scalar_type_t<std::decay_t<Types>>>...>;
+    = require_all_t<std::is_same<scalar_type_t<std::decay_t<T>>,
+                                 scalar_type_t<std::decay_t<Types>>>...>;
 
 template <typename T, typename... Types>
 using require_any_not_same_st
-    = require_all_not_t<std::is_same<scalar_type_t<std::decay_t<T>>, scalar_type_t<std::decay_t<Types>>>...>;
+    = require_all_not_t<std::is_same<scalar_type_t<std::decay_t<T>>,
+                                     scalar_type_t<std::decay_t<Types>>>...>;
 
 /**
  * Require both types to be the same
  */
 template <typename T, typename S>
-using require_same_vt
-    = require_t<std::is_same<value_type_t<std::decay_t<T>>, value_type_t<std::decay_t<S>>>>;
+using require_same_vt = require_t<
+    std::is_same<value_type_t<std::decay_t<T>>, value_type_t<std::decay_t<S>>>>;
 
 /**
  * Require both types to not be the same
  */
 template <typename T, typename S>
-using require_not_same_vt
-    = require_not_t<std::is_same<value_type_t<std::decay_t<T>>, value_type_t<std::decay_t<S>>>>;
+using require_not_same_vt = require_not_t<
+    std::is_same<value_type_t<std::decay_t<T>>, value_type_t<std::decay_t<S>>>>;
 
 /**
  * Require both types to not be the same
  */
 template <typename T, typename... Types>
 using require_all_same_vt
-    = require_all_t<std::is_same<value_type_t<std::decay_t<T>>, value_type_t<std::decay_t<Types>>>...>;
+    = require_all_t<std::is_same<value_type_t<std::decay_t<T>>,
+                                 value_type_t<std::decay_t<Types>>>...>;
 
 template <typename T, typename... Types>
 using require_any_not_same_vt
-    = require_all_not_t<std::is_same<value_type_t<std::decay_t<T>>, value_type_t<std::decay_t<Types>>>...>;
+    = require_all_not_t<std::is_same<value_type_t<std::decay_t<T>>,
+                                     value_type_t<std::decay_t<Types>>>...>;
 
 /**
  * Below are enablers for

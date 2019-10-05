@@ -206,8 +206,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
       buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * this->size());
       cl::Event cstr_event;
       queue.enqueueCopyBuffer(A.buffer(), this->buffer(), 0, 0,
-                              A.size() * sizeof(T), nullptr,
-                              &cstr_event);
+                              A.size() * sizeof(T), nullptr, &cstr_event);
       this->add_write_event(cstr_event);
       A.add_read_event(cstr_event);
     } catch (const cl::Error& e) {
@@ -261,8 +260,8 @@ class matrix_cl<T, require_arithmetic_t<T>> {
        */
       cl::Event write_event;
       queue.enqueueWriteBuffer(buffer_cl_, CL_FALSE, sizeof(T) * offset_size,
-                               sizeof(T) * rows_, A[i].data(),
-                               nullptr, &write_event);
+                               sizeof(T) * rows_, A[i].data(), nullptr,
+                               &write_event);
       this->add_write_event(write_event);
     }
   } catch (const cl::Error& e) {
@@ -346,8 +345,8 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     try {
       buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T));
       cl::Event transfer_event;
-      queue.enqueueWriteBuffer(buffer_cl_, CL_FALSE, 0, sizeof(T), &A,
-                               nullptr, &transfer_event);
+      queue.enqueueWriteBuffer(buffer_cl_, CL_FALSE, 0, sizeof(T), &A, nullptr,
+                               &transfer_event);
       this->add_write_event(transfer_event);
     } catch (const cl::Error& e) {
       check_opencl_error("matrix constructor", e);
@@ -364,7 +363,8 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * @throw <code>std::system_error</code> if the
    * matrices do not have matching dimensions
    */
-  template <typename Vec, require_std_vector_t<Vec>..., require_same_st<T, Vec>...>
+  template <typename Vec, require_std_vector_t<Vec>...,
+            require_same_st<T, Vec>...>
   explicit matrix_cl(Vec&& A, const int& R, const int& C,
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
       : rows_(R), cols_(C), view_(partial_view) {
