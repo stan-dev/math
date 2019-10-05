@@ -97,14 +97,14 @@ TEST(requires, all_same_test) {
 }
 
 TEST(requires, all_not_same_test) {
-  using stan::require_all_not_same_t;
+  using stan::require_any_not_same_t;
   using stan::test::require_variadic_checker;
-  EXPECT_TRUE((require_variadic_checker<require_all_not_same_t, double, int,
+  EXPECT_TRUE((require_variadic_checker<require_any_not_same_t, double, int,
                                         double>::value));
-  EXPECT_FALSE((require_variadic_checker<require_all_not_same_t, double, double,
+  EXPECT_FALSE((require_variadic_checker<require_any_not_same_t, double, double,
                                          double>::value));
   EXPECT_FALSE(
-      (require_variadic_checker<require_all_not_same_t, int, int, int>::value));
+      (require_variadic_checker<require_any_not_same_t, int, int, int>::value));
 }
 
 // Double or Int

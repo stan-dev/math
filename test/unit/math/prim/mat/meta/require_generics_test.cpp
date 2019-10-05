@@ -9,6 +9,95 @@
 template <typename T>
 using eigen_x = Eigen::Matrix<T, -1, -1>;
 
+// Test same
+TEST(requires, same_vtest) {
+  using stan::require_same_vt;
+  using stan::test::require_variadic_checker;
+  EXPECT_FALSE(
+      (require_variadic_checker<stan::require_same_vt, eigen_x<double>, eigen_x<int>>::value));
+  EXPECT_TRUE(
+      (require_variadic_checker<stan::require_same_vt, eigen_x<double>, eigen_x<double>>::value));
+  EXPECT_TRUE(
+      (require_variadic_checker<stan::require_same_vt, eigen_x<int>, eigen_x<int>>::value));
+}
+
+TEST(requires, not_same_vtest) {
+  using stan::require_not_same_vt;
+  using stan::test::require_variadic_checker;
+  EXPECT_TRUE(
+      (require_variadic_checker<require_not_same_vt, eigen_x<double>, eigen_x<int>>::value));
+  EXPECT_FALSE(
+      (require_variadic_checker<require_not_same_vt, eigen_x<double>, eigen_x<double>>::value));
+  EXPECT_FALSE((require_variadic_checker<require_not_same_vt, eigen_x<int>, eigen_x<int>>::value));
+}
+
+TEST(requires, all_same_vtest) {
+  using stan::require_all_same_vt;
+  using stan::test::require_variadic_checker;
+  EXPECT_FALSE((require_variadic_checker<require_all_same_vt, eigen_x<double>,
+                                         std::string, eigen_x<double>>::value));
+  EXPECT_TRUE((require_variadic_checker<require_all_same_vt, eigen_x<double>, eigen_x<double>,
+                                        eigen_x<double>>::value));
+  EXPECT_TRUE(
+      (require_variadic_checker<require_all_same_vt, eigen_x<int>, eigen_x<int>, eigen_x<int>>::value));
+}
+
+TEST(requires, all_not_same_vtest) {
+  using stan::require_any_not_same_vt;
+  using stan::test::require_variadic_checker;
+  EXPECT_TRUE((require_variadic_checker<require_any_not_same_vt, eigen_x<double>, eigen_x<int>,
+                                        eigen_x<double>>::value));
+  EXPECT_FALSE((require_variadic_checker<require_any_not_same_vt, eigen_x<double>, eigen_x<double>,
+                                         eigen_x<double>>::value));
+  EXPECT_FALSE(
+      (require_variadic_checker<require_any_not_same_vt, eigen_x<int>, eigen_x<int>, eigen_x<int>>::value));
+}
+
+
+// Test same
+TEST(requires, same_stest) {
+  using stan::require_same_st;
+  using stan::test::require_variadic_checker;
+  EXPECT_FALSE(
+      (require_variadic_checker<stan::require_same_st, eigen_x<double>, eigen_x<int>>::value));
+  EXPECT_TRUE(
+      (require_variadic_checker<stan::require_same_st, eigen_x<double>, eigen_x<double>>::value));
+  EXPECT_TRUE(
+      (require_variadic_checker<stan::require_same_st, eigen_x<int>, eigen_x<int>>::value));
+}
+
+TEST(requires, not_same_stest) {
+  using stan::require_not_same_st;
+  using stan::test::require_variadic_checker;
+  EXPECT_TRUE(
+      (require_variadic_checker<require_not_same_st, eigen_x<double>, eigen_x<int>>::value));
+  EXPECT_FALSE(
+      (require_variadic_checker<require_not_same_st, eigen_x<double>, eigen_x<double>>::value));
+  EXPECT_FALSE((require_variadic_checker<require_not_same_st, eigen_x<int>, eigen_x<int>>::value));
+}
+
+TEST(requires, all_same_stest) {
+  using stan::require_all_same_st;
+  using stan::test::require_variadic_checker;
+  EXPECT_FALSE((require_variadic_checker<require_all_same_st, eigen_x<double>,
+                                         std::string, eigen_x<double>>::value));
+  EXPECT_TRUE((require_variadic_checker<require_all_same_st, eigen_x<double>, eigen_x<double>,
+                                        eigen_x<double>>::value));
+  EXPECT_TRUE(
+      (require_variadic_checker<require_all_same_st, eigen_x<int>, eigen_x<int>, eigen_x<int>>::value));
+}
+
+TEST(requires, all_not_same_stest) {
+  using stan::require_any_not_same_st;
+  using stan::test::require_variadic_checker;
+  EXPECT_TRUE((require_variadic_checker<require_any_not_same_st, eigen_x<double>, eigen_x<int>,
+                                        eigen_x<double>>::value));
+  EXPECT_FALSE((require_variadic_checker<require_any_not_same_st, eigen_x<double>, eigen_x<double>,
+                                         eigen_x<double>>::value));
+  EXPECT_FALSE(
+      (require_variadic_checker<require_any_not_same_st, eigen_x<int>, eigen_x<int>, eigen_x<int>>::value));
+}
+
 TEST(requires, eigen_t_test) {
   using stan::test::require_scal_checker;
   require_scal_checker<stan::require_eigen_t, eigen_x<double>>::unary();
