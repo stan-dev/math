@@ -66,7 +66,7 @@ GIT_ERROR
     exit 1
 fi
 
-tbb_old_version=`expr "$(ls -d tbb/tbb_*\.ver)" : '^tbb/tbb_\(.*\)\.ver'`
+tbb_old_version=`expr "$(ls -d tbb_*/)" : '^tbb_\(.*\)/'`
 
 echo "Old version:  $tbb_old_version"
 echo "New version:  $tbb_version"
@@ -79,14 +79,14 @@ git commit -m "upgrading to TBB version ${tbb_version}; removing old TBB library
 # 2. Modify makefiles and README with new version number
 # if the versions are the same we are only trimming files
 if [ "$tbb_version" != "$tbb_old_version" ]; then
-touch tbb/tbb_$tbb_version.ver
+
 sed -i -e "s|lib/tbb_${tbb_old_version}|lib/tbb_${tbb_version}|g" ../README.md ../make/*
 sed -i -e "s|TBB (version ${tbb_old_version})|TBB (version ${tbb_version})|g" ../README.md
 rm -f ../README.md*-e ../make/*-e
-git add -u ../README.md ../make/* tbb/tbb_$tbb_version.ver
+git add -u ../README.md ../make/*
 git commit -m "upgrading to TBB version ${tbb_version}; modifying with new version number"
-fi
 
+fi
 # 3. Unpack the new TBB version.
 tar xvzf $tbb_filename
 mv tbb-${tbb_version} tbb_${tbb_version}
