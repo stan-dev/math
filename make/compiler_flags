@@ -7,6 +7,19 @@ ifneq ($(OS),Windows_NT)
   OS := $(shell uname -s)
 endif
 
+## Set OS specific library filename extensions
+ifeq ($(OS),Windows_NT)
+  LIBRARY_SUFFIX ?= .dll
+endif
+
+ifeq ($(OS),Darwin)
+  LIBRARY_SUFFIX ?= .dylib
+endif
+
+ifeq ($(OS),Linux)
+  LIBRARY_SUFFIX ?= .so
+endif
+
 ## Set default compiler
 ifeq (default,$(origin CXX))
   ifeq ($(OS),Darwin)  ## Darwin is Mac OS X
@@ -81,6 +94,11 @@ CXXFLAGS_SUNDIALS ?= -pipe
 # CXXFLAGS_OPENCL
 # LDFLAGS_OPENCL
 # LDLIBS_OPENCL
+
+## TBB specific flags
+# CXXFLAGS_TBB
+# LDFLAGS_TBB
+# LDLIBS_TBB
 
 ## MPI specific flags
 # CXXFLAGS_MPI
@@ -160,6 +178,43 @@ ifdef STAN_OPENCL
 endif
 
 ################################################################################
+# Setup Intel TBB
+#
+# Sets up TBB CXXFLAGS_TBB and LDFLAGS_TBB to compile and link to TBB
+#
+# The tbbmalloc and tbbmalloc_proxy libraries are optionally included
+# as targets. By default these are included on MacOS only. This behavior
+# can be altered by explicitly setting the TBB_LIBRARIES variable which 
+# should contain "tbb" or "tbb tbbmalloc tbbmalloc_proxy". Setting the
+# TBB_LIBRARIES variable overrides the default.
+
+TBB_BIN ?= $(MATH)lib/tbb
+TBB_BIN_ABSOLUTE_PATH = $(abspath $(TBB_BIN))
+TBB_ABSOLUTE_PATH = $(abspath $(TBB))
+
+ifeq ($(OS),Darwin)
+  TBB_LIBRARIES ?= tbb tbbmalloc tbbmalloc_proxy 
+else
+  TBB_LIBRARIES ?= tbb
+endif
+
+ifeq ($(OS),Windows_NT)
+  TBB_TARGETS ?= $(addsuffix $(LIBRARY_SUFFIX),$(addprefix $(TBB_BIN)/,$(TBB_LIBRARIES)))
+endif
+ifeq ($(OS),Darwin)
+  TBB_TARGETS ?= $(addsuffix $(LIBRARY_SUFFIX),$(addprefix $(TBB_BIN)/lib,$(TBB_LIBRARIES)))
+endif
+ifeq ($(OS),Linux)
+  TBB_TARGETS ?= $(addsuffix $(LIBRARY_SUFFIX).2,$(addprefix $(TBB_BIN)/lib,$(TBB_LIBRARIES)))
+endif
+
+
+CXXFLAGS_TBB ?= -I $(TBB)/include
+LDFLAGS_TBB ?= -Wl,-L,"$(TBB_BIN_ABSOLUTE_PATH)" -Wl,-rpath,"$(TBB_BIN_ABSOLUTE_PATH)"
+LDLIBS_TBB ?= 
+
+
+################################################################################
 # Setup MPI
 #
 # Sets up MPI CXXFLAGS_MPI and LDLIBS_MPI to compile and link to MPI
@@ -169,15 +224,7 @@ ifdef STAN_MPI
     $(error MPI is not supported on Windows.)
   endif
 
-  ifeq ($(OS),Darwin)
-    BOOST_LIBRARY_SUFFIX := .dylib
-  endif
-
-  ifeq ($(OS),Linux)
-    BOOST_LIBRARY_SUFFIX := .so
-  endif
-
-  MPI_TARGETS ?= $(addsuffix $(BOOST_LIBRARY_SUFFIX),$(BOOST)/stage/lib/libboost_serialization $(BOOST)/stage/lib/libboost_mpi) $(MPI_TEMPLATE_INSTANTIATION)
+  MPI_TARGETS ?= $(addsuffix $(LIBRARY_SUFFIX),$(BOOST)/stage/lib/libboost_serialization $(BOOST)/stage/lib/libboost_mpi) $(MPI_TEMPLATE_INSTANTIATION)
   CPPFLAGS_MPI ?= -DSTAN_MPI
 
   BOOST_LIBRARY_ABSOLUTE_PATH = $(abspath $(BOOST)/stage/lib)
@@ -188,10 +235,10 @@ endif
 
 
 
-CXXFLAGS += $(CXXFLAGS_LANG) $(CXXFLAGS_OS) $(CXXFLAGS_WARNINGS) $(CXXFLAGS_BOOST) $(CXXFLAGS_EIGEN) $(CXXFLAGS_OPENCL) $(CXXFLAGS_MPI) -O$(O) $(INC)
-CPPFLAGS += $(CPPFLAGS_LANG) $(CPPFLAGS_OS) $(CPPFLAGS_WARNINGS) $(CPPFLAGS_BOOST) $(CPPFLAGS_EIGEN) $(CPPFLAGS_OPENCL) $(CPPFLAGS_MPI)
-LDFLAGS += $(LDFLAGS_LANG) $(LDFLAGS_OS) $(LDFLAGS_WARNINGS) $(LDFLAGS_BOOST) $(LDFLAGS_EIGEN) $(LDFLAGS_OPENCL) $(LDFLAGS_MPI)
-LDLIBS += $(LDLIBS_LANG) $(LDLIBS_OS) $(LDLIBS_WARNINGS) $(LDLIBS_BOOST) $(LDLIBS_EIGEN) $(LDLIBS_OPENCL) $(LDLIBS_MPI)
+CXXFLAGS += $(CXXFLAGS_LANG) $(CXXFLAGS_OS) $(CXXFLAGS_WARNINGS) $(CXXFLAGS_BOOST) $(CXXFLAGS_EIGEN) $(CXXFLAGS_OPENCL) $(CXXFLAGS_MPI) $(CXXFLAGS_TBB) -O$(O) $(INC)
+CPPFLAGS += $(CPPFLAGS_LANG) $(CPPFLAGS_OS) $(CPPFLAGS_WARNINGS) $(CPPFLAGS_BOOST) $(CPPFLAGS_EIGEN) $(CPPFLAGS_OPENCL) $(CPPFLAGS_MPI) $(CPPFLAGS_TBB)
+LDFLAGS += $(LDFLAGS_LANG) $(LDFLAGS_OS) $(LDFLAGS_WARNINGS) $(LDFLAGS_BOOST) $(LDFLAGS_EIGEN) $(LDFLAGS_OPENCL) $(LDFLAGS_MPI) $(LDFLAGS_TBB)
+LDLIBS += $(LDLIBS_LANG) $(LDLIBS_OS) $(LDLIBS_WARNINGS) $(LDLIBS_BOOST) $(LDLIBS_EIGEN) $(LDLIBS_OPENCL) $(LDLIBS_MPI) $(LDLIBS_TBB)
 
 .PHONY: print-compiler-flags
 print-compiler-flags:
@@ -205,6 +252,7 @@ print-compiler-flags:
 	@echo '  - EIGEN                       ' $(EIGEN)
 	@echo '  - BOOST                       ' $(BOOST)
 	@echo '  - SUNDIALS                    ' $(SUNDIALS)
+	@echo '  - TBB                         ' $(TBB)
 	@echo '  - GTEST                       ' $(GTEST)
 	@echo '  - STAN_OPENCL                 ' $(STAN_OPENCL)
 	@echo '  - STAN_MPI                    ' $(STAN_MPI)
@@ -216,6 +264,7 @@ print-compiler-flags:
 	@echo '  - CXXFLAGS_OS                 ' $(CXXFLAGS_OS)
 	@echo '  - CXXFLAGS_GTEST              ' $(CXXFLAGS_GTEST)
 	@echo '  - CXXFLAGS_OPENCL             ' $(CXXFLAGS_OPENCL)
+	@echo '  - CXXFLAGS_TBB                ' $(CXXFLAGS_TBB)
 	@echo '  - CXXFLAGS_MPI                ' $(CXXFLAGS_MPI)
 	@echo '  - CFLAGS_SUNDIALS             ' $(CFLAGS_SUNDIALS)
 	@echo '  LDLIBS:'
@@ -226,6 +275,7 @@ print-compiler-flags:
 	@echo '  - LDLIBS_OS                   ' $(LDLIBS_OS)
 	@echo '  - LDLIBS_GTEST                ' $(LDLIBS_GTEST)
 	@echo '  - LDLIBS_OPENCL               ' $(LDLIBS_OPENCL)
+	@echo '  - LDLIBS_TBB                  ' $(LDLIBS_TBB)
 	@echo '  - LDLIBS_MPI                  ' $(LDLIBS_MPI)
 	@echo '  LDFLAGS:'
 	@echo '  - LDFLAGS_LANG                ' $(LDFLAGS_LANG)
@@ -235,5 +285,6 @@ print-compiler-flags:
 	@echo '  - LDFLAGS_OS                  ' $(LDFLAGS_OS)
 	@echo '  - LDFLAGS_GTEST               ' $(LDFLAGS_GTEST)
 	@echo '  - LDFLAGS_OPENCL              ' $(LDFLAGS_OPENCL)
+	@echo '  - LDFLAGS_TBB                 ' $(LDFLAGS_TBB)
 	@echo '  - LDFLAGS_MPI                 ' $(LDFLAGS_MPI)
 	@echo ''
