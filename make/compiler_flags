@@ -183,17 +183,16 @@ endif
 # Sets up TBB CXXFLAGS_TBB and LDFLAGS_TBB to compile and link to TBB
 #
 # The tbbmalloc and tbbmalloc_proxy libraries are optionally included
-# as targets. By default these are included whenever STAN_THREADS is
-# set and they are left out otherwise. This behavior can be altered by
-# explicitly setting the TBB_LIBRARIES variable which should contain
-# "tbb" or "tbb tbbmalloc tbbmalloc_proxy". Setting the TBB_LIBRARIES
-# variable overrides the default.
+# as targets. By default these are included on MacOS only. This behavior
+# can be altered by explicitly setting the TBB_LIBRARIES variable which 
+# should contain "tbb" or "tbb tbbmalloc tbbmalloc_proxy". Setting the
+# TBB_LIBRARIES variable overrides the default.
 
-TBB_BIN ?= lib/tbb
+TBB_BIN ?= $(MATH)lib/tbb
 TBB_BIN_ABSOLUTE_PATH = $(abspath $(TBB_BIN))
 TBB_ABSOLUTE_PATH = $(abspath $(TBB))
 
-ifneq (,$(findstring STAN_THREADS,$(CXXFLAGS)))
+ifeq ($(OS),Darwin)
   TBB_LIBRARIES ?= tbb tbbmalloc tbbmalloc_proxy 
 else
   TBB_LIBRARIES ?= tbb
