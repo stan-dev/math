@@ -174,7 +174,7 @@ class stack_alloc {
     if (unlikely(next_loc_ >= cur_block_end_)) {
       result = move_to_next_block(len);
     }
-    return reinterpret_cast<void*>(result);
+    return static_cast<void*>(result);
   }
 
   /**
