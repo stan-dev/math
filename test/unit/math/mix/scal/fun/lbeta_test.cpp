@@ -1,6 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 
-TEST(mathMixCore, beta) {
+TEST(mathMixScalFun, lbeta) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::lbeta;
     return lbeta(x1, x2);
