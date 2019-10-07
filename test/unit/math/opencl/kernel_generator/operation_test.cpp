@@ -16,11 +16,11 @@ using stan::math::matrix_cl;
   for (int i = 0; i < A.size(); i++)    \
     EXPECT_NEAR(A(i), B(i), DELTA);
 
-
 TEST(MathMatrixCL, operation_errors) {
-  EXPECT_THROW(matrix_cl<double> a = stan::math::as_operation(3.5), std::domain_error);
-  matrix_cl<double> b(3,3);
-  matrix_cl<double> c(4,3);
+  EXPECT_THROW(matrix_cl<double> a = stan::math::as_operation(3.5),
+               std::domain_error);
+  matrix_cl<double> b(3, 3);
+  matrix_cl<double> c(4, 3);
   EXPECT_THROW((b + 3).evaluate_into(c), std::invalid_argument);
 }
 

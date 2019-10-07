@@ -29,13 +29,12 @@ namespace math {
  */
 template <typename Derived, typename T_a, typename T_b>
 class binary_operation
-    : public operation<
-          Derived,
-          common_return_scalar_t<T_a, T_b>> {
+    : public operation<Derived, common_return_scalar_t<T_a, T_b>> {
  protected:
   T_a a_;
   T_b b_;
   std::string op_;
+
  public:
   static_assert(
       std::is_base_of<operation_base, std::remove_reference_t<T_a>>::value,
@@ -143,7 +142,6 @@ class binary_operation
    * @return view
    */
   inline matrix_cl_view view() const { return either(a_.view(), b_.view()); }
-
 };
 
 /**

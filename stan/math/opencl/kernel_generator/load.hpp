@@ -24,6 +24,7 @@ class load__
     : public operation<load__<T>, typename std::remove_reference_t<T>::type> {
  protected:
   T a_;
+
  public:
   using ReturnScalar = typename std::remove_reference_t<T>::type;
   using base = operation<load__<T>, ReturnScalar>;
@@ -79,7 +80,8 @@ class load__
    * @return part of kernel with code for this expressions
    */
   inline kernel_parts generate_lhs(std::set<const void*>& generated,
-                                   name_generator& name_gen, const std::string& i,
+                                   name_generator& name_gen,
+                                   const std::string& i,
                                    const std::string& j) const {
     kernel_parts res;
     if (generated.count(this) == 0) {
@@ -143,7 +145,6 @@ class load__
    * @return view
    */
   inline matrix_cl_view view() const { return a_.view(); }
-
 };
 
 }  // namespace math

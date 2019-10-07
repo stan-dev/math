@@ -18,8 +18,9 @@ namespace math {
  * @param an operation
  * @return operation
  */
-template <typename T_operation, typename = std::enable_if_t<std::is_base_of<
-                          operation_base, std::remove_reference_t<T_operation>>::value>>
+template <typename T_operation,
+          typename = std::enable_if_t<std::is_base_of<
+              operation_base, std::remove_reference_t<T_operation>>::value>>
 inline T_operation&& as_operation(T_operation&& a) {
   return std::forward<T_operation>(a);
 }
@@ -43,9 +44,10 @@ inline scalar__<T_scalar> as_operation(const T_scalar a) {
  * @param a \c matrix_cl
  * @return \c load__ wrapping the input
  */
-template <typename T_matrix_cl, typename = std::enable_if_t<std::is_base_of<
-                          matrix_cl<typename std::remove_reference_t<T_matrix_cl>::type>,
-                          std::remove_reference_t<T_matrix_cl>>::value>>
+template <typename T_matrix_cl,
+          typename = std::enable_if_t<std::is_base_of<
+              matrix_cl<typename std::remove_reference_t<T_matrix_cl>::type>,
+              std::remove_reference_t<T_matrix_cl>>::value>>
 inline load__<T_matrix_cl> as_operation(T_matrix_cl&& a) {
   return load__<T_matrix_cl>(std::forward<T_matrix_cl>(a));
 }
@@ -55,7 +57,8 @@ inline load__<T_matrix_cl> as_operation(T_matrix_cl&& a) {
  * operation. If a function accepts a forwarding reference T&& a, the result of
  * as_operation(a) should be stored in a variable of type as_operation_t<T>. If
  * the return value of \c as_operation() would be a rvalue reference, the
- * reference is removed, so that a variable of this type actually stores the value.
+ * reference is removed, so that a variable of this type actually stores the
+ * value.
  */
 template <typename T>
 using as_operation_t = std::conditional_t<

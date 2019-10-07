@@ -10,7 +10,8 @@ namespace stan {
 namespace math {
 
 /**
- *Non-templated base of \c operation is needed for easy checking if something is a subclass of \c operation.
+ *Non-templated base of \c operation is needed for easy checking if something is
+ *a subclass of \c operation.
  */
 class operation_base {};
 

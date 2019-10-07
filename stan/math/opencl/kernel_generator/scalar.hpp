@@ -22,6 +22,7 @@ template <typename T>
 class scalar__ : public operation<scalar__<T>, T> {
  private:
   T a_;
+
  public:
   static_assert(std::is_arithmetic<T>::value,
                 "class scalar__<T>: std::is_arithmetic<T> must be true!");
@@ -93,7 +94,6 @@ class scalar__ : public operation<scalar__<T>, T> {
    * @return view
    */
   inline matrix_cl_view view() const { return matrix_cl_view::Entire; }
-
 };
 
 }  // namespace math

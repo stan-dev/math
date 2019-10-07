@@ -14,6 +14,5 @@
 #include <stan/math/opencl/kernel_generator/scalar.hpp>
 #include <stan/math/opencl/kernel_generator/binary_operation.hpp>
 
-
 #endif
 #endif

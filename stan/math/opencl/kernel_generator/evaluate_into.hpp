@@ -16,7 +16,9 @@ namespace math {
 template <typename Derived, typename ReturnScalar>
 template <typename T_lhs>
 void operation<Derived, ReturnScalar>::evaluate_into(const T_lhs& lhs) const {
-  static_assert(is_valid_expression<T_lhs>::value, "operation::evaluate_into: left hand side is not a valid expression!");
+  static_assert(
+      is_valid_expression<T_lhs>::value,
+      "operation::evaluate_into: left hand side is not a valid expression!");
   using cache = operation<Derived, ReturnScalar>::cache<T_lhs>;
   const auto& lhs_expression = as_operation(lhs);
 
@@ -26,9 +28,9 @@ void operation<Derived, ReturnScalar>::evaluate_into(const T_lhs& lhs) const {
   check_positive(function, "number of rows", n_rows);
   check_positive(function, "number of columns", n_cols);
   check_size_match(function, "Rows of ", "*this", n_rows, "rows of ",
-                     "lhs_expression", lhs_expression.rows());
+                   "lhs_expression", lhs_expression.rows());
   check_size_match(function, "Columns of ", "*this", n_cols, "columns of ",
-                     "lhs_expression", lhs_expression.cols());
+                   "lhs_expression", lhs_expression.cols());
   try {
     if (cache::kernel() == NULL) {
       std::string src = get_kernel_source_for_evaluating_into(lhs);
