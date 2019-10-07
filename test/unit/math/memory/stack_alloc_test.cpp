@@ -46,7 +46,6 @@ TEST(stack_alloc, bytes_allocated) {
   }
 }
 
-
 TEST(stack_alloc, alloc) {
   std::vector<double*> ds;
   std::vector<int*> is;
