@@ -24,11 +24,8 @@ class sum_eigen_v_vari : public sum_v_vari {
  public:
   template <int R1, int C1>
   explicit sum_eigen_v_vari(const Eigen::Matrix<var, R1, C1>& v1)
-      : sum_v_vari(
-            sum_of_val(v1),
-            reinterpret_cast<vari**>(stack_mem.alloc(
-                v1.size() * sizeof(vari*))),
-            v1.size()) {
+      : sum_v_vari(sum_of_val(v1), stack_mem.alloc_array<vari*>(v1.size()),
+                   v1.size()) {
     Eigen::Map<matrix_vi>(v_, v1.rows(), v1.cols()) = v1.vi();
   }
 };

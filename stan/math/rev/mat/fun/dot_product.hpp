@@ -78,8 +78,7 @@ class dot_product_vari : public vari {
   inline void initialize(vari**& mem_v, const var* inv,
                          vari** shared = nullptr) {
     if (shared == nullptr) {
-      mem_v = reinterpret_cast<vari**>(
-          stack_mem.alloc(length_ * sizeof(vari*)));
+      mem_v = stack_mem.alloc_array<vari*>(length_);
       Eigen::Map<vector_vi>(mem_v, length_)
           = Eigen::Map<const vector_v>(inv, length_).vi();
     } else {
@@ -90,8 +89,7 @@ class dot_product_vari : public vari {
   inline void initialize(vari**& mem_v, const Eigen::DenseBase<Derived>& inv,
                          vari** shared = nullptr) {
     if (shared == nullptr) {
-      mem_v = reinterpret_cast<vari**>(
-          stack_mem.alloc(length_ * sizeof(vari*)));
+      mem_v = stack_mem.alloc_array<vari*>(length_);
       Eigen::Map<vector_vi>(mem_v, length_)
           = Eigen::Ref<const vector_v>(inv).vi();
     } else {
@@ -102,8 +100,7 @@ class dot_product_vari : public vari {
   inline void initialize(double*& mem_d, const double* ind,
                          double* shared = nullptr) {
     if (shared == nullptr) {
-      mem_d = reinterpret_cast<double*>(
-          stack_mem.alloc(length_ * sizeof(double)));
+      mem_d = stack_mem.alloc_array<double>(length_);
       for (size_t i = 0; i < length_; i++) {
         mem_d[i] = ind[i];
       }
@@ -115,8 +112,7 @@ class dot_product_vari : public vari {
   inline void initialize(double*& mem_d, const Eigen::DenseBase<Derived>& ind,
                          double* shared = nullptr) {
     if (shared == nullptr) {
-      mem_d = reinterpret_cast<double*>(
-          stack_mem.alloc(length_ * sizeof(double)));
+      mem_d = stack_mem.alloc_array<double>(length_);
       Eigen::Map<vector_d>(mem_d, length_) = Eigen::Ref<const vector_d>(ind);
     } else {
       mem_d = shared;

@@ -31,9 +31,7 @@ inline matrix_v tcrossprod(const matrix_v& M) {
 
   matrix_v MMt(M.rows(), M.rows());
 
-  vari** vs
-      = reinterpret_cast<vari**>(stack_mem.alloc(
-          (M.rows() * M.cols()) * sizeof(vari*)));
+  vari** vs = stack_mem.alloc_array<vari*>(M.rows() * M.cols());
   int pos = 0;
   for (int m = 0; m < M.rows(); ++m) {
     for (int n = 0; n < M.cols(); ++n) {

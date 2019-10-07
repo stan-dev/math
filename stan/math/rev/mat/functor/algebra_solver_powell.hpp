@@ -44,10 +44,8 @@ struct algebra_solver_vari : public vari {
         y_(stack_mem.alloc_array<vari*>(y.size())),
         y_size_(y.size()),
         x_size_(x.size()),
-        theta_(
-            stack_mem.alloc_array<vari*>(x_size_)),
-        Jx_y_(stack_mem.alloc_array<double>(
-            x_size_ * y_size_)) {
+        theta_(stack_mem.alloc_array<vari*>(x_size_)),
+        Jx_y_(stack_mem.alloc_array<double>(x_size_ * y_size_)) {
     using Eigen::Map;
     using Eigen::MatrixXd;
     for (int i = 0; i < y.size(); ++i) {

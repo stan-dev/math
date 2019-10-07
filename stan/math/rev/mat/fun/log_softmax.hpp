@@ -61,8 +61,7 @@ inline Eigen::Matrix<var, Eigen::Dynamic, 1> log_softmax(
   check_nonzero_size("log_softmax", "alpha", alpha);
 
   // TODO(carpenter): replace with array alloc
-  vari** alpha_vi_array
-      = reinterpret_cast<vari**>(vari::operator new(sizeof(vari*) * a_size));
+  vari** alpha_vi_array = stack_mem.alloc_array<vari*>(a_size);
   Eigen::Map<vector_vi>(alpha_vi_array, a_size) = alpha.vi();
 
   vector_d alpha_d = alpha.val();
@@ -78,8 +77,7 @@ inline Eigen::Matrix<var, Eigen::Dynamic, 1> log_softmax(
 
   // end fold
   // TODO(carpenter): replace with array alloc
-  double* softmax_alpha_d_array
-      = reinterpret_cast<double*>(vari::operator new(sizeof(double) * a_size));
+  double* softmax_alpha_d_array = stack_mem.alloc_array<double>(a_size);
   Eigen::Map<vector_d>(softmax_alpha_d_array, a_size) = softmax_alpha_d;
 
   vector_v log_softmax_alpha(a_size);

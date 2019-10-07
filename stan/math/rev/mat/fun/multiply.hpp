@@ -72,12 +72,9 @@ class multiply_mat_vari : public vari {
         B_size_(B.size()),
         Ad_(stack_mem.alloc_array<double>(A_size_)),
         Bd_(stack_mem.alloc_array<double>(B_size_)),
-        variRefA_(
-            stack_mem.alloc_array<vari*>(A_size_)),
-        variRefB_(
-            stack_mem.alloc_array<vari*>(B_size_)),
-        variRefAB_(stack_mem.alloc_array<vari*>(
-            A_rows_ * B_cols_)) {
+        variRefA_(stack_mem.alloc_array<vari*>(A_size_)),
+        variRefB_(stack_mem.alloc_array<vari*>(B_size_)),
+        variRefAB_(stack_mem.alloc_array<vari*>(A_rows_ * B_cols_)) {
     using Eigen::Map;
     Map<matrix_vi>(variRefA_, A_rows_, A_cols_) = A.vi();
     Map<matrix_vi>(variRefB_, A_cols_, B_cols_) = B.vi();
@@ -182,10 +179,8 @@ class multiply_mat_vari<Ta, 1, Ca, Tb, 1> : public vari {
         size_(A.cols()),
         Ad_(stack_mem.alloc_array<double>(size_)),
         Bd_(stack_mem.alloc_array<double>(size_)),
-        variRefA_(
-            stack_mem.alloc_array<vari*>(size_)),
-        variRefB_(
-            stack_mem.alloc_array<vari*>(size_)) {
+        variRefA_(stack_mem.alloc_array<vari*>(size_)),
+        variRefB_(stack_mem.alloc_array<vari*>(size_)) {
     using Eigen::Map;
     Map<row_vector_vi>(variRefA_, size_) = A.vi();
     Map<vector_vi>(variRefB_, size_) = B.vi();
@@ -261,10 +256,8 @@ class multiply_mat_vari<double, Ra, Ca, Tb, Cb> : public vari {
         B_size_(B.size()),
         Ad_(stack_mem.alloc_array<double>(A_size_)),
         Bd_(stack_mem.alloc_array<double>(B_size_)),
-        variRefB_(
-            stack_mem.alloc_array<vari*>(B_size_)),
-        variRefAB_(stack_mem.alloc_array<vari*>(
-            A_rows_ * B_cols_)) {
+        variRefB_(stack_mem.alloc_array<vari*>(B_size_)),
+        variRefAB_(stack_mem.alloc_array<vari*>(A_rows_ * B_cols_)) {
     using Eigen::Map;
     Map<matrix_vi>(variRefB_, A_cols_, B_cols_) = B.vi();
     Map<matrix_d> Ad(Ad_, A_rows_, A_cols_);
@@ -358,8 +351,7 @@ class multiply_mat_vari<double, 1, Ca, Tb, 1> : public vari {
         size_(A.cols()),
         Ad_(stack_mem.alloc_array<double>(size_)),
         Bd_(stack_mem.alloc_array<double>(size_)),
-        variRefB_(
-            stack_mem.alloc_array<vari*>(size_)) {
+        variRefB_(stack_mem.alloc_array<vari*>(size_)) {
     using Eigen::Map;
     Map<row_vector_d> Ad(Ad_, size_);
     Map<vector_d> Bd(Bd_, size_);
@@ -431,10 +423,8 @@ class multiply_mat_vari<Ta, Ra, Ca, double, Cb> : public vari {
         B_size_(B.size()),
         Ad_(stack_mem.alloc_array<double>(A_size_)),
         Bd_(stack_mem.alloc_array<double>(B_size_)),
-        variRefA_(
-            stack_mem.alloc_array<vari*>(A_size_)),
-        variRefAB_(stack_mem.alloc_array<vari*>(
-            A_rows_ * B_cols_)) {
+        variRefA_(stack_mem.alloc_array<vari*>(A_size_)),
+        variRefAB_(stack_mem.alloc_array<vari*>(A_rows_ * B_cols_)) {
     using Eigen::Map;
     Map<matrix_vi>(variRefA_, A_rows_, A_cols_) = A.vi();
     Map<matrix_d> Ad(Ad_, A_rows_, A_cols_);
@@ -531,8 +521,7 @@ class multiply_mat_vari<Ta, 1, Ca, double, 1> : public vari {
         size_(A.cols()),
         Ad_(stack_mem.alloc_array<double>(size_)),
         Bd_(stack_mem.alloc_array<double>(size_)),
-        variRefA_(
-            stack_mem.alloc_array<vari*>(size_)) {
+        variRefA_(stack_mem.alloc_array<vari*>(size_)) {
     using Eigen::Map;
     Map<row_vector_vi>(variRefA_, size_) = A.vi();
     Map<row_vector_d> Ad(Ad_, size_);

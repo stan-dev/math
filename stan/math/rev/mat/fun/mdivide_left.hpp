@@ -30,21 +30,11 @@ class mdivide_left_vv_vari : public vari {
       : vari(0.0),
         M_(A.rows()),
         N_(B.cols()),
-        A_(reinterpret_cast<double *>(
-            stack_mem.alloc(sizeof(double) * A.rows()
-                                                       * A.cols()))),
-        C_(reinterpret_cast<double *>(
-            stack_mem.alloc(sizeof(double) * B.rows()
-                                                       * B.cols()))),
-        variRefA_(reinterpret_cast<vari **>(
-            stack_mem.alloc(sizeof(vari *) * A.rows()
-                                                       * A.cols()))),
-        variRefB_(reinterpret_cast<vari **>(
-            stack_mem.alloc(sizeof(vari *) * B.rows()
-                                                       * B.cols()))),
-        variRefC_(reinterpret_cast<vari **>(
-            stack_mem.alloc(sizeof(vari *) * B.rows()
-                                                       * B.cols()))) {
+        A_(stack_mem.alloc_array<double>(A.rows() * A.cols())),
+        C_(stack_mem.alloc_array<double>(B.rows() * B.cols())),
+        variRefA_(stack_mem.alloc_array<vari *>(A.rows() * A.cols())),
+        variRefB_(stack_mem.alloc_array<vari *>(B.rows() * B.cols())),
+        variRefC_(stack_mem.alloc_array<vari *>(B.rows() * B.cols())) {
     using Eigen::Map;
 
     Map<matrix_d> Ad(A_, M_, M_);
@@ -86,18 +76,10 @@ class mdivide_left_dv_vari : public vari {
       : vari(0.0),
         M_(A.rows()),
         N_(B.cols()),
-        A_(reinterpret_cast<double *>(
-            stack_mem.alloc(sizeof(double) * A.rows()
-                                                       * A.cols()))),
-        C_(reinterpret_cast<double *>(
-            stack_mem.alloc(sizeof(double) * B.rows()
-                                                       * B.cols()))),
-        variRefB_(reinterpret_cast<vari **>(
-            stack_mem.alloc(sizeof(vari *) * B.rows()
-                                                       * B.cols()))),
-        variRefC_(reinterpret_cast<vari **>(
-            stack_mem.alloc(sizeof(vari *) * B.rows()
-                                                       * B.cols()))) {
+        A_(stack_mem.alloc_array<double>(A.rows() * A.cols())),
+        C_(stack_mem.alloc_array<double>(B.rows() * B.cols())),
+        variRefB_(stack_mem.alloc_array<vari *>(B.rows() * B.cols())),
+        variRefC_(stack_mem.alloc_array<vari *>(B.rows() * B.cols())) {
     using Eigen::Map;
 
     Map<matrix_d> Ad(A_, M_, M_);
@@ -135,18 +117,10 @@ class mdivide_left_vd_vari : public vari {
       : vari(0.0),
         M_(A.rows()),
         N_(B.cols()),
-        A_(reinterpret_cast<double *>(
-            stack_mem.alloc(sizeof(double) * A.rows()
-                                                       * A.cols()))),
-        C_(reinterpret_cast<double *>(
-            stack_mem.alloc(sizeof(double) * B.rows()
-                                                       * B.cols()))),
-        variRefA_(reinterpret_cast<vari **>(
-            stack_mem.alloc(sizeof(vari *) * A.rows()
-                                                       * A.cols()))),
-        variRefC_(reinterpret_cast<vari **>(
-            stack_mem.alloc(sizeof(vari *) * B.rows()
-                                                       * B.cols()))) {
+        A_(stack_mem.alloc_array<double>(A.rows() * A.cols())),
+        C_(stack_mem.alloc_array<double>(B.rows() * B.cols())),
+        variRefA_(stack_mem.alloc_array<vari *>(A.rows() * A.cols())),
+        variRefC_(stack_mem.alloc_array<vari *>(B.rows() * B.cols())) {
     using Eigen::Map;
 
     Map<matrix_vi>(variRefA_, M_, M_) = A.vi();

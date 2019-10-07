@@ -60,10 +60,8 @@ Eigen::Matrix<var, R, C> unit_vector_constrain(
   check_nonzero_size("unit_vector", "y", y);
   vector_d y_d = y.val();
 
-  vari** y_vi_array = reinterpret_cast<vari**>(
-      stack_mem.alloc(sizeof(vari*) * y.size()));
-  double* unit_vector_y_d_array = reinterpret_cast<double*>(
-      stack_mem.alloc(sizeof(double) * y_d.size()));
+  vari** y_vi_array = stack_mem.alloc_array<vari*>(y.size());
+  double* unit_vector_y_d_array = stack_mem.alloc_array<double>(y_d.size()));
 
   Eigen::Map<vector_vi>(y_vi_array, y.size()) = y.vi();
   const double norm = y_d.norm();
