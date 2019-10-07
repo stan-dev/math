@@ -46,17 +46,6 @@ TEST(stack_alloc, bytes_allocated) {
   }
 }
 
-TEST(stack_alloc, is_aligned) {
-  char* ptr = static_cast<char*>(malloc(1024));
-  EXPECT_TRUE(stan::math::is_aligned(ptr, 1U));
-  EXPECT_TRUE(stan::math::is_aligned(ptr, 2U));
-  EXPECT_TRUE(stan::math::is_aligned(ptr, 4U));
-  EXPECT_TRUE(stan::math::is_aligned(ptr, 8U));
-
-  EXPECT_FALSE(stan::math::is_aligned(ptr + 1, 8U));
-  // not very safe, but just a test
-  free(ptr);
-}
 
 TEST(stack_alloc, alloc) {
   std::vector<double*> ds;
