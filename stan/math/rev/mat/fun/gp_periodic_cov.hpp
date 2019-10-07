@@ -230,8 +230,8 @@ class gp_periodic_cov_vari<T_x, double, T_l, T_p> : public vari {
         sin_dist_sq_(stack_mem.alloc_array<double>(size_ltri_)),
         l_vari_(l.vi_),
         p_vari_(p.vi_),
-        cov_lower_(stack_mem.alloc_array<vari*>(size_ltri_)),
-        cov_diag_(stack_mem.alloc_array<vari*>(size_)) {
+        cov_lower_(stack_mem.alloc_array<vari *>(size_ltri_)),
+        cov_diag_(stack_mem.alloc_array<vari *>(size_)) {
     double neg_two_inv_l_sq = -2.0 / (l_d_ * l_d_);
     double pi_div_p = pi() / p_d_;
 
