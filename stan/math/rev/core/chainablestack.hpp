@@ -39,7 +39,6 @@ struct stack_mem_impl {
   inline bool in_stack(const void* ptr) const {
     return ChainableStack::instance_->memalloc_.in_stack(ptr);
   }
-
 } stack_mem;
 }  // namespace math
 }  // namespace stan
