@@ -124,7 +124,7 @@ class vari {
    * @return Pointer to allocated bytes.
    */
   static inline void* operator new(size_t nbytes) {
-    return ChainableStack::instance_->memalloc_.alloc(nbytes);
+    return stack_mem.alloc(nbytes);
   }
 
   /**

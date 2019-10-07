@@ -24,7 +24,7 @@ class dot_self_vari : public vari {
   explicit dot_self_vari(const Eigen::DenseBase<Derived>& v)
       : vari(var_dot_self(v)), size_(v.size()) {
     v_ = reinterpret_cast<vari**>(
-        ChainableStack::instance_->memalloc_.alloc(size_ * sizeof(vari*)));
+        stack_mem.alloc(size_ * sizeof(vari*)));
 
     Eigen::Map<vector_vi>(v_, size_) = Eigen::Ref<const vector_v>(v).vi();
   }
@@ -32,7 +32,7 @@ class dot_self_vari : public vari {
   explicit dot_self_vari(const Eigen::Matrix<var, R, C>& v)
       : vari(var_dot_self(v)), size_(v.size()) {
     v_ = reinterpret_cast<vari**>(
-        ChainableStack::instance_->memalloc_.alloc(size_ * sizeof(vari*)));
+        stack_mem.alloc(size_ * sizeof(vari*)));
     Eigen::Map<matrix_vi>(v_, v.rows(), v.cols()) = v.vi();
   }
   inline static double square(double x) { return square(x); }

@@ -14,9 +14,9 @@ namespace math {
 namespace internal {
 
 inline var calc_variance(size_t size, const var* dtrs) {
-  vari** varis = ChainableStack::instance_->memalloc_.alloc_array<vari*>(size);
+  vari** varis = stack_mem.alloc_array<vari*>(size);
   double* partials
-      = ChainableStack::instance_->memalloc_.alloc_array<double>(size);
+      = stack_mem.alloc_array<double>(size);
 
   Eigen::Map<const vector_v> dtrs_map(dtrs, size);
   Eigen::Map<vector_vi>(varis, size) = dtrs_map.vi();

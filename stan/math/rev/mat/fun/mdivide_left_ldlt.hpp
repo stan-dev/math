@@ -52,10 +52,10 @@ class mdivide_left_ldlt_vv_vari : public vari {
         M_(A.rows()),
         N_(B.cols()),
         variRefB_(reinterpret_cast<vari **>(
-            ChainableStack::instance_->memalloc_.alloc(sizeof(vari *) * B.rows()
+            stack_mem.alloc(sizeof(vari *) * B.rows()
                                                        * B.cols()))),
         variRefC_(reinterpret_cast<vari **>(
-            ChainableStack::instance_->memalloc_.alloc(sizeof(vari *) * B.rows()
+            stack_mem.alloc(sizeof(vari *) * B.rows()
                                                        * B.cols()))),
         alloc_(new mdivide_left_ldlt_alloc<R1, C1, R2, C2>()),
         alloc_ldlt_(A.alloc_) {
@@ -102,10 +102,10 @@ class mdivide_left_ldlt_dv_vari : public vari {
         M_(A.rows()),
         N_(B.cols()),
         variRefB_(reinterpret_cast<vari **>(
-            ChainableStack::instance_->memalloc_.alloc(sizeof(vari *) * B.rows()
+            stack_mem.alloc(sizeof(vari *) * B.rows()
                                                        * B.cols()))),
         variRefC_(reinterpret_cast<vari **>(
-            ChainableStack::instance_->memalloc_.alloc(sizeof(vari *) * B.rows()
+            stack_mem.alloc(sizeof(vari *) * B.rows()
                                                        * B.cols()))),
         alloc_(new mdivide_left_ldlt_alloc<R1, C1, R2, C2>()) {
     Eigen::Map<matrix_vi>(variRefB_, M_, N_) = B.vi();
@@ -148,7 +148,7 @@ class mdivide_left_ldlt_vd_vari : public vari {
         M_(A.rows()),
         N_(B.cols()),
         variRefC_(reinterpret_cast<vari **>(
-            ChainableStack::instance_->memalloc_.alloc(sizeof(vari *) * B.rows()
+            stack_mem.alloc(sizeof(vari *) * B.rows()
                                                        * B.cols()))),
         alloc_(new mdivide_left_ldlt_alloc<R1, C1, R2, C2>()),
         alloc_ldlt_(A.alloc_) {

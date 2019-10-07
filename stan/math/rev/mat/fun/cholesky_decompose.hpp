@@ -75,9 +75,9 @@ class cholesky_block : public vari {
                  const Eigen::Matrix<double, -1, -1>& L_A)
       : vari(0.0),
         M_(A.rows()),
-        vari_ref_A_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
+        vari_ref_A_(stack_mem.alloc_array<vari*>(
             A.rows() * (A.rows() + 1) / 2)),
-        vari_ref_L_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
+        vari_ref_L_(stack_mem.alloc_array<vari*>(
             A.rows() * (A.rows() + 1) / 2)) {
     size_t pos = 0;
     block_size_ = std::max(M_ / 8, 8);
@@ -189,9 +189,9 @@ class cholesky_scalar : public vari {
                   const Eigen::Matrix<double, -1, -1>& L_A)
       : vari(0.0),
         M_(A.rows()),
-        vari_ref_A_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
+        vari_ref_A_(stack_mem.alloc_array<vari*>(
             A.rows() * (A.rows() + 1) / 2)),
-        vari_ref_L_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
+        vari_ref_L_(stack_mem.alloc_array<vari*>(
             A.rows() * (A.rows() + 1) / 2)) {
     size_t accum = 0;
     size_t accum_i = accum;
@@ -279,9 +279,9 @@ class cholesky_opencl : public vari {
                   const Eigen::Matrix<double, -1, -1>& L_A)
       : vari(0.0),
         M_(A.rows()),
-        vari_ref_A_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
+        vari_ref_A_(stack_mem.alloc_array<vari*>(
             A.rows() * (A.rows() + 1) / 2)),
-        vari_ref_L_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
+        vari_ref_L_(stack_mem.alloc_array<vari*>(
             A.rows() * (A.rows() + 1) / 2)) {
     size_t pos = 0;
     for (size_type j = 0; j < M_; ++j) {

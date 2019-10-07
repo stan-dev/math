@@ -61,9 +61,9 @@ Eigen::Matrix<var, R, C> unit_vector_constrain(
   vector_d y_d = y.val();
 
   vari** y_vi_array = reinterpret_cast<vari**>(
-      ChainableStack::instance_->memalloc_.alloc(sizeof(vari*) * y.size()));
+      stack_mem.alloc(sizeof(vari*) * y.size()));
   double* unit_vector_y_d_array = reinterpret_cast<double*>(
-      ChainableStack::instance_->memalloc_.alloc(sizeof(double) * y_d.size()));
+      stack_mem.alloc(sizeof(double) * y_d.size()));
 
   Eigen::Map<vector_vi>(y_vi_array, y.size()) = y.vi();
   const double norm = y_d.norm();

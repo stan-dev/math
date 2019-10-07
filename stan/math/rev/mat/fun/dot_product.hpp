@@ -79,7 +79,7 @@ class dot_product_vari : public vari {
                          vari** shared = nullptr) {
     if (shared == nullptr) {
       mem_v = reinterpret_cast<vari**>(
-          ChainableStack::instance_->memalloc_.alloc(length_ * sizeof(vari*)));
+          stack_mem.alloc(length_ * sizeof(vari*)));
       Eigen::Map<vector_vi>(mem_v, length_)
           = Eigen::Map<const vector_v>(inv, length_).vi();
     } else {
@@ -91,7 +91,7 @@ class dot_product_vari : public vari {
                          vari** shared = nullptr) {
     if (shared == nullptr) {
       mem_v = reinterpret_cast<vari**>(
-          ChainableStack::instance_->memalloc_.alloc(length_ * sizeof(vari*)));
+          stack_mem.alloc(length_ * sizeof(vari*)));
       Eigen::Map<vector_vi>(mem_v, length_)
           = Eigen::Ref<const vector_v>(inv).vi();
     } else {
@@ -103,7 +103,7 @@ class dot_product_vari : public vari {
                          double* shared = nullptr) {
     if (shared == nullptr) {
       mem_d = reinterpret_cast<double*>(
-          ChainableStack::instance_->memalloc_.alloc(length_ * sizeof(double)));
+          stack_mem.alloc(length_ * sizeof(double)));
       for (size_t i = 0; i < length_; i++) {
         mem_d[i] = ind[i];
       }
@@ -116,7 +116,7 @@ class dot_product_vari : public vari {
                          double* shared = nullptr) {
     if (shared == nullptr) {
       mem_d = reinterpret_cast<double*>(
-          ChainableStack::instance_->memalloc_.alloc(length_ * sizeof(double)));
+          stack_mem.alloc(length_ * sizeof(double)));
       Eigen::Map<vector_d>(mem_d, length_) = Eigen::Ref<const vector_d>(ind);
     } else {
       mem_d = shared;

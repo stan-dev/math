@@ -41,11 +41,11 @@ inline var log_determinant_spd(const Eigen::Matrix<var, R, C>& m) {
                "log determininant of the matrix argument", val);
 
   vari** operands
-      = ChainableStack::instance_->memalloc_.alloc_array<vari*>(m.size());
+      = stack_mem.alloc_array<vari*>(m.size());
   Eigen::Map<matrix_vi>(operands, m.rows(), m.cols()) = m.vi();
 
   double* gradients
-      = ChainableStack::instance_->memalloc_.alloc_array<double>(m.size());
+      = stack_mem.alloc_array<double>(m.size());
   Eigen::Map<matrix_d>(gradients, m.rows(), m.cols()) = m_d;
 
   return var(

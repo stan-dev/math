@@ -70,13 +70,13 @@ class multiply_mat_vari : public vari {
         B_cols_(B.cols()),
         A_size_(A.size()),
         B_size_(B.size()),
-        Ad_(ChainableStack::instance_->memalloc_.alloc_array<double>(A_size_)),
-        Bd_(ChainableStack::instance_->memalloc_.alloc_array<double>(B_size_)),
+        Ad_(stack_mem.alloc_array<double>(A_size_)),
+        Bd_(stack_mem.alloc_array<double>(B_size_)),
         variRefA_(
-            ChainableStack::instance_->memalloc_.alloc_array<vari*>(A_size_)),
+            stack_mem.alloc_array<vari*>(A_size_)),
         variRefB_(
-            ChainableStack::instance_->memalloc_.alloc_array<vari*>(B_size_)),
-        variRefAB_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
+            stack_mem.alloc_array<vari*>(B_size_)),
+        variRefAB_(stack_mem.alloc_array<vari*>(
             A_rows_ * B_cols_)) {
     using Eigen::Map;
     Map<matrix_vi>(variRefA_, A_rows_, A_cols_) = A.vi();
@@ -180,12 +180,12 @@ class multiply_mat_vari<Ta, 1, Ca, Tb, 1> : public vari {
                     const Eigen::Matrix<Tb, Ca, 1>& B)
       : vari(0.0),
         size_(A.cols()),
-        Ad_(ChainableStack::instance_->memalloc_.alloc_array<double>(size_)),
-        Bd_(ChainableStack::instance_->memalloc_.alloc_array<double>(size_)),
+        Ad_(stack_mem.alloc_array<double>(size_)),
+        Bd_(stack_mem.alloc_array<double>(size_)),
         variRefA_(
-            ChainableStack::instance_->memalloc_.alloc_array<vari*>(size_)),
+            stack_mem.alloc_array<vari*>(size_)),
         variRefB_(
-            ChainableStack::instance_->memalloc_.alloc_array<vari*>(size_)) {
+            stack_mem.alloc_array<vari*>(size_)) {
     using Eigen::Map;
     Map<row_vector_vi>(variRefA_, size_) = A.vi();
     Map<vector_vi>(variRefB_, size_) = B.vi();
@@ -259,11 +259,11 @@ class multiply_mat_vari<double, Ra, Ca, Tb, Cb> : public vari {
         B_cols_(B.cols()),
         A_size_(A.size()),
         B_size_(B.size()),
-        Ad_(ChainableStack::instance_->memalloc_.alloc_array<double>(A_size_)),
-        Bd_(ChainableStack::instance_->memalloc_.alloc_array<double>(B_size_)),
+        Ad_(stack_mem.alloc_array<double>(A_size_)),
+        Bd_(stack_mem.alloc_array<double>(B_size_)),
         variRefB_(
-            ChainableStack::instance_->memalloc_.alloc_array<vari*>(B_size_)),
-        variRefAB_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
+            stack_mem.alloc_array<vari*>(B_size_)),
+        variRefAB_(stack_mem.alloc_array<vari*>(
             A_rows_ * B_cols_)) {
     using Eigen::Map;
     Map<matrix_vi>(variRefB_, A_cols_, B_cols_) = B.vi();
@@ -356,10 +356,10 @@ class multiply_mat_vari<double, 1, Ca, Tb, 1> : public vari {
                     const Eigen::Matrix<Tb, Ca, 1>& B)
       : vari(0.0),
         size_(A.cols()),
-        Ad_(ChainableStack::instance_->memalloc_.alloc_array<double>(size_)),
-        Bd_(ChainableStack::instance_->memalloc_.alloc_array<double>(size_)),
+        Ad_(stack_mem.alloc_array<double>(size_)),
+        Bd_(stack_mem.alloc_array<double>(size_)),
         variRefB_(
-            ChainableStack::instance_->memalloc_.alloc_array<vari*>(size_)) {
+            stack_mem.alloc_array<vari*>(size_)) {
     using Eigen::Map;
     Map<row_vector_d> Ad(Ad_, size_);
     Map<vector_d> Bd(Bd_, size_);
@@ -429,11 +429,11 @@ class multiply_mat_vari<Ta, Ra, Ca, double, Cb> : public vari {
         B_cols_(B.cols()),
         A_size_(A.size()),
         B_size_(B.size()),
-        Ad_(ChainableStack::instance_->memalloc_.alloc_array<double>(A_size_)),
-        Bd_(ChainableStack::instance_->memalloc_.alloc_array<double>(B_size_)),
+        Ad_(stack_mem.alloc_array<double>(A_size_)),
+        Bd_(stack_mem.alloc_array<double>(B_size_)),
         variRefA_(
-            ChainableStack::instance_->memalloc_.alloc_array<vari*>(A_size_)),
-        variRefAB_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
+            stack_mem.alloc_array<vari*>(A_size_)),
+        variRefAB_(stack_mem.alloc_array<vari*>(
             A_rows_ * B_cols_)) {
     using Eigen::Map;
     Map<matrix_vi>(variRefA_, A_rows_, A_cols_) = A.vi();
@@ -529,10 +529,10 @@ class multiply_mat_vari<Ta, 1, Ca, double, 1> : public vari {
                     const Eigen::Matrix<double, Ca, 1>& B)
       : vari(0.0),
         size_(A.cols()),
-        Ad_(ChainableStack::instance_->memalloc_.alloc_array<double>(size_)),
-        Bd_(ChainableStack::instance_->memalloc_.alloc_array<double>(size_)),
+        Ad_(stack_mem.alloc_array<double>(size_)),
+        Bd_(stack_mem.alloc_array<double>(size_)),
         variRefA_(
-            ChainableStack::instance_->memalloc_.alloc_array<vari*>(size_)) {
+            stack_mem.alloc_array<vari*>(size_)) {
     using Eigen::Map;
     Map<row_vector_vi>(variRefA_, size_) = A.vi();
     Map<row_vector_d> Ad(Ad_, size_);

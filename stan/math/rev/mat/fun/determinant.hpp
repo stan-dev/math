@@ -23,10 +23,10 @@ class determinant_vari : public vari {
       : vari(determinant_vari_calc(A)),
         rows_(A.rows()),
         cols_(A.cols()),
-        A_(reinterpret_cast<double*>(ChainableStack::instance_->memalloc_.alloc(
+        A_(reinterpret_cast<double*>(stack_mem.alloc(
             sizeof(double) * A.rows() * A.cols()))),
         adjARef_(
-            reinterpret_cast<vari**>(ChainableStack::instance_->memalloc_.alloc(
+            reinterpret_cast<vari**>(stack_mem.alloc(
                 sizeof(vari*) * A.rows() * A.cols()))) {
     Eigen::Map<Eigen::MatrixXd>(A_, rows_, cols_) = A.val();
     Eigen::Map<matrix_vi>(adjARef_, rows_, cols_) = A.vi();

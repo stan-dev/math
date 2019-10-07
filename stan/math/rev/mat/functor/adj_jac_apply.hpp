@@ -332,7 +332,7 @@ struct adj_jac_vari : public vari {
    * @return var
    */
   var build_return_varis_and_vars(const double& val_y) {
-    y_vi_ = ChainableStack::instance_->memalloc_.alloc_array<vari*>(1);
+    y_vi_ = stack_mem.alloc_array<vari*>(1);
     y_vi_[0] = new vari(val_y, false);
 
     return y_vi_[0];
@@ -351,7 +351,7 @@ struct adj_jac_vari : public vari {
     std::vector<var> var_y(M_[0]);
 
     y_vi_
-        = ChainableStack::instance_->memalloc_.alloc_array<vari*>(var_y.size());
+        = stack_mem.alloc_array<vari*>(var_y.size());
     for (size_t m = 0; m < var_y.size(); ++m) {
       y_vi_[m] = new vari(val_y[m], false);
       var_y[m] = y_vi_[m];
@@ -378,7 +378,7 @@ struct adj_jac_vari : public vari {
     Eigen::Matrix<var, R, C> var_y(M_[0], M_[1]);
 
     y_vi_
-        = ChainableStack::instance_->memalloc_.alloc_array<vari*>(var_y.size());
+        = stack_mem.alloc_array<vari*>(var_y.size());
     for (int m = 0; m < var_y.size(); ++m) {
       y_vi_[m] = new vari(val_y(m), false);
       var_y(m) = y_vi_[m];
@@ -407,7 +407,7 @@ struct adj_jac_vari : public vari {
    * @return Output of f_ as vars
    */
   auto operator()(const Targs&... args) {
-    x_vis_ = ChainableStack::instance_->memalloc_.alloc_array<vari*>(
+    x_vis_ = stack_mem.alloc_array<vari*>(
         count_memory(0, args...));
 
     prepare_x_vis(args...);

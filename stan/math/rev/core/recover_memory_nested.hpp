@@ -41,7 +41,7 @@ static inline void recover_memory_nested() {
       ChainableStack::instance_->nested_var_alloc_stack_starts_.back());
   ChainableStack::instance_->nested_var_alloc_stack_starts_.pop_back();
 
-  ChainableStack::instance_->memalloc_.recover_nested();
+  stack_mem.recover_nested();
 }
 
 }  // namespace math
