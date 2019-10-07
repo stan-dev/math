@@ -25,26 +25,17 @@ namespace math {
  * @return <code>true</code> if pointer is aligned.
  * @tparam Type of object to which pointer points.
  */
-template <typename T>
-bool is_aligned(T* ptr, unsigned int bytes_aligned) {
-  return (reinterpret_cast<uintptr_t>(ptr) % bytes_aligned) == 0U;
-}
-
+using byte = unsigned char;
 namespace internal {
 const size_t DEFAULT_INITIAL_NBYTES = 1 << 16;  // 64KB
 
 // FIXME: enforce alignment
 // big fun to inline, but only called twice
-inline char* eight_byte_aligned_malloc(size_t size) {
-  char* ptr = static_cast<char*>(malloc(size));
+template <typename T>
+inline byte* eight_byte_aligned_malloc(size_t size) {
+  byte* ptr = static_cast<byte*>(aligned_alloc(alignof(T), size));
   if (!ptr) {
     return ptr;  // malloc failed to alloc
-  }
-  if (!is_aligned(ptr, 8U)) {
-    std::stringstream s;
-    s << "invalid alignment to 8 bytes, ptr="
-      << reinterpret_cast<uintptr_t>(ptr) << std::endl;
-    throw std::runtime_error(s.str());
   }
   return ptr;
 }
@@ -71,17 +62,17 @@ inline char* eight_byte_aligned_malloc(size_t size) {
  */
 class stack_alloc {
  private:
-  std::vector<char*> blocks_;  // storage for blocks,
+  std::vector<byte*> blocks_;  // storage for blocks,
                                // may be bigger than cur_block_
   std::vector<size_t> sizes_;  // could store initial & shift for others
   size_t cur_block_;           // index into blocks_ for next alloc
-  char* cur_block_end_;        // ptr to cur_block_ptr_ + sizes_[cur_block_]
-  char* next_loc_;             // ptr to next available spot in cur
+  byte* cur_block_end_;        // ptr to cur_block_ptr_ + sizes_[cur_block_]
+  byte* next_loc_;             // ptr to next available spot in cur
                                // block
   // next three for keeping track of nested allocations on top of stack:
   std::vector<size_t> nested_cur_blocks_;
-  std::vector<char*> nested_next_locs_;
-  std::vector<char*> nested_cur_block_ends_;
+  std::vector<byte*> nested_next_locs_;
+  std::vector<byte*> nested_cur_block_ends_;
 
   /**
    * Moves us to the next block of memory, allocating that block
@@ -91,8 +82,9 @@ class stack_alloc {
    * @param size_t $len Number of bytes to allocate.
    * @return A pointer to the allocated memory.
    */
-  char* move_to_next_block(size_t len) {
-    char* result;
+  template <typename T>
+  byte* move_to_next_block(size_t len) {
+    byte* result;
     ++cur_block_;
     // Find the next block (if any) containing at least len bytes.
     while ((cur_block_ < blocks_.size()) && (sizes_[cur_block_] < len)) {
@@ -105,7 +97,7 @@ class stack_alloc {
       if (newsize < len) {
         newsize = len;
       }
-      blocks_.push_back(internal::eight_byte_aligned_malloc(newsize));
+      blocks_.push_back(internal::eight_byte_aligned_malloc<T>(newsize));
       if (!blocks_.back()) {
         throw std::bad_alloc();
       }
@@ -129,7 +121,7 @@ class stack_alloc {
    * aligned.
    */
   explicit stack_alloc(size_t initial_nbytes = internal::DEFAULT_INITIAL_NBYTES)
-      : blocks_(1, internal::eight_byte_aligned_malloc(initial_nbytes)),
+      : blocks_(1, internal::eight_byte_aligned_malloc<double>(initial_nbytes)),
         sizes_(1, initial_nbytes),
         cur_block_(0),
         cur_block_end_(blocks_[0] + initial_nbytes),
@@ -166,13 +158,14 @@ class stack_alloc {
    * @param len Number of bytes to allocate.
    * @return A pointer to the allocated memory.
    */
+  template <typename T = double>
   inline void* alloc(size_t len) {
     // Typically, just return and increment the next location.
-    char* result = next_loc_;
+    byte* result = next_loc_;
     next_loc_ += len;
     // Occasionally, we have to switch blocks.
     if (unlikely(next_loc_ >= cur_block_end_)) {
-      result = move_to_next_block(len);
+      result = move_to_next_block<T>(len);
     }
     return static_cast<void*>(result);
   }
@@ -187,7 +180,7 @@ class stack_alloc {
    */
   template <typename T>
   inline T* alloc_array(size_t n) {
-    return static_cast<T*>(alloc(n * sizeof(T)));
+    return static_cast<T*>(alloc<T>(n * sizeof(T)));
   }
 
   /**

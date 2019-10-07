@@ -18,7 +18,7 @@ struct stack_mem_adapter {
     return ChainableStack::instance_->memalloc_.alloc_array<T>(n);
   }
   inline void* alloc(size_t len) const {
-    return ChainableStack::instance_->memalloc_.alloc(len);
+    return ChainableStack::instance_->memalloc_.alloc<double>(len);
   }
 
   inline void recover_all() const {
