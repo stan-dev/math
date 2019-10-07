@@ -856,12 +856,10 @@ void expect_common_nonzero_binary(const F& f, bool disable_lhs_int = false) {
   auto int_args = internal::common_nonzero_int_args();
   for (double x1 : args)
     for (double x2 : args) {
-      std::cout << x1 << ", " << x2 << std::endl;
       expect_ad(f, x1, x2);
     }
   for (double x1 : args)
     for (int x2 : int_args) {
-      std::cout << x1 << ", " << x2 << std::endl;
       expect_ad(f, x1, x2);
     }
 
@@ -870,12 +868,10 @@ void expect_common_nonzero_binary(const F& f, bool disable_lhs_int = false) {
 
   for (int x1 : int_args)
     for (double x2 : args) {
-      std::cout << x1 << ", " << x2 << std::endl;
       expect_ad(f, x1, x2);
     }
   for (int x1 : int_args)
     for (int x2 : int_args) {
-      std::cout << x1 << ", " << x2 << std::endl;
       expect_ad(f, x1, x2);
     }
 }
@@ -904,24 +900,20 @@ void expect_common_binary(const F& f, bool disable_lhs_int = false) {
   auto int_args = internal::common_int_args();
   for (double x1 : args)
     for (double x2 : args) {
-      std::cout << x1 << ", " << x2 << std::endl;
       expect_ad(f, x1, x2);
     }
   for (double x1 : args)
     for (int x2 : int_args) {
-      std::cout << x1 << ", " << x2 << std::endl;
       expect_ad(f, x1, x2);
     }
   if (disable_lhs_int)
     return;
   for (int x1 : int_args)
     for (double x2 : args) {
-      std::cout << x1 << ", " << x2 << std::endl;
       expect_ad(f, x1, x2);
     }
   for (int x1 : int_args)
     for (int x2 : int_args) {
-      std::cout << x1 << ", " << x2 << std::endl;
       expect_ad(f, x1, x2);
     }
 }
