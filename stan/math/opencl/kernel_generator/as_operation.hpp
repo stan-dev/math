@@ -15,7 +15,7 @@ namespace math {
  * Converts any valid kernel generator expression into an operation. This is an
  * overload for operations - a no-op
  * @tparam T_operation type of the input operation
- * @param an operation
+ * @param a an operation
  * @return operation
  */
 template <typename T_operation,
