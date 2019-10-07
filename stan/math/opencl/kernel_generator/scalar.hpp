@@ -20,39 +20,39 @@ namespace math {
  */
 template <typename T>
 class scalar__ : public operation<scalar__<T>, T> {
+ private:
+  T a_;
  public:
   static_assert(std::is_arithmetic<T>::value,
-                "std::is_arithmetic<T> must be true for scalars!");
+                "class scalar__<T>: std::is_arithmetic<T> must be true!");
   using ReturnScalar = T;
   using base = operation<scalar__<T>, T>;
   using base::var_name;
 
   /**
-   * Constructor
+   * Constructor for an arithmetic type
    * @param a scalar value
    */
   explicit scalar__(const T a) : a_(a) {}
 
   /**
    * generates kernel code for this and nested expressions.
-   * @param[in,out] generated set of already generated operations
-   * @param ng name generator for this kernel
+   * @param[in,out] generated set of (pointer to) already generated operations
+   * @param name_gen name generator for this kernel
    * @param i row index variable name
    * @param j column index variable name
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts generate(std::set<const void*>& generated,
-                               name_generator& ng, const std::string& i,
+                               name_generator& name_gen, const std::string& i,
                                const std::string& j) const {
+    kernel_parts res{};
     if (generated.count(this) == 0) {
       generated.insert(this);
-      var_name = ng.generate();
-      kernel_parts res;
+      this->var_name = name_gen.generate();
       res.args = type_str<T>::name + " " + var_name + ", ";
-      return res;
-    } else {
-      return {};
     }
+    return res;
   }
 
   /**
@@ -69,10 +69,10 @@ class scalar__ : public operation<scalar__<T>, T> {
   }
 
   /**
-   * Adds event for any matrices used by this expression.
+   * Adds read event for any matrices used by this expression - a no-op.
    * @param e the event to add
    */
-  inline void add_event(cl::Event& e) const {}
+  inline void add_read_event(cl::Event& e) const {}
 
   /**
    * Number of rows of a matrix that would be the result of evaluating this
@@ -94,8 +94,6 @@ class scalar__ : public operation<scalar__<T>, T> {
    */
   inline matrix_cl_view view() const { return matrix_cl_view::Entire; }
 
- private:
-  T a_;
 };
 
 }  // namespace math

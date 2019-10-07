@@ -12,8 +12,6 @@ namespace math {
  */
 class name_generator {
  public:
-  name_generator() : i_(0) {}
-
   /**
    * Generates a unique variable name.
    * @return variable name
@@ -21,7 +19,7 @@ class name_generator {
   inline std::string generate() { return "var" + std::to_string(++i_); }
 
  private:
-  int i_;
+  int i_{0};
 };
 
 }  // namespace math

@@ -12,6 +12,7 @@
 #include <stan/math/opencl/kernel_generator/scalar.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation.hpp>
 #include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
+#include <stan/math/opencl/kernel_generator/common_return_scalar.hpp>
 #include <string>
 #include <type_traits>
 #include <set>
@@ -30,9 +31,11 @@ template <typename Derived, typename T_a, typename T_b>
 class binary_operation
     : public operation<
           Derived,
-          typename std::common_type<
-              typename std::remove_reference_t<T_a>::ReturnScalar,
-              typename std::remove_reference_t<T_b>::ReturnScalar>::type> {
+          common_return_scalar_t<T_a, T_b>> {
+ protected:
+  T_a a_;
+  T_b b_;
+  std::string op_;
  public:
   static_assert(
       std::is_base_of<operation_base, std::remove_reference_t<T_a>>::value,
@@ -41,17 +44,15 @@ class binary_operation
       std::is_base_of<operation_base, std::remove_reference_t<T_b>>::value,
       "binary_operation: b must be an operation!");
 
-  using ReturnScalar = typename std::common_type<
-      typename std::remove_reference_t<T_a>::ReturnScalar,
-      typename std::remove_reference_t<T_b>::ReturnScalar>::type;
+  using ReturnScalar = common_return_scalar_t<T_a, T_b>;
   using base = operation<Derived, ReturnScalar>;
   using base::var_name;
 
   /**
    * Constructor
-   * @param a first argument
-   * @param b sedond argument
-   * @param op operation
+   * @param a first argument of the binary operation
+   * @param b sedond argument of the binary operation
+   * @param op operator used in the binary operation
    */
   binary_operation(T_a&& a, T_b&& b, const std::string& op)  // NOLINT
       : a_(std::forward<T_a>(a)), b_(std::forward<T_b>(b)), op_(op) {
@@ -68,29 +69,27 @@ class binary_operation
 
   /**
    * generates kernel code for this and nested expressions.
-   * @param[in,out] generated set of already generated operations
-   * @param ng name generator for this kernel
+   * @param[in,out] generated set of (pointer to) already generated operations
+   * @param name_gen name generator for this kernel
    * @param i row index variable name
    * @param j column index variable name
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts generate(std::set<const void*>& generated,
-                               name_generator& ng, const std::string& i,
+                               name_generator& name_gen, const std::string& i,
                                const std::string& j) const {
+    kernel_parts res{};
     if (generated.count(this) == 0) {
-      kernel_parts a_parts = a_.generate(generated, ng, i, j);
-      kernel_parts b_parts = b_.generate(generated, ng, i, j);
+      kernel_parts a_parts = a_.generate(generated, name_gen, i, j);
+      kernel_parts b_parts = b_.generate(generated, name_gen, i, j);
       generated.insert(this);
-      var_name = ng.generate();
-      kernel_parts res;
+      this->var_name = name_gen.generate();
       res.body = a_parts.body + b_parts.body + type_str<ReturnScalar>::name
                  + " " + var_name + " = " + a_.var_name + op_ + b_.var_name
                  + ";\n";
       res.args = a_parts.args + b_parts.args;
-      return res;
-    } else {
-      return {};
     }
+    return res;
   }
 
   /**
@@ -111,12 +110,12 @@ class binary_operation
   }
 
   /**
-   * Adds event for any matrices used by this or nested expressions.
+   * Adds read event to any matrices used by this or nested expressions.
    * @param e the event to add
    */
-  inline void add_event(cl::Event& e) const {
-    a_.add_event(e);
-    b_.add_event(e);
+  inline void add_read_event(cl::Event& e) const {
+    a_.add_read_event(e);
+    b_.add_read_event(e);
   }
 
   /**
@@ -145,10 +144,6 @@ class binary_operation
    */
   inline matrix_cl_view view() const { return either(a_.view(), b_.view()); }
 
- protected:
-  T_a a_;
-  T_b b_;
-  std::string op_;
 };
 
 /**

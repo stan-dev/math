@@ -3,12 +3,16 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/matrix_cl.hpp>
-#include <stan/math/opencl/kernel_generator/operation.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <type_traits>
 
 namespace stan {
 namespace math {
+
+/**
+ *Non-templated base of \c operation is needed for easy checking if something is a subclass of \c operation.
+ */
+class operation_base {};
 
 /**
  * Determines whether a type is non-scalar type that is a valid kernel generator
@@ -46,7 +50,7 @@ struct is_valid_expression {
 };
 
 /**
- * Disables a template if not all given types are non-scalar types that are a
+ * Enables a template if all given types are non-scalar types that are a
  * valid kernel generator expressions.
  */
 template <typename... Types>
@@ -55,7 +59,7 @@ using enable_if_all_valid_expressions_and_none_scalar =
         math::conjunction<is_valid_expression_and_not_scalar<Types>...>::value>;
 
 /**
- * Disables a template if not all given types are are a valid kernel generator
+ * Enables a template if all given types are are a valid kernel generator
  * expressions.
  */
 template <typename... Types>

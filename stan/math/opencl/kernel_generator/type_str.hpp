@@ -5,7 +5,7 @@
 #include <string>
 
 /**
- * Determins a string name of a type. Unsupported types fail static assert.
+ * Determines a string name of a type. Unsupported types fail static assert.
  */
 template <typename T>
 struct type_str {

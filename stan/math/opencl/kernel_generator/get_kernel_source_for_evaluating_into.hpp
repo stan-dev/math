@@ -16,6 +16,7 @@ template <typename T_lhs>
 std::string
 operation<Derived, ReturnScalar>::get_kernel_source_for_evaluating_into(
     const T_lhs& lhs) const {
+  static_assert(is_valid_expression<T_lhs>::value, "operation::get_kernel_source_for_evaluating_into: left hand side is not a valid expression!");
   auto lhs_expression = as_operation(lhs);
   std::set<const void*> generated;
   name_generator ng;
@@ -27,7 +28,7 @@ operation<Derived, ReturnScalar>::get_kernel_source_for_evaluating_into(
                     "int i = get_global_id(0);\n"
                     "int j = get_global_id(1);\n"
                     + parts.body +
-                    out_parts.body + " = " + var_name + ";}";
+                    out_parts.body + " = " + var_name + ";\n}";
   return src;
 }
 

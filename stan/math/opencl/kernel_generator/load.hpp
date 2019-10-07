@@ -22,6 +22,8 @@ namespace math {
 template <typename T>
 class load__
     : public operation<load__<T>, typename std::remove_reference_t<T>::type> {
+ protected:
+  T a_;
  public:
   using ReturnScalar = typename std::remove_reference_t<T>::type;
   using base = operation<load__<T>, ReturnScalar>;
@@ -41,19 +43,19 @@ class load__
 
   /**
    * generates kernel code for this expression.
-   * @param[in,out] generated set of already generated operations
-   * @param ng name generator for this kernel
+   * @param[in,out] generated set of (pointer to) already generated operations
+   * @param name_gen name generator for this kernel
    * @param i row index variable name
    * @param j column index variable name
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts generate(std::set<const void*>& generated,
-                               name_generator& ng, const std::string& i,
+                               name_generator& name_gen, const std::string& i,
                                const std::string& j) const {
+    kernel_parts res{};
     if (generated.count(this) == 0) {
       generated.insert(this);
-      var_name = ng.generate();
-      kernel_parts res;
+      this->var_name = name_gen.generate();
       std::string type = type_str<ReturnScalar>::name;
       res.body = type + " " + var_name + " = 0;"
                  " if (!((!contains_nonzero(" + var_name + "_view, LOWER) && "
@@ -63,28 +65,26 @@ class load__
                  var_name + "_rows * " + j + "];}\n";
       res.args = "__global " + type + "* " + var_name + "_global, int "
                  + var_name + "_rows, int " + var_name + "_view, ";
-      return res;
-    } else {
-      return {};
     }
+    return res;
   }
 
   /**
    * generates kernel code for this expression if it appears on the left hand
    * side of an assigment.
-   * @param ng name generator for this kernel
-   * @param[in,out] generated set of already generated operations
+   * @param name_gen name generator for this kernel
+   * @param[in,out] generated set of (pointer to) already generated operations
    * @param i row index variable name
    * @param j column index variable name
    * @return part of kernel with code for this expressions
    */
   inline kernel_parts generate_lhs(std::set<const void*>& generated,
-                                   name_generator& ng, const std::string& i,
+                                   name_generator& name_gen, const std::string& i,
                                    const std::string& j) const {
     kernel_parts res;
     if (generated.count(this) == 0) {
       generated.insert(this);
-      var_name = ng.generate();
+      this->var_name = name_gen.generate();
       std::string type = type_str<ReturnScalar>::name;
       res.args = "__global " + type + "* " + var_name + "_global, int "
                  + var_name + "_rows, int " + var_name + "_view, ";
@@ -113,10 +113,10 @@ class load__
   }
 
   /**
-   * Adds event to the matrix used in this expression.
+   * Adds read event to the matrix used in this expression.
    * @param e the event to add
    */
-  inline void add_event(cl::Event& e) const { a_.add_read_event(e); }
+  inline void add_read_event(cl::Event& e) const { a_.add_read_event(e); }
 
   /**
    * Adds write event to the matrix used in this expression.
@@ -144,8 +144,6 @@ class load__
    */
   inline matrix_cl_view view() const { return a_.view(); }
 
- protected:
-  T a_;
 };
 
 }  // namespace math

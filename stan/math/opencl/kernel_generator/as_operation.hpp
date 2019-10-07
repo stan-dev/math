@@ -12,47 +12,50 @@ namespace stan {
 namespace math {
 
 /**
- * Converts any valid kernel generator expression into an operation. Operations
- * are returned unchanged.
- * @tparam T type of the input operation
- * @param a operation
+ * Converts any valid kernel generator expression into an operation. This is an
+ * overload for operations - a no-op
+ * @tparam T_operation type of the input operation
+ * @param an operation
  * @return operation
  */
-template <typename T, typename = std::enable_if_t<std::is_base_of<
-                          operation_base, std::remove_reference_t<T>>::value>>
-inline T&& as_operation(T&& a) {
-  return std::forward<T>(a);
+template <typename T_operation, typename = std::enable_if_t<std::is_base_of<
+                          operation_base, std::remove_reference_t<T_operation>>::value>>
+inline T_operation&& as_operation(T_operation&& a) {
+  return std::forward<T_operation>(a);
 }
 
 /**
- * Converts any valid kernel generator expression into an operation. Scalars are
- * wrapped into \c scalar__.
- * @tparam T type of the input scalar
+ * Converts any valid kernel generator expression into an operation. This is an
+ * overload for scalars (atihmetic types). It wraps them into \c scalar__.
+ * @tparam T_scalar type of the input scalar
  * @param a scalar
  * @return \c scalar__ wrapping the input
  */
-template <typename T, typename = enable_if_arithmetic<T>>
-inline scalar__<T> as_operation(const T a) {
-  return scalar__<T>(a);
+template <typename T_scalar, typename = enable_if_arithmetic<T_scalar>>
+inline scalar__<T_scalar> as_operation(const T_scalar a) {
+  return scalar__<T_scalar>(a);
 }
 
 /**
- * Converts any valid kernel generator expression into an operation. \c
- * matrix_cl is wrapped into \c load__.
- * @tparam T \c matrix_cl
+ * Converts any valid kernel generator expression into an operation. This is an
+ * overload for \c matrix_cl. It wraps them into into \c load__.
+ * @tparam T_matrix_cl \c matrix_cl
  * @param a \c matrix_cl
  * @return \c load__ wrapping the input
  */
-template <typename T, typename = std::enable_if_t<std::is_base_of<
-                          matrix_cl<typename std::remove_reference_t<T>::type>,
-                          typename std::remove_reference_t<T>>::value>>
-inline load__<T> as_operation(T&& a) {
-  return load__<T>(std::forward<T>(a));
+template <typename T_matrix_cl, typename = std::enable_if_t<std::is_base_of<
+                          matrix_cl<typename std::remove_reference_t<T_matrix_cl>::type>,
+                          std::remove_reference_t<T_matrix_cl>>::value>>
+inline load__<T_matrix_cl> as_operation(T_matrix_cl&& a) {
+  return load__<T_matrix_cl>(std::forward<T_matrix_cl>(a));
 }
 
 /**
  * Type that results when converting any valid kernel generator expression into
- * operation.
+ * operation. If a function accepts a forwarding reference T&& a, the result of
+ * as_operation(a) should be stored in a variable of type as_operation_t<T>. If
+ * the return value of \c as_operation() would be a rvalue reference, the
+ * reference is removed, so that a variable of this type actually stores the value.
  */
 template <typename T>
 using as_operation_t = std::conditional_t<

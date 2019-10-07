@@ -1,6 +1,6 @@
 #ifdef STAN_OPENCL
 
-#include <stan/math/opencl/kernel_generator/binary_operation.hpp>
+#include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <Eigen/Dense>
@@ -181,7 +181,8 @@ TEST(MathMatrixCL, reuse_expression) {
         "var2_global[i + var2_rows * j];}\n"
         "double var3 = var1+var2;\n"
         "double var4 = var3*var3;\n"
-        "var5_global[i + var5_rows * j] = var4;}";
+        "var5_global[i + var5_rows * j] = var4;\n"
+        "}";
   MatrixXd m1(3, 3);
   m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
   MatrixXd m2(3, 3);

@@ -1,11 +1,12 @@
 #ifdef STAN_OPENCL
 
-#include <stan/math/opencl/kernel_generator/binary_operation.hpp>
+#include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <Eigen/Dense>
 #include <gtest/gtest.h>
 #include <cl.hpp>
+#include <exception>
 
 using Eigen::MatrixXd;
 using Eigen::MatrixXi;
@@ -14,6 +15,14 @@ using stan::math::matrix_cl;
 #define EXPECT_MATRIX_NEAR(A, B, DELTA) \
   for (int i = 0; i < A.size(); i++)    \
     EXPECT_NEAR(A(i), B(i), DELTA);
+
+
+TEST(MathMatrixCL, operation_errors) {
+  EXPECT_THROW(matrix_cl<double> a = stan::math::as_operation(3.5), std::domain_error);
+  matrix_cl<double> b(3,3);
+  matrix_cl<double> c(4,3);
+  EXPECT_THROW((b + 3).evaluate_into(c), std::invalid_argument);
+}
 
 TEST(MathMatrixCL, kernel_caching) {
   MatrixXd m1(3, 3);
