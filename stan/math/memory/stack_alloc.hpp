@@ -14,17 +14,17 @@
 namespace stan {
 namespace math {
 
-  using byte = unsigned char;
+using byte = unsigned char;
 
-  namespace internal {
-  const size_t DEFAULT_INITIAL_NBYTES = 1 << 16;  // 64KB
+namespace internal {
+const size_t DEFAULT_INITIAL_NBYTES = 1 << 16;  // 64KB
 
-  // FIXME: enforce alignment
-  // big fun to inline, but only called twice
-  inline byte* eight_byte_aligned_malloc(size_t size) noexcept {
-    byte* ptr = static_cast<byte*>(malloc(size));
-    return ptr;
-  }
+// FIXME: enforce alignment
+// big fun to inline, but only called twice
+inline byte* eight_byte_aligned_malloc(size_t size) noexcept {
+  byte* ptr = static_cast<byte*>(malloc(size));
+  return ptr;
+}
 }  // namespace internal
 
 /**
