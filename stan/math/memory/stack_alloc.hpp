@@ -14,31 +14,17 @@
 namespace stan {
 namespace math {
 
-/**
- * Return <code>true</code> if the specified pointer is aligned
- * on the number of bytes.
- *
- * This doesn't really make sense other than for powers of 2.
- *
- * @param ptr Pointer to test.
- * @param bytes_aligned Number of bytes of alignment required.
- * @return <code>true</code> if pointer is aligned.
- * @tparam Type of object to which pointer points.
- */
-using byte = unsigned char;
-namespace internal {
-const size_t DEFAULT_INITIAL_NBYTES = 1 << 16;  // 64KB
+  using byte = unsigned char;
 
-// FIXME: enforce alignment
-// big fun to inline, but only called twice
-template <typename T>
-inline byte* eight_byte_aligned_malloc(size_t size) {
-  byte* ptr = static_cast<byte*>(aligned_alloc(alignof(T), size));
-  if (!ptr) {
-    return ptr;  // malloc failed to alloc
+  namespace internal {
+  const size_t DEFAULT_INITIAL_NBYTES = 1 << 16;  // 64KB
+
+  // FIXME: enforce alignment
+  // big fun to inline, but only called twice
+  inline byte* eight_byte_aligned_malloc(size_t size) noexcept {
+    byte* ptr = static_cast<byte*>(malloc(size));
+    return ptr;
   }
-  return ptr;
-}
 }  // namespace internal
 
 /**
@@ -82,7 +68,6 @@ class stack_alloc {
    * @param size_t $len Number of bytes to allocate.
    * @return A pointer to the allocated memory.
    */
-  template <typename T>
   byte* move_to_next_block(size_t len) {
     byte* result;
     ++cur_block_;
@@ -97,7 +82,7 @@ class stack_alloc {
       if (newsize < len) {
         newsize = len;
       }
-      blocks_.push_back(internal::eight_byte_aligned_malloc<T>(newsize));
+      blocks_.push_back(internal::eight_byte_aligned_malloc(newsize));
       if (!blocks_.back()) {
         throw std::bad_alloc();
       }
@@ -121,7 +106,7 @@ class stack_alloc {
    * aligned.
    */
   explicit stack_alloc(size_t initial_nbytes = internal::DEFAULT_INITIAL_NBYTES)
-      : blocks_(1, internal::eight_byte_aligned_malloc<double>(initial_nbytes)),
+      : blocks_(1, internal::eight_byte_aligned_malloc(initial_nbytes)),
         sizes_(1, initial_nbytes),
         cur_block_(0),
         cur_block_end_(blocks_[0] + initial_nbytes),
@@ -158,14 +143,13 @@ class stack_alloc {
    * @param len Number of bytes to allocate.
    * @return A pointer to the allocated memory.
    */
-  template <typename T = double>
   inline void* alloc(size_t len) {
     // Typically, just return and increment the next location.
     byte* result = next_loc_;
     next_loc_ += len;
     // Occasionally, we have to switch blocks.
     if (unlikely(next_loc_ >= cur_block_end_)) {
-      result = move_to_next_block<T>(len);
+      result = move_to_next_block(len);
     }
     return static_cast<void*>(result);
   }
@@ -180,7 +164,7 @@ class stack_alloc {
    */
   template <typename T>
   inline T* alloc_array(size_t n) {
-    return static_cast<T*>(alloc<T>(n * sizeof(T)));
+    return static_cast<T*>(alloc(n * sizeof(T)));
   }
 
   /**
