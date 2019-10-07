@@ -206,7 +206,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
       buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * this->size());
       cl::Event cstr_event;
       queue.enqueueCopyBuffer(A.buffer(), this->buffer(), 0, 0,
-                              A.size() * sizeof(T), nullptr, &cstr_event);
+                              A.size() * sizeof(T), &A.write_events(), &cstr_event);
       this->add_write_event(cstr_event);
       A.add_read_event(cstr_event);
     } catch (const cl::Error& e) {
