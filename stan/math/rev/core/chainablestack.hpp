@@ -12,25 +12,25 @@ class chainable_alloc;
 using ChainableStack = AutodiffStackSingleton<vari, chainable_alloc>;
 
 // Helper struct to access the underlying stack allocator.
-struct stack_mem_impl {
+struct stack_mem_adapter {
   template <typename T>
-  inline T* alloc_array(size_t n) {
+  inline T* alloc_array(size_t n) const {
     return ChainableStack::instance_->memalloc_.alloc_array<T>(n);
   }
-  inline void* alloc(size_t len) {
+  inline void* alloc(size_t len) const {
     return ChainableStack::instance_->memalloc_.alloc(len);
   }
 
-  inline void recover_all() {
+  inline void recover_all() const {
     return ChainableStack::instance_->memalloc_.recover_all();
   }
-  inline void start_nested() {
+  inline void start_nested() const {
     return ChainableStack::instance_->memalloc_.start_nested();
   }
-  inline void recover_nested() {
+  inline void recover_nested() const {
     return ChainableStack::instance_->memalloc_.recover_nested();
   }
-  inline void free_all() {
+  inline void free_all() const {
     return ChainableStack::instance_->memalloc_.free_all();
   }
   inline size_t bytes_allocated() const {
@@ -39,7 +39,10 @@ struct stack_mem_impl {
   inline bool in_stack(const void* ptr) const {
     return ChainableStack::instance_->memalloc_.in_stack(ptr);
   }
-} stack_mem;
+};
+
+constexpr stack_mem_adapter stack_mem;
+
 }  // namespace math
 }  // namespace stan
 #endif

@@ -83,3 +83,8 @@ compile_commands.json
 
 # Visual Studio Project Setup
 .vscode/*
+
+/lib/tbb/*.o
+/lib/tbb/*.d
+/lib/tbb/*.so*
+/lib/tbb/**
