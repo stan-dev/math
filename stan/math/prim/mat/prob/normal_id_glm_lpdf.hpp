@@ -71,19 +71,11 @@ return_type_t<T_y, T_x_scalar, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   const size_t N_instances = T_x_rows == 1 ? length(y) : x.rows();
   const size_t N_attributes = x.cols();
 
-  if (is_vector<T_y>::value && T_x_rows != 1) {
-    check_consistent_size(function, "Vector of dependent variables", y,
+  check_consistent_size(function, "Vector of dependent variables", y,
                           N_instances);
-  }
   check_consistent_size(function, "Weight vector", beta, N_attributes);
-  if (is_vector<T_scale>::value) {
-    check_consistent_sizes(function, "Vector of scale parameters", sigma,
-                           "Vector of dependent variables", y);
-  }
-  if (is_vector<T_alpha>::value) {
-    check_consistent_sizes(function, "Vector of intercepts", alpha,
-                           "Vector of dependent variables", y);
-  }
+  check_consistent_size(function, "Vector of scale parameters", sigma, N_instances);
+  check_consistent_size(function, "Vector of intercepts", alpha, N_instances);
   check_positive_finite(function, "Scale vector", sigma);
 
   if (size_zero(y, x, beta, sigma)) {

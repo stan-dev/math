@@ -85,14 +85,8 @@ return_type_t<T_x_scalar, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_l
   check_consistent_size(function, "Vector of dependent variables", y,
                         N_instances);
   check_consistent_size(function, "Weight vector", beta, N_attributes);
-  if (is_vector<T_precision>::value) {
-    check_consistent_sizes(function, "Vector of precision parameters", phi,
-                           "Vector of dependent variables", y);
-  }
-  if (is_vector<T_alpha>::value) {
-    check_consistent_sizes(function, "Vector of intercepts", alpha,
-                           "Vector of dependent variables", y);
-  }
+  check_consistent_size(function, "Vector of precision parameters", phi, N_instances);
+  check_consistent_size(function, "Vector of intercepts", alpha, N_instances);
   check_nonnegative(function, "Failures variables", y);
   check_finite(function, "Weight vector", beta);
   check_finite(function, "Intercept", alpha);

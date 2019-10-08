@@ -69,10 +69,7 @@ return_type_t<T_x_scalar, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
   check_consistent_size(function, "Vector of dependent variables", y,
                         N_instances);
   check_consistent_size(function, "Weight vector", beta, N_attributes);
-  if (is_vector<T_alpha>::value) {
-    check_consistent_sizes(function, "Vector of intercepts", alpha,
-                           "Vector of dependent variables", y);
-  }
+  check_consistent_size(function, "Vector of intercepts", alpha, N_instances);
   check_nonnegative(function, "Vector of dependent variables", y);
 
   if (size_zero(y, x, beta)) {
