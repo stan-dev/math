@@ -25,7 +25,7 @@ template <typename T_desired, typename T_actual,
               && static_cast<int>(T_desired::ColsAtCompileTime)
                      == static_cast<int>(T_actual::ColsAtCompileTime)>,
           typename = void>
-inline T_actual&& assume_type(T_actual&& a) { // NOLINT
+inline T_actual&& assume_type(T_actual&& a) {  // NOLINT
   return std::forward<T_actual>(a);
 }
 
