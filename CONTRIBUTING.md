@@ -116,9 +116,8 @@ These are generally large features which allow Stan to do things it could not pr
 
 1. [Async for OpenCL](https://github.com/stan-dev/math/pull/1162)
 2. [MPI Backend](https://github.com/stan-dev/math/pull/854)
-3. [Complex Number Support](https://github.com/stan-dev/math/pull/789)
-4. [ODE Solvers](https://github.com/stan-dev/math/pull/768)
-5. [Changing how the lgamma function is calculated](https://github.com/stan-dev/math/pull/1255)
+3. [ODE Solvers](https://github.com/stan-dev/math/pull/768)
+4. [Changing how the lgamma function is calculated](https://github.com/stan-dev/math/pull/1255)
 
 
 ## Discussion
