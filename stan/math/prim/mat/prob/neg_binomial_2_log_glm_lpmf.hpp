@@ -156,8 +156,8 @@ return_type_t<T_x_scalar, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_l
       }
     } else {
       logp += N_instances
-              * (multiply_log(as_scalar(phi_val), as_scalar(phi_val))
-                 - lgamma(as_scalar(phi_val)));
+              * (multiply_log(assume_type<double>(phi_val), assume_type<double>(phi_val))
+                 - lgamma(assume_type<double>(phi_val)));
     }
   }
   if (include_summand<propto, T_x_scalar, T_alpha, T_beta, T_precision>::value) {

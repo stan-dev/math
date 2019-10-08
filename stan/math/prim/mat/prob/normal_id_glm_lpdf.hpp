@@ -170,7 +170,7 @@ return_type_t<T_y, T_x_scalar, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
       } else {
         y_scaled_sq_sum = sum(y_scaled * y_scaled);
         ops_partials.edge5_.partials_[0]
-            = (y_scaled_sq_sum - N_instances) * as_scalar(inv_sigma);
+            = (y_scaled_sq_sum - N_instances) * assume_type<double>(inv_sigma);
       }
     }
   } else {
@@ -194,7 +194,7 @@ return_type_t<T_y, T_x_scalar, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
     if (is_vector<T_scale>::value) {
       logp -= sum(log(sigma_val_vec));
     } else {
-      logp -= N_instances * log(as_scalar(sigma_val));
+      logp -= N_instances * log(assume_type<double>(sigma_val));
     }
   }
   if (include_summand<propto, T_y, T_x_scalar, T_alpha, T_beta, T_scale>::value) {
