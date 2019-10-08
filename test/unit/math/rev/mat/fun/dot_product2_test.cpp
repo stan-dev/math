@@ -326,7 +326,7 @@ TEST(AgradRevMatrix, initializeVariable) {
     EXPECT_FLOAT_EQ(7.0, cc(m).val());
 
   Matrix<AVAR, Dynamic, Dynamic> init_val(3, 4);
-  vector<Matrix<AVAR, Dynamic, Dynamic> > dd(5, init_val);
+  vector<Matrix<AVAR, Dynamic, Dynamic>> dd(5, init_val);
   initialize_variable(dd, AVAR(11.0));
   for (size_t i = 0; i < dd.size(); ++i)
     for (int m = 0; m < dd[0].rows(); ++m)
@@ -967,9 +967,9 @@ TEST(AgradRevMatrix, cumulative_sum) {
   Eigen::Matrix<var, 1, Eigen::Dynamic> b;
   EXPECT_FLOAT_EQ(0, cumulative_sum(b).size());
 
-  test_cumulative_sum<std::vector<var> >();
-  test_cumulative_sum<Eigen::Matrix<var, Eigen::Dynamic, 1> >();
-  test_cumulative_sum<Eigen::Matrix<var, 1, Eigen::Dynamic> >();
+  test_cumulative_sum<std::vector<var>>();
+  test_cumulative_sum<Eigen::Matrix<var, Eigen::Dynamic, 1>>();
+  test_cumulative_sum<Eigen::Matrix<var, 1, Eigen::Dynamic>>();
 }
 
 TEST(AgradRevMatrix, promoteElts) {
@@ -997,19 +997,18 @@ TEST(AgradRevMatrix, promoteElts) {
 
   vector<double> x(5);
   for (int i = 0; i < 5; ++i) {
-    x[i] = i * i;    
+    x[i] = i * i;
   }
   vector<double> y = promote_common<vector<double>, vector<double>>(x);
   EXPECT_EQ(5U, y.size());
   for (int i = 0; i < 5; ++i) {
     EXPECT_FLOAT_EQ(x[i], y[i]);
   }
-  std::vector<var> z
-      = promote_common<std::vector<double>, std::vector<var>>(x);
+  std::vector<var> z = promote_common<std::vector<double>, std::vector<var>>(x);
   EXPECT_EQ(5U, z.size());
   for (int i = 0; i < 5; ++i)
     EXPECT_FLOAT_EQ(x[i], z[i].val());
-  vector<var> w = promote_common<vector<var>, vector<var> >(z);
+  vector<var> w = promote_common<vector<var>, vector<var>>(z);
   EXPECT_EQ(5U, w.size());
   for (int i = 0; i < 5; ++i)
     EXPECT_FLOAT_EQ(x[i], w[i].val());
