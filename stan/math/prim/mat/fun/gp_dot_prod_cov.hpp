@@ -26,20 +26,21 @@ namespace math {
  *
  * @param x std::vector of elements that can be used in dot product.
  *    This function assumes each element of x is the same size.
- * @param Sigma covariance matrix 
+ * @param Sigma covariance matrix
  * @return dot product covariance matrix that is positive semi-definite
  * @throw std::domain_error if sigma < 0, nan, inf or
  *   x is nan or infinite
  */
 template <typename T_x, typename T_sigma>
 Eigen::Matrix<return_type_t<T_x, T_sigma>, Eigen::Dynamic, Eigen::Dynamic>
-gp_dot_prod_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
-                const Eigen::Matrix<T_sigma, Eigen::Dynamic, Eigen::Dynamic> &Sigma) {
+gp_dot_prod_cov(
+    const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
+    const Eigen::Matrix<T_sigma, Eigen::Dynamic, Eigen::Dynamic> &Sigma) {
   check_not_nan("gp_dot_prod_cov", "Sigma", Sigma);
   check_nonnegative("gp_dot_prod_cov", "Sigma", Sigma);
   check_finite("gp_dot_prod_cov", "Sigma", Sigma);
   check_square("gp_dot_prod_cov", "Sigma", Sigma);
-  
+
   size_t x_size = x.size();
   for (size_t i = 0; i < x_size; ++i) {
     check_not_nan("gp_dot_prod_cov", "x", x[i]);
@@ -52,8 +53,8 @@ gp_dot_prod_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
     return cov;
   }
 
-  check_size_match("gp_dot_prod_cov", "dimension of elements of x", size_of(x[0]),
-                   "dimension of Sigma", Sigma.cols());
+  check_size_match("gp_dot_prod_cov", "dimension of elements of x",
+                   size_of(x[0]), "dimension of Sigma", Sigma.cols());
 
   std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> x_new(x_size);
 
@@ -84,7 +85,7 @@ gp_dot_prod_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
  * @param x std::vector of elements that can be used in transpose
  *   and multiply
  *    This function assumes each element of x is the same size.
- * @param sigma variance 
+ * @param sigma variance
  * @return dot product covariance matrix that is positive semi-definite
  * @throw std::domain_error if sigma < 0, nan, inf or
  *   x is nan or infinite
@@ -139,9 +140,10 @@ gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma &sigma) {
 template <typename T_x1, typename T_x2, typename T_sigma>
 Eigen::Matrix<return_type_t<T_x1, T_x2, T_sigma>, Eigen::Dynamic,
               Eigen::Dynamic>
-gp_dot_prod_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
-                const std::vector<Eigen::Matrix<T_x2, Eigen::Dynamic, 1>> &x2,
-                const Eigen::Matrix<T_sigma, Eigen::Dynamic, Eigen::Dynamic> &Sigma) {
+gp_dot_prod_cov(
+    const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
+    const std::vector<Eigen::Matrix<T_x2, Eigen::Dynamic, 1>> &x2,
+    const Eigen::Matrix<T_sigma, Eigen::Dynamic, Eigen::Dynamic> &Sigma) {
   check_not_nan("gp_dot_prod_cov", "Sigma", Sigma);
   check_nonnegative("gp_dot_prod_cov", "Sigma", Sigma);
   check_finite("gp_dot_prod_cov", "Sigma", Sigma);
@@ -165,14 +167,15 @@ gp_dot_prod_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
     return cov;
   }
 
-  check_size_match("gp_dot_prod_cov", "dimension of elements of x1", size_of(x1[0]),
-                   "dimension of elements of x2", size_of(x2[0]));
+  check_size_match("gp_dot_prod_cov", "dimension of elements of x1",
+                   size_of(x1[0]), "dimension of elements of x2",
+                   size_of(x2[0]));
 
-  check_size_match("gp_dot_prod_cov", "dimension of elements of x1", size_of(x1[0]),
-                   "dimension of Sigma", Sigma.cols());
+  check_size_match("gp_dot_prod_cov", "dimension of elements of x1",
+                   size_of(x1[0]), "dimension of Sigma", Sigma.cols());
 
-  check_size_match("gp_dot_prod_cov", "dimension of elements of x", size_of(x2[0]),
-                   "dimension of Sigma", Sigma.cols());
+  check_size_match("gp_dot_prod_cov", "dimension of elements of x",
+                   size_of(x2[0]), "dimension of Sigma", Sigma.cols());
 
   std::vector<Eigen::Matrix<T_x2, Eigen::Dynamic, 1>> x2_new(x2_size);
 
