@@ -996,14 +996,16 @@ TEST(AgradRevMatrix, promoteElts) {
   EXPECT_FLOAT_EQ(5.0, c.val());
 
   vector<double> x(5);
-  for (int i = 0; i < 5; ++i)
-    x[i] = i * i;
-  vector<double> y = promote_common<vector<double>, vector<double> >(x);
+  for (int i = 0; i < 5; ++i) {
+    x[i] = i * i;    
+  }
+  vector<double> y = promote_common<vector<double>, vector<double>>(x);
   EXPECT_EQ(5U, y.size());
-  for (int i = 0; i < 5; ++i)
+  for (int i = 0; i < 5; ++i) {
     EXPECT_FLOAT_EQ(x[i], y[i]);
+  }
   std::vector<var> z
-      = promote_common<std::vector<double>, std::vector<var> >(x);
+      = promote_common<std::vector<double>, std::vector<var>>(x);
   EXPECT_EQ(5U, z.size());
   for (int i = 0; i < 5; ++i)
     EXPECT_FLOAT_EQ(x[i], z[i].val());

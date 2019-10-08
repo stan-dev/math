@@ -19,7 +19,7 @@ namespace math {
  * @tparam S type of input elements, must be assignable to T
  */
 template <typename T, typename S>
-struct promote_elements<std::vector<T>, std::vector<S> > {
+struct promote_elements<std::vector<T>, std::vector<S>> {
   /**
    * Return input vector of type S as vector of type T.
    *
@@ -27,8 +27,7 @@ struct promote_elements<std::vector<T>, std::vector<S> > {
    * @returns vector of type T
    */
   inline static std::vector<T> promote(const std::vector<S>& u) {
-    std::vector<T> t({u.data(), u.data() + u.size()});
-    return t;
+    return {u.begin(), u.end()};
   }
 };
 
@@ -40,7 +39,7 @@ struct promote_elements<std::vector<T>, std::vector<S> > {
  * @tparam T type of elements
  */
 template <typename T>
-struct promote_elements<std::vector<T>, std::vector<T> > {
+struct promote_elements<std::vector<T>, std::vector<T>> {
   /**
    * Return input vector.
    *
