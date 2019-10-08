@@ -146,7 +146,6 @@ using require_any_not_same_vt
     = require_all_not_t<std::is_same<value_type_t<std::decay_t<T>>,
                                      value_type_t<std::decay_t<Types>>>...>;
 
-
 /**
  * Require T is convertible to S
  */
