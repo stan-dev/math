@@ -146,10 +146,9 @@ using require_any_not_same_vt
     = require_all_not_t<std::is_same<value_type_t<std::decay_t<T>>,
                                      value_type_t<std::decay_t<Types>>>...>;
 
-
 /**
-  * Require type is convertible to a string
-  */
+ * Require type is convertible to a string
+ */
 template <typename T>
 using require_string_convertible_t
     = require_t<std::is_convertible<std::decay_t<T>, std::string>::value>;
