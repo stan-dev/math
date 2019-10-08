@@ -111,10 +111,10 @@ TEST(requires, all_not_same_test) {
 TEST(requires, convertible_test) {
   using stan::require_convertible_t;
   using stan::test::require_variadic_checker;
-  EXPECT_FALSE(
-      (require_variadic_checker<stan::require_convertible_t, double, char[1]>::value));
-  EXPECT_TRUE(
-      (require_variadic_checker<stan::require_convertible_t, double, double>::value));
+  EXPECT_FALSE((require_variadic_checker<stan::require_convertible_t, double,
+                                         char[1]>::value));
+  EXPECT_TRUE((require_variadic_checker<stan::require_convertible_t, double,
+                                        double>::value));
   EXPECT_TRUE(
       (require_variadic_checker<stan::require_convertible_t, int, int>::value));
 }
@@ -122,11 +122,12 @@ TEST(requires, convertible_test) {
 TEST(requires, not_convertible_test) {
   using stan::require_not_convertible_t;
   using stan::test::require_variadic_checker;
-  EXPECT_TRUE(
-      (require_variadic_checker<require_not_convertible_t, double, char[1]>::value));
+  EXPECT_TRUE((require_variadic_checker<require_not_convertible_t, double,
+                                        char[1]>::value));
+  EXPECT_FALSE((require_variadic_checker<require_not_convertible_t, double,
+                                         double>::value));
   EXPECT_FALSE(
-      (require_variadic_checker<require_not_convertible_t, double, double>::value));
-  EXPECT_FALSE((require_variadic_checker<require_not_convertible_t, int, int>::value));
+      (require_variadic_checker<require_not_convertible_t, int, int>::value));
 }
 
 TEST(requires, all_convertible_test) {
@@ -136,19 +137,19 @@ TEST(requires, all_convertible_test) {
                                          std::string, double>::value));
   EXPECT_TRUE((require_variadic_checker<require_all_convertible_t, double, int,
                                         int>::value));
-  EXPECT_TRUE(
-      (require_variadic_checker<require_all_convertible_t, int, int, int>::value));
+  EXPECT_TRUE((require_variadic_checker<require_all_convertible_t, int, int,
+                                        int>::value));
 }
 
 TEST(requires, all_not_convertible_test) {
   using stan::require_any_not_convertible_t;
   using stan::test::require_variadic_checker;
-  EXPECT_TRUE((require_variadic_checker<require_any_not_convertible_t, double, int,
-                                        std::string>::value));
-  EXPECT_FALSE((require_variadic_checker<require_any_not_convertible_t, double, double,
-                                         double>::value));
-  EXPECT_FALSE(
-      (require_variadic_checker<require_any_not_convertible_t, int, double, int>::value));
+  EXPECT_TRUE((require_variadic_checker<require_any_not_convertible_t, double,
+                                        int, std::string>::value));
+  EXPECT_FALSE((require_variadic_checker<require_any_not_convertible_t, double,
+                                         double, double>::value));
+  EXPECT_FALSE((require_variadic_checker<require_any_not_convertible_t, int,
+                                         double, int>::value));
 }
 
 // Double or Int
