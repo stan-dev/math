@@ -12,6 +12,11 @@ distributed as a unitary binary. You may refer to the Apache 2.0
 evaluation page on the [Stan Math
 wiki](https://github.com/stan-dev/math/wiki/Apache-2.0-License-Evaluation).
 
+Contributing
+---------
+
+We love new contributors! See the [contributing guide](https://github.com/stan-dev/math/blob/develop/CONTRIBUTING.md) for making feature requests and bug fixes.
+
 Required Libraries
 ------------------
 Stan Math depends on four libraries:
