@@ -152,7 +152,8 @@ TEST(ProbDistributionsNormalIdGLM, gpu_broadcast_y) {
   int M = 2;
 
   double y = 13;
-  Matrix<double, Dynamic, 1> y_vec = Matrix<double, Dynamic, 1>::Constant(N, 1,y);
+  Matrix<double, Dynamic, 1> y_vec
+      = Matrix<double, Dynamic, 1>::Constant(N, 1, y);
   Matrix<double, Dynamic, Dynamic> x(N, M);
   x << -12, 46, -42, 24, 25, 27;
   Matrix<double, Dynamic, 1> beta(M, 1);
@@ -182,8 +183,8 @@ TEST(ProbDistributionsNormalIdGLM, gpu_broadcast_y) {
 
   var res1 = stan::math::normal_id_glm_lpdf(y_cl, x_cl, alpha_var1, beta_var1,
                                             sigma_var1);
-  var res2
-      = stan::math::normal_id_glm_lpdf(y_vec_cl, x_cl, alpha_var2, beta_var2, sigma_var2);
+  var res2 = stan::math::normal_id_glm_lpdf(y_vec_cl, x_cl, alpha_var2,
+                                            beta_var2, sigma_var2);
 
   (res1 + res2).grad();
 

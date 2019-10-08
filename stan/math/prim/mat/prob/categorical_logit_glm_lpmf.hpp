@@ -55,7 +55,7 @@ categorical_logit_glm_lpmf(
   const size_t N_classes = beta.cols();
 
   check_consistent_size(function, "Vector of dependent variables", y,
-                          N_instances);
+                        N_instances);
   check_consistent_size(function, "Intercept vector", alpha, N_classes);
   check_size_match(function, "x.cols()", N_attributes, "beta.rows()",
                    beta.rows());

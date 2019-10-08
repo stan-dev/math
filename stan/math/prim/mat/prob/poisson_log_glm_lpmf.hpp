@@ -33,8 +33,8 @@ namespace math {
  * value (for models with constant intercept);
  * @tparam T_beta type of the weight vector;
  * this can also be a single value;
- * @param y positive integer scalar or vector parameter. If it is a scalar it will be
- * broadcast - used for all instances.
+ * @param y positive integer scalar or vector parameter. If it is a scalar it
+ * will be broadcast - used for all instances.
  * @param x design matrix or row vector. If it is a row vector it will be
  * broadcast - used for all instances.
  * @param alpha intercept (in log odds)
@@ -44,24 +44,25 @@ namespace math {
  * @throw std::domain_error if y is negative.
  * @throw std::invalid_argument if container sizes mismatch.
  */
-template <bool propto, typename T_y, typename T_x_scalar, int T_x_rows, typename T_alpha,
-          typename T_beta>
-return_type_t<T_x_scalar, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
-                                                         const Eigen::Matrix<T_x_scalar,T_x_rows,Eigen::Dynamic>& x,
-                                                         const T_alpha& alpha,
-                                                         const T_beta& beta) {
+template <bool propto, typename T_y, typename T_x_scalar, int T_x_rows,
+          typename T_alpha, typename T_beta>
+return_type_t<T_x_scalar, T_alpha, T_beta> poisson_log_glm_lpmf(
+    const T_y& y, const Eigen::Matrix<T_x_scalar, T_x_rows, Eigen::Dynamic>& x,
+    const T_alpha& alpha, const T_beta& beta) {
   static const char* function = "poisson_log_glm_lpmf";
 
+  using Eigen::Array;
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using Eigen::Array;
   using std::exp;
   using T_partials_return = partials_return_t<T_y, T_x_scalar, T_alpha, T_beta>;
   using T_alpha_val = typename std::conditional_t<
       is_vector<T_alpha>::value,
       Eigen::Array<partials_return_t<T_alpha>, -1, 1>,
       partials_return_t<T_alpha>>;
-  using T_theta_tmp = typename std::conditional_t<T_x_rows==1, T_partials_return, Array<T_partials_return, Dynamic, 1>>;
+  using T_theta_tmp =
+      typename std::conditional_t<T_x_rows == 1, T_partials_return,
+                                  Array<T_partials_return, Dynamic, 1>>;
 
   const size_t N_instances = T_x_rows == 1 ? length(y) : x.rows();
   const size_t N_attributes = x.cols();
@@ -92,11 +93,10 @@ return_type_t<T_x_scalar, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
   const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val);
 
   Array<T_partials_return, Dynamic, 1> theta(N_instances);
-  if(T_x_rows==1){
+  if (T_x_rows == 1) {
     T_theta_tmp theta_tmp = x_val * beta_val_vec;
     theta = theta_tmp + as_array_or_scalar(alpha_val_vec);
-  }
-  else{
+  } else {
     theta = x_val * beta_val_vec;
     theta += as_array_or_scalar(alpha_val_vec);
   }
@@ -121,22 +121,25 @@ return_type_t<T_x_scalar, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
                 - exp(theta.array()));
   }
 
-  operands_and_partials<Eigen::Matrix<T_x_scalar,T_x_rows,Eigen::Dynamic>, T_alpha, T_beta> ops_partials(x, alpha, beta);
+  operands_and_partials<Eigen::Matrix<T_x_scalar, T_x_rows, Eigen::Dynamic>,
+                        T_alpha, T_beta>
+      ops_partials(x, alpha, beta);
   // Compute the necessary derivatives.
   if (!is_constant_all<T_beta>::value) {
-    if(T_x_rows==1){
-      ops_partials.edge3_.partials_ = assume_type<Matrix<T_partials_return, 1, Dynamic>>(theta_derivative.sum() * x_val);
-    }
-    else {
+    if (T_x_rows == 1) {
+      ops_partials.edge3_.partials_
+          = assume_type<Matrix<T_partials_return, 1, Dynamic>>(
+              theta_derivative.sum() * x_val);
+    } else {
       ops_partials.edge3_.partials_ = x_val.transpose() * theta_derivative;
     }
   }
   if (!is_constant_all<T_x_scalar>::value) {
-    if(T_x_rows==1){
+    if (T_x_rows == 1) {
       ops_partials.edge1_.partials_
-          = assume_type<Array<T_partials_return, Dynamic, T_x_rows>>(beta_val_vec * theta_derivative.sum());
-    }
-    else {
+          = assume_type<Array<T_partials_return, Dynamic, T_x_rows>>(
+              beta_val_vec * theta_derivative.sum());
+    } else {
       ops_partials.edge1_.partials_
           = (beta_val_vec * theta_derivative.transpose()).transpose();
     }

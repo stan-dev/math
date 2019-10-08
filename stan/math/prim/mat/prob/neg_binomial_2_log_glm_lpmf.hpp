@@ -41,8 +41,8 @@ namespace math {
  * @tparam T_precision type of the (positive) precision(s);
  * this can be a vector (of the same length as y, for heteroskedasticity)
  * or a scalar.
- * @param y failures count scalar or vector parameter. If it is a scalar it will be
- * broadcast - used for all instances.
+ * @param y failures count scalar or vector parameter. If it is a scalar it will
+ * be broadcast - used for all instances.
  * @param x design matrix or row vector. If it is a row vector it will be
  * broadcast - used for all instances.
  * @param alpha intercept (in log odds)
@@ -54,11 +54,12 @@ namespace math {
  * @throw std::domain_error if phi is infinite or non-positive.
  * @throw std::domain_error if y is negative.
  */
-template <bool propto, typename T_y, typename T_x_scalar, int T_x_rows, typename T_alpha,
-          typename T_beta, typename T_precision>
-return_type_t<T_x_scalar, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
-    const T_y& y, const Eigen::Matrix<T_x_scalar, T_x_rows, Eigen::Dynamic>& x, const T_alpha& alpha, const T_beta& beta,
-    const T_precision& phi) {
+template <bool propto, typename T_y, typename T_x_scalar, int T_x_rows,
+          typename T_alpha, typename T_beta, typename T_precision>
+return_type_t<T_x_scalar, T_alpha, T_beta, T_precision>
+neg_binomial_2_log_glm_lpmf(
+    const T_y& y, const Eigen::Matrix<T_x_scalar, T_x_rows, Eigen::Dynamic>& x,
+    const T_alpha& alpha, const T_beta& beta, const T_precision& phi) {
   static const char* function = "neg_binomial_2_log_glm_lpmf";
 
   using Eigen::Array;
@@ -77,7 +78,9 @@ return_type_t<T_x_scalar, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_l
       is_vector<T_y>::value || is_vector<T_precision>::value,
       Eigen::Array<partials_return_t<T_y, T_precision>, -1, 1>,
       partials_return_t<T_y, T_precision>>;
-  using T_theta_tmp = typename std::conditional_t<T_x_rows==1, T_partials_return, Array<T_partials_return, Dynamic, 1>>;
+  using T_theta_tmp =
+      typename std::conditional_t<T_x_rows == 1, T_partials_return,
+                                  Array<T_partials_return, Dynamic, 1>>;
 
   const size_t N_instances = T_x_rows == 1 ? length(y) : x.rows();
   const size_t N_attributes = x.cols();
@@ -85,7 +88,8 @@ return_type_t<T_x_scalar, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_l
   check_consistent_size(function, "Vector of dependent variables", y,
                         N_instances);
   check_consistent_size(function, "Weight vector", beta, N_attributes);
-  check_consistent_size(function, "Vector of precision parameters", phi, N_instances);
+  check_consistent_size(function, "Vector of precision parameters", phi,
+                        N_instances);
   check_consistent_size(function, "Vector of intercepts", alpha, N_instances);
   check_nonnegative(function, "Failures variables", y);
   check_finite(function, "Weight vector", beta);
@@ -96,7 +100,8 @@ return_type_t<T_x_scalar, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_l
     return 0;
   }
 
-  if (!include_summand<propto, T_x_scalar, T_alpha, T_beta, T_precision>::value) {
+  if (!include_summand<propto, T_x_scalar, T_alpha, T_beta,
+                       T_precision>::value) {
     return 0;
   }
 
@@ -116,11 +121,10 @@ return_type_t<T_x_scalar, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_l
   const auto& phi_arr = as_array_or_scalar(phi_val_vec);
 
   Array<T_partials_return, Dynamic, 1> theta(N_instances);
-  if(T_x_rows==1){
+  if (T_x_rows == 1) {
     T_theta_tmp theta_tmp = x_val * beta_val_vec;
     theta = theta_tmp + as_array_or_scalar(alpha_val_vec);
-  }
-  else{
+  } else {
     theta = x_val * beta_val_vec;
     theta += as_array_or_scalar(alpha_val_vec);
   }
@@ -135,11 +139,10 @@ return_type_t<T_x_scalar, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_l
 
   // Compute the log-density.
   if (include_summand<propto>::value) {
-    if(is_vector<T_y>::value) {
+    if (is_vector<T_y>::value) {
       logp -= sum(lgamma(y_arr + 1));
-    }
-    else{
-      logp -= sum(lgamma(y_arr + 1))* N_instances;
+    } else {
+      logp -= sum(lgamma(y_arr + 1)) * N_instances;
     }
   }
   if (include_summand<propto, T_precision>::value) {
@@ -150,47 +153,50 @@ return_type_t<T_x_scalar, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_l
       }
     } else {
       logp += N_instances
-              * (multiply_log(assume_type<double>(phi_val), assume_type<double>(phi_val))
+              * (multiply_log(assume_type<double>(phi_val),
+                              assume_type<double>(phi_val))
                  - lgamma(assume_type<double>(phi_val)));
     }
   }
-  if (include_summand<propto, T_x_scalar, T_alpha, T_beta, T_precision>::value) {
+  if (include_summand<propto, T_x_scalar, T_alpha, T_beta,
+                      T_precision>::value) {
     logp -= sum(y_plus_phi * logsumexp_theta_logphi);
   }
   if (include_summand<propto, T_x_scalar, T_alpha, T_beta>::value) {
     logp += sum(y_arr * theta);
   }
   if (include_summand<propto, T_precision>::value) {
-    if(is_vector<T_y>::value || is_vector<T_precision>::value) {
+    if (is_vector<T_y>::value || is_vector<T_precision>::value) {
       logp += sum(lgamma(y_plus_phi));
-    }
-    else{
-      logp += sum(lgamma(y_plus_phi))* N_instances;
+    } else {
+      logp += sum(lgamma(y_plus_phi)) * N_instances;
     }
   }
 
   // Compute the necessary derivatives.
-  operands_and_partials<Eigen::Matrix<T_x_scalar, T_x_rows, Eigen::Dynamic>, T_alpha, T_beta, T_precision> ops_partials(
-      x, alpha, beta, phi);
+  operands_and_partials<Eigen::Matrix<T_x_scalar, T_x_rows, Eigen::Dynamic>,
+                        T_alpha, T_beta, T_precision>
+      ops_partials(x, alpha, beta, phi);
   if (!is_constant_all<T_x_scalar, T_beta, T_alpha, T_precision>::value) {
     Array<T_partials_return, Dynamic, 1> theta_exp = theta.exp();
     if (!is_constant_all<T_x_scalar, T_beta, T_alpha>::value) {
       Matrix<T_partials_return, Dynamic, 1> theta_derivative
           = y_arr - theta_exp * y_plus_phi / (theta_exp + phi_arr);
       if (!is_constant_all<T_beta>::value) {
-        if(T_x_rows==1){
-          ops_partials.edge3_.partials_ = assume_type<Matrix<T_partials_return, 1, Dynamic>>(theta_derivative.sum() * x_val);
-        }
-        else {
+        if (T_x_rows == 1) {
+          ops_partials.edge3_.partials_
+              = assume_type<Matrix<T_partials_return, 1, Dynamic>>(
+                  theta_derivative.sum() * x_val);
+        } else {
           ops_partials.edge3_.partials_ = x_val.transpose() * theta_derivative;
         }
       }
       if (!is_constant_all<T_x_scalar>::value) {
-        if(T_x_rows==1){
+        if (T_x_rows == 1) {
           ops_partials.edge1_.partials_
-              = assume_type<Array<T_partials_return, Dynamic, T_x_rows>>(beta_val_vec * theta_derivative.sum());
-        }
-        else {
+              = assume_type<Array<T_partials_return, Dynamic, T_x_rows>>(
+                  beta_val_vec * theta_derivative.sum());
+        } else {
           ops_partials.edge1_.partials_
               = (beta_val_vec * theta_derivative.transpose()).transpose();
         }

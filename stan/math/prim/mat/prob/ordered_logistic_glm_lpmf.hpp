@@ -69,7 +69,7 @@ ordered_logistic_glm_lpmf(
   const size_t N_classes = length(cuts) + 1;
 
   check_consistent_size(function, "Vector of dependent variables", y,
-                          N_instances);
+                        N_instances);
   check_consistent_size(function, "Weight vector", beta, N_attributes);
   check_bounded(function, "Vector of dependent variables", y, 1, N_classes);
   check_ordered(function, "Cut-points", cuts);

@@ -36,8 +36,8 @@ namespace math {
  * @tparam T_scale type of the (positive) scale(s);
  * this can be a vector (of the same length as y, for heteroskedasticity)
  * or a scalar.
- * @param y_cl scalar or vector parameter on OpenCL device. If it is a scalar it will be
- * broadcast - used for all instances.
+ * @param y_cl scalar or vector parameter on OpenCL device. If it is a scalar it
+ * will be broadcast - used for all instances.
  * @param x_cl design matrix on OpenCL device. This overload does not support
  * broadcasting of a row vector x!
  * @param alpha intercept (in log odds)
@@ -69,7 +69,7 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   const size_t M = x_cl.cols();
 
   check_positive_finite(function, "Scale vector", sigma);
-  if(y_cl.size()!=1) {
+  if (y_cl.size() != 1) {
     check_size_match(function, "Rows of ", "x_cl", N, "rows of ", "y_cl",
                      y_cl.size());
   }
@@ -130,8 +130,9 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
         mu_derivative_cl, mu_derivative_sum_cl,
         y_minus_mu_over_sigma_squared_sum_cl, sigma_derivative_cl,
         log_sigma_sum_cl, y_cl, x_cl, alpha_cl, beta_cl, sigma_cl, N, M,
-        y_cl.size() != 1, length(alpha) != 1, length(sigma) != 1, need_mu_derivative,
-        need_mu_derivative_sum, need_sigma_derivative, need_log_sigma_sum);
+        y_cl.size() != 1, length(alpha) != 1, length(sigma) != 1,
+        need_mu_derivative, need_mu_derivative_sum, need_sigma_derivative,
+        need_log_sigma_sum);
   } catch (const cl::Error &e) {
     check_opencl_error(function, e);
   }

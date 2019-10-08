@@ -178,12 +178,13 @@ TEST(ProbDistributionsNegBinomial2LogGLM, gpu_broadcast_y) {
   expect_near_rel(
       "neg_binomial_2_log_glm_lpmf (OpenCL)",
       stan::math::neg_binomial_2_log_glm_lpmf(y_cl, x_cl, alpha, beta, phi),
-      stan::math::neg_binomial_2_log_glm_lpmf(y_vec_cl, x_cl, alpha, beta, phi));
-  expect_near_rel(
-      "neg_binomial_2_log_glm_lpmf (OpenCL)",
-      stan::math::neg_binomial_2_log_glm_lpmf<true>(y_cl, x_cl, alpha, beta,
-                                                    phi),
-      stan::math::neg_binomial_2_log_glm_lpmf<true>(y_vec_cl, x_cl, alpha, beta, phi));
+      stan::math::neg_binomial_2_log_glm_lpmf(y_vec_cl, x_cl, alpha, beta,
+                                              phi));
+  expect_near_rel("neg_binomial_2_log_glm_lpmf (OpenCL)",
+                  stan::math::neg_binomial_2_log_glm_lpmf<true>(
+                      y_cl, x_cl, alpha, beta, phi),
+                  stan::math::neg_binomial_2_log_glm_lpmf<true>(
+                      y_vec_cl, x_cl, alpha, beta, phi));
 
   Matrix<var, Dynamic, 1> beta_var1 = beta;
   Matrix<var, Dynamic, 1> beta_var2 = beta;

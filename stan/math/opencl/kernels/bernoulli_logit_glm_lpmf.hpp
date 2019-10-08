@@ -41,8 +41,8 @@ static const char* bernoulli_logit_glm_kernel_code = STRINGIFY(
         __global double* theta_derivative_sum, const __global int* y_global,
         const __global double* x, const __global double* alpha,
         const __global double* beta, const int N, const int M,
-        const int is_y_vector, const int is_alpha_vector, const int need_theta_derivative,
-        const int need_theta_derivative_sum) {
+        const int is_y_vector, const int is_alpha_vector,
+        const int need_theta_derivative, const int need_theta_derivative_sum) {
       const int gid = get_global_id(0);
       const int lid = get_local_id(0);
       const int lsize = get_local_size(0);

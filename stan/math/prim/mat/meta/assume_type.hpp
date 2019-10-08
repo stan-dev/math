@@ -8,16 +8,23 @@ namespace stan {
 namespace math {
 
 /**
- * Assume which type we get. If actual type is convertible to assumed type or in case of eigen types compile time rows and columns also match this is a no-op.
- * This is intended to be used in compile time branches that could otherwise trigger compile error even though they are optimized away.
+ * Assume which type we get. If actual type is convertible to assumed type or in
+ * case of eigen types compile time rows and columns also match this is a no-op.
+ * This is intended to be used in compile time branches that could otherwise
+ * trigger compile error even though they are optimized away.
  * @tparam T_desired type of output we need to avoid compile time errors
  * @tparam T_actual actual type of the argument
  * @param a input value
  * @return the input value a
  */
-template <typename T_desired, typename T_actual, typename = std::enable_if_t<std::is_convertible<T_actual, T_desired>::value &&
-                                                                             static_cast<int>(T_desired::RowsAtCompileTime) == static_cast<int>(T_actual::RowsAtCompileTime) &&
-                                                                             static_cast<int>(T_desired::ColsAtCompileTime) == static_cast<int>(T_actual::ColsAtCompileTime)>, typename = void>
+template <typename T_desired, typename T_actual,
+          typename = std::enable_if_t<
+              std::is_convertible<T_actual, T_desired>::value&& static_cast<
+                  int>(T_desired::RowsAtCompileTime)
+                  == static_cast<int>(T_actual::RowsAtCompileTime)
+              && static_cast<int>(T_desired::ColsAtCompileTime)
+                     == static_cast<int>(T_actual::ColsAtCompileTime)>,
+          typename = void>
 inline T_actual&& assume_type(T_actual&& a) {
   return std::forward<T_actual>(a);
 }
@@ -25,21 +32,28 @@ inline T_actual&& assume_type(T_actual&& a) {
 /**
  * Assume which type we get. If actual type is not convertible to assumed type
  * or in case of eigen types compile time rows and columns are not the same this
- * has return type of \c T_desired, but it only throws. This version should only be used where it is optimized away so the throw should never happen.
- * This is intended to be used in compile time branches that would otherwise trigger compile error even though they are optimized away.
+ * has return type of \c T_desired, but it only throws. This version should only
+ * be used where it is optimized away so the throw should never happen. This is
+ * intended to be used in compile time branches that would otherwise trigger
+ * compile error even though they are optimized away.
  * @tparam T_desired type of output we need to avoid compile time errors
  * @tparam T_actual actual type of the argument
  * @param a input value
  * @return nothing, this always throws
  * @throw always throws std::runtime_error
  */
-template <typename T_desired, typename T_actual, typename = std::enable_if_t<!std::is_convertible<T_actual, T_desired>::value ||
-                                                                             static_cast<int>(T_desired::RowsAtCompileTime) != static_cast<int>(T_actual::RowsAtCompileTime) ||
-                                                                             static_cast<int>(T_desired::ColsAtCompileTime) != static_cast<int>(T_actual::ColsAtCompileTime)>, typename = void>
-inline T_desired assume_type(const T_actual& a){
+template <typename T_desired, typename T_actual,
+          typename = std::enable_if_t<
+              !std::is_convertible<T_actual, T_desired>::value
+              || static_cast<int>(T_desired::RowsAtCompileTime)
+                     != static_cast<int>(T_actual::RowsAtCompileTime)
+              || static_cast<int>(T_desired::ColsAtCompileTime)
+                     != static_cast<int>(T_actual::ColsAtCompileTime)>,
+          typename = void>
+inline T_desired assume_type(const T_actual& a) {
   throw std::runtime_error("Wrong type assumed! Please file a bug report.");
 }
 
-}
-}
+}  // namespace math
+}  // namespace stan
 #endif

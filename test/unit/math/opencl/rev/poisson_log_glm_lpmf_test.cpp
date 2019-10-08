@@ -134,9 +134,10 @@ TEST(ProbDistributionsPoissonLogGLM, gpu_broadcast_y) {
   matrix_cl<int> y_cl(y);
   matrix_cl<int> y_vec_cl(y_vec, N, 1);
 
-  expect_near_rel("poisson_log_glm_lpmf (OpenCL)",
-                  stan::math::poisson_log_glm_lpmf(y_cl, x_cl, alpha, beta),
-                  stan::math::poisson_log_glm_lpmf(y_vec_cl, x_cl, alpha, beta));
+  expect_near_rel(
+      "poisson_log_glm_lpmf (OpenCL)",
+      stan::math::poisson_log_glm_lpmf(y_cl, x_cl, alpha, beta),
+      stan::math::poisson_log_glm_lpmf(y_vec_cl, x_cl, alpha, beta));
   expect_near_rel(
       "poisson_log_glm_lpmf (OpenCL)",
       stan::math::poisson_log_glm_lpmf<true>(y_cl, x_cl, alpha, beta),
@@ -149,7 +150,8 @@ TEST(ProbDistributionsPoissonLogGLM, gpu_broadcast_y) {
 
   var res1
       = stan::math::poisson_log_glm_lpmf(y_cl, x_cl, alpha_var1, beta_var1);
-  var res2 = stan::math::poisson_log_glm_lpmf(y_vec_cl, x_cl, alpha_var2, beta_var2);
+  var res2
+      = stan::math::poisson_log_glm_lpmf(y_vec_cl, x_cl, alpha_var2, beta_var2);
 
   (res1 + res2).grad();
 

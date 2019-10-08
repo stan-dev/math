@@ -115,7 +115,6 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars) {
   }
 }
 
-
 TEST(ProbDistributionsNormalIdGLM, broadcast_x) {
   Matrix<double, Dynamic, 1> y(3, 1);
   y << 14, 32, 21;
@@ -124,7 +123,7 @@ TEST(ProbDistributionsNormalIdGLM, broadcast_x) {
   Matrix<double, 1, Dynamic> x(1, 2);
   x << -12, 46;
   Matrix<var, 1, Dynamic> x1 = x;
-  Matrix<var, Dynamic, Dynamic> x_mat = x.replicate(3,1);
+  Matrix<var, Dynamic, Dynamic> x_mat = x.replicate(3, 1);
   Matrix<double, Dynamic, 1> beta(2, 1);
   beta << 0.3, 2;
   Matrix<var, Dynamic, 1> beta1 = beta;
@@ -141,11 +140,11 @@ TEST(ProbDistributionsNormalIdGLM, broadcast_x) {
 
   (lp1 + lp2).grad();
 
-  for(int i=0;i<3;i++){
+  for (int i = 0; i < 3; i++) {
     EXPECT_DOUBLE_EQ(y1[i].adj(), y1[i].adj());
   }
 
-  for(int i=0;i<2;i++){
+  for (int i = 0; i < 2; i++) {
     EXPECT_DOUBLE_EQ(x1[i].adj(), x_mat.col(i).adj().sum());
     EXPECT_DOUBLE_EQ(beta1[i].adj(), beta2[i].adj());
   }
@@ -179,9 +178,9 @@ TEST(ProbDistributionsNormalIdGLM, broadcast_y) {
 
   EXPECT_DOUBLE_EQ(y1.adj(), y_vec.adj().sum());
 
-  for(int i=0;i<2;i++){
-    for(int j=0;j<2;j++) {
-      EXPECT_DOUBLE_EQ(x1(j,i).adj(), x2(j,i).adj());
+  for (int i = 0; i < 2; i++) {
+    for (int j = 0; j < 2; j++) {
+      EXPECT_DOUBLE_EQ(x1(j, i).adj(), x2(j, i).adj());
     }
     EXPECT_DOUBLE_EQ(beta1[i].adj(), beta2[i].adj());
   }

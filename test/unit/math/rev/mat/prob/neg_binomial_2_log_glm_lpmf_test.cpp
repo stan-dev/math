@@ -115,7 +115,7 @@ TEST(ProbDistributionsNegBinomial2LogGLM, broadcast_x) {
   Matrix<double, 1, Dynamic> x(1, 2);
   x << -12, 46;
   Matrix<var, 1, Dynamic> x1 = x;
-  Matrix<var, Dynamic, Dynamic> x_mat = x.replicate(3,1);
+  Matrix<var, Dynamic, Dynamic> x_mat = x.replicate(3, 1);
   Matrix<double, Dynamic, 1> beta(2, 1);
   beta << 0.3, 2;
   Matrix<var, Dynamic, 1> beta1 = beta;
@@ -126,13 +126,14 @@ TEST(ProbDistributionsNegBinomial2LogGLM, broadcast_x) {
   var phi2 = 10;
 
   var lp1 = stan::math::neg_binomial_2_log_glm_lpmf(y, x1, alpha1, beta1, phi1);
-  var lp2 = stan::math::neg_binomial_2_log_glm_lpmf(y, x_mat, alpha2, beta2, phi2);
+  var lp2
+      = stan::math::neg_binomial_2_log_glm_lpmf(y, x_mat, alpha2, beta2, phi2);
 
   EXPECT_DOUBLE_EQ(lp1.val(), lp2.val());
 
   (lp1 + lp2).grad();
 
-  for(int i=0;i<2;i++){
+  for (int i = 0; i < 2; i++) {
     EXPECT_DOUBLE_EQ(x1[i].adj(), x_mat.col(i).adj().sum());
     EXPECT_DOUBLE_EQ(beta1[i].adj(), beta2[i].adj());
   }
@@ -157,15 +158,16 @@ TEST(ProbDistributionsNegBinomial2LogGLM, broadcast_y) {
   var phi2 = 10;
 
   var lp1 = stan::math::neg_binomial_2_log_glm_lpmf(y, x1, alpha1, beta1, phi1);
-  var lp2 = stan::math::neg_binomial_2_log_glm_lpmf(y_vec, x2, alpha2, beta2, phi2);
+  var lp2
+      = stan::math::neg_binomial_2_log_glm_lpmf(y_vec, x2, alpha2, beta2, phi2);
 
   EXPECT_DOUBLE_EQ(lp1.val(), lp2.val());
 
   (lp1 + lp2).grad();
 
-  for(int i=0;i<2;i++){
-    for(int j=0;j<2;j++) {
-      EXPECT_DOUBLE_EQ(x1(j,i).adj(), x2(j,i).adj());
+  for (int i = 0; i < 2; i++) {
+    for (int j = 0; j < 2; j++) {
+      EXPECT_DOUBLE_EQ(x1(j, i).adj(), x2(j, i).adj());
     }
     EXPECT_DOUBLE_EQ(beta1[i].adj(), beta2[i].adj());
   }

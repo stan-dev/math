@@ -40,8 +40,8 @@ static const char* poisson_log_glm_kernel_code = STRINGIFY(
         __global double* theta_derivative_sum, __global double* logp_global,
         const __global int* y_global, const __global double* x,
         const __global double* alpha, const __global double* beta, const int N,
-        const int M, const int is_y_vector, const int is_alpha_vector, const int need_logp1,
-        const int need_logp2) {
+        const int M, const int is_y_vector, const int is_alpha_vector,
+        const int need_logp1, const int need_logp2) {
       const int gid = get_global_id(0);
       const int lid = get_local_id(0);
       const int lsize = get_local_size(0);
