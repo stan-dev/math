@@ -5,6 +5,7 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/dot_product.hpp>
 #include <stan/math/prim/mat/fun/dot_self.hpp>
+#include <stan/math/prim/mat/fun/multiply.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -18,19 +19,14 @@ namespace math {
  * Returns a dot product covariance matrix. A member of Stan's Gaussian Process
  * Library.
  *
- * \f$k(x,x') = \sigma^2 + x \cdot x'\f$
- *
- * A dot product covariance matrix is the same covariance matrix
- * as in bayesian regression with \f$N(0,1)\f$ priors on regression coefficients
- * and a \f$N(0,\sigma^2)\f$ prior on the constant function. See Rasmussen and
- * Williams et al 2006, Chapter 4.
+ * \f$k(x,x') = x^T \Sigma x'\f$
  *
  * @tparam T_x type of std::vector of elements
- * @tparam T_sigma type of sigma
+ * @tparam T_sigma scalar type of sigma elements
  *
  * @param x std::vector of elements that can be used in dot product.
  *    This function assumes each element of x is the same size.
- * @param sigma constant function that can be used in stan::math::square
+ * @param Sigma covariance matrix 
  * @return dot product covariance matrix that is positive semi-definite
  * @throw std::domain_error if sigma < 0, nan, inf or
  *   x is nan or infinite
@@ -38,11 +34,12 @@ namespace math {
 template <typename T_x, typename T_sigma>
 Eigen::Matrix<return_type_t<T_x, T_sigma>, Eigen::Dynamic, Eigen::Dynamic>
 gp_dot_prod_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
-                const T_sigma &sigma) {
-  check_not_nan("gp_dot_prod_cov", "sigma", sigma);
-  check_nonnegative("gp_dot_prod_cov", "sigma", sigma);
-  check_finite("gp_dot_prod_cov", "sigma", sigma);
-
+                const Eigen::Matrix<T_sigma, Eigen::Dynamic, Eigen::Dynamic> &Sigma) {
+  check_not_nan("gp_dot_prod_cov", "Sigma", Sigma);
+  check_nonnegative("gp_dot_prod_cov", "Sigma", Sigma);
+  check_finite("gp_dot_prod_cov", "Sigma", Sigma);
+  check_square("gp_dot_prod_cov", "Sigma", Sigma);
+  
   size_t x_size = x.size();
   for (size_t i = 0; i < x_size; ++i) {
     check_not_nan("gp_dot_prod_cov", "x", x[i]);
@@ -55,16 +52,23 @@ gp_dot_prod_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
     return cov;
   }
 
-  T_sigma sigma_sq = square(sigma);
+  check_size_match("gp_dot_prod_cov", "dimension of elements of x", size_of(x[0]),
+                   "dimension of Sigma", Sigma.cols());
+
+  std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> x_new(x_size);
+
+  for (size_t i = 0; i < x_size; ++i) {
+    x_new[i] = multiply(Sigma, x[i]);
+  }
 
   for (size_t i = 0; i < (x_size - 1); ++i) {
-    cov(i, i) = sigma_sq + dot_self(x[i]);
+    cov(i, i) = dot_product(x[i], x_new[i]);
     for (size_t j = i + 1; j < x_size; ++j) {
-      cov(i, j) = sigma_sq + dot_product(x[i], x[j]);
+      cov(i, j) = dot_product(x[i], x_new[j]);
       cov(j, i) = cov(i, j);
     }
   }
-  cov(x_size - 1, x_size - 1) = sigma_sq + dot_self(x[x_size - 1]);
+  cov(x_size - 1, x_size - 1) = dot_product(x[x_size - 1], x_new[x_size - 1]);
   return cov;
 }
 
@@ -72,20 +76,15 @@ gp_dot_prod_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
  * Returns a dot product covariance matrix. A member of Stan's Gaussian
  * Process Library.
  *
- * \f$k(x,x') = \sigma^2 + x \cdot x'\f$
+ * \f$k(x,x') = \sigma^2 x \cdot x'\f$
  *
- * A dot product covariance matrix is the same covariance matrix
- * as in bayesian regression with \f$N(0,1)\f$ priors on regression coefficients
- * and a \f$N(0,\sigma^2)\f$ prior on the constant function. See Rasmussen and
- * Williams et al 2006, Chapter 4.
- *
- * @tparam T_x type of std::vector of double
- * @tparam T_sigma type of sigma
+ * @tparam T_x type of std::vector of elements
+ * @tparam T_sigma scalar type of sigma elements
  *
  * @param x std::vector of elements that can be used in transpose
  *   and multiply
  *    This function assumes each element of x is the same size.
- * @param sigma constant function that can be used in stan::math::square
+ * @param sigma variance 
  * @return dot product covariance matrix that is positive semi-definite
  * @throw std::domain_error if sigma < 0, nan, inf or
  *   x is nan or infinite
@@ -110,13 +109,13 @@ gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma &sigma) {
   T_sigma sigma_sq = square(sigma);
 
   for (size_t i = 0; i < (x_size - 1); ++i) {
-    cov(i, i) = sigma_sq + x[i] * x[i];
+    cov(i, i) = sigma_sq * x[i] * x[i];
     for (size_t j = i + 1; j < x_size; ++j) {
-      cov(i, j) = sigma_sq + x[i] * x[j];
+      cov(i, j) = sigma_sq * x[i] * x[j];
       cov(j, i) = cov(i, j);
     }
   }
-  cov(x_size - 1, x_size - 1) = sigma_sq + x[x_size - 1] * x[x_size - 1];
+  cov(x_size - 1, x_size - 1) = sigma_sq * x[x_size - 1] * x[x_size - 1];
   return cov;
 }
 
@@ -124,21 +123,16 @@ gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma &sigma) {
  * Returns a dot product covariance matrix of differing
  * x's. A member of Stan's Gaussian Process Library.
  *
- * \f$k(x,x') = \sigma^2 + x \cdot x'\f$
+ * \f$k(x,x') = x^T \Sigma x'\f$
  *
- * A dot product covariance matrix is the same covariance matrix
- * as in bayesian regression with \f$N(0,1)\f$ priors on regression coefficients
- * and a \f$N(0,\sigma^2)\f$ prior on the constant function. See Rasmussen and
- * Williams et al 2006, Chapter 4.
- *
- * @tparam T_x1 type of first std::vector of elements
- * @tparam T_x2 type of second std::vector of elements
- * @tparam T_sigma type of sigma
+ * @tparam T_x1 scalar type of x1
+ * @tparam T_x2 scalar type of x2
+ * @tparam T_sigma scalar type of Sigma
  *
  * @param x1 std::vector of elements that can be used in dot_product
  * @param x2 std::vector of elements that can be used in dot_product
- * @param sigma constant function that can be used in stan::math::square
- * @return dot product covariance matrix that is not always symmetric
+ * @param Sigma covariance matrix
+ * @return dot product covariance matrix
  * @throw std::domain_error if sigma < 0, nan or inf
  *   or if x1 or x2 are nan or inf
  */
@@ -147,10 +141,11 @@ Eigen::Matrix<return_type_t<T_x1, T_x2, T_sigma>, Eigen::Dynamic,
               Eigen::Dynamic>
 gp_dot_prod_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
                 const std::vector<Eigen::Matrix<T_x2, Eigen::Dynamic, 1>> &x2,
-                const T_sigma &sigma) {
-  check_not_nan("gp_dot_prod_cov", "sigma", sigma);
-  check_nonnegative("gp_dot_prod_cov", "sigma", sigma);
-  check_finite("gp_dot_prod_cov", "sigma", sigma);
+                const Eigen::Matrix<T_sigma, Eigen::Dynamic, Eigen::Dynamic> &Sigma) {
+  check_not_nan("gp_dot_prod_cov", "Sigma", Sigma);
+  check_nonnegative("gp_dot_prod_cov", "Sigma", Sigma);
+  check_finite("gp_dot_prod_cov", "Sigma", Sigma);
+  check_square("gp_dot_prod_cov", "Sigma", Sigma);
 
   size_t x1_size = x1.size();
   size_t x2_size = x2.size();
@@ -170,11 +165,24 @@ gp_dot_prod_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
     return cov;
   }
 
-  T_sigma sigma_sq = square(sigma);
+  check_size_match("gp_dot_prod_cov", "dimension of elements of x1", size_of(x1[0]),
+                   "dimension of elements of x2", size_of(x2[0]));
+
+  check_size_match("gp_dot_prod_cov", "dimension of elements of x1", size_of(x1[0]),
+                   "dimension of Sigma", Sigma.cols());
+
+  check_size_match("gp_dot_prod_cov", "dimension of elements of x", size_of(x2[0]),
+                   "dimension of Sigma", Sigma.cols());
+
+  std::vector<Eigen::Matrix<T_x2, Eigen::Dynamic, 1>> x2_new(x2_size);
+
+  for (size_t i = 0; i < x2_size; ++i) {
+    x2_new[i] = multiply(Sigma, x2[i]);
+  }
 
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
-      cov(i, j) = sigma_sq + dot_product(x1[i], x2[j]);
+      cov(i, j) = dot_product(x1[i], x2_new[j]);
     }
   }
   return cov;
@@ -184,12 +192,7 @@ gp_dot_prod_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
  * Returns a dot product covariance matrix of
  * differing x's. A member of Stan's Gaussian Process Library.
  *
- * \f$k(x,x') = \sigma^2 + x \cdot x'\f$
- *
- * A dot product covariance matrix is the same covariance matrix
- * as in bayesian regression with \f$N(0,1)\f$ priors on regression coefficients
- * and a \f$N(0,\sigma^2)\f$ prior on the constant function. See Rasmussen and
- * Williams et al 2006, Chapter 4.
+ * \f$k(x,x') = \sigma^2 * x \cdot x'\f$
  *
  * @tparam T_x1 type of first std::vector of double
  * @tparam T_x2 type of second std::vector of double
@@ -197,8 +200,8 @@ gp_dot_prod_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
  *
  * @param x1 std::vector of elements that can be used in dot_product
  * @param x2 std::vector of elements that can be used in dot_product
- * @param sigma is the constant function that can be used in stan::math::square
- * @return dot product covariance matrix that is not always symmetric
+ * @param sigma standard deviation
+ * @return dot product covariance matrix
  * @throw std::domain_error if sigma < 0, nan or inf
  *   or if x1 or x2 are nan or inf
  */
@@ -230,7 +233,7 @@ gp_dot_prod_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
-      cov(i, j) = sigma_sq + x1[i] * x2[j];
+      cov(i, j) = sigma_sq * x1[i] * x2[j];
     }
   }
   return cov;
