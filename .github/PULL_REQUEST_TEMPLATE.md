@@ -8,6 +8,10 @@ Describe the contents of the pull request. The issue describes the problem that 
 
 Describe implementation details and any relevant information that would help the code reviewer understand this pull request. If there is anything special you need to draw someone's attention to, do it here. Link to any related pull requests or Discourse threads.
 
+## Release Note
+
+The section here can be directly added to the release notes. This should be written from the perspective of letting users know about the bug fix or new feature.
+
 ## Tests
 
 Describe the new tests with the pull request.

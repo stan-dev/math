@@ -21,3 +21,7 @@ clang-tidy-fix:
 		 -checks='$(tidy_checks)' -format-style='file' -header-filter='./stan/*' \
 		 -fix -export-fixes="./.clang-fixes.log" \
 		 -- $(CXXFLAGS) $(LDFLAGS) $(LDLIBS) $(INC_GTEST) $(CXXFLAGS_GTEST) $(CPPFLAGS)
+
+.PHONY: clang-format
+clang-format:
+		find stan test -name '*.hpp' -o -name '*.cpp' | xargs -n20 -P1 clang-format-5.0 -i
