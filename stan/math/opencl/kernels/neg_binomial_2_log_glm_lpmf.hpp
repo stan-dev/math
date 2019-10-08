@@ -32,6 +32,8 @@ static const char* neg_binomial_2_log_glm_kernel_code = STRINGIFY(
      * @param[in] phi_global (vector of) precision parameter(s)
      * @param N number of cases
      * @param M number of attributes
+     * @param is_y_vector 0 or 1 - whether y is a vector (alternatively
+     * it is a scalar)
      * @param is_alpha_vector 0 or 1 - whether alpha is a vector (alternatively
      * it is a scalar)
      * @param is_phi_vector 0 or 1 - whether phi is a vector (alternatively it

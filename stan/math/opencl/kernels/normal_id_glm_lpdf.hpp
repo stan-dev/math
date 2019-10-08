@@ -31,6 +31,8 @@ static const char* normal_id_glm_kernel_code = STRINGIFY(
      * per work group)
      * @param N number of cases
      * @param M number of attributes
+     * @param is_y_vector 0 or 1 - whether y is a vector (alternatively
+     * it is a scalar)
      * @param is_alpha_vector 0 or 1 - whether alpha is a vector (alternatively
      * it is a scalar)
      * @param is_sigma_vector 0 or 1 - whether sigma is a vector (alternatively

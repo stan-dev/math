@@ -29,6 +29,8 @@ static const char* bernoulli_logit_glm_kernel_code = STRINGIFY(
      * @param[in] beta weight vector
      * @param N number of cases
      * @param M number of attributes
+     * @param is_y_vector 0 or 1 - whether y is a vector (alternatively
+     * it is a scalar)
      * @param is_alpha_vector 0 or 1 - whether alpha is a vector (alternatively
      * it is a scalar)
      * @param need_theta_derivative interpreted as boolean - whether
