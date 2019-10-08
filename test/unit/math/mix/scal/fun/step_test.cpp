@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <limits>
 
 TEST(mathMixScalFun, step) {
   auto f = [](const auto& x) { return stan::math::step(x); };

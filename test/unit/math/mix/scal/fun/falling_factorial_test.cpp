@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <limits>
 
 TEST(mathMixScalFun, fallingFactorial) {
   auto f = [](const int x2) {

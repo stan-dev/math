@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <limits>
 
 TEST(mathMixScalFun, besselSecondKind) {
   // bind integer arg because can't autodiff through

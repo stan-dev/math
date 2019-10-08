@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <limits>
 
 TEST(mathMixScalFun, modifiedBesselSecondKind) {
   auto f = [](const int x1) {

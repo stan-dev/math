@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <limits>
 
 TEST(mathMixScalFun, logDiffExp) {
   auto f = [](const auto& x1, const auto& x2) {
