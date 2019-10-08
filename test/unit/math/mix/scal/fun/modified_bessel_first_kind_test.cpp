@@ -3,7 +3,7 @@
 TEST(mathMixScalFun, modifiedBesselFirstKind) {
   // bind integer arg because can't autodiff through
   auto f = [](const int x1) {
-    return [&](const auto& x2) {
+    return [=](const auto& x2) {
       return stan::math::modified_bessel_first_kind(x1, x2);
     };
   };

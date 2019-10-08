@@ -3,7 +3,7 @@
 TEST(mathMixScalFun, fallingFactorial) {
   auto f = [](const int x2) {
     return
-        [&](const auto& x1) { return stan::math::falling_factorial(x1, x2); };
+        [=](const auto& x1) { return stan::math::falling_factorial(x1, x2); };
   };
   stan::test::expect_ad(f(-2), -3.0);  // throws
   stan::test::expect_ad(f(2), -3.0);   // throws
