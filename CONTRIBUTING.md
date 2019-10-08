@@ -2,12 +2,12 @@
 
 Thanks for reading! We love contributions from everyone in the form of good discussion, issues, and pull requests.
 
-This is the short version. There's more information on the [wiki](https://github.com/stan-dev/math/wiki/Developer-Doc#contributing).
+This is the short version. For an extended guide see [developer doc on the wiki](https://github.com/stan-dev/math/wiki/Developer-Doc#contributing).
 
 ### Pull Request Checklist
 
-1. Read Code of Conduct // TODO: Link here after
-2. Fill out a bug or feature request [issue](https://github.com/stan-dev/math/issues)
+1. Read the [Code of Conduct](https://github.com/stan-dev/math/blob/develop/CODE_OF_CONDUCT.md).
+2. Fill out a bug or feature request [issue](https://github.com/stan-dev/math/issues).
 3. Make a fork and branch, for features start the branch with `feature/your-feature`, for bugs use `bug-fix/your-fix`, and refactors `refactor/your-refactor`.
 4. Once your branch passes cpplint and tests relevant to your PR, submit a [pull request](https://github.com/stan-dev/math/pulls) following the checks in the pull request template.
 
@@ -19,9 +19,9 @@ We reserve [issues](https://github.com/stan-dev/math/issues) for bugs and featur
 
 The issue template gives the minimum information we like to have when a bug is reported.
 
-1. a description of the problem
-2. a reproducible example
-3. the expected outcome if the bug were fixed.
+1. A description of the problem
+2. A reproducible example
+3. The expected outcome if the bug were fixed.
 
 If there's an error and you can produce any of these pieces, it's much appreciated!
 
@@ -29,9 +29,9 @@ If there's an error and you can produce any of these pieces, it's much appreciat
 
 We track the development of new features using the same [issue tracker](https://github.com/stan-dev/math/issues). Ideally, feature requests will have:
 
-1. a description of the feature
-2. an example
-3. the expected outcome if the feature existed.
+1. A description of the feature
+2. An example
+3. The expected outcome if the feature existed.
 
 Open feature requests should be the ones we want to implement in the Math library. We'll try to close vague feature requests that don't have enough information and move the discussion to the forums.
 
@@ -92,6 +92,7 @@ For these you don't need a design document, but your pull request should have a 
 - Big new features
 
 Some example PRs include:
+
 1. [Refactoring type traits](https://github.com/stan-dev/math/pull/1341)
 2. [Adding Variadic Templates](https://github.com/stan-dev/math/pull/978)
 3. [Allow ts of ODEs to be `var`s](https://github.com/stan-dev/math/pull/857)
@@ -112,7 +113,7 @@ For some of these we have special cases which I'll list more in depth below
 - Changes that heavily effect reproducibility of Stan programs.
 - If you need a new folder to hold your code.
 
-These are generally large features which allow Stan to do things it could not previously do, but are also the most complex and difficult to review (for both the reviewer and reviewee). It's heavily encouraged to post on Stan discourse, come to a meeting, and have very thorough documentation and discussion before proceeding with a feature heavy pull request.
+These are generally large features which allow Stan to do things it could not previously do, but are also the most complex and difficult to review (for both the reviewer and reviewee). It's heavily encouraged to post on Stan discourse, come to a meeting, and have thorough documentation and discussion before proceeding with a feature heavy pull request.
 
 1. [Async for OpenCL](https://github.com/stan-dev/math/pull/1162)
 2. [MPI Backend](https://github.com/stan-dev/math/pull/854)
@@ -131,23 +132,24 @@ Below are some general tips and good things to know when reading Stan math's cod
 
 ### Folder Structure
 
-- `OpenCL`: The OpenCL backend, everything related to interacting with the OpenCL instance and devices is managed here.
+- `opencl`: The OpenCL backend, everything related to interacting with the OpenCL instance and devices is managed here.
 - `memory`: Code for Stan's stack allocator.
 - `prim`: Functions here are templated generally such that if a specialization does not exist in rev or fwd the function will default to this implementation in prim. Anything in this folder should be unaware of the `fvar` and `var` types.
 - `rev`: Specializations of the functions in prim for reverse mode autodiff.
-- `fwd`: Specialiations of the functions in prim for forward mode autodiff.
-- `mix`: Specialziations that operate on mixes of `fvar` and `var` types.
-
-Anything added to `rev` and `fwd` should have a general function available in `prim`. Within each of `prim`, `rev` and `fwd` there are folders for `arr`, `mat` and `scal`. `scal` is for functions that work on scalar types such as `double` or `var`, `arr` holds methods and classes for working with standard vectors while `mat` holds methods that work on `Eigen` matrices.
+- `fwd`: Specializations of the functions in prim for forward mode autodiff.
+- `mix`: Specializations that operate on mixes of `fvar` and `var` types.
 
 See the [OpenCL Wiki](https://github.com/stan-dev/math/wiki/OpenCL-GPU-Routines) for information on contributing to Stan's GPU backend.
 
+Anything added to `rev` and `fwd` should have a general function available in `prim`. Within each of `prim`, `rev` and `fwd` there are folders for `arr`, `mat` and `scal`. `scal` is for functions that work on scalar types such as `double` or `var`, `arr` holds methods and classes for working with standard library vectors while `mat` holds methods that work on `Eigen` matrices and vectors.
+
+
 Within each of `scal`, `arr`, and `mat` there are folder for `err`, `fun`, `functor`, `prob` and `meta` which contain
 
-- `err`: Error checking methods
-- `fun`: Functions which operator on types for each folder
-- `functor`: Functors which operate on functions and types for each folder
-- `meta`: Type traits relevant to each
+- `err`: Error checking methods.
+- `fun`: Functions which operator on types for each folder.
+- `functor`: Functors which operate on functions and types for each folder.
+- `meta`: Type traits relevant to template metaprogramming.
 - `prob`: Methods for calculating the log probability given a distribution.
 
 As it comes to include order, the general rules are
@@ -171,3 +173,9 @@ It's preferred if methods used within Stan math that are not exposed to the user
 4. Rolling your own function in the `internal` namespace
 
 Functions in the `internal` namespace should only be used in a single file, else they should be in the `stan math` namespace with proper documentation and tests. It's helpful and good for functions in the `internal` namespace to have at least a one liner comment giving the intent of the function.
+
+
+Some other random tips
+
+1. Make something `const` if it can be const.
+2. Use the necessary error checking available in the `err` folder for your methods inputs and outputs. If your method can't throw an error, make it `noexcept`.
