@@ -159,9 +159,9 @@ struct hybrj_functor_solver : nlo_functor<double> {
   Eigen::VectorXd get_value(const Eigen::VectorXd& iv) const { return fs_(iv); }
 };
 
-template <typename T>
-void algebra_solver_check(const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
-                          const Eigen::VectorXd y,
+template <typename T1, typename T2>
+void algebra_solver_check(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
+                          const Eigen::Matrix<T2, Eigen::Dynamic, 1> y,
                           const std::vector<double>& dat,
                           const std::vector<int>& dat_int,
                           double function_tolerance,
@@ -169,10 +169,8 @@ void algebra_solver_check(const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
   check_nonzero_size("algebra_solver", "initial guess", x);
   check_finite("algebra_solver", "initial guess", x);
   check_finite("algebra_solver", "parameter vector", y);
-  for (double i : dat)
-    check_finite("algebra_solver", "continuous data", i);
-  for (int x : dat_int)
-    check_finite("algebra_solver", "integer data", x);
+  check_finite("algebra_solver", "continuous data", dat);
+  check_finite("algebra_solver", "integer data", dat_int);
 
   check_nonnegative("algebra_solver", "function_tolerance", function_tolerance);
   check_positive("algebra_solver", "max_num_steps", max_num_steps);

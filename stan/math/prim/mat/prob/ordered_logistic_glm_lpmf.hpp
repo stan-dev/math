@@ -75,8 +75,12 @@ ordered_logistic_glm_lpmf(
   check_consistent_size(function, "Weight vector", beta, N_attributes);
   check_bounded(function, "Vector of dependent variables", y, 1, N_classes);
   check_ordered(function, "Cut-points", cuts);
-  check_finite(function, "Final cut-point", cuts[N_classes - 2]);
-  check_finite(function, "First cut-point", cuts[0]);
+  if (N_classes > 1) {
+    if (N_classes > 2) {
+      check_finite(function, "Final cut-point", cuts[N_classes - 2]);
+    }
+    check_finite(function, "First cut-point", cuts[0]);
+  }
 
   if (size_zero(y, cuts))
     return 0;
