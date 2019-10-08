@@ -148,11 +148,32 @@ using require_any_not_same_vt
 
 
 /**
-  * Require type is convertible to a string
-  */
-template <typename T>
-using require_string_convertible_t
-    = require_t<std::is_convertible<std::decay_t<T>, std::string>::value>;
+ * Require T is convertible to S
+ */
+template <typename T, typename S>
+using require_convertible_t
+   = require_t<std::is_convertible<std::decay_t<T>, std::decay_t<S>>>;
+
+/**
+ * Require T is not convertible to S
+ */
+template <typename T, typename S>
+using require_not_convertible_t
+   = require_not_t<std::is_convertible<std::decay_t<T>, std::decay_t<S>>>;
+
+/**
+ * Require T is convertible to all Types
+ */
+template <typename T, typename... Types>
+using require_all_convertible_t
+   = require_all_t<std::is_convertible<std::decay_t<T>, std::decay_t<Types>>...>;
+
+/**
+ * require T is not convertible to any Types
+ */
+template <typename T, typename... Types>
+using require_any_not_convertible_t
+   = require_all_not_t<std::is_convertible<std::decay_t<T>, std::decay_t<Types>>...>;
 
 /**
  * Below are enablers for
