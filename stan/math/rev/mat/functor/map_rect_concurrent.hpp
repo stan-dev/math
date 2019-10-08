@@ -8,10 +8,8 @@
 #include <stan/math/prim/mat/functor/map_rect_combine.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
 
-#ifdef STAN_THREADS
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
-#endif
 
 #include <algorithm>
 #include <vector>

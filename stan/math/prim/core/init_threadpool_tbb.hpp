@@ -1,18 +1,14 @@
 #ifndef STAN_MATH_PRIM_CORE_INIT_THREADPOOL_TBB_HPP
 #define STAN_MATH_PRIM_CORE_INIT_THREADPOOL_TBB_HPP
 
-// TODO(SW): remove STAN_THREADS guards once Intel TBB is fully
-// mandatory
-
 #include <stan/math/prim/scal/err/invalid_argument.hpp>
+
 #include <boost/lexical_cast.hpp>
+
+#include <tbb/task_scheduler_init.h>
 
 #include <cstdlib>
 #include <thread>
-
-#ifdef STAN_THREADS
-#include <tbb/task_scheduler_init.h>
-#endif
 
 namespace stan {
 namespace math {
@@ -36,7 +32,6 @@ namespace internal {
  */
 inline int get_num_threads() {
   int num_threads = 1;
-#ifdef STAN_THREADS
   const char* env_stan_num_threads = std::getenv("STAN_NUM_THREADS");
   if (env_stan_num_threads != nullptr) {
     try {
@@ -45,7 +40,7 @@ inline int get_num_threads() {
       if (env_num_threads > 0) {
         num_threads = env_num_threads;
       } else if (env_num_threads == -1) {
-        num_threads = tbb::task_scheduler_init::default_num_threads();
+        num_threads = std::thread::hardware_concurrency();
       } else {
         invalid_argument("get_num_threads(int)", "STAN_NUM_THREADS",
                          env_stan_num_threads,
@@ -59,51 +54,39 @@ inline int get_num_threads() {
                        "' but it must be a positive number or -1");
     }
   }
-#endif
   return num_threads;
 }
 
 }  // namespace internal
 
-// TODO(wds15): get rid of this typedef once the TBB is mandatory
-#ifdef STAN_THREADS
-typedef tbb::stack_size_type stack_size_type;
-#else
-typedef std::size_t stack_size_type;
-#endif
-
 /**
  * Initialize the Intel TBB threadpool and global scheduler through
  * the tbb::task_scheduler_init object. In case an instance of the
  * tbb::task_scheduler_object has been instantiated prior to calling
- * this function, then any subsequent initialization is ignored, which
- * is the default behavior of the Intel TBB library.
+ * this function, then any subsequent initialization is ignored by the
+ * Intel TBB.
  *
  * The maximal number of threads is read from the environment variable
  * STAN_NUM_THREADS using internal::get_num_threads. See conventions
- * of get_num_threads.
+ * of get_num_threads. The TBB scheduler will be activated by calling
+ * this function.
  *
- * The function returns as a boolean if the tbb::task_scheduler_init
- * instance has become active once constructed. The instance may not
- * become active if there is already another instance created before
- * calling this function.
+ * The function returns a reference to the static
+ * tbb::task_scheduler_init instance.
  *
  * @param stack_size sets the stack size of each thread; the default 0
  * let's the TBB choose the stack size
- * @return active status of static tbb::task_scheduler_init
+ * @return reference to the static tbb::task_scheduler_init
  * @throws std::runtime_error if the value of STAN_NUM_THREADS env. variable
  * is invalid
  */
-inline bool init_threadpool_tbb(stack_size_type stack_size = 0) {
-#ifdef STAN_THREADS
+inline tbb::task_scheduler_init& init_threadpool_tbb(
+    tbb::stack_size_type stack_size = 0) {
   int tbb_max_threads = internal::get_num_threads();
 
   static tbb::task_scheduler_init tbb_scheduler(tbb_max_threads, stack_size);
 
-  return tbb_scheduler.is_active();
-#else
-  return false;
-#endif
+  return tbb_scheduler;
 }
 
 }  // namespace math
