@@ -25,16 +25,19 @@ namespace math {
  * If containers are supplied, returns the log sum of the probabilities.
  * @tparam T_y type of binary vector of dependent variables (labels);
  * this can also be a single binary value;
- * @tparam T_x type of the matrix of independent variables (features); this
- * should be an Eigen::Matrix type whose number of rows should match the
- * length of y and whose number of columns should match the length of beta
+ * @tparam T_x_scalar type of a scalar in the matrix of independent variables
+ * (features)
+ * @tparam T_x_rows compile-time number of rows of `x`. It can be either
+ * `Eigen::Dynamic` or 1.
  * @tparam T_alpha type of the intercept(s);
  * this can be a vector (of the same length as y) of intercepts or a single
  * value (for models with constant intercept);
  * @tparam T_beta type of the weight vector;
  * this can also be a single value;
- * @param y binary vector parameter
- * @param x design matrix
+ * @param y binary scalar or vector parameter. If it is a scalar it will be
+ * broadcast - used for all instances.
+ * @param x design matrix or row vector. If it is a row vector it will be
+ * broadcast - used for all instances.
  * @param alpha intercept (in log odds)
  * @param beta weight vector
  * @return log probability or log sum of probabilities
@@ -43,26 +46,30 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch.
  */
 
-template <bool propto, typename T_y, typename T_x, typename T_alpha,
+template <bool propto, typename T_y, typename T_x_scalar, int T_x_rows, typename T_alpha,
           typename T_beta>
-return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
-    const T_y &y, const T_x &x, const T_alpha &alpha, const T_beta &beta) {
+return_type_t<T_x_scalar, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
+    const T_y &y, const Eigen::Matrix<T_x_scalar, T_x_rows, Eigen::Dynamic> &x, const T_alpha &alpha, const T_beta &beta) {
   static const char *function = "bernoulli_logit_glm_lpmf";
-  using T_partials_return = partials_return_t<T_y, T_x, T_alpha, T_beta>;
+
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::Array;
+  using std::exp;
+
+  using T_partials_return = partials_return_t<T_y, T_x_scalar, T_alpha, T_beta>;
   using T_y_val =
       typename std::conditional_t<is_vector<T_y>::value,
                                   Eigen::Matrix<partials_return_t<T_y>, -1, 1>,
                                   partials_return_t<T_y>>;
+  using T_ytheta_tmp = typename std::conditional_t<T_x_rows==1, T_partials_return, Array<T_partials_return, Dynamic, 1>>;
 
-  using Eigen::Dynamic;
-  using Eigen::Matrix;
-  using std::exp;
+  const size_t N_instances = T_x_rows == 1 ? length(y) : x.rows();
+  const size_t N_attributes = x.cols();
 
-  const size_t N = x.rows();
-  const size_t M = x.cols();
-
-  check_consistent_size(function, "Vector of dependent variables", y, N);
-  check_consistent_size(function, "Weight vector", beta, M);
+  check_consistent_size(function, "Vector of dependent variables", y,
+                        N_instances);
+  check_consistent_size(function, "Weight vector", beta, N_attributes);
   if (is_vector<T_alpha>::value) {
     check_consistent_sizes(function, "Vector of intercepts", alpha,
                            "Vector of dependent variables", y);
@@ -73,7 +80,7 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
     return 0;
   }
 
-  if (!include_summand<propto, T_x, T_alpha, T_beta>::value) {
+  if (!include_summand<propto, T_x_scalar, T_alpha, T_beta>::value) {
     return 0;
   }
 
@@ -89,9 +96,17 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
 
   T_y_val signs = 2 * as_array_or_scalar(y_val_vec) - 1;
 
-  Eigen::Array<T_partials_return, Dynamic, 1> ytheta = x_val * beta_val_vec;
-  ytheta = as_array_or_scalar(signs)
-           * (ytheta + as_array_or_scalar(alpha_val_vec));
+  Array<T_partials_return, Dynamic, 1> ytheta(N_instances);
+  if(T_x_rows==1){
+    T_ytheta_tmp ytheta_tmp = x_val * beta_val_vec;
+    ytheta = as_array_or_scalar(signs)
+             * (ytheta_tmp + as_array_or_scalar(alpha_val_vec));
+  }
+  else{
+    ytheta = x_val * beta_val_vec;
+    ytheta = as_array_or_scalar(signs)
+             * (ytheta + as_array_or_scalar(alpha_val_vec));
+  }
 
   // Compute the log-density and handle extreme values gracefully
   // using Taylor approximations.
@@ -109,9 +124,9 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
     check_finite(function, "Matrix of independent variables", ytheta);
   }
 
-  operands_and_partials<T_x, T_alpha, T_beta> ops_partials(x, alpha, beta);
+  operands_and_partials<Eigen::Matrix<T_x_scalar, T_x_rows, Eigen::Dynamic>, T_alpha, T_beta> ops_partials(x, alpha, beta);
   // Compute the necessary derivatives.
-  if (!is_constant_all<T_beta, T_x, T_alpha>::value) {
+  if (!is_constant_all<T_beta, T_x_scalar, T_alpha>::value) {
     Matrix<T_partials_return, Dynamic, 1> theta_derivative
         = (ytheta > cutoff)
               .select(-exp_m_ytheta,
@@ -120,11 +135,22 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
                                   as_array_or_scalar(signs) * exp_m_ytheta
                                       / (exp_m_ytheta + 1)));
     if (!is_constant_all<T_beta>::value) {
-      ops_partials.edge3_.partials_ = x_val.transpose() * theta_derivative;
+      if(T_x_rows==1){
+        ops_partials.edge3_.partials_ = assume_type<Matrix<T_partials_return, 1, Dynamic>>(theta_derivative.sum() * x_val);
+      }
+      else {
+        ops_partials.edge3_.partials_ = x_val.transpose() * theta_derivative;
+      }
     }
-    if (!is_constant_all<T_x>::value) {
-      ops_partials.edge1_.partials_
-          = (beta_val_vec * theta_derivative.transpose()).transpose();
+    if (!is_constant_all<T_x_scalar>::value) {
+      if(T_x_rows==1){
+        ops_partials.edge1_.partials_
+            = assume_type<Array<T_partials_return, Dynamic, T_x_rows>>(beta_val_vec * theta_derivative.sum());
+      }
+      else {
+        ops_partials.edge1_.partials_
+            = (beta_val_vec * theta_derivative.transpose()).transpose();
+      }
     }
     if (!is_constant_all<T_alpha>::value) {
       if (is_vector<T_alpha>::value) {

@@ -60,7 +60,7 @@ static const char* neg_binomial_2_log_glm_kernel_code = STRINGIFY(
         __global double* phi_derivative_global, const __global int* y_global,
         const __global double* x, const __global double* alpha,
         const __global double* beta, const __global double* phi_global,
-        const int N, const int M, const int is_alpha_vector,
+        const int N, const int M, const int is_y_vector, const int is_alpha_vector,
         const int is_phi_vector, const int need_theta_derivative,
         const int need_theta_derivative_sum, const int need_phi_derivative,
         const int need_phi_derivative_sum, const int need_logp1,
@@ -84,7 +84,7 @@ static const char* neg_binomial_2_log_glm_kernel_code = STRINGIFY(
           theta += x[j + gid] * beta[i];
         }
         double phi = phi_global[gid * is_phi_vector];
-        double y = y_global[gid];
+        double y = y_global[gid * is_y_vector];
         if (!isfinite(theta) || y < 0 || !isfinite(phi)) {
           logp = NAN;
         }
@@ -194,7 +194,7 @@ static const char* neg_binomial_2_log_glm_kernel_code = STRINGIFY(
  * See the docs for \link kernels/subtract.hpp subtract() \endlink
  */
 const kernel_cl<out_buffer, out_buffer, out_buffer, out_buffer, in_buffer,
-                in_buffer, in_buffer, in_buffer, in_buffer, int, int, int, int,
+                in_buffer, in_buffer, in_buffer, in_buffer, int, int, int, int, int,
                 int, int, int, int, int, int, int, int, int>
     neg_binomial_2_log_glm("neg_binomial_2_log_glm",
                            {digamma_device_function,

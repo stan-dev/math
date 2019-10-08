@@ -107,6 +107,64 @@ TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_vars) {
   }
 }
 
+
+TEST(ProbDistributionsBernoulliLogitGLM, broadcast_x) {
+  vector<int> y{1, 0, 1};
+  Matrix<double, 1, Dynamic> x(1, 2);
+  x << -12, 46;
+  Matrix<var, 1, Dynamic> x1 = x;
+  Matrix<var, Dynamic, Dynamic> x_mat = x.replicate(3,1);
+  Matrix<double, Dynamic, 1> beta(2, 1);
+  beta << 0.3, 2;
+  Matrix<var, Dynamic, 1> beta1 = beta;
+  Matrix<var, Dynamic, 1> beta2 = beta;
+  var alpha1 = 0.3;
+  var alpha2 = 0.3;
+
+  var lp1 = stan::math::bernoulli_logit_glm_lpmf(y, x1, alpha1, beta1);
+  var lp2 = stan::math::bernoulli_logit_glm_lpmf(y, x_mat, alpha2, beta2);
+
+  EXPECT_DOUBLE_EQ(lp1.val(), lp2.val());
+
+  (lp1 + lp2).grad();
+
+  for(int i=0;i<2;i++){
+    EXPECT_DOUBLE_EQ(x1[i].adj(), x_mat.col(i).adj().sum());
+    EXPECT_DOUBLE_EQ(beta1[i].adj(), beta2[i].adj());
+  }
+  EXPECT_DOUBLE_EQ(alpha1.adj(), alpha2.adj());
+}
+
+TEST(ProbDistributionsBernoulliLogitGLM, broadcast_y) {
+  int y = 1;
+  Matrix<int, Dynamic, 1> y_vec = Matrix<int, Dynamic, 1>::Constant(3, 1, y);
+  Matrix<double, Dynamic, Dynamic> x(3, 2);
+  x << -12, 46, -42, 24, 25, 27;
+  Matrix<var, Dynamic, Dynamic> x1 = x;
+  Matrix<var, Dynamic, Dynamic> x2 = x;
+  Matrix<double, Dynamic, 1> beta(2, 1);
+  beta << 0.3, 2;
+  Matrix<var, Dynamic, 1> beta1 = beta;
+  Matrix<var, Dynamic, 1> beta2 = beta;
+  var alpha1 = 0.3;
+  var alpha2 = 0.3;
+
+  var lp1 = stan::math::bernoulli_logit_glm_lpmf(y, x1, alpha1, beta1);
+  var lp2 = stan::math::bernoulli_logit_glm_lpmf(y_vec, x2, alpha2, beta2);
+
+  EXPECT_DOUBLE_EQ(lp1.val(), lp2.val());
+
+  (lp1 + lp2).grad();
+
+  for(int i=0;i<2;i++){
+    for(int j=0;j<2;j++) {
+      EXPECT_DOUBLE_EQ(x1(j,i).adj(), x2(j,i).adj());
+    }
+    EXPECT_DOUBLE_EQ(beta1[i].adj(), beta2[i].adj());
+  }
+  EXPECT_DOUBLE_EQ(alpha1.adj(), alpha2.adj());
+}
+
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives.
 TEST(ProbDistributionsBernoulliLogitGLM,
@@ -315,7 +373,7 @@ TEST(ProbDistributionsBernoulliLogitGLM,
 }
 
 //  We check that the right errors are thrown.
-TEST(ProbDistributionsPoissonLogGLM,
+TEST(ProbDistributionsBernoulliLogitGLM,
      glm_matches_bernoulli_logit_error_checking) {
   int N = 3;
   int M = 2;

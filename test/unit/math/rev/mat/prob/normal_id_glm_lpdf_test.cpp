@@ -115,6 +115,80 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars) {
   }
 }
 
+
+TEST(ProbDistributionsNormalIdGLM, broadcast_x) {
+  Matrix<double, Dynamic, 1> y(3, 1);
+  y << 14, 32, 21;
+  Matrix<var, Dynamic, 1> y1 = y;
+  Matrix<var, Dynamic, 1> y2 = y;
+  Matrix<double, 1, Dynamic> x(1, 2);
+  x << -12, 46;
+  Matrix<var, 1, Dynamic> x1 = x;
+  Matrix<var, Dynamic, Dynamic> x_mat = x.replicate(3,1);
+  Matrix<double, Dynamic, 1> beta(2, 1);
+  beta << 0.3, 2;
+  Matrix<var, Dynamic, 1> beta1 = beta;
+  Matrix<var, Dynamic, 1> beta2 = beta;
+  var alpha1 = 0.3;
+  var alpha2 = 0.3;
+  var sigma1 = 10;
+  var sigma2 = 10;
+
+  var lp1 = stan::math::normal_id_glm_lpdf(y1, x1, alpha1, beta1, sigma1);
+  var lp2 = stan::math::normal_id_glm_lpdf(y2, x_mat, alpha2, beta2, sigma2);
+
+  EXPECT_DOUBLE_EQ(lp1.val(), lp2.val());
+
+  (lp1 + lp2).grad();
+
+  for(int i=0;i<3;i++){
+    EXPECT_DOUBLE_EQ(y1[i].adj(), y1[i].adj());
+  }
+
+  for(int i=0;i<2;i++){
+    EXPECT_DOUBLE_EQ(x1[i].adj(), x_mat.col(i).adj().sum());
+    EXPECT_DOUBLE_EQ(beta1[i].adj(), beta2[i].adj());
+  }
+  EXPECT_DOUBLE_EQ(alpha1.adj(), alpha2.adj());
+  EXPECT_DOUBLE_EQ(sigma1.adj(), sigma2.adj());
+}
+
+TEST(ProbDistributionsNormalIdGLM, broadcast_y) {
+  double y = 13;
+  var y1 = y;
+  Matrix<var, Dynamic, 1> y_vec = Matrix<double, Dynamic, 1>::Constant(3, 1, y);
+  Matrix<double, Dynamic, Dynamic> x(3, 2);
+  x << -12, 46, -42, 24, 25, 27;
+  Matrix<var, Dynamic, Dynamic> x1 = x;
+  Matrix<var, Dynamic, Dynamic> x2 = x;
+  Matrix<double, Dynamic, 1> beta(2, 1);
+  beta << 0.3, 2;
+  Matrix<var, Dynamic, 1> beta1 = beta;
+  Matrix<var, Dynamic, 1> beta2 = beta;
+  var alpha1 = 0.3;
+  var alpha2 = 0.3;
+  var sigma1 = 10;
+  var sigma2 = 10;
+
+  var lp1 = stan::math::normal_id_glm_lpdf(y1, x1, alpha1, beta1, sigma1);
+  var lp2 = stan::math::normal_id_glm_lpdf(y_vec, x2, alpha2, beta2, sigma2);
+
+  EXPECT_DOUBLE_EQ(lp1.val(), lp2.val());
+
+  (lp1 + lp2).grad();
+
+  EXPECT_DOUBLE_EQ(y1.adj(), y_vec.adj().sum());
+
+  for(int i=0;i<2;i++){
+    for(int j=0;j<2;j++) {
+      EXPECT_DOUBLE_EQ(x1(j,i).adj(), x2(j,i).adj());
+    }
+    EXPECT_DOUBLE_EQ(beta1[i].adj(), beta2[i].adj());
+  }
+  EXPECT_DOUBLE_EQ(alpha1.adj(), alpha2.adj());
+  EXPECT_DOUBLE_EQ(sigma1.adj(), sigma2.adj());
+}
+
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives.
 TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_rand) {

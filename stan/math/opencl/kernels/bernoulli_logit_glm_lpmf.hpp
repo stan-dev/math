@@ -41,7 +41,7 @@ static const char* bernoulli_logit_glm_kernel_code = STRINGIFY(
         __global double* theta_derivative_sum, const __global int* y_global,
         const __global double* x, const __global double* alpha,
         const __global double* beta, const int N, const int M,
-        const int is_alpha_vector, const int need_theta_derivative,
+        const int is_y_vector, const int is_alpha_vector, const int need_theta_derivative,
         const int need_theta_derivative_sum) {
       const int gid = get_global_id(0);
       const int lid = get_local_id(0);
@@ -59,7 +59,7 @@ static const char* bernoulli_logit_glm_kernel_code = STRINGIFY(
         for (int i = 0, j = 0; i < M; i++, j += N) {
           ytheta += x[j + gid] * beta[i];
         }
-        const int y = y_global[gid];
+        const int y = y_global[gid * is_y_vector];
         const double sign_ = 2 * y - 1;
         ytheta += alpha[gid * is_alpha_vector];
         ytheta *= sign_;
@@ -131,7 +131,7 @@ static const char* bernoulli_logit_glm_kernel_code = STRINGIFY(
  * bernoulli_logit_glm() \endlink
  */
 const kernel_cl<out_buffer, out_buffer, out_buffer, in_buffer, in_buffer,
-                in_buffer, in_buffer, int, int, int, int, int>
+                in_buffer, in_buffer, int, int, int, int, int, int>
     bernoulli_logit_glm("bernoulli_logit_glm",
                         {bernoulli_logit_glm_kernel_code},
                         {{"REDUCTION_STEP_SIZE", 4}, {"LOCAL_SIZE_", 64}});

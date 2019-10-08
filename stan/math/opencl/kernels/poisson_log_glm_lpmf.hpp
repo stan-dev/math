@@ -40,7 +40,7 @@ static const char* poisson_log_glm_kernel_code = STRINGIFY(
         __global double* theta_derivative_sum, __global double* logp_global,
         const __global int* y_global, const __global double* x,
         const __global double* alpha, const __global double* beta, const int N,
-        const int M, const int is_alpha_vector, const int need_logp1,
+        const int M, const int is_y_vector, const int is_alpha_vector, const int need_logp1,
         const int need_logp2) {
       const int gid = get_global_id(0);
       const int lid = get_local_id(0);
@@ -59,7 +59,7 @@ static const char* poisson_log_glm_kernel_code = STRINGIFY(
         }
 
         theta += alpha[gid * is_alpha_vector];
-        const double y = y_global[gid];
+        const double y = y_global[gid * is_y_vector];
         const double exp_theta = exp(theta);
         theta_derivative = y - exp_theta;
         if (y < 0 || !isfinite(theta)) {
@@ -119,7 +119,7 @@ static const char* poisson_log_glm_kernel_code = STRINGIFY(
  * See the docs for \link kernels/subtract.hpp subtract() \endlink
  */
 const kernel_cl<out_buffer, out_buffer, out_buffer, in_buffer, in_buffer,
-                in_buffer, in_buffer, int, int, int, int, int>
+                in_buffer, in_buffer, int, int, int, int, int, int>
     poisson_log_glm("poisson_log_glm", {poisson_log_glm_kernel_code},
                     {{"REDUCTION_STEP_SIZE", 4}, {"LOCAL_SIZE_", 64}});
 

@@ -51,7 +51,7 @@ static const char* normal_id_glm_kernel_code = STRINGIFY(
         const __global double* y, const __global double* x,
         const __global double* alpha, const __global double* beta,
         const __global double* sigma_global, const int N, const int M,
-        const int is_alpha_vector, const int is_sigma_vector,
+        const int is_y_vector, const int is_alpha_vector, const int is_sigma_vector,
         const int need_mu_derivative, const int need_mu_derivative_sum,
         const int need_sigma_derivative, const int need_log_sigma_sum) {
       const int gid = get_global_id(0);
@@ -74,7 +74,7 @@ static const char* normal_id_glm_kernel_code = STRINGIFY(
         double sigma = sigma_global[gid * is_sigma_vector];
         double inv_sigma = 1 / sigma;
         y_scaled
-            = (y[gid] - y_scaled - alpha[gid * is_alpha_vector]) * inv_sigma;
+            = (y[gid * is_y_vector] - y_scaled - alpha[gid * is_alpha_vector]) * inv_sigma;
         mu_derivative = inv_sigma * y_scaled;
         if (need_mu_derivative) {
           mu_derivative_global[gid] = mu_derivative;
@@ -153,7 +153,7 @@ static const char* normal_id_glm_kernel_code = STRINGIFY(
  * normal_id_glm() \endlink
  */
 const kernel_cl<out_buffer, out_buffer, out_buffer, out_buffer, out_buffer,
-                in_buffer, in_buffer, in_buffer, in_buffer, in_buffer, int, int,
+                in_buffer, in_buffer, in_buffer, in_buffer, in_buffer, int, int, int,
                 int, int, int, int, int, int>
     normal_id_glm("normal_id_glm", {normal_id_glm_kernel_code},
                   {{"REDUCTION_STEP_SIZE", 4}, {"LOCAL_SIZE_", 64}});

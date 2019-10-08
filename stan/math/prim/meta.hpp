@@ -33,6 +33,7 @@
 #include <stan/math/prim/scal/meta/as_array_or_scalar.hpp>
 #include <stan/math/prim/scal/meta/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/scal/meta/as_scalar.hpp>
+#include <stan/math/prim/scal/meta/assume_type.hpp>
 #include <stan/math/prim/scal/meta/bool_constant.hpp>
 #include <stan/math/prim/scal/meta/child_type.hpp>
 #include <stan/math/prim/scal/meta/contains_fvar.hpp>
