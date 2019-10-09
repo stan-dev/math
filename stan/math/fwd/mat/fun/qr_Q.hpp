@@ -12,15 +12,17 @@ namespace math {
 template <typename T>
 Eigen::Matrix<fvar<T>, Eigen::Dynamic, Eigen::Dynamic> qr_Q(
     const Eigen::Matrix<fvar<T>, Eigen::Dynamic, Eigen::Dynamic>& m) {
-  typedef Eigen::Matrix<fvar<T>, Eigen::Dynamic, Eigen::Dynamic> matrix_fwd_t;
+  using matrix_fwd_t = Eigen::Matrix<fvar<T>, Eigen::Dynamic, Eigen::Dynamic>;
   check_nonzero_size("qr_Q", "m", m);
   check_greater_or_equal("qr_Q", "m.rows()", m.rows(), m.cols());
   Eigen::HouseholderQR<matrix_fwd_t> qr(m.rows(), m.cols());
   qr.compute(m);
   matrix_fwd_t Q = qr.householderQ();
-  for (int i = 0; i < m.cols(); i++)
-    if (qr.matrixQR()(i, i) < 0.0)
+  for (int i = 0; i < m.cols(); i++) {
+    if (qr.matrixQR()(i, i) < 0.0) {
       Q.col(i) *= -1.0;
+    }
+  }
   return Q;
 }
 

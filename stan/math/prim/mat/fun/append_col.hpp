@@ -46,13 +46,17 @@ append_col(const Eigen::Matrix<T1, R1, C1>& A,
   check_size_match("append_col", "rows of A", Arows, "rows of B", Brows);
 
   Matrix<return_type_t<T1, T2>, Dynamic, Dynamic> result(Arows, Acols + Bcols);
-  for (int j = 0; j < Acols; j++)
-    for (int i = 0; i < Arows; i++)
+  for (int j = 0; j < Acols; j++) {
+    for (int i = 0; i < Arows; i++) {
       result(i, j) = A(i, j);
+    }
+  }
 
-  for (int j = Acols, k = 0; k < Bcols; j++, k++)
-    for (int i = 0; i < Arows; i++)
+  for (int j = Acols, k = 0; k < Bcols; j++, k++) {
+    for (int i = 0; i < Arows; i++) {
       result(i, j) = B(i, k);
+    }
+  }
   return result;
 }
 
@@ -82,10 +86,12 @@ inline Eigen::Matrix<return_type_t<T1, T2>, 1, Eigen::Dynamic> append_col(
   int Asize = A.size();
   int Bsize = B.size();
   Matrix<return_type_t<T1, T2>, 1, Dynamic> result(Asize + Bsize);
-  for (int i = 0; i < Asize; i++)
+  for (int i = 0; i < Asize; i++) {
     result(i) = A(i);
-  for (int i = 0, j = Asize; i < Bsize; i++, j++)
+  }
+  for (int i = 0, j = Asize; i < Bsize; i++, j++) {
     result(j) = B(i);
+  }
   return result;
 }
 
@@ -172,7 +178,7 @@ inline Eigen::Matrix<return_type_t<T1, T2>, 1, Eigen::Dynamic> append_col(
     const T1& A, const Eigen::Matrix<T2, R, C>& B) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  typedef return_type_t<T1, T2> return_type;
+  using return_type = return_type_t<T1, T2>;
 
   Matrix<return_type, 1, Dynamic> result(B.size() + 1);
   result << A, B.template cast<return_type>();
@@ -198,7 +204,7 @@ inline Eigen::Matrix<return_type_t<T1, T2>, 1, Eigen::Dynamic> append_col(
     const Eigen::Matrix<T1, R, C>& A, const T2& B) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  typedef return_type_t<T1, T2> return_type;
+  using return_type = return_type_t<T1, T2>;
 
   Matrix<return_type, 1, Dynamic> result(A.size() + 1);
   result << A.template cast<return_type>(), B;

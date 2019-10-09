@@ -11,9 +11,11 @@ TEST(AgradMixMatrixAddons, matrix_fv) {
 
   matrix_fv mat_in = vals;
 
-  for (int i = 0; i < 100; i++)
-    for (int j = 0; j < 100; j++)
+  for (int i = 0; i < 100; i++) {
+    for (int j = 0; j < 100; j++) {
       mat_in(i, j).d_ = derivs(i, j);
+    }
+  }
 
   expect_matrix_eq(vals, mat_in.val().val());
   expect_matrix_eq(vals.array().exp(), mat_in.val().val().array().exp());
@@ -37,9 +39,11 @@ TEST(AgradMixMatrixAddons, matrix_ffv) {
 
   matrix_ffv mat_in = vals;
 
-  for (int i = 0; i < 100; i++)
-    for (int j = 0; j < 100; j++)
+  for (int i = 0; i < 100; i++) {
+    for (int j = 0; j < 100; j++) {
       mat_in(i, j).d_ = derivs(i, j);
+    }
+  }
 
   expect_matrix_eq(vals, mat_in.val().val().val());
   expect_matrix_eq(vals.array().exp(), mat_in.val().val().val().array().exp());
@@ -63,8 +67,9 @@ TEST(AgradMixMatrixAddons, vector_fv) {
 
   vector_fv vec_in = vals;
 
-  for (int i = 0; i < 100; i++)
+  for (int i = 0; i < 100; i++) {
     vec_in(i).d_ = derivs(i);
+  }
 
   expect_matrix_eq(vals, vec_in.val().val());
   expect_matrix_eq(vals.array().exp(), vec_in.val().val().array().exp());
@@ -88,8 +93,9 @@ TEST(AgradMixMatrixAddons, vector_ffv) {
 
   vector_ffv vec_in = vals;
 
-  for (int i = 0; i < 100; i++)
+  for (int i = 0; i < 100; i++) {
     vec_in(i).d_ = derivs(i);
+  }
 
   expect_matrix_eq(vals, vec_in.val().val().val());
   expect_matrix_eq(vals.array().exp(), vec_in.val().val().val().array().exp());
@@ -113,8 +119,9 @@ TEST(AgradMixMatrixAddons, row_vector_fv) {
 
   row_vector_fv row_vec_in = vals;
 
-  for (int i = 0; i < 100; i++)
+  for (int i = 0; i < 100; i++) {
     row_vec_in(i).d_ = derivs(i);
+  }
 
   expect_matrix_eq(vals, row_vec_in.val().val());
   expect_matrix_eq(vals.array().exp(), row_vec_in.val().val().array().exp());
@@ -138,8 +145,9 @@ TEST(AgradMixMatrixAddons, row_vector_ffv) {
 
   row_vector_ffv row_vec_in = vals;
 
-  for (int i = 0; i < 100; i++)
+  for (int i = 0; i < 100; i++) {
     row_vec_in(i).d_ = derivs(i);
+  }
 
   expect_matrix_eq(vals, row_vec_in.val().val().val());
   expect_matrix_eq(vals.array().exp(),

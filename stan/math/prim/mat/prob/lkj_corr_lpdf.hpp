@@ -20,20 +20,23 @@ return_type_t<double, T_shape> do_lkj_constant(const T_shape& eta,
   if (eta == 1.0) {
     // C++ integer division is appropriate in this block
     Eigen::VectorXd denominator(Km1 / 2);
-    for (int k = 1; k <= denominator.rows(); k++)
+    for (int k = 1; k <= denominator.rows(); k++) {
       denominator(k - 1) = lgamma(2.0 * k);
+    }
     constant = -denominator.sum();
-    if ((K % 2) == 1)
+    if ((K % 2) == 1) {
       constant -= 0.25 * (K * K - 1) * LOG_PI - 0.25 * (Km1 * Km1) * LOG_2
                   - Km1 * lgamma(0.5 * (K + 1));
-    else
+    } else {
       constant -= 0.25 * K * (K - 2) * LOG_PI
                   + 0.25 * (3 * K * K - 4 * K) * LOG_2 + K * lgamma(0.5 * K)
                   - Km1 * lgamma(static_cast<double>(K));
+    }
   } else {
     constant = Km1 * lgamma(eta + 0.5 * Km1);
-    for (int k = 1; k <= Km1; k++)
+    for (int k = 1; k <= Km1; k++) {
       constant -= 0.5 * k * LOG_PI + lgamma(eta + 0.5 * (Km1 - k));
+    }
   }
   return constant;
 }
@@ -53,18 +56,22 @@ return_type_t<T_y, T_shape> lkj_corr_lpdf(
   check_corr_matrix(function, "Correlation matrix", y);
 
   const unsigned int K = y.rows();
-  if (K == 0)
+  if (K == 0) {
     return 0.0;
+  }
 
-  if (include_summand<propto, T_shape>::value)
+  if (include_summand<propto, T_shape>::value) {
     lp += do_lkj_constant(eta, K);
+  }
 
   if ((eta == 1.0)
-      && stan::is_constant_all<typename stan::scalar_type<T_shape> >::value)
+      && stan::is_constant_all<typename stan::scalar_type<T_shape> >::value) {
     return lp;
+  }
 
-  if (!include_summand<propto, T_y, T_shape>::value)
+  if (!include_summand<propto, T_y, T_shape>::value) {
     return lp;
+  }
 
   Eigen::Matrix<T_y, Eigen::Dynamic, 1> values
       = y.ldlt().vectorD().array().log().matrix();

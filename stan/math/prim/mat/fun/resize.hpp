@@ -21,10 +21,12 @@ template <typename T>
 void resize(std::vector<T>& x, const std::vector<int>& dims, int pos) {
   x.resize(dims[pos]);
   ++pos;
-  if (pos >= static_cast<int>(dims.size()))
+  if (pos >= static_cast<int>(dims.size())) {
     return;  // skips lowest loop to scalar
-  for (size_t i = 0; i < x.size(); ++i)
+  }
+  for (size_t i = 0; i < x.size(); ++i) {
     resize(x[i], dims, pos);
+  }
 }
 }  // namespace internal
 

@@ -16,10 +16,11 @@ namespace math {
  * <code>false</code>
  */
 static inline void recover_memory() {
-  if (!empty_nested())
+  if (!empty_nested()) {
     throw std::logic_error(
         "empty_nested() must be true"
         " before calling recover_memory()");
+  }
   ChainableStack::instance_->var_stack_.clear();
   ChainableStack::instance_->var_nochain_stack_.clear();
   for (auto &x : ChainableStack::instance_->var_alloc_stack_) {

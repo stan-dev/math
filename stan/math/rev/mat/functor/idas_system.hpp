@@ -153,11 +153,13 @@ class idas_system {
         id_(N_VNew_Serial(N_)),
         mem_(IDACreate()),
         msgs_(msgs) {
-    if (nv_yy_ == NULL || nv_yp_ == NULL)
+    if (nv_yy_ == NULL || nv_yp_ == NULL) {
       throw std::runtime_error("N_VMake_Serial failed to allocate memory");
+    }
 
-    if (mem_ == NULL)
+    if (mem_ == NULL) {
       throw std::runtime_error("IDACreate failed to allocate memory");
+    }
 
     static const char* caller = "idas_system";
     check_finite(caller, "initial state", yy0);
@@ -173,8 +175,9 @@ class idas_system {
     check_greater_or_equal(caller, "derivative-algebra id", eq_id, 0);
     check_less_or_equal(caller, "derivative-algebra id", eq_id, 1);
 
-    for (size_t i = 0; i < N_; ++i)
+    for (size_t i = 0; i < N_; ++i) {
       NV_Ith_S(id_, i) = eq_id[i];
+    }
   }
 
   /**
@@ -320,8 +323,9 @@ class idas_system {
       std::vector<double> yp_vec(yp_val, yp_val + N);
       auto res = dae->f_(t, yy_vec, yp_vec, dae->theta_, dae->x_r_, dae->x_i_,
                          dae->msgs_);
-      for (size_t i = 0; i < N; ++i)
+      for (size_t i = 0; i < N; ++i) {
         NV_Ith_S(rr, i) = value_of(res[i]);
+      }
 
       return 0;
     };

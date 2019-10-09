@@ -29,9 +29,10 @@ struct finite<Eigen::Matrix<T, R, C>, true> {
                     const Eigen::Matrix<T, R, C>& y) {
     if (!value_of(y).allFinite()) {
       for (int n = 0; n < y.size(); ++n) {
-        if (!(boost::math::isfinite)(y(n)))
+        if (!(boost::math::isfinite)(y(n))) {
           domain_error_vec(function, name, y, n, "is ",
                            ", but must be finite!");
+        }
       }
     }
   }

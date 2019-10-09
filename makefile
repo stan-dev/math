@@ -19,6 +19,7 @@ include make/dependencies                 # rules for generating dependencies
 include make/libraries
 include make/tests
 include make/cpplint
+include make/clang-tidy
 
 .PHONY: help
 help:
@@ -41,13 +42,13 @@ help:
 	@echo '  To run a single header test, add "-test" to the end of the file name.'
 	@echo '  Example: make stan/math/constants.hpp-test'
 	@echo ''
-	@echo '  - test-math-dependencies : walks through all the header files and indicates'
-	@echo '      when the math dependencies are violated. Dependencies should follow:'
-	@echo '      * rev -> prim'
-	@echo '      * fwd -> prim'
-	@echo '      * mix -> {rev, fwd, prim}'
-	@echo '      * within {prim, rev, fwd, mix}: mat -> arr -> scal'
-	@echo '      * only include {prim, rev, fwd, mix}/meta.hpp from the meta subfolders'
+	@echo '  - test-math-dependencies : walks through all the header files and indicates'	
+	@echo '      when the math dependencies are violated. Dependencies should follow:'	
+	@echo '      * rev -> prim'	
+	@echo '      * fwd -> prim'	
+	@echo '      * mix -> {rev, fwd, prim}'	
+	@echo '      * within {prim, rev, fwd, mix}: mat -> arr -> scal'	
+	@echo '      * only include {prim, rev, fwd, mix}/meta.hpp from the meta subfolders'	
 	@echo ''
 	@echo '  Cpplint'
 	@echo '  - cpplint       : runs cpplint.py on source files. requires python 2.7.'
@@ -55,6 +56,22 @@ help:
 	@echo '                      CPPLINT = $(CPPLINT)'
 	@echo '                    To set the version of python 2, set the PYTHON2 variable:'
 	@echo '                      PYTHON2 = $(PYTHON2)'
+	@echo ''
+	@echo ' Clang Tidy'
+	@echo ' - clang-tidy     : runs the clang-tidy makefile over the test suite.'
+	@echo '                    Options:'
+	@echo '                     files: (Optional) regex for file names to include in the check'
+	@echo '                      Default runs all the tests in unit'
+	@echo '                     tidy_checks: (Optional) A set of checks'
+	@echo '                      Default runs a hand picked selection of tests'
+	@echo ''
+	@echo '     Example: This runs clang-tidy over all the multiply tests in prim'
+	@echo ''
+	@echo '     make clang-tidy files=*prim*multiply*'
+	@echo ''
+	@echo ' - clang-tidy-fix : same as above but runs with the -fix flag.'
+	@echo '                    For automated fixes, outputs a yaml named'
+	@echo '                    .clang-fixes.yml'
 	@echo ''
 	@echo 'Documentation:'
 	@echo '  Doxygen'
@@ -64,7 +81,7 @@ help:
 	@echo '  - clean         : Basic clean. Leaves doc and compiled libraries intact.'
 	@echo '  - clean-deps    : Removes dependency files for tests. If tests stop building,'
 	@echo '                    run this target.'
-	@echo '  - clean-libraries : Removes binaries built for libraries including CVODES.'
+	@echo '  - clean-libraries : Removes binaries built for libraries including CVODES and the TBB.'
 	@echo '  - clean-all     : Cleans up all of Stan.'
 	@echo ''
 	@echo '--------------------------------------------------------------------------------'
@@ -103,6 +120,9 @@ clean-deps:
 
 clean-all: clean clean-doxygen clean-deps clean-libraries
 
+.PHONY: test-math-dependencies	
+test-math-dependencies:
+	@python runChecks.py
 ##
 # Debug target that allows you to print a variable
 ##

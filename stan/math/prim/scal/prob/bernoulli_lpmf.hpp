@@ -28,12 +28,13 @@ namespace math {
 template <bool propto, typename T_n, typename T_prob>
 return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
   static const char* function = "bernoulli_lpmf";
-  typedef partials_return_type_t<T_n, T_prob> T_partials_return;
+  using T_partials_return = partials_return_t<T_n, T_prob>;
 
   using std::log;
 
-  if (size_zero(n, theta))
+  if (size_zero(n, theta)) {
     return 0.0;
+  }
 
   T_partials_return logp(0.0);
 
@@ -43,8 +44,9 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
   check_consistent_sizes(function, "Random variable", n,
                          "Probability parameter", theta);
 
-  if (!include_summand<propto, T_prob>::value)
+  if (!include_summand<propto, T_prob>::value) {
     return 0.0;
+  }
 
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_prob> theta_vec(theta);
@@ -60,12 +62,14 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
     // avoid nans when sum == N or sum == 0
     if (sum == N) {
       logp += N * log(theta_dbl);
-      if (!is_constant_all<T_prob>::value)
+      if (!is_constant_all<T_prob>::value) {
         ops_partials.edge1_.partials_[0] += N / theta_dbl;
+      }
     } else if (sum == 0) {
       logp += N * log1m(theta_dbl);
-      if (!is_constant_all<T_prob>::value)
+      if (!is_constant_all<T_prob>::value) {
         ops_partials.edge1_.partials_[0] += N / (theta_dbl - 1);
+      }
     } else {
       const T_partials_return log_theta = log(theta_dbl);
       const T_partials_return log1m_theta = log1m(theta_dbl);
@@ -83,16 +87,18 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
       const int n_int = value_of(n_vec[n]);
       const T_partials_return theta_dbl = value_of(theta_vec[n]);
 
-      if (n_int == 1)
+      if (n_int == 1) {
         logp += log(theta_dbl);
-      else
+      } else {
         logp += log1m(theta_dbl);
+      }
 
       if (!is_constant_all<T_prob>::value) {
-        if (n_int == 1)
+        if (n_int == 1) {
           ops_partials.edge1_.partials_[n] += 1.0 / theta_dbl;
-        else
+        } else {
           ops_partials.edge1_.partials_[n] += 1.0 / (theta_dbl - 1);
+        }
       }
     }
   }

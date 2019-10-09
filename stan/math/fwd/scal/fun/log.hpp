@@ -11,10 +11,11 @@ namespace math {
 template <typename T>
 inline fvar<T> log(const fvar<T>& x) {
   using std::log;
-  if (x.val_ < 0.0)
+  if (x.val_ < 0.0) {
     return fvar<T>(NOT_A_NUMBER, NOT_A_NUMBER);
-  else
+  } else {
     return fvar<T>(log(x.val_), x.d_ / x.val_);
+  }
 }
 }  // namespace math
 }  // namespace stan
