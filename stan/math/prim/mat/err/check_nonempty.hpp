@@ -10,7 +10,8 @@ namespace stan {
 namespace math {
 
 /**
- * Check if the specified matrix is not empty. This check does not allow 0x0 matrices.
+ * Check if the specified matrix is not empty. This check does not allow 0x0
+ * matrices.
  * @tparam T Type of scalar
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
@@ -21,7 +22,7 @@ template <typename T_y>
 inline void check_nonempty(
     const char* function, const char* name,
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
-  if (y.rows()>0 && y.cols()>0) {
+  if (y.rows() > 0 && y.cols() > 0) {
     return;
   }
   invalid_argument(function, "Expecting a non empty matrix", name, "", ".");

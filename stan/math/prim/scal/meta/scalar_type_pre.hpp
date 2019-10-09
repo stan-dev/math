@@ -15,9 +15,9 @@ struct scalar_type_helper_pre {
 template <typename T, typename T_container>
 struct scalar_type_helper_pre<true, T, T_container> {
   using type = typename scalar_type_helper_pre<
-      is_vector<typename stan::math::value_type<T>::type>::value,
-      typename stan::math::value_type<T>::type,
-      typename stan::math::value_type<T_container>::type>::type;
+      is_vector<typename value_type<T>::type>::value,
+      typename value_type<T>::type,
+      typename value_type<T_container>::type>::type;
 };
 }  // namespace internal
 
@@ -30,8 +30,8 @@ struct scalar_type_helper_pre<true, T, T_container> {
 template <typename T>
 struct scalar_type_pre {
   using type = typename internal::scalar_type_helper_pre<
-      is_vector<typename stan::math::value_type<T>::type>::value,
-      typename stan::math::value_type<T>::type, T>::type;
+      is_vector<typename value_type<T>::type>::value,
+      typename value_type<T>::type, T>::type;
 };
 
 }  // namespace stan
