@@ -19,7 +19,7 @@ namespace math {
  */
 template <typename T_desired, typename T_actual,
           typename = std::enable_if_t<
-              std::is_convertible<T_actual, T_desired>::value&& static_cast<
+              std::is_convertible<T_actual, T_desired>::value && static_cast<
                   int>(T_desired::RowsAtCompileTime)
                   == static_cast<int>(T_actual::RowsAtCompileTime)
               && static_cast<int>(T_desired::ColsAtCompileTime)
