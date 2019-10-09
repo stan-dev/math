@@ -30,8 +30,4 @@ TEST(mathMixMatFun, inverse) {
   Eigen::MatrixXd x(4, 4);
   x << 2, 3, 4, 5, 9, -1, 2, 2, 4, 3, 7, -1, 0, 1, 19, 112;
   stan::test::expect_ad(tols2, f, x);
-
-  Eigen::MatrixXd y(1, 1);
-  y << std::numeric_limits<double>::quiet_NaN();
-  stan::test::expect_ad(f, y);
 }
