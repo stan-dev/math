@@ -6,6 +6,8 @@
 #include <stan/math/opencl/kernel_generator/load.hpp>
 #include <stan/math/opencl/kernel_generator/scalar.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
+#include <stan/math/opencl/is_matrix_cl.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <type_traits>
 
 namespace stan {
@@ -32,7 +34,7 @@ inline T_operation&& as_operation(T_operation&& a) {
  * @param a scalar
  * @return \c scalar__ wrapping the input
  */
-template <typename T_scalar, typename = enable_if_arithmetic<T_scalar>>
+template <typename T_scalar, typename = require_arithmetic_t<T_scalar>>
 inline scalar__<T_scalar> as_operation(const T_scalar a) {
   return scalar__<T_scalar>(a);
 }
@@ -45,9 +47,7 @@ inline scalar__<T_scalar> as_operation(const T_scalar a) {
  * @return \c load__ wrapping the input
  */
 template <typename T_matrix_cl,
-          typename = std::enable_if_t<std::is_base_of<
-              matrix_cl<typename std::remove_reference_t<T_matrix_cl>::type>,
-              std::remove_reference_t<T_matrix_cl>>::value>>
+          typename = require_matrix_cl_t<std::remove_reference_t<T_matrix_cl>>>
 inline load__<T_matrix_cl> as_operation(T_matrix_cl&& a) {
   return load__<T_matrix_cl>(std::forward<T_matrix_cl>(a));
 }

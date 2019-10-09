@@ -265,7 +265,7 @@ elewise_multiplication(T_a&& a, T_b&& b) {  // NOLINT
  * @param b expression
  * @return Multiplication of given arguments
  */
-template <typename T_a, typename T_b, typename = enable_if_arithmetic<T_a>,
+template <typename T_a, typename T_b, typename = require_arithmetic_t<T_a>,
           typename = enable_if_all_valid_expressions<T_b>>
 inline elewise_multiplication__<scalar__<T_a>, as_operation_t<T_b>> operator*(
     T_a&& a, T_b&& b) {  // NOLINT
@@ -283,7 +283,7 @@ inline elewise_multiplication__<scalar__<T_a>, as_operation_t<T_b>> operator*(
  */
 template <typename T_a, typename T_b,
           typename = enable_if_all_valid_expressions<T_a>,
-          typename = enable_if_arithmetic<T_b>>
+          typename = require_arithmetic_t<T_b>>
 inline elewise_multiplication__<as_operation_t<T_a>, scalar__<T_b>> operator*(
     T_a&& a, const T_b b) {  // NOLINT
   return {as_operation(std::forward<T_a>(a)), as_operation(b)};
