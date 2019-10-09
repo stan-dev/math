@@ -62,7 +62,6 @@ gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma &sigma) {
   return cov;
 }
 
-
 /**
  * Returns a dot product covariance matrix of
  * differing x's. A member of Stan's Gaussian Process Library.
@@ -275,7 +274,8 @@ gp_dot_prod_cov(
   }
 
   check_size_match("gp_dot_prod_cov", "dimension of elements of x",
-                   size_of(x[0]), "dimension of diagonal_Sigma", diagonal_Sigma.rows());
+                   size_of(x[0]), "dimension of diagonal_Sigma",
+                   diagonal_Sigma.rows());
 
   std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> x_new(x_size);
 
