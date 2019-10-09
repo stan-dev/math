@@ -164,7 +164,7 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
           = from_matrix_cl<Dynamic, 1>(sigma_derivative_cl);
     } else {
       ops_partials.edge3_.partials_[0]
-          = (y_scaled_sq_sum - N) * as_scalar(inv_sigma);
+          = (y_scaled_sq_sum - N) * assume_type<double>(inv_sigma);
     }
   }
 
@@ -186,7 +186,7 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
     if (is_vector<T_scale>::value) {
       logp -= sum(from_matrix_cl(log_sigma_sum_cl));
     } else {
-      logp -= N * log(as_scalar(sigma_val));
+      logp -= N * log(assume_type<double>(sigma_val));
     }
   }
   if (include_summand<propto, T_alpha, T_beta, T_scale>::value) {
