@@ -111,8 +111,7 @@ inline void assign_event(const cl::Event& e,
   helper.set(e, m);
 }
 
-template <typename T,
-          typename std::enable_if_t<std::is_same<T, cl::Event>::value, int> = 0>
+template <typename T, require_same_t<T, cl::Event>...>
 inline void assign_events(const T&) {}
 
 /**
