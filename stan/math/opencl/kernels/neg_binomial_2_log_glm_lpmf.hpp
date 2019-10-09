@@ -3,7 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_cl.hpp>
-#include <stan/math/opencl/device_functions/digamma.hpp>
+#include <stan/math/opencl/kernels/device_functions/digamma.hpp>
 
 namespace stan {
 namespace math {
