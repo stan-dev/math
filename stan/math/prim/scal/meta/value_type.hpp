@@ -4,7 +4,6 @@
 #include <type_traits>
 
 namespace stan {
-namespace math {
 
 /**
  * Primary template class for metaprogram to compute the type of
@@ -32,6 +31,5 @@ struct value_type<T, std::enable_if_t<std::is_pointer<T>::value>> {
 template <typename T>
 using value_type_t = typename value_type<T>::type;
 
-}  // namespace math
 }  // namespace stan
 #endif
