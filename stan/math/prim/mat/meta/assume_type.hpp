@@ -19,13 +19,14 @@ namespace math {
  */
 template <typename T_desired, typename T_actual,
           typename = std::enable_if_t<
-              std::is_convertible<T_actual, T_desired>::value
-              && static_cast<int>(T_desired::RowsAtCompileTime)
+              std::is_convertible<T_actual, T_desired>::value&& static_cast<
+                  int>(T_desired::RowsAtCompileTime)
                   == static_cast<int>(T_actual::RowsAtCompileTime)
               && static_cast<int>(T_desired::ColsAtCompileTime)
                      == static_cast<int>(T_actual::ColsAtCompileTime)>,
           typename = void>  // NOLINT
-inline T_actual&& assume_type(T_actual&& a) {  // NOLINT
+inline T_actual&&
+assume_type(T_actual&& a) {  // NOLINT
   return std::forward<T_actual>(a);
 }
 
