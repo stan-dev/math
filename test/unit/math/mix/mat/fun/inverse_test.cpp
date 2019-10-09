@@ -2,9 +2,7 @@
 #include <limits>
 
 TEST(mathMixMatFun, inverse) {
-  auto f = [](const auto& x) {
-    return stan::math::inverse(x);
-  };
+  auto f = [](const auto& x) { return stan::math::inverse(x); };
 
   Eigen::MatrixXd u(1, 1);
   u << 2;
