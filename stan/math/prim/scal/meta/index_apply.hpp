@@ -1,7 +1,5 @@
 #ifndef STAN_MATH_PRIM_SCAL_META_APPLY_HPP
 #define STAN_MATH_PRIM_SCAL_META_APPLY_HPP
-#include <tuple>
-#include <type_traits>
 #include <utility>
 
 namespace stan{

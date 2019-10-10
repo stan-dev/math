@@ -30,21 +30,12 @@ namespace math {
 template <typename Derived, typename T_a, typename T_b>
 class binary_operation
     : public operation<Derived, common_return_scalar_t<T_a, T_b>, T_a, T_b> {
- protected:
-  std::string op_;
-
  public:
-  static_assert(
-      std::is_base_of<operation_base, std::remove_reference_t<T_a>>::value,
-      "binary_operation: a must be an operation!");
-  static_assert(
-      std::is_base_of<operation_base, std::remove_reference_t<T_b>>::value,
-      "binary_operation: b must be an operation!");
-
   using ReturnScalar = common_return_scalar_t<T_a, T_b>;
   using base = operation<Derived, ReturnScalar, T_a, T_b>;
   using base::var_name;
  protected:
+  std::string op_;
   using base::arguments_;
  public:
 

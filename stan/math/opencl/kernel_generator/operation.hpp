@@ -35,6 +35,8 @@ struct kernel_parts {
 template <typename Derived, typename ReturnScalar, typename... Args>
 class operation : public operation_base {
  public:
+  static_assert(conjunction<std::is_base_of<operation_base, std::remove_reference_t<Args>> ...>::value, "operation: all arguments to operation must be operations!");
+  //number of arguments this operation has
   static constexpr int N = std::tuple_size<std::tuple<Args...>>::value;
   // value representing a not yet determined size
   static const int dynamic = -1;
