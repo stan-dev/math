@@ -95,8 +95,8 @@ namespace stan {
   *
   *~~~~~{.cpp}
   *  template <typename Mat1, typename Mat2,
-  *require_all_eigen_vt<is_arithmetic, Mat1, Mat2>...> // (1)
-  *inline auto a_func(Mat1&& m1, Mat2&& m2) { // (2)
+  * require_all_eigen_vt<is_arithmetic, Mat1, Mat2>...>
+  * inline auto a_func(Mat1&& m1, Mat2&& m2) {
   *   check_nan(m1);
   *   check_nan(m2);
   *   // If m1 and/or m2 is an rvalue it will be moved over to this function
