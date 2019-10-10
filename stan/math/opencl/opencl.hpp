@@ -16,8 +16,10 @@
 #include <stan/math/opencl/prim/rep_matrix.hpp>
 #include <stan/math/opencl/prim/rep_row_vector.hpp>
 #include <stan/math/opencl/prim/rep_vector.hpp>
+#include <stan/math/opencl/scalar_type.hpp>
 #include <stan/math/opencl/sub_block.hpp>
 #include <stan/math/opencl/triangular_transpose.hpp>
+#include <stan/math/opencl/value_type.hpp>
 #include <stan/math/opencl/zeros.hpp>
 
 #include <stan/math/opencl/prim/add.hpp>
