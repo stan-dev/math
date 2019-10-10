@@ -26,7 +26,7 @@ namespace math {
  */
 template <typename T>
 template <matrix_cl_view matrix_view>
-inline void matrix_cl<T, enable_if_arithmetic<T>>::zeros() try {
+inline void matrix_cl<T, require_arithmetic_t<T>>::zeros() try {
   if (size() == 0) {
     return;
   }
@@ -53,7 +53,7 @@ inline void matrix_cl<T, enable_if_arithmetic<T>>::zeros() try {
  */
 template <typename T>
 template <matrix_cl_view matrix_view>
-inline void matrix_cl<T, enable_if_arithmetic<T>>::zeros_strict_tri() try {
+inline void matrix_cl<T, require_arithmetic_t<T>>::zeros_strict_tri() try {
   if (matrix_view == matrix_cl_view::Entire) {
     invalid_argument(
         "zeros_strict_tri", "matrix_view",
