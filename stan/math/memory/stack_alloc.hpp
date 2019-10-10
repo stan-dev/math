@@ -3,14 +3,20 @@
 
 // TODO(Bob): <cstddef> replaces this ifdef in C++11, until then this
 //            is best we can do to get safe pointer casts to uints.
-#include <stdint.h>
 #include <stan/math/prim/meta.hpp>
 #include <cstdlib>
 #include <cstddef>
 #include <sstream>
 #include <stdexcept>
 #include <vector>
-
+#include <stdint.h>
+#if EIGEN_COMP_MSVC
+#include <malloc.h>
+#define aligned_alloc_ _aligned_malloc
+#else
+#include <stdlib.h>
+#define aligned_alloc_ aligned_alloc
+#endif
 namespace stan {
 namespace math {
 
@@ -21,8 +27,8 @@ const size_t DEFAULT_INITIAL_NBYTES = 1 << 16;  // 64KB
 
 // FIXME: enforce alignment
 // big fun to inline, but only called twice
-inline byte* eight_byte_aligned_malloc(size_t size) noexcept {
-  byte* ptr = static_cast<byte*>(malloc(size));
+inline byte* aligned_malloc(size_t size) noexcept {
+  byte* ptr = static_cast<byte*>(aligned_alloc_(64, size));
   return ptr;
 }
 }  // namespace internal
@@ -82,7 +88,7 @@ class stack_alloc {
       if (newsize < len) {
         newsize = len;
       }
-      blocks_.push_back(internal::eight_byte_aligned_malloc(newsize));
+      blocks_.push_back(internal::aligned_malloc(newsize));
       if (!blocks_.back()) {
         throw std::bad_alloc();
       }
@@ -106,7 +112,7 @@ class stack_alloc {
    * aligned.
    */
   explicit stack_alloc(size_t initial_nbytes = internal::DEFAULT_INITIAL_NBYTES)
-      : blocks_(1, internal::eight_byte_aligned_malloc(initial_nbytes)),
+      : blocks_(1, internal::aligned_malloc(initial_nbytes)),
         sizes_(1, initial_nbytes),
         cur_block_(0),
         cur_block_end_(blocks_[0] + initial_nbytes),

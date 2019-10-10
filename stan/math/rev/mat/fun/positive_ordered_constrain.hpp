@@ -37,7 +37,7 @@ class positive_ordered_constrain_op {
       return y;
     }
 
-    exp_x_ = stack_mem.alloc_array<double>(N_);
+    exp_x_ = stack_mem::alloc_array<double>(N_);
 
     exp_x_[0] = exp(x[0]);
     y[0] = exp_x_[0];

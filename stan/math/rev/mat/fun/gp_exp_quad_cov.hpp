@@ -69,11 +69,11 @@ class gp_exp_quad_cov_vari : public vari {
         l_d_(value_of(length_scale)),
         sigma_d_(value_of(sigma)),
         sigma_sq_d_(sigma_d_ * sigma_d_),
-        dist_(stack_mem.alloc_array<double>(size_ltri_)),
+        dist_(stack_mem::alloc_array<double>(size_ltri_)),
         l_vari_(length_scale.vi_),
         sigma_vari_(sigma.vi_),
-        cov_lower_(stack_mem.alloc_array<vari *>(size_ltri_)),
-        cov_diag_(stack_mem.alloc_array<vari *>(size_)) {
+        cov_lower_(stack_mem::alloc_array<vari *>(size_ltri_)),
+        cov_diag_(stack_mem::alloc_array<vari *>(size_)) {
     double inv_half_sq_l_d = 0.5 / (l_d_ * l_d_);
     size_t pos = 0;
     for (size_t j = 0; j < size_ - 1; ++j) {
@@ -160,10 +160,10 @@ class gp_exp_quad_cov_vari<T_x, double, T_l> : public vari {
         l_d_(value_of(length_scale)),
         sigma_d_(value_of(sigma)),
         sigma_sq_d_(sigma_d_ * sigma_d_),
-        dist_(stack_mem.alloc_array<double>(size_ltri_)),
+        dist_(stack_mem::alloc_array<double>(size_ltri_)),
         l_vari_(length_scale.vi_),
-        cov_lower_(stack_mem.alloc_array<vari *>(size_ltri_)),
-        cov_diag_(stack_mem.alloc_array<vari *>(size_)) {
+        cov_lower_(stack_mem::alloc_array<vari *>(size_ltri_)),
+        cov_diag_(stack_mem::alloc_array<vari *>(size_)) {
     double inv_half_sq_l_d = 0.5 / (l_d_ * l_d_);
     size_t pos = 0;
     for (size_t j = 0; j < size_ - 1; ++j) {

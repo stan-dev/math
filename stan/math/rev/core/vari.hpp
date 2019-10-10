@@ -124,7 +124,7 @@ class vari {
    * @return Pointer to allocated bytes.
    */
   static inline void* operator new(size_t nbytes) {
-    return stack_mem.alloc(nbytes);
+    return stack_mem::alloc(nbytes);
   }
 
   /**

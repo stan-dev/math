@@ -52,8 +52,8 @@ class precomputed_gradients_vari : public vari {
                              const std::vector<double>& gradients)
       : vari(val),
         size_(vars.size()),
-        varis_(stack_mem.alloc_array<vari*>(vars.size())),
-        gradients_(stack_mem.alloc_array<double>(vars.size())) {
+        varis_(stack_mem::alloc_array<vari*>(vars.size())),
+        gradients_(stack_mem::alloc_array<double>(vars.size())) {
     check_consistent_sizes("precomputed_gradients_vari", "vars", vars,
                            "gradients", gradients);
     for (size_t i = 0; i < vars.size(); ++i) {

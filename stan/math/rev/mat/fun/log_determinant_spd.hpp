@@ -40,10 +40,10 @@ inline var log_determinant_spd(const Eigen::Matrix<var, R, C>& m) {
   check_finite("log_determinant_spd",
                "log determininant of the matrix argument", val);
 
-  vari** operands = stack_mem.alloc_array<vari*>(m.size());
+  vari** operands = stack_mem::alloc_array<vari*>(m.size());
   Eigen::Map<matrix_vi>(operands, m.rows(), m.cols()) = m.vi();
 
-  double* gradients = stack_mem.alloc_array<double>(m.size());
+  double* gradients = stack_mem::alloc_array<double>(m.size());
   Eigen::Map<matrix_d>(gradients, m.rows(), m.cols()) = m_d;
 
   return var(

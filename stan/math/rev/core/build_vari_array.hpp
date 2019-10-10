@@ -19,7 +19,7 @@ namespace math {
  */
 template <int R, int C>
 vari** build_vari_array(const Eigen::Matrix<var, R, C>& x) {
-  vari** x_vi_ = stack_mem.alloc_array<vari*>(x.size());
+  vari** x_vi_ = stack_mem::alloc_array<vari*>(x.size());
   for (int i = 0; i < x.size(); ++i) {
     x_vi_[i] = x(i).vi_;
   }

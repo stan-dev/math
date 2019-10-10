@@ -16,7 +16,7 @@ class op_vector_vari : public vari {
  public:
   op_vector_vari(double f, const std::vector<var>& vs)
       : vari(f), size_(vs.size()) {
-    vis_ = stack_mem.alloc_array<vari*>(vs.size());
+    vis_ = stack_mem::alloc_array<vari*>(vs.size());
     for (size_t i = 0; i < vs.size(); ++i) {
       vis_[i] = vs[i].vi_;
     }

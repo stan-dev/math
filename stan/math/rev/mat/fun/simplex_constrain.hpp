@@ -36,8 +36,8 @@ class simplex_constrain_op {
   Eigen::VectorXd operator()(const std::array<bool, size>& needs_adj,
                              const Eigen::VectorXd& y) {
     N_ = y.size();
-    diag_ = stack_mem.alloc_array<double>(N_);
-    z_ = stack_mem.alloc_array<double>(N_);
+    diag_ = stack_mem::alloc_array<double>(N_);
+    z_ = stack_mem::alloc_array<double>(N_);
 
     Eigen::Matrix<double, Eigen::Dynamic, 1> x(N_ + 1);
     double stick_len(1.0);
