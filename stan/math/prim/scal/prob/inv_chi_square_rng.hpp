@@ -26,8 +26,8 @@ namespace math {
 template <typename T_deg, class RNG>
 inline typename VectorBuilder<true, double, T_deg>::type inv_chi_square_rng(
     const T_deg& nu, RNG& rng) {
-  using boost::variate_generator;
   using boost::random::chi_squared_distribution;
+  using boost::variate_generator;
 
   static const char* function = "inv_chi_square_rng";
 
