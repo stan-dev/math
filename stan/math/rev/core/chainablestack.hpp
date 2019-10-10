@@ -11,11 +11,6 @@ class chainable_alloc;
 
 using ChainableStack = AutodiffStackSingleton<vari, chainable_alloc>;
 
-// Helper struct to access the underlying stack allocator.
-struct stack_mem {
-};
-
-
 }  // namespace math
 }  // namespace stan
 #endif
