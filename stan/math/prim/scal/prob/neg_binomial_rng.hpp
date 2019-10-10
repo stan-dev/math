@@ -37,8 +37,8 @@ template <typename T_shape, typename T_inv, class RNG>
 inline typename VectorBuilder<true, int, T_shape, T_inv>::type neg_binomial_rng(
     const T_shape& alpha, const T_inv& beta, RNG& rng) {
   using boost::gamma_distribution;
-  using boost::random::poisson_distribution;
   using boost::variate_generator;
+  using boost::random::poisson_distribution;
 
   static const char* function = "neg_binomial_rng";
 

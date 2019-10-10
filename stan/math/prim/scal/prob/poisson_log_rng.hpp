@@ -26,8 +26,8 @@ namespace math {
 template <typename T_rate, class RNG>
 inline typename VectorBuilder<true, int, T_rate>::type poisson_log_rng(
     const T_rate& alpha, RNG& rng) {
-  using boost::random::poisson_distribution;
   using boost::variate_generator;
+  using boost::random::poisson_distribution;
 
   static const char* function = "poisson_log_rng";
   static const double POISSON_MAX_LOG_RATE = 30 * std::log(2);

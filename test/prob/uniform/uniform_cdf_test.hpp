@@ -59,8 +59,8 @@ class AgradCdfUniform : public AgradCdfTest {
   typename stan::return_type<T_y, T_low, T_high>::type cdf_function(
       const T_y& y, const T_low& alpha, const T_high& beta, const T3&,
       const T4&, const T5&) {
-    using stan::math::LOG_ZERO;
     using stan::math::include_summand;
+    using stan::math::LOG_ZERO;
 
     if (y < alpha || y > beta)
       return 0.0;

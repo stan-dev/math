@@ -164,19 +164,18 @@ class idas_integrator {
 
     return res_yy;
   }
-};
-idas integrator
+};  // idas integrator
 
-    /**
-     * Initialize sensitivity calculation and set
-     * tolerance. For sensitivity with respect to initial
-     * conditions, set sensitivity to identity
-     *
-     * @tparam Dae DAE system type
-     * @param[in, out] dae DAE system
-     */
-    template <typename Dae>
-    void idas_integrator::init_sensitivity(Dae& dae) {
+/**
+ * Initialize sensitivity calculation and set
+ * tolerance. For sensitivity with respect to initial
+ * conditions, set sensitivity to identity
+ *
+ * @tparam Dae DAE system type
+ * @param[in, out] dae DAE system
+ */
+template <typename Dae>
+void idas_integrator::init_sensitivity(Dae& dae) {
   if (Dae::need_sens) {
     auto mem = dae.mem();
     auto yys = dae.nv_yys();
