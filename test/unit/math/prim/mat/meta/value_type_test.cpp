@@ -6,7 +6,7 @@
 TEST(MathMeta, index_type) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using stan::math::value_type;
+  using stan::value_type;
 
   expect_same_type<Matrix<double, Dynamic, Dynamic>::Scalar,
                    value_type<Matrix<double, Dynamic, Dynamic> >::type>();
