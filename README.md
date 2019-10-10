@@ -15,7 +15,7 @@ wiki](https://github.com/stan-dev/math/wiki/Apache-2.0-License-Evaluation).
 Contributing
 ---------
 
-We love new contributors! See the [contributing guide](https://github.com/stan-dev/math/blob/develop/CONTRIBUTING.md) for making feature requests and bug fixes.
+We love new contributors! See the [contributing guide](https://github.com/stan-dev/math/blob/develop/.github/CONTRIBUTING.md) for making feature requests and bug fixes.
 
 Required Libraries
 ------------------

@@ -6,10 +6,9 @@ This is the short version. For an extended guide see [developer doc on the wiki]
 
 ### Pull Request Checklist
 
-1. Read the [Code of Conduct](https://github.com/stan-dev/math/blob/develop/CODE_OF_CONDUCT.md).
-2. Fill out a bug or feature request [issue](https://github.com/stan-dev/math/issues).
-3. Make a fork and branch, for features start the branch with `feature/your-feature`, for bugs use `bug-fix/your-fix`, and refactors `refactor/your-refactor`.
-4. Once your branch passes cpplint and tests relevant to your PR, submit a [pull request](https://github.com/stan-dev/math/pulls) following the checks in the pull request template.
+1. Fill out a bug or feature request [issue](https://github.com/stan-dev/math/issues).
+2. Make a fork and branch, for features start the branch with `feature/your-feature`, for bugs use `bug-fix/your-fix`, and refactors `refactor/your-refactor`.
+3. Once your branch passes cpplint and tests relevant to your PR, submit a [pull request](https://github.com/stan-dev/math/pulls) following the checks in the pull request template.
 
 ## How to Become a Contributor
 
