@@ -17,30 +17,29 @@ struct stack_mem {
   inline static T* alloc_array(size_t n) {
     return ChainableStack::instance_->memalloc_.alloc_array<T>(n);
   }
-  inline static void* alloc(size_t len)  {
+  inline static void* alloc(size_t len) {
     return ChainableStack::instance_->memalloc_.alloc(len);
   }
 
-  inline static void recover_all()  {
+  inline static void recover_all() {
     return ChainableStack::instance_->memalloc_.recover_all();
   }
-  inline static void start_nested()  {
+  inline static void start_nested() {
     return ChainableStack::instance_->memalloc_.start_nested();
   }
-  inline static void recover_nested()  {
+  inline static void recover_nested() {
     return ChainableStack::instance_->memalloc_.recover_nested();
   }
-  inline static void free_all()  {
+  inline static void free_all() {
     return ChainableStack::instance_->memalloc_.free_all();
   }
-  inline static size_t bytes_allocated()  {
+  inline static size_t bytes_allocated() {
     return ChainableStack::instance_->memalloc_.bytes_allocated();
   }
-  inline static bool in_stack(const void* ptr)  {
+  inline static bool in_stack(const void* ptr) {
     return ChainableStack::instance_->memalloc_.in_stack(ptr);
   }
 };
-
 
 }  // namespace math
 }  // namespace stan

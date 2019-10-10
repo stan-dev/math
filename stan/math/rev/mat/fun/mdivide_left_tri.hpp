@@ -31,7 +31,8 @@ class mdivide_left_tri_vv_vari : public vari {
         N_(B.cols()),
         A_(stack_mem::alloc_array<double>(A.rows() * A.cols())),
         C_(stack_mem::alloc_array<double>(B.rows() * B.cols())),
-        variRefA_(stack_mem::alloc_array<vari *>(A.rows() * (A.rows() + 1) / 2)),
+        variRefA_(
+            stack_mem::alloc_array<vari *>(A.rows() * (A.rows() + 1) / 2)),
         variRefB_(stack_mem::alloc_array<vari *>(B.rows() * B.cols())),
         variRefC_(stack_mem::alloc_array<vari *>(B.rows() * B.cols())) {
     using Eigen::Map;
@@ -200,7 +201,8 @@ class mdivide_left_tri_vd_vari : public vari {
         N_(B.cols()),
         A_(stack_mem::alloc_array<double>(A.rows() * A.cols())),
         C_(stack_mem::alloc_array<double>(B.rows() * B.cols())),
-        variRefA_(stack_mem::alloc_array<vari *>(A.rows() * (A.rows() + 1) / 2)),
+        variRefA_(
+            stack_mem::alloc_array<vari *>(A.rows() * (A.rows() + 1) / 2)),
         variRefC_(stack_mem::alloc_array<vari *>(B.rows() * B.cols())) {
     using Eigen::Map;
     using Eigen::Matrix;
