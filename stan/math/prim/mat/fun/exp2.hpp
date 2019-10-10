@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/scal/fun/exp2.hpp>
+#include <stan/math/prim/meta.hpp>
 
 namespace stan {
 namespace math {
@@ -34,7 +35,7 @@ struct exp2_fun {
  * @param x Container.
  * @return Elementwise exp2 of members of container.
  */
-template <typename T>
+template <typename T, typename = require_vector_like_t<T>>
 inline typename apply_scalar_unary<exp2_fun, T>::return_t exp2(const T& x) {
   return apply_scalar_unary<exp2_fun, T>::apply(x);
 }

@@ -2,8 +2,6 @@
 #define STAN_MATH_PRIM_SCAL_FUN_HYPOT_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/square.hpp>
-#include <boost/math/tools/promotion.hpp>
 #include <cmath>
 
 namespace stan {
@@ -21,10 +19,10 @@ namespace math {
  * @return Length of hypoteneuse of right triangle with opposite
  * and adjacent side lengths x and y.
  */
-template <typename T1, typename T2>
-inline return_type_t<T1, T2> hypot(const T1& x, const T2& y) {
-  using std::sqrt;
-  return sqrt(square(x) + square(y));
+template <typename T1, typename T2, typename = require_all_arithmetic_t<T1, T2>>
+inline double hypot(T1 x, T2 y) {
+  using std::hypot;
+  return hypot(x, y);
 }
 
 }  // namespace math

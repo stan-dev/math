@@ -9,6 +9,7 @@
 #include <stan/math/opencl/cholesky_decompose.hpp>
 #include <stan/math/opencl/diagonal_multiply.hpp>
 #include <stan/math/opencl/identity.hpp>
+#include <stan/math/opencl/is_matrix_cl.hpp>
 #include <stan/math/opencl/tri_inverse.hpp>
 #include <stan/math/opencl/multiply_transpose.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
@@ -32,7 +33,6 @@
 #include <stan/math/opencl/prim/normal_id_glm_lpdf.hpp>
 #include <stan/math/opencl/prim/ordered_logistic_glm_lpmf.hpp>
 #include <stan/math/opencl/prim/poisson_log_glm_lpmf.hpp>
-
 #include <stan/math/opencl/prim/subtract.hpp>
 #include <stan/math/opencl/prim/transpose.hpp>
 

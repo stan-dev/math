@@ -36,8 +36,7 @@ namespace math {
  * @throw <code>std::invalid_argument</code> if the matrix
  *    is not square
  */
-template <matrix_cl_view matrix_view = matrix_cl_view::Entire, typename T,
-          typename = enable_if_floating_point<T>>
+template <typename T, typename = require_floating_point_t<T>>
 inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
   // if the triangular view is not specified use the triangularity of
   // the input matrix

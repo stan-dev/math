@@ -32,7 +32,7 @@ namespace opencl {
  *   number of columns in A and rows in B do not match
  */
 
-template <typename T1, typename T2, typename = enable_if_all_arithmetic<T1, T2>>
+template <typename T1, typename T2, typename = require_all_arithmetic_t<T1, T2>>
 inline matrix_cl<return_type_t<T1, T2>> multiply(const matrix_cl<T1>& A,
                                                  const matrix_cl<T2>& B) {
   check_size_match("multiply ((OpenCL))", "A.cols()", A.cols(), "B.rows()",
