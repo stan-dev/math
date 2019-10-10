@@ -117,29 +117,27 @@ struct AutodiffStackSingleton {
 
   static STAN_THREADS_DEF AutodiffStackStorage *instance_;
   template <typename T>
-  inline static T* alloc_array(size_t n) {
+  inline static T *alloc_array(size_t n) {
     return instance_->memalloc_.template alloc_array<T>(n);
   }
-  inline static void* alloc(size_t len)  {
+  inline static void *alloc(size_t len) {
     return instance_->memalloc_.alloc(len);
   }
 
-  inline static void recover_all()  {
+  inline static void recover_all() {
     return instance_->memalloc_.recover_all();
   }
-  inline static void start_nested()  {
+  inline static void start_nested() {
     return instance_->memalloc_.start_nested();
   }
-  inline static void recover_nested()  {
+  inline static void recover_nested() {
     return instance_->memalloc_.recover_nested();
   }
-  inline static void free_all()  {
-    return instance_->memalloc_.free_all();
-  }
-  inline static size_t bytes_allocated()  {
+  inline static void free_all() { return instance_->memalloc_.free_all(); }
+  inline static size_t bytes_allocated() {
     return instance_->memalloc_.bytes_allocated();
   }
-  inline static bool in_stack(const void* ptr)  {
+  inline static bool in_stack(const void *ptr) {
     return instance_->memalloc_.in_stack(ptr);
   }
 
@@ -154,7 +152,6 @@ struct AutodiffStackSingleton {
 
   bool own_instance_;
 };
-
 
 template <typename ChainableT, typename ChainableAllocT>
 STAN_THREADS_DEF
