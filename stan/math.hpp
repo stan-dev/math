@@ -5,16 +5,16 @@
  * \defgroup prob_dists Probability Distributions
  */
 
- /**
-  * \ingroup prob_dists
-  * \defgroup multivar_dists Multivariate Distributions
-  * Distributions with Matrix inputs
-  */
- /**
-  * \ingroup prob_dists
-  * \defgroup univar_dists Univariate Distributions
-  * Distributions with scalar, vector, or array input.
-  */
+/**
+ * \ingroup prob_dists
+ * \defgroup multivar_dists Multivariate Distributions
+ * Distributions with Matrix inputs
+ */
+/**
+ * \ingroup prob_dists
+ * \defgroup univar_dists Univariate Distributions
+ * Distributions with scalar, vector, or array input.
+ */
 
 /**
  * \defgroup type_trait Type Traits
@@ -127,10 +127,10 @@
  * \defgroup require_base_types Basic Type Pseudo-Concepts
  */
 
- /**
-  * \ingroup require_meta
-  * \defgroup require_container_types Container Pseudo-Concepts
-  */
+/**
+ * \ingroup require_meta
+ * \defgroup require_container_types Container Pseudo-Concepts
+ */
 
 #include <stan/math/rev/mat.hpp>
 

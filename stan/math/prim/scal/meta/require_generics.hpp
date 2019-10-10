@@ -70,21 +70,24 @@ using container_value_type_check_base = bool_constant<
                       TypeCheck<value_type_t<Check>>...>::value>;
 
 /**
- * Meta type trait to check if type is a standard vector and value type passes additional type trait check
+ * Meta type trait to check if type is a standard vector and value type passes
+ * additional type trait check
  */
 template <template <class...> class TypeCheck, class... Check>
 struct is_std_vector_value_check
     : container_value_type_check_base<is_std_vector, TypeCheck, Check...> {};
 
 /**
- * Meta type trait to check if type is a standard vector or eigen vector and value type passes additional type trait check
+ * Meta type trait to check if type is a standard vector or eigen vector and
+ * value type passes additional type trait check
  */
 template <template <class...> class TypeCheck, class... Check>
 struct is_vector_value_check
     : container_value_type_check_base<is_vector, TypeCheck, Check...> {};
 
 /**
- * Meta type trait to check if type is a standard vector, eigen vector, or array and value type passes additional type trait check
+ * Meta type trait to check if type is a standard vector, eigen vector, or array
+ * and value type passes additional type trait check
  */
 template <template <class...> class TypeCheck, class... Check>
 struct is_vector_like_value_check
@@ -98,61 +101,66 @@ struct is_eigen_value_check
     : container_value_type_check_base<is_eigen, TypeCheck, Check...> {};
 
 /**
- * Meta type trait to check if type inherits from EigenBase and has row or col values at compile time of 1.
+ * Meta type trait to check if type inherits from EigenBase and has row or col
+ * values at compile time of 1.
  */
 template <template <class...> class TypeCheck, class... Check>
 struct is_eigen_vector_value_check
     : container_value_type_check_base<is_eigen_vector, TypeCheck, Check...> {};
 
 /**
-* Used as the base for checking whether a type is a container with
-* an underlying scalar type
-*
-* @tparam ContainerCheck Templated struct or alias that wraps a static constant
-* scalar called type. Used to check the container satisfies a particular type
-* check.
-* @tparam CheckType Templated struct or alias that wraps a static constant
-* scalar called type. Used to check the container's underlying type satisfies a
-* particular type check.
-*
-*/
+ * Used as the base for checking whether a type is a container with
+ * an underlying scalar type
+ *
+ * @tparam ContainerCheck Templated struct or alias that wraps a static constant
+ * scalar called type. Used to check the container satisfies a particular type
+ * check.
+ * @tparam CheckType Templated struct or alias that wraps a static constant
+ * scalar called type. Used to check the container's underlying type satisfies a
+ * particular type check.
+ *
+ */
 template <template <class...> class ContainerCheck,
-         template <class...> class TypeCheck, class... Check>
+          template <class...> class TypeCheck, class... Check>
 using container_scalar_type_check_base = bool_constant<
-   math::conjunction<ContainerCheck<std::decay_t<Check>>...,
-                     TypeCheck<scalar_type_t<Check>>...>::value>;
+    math::conjunction<ContainerCheck<std::decay_t<Check>>...,
+                      TypeCheck<scalar_type_t<Check>>...>::value>;
 
- /**
-  * Meta type trait to check if type is a standard vector and scalar type passes additional type trait check
-  */
+/**
+ * Meta type trait to check if type is a standard vector and scalar type passes
+ * additional type trait check
+ */
 template <template <class...> class TypeCheck, class... Check>
 struct is_std_vector_scalar_check
     : container_scalar_type_check_base<is_std_vector, TypeCheck, Check...> {};
 
-
 /**
- * Meta type trait to check if type is a standard vector or eigen vector and scalar type passes additional type trait check
+ * Meta type trait to check if type is a standard vector or eigen vector and
+ * scalar type passes additional type trait check
  */
 template <template <class...> class TypeCheck, class... Check>
 struct is_vector_scalar_check
     : container_scalar_type_check_base<is_vector, TypeCheck, Check...> {};
 
 /**
- * Meta type trait to check if type is a standard vector, eigen vector, or array and scalar type passes additional type trait check
+ * Meta type trait to check if type is a standard vector, eigen vector, or array
+ * and scalar type passes additional type trait check
  */
 template <template <class...> class TypeCheck, class... Check>
 struct is_vector_like_scalar_check
     : container_scalar_type_check_base<is_vector_like, TypeCheck, Check...> {};
 
 /**
- * Meta type trait to check if type inherits from EigenBase and scalar type pass additional type trait check
+ * Meta type trait to check if type inherits from EigenBase and scalar type pass
+ * additional type trait check
  */
 template <template <class...> class TypeCheck, class... Check>
 struct is_eigen_scalar_check
     : container_scalar_type_check_base<is_eigen, TypeCheck, Check...> {};
 
 /**
- * Meta type trait to check if type inherits from EigenBase, has 1 row or column compile time size, and scalar type passes additional type trait check
+ * Meta type trait to check if type inherits from EigenBase, has 1 row or column
+ * compile time size, and scalar type passes additional type trait check
  */
 template <template <class...> class TypeCheck, class... Check>
 struct is_eigen_vector_scalar_check
@@ -510,8 +518,8 @@ using require_any_not_stan_scalar_t
  */
 
 /** \addtogroup require_container_types
-  *  @{
-  */
+ *  @{
+ */
 
 template <typename T>
 using require_std_vector_t = require_t<is_std_vector<T>>;
@@ -741,7 +749,6 @@ using require_all_not_eigen_vector_vt
 /**
  * Container Scalar check
  */
-
 
 /**
  * Check a templated type to see if it and it's inner type pass a condiational
