@@ -8,8 +8,10 @@
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernel_cl.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <cl.hpp>
 #include <string>
+#include <tuple>
 #include <set>
 
 namespace stan {
@@ -27,12 +29,20 @@ struct kernel_parts {
  * Base for all kernel generator operations.
  * @tparam Derived derived type
  * @tparam ReturnScalar scalar type of the result
+ * @tparam Args types of arguments to this operation
  */
-template <typename Derived, typename ReturnScalar>
+template <typename Derived, typename ReturnScalar, typename... Args>
 class operation : public operation_base {
  public:
-  static const int dynamic = -1;  // value representing a not yet determined
-                                  // size
+  static constexpr int N = std::tuple_size<std::tuple<Args...>>::value;
+  // value representing a not yet determined size
+  static const int dynamic = -1;
+
+  /**
+   * Constructor
+   * @param arguments Arguments of this expression that are also valid expressions
+   */
+  operation(Args&&... arguments) : arguments_(std::forward<Args>(arguments)...){}
 
   /**
    * Evaluates the expression.
@@ -79,7 +89,63 @@ class operation : public operation_base {
                                // operation and every \c T_lhs
   };
 
+  /**
+   * Sets kernel arguments for nested expressions.
+   * @param[in,out] generated set of expressions that already set their kernel
+   * arguments
+   * @param kernel kernel to set arguments on
+   * @param[in,out] arg_num consecutive number of the first argument to set.
+   * This is incremented for each argument set by this function.
+   */
+  inline void set_args(std::set<const void*>& generated, cl::Kernel& kernel,
+                       int& arg_num) const {
+    if (generated.count(this) == 0) {
+      generated.insert(this);
+      index_apply<N>([&](auto... Is) {
+        (void)std::initializer_list<int>{(
+            std::get<Is>(arguments_).set_args(generated, kernel, arg_num),0)...};
+      });
+    }
+  }
+
+  /**
+   * Adds read event to any matrices used by nested expressions.
+   * @param e the event to add
+   */
+  inline void add_read_event(cl::Event& e) const {
+    index_apply<N>([&](auto... Is) {
+      (void)std::initializer_list<int>{(
+          std::get<Is>(arguments_).add_read_event(e),0)...};
+    });
+  }
+
+  /**
+   * Number of rows of a matrix that would be the result of evaluating this
+   * expression. Some subclasses may need to override this.
+   * @return number of rows
+   */
+  inline int rows() const {
+    return index_apply<N>([&](auto... Is) {
+      // assuming all non-dynamic sizes match
+      return std::max(get<Is>(arguments_).rows()...);
+    });
+  }
+
+  /**
+   * Number of columns of a matrix that would be the result of evaluating this
+   * expression. Some subclasses may need to override this.
+   * @return number of columns
+   */
+  template<size_t... I>
+  inline int cols() const {
+    return index_apply<N>([&](auto... Is) {
+      // assuming all non-dynamic sizes match
+      return std::max(get<Is>(arguments_).cols()...);
+    });
+  }
+
  protected:
+  std::tuple<Args...> arguments_;
   mutable std::string var_name;  // name of the variable that holds result of
                                  // this operation in the kernel
 
@@ -98,9 +164,9 @@ class operation : public operation_base {
   }
 };
 
-template <typename Derived, typename ReturnScalar>
+template <typename Derived, typename ReturnScalar, typename... Args>
 template <typename T_lhs>
-cl::Kernel operation<Derived, ReturnScalar>::cache<T_lhs>::kernel;
+cl::Kernel operation<Derived, ReturnScalar, Args ...>::cache<T_lhs>::kernel;
 
 }  // namespace math
 }  // namespace stan

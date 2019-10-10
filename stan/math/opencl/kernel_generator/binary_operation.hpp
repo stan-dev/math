@@ -29,10 +29,8 @@ namespace math {
  */
 template <typename Derived, typename T_a, typename T_b>
 class binary_operation
-    : public operation<Derived, common_return_scalar_t<T_a, T_b>> {
+    : public operation<Derived, common_return_scalar_t<T_a, T_b>, T_a, T_b> {
  protected:
-  T_a a_;
-  T_b b_;
   std::string op_;
 
  public:
@@ -44,8 +42,11 @@ class binary_operation
       "binary_operation: b must be an operation!");
 
   using ReturnScalar = common_return_scalar_t<T_a, T_b>;
-  using base = operation<Derived, ReturnScalar>;
+  using base = operation<Derived, ReturnScalar, T_a, T_b>;
   using base::var_name;
+ protected:
+  using base::arguments_;
+ public:
 
   /**
    * Constructor
@@ -54,7 +55,7 @@ class binary_operation
    * @param op operator used in the binary operation
    */
   binary_operation(T_a&& a, T_b&& b, const std::string& op)  // NOLINT
-      : a_(std::forward<T_a>(a)), b_(std::forward<T_b>(b)), op_(op) {
+      : base(std::forward<T_a>(a), std::forward<T_b>(b)), op_(op) {
     const std::string function = "binary_operator" + op;
     if (a.rows() != base::dynamic && b.rows() != base::dynamic) {
       check_size_match(function.c_str(), "Rows of ", "a", a.rows(), "rows of ",
@@ -79,69 +80,23 @@ class binary_operation
                                const std::string& j) const {
     kernel_parts res{};
     if (generated.count(this) == 0) {
-      kernel_parts a_parts = a_.generate(generated, name_gen, i, j);
-      kernel_parts b_parts = b_.generate(generated, name_gen, i, j);
+      kernel_parts a_parts = std::get<0>(arguments_).generate(generated, name_gen, i, j);
+      kernel_parts b_parts = std::get<1>(arguments_).generate(generated, name_gen, i, j);
       generated.insert(this);
       this->var_name = name_gen.generate();
       res.body = a_parts.body + b_parts.body + type_str<ReturnScalar>::name
-                 + " " + var_name + " = " + a_.var_name + op_ + b_.var_name
-                 + ";\n";
+                 + " " + var_name + " = " + std::get<0>(arguments_).var_name + op_ +
+                 std::get<1>(arguments_).var_name + ";\n";
       res.args = a_parts.args + b_parts.args;
     }
     return res;
   }
 
   /**
-   * Sets kernel arguments for this and nested expressions.
-   * @param[in,out] generated set of expressions that already set their kernel
-   * arguments
-   * @param kernel kernel to set arguments on
-   * @param[in,out] arg_num consecutive number of the first argument to set.
-   * This is incremented for each argument set by this function.
-   */
-  inline void set_args(std::set<const void*>& generated, cl::Kernel& kernel,
-                       int& arg_num) const {
-    if (generated.count(this) == 0) {
-      generated.insert(this);
-      a_.set_args(generated, kernel, arg_num);
-      b_.set_args(generated, kernel, arg_num);
-    }
-  }
-
-  /**
-   * Adds read event to any matrices used by this or nested expressions.
-   * @param e the event to add
-   */
-  inline void add_read_event(cl::Event& e) const {
-    a_.add_read_event(e);
-    b_.add_read_event(e);
-  }
-
-  /**
-   * Number of rows of a matrix that would be the result of evaluating this
-   * expression.
-   * @return number of rows
-   */
-  inline int rows() const {
-    int a_rows = a_.rows();
-    return a_rows == base::dynamic ? b_.rows() : a_rows;
-  }
-
-  /**
-   * Number of columns of a matrix that would be the result of evaluating this
-   * expression.
-   * @return number of columns
-   */
-  inline int cols() const {
-    int a_cols = a_.cols();
-    return a_cols == base::dynamic ? b_.cols() : a_cols;
-  }
-
-  /**
    * View of a matrix that would be the result of evaluating this expression.
    * @return view
    */
-  inline matrix_cl_view view() const { return either(a_.view(), b_.view()); }
+  inline matrix_cl_view view() const { return either(std::get<0>(arguments_).view(), std::get<1>(arguments_).view()); }
 };
 
 /**
@@ -238,7 +193,7 @@ class elewise_multiplication__
    */
   inline matrix_cl_view view() const {
     using base = binary_operation<elewise_multiplication__<T_a, T_b>, T_a, T_b>;
-    return both(base::a_.view(), base::b_.view());
+    return both(std::get<0>(base::arguments_).view(), std::get<1>(base::arguments_).view());
   }
 };
 
@@ -329,7 +284,7 @@ class elewise_division__
    */
   inline matrix_cl_view view() const {
     using base = binary_operation<elewise_division__<T_a, T_b>, T_a, T_b>;
-    return either(base::a_.view(), invert(base::b_.view()));
+    return either(std::get<0>(base::arguments_).view(), invert(std::get<1>(base::arguments_).view()));
   }
 };
 

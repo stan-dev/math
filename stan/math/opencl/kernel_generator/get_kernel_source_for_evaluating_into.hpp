@@ -11,10 +11,10 @@
 namespace stan {
 namespace math {
 
-template <typename Derived, typename ReturnScalar>
+template <typename Derived, typename ReturnScalar, typename... Args>
 template <typename T_lhs>
 std::string
-operation<Derived, ReturnScalar>::get_kernel_source_for_evaluating_into(
+operation<Derived, ReturnScalar, Args...>::get_kernel_source_for_evaluating_into(
     const T_lhs& lhs) const {
   static_assert(is_valid_expression<T_lhs>::value,
                 "operation::get_kernel_source_for_evaluating_into: left hand "

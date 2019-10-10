@@ -13,13 +13,13 @@
 namespace stan {
 namespace math {
 
-template <typename Derived, typename ReturnScalar>
+template <typename Derived, typename ReturnScalar, typename... Args>
 template <typename T_lhs>
-void operation<Derived, ReturnScalar>::evaluate_into(const T_lhs& lhs) const {
+void operation<Derived, ReturnScalar, Args...>::evaluate_into(const T_lhs& lhs) const {
   static_assert(
       is_valid_expression<T_lhs>::value,
       "operation::evaluate_into: left hand side is not a valid expression!");
-  using cache = operation<Derived, ReturnScalar>::cache<T_lhs>;
+  using cache = operation<Derived, ReturnScalar, Args...>::cache<T_lhs>;
   const auto& lhs_expression = as_operation(lhs);
 
   int n_rows = derived().rows();

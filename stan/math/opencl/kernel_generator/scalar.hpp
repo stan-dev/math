@@ -70,12 +70,6 @@ class scalar__ : public operation<scalar__<T>, T> {
   }
 
   /**
-   * Adds read event for any matrices used by this expression - a no-op.
-   * @param e the event to add
-   */
-  inline void add_read_event(cl::Event& e) const {}
-
-  /**
    * Number of rows of a matrix that would be the result of evaluating this
    * expression.
    * @return number of rows
