@@ -7,6 +7,7 @@
 #include <stan/math/opencl/kernel_generator/type_str.hpp>
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation.hpp>
+#include <stan/math/opencl/kernel_generator/operation_lhs.hpp>
 #include <type_traits>
 #include <string>
 #include <utility>
@@ -21,7 +22,7 @@ namespace math {
  */
 template <typename T>
 class load__
-    : public operation<load__<T>, typename std::remove_reference_t<T>::type> {
+    : public operation_lhs<load__<T>, typename std::remove_reference_t<T>::type> {
  protected:
   T a_;
 
@@ -71,18 +72,11 @@ class load__
    * @param j column index variable name
    * @return part of kernel with code for this expressions
    */
-  inline kernel_parts generate_lhs(std::set<const void*>& generated,
-                                   name_generator& name_gen,
-                                   const std::string& i,
-                                   const std::string& j) const {
+  inline kernel_parts generate_lhs(const std::string& i, const std::string& j) const {
     kernel_parts res;
-    if (generated.count(this) == 0) {
-      generated.insert(this);
-      this->var_name = name_gen.generate();
-      std::string type = type_str<ReturnScalar>::name;
-      res.args = "__global " + type + "* " + var_name + "_global, int "
+    std::string type = type_str<ReturnScalar>::name;
+    res.args = "__global " + type + "* " + var_name + "_global, int "
                  + var_name + "_rows, int " + var_name + "_view, ";
-    }
     res.body
         = var_name + "_global[" + i + " + " + var_name + "_rows * " + j + "]";
     return res;
