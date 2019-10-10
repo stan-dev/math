@@ -2,9 +2,7 @@
 #include <limits>
 
 TEST(mathMixMatFun, inverse) {
-  auto f = [](const auto& x) {
-    return stan::math::inverse(x);
-  };
+  auto f = [](const auto& x) { return stan::math::inverse(x); };
 
   Eigen::Matrix<stan::math::var, -1, -1> t(0, 0);
   EXPECT_THROW(stan::math::inverse(t), std::invalid_argument);
