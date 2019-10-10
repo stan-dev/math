@@ -24,7 +24,6 @@ class operation_lhs : public operation<Derived, ReturnScalar, Args...> {
   using base::arguments_;
 
  public:
-
   /**
    * generates kernel code for this expression if it appears on the left hand
    * side of an assigment.
