@@ -20,7 +20,7 @@
 
 namespace stan {
 namespace math {
-/**
+/** \ingroup opencl
  * Performs an in-place of the the lower-triangular Cholesky factor (i.e.,
  * matrix square root) of the specified square, symmetric matrix. The return
  * value \f$L\f$ will be a lower-traingular matrix such that the original matrix

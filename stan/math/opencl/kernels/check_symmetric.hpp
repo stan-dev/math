@@ -12,7 +12,7 @@ namespace opencl_kernels {
 // \cond
 static const std::string is_symmetric_kernel_code = STRINGIFY(
     // \endcond
-    /**
+    /** \ingroup opencl
      * Check if the <code>matrix_cl</code> is symmetric
      *
      * @param[in] A The matrix to check.
@@ -42,7 +42,7 @@ static const std::string is_symmetric_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/**
+/** \ingroup opencl
  * See the docs for \link kernels/check_symmetric.hpp check_symmetric() \endlink
  */
 const kernel_cl<in_buffer, out_buffer, int, int, const double> check_symmetric(

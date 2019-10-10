@@ -19,7 +19,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Returns the chi square log complementary cumulative distribution
  * function for the given variate and degrees of freedom. If given
  * containers of matching sizes, returns the log sum of probabilities.

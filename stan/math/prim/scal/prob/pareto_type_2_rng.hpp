@@ -13,7 +13,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Return a Pareto type 2 random variate for the given location,
  * scale, and shape using the specified random number generator.
  *

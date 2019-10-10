@@ -12,7 +12,7 @@
 
 namespace stan {
 namespace math {
-/**
+/** \ingroup opencl
  * Creates a matrix_cl by replicating the value of
  * the only element in the input 1x1 matrix_cl. The
  * element must be of arithmetic type.
@@ -48,7 +48,7 @@ inline matrix_cl<T> rep_matrix(const matrix_cl<T>& x, int n, int m) {
   return A;
 }
 
-/**
+/** \ingroup opencl
  * Creates a matrix_cl by replicating the input
  * vector or row_vector.  The elements of the
  * vector or row_vector must be of arithmetic type.

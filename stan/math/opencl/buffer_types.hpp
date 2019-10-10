@@ -22,7 +22,7 @@ struct in_out_buffer {};
 
 namespace internal {
 
-/**
+/** \ingroup opencl
  * meta template struct for changing read/write buffer argument types to
  * cl::Buffer types.
  * @tparam T A template typename that for cases of non-read/write buffers

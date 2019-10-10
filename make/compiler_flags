@@ -184,7 +184,7 @@ endif
 #
 # The tbbmalloc and tbbmalloc_proxy libraries are optionally included
 # as targets. By default these are included on MacOS only. This behavior
-# can be altered by explicitly setting the TBB_LIBRARIES variable which 
+# can be altered by explicitly setting the TBB_LIBRARIES variable which
 # should contain "tbb" or "tbb tbbmalloc tbbmalloc_proxy". Setting the
 # TBB_LIBRARIES variable overrides the default.
 
@@ -194,7 +194,7 @@ TBB_BIN_ABSOLUTE_PATH = $(abspath $(TBB_BIN))
 TBB_ABSOLUTE_PATH = $(abspath $(TBB))
 
 ifeq ($(OS),Darwin)
-  TBB_LIBRARIES ?= tbb tbbmalloc tbbmalloc_proxy 
+  TBB_LIBRARIES ?= tbb tbbmalloc tbbmalloc_proxy
 else
   TBB_LIBRARIES ?= tbb
 endif
@@ -212,7 +212,7 @@ endif
 
 CXXFLAGS_TBB ?= -I $(TBB)/include
 LDFLAGS_TBB ?= -Wl,-L,"$(TBB_BIN_ABSOLUTE_PATH)" -Wl,-rpath,"$(TBB_BIN_ABSOLUTE_PATH)"
-LDLIBS_TBB ?= 
+LDLIBS_TBB ?=
 
 
 ################################################################################

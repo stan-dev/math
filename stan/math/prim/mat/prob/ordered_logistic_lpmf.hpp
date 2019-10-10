@@ -20,7 +20,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Returns the (natural) log probability of the specified array
  * of integers given the vector of continuous locations and
  * specified cutpoints in an ordered logistic model.

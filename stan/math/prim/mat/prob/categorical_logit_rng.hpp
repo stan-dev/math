@@ -12,7 +12,7 @@
 
 namespace stan {
 namespace math {
-/**
+/** \ingroup prob_dists
  * Return a draw from a Categorical distribution given a
  * a vector of unnormalized log probabilities and a psuedo-random
  * number generator.

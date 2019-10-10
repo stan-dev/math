@@ -12,7 +12,7 @@ namespace opencl_kernels {
 // \cond
 static const std::string transpose_kernel_code = STRINGIFY(
     // \endcond
-    /**
+    /** \ingroup opencl
      * Takes the transpose of the matrix on the OpenCL device.
      *
      * @param[out] B The output matrix to hold transpose of A.
@@ -35,7 +35,7 @@ static const std::string transpose_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/**
+/** \ingroup opencl
  * See the docs for \link kernels/transpose.hpp transpose() \endlink
  */
 const kernel_cl<out_buffer, in_buffer, int, int> transpose(

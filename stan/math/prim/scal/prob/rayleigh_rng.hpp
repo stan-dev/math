@@ -9,7 +9,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Return a Rayleigh random variate with scale parameter sigma
  * using the specified random number generator.
  *

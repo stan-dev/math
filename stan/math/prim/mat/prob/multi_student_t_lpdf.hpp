@@ -20,7 +20,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Return the log of the multivariate Student t distribution
  * at the specified arguments.
  *

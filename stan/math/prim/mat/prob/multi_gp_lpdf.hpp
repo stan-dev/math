@@ -15,7 +15,7 @@
 
 namespace stan {
 namespace math {
-/**
+/** \ingroup prob_dists
  * The log of a multivariate Gaussian Process for the given y, Sigma, and
  * w.  y is a dxN matrix, where each column is a different observation and each
  * row is a different output dimension.  The Gaussian Process is assumed to

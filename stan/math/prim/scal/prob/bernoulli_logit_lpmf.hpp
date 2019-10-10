@@ -13,7 +13,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Returns the log PMF of the logit-parametrized Bernoulli distribution. If
  * containers are supplied, returns the log sum of the probabilities.
  *

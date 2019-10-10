@@ -15,7 +15,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Return a negative binomial random variate with the specified location and
  * precision parameters using the given random number generator.
  *

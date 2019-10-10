@@ -12,7 +12,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Return a multivariate normal random variate with the given location and
  * covariance using the specified random number generator.
  *

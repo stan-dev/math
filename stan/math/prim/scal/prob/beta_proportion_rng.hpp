@@ -10,7 +10,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Return a Beta random variate specified probability, location, and
  * precision parameters: beta_proportion_rng(y | mu, kappa) =
  * beta_rng(y | mu * kappa, (1 - mu) * kappa).  Any arguments other

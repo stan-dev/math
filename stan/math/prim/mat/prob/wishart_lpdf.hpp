@@ -15,7 +15,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * The log of the Wishart density for the given W, degrees of freedom,
  * and scale matrix.
  *

@@ -12,6 +12,10 @@
 namespace stan {
 namespace math {
 namespace internal {
+
+/**
+ * \callergraph
+ */
 template <>
 class ops_partials_edge<double, var> {
  public:
@@ -32,6 +36,7 @@ class ops_partials_edge<double, var> {
 }  // namespace internal
 
 /**
+ * \callergraph
  * This class builds partial derivatives with respect to a set of
  * operands. There are two reason for the generality of this
  * class. The first is to handle vector and scalar arguments

@@ -15,7 +15,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup opencl
  * Copies a lower/upper triangular of a matrix to it's upper/lower.
  *
  * @tparam triangular_map Specifies if the copy is

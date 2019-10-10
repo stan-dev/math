@@ -14,7 +14,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup opencl
  * Returns the log PMF of the Generalized Linear Model (GLM)
  * with categorical distribution and logit (softmax) link function.
  * This is an overload of the GLM in

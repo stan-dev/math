@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>binomial_lpmf</code>
  */
 template <bool propto, typename T_n, typename T_N, typename T_prob>
@@ -16,7 +16,7 @@ return_type_t<T_prob> binomial_log(const T_n& n, const T_N& N,
   return binomial_lpmf<propto, T_n, T_N, T_prob>(n, N, theta);
 }
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>binomial_lpmf</code>
  */
 template <typename T_n, typename T_N, typename T_prob>

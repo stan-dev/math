@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * The log of the beta density for specified y, location, and
  * precision: beta_proportion_lpdf(y | mu, kappa) = beta_lpdf(y | mu *
  * kappa, (1 - mu) * kappa).  Any arguments other than scalars must be
@@ -37,7 +37,7 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_log(const T_y& y,
   return beta_proportion_lpdf<propto, T_y, T_loc, T_prec>(y, mu, kappa);
 }
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>beta_proportion_lpdf</code>
  */
 template <typename T_y, typename T_loc, typename T_prec>

@@ -18,7 +18,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * The CDF of a scaled inverse chi-squared density for y with the
  * specified degrees of freedom parameter and scale parameter.
  *

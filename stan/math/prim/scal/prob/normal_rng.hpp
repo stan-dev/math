@@ -11,7 +11,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Return a Normal random variate for the given location and scale
  * using the specified random number generator.
  *

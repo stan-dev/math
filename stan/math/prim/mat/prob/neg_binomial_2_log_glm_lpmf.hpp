@@ -19,7 +19,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Returns the log PMF of the Generalized Linear Model (GLM)
  * with Negative-Binomial-2 distribution and log link function.
  * The idea is that neg_binomial_2_log_glm_lpmf(y, x, alpha, beta, phi) should

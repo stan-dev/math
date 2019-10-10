@@ -19,7 +19,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup opencl
  * Returns the log PMF of the Generalized Linear Model (GLM)
  * with Poisson distribution and log link function.
  * This is an overload of the GLM in prim/mat/prob/poisson_log_glm_lpmf.hpp

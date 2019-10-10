@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Returns the (natural) log probability of the integer/s
  * given the vector of continuous location/s and
  * specified cutpoints in an ordered probit model.
@@ -44,7 +44,7 @@ return_type_t<T_loc, T_cut> ordered_probit_log(const T_y& y,
   return ordered_probit_lpmf<propto>(y, lambda, c);
 }
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>ordered_probit_lpmf</code>
  */
 template <typename T_y, typename T_loc, typename T_cut>

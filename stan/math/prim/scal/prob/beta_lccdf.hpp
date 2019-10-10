@@ -18,7 +18,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Returns the beta log complementary cumulative distribution function
  * for the given probability, success, and failure parameters.  Any
  * arguments other than scalars must be containers of the same size.

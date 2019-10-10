@@ -10,7 +10,7 @@
 
 namespace stan {
 namespace math {
-/**
+/** \ingroup opencl
  * Takes the transpose of the matrix on the OpenCL device.
  *
  * @param src the input matrix

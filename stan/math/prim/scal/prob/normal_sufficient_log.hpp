@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>normal_lpdf</code>
  */
 template <bool propto, typename T_y, typename T_s, typename T_n, typename T_loc,
@@ -19,7 +19,7 @@ inline return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_log(
       y_bar, s_squared, n_obs, mu, sigma);
 }
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>normal_lpdf</code>
  */
 template <typename T_y, typename T_s, typename T_n, typename T_loc,

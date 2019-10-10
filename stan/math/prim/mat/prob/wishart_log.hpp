@@ -9,7 +9,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * The log of the Wishart density for the given W, degrees of freedom,
  * and scale matrix.
  *
@@ -49,7 +49,7 @@ return_type_t<T_y, T_dof, T_scale> wishart_log(
   return wishart_lpdf<propto, T_y, T_dof, T_scale>(W, nu, S);
 }
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>wishart_lpdf</code>
  */
 template <typename T_y, typename T_dof, typename T_scale>

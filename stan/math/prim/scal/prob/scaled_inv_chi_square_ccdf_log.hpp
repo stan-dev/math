@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>scaled_inv_chi_square_lccdf</code>
  */
 template <typename T_y, typename T_dof, typename T_scale>

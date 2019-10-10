@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * The log of the Student-t density for the given y, nu, mean, and
  * scale parameter.  The scale parameter must be greater
  * than 0.
@@ -46,7 +46,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_log(const T_y& y,
   return student_t_lpdf<propto, T_y, T_dof, T_loc, T_scale>(y, nu, mu, sigma);
 }
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>student_t_lpdf</code>
  */
 template <typename T_y, typename T_dof, typename T_loc, typename T_scale>

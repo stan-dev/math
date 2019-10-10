@@ -13,7 +13,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * The log of an exponential density for y with the specified
  * inverse scale parameter.
  * Inverse scale parameter must be greater than 0.

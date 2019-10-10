@@ -19,7 +19,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * The log of the beta density for the specified scalar(s) given the specified
  * sample size(s). y, alpha, or beta can each either be scalar or a vector.
  * Any vector inputs must be the same length.

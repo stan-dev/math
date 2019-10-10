@@ -11,7 +11,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Returns the Weibull log complementary cumulative distribution function
  * for the given location and scale. Given containers of matching sizes,
  * returns the log sum of probabilities.

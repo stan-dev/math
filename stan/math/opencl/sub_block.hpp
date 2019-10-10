@@ -15,7 +15,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup opencl
  * Write the contents of A into
  * <code>this</code> starting at the top left of <code>this</code>
  * @param A input matrix

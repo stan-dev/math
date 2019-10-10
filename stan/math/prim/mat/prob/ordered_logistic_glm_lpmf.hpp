@@ -16,7 +16,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Returns the log PMF of the ordinal regression Generalized Linear Model (GLM).
  * This is equivalent to and faster than ordered_logistic_lpmf(y, x * beta,
  * cuts).

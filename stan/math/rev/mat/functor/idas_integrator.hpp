@@ -42,23 +42,25 @@ class idas_integrator {
   template <typename F>
   void init_sensitivity(idas_forward_system<F, double, double, double>& dae) {}
 
-  // /**
-  //  *  idas adjoint sens calculation requires different initialization
-  //  *
-  //  * @tparam F type of DAE RHS functor
-  //  * @tparam Tyy type of DAE primary unknowns
-  //  * @tparam Typ type of DAE derivative unknowns
-  //  * @tparam Tpar type of DAE parameters.
-  //  * @param[out] dae DAE system
-  //  * @param[in] t0 initial time.
-  //  * @param[in] ts times of the desired solutions
-  //  * @param[out] res_yy DAE solutions
-  //  */
-  // template <typename F, typename Tyy, typename Typ, typename Tpar>
-  // void init_sensitivity(idas_adjoint_system<F, Tyy, Typ, Tpar>& dae) {
-  //   // TODO(yizhang): adjoint sensitivity initialization
-  // }
+   // \cond
+   // template <typename F, typename Tyy, typename Typ, typename Tpar>
+   // void init_sensitivity(idas_adjoint_system<F, Tyy, Typ, Tpar>& dae) {
+   //    TODO(yizhang): adjoint sensitivity initialization
+   // }
+   // \endcond
 
+ /**
+  *  idas adjoint sens calculation requires different initialization
+  *
+  * @tparam F type of DAE RHS functor
+  * @tparam Tyy type of DAE primary unknowns
+  * @tparam Typ type of DAE derivative unknowns
+  * @tparam Tpar type of DAE parameters.
+  * @param[out] dae DAE system
+  * @param[in] t0 initial time.
+  * @param[in] ts times of the desired solutions
+  * @param[out] res_yy DAE solutions
+  */
   template <typename F>
   void solve(idas_forward_system<F, double, double, double>& dae,
              const double& t0, const std::vector<double>& ts,
@@ -68,7 +70,7 @@ class idas_integrator {
   void solve(Dae& dae, const double& t0, const std::vector<double>& ts,
              typename Dae::return_type& res_yy);
 
-  // TODO(yizhang): adjoint sensitivity solver
+   //TODO(yizhang): adjoint sensitivity solver
 
  public:
   static constexpr int IDAS_MAX_STEPS = 500;
@@ -162,7 +164,7 @@ class idas_integrator {
 
     return res_yy;
   }
-};  // idas integrator
+};   idas integrator
 
 /**
  * Initialize sensitivity calculation and set
@@ -198,6 +200,7 @@ void idas_integrator::init_sensitivity(Dae& dae) {
 }
 
 /**
+ *
  * Solve DAE system, no sensitivty
  *
  * @tparam F DAE functor type
@@ -224,6 +227,7 @@ void idas_integrator::solve(idas_forward_system<F, double, double, double>& dae,
 }
 
 /**
+ *
  * Solve Dae system with forward sensitivty, return a
  * vector of var with precomputed gradient as sensitivity value
  *
@@ -264,7 +268,7 @@ void idas_integrator::solve(Dae& dae, const double& t0,
     ++i;
   });
 }
-}  // namespace math
-}  // namespace stan
+}//   namespace math
+}//   namespace stan
 
 #endif

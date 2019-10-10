@@ -13,6 +13,7 @@ class operands_and_partials;  // Forward declaration
 
 namespace internal {
 /**
+ * \callergraph
  * An edge holds both the operands and its associated
  * partial derivatives. They're held together in the
  * same class because then we can keep the templating logic that
@@ -51,6 +52,7 @@ class ops_partials_edge {
 }  // namespace internal
 
 /**
+ * \callergraph
  * This template builds partial derivatives with respect to a
  * set of
  * operands. There are two reason for the generality of this

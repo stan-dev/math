@@ -14,7 +14,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Returns the cauchy cumulative distribution function for the given
  * location, and scale. If given containers of matching sizes
  * returns the product of probabilities.

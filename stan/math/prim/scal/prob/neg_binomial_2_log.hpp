@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>neg_binomial_2_lpmf</code>
  */
 template <bool propto, typename T_n, typename T_location, typename T_precision>
@@ -16,7 +16,7 @@ return_type_t<T_location, T_precision> neg_binomial_2_log(
   return neg_binomial_2_lpmf<propto, T_n, T_location, T_precision>(n, mu, phi);
 }
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>neg_binomial_2_lpmf</code>
  */
 template <typename T_n, typename T_location, typename T_precision>

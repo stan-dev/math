@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>exp_mod_normal_lpdf</code>
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
@@ -19,7 +19,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_log(
       y, mu, sigma, lambda);
 }
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>exp_mod_normal_lpdf</code>
  */
 template <typename T_y, typename T_loc, typename T_scale, typename T_inv_scale>

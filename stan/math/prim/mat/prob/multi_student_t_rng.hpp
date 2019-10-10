@@ -14,7 +14,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Return a multivariate student-t random variate with the given degrees of
  * freedom location and covariance using the specified random number generator.
  *

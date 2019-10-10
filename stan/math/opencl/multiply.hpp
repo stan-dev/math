@@ -14,7 +14,7 @@
 namespace stan {
 namespace math {
 namespace opencl {
-/**
+/** \ingroup opencl
  * Computes the product of the specified matrices with the option
  * of specifying the triangularity of either input matrices.
  *
@@ -103,7 +103,7 @@ inline matrix_cl<return_type_t<T1, T2>> multiply(const matrix_cl<T1>& A,
 }
 }  // namespace opencl
 
-/**
+/** \ingroup opencl
  * Multiplies the specified matrix on the OpenCL device
  * with the specified scalar.
  *
@@ -127,7 +127,7 @@ inline matrix_cl<return_type_t<T1, T2>> multiply(const matrix_cl<T1>& A,
   return temp;
 }
 
-/**
+/** \ingroup opencl
  * Multiplies the specified matrix on the OpenCL device
  * with the specified scalar.
  *
@@ -141,7 +141,7 @@ inline matrix_cl<return_type_t<T1, T2>> multiply(const T1 scalar,
   return multiply(A, scalar);
 }
 
-/**
+/** \ingroup opencl
  * Computes the product of the specified matrices.
  *
  * Computes the matrix multiplication C[M, K] = A[M, N] x B[N, K]
@@ -159,7 +159,7 @@ inline matrix_cl<return_type_t<T1, T2>> multiply(const matrix_cl<T1>& A,
   return opencl::multiply(A, B);
 }
 
-/**
+/** \ingroup opencl
  * Templated product operator for OpenCL matrices.
  *
  * Computes the matrix multiplication C[M, K] = A[M, N] x B[N, K].

@@ -21,7 +21,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup opencl
  * Returns the log PMF of the Generalized Linear Model (GLM)
  * with Bernoulli distribution and logit link function.
  * This is an overload of the GLM in prim/mat/prob/bernoulli_logit_glm_lpmf.hpp

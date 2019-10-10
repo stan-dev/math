@@ -12,7 +12,7 @@ namespace opencl_kernels {
 // \cond
 static const char* bernoulli_logit_glm_kernel_code = STRINGIFY(
     // \endcond
-    /**
+    /** \ingroup opencl
      * GPU implementation of Generalized Linear Model (GLM)
      * with Bernoulli distribution and logit link function.
      *
@@ -126,7 +126,7 @@ static const char* bernoulli_logit_glm_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/**
+/** \ingroup opencl
  * See the docs for \link kernels/bernoulli_logit_glm_lpmf.hpp
  * bernoulli_logit_glm() \endlink
  */

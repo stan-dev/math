@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>poisson_lccdf</code>
  */
 template <typename T_n, typename T_rate>

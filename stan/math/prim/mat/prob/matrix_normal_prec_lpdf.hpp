@@ -14,7 +14,7 @@
 
 namespace stan {
 namespace math {
-/**
+/** \ingroup prob_dists
  * The log of the matrix normal density for the given y, mu, Sigma and D
  * where Sigma and D are given as precision matrices, not covariance matrices.
  *

@@ -6,7 +6,7 @@
 
 namespace stan {
 namespace math {
-/**
+/** \ingroup opencl
  * Check if two <code>matrix_cl</code>s have the same dimensions.
  *
  * @param function Function name (for error messages)

@@ -16,7 +16,7 @@
 #include <vector>
 #include <algorithm>
 
-/**
+/** \ingroup opencl
  *  @file stan/math/opencl/matrix_cl.hpp
  *  @brief The matrix_cl class - allocates memory space on the OpenCL device,
  *    functions for transfering matrices to and from OpenCL devices
@@ -24,7 +24,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup opencl
  * Represents a matrix on the OpenCL device.
  *
  * @tparam T an arithmetic type for the type stored in the OpenCL buffer.
@@ -64,7 +64,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
 
   void view(const matrix_cl_view& view) { view_ = view; }
 
-  /**
+  /** \ingroup opencl
    * Clear the write events from the event stacks.
    */
   inline void clear_write_events() const {
@@ -72,7 +72,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     return;
   }
 
-  /**
+  /** \ingroup opencl
    * Clear the read events from the event stacks.
    */
   inline void clear_read_events() const {
@@ -80,7 +80,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     return;
   }
 
-  /**
+  /** \ingroup opencl
    * Clear the write events from the event stacks.
    */
   inline void clear_read_write_events() const {
@@ -89,7 +89,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     return;
   }
 
-  /**
+  /** \ingroup opencl
    * Get the events from the event stacks.
    * @return The write event stack.
    */
@@ -97,7 +97,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     return write_events_;
   }
 
-  /**
+  /** \ingroup opencl
    * Get the events from the event stacks.
    * @return The read/write event stack.
    */
@@ -105,7 +105,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     return read_events_;
   }
 
-  /**
+  /** \ingroup opencl
    * Get the events from the event stacks.
    * @return The read/write event stack.
    */
@@ -113,7 +113,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     return vec_concat(this->read_events(), this->write_events());
   }
 
-  /**
+  /** \ingroup opencl
    * Add an event to the read event stack.
    * @param new_event The event to be pushed on the event stack.
    */
@@ -121,7 +121,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     this->read_events_.push_back(new_event);
   }
 
-  /**
+  /** \ingroup opencl
    * Add an event to the write event stack.
    * @param new_event The event to be pushed on the event stack.
    */
@@ -129,7 +129,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     this->write_events_.push_back(new_event);
   }
 
-  /**
+  /** \ingroup opencl
    * Add an event to the read/write event stack.
    * @param new_event The event to be pushed on the event stack.
    */
@@ -138,7 +138,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     this->write_events_.push_back(new_event);
   }
 
-  /**
+  /** \ingroup opencl
    * Waits for the write events and clears the read event stack.
    */
   inline void wait_for_write_events() const {
@@ -150,7 +150,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     return;
   }
 
-  /**
+  /** \ingroup opencl
    * Waits for the read events and clears the read event stack.
    */
   inline void wait_for_read_events() const {
@@ -162,7 +162,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     return;
   }
 
-  /**
+  /** \ingroup opencl
    * Waits for read and write events to finish and clears the read, write, and
    * read/write event stacks.
    */
@@ -181,7 +181,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
   cl::Buffer& buffer() { return buffer_cl_; }
 
   matrix_cl() {}
-  /**
+  /** \ingroup opencl
    * Construct a matrix_cl<T> from an existing cl::Buffer object. The matrix
    * directly uses given buffer - no copying is done.
    *
@@ -223,7 +223,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
         write_events_(std::move(A.write_events_)),
         read_events_(std::move(A.read_events_)) {}
 
-  /**
+  /** \ingroup opencl
    * Constructor for the matrix_cl that
    * creates a copy of the Eigen matrix on the OpenCL device.
    *
@@ -251,7 +251,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     for (int i = 0, offset_size = 0; i < cols_; i++, offset_size += rows_) {
       check_size_match("matrix constructor", "input rows", A[i].size(),
                        "matrix_cl rows", rows_);
-      /**
+      /** \ingroup opencl
        * Writes the contents of A[i] to the OpenCL buffer
        * starting at the offset sizeof(double)*start.
        * CL_TRUE denotes that the call is blocking as
@@ -269,7 +269,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     check_opencl_error("matrix constructor", e);
   }
 
-  /**
+  /** \ingroup opencl
    * Constructor for the matrix_cl that
    * only allocates the buffer on the OpenCL device.
    * Regardless of `partial_view`, whole matrix is stored.
@@ -298,7 +298,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     }
   }
 
-  /**
+  /** \ingroup opencl
    * Constructor for the matrix_cl that
    * creates a copy of the Eigen matrix on the OpenCL device.
    * Regardless of `partial_view`, whole matrix is stored.
@@ -330,7 +330,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     }
   }
 
-  /**
+  /** \ingroup opencl
    * Constructor for the matrix_cl that
    * creates a copy of a scalar on the OpenCL device.
    * Regardless of `partial_view`, whole matrix is stored.
@@ -354,7 +354,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     }
   }
 
-  /**
+  /** \ingroup opencl
    * Construct from \c std::vector with given rows and columns
    *
    * @param A Standard vector
@@ -385,7 +385,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     }
   }
 
-  /**
+  /** \ingroup opencl
    * Construct from \c array of doubles with given rows and columns
    *
    * @param A array of doubles
@@ -415,7 +415,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     }
   }
 
-  /**
+  /** \ingroup opencl
    * Assign a \c matrix_cl to another
    */
   matrix_cl<T>& operator=(matrix_cl<T>&& a) {
@@ -429,7 +429,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     return *this;
   }
 
-  /**
+  /** \ingroup opencl
    * Assign a \c matrix_cl to another
    */
   matrix_cl<T>& operator=(const matrix_cl<T>& a) {

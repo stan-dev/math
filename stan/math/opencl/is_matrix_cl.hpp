@@ -19,13 +19,13 @@ class matrix_cl {
 
 namespace internal {
 
-/**
+/** \ingroup opencl
  * This underlying implimentation is used when the type is not an std vector.
  */
 template <typename T>
 struct is_matrix_cl_impl : std::false_type {};
 
-/**
+/** \ingroup opencl
  * This specialization implimentation has a static member named value when the
  * template type is an std vector.
  */
@@ -37,7 +37,7 @@ struct is_matrix_cl_impl<stan::math::matrix_cl<Args...>> : std::true_type {};
 template <typename T, typename = void>
 struct is_matrix_cl : std::false_type {};
 
-/**
+/** \ingroup opencl
  * Checks if the decayed type of T is a matrix_cl.
  */
 template <typename T>
@@ -63,7 +63,7 @@ using require_all_not_matrix_cl_t = require_all_not_t<is_matrix_cl<Types>...>;
 template <typename... Types>
 using require_any_not_matrix_cl_t = require_any_not_t<is_matrix_cl<Types>...>;
 
-/**
+/** \ingroup opencl
  * matrix_cl
  */
 template <template <class...> class TypeCheck, class... Check>
@@ -96,7 +96,7 @@ using require_all_not_matrix_cl_vt
 
 // Scalar Check
 
-/**
+/** \ingroup opencl
  * matrix_cl
  */
 template <template <class...> class TypeCheck, class... Check>

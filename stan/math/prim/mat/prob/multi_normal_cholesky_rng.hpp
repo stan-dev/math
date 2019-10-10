@@ -10,7 +10,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Return a multivariate normal random variate with the given location and
  * Cholesky factorization of the covariance using the specified random number
  * generator.

@@ -12,7 +12,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup opencl
  * Divides each column of a matrix by a vector
  *
  * @tparam T1 Type of first matrix
@@ -41,7 +41,7 @@ inline void divide_columns(const matrix_cl<T1>& A, const matrix_cl<T2>& B) {
   }
 }
 
-/**
+/** \ingroup opencl
  * Divides each column of a matrix by a scalar
  *
  * @tparam T1 Type of first matrix

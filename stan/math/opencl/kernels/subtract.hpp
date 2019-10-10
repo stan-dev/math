@@ -13,7 +13,7 @@ namespace opencl_kernels {
 // \cond
 static const std::string subtract_kernel_code = STRINGIFY(
     // \endcond
-    /**
+    /** \ingroup opencl
      * Matrix subtraction on the OpenCL device
      * Subtracts the second matrix from the
      * first matrix and stores the result
@@ -59,7 +59,7 @@ static const std::string subtract_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/**
+/** \ingroup opencl
  * See the docs for \link kernels/subtract.hpp subtract() \endlink
  */
 const kernel_cl<out_buffer, in_buffer, in_buffer, int, int, matrix_cl_view,

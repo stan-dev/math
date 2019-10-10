@@ -21,7 +21,7 @@
 
 namespace stan {
 namespace math {
-/**
+/** \ingroup opencl
  * Computes the inverse of a triangular matrix
  *
  * For a full guide to how this works and fits into Cholesky decompositions,

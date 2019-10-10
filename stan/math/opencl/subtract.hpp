@@ -12,7 +12,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup opencl
  * Matrix subtraction on the OpenCL device
  * Subtracts the second matrix
  * from the first matrix and stores
@@ -45,7 +45,7 @@ inline matrix_cl<return_type_t<T1, T2>> subtract(const matrix_cl<T1>& A,
   return C;
 }
 
-/**
+/** \ingroup opencl
  * Matrix subtraction on the OpenCL device
  * Subtracts the second matrix
  * from the first matrix and stores

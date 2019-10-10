@@ -11,7 +11,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Return a pseudorandom binomial random variable for the given population
  * size and chance of success parameters using the specified random number
  * generator.

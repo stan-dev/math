@@ -12,7 +12,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Return a draw from a Dirichlet distribution with specified
  * parameters and pseudo-random number generator.
  *

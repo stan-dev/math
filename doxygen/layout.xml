@@ -1,0 +1,33 @@
+<navindex>
+  <tab type="mainpage" visible="yes" title=""/>
+    <tab type="modules" visible="yes" title="" intro=""/>
+    <tab type="namespaces" visible="yes" title="">
+      <tab type="namespacelist" visible="yes" title="" intro=""/>
+      <tab type="namespacemembers" visible="yes" title="" intro=""/>
+    </tab>
+    <tab type="classes" visible="yes" title="">
+      <tab type="classlist" visible="yes" title="" intro=""/>
+      <tab type="classindex" visible="$ALPHABETICAL_INDEX" title=""/>
+      <tab type="hierarchy" visible="yes" title="" intro=""/>
+      <tab type="classmembers" visible="yes" title="" intro=""/>
+    </tab>
+    <tab type="files" visible="yes" title="">
+      <tab type="filelist" visible="yes" title="" intro=""/>
+      <tab type="globals" visible="yes" title="" intro=""/>
+    </tab>
+    <tab type="examples" visible="yes" title="" intro=""/>
+    <tab type="usergroup" visible="yes" title="Contributor Guide" url="@ref contributing" intro="">
+        <tab type="usergroup" visible="yes" title="Developer Guide" url="@ref developer_guide" intro=""/>
+        <tab type="usergroup" visible="yes" title="Testing Automatic Differentiation Functions" url="@ref autodiff_test" intro=""/>
+        <tab type="usergroup" visible="yes" title="Testing New Distributions" url="@ref dist_tests" intro=""/>
+        <tab type="usergroup" visible="yes" title="Add New Functions With Known Gradients" url="@ref new_grad" intro=""/>
+        <tab type="usergroup" visible="yes" title="Windows Development Tips" url="@ref windows_tips" intro=""/>
+    </tab>
+    <tab type="usergroup" visible="yes" title="Parallelism" intro="">
+      <tab type="usergroup" visible="yes" title="Threading" url="@ref tbb_threading" intro=""/>
+      <tab type="usergroup" visible="yes" title="OpenCL for GPU Computing" url="@ref opencl_support" intro=""/>
+      <tab type="usergroup" visible="yes" title="MPI Support" url="@ref mpi" intro=""/>
+    </tab>
+    <tab type="usergroup" visible="yes" title="(External Link) Stan Language Docs" url="https://mc-stan.org/users/documentation/" intro=""/>
+    <tab type="usergroup" visible="yes" title="(External Link) Stan Discourse" url="https://discourse.mc-stan.org/" intro=""/>
+</navindex>

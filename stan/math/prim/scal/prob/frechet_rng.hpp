@@ -9,7 +9,7 @@
 
 namespace stan {
 namespace math {
-/**
+/** \ingroup prob_dists
  * Return a pseudorandom Frechet variate for the given shape
  * and scale parameters using the specified random number generator.
  *

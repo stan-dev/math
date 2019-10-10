@@ -18,7 +18,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * The log of the beta density for specified y, location, and
  * precision: beta_proportion_lpdf(y | mu, kappa) = beta_lpdf(y | mu *
  * kappa, (1 - mu) * kappa).  Any arguments other than scalars must be

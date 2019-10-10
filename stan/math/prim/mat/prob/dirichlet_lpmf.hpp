@@ -12,7 +12,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * The log of the Dirichlet density for the given theta and
  * a vector of prior sample sizes, alpha.
  * Each element of alpha must be greater than 0.

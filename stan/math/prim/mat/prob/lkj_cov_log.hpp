@@ -9,7 +9,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>lkj_cov_lpdf</code>
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
@@ -22,7 +22,7 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_log(
   return lkj_cov_lpdf<propto, T_y, T_loc, T_scale, T_shape>(y, mu, sigma, eta);
 }
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>lkj_cov_lpdf</code>
  */
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
@@ -34,7 +34,7 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_log(
   return lkj_cov_lpdf<T_y, T_loc, T_scale, T_shape>(y, mu, sigma, eta);
 }
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>lkj_cov_lpdf</code>
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
@@ -45,7 +45,7 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_log(
   return lkj_cov_lpdf<propto, T_y, T_loc, T_scale, T_shape>(y, mu, sigma, eta);
 }
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>lkj_cov_lpdf</code>
  */
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape>

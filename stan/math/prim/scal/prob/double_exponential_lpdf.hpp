@@ -14,7 +14,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Returns the double exponential log probability density function. Given
  * containers of matching sizes, returns the log sum of densities.
  *

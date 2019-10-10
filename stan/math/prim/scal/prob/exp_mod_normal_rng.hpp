@@ -13,7 +13,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Return an exponentially modified normal random variate for the
  * given location, scale, and inverse scale using the specified random
  * number generator.

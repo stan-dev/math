@@ -12,7 +12,7 @@ namespace opencl_kernels {
 // \cond
 static const std::string categorical_logit_glm_kernel_code = STRINGIFY(
     // \endcond
-    /**
+    /** \ingroup opencl
      * GPU implementation of Generalized Linear Model (GLM)
      * with categorical distribution and logit (softmax) link function.
      *
@@ -143,7 +143,7 @@ static const std::string categorical_logit_glm_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/**
+/** \ingroup opencl
  * See the docs for \link kernels/categorical_logit_glm_lpmf.hpp
  * categorical_logit_glm() \endlink
  */
@@ -157,7 +157,7 @@ const kernel_cl<out_buffer, out_buffer, out_buffer, out_buffer, out_buffer,
 static const std::string categorical_logit_glm_beta_derivative_kernel_code
     = STRINGIFY(
         // \endcond
-        /**
+        /** \ingroup opencl
          * Calculates derivative wrt beta.
          *
          * Must be run with global size of local_size*N_attributes.
@@ -201,7 +201,7 @@ static const std::string categorical_logit_glm_beta_derivative_kernel_code
     );  // NOLINT
 // \endcond
 
-/**
+/** \ingroup opencl
  * See the docs for \link kernels/categorical_logit_glm_lpmf.hpp
  * categorical_logit_glm_beta_derivative() \endlink
  */

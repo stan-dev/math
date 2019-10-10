@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>inv_gamma_lccdf</code>
  */
 template <typename T_y, typename T_shape, typename T_scale>

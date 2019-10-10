@@ -9,7 +9,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Return a random correlation matrix (symmetric, positive
  * definite, unit diagonal) of the specified dimensionality drawn
  * from the LKJ distribution with the specified degrees of freedom

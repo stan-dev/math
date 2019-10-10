@@ -42,6 +42,7 @@ namespace math {
  */
 
 /**
+ * \addtogroup csr_format
  * Return the multiplication of the sparse matrix (specified by
  * by values and indexing) by the specified dense vector.
  *
@@ -69,8 +70,6 @@ namespace math {
  *   defined in Stan which guarantee a consistent set of m/n/w/v/u
  *   for a given sparse matrix.
  * @throw std::out_of_range if any of the indexes are out of range.
- */
-/** \addtogroup csr_format
  */
 template <typename T1, typename T2>
 inline Eigen::Matrix<return_type_t<T1, T2>, Eigen::Dynamic, 1>
@@ -110,7 +109,6 @@ csr_matrix_times_vector(int m, int n,
   }
   return result;
 }
-/** @}*/  // end of csr_format group
 
 }  // namespace math
 }  // namespace stan

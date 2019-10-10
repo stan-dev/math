@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>beta_binomial_lcdf</code>
  */
 template <typename T_n, typename T_N, typename T_size1, typename T_size2>

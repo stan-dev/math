@@ -12,7 +12,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Returns the double exponential cumulative density function. Given
  * containers of matching sizes, returns the product of probabilities.
  *

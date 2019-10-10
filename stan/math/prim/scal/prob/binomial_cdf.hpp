@@ -15,7 +15,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Returns the CDF for the binomial distribution evaluated at the specified
  * success, population size, and chance of success. If given containers of
  * matching lengths, returns the product of probabilities.

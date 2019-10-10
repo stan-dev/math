@@ -11,7 +11,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup opencl
  * Check if the matrix is either a row vector or column vector.
  * This function checks the runtime size of the matrix to check
  * whether it is a row or column vector.

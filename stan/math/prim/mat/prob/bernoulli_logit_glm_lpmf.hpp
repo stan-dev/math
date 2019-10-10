@@ -16,7 +16,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Returns the log PMF of the Generalized Linear Model (GLM)
  * with Bernoulli distribution and logit link function.
  * The idea is that bernoulli_logit_glm_lpmf(y, x, alpha, beta) should

@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * The log of a uniform density for the given
  * y, lower, and upper bound.
  *
@@ -37,7 +37,7 @@ return_type_t<T_y, T_low, T_high> uniform_log(const T_y& y, const T_low& alpha,
   return uniform_lpdf<propto, T_y, T_low, T_high>(y, alpha, beta);
 }
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>uniform_lpdf</code>
  */
 template <typename T_y, typename T_low, typename T_high>

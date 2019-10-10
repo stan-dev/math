@@ -1,4 +1,4 @@
-# Contributing to the Stan Math library
+# Contributing to the Stan Math library {#contributing}
 
 Thanks for reading! We love contributions from everyone in the form of good discussion, issues, and pull requests.
 

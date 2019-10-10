@@ -8,7 +8,7 @@
 
 namespace stan {
 namespace math {
-/**
+/** \ingroup prob_dists
  * The log of the multivariate normal density for the given y, mu, and
  * a Cholesky factor L of the variance matrix.
  * Sigma = LL', a square, semi-positive definite matrix.
@@ -33,7 +33,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_log(const T_y& y,
   return multi_normal_cholesky_lpdf<propto, T_y, T_loc, T_covar>(y, mu, L);
 }
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>multi_normal_cholesky_lpdf</code>
  */
 template <typename T_y, typename T_loc, typename T_covar>

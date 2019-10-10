@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * The log of an inverse chi-squared density for y with the specified
  * degrees of freedom parameter.
  * The degrees of freedom prarameter must be greater than 0.
@@ -34,7 +34,7 @@ return_type_t<T_y, T_dof> inv_chi_square_log(const T_y& y, const T_dof& nu) {
   return inv_chi_square_lpdf<propto, T_y, T_dof>(y, nu);
 }
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>inv_chi_square_lpdf</code>
  */
 template <typename T_y, typename T_dof>
