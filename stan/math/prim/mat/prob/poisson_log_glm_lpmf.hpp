@@ -15,7 +15,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup multivar_dists
  * Returns the log PMF of the Generalized Linear Model (GLM)
  * with Poisson distribution and log link function.
  * The idea is that poisson_log_glm_lpmf(y, x, alpha, beta) should

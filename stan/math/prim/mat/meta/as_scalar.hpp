@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup type_trait
  * Converts input to a scalar. As this is not possible for matrices, arrays or
  * Eigen expressions it always throws. This is intended to never be called, only
  * used in templated functions in branches that will be optimized out - to

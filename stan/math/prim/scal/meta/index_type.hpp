@@ -6,7 +6,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup type_trait
  * Primary template class for the metaprogram to compute the index
  * type of a container.
  *
@@ -19,7 +19,7 @@ namespace math {
 template <typename T, typename = void>
 struct index_type {};
 
-/**
+/** \ingroup type_trait
  * Specialization of index_type for pointers.
  *
  * @tparam T type of container.

@@ -10,7 +10,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup multivar_dists
  * @deprecated use <code>multinomial_lpmf</code>
  */
 template <bool propto, typename T_prob>
@@ -20,7 +20,7 @@ return_type_t<T_prob> multinomial_log(
   return multinomial_lpmf<propto, T_prob>(ns, theta);
 }
 
-/** \ingroup prob_dists
+/** \ingroup multivar_dists
  * @deprecated use <code>multinomial_lpmf</code>
  */
 template <typename T_prob>

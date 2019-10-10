@@ -13,7 +13,7 @@ namespace stan {
 namespace math {
 namespace internal {
 
-/**
+/** \ingroup type_trait
  * \callergraph
  */
 template <>
@@ -35,7 +35,7 @@ class ops_partials_edge<double, var> {
 };
 }  // namespace internal
 
-/**
+/** \ingroup type_trait
  * \callergraph
  * This class builds partial derivatives with respect to a set of
  * operands. There are two reason for the generality of this
@@ -90,7 +90,7 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, var> {
                         const Op4& o4, const Op5& o5)
       : edge1_(o1), edge2_(o2), edge3_(o3), edge4_(o4), edge5_(o5) {}
 
-  /**
+  /** \ingroup type_trait
    * Build the node to be stored on the autodiff graph.
    * This should contain both the value and the tangent.
    *

@@ -4,7 +4,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup type_trait
  * Converts input argument to a column vector or a scalar. For scalar inputs
  * that is an identity function.
  *

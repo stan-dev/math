@@ -45,7 +45,7 @@ class idas_integrator {
   // \cond
   // template <typename F, typename Tyy, typename Typ, typename Tpar>
   // void init_sensitivity(idas_adjoint_system<F, Tyy, Typ, Tpar>& dae) {
-  //    TODO(yizhang): adjoint sensitivity initialization
+  // TODO(yizhang): adjoint sensitivity initialization
   // }
   // \endcond
 

@@ -12,7 +12,7 @@ namespace opencl_kernels {
 // \cond
 static const std::string identity_kernel_code = STRINGIFY(
     // \endcond
-    /** \ingroup opencl
+    /** \ingroup opencl_kernels
      * Makes an identity matrix on the OpenCL device
      *
      * @param[in,out] A The identity matrix output.
@@ -42,7 +42,7 @@ static const std::string identity_kernel_code = STRINGIFY(
 static const std::string batch_identity_kernel_code = STRINGIFY(
     // \endcond
 
-    /** \ingroup opencl
+    /** \ingroup opencl_kernels
      * Makes a batch of smaller identity matrices inside the input matrix
      *
      * This kernel operates inplace on the matrix A, filling it with smaller
@@ -88,14 +88,14 @@ static const std::string batch_identity_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/** \ingroup opencl
+/** \ingroup opencl_kernels
  * See the docs for \link kernels/identity.hpp identity() \endlink
  */
 const kernel_cl<out_buffer, int, int> identity("identity",
                                                {indexing_helpers,
                                                 identity_kernel_code});
 
-/** \ingroup opencl
+/** \ingroup opencl_kernels
  * See the docs for \link kernels/identity.hpp batch_identity() \endlink
  */
 const kernel_cl<out_buffer, int, int> batch_identity(

@@ -14,7 +14,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup multivar_dists
  * Returns a draw from the Generalized Linear Model (GLM)
  * with Bernoulli distribution and logit link function.
  *

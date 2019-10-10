@@ -13,7 +13,7 @@ namespace opencl_kernels {
 // \cond
 static const std::string scalar_mul_kernel_code = STRINGIFY(
     // \endcond
-    /** \ingroup opencl
+    /** \ingroup opencl_kernels
      * Multiplication of the matrix A with a scalar
      *
      * @param[out] A output matrix
@@ -41,7 +41,7 @@ static const std::string scalar_mul_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/** \ingroup opencl
+/** \ingroup opencl_kernels
  * See the docs for \link kernels/scalar_mul.hpp add() \endlink
  */
 const kernel_cl<out_buffer, in_buffer, double, int, int, matrix_cl_view>

@@ -6,7 +6,7 @@
 
 namespace stan {
 
-/**
+/** \ingroup type_trait
  * length_mvt provides the length of a multivariate argument.
  *
  * This is the default template function. For any scalar type, this

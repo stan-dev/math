@@ -16,7 +16,7 @@ class broadcast_array {
 
   T& operator[](int /*i*/) { return prim_; }
 
-  /**
+  /** \ingroup type_trait
    * We can assign any right hand side which allows for indexing to a
    * broadcast_array. The idea is that the entry for the first index is what
    * gets assigned. The most common use-case should be where the rhs is some
@@ -32,12 +32,12 @@ template <typename T, typename S>
 class empty_broadcast_array {
  public:
   empty_broadcast_array() {}
-  /**
+  /** \ingroup type_trait
    * Not implemented so cannot be called.
    */
   T& operator[](int /*i*/);
 
-  /**
+  /** \ingroup type_trait
    * Not implemented so cannot be called.
    */
   template <typename Y>

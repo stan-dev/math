@@ -9,7 +9,7 @@
 #include <type_traits>
 
 namespace stan {
-/**
+/** \ingroup type_trait
  * Defines a public enum named value and sets it to true
  * if the type of the elements in the provided Eigen Matrix
  * is constant, false otherwise. This is used in

@@ -10,7 +10,7 @@ namespace opencl_kernels {
 // \cond
 static const std::string log1m_exp_device_function = STRINGIFY(
     // \endcond
-    /** \ingroup opencl
+    /** \ingroup opencl_kernels
      * Calculates the natural logarithm of one minus the exponential
      * of the specified value without overflow,
      *

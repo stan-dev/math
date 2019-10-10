@@ -6,7 +6,7 @@
 
 namespace stan {
 
-/**
+/** \ingroup type_trait
  * End of recursion to determine base scalar type of a type
  * The underlying base scalar type. If T is not a container then this
  * has a static member nameed type with the type T.
@@ -17,7 +17,7 @@ struct scalar_type_base {
   using type = T;
 };
 
-/**
+/** \ingroup type_trait
  * Metaprogram structure to determine the base scalar type
  * of a template argument.
  *

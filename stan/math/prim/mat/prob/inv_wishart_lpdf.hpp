@@ -14,7 +14,7 @@
 
 namespace stan {
 namespace math {
-/** \ingroup prob_dists
+/** \ingroup multivar_dists
  * The log of the Inverse-Wishart density for the given W, degrees
  * of freedom, and scale matrix.
  *

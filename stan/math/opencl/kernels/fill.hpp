@@ -13,7 +13,7 @@ namespace opencl_kernels {
 // \cond
 static const std::string fill_kernel_code = STRINGIFY(
     // \endcond
-    /** \ingroup opencl
+    /** \ingroup opencl_kernels
      * Stores constant in the matrix on the OpenCL device.
      * Supports writing constants to the lower and upper triangular or
      * the whole matrix.
@@ -43,7 +43,7 @@ static const std::string fill_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/** \ingroup opencl
+/** \ingroup opencl_kernels
  * See the docs for \link kernels/fill.hpp fill() \endlink
  */
 const kernel_cl<out_buffer, double, int, int, matrix_cl_view> fill(
@@ -52,7 +52,7 @@ const kernel_cl<out_buffer, double, int, int, matrix_cl_view> fill(
 // \cond
 static const std::string fill_strict_tri_kernel_code = STRINGIFY(
     // \endcond
-    /** \ingroup opencl
+    /** \ingroup opencl_kernels
      * Stores constant in the triangular part of a matrix
      * on the OpenCL device. Supports writing constants
      * to the lower and upper triangular. The input
@@ -84,7 +84,7 @@ static const std::string fill_strict_tri_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/** \ingroup opencl
+/** \ingroup opencl_kernels
  * See the docs for \link kernels/fill.hpp fill_strict_tri_kernel_code()
  * \endlink
  */

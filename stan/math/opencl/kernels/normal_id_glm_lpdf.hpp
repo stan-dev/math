@@ -11,7 +11,7 @@ namespace opencl_kernels {
 // \cond
 static const char* normal_id_glm_kernel_code = STRINGIFY(
     // \endcond
-    /** \ingroup opencl
+    /** \ingroup opencl_kernels
      * GPU implementation of Generalized Linear Model (GLM)
      * with Normal distribution and identity link function.
      *
@@ -148,7 +148,7 @@ static const char* normal_id_glm_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/** \ingroup opencl
+/** \ingroup opencl_kernels
  * See the docs for \link kernels/normal_id_glm_lpdf.hpp
  * normal_id_glm() \endlink
  */

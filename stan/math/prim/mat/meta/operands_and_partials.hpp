@@ -11,7 +11,7 @@ namespace stan {
 namespace math {
 namespace internal {
 
-/**
+/** \ingroup type_trait
  * \callergraph
  * This class will be used for both multivariate (nested container)
  * operands_and_partials edges as well as for the univariate case.
@@ -35,7 +35,7 @@ class ops_partials_edge<ViewElt, Eigen::Matrix<Op, R, C>> {
   int size() const { return 0; }
 };
 
-/**
+/** \ingroup type_trait
  * \callergraph
  */
 template <typename Op, typename ViewElt, int R, int C>
@@ -57,7 +57,7 @@ class ops_partials_edge<ViewElt, std::vector<Eigen::Matrix<Op, R, C>>> {
   int size() const { return 0; }
 };
 
-/**
+/** \ingroup type_trait
  * \callergraph
  */
 template <typename Op, typename ViewElt>

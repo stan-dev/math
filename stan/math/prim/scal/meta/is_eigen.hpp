@@ -5,7 +5,7 @@
 
 namespace stan {
 
-/**
+/** \ingroup type_trait
  * Base implimentation to check whether a type is derived from EigenBase
  */
 template <typename T, typename = void>

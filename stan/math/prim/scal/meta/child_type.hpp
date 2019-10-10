@@ -6,7 +6,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup type_trait
  * Primary template class for metaprogram to compute child type of
  * T.
  *
@@ -20,7 +20,7 @@ struct child_type {
   using type = double;
 };
 
-/**
+/** \ingroup type_trait
  * Specialization for template classes / structs.
  *
  * See <code>test/unit/math/meta/child_type_test.cpp</code> for

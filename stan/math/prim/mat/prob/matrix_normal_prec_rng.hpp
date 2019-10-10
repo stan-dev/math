@@ -14,7 +14,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup multivar_dists
  * Sample from the the matrix normal distribution for the given Mu,
  * Sigma and D where Sigma and D are given as precision matrices, not
  * covariance matrices.

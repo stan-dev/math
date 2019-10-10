@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup multivar_dists
  * @deprecated use <code>multi_normal_prec_lpdf</code>
  */
 template <bool propto, typename T_y, typename T_loc, typename T_covar>
@@ -17,7 +17,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_prec_log(const T_y& y,
   return multi_normal_prec_lpdf<propto, T_y, T_loc, T_covar>(y, mu, Sigma);
 }
 
-/** \ingroup prob_dists
+/** \ingroup multivar_dists
  * @deprecated use <code>multi_normal_prec_lpdf</code>
  */
 template <typename T_y, typename T_loc, typename T_covar>

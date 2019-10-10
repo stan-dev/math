@@ -13,7 +13,7 @@ namespace opencl_kernels {
 // \cond
 static const std::string add_kernel_code = STRINGIFY(
     // \endcond
-    /** \ingroup opencl
+    /** \ingroup opencl_kernels
      * Matrix addition on the OpenCL device
      *
      * @param[out] C Output matrix.
@@ -54,7 +54,7 @@ static const std::string add_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/** \ingroup opencl
+/** \ingroup opencl_kernels
  * See the docs for \link kernels/add.hpp add() \endlink
  */
 const kernel_cl<out_buffer, in_buffer, in_buffer, int, int, matrix_cl_view,
@@ -63,7 +63,7 @@ const kernel_cl<out_buffer, in_buffer, in_buffer, int, int, matrix_cl_view,
 // \cond
 static const std::string add_batch_kernel_code = STRINGIFY(
     // \endcond
-    /** \ingroup opencl
+    /** \ingroup opencl_kernels
      * Sums a batch of matrices. Buffer A contains
      * batch_size matrices of size rows x cols. All elements
      * at matching indices are summed up and stored to the
@@ -95,7 +95,7 @@ static const std::string add_batch_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/** \ingroup opencl
+/** \ingroup opencl_kernels
  * See the docs for \link kernels/add.hpp add_batch() \endlink
  */
 const kernel_cl<out_buffer, in_buffer, int, int, int> add_batch(

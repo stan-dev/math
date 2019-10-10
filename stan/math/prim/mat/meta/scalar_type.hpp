@@ -6,7 +6,7 @@
 #include <stan/math/prim/arr/meta/scalar_type.hpp>
 #include <type_traits>
 namespace stan {
-/**
+/** \ingroup type_trait
  * Template metaprogram defining the base scalar type of
  * values stored in an Eigen matrix.
  *

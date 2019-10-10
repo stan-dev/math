@@ -5,7 +5,7 @@
 
 namespace stan {
 
-/**
+/** \ingroup type_trait
  *  VectorBuilder allocates type T1 values to be used as
  *  intermediate values. There are 2 template parameters:
  *  - used: boolean variable indicating whether this instance

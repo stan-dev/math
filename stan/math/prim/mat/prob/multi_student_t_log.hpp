@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup multivar_dists
  * Return the log of the multivariate Student t distribution
  * at the specified arguments.
  *
@@ -23,7 +23,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_log(
                                                                   Sigma);
 }
 
-/** \ingroup prob_dists
+/** \ingroup multivar_dists
  * @deprecated use <code>multi_student_t_lpdf</code>
  */
 template <typename T_y, typename T_dof, typename T_loc, typename T_scale>

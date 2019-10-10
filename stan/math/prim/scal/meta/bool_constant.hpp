@@ -4,7 +4,7 @@
 #include <type_traits>
 
 namespace stan {
-/**
+/** \ingroup type_trait
  * Alias for structs used for wraps a static constant of bool.
  * @tparam B On true, inherits std::true_type, false is std::false_type
  */

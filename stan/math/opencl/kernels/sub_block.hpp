@@ -13,7 +13,7 @@ namespace opencl_kernels {
 // \cond
 static const std::string sub_block_kernel_code = STRINGIFY(
     // \endcond
-    /** \ingroup opencl
+    /** \ingroup opencl_kernels
      * Copies a submatrix of the source matrix to
      * the destination matrix. The submatrix to copy
      * starts at (0, 0)
@@ -69,7 +69,7 @@ static const std::string sub_block_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/** \ingroup opencl
+/** \ingroup opencl_kernels
  * See the docs for \link kernels/sub_block.hpp sub_block() \endlink
  */
 const kernel_cl<in_buffer, out_buffer, int, int, int, int, int, int, int, int,

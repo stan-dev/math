@@ -7,7 +7,7 @@
 
 namespace stan {
 namespace math {
-/**
+/** \ingroup type_trait
  * This template metaprogram is used to compute the return type for
  * append_array
  *
@@ -23,7 +23,7 @@ struct append_return_type {
   using type = return_type_t<T1, T2>;
 };
 
-/**
+/** \ingroup type_trait
  * This template metaprogram is used to compute the return type for
  * append_array
  *
@@ -37,7 +37,7 @@ struct append_return_type<int, int> {
   using type = int;
 };
 
-/**
+/** \ingroup type_trait
  * This template metaprogram is used to compute the return type for
  * append_array
  *
@@ -56,7 +56,7 @@ struct append_return_type<Eigen::Matrix<T1, R, C>, Eigen::Matrix<T2, R, C> > {
   using type = typename Eigen::Matrix<return_type_t<T1, T2>, R, C>;
 };
 
-/**
+/** \ingroup type_trait
  * This template metaprogram is used to compute the return type for
  * append_array
  *

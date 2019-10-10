@@ -12,31 +12,31 @@ template <typename ViewElt, typename OpElt, int R, int C>
 class empty_broadcast_array<ViewElt, Eigen::Matrix<OpElt, R, C> > {
  public:
   empty_broadcast_array() {}
-  /**
+  /** \ingroup type_trait
    * Not implemented so cannot be called.
    */
   ViewElt& operator[](int /*i*/);
-  /**
+  /** \ingroup type_trait
    * Not implemented so cannot be called.
    */
   ViewElt& operator()(int /*i*/);
-  /**
+  /** \ingroup type_trait
    * Not implemented so cannot be called.
    */
   void operator=(const Eigen::Matrix<ViewElt, R, C>& /*A*/);
-  /**
+  /** \ingroup type_trait
    * Not implemented so cannot be called.
    */
   void operator+=(Eigen::Matrix<ViewElt, R, C> /*A*/);
-  /**
+  /** \ingroup type_trait
    * Not implemented so cannot be called.
    */
   void operator-=(Eigen::Matrix<ViewElt, R, C> /*A*/);
-  /**
+  /** \ingroup type_trait
    * Not implemented so cannot be called.
    */
   Eigen::Matrix<ViewElt, 1, C>& row(int /*i*/);
-  /**
+  /** \ingroup type_trait
    * Not implemented so cannot be called.
    */
   Eigen::Matrix<ViewElt, R, 1>& col(int /*i*/);

@@ -11,7 +11,7 @@ namespace opencl_kernels {
 // \cond
 static const char* poisson_log_glm_kernel_code = STRINGIFY(
     // \endcond
-    /** \ingroup opencl
+    /** \ingroup opencl_kernels
      * GPU implementation of Generalized Linear Model (GLM)
      * with Poisson distribution and log link function.
      *
@@ -115,7 +115,7 @@ static const char* poisson_log_glm_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/** \ingroup opencl
+/** \ingroup opencl_kernels
  * See the docs for \link kernels/subtract.hpp subtract() \endlink
  */
 const kernel_cl<out_buffer, out_buffer, out_buffer, in_buffer, in_buffer,

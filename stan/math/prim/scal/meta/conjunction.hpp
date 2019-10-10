@@ -5,7 +5,7 @@
 
 namespace stan {
 namespace math {
-/**
+/** \ingroup type_trait
  * Extends std::true_type when instantiated with zero or more template
  * parameters, all of which extend the std::true_type. Extends std::false_type
  * if any of them extend the std::false_type.

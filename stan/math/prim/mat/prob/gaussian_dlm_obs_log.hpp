@@ -7,7 +7,7 @@
 
 namespace stan {
 namespace math {
-/** \ingroup prob_dists
+/** \ingroup multivar_dists
  * The log of a Gaussian dynamic linear model (GDLM).
  * This distribution is equivalent to, for \f$t = 1:T\f$,
  * \f{eqnarray*}{
@@ -57,7 +57,7 @@ gaussian_dlm_obs_log(
       y, F, G, V, W, m0, C0);
 }
 
-/** \ingroup prob_dists
+/** \ingroup multivar_dists
  * @deprecated use <code>gaussian_dlm_obs_lpdf</code>
  */
 template <typename T_y, typename T_F, typename T_G, typename T_V, typename T_W,
@@ -75,7 +75,7 @@ gaussian_dlm_obs_log(
                                                                     W, m0, C0);
 }
 
-/** \ingroup prob_dists
+/** \ingroup multivar_dists
  * The log of a Gaussian dynamic linear model (GDLM) with
  * uncorrelated observation disturbances.
  * This distribution is equivalent to, for \f$t = 1:T\f$,
@@ -127,7 +127,7 @@ gaussian_dlm_obs_log(
       y, F, G, V, W, m0, C0);
 }
 
-/** \ingroup prob_dists
+/** \ingroup multivar_dists
  * @deprecated use <code>gaussian_dlm_obs_lpdf</code>
  */
 template <typename T_y, typename T_F, typename T_G, typename T_V, typename T_W,

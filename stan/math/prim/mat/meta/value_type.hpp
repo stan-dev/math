@@ -8,7 +8,7 @@
 
 namespace stan {
 
-/**
+/** \ingroup type_trait
  * Template metaprogram defining the type of values stored in an
  * Eigen matrix, vector, or row vector.
  *

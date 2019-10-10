@@ -7,7 +7,7 @@
 
 namespace stan {
 
-/**
+/** \ingroup type_trait
  * Template specialization for using a vector
  */
 template <typename T1>

@@ -16,7 +16,7 @@ struct size_of_helper<T, true> {
   static size_t size_of(const T& x) { return x.size(); }
 };
 
-/**
+/** \ingroup type_trait
  * Returns the size of the provided vector or
  * the constant 1 if the input argument is not a vector.
  * @param x value for which to obtain the size of

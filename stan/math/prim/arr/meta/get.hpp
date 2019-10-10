@@ -5,7 +5,7 @@
 #include <vector>
 
 namespace stan {
-/**
+/** \ingroup type_trait
  * Returns the n-th element of the provided std::vector.
  *
  * @param x input vector

@@ -7,7 +7,7 @@
 #include <type_traits>
 
 namespace stan {
-/**
+/** \ingroup type_trait
  * Checks if any types are std vectors.
  */
 template <typename... Ts>

@@ -4,7 +4,7 @@
 #include <cstdlib>
 
 namespace stan {
-/**
+/** \ingroup type_trait
  * Returns the length of primitive scalar types
  * that are always of length 1.
  */

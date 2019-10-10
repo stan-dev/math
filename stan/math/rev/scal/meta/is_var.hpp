@@ -6,7 +6,7 @@
 #include <type_traits>
 
 namespace stan {
-/**
+/** \ingroup type_trait
  * Specialization for checking if value of T minus cv qualifier is a var.
  */
 template <typename T>

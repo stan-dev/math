@@ -8,7 +8,7 @@
 
 namespace stan {
 
-/**
+/** \ingroup type_trait
  * Template metaprogram indicates whether a type is vector_like.
  *
  * A type is vector_like if an instance can be accessed like a

@@ -14,7 +14,7 @@
 
 namespace stan {
 namespace math {
-/** \ingroup prob_dists
+/** \ingroup multivar_dists
  * The log of the multivariate normal density for the given y, mu, and
  * a Cholesky factor L of the variance matrix.
  * Sigma = LL', a square, semi-positive definite matrix.

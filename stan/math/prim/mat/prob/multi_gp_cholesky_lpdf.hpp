@@ -13,7 +13,7 @@
 
 namespace stan {
 namespace math {
-/** \ingroup prob_dists
+/** \ingroup multivar_dists
  * The log of a multivariate Gaussian Process for the given y, w, and
  * a Cholesky factor L of the kernel matrix Sigma.
  * Sigma = LL', a square, semi-positive definite matrix.

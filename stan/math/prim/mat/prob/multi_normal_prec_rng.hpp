@@ -13,7 +13,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup multivar_dists
  * Return a multivariate normal random variate with the given location
  * and precision using the specified random number generator.
  *

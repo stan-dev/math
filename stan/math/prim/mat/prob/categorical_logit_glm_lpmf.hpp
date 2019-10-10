@@ -10,7 +10,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup multivar_dists
  * Returns the log PMF of the Generalized Linear Model (GLM)
  * with categorical distribution and logit (softmax) link function.
  *

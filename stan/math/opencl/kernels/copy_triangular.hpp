@@ -13,7 +13,7 @@ namespace opencl_kernels {
 // \cond
 static const std::string copy_triangular_kernel_code = STRINGIFY(
     // \endcond
-    /** \ingroup opencl
+    /** \ingroup opencl_kernels
      * Copies the lower or upper
      * triangular of the source matrix to
      * the destination matrix.
@@ -52,7 +52,7 @@ static const std::string copy_triangular_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/** \ingroup opencl
+/** \ingroup opencl_kernels
  * See the docs for \link kernels/copy_triangular.hpp copy_triangular() \endlink
  */
 const kernel_cl<out_buffer, in_buffer, int, int, matrix_cl_view>

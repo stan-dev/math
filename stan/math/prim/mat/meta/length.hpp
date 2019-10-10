@@ -5,7 +5,7 @@
 
 namespace stan {
 
-/**
+/** \ingroup type_trait
  * Returns the size of the provided Eigen matrix.
  *
  * @param m a const Eigen matrix

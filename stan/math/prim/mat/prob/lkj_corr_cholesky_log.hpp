@@ -9,7 +9,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup prob_dists
+/** \ingroup multivar_dists
  * @deprecated use <code>lkj_corr_cholesky_lpdf</code>
  */
 template <bool propto, typename T_covar, typename T_shape>
@@ -19,7 +19,7 @@ return_type_t<T_covar, T_shape> lkj_corr_cholesky_log(
   return lkj_corr_cholesky_lpdf<propto, T_covar, T_shape>(L, eta);
 }
 
-/** \ingroup prob_dists
+/** \ingroup multivar_dists
  * @deprecated use <code>lkj_corr_cholesky_lpdf</code>
  */
 template <typename T_covar, typename T_shape>
