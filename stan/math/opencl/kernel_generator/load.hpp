@@ -67,8 +67,6 @@ class load__ : public operation_lhs<load__<T>,
   /**
    * generates kernel code for this expression if it appears on the left hand
    * side of an assigment.
-   * @param name_gen name generator for this kernel
-   * @param[in,out] generated set of (pointer to) already generated operations
    * @param i row index variable name
    * @param j column index variable name
    * @return part of kernel with code for this expressions

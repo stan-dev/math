@@ -10,6 +10,7 @@
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <cl.hpp>
+#include <algorithm>
 #include <string>
 #include <tuple>
 #include <set>
@@ -48,7 +49,7 @@ class operation : public operation_base {
    * @param arguments Arguments of this expression that are also valid
    * expressions
    */
-  operation(Args&&... arguments)
+  explicit operation(Args&&... arguments)
       : arguments_(std::forward<Args>(arguments)...) {}
 
   /**

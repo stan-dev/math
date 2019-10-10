@@ -2,6 +2,9 @@
 #define STAN_MATH_OPENCL_KERNEL_GENERATOR_OPERATION_LHS_HPP
 
 #include <stan/math/opencl/kernel_generator/operation.hpp>
+#include <string>
+#include <set>
+#include <array>
 
 namespace stan {
 namespace math {
@@ -21,6 +24,7 @@ class operation_lhs : public operation<Derived, ReturnScalar, Args...> {
   using base::arguments_;
 
  public:
+
   /**
    * generates kernel code for this expression if it appears on the left hand
    * side of an assigment.
