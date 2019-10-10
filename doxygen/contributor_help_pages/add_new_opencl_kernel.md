@@ -17,8 +17,8 @@ Developers can pass in Eigen matrices directly to the `matrix_cl` constructor or
 Eigen::MatrixXd m(2, 2);
 m << 1, 2, 3, 4;
 
-matrix_cl A(m);
-matrix_cl B(2, 2);
+matrix_cl<double> A(m);
+matrix_cl<double> B(2, 2);
 
 B = to_matrix_cl(m);
 Eigen::MatrixXd C = from_matrix_cl(B);
@@ -29,14 +29,14 @@ Similar constructors for the `matrix_cl` class are available for standard vector
 We can reduce the data transfers of triangular matrices by only transferring the non-zero parts of the matrix in a packed form. The kernel `unpack` deals with unpacking the packed form shown on the right-hand side on to a flat matrix shown on the left-hand side. For lower (upper) triangular matrices, the upper (lower) triangular fill with zeros. The kernel `pack` packs the flat matrix to packed form for the transfer back to the host's global memory.
 
 ```cpp
-  matrix_cl L = packed_copy<TriangularViewCL::Lower>(L_val_cpu, M_);
+  matrix_cl<double> L = packed_copy(L_val_cpu, M_, matrix_view::Lower);
 ```
 
 ## Adding New OpenCL Kernels
 
 The OpenCL specification demands that strings are used to represent OpenCL kernels. However, having a large number of files comprised of strings is unwieldy and difficult to maintain. Stan wraps its kernels inside of a STRINGIFY macro, which gives developers access to the standard set of developer tools such as code highlighting, linting, Doxygen, and auto-formatting. This style makes the kernel code easier to maintain compared to having files full of strings.
 
-```
+```cpp
 const char *example_kernel_code = STRINGIFY(
 
   __kernel void example(double *A, double *B, int *val) {
@@ -58,8 +58,8 @@ Internally, we keep track of OpenCL events via queues on each `matrix_cl` object
 When the `kernel_cl` struct is constructed, it compiles the kernel and developers call the kernel with
 
 ```cpp
-matrix_cl foo = //...
-matrix_cl goo;
+matrix_cl<double> foo = //...
+matrix_cl<double> goo;
 example(cl::NDRange(...), goo, foo, 10);
 ```
 
