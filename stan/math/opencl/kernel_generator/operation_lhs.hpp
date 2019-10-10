@@ -1,5 +1,6 @@
 #ifndef STAN_MATH_OPENCL_KERNEL_GENERATOR_OPERATION_LHS_HPP
 #define STAN_MATH_OPENCL_KERNEL_GENERATOR_OPERATION_LHS_HPP
+#ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_generator/operation.hpp>
 #include <string>
@@ -68,4 +69,5 @@ class operation_lhs : public operation<Derived, ReturnScalar, Args...> {
 }  // namespace math
 }  // namespace stan
 
+#endif
 #endif
