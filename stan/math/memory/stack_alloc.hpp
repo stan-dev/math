@@ -4,11 +4,6 @@
 // TODO(Bob): <cstddef> replaces this ifdef in C++11, until then this
 //            is best we can do to get safe pointer casts to uints.
 #include <stan/math/prim/meta.hpp>
-#include <cstdlib>
-#include <cstddef>
-#include <sstream>
-#include <stdexcept>
-#include <vector>
 #include <stdint.h>
 #if EIGEN_COMP_MSVC
 #include <malloc.h>
@@ -17,6 +12,11 @@
 #include <stdlib.h>
 #define aligned_alloc_ aligned_alloc
 #endif
+#include <cstdlib>
+#include <cstddef>
+#include <sstream>
+#include <stdexcept>
+#include <vector>
 namespace stan {
 namespace math {
 
