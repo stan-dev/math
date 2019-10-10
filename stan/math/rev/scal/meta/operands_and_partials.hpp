@@ -101,8 +101,8 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, var> {
   var build(double value) {
     size_t size = edge1_.size() + edge2_.size() + edge3_.size() + edge4_.size()
                   + edge5_.size();
-    vari** varis = stack_mem::alloc_array<vari*>(size);
-    double* partials = stack_mem::alloc_array<double>(size);
+    vari** varis = ChainableStack::alloc_array<vari*>(size);
+    double* partials = ChainableStack::alloc_array<double>(size);
     int idx = 0;
     edge1_.dump_operands(&varis[idx]);
     edge1_.dump_partials(&partials[idx]);

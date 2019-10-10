@@ -23,8 +23,8 @@ class determinant_vari : public vari {
       : vari(determinant_vari_calc(A)),
         rows_(A.rows()),
         cols_(A.cols()),
-        A_(stack_mem::alloc_array<double>(A.rows() * A.cols())),
-        adjARef_(stack_mem::alloc_array<vari*>(A.rows() * A.cols())) {
+        A_(ChainableStack::alloc_array<double>(A.rows() * A.cols())),
+        adjARef_(ChainableStack::alloc_array<vari*>(A.rows() * A.cols())) {
     Eigen::Map<Eigen::MatrixXd>(A_, rows_, cols_) = A.val();
     Eigen::Map<matrix_vi>(adjARef_, rows_, cols_) = A.vi();
   }

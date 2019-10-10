@@ -23,14 +23,14 @@ class dot_self_vari : public vari {
   template <typename Derived>
   explicit dot_self_vari(const Eigen::DenseBase<Derived>& v)
       : vari(var_dot_self(v)), size_(v.size()) {
-    v_ = stack_mem::alloc_array<vari*>(size_);
+    v_ = ChainableStack::alloc_array<vari*>(size_);
 
     Eigen::Map<vector_vi>(v_, size_) = Eigen::Ref<const vector_v>(v).vi();
   }
   template <int R, int C>
   explicit dot_self_vari(const Eigen::Matrix<var, R, C>& v)
       : vari(var_dot_self(v)), size_(v.size()) {
-    v_ = stack_mem::alloc_array<vari*>(size_);
+    v_ = ChainableStack::alloc_array<vari*>(size_);
     Eigen::Map<matrix_vi>(v_, v.rows(), v.cols()) = v.vi();
   }
   inline static double square(double x) { return square(x); }

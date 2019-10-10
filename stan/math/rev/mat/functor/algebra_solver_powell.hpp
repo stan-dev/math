@@ -41,11 +41,11 @@ struct algebra_solver_vari : public vari {
                       const Eigen::VectorXd& theta_dbl, Fx& fx,
                       std::ostream* msgs)
       : vari(theta_dbl(0)),
-        y_(stack_mem::alloc_array<vari*>(y.size())),
+        y_(ChainableStack::alloc_array<vari*>(y.size())),
         y_size_(y.size()),
         x_size_(x.size()),
-        theta_(stack_mem::alloc_array<vari*>(x_size_)),
-        Jx_y_(stack_mem::alloc_array<double>(x_size_ * y_size_)) {
+        theta_(ChainableStack::alloc_array<vari*>(x_size_)),
+        Jx_y_(ChainableStack::alloc_array<double>(x_size_ * y_size_)) {
     using Eigen::Map;
     using Eigen::MatrixXd;
     for (int i = 0; i < y.size(); ++i) {

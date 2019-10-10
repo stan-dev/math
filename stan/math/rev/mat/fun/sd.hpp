@@ -20,8 +20,8 @@ namespace internal {
 
 inline var calc_sd(size_t size, const var* dtrs) {
   using std::sqrt;
-  vari** varis = stack_mem::alloc_array<vari*>(size);
-  double* partials = stack_mem::alloc_array<double>(size);
+  vari** varis = ChainableStack::alloc_array<vari*>(size);
+  double* partials = ChainableStack::alloc_array<double>(size);
   Eigen::Map<vector_vi> varis_map(varis, size);
   Eigen::Map<const vector_v> dtrs_map(dtrs, size);
   Eigen::Map<vector_d> partials_map(partials, size);

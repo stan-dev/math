@@ -27,7 +27,7 @@ static inline void recover_memory() {
     delete x;
   }
   ChainableStack::instance_->var_alloc_stack_.clear();
-  stack_mem::recover_all();
+  ChainableStack::recover_all();
 }
 
 }  // namespace math

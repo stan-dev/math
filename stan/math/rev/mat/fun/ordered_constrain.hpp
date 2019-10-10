@@ -37,7 +37,7 @@ class ordered_constrain_op {
       return y;
     }
 
-    exp_x_ = stack_mem::alloc_array<double>(N_ - 1);
+    exp_x_ = ChainableStack::alloc_array<double>(N_ - 1);
 
     y[0] = x[0];
     for (int n = 1; n < N_; ++n) {

@@ -19,10 +19,10 @@ inline var log_determinant(const Eigen::Matrix<var, R, C>& m) {
   Eigen::FullPivHouseholderQR<Matrix<double, R, C> > hh
       = m.val().fullPivHouseholderQr();
 
-  vari** varis = stack_mem::alloc_array<vari*>(m.size());
+  vari** varis = ChainableStack::alloc_array<vari*>(m.size());
   Eigen::Map<matrix_vi>(varis, m.rows(), m.cols()) = m.vi();
 
-  double* gradients = stack_mem::alloc_array<double>(m.size());
+  double* gradients = ChainableStack::alloc_array<double>(m.size());
   Eigen::Map<matrix_d>(gradients, m.rows(), m.cols())
       = hh.inverse().transpose();
 

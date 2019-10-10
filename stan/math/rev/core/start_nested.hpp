@@ -17,7 +17,7 @@ static inline void start_nested() {
       ChainableStack::instance_->var_nochain_stack_.size());
   ChainableStack::instance_->nested_var_alloc_stack_starts_.push_back(
       ChainableStack::instance_->var_alloc_stack_.size());
-  stack_mem::start_nested();
+  ChainableStack::start_nested();
 }
 
 }  // namespace math

@@ -30,7 +30,7 @@ inline matrix_v multiply_lower_tri_self_transpose(const matrix_v& L) {
   } else {  // if (K < J)
     Knz = (K * (K + 1)) / 2;
   }
-  vari** vs = stack_mem::alloc_array<vari*>(Knz);
+  vari** vs = ChainableStack::alloc_array<vari*>(Knz);
   int pos = 0;
   for (int m = 0; m < K; ++m) {
     for (int n = 0; n < ((J < (m + 1)) ? J : (m + 1)); ++n) {
