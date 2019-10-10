@@ -6,6 +6,7 @@
 #include <string>
 #include <set>
 #include <array>
+#include <numeric>
 
 namespace stan {
 namespace math {
