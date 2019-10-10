@@ -25,8 +25,8 @@ namespace math {
 template <typename T_scale, class RNG>
 inline typename VectorBuilder<true, double, T_scale>::type rayleigh_rng(
     const T_scale& sigma, RNG& rng) {
-  using boost::variate_generator;
   using boost::random::uniform_real_distribution;
+  using boost::variate_generator;
 
   static const char* function = "rayleigh_rng";
 
