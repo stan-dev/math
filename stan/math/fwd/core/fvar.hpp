@@ -86,12 +86,9 @@ struct fvar {
    * zero tangent.
    *
    * @tparam V type of value (must be assignable to T)
-   * @tparam Dummy dummy type inferred as part of enable-if
    * @param[in] v value
    */
-  template <typename V,
-            typename std::enable_if<ad_promotable<V, T>::value>::type* Dummy
-            = nullptr>
+  template <typename V, typename = std::enable_if_t<ad_promotable<V, T>::value>>
   fvar(const V& v) : val_(v), d_(0) {}  // NOLINT(runtime/explicit)
 
   /**
