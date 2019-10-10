@@ -21,8 +21,8 @@ namespace math {
  * @tparam T \c matrix_cl
  */
 template <typename T>
-class load__
-    : public operation_lhs<load__<T>, typename std::remove_reference_t<T>::type> {
+class load__ : public operation_lhs<load__<T>,
+                                    typename std::remove_reference_t<T>::type> {
  protected:
   T a_;
 
@@ -49,7 +49,8 @@ class load__
    * @param j column index variable name
    * @return part of kernel with code for this expression
    */
-  inline kernel_parts generate(const std::string& i, const std::string& j) const {
+  inline kernel_parts generate(const std::string& i,
+                               const std::string& j) const {
     kernel_parts res{};
     std::string type = type_str<ReturnScalar>::name;
     res.body = type + " " + var_name + " = 0;"
@@ -58,8 +59,8 @@ class load__
                "_view, UPPER) && " + j + " > " + i + "))) {"
                + var_name + " = " + var_name + "_global[" + i + " + " +
                var_name + "_rows * " + j + "];}\n";
-    res.args = "__global " + type + "* " + var_name + "_global, int "
-               + var_name + "_rows, int " + var_name + "_view, ";
+    res.args = "__global " + type + "* " + var_name + "_global, int " + var_name
+               + "_rows, int " + var_name + "_view, ";
     return res;
   }
 
@@ -72,11 +73,12 @@ class load__
    * @param j column index variable name
    * @return part of kernel with code for this expressions
    */
-  inline kernel_parts generate_lhs(const std::string& i, const std::string& j) const {
+  inline kernel_parts generate_lhs(const std::string& i,
+                                   const std::string& j) const {
     kernel_parts res;
     std::string type = type_str<ReturnScalar>::name;
-    res.args = "__global " + type + "* " + var_name + "_global, int "
-                 + var_name + "_rows, int " + var_name + "_view, ";
+    res.args = "__global " + type + "* " + var_name + "_global, int " + var_name
+               + "_rows, int " + var_name + "_view, ";
     res.body
         = var_name + "_global[" + i + " + " + var_name + "_rows * " + j + "]";
     return res;

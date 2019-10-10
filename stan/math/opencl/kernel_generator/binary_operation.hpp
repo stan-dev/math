@@ -34,11 +34,12 @@ class binary_operation
   using ReturnScalar = common_return_scalar_t<T_a, T_b>;
   using base = operation<Derived, ReturnScalar, T_a, T_b>;
   using base::var_name;
+
  protected:
   std::string op_;
   using base::arguments_;
- public:
 
+ public:
   /**
    * Constructor
    * @param a first argument of the binary operation
@@ -66,10 +67,12 @@ class binary_operation
    * @param var_name_b variable name of the second nested expression
    * @return part of kernel with code for this expression
    */
-  inline kernel_parts generate(const std::string& i, const std::string& j, const std::string& var_name_a, const std::string& var_name_b) const {
+  inline kernel_parts generate(const std::string& i, const std::string& j,
+                               const std::string& var_name_a,
+                               const std::string& var_name_b) const {
     kernel_parts res{};
-    res.body = type_str<ReturnScalar>::name
-         + " " + var_name + " = " + var_name_a + op_ + var_name_b + ";\n";
+    res.body = type_str<ReturnScalar>::name + " " + var_name + " = "
+               + var_name_a + op_ + var_name_b + ";\n";
     return res;
   }
 
@@ -77,7 +80,10 @@ class binary_operation
    * View of a matrix that would be the result of evaluating this expression.
    * @return view
    */
-  inline matrix_cl_view view() const { return either(std::get<0>(arguments_).view(), std::get<1>(arguments_).view()); }
+  inline matrix_cl_view view() const {
+    return either(std::get<0>(arguments_).view(),
+                  std::get<1>(arguments_).view());
+  }
 };
 
 /**
@@ -174,7 +180,8 @@ class elewise_multiplication__
    */
   inline matrix_cl_view view() const {
     using base = binary_operation<elewise_multiplication__<T_a, T_b>, T_a, T_b>;
-    return both(std::get<0>(base::arguments_).view(), std::get<1>(base::arguments_).view());
+    return both(std::get<0>(base::arguments_).view(),
+                std::get<1>(base::arguments_).view());
   }
 };
 
@@ -265,7 +272,8 @@ class elewise_division__
    */
   inline matrix_cl_view view() const {
     using base = binary_operation<elewise_division__<T_a, T_b>, T_a, T_b>;
-    return either(std::get<0>(base::arguments_).view(), invert(std::get<1>(base::arguments_).view()));
+    return either(std::get<0>(base::arguments_).view(),
+                  invert(std::get<1>(base::arguments_).view()));
   }
 };
 

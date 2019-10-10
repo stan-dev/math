@@ -35,17 +35,21 @@ struct kernel_parts {
 template <typename Derived, typename ReturnScalar, typename... Args>
 class operation : public operation_base {
  public:
-  static_assert(conjunction<std::is_base_of<operation_base, std::remove_reference_t<Args>> ...>::value, "operation: all arguments to operation must be operations!");
-  //number of arguments this operation has
+  static_assert(conjunction<std::is_base_of<
+                    operation_base, std::remove_reference_t<Args>>...>::value,
+                "operation: all arguments to operation must be operations!");
+  // number of arguments this operation has
   static constexpr int N = std::tuple_size<std::tuple<Args...>>::value;
   // value representing a not yet determined size
   static const int dynamic = -1;
 
   /**
    * Constructor
-   * @param arguments Arguments of this expression that are also valid expressions
+   * @param arguments Arguments of this expression that are also valid
+   * expressions
    */
-  operation(Args&&... arguments) : arguments_(std::forward<Args>(arguments)...){}
+  operation(Args&&... arguments)
+      : arguments_(std::forward<Args>(arguments)...) {}
 
   /**
    * Evaluates the expression.
@@ -92,7 +96,7 @@ class operation : public operation_base {
                                // operation and every \c T_lhs
   };
 
-    /**
+  /**
    * generates kernel code for this and nested expressions.
    * @param[in,out] generated set of (pointer to) already generated operations
    * @param name_gen name generator for this kernel
@@ -101,19 +105,31 @@ class operation : public operation_base {
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts get_kernel_parts(std::set<const void*>& generated,
-                               name_generator& name_gen, const std::string& i,
-                               const std::string& j) const {
+                                       name_generator& name_gen,
+                                       const std::string& i,
+                                       const std::string& j) const {
     kernel_parts res{};
     if (generated.count(this) == 0) {
       generated.insert(this);
-      std::array<kernel_parts,N> args_parts = index_apply<N>([&](auto... Is){
-        return std::array<kernel_parts,N>{std::get<Is>(arguments_).get_kernel_parts(generated, name_gen, i, j)...};
+      std::array<kernel_parts, N> args_parts = index_apply<N>([&](auto... Is) {
+        return std::array<kernel_parts, N>{
+            std::get<Is>(arguments_)
+                .get_kernel_parts(generated, name_gen, i, j)...};
       });
-      res.body = std::accumulate(args_parts.begin(), args_parts.end(), std::string(), [](const std::string& a, const kernel_parts& b) {return a+b.body;});
-      res.args = std::accumulate(args_parts.begin(), args_parts.end(), std::string(), [](const std::string& a, const kernel_parts& b) {return a+b.args;});
+      res.body
+          = std::accumulate(args_parts.begin(), args_parts.end(), std::string(),
+                            [](const std::string& a, const kernel_parts& b) {
+                              return a + b.body;
+                            });
+      res.args
+          = std::accumulate(args_parts.begin(), args_parts.end(), std::string(),
+                            [](const std::string& a, const kernel_parts& b) {
+                              return a + b.args;
+                            });
       this->var_name = name_gen.generate();
-      kernel_parts my_part = index_apply<N>([&](auto... Is){
-        return this->derived().generate(i,j,std::get<Is>(arguments_).var_name...);
+      kernel_parts my_part = index_apply<N>([&](auto... Is) {
+        return this->derived().generate(i, j,
+                                        std::get<Is>(arguments_).var_name...);
       });
       res.body += my_part.body;
       res.args += my_part.args;
@@ -134,8 +150,9 @@ class operation : public operation_base {
     if (generated.count(this) == 0) {
       generated.insert(this);
       index_apply<N>([&](auto... Is) {
-        (void)std::initializer_list<int>{(
-            std::get<Is>(arguments_).set_args(generated, kernel, arg_num),0)...};
+        (void)std::initializer_list<int>{
+            (std::get<Is>(arguments_).set_args(generated, kernel, arg_num),
+             0)...};
       });
     }
   }
@@ -146,8 +163,8 @@ class operation : public operation_base {
    */
   inline void add_read_event(cl::Event& e) const {
     index_apply<N>([&](auto... Is) {
-      (void)std::initializer_list<int>{(
-          std::get<Is>(arguments_).add_read_event(e),0)...};
+      (void)std::initializer_list<int>{
+          (std::get<Is>(arguments_).add_read_event(e), 0)...};
     });
   }
 
@@ -168,7 +185,7 @@ class operation : public operation_base {
    * expression. Some subclasses may need to override this.
    * @return number of columns
    */
-  template<size_t... I>
+  template <size_t... I>
   inline int cols() const {
     return index_apply<N>([&](auto... Is) {
       // assuming all non-dynamic sizes match
@@ -198,7 +215,7 @@ class operation : public operation_base {
 
 template <typename Derived, typename ReturnScalar, typename... Args>
 template <typename T_lhs>
-cl::Kernel operation<Derived, ReturnScalar, Args ...>::cache<T_lhs>::kernel;
+cl::Kernel operation<Derived, ReturnScalar, Args...>::cache<T_lhs>::kernel;
 
 }  // namespace math
 }  // namespace stan

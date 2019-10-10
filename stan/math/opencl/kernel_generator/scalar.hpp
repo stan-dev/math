@@ -42,7 +42,8 @@ class scalar__ : public operation<scalar__<T>, T> {
    * @param j column index variable name
    * @return part of kernel with code for this expression
    */
-  inline kernel_parts generate(const std::string& i, const std::string& j) const {
+  inline kernel_parts generate(const std::string& i,
+                               const std::string& j) const {
     kernel_parts res{};
     res.args = type_str<T>::name + " " + var_name + ", ";
     return res;

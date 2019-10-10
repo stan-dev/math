@@ -7,7 +7,8 @@ namespace stan {
 namespace math {
 
 /**
- * Base for all kernel generator operations that can be used on left hand side of an expression.
+ * Base for all kernel generator operations that can be used on left hand side
+ * of an expression.
  * @tparam Derived derived type
  * @tparam ReturnScalar scalar type of the result
  * @tparam Args types of arguments to this operation
@@ -18,30 +19,41 @@ class operation_lhs : public operation<Derived, ReturnScalar, Args...> {
   using base = operation<Derived, ReturnScalar, Args...>;
   static constexpr int N = sizeof...(Args);
   using base::arguments_;
+
  public:
   /**
-  * generates kernel code for this expression if it appears on the left hand
-  * side of an assigment.
-  * @param[in,out] generated set of (pointer to) already generated operations
-  * @param name_gen name generator for this kernel
-  * @param i row index variable name
-  * @param j column index variable name
-  * @return part of kernel with code for this expressions
-  */
+   * generates kernel code for this expression if it appears on the left hand
+   * side of an assigment.
+   * @param[in,out] generated set of (pointer to) already generated operations
+   * @param name_gen name generator for this kernel
+   * @param i row index variable name
+   * @param j column index variable name
+   * @return part of kernel with code for this expressions
+   */
   inline kernel_parts get_kernel_parts_lhs(std::set<const void*>& generated,
-                                       name_generator& name_gen, const std::string& i,
-                                       const std::string& j) const {
-    std::array<kernel_parts,N> args_parts = index_apply<N>([&](auto... Is){
-      return std::array<kernel_parts,N>{std::get<Is>(arguments_).get_kernel_parts_lhs(generated, name_gen, i, j)...};
+                                           name_generator& name_gen,
+                                           const std::string& i,
+                                           const std::string& j) const {
+    std::array<kernel_parts, N> args_parts = index_apply<N>([&](auto... Is) {
+      return std::array<kernel_parts, N>{
+          std::get<Is>(arguments_)
+              .get_kernel_parts_lhs(generated, name_gen, i, j)...};
     });
     kernel_parts res{};
-    res.body = std::accumulate(args_parts.begin(), args_parts.end(), std::string(), [](const std::string& a, const kernel_parts& b) {return a+b.body;});
+    res.body = std::accumulate(
+        args_parts.begin(), args_parts.end(), std::string(),
+        [](const std::string& a, const kernel_parts& b) { return a + b.body; });
     if (generated.count(this) == 0) {
       generated.insert(this);
       this->var_name = name_gen.generate();
-      res.args = std::accumulate(args_parts.begin(), args_parts.end(), std::string(), [](const std::string& a, const kernel_parts& b) {return a+b.args;});
-      kernel_parts my_part = index_apply<N>([&](auto... Is){
-        return this->derived().generate_lhs(i,j,std::get<Is>(arguments_).var_name...);
+      res.args
+          = std::accumulate(args_parts.begin(), args_parts.end(), std::string(),
+                            [](const std::string& a, const kernel_parts& b) {
+                              return a + b.args;
+                            });
+      kernel_parts my_part = index_apply<N>([&](auto... Is) {
+        return this->derived().generate_lhs(
+            i, j, std::get<Is>(arguments_).var_name...);
       });
       res.body += my_part.body;
       res.args += my_part.args;
@@ -50,7 +62,7 @@ class operation_lhs : public operation<Derived, ReturnScalar, Args...> {
   }
 };
 
-}
-}
+}  // namespace math
+}  // namespace stan
 
 #endif
