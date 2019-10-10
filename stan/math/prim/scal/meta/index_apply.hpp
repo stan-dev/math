@@ -1,14 +1,15 @@
 #ifndef STAN_MATH_PRIM_SCAL_META_APPLY_HPP
 #define STAN_MATH_PRIM_SCAL_META_APPLY_HPP
 #include <utility>
+#include <cstddef>
 
 namespace stan {
 namespace math {
 
 namespace internal {
-template <class F, size_t... Is>
+template <class F, std::size_t... Is>
 constexpr auto index_apply_impl(F f, std::index_sequence<Is...>) {
-  return f(std::integral_constant<size_t, Is>{}...);
+  return f(std::integral_constant<std::size_t, Is>{}...);
 }
 }  // namespace internal
 
@@ -21,7 +22,7 @@ constexpr auto index_apply_impl(F f, std::index_sequence<Is...>) {
  * @param f callable
  * @return what the given callable returns
  */
-template <size_t N, class F>
+template <std::size_t N, class F>
 constexpr auto index_apply(F f) {
   return internal::index_apply_impl(f, std::make_index_sequence<N>{});
 }
