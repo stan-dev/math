@@ -2,7 +2,7 @@
 #define STAN_MATH_OPENCL_OPENCL
 #ifdef STAN_OPENCL
 
-/** 
+/**
  * \defgroup opencl OpenCL
  */
 
