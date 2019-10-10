@@ -21,7 +21,7 @@ namespace math {
  * @throw std::domain_error if m is not a symmetric matrix or
  *   if m is not positive definite (if m has more than 0 elements)
  */
-template <typename T, typename = enable_if_floating_point<T>>
+template <typename T, typename = require_floating_point_t<T>>
 inline matrix_cl<T> cholesky_decompose(matrix_cl<T>& A) {
   check_square("cholesky_decompose", "A", A);
   check_symmetric("cholesky_decompose", "A", A);
@@ -33,11 +33,8 @@ inline matrix_cl<T> cholesky_decompose(matrix_cl<T>& A) {
   // check_pos_definite on matrix_cl is check_nan + check_diagonal_zeros
   check_nan("cholesky_decompose (OpenCL)", "A", res);
   check_diagonal_zeros("cholesky_decompose (OpenCL)", "A", res);
-  // TODO(Rok): replace the below two lines with
-  // res.zeros_stric_tri<matrix_cl_view::Lower>();
-  // once that is merged
-  res.view(matrix_cl_view::Lower);
-  return copy_triangular(res);
+  res.template zeros_strict_tri<matrix_cl_view::Upper>();
+  return res;
 }
 }  // namespace math
 }  // namespace stan

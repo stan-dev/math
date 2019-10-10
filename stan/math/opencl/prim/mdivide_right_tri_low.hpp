@@ -19,7 +19,7 @@ namespace math {
  * match the size of A.
  */
 template <typename T1, typename T2,
-          typename = enable_if_all_floating_point<T1, T2>>
+          typename = require_all_floating_point_t<T1, T2>>
 inline matrix_cl<return_type_t<T1, T2>> mdivide_right_tri_low(
     const matrix_cl<T2>& b, const matrix_cl<T1>& A) {
   check_square("mdivide_right_tri_low (OpenCL)", "A", A);
