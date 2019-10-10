@@ -22,7 +22,7 @@ operation<Derived, ReturnScalar, Args...>::get_kernel_source_for_evaluating_into
   auto lhs_expression = as_operation(lhs);
   std::set<const void*> generated;
   name_generator ng;
-  kernel_parts parts = derived().generate(generated, ng, "i", "j");
+  kernel_parts parts = derived().get_kernel_parts(generated, ng, "i", "j");
   kernel_parts out_parts = lhs_expression.generate_lhs(generated, ng, "i", "j");
   std::string src = "kernel void calculate(" + parts.args +
                     out_parts.args.substr(0, out_parts.args.size() - 2) +

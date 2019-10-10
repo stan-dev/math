@@ -44,29 +44,21 @@ class load__
 
   /**
    * generates kernel code for this expression.
-   * @param[in,out] generated set of (pointer to) already generated operations
-   * @param name_gen name generator for this kernel
    * @param i row index variable name
    * @param j column index variable name
-   * @return part of kernel with code for this and nested expressions
+   * @return part of kernel with code for this expression
    */
-  inline kernel_parts generate(std::set<const void*>& generated,
-                               name_generator& name_gen, const std::string& i,
-                               const std::string& j) const {
+  inline kernel_parts generate(const std::string& i, const std::string& j) const {
     kernel_parts res{};
-    if (generated.count(this) == 0) {
-      generated.insert(this);
-      this->var_name = name_gen.generate();
-      std::string type = type_str<ReturnScalar>::name;
-      res.body = type + " " + var_name + " = 0;"
-                 " if (!((!contains_nonzero(" + var_name + "_view, LOWER) && "
-                 + j + " < " + i + ") || (!contains_nonzero(" + var_name +
-                 "_view, UPPER) && " + j + " > " + i + "))) {"
-                 + var_name + " = " + var_name + "_global[" + i + " + " +
-                 var_name + "_rows * " + j + "];}\n";
-      res.args = "__global " + type + "* " + var_name + "_global, int "
-                 + var_name + "_rows, int " + var_name + "_view, ";
-    }
+    std::string type = type_str<ReturnScalar>::name;
+    res.body = type + " " + var_name + " = 0;"
+               " if (!((!contains_nonzero(" + var_name + "_view, LOWER) && "
+               + j + " < " + i + ") || (!contains_nonzero(" + var_name +
+               "_view, UPPER) && " + j + " > " + i + "))) {"
+               + var_name + " = " + var_name + "_global[" + i + " + " +
+               var_name + "_rows * " + j + "];}\n";
+    res.args = "__global " + type + "* " + var_name + "_global, int "
+               + var_name + "_rows, int " + var_name + "_view, ";
     return res;
   }
 

@@ -37,22 +37,14 @@ class scalar__ : public operation<scalar__<T>, T> {
   explicit scalar__(const T a) : a_(a) {}
 
   /**
-   * generates kernel code for this and nested expressions.
-   * @param[in,out] generated set of (pointer to) already generated operations
-   * @param name_gen name generator for this kernel
+   * generates kernel code for this expression.
    * @param i row index variable name
    * @param j column index variable name
-   * @return part of kernel with code for this and nested expressions
+   * @return part of kernel with code for this expression
    */
-  inline kernel_parts generate(std::set<const void*>& generated,
-                               name_generator& name_gen, const std::string& i,
-                               const std::string& j) const {
+  inline kernel_parts generate(const std::string& i, const std::string& j) const {
     kernel_parts res{};
-    if (generated.count(this) == 0) {
-      generated.insert(this);
-      this->var_name = name_gen.generate();
-      res.args = type_str<T>::name + " " + var_name + ", ";
-    }
+    res.args = type_str<T>::name + " " + var_name + ", ";
     return res;
   }
 

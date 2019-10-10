@@ -68,27 +68,17 @@ class binary_operation
   }
 
   /**
-   * generates kernel code for this and nested expressions.
-   * @param[in,out] generated set of (pointer to) already generated operations
-   * @param name_gen name generator for this kernel
+   * generates kernel code for this expression.
    * @param i row index variable name
    * @param j column index variable name
-   * @return part of kernel with code for this and nested expressions
+   * @param var_name_a variable name of the first nested expression
+   * @param var_name_b variable name of the second nested expression
+   * @return part of kernel with code for this expression
    */
-  inline kernel_parts generate(std::set<const void*>& generated,
-                               name_generator& name_gen, const std::string& i,
-                               const std::string& j) const {
+  inline kernel_parts generate(const std::string& i, const std::string& j, const std::string& var_name_a, const std::string& var_name_b) const {
     kernel_parts res{};
-    if (generated.count(this) == 0) {
-      kernel_parts a_parts = std::get<0>(arguments_).generate(generated, name_gen, i, j);
-      kernel_parts b_parts = std::get<1>(arguments_).generate(generated, name_gen, i, j);
-      generated.insert(this);
-      this->var_name = name_gen.generate();
-      res.body = a_parts.body + b_parts.body + type_str<ReturnScalar>::name
-                 + " " + var_name + " = " + std::get<0>(arguments_).var_name + op_ +
-                 std::get<1>(arguments_).var_name + ";\n";
-      res.args = a_parts.args + b_parts.args;
-    }
+    res.body = type_str<ReturnScalar>::name
+         + " " + var_name + " = " + var_name_a + op_ + var_name_b + ";\n";
     return res;
   }
 

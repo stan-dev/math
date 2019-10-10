@@ -13,6 +13,7 @@
 #include <string>
 #include <tuple>
 #include <set>
+#include <array>
 
 namespace stan {
 namespace math {
@@ -88,6 +89,35 @@ class operation : public operation_base {
                                // combination of template instantination of \c
                                // operation and every \c T_lhs
   };
+
+    /**
+   * generates kernel code for this and nested expressions.
+   * @param[in,out] generated set of (pointer to) already generated operations
+   * @param name_gen name generator for this kernel
+   * @param i row index variable name
+   * @param j column index variable name
+   * @return part of kernel with code for this and nested expressions
+   */
+  inline kernel_parts get_kernel_parts(std::set<const void*>& generated,
+                               name_generator& name_gen, const std::string& i,
+                               const std::string& j) const {
+    kernel_parts res{};
+    if (generated.count(this) == 0) {
+      generated.insert(this);
+      std::array<kernel_parts,N> args_parts = index_apply<N>([&](auto... Is){
+        return std::array<kernel_parts,N>{std::get<Is>(arguments_).get_kernel_parts(generated, name_gen, i, j)...};
+      });
+      res.body = std::accumulate(args_parts.begin(), args_parts.end(), std::string(), [](const std::string& a, const kernel_parts& b) {return a+b.body;});
+      res.args = std::accumulate(args_parts.begin(), args_parts.end(), std::string(), [](const std::string& a, const kernel_parts& b) {return a+b.args;});
+      this->var_name = name_gen.generate();
+      kernel_parts my_part = index_apply<N>([&](auto... Is){
+        return this->derived().generate(i,j,std::get<Is>(arguments_).var_name...);
+      });
+      res.body += my_part.body;
+      res.args += my_part.args;
+    }
+    return res;
+  }
 
   /**
    * Sets kernel arguments for nested expressions.
