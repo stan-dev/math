@@ -172,7 +172,7 @@ class idas_integrator {
  * conditions, set sensitivity to identity
  *
  * @tparam Dae DAE system type
- * @param[in/out] dae DAE system
+ * @param[in, out] dae DAE system
  */
 template <typename Dae>
 void idas_integrator::init_sensitivity(Dae& dae) {

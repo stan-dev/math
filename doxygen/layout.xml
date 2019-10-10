@@ -21,6 +21,7 @@
         <tab type="usergroup" visible="yes" title="Testing Automatic Differentiation Functions" url="@ref autodiff_test" intro=""/>
         <tab type="usergroup" visible="yes" title="Testing New Distributions" url="@ref dist_tests" intro=""/>
         <tab type="usergroup" visible="yes" title="Add New Functions With Known Gradients" url="@ref new_grad" intro=""/>
+        <tab type="usergroup" visible="yes" title="Adding New OpenCL Functions" url="@ref opencl_guide" intro=""/>
         <tab type="usergroup" visible="yes" title="Windows Development Tips" url="@ref windows_tips" intro=""/>
     </tab>
     <tab type="usergroup" visible="yes" title="Parallelism" intro="">
