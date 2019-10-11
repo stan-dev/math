@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_OPENCL_POISSON_LOG_GLM_LPMF_HPP
-#define STAN_MATH_OPENCL_POISSON_LOG_GLM_LPMF_HPP
+#ifndef STAN_MATH_OPENCL_PRIM_POISSON_LOG_GLM_LPMF_HPP
+#define STAN_MATH_OPENCL_PRIM_POISSON_LOG_GLM_LPMF_HPP
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/meta.hpp>
@@ -12,6 +12,7 @@
 #include <stan/math/prim/arr/fun/value_of_rec.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/prim/arr/fun/value_of.hpp>
+#include <stan/math/prim/mat/fun/sum.hpp>
 #include <stan/math/opencl/kernels/poisson_log_glm_lpmf.hpp>
 #include <cmath>
 #include <limits>
