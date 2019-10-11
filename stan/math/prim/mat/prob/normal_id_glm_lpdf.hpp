@@ -8,13 +8,8 @@
 #include <stan/math/prim/mat/fun/value_of_rec.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/sum.hpp>
+#include <stan/math/prim/mat/fun/log.hpp>
 #include <stan/math/prim/arr/fun/value_of_rec.hpp>
-
-#ifdef STAN_OPENCL
-#include <stan/math/opencl/kernels/normal_id_glm_lpdf.hpp>
-#include <stan/math/opencl/matrix_cl.hpp>
-#include <stan/math/opencl/multiply.hpp>
-#endif
 
 #include <cmath>
 

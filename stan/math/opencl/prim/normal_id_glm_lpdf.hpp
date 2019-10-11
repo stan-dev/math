@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_OPENCL_NORMAL_ID_GLM_LPDF_HPP
-#define STAN_MATH_OPENCL_NORMAL_ID_GLM_LPDF_HPP
+#ifndef STAN_MATH_OPENCL_PRIM_NORMAL_ID_GLM_LPDF_HPP
+#define STAN_MATH_OPENCL_PRIM_NORMAL_ID_GLM_LPDF_HPP
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/meta.hpp>
@@ -15,7 +15,7 @@
 
 #include <stan/math/opencl/kernels/normal_id_glm_lpdf.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
-#include <stan/math/opencl/multiply.hpp>
+#include <stan/math/opencl/prim/multiply.hpp>
 
 #include <cmath>
 
