@@ -91,9 +91,6 @@ help:
 doxygen:
 	mkdir -p doc/api
 	doxygen doxygen/doxygen.cfg
-	cp doxygen/pretty_stuff/ftv2node.png doc/api/html/
-	cp doxygen/pretty_stuff/ftv2pnode.png doc/api/html/
-	cp doxygen/pretty_stuff/eigen_navtree_hacks.js doc/api/html/
 
 ##
 # Clean up.
