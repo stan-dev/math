@@ -1,6 +1,6 @@
 #ifdef STAN_OPENCL
 #include <stan/math.hpp>
-#include <stan/math/opencl/neg_binomial_2_log_glm_lpmf.hpp>
+#include <stan/math/opencl/opencl.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/expect_near_rel.hpp>
 #include <vector>
