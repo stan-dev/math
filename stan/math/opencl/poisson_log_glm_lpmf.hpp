@@ -59,7 +59,7 @@ return_type_t<T_alpha, T_beta> poisson_log_glm_lpmf(
     check_size_match(function, "Rows of ", "y_cl", N, "size of ", "alpha",
                      length(alpha));
   }
-  if (N == 0 || M == 0) {
+  if (N == 0) {
     return 0;
   }
 
