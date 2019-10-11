@@ -2,7 +2,7 @@
 function generate_autotoc() {
   var headers = $("h1, h2");
   if(headers.length > 1) {
-    var toc = $("#side-nav").append('<div id="nav-toc" class="toc"><h3>Table of contents</h3></div>');
+    var toc = $("#side-nav").append('<div id="nav-toc" class="toc"><h3>Section Contents: </h3></div>');
     toc = $("#nav-toc");
     var footerHeight = footer.height();
     toc = toc.append('<ul></ul>');
@@ -135,8 +135,10 @@ function initNavTree(toroot,relpath)
        navTo(o,toroot,window.location.hash,relpath);
      }
   })
+  $(window).on('load', function () {
+       showRoot();
+  });
 
-  $(window).load(showRoot);
 }
 
 // return false if the the node has no children at all, or has only section/subsection children
@@ -239,6 +241,7 @@ $(document).ready(function() {
       setTimeout(arguments.callee, 10);
     }
   })();
-
-  $(window).load(resizeHeight);
+  $(window).on('load', function () {
+       resizeHeight();
+  });
 });
