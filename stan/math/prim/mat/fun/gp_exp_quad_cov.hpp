@@ -12,9 +12,7 @@
 #include <stan/math/prim/scal/fun/exp.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #ifdef STAN_OPENCL
-#include <stan/math/opencl/err/check_nan.hpp>
-#include <stan/math/opencl/gp_exp_quad_cov.hpp>
-#include <stan/math/opencl/divide_columns.hpp>
+#include <stan/math/opencl/opencl.hpp>
 #endif
 
 #include <cmath>
