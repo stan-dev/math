@@ -22,72 +22,68 @@ namespace math {
  * \f$k(x,x') = \sigma^2 x \cdot x'\f$
  *
  * @tparam T_x type of std::vector of elements
- * @tparam T_sigma scalar type of sigma elements
+ * @tparam T_sigma_squared scalar type of sigma_squared
  *
  * @param x std::vector of elements that can be used in transpose
  *   and multiply
  *    This function assumes each element of x is the same size.
- * @param sigma variance
+ * @param sigma_squared variance
  * @return dot product covariance matrix that is positive semi-definite
  * @throw std::domain_error if sigma < 0, nan, inf or
  *   x is nan or infinite
  */
-template <typename T_x, typename T_sigma>
-Eigen::Matrix<return_type_t<T_x, T_sigma>, Eigen::Dynamic, Eigen::Dynamic>
-gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma &sigma) {
-  check_not_nan("gp_dot_prod_cov", "sigma", sigma);
-  check_nonnegative("gp_dot_prod_cov", "sigma", sigma);
-  check_finite("gp_dot_prod_cov", "sigma", sigma);
+template <typename T_x, typename T_sigma_squared>
+Eigen::Matrix<return_type_t<T_x, T_sigma_squared>, Eigen::Dynamic, Eigen::Dynamic>
+gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma_squared &sigma_squared) {
+  check_not_nan("gp_dot_prod_cov", "sigma_squared", sigma_squared);
+  check_positive_finite("gp_dot_prod_cov", "sigma_squared", sigma_squared);
 
   size_t x_size = x.size();
   check_not_nan("gp_dot_prod_cov", "x", x);
   check_finite("gp_dot_prod_cov", "x", x);
 
-  Eigen::Matrix<return_type_t<T_x, T_sigma>, Eigen::Dynamic, Eigen::Dynamic>
+  Eigen::Matrix<return_type_t<T_x, T_sigma_squared>, Eigen::Dynamic, Eigen::Dynamic>
       cov(x_size, x_size);
   if (x_size == 0) {
     return cov;
   }
 
-  T_sigma sigma_sq = square(sigma);
-
   for (size_t i = 0; i < (x_size - 1); ++i) {
-    cov(i, i) = sigma_sq * x[i] * x[i];
+    cov(i, i) = sigma_squared * x[i] * x[i];
     for (size_t j = i + 1; j < x_size; ++j) {
-      cov(i, j) = sigma_sq * x[i] * x[j];
+      cov(i, j) = sigma_squared * x[i] * x[j];
       cov(j, i) = cov(i, j);
     }
   }
-  cov(x_size - 1, x_size - 1) = sigma_sq * x[x_size - 1] * x[x_size - 1];
+  cov(x_size - 1, x_size - 1) = sigma_squared * x[x_size - 1] * x[x_size - 1];
   return cov;
 }
 
 
 /**
- * Returns a dot product covariance matrix of
- * differing x's. A member of Stan's Gaussian Process Library.
+ * Returns a dot product covariance matrix. A member of Stan's Gaussian
+ * Process Library.
  *
- * \f$k(x,x') = \sigma^2 * x \cdot x'\f$
+ * \f$k(x,x') = \sigma^2 x \cdot x'\f$
  *
  * @tparam T_x1 type of first std::vector of double
  * @tparam T_x2 type of second std::vector of double
- * @tparam T_sigma type of sigma
+ * @tparam T_sigma_squared scalar type of sigma_squared
  *
  * @param x1 std::vector of elements that can be used in dot_product
  * @param x2 std::vector of elements that can be used in dot_product
- * @param sigma standard deviation
+ * @param sigma_squared variance
  * @return dot product covariance matrix
  * @throw std::domain_error if sigma < 0, nan or inf
  *   or if x1 or x2 are nan or inf
  */
-template <typename T_x1, typename T_x2, typename T_sigma>
-Eigen::Matrix<return_type_t<T_x1, T_x2, T_sigma>, Eigen::Dynamic,
+template <typename T_x1, typename T_x2, typename T_sigma_squared>
+Eigen::Matrix<return_type_t<T_x1, T_x2, T_sigma_squared>, Eigen::Dynamic,
               Eigen::Dynamic>
 gp_dot_prod_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
-                const T_sigma &sigma) {
-  check_not_nan("gp_dot_prod_cov", "sigma", sigma);
-  check_nonnegative("gp_dot_prod_cov", "sigma", sigma);
-  check_finite("gp_dot_prod_cov", "sigma", sigma);
+                const T_sigma_squared &sigma_squared) {
+  check_not_nan("gp_dot_prod_cov", "sigma_squared", sigma_squared);
+  check_positive_finite("gp_dot_prod_cov", "sigma_squared", sigma_squared);
 
   size_t x1_size = x1.size();
   size_t x2_size = x2.size();
@@ -96,7 +92,7 @@ gp_dot_prod_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   check_not_nan("gp_dot_prod_cov", "x2", x2);
   check_finite("gp_dot_prod_cov", "x2", x2);
 
-  Eigen::Matrix<return_type_t<T_x1, T_x2, T_sigma>, Eigen::Dynamic,
+  Eigen::Matrix<return_type_t<T_x1, T_x2, T_sigma_squared>, Eigen::Dynamic,
                 Eigen::Dynamic>
       cov(x1_size, x2_size);
 
@@ -104,11 +100,9 @@ gp_dot_prod_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
     return cov;
   }
 
-  T_sigma sigma_sq = square(sigma);
-
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
-      cov(i, j) = sigma_sq * x1[i] * x2[j];
+      cov(i, j) = sigma_squared * x1[i] * x2[j];
     }
   }
   return cov;
@@ -135,6 +129,7 @@ Eigen::Matrix<return_type_t<T_x, T_sigma>, Eigen::Dynamic, Eigen::Dynamic>
 gp_dot_prod_cov(
     const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
     const Eigen::Matrix<T_sigma, Eigen::Dynamic, Eigen::Dynamic> &Sigma) {
+  check_finite("gp_dot_prod_cov", "Sigma", Sigma);
   check_pos_definite("gp_dot_prod_cov", "Sigma", Sigma);
 
   size_t x_size = x.size();
@@ -193,6 +188,7 @@ gp_dot_prod_cov(
     const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
     const std::vector<Eigen::Matrix<T_x2, Eigen::Dynamic, 1>> &x2,
     const Eigen::Matrix<T_sigma, Eigen::Dynamic, Eigen::Dynamic> &Sigma) {
+  check_finite("gp_dot_prod_cov", "Sigma", Sigma);
   check_pos_definite("gp_dot_prod_cov", "Sigma", Sigma);
 
   size_t x1_size = x1.size();
