@@ -69,7 +69,7 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
   }
   check_bounded(function, "Vector of dependent variables", y, 0, 1);
 
-  if (size_zero(y, x, beta)) {
+  if (size_zero(y)) {
     return 0;
   }
 
