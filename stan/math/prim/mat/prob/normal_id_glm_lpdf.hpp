@@ -78,7 +78,7 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
     check_consistent_sizes(function, "Vector of intercepts", alpha,
                            "Vector of dependent variables", y);
   }
-  if (size_zero(y, x, beta, sigma)) {
+  if (size_zero(y, sigma)) {
     return 0;
   }
 

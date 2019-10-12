@@ -63,7 +63,7 @@ return_type_t<T_alpha, T_beta> bernoulli_logit_glm_lpmf(
                      length(alpha));
   }
 
-  if (N == 0 || M == 0) {
+  if (N == 0) {
     return 0;
   }
 

@@ -15,7 +15,6 @@ void test_nan_fd(const F& f, const double& arg1, const bool& throws) {
     EXPECT_THROW(f(arg1_v), std::domain_error);
   } else {
     EXPECT_TRUE(stan::math::is_nan(f(arg1_v).val_));
-    EXPECT_TRUE(stan::math::is_nan(f(arg1_v).d_));
   }
 }
 
@@ -28,9 +27,6 @@ void test_nan_ffd(const F& f, const double& arg1, const bool& throws) {
     EXPECT_THROW(f(arg1_v), std::domain_error);
   } else {
     EXPECT_TRUE(stan::math::is_nan(f(arg1_v).val_.val_));
-    EXPECT_TRUE(stan::math::is_nan(f(arg1_v).val_.d_));
-    EXPECT_TRUE(stan::math::is_nan(f(arg1_v).d_.val_));
-    EXPECT_TRUE(stan::math::is_nan(f(arg1_v).d_.d_));
   }
 }
 
@@ -67,9 +63,6 @@ void test_nan_fd(const F& f, const double& arg1, const double& arg2,
     EXPECT_TRUE(stan::math::is_nan(f(arg1_v, arg2_v).val_)) << fail_msg1.str();
     EXPECT_TRUE(stan::math::is_nan(f(arg1_v, arg2).val_)) << fail_msg2.str();
     EXPECT_TRUE(stan::math::is_nan(f(arg1, arg2_v).val_)) << fail_msg3.str();
-    EXPECT_TRUE(stan::math::is_nan(f(arg1_v, arg2_v).d_)) << fail_msg1.str();
-    EXPECT_TRUE(stan::math::is_nan(f(arg1_v, arg2).d_)) << fail_msg2.str();
-    EXPECT_TRUE(stan::math::is_nan(f(arg1, arg2_v).d_)) << fail_msg3.str();
   }
 }
 
@@ -110,17 +103,6 @@ void test_nan_ffd(const F& f, const double& arg1, const double& arg2,
         << fail_msg2.str();
     EXPECT_TRUE(stan::math::is_nan(f(arg1, arg2_v).val_.val_))
         << fail_msg3.str();
-    EXPECT_TRUE(stan::math::is_nan(f(arg1_v, arg2_v).val_.d_))
-        << fail_msg1.str();
-    EXPECT_TRUE(stan::math::is_nan(f(arg1_v, arg2).val_.d_)) << fail_msg2.str();
-    EXPECT_TRUE(stan::math::is_nan(f(arg1, arg2_v).val_.d_)) << fail_msg3.str();
-    EXPECT_TRUE(stan::math::is_nan(f(arg1_v, arg2_v).d_.val_))
-        << fail_msg1.str();
-    EXPECT_TRUE(stan::math::is_nan(f(arg1_v, arg2).d_.val_)) << fail_msg2.str();
-    EXPECT_TRUE(stan::math::is_nan(f(arg1, arg2_v).d_.val_)) << fail_msg3.str();
-    EXPECT_TRUE(stan::math::is_nan(f(arg1_v, arg2_v).d_.d_)) << fail_msg1.str();
-    EXPECT_TRUE(stan::math::is_nan(f(arg1_v, arg2).d_.d_)) << fail_msg2.str();
-    EXPECT_TRUE(stan::math::is_nan(f(arg1, arg2_v).d_.d_)) << fail_msg3.str();
   }
 }
 
@@ -169,13 +151,6 @@ void test_nan_fd(const F& f, const double& arg1, const double& arg2,
     EXPECT_TRUE(isnan(f(arg1, arg2, arg3_v).val_)) << fail_msg.str();
     EXPECT_TRUE(isnan(f(arg1, arg2_v, arg3).val_)) << fail_msg.str();
     EXPECT_TRUE(isnan(f(arg1_v, arg2, arg3).val_)) << fail_msg.str();
-    EXPECT_TRUE(isnan(f(arg1_v, arg2_v, arg3_v).d_)) << fail_msg.str();
-    EXPECT_TRUE(isnan(f(arg1, arg2_v, arg3_v).d_)) << fail_msg.str();
-    EXPECT_TRUE(isnan(f(arg1_v, arg2, arg3_v).d_)) << fail_msg.str();
-    EXPECT_TRUE(isnan(f(arg1_v, arg2_v, arg3).d_)) << fail_msg.str();
-    EXPECT_TRUE(isnan(f(arg1, arg2, arg3_v).d_)) << fail_msg.str();
-    EXPECT_TRUE(isnan(f(arg1, arg2_v, arg3).d_)) << fail_msg.str();
-    EXPECT_TRUE(isnan(f(arg1_v, arg2, arg3).d_)) << fail_msg.str();
   }
 }
 template <typename F>
@@ -215,27 +190,6 @@ void test_nan_ffd(const F& f, const double& arg1, const double& arg2,
     EXPECT_TRUE(isnan(f(arg1, arg2, arg3_v).val_.val_)) << fail_msg.str();
     EXPECT_TRUE(isnan(f(arg1, arg2_v, arg3).val_.val_)) << fail_msg.str();
     EXPECT_TRUE(isnan(f(arg1_v, arg2, arg3).val_.val_)) << fail_msg.str();
-    EXPECT_TRUE(isnan(f(arg1_v, arg2_v, arg3_v).val_.d_)) << fail_msg.str();
-    EXPECT_TRUE(isnan(f(arg1, arg2_v, arg3_v).val_.d_)) << fail_msg.str();
-    EXPECT_TRUE(isnan(f(arg1_v, arg2, arg3_v).val_.d_)) << fail_msg.str();
-    EXPECT_TRUE(isnan(f(arg1_v, arg2_v, arg3).val_.d_)) << fail_msg.str();
-    EXPECT_TRUE(isnan(f(arg1, arg2, arg3_v).val_.d_)) << fail_msg.str();
-    EXPECT_TRUE(isnan(f(arg1, arg2_v, arg3).val_.d_)) << fail_msg.str();
-    EXPECT_TRUE(isnan(f(arg1_v, arg2, arg3).val_.d_)) << fail_msg.str();
-    EXPECT_TRUE(isnan(f(arg1_v, arg2_v, arg3_v).d_.val_)) << fail_msg.str();
-    EXPECT_TRUE(isnan(f(arg1, arg2_v, arg3_v).d_.val_)) << fail_msg.str();
-    EXPECT_TRUE(isnan(f(arg1_v, arg2, arg3_v).d_.val_)) << fail_msg.str();
-    EXPECT_TRUE(isnan(f(arg1_v, arg2_v, arg3).d_.val_)) << fail_msg.str();
-    EXPECT_TRUE(isnan(f(arg1, arg2, arg3_v).d_.val_)) << fail_msg.str();
-    EXPECT_TRUE(isnan(f(arg1, arg2_v, arg3).d_.val_)) << fail_msg.str();
-    EXPECT_TRUE(isnan(f(arg1_v, arg2, arg3).d_.val_)) << fail_msg.str();
-    EXPECT_TRUE(isnan(f(arg1_v, arg2_v, arg3_v).d_.d_)) << fail_msg.str();
-    EXPECT_TRUE(isnan(f(arg1, arg2_v, arg3_v).d_.d_)) << fail_msg.str();
-    EXPECT_TRUE(isnan(f(arg1_v, arg2, arg3_v).d_.d_)) << fail_msg.str();
-    EXPECT_TRUE(isnan(f(arg1_v, arg2_v, arg3).d_.d_)) << fail_msg.str();
-    EXPECT_TRUE(isnan(f(arg1, arg2, arg3_v).d_.d_)) << fail_msg.str();
-    EXPECT_TRUE(isnan(f(arg1, arg2_v, arg3).d_.d_)) << fail_msg.str();
-    EXPECT_TRUE(isnan(f(arg1_v, arg2, arg3).d_.d_)) << fail_msg.str();
   }
 }
 template <typename F>
