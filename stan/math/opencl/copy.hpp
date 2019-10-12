@@ -25,37 +25,64 @@
 
 namespace stan {
 namespace math {
+namespace internal {
+/**
+ * Internal function used to write to the buffer of a matrix_cl
+ * when the input matrix is a non-rvalue Eigen Matrix.
+ * @tparam Mat type of the input Eigen matrix
+ * @tparam T type of the elements in matrix_cl
+ * @param dst matrix_cl in which to copy the data
+ * @param src source Eigen Matrix
+ */
+template <typename Mat, typename T, std::enable_if_t<is_eigen_matrix<Mat>::value>...>
+inline void write_buffer(matrix_cl<T>& dst, Mat&& src) {
+  cl::Event transfer_event;
+  cl::CommandQueue& queue = opencl_context.queue();
+  queue.enqueueWriteBuffer(dst.buffer(), std::is_rvalue_reference<decltype(src)>::value, 0,
+                           sizeof(T) * src.size(), src.data(), nullptr,
+                           &transfer_event);
+  dst.add_write_event(transfer_event);
+}
+
+/**
+ * Internal function used to write to the buffer of a matrix_cl
+ * when the input matrix is of type Eigen but not an Eigen Matrix
+ * or is an rvalue.
+ * 
+ * @tparam Mat input Eigen type
+ * @tparam T type of the elements in matrix_cl
+ * @param dst matrix_cl in which to copy the data
+ * @param src source Eigen expression
+ */
+template <typename Mat, typename T,
+          std::enable_if_t<!is_eigen_matrix<Mat>::value
+                           || std::is_rvalue_reference<Mat>::value>...>
+inline void write_buffer(matrix_cl<T>& dst, Mat&& src) {
+  cl::Event transfer_event;
+  cl::CommandQueue& queue = opencl_context.queue();
+  queue.enqueueWriteBuffer(dst.buffer(), CL_TRUE, 0,
+                           sizeof(T) * src.size(), src.eval().data(), nullptr,
+                           &transfer_event);
+  dst.add_write_event(transfer_event);
+}
+}
 
 /**
  * Copies the source Eigen matrix to
  * the destination matrix that is stored
  * on the OpenCL device.
  *
- * @tparam R Compile time rows of the Eigen matrix
- * @tparam C Compile time columns of the Eigen matrix
  * @param src source Eigen matrix
  * @return matrix_cl with a copy of the data in the source matrix
  */
-template <typename T, int R, int C, typename = require_arithmetic_t<T>>
-inline matrix_cl<T> to_matrix_cl(const Eigen::Matrix<T, R, C>& src) {
-  matrix_cl<T> dst(src.rows(), src.cols());
+template <typename Mat, typename Mat_scalar = scalar_type_t<Mat>, require_eigen_t<Mat>...>
+inline matrix_cl<Mat_scalar> to_matrix_cl(Mat&& src) {
+  matrix_cl<Mat_scalar> dst(src.rows(), src.cols());
   if (src.size() == 0) {
     return dst;
   }
   try {
-    /**
-     * Writes the contents of src to the OpenCL buffer
-     * starting at the offset 0
-     * CL_FALSE denotes that the call is non-blocking
-     * This means that future kernels need to know about the copy_event
-     * So that they do not execute until this transfer finishes.
-     */
-    cl::Event copy_event;
-    const cl::CommandQueue& queue = opencl_context.queue();
-    queue.enqueueWriteBuffer(dst.buffer(), opencl_context.in_order(), 0,
-                             sizeof(T) * dst.size(), src.data(),
-                             &dst.write_events(), &copy_event);
-    dst.add_write_event(copy_event);
+    internal::write_buffer(dst, std::forward<Mat>(src));    
   } catch (const cl::Error& e) {
     check_opencl_error("copy Eigen->(OpenCL)", e);
   }
@@ -238,15 +265,48 @@ inline T from_matrix_cl_error_code(const matrix_cl<T>& src) {
   return dst;
 }
 
+
+// /**
+//    * Construct from \c std::vector with given rows and columns
+//    *
+//    * @param A Standard vector
+//    * @param R Number of rows the matrix should have.
+//    * @param C Number of columns the matrix should have.
+//    * @param partial_view which part of the matrix is used
+//    * @throw <code>std::system_error</code> if the
+//    * matrices do not have matching dimensions
+//    */
+//   template <typename Vec, require_std_vector_t<Vec>...,
+//             require_same_vt<Vec, T>...>
+//   explicit matrix_cl(Vec&& A, const int& R, const int& C,
+//                      matrix_cl_view partial_view = matrix_cl_view::Entire)
+//       : rows_(R), cols_(C), view_(partial_view) {
+//     if (size() == 0) {
+//       return;
+//     }
+//     cl::Context& ctx = opencl_context.context();
+//     cl::CommandQueue& queue = opencl_context.queue();
+//     try {
+//       buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
+//       cl::Event transfer_event;
+//       queue.enqueueWriteBuffer(buffer_cl_, std::is_rvalue_reference<decltype(A)>::value, 0,
+//                                sizeof(T) * A.size(), A.data(), nullptr,
+//                                &transfer_event);
+//       this->add_write_event(transfer_event);
+//     } catch (const cl::Error& e) {
+//       check_opencl_error("matrix constructor", e);
+//     }
+//   }
+
 /**
  * Copy an arithmetic type to the device.
  * @tparam T An arithmetic type to pass the value from the OpenCL matrix to.
  * @param src Arithmetic to receive the matrix_cl value.
  * @return A 1x1 matrix on the device.
  */
-template <typename T, typename = require_arithmetic_t<T>>
-inline matrix_cl<T> to_matrix_cl(const T& src) {
-  matrix_cl<T> dst(1, 1);
+template <typename T, typename = require_arithmetic_t<std::decay_t<T>>>
+inline matrix_cl<std::decay_t<T>> to_matrix_cl(T&& src) {
+  matrix_cl<std::decay_t<T>> dst(1, 1);
   check_size_match("to_matrix_cl ((OpenCL) -> (OpenCL))", "src.rows()",
                    dst.rows(), "dst.rows()", 1);
   check_size_match("to_matrix_cl ((OpenCL) -> (OpenCL))", "src.cols()",
@@ -254,8 +314,8 @@ inline matrix_cl<T> to_matrix_cl(const T& src) {
   try {
     cl::Event copy_event;
     const cl::CommandQueue queue = opencl_context.queue();
-    queue.enqueueWriteBuffer(dst.buffer(), opencl_context.in_order(), 0,
-                             sizeof(T), &src, &dst.write_events(), &copy_event);
+    queue.enqueueWriteBuffer(dst.buffer(), std::is_rvalue_reference<decltype(src)>::value, 0,
+                             sizeof(std::decay_t<T>), &src, &dst.write_events(), &copy_event);
     dst.add_write_event(copy_event);
   } catch (const cl::Error& e) {
     check_opencl_error("to_matrix_cl (OpenCL)->(OpenCL)", e);
