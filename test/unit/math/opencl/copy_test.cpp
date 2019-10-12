@@ -46,7 +46,8 @@ TEST(MathMatrixGPU, copy_destroyed_constructor_eval) {
   int N = 100;
   MatrixXd a = MatrixXd::Random(N, N);
   MatrixXd b = MatrixXd::Random(N, N);
-  matrix_cl<double> c_cl((a + b).eval());  // the problem, this case with .eval()
+  matrix_cl<double> c_cl(
+      (a + b).eval());  // the problem, this case with .eval()
   // attempt to scramble the memory that was used by the temporary
   MatrixXd w = a - b;
 
@@ -104,7 +105,8 @@ TEST(MathMatrixGPU, copy_destroyed_to_matrix_cl2) {
   int N = 100;
   MatrixXd a = MatrixXd::Random(N, N);
   MatrixXd b = MatrixXd::Random(N, N);
-  matrix_cl<double> c_cl = stan::math::to_matrix_cl((a + b).eval());  // the problem
+  matrix_cl<double> c_cl
+      = stan::math::to_matrix_cl((a + b).eval());  // the problem
   // attempt to scramble the memory that was used by the temporary
   MatrixXd w = a - b;
 
@@ -134,9 +136,10 @@ TEST(MathMatrixGPU, copy_destroyed_to_matrix_cl_scalar) {
   double b = 2.0;
   double c = 3.0;
   double d = 4.0;
-  matrix_cl<double> c_cl = stan::math::to_matrix_cl(a + b + c + d);  // the problem
+  matrix_cl<double> c_cl
+      = stan::math::to_matrix_cl(a + b + c + d);  // the problem
   // attempt to scramble the memory that was used by the temporary
-  double f = a - b - c -d;
+  double f = a - b - c - d;
 
   // make compiler think a and b were changed, so second sum can not be
   // optimized away
@@ -163,7 +166,7 @@ TEST(MathMatrixGPU, copy_destroyed_constructor_scalar) {
   double d = 4.0;
   matrix_cl<double> c_cl(a + b + c + d);  // the problem
   // attempt to scramble the memory that was used by the temporary
-  double f = a - b - c -d;
+  double f = a - b - c - d;
 
   // make compiler think a and b were changed, so second sum can not be
   // optimized away
@@ -183,9 +186,10 @@ TEST(MathMatrixGPU, copy_destroyed) {
   using stan::math::from_matrix_cl;
   using stan::math::matrix_cl;
 
-  matrix_cl<double> c_cl(std::vector<double>({1,2,3,4,5,6}), 2, 3);  // the problem
-  
-  std::vector<int> correct {1,2,3,4,5,6};
+  matrix_cl<double> c_cl(std::vector<double>({1, 2, 3, 4, 5, 6}), 2,
+                         3);  // the problem
+
+  std::vector<int> correct{1, 2, 3, 4, 5, 6};
   MatrixXd result = from_matrix_cl(c_cl);
   for (int i = 0; i < correct.size(); i++) {
     EXPECT_EQ(result(i), correct[i]);

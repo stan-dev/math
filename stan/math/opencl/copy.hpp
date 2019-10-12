@@ -34,13 +34,14 @@ namespace internal {
  * @param dst matrix_cl in which to copy the data
  * @param src source Eigen Matrix
  */
-template <typename Mat, typename T, std::enable_if_t<is_eigen_matrix<Mat>::value>...>
+template <typename Mat, typename T,
+          std::enable_if_t<is_eigen_matrix<Mat>::value>...>
 inline void write_buffer(matrix_cl<T>& dst, Mat&& src) {
   cl::Event transfer_event;
   cl::CommandQueue& queue = opencl_context.queue();
-  queue.enqueueWriteBuffer(dst.buffer(), std::is_rvalue_reference<decltype(src)>::value, 0,
-                           sizeof(T) * src.size(), src.data(), nullptr,
-                           &transfer_event);
+  queue.enqueueWriteBuffer(
+      dst.buffer(), std::is_rvalue_reference<decltype(src)>::value, 0,
+      sizeof(T) * src.size(), src.data(), nullptr, &transfer_event);
   dst.add_write_event(transfer_event);
 }
 
@@ -48,7 +49,7 @@ inline void write_buffer(matrix_cl<T>& dst, Mat&& src) {
  * Internal function used to write to the buffer of a matrix_cl
  * when the input matrix is of type Eigen but not an Eigen Matrix
  * or is an rvalue.
- * 
+ *
  * @tparam Mat input Eigen type
  * @tparam T type of the elements in matrix_cl
  * @param dst matrix_cl in which to copy the data
@@ -60,12 +61,11 @@ template <typename Mat, typename T,
 inline void write_buffer(matrix_cl<T>& dst, Mat&& src) {
   cl::Event transfer_event;
   cl::CommandQueue& queue = opencl_context.queue();
-  queue.enqueueWriteBuffer(dst.buffer(), CL_TRUE, 0,
-                           sizeof(T) * src.size(), src.eval().data(), nullptr,
-                           &transfer_event);
+  queue.enqueueWriteBuffer(dst.buffer(), CL_TRUE, 0, sizeof(T) * src.size(),
+                           src.eval().data(), nullptr, &transfer_event);
   dst.add_write_event(transfer_event);
 }
-}
+}  // namespace internal
 
 /**
  * Copies the source Eigen matrix to
@@ -75,14 +75,15 @@ inline void write_buffer(matrix_cl<T>& dst, Mat&& src) {
  * @param src source Eigen matrix
  * @return matrix_cl with a copy of the data in the source matrix
  */
-template <typename Mat, typename Mat_scalar = scalar_type_t<Mat>, require_eigen_t<Mat>...>
+template <typename Mat, typename Mat_scalar = scalar_type_t<Mat>,
+          require_eigen_t<Mat>...>
 inline matrix_cl<Mat_scalar> to_matrix_cl(Mat&& src) {
   matrix_cl<Mat_scalar> dst(src.rows(), src.cols());
   if (src.size() == 0) {
     return dst;
   }
   try {
-    internal::write_buffer(dst, std::forward<Mat>(src));    
+    internal::write_buffer(dst, std::forward<Mat>(src));
   } catch (const cl::Error& e) {
     check_opencl_error("copy Eigen->(OpenCL)", e);
   }
@@ -265,7 +266,6 @@ inline T from_matrix_cl_error_code(const matrix_cl<T>& src) {
   return dst;
 }
 
-
 // /**
 //    * Construct from \c std::vector with given rows and columns
 //    *
@@ -289,7 +289,8 @@ inline T from_matrix_cl_error_code(const matrix_cl<T>& src) {
 //     try {
 //       buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
 //       cl::Event transfer_event;
-//       queue.enqueueWriteBuffer(buffer_cl_, std::is_rvalue_reference<decltype(A)>::value, 0,
+//       queue.enqueueWriteBuffer(buffer_cl_,
+//       std::is_rvalue_reference<decltype(A)>::value, 0,
 //                                sizeof(T) * A.size(), A.data(), nullptr,
 //                                &transfer_event);
 //       this->add_write_event(transfer_event);
@@ -314,8 +315,9 @@ inline matrix_cl<std::decay_t<T>> to_matrix_cl(T&& src) {
   try {
     cl::Event copy_event;
     const cl::CommandQueue queue = opencl_context.queue();
-    queue.enqueueWriteBuffer(dst.buffer(), std::is_rvalue_reference<decltype(src)>::value, 0,
-                             sizeof(std::decay_t<T>), &src, &dst.write_events(), &copy_event);
+    queue.enqueueWriteBuffer(
+        dst.buffer(), std::is_rvalue_reference<decltype(src)>::value, 0,
+        sizeof(std::decay_t<T>), &src, &dst.write_events(), &copy_event);
     dst.add_write_event(copy_event);
   } catch (const cl::Error& e) {
     check_opencl_error("to_matrix_cl (OpenCL)->(OpenCL)", e);

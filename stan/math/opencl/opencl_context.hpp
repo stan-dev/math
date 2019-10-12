@@ -146,7 +146,7 @@ class opencl_context_base {
   std::string device_name_;          // The name of OpenCL device
   size_t max_thread_block_size_;  // The maximum size of a block of workers on
                                   // the device
-  bool in_order_;            // Whether to use out of order execution.
+  bool in_order_;                 // Whether to use out of order execution.
   // Holds Default parameter values for each Kernel.
   using map_base_opts = std::map<std::string, int>;
   map_base_opts base_opts_
