@@ -1,13 +1,6 @@
 #ifdef STAN_OPENCL
 #include <stan/math/prim/mat.hpp>
-#include <stan/math/opencl/copy.hpp>
-#include <stan/math/opencl/cholesky_decompose.hpp>
-#include <stan/math/opencl/opencl_context.hpp>
-#include <stan/math/prim/mat/fun/cholesky_decompose.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/err/check_pos_definite.hpp>
-#include <stan/math/prim/mat/err/check_square.hpp>
-#include <stan/math/prim/mat/err/check_symmetric.hpp>
+#include <stan/math/opencl/opencl.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
 #include <vector>
@@ -29,8 +22,8 @@ TEST(MathMatrix, cholesky_decompose_cpu_vs_cl_small) {
   stan::math::matrix_d m0_res = stan::math::cholesky_decompose(m0);
   stan::math::matrix_d m1_res = stan::math::cholesky_decompose(m1);
 
-  cholesky_decompose(m0_cl);
-  cholesky_decompose(m1_cl);
+  stan::math::opencl::cholesky_decompose(m0_cl);
+  stan::math::opencl::cholesky_decompose(m1_cl);
 
   m0 = stan::math::from_matrix_cl(m0_cl);
   m1 = stan::math::from_matrix_cl(m1_cl);
@@ -104,5 +97,4 @@ TEST(MathMatrix, cholesky_decompose_big_tuning_opts) {
     cholesky_decompose_test(128 * 4 - 1);
   }
 }
-
 #endif

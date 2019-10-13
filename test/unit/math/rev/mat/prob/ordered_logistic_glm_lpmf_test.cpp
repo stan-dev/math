@@ -210,7 +210,34 @@ TEST(ProbDistributionsOrderedLogisticGLM,
 }
 
 TEST(ProbDistributionsOrderedLogisticGLM,
-     glm_matches_ordered_logistic_no_attributes) {
+     glm_matches_ordered_logistic_zero_instances) {
+  double eps = 1e-13;
+  int N = 0;
+  int M = 2;
+  int C = 3;
+  vector<int> y{};
+  Matrix<var, Dynamic, 1> cuts1(C), cuts2(C);
+  cuts1 << 0.9, 1.1, 7;
+  cuts2 << 0.9, 1.1, 7;
+  Matrix<var, Dynamic, 1> beta1(M), beta2(M);
+  beta1 << 1.1, 0.4;
+  beta2 << 1.1, 0.4;
+  Matrix<var, Dynamic, Dynamic> x1(N, M), x2(N, M);
+  var res1 = ordered_logistic_glm_lpmf(y, x1, beta1, cuts1);
+  var res2 = ordered_logistic_glm_simple_lpmf<false>(y, x2, beta2, cuts2);
+  (res1 + res2).grad();
+
+  EXPECT_NEAR(res1.val(), res2.val(), eps);
+  for (int i = 0; i < M; i++) {
+    EXPECT_NEAR(beta1[i].adj(), beta2[i].adj(), eps);
+  }
+  for (int i = 0; i < C; i++) {
+    EXPECT_NEAR(cuts1[i].adj(), cuts2[i].adj(), eps);
+  }
+}
+
+TEST(ProbDistributionsOrderedLogisticGLM,
+     glm_matches_ordered_logistic_zero_attributes) {
   double eps = 1e-13;
   int N = 5;
   int M = 0;
