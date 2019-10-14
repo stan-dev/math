@@ -391,7 +391,6 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     if (size() == 0) {
       return;
     }
-    std::cout << "T" << std::endl;
     cl::Context& ctx = opencl_context.context();
     cl::CommandQueue& queue = opencl_context.queue();
     try {
