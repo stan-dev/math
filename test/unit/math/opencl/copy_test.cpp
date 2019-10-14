@@ -143,8 +143,8 @@ TEST(MathMatrixGPU, std_vector_copy_destroyed_to_matrix_cl) {
   using stan::math::from_matrix_cl;
   using stan::math::matrix_cl;
 
-  matrix_cl<double> c_cl = stan::math::to_matrix_cl(std::vector<double>({1, 2, 3, 4, 5, 6}), 2,
-                         3);  // the problem
+  matrix_cl<double> c_cl = stan::math::to_matrix_cl(
+      std::vector<double>({1, 2, 3, 4, 5, 6}));  // the problem
 
   std::vector<int> correct{1, 2, 3, 4, 5, 6};
   MatrixXd result = from_matrix_cl(c_cl);
@@ -177,14 +177,14 @@ TEST(MathMatrixGPU, matrix_cl_vector_copy) {
 }
 
 TEST(MathMatrixGPU, matrix_cl_std_vector_copy) {
-  std::vector<double> d1_cpu{ 10.0, 20.0, 30.0 };
+  std::vector<double> d1_cpu{10.0, 20.0, 30.0};
   std::vector<double> d_empty;
   stan::math::matrix_d d1_cpu_ret;
 
   stan::math::matrix_cl<double> d11_cl = stan::math::to_matrix_cl(d1_cpu);
   stan::math::matrix_cl<double> d_empty_cl;
   EXPECT_NO_THROW(d_empty_cl = stan::math::to_matrix_cl(d_empty));
-  EXPECT_NO_THROW(d1_cpu_ret= stan::math::from_matrix_cl(d11_cl));
+  EXPECT_NO_THROW(d1_cpu_ret = stan::math::from_matrix_cl(d11_cl));
   EXPECT_EQ(10.0, d1_cpu_ret(0));
   EXPECT_EQ(20.0, d1_cpu_ret(1));
   EXPECT_EQ(30.0, d1_cpu_ret(2));
