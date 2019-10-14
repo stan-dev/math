@@ -297,27 +297,6 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     }
   }
 
-  template <typename Mat, std::enable_if_t<is_eigen_matrix<Mat>::value>...>
-  inline void write_buffer_(Mat&& A) {
-    cl::Event transfer_event;
-    cl::CommandQueue& queue = opencl_context.queue();
-    queue.enqueueWriteBuffer(
-        this->buffer_cl_, std::is_rvalue_reference<decltype(A)>::value, 0,
-        sizeof(T) * A.size(), A.data(), nullptr, &transfer_event);
-    this->add_write_event(transfer_event);
-  }
-
-  template <typename Mat,
-            std::enable_if_t<!is_eigen_matrix<Mat>::value
-                             || std::is_rvalue_reference<Mat>::value>...>
-  inline void write_buffer_(Mat&& A) {
-    cl::Event transfer_event;
-    cl::CommandQueue& queue = opencl_context.queue();
-    queue.enqueueWriteBuffer(this->buffer_cl_, CL_TRUE, 0, sizeof(T) * A.size(),
-                             A.eval().data(), nullptr, &transfer_event);
-    this->add_write_event(transfer_event);
-  }
-
   /**
    * Constructor for the matrix_cl that
    * creates a copy of the Eigen matrix on the OpenCL device.
@@ -340,7 +319,12 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     cl::Context& ctx = opencl_context.context();
     try {
       buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
-      write_buffer_(std::forward<Mat>(A));
+      cl::Event transfer_event;
+      cl::CommandQueue& queue = opencl_context.queue();
+      queue.enqueueWriteBuffer(
+          this->buffer_cl_, std::is_rvalue_reference<Mat&&>::value, 0,
+          sizeof(T) * A.size(), A.data(), nullptr, &transfer_event);
+      this->add_write_event(transfer_event);
     } catch (const cl::Error& e) {
       check_opencl_error("matrix constructor", e);
     }
@@ -354,7 +338,33 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * @param A the scalar
    * @param partial_view which part of the matrix is used
    */
-  explicit matrix_cl(T&& A,
+  explicit matrix_cl(const T& A,
+                     matrix_cl_view partial_view = matrix_cl_view::Diagonal)
+      : rows_(1), cols_(1), view_(partial_view) {
+    cl::Context& ctx = opencl_context.context();
+    cl::CommandQueue& queue = opencl_context.queue();
+    try {
+      buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T));
+      cl::Event transfer_event;
+      queue.enqueueWriteBuffer(
+          buffer_cl_, opencl_context.in_order(), 0,
+          sizeof(T), &A, nullptr, &transfer_event);
+      this->add_write_event(transfer_event);
+    } catch (const cl::Error& e) {
+      check_opencl_error("matrix constructor", e);
+    }
+  }
+
+  /**
+   * Constructor for the matrix_cl that
+   * creates a copy of a rvalue reference
+   * of a scalar on the OpenCL device.
+   * Regardless of `partial_view`, whole matrix is stored.
+   *
+   * @param A the scalar
+   * @param partial_view which part of the matrix is used
+   */
+  explicit matrix_cl(const T&& A,
                      matrix_cl_view partial_view = matrix_cl_view::Diagonal)
       : rows_(1), cols_(1), view_(partial_view) {
     cl::Context& ctx = opencl_context.context();
@@ -363,13 +373,14 @@ class matrix_cl<T, require_arithmetic_t<T>> {
       buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(std::decay_t<T>));
       cl::Event transfer_event;
       queue.enqueueWriteBuffer(
-          buffer_cl_, std::is_rvalue_reference<decltype(A)>::value, 0,
+          buffer_cl_, std::is_rvalue_reference<T&&>::value, 0,
           sizeof(std::decay_t<T>), &A, nullptr, &transfer_event);
       this->add_write_event(transfer_event);
     } catch (const cl::Error& e) {
       check_opencl_error("matrix constructor", e);
     }
   }
+
   /**
    * Construct a matrix_cl of size Nx1 from \c std::vector
    *
@@ -394,7 +405,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
       buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
       cl::Event transfer_event;
       queue.enqueueWriteBuffer(
-          buffer_cl_, std::is_rvalue_reference<decltype(A)>::value, 0,
+          buffer_cl_, std::is_rvalue_reference<Vec&&>::value, 0,
           sizeof(T) * A.size(), A.data(), nullptr, &transfer_event);
       this->add_write_event(transfer_event);
     } catch (const cl::Error& e) {
@@ -426,7 +437,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
       buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
       cl::Event transfer_event;
       queue.enqueueWriteBuffer(
-          buffer_cl_, std::is_rvalue_reference<decltype(A)>::value, 0,
+          buffer_cl_, std::is_rvalue_reference<Vec&&>::value, 0,
           sizeof(T) * A.size(), A.data(), nullptr, &transfer_event);
       this->add_write_event(transfer_event);
     } catch (const cl::Error& e) {

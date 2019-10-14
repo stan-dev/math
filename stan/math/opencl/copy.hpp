@@ -25,48 +25,6 @@
 
 namespace stan {
 namespace math {
-namespace internal {
-/**
- * Internal function used to write to the buffer of a matrix_cl
- * when the input matrix is a non-rvalue Eigen Matrix.
- * @tparam Mat type of the input Eigen matrix
- * @tparam T type of the elements in matrix_cl
- * @param dst matrix_cl in which to copy the data
- * @param src source Eigen Matrix
- */
-template <typename Mat, typename T,
-          std::enable_if_t<is_eigen_matrix<Mat>::value>...>
-inline void write_buffer(matrix_cl<T>& dst, Mat&& src) {
-  cl::Event transfer_event;
-  cl::CommandQueue& queue = opencl_context.queue();
-  queue.enqueueWriteBuffer(
-      dst.buffer(), std::is_rvalue_reference<decltype(src)>::value, 0,
-      sizeof(T) * src.size(), src.data(), nullptr, &transfer_event);
-  dst.add_write_event(transfer_event);
-}
-
-/**
- * Internal function used to write to the buffer of a matrix_cl
- * when the input matrix is of type Eigen but not an Eigen Matrix
- * or is an rvalue.
- *
- * @tparam Mat input Eigen type
- * @tparam T type of the elements in matrix_cl
- * @param dst matrix_cl in which to copy the data
- * @param src source Eigen expression
- */
-template <typename Mat, typename T,
-          std::enable_if_t<!is_eigen_matrix<Mat>::value
-                           || std::is_rvalue_reference<Mat>::value>...>
-inline void write_buffer(matrix_cl<T>& dst, Mat&& src) {
-  cl::Event transfer_event;
-  cl::CommandQueue& queue = opencl_context.queue();
-  queue.enqueueWriteBuffer(dst.buffer(), CL_TRUE, 0, sizeof(T) * src.size(),
-                           src.eval().data(), nullptr, &transfer_event);
-  dst.add_write_event(transfer_event);
-}
-}  // namespace internal
-
 /**
  * Copies the source Eigen matrix to
  * the destination matrix that is stored
@@ -83,7 +41,40 @@ inline matrix_cl<Mat_scalar> to_matrix_cl(Mat&& src) {
     return dst;
   }
   try {
-    internal::write_buffer(dst, std::forward<Mat>(src));
+    cl::Event transfer_event;
+    cl::CommandQueue& queue = opencl_context.queue();
+    queue.enqueueWriteBuffer(
+        dst.buffer(), std::is_rvalue_reference<Mat_scalar&&>::value, 0,
+        sizeof(Mat_scalar) * src.size(), src.data(), nullptr, &transfer_event);
+    dst.add_write_event(transfer_event);
+  } catch (const cl::Error& e) {
+    check_opencl_error("copy Eigen->(OpenCL)", e);
+  }
+  return dst;
+}
+
+/**
+ * Copies the source std::vector to
+ * the destination matrix that is stored
+ * on the OpenCL device.
+ *
+ * @param src source std::vector
+ * @return matrix_cl with a copy of the data in the source matrix
+ */
+template <typename Vec, typename Vec_scalar = scalar_type_t<Vec>,
+          require_std_vector_t<Vec>...>
+inline matrix_cl<Vec_scalar> to_matrix_cl(Vec&& src) {
+  matrix_cl<Vec_scalar> dst(src.size(), 1);
+  if (src.size() == 0) {
+    return dst;
+  }
+  try {
+    cl::Event transfer_event;
+    cl::CommandQueue& queue = opencl_context.queue();
+    queue.enqueueWriteBuffer(
+        dst.buffer(), std::is_rvalue_reference<Vec_scalar&&>::value, 0,
+        sizeof(Vec_scalar) * src.size(), src.data(), nullptr, &transfer_event);
+    dst.add_write_event(transfer_event);
   } catch (const cl::Error& e) {
     check_opencl_error("copy Eigen->(OpenCL)", e);
   }
