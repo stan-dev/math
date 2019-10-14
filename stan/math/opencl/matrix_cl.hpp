@@ -371,7 +371,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
             require_same_vt<Vec, T>...>
   explicit matrix_cl(Vec&& A,
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
-      : matrix_cl(A, A.size(), 1) {}
+      : matrix_cl(std::forward<Vec>(A), A.size(), 1) {}
 
   /**
    * Construct from \c std::vector with given rows and columns
@@ -391,6 +391,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     if (size() == 0) {
       return;
     }
+    std::cout << "T" << std::endl;
     cl::Context& ctx = opencl_context.context();
     cl::CommandQueue& queue = opencl_context.queue();
     try {
@@ -398,7 +399,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
       cl::Event transfer_event;
       queue.enqueueWriteBuffer(
           buffer_cl_,
-          opencl_context.in_order() || std::is_rvalue_reference<Vec&&>::value,
+          std::is_rvalue_reference<Vec&&>::value,
           0, sizeof(T) * A.size(), A.data(), nullptr, &transfer_event);
       this->add_write_event(transfer_event);
     } catch (const cl::Error& e) {

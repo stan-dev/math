@@ -221,7 +221,7 @@ inline matrix_cl<T> copy_cl(const matrix_cl<T>& src) {
   }
   try {
     /**
-     * Copies the contents of the src buffer to the dst buffer<
+     * Copies the contents of the src buffer to the dst buffer
      * see the matrix_cl(matrix_cl&) constructor
      *  for explanation
      */

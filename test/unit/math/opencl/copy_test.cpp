@@ -17,7 +17,7 @@ TEST(MathMatrixGPU, copy_destroyed_constructor) {
   int N = 100;
   MatrixXd a = MatrixXd::Random(N, N);
   MatrixXd b = MatrixXd::Random(N, N);
-  matrix_cl<double> c_cl(a + b);  // the problem, this case with .eval()
+  matrix_cl<double> c_cl(a + b);  // the problem
   // attempt to scramble the memory that was used by the temporary
   MatrixXd w = a - b;
 
