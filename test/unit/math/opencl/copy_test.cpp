@@ -190,6 +190,16 @@ TEST(MathMatrixGPU, matrix_cl_std_vector_copy) {
   EXPECT_EQ(30.0, d1_cpu_ret(2));
 }
 
+TEST(MathMatrixGPU, matrix_cl_packed_std_vector_copy_destroyed) {
+  stan::math::matrix_d d1_cpu_ret;
+
+  stan::math::matrix_cl<double> d11_cl = stan::math::packed_copy<stan::math::matrix_cl_view::Lower>(std::vector<double>({10.0, 20.0, 30.0}),2);
+  EXPECT_NO_THROW(d1_cpu_ret = stan::math::from_matrix_cl(d11_cl));
+  EXPECT_EQ(10.0, d1_cpu_ret(0));
+  EXPECT_EQ(20.0, d1_cpu_ret(1));
+  EXPECT_EQ(30.0, d1_cpu_ret(2));
+}
+
 TEST(MathMatrixCL, matrix_cl_matrix_copy) {
   stan::math::matrix_d d2_cpu;
   stan::math::matrix_d d2_a_cpu;
@@ -243,7 +253,7 @@ TEST(MathMatrixCL, matrix_cl_pack_unpack_copy_lower) {
     packed_mat[i] = i;
   }
   stan::math::matrix_d m_flat_cpu(size, size);
-  auto m_cl = stan::math::packed_copy<stan::math::matrix_cl_view::Lower>(
+  stan::math::matrix_cl<double> m_cl = stan::math::packed_copy<stan::math::matrix_cl_view::Lower>(
       packed_mat, size);
   m_flat_cpu = stan::math::from_matrix_cl(m_cl);
   size_t pos = 0;

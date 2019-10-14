@@ -168,22 +168,21 @@ inline std::vector<T> packed_copy(const matrix_cl<T>& src) {
  * size of the vector does not match the expected size
  * for the packed triangular matrix
  */
-template <matrix_cl_view matrix_view, typename T,
-          typename = require_arithmetic_t<T>>
-inline matrix_cl<T> packed_copy(const std::vector<T>& src, int rows) {
+template <matrix_cl_view matrix_view, typename Vec, typename Vec_scalar = scalar_type_t<Vec>, require_std_vector_t<Vec>...>
+inline matrix_cl<Vec_scalar> packed_copy(Vec&& src, int rows) {
   const int packed_size = rows * (rows + 1) / 2;
   check_size_match("copy (packed std::vector -> OpenCL)", "src.size()",
                    src.size(), "rows * (rows + 1) / 2", packed_size);
-  matrix_cl<T> dst(rows, rows, matrix_view);
+  matrix_cl<Vec_scalar> dst(rows, rows, matrix_view);
   if (dst.size() == 0) {
     return dst;
   }
   try {
-    matrix_cl<T> packed(packed_size, 1);
+    matrix_cl<Vec_scalar> packed(packed_size, 1);
     cl::Event packed_event;
     const cl::CommandQueue queue = opencl_context.queue();
     queue.enqueueWriteBuffer(packed.buffer(), opencl_context.in_order(), 0,
-                             sizeof(T) * packed_size, src.data(), nullptr,
+                             sizeof(Vec_scalar) * packed_size, src.data(), nullptr,
                              &packed_event);
     packed.add_write_event(packed_event);
     stan::math::opencl_kernels::unpack(cl::NDRange(dst.rows(), dst.rows()), dst,
@@ -257,39 +256,6 @@ inline T from_matrix_cl_error_code(const matrix_cl<T>& src) {
   return dst;
 }
 
-// /**
-//    * Construct from \c std::vector with given rows and columns
-//    *
-//    * @param A Standard vector
-//    * @param R Number of rows the matrix should have.
-//    * @param C Number of columns the matrix should have.
-//    * @param partial_view which part of the matrix is used
-//    * @throw <code>std::system_error</code> if the
-//    * matrices do not have matching dimensions
-//    */
-//   template <typename Vec, require_std_vector_t<Vec>...,
-//             require_same_vt<Vec, T>...>
-//   explicit matrix_cl(Vec&& A, const int& R, const int& C,
-//                      matrix_cl_view partial_view = matrix_cl_view::Entire)
-//       : rows_(R), cols_(C), view_(partial_view) {
-//     if (size() == 0) {
-//       return;
-//     }
-//     cl::Context& ctx = opencl_context.context();
-//     cl::CommandQueue& queue = opencl_context.queue();
-//     try {
-//       buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
-//       cl::Event transfer_event;
-//       queue.enqueueWriteBuffer(buffer_cl_,
-//       std::is_rvalue_reference<decltype(A)>::value, 0,
-//                                sizeof(T) * A.size(), A.data(), nullptr,
-//                                &transfer_event);
-//       this->add_write_event(transfer_event);
-//     } catch (const cl::Error& e) {
-//       check_opencl_error("matrix constructor", e);
-//     }
-//   }
-
 /**
  * Copy an arithmetic type to the device.
  * @tparam T An arithmetic type to pass the value from the OpenCL matrix to.
@@ -307,7 +273,7 @@ inline matrix_cl<std::decay_t<T>> to_matrix_cl(T&& src) {
     cl::Event copy_event;
     const cl::CommandQueue queue = opencl_context.queue();
     queue.enqueueWriteBuffer(
-        dst.buffer(), std::is_rvalue_reference<decltype(src)>::value, 0,
+        dst.buffer(), std::is_rvalue_reference<T&&>::value, 0,
         sizeof(std::decay_t<T>), &src, &dst.write_events(), &copy_event);
     dst.add_write_event(copy_event);
   } catch (const cl::Error& e) {
