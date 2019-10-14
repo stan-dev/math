@@ -44,8 +44,11 @@ inline matrix_cl<Mat_scalar> to_matrix_cl(Mat&& src) {
     cl::Event transfer_event;
     cl::CommandQueue& queue = opencl_context.queue();
     queue.enqueueWriteBuffer(
-        dst.buffer(), std::is_rvalue_reference<Mat_scalar&&>::value, 0,
-        sizeof(Mat_scalar) * src.size(), src.data(), nullptr, &transfer_event);
+        dst.buffer(),
+        opencl_context.in_order()
+            || std::is_rvalue_reference<Mat_scalar&&>::value,
+        0, sizeof(Mat_scalar) * src.size(), src.eval().data(), nullptr,
+        &transfer_event);
     dst.add_write_event(transfer_event);
   } catch (const cl::Error& e) {
     check_opencl_error("copy Eigen->(OpenCL)", e);
@@ -72,8 +75,11 @@ inline matrix_cl<Vec_scalar> to_matrix_cl(Vec&& src) {
     cl::Event transfer_event;
     cl::CommandQueue& queue = opencl_context.queue();
     queue.enqueueWriteBuffer(
-        dst.buffer(), std::is_rvalue_reference<Vec_scalar&&>::value, 0,
-        sizeof(Vec_scalar) * src.size(), src.data(), nullptr, &transfer_event);
+        dst.buffer(),
+        opencl_context.in_order()
+            || std::is_rvalue_reference<Vec_scalar&&>::value,
+        0, sizeof(Vec_scalar) * src.size(), src.data(), nullptr,
+        &transfer_event);
     dst.add_write_event(transfer_event);
   } catch (const cl::Error& e) {
     check_opencl_error("copy Eigen->(OpenCL)", e);
@@ -183,9 +189,10 @@ inline matrix_cl<Vec_scalar> packed_copy(Vec&& src, int rows) {
     matrix_cl<Vec_scalar> packed(packed_size, 1);
     cl::Event packed_event;
     const cl::CommandQueue queue = opencl_context.queue();
-    queue.enqueueWriteBuffer(packed.buffer(), opencl_context.in_order(), 0,
-                             sizeof(Vec_scalar) * packed_size, src.data(),
-                             nullptr, &packed_event);
+    queue.enqueueWriteBuffer(
+        packed.buffer(),
+        opencl_context.in_order() || std::is_rvalue_reference<Vec&&>::value, 0,
+        sizeof(Vec_scalar) * packed_size, src.data(), nullptr, &packed_event);
     packed.add_write_event(packed_event);
     stan::math::opencl_kernels::unpack(cl::NDRange(dst.rows(), dst.rows()), dst,
                                        packed, dst.rows(), dst.rows(),
@@ -214,7 +221,7 @@ inline matrix_cl<T> copy_cl(const matrix_cl<T>& src) {
   }
   try {
     /**
-     * Copies the contents of the src buffer to the dst buffer
+     * Copies the contents of the src buffer to the dst buffer<
      * see the matrix_cl(matrix_cl&) constructor
      *  for explanation
      */
@@ -274,9 +281,10 @@ inline matrix_cl<std::decay_t<T>> to_matrix_cl(T&& src) {
   try {
     cl::Event copy_event;
     const cl::CommandQueue queue = opencl_context.queue();
-    queue.enqueueWriteBuffer(dst.buffer(), std::is_rvalue_reference<T&&>::value,
-                             0, sizeof(std::decay_t<T>), &src,
-                             &dst.write_events(), &copy_event);
+    queue.enqueueWriteBuffer(
+        dst.buffer(),
+        opencl_context.in_order() || std::is_rvalue_reference<T&&>::value, 0,
+        sizeof(std::decay_t<T>), &src, &dst.write_events(), &copy_event);
     dst.add_write_event(copy_event);
   } catch (const cl::Error& e) {
     check_opencl_error("to_matrix_cl (OpenCL)->(OpenCL)", e);

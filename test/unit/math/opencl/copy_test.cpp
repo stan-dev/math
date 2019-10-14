@@ -8,6 +8,35 @@
 #include <algorithm>
 #include <vector>
 
+TEST(MathMatrixGPU, copy_destroyed_constructor) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using stan::math::from_matrix_cl;
+  using stan::math::matrix_cl;
+  int N = 100;
+  MatrixXd a = MatrixXd::Random(N, N);
+  MatrixXd b = MatrixXd::Random(N, N);
+  matrix_cl<double> c_cl(a + b);  // the problem, this case with .eval()
+  // attempt to scramble the memory that was used by the temporary
+  MatrixXd w = a - b;
+
+  // make compiler think a and b were changed, so second sum can not be
+  // optimized away
+  volatile int i = 19;
+  volatile double no_opt = a(i);
+  a(i) = no_opt;
+  no_opt = b(i);
+  b(i) = no_opt;
+
+  MatrixXd correct = a + b;
+  MatrixXd result = from_matrix_cl(c_cl);
+  for (int i = 0; i < N * N; i++) {
+    EXPECT_EQ(result(i), correct(i));
+  }
+  no_opt = w.array().sum();
+}
+
 TEST(MathMatrixGPU, copy_destroyed_constructor_eval) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -19,6 +48,36 @@ TEST(MathMatrixGPU, copy_destroyed_constructor_eval) {
   MatrixXd b = MatrixXd::Random(N, N);
   matrix_cl<double> c_cl(
       (a + b).eval());  // the problem, this case with .eval()
+  // attempt to scramble the memory that was used by the temporary
+  MatrixXd w = a - b;
+
+  // make compiler think a and b were changed, so second sum can not be
+  // optimized away
+  volatile int i = 19;
+  volatile double no_opt = a(i);
+  a(i) = no_opt;
+  no_opt = b(i);
+  b(i) = no_opt;
+
+  MatrixXd correct = a + b;
+  MatrixXd result = from_matrix_cl(c_cl);
+  for (int i = 0; i < N * N; i++) {
+    EXPECT_EQ(result(i), correct(i));
+  }
+  no_opt = w.array().sum();
+}
+
+TEST(MathMatrixGPU, copy_destroyed_to_matrix_cl) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using stan::math::from_matrix_cl;
+  using stan::math::matrix_cl;
+  int N = 100;
+  MatrixXd a = MatrixXd::Random(N, N);
+  MatrixXd b = MatrixXd::Random(N, N);
+  matrix_cl<double> c_cl
+      = stan::math::to_matrix_cl(a + b);  // the problem
   // attempt to scramble the memory that was used by the temporary
   MatrixXd w = a - b;
 
@@ -128,8 +187,7 @@ TEST(MathMatrixGPU, std_vector_copy_destroyed_constructor) {
   using stan::math::from_matrix_cl;
   using stan::math::matrix_cl;
 
-  matrix_cl<double> c_cl(std::vector<double>({1, 2, 3, 4, 5, 6}), 2,
-                         3);  // the problem
+  matrix_cl<double> c_cl(std::vector<double>({1, 2, 3, 4, 5, 6}));  // the problem
 
   std::vector<int> correct{1, 2, 3, 4, 5, 6};
   MatrixXd result = from_matrix_cl(c_cl);
@@ -197,9 +255,9 @@ TEST(MathMatrixGPU, matrix_cl_packed_std_vector_copy_destroyed) {
       = stan::math::packed_copy<stan::math::matrix_cl_view::Lower>(
           std::vector<double>({10.0, 20.0, 30.0}), 2);
   EXPECT_NO_THROW(d1_cpu_ret = stan::math::from_matrix_cl(d11_cl));
-  EXPECT_EQ(10.0, d1_cpu_ret(0));
-  EXPECT_EQ(20.0, d1_cpu_ret(1));
-  EXPECT_EQ(30.0, d1_cpu_ret(2));
+  EXPECT_EQ(10.0, d1_cpu_ret(0, 0));
+  EXPECT_EQ(20.0, d1_cpu_ret(1, 0));
+  EXPECT_EQ(30.0, d1_cpu_ret(1, 1));
 }
 
 TEST(MathMatrixCL, matrix_cl_matrix_copy) {
