@@ -62,7 +62,7 @@ categorical_logit_glm_lpmf(
   check_bounded(function, "categorical outcome out of support", y, 1,
                 N_classes);
 
-  if (size_zero(y, x, beta) || N_classes == 1) {
+  if (size_zero(y) || N_classes == 1) {
     return 0;
   }
 

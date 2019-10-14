@@ -96,7 +96,7 @@ neg_binomial_2_log_glm_lpmf(
   check_finite(function, "Intercept", alpha);
   check_positive_finite(function, "Precision parameter", phi);
 
-  if (size_zero(y, x, beta, phi)) {
+  if (size_zero(y, phi)) {
     return 0;
   }
 

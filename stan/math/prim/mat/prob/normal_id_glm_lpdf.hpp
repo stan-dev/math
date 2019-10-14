@@ -82,7 +82,7 @@ return_type_t<T_y, T_x_scalar, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   check_consistent_size(function, "Vector of intercepts", alpha, N_instances);
   check_positive_finite(function, "Scale vector", sigma);
 
-  if (size_zero(y, x, beta, sigma)) {
+  if (size_zero(y, sigma)) {
     return 0;
   }
 
