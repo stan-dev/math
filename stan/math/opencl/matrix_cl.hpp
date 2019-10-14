@@ -341,7 +341,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    */
   template <typename Scal,
             typename = require_same_t<T, std::remove_reference_t<Scal>>>
-  explicit matrix_cl(const Scal&& A,
+  explicit matrix_cl(Scal&& A,
                      matrix_cl_view partial_view = matrix_cl_view::Diagonal)
       : rows_(1), cols_(1), view_(partial_view) {
     cl::Context& ctx = opencl_context.context();
