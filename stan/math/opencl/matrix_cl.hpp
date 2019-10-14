@@ -339,7 +339,8 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * @param A the scalar
    * @param partial_view which part of the matrix is used
    */
-  template<typename Scal, typename = require_same_t<T,std::remove_reference_t<Scal>>>
+  template <typename Scal,
+            typename = require_same_t<T, std::remove_reference_t<Scal>>>
   explicit matrix_cl(const Scal&& A,
                      matrix_cl_view partial_view = matrix_cl_view::Diagonal)
       : rows_(1), cols_(1), view_(partial_view) {
@@ -370,7 +371,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
             require_same_vt<Vec, T>...>
   explicit matrix_cl(Vec&& A,
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
-     : matrix_cl(A, A.size(), 1) {}
+      : matrix_cl(A, A.size(), 1) {}
 
   /**
    * Construct from \c std::vector with given rows and columns

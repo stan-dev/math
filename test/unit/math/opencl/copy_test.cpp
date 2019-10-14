@@ -76,8 +76,7 @@ TEST(MathMatrixGPU, copy_destroyed_to_matrix_cl) {
   int N = 100;
   MatrixXd a = MatrixXd::Random(N, N);
   MatrixXd b = MatrixXd::Random(N, N);
-  matrix_cl<double> c_cl
-      = stan::math::to_matrix_cl(a + b);  // the problem
+  matrix_cl<double> c_cl = stan::math::to_matrix_cl(a + b);  // the problem
   // attempt to scramble the memory that was used by the temporary
   MatrixXd w = a - b;
 
@@ -187,7 +186,8 @@ TEST(MathMatrixGPU, std_vector_copy_destroyed_constructor) {
   using stan::math::from_matrix_cl;
   using stan::math::matrix_cl;
 
-  matrix_cl<double> c_cl(std::vector<double>({1, 2, 3, 4, 5, 6}));  // the problem
+  matrix_cl<double> c_cl(
+      std::vector<double>({1, 2, 3, 4, 5, 6}));  // the problem
 
   std::vector<int> correct{1, 2, 3, 4, 5, 6};
   MatrixXd result = from_matrix_cl(c_cl);
