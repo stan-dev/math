@@ -153,7 +153,6 @@ TEST(ProbDistributionsPoissonLogGLM, broadcast_y) {
   EXPECT_DOUBLE_EQ(alpha1.adj(), alpha2.adj());
 }
 
-
 TEST(ProbDistributionsPoissonLogGLM,
      glm_matches_poisson_log_vars_zero_instances) {
   vector<int> y{};
