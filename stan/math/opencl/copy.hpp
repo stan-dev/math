@@ -168,7 +168,9 @@ inline std::vector<T> packed_copy(const matrix_cl<T>& src) {
  * size of the vector does not match the expected size
  * for the packed triangular matrix
  */
-template <matrix_cl_view matrix_view, typename Vec, typename Vec_scalar = scalar_type_t<Vec>, require_std_vector_t<Vec>...>
+template <matrix_cl_view matrix_view, typename Vec,
+          typename Vec_scalar = scalar_type_t<Vec>,
+          require_std_vector_t<Vec>...>
 inline matrix_cl<Vec_scalar> packed_copy(Vec&& src, int rows) {
   const int packed_size = rows * (rows + 1) / 2;
   check_size_match("copy (packed std::vector -> OpenCL)", "src.size()",
@@ -182,8 +184,8 @@ inline matrix_cl<Vec_scalar> packed_copy(Vec&& src, int rows) {
     cl::Event packed_event;
     const cl::CommandQueue queue = opencl_context.queue();
     queue.enqueueWriteBuffer(packed.buffer(), opencl_context.in_order(), 0,
-                             sizeof(Vec_scalar) * packed_size, src.data(), nullptr,
-                             &packed_event);
+                             sizeof(Vec_scalar) * packed_size, src.data(),
+                             nullptr, &packed_event);
     packed.add_write_event(packed_event);
     stan::math::opencl_kernels::unpack(cl::NDRange(dst.rows(), dst.rows()), dst,
                                        packed, dst.rows(), dst.rows(),
@@ -272,9 +274,9 @@ inline matrix_cl<std::decay_t<T>> to_matrix_cl(T&& src) {
   try {
     cl::Event copy_event;
     const cl::CommandQueue queue = opencl_context.queue();
-    queue.enqueueWriteBuffer(
-        dst.buffer(), std::is_rvalue_reference<T&&>::value, 0,
-        sizeof(std::decay_t<T>), &src, &dst.write_events(), &copy_event);
+    queue.enqueueWriteBuffer(dst.buffer(), std::is_rvalue_reference<T&&>::value,
+                             0, sizeof(std::decay_t<T>), &src,
+                             &dst.write_events(), &copy_event);
     dst.add_write_event(copy_event);
   } catch (const cl::Error& e) {
     check_opencl_error("to_matrix_cl (OpenCL)->(OpenCL)", e);
