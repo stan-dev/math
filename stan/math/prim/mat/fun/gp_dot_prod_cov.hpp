@@ -128,10 +128,10 @@ gp_dot_prod_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  *   x is nan or infinite
  */
 template <typename T_x, typename T_sigma_squared>
-Eigen::Matrix<return_type_t<T_x, T_sigma_squared>, Eigen::Dynamic, Eigen::Dynamic>
-gp_dot_prod_cov(
-    const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
-    const T_sigma_squared &sigma_squared) {
+Eigen::Matrix<return_type_t<T_x, T_sigma_squared>, Eigen::Dynamic,
+              Eigen::Dynamic>
+gp_dot_prod_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
+                const T_sigma_squared &sigma_squared) {
   check_not_nan("gp_dot_prod_cov", "sigma_squared", sigma_squared);
   check_positive_finite("gp_dot_prod_cov", "sigma_squared", sigma_squared);
 
@@ -141,7 +141,8 @@ gp_dot_prod_cov(
     check_finite("gp_dot_prod_cov", "x", x[i]);
   }
 
-  Eigen::Matrix<return_type_t<T_x, T_sigma_squared>, Eigen::Dynamic, Eigen::Dynamic>
+  Eigen::Matrix<return_type_t<T_x, T_sigma_squared>, Eigen::Dynamic,
+                Eigen::Dynamic>
       cov(x_size, x_size);
   if (x_size == 0) {
     return cov;
@@ -184,10 +185,9 @@ gp_dot_prod_cov(
 template <typename T_x1, typename T_x2, typename T_sigma_squared>
 Eigen::Matrix<return_type_t<T_x1, T_x2, T_sigma_squared>, Eigen::Dynamic,
               Eigen::Dynamic>
-gp_dot_prod_cov(
-    const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
-    const std::vector<Eigen::Matrix<T_x2, Eigen::Dynamic, 1>> &x2,
-    const T_sigma_squared &sigma_squared) {
+gp_dot_prod_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
+                const std::vector<Eigen::Matrix<T_x2, Eigen::Dynamic, 1>> &x2,
+                const T_sigma_squared &sigma_squared) {
   check_not_nan("gp_dot_prod_cov", "sigma_squared", sigma_squared);
   check_positive_finite("gp_dot_prod_cov", "sigma_squared", sigma_squared);
 
