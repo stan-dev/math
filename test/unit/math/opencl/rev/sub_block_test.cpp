@@ -9,14 +9,16 @@
 #include <algorithm>
 
 TEST(MathMatrixCL, sub_block_pass_vari) {
+  using stan::math::matrix_cl;
   using stan::math::matrix_d;
   using stan::math::matrix_v;
-  using stan::math::var;
-  using stan::math::matrix_cl;
-  using stan::math::vari;
   using stan::math::matrix_vi;
-  vari** d1_vals(stan::math::ChainableStack::instance_->memalloc_.alloc_array<vari*>(9));
-  vari** d2_vals(stan::math::ChainableStack::instance_->memalloc_.alloc_array<vari*>(16));
+  using stan::math::var;
+  using stan::math::vari;
+  vari** d1_vals(
+      stan::math::ChainableStack::instance_->memalloc_.alloc_array<vari*>(9));
+  vari** d2_vals(
+      stan::math::ChainableStack::instance_->memalloc_.alloc_array<vari*>(16));
 
   for (int i = 0; i < 9; i++) {
     d1_vals[i] = new vari(i);

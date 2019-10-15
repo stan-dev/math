@@ -7,10 +7,10 @@
 #include <vector>
 
 TEST(MathMatrixCL, matrix_cl_var_creation) {
-  using stan::math::vector_v;
-  using stan::math::matrix_v;
   using stan::math::matrix_cl;
+  using stan::math::matrix_v;
   using stan::math::var;
+  using stan::math::vector_v;
   vector_v vec_1;
   matrix_v mat_1;
   matrix_v mat_2;

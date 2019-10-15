@@ -2,8 +2,8 @@
 #include <gtest/gtest.h>
 
 TEST(MetaTraits, VectorBuilderHelper_false_true) {
-  using stan::VectorBuilderHelper;
   using stan::length;
+  using stan::VectorBuilderHelper;
   using stan::math::var;
 
   var a_var(1);

@@ -49,9 +49,9 @@ inline matrix_cl<T> to_matrix_cl(const Eigen::Matrix<T, R, C>& src) try {
  * @param src source matrix on the OpenCL device
  * @return Eigen matrix with a copy of the data in the source matrix
  */
-template <int R = Eigen::Dynamic, int C = Eigen::Dynamic, typename T, require_var_t<T>...>
+template <int R = Eigen::Dynamic, int C = Eigen::Dynamic, typename T,
+          require_var_t<T>...>
 inline Eigen::Matrix<double, R, C> from_matrix_cl(const matrix_cl<T>& src) try {
-
   Eigen::Matrix<double, R, C> dst(src.rows(), src.cols());
   if (src.size() == 0) {
     return dst;
@@ -107,7 +107,9 @@ inline matrix_cl<var> packed_copy(vari** src, int rows) try {
   if (dst.size() == 0) {
     return dst;
   }
-  const Eigen::Matrix<vari*, -1, 1> foo = Eigen::Map<const Eigen::Matrix<vari*, -1, 1>>(src, rows * (rows + 1) / 2, 1);
+  const Eigen::Matrix<vari*, -1, 1> foo
+      = Eigen::Map<const Eigen::Matrix<vari*, -1, 1>>(src,
+                                                      rows * (rows + 1) / 2, 1);
   dst.val() = packed_copy<matrix_view>(foo.val().eval(), rows);
   dst.adj() = packed_copy<matrix_view>(foo.adj().eval(), rows);
   return dst;
@@ -141,7 +143,6 @@ inline matrix_cl<T> copy_cl(const matrix_cl<T>& src) {
   }
   return dst;
 }
-
 
 }  // namespace math
 }  // namespace stan

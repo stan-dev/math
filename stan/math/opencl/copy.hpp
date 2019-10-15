@@ -174,7 +174,8 @@ inline std::vector<T> packed_copy(const matrix_cl<T>& src) {
  * size of the vector does not match the expected size
  * for the packed triangular matrix
  */
-template <matrix_cl_view matrix_view, typename Vec, require_vector_vt<std::is_arithmetic, Vec>...>
+template <matrix_cl_view matrix_view, typename Vec,
+          require_vector_vt<std::is_arithmetic, Vec>...>
 inline auto packed_copy(Vec&& src, int rows) {
   using vec_value_type = value_type_t<Vec>;
   const int packed_size = rows * (rows + 1) / 2;
@@ -188,9 +189,11 @@ inline auto packed_copy(Vec&& src, int rows) {
     matrix_cl<vec_value_type> packed(packed_size, 1);
     cl::Event packed_event;
     const cl::CommandQueue queue = opencl_context.queue();
-    queue.enqueueWriteBuffer(packed.buffer(), opencl_context.in_order() || std::is_rvalue_reference<Vec&&>::value, 0,
-                             sizeof(vec_value_type) * packed_size, src.data(), nullptr,
-                             &packed_event);
+    queue.enqueueWriteBuffer(
+        packed.buffer(),
+        opencl_context.in_order() || std::is_rvalue_reference<Vec&&>::value, 0,
+        sizeof(vec_value_type) * packed_size, src.data(), nullptr,
+        &packed_event);
     packed.add_write_event(packed_event);
     stan::math::opencl_kernels::unpack(cl::NDRange(dst.rows(), dst.rows()), dst,
                                        packed, dst.rows(), dst.rows(),

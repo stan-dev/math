@@ -77,7 +77,9 @@ TEST(MathMatrixCL, matrix_cl_pack_unpack_copy_lower) {
   using stan::math::vari;
   int size = 42;
   int packed_size = size * (size + 1) / 2;
-  vari** packed_mat = stan::math::ChainableStack::instance_->memalloc_.alloc_array<vari*>(packed_size);
+  vari** packed_mat
+      = stan::math::ChainableStack::instance_->memalloc_.alloc_array<vari*>(
+          packed_size);
   std::vector<double> packed_mat_dst(packed_size);
   for (size_t i = 0; i < packed_size; i++) {
     packed_mat[i] = new stan::math::vari(i);
@@ -111,7 +113,9 @@ TEST(MathMatrixCL, matrix_cl_pack_unpack_copy_upper) {
   using stan::math::vari;
   int size = 51;
   int packed_size = size * (size + 1) / 2;
-  vari** packed_mat = stan::math::ChainableStack::instance_->memalloc_.alloc_array<vari*>(packed_size);
+  vari** packed_mat
+      = stan::math::ChainableStack::instance_->memalloc_.alloc_array<vari*>(
+          packed_size);
   std::vector<double> packed_mat_dst(packed_size);
   for (size_t i = 0; i < packed_size; i++) {
     packed_mat[i] = new stan::math::vari(i);
