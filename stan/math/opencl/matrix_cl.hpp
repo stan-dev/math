@@ -332,8 +332,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
 
   /**
    * Constructor for the matrix_cl that
-   * creates a copy of a rvalue reference
-   * of a scalar on the OpenCL device.
+   * creates a copy of a scalar on the OpenCL device.
    * Regardless of `partial_view`, whole matrix is stored.
    *
    * @param A the scalar
@@ -397,7 +396,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
       buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
       cl::Event transfer_event;
       queue.enqueueWriteBuffer(
-          buffer_cl_, std::is_rvalue_reference<Vec&&>::value, 0,
+          buffer_cl_, opencl_context.in_order() || std::is_rvalue_reference<Vec&&>::value, 0,
           sizeof(T) * A.size(), A.data(), nullptr, &transfer_event);
       this->add_write_event(transfer_event);
     } catch (const cl::Error& e) {

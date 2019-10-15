@@ -8,7 +8,7 @@
 #include <algorithm>
 #include <vector>
 
-TEST(MathMatrixGPU, copy_destroyed_constructor) {
+TEST(MathMatrixGPU, copy_rvalue_constructor) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
@@ -37,7 +37,7 @@ TEST(MathMatrixGPU, copy_destroyed_constructor) {
   no_opt = w.array().sum();
 }
 
-TEST(MathMatrixGPU, copy_destroyed_constructor_eval) {
+TEST(MathMatrixGPU, copy_rvalue_constructor_eval) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
@@ -67,7 +67,7 @@ TEST(MathMatrixGPU, copy_destroyed_constructor_eval) {
   no_opt = w.array().sum();
 }
 
-TEST(MathMatrixGPU, copy_destroyed_to_matrix_cl) {
+TEST(MathMatrixGPU, copy_rvalue_to_matrix_cl) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
@@ -96,7 +96,7 @@ TEST(MathMatrixGPU, copy_destroyed_to_matrix_cl) {
   no_opt = w.array().sum();
 }
 
-TEST(MathMatrixGPU, copy_destroyed_to_matrix_cl_eval) {
+TEST(MathMatrixGPU, copy_rvalue_to_matrix_cl_eval) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
@@ -126,7 +126,7 @@ TEST(MathMatrixGPU, copy_destroyed_to_matrix_cl_eval) {
   no_opt = w.array().sum();
 }
 
-TEST(MathMatrixGPU, copy_destroyed_to_matrix_cl_scalar) {
+TEST(MathMatrixGPU, copy_rvalue_to_matrix_cl_scalar) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
@@ -154,7 +154,7 @@ TEST(MathMatrixGPU, copy_destroyed_to_matrix_cl_scalar) {
   no_opt = f + b + c + d;
 }
 
-TEST(MathMatrixGPU, copy_destroyed_constructor_scalar) {
+TEST(MathMatrixGPU, copy_rvalue_constructor_scalar) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
@@ -181,7 +181,7 @@ TEST(MathMatrixGPU, copy_destroyed_constructor_scalar) {
   no_opt = f + b + c + d;
 }
 
-TEST(MathMatrixGPU, std_vector_copy_destroyed_constructor) {
+TEST(MathMatrixGPU, std_vector_copy_rvalue_constructor) {
   using Eigen::MatrixXd;
   using stan::math::from_matrix_cl;
   using stan::math::matrix_cl;
@@ -196,7 +196,7 @@ TEST(MathMatrixGPU, std_vector_copy_destroyed_constructor) {
   }
 }
 
-TEST(MathMatrixGPU, std_vector_copy_destroyed_to_matrix_cl) {
+TEST(MathMatrixGPU, std_vector_copy_rvalue_to_matrix_cl) {
   using Eigen::MatrixXd;
   using stan::math::from_matrix_cl;
   using stan::math::matrix_cl;
@@ -248,7 +248,7 @@ TEST(MathMatrixGPU, matrix_cl_std_vector_copy) {
   EXPECT_EQ(30.0, d1_cpu_ret(2));
 }
 
-TEST(MathMatrixGPU, matrix_cl_packed_std_vector_copy_destroyed) {
+TEST(MathMatrixGPU, matrix_cl_packed_std_vector_copy_rvalue) {
   stan::math::matrix_d d1_cpu_ret;
 
   stan::math::matrix_cl<double> d11_cl
