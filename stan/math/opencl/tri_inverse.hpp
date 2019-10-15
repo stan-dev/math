@@ -8,12 +8,12 @@
 #include <stan/math/opencl/kernels/inv_lower_tri_multiply.hpp>
 #include <stan/math/opencl/kernels/neg_rect_lower_tri_multiply.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
-#include <stan/math/opencl/transpose.hpp>
 #include <stan/math/opencl/identity.hpp>
 #include <stan/math/opencl/err/check_square.hpp>
 #include <stan/math/opencl/err/check_triangular.hpp>
 #include <stan/math/opencl/sub_block.hpp>
 #include <stan/math/opencl/zeros.hpp>
+#include <stan/math/opencl/prim/transpose.hpp>
 #include <stan/math/prim/meta.hpp>
 
 #include <string>
@@ -36,8 +36,16 @@ namespace math {
  * @throw <code>std::invalid_argument</code> if the matrix
  *    is not square
  */
-template <typename T, typename = enable_if_floating_point<T>>
+template <matrix_cl_view matrix_view = matrix_cl_view::Entire, typename T,
+          typename = require_floating_point_t<T>>
 inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
+  // if the triangular view is not specified use the triangularity of
+  // the input matrix
+  matrix_cl_view tri_view = matrix_view;
+  if (matrix_view == matrix_cl_view::Entire
+      || matrix_view == matrix_cl_view::Diagonal) {
+    tri_view = A.view();
+  }
   check_triangular("tri_inverse (OpenCL)", "A", A);
   check_square("tri_inverse (OpenCL)", "A", A);
 
@@ -74,7 +82,7 @@ inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
   zero_mat.template zeros<stan::math::matrix_cl_view::Entire>();
   temp.template zeros<stan::math::matrix_cl_view::Entire>();
   inv_padded.template zeros<stan::math::matrix_cl_view::Entire>();
-  if (A.view() == matrix_cl_view::Upper) {
+  if (tri_view == matrix_cl_view::Upper) {
     inv_mat = transpose(inv_mat);
   }
   int work_per_thread
@@ -99,10 +107,10 @@ inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
   // set the padded part of the matrix and the upper triangular to zeros
   inv_padded.sub_block(zero_mat, 0, 0, inv_mat.rows(), 0, zero_mat.rows(),
                        zero_mat.cols());
-  inv_padded.template zeros<stan::math::matrix_cl_view::Upper>();
+  inv_padded.template zeros_strict_tri<stan::math::matrix_cl_view::Upper>();
   if (parts == 1) {
     inv_mat.sub_block(inv_padded, 0, 0, 0, 0, inv_mat.rows(), inv_mat.rows());
-    if (A.view() == matrix_cl_view::Upper) {
+    if (tri_view == matrix_cl_view::Upper) {
       inv_mat = transpose(inv_mat);
     }
     return inv_mat;
@@ -139,14 +147,14 @@ inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
     // set the padded part and upper diagonal to zeros
     inv_padded.sub_block(zero_mat, 0, 0, inv_mat.rows(), 0, zero_mat.rows(),
                          zero_mat.cols());
-    inv_padded.template zeros<stan::math::matrix_cl_view::Upper>();
+    inv_padded.template zeros_strict_tri<stan::math::matrix_cl_view::Upper>();
   }
   // un-pad and return
   inv_mat.sub_block(inv_padded, 0, 0, 0, 0, inv_mat.rows(), inv_mat.rows());
-  if (A.view() == matrix_cl_view::Upper) {
+  if (tri_view == matrix_cl_view::Upper) {
     inv_mat = transpose(inv_mat);
   }
-  inv_mat.view(A.view());
+  inv_mat.view(tri_view);
   return inv_mat;
 }
 }  // namespace math

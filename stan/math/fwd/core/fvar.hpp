@@ -3,8 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
-#include <stan/math/fwd/meta.hpp>
 #include <ostream>
+#include <type_traits>
 
 namespace stan {
 namespace math {
@@ -50,6 +50,11 @@ struct fvar {
   T d_;
 
   /**
+   * The Type inside of the fvar.
+   */
+  using Scalar = T;
+
+  /**
    * Return the value of this variable.
    *
    * @return value of this variable
@@ -66,7 +71,7 @@ struct fvar {
   /**
    * Construct a forward variable with zero value and tangent.
    */
-  fvar() : val_(0.0), d_(0.0) {}
+  fvar() : val_(0), d_(0) {}
 
   /**
    * Construct a forward variable with value and tangent set to
@@ -80,32 +85,11 @@ struct fvar {
    * Construct a forward variable with the specified value and
    * zero tangent.
    *
-   * @tparam V type of value (must be assignable to the value and
-   *   tangent type T)
+   * @tparam V type of value (must be assignable to T)
    * @param[in] v value
    */
-  fvar(const T& v) : val_(v), d_(0.0) {  // NOLINT(runtime/explicit)
-    if (unlikely(is_nan(v)))
-      d_ = v;
-  }
-
-  /**
-   * Construct a forward variable with the specified value and
-   * zero tangent.
-   *
-   * @tparam V type of value (must be assignable to the value and
-   *   tangent type T)
-   * @param[in] v value
-   * @param[in] dummy value given by default with enable-if
-   *   metaprogramming
-   */
-  template <typename V>
-  fvar(const V& v,
-       typename std::enable_if<ad_promotable<V, T>::value>::type* dummy = 0)
-      : val_(v), d_(0.0) {
-    if (unlikely(is_nan(v)))
-      d_ = v;
-  }
+  template <typename V, typename = std::enable_if_t<ad_promotable<V, T>::value>>
+  fvar(const V& v) : val_(v), d_(0) {}  // NOLINT(runtime/explicit)
 
   /**
    * Construct a forward variable with the specified value and
@@ -119,10 +103,7 @@ struct fvar {
    * @param[in] d tangent
    */
   template <typename V, typename D>
-  fvar(const V& v, const D& d) : val_(v), d_(d) {
-    if (unlikely(is_nan(v)))
-      d_ = v;
-  }
+  fvar(const V& v, const D& d) : val_(v), d_(d) {}
 
   /**
    * Add the specified variable to this variable and return a

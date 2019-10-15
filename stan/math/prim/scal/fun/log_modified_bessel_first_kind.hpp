@@ -50,17 +50,20 @@ inline return_type_t<T1, T2, double> log_modified_bessel_first_kind(
   using std::log;
   using std::sqrt;
 
-  typedef return_type_t<T1, T2, double> T;
+  using T = return_type_t<T1, T2, double>;
 
   if (z == 0) {
-    if (v == 0)
+    if (v == 0) {
       return 0.0;
-    if (v > 0)
+    }
+    if (v > 0) {
       return NEGATIVE_INFTY;
+    }
     return INFTY;
   }
-  if (is_inf(z))
+  if (is_inf(z)) {
     return z;
+  }
   if (v == 0) {
     // WARNING: will not autodiff for v = 0 correctly
     // modified from Boost's bessel_i0_imp in the double precision case,

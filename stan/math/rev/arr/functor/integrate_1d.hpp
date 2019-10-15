@@ -37,8 +37,9 @@ inline double gradient_of_f(const F &f, const double &x, const double &xc,
   start_nested();
   std::vector<var> theta_var(theta_vals.size());
   try {
-    for (size_t i = 0; i < theta_vals.size(); i++)
+    for (size_t i = 0; i < theta_vals.size(); i++) {
       theta_var[i] = theta_vals[i];
+    }
     var fx = f(x, xc, theta_var, x_r, x_i, &msgs);
     fx.grad();
     gradient = theta_var[n].adj();
@@ -114,7 +115,7 @@ inline double gradient_of_f(const F &f, const double &x, const double &xc,
  * @return numeric integral of function f
  */
 template <typename F, typename T_a, typename T_b, typename T_theta,
-          typename = enable_if_any_var<T_a, T_b, T_theta>>
+          typename = require_any_var_t<T_a, T_b, T_theta>>
 inline return_type_t<T_a, T_b, T_theta> integrate_1d(
     const F &f, const T_a &a, const T_b &b, const std::vector<T_theta> &theta,
     const std::vector<double> &x_r, const std::vector<int> &x_i,
@@ -125,9 +126,10 @@ inline return_type_t<T_a, T_b, T_theta> integrate_1d(
   check_less_or_equal(function, "lower limit", a, b);
 
   if (value_of(a) == value_of(b)) {
-    if (is_inf(a))
+    if (is_inf(a)) {
       domain_error(function, "Integration endpoints are both", value_of(a), "",
                    "");
+    }
     return var(0.0);
   } else {
     double integral = integrate(

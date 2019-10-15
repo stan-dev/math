@@ -22,11 +22,12 @@ namespace math {
  * @throw <code>std::domain_error</code> if
  *    the matrix is not symmetric.
  */
-template <typename T, typename = enable_if_arithmetic<T>>
+template <typename T, typename = require_arithmetic_t<T>>
 inline void check_symmetric(const char* function, const char* name,
                             const matrix_cl<T>& y) {
-  if (y.size() == 0)
+  if (y.size() == 0) {
     return;
+  }
   check_square(function, name, y);
   try {
     int symmetric_flag = 1;

@@ -25,8 +25,9 @@ return_type_t<T_prob> categorical_lpmf(
   check_bounded(function, "Number of categories", n, lb, theta.size());
   check_simplex(function, "Probabilities parameter", theta);
 
-  if (include_summand<propto, T_prob>::value)
+  if (include_summand<propto, T_prob>::value) {
     return log(theta(n - 1));
+  }
   return 0.0;
 }
 
@@ -48,26 +49,31 @@ return_type_t<T_prob> categorical_lpmf(
 
   int lb = 1;
 
-  for (size_t i = 0; i < ns.size(); ++i)
+  for (size_t i = 0; i < ns.size(); ++i) {
     check_bounded(function, "element of outcome array", ns[i], lb,
                   theta.size());
+  }
 
   check_simplex(function, "Probabilities parameter", theta);
 
-  if (!include_summand<propto, T_prob>::value)
+  if (!include_summand<propto, T_prob>::value) {
     return 0.0;
+  }
 
-  if (ns.size() == 0)
+  if (ns.size() == 0) {
     return 0.0;
+  }
 
   Eigen::Matrix<T_prob, Eigen::Dynamic, 1> log_theta(theta.size());
-  for (int i = 0; i < theta.size(); ++i)
+  for (int i = 0; i < theta.size(); ++i) {
     log_theta(i) = log(theta(i));
+  }
 
   Eigen::Matrix<return_type_t<T_prob>, Eigen::Dynamic, 1> log_theta_ns(
       ns.size());
-  for (size_t i = 0; i < ns.size(); ++i)
+  for (size_t i = 0; i < ns.size(); ++i) {
     log_theta_ns(i) = log_theta(ns[i] - 1);
+  }
 
   return sum(log_theta_ns);
 }

@@ -20,16 +20,18 @@ void hessian_times_vector(const F& f,
   start_nested();
   try {
     Matrix<var, Eigen::Dynamic, 1> x_var(x.size());
-    for (int i = 0; i < x_var.size(); ++i)
+    for (int i = 0; i < x_var.size(); ++i) {
       x_var(i) = x(i);
+    }
     var fx_var;
     var grad_fx_var_dot_v;
     gradient_dot_vector(f, x_var, v, fx_var, grad_fx_var_dot_v);
     fx = fx_var.val();
     grad(grad_fx_var_dot_v.vi_);
     Hv.resize(x.size());
-    for (int i = 0; i < x.size(); ++i)
+    for (int i = 0; i < x.size(); ++i) {
       Hv(i) = x_var(i).adj();
+    }
   } catch (const std::exception& e) {
     recover_memory_nested();
     throw;

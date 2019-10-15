@@ -15,14 +15,15 @@ template <typename T>
 inline fvar<T> fabs(const fvar<T>& x) {
   using std::fabs;
 
-  if (unlikely(is_nan(value_of(x.val_))))
+  if (unlikely(is_nan(value_of(x.val_)))) {
     return fvar<T>(fabs(x.val_), NOT_A_NUMBER);
-  else if (x.val_ > 0.0)
+  } else if (x.val_ > 0.0) {
     return x;
-  else if (x.val_ < 0.0)
+  } else if (x.val_ < 0.0) {
     return fvar<T>(-x.val_, -x.d_);
-  else
+  } else {
     return fvar<T>(0, 0);
+  }
 }
 
 }  // namespace math

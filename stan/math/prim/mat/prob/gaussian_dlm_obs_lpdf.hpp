@@ -75,8 +75,8 @@ gaussian_dlm_obs_lpdf(
     const Eigen::Matrix<T_m0, Eigen::Dynamic, 1>& m0,
     const Eigen::Matrix<T_C0, Eigen::Dynamic, Eigen::Dynamic>& C0) {
   static const char* function = "gaussian_dlm_obs_lpdf";
-  typedef return_type_t<T_y, return_type_t<T_F, T_G, T_V, T_W, T_m0, T_C0>>
-      T_lp;
+  using T_lp
+      = return_type_t<T_y, return_type_t<T_F, T_G, T_V, T_W, T_m0, T_C0>>;
   int r = y.rows();  // number of variables
   int T = y.cols();  // number of observations
   int n = G.rows();  // number of states
@@ -102,8 +102,9 @@ gaussian_dlm_obs_lpdf(
   check_pos_definite(function, "C0", C0);
   check_finite(function, "C0", C0);
 
-  if (size_zero(y))
+  if (size_zero(y)) {
     return 0;
+  }
 
   T_lp lp(0);
   if (include_summand<propto>::value) {
@@ -222,8 +223,8 @@ gaussian_dlm_obs_lpdf(
     const Eigen::Matrix<T_m0, Eigen::Dynamic, 1>& m0,
     const Eigen::Matrix<T_C0, Eigen::Dynamic, Eigen::Dynamic>& C0) {
   static const char* function = "gaussian_dlm_obs_lpdf";
-  typedef return_type_t<T_y, return_type_t<T_F, T_G, T_V, T_W, T_m0, T_C0>>
-      T_lp;
+  using T_lp
+      = return_type_t<T_y, return_type_t<T_F, T_G, T_V, T_W, T_m0, T_C0>>;
   using std::log;
 
   int r = y.rows();  // number of variables
@@ -257,8 +258,9 @@ gaussian_dlm_obs_lpdf(
   check_finite(function, "C0", C0);
   check_not_nan(function, "C0", C0);
 
-  if (y.cols() == 0 || y.rows() == 0)
+  if (y.cols() == 0 || y.rows() == 0) {
     return 0;
+  }
 
   T_lp lp(0);
   if (include_summand<propto>::value) {

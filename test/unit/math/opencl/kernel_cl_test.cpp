@@ -1,12 +1,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/mat.hpp>
-#include <CL/cl.hpp>
-#include <stan/math/opencl/opencl_context.hpp>
-#include <stan/math/opencl/kernel_cl.hpp>
-#include <stan/math/opencl/copy.hpp>
-#include <stan/math/opencl/matrix_cl.hpp>
-#include <stan/math/opencl/transpose.hpp>
+#include <stan/math/opencl/opencl.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
 

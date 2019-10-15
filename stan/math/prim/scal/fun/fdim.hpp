@@ -2,10 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_FUN_FDIM_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/is_any_nan.hpp>
-#include <boost/math/tools/promotion.hpp>
+#include <limits>
 
 namespace stan {
 namespace math {
@@ -21,13 +18,10 @@ namespace math {
  * @param y Second value.
  * @return max(x- y, 0)
  */
-template <typename T1, typename T2>
-inline return_type_t<T1, T2> fdim(T1 x, T2 y) {
-  typedef return_type_t<T1, T2> return_t;
-  using std::numeric_limits;
-  if (is_any_nan(x, y))
-    return NOT_A_NUMBER;
-  return (x <= y) ? 0 : x - y;
+template <typename T1, typename T2, typename = require_all_arithmetic_t<T1, T2>>
+inline double fdim(T1 x, T2 y) {
+  using std::fdim;
+  return fdim(x, y);
 }
 
 }  // namespace math

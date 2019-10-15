@@ -15,4 +15,6 @@ TEST(MathFunctions, digamma_nan) {
   EXPECT_PRED1(boost::math::isnan<double>, stan::math::digamma(nan));
 
   EXPECT_PRED1(boost::math::isnan<double>, stan::math::digamma(-1));
+
+  EXPECT_PRED1(boost::math::isnormal<double>, stan::math::digamma(1.0E50));
 }

@@ -19,10 +19,11 @@ template <typename T_y, typename T_scale, typename T_shape>
 return_type_t<T_y, T_scale, T_shape> pareto_lccdf(const T_y& y,
                                                   const T_scale& y_min,
                                                   const T_shape& alpha) {
-  typedef partials_return_type_t<T_y, T_scale, T_shape> T_partials_return;
+  using T_partials_return = partials_return_t<T_y, T_scale, T_shape>;
 
-  if (size_zero(y, y_min, alpha))
+  if (size_zero(y, y_min, alpha)) {
     return 0.0;
+  }
 
   static const char* function = "pareto_lccdf";
 
@@ -48,8 +49,9 @@ return_type_t<T_y, T_scale, T_shape> pareto_lccdf(const T_y& y,
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
   for (size_t i = 0; i < stan::length(y); i++) {
-    if (value_of(y_vec[i]) < value_of(y_min_vec[i]))
+    if (value_of(y_vec[i]) < value_of(y_min_vec[i])) {
       return ops_partials.build(0.0);
+    }
   }
 
   for (size_t n = 0; n < N; n++) {
@@ -66,13 +68,16 @@ return_type_t<T_y, T_scale, T_shape> pareto_lccdf(const T_y& y,
 
     P += alpha_dbl * log_dbl;
 
-    if (!is_constant_all<T_y>::value)
+    if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n]
           -= alpha_dbl * y_min_inv_dbl * exp(log_dbl);
-    if (!is_constant_all<T_scale>::value)
+    }
+    if (!is_constant_all<T_scale>::value) {
       ops_partials.edge2_.partials_[n] += alpha_dbl * y_min_inv_dbl;
-    if (!is_constant_all<T_shape>::value)
+    }
+    if (!is_constant_all<T_shape>::value) {
       ops_partials.edge3_.partials_[n] += log_dbl;
+    }
   }
   return ops_partials.build(P);
 }

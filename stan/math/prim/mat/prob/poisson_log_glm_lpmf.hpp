@@ -48,12 +48,11 @@ return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
                                                          const T_alpha& alpha,
                                                          const T_beta& beta) {
   static const char* function = "poisson_log_glm_lpmf";
-  typedef partials_return_type_t<T_y, T_x, T_alpha, T_beta> T_partials_return;
-  typedef typename std::conditional_t<
+  using T_partials_return = partials_return_t<T_y, T_x, T_alpha, T_beta>;
+  using T_alpha_val = typename std::conditional_t<
       is_vector<T_alpha>::value,
-      Eigen::Array<partials_return_type_t<T_alpha>, -1, 1>,
-      partials_return_type_t<T_alpha>>
-      T_alpha_val;
+      Eigen::Array<partials_return_t<T_alpha>, -1, 1>,
+      partials_return_t<T_alpha>>;
 
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -62,17 +61,21 @@ return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
   const size_t N = x.rows();
   const size_t M = x.cols();
 
-  check_nonnegative(function, "Vector of dependent variables", y);
   check_consistent_size(function, "Vector of dependent variables", y, N);
   check_consistent_size(function, "Weight vector", beta, M);
-  if (is_vector<T_alpha>::value)
+  if (is_vector<T_alpha>::value) {
     check_consistent_sizes(function, "Vector of intercepts", alpha,
                            "Vector of dependent variables", y);
-  if (size_zero(y, x, beta))
-    return 0;
+  }
+  check_nonnegative(function, "Vector of dependent variables", y);
 
-  if (!include_summand<propto, T_x, T_alpha, T_beta>::value)
+  if (size_zero(y)) {
     return 0;
+  }
+
+  if (!include_summand<propto, T_x, T_alpha, T_beta>::value) {
+    return 0;
+  }
 
   T_partials_return logp(0);
 
@@ -108,8 +111,8 @@ return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
                 - exp(theta.array()));
   }
 
-  // Compute the necessary derivatives.
   operands_and_partials<T_x, T_alpha, T_beta> ops_partials(x, alpha, beta);
+  // Compute the necessary derivatives.
   if (!is_constant_all<T_beta>::value) {
     ops_partials.edge3_.partials_ = x_val.transpose() * theta_derivative;
   }
@@ -118,10 +121,11 @@ return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
         = (beta_val_vec * theta_derivative.transpose()).transpose();
   }
   if (!is_constant_all<T_alpha>::value) {
-    if (is_vector<T_alpha>::value)
+    if (is_vector<T_alpha>::value) {
       ops_partials.edge2_.partials_ = theta_derivative;
-    else
+    } else {
       ops_partials.edge2_.partials_[0] = theta_derivative_sum;
+    }
   }
   return ops_partials.build(logp);
 }

@@ -42,15 +42,16 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> corr_matrix_free(
   using Eigen::Array;
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
+  using size_type = typename index_type<Matrix<T, Dynamic, 1>>::type;
 
   size_type k = y.rows();
   size_type k_choose_2 = (k * (k - 1)) / 2;
   Array<T, Dynamic, 1> x(k_choose_2);
   Array<T, Dynamic, 1> sds(k);
   bool successful = factor_cov_matrix(y, x, sds);
-  if (!successful)
+  if (!successful) {
     domain_error("corr_matrix_free", "factor_cov_matrix failed on y", y, "");
+  }
   for (size_type i = 0; i < k; ++i) {
     check_bounded("corr_matrix_free", "log(sd)", sds[i], -CONSTRAINT_TOLERANCE,
                   CONSTRAINT_TOLERANCE);

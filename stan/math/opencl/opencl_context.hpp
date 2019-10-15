@@ -14,7 +14,7 @@
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/prim/scal/err/system_error.hpp>
 
-#include <CL/cl.hpp>
+#include <cl.hpp>
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -22,6 +22,7 @@
 #include <vector>
 #include <cmath>
 #include <cerrno>
+
 /**
  *  @file stan/math/opencl/opencl_context.hpp
  *  @brief Initialization for OpenCL:
@@ -32,35 +33,7 @@
  */
 namespace stan {
 namespace math {
-namespace opencl {
-/**
- * A helper function to convert an array to a cl::size_t<N>.
- * This implementation throws because cl::size_t<N> for N!=3
- * should throw.
- *
- * @param values the input array to be converted
- * @return the cl::size_t<N> converted from the input array
- */
-template <int N>
-inline cl::size_t<N> to_size_t(const size_t (&values)[N]) {
-  throw std::domain_error("cl::size_t<N> is not supported for N != 3");
-}
 
-/**
- * A template specialization of the helper function
- * to convert an array to a cl::size_t<3>.
- *
- * @param values the input array to be converted
- * @return the cl::size_t<3> converted from the input array
- */
-template <>
-inline cl::size_t<3> to_size_t(const size_t (&values)[3]) {
-  cl::size_t<3> s;
-  for (size_t i = 0; i < 3; i++)
-    s[i] = values[i];
-  return s;
-}
-}  // namespace opencl
 /**
  * The <code>opencl_context_base</code> class represents an OpenCL context
  * in the standard Meyers singleton design pattern.
@@ -128,8 +101,10 @@ class opencl_context_base {
       if (device_properties & CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE) {
         command_queue_ = cl::CommandQueue(
             context_, device_, CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE, nullptr);
+        in_order_ = CL_FALSE;
       } else {
         command_queue_ = cl::CommandQueue(context_, device_, 0, nullptr);
+        in_order_ = CL_TRUE;
       }
       int thread_block_size_sqrt
           = static_cast<int>(sqrt(static_cast<double>(max_thread_block_size_)));
@@ -171,9 +146,9 @@ class opencl_context_base {
   std::string device_name_;          // The name of OpenCL device
   size_t max_thread_block_size_;  // The maximum size of a block of workers on
                                   // the device
-
+  bool in_order_;                 // Whether to use out of order execution.
   // Holds Default parameter values for each Kernel.
-  typedef std::map<std::string, int> map_base_opts;
+  using map_base_opts = std::map<std::string, int>;
   map_base_opts base_opts_
       = {{"LOWER", static_cast<int>(matrix_cl_view::Lower)},
          {"UPPER", static_cast<int>(matrix_cl_view::Upper)},
@@ -195,7 +170,7 @@ class opencl_context_base {
     int cholesky_rev_min_block_size = 512;
     int cholesky_rev_block_partition = 8;
     // used in math/opencl/multiply
-    int multiply_split_upper_limit = 2000000;
+    int multiply_wgs_per_compute_unit = 5;
     // used in math/prim/mat/fun/gp_exp_quad_cov
     double gp_exp_quad_cov_complex = 1'000'000;
     double gp_exp_quad_cov_simple = 1'250;
@@ -396,6 +371,13 @@ class opencl_context {
    */
   inline std::vector<cl::Platform> platform() {
     return {opencl_context_base::getInstance().platform_};
+  }
+  /**
+   * Return a bool representing whether the write to the OpenCL device are
+   * blocking
+   */
+  inline bool in_order() {
+    return opencl_context_base::getInstance().in_order_;
   }
 };
 static opencl_context opencl_context;

@@ -1,33 +1,35 @@
 #ifndef STAN_MATH_PRIM_SCAL_META_VALUE_TYPE_HPP
 #define STAN_MATH_PRIM_SCAL_META_VALUE_TYPE_HPP
 
+#include <type_traits>
+
 namespace stan {
-namespace math {
 
 /**
  * Primary template class for metaprogram to compute the type of
  * values stored in a container.
  *
- * Only the specializations have behavior that can be used, and
- * all implement a typedef <code>type</code> for the type of the
- * values in the container.
- *
  * tparam T type of container.
  */
-template <typename T>
-struct value_type {};
-
-/**
- * Template class for metaprogram to compute the type of values
- * stored in a constant container.
- *
- * @tparam T type of container without const modifier.
- */
-template <typename T>
-struct value_type<const T> {
-  typedef typename value_type<T>::type type;
+template <typename T, typename = void>
+struct value_type {
+  using type = typename std::decay_t<T>;
 };
 
-}  // namespace math
+/**
+ * Specialization for pointers returns the underlying value the pointer is
+ * pointing to.
+ */
+template <typename T>
+struct value_type<T, std::enable_if_t<std::is_pointer<T>::value>> {
+  using type = typename value_type<std::remove_pointer<T>>::type;
+};
+
+/**
+ * Helper function for accessing underlying type.
+ */
+template <typename T>
+using value_type_t = typename value_type<T>::type;
+
 }  // namespace stan
 #endif

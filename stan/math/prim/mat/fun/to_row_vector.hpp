@@ -30,8 +30,9 @@ inline Eigen::Matrix<double, 1, Eigen::Dynamic> to_row_vector(
     const std::vector<int>& vec) {
   int C = vec.size();
   Eigen::Matrix<double, 1, Eigen::Dynamic> result(C);
-  for (int i = 0; i < C; i++)
+  for (int i = 0; i < C; i++) {
     result(i) = vec[i];
+  }
   return result;
 }
 

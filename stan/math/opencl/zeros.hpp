@@ -6,11 +6,11 @@
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
-#include <stan/math/opencl/kernels/zeros.hpp>
+#include <stan/math/opencl/kernels/fill.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 
-#include <CL/cl.hpp>
+#include <cl.hpp>
 
 namespace stan {
 namespace math {
@@ -26,15 +26,54 @@ namespace math {
  */
 template <typename T>
 template <matrix_cl_view matrix_view>
-inline void matrix_cl<T, enable_if_arithmetic<T>>::zeros() try {
-  if (size() == 0)
+inline void matrix_cl<T, require_arithmetic_t<T>>::zeros() try {
+  if (size() == 0) {
     return;
+  }
   this->view_ = both(this->view_, invert(matrix_view));
   cl::CommandQueue cmdQueue = opencl_context.queue();
-  opencl_kernels::zeros(cl::NDRange(this->rows(), this->cols()), *this,
-                        this->rows(), this->cols(), matrix_view);
+  opencl_kernels::fill(cl::NDRange(this->rows(), this->cols()), *this, 0.0,
+                       this->rows(), this->cols(), matrix_view);
 } catch (const cl::Error& e) {
   check_opencl_error("zeros", e);
+}
+
+/**
+ * Stores zeros in the stricts triangular part (excluding the diagonal)
+ * of a matrix on the OpenCL device.
+ * Supports writing zeroes to the lower and upper triangular.
+ * Throws if used with the Entire matrix_cl_view.
+ *
+ * @tparam view Specifies if zeros are assigned to
+ * the lower triangular or upper triangular. The
+ * value must be of type matrix_cl_view
+ *
+ * @throw <code>std::invalid_argument</code> if the
+ * matrix_view parameter is Entire.
+ */
+template <typename T>
+template <matrix_cl_view matrix_view>
+inline void matrix_cl<T, require_arithmetic_t<T>>::zeros_strict_tri() try {
+  if (matrix_view == matrix_cl_view::Entire) {
+    invalid_argument(
+        "zeros_strict_tri", "matrix_view",
+        "matrix_cl_view::Entire is not a valid template parameter value", "");
+  }
+  if (matrix_view == matrix_cl_view::Diagonal) {
+    invalid_argument(
+        "zeros_strict_tri", "matrix_view",
+        "matrix_cl_view::Diagonal is not a valid template parameter value", "");
+  }
+  if (size() == 0) {
+    return;
+  }
+  this->view_ = both(this->view_, invert(matrix_view));
+  cl::CommandQueue cmdQueue = opencl_context.queue();
+  opencl_kernels::fill_strict_tri(cl::NDRange(this->rows(), this->cols()),
+                                  *this, 0.0, this->rows(), this->cols(),
+                                  matrix_view);
+} catch (const cl::Error& e) {
+  check_opencl_error("zeros_strict_tri", e);
 }
 
 }  // namespace math

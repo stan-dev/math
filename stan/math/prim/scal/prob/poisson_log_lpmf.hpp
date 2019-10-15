@@ -19,14 +19,15 @@ namespace math {
 template <bool propto, typename T_n, typename T_log_rate>
 return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
                                            const T_log_rate& alpha) {
-  typedef partials_return_type_t<T_n, T_log_rate> T_partials_return;
+  using T_partials_return = partials_return_t<T_n, T_log_rate>;
 
   static const char* function = "poisson_log_lpmf";
 
   using std::exp;
 
-  if (size_zero(n, alpha))
+  if (size_zero(n, alpha)) {
     return 0.0;
+  }
 
   T_partials_return logp(0.0);
 
@@ -35,21 +36,26 @@ return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
   check_consistent_sizes(function, "Random variable", n, "Log rate parameter",
                          alpha);
 
-  if (!include_summand<propto, T_log_rate>::value)
+  if (!include_summand<propto, T_log_rate>::value) {
     return 0.0;
+  }
 
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_log_rate> alpha_vec(alpha);
   size_t size = max_size(n, alpha);
 
   // FIXME: first loop size of alpha_vec, second loop if-ed for size==1
-  for (size_t i = 0; i < size; i++)
-    if (std::numeric_limits<double>::infinity() == alpha_vec[i])
+  for (size_t i = 0; i < size; i++) {
+    if (std::numeric_limits<double>::infinity() == alpha_vec[i]) {
       return LOG_ZERO;
-  for (size_t i = 0; i < size; i++)
+    }
+  }
+  for (size_t i = 0; i < size; i++) {
     if (-std::numeric_limits<double>::infinity() == alpha_vec[i]
-        && n_vec[i] != 0)
+        && n_vec[i] != 0) {
       return LOG_ZERO;
+    }
+  }
 
   operands_and_partials<T_log_rate> ops_partials(alpha);
 
@@ -57,21 +63,26 @@ return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
   VectorBuilder<include_summand<propto, T_log_rate>::value, T_partials_return,
                 T_log_rate>
       exp_alpha(length(alpha));
-  for (size_t i = 0; i < length(alpha); i++)
-    if (include_summand<propto, T_log_rate>::value)
+  for (size_t i = 0; i < length(alpha); i++) {
+    if (include_summand<propto, T_log_rate>::value) {
       exp_alpha[i] = exp(value_of(alpha_vec[i]));
+    }
+  }
 
   for (size_t i = 0; i < size; i++) {
     if (!(alpha_vec[i] == -std::numeric_limits<double>::infinity()
           && n_vec[i] == 0)) {
-      if (include_summand<propto>::value)
+      if (include_summand<propto>::value) {
         logp -= lgamma(n_vec[i] + 1.0);
-      if (include_summand<propto, T_log_rate>::value)
+      }
+      if (include_summand<propto, T_log_rate>::value) {
         logp += n_vec[i] * value_of(alpha_vec[i]) - exp_alpha[i];
+      }
     }
 
-    if (!is_constant_all<T_log_rate>::value)
+    if (!is_constant_all<T_log_rate>::value) {
       ops_partials.edge1_.partials_[i] += n_vec[i] - exp_alpha[i];
+    }
   }
   return ops_partials.build(logp);
 }

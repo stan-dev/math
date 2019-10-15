@@ -1,19 +1,21 @@
 #ifndef STAN_MATH_OPENCL_MATRIX_CL_HPP
 #define STAN_MATH_OPENCL_MATRIX_CL_HPP
 #ifdef STAN_OPENCL
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/opencl/is_matrix_cl.hpp>
 #include <stan/math/opencl/opencl_context.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/arr/fun/vec_concat.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
-#include <CL/cl.hpp>
+#include <cl.hpp>
+#include <algorithm>
 #include <iostream>
 #include <string>
+#include <type_traits>
 #include <vector>
-#include <algorithm>
 
 /**
  *  @file stan/math/opencl/matrix_cl.hpp
@@ -22,35 +24,33 @@
  */
 namespace stan {
 namespace math {
-
-// Dummy class to instantiate matrix_cl to enable for specific types.
-template <typename T, typename = void>
-class matrix_cl {};
-
 /**
  * Represents a matrix on the OpenCL device.
- *
  * @tparam T an arithmetic type for the type stored in the OpenCL buffer.
  */
 template <typename T>
-class matrix_cl<T, enable_if_arithmetic<T>> {
+class matrix_cl<T, require_arithmetic_t<T>> {
  private:
   cl::Buffer buffer_cl_;  // Holds the allocated memory on the device
-  const int rows_;
-  const int cols_;
-  matrix_cl_view view_;  // Holds info on if matrix is a special type
+  int rows_{0};
+  int cols_{0};
+  // Holds info on if matrix is a special type
+  matrix_cl_view view_{matrix_cl_view::Entire};
   mutable std::vector<cl::Event> write_events_;  // Tracks write jobs
   mutable std::vector<cl::Event> read_events_;   // Tracks reads
 
  public:
-  typedef T type;
+  using Scalar = T;
+  using type = T;
   // Forward declare the methods that work in place on the matrix
   template <matrix_cl_view matrix_view = matrix_cl_view::Entire>
   void zeros();
+  template <matrix_cl_view matrix_view = matrix_cl_view::Entire>
+  void zeros_strict_tri();
   template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper>
   void triangular_transpose();
 
-  void sub_block(const matrix_cl<T, enable_if_arithmetic<T>>& A, size_t A_i,
+  void sub_block(const matrix_cl<T, require_arithmetic_t<T>>& A, size_t A_i,
                  size_t A_j, size_t this_i, size_t this_j, size_t nrows,
                  size_t ncols);
   int rows() const { return rows_; }
@@ -178,44 +178,67 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
 
   const cl::Buffer& buffer() const { return buffer_cl_; }
   cl::Buffer& buffer() { return buffer_cl_; }
-  matrix_cl() : rows_(0), cols_(0) {}
+
+  matrix_cl() {}
+  /**
+   * Construct a matrix_cl<T> from an existing cl::Buffer object. The matrix
+   * directly uses given buffer - no copying is done.
+   *
+   * @param A the cl::Buffer object to construct the matrix from
+   * @param R number of rows
+   * @param C number of columns
+   * @param partial_view view of the matrix
+   */
+  matrix_cl(cl::Buffer& A, const int R, const int C,
+            matrix_cl_view partial_view = matrix_cl_view::Entire)
+      : buffer_cl_(A), rows_(R), cols_(C), view_(partial_view) {}
 
   matrix_cl(const matrix_cl<T>& A)
       : rows_(A.rows()), cols_(A.cols()), view_(A.view()) {
-    if (A.size() == 0)
+    if (A.size() == 0) {
       return;
+    }
+    this->wait_for_read_write_events();
     cl::Context& ctx = opencl_context.context();
     cl::CommandQueue queue = opencl_context.queue();
     try {
-      buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * size());
+      buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * this->size());
       cl::Event cstr_event;
       queue.enqueueCopyBuffer(A.buffer(), this->buffer(), 0, 0,
                               A.size() * sizeof(T), &A.write_events(),
                               &cstr_event);
       this->add_write_event(cstr_event);
+      A.add_read_event(cstr_event);
     } catch (const cl::Error& e) {
       check_opencl_error("copy (OpenCL)->(OpenCL)", e);
     }
   }
 
+  explicit matrix_cl(matrix_cl<T>&& A)
+      : buffer_cl_(std::move(A.buffer_cl_)),
+        rows_(A.rows_),
+        cols_(A.cols_),
+        view_(A.view_),
+        write_events_(std::move(A.write_events_)),
+        read_events_(std::move(A.read_events_)) {}
+
   /**
    * Constructor for the matrix_cl that
    * creates a copy of the Eigen matrix on the OpenCL device.
    *
-   *
-   * @tparam R row type
-   * @tparam C column type
    * @param A the Eigen matrix
    *
    * @throw <code>std::invalid_argument</code> if the
    * matrices do not have matching dimensions
    */
-  template <int R, int C>
-  explicit matrix_cl(const std::vector<Eigen::Matrix<T, R, C>>& A) try
-      : rows_(A.empty() ? 0 : A[0].size()),
-        cols_(A.size()) {
-    if (this->size() == 0)
+  template <typename Vec, require_std_vector_vt<is_eigen, Vec>...,
+            require_same_st<Vec, T>...>
+  explicit matrix_cl(Vec&& A) try : rows_(A.empty() ? 0 : A[0].size()),
+                                    cols_(A.size()) {
+    if (this->size() == 0) {
       return;
+    }
+
     cl::Context& ctx = opencl_context.context();
     cl::CommandQueue& queue = opencl_context.queue();
     // creates the OpenCL buffer to copy the Eigen
@@ -234,8 +257,10 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
        */
       cl::Event write_event;
       queue.enqueueWriteBuffer(
-          buffer_cl_, CL_FALSE, sizeof(double) * offset_size,
-          sizeof(double) * rows_, A[i].data(), NULL, &write_event);
+          buffer_cl_,
+          opencl_context.in_order() || std::is_rvalue_reference<Vec&&>::value,
+          sizeof(T) * offset_size, sizeof(T) * rows_, A[i].data(), nullptr,
+          &write_event);
       this->add_write_event(write_event);
     }
   } catch (const cl::Error& e) {
@@ -255,7 +280,7 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
    * matrices do not have matching dimensions
    *
    */
-  matrix_cl(const int& rows, const int& cols,
+  matrix_cl(const int rows, const int cols,
             matrix_cl_view partial_view = matrix_cl_view::Entire)
       : rows_(rows), cols_(cols), view_(partial_view) {
     if (size() == 0) {
@@ -283,20 +308,22 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
    * @throw <code>std::system_error</code> if the
    * matrices do not have matching dimensions
    */
-  template <int R, int C>
-  explicit matrix_cl(const Eigen::Matrix<T, R, C>& A,
+  template <typename Mat, require_eigen_t<Mat>..., require_same_vt<Mat, T>...>
+  explicit matrix_cl(Mat&& A,
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
       : rows_(A.rows()), cols_(A.cols()), view_(partial_view) {
     if (size() == 0) {
       return;
     }
     cl::Context& ctx = opencl_context.context();
-    cl::CommandQueue& queue = opencl_context.queue();
     try {
       buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
       cl::Event transfer_event;
-      queue.enqueueWriteBuffer(buffer_cl_, CL_FALSE, 0, sizeof(T) * A.size(),
-                               A.data(), NULL, &transfer_event);
+      cl::CommandQueue& queue = opencl_context.queue();
+      queue.enqueueWriteBuffer(
+          this->buffer_cl_,
+          opencl_context.in_order() || std::is_rvalue_reference<Mat&&>::value,
+          0, sizeof(T) * A.size(), A.eval().data(), nullptr, &transfer_event);
       this->add_write_event(transfer_event);
     } catch (const cl::Error& e) {
       check_opencl_error("matrix constructor", e);
@@ -304,16 +331,62 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
   }
 
   /**
+   * Constructor for the matrix_cl that
+   * creates a copy of a scalar on the OpenCL device.
+   * Regardless of `partial_view`, whole matrix is stored.
+   *
+   * @param A the scalar
+   * @param partial_view which part of the matrix is used
+   */
+  template <typename Scal,
+            typename = require_same_t<T, std::remove_reference_t<Scal>>>
+  explicit matrix_cl(Scal&& A,
+                     matrix_cl_view partial_view = matrix_cl_view::Diagonal)
+      : rows_(1), cols_(1), view_(partial_view) {
+    cl::Context& ctx = opencl_context.context();
+    cl::CommandQueue& queue = opencl_context.queue();
+    try {
+      buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(std::decay_t<T>));
+      cl::Event transfer_event;
+      queue.enqueueWriteBuffer(
+          buffer_cl_,
+          opencl_context.in_order() || std::is_rvalue_reference<T&&>::value, 0,
+          sizeof(std::decay_t<T>), &A, nullptr, &transfer_event);
+      this->add_write_event(transfer_event);
+    } catch (const cl::Error& e) {
+      check_opencl_error("matrix constructor", e);
+    }
+  }
+
+  /**
+   * Construct a matrix_cl of size Nx1 from \c std::vector
+   *
+   * @param A Standard vector
+   * @param partial_view which part of the matrix is used
+   * @throw <code>std::system_error</code> if the
+   * matrices do not have matching dimensions
+   */
+  template <typename Vec, require_std_vector_t<Vec>...,
+            require_same_vt<Vec, T>...>
+  explicit matrix_cl(Vec&& A,
+                     matrix_cl_view partial_view = matrix_cl_view::Entire)
+      : matrix_cl(std::forward<Vec>(A), A.size(), 1) {}
+
+  /**
    * Construct from \c std::vector with given rows and columns
    *
    * @param A Standard vector
    * @param R Number of rows the matrix should have.
    * @param C Number of columns the matrix should have.
+   * @param partial_view which part of the matrix is used
    * @throw <code>std::system_error</code> if the
    * matrices do not have matching dimensions
    */
-  explicit matrix_cl(const std::vector<T>& A, const int& R, const int& C)
-      : rows_(R), cols_(C) {
+  template <typename Vec, require_std_vector_t<Vec>...,
+            require_same_vt<Vec, T>...>
+  explicit matrix_cl(Vec&& A, const int& R, const int& C,
+                     matrix_cl_view partial_view = matrix_cl_view::Entire)
+      : rows_(R), cols_(C), view_(partial_view) {
     if (size() == 0) {
       return;
     }
@@ -322,8 +395,40 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
     try {
       buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
       cl::Event transfer_event;
-      queue.enqueueWriteBuffer(buffer_cl_, CL_FALSE, 0, sizeof(T) * A.size(),
-                               A.data(), NULL, &transfer_event);
+      queue.enqueueWriteBuffer(
+          buffer_cl_,
+          opencl_context.in_order() || std::is_rvalue_reference<Vec&&>::value,
+          0, sizeof(T) * A.size(), A.data(), nullptr, &transfer_event);
+      this->add_write_event(transfer_event);
+    } catch (const cl::Error& e) {
+      check_opencl_error("matrix constructor", e);
+    }
+  }
+
+  /**
+   * Construct from \c array of doubles with given rows and columns
+   *
+   * @param A array of doubles
+   * @param R Number of rows the matrix should have.
+   * @param C Number of columns the matrix should have.
+   * @param partial_view which part of the matrix is used
+   * @throw <code>std::system_error</code> if the
+   * matrices do not have matching dimensions
+   */
+  template <typename U, require_same_t<T, U>...>
+  explicit matrix_cl(const U* A, const int& R, const int& C,
+                     matrix_cl_view partial_view = matrix_cl_view::Entire)
+      : rows_(R), cols_(C), view_(partial_view) {
+    if (size() == 0) {
+      return;
+    }
+    cl::Context& ctx = opencl_context.context();
+    cl::CommandQueue& queue = opencl_context.queue();
+    try {
+      buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * size());
+      cl::Event transfer_event;
+      queue.enqueueWriteBuffer(buffer_cl_, opencl_context.in_order(), 0,
+                               sizeof(T) * size(), A, nullptr, &transfer_event);
       this->add_write_event(transfer_event);
     } catch (const cl::Error& e) {
       check_opencl_error("matrix constructor", e);
@@ -333,40 +438,46 @@ class matrix_cl<T, enable_if_arithmetic<T>> {
   /**
    * Assign a \c matrix_cl to another
    */
-  matrix_cl<T>& operator=(const matrix_cl<T>& a) {
-    check_size_match("assignment of (OpenCL) matrices", "source.rows()",
-                     a.rows(), "destination.rows()", rows());
-    check_size_match("assignment of (OpenCL) matrices", "source.cols()",
-                     a.cols(), "destination.cols()", cols());
-    // Need to wait for all of matrices events before destroying old buffer
-    this->wait_for_read_write_events();
-    buffer_cl_ = a.buffer();
+  matrix_cl<T>& operator=(matrix_cl<T>&& a) {
     view_ = a.view();
+    rows_ = a.rows();
+    cols_ = a.cols();
+    this->wait_for_read_write_events();
+    buffer_cl_ = std::move(a.buffer_cl_);
+    write_events_ = std::move(a.write_events_);
+    read_events_ = std::move(a.read_events_);
     return *this;
   }
 
   /**
-   * Assign a \c matrix_cl of one arithmetic type to another
+   * Assign a \c matrix_cl to another
    */
-  template <typename U, typename = enable_if_arithmetic<U>>
-  matrix_cl<T>& operator=(const matrix_cl<U>& a) {
-    check_size_match("assignment of (OpenCL) matrices", "source.rows()",
-                     a.rows(), "destination.rows()", rows());
-    check_size_match("assignment of (OpenCL) matrices", "source.cols()",
-                     a.cols(), "destination.cols()", cols());
-    // Need to wait for all of matrices events before destroying old buffer
-    this->wait_for_read_write_events();
-    buffer_cl_ = a.buffer();
-    view_ = a.view();
+  matrix_cl<T>& operator=(const matrix_cl<T>& a) {
+    this->view_ = a.view();
+    this->rows_ = a.rows();
+    this->cols_ = a.cols();
+    cl::Context& ctx = opencl_context.context();
+    cl::CommandQueue queue = opencl_context.queue();
+    try {
+      buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * this->size());
+      cl::Event cstr_event;
+      queue.enqueueCopyBuffer(a.buffer(), this->buffer(), 0, 0,
+                              a.size() * sizeof(T), &a.write_events(),
+                              &cstr_event);
+      this->add_write_event(cstr_event);
+      a.add_read_event(cstr_event);
+    } catch (const cl::Error& e) {
+      check_opencl_error("copy (OpenCL)->(OpenCL)", e);
+    }
     return *this;
   }
-};
+};  // namespace math
 
 template <typename T>
-using matrix_cl_prim = matrix_cl<T, enable_if_arithmetic<T>>;
+using matrix_cl_prim = matrix_cl<T, require_arithmetic_t<T>>;
 
 template <typename T>
-using matrix_cl_fp = matrix_cl<T, enable_if_floating_point<T>>;
+using matrix_cl_fp = matrix_cl<T, require_floating_point_t<T>>;
 
 }  // namespace math
 }  // namespace stan

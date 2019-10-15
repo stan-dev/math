@@ -47,17 +47,22 @@ class trace_gen_quad_form_vari : public vari {
                                      Eigen::Matrix<var, Rb, Cb>* varB) {
     Eigen::Matrix<double, Ca, Cb> AtB;
     Eigen::Matrix<double, Ra, Cb> BD;
-    if (varB || varA)
+    if (varB || varA) {
       BD.noalias() = B * D;
-    if (varB || varD)
+    }
+    if (varB || varD) {
       AtB.noalias() = A.transpose() * B;
+    }
 
-    if (varB)
+    if (varB) {
       (*varB).adj() += adj * (A * BD + AtB * D.transpose());
-    if (varA)
+    }
+    if (varA) {
       (*varA).adj() += adj * (B * BD.transpose());
-    if (varD)
+    }
+    if (varD) {
       (*varD).adj() += adj * (B.transpose() * AtB);
+    }
   }
 
  public:
@@ -81,7 +86,7 @@ class trace_gen_quad_form_vari : public vari {
 }  // namespace internal
 
 template <typename Td, int Rd, int Cd, typename Ta, int Ra, int Ca, typename Tb,
-          int Rb, int Cb, typename = enable_if_any_var<Td, Ta, Tb>>
+          int Rb, int Cb, typename = require_any_var_t<Td, Ta, Tb>>
 inline var trace_gen_quad_form(const Eigen::Matrix<Td, Rd, Cd>& D,
                                const Eigen::Matrix<Ta, Ra, Ca>& A,
                                const Eigen::Matrix<Tb, Rb, Cb>& B) {

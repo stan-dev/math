@@ -8,9 +8,11 @@
 #include <stan/math/prim/mat/functor/map_rect_combine.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
 
+#include <tbb/parallel_for.h>
+#include <tbb/blocked_range.h>
+
+#include <algorithm>
 #include <vector>
-#include <thread>
-#include <future>
 
 namespace stan {
 namespace math {
@@ -26,70 +28,43 @@ map_rect_concurrent(
         job_params,
     const std::vector<std::vector<double>>& x_r,
     const std::vector<std::vector<int>>& x_i, std::ostream* msgs) {
-  typedef map_rect_reduce<F, T_shared_param, T_job_param> ReduceF;
-  typedef map_rect_combine<F, T_shared_param, T_job_param> CombineF;
+  using ReduceF = map_rect_reduce<F, T_shared_param, T_job_param>;
+  using CombineF = map_rect_combine<F, T_shared_param, T_job_param>;
 
   const int num_jobs = job_params.size();
   const vector_d shared_params_dbl = value_of(shared_params);
-  std::vector<std::future<std::vector<matrix_d>>> futures;
+  std::vector<matrix_d> job_output(num_jobs);
+  std::vector<int> world_f_out(num_jobs, 0);
 
-  auto execute_chunk = [&](int start, int size) -> std::vector<matrix_d> {
-#ifdef STAN_THREADS
-    ChainableStack thread_stack_instance;
-#endif
-    const int end = start + size;
-    std::vector<matrix_d> chunk_f_out;
-    chunk_f_out.reserve(size);
-    for (int i = start; i != end; i++)
-      chunk_f_out.push_back(ReduceF()(
-          shared_params_dbl, value_of(job_params[i]), x_r[i], x_i[i], msgs));
-    return chunk_f_out;
+  auto execute_chunk = [&](std::size_t start, std::size_t end) -> void {
+    for (std::size_t i = start; i != end; ++i) {
+      job_output[i] = ReduceF()(shared_params_dbl, value_of(job_params[i]),
+                                x_r[i], x_i[i], msgs);
+      world_f_out[i] = job_output[i].cols();
+    }
   };
 
-  int num_threads = get_num_threads(num_jobs);
-  int num_jobs_per_thread = num_jobs / num_threads;
-  futures.emplace_back(
-      std::async(std::launch::deferred, execute_chunk, 0, num_jobs_per_thread));
-
 #ifdef STAN_THREADS
-  if (num_threads > 1) {
-    const int num_big_threads = num_jobs % num_threads;
-    const int first_big_thread = num_threads - num_big_threads;
-    for (int i = 1, job_start = num_jobs_per_thread, job_size = 0;
-         i < num_threads; ++i, job_start += job_size) {
-      job_size = i >= first_big_thread ? num_jobs_per_thread + 1
-                                       : num_jobs_per_thread;
-      futures.emplace_back(
-          std::async(std::launch::async, execute_chunk, job_start, job_size));
-    }
-  }
+  tbb::parallel_for(tbb::blocked_range<std::size_t>(0, num_jobs),
+                    [&](const tbb::blocked_range<size_t>& r) {
+                      execute_chunk(r.begin(), r.end());
+                    });
+#else
+  execute_chunk(0, num_jobs);
 #endif
 
   // collect results
-  std::vector<int> world_f_out;
-  world_f_out.reserve(num_jobs);
-  matrix_d world_output(0, 0);
+  const int num_world_output
+      = std::accumulate(world_f_out.begin(), world_f_out.end(), 0);
+  matrix_d world_output(job_output[0].rows(), num_world_output);
 
   int offset = 0;
-  for (std::size_t i = 0; i < futures.size(); ++i) {
-    const std::vector<matrix_d>& chunk_result = futures[i].get();
-    if (i == 0)
-      world_output.resize(chunk_result[0].rows(),
-                          num_jobs * chunk_result[0].cols());
+  for (const auto& job : job_output) {
+    const int num_job_outputs = job.cols();
 
-    for (const auto& job_result : chunk_result) {
-      const int num_job_outputs = job_result.cols();
-      world_f_out.push_back(num_job_outputs);
+    world_output.block(0, offset, world_output.rows(), num_job_outputs) = job;
 
-      if (world_output.cols() < offset + num_job_outputs)
-        world_output.conservativeResize(Eigen::NoChange,
-                                        2 * (offset + num_job_outputs));
-
-      world_output.block(0, offset, world_output.rows(), num_job_outputs)
-          = job_result;
-
-      offset += num_job_outputs;
-    }
+    offset += num_job_outputs;
   }
   CombineF combine(shared_params, job_params);
   return combine(world_output, world_f_out);

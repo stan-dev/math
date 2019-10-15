@@ -6,7 +6,7 @@
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/opencl/kernels/identity.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <CL/cl.hpp>
+#include <cl.hpp>
 
 namespace stan {
 namespace math {
@@ -19,7 +19,7 @@ namespace math {
  * @return the identity matrix
  *
  */
-template <typename T, typename = enable_if_arithmetic<T>>
+template <typename T, typename = require_arithmetic_t<T>>
 inline matrix_cl<T> identity(int rows_cols) {
   matrix_cl<T> A(rows_cols, rows_cols, matrix_cl_view::Diagonal);
   if (rows_cols == 0) {
