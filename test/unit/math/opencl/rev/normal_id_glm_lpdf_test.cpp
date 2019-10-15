@@ -146,7 +146,7 @@ TEST(ProbDistributionsNormalIdGLM, gpu_matches_cpu_small_simple) {
                   beta_var2.adj().eval());
 }
 
-TEST(ProbDistributionsNormalIdGLM, gpu_matches_cpu_zero_rows) {
+TEST(ProbDistributionsNormalIdGLM, gpu_matches_cpu_zero_instances) {
   double eps = 1e-9;
   int N = 0;
   int M = 2;
@@ -194,7 +194,7 @@ TEST(ProbDistributionsNormalIdGLM, gpu_matches_cpu_zero_rows) {
                   beta_var2.adj().eval());
 }
 
-TEST(ProbDistributionsNormalIdGLM, gpu_matches_cpu_zero_cols) {
+TEST(ProbDistributionsNormalIdGLM, gpu_matches_cpu_zero_attributes) {
   double eps = 1e-9;
   int N = 3;
   int M = 0;

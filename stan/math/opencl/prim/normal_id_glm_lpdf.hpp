@@ -83,7 +83,7 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
     return 0;
   }
 
-  if (N == 0 || M == 0) {
+  if (N == 0) {
     return 0;
   }
 
