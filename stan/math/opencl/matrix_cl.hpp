@@ -396,8 +396,9 @@ class matrix_cl<T, require_arithmetic_t<T>> {
       buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * A.size());
       cl::Event transfer_event;
       queue.enqueueWriteBuffer(
-          buffer_cl_, opencl_context.in_order() || std::is_rvalue_reference<Vec&&>::value, 0,
-          sizeof(T) * A.size(), A.data(), nullptr, &transfer_event);
+          buffer_cl_,
+          opencl_context.in_order() || std::is_rvalue_reference<Vec&&>::value,
+          0, sizeof(T) * A.size(), A.data(), nullptr, &transfer_event);
       this->add_write_event(transfer_event);
     } catch (const cl::Error& e) {
       check_opencl_error("matrix constructor", e);
