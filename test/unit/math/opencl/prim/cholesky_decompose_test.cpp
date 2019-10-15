@@ -9,7 +9,30 @@
   for (int i = 0; i < A.size(); i++)    \
     EXPECT_NEAR(A(i), B(i), DELTA);
 
-TEST(MathMatrix, cholesky_decompose_cpu_vs_cl_small) {
+TEST(MathMatrix, cholesky_decompose_cl_expections) {
+  using stan::math::matrix_cl;
+  matrix_cl<double> m0;
+  EXPECT_NO_THROW(stan::math::cholesky_decompose(m0));
+
+  stan::math::matrix_d m1(2, 3);
+  m1 << 1, 2, 3, 4, 5, 6;
+  matrix_cl<double> m1_cl(m1);
+  EXPECT_THROW(stan::math::cholesky_decompose(m1_cl), std::invalid_argument);
+
+  // not pos-def
+  stan::math::matrix_d m22(2, 2);
+  m22 << 1.0, 2.0, 2.0, 3.0;
+  matrix_cl<double> m22_cl(m22);
+  EXPECT_THROW(stan::math::cholesky_decompose(m22_cl), std::domain_error);
+
+  // not symmetric
+  stan::math::matrix_d m_not_sym(2, 2);
+  m_not_sym << 1.0, 2.0, 3.0, 4.0;
+  matrix_cl<double> m_not_sym_cl(m_not_sym);
+  EXPECT_THROW(stan::math::cholesky_decompose(m_not_sym_cl), std::domain_error);
+}
+
+TEST(MathMatrix, cholesky_decompose_non_inplace_cpu_vs_cl_small) {
   stan::math::matrix_d m0(3, 3);
   m0 << 25, 15, -5, 15, 18, 0, -5, 0, 11;
 
@@ -22,11 +45,13 @@ TEST(MathMatrix, cholesky_decompose_cpu_vs_cl_small) {
   stan::math::matrix_d m0_res = stan::math::cholesky_decompose(m0);
   stan::math::matrix_d m1_res = stan::math::cholesky_decompose(m1);
 
-  stan::math::opencl::cholesky_decompose(m0_cl);
-  stan::math::opencl::cholesky_decompose(m1_cl);
+  stan::math::matrix_cl<double> m0_cl_res
+      = stan::math::cholesky_decompose(m0_cl);
+  stan::math::matrix_cl<double> m1_cl_res
+      = stan::math::cholesky_decompose(m1_cl);
 
-  m0 = stan::math::from_matrix_cl(m0_cl);
-  m1 = stan::math::from_matrix_cl(m1_cl);
+  m0 = stan::math::from_matrix_cl(m0_cl_res);
+  m1 = stan::math::from_matrix_cl(m1_cl_res);
 
   EXPECT_MATRIX_NEAR(m0, m0_res, 1e-8);
   EXPECT_MATRIX_NEAR(m1, m1_res, 1e-8);
@@ -37,23 +62,23 @@ void cholesky_decompose_test(int size) {
   stan::math::matrix_d m1_pos_def
       = m1 * m1.transpose() + size * Eigen::MatrixXd::Identity(size, size);
 
-  stan::math::matrix_d m1_cpu(size, size);
-  stan::math::matrix_d m1_cl(size, size);
-
   stan::math::check_square("cholesky_decompose", "m", m1_pos_def);
   stan::math::check_symmetric("cholesky_decompose", "m", m1_pos_def);
   Eigen::LLT<stan::math::matrix_d> llt(m1_pos_def.rows());
   llt.compute(m1_pos_def);
   stan::math::check_pos_definite("cholesky_decompose", "m", llt);
-  m1_cpu = llt.matrixL();
+  stan::math::matrix_d m1_cpu = llt.matrixL();
 
-  m1_cl = stan::math::cholesky_decompose(m1_pos_def);
-
+  stan::math::matrix_cl<double> m1_pos_def_cl(m1_pos_def);
+  stan::math::matrix_cl<double> m1_pos_def_cl_result
+      = stan::math::cholesky_decompose(m1_pos_def_cl);
+  stan::math::matrix_d m1_cl_cpu
+      = stan::math::from_matrix_cl(m1_pos_def_cl_result);
   double max_error = 0;
   for (int i = 0; i < size; i++) {
     for (int j = 0; j <= i; j++) {
-      double abs_err = std::fabs(m1_cpu(i, j) - m1_cl(i, j));
-      double a = std::max(abs_err / m1_cpu(i, j), abs_err / m1_cl(i, j));
+      double abs_err = std::fabs(m1_cpu(i, j) - m1_cl_cpu(i, j));
+      double a = std::max(abs_err / m1_cpu(i, j), abs_err / m1_cl_cpu(i, j));
       max_error = std::max(max_error, a);
     }
   }
@@ -70,31 +95,5 @@ TEST(MathMatrix, cholesky_decompose_big) {
   cholesky_decompose_test(1251);
   cholesky_decompose_test(1704);
   cholesky_decompose_test(2000);
-}
-
-TEST(MathMatrix, cholesky_decompose_big_tuning_opts) {
-  std::vector<int> size_transfer({256, 512, 1300});
-  std::vector<int> cholesky_min_size({64, 256});
-  std::vector<int> cholesky_part({2, 4});
-  for (auto&& size_t_ : size_transfer) {
-    for (auto&& min_size_ : cholesky_min_size) {
-      for (auto&& part_ : cholesky_part) {
-        stan::math::opencl_context.tuning_opts().cholesky_size_worth_transfer
-            = size_t_;
-        stan::math::opencl_context.tuning_opts().cholesky_min_L11_size
-            = min_size_;
-        stan::math::opencl_context.tuning_opts().cholesky_partition = part_;
-        cholesky_decompose_test(1300);
-      }
-    }
-    stan::math::opencl_context.tuning_opts().cholesky_size_worth_transfer = 128;
-    stan::math::opencl_context.tuning_opts().cholesky_min_L11_size = 64;
-    stan::math::opencl_context.tuning_opts().cholesky_partition = 4;
-    cholesky_decompose_test(128);
-    cholesky_decompose_test(65);
-    cholesky_decompose_test(130);
-    cholesky_decompose_test(128 * 4);
-    cholesky_decompose_test(128 * 4 - 1);
-  }
 }
 #endif
