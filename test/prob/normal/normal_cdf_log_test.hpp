@@ -34,6 +34,18 @@ class AgradCdfLogNormal : public AgradCdfLogTest {
     param[2] = 7.2;   // sigma
     parameters.push_back(param);
     cdf_log.push_back(-1.484448229919656192521);  // expected cdf_log
+
+    param[0] = -50;  // y
+    param[1] = 0;   // mu
+    param[2] = 1;   // sigma
+    parameters.push_back(param);
+    cdf_log.push_back(-1254.8313611394199);  // expected cdf_log
+
+    param[0] = 7.5;  // y
+    param[1] = 0;   // mu
+    param[2] = 1;   // sigma
+    parameters.push_back(param);
+    cdf_log.push_back(-3.1908916729109475e-14);  // expected cdf_log
   }
 
   void invalid_values(vector<size_t>& index, vector<double>& value) {
