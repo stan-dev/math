@@ -116,12 +116,10 @@ gp_dot_prod_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  *
  * \f$k(x,x') = x^T sigma\_squared I x'\f$
  *
- * @tparam T_x1 type of first std::vector of double
- * @tparam T_x2 type of second std::vector of double
+ * @tparam T_x type of first std::vector of double
  * @tparam T_sigma_squared scalar type of sigma_squared
  *
- * @param x1 std::vector of elements that can be used in dot_product
- * @param x2 std::vector of elements that can be used in dot_product
+ * @param x std::vector of elements that can be used in dot_product
  * @param sigma_squared variance
  * @return dot product covariance matrix that is positive semi-definite
  * @throw std::domain_error if sigma < 0, nan, inf or
