@@ -2,6 +2,7 @@
 #define STAN_MATH_OPENCL_OPENCL
 #ifdef STAN_OPENCL
 
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/opencl/opencl_context.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/copy.hpp>

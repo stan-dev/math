@@ -433,6 +433,9 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * Assign a \c matrix_cl to another
    */
   matrix_cl<T>& operator=(const matrix_cl<T>& a) {
+    if (a.size() == 0) {
+      return *this;
+    }
     this->view_ = a.view();
     this->rows_ = a.rows();
     this->cols_ = a.cols();

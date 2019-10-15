@@ -3,18 +3,28 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/opencl_context.hpp>
-#include <stan/math/opencl/kernels/sub_block.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/opencl/sub_block.hpp>
 #include <stan/math/opencl/rev/matrix_cl.hpp>
+#include <stan/math/prim/scal/err/domain_error.hpp>
 #include <CL/cl.hpp>
 #include <vector>
 
 namespace stan {
 namespace math {
+  /**
+   * Write the contents of A into
+   * \c this starting at the top left of \c this
+   * @param A input matrix
+   * @param A_i the offset row in A
+   * @param A_j the offset column in A
+   * @param this_i the offset row for the matrix to be subset into
+   * @param this_j the offset col for the matrix to be subset into
+   * @param nrows the number of rows in the submatrix
+   * @param ncols the number of columns in the submatrix
+   */
   template <typename T>
   inline void matrix_cl<T, require_var_t<T>>::sub_block(const matrix_cl<T, require_var_t<T>>& A, size_t A_i,
-                   size_t A_j, size_t this_i, size_t this_j, size_t nrows,
-                   size_t ncols) try {
+                   size_t A_j, size_t this_i, size_t this_j, size_t nrows, size_t ncols) try {
     this->val().sub_block(A.val(), A_i, A_j, this_i, this_j, nrows, ncols);
     this->adj().sub_block(A.adj(), A_i, A_j, this_i, this_j, nrows, ncols);
   } catch (const cl::Error& e) {

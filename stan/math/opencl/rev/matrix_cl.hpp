@@ -2,7 +2,6 @@
 #define STAN_MATH_OPENCL_REV_MATRIX_CL_HPP
 #ifdef STAN_OPENCL
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/rev/mat.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
@@ -42,7 +41,7 @@ class matrix_cl<T, require_var_t<T>> {
 
   matrix_cl<double>& val() const {return val_;}
   matrix_cl<double>& adj() const {return adj_;}
-  explicit matrix_cl() : rows_(0), cols_(0) {}
+  explicit matrix_cl() : rows_(0), cols_(0), val_(0, 0), adj_(0,0) {}
 
   // Forward declare the methods that work in place on the matrix
   template <matrix_cl_view matrix_view = matrix_cl_view::Entire>
@@ -58,7 +57,11 @@ class matrix_cl<T, require_var_t<T>> {
 
    const matrix_cl_view& view() const { return view_; }
 
-   void view(const matrix_cl_view& view) { view_ = view; }
+   void view(const matrix_cl_view& view) {
+     view_ = view;
+     val_.view(view);
+     adj_.view(view);
+   }
 
   template <typename Mat, require_eigen_st<is_var, Mat>...>
   explicit matrix_cl(Mat&& A, matrix_cl_view partial_view = matrix_cl_view::Entire)
@@ -95,6 +98,43 @@ class matrix_cl<T, require_var_t<T>> {
       val_.buffer() = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * packed_size);
       adj_.buffer() = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * packed_size);
       const matrix_vi foo = Eigen::Map<const matrix_vi>(A, 1, packed_size);
+      queue.enqueueWriteBuffer(val_.buffer(), CL_FALSE, 0,
+                               sizeof(double) * packed_size,
+                               foo.val().eval().data(), NULL,
+                               &transfer_event1);
+      queue.enqueueWriteBuffer(adj_.buffer(), CL_FALSE, 0,
+                              sizeof(double) * packed_size,
+                              foo.adj().eval().data(), NULL,
+                              &transfer_event2);
+    }
+    val_.add_write_event(transfer_event1);
+    adj_.add_write_event(transfer_event2);
+  }
+
+  explicit matrix_cl(const std::vector<var>& A, const int& R, const int& C, matrix_cl_view partial_view = matrix_cl_view::Entire) :
+    rows_(R), cols_(C), view_(partial_view),
+    val_(R, C, partial_view), adj_(R, C, partial_view) {
+    cl::Context& ctx = opencl_context.context();
+    cl::CommandQueue& queue = opencl_context.queue();
+    cl::Event transfer_event1;
+    cl::Event transfer_event2;
+    if (view_ == matrix_cl_view::Entire) {
+      const matrix_v foo = Eigen::Map<const matrix_v>(A.data(), R, C);
+      val_.buffer() = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * R * C);
+      adj_.buffer() = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * R * C);
+      queue.enqueueWriteBuffer(val_.buffer(), CL_FALSE, 0,
+                               sizeof(double) * R * C,
+                               foo.val().eval().data(), NULL,
+                               &transfer_event1);
+      queue.enqueueWriteBuffer(adj_.buffer(), CL_FALSE, 0,
+                              sizeof(double) * R * C,
+                              foo.adj().eval().data(), NULL,
+                              &transfer_event2);
+    } else {
+      const int packed_size = R * (R + 1) / 2;
+      val_.buffer() = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * packed_size);
+      adj_.buffer() = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * packed_size);
+      const matrix_v foo = Eigen::Map<const matrix_v>(A.data(), 1, packed_size);
       queue.enqueueWriteBuffer(val_.buffer(), CL_FALSE, 0,
                                sizeof(double) * packed_size,
                                foo.val().eval().data(), NULL,

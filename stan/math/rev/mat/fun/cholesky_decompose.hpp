@@ -14,7 +14,7 @@
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 
 #ifdef STAN_OPENCL
-#include <stan/math/opencl/opencl.hpp>
+#include <stan/math/opencl/opencl_rev.hpp>
 #endif
 
 #include <algorithm>
@@ -299,12 +299,12 @@ class cholesky_opencl : public vari {
    * @param L cholesky factor
    * @param L_adj matrix of adjoints of L
    */
-  inline void symbolic_rev(matrix_cl<double>& L, matrix_cl<double>& L_adj) {
-    L_adj = transpose(L) * L_adj;
-    L_adj.triangular_transpose<TriangularMapCL::LowerToUpper>();
-    L = transpose(tri_inverse(L));
-    L_adj = L * transpose(L * L_adj);
-    L_adj.triangular_transpose<TriangularMapCL::LowerToUpper>();
+  inline void symbolic_rev(matrix_cl<var>& L) {
+    L.adj() = transpose(L.val()) * L.adj();
+    L.adj().triangular_transpose<TriangularMapCL::LowerToUpper>();
+    L.val() = transpose(tri_inverse(L.val()));
+    L.adj() = L.val() * transpose(L.val() * L.adj());
+    L.adj().triangular_transpose<TriangularMapCL::LowerToUpper>();
   }
 
   /**
@@ -318,14 +318,7 @@ class cholesky_opencl : public vari {
   virtual void chain() {
     const int packed_size = M_ * (M_ + 1) / 2;
     std::vector<double> L_adj_cpu(packed_size);
-    std::vector<double> L_val_cpu(packed_size);
-
-    for (size_type j = 0; j < packed_size; ++j) {
-      L_adj_cpu[j] = vari_ref_L_[j]->adj_;
-      L_val_cpu[j] = vari_ref_L_[j]->val_;
-    }
-    matrix_cl<double> L = packed_copy<matrix_cl_view::Lower>(L_val_cpu, M_);
-    matrix_cl<double> L_adj = packed_copy<matrix_cl_view::Lower>(L_adj_cpu, M_);
+    matrix_cl<var> L = packed_copy<matrix_cl_view::Lower>(vari_ref_L_, M_);
     int block_size
         = M_ / opencl_context.tuning_opts().cholesky_rev_block_partition;
     block_size = std::max(block_size, 8);
@@ -339,42 +332,32 @@ class cholesky_opencl : public vari {
       const int k_j_ind = k - j;
       const int m_k_ind = M_ - k;
 
-      matrix_cl<double> R(k_j_ind, j, matrix_cl_view::Lower);
-      matrix_cl<double> D(k_j_ind, k_j_ind, matrix_cl_view::Lower);
-      matrix_cl<double> B(m_k_ind, j);
-      matrix_cl<double> C(m_k_ind, k_j_ind, matrix_cl_view::Lower);
-
-      matrix_cl<double> R_adj(k_j_ind, j, matrix_cl_view::Lower);
-      matrix_cl<double> D_adj(k_j_ind, k_j_ind, matrix_cl_view::Lower);
-      matrix_cl<double> B_adj(m_k_ind, j);
-      matrix_cl<double> C_adj(m_k_ind, k_j_ind, matrix_cl_view::Lower);
+      matrix_cl<var> R(k_j_ind, j, matrix_cl_view::Lower);
+      matrix_cl<var> D(k_j_ind, k_j_ind, matrix_cl_view::Lower);
+      matrix_cl<var> B(m_k_ind, j);
+      matrix_cl<var> C(m_k_ind, k_j_ind, matrix_cl_view::Lower);
 
       R.sub_block(L, j, 0, 0, 0, k_j_ind, j);
       D.sub_block(L, j, j, 0, 0, k_j_ind, k_j_ind);
       B.sub_block(L, k, 0, 0, 0, m_k_ind, j);
       C.sub_block(L, k, j, 0, 0, m_k_ind, k_j_ind);
 
-      R_adj.sub_block(L_adj, j, 0, 0, 0, k_j_ind, j);
-      D_adj.sub_block(L_adj, j, j, 0, 0, k_j_ind, k_j_ind);
-      B_adj.sub_block(L_adj, k, 0, 0, 0, m_k_ind, j);
-      C_adj.sub_block(L_adj, k, j, 0, 0, m_k_ind, k_j_ind);
+      C.adj() = C.adj() * tri_inverse(D.val());
+      B.adj() = B.adj() - C.adj() * R.val();
+      D.adj() = D.adj() - transpose(C.adj()) * C.val();
 
-      C_adj = C_adj * tri_inverse(D);
-      B_adj = B_adj - C_adj * R;
-      D_adj = D_adj - transpose(C_adj) * C;
+      symbolic_rev(D);
 
-      symbolic_rev(D, D_adj);
+      R.adj() = R.adj() - transpose(C.adj()) * B.val() - D.adj() * R.val();
+      D.adj() = diagonal_multiply(D.adj(), 0.5);
 
-      R_adj = R_adj - transpose(C_adj) * B - D_adj * R;
-      D_adj = diagonal_multiply(D_adj, 0.5);
-
-      L_adj.sub_block(R_adj, 0, 0, j, 0, k_j_ind, j);
-      L_adj.sub_block(D_adj, 0, 0, j, j, k_j_ind, k_j_ind);
-      L_adj.sub_block(B_adj, 0, 0, k, 0, m_k_ind, j);
-      L_adj.sub_block(C_adj, 0, 0, k, j, m_k_ind, k_j_ind);
+      L.adj().sub_block(R.adj(), 0, 0, j, 0, k_j_ind, j);
+      L.adj().sub_block(D.adj(), 0, 0, j, j, k_j_ind, k_j_ind);
+      L.adj().sub_block(B.adj(), 0, 0, k, 0, m_k_ind, j);
+      L.adj().sub_block(C.adj(), 0, 0, k, j, m_k_ind, k_j_ind);
     }
-    L_adj.view(matrix_cl_view::Lower);
-    L_adj_cpu = packed_copy(L_adj);
+    L.view(matrix_cl_view::Lower);
+    L_adj_cpu = packed_copy(L);
     for (size_type j = 0; j < packed_size; ++j) {
       vari_ref_A_[j]->adj_ += L_adj_cpu[j];
     }
