@@ -4,34 +4,7 @@
 #include <string>
 #include <vector>
 
-template <typename T_x, typename T_sigma>
-std::string pull_msg(std::vector<T_x> x, T_sigma sigma) {
-  std::string message;
-  try {
-    stan::math::gp_dot_prod_cov(x, sigma);
-  } catch (std::domain_error &e) {
-    message = e.what();
-  } catch (...) {
-    message = "Threw the wrong exection";
-  }
-  return message;
-}
-
-template <typename T_x1, typename T_x2, typename T_sigma>
-std::string pull_msg(std::vector<T_x1> x1, std::vector<T_x2> x2,
-                     T_sigma sigma) {
-  std::string message;
-  try {
-    stan::math::gp_dot_prod_cov(x1, x2, sigma);
-  } catch (std::domain_error &e) {
-    message = e.what();
-  } catch (...) {
-    message = "Threw the wrong exection";
-  }
-  return message;
-}
-
-TEST(MathPrimMat, scalar_one_x) {
+TEST(MathPrimMat, 1d_one_x) {
   double sigma_squared = 0.25;
 
   std::vector<double> x(3);
@@ -46,13 +19,13 @@ TEST(MathPrimMat, scalar_one_x) {
   Eigen::MatrixXd cov;
   EXPECT_NO_THROW(cov = stan::math::gp_dot_prod_cov(x, sigma_squared));
 
-  for (int i = 0; i < 3; i++)
-    for (int j = 0; j < 3; j++)
+  for (int i = 0; i < ref.rows(); i++)
+    for (int j = 0; j < ref.cols(); j++)
       EXPECT_FLOAT_EQ(ref(i, j), cov(i, j))
           << "index: (" << i << ", " << j << ")";
 }
 
-TEST(MathPrimMat, scalar_two_x) {
+TEST(MathPrimMat, 1d_two_x) {
   double sigma_squared = 0.25;
 
   std::vector<double> x1(3);
@@ -81,7 +54,66 @@ TEST(MathPrimMat, scalar_two_x) {
           << "index: (" << i << ", " << j << ")";
 }
 
-TEST(MathPrimMat, vector_one_x) {
+TEST(MathPrimMat, 2d_scalar_one_x) {
+  double sigma_squared = 1.1;
+
+  Eigen::MatrixXd ref(4, 4);
+
+  ref << 14.3, 28.6, 42.9, 57.2,
+    28.6, 57.2, 85.8, 114.4,
+    42.9, 85.8, 128.7, 171.6,
+    57.2, 114.4, 171.6, 228.8;
+
+  std::vector<Eigen::Matrix<double, -1, 1>> x(4);
+  for (size_t i = 0; i < x.size(); ++i) {
+    x[i].resize(2, 1);
+    x[i] << 2 * (i + 1), 3 * (i + 1);
+  }
+
+  Eigen::MatrixXd cov;
+  EXPECT_NO_THROW(cov = stan::math::gp_dot_prod_cov(x, sigma_squared));
+  for (int i = 0; i < ref.rows(); i++) {
+    for (int j = 0; j < ref.cols(); j++) {
+      EXPECT_FLOAT_EQ(ref(i, j), cov(i, j))
+          << "index: (" << i << ", " << j << ")";
+    }
+  }
+}
+
+TEST(MathPrimMat, 2d_scalar_two_x) {
+  double sigma_squared = 1.1;
+
+  Eigen::MatrixXd ref(3, 4);
+
+  ref << -15.4, -23.1, -30.8, -38.5,
+    -30.8, -46.2, -61.6, -77.0,
+    -46.2, -69.3, -92.4, -115.5;
+
+  std::vector<Eigen::Matrix<double, -1, 1>> x1(3);
+  for (size_t i = 0; i < x1.size(); ++i) {
+    x1[i].resize(3, 1);
+    x1[i] << 2 * (i + 1), 3 * (i + 1), 4 * (i + 1);
+  }
+
+  std::vector<Eigen::Matrix<double, -1, 1>> x2(4);
+  for (size_t i = 0; i < x2.size(); ++i) {
+    x2[i].resize(3, 1);
+    x2[i] << 2 * (i + 1.0) - 5, 3 * (i + 1.0) + 1, -5 * (i + 1.0);
+  }
+
+  Eigen::MatrixXd cov;
+  EXPECT_NO_THROW(cov = stan::math::gp_dot_prod_cov(x1, x2, sigma_squared));
+  EXPECT_EQ(ref.rows(), cov.rows());
+  EXPECT_EQ(ref.cols(), cov.cols());
+  for (int i = 0; i < ref.rows(); ++i) {
+    for (int j = 0; j < ref.cols(); ++j) {
+      EXPECT_FLOAT_EQ(ref(i, j), cov(i, j))
+          << "index: (" << i << ", " << j << ")";
+    }
+  }
+}
+
+TEST(MathPrimMat, 2d_vector_one_x) {
   Eigen::VectorXd diagonal_Sigma(2);
 
   diagonal_Sigma << 1.5, 1.7;
@@ -101,15 +133,15 @@ TEST(MathPrimMat, vector_one_x) {
 
   Eigen::MatrixXd cov;
   EXPECT_NO_THROW(cov = stan::math::gp_dot_prod_cov(x, diagonal_Sigma));
-  for (int i = 0; i < 3; i++) {
-    for (int j = 0; j < 3; j++) {
+  for (int i = 0; i < ref.rows(); i++) {
+    for (int j = 0; j < ref.cols(); j++) {
       EXPECT_FLOAT_EQ(ref(i, j), cov(i, j))
           << "index: (" << i << ", " << j << ")";
     }
   }
 }
 
-TEST(MathPrimMat, vector_two_x) {
+TEST(MathPrimMat, 2d_vector_two_x) {
   Eigen::VectorXd diagonal_Sigma(3);
 
   diagonal_Sigma << 1.1, 2.70, 4.70;
@@ -144,7 +176,7 @@ TEST(MathPrimMat, vector_two_x) {
   }
 }
 
-TEST(MathPrimMat, matrix_one_x) {
+TEST(MathPrimMat, 2d_matrix_one_x) {
   Eigen::MatrixXd Sigma(2, 2);
 
   Sigma << 1.5, 0.5, 0.5, 1.7;
@@ -162,15 +194,15 @@ TEST(MathPrimMat, matrix_one_x) {
 
   Eigen::MatrixXd cov;
   EXPECT_NO_THROW(cov = stan::math::gp_dot_prod_cov(x, Sigma));
-  for (int i = 0; i < 3; i++) {
-    for (int j = 0; j < 3; j++) {
+  for (int i = 0; i < ref.rows(); i++) {
+    for (int j = 0; j < ref.cols(); j++) {
       EXPECT_FLOAT_EQ(ref(i, j), cov(i, j))
           << "index: (" << i << ", " << j << ")";
     }
   }
 }
 
-TEST(MathPrimMat, matrix_two_x) {
+TEST(MathPrimMat, 2d_matrix_two_x) {
   Eigen::MatrixXd Sigma(3, 3);
 
   Sigma << 1.1, 0.30, 0.10, 0.3, 2.70, 0.25, 0.1, 0.25, 4.70;
@@ -204,49 +236,108 @@ TEST(MathPrimMat, matrix_two_x) {
   }
 }
 
-TEST(MathPrimMat, scalar_one_x_error) {
-  double sigma = 0.5;
-  double sigma_nan = std::numeric_limits<double>::quiet_NaN();
-  double sigma_inf = std::numeric_limits<double>::infinity();
-  double sigma_not_positive = 0.0;
-  double sigma_negative = -1.0;
+TEST(MathPrimMat, 1d_one_x_error) {
+  double sigma_squared = 0.5;
+  double sigma_squared_nan = std::numeric_limits<double>::quiet_NaN();
+  double sigma_squared_inf = std::numeric_limits<double>::infinity();
+  double sigma_squared_not_positive = 0.0;
+  double sigma_squared_negative = -1.0;
 
   std::vector<double> x = { -2, -1, -0.5 };
   std::vector<double> x_nan = { -2, -1, std::numeric_limits<double>::quiet_NaN() };
   std::vector<double> x_inf = { -2, -1, std::numeric_limits<double>::infinity() };
 
   Eigen::MatrixXd cov;
-  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x_nan, sigma), std::domain_error);
-  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x_inf, sigma), std::domain_error);
-  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x, sigma_nan), std::domain_error);
-  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x, sigma_inf), std::domain_error);
-  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x, sigma_not_positive), std::domain_error);
-  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x, sigma_negative), std::domain_error);
+  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x_nan, sigma_squared), std::domain_error);
+  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x_inf, sigma_squared), std::domain_error);
+  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x, sigma_squared_nan), std::domain_error);
+  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x, sigma_squared_inf), std::domain_error);
+  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x, sigma_squared_not_positive), std::domain_error);
+  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x, sigma_squared_negative), std::domain_error);
 }
 
-TEST(MathPrimMat, scalar_two_x_error) {
-  double sigma = 0.5;
-  double sigma_nan = std::numeric_limits<double>::quiet_NaN();
-  double sigma_inf = std::numeric_limits<double>::infinity();
-  double sigma_not_positive = 0.0;
-  double sigma_negative = -1.0;
+TEST(MathPrimMat, 1d_two_x_error) {
+  double sigma_squared = 0.5;
+  double sigma_squared_nan = std::numeric_limits<double>::quiet_NaN();
+  double sigma_squared_inf = std::numeric_limits<double>::infinity();
+  double sigma_squared_not_positive = 0.0;
+  double sigma_squared_negative = -1.0;
 
   std::vector<double> x = { -2, -1, -0.5 };
   std::vector<double> x_nan = { -2, -1, std::numeric_limits<double>::quiet_NaN() };
   std::vector<double> x_inf = { -2, -1, std::numeric_limits<double>::infinity() };
 
   Eigen::MatrixXd cov;
-  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x_nan, x, sigma), std::domain_error);
-  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x_inf, x, sigma), std::domain_error);
-  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x, x_nan, sigma), std::domain_error);
-  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x, x_inf, sigma), std::domain_error);
-  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x, x, sigma_nan), std::domain_error);
-  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x, x, sigma_inf), std::domain_error);
-  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x, x, sigma_not_positive), std::domain_error);
-  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x, x, sigma_negative), std::domain_error);
+  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x_nan, x, sigma_squared), std::domain_error);
+  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x_inf, x, sigma_squared), std::domain_error);
+  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x, x_nan, sigma_squared), std::domain_error);
+  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x, x_inf, sigma_squared), std::domain_error);
+  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x, x, sigma_squared_nan), std::domain_error);
+  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x, x, sigma_squared_inf), std::domain_error);
+  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x, x, sigma_squared_not_positive), std::domain_error);
+  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x, x, sigma_squared_negative), std::domain_error);
 }
 
-TEST(MathPrimMat, vector_one_x_error) {
+TEST(MathPrimMat, 2d_scalar_one_x_error) {
+  double sigma_squared = 0.5;
+  double sigma_squared_nan = std::numeric_limits<double>::quiet_NaN();
+  double sigma_squared_inf = std::numeric_limits<double>::infinity();
+  double sigma_squared_not_positive = 0.0;
+  double sigma_squared_negative = -1.0;
+
+  std::vector<Eigen::Matrix<double, -1, 1>> x(1);
+  x[0].resize(2, 1);
+  x[0] << 1, 2;
+  std::vector<Eigen::Matrix<double, -1, 1>> x_nan(1);
+  x_nan[0].resize(2, 1);
+  x_nan[0] << 1, std::numeric_limits<double>::quiet_NaN();
+  std::vector<Eigen::Matrix<double, -1, 1>> x_inf(1);
+  x_inf[0].resize(2, 1);
+  x_inf[0] << 1, std::numeric_limits<double>::infinity();
+
+  Eigen::MatrixXd cov;
+  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x_nan, sigma_squared), std::domain_error);
+  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x_inf, sigma_squared), std::domain_error);
+  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x, sigma_squared_nan), std::domain_error);
+  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x, sigma_squared_inf), std::domain_error);
+  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x, sigma_squared_not_positive), std::domain_error);
+  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x, sigma_squared_negative), std::domain_error);
+}
+
+TEST(MathPrimMat, 2d_scalar_two_x_error) {
+  double sigma_squared = 0.5;
+  double sigma_squared_nan = std::numeric_limits<double>::quiet_NaN();
+  double sigma_squared_inf = std::numeric_limits<double>::infinity();
+  double sigma_squared_not_positive = 0.0;
+  double sigma_squared_negative = -1.0;
+
+  std::vector<Eigen::Matrix<double, -1, 1>> x(1);
+  x[0].resize(2, 1);
+  x[0] << 1, 2;
+  std::vector<Eigen::Matrix<double, -1, 1>> x_nan(1);
+  x_nan[0].resize(2, 1);
+  x_nan[0] << 1, std::numeric_limits<double>::quiet_NaN();
+  std::vector<Eigen::Matrix<double, -1, 1>> x_inf(1);
+  x_inf[0].resize(2, 1);
+  x_inf[0] << 1, std::numeric_limits<double>::infinity();
+  std::vector<Eigen::Matrix<double, -1, 1>> x_size(1);
+  x_size[0].resize(3, 1);
+  x_size[0] << 1, 2, 3;
+
+  Eigen::MatrixXd cov;
+  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x_nan, x, sigma_squared), std::domain_error);
+  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x_inf, x, sigma_squared), std::domain_error);
+  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x_size, x, sigma_squared), std::invalid_argument);
+  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x, x_nan, sigma_squared), std::domain_error);
+  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x, x_inf, sigma_squared), std::domain_error);
+  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x, x_size, sigma_squared), std::invalid_argument);
+  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x, x, sigma_squared_nan), std::domain_error);
+  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x, x, sigma_squared_inf), std::domain_error);
+  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x, x, sigma_squared_not_positive), std::domain_error);
+  EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x, x, sigma_squared_negative), std::domain_error);
+}
+
+TEST(MathPrimMat, 2d_vector_one_x_error) {
   Eigen::VectorXd diagonal_Sigma(2);
   diagonal_Sigma << 1.5, 1.7;
   Eigen::VectorXd diagonal_Sigma_nan(2);
@@ -284,7 +375,7 @@ TEST(MathPrimMat, vector_one_x_error) {
   EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x, diagonal_Sigma_size), std::invalid_argument);
 }
 
-TEST(MathPrimMat, vector_two_x_error) {
+TEST(MathPrimMat, 2d_vector_two_x_error) {
   Eigen::VectorXd diagonal_Sigma(2);
   diagonal_Sigma << 1.5, 1.7;
   Eigen::VectorXd diagonal_Sigma_nan(2);
@@ -325,7 +416,7 @@ TEST(MathPrimMat, vector_two_x_error) {
   EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x, x, diagonal_Sigma_size), std::invalid_argument);
 }
 
-TEST(MathPrimMat, matrix_one_x_error) {
+TEST(MathPrimMat, 2d_matrix_one_x_error) {
   Eigen::MatrixXd Sigma(2, 2);
   Sigma << 1.5, 0.1, 0.1, 1.7;
   Eigen::MatrixXd Sigma_nan(2, 2);
@@ -360,7 +451,7 @@ TEST(MathPrimMat, matrix_one_x_error) {
   EXPECT_THROW(cov = stan::math::gp_dot_prod_cov(x, Sigma_size), std::invalid_argument);
 }
 
-TEST(MathPrimMat, matrix_two_x_error) {
+TEST(MathPrimMat, 2d_matrix_two_x_error) {
   Eigen::MatrixXd Sigma(2, 2);
   Sigma << 1.5, 0.1, 0.1, 1.7;
   Eigen::MatrixXd Sigma_nan(2, 2);
