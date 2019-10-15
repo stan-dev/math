@@ -65,7 +65,8 @@ ifneq (,$(shell $(CONLY) -dumpfullversion -dumpversion | egrep  "^([6-9])"))
 endif
 
 ifeq ($(cfg), release)
-        CPLUS_FLAGS = $(ITT_NOTIFY) -g -O2 -DUSE_PTHREAD
+#        CPLUS_FLAGS = $(ITT_NOTIFY) -g -O2 -DUSE_PTHREAD
+        CPLUS_FLAGS = $(ITT_NOTIFY) -O2 -DUSE_PTHREAD
 endif
 ifeq ($(cfg), debug)
         CPLUS_FLAGS = -DTBB_USE_DEBUG $(ITT_NOTIFY) -g -O0 -DUSE_PTHREAD
