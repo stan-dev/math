@@ -146,7 +146,7 @@ pipeline {
             steps {
               deleteDir()
               unstash 'MathSetup'
-              sh "make doxygen"
+              sh "doxygen doxygen/doxygen.cfg"
             }
         }
         stage('Headers check') {
