@@ -147,9 +147,11 @@ pipeline {
           steps {
               deleteDir()
               unstash 'MathSetup'
+              sh "mkdir -p doc"
               sh "mkdir -p doc/api"
             	sh "doxygen doxygen/doxygen.cfg"
           }
+          post { always { deleteDir() } }
         }
         stage('Headers check') {
             agent any
