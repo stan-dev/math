@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_OPENCL_ORDERED_LOGISTIC_GLM_LPMF_HPP
-#define STAN_MATH_OPENCL_ORDERED_LOGISTIC_GLM_LPMF_HPP
+#ifndef STAN_MATH_OPENCL_PRIM_ORDERED_LOGISTIC_GLM_LPMF_HPP
+#define STAN_MATH_OPENCL_PRIM_ORDERED_LOGISTIC_GLM_LPMF_HPP
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
@@ -11,6 +11,7 @@
 #include <stan/math/prim/mat/err/check_ordered.hpp>
 #include <stan/math/prim/arr/err/check_ordered.hpp>
 #include <stan/math/prim/mat/fun/log1m_exp.hpp>
+#include <stan/math/prim/mat/fun/sum.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernels/ordered_logistic_glm_lpmf.hpp>

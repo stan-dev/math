@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_OPENCL_TRANSPOSE_HPP
-#define STAN_MATH_OPENCL_TRANSPOSE_HPP
+#ifndef STAN_MATH_OPENCL_PRIM_TRANSPOSE_HPP
+#define STAN_MATH_OPENCL_PRIM_TRANSPOSE_HPP
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernels/transpose.hpp>

@@ -107,6 +107,73 @@ TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_vars) {
   }
 }
 
+TEST(ProbDistributionsBernoulliLogitGLM,
+     glm_matches_bernoulli_logit_vars_zero_instances) {
+  vector<int> y{};
+  Matrix<var, Dynamic, Dynamic> x(0, 2);
+  Matrix<var, Dynamic, 1> beta(2, 1);
+  beta << 0.3, 2000;
+  var alpha = 0.3;
+  Matrix<var, Dynamic, 1> theta(0, 1);
+
+  var lp = stan::math::bernoulli_logit_lpmf(y, theta);
+  lp.grad();
+
+  double lp_val = lp.val();
+  double alpha_adj = alpha.adj();
+  Matrix<double, Dynamic, 1> beta_adj(2, 1);
+  for (size_t i = 0; i < 2; i++) {
+    beta_adj[i] = beta[i].adj();
+  }
+
+  stan::math::recover_memory();
+
+  vector<int> y2{};
+  Matrix<var, Dynamic, Dynamic> x2(0, 2);
+  Matrix<var, Dynamic, 1> beta2(2, 1);
+  beta2 << 0.3, 2000;
+  var alpha2 = 0.3;
+
+  var lp2 = stan::math::bernoulli_logit_glm_lpmf(y2, x2, alpha2, beta2);
+  lp2.grad();
+
+  EXPECT_FLOAT_EQ(lp_val, lp2.val());
+  EXPECT_FLOAT_EQ(alpha_adj, alpha2.adj());
+  for (size_t i = 0; i < 2; i++) {
+    EXPECT_FLOAT_EQ(beta_adj[i], beta2[i].adj());
+  }
+}
+
+TEST(ProbDistributionsBernoulliLogitGLM,
+     glm_matches_bernoulli_logit_vars_zero_attributes) {
+  vector<int> y{1, 0, 1};
+  Matrix<var, Dynamic, Dynamic> x(3, 0);
+  Matrix<var, Dynamic, 1> beta(0, 1);
+  var alpha = 0.3;
+  Matrix<var, Dynamic, 1> alphavec = alpha * Matrix<double, 3, 1>::Ones();
+  Matrix<var, Dynamic, 1> theta(3, 1);
+  theta = x * beta + alphavec;
+
+  var lp = stan::math::bernoulli_logit_lpmf(y, theta);
+  lp.grad();
+
+  double lp_val = lp.val();
+  double alpha_adj = alpha.adj();
+
+  stan::math::recover_memory();
+
+  vector<int> y2{1, 0, 1};
+  Matrix<var, Dynamic, Dynamic> x2(3, 0);
+  Matrix<var, Dynamic, 1> beta2(0, 1);
+  var alpha2 = 0.3;
+
+  var lp2 = stan::math::bernoulli_logit_glm_lpmf(y2, x2, alpha2, beta2);
+  lp2.grad();
+
+  EXPECT_FLOAT_EQ(lp_val, lp2.val());
+  EXPECT_FLOAT_EQ(alpha_adj, alpha2.adj());
+}
+
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives.
 TEST(ProbDistributionsBernoulliLogitGLM,
