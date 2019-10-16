@@ -142,6 +142,15 @@ pipeline {
                 }
             }
         }
+        stage("Doxygen") {
+          agent { docker { image 'nnadeau/docker-doxygen'}}
+          steps {
+              deleteDir()
+              unstash 'MathSetup'
+              sh "mkdir -p doc/api"
+            	sh "doxygen doxygen/doxygen.cfg"
+          }
+        }
         stage('Headers check') {
             agent any
             steps {

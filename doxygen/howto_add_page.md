@@ -1,6 +1,6 @@
 ## Adding A New Doxygen Page
 
-1. Have a tag for your .md's first title header such as `{#my_md}`
+1. Have a tag for your .md's first title header such as `{\#my_md}`
 2. Take your .md and place it in an appropriate folder (or make one)
 3. In `pretty_stuff/layout.xml`, in the `navindex`:
 4. Add a new tab within an existing tab
