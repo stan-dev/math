@@ -129,7 +129,6 @@ pipeline {
                         Dependencies: { sh """#!/bin/bash
                             set -o pipefail
                             make test-math-dependencies 2>&1 | tee dependencies.log""" } ,
-                        Documentation: { sh "make doxygen" },
                     )
                 }
             }
@@ -143,11 +142,15 @@ pipeline {
             }
         }
         stage("Doxygen") {
-          agent { docker { image 'nnadeau/docker-doxygen'}}
+          agent {
+            docker {
+               image 'nnadeau/docker-doxygen'
+               args '-v $HOME/math:/root/math'
+               }
+             }
           steps {
               deleteDir()
               unstash 'MathSetup'
-              sh "mkdir -p doc"
               sh "mkdir -p doc/api"
             	sh "doxygen doxygen/doxygen.cfg"
           }
