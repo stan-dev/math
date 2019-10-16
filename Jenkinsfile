@@ -114,7 +114,7 @@ pipeline {
                 }
             }
         }
-        stage('Linting') {
+        stage('Linting & Doc checks') {
             agent any
             steps {
                 script {
@@ -128,7 +128,8 @@ pipeline {
                         CppLint: { sh "make cpplint" },
                         Dependencies: { sh """#!/bin/bash
                             set -o pipefail
-                            make test-math-dependencies 2>&1 | tee dependencies.log""" }
+                            make test-math-dependencies 2>&1 | tee dependencies.log""" } ,
+                        Documentation: { sh "make doxygen" },
                     )
                 }
             }
@@ -139,14 +140,6 @@ pipeline {
                          groovyScript(parserId: 'mathDependencies', pattern: '**/dependencies.log')]
                     deleteDir()
                 }
-            }
-        }
-        stage("Doc Check") {
-          agent { docker { image 'nnadeau/docker-doxygen'}}
-            steps {
-              deleteDir()
-              unstash 'MathSetup'
-              sh "doxygen doxygen/doxygen.cfg"
             }
         }
         stage('Headers check') {
@@ -288,7 +281,7 @@ pipeline {
             }
         }
         stage('Upload doxygen') {
-            agent { docker { image 'nnadeau/docker-doxygen'}}
+            agent any
             when { branch 'master'}
             steps {
                 deleteDir()
