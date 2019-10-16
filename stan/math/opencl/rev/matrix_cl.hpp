@@ -8,7 +8,7 @@
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/arr/fun/vec_concat.hpp>
 #include <stan/math/rev/core.hpp>
-#include <CL/cl.hpp>
+#include <cl.hpp>
 #include <iostream>
 #include <string>
 #include <vector>

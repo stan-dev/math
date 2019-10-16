@@ -8,7 +8,7 @@
 #include <stan/math/opencl/rev/matrix_cl.hpp>
 #include <stan/math/opencl/zeros.hpp>
 
-#include <CL/cl.hpp>
+#include <cl.hpp>
 
 namespace stan {
 namespace math {
