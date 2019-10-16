@@ -4,14 +4,8 @@
 // TODO(Bob): <cstddef> replaces this ifdef in C++11, until then this
 //            is best we can do to get safe pointer casts to uints.
 #include <stan/math/prim/meta.hpp>
+#include <boost/align/aligned_allocator.hpp>
 #include <stdint.h>
-#if EIGEN_COMP_MSVC
-#include <malloc.h>
-#define aligned_alloc_ _aligned_malloc
-#else
-#include <stdlib.h>
-#define aligned_alloc_ aligned_alloc
-#endif
 #include <cstdlib>
 #include <cstddef>
 #include <sstream>
@@ -25,10 +19,8 @@ using byte = unsigned char;
 namespace internal {
 const size_t DEFAULT_INITIAL_NBYTES = 1 << 16;  // 64KB
 
-// FIXME: enforce alignment
-// big fun to inline, but only called twice
 inline byte* aligned_malloc(size_t size) noexcept {
-  byte* ptr = static_cast<byte*>(aligned_alloc_(64, size));
+  byte* ptr = static_cast<byte*>(boost::alignment::aligned_alloc(64, size));
   return ptr;
 }
 }  // namespace internal
@@ -132,7 +124,7 @@ class stack_alloc {
     // free ALL blocks
     for (auto& block : blocks_) {
       if (block) {
-        free(block);
+        boost::alignment::aligned_free(block);
       }
     }
   }
@@ -222,7 +214,7 @@ class stack_alloc {
     // frees all BUT the first (index 0) block
     for (size_t i = 1; i < blocks_.size(); ++i) {
       if (blocks_[i]) {
-        free(blocks_[i]);
+        boost::alignment::aligned_free(blocks_[i]);
       }
     }
     sizes_.resize(1);
