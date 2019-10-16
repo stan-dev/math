@@ -145,9 +145,7 @@ pipeline {
           agent { docker { image 'nnadeau/docker-doxygen'}}
             steps {
               deleteDir()
-              retry(3) { checkout scm }
-              sh "git clean -xffd"
-              stash 'MathSetup'
+              unstash 'MathSetup'
               sh "echo CXX=${env.CXX} -Werror > make/local"
               sh "echo BOOST_PARALLEL_JOBS=${env.PARALLEL} >> make/local"
               sh "make doxygen"
