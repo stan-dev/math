@@ -146,8 +146,6 @@ pipeline {
             steps {
               deleteDir()
               unstash 'MathSetup'
-              sh "echo CXX=${env.CXX} -Werror > make/local"
-              sh "echo BOOST_PARALLEL_JOBS=${env.PARALLEL} >> make/local"
               sh "make doxygen"
             }
         }
