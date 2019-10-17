@@ -12,7 +12,7 @@ namespace math {
 
 /**
  * Return the greater of the two specified arguments.  If one is
- * greater than the other, return not-a-number.
+ * not-a-number, return the other.
  *
  * @param x1 First argument.
  * @param x2 Second argument.
@@ -39,7 +39,7 @@ inline fvar<T> fmax(const fvar<T>& x1, const fvar<T>& x2) {
 
 /**
  * Return the greater of the two specified arguments.  If one is
- * greater than the other, return not-a-number.
+ * not-a-number, return the other.
  *
  * @param x1 First argument.
  * @param x2 Second argument.
@@ -66,7 +66,7 @@ inline fvar<T> fmax(double x1, const fvar<T>& x2) {
 
 /**
  * Return the greater of the two specified arguments.  If one is
- * greater than the other, return not-a-number.
+ * not-a-number, return the other.
  *
  * @param x1 First argument.
  * @param x2 Second argument.
