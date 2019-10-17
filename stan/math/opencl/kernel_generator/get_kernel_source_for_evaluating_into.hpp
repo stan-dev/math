@@ -19,7 +19,7 @@ std::string operation<Derived, ReturnScalar, Args...>::
                 "operation::get_kernel_source_for_evaluating_into: left hand "
                 "side is not a valid expression!");
   auto lhs_expression = as_operation(lhs);
-  std::set<const void*> generated;
+  std::set<const operation_base*> generated;
   name_generator ng;
   kernel_parts parts = derived().get_kernel_parts(generated, ng, "i", "j");
   kernel_parts out_parts

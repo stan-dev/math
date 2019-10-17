@@ -113,7 +113,7 @@ class addition__ : public binary_operation<addition__<T_a, T_b>, T_a, T_b> {
  * @return Addition of given expressions
  */
 template <typename T_a, typename T_b,
-          typename = enable_if_all_valid_expressions<T_a, T_b>>
+          typename = require_all_valid_expressions_t<T_a, T_b>>
 inline addition__<as_operation_t<T_a>, as_operation_t<T_b>> operator+(
     T_a&& a, T_b&& b) {  // NOLINT
   return {as_operation(std::forward<T_a>(a)),
@@ -148,7 +148,7 @@ class subtraction__
  * @return Subtraction of given expressions
  */
 template <typename T_a, typename T_b,
-          typename = enable_if_all_valid_expressions<T_a, T_b>>
+          typename = require_all_valid_expressions_t<T_a, T_b>>
 inline subtraction__<as_operation_t<T_a>, as_operation_t<T_b>> operator-(
     T_a&& a, T_b&& b) {  // NOLINT
   return {as_operation(std::forward<T_a>(a)),
@@ -161,7 +161,7 @@ inline subtraction__<as_operation_t<T_a>, as_operation_t<T_b>> operator-(
  * @tparam T_b type of second expression
  */
 template <typename T_a, typename T_b,
-          typename = enable_if_all_valid_expressions<T_a, T_b>>
+          typename = require_all_valid_expressions_t<T_a, T_b>>
 class elewise_multiplication__
     : public binary_operation<elewise_multiplication__<T_a, T_b>, T_a, T_b> {
  public:
@@ -209,7 +209,7 @@ elewise_multiplication(T_a&& a, T_b&& b) {  // NOLINT
  * @return Multiplication of given arguments
  */
 template <typename T_a, typename T_b, typename = require_arithmetic_t<T_a>,
-          typename = enable_if_all_valid_expressions<T_b>>
+          typename = require_all_valid_expressions_t<T_b>>
 inline elewise_multiplication__<scalar__<T_a>, as_operation_t<T_b>> operator*(
     T_a&& a, T_b&& b) {  // NOLINT
   return {as_operation(std::forward<T_a>(a)),
@@ -225,7 +225,7 @@ inline elewise_multiplication__<scalar__<T_a>, as_operation_t<T_b>> operator*(
  * @return Multiplication of given arguments
  */
 template <typename T_a, typename T_b,
-          typename = enable_if_all_valid_expressions<T_a>,
+          typename = require_all_valid_expressions_t<T_a>,
           typename = require_arithmetic_t<T_b>>
 inline elewise_multiplication__<as_operation_t<T_a>, scalar__<T_b>> operator*(
     T_a&& a, const T_b b) {  // NOLINT
@@ -242,7 +242,7 @@ inline elewise_multiplication__<as_operation_t<T_a>, scalar__<T_b>> operator*(
  * @return Matrix product of given arguments
  */
 template <typename T_a, typename T_b,
-          typename = enable_if_all_valid_expressions_and_none_scalar<T_a, T_b>>
+          typename = require_all_valid_expressions_and_none_scalar_t<T_a, T_b>>
 inline matrix_cl<double> operator*(const T_a& a, const T_b& b) {
   // no need for perfect forwarding as operations are evaluated
   return as_operation(a).eval() * as_operation(b).eval();
@@ -286,7 +286,7 @@ class elewise_division__
  * @return Element-wise division of given expressions
  */
 template <typename T_a, typename T_b,
-          typename = enable_if_all_valid_expressions<T_a, T_b>>
+          typename = require_all_valid_expressions_t<T_a, T_b>>
 inline elewise_division__<as_operation_t<T_a>, as_operation_t<T_b>>
 elewise_division(T_a&& a, T_b&& b) {  // NOLINT
   return {as_operation(std::forward<T_a>(a)),

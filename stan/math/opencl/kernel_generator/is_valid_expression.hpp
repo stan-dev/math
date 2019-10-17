@@ -19,23 +19,15 @@ class operation_base {};
  * Determines whether a type is non-scalar type that is a valid kernel generator
  * expression.
  */
-template <typename T>
-struct is_valid_expression_and_not_scalar {
-  enum { value = std::is_base_of<operation_base, T>::value };
+template <typename T, typename = void>
+struct is_valid_expression_and_not_scalar
+    : bool_constant<
+          std::is_base_of<operation_base, std::remove_reference_t<T>>::value> {
 };
 
 template <typename T>
-struct is_valid_expression_and_not_scalar<matrix_cl<T>> : std::true_type {};
-
-template <typename T>
-struct is_valid_expression_and_not_scalar<T&> {
-  enum { value = is_valid_expression_and_not_scalar<T>::value };
-};
-
-template <typename T>
-struct is_valid_expression_and_not_scalar<T&&> {
-  enum { value = is_valid_expression_and_not_scalar<T>::value };
-};
+struct is_valid_expression_and_not_scalar<T, require_matrix_cl_t<T>>
+    : std::true_type {};
 
 /**
  * Determines whether a type is is a valid kernel generator expression. Valid
@@ -43,11 +35,9 @@ struct is_valid_expression_and_not_scalar<T&&> {
  * references of these types.
  */
 template <typename T>
-struct is_valid_expression {
-  enum {
-    value = is_valid_expression_and_not_scalar<T>::value
-            || std::is_arithmetic<std::remove_reference_t<T>>::value
-  };
+struct is_valid_expression
+    : bool_constant<is_valid_expression_and_not_scalar<T>::value
+                    || std::is_arithmetic<std::remove_reference_t<T>>::value> {
 };
 
 /**
@@ -55,17 +45,16 @@ struct is_valid_expression {
  * valid kernel generator expressions.
  */
 template <typename... Types>
-using enable_if_all_valid_expressions_and_none_scalar =
-    typename std::enable_if_t<
-        math::conjunction<is_valid_expression_and_not_scalar<Types>...>::value>;
+using require_all_valid_expressions_and_none_scalar_t
+    = require_all_t<is_valid_expression_and_not_scalar<Types>...>;
 
 /**
  * Enables a template if all given types are are a valid kernel generator
  * expressions.
  */
 template <typename... Types>
-using enable_if_all_valid_expressions = typename std::enable_if_t<
-    math::conjunction<is_valid_expression<Types>...>::value>;
+using require_all_valid_expressions_t
+    = require_all_t<is_valid_expression<Types>...>;
 
 }  // namespace math
 }  // namespace stan

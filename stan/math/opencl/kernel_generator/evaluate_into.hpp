@@ -33,14 +33,14 @@ void operation<Derived, ReturnScalar, Args...>::evaluate_into(
   check_size_match(function, "Columns of ", "*this", n_cols, "columns of ",
                    "lhs_expression", lhs_expression.cols());
   try {
-    if (cache::kernel() == NULL) {
+    if (cache::kernel() == nullptr) {
       std::string src = get_kernel_source_for_evaluating_into(lhs);
       auto opts = opencl_context.base_opts();
       cache::kernel = opencl_kernels::compile_kernel(
           "calculate", {view_kernel_helpers, src.c_str()}, opts);
     }
     int arg_num = 0;
-    std::set<const void*> generated;
+    std::set<const operation_base*> generated;
     derived().set_args(generated, cache::kernel, arg_num);
     lhs_expression.set_args(generated, cache::kernel, arg_num);
 

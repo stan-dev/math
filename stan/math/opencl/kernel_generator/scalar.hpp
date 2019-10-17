@@ -57,8 +57,8 @@ class scalar__ : public operation<scalar__<T>, T> {
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
-  inline void set_args(std::set<const void*>& generated, cl::Kernel& kernel,
-                       int& arg_num) const {
+  inline void set_args(std::set<const operation_base*>& generated,
+                       cl::Kernel& kernel, int& arg_num) const {
     kernel.setArg(arg_num++, a_);
   }
 

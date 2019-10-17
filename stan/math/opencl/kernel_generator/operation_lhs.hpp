@@ -35,10 +35,9 @@ class operation_lhs : public operation<Derived, ReturnScalar, Args...> {
    * @param j column index variable name
    * @return part of kernel with code for this expressions
    */
-  inline kernel_parts get_kernel_parts_lhs(std::set<const void*>& generated,
-                                           name_generator& name_gen,
-                                           const std::string& i,
-                                           const std::string& j) const {
+  inline kernel_parts get_kernel_parts_lhs(
+      std::set<const operation_base*>& generated, name_generator& name_gen,
+      const std::string& i, const std::string& j) const {
     std::array<kernel_parts, N> args_parts = index_apply<N>([&](auto... Is) {
       return std::array<kernel_parts, N>{
           std::get<Is>(arguments_)

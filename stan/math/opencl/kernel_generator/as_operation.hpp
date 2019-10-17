@@ -46,8 +46,7 @@ inline scalar__<T_scalar> as_operation(const T_scalar a) {
  * @param a \c matrix_cl
  * @return \c load__ wrapping the input
  */
-template <typename T_matrix_cl,
-          typename = require_matrix_cl_t<std::remove_reference_t<T_matrix_cl>>>
+template <typename T_matrix_cl, typename = require_matrix_cl_t<T_matrix_cl>>
 inline load__<T_matrix_cl> as_operation(T_matrix_cl&& a) {
   return load__<T_matrix_cl>(std::forward<T_matrix_cl>(a));
 }

@@ -36,12 +36,32 @@ struct kernel_parts {
  */
 template <typename Derived, typename ReturnScalar, typename... Args>
 class operation : public operation_base {
- public:
   static_assert(conjunction<std::is_base_of<
                     operation_base, std::remove_reference_t<Args>>...>::value,
                 "operation: all arguments to operation must be operations!");
+
+ protected:
+  std::tuple<Args...> arguments_;
+  mutable std::string var_name;  // name of the variable that holds result of
+                                 // this operation in the kernel
+
+  /**
+   * Casts the instance into its derived type.
+   * @return \c this cast into derived type
+   */
+  inline Derived& derived() { return *static_cast<Derived*>(this); }
+
+  /**
+   * Casts the instance into its derived type.
+   * @return \c this cast into derived type
+   */
+  inline const Derived& derived() const {
+    return *static_cast<const Derived*>(this);
+  }
+
+ public:
   // number of arguments this operation has
-  static constexpr int N = std::tuple_size<std::tuple<Args...>>::value;
+  static constexpr int N = sizeof...(Args);
   // value representing a not yet determined size
   static const int dynamic = -1;
 
@@ -106,10 +126,9 @@ class operation : public operation_base {
    * @param j column index variable name
    * @return part of kernel with code for this and nested expressions
    */
-  inline kernel_parts get_kernel_parts(std::set<const void*>& generated,
-                                       name_generator& name_gen,
-                                       const std::string& i,
-                                       const std::string& j) const {
+  inline kernel_parts get_kernel_parts(
+      std::set<const operation_base*>& generated, name_generator& name_gen,
+      const std::string& i, const std::string& j) const {
     kernel_parts res{};
     if (generated.count(this) == 0) {
       generated.insert(this);
@@ -147,14 +166,19 @@ class operation : public operation_base {
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
-  inline void set_args(std::set<const void*>& generated, cl::Kernel& kernel,
-                       int& arg_num) const {
+  inline void set_args(std::set<const operation_base*>& generated,
+                       cl::Kernel& kernel, int& arg_num) const {
     if (generated.count(this) == 0) {
       generated.insert(this);
+      // parameter pack expansion returns a comma-separated list of values,
+      // which can not be used as an expression. We work around that by using
+      // comma operator to get a list of ints, which we use to construct an
+      // initializer_list from. Cast to voids avoids warnings about unused
+      // expression.
       index_apply<N>([&](auto... Is) {
-        (void)std::initializer_list<int>{
+        static_cast<void>(std::initializer_list<int>{
             (std::get<Is>(arguments_).set_args(generated, kernel, arg_num),
-             0)...};
+             0)...});
       });
     }
   }
@@ -193,25 +217,6 @@ class operation : public operation_base {
       // assuming all non-dynamic sizes match
       return std::max(get<Is>(arguments_).cols()...);
     });
-  }
-
- protected:
-  std::tuple<Args...> arguments_;
-  mutable std::string var_name;  // name of the variable that holds result of
-                                 // this operation in the kernel
-
-  /**
-   * Casts the instance into its derived type.
-   * @return \c this cast into derived type
-   */
-  inline Derived& derived() { return *static_cast<Derived*>(this); }
-
-  /**
-   * Casts the instance into its derived type.
-   * @return \c this cast into derived type
-   */
-  inline const Derived& derived() const {
-    return *static_cast<const Derived*>(this);
   }
 };
 
