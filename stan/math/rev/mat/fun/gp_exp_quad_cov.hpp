@@ -37,7 +37,7 @@ class gp_exp_quad_cov_vari : public vari {
   const double l_d_;
   const double sigma_d_;
   const double sigma_sq_d_;
-  double *dist_;
+  double* dist_;
   vari* l_vari_;
   vari* sigma_vari_;
   vari** cov_lower_;
@@ -61,8 +61,8 @@ class gp_exp_quad_cov_vari : public vari {
    * @param sigma standard deviation
    * @param length_scale length scale
    */
-  gp_exp_quad_cov_vari(const std::vector<T_x> &x, const T_sigma &sigma,
-                       const T_l &length_scale)
+  gp_exp_quad_cov_vari(const std::vector<T_x>& x, const T_sigma& sigma,
+                       const T_l& length_scale)
       : vari(0.0),
         size_(x.size()),
         size_ltri_(size_ * (size_ - 1) / 2),
@@ -72,8 +72,8 @@ class gp_exp_quad_cov_vari : public vari {
         dist_(ChainableStack::alloc_array<double>(size_ltri_)),
         l_vari_(length_scale.vi_),
         sigma_vari_(sigma.vi_),
-        cov_lower_(ChainableStack::alloc_array<vari* >(size_ltri_)),
-        cov_diag_(ChainableStack::alloc_array<vari* >(size_)) {
+        cov_lower_(ChainableStack::alloc_array<vari*>(size_ltri_)),
+        cov_diag_(ChainableStack::alloc_array<vari*>(size_)) {
     double inv_half_sq_l_d = 0.5 / (l_d_ * l_d_);
     size_t pos = 0;
     for (size_t j = 0; j < size_ - 1; ++j) {
@@ -129,7 +129,7 @@ class gp_exp_quad_cov_vari<T_x, double, T_l> : public vari {
   const double l_d_;
   const double sigma_d_;
   const double sigma_sq_d_;
-  double *dist_;
+  double* dist_;
   vari* l_vari_;
   vari** cov_lower_;
   vari** cov_diag_;
@@ -152,8 +152,8 @@ class gp_exp_quad_cov_vari<T_x, double, T_l> : public vari {
    * @param sigma standard deviation
    * @param length_scale length scale
    */
-  gp_exp_quad_cov_vari(const std::vector<T_x> &x, double sigma,
-                       const T_l &length_scale)
+  gp_exp_quad_cov_vari(const std::vector<T_x>& x, double sigma,
+                       const T_l& length_scale)
       : vari(0.0),
         size_(x.size()),
         size_ltri_(size_ * (size_ - 1) / 2),
@@ -162,8 +162,8 @@ class gp_exp_quad_cov_vari<T_x, double, T_l> : public vari {
         sigma_sq_d_(sigma_d_ * sigma_d_),
         dist_(ChainableStack::alloc_array<double>(size_ltri_)),
         l_vari_(length_scale.vi_),
-        cov_lower_(ChainableStack::alloc_array<vari* >(size_ltri_)),
-        cov_diag_(ChainableStack::alloc_array<vari* >(size_)) {
+        cov_lower_(ChainableStack::alloc_array<vari*>(size_ltri_)),
+        cov_diag_(ChainableStack::alloc_array<vari*>(size_)) {
     double inv_half_sq_l_d = 0.5 / (l_d_ * l_d_);
     size_t pos = 0;
     for (size_t j = 0; j < size_ - 1; ++j) {
@@ -204,9 +204,9 @@ class gp_exp_quad_cov_vari<T_x, double, T_l> : public vari {
  */
 template <typename T_x,
           typename = require_arithmetic_t<typename scalar_type<T_x>::type>>
-inline Eigen::Matrix<var, -1, -1> gp_exp_quad_cov(const std::vector<T_x> &x,
-                                                  const var &sigma,
-                                                  const var &length_scale) {
+inline Eigen::Matrix<var, -1, -1> gp_exp_quad_cov(const std::vector<T_x>& x,
+                                                  const var& sigma,
+                                                  const var& length_scale) {
   check_positive("gp_exp_quad_cov", "sigma", sigma);
   check_positive("gp_exp_quad_cov", "length_scale", length_scale);
   size_t x_size = x.size();
@@ -219,7 +219,7 @@ inline Eigen::Matrix<var, -1, -1> gp_exp_quad_cov(const std::vector<T_x> &x,
     return cov;
   }
 
-  gp_exp_quad_cov_vari<T_x, var, var> *baseVari
+  gp_exp_quad_cov_vari<T_x, var, var>* baseVari
       = new gp_exp_quad_cov_vari<T_x, var, var>(x, sigma, length_scale);
 
   size_t pos = 0;
@@ -248,9 +248,9 @@ inline Eigen::Matrix<var, -1, -1> gp_exp_quad_cov(const std::vector<T_x> &x,
  */
 template <typename T_x,
           typename = require_arithmetic_t<typename scalar_type<T_x>::type>>
-inline Eigen::Matrix<var, -1, -1> gp_exp_quad_cov(const std::vector<T_x> &x,
+inline Eigen::Matrix<var, -1, -1> gp_exp_quad_cov(const std::vector<T_x>& x,
                                                   double sigma,
-                                                  const var &length_scale) {
+                                                  const var& length_scale) {
   check_positive("gp_exp_quad_cov", "marginal variance", sigma);
   check_positive("gp_exp_quad_cov", "length-scale", length_scale);
   size_t x_size = x.size();
@@ -263,7 +263,7 @@ inline Eigen::Matrix<var, -1, -1> gp_exp_quad_cov(const std::vector<T_x> &x,
     return cov;
   }
 
-  gp_exp_quad_cov_vari<T_x, double, var> *baseVari
+  gp_exp_quad_cov_vari<T_x, double, var>* baseVari
       = new gp_exp_quad_cov_vari<T_x, double, var>(x, sigma, length_scale);
 
   size_t pos = 0;

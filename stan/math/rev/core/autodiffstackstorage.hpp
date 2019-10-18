@@ -142,7 +142,7 @@ struct AutodiffStackSingleton {
    * @param len Number of bytes to allocate.
    * @return A pointer to the allocated memory.
    */
-  inline static void* alloc(size_t len) {
+  inline static void *alloc(size_t len) {
     return instance_->memalloc_.alloc(len);
   }
 

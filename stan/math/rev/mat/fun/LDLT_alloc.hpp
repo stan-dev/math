@@ -41,7 +41,7 @@ class LDLT_alloc : public chainable_alloc {
 
   size_t N_;
   Eigen::LDLT<Eigen::Matrix<double, R, C> > ldlt_;
-  Eigen::Matrix<vari* , R, C> variA_;
+  Eigen::Matrix<vari *, R, C> variA_;
 };
 }  // namespace math
 }  // namespace stan
