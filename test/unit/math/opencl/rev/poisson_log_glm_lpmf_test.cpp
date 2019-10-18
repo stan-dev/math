@@ -1,6 +1,6 @@
 #ifdef STAN_OPENCL
 #include <stan/math.hpp>
-#include <stan/math/opencl/poisson_log_glm_lpmf.hpp>
+#include <stan/math/opencl/opencl.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/expect_near_rel.hpp>
 #include <vector>
@@ -117,7 +117,7 @@ TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_small_simple) {
                   beta_var2.adj().eval());
 }
 
-TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_zero_rows) {
+TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_zero_instances) {
   double eps = 1e-9;
   int N = 0;
   int M = 2;
@@ -158,7 +158,7 @@ TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_zero_rows) {
                   beta_var2.adj().eval());
 }
 
-TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_zero_cols) {
+TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_zero_attributes) {
   double eps = 1e-9;
   int N = 3;
   int M = 0;

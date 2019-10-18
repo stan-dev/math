@@ -18,6 +18,7 @@
 #include <stan/math/prim/mat/err/check_lower_triangular.hpp>
 #include <stan/math/prim/mat/err/check_matching_dims.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
+#include <stan/math/prim/mat/err/check_nonempty.hpp>
 #include <stan/math/prim/mat/err/check_ordered.hpp>
 #include <stan/math/prim/mat/err/check_pos_definite.hpp>
 #include <stan/math/prim/mat/err/check_pos_semidefinite.hpp>
