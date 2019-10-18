@@ -1,11 +1,12 @@
-#ifndef STAN_MATH_OPENCL_CATEGORICAL_LOGIT_GLM_LPMF_HPP
-#define STAN_MATH_OPENCL_CATEGORICAL_LOGIT_GLM_LPMF_HPP
+#ifndef STAN_MATH_OPENCL_PRIM_CATEGORICAL_LOGIT_GLM_LPMF_HPP
+#define STAN_MATH_OPENCL_PRIM_CATEGORICAL_LOGIT_GLM_LPMF_HPP
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_consistent_size.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
+#include <stan/math/prim/mat/fun/sum.hpp>
 #include <Eigen/Core>
 
 #include <stan/math/opencl/matrix_cl.hpp>
@@ -58,7 +59,7 @@ return_type_t<T_alpha_scalar, T_beta_scalar> categorical_logit_glm_lpmf(
   check_size_match(function, "x.cols()", N_attributes, "beta.rows()",
                    beta.rows());
 
-  if (N_instances == 0 || N_attributes == 0 || N_classes <= 1) {
+  if (N_instances == 0 || N_classes <= 1) {
     return 0;
   }
 
@@ -119,7 +120,7 @@ return_type_t<T_alpha_scalar, T_beta_scalar> categorical_logit_glm_lpmf(
     ops_partials.edge1_.partials_
         = from_matrix_cl(alpha_derivative_cl).colwise().sum();
   }
-  if (!is_constant_all<T_beta_scalar>::value) {
+  if (!is_constant_all<T_beta_scalar>::value && N_attributes != 0) {
     matrix_cl<double> beta_derivative_cl = transpose(x_cl) * neg_softmax_lin_cl;
     matrix_cl<double> temp(N_classes, local_size * N_attributes);
     try {

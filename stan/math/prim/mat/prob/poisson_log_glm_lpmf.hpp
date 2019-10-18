@@ -69,7 +69,7 @@ return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
   }
   check_nonnegative(function, "Vector of dependent variables", y);
 
-  if (size_zero(y, x, beta)) {
+  if (size_zero(y)) {
     return 0;
   }
 

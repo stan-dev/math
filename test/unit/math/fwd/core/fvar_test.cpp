@@ -3,7 +3,15 @@
 #include <sstream>
 #include <limits>
 
-TEST(AgradFwdFvar, Fvar) {
+TEST(mathFwdCoreFvar, copyCtor) {
+  using stan::math::fvar;
+  fvar<double> a(2, 1);
+  fvar<double> b(a);
+  EXPECT_FLOAT_EQ(a.val_, b.val_);
+  EXPECT_FLOAT_EQ(a.d_, b.d_);
+}
+
+TEST(mathFwdCoreFvar, ctor) {
   using stan::math::fvar;
 
   fvar<double> a;
@@ -35,11 +43,11 @@ TEST(AgradFwdFvar, Fvar) {
   double nan = std::numeric_limits<double>::quiet_NaN();
   fvar<double> f(nan);
   EXPECT_TRUE(stan::math::is_nan(f.val_));
-  EXPECT_TRUE(stan::math::is_nan(f.d_));
+  EXPECT_FLOAT_EQ(0, f.d_);
 
   fvar<double> g(nan, 1);
   EXPECT_TRUE(stan::math::is_nan(g.val_));
-  EXPECT_TRUE(stan::math::is_nan(g.d_));
+  EXPECT_FLOAT_EQ(1, g.d_);
 
   fvar<double> h(nan, nan);
   EXPECT_TRUE(stan::math::is_nan(h.val_));
