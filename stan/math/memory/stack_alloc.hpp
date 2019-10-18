@@ -1,8 +1,11 @@
 #ifndef STAN_MATH_MEMORY_STACK_ALLOC_HPP
 #define STAN_MATH_MEMORY_STACK_ALLOC_HPP
 
-// TODO(Bob): <cstddef> replaces this ifdef in C++11, until then this
-//            is best we can do to get safe pointer casts to uints.
+
+// Sets the alignment for memory returns by boost::aligned_alloc
+#ifndef STAN_MALLOC_ALIGNMENT
+#define STAN_MALLOC_ALIGNMENT 64
+#endif
 #include <stan/math/prim/meta.hpp>
 #include <boost/align/aligned_allocator.hpp>
 #include <stdint.h>
@@ -20,7 +23,7 @@ namespace internal {
 const size_t DEFAULT_INITIAL_NBYTES = 1 << 16;  // 64KB
 
 inline byte* aligned_malloc(size_t size) noexcept {
-  byte* ptr = static_cast<byte*>(boost::alignment::aligned_alloc(64, size));
+  byte* ptr = static_cast<byte*>(boost::alignment::aligned_alloc(STAN_MALLOC_ALIGNMENT, size));
   return ptr;
 }
 }  // namespace internal
