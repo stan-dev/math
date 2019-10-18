@@ -41,8 +41,8 @@ class mdivide_left_ldlt_vv_vari : public vari {
  public:
   int M_;  // A.rows() = A.cols() = B.rows()
   int N_;  // B.cols()
-  vari **variRefB_;
-  vari **variRefC_;
+  vari** variRefB_;
+  vari** variRefC_;
   mdivide_left_ldlt_alloc<R1, C1, R2, C2> *alloc_;
   const LDLT_alloc<R1, C1> *alloc_ldlt_;
 
@@ -51,8 +51,8 @@ class mdivide_left_ldlt_vv_vari : public vari {
       : vari(0.0),
         M_(A.rows()),
         N_(B.cols()),
-        variRefB_(ChainableStack::alloc_array<vari *>(B.rows() * B.cols())),
-        variRefC_(ChainableStack::alloc_array<vari *>(B.rows() * B.cols())),
+        variRefB_(ChainableStack::alloc_array<vari* >(B.rows() * B.cols())),
+        variRefC_(ChainableStack::alloc_array<vari* >(B.rows() * B.cols())),
         alloc_(new mdivide_left_ldlt_alloc<R1, C1, R2, C2>()),
         alloc_ldlt_(A.alloc_) {
     Eigen::Map<matrix_vi>(variRefB_, M_, N_) = B.vi();
@@ -88,8 +88,8 @@ class mdivide_left_ldlt_dv_vari : public vari {
  public:
   int M_;  // A.rows() = A.cols() = B.rows()
   int N_;  // B.cols()
-  vari **variRefB_;
-  vari **variRefC_;
+  vari** variRefB_;
+  vari** variRefC_;
   mdivide_left_ldlt_alloc<R1, C1, R2, C2> *alloc_;
 
   mdivide_left_ldlt_dv_vari(const LDLT_factor<double, R1, C1> &A,
@@ -97,8 +97,8 @@ class mdivide_left_ldlt_dv_vari : public vari {
       : vari(0.0),
         M_(A.rows()),
         N_(B.cols()),
-        variRefB_(ChainableStack::alloc_array<vari *>(B.rows() * B.cols())),
-        variRefC_(ChainableStack::alloc_array<vari *>(B.rows() * B.cols())),
+        variRefB_(ChainableStack::alloc_array<vari* >(B.rows() * B.cols())),
+        variRefC_(ChainableStack::alloc_array<vari* >(B.rows() * B.cols())),
         alloc_(new mdivide_left_ldlt_alloc<R1, C1, R2, C2>()) {
     Eigen::Map<matrix_vi>(variRefB_, M_, N_) = B.vi();
     alloc_->C_ = B.val();
@@ -130,7 +130,7 @@ class mdivide_left_ldlt_vd_vari : public vari {
  public:
   int M_;  // A.rows() = A.cols() = B.rows()
   int N_;  // B.cols()
-  vari **variRefC_;
+  vari** variRefC_;
   mdivide_left_ldlt_alloc<R1, C1, R2, C2> *alloc_;
   const LDLT_alloc<R1, C1> *alloc_ldlt_;
 
@@ -139,7 +139,7 @@ class mdivide_left_ldlt_vd_vari : public vari {
       : vari(0.0),
         M_(A.rows()),
         N_(B.cols()),
-        variRefC_(ChainableStack::alloc_array<vari *>(B.rows() * B.cols())),
+        variRefC_(ChainableStack::alloc_array<vari* >(B.rows() * B.cols())),
         alloc_(new mdivide_left_ldlt_alloc<R1, C1, R2, C2>()),
         alloc_ldlt_(A.alloc_) {
     alloc_->C_ = B;

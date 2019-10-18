@@ -38,10 +38,10 @@ class gp_exp_quad_cov_vari : public vari {
   const double sigma_d_;
   const double sigma_sq_d_;
   double *dist_;
-  vari *l_vari_;
-  vari *sigma_vari_;
-  vari **cov_lower_;
-  vari **cov_diag_;
+  vari* l_vari_;
+  vari* sigma_vari_;
+  vari** cov_lower_;
+  vari** cov_diag_;
 
   /**
    * Constructor for gp_exp_quad_cov.
@@ -72,8 +72,8 @@ class gp_exp_quad_cov_vari : public vari {
         dist_(ChainableStack::alloc_array<double>(size_ltri_)),
         l_vari_(length_scale.vi_),
         sigma_vari_(sigma.vi_),
-        cov_lower_(ChainableStack::alloc_array<vari *>(size_ltri_)),
-        cov_diag_(ChainableStack::alloc_array<vari *>(size_)) {
+        cov_lower_(ChainableStack::alloc_array<vari* >(size_ltri_)),
+        cov_diag_(ChainableStack::alloc_array<vari* >(size_)) {
     double inv_half_sq_l_d = 0.5 / (l_d_ * l_d_);
     size_t pos = 0;
     for (size_t j = 0; j < size_ - 1; ++j) {
@@ -95,13 +95,13 @@ class gp_exp_quad_cov_vari : public vari {
     double adjsigma = 0;
 
     for (size_t i = 0; i < size_ltri_; ++i) {
-      vari *el_low = cov_lower_[i];
+      vari* el_low = cov_lower_[i];
       double prod_add = el_low->adj_ * el_low->val_;
       adjl += prod_add * dist_[i];
       adjsigma += prod_add;
     }
     for (size_t i = 0; i < size_; ++i) {
-      vari *el = cov_diag_[i];
+      vari* el = cov_diag_[i];
       adjsigma += el->adj_ * el->val_;
     }
     l_vari_->adj_ += adjl / (l_d_ * l_d_ * l_d_);
@@ -130,9 +130,9 @@ class gp_exp_quad_cov_vari<T_x, double, T_l> : public vari {
   const double sigma_d_;
   const double sigma_sq_d_;
   double *dist_;
-  vari *l_vari_;
-  vari **cov_lower_;
-  vari **cov_diag_;
+  vari* l_vari_;
+  vari** cov_lower_;
+  vari** cov_diag_;
 
   /**
    * Constructor for gp_exp_quad_cov.
@@ -162,8 +162,8 @@ class gp_exp_quad_cov_vari<T_x, double, T_l> : public vari {
         sigma_sq_d_(sigma_d_ * sigma_d_),
         dist_(ChainableStack::alloc_array<double>(size_ltri_)),
         l_vari_(length_scale.vi_),
-        cov_lower_(ChainableStack::alloc_array<vari *>(size_ltri_)),
-        cov_diag_(ChainableStack::alloc_array<vari *>(size_)) {
+        cov_lower_(ChainableStack::alloc_array<vari* >(size_ltri_)),
+        cov_diag_(ChainableStack::alloc_array<vari* >(size_)) {
     double inv_half_sq_l_d = 0.5 / (l_d_ * l_d_);
     size_t pos = 0;
     for (size_t j = 0; j < size_ - 1; ++j) {
@@ -184,7 +184,7 @@ class gp_exp_quad_cov_vari<T_x, double, T_l> : public vari {
     double adjl = 0;
 
     for (size_t i = 0; i < size_ltri_; ++i) {
-      vari *el_low = cov_lower_[i];
+      vari* el_low = cov_lower_[i];
       adjl += el_low->adj_ * el_low->val_ * dist_[i];
     }
     l_vari_->adj_ += adjl / (l_d_ * l_d_ * l_d_);

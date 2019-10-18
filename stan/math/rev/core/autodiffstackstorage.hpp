@@ -116,27 +116,90 @@ struct AutodiffStackSingleton {
   AutodiffStackSingleton &operator=(const AutodiffStackSingleton_t &) = delete;
 
   static STAN_THREADS_DEF AutodiffStackStorage *instance_;
+
+  /**
+   * Helper method to allocate an array on the arena of
+   * the specified size to hold values of the specified template parameter type.
+   *
+   * @tparam T type of entries in allocated array.
+   * @param[in] n size of array to allocate.
+   * @return new array allocated on the arena.
+   */
   template <typename T>
   inline static T *alloc_array(size_t n) {
     return instance_->memalloc_.template alloc_array<T>(n);
   }
-  inline static void *alloc(size_t len) {
+
+  /**
+   * Return a newly allocated block of memory of the appropriate
+   * size managed by the stack allocator.
+   *
+   * The allocated pointer will be 8-byte aligned.
+   *
+   * This function may call C++'s <code>malloc()</code> function,
+   * with any exceptions percolated throught this function.
+   *
+   * @param len Number of bytes to allocate.
+   * @return A pointer to the allocated memory.
+   */
+  inline static void* alloc(size_t len) {
     return instance_->memalloc_.alloc(len);
   }
 
+  /**
+   * Recover all the memory used by the stack allocator.  The stack
+   * of memory blocks allocated so far will be available for further
+   * allocations.  To free memory back to the system, use the
+   * function free_all().
+   */
   inline static void recover_all() {
     return instance_->memalloc_.recover_all();
   }
+
+  /**
+   * Store current positions before doing nested operation so can
+   * recover back to start.
+   */
   inline static void start_nested() {
     return instance_->memalloc_.start_nested();
   }
+
+  /**
+   * recover memory back to the last start_nested call.
+   */
   inline static void recover_nested() {
     return instance_->memalloc_.recover_nested();
   }
+
+  /**
+   * Free all memory used by the stack allocator other than the
+   * initial block allocation back to the system.  Note:  the
+   * destructor will free all memory.
+   */
   inline static void free_all() { return instance_->memalloc_.free_all(); }
+
+  /**
+   * Return number of bytes allocated to this instance by the heap.
+   * This is not the same as the number of bytes allocated through
+   * calls to memalloc_.  The latter number is not calculatable
+   * because space is wasted at the end of blocks if the next
+   * alloc request doesn't fit.  (Perhaps we could trim down to
+   * what is actually used?)
+   *
+   * @return number of bytes allocated to this instance
+   */
   inline static size_t bytes_allocated() {
     return instance_->memalloc_.bytes_allocated();
   }
+
+  /**
+   * Indicates whether the memory in the pointer
+   * is in the stack.
+   *
+   * @param[in] ptr memory location
+   * @return true if the pointer is in the stack,
+   *    false otherwise.
+   */
   inline static bool in_stack(const void *ptr) {
     return instance_->memalloc_.in_stack(ptr);
   }

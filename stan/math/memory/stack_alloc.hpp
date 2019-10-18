@@ -22,6 +22,12 @@ using byte = unsigned char;
 namespace internal {
 const size_t DEFAULT_INITIAL_NBYTES = 1 << 16;  // 64KB
 
+/**
+ * Allocates memory aligned by the macro \c STAN_MALLOC_ALIGNMENT
+ * @param size Size in bytes of uninitialized storage to return
+ * @return size bytes of uninitalized storage aligned by
+ * \c STAN_MALLOC_ALIGNMENT.
+ */
 inline byte* aligned_malloc(size_t size) noexcept {
   byte* ptr = static_cast<byte*>(boost::alignment::aligned_alloc(STAN_MALLOC_ALIGNMENT, size));
   return ptr;

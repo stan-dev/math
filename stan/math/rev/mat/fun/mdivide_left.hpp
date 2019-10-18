@@ -21,9 +21,9 @@ class mdivide_left_vv_vari : public vari {
   int N_;  // B.cols()
   double *A_;
   double *C_;
-  vari **variRefA_;
-  vari **variRefB_;
-  vari **variRefC_;
+  vari** variRefA_;
+  vari** variRefB_;
+  vari** variRefC_;
 
   mdivide_left_vv_vari(const Eigen::Matrix<var, R1, C1> &A,
                        const Eigen::Matrix<var, R2, C2> &B)
@@ -32,9 +32,9 @@ class mdivide_left_vv_vari : public vari {
         N_(B.cols()),
         A_(ChainableStack::alloc_array<double>(A.rows() * A.cols())),
         C_(ChainableStack::alloc_array<double>(B.rows() * B.cols())),
-        variRefA_(ChainableStack::alloc_array<vari *>(A.rows() * A.cols())),
-        variRefB_(ChainableStack::alloc_array<vari *>(B.rows() * B.cols())),
-        variRefC_(ChainableStack::alloc_array<vari *>(B.rows() * B.cols())) {
+        variRefA_(ChainableStack::alloc_array<vari* >(A.rows() * A.cols())),
+        variRefB_(ChainableStack::alloc_array<vari* >(B.rows() * B.cols())),
+        variRefC_(ChainableStack::alloc_array<vari* >(B.rows() * B.cols())) {
     using Eigen::Map;
 
     Map<matrix_d> Ad(A_, M_, M_);
@@ -68,8 +68,8 @@ class mdivide_left_dv_vari : public vari {
   int N_;  // B.cols()
   double *A_;
   double *C_;
-  vari **variRefB_;
-  vari **variRefC_;
+  vari** variRefB_;
+  vari** variRefC_;
 
   mdivide_left_dv_vari(const Eigen::Matrix<double, R1, C1> &A,
                        const Eigen::Matrix<var, R2, C2> &B)
@@ -78,8 +78,8 @@ class mdivide_left_dv_vari : public vari {
         N_(B.cols()),
         A_(ChainableStack::alloc_array<double>(A.rows() * A.cols())),
         C_(ChainableStack::alloc_array<double>(B.rows() * B.cols())),
-        variRefB_(ChainableStack::alloc_array<vari *>(B.rows() * B.cols())),
-        variRefC_(ChainableStack::alloc_array<vari *>(B.rows() * B.cols())) {
+        variRefB_(ChainableStack::alloc_array<vari* >(B.rows() * B.cols())),
+        variRefC_(ChainableStack::alloc_array<vari* >(B.rows() * B.cols())) {
     using Eigen::Map;
 
     Map<matrix_d> Ad(A_, M_, M_);
@@ -109,8 +109,8 @@ class mdivide_left_vd_vari : public vari {
   int N_;  // B.cols()
   double *A_;
   double *C_;
-  vari **variRefA_;
-  vari **variRefC_;
+  vari** variRefA_;
+  vari** variRefC_;
 
   mdivide_left_vd_vari(const Eigen::Matrix<var, R1, C1> &A,
                        const Eigen::Matrix<double, R2, C2> &B)
@@ -119,8 +119,8 @@ class mdivide_left_vd_vari : public vari {
         N_(B.cols()),
         A_(ChainableStack::alloc_array<double>(A.rows() * A.cols())),
         C_(ChainableStack::alloc_array<double>(B.rows() * B.cols())),
-        variRefA_(ChainableStack::alloc_array<vari *>(A.rows() * A.cols())),
-        variRefC_(ChainableStack::alloc_array<vari *>(B.rows() * B.cols())) {
+        variRefA_(ChainableStack::alloc_array<vari* >(A.rows() * A.cols())),
+        variRefC_(ChainableStack::alloc_array<vari* >(B.rows() * B.cols())) {
     using Eigen::Map;
 
     Map<matrix_vi>(variRefA_, M_, M_) = A.vi();

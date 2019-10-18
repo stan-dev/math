@@ -28,9 +28,9 @@ class mdivide_left_spd_vv_vari : public vari {
  public:
   int M_;  // A.rows() = A.cols() = B.rows()
   int N_;  // B.cols()
-  vari **variRefA_;
-  vari **variRefB_;
-  vari **variRefC_;
+  vari** variRefA_;
+  vari** variRefB_;
+  vari** variRefC_;
   mdivide_left_spd_alloc<R1, C1, R2, C2> *alloc_;
 
   mdivide_left_spd_vv_vari(const Eigen::Matrix<var, R1, C1> &A,
@@ -38,9 +38,9 @@ class mdivide_left_spd_vv_vari : public vari {
       : vari(0.0),
         M_(A.rows()),
         N_(B.cols()),
-        variRefA_(ChainableStack::alloc_array<vari *>(A.rows() * A.cols())),
-        variRefB_(ChainableStack::alloc_array<vari *>(B.rows() * B.cols())),
-        variRefC_(ChainableStack::alloc_array<vari *>(B.rows() * B.cols())),
+        variRefA_(ChainableStack::alloc_array<vari* >(A.rows() * A.cols())),
+        variRefB_(ChainableStack::alloc_array<vari* >(B.rows() * B.cols())),
+        variRefC_(ChainableStack::alloc_array<vari* >(B.rows() * B.cols())),
         alloc_(new mdivide_left_spd_alloc<R1, C1, R2, C2>()) {
     Eigen::Map<matrix_vi>(variRefA_, M_, M_) = A.vi();
     Eigen::Map<matrix_vi>(variRefB_, M_, N_) = B.vi();
@@ -66,8 +66,8 @@ class mdivide_left_spd_dv_vari : public vari {
  public:
   int M_;  // A.rows() = A.cols() = B.rows()
   int N_;  // B.cols()
-  vari **variRefB_;
-  vari **variRefC_;
+  vari** variRefB_;
+  vari** variRefC_;
   mdivide_left_spd_alloc<R1, C1, R2, C2> *alloc_;
 
   mdivide_left_spd_dv_vari(const Eigen::Matrix<double, R1, C1> &A,
@@ -75,8 +75,8 @@ class mdivide_left_spd_dv_vari : public vari {
       : vari(0.0),
         M_(A.rows()),
         N_(B.cols()),
-        variRefB_(ChainableStack::alloc_array<vari *>(B.rows() * B.cols())),
-        variRefC_(ChainableStack::alloc_array<vari *>(B.rows() * B.cols())),
+        variRefB_(ChainableStack::alloc_array<vari* >(B.rows() * B.cols())),
+        variRefC_(ChainableStack::alloc_array<vari* >(B.rows() * B.cols())),
         alloc_(new mdivide_left_spd_alloc<R1, C1, R2, C2>()) {
     alloc_->C_ = B.val();
     Eigen::Map<matrix_vi>(variRefB_, M_, N_) = B.vi();
@@ -99,8 +99,8 @@ class mdivide_left_spd_vd_vari : public vari {
  public:
   int M_;  // A.rows() = A.cols() = B.rows()
   int N_;  // B.cols()
-  vari **variRefA_;
-  vari **variRefC_;
+  vari** variRefA_;
+  vari** variRefC_;
   mdivide_left_spd_alloc<R1, C1, R2, C2> *alloc_;
 
   mdivide_left_spd_vd_vari(const Eigen::Matrix<var, R1, C1> &A,
@@ -108,8 +108,8 @@ class mdivide_left_spd_vd_vari : public vari {
       : vari(0.0),
         M_(A.rows()),
         N_(B.cols()),
-        variRefA_(ChainableStack::alloc_array<vari *>(A.rows() * A.cols())),
-        variRefC_(ChainableStack::alloc_array<vari *>(B.rows() * B.cols())),
+        variRefA_(ChainableStack::alloc_array<vari* >(A.rows() * A.cols())),
+        variRefC_(ChainableStack::alloc_array<vari* >(B.rows() * B.cols())),
         alloc_(new mdivide_left_spd_alloc<R1, C1, R2, C2>()) {
     Eigen::Map<matrix_vi>(variRefA_, M_, M_) = A.vi();
     alloc_->llt_ = A.val().llt();

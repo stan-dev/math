@@ -63,11 +63,11 @@ class gp_periodic_cov_vari : public vari {
   double *dist_;
   double *sin_2_dist_;
   double *sin_dist_sq_;
-  vari *l_vari_;
-  vari *sigma_vari_;
-  vari *p_vari_;
-  vari **cov_lower_;
-  vari **cov_diag_;
+  vari* l_vari_;
+  vari* sigma_vari_;
+  vari* p_vari_;
+  vari** cov_lower_;
+  vari** cov_diag_;
 
   /**
    * Constructor for gp_periodic_cov.
@@ -103,8 +103,8 @@ class gp_periodic_cov_vari : public vari {
         l_vari_(l.vi_),
         sigma_vari_(sigma.vi_),
         p_vari_(p.vi_),
-        cov_lower_(ChainableStack::alloc_array<vari *>(size_ltri_)),
-        cov_diag_(ChainableStack::alloc_array<vari *>(size_)) {
+        cov_lower_(ChainableStack::alloc_array<vari* >(size_ltri_)),
+        cov_diag_(ChainableStack::alloc_array<vari* >(size_)) {
     double neg_two_inv_l_sq = -2.0 / (l_d_ * l_d_);
     double pi_div_p = pi() / p_d_;
 
@@ -131,14 +131,14 @@ class gp_periodic_cov_vari : public vari {
     double adjp = 0;
 
     for (size_t i = 0; i < size_ltri_; ++i) {
-      vari *el_low = cov_lower_[i];
+      vari* el_low = cov_lower_[i];
       double prod_add = el_low->adj_ * el_low->val_;
       adjl += prod_add * sin_dist_sq_[i];
       adjsigma += prod_add;
       adjp += prod_add * sin_2_dist_[i] * dist_[i];
     }
     for (size_t i = 0; i < size_; ++i) {
-      vari *el = cov_diag_[i];
+      vari* el = cov_diag_[i];
       adjsigma += el->adj_ * el->val_;
     }
     double l_d_sq = l_d_ * l_d_;
@@ -192,10 +192,10 @@ class gp_periodic_cov_vari<T_x, double, T_l, T_p> : public vari {
   double *dist_;
   double *sin_2_dist_;
   double *sin_dist_sq_;
-  vari *l_vari_;
-  vari *p_vari_;
-  vari **cov_lower_;
-  vari **cov_diag_;
+  vari* l_vari_;
+  vari* p_vari_;
+  vari** cov_lower_;
+  vari** cov_diag_;
 
   /**
    * Constructor for gp_periodic_cov.
@@ -230,8 +230,8 @@ class gp_periodic_cov_vari<T_x, double, T_l, T_p> : public vari {
         sin_dist_sq_(ChainableStack::alloc_array<double>(size_ltri_)),
         l_vari_(l.vi_),
         p_vari_(p.vi_),
-        cov_lower_(ChainableStack::alloc_array<vari *>(size_ltri_)),
-        cov_diag_(ChainableStack::alloc_array<vari *>(size_)) {
+        cov_lower_(ChainableStack::alloc_array<vari* >(size_ltri_)),
+        cov_diag_(ChainableStack::alloc_array<vari* >(size_)) {
     double neg_two_inv_l_sq = -2.0 / (l_d_ * l_d_);
     double pi_div_p = pi() / p_d_;
 
@@ -257,7 +257,7 @@ class gp_periodic_cov_vari<T_x, double, T_l, T_p> : public vari {
     double adjp = 0;
 
     for (size_t i = 0; i < size_ltri_; ++i) {
-      vari *el_low = cov_lower_[i];
+      vari* el_low = cov_lower_[i];
       double prod_add = el_low->adj_ * el_low->val_;
       adjl += prod_add * sin_dist_sq_[i];
       adjp += prod_add * sin_2_dist_[i] * dist_[i];
