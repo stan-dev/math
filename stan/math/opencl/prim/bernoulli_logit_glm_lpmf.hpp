@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_OPENCL_BERNOULLI_LOGIT_GLM_LPMF_HPP
-#define STAN_MATH_OPENCL_BERNOULLI_LOGIT_GLM_LPMF_HPP
+#ifndef STAN_MATH_OPENCL_PRIM_BERNOULLI_LOGIT_GLM_LPMF_HPP
+#define STAN_MATH_OPENCL_PRIM_BERNOULLI_LOGIT_GLM_LPMF_HPP
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
@@ -9,6 +9,7 @@
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/mat/fun/value_of_rec.hpp>
+#include <stan/math/prim/mat/fun/sum.hpp>
 #include <stan/math/prim/arr/fun/value_of_rec.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 
@@ -62,7 +63,7 @@ return_type_t<T_alpha, T_beta> bernoulli_logit_glm_lpmf(
                      length(alpha));
   }
 
-  if (N == 0 || M == 0) {
+  if (N == 0) {
     return 0;
   }
 
