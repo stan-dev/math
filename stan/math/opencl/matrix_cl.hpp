@@ -197,7 +197,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * Copy constructor.
    * @param A matrix_cl to copy
    */
-  explicit matrix_cl(const matrix_cl<T>& A)
+  matrix_cl(const matrix_cl<T>& A)
       : rows_(A.rows()), cols_(A.cols()), view_(A.view()) {
     if (A.size() == 0) {
       return;
@@ -209,7 +209,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * Move constructor.
    * @param A matrix_cl to move
    */
-  explicit matrix_cl(matrix_cl<T>&& A)
+  matrix_cl(matrix_cl<T>&& A)
       : buffer_cl_(std::move(A.buffer_cl_)),
         rows_(A.rows_),
         cols_(A.cols_),
