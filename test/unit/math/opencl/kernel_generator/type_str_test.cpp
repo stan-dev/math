@@ -4,9 +4,9 @@
 #include <gtest/gtest.h>
 
 TEST(MathMatrixCL, type_str) {
-  EXPECT_EQ(type_str<double>::name, "double");
-  EXPECT_EQ(type_str<int>::name, "int");
-  EXPECT_EQ(type_str<bool>::name, "bool");
+  EXPECT_EQ(type_str<double>(), "double");
+  EXPECT_EQ(type_str<int>(), "int");
+  EXPECT_EQ(type_str<bool>(), "bool");
 }
 
 #endif
