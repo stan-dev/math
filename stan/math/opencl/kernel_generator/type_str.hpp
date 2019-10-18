@@ -9,15 +9,15 @@
  * @return name of the type
  */
 template <typename T>
-inline std::string type_str(){
+inline std::string type_str() {
   static_assert(sizeof(T) == -1, "Unsupported type in type_str");
   return "";
 }
 
-#define ADD_TYPE_TO_TYPE_STR(t)    \
-  template <>                      \
-  inline std::string type_str<t>(){            \
-    return #t; \
+#define ADD_TYPE_TO_TYPE_STR(t)      \
+  template <>                        \
+  inline std::string type_str<t>() { \
+    return #t;                       \
   }
 ADD_TYPE_TO_TYPE_STR(double)
 ADD_TYPE_TO_TYPE_STR(int)
