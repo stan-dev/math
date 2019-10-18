@@ -45,7 +45,7 @@ class scalar__ : public operation<scalar__<T>, T> {
   inline kernel_parts generate(const std::string& i,
                                const std::string& j) const {
     kernel_parts res{};
-    res.args = type_str<T>::name + " " + var_name + ", ";
+    res.args = type_str<ReturnScalar>() + " " + var_name + ", ";
     return res;
   }
 

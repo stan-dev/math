@@ -71,7 +71,7 @@ class binary_operation
                                const std::string& var_name_a,
                                const std::string& var_name_b) const {
     kernel_parts res{};
-    res.body = type_str<ReturnScalar>::name + " " + var_name + " = "
+    res.body = type_str<ReturnScalar>() + " " + var_name + " = "
                + var_name_a + op_ + var_name_b + ";\n";
     return res;
   }

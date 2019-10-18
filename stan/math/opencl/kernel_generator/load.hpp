@@ -52,7 +52,7 @@ class load__ : public operation_lhs<load__<T>,
   inline kernel_parts generate(const std::string& i,
                                const std::string& j) const {
     kernel_parts res{};
-    std::string type = type_str<ReturnScalar>::name;
+    std::string type = type_str<ReturnScalar>();
     res.body = type + " " + var_name + " = 0;"
                " if (!((!contains_nonzero(" + var_name + "_view, LOWER) && "
                + j + " < " + i + ") || (!contains_nonzero(" + var_name +
@@ -74,7 +74,7 @@ class load__ : public operation_lhs<load__<T>,
   inline kernel_parts generate_lhs(const std::string& i,
                                    const std::string& j) const {
     kernel_parts res;
-    std::string type = type_str<ReturnScalar>::name;
+    std::string type = type_str<ReturnScalar>();
     res.args = "__global " + type + "* " + var_name + "_global, int " + var_name
                + "_rows, int " + var_name + "_view, ";
     res.body
