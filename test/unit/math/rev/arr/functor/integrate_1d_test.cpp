@@ -8,7 +8,7 @@
 #include <limits>
 #include <sstream>
 
-std::ostringstream* msgs = nullptr;
+std::ostringstream *msgs = nullptr;
 
 struct f1 {
   template <typename T1, typename T2, typename T3>

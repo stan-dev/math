@@ -32,7 +32,7 @@ inline double gradient_of_f(const F &f, const double &x, const double &xc,
                             const std::vector<double> &theta_vals,
                             const std::vector<double> &x_r,
                             const std::vector<int> &x_i, size_t n,
-                            std::ostream* msgs) {
+                            std::ostream *msgs) {
   double gradient = 0.0;
   start_nested();
   std::vector<var> theta_var(theta_vals.size());
