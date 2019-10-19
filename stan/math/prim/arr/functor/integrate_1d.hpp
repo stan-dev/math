@@ -195,7 +195,7 @@ template <typename F>
 inline double integrate_1d(
     const F& f, const double a, const double b,
     const std::vector<double>& theta, const std::vector<double>& x_r,
-    const std::vector<int>& x_i, std::ostream& msgs,
+    const std::vector<int>& x_i, std::ostream* msgs,
     const double relative_tolerance
     = std::sqrt(std::numeric_limits<double>::epsilon())) {
   static const char* function = "integrate_1d";
@@ -209,7 +209,7 @@ inline double integrate_1d(
   } else {
     return integrate(
         std::bind<double>(f, std::placeholders::_1, std::placeholders::_2,
-                          theta, x_r, x_i, &msgs),
+                          theta, x_r, x_i, msgs),
         a, b, relative_tolerance);
   }
 }

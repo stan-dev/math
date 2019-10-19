@@ -6,7 +6,7 @@
 #include <sstream>
 #include <vector>
 
-std::ostringstream msgs;
+std::ostringstream* msgs = nullptr;
 
 struct f1 {
   template <typename T1, typename T2>

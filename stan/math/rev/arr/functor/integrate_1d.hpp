@@ -32,7 +32,7 @@ inline double gradient_of_f(const F &f, const double &x, const double &xc,
                             const std::vector<double> &theta_vals,
                             const std::vector<double> &x_r,
                             const std::vector<int> &x_i, size_t n,
-                            std::ostream &msgs) {
+                            std::ostream* msgs) {
   double gradient = 0.0;
   start_nested();
   std::vector<var> theta_var(theta_vals.size());
@@ -40,7 +40,7 @@ inline double gradient_of_f(const F &f, const double &x, const double &xc,
     for (size_t i = 0; i < theta_vals.size(); i++) {
       theta_var[i] = theta_vals[i];
     }
-    var fx = f(x, xc, theta_var, x_r, x_i, &msgs);
+    var fx = f(x, xc, theta_var, x_r, x_i, msgs);
     fx.grad();
     gradient = theta_var[n].adj();
     if (is_nan(gradient)) {
@@ -119,7 +119,7 @@ template <typename F, typename T_a, typename T_b, typename T_theta,
 inline return_type_t<T_a, T_b, T_theta> integrate_1d(
     const F &f, const T_a &a, const T_b &b, const std::vector<T_theta> &theta,
     const std::vector<double> &x_r, const std::vector<int> &x_i,
-    std::ostream &msgs,
+    std::ostream *msgs,
     const double relative_tolerance
     = std::sqrt(std::numeric_limits<double>::epsilon())) {
   static const char *function = "integrate_1d";
@@ -134,7 +134,7 @@ inline return_type_t<T_a, T_b, T_theta> integrate_1d(
   } else {
     double integral = integrate(
         std::bind<double>(f, std::placeholders::_1, std::placeholders::_2,
-                          value_of(theta), x_r, x_i, &msgs),
+                          value_of(theta), x_r, x_i, msgs),
         value_of(a), value_of(b), relative_tolerance);
 
     size_t N_theta_vars = is_var<T_theta>::value ? theta.size() : 0;
@@ -148,7 +148,7 @@ inline return_type_t<T_a, T_b, T_theta> integrate_1d(
         dintegral_dtheta[n] = integrate(
             std::bind<double>(gradient_of_f<F>, f, std::placeholders::_1,
                               std::placeholders::_2, theta_vals, x_r, x_i, n,
-                              std::ref(msgs)),
+                              msgs),
             value_of(a), value_of(b), relative_tolerance);
         theta_concat[n] = theta[n];
       }
@@ -157,13 +157,13 @@ inline return_type_t<T_a, T_b, T_theta> integrate_1d(
     if (!is_inf(a) && is_var<T_a>::value) {
       theta_concat.push_back(a);
       dintegral_dtheta.push_back(
-          -value_of(f(value_of(a), 0.0, theta, x_r, x_i, &msgs)));
+          -value_of(f(value_of(a), 0.0, theta, x_r, x_i, msgs)));
     }
 
     if (!is_inf(b) && is_var<T_b>::value) {
       theta_concat.push_back(b);
       dintegral_dtheta.push_back(
-          value_of(f(value_of(b), 0.0, theta, x_r, x_i, &msgs)));
+          value_of(f(value_of(b), 0.0, theta, x_r, x_i, msgs)));
     }
 
     return precomputed_gradients(integral, theta_concat, dintegral_dtheta);
