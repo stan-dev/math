@@ -10,6 +10,7 @@
 #include <stan/math/prim/mat/fun/value_of_rec.hpp>
 #include <stan/math/prim/arr/fun/value_of_rec.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
+
 #include <cmath>
 
 namespace stan {
@@ -60,15 +61,15 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
   const size_t N = x.rows();
   const size_t M = x.cols();
 
-  check_bounded(function, "Vector of dependent variables", y, 0, 1);
   check_consistent_size(function, "Vector of dependent variables", y, N);
   check_consistent_size(function, "Weight vector", beta, M);
   if (is_vector<T_alpha>::value) {
     check_consistent_sizes(function, "Vector of intercepts", alpha,
                            "Vector of dependent variables", y);
   }
+  check_bounded(function, "Vector of dependent variables", y, 0, 1);
 
-  if (size_zero(y, x, beta)) {
+  if (size_zero(y)) {
     return 0;
   }
 
@@ -101,14 +102,15 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
       (ytheta > cutoff)
           .select(-exp_m_ytheta,
                   (ytheta < -cutoff).select(ytheta, -log1p(exp_m_ytheta))));
+
   if (!std::isfinite(logp)) {
     check_finite(function, "Weight vector", beta);
     check_finite(function, "Intercept", alpha);
     check_finite(function, "Matrix of independent variables", ytheta);
   }
 
-  // Compute the necessary derivatives.
   operands_and_partials<T_x, T_alpha, T_beta> ops_partials(x, alpha, beta);
+  // Compute the necessary derivatives.
   if (!is_constant_all<T_beta, T_x, T_alpha>::value) {
     Matrix<T_partials_return, Dynamic, 1> theta_derivative
         = (ytheta > cutoff)

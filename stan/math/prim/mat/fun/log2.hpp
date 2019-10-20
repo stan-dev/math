@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/scal/fun/log2.hpp>
+#include <stan/math/prim/meta.hpp>
 
 namespace stan {
 namespace math {
@@ -34,7 +35,7 @@ struct log2_fun {
  * @param x container
  * @return elementwise log2 of container elements
  */
-template <typename T>
+template <typename T, typename = require_vector_like_t<T>>
 inline typename apply_scalar_unary<log2_fun, T>::return_t log2(const T& x) {
   return apply_scalar_unary<log2_fun, T>::apply(x);
 }

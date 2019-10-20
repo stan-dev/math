@@ -24,6 +24,7 @@
 #include <stan/math/rev/mat/fun/gp_periodic_cov.hpp>
 #include <stan/math/rev/mat/fun/grad.hpp>
 #include <stan/math/rev/mat/fun/initialize_variable.hpp>
+#include <stan/math/rev/mat/fun/inverse.hpp>
 #include <stan/math/rev/mat/fun/LDLT_alloc.hpp>
 #include <stan/math/rev/mat/fun/LDLT_factor.hpp>
 #include <stan/math/rev/mat/fun/log_determinant.hpp>
@@ -60,7 +61,8 @@
 #include <stan/math/rev/mat/fun/variance.hpp>
 
 #include <stan/math/rev/mat/functor/adj_jac_apply.hpp>
-#include <stan/math/rev/mat/functor/algebra_solver.hpp>
+#include <stan/math/rev/mat/functor/algebra_solver_powell.hpp>
+#include <stan/math/rev/mat/functor/algebra_solver_newton.hpp>
 #include <stan/math/rev/mat/functor/gradient.hpp>
 #include <stan/math/rev/mat/functor/jacobian.hpp>
 #include <stan/math/rev/mat/functor/cvodes_utils.hpp>

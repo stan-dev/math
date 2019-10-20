@@ -2,6 +2,8 @@
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/opencl/opencl_context.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
+#include <stan/math/opencl/copy.hpp>
+#include <stan/math/opencl/zeros.hpp>
 #include <stan/math/opencl/sub_block.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
@@ -24,6 +26,35 @@ TEST(MathMatrixCL, matrix_cl_types_creation) {
   test_matrix_creation<float>();
   test_matrix_creation<int>();
   test_matrix_creation<long double>();
+}
+
+TEST(MathMatrixCL, assignment) {
+  using stan::math::matrix_cl;
+  Eigen::Matrix<double, 2, 2> mat_1;
+  Eigen::Matrix<double, 2, 2> mat_2;
+  mat_1 << 1, 2, 3, 4;
+  matrix_cl<double> mat1_cl(mat_1);
+  matrix_cl<double> mat2_cl(2, 2);
+  {
+    Eigen::Matrix<double, 2, 2> mat_local_1;
+    mat_local_1 << 1, 2, 3, 4;
+    matrix_cl<double> mat1_local_cl(mat_local_1);
+    matrix_cl<double> mat2_local_cl(mat_local_1);
+    mat2_cl = mat1_local_cl;
+    mat1_local_cl.template zeros<stan::math::matrix_cl_view::Entire>();
+  }
+  Eigen::Matrix<double, 2, 2> mat_2_fromcl
+      = stan::math::from_matrix_cl(mat2_cl);
+  // Make sure mat_2_from_cl matches the local scoped values
+  EXPECT_EQ(mat_2_fromcl(0), 1);
+  EXPECT_EQ(mat_2_fromcl(1), 3);
+  EXPECT_EQ(mat_2_fromcl(2), 2);
+  EXPECT_EQ(mat_2_fromcl(3), 4);
+
+  EXPECT_NO_THROW({ mat2_cl = std::move(mat1_cl); });
+  // mat1_cl should be null
+  EXPECT_NE(mat2_cl.buffer()(), mat1_cl.buffer()());
+  EXPECT_EQ(nullptr, mat1_cl.buffer()());
 }
 
 #endif
