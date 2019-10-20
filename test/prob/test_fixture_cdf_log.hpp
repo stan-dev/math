@@ -354,8 +354,9 @@ class AgradCdfLogTestFixture : public ::testing::Test {
         << "Number of finite diff gradients and calculated gradients must "
            "match -- error in test fixture";
     for (size_t i = 0; i < finite_dif.size(); i++) {
-      // use relative error check in first case as logs of functions do not necessarily converge to asymptotic values
-      if (abs((finite_dif[i]-gradients[i])/finite_dif[i]) > 0.1) {
+      // use relative error check in first case as logs of functions do not
+      // necessarily converge to asymptotic values
+      if (abs((finite_dif[i] - gradients[i]) / finite_dif[i]) > 0.1) {
         EXPECT_NEAR(finite_dif[i], gradients[i], 1e-4)
             << "Comparison of finite diff to calculated gradient failed for i="
             << i << ": " << parameters << std::endl
