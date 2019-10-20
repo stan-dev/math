@@ -5,7 +5,6 @@ TEST(MathMixMatFun, appendCol) {
     return stan::math::append_col(x, y);
   };
 
-  // (matrix, matrix)
   Eigen::MatrixXd m22(2, 2);
   m22 << 2, 3, 9, -1;
   Eigen::MatrixXd m22b(2, 2);
@@ -15,7 +14,7 @@ TEST(MathMixMatFun, appendCol) {
   Eigen::VectorXd v2(2);
   v2 << 17, -32;
   Eigen::VectorXd v2b(2);
-  v2 << 11, 9;
+  v2b << 11, 9;
   Eigen::RowVectorXd rv4(4);
   rv4 << 2, 3, 9, -1;
   Eigen::RowVectorXd rv3(3);
