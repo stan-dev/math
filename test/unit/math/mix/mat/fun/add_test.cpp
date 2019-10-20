@@ -1,6 +1,4 @@
 #include <test/unit/math/test_ad.hpp>
-#include <limits>
-#include <vector>
 
 TEST(MathMixMatFun, add) {
   auto f = [](const auto& x, const auto& y) { return stan::math::add(x, y); };
@@ -66,6 +64,12 @@ TEST(MathMixMatFun, add) {
   Eigen::MatrixXd m22d(2, 2);
   m22d << 10, -10, 1, 2;
   stan::test::expect_ad(f, m22c, m22d);
+
+  Eigen::MatrixXd m23(2, 3);
+  m23 << 1, 2, 3, 4, 5, 6;
+  Eigen::MatrixXd m23b(2, 3);
+  m23b << 10, 12, 14, -1, -3, -10;
+  stan::test::expect_ad(f, m23, m23b);
 
   // these will throw
   stan::test::expect_ad(f, v1, v2);
