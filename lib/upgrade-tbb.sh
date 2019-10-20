@@ -101,9 +101,12 @@ git commit -m "upgrading to TBB version ${tbb_version}; pruning files"
 
 cat <<EOF
 
+    Please port the changes in the commit a38babf to the new version. This
+    ensures that the -g flag is not set for release builds.
+
     Done upgrading TBB from version ${tbb_old_version} to version ${tbb_version}.
 
     Please check the upgrade worked by running a test that uses TBB
     Example (from Math home directory):
-      TODO(Sebastian)
+      ./runTests.py test/unit/math/prim/core/init_threadpool_tbb_test.cpp
 EOF
