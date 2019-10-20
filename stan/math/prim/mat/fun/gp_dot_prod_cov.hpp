@@ -146,7 +146,9 @@ gp_dot_prod_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
     return cov;
   }
 
-  std::vector<Eigen::Matrix<return_type_t<T_x, T_sigma_squared>, Eigen::Dynamic, 1>> x_new(x_size);
+  std::vector<
+      Eigen::Matrix<return_type_t<T_x, T_sigma_squared>, Eigen::Dynamic, 1>>
+      x_new(x_size);
 
   for (size_t i = 0; i < x_size; ++i) {
     x_new[i] = sigma_squared * x[i];
@@ -211,7 +213,9 @@ gp_dot_prod_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
                    size_of(x1[0]), "dimension of elements of x2",
                    size_of(x2[0]));
 
-  std::vector<Eigen::Matrix<return_type_t<T_x2, T_sigma_squared>, Eigen::Dynamic, 1>> x2_new(x2_size);
+  std::vector<
+      Eigen::Matrix<return_type_t<T_x2, T_sigma_squared>, Eigen::Dynamic, 1>>
+      x2_new(x2_size);
 
   for (size_t i = 0; i < x2_size; ++i) {
     x2_new[i] = sigma_squared * x2[i];
@@ -266,7 +270,8 @@ gp_dot_prod_cov(
                    size_of(x[0]), "dimension of diagonal_Sigma",
                    diagonal_Sigma.rows());
 
-  std::vector<Eigen::Matrix<return_type_t<T_x, T_sigma>, Eigen::Dynamic, 1>> x_new(x_size);
+  std::vector<Eigen::Matrix<return_type_t<T_x, T_sigma>, Eigen::Dynamic, 1>>
+      x_new(x_size);
 
   for (size_t i = 0; i < x_size; ++i) {
     x_new[i].resize(x[i].rows(), 1);
@@ -342,7 +347,8 @@ gp_dot_prod_cov(
   check_size_match("gp_dot_prod_cov", "dimension of elements of x2",
                    size_of(x2[0]), "dimension of Sigma", diagonal_Sigma.rows());
 
-  std::vector<Eigen::Matrix<return_type_t<T_x2, T_sigma>, Eigen::Dynamic, 1>> x2_new(x2_size);
+  std::vector<Eigen::Matrix<return_type_t<T_x2, T_sigma>, Eigen::Dynamic, 1>>
+      x2_new(x2_size);
 
   for (size_t i = 0; i < x2_size; ++i) {
     x2_new[i].resize(x2[i].rows(), 1);
@@ -398,7 +404,8 @@ gp_dot_prod_cov(
   check_size_match("gp_dot_prod_cov", "dimension of elements of x",
                    size_of(x[0]), "dimension of Sigma", Sigma.cols());
 
-  std::vector<Eigen::Matrix<return_type_t<T_x, T_sigma>, Eigen::Dynamic, 1>> x_new(x_size);
+  std::vector<Eigen::Matrix<return_type_t<T_x, T_sigma>, Eigen::Dynamic, 1>>
+      x_new(x_size);
 
   for (size_t i = 0; i < x_size; ++i) {
     x_new[i] = multiply(Sigma, x[i]);
@@ -470,7 +477,8 @@ gp_dot_prod_cov(
   check_size_match("gp_dot_prod_cov", "dimension of elements of x2",
                    size_of(x2[0]), "dimension of Sigma", Sigma.cols());
 
-  std::vector<Eigen::Matrix<return_type_t<T_x2, T_sigma>, Eigen::Dynamic, 1>> x2_new(x2_size);
+  std::vector<Eigen::Matrix<return_type_t<T_x2, T_sigma>, Eigen::Dynamic, 1>>
+      x2_new(x2_size);
 
   for (size_t i = 0; i < x2_size; ++i) {
     x2_new[i] = multiply(Sigma, x2[i]);

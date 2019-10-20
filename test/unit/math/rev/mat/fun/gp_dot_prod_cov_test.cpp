@@ -9,8 +9,8 @@ TEST(RevMath, 1d_x) {
   double sigma_squared = 0.25;
   stan::math::var sigma_squaredv = 0.25;
 
-  std::vector<double> x = { -2, -1, -0.5 };
-  std::vector<stan::math::var> xv = { -2, -1, -0.5 };
+  std::vector<double> x = {-2, -1, -0.5};
+  std::vector<stan::math::var> xv = {-2, -1, -0.5};
 
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
   EXPECT_NO_THROW(cov = stan::math::gp_dot_prod_cov(x, sigma_squaredv));
@@ -38,7 +38,6 @@ TEST(RevMath, nd_scalar_x) {
     x[i] << 2 * (i + 1), 3 * (i + 1);
     xv[i] << 2 * (i + 1), 3 * (i + 1);
   }
-
 
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
   EXPECT_NO_THROW(cov = stan::math::gp_dot_prod_cov(x, sigma_squaredv));
@@ -69,7 +68,6 @@ TEST(RevMath, nd_vector_x) {
     xv[i] << 2 * (i + 1), 3 * (i + 1);
   }
 
-
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
   EXPECT_NO_THROW(cov = stan::math::gp_dot_prod_cov(x, diagonal_Sigmav));
   EXPECT_NO_THROW(cov = stan::math::gp_dot_prod_cov(xv, diagonal_Sigma));
@@ -82,7 +80,6 @@ TEST(RevMath, nd_vector_x) {
   EXPECT_NO_THROW(cov = stan::math::gp_dot_prod_cov(xv, xv, diagonal_Sigma));
   EXPECT_NO_THROW(cov = stan::math::gp_dot_prod_cov(xv, xv, diagonal_Sigmav));
 }
-
 
 TEST(RevMath, nd_matrix_x) {
   Eigen::MatrixXd Sigma(2, 2);
@@ -100,7 +97,6 @@ TEST(RevMath, nd_matrix_x) {
     xv[i] << 2 * (i + 1), 3 * (i + 1);
   }
 
-
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
   EXPECT_NO_THROW(cov = stan::math::gp_dot_prod_cov(x, Sigmav));
   EXPECT_NO_THROW(cov = stan::math::gp_dot_prod_cov(xv, Sigma));
@@ -113,4 +109,3 @@ TEST(RevMath, nd_matrix_x) {
   EXPECT_NO_THROW(cov = stan::math::gp_dot_prod_cov(xv, xv, Sigma));
   EXPECT_NO_THROW(cov = stan::math::gp_dot_prod_cov(xv, xv, Sigmav));
 }
-
