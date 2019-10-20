@@ -39,14 +39,13 @@ void test_gradient(const ad_tolerances& tols, const F& f,
   Eigen::VectorXd grad_ad;
   double fx_ad = fx;
   stan::math::gradient<F>(f, x, fx_ad, grad_ad);
-  expect_near_rel("test_gradient fx = fx_ad", fx, fx_ad, tols.gradient_val_);
+  expect_near_rel("gradient() val", fx, fx_ad, tols.gradient_val_);
   if (!test_derivs || !is_finite(x) || !is_finite(fx))
     return;
   Eigen::VectorXd grad_fd;
   double fx_fd;
   stan::math::finite_diff_gradient_auto(f, x, fx_fd, grad_fd);
-  expect_near_rel("test gradient grad_fd == grad_ad", grad_fd, grad_ad,
-                  tols.gradient_grad_);
+  expect_near_rel("gradient() grad", grad_fd, grad_ad, tols.gradient_grad_);
 }
 
 /**
@@ -78,14 +77,13 @@ void test_gradient_fvar(const ad_tolerances& tols, const F& f,
   Eigen::VectorXd grad_ad;
   double fx_ad = fx;
   stan::math::gradient<double, F>(f, x, fx_ad, grad_ad);
-  expect_near_rel("gradient_fvar fx == fx_ad", fx, fx_ad,
-                  tols.gradient_fvar_val_);
+  expect_near_rel("gradient_fvar() val", fx, fx_ad, tols.gradient_fvar_val_);
   if (!test_derivs || !is_finite(x) || !is_finite(fx))
     return;
   Eigen::VectorXd grad_fd;
   double fx_fd;
   stan::math::finite_diff_gradient_auto(f, x, fx_fd, grad_fd);
-  expect_near_rel("gradient_fvar grad_fd == grad_ad", grad_fd, grad_ad,
+  expect_near_rel("gradient_fvar() grad", grad_fd, grad_ad,
                   tols.gradient_fvar_grad_);
 }
 
@@ -119,17 +117,16 @@ void test_hessian_fvar(const ad_tolerances& tols, const F& f,
   Eigen::VectorXd grad_ad;
   Eigen::MatrixXd H_ad;
   stan::math::hessian<double, F>(f, x, fx_ad, grad_ad, H_ad);
-  expect_near_rel("hessian_fvar fx == fx_ad", fx, fx_ad,
-                  tols.hessian_fvar_val_);
+  expect_near_rel("hessian_fvar() val", fx, fx_ad, tols.hessian_fvar_val_);
   if (!test_derivs || !is_finite(x) || !is_finite(fx))
     return;
   double fx_fd;
   Eigen::VectorXd grad_fd;
   Eigen::MatrixXd H_fd;
   stan::math::finite_diff_hessian_auto(f, x, fx_fd, grad_fd, H_fd);
-  expect_near_rel("hessian fvar grad_fd == grad_ad", grad_fd, grad_ad,
+  expect_near_rel("hessian_fvar() grad", grad_fd, grad_ad,
                   tols.hessian_fvar_grad_);
-  expect_near_rel("hessian fvar H_fd = H_ad", H_fd, H_ad,
+  expect_near_rel("hessian_fvar() Hessian", H_fd, H_ad,
                   tols.hessian_fvar_hessian_);
 }
 
@@ -163,17 +160,15 @@ void test_hessian(const ad_tolerances& tols, const F& f,
   Eigen::VectorXd grad_ad;
   Eigen::MatrixXd H_ad;
   stan::math::hessian<F>(f, x, fx_ad, grad_ad, H_ad);
-  expect_near_rel("hessian fx == fx_ad", fx, fx_ad, tols.hessian_val_);
+  expect_near_rel("hessian val", fx, fx_ad, tols.hessian_val_);
   if (!test_derivs || !is_finite(x) || !is_finite(fx))
     return;
   double fx_fd;
   Eigen::VectorXd grad_fd;
   Eigen::MatrixXd H_fd;
   stan::math::finite_diff_hessian_auto(f, x, fx_fd, grad_fd, H_fd);
-  expect_near_rel("hessian grad_fd = grad_ad", grad_fd, grad_ad,
-                  tols.hessian_grad_);
-  expect_near_rel("hessian grad_fd H_fd == H_ad", H_fd, H_ad,
-                  tols.hessian_hessian_);
+  expect_near_rel("hessian() grad", grad_fd, grad_ad, tols.hessian_grad_);
+  expect_near_rel("hessian() Hessian", H_fd, H_ad, tols.hessian_hessian_);
 }
 
 /**
@@ -206,20 +201,19 @@ void test_grad_hessian(const ad_tolerances& tols, const F& f,
   Eigen::MatrixXd H_ad;
   std::vector<Eigen::MatrixXd> grad_H_ad;
   stan::math::grad_hessian(f, x, fx_ad, H_ad, grad_H_ad);
-  expect_near_rel("grad_hessian fx == fx_ad", fx, fx_ad,
-                  tols.grad_hessian_val_);
+  expect_near_rel("grad_hessian() val", fx, fx_ad, tols.grad_hessian_val_);
   if (!test_derivs || !is_finite(x) || !is_finite(fx))
     return;
   double fx_fd;
   Eigen::MatrixXd H_fd;
   std::vector<Eigen::MatrixXd> grad_H_fd;
   stan::math::finite_diff_grad_hessian_auto(f, x, fx_fd, H_fd, grad_H_fd);
-  expect_near_rel("grad hessian H_fd == H_ad", H_fd, H_ad,
+  expect_near_rel("grad_hessian() Hessian", H_fd, H_ad,
                   tols.grad_hessian_hessian_);
   EXPECT_EQ(x.size(), grad_H_fd.size());
   for (size_t i = 0; i < grad_H_fd.size(); ++i)
-    expect_near_rel("grad hessian grad_H_fd[i] == grad_H_ad[i]", grad_H_fd[i],
-                    grad_H_ad[i], tols.grad_hessian_grad_hessian_);
+    expect_near_rel("grad_hessian() grad Hessian", grad_H_fd[i], grad_H_ad[i],
+                    tols.grad_hessian_grad_hessian_);
 }
 
 /**
