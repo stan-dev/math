@@ -54,7 +54,7 @@ TEST(MathPrimMat, 1d_two_x) {
           << "index: (" << i << ", " << j << ")";
 }
 
-TEST(MathPrimMat, 2d_scalar_one_x) {
+TEST(MathPrimMat, nd_scalar_one_x) {
   double sigma_squared = 1.1;
 
   Eigen::MatrixXd ref(4, 4);
@@ -78,7 +78,7 @@ TEST(MathPrimMat, 2d_scalar_one_x) {
   }
 }
 
-TEST(MathPrimMat, 2d_scalar_two_x) {
+TEST(MathPrimMat, nd_scalar_two_x) {
   double sigma_squared = 1.1;
 
   Eigen::MatrixXd ref(3, 4);
@@ -110,7 +110,7 @@ TEST(MathPrimMat, 2d_scalar_two_x) {
   }
 }
 
-TEST(MathPrimMat, 2d_vector_one_x) {
+TEST(MathPrimMat, nd_vector_one_x) {
   Eigen::VectorXd diagonal_Sigma(2);
 
   diagonal_Sigma << 1.5, 1.7;
@@ -136,7 +136,7 @@ TEST(MathPrimMat, 2d_vector_one_x) {
   }
 }
 
-TEST(MathPrimMat, 2d_vector_two_x) {
+TEST(MathPrimMat, nd_vector_two_x) {
   Eigen::VectorXd diagonal_Sigma(3);
 
   diagonal_Sigma << 1.1, 2.70, 4.70;
@@ -170,7 +170,7 @@ TEST(MathPrimMat, 2d_vector_two_x) {
   }
 }
 
-TEST(MathPrimMat, 2d_matrix_one_x) {
+TEST(MathPrimMat, nd_matrix_one_x) {
   Eigen::MatrixXd Sigma(2, 2);
 
   Sigma << 1.5, 0.5, 0.5, 1.7;
@@ -196,7 +196,7 @@ TEST(MathPrimMat, 2d_matrix_one_x) {
   }
 }
 
-TEST(MathPrimMat, 2d_matrix_two_x) {
+TEST(MathPrimMat, nd_matrix_two_x) {
   Eigen::MatrixXd Sigma(3, 3);
 
   Sigma << 1.1, 0.30, 0.10, 0.3, 2.70, 0.25, 0.1, 0.25, 4.70;
@@ -289,7 +289,7 @@ TEST(MathPrimMat, 1d_two_x_error) {
                std::domain_error);
 }
 
-TEST(MathPrimMat, 2d_scalar_one_x_error) {
+TEST(MathPrimMat, nd_scalar_one_x_error) {
   double sigma_squared = 0.5;
   double sigma_squared_nan = std::numeric_limits<double>::quiet_NaN();
   double sigma_squared_inf = std::numeric_limits<double>::infinity();
@@ -321,7 +321,7 @@ TEST(MathPrimMat, 2d_scalar_one_x_error) {
                std::domain_error);
 }
 
-TEST(MathPrimMat, 2d_scalar_two_x_error) {
+TEST(MathPrimMat, nd_scalar_two_x_error) {
   double sigma_squared = 0.5;
   double sigma_squared_nan = std::numeric_limits<double>::quiet_NaN();
   double sigma_squared_inf = std::numeric_limits<double>::infinity();
@@ -365,7 +365,7 @@ TEST(MathPrimMat, 2d_scalar_two_x_error) {
                std::domain_error);
 }
 
-TEST(MathPrimMat, 2d_vector_one_x_error) {
+TEST(MathPrimMat, nd_vector_one_x_error) {
   Eigen::VectorXd diagonal_Sigma(2);
   diagonal_Sigma << 1.5, 1.7;
   Eigen::VectorXd diagonal_Sigma_nan(2);
@@ -412,7 +412,7 @@ TEST(MathPrimMat, 2d_vector_one_x_error) {
                std::invalid_argument);
 }
 
-TEST(MathPrimMat, 2d_vector_two_x_error) {
+TEST(MathPrimMat, nd_vector_two_x_error) {
   Eigen::VectorXd diagonal_Sigma(2);
   diagonal_Sigma << 1.5, 1.7;
   Eigen::VectorXd diagonal_Sigma_nan(2);
@@ -465,7 +465,7 @@ TEST(MathPrimMat, 2d_vector_two_x_error) {
                std::invalid_argument);
 }
 
-TEST(MathPrimMat, 2d_matrix_one_x_error) {
+TEST(MathPrimMat, nd_matrix_one_x_error) {
   Eigen::MatrixXd Sigma(2, 2);
   Sigma << 1.5, 0.1, 0.1, 1.7;
   Eigen::MatrixXd Sigma_nan(2, 2);
@@ -507,7 +507,7 @@ TEST(MathPrimMat, 2d_matrix_one_x_error) {
                std::invalid_argument);
 }
 
-TEST(MathPrimMat, 2d_matrix_two_x_error) {
+TEST(MathPrimMat, nd_matrix_two_x_error) {
   Eigen::MatrixXd Sigma(2, 2);
   Sigma << 1.5, 0.1, 0.1, 1.7;
   Eigen::MatrixXd Sigma_nan(2, 2);
