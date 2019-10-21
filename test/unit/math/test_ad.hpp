@@ -259,7 +259,7 @@ void expect_ad_derivatives(const ad_tolerances& tols, const G& g,
  * @tparam T type of scalars to test
  * @tparam F type of functor to test
  * @param f functor to test
- * @param x values to test
+ * @param x value to test
  * @param name_of_T name of type of exception expected
  */
 template <typename T, typename F>
@@ -295,30 +295,6 @@ void expect_all_throw(const F& f, const Eigen::VectorXd& x) {
   expect_throw<fvar<fvar<double>>>(f, x, "fvar<fvar<double>>");
   expect_throw<fvar<var>>(f, x, "fvar<var>");
   expect_throw<fvar<fvar<var>>>(f, x, "fvar<fvar<var>>");
-}
-
-/**
- * Nucceeds if the specified function applied to the specified
- * argument throws an exception at every level of autodiff.
- *
- * @tparam F type of function
- * @param f function to evaluate
- * @param x argument to evaluate
- */
-template <typename F>
-void expect_all_throw(const F& f, double x1) {
-  auto h = [&](auto v) { return serialize_return(f(v(0))); };
-  Eigen::VectorXd x(1);
-  x << x1;
-  expect_all_throw(h, x);
-}
-
-template <typename F>
-void expect_all_throw(const F& f, double x1, double x2) {
-  auto h = [&](auto v) { return serialize_return(f(v(0), v(1))); };
-  Eigen::VectorXd x(2);
-  x << x1, x2;
-  expect_all_throw(h, x);
 }
 
 /**
@@ -622,6 +598,38 @@ void expect_comparison(const F& f, const T1& x1, const T2& x2) {
 }
 
 }  // namespace internal
+
+/**
+ * Succeeds if the specified function applied to the specified
+ * argument throws an exception at every level of autodiff.
+ *
+ * @tparam F type of function
+ * @param f function to evaluate
+ * @param x argument to evaluate
+ */
+template <typename F>
+void expect_all_throw(const F& f, double x1) {
+  auto h = [&](auto v) { return serialize_return(f(v(0))); };
+  Eigen::VectorXd x(1);
+  x << x1;
+  expect_all_throw(h, x);
+}
+
+/**
+ * Succeeds if the specified function applied to the specified
+ * argument thorws an exception at every level of autodiff.
+ * @tparam F type of function
+ * @param f function to evaluate
+ * @param x1 first argument
+ * @param x2 second argument
+ */
+template <typename F>
+void expect_all_throw(const F& f, double x1, double x2) {
+  auto h = [&](auto v) { return serialize_return(f(v(0), v(1))); };
+  Eigen::VectorXd x(2);
+  x << x1, x2;
+  expect_all_throw(h, x);
+}
 
 /**
  * Test that the specified function has the same value when applied to
