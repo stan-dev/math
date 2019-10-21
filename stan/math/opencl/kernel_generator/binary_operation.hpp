@@ -245,7 +245,8 @@ template <typename T_a, typename T_b,
           typename = require_all_valid_expressions_and_none_scalar_t<T_a, T_b>>
 inline matrix_cl<double> operator*(const T_a& a, const T_b& b) {
   // no need for perfect forwarding as operations are evaluated
-  return as_operation(a).eval() * as_operation(b).eval();
+  return stan::math::opencl::multiply(as_operation(a).eval(),
+                                      as_operation(b).eval());
 }
 
 /**
