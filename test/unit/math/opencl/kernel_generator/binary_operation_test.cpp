@@ -1,5 +1,4 @@
 #ifdef STAN_OPENCL
-#define STAN_TEST_KERNEL_GENERATOR_STORE_REFERENCE_KERNELS
 
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
