@@ -1,8 +1,10 @@
 #ifdef STAN_OPENCL
+#define STAN_TEST_KERNEL_GENERATOR_STORE_REFERENCE_KERNELS
 
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/copy.hpp>
+#include <test/unit/math/opencl/kernel_generator/reference_kernel.hpp>
 #include <Eigen/Dense>
 #include <gtest/gtest.h>
 #include <string>
@@ -166,23 +168,7 @@ TEST(MathMatrixCL, matrix_multiplication_in_expression_test) {
 }
 
 TEST(MathMatrixCL, reuse_expression) {
-  std::string expected_kernel_src
-      = "kernel void calculate(__global double* var1_global, int var1_rows, "
-        "int var1_view, __global double* var2_global, int var2_rows, int "
-        "var2_view, __global double* var5_global, int var5_rows, int "
-        "var5_view){\n"
-        "int i = get_global_id(0);\n"
-        "int j = get_global_id(1);\n"
-        "double var1 = 0; if (!((!contains_nonzero(var1_view, LOWER) && j < i) "
-        "|| (!contains_nonzero(var1_view, UPPER) && j > i))) {var1 = "
-        "var1_global[i + var1_rows * j];}\n"
-        "double var2 = 0; if (!((!contains_nonzero(var2_view, LOWER) && j < i) "
-        "|| (!contains_nonzero(var2_view, UPPER) && j > i))) {var2 = "
-        "var2_global[i + var2_rows * j];}\n"
-        "double var3 = var1+var2;\n"
-        "double var4 = var3*var3;\n"
-        "var5_global[i + var5_rows * j] = var4;\n"
-        "}";
+  std::string kernel_filename = "binary_operation_reuse_expression.cl";
   MatrixXd m1(3, 3);
   m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
   MatrixXd m2(3, 3);
@@ -194,6 +180,9 @@ TEST(MathMatrixCL, reuse_expression) {
   auto tmp2 = stan::math::elewise_multiplication(tmp, tmp);
   matrix_cl<double> res_cl;
   std::string kernel_src = tmp2.get_kernel_source_for_evaluating_into(res_cl);
+  stan::test::store_reference_kernel_if_needed(kernel_filename, kernel_src);
+  std::string expected_kernel_src
+      = stan::test::load_reference_kernel(kernel_filename);
   EXPECT_EQ(expected_kernel_src, kernel_src);
 
   res_cl = tmp2;

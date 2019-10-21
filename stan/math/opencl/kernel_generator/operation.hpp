@@ -113,9 +113,11 @@ class operation : public operation_base {
 
   template <typename T_lhs>
   struct cache {
-    static cl::Kernel kernel;  // cached kernel - different for every
-                               // combination of template instantination of \c
-                               // operation and every \c T_lhs
+    static std::string source;  // kernel source - not used anywhere. Only
+                                // intended for debugging.
+    static cl::Kernel kernel;   // cached kernel - different for every
+                                // combination of template instantination of \c
+                                // operation and every \c T_lhs
   };
 
   /**
@@ -223,6 +225,10 @@ class operation : public operation_base {
 template <typename Derived, typename ReturnScalar, typename... Args>
 template <typename T_lhs>
 cl::Kernel operation<Derived, ReturnScalar, Args...>::cache<T_lhs>::kernel;
+
+template <typename Derived, typename ReturnScalar, typename... Args>
+template <typename T_lhs>
+std::string operation<Derived, ReturnScalar, Args...>::cache<T_lhs>::source;
 
 }  // namespace math
 }  // namespace stan

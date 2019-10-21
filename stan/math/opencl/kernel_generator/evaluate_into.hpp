@@ -34,10 +34,10 @@ void operation<Derived, ReturnScalar, Args...>::evaluate_into(
                    "lhs_expression", lhs_expression.cols());
   try {
     if (cache::kernel() == nullptr) {
-      std::string src = get_kernel_source_for_evaluating_into(lhs);
+      cache::source = get_kernel_source_for_evaluating_into(lhs);
       auto opts = opencl_context.base_opts();
       cache::kernel = opencl_kernels::compile_kernel(
-          "calculate", {view_kernel_helpers, src.c_str()}, opts);
+          "calculate", {view_kernel_helpers, cache::source.c_str()}, opts);
     }
     int arg_num = 0;
     std::set<const operation_base*> generated;
