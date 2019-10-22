@@ -36,7 +36,7 @@ beta_proportion_rng(const T_loc &mu, const T_prec &kappa, RNG &rng) {
   static const char *function = "beta_proportion_rng";
 
   check_positive(function, "Location parameter", mu);
-  check_less_or_equal(function, "Location parameter", mu, 1.0);
+  check_less(function, "Location parameter", mu, 1.0);
   check_positive_finite(function, "Precision parameter", kappa);
   check_consistent_sizes(function, "Location parameter", mu,
                          "Precision parameter", kappa);

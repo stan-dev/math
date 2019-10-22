@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
+#include <stan/math/prim/scal/err/check_less.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -48,7 +49,7 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
   using T_partials_return = partials_return_t<T_y, T_loc, T_prec>;
   using std::log;
   check_positive(function, "Location parameter", mu);
-  check_less_or_equal(function, "Location parameter", mu, 1.0);
+  check_less(function, "Location parameter", mu, 1.0);
   check_positive_finite(function, "Precision parameter", kappa);
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
