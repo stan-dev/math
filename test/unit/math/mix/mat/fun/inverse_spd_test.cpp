@@ -1,305 +1,53 @@
-#include <stan/math/mix/mat.hpp>
-#include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
-#include <vector>
+#include <test/unit/math/test_ad.hpp>
 
-using stan::math::var;
+TEST(MathMixMatFun, inverseSpd) {
+  auto f = [](const auto& x) {
+    if (x.rows() != x.cols())
+      return stan::math::inverse_spd(x);
+    auto y = ((x + x.transpose()) * 0.5).eval();  // symmetry for finite diffs
+    return stan::math::inverse_spd(y);
+  };
 
-class AgradMixMatrixInverseSPD : public testing::Test {
-  void SetUp() { stan::math::recover_memory(); }
-};
+  Eigen::MatrixXd a(2, 2);
+  a << 2, 3, 3, 7;
+  stan::test::expect_ad(f, a);
 
-TEST_F(AgradMixMatrixInverseSPD, exception_fv) {
-  using stan::math::inverse_spd;
+  Eigen::MatrixXd b(2, 2);
+  b << 1, -1, -1, -1;
+  stan::test::expect_ad(f, b);
 
-  // non-square
-  stan::math::matrix_fv m1(2, 3);
-  m1 << 1, 2, 3, 4, 5, 6;
-  EXPECT_THROW(inverse_spd(m1), std::invalid_argument);
+  Eigen::MatrixXd c(2, 2);
+  c << 2, 3, 1, 7;
+  stan::test::expect_ad(f, c);
 
-  // non-symmetric
-  stan::math::matrix_fv m2(3, 3);
-  m2 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
-  EXPECT_THROW(inverse_spd(m2), std::domain_error);
-
-  // not positive definite
-  stan::math::matrix_fv m3(3, 3);
-  m3 << 1, 2, 3, 2, 4, 5, 3, 5, 6;
-  EXPECT_THROW(inverse_spd(m3), std::domain_error);
-}
-TEST_F(AgradMixMatrixInverseSPD, exception_ffv) {
-  using stan::math::inverse_spd;
-
-  // non-square
-  stan::math::matrix_ffv m1(2, 3);
-  m1 << 1, 2, 3, 4, 5, 6;
-  EXPECT_THROW(inverse_spd(m1), std::invalid_argument);
-
-  // non-symmetric
-  stan::math::matrix_ffv m2(3, 3);
-  m2 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
-  EXPECT_THROW(inverse_spd(m2), std::domain_error);
-
-  // not positive definite
-  stan::math::matrix_ffv m3(3, 3);
-  m3 << 1, 2, 3, 2, 4, 5, 3, 5, 6;
-  EXPECT_THROW(inverse_spd(m3), std::domain_error);
-}
-TEST_F(AgradMixMatrixInverseSPD, matrix_fv_1st_deriv) {
-  using stan::math::inverse_spd;
-
-  stan::math::matrix_fv m1(3, 3);
-  m1 << 2, -1, 0, -1, 2, -1, 0, -1, 2;
-  m1(0, 0).d_ = 1.0;
-  m1(0, 1).d_ = 1.0;
-  m1(0, 2).d_ = 1.0;
-  m1(1, 0).d_ = 1.0;
-  m1(1, 1).d_ = 1.0;
-  m1(1, 2).d_ = 1.0;
-  m1(2, 0).d_ = 1.0;
-  m1(2, 1).d_ = 1.0;
-  m1(2, 2).d_ = 1.0;
-
-  stan::math::matrix_fv m2 = stan::math::inverse(m1);
-  stan::math::matrix_fv m3 = inverse_spd(m1);
-
-  for (int i = 0; i < 3; i++) {
-    for (int j = 0; j < 3; j++) {
-      EXPECT_FLOAT_EQ(m2(i, j).val_.val(), m3(i, j).val_.val());
-      EXPECT_FLOAT_EQ(m2(i, j).d_.val(), m3(i, j).d_.val());
+  for (int k = 1; k < 4; ++k) {
+    Eigen::MatrixXd d(k, k);
+    for (int i = 0; i < k; ++i) {
+      d(i, i) = 1;
+      for (int j = 0; j < i; ++j) {
+        d(i, j) = std::pow(0.9, std::fabs(i - j));
+        d(j, i) = d(i, j);
+      }
     }
+    stan::test::expect_ad(f, d);
   }
 
-  std::vector<var> z1;
-  z1.push_back(m1(0, 0).val_);
-  z1.push_back(m1(0, 1).val_);
-  z1.push_back(m1(0, 2).val_);
-  z1.push_back(m1(1, 0).val_);
-  z1.push_back(m1(1, 1).val_);
-  z1.push_back(m1(1, 2).val_);
-  z1.push_back(m1(2, 0).val_);
-  z1.push_back(m1(2, 1).val_);
-  z1.push_back(m1(2, 2).val_);
+  Eigen::MatrixXd h(3, 3);  // not positive definite
+  h << 1, 2, 3, 2, 4, 5, 3, 5, 6;
+  stan::test::expect_ad(f, h);
 
-  for (int i = 0; i < 3; i++) {
-    for (int j = 0; j < 3; j++) {
-      VEC h1;
-      VEC h2;
-      m2(i, j).val_.grad(z1, h1);
-      stan::math::recover_memory();
-      m3(i, j).val_.grad(z1, h2);
-      stan::math::recover_memory();
-      for (int k = 0; k < 9; k++)
-        EXPECT_FLOAT_EQ(h1[k], h2[k]);
-    }
-  }
-}
+  Eigen::MatrixXd j(3, 3);
+  j << 2, -1, 0, -1, 2, -1, 0, -1, 2;
+  stan::test::expect_ad(f, j);
 
-TEST_F(AgradMixMatrixInverseSPD, matrix_fv_2nd_deriv) {
-  using stan::math::inverse_spd;
+  // test functor that doesn't symmetrize input to test errors
+  auto f_asym = [](const auto& x) { return stan::math::inverse_spd(x); };
 
-  stan::math::matrix_fv m1(3, 3);
-  m1 << 2, -1, 0, -1, 2, -1, 0, -1, 2;
-  m1(0, 0).d_ = 1.0;
-  m1(0, 1).d_ = 1.0;
-  m1(0, 2).d_ = 1.0;
-  m1(1, 0).d_ = 1.0;
-  m1(1, 1).d_ = 1.0;
-  m1(1, 2).d_ = 1.0;
-  m1(2, 0).d_ = 1.0;
-  m1(2, 1).d_ = 1.0;
-  m1(2, 2).d_ = 1.0;
+  Eigen::MatrixXd g(3, 3);  // not symmetric
+  g << 1, 2, 3, 4, 5, 6, 7, 8, 9;
+  stan::test::expect_ad(f_asym, g);
 
-  stan::math::matrix_fv m2 = stan::math::inverse(m1);
-  stan::math::matrix_fv m3 = inverse_spd(m1);
-
-  for (int i = 0; i < 3; i++) {
-    for (int j = 0; j < 3; j++) {
-      EXPECT_FLOAT_EQ(m2(i, j).val_.val(), m3(i, j).val_.val());
-      EXPECT_FLOAT_EQ(m2(i, j).d_.val(), m3(i, j).d_.val());
-    }
-  }
-
-  std::vector<var> z1;
-  z1.push_back(m1(0, 0).val_);
-  z1.push_back(m1(0, 1).val_);
-  z1.push_back(m1(0, 2).val_);
-  z1.push_back(m1(1, 0).val_);
-  z1.push_back(m1(1, 1).val_);
-  z1.push_back(m1(1, 2).val_);
-  z1.push_back(m1(2, 0).val_);
-  z1.push_back(m1(2, 1).val_);
-  z1.push_back(m1(2, 2).val_);
-
-  for (int i = 0; i < 3; i++) {
-    for (int j = 0; j < 3; j++) {
-      VEC h1;
-      VEC h2;
-      m2(i, j).d_.grad(z1, h1);
-      stan::math::recover_memory();
-      m3(i, j).d_.grad(z1, h2);
-      stan::math::recover_memory();
-      for (int k = 0; k < 9; k++)
-        EXPECT_FLOAT_EQ(h1[k], h2[k]);
-    }
-  }
-}
-
-TEST_F(AgradMixMatrixInverseSPD, matrix_ffv_1st_deriv) {
-  using stan::math::inverse_spd;
-
-  stan::math::matrix_ffv m1(3, 3);
-  m1 << 2, -1, 0, -1, 2, -1, 0, -1, 2;
-  m1(0, 0).d_ = 1.0;
-  m1(0, 1).d_ = 1.0;
-  m1(0, 2).d_ = 1.0;
-  m1(1, 0).d_ = 1.0;
-  m1(1, 1).d_ = 1.0;
-  m1(1, 2).d_ = 1.0;
-  m1(2, 0).d_ = 1.0;
-  m1(2, 1).d_ = 1.0;
-  m1(2, 2).d_ = 1.0;
-
-  stan::math::matrix_ffv m2 = stan::math::inverse(m1);
-  stan::math::matrix_ffv m3 = inverse_spd(m1);
-
-  for (int i = 0; i < 3; i++) {
-    for (int j = 0; j < 3; j++) {
-      EXPECT_FLOAT_EQ(m2(i, j).val_.val_.val(), m3(i, j).val_.val_.val());
-      EXPECT_FLOAT_EQ(m2(i, j).d_.val_.val(), m3(i, j).d_.val_.val());
-    }
-  }
-
-  std::vector<var> z1;
-  z1.push_back(m1(0, 0).val_.val_);
-  z1.push_back(m1(0, 1).val_.val_);
-  z1.push_back(m1(0, 2).val_.val_);
-  z1.push_back(m1(1, 0).val_.val_);
-  z1.push_back(m1(1, 1).val_.val_);
-  z1.push_back(m1(1, 2).val_.val_);
-  z1.push_back(m1(2, 0).val_.val_);
-  z1.push_back(m1(2, 1).val_.val_);
-  z1.push_back(m1(2, 2).val_.val_);
-
-  for (int i = 0; i < 3; i++) {
-    for (int j = 0; j < 3; j++) {
-      VEC h1;
-      VEC h2;
-      m2(i, j).val_.val_.grad(z1, h1);
-      stan::math::recover_memory();
-      m3(i, j).val_.val_.grad(z1, h2);
-      stan::math::recover_memory();
-      for (int k = 0; k < 9; k++)
-        EXPECT_FLOAT_EQ(h1[k], h2[k]);
-    }
-  }
-}
-
-TEST_F(AgradMixMatrixInverseSPD, matrix_ffv_2nd_deriv) {
-  using stan::math::inverse_spd;
-
-  stan::math::matrix_ffv m1(3, 3);
-  m1 << 2, -1, 0, -1, 2, -1, 0, -1, 2;
-  m1(0, 0).d_ = 1.0;
-  m1(0, 1).d_ = 1.0;
-  m1(0, 2).d_ = 1.0;
-  m1(1, 0).d_ = 1.0;
-  m1(1, 1).d_ = 1.0;
-  m1(1, 2).d_ = 1.0;
-  m1(2, 0).d_ = 1.0;
-  m1(2, 1).d_ = 1.0;
-  m1(2, 2).d_ = 1.0;
-
-  stan::math::matrix_ffv m2 = stan::math::inverse(m1);
-  stan::math::matrix_ffv m3 = inverse_spd(m1);
-
-  for (int i = 0; i < 3; i++) {
-    for (int j = 0; j < 3; j++) {
-      EXPECT_FLOAT_EQ(m2(i, j).val_.val_.val(), m3(i, j).val_.val_.val());
-      EXPECT_FLOAT_EQ(m2(i, j).d_.val_.val(), m3(i, j).d_.val_.val());
-    }
-  }
-
-  std::vector<var> z1;
-  z1.push_back(m1(0, 0).val_.val_);
-  z1.push_back(m1(0, 1).val_.val_);
-  z1.push_back(m1(0, 2).val_.val_);
-  z1.push_back(m1(1, 0).val_.val_);
-  z1.push_back(m1(1, 1).val_.val_);
-  z1.push_back(m1(1, 2).val_.val_);
-  z1.push_back(m1(2, 0).val_.val_);
-  z1.push_back(m1(2, 1).val_.val_);
-  z1.push_back(m1(2, 2).val_.val_);
-
-  for (int i = 0; i < 3; i++) {
-    for (int j = 0; j < 3; j++) {
-      VEC h1;
-      VEC h2;
-      m2(i, j).d_.val_.grad(z1, h1);
-      stan::math::recover_memory();
-      m3(i, j).d_.val_.grad(z1, h2);
-      stan::math::recover_memory();
-      for (int k = 0; k < 9; k++)
-        EXPECT_FLOAT_EQ(h1[k], h2[k]);
-    }
-  }
-}
-
-TEST_F(AgradMixMatrixInverseSPD, matrix_ffv_3rd_deriv) {
-  using stan::math::inverse_spd;
-
-  stan::math::matrix_ffv m1(3, 3);
-  m1 << 2, -1, 0, -1, 2, -1, 0, -1, 2;
-  m1(0, 0).d_ = 1.0;
-  m1(0, 1).d_ = 1.0;
-  m1(0, 2).d_ = 1.0;
-  m1(1, 0).d_ = 1.0;
-  m1(1, 1).d_ = 1.0;
-  m1(1, 2).d_ = 1.0;
-  m1(2, 0).d_ = 1.0;
-  m1(2, 1).d_ = 1.0;
-  m1(2, 2).d_ = 1.0;
-  m1(0, 0).val_.d_ = 1.0;
-  m1(0, 1).val_.d_ = 1.0;
-  m1(0, 2).val_.d_ = 1.0;
-  m1(1, 0).val_.d_ = 1.0;
-  m1(1, 1).val_.d_ = 1.0;
-  m1(1, 2).val_.d_ = 1.0;
-  m1(2, 0).val_.d_ = 1.0;
-  m1(2, 1).val_.d_ = 1.0;
-  m1(2, 2).val_.d_ = 1.0;
-
-  stan::math::matrix_ffv m2 = stan::math::inverse(m1);
-  stan::math::matrix_ffv m3 = inverse_spd(m1);
-
-  for (int i = 0; i < 3; i++) {
-    for (int j = 0; j < 3; j++) {
-      EXPECT_FLOAT_EQ(m2(i, j).val_.val_.val(), m3(i, j).val_.val_.val());
-      EXPECT_FLOAT_EQ(m2(i, j).d_.val_.val(), m3(i, j).d_.val_.val());
-    }
-  }
-
-  std::vector<var> z1;
-  z1.push_back(m1(0, 0).val_.val_);
-  z1.push_back(m1(0, 1).val_.val_);
-  z1.push_back(m1(0, 2).val_.val_);
-  z1.push_back(m1(1, 0).val_.val_);
-  z1.push_back(m1(1, 1).val_.val_);
-  z1.push_back(m1(1, 2).val_.val_);
-  z1.push_back(m1(2, 0).val_.val_);
-  z1.push_back(m1(2, 1).val_.val_);
-  z1.push_back(m1(2, 2).val_.val_);
-
-  for (int i = 0; i < 3; i++) {
-    for (int j = 0; j < 3; j++) {
-      VEC h1;
-      VEC h2;
-      m2(i, j).d_.d_.grad(z1, h1);
-      stan::math::recover_memory();
-      m3(i, j).d_.d_.grad(z1, h2);
-      stan::math::recover_memory();
-      for (int k = 0; k < 9; k++)
-        EXPECT_FLOAT_EQ(h1[k], h2[k]);
-    }
-  }
+  Eigen::MatrixXd e(3, 2);  // not square
+  e << 1, 2, 3, 4, 5, 6;
+  stan::test::expect_ad(f_asym, e);
 }
