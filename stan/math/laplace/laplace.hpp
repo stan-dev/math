@@ -4,6 +4,7 @@
 // New prototypes
 #include <stan/math/laplace/laplace_marginal_bernoulli.hpp>
 #include <stan/math/laplace/laplace_marginal_poisson.hpp>
+#include <stan/math/laplace/laplace_approx_poisson_rng.hpp>
 
 // First prototypes
 #include <stan/math/laplace/lgp_newton_solver.hpp>
