@@ -2,6 +2,7 @@
 
 TEST(MathMixMatFun, eigenvaluesSym) {
   auto f = [](const auto& y) {
+    // need to maintain symmetry for finite diffs
     auto a = ((y + y.transpose()) * 0.5).eval();
     return stan::math::eigenvalues_sym(a);
   };
