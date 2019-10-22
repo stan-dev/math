@@ -27,4 +27,8 @@ TEST(MathMixMatFun, eltDivide) {
   stan::test::expect_ad(f, a2, z);
   stan::test::expect_ad(f, c2, z);
   stan::test::expect_ad(f, e23, z);
+
+  stan::test::expect_ad(f, z, a2);
+  stan::test::expect_ad(f, z, c2);
+  stan::test::expect_ad(f, z, e23);
 }
