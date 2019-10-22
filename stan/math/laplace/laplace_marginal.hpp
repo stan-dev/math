@@ -39,16 +39,19 @@ namespace math {
    * "Gaussian Processes for Machine Learning", second edition,
    * MIT Press 2006, algorithm 3.1.
    *
-   * Variables needed for the gradient are stored by reference.
+   * Variables needed for the gradient or generating quantities
+   * are stored by reference.
    *
    * @tparam D structure type for the likelihood object.
    * @tparam K structure type for the covariance object.
    * @param[in] theta_0 the initial guess for the mode.
    * @param[in] phi the global parameter (input for the covariance function).
-   * @param[in] x data for the covariance function.
+   * @param[in] x variance data (input for the covariance function).
    * @param[in] D structure to compute and differentiate the log likelihood.
    *            The object stores the sufficient stats for the observations.
    * @param[in] K structure to compute the covariance function.
+   * @param[in, out] covariance the evaluated covariance function for the
+   *                 latent gaussian variable.
    * @param[in, out] theta a vector to store the mode.
    * @param[in, out] W_root a vector to store the square root of the 
    *                 diagonal negative Hessian.
@@ -66,6 +69,7 @@ namespace math {
                             const std::vector<Eigen::VectorXd>& x,
                             const D& diff_likelihood,
                             const K& covariance_function,
+                            Eigen::MatrixXd& covariance,
                             Eigen::VectorXd& theta,
                             Eigen::VectorXd& W_root,
                             Eigen::MatrixXd& L,
@@ -77,7 +81,9 @@ namespace math {
     using Eigen::VectorXd;
 
     int group_size = theta_0.size();
-    MatrixXd covariance = covariance_function(phi, x, group_size);
+    // MatrixXd covariance = covariance_function(phi, x, group_size);
+    covariance = covariance_function(phi, x, group_size);
+    // CHECK -- should we compute the derivatives here too?
     theta = theta_0;
     double objective_old = - 1e+10;  // CHECK -- what value to use?
     double objective_new;
@@ -157,9 +163,10 @@ namespace math {
                             double tolerance = 1e-6,
                             long int max_num_steps = 100) {
     Eigen::VectorXd theta, W_root, a, l_grad;
-    Eigen::MatrixXd L;
+    Eigen::MatrixXd L, covariance;
     return laplace_marginal_density(value_of(theta_0), phi, x,
               diff_likelihood, covariance_function,
+              covariance,
               theta, W_root, L, a, l_grad,
               tolerance, max_num_steps);
   }
@@ -330,13 +337,19 @@ namespace math {
        long int max_num_steps = 100) {
     Eigen::VectorXd theta, W_root, a, l_grad;
     Eigen::MatrixXd L;
-    double marginal_density_dbl
-      = laplace_marginal_density(value_of(theta_0),
-                                 value_of(phi),
-                                 x, diff_likelihood,
-                                 covariance_function,
-                                 theta, W_root, L, a, l_grad,
-                                 tolerance, max_num_steps);
+    double marginal_density_dbl;
+
+    {
+      Eigen::MatrixXd covariance;  // temporary place holder.
+      marginal_density_dbl
+        = laplace_marginal_density(value_of(theta_0),
+                                   value_of(phi),
+                                   x, diff_likelihood,
+                                   covariance_function,
+                                   covariance,
+                                   theta, W_root, L, a, l_grad,
+                                   tolerance, max_num_steps);
+    }
 
     // construct vari
     laplace_marginal_density_vari* vi0

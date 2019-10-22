@@ -26,10 +26,10 @@ TEST(laplace, disease_map_dim_911) {
   read_in_data(dim_theta, n_observations, data_directory, x1, x2, y, ye);
 
   // look at some of the data
-  // std::cout << "x_1: " << x1[0] << " " << x2[0] << std::endl
-  //           << "x_2: " << x1[1] << " " << x2[1] << std::endl
-  //           << "y_1: " << y[0] << " y_2: " << y[1] << std::endl
-  //           << "ye_1: " << ye[0] << " ye_2: " << ye[1] << std::endl;
+  std::cout << "x_1: " << x1[0] << " " << x2[0] << std::endl
+            << "x_2: " << x1[1] << " " << x2[1] << std::endl
+            << "y_1: " << y[0] << " y_2: " << y[1] << std::endl
+            << "ye_1: " << ye[0] << " ye_2: " << ye[1] << std::endl;
 
   int dim_x = 2;
   std::vector<Eigen::VectorXd> x(dim_theta);
