@@ -162,11 +162,9 @@ inline auto packed_copy(Vec&& src, int rows) {
     matrix_cl<vec_value_type> packed(packed_size, 1);
     cl::Event packed_event;
     const cl::CommandQueue queue = opencl_context.queue();
-    queue.enqueueWriteBuffer(
-        packed.buffer(),
-        CL_FALSE, 0,
-        sizeof(vec_value_type) * packed_size, src.data(), nullptr,
-        &packed_event);
+    queue.enqueueWriteBuffer(packed.buffer(), CL_FALSE, 0,
+                             sizeof(vec_value_type) * packed_size, src.data(),
+                             nullptr, &packed_event);
     packed.add_write_event(packed_event);
     stan::math::opencl_kernels::unpack(cl::NDRange(dst.rows(), dst.rows()), dst,
                                        packed, dst.rows(), dst.rows(),

@@ -51,9 +51,9 @@ class matrix_cl<T, require_arithmetic_t<T>> {
   template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper>
   inline void triangular_transpose();
 
-  inline void sub_block(const matrix_cl<T, require_arithmetic_t<T>>& A, size_t A_i,
-                 size_t A_j, size_t this_i, size_t this_j, size_t nrows,
-                 size_t ncols);
+  inline void sub_block(const matrix_cl<T, require_arithmetic_t<T>>& A,
+                        size_t A_i, size_t A_j, size_t this_i, size_t this_j,
+                        size_t nrows, size_t ncols);
   int rows() const { return rows_; }
 
   int cols() const { return cols_; }

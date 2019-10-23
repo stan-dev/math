@@ -53,8 +53,8 @@ class matrix_cl<T, require_var_t<T>> {
   inline void triangular_transpose();
 
   inline void sub_block(const matrix_cl<T, require_var_t<T>>& A, size_t A_i,
-                 size_t A_j, size_t this_i, size_t this_j, size_t nrows,
-                 size_t ncols);
+                        size_t A_j, size_t this_i, size_t this_j, size_t nrows,
+                        size_t ncols);
 
   inline const matrix_cl_view& view() const { return view_; }
 
