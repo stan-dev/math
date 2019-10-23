@@ -322,7 +322,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
       cl::CommandQueue& queue = opencl_context.queue();
       queue.enqueueWriteBuffer(
           this->buffer_cl_,
-          opencl_context.in_order() || std::is_rvalue_reference<Mat&&>::value,
+          opencl_context.in_order() || std::is_rvalue_reference<Mat&&>::value || !is_eigen_matrix<Mat>::value,
           0, sizeof(T) * A.size(), A.eval().data(), nullptr, &transfer_event);
       this->add_write_event(transfer_event);
     } catch (const cl::Error& e) {
