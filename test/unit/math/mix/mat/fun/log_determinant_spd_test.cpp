@@ -2,13 +2,12 @@
 
 TEST(MathMixMatFun, logDeterminantSpd) {
   auto f = [](const auto& x) {
-    // if asymmetric, let basic function test exception
-    if (x.rows() != x.cols()) {
-      return stan::math::log_determinant_spd(x);
-    }
     auto z = ((x + x.transpose()) * 0.5).eval();
     return stan::math::log_determinant_spd(z);
   };
+
+  // for testing error conditions
+  auto g = [](const auto& x) { return stan::math::log_determinant_spd(x); };
 
   Eigen::MatrixXd a(2, 2);
   a << 3, 0, 0, 4;
@@ -28,7 +27,11 @@ TEST(MathMixMatFun, logDeterminantSpd) {
     }
   }
 
-  Eigen::MatrixXd d(2, 3);
+  Eigen::MatrixXd d(2, 3);  // not square
   d << 1, 2, 3, 4, 5, 6;
-  stan::test::expect_ad(f, d);
+  stan::test::expect_ad(g, d);
+
+  Eigen::MatrixXd e(2, 2);  // asymmetric
+  e << 1, 2, 3, 4;
+  stan::test::expect_ad(g, e);
 }
