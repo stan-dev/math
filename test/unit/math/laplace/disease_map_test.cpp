@@ -1,5 +1,10 @@
 #include <stan/math.hpp>
-#include <stan/math/laplace/laplace_marginal_poisson.hpp>
+#include <stan/math/laplace/laplace.hpp>
+// #include <stan/math/laplace/laplace_marginal_poisson.hpp>
+// #include <stan/math/laplace/prob/laplace_approx_rng.hpp>
+
+#include <boost/random/mersenne_twister.hpp>
+#include <boost/math/distributions.hpp>
 
 #include <test/unit/math/laplace/lgp_utility.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
@@ -63,6 +68,29 @@ TEST(laplace, disease_map_dim_911) {
   std::cout << "LAPLACE MARGINAL AND VARI CLASS" << std::endl
             << "density: " << value_of(marginal_density) << std::endl
             << "autodiff grad: " << g[0] << " " << g[1] << std::endl
+            << "total time: " << elapsed_time.count() << std::endl
+            << std::endl;
+  
+  ////////////////////////////////////////////////////////////////////////
+  // Let's now generate a sample theta from the estimated posterior
+  using stan::math::diff_poisson_log;
+  using stan::math::to_vector;
+  using stan::math::sqr_exp_kernel_functor;
+  
+  diff_poisson_log diff_likelihood(to_vector(n_samples),
+                                   to_vector(y),
+                                   stan::math::log(ye));
+  boost::random::mt19937 rng;
+  start = std::chrono::system_clock::now();
+  Eigen::VectorXd
+    theta_pred = laplace_approx_rng(theta_0, phi, x,
+                                    diff_likelihood,
+                                    sqr_exp_kernel_functor(),
+                                    rng);
+  end = std::chrono::system_clock::now();
+  elapsed_time = end - start;
+  
+  std::cout << "LAPLACE_APPROX_RNG" << std::endl
             << "total time: " << elapsed_time.count() << std::endl
             << std::endl;
 }
