@@ -1159,6 +1159,35 @@ void expect_common_prim(const F1& f1, const F2& f2) {
     expect_match_prim(f1, f2, x);
 }
 
+/**
+ * Return sequence of covariance matrices ranging in dimension from
+ * the specified minimum to maximum, with specified autocorrelation.
+ * The entries `Sigma[i, j]` in the result are `pow(rho, fabs(i -
+ * j))`.
+ *
+ * @param N_min minimum covariance matrix dimension
+ * @param N_max maximum covariance matrix dimension
+ * @param rho correlation (between -1 and 1)
+ * @return sequence of covariance matrices between specified sizes
+ * with specified autocorrelation
+ */
+std::vector<Eigen::MatrixXd> ar_test_cov_matrices(int N_min, int N_max,
+                                                  double rho) {
+  std::vector<Eigen::MatrixXd> ys;
+  for (int n = N_min; n <= N_max; ++n) {
+    Eigen::MatrixXd y(n, n);
+    for (int i = 0; i < n; ++i) {
+      y(i, i) = 1;
+      for (int j = 0; j < i; ++j) {
+        y(i, j) = std::pow(rho, std::fabs(i - j));
+        y(j, i) = y(i, j);
+      }
+    }
+    ys.push_back(y);
+  }
+  return ys;
+}
+
 }  // namespace test
 }  // namespace stan
 #endif

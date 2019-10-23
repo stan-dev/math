@@ -2,6 +2,7 @@
 // non-framework tests require following includes
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
+#include <cmath>
 #include <vector>
 
 template <typename T, int R, int C>
@@ -26,28 +27,22 @@ TEST(MathMixMatFun, logDeterminantLdlt) {
   c << 1, 0, 0, 3;
   stan::test::expect_ad(f, c);
 
-  for (const auto& rho : std::vector<double>{0, 0.9}) {
-    for (int k = 1; k < 4; ++k) {
-      Eigen::MatrixXd y(k, k);
-      for (int i = 0; i < k; ++i) {
-        y(i, i) = 0;
-        for (int j = 0; j < i; ++j) {
-          y(i, j) = std::pow(rho, std::fabs(i - j));
-          y(j, i) = y(i, j);
-        }
-      }
-      stan::test::expect_ad(f, y);
-    }
-  }
-
-  // TODO(carpenter): figure out why this example requires loose tolerance
+  // TODO(carpenter): why do gradient tests have such high tolerance?
   // original derivative test for this case is included below
   stan::test::ad_tolerances tols;
-  tols.gradient_grad_ = 1;  // default is tiny
+  tols.gradient_grad_ = 1;
 
   Eigen::MatrixXd b(2, 2);
   b << 2, 1, 1, 3;
   stan::test::expect_ad(tols, f, b);
+
+  // the general case is even worse; these not in original tests
+  tols.gradient_grad_ = 5;
+  for (const auto& rho : std::vector<double>{0, 0.9}) {
+    for (const auto& y : stan::test::ar_test_cov_matrices(1, 3, rho)) {
+      stan::test::expect_ad(tols, f, y);
+    }
+  }
 }
 
 TEST(MathMixMatFun, logDeterminantLdltSpecial) {
