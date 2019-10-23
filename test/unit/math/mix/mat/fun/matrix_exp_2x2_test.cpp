@@ -1,5 +1,4 @@
 #include <test/unit/math/test_ad.hpp>
-#include <limits>
 
 TEST(MathMixMatFun, matrixExp2x2) {
   auto f = [](const auto& x) { return stan::math::matrix_exp_2x2(x); };
