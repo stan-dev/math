@@ -630,6 +630,81 @@ void expect_comparison(const F& f, const T1& x1, const T2& x2) {
 }  // namespace internal
 
 /**
+ * Test that the specified function has the same value when applied to
+ * type `T` as it does promoting `T` to all of the autodiff types
+ * (`var`, `fvar<double>`, `fvar<fvar<double>>`, `fvar<var>`,
+ * `fvar<fvar<var>>`).
+ *
+ * @tparam F type of function to test
+ * @tparam T type of scalar argument
+ * @param f function to test
+ * @param x value to test
+ */
+template <typename F, typename T>
+void expect_value(const F& f, const T& x) {
+  using stan::math::fvar;
+  using stan::math::var;
+  typedef var v;
+  typedef fvar<double> fd;
+  typedef fvar<fvar<double>> ffd;
+  typedef fvar<var> fv;
+  typedef fvar<fvar<var>> ffv;
+
+  double fx = f(x);
+  EXPECT_FLOAT_EQ(fx, f(v(x)).val());
+  EXPECT_FLOAT_EQ(fx, f(fd(x)).val());
+  EXPECT_FLOAT_EQ(fx, f(ffd(x)).val().val());
+  EXPECT_FLOAT_EQ(fx, f(fv(x)).val().val());
+  EXPECT_FLOAT_EQ(fx, f(ffv(x)).val().val().val());
+}
+
+/**
+ * Test that the specified function has the same value when applied to
+ * type `T1` and `T2` to all of the autodiff types
+ * (`var`, `fvar<double>`, `fvar<fvar<double>>`, `fvar<var>`,
+ * `fvar<fvar<var>>`).
+ *
+ * @tparam F type of function to test
+ * @tparam T1 type of first scalar argument
+ * @tparam T2 type of second scalar argument
+ * @param f function to test
+ * @param x1 first argument to test
+ * @param x1 second argument to test
+ */
+template <typename F, typename T1, typename T2>
+void expect_value(const F& f, const T1& x1, const T2& x2) {
+  using stan::math::fvar;
+  using stan::math::var;
+  typedef var v;
+  typedef fvar<double> fd;
+  typedef fvar<fvar<double>> ffd;
+  typedef fvar<var> fv;
+  typedef fvar<fvar<var>> ffv;
+  double fx = f(x1, x2);
+
+  // vv
+  EXPECT_FLOAT_EQ(fx, f(v(x1), v(x2)).val());
+  EXPECT_FLOAT_EQ(fx, f(fd(x1), fd(x2)).val());
+  EXPECT_FLOAT_EQ(fx, f(ffd(x1), ffd(x2)).val().val());
+  EXPECT_FLOAT_EQ(fx, f(fv(x1), fv(x2)).val().val());
+  EXPECT_FLOAT_EQ(fx, f(ffv(x1), ffv(x2)).val().val().val());
+
+  // vd
+  EXPECT_FLOAT_EQ(fx, f(v(x1), x2).val());
+  EXPECT_FLOAT_EQ(fx, f(fd(x1), x2).val());
+  EXPECT_FLOAT_EQ(fx, f(ffd(x1), x2).val().val());
+  EXPECT_FLOAT_EQ(fx, f(fv(x1), x2).val().val());
+  EXPECT_FLOAT_EQ(fx, f(ffv(x1), x2).val().val().val());
+
+  // dv
+  EXPECT_FLOAT_EQ(fx, f(x1, v(x2)).val());
+  EXPECT_FLOAT_EQ(fx, f(x1, fd(x2)).val());
+  EXPECT_FLOAT_EQ(fx, f(x1, ffd(x2)).val().val());
+  EXPECT_FLOAT_EQ(fx, f(x1, fv(x2)).val().val());
+  EXPECT_FLOAT_EQ(fx, f(x1, ffv(x2)).val().val().val());
+}
+
+/**
  * Test that the specified polymorphic unary functor produces autodiff
  * results consistent with values determined by double or integer
  * inputs and 1st-, 2nd-, and 3rd-order derivatives consistent with
@@ -783,6 +858,27 @@ void expect_common_unary(const F& f) {
 }
 
 /**
+ * Test that the specified polymorphic unary function produces the
+ * same results, exceptions, and has 1st-, 2nd-, and 3rd-order
+ * derivatives consistent with finite differences as returned by the
+ * primitive version of the function, when applied to all
+ * common integer and double arguments excluding zero.
+ *
+ * @tparam F type of polymorphic binary functor
+ * @param f functor to test
+ */
+template <typename F>
+void expect_common_nonzero_unary(const F& f) {
+  auto args = internal::common_nonzero_args();
+  for (double x1 : args)
+    expect_ad(f, x1);
+
+  auto int_args = internal::common_nonzero_int_args();
+  for (int x : int_args)
+    expect_ad(f, x);
+}
+
+/**
  * Test that the specified polymorphic binary function produces the
  * same results, exceptions, and has 1st-, 2nd-, and 3rd-order
  * derivatives consistent with finite differences as returned by the
@@ -805,21 +901,25 @@ void expect_common_nonzero_binary(const F& f, bool disable_lhs_int = false) {
   auto args = internal::common_nonzero_args();
   auto int_args = internal::common_nonzero_int_args();
   for (double x1 : args)
-    for (double x2 : args)
+    for (double x2 : args) {
       expect_ad(f, x1, x2);
+    }
   for (double x1 : args)
-    for (int x2 : int_args)
+    for (int x2 : int_args) {
       expect_ad(f, x1, x2);
+    }
 
   if (disable_lhs_int)
     return;
 
   for (int x1 : int_args)
-    for (double x2 : args)
+    for (double x2 : args) {
       expect_ad(f, x1, x2);
+    }
   for (int x1 : int_args)
-    for (int x2 : int_args)
+    for (int x2 : int_args) {
       expect_ad(f, x1, x2);
+    }
 }
 
 /**
@@ -845,19 +945,23 @@ void expect_common_binary(const F& f, bool disable_lhs_int = false) {
   auto args = internal::common_args();
   auto int_args = internal::common_int_args();
   for (double x1 : args)
-    for (double x2 : args)
+    for (double x2 : args) {
       expect_ad(f, x1, x2);
+    }
   for (double x1 : args)
-    for (int x2 : int_args)
+    for (int x2 : int_args) {
       expect_ad(f, x1, x2);
+    }
   if (disable_lhs_int)
     return;
   for (int x1 : int_args)
-    for (double x2 : args)
+    for (double x2 : args) {
       expect_ad(f, x1, x2);
+    }
   for (int x1 : int_args)
-    for (int x2 : int_args)
+    for (int x2 : int_args) {
       expect_ad(f, x1, x2);
+    }
 }
 
 /**

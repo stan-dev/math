@@ -62,7 +62,6 @@ namespace math {
 template <typename T_N, typename T_n>
 inline return_type_t<T_N, T_n> binomial_coefficient_log(const T_N N,
                                                         const T_n n) {
-  using std::log;
   const double CUTOFF = 1000;
   if (N - n < CUTOFF) {
     const T_N N_plus_1 = N + 1;

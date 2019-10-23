@@ -28,6 +28,9 @@
 *.exe
 *.a
 
+# Intel template building blocks (TBB)
+lib/tbb
+
 # /doc/
 /doc/api
 /doc/*.pdf
