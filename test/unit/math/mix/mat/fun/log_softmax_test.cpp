@@ -19,9 +19,9 @@ TEST(MathMixMatFun, logSoftmax) {
 
   Eigen::VectorXd x3b(3);
   x3 << 0, 1, 2;
-  stan::test::expect_ad(f, x3);
+  stan::test::expect_ad(f, x3b);
 
   Eigen::VectorXd x3c(3);
   x3 << 2, 1, 1;
-  stan::test::expect_ad(f, x3);
+  stan::test::expect_ad(f, x3c);
 }
