@@ -26,7 +26,6 @@ TEST(MathMixMatFun, logDeterminantLdlt) {
   b << 2, 1, 1, 3;
   stan::test::expect_ad(f, b);
 
-  tols.gradient_grad_ = 5;
   for (const auto& rho : std::vector<double>{0, 0.9}) {
     for (const auto& y : stan::test::ar_test_cov_matrices(1, 3, rho)) {
       stan::test::expect_ad(f, y);
