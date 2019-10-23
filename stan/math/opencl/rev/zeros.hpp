@@ -23,7 +23,7 @@ namespace math {
  * value must be of type matrix_cl_view
  */
 template <typename T>
-template <matrix_cl_view matrix_view = matrix_cl_view::Entire>
+template <matrix_cl_view matrix_view>
 inline void matrix_cl<T, require_var_t<T>>::zeros() try {
   this->val().template zeros<matrix_view>();
   this->adj().template zeros<matrix_view>();

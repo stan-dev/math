@@ -2,12 +2,12 @@
 #define STAN_MATH_OPENCL_REV_MATRIX_CL_HPP
 #ifdef STAN_OPENCL
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/rev/core.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/arr/fun/vec_concat.hpp>
-#include <stan/math/rev/core.hpp>
 #include <cl.hpp>
 #include <iostream>
 #include <string>
@@ -34,31 +34,31 @@ class matrix_cl<T, require_var_t<T>> {
  public:
   using Scalar = T;
   using type = T;
-  int rows() const { return rows_; }
+  inline int rows() const { return rows_; }
 
-  int cols() const { return cols_; }
+  inline int cols() const { return cols_; }
 
-  int size() const { return rows_ * cols_; }
+  inline int size() const { return rows_ * cols_; }
 
-  matrix_cl<double>& val() const { return val_; }
-  matrix_cl<double>& adj() const { return adj_; }
+  inline matrix_cl<double>& val() const { return val_; }
+  inline matrix_cl<double>& adj() const { return adj_; }
   matrix_cl() : rows_(0), cols_(0), val_(0, 0), adj_(0, 0) {}
 
   // Forward declare the methods that work in place on the matrix
   template <matrix_cl_view matrix_view = matrix_cl_view::Entire>
-  void zeros();
+  inline void zeros();
   template <matrix_cl_view matrix_view = matrix_cl_view::Entire>
-  void zeros_strict_tri();
+  inline void zeros_strict_tri();
   template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper>
-  void triangular_transpose();
+  inline void triangular_transpose();
 
-  void sub_block(const matrix_cl<T, require_var_t<T>>& A, size_t A_i,
+  inline void sub_block(const matrix_cl<T, require_var_t<T>>& A, size_t A_i,
                  size_t A_j, size_t this_i, size_t this_j, size_t nrows,
                  size_t ncols);
 
-  const matrix_cl_view& view() const { return view_; }
+  inline const matrix_cl_view& view() const { return view_; }
 
-  void view(const matrix_cl_view& view) {
+  inline void view(const matrix_cl_view& view) {
     view_ = view;
     val_.view(view);
     adj_.view(view);
