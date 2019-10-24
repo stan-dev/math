@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_ARR_FUN_SUM_HPP
 #define STAN_MATH_PRIM_ARR_FUN_SUM_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <cstddef>
 #include <vector>
 #include <numeric>

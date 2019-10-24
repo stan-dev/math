@@ -22,13 +22,15 @@ inline Eigen::Matrix<fvar<T>, R, C> unit_vector_constrain(
   using std::sqrt;
 
   Matrix<T, R, C> y_t(y.size());
-  for (int k = 0; k < y.size(); ++k)
+  for (int k = 0; k < y.size(); ++k) {
     y_t.coeffRef(k) = y.coeff(k).val_;
+  }
 
   Matrix<T, R, C> unit_vector_y_t = unit_vector_constrain(y_t);
   Matrix<fvar<T>, R, C> unit_vector_y(y.size());
-  for (int k = 0; k < y.size(); ++k)
+  for (int k = 0; k < y.size(); ++k) {
     unit_vector_y.coeffRef(k).val_ = unit_vector_y_t.coeff(k);
+  }
 
   T squared_norm = dot_self(y_t);
   T norm = sqrt(squared_norm);
@@ -38,8 +40,9 @@ inline Eigen::Matrix<fvar<T>, R, C> unit_vector_constrain(
 
   for (int m = 0; m < y.size(); ++m) {
     J.coeffRef(m, m) += inv_norm;
-    for (int k = 0; k < y.size(); ++k)
+    for (int k = 0; k < y.size(); ++k) {
       unit_vector_y.coeffRef(k).d_ = J.coeff(k, m);
+    }
   }
   return unit_vector_y;
 }

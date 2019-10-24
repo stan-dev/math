@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_MAT_FUNCTOR_GRADIENT_HPP
 #define STAN_MATH_REV_MAT_FUNCTOR_GRADIENT_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stdexcept>
@@ -42,15 +43,12 @@ void gradient(const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
               double& fx, Eigen::Matrix<double, Eigen::Dynamic, 1>& grad_fx) {
   start_nested();
   try {
-    Eigen::Matrix<var, Eigen::Dynamic, 1> x_var(x.size());
-    for (int i = 0; i < x.size(); ++i)
-      x_var(i) = x(i);
+    Eigen::Matrix<var, Eigen::Dynamic, 1> x_var(x);
     var fx_var = f(x_var);
     fx = fx_var.val();
     grad_fx.resize(x.size());
     grad(fx_var.vi_);
-    for (int i = 0; i < x.size(); ++i)
-      grad_fx(i) = x_var(i).adj();
+    grad_fx = x_var.adj();
   } catch (const std::exception& /*e*/) {
     recover_memory_nested();
     throw;

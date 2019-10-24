@@ -1,13 +1,13 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_CORR_MATRIX_FREE_HPP
 #define STAN_MATH_PRIM_MAT_FUN_CORR_MATRIX_FREE_HPP
 
-#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/err/constraint_tolerance.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/mat/fun/factor_cov_matrix.hpp>
-#include <stan/math/prim/mat/meta/index_type.hpp>
 #include <cmath>
 
 namespace stan {
@@ -42,15 +42,16 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> corr_matrix_free(
   using Eigen::Array;
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
+  using size_type = typename index_type<Matrix<T, Dynamic, 1>>::type;
 
   size_type k = y.rows();
   size_type k_choose_2 = (k * (k - 1)) / 2;
   Array<T, Dynamic, 1> x(k_choose_2);
   Array<T, Dynamic, 1> sds(k);
   bool successful = factor_cov_matrix(y, x, sds);
-  if (!successful)
+  if (!successful) {
     domain_error("corr_matrix_free", "factor_cov_matrix failed on y", y, "");
+  }
   for (size_type i = 0; i < k; ++i) {
     check_bounded("corr_matrix_free", "log(sd)", sds[i], -CONSTRAINT_TOLERANCE,
                   CONSTRAINT_TOLERANCE);

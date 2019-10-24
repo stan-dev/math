@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_BETA_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_BETA_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <boost/math/tools/promotion.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 
@@ -47,8 +48,7 @@ namespace math {
  * @return Beta function applied to the two values.
  */
 template <typename T1, typename T2>
-inline typename boost::math::tools::promote_args<T1, T2>::type beta(
-    const T1 a, const T2 b) {
+inline return_type_t<T1, T2> beta(const T1 a, const T2 b) {
   using std::exp;
   return exp(lgamma(a) + lgamma(b) - lgamma(a + b));
 }

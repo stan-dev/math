@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_LMGAMMA_HPP
 #define STAN_MATH_REV_SCAL_FUN_LMGAMMA_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/fun/lmgamma.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
@@ -15,8 +16,9 @@ class lmgamma_dv_vari : public op_dv_vari {
       : op_dv_vari(lmgamma(a, bvi->val_), a, bvi) {}
   void chain() {
     double deriv = 0;
-    for (int i = 1; i < ad_ + 1; i++)
+    for (int i = 1; i < ad_ + 1; i++) {
       deriv += digamma(bvi_->val_ + (1.0 - i) / 2.0);
+    }
     bvi_->adj_ += adj_ * deriv;
   }
 };

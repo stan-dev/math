@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_SIMPLEX_CONSTRAIN_HPP
 #define STAN_MATH_PRIM_MAT_FUN_SIMPLEX_CONSTRAIN_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/meta/index_type.hpp>
 #include <stan/math/prim/scal/fun/inv_logit.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/log1p_exp.hpp>
@@ -31,7 +31,7 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> simplex_constrain(
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::log;
-  typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
+  using size_type = typename index_type<Matrix<T, Dynamic, 1>>::type;
 
   int Km1 = y.size();
   Matrix<T, Dynamic, 1> x(Km1 + 1);
@@ -65,7 +65,7 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> simplex_constrain(
   using Eigen::Matrix;
   using std::log;
 
-  typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
+  using size_type = typename index_type<Matrix<T, Dynamic, 1>>::type;
 
   int Km1 = y.size();  // K = Km1 + 1
   Matrix<T, Dynamic, 1> x(Km1 + 1);

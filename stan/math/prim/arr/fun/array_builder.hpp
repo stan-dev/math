@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_ARR_FUN_ARRAY_BUILDER_HPP
 #define STAN_MATH_PRIM_ARR_FUN_ARRAY_BUILDER_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/promote_elements.hpp>
 #include <vector>
 

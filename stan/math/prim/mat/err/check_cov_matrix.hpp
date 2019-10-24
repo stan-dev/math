@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_CHECK_COV_MATRIX_HPP
 #define STAN_MATH_PRIM_MAT_ERR_CHECK_COV_MATRIX_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/err/check_pos_definite.hpp>
 

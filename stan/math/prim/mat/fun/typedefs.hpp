@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_TYPEDEFS_HPP
 #define STAN_MATH_PRIM_MAT_FUN_TYPEDEFS_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/meta/index_type.hpp>
 
 namespace stan {
 namespace math {
@@ -10,23 +10,23 @@ namespace math {
 /**
  * Type for sizes and indexes in an Eigen matrix with double e
  */
-typedef index_type<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> >::type
-    size_type;
+using size_type
+    = index_type_t<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>>;
 
 /**
  * Type for matrix of double values.
  */
-typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> matrix_d;
+using matrix_d = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>;
 
 /**
  * Type for (column) vector of double values.
  */
-typedef Eigen::Matrix<double, Eigen::Dynamic, 1> vector_d;
+using vector_d = Eigen::Matrix<double, Eigen::Dynamic, 1>;
 
 /**
  * Type for (row) vector of double values.
  */
-typedef Eigen::Matrix<double, 1, Eigen::Dynamic> row_vector_d;
+using row_vector_d = Eigen::Matrix<double, 1, Eigen::Dynamic>;
 
 }  // namespace math
 }  // namespace stan

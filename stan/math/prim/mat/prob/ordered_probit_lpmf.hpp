@@ -1,13 +1,13 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_ORDERED_PROBIT_LPMF_HPP
 #define STAN_MATH_PRIM_MAT_PROB_ORDERED_PROBIT_LPMF_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/Phi.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_greater.hpp>
 #include <stan/math/prim/arr/err/check_ordered.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
-#include <Eigen/Dense>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <vector>
 
 namespace stan {
@@ -37,7 +37,7 @@ namespace math {
  * ascending order.
  */
 template <bool propto, typename T_loc, typename T_cut>
-typename return_type<T_loc, T_cut>::type ordered_probit_lpmf(
+return_type_t<T_loc, T_cut> ordered_probit_lpmf(
     int y, const T_loc& lambda,
     const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c) {
   using std::exp;
@@ -63,7 +63,7 @@ typename return_type<T_loc, T_cut>::type ordered_probit_lpmf(
 }
 
 template <typename T_loc, typename T_cut>
-typename return_type<T_loc, T_cut>::type ordered_probit_lpmf(
+return_type_t<T_loc, T_cut> ordered_probit_lpmf(
     int y, const T_loc& lambda,
     const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c) {
   return ordered_probit_lpmf<false>(y, lambda, c);
@@ -95,7 +95,7 @@ typename return_type<T_loc, T_cut>::type ordered_probit_lpmf(
  * lengths.
  */
 template <bool propto, typename T_loc, typename T_cut>
-typename return_type<T_loc, T_cut>::type ordered_probit_lpmf(
+return_type_t<T_loc, T_cut> ordered_probit_lpmf(
     const std::vector<int>& y,
     const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
     const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c) {
@@ -114,7 +114,7 @@ typename return_type<T_loc, T_cut>::type ordered_probit_lpmf(
   check_greater(function, "Size of cut points parameter", c.size(), 0);
   check_finite(function, "Cut-points", c);
 
-  typename return_type<T_loc, T_cut>::type logp_n(0.0);
+  return_type_t<T_loc, T_cut> logp_n(0.0);
 
   for (int i = 0; i < N; ++i) {
     if (y[i] == 1) {
@@ -130,7 +130,7 @@ typename return_type<T_loc, T_cut>::type ordered_probit_lpmf(
 }
 
 template <typename T_loc, typename T_cut>
-typename return_type<T_loc, T_cut>::type ordered_probit_lpmf(
+return_type_t<T_loc, T_cut> ordered_probit_lpmf(
     const std::vector<int>& y,
     const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
     const Eigen::Matrix<T_cut, Eigen::Dynamic, 1>& c) {
@@ -165,7 +165,7 @@ typename return_type<T_loc, T_cut>::type ordered_probit_lpmf(
  * lengths.
  */
 template <bool propto, typename T_loc, typename T_cut>
-typename return_type<T_loc, T_cut>::type ordered_probit_lpmf(
+return_type_t<T_loc, T_cut> ordered_probit_lpmf(
     const std::vector<int>& y,
     const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
     const std::vector<Eigen::Matrix<T_cut, Eigen::Dynamic, 1> >& c) {
@@ -189,7 +189,7 @@ typename return_type<T_loc, T_cut>::type ordered_probit_lpmf(
   check_finite(function, "Location parameter", lambda);
   check_finite(function, "Cut-points", c);
 
-  typename return_type<T_loc, T_cut>::type logp_n(0.0);
+  return_type_t<T_loc, T_cut> logp_n(0.0);
 
   for (int i = 0; i < N; ++i) {
     int K = c[i].size() + 1;
@@ -207,7 +207,7 @@ typename return_type<T_loc, T_cut>::type ordered_probit_lpmf(
 }
 
 template <typename T_loc, typename T_cut>
-typename return_type<T_loc, T_cut>::type ordered_probit_lpmf(
+return_type_t<T_loc, T_cut> ordered_probit_lpmf(
     const std::vector<int>& y,
     const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& lambda,
     const std::vector<Eigen::Matrix<T_cut, Eigen::Dynamic, 1> >& c) {

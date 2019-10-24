@@ -92,12 +92,18 @@ def doCommand(command, exit_on_failure=True):
 
 def generateTests(j):
     """Generate all tests and pass along the j parameter to make."""
-    doCommand('make -j%d generate-tests -s' % (j or 1))
+    if isWin():
+        doCommand('mingw32-make -j%d generate-tests -s' % (j or 1))
+    else:
+        doCommand('make -j%d generate-tests -s' % (j or 1))
 
 
 def makeTest(name, j):
     """Run the make command for a given single test."""
-    doCommand('make -j%d %s' % (j or 1, name))
+    if isWin():
+        doCommand('mingw32-make -j%d %s' % (j or 1, name))
+    else:
+        doCommand('make -j%d %s' % (j or 1, name))
 
 def commandExists(command):
     p = subprocess.Popen(command, shell=True,

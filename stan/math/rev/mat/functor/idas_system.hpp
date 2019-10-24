@@ -1,14 +1,13 @@
 #ifndef STAN_MATH_REV_MAT_FUNCTOR_IDAS_RESIDUAL_HPP
 #define STAN_MATH_REV_MAT_FUNCTOR_IDAS_RESIDUAL_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/arr/fun/value_of.hpp>
 #include <stan/math/prim/arr/fun/dot_self.hpp>
 #include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
-#include <stan/math/rev/scal/meta/is_var.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/rev/mat/fun/typedefs.hpp>
 #include <idas/idas.h>
@@ -154,11 +153,13 @@ class idas_system {
         id_(N_VNew_Serial(N_)),
         mem_(IDACreate()),
         msgs_(msgs) {
-    if (nv_yy_ == NULL || nv_yp_ == NULL)
+    if (nv_yy_ == NULL || nv_yp_ == NULL) {
       throw std::runtime_error("N_VMake_Serial failed to allocate memory");
+    }
 
-    if (mem_ == NULL)
+    if (mem_ == NULL) {
       throw std::runtime_error("IDACreate failed to allocate memory");
+    }
 
     static const char* caller = "idas_system";
     check_finite(caller, "initial state", yy0);
@@ -174,8 +175,9 @@ class idas_system {
     check_greater_or_equal(caller, "derivative-algebra id", eq_id, 0);
     check_less_or_equal(caller, "derivative-algebra id", eq_id, 1);
 
-    for (size_t i = 0; i < N_; ++i)
+    for (size_t i = 0; i < N_; ++i) {
       NV_Ith_S(id_, i) = eq_id[i];
+    }
   }
 
   /**
@@ -321,8 +323,9 @@ class idas_system {
       std::vector<double> yp_vec(yp_val, yp_val + N);
       auto res = dae->f_(t, yy_vec, yp_vec, dae->theta_, dae->x_r_, dae->x_i_,
                          dae->msgs_);
-      for (size_t i = 0; i < N; ++i)
+      for (size_t i = 0; i < N; ++i) {
         NV_Ith_S(rr, i) = value_of(res[i]);
+      }
 
       return 0;
     };

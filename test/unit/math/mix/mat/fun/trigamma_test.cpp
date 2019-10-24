@@ -1,102 +1,32 @@
-#include <stan/math/mix/mat.hpp>
-#include <gtest/gtest.h>
-#include <test/unit/math/prim/mat/vectorize/prim_scalar_unary_test.hpp>
-#include <test/unit/math/rev/mat/vectorize/rev_scalar_unary_test.hpp>
-#include <test/unit/math/fwd/mat/vectorize/fwd_scalar_unary_test.hpp>
-#include <test/unit/math/mix/mat/vectorize/mix_scalar_unary_test.hpp>
-#include <test/unit/math/prim/mat/vectorize/vector_builder.hpp>
-#include <vector>
+#include <test/unit/math/test_ad.hpp>
 
-/**
- * This is the structure for testing vectorized trigamma (defined in the
- * testing framework).
- */
-struct trigamma_test {
-  /**
-   * Redefinition of function brought in from stan::math.  The reason
-   * to do this is that it wraps it up in this static template class.
-   *
-   * This is the version that's being tested.
-   *
-   * WARNING:  assumes that the scalar values for all instantiations
-   * (prim, rev, fwd, mix) ***have already been tested***.
-   *
-   * @tparam R Return type.
-   * @tparam T Argument type.
-   */
-  template <typename R, typename T>
-  static R apply(const T& x) {
-    using stan::math::trigamma;
-    return trigamma(x);
-  }
+TEST(mathMixMatFun, trigamma) {
+  using stan::math::trigamma;
+  using stan::test::ad_tolerances;
+  using stan::test::expect_unary_vectorized;
 
-  /**
-   * This defines the truth against which we're testing.
-   *
-   * Because this is *not an independent test*, this function just
-   * delegates to the actual function defined in stan::math.
-   *
-   * Redundant definition of function from stan::math to apply to an
-   * integer and return a double.
-   *
-   * This function delegates to apply(), defined above, directly.
-   *
-   * WARNING:  this is *not an independent test*.
-   */
-  static double apply_base(int x) { return apply<double>(x); }
+  auto f = [](const auto& x1) { return trigamma(x1); };
 
-  /**
-   * This is the generic version of the integer version defined
-   * above.  For every other type, the return type is the same as the
-   * reference type.
-   *
-   * WARNING:  this is *not an independent test of the underlying function*.
-   */
-  template <typename T>
-  static T apply_base(const T& x) {
-    return apply<T>(x);
-  }
+  // reduce second and third order tests one order of magnitude
+  stan::test::ad_tolerances tols;
+  tols.hessian_hessian_ = 1e-2;
+  tols.hessian_fvar_hessian_ = 1e-2;
+  tols.grad_hessian_hessian_ = 1e-2;
+  tols.grad_hessian_grad_hessian_ = 1e-1;
 
-  /**
-   * Return sequence of valid double-valued inputs.
-   */
-  static std::vector<double> valid_inputs() {
-    return test::math::vector_builder<double>()
-        .add(-0.9)
-        .add(0)
-        .add(1.3)
-        .add(19.2)
-        .build();
-  }
+  expect_unary_vectorized(tols, f, -103.52, -0.9, -0.5, 0, 0.5, 1.3, 5.1, 19.2);
 
-  /**
-   * Return sequence of invalid double-valued inputs.
-   */
-  static std::vector<double> invalid_inputs() {
-    return test::math::vector_builder<double>().build();
-  }
+  // reduce first deriv tests one order, second derivs four orders,
+  // and third derivs three orders
+  stan::test::ad_tolerances tols2;
+  tols2.gradient_grad_ = 1e-3;
+  tols2.gradient_fvar_grad_ = 1e-3;
+  tols2.hessian_grad_ = 1e-3;
+  tols2.hessian_fvar_grad_ = 1e-3;
+  tols2.hessian_hessian_ = 1e1;
+  tols2.hessian_fvar_hessian_ = 1e1;
+  tols2.grad_hessian_hessian_ = 1e1;
+  tols2.grad_hessian_grad_hessian_ = 1e1;
 
-  /**
-   * Return sequence of valid integer inputs.
-   */
-  static std::vector<int> int_valid_inputs() {
-    return test::math::vector_builder<int>()
-        .add(0)
-        .add(1)
-        .add(5)
-        .add(10)
-        .build();
-  }
-
-  /**
-   * Return sequence of invalid integer inputs.
-   */
-  static std::vector<int> int_invalid_inputs() {
-    return test::math::vector_builder<int>().build();
-  }
-};
-
-INSTANTIATE_TYPED_TEST_CASE_P(, prim_scalar_unary_test, trigamma_test);
-INSTANTIATE_TYPED_TEST_CASE_P(, rev_scalar_unary_test, trigamma_test);
-INSTANTIATE_TYPED_TEST_CASE_P(, fwd_scalar_unary_test, trigamma_test);
-INSTANTIATE_TYPED_TEST_CASE_P(, mix_scalar_unary_test, trigamma_test);
+  expect_unary_vectorized(tols2, f, -20, 1, 5);
+}

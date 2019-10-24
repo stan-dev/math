@@ -1,16 +1,13 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_BERNOULLI_LCCDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_BERNOULLI_LCCDF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <cmath>
 
 namespace stan {
@@ -29,14 +26,13 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch.
  */
 template <typename T_n, typename T_prob>
-typename return_type<T_prob>::type bernoulli_lccdf(const T_n& n,
-                                                   const T_prob& theta) {
+return_type_t<T_prob> bernoulli_lccdf(const T_n& n, const T_prob& theta) {
   static const char* function = "bernoulli_lccdf";
-  typedef
-      typename stan::partials_return_type<T_n, T_prob>::type T_partials_return;
+  using T_partials_return = partials_return_t<T_n, T_prob>;
 
-  if (size_zero(n, theta))
+  if (size_zero(n, theta)) {
     return 0.0;
+  }
 
   T_partials_return P(0.0);
 
@@ -55,8 +51,9 @@ typename return_type<T_prob>::type bernoulli_lccdf(const T_n& n,
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
   for (size_t i = 0; i < stan::length(n); i++) {
-    if (value_of(n_vec[i]) < 0)
+    if (value_of(n_vec[i]) < 0) {
       return ops_partials.build(0.0);
+    }
   }
 
   for (size_t i = 0; i < size; i++) {
@@ -69,8 +66,9 @@ typename return_type<T_prob>::type bernoulli_lccdf(const T_n& n,
 
       P += log(Pi);
 
-      if (!is_constant_struct<T_prob>::value)
+      if (!is_constant_all<T_prob>::value) {
         ops_partials.edge1_.partials_[i] += 1 / Pi;
+      }
     }
   }
 

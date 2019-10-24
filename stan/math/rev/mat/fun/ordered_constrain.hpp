@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_MAT_FUN_ORDERED_CONSTRAIN_HPP
 #define STAN_MATH_REV_MAT_FUN_ORDERED_CONSTRAIN_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/mat/functor/adj_jac_apply.hpp>
 #include <tuple>
@@ -32,10 +33,11 @@ class ordered_constrain_op {
     N_ = x.size();
 
     Eigen::Matrix<double, Eigen::Dynamic, 1> y(N_);
-    if (N_ == 0)
+    if (N_ == 0) {
       return y;
+    }
 
-    exp_x_ = ChainableStack::instance().memalloc_.alloc_array<double>(N_ - 1);
+    exp_x_ = ChainableStack::instance_->memalloc_.alloc_array<double>(N_ - 1);
 
     y[0] = x[0];
     for (int n = 1; n < N_; ++n) {

@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_ACCUMULATOR_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/sum.hpp>
 #include <vector>
 #include <type_traits>
@@ -45,8 +46,8 @@ class accumulator {
    * @tparam S Type of argument
    * @param x Value to add
    */
-  template <typename S>
-  typename std::enable_if<std::is_arithmetic<S>::value, void>::type add(S x) {
+  template <typename S, typename = require_arithmetic_t<S>>
+  void add(S x) {
     buf_.push_back(static_cast<T>(x));
   }
 
@@ -62,11 +63,9 @@ class accumulator {
    * @tparam S Type of argument
    * @param x Value to add
    */
-  template <typename S>
-  typename std::enable_if<
-      !std::is_arithmetic<S>::value,
-      typename std::enable_if<std::is_same<S, T>::value, void>::type>::type
-  add(const S& x) {
+  template <typename S, typename = require_not_arithmetic_t<S>,
+            typename = require_same_t<S, T>>
+  void add(const S& x) {
     buf_.push_back(x);
   }
 
@@ -81,8 +80,9 @@ class accumulator {
    */
   template <typename S, int R, int C>
   void add(const Eigen::Matrix<S, R, C>& m) {
-    for (int i = 0; i < m.size(); ++i)
-      add(m(i));
+    for (int i = 0; i < m.size(); ++i) {
+      this->add(m(i));
+    }
   }
 
   /**
@@ -96,8 +96,9 @@ class accumulator {
    */
   template <typename S>
   void add(const std::vector<S>& xs) {
-    for (size_t i = 0; i < xs.size(); ++i)
-      add(xs[i]);
+    for (size_t i = 0; i < xs.size(); ++i) {
+      this->add(xs[i]);
+    }
   }
 
   /**

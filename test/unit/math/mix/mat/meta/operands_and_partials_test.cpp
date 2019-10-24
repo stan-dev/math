@@ -46,7 +46,7 @@ TEST(AgradPartialsVari, OperandsAndPartialsUniMixMat) {
 }
 
 TEST(AgradPartialsVari, OperandsAndPartialsUniMixMat_dbl) {
-  using stan::is_constant_struct;
+  using stan::is_constant_all;
   using stan::math::fvar;
   using stan::math::operands_and_partials;
   using stan::math::var;

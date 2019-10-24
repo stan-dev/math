@@ -1,12 +1,10 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_GUMBEL_RNG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_GUMBEL_RNG_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/meta/max_size.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/variate_generator.hpp>
 
@@ -49,8 +47,9 @@ inline typename VectorBuilder<true, double, T_loc, T_scale>::type gumbel_rng(
   VectorBuilder<true, double, T_loc, T_scale> output(N);
 
   variate_generator<RNG&, uniform_01<> > uniform01_rng(rng, uniform_01<>());
-  for (size_t n = 0; n < N; ++n)
+  for (size_t n = 0; n < N; ++n) {
     output[n] = mu_vec[n] - beta_vec[n] * std::log(-std::log(uniform01_rng()));
+  }
 
   return output.data();
 }

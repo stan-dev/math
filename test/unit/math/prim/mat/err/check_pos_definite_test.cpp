@@ -46,15 +46,6 @@ TEST_F(ErrorHandlingMatrix, checkPosDefinite_not_square) {
                << "y (4) must match in size";
   EXPECT_THROW_MSG(check_pos_definite(function, "y", y), std::invalid_argument,
                    expected_msg.str());
-  y.resize(2, 3);
-  y << 1, 1, 1, 1, 1, 1;
-  Eigen::LLT<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > llt(
-      y.rows());
-  // FIXME
-  // Linux behavior for handling assertion thrown by llt.compute(y)
-  // differs from mac; produces a core dump
-  EXPECT_DEATH(llt.compute(y), "");
-  EXPECT_DEATH(y.ldlt(), "");
 }
 
 TEST_F(ErrorHandlingMatrix, checkPosDefinite_0_size) {
@@ -71,9 +62,6 @@ TEST_F(ErrorHandlingMatrix, checkPosDefinite_0_size) {
       x.rows());
   llt.compute(x);
   EXPECT_NO_THROW(check_pos_definite(function, "x", llt));
-  Eigen::LDLT<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > ldlt(
-      x.rows());
-  EXPECT_DEATH(ldlt.compute(x), "");
 }
 
 TEST_F(ErrorHandlingMatrix, checkPosDefinite_non_symmetric) {

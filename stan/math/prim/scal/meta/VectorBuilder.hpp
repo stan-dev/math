@@ -22,17 +22,13 @@ namespace stan {
  *
  *  These values are mutable.
  */
-template <bool used, typename T1, typename T2, typename T3 = double,
-          typename T4 = double, typename T5 = double, typename T6 = double,
-          typename T7 = double>
+template <bool used, typename T1, typename... Args>
 class VectorBuilder {
  private:
-  typedef VectorBuilderHelper<T1, used,
-                              contains_vector<T2, T3, T4, T5, T6, T7>::value>
-      helper;
+  using helper = VectorBuilderHelper<T1, used, contains_vector<Args...>::value>;
 
  public:
-  typedef typename helper::type type;
+  using type = typename helper::type;
   helper a;
 
   explicit VectorBuilder(size_t n) : a(n) {}

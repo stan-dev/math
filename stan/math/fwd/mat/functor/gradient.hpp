@@ -41,11 +41,13 @@ void gradient(const F& f, const Eigen::Matrix<T, Eigen::Dynamic, 1>& x, T& fx,
   Eigen::Matrix<fvar<T>, Eigen::Dynamic, 1> x_fvar(x.size());
   grad_fx.resize(x.size());
   for (int i = 0; i < x.size(); ++i) {
-    for (int k = 0; k < x.size(); ++k)
+    for (int k = 0; k < x.size(); ++k) {
       x_fvar(k) = fvar<T>(x(k), k == i);
+    }
     fvar<T> fx_fvar = f(x_fvar);
-    if (i == 0)
+    if (i == 0) {
       fx = fx_fvar.val_;
+    }
     grad_fx(i) = fx_fvar.d_;
   }
 }

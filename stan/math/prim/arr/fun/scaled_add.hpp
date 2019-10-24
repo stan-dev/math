@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_ARR_FUN_SCALED_ADD_HPP
 #define STAN_MATH_PRIM_ARR_FUN_SCALED_ADD_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <vector>
 #include <cstddef>
 
@@ -9,8 +10,9 @@ namespace math {
 
 inline void scaled_add(std::vector<double>& x, const std::vector<double>& y,
                        double lambda) {
-  for (size_t i = 0; i < x.size(); ++i)
+  for (size_t i = 0; i < x.size(); ++i) {
     x[i] += lambda * y[i];
+  }
 }
 
 }  // namespace math

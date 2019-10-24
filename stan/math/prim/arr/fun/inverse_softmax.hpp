@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_ARR_SCAL_FUN_INVERSE_SOFTMAX_HPP
 #define STAN_MATH_ARR_SCAL_FUN_INVERSE_SOFTMAX_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/arr/err/check_matching_sizes.hpp>
 #include <cmath>
 
@@ -34,8 +35,9 @@ template <typename Vector>
 void inverse_softmax(const Vector& simplex, Vector& y) {
   using std::log;
   check_matching_sizes("inverse_softmax", "simplex", simplex, "y", y);
-  for (size_t i = 0; i < simplex.size(); ++i)
+  for (size_t i = 0; i < simplex.size(); ++i) {
     y[i] = log(simplex[i]);
+  }
 }
 
 }  // namespace math

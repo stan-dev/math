@@ -1,11 +1,10 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_EXP_MOD_NORMAL_RNG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_EXP_MOD_NORMAL_RNG_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/meta/max_size.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/prob/exponential_rng.hpp>
 #include <stan/math/prim/scal/prob/normal_rng.hpp>
 #include <boost/random/normal_distribution.hpp>
@@ -54,9 +53,10 @@ exp_mod_normal_rng(const T_loc& mu, const T_scale& sigma,
   size_t N = max_size(mu, sigma, lambda);
   VectorBuilder<true, double, T_loc, T_scale, T_inv_scale> output(N);
 
-  for (size_t n = 0; n < N; ++n)
+  for (size_t n = 0; n < N; ++n) {
     output[n] = normal_rng(mu_vec[n], sigma_vec[n], rng)
                 + exponential_rng(lambda_vec[n], rng);
+  }
 
   return output.data();
 }

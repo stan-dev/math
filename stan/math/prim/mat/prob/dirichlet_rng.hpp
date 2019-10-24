@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_DIRICHLET_RNG_HPP
 #define STAN_MATH_PRIM_MAT_PROB_DIRICHLET_RNG_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <boost/math/special_functions/gamma.hpp>
 #include <boost/random/gamma_distribution.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
@@ -55,8 +56,9 @@ inline Eigen::VectorXd dirichlet_rng(
     }
     double log_sum_y = log_sum_exp(log_y);
     VectorXd theta(alpha.size());
-    for (int i = 0; i < alpha.size(); ++i)
+    for (int i = 0; i < alpha.size(); ++i) {
       theta(i) = exp(log_y(i) - log_sum_y);
+    }
     return theta;
   }
 

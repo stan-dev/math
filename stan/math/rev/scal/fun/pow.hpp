@@ -1,13 +1,14 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_POW_HPP
 #define STAN_MATH_REV_SCAL_FUN_POW_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/fun/inv.hpp>
 #include <stan/math/rev/scal/fun/inv_sqrt.hpp>
 #include <stan/math/rev/scal/fun/inv_square.hpp>
 #include <stan/math/rev/scal/fun/sqrt.hpp>
 #include <stan/math/rev/scal/fun/square.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <stan/math/prim/scal/fun/is_any_nan.hpp>
 #include <cmath>
 #include <limits>
 
@@ -20,12 +21,13 @@ class pow_vv_vari : public op_vv_vari {
   pow_vv_vari(vari* avi, vari* bvi)
       : op_vv_vari(std::pow(avi->val_, bvi->val_), avi, bvi) {}
   void chain() {
-    if (unlikely(is_nan(avi_->val_) || is_nan(bvi_->val_))) {
+    if (unlikely(is_any_nan(avi_->val_, bvi_->val_))) {
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
       bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
     } else {
-      if (avi_->val_ == 0.0)
+      if (avi_->val_ == 0.0) {
         return;  // partials zero, avoids 0 & log(0)
+      }
       avi_->adj_ += adj_ * bvi_->val_ * val_ / avi_->val_;
       bvi_->adj_ += adj_ * std::log(avi_->val_) * val_;
     }
@@ -37,11 +39,12 @@ class pow_vd_vari : public op_vd_vari {
   pow_vd_vari(vari* avi, double b)
       : op_vd_vari(std::pow(avi->val_, b), avi, b) {}
   void chain() {
-    if (unlikely(is_nan(avi_->val_) || is_nan(bd_))) {
+    if (unlikely(is_any_nan(avi_->val_, bd_))) {
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
     } else {
-      if (avi_->val_ == 0.0)
+      if (avi_->val_ == 0.0) {
         return;  // partials zero, avoids 0 & log(0)
+      }
       avi_->adj_ += adj_ * bd_ * val_ / avi_->val_;
     }
   }
@@ -52,11 +55,12 @@ class pow_dv_vari : public op_dv_vari {
   pow_dv_vari(double a, vari* bvi)
       : op_dv_vari(std::pow(a, bvi->val_), a, bvi) {}
   void chain() {
-    if (unlikely(is_nan(bvi_->val_) || is_nan(ad_))) {
+    if (unlikely(is_any_nan(bvi_->val_, ad_))) {
       bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
     } else {
-      if (ad_ == 0.0)
+      if (ad_ == 0.0) {
         return;  // partials zero, avoids 0 & log(0)
+      }
       bvi_->adj_ += adj_ * std::log(ad_) * val_;
     }
   }
@@ -118,18 +122,24 @@ inline var pow(const var& base, const var& exponent) {
  * @return Base raised to the exponent.
  */
 inline var pow(const var& base, double exponent) {
-  if (exponent == 0.5)
+  if (exponent == 0.5) {
     return sqrt(base);
-  if (exponent == 1.0)
+  }
+  if (exponent == 1.0) {
     return base;
-  if (exponent == 2.0)
+  }
+  if (exponent == 2.0) {
     return square(base);
-  if (exponent == -2.0)
+  }
+  if (exponent == -2.0) {
     return inv_square(base);
-  if (exponent == -1.0)
+  }
+  if (exponent == -1.0) {
     return inv(base);
-  if (exponent == -0.5)
+  }
+  if (exponent == -0.5) {
     return inv_sqrt(base);
+  }
   return var(new internal::pow_vd_vari(base.vi_, exponent));
 }
 

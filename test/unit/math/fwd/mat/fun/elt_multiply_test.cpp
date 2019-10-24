@@ -195,7 +195,6 @@ TEST(AgradFwdMatrixEltMultiply, ffd_vec_vv) {
   using stan::math::elt_multiply;
   using stan::math::fvar;
   using stan::math::vector_ffd;
-  using stan::math::vector_ffd;
 
   fvar<fvar<double> > a, b, c, d;
   a.val_.val_ = 2.0;

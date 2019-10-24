@@ -22,24 +22,21 @@ namespace math {
  * @return Difference between first matrix and second matrix.
  */
 template <typename T1, typename T2, int R, int C>
-inline Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type, R,
-                     C>
-subtract(const Eigen::Matrix<T1, R, C>& m1, const Eigen::Matrix<T2, R, C>& m2) {
+inline Eigen::Matrix<return_type_t<T1, T2>, R, C> subtract(
+    const Eigen::Matrix<T1, R, C>& m1, const Eigen::Matrix<T2, R, C>& m2) {
   check_matching_dims("subtract", "m1", m1, "m2", m2);
   return m1 - m2;
 }
 
 template <typename T1, typename T2, int R, int C>
-inline Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type, R,
-                     C>
-subtract(const T1& c, const Eigen::Matrix<T2, R, C>& m) {
+inline Eigen::Matrix<return_type_t<T1, T2>, R, C> subtract(
+    const T1& c, const Eigen::Matrix<T2, R, C>& m) {
   return c - m.array();
 }
 
 template <typename T1, typename T2, int R, int C>
-inline Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type, R,
-                     C>
-subtract(const Eigen::Matrix<T1, R, C>& m, const T2& c) {
+inline Eigen::Matrix<return_type_t<T1, T2>, R, C> subtract(
+    const Eigen::Matrix<T1, R, C>& m, const T2& c) {
   return m.array() - c;
 }
 

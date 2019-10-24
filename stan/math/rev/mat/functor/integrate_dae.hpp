@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_MAT_FUNCTOR_INTEGRATOR_DAE_HPP
 #define STAN_MATH_REV_MAT_FUNCTOR_INTEGRATOR_DAE_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/mat/functor/idas_forward_system.hpp>
 #include <stan/math/rev/mat/functor/idas_integrator.hpp>
 #include <ostream>
@@ -40,7 +41,7 @@ std::vector<std::vector<Tpar> > integrate_dae(
     const double rtol, const double atol,
     const int64_t max_num_steps = idas_integrator::IDAS_MAX_STEPS,
     std::ostream* msgs = nullptr) {
-  /* it doesn't matter here what values @c eq_id has, as we
+  /* it doesn't matter here what values \c eq_id has, as we
      don't allow yy0 or yp0 to be parameters */
   const std::vector<int> dummy_eq_id(yy0.size(), 0);
 

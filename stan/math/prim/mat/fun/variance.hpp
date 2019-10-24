@@ -19,11 +19,11 @@ namespace math {
  * than 1.
  */
 template <typename T>
-inline typename boost::math::tools::promote_args<T>::type variance(
-    const std::vector<T>& v) {
+inline return_type_t<T> variance(const std::vector<T>& v) {
   check_nonzero_size("variance", "v", v);
-  if (v.size() == 1)
+  if (v.size() == 1) {
     return 0.0;
+  }
   T v_mean(mean(v));
   T sum_sq_diff(0);
   for (size_t i = 0; i < v.size(); ++i) {
@@ -40,16 +40,16 @@ inline typename boost::math::tools::promote_args<T>::type variance(
  * @return Sample variance of vector.
  */
 template <typename T, int R, int C>
-inline typename boost::math::tools::promote_args<T>::type variance(
-    const Eigen::Matrix<T, R, C>& m) {
+inline return_type_t<T> variance(const Eigen::Matrix<T, R, C>& m) {
   check_nonzero_size("variance", "m", m);
 
-  if (m.size() == 1)
+  if (m.size() == 1) {
     return 0.0;
-  typename boost::math::tools::promote_args<T>::type mn(mean(m));
-  typename boost::math::tools::promote_args<T>::type sum_sq_diff(0);
+  }
+  return_type_t<T> mn(mean(m));
+  return_type_t<T> sum_sq_diff(0);
   for (int i = 0; i < m.size(); ++i) {
-    typename boost::math::tools::promote_args<T>::type diff = m(i) - mn;
+    return_type_t<T> diff = m(i) - mn;
     sum_sq_diff += diff * diff;
   }
   return sum_sq_diff / (m.size() - 1);

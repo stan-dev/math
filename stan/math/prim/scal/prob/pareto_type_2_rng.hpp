@@ -1,11 +1,10 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_PARETO_TYPE_2_RNG_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_PARETO_TYPE_2_RNG_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/meta/max_size.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <stan/math/prim/scal/prob/exponential_rng.hpp>
 #include <stan/math/prim/scal/prob/normal_rng.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
@@ -57,10 +56,11 @@ pareto_type_2_rng(const T_loc& mu, const T_scale& lambda, const T_shape& alpha,
 
   variate_generator<RNG&, uniform_real_distribution<> > uniform_rng(
       rng, uniform_real_distribution<>(0.0, 1.0));
-  for (size_t n = 0; n < N; ++n)
+  for (size_t n = 0; n < N; ++n) {
     output[n] = (std::pow(1.0 - uniform_rng(), -1.0 / alpha_vec[n]) - 1.0)
                     * lambda_vec[n]
                 + mu_vec[n];
+  }
 
   return output.data();
 }

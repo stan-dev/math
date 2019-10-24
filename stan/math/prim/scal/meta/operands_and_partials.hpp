@@ -8,8 +8,7 @@ namespace stan {
 namespace math {
 template <typename Op1 = double, typename Op2 = double, typename Op3 = double,
           typename Op4 = double, typename Op5 = double,
-          typename T_return_type =
-              typename return_type<Op1, Op2, Op3, Op4, Op5>::type>
+          typename T_return_type = return_type_t<Op1, Op2, Op3, Op4, Op5>>
 class operands_and_partials;  // Forward declaration
 
 namespace internal {

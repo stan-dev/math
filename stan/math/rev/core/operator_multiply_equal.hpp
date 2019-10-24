@@ -13,8 +13,9 @@ inline var& var::operator*=(const var& b) {
 }
 
 inline var& var::operator*=(double b) {
-  if (b == 1.0)
+  if (b == 1.0) {
     return *this;
+  }
   vi_ = new internal::multiply_vd_vari(vi_, b);
   return *this;
 }

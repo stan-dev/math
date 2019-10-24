@@ -33,7 +33,7 @@ static void grad(vari* vi);
 class var {
  public:
   // FIXME: doc what this is for
-  typedef double Scalar;
+  using Scalar = double;
 
   /**
    * Pointer to the implementation of this variable.
@@ -62,7 +62,7 @@ class var {
    * dangling.  Before an assignment, the behavior is thus undefined just
    * as for a basic double.
    */
-  var() : vi_(static_cast<vari*>(0U)) {}
+  var() : vi_(static_cast<vari*>(nullptr)) {}
 
   /**
    * Construct a variable from a pointer to a variable implementation.
@@ -318,8 +318,9 @@ class var {
   void grad(std::vector<var>& x, std::vector<double>& g) {
     stan::math::grad(vi_);
     g.resize(x.size());
-    for (size_t i = 0; i < x.size(); ++i)
+    for (size_t i = 0; i < x.size(); ++i) {
       g[i] = x[i].vi_->adj_;
+    }
   }
 
   /**
@@ -470,8 +471,9 @@ class var {
    * @return Reference to the specified output stream.
    */
   friend std::ostream& operator<<(std::ostream& os, const var& v) {
-    if (v.vi_ == nullptr)
+    if (v.vi_ == nullptr) {
       return os << "uninitialized";
+    }
     return os << v.val();
   }
 };

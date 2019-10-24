@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_ORDERED_LOGISTIC_RNG_HPP
 #define STAN_MATH_PRIM_MAT_PROB_ORDERED_LOGISTIC_RNG_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <stan/math/prim/scal/fun/inv_logit.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
@@ -27,8 +28,9 @@ inline int ordered_logistic_rng(
 
   Eigen::VectorXd cut(c.rows() + 1);
   cut(0) = 1 - inv_logit(eta - c(0));
-  for (int j = 1; j < c.rows(); j++)
+  for (int j = 1; j < c.rows(); j++) {
     cut(j) = inv_logit(eta - c(j - 1)) - inv_logit(eta - c(j));
+  }
   cut(c.rows()) = inv_logit(eta - c(c.rows() - 1));
 
   return categorical_rng(cut, rng);

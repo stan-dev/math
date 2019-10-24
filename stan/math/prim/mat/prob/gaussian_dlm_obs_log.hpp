@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_GAUSSIAN_DLM_OBS_LOG_HPP
 #define STAN_MATH_PRIM_MAT_PROB_GAUSSIAN_DLM_OBS_LOG_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/prob/gaussian_dlm_obs_lpdf.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
 
 namespace stan {
 namespace math {
@@ -44,8 +44,7 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_F, typename T_G, typename T_V,
           typename T_W, typename T_m0, typename T_C0>
-typename return_type<
-    T_y, typename return_type<T_F, T_G, T_V, T_W, T_m0, T_C0>::type>::type
+inline return_type_t<T_y, return_type_t<T_F, T_G, T_V, T_W, T_m0, T_C0>>
 gaussian_dlm_obs_log(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
     const Eigen::Matrix<T_F, Eigen::Dynamic, Eigen::Dynamic>& F,
@@ -63,8 +62,7 @@ gaussian_dlm_obs_log(
  */
 template <typename T_y, typename T_F, typename T_G, typename T_V, typename T_W,
           typename T_m0, typename T_C0>
-inline typename return_type<
-    T_y, typename return_type<T_F, T_G, T_V, T_W, T_m0, T_C0>::type>::type
+inline return_type_t<T_y, return_type_t<T_F, T_G, T_V, T_W, T_m0, T_C0>>
 gaussian_dlm_obs_log(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
     const Eigen::Matrix<T_F, Eigen::Dynamic, Eigen::Dynamic>& F,
@@ -116,8 +114,7 @@ gaussian_dlm_obs_log(
  */
 template <bool propto, typename T_y, typename T_F, typename T_G, typename T_V,
           typename T_W, typename T_m0, typename T_C0>
-typename return_type<
-    T_y, typename return_type<T_F, T_G, T_V, T_W, T_m0, T_C0>::type>::type
+return_type_t<T_y, return_type_t<T_F, T_G, T_V, T_W, T_m0, T_C0>>
 gaussian_dlm_obs_log(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
     const Eigen::Matrix<T_F, Eigen::Dynamic, Eigen::Dynamic>& F,
@@ -135,8 +132,7 @@ gaussian_dlm_obs_log(
  */
 template <typename T_y, typename T_F, typename T_G, typename T_V, typename T_W,
           typename T_m0, typename T_C0>
-inline typename return_type<
-    T_y, typename return_type<T_F, T_G, T_V, T_W, T_m0, T_C0>::type>::type
+inline return_type_t<T_y, return_type_t<T_F, T_G, T_V, T_W, T_m0, T_C0>>
 gaussian_dlm_obs_log(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
     const Eigen::Matrix<T_F, Eigen::Dynamic, Eigen::Dynamic>& F,

@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_IDENTITY_CONSTRAIN_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_IDENTITY_CONSTRAIN_HPP
 
+#include <stan/math/prim/meta.hpp>
 namespace stan {
 namespace math {
 

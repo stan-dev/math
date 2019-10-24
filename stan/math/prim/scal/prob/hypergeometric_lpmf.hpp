@@ -1,14 +1,12 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_HYPERGEOMETRIC_LPMF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_HYPERGEOMETRIC_LPMF_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_greater.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/binomial_coefficient_log.hpp>
-#include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/meta/include_summand.hpp>
 
 namespace stan {
 namespace math {
@@ -21,8 +19,9 @@ double hypergeometric_lpmf(const T_n& n, const T_N& N, const T_a& a,
                            const T_b& b) {
   static const char* function = "hypergeometric_lpmf";
 
-  if (size_zero(n, N, a, b))
+  if (size_zero(n, N, a, b)) {
     return 0.0;
+  }
 
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_N> N_vec(N);
@@ -43,13 +42,15 @@ double hypergeometric_lpmf(const T_n& n, const T_N& N, const T_a& a,
                          N, "Successes in population parameter", a,
                          "Failures in population parameter", b);
 
-  if (!include_summand<propto>::value)
+  if (!include_summand<propto>::value) {
     return 0.0;
+  }
 
-  for (size_t i = 0; i < size; i++)
+  for (size_t i = 0; i < size; i++) {
     logp += math::binomial_coefficient_log(a_vec[i], n_vec[i])
             + math::binomial_coefficient_log(b_vec[i], N_vec[i] - n_vec[i])
             - math::binomial_coefficient_log(a_vec[i] + b_vec[i], N_vec[i]);
+  }
   return logp;
 }
 

@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_MULTIPLY_LOG_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_MULTIPLY_LOG_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <boost/math/tools/promotion.hpp>
 
 namespace stan {
@@ -47,11 +48,11 @@ namespace math {
  * @return a * log(b)
  */
 template <typename T_a, typename T_b>
-inline typename boost::math::tools::promote_args<T_a, T_b>::type multiply_log(
-    const T_a a, const T_b b) {
+inline return_type_t<T_a, T_b> multiply_log(const T_a a, const T_b b) {
   using std::log;
-  if (b == 0.0 && a == 0.0)
+  if (b == 0.0 && a == 0.0) {
     return 0.0;
+  }
   return a * log(b);
 }
 

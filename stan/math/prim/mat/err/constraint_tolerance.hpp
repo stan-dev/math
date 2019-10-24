@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_CONSTRAINT_TOLERANCE_HPP
 #define STAN_MATH_PRIM_MAT_ERR_CONSTRAINT_TOLERANCE_HPP
 
+#include <stan/math/prim/meta.hpp>
 namespace stan {
 namespace math {
 

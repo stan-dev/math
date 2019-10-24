@@ -1,7 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LDEXP_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LDEXP_HPP
 
-#include <stan/math/prim/scal/fun/exp2.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -15,9 +16,10 @@ namespace math {
  * @param[in] b an integer that is the exponent
  * @return product of a times 2 to the power b
  */
-template <typename T>
-inline T ldexp(const T& a, int b) {
-  return a * exp2(b);
+template <typename T1, typename = require_arithmetic_t<T1>>
+inline double ldexp(T1 a, int b) {
+  using std::ldexp;
+  return ldexp(a, b);
 }
 }  // namespace math
 }  // namespace stan

@@ -20,9 +20,8 @@ namespace math {
  * @return Elementwise division of matrices.
  */
 template <typename T1, typename T2, int R, int C>
-Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type, R, C>
-elt_divide(const Eigen::Matrix<T1, R, C>& m1,
-           const Eigen::Matrix<T2, R, C>& m2) {
+Eigen::Matrix<return_type_t<T1, T2>, R, C> elt_divide(
+    const Eigen::Matrix<T1, R, C>& m1, const Eigen::Matrix<T2, R, C>& m2) {
   check_matching_dims("elt_divide", "m1", m1, "m2", m2);
 
   return m1.array() / m2.array();
@@ -41,8 +40,8 @@ elt_divide(const Eigen::Matrix<T1, R, C>& m1,
  * @return Elementwise division of a scalar by matrix.
  */
 template <typename T1, typename T2, int R, int C>
-Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type, R, C>
-elt_divide(const Eigen::Matrix<T1, R, C>& m, T2 s) {
+Eigen::Matrix<return_type_t<T1, T2>, R, C> elt_divide(
+    const Eigen::Matrix<T1, R, C>& m, T2 s) {
   return m.array() / s;
 }
 
@@ -59,8 +58,8 @@ elt_divide(const Eigen::Matrix<T1, R, C>& m, T2 s) {
  * @return Elementwise division of a scalar by matrix.
  */
 template <typename T1, typename T2, int R, int C>
-Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type, R, C>
-elt_divide(T1 s, const Eigen::Matrix<T2, R, C>& m) {
+Eigen::Matrix<return_type_t<T1, T2>, R, C> elt_divide(
+    T1 s, const Eigen::Matrix<T2, R, C>& m) {
   return s / m.array();
 }
 

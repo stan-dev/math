@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_SCAL_FUN_ERF_HPP
 #define STAN_MATH_REV_SCAL_FUN_ERF_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/erf.hpp>

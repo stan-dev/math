@@ -20,8 +20,8 @@ namespace math {
  * size or if they are both not vector dimensioned.
  */
 template <typename T1, int R1, int C1, typename T2, int R2, int C2>
-inline typename boost::math::tools::promote_args<T1, T2>::type distance(
-    const Eigen::Matrix<T1, R1, C1>& v1, const Eigen::Matrix<T2, R2, C2>& v2) {
+inline return_type_t<T1, T2> distance(const Eigen::Matrix<T1, R1, C1>& v1,
+                                      const Eigen::Matrix<T2, R2, C2>& v2) {
   using std::sqrt;
   check_vector("distance", "v1", v1);
   check_vector("distance", "v2", v2);

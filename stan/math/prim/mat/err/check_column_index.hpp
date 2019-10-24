@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_CHECK_COLUMN_INDEX_HPP
 #define STAN_MATH_PRIM_MAT_ERR_CHECK_COLUMN_INDEX_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/out_of_range.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/meta/error_index.hpp>
 #include <sstream>
 #include <string>
 
@@ -30,8 +30,9 @@ template <typename T_y, int R, int C>
 inline void check_column_index(const char* function, const char* name,
                                const Eigen::Matrix<T_y, R, C>& y, size_t i) {
   if (i >= stan::error_index::value
-      && i < static_cast<size_t>(y.cols()) + stan::error_index::value)
+      && i < static_cast<size_t>(y.cols()) + stan::error_index::value) {
     return;
+  }
 
   std::stringstream msg;
   msg << " for columns of " << name;

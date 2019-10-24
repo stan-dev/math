@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_ARR_ERR_CHECK_MATCHING_SIZES_HPP
 #define STAN_MATH_PRIM_ARR_ERR_CHECK_MATCHING_SIZES_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 

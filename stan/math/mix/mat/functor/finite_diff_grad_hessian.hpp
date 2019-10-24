@@ -38,24 +38,21 @@ namespace math {
  * @param[in] epsilon perturbation size
  */
 template <typename F>
-void finite_diff_grad_hessian(
-    const F& f, const Eigen::Matrix<double, -1, 1>& x, double& fx,
-    Eigen::Matrix<double, -1, -1>& hess,
-    std::vector<Eigen::Matrix<double, -1, -1> >& grad_hess_fx,
-    double epsilon = 1e-04) {
-  using Eigen::Dynamic;
-  using Eigen::Matrix;
-
+void finite_diff_grad_hessian(const F& f, const Eigen::VectorXd& x, double& fx,
+                              Eigen::MatrixXd& hess,
+                              std::vector<Eigen::MatrixXd>& grad_hess_fx,
+                              double epsilon = 1e-04) {
   int d = x.size();
-  double dummy_fx_eval;
+  grad_hess_fx.clear();
 
-  Matrix<double, Dynamic, 1> x_temp(x);
-  Matrix<double, Dynamic, 1> grad_auto(d);
-  Matrix<double, Dynamic, Dynamic> hess_auto(d, d);
-  Matrix<double, Dynamic, Dynamic> hess_diff(d, d);
+  Eigen::VectorXd x_temp(x);
+  Eigen::VectorXd grad_auto(d);
+  Eigen::MatrixXd hess_auto(d, d);
+  Eigen::MatrixXd hess_diff(d, d);
 
   hessian(f, x, fx, grad_auto, hess);
   for (int i = 0; i < d; ++i) {
+    double dummy_fx_eval;
     hess_diff.setZero();
 
     x_temp(i) = x(i) + 2.0 * epsilon;

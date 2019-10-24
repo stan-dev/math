@@ -11,7 +11,7 @@ namespace internal {
 template <typename Dx>
 class ops_partials_edge<Dx, fvar<Dx> > {
  public:
-  typedef fvar<Dx> Op;
+  using Op = fvar<Dx>;
   Dx partial_;
   broadcast_array<Dx> partials_;
   explicit ops_partials_edge(const Op& op)
@@ -71,7 +71,7 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, fvar<Dx> > {
   internal::ops_partials_edge<Dx, Op3> edge3_;
   internal::ops_partials_edge<Dx, Op4> edge4_;
   internal::ops_partials_edge<Dx, Op5> edge5_;
-  typedef fvar<Dx> T_return_type;
+  using T_return_type = fvar<Dx>;
   explicit operands_and_partials(const Op1& o1) : edge1_(o1) {}
   operands_and_partials(const Op1& o1, const Op2& o2)
       : edge1_(o1), edge2_(o2) {}

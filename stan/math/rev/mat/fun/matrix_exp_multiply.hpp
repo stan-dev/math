@@ -1,12 +1,12 @@
 #ifndef STAN_MATH_REV_MAT_FUN_MATRIX_EXP_MULTIPLY_HPP
 #define STAN_MATH_REV_MAT_FUN_MATRIX_EXP_MULTIPLY_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/fun/matrix_exp.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/rev/mat/fun/multiply.hpp>
 #include <stan/math/rev/core.hpp>
 

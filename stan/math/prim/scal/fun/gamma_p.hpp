@@ -1,13 +1,21 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_GAMMA_P_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_GAMMA_P_HPP
 
+#include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <stan/math/prim/scal/err/check_nonnegative.hpp>
+#include <stan/math/prim/scal/err/check_positive.hpp>
 #include <boost/math/special_functions/gamma.hpp>
+#include <stan/math/prim/scal/fun/boost_policy.hpp>
 
 namespace stan {
 namespace math {
 
 /**
+ * Return the value of the normalized, lower-incomplete gamma function
+ * applied to the specified argument.
  *
+ * <p>This function is defined, including error conditions, as follows
    \f[
    \mbox{gamma\_p}(a, z) =
    \begin{cases}
@@ -48,10 +56,25 @@ namespace math {
    \f[
    \frac{\partial \, P(a, z)}{\partial z} = \frac{z^{a-1}e^{-z}}{\Gamma(a)}
    \f]
-   * @throws domain_error if x is at pole
-
+   *
+   * @param z first argument
+   * @param a second argument
+   * @return value of the normalized, lower-incomplete gamma function
+   * applied to z and a
+   * @throws std::domain_error if either argument is not positive or
+   * if z is at a pole of the function
  */
-inline double gamma_p(double x, double a) { return boost::math::gamma_p(x, a); }
+inline double gamma_p(double z, double a) {
+  if (is_nan(z)) {
+    return not_a_number();
+  }
+  if (is_nan(a)) {
+    return not_a_number();
+  }
+  check_positive("gamma_p", "first argument (z)", z);
+  check_nonnegative("gamma_p", "second argument (a)", a);
+  return boost::math::gamma_p(z, a, boost_policy_t());
+}
 
 }  // namespace math
 }  // namespace stan

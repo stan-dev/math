@@ -1,9 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_LOGNORMAL_LCCDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_LOGNORMAL_LCCDF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -11,26 +9,26 @@
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <cmath>
 
 namespace stan {
 namespace math {
 
 template <typename T_y, typename T_loc, typename T_scale>
-typename return_type<T_y, T_loc, T_scale>::type lognormal_lccdf(
-    const T_y& y, const T_loc& mu, const T_scale& sigma) {
+return_type_t<T_y, T_loc, T_scale> lognormal_lccdf(const T_y& y,
+                                                   const T_loc& mu,
+                                                   const T_scale& sigma) {
   static const char* function = "lognormal_lccdf";
-  typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
-      T_partials_return;
+  using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
 
   T_partials_return ccdf_log = 0.0;
 
   using std::exp;
   using std::log;
 
-  if (size_zero(y, mu, sigma))
+  if (size_zero(y, mu, sigma)) {
     return ccdf_log;
+  }
 
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
@@ -47,8 +45,9 @@ typename return_type<T_y, T_loc, T_scale>::type lognormal_lccdf(
   const double sqrt_pi = std::sqrt(pi());
 
   for (size_t i = 0; i < stan::length(y); i++) {
-    if (value_of(y_vec[i]) == 0.0)
+    if (value_of(y_vec[i]) == 0.0) {
       return ops_partials.build(0.0);
+    }
   }
 
   const double log_half = std::log(0.5);
@@ -65,13 +64,16 @@ typename return_type<T_y, T_loc, T_scale>::type lognormal_lccdf(
     const T_partials_return erfc_calc = erfc(scaled_diff);
     ccdf_log += log_half + log(erfc_calc);
 
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] -= rep_deriv / erfc_calc / y_dbl;
-    if (!is_constant_struct<T_loc>::value)
+    }
+    if (!is_constant_all<T_loc>::value) {
       ops_partials.edge2_.partials_[n] += rep_deriv / erfc_calc;
-    if (!is_constant_struct<T_scale>::value)
+    }
+    if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n]
           += rep_deriv * scaled_diff * SQRT_2 / erfc_calc;
+    }
   }
   return ops_partials.build(ccdf_log);
 }

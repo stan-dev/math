@@ -1,12 +1,15 @@
 #ifndef STAN_MATH_REV_MAT_FUNCTOR_ALGEBRA_SYSTEM_HPP
 #define STAN_MATH_REV_MAT_FUNCTOR_ALGEBRA_SYSTEM_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/mat/functor/jacobian.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_consistent_size.hpp>
 #include <stan/math/prim/arr/err/check_matching_sizes.hpp>
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
+#include <stan/math/prim/scal/err/check_nonnegative.hpp>
+#include <stan/math/prim/scal/err/check_positive.hpp>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -58,10 +61,11 @@ struct system_functor {
   template <typename T>
   inline Eigen::Matrix<T, Eigen::Dynamic, 1> operator()(
       const Eigen::Matrix<T, Eigen::Dynamic, 1>& iv) const {
-    if (x_is_iv)
+    if (x_is_iv) {
       return f_(iv, y_, dat_, dat_int_, msgs_);
-    else
+    } else {
       return f_(x_, iv, dat_, dat_int_, msgs_);
+    }
   }
 };
 
@@ -155,39 +159,22 @@ struct hybrj_functor_solver : nlo_functor<double> {
   Eigen::VectorXd get_value(const Eigen::VectorXd& iv) const { return fs_(iv); }
 };
 
-template <typename T>
-void algebra_solver_check(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
-    const Eigen::VectorXd y,
-    const std::vector<double>& dat,
-    const std::vector<int>& dat_int,
-    double relative_tolerance, double function_tolerance,
-    long int max_num_steps) {  // NOLINT(runtime/int)
+template <typename T1, typename T2>
+void algebra_solver_check(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
+                          const Eigen::Matrix<T2, Eigen::Dynamic, 1> y,
+                          const std::vector<double>& dat,
+                          const std::vector<int>& dat_int,
+                          double function_tolerance,
+                          long int max_num_steps) {  // NOLINT(runtime/int)
   check_nonzero_size("algebra_solver", "initial guess", x);
-  for (int i = 0; i < x.size(); i++)
-    check_finite("algebra_solver", "initial guess", x(i));
-  for (int i = 0; i < y.size(); i++)
-    check_finite("algebra_solver", "parameter vector", y(i));
-  for (double i : dat)
-    check_finite("algebra_solver", "continuous data", i);
-  for (int x : dat_int)
-    check_finite("algebra_solver", "integer data", x);
+  check_finite("algebra_solver", "initial guess", x);
+  check_finite("algebra_solver", "parameter vector", y);
+  check_finite("algebra_solver", "continuous data", dat);
+  check_finite("algebra_solver", "integer data", dat_int);
 
-  if (relative_tolerance < 0)
-    invalid_argument("algebra_solver", "relative_tolerance,",
-                     relative_tolerance, "",
-                     ", must be greater than or equal to 0");
-  if (function_tolerance < 0)
-    invalid_argument("algebra_solver", "function_tolerance,",
-                     function_tolerance, "",
-                     ", must be greater than or equal to 0");
-  if (max_num_steps <= 0)
-    invalid_argument("algebra_solver", "max_num_steps,", max_num_steps, "",
-                     ", must be greater than 0");
+  check_nonnegative("algebra_solver", "function_tolerance", function_tolerance);
+  check_positive("algebra_solver", "max_num_steps", max_num_steps);
 }
-
-
-
 
 }  // namespace math
 }  // namespace stan

@@ -44,7 +44,8 @@ void hessian(const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
              Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& H) {
   H.resize(x.size(), x.size());
   grad.resize(x.size());
-  // size 0 separate because nothing to loop over in main body
+
+  // need to compute fx even with size = 0
   if (x.size() == 0) {
     fx = f(x);
     return;
@@ -53,15 +54,18 @@ void hessian(const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
     for (int i = 0; i < x.size(); ++i) {
       start_nested();
       Eigen::Matrix<fvar<var>, Eigen::Dynamic, 1> x_fvar(x.size());
-      for (int j = 0; j < x.size(); ++j)
+      for (int j = 0; j < x.size(); ++j) {
         x_fvar(j) = fvar<var>(x(j), i == j);
+      }
       fvar<var> fx_fvar = f(x_fvar);
       grad(i) = fx_fvar.d_.val();
-      if (i == 0)
+      if (i == 0) {
         fx = fx_fvar.val_.val();
+      }
       stan::math::grad(fx_fvar.d_.vi_);
-      for (int j = 0; j < x.size(); ++j)
+      for (int j = 0; j < x.size(); ++j) {
         H(i, j) = x_fvar(j).val_.adj();
+      }
       recover_memory_nested();
     }
   } catch (const std::exception& e) {

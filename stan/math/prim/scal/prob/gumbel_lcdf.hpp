@@ -1,16 +1,12 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_GUMBEL_LCDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_GUMBEL_LCDF_HPP
 
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <cmath>
 
@@ -33,17 +29,17 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_y, typename T_loc, typename T_scale>
-typename return_type<T_y, T_loc, T_scale>::type gumbel_lcdf(
-    const T_y& y, const T_loc& mu, const T_scale& beta) {
+return_type_t<T_y, T_loc, T_scale> gumbel_lcdf(const T_y& y, const T_loc& mu,
+                                               const T_scale& beta) {
   static const char* function = "gumbel_lcdf";
-  typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
-      T_partials_return;
+  using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
 
   using std::exp;
 
   T_partials_return cdf_log(0.0);
-  if (size_zero(y, mu, beta))
+  if (size_zero(y, mu, beta)) {
     return cdf_log;
+  }
 
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
@@ -67,12 +63,15 @@ typename return_type<T_y, T_loc, T_scale>::type gumbel_lcdf(
     const T_partials_return rep_deriv = exp(-scaled_diff) / beta_dbl;
     cdf_log -= exp(-scaled_diff);
 
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] += rep_deriv;
-    if (!is_constant_struct<T_loc>::value)
+    }
+    if (!is_constant_all<T_loc>::value) {
       ops_partials.edge2_.partials_[n] -= rep_deriv;
-    if (!is_constant_struct<T_scale>::value)
+    }
+    if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n] -= rep_deriv * scaled_diff;
+    }
   }
   return ops_partials.build(cdf_log);
 }

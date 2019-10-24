@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUNCTOR_FINITE_DIFF_GRADIENT_HPP
 #define STAN_MATH_PRIM_MAT_FUNCTOR_FINITE_DIFF_GRADIENT_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 
 namespace stan {
@@ -13,18 +14,23 @@ namespace math {
  * <p>The functor must implement
  *
  * <code>
- * double
- * operator()(const
- * Eigen::Matrix<double, Eigen::Dynamic, 1>&)
+ * double operator()(const Eigen::Matrix<double, -1, 1>&) const;
  * </code>
  *
- * Error should be on order of epsilon ^ 6.
- * The reference for this algorithm is:
+ * If epsilon is chosen to be near the square root of the machine
+ * precision and the input vector elements are all roughly unit scale,
+ * and if the function has reasonable limits on variation, error
+ * should be on the order of epsilon^6.
  *
- * De Levie: An improved numerical approximation
- * for the first derivative, page 3
  *
- * This function involves 6 calls to f.
+ * <p>The reference for the algorithm is:
+ *
+ * <br /> Robert de Levie. 2009. An improved numerical approximation
+ * for the first derivative. Journal of Chemical Sciences 121(5), page
+ * 3.
+ *
+ * <p>Evaluating this function involves 6 calls to f for each
+ * dimension of the input.
  *
  * @tparam F Type of function
  * @param[in] f Function
@@ -34,13 +40,9 @@ namespace math {
  * @param[in] epsilon perturbation size
  */
 template <typename F>
-void finite_diff_gradient(const F& f, const Eigen::Matrix<double, -1, 1>& x,
-                          double& fx, Eigen::Matrix<double, -1, 1>& grad_fx,
-                          double epsilon = 1e-03) {
-  using Eigen::Dynamic;
-  using Eigen::Matrix;
-  Matrix<double, Dynamic, 1> x_temp(x);
-
+void finite_diff_gradient(const F& f, const Eigen::VectorXd& x, double& fx,
+                          Eigen::VectorXd& grad_fx, double epsilon = 1e-03) {
+  Eigen::VectorXd x_temp(x);
   int d = x.size();
   grad_fx.resize(d);
 

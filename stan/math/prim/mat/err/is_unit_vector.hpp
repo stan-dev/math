@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_IS_UNIT_VECTOR_HPP
 #define STAN_MATH_PRIM_MAT_ERR_IS_UNIT_VECTOR_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/arr/err/is_nonzero_size.hpp>
 #include <stan/math/prim/mat/err/constraint_tolerance.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>

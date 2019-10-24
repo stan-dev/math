@@ -1,8 +1,10 @@
 #ifndef STAN_MATH_PRIM_SCAL_META_INCLUDE_SUMMAND_HPP
 #define STAN_MATH_PRIM_SCAL_META_INCLUDE_SUMMAND_HPP
 
+#include <stan/math/prim/scal/meta/bool_constant.hpp>
 #include <stan/math/prim/scal/meta/is_constant.hpp>
 #include <stan/math/prim/scal/meta/scalar_type.hpp>
+#include <type_traits>
 
 namespace stan {
 namespace math {
@@ -21,7 +23,7 @@ namespace math {
  * The <code>value</code> enum will be <code>true</code> if the
  * <code>propto</code> parameter is <code>false</code> or if any
  * of the other template arguments are not constants as defined by
- * <code>stan::is_constant<T></code>.
+ * <code>stan::is_constant_all<T></code>.
  *
  * Example use: <code>include_summand<false, double, var, double, double></code>
  *
@@ -32,25 +34,20 @@ namespace math {
  * extend the applicabiity of the function to an arbitrary number of types.
  */
 template <bool propto, typename T = double, typename... T_pack>
-struct include_summand {
-  enum {
-    value = (!stan::is_constant<typename scalar_type<T>::type>::value
-             || include_summand<propto, T_pack...>::value)
-  };
-};
+struct include_summand
+    : bool_constant<(!stan::is_constant_all<scalar_type_t<T>>::value
+                     || include_summand<propto, T_pack...>::value)> {};
 
+/**
+ * <code>true</code> if a term with the specified propto
+ * value and subterm types should be included in a proportionality
+ * calculation.
+ */
 template <bool propto, typename T>
-struct include_summand<propto, T> {
-  /**
-   * <code>true</code> if a term with the specified propto
-   * value and subterm types should be included in a proportionality
-   * calculation.
-   */
-  enum {
-    value
-    = (!propto || !stan::is_constant<typename scalar_type<T>::type>::value)
-  };
-};
+struct include_summand<propto, T>
+    : bool_constant<(
+          !propto
+          || !stan::is_constant_all<typename scalar_type<T>::type>::value)> {};
 
 }  // namespace math
 

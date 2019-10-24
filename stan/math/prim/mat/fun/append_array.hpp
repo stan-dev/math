@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_APPEND_ARRAY_HPP
 #define STAN_MATH_PRIM_MAT_FUN_APPEND_ARRAY_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/dims.hpp>
 #include <stan/math/prim/mat/fun/resize.hpp>
 #include <stan/math/prim/mat/fun/assign.hpp>
-#include <stan/math/prim/mat/meta/append_return_type.hpp>
 #include <stan/math/prim/arr/err/check_matching_sizes.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <vector>
@@ -37,10 +37,12 @@ append_array(const std::vector<T1>& x, const std::vector<T2>& y) {
     zdims[0] += y.size();
   }
   resize(z, zdims);
-  for (size_t i = 0; i < x.size(); ++i)
+  for (size_t i = 0; i < x.size(); ++i) {
     assign(z[i], x[i]);
-  for (size_t i = 0; i < y.size(); ++i)
+  }
+  for (size_t i = 0; i < y.size(); ++i) {
     assign(z[i + x.size()], y[i]);
+  }
   return z;
 }
 

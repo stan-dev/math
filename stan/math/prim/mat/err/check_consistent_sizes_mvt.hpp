@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_CHECK_CONSISTENT_SIZES_MVT_HPP
 #define STAN_MATH_PRIM_MAT_ERR_CHECK_CONSISTENT_SIZES_MVT_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/err/check_consistent_size_mvt.hpp>
-#include <stan/math/prim/mat/meta/length_mvt.hpp>
 #include <algorithm>
 
 namespace stan {

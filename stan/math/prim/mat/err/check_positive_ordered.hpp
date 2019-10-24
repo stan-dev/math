@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_CHECK_POSITIVE_ORDERED_HPP
 #define STAN_MATH_PRIM_MAT_ERR_CHECK_POSITIVE_ORDERED_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/mat/err/check_ordered.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/meta/index_type.hpp>
 #include <sstream>
 #include <string>
 
@@ -27,8 +27,9 @@ void check_positive_ordered(const char* function, const char* name,
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
-  if (y.size() == 0)
+  if (y.size() == 0) {
     return;
+  }
 
   if (y[0] < 0) {
     std::ostringstream msg;

@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_CHOOSE_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_CHOOSE_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
 #include <boost/math/special_functions/binomial.hpp>
@@ -28,8 +29,9 @@ namespace math {
 inline int choose(int n, int k) {
   check_nonnegative("choose", "n", n);
   check_nonnegative("choose", "k", k);
-  if (k > n)
+  if (k > n) {
     return 0;
+  }
   const double choices = boost::math::binomial_coefficient<double>(n, k);
   check_less_or_equal("choose", "n choose k", choices,
                       std::numeric_limits<int>::max());

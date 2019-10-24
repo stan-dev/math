@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_PRIMITIVE_VALUE_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_PRIMITIVE_VALUE_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <type_traits>
 
