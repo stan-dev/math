@@ -15,7 +15,7 @@ namespace math {
  * return a multivariate normal random variate sampled
  * from the gaussian approximation of p(theta | y, phi).
  */
-template <typename T0, typename T1, typename D, typename K, class RNG>
+template <typename T0, typename T1, class RNG>
 inline Eigen::VectorXd  // CHECK -- right return type
   laplace_approx_poisson_rng
   (const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,
@@ -37,7 +37,7 @@ inline Eigen::VectorXd  // CHECK -- right return type
 /**
  * Overload for case where user passes exposure.
  */
-template <typename T0, typename T1, typename D, typename K, class RNG>
+template <typename T0, typename T1, class RNG>
 inline Eigen::VectorXd  // CHECK -- right return type
 laplace_approx_poisson_rng
   (const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,
