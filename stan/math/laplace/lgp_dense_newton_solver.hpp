@@ -31,10 +31,10 @@ namespace math {
                                  const lgp_dense_system<double>& system,
                                  const Eigen::VectorXd& theta_dbl)
       : vari(theta_dbl(0)),
-        phi_(ChainableStack::instance().memalloc_.alloc_array<vari*>(phi.size())),
+        phi_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(phi.size())),
         phi_size_(phi.size()),
         theta_size_(theta_dbl.size()),
-        theta_(ChainableStack::instance().memalloc_.alloc_array<vari*>(
+        theta_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
           theta_size_)) {
       using Eigen::Map;
       using Eigen::VectorXd;

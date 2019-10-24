@@ -238,11 +238,11 @@ namespace math {
        const Eigen::VectorXd& l_grad)
       : vari(marginal_density),
         phi_size_(phi.size()),
-        phi_(ChainableStack::instance().memalloc_.alloc_array<vari*>(
+        phi_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
 	        phi.size())),
         // theta_size_(theta.size()),
         marginal_density_(
-          ChainableStack::instance().memalloc_.alloc_array<vari*>(1)) {
+          ChainableStack::instance_->memalloc_.alloc_array<vari*>(1)) {
       int theta_size = theta.size();
       for (int i = 0; i < phi_size_; i++) phi_[i] = phi(i).vi_;
 
