@@ -298,7 +298,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
   explicit matrix_cl(Mat&& A,
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
       : rows_(A.rows()), cols_(A.cols()), view_(partial_view) {
-    initialize_buffer<std::is_rvalue_reference<Mat&&>::value>(A.eval().data());
+    initialize_buffer<std::is_rvalue_reference<Mat&&>::value || !is_eigen_matrix<Mat>::value>(A.eval().data());
   }
 
   /**
