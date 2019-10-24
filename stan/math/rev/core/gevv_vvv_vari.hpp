@@ -19,8 +19,9 @@ class gevv_vvv_vari : public vari {
                                  const var* v2, int stride2, size_t length,
                                  double* dotprod) {
     double result = 0;
-    for (size_t i = 0; i < length; i++)
+    for (size_t i = 0; i < length; i++) {
       result += v1[i * stride1].vi_->val_ * v2[i * stride2].vi_->val_;
+    }
     *dotprod = result;
     return alpha->vi_->val_ * result;
   }
@@ -32,13 +33,15 @@ class gevv_vvv_vari : public vari {
         length_(length) {
     alpha_ = alpha->vi_;
     // TODO(carpenter): replace this with array alloc fun call
-    v1_ = reinterpret_cast<vari**>(ChainableStack::instance().memalloc_.alloc(
+    v1_ = reinterpret_cast<vari**>(ChainableStack::instance_->memalloc_.alloc(
         2 * length_ * sizeof(vari*)));
     v2_ = v1_ + length_;
-    for (size_t i = 0; i < length_; i++)
+    for (size_t i = 0; i < length_; i++) {
       v1_[i] = v1[i * stride1].vi_;
-    for (size_t i = 0; i < length_; i++)
+    }
+    for (size_t i = 0; i < length_; i++) {
       v2_[i] = v2[i * stride2].vi_;
+    }
   }
   virtual ~gevv_vvv_vari() {}
   void chain() {

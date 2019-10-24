@@ -1,11 +1,12 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_CHECK_VECTOR_HPP
 #define STAN_MATH_PRIM_MAT_ERR_CHECK_VECTOR_HPP
 
-#include <stan/math/prim/scal/meta/scalar_type.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/invalid_argument.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <sstream>
 #include <string>
+#include <typeinfo>
 
 namespace stan {
 namespace math {
@@ -26,12 +27,15 @@ namespace math {
 template <typename T, int R, int C>
 inline void check_vector(const char* function, const char* name,
                          const Eigen::Matrix<T, R, C>& x) {
-  if (R == 1)
+  if (R == 1) {
     return;
-  if (C == 1)
+  }
+  if (C == 1) {
     return;
-  if (x.rows() == 1 || x.cols() == 1)
+  }
+  if (x.rows() == 1 || x.cols() == 1) {
     return;
+  }
 
   std::ostringstream msg;
   msg << ") has " << x.rows() << " rows and " << x.cols()

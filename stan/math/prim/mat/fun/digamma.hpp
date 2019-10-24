@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_DIGAMMA_HPP
 
 #include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
-#include <boost/math/special_functions/digamma.hpp>
+#include <stan/math/prim/scal/fun/digamma.hpp>
 
 namespace stan {
 namespace math {
@@ -17,7 +17,6 @@ namespace math {
 struct digamma_fun {
   template <typename T>
   static inline T fun(const T& x) {
-    using boost::math::digamma;
     return digamma(x);
   }
 };

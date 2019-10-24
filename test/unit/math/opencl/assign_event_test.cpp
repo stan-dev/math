@@ -11,7 +11,7 @@ using stan::math::opencl_kernels::internal::assign_events;
 using stan::math::opencl_kernels::out_buffer;
 
 TEST(assign_event, correct_vectors) {
-  matrix_cl m;
+  matrix_cl<double> m;
   // pointers not set up to work yet; TBD if needed
   // matrix_cl *mp = &m;
   cl::Event e;

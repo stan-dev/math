@@ -156,8 +156,6 @@ TEST(AgradFwdMatrixMdivideRightTri, fd_exceptions_lower) {
   using stan::math::matrix_fd;
   using stan::math::mdivide_right_tri;
   using stan::math::row_vector_d;
-  using stan::math::row_vector_d;
-  using stan::math::row_vector_fd;
   using stan::math::row_vector_fd;
 
   matrix_fd fv1(3, 3), fv2(4, 4);
@@ -373,8 +371,6 @@ TEST(AgradFwdMatrixMdivideRightTri, ffd_exceptions_lower) {
   using stan::math::matrix_ffd;
   using stan::math::mdivide_right_tri;
   using stan::math::row_vector_d;
-  using stan::math::row_vector_d;
-  using stan::math::row_vector_ffd;
   using stan::math::row_vector_ffd;
 
   matrix_ffd fv1(3, 3), fv2(4, 4);

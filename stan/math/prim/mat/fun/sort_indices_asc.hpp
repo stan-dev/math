@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_SORT_INDICES_ASC_HPP
 #define STAN_MATH_PRIM_MAT_FUN_SORT_INDICES_ASC_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/meta/index_type.hpp>
 #include <stan/math/prim/mat/fun/sort_indices.hpp>
 #include <algorithm>  // std::sort
 #include <vector>

@@ -12,10 +12,10 @@ namespace math {
  * @tparam T2 Type of second argument.
  * @param x1 First argument
  * @param x2 Second argument
- * @return <code>true</code> iff <code>x1 &lt; x2</code>
+ * @return <code>true</code> if <code>x1 &lt; x2</code>
  */
 template <typename T1, typename T2>
-inline int logical_lt(T1 x1, T2 x2) {
+inline bool logical_lt(T1 x1, T2 x2) {
   return x1 < x2;
 }
 

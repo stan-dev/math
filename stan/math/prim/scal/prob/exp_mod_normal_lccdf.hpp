@@ -1,9 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_EXP_MOD_NORMAL_LCCDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_EXP_MOD_NORMAL_LCCDF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -11,7 +9,6 @@
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/is_inf.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <cmath>
 
@@ -19,17 +16,16 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_loc, typename T_scale, typename T_inv_scale>
-typename return_type<T_y, T_loc, T_scale, T_inv_scale>::type
-exp_mod_normal_lccdf(const T_y& y, const T_loc& mu, const T_scale& sigma,
-                     const T_inv_scale& lambda) {
+return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lccdf(
+    const T_y& y, const T_loc& mu, const T_scale& sigma,
+    const T_inv_scale& lambda) {
   static const char* function = "exp_mod_normal_lccdf";
-  typedef
-      typename stan::partials_return_type<T_y, T_loc, T_scale,
-                                          T_inv_scale>::type T_partials_return;
+  using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_inv_scale>;
 
   T_partials_return ccdf_log(0.0);
-  if (size_zero(y, mu, sigma, lambda))
+  if (size_zero(y, mu, sigma, lambda)) {
     return ccdf_log;
+  }
 
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
@@ -55,10 +51,11 @@ exp_mod_normal_lccdf(const T_y& y, const T_loc& mu, const T_scale& sigma,
   const double sqrt_pi = std::sqrt(pi());
   for (size_t n = 0; n < N; n++) {
     if (is_inf(y_vec[n])) {
-      if (y_vec[n] > 0.0)
+      if (y_vec[n] > 0.0) {
         return ops_partials.build(negative_infinity());
-      else
+      } else {
         return ops_partials.build(0.0);
+      }
     }
 
     const T_partials_return y_dbl = value_of(y_vec[n]);
@@ -91,12 +88,14 @@ exp_mod_normal_lccdf(const T_y& y, const T_loc& mu, const T_scale& sigma,
 
     ccdf_log += log(ccdf_);
 
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] -= (deriv_1 - deriv_2 + deriv_3) / ccdf_;
-    if (!is_constant_struct<T_loc>::value)
+    }
+    if (!is_constant_all<T_loc>::value) {
       ops_partials.edge2_.partials_[n]
           -= (-deriv_1 + deriv_2 - deriv_3) / ccdf_;
-    if (!is_constant_struct<T_scale>::value)
+    }
+    if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n]
           -= (-deriv_1 * v - deriv_3 * scaled_diff * SQRT_2
               - deriv_2 * sigma_dbl * SQRT_2
@@ -104,7 +103,8 @@ exp_mod_normal_lccdf(const T_y& y, const T_loc& mu, const T_scale& sigma,
                            * (-lambda_dbl + scaled_diff * SQRT_2 / sigma_dbl)
                        - SQRT_2 * lambda_dbl))
              / ccdf_;
-    if (!is_constant_struct<T_inv_scale>::value)
+    }
+    if (!is_constant_all<T_inv_scale>::value) {
       ops_partials.edge4_.partials_[n]
           -= exp(0.5 * v_sq - u)
              * (SQRT_2 / sqrt_pi * 0.5 * sigma_dbl
@@ -112,6 +112,7 @@ exp_mod_normal_lccdf(const T_y& y, const T_loc& mu, const T_scale& sigma,
                           * (v / SQRT_2 - scaled_diff))
                 - (v * sigma_dbl + mu_dbl - y_dbl) * erf_calc2)
              / ccdf_;
+    }
   }
   return ops_partials.build(ccdf_log);
 }

@@ -7,7 +7,7 @@
 namespace stan {
 /**
  * Metaprogram to determine if any of the
- * provided types is a std::vector.
+ * provided types is a std or eigen vector.
  * @tparam T Types to test
  */
 template <typename... T>

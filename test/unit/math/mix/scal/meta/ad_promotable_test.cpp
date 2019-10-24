@@ -35,14 +35,6 @@ TEST(MathMeta, primitive_to_mix) {
       (stan::math::ad_promotable<unsigned long,
                                  stan::math::fvar<stan::math::var>>::value));
   EXPECT_TRUE(
-      // NOLINTNEXTLINE(runtime/int)
-      (stan::math::ad_promotable<long long,
-                                 stan::math::fvar<stan::math::var>>::value));
-  EXPECT_TRUE(
-      // NOLINTNEXTLINE(runtime/int)
-      (stan::math::ad_promotable<unsigned long long,
-                                 stan::math::fvar<stan::math::var>>::value));
-  EXPECT_TRUE(
       (stan::math::ad_promotable<float,
                                  stan::math::fvar<stan::math::var>>::value));
   EXPECT_TRUE(

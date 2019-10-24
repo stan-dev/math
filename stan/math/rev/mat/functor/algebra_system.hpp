@@ -1,8 +1,15 @@
 #ifndef STAN_MATH_REV_MAT_FUNCTOR_ALGEBRA_SYSTEM_HPP
 #define STAN_MATH_REV_MAT_FUNCTOR_ALGEBRA_SYSTEM_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/mat/functor/jacobian.hpp>
+#include <stan/math/prim/scal/err/check_finite.hpp>
+#include <stan/math/prim/scal/err/check_consistent_size.hpp>
+#include <stan/math/prim/arr/err/check_matching_sizes.hpp>
+#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
+#include <stan/math/prim/scal/err/check_nonnegative.hpp>
+#include <stan/math/prim/scal/err/check_positive.hpp>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -12,7 +19,7 @@ namespace math {
 
 /**
  * A functor that allows us to treat either x or y as
- * the independent variable. If x_is_dv = true, than the
+ * the independent variable. If x_is_iv = true, than the
  * Jacobian is computed w.r.t x, else it is computed
  * w.r.t y.
  * @tparam F type for algebraic system functor
@@ -54,10 +61,11 @@ struct system_functor {
   template <typename T>
   inline Eigen::Matrix<T, Eigen::Dynamic, 1> operator()(
       const Eigen::Matrix<T, Eigen::Dynamic, 1>& iv) const {
-    if (x_is_iv)
+    if (x_is_iv) {
       return f_(iv, y_, dat_, dat_int_, msgs_);
-    else
+    } else {
       return f_(x_, iv, dat_, dat_int_, msgs_);
+    }
   }
 };
 
@@ -83,6 +91,8 @@ struct nlo_functor {
 /**
  * A functor with the required operators to call Eigen's
  * algebraic solver.
+ * It is also used in the vari classes of the algebraic solvers
+ * to compute the requisite sensitivities.
  * @tparam S wrapper around the algebraic system functor. Has the
  * signature required for jacobian (i.e takes only one argument).
  * @tparam F algebraic system functor
@@ -148,6 +158,23 @@ struct hybrj_functor_solver : nlo_functor<double> {
    */
   Eigen::VectorXd get_value(const Eigen::VectorXd& iv) const { return fs_(iv); }
 };
+
+template <typename T1, typename T2>
+void algebra_solver_check(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
+                          const Eigen::Matrix<T2, Eigen::Dynamic, 1> y,
+                          const std::vector<double>& dat,
+                          const std::vector<int>& dat_int,
+                          double function_tolerance,
+                          long int max_num_steps) {  // NOLINT(runtime/int)
+  check_nonzero_size("algebra_solver", "initial guess", x);
+  check_finite("algebra_solver", "initial guess", x);
+  check_finite("algebra_solver", "parameter vector", y);
+  check_finite("algebra_solver", "continuous data", dat);
+  check_finite("algebra_solver", "integer data", dat_int);
+
+  check_nonnegative("algebra_solver", "function_tolerance", function_tolerance);
+  check_positive("algebra_solver", "max_num_steps", max_num_steps);
+}
 
 }  // namespace math
 }  // namespace stan

@@ -22,9 +22,8 @@ namespace math {
  * dimensions.
  */
 template <typename T1, typename T2, int R, int C>
-inline Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type, R,
-                     C>
-add(const Eigen::Matrix<T1, R, C>& m1, const Eigen::Matrix<T2, R, C>& m2) {
+inline Eigen::Matrix<return_type_t<T1, T2>, R, C> add(
+    const Eigen::Matrix<T1, R, C>& m1, const Eigen::Matrix<T2, R, C>& m2) {
   check_matching_dims("add", "m1", m1, "m2", m2);
   return m1 + m2;
 }
@@ -39,9 +38,8 @@ add(const Eigen::Matrix<T1, R, C>& m1, const Eigen::Matrix<T2, R, C>& m2) {
  * @return The matrix plus the scalar.
  */
 template <typename T1, typename T2, int R, int C>
-inline Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type, R,
-                     C>
-add(const Eigen::Matrix<T1, R, C>& m, const T2& c) {
+inline Eigen::Matrix<return_type_t<T1, T2>, R, C> add(
+    const Eigen::Matrix<T1, R, C>& m, const T2& c) {
   return m.array() + c;
 }
 
@@ -55,9 +53,8 @@ add(const Eigen::Matrix<T1, R, C>& m, const T2& c) {
  * @return The scalar plus the matrix.
  */
 template <typename T1, typename T2, int R, int C>
-inline Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type, R,
-                     C>
-add(const T1& c, const Eigen::Matrix<T2, R, C>& m) {
+inline Eigen::Matrix<return_type_t<T1, T2>, R, C> add(
+    const T1& c, const Eigen::Matrix<T2, R, C>& m) {
   return c + m.array();
 }
 

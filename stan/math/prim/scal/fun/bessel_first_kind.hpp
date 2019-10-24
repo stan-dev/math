@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_BESSEL_FIRST_KIND_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_BESSEL_FIRST_KIND_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <boost/math/special_functions/bessel.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 

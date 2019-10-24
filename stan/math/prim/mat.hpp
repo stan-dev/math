@@ -1,27 +1,10 @@
 #ifndef STAN_MATH_PRIM_MAT_HPP
 #define STAN_MATH_PRIM_MAT_HPP
 
-#include <stan/math/prim/arr/meta/get.hpp>
-#include <stan/math/prim/arr/meta/index_type.hpp>
-#include <stan/math/prim/arr/meta/is_vector.hpp>
-#include <stan/math/prim/arr/meta/length.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 
-#include <stan/math/prim/mat/meta/as_array_or_scalar.hpp>
-#include <stan/math/prim/mat/meta/as_column_vector_or_scalar.hpp>
-#include <stan/math/prim/mat/meta/as_scalar.hpp>
-#include <stan/math/prim/mat/meta/broadcast_array.hpp>
-#include <stan/math/prim/mat/meta/get.hpp>
-#include <stan/math/prim/mat/meta/index_type.hpp>
-#include <stan/math/prim/mat/meta/is_constant_struct.hpp>
-#include <stan/math/prim/mat/meta/is_vector.hpp>
-#include <stan/math/prim/mat/meta/is_vector_like.hpp>
-#include <stan/math/prim/mat/meta/length.hpp>
-#include <stan/math/prim/mat/meta/length_mvt.hpp>
-#include <stan/math/prim/mat/meta/operands_and_partials.hpp>
-#include <stan/math/prim/mat/meta/scalar_type.hpp>
-#include <stan/math/prim/mat/meta/seq_view.hpp>
-#include <stan/math/prim/mat/meta/value_type.hpp>
-#include <stan/math/prim/mat/meta/vector_seq_view.hpp>
+#include <stan/math/prim/core.hpp>
+#include <stan/math/prim/meta.hpp>
 
 #include <stan/math/prim/mat/err/check_cholesky_factor.hpp>
 #include <stan/math/prim/mat/err/check_cholesky_factor_corr.hpp>
@@ -35,6 +18,7 @@
 #include <stan/math/prim/mat/err/check_lower_triangular.hpp>
 #include <stan/math/prim/mat/err/check_matching_dims.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
+#include <stan/math/prim/mat/err/check_nonempty.hpp>
 #include <stan/math/prim/mat/err/check_ordered.hpp>
 #include <stan/math/prim/mat/err/check_pos_definite.hpp>
 #include <stan/math/prim/mat/err/check_pos_semidefinite.hpp>
@@ -63,7 +47,6 @@
 #include <stan/math/prim/mat/err/is_unit_vector.hpp>
 #include <stan/math/prim/mat/err/validate_non_negative_index.hpp>
 
-#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/LDLT_factor.hpp>
 #include <stan/math/prim/mat/fun/Phi.hpp>
 #include <stan/math/prim/mat/fun/Phi_approx.hpp>
@@ -274,7 +257,10 @@
 #include <stan/math/prim/mat/fun/welford_var_estimator.hpp>
 
 #include <stan/math/prim/mat/functor/finite_diff_gradient.hpp>
+#include <stan/math/prim/mat/functor/finite_diff_gradient_auto.hpp>
 #include <stan/math/prim/mat/functor/finite_diff_hessian.hpp>
+#include <stan/math/prim/mat/functor/finite_diff_hessian_auto.hpp>
+#include <stan/math/prim/mat/functor/finite_diff_hessian_helper.hpp>
 #include <stan/math/prim/mat/functor/map_rect.hpp>
 #include <stan/math/prim/mat/functor/map_rect_combine.hpp>
 #include <stan/math/prim/mat/functor/map_rect_concurrent.hpp>
@@ -283,6 +269,7 @@
 #include <stan/math/prim/mat/prob/bernoulli_logit_glm_lpmf.hpp>
 #include <stan/math/prim/mat/prob/bernoulli_logit_glm_rng.hpp>
 #include <stan/math/prim/mat/prob/categorical_log.hpp>
+#include <stan/math/prim/mat/prob/categorical_logit_glm_lpmf.hpp>
 #include <stan/math/prim/mat/prob/categorical_logit_log.hpp>
 #include <stan/math/prim/mat/prob/categorical_logit_lpmf.hpp>
 #include <stan/math/prim/mat/prob/categorical_logit_rng.hpp>
@@ -332,6 +319,7 @@
 #include <stan/math/prim/mat/prob/normal_id_glm_log.hpp>
 #include <stan/math/prim/mat/prob/normal_id_glm_lpdf.hpp>
 #include <stan/math/prim/mat/prob/ordered_logistic_log.hpp>
+#include <stan/math/prim/mat/prob/ordered_logistic_glm_lpmf.hpp>
 #include <stan/math/prim/mat/prob/ordered_logistic_lpmf.hpp>
 #include <stan/math/prim/mat/prob/ordered_logistic_rng.hpp>
 #include <stan/math/prim/mat/prob/ordered_probit_log.hpp>

@@ -9,7 +9,6 @@ using stan::math::var;
 
 void test_sort_asc2(std::vector<double> val) {
   using stan::math::sort_asc;
-  using stan::math::sort_asc;
 
   std::vector<fvar<var> > x;
   for (size_t i = 0U; i < val.size(); i++)
@@ -29,7 +28,6 @@ void test_sort_asc2(std::vector<double> val) {
         EXPECT_FALSE(x_sorted[i] == x[j]);
 }
 void test_sort_asc4(std::vector<double> val) {
-  using stan::math::sort_asc;
   using stan::math::sort_asc;
 
   std::vector<fvar<fvar<var> > > x;
@@ -51,7 +49,6 @@ void test_sort_asc4(std::vector<double> val) {
 }
 void test_sort_desc2(VEC val) {
   using stan::math::sort_desc;
-  using stan::math::sort_desc;
 
   std::vector<fvar<var> > x;
   for (size_t i = 0U; i < val.size(); i++)
@@ -71,7 +68,6 @@ void test_sort_desc2(VEC val) {
         EXPECT_FALSE(x_sorted[i] == x[j]);
 }
 void test_sort_desc4(VEC val) {
-  using stan::math::sort_desc;
   using stan::math::sort_desc;
 
   std::vector<fvar<fvar<var> > > x;
@@ -93,7 +89,6 @@ void test_sort_desc4(VEC val) {
 }
 template <typename T, int R, int C>
 void test_sort_asc2(Eigen::Matrix<T, R, C> val) {
-  using stan::math::sort_asc;
   using stan::math::sort_asc;
 
   typedef Eigen::Matrix<fvar<var>, R, C> AVEC;
@@ -121,7 +116,6 @@ void test_sort_asc2(Eigen::Matrix<T, R, C> val) {
 template <typename T, int R, int C>
 void test_sort_asc4(Eigen::Matrix<T, R, C> val) {
   using stan::math::sort_asc;
-  using stan::math::sort_asc;
 
   typedef Eigen::Matrix<fvar<fvar<var> >, R, C> AVEC;
   typedef Eigen::Matrix<double, R, C> VEC;
@@ -148,7 +142,6 @@ void test_sort_asc4(Eigen::Matrix<T, R, C> val) {
 template <typename T, int R, int C>
 void test_sort_desc2(Eigen::Matrix<T, R, C> val) {
   using stan::math::sort_desc;
-  using stan::math::sort_desc;
 
   typedef Eigen::Matrix<fvar<var>, R, C> AVEC;
   typedef Eigen::Matrix<double, R, C> VEC;
@@ -174,7 +167,6 @@ void test_sort_desc2(Eigen::Matrix<T, R, C> val) {
 }
 template <typename T, int R, int C>
 void test_sort_desc4(Eigen::Matrix<T, R, C> val) {
-  using stan::math::sort_desc;
   using stan::math::sort_desc;
 
   typedef Eigen::Matrix<fvar<fvar<var> >, R, C> AVEC;

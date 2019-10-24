@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_ARR_FUN_PROMOTE_ELEMENTS_HPP
 #define STAN_MATH_PRIM_ARR_FUN_PROMOTE_ELEMENTS_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/promote_elements.hpp>
 #include <vector>
 #include <cstddef>
@@ -28,8 +29,9 @@ struct promote_elements<std::vector<T>, std::vector<S> > {
   inline static std::vector<T> promote(const std::vector<S>& u) {
     std::vector<T> t;
     t.reserve(u.size());
-    for (size_t i = 0; i < u.size(); ++i)
+    for (size_t i = 0; i < u.size(); ++i) {
       t.push_back(promote_elements<T, S>::promote(u[i]));
+    }
     return t;
   }
 };

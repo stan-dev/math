@@ -1,5 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <gtest/gtest.h>
 #include <limits>
+#include <type_traits>
 #include <vector>
 
 TEST(test_unit_math_test_ad, test_ad_unary) {
@@ -9,8 +11,10 @@ TEST(test_unit_math_test_ad, test_ad_unary) {
   auto g = [](const auto& u) { return stan::math::inverse(u); };
   stan::test::expect_ad(g, x);
 
-  // need functor because can't infer template param F of expect_ad
-  // stan::test::expect_ad(inverse, x);  // won't compile
+  // Note:  the above is how tests need to be written;  the
+  // functor is required because the following won't compile
+  // because the template parameter F for expect_ad can't be deduced
+  //   stan::test::expect_ad(inverse, x);
 }
 
 TEST(test_unit_math_test_ad, test_ad_binary) {
@@ -81,4 +85,224 @@ TEST(test_ad, misthrow) {
   auto h = [](const auto& u) { return f_misthrow(u); };
   // include following line to show exception error behavior
   // stan::test::expect_ad(h, x);
+}
+
+struct foo_fun {
+  // must be static because operator() must be const
+  static int calls_int_;
+  static int calls_t_;
+
+  template <typename T>
+  T operator()(const T& x) const {
+    ++foo_fun::calls_t_;
+    return x / 2;
+  }
+
+  double operator()(const int& x) const {
+    ++foo_fun::calls_int_;
+    // return x / 2;  // fails if x is odd
+    return x / 2.0;  // works for any x
+  }
+};
+
+// need these or it won't link
+int foo_fun::calls_int_ = -1;
+int foo_fun::calls_t_ = -1;
+
+TEST(test_ad, integerGetsPassed) {
+  // double arguments will not call int version
+  foo_fun h;
+  foo_fun::calls_int_ = 0;
+  foo_fun::calls_t_ = 0;
+  stan::test::expect_ad(h, 3.0);
+  EXPECT_EQ(0, foo_fun::calls_int_);
+  EXPECT_GT(foo_fun::calls_t_, 0);
+
+  // int argument calls everything
+  foo_fun g;
+  foo_fun::calls_int_ = 0;
+  foo_fun::calls_t_ = 0;
+  stan::test::expect_ad(g, 3);
+  EXPECT_GT(foo_fun::calls_int_, 0);
+  EXPECT_GT(foo_fun::calls_t_, 0);
+
+  foo_fun::calls_int_ = 0;
+  foo_fun::calls_t_ = 0;
+  stan::test::expect_common_unary(g);
+  EXPECT_GT(foo_fun::calls_int_, 0);
+  EXPECT_GT(foo_fun::calls_t_, 0);
+}
+
+struct bar_fun {
+  // must be static because operator() must be const
+  static int calls_t_;
+  static int calls_int1_;
+  static int calls_int2_;
+  static int calls_int12_;
+
+  static void reset() {
+    bar_fun::calls_t_ = 0;
+    bar_fun::calls_int1_ = 0;
+    bar_fun::calls_int2_ = 0;
+    bar_fun::calls_int12_ = 0;
+  }
+
+  double operator()(int x, int y) const {
+    ++bar_fun::calls_int12_;
+    return this->operator()(static_cast<double>(x), static_cast<double>(y));
+  }
+  double operator()(int x, double y) const {
+    ++bar_fun::calls_int1_;
+    return x * y;
+  }
+  template <typename T>
+  T operator()(int x, const T& y) const {
+    ++bar_fun::calls_int1_;
+    return this->operator()(static_cast<double>(x), y);
+  }
+
+  double operator()(double x, int y) const {
+    ++bar_fun::calls_int2_;
+    return x * y;
+  }
+  double operator()(double x, double y) const { return x * y; }
+  template <typename T>
+  T operator()(double x, const T& y) const {
+    return x * y;
+  }
+
+  template <typename T>
+  T operator()(const T& x, int y) const {
+    ++bar_fun::calls_int2_;
+    return this->operator()(x, static_cast<double>(y));
+  }
+  template <typename T>
+  T operator()(const T& x, double y) const {
+    ++bar_fun::calls_t_;
+    return x * y;
+  }
+  template <typename T1, typename T2>
+  typename boost::math::tools::promote_args<T1, T2>::type operator()(
+      const T1& x, const T2& y) const {
+    return x * y;
+  }
+};
+
+// need these or it won't link
+int bar_fun::calls_t_ = -1;
+int bar_fun::calls_int1_ = -1;
+int bar_fun::calls_int2_ = -1;
+int bar_fun::calls_int12_ = -1;
+
+TEST(testAd, integerGetsPassedBinary) {
+  bar_fun f;
+
+  bar_fun::reset();
+  stan::test::expect_ad(f, 3.0, 2.7);
+  EXPECT_GT(bar_fun::calls_t_, 0);
+  EXPECT_EQ(bar_fun::calls_int1_, 0);
+  EXPECT_EQ(bar_fun::calls_int2_, 0);
+  EXPECT_EQ(bar_fun::calls_int12_, 0);
+
+  bar_fun::reset();
+  stan::test::expect_ad(f, 3, 2.7);
+  EXPECT_GT(bar_fun::calls_t_, 0);
+  EXPECT_GT(bar_fun::calls_int1_, 0);
+
+  bar_fun::reset();
+  stan::test::expect_ad(f, 2.7, 3);
+  EXPECT_GT(bar_fun::calls_t_, 0);
+  EXPECT_GT(bar_fun::calls_int2_, 0);
+
+  bar_fun::reset();
+  stan::test::expect_ad(f, 3, 4);
+  EXPECT_GT(bar_fun::calls_t_, 0);
+  EXPECT_GT(bar_fun::calls_int12_, 0);
+
+  bar_fun::reset();
+  stan::test::expect_common_binary(f);
+  EXPECT_GT(bar_fun::calls_t_, 0);
+  EXPECT_GT(bar_fun::calls_int1_, 0);
+  EXPECT_GT(bar_fun::calls_int2_, 0);
+  EXPECT_GT(bar_fun::calls_int12_, 0);
+}
+
+int baz_int = 0;
+int baz_double = 0;
+int baz_var = 0;
+int baz_fvar = 0;
+
+double baz(int x) {
+  ++baz_int;
+  return x / 2.0;
+}
+double baz(double x) {
+  ++baz_double;
+  return x / 2.0;
+}
+stan::math::var baz(const stan::math::var& x) {
+  ++baz_var;
+  return x / 2.0;
+}
+template <typename T>
+stan::math::fvar<T> baz(const stan::math::fvar<T>& x) {
+  ++baz_fvar;
+  return x / 2.0;
+}
+
+struct baz_fun {
+  template <typename T>
+  static inline T fun(const T& x) {
+    return baz(x);
+  }
+};
+
+template <typename T>
+inline typename stan::math::apply_scalar_unary<baz_fun, T>::return_t baz(
+    const T& x) {
+  return stan::math::apply_scalar_unary<baz_fun, T>::apply(x);
+}
+
+TEST(testAd, integerGetsPassedVectorized) {
+  auto h = [&](auto x) { return baz(x); };
+
+  baz_int = 0;
+  baz_double = 0;
+  baz_var = 0;
+  baz_fvar = 0;
+  stan::test::expect_ad_vectorized(h, 0.2);
+  EXPECT_EQ(0, baz_int);  // int doesn't get called
+  EXPECT_GT(baz_double, 0);
+  EXPECT_GT(baz_var, 0);
+  EXPECT_GT(baz_fvar, 0);
+
+  baz_int = 0;
+  baz_double = 0;
+  baz_var = 0;
+  baz_fvar = 0;
+  stan::test::expect_ad_vectorized(h, 1);
+  EXPECT_GT(baz_int, 0);  // int version gets called
+  EXPECT_GT(baz_double, 0);
+  EXPECT_GT(baz_var, 0);
+  EXPECT_GT(baz_fvar, 0);
+
+  baz_int = 0;
+  baz_double = 0;
+  baz_var = 0;
+  baz_fvar = 0;
+  stan::test::expect_common_unary_vectorized(h);
+  EXPECT_GT(baz_int, 0);  // int version gets called
+  EXPECT_GT(baz_double, 0);
+  EXPECT_GT(baz_var, 0);
+  EXPECT_GT(baz_fvar, 0);
+
+  baz_int = 0;
+  baz_double = 0;
+  baz_var = 0;
+  baz_fvar = 0;
+  stan::test::expect_common_nonzero_unary_vectorized(h);
+  EXPECT_GT(baz_int, 0);  // int version gets called
+  EXPECT_GT(baz_double, 0);
+  EXPECT_GT(baz_var, 0);
+  EXPECT_GT(baz_fvar, 0);
 }

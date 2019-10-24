@@ -2,8 +2,10 @@
 #define STAN_MATH_PRIM_SCAL_META_PARTIALS_RETURN_TYPE_HPP
 
 #include <stan/math/prim/scal/meta/partials_type.hpp>
+#include <stan/math/prim/scal/meta/promote_args.hpp>
 #include <stan/math/prim/scal/meta/scalar_type.hpp>
 #include <boost/math/tools/promotion.hpp>
+#include <type_traits>
 
 namespace stan {
 
@@ -28,20 +30,19 @@ namespace stan {
  * @tparam T (required) A type
  * @tparam T_pack (optional) A parameter pack containing further types.
  */
-
 template <typename T, typename... T_pack>
 struct partials_return_type {
-  typedef typename boost::math::tools::promote_args<
-      double, typename partials_type<typename scalar_type<T>::type>::type,
-      typename partials_return_type<T_pack...>::type>::type type;
+  using type = promote_args_t<double, partials_type_t<scalar_type_t<T>>,
+                              typename partials_return_type<T_pack...>::type>;
 };
 
 template <typename T>
 struct partials_return_type<T> {
-  typedef typename boost::math::tools::promote_args<
-      double, typename partials_type<typename scalar_type<T>::type>::type>::type
-      type;
+  using type = promote_args_t<double, partials_type_t<scalar_type_t<T>>>;
 };
+
+template <typename... Args>
+using partials_return_t = typename partials_return_type<Args...>::type;
 
 }  // namespace stan
 #endif

@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_MAT_FUN_LDLT_ALLOC_HPP
 #define STAN_MATH_REV_MAT_FUN_LDLT_ALLOC_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
 
@@ -28,19 +29,9 @@ class LDLT_alloc : public chainable_alloc {
    * called elsewhere.
    **/
   inline void compute(const Eigen::Matrix<var, R, C> &A) {
-    Eigen::Matrix<double, R, C> Ad(A.rows(), A.cols());
-
     N_ = A.rows();
-    variA_.resize(A.rows(), A.cols());
-
-    for (size_t j = 0; j < N_; j++) {
-      for (size_t i = 0; i < N_; i++) {
-        Ad(i, j) = A(i, j).val();
-        variA_(i, j) = A(i, j).vi_;
-      }
-    }
-
-    ldlt_.compute(Ad);
+    variA_ = A.vi();
+    ldlt_.compute(A.val());
   }
 
   // Compute the log(abs(det(A))).  This is just a convenience function.

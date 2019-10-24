@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_OFFSET_MULTIPLIER_FREE_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_OFFSET_MULTIPLIER_FREE_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/identity_free.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
@@ -38,12 +39,13 @@ namespace math {
  * @throw std::domain_error if mu is not finite
  */
 template <typename T, typename L, typename S>
-inline typename boost::math::tools::promote_args<T, L, S>::type
-offset_multiplier_free(const T& y, const L& mu, const S& sigma) {
+inline return_type_t<T, L, S> offset_multiplier_free(const T& y, const L& mu,
+                                                     const S& sigma) {
   check_finite("offset_multiplier_free", "offset", mu);
   if (sigma == 1) {
-    if (mu == 0)
+    if (mu == 0) {
       return identity_free(y);
+    }
     return y - mu;
   }
   check_positive_finite("offset_multiplier_free", "multiplier", sigma);

@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_TRACE_GEN_QUAD_FORM_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 
@@ -10,10 +11,11 @@ namespace math {
 /**
  * Compute trace(D B^T A B).
  **/
-template <int RD, int CD, int RA, int CA, int RB, int CB>
-inline double trace_gen_quad_form(const Eigen::Matrix<double, RD, CD> &D,
-                                  const Eigen::Matrix<double, RA, CA> &A,
-                                  const Eigen::Matrix<double, RB, CB> &B) {
+template <typename TD, int RD, int CD, typename TA, int RA, int CA, typename TB,
+          int RB, int CB, typename = require_any_not_var_t<TD, TA, TB>>
+inline return_type_t<TD, TA, TB> trace_gen_quad_form(
+    const Eigen::Matrix<TD, RD, CD> &D, const Eigen::Matrix<TA, RA, CA> &A,
+    const Eigen::Matrix<TB, RB, CB> &B) {
   check_square("trace_gen_quad_form", "A", A);
   check_square("trace_gen_quad_form", "D", D);
   check_multiplicable("trace_gen_quad_form", "A", A, "B", B);

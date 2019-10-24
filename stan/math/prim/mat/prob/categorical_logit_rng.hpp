@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_CATEGORICAL_LOGIT_RNG_HPP
 #define STAN_MATH_PRIM_MAT_PROB_CATEGORICAL_LOGIT_RNG_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
@@ -39,8 +40,9 @@ inline int categorical_logit_rng(const Eigen::VectorXd& beta, RNG& rng) {
 
   double c = uniform01_rng();
   int b = 0;
-  while (c > index(b))
+  while (c > index(b)) {
     b++;
+  }
   return b + 1;
 }
 }  // namespace math

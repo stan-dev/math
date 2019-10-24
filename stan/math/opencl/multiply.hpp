@@ -8,7 +8,9 @@
 #include <stan/math/opencl/kernels/add.hpp>
 #include <stan/math/opencl/sub_block.hpp>
 #include <stan/math/opencl/zeros.hpp>
-#include <Eigen/Dense>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <algorithm>
 
 namespace stan {
 namespace math {
@@ -21,9 +23,9 @@ namespace opencl {
  *
  * @param A first matrix
  * @param B second matrix
- * @tparam triangular_view_A specifies whether the matrix A is a
+ * @tparam partial_view_A specifies whether the matrix A is a
  *  lower/upper triangular or a rectangular matrix
- * @tparam triangular_view_B specifies whether the matrix B is a
+ * @tparam partial_view_B specifies whether the matrix B is a
  *  lower/upper triangular or a rectangular matrix
  * @return the product of the first and second matrix
  *
@@ -31,12 +33,13 @@ namespace opencl {
  *   number of columns in A and rows in B do not match
  */
 
-template <TriangularViewCL triangular_view_A = TriangularViewCL::Entire,
-          TriangularViewCL triangular_view_B = TriangularViewCL::Entire>
-inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
+template <typename T1, typename T2, typename = require_all_arithmetic_t<T1, T2>>
+inline matrix_cl<return_type_t<T1, T2>> multiply(const matrix_cl<T1>& A,
+                                                 const matrix_cl<T2>& B) {
   check_size_match("multiply ((OpenCL))", "A.cols()", A.cols(), "B.rows()",
                    B.rows());
-  matrix_cl temp(A.rows(), B.cols());
+  matrix_cl<return_type_t<T1, T2>> temp(A.rows(), B.cols(),
+                                        either(A.view(), B.view()));
   if (A.size() == 0 || B.size() == 0) {
     temp.zeros();
     return temp;
@@ -48,7 +51,7 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
     try {
       opencl_kernels::row_vector_matrix_multiply(
           cl::NDRange(temp.cols() * local_size), cl::NDRange(local_size), A, B,
-          temp, B.rows(), B.cols(), triangular_view_A, triangular_view_B);
+          temp, B.rows(), B.cols(), A.view(), B.view());
     } catch (cl::Error& e) {
       check_opencl_error("row_vector - matrix multiply", e);
     }
@@ -56,9 +59,9 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
   }
   if (B.cols() == 1) {
     try {
-      opencl_kernels::matrix_vector_multiply(
-          cl::NDRange(temp.rows()), A, B, temp, A.rows(), A.cols(),
-          triangular_view_A, triangular_view_B);
+      opencl_kernels::matrix_vector_multiply(cl::NDRange(temp.rows()), A, B,
+                                             temp, A.rows(), A.cols(), A.view(),
+                                             B.view());
     } catch (cl::Error& e) {
       check_opencl_error("matrix - vector multiply", e);
     }
@@ -70,28 +73,25 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
   const int Npad = ((B.cols() + local - 1) / local) * local;
   const int wpt = opencl_kernels::matrix_multiply.make_functor.get_opts().at(
       "WORK_PER_THREAD");
-  int split = A.cols() / std::sqrt(A.rows() * B.cols());
-  if (split > 20) {
-    split = 20;
-  }
-  // when there result matrix is large, there is no benefit of splitting
-  // as the number of created threads is large enough to occupy all
-  // compute units in the OpenCL device
-  if (temp.size() > opencl_context.tuning_opts().multiply_split_upper_limit) {
-    split = 1;
-  }
+  const int wgs = Mpad / local * Npad / local;
+  const int split = std::min(
+      A.cols() / local,
+      (opencl_context.tuning_opts().multiply_wgs_per_compute_unit
+           * static_cast<int>(opencl_context.device()[0]
+                                  .getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>())
+       + wgs - 1)
+          / wgs);
   try {
     if (split <= 1) {
-      opencl_kernels::matrix_multiply(cl::NDRange(Mpad, Npad / wpt),
-                                      cl::NDRange(local, local / wpt), A, B,
-                                      temp, A.rows(), B.cols(), B.rows(),
-                                      triangular_view_A, triangular_view_B);
+      opencl_kernels::matrix_multiply(
+          cl::NDRange(Mpad, Npad / wpt), cl::NDRange(local, local / wpt), A, B,
+          temp, A.rows(), B.cols(), B.rows(), A.view(), B.view());
     } else {
-      matrix_cl tempSplit(A.rows(), B.cols() * split);
+      matrix_cl<return_type_t<T1, T2>> tempSplit(A.rows(), B.cols() * split);
       opencl_kernels::matrix_multiply(cl::NDRange(Mpad, Npad / wpt, split),
                                       cl::NDRange(local, local / wpt, 1), A, B,
                                       tempSplit, A.rows(), B.cols(), B.rows(),
-                                      triangular_view_A, triangular_view_B);
+                                      A.view(), B.view());
       opencl_kernels::add_batch(cl::NDRange(A.rows(), B.cols()), temp,
                                 tempSplit, A.rows(), B.cols(), split);
     }
@@ -101,79 +101,7 @@ inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
   return temp;
 }
 }  // namespace opencl
-
-/**
- * Multiplies the specified matrix on the OpenCL device
- * with the specified scalar.
- *
- * @param A matrix
- * @param scalar scalar
- * @return matrix multipled with scalar
- */
-inline matrix_cl multiply(const matrix_cl& A, const double scalar) {
-  matrix_cl temp(A.rows(), A.cols());
-  if (A.size() == 0)
-    return temp;
-  try {
-    opencl_kernels::scalar_mul(cl::NDRange(A.rows(), A.cols()), temp, A, scalar,
-                               A.rows(), A.cols());
-  } catch (const cl::Error& e) {
-    check_opencl_error("multiply scalar", e);
-  }
-  return temp;
-}
-
-/**
- * Multiplies the specified matrix on the OpenCL device
- * with the specified scalar.
- *
- * @param scalar scalar
- * @param A matrix
- * @return matrix multipled with scalar
- */
-inline auto multiply(const double scalar, const matrix_cl& A) {
-  return multiply(A, scalar);
-}
-
-/**
- * Computes the product of the specified matrices.
- *
- * Computes the matrix multiplication C[M, K] = A[M, N] x B[N, K]
- *
- * @param A first matrix
- * @param B second matrix
- * @return the product of the first and second matrix
- *
- * @throw <code>std::invalid_argument</code> if the
- *   number of columns in A and rows in B do not match
- */
-inline auto multiply(const matrix_cl& A, const matrix_cl& B) {
-  return opencl::multiply(A, B);
-}
-
-/**
- * Templated product operator for OpenCL matrices.
- *
- * Computes the matrix multiplication C[M, K] = A[M, N] x B[N, K].
- *
- * @param A A matrix or scalar
- * @param B A matrix or scalar
- * @return the product of the first and second arguments
- *
- * @throw <code>std::invalid_argument</code> if the
- *   number of columns in A and rows in B do not match
- */
-inline matrix_cl operator*(const matrix_cl& A, const matrix_cl& B) {
-  return opencl::multiply(A, B);
-}
-inline matrix_cl operator*(const matrix_cl& B, const double scalar) {
-  return multiply(B, scalar);
-}
-inline matrix_cl operator*(const double scalar, const matrix_cl& B) {
-  return multiply(scalar, B);
-}
 }  // namespace math
 }  // namespace stan
-
 #endif
 #endif

@@ -15,7 +15,7 @@ namespace math {
  * @return <code>true</code> iff <code>x1 &lt;= x2</code>
  */
 template <typename T1, typename T2>
-inline int logical_lte(const T1 x1, const T2 x2) {
+inline bool logical_lte(const T1 x1, const T2 x2) {
   return x1 <= x2;
 }
 

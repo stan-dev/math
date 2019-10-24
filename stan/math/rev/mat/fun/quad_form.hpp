@@ -1,8 +1,10 @@
 #ifndef STAN_MATH_REV_MAT_FUN_QUAD_FORM_HPP
 #define STAN_MATH_REV_MAT_FUN_QUAD_FORM_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/prim/mat/fun/quad_form.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
@@ -19,7 +21,7 @@ class quad_form_vari_alloc : public chainable_alloc {
  private:
   inline void compute(const Eigen::Matrix<double, Ra, Ca>& A,
                       const Eigen::Matrix<double, Rb, Cb>& B) {
-    Eigen::Matrix<double, Cb, Cb> Cd(B.transpose() * A * B);
+    matrix_d Cd = B.transpose() * A * B;
     for (int j = 0; j < C_.cols(); j++) {
       for (int i = 0; i < C_.rows(); i++) {
         if (sym_) {
@@ -59,22 +61,13 @@ class quad_form_vari : public vari {
   inline void chainA(Eigen::Matrix<var, Ra, Ca>& A,
                      const Eigen::Matrix<double, Rb, Cb>& Bd,
                      const Eigen::Matrix<double, Cb, Cb>& adjC) {
-    Eigen::Matrix<double, Ra, Ca> adjA(Bd * adjC * Bd.transpose());
-    for (int j = 0; j < A.cols(); j++) {
-      for (int i = 0; i < A.rows(); i++) {
-        A(i, j).vi_->adj_ += adjA(i, j);
-      }
-    }
+    A.adj() += Bd * adjC * Bd.transpose();
   }
   inline void chainB(Eigen::Matrix<var, Rb, Cb>& B,
                      const Eigen::Matrix<double, Ra, Ca>& Ad,
                      const Eigen::Matrix<double, Rb, Cb>& Bd,
                      const Eigen::Matrix<double, Cb, Cb>& adjC) {
-    Eigen::Matrix<double, Ra, Ca> adjB(Ad * Bd * adjC.transpose()
-                                       + Ad.transpose() * Bd * adjC);
-    for (int j = 0; j < B.cols(); j++)
-      for (int i = 0; i < B.rows(); i++)
-        B(i, j).vi_->adj_ += adjB(i, j);
+    B.adj() += Ad * Bd * adjC.transpose() + Ad.transpose() * Bd * adjC;
   }
 
   inline void chainAB(Eigen::Matrix<Ta, Ra, Ca>& A,
@@ -94,11 +87,7 @@ class quad_form_vari : public vari {
   }
 
   virtual void chain() {
-    Eigen::Matrix<double, Cb, Cb> adjC(impl_->C_.rows(), impl_->C_.cols());
-
-    for (int j = 0; j < impl_->C_.cols(); j++)
-      for (int i = 0; i < impl_->C_.rows(); i++)
-        adjC(i, j) = impl_->C_(i, j).vi_->adj_;
+    matrix_d adjC = impl_->C_.adj();
 
     chainAB(impl_->A_, impl_->B_, value_of(impl_->A_), value_of(impl_->B_),
             adjC);

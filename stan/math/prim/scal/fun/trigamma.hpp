@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_TRIGAMMA_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_TRIGAMMA_HPP
 
+#include <stan/math/prim/meta.hpp>
 // Reference:
 //   BE Schneider,
 //   Algorithm AS 121:
@@ -9,6 +10,8 @@
 //   Volume 27, Number 1, pages 97-99, 1978.
 
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/fun/square.hpp>
+#include <stan/math/prim/scal/fun/inv_square.hpp>
 #include <cmath>
 
 namespace stan {
@@ -38,10 +41,10 @@ inline T trigamma_impl(const T& x) {
   T z;
 
   // bernoulli numbers
-  double b2 = 1.0 / 6.0;
-  double b4 = -1.0 / 30.0;
-  double b6 = 1.0 / 42.0;
-  double b8 = -1.0 / 30.0;
+  double b2 = inv(6.0);
+  double b4 = -inv(30.0);
+  double b6 = inv(42.0);
+  double b8 = -inv(30.0);
 
   // negative integers and zero return postiive infinity
   // see http://mathworld.wolfram.com/PolygammaFunction.html
@@ -53,27 +56,27 @@ inline T trigamma_impl(const T& x) {
   // negative non-integers: use the reflection formula
   // see http://mathworld.wolfram.com/PolygammaFunction.html
   if ((x <= 0) && (floor(x) != x)) {
-    value = -trigamma_impl(-x + 1.0)
-            + (pi() / sin(-pi() * x)) * (pi() / sin(-pi() * x));
+    value = -trigamma_impl(-x + 1.0) + square(pi() / sin(-pi() * x));
     return value;
   }
 
   // small value approximation if x <= small.
-  if (x <= small)
-    return 1.0 / (x * x);
+  if (x <= small) {
+    return inv_square(x);
+  }
 
   // use recurrence relation until x >= large
   // see http://mathworld.wolfram.com/PolygammaFunction.html
   z = x;
   value = 0.0;
   while (z < large) {
-    value += 1.0 / (z * z);
+    value += inv_square(z);
     z += 1.0;
   }
 
   // asymptotic expansion as a Laurent series if x >= large
   // see http://en.wikipedia.org/wiki/Trigamma_function
-  y = 1.0 / (z * z);
+  y = inv_square(z);
   value += 0.5 * y + (1.0 + y * (b2 + y * (b4 + y * (b6 + y * b8)))) / z;
 
   return value;

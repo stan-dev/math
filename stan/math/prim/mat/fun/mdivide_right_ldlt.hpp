@@ -20,10 +20,8 @@ namespace math {
  */
 
 template <typename T1, typename T2, int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type,
-                     R1, C2>
-mdivide_right_ldlt(const Eigen::Matrix<T1, R1, C1> &b,
-                   const LDLT_factor<T2, R2, C2> &A) {
+inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_right_ldlt(
+    const Eigen::Matrix<T1, R1, C1> &b, const LDLT_factor<T2, R2, C2> &A) {
   check_multiplicable("mdivide_right_ldlt", "b", b, "A", A);
 
   return transpose(mdivide_left_ldlt(A, transpose(b)));

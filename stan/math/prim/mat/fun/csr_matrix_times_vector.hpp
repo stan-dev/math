@@ -73,13 +73,12 @@ namespace math {
 /** \addtogroup csr_format
  */
 template <typename T1, typename T2>
-inline Eigen::Matrix<typename boost::math::tools::promote_args<T1, T2>::type,
-                     Eigen::Dynamic, 1>
+inline Eigen::Matrix<return_type_t<T1, T2>, Eigen::Dynamic, 1>
 csr_matrix_times_vector(int m, int n,
                         const Eigen::Matrix<T1, Eigen::Dynamic, 1>& w,
                         const std::vector<int>& v, const std::vector<int>& u,
                         const Eigen::Matrix<T2, Eigen::Dynamic, 1>& b) {
-  typedef typename boost::math::tools::promote_args<T1, T2>::type result_t;
+  using result_t = return_type_t<T1, T2>;
 
   check_positive("csr_matrix_times_vector", "m", m);
   check_positive("csr_matrix_times_vector", "n", n);
@@ -88,8 +87,9 @@ csr_matrix_times_vector(int m, int n,
   check_size_match("csr_matrix_times_vector", "w", w.size(), "v", v.size());
   check_size_match("csr_matrix_times_vector", "u/z",
                    u[m - 1] + csr_u_to_z(u, m - 1) - 1, "v", v.size());
-  for (int i : v)
+  for (int i : v) {
     check_range("csr_matrix_times_vector", "v[]", n, i);
+  }
 
   Eigen::Matrix<result_t, Eigen::Dynamic, 1> result(m);
   result.setZero();

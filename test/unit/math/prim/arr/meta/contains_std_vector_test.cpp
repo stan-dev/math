@@ -8,8 +8,8 @@ TEST(MetaTraits, contains_vector_true) {
 
   EXPECT_TRUE(contains_std_vector<std::vector<double> >::value);
   EXPECT_TRUE(contains_std_vector<std::vector<int> >::value);
-  EXPECT_TRUE(contains_std_vector<std::vector<const double> >::value);
-  EXPECT_TRUE(contains_std_vector<std::vector<const int> >::value);
+  EXPECT_TRUE(contains_std_vector<const std::vector<double> >::value);
+  EXPECT_TRUE(contains_std_vector<const std::vector<int> >::value);
 
   bool r = contains_std_vector<std::vector<double>, double, double, double,
                                double, double>::value;

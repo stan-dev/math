@@ -34,12 +34,12 @@ template <bool used, typename T1, typename T2, typename T3 = double,
           typename T7 = double>
 class StdVectorBuilder {
  private:
-  typedef VectorBuilderHelper<
-      T1, used, contains_std_vector<T2, T3, T4, T5, T6, T7>::value>
-      helper;
+  using helper
+      = VectorBuilderHelper<T1, used,
+                            contains_std_vector<T2, T3, T4, T5, T6, T7>::value>;
 
  public:
-  typedef typename helper::type type;
+  using type = typename helper::type;
   helper a;
 
   explicit StdVectorBuilder(size_t n) : a(n) {}

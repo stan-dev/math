@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_ARR_FUNCTOR_INTEGRATE_ODE_RK45_HPP
 #define STAN_MATH_PRIM_ARR_FUNCTOR_INTEGRATE_ODE_RK45_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/arr/err/check_ordered.hpp>
 #include <stan/math/prim/arr/functor/coupled_ode_system.hpp>
@@ -9,7 +10,6 @@
 #include <stan/math/prim/scal/err/check_less.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/invalid_argument.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <boost/version.hpp>
 #if BOOST_VERSION == 106400
 #include <boost/serialization/array_wrapper.hpp>
@@ -71,13 +71,12 @@ namespace math {
  * same size as the state variable, corresponding to a time in ts.
  */
 template <typename F, typename T1, typename T2, typename T_t0, typename T_ts>
-std::vector<std::vector<typename stan::return_type<T1, T2, T_t0, T_ts>::type>>
-integrate_ode_rk45(const F& f, const std::vector<T1>& y0, const T_t0& t0,
-                   const std::vector<T_ts>& ts, const std::vector<T2>& theta,
-                   const std::vector<double>& x, const std::vector<int>& x_int,
-                   std::ostream* msgs = nullptr,
-                   double relative_tolerance = 1e-6,
-                   double absolute_tolerance = 1e-6, int max_num_steps = 1E6) {
+std::vector<std::vector<return_type_t<T1, T2, T_t0, T_ts>>> integrate_ode_rk45(
+    const F& f, const std::vector<T1>& y0, const T_t0& t0,
+    const std::vector<T_ts>& ts, const std::vector<T2>& theta,
+    const std::vector<double>& x, const std::vector<int>& x_int,
+    std::ostream* msgs = nullptr, double relative_tolerance = 1e-6,
+    double absolute_tolerance = 1e-6, int max_num_steps = 1E6) {
   using boost::numeric::odeint::integrate_times;
   using boost::numeric::odeint::make_dense_output;
   using boost::numeric::odeint::max_step_checker;
@@ -97,15 +96,18 @@ integrate_ode_rk45(const F& f, const std::vector<T1>& y0, const T_t0& t0,
   check_ordered("integrate_ode_rk45", "times", ts_dbl);
   check_less("integrate_ode_rk45", "initial time", t0_dbl, ts_dbl[0]);
 
-  if (relative_tolerance <= 0)
+  if (relative_tolerance <= 0) {
     invalid_argument("integrate_ode_rk45", "relative_tolerance,",
                      relative_tolerance, "", ", must be greater than 0");
-  if (absolute_tolerance <= 0)
+  }
+  if (absolute_tolerance <= 0) {
     invalid_argument("integrate_ode_rk45", "absolute_tolerance,",
                      absolute_tolerance, "", ", must be greater than 0");
-  if (max_num_steps <= 0)
+  }
+  if (max_num_steps <= 0) {
     invalid_argument("integrate_ode_rk45", "max_num_steps,", max_num_steps, "",
                      ", must be greater than 0");
+  }
 
   // creates basic or coupled system by template specializations
   coupled_ode_system<F, T1, T2> coupled_system(f, y0, theta, x, x_int, msgs);
@@ -115,8 +117,7 @@ integrate_ode_rk45(const F& f, const std::vector<T1>& y0, const T_t0& t0,
   ts_vec[0] = t0_dbl;
   std::copy(ts_dbl.begin(), ts_dbl.end(), ts_vec.begin() + 1);
 
-  std::vector<std::vector<typename stan::return_type<T1, T2, T_t0, T_ts>::type>>
-      y;
+  std::vector<std::vector<return_type_t<T1, T2, T_t0, T_ts>>> y;
   coupled_ode_observer<F, T1, T2, T_t0, T_ts> observer(f, y0, theta, t0, ts, x,
                                                        x_int, msgs, y);
   bool observer_initial_recorded = false;

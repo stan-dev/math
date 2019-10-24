@@ -9,9 +9,12 @@ def runTests(String testPath) {
 }
 
 def runTestsWin(String testPath) {
-    bat "runTests.py -j${env.PARALLEL} ${testPath} --make-only"
-    try { bat "runTests.py -j${env.PARALLEL} ${testPath}" }
-    finally { junit 'test/**/*.xml' }
+    withEnv(['PATH+TBB=./lib/tbb']) {
+       bat "echo $PATH"
+       bat "runTests.py -j${env.PARALLEL} ${testPath} --make-only"
+       try { bat "runTests.py -j${env.PARALLEL} ${testPath}" }
+       finally { junit 'test/**/*.xml' }
+    }
 }
 
 def deleteDirWin() {
@@ -48,6 +51,9 @@ pipeline {
     options {
         skipDefaultCheckout()
         preserveStashes(buildCount: 7)
+    }
+    environment {
+        STAN_NUM_THREADS = '4'
     }
     stages {
         stage('Kill previous builds') {
@@ -154,6 +160,7 @@ pipeline {
                         deleteDir()
                         unstash 'MathSetup'
                         sh "echo CXX=${MPICXX} >> make/local"
+                        sh "echo CXX_TYPE=gcc >> make/local"                        
                         sh "echo STAN_MPI=true >> make/local"
                         runTests("test/unit")
                     }
@@ -221,8 +228,19 @@ pipeline {
                     steps {
                         deleteDirWin()
                         unstash 'MathSetup'
-                        bat "make -j${env.PARALLEL} test-headers"
+                        bat "mingw32-make -j${env.PARALLEL} test-headers"
                         runTestsWin("test/unit")
+                    }
+                }
+                stage('Windows Threading') {
+                    agent { label 'windows' }
+                    steps {
+                        deleteDirWin()
+                        unstash 'MathSetup'
+                        bat "echo CXX=${env.CXX} -Werror > make/local"
+                        bat "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
+                        runTestsWin("test/unit -f thread")
+                        runTestsWin("test/unit -f map_rect")
                     }
                 }
             }
@@ -236,7 +254,7 @@ pipeline {
                         deleteDir()
                         unstash 'MathSetup'
                         sh "echo CXX=${GCC} >> make/local"
-                        sh "echo CPPFLAGS=-DSTAN_THREADS >> make/local"
+                        sh "echo CXXFLAGS=-DSTAN_THREADS >> make/local"
                         runTests("test/unit")
                     }
                     post { always { retry(3) { deleteDir() } } }

@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_VALUE_OF_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_VALUE_OF_HPP
 
+#include <stan/math/prim/meta.hpp>
 namespace stan {
 namespace math {
 

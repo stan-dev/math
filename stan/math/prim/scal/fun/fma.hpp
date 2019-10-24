@@ -1,7 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_FMA_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_FMA_HPP
 
-#include <boost/math/tools/promotion.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -19,10 +20,11 @@ namespace math {
  * @return The product of the first two arguments plus the third
  * argument.
  */
-template <typename T1, typename T2, typename T3>
-inline typename boost::math::tools::promote_args<T1, T2, T3>::type fma(
-    const T1& x, const T2& y, const T3& z) {
-  return x * y + z;
+template <typename T1, typename T2, typename T3,
+          typename = require_all_arithmetic_t<T1, T2, T3>>
+inline double fma(T1 x, T2 y, T3 z) {
+  using std::fma;
+  return fma(x, y, z);
 }
 
 }  // namespace math

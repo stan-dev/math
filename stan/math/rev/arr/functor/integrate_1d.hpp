@@ -1,13 +1,14 @@
 #ifndef STAN_MATH_REV_ARR_FUNCTOR_integrate_1d_HPP
 #define STAN_MATH_REV_ARR_FUNCTOR_integrate_1d_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/arr/fun/value_of.hpp>
 #include <stan/math/prim/arr/functor/integrate_1d.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/rev/scal/fun/is_nan.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
-#include <stan/math/rev/scal/meta/is_var.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <type_traits>
 #include <string>
 #include <vector>
@@ -36,8 +37,9 @@ inline double gradient_of_f(const F &f, const double &x, const double &xc,
   start_nested();
   std::vector<var> theta_var(theta_vals.size());
   try {
-    for (size_t i = 0; i < theta_vals.size(); i++)
+    for (size_t i = 0; i < theta_vals.size(); i++) {
       theta_var[i] = theta_vals[i];
+    }
     var fx = f(x, xc, theta_var, x_r, x_i, &msgs);
     fx.grad();
     gradient = theta_var[n].adj();
@@ -112,23 +114,22 @@ inline double gradient_of_f(const F &f, const double &x, const double &xc,
  * @param relative_tolerance relative tolerance passed to Boost quadrature
  * @return numeric integral of function f
  */
-template <typename F, typename T_a, typename T_b, typename T_theta>
-inline typename std::enable_if<std::is_same<T_a, var>::value
-                                   || std::is_same<T_b, var>::value
-                                   || std::is_same<T_theta, var>::value,
-                               var>::type
-integrate_1d(const F &f, const T_a &a, const T_b &b,
-             const std::vector<T_theta> &theta, const std::vector<double> &x_r,
-             const std::vector<int> &x_i, std::ostream &msgs,
-             const double relative_tolerance
-             = std::sqrt(std::numeric_limits<double>::epsilon())) {
+template <typename F, typename T_a, typename T_b, typename T_theta,
+          typename = require_any_var_t<T_a, T_b, T_theta>>
+inline return_type_t<T_a, T_b, T_theta> integrate_1d(
+    const F &f, const T_a &a, const T_b &b, const std::vector<T_theta> &theta,
+    const std::vector<double> &x_r, const std::vector<int> &x_i,
+    std::ostream &msgs,
+    const double relative_tolerance
+    = std::sqrt(std::numeric_limits<double>::epsilon())) {
   static const char *function = "integrate_1d";
   check_less_or_equal(function, "lower limit", a, b);
 
   if (value_of(a) == value_of(b)) {
-    if (is_inf(a))
+    if (is_inf(a)) {
       domain_error(function, "Integration endpoints are both", value_of(a), "",
                    "");
+    }
     return var(0.0);
   } else {
     double integral = integrate(

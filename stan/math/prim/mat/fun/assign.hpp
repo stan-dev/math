@@ -23,10 +23,11 @@ namespace math {
  */
 template <int N>
 inline void print_mat_size(std::ostream& o) {
-  if (N == Eigen::Dynamic)
+  if (N == Eigen::Dynamic) {
     o << "dynamically sized";
-  else
+  } else {
     o << N;
+  }
 }
 
 /**
@@ -107,8 +108,9 @@ template <typename T_lhs, typename T_rhs, int R, int C>
 inline void assign(Eigen::Matrix<T_lhs, R, C>& x,
                    const Eigen::Matrix<T_rhs, R, C>& y) {
   check_matching_dims("assign", "left-hand-side", x, "right-hand-side", y);
-  for (int i = 0; i < x.size(); ++i)
+  for (int i = 0; i < x.size(); ++i) {
     assign(x(i), y(i));
+  }
 }
 
 /**
@@ -140,9 +142,11 @@ inline void assign(Eigen::Block<T_lhs> x, const Eigen::Matrix<T, R, C>& y) {
                    "right-hand side rows", y.rows());
   check_size_match("assign", "left-hand side cols", x.cols(),
                    "right-hand side cols", y.cols());
-  for (int n = 0; n < y.cols(); ++n)
-    for (int m = 0; m < y.rows(); ++m)
+  for (int n = 0; n < y.cols(); ++n) {
+    for (int m = 0; m < y.rows(); ++m) {
       assign(x(m, n), y(m, n));
+    }
+  }
 }
 
 /**
@@ -167,8 +171,9 @@ inline void assign(Eigen::Block<T_lhs> x, const Eigen::Matrix<T, R, C>& y) {
 template <typename T_lhs, typename T_rhs>
 inline void assign(std::vector<T_lhs>& x, const std::vector<T_rhs>& y) {
   check_matching_sizes("assign", "left-hand side", x, "right-hand side", y);
-  for (size_t i = 0; i < x.size(); ++i)
+  for (size_t i = 0; i < x.size(); ++i) {
     assign(x[i], y[i]);
+  }
 }
 
 }  // namespace math

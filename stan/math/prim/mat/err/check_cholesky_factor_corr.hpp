@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_CHECK_CHOLESKY_FACTOR_CORR_HPP
 #define STAN_MATH_PRIM_MAT_ERR_CHECK_CHOLESKY_FACTOR_CORR_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/mat/err/check_lower_triangular.hpp>
@@ -32,8 +33,9 @@ void check_cholesky_factor_corr(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
   check_square(function, name, y);
   check_lower_triangular(function, name, y);
-  for (int i = 0; i < y.rows(); ++i)
+  for (int i = 0; i < y.rows(); ++i) {
     check_positive(function, name, y(i, i));
+  }
   for (int i = 0; i < y.rows(); ++i) {
     Eigen::Matrix<T_y, Eigen::Dynamic, 1> y_i = y.row(i).transpose();
     check_unit_vector(function, name, y_i);

@@ -6,7 +6,6 @@
 
 TEST(AgradRev, if_else) {
   using stan::math::if_else;
-  using stan::math::if_else;
   using stan::math::var;
 
   EXPECT_FLOAT_EQ(1.0, if_else(true, var(1.0), var(2.0)).val());

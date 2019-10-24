@@ -52,6 +52,16 @@ TEST(MathFunctions, log_sum_exp_2) {
   EXPECT_FLOAT_EQ(0.0, log_sum_exp(-10000.0, 0.0));
 }
 
+TEST(MathFunctions, log_sum_exp_2_inf) {
+  using stan::math::log_sum_exp;
+  double inf = std::numeric_limits<double>::infinity();
+  test_log_sum_exp(1.0, -inf);
+  test_log_sum_exp(-inf, 3.0);
+  test_log_sum_exp(-inf, -inf);
+  EXPECT_FLOAT_EQ(inf, log_sum_exp(inf, 3.0));
+  EXPECT_FLOAT_EQ(inf, log_sum_exp(inf, inf));
+}
+
 TEST(MathFunctions, log_sum_exp_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
 

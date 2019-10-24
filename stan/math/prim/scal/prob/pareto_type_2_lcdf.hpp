@@ -1,9 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_PROB_PARETO_TYPE_2_LCDF_HPP
 #define STAN_MATH_PRIM_SCAL_PROB_PARETO_TYPE_2_LCDF_HPP
 
-#include <stan/math/prim/scal/meta/is_constant_struct.hpp>
-#include <stan/math/prim/scal/meta/partials_return_type.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
@@ -12,23 +10,20 @@
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
-#include <stan/math/prim/scal/meta/scalar_seq_view.hpp>
-#include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 #include <cmath>
 
 namespace stan {
 namespace math {
 
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
-typename return_type<T_y, T_loc, T_scale, T_shape>::type pareto_type_2_lcdf(
+return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lcdf(
     const T_y& y, const T_loc& mu, const T_scale& lambda,
     const T_shape& alpha) {
-  typedef
-      typename stan::partials_return_type<T_y, T_loc, T_scale, T_shape>::type
-          T_partials_return;
+  using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_shape>;
 
-  if (size_zero(y, mu, lambda, alpha))
+  if (size_zero(y, mu, lambda, alpha)) {
     return 0.0;
+  }
 
   static const char* function = "pareto_type_2_lcdf";
 
@@ -59,8 +54,8 @@ typename return_type<T_y, T_loc, T_scale, T_shape>::type pareto_type_2_lcdf(
   VectorBuilder<true, T_partials_return, T_y, T_loc, T_scale, T_shape>
       inv_p1_pow_alpha_minus_one(N);
 
-  VectorBuilder<!is_constant_struct<T_shape>::value, T_partials_return, T_y,
-                T_loc, T_scale, T_shape>
+  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_y, T_loc,
+                T_scale, T_shape>
       log_1p_y_over_lambda(N);
 
   for (size_t i = 0; i < N; i++) {
@@ -72,8 +67,9 @@ typename return_type<T_y, T_loc, T_scale, T_shape>::type pareto_type_2_lcdf(
 
     inv_p1_pow_alpha_minus_one[i] = 1.0 / (p1_pow_alpha - 1.0);
 
-    if (!is_constant_struct<T_shape>::value)
+    if (!is_constant_all<T_shape>::value) {
       log_1p_y_over_lambda[i] = log(temp);
+    }
   }
 
   for (size_t n = 0; n < N; n++) {
@@ -87,16 +83,20 @@ typename return_type<T_y, T_loc, T_scale, T_shape>::type pareto_type_2_lcdf(
 
     P += cdf_log[n];
 
-    if (!is_constant_struct<T_y>::value)
+    if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] += grad_1_2;
-    if (!is_constant_struct<T_loc>::value)
+    }
+    if (!is_constant_all<T_loc>::value) {
       ops_partials.edge2_.partials_[n] -= grad_1_2;
-    if (!is_constant_struct<T_scale>::value)
+    }
+    if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n]
           += (mu_dbl - y_dbl) * grad_1_2 / lambda_dbl;
-    if (!is_constant_struct<T_shape>::value)
+    }
+    if (!is_constant_all<T_shape>::value) {
       ops_partials.edge4_.partials_[n]
           += log_1p_y_over_lambda[n] * inv_p1_pow_alpha_minus_one[n];
+    }
   }
   return ops_partials.build(P);
 }

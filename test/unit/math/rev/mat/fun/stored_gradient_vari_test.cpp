@@ -7,7 +7,7 @@ TEST(StoredGradientVari, propagate3) {
   using stan::math::var;
   using stan::math::vari;
   vari** xs = reinterpret_cast<vari**>(
-      stan::math::ChainableStack::instance().memalloc_.alloc(3
+      stan::math::ChainableStack::instance_->memalloc_.alloc(3
                                                              * sizeof(vari*)));
   // value not used here
   var xs1 = 1;
@@ -19,7 +19,7 @@ TEST(StoredGradientVari, propagate3) {
   xs[1] = xs2.vi_;
   xs[2] = xs3.vi_;
   double* partials = reinterpret_cast<double*>(
-      stan::math::ChainableStack::instance().memalloc_.alloc(3
+      stan::math::ChainableStack::instance_->memalloc_.alloc(3
                                                              * sizeof(double)));
   partials[0] = 10;
   partials[1] = 100;
@@ -69,7 +69,7 @@ TEST(AgradRevMatrix, check_varis_on_stack) {
   using stan::math::var;
   using stan::math::vari;
   vari** xs = reinterpret_cast<vari**>(
-      stan::math::ChainableStack::instance().memalloc_.alloc(3
+      stan::math::ChainableStack::instance_->memalloc_.alloc(3
                                                              * sizeof(vari*)));
   // value not used here
   var xs1 = 1;
@@ -81,7 +81,7 @@ TEST(AgradRevMatrix, check_varis_on_stack) {
   xs[1] = xs2.vi_;
   xs[2] = xs3.vi_;
   double* partials = reinterpret_cast<double*>(
-      stan::math::ChainableStack::instance().memalloc_.alloc(3
+      stan::math::ChainableStack::instance_->memalloc_.alloc(3
                                                              * sizeof(double)));
   partials[0] = 10;
   partials[1] = 100;

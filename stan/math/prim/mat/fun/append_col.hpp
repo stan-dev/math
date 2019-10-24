@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_APPEND_COL_HPP
 #define STAN_MATH_PRIM_MAT_FUN_APPEND_COL_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/meta/return_type.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <vector>
 
@@ -33,8 +33,7 @@ namespace math {
  * second matrix side by side.
  */
 template <typename T1, typename T2, int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<typename return_type<T1, T2>::type, Eigen::Dynamic,
-                     Eigen::Dynamic>
+inline Eigen::Matrix<return_type_t<T1, T2>, Eigen::Dynamic, Eigen::Dynamic>
 append_col(const Eigen::Matrix<T1, R1, C1>& A,
            const Eigen::Matrix<T2, R2, C2>& B) {
   using Eigen::Dynamic;
@@ -46,15 +45,18 @@ append_col(const Eigen::Matrix<T1, R1, C1>& A,
   int Bcols = B.cols();
   check_size_match("append_col", "rows of A", Arows, "rows of B", Brows);
 
-  Matrix<typename return_type<T1, T2>::type, Dynamic, Dynamic> result(
-      Arows, Acols + Bcols);
-  for (int j = 0; j < Acols; j++)
-    for (int i = 0; i < Arows; i++)
+  Matrix<return_type_t<T1, T2>, Dynamic, Dynamic> result(Arows, Acols + Bcols);
+  for (int j = 0; j < Acols; j++) {
+    for (int i = 0; i < Arows; i++) {
       result(i, j) = A(i, j);
+    }
+  }
 
-  for (int j = Acols, k = 0; k < Bcols; j++, k++)
-    for (int i = 0; i < Arows; i++)
+  for (int j = Acols, k = 0; k < Bcols; j++, k++) {
+    for (int i = 0; i < Arows; i++) {
       result(i, j) = B(i, k);
+    }
+  }
   return result;
 }
 
@@ -76,19 +78,20 @@ append_col(const Eigen::Matrix<T1, R1, C1>& A,
  * of the first row vector.
  */
 template <typename T1, typename T2, int C1, int C2>
-inline Eigen::Matrix<typename return_type<T1, T2>::type, 1, Eigen::Dynamic>
-append_col(const Eigen::Matrix<T1, 1, C1>& A,
-           const Eigen::Matrix<T2, 1, C2>& B) {
+inline Eigen::Matrix<return_type_t<T1, T2>, 1, Eigen::Dynamic> append_col(
+    const Eigen::Matrix<T1, 1, C1>& A, const Eigen::Matrix<T2, 1, C2>& B) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
   int Asize = A.size();
   int Bsize = B.size();
-  Matrix<typename return_type<T1, T2>::type, 1, Dynamic> result(Asize + Bsize);
-  for (int i = 0; i < Asize; i++)
+  Matrix<return_type_t<T1, T2>, 1, Dynamic> result(Asize + Bsize);
+  for (int i = 0; i < Asize; i++) {
     result(i) = A(i);
-  for (int i = 0, j = Asize; i < Bsize; i++, j++)
+  }
+  for (int i = 0, j = Asize; i < Bsize; i++, j++) {
     result(j) = B(i);
+  }
   return result;
 }
 
@@ -171,11 +174,11 @@ inline Eigen::Matrix<T, 1, Eigen::Dynamic> append_col(
  * @return Result of stacking the scalar on top of the row vector.
  */
 template <typename T1, typename T2, int R, int C>
-inline Eigen::Matrix<typename return_type<T1, T2>::type, 1, Eigen::Dynamic>
-append_col(const T1& A, const Eigen::Matrix<T2, R, C>& B) {
+inline Eigen::Matrix<return_type_t<T1, T2>, 1, Eigen::Dynamic> append_col(
+    const T1& A, const Eigen::Matrix<T2, R, C>& B) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  typedef typename return_type<T1, T2>::type return_type;
+  using return_type = return_type_t<T1, T2>;
 
   Matrix<return_type, 1, Dynamic> result(B.size() + 1);
   result << A, B.template cast<return_type>();
@@ -197,11 +200,11 @@ append_col(const T1& A, const Eigen::Matrix<T2, R, C>& B) {
  * @return Result of stacking the row vector on top of the scalar.
  */
 template <typename T1, typename T2, int R, int C>
-inline Eigen::Matrix<typename return_type<T1, T2>::type, 1, Eigen::Dynamic>
-append_col(const Eigen::Matrix<T1, R, C>& A, const T2& B) {
+inline Eigen::Matrix<return_type_t<T1, T2>, 1, Eigen::Dynamic> append_col(
+    const Eigen::Matrix<T1, R, C>& A, const T2& B) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  typedef typename return_type<T1, T2>::type return_type;
+  using return_type = return_type_t<T1, T2>;
 
   Matrix<return_type, 1, Dynamic> result(A.size() + 1);
   result << A.template cast<return_type>(), B;

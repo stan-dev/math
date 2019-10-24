@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_MAT_FUN_STAN_PRINT_HPP
 #define STAN_MATH_REV_MAT_FUN_STAN_PRINT_HPP
 
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <ostream>
 

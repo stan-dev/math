@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_REV_MAT_HPP
 #define STAN_MATH_REV_MAT_HPP
 
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/scal/meta/is_var.hpp>
-#include <stan/math/rev/scal/meta/partials_type.hpp>
-#include <stan/math/rev/mat/meta/operands_and_partials.hpp>
+#include <stan/math/rev/meta.hpp>
 
 #include <stan/math/rev/mat/fun/Eigen_NumTraits.hpp>
 
@@ -24,6 +24,7 @@
 #include <stan/math/rev/mat/fun/gp_periodic_cov.hpp>
 #include <stan/math/rev/mat/fun/grad.hpp>
 #include <stan/math/rev/mat/fun/initialize_variable.hpp>
+#include <stan/math/rev/mat/fun/inverse.hpp>
 #include <stan/math/rev/mat/fun/LDLT_alloc.hpp>
 #include <stan/math/rev/mat/fun/LDLT_factor.hpp>
 #include <stan/math/rev/mat/fun/log_determinant.hpp>
@@ -60,7 +61,8 @@
 #include <stan/math/rev/mat/fun/variance.hpp>
 
 #include <stan/math/rev/mat/functor/adj_jac_apply.hpp>
-#include <stan/math/rev/mat/functor/algebra_solver.hpp>
+#include <stan/math/rev/mat/functor/algebra_solver_powell.hpp>
+#include <stan/math/rev/mat/functor/algebra_solver_newton.hpp>
 #include <stan/math/rev/mat/functor/gradient.hpp>
 #include <stan/math/rev/mat/functor/jacobian.hpp>
 #include <stan/math/rev/mat/functor/cvodes_utils.hpp>
@@ -68,6 +70,7 @@
 #include <stan/math/rev/mat/functor/integrate_ode_adams.hpp>
 #include <stan/math/rev/mat/functor/integrate_ode_bdf.hpp>
 #include <stan/math/rev/mat/functor/integrate_dae.hpp>
+#include <stan/math/rev/mat/functor/map_rect_concurrent.hpp>
 #include <stan/math/rev/mat/functor/map_rect_reduce.hpp>
 
 #endif
