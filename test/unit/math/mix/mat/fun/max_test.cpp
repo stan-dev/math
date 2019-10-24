@@ -15,8 +15,6 @@ void expect_max(const T& m) {
 }
 
 TEST(MathMixMatFun, max) {
-  auto f = [](const auto& x) { return stan::math::max(x); };
-
   Eigen::MatrixXd a(0, 0);
   expect_max(a);
 
