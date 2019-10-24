@@ -431,7 +431,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * size of given matrix.
    * @param A matrix_cl
    */
-  void initialize_buffer(matrix_cl<T> A) {
+  void initialize_buffer(const matrix_cl<T>& A) {
     cl::Context& ctx = opencl_context.context();
     cl::CommandQueue queue = opencl_context.queue();
     try {
