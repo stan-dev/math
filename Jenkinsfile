@@ -151,8 +151,7 @@ pipeline {
           steps {
               deleteDir()
               unstash 'MathSetup'
-              sh "mkdir -p doc/api"
-              sh "doxygen doxygen/doxygen.cfg"
+              sh "make doxygen"
           }
           post { always { deleteDir() } }
         }
