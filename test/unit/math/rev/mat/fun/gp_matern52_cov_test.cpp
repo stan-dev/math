@@ -6,7 +6,7 @@
 #include <vector>
 #include <type_traits>
 
-TEST(MathPrimMat, vec_double_gp_matern52_cov1) {
+TEST(MathRevMat, vec_double_gp_matern52_cov1) {
   stan::math::var sigma = 0.2;
   stan::math::var l = 5.0;
 
@@ -36,7 +36,7 @@ TEST(MathPrimMat, vec_double_gp_matern52_cov1) {
           << "index: (" << i << ", " << j << ")";
 }
 
-TEST(MathPrimMat, output_type_checking) {
+TEST(MathRevMat, output_type_checking) {
   stan::math::var sigma = 0.2;
   stan::math::var l = 5.0;
 
@@ -80,7 +80,7 @@ TEST(MathPrimMat, output_type_checking) {
                    value_of(x), value_of(sigma), l))>::value));
 }
 
-TEST(MathRev, fails_to_compile) {
+TEST(MathRevMat, fails_to_compile) {
   std::vector<Eigen::VectorXd> x(0);
   stan::math::var sigma;
   std::vector<stan::math::var> l;

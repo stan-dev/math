@@ -138,7 +138,7 @@ TEST(ErrorHandlingMat, CheckLess_Matrix_one_indexed_message) {
       << message;
 }
 
-TEST(ErrorHandlingMat, CheckGreaterOrEqual_nan) {
+TEST(ErrorHandlingMat, CheckLess_nan) {
   const char* function = "check_less";
   double nan = std::numeric_limits<double>::quiet_NaN();
 

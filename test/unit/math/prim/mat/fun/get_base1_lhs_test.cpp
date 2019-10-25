@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMatrixPrimMat, failing_in_26) {
+TEST(MathMatrixPrimMat, get_base1_lhs_failing_in_26) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::get_base1_lhs;
@@ -14,7 +14,7 @@ TEST(MathMatrixPrimMat, failing_in_26) {
       EXPECT_FLOAT_EQ(y(i - 1, j - 1), get_base1_lhs(y, i, j, "y", 2));
 }
 
-TEST(MathMatrixPrimMat, failing_pre_20) {
+TEST(MathMatrixPrimMat, get_base1_lhs_failing_pre_20) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::get_base1_lhs;

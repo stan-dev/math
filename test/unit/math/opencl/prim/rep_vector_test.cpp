@@ -25,7 +25,7 @@ TEST(MathMatrixCL, rep_v_exception_pass) {
   EXPECT_NO_THROW(stan::math::rep_vector(b, 1));
 }
 
-TEST(MathMatrixCL, rep_rv_value_check) {
+TEST(MathMatrixCL, rep_v_value_check) {
   double val = -5.0;
   stan::math::matrix_cl<double> m0_cl(val);
 

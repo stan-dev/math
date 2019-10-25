@@ -47,7 +47,7 @@ TEST(MathMatrixRevMat, diagPostMultiply2_vd) {
   expect_matrix_eq(v_m_times_m1, diag_post_multiply(m2, v));
 }
 
-TEST(MathMatrixRevMat, diagPreMultiply2_dv) {
+TEST(MathMatrixRevMat, diagPostMultiply2_dv) {
   Matrix<double, Dynamic, Dynamic> m1(3, 3);
   m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
 

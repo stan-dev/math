@@ -92,7 +92,7 @@ TEST(MathMatrixRevMat, matrix_exp_pade_3x3) {
   }
 }
 
-TEST(MathMatrixRevMat, matrix_exp_25x25) {
+TEST(MathMatrixRevMat, matrix_exp_pade_25x25) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::matrix_v;

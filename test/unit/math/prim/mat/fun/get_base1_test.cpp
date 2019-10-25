@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMatrixPrimMat, failing_pre_20) {
+TEST(MathMatrixPrimMat, get_base1_failing_pre_20) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::get_base1;

@@ -41,7 +41,7 @@ TEST(MathMatrixPrimMat, matrix_exp_pade_3x3_2) {
   expect_matrix_eq(m2, stan::math::matrix_exp_pade(m1));
 }
 
-TEST(MathMatrixPrimMat, matrix_exp_100x100) {
+TEST(MathMatrixPrimMat, matrix_exp_pade_100x100) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 

@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/prim/mat/fun/expect_matrix_eq.hpp>
 
-TEST(MathMatrixPrimMat, matrix_exp_2x2_1) {
+TEST(MathMatrixPrimMat, matrix_exp_2x2_2x2_1) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m1(2, 2), m2(2, 2);
 
   m1 << 3, 0, 0, 4;
@@ -12,7 +12,7 @@ TEST(MathMatrixPrimMat, matrix_exp_2x2_1) {
   expect_matrix_eq(m2, stan::math::matrix_exp_2x2(m1));
 }
 
-TEST(MathMatrixPrimMat, matrix_exp_2x2_2) {
+TEST(MathMatrixPrimMat, matrix_exp_2x2_2x2_2) {
   // example from Moler & Van Loan, 2003
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m1(2, 2), m2(2, 2);
 

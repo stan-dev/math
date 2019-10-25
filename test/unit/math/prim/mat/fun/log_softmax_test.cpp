@@ -23,7 +23,7 @@ void test_log_softmax(const Eigen::Matrix<double, Eigen::Dynamic, 1>& theta) {
     EXPECT_FLOAT_EQ(log_softmax_theta_expected(i), log_softmax_theta(i));
 }
 
-TEST(MathMatrixPrimMat, softmax) {
+TEST(MathMatrixPrimMat, log_softmax) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::log_softmax;
@@ -41,7 +41,7 @@ TEST(MathMatrixPrimMat, softmax) {
   // x3 << -1.0, 1.0, 10.0;
   // test_log_softmax(x3);
 }
-TEST(MathMatrixPrimMat, softmax_exception) {
+TEST(MathMatrixPrimMat, log_softmax_exception) {
   using stan::math::log_softmax;
   stan::math::vector_d v0;  // size == 0
 

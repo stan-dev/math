@@ -106,7 +106,7 @@ TEST(MathMatrixFwdMat, matrix_exp_pade_3x3) {
   EXPECT_FLOAT_EQ(-168.14036, output(2, 2).d_);
 }
 
-TEST(MathMatrixFwdMat, matrix_exp_100x100) {
+TEST(MathMatrixFwdMat, matrix_exp_pade_100x100) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
