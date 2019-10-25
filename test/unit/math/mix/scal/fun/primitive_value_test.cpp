@@ -4,7 +4,7 @@
 #include <test/unit/math/rev/scal/fun/util.hpp>
 #include <limits>
 
-TEST(AgradFwd, primitiveValueRevNested) {
+TEST(AgradMix, primitiveValueRevNested) {
   using stan::math::fvar;
   using stan::math::primitive_value;
   using stan::math::var;
@@ -17,7 +17,7 @@ TEST(AgradFwd, primitiveValueRevNested) {
   EXPECT_EQ(3, primitive_value(3));
 }
 
-TEST(AgradFwd, primitiveValueNanRevNested) {
+TEST(AgradMix, primitiveValueNanRevNested) {
   using stan::math::fvar;
   using stan::math::primitive_value;
   using stan::math::var;

@@ -316,7 +316,7 @@ TEST(AgradRev, log_mix_NaN) {
   test_nan(log_mix_, 0.6, 0.3, 0.5, true, false);
 }
 
-TEST(AgradRev, check_varis_on_stack) {
+TEST(AgradRev, log_mix_check_varis_on_stack) {
   stan::math::var theta = 0.5;
   stan::math::var x = 10.0;
   stan::math::var y = 4.0;

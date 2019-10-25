@@ -147,7 +147,7 @@ TEST(AgradRev, log_sum_exp_vec_3) {
   EXPECT_FLOAT_EQ(g[2], g2[2]);
 }
 
-TEST(AgradRev, check_varis_on_stack) {
+TEST(AgradRev, log_sum_exp_check_varis_on_stack) {
   std::vector<stan::math::var> x;
   x.push_back(5.0);
   x.push_back(2.0);

@@ -107,7 +107,7 @@ TEST(MathMatrixPrimMat, multiply) {
   EXPECT_NO_THROW(multiply(2.0, m0));
 }
 
-TEST(AgradRevMatrix, multiply_int) {
+TEST(MathMatrixPrimMat, multiply_int) {
   using stan::math::assign;
   using stan::math::multiply;
 
@@ -120,7 +120,7 @@ TEST(AgradRevMatrix, multiply_int) {
   assign(t_vec, multiply(vec, d_int));
 }
 
-TEST(AgradRevMatrix, multiply_vector_int) {
+TEST(MathMatrixPrimMat, multiply_vector_int) {
   using stan::math::multiply;
   using stan::math::vector_d;
 
