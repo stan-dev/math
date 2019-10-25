@@ -467,15 +467,14 @@ class matrix_cl<T, require_arithmetic_t<T>> {
   /**
    * Initializes the OpencL buffer of this matrix by copying the data from given
    * object. Assumes that size of \c this is already set and matches the
-   * buffer size. If the object is rvalue (temporary) it is first copied to heap
+   * buffer size. If the object is rvalue (temporary) it is first moved to heap
    * and callback is set to delete it after copying to OpenCL device is
    * complete.
-   * @tparam in_order whether copying must be done in order
    * @tparam U type of object
    * @param obj object
    * @return event for the copy
    */
-  template <bool in_order = false, typename U>
+  template <typename U>
   void initialize_buffer_optionally_from_heap(U&& obj) {
     using U_val = std::decay_t<U>;
     if (size() == 0) {
@@ -518,7 +517,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
   }
 
   /**
-   * Deletes the container. Used as callback OpenCL event.
+   * Deletes the container. Used as a callback for OpenCL event.
    * @tparam U type of container
    * @param e cl_event handle
    * @param status status of event
