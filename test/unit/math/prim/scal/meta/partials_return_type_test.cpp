@@ -5,19 +5,19 @@
 
 using stan::partials_return_type;
 
-TEST(MetaTraits, PartialsReturnTypeDouble) {
+TEST(MetaTraitsPrimScal, PartialsReturnTypeDouble) {
   test::expect_same_type<double, partials_return_type<double>::type>();
 }
 
-TEST(MetaTraits, PartialsReturnTypeFloat) {
+TEST(MetaTraitsPrimScal, PartialsReturnTypeFloat) {
   test::expect_same_type<double, partials_return_type<float>::type>();
 }
 
-TEST(MetaTraits, PartialsReturnTypeInt) {
+TEST(MetaTraitsPrimScal, PartialsReturnTypeInt) {
   test::expect_same_type<double, partials_return_type<int>::type>();
 }
 
-TEST(MetaTraits, PartialsReturnTypeScalarTenParams) {
+TEST(MetaTraitsPrimScal, PartialsReturnTypeScalarTenParams) {
   test::expect_same_type<
       double, partials_return_type<double, int, double, float, float, double,
                                    float, int, double, double>::type>();
