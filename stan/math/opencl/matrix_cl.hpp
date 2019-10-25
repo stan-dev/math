@@ -300,6 +300,9 @@ class matrix_cl<T, require_arithmetic_t<T>> {
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
       : rows_(A.rows()), cols_(A.cols()), view_(partial_view) {
     using Mat_type = std::decay_t<decltype(A.eval())>;
+    if (size() == 0) {
+      return;
+    }
     if (is_eigen_matrix_or_array<Mat>::value
         && std::is_lvalue_reference<Mat>::value) {
       initialize_buffer(A.eval().data());
@@ -475,6 +478,9 @@ class matrix_cl<T, require_arithmetic_t<T>> {
   template <bool in_order = false, typename U>
   void initialize_buffer_optionally_from_heap(U&& obj) {
     using U_val = std::decay_t<U>;
+    if (size() == 0) {
+      return;
+    }
     if (std::is_lvalue_reference<U>::value) {
       initialize_buffer(obj.data());
     } else {
