@@ -19,7 +19,7 @@ TEST(MathFunctions, sum) {
   EXPECT_FLOAT_EQ(6.0, stan::math::sum(x));
 }
 
-TEST(MathFunctions, sub_nan) {
+TEST(MathFunctions, sum_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
   std::vector<double> x(3);
 
