@@ -4,7 +4,7 @@
 #include <limits>
 #include <vector>
 
-TEST(ErrorHandlingMatrix, checkVectorMatrix) {
+TEST(ErrorHandlingOpenCL, checkVectorMatrix) {
   using stan::math::matrix_cl;
   matrix_cl<double> x(3, 3);
 
@@ -21,7 +21,7 @@ TEST(ErrorHandlingMatrix, checkVectorMatrix) {
   EXPECT_NO_THROW(stan::math::check_vector("checkVector", "x", x3));
 }
 
-TEST(ErrorHandlingMatrix, checkVectorMatrix_nan) {
+TEST(ErrorHandlingOpenCL, checkVectorMatrix_nan) {
   using stan::math::matrix_cl;
   double nan = std::numeric_limits<double>::quiet_NaN();
   std::vector<double> nan_vec({nan, nan, nan, nan, nan, nan, nan, nan, nan});

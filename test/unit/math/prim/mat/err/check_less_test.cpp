@@ -5,7 +5,7 @@
 
 using stan::math::check_less;
 
-TEST(ErrorHandlingScalar, CheckLess_Matrix) {
+TEST(ErrorHandlingMat, CheckLess_Matrix) {
   const char* function = "check_less";
   double x;
   double high;
@@ -80,7 +80,7 @@ TEST(ErrorHandlingScalar, CheckLess_Matrix) {
   EXPECT_THROW(check_less(function, "x", x, high_vec), std::domain_error);
 }
 
-TEST(ErrorHandlingScalar, CheckLess_Matrix_one_indexed_message) {
+TEST(ErrorHandlingMat, CheckLess_Matrix_one_indexed_message) {
   const char* function = "check_less";
   double x;
   double high;
@@ -138,7 +138,7 @@ TEST(ErrorHandlingScalar, CheckLess_Matrix_one_indexed_message) {
       << message;
 }
 
-TEST(ErrorHandlingScalar, CheckGreaterOrEqual_nan) {
+TEST(ErrorHandlingMat, CheckGreaterOrEqual_nan) {
   const char* function = "check_less";
   double nan = std::numeric_limits<double>::quiet_NaN();
 

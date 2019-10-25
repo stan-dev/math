@@ -50,7 +50,7 @@ TEST(MathMatrixOpenCL, multiply_zero_size) {
   EXPECT_NO_THROW(stan::math::multiply_transpose(m00));
 }
 
-TEST(AgradRevMatrix, multiply_transposed_small) {
+TEST(MathMatrixOpenCL, multiply_transposed_small) {
   using stan::math::multiply;
   auto m1 = stan::math::matrix_d::Random(3, 3).eval();
   stan::math::matrix_d m2(3, 3);
@@ -66,7 +66,7 @@ TEST(AgradRevMatrix, multiply_transposed_small) {
   EXPECT_MATRIX_NEAR(m2, m2_cl, 1e-10);
 }
 
-TEST(AgradRevMatrix, multiply_transposed_big) {
+TEST(MathMatrixOpenCL, multiply_transposed_big) {
   using stan::math::multiply;
   stan::math::matrix_d m2, m2_cl;
 
@@ -83,7 +83,7 @@ TEST(AgradRevMatrix, multiply_transposed_big) {
   EXPECT_MATRIX_NEAR(m2, m2_cl, 1e-10);
 }
 
-TEST(AgradRevMatrix, multiply_transposed_big_non_square) {
+TEST(MathMatrixOpenCL, multiply_transposed_big_non_square) {
   using stan::math::multiply;
   stan::math::matrix_d m2, m2_cl;
 
@@ -103,7 +103,7 @@ TEST(AgradRevMatrix, multiply_transposed_big_non_square) {
   EXPECT_MATRIX_NEAR(m2, m2_cl, 1e-10);
 }
 
-TEST(AgradRevMatrix, multiply_transposed_big_x) {
+TEST(MathMatrixOpenCL, multiply_transposed_big_x) {
   using stan::math::multiply;
   stan::math::matrix_d m2, m2_cl;
 
