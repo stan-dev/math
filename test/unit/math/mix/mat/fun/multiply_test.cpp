@@ -1,0 +1,68 @@
+#include <test/unit/math/test_ad.hpp>
+
+TEST(mathMixMatFun, multiply) {
+  auto f
+      = [](const auto& x, const auto& y) { return stan::math::multiply(x, y); };
+
+  stan::test::ad_tolerances tols;
+  tols.hessian_hessian_ = 1e-1;
+  tols.hessian_fvar_hessian_ = 1e-1;
+
+  double a = 10;
+  Eigen::VectorXd v1(1);
+  v1 << 3;
+  Eigen::RowVectorXd rv1(1);
+  rv1 << -2;
+  Eigen::MatrixXd m11(1, 1);
+  m11 << 1.5;
+  stan::test::expect_ad(tols, f, a, v1);
+  stan::test::expect_ad(tols, f, v1, a);
+  stan::test::expect_ad(tols, f, a, rv1);
+  stan::test::expect_ad(tols, f, rv1, a);
+  stan::test::expect_ad(tols, f, rv1, v1);
+  stan::test::expect_ad(tols, f, v1, rv1);
+  stan::test::expect_ad(tols, f, a, m11);
+  stan::test::expect_ad(tols, f, m11, a);
+  stan::test::expect_ad(tols, f, m11, v1);
+  stan::test::expect_ad(tols, f, rv1, m11);
+  stan::test::expect_ad(tols, f, m11, m11);
+
+  Eigen::VectorXd v(2);
+  v << 100, -3;
+  Eigen::RowVectorXd rv(2);
+  rv << 100, -3;
+  Eigen::MatrixXd m(2, 2);
+  m << 100, 0, -3, 4;
+  stan::test::expect_ad(tols, f, a, v);
+  stan::test::expect_ad(tols, f, v, a);
+  stan::test::expect_ad(tols, f, a, rv);
+  stan::test::expect_ad(tols, f, rv, a);
+  stan::test::expect_ad(tols, f, rv, v);
+  stan::test::expect_ad(tols, f, v, rv);
+  stan::test::expect_ad(tols, f, a, m);
+  stan::test::expect_ad(tols, f, m, a);
+  stan::test::expect_ad(tols, f, m, v);
+  stan::test::expect_ad(tols, f, rv, m);
+  stan::test::expect_ad(tols, f, m, m);
+
+  // TODO(carpenter):  multiplying by size zero should return size zero
+  // the functions need to be fixed then the following will pass
+
+  // Eigen::VectorXd v0(0);
+  // Eigen::RowVectorXd rv0(0);
+  // Eigen::MatrixXd m00(0, 0);
+  // stan::test::expect_ad(tols, f, a, v0);
+  // stan::test::expect_ad(tols, f, v0, a);
+  // stan::test::expect_ad(tols, f, a, rv0);
+  // stan::test::expect_ad(tols, f, rv0, a);
+  // stan::test::expect_ad(tols, f, rv0, v0);
+  // stan::test::expect_ad(tols, f, v0, rv0);
+  // stan::test::expect_ad(tols, f, a, m00);
+  // stan::test::expect_ad(tols, f, m00, a);
+  // stan::test::expect_ad(tols, f, m00, v0);
+  // stan::test::expect_ad(tols, f, rv0, m00);
+  // stan::test::expect_ad(tols, f, m00, m00);
+
+  // exception cases
+  // can't compile mismatched dimensions, so no tests
+}
