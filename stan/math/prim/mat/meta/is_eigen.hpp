@@ -43,11 +43,44 @@ template <typename T, int R, int C>
 struct is_eigen_matrix_impl<Eigen::Matrix<T, R, C>> : std::true_type {};
 template <typename T>
 struct is_eigen_matrix_impl<Eigen::SparseMatrix<T>> : std::true_type {};
-
 }  // namespace internal
 
 template <typename T>
 struct is_eigen_matrix : internal::is_eigen_matrix_impl<std::decay_t<T>> {};
+
+namespace internal {
+template <typename T>
+struct is_eigen_array_impl : std::false_type {};
+template <typename T, int R, int C>
+struct is_eigen_array_impl<Eigen::Array<T, R, C>> : std::true_type {};
+}  // namespace internal
+
+template <typename T>
+struct is_eigen_array : internal::is_eigen_array_impl<std::decay_t<T>> {};
+
+template <typename T>
+using is_eigen_matrix_or_array
+    = math::disjunction<is_eigen_matrix<T>, is_eigen_array<T>>;
+
+namespace internal {
+template <typename T>
+struct is_eigen_contiguous_map_impl : std::false_type {};
+template <typename T, int Opts>
+struct is_eigen_contiguous_map_impl<Eigen::Map<T, Opts, Eigen::Stride<0, 0>>>
+    : std::true_type {};
+
+}  // namespace internal
+
+template <typename T>
+struct is_eigen_contiguous_map
+    : internal::is_eigen_contiguous_map_impl<std::decay_t<T>> {};
+
+template <typename T>
+using require_eigen_contiguous_map_t = require_t<is_eigen_contiguous_map<T>>;
+
+template <typename T>
+using require_not_eigen_contiguous_map_t
+    = require_not_t<is_eigen_contiguous_map<T>>;
 
 }  // namespace stan
 #endif

@@ -294,12 +294,45 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * @throw <code>std::system_error</code> if the memory on the device could not
    * be allocated
    */
-  template <typename Mat, require_eigen_t<Mat>..., require_same_vt<Mat, T>...>
+  template <typename Mat, require_eigen_t<Mat>..., require_same_vt<Mat, T>...,
+            require_not_eigen_contiguous_map_t<Mat>...>
   explicit matrix_cl(Mat&& A,
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
       : rows_(A.rows()), cols_(A.cols()), view_(partial_view) {
-    initialize_buffer<std::is_rvalue_reference<Mat&&>::value
-                      || !is_eigen_matrix<Mat>::value>(A.eval().data());
+    using Mat_type = std::decay_t<decltype(A.eval())>;
+    if (is_eigen_matrix_or_array<Mat>::value
+        && std::is_lvalue_reference<Mat>::value) {
+      initialize_buffer(A.eval().data());
+    } else {
+      auto* A_heap = new Mat_type(std::move(A.eval()));
+      try {
+        cl::Event e = initialize_buffer(A_heap->data());
+        e.setCallback(CL_COMPLETE, &delete_it<Mat_type>, A_heap);
+      } catch (...) {
+        delete A_heap;
+        throw;
+      }
+    }
+  }
+
+  /**
+   * Constructor for the matrix_cl that
+   * creates a copy of the Eigen Map on the OpenCL device.
+   * Regardless of `partial_view`, whole matrix is stored.
+   *
+   * @tparam T type of data in the \c Eigen \c Matrix
+   * @param A the \c Eigen \c Map
+   * @param partial_view which part of the matrix is used
+   *
+   * @throw <code>std::system_error</code> if the memory on the device could not
+   * be allocated
+   */
+  template <typename Map, require_eigen_contiguous_map_t<Map>...,
+            require_same_vt<Map, T>...>
+  explicit matrix_cl(Map&& A,
+                     matrix_cl_view partial_view = matrix_cl_view::Entire)
+      : rows_(A.rows()), cols_(A.cols()), view_(partial_view) {
+    initialize_buffer_optionally_from_heap(std::forward<Map>(A));
   }
 
   /**
@@ -352,7 +385,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
   explicit matrix_cl(Vec&& A, const int& R, const int& C,
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
       : rows_(R), cols_(C), view_(partial_view) {
-    initialize_buffer<std::is_rvalue_reference<Vec&&>::value>(A.data());
+    initialize_buffer_optionally_from_heap(std::forward<Vec>(A));
   }
 
   /**
@@ -406,23 +439,53 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * buffer size.
    * @tparam in_order whether copying must be done in order
    * @param A pointer to buffer
+   * @return event for the copy
    */
   template <bool in_order = false>
-  void initialize_buffer(const T* A) {
+  cl::Event initialize_buffer(const T* A) {
+    cl::Event transfer_event;
     if (size() == 0) {
-      return;
+      return transfer_event;
     }
     cl::Context& ctx = opencl_context.context();
     cl::CommandQueue& queue = opencl_context.queue();
     try {
       buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * size());
-      cl::Event transfer_event;
       queue.enqueueWriteBuffer(buffer_cl_,
                                opencl_context.in_order() || in_order, 0,
                                sizeof(T) * size(), A, nullptr, &transfer_event);
       this->add_write_event(transfer_event);
     } catch (const cl::Error& e) {
       check_opencl_error("initialize_buffer", e);
+    }
+    return transfer_event;
+  }
+
+  /**
+   * Initializes the OpencL buffer of this matrix by copying the data from given
+   * object. Assumes that size of \c this is already set and matches the
+   * buffer size. If the object is rvalue (temporary) it is first copied to heap
+   * and callback is set to delete it after copying to OpenCL device is
+   * complete.
+   * @tparam in_order whether copying must be done in order
+   * @tparam U type of object
+   * @param obj object
+   * @return event for the copy
+   */
+  template <bool in_order = false, typename U>
+  void initialize_buffer_optionally_from_heap(U&& obj) {
+    using U_val = std::decay_t<U>;
+    if (std::is_lvalue_reference<U>::value) {
+      initialize_buffer(obj.data());
+    } else {
+      auto* obj_heap = new U_val(std::move(obj));
+      try {
+        cl::Event e = initialize_buffer(obj_heap->data());
+        e.setCallback(CL_COMPLETE, &delete_it<U_val>, obj_heap);
+      } catch (...) {
+        delete obj_heap;
+        throw;
+      }
     }
   }
 
@@ -446,6 +509,18 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     } catch (const cl::Error& e) {
       check_opencl_error("copy (OpenCL)->(OpenCL)", e);
     }
+  }
+
+  /**
+   * Deletes the container. Used as callback OpenCL event.
+   * @tparam U type of container
+   * @param e cl_event handle
+   * @param status status of event
+   * @param container container to delete
+   */
+  template <typename U>
+  static void delete_it(cl_event e, cl_int status, void* container) {
+    delete static_cast<U*>(container);
   }
 };
 
