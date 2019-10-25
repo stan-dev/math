@@ -1,7 +1,6 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 #include <limits>
-#include <string>
 
 TEST(ErrorHandlingMatrix, isSymmetric) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y;
@@ -16,7 +15,6 @@ TEST(ErrorHandlingMatrix, isSymmetric) {
 
 TEST(ErrorHandlingMatrix, isSymmetric_one_indexed_message) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y;
-  std::string message;
 
   y.resize(2, 2);
   y << 1, 0, 3, 1;

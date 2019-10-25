@@ -20,10 +20,10 @@ namespace math {
  * @param name Variable name (for error messages)
  * @param y Matrix to test
  * @throw <code>std::invalid_argument</code> if the matrix is not square
- *   or if the matrix has 0 size.
+ *   or if the matrix has 0 size
  * @throw <code>std::domain_error</code> if the matrix is not symmetric,
  *   or if it is not positive semi-definite,
- *   or if any element of the matrix is <code>NaN</code>.
+ *   or if any element of the matrix is <code>NaN</code>
  */
 template <typename T_y>
 inline void check_pos_semidefinite(
@@ -32,16 +32,16 @@ inline void check_pos_semidefinite(
   check_symmetric(function, name, y);
   check_positive(function, name, "rows", y.rows());
 
-  if (y.rows() == 1 && !(y(0, 0) >= 0.0)) {
+  if (y.rows() == 1 && !(y(0, 0) >= 0))
     domain_error(function, name, "is not positive semi-definite.", "");
   }
 
   using Eigen::Dynamic;
   using Eigen::LDLT;
   using Eigen::Matrix;
-  LDLT<Matrix<double, Dynamic, Dynamic> > cholesky = value_of_rec(y).ldlt();
+  LDLT<Eigen::MatrixXd> cholesky = value_of_rec(y).ldlt();
   if (cholesky.info() != Eigen::Success
-      || (cholesky.vectorD().array() < 0.0).any()) {
+      || (cholesky.vectorD().array() < 0).any())
     domain_error(function, name, "is not positive semi-definite.", "");
   }
   check_not_nan(function, name, y);
