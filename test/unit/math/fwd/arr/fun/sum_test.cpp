@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(AgradFwdMatrixSum, vectorFvar) {
+TEST(AgradFwdArrSum, vectorFvar) {
   using stan::math::fvar;
   using stan::math::sum;
   using std::vector;
@@ -24,7 +24,7 @@ TEST(AgradFwdMatrixSum, vectorFvar) {
   EXPECT_FLOAT_EQ(0.0, sum(ve).d_);
 }
 
-TEST(AgradFwdMatrixSum, ffd_vector) {
+TEST(AgradFwdArrSum, ffd_vector) {
   using stan::math::fvar;
   using stan::math::sum;
   using std::vector;

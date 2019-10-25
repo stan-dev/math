@@ -213,7 +213,7 @@ TEST(MathPrimMat, vec_eigen_vec_gp_exp_quad_cov2) {
     }
 }
 
-TEST(MathPrimMat, domain_error_training_sig_l) {
+TEST(MathPrimMat, domain_error_training_sig_l_gp_cov_exp) {
   set_tuning_opts_to_use_gpu();
   double sigma = 0.2;
   double l = 5;
@@ -266,7 +266,7 @@ TEST(MathPrimMat, domain_error_training_sig_l) {
                std::domain_error);
 }
 
-TEST(MathPrimMat, nan_error_training_sig_l) {
+TEST(MathPrimMat, nan_error_training_sig_l_gp_cov_exp) {
   set_tuning_opts_to_use_gpu();
   double sigma = 0.2;
   double l = 5;
