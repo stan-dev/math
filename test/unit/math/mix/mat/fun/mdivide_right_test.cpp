@@ -1,532 +1,72 @@
+#include <test/unit/math/test_ad.hpp>
+
 #include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
-
-using stan::math::fvar;
-using stan::math::var;
-TEST(AgradMixMatrixMdivideRight, fv_matrix_matrix_1stDeriv) {
-  using stan::math::matrix_d;
-  using stan::math::matrix_fv;
-  using stan::math::mdivide_right;
-
-  matrix_fv Av(2, 2);
-  matrix_d Ad(2, 2);
-  matrix_fv I;
-
-  Av << 2.0, 3.0, 5.0, 7.0;
-  Av(0, 0).d_ = 2.0;
-  Av(0, 1).d_ = 2.0;
-  Av(1, 0).d_ = 2.0;
-  Av(1, 1).d_ = 2.0;
-  Ad << 2.0, 3.0, 5.0, 7.0;
-
-  I = mdivide_right(Av, Av);
-  EXPECT_NEAR(1.0, I(0, 0).val_.val(), 1.0E-12);
-  EXPECT_NEAR(0.0, I(0, 1).val_.val(), 1.0E-12);
-  EXPECT_NEAR(0.0, I(1, 0).val_.val(), 1.0E-12);
-  EXPECT_NEAR(1.0, I(1, 1).val_.val(), 1.0e-12);
-  EXPECT_NEAR(0.0, I(0, 0).d_.val(), 1.0E-12);
-  EXPECT_NEAR(0.0, I(0, 1).d_.val(), 1.0E-12);
-  EXPECT_NEAR(0.0, I(1, 0).d_.val(), 1.0E-12);
-  EXPECT_NEAR(0.0, I(1, 1).d_.val(), 1.0e-12);
-
-  I = mdivide_right(Av, Ad);
-  EXPECT_NEAR(1.0, I(0, 0).val_.val(), 1.0E-12);
-  EXPECT_NEAR(0.0, I(0, 1).val_.val(), 1.0E-12);
-  EXPECT_NEAR(0.0, I(1, 0).val_.val(), 1.0E-12);
-  EXPECT_NEAR(1.0, I(1, 1).val_.val(), 1.0e-12);
-  EXPECT_NEAR(-4.0, I(0, 0).d_.val(), 1.0E-12);
-  EXPECT_NEAR(2.0, I(0, 1).d_.val(), 1.0E-12);
-  EXPECT_NEAR(-4.0, I(1, 0).d_.val(), 1.0E-12);
-  EXPECT_NEAR(2.0, I(1, 1).d_.val(), 1.0e-12);
-
-  I = mdivide_right(Ad, Av);
-  EXPECT_NEAR(1.0, I(0, 0).val_.val(), 1.0E-12);
-  EXPECT_NEAR(0.0, I(0, 1).val_.val(), 1.0E-12);
-  EXPECT_NEAR(0.0, I(1, 0).val_.val(), 1.0E-12);
-  EXPECT_NEAR(1.0, I(1, 1).val_.val(), 1.0e-12);
-  EXPECT_NEAR(4.0, I(0, 0).d_.val(), 1.0E-12);
-  EXPECT_NEAR(-2.0, I(0, 1).d_.val(), 1.0E-12);
-  EXPECT_NEAR(4.0, I(1, 0).d_.val(), 1.0E-12);
-  EXPECT_NEAR(-2.0, I(1, 1).d_.val(), 1.0e-12);
-
-  AVEC q = createAVEC(Av(0, 0).val(), Av(0, 1).val(), Av(1, 0).val(),
-                      Av(1, 1).val());
-  VEC h;
-  I(0).val_.grad(q, h);
-  EXPECT_FLOAT_EQ(7.0, h[0]);
-  EXPECT_FLOAT_EQ(-5.0, h[1]);
-  EXPECT_FLOAT_EQ(0.0, h[2]);
-  EXPECT_FLOAT_EQ(0.0, h[3]);
-}
-TEST(AgradMixMatrixMdivideRight, fv_matrix_matrix_2ndDeriv) {
-  using stan::math::matrix_d;
-  using stan::math::matrix_fv;
-  using stan::math::mdivide_right;
-
-  matrix_fv Av(2, 2);
-  matrix_d Ad(2, 2);
-  matrix_fv I;
-
-  Av << 2.0, 3.0, 5.0, 7.0;
-  Av(0, 0).d_ = 2.0;
-  Av(0, 1).d_ = 2.0;
-  Av(1, 0).d_ = 2.0;
-  Av(1, 1).d_ = 2.0;
-  Ad << 2.0, 3.0, 5.0, 7.0;
-
-  I = mdivide_right(Ad, Av);
-
-  AVEC q = createAVEC(Av(0, 0).val(), Av(0, 1).val(), Av(1, 0).val(),
-                      Av(1, 1).val());
-  VEC h;
-  I(0).d_.grad(q, h);
-  EXPECT_FLOAT_EQ(44.0, h[0]);
-  EXPECT_FLOAT_EQ(-32.0, h[1]);
-  EXPECT_FLOAT_EQ(-14.0, h[2]);
-  EXPECT_FLOAT_EQ(10.0, h[3]);
-}
-TEST(AgradMixMatrixMdivideRight, fv_matrix_rowvector_1stDeriv) {
-  using stan::math::matrix_d;
-  using stan::math::matrix_fv;
-  using stan::math::mdivide_right;
-  using stan::math::row_vector_d;
-  using stan::math::row_vector_fv;
-
-  matrix_fv fv(2, 2);
-  fv << 1, 2, 3, 4;
-  fv(0, 0).d_ = 2.0;
-  fv(0, 1).d_ = 2.0;
-  fv(1, 0).d_ = 2.0;
-  fv(1, 1).d_ = 2.0;
-
-  matrix_d dv(2, 2);
-  dv << 1, 2, 3, 4;
-
-  row_vector_fv vecf(2);
-  vecf << 5, 6;
-  vecf(0).d_ = 2.0;
-  vecf(1).d_ = 2.0;
-
-  row_vector_d vecd(2);
-  vecd << 5, 6;
-
-  matrix_fv output;
-  output = mdivide_right(vecf, fv);
-  EXPECT_NEAR(-1.0, output(0, 0).val_.val(), 1.0E-12);
-  EXPECT_NEAR(2.0, output(0, 1).val_.val(), 1.0E-12);
-  EXPECT_NEAR(0.0, output(0, 0).d_.val(), 1.0E-12);
-  EXPECT_NEAR(0.0, output(0, 1).d_.val(), 1.0E-12);
-
-  output = mdivide_right(vecd, fv);
-  EXPECT_NEAR(-1.0, output(0, 0).val_.val(), 1.0E-12);
-  EXPECT_NEAR(2.0, output(0, 1).val_.val(), 1.0E-12);
-  EXPECT_NEAR(1.0, output(0, 0).d_.val(), 1.0E-12);
-  EXPECT_NEAR(-1.0, output(0, 1).d_.val(), 1.0E-12);
-
-  output = mdivide_right(vecf, dv);
-  EXPECT_NEAR(-1.0, output(0, 0).val_.val(), 1.0E-12);
-  EXPECT_NEAR(2.0, output(0, 1).val_.val(), 1.0E-12);
-  EXPECT_NEAR(-1.0, output(0, 0).d_.val(), 1.0E-12);
-  EXPECT_NEAR(1.0, output(0, 1).d_.val(), 1.0E-12);
-
-  AVEC q = createAVEC(vecf(0).val(), vecf(1).val());
-  VEC h;
-  output(0, 0).val_.grad(q, h);
-  EXPECT_FLOAT_EQ(-2.0, h[0]);
-  EXPECT_FLOAT_EQ(1.5, h[1]);
-}
-TEST(AgradMixMatrixMdivideRight, fv_matrix_rowvector_2ndDeriv) {
-  using stan::math::matrix_d;
-  using stan::math::matrix_fv;
-  using stan::math::mdivide_right;
-  using stan::math::row_vector_d;
-  using stan::math::row_vector_fv;
-
-  matrix_d dv(2, 2);
-  dv << 1, 2, 3, 4;
-
-  row_vector_fv vecf(2);
-  vecf << 5, 6;
-  vecf(0).d_ = 2.0;
-  vecf(1).d_ = 2.0;
-
-  matrix_fv output;
-  output = mdivide_right(vecf, dv);
-
-  AVEC q = createAVEC(vecf(0).val(), vecf(1).val());
-  VEC h;
-  output(0, 0).d_.grad(q, h);
-  EXPECT_FLOAT_EQ(0.0, h[0]);
-  EXPECT_FLOAT_EQ(0.0, h[1]);
-}
-TEST(AgradMixMatrixMdivideRight, fv_exceptions) {
-  using stan::math::matrix_d;
-  using stan::math::matrix_fv;
-  using stan::math::mdivide_right;
-  using stan::math::row_vector_d;
-  using stan::math::row_vector_fv;
-  using stan::math::vector_d;
-  using stan::math::vector_fv;
-
-  matrix_fv fv1(3, 3), fv2(4, 4);
-  fv1.setZero();
-  fv2.setZero();
-  row_vector_fv rvf1(3), rvf2(4);
-  rvf1.setZero();
-  rvf2.setZero();
-  vector_fv vf1(3), vf2(4);
-  vf1.setZero();
-  vf2.setZero();
-  matrix_d fd1(3, 3), fd2(4, 4);
-  fd1.setZero();
-  fd2.setZero();
-  row_vector_d rvd1(3), rvd2(4);
-  rvd1.setZero();
-  rvd2.setZero();
-  vector_d vd1(3), vd2(4);
-  vd1.setZero();
-  vd2.setZero();
-
-  EXPECT_THROW(mdivide_right(fv1, fd2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(fd1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(fv1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(fv1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(fv1, fd2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(fd1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(rvf2, fv1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(rvd2, fv1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(vd1, fv1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(vd2, fv1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(vf1, fv1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(vf2, fv1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(rvf1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(rvd1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(vd1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(vd2, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(vf1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(vf2, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(rvf2, fd1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(vf1, fd1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(vf2, fd1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(rvf1, fd2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(vf1, fd2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(vf2, fd2), std::invalid_argument);
-}
-TEST(AgradMixMatrixMdivideRight, ffv_matrix_matrix_1stDeriv) {
-  using stan::math::matrix_d;
-  using stan::math::matrix_ffv;
-  using stan::math::mdivide_right;
-
-  matrix_ffv Av(2, 2);
-  matrix_d Ad(2, 2);
-  matrix_ffv I;
-
-  Av << 2.0, 3.0, 5.0, 7.0;
-  Av(0, 0).d_ = 2.0;
-  Av(0, 1).d_ = 2.0;
-  Av(1, 0).d_ = 2.0;
-  Av(1, 1).d_ = 2.0;
-  Ad << 2.0, 3.0, 5.0, 7.0;
-
-  I = mdivide_right(Av, Av);
-  EXPECT_NEAR(1.0, I(0, 0).val_.val().val(), 1.0E-12);
-  EXPECT_NEAR(0.0, I(0, 1).val_.val().val(), 1.0E-12);
-  EXPECT_NEAR(0.0, I(1, 0).val_.val().val(), 1.0E-12);
-  EXPECT_NEAR(1.0, I(1, 1).val_.val().val(), 1.0e-12);
-  EXPECT_NEAR(0.0, I(0, 0).d_.val().val(), 1.0E-12);
-  EXPECT_NEAR(0.0, I(0, 1).d_.val().val(), 1.0E-12);
-  EXPECT_NEAR(0.0, I(1, 0).d_.val().val(), 1.0E-12);
-  EXPECT_NEAR(0.0, I(1, 1).d_.val().val(), 1.0e-12);
-
-  I = mdivide_right(Av, Ad);
-  EXPECT_NEAR(1.0, I(0, 0).val_.val().val(), 1.0E-12);
-  EXPECT_NEAR(0.0, I(0, 1).val_.val().val(), 1.0E-12);
-  EXPECT_NEAR(0.0, I(1, 0).val_.val().val(), 1.0E-12);
-  EXPECT_NEAR(1.0, I(1, 1).val_.val().val(), 1.0e-12);
-  EXPECT_NEAR(-4.0, I(0, 0).d_.val().val(), 1.0E-12);
-  EXPECT_NEAR(2.0, I(0, 1).d_.val().val(), 1.0E-12);
-  EXPECT_NEAR(-4.0, I(1, 0).d_.val().val(), 1.0E-12);
-  EXPECT_NEAR(2.0, I(1, 1).d_.val().val(), 1.0e-12);
-
-  I = mdivide_right(Ad, Av);
-  EXPECT_NEAR(1.0, I(0, 0).val_.val().val(), 1.0E-12);
-  EXPECT_NEAR(0.0, I(0, 1).val_.val().val(), 1.0E-12);
-  EXPECT_NEAR(0.0, I(1, 0).val_.val().val(), 1.0E-12);
-  EXPECT_NEAR(1.0, I(1, 1).val_.val().val(), 1.0e-12);
-  EXPECT_NEAR(4.0, I(0, 0).d_.val().val(), 1.0E-12);
-  EXPECT_NEAR(-2.0, I(0, 1).d_.val().val(), 1.0E-12);
-  EXPECT_NEAR(4.0, I(1, 0).d_.val().val(), 1.0E-12);
-  EXPECT_NEAR(-2.0, I(1, 1).d_.val().val(), 1.0e-12);
-
-  AVEC q = createAVEC(Av(0, 0).val().val(), Av(0, 1).val().val(),
-                      Av(1, 0).val().val(), Av(1, 1).val().val());
-  VEC h;
-  I(0).val_.val().grad(q, h);
-  EXPECT_FLOAT_EQ(7.0, h[0]);
-  EXPECT_FLOAT_EQ(-5.0, h[1]);
-  EXPECT_FLOAT_EQ(0.0, h[2]);
-  EXPECT_FLOAT_EQ(0.0, h[3]);
-}
-TEST(AgradMixMatrixMdivideRight, ffv_matrix_matrix_2ndDeriv_1) {
-  using stan::math::matrix_d;
-  using stan::math::matrix_ffv;
-  using stan::math::mdivide_right;
-
-  matrix_ffv Av(2, 2);
-  matrix_d Ad(2, 2);
-  matrix_ffv I;
-
-  Av << 2.0, 3.0, 5.0, 7.0;
-  Av(0, 0).d_ = 2.0;
-  Av(0, 1).d_ = 2.0;
-  Av(1, 0).d_ = 2.0;
-  Av(1, 1).d_ = 2.0;
-  Ad << 2.0, 3.0, 5.0, 7.0;
-
-  I = mdivide_right(Ad, Av);
-
-  AVEC q = createAVEC(Av(0, 0).val().val(), Av(0, 1).val().val(),
-                      Av(1, 0).val().val(), Av(1, 1).val().val());
-  VEC h;
-  I(0).val().d_.grad(q, h);
-  EXPECT_FLOAT_EQ(0, h[0]);
-  EXPECT_FLOAT_EQ(0, h[1]);
-  EXPECT_FLOAT_EQ(0, h[2]);
-  EXPECT_FLOAT_EQ(0, h[3]);
-}
-TEST(AgradMixMatrixMdivideRight, ffv_matrix_matrix_2ndDeriv_2) {
-  using stan::math::matrix_d;
-  using stan::math::matrix_ffv;
-  using stan::math::mdivide_right;
-
-  matrix_ffv Av(2, 2);
-  matrix_d Ad(2, 2);
-  matrix_ffv I;
-
-  Av << 2.0, 3.0, 5.0, 7.0;
-  Av(0, 0).d_ = 2.0;
-  Av(0, 1).d_ = 2.0;
-  Av(1, 0).d_ = 2.0;
-  Av(1, 1).d_ = 2.0;
-  Ad << 2.0, 3.0, 5.0, 7.0;
-
-  I = mdivide_right(Ad, Av);
-
-  AVEC q = createAVEC(Av(0, 0).val().val(), Av(0, 1).val().val(),
-                      Av(1, 0).val().val(), Av(1, 1).val().val());
-  VEC h;
-  I(0).d_.val().grad(q, h);
-  EXPECT_FLOAT_EQ(44.0, h[0]);
-  EXPECT_FLOAT_EQ(-32.0, h[1]);
-  EXPECT_FLOAT_EQ(-14.0, h[2]);
-  EXPECT_FLOAT_EQ(10.0, h[3]);
-}
-TEST(AgradMixMatrixMdivideRight, ffv_matrix_matrix_3rdDeriv) {
-  using stan::math::matrix_d;
-  using stan::math::matrix_ffv;
-  using stan::math::mdivide_right;
-
-  matrix_ffv Av(2, 2);
-  matrix_d Ad(2, 2);
-  matrix_ffv I;
-
-  Av << 2.0, 3.0, 5.0, 7.0;
-  Av(0, 0).d_ = 1.0;
-  Av(0, 1).d_ = 1.0;
-  Av(1, 0).d_ = 1.0;
-  Av(1, 1).d_ = 1.0;
-  Av(0, 0).val_.d_ = 1.0;
-  Av(0, 1).val_.d_ = 1.0;
-  Av(1, 0).val_.d_ = 1.0;
-  Av(1, 1).val_.d_ = 1.0;
-  Ad << 2.0, 3.0, 5.0, 7.0;
-
-  I = mdivide_right(Ad, Av);
-
-  AVEC q = createAVEC(Av(0, 0).val().val(), Av(0, 1).val().val(),
-                      Av(1, 0).val().val(), Av(1, 1).val().val());
-  VEC h;
-  I(0).d_.d_.grad(q, h);
-  EXPECT_FLOAT_EQ(76, h[0]);
-  EXPECT_FLOAT_EQ(-56, h[1]);
-  EXPECT_FLOAT_EQ(-30, h[2]);
-  EXPECT_FLOAT_EQ(22, h[3]);
-}
-TEST(AgradMixMatrixMdivideRight, ffv_matrix_rowvector_1stDeriv) {
-  using stan::math::matrix_d;
-  using stan::math::matrix_ffv;
-  using stan::math::mdivide_right;
-  using stan::math::row_vector_d;
-  using stan::math::row_vector_ffv;
-
-  matrix_ffv fv(2, 2);
-  fv << 1, 2, 3, 4;
-  fv(0, 0).d_ = 2.0;
-  fv(0, 1).d_ = 2.0;
-  fv(1, 0).d_ = 2.0;
-  fv(1, 1).d_ = 2.0;
-
-  matrix_d dv(2, 2);
-  dv << 1, 2, 3, 4;
-
-  row_vector_ffv vecf(2);
-  vecf << 5, 6;
-  vecf(0).d_ = 2.0;
-  vecf(1).d_ = 2.0;
-
-  row_vector_d vecd(2);
-  vecd << 5, 6;
-
-  matrix_ffv output;
-  output = mdivide_right(vecf, fv);
-  EXPECT_NEAR(-1.0, output(0, 0).val_.val().val(), 1.0E-12);
-  EXPECT_NEAR(2.0, output(0, 1).val_.val().val(), 1.0E-12);
-  EXPECT_NEAR(0.0, output(0, 0).d_.val().val(), 1.0E-12);
-  EXPECT_NEAR(0.0, output(0, 1).d_.val().val(), 1.0E-12);
-
-  output = mdivide_right(vecd, fv);
-  EXPECT_NEAR(-1.0, output(0, 0).val_.val().val(), 1.0E-12);
-  EXPECT_NEAR(2.0, output(0, 1).val_.val().val(), 1.0E-12);
-  EXPECT_NEAR(1.0, output(0, 0).d_.val().val(), 1.0E-12);
-  EXPECT_NEAR(-1.0, output(0, 1).d_.val().val(), 1.0E-12);
-
-  output = mdivide_right(vecf, dv);
-  EXPECT_NEAR(-1.0, output(0, 0).val_.val().val(), 1.0E-12);
-  EXPECT_NEAR(2.0, output(0, 1).val_.val().val(), 1.0E-12);
-  EXPECT_NEAR(-1.0, output(0, 0).d_.val().val(), 1.0E-12);
-  EXPECT_NEAR(1.0, output(0, 1).d_.val().val(), 1.0E-12);
-
-  AVEC q = createAVEC(vecf(0).val().val(), vecf(1).val().val());
-  VEC h;
-  output(0, 0).val_.val().grad(q, h);
-  EXPECT_FLOAT_EQ(-2.0, h[0]);
-  EXPECT_FLOAT_EQ(1.5, h[1]);
-}
-TEST(AgradMixMatrixMdivideRight, ffv_matrix_rowvector_2ndDeriv_1) {
-  using stan::math::matrix_d;
-  using stan::math::matrix_ffv;
-  using stan::math::mdivide_right;
-  using stan::math::row_vector_d;
-  using stan::math::row_vector_ffv;
-
-  matrix_d dv(2, 2);
-  dv << 1, 2, 3, 4;
-
-  row_vector_ffv vecf(2);
-  vecf << 5, 6;
-  vecf(0).d_ = 2.0;
-  vecf(1).d_ = 2.0;
-
-  matrix_ffv output;
-  output = mdivide_right(vecf, dv);
-
-  AVEC q = createAVEC(vecf(0).val().val(), vecf(1).val().val());
-  VEC h;
-  output(0, 0).val().d_.grad(q, h);
-  EXPECT_FLOAT_EQ(0.0, h[0]);
-  EXPECT_FLOAT_EQ(0.0, h[1]);
-}
-TEST(AgradMixMatrixMdivideRight, ffv_matrix_rowvector_2ndDeriv_2) {
-  using stan::math::matrix_d;
-  using stan::math::matrix_ffv;
-  using stan::math::mdivide_right;
-  using stan::math::row_vector_d;
-  using stan::math::row_vector_ffv;
-
-  matrix_d dv(2, 2);
-  dv << 1, 2, 3, 4;
-
-  row_vector_ffv vecf(2);
-  vecf << 5, 6;
-  vecf(0).d_ = 2.0;
-  vecf(1).d_ = 2.0;
-
-  matrix_ffv output;
-  output = mdivide_right(vecf, dv);
-
-  AVEC q = createAVEC(vecf(0).val().val(), vecf(1).val().val());
-  VEC h;
-  output(0, 0).d_.val().grad(q, h);
-  EXPECT_FLOAT_EQ(0.0, h[0]);
-  EXPECT_FLOAT_EQ(0.0, h[1]);
-}
-TEST(AgradMixMatrixMdivideRight, ffv_matrix_rowvector_3rdDeriv) {
-  using stan::math::matrix_d;
-  using stan::math::matrix_ffv;
-  using stan::math::mdivide_right;
-  using stan::math::row_vector_d;
-  using stan::math::row_vector_ffv;
-
-  matrix_d dv(2, 2);
-  dv << 1, 2, 3, 4;
-
-  row_vector_ffv vecf(2);
-  vecf << 5, 6;
-  vecf(0).d_ = 1.0;
-  vecf(1).d_ = 1.0;
-  vecf(0).val_.d_ = 1.0;
-  vecf(1).val_.d_ = 1.0;
-
-  matrix_ffv output;
-  output = mdivide_right(vecf, dv);
-
-  AVEC q = createAVEC(vecf(0).val().val(), vecf(1).val().val());
-  VEC h;
-  output(0, 0).d_.d_.grad(q, h);
-  EXPECT_FLOAT_EQ(0.0, h[0]);
-  EXPECT_FLOAT_EQ(0.0, h[1]);
-}
-TEST(AgradMixMatrixMdivideRight, ffv_exceptions) {
-  using stan::math::matrix_d;
-  using stan::math::matrix_ffv;
-  using stan::math::mdivide_right;
-  using stan::math::row_vector_d;
-  using stan::math::row_vector_ffv;
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
-
-  matrix_ffv fv1(3, 3), fv2(4, 4);
-  fv1.setZero();
-  fv2.setZero();
-  row_vector_ffv rvf1(3), rvf2(4);
-  rvf1.setZero();
-  rvf2.setZero();
-  vector_ffv vf1(3), vf2(4);
-  vf1.setZero();
-  vf2.setZero();
-  matrix_d fd1(3, 3), fd2(4, 4);
-  fd1.setZero();
-  fd2.setZero();
-  row_vector_d rvd1(3), rvd2(4);
-  rvd1.setZero();
-  rvd2.setZero();
-  vector_d vd1(3), vd2(4);
-  vd1.setZero();
-  vd2.setZero();
-
-  EXPECT_THROW(mdivide_right(fv1, fd2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(fd1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(fv1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(fv1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(fv1, fd2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(fd1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(rvf2, fv1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(rvd2, fv1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(vd1, fv1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(vd2, fv1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(vf1, fv1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(vf2, fv1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(rvf1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(rvd1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(vd1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(vd2, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(vf1, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(vf2, fv2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(rvf2, fd1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(vf1, fd1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(vf2, fd1), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(rvf1, fd2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(vf1, fd2), std::invalid_argument);
-  EXPECT_THROW(mdivide_right(vf2, fd2), std::invalid_argument);
+#include <vector>
+
+TEST(MathMixMatFun, mdivideRight) {
+  auto f = [](const auto& x, const auto& y) {
+    return stan::math::mdivide_right(x, y);
+  };
+
+  Eigen::MatrixXd a(1, 1);
+  a << 2;
+  Eigen::MatrixXd b(1, 1);
+  b << 3;
+  stan::test::expect_ad(f, a, b);
+
+  Eigen::RowVectorXd g(1);
+  g << 3;
+  stan::test::expect_ad(f, g, a);
+
+  Eigen::MatrixXd c(2, 2);
+  c << 2, 3, 3, 7;
+  Eigen::MatrixXd d(2, 2);
+  d << 2, 0, 0, 3;
+  Eigen::MatrixXd ee(2, 2);
+  ee << 2, 3, 5, 7;
+  for (const auto& m1 : std::vector<Eigen::MatrixXd>{c, d, ee}) {
+    for (const auto& m2 : std::vector<Eigen::MatrixXd>{c, d, ee}) {
+      stan::test::expect_ad(f, m1, m2);
+    }
+  }
+
+  Eigen::RowVectorXd e(2);
+  e << 2, 3;
+  for (const auto& m1 : std::vector<Eigen::MatrixXd>{c, d, ee}) {
+    stan::test::expect_ad(f, e, m1);
+  }
+
+  Eigen::RowVectorXd h(2);
+  h << 5, 6;
+  Eigen::MatrixXd j(2, 2);
+  j << 1, 2, 3, 4;
+  stan::test::expect_ad(f, h, j);
+
+  // ill-formed matrix inputs compile then throw at runtime
+  Eigen::MatrixXd m33(3, 3);
+  m33 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
+  Eigen::MatrixXd m44(4, 4);
+  m44 << 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16;
+
+  Eigen::VectorXd v3(3);
+  v3 << 1, 2, 3;
+
+  Eigen::RowVectorXd rv3(3);
+  rv3 << 1, 2, 3;
+
+  stan::test::ad_tolerances tols;
+  tols.hessian_hessian_ = 1e-2;
+  tols.hessian_fvar_hessian_ = 1e-2;
+  Eigen::RowVectorXd u(5);
+  u << 62, 84, 84, 76, 108;
+  Eigen::MatrixXd v(5, 5);
+  v << 20, 8, -9, 7, 5, 8, 20, 0, 4, 4, -9, 0, 20, 2, 5, 7, 4, 2, 20, -5, 5, 4,
+      5, -5, 20;
+  stan::test::expect_ad(tols, f, u, v);
+
+  // ill-formed inputs
+  stan::test::expect_ad(f, m33, m44);  // wrong size
+  stan::test::expect_ad(f, rv3, m44);  // wrong size
+  stan::test::expect_ad(f, v3, m33);   // wrong type
 }
