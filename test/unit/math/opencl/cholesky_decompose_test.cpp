@@ -9,7 +9,7 @@
   for (int i = 0; i < A.size(); i++)    \
     EXPECT_NEAR(A(i), B(i), DELTA);
 
-TEST(MathMatrix, cholesky_decompose_cpu_vs_cl_small) {
+TEST(MathMatrixOpenCL, cholesky_decompose_cpu_vs_cl_small) {
   stan::math::matrix_d m0(3, 3);
   m0 << 25, 15, -5, 15, 18, 0, -5, 0, 11;
 
@@ -60,19 +60,19 @@ void cholesky_decompose_test(int size) {
   EXPECT_LT(max_error, 1e-8);
 }
 
-TEST(MathMatrix, cholesky_decompose_small) {
+TEST(MathMatrixOpenCL, cholesky_decompose_small) {
   cholesky_decompose_test(10);
   cholesky_decompose_test(50);
   cholesky_decompose_test(100);
 }
 
-TEST(MathMatrix, cholesky_decompose_big) {
+TEST(MathMatrixOpenCL, cholesky_decompose_big) {
   cholesky_decompose_test(1251);
   cholesky_decompose_test(1704);
   cholesky_decompose_test(2000);
 }
 
-TEST(MathMatrix, cholesky_decompose_big_tuning_opts) {
+TEST(MathMatrixOpenCL, cholesky_decompose_big_tuning_opts) {
   std::vector<int> size_transfer({256, 512, 1300});
   std::vector<int> cholesky_min_size({64, 256});
   std::vector<int> cholesky_part({2, 4});

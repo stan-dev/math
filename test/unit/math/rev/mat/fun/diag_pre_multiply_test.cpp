@@ -9,7 +9,7 @@ using Eigen::Matrix;
 using stan::math::diag_pre_multiply;
 using stan::math::var;
 
-TEST(MathMatrix, diagPreMultiply2_vv) {
+TEST(MathMatrixRevMat, diagPreMultiply2_vv) {
   Matrix<var, Dynamic, Dynamic> m(3, 3);
   m << 1, 2, 3, 4, 5, 6, 7, 8, 9;
 
@@ -29,7 +29,7 @@ TEST(MathMatrix, diagPreMultiply2_vv) {
   expect_matrix_eq(v_m_times_m, diag_pre_multiply(rv, m));
 }
 
-TEST(MathMatrix, diagPreMultiply2_vd) {
+TEST(MathMatrixRevMat, diagPreMultiply2_vd) {
   Matrix<var, Dynamic, Dynamic> m1(3, 3);
   m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
 
@@ -47,7 +47,7 @@ TEST(MathMatrix, diagPreMultiply2_vd) {
   expect_matrix_eq(v_m_times_m1, diag_pre_multiply(v, m2));
 }
 
-TEST(MathMatrix, diagPreMultiply2_dv) {
+TEST(MathMatrixRevMat, diagPreMultiply2_dv) {
   Matrix<double, Dynamic, Dynamic> m1(3, 3);
   m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
 
@@ -65,7 +65,7 @@ TEST(MathMatrix, diagPreMultiply2_dv) {
   expect_matrix_eq(v_m_times_m2, diag_pre_multiply(v, m1));
 }
 
-TEST(MathMatrix, diagPreMultiplyGrad_vv) {
+TEST(MathMatrixRevMat, diagPreMultiplyGrad_vv) {
   Matrix<var, Dynamic, Dynamic> m1(3, 3);
   m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
 
@@ -108,7 +108,7 @@ TEST(MathMatrix, diagPreMultiplyGrad_vv) {
     EXPECT_FLOAT_EQ(g1[i], g2[i]);
 }
 
-TEST(MathMatrix, diagPreMultiplyGrad_vd) {
+TEST(MathMatrixRevMat, diagPreMultiplyGrad_vd) {
   Matrix<var, Dynamic, Dynamic> m1(3, 3);
   m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
 
@@ -148,7 +148,7 @@ TEST(MathMatrix, diagPreMultiplyGrad_vd) {
     EXPECT_FLOAT_EQ(g1[i], g2[i]);
 }
 
-TEST(MathMatrix, diagPreMultiplyGrad_dv) {
+TEST(MathMatrixRevMat, diagPreMultiplyGrad_dv) {
   Matrix<double, Dynamic, Dynamic> m1(3, 3);
   m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
 
@@ -188,7 +188,7 @@ TEST(MathMatrix, diagPreMultiplyGrad_dv) {
     EXPECT_FLOAT_EQ(g1[i], g2[i]);
 }
 
-TEST(MathMatrix, diagPreMultiplyException) {
+TEST(MathMatrixRevMat, diagPreMultiplyException) {
   Matrix<var, Dynamic, Dynamic> m(2, 2);
   m << 2, 3, 4, 5;
   EXPECT_THROW(diag_pre_multiply(m, m), std::invalid_argument);

@@ -1,7 +1,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathMatrix, eltMultiplyVec) {
+TEST(MathMatrixPrimMat, eltMultiplyVec) {
   stan::math::vector_d v1(2);
   stan::math::vector_d v2(2);
   v1 << 1, 2;
@@ -10,14 +10,14 @@ TEST(MathMatrix, eltMultiplyVec) {
   EXPECT_FLOAT_EQ(10.0, v(0));
   EXPECT_FLOAT_EQ(200.0, v(1));
 }
-TEST(MathMatrix, eltMultiplyVecException) {
+TEST(MathMatrixPrimMat, eltMultiplyVecException) {
   stan::math::vector_d v1(2);
   stan::math::vector_d v2(3);
   v1 << 1, 2;
   v2 << 10, 100, 1000;
   EXPECT_THROW(stan::math::elt_multiply(v1, v2), std::invalid_argument);
 }
-TEST(MathMatrix, eltMultiplyRowVec) {
+TEST(MathMatrixPrimMat, eltMultiplyRowVec) {
   stan::math::row_vector_d v1(2);
   stan::math::row_vector_d v2(2);
   v1 << 1, 2;
@@ -26,14 +26,14 @@ TEST(MathMatrix, eltMultiplyRowVec) {
   EXPECT_FLOAT_EQ(10.0, v(0));
   EXPECT_FLOAT_EQ(200.0, v(1));
 }
-TEST(MathMatrix, eltMultiplyRowVecException) {
+TEST(MathMatrixPrimMat, eltMultiplyRowVecException) {
   stan::math::row_vector_d v1(2);
   stan::math::row_vector_d v2(3);
   v1 << 1, 2;
   v2 << 10, 100, 1000;
   EXPECT_THROW(stan::math::elt_multiply(v1, v2), std::invalid_argument);
 }
-TEST(MathMatrix, eltMultiplyMatrix) {
+TEST(MathMatrixPrimMat, eltMultiplyMatrix) {
   stan::math::matrix_d m1(2, 3);
   stan::math::matrix_d m2(2, 3);
   m1 << 1, 2, 3, 4, 5, 6;
@@ -49,7 +49,7 @@ TEST(MathMatrix, eltMultiplyMatrix) {
   EXPECT_FLOAT_EQ(500000.0, m(1, 1));
   EXPECT_FLOAT_EQ(6000000.0, m(1, 2));
 }
-TEST(MathMatrix, eltMultiplyMatrixException) {
+TEST(MathMatrixPrimMat, eltMultiplyMatrixException) {
   stan::math::matrix_d m1(2, 3);
   stan::math::matrix_d m2(2, 4);
   stan::math::matrix_d m3(4, 3);

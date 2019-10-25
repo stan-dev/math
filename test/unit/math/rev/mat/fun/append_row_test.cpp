@@ -102,7 +102,7 @@ void correct_type_matrix(const Eigen::Matrix<T, R, C>& x) {
   EXPECT_EQ(Eigen::Dynamic, R);
 }
 
-TEST(MathMatrix, append_row_different_types) {
+TEST(MathMatrixRevMat, append_row_different_types) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;

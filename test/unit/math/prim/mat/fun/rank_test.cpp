@@ -70,7 +70,7 @@ void test_rank_int() {
   EXPECT_THROW(rank(z, 2), std::out_of_range);
 }
 
-TEST(MathMatrix, rank) {
+TEST(MathMatrixPrimMat, rank) {
   using stan::math::rank;
 
   test_rank<std::vector<double> >();

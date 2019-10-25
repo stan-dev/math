@@ -12,7 +12,7 @@ boost::random::mt19937 rng;
   for (int i = 0; i < A.size(); i++)    \
     EXPECT_NEAR(A(i), B(i), DELTA);
 
-TEST(MathMatrix, multiply_transpose_exception_fail_zero) {
+TEST(MathMatrixOpenCL, multiply_transpose_exception_fail_zero) {
   stan::math::row_vector_d rv(0);
   stan::math::matrix_d m(0, 3);
   stan::math::matrix_d m1(2, 0);
@@ -27,7 +27,7 @@ TEST(MathMatrix, multiply_transpose_exception_fail_zero) {
   EXPECT_NO_THROW(ans_mm3 = stan::math::multiply_transpose(mm2));
 }
 
-TEST(MathMatrix, multiply_m_m_exception_pass_dim) {
+TEST(MathMatrixOpenCL, multiply_m_m_exception_pass_dim) {
   stan::math::matrix_d m1(1, 3);
   stan::math::matrix_d m2(3, 5);
   stan::math::matrix_cl<double> mm1(m1);
@@ -38,7 +38,7 @@ TEST(MathMatrix, multiply_m_m_exception_pass_dim) {
   EXPECT_NO_THROW(mm3b = stan::math::multiply_transpose(mm2));
 }
 
-TEST(MathMatrix, multiply_zero_size) {
+TEST(MathMatrixOpenCL, multiply_zero_size) {
   stan::math::vector_d v0;
   stan::math::row_vector_d rv0;
   stan::math::matrix_d m0;

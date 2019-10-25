@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/util.hpp>
 
-TEST(mathMatrix, getLp) {
+TEST(MathMatrixRevMat, getLp) {
   using stan::math::accumulator;
   using stan::math::get_lp;
   using stan::math::var;

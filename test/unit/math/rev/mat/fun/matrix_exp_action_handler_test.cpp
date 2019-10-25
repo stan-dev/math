@@ -5,7 +5,7 @@
 #include <stan/math/prim/mat/fun/matrix_exp_action_handler.hpp>
 #include <vector>
 
-TEST(MathMatrix, matrix_exp_action_diag) {
+TEST(MathMatrixRevMat, matrix_exp_action_diag) {
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
   stan::math::matrix_exp_action_handler handler;
@@ -55,7 +55,7 @@ TEST(MathMatrix, matrix_exp_action_diag) {
   }
 }
 
-TEST(MathMatrix, matrix_exp_action_vector) {
+TEST(MathMatrixRevMat, matrix_exp_action_vector) {
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
   stan::math::matrix_exp_action_handler handler;
@@ -81,7 +81,7 @@ TEST(MathMatrix, matrix_exp_action_vector) {
   }
 }
 
-TEST(MathMatrix, matrix_exp_action_matrix) {
+TEST(MathMatrixRevMat, matrix_exp_action_matrix) {
   using Eigen::MatrixXd;
   stan::math::matrix_exp_action_handler handler;
   std::srand(999);
@@ -103,7 +103,7 @@ TEST(MathMatrix, matrix_exp_action_matrix) {
   }
 }
 
-TEST(MathMatrix, matrix_exp_action_matrix_transpose) {
+TEST(MathMatrixRevMat, matrix_exp_action_matrix_transpose) {
   using Eigen::MatrixXd;
   stan::math::matrix_exp_action_handler handler;
   std::srand(1999);

@@ -1,7 +1,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathMatrix, mdivide_right_val) {
+TEST(MathMatrixPrimMat, mdivide_right_val) {
   using stan::math::mdivide_right;
   stan::math::matrix_d Ad(2, 2);
   stan::math::matrix_d I;
@@ -15,7 +15,7 @@ TEST(MathMatrix, mdivide_right_val) {
   EXPECT_NEAR(1.0, I(1, 1), 1.0e-12);
 }
 
-TEST(MathMatrix, mdivide_right_val2) {
+TEST(MathMatrixPrimMat, mdivide_right_val2) {
   using stan::math::mdivide_right;
   stan::math::row_vector_d b(5);
   stan::math::matrix_d A(5, 5);

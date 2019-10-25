@@ -3,7 +3,7 @@
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
 
-TEST(MathMatrix, qr_R) {
+TEST(MathMatrixRevMat, qr_R) {
   stan::math::matrix_v m0(0, 0);
   stan::math::matrix_v m1(3, 2);
   m1 << 1, 2, 3, 4, 5, 6;

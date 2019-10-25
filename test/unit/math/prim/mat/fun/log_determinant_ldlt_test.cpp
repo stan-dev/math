@@ -1,7 +1,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathMatrix, log_deterimant_ldlt) {
+TEST(MathMatrixPrimMat, log_deterimant_ldlt) {
   using stan::math::determinant;
   using std::fabs;
   using std::log;

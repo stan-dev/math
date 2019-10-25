@@ -7,7 +7,7 @@
 #include <vector>
 #include <random>
 
-TEST(MathMatrix, matrix_exp_pade_1x1) {
+TEST(MathMatrixRevMat, matrix_exp_pade_1x1) {
   stan::math::matrix_v m1(1, 1), m2(1, 1), m1_exp;
   m1 << 0;
   m2 << 1;
@@ -20,7 +20,7 @@ TEST(MathMatrix, matrix_exp_pade_1x1) {
   EXPECT_FLOAT_EQ(m1_exp(0, 0).val(), g[0]);
 }
 
-TEST(MathMatrix, matrix_exp_pade_2x2) {
+TEST(MathMatrixRevMat, matrix_exp_pade_2x2) {
   using stan::math::matrix_v;
   // example from Moler & Van Loan, 2003
   for (size_t k = 0; k < 2; k++) {
@@ -47,7 +47,7 @@ TEST(MathMatrix, matrix_exp_pade_2x2) {
   }
 }
 
-TEST(MathMatrix, matrix_exp_pade_3x3) {
+TEST(MathMatrixRevMat, matrix_exp_pade_3x3) {
   using stan::math::matrix_v;
 
   for (size_t k = 0; k < 3; k++) {
@@ -92,7 +92,7 @@ TEST(MathMatrix, matrix_exp_pade_3x3) {
   }
 }
 
-TEST(MathMatrix, matrix_exp_25x25) {
+TEST(MathMatrixRevMat, matrix_exp_25x25) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::matrix_v;

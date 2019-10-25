@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMatrix, size_zero) {
+TEST(MathMatrixPrimScal, size_zero) {
   std::vector<double> x(3), y(0);
   stan::math::matrix_d m(3, 4);
   stan::math::matrix_d n(3, 0);

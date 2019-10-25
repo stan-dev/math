@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMatrix, variance) {
+TEST(MathMatrixPrimMat, variance) {
   using stan::math::variance;
   std::vector<double> x;
   EXPECT_THROW(variance(x), std::invalid_argument);

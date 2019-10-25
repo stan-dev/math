@@ -28,7 +28,7 @@ inline void test_matrix_exp_multiply() {
   }
 }
 
-TEST(MathMatrix, matrix_exp_multiply) {
+TEST(MathMatrixPrimMat, matrix_exp_multiply) {
   test_matrix_exp_multiply<1, 1>();
   test_matrix_exp_multiply<1, 5>();
   test_matrix_exp_multiply<5, 1>();
@@ -36,7 +36,7 @@ TEST(MathMatrix, matrix_exp_multiply) {
   test_matrix_exp_multiply<20, 2>();
 }
 
-TEST(MathMatrix, matrix_exp_multiply_exception) {
+TEST(MathMatrixPrimMat, matrix_exp_multiply_exception) {
   using stan::math::matrix_exp_multiply;
   {  // nonzero size
     Eigen::MatrixXd A(0, 0);
