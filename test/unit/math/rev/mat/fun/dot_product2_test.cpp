@@ -4,7 +4,7 @@
 #include <test/unit/math/rev/mat/fun/jacobian.hpp>
 #include <vector>
 
-TEST(AgradRevMatrix, dot_product_vv) {
+TEST(AgradRevMatrix, dot_product_vv_dot_product2) {
   AVEC a, b;
   AVAR c;
   // a = (-1, 0, 1), b = (1, 2, 3)
@@ -28,7 +28,7 @@ TEST(AgradRevMatrix, dot_product_vv) {
   EXPECT_EQ(grad[4], 3);
   EXPECT_EQ(grad[5], 1);
 }
-TEST(AgradRevMatrix, dot_product_dv) {
+TEST(AgradRevMatrix, dot_product_dv_dot_product2) {
   VEC a;
   AVEC b;
   AVAR c;
@@ -45,7 +45,7 @@ TEST(AgradRevMatrix, dot_product_dv) {
   EXPECT_EQ(grad[1], 0);
   EXPECT_EQ(grad[2], 1);
 }
-TEST(AgradRevMatrix, dot_product_vd) {
+TEST(AgradRevMatrix, dot_product_vd_dot_product2) {
   AVEC a;
   VEC b;
   AVAR c;
@@ -62,7 +62,7 @@ TEST(AgradRevMatrix, dot_product_vd) {
   EXPECT_EQ(grad[1], 2);
   EXPECT_EQ(grad[2], 3);
 }
-TEST(AgradRevMatrix, dot_product_vv_vec) {
+TEST(AgradRevMatrix, dot_product_vv_vec_dot_product2) {
   AVEC a, b;
   AVAR c;
   // a = (-1, 0, 1), b = (1, 2, 3)
@@ -86,7 +86,7 @@ TEST(AgradRevMatrix, dot_product_vv_vec) {
   EXPECT_EQ(grad[4], 3);
   EXPECT_EQ(grad[5], 1);
 }
-TEST(AgradRevMatrix, dot_product_dv_vec) {
+TEST(AgradRevMatrix, dot_product_dv_vec_dot_product2) {
   VEC a;
   AVEC b;
   AVAR c;
@@ -103,7 +103,7 @@ TEST(AgradRevMatrix, dot_product_dv_vec) {
   EXPECT_EQ(grad[1], 0);
   EXPECT_EQ(grad[2], 1);
 }
-TEST(AgradRevMatrix, dot_product_vd_vec) {
+TEST(AgradRevMatrix, dot_product_vd_vec_dot_product2) {
   AVEC a;
   VEC b;
   AVAR c;
@@ -134,7 +134,7 @@ void assert_val_grad(Eigen::Matrix<stan::math::var, R, C>& v) {
   EXPECT_FLOAT_EQ(6.0, g[2]);
 }
 
-TEST(AgradRevMatrix, dot_self_vec) {
+TEST(AgradRevMatrix, dot_self_vec_dot_product2) {
   using stan::math::dot_self;
 
   Eigen::Matrix<AVAR, Eigen::Dynamic, 1> v1(1);
@@ -160,7 +160,7 @@ TEST(AgradRevMatrix, dot_self_vec) {
   assert_val_grad(vvvv);
 }
 
-TEST(AgradRevMatrix, columns_dot_self) {
+TEST(AgradRevMatrix, columns_dot_self_dot_product2) {
   using stan::math::columns_dot_self;
 
   Eigen::Matrix<AVAR, Eigen::Dynamic, Eigen::Dynamic> m1(1, 1);
@@ -185,7 +185,7 @@ TEST(AgradRevMatrix, columns_dot_self) {
   assert_val_grad(vvvv);
 }
 
-TEST(AgradRevMatrix, softmax) {
+TEST(AgradRevMatrix, softmax_dot_product2) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::softmax;
@@ -215,7 +215,7 @@ TEST(AgradRevMatrix, softmax) {
   EXPECT_FLOAT_EQ(exp(1) / (exp(-1) + exp(1) + exp(10.0)), theta3[1].val());
   EXPECT_FLOAT_EQ(exp(10) / (exp(-1) + exp(1) + exp(10.0)), theta3[2].val());
 }
-TEST(AgradRevMatrix, meanStdVector) {
+TEST(AgradRevMatrix, meanStdVector_dot_product2) {
   // should use arg-dep lookup
   using stan::math::mean;
   AVEC x(0);
@@ -232,7 +232,7 @@ TEST(AgradRevMatrix, meanStdVector) {
   EXPECT_FLOAT_EQ(0.5, grad[1]);
   EXPECT_EQ(2U, grad.size());
 }
-TEST(AgradRevMatrix, varianceStdVector) {
+TEST(AgradRevMatrix, varianceStdVector_dot_product2) {
   // should use arg-dep lookup
   using stan::math::variance;
 
@@ -258,7 +258,7 @@ TEST(AgradRevMatrix, varianceStdVector) {
   for (size_t i = 0; i < 3; ++i)
     EXPECT_FLOAT_EQ(grad2[i], grad1[i]);
 }
-TEST(AgradRevMatrix, sdStdVector) {
+TEST(AgradRevMatrix, sdStdVector_dot_product2) {
   // should use arg-dep lookup (and for sqrt)
   using stan::math::sd;
 
@@ -285,7 +285,7 @@ TEST(AgradRevMatrix, sdStdVector) {
     EXPECT_FLOAT_EQ(grad2[i], grad1[i]);
 }
 
-TEST(AgradRevMatrix, initializeVariable) {
+TEST(AgradRevMatrix, initializeVariable_dot_product2) {
   using stan::math::initialize_variable;
   using std::vector;
 
@@ -334,7 +334,7 @@ TEST(AgradRevMatrix, initializeVariable) {
         EXPECT_FLOAT_EQ(11.0, dd[i](m, n).val());
 }
 
-TEST(AgradRevMatrix, UserCase1) {
+TEST(AgradRevMatrix, UserCase1_dot_product2) {
   using stan::math::assign;
   using stan::math::dot_product;
   using stan::math::get_base1;
@@ -379,7 +379,7 @@ TEST(AgradRevMatrix, UserCase1) {
   EXPECT_NE(lp__.val(), 0);
 }
 
-TEST(AgradRevMatrix, prod) {
+TEST(AgradRevMatrix, prod_dot_product2) {
   using stan::math::prod;
   using stan::math::vector_d;
   using stan::math::vector_v;
@@ -411,7 +411,7 @@ TEST(AgradRevMatrix, prod) {
   EXPECT_FLOAT_EQ(3.0, g[0]);
   EXPECT_FLOAT_EQ(2.0, g[1]);
 }
-TEST(AgradRevMatrix, diagMatrix) {
+TEST(AgradRevMatrix, diagMatrix_dot_product2) {
   using stan::math::diag_matrix;
   using stan::math::matrix_v;
   using stan::math::vector_d;
@@ -445,7 +445,7 @@ void test_mult_LLT(const stan::math::matrix_v& L) {
       EXPECT_FLOAT_EQ(LLT_eigen(m, n).val(), LLT_stan(m, n).val());
 }
 
-TEST(AgradRevMatrix, multiplyLowerTriSelfTransposeGrad1) {
+TEST(AgradRevMatrix, multiplyLowerTriSelfTransposeGrad1_dot_product2) {
   using stan::math::matrix_v;
   using stan::math::multiply_lower_tri_self_transpose;
 
@@ -466,7 +466,7 @@ TEST(AgradRevMatrix, multiplyLowerTriSelfTransposeGrad1) {
   EXPECT_FLOAT_EQ(6.0, J[0][0]);
 }
 
-TEST(AgradRevMatrix, multiplyLowerTriSelfTransposeGrad2) {
+TEST(AgradRevMatrix, multiplyLowerTriSelfTransposeGrad2_dot_product2) {
   using stan::math::matrix_v;
   using stan::math::multiply_lower_tri_self_transpose;
 
@@ -516,7 +516,7 @@ TEST(AgradRevMatrix, multiplyLowerTriSelfTransposeGrad2) {
   EXPECT_FLOAT_EQ(6.0, J[3][2]);
 }
 
-TEST(AgradRevMatrix, multiplyLowerTriSelfTransposeGrad3) {
+TEST(AgradRevMatrix, multiplyLowerTriSelfTransposeGrad3_dot_product2) {
   using stan::math::matrix_v;
   using stan::math::multiply_lower_tri_self_transpose;
 
@@ -623,7 +623,7 @@ TEST(AgradRevMatrix, multiplyLowerTriSelfTransposeGrad3) {
   EXPECT_FLOAT_EQ(12.0, J[8][5]);
 }
 
-TEST(AgradRevMatrix, multiplyLowerTriSelfTranspose) {
+TEST(AgradRevMatrix, multiplyLowerTriSelfTranspose_dot_product2) {
   using stan::math::matrix_v;
   using stan::math::multiply_lower_tri_self_transpose;
 
@@ -668,7 +668,7 @@ void test_tcrossprod(const stan::math::matrix_v& L) {
     for (int n = 0; n < LLT_eigen.cols(); ++n)
       EXPECT_FLOAT_EQ(LLT_eigen(m, n).val(), LLT_stan(m, n).val());
 }
-TEST(AgradRevMatrix, tcrossprod) {
+TEST(AgradRevMatrix, tcrossprod_dot_product2) {
   using stan::math::matrix_v;
 
   matrix_v L(3, 3);
@@ -702,7 +702,7 @@ TEST(AgradRevMatrix, tcrossprod) {
   Q << 1, 2, 3, -1, 4, -9;
   test_tcrossprod(Q);
 }
-TEST(AgradRevMatrix, tcrossprodGrad1) {
+TEST(AgradRevMatrix, tcrossprodGrad1_dot_product2) {
   using stan::math::matrix_v;
   using stan::math::tcrossprod;
 
@@ -723,7 +723,7 @@ TEST(AgradRevMatrix, tcrossprodGrad1) {
   EXPECT_FLOAT_EQ(6.0, J[0][0]);
 }
 
-TEST(AgradRevMatrix, tcrossprodGrad2) {
+TEST(AgradRevMatrix, tcrossprodGrad2_dot_product2) {
   using stan::math::matrix_v;
   using stan::math::tcrossprod;
 
@@ -773,7 +773,7 @@ TEST(AgradRevMatrix, tcrossprodGrad2) {
   EXPECT_FLOAT_EQ(6.0, J[3][2]);
 }
 
-TEST(AgradRevMatrix, tcrossprodGrad3) {
+TEST(AgradRevMatrix, tcrossprodGrad3_dot_product2) {
   using stan::math::matrix_v;
   using stan::math::tcrossprod;
 
@@ -891,7 +891,7 @@ void test_crossprod(const stan::math::matrix_v& L) {
       EXPECT_FLOAT_EQ(LLT_eigen(m, n).val(), LLT_stan(m, n).val());
 }
 
-TEST(AgradRevMatrix, crossprod) {
+TEST(AgradRevMatrix, crossprod_dot_product2) {
   using stan::math::matrix_v;
 
   matrix_v L(3, 3);
@@ -955,7 +955,7 @@ void test_cumulative_sum() {
   EXPECT_FLOAT_EQ(1.0, grad[1]);
   EXPECT_FLOAT_EQ(1.0, grad[2]);
 }
-TEST(AgradRevMatrix, cumulative_sum) {
+TEST(AgradRevMatrix, cumulative_sum_dot_product2) {
   using stan::math::cumulative_sum;
   using stan::math::var;
 

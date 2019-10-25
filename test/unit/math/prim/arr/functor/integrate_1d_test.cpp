@@ -234,7 +234,7 @@ void test_integration(const F &f, double a, double b,
   }
 }
 
-TEST(StanMath_integrate_1d, TestThrows) {
+TEST(StanMath_integrate_1d_prim, TestThrows) {
   // Left limit of integration must be less than or equal to right limit
   EXPECT_THROW(stan::math::integrate_1d(f2{}, 1.0, 0.0, std::vector<double>(),
                                         {}, {}, msgs, 1e-6),
@@ -284,7 +284,7 @@ TEST(StanMath_integrate_1d, TestThrows) {
       f11{}, 0.0, 1.0, std::vector<double>(), {}, {}, msgs, 1e-6));
 }
 
-TEST(StanMath_integrate_1d, test_integer_arguments) {
+TEST(StanMath_integrate_1d_prim, test_integer_arguments) {
   double v;
   EXPECT_NO_THROW(v = stan::math::integrate_1d(
                       f2{}, 0, 1, std::vector<double>(), {}, {}, msgs, 1e-6));
@@ -294,7 +294,7 @@ TEST(StanMath_integrate_1d, test_integer_arguments) {
                       f2{}, 0, 1.0, std::vector<double>(), {}, {}, msgs, 1e-6));
 }
 
-TEST(StanMath_integrate_1d, test1) {
+TEST(StanMath_integrate_1d_prim, test1) {
   // Tricky integral from Boost docs + limit at infinity
   test_integration(f1{}, 0.0, std::numeric_limits<double>::infinity(), {}, {},
                    {}, 1.772453850905516);

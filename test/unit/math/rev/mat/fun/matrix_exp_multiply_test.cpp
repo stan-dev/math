@@ -109,7 +109,7 @@ inline void test_matrix_exp_multiply_dv(int N, int M) {
   }
 }
 
-TEST(MathMatrix, matrix_exp_multiply_dv) {
+TEST(MathMatrixRevMat, matrix_exp_multiply_dv) {
   test_matrix_exp_multiply_dv(1, 1);
   test_matrix_exp_multiply_dv(1, 5);
   test_matrix_exp_multiply_dv(5, 1);
@@ -165,7 +165,7 @@ inline void test_matrix_exp_multiply_vd(int N, int M) {
   }
 }
 
-TEST(MathMatrix, matrix_exp_multiply_vd) {
+TEST(MathMatrixRevMat, matrix_exp_multiply_vd) {
   test_matrix_exp_multiply_vd(1, 1);
   test_matrix_exp_multiply_vd(1, 5);
   test_matrix_exp_multiply_vd(5, 1);
@@ -221,7 +221,7 @@ inline void test_matrix_exp_multiply_vv(int N, int M) {
   }
 }
 
-TEST(MathMatrix, matrix_exp_multiply_vv) {
+TEST(MathMatrixRevMat, matrix_exp_multiply_vv) {
   test_matrix_exp_multiply_vv(1, 1);
   test_matrix_exp_multiply_vv(1, 5);
   test_matrix_exp_multiply_vv(5, 1);
@@ -229,7 +229,7 @@ TEST(MathMatrix, matrix_exp_multiply_vv) {
   test_matrix_exp_multiply_vv(8, 2);
 }
 
-TEST(MathMatrix, matrix_exp_multiply_exception) {
+TEST(MathMatrixRevMat, matrix_exp_multiply_exception) {
   using stan::math::matrix_exp_multiply;
   using stan::math::var;
   {  // nonzero size
@@ -252,7 +252,7 @@ TEST(MathMatrix, matrix_exp_multiply_exception) {
   }
 }
 
-// TEST(MathMatrix, matrix_exp_multiply_clock) {
+// TEST(MathMatrixRevMat, matrix_exp_multiply_clock) {
 //   using Eigen::MatrixXd;
 //   using stan::math::var;
 //   using stan::math::value_of;
@@ -276,7 +276,7 @@ TEST(MathMatrix, matrix_exp_multiply_exception) {
 //   }
 // }
 
-// TEST(MathMatrix, matrix_exp_action_clock_large_norm) {
+// TEST(MathMatrixRevMat, matrix_exp_action_clock_large_norm) {
 //   using Eigen::MatrixXd;
 //   using stan::math::var;
 //   using stan::math::value_of;

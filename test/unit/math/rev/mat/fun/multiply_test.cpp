@@ -1669,7 +1669,7 @@ TEST(AgradRevMatrix, multiply_vector_row_vector_grad_ex_vd) {
     }
   }
 }
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, multiply_check_varis_on_stack) {
   using stan::math::value_of;
   stan::math::matrix_v m(3, 3);
   m << 1, 2, 3, 4, 5, 6, 7, 8, 9;

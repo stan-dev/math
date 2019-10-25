@@ -64,7 +64,7 @@ TEST(AgradRevSoftmax, gradient_check) {
   }
 }
 
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, softmax_check_varis_on_stack) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> alpha(3);
   alpha << 0.0, 3.0, -1.0;
   test::check_varis_on_stack(stan::math::softmax(alpha));

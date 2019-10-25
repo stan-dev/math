@@ -152,7 +152,7 @@ TEST(prob_transform, simplex_constrain_analytical_grads_rng) {
   }
 }
 
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, simplex_constrain_check_varis_on_stack) {
   stan::math::vector_v y(3);
   y << 2, 3, -1;
   stan::math::var lp = 0;

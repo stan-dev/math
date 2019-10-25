@@ -345,7 +345,7 @@ TEST(MathPrimMat, vec_eigen_mixed_cov_exp_quad2) {
     }
 }
 
-TEST(MathPrimMat, domain_error_training_sig_l) {
+TEST(MathPrimMat, domain_error_training_sig_l_cov_exp_quad) {
   double sigma = 0.2;
   double l = 5;
 
@@ -393,7 +393,7 @@ TEST(MathPrimMat, domain_error_training_sig_l) {
                std::domain_error);
 }
 
-TEST(MathPrimMat, nan_error_training_sig_l) {
+TEST(MathPrimMat, nan_error_training_sig_l_cov_exp_quad) {
   double sigma = 0.2;
   double l = 5;
 

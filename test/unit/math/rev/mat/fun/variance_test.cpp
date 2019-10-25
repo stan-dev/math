@@ -178,7 +178,7 @@ TEST(AgradRevMatrix, varianceStdVector) {
   }
 }
 
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, variance_check_varis_on_stack) {
   stan::math::vector_v v1(6);
   v1 << 1, 2, 3, 4, 5, 6;
   stan::math::row_vector_v v2(6);

@@ -1,7 +1,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
-TEST(MetaTraits, VectorBuilderHelper_false_false) {
+TEST(MetaTraitsPrimMat, VectorBuilderHelper_false_false) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::VectorBuilderHelper;
@@ -19,7 +19,7 @@ TEST(MetaTraits, VectorBuilderHelper_false_false) {
   EXPECT_THROW(dvv4.data(), std::logic_error);
 }
 
-TEST(MetaTraits, VectorBuilderHelper_true_false) {
+TEST(MetaTraitsPrimMat, VectorBuilderHelper_true_false) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::VectorBuilderHelper;

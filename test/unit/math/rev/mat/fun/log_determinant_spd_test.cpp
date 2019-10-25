@@ -43,43 +43,8 @@ TEST(AgradRevMatrix, log_determinant_spd) {
   EXPECT_FLOAT_EQ(std::log(3.0), det.val());
 }
 
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, log_determinant_spd_check_varis_on_stack) {
   stan::math::matrix_v v2(2, 2);
   v2 << 2, 1, 1, 3;
   test::check_varis_on_stack(stan::math::log_determinant_spd(v2));
 }
-
-#if 0
-TEST(AgradRevMatrix, log_deteriminant_exception) {
-  using stan::math::matrix_v;
-  using stan::math::log_determinant;
-
-  EXPECT_THROW(log_determinant(matrix_v(2, 3)), std::domain_error);
-}
-
-TEST(AgradRevMatrix, log_determinant_grad) {
-  using stan::math::matrix_v;
-  using stan::math::log_determinant;
-
-  matrix_v X(2, 2);
-  AVAR a = 2.0;
-  AVAR b = 3.0;
-  AVAR c = 5.0;
-  AVAR d = 7.0;
-  X << a, b, c, d;
-
-  AVEC x = createAVEC(a, b, c, d);
-
-  AVAR f = log_determinant(X);
-
-  // det = ad - bc
-  EXPECT_NEAR(0.0, f.val(), 1E-12);
-
-  VEC g;
-  f.grad(x, g);
-  EXPECT_FLOAT_EQ(-7.0, g[0]);
-  EXPECT_FLOAT_EQ(5.0, g[1]);
-  EXPECT_FLOAT_EQ(3.0, g[2]);
-  EXPECT_FLOAT_EQ(-2.0, g[3]);
-}
-#endif

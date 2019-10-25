@@ -69,7 +69,7 @@ TEST(AgradRevMatrix, transpose_row_vector) {
   EXPECT_FLOAT_EQ(0.0, g[2]);
 }
 
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, transpose_check_varis_on_stack) {
   stan::math::row_vector_v a(3);
   a << 1.0, 2.0, 3.0;
   stan::math::vector_v b(3);

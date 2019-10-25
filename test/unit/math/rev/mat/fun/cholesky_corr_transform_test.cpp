@@ -66,7 +66,7 @@ TEST(probTransform, choleskyCorrJacobian) {
   y4 << 1.0, 2.0, -3.0, 1.5, 0.2, 2.0;
   test_cholesky_correlation_jacobian(y4, 4);
 }
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, cholesky_corr_constrain_check_varis_on_stack) {
   stan::math::vector_v y(3);
   y << -1.7, 2.9, 0.01;
   stan::math::var lp(0);

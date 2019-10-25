@@ -256,7 +256,7 @@ TEST(AgradRevMatrix, multiplyLowerTriSelfTranspose) {
   matrix_v K(0, 0);
   test_mult_LLT(K);
 }
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, multiply_lower_tri_self_transpose_check_varis_on_stack) {
   using stan::math::matrix_v;
 
   stan::math::matrix_v L(3, 3);

@@ -84,7 +84,7 @@ TEST(AgradRevMatrix, min_matrix_exception) {
   matrix_v v;
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), min(v).val());
 }
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, min_check_varis_on_stack) {
   stan::math::vector_v v(3);
   v << -100, 0, 1;
   stan::math::row_vector_v rv(3);

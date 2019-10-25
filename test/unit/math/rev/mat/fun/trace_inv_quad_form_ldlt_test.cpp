@@ -343,7 +343,7 @@ TEST(AgradRevMatrix, trace_quad_form_ldlt_dv_basic) {
     EXPECT_FLOAT_EQ(grad_basic[n], grad[n]);
 }
 
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, trace_inv_quad_form_ldlt_check_varis_on_stack) {
   using stan::math::to_var;
 
   stan::math::matrix_d a(4, 4);

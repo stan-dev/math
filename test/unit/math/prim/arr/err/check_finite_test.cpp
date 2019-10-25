@@ -6,7 +6,7 @@
 using stan::math::check_finite;
 
 // ---------- check_finite: vector tests ----------
-TEST(ErrorHandlingScalar, CheckFinite_Vector) {
+TEST(ErrorHandlingArr, CheckFinite_Vector) {
   const char* function = "check_finite";
   std::vector<double> x = {-1, 0, 1};
   ASSERT_NO_THROW(check_finite(function, "x", x))
@@ -25,7 +25,7 @@ TEST(ErrorHandlingScalar, CheckFinite_Vector) {
       << "check_finite should throw exception on NaN";
 }
 
-TEST(ErrorHandlingScalar, CheckFinite_nan) {
+TEST(ErrorHandlingArr, CheckFinite_nan) {
   const char* function = "check_finite";
   double nan = std::numeric_limits<double>::quiet_NaN();
 

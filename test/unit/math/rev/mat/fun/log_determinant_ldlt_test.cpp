@@ -58,7 +58,7 @@ TEST(AgradRevMatrix, log_determinant_ldlt) {
   EXPECT_FLOAT_EQ(1.0 / 3.0, grad[3]);
 }
 
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, log_determinant_ldlt_check_varis_on_stack) {
   stan::math::matrix_v v2(2, 2);
   v2 << 2, 1, 1, 3;
   stan::math::LDLT_factor<stan::math::var, -1, -1> ldlt_v;

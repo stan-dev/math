@@ -1069,7 +1069,7 @@ void test_log_mix_2xdouble_lam_2_fvar_var(double theta, double lambda1,
   stan::math::recover_memory();
 }
 
-TEST(AgradFwdLogMix, FvarFvarVar_Double_Double_D3) {
+TEST(AgradMixLogMix, FvarFvarVar_Double_Double_D3) {
   test_log_mix_2xdouble_fvar_fvar_var_theta_D3(0.7, 2.0, 6.0, 1.3, 5.0);
   test_log_mix_2xdouble_fvar_fvar_var_theta_D3(0.7, 2.0, 6.0, 1, 0);
   test_log_mix_2xdouble_fvar_fvar_var_theta_D3(0.3, 2.0, 6.0, 0, 0);
@@ -1101,7 +1101,7 @@ TEST(AgradFwdLogMix, FvarFvarVar_Double_Double_D3) {
   test_log_mix_2xdouble_fvar_fvar_var_lam_2_D3(0.3, 1.0, -2.0, 0, 1);
 }
 
-TEST(AgradFwdLogMix, FvarFvarVar_Double_Double_D2) {
+TEST(AgradMixLogMix, FvarFvarVar_Double_Double_D2) {
   test_log_mix_2xdouble_fvar_fvar_var_theta_D2(0.7, 2.0, 6.0, 1.3);
   test_log_mix_2xdouble_fvar_fvar_var_theta_D2(0.7, 2.0, 6.0, 1);
   test_log_mix_2xdouble_fvar_fvar_var_theta_D2(0.7, 2.0, 6.0, 0);
@@ -1127,7 +1127,7 @@ TEST(AgradFwdLogMix, FvarFvarVar_Double_Double_D2) {
   test_log_mix_2xdouble_fvar_fvar_var_lam_2_D2(0.3, 2.0, -6.0, 0);
 }
 
-TEST(AgradFwdLogMix, FvarVar_FvarVar_FvarVar_D1) {
+TEST(AgradMixLogMix, FvarVar_FvarVar_FvarVar_D1) {
   test_log_mix_3xfvar_var_D1(0.7, 2.0, 6.0, 1.3, 5.0, 3.0);
   test_log_mix_3xfvar_var_D1(0.7, 2.0, 6.0, 1, 0, 0);
   test_log_mix_3xfvar_var_D1(0.7, 2.0, 6.0, 0, 1, 0);
@@ -1147,7 +1147,7 @@ TEST(AgradFwdLogMix, FvarVar_FvarVar_FvarVar_D1) {
   test_log_mix_3xfvar_var_D1(0.2, 2.0, -6.0, 1, 1, 1);
 }
 
-TEST(AgradFwdLogMix, FvarFvarVar_FvarFvarVar_Double_D3) {
+TEST(AgradMixLogMix, FvarFvarVar_FvarFvarVar_Double_D3) {
   test_log_mix_2xfvar_fvar_var_ex_theta_D3(0.7, 2.0, 6.0, 5.0, 3.0, 5.0, 3.0);
   test_log_mix_2xfvar_fvar_var_ex_theta_D3(0.7, 2.0, 6.0, 1, 1, 1, 1);
   test_log_mix_2xfvar_fvar_var_ex_theta_D3(0.7, 2.0, 6.0, 1, 1, 0, 1);
@@ -1185,7 +1185,7 @@ TEST(AgradFwdLogMix, FvarFvarVar_FvarFvarVar_Double_D3) {
   test_log_mix_2xfvar_fvar_var_ex_lam_2_D3(0.7, 2.0, -6.0, 1, 0, 1, 1);
 }
 
-TEST(AgradFwdLogMix, FvarFvarVar_FvarFvarVar_Double_D2) {
+TEST(AgradMixLogMix, FvarFvarVar_FvarFvarVar_Double_D2) {
   test_log_mix_2xfvar_fvar_var_ex_theta_D2(0.7, 2.0, 6.0, 5.0, 3.0);
   test_log_mix_2xfvar_fvar_var_ex_theta_D2(0.7, 2.0, 6.0, 1.0, 0.0);
   test_log_mix_2xfvar_fvar_var_ex_theta_D2(0.7, 2.0, 6.0, 1.0, 1.0);
@@ -1223,7 +1223,7 @@ TEST(AgradFwdLogMix, FvarFvarVar_FvarFvarVar_Double_D2) {
   test_log_mix_2xfvar_fvar_var_ex_lam_2_D2(0.7, 2.0, -6.0, 0.0, 1.0);
 }
 
-TEST(AgradFwdLogMix, FvarVar_FvarVar_FvarVar_D2) {
+TEST(AgradMixLogMix, FvarVar_FvarVar_FvarVar_D2) {
   test_log_mix_3xfvar_var_D2(0.7, 2.0, 6.0, 1.3, 5.0, 3.0);
   test_log_mix_3xfvar_var_D2(0.7, 2.0, 6.0, 1.0, 0.0, 0);
   test_log_mix_3xfvar_var_D2(0.7, 2.0, 6.0, 0.0, 1.0, 0.0);
@@ -1247,7 +1247,7 @@ TEST(AgradFwdLogMix, FvarVar_FvarVar_FvarVar_D2) {
   test_log_mix_3xfvar_var_D2(0.2, 2.0, -6.0, 1.0, 1.0, 1.0);
 }
 
-TEST(AgradFwdLogMix, FvarFvarVar_FvarFvarVar_FvarFvarVar_D2) {
+TEST(AgradMixLogMix, FvarFvarVar_FvarFvarVar_FvarFvarVar_D2) {
   test_log_mix_3xfvar_fvar_var_D2(0.7, 2.0, 6.0, 1.3, 5.0, 3.0);
   test_log_mix_3xfvar_fvar_var_D2(0.7, 2.0, 6.0, 1.0, 0.0, 0);
   test_log_mix_3xfvar_fvar_var_D2(0.7, 2.0, 6.0, 0.0, 1.0, 0.0);
@@ -1271,7 +1271,7 @@ TEST(AgradFwdLogMix, FvarFvarVar_FvarFvarVar_FvarFvarVar_D2) {
   test_log_mix_3xfvar_fvar_var_D2(0.2, 2.0, -6.0, 1.0, 1.0, 1.0);
 }
 
-TEST(AgradFwdLogMix, FvarFvarVar_FvarFvarVar_FvarFvarVar_D3) {
+TEST(AgradMixLogMix, FvarFvarVar_FvarFvarVar_FvarFvarVar_D3) {
   test_log_mix_3xfvar_fvar_var_D3(0.7, 2.0, 6.0, 1.3, 5.0, 3.0, 3.0, 4.0, 1.0);
   test_log_mix_3xfvar_fvar_var_D3(0.7, 2.0, 6.0, 1.0, 0.0, 0, 3.0, 4.0, 1.0);
   test_log_mix_3xfvar_fvar_var_D3(0.7, 2.0, 6.0, 0.0, 1.0, 0.0, 3.0, 4.0, 1.0);
@@ -1295,7 +1295,7 @@ TEST(AgradFwdLogMix, FvarFvarVar_FvarFvarVar_FvarFvarVar_D3) {
   test_log_mix_3xfvar_fvar_var_D3(0.2, 2.0, -6.0, 1.0, 1.0, 1.0, 3.0, 4.0, 1.0);
 }
 
-TEST(AgradFwdLogMix, FvarVar_FvarVar_Double) {
+TEST(AgradMixLogMix, FvarVar_FvarVar_Double) {
   test_log_mix_2xfvar_var_lam_1_double(0.7, 2.0, 6.0, 1.3, 2.0);
   test_log_mix_2xfvar_var_lam_1_double(0.7, 2.0, 6.0, 1, 0);
   test_log_mix_2xfvar_var_lam_1_double(0.7, 2.0, 6.0, 0, 1);
@@ -1330,7 +1330,7 @@ TEST(AgradFwdLogMix, FvarVar_FvarVar_Double) {
   test_log_mix_2xfvar_var_theta_double(0.2, -2.0, 6.0, 0, 0);
 }
 
-TEST(AgradFwdLogMix, FvarVar_Double_Double) {
+TEST(AgradMixLogMix, FvarVar_Double_Double) {
   test_log_mix_2xdouble_theta_fvar_var(0.7, 2.0, 6.0, 1.3);
   test_log_mix_2xdouble_theta_fvar_var(0.7, 2.0, 6.0, 1);
   test_log_mix_2xdouble_theta_fvar_var(0.7, 2.0, 6.0, 0);
@@ -1361,7 +1361,7 @@ struct log_mix_fun {
   }
 };
 
-TEST(AgradFwdLogMix, log_mix_NaN) {
+TEST(AgradMixLogMix, log_mix_NaN) {
   log_mix_fun log_mix_;
   test_nan_mix(log_mix_, 0.7, 3.0, 5.0, true);
 }

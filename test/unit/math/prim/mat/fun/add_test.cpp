@@ -1,7 +1,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathMatrix, add_v_exception) {
+TEST(MathMatrixPrimMat, add_v_exception) {
   stan::math::vector_d d1, d2;
 
   d1.resize(3);
@@ -16,7 +16,7 @@ TEST(MathMatrix, add_v_exception) {
   d2.resize(3);
   EXPECT_THROW(stan::math::add(d1, d2), std::invalid_argument);
 }
-TEST(MathMatrix, add_rv_exception) {
+TEST(MathMatrixPrimMat, add_rv_exception) {
   stan::math::row_vector_d d1, d2;
 
   d1.resize(3);
@@ -31,7 +31,7 @@ TEST(MathMatrix, add_rv_exception) {
   d2.resize(3);
   EXPECT_THROW(stan::math::add(d1, d2), std::invalid_argument);
 }
-TEST(MathMatrix, add_m_exception) {
+TEST(MathMatrixPrimMat, add_m_exception) {
   stan::math::matrix_d d1, d2;
 
   d1.resize(2, 3);
@@ -47,7 +47,7 @@ TEST(MathMatrix, add_m_exception) {
   EXPECT_THROW(stan::math::add(d1, d2), std::invalid_argument);
 }
 
-TEST(MathMatrix, add_c_m) {
+TEST(MathMatrixPrimMat, add_c_m) {
   stan::math::matrix_d v(2, 2);
   v << 1, 2, 3, 4;
   stan::math::matrix_d result;
@@ -65,7 +65,7 @@ TEST(MathMatrix, add_c_m) {
   EXPECT_FLOAT_EQ(6.0, result(1, 1));
 }
 
-TEST(MathMatrix, add_c_rv) {
+TEST(MathMatrixPrimMat, add_c_rv) {
   stan::math::row_vector_d v(3);
   v << 1, 2, 3;
   stan::math::row_vector_d result;
@@ -81,7 +81,7 @@ TEST(MathMatrix, add_c_rv) {
   EXPECT_FLOAT_EQ(5.0, result(2));
 }
 
-TEST(MathMatrix, add_c_v) {
+TEST(MathMatrixPrimMat, add_c_v) {
   stan::math::vector_d v(3);
   v << 1, 2, 3;
   stan::math::vector_d result;
@@ -97,7 +97,7 @@ TEST(MathMatrix, add_c_v) {
   EXPECT_FLOAT_EQ(5.0, result(2));
 }
 
-TEST(MathMatrix, add) {
+TEST(MathMatrixPrimMat, add) {
   stan::math::vector_d v1(2);
   v1 << 1, 2;
   stan::math::vector_d v2(3);

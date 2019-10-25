@@ -221,7 +221,7 @@ TEST(AgradRevMatrix, divide_matrix) {
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), output(1, 1).val());
 }
 
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, divide_check_varis_on_stack) {
   using stan::math::value_of;
   stan::math::var x = 10;
   stan::math::vector_v v(3);

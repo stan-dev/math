@@ -354,7 +354,7 @@ TEST(AgradRevMatrix, mdivide_left_ldlt_finite_diff_vd) {
   }
 }
 
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, mdivide_left_ldlt_check_varis_on_stack) {
   using stan::math::value_of;
   stan::math::LDLT_factor<stan::math::var, -1, -1> ldlt_Av;
   stan::math::matrix_v Av(2, 2);

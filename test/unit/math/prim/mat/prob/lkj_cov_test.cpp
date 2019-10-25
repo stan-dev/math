@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <random>
 
-TEST(ProbDistributionsLkjCorr, testIdentity) {
+TEST(ProbDistributionsLkjCov, testIdentity) {
   std::random_device rd;
   std::mt19937 mt(rd());
   unsigned int K = 4;
@@ -17,7 +17,7 @@ TEST(ProbDistributionsLkjCorr, testIdentity) {
   EXPECT_FLOAT_EQ(f, stan::math::lkj_corr_log(Sigma, eta));
 }
 
-TEST(ProbDistributionsLkjCorr, testHalf) {
+TEST(ProbDistributionsLkjCov, testHalf) {
   std::random_device rd;
   std::mt19937 mt(rd());
   unsigned int K = 4;
@@ -33,7 +33,7 @@ TEST(ProbDistributionsLkjCorr, testHalf) {
   EXPECT_FLOAT_EQ(f, stan::math::lkj_corr_log(Sigma, eta));
 }
 
-TEST(ProbDistributionsLkjCorr, Sigma) {
+TEST(ProbDistributionsLkjCov, Sigma) {
   std::random_device rd;
   std::mt19937 mt(rd());
   unsigned int K = 4;

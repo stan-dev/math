@@ -225,7 +225,7 @@ TEST(AgradRevMatrix, mdivide_right_ldlt_dv) {
   }
 }
 
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, mdivide_right_ldlt_check_varis_on_stack) {
   using stan::math::value_of;
   stan::math::row_vector_v b(5);
   b << 62, 84, 84, 76, 108;

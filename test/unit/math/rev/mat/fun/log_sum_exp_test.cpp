@@ -78,7 +78,7 @@ TEST(AgradRev, logSumExpMatrixInf) {
   EXPECT_NO_THROW(s.grad(v, grad_s));
 }
 
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, log_sum_exp_check_varis_on_stack) {
   stan::math::vector_v a(2);
   a << 5, 2;
   test::check_varis_on_stack(stan::math::log_sum_exp(a));

@@ -6,7 +6,7 @@ using Eigen::Dynamic;
 using Eigen::Matrix;
 using stan::math::diag_post_multiply;
 
-TEST(MathMatrix, diagPostMultiply) {
+TEST(MathMatrixPrimMat, diagPostMultiply) {
   Matrix<double, Dynamic, Dynamic> m(1, 1);
   m << 3;
 
@@ -18,7 +18,7 @@ TEST(MathMatrix, diagPostMultiply) {
 
   expect_matrix_eq(m * v_m, diag_post_multiply(m, v));
 }
-TEST(MathMatrix, diagPostMultiply2) {
+TEST(MathMatrixPrimMat, diagPostMultiply2) {
   Matrix<double, Dynamic, Dynamic> m(2, 2);
   m << 2, 3, 4, 5;
 
@@ -35,7 +35,7 @@ TEST(MathMatrix, diagPostMultiply2) {
   expect_matrix_eq(m * v_m, diag_post_multiply(m, rv));
 }
 
-TEST(MathMatrix, diagPostMultiplyException) {
+TEST(MathMatrixPrimMat, diagPostMultiplyException) {
   Matrix<double, Dynamic, Dynamic> m(2, 2);
   m << 2, 3, 4, 5;
   EXPECT_THROW(diag_post_multiply(m, m), std::invalid_argument);

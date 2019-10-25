@@ -80,7 +80,7 @@ TEST(AgradRevMatrix, max_matrix_exception) {
   matrix_v v;
   EXPECT_EQ(-std::numeric_limits<double>::infinity(), max(v).val());
 }
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, max_check_varis_on_stack) {
   stan::math::vector_v v(3);
   v << -100, 0, 1;
   stan::math::row_vector_v rv(3);

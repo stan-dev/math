@@ -29,7 +29,7 @@ inline void test_scale_matrix_exp_multiply() {
   }
 }
 
-TEST(MathMatrix, scale_matrix_exp_multiply) {
+TEST(MathMatrixPrimMat, scale_matrix_exp_multiply) {
   test_scale_matrix_exp_multiply<1, 1>();
   test_scale_matrix_exp_multiply<1, 5>();
   test_scale_matrix_exp_multiply<5, 1>();
@@ -37,7 +37,7 @@ TEST(MathMatrix, scale_matrix_exp_multiply) {
   test_scale_matrix_exp_multiply<20, 2>();
 }
 
-TEST(MathMatrix, scale_matrix_exp_multiply_exception) {
+TEST(MathMatrixPrimMat, scale_matrix_exp_multiply_exception) {
   using stan::math::scale_matrix_exp_multiply;
   const double t = 1.0;
   {  // nonzero size

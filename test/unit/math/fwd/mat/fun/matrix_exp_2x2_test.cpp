@@ -2,7 +2,7 @@
 #include <stan/math/prim/mat/fun/matrix_exp_2x2.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathMatrix, matrix_exp_2x2_1) {
+TEST(MathMatrixFwdMat, matrix_exp_2x2_2x2_1) {
   stan::math::fvar<double> a;
   a.val_ = 3.0;
   a.d_ = 1.0;
@@ -40,7 +40,7 @@ TEST(MathMatrix, matrix_exp_2x2_1) {
   }
 }
 
-TEST(MathMatrix, matrix_exp_2x2_2) {
+TEST(MathMatrixFwdMat, matrix_exp_2x2_2x2_2) {
   // example from Moler & Van Loan, 2003, section 3
   stan::math::fvar<double> a, b;
   a.val_ = -1.0;

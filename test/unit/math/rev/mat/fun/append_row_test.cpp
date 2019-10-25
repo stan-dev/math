@@ -102,7 +102,7 @@ void correct_type_matrix(const Eigen::Matrix<T, R, C>& x) {
   EXPECT_EQ(Eigen::Dynamic, R);
 }
 
-TEST(MathMatrix, append_row_different_types) {
+TEST(MathMatrixRevMat, append_row_different_types) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
@@ -202,7 +202,7 @@ TEST(MathMatrix, append_row_different_types) {
   correct_type_vector(append_row(vv3, vv3b));
   correct_type_vector(append_row(vv3b, vv3));
 }
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, append_row_check_varis_on_stack) {
   using stan::math::to_var;
   stan::math::matrix_d a(2, 2);
   stan::math::matrix_d b(2, 2);

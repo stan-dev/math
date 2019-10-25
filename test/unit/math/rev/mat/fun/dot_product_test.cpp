@@ -247,7 +247,7 @@ TEST(AgradRevMatrix, dot_product_vd_vec) {
   EXPECT_EQ(grad[2], 3);
 }
 
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, dot_product_check_varis_on_stack) {
   using stan::math::value_of;
   stan::math::vector_v v1(3), v2(3);
   v1 << 1, 3, -5;

@@ -195,7 +195,7 @@ TEST(AgradRevMatrix, add_matrix_matrix_exception) {
   EXPECT_THROW(add(v1, d2), std::invalid_argument);
   EXPECT_THROW(add(v1, v2), std::invalid_argument);
 }
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, add_check_varis_on_stack) {
   stan::math::matrix_v m(2, 2);
   m << 1, 2, 3, 4;
 

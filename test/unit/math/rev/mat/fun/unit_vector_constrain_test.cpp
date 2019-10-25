@@ -61,7 +61,7 @@ TEST(AgradRevUnitVectorConstrain, exceptions) {
   EXPECT_THROW(unit_vector_constrain(x), std::domain_error);
 }
 
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, unit_vector_constrain_check_varis_on_stack) {
   using stan::math::to_var;
   using stan::math::var;
   Eigen::Matrix<var, Eigen::Dynamic, 1> y(3);

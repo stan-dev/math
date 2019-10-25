@@ -9,7 +9,7 @@ using Eigen::Matrix;
 using stan::math::quad_form_diag;
 using stan::math::var;
 
-TEST(MathMatrix, quadFormDiag2_vv) {
+TEST(MathMatrixRevMat, quadFormDiag2_vv) {
   Matrix<var, Dynamic, Dynamic> m(3, 3);
   m << 1, 2, 3, 4, 5, 6, 7, 8, 9;
 
@@ -29,7 +29,7 @@ TEST(MathMatrix, quadFormDiag2_vv) {
   expect_matrix_eq(v_m_times_m, quad_form_diag(m, rv));
 }
 
-TEST(MathMatrix, quadFormDiag2_vd) {
+TEST(MathMatrixRevMat, quadFormDiag2_vd) {
   Matrix<var, Dynamic, Dynamic> m1(3, 3);
   m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
 
@@ -47,7 +47,7 @@ TEST(MathMatrix, quadFormDiag2_vd) {
   expect_matrix_eq(v_m_times_m1, quad_form_diag(m2, v));
 }
 
-TEST(MathMatrix, quadFormDiag2_dv) {
+TEST(MathMatrixRevMat, quadFormDiag2_dv) {
   Matrix<double, Dynamic, Dynamic> m1(3, 3);
   m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
 
@@ -65,7 +65,7 @@ TEST(MathMatrix, quadFormDiag2_dv) {
   expect_matrix_eq(v_m_times_m2, quad_form_diag(m1, v));
 }
 
-TEST(MathMatrix, quadFormDiagGrad_vv) {
+TEST(MathMatrixRevMat, quadFormDiagGrad_vv) {
   Matrix<var, Dynamic, Dynamic> m1(3, 3);
   m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
 
@@ -108,7 +108,7 @@ TEST(MathMatrix, quadFormDiagGrad_vv) {
     EXPECT_FLOAT_EQ(g1[i], g2[i]);
 }
 
-TEST(MathMatrix, quadFormDiagGrad_vd) {
+TEST(MathMatrixRevMat, quadFormDiagGrad_vd) {
   Matrix<var, Dynamic, Dynamic> m1(3, 3);
   m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
 
@@ -149,7 +149,7 @@ TEST(MathMatrix, quadFormDiagGrad_vd) {
     EXPECT_FLOAT_EQ(g1[i], g2[i]);
 }
 
-TEST(MathMatrix, quadFormDiagGrad_dv) {
+TEST(MathMatrixRevMat, quadFormDiagGrad_dv) {
   Matrix<double, Dynamic, Dynamic> m1(3, 3);
   m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
 
@@ -190,7 +190,7 @@ TEST(MathMatrix, quadFormDiagGrad_dv) {
     EXPECT_FLOAT_EQ(g1[i], g2[i]);
 }
 
-TEST(MathMatrix, quadFormDiagException) {
+TEST(MathMatrixRevMat, quadFormDiagException) {
   Matrix<var, Dynamic, Dynamic> m(2, 2);
   m << 2, 3, 4, 5;
   EXPECT_THROW(quad_form_diag(m, m), std::invalid_argument);
@@ -200,7 +200,7 @@ TEST(MathMatrix, quadFormDiagException) {
   EXPECT_THROW(quad_form_diag(m, v), std::invalid_argument);
 }
 
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, quad_form_diag_check_varis_on_stack) {
   using stan::math::to_var;
   stan::math::matrix_d m(3, 3);
   m << 1, 2, 3, 4, 5, 6, 7, 8, 9;

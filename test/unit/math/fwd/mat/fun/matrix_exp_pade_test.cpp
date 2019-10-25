@@ -8,7 +8,7 @@ using stan::math::fvar;
 using stan::math::matrix_exp_pade;
 using stan::math::matrix_fd;
 
-TEST(MathMatrix, matrix_exp_pade_1x1) {
+TEST(MathMatrixFwdMat, matrix_exp_pade_1x1) {
   using stan::math::fvar;
 
   fvar<double> a;
@@ -33,7 +33,7 @@ TEST(MathMatrix, matrix_exp_pade_1x1) {
   EXPECT_EQ(b.d_ * output(0, 0).val_, output(0, 0).d_);
 }
 
-TEST(MathMatrix, matrix_exp_pade_2x2) {
+TEST(MathMatrixFwdMat, matrix_exp_pade_2x2) {
   // example from Moler & Van Loan, 2003, section 3
   stan::math::fvar<double> a, b;
   a.val_ = -1.0;
@@ -61,7 +61,7 @@ TEST(MathMatrix, matrix_exp_pade_2x2) {
   EXPECT_FLOAT_EQ(1.103638, output(1, 1).d_);
 }
 
-TEST(MathMatrix, matrix_exp_pade_3x3) {
+TEST(MathMatrixFwdMat, matrix_exp_pade_3x3) {
   using stan::math::fvar;
   using stan::math::matrix_fd;
 
@@ -106,7 +106,7 @@ TEST(MathMatrix, matrix_exp_pade_3x3) {
   EXPECT_FLOAT_EQ(-168.14036, output(2, 2).d_);
 }
 
-TEST(MathMatrix, matrix_exp_100x100) {
+TEST(MathMatrixFwdMat, matrix_exp_pade_100x100) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
