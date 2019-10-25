@@ -105,7 +105,7 @@ struct multi_normal_prec_fun {
   }
 };
 
-TEST(MultiNormalPrec, TestGradFunctional) {
+TEST(ProbDistributionsMultiNormalPrec2, TestGradFunctional) {
   std::vector<double> x(3 + 3 + 3 * 2);
   // y
   x[0] = 1.0;

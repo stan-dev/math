@@ -23,7 +23,7 @@ typedef Eigen::Matrix<stan::math::var, 1, Eigen::Dynamic> var_v1;
 typedef std::vector<var_v1> var_v2;
 typedef std::vector<var_v2> var_v3;
 
-TEST(MetaTraits, isConstantStruct) {
+TEST(MetaTraitsRevMat, isConstantStruct) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::vector;

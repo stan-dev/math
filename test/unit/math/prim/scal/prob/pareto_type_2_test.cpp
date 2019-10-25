@@ -3,7 +3,7 @@
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
 
-TEST(ProbDistributionsParetoType2, chiSquareGoodnessFitTest) {
+TEST(ProbDistributionsParetoType2Prim, chiSquareGoodnessFitTest) {
   boost::random::mt19937 rng;
   int N = 10000;
   int K = stan::math::round(2 * std::pow(N, 0.4));
