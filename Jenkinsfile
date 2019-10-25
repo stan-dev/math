@@ -144,8 +144,9 @@ pipeline {
         }
         stage("Doxygen") {
           agent { docker {
-            image 'nnadeau/docker-doxygen'}
+            image 'nnadeau/docker-doxygen'
             args '-u root'
+          }
           }
           steps {
               deleteDir()
