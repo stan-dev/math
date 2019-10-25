@@ -337,7 +337,7 @@ void test_all() {
   }
 }
 
-TEST(MultiNormal, TestGradFunctionalVectorized) {
+TEST(ProbDistributionsMultiNormalPrec2, TestGradFunctionalVectorized) {
   test_all<1, 1>();
   test_all<1, -1>();
   test_all<-1, 1>();
