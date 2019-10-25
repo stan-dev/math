@@ -167,7 +167,7 @@ struct select_event_helper<in_buffer, K> {
 template <typename K>
 struct select_event_helper<out_buffer, K> {
   inline const std::vector<cl::Event> get(const stan::math::matrix_cl<K>& m) {
-    return m.read_events();
+    return m.read_write_events();
   }
 };
 
