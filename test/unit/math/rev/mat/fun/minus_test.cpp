@@ -84,7 +84,7 @@ TEST(AgradRevMatrix, minus_matrix) {
   EXPECT_FLOAT_EQ(40, output(1, 1).val());
   EXPECT_FLOAT_EQ(-2, output(1, 2).val());
 }
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, minus_check_varis_on_stack) {
   stan::math::var x = 10;
   stan::math::vector_v v(3);
   v << -100, 0, 1;

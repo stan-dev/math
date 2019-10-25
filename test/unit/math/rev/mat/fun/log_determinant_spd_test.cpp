@@ -43,7 +43,7 @@ TEST(AgradRevMatrix, log_determinant_spd) {
   EXPECT_FLOAT_EQ(std::log(3.0), det.val());
 }
 
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, log_determinant_spd_check_varis_on_stack) {
   stan::math::matrix_v v2(2, 2);
   v2 << 2, 1, 1, 3;
   test::check_varis_on_stack(stan::math::log_determinant_spd(v2));

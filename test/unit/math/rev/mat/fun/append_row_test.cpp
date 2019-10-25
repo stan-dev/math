@@ -202,7 +202,7 @@ TEST(MathMatrixRevMat, append_row_different_types) {
   correct_type_vector(append_row(vv3, vv3b));
   correct_type_vector(append_row(vv3b, vv3));
 }
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, append_row_check_varis_on_stack) {
   using stan::math::to_var;
   stan::math::matrix_d a(2, 2);
   stan::math::matrix_d b(2, 2);

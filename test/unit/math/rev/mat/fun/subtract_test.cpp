@@ -200,7 +200,7 @@ TEST(AgradRevMatrix, subtract_matrix_matrix_exception) {
   EXPECT_THROW(subtract(v1, d2), std::invalid_argument);
   EXPECT_THROW(subtract(v1, v2), std::invalid_argument);
 }
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, subtract_check_varis_on_stack) {
   using stan::math::value_of;
   stan::math::matrix_v m(2, 2);
   m << 1, 2, 3, 4;

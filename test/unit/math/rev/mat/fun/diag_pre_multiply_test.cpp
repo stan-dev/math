@@ -198,7 +198,7 @@ TEST(MathMatrixRevMat, diagPreMultiplyException) {
   EXPECT_THROW(diag_pre_multiply(v, m), std::invalid_argument);
 }
 
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, diag_pre_multiply_check_varis_on_stack) {
   stan::math::matrix_v m(3, 3);
   m << 1, 2, 3, 4, 5, 6, 7, 8, 9;
   stan::math::vector_v v(3);

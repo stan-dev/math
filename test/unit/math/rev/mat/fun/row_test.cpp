@@ -41,7 +41,7 @@ TEST(AgradRevMatrix, row_v_excHigh) {
   EXPECT_THROW(row(y, 5), std::out_of_range);
 }
 
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, row_check_varis_on_stack) {
   stan::math::matrix_v y(2, 3);
   y << 1, 2, 3, 4, 5, 6;
 

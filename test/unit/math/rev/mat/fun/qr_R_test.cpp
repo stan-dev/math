@@ -22,7 +22,7 @@ TEST(MathMatrixRevMat, qr_R) {
     }
   }
 }
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, qr_R_check_varis_on_stack) {
   stan::math::matrix_v m1(3, 2);
   m1 << 1, 2, 3, 4, 5, 6;
   test::check_varis_on_stack(stan::math::qr_R(m1));

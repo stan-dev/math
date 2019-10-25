@@ -160,7 +160,7 @@ TEST(AgradRevMatrix, mdivide_left_grad_vd) {
   }
 }
 
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, mdivide_left_check_varis_on_stack) {
   using stan::math::value_of;
   stan::math::matrix_v A(2, 2);
   A << 2.0, 3.0, 5.0, 7.0;

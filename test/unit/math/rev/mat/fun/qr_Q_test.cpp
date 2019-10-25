@@ -13,7 +13,7 @@ TEST(MathMatrixRevMat, qr_Q) {
   EXPECT_THROW(qr_Q(m0), std::invalid_argument);
   EXPECT_NO_THROW(qr_Q(m1));
 }
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, qr_Q_check_varis_on_stack) {
   stan::math::matrix_v m1(3, 2);
   m1 << 1, 2, 3, 4, 5, 6;
   test::check_varis_on_stack(stan::math::qr_Q(m1));

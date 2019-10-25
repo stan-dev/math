@@ -651,7 +651,7 @@ TEST(AgradRevMatrix, quad_form_sym_vec_grad_vv) {
       EXPECT_FLOAT_EQ(grad[pos], dqda(i, j));
 }
 
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, quad_form_check_varis_on_stack) {
   using stan::math::to_var;
   stan::math::matrix_d a(4, 4);
   stan::math::matrix_d b(4, 2);

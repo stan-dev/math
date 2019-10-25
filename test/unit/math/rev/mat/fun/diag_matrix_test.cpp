@@ -22,7 +22,7 @@ TEST(AgradRevMatrix, diagMatrix) {
   EXPECT_EQ(9, m(2, 2).val());
 }
 
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, diag_matrix_check_varis_on_stack) {
   stan::math::vector_v v(3);
   v << 1, 4, 9;
   test::check_varis_on_stack(stan::math::diag_matrix(v));

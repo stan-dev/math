@@ -34,7 +34,7 @@ TEST(AgradRevMatrix, mdivide_right_val) {
   EXPECT_NEAR(1.0, I(1, 1).val(), 1.0e-12);
 }
 
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, mdivide_right_check_varis_on_stack) {
   using stan::math::value_of;
   stan::math::matrix_v m(2, 2);
   m << 2.0, 3.0, 5.0, 7.0;

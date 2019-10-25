@@ -72,7 +72,7 @@ TEST(AgradRevMatrix, determinant3by3) {
   // supresses set but not used warning
   h = h;
 }
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, determinant_check_varis_on_stack) {
   stan::math::matrix_v X(2, 2);
   X << 2, 3, 5, 7;
   test::check_varis_on_stack(stan::math::determinant(X));

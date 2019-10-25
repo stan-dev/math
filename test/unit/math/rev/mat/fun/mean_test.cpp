@@ -104,7 +104,7 @@ TEST(AgradRevMatrix, meanStdVector) {
   EXPECT_FLOAT_EQ(0.5, grad[1]);
   EXPECT_EQ(2U, grad.size());
 }
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, mean_check_varis_on_stack) {
   stan::math::vector_v v(3);
   v << -100, 0, 1;
   stan::math::row_vector_v rv(3);

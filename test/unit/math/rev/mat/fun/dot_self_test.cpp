@@ -67,7 +67,7 @@ TEST(AgradRevMatrix, columns_dot_self) {
   assert_val_grad(vvvv);
 }
 
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, dot_self_check_varis_on_stack) {
   Eigen::Matrix<AVAR, Eigen::Dynamic, 1> v2(2);
   v2 << 2.0, 3.0;
   test::check_varis_on_stack(stan::math::dot_self(v2));

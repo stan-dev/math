@@ -100,7 +100,7 @@ TEST(prob_transform, positive_ordered_constrain_analytical_grads_rng) {
   }
 }
 
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, positive_ordered_constrain_check_varis_on_stack) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> x(3);
   x << -12.0, 3.0, -1.9;
   stan::math::var lp = 0.0;

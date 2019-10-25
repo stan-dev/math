@@ -22,7 +22,7 @@ TEST(AgradRevMatrix, mv_trace) {
   EXPECT_FLOAT_EQ(1.0, g[3]);
 }
 
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, trace_check_varis_on_stack) {
   stan::math::matrix_v a(2, 2);
   a << -1.0, 2.0, 5.0, 10.0;
   test::check_varis_on_stack(stan::math::trace(a));

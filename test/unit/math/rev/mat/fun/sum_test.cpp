@@ -83,7 +83,7 @@ TEST(AgradRevMatrix, sum_matrix) {
   EXPECT_FLOAT_EQ(0.0, sum(v).val());
 }
 
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, sum_check_varis_on_stack) {
   stan::math::matrix_v m(2, 2);
   m << 1, 2, 3, 4;
 

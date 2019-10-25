@@ -206,7 +206,7 @@ TEST(AgradRevMatrix, distance_vd) {
   EXPECT_FLOAT_EQ((a(2).val() - b(2)) / 3.464102, grad[2]);
 }
 
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, distance_check_varis_on_stack) {
   stan::math::vector_v v1(3), v2(3);
   v1 << 1, 3, -5;
   v2 << 4, -2, -1;

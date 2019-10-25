@@ -228,7 +228,7 @@ TEST(AgradRevMatrix, tcrossprodGrad3) {
   EXPECT_FLOAT_EQ(12.0, J[8][5]);
 }
 
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, tcrossprod_check_varis_on_stack) {
   stan::math::matrix_v L(3, 3);
   L << 1, 0, 0, 2, 3, 0, 4, 5, 6;
 

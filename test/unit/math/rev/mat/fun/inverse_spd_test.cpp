@@ -86,7 +86,7 @@ TEST(AgradRevMatrix, inverse_spd_inverse_spd_sum) {
   }
 }
 
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, inverse_spd_check_varis_on_stack) {
   using stan::math::inverse_spd;
   using stan::math::matrix_v;
 

@@ -200,7 +200,7 @@ TEST(MathMatrixRevMat, quadFormDiagException) {
   EXPECT_THROW(quad_form_diag(m, v), std::invalid_argument);
 }
 
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, quad_form_diag_check_varis_on_stack) {
   using stan::math::to_var;
   stan::math::matrix_d m(3, 3);
   m << 1, 2, 3, 4, 5, 6, 7, 8, 9;
