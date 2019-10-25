@@ -75,12 +75,5 @@ template <typename T>
 struct is_eigen_contiguous_map
     : internal::is_eigen_contiguous_map_impl<std::decay_t<T>> {};
 
-template <typename T>
-using require_eigen_contiguous_map_t = require_t<is_eigen_contiguous_map<T>>;
-
-template <typename T>
-using require_not_eigen_contiguous_map_t
-    = require_not_t<is_eigen_contiguous_map<T>>;
-
 }  // namespace stan
 #endif

@@ -295,7 +295,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * be allocated
    */
   template <typename Mat, require_eigen_t<Mat>..., require_same_vt<Mat, T>...,
-            require_not_eigen_contiguous_map_t<Mat>...>
+            require_not_t<is_eigen_contiguous_map<Mat>>...>
   explicit matrix_cl(Mat&& A,
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
       : rows_(A.rows()), cols_(A.cols()), view_(partial_view) {
@@ -330,7 +330,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * @throw <code>std::system_error</code> if the memory on the device could not
    * be allocated
    */
-  template <typename Map, require_eigen_contiguous_map_t<Map>...,
+  template <typename Map, require_t<is_eigen_contiguous_map<Map>>...,
             require_same_vt<Map, T>...>
   explicit matrix_cl(Map&& A,
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
