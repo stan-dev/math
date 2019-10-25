@@ -30,14 +30,14 @@ inline void check_row_index(const char* function, const char* name,
   if (i >= error_index::value
       && i < static_cast<size_t>(y.rows()) + error_index::value)
     return;
-  }
-
-  std::stringstream msg;
-  msg << " for rows of " << name;
-  std::string msg_str(msg.str());
-  out_of_range(function, y.rows(), i, msg_str.c_str());
 }
 
+std::stringstream msg;
+msg << " for rows of " << name;
+std::string msg_str(msg.str());
+out_of_range(function, y.rows(), i, msg_str.c_str());
 }  // namespace math
+
+}  // namespace stan
 }  // namespace stan
 #endif

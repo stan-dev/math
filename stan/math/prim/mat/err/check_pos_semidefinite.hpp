@@ -34,18 +34,17 @@ inline void check_pos_semidefinite(
 
   if (y.rows() == 1 && !(y(0, 0) >= 0))
     domain_error(function, name, "is not positive semi-definite.", "");
-  }
-
-  using Eigen::Dynamic;
-  using Eigen::LDLT;
-  using Eigen::Matrix;
-  LDLT<Eigen::MatrixXd> cholesky = value_of_rec(y).ldlt();
-  if (cholesky.info() != Eigen::Success
-      || (cholesky.vectorD().array() < 0).any())
-    domain_error(function, name, "is not positive semi-definite.", "");
-  }
-  check_not_nan(function, name, y);
 }
+
+using Eigen::Dynamic;
+using Eigen::LDLT;
+using Eigen::Matrix;
+LDLT<Eigen::MatrixXd> cholesky = value_of_rec(y).ldlt();
+if (cholesky.info() != Eigen::Success || (cholesky.vectorD().array() < 0).any())
+  domain_error(function, name, "is not positive semi-definite.", "");
+}  // namespace math
+check_not_nan(function, name, y);
+}  // namespace stan
 
 /**
  * Check if the specified matrix is positive semidefinite
