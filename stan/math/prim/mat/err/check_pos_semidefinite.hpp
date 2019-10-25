@@ -64,7 +64,6 @@ inline void check_pos_semidefinite(const char* function, const char* name,
     domain_error(function, name, "is not positive semi-definite.", "");
   }
 }
-
 }  // namespace math
 }  // namespace stan
 #endif
