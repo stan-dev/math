@@ -10,6 +10,9 @@
 TEST(MathFunctions, fma) {
   EXPECT_FLOAT_EQ(5.0, fma(1.0, 2.0, 3.0));
   EXPECT_FLOAT_EQ(10.0, fma(2.0, 3.0, 4.0));
+  using stan::math::fma;
+  EXPECT_FLOAT_EQ(
+      11.0, fma(static_cast<int>(3), static_cast<int>(2), static_cast<int>(5)));
 }
 
 TEST(MathFunctions, fma_nan) {
