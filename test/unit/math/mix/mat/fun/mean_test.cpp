@@ -1,8 +1,3 @@
-#include <stan/math/mix/mat.hpp>
-#include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
-#include <vector>
-
 #include <test/unit/math/test_ad.hpp>
 
 template <typename T>
