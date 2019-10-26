@@ -214,6 +214,14 @@ CXXFLAGS_TBB ?= -I $(TBB)/include
 LDFLAGS_TBB ?= -Wl,-L,"$(TBB_BIN_ABSOLUTE_PATH)" -Wl,-rpath,"$(TBB_BIN_ABSOLUTE_PATH)"
 LDLIBS_TBB ?= 
 
+################################################################################
+# Setup STAN_THREADS
+#
+# Sets up CXXFLAGS_THREADS to use threading
+
+ifdef STAN_THREADS
+  CXXFLAGS_THREADS ?= -DSTAN_THREADS
+endif
 
 ################################################################################
 # Setup MPI
@@ -236,7 +244,7 @@ endif
 
 
 
-CXXFLAGS += $(CXXFLAGS_LANG) $(CXXFLAGS_OS) $(CXXFLAGS_WARNINGS) $(CXXFLAGS_BOOST) $(CXXFLAGS_EIGEN) $(CXXFLAGS_OPENCL) $(CXXFLAGS_MPI) $(CXXFLAGS_TBB) -O$(O) $(INC)
+CXXFLAGS += $(CXXFLAGS_LANG) $(CXXFLAGS_OS) $(CXXFLAGS_WARNINGS) $(CXXFLAGS_BOOST) $(CXXFLAGS_EIGEN) $(CXXFLAGS_OPENCL) $(CXXFLAGS_MPI) $(CXXFLAGS_THREADS) $(CXXFLAGS_TBB) -O$(O) $(INC)
 CPPFLAGS += $(CPPFLAGS_LANG) $(CPPFLAGS_OS) $(CPPFLAGS_WARNINGS) $(CPPFLAGS_BOOST) $(CPPFLAGS_EIGEN) $(CPPFLAGS_OPENCL) $(CPPFLAGS_MPI) $(CPPFLAGS_TBB)
 LDFLAGS += $(LDFLAGS_LANG) $(LDFLAGS_OS) $(LDFLAGS_WARNINGS) $(LDFLAGS_BOOST) $(LDFLAGS_EIGEN) $(LDFLAGS_OPENCL) $(LDFLAGS_MPI) $(LDFLAGS_TBB)
 LDLIBS += $(LDLIBS_LANG) $(LDLIBS_OS) $(LDLIBS_WARNINGS) $(LDLIBS_BOOST) $(LDLIBS_EIGEN) $(LDLIBS_OPENCL) $(LDLIBS_MPI) $(LDLIBS_TBB)
@@ -255,6 +263,7 @@ print-compiler-flags:
 	@echo '  - SUNDIALS                    ' $(SUNDIALS)
 	@echo '  - TBB                         ' $(TBB)
 	@echo '  - GTEST                       ' $(GTEST)
+	@echo '  - STAN_THREADS                ' $(STAN_THREADS) 
 	@echo '  - STAN_OPENCL                 ' $(STAN_OPENCL)
 	@echo '  - STAN_MPI                    ' $(STAN_MPI)
 	@echo '  Compiler flags (each can be overriden separately):'
@@ -264,6 +273,7 @@ print-compiler-flags:
 	@echo '  - CXXFLAGS_EIGEN              ' $(CXXFLAGS_EIGEN)
 	@echo '  - CXXFLAGS_OS                 ' $(CXXFLAGS_OS)
 	@echo '  - CXXFLAGS_GTEST              ' $(CXXFLAGS_GTEST)
+	@echo '  - CXXFLAGS_THREADS            ' $(CXXFLAGS_THREADS)
 	@echo '  - CXXFLAGS_OPENCL             ' $(CXXFLAGS_OPENCL)
 	@echo '  - CXXFLAGS_TBB                ' $(CXXFLAGS_TBB)
 	@echo '  - CXXFLAGS_MPI                ' $(CXXFLAGS_MPI)
