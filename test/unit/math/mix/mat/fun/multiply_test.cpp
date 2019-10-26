@@ -45,6 +45,25 @@ TEST(mathMixMatFun, multiply) {
   stan::test::expect_ad(tols, f, rv, m);
   stan::test::expect_ad(tols, f, m, m);
 
+  Eigen::RowVectorXd d1(3);
+  d1 << 1, 3, -5;
+  Eigen::VectorXd d2(3);
+  d2 << 4, -2, -1;
+  stan::test::expect_ad(tols, f, d1, d2);
+  stan::test::expect_ad(tols, f, d2, d1);
+
+  Eigen::MatrixXd u(3, 2);
+  u << 1, 3, -5, 4, -2, -1;
+  Eigen::MatrixXd u_tr = u.transpose();
+  Eigen::VectorXd vv(2);
+  vv << -2, 4;
+  Eigen::RowVectorXd rvv(3);
+  rvv << -2, 4, 1;
+  stan::test::expect_ad(tols, f, u, u_tr);
+  stan::test::expect_ad(tols, f, u_tr, u);
+  stan::test::expect_ad(tols, f, u, vv);
+  stan::test::expect_ad(tols, f, rvv, u);
+
   // TODO(carpenter):  multiplying by size zero should return size zero
   // the functions need to be fixed then the following will pass
 

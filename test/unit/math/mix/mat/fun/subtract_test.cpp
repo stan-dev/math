@@ -59,6 +59,10 @@ TEST(MathMixMatFun, subtract) {
   v5 << 2, 3, 4, 5, 6;
   stan::test::expect_ad(f, v5, v5b);
   stan::test::expect_ad(f, rv5, rv5b);
+  stan::test::expect_ad(f, v5, d);
+  stan::test::expect_ad(f, d, v5);
+  stan::test::expect_ad(f, rv5, d);
+  stan::test::expect_ad(f, d, rv5);
 
   Eigen::MatrixXd m22c(2, 2);
   m22c << -10, 1, 10, 0;
