@@ -1,187 +1,44 @@
-#include <stan/math/mix/mat.hpp>
-#include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/test_ad.hpp>
 
-TEST(AgradMixMatrixColumnsDotSelf, matrix_fv_1stDeriv) {
-  using stan::math::columns_dot_self;
-  using stan::math::fvar;
-  using stan::math::matrix_fv;
-  using stan::math::var;
+TEST(MathMixMatFun, columnsDotSelf) {
+  auto f = [](const auto& x) { return stan::math::columns_dot_self(x); };
+  Eigen::MatrixXd a11(1, 1);
+  a11 << 2;
+  stan::test::expect_ad(f, a11);
 
-  fvar<var> a(2.0, 1.0);
-  fvar<var> b(3.0, 1.0);
-  fvar<var> c(4.0, 1.0);
-  fvar<var> d(5.0, 1.0);
-  matrix_fv m1(1, 1);
-  m1 << a;
+  Eigen::MatrixXd a12(1, 2);
+  a12 << 2, 3;
+  stan::test::expect_ad(f, a12);
 
-  EXPECT_NEAR(4.0, columns_dot_self(m1)(0, 0).val_.val(), 1E-12);
-  EXPECT_NEAR(4.0, columns_dot_self(m1)(0, 0).d_.val(), 1E-12);
+  Eigen::MatrixXd a22(2, 2);
+  a22 << 2, 3, 4, 5;
+  stan::test::expect_ad(f, a22);
 
-  matrix_fv m2(1, 2);
-  m2 << a, b;
-  matrix_fv x;
-  x = columns_dot_self(m2);
-  EXPECT_NEAR(4.0, x(0, 0).val_.val(), 1E-12);
-  EXPECT_NEAR(9.0, x(0, 1).val_.val(), 1E-12);
-  EXPECT_NEAR(4.0, x(0, 0).d_.val(), 1E-12);
-  EXPECT_NEAR(6.0, x(0, 1).d_.val(), 1E-12);
+  Eigen::VectorXd u3(3);
+  u3 << 1, 3, -5;
+  Eigen::VectorXd v3(3);
+  v3 << 4, -2, -1;
+  stan::test::expect_ad(f, u3);
 
-  matrix_fv m3(2, 2);
-  m3 << a, b, c, d;
-  x = columns_dot_self(m3);
-  EXPECT_NEAR(20.0, x(0, 0).val_.val(), 1E-12);
-  EXPECT_NEAR(34.0, x(0, 1).val_.val(), 1E-12);
-  EXPECT_NEAR(12.0, x(0, 0).d_.val(), 1E-12);
-  EXPECT_NEAR(16.0, x(0, 1).d_.val(), 1E-12);
+  Eigen::RowVectorXd ru3 = u3;
+  stan::test::expect_ad(f, ru3);
 
-  AVEC z = createAVEC(a.val(), b.val(), c.val(), d.val());
-  VEC h;
-  x(0, 0).val_.grad(z, h);
-  EXPECT_FLOAT_EQ(4.0, h[0]);
-  EXPECT_FLOAT_EQ(0.0, h[1]);
-  EXPECT_FLOAT_EQ(8.0, h[2]);
-  EXPECT_FLOAT_EQ(0.0, h[3]);
-}
-TEST(AgradMixMatrixColumnsDotSelf, matrix_fv_2ndDeriv) {
-  using stan::math::columns_dot_self;
-  using stan::math::fvar;
-  using stan::math::matrix_fv;
-  using stan::math::var;
+  Eigen::MatrixXd a33(3, 3);
+  a33 << 1, 1, 1, 3, 3, 3, -5, -5, -5;
+  Eigen::MatrixXd b33(3, 3);
+  b33 << 4, 4, 4, -2, -2, -2, -1, -1, -1;
+  stan::test::expect_ad(f, a33);
+  stan::test::expect_ad(f, b33);
 
-  fvar<var> a(2.0, 1.0);
-  fvar<var> b(3.0, 1.0);
-  fvar<var> c(4.0, 1.0);
-  fvar<var> d(5.0, 1.0);
-  matrix_fv x;
-  matrix_fv m3(2, 2);
-  m3 << a, b, c, d;
-  x = columns_dot_self(m3);
+  Eigen::MatrixXd c32(3, 2);
+  c32 << 1, 2, 3, 4, 5, 6;
+  Eigen::MatrixXd d32(3, 2);
+  d32 << -1, -2, -3, -4, -5, -6;
+  stan::test::expect_ad(f, c32);
+  stan::test::expect_ad(f, d32);
 
-  AVEC z = createAVEC(a.val(), b.val(), c.val(), d.val());
-  VEC h;
-  x(0, 0).d_.grad(z, h);
-  EXPECT_FLOAT_EQ(2.0, h[0]);
-  EXPECT_FLOAT_EQ(0.0, h[1]);
-  EXPECT_FLOAT_EQ(2.0, h[2]);
-  EXPECT_FLOAT_EQ(0.0, h[3]);
-}
-TEST(AgradMixMatrixColumnsDotSelf, matrix_ffv_1stDeriv) {
-  using stan::math::columns_dot_self;
-  using stan::math::fvar;
-  using stan::math::matrix_ffv;
-  using stan::math::var;
-
-  fvar<fvar<var> > a(2.0, 1.0);
-  fvar<fvar<var> > b(3.0, 1.0);
-  fvar<fvar<var> > c(4.0, 1.0);
-  fvar<fvar<var> > d(5.0, 1.0);
-  matrix_ffv m1(1, 1);
-  m1 << a;
-
-  EXPECT_NEAR(4.0, columns_dot_self(m1)(0, 0).val_.val().val(), 1E-12);
-  EXPECT_NEAR(4.0, columns_dot_self(m1)(0, 0).d_.val().val(), 1E-12);
-
-  matrix_ffv m2(1, 2);
-  m2 << a, b;
-  matrix_ffv x;
-  x = columns_dot_self(m2);
-  EXPECT_NEAR(4.0, x(0, 0).val_.val().val(), 1E-12);
-  EXPECT_NEAR(9.0, x(0, 1).val_.val().val(), 1E-12);
-  EXPECT_NEAR(4.0, x(0, 0).d_.val().val(), 1E-12);
-  EXPECT_NEAR(6.0, x(0, 1).d_.val().val(), 1E-12);
-
-  matrix_ffv m3(2, 2);
-  m3 << a, b, c, d;
-  x = columns_dot_self(m3);
-  EXPECT_NEAR(20.0, x(0, 0).val_.val().val(), 1E-12);
-  EXPECT_NEAR(34.0, x(0, 1).val_.val().val(), 1E-12);
-  EXPECT_NEAR(12.0, x(0, 0).d_.val().val(), 1E-12);
-  EXPECT_NEAR(16.0, x(0, 1).d_.val().val(), 1E-12);
-
-  AVEC z
-      = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
-  VEC h;
-  x(0, 0).val_.val().grad(z, h);
-  EXPECT_FLOAT_EQ(4.0, h[0]);
-  EXPECT_FLOAT_EQ(0.0, h[1]);
-  EXPECT_FLOAT_EQ(8.0, h[2]);
-  EXPECT_FLOAT_EQ(0.0, h[3]);
-}
-TEST(AgradMixMatrixColumnsDotSelf, matrix_ffv_2ndDeriv_1) {
-  using stan::math::columns_dot_self;
-  using stan::math::fvar;
-  using stan::math::matrix_ffv;
-  using stan::math::var;
-
-  fvar<fvar<var> > a(2.0, 1.0);
-  fvar<fvar<var> > b(3.0, 1.0);
-  fvar<fvar<var> > c(4.0, 1.0);
-  fvar<fvar<var> > d(5.0, 1.0);
-  matrix_ffv x;
-  matrix_ffv m3(2, 2);
-  m3 << a, b, c, d;
-  x = columns_dot_self(m3);
-
-  AVEC z
-      = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
-  VEC h;
-  x(0, 0).val().d_.grad(z, h);
-  EXPECT_FLOAT_EQ(0.0, h[0]);
-  EXPECT_FLOAT_EQ(0.0, h[1]);
-  EXPECT_FLOAT_EQ(0.0, h[2]);
-  EXPECT_FLOAT_EQ(0.0, h[3]);
-}
-
-TEST(AgradMixMatrixColumnsDotSelf, matrix_ffv_2ndDeriv_2) {
-  using stan::math::columns_dot_self;
-  using stan::math::fvar;
-  using stan::math::matrix_ffv;
-  using stan::math::var;
-
-  fvar<fvar<var> > a(2.0, 1.0);
-  fvar<fvar<var> > b(3.0, 1.0);
-  fvar<fvar<var> > c(4.0, 1.0);
-  fvar<fvar<var> > d(5.0, 1.0);
-  matrix_ffv x;
-  matrix_ffv m3(2, 2);
-  m3 << a, b, c, d;
-  x = columns_dot_self(m3);
-
-  AVEC z
-      = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
-  VEC h;
-  x(0, 0).d_.val().grad(z, h);
-  EXPECT_FLOAT_EQ(2.0, h[0]);
-  EXPECT_FLOAT_EQ(0.0, h[1]);
-  EXPECT_FLOAT_EQ(2.0, h[2]);
-  EXPECT_FLOAT_EQ(0.0, h[3]);
-}
-TEST(AgradMixMatrixColumnsDotSelf, matrix_ffv_3rdDeriv) {
-  using stan::math::columns_dot_self;
-  using stan::math::fvar;
-  using stan::math::matrix_ffv;
-  using stan::math::var;
-
-  fvar<fvar<var> > a(2.0, 1.0);
-  fvar<fvar<var> > b(3.0, 1.0);
-  fvar<fvar<var> > c(4.0, 1.0);
-  fvar<fvar<var> > d(5.0, 1.0);
-  a.val_.d_ = 1.0;
-  b.val_.d_ = 1.0;
-  c.val_.d_ = 1.0;
-  d.val_.d_ = 1.0;
-  matrix_ffv x;
-  matrix_ffv m3(2, 2);
-  m3 << a, b, c, d;
-  x = columns_dot_self(m3);
-
-  AVEC z
-      = createAVEC(a.val().val(), b.val().val(), c.val().val(), d.val().val());
-  VEC h;
-  x(0, 0).d_.d_.grad(z, h);
-  EXPECT_FLOAT_EQ(0.0, h[0]);
-  EXPECT_FLOAT_EQ(0.0, h[1]);
-  EXPECT_FLOAT_EQ(0.0, h[2]);
-  EXPECT_FLOAT_EQ(0.0, h[3]);
+  Eigen::MatrixXd c23 = c32.transpose();
+  Eigen::MatrixXd d23 = d32.transpose();
+  stan::test::expect_ad(f, c23);
+  stan::test::expect_ad(f, d23);
 }
