@@ -1189,6 +1189,23 @@ std::vector<Eigen::MatrixXd> ar_test_cov_matrices(int N_min, int N_max,
 }
 
 /**
+ * Return standard vector containing elements of the specified
+ * Eigen vector, row vector, or matrix.
+ *
+ * @tparam R row type
+ * @tparam C column type
+ * @param x Eigen object
+ * @return standard vector with elements of Eigen object
+ */
+template <int R, int C>
+std::vector<double> to_std_vector(const Eigen::Matrix<double, R, C>& x) {
+  std::vector<double> y(x.size());
+  for (int i = 0; i < x.size(); ++i)
+    y[i] = x(i);
+  return y;
+}
+
+/**
  * Return Eigen vector with elements given by the specified standard
  * vector.
  *
