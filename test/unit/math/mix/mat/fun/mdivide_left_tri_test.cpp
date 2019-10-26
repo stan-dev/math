@@ -1,10 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 #include <limits>
 
-#ifdef STAN_OPENCL
-#include <boost/random/mersenne_twister.hpp>
-#endif
-
 TEST(MathMixMatFun, mdivideLeftTri) {
   auto f = [](const auto& x, const auto& y) {
     return stan::math::mdivide_left_tri<Eigen::Lower>(x, y);
