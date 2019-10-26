@@ -59,6 +59,7 @@ TEST(AgradRevMatrix, multiply_val_vd_cl) {
       Bd(i, j) = stan::math::uniform_rng(-5, 5, rng);
     }
   }
+
   stan::math::opencl_context.tuning_opts().multiply_dim_prod_worth_transfer
       = MULTIPLY_OPENCL_OVERRIDE;
   C_cl = multiply(Av, Bd);
