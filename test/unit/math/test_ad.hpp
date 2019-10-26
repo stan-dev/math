@@ -1188,6 +1188,34 @@ std::vector<Eigen::MatrixXd> ar_test_cov_matrices(int N_min, int N_max,
   return ys;
 }
 
+/**
+ * Return Eigen vector with elements given by the specified standard
+ * vector.
+ *
+ * @param x standard vector input
+ * @return copy as Eigen vector
+ */
+Eigen::VectorXd to_vector(const std::vector<double>& x) {
+  Eigen::VectorXd y(x.size());
+  for (size_t i = 0; i < x.size(); ++i)
+    y(i) = x[i];
+  return y;
+}
+
+/**
+ * Return Eigen row vector with elements given by the specified
+ * standard vector.
+ *
+ * @param x standard vector input
+ * @return copy as Eigen row vector
+ */
+Eigen::RowVectorXd to_row_vector(const std::vector<double>& x) {
+  Eigen::RowVectorXd y(x.size());
+  for (size_t i = 0; i < x.size(); ++i)
+    y(i) = x[i];
+  return y;
+}
+
 }  // namespace test
 }  // namespace stan
 #endif
