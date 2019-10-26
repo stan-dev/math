@@ -1250,6 +1250,22 @@ Eigen::VectorXd to_row_vector(const Eigen::Matrix<double, R, C>& x) {
   return y;
 }
 
+/**
+ * Return the LDLT computed from the symmetrized form of the specified
+ * argument.
+ *
+ * @tparam T scalar type of matrix
+ * @param matrix to factor
+ * @return LDLT factor for matrix
+ */
+template <typename T>
+auto ldlt_factor(const Eigen::Matrix<T, -1, -1>& x) {
+  stan::math::LDLT_factor<T, -1, -1> ldlt_x;
+  Eigen::Matrix<T, -1, -1> x_sym = (x + x.transpose()) * 0.5;
+  ldlt_x.compute(x_sym);
+  return ldlt_x;
+}
+
 }  // namespace test
 }  // namespace stan
 #endif

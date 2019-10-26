@@ -1,20 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
 
-template <typename T>
-auto ldlt_factor(const Eigen::Matrix<T, -1, -1>& x) {
-  stan::math::LDLT_factor<T, -1, -1> ldlt_x;
-  Eigen::Matrix<T, -1, -1> x_sym = (x + x.transpose()) * 0.5;
-  ldlt_x.compute(x_sym);
-  return ldlt_x;
-}
-
-#include <stan/math/mix/mat.hpp>
-#include <gtest/gtest.h>
-#include <vector>
-
 TEST(MathMixMatFun, mdivideRightLdlt) {
   auto f = [](const auto& x, const auto& y) {
-    return stan::math::mdivide_right_ldlt(x, ldlt_factor(y));
+    return stan::math::mdivide_right_ldlt(x, stan::test::ldlt_factor(y));
   };
 
   Eigen::MatrixXd a(1, 1);

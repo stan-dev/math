@@ -1,16 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
 
-template <typename T, int R, int C>
-stan::math::LDLT_factor<T, R, C> ldlt_factor(const Eigen::Matrix<T, R, C>& x) {
-  stan::math::LDLT_factor<T, R, C> ldlt;
-  ldlt.compute(x);
-  return ldlt;
-}
-
 TEST(MathMixMatFun, logDeterminantLdlt) {
   auto f = [](const auto& x) {
-    auto z = ((x + x.transpose()) * 0.5).eval();
-    auto y = ldlt_factor(z);
+    auto y = stan::test::ldlt_factor(x);
     return stan::math::log_determinant_ldlt(y);
   };
 
