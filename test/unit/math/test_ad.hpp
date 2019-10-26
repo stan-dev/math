@@ -1203,6 +1203,23 @@ Eigen::VectorXd to_vector(const std::vector<double>& x) {
 }
 
 /**
+ * Copy the specified Eigen matrix, vector, or row vector to a
+ * vector.
+ *
+ * @tparam R row specification for matrix
+ * @tparam C column specification for matrix
+ * @param x matrix
+ * @return copy as vector
+ */
+template <int R, int C>
+Eigen::VectorXd to_vector(const Eigen::Matrix<double, R, C>& x) {
+  Eigen::VectorXd y(x.size());
+  for (int i = 0; i < x.size(); ++i)
+    y(i) = x(i);
+  return y;
+}
+
+/**
  * Return Eigen row vector with elements given by the specified
  * standard vector.
  *
@@ -1213,6 +1230,23 @@ Eigen::RowVectorXd to_row_vector(const std::vector<double>& x) {
   Eigen::RowVectorXd y(x.size());
   for (size_t i = 0; i < x.size(); ++i)
     y(i) = x[i];
+  return y;
+}
+
+/**
+ * Copy the specified Eigen matrix, vector, or row vector to a
+ * row vector.
+ *
+ * @tparam R row specification for matrix
+ * @tparam C column specification for matrix
+ * @param x matrix
+ * @return copy as row vector
+ */
+template <int R, int C>
+Eigen::VectorXd to_row_vector(const Eigen::Matrix<double, R, C>& x) {
+  Eigen::RowVectorXd y(x.size());
+  for (int i = 0; i < x.size(); ++i)
+    y(i) = x(i);
   return y;
 }
 
