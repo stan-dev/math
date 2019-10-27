@@ -2,8 +2,7 @@
 #define STAN_MATH_PRIM_MAT_ERR_IS_ORDERED_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/meta/index_type.hpp>
-#include <stan/math/prim/scal/meta/error_index.hpp>
+#include <stan/math/prim/meta.hpp>
 
 namespace stan {
 namespace math {

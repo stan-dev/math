@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_ERR_IS_CONSISTENT_SIZE_HPP
 
 #include <stan/math/prim/scal/err/invalid_argument.hpp>
-#include <stan/math/prim/scal/meta/size_of.hpp>
+#include <stan/math/prim/meta.hpp>
 
 namespace stan {
 namespace math {

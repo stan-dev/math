@@ -1,9 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_ERR_IS_CONSISTENT_SIZE_MVT_HPP
 #define STAN_MATH_PRIM_SCAL_ERR_IS_CONSISTENT_SIZE_MVT_HPP
 
-#include <stan/math/prim/mat/meta/length.hpp>
-#include <stan/math/prim/mat/meta/length_mvt.hpp>
-#include <stan/math/prim/mat/meta/is_vector.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <type_traits>
 
 namespace stan {

@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_ERR_IS_RANGE_HPP
 #define STAN_MATH_PRIM_MAT_ERR_IS_RANGE_HPP
 
-#include <stan/math/prim/scal/meta/error_index.hpp>
+#include <stan/math/prim/meta.hpp>
 
 namespace stan {
 namespace math {

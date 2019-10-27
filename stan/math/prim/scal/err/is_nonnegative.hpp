@@ -1,10 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_ERR_IS_NONNEGATIVE_HPP
 #define STAN_MATH_PRIM_SCAL_ERR_IS_NONNEGATIVE_HPP
 
-#include <stan/math/prim/scal/meta/get.hpp>
-#include <stan/math/prim/scal/meta/length.hpp>
-#include <stan/math/prim/scal/meta/value_type.hpp>
-#include <stan/math/prim/scal/meta/is_vector_like.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <type_traits>
 
 namespace stan {

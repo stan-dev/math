@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/out_of_range.hpp>
-#include <stan/math/prim/scal/meta/error_index.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <sstream>
 #include <string>
