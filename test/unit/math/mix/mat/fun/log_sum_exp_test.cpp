@@ -37,9 +37,13 @@ TEST(MathMixMatFun, logSumExp) {
   Eigen::MatrixXd x23(2, 2);
   x23 << 1, 2, 3, 4;
   stan::test::expect_ad(f, x23);
-}
 
-#include <stan/math/mix/mat.hpp>
-#include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
-#include <vector>
+  std::vector<double> a1{0};
+  stan::test::expect_ad(f, a1);
+
+  std::vector<double> a2{5, 2};
+  stan::test::expect_ad(f, a2);
+
+  std::vector<double> a4{1, 2, 3, 4};
+  stan::test::expect_ad(f, a4);
+}
