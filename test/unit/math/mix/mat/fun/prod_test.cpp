@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <vector>
 
 template <typename T>
 void expect_prod(const T& m) {

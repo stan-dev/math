@@ -1,5 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 #include <limits>
+#include <vector>
 
 void expect_squared_distance(const std::vector<double>& sv1,
                              const std::vector<double>& sv2,

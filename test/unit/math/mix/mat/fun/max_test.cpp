@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <algorithm>
 
 template <typename T>
 void expect_max(const T& m) {

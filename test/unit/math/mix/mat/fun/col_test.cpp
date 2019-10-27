@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <vector>
 
 auto f(int j) {
   return [=](const auto& y) { return stan::math::col(y, j); };

@@ -1,5 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 #include <limits>
+#include <vector>
 
 void expect_sort(const std::vector<double>& sv,
                  const stan::test::ad_tolerances& tols

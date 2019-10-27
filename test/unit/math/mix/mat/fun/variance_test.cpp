@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <vector>
 
 void expect_variance(const Eigen::MatrixXd& m) {
   auto f = [](const auto& x) { return stan::math::variance(x); };

@@ -1,5 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 #include <cmath>
+#include <vector>
 
 TEST(MathMixMatFun, determinant) {
   auto f = [](const auto& y) { return stan::math::determinant(y); };

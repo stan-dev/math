@@ -1,5 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 #include <limits>
+#include <vector>
 
 TEST(MathMixMatFun, logSumExp) {
   auto f = [](const auto& x) { return stan::math::log_sum_exp(x); };

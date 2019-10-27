@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <vector>
 
 void expect_cumulative_sum(std::vector<double>& x) {
   auto f = [](const auto& y) { return stan::math::cumulative_sum(y); };

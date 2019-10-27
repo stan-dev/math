@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <vector>
 
 TEST(MathMixMatFun, logDeterminantLdlt) {
   auto f = [](const auto& x) {

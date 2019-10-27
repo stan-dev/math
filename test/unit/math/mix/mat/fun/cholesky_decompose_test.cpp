@@ -1,5 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 #include <cmath>
+#include <vector>
 
 // can't autodiff directly through Cholesky due to symmetry test;
 // use unconstrained input and constrain to test Cholesky derivs;

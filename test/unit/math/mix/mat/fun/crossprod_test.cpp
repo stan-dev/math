@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <vector>
 
 TEST(MathMixMatFun, crossprod) {
   auto f = [](const auto& y) { return stan::math::crossprod(y); };
