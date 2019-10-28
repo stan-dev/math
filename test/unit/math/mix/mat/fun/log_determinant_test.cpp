@@ -33,6 +33,6 @@ TEST(MathMixMatFun, logDeterminant) {
   stan::test::expect_ad(f, e);
 
   Eigen::MatrixXd g(2, 2);
-  e << 2, 3, 5, 7;
+  g << 2, 3, 5, 7;
   stan::test::expect_ad(f, g);
 }
