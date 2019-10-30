@@ -111,8 +111,7 @@ inline void assign_event(const cl::Event& e,
   helper.set(e, m);
 }
 
-template <typename T,
-          typename std::enable_if_t<std::is_same<T, cl::Event>::value, int> = 0>
+template <typename T, require_same_t<T, cl::Event>...>
 inline void assign_events(const T&) {}
 
 /**
@@ -168,7 +167,7 @@ struct select_event_helper<in_buffer, K> {
 template <typename K>
 struct select_event_helper<out_buffer, K> {
   inline const std::vector<cl::Event> get(const stan::math::matrix_cl<K>& m) {
-    return m.read_events();
+    return m.read_write_events();
   }
 };
 

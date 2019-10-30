@@ -1,6 +1,94 @@
 Stan Math Library Release Notes
 
 ======================================================================
+v3.0.0 (18 October 2019)
+======================================================================
+
+## Features
+
+PR [#1180](https://github.com/stan-dev/math/pull/1180) brought the [Intel TBB](https://github.com/intel/tbb) into Stan as a dependency, which we will be using in the future for CPU parallelism all across Stan! The TBB is an excellent framework that will let Stan utilize nested parallelism across the algorithms and gradient evaluations. The licensing for the Intel TBB library is under the Apache 2.0 license. This dependency implies an additional restriction as compared to the new BSD license alone. The Apache 2.0 license is incompatible with GPL-2 licensed code if the software if distributing the software as a unitary binary. Refer to the Apache 2.0 evaluation page on the Stan Math [wiki](https://github.com/stan-dev/math/wiki/Apache-2.0-License-Evaluation).
+
+With @t4c1's large contributions, we now have GPU/OpenCL support for many of our glm functions! @rok-cesnovar added an OpenCL reverse mode specialization for `multiplication` and `mdivide_left_tri` while @t4c1 added the OpenCL specialization for `gp_exp_quad_cov`.
+
+Some other nice features include @andrjohns vectorizing the Dirichlet distribution, @IvanYashchuk implementing a reverse mode specialization for inverse, and @yizhang-yiz with @charlesm93 adding fixed point algebra solvers based on Sundial's KINSOL scheme.
+
+Internally, @bob-carpenter added a new AD testing framework, which both replaced 18,539 of code with 2,500 and simultaneously increased our test coverage! @Stevebronder added a type traits metaprogramming scheme so that we can make use of more generic templating in a lot of our code. Last but not least, @andrjohns standardized a lot of our code to use standard library functions instead of our hand-rolled methods.
+
+We are now using TBB for threading in map_rect. With performance tests on a non-trivial map_rect model we have observed speedups of up to 20% on Windows, 70% on Linux and 30% on MacOS. Speedups were observed for both Intel and AMD CPUs. On MacOS we observed 25-30% speedups even for single threaded models when using tbbmalloc.
+
+![Chart](https://user-images.githubusercontent.com/5857231/66257806-3158c780-e7a6-11e9-9c8c-fbf6bcde8fd5.png)
+
+## Fixes
+
+@wds15 patched the way we use `lgamma` so that it's faster in concurrent settings. A speedy patch came in from @t4c1 when @jgabry reported intercept only glm specializations with size zero matrices could give the wrong output. We had several patches and code cleanups in the OpenCL code, mostly testing and improving the type trait system around the OpenCL methods. @nhuurre patched `log_sum_exp` and `log_diff_exp` so that the methods respected boundary conditions a bit better. Stan also now uses `clang-tidy,` which gives us an automated way to keep the code base standardized.
+
+## Features List
+
+|Contributor                                                                                               |Title                                                                                          |
+|:---------------------------------------------------------------------------------------------------------|:----------------------------------------------------------------------------------------------|
+|[bob-carpenter](https://github.com/bob-carpenter) : ([#1384](https://github.com/stan-dev/math/pull/1384)) |Feature/1382 remove fvar nan checks                                                            |
+|[wds15](https://github.com/wds15) : ([#1376](https://github.com/stan-dev/math/pull/1376))                 |integrate Intel TBB                                                                            |
+|[yizhang-yiz](https://github.com/yizhang-yiz) : ([#1371](https://github.com/stan-dev/math/pull/1371))     |Feature fp solver                                                                              |
+|[t4c1](https://github.com/t4c1) : ([#1366](https://github.com/stan-dev/math/pull/1366))                   |Gpu ordered_logistic_glm_lpmf and categorical_logit_glm_lpmf                                   |
+|[t4c1](https://github.com/t4c1) : ([#1365](https://github.com/stan-dev/math/pull/1365))                   |Gpu neg_binomial_2_log_glm                                                                     |
+|[andrjohns](https://github.com/andrjohns) : ([#1363](https://github.com/stan-dev/math/pull/1363))         |Issue 1362 - Vectorised Dirichlet distribution                                                 |
+|[rok-cesnovar](https://github.com/rok-cesnovar) : ([#1355](https://github.com/stan-dev/math/pull/1355))   |Feature/issue 1354 Implement matrix_cl overloads for rep_vector, rep_row_vector and rep_matrix |
+|[rok-cesnovar](https://github.com/rok-cesnovar) : ([#1353](https://github.com/stan-dev/math/pull/1353))   |Revert GPU caching                                                                             |
+|[t4c1](https://github.com/t4c1) : ([#1350](https://github.com/stan-dev/math/pull/1350))                   |Gpu poisson bernoulli glms                                                                     |
+|[SteveBronder](https://github.com/SteveBronder) : ([#1344](https://github.com/stan-dev/math/pull/1344))   |Adds require_* template type traits                                                            |
+|[charlesm93](https://github.com/charlesm93) : ([#1339](https://github.com/stan-dev/math/pull/1339))       |Feature/issue 1115 newton solver                                                               |
+|[IvanYashchuk](https://github.com/IvanYashchuk) : ([#1334](https://github.com/stan-dev/math/pull/1334))   |Implemented reverse mode for inverse                                                           |
+|[t4c1](https://github.com/t4c1) : ([#1333](https://github.com/stan-dev/math/pull/1333))                   |Implement normal_id_glm_lpdf in OpenCL                                                         |
+|[rok-cesnovar](https://github.com/rok-cesnovar) : ([#1329](https://github.com/stan-dev/math/pull/1329))   |Feature/Issue 1294 Rewrite the test-math-dependencies script in Python                         |
+|[SteveBronder](https://github.com/SteveBronder) : ([#1323](https://github.com/stan-dev/math/pull/1323))   |Adds const ref and ref returns for to_var/fvar methods                                         |
+|[andrjohns](https://github.com/andrjohns) : ([#1318](https://github.com/stan-dev/math/pull/1318))         |Issue 1010 - Replace hand-coded math with standard library c++11 functions                     |
+|[rok-cesnovar](https://github.com/rok-cesnovar) : ([#1303](https://github.com/stan-dev/math/pull/1303))   |Feature/issue 1221 Use OpenCL in rev/mdivide_left_tri                                          |
+|[andrjohns](https://github.com/andrjohns) : ([#1296](https://github.com/stan-dev/math/pull/1296))         |issue 1279 - Remove deprecated Eigen content from math headers                                 |
+|[t4c1](https://github.com/t4c1) : ([#1293](https://github.com/stan-dev/math/pull/1293))                   |OpenCL matrix multiplication optimizations                                                     |
+|[andrjohns](https://github.com/andrjohns) : ([#1283](https://github.com/stan-dev/math/pull/1283))         |Refactor rev/mat with eigen plugin methods                                                     |
+|[SteveBronder](https://github.com/SteveBronder) : ([#1281](https://github.com/stan-dev/math/pull/1281))   |Add a double template to matrix_cl                                                             |
+|[bob-carpenter](https://github.com/bob-carpenter) : ([#1262](https://github.com/stan-dev/math/pull/1262)) |Feature/1258 ad test core                                                                      |
+|[t4c1](https://github.com/t4c1) : ([#1252](https://github.com/stan-dev/math/pull/1252))                   |Implement ordinal regression GLM (ordered_logistic_glm_lpmf)                                   |
+|[t4c1](https://github.com/t4c1) : ([#1206](https://github.com/stan-dev/math/pull/1206))                   |opencl prim gp_exp_quad_cov                                                                    |
+|[rok-cesnovar](https://github.com/rok-cesnovar) : ([#1305](https://github.com/stan-dev/math/pull/1305)) |Feature/issue 1221 Use OpenCL in rev/multiply                                   |
+|[rok-cesnovar](https://github.com/rok-cesnovar) : ([#1278](https://github.com/stan-dev/math/pull/1278)) |Feature/1221 OpenCL primitive multiply                                          |
+|[t4c1](https://github.com/t4c1) : ([#1299](https://github.com/stan-dev/math/pull/1299))                 |mdivide_right_tri can use OpenCL                                                |
+|[wds15](https://github.com/wds15) : ([#1180](https://github.com/stan-dev/math/pull/1180))                 |Feature/intel tbb lib                                                                          |
+
+## Fixes
+
+|Contributor                                                                                             |Title                                                                           |
+|:-------------------------------------------------------------------------------------------------------|:-------------------------------------------------------------------------------|
+|[wds15](https://github.com/wds15) : ([#1401](https://github.com/stan-dev/math/pull/1401))               |Bugfix/tbb cleanup                                                              |
+|[t4c1](https://github.com/t4c1) : ([#1399](https://github.com/stan-dev/math/pull/1399))                 |bugfix intercept only GLMs                                                      |
+|[wds15](https://github.com/wds15) : ([#1395](https://github.com/stan-dev/math/pull/1395))               |allow spaces in path leading to stan-directory in makefiles                     |
+|[SteveBronder](https://github.com/SteveBronder) : ([#1392](https://github.com/stan-dev/math/pull/1392)) |Add /lib/tbb/** to the .gitignore                                               |
+|[rok-cesnovar](https://github.com/rok-cesnovar) : ([#1375](https://github.com/stan-dev/math/pull/1375)) |Fix bug in stack_alloc_test                                                     |
+|[rok-cesnovar](https://github.com/rok-cesnovar) : ([#1369](https://github.com/stan-dev/math/pull/1369)) |Bugfix/remove unused vectorize test                                             |
+|[rok-cesnovar](https://github.com/rok-cesnovar) : ([#1364](https://github.com/stan-dev/math/pull/1364)) |Reorganize /opencl and add missing matrix_cl overloads                          |
+|[rok-cesnovar](https://github.com/rok-cesnovar) : ([#1361](https://github.com/stan-dev/math/pull/1361)) |Remove const qualifier from matrix_cl rows & cols                               |
+|[t4c1](https://github.com/t4c1) : ([#1358](https://github.com/stan-dev/math/pull/1358))                 |Split opencl glm function                                                       |
+|[SteveBronder](https://github.com/SteveBronder) : ([#1356](https://github.com/stan-dev/math/pull/1356)) |Bugfix for making matrix_cls from temporaries                                   |
+|[SteveBronder](https://github.com/SteveBronder) : ([#1341](https://github.com/stan-dev/math/pull/1341)) |Refactor Type Traits                                                            |
+|[SteveBronder](https://github.com/SteveBronder) : ([#1340](https://github.com/stan-dev/math/pull/1340)) |Refactor/clang tidy cleanup                                                     |
+|[SteveBronder](https://github.com/SteveBronder) : ([#1337](https://github.com/stan-dev/math/pull/1337)) |Update OpenCL Headers                                                           |
+|[SteveBronder](https://github.com/SteveBronder) : ([#1331](https://github.com/stan-dev/math/pull/1331)) |Moves if statements for scal/prob/beta-binomial out of for loops                |
+|[rok-cesnovar](https://github.com/rok-cesnovar) : ([#1330](https://github.com/stan-dev/math/pull/1330)) |Remove EXPECT_DEATH unit tests that fail when -NDEBUG is set                    |
+|[SteveBronder](https://github.com/SteveBronder) : ([#1327](https://github.com/stan-dev/math/pull/1327)) |Adds clang-tidy to makefile                                                     |
+|[t4c1](https://github.com/t4c1) : ([#1314](https://github.com/stan-dev/math/pull/1314))                 |fix matrix_cl_view test                                                         |
+|[t4c1](https://github.com/t4c1) : ([#1311](https://github.com/stan-dev/math/pull/1311))                 |Fixed matrix_cl copying and moving                                              |
+|[rok-cesnovar](https://github.com/rok-cesnovar) : ([#1310](https://github.com/stan-dev/math/pull/1310)) |Cleanup/issue #1301 remove unnecessary Boost and other compiler flags           |
+|[rok-cesnovar](https://github.com/rok-cesnovar) : ([#1304](https://github.com/stan-dev/math/pull/1304)) |Re-apply #1278 OpenCL prim multiply                                             |
+|[SteveBronder](https://github.com/SteveBronder) : ([#1298](https://github.com/stan-dev/math/pull/1298)) |make key of map for opencl kernel options into a string                         |
+|[SteveBronder](https://github.com/SteveBronder) : ([#1291](https://github.com/stan-dev/math/pull/1291)) |Changes all prim files to use *_return_type_t instead of typename *_return_type |
+|[nhuurre](https://github.com/nhuurre) : ([#1290](https://github.com/stan-dev/math/pull/1290))           |Bugfix/646 log_sum_exp and log_diff_exp boundaries                              |
+|[SteveBronder](https://github.com/SteveBronder) : ([#1289](https://github.com/stan-dev/math/pull/1289)) |Refactor for enable_if functions                                                |
+|[SteveBronder](https://github.com/SteveBronder) : ([#1286](https://github.com/stan-dev/math/pull/1286)) |Removes extra loops in Jacobian calculations                                    |
+|[t4c1](https://github.com/t4c1) : ([#1266](https://github.com/stan-dev/math/pull/1266))                 |Added triangularity attribute to matrix_cl                                      |
+|[t4c1](https://github.com/t4c1) : ([#1261](https://github.com/stan-dev/math/pull/1261))                 |GLM tests improvements                                                          |
+|[wds15](https://github.com/wds15) : ([#1255](https://github.com/stan-dev/math/pull/1255))               |Bugfix/issue 1250 lgamma                                                        |
+
+======================================================================
 v2.20.0 (18 July 2019)
 ======================================================================
 

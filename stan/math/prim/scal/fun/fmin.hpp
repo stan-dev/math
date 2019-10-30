@@ -15,7 +15,7 @@ namespace math {
  * @param y Second argument.
  * @return Minimum of x or y and if one is NaN return the other
  */
-template <typename T1, typename T2, typename = enable_if_all_arithmetic<T1, T2>>
+template <typename T1, typename T2, typename = require_all_arithmetic_t<T1, T2>>
 inline double fmin(T1 x, T2 y) {
   using std::fmin;
   return fmin(x, y);

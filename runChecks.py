@@ -13,6 +13,7 @@ import glob
 
 winsfx = ".exe"
 testsfx = "_test.cpp"
+testsfx_no_ext = "_test"
 
 
 def files_in_folder(folder):
@@ -94,11 +95,17 @@ def grep_patterns(type, folder, patterns_and_messages, exclude_filters=[]):
 def check_non_test_files_in_test():
     all_cpp = files_in_folder("test/unit/math/")
     # if the file is a .cpp file that doesnt end with _test.cpp
-    errors = [
+    errors = []
+    errors.extend(
         x + ":\n\t A .cpp file without the " + testsfx + " suffix in test/unit/math/"
         for x in all_cpp
         if os.path.splitext(x)[1] == ".cpp" and x[-len(testsfx) :] != testsfx
-    ]
+    )
+    errors.extend(
+        x + ":\n\t A *_test.hpp file found. Must be *_test.cpp to run."
+        for x in all_cpp
+        if os.path.splitext(x)[1] == ".hpp" and x[-len(testsfx): -len(testsfx) + len(testsfx_no_ext)] == testsfx_no_ext
+    )
     return errors
 
 

@@ -4,6 +4,7 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/meta/is_eigen.hpp>
 #include <stan/math/prim/scal/meta/index_type.hpp>
+#include <stan/math/prim/scal/meta/require_generics.hpp>
 #include <type_traits>
 
 namespace stan {
@@ -16,7 +17,7 @@ namespace math {
  * @tparam T type of matrix.
  */
 template <typename T>
-struct index_type<T, std::enable_if_t<is_eigen<T>::value>> {
+struct index_type<T, require_eigen_t<T>> {
   using type = typename std::decay_t<T>::Index;
 };
 

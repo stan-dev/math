@@ -81,7 +81,7 @@ help:
 	@echo '  - clean         : Basic clean. Leaves doc and compiled libraries intact.'
 	@echo '  - clean-deps    : Removes dependency files for tests. If tests stop building,'
 	@echo '                    run this target.'
-	@echo '  - clean-libraries : Removes binaries built for libraries including CVODES.'
+	@echo '  - clean-libraries : Removes binaries built for libraries including CVODES and the TBB.'
 	@echo '  - clean-all     : Cleans up all of Stan.'
 	@echo ''
 	@echo '--------------------------------------------------------------------------------'
