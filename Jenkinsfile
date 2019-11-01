@@ -143,10 +143,11 @@ pipeline {
             }
         }
         stage("Doxygen") {
-          agent { docker {
-            image 'nnadeau/docker-doxygen'
-            args '-u root'
-          }
+          agent {
+            dockerfile {
+              filename 'doxygen/docker/alpine/Dockerfile'
+              args "-u root --entrypoint=\'\'"
+            }
           }
           steps {
               deleteDir()
