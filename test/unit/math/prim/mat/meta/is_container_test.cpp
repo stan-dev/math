@@ -1,5 +1,6 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <vector>
 
 TEST(MetaTraits, is_mat_container_check) {
   using stan::is_container;

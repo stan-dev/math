@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_META_IS_STRING_CONVERTIBLE_HPP
 
 #include <type_traits>
+#include <string>
 
 namespace stan {
 
