@@ -76,7 +76,6 @@ pipeline {
           }
           steps {
               deleteDir()
-              unstash 'MathSetup'
               sh "make doxygen"
           }
           post { always { deleteDir() } }
