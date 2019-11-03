@@ -43,8 +43,11 @@
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/index_type.hpp>
 #include <stan/math/prim/scal/meta/is_constant.hpp>
+#include <stan/math/prim/scal/meta/is_container.hpp>
 #include <stan/math/prim/scal/meta/is_eigen.hpp>
 #include <stan/math/prim/scal/meta/is_fvar.hpp>
+#include <stan/math/prim/scal/meta/is_index.hpp>
+#include <stan/math/prim/scal/meta/is_string_convertible.hpp>
 #include <stan/math/prim/scal/meta/is_var.hpp>
 #include <stan/math/prim/scal/meta/is_var_or_arithmetic.hpp>
 #include <stan/math/prim/scal/meta/is_vector.hpp>

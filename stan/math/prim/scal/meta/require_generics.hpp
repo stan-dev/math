@@ -3,7 +3,10 @@
 
 #include <stan/math/prim/scal/meta/bool_constant.hpp>
 #include <stan/math/prim/scal/meta/is_eigen.hpp>
+#include <stan/math/prim/scal/meta/is_container.hpp>
 #include <stan/math/prim/scal/meta/is_fvar.hpp>
+#include <stan/math/prim/scal/meta/is_index.hpp>
+#include <stan/math/prim/scal/meta/is_string_convertible.hpp>
 #include <stan/math/prim/scal/meta/is_var.hpp>
 #include <stan/math/prim/scal/meta/is_var_or_arithmetic.hpp>
 #include <stan/math/prim/scal/meta/is_vector.hpp>
@@ -174,11 +177,37 @@ template <typename T, typename... Types>
 using require_any_not_convertible_t = require_all_not_t<
     std::is_convertible<std::decay_t<T>, std::decay_t<Types>>...>;
 
+// Checks if type is something we would use for string_convertible
+template <typename T>
+using require_string_convertible_t
+    = require_t<is_string_convertible<std::decay_t<T>>>;
+
+template <typename T>
+using require_not_string_convertible_t
+    = require_not_t<is_string_convertible<std::decay_t<T>>>;
+
+template <typename... Types>
+using require_all_string_convertible_t
+    = require_all_t<is_string_convertible<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_string_convertible_t
+    = require_any_t<is_string_convertible<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_all_not_string_convertible_t
+    = require_all_not_t<is_string_convertible<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_not_string_convertible_t
+    = require_any_not_t<is_string_convertible<std::decay_t<Types>>...>;
+
 /**
  * Below are enablers for
  * - Double or Int
  * - Arithmetic
  * - Floating Point
+ * - Index
  * - Var
  * - Var or Arithmetic
  * - Fvar
@@ -267,6 +296,31 @@ using require_all_not_floating_point_t
 template <typename... Types>
 using require_any_not_floating_point_t
     = require_any_not_t<std::is_floating_point<std::decay_t<Types>>...>;
+
+// Checks if type is something we would use for index
+template <typename T>
+using require_index_t
+    = require_t<is_index<std::decay_t<T>>>;
+
+template <typename T>
+using require_not_index_t
+    = require_not_t<is_index<std::decay_t<T>>>;
+
+template <typename... Types>
+using require_all_index_t
+    = require_all_t<is_index<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_index_t
+    = require_any_t<is_index<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_all_not_index_t
+    = require_all_not_t<is_index<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_not_index_t
+    = require_any_not_t<is_index<std::decay_t<Types>>...>;
 
 template <typename T>
 using require_var_t = require_t<is_var<std::decay_t<T>>>;
@@ -486,6 +540,30 @@ using require_all_not_vector_like_t
 template <typename... Types>
 using require_any_not_vector_like_t
     = require_any_not_t<is_vector_like<Types>...>;
+
+// Checks for container types
+template <typename T>
+using require_container_t = require_t<is_container<std::decay_t<T>>>;
+
+template <typename T>
+using require_not_container_t
+    = require_not_t<is_container<std::decay_t<T>>>;
+
+template <typename... Types>
+using require_all_container_t
+    = require_all_t<is_container<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_container_t
+    = require_any_t<is_container<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_all_not_container_t
+    = require_all_not_t<is_container<std::decay_t<Types>>...>;
+
+template <typename... Types>
+using require_any_not_container_t
+    = require_any_not_t<is_container<std::decay_t<Types>>...>;
 
 /**
  * Used as the base for checking whether a type is a container with
