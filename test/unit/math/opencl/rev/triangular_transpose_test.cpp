@@ -5,42 +5,34 @@
 #include <algorithm>
 
 TEST(MathMatrixCL, triangular_transpose_m_exception_pass) {
-  using stan::math::var;
-  using stan::math::matrix_cl;
   using stan::math::TriangularMapCL;
+  using stan::math::matrix_cl;
+  using stan::math::var;
   matrix_cl<var> m1(1, 1);
   matrix_cl<var> m0;
   matrix_cl<var> m2(5, 3);
   matrix_cl<var> m3(3, 4);
 
-  EXPECT_NO_THROW(
-      m0.triangular_transpose<TriangularMapCL::LowerToUpper>());
-  EXPECT_NO_THROW(
-      m0.triangular_transpose<TriangularMapCL::UpperToLower>());
-  EXPECT_NO_THROW(
-      m1.triangular_transpose<TriangularMapCL::LowerToUpper>());
-  EXPECT_NO_THROW(
-      m1.triangular_transpose<TriangularMapCL::UpperToLower>());
-  EXPECT_THROW(
-      m2.triangular_transpose<TriangularMapCL::LowerToUpper>(),
-      std::invalid_argument);
-  EXPECT_THROW(
-      m2.triangular_transpose<TriangularMapCL::UpperToLower>(),
-      std::invalid_argument);
-  EXPECT_THROW(
-      m3.triangular_transpose<TriangularMapCL::LowerToUpper>(),
-      std::invalid_argument);
-  EXPECT_THROW(
-      m3.triangular_transpose<TriangularMapCL::UpperToLower>(),
-      std::invalid_argument);
+  EXPECT_NO_THROW(m0.triangular_transpose<TriangularMapCL::LowerToUpper>());
+  EXPECT_NO_THROW(m0.triangular_transpose<TriangularMapCL::UpperToLower>());
+  EXPECT_NO_THROW(m1.triangular_transpose<TriangularMapCL::LowerToUpper>());
+  EXPECT_NO_THROW(m1.triangular_transpose<TriangularMapCL::UpperToLower>());
+  EXPECT_THROW(m2.triangular_transpose<TriangularMapCL::LowerToUpper>(),
+               std::invalid_argument);
+  EXPECT_THROW(m2.triangular_transpose<TriangularMapCL::UpperToLower>(),
+               std::invalid_argument);
+  EXPECT_THROW(m3.triangular_transpose<TriangularMapCL::LowerToUpper>(),
+               std::invalid_argument);
+  EXPECT_THROW(m3.triangular_transpose<TriangularMapCL::UpperToLower>(),
+               std::invalid_argument);
 }
 
 TEST(MathMatrixCL, triangular_transpose_m_pass) {
-  using stan::math::matrix_v;
-  using stan::math::matrix_d;
-  using stan::math::matrix_cl;
   using stan::math::TriangularMapCL;
   using stan::math::from_matrix_cl;
+  using stan::math::matrix_cl;
+  using stan::math::matrix_d;
+  using stan::math::matrix_v;
   using stan::math::var;
   matrix_v m0(2, 2);
   matrix_d m0_dst(2, 2);

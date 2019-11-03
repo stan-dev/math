@@ -61,7 +61,6 @@ TEST(MathMatrixCL, matrix_cl_matrix_copy) {
   EXPECT_NO_THROW(d000_cl = stan::math::copy_cl(d00_cl));
 }
 
-
 TEST(MathMatrixCL, matrix_cl_pack_unpack_copy_lower) {
   using stan::math::var;
   using stan::math::vari;
