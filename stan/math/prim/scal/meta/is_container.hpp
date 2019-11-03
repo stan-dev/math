@@ -9,13 +9,13 @@
 
 namespace stan {
 
-
 /**
-  * Deduces whether type is convertible to string
-  * @tparam T type to check
-  */
+ * Deduces whether type is convertible to string
+ * @tparam T type to check
+ */
 template <typename Container>
-using is_container = bool_constant<math::disjunction<is_eigen<Container>, is_std_vector<Container>>::value>;
-}
+using is_container = bool_constant<
+    math::disjunction<is_eigen<Container>, is_std_vector<Container>>::value>;
+}  // namespace stan
 
 #endif
