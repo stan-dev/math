@@ -70,7 +70,7 @@ pipeline {
         stage("Doxygen") {
           agent {
             dockerfile {
-              filename 'doxygen/docker/alpine/Dockerfile'
+              filename './doxygen/docker/alpine/Dockerfile'
               args "-u root --entrypoint=\'\'"
             }
           }
