@@ -69,13 +69,12 @@ pipeline {
         }
         stage("Doxygen") {
           agent {
-            docker {
-              image 'stevebronder/alpine-doxygen-make'
+            dockerfile {
+              filename 'doxygen/docker/alpine/Dockerfile'
               args "-u root --entrypoint=\'\'"
             }
           }
           steps {
-              deleteDir()
               sh "make doxygen"
           }
           post { always { deleteDir() } }
