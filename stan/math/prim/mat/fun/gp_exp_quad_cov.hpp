@@ -38,9 +38,8 @@ namespace internal {
  * @return squared distance
  */
 template <typename T_x, typename T_sigma, typename T_l>
-inline auto
-gp_exp_quad_cov(const std::vector<T_x> &x, const T_sigma &sigma_sq,
-                const T_l &neg_half_inv_l_sq) {
+inline auto gp_exp_quad_cov(const std::vector<T_x> &x, const T_sigma &sigma_sq,
+                            const T_l &neg_half_inv_l_sq) {
   using std::exp;
   const size_t x_size = x.size();
   Eigen::Matrix<return_type_t<T_x, T_sigma, T_l>, Eigen::Dynamic,
@@ -69,9 +68,8 @@ gp_exp_quad_cov(const std::vector<T_x> &x, const T_sigma &sigma_sq,
  *   x is nan or infinite
  */
 template <typename T_x, typename T_sigma>
-inline auto
-gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x, -1, 1>> &x,
-                const T_sigma &sigma_sq) {
+inline auto gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x, -1, 1>> &x,
+                            const T_sigma &sigma_sq) {
   using std::exp;
   const auto x_size = x.size();
   Eigen::Matrix<return_type_t<T_x, T_sigma>, Eigen::Dynamic, Eigen::Dynamic>
@@ -105,9 +103,10 @@ gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x, -1, 1>> &x,
  * @return squared distance
  */
 template <typename T_x1, typename T_x2, typename T_sigma, typename T_l>
-inline auto
-gp_exp_quad_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
-                const T_sigma &sigma_sq, const T_l &neg_half_inv_l_sq) {
+inline auto gp_exp_quad_cov(const std::vector<T_x1> &x1,
+                            const std::vector<T_x2> &x2,
+                            const T_sigma &sigma_sq,
+                            const T_l &neg_half_inv_l_sq) {
   using std::exp;
   Eigen::Matrix<return_type_t<T_x1, T_x2, T_sigma, T_l>, Eigen::Dynamic,
                 Eigen::Dynamic>
@@ -137,10 +136,9 @@ gp_exp_quad_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  * @return squared distance
  */
 template <typename T_x1, typename T_x2, typename T_s>
-inline auto
-gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x1, -1, 1>> &x1,
-                const std::vector<Eigen::Matrix<T_x2, -1, 1>> &x2,
-                const T_s &sigma_sq) {
+inline auto gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x1, -1, 1>> &x1,
+                            const std::vector<Eigen::Matrix<T_x2, -1, 1>> &x2,
+                            const T_s &sigma_sq) {
   using std::exp;
   Eigen::Matrix<return_type_t<T_x1, T_x2, T_s>, Eigen::Dynamic, Eigen::Dynamic>
       cov(x1.size(), x2.size());
@@ -169,9 +167,8 @@ gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x1, -1, 1>> &x1,
  *   x is nan or infinite
  */
 template <typename T_x, typename T_sigma, typename T_l>
-inline auto
-gp_exp_quad_cov(const std::vector<T_x> &x, const T_sigma &sigma,
-                const T_l &length_scale) {
+inline auto gp_exp_quad_cov(const std::vector<T_x> &x, const T_sigma &sigma,
+                            const T_l &length_scale) {
   check_positive("gp_exp_quad_cov", "magnitude", sigma);
   check_positive("gp_exp_quad_cov", "length scale", length_scale);
 
@@ -208,9 +205,9 @@ gp_exp_quad_cov(const std::vector<T_x> &x, const T_sigma &sigma,
  *   x is nan or infinite
  */
 template <typename T_x, typename T_sigma, typename T_l>
-inline auto
-gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x, -1, 1>> &x,
-                const T_sigma &sigma, const std::vector<T_l> &length_scale) {
+inline auto gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x, -1, 1>> &x,
+                            const T_sigma &sigma,
+                            const std::vector<T_l> &length_scale) {
   check_positive_finite("gp_exp_quad_cov", "magnitude", sigma);
   check_positive_finite("gp_exp_quad_cov", "length scale", length_scale);
 
@@ -250,9 +247,9 @@ gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x, -1, 1>> &x,
  *   x is nan or infinite
  */
 template <typename T_x1, typename T_x2, typename T_sigma, typename T_l>
-inline auto
-gp_exp_quad_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
-                const T_sigma &sigma, const T_l &length_scale) {
+inline auto gp_exp_quad_cov(const std::vector<T_x1> &x1,
+                            const std::vector<T_x2> &x2, const T_sigma &sigma,
+                            const T_l &length_scale) {
   const char *function_name = "gp_exp_quad_cov";
   check_positive(function_name, "magnitude", sigma);
   check_positive(function_name, "length scale", length_scale);
@@ -298,10 +295,10 @@ gp_exp_quad_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  *   x is nan or infinite
  */
 template <typename T_x1, typename T_x2, typename T_s, typename T_l>
-inline auto
-gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x1, -1, 1>> &x1,
-                const std::vector<Eigen::Matrix<T_x2, -1, 1>> &x2,
-                const T_s &sigma, const std::vector<T_l> &length_scale) {
+inline auto gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x1, -1, 1>> &x1,
+                            const std::vector<Eigen::Matrix<T_x2, -1, 1>> &x2,
+                            const T_s &sigma,
+                            const std::vector<T_l> &length_scale) {
   size_t x1_size = x1.size();
   size_t x2_size = x2.size();
   size_t l_size = length_scale.size();
@@ -345,9 +342,8 @@ gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x1, -1, 1>> &x1,
  *   x is nan or infinite
  */
 template <>
-inline auto gp_exp_quad_cov(const std::vector<double> &x,
-                                       const double &sigma,
-                                       const double &length_scale) {
+inline auto gp_exp_quad_cov(const std::vector<double> &x, const double &sigma,
+                            const double &length_scale) {
   const char *function_name = "gp_exp_quad_cov";
   check_positive(function_name, "magnitude", sigma);
   check_positive(function_name, "length scale", length_scale);
@@ -389,8 +385,7 @@ inline auto gp_exp_quad_cov(const std::vector<double> &x,
  */
 template <>
 inline auto gp_exp_quad_cov(const std::vector<Eigen::VectorXd> &x,
-                                       const double &sigma,
-                                       const double &length_scale) {
+                            const double &sigma, const double &length_scale) {
   const char *function_name = "gp_exp_quad_cov";
   check_positive(function_name, "magnitude", sigma);
   check_positive(function_name, "length scale", length_scale);
@@ -432,9 +427,9 @@ inline auto gp_exp_quad_cov(const std::vector<Eigen::VectorXd> &x,
  *   x is nan or infinite
  */
 template <>
-inline auto gp_exp_quad_cov(
-    const std::vector<Eigen::VectorXd> &x, const double &sigma,
-    const std::vector<double> &length_scale) {
+inline auto gp_exp_quad_cov(const std::vector<Eigen::VectorXd> &x,
+                            const double &sigma,
+                            const std::vector<double> &length_scale) {
   const char *function_name = "gp_exp_quad_cov";
   check_positive_finite(function_name, "magnitude", sigma);
   check_positive_finite(function_name, "length scale", length_scale);
@@ -480,9 +475,8 @@ inline auto gp_exp_quad_cov(
  */
 template <>
 inline auto gp_exp_quad_cov(const std::vector<double> &x1,
-                                                const std::vector<double> &x2,
-                                                const double &sigma,
-                                                const double &length_scale) {
+                            const std::vector<double> &x2, const double &sigma,
+                            const double &length_scale) {
   const char *function_name = "gp_exp_quad_cov";
   check_positive_finite(function_name, "magnitude", sigma);
   check_positive_finite(function_name, "length scale", length_scale);
@@ -530,10 +524,9 @@ inline auto gp_exp_quad_cov(const std::vector<double> &x1,
  *   x is nan or infinite
  */
 template <>
-inline auto gp_exp_quad_cov(
-    const std::vector<Eigen::VectorXd> &x1,
-    const std::vector<Eigen::VectorXd> &x2, const double &sigma,
-    const double &length_scale) {
+inline auto gp_exp_quad_cov(const std::vector<Eigen::VectorXd> &x1,
+                            const std::vector<Eigen::VectorXd> &x2,
+                            const double &sigma, const double &length_scale) {
   const char *function_name = "gp_exp_quad_cov";
   const int x1_size = x1.size();
   const int x2_size = x2.size();
@@ -586,10 +579,10 @@ inline auto gp_exp_quad_cov(
  *   x is nan or infinite
  */
 template <>
-inline auto gp_exp_quad_cov(
-    const std::vector<Eigen::VectorXd> &x1,
-    const std::vector<Eigen::VectorXd> &x2, const double &sigma,
-    const std::vector<double> &length_scale) {
+inline auto gp_exp_quad_cov(const std::vector<Eigen::VectorXd> &x1,
+                            const std::vector<Eigen::VectorXd> &x2,
+                            const double &sigma,
+                            const std::vector<double> &length_scale) {
   size_t x1_size = x1.size();
   size_t x2_size = x2.size();
   size_t l_size = length_scale.size();
