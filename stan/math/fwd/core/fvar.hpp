@@ -4,25 +4,25 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <ostream>
+#include <type_traits>
 
 namespace stan {
 namespace math {
 
 /**
  * This template class represents scalars used in forward-mode
- * automatic differentiation, which consist of values and
- * directional derivatives of the specified template type.  When
- * performing operations on instances of this class, all operands
- * should be either primitive integer or double values or dual
- * numbers representing derivatives in the same direction.  The
- * typical use case is to have a unit length directional
- * derivative in the direction of a single independent variable.
+ * automatic differentiation, which consist of values and directional
+ * derivatives of the specified template type.  When performing
+ * operations on instances of this class, all operands should be
+ * either primitive integer or double values or dual numbers
+ * representing derivatives in the same direction.  The typical use
+ * case is to have a unit length directional derivative in the
+ * direction of a single independent variable.
  *
- * By using reverse-mode automatic derivative variables,
- * second-order derivatives may
- * be calculated.  By using fvar&lt;<var&gt; instances,
- * third-order derivatives may be calculated.  These are called
- * mixed-mode automatic differentiation variable in Stan.
+ * By using reverse-mode automatic derivative variables, second-order
+ * derivatives may be calculated.  By using fvar&lt;<var&gt;
+ * instances, third-order derivatives may be calculated.  These are
+ * called mixed-mode automatic differentiation variable in Stan.
  *
  * Specialized functionals that perform differentiation on
  * functors may be found in the matrix subdirectories of the
@@ -30,9 +30,9 @@ namespace math {
  *
  * The <a
  * href="https://en.wikipedia.org/wiki/Automatic_differentiation">Wikipedia
- * page on automatic differentiation</a> describes how
- * forward-mode automatic differentiation works mathematically in
- * terms of dual numbers.
+ * page on automatic differentiation</a> describes how forward-mode
+ * automatic differentiation works mathematically in terms of dual
+ * numbers.
  *
  * @tparam T type of value and tangent
  */
@@ -49,9 +49,10 @@ struct fvar {
   T d_;
 
   /**
-   * The Type inside of the fvar.
+   * The type of values and tangents.
    */
   using Scalar = T;
+
   /**
    * Return the value of this variable.
    *
@@ -69,7 +70,7 @@ struct fvar {
   /**
    * Construct a forward variable with zero value and tangent.
    */
-  fvar() : val_(0.0), d_(0.0) {}
+  fvar() : fvar(0, 0) {}
 
   /**
    * Construct a forward variable with value and tangent set to
@@ -77,59 +78,29 @@ struct fvar {
    *
    * @param[in] x variable to be copied
    */
-  fvar(const fvar<T>& x) : val_(x.val_), d_(x.d_) {}
+  fvar(const fvar<T>& x) : fvar(x.val_, x.d_) {}
 
   /**
    * Construct a forward variable with the specified value and
    * zero tangent.
    *
-   * @tparam V type of value (must be assignable to the value and
-   *   tangent type T)
+   * @tparam V type of value (must be assignable to T)
    * @param[in] v value
    */
-  fvar(const T& v) : val_(v), d_(0.0) {  // NOLINT(runtime/explicit)
-    if (unlikely(is_nan(v))) {
-      d_ = v;
-    }
-  }
-
-  /**
-   * Construct a forward variable with the specified value and
-   * zero tangent.
-   *
-   * @tparam V type of value (must be assignable to the value and
-   *   tangent type T)
-   * @param[in] v value
-   * @param[in] dummy value given by default with enable-if
-   *   metaprogramming
-   */
-  template <typename V>
-  fvar(const V& v,
-       typename std::enable_if<ad_promotable<V, T>::value>::type* dummy
-       = nullptr)
-      : val_(v), d_(0.0) {
-    if (unlikely(is_nan(v))) {
-      d_ = v;
-    }
-  }
+  template <typename V, typename = std::enable_if_t<ad_promotable<V, T>::value>>
+  fvar(const V& v) : val_(v), d_(0) {}  // NOLINT(runtime/explicit)
 
   /**
    * Construct a forward variable with the specified value and
    * tangent.
    *
-   * @tparam V type of value (must be assignable to the value and
-   *   tangent type T)
-   * @tparam D type of tangent (must be assignable to the value and
-   *   tangent type T)
+   * @tparam V type of value (must be assignable to class type T)
+   * @tparam D type of tangent (must be assignable class type T)
    * @param[in] v value
    * @param[in] d tangent
    */
   template <typename V, typename D>
-  fvar(const V& v, const D& d) : val_(v), d_(d) {
-    if (unlikely(is_nan(v))) {
-      d_ = v;
-    }
-  }
+  fvar(const V& v, const D& d) : val_(v), d_(d) {}
 
   /**
    * Add the specified variable to this variable and return a

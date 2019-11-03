@@ -189,6 +189,7 @@ endif
 # TBB_LIBRARIES variable overrides the default.
 
 TBB_BIN ?= $(MATH)lib/tbb
+TBB_RELATIVE_PATH ?= ../$(notdir $(TBB))
 TBB_BIN_ABSOLUTE_PATH = $(abspath $(TBB_BIN))
 TBB_ABSOLUTE_PATH = $(abspath $(TBB))
 
@@ -199,13 +200,13 @@ else
 endif
 
 ifeq ($(OS),Windows_NT)
-  TBB_TARGETS ?= $(addsuffix $(LIBRARY_SUFFIX),$(addprefix $(TBB_BIN)/,$(TBB_LIBRARIES)))
+  TBB_TARGETS ?= $(addprefix $(TBB_BIN)/,$(addsuffix $(LIBRARY_SUFFIX),$(TBB_LIBRARIES)))
 endif
 ifeq ($(OS),Darwin)
-  TBB_TARGETS ?= $(addsuffix $(LIBRARY_SUFFIX),$(addprefix $(TBB_BIN)/lib,$(TBB_LIBRARIES)))
+  TBB_TARGETS ?= $(addprefix $(TBB_BIN)/lib,$(addsuffix $(LIBRARY_SUFFIX), $(TBB_LIBRARIES)))
 endif
 ifeq ($(OS),Linux)
-  TBB_TARGETS ?= $(addsuffix $(LIBRARY_SUFFIX).2,$(addprefix $(TBB_BIN)/lib,$(TBB_LIBRARIES)))
+  TBB_TARGETS ?= $(addprefix $(TBB_BIN)/lib,$(addsuffix $(LIBRARY_SUFFIX).2,$(TBB_LIBRARIES)))
 endif
 
 

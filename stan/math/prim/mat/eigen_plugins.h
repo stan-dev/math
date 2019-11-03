@@ -5,7 +5,7 @@
 /**
  * Reimplements is_fvar without requiring external math headers
  *
- * decltype((void)(T::d_)) is a pre C++17 replacement for 
+ * decltype((void)(T::d_)) is a pre C++17 replacement for
  * std::void_t<decltype(T::d_)>
  *
  * TODO(Andrew): Replace with std::void_t after move to C++17
@@ -45,7 +45,7 @@ using forward_return_t = std::conditional_t<std::is_const<std::remove_reference_
  *
  * There are two methods for returning doubles unchanged. One which takes a reference
  * to a double and returns the same reference, used when 'chaining' methods
- * (i.e. A.adj().val()). The other for passing and returning by value, used directly 
+ * (i.e. A.adj().val()). The other for passing and returning by value, used directly
  * with matrices of doubles (i.e. A.val(), where A is of type MatrixXd).
  *
  * For definitions of EIGEN_EMPTY_STRUCT_CTOR, EIGEN_DEVICE_FUNC, and

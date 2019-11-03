@@ -21,7 +21,7 @@ namespace math {
  * argument.
  */
 template <typename T1, typename T2, typename T3,
-          typename = enable_if_all_arithmetic<T1, T2, T3>>
+          typename = require_all_arithmetic_t<T1, T2, T3>>
 inline double fma(T1 x, T2 y, T3 z) {
   using std::fma;
   return fma(x, y, z);

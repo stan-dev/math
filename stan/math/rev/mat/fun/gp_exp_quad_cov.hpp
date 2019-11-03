@@ -208,7 +208,7 @@ class gp_exp_quad_cov_vari<T_x, double, T_l> : public vari {
  * @throw std::domain_error if sigma <= 0, l <= 0, or
  *   x is nan or infinite
  */
-template <typename T_x, typename = enable_if_arithmetic<scalar_type_t<T_x>>>
+template <typename T_x, typename = require_arithmetic_t<scalar_type_t<T_x>>>
 inline Eigen::Matrix<var, -1, -1> gp_exp_quad_cov(const std::vector<T_x> &x,
                                                   const var &sigma,
                                                   const var &length_scale) {
@@ -251,7 +251,7 @@ inline Eigen::Matrix<var, -1, -1> gp_exp_quad_cov(const std::vector<T_x> &x,
  *   x is nan or infinite
  */
 template <typename T_x,
-          typename = enable_if_arithmetic<typename scalar_type<T_x>::type>>
+          typename = require_arithmetic_t<typename scalar_type<T_x>::type>>
 inline Eigen::Matrix<var, -1, -1> gp_exp_quad_cov(const std::vector<T_x> &x,
                                                   double sigma,
                                                   const var &length_scale) {

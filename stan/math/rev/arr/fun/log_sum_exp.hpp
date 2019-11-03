@@ -13,6 +13,7 @@ namespace stan {
 namespace math {
 
 namespace internal {
+// If we make a vectorized value_of we can just use the prim version here
 inline double log_sum_exp_as_double(const std::vector<var>& x) {
   using std::exp;
   using std::log;

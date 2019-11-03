@@ -148,7 +148,6 @@ TEST(AgradMixMatrixOperatorDivision, fv_vector_1stDeriv) {
   EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(),
                   output(2).val_.val());
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), output(0).d_.val());
-  EXPECT_TRUE(std::isnan(output(1).d_.val()));
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), output(2).d_.val());
 
   output = divide(v1, v2);
@@ -273,7 +272,6 @@ TEST(AgradMixMatrixOperatorDivision, fv_rowvector_1stDeriv) {
   EXPECT_FLOAT_EQ(-std::numeric_limits<double>::infinity(),
                   output(2).val_.val());
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), output(0).d_.val());
-  EXPECT_TRUE(std::isnan(output(1).d_.val()));
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(), output(2).d_.val());
 
   output = divide(v1, v2);
@@ -414,7 +412,6 @@ TEST(AgradMixMatrixOperatorDivision, fv_matrix_1stDeriv) {
                   output(1, 1).val_.val());
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
                   output(0, 0).d_.val());
-  EXPECT_TRUE(std::isnan(output(0, 1).d_.val()));
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
                   output(1, 0).d_.val());
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
@@ -651,7 +648,6 @@ TEST(AgradMixMatrixOperatorDivision, ffv_vector_1stDeriv) {
                   output(2).val_.val().val());
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
                   output(0).d_.val().val());
-  EXPECT_TRUE(std::isnan(output(1).d_.val().val()));
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
                   output(2).d_.val().val());
 
@@ -830,7 +826,6 @@ TEST(AgradMixMatrixOperatorDivision, ffv_rowvector_1stDeriv) {
                   output(2).val_.val().val());
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
                   output(0).d_.val().val());
-  EXPECT_TRUE(std::isnan(output(1).d_.val().val()));
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
                   output(2).d_.val().val());
 
@@ -1026,7 +1021,6 @@ TEST(AgradMixMatrixOperatorDivision, ffv_matrix_1stDeriv) {
                   output(1, 1).val_.val().val());
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
                   output(0, 0).d_.val().val());
-  EXPECT_TRUE(std::isnan(output(0, 1).d_.val().val()));
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),
                   output(1, 0).d_.val().val());
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),

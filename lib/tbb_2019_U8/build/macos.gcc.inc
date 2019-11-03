@@ -53,7 +53,8 @@ ifneq (,$(shell $(CONLY) -dumpfullversion -dumpversion | egrep  "^([6-9])"))
 endif
 
 ifeq ($(cfg), release)
-    CPLUS_FLAGS = -g -O2
+#    CPLUS_FLAGS = -g -O2
+    CPLUS_FLAGS = -O2
 else
     CPLUS_FLAGS = -g -O0 -DTBB_USE_DEBUG
 endif

@@ -59,15 +59,8 @@ inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
   check_square("cholesky_decompose", "m", m);
 #ifdef STAN_OPENCL
   if (m.rows() >= opencl_context.tuning_opts().cholesky_size_worth_transfer) {
-    matrix_cl<double> m_cl(m);
-    check_symmetric("cholesky_decompose", "m", m_cl);
-    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m_chol(m.rows(),
-                                                                 m.cols());
-    cholesky_decompose(m_cl);
-    check_nan("cholesky_decompose (OpenCL)", "Matrix m", m_cl);
-    check_diagonal_zeros("cholesky_decompose (OpenCL)", "Matrix m", m_cl);
-    m_chol = from_matrix_cl(m_cl);
-    return m_chol;
+    matrix_cl<double> m_chol(m);
+    return from_matrix_cl(cholesky_decompose(m_chol));
   } else {
     check_symmetric("cholesky_decompose", "m", m);
     Eigen::LLT<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > llt(

@@ -35,6 +35,10 @@ class accumulator {
    * Destroy an accumulator.
    */
   ~accumulator() = default;
+  accumulator(const accumulator& other) = default;
+  accumulator(accumulator&& other) = default;
+  accumulator& operator=(const accumulator& other) = default;
+  accumulator& operator=(accumulator&& other) = default;
 
   /**
    * Add the specified arithmetic type value to the buffer after
@@ -46,7 +50,7 @@ class accumulator {
    * @tparam S Type of argument
    * @param x Value to add
    */
-  template <typename S, typename = enable_if_arithmetic<S>>
+  template <typename S, typename = require_arithmetic_t<S>>
   void add(S x) {
     buf_.push_back(static_cast<T>(x));
   }
@@ -63,8 +67,8 @@ class accumulator {
    * @tparam S Type of argument
    * @param x Value to add
    */
-  template <typename S, typename = enable_if_not_arithmetic<S>,
-            typename = enable_if_same<S, T>>
+  template <typename S, typename = require_not_arithmetic_t<S>,
+            typename = require_same_t<S, T>>
   void add(const S& x) {
     buf_.push_back(x);
   }

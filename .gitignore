@@ -28,6 +28,9 @@
 *.exe
 *.a
 
+# Intel template building blocks (TBB)
+lib/tbb
+
 # /doc/
 /doc/api
 /doc/*.pdf
@@ -83,3 +86,6 @@ compile_commands.json
 
 # Visual Studio Project Setup
 .vscode/*
+
+# Ignore things made with tbb
+lib/tbb/**
