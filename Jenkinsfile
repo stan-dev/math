@@ -114,6 +114,19 @@ pipeline {
                 }
             }
         }
+        stage("Doxygen") {
+          agent {
+            dockerfile {
+              filename 'doxygen/docker/alpine/Dockerfile'
+              args "-u root --entrypoint=\'\'"
+            }
+          }
+          steps {
+              deleteDir()
+              sh "make doxygen"
+          }
+          post { always { deleteDir() } }
+        }
         stage('Linting & Doc checks') {
             agent any
             steps {
@@ -141,20 +154,6 @@ pipeline {
                     deleteDir()
                 }
             }
-        }
-        stage("Doxygen") {
-          agent {
-            dockerfile {
-              filename 'doxygen/docker/alpine/Dockerfile'
-              args "-u root --entrypoint=\'\'"
-            }
-          }
-          steps {
-              deleteDir()
-              unstash 'MathSetup'
-              sh "make doxygen"
-          }
-          post { always { deleteDir() } }
         }
         stage('Headers check') {
             agent any
