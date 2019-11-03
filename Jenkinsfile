@@ -67,18 +67,6 @@ pipeline {
                 }
             }
         }
-        stage("Doxygen") {
-          agent {
-            dockerfile {
-              filename './doxygen/docker/alpine/Dockerfile'
-              args "-u root --entrypoint=\'\'"
-            }
-          }
-          steps {
-              sh "make doxygen"
-          }
-          post { always { deleteDir() } }
-        }
         stage("Clang-format") {
             agent any
             steps {
@@ -125,6 +113,20 @@ pipeline {
                     }
                 }
             }
+        }
+        stage("Doxygen") {
+          agent {
+            dockerfile {
+              filename 'doxygen/docker/alpine/Dockerfile'
+              args "-u root --entrypoint=\'\'"
+            }
+          }
+          steps {
+              deleteDir()
+              retry(3) { checkout scm }
+              sh "make doxygen"
+          }
+          post { always { deleteDir() } }
         }
         stage('Linting & Doc checks') {
             agent any
