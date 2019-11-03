@@ -1,5 +1,5 @@
 #ifdef STAN_OPENCL
-#include <stan/math/opencl/opencl_rev.hpp>
+#include <stan/math/opencl/rev/opencl.hpp>
 #include <gtest/gtest.h>
 #include <cl.hpp>
 #include <algorithm>
@@ -61,16 +61,6 @@ TEST(MathMatrixCL, matrix_cl_matrix_copy) {
   EXPECT_NO_THROW(d000_cl = stan::math::copy_cl(d00_cl));
 }
 
-/** TODO(Steve): Do we want this?
-TEST(MathMatrixCL, matrix_cl_matrix_copy_arithmetic) {
-  using stan::math::var;
-  double test_val = 5;
-  // Use this for successful copy
-  stan::math::matrix_cl<var> d22_cl(1, 1);
-  EXPECT_NO_THROW(d22_cl = stan::math::to_matrix_cl(test_val));
-  EXPECT_NO_THROW(test_val = stan::math::from_matrix_cl_error_code(d22_cl));
-}
-*/
 
 TEST(MathMatrixCL, matrix_cl_pack_unpack_copy_lower) {
   using stan::math::var;

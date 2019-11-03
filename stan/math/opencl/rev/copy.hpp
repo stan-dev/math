@@ -3,7 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/opencl/opencl_rev.hpp>
+#include <stan/math/opencl/rev/opencl.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/arr/fun/vec_concat.hpp>
 
@@ -17,7 +17,7 @@ namespace stan {
 namespace math {
 
 /**
- * Copies the source Eigen matrix to
+ * Copies the source Eigen matrix of vars to
  * the destination matrix that is stored
  * on the OpenCL device.
  *
@@ -42,12 +42,12 @@ inline matrix_cl<T> to_matrix_cl(const Eigen::Matrix<T, R, C>& src) try {
 }
 
 /**
- * Copies the adjoint of the source matrix that is stored
+ * Copies the adjoint of the source matrix of vars that is stored
  * on the OpenCL device to the destination Eigen
  * matrix.
  *
- * @param src source matrix on the OpenCL device
- * @return Eigen matrix with a copy of the data in the source matrix
+ * @param src source matrix of vars on the OpenCL device
+ * @return Eigen matrix with a copy of the adjoints in the source matrix
  */
 template <int R = Eigen::Dynamic, int C = Eigen::Dynamic, typename T,
           require_var_t<T>...>
@@ -65,11 +65,11 @@ inline Eigen::Matrix<double, R, C> from_matrix_cl(const matrix_cl<T>& src) try {
 }
 
 /**
- * Packs the flat triagnular matrix on the OpenCL device and
- * copies it to the std::vector.
+ * Packs the flat triangular matrix on the OpenCL device and
+ * copies the adjoint values to the std::vector.
  *
  * @param src the flat triangular source matrix on the OpenCL device
- * @return the packed std::vector
+ * @return the packed std::vector of adjoint values.
  * @throw <code>std::invalid_argument</code> if the matrix is not triangular
  */
 template <typename T, typename = require_var_t<T>>
