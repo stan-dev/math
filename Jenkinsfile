@@ -67,6 +67,20 @@ pipeline {
                 }
             }
         }
+        stage("Doxygen") {
+          agent {
+            docker {
+              image 'stevebronder/alpine-doxygen-make'
+              args "-u root --entrypoint=\'\'"
+            }
+          }
+          steps {
+              deleteDir()
+              unstash 'MathSetup'
+              sh "make doxygen"
+          }
+          post { always { deleteDir() } }
+        }
         stage("Clang-format") {
             agent any
             steps {
@@ -141,20 +155,6 @@ pipeline {
                     deleteDir()
                 }
             }
-        }
-        stage("Doxygen") {
-          agent {
-            docker {
-              image 'stevebronder/alpine-doxygen-make'
-              args "-u root --entrypoint=\'\'"
-            }
-          }
-          steps {
-              deleteDir()
-              unstash 'MathSetup'
-              sh "make doxygen"
-          }
-          post { always { deleteDir() } }
         }
         stage('Headers check') {
             agent any
