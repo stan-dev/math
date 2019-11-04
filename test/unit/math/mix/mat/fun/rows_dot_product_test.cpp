@@ -4,6 +4,14 @@ TEST(MathMixMatFun, rowsDotProduct) {
   auto f = [](const auto& x, const auto& y) {
     return stan::math::rows_dot_product(x, y);
   };
+
+  Eigen::VectorXd v0(0);
+  Eigen::RowVectorXd rv0(0);
+  Eigen::MatrixXd m00(0, 0);
+  stan::test::expect_ad(f, v0, v0);
+  stan::test::expect_ad(f, rv0, rv0);
+  stan::test::expect_ad(f, m00, m00);
+
   Eigen::VectorXd u3(3);
   u3 << 1, 3, -5;
   Eigen::VectorXd v3(3);

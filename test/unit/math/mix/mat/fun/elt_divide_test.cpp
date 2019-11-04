@@ -31,4 +31,14 @@ TEST(MathMixMatFun, eltDivide) {
   stan::test::expect_ad(f, z, a2);
   stan::test::expect_ad(f, z, c2);
   stan::test::expect_ad(f, z, e23);
+
+  Eigen::VectorXd v0(0);
+  Eigen::RowVectorXd rv0(0);
+  Eigen::MatrixXd m00(0, 0);
+  stan::test::expect_ad(f, v0, v0);
+  stan::test::expect_ad(f, rv0, rv0);
+  stan::test::expect_ad(f, m00, m00);
+  stan::test::expect_ad(f, v0, z);
+  stan::test::expect_ad(f, rv0, z);
+  stan::test::expect_ad(f, m00, z);
 }

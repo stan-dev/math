@@ -30,4 +30,11 @@ TEST(MathMixMatFun, divide) {
   Eigen::VectorXd u(4);
   u << 100, 0, -3, 4;
   stan::test::expect_ad(f, u, x2);
+
+  Eigen::MatrixXd m00(0, 0);
+  Eigen::VectorXd v0(0);
+  Eigen::RowVectorXd rv0(0);
+  stan::test::expect_ad(f, v0, x1);
+  stan::test::expect_ad(f, rv0, x1);
+  stan::test::expect_ad(f, m00, x1);
 }

@@ -8,6 +8,10 @@ TEST(MathMixMatFun, inverseSpd) {
     return stan::math::inverse_spd(y);
   };
 
+  Eigen::MatrixXd m11(1, 1);
+  m11 << 1.3;
+  stan::test::expect_ad(f, m11);
+
   Eigen::MatrixXd a(2, 2);
   a << 2, 3, 3, 7;
   stan::test::expect_ad(f, a);

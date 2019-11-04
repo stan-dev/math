@@ -19,6 +19,11 @@ TEST(MathMixMatFun, mdivideLeftTriLow) {
   cc << 3;
   stan::test::expect_ad(f, aa, cc);
 
+  Eigen::MatrixXd m00(0, 0);
+  Eigen::VectorXd v0(0);
+  stan::test::expect_ad(f, m00, v0);
+  stan::test::expect_ad(f, m00, m00);
+
   Eigen::MatrixXd a(2, 2);
   a << 1, std::numeric_limits<double>::quiet_NaN(), -3, 5;
   Eigen::MatrixXd b(2, 2);

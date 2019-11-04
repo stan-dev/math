@@ -41,4 +41,11 @@ TEST(MathMixMatFun, columnsDotSelf) {
   Eigen::MatrixXd d23 = d32.transpose();
   stan::test::expect_ad(f, c23);
   stan::test::expect_ad(f, d23);
+
+  Eigen::MatrixXd a00(0, 0);
+  Eigen::VectorXd v0(0);
+  Eigen::RowVectorXd rv0(0);
+  stan::test::expect_ad(f, a00);
+  stan::test::expect_ad(f, v0);
+  stan::test::expect_ad(f, rv0);
 }

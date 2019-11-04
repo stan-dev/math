@@ -3,6 +3,13 @@
 TEST(MathMixMatFun, rowsDotSelf) {
   auto f = [](const auto& x) { return stan::math::rows_dot_self(x); };
 
+  Eigen::MatrixXd a00(0, 0);
+  Eigen::VectorXd v0(0);
+  Eigen::RowVectorXd rv0(0);
+  stan::test::expect_ad(f, a00);
+  stan::test::expect_ad(f, v0);
+  stan::test::expect_ad(f, rv0);
+
   Eigen::MatrixXd a11(1, 1);
   a11 << 2;
   stan::test::expect_ad(f, a11);

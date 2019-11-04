@@ -27,6 +27,19 @@ TEST(mathMixMatFun, multiply) {
   stan::test::expect_ad(tols, f, rv1, m11);
   stan::test::expect_ad(tols, f, m11, m11);
 
+  Eigen::VectorXd v0(0);
+  Eigen::RowVectorXd rv0(0);
+  Eigen::MatrixXd m00(0, 0);
+  stan::test::expect_ad(f, a, v0);
+  stan::test::expect_ad(f, v0, a);
+  stan::test::expect_ad(f, a, rv0);
+  stan::test::expect_ad(f, rv0, a);
+  stan::test::expect_ad(f, a, m00);
+  stan::test::expect_ad(f, m00, a);
+  stan::test::expect_ad(f, m00, v0);
+  stan::test::expect_ad(f, rv0, m00);
+  stan::test::expect_ad(f, m00, m00);
+
   Eigen::VectorXd v(2);
   v << 100, -3;
   Eigen::RowVectorXd rv(2);

@@ -26,4 +26,11 @@ TEST(MathMixMatFun, eltMultiply) {
   Eigen::MatrixXd f23(2, 3);
   f23 << 1e1, 1e2, 1e3, 1e4, 1e5, 1e6;
   stan::test::expect_ad(tols, f, e23, f23);
+
+  Eigen::VectorXd v0(0);
+  Eigen::RowVectorXd rv0(0);
+  Eigen::MatrixXd m00(0, 0);
+  stan::test::expect_ad(f, v0, v0);
+  stan::test::expect_ad(f, rv0, rv0);
+  stan::test::expect_ad(f, m00, m00);
 }

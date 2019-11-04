@@ -30,6 +30,14 @@ TEST(MathMixMatFun, columnsDotProduct) {
   Eigen::MatrixXd d23 = d32.transpose();
   stan::test::expect_ad(f, c23, d23);
 
+  // size zero boundary
+  Eigen::VectorXd v0(0);
+  Eigen::RowVectorXd rv0(0);
+  Eigen::MatrixXd a00(0, 0);
+  stan::test::expect_ad(f, v0, v0);
+  stan::test::expect_ad(f, rv0, rv0);
+  stan::test::expect_ad(f, a00, a00);
+
   // exceptions---sizes
   Eigen::MatrixXd em33 = Eigen::MatrixXd::Zero(3, 3);
   Eigen::MatrixXd em32 = Eigen::MatrixXd::Zero(3, 2);

@@ -26,6 +26,22 @@ TEST(MathMixMatFun, add) {
   stan::test::expect_ad(f, rv1, rv1b);
   stan::test::expect_ad(f, m11, m11b);
 
+  Eigen::MatrixXd m00(0, 0);
+  Eigen::MatrixXd m00b(0, 0);
+  Eigen::VectorXd v0(0);
+  Eigen::VectorXd v0b(0);
+  Eigen::RowVectorXd rv0(0);
+  Eigen::RowVectorXd rv0b(0);
+  stan::test::expect_ad(f, d, v0);
+  stan::test::expect_ad(f, d, rv0);
+  stan::test::expect_ad(f, d, m00);
+  stan::test::expect_ad(f, v0, d);
+  stan::test::expect_ad(f, rv0, d);
+  stan::test::expect_ad(f, m00, d);
+  stan::test::expect_ad(f, v0, v0b);
+  stan::test::expect_ad(f, rv0, rv0b);
+  stan::test::expect_ad(f, m00, m00b);
+
   Eigen::MatrixXd m22(2, 2);
   m22 << 1, 2, 3, 4;
   Eigen::MatrixXd m22b(2, 2);

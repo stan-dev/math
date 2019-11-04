@@ -23,6 +23,11 @@ TEST(MathMixMatFun, mdivideLeftTri) {
   stan::test::expect_ad(f, aa, cc);
   stan::test::expect_ad(f_up, aa, cc);
 
+  Eigen::MatrixXd m00(0, 0);
+  Eigen::VectorXd v0(0);
+  stan::test::expect_ad(f, m00, v0);
+  stan::test::expect_ad(f, m00, m00);
+
   Eigen::MatrixXd a(2, 2);
   a << 2, 0, 5, 7;
   Eigen::MatrixXd a_tr = a.transpose();

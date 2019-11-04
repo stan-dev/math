@@ -20,6 +20,9 @@ TEST(MathMixMatFun, matrixExpMultiply) {
     return stan::math::matrix_exp_multiply(x, y);
   };
 
+  Eigen::MatrixXd m00(0, 0);
+  stan::test::expect_ad(f, m00, m00);
+
   stan::test::ad_tolerances tols;
   tols.hessian_hessian_ = 1e-2;
   tols.hessian_fvar_hessian_ = 1e-2;

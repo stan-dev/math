@@ -21,4 +21,13 @@ TEST(MathMixMatFun, subRow) {
   stan::test::expect_ad(f(1, 1, 7), b);  // exception--range
   stan::test::expect_ad(f(7, 1, 1), b);  // exception--range
   stan::test::expect_ad(f(1, 7, 1), b);  // exception--range
+
+  Eigen::MatrixXd c(0, 0);
+  stan::test::expect_ad(f(0, 0, 0), c);
+  stan::test::expect_ad(f(0, 1, 0), c);
+  stan::test::expect_ad(f(0, 1, 1), c);
+  stan::test::expect_ad(f(1, 0, 0), c);
+  stan::test::expect_ad(f(1, 0, 1), c);
+  stan::test::expect_ad(f(1, 1, 0), c);
+  stan::test::expect_ad(f(1, 1, 1), c);
 }

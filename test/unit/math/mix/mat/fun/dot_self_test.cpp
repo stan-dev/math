@@ -4,6 +4,8 @@
 TEST(MathMixMatFun, dotSelf) {
   auto f = [](const auto& y) { return stan::math::dot_self(y); };
 
+  Eigen::VectorXd x0(0);
+
   Eigen::VectorXd x1(1);
   x1 << 2;
 
@@ -13,6 +15,6 @@ TEST(MathMixMatFun, dotSelf) {
   Eigen::VectorXd x3(3);
   x3 << 2, 3, 4;
 
-  for (const auto& a : std::vector<Eigen::VectorXd>{x1, x2, x3})
+  for (const auto& a : std::vector<Eigen::VectorXd>{x0, x1, x2, x3})
     stan::test::expect_ad(f, a);
 }

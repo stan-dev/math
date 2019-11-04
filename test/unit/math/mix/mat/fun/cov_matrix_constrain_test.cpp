@@ -48,6 +48,9 @@ void expect_cov_matrix_transform(const T& x) {
 TEST(MathMixMatFun, cov_matrixTransform) {
   // sizes must be n + (n choose 2)
 
+  Eigen::VectorXd v0(0);
+  expect_cov_matrix_transform(v0);
+
   // 1 x 1
   Eigen::VectorXd v1(1);
   v1 << -1.7;

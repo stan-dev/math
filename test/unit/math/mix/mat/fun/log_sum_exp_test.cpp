@@ -5,10 +5,6 @@
 TEST(MathMixMatFun, logSumExp) {
   auto f = [](const auto& x) { return stan::math::log_sum_exp(x); };
 
-  // TODO(carpenter): fix log_sum_exp boundary behavior
-  // Eigen::VectorXd x0(0);
-  // stan::test::expect_ad(f, x0);
-
   Eigen::VectorXd x1(1);
   x1 << 0;
 

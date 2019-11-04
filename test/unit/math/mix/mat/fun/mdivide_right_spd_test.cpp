@@ -20,6 +20,11 @@ TEST(MathMixMatFun, mdivideRightSpd) {
   cc << 3;
   stan::test::expect_ad(f, cc, aa);
 
+  Eigen::MatrixXd m00(0, 0);
+  Eigen::RowVectorXd rv0(0);
+  stan::test::expect_ad(f, m00, m00);
+  stan::test::expect_ad(f, rv0, m00);
+
   Eigen::MatrixXd a(2, 2);
   a << 2, 3, 3, 7;
 

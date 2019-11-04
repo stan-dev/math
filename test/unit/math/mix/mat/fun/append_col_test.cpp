@@ -36,4 +36,15 @@ TEST(MathMixMatFun, appendCol) {
   // (row vector, row vector)
   stan::test::expect_ad(f, rv3, rv4);
   stan::test::expect_ad(f, rv4, rv3);
+
+  Eigen::MatrixXd m00(0, 0);
+  Eigen::MatrixXd m03(0, 3);
+  Eigen::VectorXd v0(0);
+  Eigen::RowVectorXd rv0(0);
+
+  stan::test::expect_ad(f, m00, m00);
+  stan::test::expect_ad(f, m00, m03);
+  stan::test::expect_ad(f, v0, m00);
+  stan::test::expect_ad(f, v0, v0);
+  stan::test::expect_ad(f, rv0, rv0);
 }

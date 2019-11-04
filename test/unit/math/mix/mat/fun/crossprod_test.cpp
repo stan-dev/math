@@ -4,6 +4,8 @@
 TEST(MathMixMatFun, crossprod) {
   auto f = [](const auto& y) { return stan::math::crossprod(y); };
 
+  Eigen::MatrixXd t(0, 0);
+
   Eigen::MatrixXd x(1, 1);
   x << 3;
 
@@ -22,6 +24,6 @@ TEST(MathMixMatFun, crossprod) {
   Eigen::MatrixXd z(3, 3);
   z << 1, 0, 0, 2, 3, 0, 4, 5, 6;
 
-  for (const auto& a : std::vector<Eigen::MatrixXd>{x, u, y, v, w, z})
+  for (const auto& a : std::vector<Eigen::MatrixXd>{t, x, u, y, v, w, z})
     stan::test::expect_ad(f, a);
 }

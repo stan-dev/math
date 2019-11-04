@@ -7,6 +7,11 @@ TEST(MathMixMatFun, mdivideRightTriLow) {
     return stan::math::mdivide_right_tri_low(x, y);
   };
 
+  Eigen::MatrixXd m00(0, 0);
+  Eigen::RowVectorXd rv0(0);
+  stan::test::expect_ad(f, m00, m00);
+  stan::test::expect_ad(f, rv0, m00);
+
   // signature 1 of 2: matrix / matrix
   Eigen::MatrixXd aa(1, 1);
   aa << 1;

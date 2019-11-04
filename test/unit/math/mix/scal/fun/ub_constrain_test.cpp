@@ -2,19 +2,16 @@
 #include <limits>
 
 template <typename T, typename U>
-typename boost::math::tools::promote_args<T, U>::type g1(const T& x,
-                                                         const U& ub) {
+stan::return_type_t<T, U> g1(const T& x, const U& ub) {
   return stan::math::ub_constrain(x, ub);
 }
 template <typename T, typename U>
-typename boost::math::tools::promote_args<T, U>::type g2(const T& x,
-                                                         const U& ub) {
+stan::return_type_t<T, U> g2(const T& x, const U& ub) {
   T lp = 0;
   return stan::math::ub_constrain(x, ub, lp);
 }
 template <typename T, typename U>
-typename boost::math::tools::promote_args<T, U>::type g3(const T& x,
-                                                         const U& ub) {
+stan::return_type_t<T, U> g3(const T& x, const U& ub) {
   T lp = 0;
   stan::math::ub_constrain(x, ub, lp);
   return lp;
