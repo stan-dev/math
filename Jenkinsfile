@@ -11,8 +11,8 @@ def runTests(String testPath) {
 def runTestsWin(String testPath) {
     withEnv(['PATH+TBB=./lib/tbb']) {
        bat "echo $PATH"
-       bat "runTests.py -j4 ${testPath} --make-only"
-       try { bat "runTests.py -j4 ${testPath}" }
+       bat "runTests.py -j12 ${testPath} --make-only"
+       try { bat "runTests.py -j12 ${testPath}" }
        finally { junit 'test/**/*.xml' }
     }
 }
