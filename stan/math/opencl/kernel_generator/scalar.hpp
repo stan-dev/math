@@ -19,22 +19,22 @@ namespace math {
  * @tparam T type of the scalar
  */
 template <typename T>
-class scalar__ : public operation<scalar__<T>, T> {
+class scalar_ : public operation<scalar_<T>, T> {
  private:
   T a_;
 
  public:
   static_assert(std::is_arithmetic<T>::value,
-                "class scalar__<T>: std::is_arithmetic<T> must be true!");
+                "class scalar_<T>: std::is_arithmetic<T> must be true!");
   using ReturnScalar = T;
-  using base = operation<scalar__<T>, T>;
+  using base = operation<scalar_<T>, T>;
   using base::var_name;
 
   /**
    * Constructor for an arithmetic type
    * @param a scalar value
    */
-  explicit scalar__(const T a) : a_(a) {}
+  explicit scalar_(const T a) : a_(a) {}
 
   /**
    * generates kernel code for this expression.

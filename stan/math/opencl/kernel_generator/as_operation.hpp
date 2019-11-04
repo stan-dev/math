@@ -29,26 +29,26 @@ inline T_operation&& as_operation(T_operation&& a) {
 
 /**
  * Converts any valid kernel generator expression into an operation. This is an
- * overload for scalars (atihmetic types). It wraps them into \c scalar__.
+ * overload for scalars (atihmetic types). It wraps them into \c scalar_.
  * @tparam T_scalar type of the input scalar
  * @param a scalar
- * @return \c scalar__ wrapping the input
+ * @return \c scalar_ wrapping the input
  */
 template <typename T_scalar, typename = require_arithmetic_t<T_scalar>>
-inline scalar__<T_scalar> as_operation(const T_scalar a) {
-  return scalar__<T_scalar>(a);
+inline scalar_<T_scalar> as_operation(const T_scalar a) {
+  return scalar_<T_scalar>(a);
 }
 
 /**
  * Converts any valid kernel generator expression into an operation. This is an
- * overload for \c matrix_cl. It wraps them into into \c load__.
+ * overload for \c matrix_cl. It wraps them into into \c load_.
  * @tparam T_matrix_cl \c matrix_cl
  * @param a \c matrix_cl
- * @return \c load__ wrapping the input
+ * @return \c load_ wrapping the input
  */
 template <typename T_matrix_cl, typename = require_matrix_cl_t<T_matrix_cl>>
-inline load__<T_matrix_cl> as_operation(T_matrix_cl&& a) {
-  return load__<T_matrix_cl>(std::forward<T_matrix_cl>(a));
+inline load_<T_matrix_cl> as_operation(T_matrix_cl&& a) {
+  return load_<T_matrix_cl>(std::forward<T_matrix_cl>(a));
 }
 
 /**

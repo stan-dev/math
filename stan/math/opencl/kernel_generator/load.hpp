@@ -21,27 +21,27 @@ namespace math {
  * @tparam T \c matrix_cl
  */
 template <typename T>
-class load__ : public operation_lhs<load__<T>,
-                                    typename std::remove_reference_t<T>::type> {
+class load_ : public operation_lhs<load_<T>,
+                                   typename std::remove_reference_t<T>::type> {
  protected:
   T a_;
 
  public:
   using ReturnScalar = typename std::remove_reference_t<T>::type;
-  using base = operation<load__<T>, ReturnScalar>;
+  using base = operation<load_<T>, ReturnScalar>;
   using base::var_name;
   static_assert(std::is_base_of<matrix_cl<ReturnScalar>,
                                 typename std::remove_reference_t<T>>::value,
-                "load__: argument a must be a matrix_cl<T>!");
+                "load_: argument a must be a matrix_cl<T>!");
   static_assert(
       std::is_arithmetic<ReturnScalar>::value,
-      "load__: T in \"matrix_cl<T> a\" argument must be an arithmetic type!");
+      "load_: T in \"matrix_cl<T> a\" argument must be an arithmetic type!");
 
   /**
    * Constructor
    * @param a \c matrix_cl
    */
-  explicit load__(T&& a) : a_(std::forward<T>(a)) {}
+  explicit load_(T&& a) : a_(std::forward<T>(a)) {}
 
   /**
    * generates kernel code for this expression.

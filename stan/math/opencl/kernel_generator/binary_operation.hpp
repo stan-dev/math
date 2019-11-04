@@ -92,16 +92,16 @@ class binary_operation
  * @tparam T_b type of second expression
  */
 template <typename T_a, typename T_b>
-class addition__ : public binary_operation<addition__<T_a, T_b>, T_a, T_b> {
+class addition_ : public binary_operation<addition_<T_a, T_b>, T_a, T_b> {
  public:
   /**
    * Constructor.
    * @param a first expression
    * @param b second expression
    */
-  addition__(T_a&& a, T_b&& b)  // NOLINT
-      : binary_operation<addition__<T_a, T_b>, T_a, T_b>(
-            std::forward<T_a>(a), std::forward<T_b>(b), "+") {}
+  addition_(T_a&& a, T_b&& b)  // NOLINT
+      : binary_operation<addition_<T_a, T_b>, T_a, T_b>(
+          std::forward<T_a>(a), std::forward<T_b>(b), "+") {}
 };
 
 /**
@@ -114,7 +114,7 @@ class addition__ : public binary_operation<addition__<T_a, T_b>, T_a, T_b> {
  */
 template <typename T_a, typename T_b,
           typename = require_all_valid_expressions_t<T_a, T_b>>
-inline addition__<as_operation_t<T_a>, as_operation_t<T_b>> operator+(
+inline addition_<as_operation_t<T_a>, as_operation_t<T_b>> operator+(
     T_a&& a, T_b&& b) {  // NOLINT
   return {as_operation(std::forward<T_a>(a)),
           as_operation(std::forward<T_b>(b))};
@@ -126,17 +126,16 @@ inline addition__<as_operation_t<T_a>, as_operation_t<T_b>> operator+(
  * @tparam T_b type of second expression
  */
 template <typename T_a, typename T_b>
-class subtraction__
-    : public binary_operation<subtraction__<T_a, T_b>, T_a, T_b> {
+class subtraction_ : public binary_operation<subtraction_<T_a, T_b>, T_a, T_b> {
  public:
   /**
    * Constructor.
    * @param a first expression
    * @param b second expression
    */
-  subtraction__(T_a&& a, T_b&& b)  // NOLINT
-      : binary_operation<subtraction__<T_a, T_b>, T_a, T_b>(
-            std::forward<T_a>(a), std::forward<T_b>(b), "-") {}
+  subtraction_(T_a&& a, T_b&& b)  // NOLINT
+      : binary_operation<subtraction_<T_a, T_b>, T_a, T_b>(
+          std::forward<T_a>(a), std::forward<T_b>(b), "-") {}
 };
 
 /**
@@ -149,7 +148,7 @@ class subtraction__
  */
 template <typename T_a, typename T_b,
           typename = require_all_valid_expressions_t<T_a, T_b>>
-inline subtraction__<as_operation_t<T_a>, as_operation_t<T_b>> operator-(
+inline subtraction_<as_operation_t<T_a>, as_operation_t<T_b>> operator-(
     T_a&& a, T_b&& b) {  // NOLINT
   return {as_operation(std::forward<T_a>(a)),
           as_operation(std::forward<T_b>(b))};
@@ -162,24 +161,24 @@ inline subtraction__<as_operation_t<T_a>, as_operation_t<T_b>> operator-(
  */
 template <typename T_a, typename T_b,
           typename = require_all_valid_expressions_t<T_a, T_b>>
-class elewise_multiplication__
-    : public binary_operation<elewise_multiplication__<T_a, T_b>, T_a, T_b> {
+class elewise_multiplication_
+    : public binary_operation<elewise_multiplication_<T_a, T_b>, T_a, T_b> {
  public:
   /**
    * Constructor.
    * @param a first expression
    * @param b second expression
    */
-  elewise_multiplication__(T_a&& a, T_b&& b)  // NOLINT
-      : binary_operation<elewise_multiplication__<T_a, T_b>, T_a, T_b>(
-            std::forward<T_a>(a), std::forward<T_b>(b), "*") {}
+  elewise_multiplication_(T_a&& a, T_b&& b)  // NOLINT
+      : binary_operation<elewise_multiplication_<T_a, T_b>, T_a, T_b>(
+          std::forward<T_a>(a), std::forward<T_b>(b), "*") {}
 
   /**
    * View of a matrix that would be the result of evaluating this expression.
    * @return view
    */
   inline matrix_cl_view view() const {
-    using base = binary_operation<elewise_multiplication__<T_a, T_b>, T_a, T_b>;
+    using base = binary_operation<elewise_multiplication_<T_a, T_b>, T_a, T_b>;
     return both(std::get<0>(base::arguments_).view(),
                 std::get<1>(base::arguments_).view());
   }
@@ -194,7 +193,7 @@ class elewise_multiplication__
  * @return Element-wise multiplication of given expressions
  */
 template <typename T_a, typename T_b>
-inline elewise_multiplication__<as_operation_t<T_a>, as_operation_t<T_b>>
+inline elewise_multiplication_<as_operation_t<T_a>, as_operation_t<T_b>>
 elewise_multiplication(T_a&& a, T_b&& b) {  // NOLINT
   return {as_operation(std::forward<T_a>(a)),
           as_operation(std::forward<T_b>(b))};
@@ -210,7 +209,7 @@ elewise_multiplication(T_a&& a, T_b&& b) {  // NOLINT
  */
 template <typename T_a, typename T_b, typename = require_arithmetic_t<T_a>,
           typename = require_all_valid_expressions_t<T_b>>
-inline elewise_multiplication__<scalar__<T_a>, as_operation_t<T_b>> operator*(
+inline elewise_multiplication_<scalar_<T_a>, as_operation_t<T_b>> operator*(
     T_a&& a, T_b&& b) {  // NOLINT
   return {as_operation(std::forward<T_a>(a)),
           as_operation(std::forward<T_b>(b))};
@@ -227,7 +226,7 @@ inline elewise_multiplication__<scalar__<T_a>, as_operation_t<T_b>> operator*(
 template <typename T_a, typename T_b,
           typename = require_all_valid_expressions_t<T_a>,
           typename = require_arithmetic_t<T_b>>
-inline elewise_multiplication__<as_operation_t<T_a>, scalar__<T_b>> operator*(
+inline elewise_multiplication_<as_operation_t<T_a>, scalar_<T_b>> operator*(
     T_a&& a, const T_b b) {  // NOLINT
   return {as_operation(std::forward<T_a>(a)), as_operation(b)};
 }
@@ -255,24 +254,24 @@ inline matrix_cl<double> operator*(const T_a& a, const T_b& b) {
  * @tparam T_b type of second expression
  */
 template <typename T_a, typename T_b>
-class elewise_division__
-    : public binary_operation<elewise_division__<T_a, T_b>, T_a, T_b> {
+class elewise_division_
+    : public binary_operation<elewise_division_<T_a, T_b>, T_a, T_b> {
  public:
   /**
    * Constructor.
    * @param a first expression
    * @param b second expression
    */
-  elewise_division__(T_a&& a, T_b&& b)  // NOLINT
-      : binary_operation<elewise_division__<T_a, T_b>, T_a, T_b>(
-            std::forward<T_a>(a), std::forward<T_b>(b), "/") {}
+  elewise_division_(T_a&& a, T_b&& b)  // NOLINT
+      : binary_operation<elewise_division_<T_a, T_b>, T_a, T_b>(
+          std::forward<T_a>(a), std::forward<T_b>(b), "/") {}
 
   /**
    * View of a matrix that would be the result of evaluating this expression.
    * @return view
    */
   inline matrix_cl_view view() const {
-    using base = binary_operation<elewise_division__<T_a, T_b>, T_a, T_b>;
+    using base = binary_operation<elewise_division_<T_a, T_b>, T_a, T_b>;
     return either(std::get<0>(base::arguments_).view(),
                   invert(std::get<1>(base::arguments_).view()));
   }
@@ -288,7 +287,7 @@ class elewise_division__
  */
 template <typename T_a, typename T_b,
           typename = require_all_valid_expressions_t<T_a, T_b>>
-inline elewise_division__<as_operation_t<T_a>, as_operation_t<T_b>>
+inline elewise_division_<as_operation_t<T_a>, as_operation_t<T_b>>
 elewise_division(T_a&& a, T_b&& b) {  // NOLINT
   return {as_operation(std::forward<T_a>(a)),
           as_operation(std::forward<T_b>(b))};
