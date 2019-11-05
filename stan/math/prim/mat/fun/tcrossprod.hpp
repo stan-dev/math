@@ -13,7 +13,8 @@ namespace math {
  * @param M Matrix to multiply.
  * @return M times its transpose.
  */
-inline matrix_d tcrossprod(const matrix_d& M) {
+template <int R, int C>
+inline Eigen::MatrixXd tcrossprod(const Eigen::Matrix<double, R, C>& M) {
   if (M.rows() == 0) {
     return matrix_d(0, 0);
   }
