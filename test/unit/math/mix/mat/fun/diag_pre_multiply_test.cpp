@@ -1,553 +1,75 @@
-#include <stan/math/mix/mat.hpp>
-#include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/test_ad.hpp>
 
-TEST(AgradMixMatrixDiagPreMultiply, vector_fv_1stDeriv) {
-  using stan::math::fvar;
-  using stan::math::matrix_d;
-  using stan::math::matrix_fv;
-  using stan::math::var;
-  using stan::math::vector_d;
-  using stan::math::vector_fv;
-
-  matrix_d Z(3, 3);
-  Z << 1, 2, 3, 2, 3, 4, 4, 5, 6;
-
-  fvar<var> a(1.0, 2.0);
-  fvar<var> b(2.0, 2.0);
-  fvar<var> c(3.0, 2.0);
-  fvar<var> d(4.0, 2.0);
-  fvar<var> e(5.0, 2.0);
-  fvar<var> f(6.0, 2.0);
-
-  matrix_fv Y(3, 3);
-  Y << a, b, c, b, c, d, d, e, f;
-
-  vector_d A(3);
-  A << 1, 2, 3;
-  vector_fv B(3);
-  B << a, b, c;
-
-  matrix_d W = stan::math::diag_pre_multiply(A, Z);
-  matrix_fv output = stan::math::diag_pre_multiply(B, Y);
-
-  for (int i = 0; i < 3; i++) {
-    for (int j = 0; j < 3; j++)
-      EXPECT_FLOAT_EQ(W(i, j), output(i, j).val_.val());
-  }
-
-  EXPECT_FLOAT_EQ(4, output(0, 0).d_.val());
-  EXPECT_FLOAT_EQ(6, output(0, 1).d_.val());
-  EXPECT_FLOAT_EQ(8, output(0, 2).d_.val());
-  EXPECT_FLOAT_EQ(8, output(1, 0).d_.val());
-  EXPECT_FLOAT_EQ(10, output(1, 1).d_.val());
-  EXPECT_FLOAT_EQ(12, output(1, 2).d_.val());
-  EXPECT_FLOAT_EQ(14, output(2, 0).d_.val());
-  EXPECT_FLOAT_EQ(16, output(2, 1).d_.val());
-  EXPECT_FLOAT_EQ(18, output(2, 2).d_.val());
-
-  AVEC z = createAVEC(a.val(), b.val(), c.val(), d.val(), e.val(), f.val());
-  VEC h;
-  output(0, 0).val_.grad(z, h);
-  EXPECT_FLOAT_EQ(2.0, h[0]);
-  EXPECT_FLOAT_EQ(0.0, h[1]);
-  EXPECT_FLOAT_EQ(0.0, h[2]);
-  EXPECT_FLOAT_EQ(0.0, h[3]);
-  EXPECT_FLOAT_EQ(0.0, h[4]);
-  EXPECT_FLOAT_EQ(0.0, h[5]);
+void expect_diag_pre_multiply(const Eigen::VectorXd& v,
+                              const Eigen::MatrixXd& a,
+                              const stan::test::ad_tolerances& tols) {
+  auto f = [](const auto& x, const auto& y) {
+    return stan::math::diag_pre_multiply(x, y);
+  };
+  stan::test::expect_ad(tols, f, v, a);
+  Eigen::RowVectorXd rv(v);
+  stan::test::expect_ad(tols, f, rv, a);
 }
-TEST(AgradMixMatrixDiagPreMultiply, vector_fv_2ndDeriv) {
-  using stan::math::fvar;
-  using stan::math::matrix_d;
-  using stan::math::matrix_fv;
-  using stan::math::var;
-  using stan::math::vector_d;
-  using stan::math::vector_fv;
-
-  fvar<var> a(1.0, 2.0);
-  fvar<var> b(2.0, 2.0);
-  fvar<var> c(3.0, 2.0);
-  fvar<var> d(4.0, 2.0);
-  fvar<var> e(5.0, 2.0);
-  fvar<var> f(6.0, 2.0);
-
-  matrix_fv Y(3, 3);
-  Y << a, b, c, b, c, d, d, e, f;
-  vector_fv B(3);
-  B << a, b, c;
-
-  matrix_fv output = stan::math::diag_pre_multiply(B, Y);
-
-  AVEC z = createAVEC(a.val(), b.val(), c.val(), d.val(), e.val(), f.val());
-  VEC h;
-  output(0, 0).d_.grad(z, h);
-  EXPECT_FLOAT_EQ(4.0, h[0]);
-  EXPECT_FLOAT_EQ(0.0, h[1]);
-  EXPECT_FLOAT_EQ(0.0, h[2]);
-  EXPECT_FLOAT_EQ(0.0, h[3]);
-  EXPECT_FLOAT_EQ(0.0, h[4]);
-  EXPECT_FLOAT_EQ(0.0, h[5]);
+void expect_diag_pre_multiply(const Eigen::VectorXd& v,
+                              const Eigen::MatrixXd& a) {
+  stan::test::ad_tolerances tols;
+  expect_diag_pre_multiply(v, a, tols);
 }
-TEST(AgradMixMatrixDiagPreMultiply, vector_fv_exception) {
-  using stan::math::matrix_fv;
-  using stan::math::vector_fv;
+TEST(MathMixMatFun, diagPreMultiply) {
+  // 0 x 0
+  Eigen::MatrixXd a00(0, 0);
+  Eigen::VectorXd u0(0);
+  expect_diag_pre_multiply(u0, a00);
 
-  matrix_fv Y(3, 3);
-  matrix_fv Z(2, 3);
-  vector_fv B(3);
-  vector_fv C(4);
+  // 1 x 1
+  Eigen::MatrixXd a11(1, 1);
+  a11 << 10;
+  Eigen::VectorXd u1(1);
+  u1 << 3;
+  expect_diag_pre_multiply(u1, a11);
 
-  EXPECT_THROW(stan::math::diag_pre_multiply(Y, B), std::invalid_argument);
-  EXPECT_THROW(stan::math::diag_pre_multiply(C, Y), std::invalid_argument);
-  EXPECT_THROW(stan::math::diag_pre_multiply(Z, Y), std::invalid_argument);
-  EXPECT_THROW(stan::math::diag_pre_multiply(Y, Z), std::invalid_argument);
-}
-TEST(AgradMixMatrixDiagPreMultiply, rowvector_fv_1stDeriv) {
-  using stan::math::fvar;
-  using stan::math::matrix_d;
-  using stan::math::matrix_fv;
-  using stan::math::row_vector_d;
-  using stan::math::row_vector_fv;
-  using stan::math::var;
+  // 2 x 2
+  Eigen::MatrixXd a22(2, 2);
+  a22 << 1, 10, 100, 1000;
+  Eigen::VectorXd u2(2);
+  u2 << 2, 3;
+  expect_diag_pre_multiply(u2, a22);
 
-  matrix_d Z(3, 3);
-  Z << 1, 2, 3, 2, 3, 4, 4, 5, 6;
+  // 3 x 3
+  Eigen::MatrixXd a33b(3, 3);
+  a33b << 1, 2, 3, 2, 3, 4, 4, 5, 6;
+  Eigen::VectorXd u3b(3);
+  u3b << 1, 2, 3;
+  expect_diag_pre_multiply(u3b, a33b);
 
-  fvar<var> a(1.0, 2.0);
-  fvar<var> b(2.0, 2.0);
-  fvar<var> c(3.0, 2.0);
-  fvar<var> d(4.0, 2.0);
-  fvar<var> e(5.0, 2.0);
-  fvar<var> f(6.0, 2.0);
+  Eigen::MatrixXd a33c(3, 3);
+  a33c << 1, 2, 3, 4, 5, 6, 7, 8, 9;
+  Eigen::VectorXd u3c(3);
+  u3c << 1, 2, 3;
+  expect_diag_pre_multiply(u3c, a33c);
 
-  matrix_fv Y(3, 3);
-  Y << a, b, c, b, c, d, d, e, f;
+  stan::test::ad_tolerances tols;
+  tols.hessian_hessian_ = 2e-2;       // default 1e-3
+  tols.hessian_fvar_hessian_ = 2e-2;  // default 1e-3
 
-  row_vector_d A(3);
-  A << 1, 2, 3;
-  row_vector_fv B(3);
-  B << a, b, c;
+  Eigen::MatrixXd a33(3, 3);
+  a33 << 1, 10, 100, 1000, 2, -4, 8, -16, 32;
+  Eigen::VectorXd u3(3);
+  u3 << -1.7, 111.2, -29.3;
+  expect_diag_pre_multiply(u3, a33, tols);
 
-  matrix_d W = stan::math::diag_pre_multiply(A, Z);
-  matrix_fv output = stan::math::diag_pre_multiply(B, Y);
+  Eigen::MatrixXd a33d(3, 3);
+  a33d << 1, 0, 0, 0, 2, 0, 0, 0, 3;
+  Eigen::VectorXd u3d(3);
+  u3d << 1, 2, 3;
+  expect_diag_pre_multiply(u3d, a33d, tols);
 
-  for (int i = 0; i < 3; i++) {
-    for (int j = 0; j < 3; j++)
-      EXPECT_FLOAT_EQ(W(i, j), output(i, j).val_.val());
-  }
+  // error: mismatched sizes
+  expect_diag_pre_multiply(u2, a33);
+  expect_diag_pre_multiply(u3, a22);
 
-  EXPECT_FLOAT_EQ(4, output(0, 0).d_.val());
-  EXPECT_FLOAT_EQ(6, output(0, 1).d_.val());
-  EXPECT_FLOAT_EQ(8, output(0, 2).d_.val());
-  EXPECT_FLOAT_EQ(8, output(1, 0).d_.val());
-  EXPECT_FLOAT_EQ(10, output(1, 1).d_.val());
-  EXPECT_FLOAT_EQ(12, output(1, 2).d_.val());
-  EXPECT_FLOAT_EQ(14, output(2, 0).d_.val());
-  EXPECT_FLOAT_EQ(16, output(2, 1).d_.val());
-  EXPECT_FLOAT_EQ(18, output(2, 2).d_.val());
-
-  AVEC z = createAVEC(a.val(), b.val(), c.val(), d.val(), e.val(), f.val());
-  VEC h;
-  output(0, 0).val_.grad(z, h);
-  EXPECT_FLOAT_EQ(2.0, h[0]);
-  EXPECT_FLOAT_EQ(0.0, h[1]);
-  EXPECT_FLOAT_EQ(0.0, h[2]);
-  EXPECT_FLOAT_EQ(0.0, h[3]);
-  EXPECT_FLOAT_EQ(0.0, h[4]);
-  EXPECT_FLOAT_EQ(0.0, h[5]);
-}
-TEST(AgradMixMatrixDiagPreMultiply, rowvector_fv_2ndDeriv) {
-  using stan::math::fvar;
-  using stan::math::matrix_d;
-  using stan::math::matrix_fv;
-  using stan::math::row_vector_d;
-  using stan::math::row_vector_fv;
-  using stan::math::var;
-
-  fvar<var> a(1.0, 2.0);
-  fvar<var> b(2.0, 2.0);
-  fvar<var> c(3.0, 2.0);
-  fvar<var> d(4.0, 2.0);
-  fvar<var> e(5.0, 2.0);
-  fvar<var> f(6.0, 2.0);
-
-  matrix_fv Y(3, 3);
-  Y << a, b, c, b, c, d, d, e, f;
-  row_vector_fv B(3);
-  B << a, b, c;
-
-  matrix_fv output = stan::math::diag_pre_multiply(B, Y);
-
-  AVEC z = createAVEC(a.val(), b.val(), c.val(), d.val(), e.val(), f.val());
-  VEC h;
-  output(0, 0).d_.grad(z, h);
-  EXPECT_FLOAT_EQ(4.0, h[0]);
-  EXPECT_FLOAT_EQ(0.0, h[1]);
-  EXPECT_FLOAT_EQ(0.0, h[2]);
-  EXPECT_FLOAT_EQ(0.0, h[3]);
-  EXPECT_FLOAT_EQ(0.0, h[4]);
-  EXPECT_FLOAT_EQ(0.0, h[5]);
-}
-TEST(AgradMixMatrixDiagPreMultiply, rowvector_fv_exception) {
-  using stan::math::matrix_fv;
-  using stan::math::row_vector_fv;
-
-  matrix_fv Y(3, 3);
-  matrix_fv Z(2, 3);
-  row_vector_fv B(3);
-  row_vector_fv C(4);
-
-  EXPECT_THROW(stan::math::diag_pre_multiply(Y, B), std::invalid_argument);
-  EXPECT_THROW(stan::math::diag_pre_multiply(C, Y), std::invalid_argument);
-  EXPECT_THROW(stan::math::diag_pre_multiply(Z, Y), std::invalid_argument);
-  EXPECT_THROW(stan::math::diag_pre_multiply(Y, Z), std::invalid_argument);
-}
-TEST(AgradMixMatrixDiagPreMultiply, vector_ffv_1stDeriv) {
-  using stan::math::fvar;
-  using stan::math::matrix_d;
-  using stan::math::matrix_ffv;
-  using stan::math::var;
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
-
-  matrix_d Z(3, 3);
-  Z << 1, 2, 3, 2, 3, 4, 4, 5, 6;
-
-  fvar<fvar<var> > a(1.0, 2.0);
-  fvar<fvar<var> > b(2.0, 2.0);
-  fvar<fvar<var> > c(3.0, 2.0);
-  fvar<fvar<var> > d(4.0, 2.0);
-  fvar<fvar<var> > e(5.0, 2.0);
-  fvar<fvar<var> > f(6.0, 2.0);
-
-  matrix_ffv Y(3, 3);
-  Y << a, b, c, b, c, d, d, e, f;
-
-  vector_d A(3);
-  A << 1, 2, 3;
-  vector_ffv B(3);
-  B << a, b, c;
-
-  matrix_d W = stan::math::diag_pre_multiply(A, Z);
-  matrix_ffv output = stan::math::diag_pre_multiply(B, Y);
-
-  for (int i = 0; i < 3; i++) {
-    for (int j = 0; j < 3; j++)
-      EXPECT_FLOAT_EQ(W(i, j), output(i, j).val_.val().val());
-  }
-
-  EXPECT_FLOAT_EQ(4, output(0, 0).d_.val().val());
-  EXPECT_FLOAT_EQ(6, output(0, 1).d_.val().val());
-  EXPECT_FLOAT_EQ(8, output(0, 2).d_.val().val());
-  EXPECT_FLOAT_EQ(8, output(1, 0).d_.val().val());
-  EXPECT_FLOAT_EQ(10, output(1, 1).d_.val().val());
-  EXPECT_FLOAT_EQ(12, output(1, 2).d_.val().val());
-  EXPECT_FLOAT_EQ(14, output(2, 0).d_.val().val());
-  EXPECT_FLOAT_EQ(16, output(2, 1).d_.val().val());
-  EXPECT_FLOAT_EQ(18, output(2, 2).d_.val().val());
-
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
-                      d.val().val(), e.val().val(), f.val().val());
-  VEC h;
-  output(0, 0).val_.val().grad(z, h);
-  EXPECT_FLOAT_EQ(2.0, h[0]);
-  EXPECT_FLOAT_EQ(0.0, h[1]);
-  EXPECT_FLOAT_EQ(0.0, h[2]);
-  EXPECT_FLOAT_EQ(0.0, h[3]);
-  EXPECT_FLOAT_EQ(0.0, h[4]);
-  EXPECT_FLOAT_EQ(0.0, h[5]);
-}
-TEST(AgradMixMatrixDiagPreMultiply, vector_ffv_2ndDeriv_1) {
-  using stan::math::fvar;
-  using stan::math::matrix_d;
-  using stan::math::matrix_ffv;
-  using stan::math::var;
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
-
-  fvar<fvar<var> > a(1.0, 2.0);
-  fvar<fvar<var> > b(2.0, 2.0);
-  fvar<fvar<var> > c(3.0, 2.0);
-  fvar<fvar<var> > d(4.0, 2.0);
-  fvar<fvar<var> > e(5.0, 2.0);
-  fvar<fvar<var> > f(6.0, 2.0);
-
-  matrix_ffv Y(3, 3);
-  Y << a, b, c, b, c, d, d, e, f;
-  vector_ffv B(3);
-  B << a, b, c;
-
-  matrix_ffv output = stan::math::diag_pre_multiply(B, Y);
-
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
-                      d.val().val(), e.val().val(), f.val().val());
-  VEC h;
-  output(0, 0).val().d_.grad(z, h);
-  EXPECT_FLOAT_EQ(0.0, h[0]);
-  EXPECT_FLOAT_EQ(0.0, h[1]);
-  EXPECT_FLOAT_EQ(0.0, h[2]);
-  EXPECT_FLOAT_EQ(0.0, h[3]);
-  EXPECT_FLOAT_EQ(0.0, h[4]);
-  EXPECT_FLOAT_EQ(0.0, h[5]);
-}
-TEST(AgradMixMatrixDiagPreMultiply, vector_ffv_2ndDeriv_2) {
-  using stan::math::fvar;
-  using stan::math::matrix_d;
-  using stan::math::matrix_ffv;
-  using stan::math::var;
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
-
-  fvar<fvar<var> > a(1.0, 2.0);
-  fvar<fvar<var> > b(2.0, 2.0);
-  fvar<fvar<var> > c(3.0, 2.0);
-  fvar<fvar<var> > d(4.0, 2.0);
-  fvar<fvar<var> > e(5.0, 2.0);
-  fvar<fvar<var> > f(6.0, 2.0);
-
-  matrix_ffv Y(3, 3);
-  Y << a, b, c, b, c, d, d, e, f;
-  vector_ffv B(3);
-  B << a, b, c;
-
-  matrix_ffv output = stan::math::diag_pre_multiply(B, Y);
-
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
-                      d.val().val(), e.val().val(), f.val().val());
-  VEC h;
-  output(0, 0).d_.val().grad(z, h);
-  EXPECT_FLOAT_EQ(4.0, h[0]);
-  EXPECT_FLOAT_EQ(0.0, h[1]);
-  EXPECT_FLOAT_EQ(0.0, h[2]);
-  EXPECT_FLOAT_EQ(0.0, h[3]);
-  EXPECT_FLOAT_EQ(0.0, h[4]);
-  EXPECT_FLOAT_EQ(0.0, h[5]);
-}
-TEST(AgradMixMatrixDiagPreMultiply, vector_ffv_3rdDeriv) {
-  using stan::math::fvar;
-  using stan::math::matrix_d;
-  using stan::math::matrix_ffv;
-  using stan::math::var;
-  using stan::math::vector_d;
-  using stan::math::vector_ffv;
-
-  fvar<fvar<var> > a(1.0, 1.0);
-  fvar<fvar<var> > b(2.0, 1.0);
-  fvar<fvar<var> > c(3.0, 1.0);
-  fvar<fvar<var> > d(4.0, 1.0);
-  fvar<fvar<var> > e(5.0, 1.0);
-  fvar<fvar<var> > f(6.0, 1.0);
-  a.val_.d_ = 1.0;
-  b.val_.d_ = 1.0;
-  c.val_.d_ = 1.0;
-  d.val_.d_ = 1.0;
-  e.val_.d_ = 1.0;
-  f.val_.d_ = 1.0;
-
-  matrix_ffv Y(3, 3);
-  Y << a, b, c, b, c, d, d, e, f;
-  vector_ffv B(3);
-  B << a, b, c;
-
-  matrix_ffv output = stan::math::diag_pre_multiply(B, Y);
-
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
-                      d.val().val(), e.val().val(), f.val().val());
-  VEC h;
-  output(0, 0).d_.d_.grad(z, h);
-  EXPECT_FLOAT_EQ(0.0, h[0]);
-  EXPECT_FLOAT_EQ(0.0, h[1]);
-  EXPECT_FLOAT_EQ(0.0, h[2]);
-  EXPECT_FLOAT_EQ(0.0, h[3]);
-  EXPECT_FLOAT_EQ(0.0, h[4]);
-  EXPECT_FLOAT_EQ(0.0, h[5]);
-}
-TEST(AgradMixMatrixDiagPreMultiply, vector_ffv_exception) {
-  using stan::math::matrix_ffv;
-  using stan::math::vector_ffv;
-
-  matrix_ffv Y(3, 3);
-  matrix_ffv Z(2, 3);
-  vector_ffv B(3);
-  vector_ffv C(4);
-
-  EXPECT_THROW(stan::math::diag_pre_multiply(Y, B), std::invalid_argument);
-  EXPECT_THROW(stan::math::diag_pre_multiply(C, Y), std::invalid_argument);
-  EXPECT_THROW(stan::math::diag_pre_multiply(Z, Y), std::invalid_argument);
-  EXPECT_THROW(stan::math::diag_pre_multiply(Y, Z), std::invalid_argument);
-}
-
-TEST(AgradMixMatrixDiagPreMultiply, rowvector_ffv_1stDeriv) {
-  using stan::math::fvar;
-  using stan::math::matrix_d;
-  using stan::math::matrix_ffv;
-  using stan::math::row_vector_d;
-  using stan::math::row_vector_ffv;
-  using stan::math::var;
-
-  matrix_d Z(3, 3);
-  Z << 1, 2, 3, 2, 3, 4, 4, 5, 6;
-
-  fvar<fvar<var> > a(1.0, 2.0);
-  fvar<fvar<var> > b(2.0, 2.0);
-  fvar<fvar<var> > c(3.0, 2.0);
-  fvar<fvar<var> > d(4.0, 2.0);
-  fvar<fvar<var> > e(5.0, 2.0);
-  fvar<fvar<var> > f(6.0, 2.0);
-
-  matrix_ffv Y(3, 3);
-  Y << a, b, c, b, c, d, d, e, f;
-
-  row_vector_d A(3);
-  A << 1, 2, 3;
-  row_vector_ffv B(3);
-  B << a, b, c;
-
-  matrix_d W = stan::math::diag_pre_multiply(A, Z);
-  matrix_ffv output = stan::math::diag_pre_multiply(B, Y);
-
-  for (int i = 0; i < 3; i++) {
-    for (int j = 0; j < 3; j++)
-      EXPECT_FLOAT_EQ(W(i, j), output(i, j).val_.val().val());
-  }
-
-  EXPECT_FLOAT_EQ(4, output(0, 0).d_.val().val());
-  EXPECT_FLOAT_EQ(6, output(0, 1).d_.val().val());
-  EXPECT_FLOAT_EQ(8, output(0, 2).d_.val().val());
-  EXPECT_FLOAT_EQ(8, output(1, 0).d_.val().val());
-  EXPECT_FLOAT_EQ(10, output(1, 1).d_.val().val());
-  EXPECT_FLOAT_EQ(12, output(1, 2).d_.val().val());
-  EXPECT_FLOAT_EQ(14, output(2, 0).d_.val().val());
-  EXPECT_FLOAT_EQ(16, output(2, 1).d_.val().val());
-  EXPECT_FLOAT_EQ(18, output(2, 2).d_.val().val());
-
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
-                      d.val().val(), e.val().val(), f.val().val());
-  VEC h;
-  output(0, 0).val_.val().grad(z, h);
-  EXPECT_FLOAT_EQ(2.0, h[0]);
-  EXPECT_FLOAT_EQ(0.0, h[1]);
-  EXPECT_FLOAT_EQ(0.0, h[2]);
-  EXPECT_FLOAT_EQ(0.0, h[3]);
-  EXPECT_FLOAT_EQ(0.0, h[4]);
-  EXPECT_FLOAT_EQ(0.0, h[5]);
-}
-TEST(AgradMixMatrixDiagPreMultiply, rowvector_ffv_2ndDeriv_1) {
-  using stan::math::fvar;
-  using stan::math::matrix_d;
-  using stan::math::matrix_ffv;
-  using stan::math::row_vector_d;
-  using stan::math::row_vector_ffv;
-  using stan::math::var;
-
-  fvar<fvar<var> > a(1.0, 2.0);
-  fvar<fvar<var> > b(2.0, 2.0);
-  fvar<fvar<var> > c(3.0, 2.0);
-  fvar<fvar<var> > d(4.0, 2.0);
-  fvar<fvar<var> > e(5.0, 2.0);
-  fvar<fvar<var> > f(6.0, 2.0);
-
-  matrix_ffv Y(3, 3);
-  Y << a, b, c, b, c, d, d, e, f;
-  row_vector_ffv B(3);
-  B << a, b, c;
-
-  matrix_ffv output = stan::math::diag_pre_multiply(B, Y);
-
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
-                      d.val().val(), e.val().val(), f.val().val());
-  VEC h;
-  output(0, 0).val().d_.grad(z, h);
-  EXPECT_FLOAT_EQ(0.0, h[0]);
-  EXPECT_FLOAT_EQ(0.0, h[1]);
-  EXPECT_FLOAT_EQ(0.0, h[2]);
-  EXPECT_FLOAT_EQ(0.0, h[3]);
-  EXPECT_FLOAT_EQ(0.0, h[4]);
-  EXPECT_FLOAT_EQ(0.0, h[5]);
-}
-TEST(AgradMixMatrixDiagPreMultiply, rowvector_ffv_2ndDeriv_2) {
-  using stan::math::fvar;
-  using stan::math::matrix_d;
-  using stan::math::matrix_ffv;
-  using stan::math::row_vector_d;
-  using stan::math::row_vector_ffv;
-  using stan::math::var;
-
-  fvar<fvar<var> > a(1.0, 2.0);
-  fvar<fvar<var> > b(2.0, 2.0);
-  fvar<fvar<var> > c(3.0, 2.0);
-  fvar<fvar<var> > d(4.0, 2.0);
-  fvar<fvar<var> > e(5.0, 2.0);
-  fvar<fvar<var> > f(6.0, 2.0);
-
-  matrix_ffv Y(3, 3);
-  Y << a, b, c, b, c, d, d, e, f;
-  row_vector_ffv B(3);
-  B << a, b, c;
-
-  matrix_ffv output = stan::math::diag_pre_multiply(B, Y);
-
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
-                      d.val().val(), e.val().val(), f.val().val());
-  VEC h;
-  output(0, 0).d_.val().grad(z, h);
-  EXPECT_FLOAT_EQ(4.0, h[0]);
-  EXPECT_FLOAT_EQ(0.0, h[1]);
-  EXPECT_FLOAT_EQ(0.0, h[2]);
-  EXPECT_FLOAT_EQ(0.0, h[3]);
-  EXPECT_FLOAT_EQ(0.0, h[4]);
-  EXPECT_FLOAT_EQ(0.0, h[5]);
-}
-TEST(AgradMixMatrixDiagPreMultiply, rowvector_ffv_3rdDeriv) {
-  using stan::math::fvar;
-  using stan::math::matrix_d;
-  using stan::math::matrix_ffv;
-  using stan::math::row_vector_d;
-  using stan::math::row_vector_ffv;
-  using stan::math::var;
-
-  fvar<fvar<var> > a(1.0, 1.0);
-  fvar<fvar<var> > b(2.0, 1.0);
-  fvar<fvar<var> > c(3.0, 1.0);
-  fvar<fvar<var> > d(4.0, 1.0);
-  fvar<fvar<var> > e(5.0, 1.0);
-  fvar<fvar<var> > f(6.0, 1.0);
-  a.val_.d_ = 1.0;
-  b.val_.d_ = 1.0;
-  c.val_.d_ = 1.0;
-  d.val_.d_ = 1.0;
-  e.val_.d_ = 1.0;
-  f.val_.d_ = 1.0;
-
-  matrix_ffv Y(3, 3);
-  Y << a, b, c, b, c, d, d, e, f;
-  row_vector_ffv B(3);
-  B << a, b, c;
-
-  matrix_ffv output = stan::math::diag_pre_multiply(B, Y);
-
-  AVEC z = createAVEC(a.val().val(), b.val().val(), c.val().val(),
-                      d.val().val(), e.val().val(), f.val().val());
-  VEC h;
-  output(0, 0).d_.d_.grad(z, h);
-  EXPECT_FLOAT_EQ(0.0, h[0]);
-  EXPECT_FLOAT_EQ(0.0, h[1]);
-  EXPECT_FLOAT_EQ(0.0, h[2]);
-  EXPECT_FLOAT_EQ(0.0, h[3]);
-  EXPECT_FLOAT_EQ(0.0, h[4]);
-  EXPECT_FLOAT_EQ(0.0, h[5]);
-}
-TEST(AgradMixMatrixDiagPreMultiply, rowvector_ffv_exception) {
-  using stan::math::matrix_ffv;
-  using stan::math::row_vector_ffv;
-
-  matrix_ffv Y(3, 3);
-  matrix_ffv Z(2, 3);
-  row_vector_ffv B(3);
-  row_vector_ffv C(4);
-
-  EXPECT_THROW(stan::math::diag_pre_multiply(Y, B), std::invalid_argument);
-  EXPECT_THROW(stan::math::diag_pre_multiply(C, Y), std::invalid_argument);
-  EXPECT_THROW(stan::math::diag_pre_multiply(Z, Y), std::invalid_argument);
-  EXPECT_THROW(stan::math::diag_pre_multiply(Y, Z), std::invalid_argument);
+  // error: non-square
+  Eigen::MatrixXd b23(2, 3);
+  b23 << 1, 2, 3, 4, 5, 6;
+  expect_diag_pre_multiply(u2, b23);
 }
