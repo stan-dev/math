@@ -39,14 +39,13 @@ void test_gradient(const ad_tolerances& tols, const F& f,
   Eigen::VectorXd grad_ad;
   double fx_ad = fx;
   stan::math::gradient<F>(f, x, fx_ad, grad_ad);
-  expect_near_rel("test_gradient fx = fx_ad", fx, fx_ad, tols.gradient_val_);
+  expect_near_rel("gradient() val", fx, fx_ad, tols.gradient_val_);
   if (!test_derivs || !is_finite(x) || !is_finite(fx))
     return;
   Eigen::VectorXd grad_fd;
   double fx_fd;
   stan::math::finite_diff_gradient_auto(f, x, fx_fd, grad_fd);
-  expect_near_rel("test gradient grad_fd == grad_ad", grad_fd, grad_ad,
-                  tols.gradient_grad_);
+  expect_near_rel("gradient() grad", grad_fd, grad_ad, tols.gradient_grad_);
 }
 
 /**
@@ -78,14 +77,13 @@ void test_gradient_fvar(const ad_tolerances& tols, const F& f,
   Eigen::VectorXd grad_ad;
   double fx_ad = fx;
   stan::math::gradient<double, F>(f, x, fx_ad, grad_ad);
-  expect_near_rel("gradient_fvar fx == fx_ad", fx, fx_ad,
-                  tols.gradient_fvar_val_);
+  expect_near_rel("gradient_fvar() val", fx, fx_ad, tols.gradient_fvar_val_);
   if (!test_derivs || !is_finite(x) || !is_finite(fx))
     return;
   Eigen::VectorXd grad_fd;
   double fx_fd;
   stan::math::finite_diff_gradient_auto(f, x, fx_fd, grad_fd);
-  expect_near_rel("gradient_fvar grad_fd == grad_ad", grad_fd, grad_ad,
+  expect_near_rel("gradient_fvar() grad", grad_fd, grad_ad,
                   tols.gradient_fvar_grad_);
 }
 
@@ -119,17 +117,16 @@ void test_hessian_fvar(const ad_tolerances& tols, const F& f,
   Eigen::VectorXd grad_ad;
   Eigen::MatrixXd H_ad;
   stan::math::hessian<double, F>(f, x, fx_ad, grad_ad, H_ad);
-  expect_near_rel("hessian_fvar fx == fx_ad", fx, fx_ad,
-                  tols.hessian_fvar_val_);
+  expect_near_rel("hessian_fvar() val", fx, fx_ad, tols.hessian_fvar_val_);
   if (!test_derivs || !is_finite(x) || !is_finite(fx))
     return;
   double fx_fd;
   Eigen::VectorXd grad_fd;
   Eigen::MatrixXd H_fd;
   stan::math::finite_diff_hessian_auto(f, x, fx_fd, grad_fd, H_fd);
-  expect_near_rel("hessian fvar grad_fd == grad_ad", grad_fd, grad_ad,
+  expect_near_rel("hessian_fvar() grad", grad_fd, grad_ad,
                   tols.hessian_fvar_grad_);
-  expect_near_rel("hessian fvar H_fd = H_ad", H_fd, H_ad,
+  expect_near_rel("hessian_fvar() Hessian", H_fd, H_ad,
                   tols.hessian_fvar_hessian_);
 }
 
@@ -163,17 +160,15 @@ void test_hessian(const ad_tolerances& tols, const F& f,
   Eigen::VectorXd grad_ad;
   Eigen::MatrixXd H_ad;
   stan::math::hessian<F>(f, x, fx_ad, grad_ad, H_ad);
-  expect_near_rel("hessian fx == fx_ad", fx, fx_ad, tols.hessian_val_);
+  expect_near_rel("hessian val", fx, fx_ad, tols.hessian_val_);
   if (!test_derivs || !is_finite(x) || !is_finite(fx))
     return;
   double fx_fd;
   Eigen::VectorXd grad_fd;
   Eigen::MatrixXd H_fd;
   stan::math::finite_diff_hessian_auto(f, x, fx_fd, grad_fd, H_fd);
-  expect_near_rel("hessian grad_fd = grad_ad", grad_fd, grad_ad,
-                  tols.hessian_grad_);
-  expect_near_rel("hessian grad_fd H_fd == H_ad", H_fd, H_ad,
-                  tols.hessian_hessian_);
+  expect_near_rel("hessian() grad", grad_fd, grad_ad, tols.hessian_grad_);
+  expect_near_rel("hessian() Hessian", H_fd, H_ad, tols.hessian_hessian_);
 }
 
 /**
@@ -206,20 +201,19 @@ void test_grad_hessian(const ad_tolerances& tols, const F& f,
   Eigen::MatrixXd H_ad;
   std::vector<Eigen::MatrixXd> grad_H_ad;
   stan::math::grad_hessian(f, x, fx_ad, H_ad, grad_H_ad);
-  expect_near_rel("grad_hessian fx == fx_ad", fx, fx_ad,
-                  tols.grad_hessian_val_);
+  expect_near_rel("grad_hessian() val", fx, fx_ad, tols.grad_hessian_val_);
   if (!test_derivs || !is_finite(x) || !is_finite(fx))
     return;
   double fx_fd;
   Eigen::MatrixXd H_fd;
   std::vector<Eigen::MatrixXd> grad_H_fd;
   stan::math::finite_diff_grad_hessian_auto(f, x, fx_fd, H_fd, grad_H_fd);
-  expect_near_rel("grad hessian H_fd == H_ad", H_fd, H_ad,
+  expect_near_rel("grad_hessian() Hessian", H_fd, H_ad,
                   tols.grad_hessian_hessian_);
   EXPECT_EQ(x.size(), grad_H_fd.size());
   for (size_t i = 0; i < grad_H_fd.size(); ++i)
-    expect_near_rel("grad hessian grad_H_fd[i] == grad_H_ad[i]", grad_H_fd[i],
-                    grad_H_ad[i], tols.grad_hessian_grad_hessian_);
+    expect_near_rel("grad_hessian() grad Hessian", grad_H_fd[i], grad_H_ad[i],
+                    tols.grad_hessian_grad_hessian_);
 }
 
 /**
@@ -265,7 +259,7 @@ void expect_ad_derivatives(const ad_tolerances& tols, const G& g,
  * @tparam T type of scalars to test
  * @tparam F type of functor to test
  * @param f functor to test
- * @param x values to test
+ * @param x value to test
  * @param name_of_T name of type of exception expected
  */
 template <typename T, typename F>
@@ -304,7 +298,7 @@ void expect_all_throw(const F& f, const Eigen::VectorXd& x) {
 }
 
 /**
- * Nucceeds if the specified function applied to the specified
+ * Succeeds if the specified function applied to the specified
  * argument throws an exception at every level of autodiff.
  *
  * @tparam F type of function
@@ -319,6 +313,14 @@ void expect_all_throw(const F& f, double x1) {
   expect_all_throw(h, x);
 }
 
+/**
+ * Succeeds if the specified function applied to the specified
+ * argument thorws an exception at every level of autodiff.
+ * @tparam F type of function
+ * @param f function to evaluate
+ * @param x1 first argument
+ * @param x2 second argument
+ */
 template <typename F>
 void expect_all_throw(const F& f, double x1, double x2) {
   auto h = [&](auto v) { return serialize_return(f(v(0), v(1))); };
@@ -628,6 +630,16 @@ void expect_comparison(const F& f, const T1& x1, const T2& x2) {
 }
 
 }  // namespace internal
+
+template <typename F>
+void expect_all_throw(const F& f, double x) {
+  internal::expect_all_throw(f, x);
+}
+
+template <typename F>
+void expect_all_throw(const F& f, double x1, double x2) {
+  internal::expect_all_throw(f, x1, x2);
+}
 
 /**
  * Test that the specified function has the same value when applied to
@@ -1155,6 +1167,130 @@ void expect_common_prim(const F1& f1, const F2& f2) {
     expect_match_prim(f1, f2, x);
   for (int x : internal::common_int_args())
     expect_match_prim(f1, f2, x);
+}
+
+/**
+ * Return sequence of covariance matrices ranging in dimension from
+ * the specified minimum to maximum, with specified autocorrelation.
+ * The entries `Sigma[i, j]` in the result are `pow(rho, fabs(i -
+ * j))`.
+ *
+ * @param N_min minimum covariance matrix dimension
+ * @param N_max maximum covariance matrix dimension
+ * @param rho correlation (between -1 and 1)
+ * @return sequence of covariance matrices between specified sizes
+ * with specified autocorrelation
+ */
+std::vector<Eigen::MatrixXd> ar_test_cov_matrices(int N_min, int N_max,
+                                                  double rho) {
+  std::vector<Eigen::MatrixXd> ys;
+  for (int n = N_min; n <= N_max; ++n) {
+    Eigen::MatrixXd y(n, n);
+    for (int i = 0; i < n; ++i) {
+      y(i, i) = 1;
+      for (int j = 0; j < i; ++j) {
+        y(i, j) = std::pow(rho, std::fabs(i - j));
+        y(j, i) = y(i, j);
+      }
+    }
+    ys.push_back(y);
+  }
+  return ys;
+}
+
+/**
+ * Return standard vector containing elements of the specified
+ * Eigen vector, row vector, or matrix.
+ *
+ * @tparam R row type
+ * @tparam C column type
+ * @param x Eigen object
+ * @return standard vector with elements of Eigen object
+ */
+template <int R, int C>
+std::vector<double> to_std_vector(const Eigen::Matrix<double, R, C>& x) {
+  std::vector<double> y(x.size());
+  for (int i = 0; i < x.size(); ++i)
+    y[i] = x(i);
+  return y;
+}
+
+/**
+ * Return Eigen vector with elements given by the specified standard
+ * vector.
+ *
+ * @param x standard vector input
+ * @return copy as Eigen vector
+ */
+Eigen::VectorXd to_vector(const std::vector<double>& x) {
+  Eigen::VectorXd y(x.size());
+  for (size_t i = 0; i < x.size(); ++i)
+    y(i) = x[i];
+  return y;
+}
+
+/**
+ * Copy the specified Eigen matrix, vector, or row vector to a
+ * vector.
+ *
+ * @tparam R row specification for matrix
+ * @tparam C column specification for matrix
+ * @param x matrix
+ * @return copy as vector
+ */
+template <int R, int C>
+Eigen::VectorXd to_vector(const Eigen::Matrix<double, R, C>& x) {
+  Eigen::VectorXd y(x.size());
+  for (int i = 0; i < x.size(); ++i)
+    y(i) = x(i);
+  return y;
+}
+
+/**
+ * Return Eigen row vector with elements given by the specified
+ * standard vector.
+ *
+ * @param x standard vector input
+ * @return copy as Eigen row vector
+ */
+Eigen::RowVectorXd to_row_vector(const std::vector<double>& x) {
+  Eigen::RowVectorXd y(x.size());
+  for (size_t i = 0; i < x.size(); ++i)
+    y(i) = x[i];
+  return y;
+}
+
+/**
+ * Copy the specified Eigen matrix, vector, or row vector to a
+ * row vector.
+ *
+ * @tparam R row specification for matrix
+ * @tparam C column specification for matrix
+ * @param x matrix
+ * @return copy as row vector
+ */
+template <int R, int C>
+Eigen::VectorXd to_row_vector(const Eigen::Matrix<double, R, C>& x) {
+  Eigen::RowVectorXd y(x.size());
+  for (int i = 0; i < x.size(); ++i)
+    y(i) = x(i);
+  return y;
+}
+
+/**
+ * Return the LDLT computed from the symmetrized form of the specified
+ * argument.
+ *
+ * @tparam T scalar type of matrix
+ * @param matrix to factor
+ * @return LDLT factor for matrix
+ */
+template <typename T>
+auto ldlt_factor(const Eigen::Matrix<T, -1, -1>& x) {
+  stan::math::LDLT_factor<T, -1, -1> ldlt_x;
+  Eigen::Matrix<T, -1, -1> x_sym = (x + x.transpose()) * 0.5;
+  ldlt_x.compute(x_sym);
+  return ldlt_x;
 }
 
 }  // namespace test

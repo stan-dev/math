@@ -11,8 +11,8 @@ def runTests(String testPath) {
 def runTestsWin(String testPath) {
     withEnv(['PATH+TBB=./lib/tbb']) {
        bat "echo $PATH"
-       bat "runTests.py -j${env.PARALLEL} ${testPath} --make-only"
-       try { bat "runTests.py -j${env.PARALLEL} ${testPath}" }
+       bat "runTests.py -j12 ${testPath} --make-only"
+       try { bat "runTests.py -j12 ${testPath}" }
        finally { junit 'test/**/*.xml' }
     }
 }
@@ -160,7 +160,7 @@ pipeline {
                         deleteDir()
                         unstash 'MathSetup'
                         sh "echo CXX=${MPICXX} >> make/local"
-                        sh "echo CXX_TYPE=gcc >> make/local"                        
+                        sh "echo CXX_TYPE=gcc >> make/local"
                         sh "echo STAN_MPI=true >> make/local"
                         runTests("test/unit")
                     }
