@@ -1,239 +1,29 @@
-#include <stan/math/mix/mat.hpp>
-#include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/test_ad.hpp>
 
-using stan::math::var;
-TEST(AgradMixMatrixRepMatrix, fv_real) {
-  using stan::math::fvar;
-  using stan::math::matrix_fv;
-  using stan::math::rep_matrix;
-  fvar<var> a;
-  a.val_ = 3.0;
-  a.d_ = 2.0;
-  matrix_fv output;
-  output = rep_matrix(a, 2, 3);
-
-  EXPECT_EQ(3, output(0, 0).val_.val());
-  EXPECT_EQ(3, output(0, 1).val_.val());
-  EXPECT_EQ(3, output(0, 2).val_.val());
-  EXPECT_EQ(3, output(1, 0).val_.val());
-  EXPECT_EQ(3, output(1, 1).val_.val());
-  EXPECT_EQ(3, output(1, 2).val_.val());
-  EXPECT_EQ(2, output(0, 0).d_.val());
-  EXPECT_EQ(2, output(0, 1).d_.val());
-  EXPECT_EQ(2, output(0, 2).d_.val());
-  EXPECT_EQ(2, output(1, 0).d_.val());
-  EXPECT_EQ(2, output(1, 1).d_.val());
-  EXPECT_EQ(2, output(1, 2).d_.val());
+// y is scalar
+auto f(int m, int n) {
+  return [=](const auto& y) { return stan::math::rep_matrix(y, m, n); };
 }
-TEST(AgradMixMatrixRepMatrix, fv_exception_real) {
-  using stan::math::fvar;
-  using stan::math::matrix_fv;
-  using stan::math::rep_matrix;
-  fvar<var> a;
-  a.val_ = 3.0;
-  a.d_ = 2.0;
 
-  EXPECT_THROW(rep_matrix(a, -2, -1), std::domain_error);
+// y is row vector or column vector
+auto g(int k) {
+  return [=](const auto& y) { return stan::math::rep_matrix(y, k); };
 }
-TEST(AgradMixMatrixRepMatrix, fv_rowvector) {
-  using stan::math::matrix_fv;
-  using stan::math::rep_matrix;
-  using stan::math::row_vector_fv;
 
-  row_vector_fv a(3);
-  a << 3.0, 3.0, 3.0;
-  a(0).d_ = 2.0;
-  a(1).d_ = 2.0;
-  a(2).d_ = 2.0;
-  matrix_fv output;
-  output = rep_matrix(a, 3);
+TEST(MathMixMatFun, repMatrix) {
+  double y = 3;
+  stan::test::expect_ad(f(0, 0), y);
+  stan::test::expect_ad(f(1, 1), y);
+  stan::test::expect_ad(f(2, 3), y);
 
-  EXPECT_EQ(3, output(0, 0).val_.val());
-  EXPECT_EQ(3, output(0, 1).val_.val());
-  EXPECT_EQ(3, output(0, 2).val_.val());
-  EXPECT_EQ(3, output(1, 0).val_.val());
-  EXPECT_EQ(3, output(1, 1).val_.val());
-  EXPECT_EQ(3, output(1, 2).val_.val());
-  EXPECT_EQ(3, output(2, 0).val_.val());
-  EXPECT_EQ(3, output(2, 1).val_.val());
-  EXPECT_EQ(3, output(2, 2).val_.val());
-  EXPECT_EQ(2, output(0, 0).d_.val());
-  EXPECT_EQ(2, output(0, 1).d_.val());
-  EXPECT_EQ(2, output(0, 2).d_.val());
-  EXPECT_EQ(2, output(1, 0).d_.val());
-  EXPECT_EQ(2, output(1, 1).d_.val());
-  EXPECT_EQ(2, output(1, 2).d_.val());
-  EXPECT_EQ(2, output(2, 0).d_.val());
-  EXPECT_EQ(2, output(2, 1).d_.val());
-  EXPECT_EQ(2, output(2, 2).d_.val());
-}
-TEST(AgradMixMatrixRepMatrix, fv_exception_rowvector) {
-  using stan::math::matrix_fv;
-  using stan::math::rep_matrix;
-  using stan::math::row_vector_fv;
+  // illegal arguments---test throw
+  stan::test::expect_ad(f(-2, -1), y);
 
-  row_vector_fv a(3);
-  a << 3.0, 3.0, 3.0;
+  Eigen::VectorXd a(3);
+  a << 3, 3, 3;
+  stan::test::expect_ad(g(2), a);
 
-  EXPECT_THROW(rep_matrix(a, -3), std::domain_error);
-}
-TEST(AgradMixMatrixRepMatrix, fv_vector) {
-  using stan::math::matrix_fv;
-  using stan::math::rep_matrix;
-  using stan::math::vector_fv;
-
-  vector_fv a(3);
-  a << 3.0, 3.0, 3.0;
-  a(0).d_ = 2.0;
-  a(1).d_ = 2.0;
-  a(2).d_ = 2.0;
-  matrix_fv output;
-  output = rep_matrix(a, 3);
-
-  EXPECT_EQ(3, output(0, 0).val_.val());
-  EXPECT_EQ(3, output(0, 1).val_.val());
-  EXPECT_EQ(3, output(0, 2).val_.val());
-  EXPECT_EQ(3, output(1, 0).val_.val());
-  EXPECT_EQ(3, output(1, 1).val_.val());
-  EXPECT_EQ(3, output(1, 2).val_.val());
-  EXPECT_EQ(3, output(2, 0).val_.val());
-  EXPECT_EQ(3, output(2, 1).val_.val());
-  EXPECT_EQ(3, output(2, 2).val_.val());
-  EXPECT_EQ(2, output(0, 0).d_.val());
-  EXPECT_EQ(2, output(0, 1).d_.val());
-  EXPECT_EQ(2, output(0, 2).d_.val());
-  EXPECT_EQ(2, output(1, 0).d_.val());
-  EXPECT_EQ(2, output(1, 1).d_.val());
-  EXPECT_EQ(2, output(1, 2).d_.val());
-  EXPECT_EQ(2, output(2, 0).d_.val());
-  EXPECT_EQ(2, output(2, 1).d_.val());
-  EXPECT_EQ(2, output(2, 2).d_.val());
-}
-TEST(AgradMixMatrixRepMatrix, fv_exception_vector) {
-  using stan::math::matrix_fv;
-  using stan::math::rep_matrix;
-  using stan::math::vector_fv;
-
-  vector_fv a(3);
-  a << 3.0, 3.0, 3.0;
-
-  EXPECT_THROW(rep_matrix(a, -3), std::domain_error);
-}
-TEST(AgradMixMatrixRepMatrix, ffv_real) {
-  using stan::math::fvar;
-  using stan::math::matrix_ffv;
-  using stan::math::rep_matrix;
-  fvar<fvar<var> > a;
-  a.val_ = 3.0;
-  a.d_ = 2.0;
-  matrix_ffv output;
-  output = rep_matrix(a, 2, 3);
-
-  EXPECT_EQ(3, output(0, 0).val_.val().val());
-  EXPECT_EQ(3, output(0, 1).val_.val().val());
-  EXPECT_EQ(3, output(0, 2).val_.val().val());
-  EXPECT_EQ(3, output(1, 0).val_.val().val());
-  EXPECT_EQ(3, output(1, 1).val_.val().val());
-  EXPECT_EQ(3, output(1, 2).val_.val().val());
-  EXPECT_EQ(2, output(0, 0).d_.val().val());
-  EXPECT_EQ(2, output(0, 1).d_.val().val());
-  EXPECT_EQ(2, output(0, 2).d_.val().val());
-  EXPECT_EQ(2, output(1, 0).d_.val().val());
-  EXPECT_EQ(2, output(1, 1).d_.val().val());
-  EXPECT_EQ(2, output(1, 2).d_.val().val());
-}
-TEST(AgradMixMatrixRepMatrix, ffv_exception_real) {
-  using stan::math::fvar;
-  using stan::math::matrix_ffv;
-  using stan::math::rep_matrix;
-  fvar<fvar<var> > a;
-  a.val_ = 3.0;
-  a.d_ = 2.0;
-
-  EXPECT_THROW(rep_matrix(a, -2, -1), std::domain_error);
-}
-TEST(AgradMixMatrixRepMatrix, ffv_rowvector) {
-  using stan::math::matrix_ffv;
-  using stan::math::rep_matrix;
-  using stan::math::row_vector_ffv;
-
-  row_vector_ffv a(3);
-  a << 3.0, 3.0, 3.0;
-  a(0).d_ = 2.0;
-  a(1).d_ = 2.0;
-  a(2).d_ = 2.0;
-  matrix_ffv output;
-  output = rep_matrix(a, 3);
-
-  EXPECT_EQ(3, output(0, 0).val_.val().val());
-  EXPECT_EQ(3, output(0, 1).val_.val().val());
-  EXPECT_EQ(3, output(0, 2).val_.val().val());
-  EXPECT_EQ(3, output(1, 0).val_.val().val());
-  EXPECT_EQ(3, output(1, 1).val_.val().val());
-  EXPECT_EQ(3, output(1, 2).val_.val().val());
-  EXPECT_EQ(3, output(2, 0).val_.val().val());
-  EXPECT_EQ(3, output(2, 1).val_.val().val());
-  EXPECT_EQ(3, output(2, 2).val_.val().val());
-  EXPECT_EQ(2, output(0, 0).d_.val().val());
-  EXPECT_EQ(2, output(0, 1).d_.val().val());
-  EXPECT_EQ(2, output(0, 2).d_.val().val());
-  EXPECT_EQ(2, output(1, 0).d_.val().val());
-  EXPECT_EQ(2, output(1, 1).d_.val().val());
-  EXPECT_EQ(2, output(1, 2).d_.val().val());
-  EXPECT_EQ(2, output(2, 0).d_.val().val());
-  EXPECT_EQ(2, output(2, 1).d_.val().val());
-  EXPECT_EQ(2, output(2, 2).d_.val().val());
-}
-TEST(AgradMixMatrixRepMatrix, ffv_exception_rowvector) {
-  using stan::math::matrix_ffv;
-  using stan::math::rep_matrix;
-  using stan::math::row_vector_ffv;
-
-  row_vector_ffv a(3);
-  a << 3.0, 3.0, 3.0;
-
-  EXPECT_THROW(rep_matrix(a, -3), std::domain_error);
-}
-TEST(AgradMixMatrixRepMatrix, ffv_vector) {
-  using stan::math::matrix_ffv;
-  using stan::math::rep_matrix;
-  using stan::math::vector_ffv;
-
-  vector_ffv a(3);
-  a << 3.0, 3.0, 3.0;
-  a(0).d_ = 2.0;
-  a(1).d_ = 2.0;
-  a(2).d_ = 2.0;
-  matrix_ffv output;
-  output = rep_matrix(a, 3);
-
-  EXPECT_EQ(3, output(0, 0).val_.val().val());
-  EXPECT_EQ(3, output(0, 1).val_.val().val());
-  EXPECT_EQ(3, output(0, 2).val_.val().val());
-  EXPECT_EQ(3, output(1, 0).val_.val().val());
-  EXPECT_EQ(3, output(1, 1).val_.val().val());
-  EXPECT_EQ(3, output(1, 2).val_.val().val());
-  EXPECT_EQ(3, output(2, 0).val_.val().val());
-  EXPECT_EQ(3, output(2, 1).val_.val().val());
-  EXPECT_EQ(3, output(2, 2).val_.val().val());
-  EXPECT_EQ(2, output(0, 0).d_.val().val());
-  EXPECT_EQ(2, output(0, 1).d_.val().val());
-  EXPECT_EQ(2, output(0, 2).d_.val().val());
-  EXPECT_EQ(2, output(1, 0).d_.val().val());
-  EXPECT_EQ(2, output(1, 1).d_.val().val());
-  EXPECT_EQ(2, output(1, 2).d_.val().val());
-  EXPECT_EQ(2, output(2, 0).d_.val().val());
-  EXPECT_EQ(2, output(2, 1).d_.val().val());
-  EXPECT_EQ(2, output(2, 2).d_.val().val());
-}
-TEST(AgradMixMatrixRepMatrix, ffv_exception_vector) {
-  using stan::math::matrix_ffv;
-  using stan::math::rep_matrix;
-  using stan::math::vector_ffv;
-
-  vector_ffv a(3);
-  a << 3.0, 3.0, 3.0;
-
-  EXPECT_THROW(rep_matrix(a, -3), std::domain_error);
+  Eigen::RowVectorXd b(2);
+  b << 2, 2;
+  stan::test::expect_ad(g(3), b);
 }

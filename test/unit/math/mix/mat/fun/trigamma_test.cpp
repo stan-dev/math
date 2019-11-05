@@ -23,8 +23,8 @@ TEST(mathMixMatFun, trigamma) {
   tols2.gradient_fvar_grad_ = 1e-3;
   tols2.hessian_grad_ = 1e-3;
   tols2.hessian_fvar_grad_ = 1e-3;
-  tols2.hessian_hessian_ = 1e1;
-  tols2.hessian_fvar_hessian_ = 1e1;
+  tols2.hessian_hessian_ = 1e2;
+  tols2.hessian_fvar_hessian_ = 1e2;
   tols2.grad_hessian_hessian_ = 1e1;
   tols2.grad_hessian_grad_hessian_ = 1e1;
 
