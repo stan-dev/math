@@ -1,51 +1,20 @@
-#include <stan/math/mix/mat.hpp>
-#include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/test_ad.hpp>
 
-TEST(AgradMixMatrixTrace, fv) {
-  using stan::math::fvar;
-  using stan::math::matrix_fv;
-  using stan::math::trace;
-  using stan::math::var;
+TEST(MathMixMatFun, trace) {
+  auto f = [](const auto& x) { return stan::math::trace(x); };
 
-  matrix_fv a(2, 2);
-  a << -1.0, 2.0, 5.0, 10.0;
-  a(0, 0).d_ = 1.0;
-  a(0, 1).d_ = 1.0;
-  a(1, 0).d_ = 1.0;
-  a(1, 1).d_ = 1.0;
+  Eigen::MatrixXd a(0, 0);
+  stan::test::expect_ad(f, a);
 
-  fvar<var> s = trace(a);
-  EXPECT_FLOAT_EQ(9.0, s.val_.val());
-  EXPECT_FLOAT_EQ(2.0, s.d_.val());
-}
-TEST(AgradMixMatrixTrace, ffv) {
-  using stan::math::fvar;
-  using stan::math::matrix_ffv;
-  using stan::math::trace;
-  using stan::math::var;
+  Eigen::MatrixXd b(1, 1);
+  b << -1.2;
+  stan::test::expect_ad(f, b);
 
-  matrix_ffv a(2, 2);
-  a << -1.0, 2.0, 5.0, 10.0;
-  a(0, 0).d_ = 1.0;
-  a(0, 1).d_ = 1.0;
-  a(1, 0).d_ = 1.0;
-  a(1, 1).d_ = 1.0;
-  a(0, 0).val_.d_ = 1.0;
-  a(0, 1).val_.d_ = 1.0;
-  a(1, 0).val_.d_ = 1.0;
-  a(1, 1).val_.d_ = 1.0;
+  Eigen::MatrixXd c(2, 2);
+  c << -1, 2, 5, 10;
+  stan::test::expect_ad(f, a);
 
-  fvar<fvar<var> > s = trace(a);
-  EXPECT_FLOAT_EQ(9.0, s.val_.val().val());
-  EXPECT_FLOAT_EQ(2.0, s.d_.val().val());
-
-  AVEC q = createAVEC(a(0, 0).val().val(), a(0, 1).val().val(),
-                      a(1, 0).val().val(), a(1, 1).val().val());
-  VEC h;
-  s.d_.d_.grad(q, h);
-  EXPECT_FLOAT_EQ(0, h[0]);
-  EXPECT_FLOAT_EQ(0, h[1]);
-  EXPECT_FLOAT_EQ(0, h[2]);
-  EXPECT_FLOAT_EQ(0, h[3]);
+  Eigen::MatrixXd d(3, 3);
+  d << 1, 2, 3, 4, 5, 6, 7, 8, 9;
+  stan::test::expect_ad(f, d);
 }
