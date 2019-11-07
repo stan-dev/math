@@ -122,7 +122,6 @@ pipeline {
             }
           }
           steps {
-              deleteDir()
               retry(3) { checkout scm }
               sh "make doxygen"
           }
