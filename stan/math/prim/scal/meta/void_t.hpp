@@ -9,14 +9,18 @@
 namespace stan {
 
 // Dummy struct that has a type void
-template<typename... Ts> struct make_void { typedef void type;};
+template <typename... Ts>
+struct make_void {
+  typedef void type;
+};
 
 /**
  * Utility metafunction that maps a sequence of any types to the type void
  * This metafunction is used in template metaprogramming to detect ill-formed
  * types or the validity of an expression in an SFINAE context:
  */
-template<typename... Ts> using void_t = typename make_void<Ts...>::type;
+template <typename... Ts>
+using void_t = typename make_void<Ts...>::type;
 
 }  // namespace stan
 #endif

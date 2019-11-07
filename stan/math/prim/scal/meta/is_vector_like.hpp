@@ -30,6 +30,5 @@ template <typename T>
 struct is_vector_like
     : bool_constant<is_detected<T, internal::operator_bracket_t>::value> {};
 
-
 }  // namespace stan
 #endif
