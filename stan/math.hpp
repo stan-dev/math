@@ -18,6 +18,9 @@
 
 /**
  * \defgroup type_trait Type Traits
+ * The type traits in Stan math are a mix of custom traits for detecting
+ *  value and container types of Eigen matrices and standard vectors as well
+ *  as backports of C++17 traits.
  */
 
 /**
@@ -125,11 +128,21 @@
 /**
  * \ingroup require_meta
  * \defgroup require_base_types Basic Type Pseudo-Concepts
+ * These type traits check the type properties of simple objects and are denoted
+ * with a _t at the end. They check only the direct type and do not inspect
+ * anything about type properties composed within a type.
  */
 
 /**
  * \ingroup require_meta
  * \defgroup require_container_types Container Pseudo-Concepts
+ * These type traits check the type properties of objects that act as
+ * containers. The @c _vt methods check that a containers @c value_type fulfills
+ * certain conditions while @c _st methods check that the objects @c scalar_type
+ * fulfills certain conditions. @c value_type and @c scalar_type differ in that
+ * @c value_type is the first level of a container while @c scalar_type
+ * recursivly goes through containers of containers till it comes to a simple
+ * type.
  */
 
 #include <stan/math/rev/mat.hpp>
