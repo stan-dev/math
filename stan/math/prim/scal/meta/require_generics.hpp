@@ -5,7 +5,6 @@
 #include <stan/math/prim/scal/meta/is_eigen.hpp>
 #include <stan/math/prim/scal/meta/is_container.hpp>
 #include <stan/math/prim/scal/meta/is_fvar.hpp>
-#include <stan/math/prim/scal/meta/is_index.hpp>
 #include <stan/math/prim/scal/meta/is_string_convertible.hpp>
 #include <stan/math/prim/scal/meta/is_var.hpp>
 #include <stan/math/prim/scal/meta/is_var_or_arithmetic.hpp>
@@ -299,24 +298,24 @@ using require_any_not_floating_point_t
 
 // Checks if type is something we would use for index
 template <typename T>
-using require_index_t = require_t<is_index<std::decay_t<T>>>;
+using require_index_t = require_t<std::is_integral<std::decay_t<T>>>;
 
 template <typename T>
-using require_not_index_t = require_not_t<is_index<std::decay_t<T>>>;
+using require_not_index_t = require_not_t<std::is_integral<std::decay_t<T>>>;
 
 template <typename... Types>
-using require_all_index_t = require_all_t<is_index<std::decay_t<Types>>...>;
+using require_all_index_t = require_all_t<std::is_integral<std::decay_t<Types>>...>;
 
 template <typename... Types>
-using require_any_index_t = require_any_t<is_index<std::decay_t<Types>>...>;
+using require_any_index_t = require_any_t<std::is_integral<std::decay_t<Types>>...>;
 
 template <typename... Types>
 using require_all_not_index_t
-    = require_all_not_t<is_index<std::decay_t<Types>>...>;
+    = require_all_not_t<std::is_integral<std::decay_t<Types>>...>;
 
 template <typename... Types>
 using require_any_not_index_t
-    = require_any_not_t<is_index<std::decay_t<Types>>...>;
+    = require_any_not_t<std::is_integral<std::decay_t<Types>>...>;
 
 template <typename T>
 using require_var_t = require_t<is_var<std::decay_t<T>>>;

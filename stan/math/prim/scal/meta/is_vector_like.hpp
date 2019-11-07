@@ -2,11 +2,17 @@
 #define STAN_MATH_PRIM_SCAL_META_IS_VECTOR_LIKE_HPP
 
 #include <stan/math/prim/scal/meta/bool_constant.hpp>
+#include <stan/math/prim/scal/meta/is_detected.hpp>
 #include <stan/math/prim/scal/meta/is_eigen.hpp>
 #include <stan/math/prim/scal/meta/is_vector.hpp>
 #include <type_traits>
 
 namespace stan {
+
+namespace internal {
+template <typename T>
+using operator_bracket_t = decltype(std::declval<T>()[int{}]);
+}
 
 /**
  * Template metaprogram indicates whether a type is vector_like.
@@ -22,8 +28,8 @@ namespace stan {
  */
 template <typename T>
 struct is_vector_like
-    : bool_constant<stan::is_vector<T>::value || std::is_pointer<T>::value
-                    || is_eigen<T>::value || std::is_array<T>::value> {};
+    : bool_constant<is_detected<T, internal::operator_bracket_t>::value> {};
+
 
 }  // namespace stan
 #endif

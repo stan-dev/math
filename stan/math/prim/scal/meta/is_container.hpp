@@ -10,7 +10,7 @@
 namespace stan {
 
 /**
- * Deduces whether type is convertible to string
+ * Deduces whether type is eigen matrix or standard vector.
  * @tparam T type to check
  */
 template <typename Container>

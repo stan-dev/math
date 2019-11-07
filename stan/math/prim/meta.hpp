@@ -44,9 +44,9 @@
 #include <stan/math/prim/scal/meta/index_type.hpp>
 #include <stan/math/prim/scal/meta/is_constant.hpp>
 #include <stan/math/prim/scal/meta/is_container.hpp>
+#include <stan/math/prim/scal/meta/is_detected.hpp>
 #include <stan/math/prim/scal/meta/is_eigen.hpp>
 #include <stan/math/prim/scal/meta/is_fvar.hpp>
-#include <stan/math/prim/scal/meta/is_index.hpp>
 #include <stan/math/prim/scal/meta/is_string_convertible.hpp>
 #include <stan/math/prim/scal/meta/is_var.hpp>
 #include <stan/math/prim/scal/meta/is_var_or_arithmetic.hpp>
@@ -68,6 +68,7 @@
 #include <stan/math/prim/scal/meta/scalar_type_pre.hpp>
 #include <stan/math/prim/scal/meta/size_of.hpp>
 #include <stan/math/prim/scal/meta/value_type.hpp>
+#include <stan/math/prim/scal/meta/void_t.hpp>
 #include <stan/math/prim/scal/meta/StdVectorBuilder.hpp>
 #include <stan/math/prim/scal/meta/VectorBuilder.hpp>
 
