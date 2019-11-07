@@ -437,13 +437,8 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     }
   }
 
-<<<<<<< HEAD
   /** \ingroup opencl
-   * Move assignment operator.
-=======
-  /**
    * Assign a \c matrix_cl to another
->>>>>>> origin
    */
   matrix_cl<T>& operator=(matrix_cl<T>&& a) {
     view_ = a.view();
@@ -456,13 +451,8 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     return *this;
   }
 
-<<<<<<< HEAD
   /** \ingroup opencl
-   * Copy assignment operator.
-=======
-  /**
    * Assign a \c matrix_cl to another
->>>>>>> origin
    */
   matrix_cl<T>& operator=(const matrix_cl<T>& a) {
     this->view_ = a.view();
