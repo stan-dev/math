@@ -11,8 +11,8 @@ def runTests(String testPath) {
 def runTestsWin(String testPath) {
     withEnv(['PATH+TBB=./lib/tbb']) {
        bat "echo $PATH"
-       bat "runTests.py -j${env.PARALLEL} ${testPath} --make-only"
-       try { bat "runTests.py -j${env.PARALLEL} ${testPath}" }
+       bat "runTests.py -j12 ${testPath} --make-only"
+       try { bat "runTests.py -j12 ${testPath}" }
        finally { junit 'test/**/*.xml' }
     }
 }
@@ -94,7 +94,7 @@ pipeline {
                 }
             }
             post {
-                always { deleteDir() }
+              // FIXME ADD back the deletedir l8r
                 failure {
                     script {
                         emailext (
