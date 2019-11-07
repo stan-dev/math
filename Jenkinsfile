@@ -115,12 +115,7 @@ pipeline {
             }
         }
         stage("Doxygen") {
-          agent {
-            dockerfile {
-              filename 'doxygen/docker/alpine/Dockerfile'
-              args "-u root --entrypoint=\'\'"
-            }
-          }
+          agent any
           steps {
               retry(3) { checkout scm }
               withCredentials([usernamePassword(credentialsId: 'a630aebc-6861-4e69-b497-fd7f496ec46b',
