@@ -20,7 +20,7 @@ namespace math {
  *
  */
 template <typename T>
-template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper>
+template <TriangularMapCL triangular_map>
 inline void matrix_cl<T, require_var_t<T>>::triangular_transpose() try {
   this->val().template triangular_transpose<triangular_map>();
   this->adj().template triangular_transpose<triangular_map>();
