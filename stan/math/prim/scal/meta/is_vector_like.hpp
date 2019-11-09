@@ -15,7 +15,7 @@ namespace internal {
  */
 template <typename T>
 using operator_bracket_t = decltype(std::declval<T>()[int{}]);
-}
+}  // namespace internal
 
 /**
  * Template metaprogram indicates whether a type is vector_like.
