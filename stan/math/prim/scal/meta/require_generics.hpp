@@ -304,10 +304,12 @@ template <typename T>
 using require_not_index_t = require_not_t<std::is_integral<std::decay_t<T>>>;
 
 template <typename... Types>
-using require_all_index_t = require_all_t<std::is_integral<std::decay_t<Types>>...>;
+using require_all_index_t
+    = require_all_t<std::is_integral<std::decay_t<Types>>...>;
 
 template <typename... Types>
-using require_any_index_t = require_any_t<std::is_integral<std::decay_t<Types>>...>;
+using require_any_index_t
+    = require_any_t<std::is_integral<std::decay_t<Types>>...>;
 
 template <typename... Types>
 using require_all_not_index_t

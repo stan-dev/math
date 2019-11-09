@@ -222,7 +222,7 @@ TEST(requires, all_eigen_vector_like_t_test) {
 TEST(requires, all_not_eigen_vector_like_t_test) {
   using stan::test::require_scal_checker;
   require_scal_checker<stan::require_all_not_vector_like_t, std::vector<double>,
-   eigen_vector_x<double>>::all_not();
+                       eigen_vector_x<double>>::all_not();
 }
 TEST(requires, any_eigen_vector_like_t_test) {
   using stan::test::require_scal_checker;
