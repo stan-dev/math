@@ -10,6 +10,9 @@
 namespace stan {
 
 namespace internal {
+/**
+ * @brief Used to detect if object has operator[](int) defined
+ */
 template <typename T>
 using operator_bracket_t = decltype(std::declval<T>()[int{}]);
 }
