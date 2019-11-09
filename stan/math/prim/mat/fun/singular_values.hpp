@@ -10,13 +10,17 @@ namespace math {
  * Return the vector of the singular values of the specified matrix
  * in decreasing order of magnitude.
  * <p>See the documentation for <code>svd()</code> for
- * information on the signular values.
+ * information on the singular values.
  * @param m Specified matrix.
  * @return Singular values of the matrix.
  */
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, 1> singular_values(
     const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& m) {
+
+  if (m.rows() == 0 || m.cols() == 0)
+    return Eigen::Matrix<T, 0, 1>();
+
   return Eigen::JacobiSVD<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >(m)
       .singularValues();
 }
