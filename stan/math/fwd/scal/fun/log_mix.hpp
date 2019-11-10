@@ -123,9 +123,10 @@ inline fvar<T> log_mix(const fvar<T>& theta, const fvar<T>& lambda1,
   }
 }
 
-template <typename T>
+template <typename T, typename P,
+          typename = std::enable_if_t<std::is_arithmetic<P>::value>>
 inline fvar<T> log_mix(const fvar<T>& theta, const fvar<T>& lambda1,
-                       double lambda2) {
+                       P lambda2) {
   if (lambda1.val_ > lambda2) {
     fvar<T> partial_deriv_array[2];
     log_mix_partial_helper(theta, lambda1, lambda2, partial_deriv_array);
@@ -141,8 +142,9 @@ inline fvar<T> log_mix(const fvar<T>& theta, const fvar<T>& lambda1,
   }
 }
 
-template <typename T>
-inline fvar<T> log_mix(const fvar<T>& theta, double lambda1,
+template <typename T, typename P,
+          typename = std::enable_if_t<std::is_arithmetic<P>::value>>
+inline fvar<T> log_mix(const fvar<T>& theta, P lambda1,
                        const fvar<T>& lambda2) {
   if (lambda1 > lambda2.val_) {
     fvar<T> partial_deriv_array[2];
@@ -159,8 +161,9 @@ inline fvar<T> log_mix(const fvar<T>& theta, double lambda1,
   }
 }
 
-template <typename T>
-inline fvar<T> log_mix(double theta, const fvar<T>& lambda1,
+template <typename T, typename P,
+          typename = std::enable_if_t<std::is_arithmetic<P>::value>>
+inline fvar<T> log_mix(P theta, const fvar<T>& lambda1,
                        const fvar<T>& lambda2) {
   if (lambda1.val_ > lambda2.val_) {
     fvar<T> partial_deriv_array[2];
@@ -177,8 +180,10 @@ inline fvar<T> log_mix(double theta, const fvar<T>& lambda1,
   }
 }
 
-template <typename T>
-inline fvar<T> log_mix(const fvar<T>& theta, double lambda1, double lambda2) {
+template <typename T, typename P1, typename P2,
+          typename = std::enable_if_t<std::is_arithmetic<P1>::value>,
+          typename = std::enable_if_t<std::is_arithmetic<P2>::value>>
+inline fvar<T> log_mix(const fvar<T>& theta, P1 lambda1, P2 lambda2) {
   if (lambda1 > lambda2) {
     fvar<T> partial_deriv_array[1];
     log_mix_partial_helper(theta, lambda1, lambda2, partial_deriv_array);
@@ -192,8 +197,10 @@ inline fvar<T> log_mix(const fvar<T>& theta, double lambda1, double lambda2) {
   }
 }
 
-template <typename T>
-inline fvar<T> log_mix(double theta, const fvar<T>& lambda1, double lambda2) {
+template <typename T, typename P1, typename P2,
+          typename = std::enable_if_t<std::is_arithmetic<P1>::value>,
+          typename = std::enable_if_t<std::is_arithmetic<P2>::value>>
+inline fvar<T> log_mix(P1 theta, const fvar<T>& lambda1, P2 lambda2) {
   if (lambda1.val_ > lambda2) {
     fvar<T> partial_deriv_array[1];
     log_mix_partial_helper(theta, lambda1, lambda2, partial_deriv_array);
@@ -207,8 +214,10 @@ inline fvar<T> log_mix(double theta, const fvar<T>& lambda1, double lambda2) {
   }
 }
 
-template <typename T>
-inline fvar<T> log_mix(double theta, double lambda1, const fvar<T>& lambda2) {
+template <typename T, typename P1, typename P2,
+          typename = std::enable_if_t<std::is_arithmetic<P1>::value>,
+          typename = std::enable_if_t<std::is_arithmetic<P2>::value>>
+inline fvar<T> log_mix(P1 theta, P2 lambda1, const fvar<T>& lambda2) {
   if (lambda1 > lambda2.val_) {
     fvar<T> partial_deriv_array[1];
     log_mix_partial_helper(theta, lambda1, lambda2, partial_deriv_array);
