@@ -12,13 +12,20 @@
  * back. For details on the speed evaluations, please refer to
  * https://github.com/stan-dev/math/pull/1255 .
  */
+
+/* disable lgamma_r use for rstan
+
 #if !__MINGW32__
 // _REENTRANT must be defined during compilation to ensure that cmath
 // exports the reentrant safe lgamma_r version.
 #if !_REENTRANT
-#error \
+#warning \
     "stan-math requires _REENTRANT being defined during compilation" \
     "to make lgamma_r available."
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/scal/fun/boost_policy.hpp>
+#include <boost/math/special_functions/gamma.hpp>
+#include <limits>
 #endif
 #include <cmath>
 #else
@@ -29,6 +36,13 @@
 #include <boost/math/special_functions/gamma.hpp>
 #include <limits>
 #endif
+
+*/
+
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/scal/fun/boost_policy.hpp>
+#include <boost/math/special_functions/gamma.hpp>
+#include <limits>
 
 namespace stan {
 namespace math {
@@ -60,14 +74,16 @@ namespace math {
 * argument
 */
 inline double lgamma(double x) {
-#if !__MINGW32__
-  int sign = 1;
-  return ::lgamma_r(x, &sign);
-#else
+  /*
+  #if !__MINGW32__ && _REENTRANT
+    int sign = 1;
+    return ::lgamma_r(x, &sign);
+  #else
+  */
   if (unlikely(x == 0.0))
     return std::numeric_limits<double>::infinity();
   return boost::math::lgamma(x, boost_policy_t());
-#endif
+  //#endif
 }
 
 /**
@@ -79,14 +95,16 @@ inline double lgamma(double x) {
  * argument
  */
 inline double lgamma(int x) {
-#if !__MINGW32__
-  int sign = 1;
-  return ::lgamma_r(x, &sign);
-#else
+  /*
+  #if !__MINGW32__ && _REENTRANT
+    int sign = 1;
+    return ::lgamma_r(x, &sign);
+  #else
+  */
   if (unlikely(x == 0.0))
     return std::numeric_limits<double>::infinity();
   return boost::math::lgamma(x, boost_policy_t());
-#endif
+  //#endif
 }
 
 }  // namespace math
