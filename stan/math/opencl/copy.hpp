@@ -34,7 +34,7 @@ namespace math {
  * @return matrix_cl with a copy of the data in the source matrix
  */
 template <typename Mat, typename Mat_scalar = scalar_type_t<Mat>,
-          require_eigen_t<Mat>...>
+          require_eigen_vt<std::is_arithmetic, Mat>...>
 inline matrix_cl<Mat_scalar> to_matrix_cl(Mat&& src) {
   matrix_cl<Mat_scalar> dst(src.rows(), src.cols());
   if (src.size() == 0) {
@@ -65,7 +65,7 @@ inline matrix_cl<Mat_scalar> to_matrix_cl(Mat&& src) {
  * @return matrix_cl with a copy of the data in the source matrix
  */
 template <typename Vec, typename Vec_scalar = scalar_type_t<Vec>,
-          require_std_vector_t<Vec>...>
+          require_std_vector_vt<std::is_arithmetic, Vec>...>
 inline matrix_cl<Vec_scalar> to_matrix_cl(Vec&& src) {
   matrix_cl<Vec_scalar> dst(src.size(), 1);
   if (src.size() == 0) {
