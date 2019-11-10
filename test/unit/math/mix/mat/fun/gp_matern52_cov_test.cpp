@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <vector>
 
 TEST(mathMixMatFun, gpMatern52Cov) {
   auto f = [](const auto& x, const auto& sigma, const auto& l) {
