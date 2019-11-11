@@ -3,6 +3,7 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 
 namespace stan {
@@ -17,7 +18,10 @@ namespace math {
  *
  * @return <code>1</code> if the value is NaN and <code>0</code> otherwise.
  */
-inline bool is_nan(const var& v) { return is_nan(v.val()); }
+template <typename T, require_var_t<T>...>
+inline bool is_nan(T&& v) {
+  return is_nan(std::forward<decltype(v.val())>(v.val()));
+}
 
 }  // namespace math
 }  // namespace stan
