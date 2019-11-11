@@ -33,7 +33,7 @@ class add_vd_vari : public op_vd_vari {
     if (unlikely(is_any_nan(avi_->val_, bd_))) {
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
     } else {
-      avi_->adj_ += adj_;
+       avi_->adj_ += adj_;
     }
   }
 };
