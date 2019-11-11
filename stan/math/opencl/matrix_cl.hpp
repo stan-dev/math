@@ -344,7 +344,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
   explicit matrix_cl(Map&& A,
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
       : rows_(A.rows()), cols_(A.cols()), view_(partial_view) {
-    initialize_buffer_optionally_from_heap(std::forward<Map>(A));
+    initialize_buffer(A.data());
   }
 
   /**
