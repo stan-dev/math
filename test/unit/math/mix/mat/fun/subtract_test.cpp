@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
 
 TEST(MathMixMatFun, subtract_1) {
-  auto f = [](const auto& x, const auto& y) { return stan::math::subtract(x, y); };
+  auto f
+      = [](const auto& x, const auto& y) { return stan::math::subtract(x, y); };
 
   double d = 2;
   Eigen::MatrixXd m11(1, 1);
@@ -28,7 +29,8 @@ TEST(MathMixMatFun, subtract_1) {
 }
 
 TEST(MathMixMatFun, subtract_empty) {
-  auto f = [](const auto& x, const auto& y) { return stan::math::subtract(x, y); };
+  auto f
+      = [](const auto& x, const auto& y) { return stan::math::subtract(x, y); };
 
   double d = 2;
   Eigen::MatrixXd m00(0, 0);
@@ -49,7 +51,8 @@ TEST(MathMixMatFun, subtract_empty) {
 }
 
 TEST(MathMixMatFun, subtract_scalar_mat) {
-  auto f = [](const auto& x, const auto& y) { return stan::math::subtract(x, y); };
+  auto f
+      = [](const auto& x, const auto& y) { return stan::math::subtract(x, y); };
 
   double d = 2;
   Eigen::MatrixXd m22(2, 2);
@@ -76,7 +79,8 @@ TEST(MathMixMatFun, subtract_scalar_mat) {
 }
 
 TEST(MathMixMatFun, subtract_vec_mat) {
-  auto f = [](const auto& x, const auto& y) { return stan::math::subtract(x, y); };
+  auto f
+      = [](const auto& x, const auto& y) { return stan::math::subtract(x, y); };
 
   Eigen::VectorXd v5(5);
   v5 << 1, 2, 3, 4, 5;
@@ -91,7 +95,8 @@ TEST(MathMixMatFun, subtract_vec_mat) {
 }
 
 TEST(MathMixMatFun, subtract_mat_mat) {
-  auto f = [](const auto& x, const auto& y) { return stan::math::subtract(x, y); };
+  auto f
+      = [](const auto& x, const auto& y) { return stan::math::subtract(x, y); };
 
   Eigen::MatrixXd m22c(2, 2);
   m22c << -10, 1, 10, 0;
@@ -108,7 +113,8 @@ TEST(MathMixMatFun, subtract_mat_mat) {
 
 // these will throw
 TEST(MathMixMatFun, subtract_throw) {
-  auto f = [](const auto& x, const auto& y) { return stan::math::subtract(x, y); };
+  auto f
+      = [](const auto& x, const auto& y) { return stan::math::subtract(x, y); };
 
   Eigen::VectorXd v1(1);
   v1 << 2;
