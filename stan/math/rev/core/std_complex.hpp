@@ -129,7 +129,7 @@ class std::complex<stan::math::var> {
   void imag(const stan::math::var& x) { im_ = x; }
 
   /**
-   * Adds other to real part of this.
+   * Adds other to this.
    *
    * @param[in] other a scalar value of matching type
    * @return this complex number
@@ -139,18 +139,38 @@ class std::complex<stan::math::var> {
     return *this;
   }
 
+  /**
+   * Subtracts other from this.
+   *
+   * @param[in] other a scalar value of matching type
+   * @return this complex number
+   */
   complex<stan::math::var>& operator-=(const stan::math::var& other) {
     re_ -= other;
     return *this;
   }
 
+  /**
+   * Multiplies other by this.
+   *
+   * @param[in] other a scalar value of matching type
+   * @return this complex number
+   */
   complex<stan::math::var>& operator*=(const stan::math::var& other) {
     re_ *= other;
+    im_ *= other;
     return *this;
   }
 
+  /**
+   * Divides other by this.
+   *
+   * @param[in] other a scalar value of matching type
+   * @return this complex number
+   */
   complex<stan::math::var>& operator/=(const stan::math::var& other) {
     re_ /= other;
+    im_ /= other;
     return *this;
   }
 

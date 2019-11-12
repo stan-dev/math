@@ -129,3 +129,61 @@ TEST(MathRevCore, stdComplexOperatorEquals3) {
   auto ptr2 = &(a = c);
   EXPECT_EQ(ptr1, ptr2);
 }
+TEST(MathRevCore, stdComplexOperatorAddEquals1) {
+  cdouble_t ad(1, 2);
+  ad += 3;
+
+  cvar_t a(1, 2);
+  var_t b = 3;
+  a += b;
+  EXPECT_DOUBLE_EQ(ad.real(), a.real().val());
+  EXPECT_DOUBLE_EQ(ad.imag(), a.imag().val());
+
+  auto ptr1 = &a;
+  auto ptr2 = &(a += b);
+  EXPECT_EQ(ptr1, ptr2);
+}
+TEST(MathRevCore, stdComplexOperatorSubtractEquals2) {
+  cdouble_t ad(1, 2);
+  ad -= 3;
+
+  cvar_t a(1, 2);
+  var_t b = 3;
+  a -= b;
+  EXPECT_EQ(ad.real(), a.real().val());
+  EXPECT_EQ(ad.imag(), a.imag().val());
+
+  auto ptr1 = &a;
+  auto ptr2 = &(a -= b);
+  EXPECT_EQ(ptr1, ptr2);
+}
+TEST(MathRevCore, stdComplexOperatorMultiplyEquals2) {
+  cdouble_t ad(2, 5);
+  ad *= 3;
+
+  cvar_t a(2, 5);
+  var_t b = 3;
+  a *= b;
+
+  EXPECT_EQ(ad.real(), a.real().val());
+  EXPECT_EQ(ad.imag(), a.imag().val());
+
+  auto ptr1 = &a;
+  auto ptr2 = &(a *= b);
+  EXPECT_EQ(ptr1, ptr2);
+}
+TEST(MathRevCore, stdComplexOperatorDivideEquals3) {
+  cdouble_t ad(2, 5);
+  ad /= 3;
+
+  cvar_t a(2, 5);
+  var_t b = 3;
+  a /= b;
+
+  EXPECT_EQ(ad.real(), a.real().val());
+  EXPECT_EQ(ad.imag(), a.imag().val());
+
+  auto ptr1 = &a;
+  auto ptr2 = &(a /= b);
+  EXPECT_EQ(ptr1, ptr2);
+}
