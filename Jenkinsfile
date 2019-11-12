@@ -167,7 +167,7 @@ pipeline {
                     post { always { retry(3) { deleteDir() } } }
                 }
                 stage('Full unit with GPU') {
-                    agent { label "gpu" }
+                    agent { label "gpu && linux" }
                     steps {
                         deleteDir()
                         unstash 'MathSetup'
