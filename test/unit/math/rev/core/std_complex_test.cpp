@@ -11,6 +11,9 @@ void expect_complex(double re, double im, const cvar_t& y) {
   EXPECT_DOUBLE_EQ(re, y.real().val());
   EXPECT_DOUBLE_EQ(im, y.imag().val());
 }
+void expect_complex(const cdouble_t& x, const cvar_t& y) {
+  expect_complex(x.real(), x.imag(), y);
+}
 
 TEST(mathRevCore, stdComplexConstructor1) {
   // constructor (1), no defaults
@@ -136,8 +139,7 @@ TEST(MathRevCore, stdComplexOperatorAddEquals1) {
   cvar_t a(1, 2);
   var_t b = 3;
   a += b;
-  EXPECT_DOUBLE_EQ(ad.real(), a.real().val());
-  EXPECT_DOUBLE_EQ(ad.imag(), a.imag().val());
+  expect_complex(ad, a);
 
   auto ptr1 = &a;
   auto ptr2 = &(a += b);
@@ -150,40 +152,111 @@ TEST(MathRevCore, stdComplexOperatorSubtractEquals2) {
   cvar_t a(1, 2);
   var_t b = 3;
   a -= b;
-  EXPECT_EQ(ad.real(), a.real().val());
-  EXPECT_EQ(ad.imag(), a.imag().val());
+  expect_complex(ad, a);
 
   auto ptr1 = &a;
   auto ptr2 = &(a -= b);
   EXPECT_EQ(ptr1, ptr2);
 }
-TEST(MathRevCore, stdComplexOperatorMultiplyEquals2) {
+TEST(MathRevCore, stdComplexOperatorMultiplyEquals3) {
   cdouble_t ad(2, 5);
   ad *= 3;
 
   cvar_t a(2, 5);
   var_t b = 3;
   a *= b;
-
-  EXPECT_EQ(ad.real(), a.real().val());
-  EXPECT_EQ(ad.imag(), a.imag().val());
+  expect_complex(ad, a);
 
   auto ptr1 = &a;
   auto ptr2 = &(a *= b);
   EXPECT_EQ(ptr1, ptr2);
 }
-TEST(MathRevCore, stdComplexOperatorDivideEquals3) {
+TEST(MathRevCore, stdComplexOperatorDivideEquals4) {
   cdouble_t ad(2, 5);
   ad /= 3;
 
   cvar_t a(2, 5);
   var_t b = 3;
   a /= b;
-
-  EXPECT_EQ(ad.real(), a.real().val());
-  EXPECT_EQ(ad.imag(), a.imag().val());
+  expect_complex(ad, a);
 
   auto ptr1 = &a;
   auto ptr2 = &(a /= b);
   EXPECT_EQ(ptr1, ptr2);
+}
+TEST(MathRevCore, stdComplexOperatorAddEquals5) {
+  cdouble_t ad(1, 2);
+  cdouble_t bd(3, 4);
+  ad += bd;
+
+  cvar_t a(1, 2);
+  cvar_t b(3, 4);
+  a += b;
+  expect_complex(ad, a);
+
+  auto ptr1 = &a;
+  auto ptr2 = &(a += b);
+  EXPECT_EQ(ptr1, ptr2);
+
+  cvar_t c(1, 2);
+  cdouble_t d(3, 4);
+  c += d;
+  expect_complex(ad, c);
+}
+TEST(MathRevCore, stdComplexOperatorSubtractEquals6) {
+  cdouble_t ad(1, 2);
+  cdouble_t bd(3, 4);
+  ad -= bd;
+
+  cvar_t a(1, 2);
+  cvar_t b(3, 4);
+  a -= b;
+  expect_complex(ad, a);
+
+  auto ptr1 = &a;
+  auto ptr2 = &(a += b);
+  EXPECT_EQ(ptr1, ptr2);
+
+  cvar_t c(1, 2);
+  cdouble_t d(3, 4);
+  c -= d;
+  expect_complex(ad, c);
+}
+TEST(MathRevCore, stdComplexOperatorMultiplyEquals7) {
+  cdouble_t ad(1, 2);
+  cdouble_t bd(3, 4);
+  ad *= bd;
+
+  cvar_t a(1, 2);
+  cvar_t b(3, 4);
+  a *= b;
+  expect_complex(ad, a);
+
+  auto ptr1 = &a;
+  auto ptr2 = &(a *= b);
+  EXPECT_EQ(ptr1, ptr2);
+
+  cvar_t c(1, 2);
+  cdouble_t d(3, 4);
+  c *= d;
+  expect_complex(ad, c);
+}
+TEST(MathRevCore, stdComplexOperatorDivideEquals8) {
+  cdouble_t ad(1, 2);
+  cdouble_t bd(3, 4);
+  ad /= bd;
+
+  cvar_t a(1, 2);
+  cvar_t b(3, 4);
+  a /= b;
+  expect_complex(ad, a);
+
+  auto ptr1 = &a;
+  auto ptr2 = &(a /= b);
+  EXPECT_EQ(ptr1, ptr2);
+
+  cvar_t c(1, 2);
+  cdouble_t d(3, 4);
+  c /= d;
+  expect_complex(ad, c);
 }

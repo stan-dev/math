@@ -3,9 +3,12 @@
 
 // doesn't need namespace std
 
+#include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/scal/fun/square.hpp>
 #include <cmath>
 #include <complex>
+#include <cstddef>
 #include <limits>
 
 #include <iostream>
@@ -174,45 +177,82 @@ class std::complex<stan::math::var> {
     return *this;
   }
 
-  // // (5)
-  // template <typename T>
-  // complex<stan::math::var>& operator+=(const std::complex<T>& other) {
-  //   re_ += other.re_;
-  //   im_ += other.im_;
-  //   return *this;
-  // }
-  // // (6)
-  // template <typename T>
-  // complex<stan::math::var>& operator-=(const std::complex<T>& other) {
-  //   re_ -= other.re_;
-  //   im_ -= other.im_;
-  //   return *this;
-  // }
-  // // (7)
-  // template <typename T>
-  // complex<stan::math::var>& operator*=(const std::complex<T>& other) {
-  //   re_ = re_ * other.re_ - im_ * other.im_;
-  //   im_ = re_ * other.im_ + other.re_ * im_;
-  //   return *this;
-  // }
-  // // (8)
-  // template <typename T>
-  // complex<stan::math::var>& operator/=(const std::complex<T>& other) {
-  //   stan::math::var sum_sq_im = square(im_) + square(other.im_);
-  //   re_ = (re_ * other.re_ + im_ * other.im_) / sum_sq_im;
-  //   im_ = (im_ * other.re_ - re_ * other.im_) / sum_sq_im;
-  //   return *this;
-  // }
+  /**
+   * Adds other to this.
+   *
+   * @param[in] other a complex value of compatible type
+   * @return this complex number
+   */
+  template <typename T>
+  complex<stan::math::var>& operator+=(const std::complex<T>& other) {
+    re_ += other.real();
+    im_ += other.imag();
+    return *this;
+  }
+
+  /**
+   * Subtracts other from this.
+   *
+   * @param[in] other a complex value of compatible type
+   * @return this complex number
+   */
+  template <typename T>
+  complex<stan::math::var>& operator-=(const std::complex<T>& other) {
+    re_ -= other.real();
+    im_ -= other.imag();
+    return *this;
+  }
+
+  /**
+   * Multiplies this by other.
+   *
+   * @param[in] other a complex value of compatible type
+   * @return this complex number
+   */
+  template <typename T>
+  complex<stan::math::var>& operator*=(const std::complex<T>& other) {
+    stan::math::var re_temp = re_ * other.real() - im_ * other.imag();
+    im_ = re_ * other.imag() + other.real() * im_;
+    re_ = re_temp;
+    return *this;
+  }
+
+  /**
+   * Divides this by other.
+   *
+   * @param[in] other a complex value of compatible type
+   * @return this complex number
+   */
+  template <typename T>
+  complex<stan::math::var>& operator/=(const std::complex<T>& other) {
+    using stan::math::square;
+    stan::math::var sum_sq_im = square(other.real()) + square(other.imag());
+    stan::math::var re_temp
+        = (re_ * other.real() + im_ * other.imag()) / sum_sq_im;
+    im_ = (im_ * other.real() - re_ * other.imag()) / sum_sq_im;
+    re_ = re_temp;
+    return *this;
+  }
 };
 
 // // non-member function specializations
 
-// // (1)
-// template <>
-// std::complex<stan::math::var>
-// operator+(const std::complex<stan::math::var>& val) {
-//   return val;
-// }
+template <>
+struct std::iterator_traits<stan::math::var> {
+  typedef std::random_access_iterator_tag iterator_category;
+  typedef std::ptrdiff_t difference_type;
+  typedef stan::math::var value_type;
+  typedef stan::math::var* pointer;
+  typedef stan::math::var& reference;
+};
+
+// (1)
+template <>
+std::complex<stan::math::var> std::operator+<stan::math::var>(
+    const std::complex<stan::math::var>& val) {
+  return val;
+}
+
 // // (2)
 // template <>
 // std::complex<stan::math::var>
