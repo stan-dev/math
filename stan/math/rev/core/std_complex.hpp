@@ -235,35 +235,66 @@ class std::complex<stan::math::var> {
   }
 };
 
-// // non-member function specializations
-
+/**
+ * Specialization of iterator traits for Stan math.  These all take
+ * the form of typedefs.
+ */
 template <>
 struct std::iterator_traits<stan::math::var> {
+  /**
+   * Iterator category for traits.
+   */
   typedef std::random_access_iterator_tag iterator_category;
+
+  /**
+   * Type for difference between pointers.
+   */
   typedef std::ptrdiff_t difference_type;
+
+  /**
+   * Type for value of pointer to values.
+   */
   typedef stan::math::var value_type;
+
+  /**
+   * Type of pointer to variables.
+   */
   typedef stan::math::var* pointer;
+
+  /**
+   * Type of reference to variables.
+   */
   typedef stan::math::var& reference;
 };
 
-// (1)
+/**
+ * Return the value of the specified argument.
+ *
+ * @param[in] val the complex number argument
+ * @return a copy of the argument
+ */
 template <>
 std::complex<stan::math::var> std::operator+<stan::math::var>(
     const std::complex<stan::math::var>& val) {
   return val;
 }
 
-// // (2)
-// template <>
-// std::complex<stan::math::var>
-// operator-(const std::complex<stan::math::var>& val) {
-//   return std::complex<stan::math::var>(-val.re_, -val.im_);
-// }
+/**
+ * Return the negation of the specified argument.
+ *
+ * @param[in] val the complex number argument
+ * @return negated argument
+ */
+template <>
+std::complex<stan::math::var> std::operator-<stan::math::var>(
+    const std::complex<stan::math::var>& val) {
+  return std::complex<stan::math::var>(-val.real(), -val.imag());
+}
 
 // // (1)
 // template <>
 // std::complex<stan::math::var>
-// operator+(const std::complex<stan::math::var>& lhs,
+// std::operator+(const std::complex<stan::math::var>& lhs,
 //           const std::complex<stan::math::var>& rhs) {
 //   std::complex<stan::math::var> y(lhs);
 //   y += rhs;
@@ -272,7 +303,7 @@ std::complex<stan::math::var> std::operator+<stan::math::var>(
 // // (2)
 // template <>
 // std::complex<stan::math::var>
-// operator+(const std::complex<stan::math::var>& lhs,
+// std::operator+(const std::complex<stan::math::var>& lhs,
 //           const stan::math::var& rhs) {
 //   std::complex<stan::math::var> y(lhs);
 //   y += rhs;
@@ -281,7 +312,7 @@ std::complex<stan::math::var> std::operator+<stan::math::var>(
 // // (3)
 // template <>
 // std::complex<stan::math::var>
-// operator+(const stan::math::var& lhs,
+// std::operator+(const stan::math::var& lhs,
 //           const std::complex<stan::math::var>& rhs) {
 //   std::complex<stan::math::var> y(lhs);
 //   y += rhs;
@@ -290,7 +321,7 @@ std::complex<stan::math::var> std::operator+<stan::math::var>(
 // // (4)
 // template <>
 // std::complex<stan::math::var>
-// operator-(const std::complex<stan::math::var>& lhs,
+// std::operator-(const std::complex<stan::math::var>& lhs,
 //           const std::complex<stan::math::var>& rhs) {
 //   std::complex<stan::math::var> y(lhs);
 //   y -= rhs;
@@ -299,7 +330,7 @@ std::complex<stan::math::var> std::operator+<stan::math::var>(
 // // (5)
 // template <>
 // std::complex<stan::math::var>
-// operator-(const std::complex<stan::math::var>& lhs,
+// std::operator-(const std::complex<stan::math::var>& lhs,
 //           const stan::math::var& rhs) {
 //   std::complex<stan::math::var> y(lhs);
 //   y -= rhs;
@@ -308,7 +339,7 @@ std::complex<stan::math::var> std::operator+<stan::math::var>(
 // // (6)
 // template <>
 // std::complex<stan::math::var>
-// operator-(const stan::math::var& lhs,
+// std::operator-(const stan::math::var& lhs,
 //           const std::complex<stan::math::var>& rhs) {
 //   std::complex<stan::math::var> y(lhs);
 //   y -= rhs;
@@ -317,7 +348,7 @@ std::complex<stan::math::var> std::operator+<stan::math::var>(
 // // (7)
 // template <>
 // std::complex<stan::math::var>
-// operator*(const std::complex<stan::math::var>& lhs,
+// std::operator*(const std::complex<stan::math::var>& lhs,
 //           const std::complex<stan::math::var>& rhs) {
 //   std::complex<stan::math::var> y(lhs);
 //   y *= rhs;
@@ -326,7 +357,7 @@ std::complex<stan::math::var> std::operator+<stan::math::var>(
 // // (8)
 // template <>
 // std::complex<stan::math::var>
-// operator*(const std::complex<stan::math::var>& lhs,
+// std::operator*(const std::complex<stan::math::var>& lhs,
 //           const stan::math::var& rhs) {
 //   std::complex<stan::math::var> y(lhs);
 //   y *= rhs;
@@ -335,7 +366,7 @@ std::complex<stan::math::var> std::operator+<stan::math::var>(
 // // (9)
 // template <>
 // std::complex<stan::math::var>
-// operator/(const stan::math::var& lhs,
+// std::operator/(const stan::math::var& lhs,
 //           const std::complex<stan::math::var>& rhs) {
 //   std::complex<stan::math::var> y(lhs);
 //   y /= rhs;
@@ -344,7 +375,7 @@ std::complex<stan::math::var> std::operator+<stan::math::var>(
 // // (10)
 // template <>
 // std::complex<stan::math::var>
-// operator/(const std::complex<stan::math::var>& lhs,
+// std::operator/(const std::complex<stan::math::var>& lhs,
 //           const std::complex<stan::math::var>& rhs) {
 //   std::complex<stan::math::var> y(lhs);
 //   y /= rhs;
@@ -353,7 +384,7 @@ std::complex<stan::math::var> std::operator+<stan::math::var>(
 // // (11)
 // template <>
 // std::complex<stan::math::var>
-// operator/(const std::complex<stan::math::var>& lhs,
+// std::operator/(const std::complex<stan::math::var>& lhs,
 //           const stan::math::var& rhs) {
 //   std::complex<stan::math::var> y(lhs);
 //   y /= rhs;
@@ -362,7 +393,7 @@ std::complex<stan::math::var> std::operator+<stan::math::var>(
 // // (12)
 // template <>
 // std::complex<stan::math::var>
-// operator/(const stan::math::var& lhs,
+// std::operator/(const stan::math::var& lhs,
 //           const std::complex<stan::math::var>& rhs) {
 //   std::complex<stan::math::var> y(lhs);
 //   y /= rhs;
@@ -371,37 +402,37 @@ std::complex<stan::math::var> std::operator+<stan::math::var>(
 
 // // (1)
 // template <>
-// bool operator==(const std::complex<stan::math::var>& lhs,
+// bool std::operator==(const std::complex<stan::math::var>& lhs,
 //                 const std::complex<stan::math::var>& rhs) {
 //   return lhs.re_ == rhs.re_ && lhs.im_ == rhs.im_;
 // }
 // // (2)
 // template <>
-// bool operator==(const std::complex<stan::math::var>& lhs,
+// bool std::operator==(const std::complex<stan::math::var>& lhs,
 //                 const stan::math::var& rhs) {
 //   return lhs.re_ == rhs && lhs.im_ == 0;
 // }
 // // (3)
 // template <>
-// bool operator==(const stan::math::var& lhs,
+// bool std::operator==(const stan::math::var& lhs,
 //                 const std::complex<stan::math::var>& rhs) {
 //   return !(lhs == rhs.re_ && 0 == rhs.im_);
 // }
 // // (4)
 // template <>
-// bool operator!=(const std::complex<stan::math::var>& lhs,
+// bool std::operator!=(const std::complex<stan::math::var>& lhs,
 //                 const std::complex<stan::math::var>& rhs) {
 //   return !(lhs.re_ == rhs.re_ && lhs.im_ == rhs.im_);
 // }
 // // (5)
 // template <>
-// bool operator!=(const std::complex<stan::math::var>& lhs,
+// bool std::operator!=(const std::complex<stan::math::var>& lhs,
 //                 const stan::math::var& rhs) {
 //   return !(lhs.re_ == rhs && lhs.im_ == 0);
 // }
 // // (6)
 // template <>
-// bool operator!=(const stan::math::var& lhs,
+// bool std::operator!=(const stan::math::var& lhs,
 //                 const std::complex<stan::math::var>& rhs) {
 //   return !(lhs == rhs.re_ && 0 == rhs.im_);
 // }
@@ -409,7 +440,8 @@ std::complex<stan::math::var> std::operator+<stan::math::var>(
 // // (1)
 // template<class CharT, class Traits>
 // basic_ostream<CharT, Traits>&
-// operator<< <stan::math::var, CharT, Traits>(basic_ostream<charT, traits>& o,
+// std::operator<< <stan::math::var, CharT, Traits>(basic_ostream<charT,
+// traits>& o,
 //                                             const complex<T>& x) {
 //     basic_ostringstream<CharT, Traits> s;
 //     s.flags(o.flags());
@@ -421,7 +453,7 @@ std::complex<stan::math::var> std::operator+<stan::math::var>(
 // // (2)
 // template <class CharT, class Traits>
 // std::basic_istream<CharT, Traits>&
-// operator>> <stan::math::var, CharT, Traits>(
+// std::operator>> <stan::math::var, CharT, Traits>(
 //     std::basic_istream<CharT, Traits>& is,
 //     std::complex<stan::math::var>& x) {
 //   // TODO(carpenter): real implementation here

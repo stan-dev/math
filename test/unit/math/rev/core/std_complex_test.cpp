@@ -260,3 +260,19 @@ TEST(MathRevCore, stdComplexOperatorDivideEquals8) {
   c /= d;
   expect_complex(ad, c);
 }
+TEST(MathRevCore, stdComplexOperatorUnaryPlus1) {
+  cdouble_t ad(1, 2);
+  cdouble_t bd = +ad;
+  cvar_t a(1, 2);
+  cvar_t b = +a;
+  expect_complex(bd, b);
+  // expect pointer equality before and after
+  EXPECT_EQ(a.real().vi_, b.real().vi_);
+}
+TEST(MathRevCore, stdComplexOperatorUnaryNegative2) {
+  cdouble_t ad(1, 2);
+  cdouble_t bd = -ad;
+  cvar_t a(1, 2);
+  cvar_t b = -a;
+  expect_complex(bd, b);
+}
