@@ -3,8 +3,14 @@
 
 // doesn't need namespace std
 
+#include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/scal/fun/atan2.hpp>
+#include <stan/math/rev/scal/fun/cos.hpp>
+#include <stan/math/rev/scal/fun/sin.hpp>
+#include <stan/math/rev/scal/fun/hypot.hpp>
+#include <stan/math/rev/scal/fun/is_inf.hpp>
 #include <stan/math/rev/scal/fun/square.hpp>
 #include <cmath>
 #include <complex>
@@ -565,99 +571,150 @@ bool std::operator!=<stan::math::var>(
   return !(lhs == rhs.real() && 0 == rhs.imag());
 }
 
-// // (1)
-// template<class CharT, class Traits>
-// basic_ostream<CharT, Traits>&
-// std::operator<< <stan::math::var, CharT, Traits>(basic_ostream<charT,
-// traits>& o,
-//                                             const complex<T>& x) {
-//     basic_ostringstream<CharT, Traits> s;
-//     s.flags(o.flags());
-//     s.imbue(o.getloc());
-//     s.precision(o.precision());
-//     s << '(' << x.real() << "," << x.imag() << ')';
-//     return o << s.str();
-// }
-// // (2)
-// template <class CharT, class Traits>
-// std::basic_istream<CharT, Traits>&
-// std::operator>> <stan::math::var, CharT, Traits>(
-//     std::basic_istream<CharT, Traits>& is,
-//     std::complex<stan::math::var>& x) {
-//   // TODO(carpenter): real implementation here
-//   return is;
-// }
+namespace stan {
+namespace math {
+// no partial fun specializations allowed in C++1y
+// instead, overload and rely in argument-dependent lookup in stan::math
+/**
+ * Writes specified complex number to specified ostream in
+ * form `(real, imag)`.
+ *
+ * @param o[in,out] character output stream
+ * @param x[in] complex number to be inserted
+ * @return specified output stream
+ */
+template <class CharT, class Traits>
+std::basic_ostream<CharT, Traits>& operator<<(
+    std::basic_ostream<CharT, Traits>& o,
+    const std::complex<stan::math::var>& x) {
+  std::basic_ostringstream<CharT, Traits> s;
+  s.flags(o.flags());
+  s.imbue(o.getloc());
+  s.precision(o.precision());
+  s << '(' << x.real() << "," << x.imag() << ')';
+  return o << s.str();
+}
 
-// // (1)
-// template <>
-// stan::math::var real<stan::math::var>(const std::complex<stan::math::var>& z)
-// {
-//   return z.real();
-// }
+template <class CharT, class Traits>
+std::basic_istream<CharT, Traits>& operator>>(
+    std::basic_istream<CharT, Traits>& is, std::complex<stan::math::var>& x) {
+  std::complex<double> y;
+  is >> y;
+  x = y;
+  return is;
+}
+}  // namespace math
+}  // namespace stan
 
-// // (1)
-// template <>
-// stan::math::var imag<stan::math::var>(const std::complex<stan::math::var>& z)
-// {
-//   return z.imag();
-// }
+/**
+ * Return the real component of the specified complex number.
+ *
+ * @param[in] z complex argument
+ * @return real component of argment
+ */
+template <>
+stan::math::var std::real<stan::math::var>(
+    const std::complex<stan::math::var>& z) {
+  return z.real();
+}
 
-// // (1)
-// template <>
-// stan::math::var abs<stan::math::var>(const std::complex<stan::math::var>& z)
-// {
-//   using std::hypot;
-//   return hypot(std::real(z), std::imag(z));
-// }
+/**
+ * Return the imaginary component of the specified complex number.
+ *
+ * @param[in] z complex argument
+ * @return real component of argment
+ */
+template <>
+stan::math::var std::imag<stan::math::var>(
+    const std::complex<stan::math::var>& z) {
+  return z.imag();
+}
 
-// // (1)
-// template <>
-// stan::math::var arg<stan::math::var>(const std::complex<stan::math::var>& z)
-// {
-//   using std::atan2;
-//   return atan2(std::imag(z), std::real(z));
-// }
+/**
+ * Return the magnitude of the specified complex number.
+ *
+ * @param[in] complex argument
+ * @return magnitude of argument
+ */
+template <>
+stan::math::var std::abs<stan::math::var>(
+    const std::complex<stan::math::var>& z) {
+  using std::hypot;
+  return hypot(std::real(z), std::imag(z));
+}
 
-// // (1)
-// template <>
-// stan::math::var norm<stan::math::var>(const std::complex<stan::math::var>& z)
-// {
-//   return square(std::real(z)) + square(std::imag(z));
-// }
+/**
+ * Return the phase angle of the specified complex number.
+ *
+ * @param[in] z complex argument
+ * @return phase angle of argument
+ */
+template <>
+stan::math::var std::arg<stan::math::var>(
+    const std::complex<stan::math::var>& z) {
+  using std::atan2;
+  return atan2(std::imag(z), std::real(z));
+}
 
-// // (1)
-// template <>
-// std::complex<stan::math::var> conj<stan::math::var>(
-//     const std::complex<stan::math::var>& z) {
-//   return {z.real(), -z.imag()};
-// }
+/**
+ * Return the squared magnitude of the specified complex number.
+ *
+ * @param[in] z complex argument
+ * @return squared magnitude of argument
+ */
+template <>
+stan::math::var std::norm<stan::math::var>(
+    const std::complex<stan::math::var>& z) {
+  using stan::math::square;
+  return square(std::real(z)) + square(std::imag(z));
+}
 
-// // (1)
-// template <>
-// std::complex<stan::math::var> proj<stan::math::var>(
-//     const std::complex<stan::math::var>& z) {
-//   using std::isinf;
-//   using std::copysign;
-//   if (isinf(z.real()) || isinf(z.imag())) {
-//     return { std::numeric_limits<stan::math::var>::infinity(),
-//           copysign(0.0, z.imag()) };  // (magnitude, sign)
-//   }
-//   return z;
-// }
+/**
+ * Return the complex conjugate of the specified complex number.
+ *
+ * @param[in] z complex argument
+ * @return complex conjugate of argument
+ */
+template <>
+std::complex<stan::math::var> std::conj<stan::math::var>(
+    const std::complex<stan::math::var>& z) {
+  return {z.real(), -z.imag()};
+}
 
-// // TODO(carpenter): add mixed forms with primitives for efficiency
-// // (1)
-// template <>
-// std::complex<stan::math::var> polar<stan::math::var>(const stan::math::var&
-// r,
-//                                              const stan::math::var& theta) {
-//   using std::cos;
-//   using std::sin;
-//   if (!(r >= 0)) {
-//     return std::numeric_limits<double>::quiet_NaN();
-//   }
-//   return {r * cos(theta), r * sin(theta)};
-// }
+/**
+ * Return the projection of the specified complex arguent onto the
+ * Riemann sphere.
+ *
+ * @param[in] z complex argument
+ * @return project of argument onto the Riemann sphere
+ */
+template <>
+std::complex<stan::math::var> std::proj<stan::math::var>(
+    const std::complex<stan::math::var>& z) {
+  if (stan::math::is_inf(z.real()) || stan::math::is_inf(z.imag())) {
+    return {std::numeric_limits<stan::math::var>::infinity(),
+            z.imag() < 0 ? -0.0 : 0.0};
+  }
+  return z;
+}
+
+/**
+ * Returns complex number with specified magnitude and phase angle.
+ *
+ * @param[in] r magnitude
+ * @param[in] theta phase angle
+ * @return complex number with magnitude and phase angle
+ */
+template <>
+std::complex<stan::math::var> std::polar<stan::math::var>(
+    const stan::math::var& r, const stan::math::var& theta) {
+  using std::cos;
+  using std::sin;
+  if (!(r >= 0) || stan::math::is_inf(theta)) {
+    return {std::numeric_limits<double>::quiet_NaN()};
+  }
+  return {r * cos(theta), r * sin(theta)};
+}
 
 // // (1)
 // template <>

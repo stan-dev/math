@@ -1,6 +1,9 @@
 #include <stan/math/rev/core.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <gtest/gtest.h>
+#include <limits>
+#include <sstream>
+#include <vector>
 
 // naughty but convenient for test scope
 typedef stan::math::var var_t;
@@ -509,4 +512,113 @@ TEST(mathRevCore, stdComplexOperatorCompareUneq6) {
   EXPECT_EQ(fd, f);
   EXPECT_EQ(gd, g);
   EXPECT_EQ(hd, h);
+}
+// the operator streams use the compiler-supplied implementations
+// this is generally unspecified behavior, but seems to work
+TEST(mathRevCore, stanMathOperatorStreamOut1) {
+  cdouble_t ad(1, 2);
+  cvar_t a(1, 2);
+
+  std::stringstream ssd;
+  ssd << ad;
+  std::string sd = ssd.str();
+  std::stringstream ss;
+  ss << a;
+  std::string s = ss.str();
+  EXPECT_EQ(sd, s);
+}
+TEST(mathRevCore, stanMathOperatorStreamIn2) {
+  std::stringstream s1;
+  s1 << "(1, 2)";
+  cvar_t a;
+  s1 >> a;
+  expect_complex(1, 2, a);
+
+  std::stringstream s2;
+  s2 << "(1)";
+  s2 >> a;
+  expect_complex(1, 0, a);
+
+  std::stringstream s3;
+  s3 << "1";
+  s3 >> a;
+  expect_complex(1, 0, a);
+}
+TEST(mathRevCore, stdRealExternal1) {
+  var_t a = 1;
+  var_t b = 2;
+  cvar_t c(a, b);
+  var_t ca = std::real(c);
+  EXPECT_EQ(a.vi_, ca.vi_);
+}
+TEST(mathRevCore, stdImagExternal1) {
+  var_t a = 1;
+  var_t b = 2;
+  cvar_t c(a, b);
+  var_t cb = std::imag(c);
+  EXPECT_EQ(b.vi_, cb.vi_);
+}
+TEST(mathRevCore, stdAbsExternal1) {
+  cdouble_t ad(1, 2);
+  double bd = std::abs(ad);
+  cvar_t a(1, 2);
+  var_t b = std::abs(a);
+  EXPECT_DOUBLE_EQ(bd, b.val());
+}
+TEST(mathRevCore, stdArgExternal1) {
+  cdouble_t ad(1, 2);
+  double bd = std::arg(ad);
+  cvar_t a(1, 2);
+  var_t b = std::arg(a);
+  EXPECT_DOUBLE_EQ(bd, b.val());
+}
+TEST(mathRevCore, stdNormExternal1) {
+  cdouble_t ad(1, 2);
+  double bd = std::norm(ad);
+  cvar_t a(1, 2);
+  var_t b = std::norm(a);
+  EXPECT_DOUBLE_EQ(bd, b.val());
+}
+TEST(mathRevCore, stdSquareConj1) {
+  cdouble_t ad(1, 2);
+  cdouble_t bd = std::conj(ad);
+  cvar_t a(1, 2);
+  cvar_t b = std::conj(a);
+  expect_complex(bd, b);
+}
+TEST(mathRevCore, stdSquareProj1) {
+  double inf = std::numeric_limits<double>::infinity();
+  std::vector<double> args{-1, 0, 1, inf, -inf};
+  for (double re : args) {
+    for (double im : args) {
+      cdouble_t ad(re, im);
+      cdouble_t bd = std::proj(ad);
+      cvar_t a(re, im);
+      cvar_t b = std::proj(a);
+      expect_complex(bd, b);
+    }
+  }
+}
+TEST(mathRevCore, stdPolar1) {
+  double r_d = 0.5;
+  double theta_d = 1.3;
+  cdouble_t a_d = std::polar(r_d, theta_d);
+
+  var_t r = 0.5;
+  var_t theta = 1.3;
+  cvar_t a = std::polar(r, theta);
+  expect_complex(a_d, a);
+
+  double inf = std::numeric_limits<double>::infinity();
+  double nan = std::numeric_limits<double>::quiet_NaN();
+
+  // these are undefined behaviors, but we return NaN
+  var_t neg1_v = -1;
+  var_t one_v = 1;
+  var_t two_v = 2;
+  var_t nan_v = nan;
+  var_t inf_v = inf;
+  EXPECT_TRUE(stan::math::is_nan(std::polar(neg1_v, two_v).real()));
+  EXPECT_TRUE(stan::math::is_nan(std::polar(nan_v, two_v).real()));
+  EXPECT_TRUE(stan::math::is_nan(std::polar(one_v, inf_v).real()));
 }
