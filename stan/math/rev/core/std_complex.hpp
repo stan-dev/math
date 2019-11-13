@@ -4,13 +4,16 @@
 // doesn't need namespace std
 
 #include <stan/math/prim/scal/fun/is_inf.hpp>
+#include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/fun/atan2.hpp>
 #include <stan/math/rev/scal/fun/cos.hpp>
+#include <stan/math/rev/scal/fun/exp.hpp>
 #include <stan/math/rev/scal/fun/sin.hpp>
 #include <stan/math/rev/scal/fun/hypot.hpp>
 #include <stan/math/rev/scal/fun/is_inf.hpp>
+#include <stan/math/rev/scal/fun/is_nan.hpp>
 #include <stan/math/rev/scal/fun/square.hpp>
 #include <cmath>
 #include <complex>
@@ -716,14 +719,39 @@ std::complex<stan::math::var> std::polar<stan::math::var>(
   return {r * cos(theta), r * sin(theta)};
 }
 
-// // (1)
-// template <>
-// std::complex<stan::math::var> exp<stan::math::var>(
-//     const std::complex<stan::math::var>& z) {
-//   using std::exp;
-//   stan::math::var exp_re = exp(z.real());
-//   return {exp_re * cos(z.imag()), exp_re * sin(z.imag())};
-// }
+/**
+ * Return the natural exponent of the specified complex number.
+ *
+ * @param[in] complex argument
+ * @return exponential of argument
+ */
+template <>
+std::complex<stan::math::var> std::exp<stan::math::var>(
+    const std::complex<stan::math::var>& z) {
+  using stan::math::is_inf;
+  using stan::math::is_nan;
+  using std::exp;
+  if (is_inf(z.real()) && z.real() > 0) {
+    if (is_nan(z.imag()) || z.imag() == 0) {
+      // (+inf, nan), (+inf, 0)
+      return z;
+    } else if (is_inf(z.imag())) {
+      // (+inf, -inf),  (+inf, +inf)
+      return {z.real(), std::numeric_limits<double>::quiet_NaN()};
+    }
+  }
+  if (is_inf(z.real()) && z.real() < 0
+      && (is_nan(z.imag()) || is_inf(z.imag()))) {
+    // (-inf, nan), (-inf, -inf), (-inf, inf)
+    return {0, 0};
+  }
+  if (is_nan(z.real()) && z.imag() == -0.0) {
+    // (nan, -0)
+    return z;
+  }
+  stan::math::var exp_re = exp(z.real());
+  return {exp_re * cos(z.imag()), exp_re * sin(z.imag())};
+}
 
 // // (1)
 // template <>

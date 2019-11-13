@@ -11,8 +11,24 @@ typedef std::complex<stan::math::var> cvar_t;
 typedef std::complex<double> cdouble_t;
 
 void expect_complex(double re, double im, const cvar_t& y) {
-  EXPECT_DOUBLE_EQ(re, y.real().val());
-  EXPECT_DOUBLE_EQ(im, y.imag().val());
+  using stan::math::is_nan;
+  if (is_nan(re)) {
+    EXPECT_TRUE(is_nan(y.real())) << "expected = (" << re << ", " << im << ")"
+                                  << "; found = " << y << std::endl;
+  } else {
+    EXPECT_DOUBLE_EQ(re, y.real().val())
+        << "expected = (" << re << ", " << im << ")"
+        << "; found = " << y << std::endl;
+  }
+  if (is_nan(im)) {
+    EXPECT_TRUE(is_nan(y.imag().val()))
+        << "expected = (" << re << ", " << im << ")"
+        << "; found = " << y << std::endl;
+  } else {
+    EXPECT_DOUBLE_EQ(im, y.imag().val())
+        << "expected = (" << re << ", " << im << ")"
+        << "; found = " << y << std::endl;
+  }
 }
 void expect_complex(const cdouble_t& x, const cvar_t& y) {
   expect_complex(x.real(), x.imag(), y);
@@ -621,4 +637,30 @@ TEST(mathRevCore, stdPolar1) {
   EXPECT_TRUE(stan::math::is_nan(std::polar(neg1_v, two_v).real()));
   EXPECT_TRUE(stan::math::is_nan(std::polar(nan_v, two_v).real()));
   EXPECT_TRUE(stan::math::is_nan(std::polar(one_v, inf_v).real()));
+}
+TEST(mathRevCore, stdExp1) {
+  double x_d = 1;
+  double y_d = 2;
+  cdouble_t a_d{x_d, y_d};
+  cdouble_t e_d = std::exp(a_d);
+
+  var_t x = 1;
+  var_t y = 2;
+  cvar_t a{x, y};
+  cvar_t e = std::exp(a);
+  expect_complex(e_d, e);
+
+  // all boundary conditions in spec
+  double inf = std::numeric_limits<double>::infinity();
+  double nan = std::numeric_limits<double>::quiet_NaN();
+  double pos_zero = 0.0;
+  double neg_zero = -0.0;
+  double pos = 1.3;
+  double neg = -0.3;
+  auto args = std::vector<double>{nan, -inf, -0.3, -0.0, 0.0, 1.3, inf};
+  for (double a : args) {
+    for (double b : args) {
+      expect_complex(std::exp(cdouble_t{a, b}), std::exp(cvar_t{a, b}));
+    }
+  }
 }
