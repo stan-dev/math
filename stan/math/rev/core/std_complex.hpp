@@ -291,114 +291,193 @@ std::complex<stan::math::var> std::operator-<stan::math::var>(
   return std::complex<stan::math::var>(-val.real(), -val.imag());
 }
 
-// // (1)
-// template <>
-// std::complex<stan::math::var>
-// std::operator+(const std::complex<stan::math::var>& lhs,
-//           const std::complex<stan::math::var>& rhs) {
-//   std::complex<stan::math::var> y(lhs);
-//   y += rhs;
-//   return y;
-// }
-// // (2)
-// template <>
-// std::complex<stan::math::var>
-// std::operator+(const std::complex<stan::math::var>& lhs,
-//           const stan::math::var& rhs) {
-//   std::complex<stan::math::var> y(lhs);
-//   y += rhs;
-//   return y;
-// }
-// // (3)
-// template <>
-// std::complex<stan::math::var>
-// std::operator+(const stan::math::var& lhs,
-//           const std::complex<stan::math::var>& rhs) {
-//   std::complex<stan::math::var> y(lhs);
-//   y += rhs;
-//   return y;
-// }
-// // (4)
-// template <>
-// std::complex<stan::math::var>
-// std::operator-(const std::complex<stan::math::var>& lhs,
-//           const std::complex<stan::math::var>& rhs) {
-//   std::complex<stan::math::var> y(lhs);
-//   y -= rhs;
-//   return y;
-// }
-// // (5)
-// template <>
-// std::complex<stan::math::var>
-// std::operator-(const std::complex<stan::math::var>& lhs,
-//           const stan::math::var& rhs) {
-//   std::complex<stan::math::var> y(lhs);
-//   y -= rhs;
-//   return y;
-// }
-// // (6)
-// template <>
-// std::complex<stan::math::var>
-// std::operator-(const stan::math::var& lhs,
-//           const std::complex<stan::math::var>& rhs) {
-//   std::complex<stan::math::var> y(lhs);
-//   y -= rhs;
-//   return y;
-// }
-// // (7)
-// template <>
-// std::complex<stan::math::var>
-// std::operator*(const std::complex<stan::math::var>& lhs,
-//           const std::complex<stan::math::var>& rhs) {
-//   std::complex<stan::math::var> y(lhs);
-//   y *= rhs;
-//   return y;
-// }
-// // (8)
-// template <>
-// std::complex<stan::math::var>
-// std::operator*(const std::complex<stan::math::var>& lhs,
-//           const stan::math::var& rhs) {
-//   std::complex<stan::math::var> y(lhs);
-//   y *= rhs;
-//   return y;
-// }
-// // (9)
-// template <>
-// std::complex<stan::math::var>
-// std::operator/(const stan::math::var& lhs,
-//           const std::complex<stan::math::var>& rhs) {
-//   std::complex<stan::math::var> y(lhs);
-//   y /= rhs;
-//   return y;
-// }
-// // (10)
-// template <>
-// std::complex<stan::math::var>
-// std::operator/(const std::complex<stan::math::var>& lhs,
-//           const std::complex<stan::math::var>& rhs) {
-//   std::complex<stan::math::var> y(lhs);
-//   y /= rhs;
-//   return y;
-// }
-// // (11)
-// template <>
-// std::complex<stan::math::var>
-// std::operator/(const std::complex<stan::math::var>& lhs,
-//           const stan::math::var& rhs) {
-//   std::complex<stan::math::var> y(lhs);
-//   y /= rhs;
-//   return y;
-// }
-// // (12)
-// template <>
-// std::complex<stan::math::var>
-// std::operator/(const stan::math::var& lhs,
-//           const std::complex<stan::math::var>& rhs) {
-//   std::complex<stan::math::var> y(lhs);
-//   y /= rhs;
-//   return y;
-// }
+/**
+ * Returns the sum of its arguments.
+ *
+ * @param[in] lhs complex first argument
+ * @param[in] rhs complex second argument
+ * @return sum of the arguments
+ */
+template <>
+std::complex<stan::math::var> std::operator+<stan::math::var>(
+    const std::complex<stan::math::var>& lhs,
+    const std::complex<stan::math::var>& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y += rhs;
+  return y;
+}
+
+/**
+ * Returns the sum of its arguments.
+ *
+ * @param[in] lhs complex first argument
+ * @param[in] rhs scalar second argument
+ * @return sum of the arguments
+ */
+template <>
+std::complex<stan::math::var> std::operator+<stan::math::var>(
+    const std::complex<stan::math::var>& lhs, const stan::math::var& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y += rhs;
+  return y;
+}
+
+/**
+ * Returns the sum of its arguments.
+ *
+ * @param[in] lhs scalar first argument
+ * @param[in] rhs complex second argument
+ * @return sum of the arguments
+ */
+template <>
+std::complex<stan::math::var> std::operator+<stan::math::var>(
+    const stan::math::var& lhs, const std::complex<stan::math::var>& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y += rhs;
+  return y;
+}
+
+/**
+ * Returns the result of subtracting the second argument from the
+ * first.
+ *
+ * @param[in] lhs complex first argument
+ * @param[in] rhs complex second argument
+ * @return difference between first and second argument
+ */
+template <>
+std::complex<stan::math::var> std::operator-<stan::math::var>(
+    const std::complex<stan::math::var>& lhs,
+    const std::complex<stan::math::var>& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y -= rhs;
+  return y;
+}
+
+/**
+ * Returns the result of subtracting the second argument from the
+ * first.
+ *
+ * @param[in] lhs complex first argument
+ * @param[in] rhs scalar second argument
+ * @return difference between first and second argument
+ */
+template <>
+std::complex<stan::math::var> std::operator-<stan::math::var>(
+    const std::complex<stan::math::var>& lhs, const stan::math::var& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y -= rhs;
+  return y;
+}
+
+/**
+ * Returns the result of subtracting the second argument from the
+ * first.
+ *
+ * @param[in] lhs scalar first argument
+ * @param[in] rhs complex second argument
+ * @return difference between first and second argument
+ */
+template <>
+std::complex<stan::math::var> std::operator-<stan::math::var>(
+    const stan::math::var& lhs, const std::complex<stan::math::var>& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y -= rhs;
+  return y;
+}
+
+/**
+ * Return the product of the first and second argument.
+ *
+ * @param[in] lhs first complex argument
+ * @parma[in] rhs second complex argument
+ * @return product of the first and second argument
+ */
+template <>
+std::complex<stan::math::var> std::operator*<stan::math::var>(
+    const std::complex<stan::math::var>& lhs,
+    const std::complex<stan::math::var>& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y *= rhs;
+  return y;
+}
+
+/**
+ * Return the product of the first and second argument.
+ *
+ * @param[in] lhs first complex argument
+ * @parma[in] rhs second scalar argument
+ * @return product of the first and second argument
+ */
+template <>
+std::complex<stan::math::var> std::operator*<stan::math::var>(
+    const std::complex<stan::math::var>& lhs, const stan::math::var& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y *= rhs;
+  return y;
+}
+
+/**
+ * Return the product of the first and second argument.
+ *
+ * @param[in] lhs first scalar argument
+ * @parma[in] rhs second complex argument
+ * @return product of the first and second argument
+ */
+template <>
+std::complex<stan::math::var> std::operator*<stan::math::var>(
+    const stan::math::var& lhs, const std::complex<stan::math::var>& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y *= rhs;
+  return y;
+}
+
+/**
+ * Return the result of dividing the first argument by the second.
+ *
+ * @param[in] lhs first complex argument
+ * @parma[in] rhs second complex argument
+ * @return quotient of the first and second argument
+ */
+template <>
+std::complex<stan::math::var> std::operator/<stan::math::var>(
+    const std::complex<stan::math::var>& lhs,
+    const std::complex<stan::math::var>& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y /= rhs;
+  return y;
+}
+
+/**
+ * Return the result of dividing the first argument by the second.
+ *
+ * @param[in] lhs first complex argument
+ * @parma[in] rhs second scalar argument
+ * @return quotient of the first and second argument
+ */
+
+template <>
+std::complex<stan::math::var> std::operator/<stan::math::var>(
+    const std::complex<stan::math::var>& lhs, const stan::math::var& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y /= rhs;
+  return y;
+}
+
+/**
+ * Return the result of dividing the first argument by the second.
+ *
+ * @param[in] lhs first scalar argument
+ * @parma[in] rhs second complex argument
+ * @return quotient of the first and second argument
+ */
+template <>
+std::complex<stan::math::var> std::operator/(
+    const stan::math::var& lhs, const std::complex<stan::math::var>& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y /= rhs;
+  return y;
+}
 
 // // (1)
 // template <>

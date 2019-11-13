@@ -276,3 +276,111 @@ TEST(MathRevCore, stdComplexOperatorUnaryNegative2) {
   cvar_t b = -a;
   expect_complex(bd, b);
 }
+TEST(MathRevCore, stdComplexOperatorAdd1) {
+  cdouble_t ad(1, 2);
+  cdouble_t bd(3, 7);
+  cdouble_t cd = ad + bd;
+  cvar_t a(1, 2);
+  cvar_t b(3, 7);
+  cvar_t c = a + b;
+  expect_complex(cd, c);
+}
+TEST(MathRevCore, stdComplexOperatorAdd2) {
+  cdouble_t ad(1, 2);
+  double bd = 3;
+  cdouble_t cd = ad + bd;
+  cvar_t a(1, 2);
+  var_t b = 3;
+  cvar_t c = a + b;
+  expect_complex(cd, c);
+}
+TEST(MathRevCore, stdComplexOperatorAdd3) {
+  double ad = 1;
+  cdouble_t bd(3, 7);
+  cdouble_t cd = ad + bd;
+  var_t a = 1;
+  cvar_t b(3, 7);
+  cvar_t c = a + b;
+  expect_complex(cd, c);
+}
+TEST(MathRevCore, stdComplexOperatorSubtract4) {
+  cdouble_t ad(1, 2);
+  cdouble_t bd(3, 7);
+  cdouble_t cd = ad - bd;
+  cvar_t a(1, 2);
+  cvar_t b(3, 7);
+  cvar_t c = a - b;
+  expect_complex(cd, c);
+}
+TEST(MathRevCore, stdComplexOperatorSubtract5) {
+  cdouble_t ad(1, 2);
+  double bd = 3;
+  cdouble_t cd = ad - bd;
+  cvar_t a(1, 2);
+  var_t b = 3;
+  cvar_t c = a - b;
+  expect_complex(cd, c);
+}
+TEST(MathRevCore, stdComplexOperatorSubtract6) {
+  double ad = 1;
+  cdouble_t bd(3, 7);
+  cdouble_t cd = ad - bd;
+  var_t a = 1;
+  cvar_t b(3, 7);
+  cvar_t c = a - b;
+  expect_complex(cd, c);
+}
+TEST(MathRevCore, stdComplexOperatorMultiply7) {
+  cdouble_t ad(1, 2);
+  cdouble_t bd(3, 7);
+  cdouble_t cd = ad * bd;
+  cvar_t a(1, 2);
+  cvar_t b(3, 7);
+  cvar_t c = a * b;
+  expect_complex(cd, c);
+}
+TEST(MathRevCore, stdComplexOperatorMultiply8) {
+  cdouble_t ad(1, 2);
+  double bd = 3;
+  cdouble_t cd = ad * bd;
+  cvar_t a(1, 2);
+  var_t b = 3;
+  cvar_t c = a * b;
+  expect_complex(cd, c);
+}
+TEST(MathRevCore, stdComplexOperatorMultiply9) {
+  double ad = 1;
+  cdouble_t bd(3, 7);
+  cdouble_t cd = ad * bd;
+  var_t a = 1;
+  cvar_t b(3, 7);
+  cvar_t c = a * b;
+  expect_complex(cd, c);
+}
+TEST(MathRevCore, stdComplexOperatorDivide10) {
+  cdouble_t ad(1, 2);
+  cdouble_t bd(3, 7);
+  cdouble_t cd = ad / bd;
+  cvar_t a(1, 2);
+  cvar_t b(3, 7);
+  cvar_t c = a / b;
+  expect_complex(cd, c);
+}
+TEST(MathRevCore, stdComplexOperatorDivide11) {
+  cdouble_t ad(1, 2);
+  double bd = 3;
+  cdouble_t cd = ad / bd;
+  cvar_t a(1, 2);
+  var_t b = 3;
+  cvar_t c = a / b;
+  expect_complex(cd, c);
+}
+TEST(MathRevCore, stdComplexOperatorDivide12) {
+  double ad = 1;
+  cdouble_t bd(3, 7);
+  cdouble_t cd = ad / bd;
+  var_t a = 1;
+  cvar_t b(3, 7);
+  cvar_t c = a / b;
+  expect_complex(cd, c);
+}
