@@ -73,27 +73,27 @@ TEST(mathRevCore, stdComplexConstructor3) {
   cvar_t b(a);
   expect_complex(1, 2, b);
 }
-TEST(MathRevCore, stdComplexReal1) {
+TEST(mathRevCore, stdComplexReal1) {
   cvar_t a(3, -1);
   EXPECT_DOUBLE_EQ(3, a.real().val());
 }
-TEST(MathRevCore, stdComplexReal2) {
+TEST(mathRevCore, stdComplexReal2) {
   cvar_t a(3, -1);
   a.real(2.7);
   EXPECT_DOUBLE_EQ(2.7, a.real().val());
   EXPECT_DOUBLE_EQ(-1, a.imag().val());
 }
-TEST(MathRevCore, stdComplexImag1) {
+TEST(mathRevCore, stdComplexImag1) {
   cvar_t a(3, -1);
   EXPECT_DOUBLE_EQ(-1, a.imag().val());
 }
-TEST(MathRevCore, stdComplexImag2) {
+TEST(mathRevCore, stdComplexImag2) {
   cvar_t a(3, -1);
   a.imag(2.7);
   EXPECT_DOUBLE_EQ(2.7, a.imag().val());
   EXPECT_DOUBLE_EQ(3, a.real().val());
 }
-TEST(MathRevCore, stdComplexOperatorEquals1) {
+TEST(mathRevCore, stdComplexOperatorEquals1) {
   cvar_t a(1, 2);
   var_t b = 3;
   a = b;
@@ -107,7 +107,7 @@ TEST(MathRevCore, stdComplexOperatorEquals1) {
   auto ptr2 = &(a = c);
   EXPECT_EQ(ptr1, ptr2);
 }
-TEST(MathRevCore, stdComplexOperatorEquals2) {
+TEST(mathRevCore, stdComplexOperatorEquals2) {
   cvar_t a(1, 2);
   cvar_t b(3, 4);
   a = b;
@@ -120,7 +120,7 @@ TEST(MathRevCore, stdComplexOperatorEquals2) {
   auto ptr2 = &(a = c);
   EXPECT_EQ(ptr1, ptr2);
 }
-TEST(MathRevCore, stdComplexOperatorEquals3) {
+TEST(mathRevCore, stdComplexOperatorEquals3) {
   cvar_t a(1, 2);
   cdouble_t b(3, 4);
   a = b;
@@ -132,7 +132,7 @@ TEST(MathRevCore, stdComplexOperatorEquals3) {
   auto ptr2 = &(a = c);
   EXPECT_EQ(ptr1, ptr2);
 }
-TEST(MathRevCore, stdComplexOperatorAddEquals1) {
+TEST(mathRevCore, stdComplexOperatorAddEquals1) {
   cdouble_t ad(1, 2);
   ad += 3;
 
@@ -145,7 +145,7 @@ TEST(MathRevCore, stdComplexOperatorAddEquals1) {
   auto ptr2 = &(a += b);
   EXPECT_EQ(ptr1, ptr2);
 }
-TEST(MathRevCore, stdComplexOperatorSubtractEquals2) {
+TEST(mathRevCore, stdComplexOperatorSubtractEquals2) {
   cdouble_t ad(1, 2);
   ad -= 3;
 
@@ -158,7 +158,7 @@ TEST(MathRevCore, stdComplexOperatorSubtractEquals2) {
   auto ptr2 = &(a -= b);
   EXPECT_EQ(ptr1, ptr2);
 }
-TEST(MathRevCore, stdComplexOperatorMultiplyEquals3) {
+TEST(mathRevCore, stdComplexOperatorMultiplyEquals3) {
   cdouble_t ad(2, 5);
   ad *= 3;
 
@@ -171,7 +171,7 @@ TEST(MathRevCore, stdComplexOperatorMultiplyEquals3) {
   auto ptr2 = &(a *= b);
   EXPECT_EQ(ptr1, ptr2);
 }
-TEST(MathRevCore, stdComplexOperatorDivideEquals4) {
+TEST(mathRevCore, stdComplexOperatorDivideEquals4) {
   cdouble_t ad(2, 5);
   ad /= 3;
 
@@ -184,7 +184,7 @@ TEST(MathRevCore, stdComplexOperatorDivideEquals4) {
   auto ptr2 = &(a /= b);
   EXPECT_EQ(ptr1, ptr2);
 }
-TEST(MathRevCore, stdComplexOperatorAddEquals5) {
+TEST(mathRevCore, stdComplexOperatorAddEquals5) {
   cdouble_t ad(1, 2);
   cdouble_t bd(3, 4);
   ad += bd;
@@ -203,7 +203,7 @@ TEST(MathRevCore, stdComplexOperatorAddEquals5) {
   c += d;
   expect_complex(ad, c);
 }
-TEST(MathRevCore, stdComplexOperatorSubtractEquals6) {
+TEST(mathRevCore, stdComplexOperatorSubtractEquals6) {
   cdouble_t ad(1, 2);
   cdouble_t bd(3, 4);
   ad -= bd;
@@ -222,7 +222,7 @@ TEST(MathRevCore, stdComplexOperatorSubtractEquals6) {
   c -= d;
   expect_complex(ad, c);
 }
-TEST(MathRevCore, stdComplexOperatorMultiplyEquals7) {
+TEST(mathRevCore, stdComplexOperatorMultiplyEquals7) {
   cdouble_t ad(1, 2);
   cdouble_t bd(3, 4);
   ad *= bd;
@@ -241,7 +241,7 @@ TEST(MathRevCore, stdComplexOperatorMultiplyEquals7) {
   c *= d;
   expect_complex(ad, c);
 }
-TEST(MathRevCore, stdComplexOperatorDivideEquals8) {
+TEST(mathRevCore, stdComplexOperatorDivideEquals8) {
   cdouble_t ad(1, 2);
   cdouble_t bd(3, 4);
   ad /= bd;
@@ -260,7 +260,7 @@ TEST(MathRevCore, stdComplexOperatorDivideEquals8) {
   c /= d;
   expect_complex(ad, c);
 }
-TEST(MathRevCore, stdComplexOperatorUnaryPlus1) {
+TEST(mathRevCore, stdComplexOperatorUnaryPlus1) {
   cdouble_t ad(1, 2);
   cdouble_t bd = +ad;
   cvar_t a(1, 2);
@@ -269,14 +269,14 @@ TEST(MathRevCore, stdComplexOperatorUnaryPlus1) {
   // expect pointer equality before and after
   EXPECT_EQ(a.real().vi_, b.real().vi_);
 }
-TEST(MathRevCore, stdComplexOperatorUnaryNegative2) {
+TEST(mathRevCore, stdComplexOperatorUnaryNegative2) {
   cdouble_t ad(1, 2);
   cdouble_t bd = -ad;
   cvar_t a(1, 2);
   cvar_t b = -a;
   expect_complex(bd, b);
 }
-TEST(MathRevCore, stdComplexOperatorAdd1) {
+TEST(mathRevCore, stdComplexOperatorAdd1) {
   cdouble_t ad(1, 2);
   cdouble_t bd(3, 7);
   cdouble_t cd = ad + bd;
@@ -285,7 +285,7 @@ TEST(MathRevCore, stdComplexOperatorAdd1) {
   cvar_t c = a + b;
   expect_complex(cd, c);
 }
-TEST(MathRevCore, stdComplexOperatorAdd2) {
+TEST(mathRevCore, stdComplexOperatorAdd2) {
   cdouble_t ad(1, 2);
   double bd = 3;
   cdouble_t cd = ad + bd;
@@ -294,7 +294,7 @@ TEST(MathRevCore, stdComplexOperatorAdd2) {
   cvar_t c = a + b;
   expect_complex(cd, c);
 }
-TEST(MathRevCore, stdComplexOperatorAdd3) {
+TEST(mathRevCore, stdComplexOperatorAdd3) {
   double ad = 1;
   cdouble_t bd(3, 7);
   cdouble_t cd = ad + bd;
@@ -303,7 +303,7 @@ TEST(MathRevCore, stdComplexOperatorAdd3) {
   cvar_t c = a + b;
   expect_complex(cd, c);
 }
-TEST(MathRevCore, stdComplexOperatorSubtract4) {
+TEST(mathRevCore, stdComplexOperatorSubtract4) {
   cdouble_t ad(1, 2);
   cdouble_t bd(3, 7);
   cdouble_t cd = ad - bd;
@@ -312,7 +312,7 @@ TEST(MathRevCore, stdComplexOperatorSubtract4) {
   cvar_t c = a - b;
   expect_complex(cd, c);
 }
-TEST(MathRevCore, stdComplexOperatorSubtract5) {
+TEST(mathRevCore, stdComplexOperatorSubtract5) {
   cdouble_t ad(1, 2);
   double bd = 3;
   cdouble_t cd = ad - bd;
@@ -321,7 +321,7 @@ TEST(MathRevCore, stdComplexOperatorSubtract5) {
   cvar_t c = a - b;
   expect_complex(cd, c);
 }
-TEST(MathRevCore, stdComplexOperatorSubtract6) {
+TEST(mathRevCore, stdComplexOperatorSubtract6) {
   double ad = 1;
   cdouble_t bd(3, 7);
   cdouble_t cd = ad - bd;
@@ -330,7 +330,7 @@ TEST(MathRevCore, stdComplexOperatorSubtract6) {
   cvar_t c = a - b;
   expect_complex(cd, c);
 }
-TEST(MathRevCore, stdComplexOperatorMultiply7) {
+TEST(mathRevCore, stdComplexOperatorMultiply7) {
   cdouble_t ad(1, 2);
   cdouble_t bd(3, 7);
   cdouble_t cd = ad * bd;
@@ -339,7 +339,7 @@ TEST(MathRevCore, stdComplexOperatorMultiply7) {
   cvar_t c = a * b;
   expect_complex(cd, c);
 }
-TEST(MathRevCore, stdComplexOperatorMultiply8) {
+TEST(mathRevCore, stdComplexOperatorMultiply8) {
   cdouble_t ad(1, 2);
   double bd = 3;
   cdouble_t cd = ad * bd;
@@ -348,7 +348,7 @@ TEST(MathRevCore, stdComplexOperatorMultiply8) {
   cvar_t c = a * b;
   expect_complex(cd, c);
 }
-TEST(MathRevCore, stdComplexOperatorMultiply9) {
+TEST(mathRevCore, stdComplexOperatorMultiply9) {
   double ad = 1;
   cdouble_t bd(3, 7);
   cdouble_t cd = ad * bd;
@@ -357,7 +357,7 @@ TEST(MathRevCore, stdComplexOperatorMultiply9) {
   cvar_t c = a * b;
   expect_complex(cd, c);
 }
-TEST(MathRevCore, stdComplexOperatorDivide10) {
+TEST(mathRevCore, stdComplexOperatorDivide10) {
   cdouble_t ad(1, 2);
   cdouble_t bd(3, 7);
   cdouble_t cd = ad / bd;
@@ -366,7 +366,7 @@ TEST(MathRevCore, stdComplexOperatorDivide10) {
   cvar_t c = a / b;
   expect_complex(cd, c);
 }
-TEST(MathRevCore, stdComplexOperatorDivide11) {
+TEST(mathRevCore, stdComplexOperatorDivide11) {
   cdouble_t ad(1, 2);
   double bd = 3;
   cdouble_t cd = ad / bd;
@@ -375,7 +375,7 @@ TEST(MathRevCore, stdComplexOperatorDivide11) {
   cvar_t c = a / b;
   expect_complex(cd, c);
 }
-TEST(MathRevCore, stdComplexOperatorDivide12) {
+TEST(mathRevCore, stdComplexOperatorDivide12) {
   double ad = 1;
   cdouble_t bd(3, 7);
   cdouble_t cd = ad / bd;
@@ -383,4 +383,130 @@ TEST(MathRevCore, stdComplexOperatorDivide12) {
   cvar_t b(3, 7);
   cvar_t c = a / b;
   expect_complex(cd, c);
+}
+TEST(mathRevCore, stdComplexOperatorCompare1) {
+  cdouble_t ad(1, 2);
+  cdouble_t bd(3, 7);
+  bool cd = ad == bd;
+  bool dd = ad == ad;
+
+  cvar_t a(1, 2);
+  cvar_t b(3, 7);
+  bool c = a == b;
+  bool d = a == a;
+  EXPECT_EQ(cd, c);
+  EXPECT_EQ(dd, d);
+}
+TEST(mathRevCore, stdComplexOperatorCompare2) {
+  cdouble_t ad(1, 0);
+  cdouble_t bd(2, 3);
+  double cd = 1;
+  double dd = 3.2;
+
+  bool ed = ad == cd;
+  bool fd = ad == dd;
+  bool gd = bd == cd;
+  bool hd = bd == dd;
+
+  cvar_t a(1, 0);
+  cvar_t b(2, 3);
+  var_t c = 1;
+  var_t d = 3.2;
+
+  bool e = a == c;
+  bool f = a == d;
+  bool g = b == c;
+  bool h = b == d;
+  EXPECT_EQ(ed, e);
+  EXPECT_EQ(fd, f);
+  EXPECT_EQ(gd, g);
+  EXPECT_EQ(hd, h);
+}
+TEST(mathRevCore, stdComplexOperatorCompare3) {
+  cdouble_t ad(1, 0);
+  cdouble_t bd(2, 3);
+  double cd = 1;
+  double dd = 3.2;
+
+  bool ed = cd == ad;
+  bool fd = cd == bd;
+  bool gd = dd == ad;
+  bool hd = dd == bd;
+
+  cvar_t a(1, 0);
+  cvar_t b(2, 3);
+  var_t c = 1;
+  var_t d = 3.2;
+
+  bool e = c == a;
+  bool f = c == b;
+  bool g = d == a;
+  bool h = d == b;
+  EXPECT_EQ(ed, e);
+  EXPECT_EQ(fd, f);
+  EXPECT_EQ(gd, g);
+  EXPECT_EQ(hd, h);
+}
+TEST(mathRevCore, stdComplexOperatorCompareUneq4) {
+  cdouble_t ad(1, 2);
+  cdouble_t bd(3, 7);
+  bool cd = ad != bd;
+  bool dd = ad != ad;
+
+  cvar_t a(1, 2);
+  cvar_t b(3, 7);
+  bool c = a != b;
+  bool d = a != a;
+  EXPECT_EQ(cd, c);
+  EXPECT_EQ(dd, d);
+}
+TEST(mathRevCore, stdComplexOperatorCompareUneq5) {
+  cdouble_t ad(1, 0);
+  cdouble_t bd(2, 3);
+  double cd = 1;
+  double dd = 3.2;
+
+  bool ed = ad != cd;
+  bool fd = ad != dd;
+  bool gd = bd != cd;
+  bool hd = bd != dd;
+
+  cvar_t a(1, 0);
+  cvar_t b(2, 3);
+  var_t c = 1;
+  var_t d = 3.2;
+
+  bool e = a != c;
+  bool f = a != d;
+  bool g = b != c;
+  bool h = b != d;
+  EXPECT_EQ(ed, e);
+  EXPECT_EQ(fd, f);
+  EXPECT_EQ(gd, g);
+  EXPECT_EQ(hd, h);
+}
+TEST(mathRevCore, stdComplexOperatorCompareUneq6) {
+  cdouble_t ad(1, 0);
+  cdouble_t bd(2, 3);
+  double cd = 1;
+  double dd = 3.2;
+
+  bool ed = cd != ad;
+  bool fd = cd != bd;
+  bool gd = dd != ad;
+  bool hd = dd != bd;
+
+  cvar_t a(1, 0);
+  cvar_t b(2, 3);
+  var_t c = 1;
+  var_t d = 3.2;
+
+  bool e = c != a;
+  bool f = c != b;
+  bool g = d != a;
+  bool h = d != b;
+  EXPECT_EQ(ed, e);
+  EXPECT_EQ(fd, f);
+  EXPECT_EQ(gd, g);
+  EXPECT_EQ(hd, h);
 }

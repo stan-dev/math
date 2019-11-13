@@ -479,42 +479,91 @@ std::complex<stan::math::var> std::operator/(
   return y;
 }
 
-// // (1)
-// template <>
-// bool std::operator==(const std::complex<stan::math::var>& lhs,
-//                 const std::complex<stan::math::var>& rhs) {
-//   return lhs.re_ == rhs.re_ && lhs.im_ == rhs.im_;
-// }
-// // (2)
-// template <>
-// bool std::operator==(const std::complex<stan::math::var>& lhs,
-//                 const stan::math::var& rhs) {
-//   return lhs.re_ == rhs && lhs.im_ == 0;
-// }
-// // (3)
-// template <>
-// bool std::operator==(const stan::math::var& lhs,
-//                 const std::complex<stan::math::var>& rhs) {
-//   return !(lhs == rhs.re_ && 0 == rhs.im_);
-// }
-// // (4)
-// template <>
-// bool std::operator!=(const std::complex<stan::math::var>& lhs,
-//                 const std::complex<stan::math::var>& rhs) {
-//   return !(lhs.re_ == rhs.re_ && lhs.im_ == rhs.im_);
-// }
-// // (5)
-// template <>
-// bool std::operator!=(const std::complex<stan::math::var>& lhs,
-//                 const stan::math::var& rhs) {
-//   return !(lhs.re_ == rhs && lhs.im_ == 0);
-// }
-// // (6)
-// template <>
-// bool std::operator!=(const stan::math::var& lhs,
-//                 const std::complex<stan::math::var>& rhs) {
-//   return !(lhs == rhs.re_ && 0 == rhs.im_);
-// }
+/**
+ * Return true if the respective parts of the two arguments are equal
+ * and false otherwise.
+ *
+ * @param[in] lhs first complex argument
+ * @parma[in] rhs second complex argument
+ * @return if the arguments are equal
+ */
+template <>
+bool std::operator==<stan::math::var>(
+    const std::complex<stan::math::var>& lhs,
+    const std::complex<stan::math::var>& rhs) {
+  return lhs.real() == rhs.real() && lhs.imag() == rhs.imag();
+}
+
+/**
+ * Return true if the respective parts of the two arguments are equal
+ * and false otherwise.
+ *
+ * @param[in] lhs first complex argument
+ * @parma[in] rhs second scalar argument
+ * @return if the arguments are equal
+ */
+template <>
+bool std::operator==<stan::math::var>(const std::complex<stan::math::var>& lhs,
+                                      const stan::math::var& rhs) {
+  return lhs.real() == rhs && lhs.imag() == 0;
+}
+
+/**
+ * Return true if the respective parts of the two arguments are equal
+ * and false otherwise.
+ *
+ * @param[in] lhs first scalar argument
+ * @parma[in] rhs second complex argument
+ * @return if the arguments are equal
+ */
+template <>
+bool std::operator==<stan::math::var>(
+    const stan::math::var& lhs, const std::complex<stan::math::var>& rhs) {
+  return lhs == rhs.real() && 0 == rhs.imag();
+}
+
+/**
+ * Return true if the respective parts of the two arguments are not
+ * equal and false otherwise.
+ *
+ * @param[in] lhs first complex argument
+ * @parma[in] rhs second complex argument
+ * @return if the arguments are not equal
+ */
+template <>
+bool std::operator!=<stan::math::var>(
+    const std::complex<stan::math::var>& lhs,
+    const std::complex<stan::math::var>& rhs) {
+  return !(lhs.real() == rhs.real() && lhs.imag() == rhs.imag());
+}
+
+/**
+ * Return true if the respective parts of the two arguments are not
+ * equal and false otherwise.
+ *
+ * @param[in] lhs first complex argument
+ * @parma[in] rhs second scalar argument
+ * @return if the arguments are not equal
+ */
+template <>
+bool std::operator!=<stan::math::var>(const std::complex<stan::math::var>& lhs,
+                                      const stan::math::var& rhs) {
+  return !(lhs.real() == rhs && lhs.imag() == 0);
+}
+
+/**
+ * Return true if the respective parts of the two arguments are not
+ * equal and false otherwise.
+ *
+ * @param[in] lhs first scalar argument
+ * @parma[in] rhs second complex argument
+ * @return if the arguments are not equal
+ */
+template <>
+bool std::operator!=<stan::math::var>(
+    const stan::math::var& lhs, const std::complex<stan::math::var>& rhs) {
+  return !(lhs == rhs.real() && 0 == rhs.imag());
+}
 
 // // (1)
 // template<class CharT, class Traits>
@@ -543,14 +592,14 @@ std::complex<stan::math::var> std::operator/(
 // template <>
 // stan::math::var real<stan::math::var>(const std::complex<stan::math::var>& z)
 // {
-//   return z.re_;
+//   return z.real();
 // }
 
 // // (1)
 // template <>
 // stan::math::var imag<stan::math::var>(const std::complex<stan::math::var>& z)
 // {
-//   return z.im_;
+//   return z.imag();
 // }
 
 // // (1)
@@ -580,7 +629,7 @@ std::complex<stan::math::var> std::operator/(
 // template <>
 // std::complex<stan::math::var> conj<stan::math::var>(
 //     const std::complex<stan::math::var>& z) {
-//   return {z.re_, -z.im_};
+//   return {z.real(), -z.imag()};
 // }
 
 // // (1)
@@ -589,9 +638,9 @@ std::complex<stan::math::var> std::operator/(
 //     const std::complex<stan::math::var>& z) {
 //   using std::isinf;
 //   using std::copysign;
-//   if (isinf(z.re_) || isinf(z.im_)) {
+//   if (isinf(z.real()) || isinf(z.imag())) {
 //     return { std::numeric_limits<stan::math::var>::infinity(),
-//           copysign(0.0, z.im_) };  // (magnitude, sign)
+//           copysign(0.0, z.imag()) };  // (magnitude, sign)
 //   }
 //   return z;
 // }
@@ -615,8 +664,8 @@ std::complex<stan::math::var> std::operator/(
 // std::complex<stan::math::var> exp<stan::math::var>(
 //     const std::complex<stan::math::var>& z) {
 //   using std::exp;
-//   stan::math::var exp_re = exp(z.re_);
-//   return {exp_re * cos(z.im_), exp_re * sin(z.im_)};
+//   stan::math::var exp_re = exp(z.real());
+//   return {exp_re * cos(z.imag()), exp_re * sin(z.imag())};
 // }
 
 // // (1)
@@ -697,9 +746,9 @@ std::complex<stan::math::var> std::operator/(
 //     const std::complex<stan::math::var>& z) {
 //   using stan::math::sqrt;
 //   using stan::math::hypot;
-//   stan::math::var hypt = hypot(z.re_, z.im_);
+//   stan::math::var hypt = hypot(z.real(), z.imag());
 //   stan::math::var sqrt_hypot = sqrt(hypt);
-//   stan::math::var half_atan2_z = 0.5 * atan2(z.re_, z.im_);
+//   stan::math::var half_atan2_z = 0.5 * atan2(z.real(), z.imag());
 //   return { sqrt_hypot * cos(half_atan2_z),
 //         sqrt_hypot * sin(half_atan2_z) }
 // }
