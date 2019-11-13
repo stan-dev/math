@@ -27,7 +27,7 @@ namespace math {
    * an approximation of the log marginal density, p(y | phi).
    * This is done by marginalizing out theta, using a Laplace
    * approxmation. The latter is obtained by finding the mode,
-   * using a custom Newton method, and the Hessian of the likelihood.
+   * via Newton's method, and computing the Hessian of the likelihood.
    *
    * The convergence criterion for the Newton is a small change in
    * log marginal density. The user controls the tolerance (i.e.
@@ -44,12 +44,14 @@ namespace math {
    *
    * @tparam D structure type for the likelihood object.
    * @tparam K structure type for the covariance object.
-   * @param[in] theta_0 the initial guess for the mode.
-   * @param[in] phi the global parameter (input for the covariance function).
-   * @param[in] x variance data (input for the covariance function).
    * @param[in] D structure to compute and differentiate the log likelihood.
-   *            The object stores the sufficient stats for the observations.
    * @param[in] K structure to compute the covariance function.
+   * @param[in] phi the global parameter (input for the covariance function).
+   * @param[in] x fixed spatial data (input for the covariance function).
+   * @param[in] delta additional fixed real data (input for covariance
+   *            function).
+   * @param[in] delta_int additional fixed integer data (input for covariance
+   *            function).
    * @param[in, out] covariance the evaluated covariance function for the
    *                 latent gaussian variable.
    * @param[in, out] theta a vector to store the mode.
@@ -58,31 +60,33 @@ namespace math {
    * @param[in, out] L cholesky decomposition of stabilized inverse covariance.
    * @param[in, out] a element in the Newton step
    * @param[in, out] l_grad the log density of the likelihood.
+   * @param[in] theta_0 the initial guess for the mode.
    * @param[in] tolerance the convergence criterion for the Newton solver.
    * @param[in] max_num_steps maximum number of steps for the Newton solver.
    * @return the log marginal density, p(y | phi).
    */
   template <typename D, typename K>
   double
-  laplace_marginal_density (const Eigen::VectorXd& theta_0,
+  laplace_marginal_density (const D& diff_likelihood,
+                            const K& covariance_function,
                             const Eigen::VectorXd& phi,
                             const std::vector<Eigen::VectorXd>& x,
-                            const D& diff_likelihood,
-                            const K& covariance_function,
+                            const std::vector<double>& delta,
+                            const std::vector<int>& delta_int,
                             Eigen::MatrixXd& covariance,
                             Eigen::VectorXd& theta,
                             Eigen::VectorXd& W_root,
                             Eigen::MatrixXd& L,
                             Eigen::VectorXd& a,
                             Eigen::VectorXd& l_grad,
+                            const Eigen::VectorXd& theta_0,
                             double tolerance = 1e-6,
                             long int max_num_steps = 100) {
     using Eigen::MatrixXd;
     using Eigen::VectorXd;
 
-    int group_size = theta_0.size();
-    // MatrixXd covariance = covariance_function(phi, x, group_size);
-    covariance = covariance_function(phi, x, group_size);
+    int group_size = theta_0.size();  // CHECK -- do we ever need this?
+    covariance = covariance_function(phi, x, delta, delta_int, group_size);
     // CHECK -- should we compute the derivatives here too?
     theta = theta_0;
     double objective_old = - 1e+10;  // CHECK -- what value to use?
@@ -138,37 +142,44 @@ namespace math {
    * threshold under which change is deemed small enough) and
    * maximum number of steps.
    *
-   * Wrapper for when the global parameter is passed as a double..
+   * Wrapper for when the global parameter is passed as a double.
    *
    * @tparam T type of the initial guess.
    * @tparam D structure type for the likelihood object.
    * @tparam K structure type for the covariance object.
-   * @param[in] theta_0 the initial guess for the mode.
-   * @param[in] phi the global parameter (input for the covariance function).
-   * @param[in] x data for the covariance function.
    * @param[in] D structure to compute and differentiate the log likelihood.
    *            The object stores the sufficient stats for the observations.
    * @param[in] K structure to compute the covariance function.
+   * @param[in] phi the global parameter (input for the covariance function).
+   * @param[in] x data for the covariance function.
+   * @param[in] delta additional fixed real data (input for covariance
+   *            function).
+   * @param[in] delta_int additional fixed integer data (input for covariance
+   *            function).
+   * @param[in] theta_0 the initial guess for the mode.
    * @param[in] tolerance the convergence criterion for the Newton solver.
    * @param[in] max_num_steps maximum number of steps for the Newton solver.
    * @return the log maginal density, p(y | phi).
    */
   template <typename T, typename D, typename K>
   double
-  laplace_marginal_density (const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta_0,
+  laplace_marginal_density (const D& diff_likelihood,
+                            const K& covariance_function,
                             const Eigen::VectorXd& phi,
                             const std::vector<Eigen::VectorXd>& x,
-                            const D& diff_likelihood,
-                            const K& covariance_function,
+                            const std::vector<double>& delta,
+                            const std::vector<int>& delta_int,
+                            const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta_0,
                             double tolerance = 1e-6,
                             long int max_num_steps = 100) {
     Eigen::VectorXd theta, W_root, a, l_grad;
     Eigen::MatrixXd L, covariance;
-    return laplace_marginal_density(value_of(theta_0), phi, x,
-              diff_likelihood, covariance_function,
-              covariance,
-              theta, W_root, L, a, l_grad,
-              tolerance, max_num_steps);
+    return laplace_marginal_density(diff_likelihood, covariance_function,
+                                    phi, x, delta, delta_int,
+                                    covariance,
+                                    theta, W_root, L, a, l_grad,
+                                    value_of(theta_0),
+                                    tolerance, max_num_steps);
   }
 
   /**
@@ -183,21 +194,28 @@ namespace math {
   struct covariance_sensitivities {
     /* input data for the covariance function. */
     std::vector<Eigen::VectorXd> x_;
+    /* additional fixed real variable */
+    std::vector<double> delta_;
+    /* additional fixed integer variable */
+    std::vector<int> delta_int_;
     /* number of latent variables. */
     int theta_size_;
     /* structure to compute the covariance function. */
     K covariance_function_;
     
     covariance_sensitivities (const std::vector<Eigen::VectorXd>& x,
+                              const std::vector<double>& delta,
+                              const std::vector<int>& delta_int,
                               int theta_size,
                               const K& covariance_function) :
-    x_(x), theta_size_(theta_size),
+    x_(x), delta_(delta), delta_int_(delta_int), theta_size_(theta_size),
     covariance_function_(covariance_function) { }
 
     template <typename T>
     Eigen::Matrix<T, Eigen::Dynamic, 1>
     operator() (const Eigen::Matrix<T, Eigen::Dynamic, 1>& phi) const {
-      return to_vector(covariance_function_(phi, x_, theta_size_));
+      return to_vector(covariance_function_(phi, x_, delta_,
+                                            delta_int_, theta_size_));
     }
   };
 
@@ -226,11 +244,14 @@ namespace math {
 
     template <typename T, typename K, typename D>
     laplace_marginal_density_vari
-      (double marginal_density,
+      (const D& diff_likelihood,
+       const K& covariance_function,
        const Eigen::Matrix<T, Eigen::Dynamic, 1>& phi,
        const std::vector<Eigen::VectorXd>& x,
-       const D& diff_likelihood,
-       const K& covariance_function,
+       const std::vector<double>& delta,
+       const std::vector<int>& delta_int,
+       double marginal_density,
+       const Eigen::MatrixXd& covariance,
        const Eigen::VectorXd& theta,
        const Eigen::VectorXd& W_root,
        const Eigen::MatrixXd& L,
@@ -240,7 +261,6 @@ namespace math {
         phi_size_(phi.size()),
         phi_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
 	        phi.size())),
-        // theta_size_(theta.size()),
         marginal_density_(
           ChainableStack::instance_->memalloc_.alloc_array<vari*>(1)) {
       int theta_size = theta.size();
@@ -251,13 +271,13 @@ namespace math {
       marginal_density_[0] = new vari(marginal_density, false);
 
       // compute derivatives of covariance matrix with respect to phi.
-      covariance_sensitivities<K> f(x, theta_size, covariance_function);
+      covariance_sensitivities<K> f(x, delta, delta_int, theta_size,
+                                    covariance_function);
       Eigen::MatrixXd diff_cov;
-      Eigen::MatrixXd covariance;
       {
         Eigen::VectorXd covariance_vector;
         jacobian_fwd(f, value_of(phi), covariance_vector, diff_cov);
-        covariance = to_matrix(covariance_vector, theta_size, theta_size);
+        // covariance = to_matrix(covariance_vector, theta_size, theta_size);
       }
 
       // Now compute the full gradient (using algorithm 5.1 of R & W)
@@ -316,46 +336,50 @@ namespace math {
    * @tparam T1 type of the global parameters.
    * @tparam D structure type for the likelihood object.
    * @tparam K structure type for the covariance object.
-   * @param[in] theta_0 the initial guess for the mode.
-   * @param[in] phi the global parameter (input for the covariance function).
-   * @param[in] x data for the covariance function.
    * @param[in] D structure to compute and differentiate the log likelihood.
    *            The object stores the sufficient stats for the observations.
-   * @param[in] K structure to compute the covariance function.
+   * @param[in] K structure to compute the covariance function.        
+   * @param[in] phi the global parameter (input for the covariance function).
+   * @param[in] x data for the covariance function.
+   * @param[in] delta addition real data for covariance function.
+   * @param[in] delta_int additional interger data for covariance function.
+   * @param[in] theta_0 the initial guess for the mode.
    * @param[in] tolerance the convergence criterion for the Newton solver.
    * @param[in] max_num_steps maximum number of steps for the Newton solver.
    * @return the log maginal density, p(y | phi).
    */
   template <typename T0, typename T1, typename D, typename K>
   T1 laplace_marginal_density
-      (const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,
+      (const D& diff_likelihood,
+       const K& covariance_function,
        const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,
        const std::vector<Eigen::VectorXd>& x,
-       const D& diff_likelihood,
-       const K& covariance_function,
+       const std::vector<double>& delta,
+       const std::vector<int>& delta_int,
+       const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,
        double tolerance = 1e-6,
        long int max_num_steps = 100) {
     Eigen::VectorXd theta, W_root, a, l_grad;
     Eigen::MatrixXd L;
     double marginal_density_dbl;
+    Eigen::MatrixXd covariance;
 
-    {
-      Eigen::MatrixXd covariance;  // temporary place holder.
-      marginal_density_dbl
-        = laplace_marginal_density(value_of(theta_0),
-                                   value_of(phi),
-                                   x, diff_likelihood,
-                                   covariance_function,
-                                   covariance,
-                                   theta, W_root, L, a, l_grad,
-                                   tolerance, max_num_steps);
-    }
+    marginal_density_dbl
+      = laplace_marginal_density(diff_likelihood,
+                                 covariance_function,
+                                 value_of(phi), x, delta, delta_int,
+                                 covariance,
+                                 theta, W_root, L, a, l_grad,
+                                 value_of(theta_0),
+                                 tolerance, max_num_steps);
 
     // construct vari
     laplace_marginal_density_vari* vi0
-      = new laplace_marginal_density_vari(marginal_density_dbl,
-                                          phi, x, diff_likelihood,
+      = new laplace_marginal_density_vari(diff_likelihood,
                                           covariance_function,
+                                          phi, x, delta, delta_int,
+                                          marginal_density_dbl,
+                                          covariance,
                                           theta, W_root, L, a, l_grad);
 
     var marginal_density = var(vi0->marginal_density_[0]);
