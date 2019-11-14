@@ -164,5 +164,18 @@ TEST(laplace, logistic_lgm_dim500) {
   // total time: 0.147897
   
   // TO DO -- get total time from GPStuff and do more comparisons.
-}
+  
+  // CASE 3: use wrapper function and compare result.
+  using stan::math::laplace_marginal_bernoulli;
+  using stan::math::value_of;
 
+  start_optimization = std::chrono::system_clock::now();
+  double marginal_density_v2
+    = laplace_marginal_bernoulli(y, n_samples,
+                                 phi, x, delta, delta_int,
+                                 theta_0, 1e-3, 100);
+  end_optimization = std::chrono::system_clock::now();
+  elapsed_time_optimization = end_optimization - start_optimization;
+  
+  EXPECT_FLOAT_EQ(marginal_density, marginal_density_v2);
+}
