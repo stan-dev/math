@@ -132,7 +132,7 @@ TEST(laplace, logistic_lgm_dim500) {
   // Expected output
   // density: -195.368
   // time: 0.059645
-  
+
   // CASE 2: phi is passed as a var
   Eigen::Matrix<var, Eigen::Dynamic, 1> phi_v2 = phi;
 
@@ -150,32 +150,37 @@ TEST(laplace, logistic_lgm_dim500) {
 
   end_optimization = std::chrono::system_clock::now();
   elapsed_time_optimization = end_optimization - start_optimization;
-  
+
   std::cout << "LAPLACE MARGINAL AND VARI CLASS" << std::endl
             << "density: " << value_of(marginal_density_v) << std::endl
             << "autodiff grad: " << g2[0] << " " << g2[1]
             << std::endl
             << "total time: " << elapsed_time_optimization.count()
             << std::endl << std::endl;
-  
+
   // EXPECTED
   // density: -195.368
   // autodiff grad: 21.9495 -32.5123
   // total time: 0.147897
-  
+
   // TO DO -- get total time from GPStuff and do more comparisons.
-  
+
   // CASE 3: use wrapper function and compare result.
   using stan::math::laplace_marginal_bernoulli;
   using stan::math::value_of;
 
-  start_optimization = std::chrono::system_clock::now();
   double marginal_density_v2
     = laplace_marginal_bernoulli(y, n_samples,
                                  phi, x, delta, delta_int,
                                  theta_0, 1e-3, 100);
-  end_optimization = std::chrono::system_clock::now();
-  elapsed_time_optimization = end_optimization - start_optimization;
-  
+
+  EXPECT_FLOAT_EQ(marginal_density, marginal_density_v2);
+
+  marginal_density_v2
+    = laplace_marginal_bernoulli(y, n_samples,
+                                 sqr_exp_kernel_functor(),
+                                 phi, x, delta, delta_int,
+                                 theta_0, 1e-3, 100);
+
   EXPECT_FLOAT_EQ(marginal_density, marginal_density_v2);
 }
