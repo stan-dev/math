@@ -97,7 +97,7 @@ TEST(laplace, poisson_lgm_dim2) {
 
   squared_kernel_functor K;
   // var target = laplace_marginal_poisson(theta_0, phi, x, n_samples, sums);
-  var target = laplace_marginal_poisson(n_samples, sums, phi, x, delta,
+  var target = laplace_marginal_poisson(sums, n_samples, phi, x, delta,
                                         delta_int, theta_0);
 
   // Test with exposure argument
@@ -122,20 +122,20 @@ TEST(laplace, poisson_lgm_dim2) {
   phi_2l(1) -= diff;
   phi_2u(1) += diff;
 
-  double target_1u = laplace_marginal_poisson(n_samples, sums, phi_1u, x,
+  double target_1u = laplace_marginal_poisson(sums, n_samples, phi_1u, x,
                                               delta,  delta_int, theta_0),
-         target_1l = laplace_marginal_poisson(n_samples, sums, phi_1l, x,
+         target_1l = laplace_marginal_poisson(sums, n_samples, phi_1l, x,
                                               delta,  delta_int, theta_0),
-         target_2u = laplace_marginal_poisson(n_samples, sums, phi_2u, x,
+         target_2u = laplace_marginal_poisson(sums, n_samples, phi_2u, x,
                                               delta,  delta_int, theta_0),
-         target_2l = laplace_marginal_poisson(n_samples, sums, phi_2l, x,
+         target_2l = laplace_marginal_poisson(sums, n_samples, phi_2l, x,
                                               delta,  delta_int, theta_0);
 
   VEC g_finite(dim_phi);
   g_finite[0] = (target_1u - target_1l) / (2 * diff);
   g_finite[1] = (target_2u - target_2l) / (2 * diff);
 
-  double tol = 8e-3;  // CHECK -- is this large or ok? About 2% error
+  double tol = 1.1e-4;
   EXPECT_NEAR(g_finite[0], g[0], tol);
   EXPECT_NEAR(g_finite[1], g[1], tol);
 }

@@ -47,6 +47,9 @@ TEST(laplace, disease_map_dim_911) {
   // one observation per group
   std::vector<int> n_samples(dim_theta);
   for (int i = 0; i < dim_theta; i++) n_samples[i] = 1;
+  
+  std::vector<double> delta;
+  std::vector<int> delta_int;
 
   Eigen::VectorXd theta_0 = Eigen::VectorXd::Zero(dim_theta);
   int dim_phi = 2;
@@ -55,8 +58,9 @@ TEST(laplace, disease_map_dim_911) {
 
   auto start = std::chrono::system_clock::now();
 
-  var marginal_density = laplace_marginal_poisson(theta_0, phi, x,
-                                                  n_samples, y, ye);
+  var marginal_density
+    = laplace_marginal_poisson(y, n_samples, ye, phi, x, delta, delta_int,
+                               theta_0);
 
   auto end = std::chrono::system_clock::now();
   std::chrono::duration<double> elapsed_time = end - start;
@@ -71,26 +75,35 @@ TEST(laplace, disease_map_dim_911) {
             << "total time: " << elapsed_time.count() << std::endl
             << std::endl;
   
+  // Expected result
+  // density: -2866.88
+  // autodiff grad: 266.501 -0.425901
+  // total time: 0.627501
+  
   ////////////////////////////////////////////////////////////////////////
   // Let's now generate a sample theta from the estimated posterior
   using stan::math::diff_poisson_log;
   using stan::math::to_vector;
   using stan::math::sqr_exp_kernel_functor;
-  
+
   diff_poisson_log diff_likelihood(to_vector(n_samples),
                                    to_vector(y),
                                    stan::math::log(ye));
   boost::random::mt19937 rng;
   start = std::chrono::system_clock::now();
   Eigen::VectorXd
-    theta_pred = laplace_approx_rng(theta_0, phi, x,
-                                    diff_likelihood,
+    theta_pred = laplace_approx_rng(diff_likelihood,
                                     sqr_exp_kernel_functor(),
-                                    rng);
+                                    phi, x, delta, delta_int,
+                                    theta_0, rng);
+
   end = std::chrono::system_clock::now();
   elapsed_time = end - start;
-  
+
   std::cout << "LAPLACE_APPROX_RNG" << std::endl
             << "total time: " << elapsed_time.count() << std::endl
             << std::endl;
+  
+  // Expected result
+  // total time: 0.404114
 }

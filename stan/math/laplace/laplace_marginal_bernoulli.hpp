@@ -33,19 +33,22 @@ namespace math {
    *            breaks and returns an error.
    */
   template <typename T0, typename T1>
-  T1 laplace_marginal_bernoulli 
-               (const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,
+  T1 laplace_marginal_bernoulli
+               (const std::vector<int>& y,
+                const std::vector<int>& n_samples,
+                // const K& covariance function,
                 const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,
                 const std::vector<Eigen::VectorXd>& x,
-                const std::vector<int>& n_samples,
-                const std::vector<int>& y,
-                // const K& covariance_function,
+                const std::vector<double>& delta,
+                const std::vector<int>& delta_int,
+                const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,
                 double tolerance = 1e-6,
                 long int max_num_steps = 100) {
-    return laplace_marginal_density(theta_0, phi, x,
-       diff_logistic_log(to_vector(n_samples), to_vector(y)),
-       sqr_exp_kernel_functor(),
-       tolerance, max_num_steps);
+    return laplace_marginal_density(
+      diff_logistic_log(to_vector(n_samples), to_vector(y)),
+      sqr_exp_kernel_functor(),
+      phi, x, delta, delta_int,
+      theta_0, tolerance, max_num_steps);
   }
 
 }  // namespace math

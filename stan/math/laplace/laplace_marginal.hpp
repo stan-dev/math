@@ -208,6 +208,7 @@ namespace math {
                               const std::vector<int>& delta_int,
                               int theta_size,
                               const K& covariance_function) :
+    // TO DO -- make covariance function the first argument
     x_(x), delta_(delta), delta_int_(delta_int), theta_size_(theta_size),
     covariance_function_(covariance_function) { }
 
@@ -281,7 +282,7 @@ namespace math {
       }
 
       // Now compute the full gradient (using algorithm 5.1 of R & W)
-      // Check: is there an efficient way to solve / divide a diagonal matrix?
+      // CHECK: is there an efficient way to solve / divide a diagonal matrix?
       Eigen::MatrixXd Z;
       {
         Eigen::MatrixXd W_root_diag = W_root.asDiagonal();

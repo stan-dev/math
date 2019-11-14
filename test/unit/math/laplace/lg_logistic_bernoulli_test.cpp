@@ -100,10 +100,18 @@ TEST(laplace, lg_logistic_solver_dim_2) {
   /////////////////////////////////////////////////////////////////////////////
   // Use laplace_marginal function.
   Eigen::Matrix<var, Eigen::Dynamic, 1> phi_v2 = phi;
+  std::vector<double> delta;
+  std::vector<int> delta_int;
 
-  var target_laplace = laplace_marginal_density(theta, phi_v2, x,
+  var target_laplace = laplace_marginal_density(
     diff_logistic_log(to_vector(n_samples), to_vector(sums)),
-    squared_kernel_functor(), 1e-3, 100);
+    squared_kernel_functor(),
+    phi_v2, x, delta, delta_int,
+    theta, 1e-3, 100);
+
+  // var target_laplace = laplace_marginal_density(theta, phi_v2, x,
+  //   diff_logistic_log(to_vector(n_samples), to_vector(sums)),
+  //   squared_kernel_functor(), 1e-3, 100);
 
   VEC g2;
   AVEC parm_vec2 = createAVEC(phi_v2(0), phi_v2(1));
@@ -120,14 +128,18 @@ TEST(laplace, lg_logistic_solver_dim_2) {
   phi_1u(0) = phi(0) + diff;
   
   double
-  target_1u = laplace_marginal_density(theta, phi_1u, x,
+  target_1u = laplace_marginal_density(
                  diff_logistic_log(to_vector(n_samples), to_vector(sums)),
-                 squared_kernel_functor(), 1e-3, 100);
+                 squared_kernel_functor(),
+                 phi_1u, x, delta, delta_int,
+                 theta, 1e-3, 100);
 
   double
-  target_1l = laplace_marginal_density(theta, phi_1l, x,
-                 diff_logistic_log(to_vector(n_samples), to_vector(sums)),
-                 squared_kernel_functor(), 1e-3, 100);
+  target_1l = laplace_marginal_density(
+                diff_logistic_log(to_vector(n_samples), to_vector(sums)),
+                squared_kernel_functor(),
+                phi_1l, x, delta, delta_int,
+                theta, 1e-3, 100);
 
   Eigen::VectorXd phi_2l = phi;
   Eigen::VectorXd phi_2u = phi;
@@ -135,14 +147,18 @@ TEST(laplace, lg_logistic_solver_dim_2) {
   phi_2u(1) = phi(1) + diff;
 
   double
-  target_2u = laplace_marginal_density(theta, phi_2u, x,
-                 diff_logistic_log(to_vector(n_samples), to_vector(sums)),
-                 squared_kernel_functor(), 1e-3, 100);
+  target_2u = laplace_marginal_density(
+    diff_logistic_log(to_vector(n_samples), to_vector(sums)),
+    squared_kernel_functor(),
+    phi_2u, x, delta, delta_int,
+    theta, 1e-3, 100);;
 
   double
-  target_2l = laplace_marginal_density(theta, phi_2l, x,
-                 diff_logistic_log(to_vector(n_samples), to_vector(sums)),
-                 squared_kernel_functor(), 1e-3, 100);
+  target_2l = laplace_marginal_density(
+    diff_logistic_log(to_vector(n_samples), to_vector(sums)),
+    squared_kernel_functor(),
+    phi_2l, x, delta, delta_int,
+    theta, 1e-3, 100);
 
   VEC g3(2);
   g3[0] = (target_1u - target_1l) / (2 * diff);
@@ -219,6 +235,7 @@ TEST(laplace, likelihood_differentiation) {
   EXPECT_NEAR(diff_hess_2, third_tensor(1), test_tolerance);
 }
 
+/*
 TEST(laplace, lg_logistic_solver_dim_500) {
   using stan::math::var;
   using stan::math::lg_logistic_solver;
@@ -349,16 +366,20 @@ TEST(laplace, lg_logistic_solver_dim_500) {
   using stan::math::laplace_marginal_density;
 
   Eigen::VectorXd theta_laplace, W_root, a, l_grad;
-  Eigen::MatrixXd L;
+  Eigen::MatrixXd L, covariance;
+  std::vector<double> delta;
+  std::vector<int> delta_int;
 
   start_optimization = std::chrono::system_clock::now();
 
   double marginal_density
-    = laplace_marginal_density(theta_0, phi, x,
-          diff_logistic_log(to_vector(n_samples), to_vector(y)),
-          squared_kernel_functor(),
-          theta_laplace, W_root, L, a, l_grad,
-          1e-3, 100);
+    = laplace_marginal_density(
+        diff_logistic_log(to_vector(n_samples), to_vector(y)),
+        squared_kernel_functor(),
+        phi, x, delta, delta_int,
+        covariance, theta_laplace, W_root, L, a, l_grad,
+        theta_0, 1e-3, 100
+    );
 
   end_optimization = std::chrono::system_clock::now();
   elapsed_time_optimization = end_optimization - start_optimization;
@@ -461,4 +482,4 @@ TEST(laplace, lg_logistic_solver_dim_500) {
   // std::cout << "density: " << value_of(marginal_density_v2) << std::endl
   //           << "time: " << elapsed_time_optimization.count()
   //           << std::endl;
-}
+}  */

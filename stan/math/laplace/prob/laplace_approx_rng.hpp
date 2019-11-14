@@ -20,11 +20,13 @@ namespace math {
 template <typename T0, typename T1, typename D, typename K, class RNG>
 inline Eigen::VectorXd  // CHECK -- right return type
 laplace_approx_rng
-  (const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,
+  (const D& diff_likelihood,
+   const K& covariance_function,
    const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,
    const std::vector<Eigen::VectorXd>& x,
-   const D& diff_likelihood,
-   const K& covariance_function,
+   const std::vector<double>& delta,
+   const std::vector<int>& delta_int,
+   const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,
    RNG& rng,
    double tolerance = 1e-6,
    long int max_num_steps = 100) {
@@ -36,23 +38,23 @@ laplace_approx_rng
     Eigen::VectorXd a;
     Eigen::VectorXd l_grad;
     double marginal_density
-      = laplace_marginal_density(value_of(theta_0),
-          value_of(phi), x,
-          diff_likelihood,
-          covariance_function,
-          covariance, theta, W_root, L, a, l_grad,
-          tolerance, max_num_steps);
+      = laplace_marginal_density(diff_likelihood, covariance_function,
+                                 value_of(phi), x, delta, delta_int,
+                                 covariance, theta, W_root, L, a, l_grad,
+                                 value_of(theta_0), tolerance, max_num_steps);
   }
 
   // Modified R&W method
   Eigen::VectorXd W_root_inv = inv(W_root);
   Eigen::MatrixXd V_dec = mdivide_left_tri<Eigen::Lower>(L,
                             diag_matrix(W_root_inv));
+  
+  // CHECK --  test that this works!!
   return multi_normal_rng(
     theta,
-    diag_matrix(square(W_root_inv)) - - V_dec.transpose() * V_dec,
+    diag_matrix(square(W_root_inv)) - V_dec.transpose() * V_dec,
     rng);
-  
+
   // CHECK -- which method to use? Both seem equivalent.
   // R&W method
   // Eigen::MatrixXd V;
