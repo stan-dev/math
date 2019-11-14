@@ -61,14 +61,15 @@ return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
   const size_t N = x.rows();
   const size_t M = x.cols();
 
-  check_nonnegative(function, "Vector of dependent variables", y);
   check_consistent_size(function, "Vector of dependent variables", y, N);
   check_consistent_size(function, "Weight vector", beta, M);
   if (is_vector<T_alpha>::value) {
     check_consistent_sizes(function, "Vector of intercepts", alpha,
                            "Vector of dependent variables", y);
   }
-  if (size_zero(y, x, beta)) {
+  check_nonnegative(function, "Vector of dependent variables", y);
+
+  if (size_zero(y)) {
     return 0;
   }
 
@@ -110,8 +111,8 @@ return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
                 - exp(theta.array()));
   }
 
-  // Compute the necessary derivatives.
   operands_and_partials<T_x, T_alpha, T_beta> ops_partials(x, alpha, beta);
+  // Compute the necessary derivatives.
   if (!is_constant_all<T_beta>::value) {
     ops_partials.edge3_.partials_ = x_val.transpose() * theta_derivative;
   }

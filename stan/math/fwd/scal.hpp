@@ -52,6 +52,7 @@
 #include <stan/math/fwd/scal/fun/is_inf.hpp>
 #include <stan/math/fwd/scal/fun/is_nan.hpp>
 #include <stan/math/fwd/scal/fun/lbeta.hpp>
+#include <stan/math/fwd/scal/fun/ldexp.hpp>
 #include <stan/math/fwd/scal/fun/lgamma.hpp>
 #include <stan/math/fwd/scal/fun/lmgamma.hpp>
 #include <stan/math/fwd/scal/fun/log.hpp>
