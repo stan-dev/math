@@ -28,6 +28,7 @@ laplace_approx_rng
    const std::vector<int>& delta_int,
    const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,
    RNG& rng,
+   std::ostream* msgs = nullptr,
    double tolerance = 1e-6,
    long int max_num_steps = 100) {
   Eigen::VectorXd theta;
@@ -41,14 +42,15 @@ laplace_approx_rng
       = laplace_marginal_density(diff_likelihood, covariance_function,
                                  value_of(phi), x, delta, delta_int,
                                  covariance, theta, W_root, L, a, l_grad,
-                                 value_of(theta_0), tolerance, max_num_steps);
+                                 value_of(theta_0), msgs,
+                                 tolerance, max_num_steps);
   }
 
   // Modified R&W method
   Eigen::VectorXd W_root_inv = inv(W_root);
   Eigen::MatrixXd V_dec = mdivide_left_tri<Eigen::Lower>(L,
                             diag_matrix(W_root_inv));
-  
+
   // CHECK --  test that this works!!
   return multi_normal_rng(
     theta,
