@@ -1,8 +1,6 @@
 #ifndef STAN_MATH_REV_CORE_STD_COMPLEX_HPP
 #define STAN_MATH_REV_CORE_STD_COMPLEX_HPP
 
-// doesn't need namespace std
-
 #include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
@@ -10,10 +8,13 @@
 #include <stan/math/rev/scal/fun/atan2.hpp>
 #include <stan/math/rev/scal/fun/cos.hpp>
 #include <stan/math/rev/scal/fun/exp.hpp>
+#include <stan/math/rev/scal/fun/log.hpp>
 #include <stan/math/rev/scal/fun/sin.hpp>
+#include <stan/math/rev/scal/fun/sqrt.hpp>
 #include <stan/math/rev/scal/fun/hypot.hpp>
 #include <stan/math/rev/scal/fun/is_inf.hpp>
 #include <stan/math/rev/scal/fun/is_nan.hpp>
+#include <stan/math/rev/scal/fun/sqrt.hpp>
 #include <stan/math/rev/scal/fun/square.hpp>
 #include <cmath>
 #include <complex>
@@ -22,12 +23,14 @@
 
 #include <iostream>
 
+namespace std {
+
 /**
  * Specialization of the standard libary complex number type for
  * reverse-mode autodiff type `stan::math::var`.
  */
 template <>
-class std::complex<stan::math::var> {
+class complex<stan::math::var> {
   stan::math::var re_;
   stan::math::var im_;
 
@@ -52,8 +55,8 @@ class std::complex<stan::math::var> {
    *
    * @param[in] other another complex to use as source
    */
-  complex(const std::complex<stan::math::var>& other)
-      : re_(other.re_), im_(other.im_) {}
+  complex(const complex<stan::math::var>& other)
+      : re_(other.real()), im_(other.imag()) {}
 
   /**
    * Constructs the complex number from the specified complex number
@@ -62,8 +65,7 @@ class std::complex<stan::math::var> {
    * @param[in] other another complex to use as source
    */
   template <typename T>
-  complex(const std::complex<T>& other)
-      : re_(other.real()), im_(other.imag()) {}
+  complex(const complex<T>& other) : re_(other.real()), im_(other.imag()) {}
 
   /**
    * Destroy this complex number.
@@ -193,7 +195,7 @@ class std::complex<stan::math::var> {
    * @return this complex number
    */
   template <typename T>
-  complex<stan::math::var>& operator+=(const std::complex<T>& other) {
+  complex<stan::math::var>& operator+=(const complex<T>& other) {
     re_ += other.real();
     im_ += other.imag();
     return *this;
@@ -206,7 +208,7 @@ class std::complex<stan::math::var> {
    * @return this complex number
    */
   template <typename T>
-  complex<stan::math::var>& operator-=(const std::complex<T>& other) {
+  complex<stan::math::var>& operator-=(const complex<T>& other) {
     re_ -= other.real();
     im_ -= other.imag();
     return *this;
@@ -219,7 +221,7 @@ class std::complex<stan::math::var> {
    * @return this complex number
    */
   template <typename T>
-  complex<stan::math::var>& operator*=(const std::complex<T>& other) {
+  complex<stan::math::var>& operator*=(const complex<T>& other) {
     stan::math::var re_temp = re_ * other.real() - im_ * other.imag();
     im_ = re_ * other.imag() + other.real() * im_;
     re_ = re_temp;
@@ -233,7 +235,7 @@ class std::complex<stan::math::var> {
    * @return this complex number
    */
   template <typename T>
-  complex<stan::math::var>& operator/=(const std::complex<T>& other) {
+  complex<stan::math::var>& operator/=(const complex<T>& other) {
     using stan::math::square;
     stan::math::var sum_sq_im = square(other.real()) + square(other.imag());
     stan::math::var re_temp
@@ -249,16 +251,16 @@ class std::complex<stan::math::var> {
  * the form of typedefs.
  */
 template <>
-struct std::iterator_traits<stan::math::var> {
+struct iterator_traits<stan::math::var> {
   /**
    * Iterator category for traits.
    */
-  typedef std::random_access_iterator_tag iterator_category;
+  typedef random_access_iterator_tag iterator_category;
 
   /**
    * Type for difference between pointers.
    */
-  typedef std::ptrdiff_t difference_type;
+  typedef ptrdiff_t difference_type;
 
   /**
    * Type for value of pointer to values.
@@ -283,8 +285,8 @@ struct std::iterator_traits<stan::math::var> {
  * @return a copy of the argument
  */
 template <>
-std::complex<stan::math::var> std::operator+<stan::math::var>(
-    const std::complex<stan::math::var>& val) {
+complex<stan::math::var> operator+<stan::math::var>(
+    const complex<stan::math::var>& val) {
   return val;
 }
 
@@ -295,9 +297,9 @@ std::complex<stan::math::var> std::operator+<stan::math::var>(
  * @return negated argument
  */
 template <>
-std::complex<stan::math::var> std::operator-<stan::math::var>(
-    const std::complex<stan::math::var>& val) {
-  return std::complex<stan::math::var>(-val.real(), -val.imag());
+complex<stan::math::var> operator-<stan::math::var>(
+    const complex<stan::math::var>& val) {
+  return complex<stan::math::var>(-val.real(), -val.imag());
 }
 
 /**
@@ -308,10 +310,9 @@ std::complex<stan::math::var> std::operator-<stan::math::var>(
  * @return sum of the arguments
  */
 template <>
-std::complex<stan::math::var> std::operator+<stan::math::var>(
-    const std::complex<stan::math::var>& lhs,
-    const std::complex<stan::math::var>& rhs) {
-  std::complex<stan::math::var> y(lhs);
+complex<stan::math::var> operator+<stan::math::var>(
+    const complex<stan::math::var>& lhs, const complex<stan::math::var>& rhs) {
+  complex<stan::math::var> y(lhs);
   y += rhs;
   return y;
 }
@@ -324,9 +325,9 @@ std::complex<stan::math::var> std::operator+<stan::math::var>(
  * @return sum of the arguments
  */
 template <>
-std::complex<stan::math::var> std::operator+<stan::math::var>(
-    const std::complex<stan::math::var>& lhs, const stan::math::var& rhs) {
-  std::complex<stan::math::var> y(lhs);
+complex<stan::math::var> operator+<stan::math::var>(
+    const complex<stan::math::var>& lhs, const stan::math::var& rhs) {
+  complex<stan::math::var> y(lhs);
   y += rhs;
   return y;
 }
@@ -339,9 +340,9 @@ std::complex<stan::math::var> std::operator+<stan::math::var>(
  * @return sum of the arguments
  */
 template <>
-std::complex<stan::math::var> std::operator+<stan::math::var>(
-    const stan::math::var& lhs, const std::complex<stan::math::var>& rhs) {
-  std::complex<stan::math::var> y(lhs);
+complex<stan::math::var> operator+<stan::math::var>(
+    const stan::math::var& lhs, const complex<stan::math::var>& rhs) {
+  complex<stan::math::var> y(lhs);
   y += rhs;
   return y;
 }
@@ -355,10 +356,9 @@ std::complex<stan::math::var> std::operator+<stan::math::var>(
  * @return difference between first and second argument
  */
 template <>
-std::complex<stan::math::var> std::operator-<stan::math::var>(
-    const std::complex<stan::math::var>& lhs,
-    const std::complex<stan::math::var>& rhs) {
-  std::complex<stan::math::var> y(lhs);
+complex<stan::math::var> operator-<stan::math::var>(
+    const complex<stan::math::var>& lhs, const complex<stan::math::var>& rhs) {
+  complex<stan::math::var> y(lhs);
   y -= rhs;
   return y;
 }
@@ -372,9 +372,9 @@ std::complex<stan::math::var> std::operator-<stan::math::var>(
  * @return difference between first and second argument
  */
 template <>
-std::complex<stan::math::var> std::operator-<stan::math::var>(
-    const std::complex<stan::math::var>& lhs, const stan::math::var& rhs) {
-  std::complex<stan::math::var> y(lhs);
+complex<stan::math::var> operator-<stan::math::var>(
+    const complex<stan::math::var>& lhs, const stan::math::var& rhs) {
+  complex<stan::math::var> y(lhs);
   y -= rhs;
   return y;
 }
@@ -388,9 +388,9 @@ std::complex<stan::math::var> std::operator-<stan::math::var>(
  * @return difference between first and second argument
  */
 template <>
-std::complex<stan::math::var> std::operator-<stan::math::var>(
-    const stan::math::var& lhs, const std::complex<stan::math::var>& rhs) {
-  std::complex<stan::math::var> y(lhs);
+complex<stan::math::var> operator-<stan::math::var>(
+    const stan::math::var& lhs, const complex<stan::math::var>& rhs) {
+  complex<stan::math::var> y(lhs);
   y -= rhs;
   return y;
 }
@@ -403,10 +403,9 @@ std::complex<stan::math::var> std::operator-<stan::math::var>(
  * @return product of the first and second argument
  */
 template <>
-std::complex<stan::math::var> std::operator*<stan::math::var>(
-    const std::complex<stan::math::var>& lhs,
-    const std::complex<stan::math::var>& rhs) {
-  std::complex<stan::math::var> y(lhs);
+complex<stan::math::var> operator*<stan::math::var>(
+    const complex<stan::math::var>& lhs, const complex<stan::math::var>& rhs) {
+  complex<stan::math::var> y(lhs);
   y *= rhs;
   return y;
 }
@@ -419,9 +418,9 @@ std::complex<stan::math::var> std::operator*<stan::math::var>(
  * @return product of the first and second argument
  */
 template <>
-std::complex<stan::math::var> std::operator*<stan::math::var>(
-    const std::complex<stan::math::var>& lhs, const stan::math::var& rhs) {
-  std::complex<stan::math::var> y(lhs);
+complex<stan::math::var> operator*<stan::math::var>(
+    const complex<stan::math::var>& lhs, const stan::math::var& rhs) {
+  complex<stan::math::var> y(lhs);
   y *= rhs;
   return y;
 }
@@ -434,9 +433,9 @@ std::complex<stan::math::var> std::operator*<stan::math::var>(
  * @return product of the first and second argument
  */
 template <>
-std::complex<stan::math::var> std::operator*<stan::math::var>(
-    const stan::math::var& lhs, const std::complex<stan::math::var>& rhs) {
-  std::complex<stan::math::var> y(lhs);
+complex<stan::math::var> operator*<stan::math::var>(
+    const stan::math::var& lhs, const complex<stan::math::var>& rhs) {
+  complex<stan::math::var> y(lhs);
   y *= rhs;
   return y;
 }
@@ -449,10 +448,9 @@ std::complex<stan::math::var> std::operator*<stan::math::var>(
  * @return quotient of the first and second argument
  */
 template <>
-std::complex<stan::math::var> std::operator/<stan::math::var>(
-    const std::complex<stan::math::var>& lhs,
-    const std::complex<stan::math::var>& rhs) {
-  std::complex<stan::math::var> y(lhs);
+complex<stan::math::var> operator/<stan::math::var>(
+    const complex<stan::math::var>& lhs, const complex<stan::math::var>& rhs) {
+  complex<stan::math::var> y(lhs);
   y /= rhs;
   return y;
 }
@@ -464,11 +462,10 @@ std::complex<stan::math::var> std::operator/<stan::math::var>(
  * @parma[in] rhs second scalar argument
  * @return quotient of the first and second argument
  */
-
 template <>
-std::complex<stan::math::var> std::operator/<stan::math::var>(
-    const std::complex<stan::math::var>& lhs, const stan::math::var& rhs) {
-  std::complex<stan::math::var> y(lhs);
+complex<stan::math::var> operator/<stan::math::var>(
+    const complex<stan::math::var>& lhs, const stan::math::var& rhs) {
+  complex<stan::math::var> y(lhs);
   y /= rhs;
   return y;
 }
@@ -481,9 +478,9 @@ std::complex<stan::math::var> std::operator/<stan::math::var>(
  * @return quotient of the first and second argument
  */
 template <>
-std::complex<stan::math::var> std::operator/(
-    const stan::math::var& lhs, const std::complex<stan::math::var>& rhs) {
-  std::complex<stan::math::var> y(lhs);
+complex<stan::math::var> operator/(const stan::math::var& lhs,
+                                   const complex<stan::math::var>& rhs) {
+  complex<stan::math::var> y(lhs);
   y /= rhs;
   return y;
 }
@@ -497,9 +494,8 @@ std::complex<stan::math::var> std::operator/(
  * @return if the arguments are equal
  */
 template <>
-bool std::operator==<stan::math::var>(
-    const std::complex<stan::math::var>& lhs,
-    const std::complex<stan::math::var>& rhs) {
+bool operator==<stan::math::var>(const complex<stan::math::var>& lhs,
+                                 const complex<stan::math::var>& rhs) {
   return lhs.real() == rhs.real() && lhs.imag() == rhs.imag();
 }
 
@@ -512,8 +508,8 @@ bool std::operator==<stan::math::var>(
  * @return if the arguments are equal
  */
 template <>
-bool std::operator==<stan::math::var>(const std::complex<stan::math::var>& lhs,
-                                      const stan::math::var& rhs) {
+bool operator==<stan::math::var>(const complex<stan::math::var>& lhs,
+                                 const stan::math::var& rhs) {
   return lhs.real() == rhs && lhs.imag() == 0;
 }
 
@@ -526,8 +522,8 @@ bool std::operator==<stan::math::var>(const std::complex<stan::math::var>& lhs,
  * @return if the arguments are equal
  */
 template <>
-bool std::operator==<stan::math::var>(
-    const stan::math::var& lhs, const std::complex<stan::math::var>& rhs) {
+bool operator==<stan::math::var>(const stan::math::var& lhs,
+                                 const complex<stan::math::var>& rhs) {
   return lhs == rhs.real() && 0 == rhs.imag();
 }
 
@@ -540,9 +536,8 @@ bool std::operator==<stan::math::var>(
  * @return if the arguments are not equal
  */
 template <>
-bool std::operator!=<stan::math::var>(
-    const std::complex<stan::math::var>& lhs,
-    const std::complex<stan::math::var>& rhs) {
+bool operator!=<stan::math::var>(const complex<stan::math::var>& lhs,
+                                 const complex<stan::math::var>& rhs) {
   return !(lhs.real() == rhs.real() && lhs.imag() == rhs.imag());
 }
 
@@ -555,8 +550,8 @@ bool std::operator!=<stan::math::var>(
  * @return if the arguments are not equal
  */
 template <>
-bool std::operator!=<stan::math::var>(const std::complex<stan::math::var>& lhs,
-                                      const stan::math::var& rhs) {
+bool operator!=<stan::math::var>(const complex<stan::math::var>& lhs,
+                                 const stan::math::var& rhs) {
   return !(lhs.real() == rhs && lhs.imag() == 0);
 }
 
@@ -569,10 +564,310 @@ bool std::operator!=<stan::math::var>(const std::complex<stan::math::var>& lhs,
  * @return if the arguments are not equal
  */
 template <>
-bool std::operator!=<stan::math::var>(
-    const stan::math::var& lhs, const std::complex<stan::math::var>& rhs) {
+bool operator!=<stan::math::var>(const stan::math::var& lhs,
+                                 const complex<stan::math::var>& rhs) {
   return !(lhs == rhs.real() && 0 == rhs.imag());
 }
+
+/**
+ * Return the real component of the specified complex number.
+ *
+ * @param[in] z complex argument
+ * @return real component of argment
+ */
+template <>
+stan::math::var real<stan::math::var>(const complex<stan::math::var>& z) {
+  return z.real();
+}
+
+/**
+ * Return the imaginary component of the specified complex number.
+ *
+ * @param[in] z complex argument
+ * @return real component of argment
+ */
+template <>
+stan::math::var imag<stan::math::var>(const complex<stan::math::var>& z) {
+  return z.imag();
+}
+
+/**
+ * Return the magnitude of the specified complex number.
+ *
+ * @param[in] complex argument
+ * @return magnitude of argument
+ */
+template <>
+stan::math::var abs<stan::math::var>(const complex<stan::math::var>& z) {
+  return hypot(real(z), imag(z));
+}
+
+/**
+ * Return the phase angle of the specified complex number.
+ *
+ * @param[in] z complex argument
+ * @return phase angle of argument
+ */
+template <>
+stan::math::var arg<stan::math::var>(const complex<stan::math::var>& z) {
+  return atan2(imag(z), real(z));
+}
+
+/**
+ * Return the squared magnitude of the specified complex number.
+ *
+ * @param[in] z complex argument
+ * @return squared magnitude of argument
+ */
+template <>
+stan::math::var norm<stan::math::var>(const complex<stan::math::var>& z) {
+  using stan::math::square;
+  return square(real(z)) + square(imag(z));
+}
+
+/**
+ * Return the complex conjugate of the specified complex number.
+ *
+ * @param[in] z complex argument
+ * @return complex conjugate of argument
+ */
+template <>
+complex<stan::math::var> conj<stan::math::var>(
+    const complex<stan::math::var>& z) {
+  return {z.real(), -z.imag()};
+}
+
+/**
+ * Return the projection of the specified complex arguent onto the
+ * Riemann sphere.
+ *
+ * @param[in] z complex argument
+ * @return project of argument onto the Riemann sphere
+ */
+template <>
+complex<stan::math::var> proj<stan::math::var>(
+    const complex<stan::math::var>& z) {
+  if (stan::math::is_inf(z.real()) || stan::math::is_inf(z.imag())) {
+    return {numeric_limits<stan::math::var>::infinity(),
+            z.imag() < 0 ? -0.0 : 0.0};
+  }
+  return z;
+}
+
+/**
+ * Returns complex number with specified magnitude and phase angle.
+ *
+ * @param[in] r magnitude
+ * @param[in] theta phase angle
+ * @return complex number with magnitude and phase angle
+ */
+template <>
+complex<stan::math::var> polar<stan::math::var>(const stan::math::var& r,
+                                                const stan::math::var& theta) {
+  if (!(r >= 0) || stan::math::is_inf(theta)) {
+    return {numeric_limits<double>::quiet_NaN()};
+  }
+  return {r * cos(theta), r * sin(theta)};
+}
+
+/**
+ * Return the natural exponent of the specified complex number.
+ *
+ * @param[in] complex argument
+ * @return exponential of argument
+ */
+template <>
+complex<stan::math::var> exp<stan::math::var>(
+    const complex<stan::math::var>& z) {
+  using stan::math::is_inf;
+  using stan::math::is_nan;
+  if (is_inf(z.real()) && z.real() > 0) {
+    if (is_nan(z.imag()) || z.imag() == 0) {
+      // (+inf, nan), (+inf, 0)
+      return z;
+    } else if (is_inf(z.imag()) && z.imag() > 0) {
+      // (+inf, +inf)
+      return {z.real(), numeric_limits<double>::quiet_NaN()};
+    } else if (is_inf(z.imag()) && z.imag() < 0) {
+      // (+inf, -inf)
+      return {numeric_limits<double>::quiet_NaN(),
+              numeric_limits<double>::quiet_NaN()};
+    }
+  }
+  if (is_inf(z.real()) && z.real() < 0
+      && (is_nan(z.imag()) || is_inf(z.imag()))) {
+    // (-inf, nan), (-inf, -inf), (-inf, inf)
+    return {0, 0};
+  }
+  if (is_nan(z.real()) && z.imag() == -0.0) {
+    // (nan, -0)
+    return z;
+  }
+  stan::math::var exp_re = exp(z.real());
+  return {exp_re * cos(z.imag()), exp_re * sin(z.imag())};
+}
+
+/**
+ * Return the natural logarithm of the specified complex value with a
+ * branch cut along the negative real axis.
+ *
+ * @param z complex argument
+ * @return natural logarithm of argument
+ */
+template <>
+complex<stan::math::var> log<stan::math::var>(
+    const complex<stan::math::var>& z) {
+  using stan::math::is_inf;
+  using stan::math::is_nan;
+  double inf = numeric_limits<double>::infinity();
+  double nan = numeric_limits<double>::quiet_NaN();
+  if ((is_nan(z.real()) && is_inf(z.imag()))
+      || (is_inf(z.real()) && is_nan(z.imag()))) {
+    return {inf, nan};
+  }
+  stan::math::var r = sqrt(norm(z));
+  stan::math::var theta = arg(z);
+  return {log(r), theta};
+}
+
+/**
+ * Return the base 10 logarithm of the specified complex value with a
+ * branch cut along the negative real axis.
+ *
+ * @param z complex argument
+ * @return base 10 logarithm of argument
+ */
+template <>
+complex<stan::math::var> log10<stan::math::var>(
+    const complex<stan::math::var>& z) {
+  const static double inv_log_10 = 1 / log(10);
+  // TODO(carpenter): remove upcast to var after * overloaded for double
+  return log(z) * stan::math::var(inv_log_10);
+}
+
+template <>
+complex<stan::math::var> pow<stan::math::var>(
+    const complex<stan::math::var>& x, const complex<stan::math::var>& y) {
+  return exp(y * log(x));
+}
+
+template <>
+complex<stan::math::var> pow<stan::math::var>(const complex<stan::math::var>& x,
+                                              int y) {
+  return exp(stan::math::var(y) * log(x));
+}
+
+// moved remaining templates in C++ spec down to overloads
+// as they can't be portably specialized in clang++ and g++
+
+/**
+ * Return the square root of the specified complex number with a
+ * branch cut along the negative real axis.
+ *
+ * @param z complex number argument
+ * @return square root of argument
+ */
+template <>
+complex<stan::math::var> sqrt<stan::math::var>(
+    const complex<stan::math::var>& z) {
+  auto m = sqrt(hypot(z.real(), z.imag()));
+  auto at = 0.5 * atan2(z.imag(), z.real());
+  return complex<stan::math::var>(m * cos(at), m * sin(at));
+}
+
+// // (1)
+// template <>
+// complex<stan::math::var> sin<stan::math::var>(
+//     const complex<stan::math::var>& z) {
+//   static const complex<double> i{0, 1};
+//   return -i * sinh(i * z);
+// }
+
+// // (1)
+// template <>
+// complex<stan::math::var> cos<stan::math::var>(
+//     const complex<stan::math::var>& z) {
+//   static const complex<double> i{0, 1};
+//   return cosh(i * z);
+// }
+
+// // (1)
+// template <>
+// complex<stan::math::var> tan<stan::math::var>(
+//     const complex<stan::math::var>& z) {
+//   static const complex<double> i{0, 1};
+//   return -i * tanh(i * z);
+// }
+
+// // (1)
+// template <>
+// complex<stan::math::var> asin<stan::math::var>(
+//     const complex<stan::math::var>& z) {
+//   static const complex<double> i{0, 1};
+//   return -i * asinh(i * z);
+// }
+
+// // (1)
+// template <>
+// complex<stan::math::var> acos<stan::math::var>(
+//     const complex<stan::math::var>& z) {
+//   static const complex<double> i{0, 1};
+//   return 0.5 * stan::math::pi() - asin(z);
+// }
+
+// // (1)
+// template <>
+// complex<stan::math::var> atan<stan::math::var>(
+//     const complex<stan::math::var>& z) {
+//   static const complex<double> i{0, 1};
+//   return -i * atanh(i * z);
+// }
+
+// // (1)
+// template <>
+// complex<stan::math::var> sinh<stan::math::var>(
+//     const complex<stan::math::var>& z) {
+//   return 0.5 * (exp(z) - exp(-z));
+// }
+
+// // (1)
+// template <>
+// complex<stan::math::var> cosh<stan::math::var>(
+//     const complex<stan::math::var>& z) {
+//   return 0.5 * (exp(z) + exp(-z));
+// }
+
+// // (1)
+// template <>
+// complex<stan::math::var> tanh<stan::math::var>(
+//     const complex<stan::math::var>& z) {
+//   auto exp_z = exp(z);
+//   auto exp_neg_z = exp(-z);
+//   return (exp_z - exp_neg_z) / (exp_z + exp_neg_z);
+// }
+
+// // (1)
+// template <>
+// complex<stan::math::var> asinh<stan::math::var>(
+//     const complex<stan::math::var>& z) {
+//   return log(z + sqrt(1 + z * z));
+// }
+
+// // (1)
+// template <>
+// complex<stan::math::var> acosh<stan::math::var>(
+//     const complex<stan::math::var>& z) {
+//   return log(z + sqrt(z + 1) * sqrt(z - 1));
+// }
+
+// // (1)
+// template <>
+// complex<stan::math::var> atanh<stan::math::var>(
+//     const complex<stan::math::var>& z) {
+//   return 0.5 * (log(1 + z) - log(1 - z));
+// }
+
+}  // namespace std
 
 namespace stan {
 namespace math {
@@ -609,325 +904,37 @@ std::basic_istream<CharT, Traits>& operator>>(
 }  // namespace math
 }  // namespace stan
 
-/**
- * Return the real component of the specified complex number.
- *
- * @param[in] z complex argument
- * @return real component of argment
- */
-template <>
-stan::math::var std::real<stan::math::var>(
-    const std::complex<stan::math::var>& z) {
-  return z.real();
+namespace stan {
+namespace math {
+
+// overload and rely on ADL;  can't specialize portably
+
+// can be specialized in g++, but not in clang++
+std::complex<var> pow(const std::complex<var>& x, const var& y) {
+  return exp(y * log(x));
 }
 
-/**
- * Return the imaginary component of the specified complex number.
- *
- * @param[in] z complex argument
- * @return real component of argment
- */
-template <>
-stan::math::var std::imag<stan::math::var>(
-    const std::complex<stan::math::var>& z) {
-  return z.imag();
+// can be specialized in g++, but not in clang++
+std::complex<var> pow(const var& x, const std::complex<var>& y) {
+  return exp(y * log(x));
 }
 
-/**
- * Return the magnitude of the specified complex number.
- *
- * @param[in] complex argument
- * @return magnitude of argument
- */
-template <>
-stan::math::var std::abs<stan::math::var>(
-    const std::complex<stan::math::var>& z) {
-  using std::hypot;
-  return hypot(std::real(z), std::imag(z));
+// can't be specialized in g++ or clang++
+std::complex<var> pow(const std::complex<var>& x,
+                      const std::complex<double>& y) {
+  return exp(std::complex<var>(y) * log(x));
 }
 
-/**
- * Return the phase angle of the specified complex number.
- *
- * @param[in] z complex argument
- * @return phase angle of argument
- */
-template <>
-stan::math::var std::arg<stan::math::var>(
-    const std::complex<stan::math::var>& z) {
-  using std::atan2;
-  return atan2(std::imag(z), std::real(z));
+// can't be specialized in g++ or clang++
+std::complex<var> pow(const std::complex<var>& x, const double& y) {
+  return exp(std::complex<var>(y) * std::complex<var>(log(x)));
 }
 
-/**
- * Return the squared magnitude of the specified complex number.
- *
- * @param[in] z complex argument
- * @return squared magnitude of argument
- */
-template <>
-stan::math::var std::norm<stan::math::var>(
-    const std::complex<stan::math::var>& z) {
-  using stan::math::square;
-  return square(std::real(z)) + square(std::imag(z));
+// can't be specialized in g++ or clang++
+std::complex<var> pow(const double& x, const std::complex<var>& y) {
+  return exp(y * std::complex<var>(log(x)));
 }
 
-/**
- * Return the complex conjugate of the specified complex number.
- *
- * @param[in] z complex argument
- * @return complex conjugate of argument
- */
-template <>
-std::complex<stan::math::var> std::conj<stan::math::var>(
-    const std::complex<stan::math::var>& z) {
-  return {z.real(), -z.imag()};
-}
-
-/**
- * Return the projection of the specified complex arguent onto the
- * Riemann sphere.
- *
- * @param[in] z complex argument
- * @return project of argument onto the Riemann sphere
- */
-template <>
-std::complex<stan::math::var> std::proj<stan::math::var>(
-    const std::complex<stan::math::var>& z) {
-  if (stan::math::is_inf(z.real()) || stan::math::is_inf(z.imag())) {
-    return {std::numeric_limits<stan::math::var>::infinity(),
-            z.imag() < 0 ? -0.0 : 0.0};
-  }
-  return z;
-}
-
-/**
- * Returns complex number with specified magnitude and phase angle.
- *
- * @param[in] r magnitude
- * @param[in] theta phase angle
- * @return complex number with magnitude and phase angle
- */
-template <>
-std::complex<stan::math::var> std::polar<stan::math::var>(
-    const stan::math::var& r, const stan::math::var& theta) {
-  using std::cos;
-  using std::sin;
-  if (!(r >= 0) || stan::math::is_inf(theta)) {
-    return {std::numeric_limits<double>::quiet_NaN()};
-  }
-  return {r * cos(theta), r * sin(theta)};
-}
-
-/**
- * Return the natural exponent of the specified complex number.
- *
- * @param[in] complex argument
- * @return exponential of argument
- */
-template <>
-std::complex<stan::math::var> std::exp<stan::math::var>(
-    const std::complex<stan::math::var>& z) {
-  using stan::math::is_inf;
-  using stan::math::is_nan;
-  using std::exp;
-  if (is_inf(z.real()) && z.real() > 0) {
-    if (is_nan(z.imag()) || z.imag() == 0) {
-      // (+inf, nan), (+inf, 0)
-      return z;
-    } else if (is_inf(z.imag())) {
-      // (+inf, -inf),  (+inf, +inf)
-      return {z.real(), std::numeric_limits<double>::quiet_NaN()};
-    }
-  }
-  if (is_inf(z.real()) && z.real() < 0
-      && (is_nan(z.imag()) || is_inf(z.imag()))) {
-    // (-inf, nan), (-inf, -inf), (-inf, inf)
-    return {0, 0};
-  }
-  if (is_nan(z.real()) && z.imag() == -0.0) {
-    // (nan, -0)
-    return z;
-  }
-  stan::math::var exp_re = exp(z.real());
-  return {exp_re * cos(z.imag()), exp_re * sin(z.imag())};
-}
-
-// // (1)
-// template <>
-// std::complex<stan::math::var> log<stan::math::var>(
-//     const std::complex<stan::math::var>& z) {
-//   using std::log;
-//   using std::sqrt;
-//   stan::math::var r = sqrt(norm(z));
-//   stan::math::var theta = arg(z);
-//   return {log(r), theta};
-// }
-
-// // (1)
-// template <>
-// std::complex<stan::math::var> log10<stan::math::var>(
-//     const std::complex<stan::math::var>& z) {
-//   using std::log;
-//   return log(z) / log(10);
-// }
-
-// // (1)
-// template <>
-// std::complex<stan::math::var> pow<stan::math::var>(
-//     const std::complex<stan::math::var>& x,
-//     const std::complex<stan::math::var>& y) {
-//   using std::exp;
-//   using std::log;
-//   return exp(y * log(x));
-// }
-// // (2)
-// template <>
-// std::complex<stan::math::var> pow<stan::math::var>(
-//     const std::complex<stan::math::var>& x, const stan::math::var& y) {
-//   using std::exp;
-//   using std::log;
-//   return exp(y * log(x));
-// }
-// // (3)
-// template <>
-// std::complex<stan::math::var> pow<stan::math::var>(const stan::math::var& x,
-//     const std::complex<stan::math::var>& y) {
-//   using std::exp;
-//   using std::log;
-//   using stan::math::log;
-//   return exp(y * log(x));
-// }
-// // (4)
-// template <U>
-// std::complex<stan::math::var> pow<stan::math::var, U>(
-//     const std::complex<stan::math::var>& x,
-//     const std::complex<U>& y) {
-//   using std::exp;
-//   using std::log;
-//   return exp(y * log(x));
-// }
-// // (5)
-// template <U>
-// std::complex<stan::math::var> pow<stan::math::var, U>(
-//     const std::complex<stan::math::var>& x, const U& y) {
-//   using std::exp;
-//   using std::log;
-//   return exp(y * log(x));
-// }
-// // (6)
-// template <T>
-// std::complex<stan::math::var> pow<T, stan::math::var>(
-//     const T& x, const std::complex<stan::math::var>& y) {
-//   using std::exp;
-//   using std::log;
-//   using stan::math::log;
-//   return exp(y * log(x));
-// }
-
-// // (1)
-// template<>
-// std::complex<stan::math::var> sqrt<stan::math::var>(
-//     const std::complex<stan::math::var>& z) {
-//   using stan::math::sqrt;
-//   using stan::math::hypot;
-//   stan::math::var hypt = hypot(z.real(), z.imag());
-//   stan::math::var sqrt_hypot = sqrt(hypt);
-//   stan::math::var half_atan2_z = 0.5 * atan2(z.real(), z.imag());
-//   return { sqrt_hypot * cos(half_atan2_z),
-//         sqrt_hypot * sin(half_atan2_z) }
-// }
-
-// // (1)
-// template <>
-// std::complex<stan::math::var> sin<stan::math::var>(
-//     const std::complex<stan::math::var>& z) {
-//   static const std::complex<double> i{0, 1};
-//   return -i * std::sinh(i * z);
-// }
-
-// // (1)
-// template <>
-// std::complex<stan::math::var> cos<stan::math::var>(
-//     const std::complex<stan::math::var>& z) {
-//   static const std::complex<double> i{0, 1};
-//   return std::cosh(i * z);
-// }
-
-// // (1)
-// template <>
-// std::complex<stan::math::var> tan<stan::math::var>(
-//     const std::complex<stan::math::var>& z) {
-//   static const std::complex<double> i{0, 1};
-//   return -i * std::tanh(i * z);
-// }
-
-// // (1)
-// template <>
-// std::complex<stan::math::var> asin<stan::math::var>(
-//     const std::complex<stan::math::var>& z) {
-//   static const std::complex<double> i{0, 1};
-//   return -i * std::asinh(i * z);
-// }
-
-// // (1)
-// template <>
-// std::complex<stan::math::var> acos<stan::math::var>(
-//     const std::complex<stan::math::var>& z) {
-//   static const std::complex<double> i{0, 1};
-//   return 0.5 * stan::math::pi() - std::asin(z);
-// }
-
-// // (1)
-// template <>
-// std::complex<stan::math::var> atan<stan::math::var>(
-//     const std::complex<stan::math::var>& z) {
-//   static const std::complex<double> i{0, 1};
-//   return -i * std::atanh(i * z);
-// }
-
-// // (1)
-// template <>
-// std::complex<stan::math::var> sinh<stan::math::var>(
-//     const std::complex<stan::math::var>& z) {
-//   return 0.5 * (std::exp(z) - std::exp(-z));
-// }
-
-// // (1)
-// template <>
-// std::complex<stan::math::var> cosh<stan::math::var>(
-//     const std::complex<stan::math::var>& z) {
-//   return 0.5 * (std::exp(z) + std::exp(-z));
-// }
-
-// // (1)
-// template <>
-// std::complex<stan::math::var> tanh<stan::math::var>(
-//     const std::complex<stan::math::var>& z) {
-//   auto exp_z = std::exp(z);
-//   auto exp_neg_z = std::exp(-z);
-//   return (exp_z - exp_neg_z) / (exp_z + exp_neg_z);
-// }
-
-// // (1)
-// template <>
-// std::complex<stan::math::var> asinh<stan::math::var>(
-//     const std::complex<stan::math::var>& z) {
-//   return std::log(z + std::sqrt(1 + z * z));
-// }
-
-// // (1)
-// template <>
-// std::complex<stan::math::var> acosh<stan::math::var>(
-//     const std::complex<stan::math::var>& z) {
-//   return std::log(z + std::sqrt(z + 1) * std::sqrt(z - 1));
-// }
-
-// // (1)
-// template <>
-// std::complex<stan::math::var> atanh<stan::math::var>(
-//     const std::complex<stan::math::var>& z) {
-//   return 0.5 * (std::log(1 + z) - std::log(1 - z));
-// }
-
+}  // namespace math
+}  // namespace stan
 #endif

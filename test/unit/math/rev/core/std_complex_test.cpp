@@ -1,6 +1,7 @@
 #include <stan/math/rev/core.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <gtest/gtest.h>
+#include <cmath>
 #include <limits>
 #include <sstream>
 #include <vector>
@@ -13,25 +14,78 @@ typedef std::complex<double> cdouble_t;
 void expect_complex(double re, double im, const cvar_t& y) {
   using stan::math::is_nan;
   if (is_nan(re)) {
-    EXPECT_TRUE(is_nan(y.real())) << "expected = (" << re << ", " << im << ")"
-                                  << "; found = " << y << std::endl;
+    EXPECT_TRUE(is_nan(y.real()))
+        << "expected = " << std::complex<double>{re, im} << "; found = " << y
+        << std::endl;
   } else {
-    EXPECT_DOUBLE_EQ(re, y.real().val())
-        << "expected = (" << re << ", " << im << ")"
-        << "; found = " << y << std::endl;
+    if (std::fabs(re) < 1e-5 && std::fabs(y.real().val()) < 1e-5) {
+      EXPECT_NEAR(re, y.real().val(), 1e-10)
+          << "expected = (" << re << ", " << im << ")"
+          << "; found = " << y << std::endl;
+    } else {
+      EXPECT_FLOAT_EQ(re, y.real().val())
+          << "expected = (" << re << ", " << im << ")"
+          << "; found = " << y << std::endl;
+    }
   }
   if (is_nan(im)) {
     EXPECT_TRUE(is_nan(y.imag().val()))
         << "expected = (" << re << ", " << im << ")"
         << "; found = " << y << std::endl;
   } else {
-    EXPECT_DOUBLE_EQ(im, y.imag().val())
+    EXPECT_FLOAT_EQ(im, y.imag().val())
         << "expected = (" << re << ", " << im << ")"
         << "; found = " << y << std::endl;
   }
 }
 void expect_complex(const cdouble_t& x, const cvar_t& y) {
   expect_complex(x.real(), x.imag(), y);
+}
+
+std::vector<double> common_non_neg_vals() {
+  double inf = std::numeric_limits<double>::infinity();
+  double nan = std::numeric_limits<double>::quiet_NaN();
+  double pos_zero = 0.0;
+  double neg_zero = -0.0;
+  return {0.0, 1.3, 2.1};
+}
+
+std::vector<double> common_vals() {
+  double inf = std::numeric_limits<double>::infinity();
+  double nan = std::numeric_limits<double>::quiet_NaN();
+  double pos_zero = 0.0;
+  double neg_zero = -0.0;
+  return {-2.5, -0.3, -0.0, 0.0, 1.3, 2.1};
+}
+
+template <typename F>
+void expect_complex_common(const F& f) {
+  for (double a : common_vals()) {
+    for (double b : common_vals()) {
+      // std:: cout << "z = " << cdouble_t{a , b} << std::endl;
+      expect_complex(f(cdouble_t{a, b}), f(cvar_t{a, b}));
+    }
+  }
+}
+
+template <typename F>
+void expect_complex_common_binary(const F& f) {
+  using stan::math::pow;
+  for (double x1 : common_non_neg_vals()) {
+    for (double y1 : common_non_neg_vals()) {
+      for (double x2 : common_non_neg_vals()) {
+        expect_complex(f(cdouble_t{x1, y1}, x2), f(cvar_t{x1, y1}, var_t{x2}));
+        // std::cout << "x1 = " << x1 << "; y1 = "
+        //           << y1 << "; x2 = " << x2 << std::endl;
+        expect_complex(f(cdouble_t{x1, y1}, x2), f(cvar_t{x1, y1}, x2));
+        expect_complex(f(x2, cdouble_t{x1, y1}), f(var_t{x2}, cvar_t{x1, y1}));
+        for (double y2 : common_non_neg_vals()) {
+          expect_complex(f(cdouble_t{x1, y1}, cdouble_t{x2, y2}),
+                         f(cvar_t{x1, y1}, cvar_t{x2, y2}));
+        }
+      }
+    }
+  }
 }
 
 TEST(mathRevCore, stdComplexConstructor1) {
@@ -94,23 +148,23 @@ TEST(mathRevCore, stdComplexConstructor3) {
 }
 TEST(mathRevCore, stdComplexReal1) {
   cvar_t a(3, -1);
-  EXPECT_DOUBLE_EQ(3, a.real().val());
+  EXPECT_FLOAT_EQ(3, a.real().val());
 }
 TEST(mathRevCore, stdComplexReal2) {
   cvar_t a(3, -1);
   a.real(2.7);
-  EXPECT_DOUBLE_EQ(2.7, a.real().val());
-  EXPECT_DOUBLE_EQ(-1, a.imag().val());
+  EXPECT_FLOAT_EQ(2.7, a.real().val());
+  EXPECT_FLOAT_EQ(-1, a.imag().val());
 }
 TEST(mathRevCore, stdComplexImag1) {
   cvar_t a(3, -1);
-  EXPECT_DOUBLE_EQ(-1, a.imag().val());
+  EXPECT_FLOAT_EQ(-1, a.imag().val());
 }
 TEST(mathRevCore, stdComplexImag2) {
   cvar_t a(3, -1);
   a.imag(2.7);
-  EXPECT_DOUBLE_EQ(2.7, a.imag().val());
-  EXPECT_DOUBLE_EQ(3, a.real().val());
+  EXPECT_FLOAT_EQ(2.7, a.imag().val());
+  EXPECT_FLOAT_EQ(3, a.real().val());
 }
 TEST(mathRevCore, stdComplexOperatorEquals1) {
   cvar_t a(1, 2);
@@ -579,21 +633,21 @@ TEST(mathRevCore, stdAbsExternal1) {
   double bd = std::abs(ad);
   cvar_t a(1, 2);
   var_t b = std::abs(a);
-  EXPECT_DOUBLE_EQ(bd, b.val());
+  EXPECT_FLOAT_EQ(bd, b.val());
 }
 TEST(mathRevCore, stdArgExternal1) {
   cdouble_t ad(1, 2);
   double bd = std::arg(ad);
   cvar_t a(1, 2);
   var_t b = std::arg(a);
-  EXPECT_DOUBLE_EQ(bd, b.val());
+  EXPECT_FLOAT_EQ(bd, b.val());
 }
 TEST(mathRevCore, stdNormExternal1) {
   cdouble_t ad(1, 2);
   double bd = std::norm(ad);
   cvar_t a(1, 2);
   var_t b = std::norm(a);
-  EXPECT_DOUBLE_EQ(bd, b.val());
+  EXPECT_FLOAT_EQ(bd, b.val());
 }
 TEST(mathRevCore, stdSquareConj1) {
   cdouble_t ad(1, 2);
@@ -639,28 +693,22 @@ TEST(mathRevCore, stdPolar1) {
   EXPECT_TRUE(stan::math::is_nan(std::polar(one_v, inf_v).real()));
 }
 TEST(mathRevCore, stdExp1) {
-  double x_d = 1;
-  double y_d = 2;
-  cdouble_t a_d{x_d, y_d};
-  cdouble_t e_d = std::exp(a_d);
-
-  var_t x = 1;
-  var_t y = 2;
-  cvar_t a{x, y};
-  cvar_t e = std::exp(a);
-  expect_complex(e_d, e);
-
-  // all boundary conditions in spec
-  double inf = std::numeric_limits<double>::infinity();
-  double nan = std::numeric_limits<double>::quiet_NaN();
-  double pos_zero = 0.0;
-  double neg_zero = -0.0;
-  double pos = 1.3;
-  double neg = -0.3;
-  auto args = std::vector<double>{nan, -inf, -0.3, -0.0, 0.0, 1.3, inf};
-  for (double a : args) {
-    for (double b : args) {
-      expect_complex(std::exp(cdouble_t{a, b}), std::exp(cvar_t{a, b}));
-    }
-  }
+  expect_complex_common([](const auto& u) { return std::exp(u); });
+}
+TEST(mathRevCore, stdLog1) {
+  expect_complex_common([](const auto& u) { return std::log(u); });
+}
+TEST(mathRevCore, stdLog101) {
+  expect_complex_common([](const auto& u) { return std::log10(u); });
+}
+TEST(MathRevCore, stdPow1) {
+  auto f = [](const auto& u, const auto& v) {
+    using std::pow;
+    return pow(u, v);
+  };
+  expect_complex_common_binary(f);
+  expect_complex(f(cdouble_t{1.2, 0.3}, 2), f(cvar_t{1.2, 0.3}, 2));
+}
+TEST(MathRevCore, stdSqrt1) {
+  expect_complex_common([](const auto& u) { return std::sqrt(u); });
 }
