@@ -4,6 +4,7 @@
 #include <cmath>
 #include <limits>
 #include <sstream>
+#include <string>
 #include <vector>
 
 // naughty but convenient for test scope

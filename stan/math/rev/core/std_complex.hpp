@@ -5,17 +5,17 @@
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/scal/fun/atan2.hpp>
 #include <stan/math/rev/scal/fun/cos.hpp>
 #include <stan/math/rev/scal/fun/exp.hpp>
-#include <stan/math/rev/scal/fun/log.hpp>
-#include <stan/math/rev/scal/fun/sin.hpp>
-#include <stan/math/rev/scal/fun/sqrt.hpp>
 #include <stan/math/rev/scal/fun/hypot.hpp>
 #include <stan/math/rev/scal/fun/is_inf.hpp>
 #include <stan/math/rev/scal/fun/is_nan.hpp>
-#include <stan/math/rev/scal/fun/sqrt.hpp>
+#include <stan/math/rev/scal/fun/log.hpp>
+#include <stan/math/rev/scal/fun/sin.hpp>
 #include <stan/math/rev/scal/fun/square.hpp>
+#include <stan/math/rev/scal/fun/sqrt.hpp>
 #include <cmath>
 #include <complex>
 #include <cstddef>
@@ -25,26 +25,76 @@
 
 namespace stan {
 namespace math {
+/**
+ * Return the second argument if its sign matches the first argument,
+ * otherwise return the negation of the second argument.
+ *
+ * @tparam T type of second argument
+ * @param[in] x sign argument
+ * @param[in] y value argument
+ * @return value argument converted to same sign as sign argument
+ */
 template <typename T>
 stan::math::var match_sign(double x, const T& y) {
   // can't just copysign---need to negate
   return (x <= 0 && y > 0) || (x > 0 && y <= 0) ? -y : y;
 }
+
+/**
+ * Return the result of matching signs of the first and second
+ * argument's real and imaginary parts.
+ *
+ * @tparam T type of secone argument
+ * @param x sign complex argument
+ * @param y value complex argument
+ * @return value argument with real and imaginary components converted
+ * to same sign as sign argument
+ */
 template <typename T>
 std::complex<T> match_sign(const std::complex<double>& x,
                            const std::complex<T>& y) {
   return {match_sign(x.real(), y.real()), match_sign(x.imag(), y.imag())};
 }
-// TODO(carpenter):  use for asinh, etc when * extended to int/double
-// template <typename F>
-// complex<stan::math::var> sign_fiddle(const F& f,
-//                                      const std::complex<stan::math::var>& z)
-//                                      {
-//   std::complex<double> z_d{z.real().val(), z.imag().val()};
-//   std::complex<double> y_d = f(z_d);
-//   std::complex<stan::math::var> y = f(z);
-//   return match_sign(y_d, y);
-// }
+
+/**
+ * Return the specified complex number multiplied by `i`.
+ *
+ * @tparam value type of complex argument
+ * @param z complex argument
+ * @return argument multipled by `i`
+ */
+template <typename T>
+std::complex<T> i_times(const std::complex<T>& z) {
+  return {-z.imag(), z.real()};
+}
+
+/**
+ * Return the specified complex number multiplied by `-i`.
+ *
+ * @tparam value type of complex argument
+ * @param z complex argument
+ * @return argument multipled by `-i`
+ */
+template <typename T>
+std::complex<T> neg_i_times(const std::complex<T>& z) {
+  return {z.imag(), -z.real()};
+}
+
+/**
+ * Return the complex number with values the same as the specified
+ * complex argument, but one lower type.  For example, an argument
+ * type of `complex<var>` is converted to a return type
+ * `complex<double>` and `complex<fvar<fvar<var>>` to
+ * `complex<fvar<var>>`.
+ *
+ * @tparam T value type of complex argument
+ * @param[in] complex argument
+ * @return complex number with same value as argument
+ */
+template <typename T>
+std::complex<typename T::Scalar> value_of(const std::complex<T>& z) {
+  return {z.real().val(), z.imag().val()};
+}
 }  // namespace math
 }  // namespace stan
 
@@ -765,7 +815,7 @@ complex<stan::math::var> log<stan::math::var>(
 template <>
 complex<stan::math::var> log10<stan::math::var>(
     const complex<stan::math::var>& z) {
-  const static double inv_log_10 = 1 / log(10);
+  static const double inv_log_10 = 1 / log(10);
   // TODO(carpenter): remove upcast to var after * overloaded for double
   return log(z) * stan::math::var(inv_log_10);
 }
@@ -804,7 +854,7 @@ complex<stan::math::var> sqrt<stan::math::var>(
 template <>
 complex<stan::math::var> sinh<stan::math::var>(
     const complex<stan::math::var>& z) {
-  return stan::math::var{0.5} * (exp(z) - exp(-z));
+  return stan::math::var(0.5) * (exp(z) - exp(-z));
 }
 
 /**
@@ -817,7 +867,7 @@ complex<stan::math::var> sinh<stan::math::var>(
 template <>
 complex<stan::math::var> cosh<stan::math::var>(
     const complex<stan::math::var>& z) {
-  return stan::math::var{0.5} * (exp(z) + exp(-z));
+  return stan::math::var(0.5) * (exp(z) + exp(-z));
 }
 
 /**
@@ -846,9 +896,8 @@ complex<stan::math::var> tanh<stan::math::var>(
 template <>
 complex<stan::math::var> asinh<stan::math::var>(
     const complex<stan::math::var>& z) {
-  complex<double> z_d{z.real().val(), z.imag().val()};
-  complex<double> y_d = asinh(z_d);
-  auto y = log(z + sqrt(stan::math::var{1} + z * z));
+  complex<double> y_d = asinh(stan::math::value_of(z));
+  auto y = log(z + sqrt(stan::math::var(1) + z * z));
   return stan::math::match_sign(y_d, y);
 }
 
@@ -863,9 +912,8 @@ complex<stan::math::var> asinh<stan::math::var>(
 template <>
 complex<stan::math::var> acosh<stan::math::var>(
     const complex<stan::math::var>& z) {
-  complex<double> z_d{z.real().val(), z.imag().val()};
-  complex<double> y_d = acosh(z_d);
-  auto y = log(z + sqrt(z * z - stan::math::var{1}));
+  complex<double> y_d = acosh(stan::math::value_of(z));
+  auto y = log(z + sqrt(z * z - stan::math::var(1)));
   return stan::math::match_sign(y_d, y);
 }
 
@@ -880,10 +928,9 @@ complex<stan::math::var> acosh<stan::math::var>(
 template <>
 complex<stan::math::var> atanh<stan::math::var>(
     const complex<stan::math::var>& z) {
-  complex<double> z_d{z.real().val(), z.imag().val()};
-  complex<double> y_d = atanh(z_d);
+  complex<double> y_d = atanh(stan::math::value_of(z));
   stan::math::var one{1};
-  auto y = stan::math::var{0.5} * (log(one + z) - log(one - z));
+  auto y = stan::math::var(0.5) * (log(one + z) - log(one - z));
   return stan::math::match_sign(y_d, y);
 }
 
@@ -896,8 +943,7 @@ complex<stan::math::var> atanh<stan::math::var>(
 template <>
 complex<stan::math::var> sin<stan::math::var>(
     const complex<stan::math::var>& z) {
-  complex<stan::math::var> i{0, 1};
-  return -i * sinh(i * z);
+  return neg_i_times(sinh(i_times(z)));
 }
 
 /**
@@ -909,8 +955,7 @@ complex<stan::math::var> sin<stan::math::var>(
 template <>
 complex<stan::math::var> cos<stan::math::var>(
     const complex<stan::math::var>& z) {
-  complex<stan::math::var> i{0, 1};
-  return cosh(i * z);
+  return cosh(i_times(z));
 }
 
 /**
@@ -922,8 +967,7 @@ complex<stan::math::var> cos<stan::math::var>(
 template <>
 complex<stan::math::var> tan<stan::math::var>(
     const complex<stan::math::var>& z) {
-  complex<stan::math::var> i{0, 1};
-  return -i * tanh(i * z);
+  return neg_i_times(tanh(i_times(z)));
 }
 
 /**
@@ -936,10 +980,8 @@ complex<stan::math::var> tan<stan::math::var>(
 template <>
 complex<stan::math::var> asin<stan::math::var>(
     const complex<stan::math::var>& z) {
-  complex<double> z_d{z.real().val(), z.imag().val()};
-  complex<double> y_d = asin(z_d);
-  complex<stan::math::var> i{0, 1};
-  auto y = -i * asinh(i * z);
+  complex<double> y_d = asin(stan::math::value_of(z));
+  auto y = neg_i_times(asinh(i_times(z)));
   return stan::math::match_sign(y_d, y);
 }
 
@@ -953,9 +995,7 @@ complex<stan::math::var> asin<stan::math::var>(
 template <>
 complex<stan::math::var> acos<stan::math::var>(
     const complex<stan::math::var>& z) {
-  // signs established by asin()
-  complex<stan::math::var> i{0, 1};
-  return stan::math::var{0.5 * stan::math::pi()} - asin(z);
+  return stan::math::var(0.5 * stan::math::pi()) - asin(z);
 }
 
 /**
@@ -969,9 +1009,7 @@ complex<stan::math::var> acos<stan::math::var>(
 template <>
 complex<stan::math::var> atan<stan::math::var>(
     const complex<stan::math::var>& z) {
-  complex<stan::math::var> i{0, 1};
-  // signs established by atanh()
-  return -i * atanh(i * z);
+  return neg_i_times(atanh(i_times(z)));
 }
 
 }  // namespace std
