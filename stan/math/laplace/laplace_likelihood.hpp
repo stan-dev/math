@@ -186,7 +186,7 @@ struct sqr_exp_kernel_functor {
               const T2& x,
               const std::vector<double>& delta,
               const std::vector<int>& delta_int,
-              int M = 0) const {
+              std::ostream* msgs = nullptr) const {
     double jitter = 1e-8;
     Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic>
       kernel = stan::math::gp_exp_quad_cov(x, phi(0), phi(1));

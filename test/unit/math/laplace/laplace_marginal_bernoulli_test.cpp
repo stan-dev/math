@@ -118,7 +118,7 @@ TEST(laplace, logistic_lgm_dim500) {
       sqr_exp_kernel_functor(),
       phi, x, delta, delta_int,
       covariance, theta_laplace, W_root, L, a, l_grad,
-      theta_0, 1e-3, 100);
+      theta_0, 0, 1e-3, 100);
 
   auto end_optimization = std::chrono::system_clock::now();
   std::chrono::duration<double>
@@ -142,7 +142,7 @@ TEST(laplace, logistic_lgm_dim500) {
         diff_logistic_log(to_vector(n_samples), to_vector(y)),
         sqr_exp_kernel_functor(),
         phi_v2, x, delta, delta_int,
-        theta_0, 1e-3, 100);
+        theta_0, 0, 1e-3, 100);
 
   VEC g2;
   AVEC parm_vec2 = createAVEC(phi_v2(0), phi_v2(1));
@@ -172,7 +172,7 @@ TEST(laplace, logistic_lgm_dim500) {
   double marginal_density_v2
     = laplace_marginal_bernoulli(y, n_samples,
                                  phi, x, delta, delta_int,
-                                 theta_0, 1e-3, 100);
+                                 theta_0, 0, 1e-3, 100);
 
   EXPECT_FLOAT_EQ(marginal_density, marginal_density_v2);
 
@@ -180,7 +180,7 @@ TEST(laplace, logistic_lgm_dim500) {
     = laplace_marginal_bernoulli(y, n_samples,
                                  sqr_exp_kernel_functor(),
                                  phi, x, delta, delta_int,
-                                 theta_0, 1e-3, 100);
+                                 theta_0, 0, 1e-3, 100);
 
   EXPECT_FLOAT_EQ(marginal_density, marginal_density_v2);
 }

@@ -10,6 +10,7 @@
 #include <stan/math/rev/mat/fun/cholesky_decompose.hpp>
 #include <stan/math/laplace/laplace_likelihood.hpp>
 
+#include <iostream>
 
 // Reference for calculations of marginal and its gradients:
 // Rasmussen and Williams,
@@ -80,13 +81,14 @@ namespace math {
                             Eigen::VectorXd& a,
                             Eigen::VectorXd& l_grad,
                             const Eigen::VectorXd& theta_0,
+                            std::ostream* msgs = nullptr,
                             double tolerance = 1e-6,
                             long int max_num_steps = 100) {
     using Eigen::MatrixXd;
     using Eigen::VectorXd;
 
     int group_size = theta_0.size();  // CHECK -- do we ever need this?
-    covariance = covariance_function(phi, x, delta, delta_int, group_size);
+    covariance = covariance_function(phi, x, delta, delta_int, msgs);
     // CHECK -- should we compute the derivatives here too?
     theta = theta_0;
     double objective_old = - 1e+10;  // CHECK -- what value to use?
@@ -170,6 +172,7 @@ namespace math {
                             const std::vector<double>& delta,
                             const std::vector<int>& delta_int,
                             const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta_0,
+                            std::ostream* msgs = nullptr,
                             double tolerance = 1e-6,
                             long int max_num_steps = 100) {
     Eigen::VectorXd theta, W_root, a, l_grad;
@@ -178,7 +181,7 @@ namespace math {
                                     phi, x, delta, delta_int,
                                     covariance,
                                     theta, W_root, L, a, l_grad,
-                                    value_of(theta_0),
+                                    value_of(theta_0), msgs,
                                     tolerance, max_num_steps);
   }
 
@@ -198,25 +201,25 @@ namespace math {
     std::vector<double> delta_;
     /* additional fixed integer variable */
     std::vector<int> delta_int_;
-    /* number of latent variables. */
-    int theta_size_;
     /* structure to compute the covariance function. */
     K covariance_function_;
-    
+    /* ostream for printing statements inside covariance function */
+    std::ostream* msgs_;
+
     covariance_sensitivities (const std::vector<Eigen::VectorXd>& x,
                               const std::vector<double>& delta,
                               const std::vector<int>& delta_int,
-                              int theta_size,
-                              const K& covariance_function) :
+                              const K& covariance_function,
+                              std::ostream* msgs) :
     // TO DO -- make covariance function the first argument
-    x_(x), delta_(delta), delta_int_(delta_int), theta_size_(theta_size),
-    covariance_function_(covariance_function) { }
+    x_(x), delta_(delta), delta_int_(delta_int),
+    covariance_function_(covariance_function), msgs_(msgs) { }
 
     template <typename T>
     Eigen::Matrix<T, Eigen::Dynamic, 1>
     operator() (const Eigen::Matrix<T, Eigen::Dynamic, 1>& phi) const {
       return to_vector(covariance_function_(phi, x_, delta_,
-                                            delta_int_, theta_size_));
+                                            delta_int_, msgs_));
     }
   };
 
@@ -257,7 +260,8 @@ namespace math {
        const Eigen::VectorXd& W_root,
        const Eigen::MatrixXd& L,
        const Eigen::VectorXd& a,
-       const Eigen::VectorXd& l_grad)
+       const Eigen::VectorXd& l_grad,
+       std::ostream* msgs = nullptr)
       : vari(marginal_density),
         phi_size_(phi.size()),
         phi_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
@@ -272,8 +276,8 @@ namespace math {
       marginal_density_[0] = new vari(marginal_density, false);
 
       // compute derivatives of covariance matrix with respect to phi.
-      covariance_sensitivities<K> f(x, delta, delta_int, theta_size,
-                                    covariance_function);
+      covariance_sensitivities<K> f(x, delta, delta_int,
+                                    covariance_function, msgs);
       Eigen::MatrixXd diff_cov;
       {
         Eigen::VectorXd covariance_vector;
@@ -358,6 +362,7 @@ namespace math {
        const std::vector<double>& delta,
        const std::vector<int>& delta_int,
        const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,
+       std::ostream* msgs = nullptr,
        double tolerance = 1e-6,
        long int max_num_steps = 100) {
     Eigen::VectorXd theta, W_root, a, l_grad;
@@ -372,6 +377,7 @@ namespace math {
                                  covariance,
                                  theta, W_root, L, a, l_grad,
                                  value_of(theta_0),
+                                 msgs,
                                  tolerance, max_num_steps);
 
     // construct vari
@@ -381,7 +387,8 @@ namespace math {
                                           phi, x, delta, delta_int,
                                           marginal_density_dbl,
                                           covariance,
-                                          theta, W_root, L, a, l_grad);
+                                          theta, W_root, L, a, l_grad,
+                                          msgs);
 
     var marginal_density = var(vi0->marginal_density_[0]);
 
