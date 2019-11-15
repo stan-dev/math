@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_MATRIX_EXP_PADE_HPP
 #define STAN_MATH_PRIM_MAT_FUN_MATRIX_EXP_PADE_HPP
 
+#include <stan/math/prim/mat/err/check_nonempty.hpp>
 #include <stan/math/prim/mat/fun/MatrixExponential.h>
 
 namespace stan {
@@ -20,6 +21,7 @@ template <typename MatrixType>
 MatrixType matrix_exp_pade(const MatrixType& arg) {
   MatrixType U, V;
   int squarings;
+  check_nonempty("matrix_exp_pade", "arg", arg);
   Eigen::matrix_exp_computeUV<MatrixType>::run(arg, U, V, squarings, arg(0, 0));
   // Pade approximant is
   // (U+V) / (-U+V)
