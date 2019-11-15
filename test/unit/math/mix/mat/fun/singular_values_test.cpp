@@ -7,6 +7,9 @@ TEST(MathMixMatFun, singularValues) {
   tols.hessian_hessian_ = 1e-2;
   tols.hessian_fvar_hessian_ = 1e-2;
 
+  Eigen::MatrixXd m00(0, 0);
+  stan::test::expect_ad(f, m00);
+
   Eigen::MatrixXd m11(1, 1);
   m11 << 1.1;
   stan::test::expect_ad(tols, f, m11);
