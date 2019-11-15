@@ -23,6 +23,31 @@
 
 #include <iostream>
 
+namespace stan {
+namespace math {
+template <typename T>
+stan::math::var match_sign(double x, const T& y) {
+  // can't just copysign---need to negate
+  return (x <= 0 && y > 0) || (x > 0 && y <= 0) ? -y : y;
+}
+template <typename T>
+std::complex<T> match_sign(const std::complex<double>& x,
+                           const std::complex<T>& y) {
+  return {match_sign(x.real(), y.real()), match_sign(x.imag(), y.imag())};
+}
+// TODO(carpenter):  use for asinh, etc when * extended to int/double
+// template <typename F>
+// complex<stan::math::var> sign_fiddle(const F& f,
+//                                      const std::complex<stan::math::var>& z)
+//                                      {
+//   std::complex<double> z_d{z.real().val(), z.imag().val()};
+//   std::complex<double> y_d = f(z_d);
+//   std::complex<stan::math::var> y = f(z);
+//   return match_sign(y_d, y);
+// }
+}  // namespace math
+}  // namespace stan
+
 namespace std {
 
 /**
@@ -751,12 +776,6 @@ complex<stan::math::var> pow<stan::math::var>(
   return exp(y * log(x));
 }
 
-template <>
-complex<stan::math::var> pow<stan::math::var>(const complex<stan::math::var>& x,
-                                              int y) {
-  return exp(stan::math::var(y) * log(x));
-}
-
 // moved remaining templates in C++ spec down to overloads
 // as they can't be portably specialized in clang++ and g++
 
@@ -775,97 +794,185 @@ complex<stan::math::var> sqrt<stan::math::var>(
   return complex<stan::math::var>(m * cos(at), m * sin(at));
 }
 
-// // (1)
-// template <>
-// complex<stan::math::var> sin<stan::math::var>(
-//     const complex<stan::math::var>& z) {
-//   static const complex<double> i{0, 1};
-//   return -i * sinh(i * z);
-// }
+/**
+ * Return the complex hyperbolic sine of the specified complex
+ * argument.
+ *
+ * @param[in] z complex argument
+ * @return hyperbolic sine of argument
+ */
+template <>
+complex<stan::math::var> sinh<stan::math::var>(
+    const complex<stan::math::var>& z) {
+  return stan::math::var{0.5} * (exp(z) - exp(-z));
+}
 
-// // (1)
-// template <>
-// complex<stan::math::var> cos<stan::math::var>(
-//     const complex<stan::math::var>& z) {
-//   static const complex<double> i{0, 1};
-//   return cosh(i * z);
-// }
+/**
+ * Return the complex hyperbolic cosine of the specified complex
+ * argument.
+ *
+ * @param[in] z complex argument
+ * @return hyperbolic cosine of argument
+ */
+template <>
+complex<stan::math::var> cosh<stan::math::var>(
+    const complex<stan::math::var>& z) {
+  return stan::math::var{0.5} * (exp(z) + exp(-z));
+}
 
-// // (1)
-// template <>
-// complex<stan::math::var> tan<stan::math::var>(
-//     const complex<stan::math::var>& z) {
-//   static const complex<double> i{0, 1};
-//   return -i * tanh(i * z);
-// }
+/**
+ * Return the complex hyperbolic tangent of the specified complex
+ * argument.
+ *
+ * @param[in] z complex argument
+ * @return hyperbolic tangent of argument
+ */
+template <>
+complex<stan::math::var> tanh<stan::math::var>(
+    const complex<stan::math::var>& z) {
+  auto exp_z = exp(z);
+  auto exp_neg_z = exp(-z);
+  return (exp_z - exp_neg_z) / (exp_z + exp_neg_z);
+}
 
-// // (1)
-// template <>
-// complex<stan::math::var> asin<stan::math::var>(
-//     const complex<stan::math::var>& z) {
-//   static const complex<double> i{0, 1};
-//   return -i * asinh(i * z);
-// }
+/**
+ * Return the complex arc hyperbolic sine of the specified complex
+ * argument with branch cuts outside the interval `[-i, i]` along the
+ * imaginary axis.
+ *
+ * @param[in] z complex argument
+ * @return arc hyperbolic sine of argument
+ */
+template <>
+complex<stan::math::var> asinh<stan::math::var>(
+    const complex<stan::math::var>& z) {
+  complex<double> z_d{z.real().val(), z.imag().val()};
+  complex<double> y_d = asinh(z_d);
+  auto y = log(z + sqrt(stan::math::var{1} + z * z));
+  return stan::math::match_sign(y_d, y);
+}
 
-// // (1)
-// template <>
-// complex<stan::math::var> acos<stan::math::var>(
-//     const complex<stan::math::var>& z) {
-//   static const complex<double> i{0, 1};
-//   return 0.5 * stan::math::pi() - asin(z);
-// }
+/**
+ * Return the complex arc hyperbolic cosine of the specified complex
+ * argument with branch cuts at values less than 1 along the real
+ * axis.
+ *
+ * @param[in] z complex argument
+ * @return arc hyperbolic cosine of argument
+ */
+template <>
+complex<stan::math::var> acosh<stan::math::var>(
+    const complex<stan::math::var>& z) {
+  complex<double> z_d{z.real().val(), z.imag().val()};
+  complex<double> y_d = acosh(z_d);
+  auto y = log(z + sqrt(z * z - stan::math::var{1}));
+  return stan::math::match_sign(y_d, y);
+}
 
-// // (1)
-// template <>
-// complex<stan::math::var> atan<stan::math::var>(
-//     const complex<stan::math::var>& z) {
-//   static const complex<double> i{0, 1};
-//   return -i * atanh(i * z);
-// }
+/**
+ * Return the complex arc hyperbolic tangent of the specified complex
+ * argument with branch cuts outside the interval `[-i, i]` along the
+ * real axis.
+ *
+ * @param[in] z complex argument
+ * @return arc hyperbolic tanget of argument
+ */
+template <>
+complex<stan::math::var> atanh<stan::math::var>(
+    const complex<stan::math::var>& z) {
+  complex<double> z_d{z.real().val(), z.imag().val()};
+  complex<double> y_d = atanh(z_d);
+  stan::math::var one{1};
+  auto y = stan::math::var{0.5} * (log(one + z) - log(one - z));
+  return stan::math::match_sign(y_d, y);
+}
 
-// // (1)
-// template <>
-// complex<stan::math::var> sinh<stan::math::var>(
-//     const complex<stan::math::var>& z) {
-//   return 0.5 * (exp(z) - exp(-z));
-// }
+/**
+ * Return the complex sine of the specified complex number.
+ *
+ * @param[in] z a complex argument
+ * @return complex sine of argument
+ */
+template <>
+complex<stan::math::var> sin<stan::math::var>(
+    const complex<stan::math::var>& z) {
+  complex<stan::math::var> i{0, 1};
+  return -i * sinh(i * z);
+}
 
-// // (1)
-// template <>
-// complex<stan::math::var> cosh<stan::math::var>(
-//     const complex<stan::math::var>& z) {
-//   return 0.5 * (exp(z) + exp(-z));
-// }
+/**
+ * Return the complex cosine of the specified complex number.
+ *
+ * @param[in] z a complex argument
+ * @return complex cosine of argument
+ */
+template <>
+complex<stan::math::var> cos<stan::math::var>(
+    const complex<stan::math::var>& z) {
+  complex<stan::math::var> i{0, 1};
+  return cosh(i * z);
+}
 
-// // (1)
-// template <>
-// complex<stan::math::var> tanh<stan::math::var>(
-//     const complex<stan::math::var>& z) {
-//   auto exp_z = exp(z);
-//   auto exp_neg_z = exp(-z);
-//   return (exp_z - exp_neg_z) / (exp_z + exp_neg_z);
-// }
+/**
+ * Return the complex tangent of the specified complex number.
+ *
+ * @param[in] z a complex argument
+ * @return complex tangent of argument
+ */
+template <>
+complex<stan::math::var> tan<stan::math::var>(
+    const complex<stan::math::var>& z) {
+  complex<stan::math::var> i{0, 1};
+  return -i * tanh(i * z);
+}
 
-// // (1)
-// template <>
-// complex<stan::math::var> asinh<stan::math::var>(
-//     const complex<stan::math::var>& z) {
-//   return log(z + sqrt(1 + z * z));
-// }
+/**
+ * Return the complex arc sine of the specified complex argument, with
+ * branch cuts outside the interval `[-1, 1]` along the real axis.
+ *
+ * @param[in] z complex argument
+ * @return complex arc sine of the argument
+ */
+template <>
+complex<stan::math::var> asin<stan::math::var>(
+    const complex<stan::math::var>& z) {
+  complex<double> z_d{z.real().val(), z.imag().val()};
+  complex<double> y_d = asin(z_d);
+  complex<stan::math::var> i{0, 1};
+  auto y = -i * asinh(i * z);
+  return stan::math::match_sign(y_d, y);
+}
 
-// // (1)
-// template <>
-// complex<stan::math::var> acosh<stan::math::var>(
-//     const complex<stan::math::var>& z) {
-//   return log(z + sqrt(z + 1) * sqrt(z - 1));
-// }
+/**
+ * Return the complex arc cosine of the specified complex argument, with
+ * branch cuts outside the interval `[-1, 1]` along the real axis.
+ *
+ * @param[in] z complex argument
+ * @return complex arc cosine of the argument
+ */
+template <>
+complex<stan::math::var> acos<stan::math::var>(
+    const complex<stan::math::var>& z) {
+  // signs established by asin()
+  complex<stan::math::var> i{0, 1};
+  return stan::math::var{0.5 * stan::math::pi()} - asin(z);
+}
 
-// // (1)
-// template <>
-// complex<stan::math::var> atanh<stan::math::var>(
-//     const complex<stan::math::var>& z) {
-//   return 0.5 * (log(1 + z) - log(1 - z));
-// }
+/**
+ * Return the complex arc tangent of the specified complex argument,
+ * with branch cuts outside the interval `[-i, i]` along the imaginary
+ * axis.
+ *
+ * @param[in] z complex argument
+ * @return complex arc tangent of the argument
+ */
+template <>
+complex<stan::math::var> atan<stan::math::var>(
+    const complex<stan::math::var>& z) {
+  complex<stan::math::var> i{0, 1};
+  // signs established by atanh()
+  return -i * atanh(i * z);
+}
 
 }  // namespace std
 
@@ -933,6 +1040,10 @@ std::complex<var> pow(const std::complex<var>& x, const double& y) {
 // can't be specialized in g++ or clang++
 std::complex<var> pow(const double& x, const std::complex<var>& y) {
   return exp(y * std::complex<var>(log(x)));
+}
+
+std::complex<var> pow(const std::complex<var>& x, int y) {
+  return exp(var(y) * log(x));
 }
 
 }  // namespace math
