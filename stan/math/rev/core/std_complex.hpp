@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_CORE_STD_COMPLEX_HPP
 #define STAN_MATH_REV_CORE_STD_COMPLEX_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
@@ -25,6 +26,70 @@
 
 namespace stan {
 namespace math {
+/**
+ * Return true if the specified value is negative.
+ *
+ * @param v argument
+ * @return true if the argument is negativexs
+ */
+bool signbit(const var& v) { return signbit(v.val()); }
+
+/**
+ * Return true if specified variable is infinite.
+ *
+ * @param v argument
+ * @return true if argument is infinite
+ */
+bool isinf(const var& v) { return is_inf(v); }
+/**
+ * Return true if specified variable is infinite.
+ *
+ * @param v argument
+ * @return true if argument is infinite
+ */
+bool isfinite(const var& v) { return !is_inf(v) && !is_nan(v); }
+
+/**
+ * If the first and second argument have different signs, return the
+ * second argument negated, otherwise return the second argument.
+ *
+ * @param x first argument
+ * @param y second argument
+ * @return second argument, negated if necessary to match sign of
+ * first argument
+ */
+var copysign(const var& x, const var& y) {
+  return (x<0 & y> 0) || (x > 0 && y < 0) ? -y : y;
+}
+/**
+ * If the first and second argument have different signs, return the
+ * second argument negated, otherwise return the second argument.
+ *
+ * @tparam U type of second argument
+ * @param x first argument
+ * @param y second argument
+ * @return second argument, negated if necessary to match sign of
+ * first argument
+ */
+template <typename U>
+var copysign(const var& x, const U& y) {
+  return (x<0 & y> 0) || (x > 0 && y < 0) ? -y : y;
+}
+/**
+ * If the first and second argument have different signs, return the
+ * second argument negated, otherwise return the second argument.
+ *
+ * @tparam T type of first argument
+ * @param x first argument
+ * @param y second argument
+ * @return second argument, negated if necessary to match sign of
+ * first argument
+ */
+template <typename T>
+var copysign(const T& x, const var& y) {
+  return (x<0 & y> 0) || (x > 0 && y < 0) ? -y : y;
+}
+
 /**
  * Return the second argument if its sign matches the first argument,
  * otherwise return the negation of the second argument.
@@ -154,6 +219,32 @@ class complex<stan::math::var> {
    * @param[in] x value to assign
    * @return this complex number
    */
+  complex<stan::math::var>& operator=(const int& x) {
+    re_ = x;
+    im_ = 0;
+    return *this;
+  }
+
+  /**
+   * Assign the specified value to the real part of this complex number
+   * and set imaginary part to zero.
+   *
+   * @param[in] x value to assign
+   * @return this complex number
+   */
+  complex<stan::math::var>& operator=(const double& x) {
+    re_ = x;
+    im_ = 0;
+    return *this;
+  }
+
+  /**
+   * Assign the specified value to the real part of this complex number
+   * and set imaginary part to zero.
+   *
+   * @param[in] x value to assign
+   * @return this complex number
+   */
   complex<stan::math::var>& operator=(const stan::math::var& x) {
     re_ = x;
     im_ = 0;
@@ -229,12 +320,56 @@ class complex<stan::math::var> {
   }
 
   /**
+   * Adds other to this.
+   *
+   * @param[in] other a scalar value of matching type
+   * @return this complex number
+   */
+  complex<stan::math::var>& operator+=(const double& other) {
+    re_ += other;
+    return *this;
+  }
+
+  /**
+   * Adds other to this.
+   *
+   * @param[in] other a scalar value of matching type
+   * @return this complex number
+   */
+  complex<stan::math::var>& operator+=(const int& other) {
+    re_ += other;
+    return *this;
+  }
+
+  /**
    * Subtracts other from this.
    *
    * @param[in] other a scalar value of matching type
    * @return this complex number
    */
   complex<stan::math::var>& operator-=(const stan::math::var& other) {
+    re_ -= other;
+    return *this;
+  }
+
+  /**
+   * Subtracts other from this.
+   *
+   * @param[in] other a scalar value of matching type
+   * @return this complex number
+   */
+  complex<stan::math::var>& operator-=(const double& other) {
+    re_ -= other;
+    return *this;
+  }
+
+  /**
+   * Subtracts other from this.
+   *
+   * @param[in] other a scalar value of matching type
+   * @return this complex number
+   */
+  complex<stan::math::var>& operator-=(const int& other) {
     re_ -= other;
     return *this;
   }
@@ -252,12 +387,60 @@ class complex<stan::math::var> {
   }
 
   /**
+   * Multiplies other by this.
+   *
+   * @param[in] other a scalar value of matching type
+   * @return this complex number
+   */
+  complex<stan::math::var>& operator*=(const double& other) {
+    re_ *= other;
+    im_ *= other;
+    return *this;
+  }
+
+  /**
+   * Multiplies other by this.
+   *
+   * @param[in] other a scalar value of matching type
+   * @return this complex number
+   */
+  complex<stan::math::var>& operator*=(const int& other) {
+    re_ *= other;
+    im_ *= other;
+    return *this;
+  }
+
+  /**
    * Divides other by this.
    *
    * @param[in] other a scalar value of matching type
    * @return this complex number
    */
   complex<stan::math::var>& operator/=(const stan::math::var& other) {
+    re_ /= other;
+    im_ /= other;
+    return *this;
+  }
+
+  /**
+   * Divides other by this.
+   *
+   * @param[in] other a scalar value of matching type
+   * @return this complex number
+   */
+  complex<stan::math::var>& operator/=(const double& other) {
+    re_ /= other;
+    im_ /= other;
+    return *this;
+  }
+
+  /**
+   * Divides other by this.
+   *
+   * @param[in] other a scalar value of matching type
+   * @return this complex number
+   */
+  complex<stan::math::var>& operator/=(const int& other) {
     re_ /= other;
     im_ /= other;
     return *this;
@@ -1054,35 +1237,56 @@ namespace math {
 
 // overload and rely on ADL;  can't specialize portably
 
-// can be specialized in g++, but not in clang++
-std::complex<var> pow(const std::complex<var>& x, const var& y) {
-  return exp(y * log(x));
+// general template solution
+template <typename T, typename U, typename = require_any_var_t<T, U>>
+std::complex<var> pow(const std::complex<T>& x, const std::complex<U>& y) {
+  using std::log;
+  using std::exp;
+  return std::exp(std::complex<var>(y) * std::log(std::complex<var>(x)));
+}
+template <typename T, typename U, typename = require_any_var_t<T, U>>
+std::complex<var> pow(const T& x, const std::complex<U>& y) {
+  using std::log;
+  using std::exp;
+  return std::exp(std::complex<var>(y) * std::log(std::complex<var>(x)));
+}
+template <typename T, typename U, typename = require_any_var_t<T, U>>
+std::complex<var> pow(const std::complex<T>& x, const U& y) {
+  using std::log;
+  using std::exp;
+  return std::exp(std::complex<var>(y) * std::log(std::complex<var>(x)));
 }
 
-// can be specialized in g++, but not in clang++
-std::complex<var> pow(const var& x, const std::complex<var>& y) {
-  return exp(y * log(x));
-}
+// // can be specialized in g++, but not in clang++
+// std::complex<var> pow(const std::complex<var>& x, const var& y) {
+//   return exp(y * log(x));
+// }
+// std::complex<var> pow(const var& x, const std::complex<var>& y) {
+//   return exp(y * log(x));
+// }
 
-// can't be specialized in g++ or clang++
-std::complex<var> pow(const std::complex<var>& x,
-                      const std::complex<double>& y) {
-  return exp(std::complex<var>(y) * log(x));
-}
+// // can't be specialized in g++ or clang++
+// std::complex<var> pow(const std::complex<var>& x,
+//                       const std::complex<double>& y) {
+//   return exp(std::complex<var>(y) * log(x));
+// }
+// std::complex<var> pow(const std::complex<double>& x,
+//                       const std::complex<var>& y) {
+//   return exp(y * std::complex<var>(log(x)));
+// }
 
-// can't be specialized in g++ or clang++
-std::complex<var> pow(const std::complex<var>& x, const double& y) {
-  return exp(std::complex<var>(y) * std::complex<var>(log(x)));
-}
+// // can't be specialized in g++ or clang++
+// std::complex<var> pow(const std::complex<var>& x, const double& y) {
+//   return exp(std::complex<var>(y) * std::complex<var>(log(x)));
+// }
+// std::complex<var> pow(const double& x, const std::complex<var>& y) {
+//   return exp(y * std::complex<var>(log(x)));
+// }
 
-// can't be specialized in g++ or clang++
-std::complex<var> pow(const double& x, const std::complex<var>& y) {
-  return exp(y * std::complex<var>(log(x)));
-}
-
-std::complex<var> pow(const std::complex<var>& x, int y) {
-  return exp(var(y) * log(x));
-}
+// // can be specialized in g++, but not in clang++
+// std::complex<var> pow(const std::complex<var>& x, int y) {
+//   return exp(var(y) * log(x));
+// }
 
 }  // namespace math
 }  // namespace stan

@@ -106,6 +106,7 @@ TEST(mathRevCore, stdComplexConstructor1) {
   cvar_t a{x};
   expect_complex(1, 0, a);
 
+  // verifies std::complex<var>() produces (0, 0)
   // constructor (1), default real and imaginary
   cvar_t b{};
   expect_complex(0, 0, b);
