@@ -50,75 +50,37 @@ bool isinf(const var& v) { return is_inf(v); }
 bool isfinite(const var& v) { return !is_inf(v) && !is_nan(v); }
 
 /**
- * If the first and second argument have different signs, return the
- * second argument negated, otherwise return the second argument.
+ * Return the negation of the first argument if the first and second
+ * argument have different signs, otherwise return a copy of the first
+ * argument.
  *
- * @param x first argument
- * @param y second argument
- * @return second argument, negated if necessary to match sign of
- * first argument
- */
-var copysign(const var& x, const var& y) {
-  return (x<0 & y> 0) || (x > 0 && y < 0) ? -y : y;
-}
-/**
- * If the first and second argument have different signs, return the
- * second argument negated, otherwise return the second argument.
- *
+ * @tparam T type of first argument
  * @tparam U type of second argument
  * @param x first argument
  * @param y second argument
  * @return second argument, negated if necessary to match sign of
  * first argument
  */
-template <typename U>
-var copysign(const var& x, const U& y) {
-  return (x<0 & y> 0) || (x > 0 && y < 0) ? -y : y;
-}
-/**
- * If the first and second argument have different signs, return the
- * second argument negated, otherwise return the second argument.
- *
- * @tparam T type of first argument
- * @param x first argument
- * @param y second argument
- * @return second argument, negated if necessary to match sign of
- * first argument
- */
-template <typename T>
-var copysign(const T& x, const var& y) {
-  return (x<0 & y> 0) || (x > 0 && y < 0) ? -y : y;
+template <typename T, typename U>
+T copysign(const T& x, const U& y) {
+  return (x < 0 && y > 0) || (x > 0 && y < 0) ? -x : x;
 }
 
 /**
- * Return the second argument if its sign matches the first argument,
- * otherwise return the negation of the second argument.
+ * Return the negation of the first argument if the first and second
+ * argument have different signs, otherwise return a copy of the first
+ * argument.
  *
- * @tparam T type of second argument
- * @param[in] x sign argument
- * @param[in] y value argument
- * @return value argument converted to same sign as sign argument
+ * @tparam T value type of first argument
+ * @tparam U value type of second argument
+ * @param x first complex argument
+ * @param y second complex argument
+ * @return copy of second argument, with components negated if
+ * necessary to match sign of first argument
  */
-template <typename T>
-stan::math::var match_sign(double x, const T& y) {
-  // can't just copysign---need to negate
-  return (x <= 0 && y > 0) || (x > 0 && y <= 0) ? -y : y;
-}
-
-/**
- * Return the result of matching signs of the first and second
- * argument's real and imaginary parts.
- *
- * @tparam T type of secone argument
- * @param x sign complex argument
- * @param y value complex argument
- * @return value argument with real and imaginary components converted
- * to same sign as sign argument
- */
-template <typename T>
-std::complex<T> match_sign(const std::complex<double>& x,
-                           const std::complex<T>& y) {
-  return {match_sign(x.real(), y.real()), match_sign(x.imag(), y.imag())};
+template <typename T, typename U>
+std::complex<T> copysign(const std::complex<T>& y, const std::complex<U>& x) {
+  return {copysign(y.real(), x.real()), copysign(y.imag(), x.imag())};
 }
 
 /**
@@ -1009,8 +971,18 @@ complex<stan::math::var> pow<stan::math::var>(
   return exp(y * log(x));
 }
 
-// moved remaining templates in C++ spec down to overloads
-// as they can't be portably specialized in clang++ and g++
+// Following cannot be reliably specialized in both g++ and clang++
+
+// can be specialized in g++, but not in clang++
+// complex<var> pow(const complex<var>& x, const var& y);
+// complex<var> pow(const var& x, const complex<var>& y);
+// complex<var> pow(const complex<var>& x, int y);
+
+// can't be specialized in g++ or clang++
+// complex<var> pow(const complex<var>& x, const complex<double>& y);
+// complex<var> pow(const complex<double>& x, const complex<var>& y);
+// complex<var> pow(const complex<var>& x, const double& y);
+// complex<var> pow(const double& x, const complex<var>& y);
 
 /**
  * Return the square root of the specified complex number with a
@@ -1081,7 +1053,7 @@ complex<stan::math::var> asinh<stan::math::var>(
     const complex<stan::math::var>& z) {
   complex<double> y_d = asinh(stan::math::value_of(z));
   auto y = log(z + sqrt(stan::math::var(1) + z * z));
-  return stan::math::match_sign(y_d, y);
+  return copysign(y, y_d);
 }
 
 /**
@@ -1097,7 +1069,7 @@ complex<stan::math::var> acosh<stan::math::var>(
     const complex<stan::math::var>& z) {
   complex<double> y_d = acosh(stan::math::value_of(z));
   auto y = log(z + sqrt(z * z - stan::math::var(1)));
-  return stan::math::match_sign(y_d, y);
+  return copysign(y, y_d);
 }
 
 /**
@@ -1114,7 +1086,7 @@ complex<stan::math::var> atanh<stan::math::var>(
   complex<double> y_d = atanh(stan::math::value_of(z));
   stan::math::var one{1};
   auto y = stan::math::var(0.5) * (log(one + z) - log(one - z));
-  return stan::math::match_sign(y_d, y);
+  return copysign(y, y_d);
 }
 
 /**
@@ -1165,7 +1137,7 @@ complex<stan::math::var> asin<stan::math::var>(
     const complex<stan::math::var>& z) {
   complex<double> y_d = asin(stan::math::value_of(z));
   auto y = neg_i_times(asinh(i_times(z)));
-  return stan::math::match_sign(y_d, y);
+  return copysign(y, y_d);
 }
 
 /**
