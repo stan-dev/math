@@ -1209,56 +1209,50 @@ namespace math {
 
 // overload and rely on ADL;  can't specialize portably
 
-// general template solution
-template <typename T, typename U, typename = require_any_var_t<T, U>>
-std::complex<var> pow(const std::complex<T>& x, const std::complex<U>& y) {
-  using std::log;
-  using std::exp;
-  return std::exp(std::complex<var>(y) * std::log(std::complex<var>(x)));
+// // // general template solution isn't specific enough to get picked up
+// template <typename T, typename U, typename = require_any_var_t<T, U>>
+// std::complex<var> pow(const std::complex<T>& x, const std::complex<U>& y) {
+//   return std::exp(std::complex<var>(y) * std::log(std::complex<var>(x)));
+// }
+// template <typename T, typename U, typename = require_any_var_t<T, U>>
+// std::complex<var> pow(const T& x, const std::complex<U>& y) {
+//   return std::exp(std::complex<var>(y) * std::log(std::complex<var>(x)));
+// }
+// template <typename T, typename U, typename = require_any_var_t<T, U>>
+// std::complex<var> pow(const std::complex<T>& x, const U& y) {
+//   return std::exp(std::complex<var>(y) * std::log(std::complex<var>(x)));
+// }
+
+// can be specialized in g++, but not in clang++
+std::complex<var> pow(const std::complex<var>& x, const var& y) {
+  return exp(y * log(x));
 }
-template <typename T, typename U, typename = require_any_var_t<T, U>>
-std::complex<var> pow(const T& x, const std::complex<U>& y) {
-  using std::log;
-  using std::exp;
-  return std::exp(std::complex<var>(y) * std::log(std::complex<var>(x)));
+std::complex<var> pow(const var& x, const std::complex<var>& y) {
+  return exp(y * log(x));
 }
-template <typename T, typename U, typename = require_any_var_t<T, U>>
-std::complex<var> pow(const std::complex<T>& x, const U& y) {
-  using std::log;
-  using std::exp;
-  return std::exp(std::complex<var>(y) * std::log(std::complex<var>(x)));
+std::complex<var> pow(const std::complex<var>& x, int y) {
+  return exp(var(y) * log(x));
 }
 
-// // can be specialized in g++, but not in clang++
-// std::complex<var> pow(const std::complex<var>& x, const var& y) {
-//   return exp(y * log(x));
-// }
-// std::complex<var> pow(const var& x, const std::complex<var>& y) {
-//   return exp(y * log(x));
-// }
+// can't be specialized in g++ or clang++
+std::complex<var> pow(const std::complex<var>& x,
+                      const std::complex<double>& y) {
+  return exp(std::complex<var>(y) * log(x));
+}
+std::complex<var> pow(const std::complex<double>& x,
+                      const std::complex<var>& y) {
+  return exp(y * std::complex<var>(log(x)));
+}
 
-// // can't be specialized in g++ or clang++
-// std::complex<var> pow(const std::complex<var>& x,
-//                       const std::complex<double>& y) {
-//   return exp(std::complex<var>(y) * log(x));
-// }
-// std::complex<var> pow(const std::complex<double>& x,
-//                       const std::complex<var>& y) {
-//   return exp(y * std::complex<var>(log(x)));
-// }
-
-// // can't be specialized in g++ or clang++
-// std::complex<var> pow(const std::complex<var>& x, const double& y) {
-//   return exp(std::complex<var>(y) * std::complex<var>(log(x)));
-// }
-// std::complex<var> pow(const double& x, const std::complex<var>& y) {
-//   return exp(y * std::complex<var>(log(x)));
-// }
-
-// // can be specialized in g++, but not in clang++
-// std::complex<var> pow(const std::complex<var>& x, int y) {
-//   return exp(var(y) * log(x));
-// }
+// can't be specialized in g++ or clang++
+template <typename T, std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
+std::complex<var> pow(const std::complex<var>& x, const T& y) {
+  return exp(var(y) * log(x));
+}
+template <typename T, std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
+std::complex<var> pow(const T& x, const std::complex<var>& y) {
+  return exp(y * var(log(x)));
+}
 
 }  // namespace math
 }  // namespace stan

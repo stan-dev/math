@@ -81,12 +81,14 @@ void expect_complex_common_binary(const F& f) {
   for (double x1 : common_non_neg_vals()) {
     for (double y1 : common_non_neg_vals()) {
       for (double x2 : common_non_neg_vals()) {
-        expect_complex(f(cdouble_t{x1, y1}, x2), f(cvar_t{x1, y1}, var_t{x2}));
         // std::cout << "x1 = " << x1 << "; y1 = "
-        //           << y1 << "; x2 = " << x2 << std::endl;
+        // << y1 << "; x2 = " << x2 << std::endl;
+        expect_complex(f(cdouble_t{x1, y1}, x2), f(cvar_t{x1, y1}, var_t{x2}));
         expect_complex(f(cdouble_t{x1, y1}, x2), f(cvar_t{x1, y1}, x2));
         expect_complex(f(x2, cdouble_t{x1, y1}), f(var_t{x2}, cvar_t{x1, y1}));
+        expect_complex(f(x2, cdouble_t{x1, y1}), f(x2, cvar_t{x1, y1}));
         for (double y2 : common_non_neg_vals()) {
+          // std::cout << "    y2 = " << y2 << std::endl;
           expect_complex(f(cdouble_t{x1, y1}, cdouble_t{x2, y2}),
                          f(cvar_t{x1, y1}, cvar_t{x2, y2}));
         }
@@ -709,50 +711,50 @@ TEST(mathRevCore, stdLog1) {
 TEST(mathRevCore, stdLog101) {
   expect_complex_common([](const auto& u) { return std::log10(u); });
 }
-TEST(MathRevCore, stdPow1) {
+TEST(mathRevCore, stdPow1) {
   auto f = [](const auto& u, const auto& v) {
-    using std::pow;
+    // using std::pow;
     return pow(u, v);
   };
   expect_complex_common_binary(f);
   expect_complex(f(cdouble_t{1.2, 0.3}, 2), f(cvar_t{1.2, 0.3}, 2));
 }
-TEST(MathRevCore, stdSqrt1) {
+TEST(mathRevCore, stdSqrt1) {
   expect_complex_common([](const auto& u) { return std::sqrt(u); });
 }
-TEST(MathRevCore, stdSinh1) {
+TEST(mathRevCore, stdSinh1) {
   expect_complex_common([](const auto& u) { return std::sinh(u); });
 }
-TEST(MathRevCore, stdCosh1) {
+TEST(mathRevCore, stdCosh1) {
   expect_complex_common([](const auto& u) { return std::cosh(u); });
 }
-TEST(MathRevCore, stdTanh1) {
+TEST(mathRevCore, stdTanh1) {
   expect_complex_common([](const auto& u) { return std::tanh(u); });
 }
-TEST(MathRevCore, stdAsinh1) {
+TEST(mathRevCore, stdAsinh1) {
   expect_complex_common([](const auto& u) { return std::asinh(u); });
 }
-TEST(MathRevCore, stdAcosh1) {
+TEST(mathRevCore, stdAcosh1) {
   expect_complex_common([](const auto& u) { return std::acosh(u); });
 }
-TEST(MathRevCore, stdAtanh1) {
+TEST(mathRevCore, stdAtanh1) {
   expect_complex_common([](const auto& u) { return std::atanh(u); });
 }
-TEST(MathRevCore, stdSin1) {
+TEST(mathRevCore, stdSin1) {
   expect_complex_common([](const auto& u) { return std::sin(u); });
 }
-TEST(MathRevCore, stdCos1) {
+TEST(mathRevCore, stdCos1) {
   expect_complex_common([](const auto& u) { return std::cos(u); });
 }
-TEST(MathRevCore, stdTan1) {
+TEST(mathRevCore, stdTan1) {
   expect_complex_common([](const auto& u) { return std::tan(u); });
 }
-TEST(MathRevCore, stdAsin1) {
+TEST(mathRevCore, stdAsin1) {
   expect_complex_common([](const auto& u) { return std::asin(u); });
 }
-TEST(MathRevCore, stdAcos1) {
+TEST(mathRevCore, stdAcos1) {
   expect_complex_common([](const auto& u) { return std::acos(u); });
 }
-TEST(MathRevCore, stdAtan1) {
+TEST(mathRevCore, stdAtan1) {
   expect_complex_common([](const auto& u) { return std::acos(u); });
 }
