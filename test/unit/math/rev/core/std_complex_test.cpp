@@ -717,6 +717,7 @@ TEST(mathRevCore, stdPow1) {
     return pow(u, v);
   };
   expect_complex_common_binary(f);
+  // verify (cvar_t, int) is unambiguous
   expect_complex(f(cdouble_t{1.2, 0.3}, 2), f(cvar_t{1.2, 0.3}, 2));
 }
 TEST(mathRevCore, stdSqrt1) {

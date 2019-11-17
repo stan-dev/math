@@ -24,6 +24,46 @@
 
 #include <iostream>
 
+// std SPECIALIZATIONS FOR STAN W/O COMPLEX
+// ===================================================================
+
+namespace std {
+/**
+ * Specialization of iterator traits for Stan math.  These all take
+ * the form of typedefs.
+ */
+template <>
+struct iterator_traits<stan::math::var> {
+  /**
+   * Iterator category for traits.
+   */
+  typedef random_access_iterator_tag iterator_category;
+
+  /**
+   * Type for difference between pointers.
+   */
+  typedef ptrdiff_t difference_type;
+
+  /**
+   * Type for value of pointer to values.
+   */
+  typedef stan::math::var value_type;
+
+  /**
+   * Type of pointer to variables.
+   */
+  typedef stan::math::var* pointer;
+
+  /**
+   * Type of reference to variables.
+   */
+  typedef stan::math::var& reference;
+};
+}  // namespace std
+
+// STAN CODE W/O complex<var>
+// ===================================================================
+
 namespace stan {
 namespace math {
 /**
@@ -125,6 +165,7 @@ std::complex<typename T::Scalar> value_of(const std::complex<T>& z) {
 }  // namespace math
 }  // namespace stan
 
+// SPECIALIZATION complex<var> for std::complex spec
 namespace std {
 
 /**
@@ -464,38 +505,6 @@ class complex<stan::math::var> {
     re_ = re_temp;
     return *this;
   }
-};
-
-/**
- * Specialization of iterator traits for Stan math.  These all take
- * the form of typedefs.
- */
-template <>
-struct iterator_traits<stan::math::var> {
-  /**
-   * Iterator category for traits.
-   */
-  typedef random_access_iterator_tag iterator_category;
-
-  /**
-   * Type for difference between pointers.
-   */
-  typedef ptrdiff_t difference_type;
-
-  /**
-   * Type for value of pointer to values.
-   */
-  typedef stan::math::var value_type;
-
-  /**
-   * Type of pointer to variables.
-   */
-  typedef stan::math::var* pointer;
-
-  /**
-   * Type of reference to variables.
-   */
-  typedef stan::math::var& reference;
 };
 
 /**
@@ -1169,6 +1178,8 @@ complex<stan::math::var> atan<stan::math::var>(
 
 }  // namespace std
 
+// SPECIALIZATIONS FOR ADL IN STAN
+
 namespace stan {
 namespace math {
 // no partial fun specializations allowed in C++1y
@@ -1207,23 +1218,6 @@ std::basic_istream<CharT, Traits>& operator>>(
 namespace stan {
 namespace math {
 
-// overload and rely on ADL;  can't specialize portably
-
-// // // general template solution isn't specific enough to get picked up
-// template <typename T, typename U, typename = require_any_var_t<T, U>>
-// std::complex<var> pow(const std::complex<T>& x, const std::complex<U>& y) {
-//   return std::exp(std::complex<var>(y) * std::log(std::complex<var>(x)));
-// }
-// template <typename T, typename U, typename = require_any_var_t<T, U>>
-// std::complex<var> pow(const T& x, const std::complex<U>& y) {
-//   return std::exp(std::complex<var>(y) * std::log(std::complex<var>(x)));
-// }
-// template <typename T, typename U, typename = require_any_var_t<T, U>>
-// std::complex<var> pow(const std::complex<T>& x, const U& y) {
-//   return std::exp(std::complex<var>(y) * std::log(std::complex<var>(x)));
-// }
-
-// can be specialized in g++, but not in clang++
 std::complex<var> pow(const std::complex<var>& x, const var& y) {
   return exp(y * log(x));
 }
@@ -1234,7 +1228,6 @@ std::complex<var> pow(const std::complex<var>& x, int y) {
   return exp(var(y) * log(x));
 }
 
-// can't be specialized in g++ or clang++
 std::complex<var> pow(const std::complex<var>& x,
                       const std::complex<double>& y) {
   return exp(std::complex<var>(y) * log(x));
@@ -1244,12 +1237,11 @@ std::complex<var> pow(const std::complex<double>& x,
   return exp(y * std::complex<var>(log(x)));
 }
 
-// can't be specialized in g++ or clang++
-template <typename T, std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
+template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
 std::complex<var> pow(const std::complex<var>& x, const T& y) {
   return exp(var(y) * log(x));
 }
-template <typename T, std::enable_if_t<std::is_arithmetic<T>::value, int> = 0>
+template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
 std::complex<var> pow(const T& x, const std::complex<var>& y) {
   return exp(y * var(log(x)));
 }
