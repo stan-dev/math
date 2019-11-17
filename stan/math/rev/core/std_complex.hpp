@@ -89,6 +89,11 @@ bool isinf(const var& v) { return is_inf(v); }
  */
 bool isfinite(const var& v) { return !is_inf(v) && !is_nan(v); }
 
+template <typename T, typename U>
+T copysign(const T& x, const U& y) {
+  return (x < 0 && y > 0) || (x > 0 && y < 0) ? -x : x;
+}
+
 /**
  * Return the negation of the first argument if the first and second
  * argument have different signs, otherwise return a copy of the first
@@ -102,7 +107,53 @@ bool isfinite(const var& v) { return !is_inf(v) && !is_nan(v); }
  * first argument
  */
 template <typename T, typename U>
-T copysign(const T& x, const U& y) {
+var copysign(const T& x, const U& y) {
+  return (x < 0 && y > 0) || (x > 0 && y < 0) ? -x : x;
+}
+
+/**
+ * Return the negation of the first argument if the first and second
+ * argument have different signs, otherwise return a copy of the first
+ * argument.
+ *
+ * @tparam U type of second argument
+ * @param x first argument
+ * @param y second argument
+ * @return second argument, negated if necessary to match sign of
+ * first argument
+ */
+template <typename U>
+var copysign(const var& x, const U& y) {
+  return (x < 0 && y > 0) || (x > 0 && y < 0) ? -x : x;
+}
+
+/**
+ * Return the negation of the first argument if the first and second
+ * argument have different signs, otherwise return a copy of the first
+ * argument.
+ *
+ * @tparam T type of first argument
+ * @param x first argument
+ * @param y second argument
+ * @return second argument, negated if necessary to match sign of
+ * first argument
+ */
+template <typename T>
+T copysign(const T& x, const var& y) {
+  return (x < 0 && y > 0) || (x > 0 && y < 0) ? -x : x;
+}
+
+/**
+ * Return the negation of the first argument if the first and second
+ * argument have different signs, otherwise return a copy of the first
+ * argument.
+ *
+ * @param x first argument
+ * @param y second argument
+ * @return second argument, negated if necessary to match sign of
+ * first argument
+ */
+var copysign(const var& x, const var& y) {
   return (x < 0 && y > 0) || (x > 0 && y < 0) ? -x : x;
 }
 
@@ -314,10 +365,12 @@ class complex<stan::math::var> {
   /**
    * Adds other to this.
    *
+   * @tparam X type of scalar argument (assignable to `stan::math::var`)
    * @param[in] other a scalar value of matching type
    * @return this complex number
    */
-  complex<stan::math::var>& operator+=(const stan::math::var& other) {
+  template <typename X>
+  complex<stan::math::var>& operator+=(const X& other) {
     re_ += other;
     return *this;
   }
@@ -325,138 +378,13 @@ class complex<stan::math::var> {
   /**
    * Adds other to this.
    *
-   * @param[in] other a scalar value of matching type
-   * @return this complex number
-   */
-  complex<stan::math::var>& operator+=(const double& other) {
-    re_ += other;
-    return *this;
-  }
-
-  /**
-   * Adds other to this.
-   *
-   * @param[in] other a scalar value of matching type
-   * @return this complex number
-   */
-  complex<stan::math::var>& operator+=(const int& other) {
-    re_ += other;
-    return *this;
-  }
-
-  /**
-   * Subtracts other from this.
-   *
-   * @param[in] other a scalar value of matching type
-   * @return this complex number
-   */
-  complex<stan::math::var>& operator-=(const stan::math::var& other) {
-    re_ -= other;
-    return *this;
-  }
-
-  /**
-   * Subtracts other from this.
-   *
-   * @param[in] other a scalar value of matching type
-   * @return this complex number
-   */
-  complex<stan::math::var>& operator-=(const double& other) {
-    re_ -= other;
-    return *this;
-  }
-
-  /**
-   * Subtracts other from this.
-   *
-   * @param[in] other a scalar value of matching type
-   * @return this complex number
-   */
-  complex<stan::math::var>& operator-=(const int& other) {
-    re_ -= other;
-    return *this;
-  }
-
-  /**
-   * Multiplies other by this.
-   *
-   * @param[in] other a scalar value of matching type
-   * @return this complex number
-   */
-  complex<stan::math::var>& operator*=(const stan::math::var& other) {
-    re_ *= other;
-    im_ *= other;
-    return *this;
-  }
-
-  /**
-   * Multiplies other by this.
-   *
-   * @param[in] other a scalar value of matching type
-   * @return this complex number
-   */
-  complex<stan::math::var>& operator*=(const double& other) {
-    re_ *= other;
-    im_ *= other;
-    return *this;
-  }
-
-  /**
-   * Multiplies other by this.
-   *
-   * @param[in] other a scalar value of matching type
-   * @return this complex number
-   */
-  complex<stan::math::var>& operator*=(const int& other) {
-    re_ *= other;
-    im_ *= other;
-    return *this;
-  }
-
-  /**
-   * Divides other by this.
-   *
-   * @param[in] other a scalar value of matching type
-   * @return this complex number
-   */
-  complex<stan::math::var>& operator/=(const stan::math::var& other) {
-    re_ /= other;
-    im_ /= other;
-    return *this;
-  }
-
-  /**
-   * Divides other by this.
-   *
-   * @param[in] other a scalar value of matching type
-   * @return this complex number
-   */
-  complex<stan::math::var>& operator/=(const double& other) {
-    re_ /= other;
-    im_ /= other;
-    return *this;
-  }
-
-  /**
-   * Divides other by this.
-   *
-   * @param[in] other a scalar value of matching type
-   * @return this complex number
-   */
-  complex<stan::math::var>& operator/=(const int& other) {
-    re_ /= other;
-    im_ /= other;
-    return *this;
-  }
-
-  /**
-   * Adds other to this.
-   *
+   * @tparam value type of complex argument (assignable to
+   * `stan::math::var`)
    * @param[in] other a complex value of compatible type
    * @return this complex number
    */
-  template <typename T>
-  complex<stan::math::var>& operator+=(const complex<T>& other) {
+  template <typename X>
+  complex<stan::math::var>& operator+=(const complex<X>& other) {
     re_ += other.real();
     im_ += other.imag();
     return *this;
@@ -465,11 +393,26 @@ class complex<stan::math::var> {
   /**
    * Subtracts other from this.
    *
+   * @tparam X type of scalar argument (assignable to `stan::math::var`)
+   * @param[in] other a scalar value of matching type
+   * @return this complex number
+   */
+  template <typename X>
+  complex<stan::math::var>& operator-=(const X& other) {
+    re_ -= other;
+    return *this;
+  }
+
+  /**
+   * Subtracts other from this.
+   *
+   * @tparam X value type of complex argument (assignable to
+   * `stan::math::var`)
    * @param[in] other a complex value of compatible type
    * @return this complex number
    */
-  template <typename T>
-  complex<stan::math::var>& operator-=(const complex<T>& other) {
+  template <typename X>
+  complex<stan::math::var>& operator-=(const complex<X>& other) {
     re_ -= other.real();
     im_ -= other.imag();
     return *this;
@@ -478,11 +421,27 @@ class complex<stan::math::var> {
   /**
    * Multiplies this by other.
    *
+   * @tparam X type of scalar argument (assignable to `stan::math::var`)
+   * @param[in] other a scalar value of matching type
+   * @return this complex number
+   */
+  template <typename X>
+  complex<stan::math::var>& operator*=(const X& other) {
+    re_ *= other;
+    im_ *= other;
+    return *this;
+  }
+
+  /**
+   * Multiplies this by other.
+   *
+   * @tparam X value type of complex argument (assignable to
+   * `stan::math::var`)
    * @param[in] other a complex value of compatible type
    * @return this complex number
    */
-  template <typename T>
-  complex<stan::math::var>& operator*=(const complex<T>& other) {
+  template <typename X>
+  complex<stan::math::var>& operator*=(const complex<X>& other) {
     stan::math::var re_temp = re_ * other.real() - im_ * other.imag();
     im_ = re_ * other.imag() + other.real() * im_;
     re_ = re_temp;
@@ -492,11 +451,27 @@ class complex<stan::math::var> {
   /**
    * Divides this by other.
    *
+   * @tparam X type of scalar argument (assignable to `stan::math::var`)
+   * @param[in] other a scalar value of matching type
+   * @return this complex number
+   */
+  template <typename X>
+  complex<stan::math::var>& operator/=(const X& other) {
+    re_ /= other;
+    im_ /= other;
+    return *this;
+  }
+
+  /**
+   * Divides this by other.
+   *
+   * @tparam X value type of complex argument (assignable to
+   * `stan::math::var`)
    * @param[in] other a complex value of compatible type
    * @return this complex number
    */
-  template <typename T>
-  complex<stan::math::var>& operator/=(const complex<T>& other) {
+  template <typename X>
+  complex<stan::math::var>& operator/=(const complex<X>& other) {
     using stan::math::square;
     stan::math::var sum_sq_im = square(other.real()) + square(other.imag());
     stan::math::var re_temp
@@ -1245,6 +1220,17 @@ template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
 std::complex<var> pow(const T& x, const std::complex<var>& y) {
   return exp(y * var(log(x)));
 }
+
+// template <typename T>
+// std::complex<var> operator+(const std::complex<var>& x,
+//                             const std::complex<var>& y) {
+// }
+// template <typename T>
+// std::complex<var> operator+(const std::complex<var>& x, const T& y) {
+// }
+// template <typename T>
+// std::complex<var> operator+(const T& x, const std::complex<var>& y) {
+// }
 
 }  // namespace math
 }  // namespace stan
