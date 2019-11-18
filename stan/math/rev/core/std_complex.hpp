@@ -537,7 +537,7 @@ complex<stan::math::var> operator+<stan::math::var>(
 }
 
 /**
- * Returns the sum of its arguments.
+ * Return the sum of the two arguments.
  *
  * @param[in] lhs scalar first argument
  * @param[in] rhs complex second argument
@@ -1221,16 +1221,65 @@ std::complex<var> pow(const T& x, const std::complex<var>& y) {
   return exp(y * var(log(x)));
 }
 
-// template <typename T>
-// std::complex<var> operator+(const std::complex<var>& x,
-//                             const std::complex<var>& y) {
-// }
-// template <typename T>
-// std::complex<var> operator+(const std::complex<var>& x, const T& y) {
-// }
-// template <typename T>
-// std::complex<var> operator+(const T& x, const std::complex<var>& y) {
-// }
+/**
+ * Return the sum of the two arguments.
+ *
+ * @param[in] lhs complex first argument
+ * @param[in] rhs complex second argument
+ * @return sum of the arguments
+ */
+
+std::complex<var> operator+(const var& lhs, const std::complex<var>& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y += rhs;
+  return y;
+}
+std::complex<var> operator+(const var& lhs, const std::complex<double>& rhs) {
+  return {lhs + rhs.real(), rhs.imag()};
+  std::complex<stan::math::var> y(lhs);
+  y += rhs;
+  return y;
+}
+std::complex<var> operator+(const std::complex<var>& lhs, const var& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y += rhs;
+  return y;
+}
+std::complex<var> operator+(const std::complex<var>& lhs,
+                            const std::complex<double>& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y += rhs;
+  return y;
+}
+std::complex<var> operator+(const std::complex<var>& lhs,
+                            const std::complex<var>& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y += rhs;
+  return y;
+}
+std::complex<var> operator+(const std::complex<double>& lhs,
+                            const std::complex<var>& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y += rhs;
+  return y;
+}
+std::complex<var> operator+(const std::complex<double>& lhs, const var& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y += rhs;
+  return y;
+}
+template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
+std::complex<var> operator+(const std::complex<var>& lhs, T rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y += rhs;
+  return y;
+}
+template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
+std::complex<var> operator+(T lhs, const std::complex<var>& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y += rhs;
+  return y;
+}
 
 }  // namespace math
 }  // namespace stan
