@@ -7,6 +7,7 @@
 #include <stan/math/rev/core/dv_vari.hpp>
 #include <stan/math/prim/scal/fun/is_any_nan.hpp>
 #include <limits>
+#include <type_traits>
 
 namespace stan {
 namespace math {
@@ -101,11 +102,13 @@ inline var operator-(const var& a, const var& b) {
  *
  * \f$\frac{\partial}{\partial x} (x-c) = 1\f$, and
  *
+ * @tparam T type of second scalar operand
  * @param a First variable operand.
  * @param b Second scalar operand.
  * @return Result of subtracting the scalar from the variable.
  */
-inline var operator-(const var& a, double b) {
+template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
+inline var operator-(const var& a, T b) {
   if (b == 0.0) {
     return a;
   }
@@ -119,11 +122,13 @@ inline var operator-(const var& a, double b) {
  *
  * \f$\frac{\partial}{\partial y} (c-y) = -1\f$, and
  *
+ * @tparam T type of first scalar operand
  * @param a First scalar operand.
  * @param b Second variable operand.
  * @return Result of sutracting a variable from a scalar.
  */
-inline var operator-(double a, const var& b) {
+template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
+inline var operator-(T a, const var& b) {
   return var(new internal::subtract_dv_vari(a, b.vi_));
 }
 

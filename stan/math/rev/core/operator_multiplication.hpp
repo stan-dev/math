@@ -6,6 +6,7 @@
 #include <stan/math/rev/core/vd_vari.hpp>
 #include <stan/math/prim/scal/fun/is_any_nan.hpp>
 #include <limits>
+#include <type_traits>
 
 namespace stan {
 namespace math {
@@ -87,11 +88,13 @@ inline var operator*(const var& a, const var& b) {
  *
  * \f$\frac{\partial}{\partial x} (x * c) = c\f$, and
  *
+ * @tparam T scalar type of second operand
  * @param a Variable operand.
  * @param b Scalar operand.
  * @return Variable result of multiplying operands.
  */
-inline var operator*(const var& a, double b) {
+template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
+inline var operator*(const var& a, T b) {
   if (b == 1.0) {
     return a;
   }
@@ -105,11 +108,13 @@ inline var operator*(const var& a, double b) {
  *
  * \f$\frac{\partial}{\partial y} (c * y) = c\f$.
  *
+ * @tparam T scalar type of first operand
  * @param a Scalar operand.
  * @param b Variable operand.
  * @return Variable result of multiplying the operands.
  */
-inline var operator*(double a, const var& b) {
+template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
+inline var operator*(T a, const var& b) {
   if (a == 1.0) {
     return b;
   }

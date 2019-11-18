@@ -6,6 +6,7 @@
 #include <stan/math/rev/core/vd_vari.hpp>
 #include <stan/math/prim/scal/fun/is_any_nan.hpp>
 #include <limits>
+#include <type_traits>
 
 namespace stan {
 namespace math {
@@ -88,11 +89,13 @@ inline var operator+(const var& a, const var& b) {
  *
  * \f$\frac{d}{dx} (x + c) = 1\f$.
  *
+ * @tparam T type of second scalar operand
  * @param a First variable operand.
  * @param b Second scalar operand.
  * @return Result of adding variable and scalar.
  */
-inline var operator+(const var& a, double b) {
+template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
+inline var operator+(const var& a, T b) {
   if (b == 0.0) {
     return a;
   }
@@ -106,11 +109,13 @@ inline var operator+(const var& a, double b) {
  *
  * \f$\frac{d}{dy} (c + y) = 1\f$.
  *
+ * @tparam T type of first scalar operand
  * @param a First scalar operand.
  * @param b Second variable operand.
  * @return Result of adding variable and scalar.
  */
-inline var operator+(double a, const var& b) {
+template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
+inline var operator+(T a, const var& b) {
   if (a == 0.0) {
     return b;
   }
