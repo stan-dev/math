@@ -46,7 +46,7 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lcdf(const T_y& y,
   scalar_seq_view<T_scale> sigma_vec(sigma);
   size_t N = max_size(y, mu, sigma);
 
-  const T_partials_return SQRT_TWO_OVER_PI = std::sqrt(2.0 / pi());
+  const double SQRT_TWO_OVER_PI = std::sqrt(2.0 / pi());
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return mu_dbl = value_of(mu_vec[n]);
@@ -162,8 +162,8 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lcdf(const T_y& y,
                  < log(std::numeric_limits<T_partials_return>::max())) {
         // approximation derived from Abramowitx and Stegun (1964) 7.1.26
         // use fact that erf(x)=-erf(-x)
-        // technically only true for -inf<x<0 but seems to be accurate
-        // for -inf<x<0.1
+        // Abramowitx and Stegun define this for -inf<x<0 but seems to be
+        // accurate for -inf<x<0.1
         t = 1.0 / (1.0 - 0.3275911 * scaled_diff);
         t2 = square(t);
         t4 = pow(t, 4);

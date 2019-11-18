@@ -247,7 +247,7 @@ void test_value_and_derivatives(double expected_val, double y_dbl,
   // necessarily converge to asymptotic values
   if (!is_nan(gradients[0])) {
     if (!is_nan(finite_diffs[0])) {
-      if (abs((finite_diffs[0] - gradients[0]) / finite_diffs[0]) > 0.1) {
+      if (abs((finite_diffs[0] - gradients[0]) / finite_diffs[0]) > 0.01) {
         EXPECT_NEAR(finite_diffs[0], gradients[0], 1e-2);
       }
     } else {
@@ -256,7 +256,7 @@ void test_value_and_derivatives(double expected_val, double y_dbl,
   }
   if (!is_nan(gradients[1])) {
     if (!is_nan(finite_diffs[1])) {
-      if (abs((finite_diffs[1] - gradients[1]) / finite_diffs[1]) > 0.1) {
+      if (abs((finite_diffs[1] - gradients[1]) / finite_diffs[1]) > 0.01) {
         EXPECT_NEAR(finite_diffs[1], gradients[1], 1e-2);
       }
     } else {
@@ -265,7 +265,7 @@ void test_value_and_derivatives(double expected_val, double y_dbl,
   }
   if (!is_nan(gradients[2])) {
     if (!is_nan(finite_diffs[2])) {
-      if (abs((finite_diffs[2] - gradients[2]) / finite_diffs[1]) > 0.1) {
+      if (abs((finite_diffs[2] - gradients[2]) / finite_diffs[1]) > 0.01) {
         EXPECT_NEAR(finite_diffs[2], gradients[2], 1e-2);
       }
     } else {

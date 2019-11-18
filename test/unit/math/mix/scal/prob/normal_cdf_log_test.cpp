@@ -15,4 +15,9 @@ TEST(mathMixScalFun, lcdf_derivatives) {
   stan::test::expect_ad(f(0.0, 1.0), 10.00);
   stan::test::expect_ad(f(-1.0, 2.0), 1.50);
   stan::test::expect_ad(f(2.0, 1.0), 0.50);
+
+  // thid order autodiff tests can fail at borders of piecewise function
+  stan::test::ad_tolerances tols;
+  tols.grad_hessian_grad_hessian_ = 1e1;
+  stan::test::expect_ad(tols, f(0.0, 1.0), 0.1 * stan::math::SQRT_2);
 }
