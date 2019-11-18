@@ -58,6 +58,11 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lcdf(const T_y& y,
     const T_partials_return sigma_sqrt2 = sigma_dbl * SQRT_2;
     const T_partials_return x2 = square(scaled_diff);
 
+    // Rigorous numerical approximations are applied here to deal with values
+    // of |scaled_diff|>>0. This is needed to deal with rare base-rate
+    // logistic regression problems where it is useful to use an alternative
+    // link function instead.
+    //
     // use erfc() instead of erf() in order to retain precision
     // since for x>0 erfc()->0
     if (scaled_diff > 0.0) {
