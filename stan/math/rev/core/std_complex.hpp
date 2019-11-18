@@ -1193,49 +1193,19 @@ std::basic_istream<CharT, Traits>& operator>>(
 namespace stan {
 namespace math {
 
-std::complex<var> pow(const std::complex<var>& x, const var& y) {
-  return exp(y * log(x));
-}
-std::complex<var> pow(const var& x, const std::complex<var>& y) {
-  return exp(y * log(x));
-}
-std::complex<var> pow(const std::complex<var>& x, int y) {
-  return exp(var(y) * log(x));
-}
-
-std::complex<var> pow(const std::complex<var>& x,
-                      const std::complex<double>& y) {
-  return exp(std::complex<var>(y) * log(x));
-}
-std::complex<var> pow(const std::complex<double>& x,
-                      const std::complex<var>& y) {
-  return exp(y * std::complex<var>(log(x)));
-}
-
-template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
-std::complex<var> pow(const std::complex<var>& x, const T& y) {
-  return exp(var(y) * log(x));
-}
-template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
-std::complex<var> pow(const T& x, const std::complex<var>& y) {
-  return exp(y * var(log(x)));
-}
-
 /**
  * Return the sum of the two arguments.
  *
- * @param[in] lhs complex first argument
- * @param[in] rhs complex second argument
+ * @param[in] lhs first argument
+ * @param[in] rhs second argument
  * @return sum of the arguments
  */
-
 std::complex<var> operator+(const var& lhs, const std::complex<var>& rhs) {
   std::complex<stan::math::var> y(lhs);
   y += rhs;
   return y;
 }
 std::complex<var> operator+(const var& lhs, const std::complex<double>& rhs) {
-  return {lhs + rhs.real(), rhs.imag()};
   std::complex<stan::math::var> y(lhs);
   y += rhs;
   return y;
@@ -1279,6 +1249,216 @@ std::complex<var> operator+(T lhs, const std::complex<var>& rhs) {
   std::complex<stan::math::var> y(lhs);
   y += rhs;
   return y;
+}
+
+/**
+ * Return the difference of the two arguments.
+ *
+ * @param[in] lhs first argument
+ * @param[in] rhs second argument
+ * @return difference of the arguments
+ */
+std::complex<var> operator-(const var& lhs, const std::complex<var>& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y -= rhs;
+  return y;
+}
+std::complex<var> operator-(const var& lhs, const std::complex<double>& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y -= rhs;
+  return y;
+}
+std::complex<var> operator-(const std::complex<var>& lhs, const var& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y -= rhs;
+  return y;
+}
+std::complex<var> operator-(const std::complex<var>& lhs,
+                            const std::complex<double>& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y -= rhs;
+  return y;
+}
+std::complex<var> operator-(const std::complex<var>& lhs,
+                            const std::complex<var>& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y -= rhs;
+  return y;
+}
+std::complex<var> operator-(const std::complex<double>& lhs,
+                            const std::complex<var>& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y -= rhs;
+  return y;
+}
+std::complex<var> operator-(const std::complex<double>& lhs, const var& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y -= rhs;
+  return y;
+}
+template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
+std::complex<var> operator-(const std::complex<var>& lhs, T rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y -= rhs;
+  return y;
+}
+template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
+std::complex<var> operator-(T lhs, const std::complex<var>& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y -= rhs;
+  return y;
+}
+
+/**
+ * Return the product of the two arguments.
+ *
+ * @param[in] lhs first argument
+ * @param[in] rhs second argument
+ * @return product of the arguments
+ */
+std::complex<var> operator*(const var& lhs, const std::complex<var>& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y *= rhs;
+  return y;
+}
+std::complex<var> operator*(const var& lhs, const std::complex<double>& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y *= rhs;
+  return y;
+}
+std::complex<var> operator*(const std::complex<var>& lhs, const var& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y *= rhs;
+  return y;
+}
+std::complex<var> operator*(const std::complex<var>& lhs,
+                            const std::complex<double>& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y *= rhs;
+  return y;
+}
+std::complex<var> operator*(const std::complex<var>& lhs,
+                            const std::complex<var>& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y *= rhs;
+  return y;
+}
+std::complex<var> operator*(const std::complex<double>& lhs,
+                            const std::complex<var>& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y *= rhs;
+  return y;
+}
+std::complex<var> operator*(const std::complex<double>& lhs, const var& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y *= rhs;
+  return y;
+}
+template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
+std::complex<var> operator*(const std::complex<var>& lhs, T rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y *= rhs;
+  return y;
+}
+template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
+std::complex<var> operator*(T lhs, const std::complex<var>& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y *= rhs;
+  return y;
+}
+
+/**
+ * Return the quotient of the two arguments.
+ *
+ * @param[in] lhs first argument
+ * @param[in] rhs second argument
+ * @return quotient of the arguments
+ */
+std::complex<var> operator/(const var& lhs, const std::complex<var>& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y /= rhs;
+  return y;
+}
+std::complex<var> operator/(const var& lhs, const std::complex<double>& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y /= rhs;
+  return y;
+}
+std::complex<var> operator/(const std::complex<var>& lhs, const var& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y /= rhs;
+  return y;
+}
+std::complex<var> operator/(const std::complex<var>& lhs,
+                            const std::complex<double>& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y /= rhs;
+  return y;
+}
+std::complex<var> operator/(const std::complex<var>& lhs,
+                            const std::complex<var>& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y /= rhs;
+  return y;
+}
+std::complex<var> operator/(const std::complex<double>& lhs,
+                            const std::complex<var>& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y /= rhs;
+  return y;
+}
+std::complex<var> operator/(const std::complex<double>& lhs, const var& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y /= rhs;
+  return y;
+}
+template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
+std::complex<var> operator/(const std::complex<var>& lhs, T rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y /= rhs;
+  return y;
+}
+template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
+std::complex<var> operator/(T lhs, const std::complex<var>& rhs) {
+  std::complex<stan::math::var> y(lhs);
+  y /= rhs;
+  return y;
+}
+
+/**
+ * Return the first argument raised to the power of the second
+ * argument.
+ *
+ * @param x first argument
+ * @param y second argument
+ * @return first argument raised to the power of the second
+ */
+std::complex<var> pow(const std::complex<var>& x, const var& y) {
+  return exp(y * log(x));
+}
+std::complex<var> pow(const var& x, const std::complex<var>& y) {
+  return exp(y * log(x));
+}
+std::complex<var> pow(const std::complex<var>& x, int y) {
+  return exp(y * log(x));
+}
+
+std::complex<var> pow(const std::complex<var>& x,
+                      const std::complex<double>& y) {
+  return exp(y * log(x));
+}
+std::complex<var> pow(const std::complex<double>& x,
+                      const std::complex<var>& y) {
+  return exp(y * log(x));
+}
+
+template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
+std::complex<var> pow(const std::complex<var>& x, const T& y) {
+  return exp(static_cast<double>(y) * log(x));
+}
+template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
+std::complex<var> pow(const T& x, const std::complex<var>& y) {
+  return exp(y * log(static_cast<double>(x)));
 }
 
 }  // namespace math

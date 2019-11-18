@@ -7,7 +7,6 @@
 #include <string>
 #include <vector>
 
-// naughty but convenient for test scope
 typedef stan::math::var var_t;
 typedef std::complex<stan::math::var> cvar_t;
 typedef std::complex<double> cdouble_t;
@@ -95,6 +94,63 @@ void expect_complex_common_binary(const F& f) {
       }
     }
   }
+}
+
+template <typename F>
+void expect_compound_assign_operator(const F& f) {
+  // cvar += var
+  cdouble_t ad(1, 2);
+  f(ad, 3);
+  cvar_t a(1, 2);
+  var_t b = 3;
+  f(a, b);
+  expect_complex(ad, a);
+  auto ptr1 = &a;
+  auto ptr2 = &(a += b);
+  EXPECT_EQ(ptr1, ptr2);
+
+  // cvar += cdouble
+  cvar_t e(1, 2);
+  cdouble_t ed(1, 2);
+  cdouble_t bd(3, 4);
+  f(ed, bd);
+  f(e, bd);
+  expect_complex(ed, e);
+  ptr1 = &e;
+  ptr2 = &(e += bd);
+  EXPECT_EQ(ptr1, ptr2);
+
+  // cvar += cvar
+  cdouble_t gd(1, 2);
+  cdouble_t hd(3, 4);
+  f(gd, hd);
+  cvar_t g(1, 2);
+  cvar_t h(3, 4);
+  f(g, h);
+  expect_complex(gd, g);
+  ptr1 = &g;
+  ptr2 = &(g += h);
+  EXPECT_EQ(ptr1, ptr2);
+
+  // cvar += double
+  cdouble_t kd(1, 2);
+  f(kd, 3.0);
+  cvar_t k(1, 2);
+  f(k, 3.0);
+  expect_complex(kd, k);
+  ptr1 = &k;
+  ptr2 = &(k += 3.0);
+  EXPECT_EQ(ptr1, ptr2);
+
+  // cvar += int
+  cdouble_t jd(1, 2);
+  f(jd, 3);
+  cvar_t j(1, 2);
+  f(j, 3);
+  expect_complex(jd, j);
+  ptr1 = &j;
+  ptr2 = &(j += 3);
+  EXPECT_EQ(ptr1, ptr2);
 }
 
 TEST(mathRevCore, stdComplexConstructor1) {
@@ -216,62 +272,6 @@ TEST(mathRevCore, stdComplexOperatorEquals3) {
   EXPECT_EQ(ptr1, ptr2);
 }
 
-template <typename F>
-void expect_compound_assign_operator(const F& f) {
-  // cvar += var
-  cdouble_t ad(1, 2);
-  f(ad, 3);
-  cvar_t a(1, 2);
-  var_t b = 3;
-  f(a, b);
-  expect_complex(ad, a);
-  auto ptr1 = &a;
-  auto ptr2 = &(a += b);
-  EXPECT_EQ(ptr1, ptr2);
-
-  // cvar += cdouble
-  cvar_t e(1, 2);
-  cdouble_t ed(1, 2);
-  cdouble_t bd(3, 4);
-  f(ed, bd);
-  f(e, bd);
-  expect_complex(ed, e);
-  ptr1 = &e;
-  ptr2 = &(e += bd);
-  EXPECT_EQ(ptr1, ptr2);
-
-  // cvar += cvar
-  cdouble_t gd(1, 2);
-  cdouble_t hd(3, 4);
-  f(gd, hd);
-  cvar_t g(1, 2);
-  cvar_t h(3, 4);
-  f(g, h);
-  expect_complex(gd, g);
-  ptr1 = &g;
-  ptr2 = &(g += h);
-  EXPECT_EQ(ptr1, ptr2);
-
-  // cvar += double
-  cdouble_t kd(1, 2);
-  f(kd, 3.0);
-  cvar_t k(1, 2);
-  f(k, 3.0);
-  expect_complex(kd, k);
-  ptr1 = &k;
-  ptr2 = &(k += 3.0);
-  EXPECT_EQ(ptr1, ptr2);
-
-  // cvar += int
-  cdouble_t jd(1, 2);
-  f(jd, 3);
-  cvar_t j(1, 2);
-  f(j, 3);
-  expect_complex(jd, j);
-  ptr1 = &j;
-  ptr2 = &(j += 3);
-  EXPECT_EQ(ptr1, ptr2);
-}
 TEST(mathRevCore, stdComplexOperatorAddEquals1and5) {
   auto f = [](auto& x1, const auto& x2) { return x1 += x2; };
   expect_compound_assign_operator(f);
