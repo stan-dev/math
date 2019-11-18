@@ -699,3 +699,19 @@ TEST(mathRevCore, stdAcos1) {
 TEST(mathRevCore, stdAtan1) {
   expect_complex_common([](const auto& u) { return std::acos(u); });
 }
+TEST(mathRevCore, eigenSolver) {
+  typedef Eigen::Matrix<stan::math::var, -1, -1> matrix_v_t;
+  matrix_v_t a(3, 3);
+  a << 1, 2, 3, 0.7, 0.11, 0.13, -5, -17, -23;
+  Eigen::EigenSolver<matrix_v_t> s(a);
+  auto ev = s.eigenvectors();
+  auto I
+      = (ev.inverse() * a * ev * s.eigenvalues().asDiagonal().inverse()).real();
+  for (int i = 0; i < I.rows(); ++i) {
+    EXPECT_NEAR(1, I(i, i).val(), 1e-8);
+    for (int j = 0; j < i; ++j) {
+      EXPECT_NEAR(0, I(i, j).val(), 1e-8);
+      EXPECT_NEAR(0, I(j, i).val(), 1e-8);
+    }
+  }
+}
