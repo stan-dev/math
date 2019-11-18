@@ -217,9 +217,20 @@ TEST(mathRevCore, stdComplexReal1) {
   EXPECT_FLOAT_EQ(3, a.real().val());
 }
 TEST(mathRevCore, stdComplexReal2) {
+  // test double, int, var args
   cvar_t a(3, -1);
   a.real(2.7);
   EXPECT_FLOAT_EQ(2.7, a.real().val());
+  EXPECT_FLOAT_EQ(-1, a.imag().val());
+
+  a.real(2);
+  EXPECT_FLOAT_EQ(2, a.real().val());
+  EXPECT_FLOAT_EQ(-1, a.imag().val());
+
+  var_t c(5);
+  a.real(c);
+  EXPECT_EQ(c.vi_, a.real().vi_);
+  EXPECT_FLOAT_EQ(5, a.real().val());
   EXPECT_FLOAT_EQ(-1, a.imag().val());
 }
 TEST(mathRevCore, stdComplexImag1) {
@@ -227,49 +238,24 @@ TEST(mathRevCore, stdComplexImag1) {
   EXPECT_FLOAT_EQ(-1, a.imag().val());
 }
 TEST(mathRevCore, stdComplexImag2) {
+  // test double, int, var args
   cvar_t a(3, -1);
   a.imag(2.7);
   EXPECT_FLOAT_EQ(2.7, a.imag().val());
   EXPECT_FLOAT_EQ(3, a.real().val());
+
+  a.imag(152);
+  EXPECT_FLOAT_EQ(152, a.imag().val());
+  EXPECT_FLOAT_EQ(3, a.real().val());
+
+  var_t c(42);
+  a.imag(c);
+  EXPECT_FLOAT_EQ(42, a.imag().val());
+  EXPECT_FLOAT_EQ(3, a.real().val());
 }
-TEST(mathRevCore, stdComplexOperatorEquals1) {
-  cvar_t a(1, 2);
-  var_t b = 3;
-  a = b;
-  // require pimpl equality
-  EXPECT_EQ(b.vi_, a.real().vi_);
-  // require imaginary value to be 0
-  EXPECT_EQ(0, a.imag().val());
-  // require return of *this
-  var_t c = 4;
-  auto ptr1 = &a;
-  auto ptr2 = &(a = c);
-  EXPECT_EQ(ptr1, ptr2);
-}
-TEST(mathRevCore, stdComplexOperatorEquals2) {
-  cvar_t a(1, 2);
-  cvar_t b(3, 4);
-  a = b;
-  // require pimpl equality
-  EXPECT_EQ(b.real().vi_, a.real().vi_);
-  EXPECT_EQ(b.imag().vi_, a.imag().vi_);
-  // require return of *this
-  cvar_t c(5, 6);
-  auto ptr1 = &a;
-  auto ptr2 = &(a = c);
-  EXPECT_EQ(ptr1, ptr2);
-}
-TEST(mathRevCore, stdComplexOperatorEquals3) {
-  cvar_t a(1, 2);
-  cdouble_t b(3, 4);
-  a = b;
-  EXPECT_EQ(3, a.real().val());
-  EXPECT_EQ(4, a.imag().val());
-  // require return of *this
-  cdouble_t c(5, 6);
-  auto ptr1 = &a;
-  auto ptr2 = &(a = c);
-  EXPECT_EQ(ptr1, ptr2);
+TEST(mathRevCore, stdComplexOperatorEquals1and2and3) {
+  auto f = [](auto& x, const auto& y) { x = y; };
+  expect_compound_assign_operator(f);
 }
 
 TEST(mathRevCore, stdComplexOperatorAddEquals1and5) {

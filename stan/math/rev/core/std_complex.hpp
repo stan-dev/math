@@ -273,48 +273,10 @@ class complex<stan::math::var> {
    * @param[in] x value to assign
    * @return this complex number
    */
-  complex<stan::math::var>& operator=(const int& x) {
+  template <typename T>
+  complex<stan::math::var>& operator=(const T& x) {
     re_ = x;
     im_ = 0;
-    return *this;
-  }
-
-  /**
-   * Assign the specified value to the real part of this complex number
-   * and set imaginary part to zero.
-   *
-   * @param[in] x value to assign
-   * @return this complex number
-   */
-  complex<stan::math::var>& operator=(const double& x) {
-    re_ = x;
-    im_ = 0;
-    return *this;
-  }
-
-  /**
-   * Assign the specified value to the real part of this complex number
-   * and set imaginary part to zero.
-   *
-   * @param[in] x value to assign
-   * @return this complex number
-   */
-  complex<stan::math::var>& operator=(const stan::math::var& x) {
-    re_ = x;
-    im_ = 0;
-    return *this;
-  }
-
-  /**
-   * Assign the real and imaginary parts of the specified complex
-   * number to the real and imaginary part of this complex number.
-   *
-   * @param[in] x complex value to assign
-   * @return this complex number
-   */
-  complex<stan::math::var>& operator=(const complex<stan::math::var>& x) {
-    re_ = x.re_;
-    im_ = x.im_;
     return *this;
   }
 
