@@ -11,6 +11,16 @@ typedef stan::math::var var_t;
 typedef std::complex<stan::math::var> cvar_t;
 typedef std::complex<double> cdouble_t;
 
+template <typename F>
+void expect_reduction(const F& f) {
+  cvar_t x(1, 2);
+  var_t y = f(x);
+
+  cdouble_t xd(1, 2);
+  double yd = f(xd);
+  EXPECT_FLOAT_EQ(yd, y.val());
+}
+
 void expect_complex(double re, double im, const cvar_t& y) {
   using stan::math::is_nan;
   if (is_nan(re)) {
@@ -589,14 +599,14 @@ TEST(mathRevCore, stdNormExternal1) {
   var_t b = std::norm(a);
   EXPECT_FLOAT_EQ(bd, b.val());
 }
-TEST(mathRevCore, stdSquareConj1) {
+TEST(mathRevCore, stdConj1) {
   cdouble_t ad(1, 2);
   cdouble_t bd = std::conj(ad);
   cvar_t a(1, 2);
   cvar_t b = std::conj(a);
   expect_complex(bd, b);
 }
-TEST(mathRevCore, stdSquareProj1) {
+TEST(mathRevCore, stdProj1) {
   double inf = std::numeric_limits<double>::infinity();
   std::vector<double> args{-1, 0, 1, inf, -inf};
   for (double re : args) {

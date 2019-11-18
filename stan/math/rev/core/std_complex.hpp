@@ -787,7 +787,6 @@ stan::math::var arg<stan::math::var>(const complex<stan::math::var>& z) {
  */
 template <>
 stan::math::var norm<stan::math::var>(const complex<stan::math::var>& z) {
-  using stan::math::square;
   return square(real(z)) + square(imag(z));
 }
 
