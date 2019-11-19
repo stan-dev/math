@@ -21,7 +21,9 @@ template <typename MatrixType>
 MatrixType matrix_exp_pade(const MatrixType& arg) {
   MatrixType U, V;
   int squarings;
-  check_nonempty("matrix_exp_pade", "arg", arg);
+  if (arg.size() == 0)
+    return {};
+
   Eigen::matrix_exp_computeUV<MatrixType>::run(arg, U, V, squarings, arg(0, 0));
   // Pade approximant is
   // (U+V) / (-U+V)
