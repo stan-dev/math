@@ -111,7 +111,7 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lcdf(const T_y& y,
       // calculate using piecewise funciton
       // (due to instability / inaccuracy in the various approximations)
       if (scaled_diff > 2.9) {
-        // approximation derived from Abramowitx and Stegun (1964) 7.1.26
+        // approximation derived from Abramowitz and Stegun (1964) 7.1.26
         t = 1.0 / (1.0 + 0.3275911 * scaled_diff);
         t2 = square(t);
         t4 = pow(t, 4);
@@ -165,9 +165,9 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lcdf(const T_y& y,
                     - 0.01772675404 * t4 * t + 0.0006577254811 * pow(t, 6);
       } else if (10.0 * log(fabs(scaled_diff))
                  < log(std::numeric_limits<T_partials_return>::max())) {
-        // approximation derived from Abramowitx and Stegun (1964) 7.1.26
+        // approximation derived from Abramowitz and Stegun (1964) 7.1.26
         // use fact that erf(x)=-erf(-x)
-        // Abramowitx and Stegun define this for -inf<x<0 but seems to be
+        // Abramowitz and Stegun define this for -inf<x<0 but seems to be
         // accurate for -inf<x<0.1
         t = 1.0 / (1.0 - 0.3275911 * scaled_diff);
         t2 = square(t);

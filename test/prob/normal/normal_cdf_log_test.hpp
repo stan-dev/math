@@ -36,12 +36,6 @@ class AgradCdfLogNormal : public AgradCdfLogTest {
     parameters.push_back(param);
     cdf_log.push_back(-1.484448229919656192521);  // expected cdf_log
 
-    param[0] = -50;  // y
-    param[1] = 0;    // mu
-    param[2] = 1;    // sigma
-    parameters.push_back(param);
-    cdf_log.push_back(-1254.8313611394199);  // expected cdf_log
-
     param[0] = 7.5;  // y
     param[1] = 0;    // mu
     param[2] = 1;    // sigma
