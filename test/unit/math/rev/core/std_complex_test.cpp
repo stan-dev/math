@@ -10,6 +10,18 @@
 typedef stan::math::var var_t;
 typedef std::complex<stan::math::var> cvar_t;
 typedef std::complex<double> cdouble_t;
+typedef Eigen::Matrix<stan::math::var, -1, -1> mvar_t;
+
+template <typename T>
+void expect_identity_matrix(const T& I) {
+  for (int i = 0; i < I.rows(); ++i) {
+    EXPECT_NEAR(1, I(i, i).val(), 1e-8);
+    for (int j = 0; j < i; ++j) {
+      EXPECT_NEAR(0, I(i, j).val(), 1e-8);
+      EXPECT_NEAR(0, I(j, i).val(), 1e-8);
+    }
+  }
+}
 
 template <typename F>
 void expect_reduction(const F& f) {
@@ -700,18 +712,32 @@ TEST(mathRevCore, stdAtan1) {
   expect_complex_common([](const auto& u) { return std::acos(u); });
 }
 TEST(mathRevCore, eigenSolver) {
+  // test adapted from https://github.com/stan-dev/math/pull/789/files
   typedef Eigen::Matrix<stan::math::var, -1, -1> matrix_v_t;
-  matrix_v_t a(3, 3);
+  mvar_t a(3, 3);
   a << 1, 2, 3, 0.7, 0.11, 0.13, -5, -17, -23;
   Eigen::EigenSolver<matrix_v_t> s(a);
   auto ev = s.eigenvectors();
   auto I
       = (ev.inverse() * a * ev * s.eigenvalues().asDiagonal().inverse()).real();
-  for (int i = 0; i < I.rows(); ++i) {
-    EXPECT_NEAR(1, I(i, i).val(), 1e-8);
-    for (int j = 0; j < i; ++j) {
-      EXPECT_NEAR(0, I(i, j).val(), 1e-8);
-      EXPECT_NEAR(0, I(j, i).val(), 1e-8);
-    }
-  }
+  expect_identity_matrix(I);
+}
+TEST(mathRevCore, pseudoEigendecomposition) {
+  // test adapted from https://github.com/stan-dev/math/pull/789/files
+  mvar_t a(3, 3);
+  a << 1, 2, 3, 0.7, 0.11, 0.13, -5, -17, -23;
+  Eigen::EigenSolver<mvar_t> s(a);
+  mvar_t D = s.pseudoEigenvalueMatrix();
+  mvar_t V = s.pseudoEigenvectors();
+  mvar_t I = V.inverse() * a * V * D.inverse();
+  expect_identity_matrix(I);
+}
+TEST(mathRevCore, complexSchur) {
+  // test adapted from https://github.com/stan-dev/math/pull/789/files
+  mvar_t a(3, 3);
+  a << 1, 2, 3, 0.7, 0.11, 0.13, -5, -17, -23;
+  Eigen::ComplexSchur<mvar_t> s(a);
+  auto M = (s.matrixU().adjoint() * s.matrixU()).eval();
+  mvar_t I = M.real() + M.imag();
+  expect_identity_matrix(I);
 }

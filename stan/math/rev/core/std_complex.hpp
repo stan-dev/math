@@ -234,6 +234,10 @@ class complex<stan::math::var> {
    */
   typedef stan::math::var value_type;
 
+  template <typename T, typename U>
+  complex(const T& x, const U& y = U(0))
+      : complex(stan::math::var{x}, stan::math::var{y}) {}
+
   /**
    * Constructs complex number from real and imaginary parts.
    *
@@ -916,7 +920,7 @@ complex<stan::math::var> pow<stan::math::var>(
   return exp(y * log(x));
 }
 
-// Following cannot be reliably specialized in both g++ and clang++
+// Following std:: templates cannot be specialized in both g++ and clang++
 
 // can be specialized in g++, but not in clang++
 // complex<var> pow(const complex<var>& x, const var& y);
@@ -941,7 +945,7 @@ complex<stan::math::var> sqrt<stan::math::var>(
     const complex<stan::math::var>& z) {
   auto m = sqrt(hypot(z.real(), z.imag()));
   auto at = 0.5 * atan2(z.imag(), z.real());
-  return complex<stan::math::var>(m * cos(at), m * sin(at));
+  return {m * cos(at), m * sin(at)};
 }
 
 /**
@@ -1421,6 +1425,18 @@ template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
 std::complex<var> pow(const T& x, const std::complex<var>& y) {
   return exp(y * log(static_cast<double>(x)));
 }
+
+std::complex<var> sqrt(const std::complex<var>& z) {
+  auto m = sqrt(hypot(z.real(), z.imag()));
+  auto at = 0.5 * atan2(z.imag(), z.real());
+  return {m * cos(at), m * sin(at)};
+}
+// template <typename T>
+// std::complex<T> sqrt(const std::complex<T>& z) {
+//   auto m = sqrt(hypot(z.real(), z.imag()));
+//   auto at = 0.5 * atan2(z.imag(), z.real());
+//   return {m * cos(at), m * sin(at)};
+// }
 
 }  // namespace math
 }  // namespace stan
