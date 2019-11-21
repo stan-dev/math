@@ -4,6 +4,7 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <vector>
 #include <cmath>
+#include <limits>
 
 namespace stan {
 namespace math {
@@ -24,6 +25,9 @@ namespace math {
  */
 template <int R, int C>
 double log_sum_exp(const Eigen::Matrix<double, R, C>& x) {
+  if (x.size() == 0)
+    return -std::numeric_limits<double>::infinity();
+
   const double max = x.maxCoeff();
   if (!std::isfinite(max)) {
     return max;
