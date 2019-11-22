@@ -45,15 +45,15 @@ class matrix_cl<T, require_arithmetic_t<T>> {
   using type = T;
   // Forward declare the methods that work in place on the matrix
   template <matrix_cl_view matrix_view = matrix_cl_view::Entire>
-  void zeros();
+  inline void zeros();
   template <matrix_cl_view matrix_view = matrix_cl_view::Entire>
-  void zeros_strict_tri();
+  inline void zeros_strict_tri();
   template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper>
-  void triangular_transpose();
+  inline void triangular_transpose();
 
-  void sub_block(const matrix_cl<T, require_arithmetic_t<T>>& A, size_t A_i,
-                 size_t A_j, size_t this_i, size_t this_j, size_t nrows,
-                 size_t ncols);
+  inline void sub_block(const matrix_cl<T, require_arithmetic_t<T>>& A,
+                        size_t A_i, size_t A_j, size_t this_i, size_t this_j,
+                        size_t nrows, size_t ncols);
   int rows() const { return rows_; }
 
   int cols() const { return cols_; }
@@ -455,6 +455,9 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * Assign a \c matrix_cl to another
    */
   matrix_cl<T>& operator=(const matrix_cl<T>& a) {
+    if (a.size() == 0) {
+      return *this;
+    }
     this->view_ = a.view();
     this->rows_ = a.rows();
     this->cols_ = a.cols();
