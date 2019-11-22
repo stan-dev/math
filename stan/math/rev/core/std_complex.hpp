@@ -1426,18 +1426,6 @@ std::complex<var> pow(const T& x, const std::complex<var>& y) {
   return exp(y * log(static_cast<double>(x)));
 }
 
-std::complex<var> sqrt(const std::complex<var>& z) {
-  auto m = sqrt(hypot(z.real(), z.imag()));
-  auto at = 0.5 * atan2(z.imag(), z.real());
-  return {m * cos(at), m * sin(at)};
-}
-// template <typename T>
-// std::complex<T> sqrt(const std::complex<T>& z) {
-//   auto m = sqrt(hypot(z.real(), z.imag()));
-//   auto at = 0.5 * atan2(z.imag(), z.real());
-//   return {m * cos(at), m * sin(at)};
-// }
-
 }  // namespace math
 }  // namespace stan
 #endif

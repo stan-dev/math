@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_MAT_VECTORIZE_APPLY_SCALAR_UNARY_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <complex>
 #include <vector>
 
 namespace stan {
@@ -57,6 +58,30 @@ struct apply_scalar_unary {
     return x.unaryExpr(
         [](scalar_t x) { return apply_scalar_unary<F, scalar_t>::apply(x); });
   }
+};
+
+/**
+ * Template specialization for complex numbers, which might themselves
+ * be instantiated to autodiff variables.
+ *
+ * @tparam F type of function defining the static apply
+ * @tparam U value type of complex numbers
+ */
+template <typename F, typename U>
+struct apply_scalar_unary<F, std::complex<U>> {
+  /**
+   * Complex return type.
+   */
+  using return_t = std::complex<U>;
+
+  /**
+   * Apply the class-specified function to the specified complex
+   * argument.
+   *
+   * @param x complex argument
+   * @return complex result of applying class template function
+   */
+  static inline return_t apply(const std::complex<U>& x) { return F::fun(x); }
 };
 
 /**
@@ -121,7 +146,7 @@ struct apply_scalar_unary<F, int> {
  * @tparam T Type of element contained in standard vector.
  */
 template <typename F, typename T>
-struct apply_scalar_unary<F, std::vector<T> > {
+struct apply_scalar_unary<F, std::vector<T>> {
   /**
    * Return type, which is calculated recursively as a standard
    * vector of the return type of the contained type T.
