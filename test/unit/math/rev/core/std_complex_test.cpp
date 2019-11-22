@@ -264,6 +264,42 @@ TEST(mathRevCore, copysignComplex) {
   }
 }
 
+TEST(mathRevCore, iTimes) {
+  for (double i = -1; i < 2; ++i) {
+    for (double j = -1; j < 2; ++j) {
+      cdouble_t a(i, j);
+      auto i_complex = cdouble_t{0, 1};
+      auto expected = i_complex * a;
+      auto found = stan::math::i_times(a);  // qualify for non-stan args
+      EXPECT_FLOAT_EQ(expected.real(), found.real());
+      EXPECT_FLOAT_EQ(expected.imag(), found.imag());
+
+      cvar_t av(i, j);
+      auto foundv = i_times(av);  // ADL for stan args
+      EXPECT_FLOAT_EQ(expected.real(), foundv.real().val());
+      EXPECT_FLOAT_EQ(expected.imag(), foundv.imag().val());
+    }
+  }
+}
+
+TEST(mathRevCore, negITimes) {
+  for (double i = -1; i < 2; ++i) {
+    for (double j = -1; j < 2; ++j) {
+      cdouble_t a(i, j);
+      auto neg_i_complex = cdouble_t{0, -1};
+      auto expected = neg_i_complex * a;
+      auto found = stan::math::neg_i_times(a);
+      EXPECT_FLOAT_EQ(expected.real(), found.real());
+      EXPECT_FLOAT_EQ(expected.imag(), found.imag());
+
+      cvar_t av(i, j);
+      auto foundv = neg_i_times(av);
+      EXPECT_FLOAT_EQ(expected.real(), foundv.real().val());
+      EXPECT_FLOAT_EQ(expected.imag(), foundv.imag().val());
+    }
+  }
+}
+
 TEST(mathRevCore, stdComplexConstructor1) {
   // constructor (1), no defaults
   var_t x = 1;
