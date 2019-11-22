@@ -30,7 +30,6 @@ inline void test_scale_matrix_exp_multiply() {
 }
 
 TEST(MathMatrix, scale_matrix_exp_multiply) {
-
   // the helper above doesn't handle 0 size inputs
   const double t = 1.0;
   Eigen::MatrixXd A(0, 0);
