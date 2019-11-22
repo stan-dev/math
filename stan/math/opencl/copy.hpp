@@ -36,7 +36,25 @@ namespace math {
 template <typename Mat, typename Mat_scalar = scalar_type_t<Mat>,
           require_eigen_t<Mat>...>
 inline matrix_cl<Mat_scalar> to_matrix_cl(Mat&& src) {
-  return matrix_cl<Mat_scalar>(src);
+  matrix_cl<Mat_scalar> dst(src.rows(), src.cols());
+  if (src.size() == 0) {
+    return dst;
+  }
+  try {
+    cl::Event transfer_event;
+    cl::CommandQueue& queue = opencl_context.queue();
+    queue.enqueueWriteBuffer(
+        dst.buffer(),
+        opencl_context.in_order()
+            || std::is_rvalue_reference<Mat_scalar&&>::value,
+        0, sizeof(Mat_scalar) * src.size(), src.eval().data(), nullptr,
+        &transfer_event);
+    dst.add_write_event(transfer_event);
+  } catch (const cl::Error& e) {
+    check_opencl_error("copy Eigen->(OpenCL)", e);
+  }
+  return dst;
+  //return matrix_cl<Mat_scalar>(src);
 }
 
 /**
