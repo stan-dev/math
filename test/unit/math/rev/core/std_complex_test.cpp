@@ -1,3 +1,4 @@
+#include <test/unit/math/test_ad.hpp>
 #include <stan/math/rev/core.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <gtest/gtest.h>
@@ -173,6 +174,94 @@ void expect_compound_assign_operator(const F& f) {
   ptr1 = &j;
   ptr2 = &(j += 3);
   EXPECT_EQ(ptr1, ptr2);
+}
+
+TEST(mathRevCore, stdIteratorTraits) {
+  using itv_t = std::iterator_traits<var_t>;
+  var_t v = 1.3;
+
+  itv_t::value_type v2 = v;
+  EXPECT_FLOAT_EQ(1.3, v2.val());
+
+  itv_t::pointer v_ptr = &v;
+  EXPECT_FLOAT_EQ(1.3, v_ptr->val());
+  *v_ptr += 2.1;
+  EXPECT_FLOAT_EQ(3.4, v.val());
+
+  itv_t::reference v_ref = v;
+  v_ref = 9.7;
+  EXPECT_FLOAT_EQ(9.7, v.val());
+
+  itv_t::difference_type a = v_ptr - v_ptr;
+}
+TEST(mathRevCore, signbit) {
+  EXPECT_TRUE(signbit(-std::numeric_limits<var_t>::infinity()));
+  EXPECT_FALSE(signbit(std::numeric_limits<var_t>::infinity()));
+  EXPECT_TRUE(signbit(var_t{-2}));
+  EXPECT_FALSE(signbit(var_t{0}));
+  EXPECT_FALSE(signbit(var_t{3.9}));
+}
+TEST(mathRevCore, isinf) {
+  EXPECT_FALSE(isinf(std::numeric_limits<var_t>::quiet_NaN()));
+  EXPECT_TRUE(isinf(std::numeric_limits<var_t>::infinity()));
+  EXPECT_TRUE(isinf(-std::numeric_limits<var_t>::infinity()));
+  EXPECT_FALSE(isinf(var_t{-1}));
+  EXPECT_FALSE(isinf(var_t{0}));
+  EXPECT_FALSE(isinf(var_t{3e27}));
+}
+TEST(mathRevCore, isfinite) {
+  EXPECT_FALSE(isfinite(std::numeric_limits<var_t>::quiet_NaN()));
+  EXPECT_FALSE(isfinite(std::numeric_limits<var_t>::infinity()));
+  EXPECT_FALSE(isfinite(-std::numeric_limits<var_t>::infinity()));
+  EXPECT_TRUE(isfinite(var_t{-1}));
+  EXPECT_TRUE(isfinite(var_t{0}));
+  EXPECT_TRUE(isfinite(var_t{3e27}));
+}
+TEST(mathRevCore, isnan) {
+  EXPECT_TRUE(isnan(std::numeric_limits<var_t>::quiet_NaN()));
+  EXPECT_FALSE(isnan(std::numeric_limits<var_t>::infinity()));
+  EXPECT_FALSE(isnan(-std::numeric_limits<var_t>::infinity()));
+  EXPECT_FALSE(isnan(var_t{-1}));
+  EXPECT_FALSE(isnan(var_t{0}));
+  EXPECT_FALSE(isnan(var_t{3e27}));
+}
+TEST(mathRevCore, isnormal) {
+  EXPECT_FALSE(isnormal(std::numeric_limits<var_t>::quiet_NaN()));
+  EXPECT_FALSE(isnormal(std::numeric_limits<var_t>::infinity()));
+  EXPECT_FALSE(isnormal(-std::numeric_limits<var_t>::infinity()));
+  EXPECT_FALSE(isnormal(var_t{0}));
+  EXPECT_TRUE(isnormal(var_t{-1}));
+  EXPECT_TRUE(isnormal(var_t{3e27}));
+}
+TEST(mathRevCore, copysignScalar) {
+  for (double i = -3; i < 3; ++i) {
+    for (double j = -3; j < 3; ++j) {
+      std::cout << "i = " << i << "; j " << j << std::endl;
+      EXPECT_FLOAT_EQ(copysign(i, j), copysign(var_t{i}, var_t{j}).val());
+    }
+  }
+}
+TEST(mathRevCore, copysignComplex) {
+  // this one's not in std:
+  for (double i = -1; i < 2; ++i) {
+    for (double j = -1; j < 2; ++j) {
+      cdouble_t a{i, j};
+      for (double k = -1; k < 2; ++k) {
+        for (double l = -1; l < 2; ++l) {
+          using stan::math::copysign;
+          cdouble_t b{k, l};
+          cvar_t av{a};
+          cvar_t bv{b};
+          cdouble_t c = copysign(a, b);
+          cvar_t cv = copysign(av, bv);
+          EXPECT_FLOAT_EQ(std::copysign(i, k), c.real());
+          EXPECT_FLOAT_EQ(std::copysign(j, l), c.imag());
+          EXPECT_FLOAT_EQ(std::copysign(i, k), cv.real().val());
+          EXPECT_FLOAT_EQ(std::copysign(j, l), cv.imag().val());
+        }
+      }
+    }
+  }
 }
 
 TEST(mathRevCore, stdComplexConstructor1) {

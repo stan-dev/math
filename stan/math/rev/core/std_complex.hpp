@@ -20,6 +20,7 @@
 #include <cmath>
 #include <complex>
 #include <cstddef>
+#include <iterator>
 #include <limits>
 
 #include <iostream>
@@ -67,19 +68,25 @@ struct iterator_traits<stan::math::var> {
 namespace stan {
 namespace math {
 /**
- * Return true if the specified argument is negative.
+ * Return `true` if the specified argument is negative and `false`
+ * otherwise.
+ *
+ * Overloads `std::signbit` from `<cmath>`.
  *
  * @tparam T type of argument
  * @param v argument
- * @return true if the argument is negatives
+ * @return `true` if the argument is negative
  */
 template <typename T>
 bool signbit(const T& v) {
+  using std::signbit;
   return signbit(v.val());
 }
 
 /**
  * Return true if specified argument is infinite.
+ *
+ * Overloads `std::isinf` from `<cmath>`.
  *
  * @tparam T type of argument
  * @param v argument
@@ -87,25 +94,62 @@ bool signbit(const T& v) {
  */
 template <typename T>
 bool isinf(const T& v) {
-  return is_inf(v);
+  using std::isinf;
+  return isinf(v.val());
 }
 
 /**
- * Return true if specified argument is infinite.
+ * Return true if specified argument is finite.
+ *
+ * Overloads `std::isfinite` from `<cmath>`.
  *
  * @tparam T type of argument
  * @param v argument
- * @return true if argument is infinite
+ * @return true if argument is finite
  */
 template <typename T>
 bool isfinite(const T& v) {
-  return !is_inf(v) && !is_nan(v);
+  using std::isfinite;
+  return isfinite(v.val());
+}
+
+/**
+ * Return true if specified argument is not-a-number.
+ *
+ * Overloads `std::isnan` from `<cmath>`.
+ *
+ * @tparam T type of argument
+ * @param v argument
+ * @return true if argument is not-a-number
+ */
+template <typename T>
+bool isnan(const T& v) {
+  using std::isnan;
+  return isnan(v.val());
+}
+
+/**
+ * Return true if specified argument is normal.  A number is normal if
+ * it is finite, non-zero and not subnormal.
+ *
+ * Overloads `std::isnormal` from `<cmath>`.
+ *
+ * @tparam T type of argument
+ * @param v argument
+ * @return true if argument is normal
+ */
+template <typename T>
+bool isnormal(const T& v) {
+  using std::isnormal;
+  return isnormal(v.val());
 }
 
 /**
  * Return the negation of the first argument if the first and second
  * argument have different signs, otherwise return a copy of the first
  * argument.
+ *
+ * Overload of `std::copysign` from `cmath`.
  *
  * @tparam T type of first argument
  * @tparam U type of second argument
@@ -116,13 +160,17 @@ bool isfinite(const T& v) {
  */
 template <typename T, typename U>
 T copysign(const T& x, const U& y) {
-  return (x < 0 && y > 0) || (x > 0 && y < 0) ? -x : x;
+  // 0 is considered positive
+  return (x < 0 && y >= 0) || (x > 0 && y < 0) ? -x : x;
 }
 
 /**
  * Return the negation of the first argument if the first and second
  * argument have different signs, otherwise return a copy of the first
  * argument.
+ *
+ * This one is not an overload of a standard library function; it's
+ * for utility in the complex overloads for `var` types.
  *
  * @tparam T value type of first argument
  * @tparam U value type of second argument
