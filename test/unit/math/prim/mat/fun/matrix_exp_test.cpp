@@ -6,6 +6,12 @@
 #include <algorithm>
 #include <random>
 
+TEST(MathMatrix, matrix_exp_0x0) {
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m1(0, 0);
+
+  expect_matrix_eq(m1, stan::math::matrix_exp(m1));
+}
+
 TEST(MathMatrix, matrix_exp_1x1) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m1(1, 1), m2(1, 1);
   m1 << 0;
@@ -95,7 +101,7 @@ TEST(MathMatrix, matrix_exp_exceptions) {
 
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m1(0, 0), m2(1, 2);
 
-  EXPECT_THROW(matrix_exp(m1), std::invalid_argument);
+  EXPECT_NO_THROW(matrix_exp(m1));
   EXPECT_THROW(matrix_exp(m2), std::invalid_argument);
 }
 
