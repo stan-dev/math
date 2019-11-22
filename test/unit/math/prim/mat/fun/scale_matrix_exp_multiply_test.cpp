@@ -30,6 +30,13 @@ inline void test_scale_matrix_exp_multiply() {
 }
 
 TEST(MathMatrix, scale_matrix_exp_multiply) {
+
+  // the helper above doesn't handle 0 size inputs
+  const double t = 1.0;
+  Eigen::MatrixXd A(0, 0);
+  Eigen::MatrixXd B(0, 0);
+  EXPECT_EQ(stan::math::scale_matrix_exp_multiply(t, A, B).size(), 0);
+
   test_scale_matrix_exp_multiply<1, 1>();
   test_scale_matrix_exp_multiply<1, 5>();
   test_scale_matrix_exp_multiply<5, 1>();

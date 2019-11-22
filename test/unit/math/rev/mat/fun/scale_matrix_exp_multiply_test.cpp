@@ -182,6 +182,14 @@ TEST(MathMatrix, scale_matrix_exp_multiply_vv) {
   test_scale_matrix_exp_multiply_vv(8, 2);
 }
 
+TEST(MathMatrix, matrix_exp_multiply_0x0) {
+  using stan::math::var;
+  const double t = 1.0;
+  Eigen::Matrix<var, -1, -1> A(0, 0);
+  Eigen::Matrix<var, -1, -1> B(0, 0);
+  EXPECT_EQ(stan::math::scale_matrix_exp_multiply(t, A, B).size(), 0);
+}
+
 TEST(MathMatrix, scale_matrix_exp_multiply_exception) {
   using stan::math::var;
   const double t = 1.0;
