@@ -17,6 +17,9 @@ namespace math {
 template <typename T, int R, int C>
 inline T determinant(const Eigen::Matrix<T, R, C>& m) {
   check_square("determinant", "m", m);
+  if (m.size() == 0)
+    return 1;
+
   return m.determinant();
 }
 
