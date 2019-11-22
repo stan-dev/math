@@ -4,6 +4,9 @@
 TEST(MathMixMatFun, logDeterminant) {
   auto f = [](const auto& x) { return stan::math::log_determinant(x); };
 
+  Eigen::MatrixXd m00(0, 0);
+  stan::test::expect_ad(f, m00);
+
   // repeat symmetric pos def tests
   Eigen::MatrixXd a(2, 2);
   a << 3, 0, 0, 4;
