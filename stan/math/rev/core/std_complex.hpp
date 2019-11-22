@@ -67,80 +67,39 @@ struct iterator_traits<stan::math::var> {
 namespace stan {
 namespace math {
 /**
- * Return true if the specified value is negative.
+ * Return true if the specified argument is negative.
  *
+ * @tparam T type of argument
  * @param v argument
- * @return true if the argument is negativexs
- */
-bool signbit(const var& v) { return signbit(v.val()); }
-
-/**
- * Return true if specified variable is infinite.
- *
- * @param v argument
- * @return true if argument is infinite
- */
-bool isinf(const var& v) { return is_inf(v); }
-/**
- * Return true if specified variable is infinite.
- *
- * @param v argument
- * @return true if argument is infinite
- */
-bool isfinite(const var& v) { return !is_inf(v) && !is_nan(v); }
-
-template <typename T, typename U>
-T copysign(const T& x, const U& y) {
-  return (x < 0 && y > 0) || (x > 0 && y < 0) ? -x : x;
-}
-
-/**
- * Return the negation of the first argument if the first and second
- * argument have different signs, otherwise return a copy of the first
- * argument.
- *
- * @tparam T type of first argument
- * @tparam U type of second argument
- * @param x first argument
- * @param y second argument
- * @return second argument, negated if necessary to match sign of
- * first argument
- */
-template <typename T, typename U>
-var copysign(const T& x, const U& y) {
-  return (x < 0 && y > 0) || (x > 0 && y < 0) ? -x : x;
-}
-
-/**
- * Return the negation of the first argument if the first and second
- * argument have different signs, otherwise return a copy of the first
- * argument.
- *
- * @tparam U type of second argument
- * @param x first argument
- * @param y second argument
- * @return second argument, negated if necessary to match sign of
- * first argument
- */
-template <typename U>
-var copysign(const var& x, const U& y) {
-  return (x < 0 && y > 0) || (x > 0 && y < 0) ? -x : x;
-}
-
-/**
- * Return the negation of the first argument if the first and second
- * argument have different signs, otherwise return a copy of the first
- * argument.
- *
- * @tparam T type of first argument
- * @param x first argument
- * @param y second argument
- * @return second argument, negated if necessary to match sign of
- * first argument
+ * @return true if the argument is negatives
  */
 template <typename T>
-T copysign(const T& x, const var& y) {
-  return (x < 0 && y > 0) || (x > 0 && y < 0) ? -x : x;
+bool signbit(const T& v) {
+  return signbit(v.val());
+}
+
+/**
+ * Return true if specified argument is infinite.
+ *
+ * @tparam T type of argument
+ * @param v argument
+ * @return true if argument is infinite
+ */
+template <typename T>
+bool isinf(const T& v) {
+  return is_inf(v);
+}
+
+/**
+ * Return true if specified argument is infinite.
+ *
+ * @tparam T type of argument
+ * @param v argument
+ * @return true if argument is infinite
+ */
+template <typename T>
+bool isfinite(const T& v) {
+  return !is_inf(v) && !is_nan(v);
 }
 
 /**
@@ -148,12 +107,15 @@ T copysign(const T& x, const var& y) {
  * argument have different signs, otherwise return a copy of the first
  * argument.
  *
- * @param x first argument
- * @param y second argument
- * @return second argument, negated if necessary to match sign of
- * first argument
+ * @tparam T type of first argument
+ * @tparam U type of second argument
+ * @param x first complex argument
+ * @param y second complex argument
+ * @return copy of second argument, negated if necessary to match sign
+ * of first argument
  */
-var copysign(const var& x, const var& y) {
+template <typename T, typename U>
+T copysign(const T& x, const U& y) {
   return (x < 0 && y > 0) || (x > 0 && y < 0) ? -x : x;
 }
 
@@ -447,6 +409,10 @@ class complex<stan::math::var> {
     return *this;
   }
 };
+
+// After here, it's specializations of function templates; for info, see:
+// Walter E. Brown.  2017.  Thou Shalt Not Specialize std Function Templates!
+// http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/p0551r1.pdf
 
 /**
  * Return the value of the specified argument.
