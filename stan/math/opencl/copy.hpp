@@ -54,7 +54,7 @@ inline matrix_cl<Mat_scalar> to_matrix_cl(Mat&& src) {
     check_opencl_error("copy Eigen->(OpenCL)", e);
   }
   return dst;
-  //return matrix_cl<Mat_scalar>(src);
+  // return matrix_cl<Mat_scalar>(src);
 }
 
 /**
