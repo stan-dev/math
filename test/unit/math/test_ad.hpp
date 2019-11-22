@@ -37,7 +37,7 @@ void test_gradient(const ad_tolerances& tols, const F& f,
                    const Eigen::VectorXd& x, double fx,
                    bool test_derivs = true) {
   Eigen::VectorXd grad_ad;
-  double fx_ad = fx;
+  double fx_ad = -1;
   stan::math::gradient<F>(f, x, fx_ad, grad_ad);
   expect_near_rel("gradient() val", fx, fx_ad, tols.gradient_val_);
   if (!test_derivs || !is_finite(x) || !is_finite(fx))
