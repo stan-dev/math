@@ -226,27 +226,32 @@ std::complex<typename T::Scalar> value_of(const std::complex<T>& z) {
 }  // namespace math
 }  // namespace stan
 
-// SPECIALIZATION complex<var> for std::complex spec
-namespace std {
-
+namespace stan {
+namespace math {
 /**
- * Specialization of the standard libary complex number type for
- * reverse-mode autodiff type `stan::math::var`.
+ * CRTP base calss for complex numbers.  Rather than typical CRTP, the
+ * template variable is just the value type for the complex number.
+ * The extending class will then be `complex<V>`.
+ *
+ * @tparam V value type for extending complex class
  */
-template <>
-class complex<stan::math::var> {
-  stan::math::var re_;
-  stan::math::var im_;
+template <typename V>
+class complex_base {
+ protected:
+  V re_;
+  V im_;
 
  public:
   /**
    * Type of real and imaginary parts.
    */
-  typedef stan::math::var value_type;
+  typedef V value_type;
+
+  typedef std::complex<value_type> complex_type;
 
   template <typename T, typename U>
-  complex(const T& x, const U& y = U(0))
-      : complex(stan::math::var{x}, stan::math::var{y}) {}
+  complex_base(const T& x, const U& y = U(0))
+      : complex_base(value_type{x}, value_type{y}) {}
 
   /**
    * Constructs complex number from real and imaginary parts.
@@ -254,17 +259,9 @@ class complex<stan::math::var> {
    * @param[in] re the real part
    * @param[in] im the imaginary part
    */
-  complex(const stan::math::var& re = stan::math::var(0),
-          const stan::math::var& im = stan::math::var(0))
+  complex_base(const value_type& re = value_type(0),
+               const value_type& im = value_type(0))
       : re_(re), im_(im) {}
-
-  /**
-   * Constructs complex number with the contents of other.
-   *
-   * @param[in] other another complex to use as source
-   */
-  complex(const complex<stan::math::var>& other)
-      : re_(other.real()), im_(other.imag()) {}
 
   /**
    * Constructs the complex number from the specified complex number
@@ -273,12 +270,15 @@ class complex<stan::math::var> {
    * @param[in] other another complex to use as source
    */
   template <typename T>
-  complex(const complex<T>& other) : re_(other.real()), im_(other.imag()) {}
+  complex_base(const std::complex<T>& other)
+      : complex_base(other.real(), other.imag()) {}
 
   /**
    * Destroy this complex number.
    */
-  ~complex() {}
+  ~complex_base() {}
+
+  complex_type& return_ref() { return static_cast<complex_type&>(*this); }
 
   /**
    * Assign the specified value to the real part of this complex number
@@ -288,10 +288,10 @@ class complex<stan::math::var> {
    * @return this complex number
    */
   template <typename T>
-  complex<stan::math::var>& operator=(const T& x) {
+  complex_type& operator=(const T& x) {
     re_ = x;
     im_ = 0;
-    return *this;
+    return return_ref();
   }
 
   /**
@@ -299,15 +299,15 @@ class complex<stan::math::var> {
    * number to the real and imaginary part of this complex number.
    *
    * @tparam T value type of argument (must be assignable to
-   * `stan::math::var`)
+   * `value_type`)
    * @param[in] x complex value to assign
    * @return this complex number
    */
   template <typename T>
-  complex<stan::math::var>& operator=(const complex<T>& x) {
+  complex_type& operator=(const std::complex<T>& x) {
     re_ = x.real();
     im_ = x.imag();
-    return *this;
+    return return_ref();
   }
 
   /**
@@ -315,28 +315,28 @@ class complex<stan::math::var> {
    *
    * @return the real part
    */
-  stan::math::var real() const { return re_; }
+  value_type real() const { return re_; }
 
   /**
    * Set the real part to the specified value.
    *
    * @param[in] x the value to set the real part to
    */
-  void real(const stan::math::var& x) { re_ = x; }
+  void real(const value_type& x) { re_ = x; }
 
   /**
    * Return the imaginary part.
    *
    * @return the imaginary part
    */
-  stan::math::var imag() const { return im_; }
+  value_type imag() const { return im_; }
 
   /**
    * Set the imaginary part to the specified value.
    *
    * @param[in] x the value to set the imaginary part to
    */
-  void imag(const stan::math::var& x) { im_ = x; }
+  void imag(const value_type& x) { im_ = x; }
 
   /**
    * Adds other to this.
@@ -346,9 +346,9 @@ class complex<stan::math::var> {
    * @return this complex number
    */
   template <typename X>
-  complex<stan::math::var>& operator+=(const X& other) {
+  complex_type& operator+=(const X& other) {
     re_ += other;
-    return *this;
+    return return_ref();
   }
 
   /**
@@ -360,10 +360,10 @@ class complex<stan::math::var> {
    * @return this complex number
    */
   template <typename X>
-  complex<stan::math::var>& operator+=(const complex<X>& other) {
+  complex_type& operator+=(const std::complex<X>& other) {
     re_ += other.real();
     im_ += other.imag();
-    return *this;
+    return return_ref();
   }
 
   /**
@@ -374,9 +374,9 @@ class complex<stan::math::var> {
    * @return this complex number
    */
   template <typename X>
-  complex<stan::math::var>& operator-=(const X& other) {
+  complex_type& operator-=(const X& other) {
     re_ -= other;
-    return *this;
+    return return_ref();
   }
 
   /**
@@ -388,10 +388,10 @@ class complex<stan::math::var> {
    * @return this complex number
    */
   template <typename X>
-  complex<stan::math::var>& operator-=(const complex<X>& other) {
+  complex_type& operator-=(const std::complex<X>& other) {
     re_ -= other.real();
     im_ -= other.imag();
-    return *this;
+    return return_ref();
   }
 
   /**
@@ -402,10 +402,10 @@ class complex<stan::math::var> {
    * @return this complex number
    */
   template <typename X>
-  complex<stan::math::var>& operator*=(const X& other) {
+  complex_type& operator*=(const X& other) {
     re_ *= other;
     im_ *= other;
-    return *this;
+    return return_ref();
   }
 
   /**
@@ -417,11 +417,11 @@ class complex<stan::math::var> {
    * @return this complex number
    */
   template <typename X>
-  complex<stan::math::var>& operator*=(const complex<X>& other) {
-    stan::math::var re_temp = re_ * other.real() - im_ * other.imag();
+  complex_type& operator*=(const std::complex<X>& other) {
+    value_type re_temp = re_ * other.real() - im_ * other.imag();
     im_ = re_ * other.imag() + other.real() * im_;
     re_ = re_temp;
-    return *this;
+    return return_ref();
   }
 
   /**
@@ -432,10 +432,10 @@ class complex<stan::math::var> {
    * @return this complex number
    */
   template <typename X>
-  complex<stan::math::var>& operator/=(const X& other) {
+  complex_type& operator/=(const X& other) {
     re_ /= other;
     im_ /= other;
-    return *this;
+    return return_ref();
   }
 
   /**
@@ -447,14 +447,189 @@ class complex<stan::math::var> {
    * @return this complex number
    */
   template <typename X>
-  complex<stan::math::var>& operator/=(const complex<X>& other) {
+  complex_type& operator/=(const std::complex<X>& other) {
     using stan::math::square;
-    stan::math::var sum_sq_im = square(other.real()) + square(other.imag());
-    stan::math::var re_temp
-        = (re_ * other.real() + im_ * other.imag()) / sum_sq_im;
+    value_type sum_sq_im = square(other.real()) + square(other.imag());
+    value_type re_temp = (re_ * other.real() + im_ * other.imag()) / sum_sq_im;
     im_ = (im_ * other.real() - re_ * other.imag()) / sum_sq_im;
     re_ = re_temp;
-    return *this;
+    return return_ref();
+  }
+};
+
+}  // namespace math
+}  // namespace stan
+
+// SPECIALIZATION complex<var> for std::complex
+namespace std {
+
+/**
+ * Specialization of the standard libary complex number type for
+ * reverse-mode autodiff type `stan::math::var`.
+ */
+template <>
+class complex<stan::math::var>
+    : public stan::math::complex_base<stan::math::var> {
+ public:
+  typedef complex_base<stan::math::var> base_t;
+
+  /**
+   * Construct complex number from real and imaginary parts.
+   *
+   * @tparam V1 type of real part
+   * @tparam V2 type of imaginary part
+   * @param[in] re real part
+   * @param[in] im imaginary part
+   */
+  template <typename V1, typename V2>
+  complex(const V1& re, const V2& im) : complex_base(re, im) {}
+
+  /**
+   * Constructs complex number from real part or with default zero
+   * value, setting imaginary part to zero.
+   *
+   * @param[in] re the real part
+   */
+  complex(const value_type& re = value_type(0)) : complex_base(re) {}
+
+  /**
+   * Constructs the complex number from the specified complex number.
+   *
+   * @tparam V value type of complex argument
+   * @param[in] other another complex to use as source
+   */
+  template <typename V>
+  complex(const complex<V>& other) : complex_base(other) {}
+
+  /**
+   * Destroy this complex number.
+   */
+  ~complex() {}
+
+  /**
+   * Assign the specified value to the real part of this complex number
+   * and set imaginary part to zero.
+   *
+   * @tparam V type of value
+   * @param[in] x value to assign
+   * @return this complex number
+   */
+  template <typename V>
+  complex_type& operator=(const V& x) {
+    return base_t::operator=(x);
+  }
+
+  /**
+   * Assign the real and imaginary parts of the specified complex
+   * number to the real and imaginary part of this complex number.
+   *
+   * @tparam V value type of argument (assignable to `stan::math::var`)
+   * @param[in] x complex value to assign
+   * @return this complex number
+   */
+  template <typename V>
+  complex_type& operator=(const complex<V>& x) {
+    return base_t::operator=(x);
+  }
+
+  /**
+   * Adds other to this.
+   *
+   * @tparam V type of scalar argument (assignable to `stan::math::var`)
+   * @param[in] other a scalar value of matching type
+   * @return this complex number
+   */
+  template <typename V>
+  complex_type& operator+=(const V& other) {
+    return base_t::operator+=(other);
+  }
+
+  /**
+   * Adds other to this.
+   *
+   * @tparam V value type of complex argument (assignable to
+   * `stan::math::var`)
+   * @param[in] other a complex value of compatible type
+   * @return this complex number
+   */
+  template <typename V>
+  complex_type& operator+=(const complex<V>& other) {
+    return base_t::operator+=(other);
+  }
+
+  /**
+   * Subtracts other from this.
+   *
+   * @tparam V type of scalar argument (assignable to `stan::math::var`)
+   * @param[in] other a scalar value of matching type
+   * @return this complex number
+   */
+  template <typename V>
+  complex_type& operator-=(const V& other) {
+    return base_t::operator-=(other);
+  }
+
+  /**
+   * Subtracts other from this.
+   *
+   * @tparam V value type of complex argument (assignable to
+   * `stan::math::var`)
+   * @param[in] other a complex value of compatible type
+   * @return this complex number
+   */
+  template <typename V>
+  complex_type& operator-=(const complex<V>& other) {
+    return base_t::operator-=(other);
+  }
+
+  /**
+   * Multiplies this by other.
+   *
+   * @tparam V type of scalar argument (assignable to `stan::math::var`)
+   * @param[in] other a scalar value of matching type
+   * @return this complex number
+   */
+  template <typename V>
+  complex_type& operator*=(const V& other) {
+    return base_t::operator*=(other);
+  }
+
+  /**
+   * Multiplies this by other.
+   *
+   * @tparam V value type of complex argument (assignable to
+   * `stan::math::var`)
+   * @param[in] other a complex value of compatible type
+   * @return this complex number
+   */
+  template <typename V>
+  complex_type& operator*=(const complex<V>& other) {
+    return base_t::operator*=(other);
+  }
+
+  /**
+   * Divides this by other.
+   *
+   * @tparam V type of scalar argument (assignable to `stan::math::var`)
+   * @param[in] other a scalar value of matching type
+   * @return this complex number
+   */
+  template <typename V>
+  complex_type& operator/=(const V& other) {
+    return base_t::operator/=(other);
+  }
+
+  /**
+   * Divides this by other.
+   *
+   * @tparam V value type of complex argument (assignable to
+   * `stan::math::var`)
+   * @param[in] other a complex value of compatible type
+   * @return this complex number
+   */
+  template <typename V>
+  complex_type& operator/=(const complex<V>& other) {
+    return base_t::operator/=(other);
   }
 };
 
