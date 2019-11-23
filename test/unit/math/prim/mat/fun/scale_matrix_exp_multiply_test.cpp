@@ -46,7 +46,7 @@ TEST(MathMatrix, scale_matrix_exp_multiply) {
 TEST(MathMatrix, scale_matrix_exp_multiply_exception) {
   using stan::math::scale_matrix_exp_multiply;
   const double t = 1.0;
-  {  // nonzero size
+  {  // multiplicable
     Eigen::MatrixXd A(0, 0);
     Eigen::MatrixXd B = Eigen::MatrixXd::Random(1, 2);
     EXPECT_THROW(scale_matrix_exp_multiply(t, A, B), std::invalid_argument);
@@ -56,6 +56,12 @@ TEST(MathMatrix, scale_matrix_exp_multiply_exception) {
   {  // multiplicable
     Eigen::MatrixXd A = Eigen::MatrixXd::Random(2, 2);
     Eigen::MatrixXd B = Eigen::MatrixXd::Random(3, 2);
+    EXPECT_THROW(scale_matrix_exp_multiply(t, A, B), std::invalid_argument);
+  }
+
+  {  // square
+    Eigen::MatrixXd A(0, 1);
+    Eigen::MatrixXd B(1, 2);
     EXPECT_THROW(scale_matrix_exp_multiply(t, A, B), std::invalid_argument);
   }
 
