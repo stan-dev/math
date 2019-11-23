@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * The log of a scaled inverse chi-squared density for y with the
  * specified degrees of freedom parameter and scale parameter.
  *
@@ -37,7 +37,7 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_log(const T_y& y,
   return scaled_inv_chi_square_lpdf<propto, T_y, T_dof, T_scale>(y, nu, s);
 }
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>scaled_inv_chi_square_lpdf</code>
  */
 template <typename T_y, typename T_dof, typename T_scale>

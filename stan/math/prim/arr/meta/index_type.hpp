@@ -10,7 +10,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup type_trait
  * Template metaprogram class to compute the type of index for a
  * standard vector.
  *

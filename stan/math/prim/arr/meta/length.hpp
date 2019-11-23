@@ -5,7 +5,7 @@
 #include <vector>
 
 namespace stan {
-/**
+/** \ingroup type_trait
  * Returns the length of the provided std::vector.
  *
  * @param x input vector

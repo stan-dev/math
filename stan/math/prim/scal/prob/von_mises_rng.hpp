@@ -14,7 +14,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Return a von Mises random variate for the given location and concentration
  * using the specified random number generator.
  *

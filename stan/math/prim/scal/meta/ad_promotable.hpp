@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup type_trait
  * If the type From can be converted to To using implicit conversions, or
  * both From and To are possibly cv-qualified void),
  * provides the member constant value equal to true.

@@ -282,7 +282,7 @@ pipeline {
         }
         stage('Upload doxygen') {
             agent any
-            when { branch 'master'}
+            when { branch 'develop'}
             steps {
                 deleteDir()
                 retry(3) { checkout scm }
