@@ -68,7 +68,7 @@ inline matrix_cl<Mat_scalar> to_matrix_cl(Mat&& src) {
 template <typename Vec, typename Vec_scalar = scalar_type_t<Vec>,
           require_std_vector_vt<std::is_arithmetic, Vec>...>
 inline matrix_cl<Vec_scalar> to_matrix_cl(Vec&& src) {
-  return matrix_cl<Vec_scalar>(src);
+  return matrix_cl<Vec_scalar>(std::forward<Vec>(src));
 }
 
 /**
