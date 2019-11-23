@@ -19,8 +19,9 @@ namespace internal {
 
 template <int R, int C>
 inline double log_sum_exp_as_double(const Eigen::Matrix<var, R, C>& x) {
-  if (x.size() == 0)
+  if (x.size() == 0) {
     return -std::numeric_limits<double>::infinity();
+  }
 
   const double max = x.val().maxCoeff();
   if (!std::isfinite(max)) {
