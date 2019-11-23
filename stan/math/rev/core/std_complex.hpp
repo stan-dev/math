@@ -633,6 +633,78 @@ class complex<stan::math::var>
   }
 };
 
+}  // namespace std
+
+namespace stan {
+namespace math {
+
+template <typename V>
+std::complex<V> complex_identity(const std::complex<V>& z) {
+  return z;
+}
+
+template <typename V>
+std::complex<V> complex_negate(const std::complex<V>& z) {
+  return {-z.real(), -z.imag()};
+}
+
+template <typename U, typename V>
+struct complex_op {};
+
+template <typename U, typename V>
+struct complex_op<std::complex<U>, V> {
+  typedef U scalar_t;
+  typedef std::complex<scalar_t> complex_t;
+};
+
+template <typename U, typename V>
+struct complex_op<U, std::complex<V>> {
+  typedef V scalar_t;
+  typedef std::complex<scalar_t> complex_t;
+};
+
+template <typename U, typename V>
+struct complex_op<std::complex<U>, std::complex<V>> {
+  typedef return_type_t<U, V> scalar_t;
+  typedef std::complex<scalar_t> complex_t;
+};
+
+template <typename U, typename V>
+typename complex_op<U, V>::complex_t complex_add(const U& lhs, const V& rhs) {
+  typename stan::math::complex_op<U, V>::complex_t y(lhs);
+  y += rhs;
+  return y;
+}
+
+template <typename U, typename V>
+typename complex_op<U, V>::complex_t complex_subtract(const U& lhs,
+                                                      const V& rhs) {
+  typename stan::math::complex_op<U, V>::complex_t y(lhs);
+  y -= rhs;
+  return y;
+}
+
+template <typename U, typename V>
+typename complex_op<U, V>::complex_t complex_multiply(const U& lhs,
+                                                      const V& rhs) {
+  typename stan::math::complex_op<U, V>::complex_t y(lhs);
+  y *= rhs;
+  return y;
+}
+
+template <typename U, typename V>
+typename complex_op<U, V>::complex_t complex_divide(const U& lhs,
+                                                    const V& rhs) {
+  typename stan::math::complex_op<U, V>::complex_t y(lhs);
+  y /= rhs;
+  return y;
+}
+
+}  // namespace math
+}  // namespace stan
+
+namespace std {
+
 // After here, it's specializations of function templates; for info, see:
 // Walter E. Brown.  2017.  Thou Shalt Not Specialize std Function Templates!
 // http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/p0551r1.pdf
@@ -646,7 +718,7 @@ class complex<stan::math::var>
 template <>
 complex<stan::math::var> operator+<stan::math::var>(
     const complex<stan::math::var>& val) {
-  return val;
+  return stan::math::complex_identity(val);
 }
 
 /**
@@ -658,7 +730,7 @@ complex<stan::math::var> operator+<stan::math::var>(
 template <>
 complex<stan::math::var> operator-<stan::math::var>(
     const complex<stan::math::var>& val) {
-  return complex<stan::math::var>(-val.real(), -val.imag());
+  return stan::math::complex_negate(val);
 }
 
 /**
@@ -671,9 +743,7 @@ complex<stan::math::var> operator-<stan::math::var>(
 template <>
 complex<stan::math::var> operator+<stan::math::var>(
     const complex<stan::math::var>& lhs, const complex<stan::math::var>& rhs) {
-  complex<stan::math::var> y(lhs);
-  y += rhs;
-  return y;
+  return complex_add(lhs, rhs);
 }
 
 /**
@@ -686,9 +756,7 @@ complex<stan::math::var> operator+<stan::math::var>(
 template <>
 complex<stan::math::var> operator+<stan::math::var>(
     const complex<stan::math::var>& lhs, const stan::math::var& rhs) {
-  complex<stan::math::var> y(lhs);
-  y += rhs;
-  return y;
+  return complex_add(lhs, rhs);
 }
 
 /**
@@ -701,9 +769,7 @@ complex<stan::math::var> operator+<stan::math::var>(
 template <>
 complex<stan::math::var> operator+<stan::math::var>(
     const stan::math::var& lhs, const complex<stan::math::var>& rhs) {
-  complex<stan::math::var> y(lhs);
-  y += rhs;
-  return y;
+  return complex_add(lhs, rhs);
 }
 
 /**
@@ -717,9 +783,7 @@ complex<stan::math::var> operator+<stan::math::var>(
 template <>
 complex<stan::math::var> operator-<stan::math::var>(
     const complex<stan::math::var>& lhs, const complex<stan::math::var>& rhs) {
-  complex<stan::math::var> y(lhs);
-  y -= rhs;
-  return y;
+  return complex_subtract(lhs, rhs);
 }
 
 /**
@@ -733,9 +797,7 @@ complex<stan::math::var> operator-<stan::math::var>(
 template <>
 complex<stan::math::var> operator-<stan::math::var>(
     const complex<stan::math::var>& lhs, const stan::math::var& rhs) {
-  complex<stan::math::var> y(lhs);
-  y -= rhs;
-  return y;
+  return complex_subtract(lhs, rhs);
 }
 
 /**
@@ -749,9 +811,7 @@ complex<stan::math::var> operator-<stan::math::var>(
 template <>
 complex<stan::math::var> operator-<stan::math::var>(
     const stan::math::var& lhs, const complex<stan::math::var>& rhs) {
-  complex<stan::math::var> y(lhs);
-  y -= rhs;
-  return y;
+  return complex_subtract(lhs, rhs);
 }
 
 /**
@@ -764,9 +824,7 @@ complex<stan::math::var> operator-<stan::math::var>(
 template <>
 complex<stan::math::var> operator*<stan::math::var>(
     const complex<stan::math::var>& lhs, const complex<stan::math::var>& rhs) {
-  complex<stan::math::var> y(lhs);
-  y *= rhs;
-  return y;
+  return complex_multiply(lhs, rhs);
 }
 
 /**
@@ -779,9 +837,7 @@ complex<stan::math::var> operator*<stan::math::var>(
 template <>
 complex<stan::math::var> operator*<stan::math::var>(
     const complex<stan::math::var>& lhs, const stan::math::var& rhs) {
-  complex<stan::math::var> y(lhs);
-  y *= rhs;
-  return y;
+  return complex_multiply(lhs, rhs);
 }
 
 /**
@@ -794,9 +850,7 @@ complex<stan::math::var> operator*<stan::math::var>(
 template <>
 complex<stan::math::var> operator*<stan::math::var>(
     const stan::math::var& lhs, const complex<stan::math::var>& rhs) {
-  complex<stan::math::var> y(lhs);
-  y *= rhs;
-  return y;
+  return complex_multiply(lhs, rhs);
 }
 
 /**
@@ -809,9 +863,7 @@ complex<stan::math::var> operator*<stan::math::var>(
 template <>
 complex<stan::math::var> operator/<stan::math::var>(
     const complex<stan::math::var>& lhs, const complex<stan::math::var>& rhs) {
-  complex<stan::math::var> y(lhs);
-  y /= rhs;
-  return y;
+  return complex_divide(lhs, rhs);
 }
 
 /**
@@ -824,9 +876,7 @@ complex<stan::math::var> operator/<stan::math::var>(
 template <>
 complex<stan::math::var> operator/<stan::math::var>(
     const complex<stan::math::var>& lhs, const stan::math::var& rhs) {
-  complex<stan::math::var> y(lhs);
-  y /= rhs;
-  return y;
+  return complex_divide(lhs, rhs);
 }
 
 /**
@@ -839,9 +889,7 @@ complex<stan::math::var> operator/<stan::math::var>(
 template <>
 complex<stan::math::var> operator/(const stan::math::var& lhs,
                                    const complex<stan::math::var>& rhs) {
-  complex<stan::math::var> y(lhs);
-  y /= rhs;
-  return y;
+  return complex_divide(lhs, rhs);
 }
 
 /**
