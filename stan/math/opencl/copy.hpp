@@ -236,7 +236,7 @@ inline T from_matrix_cl_error_code(const matrix_cl<T>& src) {
  */
 template <typename T, typename = require_arithmetic_t<std::decay_t<T>>>
 inline matrix_cl<std::decay_t<T>> to_matrix_cl(T&& src) {
-  return matrix_cl<std::decay_t<T>>(src);
+  return matrix_cl<std::decay_t<T>>(std::forward<T>(src));
 }
 
 }  // namespace math
