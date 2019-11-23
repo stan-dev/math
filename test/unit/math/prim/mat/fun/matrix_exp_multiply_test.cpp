@@ -32,7 +32,7 @@ TEST(MathMatrix, matrix_exp_multiply) {
   // the helper above doesn't handle 0 size inputs
   Eigen::MatrixXd A(0, 0);
   Eigen::MatrixXd B(0, 0);
-  EXPECT_EQ(stan::math::matrix_exp_multiply(A, B), A);
+  EXPECT_EQ(stan::math::matrix_exp_multiply(A, B).size(), 0);
 
   test_matrix_exp_multiply<1, 1>();
   test_matrix_exp_multiply<1, 5>();
