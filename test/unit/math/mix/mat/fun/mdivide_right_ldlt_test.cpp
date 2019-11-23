@@ -6,6 +6,11 @@ TEST(MathMixMatFun, mdivideRightLdlt) {
     return stan::math::mdivide_right_ldlt(x, stan::test::ldlt_factor(y));
   };
 
+  Eigen::MatrixXd m00(0, 0);
+  Eigen::RowVectorXd rv0(0);
+  stan::test::expect_ad(f, m00, m00);
+  stan::test::expect_ad(f, rv0, m00);
+
   Eigen::MatrixXd a(1, 1);
   a << 2;
   Eigen::MatrixXd b(1, 1);

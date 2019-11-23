@@ -32,7 +32,7 @@ class mdivide_left_ldlt_alloc : public chainable_alloc {
  * used in the other matrix operations where there is one "master"
  * vari whose value is never used and a large number of "slave" varis
  * whose chain() functions are never called because their adjoints are
- * set by the "mater" vari.
+ * set by the "master" vari.
  *
  * This class handles the var/var case.
  **/
@@ -83,7 +83,7 @@ class mdivide_left_ldlt_vv_vari : public vari {
  * used in the other matrix operations where there is one "master"
  * vari whose value is never used and a large number of "slave" varis
  * whose chain() functions are never called because their adjoints are
- * set by the "mater" vari.
+ * set by the "master" vari.
  *
  * This class handles the double/var case.
  **/
@@ -129,7 +129,7 @@ class mdivide_left_ldlt_dv_vari : public vari {
  * used in the other matrix operations where there is one "master"
  * vari whose value is never used and a large number of "slave" varis
  * whose chain() functions are never called because their adjoints are
- * set by the "mater" vari.
+ * set by the "master" vari.
  *
  * This class handles the var/double case.
  **/
@@ -171,13 +171,17 @@ class mdivide_left_ldlt_vd_vari : public vari {
  * Returns the solution of the system Ax=b given an LDLT_factor of A
  * @param A LDLT_factor
  * @param b Right hand side matrix or vector.
- * @return x = b A^-1, solution of the linear system.
+ * @return x = A^-1 b, solution of the linear system.
  * @throws std::domain_error if rows of b don't match the size of A.
  */
 template <int R1, int C1, int R2, int C2>
 inline Eigen::Matrix<var, R1, C2> mdivide_left_ldlt(
     const LDLT_factor<var, R1, C1> &A, const Eigen::Matrix<var, R2, C2> &b) {
   Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
+
+  if (A.cols() == 0 && b.rows() == 0) {
+    return {};
+  }
 
   check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);
 
@@ -193,13 +197,16 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_ldlt(
  * Returns the solution of the system Ax=b given an LDLT_factor of A
  * @param A LDLT_factor
  * @param b Right hand side matrix or vector.
- * @return x = b A^-1, solution of the linear system.
+ * @return x = A^-1 b, solution of the linear system.
  * @throws std::domain_error if rows of b don't match the size of A.
  */
 template <int R1, int C1, int R2, int C2>
 inline Eigen::Matrix<var, R1, C2> mdivide_left_ldlt(
     const LDLT_factor<var, R1, C1> &A, const Eigen::Matrix<double, R2, C2> &b) {
   Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
+  if (A.cols() == 0 && b.rows() == 0) {
+    return {};
+  }
 
   check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);
 
@@ -215,13 +222,16 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_ldlt(
  * Returns the solution of the system Ax=b given an LDLT_factor of A
  * @param A LDLT_factor
  * @param b Right hand side matrix or vector.
- * @return x = b A^-1, solution of the linear system.
+ * @return x = A^-1 b, solution of the linear system.
  * @throws std::domain_error if rows of b don't match the size of A.
  */
 template <int R1, int C1, int R2, int C2>
 inline Eigen::Matrix<var, R1, C2> mdivide_left_ldlt(
     const LDLT_factor<double, R1, C1> &A, const Eigen::Matrix<var, R2, C2> &b) {
   Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
+  if (A.cols() == 0 && b.rows() == 0) {
+    return {};
+  }
 
   check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);
 
