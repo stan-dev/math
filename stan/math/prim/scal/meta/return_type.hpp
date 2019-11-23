@@ -7,7 +7,7 @@
 
 namespace stan {
 
-/**
+/** \ingroup type_trait
  * Template metaprogram to calculate the base scalar return type resulting
  * from promoting all the scalar types of the template parameters. The
  * metaprogram can take an arbitrary number of template parameters.

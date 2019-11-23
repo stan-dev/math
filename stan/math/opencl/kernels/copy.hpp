@@ -13,7 +13,7 @@ namespace opencl_kernels {
 // \cond
 static const std::string copy_kernel_code = STRINGIFY(
     // \endcond
-    /**
+    /** \ingroup opencl_kernels
      * Copy one matrix to another
      * @param[in] A The matrix to copy.
      * @param[out] B The matrix to copy A to.
@@ -36,7 +36,7 @@ static const std::string copy_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/**
+/** \ingroup opencl_kernels
  * See the docs for \link kernels/copy.hpp copy() \endlink
  */
 const kernel_cl<in_buffer, out_buffer, int, int> copy("copy",

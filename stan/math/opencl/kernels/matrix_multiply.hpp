@@ -13,7 +13,7 @@ namespace opencl_kernels {
 // \cond
 static const std::string matrix_multiply_kernel_code = STRINGIFY(
     // \endcond
-    /**
+    /** \ingroup opencl_kernels
      * Matrix multiplication on the OpenCL device
      *
      * @param[in] A the left matrix in matrix multiplication
@@ -282,7 +282,7 @@ static const std::string matrix_multiply_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/**
+/** \ingroup opencl_kernels
  * See the docs for \link kernels/matrix_multiply.hpp matrix_multiply() \endlink
  */
 const kernel_cl<in_buffer, in_buffer, out_buffer, int, int, int, matrix_cl_view,
@@ -295,7 +295,7 @@ const kernel_cl<in_buffer, in_buffer, out_buffer, int, int, int, matrix_cl_view,
 // \cond
 static const std::string matrix_vector_multiply_kernel_code = STRINGIFY(
     // \endcond
-    /**
+    /** \ingroup opencl_kernels
      * Matrix-vector multiplication R=A*B on the OpenCL device
      *
      * @param[in] A matrix in matrix-vector multiplication
@@ -326,7 +326,7 @@ static const std::string matrix_vector_multiply_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/**
+/** \ingroup opencl_kernels
  * See the docs for \link kernels/matrix_multiply.hpp matrix_vector_multiply()
  * \endlink
  */
@@ -339,7 +339,7 @@ const kernel_cl<in_buffer, in_buffer, out_buffer, int, int, matrix_cl_view,
 // \cond
 static const std::string row_vector_matrix_multiply_kernel_code = STRINGIFY(
     // \endcond
-    /**
+    /** \ingroup opencl_kernels
      * Row vector-matrix multiplication R=A*B on the OpenCL device
      *
      * @param[in] A row vector in row vector-matrix multiplication
@@ -388,7 +388,7 @@ static const std::string row_vector_matrix_multiply_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/**
+/** \ingroup opencl_kernels
  * See the docs for \link kernels/matrix_multiply.hpp
  * row_vector_matrix_multiply() \endlink
  */

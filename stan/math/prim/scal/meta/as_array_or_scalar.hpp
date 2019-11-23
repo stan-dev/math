@@ -4,7 +4,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup type_trait
  * Returns specified input value.
  *
  * @tparam T Type of element.

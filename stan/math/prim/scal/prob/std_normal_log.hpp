@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * The log of a standard normal density for the specified scalar(s).
  * y can be either a scalar or a vector.
  *
@@ -26,7 +26,7 @@ return_type_t<T_y> std_normal_log(const T_y& y) {
   return std_normal_lpdf<propto, T_y>(y);
 }
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>std_normal_lpdf</code>
  */
 template <typename T_y>

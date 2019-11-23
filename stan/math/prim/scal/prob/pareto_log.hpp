@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>pareto_lpdf</code>
  */
 template <bool propto, typename T_y, typename T_scale, typename T_shape>
@@ -17,7 +17,7 @@ return_type_t<T_y, T_scale, T_shape> pareto_log(const T_y& y,
   return pareto_lpdf<propto, T_y, T_scale, T_shape>(y, y_min, alpha);
 }
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>pareto_lpdf</code>
  */
 template <typename T_y, typename T_scale, typename T_shape>

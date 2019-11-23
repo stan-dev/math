@@ -12,7 +12,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup opencl
  * Copies the lower or upper
  * triangular of the source matrix to
  * the destination matrix.

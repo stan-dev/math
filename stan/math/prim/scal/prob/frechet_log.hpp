@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>frechet_lpdf</code>
  */
 template <bool propto, typename T_y, typename T_shape, typename T_scale>
@@ -17,7 +17,7 @@ return_type_t<T_y, T_shape, T_scale> frechet_log(const T_y& y,
   return frechet_lpdf<propto, T_y, T_shape, T_scale>(y, alpha, sigma);
 }
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>frechet_lpdf</code>
  */
 template <typename T_y, typename T_shape, typename T_scale>

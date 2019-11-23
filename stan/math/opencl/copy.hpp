@@ -25,7 +25,8 @@
 
 namespace stan {
 namespace math {
-/**
+
+/** \ingroup opencl
  * Copies the source Eigen matrix to
  * the destination matrix that is stored
  * on the OpenCL device.
@@ -56,7 +57,7 @@ inline matrix_cl<Mat_scalar> to_matrix_cl(Mat&& src) {
   return dst;
 }
 
-/**
+/** \ingroup opencl
  * Copies the source std::vector to
  * the destination matrix that is stored
  * on the OpenCL device.
@@ -87,7 +88,7 @@ inline matrix_cl<Vec_scalar> to_matrix_cl(Vec&& src) {
   return dst;
 }
 
-/**
+/** \ingroup opencl
  * Copies the source matrix that is stored
  * on the OpenCL device to the destination Eigen
  * matrix.
@@ -104,7 +105,7 @@ inline Eigen::Matrix<T, R, C> from_matrix_cl(const matrix_cl<T>& src) {
     return dst;
   }
   try {
-    /**
+    /** \ingroup opencl
      * Reads the contents of the OpenCL buffer
      * starting at the offset 0 to the Eigen
      * matrix
@@ -125,7 +126,7 @@ inline Eigen::Matrix<T, R, C> from_matrix_cl(const matrix_cl<T>& src) {
   return dst;
 }
 
-/**
+/** \ingroup opencl
  * Packs the flat triagnular matrix on the OpenCL device and
  * copies it to the std::vector.
  *
@@ -161,7 +162,7 @@ inline std::vector<T> packed_copy(const matrix_cl<T>& src) {
   return dst;
 }
 
-/**
+/** \ingroup opencl
  * Copies the packed triangular matrix from
  * the source std::vector to an OpenCL buffer and
  * unpacks it to a flat matrix on the OpenCL device.
@@ -203,7 +204,7 @@ inline matrix_cl<Vec_scalar> packed_copy(Vec&& src, int rows) {
   return dst;
 }
 
-/**
+/** \ingroup opencl
  * Copies the source matrix to the
  * destination matrix. Both matrices
  * are stored on the OpenCL device.
@@ -239,7 +240,7 @@ inline matrix_cl<T> copy_cl(const matrix_cl<T>& src) {
   return dst;
 }
 
-/**
+/** \ingroup opencl
  * Copy A 1 by 1 source matrix from the Device to  the host.
  * @tparam T An arithmetic type to pass the value from the OpenCL matrix to.
  * @param src A 1x1 matrix on the device.
@@ -265,7 +266,7 @@ inline T from_matrix_cl_error_code(const matrix_cl<T>& src) {
   return dst;
 }
 
-/**
+/** \ingroup opencl
  * Copy an arithmetic type to the device.
  * @tparam T An arithmetic type to pass the value from the OpenCL matrix to.
  * @param src Arithmetic to receive the matrix_cl value.

@@ -12,7 +12,7 @@ namespace opencl_kernels {
 // \cond
 static const std::string is_zero_on_diagonal_kernel_code = STRINGIFY(
     // \endcond
-    /**
+    /** \ingroup opencl_kernels
      * Check if the <code>matrix_cl</code> has zeros on the diagonal
      *
      * @param[in] A Matrix to check.
@@ -37,7 +37,7 @@ static const std::string is_zero_on_diagonal_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/**
+/** \ingroup opencl_kernels
  * See the docs for \link kernels/check_diagonal_zeros.hpp
  * check_diagonal_zeros() \endlink
  */

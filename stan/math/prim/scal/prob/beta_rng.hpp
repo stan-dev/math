@@ -12,7 +12,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Return a Beta random variate with the supplied success and failure
  * parameters using the given random number generator.
  *
