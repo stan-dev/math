@@ -4,6 +4,10 @@
 TEST(MathMatrix, inverse_spd_exception) {
   using stan::math::inverse_spd;
 
+  // empty
+  stan::math::matrix_d m0(0, 0);
+  EXPECT_THROW(inverse_spd(m0), std::invalid_argument);
+
   stan::math::matrix_d m1(2, 3);
 
   // non-square
