@@ -970,6 +970,14 @@ TEST(mathMix, complexCtor2) {
   };
   stan::test::expect_ad(f, 1.2, 1.3);
 }
+TEST(mathMix, operatorEqualScalar) {
+  auto f = [](const auto& x) {
+    std::complex<decltype(x + 0.0)> lhs;
+    lhs = x;  // assignment being tested
+    return to_array(lhs);
+  };
+  stan::test::expect_ad(f, 1.2);
+}
 TEST(mathMix, operatorEqualComplex) {
   auto f = [](const auto& x, const auto& y) {
     std::complex<decltype(x + y + 0.0)> lhs(0.0, 0.0);
@@ -979,11 +987,85 @@ TEST(mathMix, operatorEqualComplex) {
   };
   stan::test::expect_ad(f, 1.2, -2.17);
 }
-TEST(mathMix, operatorEqualScalar) {
+TEST(mathMix, operatorPlusEqualScalar) {
   auto f = [](const auto& x) {
     std::complex<decltype(x + 0.0)> lhs;
-    lhs = x;  // assignment being tested
+    lhs += x;  // assignment being tested
     return to_array(lhs);
   };
   stan::test::expect_ad(f, 1.2);
+}
+TEST(mathMix, operatorPlusEqualComplex) {
+  auto f = [](const auto& x, const auto& y) {
+    std::complex<decltype(x + y + 0.0)> lhs(1.5, -2.3);
+    auto rhs = to_complex(x, y);
+    lhs += rhs;
+    return to_array(lhs);
+  };
+  stan::test::expect_ad(f, 1.2, -2.17);
+}
+TEST(mathMix, operatorMinusEqualScalar) {
+  auto f = [](const auto& x) {
+    std::complex<decltype(x + 0.0)> lhs;
+    lhs -= x;  // assignment being tested
+    return to_array(lhs);
+  };
+  stan::test::expect_ad(f, 1.2);
+}
+TEST(mathMix, operatorMinusEqualComplex) {
+  auto f = [](const auto& x, const auto& y) {
+    std::complex<decltype(x + y + 0.0)> lhs(1.5, -2.3);
+    auto rhs = to_complex(x, y);
+    lhs -= rhs;
+    return to_array(lhs);
+  };
+  stan::test::expect_ad(f, 1.2, -2.17);
+}
+TEST(mathMix, operatorTimesEqualScalar) {
+  auto f = [](const auto& x) {
+    std::complex<decltype(x + 0.0)> lhs;
+    lhs *= x;  // assignment being tested
+    return to_array(lhs);
+  };
+  stan::test::expect_ad(f, 1.2);
+}
+TEST(mathMix, operatorTimesEqualComplex) {
+  auto f = [](const auto& x, const auto& y) {
+    std::complex<decltype(x + y + 0.0)> lhs(1.5, -2.3);
+    auto rhs = to_complex(x, y);
+    lhs *= rhs;
+    return to_array(lhs);
+  };
+  stan::test::expect_ad(f, 1.2, -2.17);
+}
+TEST(mathMix, operatorDivideEqualScalar) {
+  auto f = [](const auto& x) {
+    std::complex<decltype(x + 0.0)> lhs;
+    lhs /= x;  // assignment being tested
+    return to_array(lhs);
+  };
+  stan::test::expect_ad(f, 1.2);
+}
+TEST(mathMix, operatorDivideEqualComplex) {
+  auto f = [](const auto& x, const auto& y) {
+    std::complex<decltype(x + y + 0.0)> lhs(1.5, -2.3);
+    auto rhs = to_complex(x, y);
+    lhs /= rhs;
+    return to_array(lhs);
+  };
+  stan::test::expect_ad(f, 1.2, -2.17);
+}
+TEST(mathMix, real) {
+  auto f = [](const auto& x, const auto& y) {
+    auto a = to_complex(x, y);
+    return a.real();
+  };
+  stan::test::expect_ad(f, 1.2, -2.17);
+}
+TEST(mathMix, imag) {
+  auto f = [](const auto& x, const auto& y) {
+    auto a = to_complex(x, y);
+    return a.imag();
+  };
+  stan::test::expect_ad(f, 1.2, -2.17);
 }
