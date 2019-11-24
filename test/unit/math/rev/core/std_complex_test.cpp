@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/expect_near_rel.hpp>
 #include <stan/math/rev/core.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <gtest/gtest.h>
@@ -8,10 +9,10 @@
 #include <string>
 #include <vector>
 
-typedef stan::math::var var_t;
-typedef std::complex<stan::math::var> cvar_t;
-typedef std::complex<double> cdouble_t;
-typedef Eigen::Matrix<stan::math::var, -1, -1> mvar_t;
+using var_t = stan::math::var;
+using cvar_t = std::complex<stan::math::var>;
+using cdouble_t = std::complex<double>;
+using mvar_t = Eigen::Matrix<stan::math::var, -1, -1>;
 
 template <typename T>
 void expect_identity_matrix(const T& I) {
@@ -34,40 +35,19 @@ void expect_reduction(const F& f) {
   EXPECT_FLOAT_EQ(yd, y.val());
 }
 
-void expect_complex(double re, double im, const cvar_t& y) {
-  using stan::math::is_nan;
-  if (is_nan(re)) {
-    EXPECT_TRUE(is_nan(y.real()))
-        << "expected = " << std::complex<double>{re, im} << "; found = " << y
-        << std::endl;
-  } else {
-    if (std::fabs(re) < 1e100 && std::fabs(y.real().val()) < 1e100) {
-      EXPECT_NEAR(re, y.real().val(), 1e-7)
-          << "expected = (" << re << ", " << im << ")"
-          << "; found = " << y << std::endl;
-    } else {
-      EXPECT_FLOAT_EQ(re, y.real().val())
-          << "expected = (" << re << ", " << im << ")"
-          << "; found = " << y << std::endl;
-    }
-  }
-  if (is_nan(im)) {
-    EXPECT_TRUE(is_nan(y.imag().val()))
-        << "expected = (" << re << ", " << im << ")"
-        << "; found = " << y << std::endl;
-  } else {
-    if (std::fabs(im) < 1e100 && std::fabs(y.imag().val()) < 1e100) {
-      EXPECT_NEAR(im, y.imag().val(), 1e-7)
-          << "expected = (" << re << ", " << im << ")"
-          << "; found = " << y << std::endl;
-    } else {
-      EXPECT_FLOAT_EQ(im, y.imag().val())
-          << "expected = (" << re << ", " << im << ")"
-          << "; found = " << y << std::endl;
-    }
-  }
+void expect_complex(double re, double im, const cdouble_t& z) {
+  stan::test::expect_near_rel("complex real value", re, z.real());
+  stan::test::expect_near_rel("complex imag value", im, z.imag());
 }
-void expect_complex(const cdouble_t& x, const cvar_t& y) {
+template <typename T>
+void expect_complex(double re, double im, const std::complex<T>& z) {
+  auto z_reduced
+      = std::complex<decltype(z.real().val())>{z.real().val(), z.imag().val()};
+  expect_complex(re, im, z_reduced);
+}
+
+template <typename T>
+void expect_complex(const cdouble_t& x, const std::complex<T>& y) {
   expect_complex(x.real(), x.imag(), y);
 }
 
@@ -193,111 +173,6 @@ TEST(mathRevCore, stdIteratorTraits) {
   EXPECT_FLOAT_EQ(9.7, v.val());
 
   itv_t::difference_type a = v_ptr - v_ptr;
-}
-TEST(mathRevCore, signbit) {
-  EXPECT_TRUE(signbit(-std::numeric_limits<var_t>::infinity()));
-  EXPECT_FALSE(signbit(std::numeric_limits<var_t>::infinity()));
-  EXPECT_TRUE(signbit(var_t{-2}));
-  EXPECT_FALSE(signbit(var_t{0}));
-  EXPECT_FALSE(signbit(var_t{3.9}));
-}
-TEST(mathRevCore, isinf) {
-  EXPECT_FALSE(isinf(std::numeric_limits<var_t>::quiet_NaN()));
-  EXPECT_TRUE(isinf(std::numeric_limits<var_t>::infinity()));
-  EXPECT_TRUE(isinf(-std::numeric_limits<var_t>::infinity()));
-  EXPECT_FALSE(isinf(var_t{-1}));
-  EXPECT_FALSE(isinf(var_t{0}));
-  EXPECT_FALSE(isinf(var_t{3e27}));
-}
-TEST(mathRevCore, isfinite) {
-  EXPECT_FALSE(isfinite(std::numeric_limits<var_t>::quiet_NaN()));
-  EXPECT_FALSE(isfinite(std::numeric_limits<var_t>::infinity()));
-  EXPECT_FALSE(isfinite(-std::numeric_limits<var_t>::infinity()));
-  EXPECT_TRUE(isfinite(var_t{-1}));
-  EXPECT_TRUE(isfinite(var_t{0}));
-  EXPECT_TRUE(isfinite(var_t{3e27}));
-}
-TEST(mathRevCore, isnan) {
-  EXPECT_TRUE(isnan(std::numeric_limits<var_t>::quiet_NaN()));
-  EXPECT_FALSE(isnan(std::numeric_limits<var_t>::infinity()));
-  EXPECT_FALSE(isnan(-std::numeric_limits<var_t>::infinity()));
-  EXPECT_FALSE(isnan(var_t{-1}));
-  EXPECT_FALSE(isnan(var_t{0}));
-  EXPECT_FALSE(isnan(var_t{3e27}));
-}
-TEST(mathRevCore, isnormal) {
-  EXPECT_FALSE(isnormal(std::numeric_limits<var_t>::quiet_NaN()));
-  EXPECT_FALSE(isnormal(std::numeric_limits<var_t>::infinity()));
-  EXPECT_FALSE(isnormal(-std::numeric_limits<var_t>::infinity()));
-  EXPECT_FALSE(isnormal(var_t{0}));
-  EXPECT_TRUE(isnormal(var_t{-1}));
-  EXPECT_TRUE(isnormal(var_t{3e27}));
-}
-TEST(mathRevCore, copysignScalar) {
-  for (double i = -3; i < 3; ++i) {
-    for (double j = -3; j < 3; ++j) {
-      std::cout << "i = " << i << "; j " << j << std::endl;
-      EXPECT_FLOAT_EQ(copysign(i, j), copysign(var_t{i}, var_t{j}).val());
-    }
-  }
-}
-TEST(mathRevCore, copysignComplex) {
-  // this one's not in std:
-  for (double i = -1; i < 2; ++i) {
-    for (double j = -1; j < 2; ++j) {
-      cdouble_t a{i, j};
-      for (double k = -1; k < 2; ++k) {
-        for (double l = -1; l < 2; ++l) {
-          using stan::math::copysign;
-          cdouble_t b{k, l};
-          cvar_t av{a};
-          cvar_t bv{b};
-          cdouble_t c = copysign(a, b);
-          cvar_t cv = copysign(av, bv);
-          EXPECT_FLOAT_EQ(std::copysign(i, k), c.real());
-          EXPECT_FLOAT_EQ(std::copysign(j, l), c.imag());
-          EXPECT_FLOAT_EQ(std::copysign(i, k), cv.real().val());
-          EXPECT_FLOAT_EQ(std::copysign(j, l), cv.imag().val());
-        }
-      }
-    }
-  }
-}
-
-TEST(mathRevCore, iTimes) {
-  for (double i = -1; i < 2; ++i) {
-    for (double j = -1; j < 2; ++j) {
-      cdouble_t a(i, j);
-      auto i_complex = cdouble_t{0, 1};
-      auto expected = i_complex * a;
-      auto found = stan::math::i_times(a);  // qualify for non-stan args
-      EXPECT_FLOAT_EQ(expected.real(), found.real());
-      EXPECT_FLOAT_EQ(expected.imag(), found.imag());
-
-      cvar_t av(i, j);
-      auto foundv = i_times(av);  // ADL for stan args
-      EXPECT_FLOAT_EQ(expected.real(), foundv.real().val());
-      EXPECT_FLOAT_EQ(expected.imag(), foundv.imag().val());
-    }
-  }
-}
-
-TEST(mathRevCore, negITimes) {
-  for (double i = -1; i < 2; ++i) {
-    for (double j = -1; j < 2; ++j) {
-      cdouble_t a(i, j);
-      auto neg_i_complex = cdouble_t{0, -1};
-      auto expected = neg_i_complex * a;
-      auto found = stan::math::neg_i_times(a);
-      EXPECT_FLOAT_EQ(expected.real(), found.real());
-      EXPECT_FLOAT_EQ(expected.imag(), found.imag());
-
-      cvar_t av(i, j);
-      auto foundv = neg_i_times(av);
-      EXPECT_FLOAT_EQ(expected.real(), foundv.real().val());
-      EXPECT_FLOAT_EQ(expected.imag(), foundv.imag().val());
-    }
-  }
 }
 
 TEST(mathRevCore, stdComplexConstructor1) {
@@ -865,4 +740,202 @@ TEST(mathRevCore, complexSchur) {
   auto M = (s.matrixU().adjoint() * s.matrixU()).eval();
   mvar_t I = M.real() + M.imag();
   expect_identity_matrix(I);
+}
+
+using fvar_d_t = stan::math::fvar<double>;
+using fvar_fvar_d_t = stan::math::fvar<fvar_d_t>;
+using fvar_v_t = stan::math::fvar<stan::math::var>;
+using fvar_fvar_v_t = stan::math::fvar<fvar_v_t>;
+
+using cfvar_d_t = std::complex<fvar_d_t>;
+using cfvar_fvar_d_t = std::complex<fvar_fvar_d_t>;
+using cfvar_v_t = std::complex<fvar_v_t>;
+using cfvar_fvar_v_t = std::complex<fvar_fvar_v_t>;
+
+TEST(mathFwdCore, stdIteratorTraits) {
+  using itv_t = std::iterator_traits<fvar_d_t>;
+  fvar_d_t v = 1.3;
+
+  itv_t::value_type v2 = v;
+  EXPECT_FLOAT_EQ(1.3, v2.val());
+
+  itv_t::pointer v_ptr = &v;
+  EXPECT_FLOAT_EQ(1.3, v_ptr->val());
+  *v_ptr += 2.1;
+  EXPECT_FLOAT_EQ(3.4, v.val());
+
+  itv_t::reference v_ref = v;
+  v_ref = 9.7;
+  EXPECT_FLOAT_EQ(9.7, v.val());
+
+  itv_t::difference_type a = v_ptr - v_ptr;
+}
+template <typename T>
+void expectSignBit() {
+  EXPECT_TRUE(signbit(-std::numeric_limits<T>::infinity()));
+  EXPECT_FALSE(signbit(std::numeric_limits<T>::infinity()));
+  EXPECT_TRUE(signbit(T{-2}));
+  EXPECT_FALSE(signbit(T{0}));
+  EXPECT_FALSE(signbit(T{3.9}));
+}
+TEST(mathFwdCore, signbit) {
+  expectSignBit<var_t>();
+  expectSignBit<fvar_d_t>();
+  expectSignBit<fvar_fvar_d_t>();
+  expectSignBit<fvar_v_t>();
+  expectSignBit<fvar_fvar_v_t>();
+}
+
+template <typename T>
+void expectIsInf() {
+  EXPECT_FALSE(isinf(std::numeric_limits<T>::quiet_NaN()));
+  EXPECT_TRUE(isinf(std::numeric_limits<T>::infinity()));
+  EXPECT_TRUE(isinf(-std::numeric_limits<T>::infinity()));
+  EXPECT_FALSE(isinf(T{-1}));
+  EXPECT_FALSE(isinf(T{0}));
+  EXPECT_FALSE(isinf(T{3e27}));
+}
+TEST(mathFwdCore, isinf) {
+  expectIsInf<var_t>();
+  expectIsInf<fvar_d_t>();
+  expectIsInf<fvar_fvar_d_t>();
+  expectIsInf<fvar_v_t>();
+  expectIsInf<fvar_fvar_v_t>();
+}
+
+template <typename T>
+void expectIsFinite() {
+  EXPECT_FALSE(isfinite(std::numeric_limits<T>::quiet_NaN()));
+  EXPECT_FALSE(isfinite(std::numeric_limits<T>::infinity()));
+  EXPECT_FALSE(isfinite(-std::numeric_limits<T>::infinity()));
+  EXPECT_TRUE(isfinite(T{-1}));
+  EXPECT_TRUE(isfinite(T{0}));
+  EXPECT_TRUE(isfinite(T{3e27}));
+}
+TEST(mathFwdCore, isfinite) {
+  expectIsFinite<var_t>();
+  expectIsFinite<fvar_d_t>();
+  expectIsFinite<fvar_fvar_d_t>();
+  expectIsFinite<fvar_v_t>();
+  expectIsFinite<fvar_fvar_v_t>();
+}
+
+template <typename T>
+void expectIsNan() {
+  EXPECT_TRUE(isnan(std::numeric_limits<T>::quiet_NaN()));
+  EXPECT_FALSE(isnan(std::numeric_limits<T>::infinity()));
+  EXPECT_FALSE(isnan(-std::numeric_limits<T>::infinity()));
+  EXPECT_FALSE(isnan(T{-1}));
+  EXPECT_FALSE(isnan(T{0}));
+  EXPECT_FALSE(isnan(T{3e27}));
+}
+TEST(mathFwdCore, isnan) {
+  expectIsNan<var_t>();
+  expectIsNan<fvar_d_t>();
+  expectIsNan<fvar_fvar_d_t>();
+  expectIsNan<fvar_v_t>();
+  expectIsNan<fvar_fvar_v_t>();
+}
+
+template <typename T>
+void expectIsNormal() {
+  EXPECT_FALSE(isnormal(std::numeric_limits<T>::quiet_NaN()));
+  EXPECT_FALSE(isnormal(std::numeric_limits<T>::infinity()));
+  EXPECT_FALSE(isnormal(-std::numeric_limits<T>::infinity()));
+  EXPECT_FALSE(isnormal(T{0}));
+  EXPECT_TRUE(isnormal(T{-1}));
+  EXPECT_TRUE(isnormal(T{3e27}));
+}
+TEST(mathFwdCore, isnormal) {
+  expectIsNormal<var_t>();
+  expectIsNormal<fvar_d_t>();
+  expectIsNormal<fvar_fvar_d_t>();
+  expectIsNormal<fvar_v_t>();
+  expectIsNormal<fvar_fvar_v_t>();
+}
+
+template <typename T>
+std::vector<T> to_array(const std::complex<T>& a) {
+  return {a.real(), a.imag()};
+}
+template <typename T>
+std::complex<T> from_array(const std::vector<T>& a) {
+  return {a[0], a[1]};
+}
+
+TEST(mathFwdCore, copysignScalar) {
+  auto f = [](const auto& x, const auto& y) {
+    using std::copysign;
+    return copysign(x, y);
+  };
+  std::vector<double> vals{-2.3, -1, 1.7};
+  for (double x : vals) {
+    for (double y : vals) {
+      stan::test::expect_ad(f, x, y);
+    }
+  }
+}
+TEST(mathMix, copysignComplex) {
+  auto f = [](const auto& x, const auto& y) {
+    using stan::math::copysign;
+    return to_array(copysign(from_array(x), from_array(y)));
+  };
+  std::vector<double> vals{-2.3, -1, 1.7};
+  for (double x1 : vals) {
+    for (double y1 : vals) {
+      std::vector<double> z1{x1, y1};
+      for (double x2 : vals) {
+        for (double y2 : vals) {
+          std::vector<double> z2{x2, y2};
+          stan::test::expect_ad(f, z1, z2);
+        }
+      }
+    }
+  }
+}
+std::vector<std::vector<double>> common_complex() {
+  std::vector<std::vector<double>> zs;
+  for (double x = -1; x <= 2.1; ++x)
+    for (double y = -1; y <= 2.1; ++y)
+      zs.push_back(std::vector<double>{x, y});
+  return zs;
+}
+
+TEST(mathMix, iTimes) {
+  auto f = [](const auto& x) {
+    using stan::math::i_times;
+    return to_array(i_times(from_array(x)));
+  };
+  auto zs = common_complex();
+  for (const auto& z : zs) {
+    stan::test::expect_ad(f, z);
+  }
+}
+TEST(mathMix, negITimes) {
+  auto f = [](const auto& x) {
+    using stan::math::neg_i_times;
+    return to_array(neg_i_times(from_array(x)));
+  };
+  auto zs = common_complex();
+  for (const auto& z : zs) {
+    stan::test::expect_ad(f, z);
+  }
+}
+TEST(mathMix, valueOf) {
+  cdouble_t zd{2, 3};
+
+  cvar_t zv{2, 3};
+  expect_complex(zd, zv);
+
+  cfvar_d_t zfd{2, 3};
+  expect_complex(zd, zfd);
+
+  cfvar_fvar_d_t zffd{2, 3};
+  expect_complex(zd, zffd);
+
+  cfvar_v_t zfv{2, 3};
+  expect_complex(zd, zfv);
+
+  cfvar_fvar_v_t zffv{2, 3};
+  expect_complex(zd, zffv);
 }
