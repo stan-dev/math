@@ -9,6 +9,8 @@ TEST(MathMixMatFun, determinant) {
   tols.hessian_hessian_ = 1e-2;       // default 1e-3
   tols.hessian_fvar_hessian_ = 1e-2;  // default 1e-3
 
+  Eigen::MatrixXd z(0, 0);
+
   Eigen::MatrixXd a(1, 1);
   a << -1;
 
@@ -33,6 +35,6 @@ TEST(MathMixMatFun, determinant) {
     }
   }
 
-  for (const auto& x : std::vector<Eigen::MatrixXd>{a, b, c, d, e, g})
+  for (const auto& x : std::vector<Eigen::MatrixXd>{z, a, b, c, d, e, g})
     stan::test::expect_ad(tols, f, x);
 }
