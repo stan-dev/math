@@ -245,9 +245,9 @@ class complex_base {
   /**
    * Type of real and imaginary parts.
    */
-  typedef V value_type;
+  using value_type = V;
 
-  typedef std::complex<value_type> complex_type;
+  using complex_type = std::complex<value_type>;
 
   template <typename T, typename U>
   complex_base(const T& x, const U& y = U(0))
@@ -278,7 +278,9 @@ class complex_base {
    */
   ~complex_base() {}
 
-  complex_type& return_ref() { return static_cast<complex_type&>(*this); }
+  complex_type& derived_complex_ref() {
+    return static_cast<complex_type&>(*this);
+  }
 
   /**
    * Assign the specified value to the real part of this complex number
@@ -291,7 +293,7 @@ class complex_base {
   complex_type& operator=(const T& x) {
     re_ = x;
     im_ = 0;
-    return return_ref();
+    return derived_complex_ref();
   }
 
   /**
@@ -307,7 +309,7 @@ class complex_base {
   complex_type& operator=(const std::complex<T>& x) {
     re_ = x.real();
     im_ = x.imag();
-    return return_ref();
+    return derived_complex_ref();
   }
 
   /**
@@ -348,7 +350,7 @@ class complex_base {
   template <typename X>
   complex_type& operator+=(const X& other) {
     re_ += other;
-    return return_ref();
+    return derived_complex_ref();
   }
 
   /**
@@ -363,7 +365,7 @@ class complex_base {
   complex_type& operator+=(const std::complex<X>& other) {
     re_ += other.real();
     im_ += other.imag();
-    return return_ref();
+    return derived_complex_ref();
   }
 
   /**
@@ -376,7 +378,7 @@ class complex_base {
   template <typename X>
   complex_type& operator-=(const X& other) {
     re_ -= other;
-    return return_ref();
+    return derived_complex_ref();
   }
 
   /**
@@ -391,7 +393,7 @@ class complex_base {
   complex_type& operator-=(const std::complex<X>& other) {
     re_ -= other.real();
     im_ -= other.imag();
-    return return_ref();
+    return derived_complex_ref();
   }
 
   /**
@@ -405,7 +407,7 @@ class complex_base {
   complex_type& operator*=(const X& other) {
     re_ *= other;
     im_ *= other;
-    return return_ref();
+    return derived_complex_ref();
   }
 
   /**
@@ -421,7 +423,7 @@ class complex_base {
     value_type re_temp = re_ * other.real() - im_ * other.imag();
     im_ = re_ * other.imag() + other.real() * im_;
     re_ = re_temp;
-    return return_ref();
+    return derived_complex_ref();
   }
 
   /**
@@ -435,7 +437,7 @@ class complex_base {
   complex_type& operator/=(const X& other) {
     re_ /= other;
     im_ /= other;
-    return return_ref();
+    return derived_complex_ref();
   }
 
   /**
@@ -453,7 +455,7 @@ class complex_base {
     value_type re_temp = (re_ * other.real() + im_ * other.imag()) / sum_sq_im;
     im_ = (im_ * other.real() - re_ * other.imag()) / sum_sq_im;
     re_ = re_temp;
-    return return_ref();
+    return derived_complex_ref();
   }
 };
 
@@ -471,7 +473,7 @@ template <>
 class complex<stan::math::var>
     : public stan::math::complex_base<stan::math::var> {
  public:
-  typedef complex_base<stan::math::var> base_t;
+  using base_t = complex_base<stan::math::var>;
 
   /**
    * Construct complex number from real and imaginary parts.
@@ -653,49 +655,49 @@ struct complex_op {};
 
 template <typename U, typename V>
 struct complex_op<std::complex<U>, V> {
-  typedef return_type_t<U, V> scalar_t;
-  typedef std::complex<scalar_t> complex_t;
+  using scalar_t = return_type_t<U, V>;
+  using complex_t = std::complex<scalar_t>;
 };
 
 template <typename U, typename V>
 struct complex_op<U, std::complex<V>> {
-  typedef return_type_t<U, V> scalar_t;
-  typedef std::complex<scalar_t> complex_t;
+  using scalar_t = return_type_t<U, V>;
+  using complex_t = std::complex<scalar_t>;
 };
 
 template <typename U, typename V>
 struct complex_op<std::complex<U>, std::complex<V>> {
-  typedef return_type_t<U, V> scalar_t;
-  typedef std::complex<scalar_t> complex_t;
+  using scalar_t = return_type_t<U, V>;
+  using complex_t = std::complex<scalar_t>;
 };
 
+template <typename... Args>
+using complex_op_t = typename complex_op<Args...>::complex_t;
+
 template <typename U, typename V>
-typename complex_op<U, V>::complex_t complex_add(const U& lhs, const V& rhs) {
-  typename stan::math::complex_op<U, V>::complex_t y(lhs);
+complex_op_t<U, V> complex_add(const U& lhs, const V& rhs) {
+  complex_op_t<U, V> y(lhs);
   y += rhs;
   return y;
 }
 
 template <typename U, typename V>
-typename complex_op<U, V>::complex_t complex_subtract(const U& lhs,
-                                                      const V& rhs) {
-  typename stan::math::complex_op<U, V>::complex_t y(lhs);
+complex_op_t<U, V> complex_subtract(const U& lhs, const V& rhs) {
+  complex_op_t<U, V> y(lhs);
   y -= rhs;
   return y;
 }
 
 template <typename U, typename V>
-typename complex_op<U, V>::complex_t complex_multiply(const U& lhs,
-                                                      const V& rhs) {
-  typename stan::math::complex_op<U, V>::complex_t y(lhs);
+complex_op_t<U, V> complex_multiply(const U& lhs, const V& rhs) {
+  complex_op_t<U, V> y(lhs);
   y *= rhs;
   return y;
 }
 
 template <typename U, typename V>
-typename complex_op<U, V>::complex_t complex_divide(const U& lhs,
-                                                    const V& rhs) {
-  typename stan::math::complex_op<U, V>::complex_t y(lhs);
+complex_op_t<U, V> complex_divide(const U& lhs, const V& rhs) {
+  complex_op_t<U, V> y(lhs);
   y /= rhs;
   return y;
 }
@@ -759,8 +761,8 @@ std::complex<V> complex_proj(const std::complex<V>& z) {
   return z;
 }
 
-template <typename V>
-std::complex<V> complex_polar(const V& r, const V& theta) {
+template <typename U, typename V>
+std::complex<return_type_t<U, V>> complex_polar(const U& r, const V& theta) {
   if (!(r >= 0) || is_inf(theta)) {
     return {std::numeric_limits<double>::quiet_NaN()};
   }
@@ -815,20 +817,7 @@ std::complex<V> complex_log10(const std::complex<V>& z) {
 }
 
 template <typename U, typename V>
-std::complex<return_type_t<U, V>> complex_pow(const std::complex<U>& x,
-                                              const std::complex<V>& y) {
-  return exp(y * log(x));
-}
-
-template <typename U, typename V>
-std::complex<return_type_t<U, V>> complex_pow(const U& x,
-                                              const std::complex<V>& y) {
-  return exp(y * log(x));
-}
-
-template <typename U, typename V>
-std::complex<return_type_t<U, V>> complex_pow(const std::complex<U>& x,
-                                              const V& y) {
+complex_op_t<U, V> complex_pow(const U& x, const V& y) {
   return exp(y * log(x));
 }
 
@@ -1747,3 +1736,5 @@ std::complex<var> pow(const std::complex<var>& lhs,
 }  // namespace math
 }  // namespace stan
 #endif
+
+#include <stan/math/fwd/core.hpp>
