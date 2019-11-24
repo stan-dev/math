@@ -939,3 +939,51 @@ TEST(mathMix, valueOf) {
   cfvar_fvar_v_t zffv{2, 3};
   expect_complex(zd, zffv);
 }
+
+// type preserving/promoting to_complex
+// adding 0.0 casts int to double but leaves others alone
+template <typename U, typename V>
+auto to_complex(const U& x, const V& y)
+    -> std::complex<stan::return_type_t<U, V, double>> {
+  return std::complex<stan::return_type_t<U, V, double>>(x, y);
+}
+
+template <typename U>
+auto to_complex(const U& x) -> std::complex<stan::return_type_t<U, double>> {
+  const auto y = x;
+  return std::complex<stan::return_type_t<U, double>>(y);
+}
+
+TEST(mathMix, complexCtor1) {
+  auto f = [](const auto& x) {
+    auto a = to_complex(x);
+    return to_array(a);
+  };
+  stan::test::expect_ad(f, 1.3);
+  stan::test::expect_ad(f, 1);
+}
+
+TEST(mathMix, complexCtor2) {
+  auto f = [](const auto& x, const auto& y) {
+    auto a = to_complex(x, y);
+    return to_array(a);
+  };
+  stan::test::expect_ad(f, 1.2, 1.3);
+}
+TEST(mathMix, operatorEqualComplex) {
+  auto f = [](const auto& x, const auto& y) {
+    std::complex<decltype(x + y + 0.0)> lhs(0.0, 0.0);
+    auto rhs = to_complex(x, y);
+    lhs = rhs;  // assignment being tested
+    return to_array(lhs);
+  };
+  stan::test::expect_ad(f, 1.2, -2.17);
+}
+TEST(mathMix, operatorEqualScalar) {
+  auto f = [](const auto& x) {
+    std::complex<decltype(x + 0.0)> lhs;
+    lhs = x;  // assignment being tested
+    return to_array(lhs);
+  };
+  stan::test::expect_ad(f, 1.2);
+}

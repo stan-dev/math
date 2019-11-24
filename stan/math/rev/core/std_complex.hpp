@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_CORE_STD_COMPLEX_HPP
 #define STAN_MATH_REV_CORE_STD_COMPLEX_HPP
 
+#include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
@@ -229,7 +230,7 @@ std::complex<typename T::Scalar> value_of(const std::complex<T>& z) {
 namespace stan {
 namespace math {
 /**
- * CRTP base calss for complex numbers.  Rather than typical CRTP, the
+ * CRTP base class for complex numbers.  Rather than typical CRTP, the
  * template variable is just the value type for the complex number.
  * The extending class will then be `complex<V>`.
  *
@@ -462,7 +463,7 @@ class complex_base {
 }  // namespace math
 }  // namespace stan
 
-// SPECIALIZATION complex<var> for std::complex
+// SPECIALIZATION std::complex<var>
 namespace std {
 
 /**
@@ -626,6 +627,186 @@ class complex<stan::math::var>
    *
    * @tparam V value type of complex argument (assignable to
    * `stan::math::var`)
+   * @param[in] other a complex value of compatible type
+   * @return this complex number
+   */
+  template <typename V>
+  complex_type& operator/=(const complex<V>& other) {
+    return base_t::operator/=(other);
+  }
+};
+
+}  // namespace std
+
+// SPECIALIZATION std::complex<fvar<T>>
+namespace std {
+
+/**
+ * Specialization of the standard libary complex number type for
+ * reverse-mode autodiff type `stan::math::fvar<T>`.
+ */
+template <typename T>
+class complex<stan::math::fvar<T>>
+    : public stan::math::complex_base<stan::math::fvar<T>> {
+ public:
+  using base_t = stan::math::complex_base<stan::math::fvar<T>>;
+  using value_type = stan::math::fvar<T>;
+  using complex_type = complex<value_type>;
+
+  /**
+   * Construct complex number from real and imaginary parts.
+   *
+   * @tparam V1 type of real part
+   * @tparam V2 type of imaginary part
+   * @param[in] re real part
+   * @param[in] im imaginary part
+   */
+  template <typename V1, typename V2>
+  complex(const V1& re, const V2& im)
+      : stan::math::complex_base<stan::math::fvar<T>>(re, im) {}
+
+  /**
+   * Constructs complex number from real part or with default zero
+   * value, setting imaginary part to zero.
+   *
+   * @param[in] re the real part
+   */
+  complex(const value_type& re = value_type(0))
+      : stan::math::complex_base<stan::math::fvar<T>>(re) {}
+
+  /**
+   * Constructs the complex number from the specified complex number.
+   *
+   * @tparam V value type of complex argument
+   * @param[in] other another complex to use as source
+   */
+  template <typename V>
+  complex(const complex<V>& other)
+      : stan::math::complex_base<stan::math::fvar<T>>(other) {}
+
+  /**
+   * Destroy this complex number.
+   */
+  ~complex() {}
+
+  /**
+   * Assign the specified value to the real part of this complex number
+   * and set imaginary part to zero.
+   *
+   * @tparam V type of value
+   * @param[in] x value to assign
+   * @return this complex number
+   */
+  template <typename V>
+  complex_type& operator=(const V& x) {
+    return base_t::operator=(x);
+  }
+
+  /**
+   * Assign the real and imaginary parts of the specified complex
+   * number to the real and imaginary part of this complex number.
+   *
+   * @tparam V value type of argument (assignable to `stan::math::fvar<T>`)
+   * @param[in] x complex value to assign
+   * @return this complex number
+   */
+  template <typename V>
+  complex_type& operator=(const complex<V>& x) {
+    return base_t::operator=(x);
+  }
+
+  /**
+   * Adds other to this.
+   *
+   * @tparam V type of scalar argument (assignable to `stan::math::fvar<T>`)
+   * @param[in] other a scalar value of matching type
+   * @return this complex number
+   */
+  template <typename V>
+  complex_type& operator+=(const V& other) {
+    return base_t::operator+=(other);
+  }
+
+  /**
+   * Adds other to this.
+   *
+   * @tparam V value type of complex argument (assignable to
+   * `stan::math::fvar<T>`)
+   * @param[in] other a complex value of compatible type
+   * @return this complex number
+   */
+  template <typename V>
+  complex_type& operator+=(const complex<V>& other) {
+    return base_t::operator+=(other);
+  }
+
+  /**
+   * Subtracts other from this.
+   *
+   * @tparam V type of scalar argument (assignable to `stan::math::fvar<T>`)
+   * @param[in] other a scalar value of matching type
+   * @return this complex number
+   */
+  template <typename V>
+  complex_type& operator-=(const V& other) {
+    return base_t::operator-=(other);
+  }
+
+  /**
+   * Subtracts other from this.
+   *
+   * @tparam V value type of complex argument (assignable to
+   * `stan::math::fvar<T>`)
+   * @param[in] other a complex value of compatible type
+   * @return this complex number
+   */
+  template <typename V>
+  complex_type& operator-=(const complex<V>& other) {
+    return base_t::operator-=(other);
+  }
+
+  /**
+   * Multiplies this by other.
+   *
+   * @tparam V type of scalar argument (assignable to `stan::math::fvar<T>`)
+   * @param[in] other a scalar value of matching type
+   * @return this complex number
+   */
+  template <typename V>
+  complex_type& operator*=(const V& other) {
+    return base_t::operator*=(other);
+  }
+
+  /**
+   * Multiplies this by other.
+   *
+   * @tparam V value type of complex argument (assignable to
+   * `stan::math::fvar<T>`)
+   * @param[in] other a complex value of compatible type
+   * @return this complex number
+   */
+  template <typename V>
+  complex_type& operator*=(const complex<V>& other) {
+    return base_t::operator*=(other);
+  }
+
+  /**
+   * Divides this by other.
+   *
+   * @tparam V type of scalar argument (assignable to `stan::math::fvar<T>`)
+   * @param[in] other a scalar value of matching type
+   * @return this complex number
+   */
+  template <typename V>
+  complex_type& operator/=(const V& other) {
+    return base_t::operator/=(other);
+  }
+
+  /**
+   * Divides this by other.
+   *
+   * @tparam V value type of complex argument (assignable to
+   * `stan::math::fvar<T>`)
    * @param[in] other a complex value of compatible type
    * @return this complex number
    */
@@ -1735,9 +1916,6 @@ std::complex<var> pow(const std::complex<var>& lhs,
 
 }  // namespace math
 }  // namespace stan
-#endif
-
-#include <stan/math/fwd/core.hpp>
 
 // std SPECIALIZATIONS FOR STAN W/O COMPLEX
 // ===================================================================
@@ -1775,3 +1953,5 @@ struct iterator_traits<stan::math::fvar<T>> {
   typedef stan::math::fvar<T>& reference;
 };
 }  // namespace std
+
+#endif
