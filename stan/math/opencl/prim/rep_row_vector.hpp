@@ -9,7 +9,7 @@
 
 namespace stan {
 namespace math {
-/**
+/** \ingroup opencl
  * Creates a matrix_cl representing a row_vector
  * by replicating the value of the only element
  * in the input 1x1 matrix_cl.

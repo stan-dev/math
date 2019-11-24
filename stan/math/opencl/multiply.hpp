@@ -15,7 +15,7 @@
 namespace stan {
 namespace math {
 namespace opencl {
-/**
+/** \ingroup opencl
  * Computes the product of the specified matrices with the option
  * of specifying the triangularity of either input matrices.
  *

@@ -8,7 +8,7 @@
 
 namespace stan {
 
-/**
+/** \ingroup type_trait
  * Template metaprogram class to compute the type of values stored
  * in a standard vector.
  *

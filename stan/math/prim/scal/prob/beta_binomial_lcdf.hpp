@@ -18,7 +18,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Returns the log CDF of the Beta-Binomial distribution with given population
  * size, prior success, and prior failure parameters. Given containers of
  * matching sizes, returns the log sum of probabilities.

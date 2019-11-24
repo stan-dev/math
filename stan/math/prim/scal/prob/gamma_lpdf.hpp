@@ -16,7 +16,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * The log of a gamma density for y with the specified
  * shape and inverse scale parameters.
  * Shape and inverse scale parameters must be greater than 0.

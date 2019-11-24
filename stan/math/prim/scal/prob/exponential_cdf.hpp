@@ -12,7 +12,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Calculates the exponential cumulative distribution function for
  * the given y and beta.
  *

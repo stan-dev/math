@@ -7,7 +7,7 @@
 
 namespace stan {
 
-/**
+/** \ingroup type_trait
  * Extends std::true_type when instantiated with at least 1
  * template parameter that is a fvar. Extends std::false_type
  * otherwise.
