@@ -6,6 +6,11 @@ TEST(MathMixMatFun, traceInvQuadFormLdlt) {
     return stan::math::trace_inv_quad_form_ldlt(x_ldlt, y);
   };
 
+  Eigen::MatrixXd m00(0, 0);
+  Eigen::VectorXd v0(0);
+  stan::test::expect_ad(f, m00, m00);
+  stan::test::expect_ad(f, m00, v0);
+
   Eigen::MatrixXd a11(1, 1);
   a11 << 1;
   Eigen::VectorXd a1(1);
