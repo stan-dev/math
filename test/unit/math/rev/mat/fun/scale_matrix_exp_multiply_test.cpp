@@ -182,7 +182,7 @@ TEST(MathMatrixRevMat, scale_matrix_exp_multiply_vv) {
   test_scale_matrix_exp_multiply_vv(8, 2);
 }
 
-TEST(MathMatrixRevMat, scale_matrix_exp_multiply_exception) {
+TEST(MathMatrixRevMat, scale_matrix_exp_multiply_exception_0x0) {
   using stan::math::var;
   const double t = 1.0;
   Eigen::Matrix<var, -1, -1> A(0, 0);
