@@ -54,7 +54,7 @@ class ErrorHandlingScalar_out_of_range : public ::testing::Test {
   }
 };
 
-TEST_F(ErrorHandlingScalar_out_of_range, var) {
+TEST_F(ErrorHandlingScalar_out_of_range_rev, var) {
   std::vector<stan::math::var> y(4);
 
   test_throw(y, 0);
