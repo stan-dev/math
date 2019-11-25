@@ -54,7 +54,7 @@ class ErrorHandlingScalar_out_of_range : public ::testing::Test {
   }
 };
 
-TEST_F(ErrorHandlingScalar_out_of_range_prim_scal, double) {
+TEST_F(ErrorHandlingScalar_out_of_range_prim_scal, double_prim_scal) {
   std::vector<double> y(4);
 
   test_throw(y, 0);
