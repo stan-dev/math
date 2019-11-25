@@ -11,7 +11,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Returns the Weibull cumulative distribution function for the given
  * location and scale. Given containers of matching sizes, returns the
  * product of probabilities.

@@ -20,7 +20,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 namespace internal {
-/**
+/** \ingroup opencl
  * Extracts the kernel's arguments, used in the global and local kernel
  * constructor.
  * @tparam For this general template the function will return back the
@@ -33,7 +33,7 @@ inline const T& get_kernel_args(const T& t) {
   return t;
 }
 
-/**
+/** \ingroup opencl
  * Extracts the kernel's arguments, used in the global and local kernel
  * constructor.
  * @tparam K The type of the \c matrix_cl.
@@ -45,7 +45,7 @@ inline const cl::Buffer& get_kernel_args(const stan::math::matrix_cl<K>& m) {
   return m.buffer();
 }
 
-/**
+/** \ingroup opencl
  * Helper function for assigning events to a \c matrix_cl.
  *
  * @tparam T Whether the assignment is to an \c in_buffer, \c out_buffer, or \c
@@ -55,7 +55,7 @@ inline const cl::Buffer& get_kernel_args(const stan::math::matrix_cl<K>& m) {
  */
 template <typename T, typename K = double>
 struct assign_event_helper {
-  /**
+  /** \ingroup opencl
    * Assigns the event to the \c matrix_cl.
    * @param e the event to be assigned.
    * @param m The \c matrix_cl to be assigned to.
@@ -87,7 +87,7 @@ struct assign_event_helper<in_out_buffer, K> {
   }
 };
 
-/**
+/** \ingroup opencl
  * Assigns the event to a \c matrix_cl.
  * @tparam T The type to be assigned, if not a matrix_cl this function
  * will do nothing.
@@ -97,7 +97,7 @@ struct assign_event_helper<in_out_buffer, K> {
 template <typename T, typename K = double>
 inline void assign_event(const cl::Event& e, const T&) {}
 
-/**
+/** \ingroup opencl
  * Assigns the event to a \c matrix_cl
  * @tparam T The type to be assigned, if not a matrix_cl will do nothing.
  * @tparam K The type of the \c matrix_cl.
@@ -114,7 +114,7 @@ inline void assign_event(const cl::Event& e,
 template <typename T, require_same_t<T, cl::Event>...>
 inline void assign_events(const T&) {}
 
-/**
+/** \ingroup opencl
  * Adds the event to any \c matrix_cls in the arguments depending on whether
  * they are \c in_buffer, \c out_buffer, or \c in_out_buffers.
  * @tparam Arg Arguments given during kernel creation that specify the kernel
@@ -137,7 +137,7 @@ inline void assign_events(const cl::Event& new_event, CallArg& m,
   assign_events<Args...>(new_event, args...);
 }
 
-/**
+/** \ingroup opencl
  * Helper function to select OpenCL event vectors from an \c matrix_cl
  * @tparam T For non \c matrix_cl types, the type of the first argument.
  * Otherwise this is the in/out/inout buffer type.
@@ -145,7 +145,7 @@ inline void assign_events(const cl::Event& new_event, CallArg& m,
  */
 template <typename T, typename K = double>
 struct select_event_helper {
-  /**
+  /** \ingroup opencl
    * Get the events from a matrix_cl. For non \c matrix_cl types this will do
    * nothing.
    * @param m A type to extract the event from.
@@ -179,7 +179,7 @@ struct select_event_helper<in_out_buffer, K> {
   }
 };
 
-/**
+/** \ingroup opencl
  * Select events from kernel arguments. Does nothing for non \c matrix_cl types.
  * @tparam T The argument type for a non \c matrix_cl, else the in/out/in_out
  * buffer types.
@@ -204,7 +204,7 @@ inline const std::vector<cl::Event> select_events(
 
 }  // namespace internal
 
-/**
+/** \ingroup opencl
  * Compile an OpenCL kernel.
  *
  * @param name The name for the kernel
@@ -237,7 +237,7 @@ inline auto compile_kernel(const char* name,
   return cl::Kernel();  // never reached because check_opencl_error throws
 }
 
-/**
+/** \ingroup opencl
  * Functor used for compiling kernels.
  *
  * @tparam Args Parameter pack of all kernel argument types.
@@ -249,7 +249,7 @@ class kernel_functor {
   std::map<std::string, int> opts_;
 
  public:
-  /**
+  /** \ingroup opencl
    * functor to access the kernel compiler.
    * @param name The name for the kernel.
    * @param sources A std::vector of strings containing the code for the kernel.
@@ -269,13 +269,13 @@ class kernel_functor {
 
   auto operator()() const { return cl::KernelFunctor<Args...>(kernel_); }
 
-  /**
+  /** \ingroup opencl
    * @return The options that the kernel was compiled with.
    */
   inline const std::map<std::string, int>& get_opts() const { return opts_; }
 };
 
-/**
+/** \ingroup opencl
  * Creates functor for kernels
  *
  * @tparam Args Parameter pack of all kernel argument types.
@@ -284,7 +284,7 @@ template <typename... Args>
 struct kernel_cl {
   const kernel_functor<internal::to_const_buffer_t<Args>&...> make_functor;
 
-  /**
+  /** \ingroup opencl
    * Creates functor for kernels that only need access to defining
    *  the global work size.
    * @param name The name for the kernel
@@ -294,7 +294,7 @@ struct kernel_cl {
   kernel_cl(const char* name, const std::vector<std::string>& sources,
             const std::map<std::string, int>& options = {})
       : make_functor(name, sources, options) {}
-  /**
+  /** \ingroup opencl
    * Executes a kernel
    * @tparam CallArgs The types of the callee arguments.
    * @tparam Args Parameter pack of all kernel argument types.
@@ -315,7 +315,7 @@ struct kernel_cl {
     return kern_event;
   }
 
-  /**
+  /** \ingroup opencl
    * Executes a kernel
    * @tparam CallArgs The types of the callee arguments.
    * @tparam Args Parameter pack of all kernel argument types.
@@ -337,7 +337,7 @@ struct kernel_cl {
     return kern_event;
   }
 
-  /**
+  /** \ingroup opencl
    * Retrieves an option used for compiling the kernel.
    * @param option_name which option to retrieve
    * @return option value

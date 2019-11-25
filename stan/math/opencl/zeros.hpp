@@ -15,7 +15,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup opencl
  * Stores zeros in the matrix on the OpenCL device.
  * Supports writing zeroes to the lower and upper triangular or
  * the whole matrix.
@@ -38,7 +38,7 @@ inline void matrix_cl<T, require_arithmetic_t<T>>::zeros() try {
   check_opencl_error("zeros", e);
 }
 
-/**
+/** \ingroup opencl
  * Stores zeros in the stricts triangular part (excluding the diagonal)
  * of a matrix on the OpenCL device.
  * Supports writing zeroes to the lower and upper triangular.

@@ -9,7 +9,7 @@
 #include <vector>
 
 namespace stan {
-/**
+/** \ingroup type_trait
  * Defines a static member named value and sets it to true
  * if the type of the elements in the provided std::vector
  * is constant, false otherwise. This is used in

@@ -1,66 +1,52 @@
-#include <stan/math/mix/mat.hpp>
-#include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/test_ad.hpp>
 
-TEST(AgradMixMatrixRowsDotSelf, fd) {
-  using stan::math::columns_dot_self;
-  using stan::math::fvar;
+TEST(MathMixMatFun, rowsDotSelf) {
+  auto f = [](const auto& x) { return stan::math::rows_dot_self(x); };
 
-  Eigen::Matrix<fvar<double>, Eigen::Dynamic, Eigen::Dynamic> m1(1, 1);
-  m1 << 2.0;
-  m1(0).d_ = 1.0;
-  EXPECT_NEAR(4.0, rows_dot_self(m1)(0, 0).val_, 1E-12);
-  EXPECT_NEAR(4.0, rows_dot_self(m1)(0, 0).d_, 1E-12);
+  Eigen::MatrixXd a00(0, 0);
+  Eigen::VectorXd v0(0);
+  Eigen::RowVectorXd rv0(0);
+  stan::test::expect_ad(f, a00);
+  stan::test::expect_ad(f, v0);
+  stan::test::expect_ad(f, rv0);
 
-  Eigen::Matrix<fvar<double>, Eigen::Dynamic, Eigen::Dynamic> m2(1, 2);
-  m2 << 2.0, 3.0;
-  m2(0).d_ = 1.0;
-  m2(1).d_ = 1.0;
-  Eigen::Matrix<fvar<double>, Eigen::Dynamic, Eigen::Dynamic> x;
-  x = rows_dot_self(m2);
-  EXPECT_NEAR(13.0, x(0, 0).val_, 1E-12);
-  EXPECT_NEAR(10.0, x(0, 0).d_, 1E-12);
+  Eigen::MatrixXd a11(1, 1);
+  a11 << 2;
+  stan::test::expect_ad(f, a11);
 
-  Eigen::Matrix<fvar<double>, Eigen::Dynamic, Eigen::Dynamic> m3(2, 2);
-  m3 << 2.0, 3.0, 4.0, 5.0;
-  m3(0, 0).d_ = 1.0;
-  m3(0, 1).d_ = 1.0;
-  m3(1, 0).d_ = 1.0;
-  m3(1, 1).d_ = 1.0;
-  x = rows_dot_self(m3);
-  EXPECT_NEAR(13.0, x(0, 0).val_, 1E-12);
-  EXPECT_NEAR(41.0, x(1, 0).val_, 1E-12);
-  EXPECT_NEAR(10.0, x(0, 0).d_, 1E-12);
-  EXPECT_NEAR(18.0, x(1, 0).d_, 1E-12);
-}
-TEST(AgradMixMatrixRowsDotSelf, ffd) {
-  using stan::math::columns_dot_self;
-  using stan::math::fvar;
+  Eigen::MatrixXd a12(1, 2);
+  a12 << 2, 3;
+  stan::test::expect_ad(f, a12);
 
-  Eigen::Matrix<fvar<fvar<double> >, Eigen::Dynamic, Eigen::Dynamic> m1(1, 1);
-  m1 << 2.0;
-  m1(0).d_ = 1.0;
-  EXPECT_NEAR(4.0, rows_dot_self(m1)(0, 0).val_.val(), 1E-12);
-  EXPECT_NEAR(4.0, rows_dot_self(m1)(0, 0).d_.val(), 1E-12);
+  Eigen::MatrixXd a22(2, 2);
+  a22 << 2, 3, 4, 5;
+  stan::test::expect_ad(f, a22);
 
-  Eigen::Matrix<fvar<fvar<double> >, Eigen::Dynamic, Eigen::Dynamic> m2(1, 2);
-  m2 << 2.0, 3.0;
-  m2(0).d_ = 1.0;
-  m2(1).d_ = 1.0;
-  Eigen::Matrix<fvar<fvar<double> >, Eigen::Dynamic, Eigen::Dynamic> x;
-  x = rows_dot_self(m2);
-  EXPECT_NEAR(13.0, x(0, 0).val_.val(), 1E-12);
-  EXPECT_NEAR(10.0, x(0, 0).d_.val(), 1E-12);
+  Eigen::VectorXd u3(3);
+  u3 << 1, 3, -5;
+  Eigen::VectorXd v3(3);
+  v3 << 4, -2, -1;
+  stan::test::expect_ad(f, u3);
 
-  Eigen::Matrix<fvar<fvar<double> >, Eigen::Dynamic, Eigen::Dynamic> m3(2, 2);
-  m3 << 2.0, 3.0, 4.0, 5.0;
-  m3(0, 0).d_ = 1.0;
-  m3(0, 1).d_ = 1.0;
-  m3(1, 0).d_ = 1.0;
-  m3(1, 1).d_ = 1.0;
-  x = rows_dot_self(m3);
-  EXPECT_NEAR(13.0, x(0, 0).val_.val(), 1E-12);
-  EXPECT_NEAR(41.0, x(1, 0).val_.val(), 1E-12);
-  EXPECT_NEAR(10.0, x(0, 0).d_.val(), 1E-12);
-  EXPECT_NEAR(18.0, x(1, 0).d_.val(), 1E-12);
+  Eigen::RowVectorXd ru3 = u3;
+  stan::test::expect_ad(f, ru3);
+
+  Eigen::MatrixXd a33(3, 3);
+  a33 << 1, 1, 1, 3, 3, 3, -5, -5, -5;
+  Eigen::MatrixXd b33(3, 3);
+  b33 << 4, 4, 4, -2, -2, -2, -1, -1, -1;
+  stan::test::expect_ad(f, a33);
+  stan::test::expect_ad(f, b33);
+
+  Eigen::MatrixXd c32(3, 2);
+  c32 << 1, 2, 3, 4, 5, 6;
+  Eigen::MatrixXd d32(3, 2);
+  d32 << -1, -2, -3, -4, -5, -6;
+  stan::test::expect_ad(f, c32);
+  stan::test::expect_ad(f, d32);
+
+  Eigen::MatrixXd c23 = c32.transpose();
+  Eigen::MatrixXd d23 = d32.transpose();
+  stan::test::expect_ad(f, c23);
+  stan::test::expect_ad(f, d23);
 }

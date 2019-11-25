@@ -9,7 +9,7 @@
 #include <stan/math/prim/meta.hpp>
 namespace stan {
 namespace math {
-/**
+/** \ingroup opencl
  * Multiplies the diagonal of a matrix on the OpenCL device with the specified
  * scalar.
  *

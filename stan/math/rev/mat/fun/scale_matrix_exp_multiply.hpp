@@ -3,7 +3,6 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/fun/matrix_exp.hpp>
@@ -29,10 +28,12 @@ template <typename Ta, typename Tb, int Cb>
 inline Eigen::Matrix<typename stan::return_type<Ta, Tb>::type, -1, Cb>
 scale_matrix_exp_multiply(const double& t, const Eigen::Matrix<Ta, -1, -1>& A,
                           const Eigen::Matrix<Tb, -1, Cb>& B) {
-  check_nonzero_size("scale_matrix_exp_multiply", "input matrix", A);
-  check_nonzero_size("scale_matrix_exp_multiply", "input matrix", B);
+  if (A.size() == 0 && B.size() == 0)
+    return {};
+
   check_multiplicable("scale_matrix_exp_multiply", "A", A, "B", B);
   check_square("scale_matrix_exp_multiply", "input matrix", A);
+
   return multiply(matrix_exp(multiply(A, t)), B);
 }
 

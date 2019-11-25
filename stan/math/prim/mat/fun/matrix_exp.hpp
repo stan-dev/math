@@ -14,13 +14,14 @@ namespace math {
  * @tparam T type of scalar of the elements of
  * input matrix.
  * @param[in] A Matrix to exponentiate.
- * @return Matrix exponential, dynacally-sized.
+ * @return Matrix exponential, dynamically-sized.
  */
 template <typename T>
 inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> matrix_exp(
     const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& A) {
-  check_nonzero_size("matrix_exp", "input matrix", A);
   check_square("matrix_exp", "input matrix", A);
+  if (A.size() == 0)
+    return {};
 
   return (A.cols() == 2
           && square(value_of(A(0, 0)) - value_of(A(1, 1)))
@@ -42,7 +43,8 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> matrix_exp(
  */
 template <typename T, int N>
 inline Eigen::Matrix<T, N, N> matrix_exp(const Eigen::Matrix<T, N, N>& A) {
-  check_nonzero_size("matrix_exp", "input matrix", A);
+  if (N == 0)
+    return {};
 
   return (N == 2
           && square(value_of(A(0, 0)) - value_of(A(1, 1)))

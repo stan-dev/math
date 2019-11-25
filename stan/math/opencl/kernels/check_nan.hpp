@@ -12,7 +12,7 @@ namespace opencl_kernels {
 // \cond
 static const std::string is_nan_kernel_code = STRINGIFY(
     // \endcond
-    /**
+    /** \ingroup opencl_kernels
      * Check if the <code>matrix_cl</code> has NaN values
      *
      * @param[in] A The matrix to check.
@@ -38,7 +38,7 @@ static const std::string is_nan_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/**
+/** \ingroup opencl_kernels
  * See the docs for \link kernels/check_nan.hpp is_nan() \endlink
  */
 const kernel_cl<in_buffer, out_buffer, int, int> check_nan(

@@ -4,7 +4,7 @@ The <b>Stan Math Library</b> is a C++, reverse-mode automatic differentiation li
 
 Licensing
 ---------
-The Stan Math Library is licensed under the [new BSD license](LICENSE.md).
+The Stan Math Library is licensed under the [new BSD license](https://github.com/stan-dev/math/blob/develop/LICENSE.md).
 
 The Stan Math Library depends on the Intel TBB library which is licensed under the Apache 2.0 license. This dependency implies an additional restriction as compared to the new BSD lincense alone. The Apache 2.0 license is incompatible with GPL-2 licensed code if distributed as a unitary binary. You may refer to the Apache 2.0 evaluation page on the [Stan Math wiki](https://github.com/stan-dev/math/wiki/Apache-2.0-License-Evaluation).
 
@@ -19,13 +19,18 @@ Stan Math depends on four libraries:
 
 These are distributed under the `lib/` subdirectory. Only these versions of the dependent libraries have been tested with Stan Math.
 
+Documentation
+------------
+
+Documentation for Stan math is available at [mc-stan.org/math](http://mc-stan.org/math/)
+
 Installation
 ------------
 The Stan Math Library is a C++ library which depends on the Intel TBB library and requires for some functionality (ordinary differential equations and root solving) on the Sundials library.
 
 A simple hello world program using Stan Math is as follows:
 
-```
+```cpp
 #include <stan/math.hpp>
 #include <iostream>
 
@@ -38,7 +43,7 @@ int main() {
 
 If this is in the file `/path/to/foo/foo.cpp`, then you can compile and run this with something like this, with the `path/to` business replaced with actual paths:
 
-```
+```bash
 > cd /path/to/foo
 > clang++ -std=c++1y -I /path/to/stan-math -I /path/to/Eigen -I /path/to/boost -I /path/to/sundials -I /path/to/tbb -L /path/to/tbb-libs -ltbb -D_REENTRANT  foo.cpp
 > ./a.out

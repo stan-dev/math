@@ -11,7 +11,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup opencl
  * Returns the identity matrix stored on the OpenCL device
  *
  * @param rows_cols the number of rows and columns

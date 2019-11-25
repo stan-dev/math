@@ -10,7 +10,7 @@
 
 namespace stan {
 namespace math {
-/**
+/** \ingroup opencl
  * Squared exponential kernel on the GPU.
  *
  * @tparam T1 Type of the matrix
@@ -37,7 +37,7 @@ inline matrix_cl<return_type_t<T1, T2, T3>> gp_exp_quad_cov(
   return res;
 }
 
-/**
+/** \ingroup opencl
  * Squared exponential kernel on the GPU.
  *
  * This function is for the cross covariance

@@ -21,7 +21,7 @@ struct scalar_type_helper_pre<true, T, T_container> {
 };
 }  // namespace internal
 
-/**
+/** \ingroup type_trait
  * Metaprogram structure to determine the type of first container of
  * the base scalar type of a template argument.
  *
