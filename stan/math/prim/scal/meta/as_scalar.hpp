@@ -4,7 +4,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup type_trait
  * Converts input to a scalar. For scalar arguments this is an identity
  * function.
  * @param a Input value
@@ -12,7 +12,7 @@ namespace math {
  */
 inline double as_scalar(double a) { return a; }
 
-/**
+/** \ingroup type_trait
  * Converts input to a scalar. For scalar arguments this is an identity
  * function.
  * @param a Input value

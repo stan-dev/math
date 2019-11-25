@@ -16,7 +16,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * The log of an inverse chi-squared density for y with the specified
  * degrees of freedom parameter.
  * The degrees of freedom prarameter must be greater than 0.

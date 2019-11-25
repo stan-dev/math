@@ -17,7 +17,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Binomial log PMF in logit parametrization. Binomial(n|n, inv_logit(alpha))
  *
  * If given vectors of matching lengths, returns

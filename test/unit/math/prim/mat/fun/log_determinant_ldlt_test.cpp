@@ -21,3 +21,15 @@ TEST(MathMatrixPrimMat, log_deterimant_ldlt) {
   ASSERT_TRUE(ldlt_x.success());
   EXPECT_FLOAT_EQ(log(3.0), stan::math::log_determinant_ldlt(ldlt_x));
 }
+
+TEST(MathMatrixPrimMat, log_determinant_ldlt_0x0) {
+  using stan::math::determinant;
+  using std::fabs;
+  using std::log;
+
+  stan::math::matrix_d x(0, 0);
+  stan::math::LDLT_factor<double, -1, -1> ldlt_x;
+
+  EXPECT_FLOAT_EQ(log(fabs(determinant(x))),
+                  stan::math::log_determinant_ldlt(ldlt_x));
+}

@@ -6,7 +6,7 @@
 
 namespace stan {
 
-/**
+/** \ingroup type_trait
  *  StdVectorBuilder allocates type T1 values to be used as
  *  intermediate values.
  *

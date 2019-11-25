@@ -16,7 +16,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup multivar_dists
  * Returns the log PDF of the Generalized Linear Model (GLM)
  * with Normal distribution and id link function.
  * If containers are supplied, returns the log sum of the probabilities.

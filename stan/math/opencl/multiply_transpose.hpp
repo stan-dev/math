@@ -12,7 +12,7 @@
 
 namespace stan {
 namespace math {
-/**
+/** \ingroup opencl
  * Computes the product of a square OpenCL matrix with its transpose.
  *
  * Computes the matrix multiplication C = A x A^T
