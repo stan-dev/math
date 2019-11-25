@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MetaTraitsMixArr, partials_return_type) {
+TEST(MetaTraitsFwdArr, partials_return_type) {
   using stan::math::fvar;
   using stan::partials_return_type;
 
