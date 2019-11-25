@@ -7,9 +7,6 @@ TEST(mathMixMatFun, inverse) {
   Eigen::Matrix<stan::math::var, -1, -1> t(0, 0);
   EXPECT_THROW(stan::math::inverse(t), std::invalid_argument);
 
-  // fails with assertion from Eigen
-  // stan::test::expect_ad(f, t);
-
   Eigen::MatrixXd t2(0, 0);
   stan::test::expect_ad(f, t2);
 
