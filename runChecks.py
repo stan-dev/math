@@ -39,7 +39,7 @@ def check_non_unique_test_names():
             with open(filepath) as file:
                 test_file_content = file.read()
                 # look for TEST() and TEST_F()
-                matches = re.findall(r"(?:TEST)|(?:TEST_F)\((.*?)\)", test_file_content, re.DOTALL)
+                matches = re.findall(r"TEST(?:_F)?\((.*?)\)", test_file_content, re.DOTALL)
                 for x in matches:
                     # strips for test names written in two lines
                     x_stripped = x.replace("\n", "").replace(" ", "").replace(",",", ")
