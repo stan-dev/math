@@ -28,10 +28,11 @@ template <typename Ta, typename Tb, int Cb>
 inline Eigen::Matrix<typename stan::return_type<Ta, Tb>::type, -1, Cb>
 scale_matrix_exp_multiply(const double& t, const Eigen::Matrix<Ta, -1, -1>& A,
                           const Eigen::Matrix<Tb, -1, Cb>& B) {
+  if (A.size() == 0 && B.size() == 0)
+    return {};
+
   check_multiplicable("scale_matrix_exp_multiply", "A", A, "B", B);
   check_square("scale_matrix_exp_multiply", "input matrix", A);
-  if (A.size() == 0)
-    return {};
 
   return multiply(matrix_exp(multiply(A, t)), B);
 }
