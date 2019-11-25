@@ -35,7 +35,7 @@ def check_non_unique_test_names():
     tests = {}
     duplicates = defaultdict(list)
     for filepath in test_files:
-        if os.path.isfile(filepath) and filepath[-len(testsfx) :] == testsfx:
+        if os.path.isfile(filepath) and filepath.endswith(testsfx):
             with open(filepath, 'r') as file:
                 test_file_content = file.read()
                 # look for TEST() and TEST_F()
