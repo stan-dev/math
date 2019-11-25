@@ -9,6 +9,12 @@
 #include <string>
 #include <vector>
 
+// DAUNTING COMBINATORICS FOR BINARY OPERATIONS
+// (7 real)     i,  d,  v,  fd,  ffd,  fv,  ffv
+// (6 complex)  -,  cd, cv, cfd, cffd, cfv, cffv
+// ----------
+// 13 * 13 = 169 test combinations!  uh oh
+
 using var_t = stan::math::var;
 using cvar_t = std::complex<stan::math::var>;
 using cdouble_t = std::complex<double>;
@@ -1057,15 +1063,161 @@ TEST(mathMix, operatorDivideEqualComplex) {
 }
 TEST(mathMix, real) {
   auto f = [](const auto& x, const auto& y) {
-    auto a = to_complex(x, y);
-    return a.real();
+    auto z = to_complex(x, y);
+    return z.real();
   };
   stan::test::expect_ad(f, 1.2, -2.17);
 }
 TEST(mathMix, imag) {
   auto f = [](const auto& x, const auto& y) {
-    auto a = to_complex(x, y);
-    return a.imag();
+    auto z = to_complex(x, y);
+    return z.imag();
   };
   stan::test::expect_ad(f, 1.2, -2.17);
+}
+
+TEST(mathMix, operatorUnaryPlus) {
+  auto f = [](const auto& x, const auto& y) {
+    auto z = to_complex(x, y);
+    return to_array(+z);
+  };
+  stan::test::expect_ad(f, 1.2, -3.1);
+}
+TEST(mathMix, operatorUnaryNegation) {
+  auto f = [](const auto& x, const auto& y) {
+    auto z = to_complex(x, y);
+    return to_array(-z);
+  };
+  stan::test::expect_ad(f, 1.2, -3.1);
+}
+
+// TODO(carpenter): replace with param packs and move to test framework
+std::vector<double> to_std_vec(double x1) { return {x1}; }
+std::vector<double> to_std_vec(double x1, double x2) { return {x1, x2}; }
+std::vector<double> to_std_vec(double x1, double x2, double x3) {
+  return {x1, x2, x3};
+}
+std::vector<double> to_std_vec(double x1, double x2, double x3, double x4) {
+  return {x1, x2, x3, x4};
+}
+
+// when all working refactor to this
+// auto cwrap_zx = [](const auto& f) {
+//   return [&](const auto& a, const auto & b) {
+//     return to_array(f(from_array(a), b));
+//   };
+// };
+// auto cwrap_xz = [](const auto& f) {
+//   return [&](const auto& a, const auto & b) {
+//     return to_array(f(a, from_array(b)));
+//   };
+// };
+// auto cwrap_zz = [](const auto& f) {
+//   return [&](const auto& a, const auto & b) {
+//     return to_array(f(from_array(a), from_array(b)));
+//   };
+// };
+// auto f = [](const auto& a, const auto& b) {
+//   return a + b;
+// };
+// auto g = cwrap_zz(f);
+// stan::test::expect_ad(g,
+//                       to_std_vec(1.2, 2.3), to_std_vec(-3.9, -1.7));
+
+// FIX STARTING HERE!
+
+TEST(mathMix, operatorAdd) {
+  auto fzz = [](const auto& z1, const auto& z2) {
+    auto c1 = from_array(z1);
+    auto c2 = from_array(z2);
+    auto y = c1 + c2;
+    return to_array(y);
+  };
+  stan::test::expect_ad(fzz, to_std_vec(1.2, 2.3), to_std_vec(-3.9, -1.7));
+
+  auto fzx = [](const auto& z, const auto& x) {
+    auto c = from_array(z);
+    auto y = c + x;
+    return to_array(y);
+  };
+  stan::test::expect_ad(fzx, to_std_vec(1.2, 2.3), -3.9);
+
+  auto fxz = [](const auto& x, const auto& z) {
+    auto c = from_array(z);
+    auto y = x + c;
+    return to_array(y);
+  };
+  stan::test::expect_ad(fxz, 1.2, to_std_vec(-3.9, -1.7));
+}
+
+TEST(mathMix, operatorSubtract) {
+  auto fzz = [](const auto& z1, const auto& z2) {
+    auto c1 = from_array(z1);
+    auto c2 = from_array(z2);
+    auto y = c1 - c2;
+    return to_array(y);
+  };
+  stan::test::expect_ad(fzz, to_std_vec(1.2, 2.3), to_std_vec(-3.9, -1.7));
+
+  auto fzx = [](const auto& z, const auto& x) {
+    auto c = from_array(z);
+    auto y = c - x;
+    return to_array(y);
+  };
+  stan::test::expect_ad(fzx, to_std_vec(1.2, 2.3), -3.9);
+
+  auto fxz = [](const auto& x, const auto& z) {
+    auto c = from_array(z);
+    auto y = x - c;
+    return to_array(y);
+  };
+  stan::test::expect_ad(fxz, 1.2, to_std_vec(-3.9, -1.7));
+}
+
+TEST(mathMix, operatorMultiply) {
+  auto fzz = [](const auto& z1, const auto& z2) {
+    auto c1 = from_array(z1);
+    auto c2 = from_array(z2);
+    auto y = c1 * c2;
+    return to_array(y);
+  };
+  stan::test::expect_ad(fzz, to_std_vec(1.2, 2.3), to_std_vec(-3.9, -1.7));
+
+  auto fzx = [](const auto& z, const auto& x) {
+    auto c = from_array(z);
+    auto y = c * x;
+    return to_array(y);
+  };
+  stan::test::expect_ad(fzx, to_std_vec(1.2, 2.3), -3.9);
+
+  auto fxz = [](const auto& x, const auto& z) {
+    auto c = from_array(z);
+    auto y = x * c;
+    return to_array(y);
+  };
+  stan::test::expect_ad(fxz, 1.2, to_std_vec(-3.9, -1.7));
+}
+
+TEST(mathMix, operatorDivide) {
+  auto fzz = [](const auto& z1, const auto& z2) {
+    auto c1 = from_array(z1);
+    auto c2 = from_array(z2);
+    auto y = c1 / c2;
+    return to_array(y);
+  };
+  stan::test::expect_ad(fzz, to_std_vec(1.2, 2.3), to_std_vec(-3.9, -1.7));
+
+  auto fzx = [](const auto& z, const auto& x) {
+    auto c = from_array(z);
+    auto y = c / x;
+    return to_array(y);
+  };
+  stan::test::expect_ad(fzx, to_std_vec(1.2, 2.3), -3.9);
+
+  auto fxz = [](const auto& x, const auto& z) {
+    auto c = from_array(z);
+    auto y = x / c;
+    return to_array(y);
+  };
+  stan::test::expect_ad(fxz, 1.2, to_std_vec(-3.9, -1.7));
 }
