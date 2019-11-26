@@ -717,36 +717,6 @@ TEST(mathRevCore, stdAcos1) {
 TEST(mathRevCore, stdAtan1) {
   expect_complex_common([](const auto& u) { return std::acos(u); });
 }
-TEST(mathRevCore, eigenSolver) {
-  // test adapted from https://github.com/stan-dev/math/pull/789/files
-  typedef Eigen::Matrix<stan::math::var, -1, -1> matrix_v_t;
-  mvar_t a(3, 3);
-  a << 1, 2, 3, 0.7, 0.11, 0.13, -5, -17, -23;
-  Eigen::EigenSolver<matrix_v_t> s(a);
-  auto ev = s.eigenvectors();
-  auto I
-      = (ev.inverse() * a * ev * s.eigenvalues().asDiagonal().inverse()).real();
-  expect_identity_matrix(I);
-}
-TEST(mathRevCore, pseudoEigendecomposition) {
-  // test adapted from https://github.com/stan-dev/math/pull/789/files
-  mvar_t a(3, 3);
-  a << 1, 2, 3, 0.7, 0.11, 0.13, -5, -17, -23;
-  Eigen::EigenSolver<mvar_t> s(a);
-  mvar_t D = s.pseudoEigenvalueMatrix();
-  mvar_t V = s.pseudoEigenvectors();
-  mvar_t I = V.inverse() * a * V * D.inverse();
-  expect_identity_matrix(I);
-}
-TEST(mathRevCore, complexSchur) {
-  // test adapted from https://github.com/stan-dev/math/pull/789/files
-  mvar_t a(3, 3);
-  a << 1, 2, 3, 0.7, 0.11, 0.13, -5, -17, -23;
-  Eigen::ComplexSchur<mvar_t> s(a);
-  auto M = (s.matrixU().adjoint() * s.matrixU()).eval();
-  mvar_t I = M.real() + M.imag();
-  expect_identity_matrix(I);
-}
 
 using fvar_d_t = stan::math::fvar<double>;
 using fvar_fvar_d_t = stan::math::fvar<fvar_d_t>;
@@ -1482,4 +1452,65 @@ TEST(mathMix, polar) {
   stan::test::expect_ad(f, 1.1, -1.3);
   stan::test::expect_ad(f, -1.1, -1.3);
   stan::test::expect_ad(f, -1.1, 2.9);
+}
+
+// tests of use, not of basic interface
+
+template <typename T>
+void expectEigenSolver() {
+  // test adapted from https://github.com/stan-dev/math/pull/789/files
+  using matrix_v_t = Eigen::Matrix<T, -1, -1>;
+  matrix_v_t a(3, 3);
+  a << 1, 2, 3, 0.7, 0.11, 0.13, -5, -17, -23;
+  Eigen::EigenSolver<matrix_v_t> s(a);
+  auto ev = s.eigenvectors();
+  auto I
+      = (ev.inverse() * a * ev * s.eigenvalues().asDiagonal().inverse()).real();
+  // expect_identity_matrix(I);
+}
+TEST(mathMix, eigenSolver) {
+  expectEigenSolver<var_t>();
+  expectEigenSolver<fvar_d_t>();
+  expectEigenSolver<fvar_fvar_d_t>();
+  expectEigenSolver<fvar_v_t>();
+  expectEigenSolver<fvar_fvar_v_t>();
+}
+
+template <typename T>
+void expectPseudoEigendecomposition() {
+  // test adapted from https://github.com/stan-dev/math/pull/789/files
+  using matrix_v_t = Eigen::Matrix<T, -1, -1>;
+  matrix_v_t a(3, 3);
+  a << 1, 2, 3, 0.7, 0.11, 0.13, -5, -17, -23;
+  Eigen::EigenSolver<matrix_v_t> s(a);
+  matrix_v_t D = s.pseudoEigenvalueMatrix();
+  matrix_v_t V = s.pseudoEigenvectors();
+  matrix_v_t I = V.inverse() * a * V * D.inverse();
+  // expect_identity_matrix(I);
+}
+TEST(mathMix, pseudoEigendecomposition) {
+  expectPseudoEigendecomposition<var_t>();
+  expectPseudoEigendecomposition<fvar_d_t>();
+  expectPseudoEigendecomposition<fvar_fvar_d_t>();
+  expectPseudoEigendecomposition<fvar_v_t>();
+  expectPseudoEigendecomposition<fvar_fvar_v_t>();
+}
+
+template <typename T>
+void expectComplexSchur() {
+  // test adapted from https://github.com/stan-dev/math/pull/789/files
+  using matrix_v_t = Eigen::Matrix<T, -1, -1>;
+  matrix_v_t a(3, 3);
+  a << 1, 2, 3, 0.7, 0.11, 0.13, -5, -17, -23;
+  Eigen::ComplexSchur<matrix_v_t> s(a);
+  auto M = (s.matrixU().adjoint() * s.matrixU()).eval();
+  matrix_v_t I = M.real() + M.imag();
+  // expect_identity_matrix(I);
+}
+TEST(mathMix, complexSchur) {
+  expectComplexSchur<var_t>();
+  expectComplexSchur<fvar_d_t>();
+  expectComplexSchur<fvar_fvar_d_t>();
+  expectComplexSchur<fvar_v_t>();
+  expectComplexSchur<fvar_fvar_v_t>();
 }

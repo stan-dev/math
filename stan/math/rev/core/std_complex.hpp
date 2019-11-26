@@ -199,6 +199,25 @@ T copysign(const T& x, const U& y) {
   return (x < 0 && y >= 0) || (x > 0 && y < 0) ? -x : x;
 }
 
+}  // namespace math
+}  // namespace stan
+
+// generic std::complex code w/o complex<var> or complex<fvar<T>>
+namespace stan {
+namespace math {
+/**
+ * Return the complex number with values the same as the specified
+ * complex argument.
+ *
+ * @tparam T value type of complex argument
+ * @param[in] complex argument
+ * @return complex number with same value as argument
+ */
+template <typename T>
+std::complex<double> value_of(const std::complex<T>& z) {
+  return {value_of_rec(z.real()), value_of_rec(z.imag())};
+}
+
 /**
  * Return the negation of the first argument if the first and second
  * argument have different signs, otherwise return a copy of the first
@@ -243,34 +262,266 @@ std::complex<T> neg_i_times(const std::complex<T>& z) {
   return {z.imag(), -z.real()};
 }
 
-/**
- * Return the complex number with values the same as the specified
- * complex argument.
- *
- * @tparam T value type of complex argument
- * @param[in] complex argument
- * @return complex number with same value as argument
- */
-template <typename T>
-std::complex<double> value_of(const std::complex<T>& z) {
-  return {value_of_rec(z.real()), value_of_rec(z.imag())};
+template <typename V>
+std::complex<V> complex_identity(const std::complex<V>& z) {
+  return z;
 }
 
-// std::complex<double> value_of(const std::complex<var>& z) {
-//   return {z.real().val(), z.imag().val()};
-// }
-// std::complex<double> value_of(const std::complex<fvar<double>>& z) {
-//   return {z.real().val(), z.imag().val()};
-// }
-// std::complex<double> value_of(const std::complex<fvar<var>>& z) {
-//   return {z.real().val().val(), z.imag().val().val()};
-// }
-// std::complex<double> value_of(const std::complex<fvar<fvar<double>>>& z) {
-//   return {z.real().val().val(), z.imag().val().val()};
-// }
-// std::complex<double> value_of(const std::complex<fvar<fvar<var>>>& z) {
-//   return {z.real().val().val().val(), z.imag().val().val().val()};
-// }
+template <typename V>
+std::complex<V> complex_negate(const std::complex<V>& z) {
+  return {-z.real(), -z.imag()};
+}
+
+template <typename U, typename V>
+struct complex_op {};
+
+template <typename U, typename V>
+struct complex_op<std::complex<U>, V> {
+  using scalar_t = return_type_t<U, V>;
+  using complex_t = std::complex<scalar_t>;
+};
+
+template <typename U, typename V>
+struct complex_op<U, std::complex<V>> {
+  using scalar_t = return_type_t<U, V>;
+  using complex_t = std::complex<scalar_t>;
+};
+
+template <typename U, typename V>
+struct complex_op<std::complex<U>, std::complex<V>> {
+  using scalar_t = return_type_t<U, V>;
+  using complex_t = std::complex<scalar_t>;
+};
+
+template <typename... Args>
+using complex_op_t = typename complex_op<Args...>::complex_t;
+
+template <typename U, typename V>
+complex_op_t<U, V> complex_add(const U& lhs, const V& rhs) {
+  complex_op_t<U, V> y(lhs);
+  y += rhs;
+  return y;
+}
+
+template <typename U, typename V>
+complex_op_t<U, V> complex_subtract(const U& lhs, const V& rhs) {
+  complex_op_t<U, V> y(lhs);
+  y -= rhs;
+  return y;
+}
+
+template <typename U, typename V>
+complex_op_t<U, V> complex_multiply(const U& lhs, const V& rhs) {
+  complex_op_t<U, V> y(lhs);
+  y *= rhs;
+  return y;
+}
+
+template <typename U, typename V>
+complex_op_t<U, V> complex_divide(const U& lhs, const V& rhs) {
+  complex_op_t<U, V> y(lhs);
+  y /= rhs;
+  return y;
+}
+
+template <typename U, typename V>
+bool complex_equal_equal(const std::complex<U>& lhs,
+                         const std::complex<V>& rhs) {
+  return lhs.real() == rhs.real() && lhs.imag() == rhs.imag();
+}
+
+template <typename U, typename V>
+bool complex_equal_equal(const U& lhs, const std::complex<V>& rhs) {
+  return lhs == rhs.real() && rhs.imag() == 0;
+}
+
+template <typename U, typename V>
+bool complex_equal_equal(const std::complex<U>& lhs, const V& rhs) {
+  return lhs.real() == rhs && lhs.imag() == 0;
+}
+
+template <typename U, typename V>
+bool complex_not_equal(const U& lhs, const V& rhs) {
+  return !complex_equal_equal(lhs, rhs);
+}
+
+template <typename V>
+V complex_real(const std::complex<V>& z) {
+  return z.real();
+}
+
+template <typename V>
+V complex_imag(const std::complex<V>& z) {
+  return z.imag();
+}
+
+template <typename V>
+V complex_abs(const std::complex<V>& z) {
+  return hypot(real(z), imag(z));
+}
+
+template <typename V>
+V complex_arg(const std::complex<V>& z) {
+  return atan2(imag(z), real(z));
+}
+
+template <typename V>
+V complex_norm(const std::complex<V>& z) {
+  return square(real(z)) + square(imag(z));
+}
+
+template <typename V>
+std::complex<V> complex_conj(const std::complex<V>& z) {
+  return {z.real(), -z.imag()};
+}
+
+template <typename V>
+std::complex<V> complex_proj(const std::complex<V>& z) {
+  if (is_inf(z.real()) || is_inf(z.imag())) {
+    return {std::numeric_limits<V>::infinity(), z.imag() < 0 ? -0.0 : 0.0};
+  }
+  return z;
+}
+
+template <typename V>
+std::complex<V> complex_exp(const std::complex<V>& z) {
+  if (is_inf(z.real()) && z.real() > 0) {
+    if (is_nan(z.imag()) || z.imag() == 0) {
+      // (+inf, nan), (+inf, 0)
+      return z;
+    } else if (is_inf(z.imag()) && z.imag() > 0) {
+      // (+inf, +inf)
+      return {z.real(), std::numeric_limits<double>::quiet_NaN()};
+    } else if (is_inf(z.imag()) && z.imag() < 0) {
+      // (+inf, -inf)
+      return {std::numeric_limits<double>::quiet_NaN(),
+              std::numeric_limits<double>::quiet_NaN()};
+    }
+  }
+  if (is_inf(z.real()) && z.real() < 0
+      && (is_nan(z.imag()) || is_inf(z.imag()))) {
+    // (-inf, nan), (-inf, -inf), (-inf, inf)
+    return {0, 0};
+  }
+  if (is_nan(z.real()) && z.imag() == -0.0) {
+    // (nan, -0)
+    return z;
+  }
+  V exp_re = exp(z.real());
+  return {exp_re * cos(z.imag()), exp_re * sin(z.imag())};
+}
+
+template <typename V>
+std::complex<V> complex_log(const std::complex<V>& z) {
+  static const double inf = std::numeric_limits<double>::infinity();
+  static const double nan = std::numeric_limits<double>::quiet_NaN();
+  if ((is_nan(z.real()) && is_inf(z.imag()))
+      || (is_inf(z.real()) && is_nan(z.imag()))) {
+    return {inf, nan};
+  }
+  V r = sqrt(norm(z));
+  V theta = arg(z);
+  return {log(r), theta};
+}
+
+template <typename V>
+std::complex<V> complex_log10(const std::complex<V>& z) {
+  static const double inv_log_10 = 1 / log(10);
+  return log(z) * V(inv_log_10);
+}
+
+template <typename U, typename V>
+complex_op_t<U, V> complex_pow(const U& x, const V& y) {
+  return exp(y * log(x));
+}
+
+template <typename V>
+std::complex<V> complex_sqrt(const std::complex<V>& z) {
+  auto m = sqrt(hypot(z.real(), z.imag()));
+  auto at = 0.5 * atan2(z.imag(), z.real());
+  return {m * cos(at), m * sin(at)};
+}
+
+template <typename V>
+std::complex<V> complex_sinh(const std::complex<V>& z) {
+  return 0.5 * (exp(z) - exp(-z));
+}
+
+template <typename V>
+std::complex<V> complex_cosh(const std::complex<V>& z) {
+  return 0.5 * (exp(z) + exp(-z));
+}
+
+template <typename V>
+std::complex<V> complex_tanh(const std::complex<V>& z) {
+  auto exp_z = exp(z);
+  auto exp_neg_z = exp(-z);
+  return (exp_z - exp_neg_z) / (exp_z + exp_neg_z);
+}
+
+template <typename V>
+std::complex<V> complex_asinh(const std::complex<V>& z) {
+  std::complex<double> y_d = asinh(value_of(z));
+  auto y = log(z + sqrt(1 + z * z));
+  return copysign(y, y_d);
+}
+
+template <typename V>
+std::complex<V> complex_acosh(const std::complex<V>& z) {
+  std::complex<double> y_d = acosh(value_of(z));
+  auto y = log(z + sqrt(z * z - 1));
+  return copysign(y, y_d);
+}
+
+template <typename V>
+std::complex<V> complex_atanh(const std::complex<V>& z) {
+  std::complex<double> y_d = atanh(value_of(z));
+  V one(1);
+  auto y = 0.5 * (log(one + z) - log(one - z));
+  return copysign(y, y_d);
+}
+
+template <typename V>
+std::complex<V> complex_sin(const std::complex<V>& z) {
+  return neg_i_times(sinh(i_times(z)));
+}
+
+template <typename V>
+std::complex<V> complex_cos(const std::complex<V>& z) {
+  return cosh(i_times(z));
+}
+
+template <typename V>
+std::complex<V> complex_tan(const std::complex<V>& z) {
+  return neg_i_times(tanh(i_times(z)));
+}
+
+template <typename V>
+std::complex<V> complex_asin(const std::complex<V>& z) {
+  auto y_d = asin(value_of(z));
+  auto y = neg_i_times(asinh(i_times(z)));
+  return copysign(y, y_d);
+}
+
+template <typename V>
+std::complex<V> complex_acos(const std::complex<V>& z) {
+  return V(0.5 * pi()) - asin(z);
+}
+
+template <typename V>
+std::complex<V> complex_atan(const std::complex<V>& z) {
+  return neg_i_times(atanh(i_times(z)));
+}
+
+template <typename U, typename V>
+std::complex<return_type_t<U, V>> complex_polar(const U& r, const V& theta) {
+  using std::cos;
+  using std::sin;
+  if (!(r >= 0) || is_inf(theta)) {
+    return {std::numeric_limits<double>::quiet_NaN()};
+  }
+  return {r * cos(theta), r * sin(theta)};
+}
 
 }  // namespace math
 }  // namespace stan
@@ -862,289 +1113,142 @@ class complex<stan::math::fvar<T>>
 
 }  // namespace std
 
-namespace stan {
-namespace math {
-
-template <typename V>
-std::complex<V> complex_identity(const std::complex<V>& z) {
-  return z;
-}
-
-template <typename V>
-std::complex<V> complex_negate(const std::complex<V>& z) {
-  return {-z.real(), -z.imag()};
-}
-
-template <typename U, typename V>
-struct complex_op {};
-
-template <typename U, typename V>
-struct complex_op<std::complex<U>, V> {
-  using scalar_t = return_type_t<U, V>;
-  using complex_t = std::complex<scalar_t>;
-};
-
-template <typename U, typename V>
-struct complex_op<U, std::complex<V>> {
-  using scalar_t = return_type_t<U, V>;
-  using complex_t = std::complex<scalar_t>;
-};
-
-template <typename U, typename V>
-struct complex_op<std::complex<U>, std::complex<V>> {
-  using scalar_t = return_type_t<U, V>;
-  using complex_t = std::complex<scalar_t>;
-};
-
-template <typename... Args>
-using complex_op_t = typename complex_op<Args...>::complex_t;
-
-template <typename U, typename V>
-complex_op_t<U, V> complex_add(const U& lhs, const V& rhs) {
-  complex_op_t<U, V> y(lhs);
-  y += rhs;
-  return y;
-}
-
-template <typename U, typename V>
-complex_op_t<U, V> complex_subtract(const U& lhs, const V& rhs) {
-  complex_op_t<U, V> y(lhs);
-  y -= rhs;
-  return y;
-}
-
-template <typename U, typename V>
-complex_op_t<U, V> complex_multiply(const U& lhs, const V& rhs) {
-  complex_op_t<U, V> y(lhs);
-  y *= rhs;
-  return y;
-}
-
-template <typename U, typename V>
-complex_op_t<U, V> complex_divide(const U& lhs, const V& rhs) {
-  complex_op_t<U, V> y(lhs);
-  y /= rhs;
-  return y;
-}
-
-template <typename U, typename V>
-bool complex_equal_equal(const std::complex<U>& lhs,
-                         const std::complex<V>& rhs) {
-  return lhs.real() == rhs.real() && lhs.imag() == rhs.imag();
-}
-
-template <typename U, typename V>
-bool complex_equal_equal(const U& lhs, const std::complex<V>& rhs) {
-  return lhs == rhs.real() && rhs.imag() == 0;
-}
-
-template <typename U, typename V>
-bool complex_equal_equal(const std::complex<U>& lhs, const V& rhs) {
-  return lhs.real() == rhs && lhs.imag() == 0;
-}
-
-template <typename U, typename V>
-bool complex_not_equal(const U& lhs, const V& rhs) {
-  return !complex_equal_equal(lhs, rhs);
-}
-
-template <typename V>
-V complex_real(const std::complex<V>& z) {
-  return z.real();
-}
-
-template <typename V>
-V complex_imag(const std::complex<V>& z) {
-  return z.imag();
-}
-
-template <typename V>
-V complex_abs(const std::complex<V>& z) {
-  return hypot(real(z), imag(z));
-}
-
-template <typename V>
-V complex_arg(const std::complex<V>& z) {
-  return atan2(imag(z), real(z));
-}
-
-template <typename V>
-V complex_norm(const std::complex<V>& z) {
-  return square(real(z)) + square(imag(z));
-}
-
-template <typename V>
-std::complex<V> complex_conj(const std::complex<V>& z) {
-  return {z.real(), -z.imag()};
-}
-
-template <typename V>
-std::complex<V> complex_proj(const std::complex<V>& z) {
-  if (is_inf(z.real()) || is_inf(z.imag())) {
-    return {std::numeric_limits<V>::infinity(), z.imag() < 0 ? -0.0 : 0.0};
-  }
-  return z;
-}
-
-template <typename V>
-std::complex<V> complex_exp(const std::complex<V>& z) {
-  if (is_inf(z.real()) && z.real() > 0) {
-    if (is_nan(z.imag()) || z.imag() == 0) {
-      // (+inf, nan), (+inf, 0)
-      return z;
-    } else if (is_inf(z.imag()) && z.imag() > 0) {
-      // (+inf, +inf)
-      return {z.real(), std::numeric_limits<double>::quiet_NaN()};
-    } else if (is_inf(z.imag()) && z.imag() < 0) {
-      // (+inf, -inf)
-      return {std::numeric_limits<double>::quiet_NaN(),
-              std::numeric_limits<double>::quiet_NaN()};
-    }
-  }
-  if (is_inf(z.real()) && z.real() < 0
-      && (is_nan(z.imag()) || is_inf(z.imag()))) {
-    // (-inf, nan), (-inf, -inf), (-inf, inf)
-    return {0, 0};
-  }
-  if (is_nan(z.real()) && z.imag() == -0.0) {
-    // (nan, -0)
-    return z;
-  }
-  V exp_re = exp(z.real());
-  return {exp_re * cos(z.imag()), exp_re * sin(z.imag())};
-}
-
-template <typename V>
-std::complex<V> complex_log(const std::complex<V>& z) {
-  static const double inf = std::numeric_limits<double>::infinity();
-  static const double nan = std::numeric_limits<double>::quiet_NaN();
-  if ((is_nan(z.real()) && is_inf(z.imag()))
-      || (is_inf(z.real()) && is_nan(z.imag()))) {
-    return {inf, nan};
-  }
-  V r = sqrt(norm(z));
-  V theta = arg(z);
-  return {log(r), theta};
-}
-
-template <typename V>
-std::complex<V> complex_log10(const std::complex<V>& z) {
-  static const double inv_log_10 = 1 / log(10);
-  return log(z) * V(inv_log_10);
-}
-
-template <typename U, typename V>
-complex_op_t<U, V> complex_pow(const U& x, const V& y) {
-  return exp(y * log(x));
-}
-
-template <typename V>
-std::complex<V> complex_sqrt(const std::complex<V>& z) {
-  auto m = sqrt(hypot(z.real(), z.imag()));
-  auto at = 0.5 * atan2(z.imag(), z.real());
-  return {m * cos(at), m * sin(at)};
-}
-
-template <typename V>
-std::complex<V> complex_sinh(const std::complex<V>& z) {
-  return 0.5 * (exp(z) - exp(-z));
-}
-
-template <typename V>
-std::complex<V> complex_cosh(const std::complex<V>& z) {
-  return 0.5 * (exp(z) + exp(-z));
-}
-
-template <typename V>
-std::complex<V> complex_tanh(const std::complex<V>& z) {
-  auto exp_z = exp(z);
-  auto exp_neg_z = exp(-z);
-  return (exp_z - exp_neg_z) / (exp_z + exp_neg_z);
-}
-
-template <typename V>
-std::complex<V> complex_asinh(const std::complex<V>& z) {
-  std::complex<double> y_d = asinh(value_of(z));
-  auto y = log(z + sqrt(1 + z * z));
-  return copysign(y, y_d);
-}
-
-template <typename V>
-std::complex<V> complex_acosh(const std::complex<V>& z) {
-  std::complex<double> y_d = acosh(value_of(z));
-  auto y = log(z + sqrt(z * z - 1));
-  return copysign(y, y_d);
-}
-
-template <typename V>
-std::complex<V> complex_atanh(const std::complex<V>& z) {
-  std::complex<double> y_d = atanh(value_of(z));
-  V one(1);
-  auto y = 0.5 * (log(one + z) - log(one - z));
-  return copysign(y, y_d);
-}
-
-template <typename V>
-std::complex<V> complex_sin(const std::complex<V>& z) {
-  return neg_i_times(sinh(i_times(z)));
-}
-
-template <typename V>
-std::complex<V> complex_cos(const std::complex<V>& z) {
-  return cosh(i_times(z));
-}
-
-template <typename V>
-std::complex<V> complex_tan(const std::complex<V>& z) {
-  return neg_i_times(tanh(i_times(z)));
-}
-
-template <typename V>
-std::complex<V> complex_asin(const std::complex<V>& z) {
-  auto y_d = asin(value_of(z));
-  auto y = neg_i_times(asinh(i_times(z)));
-  return copysign(y, y_d);
-}
-
-template <typename V>
-std::complex<V> complex_acos(const std::complex<V>& z) {
-  return V(0.5 * pi()) - asin(z);
-}
-
-template <typename V>
-std::complex<V> complex_atan(const std::complex<V>& z) {
-  return neg_i_times(atanh(i_times(z)));
-}
-
-template <typename U, typename V>
-std::complex<return_type_t<U, V>> complex_polar(const U& r, const V& theta) {
-  using std::cos;
-  using std::sin;
-  if (!(r >= 0) || is_inf(theta)) {
-    return {std::numeric_limits<double>::quiet_NaN()};
-  }
-  return {r * cos(theta), r * sin(theta)};
-
-  // return {r + theta, theta + r};
-
-  // return_type_t<U, V> r_up(r);
-  // return_type_t<U, V> theta_up(theta);
-  // return_type_t<U, V> rcos = r_up * cos(theta_up);
-  // return_type_t<U, V> rsin = r_up * sin(theta_up);
-  // std::complex<return_type_t<U, V>> z(rcos, rsin);
-  // return z;
-
-  //  return {r * cos(theta), r * sin(theta)};
-}
-
-}  // namespace math
-}  // namespace stan
-
 namespace std {
 
-// After here, it's specializations of function templates; for info, see:
+// These are function template specializations.  These are necessary to
+// compile in g++.  If libstdc++ used by g++ were written to support
+// ADL, this wouldn't be necessary.  For more info on template function
+// resolution and background on why libstdc++ code is bad, see:
 // Walter E. Brown.  2017.  Thou Shalt Not Specialize std Function Templates!
 // http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/p0551r1.pdf
+//
+// Despite
+
+/**
+ * Return true if the respective parts of the two arguments are equal
+ * and false otherwise.
+ *
+ * @param[in] lhs first complex argument
+ * @parma[in] rhs second complex argument
+ * @return if the arguments are equal
+ */
+template <>
+bool operator==<stan::math::var>(const complex<stan::math::var>& lhs,
+                                 const complex<stan::math::var>& rhs) {
+  return complex_equal_equal(lhs, rhs);
+}
+
+/**
+ * Return true if the respective parts of the two arguments are equal
+ * and false otherwise.
+ *
+ * @param[in] lhs first complex argument
+ * @parma[in] rhs second scalar argument
+ * @return if the arguments are equal
+ */
+template <>
+bool operator==<stan::math::var>(const complex<stan::math::var>& lhs,
+                                 const stan::math::var& rhs) {
+  return complex_equal_equal(lhs, rhs);
+}
+
+/**
+ * Return true if the respective parts of the two arguments are equal
+ * and false otherwise.
+ *
+ * @param[in] lhs first scalar argument
+ * @parma[in] rhs second complex argument
+ * @return if the arguments are equal
+ */
+template <>
+bool operator==<stan::math::var>(const stan::math::var& lhs,
+                                 const complex<stan::math::var>& rhs) {
+  return complex_equal_equal(lhs, rhs);
+}
+
+/**
+ * Return true if the respective parts of the two arguments are not
+ * equal and false otherwise.
+ *
+ * @param[in] lhs first complex argument
+ * @parma[in] rhs second complex argument
+ * @return if the arguments are not equal
+ */
+template <>
+bool operator!=<stan::math::var>(const complex<stan::math::var>& lhs,
+                                 const complex<stan::math::var>& rhs) {
+  return complex_not_equal(lhs, rhs);
+}
+
+/**
+ * Return true if the respective parts of the two arguments are not
+ * equal and false otherwise.
+ *
+ * @param[in] lhs first complex argument
+ * @parma[in] rhs second scalar argument
+ * @return if the arguments are not equal
+ */
+template <>
+bool operator!=<stan::math::var>(const complex<stan::math::var>& lhs,
+                                 const stan::math::var& rhs) {
+  return complex_not_equal(lhs, rhs);
+}
+
+/**
+ * Return true if the respective parts of the two arguments are not
+ * equal and false otherwise.
+ *
+ * @param[in] lhs first scalar argument
+ * @parma[in] rhs second complex argument
+ * @return if the arguments are not equal
+ */
+template <>
+bool operator!=<stan::math::var>(const stan::math::var& lhs,
+                                 const complex<stan::math::var>& rhs) {
+  return complex_not_equal(lhs, rhs);
+}
+
+/**
+ * Return the complex arc hyperbolic sine of the specified complex
+ * argument with branch cuts outside the interval `[-i, i]` along the
+ * imaginary axis.
+ *
+ * @param[in] z complex argument
+ * @return arc hyperbolic sine of argument
+ */
+template <>
+complex<stan::math::var> asinh<stan::math::var>(
+    const complex<stan::math::var>& z) {
+  return complex_asinh(z);
+}
+
+/**
+ * Return the complex arc hyperbolic cosine of the specified complex
+ * argument with branch cuts at values less than 1 along the real
+ * axis.
+ *
+ * @param[in] z complex argument
+ * @return arc hyperbolic cosine of argument
+ */
+template <>
+complex<stan::math::var> acosh<stan::math::var>(
+    const complex<stan::math::var>& z) {
+  return complex_acosh(z);
+}
+
+/**
+ * Return the complex arc hyperbolic tangent of the specified complex
+ * argument with branch cuts outside the interval `[-i, i]` along the
+ * real axis.
+ *
+ * @param[in] z complex argument
+ * @return arc hyperbolic tanget of argument
+ */
+template <>
+complex<stan::math::var> atanh<stan::math::var>(
+    const complex<stan::math::var>& z) {
+  return complex_atanh(z);
+}
 
 /**
  * Return the value of the specified argument.
@@ -1327,90 +1431,6 @@ template <>
 complex<stan::math::var> operator/(const stan::math::var& lhs,
                                    const complex<stan::math::var>& rhs) {
   return complex_divide(lhs, rhs);
-}
-
-/**
- * Return true if the respective parts of the two arguments are equal
- * and false otherwise.
- *
- * @param[in] lhs first complex argument
- * @parma[in] rhs second complex argument
- * @return if the arguments are equal
- */
-template <>
-bool operator==<stan::math::var>(const complex<stan::math::var>& lhs,
-                                 const complex<stan::math::var>& rhs) {
-  return complex_equal_equal(lhs, rhs);
-}
-
-/**
- * Return true if the respective parts of the two arguments are equal
- * and false otherwise.
- *
- * @param[in] lhs first complex argument
- * @parma[in] rhs second scalar argument
- * @return if the arguments are equal
- */
-template <>
-bool operator==<stan::math::var>(const complex<stan::math::var>& lhs,
-                                 const stan::math::var& rhs) {
-  return complex_equal_equal(lhs, rhs);
-}
-
-/**
- * Return true if the respective parts of the two arguments are equal
- * and false otherwise.
- *
- * @param[in] lhs first scalar argument
- * @parma[in] rhs second complex argument
- * @return if the arguments are equal
- */
-template <>
-bool operator==<stan::math::var>(const stan::math::var& lhs,
-                                 const complex<stan::math::var>& rhs) {
-  return complex_equal_equal(lhs, rhs);
-}
-
-/**
- * Return true if the respective parts of the two arguments are not
- * equal and false otherwise.
- *
- * @param[in] lhs first complex argument
- * @parma[in] rhs second complex argument
- * @return if the arguments are not equal
- */
-template <>
-bool operator!=<stan::math::var>(const complex<stan::math::var>& lhs,
-                                 const complex<stan::math::var>& rhs) {
-  return complex_not_equal(lhs, rhs);
-}
-
-/**
- * Return true if the respective parts of the two arguments are not
- * equal and false otherwise.
- *
- * @param[in] lhs first complex argument
- * @parma[in] rhs second scalar argument
- * @return if the arguments are not equal
- */
-template <>
-bool operator!=<stan::math::var>(const complex<stan::math::var>& lhs,
-                                 const stan::math::var& rhs) {
-  return complex_not_equal(lhs, rhs);
-}
-
-/**
- * Return true if the respective parts of the two arguments are not
- * equal and false otherwise.
- *
- * @param[in] lhs first scalar argument
- * @parma[in] rhs second complex argument
- * @return if the arguments are not equal
- */
-template <>
-bool operator!=<stan::math::var>(const stan::math::var& lhs,
-                                 const complex<stan::math::var>& rhs) {
-  return complex_not_equal(lhs, rhs);
 }
 
 /**
@@ -1616,48 +1636,6 @@ complex<stan::math::var> tanh<stan::math::var>(
 }
 
 /**
- * Return the complex arc hyperbolic sine of the specified complex
- * argument with branch cuts outside the interval `[-i, i]` along the
- * imaginary axis.
- *
- * @param[in] z complex argument
- * @return arc hyperbolic sine of argument
- */
-template <>
-complex<stan::math::var> asinh<stan::math::var>(
-    const complex<stan::math::var>& z) {
-  return complex_asinh(z);
-}
-
-/**
- * Return the complex arc hyperbolic cosine of the specified complex
- * argument with branch cuts at values less than 1 along the real
- * axis.
- *
- * @param[in] z complex argument
- * @return arc hyperbolic cosine of argument
- */
-template <>
-complex<stan::math::var> acosh<stan::math::var>(
-    const complex<stan::math::var>& z) {
-  return complex_acosh(z);
-}
-
-/**
- * Return the complex arc hyperbolic tangent of the specified complex
- * argument with branch cuts outside the interval `[-i, i]` along the
- * real axis.
- *
- * @param[in] z complex argument
- * @return arc hyperbolic tanget of argument
- */
-template <>
-complex<stan::math::var> atanh<stan::math::var>(
-    const complex<stan::math::var>& z) {
-  return complex_atanh(z);
-}
-
-/**
  * Return the complex sine of the specified complex number.
  *
  * @param[in] z a complex argument
@@ -1732,10 +1710,9 @@ complex<stan::math::var> atan<stan::math::var>(
     const complex<stan::math::var>& z) {
   return complex_atan(z);
 }
-
 }  // namespace std
 
-// SPECIALIZATIONS FOR ADL IN STAN
+// OVERLOADS FOR ADL IN STAN
 
 namespace stan {
 namespace math {
@@ -1799,6 +1776,20 @@ namespace math {
 
 // not sure why these are sufficient for addition/multiplication, but not
 // for others. obviously not specific enough, but why there?
+
+std::complex<var> operator+(const std::complex<var>& z) { return z; }
+template <typename T>
+std::complex<fvar<T>> operator+(const std::complex<var>& z) {
+  return z;
+}
+
+std::complex<var> operator-(const std::complex<var>& z) {
+  return complex_negate(z);
+}
+template <typename T>
+std::complex<fvar<T>> operator-(const std::complex<var>& z) {
+  return complex_negate(z);
+}
 
 /**
  * Return the sum of the two arguments.
