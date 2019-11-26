@@ -63,6 +63,40 @@ struct iterator_traits<stan::math::var> {
 };
 }  // namespace std
 
+namespace std {
+/**
+ * Specialization of iterator traits for Stan math.  These all take
+ * the form of typedefs.
+ */
+template <typename T>
+struct iterator_traits<stan::math::fvar<T>> {
+  /**
+   * Iterator category for traits.
+   */
+  typedef random_access_iterator_tag iterator_category;
+
+  /**
+   * Type for difference between pointers.
+   */
+  typedef ptrdiff_t difference_type;
+
+  /**
+   * Type for value of pointer to values.
+   */
+  typedef stan::math::fvar<T> value_type;
+
+  /**
+   * Type of pointer to variables.
+   */
+  typedef stan::math::fvar<T>* pointer;
+
+  /**
+   * Type of reference to variables.
+   */
+  typedef stan::math::fvar<T>& reference;
+};
+}  // namespace std
+
 // STAN CODE W/O complex<var>
 // ===================================================================
 
@@ -211,19 +245,33 @@ std::complex<T> neg_i_times(const std::complex<T>& z) {
 
 /**
  * Return the complex number with values the same as the specified
- * complex argument, but one lower type.  For example, an argument
- * type of `complex<var>` is converted to a return type
- * `complex<double>` and `complex<fvar<fvar<var>>` to
- * `complex<fvar<var>>`.
+ * complex argument.
  *
  * @tparam T value type of complex argument
  * @param[in] complex argument
  * @return complex number with same value as argument
  */
 template <typename T>
-std::complex<typename T::Scalar> value_of(const std::complex<T>& z) {
-  return {z.real().val(), z.imag().val()};
+std::complex<double> value_of(const std::complex<T>& z) {
+  return {value_of_rec(z.real()), value_of_rec(z.imag())};
 }
+
+// std::complex<double> value_of(const std::complex<var>& z) {
+//   return {z.real().val(), z.imag().val()};
+// }
+// std::complex<double> value_of(const std::complex<fvar<double>>& z) {
+//   return {z.real().val(), z.imag().val()};
+// }
+// std::complex<double> value_of(const std::complex<fvar<var>>& z) {
+//   return {z.real().val().val(), z.imag().val().val()};
+// }
+// std::complex<double> value_of(const std::complex<fvar<fvar<double>>>& z) {
+//   return {z.real().val().val(), z.imag().val().val()};
+// }
+// std::complex<double> value_of(const std::complex<fvar<fvar<var>>>& z) {
+//   return {z.real().val().val().val(), z.imag().val().val().val()};
+// }
+
 }  // namespace math
 }  // namespace stan
 
@@ -938,14 +986,6 @@ std::complex<V> complex_proj(const std::complex<V>& z) {
   return z;
 }
 
-template <typename U, typename V>
-std::complex<return_type_t<U, V>> complex_polar(const U& r, const V& theta) {
-  if (!(r >= 0) || is_inf(theta)) {
-    return {std::numeric_limits<double>::quiet_NaN()};
-  }
-  return {r * cos(theta), r * sin(theta)};
-}
-
 template <typename V>
 std::complex<V> complex_exp(const std::complex<V>& z) {
   if (is_inf(z.real()) && z.real() > 0) {
@@ -1061,19 +1101,40 @@ std::complex<V> complex_tan(const std::complex<V>& z) {
 
 template <typename V>
 std::complex<V> complex_asin(const std::complex<V>& z) {
-  std::complex<double> y_d = asin(value_of(z));
+  auto y_d = asin(value_of(z));
   auto y = neg_i_times(asinh(i_times(z)));
   return copysign(y, y_d);
 }
 
 template <typename V>
 std::complex<V> complex_acos(const std::complex<V>& z) {
-  return stan::math::var(0.5 * pi()) - asin(z);
+  return V(0.5 * pi()) - asin(z);
 }
 
 template <typename V>
 std::complex<V> complex_atan(const std::complex<V>& z) {
   return neg_i_times(atanh(i_times(z)));
+}
+
+template <typename U, typename V>
+std::complex<return_type_t<U, V>> complex_polar(const U& r, const V& theta) {
+  using std::cos;
+  using std::sin;
+  if (!(r >= 0) || is_inf(theta)) {
+    return {std::numeric_limits<double>::quiet_NaN()};
+  }
+  return {r * cos(theta), r * sin(theta)};
+
+  // return {r + theta, theta + r};
+
+  // return_type_t<U, V> r_up(r);
+  // return_type_t<U, V> theta_up(theta);
+  // return_type_t<U, V> rcos = r_up * cos(theta_up);
+  // return_type_t<U, V> rsin = r_up * sin(theta_up);
+  // std::complex<return_type_t<U, V>> z(rcos, rsin);
+  // return z;
+
+  //  return {r * cos(theta), r * sin(theta)};
 }
 
 }  // namespace math
@@ -1739,6 +1800,15 @@ namespace math {
 // not sure why these are sufficient for addition/multiplication, but not
 // for others. obviously not specific enough, but why there?
 
+/**
+ * Return the sum of the two arguments.
+ *
+ * @tparam U value type of first argument
+ * @tparam V value type of second argument
+ * @param x first complex argument
+ * @param y second complex argument
+ * @return sum of the arguments
+ */
 template <typename U, typename V>
 std::complex<return_type_t<U, V>> operator+(const std::complex<U>& x,
                                             const std::complex<V>& y) {
@@ -1755,6 +1825,15 @@ std::complex<return_type_t<U, V>> operator+(const U& x,
   return complex_add(x, y);
 }
 
+/**
+ * Return the difference of the two arguments.
+ *
+ * @tparam U value type of first argument
+ * @tparam V value type of second argument
+ * @param x first complex argument
+ * @param y second complex argument
+ * @return difference between first and second argument
+ */
 template <typename U, typename V>
 std::complex<return_type_t<U, V>> operator-(const std::complex<U>& x,
                                             const std::complex<V>& y) {
@@ -1778,111 +1857,110 @@ std::complex<return_type_t<U, V>> operator-(const U& x,
  * @param[in] rhs second argument
  * @return product of the arguments
  */
-// 1
+// var 1
 std::complex<var> operator*(int lhs, const std::complex<var>& rhs) {
   return complex_multiply(lhs, rhs);
 }
-// 2
+// var 2
 std::complex<var> operator*(double lhs, const std::complex<var>& rhs) {
   return complex_multiply(lhs, rhs);
 }
-// 3
+// var 3
 std::complex<var> operator*(const var& lhs, const std::complex<double>& rhs) {
   return complex_multiply(lhs, rhs);
 }
-// 4
+// var 4
 std::complex<var> operator*(const var& lhs, const std::complex<var>& rhs) {
   return complex_multiply(lhs, rhs);
 }
-// 5
+// var 5
 std::complex<var> operator*(const std::complex<double>& lhs, const var& rhs) {
   return complex_multiply(lhs, rhs);
 }
-// 6
+// var 6
 std::complex<var> operator*(const std::complex<double>& lhs,
                             const std::complex<var>& rhs) {
   return complex_multiply(lhs, rhs);
 }
-// 7
+// var 7
 std::complex<var> operator*(const std::complex<var>& lhs, int rhs) {
   return complex_multiply(lhs, rhs);
 }
-// 8
+// var 8
 std::complex<var> operator*(const std::complex<var>& lhs, double rhs) {
   return complex_multiply(lhs, rhs);
 }
-// 9
+// var 9
 std::complex<var> operator*(const std::complex<var>& lhs, const var& rhs) {
   return complex_multiply(lhs, rhs);
 }
-// 10
+// var 10
 std::complex<var> operator*(const std::complex<var>& lhs,
                             const std::complex<double>& rhs) {
   return complex_multiply(lhs, rhs);
 }
-// 11
+// var 11
 std::complex<var> operator*(const std::complex<var>& lhs,
                             const std::complex<var>& rhs) {
   return complex_multiply(lhs, rhs);
 }
-
-// 1
+// fvar 1
 template <typename T>
 std::complex<fvar<T>> operator*(int lhs, const std::complex<fvar<T>>& rhs) {
   return complex_multiply(lhs, rhs);
 }
-// 2
+// fvar 2
 template <typename T>
 std::complex<fvar<T>> operator*(double lhs, const std::complex<fvar<T>>& rhs) {
   return complex_multiply(lhs, rhs);
 }
-// 3
+// fvar 3
 template <typename T>
 std::complex<fvar<T>> operator*(const fvar<T>& lhs,
                                 const std::complex<double>& rhs) {
   return complex_multiply(lhs, rhs);
 }
-// 4
+// fvar 4
 template <typename T>
 std::complex<fvar<T>> operator*(const fvar<T>& lhs,
                                 const std::complex<fvar<T>>& rhs) {
   return complex_multiply(lhs, rhs);
 }
-// 5
+// fvar 5
 template <typename T>
 std::complex<fvar<T>> operator*(const std::complex<double>& lhs,
                                 const fvar<T>& rhs) {
   return complex_multiply(lhs, rhs);
 }
-// 6
+// fvar 6
 template <typename T>
 std::complex<fvar<T>> operator*(const std::complex<double>& lhs,
                                 const std::complex<fvar<T>>& rhs) {
   return complex_multiply(lhs, rhs);
 }
-// 7
+// fvar 7
 template <typename T>
 std::complex<fvar<T>> operator*(const std::complex<fvar<T>>& lhs, int rhs) {
   return complex_multiply(lhs, rhs);
 }
-// 8
+// fvar 8
 template <typename T>
 std::complex<fvar<T>> operator*(const std::complex<fvar<T>>& lhs, double rhs) {
   return complex_multiply(lhs, rhs);
 }
-// 9
+// fvar 9
 template <typename T>
 std::complex<fvar<T>> operator*(const std::complex<fvar<T>>& lhs,
                                 const fvar<T>& rhs) {
   return complex_multiply(lhs, rhs);
 }
-// 10
+// fvar 10
 template <typename T>
 std::complex<fvar<T>> operator*(const std::complex<fvar<T>>& lhs,
                                 const std::complex<double>& rhs) {
   return complex_multiply(lhs, rhs);
 }
-// 11
+// fvar 11
 template <typename T>
 std::complex<fvar<T>> operator*(const std::complex<fvar<T>>& lhs,
                                 const std::complex<fvar<T>>& rhs) {
@@ -1943,68 +2021,131 @@ std::complex<var> operator/(const std::complex<var>& lhs,
                             const std::complex<var>& rhs) {
   return complex_divide(lhs, rhs);
 }
-
-// 1
+// fvar 1
 template <typename T>
 std::complex<fvar<T>> operator/(int lhs, const std::complex<fvar<T>>& rhs) {
   return complex_divide(lhs, rhs);
 }
-// 2
+// fvar 2
 template <typename T>
 std::complex<fvar<T>> operator/(double lhs, const std::complex<fvar<T>>& rhs) {
   return complex_divide(lhs, rhs);
 }
-// 3
+// fvar 3
 template <typename T>
 std::complex<fvar<T>> operator/(const fvar<T>& lhs,
                                 const std::complex<double>& rhs) {
   return complex_divide(lhs, rhs);
 }
-// 4
+// fvar 4
 template <typename T>
 std::complex<fvar<T>> operator/(const fvar<T>& lhs,
                                 const std::complex<fvar<T>>& rhs) {
   return complex_divide(lhs, rhs);
 }
-// 5
+// fvar 5
 template <typename T>
 std::complex<fvar<T>> operator/(const std::complex<double>& lhs,
                                 const fvar<T>& rhs) {
   return complex_divide(lhs, rhs);
 }
-// 6
+// fvar 6
 template <typename T>
 std::complex<fvar<T>> operator/(const std::complex<double>& lhs,
                                 const std::complex<fvar<T>>& rhs) {
   return complex_divide(lhs, rhs);
 }
-// 7
+// fvar 7
 template <typename T>
 std::complex<fvar<T>> operator/(const std::complex<fvar<T>>& lhs, int rhs) {
   return complex_divide(lhs, rhs);
 }
-// 8
+// fvar 8
 template <typename T>
 std::complex<fvar<T>> operator/(const std::complex<fvar<T>>& lhs, double rhs) {
   return complex_divide(lhs, rhs);
 }
-// 9
+// fvar 9
 template <typename T>
 std::complex<fvar<T>> operator/(const std::complex<fvar<T>>& lhs,
                                 const fvar<T>& rhs) {
   return complex_divide(lhs, rhs);
 }
-// 10
+// fvar 10
 template <typename T>
 std::complex<fvar<T>> operator/(const std::complex<fvar<T>>& lhs,
                                 const std::complex<double>& rhs) {
   return complex_divide(lhs, rhs);
 }
-// 11
+// fvar 11
 template <typename T>
 std::complex<fvar<T>> operator/(const std::complex<fvar<T>>& lhs,
                                 const std::complex<fvar<T>>& rhs) {
   return complex_divide(lhs, rhs);
+}
+
+// var 1
+var abs(const std::complex<var>& z) { return complex_abs(z); }
+// fvar 1
+template <typename T>
+fvar<T> abs(const std::complex<fvar<T>>& z) {
+  return complex_abs(z);
+}
+
+// var 1
+var arg(const std::complex<var>& z) { return complex_arg(z); }
+// fvar 1
+template <typename T>
+fvar<T> arg(const std::complex<fvar<T>>& z) {
+  return complex_arg(z);
+}
+
+// var 1
+var norm(const std::complex<var>& z) { return complex_norm(z); }
+// fvar 1
+template <typename T>
+fvar<T> norm(const std::complex<fvar<T>>& z) {
+  return complex_norm(z);
+}
+
+// var 1
+std::complex<var> conj(const std::complex<var>& z) { return complex_conj(z); }
+// fvar 1
+template <typename T>
+std::complex<fvar<T>> conj(const std::complex<fvar<T>>& z) {
+  return complex_conj(z);
+}
+
+// var 1
+std::complex<var> proj(const std::complex<var>& z) { return complex_proj(z); }
+// fvar 1
+template <typename T>
+std::complex<fvar<T>> proj(const std::complex<fvar<T>>& z) {
+  return complex_proj(z);
+}
+
+// var 1
+std::complex<var> exp(const std::complex<var>& z) { return complex_exp(z); }
+// fvar 1
+template <typename T>
+std::complex<fvar<T>> exp(const std::complex<fvar<T>>& z) {
+  return complex_exp(z);
+}
+
+// var 1
+std::complex<var> log(const std::complex<var>& z) { return complex_log(z); }
+// fvar 1
+template <typename T>
+std::complex<fvar<T>> log(const std::complex<fvar<T>>& z) {
+  return complex_log(z);
+}
+
+// var 1
+std::complex<var> log10(const std::complex<var>& z) { return complex_log10(z); }
+// fvar 1
+template <typename T>
+std::complex<fvar<T>> log10(const std::complex<fvar<T>>& z) {
+  return complex_log10(z);
 }
 
 /**
@@ -2014,77 +2155,265 @@ std::complex<fvar<T>> operator/(const std::complex<fvar<T>>& lhs,
  * @param[in] rhs second argument
  * @return first argument to the power of the second
  */
+// var 1
 std::complex<var> pow(int lhs, const std::complex<var>& rhs) {
   return complex_pow(lhs, rhs);
 }
+// var 2
 std::complex<var> pow(double lhs, const std::complex<var>& rhs) {
   return complex_pow(lhs, rhs);
 }
+// var 3
 std::complex<var> pow(const var& lhs, const std::complex<double>& rhs) {
   return complex_pow(lhs, rhs);
 }
+// var 4
 std::complex<var> pow(const var& lhs, const std::complex<var>& rhs) {
   return complex_pow(lhs, rhs);
 }
+// var 5
 std::complex<var> pow(const std::complex<double>& lhs, const var& rhs) {
   return complex_pow(lhs, rhs);
 }
+// var 6
 std::complex<var> pow(const std::complex<double>& lhs,
                       const std::complex<var>& rhs) {
   return complex_pow(lhs, rhs);
 }
+// var 7
 std::complex<var> pow(const std::complex<var>& lhs, int rhs) {
   return complex_pow(lhs, rhs);
 }
+// var 8
 std::complex<var> pow(const std::complex<var>& lhs, double rhs) {
   return complex_pow(lhs, rhs);
 }
+// var 9
 std::complex<var> pow(const std::complex<var>& lhs, const var& rhs) {
   return complex_pow(lhs, rhs);
 }
+// var 10
 std::complex<var> pow(const std::complex<var>& lhs,
                       const std::complex<double>& rhs) {
   return complex_pow(lhs, rhs);
 }
+// var 11
+std::complex<var> pow(const std::complex<var>& lhs,
+                      const std::complex<var>& rhs) {
+  return complex_pow(lhs, rhs);
+}
+// fvar 1
+template <typename T>
+std::complex<fvar<T>> pow(int lhs, const std::complex<fvar<T>>& rhs) {
+  return complex_pow(lhs, rhs);
+}
+// fvar 2
+template <typename T>
+std::complex<fvar<T>> pow(double lhs, const std::complex<fvar<T>>& rhs) {
+  return complex_pow(lhs, rhs);
+}
+// fvar 3
+template <typename T>
+std::complex<fvar<T>> pow(const fvar<T>& lhs, const std::complex<double>& rhs) {
+  return complex_pow(lhs, rhs);
+}
+// fvar 4
+template <typename T>
+std::complex<fvar<T>> pow(const fvar<T>& lhs,
+                          const std::complex<fvar<T>>& rhs) {
+  return complex_pow(lhs, rhs);
+}
+// fvar 5
+template <typename T>
+std::complex<fvar<T>> pow(const std::complex<double>& lhs, const fvar<T>& rhs) {
+  return complex_pow(lhs, rhs);
+}
+// fvar 6
+template <typename T>
+std::complex<fvar<T>> pow(const std::complex<double>& lhs,
+                          const std::complex<fvar<T>>& rhs) {
+  return complex_pow(lhs, rhs);
+}
+// fvar 7
+template <typename T>
+std::complex<fvar<T>> pow(const std::complex<fvar<T>>& lhs, int rhs) {
+  return complex_pow(lhs, rhs);
+}
+// fvar 8
+template <typename T>
+std::complex<fvar<T>> pow(const std::complex<fvar<T>>& lhs, double rhs) {
+  return complex_pow(lhs, rhs);
+}
+// fvar 9
+template <typename T>
+std::complex<fvar<T>> pow(const std::complex<fvar<T>>& lhs,
+                          const fvar<T>& rhs) {
+  return complex_pow(lhs, rhs);
+}
+// fvar 10
+template <typename T>
+std::complex<fvar<T>> pow(const std::complex<fvar<T>>& lhs,
+                          const std::complex<double>& rhs) {
+  return complex_pow(lhs, rhs);
+}
+// fvar 11
+template <typename T>
+std::complex<fvar<T>> pow(const std::complex<fvar<T>>& lhs,
+                          const std::complex<fvar<T>>& rhs) {
+  return complex_pow(lhs, rhs);
+}
+
+// var 1
+std::complex<var> sqrt(const std::complex<var>& z) { return complex_sqrt(z); }
+// fvar 1
+template <typename T>
+std::complex<fvar<T>> sqrt(const std::complex<fvar<T>>& z) {
+  return complex_sqrt(z);
+}
+
+// var 1
+std::complex<var> sin(const std::complex<var>& z) { return complex_sin(z); }
+// fvar 1
+template <typename T>
+std::complex<fvar<T>> sin(const std::complex<fvar<T>>& z) {
+  return complex_sin(z);
+}
+
+// var 1
+std::complex<var> cos(const std::complex<var>& z) { return complex_cos(z); }
+// fvar 1
+template <typename T>
+std::complex<fvar<T>> cos(const std::complex<fvar<T>>& z) {
+  return complex_cos(z);
+}
+
+// var 1
+std::complex<var> tan(const std::complex<var>& z) { return complex_tan(z); }
+// fvar 1
+template <typename T>
+std::complex<fvar<T>> tan(const std::complex<fvar<T>>& z) {
+  return complex_tan(z);
+}
+
+// var 1
+std::complex<var> asin(const std::complex<var>& z) { return complex_asin(z); }
+// fvar 1
+template <typename T>
+std::complex<fvar<T>> asin(const std::complex<fvar<T>>& z) {
+  return complex_asin(z);
+}
+
+// var 1
+std::complex<var> acos(const std::complex<var>& z) { return complex_acos(z); }
+// fvar 1
+template <typename T>
+std::complex<fvar<T>> acos(const std::complex<fvar<T>>& z) {
+  return complex_acos(z);
+}
+
+// var 1
+std::complex<var> atan(const std::complex<var>& z) { return complex_atan(z); }
+// fvar 1
+template <typename T>
+std::complex<fvar<T>> atan(const std::complex<fvar<T>>& z) {
+  return complex_atan(z);
+}
+
+// var 1
+std::complex<var> sinh(const std::complex<var>& z) { return complex_sinh(z); }
+// fvar 1
+template <typename T>
+std::complex<fvar<T>> sinh(const std::complex<fvar<T>>& z) {
+  return complex_sinh(z);
+}
+
+// var 1
+std::complex<var> cosh(const std::complex<var>& z) { return complex_cosh(z); }
+// fvar 1
+template <typename T>
+std::complex<fvar<T>> cosh(const std::complex<fvar<T>>& z) {
+  return complex_cosh(z);
+}
+
+// var 1
+std::complex<var> tanh(const std::complex<var>& z) { return complex_tanh(z); }
+// fvar 1
+template <typename T>
+std::complex<fvar<T>> tanh(const std::complex<fvar<T>>& z) {
+  return complex_tanh(z);
+}
+
+// var 1
+std::complex<var> asinh(const std::complex<var>& z) { return complex_asinh(z); }
+// fvar 1
+template <typename T>
+std::complex<fvar<T>> asinh(const std::complex<fvar<T>>& z) {
+  return complex_asinh(z);
+}
+
+// var 1
+std::complex<var> acosh(const std::complex<var>& z) { return complex_acosh(z); }
+// fvar 1
+template <typename T>
+std::complex<fvar<T>> acosh(const std::complex<fvar<T>>& z) {
+  return complex_acosh(z);
+}
+
+// var 1
+std::complex<var> atanh(const std::complex<var>& z) { return complex_atanh(z); }
+// fvar 1
+template <typename T>
+std::complex<fvar<T>> atanh(const std::complex<fvar<T>>& z) {
+  return complex_atanh(z);
+}
+
+// var 1
+std::complex<var> polar(const var& r, const var& theta) {
+  return complex_polar(r, theta);
+}
+// var 2
+std::complex<var> polar(const var& r, double theta) {
+  return complex_polar(r, theta);
+}
+// var 3
+std::complex<var> polar(double r, const var& theta) {
+  return complex_polar(r, theta);
+}
+// var 4
+std::complex<var> polar(const var& r, int theta) {
+  return complex_polar(r, theta);
+}
+// var 5
+std::complex<var> polar(int r, const var& theta) {
+  return complex_polar(r, theta);
+}
+// // fvar 1
+template <typename T>
+std::complex<fvar<T>> polar(const fvar<T>& r, const fvar<T>& theta) {
+  return complex_polar(r, theta);
+}
+// fvar 2
+template <typename T>
+std::complex<fvar<T>> polar(const fvar<T>& r, double theta) {
+  return complex_polar(r, theta);
+}
+// fvar 3
+template <typename T>
+std::complex<fvar<T>> polar(double r, const fvar<T>& theta) {
+  return complex_polar(r, theta);
+}
+// fvar 4
+template <typename T>
+std::complex<fvar<T>> polar(const fvar<T>& r, int theta) {
+  return complex_polar(r, theta);
+}
+// fvar 5
+template <typename T>
+std::complex<fvar<T>> polar(int r, const fvar<T>& theta) {
+  return complex_polar(r, theta);
+}
 
 }  // namespace math
 }  // namespace stan
-
-// std SPECIALIZATIONS FOR STAN W/O COMPLEX
-// ===================================================================
-
-namespace std {
-/**
- * Specialization of iterator traits for Stan math.  These all take
- * the form of typedefs.
- */
-template <typename T>
-struct iterator_traits<stan::math::fvar<T>> {
-  /**
-   * Iterator category for traits.
-   */
-  typedef random_access_iterator_tag iterator_category;
-
-  /**
-   * Type for difference between pointers.
-   */
-  typedef ptrdiff_t difference_type;
-
-  /**
-   * Type for value of pointer to values.
-   */
-  typedef stan::math::fvar<T> value_type;
-
-  /**
-   * Type of pointer to variables.
-   */
-  typedef stan::math::fvar<T>* pointer;
-
-  /**
-   * Type of reference to variables.
-   */
-  typedef stan::math::fvar<T>& reference;
-};
-}  // namespace std
 
 #endif

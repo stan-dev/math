@@ -1221,3 +1221,265 @@ TEST(mathMix, operatorDivide) {
   };
   stan::test::expect_ad(fxz, 1.2, to_std_vec(-3.9, -1.7));
 }
+
+TEST(mathMix, abs) {
+  auto f = [](const auto& z) {
+    using std::arg;
+    return abs(from_array(z));
+  };
+  stan::test::expect_ad(f, to_std_vec(1.1, -1.3));
+  stan::test::expect_ad(f, to_std_vec(-1.1, -1.3));
+  stan::test::expect_ad(f, to_std_vec(-1.1, 2.9));
+}
+
+TEST(mathMix, arg) {
+  auto f = [](const auto& z) {
+    using std::arg;
+    return arg(from_array(z));
+  };
+  stan::test::expect_ad(f, to_std_vec(1.1, -1.3));
+  stan::test::expect_ad(f, to_std_vec(-1.1, -1.3));
+  stan::test::expect_ad(f, to_std_vec(-1.1, 2.9));
+}
+
+TEST(mathMix, norm) {
+  auto f = [](const auto& z) {
+    using std::norm;
+    return norm(from_array(z));
+  };
+  stan::test::expect_ad(f, to_std_vec(1.1, -1.3));
+  stan::test::expect_ad(f, to_std_vec(-1.1, -1.3));
+  stan::test::expect_ad(f, to_std_vec(-1.1, 2.9));
+}
+
+TEST(mathMix, conj) {
+  auto f = [](const auto& z) {
+    using std::norm;
+    return to_array(conj(from_array(z)));
+  };
+  stan::test::expect_ad(f, to_std_vec(1.1, -1.3));
+  stan::test::expect_ad(f, to_std_vec(-1.1, -1.3));
+  stan::test::expect_ad(f, to_std_vec(-1.1, 2.9));
+}
+
+TEST(mathMix, proj) {
+  auto f = [](const auto& z) {
+    using std::proj;
+    return to_array(proj(from_array(z)));
+  };
+  stan::test::expect_ad(f, to_std_vec(1.1, -1.3));
+  stan::test::expect_ad(f, to_std_vec(-1.1, -1.3));
+  stan::test::expect_ad(f, to_std_vec(-1.1, 2.9));
+}
+
+TEST(mathMix, exp) {
+  auto f = [](const auto& z) {
+    using std::exp;
+    return to_array(exp(from_array(z)));
+  };
+  stan::test::expect_ad(f, to_std_vec(1.1, -1.3));
+  stan::test::expect_ad(f, to_std_vec(-1.1, -1.3));
+  stan::test::expect_ad(f, to_std_vec(-1.1, 2.9));
+}
+
+TEST(mathMix, log) {
+  auto f = [](const auto& z) {
+    using std::log;
+    return to_array(log(from_array(z)));
+  };
+  stan::test::expect_ad(f, to_std_vec(1.1, -1.3));
+  stan::test::expect_ad(f, to_std_vec(-1.1, -1.3));
+  stan::test::expect_ad(f, to_std_vec(-1.1, 2.9));
+}
+
+TEST(mathMix, log10) {
+  auto f = [](const auto& z) {
+    using std::log10;
+    return to_array(log10(from_array(z)));
+  };
+  stan::test::expect_ad(f, to_std_vec(1.1, -1.3));
+  stan::test::expect_ad(f, to_std_vec(-1.1, -1.3));
+  stan::test::expect_ad(f, to_std_vec(-1.1, 2.9));
+}
+
+TEST(mathMix, pow) {
+  auto fzz = [](const auto& z1, const auto& z2) {
+    using std::pow;
+    auto c1 = from_array(z1);
+    auto c2 = from_array(z2);
+    auto y = pow(c1, c2);
+    return to_array(y);
+  };
+  stan::test::expect_ad(fzz, to_std_vec(1.2, 2.3), to_std_vec(-3.9, -1.7));
+
+  auto fzx = [](const auto& z, const auto& x) {
+    using std::pow;
+    auto c = from_array(z);
+    auto y = pow(c, x);
+    return to_array(y);
+  };
+  stan::test::expect_ad(fzx, to_std_vec(1.2, 2.3), -3.9);
+
+  auto fxz = [](const auto& x, const auto& z) {
+    using std::pow;
+    auto c = from_array(z);
+    auto y = pow(x, c);
+    return to_array(y);
+  };
+  stan::test::expect_ad(fxz, 1.2, to_std_vec(-3.9, -1.7));
+}
+
+TEST(mathMix, sqrt) {
+  auto f = [](const auto& z) {
+    using std::sqrt;
+    return to_array(sqrt(from_array(z)));
+  };
+  stan::test::expect_ad(f, to_std_vec(1.1, -1.3));
+  stan::test::expect_ad(f, to_std_vec(-1.1, -1.3));
+  stan::test::expect_ad(f, to_std_vec(-1.1, 2.9));
+}
+
+TEST(mathMix, sin) {
+  auto f = [](const auto& z) {
+    using std::sin;
+    return to_array(sin(from_array(z)));
+  };
+  stan::test::expect_ad(f, to_std_vec(1.1, -1.3));
+  stan::test::expect_ad(f, to_std_vec(-1.1, -1.3));
+  stan::test::expect_ad(f, to_std_vec(-1.1, 2.9));
+}
+
+TEST(mathMix, cos) {
+  auto f = [](const auto& z) {
+    using std::cos;
+    return to_array(cos(from_array(z)));
+  };
+  stan::test::expect_ad(f, to_std_vec(1.1, -1.3));
+  stan::test::expect_ad(f, to_std_vec(-1.1, -1.3));
+  stan::test::expect_ad(f, to_std_vec(-1.1, 2.9));
+}
+
+TEST(mathMix, tan) {
+  auto f = [](const auto& z) {
+    using std::tan;
+    return to_array(tan(from_array(z)));
+  };
+  stan::test::expect_ad(f, to_std_vec(1.1, -1.3));
+  stan::test::expect_ad(f, to_std_vec(-1.1, -1.3));
+  stan::test::expect_ad(f, to_std_vec(-1.1, 2.9));
+}
+
+TEST(mathMix, asin) {
+  auto f = [](const auto& z) {
+    using std::asin;
+    return to_array(asin(from_array(z)));
+  };
+  stan::test::ad_tolerances tols;
+  tols.hessian_hessian_ = 1e-2;
+  tols.hessian_fvar_hessian_ = 1e-2;
+  stan::test::expect_ad(tols, f, to_std_vec(1.1, -1.3));
+  stan::test::expect_ad(tols, f, to_std_vec(-1.1, -1.3));
+  stan::test::expect_ad(tols, f, to_std_vec(-1.1, 2.9));
+}
+
+TEST(mathMix, acos) {
+  auto f = [](const auto& z) {
+    using std::acos;
+    return to_array(acos(from_array(z)));
+  };
+  stan::test::ad_tolerances tols;
+  tols.hessian_hessian_ = 1e-2;
+  tols.hessian_fvar_hessian_ = 1e-2;
+  stan::test::expect_ad(tols, f, to_std_vec(1.1, -1.3));
+  stan::test::expect_ad(tols, f, to_std_vec(-1.1, -1.3));
+  stan::test::expect_ad(tols, f, to_std_vec(-1.1, 2.9));
+}
+
+TEST(mathMix, atan) {
+  auto f = [](const auto& z) {
+    using std::atan;
+    return to_array(atan(from_array(z)));
+  };
+  stan::test::expect_ad(f, to_std_vec(1.1, -1.3));
+  stan::test::expect_ad(f, to_std_vec(-1.1, -1.3));
+  stan::test::expect_ad(f, to_std_vec(-1.1, 2.9));
+}
+
+TEST(mathMix, sinh) {
+  auto f = [](const auto& z) {
+    using std::sinh;
+    return to_array(sinh(from_array(z)));
+  };
+  stan::test::expect_ad(f, to_std_vec(1.1, -1.3));
+  stan::test::expect_ad(f, to_std_vec(-1.1, -1.3));
+  stan::test::expect_ad(f, to_std_vec(-1.1, 2.9));
+}
+
+TEST(mathMix, cosh) {
+  auto f = [](const auto& z) {
+    using std::cosh;
+    return to_array(cosh(from_array(z)));
+  };
+  stan::test::expect_ad(f, to_std_vec(1.1, -1.3));
+  stan::test::expect_ad(f, to_std_vec(-1.1, -1.3));
+  stan::test::expect_ad(f, to_std_vec(-1.1, 2.9));
+}
+
+TEST(mathMix, tanh) {
+  auto f = [](const auto& z) {
+    using std::tanh;
+    return to_array(tanh(from_array(z)));
+  };
+  stan::test::expect_ad(f, to_std_vec(1.1, -1.3));
+  stan::test::expect_ad(f, to_std_vec(-1.1, -1.3));
+  stan::test::expect_ad(f, to_std_vec(-1.1, 2.9));
+}
+
+TEST(mathMix, asinh) {
+  auto f = [](const auto& z) {
+    using std::asinh;
+    return to_array(asinh(from_array(z)));
+  };
+  stan::test::ad_tolerances tols;
+  tols.hessian_hessian_ = 1e-2;
+  tols.hessian_fvar_hessian_ = 1e-2;
+  stan::test::expect_ad(tols, f, to_std_vec(1.1, -1.3));
+  stan::test::expect_ad(tols, f, to_std_vec(-1.1, -1.3));
+  stan::test::expect_ad(tols, f, to_std_vec(-1.1, 2.9));
+}
+
+TEST(mathMix, acosh) {
+  auto f = [](const auto& z) {
+    using std::acosh;
+    return to_array(acosh(from_array(z)));
+  };
+  stan::test::ad_tolerances tols;
+  tols.hessian_hessian_ = 1e-2;
+  tols.hessian_fvar_hessian_ = 1e-2;
+  stan::test::expect_ad(tols, f, to_std_vec(1.1, -1.3));
+  stan::test::expect_ad(tols, f, to_std_vec(-1.1, -1.3));
+  stan::test::expect_ad(tols, f, to_std_vec(-1.1, 2.9));
+}
+
+TEST(mathMix, atanh) {
+  auto f = [](const auto& z) {
+    using std::atanh;
+    return to_array(atanh(from_array(z)));
+  };
+  stan::test::ad_tolerances tols;
+  tols.hessian_hessian_ = 1e-2;
+  tols.hessian_fvar_hessian_ = 1e-2;
+  stan::test::expect_ad(tols, f, to_std_vec(1.1, -1.3));
+  stan::test::expect_ad(tols, f, to_std_vec(-1.1, -1.3));
+  stan::test::expect_ad(tols, f, to_std_vec(-1.1, 2.9));
+}
+
+TEST(mathMix, polar) {
+  auto f = [](const auto& r, const auto& theta) {
+    using stan::math::complex_polar;
+    return to_array(complex_polar(r, theta));
+  };
+  stan::test::expect_ad(f, 1.1, -1.3);
+  stan::test::expect_ad(f, -1.1, -1.3);
+  stan::test::expect_ad(f, -1.1, 2.9);
+}
