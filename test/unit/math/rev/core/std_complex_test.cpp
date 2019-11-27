@@ -23,10 +23,10 @@ using mvar_t = Eigen::Matrix<stan::math::var, -1, -1>;
 template <typename T>
 void expect_identity_matrix(const T& I) {
   for (int i = 0; i < I.rows(); ++i) {
-    EXPECT_NEAR(1, I(i, i).val(), 1e-8);
+    EXPECT_NEAR(1, value_of_rec(I(i, i)), 1e-8);
     for (int j = 0; j < i; ++j) {
-      EXPECT_NEAR(0, I(i, j).val(), 1e-8);
-      EXPECT_NEAR(0, I(j, i).val(), 1e-8);
+      EXPECT_NEAR(0, value_of_rec(I(i, j)), 1e-8);
+      EXPECT_NEAR(0, value_of_rec(I(j, i)), 1e-8);
     }
   }
 }
@@ -1466,7 +1466,7 @@ void expectEigenSolver() {
   auto ev = s.eigenvectors();
   auto I
       = (ev.inverse() * a * ev * s.eigenvalues().asDiagonal().inverse()).real();
-  // expect_identity_matrix(I);
+  expect_identity_matrix(I);
 }
 TEST(mathMix, eigenSolver) {
   expectEigenSolver<var_t>();
@@ -1486,7 +1486,7 @@ void expectPseudoEigendecomposition() {
   matrix_v_t D = s.pseudoEigenvalueMatrix();
   matrix_v_t V = s.pseudoEigenvectors();
   matrix_v_t I = V.inverse() * a * V * D.inverse();
-  // expect_identity_matrix(I);
+  expect_identity_matrix(I);
 }
 TEST(mathMix, pseudoEigendecomposition) {
   expectPseudoEigendecomposition<var_t>();
@@ -1505,7 +1505,7 @@ void expectComplexSchur() {
   Eigen::ComplexSchur<matrix_v_t> s(a);
   auto M = (s.matrixU().adjoint() * s.matrixU()).eval();
   matrix_v_t I = M.real() + M.imag();
-  // expect_identity_matrix(I);
+  expect_identity_matrix(I);
 }
 TEST(mathMix, complexSchur) {
   expectComplexSchur<var_t>();
