@@ -1114,15 +1114,12 @@ class complex<stan::math::fvar<T>>
 }  // namespace std
 
 namespace std {
-
 // These are function template specializations.  These are necessary to
-// compile in g++.  If libstdc++ used by g++ were written to support
-// ADL, this wouldn't be necessary.  For more info on template function
+// compile in g++.  For more info on template function
 // resolution and background on why libstdc++ code is bad, see:
 // Walter E. Brown.  2017.  Thou Shalt Not Specialize std Function Templates!
 // http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/p0551r1.pdf
 //
-// Despite
 
 /**
  * Return true if the respective parts of the two arguments are equal
