@@ -4,14 +4,15 @@
 
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/opencl/buffer_types.hpp>
+#include <string>
 
 namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const char* triangular_transpose_kernel_code = STRINGIFY(
+static const std::string triangular_transpose_kernel_code = STRINGIFY(
     // \endcond
-    /**
+    /** \ingroup opencl_kernels
      * Copies a lower/upper triangular of a matrix to it's upper/lower.
      *
      * @param[in,out] A The matrix.
@@ -43,7 +44,7 @@ static const char* triangular_transpose_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/**
+/** \ingroup opencl_kernels
  * See the docs for \link kernels/triangular_transpose.hpp
  * triangular_transpose() \endlink
  */

@@ -39,15 +39,6 @@ TEST_F(ErrorHandlingMatrix, isPosDefinite) {
 TEST_F(ErrorHandlingMatrix, isPosDefinite_not_square) {
   y.resize(3, 4);
   EXPECT_FALSE(is_pos_definite(y));
-  y.resize(2, 3);
-  y << 1, 1, 1, 1, 1, 1;
-  Eigen::LLT<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > llt(
-      y.rows());
-  // FIXME
-  // Linux behavior for handling assertion thrown by llt.compute(y)
-  // differs from mac; produces a core dump
-  EXPECT_DEATH(llt.compute(y), "");
-  EXPECT_DEATH(y.ldlt(), "");
 }
 
 TEST_F(ErrorHandlingMatrix, isPosDefinite_0_size) {
@@ -59,10 +50,6 @@ TEST_F(ErrorHandlingMatrix, isPosDefinite_0_size) {
       x.rows());
   llt.compute(x);
   EXPECT_TRUE(is_pos_definite(llt));
-
-  Eigen::LDLT<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > ldlt(
-      x.rows());
-  EXPECT_DEATH(ldlt.compute(x), "");
 }
 
 TEST_F(ErrorHandlingMatrix, isPosDefinite_non_symmetric) {

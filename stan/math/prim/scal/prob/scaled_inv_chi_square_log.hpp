@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * The log of a scaled inverse chi-squared density for y with the
  * specified degrees of freedom parameter and scale parameter.
  *
@@ -31,17 +31,18 @@ namespace math {
  * @tparam T_dof Type of degrees of freedom.
  */
 template <bool propto, typename T_y, typename T_dof, typename T_scale>
-typename return_type<T_y, T_dof, T_scale>::type scaled_inv_chi_square_log(
-    const T_y& y, const T_dof& nu, const T_scale& s) {
+return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_log(const T_y& y,
+                                                             const T_dof& nu,
+                                                             const T_scale& s) {
   return scaled_inv_chi_square_lpdf<propto, T_y, T_dof, T_scale>(y, nu, s);
 }
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>scaled_inv_chi_square_lpdf</code>
  */
 template <typename T_y, typename T_dof, typename T_scale>
-inline typename return_type<T_y, T_dof, T_scale>::type
-scaled_inv_chi_square_log(const T_y& y, const T_dof& nu, const T_scale& s) {
+inline return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_log(
+    const T_y& y, const T_dof& nu, const T_scale& s) {
   return scaled_inv_chi_square_lpdf<T_y, T_dof, T_scale>(y, nu, s);
 }
 

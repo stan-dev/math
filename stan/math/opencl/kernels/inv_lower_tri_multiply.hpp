@@ -4,14 +4,15 @@
 
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/opencl/buffer_types.hpp>
+#include <string>
 
 namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const char* inv_lower_tri_multiply_kernel_code = STRINGIFY(
+static const std::string inv_lower_tri_multiply_kernel_code = STRINGIFY(
     // \endcond
-    /**
+    /** \ingroup opencl_kernels
      * Calculates B = C * A. C is an inverse matrix and A is lower triangular.
      *
      * This kernel is used in the final iteration of the batched lower
@@ -122,7 +123,7 @@ static const char* inv_lower_tri_multiply_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/**
+/** \ingroup opencl_kernels
  * See the docs for \link kernels/inv_lower_tri_multiply.hpp add() \endlink
  */
 const kernel_cl<in_buffer, out_buffer, int, int> inv_lower_tri_multiply(

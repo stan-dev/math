@@ -103,20 +103,23 @@ namespace math {
  *
  */
 template <typename T1, typename T2>
-typename return_type<T1, T2>::type grad_reg_lower_inc_gamma(
-    const T1& a, const T2& z, double precision = 1e-10, int max_steps = 1e5) {
+return_type_t<T1, T2> grad_reg_lower_inc_gamma(const T1& a, const T2& z,
+                                               double precision = 1e-10,
+                                               int max_steps = 1e5) {
   using std::exp;
   using std::log;
   using std::pow;
-  typedef typename return_type<T1, T2>::type TP;
+  using TP = return_type_t<T1, T2>;
 
-  if (is_any_nan(a, z))
+  if (is_any_nan(a, z)) {
     return std::numeric_limits<TP>::quiet_NaN();
+  }
 
   check_positive_finite("grad_reg_lower_inc_gamma", "a", a);
 
-  if (z == 0.0)
+  if (z == 0.0) {
     return 0.0;
+  }
   check_positive_finite("grad_reg_lower_inc_gamma", "z", z);
 
   if ((a < 0.8 && z > 15.0) || (a < 12.0 && z > 30.0)
@@ -139,13 +142,15 @@ typename return_type<T1, T2>::type grad_reg_lower_inc_gamma(
   while (true) {
     term = exp(a_plus_n * log_z - lgamma_a_plus_n_plus_1);
     sum_a += term;
-    if (term <= precision)
+    if (term <= precision) {
       break;
-    if (n >= max_steps)
+    }
+    if (n >= max_steps) {
       domain_error("grad_reg_lower_inc_gamma", "n (internal counter)",
                    max_steps, "exceeded ",
                    " iterations, gamma_p(a,z) gradient (a) "
                    "did not converge.");
+    }
     ++n;
     lgamma_a_plus_n_plus_1 += log1p(a_plus_n);
     ++a_plus_n;
@@ -159,13 +164,15 @@ typename return_type<T1, T2>::type grad_reg_lower_inc_gamma(
     term = exp(a_plus_n * log_z - lgamma_a_plus_n_plus_1)
            * digamma(a_plus_n + 1);
     sum_b += term;
-    if (term <= precision)
+    if (term <= precision) {
       return emz * (log_z * sum_a - sum_b);
-    if (n >= max_steps)
+    }
+    if (n >= max_steps) {
       domain_error("grad_reg_lower_inc_gamma", "n (internal counter)",
                    max_steps, "exceeded ",
                    " iterations, gamma_p(a,z) gradient (a) "
                    "did not converge.");
+    }
     ++n;
     lgamma_a_plus_n_plus_1 += log1p(a_plus_n);
     ++a_plus_n;

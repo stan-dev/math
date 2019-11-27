@@ -8,7 +8,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * The log of the first passage time density function for a (Wiener)
  *  drift diffusion model for the given \f$y\f$,
  * boundary separation \f$\alpha\f$, nondecision time \f$\tau\f$,
@@ -30,21 +30,21 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_alpha, typename T_tau,
           typename T_beta, typename T_delta>
-typename return_type<T_y, T_alpha, T_tau, T_beta, T_delta>::type wiener_log(
+return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_log(
     const T_y& y, const T_alpha& alpha, const T_tau& tau, const T_beta& beta,
     const T_delta& delta) {
   return wiener_lpdf<propto, T_y, T_alpha, T_tau, T_beta, T_delta>(
       y, alpha, tau, beta, delta);
 }
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>wiener_lpdf</code>
  */
 template <typename T_y, typename T_alpha, typename T_tau, typename T_beta,
           typename T_delta>
-inline typename return_type<T_y, T_alpha, T_tau, T_beta, T_delta>::type
-wiener_log(const T_y& y, const T_alpha& alpha, const T_tau& tau,
-           const T_beta& beta, const T_delta& delta) {
+inline return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_log(
+    const T_y& y, const T_alpha& alpha, const T_tau& tau, const T_beta& beta,
+    const T_delta& delta) {
   return wiener_lpdf<T_y, T_alpha, T_tau, T_beta, T_delta>(y, alpha, tau, beta,
                                                            delta);
 }

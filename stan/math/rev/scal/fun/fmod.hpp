@@ -31,10 +31,11 @@ class fmod_vd_vari : public op_vd_vari {
   fmod_vd_vari(vari* avi, double b)
       : op_vd_vari(std::fmod(avi->val_, b), avi, b) {}
   void chain() {
-    if (unlikely(is_any_nan(avi_->val_, bd_)))
+    if (unlikely(is_any_nan(avi_->val_, bd_))) {
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
-    else
+    } else {
       avi_->adj_ += adj_;
+    }
   }
 };
 

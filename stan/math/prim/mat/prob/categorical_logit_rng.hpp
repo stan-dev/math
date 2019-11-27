@@ -12,7 +12,7 @@
 
 namespace stan {
 namespace math {
-/**
+/** \ingroup multivar_dists
  * Return a draw from a Categorical distribution given a
  * a vector of unnormalized log probabilities and a psuedo-random
  * number generator.
@@ -40,8 +40,9 @@ inline int categorical_logit_rng(const Eigen::VectorXd& beta, RNG& rng) {
 
   double c = uniform01_rng();
   int b = 0;
-  while (c > index(b))
+  while (c > index(b)) {
     b++;
+  }
   return b + 1;
 }
 }  // namespace math

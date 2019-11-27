@@ -1,6 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_HPP
 #define STAN_MATH_PRIM_MAT_HPP
 
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+
+#include <stan/math/prim/core.hpp>
 #include <stan/math/prim/meta.hpp>
 
 #include <stan/math/prim/mat/err/check_cholesky_factor.hpp>
@@ -15,6 +18,7 @@
 #include <stan/math/prim/mat/err/check_lower_triangular.hpp>
 #include <stan/math/prim/mat/err/check_matching_dims.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
+#include <stan/math/prim/mat/err/check_nonempty.hpp>
 #include <stan/math/prim/mat/err/check_ordered.hpp>
 #include <stan/math/prim/mat/err/check_pos_definite.hpp>
 #include <stan/math/prim/mat/err/check_pos_semidefinite.hpp>
@@ -43,7 +47,6 @@
 #include <stan/math/prim/mat/err/is_unit_vector.hpp>
 #include <stan/math/prim/mat/err/validate_non_negative_index.hpp>
 
-#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/LDLT_factor.hpp>
 #include <stan/math/prim/mat/fun/Phi.hpp>
 #include <stan/math/prim/mat/fun/Phi_approx.hpp>
@@ -316,6 +319,7 @@
 #include <stan/math/prim/mat/prob/normal_id_glm_log.hpp>
 #include <stan/math/prim/mat/prob/normal_id_glm_lpdf.hpp>
 #include <stan/math/prim/mat/prob/ordered_logistic_log.hpp>
+#include <stan/math/prim/mat/prob/ordered_logistic_glm_lpmf.hpp>
 #include <stan/math/prim/mat/prob/ordered_logistic_lpmf.hpp>
 #include <stan/math/prim/mat/prob/ordered_logistic_rng.hpp>
 #include <stan/math/prim/mat/prob/ordered_probit_log.hpp>

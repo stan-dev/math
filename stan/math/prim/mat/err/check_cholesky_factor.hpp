@@ -32,9 +32,10 @@ inline void check_cholesky_factor(
                       y.rows());
   check_positive(function, "columns of Cholesky factor", y.cols());
   check_lower_triangular(function, name, y);
-  for (int i = 0; i < y.cols(); ++i)
+  for (int i = 0; i < y.cols(); ++i) {
     // FIXME:  should report row
     check_positive(function, name, y(i, i));
+  }
 }
 
 }  // namespace math

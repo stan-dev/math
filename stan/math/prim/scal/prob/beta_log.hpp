@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * The log of the beta density for the specified scalar(s) given the specified
  * sample size(s). y, alpha, or beta can each either be scalar or a vector.
  * Any vector inputs must be the same length.
@@ -29,16 +29,16 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_scale_succ,
           typename T_scale_fail>
-typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_log(
+return_type_t<T_y, T_scale_succ, T_scale_fail> beta_log(
     const T_y& y, const T_scale_succ& alpha, const T_scale_fail& beta) {
   return beta_lpdf<propto, T_y, T_scale_succ, T_scale_fail>(y, alpha, beta);
 }
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>beta_lpdf</code>
  */
 template <typename T_y, typename T_scale_succ, typename T_scale_fail>
-inline typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_log(
+inline return_type_t<T_y, T_scale_succ, T_scale_fail> beta_log(
     const T_y& y, const T_scale_succ& alpha, const T_scale_fail& beta) {
   return beta_lpdf<T_y, T_scale_succ, T_scale_fail>(y, alpha, beta);
 }

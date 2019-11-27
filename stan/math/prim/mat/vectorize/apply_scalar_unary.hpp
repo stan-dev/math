@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_VECTORIZE_APPLY_SCALAR_UNARY_HPP
 #define STAN_MATH_PRIM_MAT_VECTORIZE_APPLY_SCALAR_UNARY_HPP
 
-#include <Eigen/Dense>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <vector>
 
 namespace stan {
@@ -36,14 +36,14 @@ struct apply_scalar_unary {
   /**
    * Type of underlying scalar for the matrix type T.
    */
-  typedef typename Eigen::internal::traits<T>::Scalar scalar_t;
+  using scalar_t = typename Eigen::internal::traits<T>::Scalar;
 
   /**
    * Return type for applying the function elementwise to a matrix
    * expression template of type T.
    */
-  typedef Eigen::Matrix<scalar_t, T::RowsAtCompileTime, T::ColsAtCompileTime>
-      return_t;
+  using return_t
+      = Eigen::Matrix<scalar_t, T::RowsAtCompileTime, T::ColsAtCompileTime>;
 
   /**
    * Return the result of applying the function defined by the
@@ -70,7 +70,7 @@ struct apply_scalar_unary<F, double> {
   /**
    * The return type, double.
    */
-  typedef double return_t;
+  using return_t = double;
 
   /**
    * Apply the function specified by F to the specified argument.
@@ -97,7 +97,7 @@ struct apply_scalar_unary<F, int> {
   /**
    * The return type, double.
    */
-  typedef double return_t;
+  using return_t = double;
 
   /**
    * Apply the function specified by F to the specified argument.
@@ -126,8 +126,8 @@ struct apply_scalar_unary<F, std::vector<T> > {
    * Return type, which is calculated recursively as a standard
    * vector of the return type of the contained type T.
    */
-  typedef typename std::vector<typename apply_scalar_unary<F, T>::return_t>
-      return_t;
+  using return_t =
+      typename std::vector<typename apply_scalar_unary<F, T>::return_t>;
 
   /**
    * Apply the function specified by F elementwise to the
@@ -140,8 +140,9 @@ struct apply_scalar_unary<F, std::vector<T> > {
    */
   static inline return_t apply(const std::vector<T>& x) {
     return_t fx(x.size());
-    for (size_t i = 0; i < x.size(); ++i)
+    for (size_t i = 0; i < x.size(); ++i) {
       fx[i] = apply_scalar_unary<F, T>::apply(x[i]);
+    }
     return fx;
   }
 };

@@ -29,14 +29,17 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> cholesky_factor_free(
   int pos = 0;
 
   for (int m = 0; m < N; ++m) {
-    for (int n = 0; n < m; ++n)
+    for (int n = 0; n < m; ++n) {
       x(pos++) = y(m, n);
+    }
     x(pos++) = log(y(m, m));
   }
 
-  for (int m = N; m < M; ++m)
-    for (int n = 0; n < N; ++n)
+  for (int m = N; m < M; ++m) {
+    for (int n = 0; n < N; ++n) {
       x(pos++) = y(m, n);
+    }
+  }
   return x;
 }
 

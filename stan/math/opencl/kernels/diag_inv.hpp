@@ -4,14 +4,15 @@
 
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/opencl/buffer_types.hpp>
+#include <string>
 
 namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const char* diag_inv_kernel_code = STRINGIFY(
+static const std::string diag_inv_kernel_code = STRINGIFY(
     // \endcond
-    /**
+    /** \ingroup opencl_kernels
      * Calculates inplace submatrix inversions along the matrix diagonal.
      *
      *  For a full guide to the inverse lower triangular kernels see the link
@@ -80,7 +81,7 @@ static const char* diag_inv_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/**
+/** \ingroup opencl_kernels
  * See the docs for \link kernels/diag_inv.hpp add()
  * \endlink
  */

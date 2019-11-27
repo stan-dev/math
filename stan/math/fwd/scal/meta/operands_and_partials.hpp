@@ -11,7 +11,7 @@ namespace internal {
 template <typename Dx>
 class ops_partials_edge<Dx, fvar<Dx> > {
  public:
-  typedef fvar<Dx> Op;
+  using Op = fvar<Dx>;
   Dx partial_;
   broadcast_array<Dx> partials_;
   explicit ops_partials_edge(const Op& op)
@@ -26,7 +26,7 @@ class ops_partials_edge<Dx, fvar<Dx> > {
 };
 }  // namespace internal
 
-/**
+/** \ingroup type_trait
  * This class builds partial derivatives with respect to a set of
  * operands. There are two reason for the generality of this
  * class. The first is to handle vector and scalar arguments
@@ -71,7 +71,7 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, fvar<Dx> > {
   internal::ops_partials_edge<Dx, Op3> edge3_;
   internal::ops_partials_edge<Dx, Op4> edge4_;
   internal::ops_partials_edge<Dx, Op5> edge5_;
-  typedef fvar<Dx> T_return_type;
+  using T_return_type = fvar<Dx>;
   explicit operands_and_partials(const Op1& o1) : edge1_(o1) {}
   operands_and_partials(const Op1& o1, const Op2& o2)
       : edge1_(o1), edge2_(o2) {}
@@ -84,7 +84,7 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, fvar<Dx> > {
                         const Op4& o4, const Op5& o5)
       : edge1_(o1), edge2_(o2), edge3_(o3), edge4_(o4), edge5_(o5) {}
 
-  /**
+  /** \ingroup type_trait
    * Build the node to be stored on the autodiff graph.
    * This should contain both the value and the tangent.
    *

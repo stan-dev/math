@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_FWD_MAT_HPP
 #define STAN_MATH_FWD_MAT_HPP
 
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/meta.hpp>
 

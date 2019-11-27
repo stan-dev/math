@@ -24,9 +24,11 @@ template <typename T, int R, int C>
 inline Eigen::Matrix<typename child_type<T>::type, R, C> value_of(
     const Eigen::Matrix<T, R, C>& M) {
   Eigen::Matrix<typename child_type<T>::type, R, C> Md(M.rows(), M.cols());
-  for (int j = 0; j < M.cols(); j++)
-    for (int i = 0; i < M.rows(); i++)
+  for (int j = 0; j < M.cols(); j++) {
+    for (int i = 0; i < M.rows(); i++) {
       Md(i, j) = value_of(M(i, j));
+    }
+  }
   return Md;
 }
 
@@ -46,6 +48,24 @@ inline const Eigen::Matrix<double, R, C>& value_of(
     const Eigen::Matrix<double, R, C>& x) {
   return x;
 }
+
+/**
+ * Return the specified argument.
+ *
+ * <p>See <code>value_of(T)</code> for a polymorphic
+ * implementation using static casts.
+ *
+ * <p>This inline pass-through no-op should be compiled away.
+ *
+ * @param x Specified matrix.
+ * @return Specified matrix.
+ */
+template <int R, int C>
+inline const Eigen::Matrix<int, R, C>& value_of(
+    const Eigen::Matrix<int, R, C>& x) {
+  return x;
+}
+
 }  // namespace math
 }  // namespace stan
 

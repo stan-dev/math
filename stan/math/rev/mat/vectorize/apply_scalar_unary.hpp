@@ -20,7 +20,7 @@ struct apply_scalar_unary<F, var> {
   /**
    * Function return type, which is <code>var</code>.
    */
-  typedef var return_t;
+  using return_t = var;
 
   /**
    * Apply the function specified by F to the specified argument.

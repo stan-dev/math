@@ -7,12 +7,11 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>poisson_lccdf</code>
  */
 template <typename T_n, typename T_rate>
-typename return_type<T_rate>::type poisson_ccdf_log(const T_n& n,
-                                                    const T_rate& lambda) {
+return_type_t<T_rate> poisson_ccdf_log(const T_n& n, const T_rate& lambda) {
   return poisson_lccdf<T_n, T_rate>(n, lambda);
 }
 

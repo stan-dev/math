@@ -14,7 +14,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Returns the cauchy log complementary cumulative distribution function
  * for the given location, and scale. If given containers of matching sizes
  * returns the log sum of probabilities.
@@ -30,13 +30,13 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_y, typename T_loc, typename T_scale>
-typename return_type<T_y, T_loc, T_scale>::type cauchy_lccdf(
-    const T_y& y, const T_loc& mu, const T_scale& sigma) {
-  typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
-      T_partials_return;
+return_type_t<T_y, T_loc, T_scale> cauchy_lccdf(const T_y& y, const T_loc& mu,
+                                                const T_scale& sigma) {
+  using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
 
-  if (size_zero(y, mu, sigma))
+  if (size_zero(y, mu, sigma)) {
     return 0.0;
+  }
 
   static const char* function = "cauchy_lccdf";
 
@@ -70,12 +70,15 @@ typename return_type<T_y, T_loc, T_scale>::type cauchy_lccdf(
 
     const T_partials_return rep_deriv
         = 1.0 / (Pn * pi() * (z * z * sigma_dbl + sigma_dbl));
-    if (!is_constant_all<T_y>::value)
+    if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] -= rep_deriv;
-    if (!is_constant_all<T_loc>::value)
+    }
+    if (!is_constant_all<T_loc>::value) {
       ops_partials.edge2_.partials_[n] += rep_deriv;
-    if (!is_constant_all<T_scale>::value)
+    }
+    if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n] += rep_deriv * z;
+    }
   }
   return ops_partials.build(ccdf_log);
 }

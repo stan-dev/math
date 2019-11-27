@@ -23,8 +23,9 @@ inline std::vector<int> multinomial_rng(
   int n_left = N;
   for (int k = 0; n_left > 0 && k < theta.size(); ++k) {
     double p = theta[k] / mass_left;
-    if (p > 1.0)
+    if (p > 1.0) {
       p = 1.0;
+    }
     result[k] = binomial_rng(n_left, p, rng);
     n_left -= result[k];
     mass_left -= theta[k];

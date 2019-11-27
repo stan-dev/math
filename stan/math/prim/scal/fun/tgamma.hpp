@@ -16,8 +16,9 @@ namespace math {
  * @return The gamma function applied to argument.
  */
 inline double tgamma(double x) {
-  if (x == 0.0 || is_nonpositive_integer(x))
+  if (x == 0.0 || is_nonpositive_integer(x)) {
     domain_error("tgamma", "x", x, "x == 0 or negative integer");
+  }
   return std::tgamma(x);
 }
 

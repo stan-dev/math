@@ -51,13 +51,16 @@ void hessian(const F& f, const Eigen::Matrix<T, Eigen::Dynamic, 1>& x, T& fx,
   Eigen::Matrix<fvar<fvar<T> >, Eigen::Dynamic, 1> x_fvar(x.size());
   for (int i = 0; i < x.size(); ++i) {
     for (int j = i; j < x.size(); ++j) {
-      for (int k = 0; k < x.size(); ++k)
+      for (int k = 0; k < x.size(); ++k) {
         x_fvar(k) = fvar<fvar<T> >(fvar<T>(x(k), j == k), fvar<T>(i == k, 0));
+      }
       fvar<fvar<T> > fx_fvar = f(x_fvar);
-      if (j == 0)
+      if (j == 0) {
         fx = fx_fvar.val_.val_;
-      if (i == j)
+      }
+      if (i == j) {
         grad(i) = fx_fvar.d_.val_;
+      }
       H(i, j) = fx_fvar.d_.d_;
       H(j, i) = H(i, j);
     }

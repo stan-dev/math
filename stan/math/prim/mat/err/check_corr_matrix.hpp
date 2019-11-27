@@ -35,15 +35,15 @@ template <typename T_y>
 inline void check_corr_matrix(
     const char* function, const char* name,
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
-  typedef typename index_type<
-      Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> >::type size_t;
+  using size_type = typename index_type<
+      Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> >::type;
 
   check_size_match(function, "Rows of correlation matrix", y.rows(),
                    "columns of correlation matrix", y.cols());
   check_positive(function, name, "rows", y.rows());
   check_symmetric(function, "y", y);
 
-  for (size_t k = 0; k < y.rows(); ++k) {
+  for (size_type k = 0; k < y.rows(); ++k) {
     if (!(fabs(y(k, k) - 1.0) <= CONSTRAINT_TOLERANCE)) {
       std::ostringstream msg;
       msg << "is not a valid correlation matrix. " << name << "("

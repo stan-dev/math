@@ -9,7 +9,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup multivar_dists
  * The log of the Inverse-Wishart density for the given W, degrees
  * of freedom, and scale matrix.
  *
@@ -30,20 +30,18 @@ namespace math {
  * @tparam T_scale Type of scale.
  */
 template <bool propto, typename T_y, typename T_dof, typename T_scale>
-typename boost::math::tools::promote_args<T_y, T_dof, T_scale>::type
-inv_wishart_log(
+return_type_t<T_y, T_dof, T_scale> inv_wishart_log(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& W,
     const T_dof& nu,
     const Eigen::Matrix<T_scale, Eigen::Dynamic, Eigen::Dynamic>& S) {
   return inv_wishart_lpdf<propto, T_y, T_dof, T_scale>(W, nu, S);
 }
 
-/**
+/** \ingroup multivar_dists
  * @deprecated use <code>inverse_wishart_lpdf</code>
  */
 template <typename T_y, typename T_dof, typename T_scale>
-inline typename boost::math::tools::promote_args<T_y, T_dof, T_scale>::type
-inv_wishart_log(
+inline return_type_t<T_y, T_dof, T_scale> inv_wishart_log(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& W,
     const T_dof& nu,
     const Eigen::Matrix<T_scale, Eigen::Dynamic, Eigen::Dynamic>& S) {

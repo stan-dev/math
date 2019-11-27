@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Returns the beta log complementary cumulative distribution function
  * for specified probability, location, and precision parameters:
  * beta_proportion_lccdf(y | mu, kappa) = beta_lccdf(y | mu * kappa, (1 -
@@ -30,7 +30,7 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_y, typename T_loc, typename T_prec>
-typename return_type<T_y, T_loc, T_prec>::type beta_proportion_ccdf_log(
+return_type_t<T_y, T_loc, T_prec> beta_proportion_ccdf_log(
     const T_y& y, const T_loc& mu, const T_prec& kappa) {
   return beta_proportion_lccdf<T_y, T_loc, T_prec>(y, mu, kappa);
 }

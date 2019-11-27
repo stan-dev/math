@@ -21,7 +21,7 @@ struct promote_scalar_type<T, std::vector<S> > {
   /**
    * The promoted type.
    */
-  typedef std::vector<typename promote_scalar_type<T, S>::type> type;
+  using type = std::vector<typename promote_scalar_type<T, S>::type>;
 };
 
 }  // namespace math

@@ -19,7 +19,7 @@ namespace math {
 // NegBinomial(n|eta, phi)  [phi > 0;  n >= 0]
 template <bool propto, typename T_n, typename T_log_location,
           typename T_precision>
-typename return_type<T_log_location, T_precision>::type neg_binomial_2_log_lpmf(
+return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
     const T_n& n, const T_log_location& eta, const T_precision& phi) {
   typedef
       typename stan::partials_return_type<T_n, T_log_location,
@@ -27,8 +27,9 @@ typename return_type<T_log_location, T_precision>::type neg_binomial_2_log_lpmf(
 
   static const char* function = "neg_binomial_2_log_lpmf";
 
-  if (size_zero(n, eta, phi))
+  if (size_zero(n, eta, phi)) {
     return 0.0;
+  }
 
   T_partials_return logp(0.0);
   check_nonnegative(function, "Failures variable", n);
@@ -38,8 +39,9 @@ typename return_type<T_log_location, T_precision>::type neg_binomial_2_log_lpmf(
                          "Log location parameter", eta, "Precision parameter",
                          phi);
 
-  if (!include_summand<propto, T_log_location, T_precision>::value)
+  if (!include_summand<propto, T_log_location, T_precision>::value) {
     return 0.0;
+  }
 
   using std::exp;
   using std::log;
@@ -55,54 +57,65 @@ typename return_type<T_log_location, T_precision>::type neg_binomial_2_log_lpmf(
   size_t len_np = max_size(n, phi);
 
   VectorBuilder<true, T_partials_return, T_log_location> eta__(length(eta));
-  for (size_t i = 0, size = length(eta); i < size; ++i)
+  for (size_t i = 0, size = length(eta); i < size; ++i) {
     eta__[i] = value_of(eta_vec[i]);
+  }
 
   VectorBuilder<true, T_partials_return, T_precision> phi__(length(phi));
-  for (size_t i = 0, size = length(phi); i < size; ++i)
+  for (size_t i = 0, size = length(phi); i < size; ++i) {
     phi__[i] = value_of(phi_vec[i]);
+  }
 
   VectorBuilder<true, T_partials_return, T_precision> log_phi(length(phi));
-  for (size_t i = 0, size = length(phi); i < size; ++i)
+  for (size_t i = 0, size = length(phi); i < size; ++i) {
     log_phi[i] = log(phi__[i]);
+  }
 
   VectorBuilder<true, T_partials_return, T_log_location, T_precision>
       logsumexp_eta_logphi(len_ep);
-  for (size_t i = 0; i < len_ep; ++i)
+  for (size_t i = 0; i < len_ep; ++i) {
     logsumexp_eta_logphi[i] = log_sum_exp(eta__[i], log_phi[i]);
+  }
 
   VectorBuilder<true, T_partials_return, T_n, T_precision> n_plus_phi(len_np);
-  for (size_t i = 0; i < len_np; ++i)
+  for (size_t i = 0; i < len_np; ++i) {
     n_plus_phi[i] = n_vec[i] + phi__[i];
+  }
 
   for (size_t i = 0; i < size; i++) {
-    if (include_summand<propto>::value)
+    if (include_summand<propto>::value) {
       logp -= lgamma(n_vec[i] + 1.0);
-    if (include_summand<propto, T_precision>::value)
+    }
+    if (include_summand<propto, T_precision>::value) {
       logp += multiply_log(phi__[i], phi__[i]) - lgamma(phi__[i]);
-    if (include_summand<propto, T_log_location, T_precision>::value)
+    }
+    if (include_summand<propto, T_log_location, T_precision>::value) {
       logp -= (n_plus_phi[i]) * logsumexp_eta_logphi[i];
-    if (include_summand<propto, T_log_location>::value)
+    }
+    if (include_summand<propto, T_log_location>::value) {
       logp += n_vec[i] * eta__[i];
-    if (include_summand<propto, T_precision>::value)
+    }
+    if (include_summand<propto, T_precision>::value) {
       logp += lgamma(n_plus_phi[i]);
+    }
 
-    if (!is_constant_all<T_log_location>::value)
+    if (!is_constant_all<T_log_location>::value) {
       ops_partials.edge1_.partials_[i]
           += n_vec[i] - n_plus_phi[i] / (phi__[i] / exp(eta__[i]) + 1.0);
-    if (!is_constant_all<T_precision>::value)
+    }
+    if (!is_constant_all<T_precision>::value) {
       ops_partials.edge2_.partials_[i]
           += 1.0 - n_plus_phi[i] / (exp(eta__[i]) + phi__[i]) + log_phi[i]
              - logsumexp_eta_logphi[i] - digamma(phi__[i])
              + digamma(n_plus_phi[i]);
+    }
   }
   return ops_partials.build(logp);
 }
 
 template <typename T_n, typename T_log_location, typename T_precision>
-inline typename return_type<T_log_location, T_precision>::type
-neg_binomial_2_log_lpmf(const T_n& n, const T_log_location& eta,
-                        const T_precision& phi) {
+inline return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
+    const T_n& n, const T_log_location& eta, const T_precision& phi) {
   return neg_binomial_2_log_lpmf<false>(n, eta, phi);
 }
 }  // namespace math

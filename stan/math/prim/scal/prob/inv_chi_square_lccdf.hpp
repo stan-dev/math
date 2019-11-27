@@ -19,7 +19,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Returns the inverse chi square log complementary cumulative distribution
  * function for the given variate and degrees of freedom. If given
  * containers of matching sizes, returns the log sum of probabilities.
@@ -33,13 +33,12 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_y, typename T_dof>
-typename return_type<T_y, T_dof>::type inv_chi_square_lccdf(const T_y& y,
-                                                            const T_dof& nu) {
-  typedef
-      typename stan::partials_return_type<T_y, T_dof>::type T_partials_return;
+return_type_t<T_y, T_dof> inv_chi_square_lccdf(const T_y& y, const T_dof& nu) {
+  using T_partials_return = partials_return_t<T_y, T_dof>;
 
-  if (size_zero(y, nu))
+  if (size_zero(y, nu)) {
     return 0.0;
+  }
 
   static const char* function = "inv_chi_square_lccdf";
 
@@ -59,9 +58,11 @@ typename return_type<T_y, T_dof>::type inv_chi_square_lccdf(const T_y& y,
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
-  for (size_t i = 0; i < stan::length(y); i++)
-    if (value_of(y_vec[i]) == 0)
+  for (size_t i = 0; i < stan::length(y); i++) {
+    if (value_of(y_vec[i]) == 0) {
       return ops_partials.build(0.0);
+    }
+  }
 
   using std::exp;
   using std::log;
@@ -95,17 +96,19 @@ typename return_type<T_y, T_dof>::type inv_chi_square_lccdf(const T_y& y,
 
     P += log(Pn);
 
-    if (!is_constant_all<T_y>::value)
+    if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n]
           -= 0.5 * y_inv_dbl * y_inv_dbl * exp(-0.5 * y_inv_dbl)
              * pow(0.5 * y_inv_dbl, 0.5 * nu_dbl - 1) / tgamma(0.5 * nu_dbl)
              / Pn;
-    if (!is_constant_all<T_dof>::value)
+    }
+    if (!is_constant_all<T_dof>::value) {
       ops_partials.edge2_.partials_[n]
           -= 0.5
              * grad_reg_inc_gamma(0.5 * nu_dbl, 0.5 * y_inv_dbl, gamma_vec[n],
                                   digamma_vec[n])
              / Pn;
+    }
   }
   return ops_partials.build(P);
 }

@@ -8,12 +8,12 @@ namespace stan {
 namespace math {
 template <typename Op1 = double, typename Op2 = double, typename Op3 = double,
           typename Op4 = double, typename Op5 = double,
-          typename T_return_type =
-              typename return_type<Op1, Op2, Op3, Op4, Op5>::type>
+          typename T_return_type = return_type_t<Op1, Op2, Op3, Op4, Op5>>
 class operands_and_partials;  // Forward declaration
 
 namespace internal {
-/**
+/** \ingroup type_trait
+ * \callergraph
  * An edge holds both the operands and its associated
  * partial derivatives. They're held together in the
  * same class because then we can keep the templating logic that
@@ -51,7 +51,8 @@ class ops_partials_edge {
 };
 }  // namespace internal
 
-/**
+/** \ingroup type_trait
+ * \callergraph
  * This template builds partial derivatives with respect to a
  * set of
  * operands. There are two reason for the generality of this
@@ -99,7 +100,7 @@ class operands_and_partials {
                         const Op3& /* op3 */, const Op4& /* op4 */,
                         const Op5& /* op5 */) {}
 
-  /**
+  /** \ingroup type_trait
    * Build the node to be stored on the autodiff graph.
    * This should contain both the value and the tangent.
    *

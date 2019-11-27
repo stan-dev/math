@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * The log of a chi-squared density for y with the specified
  * degrees of freedom parameter.
  * The degrees of freedom prarameter must be greater than 0.
@@ -29,17 +29,15 @@ namespace math {
  * @tparam T_dof Type of degrees of freedom.
  */
 template <bool propto, typename T_y, typename T_dof>
-typename return_type<T_y, T_dof>::type chi_square_log(const T_y& y,
-                                                      const T_dof& nu) {
+return_type_t<T_y, T_dof> chi_square_log(const T_y& y, const T_dof& nu) {
   return chi_square_lpdf<propto, T_y, T_dof>(y, nu);
 }
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>chi_square_lpdf</code>
  */
 template <typename T_y, typename T_dof>
-inline typename return_type<T_y, T_dof>::type chi_square_log(const T_y& y,
-                                                             const T_dof& nu) {
+inline return_type_t<T_y, T_dof> chi_square_log(const T_y& y, const T_dof& nu) {
   return chi_square_lpdf<T_y, T_dof>(y, nu);
 }
 

@@ -4,14 +4,15 @@
 
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/opencl/buffer_types.hpp>
+#include <string>
 
 namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const char *cholesky_decompose_kernel_code = STRINGIFY(
+static const std::string cholesky_decompose_kernel_code = STRINGIFY(
     // \endcond
-    /**
+    /** \ingroup opencl_kernels
      * Calculates the Cholesky Decomposition of a matrix on an OpenCL
      *
      * This kernel is run with threads organized in one dimension and
@@ -58,7 +59,7 @@ static const char *cholesky_decompose_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/**
+/** \ingroup opencl_kernels
  * See the docs for \link kernels/cholesky_decompose.hpp cholesky_decompose()
  * \endlink
  */

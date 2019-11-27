@@ -41,8 +41,9 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> cov_matrix_free(
 
   using std::log;
   int K = y.rows();
-  for (int k = 0; k < K; ++k)
+  for (int k = 0; k < K; ++k) {
     check_positive("cov_matrix_free", "y", y(k, k));
+  }
   Eigen::Matrix<T, Eigen::Dynamic, 1> x((K * (K + 1)) / 2);
   // FIXME: see Eigen LDLT for rank-revealing version -- use that
   // even if less efficient?
@@ -51,8 +52,9 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> cov_matrix_free(
   Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> L = llt.matrixL();
   int i = 0;
   for (int m = 0; m < K; ++m) {
-    for (int n = 0; n < m; ++n)
+    for (int n = 0; n < m; ++n) {
       x(i++) = L(m, n);
+    }
     x(i++) = log(L(m, m));
   }
   return x;

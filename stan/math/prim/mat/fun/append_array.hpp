@@ -37,10 +37,12 @@ append_array(const std::vector<T1>& x, const std::vector<T2>& y) {
     zdims[0] += y.size();
   }
   resize(z, zdims);
-  for (size_t i = 0; i < x.size(); ++i)
+  for (size_t i = 0; i < x.size(); ++i) {
     assign(z[i], x[i]);
-  for (size_t i = 0; i < y.size(); ++i)
+  }
+  for (size_t i = 0; i < y.size(); ++i) {
     assign(z[i + x.size()], y[i]);
+  }
   return z;
 }
 

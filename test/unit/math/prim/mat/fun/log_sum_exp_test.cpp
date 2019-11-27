@@ -1,5 +1,6 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 
 template <int R, int C>
 void test_log_sum_exp(const Eigen::Matrix<double, R, C>& as) {
@@ -25,11 +26,19 @@ TEST(MathFunctions, log_sum_exp) {
   v << 1, 2, 3;
   test_log_sum_exp(v);
 
-  Matrix<double, Dynamic, 1> rv(3);
+  Matrix<double, 1, Dynamic> rv(3);
   rv << 1, 2, 3;
   test_log_sum_exp(rv);
 
   Matrix<double, Dynamic, Dynamic> m_trivial(1, 1);
   m_trivial << 2;
   EXPECT_FLOAT_EQ(2, log_sum_exp(m_trivial));
+
+  Matrix<double, Dynamic, 1> i(3);
+  i << 1, 2, -std::numeric_limits<double>::infinity();
+  test_log_sum_exp(i);
+
+  Matrix<double, Dynamic, 1> ii(1);
+  ii << -std::numeric_limits<double>::infinity();
+  test_log_sum_exp(ii);
 }

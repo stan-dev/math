@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
+#include <stan/math/prim/scal/err/check_less.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
@@ -18,7 +19,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Returns the beta log complementary cumulative distribution function
  * for specified probability, location, and precision parameters:
  * beta_proportion_lccdf(y | mu, kappa) = beta_lccdf(y | mu * kappa, (1 -
@@ -39,20 +40,21 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_y, typename T_loc, typename T_prec>
-typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lccdf(
-    const T_y& y, const T_loc& mu, const T_prec& kappa) {
-  typedef typename stan::partials_return_type<T_y, T_loc, T_prec>::type
-      T_partials_return;
+return_type_t<T_y, T_loc, T_prec> beta_proportion_lccdf(const T_y& y,
+                                                        const T_loc& mu,
+                                                        const T_prec& kappa) {
+  using T_partials_return = partials_return_t<T_y, T_loc, T_prec>;
 
   static const char* function = "beta_proportion_lccdf";
 
-  if (size_zero(y, mu, kappa))
+  if (size_zero(y, mu, kappa)) {
     return 0.0;
+  }
 
   T_partials_return ccdf_log(0.0);
 
   check_positive(function, "Location parameter", mu);
-  check_less_or_equal(function, "Location parameter", mu, 1.0);
+  check_less(function, "Location parameter", mu, 1.0);
   check_positive_finite(function, "Precision parameter", kappa);
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
@@ -109,10 +111,11 @@ typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lccdf(
 
     ccdf_log += log(Pn);
 
-    if (!is_constant_all<T_y>::value)
+    if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] -= pow(1 - y_dbl, kappa_mukappa_dbl - 1)
                                           * pow(y_dbl, mukappa_dbl - 1)
                                           / betafunc_dbl / Pn;
+    }
 
     T_partials_return g1 = 0;
     T_partials_return g2 = 0;
@@ -122,11 +125,13 @@ typename return_type<T_y, T_loc, T_prec>::type beta_proportion_lccdf(
                         digamma_mukappa[n], digamma_kappa_mukappa[n],
                         digamma_kappa[n], betafunc_dbl);
     }
-    if (!is_constant_all<T_loc>::value)
+    if (!is_constant_all<T_loc>::value) {
       ops_partials.edge2_.partials_[n] -= kappa_dbl * (g1 - g2) / Pn;
-    if (!is_constant_all<T_prec>::value)
+    }
+    if (!is_constant_all<T_prec>::value) {
       ops_partials.edge3_.partials_[n]
           -= (g1 * mu_dbl + g2 * (1 - mu_dbl)) / Pn;
+    }
   }
   return ops_partials.build(ccdf_log);
 }

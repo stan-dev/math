@@ -123,8 +123,8 @@ class LDLT_factor<var, R, C> {
   inline size_t rows() const { return alloc_->N_; }
   inline size_t cols() const { return alloc_->N_; }
 
-  typedef size_t size_type;
-  typedef var value_type;
+  using size_type = size_t;
+  using value_type = var;
 
   /**
    * The LDLT_alloc object actually contains the factorization but is

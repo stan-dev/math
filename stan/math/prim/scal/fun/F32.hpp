@@ -63,16 +63,18 @@ T F32(const T& a1, const T& a2, const T& a3, const T& b1, const T& b2,
 
   for (int k = 0; k <= max_steps; ++k) {
     T p = (a1 + k) * (a2 + k) * (a3 + k) / ((b1 + k) * (b2 + k) * (k + 1));
-    if (p == 0.0)
+    if (p == 0.0) {
       return t_acc;
+    }
 
     log_t += log(fabs(p)) + log_z;
     t_sign = p >= 0.0 ? t_sign : -t_sign;
     T t_new = t_sign > 0.0 ? exp(log_t) : -exp(log_t);
     t_acc += t_new;
 
-    if (fabs(t_new) <= precision)
+    if (fabs(t_new) <= precision) {
       return t_acc;
+    }
 
     if (is_inf(t_acc)) {
       domain_error("F32", "sum (output)", t_acc, "overflow ",

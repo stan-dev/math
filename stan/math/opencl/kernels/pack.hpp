@@ -4,37 +4,38 @@
 
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/opencl/buffer_types.hpp>
+#include <string>
 
 namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const char* pack_kernel_code = STRINGIFY(
+static const std::string pack_kernel_code = STRINGIFY(
     // \endcond
-    /**
+    /** \ingroup opencl_kernels
      * Packs a flat matrix to a packed triangular matrix
      *
      * @param[out] A packed buffer
      * @param[in] B flat matrix
      * @param rows number of columns for matrix B
      * @param cols number of columns for matrix B
-     * @param part parameter that defines the triangularity of the
+     * @param view parameter that defines the triangularity of the
      * input matrix
      *  LOWER - lower triangular
      *  UPPER - upper triangular
-     * if the part parameter is not specified
+     * if the view parameter is not specified
      * @note Code is a <code>const char*</code> held in
      * <code>pack_kernel_code.</code>
      * This kernel uses the helper macros available in helpers.cl.
      */
     __kernel void pack(__global double* A, __global double* B,
                        unsigned int rows, unsigned int cols,
-                       unsigned int part) {
+                       unsigned int view) {
       int i = get_global_id(0);
       int j = get_global_id(1);
       if (i < rows && j < cols) {
         // the packed matrices are stored in row major
-        if (part == LOWER) {
+        if (view == LOWER) {
           const int column_offset = j * rows - (j * (j - 1)) / 2;
           const int row_offset = (i - j);
           if (j <= i) {
@@ -52,10 +53,10 @@ static const char* pack_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/**
+/** \ingroup opencl_kernels
  * See the docs for \link kernels/pack.hpp pack() \endlink
  */
-const kernel_cl<out_buffer, in_buffer, int, int, TriangularViewCL> pack(
+const kernel_cl<out_buffer, in_buffer, int, int, matrix_cl_view> pack(
     "pack", {indexing_helpers, pack_kernel_code});
 
 }  // namespace opencl_kernels

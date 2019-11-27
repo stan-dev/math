@@ -35,8 +35,9 @@ class gamma_p_vv_vari : public op_vv_vari {
 
     // return zero derivative as gamma_p is flat
     // to machine precision for b / a > 10
-    if (std::fabs(bvi_->val_ / avi_->val_) > 10)
+    if (std::fabs(bvi_->val_ / avi_->val_) > 10) {
       return;
+    }
 
     avi_->adj_ += adj_ * grad_reg_lower_inc_gamma(avi_->val_, bvi_->val_);
     bvi_->adj_
@@ -62,8 +63,9 @@ class gamma_p_vd_vari : public op_vd_vari {
 
     // return zero derivative as gamma_p is flat
     // to machine precision for b / a > 10
-    if (std::fabs(bd_ / avi_->val_) > 10)
+    if (std::fabs(bd_ / avi_->val_) > 10) {
       return;
+    }
 
     avi_->adj_ += adj_ * grad_reg_lower_inc_gamma(avi_->val_, bd_);
   }
@@ -85,8 +87,9 @@ class gamma_p_dv_vari : public op_dv_vari {
 
     // return zero derivative as gamma_p is flat to
     // machine precision for b / a > 10
-    if (std::fabs(bvi_->val_ / ad_) > 10)
+    if (std::fabs(bvi_->val_ / ad_) > 10) {
       return;
+    }
 
     bvi_->adj_ += adj_
                   * std::exp(-bvi_->val_ + (ad_ - 1.0) * std::log(bvi_->val_)

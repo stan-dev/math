@@ -28,10 +28,12 @@ namespace math {
 inline double inv_Phi(double p) {
   check_bounded("inv_Phi", "Probability variable", p, 0, 1);
 
-  if (p < 8e-311)
+  if (p < 8e-311) {
     return NEGATIVE_INFTY;
-  if (p == 1)
+  }
+  if (p == 1) {
     return INFTY;
+  }
 
   static const double a[6]
       = {-3.969683028665376e+01, 2.209460984245205e+02,  -2.759285104469687e+02,

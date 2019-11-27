@@ -27,8 +27,9 @@ void check_positive_ordered(const char* function, const char* name,
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
-  if (y.size() == 0)
+  if (y.size() == 0) {
     return;
+  }
 
   if (y[0] < 0) {
     std::ostringstream msg;

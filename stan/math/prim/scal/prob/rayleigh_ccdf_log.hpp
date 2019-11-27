@@ -7,12 +7,12 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>rayleigh_lccdf</code>
  */
 template <typename T_y, typename T_scale>
-typename return_type<T_y, T_scale>::type rayleigh_ccdf_log(
-    const T_y& y, const T_scale& sigma) {
+return_type_t<T_y, T_scale> rayleigh_ccdf_log(const T_y& y,
+                                              const T_scale& sigma) {
   return rayleigh_lccdf<T_y, T_scale>(y, sigma);
 }
 

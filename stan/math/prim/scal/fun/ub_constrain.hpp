@@ -30,11 +30,11 @@ namespace math {
  * @return scalar constrained to have upper bound
  */
 template <typename T, typename U>
-inline typename boost::math::tools::promote_args<T, U>::type ub_constrain(
-    const T& x, const U& ub) {
+inline return_type_t<T, U> ub_constrain(const T& x, const U& ub) {
   using std::exp;
-  if (ub == INFTY)
+  if (ub == INFTY) {
     return identity_constrain(x);
+  }
   return ub - exp(x);
 }
 
@@ -62,11 +62,11 @@ inline typename boost::math::tools::promote_args<T, U>::type ub_constrain(
  * @return scalar constrained to have upper bound
  */
 template <typename T, typename U>
-inline typename boost::math::tools::promote_args<T, U>::type ub_constrain(
-    const T& x, const U& ub, T& lp) {
+inline return_type_t<T, U> ub_constrain(const T& x, const U& ub, T& lp) {
   using std::exp;
-  if (ub == INFTY)
+  if (ub == INFTY) {
     return identity_constrain(x, lp);
+  }
   lp += x;
   return ub - exp(x);
 }

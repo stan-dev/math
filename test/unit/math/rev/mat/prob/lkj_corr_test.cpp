@@ -1,11 +1,10 @@
-#include <stan/math/rev/mat.hpp>
-#include <gtest/gtest.h>
 #include <stan/math.hpp>
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/math/distributions.hpp>
 #include <test/unit/math/rev/mat/prob/lkj_corr_cholesky_test_functors.hpp>
 #include <test/unit/math/rev/mat/prob/test_gradients.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
+#include <boost/random/mersenne_twister.hpp>
+#include <boost/math/distributions.hpp>
+#include <gtest/gtest.h>
 
 TEST(ProbDistributionsLkjCorr, var) {
   using stan::math::var;

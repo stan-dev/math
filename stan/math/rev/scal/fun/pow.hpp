@@ -25,8 +25,9 @@ class pow_vv_vari : public op_vv_vari {
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
       bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
     } else {
-      if (avi_->val_ == 0.0)
+      if (avi_->val_ == 0.0) {
         return;  // partials zero, avoids 0 & log(0)
+      }
       avi_->adj_ += adj_ * bvi_->val_ * val_ / avi_->val_;
       bvi_->adj_ += adj_ * std::log(avi_->val_) * val_;
     }
@@ -41,8 +42,9 @@ class pow_vd_vari : public op_vd_vari {
     if (unlikely(is_any_nan(avi_->val_, bd_))) {
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
     } else {
-      if (avi_->val_ == 0.0)
+      if (avi_->val_ == 0.0) {
         return;  // partials zero, avoids 0 & log(0)
+      }
       avi_->adj_ += adj_ * bd_ * val_ / avi_->val_;
     }
   }
@@ -56,8 +58,9 @@ class pow_dv_vari : public op_dv_vari {
     if (unlikely(is_any_nan(bvi_->val_, ad_))) {
       bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
     } else {
-      if (ad_ == 0.0)
+      if (ad_ == 0.0) {
         return;  // partials zero, avoids 0 & log(0)
+      }
       bvi_->adj_ += adj_ * std::log(ad_) * val_;
     }
   }
@@ -119,18 +122,24 @@ inline var pow(const var& base, const var& exponent) {
  * @return Base raised to the exponent.
  */
 inline var pow(const var& base, double exponent) {
-  if (exponent == 0.5)
+  if (exponent == 0.5) {
     return sqrt(base);
-  if (exponent == 1.0)
+  }
+  if (exponent == 1.0) {
     return base;
-  if (exponent == 2.0)
+  }
+  if (exponent == 2.0) {
     return square(base);
-  if (exponent == -2.0)
+  }
+  if (exponent == -2.0) {
     return inv_square(base);
-  if (exponent == -1.0)
+  }
+  if (exponent == -1.0) {
     return inv(base);
-  if (exponent == -0.5)
+  }
+  if (exponent == -0.5) {
     return inv_sqrt(base);
+  }
   return var(new internal::pow_vd_vari(base.vi_, exponent));
 }
 

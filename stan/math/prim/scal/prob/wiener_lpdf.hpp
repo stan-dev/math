@@ -47,7 +47,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * The log of the first passage time density function for a (Wiener)
  *  drift diffusion model for the given \f$y\f$,
  * boundary separation \f$\alpha\f$, nondecision time \f$\tau\f$,
@@ -67,7 +67,7 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_alpha, typename T_tau,
           typename T_beta, typename T_delta>
-typename return_type<T_y, T_alpha, T_tau, T_beta, T_delta>::type wiener_lpdf(
+return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
     const T_y& y, const T_alpha& alpha, const T_tau& tau, const T_beta& beta,
     const T_delta& delta) {
   static const char* function = "wiener_lpdf";
@@ -86,11 +86,11 @@ typename return_type<T_y, T_alpha, T_tau, T_beta, T_delta>::type wiener_lpdf(
   static const double SQUARE_PI_OVER_TWO = square(pi()) * 0.5;
   static const double TWO_TIMES_LOG_SQRT_PI = 2.0 * LOG_SQRT_PI;
 
-  if (size_zero(y, alpha, beta, tau, delta))
+  if (size_zero(y, alpha, beta, tau, delta)) {
     return 0.0;
+  }
 
-  typedef typename return_type<T_y, T_alpha, T_tau, T_beta, T_delta>::type
-      T_return_type;
+  using T_return_type = return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta>;
   T_return_type lp(0.0);
 
   check_not_nan(function, "Random variable", y);
@@ -111,8 +111,9 @@ typename return_type<T_y, T_alpha, T_tau, T_beta, T_delta>::type wiener_lpdf(
                          "Drift rate", delta);
 
   size_t N = std::max(max_size(y, alpha, beta), max_size(tau, delta));
-  if (!N)
+  if (!N) {
     return 0.0;
+  }
 
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_alpha> alpha_vec(alpha);
@@ -131,8 +132,9 @@ typename return_type<T_y, T_alpha, T_tau, T_beta, T_delta>::type wiener_lpdf(
     }
   }
 
-  if (!include_summand<propto, T_y, T_alpha, T_tau, T_beta, T_delta>::value)
+  if (!include_summand<propto, T_y, T_alpha, T_tau, T_beta, T_delta>::value) {
     return 0;
+  }
 
   for (size_t i = 0; i < N; i++) {
     typename scalar_type<T_beta>::type one_minus_beta = 1.0 - beta_vec[i];
@@ -171,15 +173,17 @@ typename return_type<T_y, T_alpha, T_tau, T_beta, T_delta>::type wiener_lpdf(
       K = ceil(ks);  // round to smallest integer meeting error
       T_return_type tmp_expr1 = (K - 1.0) / 2.0;
       T_return_type tmp_expr2 = ceil(tmp_expr1);
-      for (k = -floor(tmp_expr1); k <= tmp_expr2; k++)
+      for (k = -floor(tmp_expr1); k <= tmp_expr2; k++) {
         tmp += (one_minus_beta + 2.0 * k)
                * exp(-(square(one_minus_beta + 2.0 * k)) * 0.5 / x);
+      }
       tmp = log(tmp) - LOG_TWO_OVER_TWO_PLUS_LOG_SQRT_PI - 1.5 * log_x;
     } else {         // if large t is better...
       K = ceil(kl);  // round to smallest integer meeting error
-      for (k = 1; k <= K; ++k)
+      for (k = 1; k <= K; ++k) {
         tmp += k * exp(-(square(k)) * (SQUARE_PI_OVER_TWO * x))
                * sin(k * pi() * one_minus_beta);
+      }
       tmp = log(tmp) + TWO_TIMES_LOG_SQRT_PI;
     }
 
@@ -192,9 +196,9 @@ typename return_type<T_y, T_alpha, T_tau, T_beta, T_delta>::type wiener_lpdf(
 
 template <typename T_y, typename T_alpha, typename T_tau, typename T_beta,
           typename T_delta>
-inline typename return_type<T_y, T_alpha, T_tau, T_beta, T_delta>::type
-wiener_lpdf(const T_y& y, const T_alpha& alpha, const T_tau& tau,
-            const T_beta& beta, const T_delta& delta) {
+inline return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
+    const T_y& y, const T_alpha& alpha, const T_tau& tau, const T_beta& beta,
+    const T_delta& delta) {
   return wiener_lpdf<false>(y, alpha, tau, beta, delta);
 }
 

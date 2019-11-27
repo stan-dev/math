@@ -4,14 +4,15 @@
 
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/opencl/buffer_types.hpp>
+#include <string>
 
 namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const char* multiply_transpose_kernel_code = STRINGIFY(
+static const std::string multiply_transpose_kernel_code = STRINGIFY(
     // \endcond
-    /**
+    /** \ingroup opencl_kernels
      * Matrix multiplication of the form A*A^T on the OpenCL device
      *
      * @param[in] A matrix A
@@ -112,7 +113,7 @@ static const char* multiply_transpose_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/**
+/** \ingroup opencl_kernels
  * See the docs for \link kernels/multiply_transpose.hpp add() \endlink
  */
 const kernel_cl<in_buffer, out_buffer, int, int> multiply_transpose(

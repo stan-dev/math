@@ -28,15 +28,17 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> ordered_free(
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::log;
-  typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
+  using size_type = typename index_type<Matrix<T, Dynamic, 1>>::type;
 
   size_type k = y.size();
   Matrix<T, Dynamic, 1> x(k);
-  if (k == 0)
+  if (k == 0) {
     return x;
+  }
   x[0] = y[0];
-  for (size_type i = 1; i < k; ++i)
+  for (size_type i = 1; i < k; ++i) {
     x[i] = log(y[i] - y[i - 1]);
+  }
   return x;
 }
 }  // namespace math

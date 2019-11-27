@@ -36,9 +36,9 @@ class cvodes_ode_data {
   std::ostream* msgs_;
   const size_t S_;
 
-  typedef cvodes_ode_data<F, T_initial, T_param> ode_data;
-  typedef stan::is_var<T_initial> initial_var;
-  typedef stan::is_var<T_param> param_var;
+  using ode_data = cvodes_ode_data<F, T_initial, T_param>;
+  using initial_var = stan::is_var<T_initial>;
+  using param_var = stan::is_var<T_param>;
 
  public:
   const coupled_ode_system<F, T_initial, T_param> coupled_ode_;
@@ -102,8 +102,9 @@ class cvodes_ode_data {
     SUNLinSolFree(LS_);
     SUNMatDestroy(A_);
     N_VDestroy_Serial(nv_state_);
-    if (S_ > 0)
+    if (S_ > 0) {
       N_VDestroyVectorArray_Serial(nv_state_sens_, S_);
+    }
   }
 
   /**
@@ -185,13 +186,15 @@ class cvodes_ode_data {
     std::vector<double> z(coupled_state_.size());
     std::vector<double>&& dz_dt = std::vector<double>(coupled_state_.size());
     std::copy(y, y + N_, z.begin());
-    for (std::size_t s = 0; s < S_; s++)
+    for (std::size_t s = 0; s < S_; s++) {
       std::copy(NV_DATA_S(yS[s]), NV_DATA_S(yS[s]) + N_,
                 z.begin() + (s + 1) * N_);
+    }
     coupled_ode_(z, dz_dt, t);
-    for (std::size_t s = 0; s < S_; s++)
+    for (std::size_t s = 0; s < S_; s++) {
       std::move(dz_dt.begin() + (s + 1) * N_, dz_dt.begin() + (s + 2) * N_,
                 NV_DATA_S(ySdot[s]));
+    }
   }
 };
 

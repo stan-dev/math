@@ -15,7 +15,7 @@
 
 namespace stan {
 namespace math {
-/**
+/** \ingroup multivar_dists
  * The log of a multivariate Gaussian Process for the given y, Sigma, and
  * w.  y is a dxN matrix, where each column is a different observation and each
  * row is a different output dimension.  The Gaussian Process is assumed to
@@ -35,14 +35,12 @@ namespace math {
  * @tparam T_w Type of weight.
  */
 template <bool propto, typename T_y, typename T_covar, typename T_w>
-typename boost::math::tools::promote_args<T_y, T_covar, T_w>::type
-multi_gp_lpdf(
+return_type_t<T_y, T_covar, T_w> multi_gp_lpdf(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
     const Eigen::Matrix<T_covar, Eigen::Dynamic, Eigen::Dynamic>& Sigma,
     const Eigen::Matrix<T_w, Eigen::Dynamic, 1>& w) {
   static const char* function = "multi_gp_lpdf";
-  typedef
-      typename boost::math::tools::promote_args<T_y, T_covar, T_w>::type T_lp;
+  using T_lp = return_type_t<T_y, T_covar, T_w>;
   T_lp lp(0.0);
 
   check_positive(function, "Kernel rows", Sigma.rows());
@@ -59,8 +57,9 @@ multi_gp_lpdf(
   check_positive_finite(function, "Kernel scales", w);
   check_finite(function, "Random variable", y);
 
-  if (y.rows() == 0)
+  if (y.rows() == 0) {
     return lp;
+  }
 
   if (include_summand<propto>::value) {
     lp += NEG_LOG_SQRT_TWO_PI * y.rows() * y.cols();
@@ -84,8 +83,7 @@ multi_gp_lpdf(
 }
 
 template <typename T_y, typename T_covar, typename T_w>
-inline typename boost::math::tools::promote_args<T_y, T_covar, T_w>::type
-multi_gp_lpdf(
+inline return_type_t<T_y, T_covar, T_w> multi_gp_lpdf(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
     const Eigen::Matrix<T_covar, Eigen::Dynamic, Eigen::Dynamic>& Sigma,
     const Eigen::Matrix<T_w, Eigen::Dynamic, 1>& w) {

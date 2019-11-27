@@ -9,28 +9,28 @@ namespace math {
 
 template <typename T>
 struct store_type {
-  typedef const T& type;
+  using type = const T &;
 };
 template <>
 struct store_type<double> {
-  typedef const double type;
+  using type = const double;
 };
 template <>
 struct store_type<int> {
-  typedef const int type;
+  using type = const int;
 };
 
 template <typename T>
 struct pass_type {
-  typedef const T& type;
+  using type = const T &;
 };
 template <>
 struct pass_type<double> {
-  typedef double type;
+  using type = double;
 };
 template <>
 struct pass_type<int> {
-  typedef int type;
+  using type = int;
 };
 
 // S assignable to T

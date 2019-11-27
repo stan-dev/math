@@ -2,6 +2,7 @@
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
 #include <limits>
+#include <cmath>
 
 template <typename T_N, typename T_n>
 void test_binom_coefficient(const T_N& N, const T_n& n) {
@@ -28,6 +29,7 @@ TEST(MathFunctions, binomial_coefficient_log) {
 
   test_binom_coefficient(1e9, 1e5);
   test_binom_coefficient(1e50, 1e45);
+  test_binom_coefficient(1e20, 1e15);
 }
 
 TEST(MathFunctions, binomial_coefficient_log_nan) {

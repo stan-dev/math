@@ -5,9 +5,9 @@
 #include <stan/math/prim/scal/meta/disjunction.hpp>
 
 namespace stan {
-/**
+/** \ingroup type_trait
  * Metaprogram to determine if any of the
- * provided types is a std::vector.
+ * provided types is a std or eigen vector.
  * @tparam T Types to test
  */
 template <typename... T>

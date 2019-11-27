@@ -39,12 +39,13 @@ namespace math {
  * @throw std::domain_error if mu is not finite
  */
 template <typename T, typename L, typename S>
-inline typename boost::math::tools::promote_args<T, L, S>::type locscale_free(
-    const T& y, const L& mu, const S& sigma) {
+inline return_type_t<T, L, S> locscale_free(const T& y, const L& mu,
+                                            const S& sigma) {
   check_finite("locscale_free", "location", mu);
   if (sigma == 1) {
-    if (mu == 0)
+    if (mu == 0) {
       return identity_free(y);
+    }
     return y - mu;
   }
   check_positive_finite("locscale_free", "scale", sigma);

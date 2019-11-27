@@ -15,7 +15,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup multivar_dists
  * The log of the Wishart density for the given W, degrees of freedom,
  * and scale matrix.
  *
@@ -46,10 +46,10 @@ namespace math {
  * @tparam T_scale Type of scale.
  */
 template <bool propto, typename T_y, typename T_dof, typename T_scale>
-typename boost::math::tools::promote_args<T_y, T_dof, T_scale>::type
-wishart_lpdf(const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& W,
-             const T_dof& nu,
-             const Eigen::Matrix<T_scale, Eigen::Dynamic, Eigen::Dynamic>& S) {
+return_type_t<T_y, T_dof, T_scale> wishart_lpdf(
+    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& W,
+    const T_dof& nu,
+    const Eigen::Matrix<T_scale, Eigen::Dynamic, Eigen::Dynamic>& S) {
   static const char* function = "wishart_lpdf";
 
   using Eigen::Dynamic;
@@ -58,7 +58,7 @@ wishart_lpdf(const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& W,
   using boost::math::tools::promote_args;
 
   typename index_type<Matrix<T_scale, Dynamic, Dynamic> >::type k = W.rows();
-  typename promote_args<T_y, T_dof, T_scale>::type lp(0.0);
+  return_type_t<T_y, T_dof, T_scale> lp(0.0);
   check_greater(function, "Degrees of freedom parameter", nu, k - 1);
   check_square(function, "random variable", W);
   check_square(function, "scale parameter", S);
@@ -71,32 +71,36 @@ wishart_lpdf(const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& W,
   LDLT_factor<T_scale, Eigen::Dynamic, Eigen::Dynamic> ldlt_S(S);
   check_ldlt_factor(function, "LDLT_Factor of scale parameter", ldlt_S);
 
-  if (include_summand<propto, T_dof>::value)
+  if (include_summand<propto, T_dof>::value) {
     lp += nu * k * NEG_LOG_TWO_OVER_TWO;
+  }
 
-  if (include_summand<propto, T_dof>::value)
+  if (include_summand<propto, T_dof>::value) {
     lp -= lmgamma(k, 0.5 * nu);
+  }
 
-  if (include_summand<propto, T_dof, T_scale>::value)
+  if (include_summand<propto, T_dof, T_scale>::value) {
     lp -= 0.5 * nu * log_determinant_ldlt(ldlt_S);
+  }
 
   if (include_summand<propto, T_scale, T_y>::value) {
-    Matrix<typename promote_args<T_y, T_scale>::type, Dynamic, Dynamic> Sinv_W(
+    Matrix<return_type_t<T_y, T_scale>, Dynamic, Dynamic> Sinv_W(
         mdivide_left_ldlt(ldlt_S, static_cast<Matrix<T_y, Dynamic, Dynamic> >(
                                       W.template selfadjointView<Lower>())));
     lp -= 0.5 * trace(Sinv_W);
   }
 
-  if (include_summand<propto, T_y, T_dof>::value && nu != (k + 1))
+  if (include_summand<propto, T_y, T_dof>::value && nu != (k + 1)) {
     lp += 0.5 * (nu - k - 1.0) * log_determinant_ldlt(ldlt_W);
+  }
   return lp;
 }
 
 template <typename T_y, typename T_dof, typename T_scale>
-inline typename boost::math::tools::promote_args<T_y, T_dof, T_scale>::type
-wishart_lpdf(const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& W,
-             const T_dof& nu,
-             const Eigen::Matrix<T_scale, Eigen::Dynamic, Eigen::Dynamic>& S) {
+inline return_type_t<T_y, T_dof, T_scale> wishart_lpdf(
+    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& W,
+    const T_dof& nu,
+    const Eigen::Matrix<T_scale, Eigen::Dynamic, Eigen::Dynamic>& S) {
   return wishart_lpdf<false>(W, nu, S);
 }
 

@@ -14,7 +14,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * The log of a uniform density for the given
  * y, lower, and upper bound.
  *
@@ -37,16 +37,16 @@ namespace math {
  * @tparam T_high Type of upper bound.
  */
 template <bool propto, typename T_y, typename T_low, typename T_high>
-typename return_type<T_y, T_low, T_high>::type uniform_lpdf(
-    const T_y& y, const T_low& alpha, const T_high& beta) {
+return_type_t<T_y, T_low, T_high> uniform_lpdf(const T_y& y, const T_low& alpha,
+                                               const T_high& beta) {
   static const char* function = "uniform_lpdf";
-  typedef typename stan::partials_return_type<T_y, T_low, T_high>::type
-      T_partials_return;
+  using T_partials_return = partials_return_t<T_y, T_low, T_high>;
 
   using std::log;
 
-  if (size_zero(y, alpha, beta))
+  if (size_zero(y, alpha, beta)) {
     return 0.0;
+  }
 
   T_partials_return logp(0.0);
   check_not_nan(function, "Random variable", y);
@@ -57,8 +57,9 @@ typename return_type<T_y, T_low, T_high>::type uniform_lpdf(
                          "Lower bound parameter", alpha,
                          "Upper bound parameter", beta);
 
-  if (!include_summand<propto, T_y, T_low, T_high>::value)
+  if (!include_summand<propto, T_y, T_low, T_high>::value) {
     return 0.0;
+  }
 
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_low> alpha_vec(alpha);
@@ -67,42 +68,51 @@ typename return_type<T_y, T_low, T_high>::type uniform_lpdf(
 
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
-    if (y_dbl < value_of(alpha_vec[n]) || y_dbl > value_of(beta_vec[n]))
+    if (y_dbl < value_of(alpha_vec[n]) || y_dbl > value_of(beta_vec[n])) {
       return LOG_ZERO;
+    }
   }
 
   VectorBuilder<include_summand<propto, T_low, T_high>::value,
                 T_partials_return, T_low, T_high>
       inv_beta_minus_alpha(max_size(alpha, beta));
-  for (size_t i = 0; i < max_size(alpha, beta); i++)
-    if (include_summand<propto, T_low, T_high>::value)
+  for (size_t i = 0; i < max_size(alpha, beta); i++) {
+    if (include_summand<propto, T_low, T_high>::value) {
       inv_beta_minus_alpha[i]
           = 1.0 / (value_of(beta_vec[i]) - value_of(alpha_vec[i]));
+    }
+  }
 
   VectorBuilder<include_summand<propto, T_low, T_high>::value,
                 T_partials_return, T_low, T_high>
       log_beta_minus_alpha(max_size(alpha, beta));
-  for (size_t i = 0; i < max_size(alpha, beta); i++)
-    if (include_summand<propto, T_low, T_high>::value)
+  for (size_t i = 0; i < max_size(alpha, beta); i++) {
+    if (include_summand<propto, T_low, T_high>::value) {
       log_beta_minus_alpha[i]
           = log(value_of(beta_vec[i]) - value_of(alpha_vec[i]));
+    }
+  }
 
   operands_and_partials<T_y, T_low, T_high> ops_partials(y, alpha, beta);
   for (size_t n = 0; n < N; n++) {
-    if (include_summand<propto, T_low, T_high>::value)
+    if (include_summand<propto, T_low, T_high>::value) {
       logp -= log_beta_minus_alpha[n];
+    }
 
-    if (!is_constant_all<T_low>::value)
+    if (!is_constant_all<T_low>::value) {
       ops_partials.edge2_.partials_[n] += inv_beta_minus_alpha[n];
-    if (!is_constant_all<T_high>::value)
+    }
+    if (!is_constant_all<T_high>::value) {
       ops_partials.edge3_.partials_[n] -= inv_beta_minus_alpha[n];
+    }
   }
   return ops_partials.build(logp);
 }
 
 template <typename T_y, typename T_low, typename T_high>
-inline typename return_type<T_y, T_low, T_high>::type uniform_lpdf(
-    const T_y& y, const T_low& alpha, const T_high& beta) {
+inline return_type_t<T_y, T_low, T_high> uniform_lpdf(const T_y& y,
+                                                      const T_low& alpha,
+                                                      const T_high& beta) {
   return uniform_lpdf<false>(y, alpha, beta);
 }
 

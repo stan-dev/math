@@ -12,7 +12,7 @@ namespace math {
 
 /**
  * Return the greater of the two specified arguments.  If one is
- * greater than the other, return not-a-number.
+ * not-a-number, return the other.
  *
  * @param x1 First argument.
  * @param x2 Second argument.
@@ -21,10 +21,11 @@ namespace math {
 template <typename T>
 inline fvar<T> fmax(const fvar<T>& x1, const fvar<T>& x2) {
   if (unlikely(is_nan(x1.val_))) {
-    if (is_nan(x2.val_))
+    if (is_nan(x2.val_)) {
       return fvar<T>(fmax(x1.val_, x2.val_), NOT_A_NUMBER);
-    else
+    } else {
       return fvar<T>(x2.val_, x2.d_);
+    }
   } else if (unlikely(is_nan(x2.val_))) {
     return fvar<T>(x1.val_, x1.d_);
   } else if (x1.val_ > x2.val_) {
@@ -38,7 +39,7 @@ inline fvar<T> fmax(const fvar<T>& x1, const fvar<T>& x2) {
 
 /**
  * Return the greater of the two specified arguments.  If one is
- * greater than the other, return not-a-number.
+ * not-a-number, return the other.
  *
  * @param x1 First argument.
  * @param x2 Second argument.
@@ -47,10 +48,11 @@ inline fvar<T> fmax(const fvar<T>& x1, const fvar<T>& x2) {
 template <typename T>
 inline fvar<T> fmax(double x1, const fvar<T>& x2) {
   if (unlikely(is_nan(x1))) {
-    if (is_nan(x2.val_))
+    if (is_nan(x2.val_)) {
       return fvar<T>(fmax(x1, x2.val_), NOT_A_NUMBER);
-    else
+    } else {
       return fvar<T>(x2.val_, x2.d_);
+    }
   } else if (unlikely(is_nan(x2.val_))) {
     return fvar<T>(x1, 0.0);
   } else if (x1 > x2.val_) {
@@ -64,7 +66,7 @@ inline fvar<T> fmax(double x1, const fvar<T>& x2) {
 
 /**
  * Return the greater of the two specified arguments.  If one is
- * greater than the other, return not-a-number.
+ * not-a-number, return the other.
  *
  * @param x1 First argument.
  * @param x2 Second argument.
@@ -73,10 +75,11 @@ inline fvar<T> fmax(double x1, const fvar<T>& x2) {
 template <typename T>
 inline fvar<T> fmax(const fvar<T>& x1, double x2) {
   if (unlikely(is_nan(x1.val_))) {
-    if (is_nan(x2))
+    if (is_nan(x2)) {
       return fvar<T>(fmax(x1.val_, x2), NOT_A_NUMBER);
-    else
+    } else {
       return fvar<T>(x2, 0.0);
+    }
   } else if (unlikely(is_nan(x2))) {
     return fvar<T>(x1.val_, x1.d_);
   } else if (x1.val_ > x2) {

@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * The log of the Cauchy density for the specified scalar(s) given
  * the specified location parameter(s) and scale parameter(s). y,
  * mu, or sigma can each either be scalar a vector.  Any vector
@@ -27,17 +27,18 @@ namespace math {
  * @tparam T_scale Type of scale.
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
-typename return_type<T_y, T_loc, T_scale>::type cauchy_log(
-    const T_y& y, const T_loc& mu, const T_scale& sigma) {
+return_type_t<T_y, T_loc, T_scale> cauchy_log(const T_y& y, const T_loc& mu,
+                                              const T_scale& sigma) {
   return cauchy_lpdf<propto, T_y, T_loc, T_scale>(y, mu, sigma);
 }
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>cauchy_lpdf</code>
  */
 template <typename T_y, typename T_loc, typename T_scale>
-inline typename return_type<T_y, T_loc, T_scale>::type cauchy_log(
-    const T_y& y, const T_loc& mu, const T_scale& sigma) {
+inline return_type_t<T_y, T_loc, T_scale> cauchy_log(const T_y& y,
+                                                     const T_loc& mu,
+                                                     const T_scale& sigma) {
   return cauchy_lpdf<T_y, T_loc, T_scale>(y, mu, sigma);
 }
 

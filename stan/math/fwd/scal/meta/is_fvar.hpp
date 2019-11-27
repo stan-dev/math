@@ -3,16 +3,23 @@
 
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/scal/meta/is_fvar.hpp>
+#include <type_traits>
 
 namespace stan {
-/**
- * Defines a public enum named value and sets it to true(1)
- * when instantiated with the stan::math::fvar type.
- */
+
+namespace internal {
 template <typename T>
-struct is_fvar<stan::math::fvar<T> > {
-  enum { value = true };
-};
+struct is_fvar_impl : std::false_type {};
+
+template <typename T>
+struct is_fvar_impl<math::fvar<T>> : std::true_type {};
+
+}  // namespace internal
+
+template <typename T>
+struct is_fvar<T,
+               std::enable_if_t<internal::is_fvar_impl<std::decay_t<T>>::value>>
+    : std::true_type {};
 
 }  // namespace stan
 #endif

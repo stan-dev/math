@@ -18,7 +18,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Returns the beta log cumulative distribution function for the given
  * probability, success, and failure parameters.  Any arguments other
  * than scalars must be containers of the same size.  With non-scalar
@@ -37,14 +37,13 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_y, typename T_scale_succ, typename T_scale_fail>
-typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lcdf(
+return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lcdf(
     const T_y& y, const T_scale_succ& alpha, const T_scale_fail& beta) {
-  typedef
-      typename stan::partials_return_type<T_y, T_scale_succ, T_scale_fail>::type
-          T_partials_return;
+  using T_partials_return = partials_return_t<T_y, T_scale_succ, T_scale_fail>;
 
-  if (size_zero(y, alpha, beta))
+  if (size_zero(y, alpha, beta)) {
     return 0.0;
+  }
 
   static const char* function = "beta_lcdf";
 
@@ -104,10 +103,11 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lcdf(
 
     cdf_log += log(Pn);
 
-    if (!is_constant_all<T_y>::value)
+    if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] += pow(1 - y_dbl, beta_dbl - 1)
                                           * pow(y_dbl, alpha_dbl - 1)
                                           / betafunc_dbl / Pn;
+    }
 
     T_partials_return g1 = 0;
     T_partials_return g2 = 0;
@@ -117,10 +117,12 @@ typename return_type<T_y, T_scale_succ, T_scale_fail>::type beta_lcdf(
                         digamma_alpha_vec[n], digamma_beta_vec[n],
                         digamma_sum_vec[n], betafunc_dbl);
     }
-    if (!is_constant_all<T_scale_succ>::value)
+    if (!is_constant_all<T_scale_succ>::value) {
       ops_partials.edge2_.partials_[n] += g1 / Pn;
-    if (!is_constant_all<T_scale_fail>::value)
+    }
+    if (!is_constant_all<T_scale_fail>::value) {
       ops_partials.edge3_.partials_[n] += g2 / Pn;
+    }
   }
 
   return ops_partials.build(cdf_log);

@@ -16,14 +16,13 @@ namespace stan {
 namespace math {
 
 template <typename T_n, typename T_rate>
-typename return_type<T_rate>::type poisson_lccdf(const T_n& n,
-                                                 const T_rate& lambda) {
+return_type_t<T_rate> poisson_lccdf(const T_n& n, const T_rate& lambda) {
   static const char* function = "poisson_lccdf";
-  typedef
-      typename stan::partials_return_type<T_n, T_rate>::type T_partials_return;
+  using T_partials_return = partials_return_t<T_n, T_rate>;
 
-  if (size_zero(n, lambda))
+  if (size_zero(n, lambda)) {
     return 0.0;
+  }
 
   T_partials_return P(0.0);
 
@@ -44,15 +43,17 @@ typename return_type<T_rate>::type poisson_lccdf(const T_n& n,
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as neg infinity
   for (size_t i = 0; i < stan::length(n); i++) {
-    if (value_of(n_vec[i]) < 0)
+    if (value_of(n_vec[i]) < 0) {
       return ops_partials.build(0.0);
+    }
   }
 
   for (size_t i = 0; i < size; i++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
-    if (value_of(n_vec[i]) == std::numeric_limits<int>::max())
+    if (value_of(n_vec[i]) == std::numeric_limits<int>::max()) {
       return ops_partials.build(negative_infinity());
+    }
 
     const T_partials_return n_dbl = value_of(n_vec[i]);
     const T_partials_return lambda_dbl = value_of(lambda_vec[i]);
@@ -60,9 +61,10 @@ typename return_type<T_rate>::type poisson_lccdf(const T_n& n,
 
     P += log_Pi;
 
-    if (!is_constant_all<T_rate>::value)
+    if (!is_constant_all<T_rate>::value) {
       ops_partials.edge1_.partials_[i] += exp(
           n_dbl * log(lambda_dbl) - lambda_dbl - lgamma(n_dbl + 1) - log_Pi);
+    }
   }
   return ops_partials.build(P);
 }

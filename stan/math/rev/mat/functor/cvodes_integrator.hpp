@@ -9,6 +9,7 @@
 #include <stan/math/prim/arr/err/check_ordered.hpp>
 #include <stan/math/prim/arr/functor/coupled_ode_observer.hpp>
 #include <stan/math/prim/arr/functor/coupled_ode_system.hpp>
+#include <stan/math/prim/mat/err/check_flag_sundials.hpp>
 #include <stan/math/rev/arr/functor/coupled_ode_system.hpp>
 #include <stan/math/rev/mat/functor/cvodes_utils.hpp>
 #include <stan/math/rev/mat/functor/cvodes_ode_data.hpp>
@@ -80,8 +81,8 @@ class cvodes_integrator {
             std::ostream* msgs, double relative_tolerance,
             double absolute_tolerance,
             long int max_num_steps) {  // NOLINT(runtime/int)
-    typedef stan::is_var<T_initial> initial_var;
-    typedef stan::is_var<T_param> param_var;
+    using initial_var = stan::is_var<T_initial>;
+    using param_var = stan::is_var<T_param>;
 
     const char* fun = "integrate_ode_cvodes";
 
@@ -97,26 +98,30 @@ class cvodes_integrator {
     check_nonzero_size(fun, "initial state", y0);
     check_ordered(fun, "times", ts_dbl);
     check_less(fun, "initial time", t0_dbl, ts_dbl[0]);
-    if (relative_tolerance <= 0)
+    if (relative_tolerance <= 0) {
       invalid_argument("integrate_ode_cvodes", "relative_tolerance,",
                        relative_tolerance, "", ", must be greater than 0");
-    if (absolute_tolerance <= 0)
+    }
+    if (absolute_tolerance <= 0) {
       invalid_argument("integrate_ode_cvodes", "absolute_tolerance,",
                        absolute_tolerance, "", ", must be greater than 0");
-    if (max_num_steps <= 0)
+    }
+    if (max_num_steps <= 0) {
       invalid_argument("integrate_ode_cvodes", "max_num_steps,", max_num_steps,
                        "", ", must be greater than 0");
+    }
 
     const size_t N = y0.size();
     const size_t M = theta.size();
     const size_t S = (initial_var::value ? N : 0) + (param_var::value ? M : 0);
 
-    typedef cvodes_ode_data<F, T_initial, T_param> ode_data;
+    using ode_data = cvodes_ode_data<F, T_initial, T_param>;
     ode_data cvodes_data(f, y0, theta, x, x_int, msgs);
 
     void* cvodes_mem = CVodeCreate(Lmm);
-    if (cvodes_mem == nullptr)
+    if (cvodes_mem == nullptr) {
       throw std::runtime_error("CVodeCreate failed to allocate memory");
+    }
 
     const size_t coupled_size = cvodes_data.coupled_ode_.size();
 
@@ -127,12 +132,12 @@ class cvodes_integrator {
         f, y0, theta, t0, ts, x, x_int, msgs, y);
 
     try {
-      cvodes_check_flag(CVodeInit(cvodes_mem, &ode_data::cv_rhs, t0_dbl,
-                                  cvodes_data.nv_state_),
-                        "CVodeInit");
+      check_flag_sundials(CVodeInit(cvodes_mem, &ode_data::cv_rhs, t0_dbl,
+                                    cvodes_data.nv_state_),
+                          "CVodeInit");
 
       // Assign pointer to this as user data
-      cvodes_check_flag(
+      check_flag_sundials(
           CVodeSetUserData(cvodes_mem, reinterpret_cast<void*>(&cvodes_data)),
           "CVodeSetUserData");
 
@@ -143,33 +148,34 @@ class cvodes_integrator {
       // and provide a Jacobian function call. new API since 3.0.0:
       // create matrix object and linear solver object; resource
       // (de-)allocation is handled in the cvodes_ode_data
-      cvodes_check_flag(
+      check_flag_sundials(
           CVodeSetLinearSolver(cvodes_mem, cvodes_data.LS_, cvodes_data.A_),
           "CVodeSetLinearSolver");
-      cvodes_check_flag(
+      check_flag_sundials(
           CVodeSetJacFn(cvodes_mem, &ode_data::cv_jacobian_states),
           "CVodeSetJacFn");
 
       // initialize forward sensitivity system of CVODES as needed
       if (S > 0) {
-        cvodes_check_flag(
+        check_flag_sundials(
             CVodeSensInit(cvodes_mem, static_cast<int>(S), CV_STAGGERED,
                           &ode_data::cv_rhs_sens, cvodes_data.nv_state_sens_),
             "CVodeSensInit");
 
-        cvodes_check_flag(CVodeSensEEtolerances(cvodes_mem),
-                          "CVodeSensEEtolerances");
+        check_flag_sundials(CVodeSensEEtolerances(cvodes_mem),
+                            "CVodeSensEEtolerances");
       }
 
       double t_init = t0_dbl;
       for (size_t n = 0; n < ts.size(); ++n) {
         double t_final = ts_dbl[n];
-        if (t_final != t_init)
-          cvodes_check_flag(CVode(cvodes_mem, t_final, cvodes_data.nv_state_,
-                                  &t_init, CV_NORMAL),
-                            "CVode");
+        if (t_final != t_init) {
+          check_flag_sundials(CVode(cvodes_mem, t_final, cvodes_data.nv_state_,
+                                    &t_init, CV_NORMAL),
+                              "CVode");
+        }
         if (S > 0) {
-          cvodes_check_flag(
+          check_flag_sundials(
               CVodeGetSens(cvodes_mem, &t_init, cvodes_data.nv_state_sens_),
               "CVodeGetSens");
         }

@@ -9,7 +9,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup multivar_dists
  * The log of the Dirichlet density for the given theta and
  * a vector of prior sample sizes, alpha.
  * Each element of alpha must be greater than 0.
@@ -29,17 +29,17 @@ namespace math {
  * @tparam T_prior_size Type of prior sample sizes.
  */
 template <bool propto, typename T_prob, typename T_prior_size>
-typename return_type<T_prob, T_prior_size>::type dirichlet_log(
-    const T_prob& theta, const T_prior_size& alpha) {
+return_type_t<T_prob, T_prior_size> dirichlet_log(const T_prob& theta,
+                                                  const T_prior_size& alpha) {
   return dirichlet_lpmf<propto, T_prob, T_prior_size>(theta, alpha);
 }
 
-/**
+/** \ingroup multivar_dists
  * @deprecated use <code>dirichlet_lpmf</code>
  */
 template <typename T_prob, typename T_prior_size>
-typename return_type<T_prob, T_prior_size>::type dirichlet_log(
-    const T_prob& theta, const T_prior_size& alpha) {
+return_type_t<T_prob, T_prior_size> dirichlet_log(const T_prob& theta,
+                                                  const T_prior_size& alpha) {
   return dirichlet_lpmf<T_prob, T_prior_size>(theta, alpha);
 }
 

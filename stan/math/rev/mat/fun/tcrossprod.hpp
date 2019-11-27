@@ -18,9 +18,12 @@ namespace math {
  * @param M Matrix to multiply.
  * @return M times its transpose.
  */
-inline matrix_v tcrossprod(const matrix_v& M) {
-  if (M.rows() == 0)
+template <int R, int C>
+inline Eigen::Matrix<var, -1, -1> tcrossprod(
+    const Eigen::Matrix<var, R, C>& M) {
+  if (M.rows() == 0) {
     return matrix_v(0, 0);
+  }
   // if (M.rows() == 1)
   //   return M * M.transpose();
 
@@ -34,11 +37,14 @@ inline matrix_v tcrossprod(const matrix_v& M) {
       = reinterpret_cast<vari**>(ChainableStack::instance_->memalloc_.alloc(
           (M.rows() * M.cols()) * sizeof(vari*)));
   int pos = 0;
-  for (int m = 0; m < M.rows(); ++m)
-    for (int n = 0; n < M.cols(); ++n)
+  for (int m = 0; m < M.rows(); ++m) {
+    for (int n = 0; n < M.cols(); ++n) {
       vs[pos++] = M(m, n).vi_;
-  for (int m = 0; m < M.rows(); ++m)
+    }
+  }
+  for (int m = 0; m < M.rows(); ++m) {
     MMt(m, m) = var(new internal::dot_self_vari(vs + m * M.cols(), M.cols()));
+  }
   for (int m = 0; m < M.rows(); ++m) {
     for (int n = 0; n < m; ++n) {
       MMt(m, n) = var(new internal::dot_product_vari<var, var>(

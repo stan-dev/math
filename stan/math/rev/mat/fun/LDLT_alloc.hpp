@@ -29,19 +29,9 @@ class LDLT_alloc : public chainable_alloc {
    * called elsewhere.
    **/
   inline void compute(const Eigen::Matrix<var, R, C> &A) {
-    Eigen::Matrix<double, R, C> Ad(A.rows(), A.cols());
-
     N_ = A.rows();
-    variA_.resize(A.rows(), A.cols());
-
-    for (size_t j = 0; j < N_; j++) {
-      for (size_t i = 0; i < N_; i++) {
-        Ad(i, j) = A(i, j).val();
-        variA_(i, j) = A(i, j).vi_;
-      }
-    }
-
-    ldlt_.compute(Ad);
+    variA_ = A.vi();
+    ldlt_.compute(A.val());
   }
 
   // Compute the log(abs(det(A))).  This is just a convenience function.

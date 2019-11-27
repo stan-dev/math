@@ -35,7 +35,7 @@ static void grad(vari* vi) {
   //   for (size_t i = end; --i > begin; )
   //     var_stack_[i]->chain();
 
-  typedef std::vector<vari*>::reverse_iterator it_t;
+  using it_t = std::vector<vari*>::reverse_iterator;
   vi->init_dependent();
   it_t begin = ChainableStack::instance_->var_stack_.rbegin();
   it_t end = empty_nested() ? ChainableStack::instance_->var_stack_.rend()

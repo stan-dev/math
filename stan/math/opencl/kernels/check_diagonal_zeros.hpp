@@ -4,14 +4,15 @@
 
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/opencl/buffer_types.hpp>
+#include <string>
 
 namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const char *is_zero_on_diagonal_kernel_code = STRINGIFY(
+static const std::string is_zero_on_diagonal_kernel_code = STRINGIFY(
     // \endcond
-    /**
+    /** \ingroup opencl_kernels
      * Check if the <code>matrix_cl</code> has zeros on the diagonal
      *
      * @param[in] A Matrix to check.
@@ -36,7 +37,7 @@ static const char *is_zero_on_diagonal_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/**
+/** \ingroup opencl_kernels
  * See the docs for \link kernels/check_diagonal_zeros.hpp
  * check_diagonal_zeros() \endlink
  */

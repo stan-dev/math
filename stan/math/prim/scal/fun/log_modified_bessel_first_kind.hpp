@@ -36,8 +36,8 @@ namespace math {
  * @return log of Bessel I function
  */
 template <typename T1, typename T2>
-inline typename boost::math::tools::promote_args<T1, T2, double>::type
-log_modified_bessel_first_kind(const T1 v, const T2 z) {
+inline return_type_t<T1, T2, double> log_modified_bessel_first_kind(
+    const T1 v, const T2 z) {
   check_not_nan("log_modified_bessel_first_kind", "first argument (order)", v);
   check_not_nan("log_modified_bessel_first_kind", "second argument (variable)",
                 z);
@@ -50,17 +50,20 @@ log_modified_bessel_first_kind(const T1 v, const T2 z) {
   using std::log;
   using std::sqrt;
 
-  typedef typename boost::math::tools::promote_args<T1, T2, double>::type T;
+  using T = return_type_t<T1, T2, double>;
 
   if (z == 0) {
-    if (v == 0)
+    if (v == 0) {
       return 0.0;
-    if (v > 0)
+    }
+    if (v > 0) {
       return NEGATIVE_INFTY;
+    }
     return INFTY;
   }
-  if (is_inf(z))
+  if (is_inf(z)) {
     return z;
+  }
   if (v == 0) {
     // WARNING: will not autodiff for v = 0 correctly
     // modified from Boost's bessel_i0_imp in the double precision case,
@@ -183,9 +186,8 @@ log_modified_bessel_first_kind(const T1 v, const T2 z) {
     }
   }
 
-  typename boost::math::tools::promote_args<T2>::type log_half_z = log(0.5 * z);
-  typename boost::math::tools::promote_args<T1>::type lgam
-      = v > -1 ? lgamma(v + 1.0) : 0;
+  return_type_t<T2> log_half_z = log(0.5 * z);
+  return_type_t<T1> lgam = v > -1 ? lgamma(v + 1.0) : 0;
   T lcons = (2.0 + v) * log_half_z;
   T out;
   if (v > -1) {

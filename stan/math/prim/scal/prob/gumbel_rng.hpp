@@ -11,7 +11,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Return a Gumbel random variate with the given location and scale
  * using the specified random number generator.
  *
@@ -47,8 +47,9 @@ inline typename VectorBuilder<true, double, T_loc, T_scale>::type gumbel_rng(
   VectorBuilder<true, double, T_loc, T_scale> output(N);
 
   variate_generator<RNG&, uniform_01<> > uniform01_rng(rng, uniform_01<>());
-  for (size_t n = 0; n < N; ++n)
+  for (size_t n = 0; n < N; ++n) {
     output[n] = mu_vec[n] - beta_vec[n] * std::log(-std::log(uniform01_rng()));
+  }
 
   return output.data();
 }

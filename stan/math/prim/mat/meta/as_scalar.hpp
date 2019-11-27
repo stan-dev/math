@@ -1,13 +1,13 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_AS_SCALAR_HPP
 #define STAN_MATH_PRIM_MAT_FUN_AS_SCALAR_HPP
 
-#include <Eigen/Dense>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stdexcept>
 
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup type_trait
  * Converts input to a scalar. As this is not possible for matrices, arrays or
  * Eigen expressions it always throws. This is intended to never be called, only
  * used in templated functions in branches that will be optimized out - to

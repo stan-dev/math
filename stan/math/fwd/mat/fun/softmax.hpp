@@ -15,8 +15,9 @@ inline Eigen::Matrix<fvar<T>, Eigen::Dynamic, 1> softmax(
   using Eigen::Matrix;
 
   Matrix<T, Dynamic, 1> alpha_t(alpha.size());
-  for (int k = 0; k < alpha.size(); ++k)
+  for (int k = 0; k < alpha.size(); ++k) {
     alpha_t(k) = alpha(k).val_;
+  }
 
   Matrix<T, Dynamic, 1> softmax_alpha_t = softmax(alpha_t);
 

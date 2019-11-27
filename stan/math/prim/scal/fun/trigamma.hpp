@@ -61,8 +61,9 @@ inline T trigamma_impl(const T& x) {
   }
 
   // small value approximation if x <= small.
-  if (x <= small)
+  if (x <= small) {
     return inv_square(x);
+  }
 
   // use recurrence relation until x >= large
   // see http://mathworld.wolfram.com/PolygammaFunction.html

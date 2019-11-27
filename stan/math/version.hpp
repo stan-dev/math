@@ -11,9 +11,9 @@
 #define STAN_STRING(s) STAN_STRING_EXPAND(s)
 #endif
 
-#define STAN_MATH_MAJOR 2
-#define STAN_MATH_MINOR 19
-#define STAN_MATH_PATCH 1
+#define STAN_MATH_MAJOR 3
+#define STAN_MATH_MINOR 0
+#define STAN_MATH_PATCH 0
 
 namespace stan {
 namespace math {

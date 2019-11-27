@@ -13,7 +13,7 @@
 
 namespace stan {
 namespace math {
-/**
+/** \ingroup multivar_dists
  * The log of a multivariate Gaussian Process for the given y, w, and
  * a Cholesky factor L of the kernel matrix Sigma.
  * Sigma = LL', a square, semi-positive definite matrix.
@@ -35,14 +35,12 @@ namespace math {
  * @tparam T_w Type of weight.
  */
 template <bool propto, typename T_y, typename T_covar, typename T_w>
-typename boost::math::tools::promote_args<T_y, T_covar, T_w>::type
-multi_gp_cholesky_lpdf(
+return_type_t<T_y, T_covar, T_w> multi_gp_cholesky_lpdf(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
     const Eigen::Matrix<T_covar, Eigen::Dynamic, Eigen::Dynamic>& L,
     const Eigen::Matrix<T_w, Eigen::Dynamic, 1>& w) {
   static const char* function = "multi_gp_cholesky_lpdf";
-  typedef
-      typename boost::math::tools::promote_args<T_y, T_covar, T_w>::type T_lp;
+  using T_lp = return_type_t<T_y, T_covar, T_w>;
 
   check_size_match(function, "Size of random variable (rows y)", y.rows(),
                    "Size of kernel scales (w)", w.size());
@@ -52,8 +50,9 @@ multi_gp_cholesky_lpdf(
   check_positive(function, "Kernel scales", w);
   check_finite(function, "Random variable", y);
 
-  if (y.rows() == 0)
+  if (y.rows() == 0) {
     return 0;
+  }
 
   T_lp lp(0);
   if (include_summand<propto>::value) {
@@ -72,10 +71,8 @@ multi_gp_cholesky_lpdf(
     T_lp sum_lp_vec(0);
     for (int i = 0; i < y.rows(); i++) {
       Eigen::Matrix<T_y, Eigen::Dynamic, 1> y_row(y.row(i));
-      Eigen::Matrix<
-          typename boost::math::tools::promote_args<T_y, T_covar>::type,
-          Eigen::Dynamic, 1>
-          half(mdivide_left_tri_low(L, y_row));
+      Eigen::Matrix<return_type_t<T_y, T_covar>, Eigen::Dynamic, 1> half(
+          mdivide_left_tri_low(L, y_row));
       sum_lp_vec += w(i) * dot_self(half);
     }
     lp -= 0.5 * sum_lp_vec;
@@ -85,8 +82,7 @@ multi_gp_cholesky_lpdf(
 }
 
 template <typename T_y, typename T_covar, typename T_w>
-inline typename boost::math::tools::promote_args<T_y, T_covar, T_w>::type
-multi_gp_cholesky_lpdf(
+inline return_type_t<T_y, T_covar, T_w> multi_gp_cholesky_lpdf(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
     const Eigen::Matrix<T_covar, Eigen::Dynamic, Eigen::Dynamic>& L,
     const Eigen::Matrix<T_w, Eigen::Dynamic, 1>& w) {

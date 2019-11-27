@@ -18,14 +18,22 @@ namespace math {
 inline var to_var(double x) { return var(x); }
 
 /**
- * Converts argument to an automatic differentiation variable.
+ * Specialization of to_var for non-const var input
  *
- * Returns a var variable with the input value.
  *
- * @param[in] x An automatic differentiation variable.
- * @return An automatic differentiation variable with the input value.
+ * @param[in,out] x An automatic differentiation variable.
+ * @return The input automatic differentiation variable.
  */
-inline var to_var(const var& x) { return x; }
+inline var& to_var(var& x) { return x; }
+
+/**
+ * Specialization of to_var for const var input
+ *
+ *
+ * @param[in,out] x An automatic differentiation variable.
+ * @return The input automatic differentiation variable.
+ */
+inline const var& to_var(const var& x) { return x; }
 
 }  // namespace math
 }  // namespace stan

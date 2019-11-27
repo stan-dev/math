@@ -1,13 +1,13 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_AS_COLUMN_VECTOR_OR_SCALAR_HPP
 #define STAN_MATH_PRIM_MAT_FUN_AS_COLUMN_VECTOR_OR_SCALAR_HPP
 
-#include <Eigen/Dense>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <vector>
 
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup type_trait
  * Converts input argument to a column vector or a scalar. For column vector
  * inputs this is an identity function.
  *
@@ -21,7 +21,7 @@ inline const Eigen::Matrix<T, Eigen::Dynamic, 1>& as_column_vector_or_scalar(
   return a;
 }
 
-/**
+/** \ingroup type_trait
  * Converts input argument to a column vector or a scalar. For a row vector
  * input this is transpose.
  *
@@ -37,7 +37,7 @@ as_column_vector_or_scalar(const Eigen::Matrix<T, 1, Eigen::Dynamic>& a) {
                             // there are less possible output types
 }
 
-/**
+/** \ingroup type_trait
  * Converts input argument to a column vector or a scalar. std::vector will be
  * converted to a column vector.
  *

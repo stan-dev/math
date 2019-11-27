@@ -171,6 +171,51 @@ TEST(ProbDistributionsCategoricalLogitGLM, single_instance) {
   }
 }
 
+TEST(ProbDistributionsCategoricalLogitGLM, zero_instances) {
+  double eps = 1e-13;
+  const size_t N_instances = 0;
+  const size_t N_attributes = 2;
+  const size_t N_classes = 3;
+  std::vector<int> y{};
+  Matrix<var, Dynamic, Dynamic> x1(N_instances, N_attributes),
+      x2(N_instances, N_attributes);
+  Matrix<var, Dynamic, Dynamic> beta1(N_attributes, N_classes),
+      beta2(N_attributes, N_classes);
+  beta1 << 0.3, 2, 0.4, -0.1, -1.3, 1;
+  beta2 << 0.3, 2, 0.4, -0.1, -1.3, 1;
+  Matrix<var, Dynamic, 1> alpha1(N_classes), alpha2(N_classes);
+  alpha1 << 0.5, -2, 4;
+  alpha2 << 0.5, -2, 4;
+
+  var res1 = categorical_logit_glm_simple_lpmf<false>(y, x1, alpha1, beta1);
+  var res2 = categorical_logit_glm_lpmf(y, x2, alpha2, beta2);
+  (res1 + res2).grad();
+  EXPECT_NEAR(res1.val(), res2.val(), eps);
+  for (int i = 0; i < N_attributes; i++) {
+    for (int j = 0; j < N_classes; j++) {
+      EXPECT_NEAR(beta1(i, j).adj(), beta2(i, j).adj(), eps);
+    }
+  }
+  for (int i = 0; i < N_classes; i++) {
+    EXPECT_NEAR(alpha1[i].adj(), alpha2[i].adj(), eps);
+  }
+
+  stan::math::set_zero_all_adjoints();
+
+  res1 = categorical_logit_glm_simple_lpmf<true>(y, x1, alpha1, beta1);
+  res2 = categorical_logit_glm_lpmf<true>(y, x2, alpha2, beta2);
+  (res1 + res2).grad();
+  EXPECT_NEAR(res1.val(), res2.val(), eps);
+  for (int i = 0; i < N_attributes; i++) {
+    for (int j = 0; j < N_classes; j++) {
+      EXPECT_NEAR(beta1(i, j).adj(), beta2(i, j).adj(), eps);
+    }
+  }
+  for (int i = 0; i < N_classes; i++) {
+    EXPECT_NEAR(alpha1[i].adj(), alpha2[i].adj(), eps);
+  }
+}
+
 TEST(ProbDistributionsCategoricalLogitGLM, single_class) {
   double eps = 1e-13;
   const size_t N_instances = 5;
@@ -232,23 +277,26 @@ TEST(ProbDistributionsCategoricalLogitGLM, zero_attributes) {
   vector<int> y{1, 3, 1, 2, 2};
   Matrix<var, Dynamic, Dynamic> x(N_instances, N_attributes);
   Matrix<var, Dynamic, Dynamic> beta(N_attributes, N_classes);
-  Matrix<var, Dynamic, 1> alpha(N_classes);
-  alpha << 0.5, -2, 4;
+  Matrix<var, Dynamic, 1> alpha1(N_classes), alpha2(N_classes);
+  alpha1 << 0.5, -2, 4;
+  alpha2 << 0.5, -2, 4;
 
-  var res2 = categorical_logit_glm_lpmf(y, x, alpha, beta);
-  res2.grad();
-  EXPECT_EQ(res2.val(), 0);
+  var res1 = categorical_logit_glm_simple_lpmf<false>(y, x, alpha1, beta);
+  var res2 = categorical_logit_glm_lpmf(y, x, alpha2, beta);
+  (res1 + res2).grad();
+  EXPECT_NEAR(res1.val(), res2.val(), eps);
   for (int i = 0; i < N_classes; i++) {
-    EXPECT_EQ(alpha[i].adj(), 0);
+    EXPECT_NEAR(alpha1[i].adj(), alpha2[i].adj(), eps);
   }
 
   stan::math::set_zero_all_adjoints();
 
-  res2 = categorical_logit_glm_lpmf<true>(y, x, alpha, beta);
-  res2.grad();
-  EXPECT_EQ(res2.val(), 0);
+  res1 = categorical_logit_glm_simple_lpmf<true>(y, x, alpha1, beta);
+  res2 = categorical_logit_glm_lpmf<true>(y, x, alpha2, beta);
+  (res1 + res2).grad();
+  EXPECT_NEAR(res1.val(), res2.val(), eps);
   for (int i = 0; i < N_classes; i++) {
-    EXPECT_EQ(alpha[i].adj(), 0);
+    EXPECT_NEAR(alpha1[i].adj(), alpha2[i].adj(), eps);
   }
 }
 

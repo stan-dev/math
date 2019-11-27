@@ -14,7 +14,7 @@
 
 namespace stan {
 namespace math {
-/**
+/** \ingroup multivar_dists
  * The log of the matrix normal density for the given y, mu, Sigma and D
  * where Sigma and D are given as precision matrices, not covariance matrices.
  *
@@ -34,15 +34,13 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_Mu, typename T_Sigma,
           typename T_D>
-typename boost::math::tools::promote_args<T_y, T_Mu, T_Sigma, T_D>::type
-matrix_normal_prec_lpdf(
+return_type_t<T_y, T_Mu, T_Sigma, T_D> matrix_normal_prec_lpdf(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
     const Eigen::Matrix<T_Mu, Eigen::Dynamic, Eigen::Dynamic>& Mu,
     const Eigen::Matrix<T_Sigma, Eigen::Dynamic, Eigen::Dynamic>& Sigma,
     const Eigen::Matrix<T_D, Eigen::Dynamic, Eigen::Dynamic>& D) {
   static const char* function = "matrix_normal_prec_lpdf";
-  typename boost::math::tools::promote_args<T_y, T_Mu, T_Sigma, T_D>::type lp(
-      0.0);
+  return_type_t<T_y, T_Mu, T_Sigma, T_D> lp(0.0);
 
   check_positive(function, "Sigma rows", Sigma.rows());
   check_finite(function, "Sigma", Sigma);
@@ -67,8 +65,9 @@ matrix_normal_prec_lpdf(
   check_finite(function, "Location parameter", Mu);
   check_finite(function, "Random variable", y);
 
-  if (include_summand<propto>::value)
+  if (include_summand<propto>::value) {
     lp += NEG_LOG_SQRT_TWO_PI * y.cols() * y.rows();
+  }
 
   if (include_summand<propto, T_Sigma>::value) {
     lp += log_determinant_ldlt(ldlt_Sigma) * (0.5 * y.rows());
@@ -85,8 +84,7 @@ matrix_normal_prec_lpdf(
 }
 
 template <typename T_y, typename T_Mu, typename T_Sigma, typename T_D>
-typename boost::math::tools::promote_args<T_y, T_Mu, T_Sigma, T_D>::type
-matrix_normal_prec_lpdf(
+return_type_t<T_y, T_Mu, T_Sigma, T_D> matrix_normal_prec_lpdf(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
     const Eigen::Matrix<T_Mu, Eigen::Dynamic, Eigen::Dynamic>& Mu,
     const Eigen::Matrix<T_Sigma, Eigen::Dynamic, Eigen::Dynamic>& Sigma,

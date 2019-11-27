@@ -7,7 +7,7 @@
 
 namespace stan {
 namespace math {
-/**
+/** \ingroup multivar_dists
  * The log of a Gaussian dynamic linear model (GDLM).
  * This distribution is equivalent to, for \f$t = 1:T\f$,
  * \f{eqnarray*}{
@@ -44,8 +44,7 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_F, typename T_G, typename T_V,
           typename T_W, typename T_m0, typename T_C0>
-typename return_type<
-    T_y, typename return_type<T_F, T_G, T_V, T_W, T_m0, T_C0>::type>::type
+inline return_type_t<T_y, return_type_t<T_F, T_G, T_V, T_W, T_m0, T_C0>>
 gaussian_dlm_obs_log(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
     const Eigen::Matrix<T_F, Eigen::Dynamic, Eigen::Dynamic>& F,
@@ -58,13 +57,12 @@ gaussian_dlm_obs_log(
       y, F, G, V, W, m0, C0);
 }
 
-/**
+/** \ingroup multivar_dists
  * @deprecated use <code>gaussian_dlm_obs_lpdf</code>
  */
 template <typename T_y, typename T_F, typename T_G, typename T_V, typename T_W,
           typename T_m0, typename T_C0>
-inline typename return_type<
-    T_y, typename return_type<T_F, T_G, T_V, T_W, T_m0, T_C0>::type>::type
+inline return_type_t<T_y, return_type_t<T_F, T_G, T_V, T_W, T_m0, T_C0>>
 gaussian_dlm_obs_log(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
     const Eigen::Matrix<T_F, Eigen::Dynamic, Eigen::Dynamic>& F,
@@ -77,7 +75,7 @@ gaussian_dlm_obs_log(
                                                                     W, m0, C0);
 }
 
-/**
+/** \ingroup multivar_dists
  * The log of a Gaussian dynamic linear model (GDLM) with
  * uncorrelated observation disturbances.
  * This distribution is equivalent to, for \f$t = 1:T\f$,
@@ -116,8 +114,7 @@ gaussian_dlm_obs_log(
  */
 template <bool propto, typename T_y, typename T_F, typename T_G, typename T_V,
           typename T_W, typename T_m0, typename T_C0>
-typename return_type<
-    T_y, typename return_type<T_F, T_G, T_V, T_W, T_m0, T_C0>::type>::type
+return_type_t<T_y, return_type_t<T_F, T_G, T_V, T_W, T_m0, T_C0>>
 gaussian_dlm_obs_log(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
     const Eigen::Matrix<T_F, Eigen::Dynamic, Eigen::Dynamic>& F,
@@ -130,13 +127,12 @@ gaussian_dlm_obs_log(
       y, F, G, V, W, m0, C0);
 }
 
-/**
+/** \ingroup multivar_dists
  * @deprecated use <code>gaussian_dlm_obs_lpdf</code>
  */
 template <typename T_y, typename T_F, typename T_G, typename T_V, typename T_W,
           typename T_m0, typename T_C0>
-inline typename return_type<
-    T_y, typename return_type<T_F, T_G, T_V, T_W, T_m0, T_C0>::type>::type
+inline return_type_t<T_y, return_type_t<T_F, T_G, T_V, T_W, T_m0, T_C0>>
 gaussian_dlm_obs_log(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
     const Eigen::Matrix<T_F, Eigen::Dynamic, Eigen::Dynamic>& F,

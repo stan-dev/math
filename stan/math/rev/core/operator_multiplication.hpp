@@ -30,10 +30,11 @@ class multiply_vd_vari : public op_vd_vari {
  public:
   multiply_vd_vari(vari* avi, double b) : op_vd_vari(avi->val_ * b, avi, b) {}
   void chain() {
-    if (unlikely(is_any_nan(avi_->val_, bd_)))
+    if (unlikely(is_any_nan(avi_->val_, bd_))) {
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
-    else
+    } else {
       avi_->adj_ += adj_ * bd_;
+    }
   }
 };
 }  // namespace internal
@@ -91,8 +92,9 @@ inline var operator*(const var& a, const var& b) {
  * @return Variable result of multiplying operands.
  */
 inline var operator*(const var& a, double b) {
-  if (b == 1.0)
+  if (b == 1.0) {
     return a;
+  }
   return var(new internal::multiply_vd_vari(a.vi_, b));
 }
 
@@ -108,8 +110,9 @@ inline var operator*(const var& a, double b) {
  * @return Variable result of multiplying the operands.
  */
 inline var operator*(double a, const var& b) {
-  if (a == 1.0)
+  if (a == 1.0) {
     return b;
+  }
   return var(new internal::multiply_vd_vari(b.vi_, a));  // by symmetry
 }
 

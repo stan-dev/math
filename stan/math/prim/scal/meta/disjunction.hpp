@@ -5,7 +5,7 @@
 
 namespace stan {
 namespace math {
-/**
+/** \ingroup type_trait
  * Extends std::false_type when instantiated with zero or more template
  * parameters, all of which extend the std::false_type. Extends std::true_type
  * if any of them extend the std::true_type.
@@ -15,8 +15,7 @@ struct disjunction : std::false_type {};
 
 template <typename Cond, typename... Conds>
 struct disjunction<Cond, Conds...>
-    : std::conditional<Cond::value, std::true_type,
-                       disjunction<Conds...>>::type {};
+    : std::conditional_t<Cond::value, std::true_type, disjunction<Conds...>> {};
 
 }  // namespace math
 }  // namespace stan

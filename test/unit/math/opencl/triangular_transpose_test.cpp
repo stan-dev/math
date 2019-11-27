@@ -1,17 +1,17 @@
 #ifdef STAN_OPENCL
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/opencl/copy.hpp>
-#include <stan/math/opencl/constants.hpp>
+#include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/triangular_transpose.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
 
 TEST(MathMatrixCL, triangular_transpose_m_exception_pass) {
-  stan::math::matrix_cl m1(1, 1);
-  stan::math::matrix_cl m0;
-  stan::math::matrix_cl m2(5, 3);
-  stan::math::matrix_cl m3(3, 4);
+  stan::math::matrix_cl<double> m1(1, 1);
+  stan::math::matrix_cl<double> m0;
+  stan::math::matrix_cl<double> m2(5, 3);
+  stan::math::matrix_cl<double> m3(3, 4);
 
   EXPECT_NO_THROW(
       m0.triangular_transpose<stan::math::TriangularMapCL::LowerToUpper>());
@@ -40,8 +40,8 @@ TEST(MathMatrixCL, triangular_transpose_m_pass) {
   stan::math::matrix_d m0_dst(2, 2);
   m0 << 1, 2, 3, 4;
 
-  stan::math::matrix_cl m00(m0);
-  stan::math::matrix_cl m11(m0);
+  stan::math::matrix_cl<double> m00(m0);
+  stan::math::matrix_cl<double> m11(m0);
 
   EXPECT_NO_THROW(
       m00.triangular_transpose<stan::math::TriangularMapCL::LowerToUpper>());

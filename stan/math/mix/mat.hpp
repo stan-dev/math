@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_MIX_MAT_HPP
 #define STAN_MATH_MIX_MAT_HPP
 
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+
 #include <stan/math/mix/mat/fun/typedefs.hpp>
 #include <stan/math/mix/meta.hpp>
 

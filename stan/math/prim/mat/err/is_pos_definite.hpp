@@ -25,16 +25,20 @@ namespace math {
  */
 template <typename T_y>
 inline bool is_pos_definite(const Eigen::Matrix<T_y, -1, -1>& y) {
-  if (!is_symmetric(y))
+  if (!is_symmetric(y)) {
     return false;
-  if (!is_positive(y.rows()))
+  }
+  if (!is_positive(y.rows())) {
     return false;
-  if (y.rows() == 1 && !(y(0, 0) > CONSTRAINT_TOLERANCE))
+  }
+  if (y.rows() == 1 && !(y(0, 0) > CONSTRAINT_TOLERANCE)) {
     return false;
+  }
   Eigen::LDLT<Eigen::MatrixXd> cholesky = value_of_rec(y).ldlt();
   if (cholesky.info() != Eigen::Success || !cholesky.isPositive()
-      || (cholesky.vectorD().array() <= 0.0).any())
+      || (cholesky.vectorD().array() <= 0.0).any()) {
     return false;
+  }
   return is_not_nan(y);
 }
 

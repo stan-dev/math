@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <Eigen/Sparse>
 #include <vector>
 #include <numeric>
 
@@ -25,8 +24,9 @@ template <typename T>
 const std::vector<int> csr_extract_u(
     const Eigen::SparseMatrix<T, Eigen::RowMajor>& A) {
   std::vector<int> u(A.outerSize() + 1);  // last entry is garbage.
-  for (int nze = 0; nze <= A.outerSize(); ++nze)
+  for (int nze = 0; nze <= A.outerSize(); ++nze) {
     u[nze] = *(A.outerIndexPtr() + nze) + stan::error_index::value;
+  }
   return u;
 }
 

@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * The log of an inverse gamma density for y with the specified
  * shape and scale parameters.
  * Shape and scale parameters must be greater than 0.
@@ -26,17 +26,19 @@ namespace math {
  * @tparam T_scale Type of scale.
  */
 template <bool propto, typename T_y, typename T_shape, typename T_scale>
-typename return_type<T_y, T_shape, T_scale>::type inv_gamma_log(
-    const T_y& y, const T_shape& alpha, const T_scale& beta) {
+return_type_t<T_y, T_shape, T_scale> inv_gamma_log(const T_y& y,
+                                                   const T_shape& alpha,
+                                                   const T_scale& beta) {
   return inv_gamma_lpdf<propto, T_y, T_shape, T_scale>(y, alpha, beta);
 }
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>inv_gamma_lpdf</code>
  */
 template <typename T_y, typename T_shape, typename T_scale>
-inline typename return_type<T_y, T_shape, T_scale>::type inv_gamma_log(
-    const T_y& y, const T_shape& alpha, const T_scale& beta) {
+inline return_type_t<T_y, T_shape, T_scale> inv_gamma_log(const T_y& y,
+                                                          const T_shape& alpha,
+                                                          const T_scale& beta) {
   return inv_gamma_lpdf<T_y, T_shape, T_scale>(y, alpha, beta);
 }
 

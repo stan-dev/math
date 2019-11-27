@@ -10,40 +10,40 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup multivar_dists
  * @deprecated use <code>categorical_lpmf</code>
  */
 template <bool propto, typename T_prob>
-typename boost::math::tools::promote_args<T_prob>::type categorical_log(
+return_type_t<T_prob> categorical_log(
     int n, const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
   return categorical_lpmf<propto, T_prob>(n, theta);
 }
 
-/**
+/** \ingroup multivar_dists
  * @deprecated use <code>categorical_lpmf</code>
  */
 template <typename T_prob>
-typename boost::math::tools::promote_args<T_prob>::type categorical_log(
+return_type_t<T_prob> categorical_log(
     const typename math::index_type<Eigen::VectorXd>::type n,
     const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
   return categorical_lpmf<T_prob>(n, theta);
 }
 
-/**
+/** \ingroup multivar_dists
  * @deprecated use <code>categorical_lpmf</code>
  */
 template <bool propto, typename T_prob>
-typename boost::math::tools::promote_args<T_prob>::type categorical_log(
+return_type_t<T_prob> categorical_log(
     const std::vector<int>& ns,
     const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
   return categorical_lpmf<propto, T_prob>(ns, theta);
 }
 
-/**
+/** \ingroup multivar_dists
  * @deprecated use <code>categorical_lpmf</code>
  */
 template <typename T_prob>
-inline typename boost::math::tools::promote_args<T_prob>::type categorical_log(
+inline return_type_t<T_prob> categorical_log(
     const std::vector<int>& ns,
     const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
   return categorical_lpmf<false>(ns, theta);

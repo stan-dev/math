@@ -18,7 +18,7 @@ namespace stan {
 namespace math {
 namespace internal {
 
-/**
+/** \ingroup multivar_dists
  * Return a multivariate normal random variate with the given location
  * and covariance using the specified random number generator.
  *
@@ -44,8 +44,9 @@ inline Eigen::VectorXd multi_normal_semidefinite_rng(
   Eigen::VectorXd stddev = S_ldlt.vectorD().array().sqrt().matrix();
   size_t M = S_ldlt.vectorD().size();
   Eigen::VectorXd z(M);
-  for (int i = 0; i < M; i++)
+  for (int i = 0; i < M; i++) {
     z(i) = stddev(i) * std_normal_rng();
+  }
 
   Eigen::VectorXd Y
       = mu + (S_ldlt.transpositionsP().transpose() * (S_ldlt.matrixL() * z));
@@ -56,7 +57,7 @@ inline Eigen::VectorXd multi_normal_semidefinite_rng(
   return Y;
 }
 
-/**
+/** \ingroup multivar_dists
  * Return a multivariate normal random variate with the given location
  * and covariance using the specified random number generator.
  *
@@ -81,8 +82,9 @@ inline Eigen::VectorXd multi_normal_definite_rng(
 
   size_t M = S_llt.matrixL().rows();
   Eigen::VectorXd z(M);
-  for (int i = 0; i < M; i++)
+  for (int i = 0; i < M; i++) {
     z(i) = std_normal_rng();
+  }
 
   Eigen::VectorXd Y = mu + S_llt.matrixL() * z;
 
@@ -91,7 +93,7 @@ inline Eigen::VectorXd multi_normal_definite_rng(
 
 }  // namespace internal
 
-/**
+/** \ingroup multivar_dists
  * Simulate random draw from Gaussian dynamic linear model (GDLM).
  * This distribution is equivalent to, for \f$t = 1:T\f$,
  * \f{eqnarray*}{

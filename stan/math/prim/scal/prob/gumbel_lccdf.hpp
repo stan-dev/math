@@ -13,7 +13,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Returns the Gumbel log complementary cumulative distribution for the
  * given location and scale. Given containers of matching sizes, returns
  * the log sum of probabilities.
@@ -29,18 +29,18 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_y, typename T_loc, typename T_scale>
-typename return_type<T_y, T_loc, T_scale>::type gumbel_lccdf(
-    const T_y& y, const T_loc& mu, const T_scale& beta) {
+return_type_t<T_y, T_loc, T_scale> gumbel_lccdf(const T_y& y, const T_loc& mu,
+                                                const T_scale& beta) {
   static const char* function = "gumbel_lccdf";
-  typedef typename stan::partials_return_type<T_y, T_loc, T_scale>::type
-      T_partials_return;
+  using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
 
   using std::exp;
   using std::log;
 
   T_partials_return ccdf_log(0.0);
-  if (size_zero(y, mu, beta))
+  if (size_zero(y, mu, beta)) {
     return ccdf_log;
+  }
 
   check_not_nan(function, "Random variable", y);
   check_finite(function, "Location parameter", mu);
@@ -66,12 +66,15 @@ typename return_type<T_y, T_loc, T_scale>::type gumbel_lccdf(
     const T_partials_return ccdf_log_ = 1.0 - exp(-exp(-scaled_diff));
     ccdf_log += log(ccdf_log_);
 
-    if (!is_constant_all<T_y>::value)
+    if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] -= rep_deriv / ccdf_log_;
-    if (!is_constant_all<T_loc>::value)
+    }
+    if (!is_constant_all<T_loc>::value) {
       ops_partials.edge2_.partials_[n] += rep_deriv / ccdf_log_;
-    if (!is_constant_all<T_scale>::value)
+    }
+    if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n] += rep_deriv * scaled_diff / ccdf_log_;
+    }
   }
 
   return ops_partials.build(ccdf_log);

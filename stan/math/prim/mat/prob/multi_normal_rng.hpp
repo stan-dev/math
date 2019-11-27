@@ -12,7 +12,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup multivar_dists
  * Return a multivariate normal random variate with the given location and
  * covariance using the specified random number generator.
  *
@@ -72,8 +72,9 @@ multi_normal_rng(const T_loc& mu,
 
   for (size_t n = 0; n < N; ++n) {
     Eigen::VectorXd z(S.cols());
-    for (int i = 0; i < S.cols(); i++)
+    for (int i = 0; i < S.cols(); i++) {
       z(i) = std_normal_rng();
+    }
 
     output[n] = Eigen::VectorXd(mu_vec[n]) + llt_of_S.matrixL() * z;
   }

@@ -12,7 +12,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup multivar_dists
  * Return a draw from a Dirichlet distribution with specified
  * parameters and pseudo-random number generator.
  *
@@ -56,8 +56,9 @@ inline Eigen::VectorXd dirichlet_rng(
     }
     double log_sum_y = log_sum_exp(log_y);
     VectorXd theta(alpha.size());
-    for (int i = 0; i < alpha.size(); ++i)
+    for (int i = 0; i < alpha.size(); ++i) {
       theta(i) = exp(log_y(i) - log_sum_y);
+    }
     return theta;
   }
 

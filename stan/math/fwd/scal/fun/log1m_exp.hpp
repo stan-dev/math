@@ -21,8 +21,9 @@ namespace math {
  */
 template <typename T>
 inline fvar<T> log1m_exp(const fvar<T>& x) {
-  if (x.val_ >= 0)
+  if (x.val_ >= 0) {
     return fvar<T>(NOT_A_NUMBER);
+  }
   return fvar<T>(log1m_exp(x.val_), x.d_ / -expm1(-x.val_));
 }
 

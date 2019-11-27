@@ -19,13 +19,13 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_dof, typename T_loc, typename T_scale>
-typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_lccdf(
+return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lccdf(
     const T_y& y, const T_dof& nu, const T_loc& mu, const T_scale& sigma) {
-  typedef typename stan::partials_return_type<T_y, T_dof, T_loc, T_scale>::type
-      T_partials_return;
+  using T_partials_return = partials_return_t<T_y, T_dof, T_loc, T_scale>;
 
-  if (size_zero(y, nu, mu, sigma))
+  if (size_zero(y, nu, mu, sigma)) {
     return 0.0;
+  }
 
   static const char* function = "student_t_lccdf";
 
@@ -48,8 +48,9 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_lccdf(
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
   for (size_t i = 0; i < stan::length(y); i++) {
-    if (value_of(y_vec[i]) == -std::numeric_limits<double>::infinity())
+    if (value_of(y_vec[i]) == -std::numeric_limits<double>::infinity()) {
       return ops_partials.build(0.0);
+    }
   }
 
   using std::exp;
@@ -102,9 +103,10 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_lccdf(
 
       P += log(Pn);
 
-      if (!is_constant_all<T_y>::value)
+      if (!is_constant_all<T_y>::value) {
         ops_partials.edge1_.partials_[n]
             += zJacobian * d_ibeta * J * sigma_inv / Pn;
+      }
 
       if (!is_constant_all<T_dof>::value) {
         T_partials_return g1 = 0;
@@ -118,12 +120,14 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_lccdf(
             -= zJacobian * (d_ibeta * (r / t) * (r / t) + 0.5 * g1) / Pn;
       }
 
-      if (!is_constant_all<T_loc>::value)
+      if (!is_constant_all<T_loc>::value) {
         ops_partials.edge3_.partials_[n]
             -= zJacobian * d_ibeta * J * sigma_inv / Pn;
-      if (!is_constant_all<T_scale>::value)
+      }
+      if (!is_constant_all<T_scale>::value) {
         ops_partials.edge4_.partials_[n]
             -= zJacobian * d_ibeta * J * sigma_inv * t / Pn;
+      }
 
     } else {
       T_partials_return z
@@ -137,9 +141,10 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_lccdf(
 
       P += log(Pn);
 
-      if (!is_constant_all<T_y>::value)
+      if (!is_constant_all<T_y>::value) {
         ops_partials.edge1_.partials_[n]
             -= zJacobian * d_ibeta * J * sigma_inv / Pn;
+      }
 
       if (!is_constant_all<T_dof>::value) {
         T_partials_return g1 = 0;
@@ -153,12 +158,14 @@ typename return_type<T_y, T_dof, T_loc, T_scale>::type student_t_lccdf(
             -= zJacobian * (-d_ibeta * (r / t) * (r / t) + 0.5 * g2) / Pn;
       }
 
-      if (!is_constant_all<T_loc>::value)
+      if (!is_constant_all<T_loc>::value) {
         ops_partials.edge3_.partials_[n]
             += zJacobian * d_ibeta * J * sigma_inv / Pn;
-      if (!is_constant_all<T_scale>::value)
+      }
+      if (!is_constant_all<T_scale>::value) {
         ops_partials.edge4_.partials_[n]
             += zJacobian * d_ibeta * J * sigma_inv * t / Pn;
+      }
     }
   }
   return ops_partials.build(P);

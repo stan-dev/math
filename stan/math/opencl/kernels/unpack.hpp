@@ -4,14 +4,15 @@
 
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/opencl/buffer_types.hpp>
+#include <string>
 
 namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const char* unpack_kernel_code = STRINGIFY(
+static const std::string unpack_kernel_code = STRINGIFY(
     // \endcond
-    /**
+    /** \ingroup opencl_kernels
      * Unpacks a packed triangular matrix to a flat
      * matrix
      *
@@ -19,23 +20,23 @@ static const char* unpack_kernel_code = STRINGIFY(
      * @param[in] A packed buffer
      * @param rows number of columns for matrix B
      * @param cols number of columns for matrix B
-     * @param part parameter that defines the triangularity of the
+     * @param view parameter that defines the triangularity of the
      * input matrix
      *  LOWER - lower triangular
      *  UPPER - upper triangular
-     * if the part parameter is not specified
+     * if the view parameter is not specified
      * @note Code is a <code>const char*</code> held in
      * <code>unpack_kernel_code.</code>
      * This kernel uses the helper macros available in helpers.cl.
      */
     __kernel void unpack(__global double* B, __global double* A,
                          unsigned int rows, unsigned int cols,
-                         unsigned int part) {
+                         unsigned int view) {
       int i = get_global_id(0);
       int j = get_global_id(1);
       if (i < rows && j < cols) {
         // the packed matrices are stored in row major
-        if (part == LOWER) {
+        if (view == LOWER) {
           const int column_offset = j * rows - (j * (j - 1)) / 2;
           const int row_offset = (i - j);
           if (j <= i) {
@@ -57,10 +58,10 @@ static const char* unpack_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/**
+/** \ingroup opencl_kernels
  * See the docs for \link kernels/unpack.hpp unpack() \endlink
  */
-const kernel_cl<out_buffer, in_buffer, int, int, TriangularViewCL> unpack(
+const kernel_cl<out_buffer, in_buffer, int, int, matrix_cl_view> unpack(
     "unpack", {indexing_helpers, unpack_kernel_code});
 
 }  // namespace opencl_kernels

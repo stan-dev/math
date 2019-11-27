@@ -7,15 +7,14 @@
 
 namespace stan {
 
-/**
+/** \ingroup type_trait
  * Extends std::true_type when instantiated with at least 1
  * template parameter that is a fvar. Extends std::false_type
  * otherwise.
  * @tparam T Types to test
  */
 template <typename... T>
-using contains_fvar
-    = math::disjunction<is_fvar<typename scalar_type<T>::type>...>;
+using contains_fvar = math::disjunction<is_fvar<scalar_type_t<T>>...>;
 
 }  // namespace stan
 #endif

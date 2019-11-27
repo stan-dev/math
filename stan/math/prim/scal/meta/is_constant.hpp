@@ -1,12 +1,13 @@
 #ifndef STAN_MATH_PRIM_SCAL_META_IS_CONSTANT_HPP
 #define STAN_MATH_PRIM_SCAL_META_IS_CONSTANT_HPP
 
+#include <stan/math/prim/scal/meta/bool_constant.hpp>
 #include <stan/math/prim/scal/meta/conjunction.hpp>
 #include <type_traits>
 
 namespace stan {
 
-/**
+/** \ingroup type_trait
  * Metaprogramming struct to detect whether a given type is constant
  * in the mathematical sense (not the C++ <code>const</code>
  * sense). If the parameter type is constant, <code>value</code>
@@ -19,16 +20,10 @@ namespace stan {
  *
  * @tparam T Type being tested.
  */
-template <typename T>
-struct is_constant {
-  /**
-   * A boolean constant with equal to <code>true</code> if the
-   * type parameter <code>T</code> is a mathematical constant.
-   */
-  enum { value = std::is_convertible<T, double>::value };
-};
+template <typename T, typename = void>
+struct is_constant : bool_constant<std::is_convertible<T, double>::value> {};
 
-/**
+/** \ingroup type_trait
  * Metaprogram defining an enum <code>value</code> which
  * is <code>true</code> if all of the type parameters
  * are constant (i.e., primtive types) and

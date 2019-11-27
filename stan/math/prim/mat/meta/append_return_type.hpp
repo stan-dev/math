@@ -7,7 +7,7 @@
 
 namespace stan {
 namespace math {
-/**
+/** \ingroup type_trait
  * This template metaprogram is used to compute the return type for
  * append_array
  *
@@ -20,10 +20,10 @@ namespace math {
  */
 template <typename T1, typename T2>
 struct append_return_type {
-  typedef typename return_type<T1, T2>::type type;
+  using type = return_type_t<T1, T2>;
 };
 
-/**
+/** \ingroup type_trait
  * This template metaprogram is used to compute the return type for
  * append_array
  *
@@ -34,10 +34,10 @@ struct append_return_type {
  */
 template <>
 struct append_return_type<int, int> {
-  typedef int type;
+  using type = int;
 };
 
-/**
+/** \ingroup type_trait
  * This template metaprogram is used to compute the return type for
  * append_array
  *
@@ -53,10 +53,10 @@ struct append_return_type<int, int> {
  */
 template <typename T1, typename T2, int R, int C>
 struct append_return_type<Eigen::Matrix<T1, R, C>, Eigen::Matrix<T2, R, C> > {
-  typedef typename Eigen::Matrix<typename return_type<T1, T2>::type, R, C> type;
+  using type = typename Eigen::Matrix<return_type_t<T1, T2>, R, C>;
 };
 
-/**
+/** \ingroup type_trait
  * This template metaprogram is used to compute the return type for
  * append_array
  *
@@ -69,7 +69,7 @@ struct append_return_type<Eigen::Matrix<T1, R, C>, Eigen::Matrix<T2, R, C> > {
  */
 template <typename T1, typename T2>
 struct append_return_type<std::vector<T1>, std::vector<T2> > {
-  typedef typename std::vector<typename append_return_type<T1, T2>::type> type;
+  using type = typename std::vector<typename append_return_type<T1, T2>::type>;
 };
 }  // namespace math
 }  // namespace stan

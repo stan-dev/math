@@ -15,7 +15,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup multivar_dists
  * Returns the log PMF of the Generalized Linear Model (GLM)
  * with Poisson distribution and log link function.
  * The idea is that poisson_log_glm_lpmf(y, x, alpha, beta) should
@@ -43,15 +43,16 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_x, typename T_alpha,
           typename T_beta>
-typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
-    const T_y& y, const T_x& x, const T_alpha& alpha, const T_beta& beta) {
+return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
+                                                         const T_x& x,
+                                                         const T_alpha& alpha,
+                                                         const T_beta& beta) {
   static const char* function = "poisson_log_glm_lpmf";
-  typedef typename partials_return_type<T_y, T_x, T_alpha, T_beta>::type
-      T_partials_return;
-  typedef typename std::conditional<
+  using T_partials_return = partials_return_t<T_y, T_x, T_alpha, T_beta>;
+  using T_alpha_val = typename std::conditional_t<
       is_vector<T_alpha>::value,
-      Eigen::Array<typename partials_return_type<T_alpha>::type, -1, 1>,
-      typename partials_return_type<T_alpha>::type>::type T_alpha_val;
+      Eigen::Array<partials_return_t<T_alpha>, -1, 1>,
+      partials_return_t<T_alpha>>;
 
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -60,17 +61,21 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
   const size_t N = x.rows();
   const size_t M = x.cols();
 
-  check_nonnegative(function, "Vector of dependent variables", y);
   check_consistent_size(function, "Vector of dependent variables", y, N);
   check_consistent_size(function, "Weight vector", beta, M);
-  if (is_vector<T_alpha>::value)
+  if (is_vector<T_alpha>::value) {
     check_consistent_sizes(function, "Vector of intercepts", alpha,
                            "Vector of dependent variables", y);
-  if (size_zero(y, x, beta))
-    return 0;
+  }
+  check_nonnegative(function, "Vector of dependent variables", y);
 
-  if (!include_summand<propto, T_x, T_alpha, T_beta>::value)
+  if (size_zero(y)) {
     return 0;
+  }
+
+  if (!include_summand<propto, T_x, T_alpha, T_beta>::value) {
+    return 0;
+  }
 
   T_partials_return logp(0);
 
@@ -106,8 +111,8 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
                 - exp(theta.array()));
   }
 
-  // Compute the necessary derivatives.
   operands_and_partials<T_x, T_alpha, T_beta> ops_partials(x, alpha, beta);
+  // Compute the necessary derivatives.
   if (!is_constant_all<T_beta>::value) {
     ops_partials.edge3_.partials_ = x_val.transpose() * theta_derivative;
   }
@@ -116,16 +121,17 @@ typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
         = (beta_val_vec * theta_derivative.transpose()).transpose();
   }
   if (!is_constant_all<T_alpha>::value) {
-    if (is_vector<T_alpha>::value)
+    if (is_vector<T_alpha>::value) {
       ops_partials.edge2_.partials_ = theta_derivative;
-    else
+    } else {
       ops_partials.edge2_.partials_[0] = theta_derivative_sum;
+    }
   }
   return ops_partials.build(logp);
 }
 
 template <typename T_y, typename T_x, typename T_alpha, typename T_beta>
-inline typename return_type<T_x, T_alpha, T_beta>::type poisson_log_glm_lpmf(
+inline return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(
     const T_y& y, const T_x& x, const T_alpha& alpha, const T_beta& beta) {
   return poisson_log_glm_lpmf<false>(y, x, alpha, beta);
 }

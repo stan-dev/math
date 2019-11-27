@@ -20,17 +20,18 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_shape, typename T_scale>
-typename return_type<T_y, T_shape, T_scale>::type frechet_lccdf(
-    const T_y& y, const T_shape& alpha, const T_scale& sigma) {
-  typedef typename stan::partials_return_type<T_y, T_shape, T_scale>::type
-      T_partials_return;
+return_type_t<T_y, T_shape, T_scale> frechet_lccdf(const T_y& y,
+                                                   const T_shape& alpha,
+                                                   const T_scale& sigma) {
+  using T_partials_return = partials_return_t<T_y, T_shape, T_scale>;
 
   static const char* function = "frechet_lccdf";
 
   using boost::math::tools::promote_args;
 
-  if (size_zero(y, alpha, sigma))
+  if (size_zero(y, alpha, sigma)) {
     return 0.0;
+  }
 
   T_partials_return ccdf_log(0.0);
   check_positive(function, "Random variable", y);
@@ -56,12 +57,15 @@ typename return_type<T_y, T_shape, T_scale>::type frechet_lccdf(
     ccdf_log += log1m(exp_);
 
     const T_partials_return rep_deriv_ = pow_ / (1.0 / exp_ - 1);
-    if (!is_constant_all<T_y>::value)
+    if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] -= alpha_dbl / y_dbl * rep_deriv_;
-    if (!is_constant_all<T_shape>::value)
+    }
+    if (!is_constant_all<T_shape>::value) {
       ops_partials.edge2_.partials_[n] -= log(y_dbl / sigma_dbl) * rep_deriv_;
-    if (!is_constant_all<T_scale>::value)
+    }
+    if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n] += alpha_dbl / sigma_dbl * rep_deriv_;
+    }
   }
   return ops_partials.build(ccdf_log);
 }

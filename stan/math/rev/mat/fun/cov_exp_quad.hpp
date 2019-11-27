@@ -62,8 +62,9 @@ class cov_exp_quad_vari : public vari {
         ++pos;
       }
     }
-    for (size_t i = 0; i < size_; ++i)
+    for (size_t i = 0; i < size_; ++i) {
       cov_diag_[i] = new vari(sigma_sq_d_, false);
+    }
   }
 
   virtual void chain() {
@@ -129,8 +130,9 @@ class cov_exp_quad_vari<T_x, double, T_l> : public vari {
         ++pos;
       }
     }
-    for (size_t i = 0; i < size_; ++i)
+    for (size_t i = 0; i < size_; ++i) {
       cov_diag_[i] = new vari(sigma_sq_d_, false);
+    }
   }
 
   virtual void chain() {
@@ -147,22 +149,20 @@ class cov_exp_quad_vari<T_x, double, T_l> : public vari {
 /**
  * @deprecated use <code>gp_exp_quad_cov_vari</code>
  */
-template <typename T_x>
-inline typename std::enable_if<
-    std::is_same<typename scalar_type<T_x>::type, double>::value,
-    Eigen::Matrix<var, -1, -1> >::type
-cov_exp_quad(const std::vector<T_x>& x, const var& sigma, const var& l) {
+template <typename T_x,
+          typename = require_arithmetic_t<typename scalar_type<T_x>::type>>
+inline Eigen::Matrix<var, -1, -1> cov_exp_quad(const std::vector<T_x>& x,
+                                               const var& sigma, const var& l) {
   return gp_exp_quad_cov(x, sigma, l);
 }
 
 /**
  * @deprecated use <code>gp_exp_quad_cov_vari</code>
  */
-template <typename T_x>
-inline typename std::enable_if<
-    std::is_same<typename scalar_type<T_x>::type, double>::value,
-    Eigen::Matrix<var, -1, -1> >::type
-cov_exp_quad(const std::vector<T_x>& x, double sigma, const var& l) {
+template <typename T_x,
+          typename = require_arithmetic_t<typename scalar_type<T_x>::type>>
+inline Eigen::Matrix<var, -1, -1> cov_exp_quad(const std::vector<T_x>& x,
+                                               double sigma, const var& l) {
   return gp_exp_quad_cov(x, sigma, l);
 }
 

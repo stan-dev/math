@@ -7,7 +7,7 @@
 
 namespace stan {
 
-/**
+/** \ingroup type_trait
  * Template specialization for using a vector
  */
 template <typename T1>
@@ -18,7 +18,7 @@ class VectorBuilderHelper<T1, true, true> {
  public:
   explicit VectorBuilderHelper(size_t n) : x_(n) {}
 
-  typedef std::vector<T1> type;
+  using type = std::vector<T1>;
 
   T1& operator[](size_t i) { return x_[i]; }
 

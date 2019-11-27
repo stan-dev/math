@@ -14,14 +14,14 @@ namespace math {
 // Multinomial(ns|N, theta)   [0 <= n <= N;  SUM ns = N;
 //                            0 <= theta[n] <= 1;  SUM theta = 1]
 template <bool propto, typename T_prob>
-typename boost::math::tools::promote_args<T_prob>::type multinomial_lpmf(
+return_type_t<T_prob> multinomial_lpmf(
     const std::vector<int>& ns,
     const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
   static const char* function = "multinomial_lpmf";
 
   using boost::math::tools::promote_args;
 
-  typename promote_args<T_prob>::type lp(0.0);
+  return_type_t<T_prob> lp(0.0);
   check_nonnegative(function, "Number of trials variable", ns);
   check_simplex(function, "Probabilities parameter", theta);
   check_size_match(function, "Size of number of trials variable", ns.size(),
@@ -29,21 +29,24 @@ typename boost::math::tools::promote_args<T_prob>::type multinomial_lpmf(
 
   if (include_summand<propto>::value) {
     double sum = 1.0;
-    for (int n : ns)
+    for (int n : ns) {
       sum += n;
+    }
     lp += lgamma(sum);
-    for (int n : ns)
+    for (int n : ns) {
       lp -= lgamma(n + 1.0);
+    }
   }
   if (include_summand<propto, T_prob>::value) {
-    for (unsigned int i = 0; i < ns.size(); ++i)
+    for (unsigned int i = 0; i < ns.size(); ++i) {
       lp += multiply_log(ns[i], theta[i]);
+    }
   }
   return lp;
 }
 
 template <typename T_prob>
-typename boost::math::tools::promote_args<T_prob>::type multinomial_lpmf(
+return_type_t<T_prob> multinomial_lpmf(
     const std::vector<int>& ns,
     const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
   return multinomial_lpmf<false>(ns, theta);

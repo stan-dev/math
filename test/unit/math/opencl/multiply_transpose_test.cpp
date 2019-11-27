@@ -16,12 +16,12 @@ TEST(MathMatrix, multiply_transpose_exception_fail_zero) {
   stan::math::row_vector_d rv(0);
   stan::math::matrix_d m(0, 3);
   stan::math::matrix_d m1(2, 0);
-  stan::math::matrix_cl mm(m);
-  stan::math::matrix_cl mm2(m1);
-  stan::math::matrix_cl rvv(rv);
-  stan::math::matrix_cl ans_mm1(1, 1);
-  stan::math::matrix_cl ans_mm2(0, 0);
-  stan::math::matrix_cl ans_mm3(2, 2);
+  stan::math::matrix_cl<double> mm(m);
+  stan::math::matrix_cl<double> mm2(m1);
+  stan::math::matrix_cl<double> rvv(rv);
+  stan::math::matrix_cl<double> ans_mm1(1, 1);
+  stan::math::matrix_cl<double> ans_mm2(0, 0);
+  stan::math::matrix_cl<double> ans_mm3(2, 2);
   EXPECT_NO_THROW(ans_mm1 = stan::math::multiply_transpose(rvv));
   EXPECT_NO_THROW(ans_mm2 = stan::math::multiply_transpose(mm));
   EXPECT_NO_THROW(ans_mm3 = stan::math::multiply_transpose(mm2));
@@ -30,10 +30,10 @@ TEST(MathMatrix, multiply_transpose_exception_fail_zero) {
 TEST(MathMatrix, multiply_m_m_exception_pass_dim) {
   stan::math::matrix_d m1(1, 3);
   stan::math::matrix_d m2(3, 5);
-  stan::math::matrix_cl mm1(m1);
-  stan::math::matrix_cl mm2(m2);
-  stan::math::matrix_cl mm3a(1, 1);
-  stan::math::matrix_cl mm3b(3, 3);
+  stan::math::matrix_cl<double> mm1(m1);
+  stan::math::matrix_cl<double> mm2(m2);
+  stan::math::matrix_cl<double> mm3a(1, 1);
+  stan::math::matrix_cl<double> mm3b(3, 3);
   EXPECT_NO_THROW(mm3a = stan::math::multiply_transpose(mm1));
   EXPECT_NO_THROW(mm3b = stan::math::multiply_transpose(mm2));
 }
@@ -42,9 +42,9 @@ TEST(MathMatrix, multiply_zero_size) {
   stan::math::vector_d v0;
   stan::math::row_vector_d rv0;
   stan::math::matrix_d m0;
-  stan::math::matrix_cl v00(v0);
-  stan::math::matrix_cl rv00(rv0);
-  stan::math::matrix_cl m00(m0);
+  stan::math::matrix_cl<double> v00(v0);
+  stan::math::matrix_cl<double> rv00(rv0);
+  stan::math::matrix_cl<double> m00(m0);
   EXPECT_NO_THROW(stan::math::multiply_transpose(v00));
   EXPECT_NO_THROW(stan::math::multiply_transpose(rv00));
   EXPECT_NO_THROW(stan::math::multiply_transpose(m00));
@@ -58,8 +58,8 @@ TEST(AgradRevMatrix, multiply_transposed_small) {
 
   m2 = m1 * m1.transpose();
 
-  stan::math::matrix_cl m11(m1);
-  stan::math::matrix_cl m22(3, 3);
+  stan::math::matrix_cl<double> m11(m1);
+  stan::math::matrix_cl<double> m22(3, 3);
   m22 = stan::math::multiply_transpose(m11);
   m2_cl = stan::math::from_matrix_cl(m22);
 
@@ -76,8 +76,8 @@ TEST(AgradRevMatrix, multiply_transposed_big) {
   m2_cl.resize(size, size);
   m2 = m1 * m1.transpose();
 
-  stan::math::matrix_cl m11(m1);
-  stan::math::matrix_cl m22(size, size);
+  stan::math::matrix_cl<double> m11(m1);
+  stan::math::matrix_cl<double> m22(size, size);
   m22 = stan::math::multiply_transpose(m11);
   m2_cl = stan::math::from_matrix_cl(m22);
   EXPECT_MATRIX_NEAR(m2, m2_cl, 1e-10);
@@ -95,8 +95,8 @@ TEST(AgradRevMatrix, multiply_transposed_big_non_square) {
 
   m2 = m1 * m1.transpose();
 
-  stan::math::matrix_cl m11(m1);
-  stan::math::matrix_cl m22(size_x, size_x);
+  stan::math::matrix_cl<double> m11(m1);
+  stan::math::matrix_cl<double> m22(size_x, size_x);
   m22 = stan::math::multiply_transpose(m11);
   m2_cl = stan::math::from_matrix_cl(m22);
 
@@ -115,8 +115,8 @@ TEST(AgradRevMatrix, multiply_transposed_big_x) {
 
   m2 = m1 * m1.transpose();
 
-  stan::math::matrix_cl m11(m1);
-  stan::math::matrix_cl m22(size_x, size_x);
+  stan::math::matrix_cl<double> m11(m1);
+  stan::math::matrix_cl<double> m22(size_x, size_x);
   m22 = stan::math::multiply_transpose(m11);
   m2_cl = stan::math::from_matrix_cl(m22);
 
