@@ -18,19 +18,11 @@ namespace math {
  * @param[in] u argument
  * @return base two logarithm of argument
  */
-inline double log2(double u) {
-  using std::log;
-  return log(u) / LOG_2;
+template <typename T, typename = require_arithmetic_t<T>>
+inline double log2(T u) {
+  using std::log2;
+  return log2(u);
 }
-
-/**
- * Return the base two logarithm of the specified argument.  This
- * version is required to disambiguate <code>log2(int)</code>.
- *
- * @param[in] u argument
- * @return base two logarithm of argument
- */
-inline double log2(int u) { return log2(static_cast<double>(u)); }
 
 /**
  * Return natural logarithm of two.

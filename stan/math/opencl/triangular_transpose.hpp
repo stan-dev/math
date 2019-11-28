@@ -15,7 +15,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup opencl
  * Copies a lower/upper triangular of a matrix to it's upper/lower.
  *
  * @tparam triangular_map Specifies if the copy is
@@ -27,7 +27,7 @@ namespace math {
  */
 template <typename T>
 template <TriangularMapCL triangular_map>
-inline void matrix_cl<T, enable_if_arithmetic<T>>::triangular_transpose() try {
+inline void matrix_cl<T, require_arithmetic_t<T>>::triangular_transpose() try {
   if (this->size() == 0 || this->size() == 1) {
     return;
   }

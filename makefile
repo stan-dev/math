@@ -81,7 +81,7 @@ help:
 	@echo '  - clean         : Basic clean. Leaves doc and compiled libraries intact.'
 	@echo '  - clean-deps    : Removes dependency files for tests. If tests stop building,'
 	@echo '                    run this target.'
-	@echo '  - clean-libraries : Removes binaries built for libraries including CVODES.'
+	@echo '  - clean-libraries : Removes binaries built for libraries including CVODES and the TBB.'
 	@echo '  - clean-all     : Cleans up all of Stan.'
 	@echo ''
 	@echo '--------------------------------------------------------------------------------'
@@ -120,6 +120,9 @@ clean-deps:
 
 clean-all: clean clean-doxygen clean-deps clean-libraries
 
+.PHONY: test-math-dependencies
+test-math-dependencies:
+	@python runChecks.py
 ##
 # Debug target that allows you to print a variable
 ##

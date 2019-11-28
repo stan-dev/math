@@ -1,145 +1,30 @@
-#include <stan/math/mix/mat.hpp>
-#include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/test_ad.hpp>
 
-TEST(AgradMixMatrixSingularValues, mat_fv_1st_deriv) {
-  stan::math::matrix_fv m1(2, 2);
-  stan::math::vector_fv res;
+TEST(MathMixMatFun, singularValues) {
+  auto f = [](const auto& x) { return stan::math::singular_values(x); };
 
-  m1 << 1, 2, 3, 4;
-  m1(0, 0).d_ = 1.0;
-  m1(0, 1).d_ = 1.0;
-  m1(1, 0).d_ = 1.0;
-  m1(1, 1).d_ = 1.0;
+  stan::test::ad_tolerances tols;
+  tols.hessian_hessian_ = 1e-2;
+  tols.hessian_fvar_hessian_ = 1e-2;
 
-  using stan::math::singular_values;
+  Eigen::MatrixXd m00(0, 0);
+  stan::test::expect_ad(f, m00);
 
-  res = singular_values(m1);
-  EXPECT_FLOAT_EQ(5.4649858, res(0).val_.val());
-  EXPECT_FLOAT_EQ(0.3659662, res(1).val_.val());
-  EXPECT_FLOAT_EQ(1.8380736, res(0).d_.val());
-  EXPECT_FLOAT_EQ(-0.12308775, res(1).d_.val());
+  Eigen::MatrixXd m11(1, 1);
+  m11 << 1.1;
+  stan::test::expect_ad(tols, f, m11);
 
-  AVEC z
-      = createAVEC(m1(0, 0).val_, m1(0, 1).val_, m1(1, 0).val_, m1(1, 1).val_);
-  VEC h;
-  res(0).val_.grad(z, h);
-  EXPECT_FLOAT_EQ(0.23304246, h[0]);
-  EXPECT_FLOAT_EQ(0.33068839, h[1]);
-  EXPECT_FLOAT_EQ(0.52680451, h[2]);
-  EXPECT_FLOAT_EQ(0.74753821, h[3]);
-}
-TEST(AgradMixMatrixSingularValues, mat_fv_2nd_deriv) {
-  stan::math::matrix_fv m1(2, 2);
-  stan::math::vector_fv res;
+  Eigen::MatrixXd m22(2, 2);
+  m22 << 3, -5, 7, 11;
+  stan::test::expect_ad(tols, f, m22);
 
-  m1 << 1, 2, 3, 4;
-  m1(0, 0).d_ = 1.0;
-  m1(0, 1).d_ = 1.0;
-  m1(1, 0).d_ = 1.0;
-  m1(1, 1).d_ = 1.0;
+  Eigen::MatrixXd m23(2, 3);
+  m23 << 3, 5, -7, -11, 13, -17;
+  Eigen::MatrixXd m32 = m23.transpose();
+  stan::test::expect_ad(tols, f, m23);
+  stan::test::expect_ad(tols, f, m32);
 
-  using stan::math::singular_values;
-
-  res = singular_values(m1);
-  EXPECT_FLOAT_EQ(5.4649858, res(0).val_.val());
-  EXPECT_FLOAT_EQ(0.3659662, res(1).val_.val());
-  EXPECT_FLOAT_EQ(1.8380736, res(0).d_.val());
-  EXPECT_FLOAT_EQ(-0.12308775, res(1).d_.val());
-
-  AVEC z
-      = createAVEC(m1(0, 0).val_, m1(0, 1).val_, m1(1, 0).val_, m1(1, 1).val_);
-  VEC h;
-  res(0).d_.grad(z, h);
-  EXPECT_FLOAT_EQ(0.083204068, h[0]);
-  EXPECT_FLOAT_EQ(0.083111323, h[1]);
-  EXPECT_FLOAT_EQ(0.0076820431, h[2]);
-  EXPECT_FLOAT_EQ(-0.068118215, h[3]);
-}
-
-TEST(AgradMixMatrixSingularValues, mat_ffv_1st_deriv) {
-  stan::math::matrix_ffv m1(2, 2);
-  stan::math::vector_ffv res;
-
-  m1 << 1, 2, 3, 4;
-  m1(0, 0).d_ = 1.0;
-  m1(0, 1).d_ = 1.0;
-  m1(1, 0).d_ = 1.0;
-  m1(1, 1).d_ = 1.0;
-
-  using stan::math::singular_values;
-
-  res = singular_values(m1);
-  EXPECT_FLOAT_EQ(5.4649858, res(0).val_.val_.val());
-  EXPECT_FLOAT_EQ(0.3659662, res(1).val_.val_.val());
-  EXPECT_FLOAT_EQ(1.8380736, res(0).d_.val_.val());
-  EXPECT_FLOAT_EQ(-0.12308775, res(1).d_.val_.val());
-
-  AVEC z = createAVEC(m1(0, 0).val_.val_, m1(0, 1).val_.val_,
-                      m1(1, 0).val_.val_, m1(1, 1).val_.val_);
-  VEC h;
-  res(0).val_.val_.grad(z, h);
-  EXPECT_FLOAT_EQ(0.23304246, h[0]);
-  EXPECT_FLOAT_EQ(0.33068839, h[1]);
-  EXPECT_FLOAT_EQ(0.52680451, h[2]);
-  EXPECT_FLOAT_EQ(0.74753821, h[3]);
-}
-TEST(AgradMixMatrixSingularValues, mat_ffv_2nd_deriv) {
-  stan::math::matrix_ffv m1(2, 2);
-  stan::math::vector_ffv res;
-
-  m1 << 1, 2, 3, 4;
-  m1(0, 0).d_ = 1.0;
-  m1(0, 1).d_ = 1.0;
-  m1(1, 0).d_ = 1.0;
-  m1(1, 1).d_ = 1.0;
-
-  using stan::math::singular_values;
-
-  res = singular_values(m1);
-  EXPECT_FLOAT_EQ(5.4649858, res(0).val_.val_.val());
-  EXPECT_FLOAT_EQ(0.3659662, res(1).val_.val_.val());
-  EXPECT_FLOAT_EQ(1.8380736, res(0).d_.val_.val());
-  EXPECT_FLOAT_EQ(-0.12308775, res(1).d_.val_.val());
-
-  AVEC z = createAVEC(m1(0, 0).val_.val_, m1(0, 1).val_.val_,
-                      m1(1, 0).val_.val_, m1(1, 1).val_.val_);
-  VEC h;
-  res(0).d_.val_.grad(z, h);
-  EXPECT_FLOAT_EQ(0.083204068, h[0]);
-  EXPECT_FLOAT_EQ(0.083111323, h[1]);
-  EXPECT_FLOAT_EQ(0.0076820431, h[2]);
-  EXPECT_FLOAT_EQ(-0.068118215, h[3]);
-}
-
-TEST(AgradMixMatrixSingularValues, mat_ffv_3rd_deriv) {
-  stan::math::matrix_ffv m1(2, 2);
-  stan::math::vector_ffv res;
-
-  m1 << 1, 2, 3, 4;
-  m1(0, 0).d_ = 1.0;
-  m1(0, 1).d_ = 1.0;
-  m1(1, 0).d_ = 1.0;
-  m1(1, 1).d_ = 1.0;
-  m1(0, 0).val_.d_ = 1.0;
-  m1(0, 1).val_.d_ = 1.0;
-  m1(1, 0).val_.d_ = 1.0;
-  m1(1, 1).val_.d_ = 1.0;
-
-  using stan::math::singular_values;
-
-  res = singular_values(m1);
-  EXPECT_FLOAT_EQ(5.4649858, res(0).val_.val_.val());
-  EXPECT_FLOAT_EQ(0.3659662, res(1).val_.val_.val());
-  EXPECT_FLOAT_EQ(1.8380736, res(0).d_.val_.val());
-  EXPECT_FLOAT_EQ(-0.12308775, res(1).d_.val_.val());
-
-  AVEC z = createAVEC(m1(0, 0).val_.val_, m1(0, 1).val_.val_,
-                      m1(1, 0).val_.val_, m1(1, 1).val_.val_);
-  VEC h;
-  res(0).d_.d_.grad(z, h);
-  EXPECT_FLOAT_EQ(-0.045198753, h[0]);
-  EXPECT_FLOAT_EQ(-0.068486936, h[1]);
-  EXPECT_FLOAT_EQ(-0.011624861, h[2]);
-  EXPECT_FLOAT_EQ(0.027791996, h[3]);
+  Eigen::MatrixXd a22(2, 2);
+  a22 << 1, 2, 3, 4;
+  stan::test::expect_ad(tols, f, a22);
 }

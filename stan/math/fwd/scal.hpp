@@ -19,7 +19,6 @@
 #include <stan/math/fwd/scal/fun/bessel_second_kind.hpp>
 #include <stan/math/fwd/scal/fun/beta.hpp>
 #include <stan/math/fwd/scal/fun/binary_log_loss.hpp>
-#include <stan/math/fwd/scal/fun/binomial_coefficient_log.hpp>
 #include <stan/math/fwd/scal/fun/cbrt.hpp>
 #include <stan/math/fwd/scal/fun/ceil.hpp>
 #include <stan/math/fwd/scal/fun/cos.hpp>
@@ -52,6 +51,7 @@
 #include <stan/math/fwd/scal/fun/is_inf.hpp>
 #include <stan/math/fwd/scal/fun/is_nan.hpp>
 #include <stan/math/fwd/scal/fun/lbeta.hpp>
+#include <stan/math/fwd/scal/fun/ldexp.hpp>
 #include <stan/math/fwd/scal/fun/lgamma.hpp>
 #include <stan/math/fwd/scal/fun/lmgamma.hpp>
 #include <stan/math/fwd/scal/fun/log.hpp>

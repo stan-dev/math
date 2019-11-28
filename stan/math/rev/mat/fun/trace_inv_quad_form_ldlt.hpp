@@ -144,9 +144,13 @@ class trace_inv_quad_form_ldlt_vari : public vari {
  * where the LDLT_factor of A is provided.
  **/
 template <typename T2, int R2, int C2, typename T3, int R3, int C3,
-          typename = enable_if_any_var<T2, T3>>
+          typename = require_any_var_t<T2, T3>>
 inline return_type_t<T2, T3> trace_inv_quad_form_ldlt(
     const LDLT_factor<T2, R2, C2> &A, const Eigen::Matrix<T3, R3, C3> &B) {
+  if (A.rows() == 0 && B.size() == 0) {
+    return 0;
+  }
+
   check_multiplicable("trace_inv_quad_form_ldlt", "A", A, "B", B);
 
   internal::trace_inv_quad_form_ldlt_impl<T2, R2, C2, T3, R3, C3> *impl_

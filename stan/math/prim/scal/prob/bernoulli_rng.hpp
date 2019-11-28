@@ -10,7 +10,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Return a Bernoulli random variate with specified chance of success
  * parameter using the specified random number generator.
  *

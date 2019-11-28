@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * The log of the normal density for the specified scalar(s) given
  * the specified mean(s) and deviation(s). y, mu, or sigma can
  * each be either a scalar or a vector. Any vector inputs
@@ -29,12 +29,13 @@ namespace math {
  * @tparam T_loc Type of location parameter.
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
-return_type_t<T_y, T_loc, T_scale> normal_log(const T_y& y, const T_loc& mu,
-                                              const T_scale& sigma) {
+inline return_type_t<T_y, T_loc, T_scale> normal_log(const T_y& y,
+                                                     const T_loc& mu,
+                                                     const T_scale& sigma) {
   return normal_lpdf<propto, T_y, T_loc, T_scale>(y, mu, sigma);
 }
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>normal_lpdf</code>
  */
 template <typename T_y, typename T_loc, typename T_scale>

@@ -10,7 +10,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup multivar_dists
  * Returns the log PMF of the Generalized Linear Model (GLM)
  * with categorical distribution and logit (softmax) link function.
  *
@@ -64,7 +64,7 @@ categorical_logit_glm_lpmf(
   check_bounded(function, "categorical outcome out of support", y, 1,
                 N_classes);
 
-  if (size_zero(y, x, beta)) {
+  if (size_zero(y) || N_classes == 1) {
     return 0;
   }
 
@@ -143,8 +143,7 @@ categorical_logit_glm_lpmf(
       // inv_sum_exp_lin;
     }
   }
-  if (!is_constant_all<T_alpha_scalar>::value
-      || !is_constant_all<T_beta_scalar>::value) {
+  if (!is_constant_all<T_alpha_scalar, T_beta_scalar>::value) {
     Array<T_partials_return, T_x_rows, Dynamic> neg_softmax_lin
         = exp_lin.colwise() * -inv_sum_exp_lin;
     if (!is_constant_all<T_alpha_scalar>::value) {

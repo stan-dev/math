@@ -7,9 +7,8 @@
 #include <type_traits>
 
 namespace stan {
-namespace math {
 
-/**
+/** \ingroup type_trait
  * Template metaprogram defining the type of values stored in an
  * Eigen matrix, vector, or row vector.
  *
@@ -19,8 +18,6 @@ template <typename T>
 struct value_type<T, std::enable_if_t<is_eigen<T>::value>> {
   using type = typename std::decay_t<T>::Scalar;
 };
-
-}  // namespace math
 
 }  // namespace stan
 

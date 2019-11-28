@@ -11,7 +11,7 @@
 
 namespace stan {
 namespace math {
-/**
+/** \ingroup opencl
  * Check if the <code>matrix_cl</code> has zeros on the diagonal
  *
  * @param function Function name (for error messages)
@@ -21,7 +21,7 @@ namespace math {
  * @throw <code>std::domain_error</code> if
  *    any diagonal element of the matrix is zero.
  */
-template <typename T, typename = enable_if_arithmetic<T>>
+template <typename T, typename = require_arithmetic_t<T>>
 inline void check_diagonal_zeros(const char* function, const char* name,
                                  const matrix_cl<T>& y) {
   if (y.size() == 0) {

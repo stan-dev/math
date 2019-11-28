@@ -4,9 +4,8 @@
 #include <type_traits>
 
 namespace stan {
-namespace math {
 
-/**
+/** \ingroup type_trait
  * Primary template class for metaprogram to compute the type of
  * values stored in a container.
  *
@@ -17,7 +16,7 @@ struct value_type {
   using type = typename std::decay_t<T>;
 };
 
-/**
+/** \ingroup type_trait
  * Specialization for pointers returns the underlying value the pointer is
  * pointing to.
  */
@@ -26,12 +25,11 @@ struct value_type<T, std::enable_if_t<std::is_pointer<T>::value>> {
   using type = typename value_type<std::remove_pointer<T>>::type;
 };
 
-/**
+/** \ingroup type_trait
  * Helper function for accessing underlying type.
  */
 template <typename T>
 using value_type_t = typename value_type<T>::type;
 
-}  // namespace math
 }  // namespace stan
 #endif

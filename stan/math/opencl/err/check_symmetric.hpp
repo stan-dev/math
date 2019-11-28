@@ -12,7 +12,7 @@
 #include <vector>
 namespace stan {
 namespace math {
-/**
+/** \ingroup opencl
  * Check if the <code>matrix_cl</code> is symmetric
  *
  * @param function Function name (for error messages)
@@ -22,7 +22,7 @@ namespace math {
  * @throw <code>std::domain_error</code> if
  *    the matrix is not symmetric.
  */
-template <typename T, typename = enable_if_arithmetic<T>>
+template <typename T, typename = require_arithmetic_t<T>>
 inline void check_symmetric(const char* function, const char* name,
                             const matrix_cl<T>& y) {
   if (y.size() == 0) {
