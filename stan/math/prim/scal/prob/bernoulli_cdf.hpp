@@ -12,7 +12,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Returns the CDF of the Bernoulli distribution. If containers are
  * supplied, returns the product of the probabilities.
  *

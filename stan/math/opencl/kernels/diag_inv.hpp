@@ -12,7 +12,7 @@ namespace opencl_kernels {
 // \cond
 static const std::string diag_inv_kernel_code = STRINGIFY(
     // \endcond
-    /**
+    /** \ingroup opencl_kernels
      * Calculates inplace submatrix inversions along the matrix diagonal.
      *
      *  For a full guide to the inverse lower triangular kernels see the link
@@ -81,7 +81,7 @@ static const std::string diag_inv_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/**
+/** \ingroup opencl_kernels
  * See the docs for \link kernels/diag_inv.hpp add()
  * \endlink
  */

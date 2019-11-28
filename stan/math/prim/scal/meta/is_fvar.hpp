@@ -4,7 +4,7 @@
 #include <type_traits>
 
 namespace stan {
-/**
+/** \ingroup type_trait
  * Defines a static member function type which is defined to be false
  * as the primitive scalar types cannot be a stan::math::fvar type.
  */

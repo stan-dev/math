@@ -10,7 +10,7 @@
 
 namespace stan {
 namespace math {
-/**
+/** \ingroup prob_dists
  * Return a pseudorandom inverse chi squared variate with the nu
  * degrees of freedom using the specified random number generator.
  *

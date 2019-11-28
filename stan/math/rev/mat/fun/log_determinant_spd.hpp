@@ -17,6 +17,8 @@ template <int R, int C>
 inline var log_determinant_spd(const Eigen::Matrix<var, R, C>& m) {
   check_square("log_determinant_spd", "m", m);
   check_symmetric("log_determinant_spd", "m", m);
+  if (m.size() == 0)
+    return 0;
 
   matrix_d m_d = m.val();
 

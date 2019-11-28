@@ -6,7 +6,7 @@
 
 namespace stan {
 
-/**
+/** \ingroup type_trait
  * This class provides a low-cost wrapper for situations where you either need
  * an Eigen Vector or RowVector or a std::vector of them and you want to be
  * agnostic between those two options. This is similar to scalar_seq_view but
@@ -20,7 +20,7 @@ namespace stan {
 template <typename T>
 class vector_seq_view {};
 
-/**
+/** \ingroup type_trait
  * This class provides a low-cost wrapper for situations where you either need
  * an Eigen Vector or RowVector or a std::vector of them and you want to be
  * agnostic between those two options. This is similar to scalar_seq_view but
@@ -45,7 +45,7 @@ class vector_seq_view<Eigen::Matrix<S, Eigen::Dynamic, 1> > {
   const Eigen::Matrix<S, Eigen::Dynamic, 1>& m_;
 };
 
-/**
+/** \ingroup type_trait
  * This class provides a low-cost wrapper for situations where you either need
  * an Eigen Vector or RowVector or a std::vector of them and you want to be
  * agnostic between those two options. This is similar to scalar_seq_view but
@@ -70,7 +70,7 @@ class vector_seq_view<Eigen::Matrix<S, 1, Eigen::Dynamic> > {
   const Eigen::Matrix<S, 1, Eigen::Dynamic>& m_;
 };
 
-/**
+/** \ingroup type_trait
  * This class provides a low-cost wrapper for situations where you either need
  * an Eigen Vector or RowVector or a std::vector of them and you want to be
  * agnostic between those two options. This is similar to scalar_seq_view but
@@ -94,7 +94,7 @@ class vector_seq_view<std::vector<Eigen::Matrix<S, Eigen::Dynamic, 1> > > {
   const std::vector<Eigen::Matrix<S, Eigen::Dynamic, 1> >& v_;
 };
 
-/**
+/** \ingroup type_trait
  * This class provides a low-cost wrapper for situations where you either need
  * an Eigen Vector or RowVector or a std::vector of them and you want to be
  * agnostic between those two options. This is similar to scalar_seq_view but

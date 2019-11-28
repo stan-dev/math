@@ -13,7 +13,7 @@ namespace opencl_kernels {
 // \cond
 static const std::string rep_matrix_kernel_code = STRINGIFY(
     // \endcond
-    /**
+    /** \ingroup opencl_kernels
      * Creates a matrix from a matrix_cl of size 1x1 by
      * replicating the single value or by replicating the
      * vector or row_vector input.
@@ -54,7 +54,7 @@ static const std::string rep_matrix_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/**
+/** \ingroup opencl_kernels
  * See the docs for \link kernels/rep_matrix.hpp rep_matrix() \endlink
  */
 const kernel_cl<out_buffer, in_buffer, int, int, int, int, matrix_cl_view>

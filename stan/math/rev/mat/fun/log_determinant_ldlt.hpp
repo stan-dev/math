@@ -40,6 +40,10 @@ class log_det_ldlt_vari : public vari {
 
 template <int R, int C>
 var log_determinant_ldlt(LDLT_factor<var, R, C> &A) {
+  if (A.rows() == 0) {
+    return 0;
+  }
+
   return var(new internal::log_det_ldlt_vari<R, C>(A));
 }
 

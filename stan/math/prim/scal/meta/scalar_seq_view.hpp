@@ -6,7 +6,7 @@
 #include <type_traits>
 
 namespace stan {
-/**
+/** \ingroup type_trait
  * scalar_seq_view provides a uniform sequence-like wrapper around either a
  * scalar or a sequence of scalars.
  * @tparam C the container type; will be the scalar type if wrapping a scalar
@@ -21,7 +21,7 @@ class scalar_seq_view<
  public:
   explicit scalar_seq_view(const C& c) : c_(c) {}
 
-  /**
+  /** \ingroup type_trait
    * Segfaults if out of bounds.
    * @param i index
    * @return the element at the specified position in the container
@@ -35,7 +35,7 @@ class scalar_seq_view<
   C c_;
 };
 
-/**
+/** \ingroup type_trait
  * This specialization handles wrapping a scalar as if it were a sequence.
  * @tparam T the scalar type
  */

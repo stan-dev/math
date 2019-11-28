@@ -24,7 +24,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * The cumulative density function for a gamma distribution for y
  * with the specified shape and inverse scale parameters.
  *

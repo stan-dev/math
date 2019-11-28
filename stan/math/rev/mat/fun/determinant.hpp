@@ -47,6 +47,10 @@ class determinant_vari : public vari {
 template <int R, int C>
 inline var determinant(const Eigen::Matrix<var, R, C>& m) {
   check_square("determinant", "m", m);
+  if (m.size() == 0) {
+    return 1;
+  }
+
   return var(new internal::determinant_vari<R, C>(m));
 }
 
