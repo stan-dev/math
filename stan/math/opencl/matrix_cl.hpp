@@ -224,6 +224,11 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * caller must make sure that the vector does not go out of scope before
    * copying is complete.
    *
+   * That means `.wait()` must be called on the event associated on copying or
+   * any other event that requires completion of this event. This can be done by
+   * calling `.wait_for_write_events()` or `.wait_for_read_write_events()` on
+   * this matrix or any matrix that is calculated from this one.
+   *
    * @param A the vector of Eigen matrices
    *
    * @throw <code>std::invalid_argument</code> if the
@@ -291,6 +296,11 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * caller must make sure that the matrix does not go out of scope before
    * copying is complete.
    *
+   * That means `.wait()` must be called on the event associated on copying or
+   * any other event that requires completion of this event. This can be done by
+   * calling `.wait_for_write_events()` or `.wait_for_read_write_events()` on
+   * this matrix or any matrix that is calculated from this one.
+   *
    * @tparam Mat type of \c Eigen \c Matrix or expression
    * @param A the \c Eigen \c Matrix or expression
    * @param partial_view which part of the matrix is used
@@ -332,6 +342,11 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * caller must make sure that the memory referenced by map is not deleted
    * before copying is complete.
    *
+   * That means `.wait()` must be called on the event associated on copying or
+   * any other event that requires completion of this event. This can be done by
+   * calling `.wait_for_write_events()` or `.wait_for_read_write_events()` on
+   * this matrix or any matrix that is calculated from this one.
+   *
    * @tparam T type of data in the \c Eigen \c Matrix
    * @param A the \c Eigen \c Map
    * @param partial_view which part of the matrix is used
@@ -353,6 +368,11 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * is passed to this constructor the caller must make sure that it does not go
    * out of scope before copying is complete.
    *
+   * That means `.wait()` must be called on the event associated on copying or
+   * any other event that requires completion of this event. This can be done by
+   * calling `.wait_for_write_events()` or `.wait_for_read_write_events()` on
+   * this matrix or any matrix that is calculated from this one.
+   *
    * @param A the scalar
    * @param partial_view which part of the matrix is used
    *
@@ -372,6 +392,11 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * passed to this constructor the caller must make sure that it does not go
    * out of scope before copying is complete.
    *
+   * That means `.wait()` must be called on the event associated on copying or
+   * any other event that requires completion of this event. This can be done by
+   * calling `.wait_for_write_events()` or `.wait_for_read_write_events()` on
+   * this matrix or any matrix that is calculated from this one.
+   *
    * @param A Standard vector
    * @param partial_view which part of the matrix is used
    *
@@ -388,6 +413,11 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * Construct from \c std::vector with given rows and columns. If a lvalue
    * is passed to this constructor the caller must make sure that it does not
    * go out of scope before copying is complete.
+   *
+   * That means `.wait()` must be called on the event associated on copying or
+   * any other event that requires completion of this event. This can be done by
+   * calling `.wait_for_write_events()` or `.wait_for_read_write_events()` on
+   * this matrix or any matrix that is calculated from this one.
    *
    * @param A Standard vector
    * @param R Number of rows the matrix should have.
@@ -408,6 +438,11 @@ class matrix_cl<T, require_arithmetic_t<T>> {
   /**
    * Construct from \c array of doubles with given rows and columns. The caller
    * must make sure that data is not deleted before copying is complete.
+   *
+   * That means `.wait()` must be called on the event associated on copying or
+   * any other event that requires completion of this event. This can be done by
+   * calling `.wait_for_write_events()` or `.wait_for_read_write_events()` on
+   * this matrix or any matrix that is calculated from this one.
    *
    * @param A array of doubles
    * @param R Number of rows the matrix should have.
@@ -456,6 +491,12 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * buffer. Assumes that size of \c this is already set and matches the
    * buffer size. If \c in_order is false the caller must make sure that data
    * is not deleted before copying is complete.
+   *
+   * That means `.wait()` must be called on the event associated on copying or
+   * any other event that requires completion of this event. This can be done by
+   * calling `.wait_for_write_events()` or `.wait_for_read_write_events()` on
+   * this matrix or any matrix that is calculated from this one.
+   *
    * @tparam in_order whether copying must be done in order
    * @param A pointer to buffer
    * @return event for the copy
@@ -485,8 +526,13 @@ class matrix_cl<T, require_arithmetic_t<T>> {
    * object. Assumes that size of \c this is already set and matches the
    * buffer size. If the object is rvalue (temporary) it is first moved to heap
    * and callback is set to delete it after copying to OpenCL device is
-   * complete. If a lvalue is passed to this constructor the caller must make
+   * complete. If a lvalue is passed to this function the caller must make
    * sure that input object does not go out of scope before copying is complete.
+   *
+   * That means `.wait()` must be called on the event associated on copying or
+   * any other event that requires completion of this event. This can be done by
+   * calling `.wait_for_write_events()` or `.wait_for_read_write_events()` on
+   * this matrix or any matrix that is calculated from this one.
    *
    * @tparam U type of object
    * @param obj object
