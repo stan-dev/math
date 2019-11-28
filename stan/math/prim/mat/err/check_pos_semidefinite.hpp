@@ -64,5 +64,5 @@ inline void check_pos_semidefinite(const char* function, const char* name,
 }
 
 }  // namespace math
-}  // namespace math
+}  // namespace stan
 #endif
