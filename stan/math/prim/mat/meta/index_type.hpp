@@ -10,7 +10,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup type_trait
  * Template metaprogram defining typedef for the type of index for
  * an Eigen matrix, vector, or row vector.
  *

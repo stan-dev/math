@@ -8,7 +8,7 @@
 
 namespace stan {
 
-/**
+/** \ingroup type_trait
  * Specialization of partials type returns double if input type is a double.
  */
 template <typename T>

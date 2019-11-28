@@ -24,6 +24,9 @@ namespace math {
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_corr_matrix(
     const Eigen::Array<T, Eigen::Dynamic, 1>& CPCs, size_t K) {
+  if (K == 0)
+    return {};
+
   Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> L = read_corr_L(CPCs, K);
   return multiply_lower_tri_self_transpose(L);
 }
@@ -49,6 +52,9 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_corr_matrix(
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_corr_matrix(
     const Eigen::Array<T, Eigen::Dynamic, 1>& CPCs, size_t K, T& log_prob) {
+  if (K == 0)
+    return Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>();
+
   Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> L
       = read_corr_L(CPCs, K, log_prob);
   return multiply_lower_tri_self_transpose(L);

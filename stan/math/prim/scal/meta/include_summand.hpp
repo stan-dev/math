@@ -9,7 +9,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup type_trait
  * Template metaprogram to calculate whether a summand
  * needs to be included in a proportional (log) probability
  * calculation.  For usage, the first boolean parameter
@@ -38,7 +38,7 @@ struct include_summand
     : bool_constant<(!stan::is_constant_all<scalar_type_t<T>>::value
                      || include_summand<propto, T_pack...>::value)> {};
 
-/**
+/** \ingroup type_trait
  * <code>true</code> if a term with the specified propto
  * value and subterm types should be included in a proportionality
  * calculation.

@@ -25,7 +25,8 @@
 
 namespace stan {
 namespace math {
-/**
+
+/** \ingroup opencl
  * Copies the source Eigen matrix to the destination matrix that is stored on
  * the OpenCL device. If a lvalue matrix is passed to this function the caller
  * must make sure that the matrix does not go out of scope before copying is
@@ -40,12 +41,12 @@ namespace math {
  * @return matrix_cl with a copy of the data in the source matrix
  */
 template <typename Mat, typename Mat_scalar = scalar_type_t<Mat>,
-          require_eigen_t<Mat>...>
+          require_eigen_vt<std::is_arithmetic, Mat>...>
 inline matrix_cl<Mat_scalar> to_matrix_cl(Mat&& src) {
   return matrix_cl<Mat_scalar>(src);
 }
 
-/**
+/** \ingroup opencl
  * Copies the source `std::vector` to the destination matrix that is stored on
  * the OpenCL device. If a lvalue is passed to this constructor the caller must
  * make sure that it does not go out of scope before copying is complete.
@@ -59,12 +60,12 @@ inline matrix_cl<Mat_scalar> to_matrix_cl(Mat&& src) {
  * @return matrix_cl with a copy of the data in the source matrix
  */
 template <typename Vec, typename Vec_scalar = scalar_type_t<Vec>,
-          require_std_vector_t<Vec>...>
+          require_std_vector_vt<std::is_arithmetic, Vec>...>
 inline matrix_cl<Vec_scalar> to_matrix_cl(Vec&& src) {
   return matrix_cl<Vec_scalar>(src);
 }
 
-/**
+/** \ingroup opencl
  * Copies the source matrix that is stored on the OpenCL device to the
  * destination Eigen matrix.
  *
@@ -80,7 +81,7 @@ inline Eigen::Matrix<T, R, C> from_matrix_cl(const matrix_cl<T>& src) {
     return dst;
   }
   try {
-    /**
+    /** \ingroup opencl
      * Reads the contents of the OpenCL buffer
      * starting at the offset 0 to the Eigen
      * matrix
@@ -101,7 +102,7 @@ inline Eigen::Matrix<T, R, C> from_matrix_cl(const matrix_cl<T>& src) {
   return dst;
 }
 
-/**
+/** \ingroup opencl
  * Packs the flat triangular matrix on the OpenCL device and
  * copies it to the std::vector.
  *
@@ -137,7 +138,7 @@ inline std::vector<T> packed_copy(const matrix_cl<T>& src) {
   return dst;
 }
 
-/**
+/** \ingroup opencl
  * Copies the packed triangular matrix from the source std::vector to an OpenCL
  * buffer and unpacks it to a flat matrix on the OpenCL device. If a lvalue is
  * passed to this constructor the caller must make sure that it does not go out
@@ -158,7 +159,7 @@ inline std::vector<T> packed_copy(const matrix_cl<T>& src) {
  */
 template <matrix_cl_view matrix_view, typename Vec,
           typename Vec_scalar = scalar_type_t<Vec>,
-          require_std_vector_t<Vec>...>
+          require_vector_vt<std::is_arithmetic, Vec>...>
 inline matrix_cl<Vec_scalar> packed_copy(Vec&& src, int rows) {
   const int packed_size = rows * (rows + 1) / 2;
   check_size_match("copy (packed std::vector -> OpenCL)", "src.size()",
@@ -185,7 +186,7 @@ inline matrix_cl<Vec_scalar> packed_copy(Vec&& src, int rows) {
   return dst;
 }
 
-/**
+/** \ingroup opencl
  * Copies the source matrix to the
  * destination matrix. Both matrices
  * are stored on the OpenCL device.
@@ -200,7 +201,7 @@ inline matrix_cl<T> copy_cl(const matrix_cl<T>& src) {
   return matrix_cl<T>(src);
 }
 
-/**
+/** \ingroup opencl
  * Copy A 1 by 1 source matrix from the Device to  the host.
  * @tparam T An arithmetic type to pass the value from the OpenCL matrix to.
  * @param src A 1x1 matrix on the device.
@@ -226,7 +227,7 @@ inline T from_matrix_cl_error_code(const matrix_cl<T>& src) {
   return dst;
 }
 
-/**
+/** \ingroup opencl
  * Copy an arithmetic type to the device. If a lvalue is passed to this
  * constructor the caller must make sure that it does not go out of scope before
  * copying is complete.

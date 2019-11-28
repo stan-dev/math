@@ -141,6 +141,8 @@ const double SQRT_TWO_PI = sqrt(2.0 * pi());
 
 const double INV_SQRT_TWO_PI = inv(SQRT_TWO_PI);
 
+const double INV_SQRT_PI = inv(SQRT_PI);
+
 const double LOG_PI = log(pi());
 
 const double LOG_PI_OVER_FOUR = LOG_PI / 4.0;

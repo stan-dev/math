@@ -5,6 +5,12 @@
 #include <algorithm>
 #include <random>
 
+TEST(MathMatrix, matrix_exp_pade_0x0) {
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m1(0, 0);
+
+  expect_matrix_eq(m1, stan::math::matrix_exp_pade(m1));
+}
+
 TEST(MathMatrix, matrix_exp_pade_1x1) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m1(1, 1), m2(1, 1);
   m1 << 0;

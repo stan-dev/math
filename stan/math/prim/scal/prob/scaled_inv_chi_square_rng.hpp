@@ -11,7 +11,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Return a scaled chi square random variate for the given
  * number of degrees of freedom and scale using the specified random
  * number generator.

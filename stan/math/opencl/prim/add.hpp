@@ -12,7 +12,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup opencl
  * Matrix addition on the OpenCL device
  *
  * @param A first matrix
@@ -42,7 +42,7 @@ inline matrix_cl<return_type_t<T1, T2>> add(const matrix_cl<T1>& A,
   return C;
 }
 
-/**
+/** \ingroup opencl
  * Matrix addition on the OpenCL device
  *
  * @param A first matrix

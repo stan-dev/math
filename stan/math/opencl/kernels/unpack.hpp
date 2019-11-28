@@ -12,7 +12,7 @@ namespace opencl_kernels {
 // \cond
 static const std::string unpack_kernel_code = STRINGIFY(
     // \endcond
-    /**
+    /** \ingroup opencl_kernels
      * Unpacks a packed triangular matrix to a flat
      * matrix
      *
@@ -58,7 +58,7 @@ static const std::string unpack_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/**
+/** \ingroup opencl_kernels
  * See the docs for \link kernels/unpack.hpp unpack() \endlink
  */
 const kernel_cl<out_buffer, in_buffer, int, int, matrix_cl_view> unpack(

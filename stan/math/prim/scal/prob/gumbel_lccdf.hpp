@@ -13,7 +13,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Returns the Gumbel log complementary cumulative distribution for the
  * given location and scale. Given containers of matching sizes, returns
  * the log sum of probabilities.

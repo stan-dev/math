@@ -17,14 +17,15 @@
 #include <type_traits>
 #include <vector>
 
-/**
+/** \ingroup opencl
  *  @file stan/math/opencl/matrix_cl.hpp
  *  @brief The matrix_cl class - allocates memory space on the OpenCL device,
  *    functions for transfering matrices to and from OpenCL devices
  */
 namespace stan {
 namespace math {
-/**
+
+/** \ingroup opencl
  * Represents a matrix on the OpenCL device.
  * @tparam T an arithmetic type for the type stored in the OpenCL buffer.
  */
@@ -44,15 +45,15 @@ class matrix_cl<T, require_arithmetic_t<T>> {
   using type = T;
   // Forward declare the methods that work in place on the matrix
   template <matrix_cl_view matrix_view = matrix_cl_view::Entire>
-  void zeros();
+  inline void zeros();
   template <matrix_cl_view matrix_view = matrix_cl_view::Entire>
-  void zeros_strict_tri();
+  inline void zeros_strict_tri();
   template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper>
-  void triangular_transpose();
+  inline void triangular_transpose();
 
-  void sub_block(const matrix_cl<T, require_arithmetic_t<T>>& A, size_t A_i,
-                 size_t A_j, size_t this_i, size_t this_j, size_t nrows,
-                 size_t ncols);
+  inline void sub_block(const matrix_cl<T, require_arithmetic_t<T>>& A,
+                        size_t A_i, size_t A_j, size_t this_i, size_t this_j,
+                        size_t nrows, size_t ncols);
   int rows() const { return rows_; }
 
   int cols() const { return cols_; }
@@ -63,7 +64,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
 
   void view(const matrix_cl_view& view) { view_ = view; }
 
-  /**
+  /** \ingroup opencl
    * Clear the write events from the event stacks.
    */
   inline void clear_write_events() const {
@@ -71,7 +72,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     return;
   }
 
-  /**
+  /** \ingroup opencl
    * Clear the read events from the event stacks.
    */
   inline void clear_read_events() const {
@@ -79,7 +80,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     return;
   }
 
-  /**
+  /** \ingroup opencl
    * Clear the write events from the event stacks.
    */
   inline void clear_read_write_events() const {
@@ -88,7 +89,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     return;
   }
 
-  /**
+  /** \ingroup opencl
    * Get the events from the event stacks.
    * @return The write event stack.
    */
@@ -96,7 +97,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     return write_events_;
   }
 
-  /**
+  /** \ingroup opencl
    * Get the events from the event stacks.
    * @return The read/write event stack.
    */
@@ -104,7 +105,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     return read_events_;
   }
 
-  /**
+  /** \ingroup opencl
    * Get the events from the event stacks.
    * @return The read/write event stack.
    */
@@ -112,7 +113,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     return vec_concat(this->read_events(), this->write_events());
   }
 
-  /**
+  /** \ingroup opencl
    * Add an event to the read event stack.
    * @param new_event The event to be pushed on the event stack.
    */
@@ -120,7 +121,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     this->read_events_.push_back(new_event);
   }
 
-  /**
+  /** \ingroup opencl
    * Add an event to the write event stack.
    * @param new_event The event to be pushed on the event stack.
    */
@@ -128,7 +129,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     this->write_events_.push_back(new_event);
   }
 
-  /**
+  /** \ingroup opencl
    * Add an event to the read/write event stack.
    * @param new_event The event to be pushed on the event stack.
    */
@@ -137,7 +138,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     this->write_events_.push_back(new_event);
   }
 
-  /**
+  /** \ingroup opencl
    * Waits for the write events and clears the read event stack.
    */
   inline void wait_for_write_events() const {
@@ -149,7 +150,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     return;
   }
 
-  /**
+  /** \ingroup opencl
    * Waits for the read events and clears the read event stack.
    */
   inline void wait_for_read_events() const {
@@ -161,7 +162,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     return;
   }
 
-  /**
+  /** \ingroup opencl
    * Waits for read and write events to finish and clears the read, write, and
    * read/write event stacks.
    */
@@ -180,7 +181,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
   cl::Buffer& buffer() { return buffer_cl_; }
 
   matrix_cl() {}
-  /**
+  /** \ingroup opencl
    * Construct a matrix_cl<T> from an existing cl::Buffer object. The matrix
    * directly uses given buffer - no copying is done.
    *
@@ -261,7 +262,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     check_opencl_error("matrix constructor", e);
   }
 
-  /**
+  /** \ingroup opencl
    * Constructor for the matrix_cl that
    * only allocates the buffer on the OpenCL device.
    * Regardless of `partial_view`, whole matrix is stored.
@@ -289,7 +290,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     }
   }
 
-  /**
+  /** \ingroup opencl
    * Constructor for the matrix_cl that creates a copy of the Eigen matrix or
    * Eigen expression on the OpenCL device. Regardless of `partial_view`, whole
    * matrix is stored. If a lvalue matrix is passed to this constructor the
@@ -336,7 +337,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     }
   }
 
-  /**
+  /** \ingroup opencl
    * Constructor for the matrix_cl that creates a copy of the Eigen Map on the
    * OpenCL device. Regardless of `partial_view`, whole matrix is stored. The
    * caller must make sure that the memory referenced by map is not deleted
@@ -362,7 +363,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     initialize_buffer(A.data());
   }
 
-  /**
+  /** \ingroup opencl
    * Constructor for the matrix_cl that creates a copy of a scalar on the OpenCL
    * device. Regardless of `partial_view`, whole matrix is stored. If a lvalue
    * is passed to this constructor the caller must make sure that it does not go
@@ -387,7 +388,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     initialize_buffer<std::is_rvalue_reference<Scal&&>::value>(&A);
   }
 
-  /**
+  /** \ingroup opencl
    * Construct a matrix_cl of size Nx1 from \c std::vector. If a lvalue is
    * passed to this constructor the caller must make sure that it does not go
    * out of scope before copying is complete.
@@ -409,7 +410,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
       : matrix_cl(std::forward<Vec>(A), A.size(), 1) {}
 
-  /**
+  /** \ingroup opencl
    * Construct from \c std::vector with given rows and columns. If a lvalue
    * is passed to this constructor the caller must make sure that it does not
    * go out of scope before copying is complete.
@@ -435,7 +436,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     initialize_buffer_optionally_from_heap(std::forward<Vec>(A));
   }
 
-  /**
+  /** \ingroup opencl
    * Construct from \c array of doubles with given rows and columns. The caller
    * must make sure that data is not deleted before copying is complete.
    *
@@ -459,7 +460,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     initialize_buffer(A);
   }
 
-  /**
+  /** \ingroup opencl
    * Move assignment operator.
    */
   matrix_cl<T>& operator=(matrix_cl<T>&& a) {
@@ -473,7 +474,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     return *this;
   }
 
-  /**
+  /** \ingroup opencl
    * Copy assignment operator.
    */
   matrix_cl<T>& operator=(const matrix_cl<T>& a) {
@@ -486,7 +487,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
   }
 
  private:
-  /**
+  /** \ingroup opencl
    * Initializes the OpencL buffer of this matrix by copying the data from given
    * buffer. Assumes that size of \c this is already set and matches the
    * buffer size. If \c in_order is false the caller must make sure that data
@@ -521,7 +522,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     return transfer_event;
   }
 
-  /**
+  /** \ingroup opencl
    * Initializes the OpencL buffer of this matrix by copying the data from given
    * object. Assumes that size of \c this is already set and matches the
    * buffer size. If the object is rvalue (temporary) it is first moved to heap
@@ -558,7 +559,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     }
   }
 
-  /**
+  /** \ingroup opencl
    * Initializes the OpencL buffer of this matrix by copying the data from given
    * matrix_cl. Assumes that size of \c this is already set and matches the
    * size of given matrix.
@@ -580,7 +581,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     }
   }
 
-  /**
+  /** \ingroup opencl
    * Deletes the container. Used as a callback for OpenCL event.
    * @tparam U type of container
    * @param e cl_event handle
@@ -591,7 +592,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
   static void delete_it(cl_event e, cl_int status, void* container) {
     delete static_cast<U*>(container);
   }
-};
+};  // namespace math
 
 template <typename T>
 using matrix_cl_prim = matrix_cl<T, require_arithmetic_t<T>>;

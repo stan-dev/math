@@ -5,7 +5,7 @@
 
 namespace stan {
 
-/**
+/** \ingroup type_trait
  * Convenience alias for boost tools promote_args
  */
 template <typename... Args>

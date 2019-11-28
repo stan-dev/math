@@ -12,7 +12,7 @@ namespace opencl_kernels {
 // \cond
 static const std::string pack_kernel_code = STRINGIFY(
     // \endcond
-    /**
+    /** \ingroup opencl_kernels
      * Packs a flat matrix to a packed triangular matrix
      *
      * @param[out] A packed buffer
@@ -53,7 +53,7 @@ static const std::string pack_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/**
+/** \ingroup opencl_kernels
  * See the docs for \link kernels/pack.hpp pack() \endlink
  */
 const kernel_cl<out_buffer, in_buffer, int, int, matrix_cl_view> pack(
