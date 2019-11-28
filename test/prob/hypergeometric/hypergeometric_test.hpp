@@ -19,12 +19,12 @@ class AgradDistributionsHypergeometric : public AgradDistributionTest {
     log_prob.push_back(-4.119424246619123763935);  // expected log_prob
 
     // case for n == N
-    param[0] = 3;   // n
-    param[1] = 3;   // N
-    param[2] = 8;   // a
+    param[0] = 5;   // n
+    param[1] = 5;   // N
+    param[2] = 10;  // a
     param[3] = 10;  // b
     parameters.push_back(param);
-    log_prob.push_back(-2.679062664228958112744);  // expected log_prob
+    log_prob.push_back(-4.119424246619123763935);  // expected log_prob
   }
 
   void invalid_values(vector<size_t>& index, vector<double>& value) {
