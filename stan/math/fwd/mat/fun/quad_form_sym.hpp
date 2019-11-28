@@ -12,7 +12,6 @@ template <int RA, int CA, int RB, int CB, typename T>
 inline Eigen::Matrix<fvar<T>, CB, CB> quad_form_sym(
     const Eigen::Matrix<fvar<T>, RA, CA>& A,
     const Eigen::Matrix<double, RB, CB>& B) {
-  check_square("quad_form_sym", "A", A);
   check_multiplicable("quad_form_sym", "A", A, "B", B);
   check_symmetric("quad_form_sym", "A", A);
   Eigen::Matrix<fvar<T>, CB, CB> ret(multiply(transpose(B), multiply(A, B)));
