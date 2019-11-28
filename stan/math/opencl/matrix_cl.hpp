@@ -219,10 +219,11 @@ class matrix_cl<T, require_arithmetic_t<T>> {
         read_events_(std::move(A.read_events_)) {}
 
   /** \ingroup opencl
-   * Constructor for the matrix_cl that
-   * creates a copy of the Eigen matrix on the OpenCL device.
+   * Constructor for the matrix_cl that creates a copy of a std::vector of Eigen
+   * matrices on the OpenCL device. Each matrix is flattened into one column
+   * of the resulting matrix_cl.
    *
-   * @param A the vector of  Eigen matrices
+   * @param A the vector of Eigen matrices
    *
    * @throw <code>std::invalid_argument</code> if the
    * matrices do not have matching dimensions
@@ -374,7 +375,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
   }
 
   /** \ingroup opencl
-   * Assign a \c matrix_cl to another
+   * Move assignment operator.
    */
   matrix_cl<T>& operator=(matrix_cl<T>&& a) {
     view_ = a.view();
@@ -388,7 +389,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
   }
 
   /** \ingroup opencl
-   * Assign a \c matrix_cl to another
+   * Copy assignment operator.
    */
   matrix_cl<T>& operator=(const matrix_cl<T>& a) {
     if (a.size() == 0) {
