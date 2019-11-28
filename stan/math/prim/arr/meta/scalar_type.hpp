@@ -8,7 +8,7 @@
 #include <vector>
 
 namespace stan {
-/**
+/** \ingroup type_trait
  * Specialization of scalar_type for vector to recursivly return the inner
  * scalar type.
  */

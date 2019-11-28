@@ -8,7 +8,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Return a beta-binomial random variate with the specified population size,
  * success, and failure parameters using the given random number generator.
  *

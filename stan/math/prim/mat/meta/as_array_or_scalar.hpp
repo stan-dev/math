@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup type_trait
  * Converts a matrix type to an array.
  *
  * @tparam T Type of scalar element.
@@ -22,7 +22,7 @@ inline Eigen::ArrayWrapper<const Eigen::Matrix<T, R, C>> as_array_or_scalar(
   return v.array();
 }
 
-/**
+/** \ingroup type_trait
  * Converts a matrix type to an array.
  *
  * @tparam T Type of scalar element.
@@ -37,7 +37,7 @@ as_array_or_scalar(const Eigen::Map<const Eigen::Matrix<T, R, C>>& v) {
   return v.array();
 }
 
-/**
+/** \ingroup type_trait
  * Converts a std::vector type to an array.
  *
  * @tparam T Type of scalar element.

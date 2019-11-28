@@ -85,7 +85,8 @@ ifeq (ok,$(call detect_js,/minversion gcc 6.0))
 endif
 
 ifeq ($(cfg), release)
-        CPLUS_FLAGS = -g -O2
+#        CPLUS_FLAGS = -g -O2
+        CPLUS_FLAGS = -O2
 endif
 ifeq ($(cfg), debug)
         CPLUS_FLAGS = -g -O0 -DTBB_USE_DEBUG

@@ -35,7 +35,8 @@ LIB_LINK_FLAGS = -dynamiclib -install_name @rpath/$(BUILDING_LIBRARY)
 C_FLAGS = $(CPLUS_FLAGS)
 
 ifeq ($(cfg), release)
-    CPLUS_FLAGS = -g -O2
+#    CPLUS_FLAGS = -g -O2
+    CPLUS_FLAGS = -O2
 else
     CPLUS_FLAGS = -g -O0 -DTBB_USE_DEBUG
 endif

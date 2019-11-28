@@ -13,7 +13,7 @@ namespace opencl_kernels {
 static const char* neg_binomial_2_log_glm_kernel_code = STRINGIFY(
     // \endcond
 
-    /**
+    /** \ingroup opencl_kernels
      * GPU implementation of Generalized Linear Model (GLM)
      * with Negative-Binomial-2 distribution and log link function.
      *
@@ -192,7 +192,7 @@ static const char* neg_binomial_2_log_glm_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/**
+/** \ingroup opencl_kernels
  * See the docs for \link kernels/subtract.hpp subtract() \endlink
  */
 const kernel_cl<out_buffer, out_buffer, out_buffer, out_buffer, in_buffer,

@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup type_trait
  * Assume which type we get. If actual type is convertible to assumed type or in
  * case of eigen types compile time rows and columns also match this is a no-op.
  * This is intended to be used in compile time branches that could otherwise

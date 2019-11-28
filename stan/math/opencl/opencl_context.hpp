@@ -23,7 +23,7 @@
 #include <cmath>
 #include <cerrno>
 
-/**
+/** \ingroup opencl
  *  @file stan/math/opencl/opencl_context.hpp
  *  @brief Initialization for OpenCL:
  *    1. create context
@@ -34,7 +34,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup opencl
  * The <code>opencl_context_base</code> class represents an OpenCL context
  * in the standard Meyers singleton design pattern.
  *
@@ -55,7 +55,7 @@ class opencl_context_base {
   friend class opencl_context;
 
  private:
-  /**
+  /** \ingroup opencl
    * Construct the opencl_context by initializing the
    * OpenCL context, devices, command queues, and kernel
    * groups.
@@ -101,8 +101,10 @@ class opencl_context_base {
       if (device_properties & CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE) {
         command_queue_ = cl::CommandQueue(
             context_, device_, CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE, nullptr);
+        in_order_ = CL_FALSE;
       } else {
         command_queue_ = cl::CommandQueue(context_, device_, 0, nullptr);
+        in_order_ = CL_TRUE;
       }
       int thread_block_size_sqrt
           = static_cast<int>(sqrt(static_cast<double>(max_thread_block_size_)));
@@ -144,7 +146,7 @@ class opencl_context_base {
   std::string device_name_;          // The name of OpenCL device
   size_t max_thread_block_size_;  // The maximum size of a block of workers on
                                   // the device
-
+  bool in_order_;                 // Whether to use out of order execution.
   // Holds Default parameter values for each Kernel.
   using map_base_opts = std::map<std::string, int>;
   map_base_opts base_opts_
@@ -189,14 +191,14 @@ class opencl_context_base {
   void operator=(opencl_context_base const&) = delete;
 };
 
-/**
+/** \ingroup opencl
  * The API to access the methods and values in opencl_context_base
  */
 class opencl_context {
  public:
   opencl_context() = default;
 
-  /**
+  /** \ingroup opencl
    * Returns the description of the OpenCL platform and device that is used.
    * Devices will be an OpenCL and Platforms are a specific OpenCL implimenation
    * such as AMD SDK's or Nvidia's OpenCL implimentation.
@@ -252,7 +254,7 @@ class opencl_context {
     return msg.str();
   }
 
-  /**
+  /** \ingroup opencl
    * Returns the description of the OpenCL platforms and devices that
    * are available. Devices will be an OpenCL and Platforms are a specific
    * OpenCL implimenation such as AMD SDK's or Nvidia's OpenCL implimentation.
@@ -316,7 +318,7 @@ class opencl_context {
     return msg.str();
   }
 
-  /**
+  /** \ingroup opencl
    * Returns the reference to the OpenCL context. The OpenCL context manages
    * objects such as the device, memory, command queue, program, and kernel
    * objects. For stan, there should only be one context, queue, device, and
@@ -325,7 +327,7 @@ class opencl_context {
   inline cl::Context& context() {
     return opencl_context_base::getInstance().context_;
   }
-  /**
+  /** \ingroup opencl
    * Returns the reference to the active OpenCL command queue for the device.
    * One command queue will exist per device where
    * kernels are placed on the command queue and by default executed in order.
@@ -333,13 +335,13 @@ class opencl_context {
   inline cl::CommandQueue& queue() {
     return opencl_context_base::getInstance().command_queue_;
   }
-  /**
+  /** \ingroup opencl
    * Returns a copy of the map of kernel defines
    */
   inline opencl_context_base::map_base_opts base_opts() {
     return opencl_context_base::getInstance().base_opts_;
   }
-  /**
+  /** \ingroup opencl
    * Returns the maximum thread block size defined by
    * CL_DEVICE_MAX_WORK_GROUP_SIZE for the device in the context. This is the
    * maximum product of thread block dimensions for a particular device. IE a
@@ -350,25 +352,32 @@ class opencl_context {
     return opencl_context_base::getInstance().max_thread_block_size_;
   }
 
-  /**
+  /** \ingroup opencl
    * Returns the thread block size for the Cholesky Decompositions L_11.
    */
   inline opencl_context_base::tuning_struct& tuning_opts() {
     return opencl_context_base::getInstance().tuning_opts_;
   }
 
-  /**
+  /** \ingroup opencl
    * Returns a vector containing the OpenCL device used to create the context
    */
   inline std::vector<cl::Device> device() {
     return {opencl_context_base::getInstance().device_};
   }
 
-  /**
+  /** \ingroup opencl
    * Returns a vector containing the OpenCL platform used to create the context
    */
   inline std::vector<cl::Platform> platform() {
     return {opencl_context_base::getInstance().platform_};
+  }
+  /**
+   * Return a bool representing whether the write to the OpenCL device are
+   * blocking
+   */
+  inline bool in_order() {
+    return opencl_context_base::getInstance().in_order_;
   }
 };
 static opencl_context opencl_context;

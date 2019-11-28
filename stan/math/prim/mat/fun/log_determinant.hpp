@@ -17,6 +17,9 @@ namespace math {
 template <typename T, int R, int C>
 inline T log_determinant(const Eigen::Matrix<T, R, C>& m) {
   check_square("log_determinant", "m", m);
+  if (m.size() == 0)
+    return 0;
+
   return m.colPivHouseholderQr().logAbsDeterminant();
 }
 

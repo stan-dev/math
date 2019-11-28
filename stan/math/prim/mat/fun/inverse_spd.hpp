@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_INVERSE_SPD_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/mat/err/check_nonempty.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
@@ -20,6 +21,7 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> inverse_spd(
   using Eigen::Dynamic;
   using Eigen::LDLT;
   using Eigen::Matrix;
+  check_nonempty("inverse_spd", "m", m);
   check_square("inverse_spd", "m", m);
   check_symmetric("inverse_spd", "m", m);
   Matrix<T, Dynamic, Dynamic> mmt = T(0.5) * (m + m.transpose());

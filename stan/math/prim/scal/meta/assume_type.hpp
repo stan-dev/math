@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup type_trait
  * Assume which type we get. If actual type is convertible to assumed type or in
  * case of eigen types compile time rows and columns also match this is a no-op.
  * This is intended to be used in compile time branches that would otherwise
@@ -25,7 +25,7 @@ inline T_actual&& assume_type(T_actual&& a) {  // NOLINT
   return std::forward<T_actual>(a);
 }
 
-/**
+/** \ingroup type_trait
  * Assume which type we get. If actual type is not convertible to assumed type
  * or in case of eigen types compile time rows and columns are not the same this
  * has return type of \c T_desired, but it only throws. This version should only
