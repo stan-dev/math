@@ -61,6 +61,7 @@ inline void check_pos_semidefinite(const char* function, const char* name,
       || (cholesky.vectorD().array() < 0.0).any()) {
     domain_error(function, name, "is not positive semi-definite.", "");
   }
+}
 
 }  // namespace math
 }  // namespace math
