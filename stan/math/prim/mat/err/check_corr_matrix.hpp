@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/mat/err/check_pos_definite.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
@@ -38,7 +37,6 @@ inline void check_corr_matrix(
       Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> >::type;
 
   check_square(function, name, y);
-  check_positive(function, name, "rows", y.rows());
 
   for (size_type k = 0; k < y.rows(); ++k) {
     if (!(fabs(y(k, k) - 1.0) <= CONSTRAINT_TOLERANCE)) {
