@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMatrix, size) {
+TEST(MathMatrixPrimMat, size) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::size;

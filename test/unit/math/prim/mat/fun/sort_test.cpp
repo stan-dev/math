@@ -39,29 +39,29 @@ void test_sort_asc() {
   EXPECT_EQ(typename index_type<T>::type(0), z.size());
 }
 
-TEST(MathMatrix, sortAscStdVecNan) {
+TEST(MathMatrixPrimMat, sortAscStdVecNan) {
   test_sort_asc_throws<std::vector<double> >();
 }
 
-TEST(MathMatrix, sortDescStdVecNan) {
+TEST(MathMatrixPrimMat, sortDescStdVecNan) {
   test_sort_desc_throws<std::vector<double> >();
 }
 
-TEST(MathMatrix, sortAscEigenVecNan) {
+TEST(MathMatrixPrimMat, sortAscEigenVecNan) {
   test_sort_asc_throws<Eigen::VectorXd>();
 }
-TEST(MathMatrix, sortAscEigenRowVecNan) {
+TEST(MathMatrixPrimMat, sortAscEigenRowVecNan) {
   test_sort_asc_throws<Eigen::RowVectorXd>();
 }
 
-TEST(MathMatrix, sortDescEigenVecNan) {
+TEST(MathMatrixPrimMat, sortDescEigenVecNan) {
   test_sort_desc_throws<Eigen::VectorXd>();
 }
-TEST(MathMatrix, sortDescEigenRowVecNan) {
+TEST(MathMatrixPrimMat, sortDescEigenRowVecNan) {
   test_sort_desc_throws<Eigen::RowVectorXd>();
 }
 
-TEST(MathMatrix, sort_asc) {
+TEST(MathMatrixPrimMat, sort_asc) {
   using stan::math::sort_asc;
 
   EXPECT_EQ(0U, sort_asc(std::vector<int>(0)).size());
@@ -105,7 +105,7 @@ void test_sort_desc() {
   EXPECT_EQ(typename index_type<T>::type(0), z.size());
 }
 
-TEST(MathMatrix, sort_desc) {
+TEST(MathMatrixPrimMat, sort_desc) {
   using stan::math::sort_desc;
 
   EXPECT_EQ(0U, sort_desc(std::vector<int>(0)).size());

@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MetaTraits, length_mvt) {
+TEST(MetaTraitsPrimScal, length_mvt) {
   using stan::length_mvt;
 
   double x1;

@@ -19,7 +19,7 @@ TEST(ProbDistributionsMultiNormalCholesky, MultiNormalVar) {
                   stan::math::multi_normal_cholesky_log(y, mu, L).val());
 }
 
-TEST(AgradRev, check_varis_on_stack) {
+TEST(ProbDistributionsMultiNormalCholesky, check_varis_on_stack) {
   using stan::math::to_var;
   Matrix<double, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;

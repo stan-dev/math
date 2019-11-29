@@ -1,7 +1,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathMatrix, dot_self) {
+TEST(MathMatrixPrimMat, dot_self) {
   using stan::math::dot_self;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> v1(1);

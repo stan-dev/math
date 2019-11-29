@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>poisson_log_lpmf</code>
  */
 template <bool propto, typename T_n, typename T_log_rate>
@@ -16,7 +16,7 @@ return_type_t<T_log_rate> poisson_log_log(const T_n& n,
   return poisson_log_lpmf<propto, T_n, T_log_rate>(n, alpha);
 }
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>poisson_log_lpmf</code>
  */
 template <typename T_n, typename T_log_rate>

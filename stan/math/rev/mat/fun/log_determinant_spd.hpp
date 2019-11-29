@@ -4,7 +4,6 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
@@ -15,8 +14,9 @@ namespace math {
 
 template <int R, int C>
 inline var log_determinant_spd(const Eigen::Matrix<var, R, C>& m) {
-  check_square("log_determinant_spd", "m", m);
   check_symmetric("log_determinant_spd", "m", m);
+  if (m.size() == 0)
+    return 0;
 
   matrix_d m_d = m.val();
 

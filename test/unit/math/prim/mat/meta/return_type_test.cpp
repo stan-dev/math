@@ -9,18 +9,18 @@ using Eigen::VectorXd;
 using stan::return_type;
 using std::vector;
 
-TEST(MetaTraits, ReturnTypeMatrixXd) {
+TEST(MetaTraitsPrimMat, ReturnTypeMatrixXd) {
   test::expect_same_type<double, return_type<MatrixXd>::type>();
 }
 
-TEST(MetaTraits, ReturnTypeVectorXd) {
+TEST(MetaTraitsPrimMat, ReturnTypeVectorXd) {
   test::expect_same_type<double, return_type<VectorXd>::type>();
 }
 
-TEST(MetaTraits, ReturnTypeRowVectorXd) {
+TEST(MetaTraitsPrimMat, ReturnTypeRowVectorXd) {
   test::expect_same_type<double, return_type<RowVectorXd>::type>();
 }
 
-TEST(MetaTraits, ReturnTypeArray) {
+TEST(MetaTraitsPrimMat, ReturnTypeArray) {
   test::expect_same_type<double, return_type<vector<int> >::type>();
 }

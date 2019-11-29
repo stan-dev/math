@@ -9,7 +9,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup opencl
  * Check if the <code>matrix_cl</code> has a single element.
  *
  * @param function Function name (for error messages)
@@ -27,7 +27,7 @@ inline void check_mat_size_one(const char* function, const char* name,
   }
 }
 
-/**
+/** \ingroup opencl
  * Check if the <code>matrix_cl</code> has a single element.
  *
  * @param function Function name (for error messages)

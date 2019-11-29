@@ -1,7 +1,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathMatrix, rep_row_vector) {
+TEST(MathMatrixPrimMat, rep_row_vector) {
   using stan::math::rep_row_vector;
   Eigen::Matrix<double, 1, Eigen::Dynamic> x = rep_row_vector(2.0, 3);
   EXPECT_EQ(3U, x.size());

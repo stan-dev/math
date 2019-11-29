@@ -55,7 +55,7 @@ namespace Eigen {
   };
 
 
-  /** \brief Compute the (5,5)-Pad&eacute; approximant to the exponential.
+  /** \brief Compute the (3,3)-Pad&eacute; approximant to the exponential.
    *
    *  After exit, \f$ (V+U)(V-U)^{-1} \f$ is the Pad&eacute;
    *  approximant of \f$ \exp(A) \f$ around \f$ A = 0 \f$.

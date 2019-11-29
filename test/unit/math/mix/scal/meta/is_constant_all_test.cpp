@@ -7,7 +7,7 @@ void expect_not_const() {
   bool temp = is_constant_all<Ts...>::value;
   EXPECT_FALSE(temp);
 }
-TEST(MetaTraits, isConstant) {
+TEST(MetaTraitsMixScal, isConstant) {
   using stan::math::fvar;
   using stan::math::var;
 

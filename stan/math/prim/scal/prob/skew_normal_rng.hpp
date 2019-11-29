@@ -12,7 +12,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Return a Skew-normal random variate for the given location, scale,
  * and shape using the specified random number generator.
  *

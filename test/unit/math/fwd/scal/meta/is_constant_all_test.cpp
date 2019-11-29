@@ -8,7 +8,7 @@ void expect_not_const() {
   EXPECT_FALSE(temp);
 }
 
-TEST(MetaTraits, isConstant) {
+TEST(MetaTraitsFwdScal, isConstant) {
   using stan::math::fvar;
 
   expect_not_const<fvar<double> >();

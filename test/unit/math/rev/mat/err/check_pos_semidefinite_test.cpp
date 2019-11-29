@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <limits>
 
-TEST(AgradRevErrorHandlingMatrix, checkPosDefiniteMatrix_nan) {
+TEST(AgradRevErrorHandlingMatrix, checkPosSemiDefiniteMatrix_nan) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -34,7 +34,7 @@ TEST(AgradRevErrorHandlingMatrix, checkPosDefiniteMatrix_nan) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRevErrorHandlingMatrix, CheckPosDefiniteMatrixVarCheck) {
+TEST(AgradRevErrorHandlingMatrix, checkPosSemiDefiniteMatrixVarCheck) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;

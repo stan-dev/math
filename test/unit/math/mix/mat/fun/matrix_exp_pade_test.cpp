@@ -3,6 +3,9 @@
 TEST(MathMixMatFun, matrixExpPade) {
   auto f = [](const auto& x) { return stan::math::matrix_exp_pade(x); };
 
+  Eigen::MatrixXd m00(0, 0);
+  stan::test::expect_ad(f, m00);
+
   Eigen::MatrixXd a1(1, 1);
   a1 << 1;
   stan::test::expect_ad(f, a1);

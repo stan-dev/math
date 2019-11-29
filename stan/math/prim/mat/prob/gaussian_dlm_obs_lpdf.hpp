@@ -30,7 +30,7 @@
 */
 namespace stan {
 namespace math {
-/**
+/** \ingroup multivar_dists
  * The log of a Gaussian dynamic linear model (GDLM).
  * This distribution is equivalent to, for \f$t = 1:T\f$,
  * \f{eqnarray*}{
@@ -176,7 +176,7 @@ gaussian_dlm_obs_lpdf(
   return gaussian_dlm_obs_lpdf<false>(y, F, G, V, W, m0, C0);
 }
 
-/**
+/** \ingroup multivar_dists
  * The log of a Gaussian dynamic linear model (GDLM) with
  * uncorrelated observation disturbances.
  * This distribution is equivalent to, for \f$t = 1:T\f$,
@@ -249,14 +249,12 @@ gaussian_dlm_obs_lpdf(
   check_size_match(function, "rows of W", W.rows(), "rows of G", G.rows());
   // TODO(anyone): support infinite W
   check_finite(function, "W", W);
-  check_not_nan(function, "W", W);
   check_size_match(function, "size of m0", m0.size(), "rows of G", G.rows());
   check_finite(function, "m0", m0);
   check_not_nan(function, "m0", m0);
   check_pos_definite(function, "C0", C0);
   check_size_match(function, "rows of C0", C0.rows(), "rows of G", G.rows());
   check_finite(function, "C0", C0);
-  check_not_nan(function, "C0", C0);
 
   if (y.cols() == 0 || y.rows() == 0) {
     return 0;

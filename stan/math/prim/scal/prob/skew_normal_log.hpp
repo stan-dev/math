@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>skew_normal_lpdf</code>
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
@@ -18,7 +18,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_log(
                                                                 alpha);
 }
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>skew_normal_lpdf</code>
  */
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape>

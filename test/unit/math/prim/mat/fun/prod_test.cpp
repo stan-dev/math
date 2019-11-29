@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMatrix, prod_vector_int) {
+TEST(MathMatrixPrimMat, prod_vector_int) {
   using stan::math::prod;
   std::vector<int> v;
   EXPECT_EQ(1, prod(v));
@@ -11,7 +11,7 @@ TEST(MathMatrix, prod_vector_int) {
   v.push_back(3);
   EXPECT_EQ(6, prod(v));
 }
-TEST(MathMatrix, prod_vector_double) {
+TEST(MathMatrixPrimMat, prod_vector_double) {
   using stan::math::prod;
   std::vector<double> x;
   EXPECT_FLOAT_EQ(1.0, prod(x));

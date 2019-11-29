@@ -49,7 +49,7 @@ TEST(AgradRev, if_else_nan) {
   EXPECT_PRED1(boost::math::isnan<double>, if_else(false, nan_v, nan_v).val());
 }
 
-TEST(AgradRev, check_varis_on_stack) {
+TEST(AgradRev, if_else_check_varis_on_stack) {
   stan::math::var x = 1.0;
   stan::math::var y = 2.0;
   test::check_varis_on_stack(stan::math::if_else(true, x, y));

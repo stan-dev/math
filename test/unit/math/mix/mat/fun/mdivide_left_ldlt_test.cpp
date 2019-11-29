@@ -5,6 +5,11 @@ TEST(MathMixMatFun, mdivideLeftLdlt) {
     return stan::math::mdivide_left_ldlt(stan::test::ldlt_factor(x), y);
   };
 
+  Eigen::MatrixXd m00(0, 0);
+  Eigen::VectorXd v0(0);
+  stan::test::expect_ad(f, m00, m00);
+  stan::test::expect_ad(f, m00, v0);
+
   Eigen::MatrixXd a(1, 1);
   a << 2;
   Eigen::MatrixXd b(1, 1);

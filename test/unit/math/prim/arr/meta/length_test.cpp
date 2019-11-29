@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MetaTraits, length) {
+TEST(MetaTraitsPrimArr, length) {
   using stan::length;
   std::vector<double> x(10);
   EXPECT_EQ(10U, length(x));
