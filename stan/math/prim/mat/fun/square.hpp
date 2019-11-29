@@ -39,8 +39,9 @@ inline auto square(const T& x) {
  * @param x Matrix or matrix expression
  * @return Each value in x squared.
  */
-template <typename Derived, typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto square(const Eigen::MatrixBase<Derived>& x){
+template <typename Derived,
+          typename = require_eigen_vt<std::is_arithmetic, Derived>>
+inline auto square(const Eigen::MatrixBase<Derived>& x) {
   return x.derived().array().square().matrix();
 }
 

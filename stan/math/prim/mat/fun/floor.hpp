@@ -40,8 +40,9 @@ inline auto floor(const T& x) {
  * @param x Matrix or matrix expression
  * @return Greatest integer <= each value in x.
  */
-template <typename Derived, typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto floor(const Eigen::MatrixBase<Derived>& x){
+template <typename Derived,
+          typename = require_eigen_vt<std::is_arithmetic, Derived>>
+inline auto floor(const Eigen::MatrixBase<Derived>& x) {
   return x.derived().array().floor().matrix();
 }
 

@@ -40,8 +40,9 @@ inline auto acos(const T& x) {
  * @param x Matrix or matrix expression
  * @return Arc cosine of each variable in the container, in radians.
  */
-template <typename Derived, typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto acos(const Eigen::MatrixBase<Derived>& x){
+template <typename Derived,
+          typename = require_eigen_vt<std::is_arithmetic, Derived>>
+inline auto acos(const Eigen::MatrixBase<Derived>& x) {
   return x.derived().array().acos().matrix();
 }
 

@@ -38,8 +38,9 @@ inline auto inv_cloglog(const T& x) {
  * @param x Matrix or matrix expression
  * @return 1 - exp(-exp()) applied to each value in x.
  */
-template <typename Derived, typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto inv_cloglog(const Eigen::MatrixBase<Derived>& x){
+template <typename Derived,
+          typename = require_eigen_vt<std::is_arithmetic, Derived>>
+inline auto inv_cloglog(const Eigen::MatrixBase<Derived>& x) {
   return (1 - exp(-exp(x.derived().array()))).matrix();
 }
 
@@ -49,8 +50,9 @@ inline auto inv_cloglog(const Eigen::MatrixBase<Derived>& x){
  * @param x Matrix or matrix expression
  * @return 1 - exp(-exp()) applied to each value in x.
  */
-template <typename Derived, typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto inv_cloglog(const Eigen::ArrayBase<Derived>& x){
+template <typename Derived,
+          typename = require_eigen_vt<std::is_arithmetic, Derived>>
+inline auto inv_cloglog(const Eigen::ArrayBase<Derived>& x) {
   return 1 - exp(-exp(x.derived()));
 }
 

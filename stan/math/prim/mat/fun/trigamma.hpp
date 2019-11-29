@@ -36,8 +36,7 @@ struct trigamma_fun {
  * @return elementwise trigamma of container elements
  */
 template <typename T>
-inline auto trigamma(
-    const T& x) {
+inline auto trigamma(const T& x) {
   return apply_scalar_unary<trigamma_fun, T>::apply(x);
 }
 

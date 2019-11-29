@@ -40,8 +40,9 @@ inline auto round(const T& x) {
  * @param x Matrix or matrix expression
  * @return Rounded value of each value in x.
  */
-template <typename Derived, typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto round(const Eigen::MatrixBase<Derived>& x){
+template <typename Derived,
+          typename = require_eigen_vt<std::is_arithmetic, Derived>>
+inline auto round(const Eigen::MatrixBase<Derived>& x) {
   return x.derived().array().round().matrix();
 }
 

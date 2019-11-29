@@ -39,8 +39,9 @@ inline auto inv_sqrt(const T& x) {
  * @param x Matrix or matrix expression
  * @return Arc cosine of each variable in the container, in radians.
  */
-template <typename Derived, typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto inv_sqrt(const Eigen::MatrixBase<Derived>& x){
+template <typename Derived,
+          typename = require_eigen_vt<std::is_arithmetic, Derived>>
+inline auto inv_sqrt(const Eigen::MatrixBase<Derived>& x) {
   return x.derived().array().rsqrt().matrix();
 }
 
@@ -50,8 +51,9 @@ inline auto inv_sqrt(const Eigen::MatrixBase<Derived>& x){
  * @param x Matrix or matrix expression
  * @return Arc cosine of each variable in the container, in radians.
  */
-template <typename Derived, typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto inv_sqrt(const Eigen::ArrayBase<Derived>& x){
+template <typename Derived,
+          typename = require_eigen_vt<std::is_arithmetic, Derived>>
+inline auto inv_sqrt(const Eigen::ArrayBase<Derived>& x) {
   return x.derived().rsqrt();
 }
 

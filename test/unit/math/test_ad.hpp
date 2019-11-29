@@ -21,8 +21,8 @@ namespace internal {
  * @param x value
  * @return value
  */
-template<typename T>
-auto eval(const stan::math::fvar<T>& x){
+template <typename T>
+auto eval(const stan::math::fvar<T>& x) {
   return x;
 }
 
@@ -31,27 +31,21 @@ auto eval(const stan::math::fvar<T>& x){
  * @param x value
  * @return value
  */
-auto eval(const stan::math::var& x){
-  return x;
-}
+auto eval(const stan::math::var& x) { return x; }
 
 /**
  * Evaluates expression. A no-op for scalars.
  * @param x value
  * @return value
  */
-auto eval(double x){
-  return x;
-}
+auto eval(double x) { return x; }
 
 /**
  * Evaluates expression. A no-op for scalars.
  * @param x value
  * @return value
  */
-auto eval(int x){
-  return x;
-}
+auto eval(int x) { return x; }
 
 /**
  * Evaluates expression.
@@ -59,8 +53,8 @@ auto eval(int x){
  * @param x expression
  * @return evaluated expression
  */
-template<typename Derived>
-auto eval(const Eigen::EigenBase<Derived>& x){
+template <typename Derived>
+auto eval(const Eigen::EigenBase<Derived>& x) {
   return x.derived().eval();
 }
 /**
@@ -69,11 +63,11 @@ auto eval(const Eigen::EigenBase<Derived>& x){
  * @param x a \c std::vector of expressions
  * @return a \cstd::vector of evaluated expressions
  */
-template<typename T>
-auto eval(const std::vector<T>& x){
+template <typename T>
+auto eval(const std::vector<T>& x) {
   using T_res = decltype(eval(std::declval<T>()));
   std::vector<T_res> res;
-  for(auto& i : x){
+  for (auto& i : x) {
     res.push_back(eval(i));
   }
   return res;

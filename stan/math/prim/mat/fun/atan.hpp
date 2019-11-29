@@ -40,8 +40,9 @@ inline typename apply_scalar_unary<atan_fun, T>::return_t atan(const T& x) {
  * @param x Matrix or matrix expression
  * @return Elementwise atan of members of container.
  */
-template <typename Derived, typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto atan(const Eigen::MatrixBase<Derived>& x){
+template <typename Derived,
+          typename = require_eigen_vt<std::is_arithmetic, Derived>>
+inline auto atan(const Eigen::MatrixBase<Derived>& x) {
   return x.derived().array().atan().matrix();
 }
 

@@ -40,8 +40,9 @@ inline auto log10(const T& x) {
  * @param x Matrix or matrix expression
  * @return Arc cosine of each variable in the container, in radians.
  */
-template <typename Derived, typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto log10(const Eigen::MatrixBase<Derived>& x){
+template <typename Derived,
+          typename = require_eigen_vt<std::is_arithmetic, Derived>>
+inline auto log10(const Eigen::MatrixBase<Derived>& x) {
   return x.derived().array().log10().matrix();
 }
 

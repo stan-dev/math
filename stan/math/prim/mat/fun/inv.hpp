@@ -39,8 +39,9 @@ inline auto inv(const T& x) {
  * @param x Matrix or matrix expression
  * @return 1 divided by each value in x.
  */
-template <typename Derived, typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto inv(const Eigen::MatrixBase<Derived>& x){
+template <typename Derived,
+          typename = require_eigen_vt<std::is_arithmetic, Derived>>
+inline auto inv(const Eigen::MatrixBase<Derived>& x) {
   return x.derived().array().inverse().matrix();
 }
 
@@ -50,8 +51,9 @@ inline auto inv(const Eigen::MatrixBase<Derived>& x){
  * @param x Matrix or matrix expression
  * @return 1 divided by each value in x.
  */
-template <typename Derived, typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto inv(const Eigen::ArrayBase<Derived>& x){
+template <typename Derived,
+          typename = require_eigen_vt<std::is_arithmetic, Derived>>
+inline auto inv(const Eigen::ArrayBase<Derived>& x) {
   return x.derived().inverse();
 }
 

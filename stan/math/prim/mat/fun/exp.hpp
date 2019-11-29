@@ -49,8 +49,9 @@ inline auto exp(const T& x) {
  * @param x Matrix or matrix expression
  * @return Elementwise application of exponentiation to the argument.
  */
-template <typename Derived, typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto exp(const Eigen::MatrixBase<Derived>& x){
+template <typename Derived,
+          typename = require_eigen_vt<std::is_arithmetic, Derived>>
+inline auto exp(const Eigen::MatrixBase<Derived>& x) {
   return x.derived().array().exp().matrix();
 }
 

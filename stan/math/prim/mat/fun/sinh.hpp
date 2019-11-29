@@ -40,8 +40,9 @@ inline auto sinh(const T& x) {
  * @param x Matrix or matrix expression
  * @return Hyperbolic sine of each variable in x.
  */
-template <typename Derived, typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto sinh(const Eigen::MatrixBase<Derived>& x){
+template <typename Derived,
+          typename = require_eigen_vt<std::is_arithmetic, Derived>>
+inline auto sinh(const Eigen::MatrixBase<Derived>& x) {
   return x.derived().array().sinh().matrix();
 }
 
@@ -51,8 +52,9 @@ inline auto sinh(const Eigen::MatrixBase<Derived>& x){
  * @param x Matrix or matrix expression
  * @return Hyperbolic sine of each variable in x.
  */
-template <typename Derived, typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto sinh(const Eigen::ArrayBase<Derived>& x){
+template <typename Derived,
+          typename = require_eigen_vt<std::is_arithmetic, Derived>>
+inline auto sinh(const Eigen::ArrayBase<Derived>& x) {
   return x.derived().sinh();
 }
 

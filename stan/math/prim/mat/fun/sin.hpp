@@ -40,8 +40,9 @@ inline auto sin(const T& x) {
  * @param x Matrix or matrix expression
  * @return Sine of each value in x.
  */
-template <typename Derived, typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto sin(const Eigen::MatrixBase<Derived>& x){
+template <typename Derived,
+          typename = require_eigen_vt<std::is_arithmetic, Derived>>
+inline auto sin(const Eigen::MatrixBase<Derived>& x) {
   return x.derived().array().sin().matrix();
 }
 

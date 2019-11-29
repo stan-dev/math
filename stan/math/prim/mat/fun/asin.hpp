@@ -40,8 +40,9 @@ inline auto asin(const T& x) {
  * @param x Matrix or matrix expression
  * @return Arcsine of each variable in the container, in radians.
  */
-template <typename Derived, typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto asin(const Eigen::MatrixBase<Derived>& x){
+template <typename Derived,
+          typename = require_eigen_vt<std::is_arithmetic, Derived>>
+inline auto asin(const Eigen::MatrixBase<Derived>& x) {
   return x.derived().array().asin().matrix();
 }
 

@@ -40,8 +40,9 @@ inline auto ceil(const T& x) {
  * @param x Matrix or matrix expression
  * @return Least integer >= each value in x.
  */
-template <typename Derived, typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto ceil(const Eigen::MatrixBase<Derived>& x){
+template <typename Derived,
+          typename = require_eigen_vt<std::is_arithmetic, Derived>>
+inline auto ceil(const Eigen::MatrixBase<Derived>& x) {
   return x.derived().array().ceil().matrix();
 }
 
