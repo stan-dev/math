@@ -273,19 +273,19 @@ inline std::complex<T> i_times(const std::complex<T>& z) {
  * @tparam V type of second argument
  */
 template <typename U, typename V>
-struct complex_op {};
+struct complex_return {};
 template <typename U, typename V>
-struct complex_op<std::complex<U>, std::complex<V>> {
+struct complex_return<std::complex<U>, std::complex<V>> {
   using complex_t = std::complex<return_type_t<U, V>>;
 };
 // doc inherited from base function template
 template <typename U, typename V>
-struct complex_op<std::complex<U>, V> {
+struct complex_return<std::complex<U>, V> {
   using complex_t = std::complex<return_type_t<U, V>>;
 };
 // doc inherited from base function template
 template <typename U, typename V>
-struct complex_op<U, std::complex<V>> {
+struct complex_return<U, std::complex<V>> {
   using complex_t = std::complex<return_type_t<U, V>>;
 };
 
@@ -296,7 +296,7 @@ struct complex_op<U, std::complex<V>> {
  * @tparam Args argument types
  */
 template <typename... Args>
-using complex_op_t = typename complex_op<Args...>::complex_t;
+using complex_return_t = typename complex_return<Args...>::complex_t;
 
 /**
  * Return the specified complex number multiplied by `-i`.
@@ -337,8 +337,8 @@ inline std::complex<V> complex_negate(const std::complex<V>& z) {
  * @return sum of the arguments
  */
 template <typename U, typename V>
-inline complex_op_t<U, V> complex_add(const U& lhs, const V& rhs) {
-  complex_op_t<U, V> y(lhs);
+inline complex_return_t<U, V> complex_add(const U& lhs, const V& rhs) {
+  complex_return_t<U, V> y(lhs);
   y += rhs;
   return y;
 }
@@ -354,8 +354,8 @@ inline complex_op_t<U, V> complex_add(const U& lhs, const V& rhs) {
  * @return difference of the arguments
  */
 template <typename U, typename V>
-inline complex_op_t<U, V> complex_subtract(const U& lhs, const V& rhs) {
-  complex_op_t<U, V> y(lhs);
+inline complex_return_t<U, V> complex_subtract(const U& lhs, const V& rhs) {
+  complex_return_t<U, V> y(lhs);
   y -= rhs;
   return y;
 }
@@ -371,8 +371,8 @@ inline complex_op_t<U, V> complex_subtract(const U& lhs, const V& rhs) {
  * @return sum of the arguments
  */
 template <typename U, typename V>
-inline complex_op_t<U, V> complex_multiply(const U& lhs, const V& rhs) {
-  complex_op_t<U, V> y(lhs);
+inline complex_return_t<U, V> complex_multiply(const U& lhs, const V& rhs) {
+  complex_return_t<U, V> y(lhs);
   y *= rhs;
   return y;
 }
@@ -388,8 +388,8 @@ inline complex_op_t<U, V> complex_multiply(const U& lhs, const V& rhs) {
  * @return sum of the arguments
  */
 template <typename U, typename V>
-inline complex_op_t<U, V> complex_divide(const U& lhs, const V& rhs) {
-  complex_op_t<U, V> y(lhs);
+inline complex_return_t<U, V> complex_divide(const U& lhs, const V& rhs) {
+  complex_return_t<U, V> y(lhs);
   y /= rhs;
   return y;
 }
@@ -624,7 +624,7 @@ inline std::complex<V> complex_log10(const std::complex<V>& z) {
  * @return first argument raised to the power of the second argument
  */
 template <typename U, typename V>
-inline complex_op_t<U, V> complex_pow(const U& x, const V& y) {
+inline complex_return_t<U, V> complex_pow(const U& x, const V& y) {
   return exp(y * log(x));
 }
 
@@ -2671,7 +2671,7 @@ inline std::complex<var> sqrt(const std::complex<var>& z) {
 }
 // fvar 1
 template <typename T>
-inline inline std::complex<fvar<T>> sqrt(const std::complex<fvar<T>>& z) {
+inline std::complex<fvar<T>> sqrt(const std::complex<fvar<T>>& z) {
   return complex_sqrt(z);
 }
 

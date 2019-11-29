@@ -77,7 +77,6 @@ template <typename F>
 void expect_complex_common(const F& f) {
   for (double a : common_vals()) {
     for (double b : common_vals()) {
-      // std:: cout << "z = " << cdouble_t{a , b} << std::endl;
       expect_complex(f(cdouble_t{a, b}), f(cvar_t{a, b}));
     }
   }
@@ -89,14 +88,11 @@ void expect_complex_common_binary(const F& f) {
   for (double x1 : common_non_neg_vals()) {
     for (double y1 : common_non_neg_vals()) {
       for (double x2 : common_non_neg_vals()) {
-        // std::cout << "x1 = " << x1 << "; y1 = "
-        // << y1 << "; x2 = " << x2 << std::endl;
         expect_complex(f(cdouble_t{x1, y1}, x2), f(cvar_t{x1, y1}, var_t{x2}));
         expect_complex(f(cdouble_t{x1, y1}, x2), f(cvar_t{x1, y1}, x2));
         expect_complex(f(x2, cdouble_t{x1, y1}), f(var_t{x2}, cvar_t{x1, y1}));
         expect_complex(f(x2, cdouble_t{x1, y1}), f(x2, cvar_t{x1, y1}));
         for (double y2 : common_non_neg_vals()) {
-          // std::cout << "    y2 = " << y2 << std::endl;
           expect_complex(f(cdouble_t{x1, y1}, cdouble_t{x2, y2}),
                          f(cvar_t{x1, y1}, cvar_t{x2, y2}));
         }
@@ -165,6 +161,25 @@ void expect_compound_assign_operator(const F& f) {
 TEST(mathRevCore, stdIteratorTraits) {
   using itv_t = std::iterator_traits<var_t>;
   var_t v = 1.3;
+
+  itv_t::value_type v2 = v;
+  EXPECT_FLOAT_EQ(1.3, v2.val());
+
+  itv_t::pointer v_ptr = &v;
+  EXPECT_FLOAT_EQ(1.3, v_ptr->val());
+  *v_ptr += 2.1;
+  EXPECT_FLOAT_EQ(3.4, v.val());
+
+  itv_t::reference v_ref = v;
+  v_ref = 9.7;
+  EXPECT_FLOAT_EQ(9.7, v.val());
+
+  itv_t::difference_type a = v_ptr - v_ptr;
+}
+
+TEST(mathFwdCore, stdIteratorTraits) {
+  using itv_t = std::iterator_traits<fvar_d_t>;
+  fvar_d_t v = 1.3;
 
   itv_t::value_type v2 = v;
   EXPECT_FLOAT_EQ(1.3, v2.val());
@@ -728,24 +743,6 @@ using cfvar_fvar_d_t = std::complex<fvar_fvar_d_t>;
 using cfvar_v_t = std::complex<fvar_v_t>;
 using cfvar_fvar_v_t = std::complex<fvar_fvar_v_t>;
 
-TEST(mathFwdCore, stdIteratorTraits) {
-  using itv_t = std::iterator_traits<fvar_d_t>;
-  fvar_d_t v = 1.3;
-
-  itv_t::value_type v2 = v;
-  EXPECT_FLOAT_EQ(1.3, v2.val());
-
-  itv_t::pointer v_ptr = &v;
-  EXPECT_FLOAT_EQ(1.3, v_ptr->val());
-  *v_ptr += 2.1;
-  EXPECT_FLOAT_EQ(3.4, v.val());
-
-  itv_t::reference v_ref = v;
-  v_ref = 9.7;
-  EXPECT_FLOAT_EQ(9.7, v.val());
-
-  itv_t::difference_type a = v_ptr - v_ptr;
-}
 template <typename T>
 void expectSignBit() {
   EXPECT_TRUE(signbit(-std::numeric_limits<T>::infinity()));
