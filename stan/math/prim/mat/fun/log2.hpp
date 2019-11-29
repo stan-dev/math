@@ -36,7 +36,7 @@ struct log2_fun {
  * @return elementwise log2 of container elements
  */
 template <typename T, typename = require_vector_like_t<T>>
-inline typename apply_scalar_unary<log2_fun, T>::return_t log2(const T& x) {
+inline auto log2(const T& x) {
   return apply_scalar_unary<log2_fun, T>::apply(x);
 }
 

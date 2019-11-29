@@ -35,7 +35,7 @@ struct logit_fun {
  * @return elementwise logit of container elements
  */
 template <typename T>
-inline typename apply_scalar_unary<logit_fun, T>::return_t logit(const T& x) {
+inline auto logit(const T& x) {
   return apply_scalar_unary<logit_fun, T>::apply(x);
 }
 

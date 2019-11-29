@@ -1,7 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_FLOOR_HPP
 #define STAN_MATH_PRIM_MAT_FUN_FLOOR_HPP
 
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <cmath>
 
 namespace stan {
@@ -27,9 +29,20 @@ struct floor_fun {
  * @tparam T Container type.
  * @return Greatest integer <= each value in x.
  */
-template <typename T>
-inline typename apply_scalar_unary<floor_fun, T>::return_t floor(const T& x) {
+template <typename T, typename = require_not_eigen_vt<std::is_arithmetic, T>>
+inline auto floor(const T& x) {
   return apply_scalar_unary<floor_fun, T>::apply(x);
+}
+
+/**
+ * Version of floor() that accepts Eigen Matrix ar matrix expressions.
+ * @tparam Derived derived type of x
+ * @param x Matrix or matrix expression
+ * @return Greatest integer <= each value in x.
+ */
+template <typename Derived, typename = require_eigen_vt<std::is_arithmetic, Derived>>
+inline auto floor(const Eigen::MatrixBase<Derived>& x){
+  return x.derived().array().floor().matrix();
 }
 
 }  // namespace math

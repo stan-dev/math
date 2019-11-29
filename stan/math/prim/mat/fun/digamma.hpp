@@ -29,8 +29,7 @@ struct digamma_fun {
  * @throw std::domain_error if any value is a negative integer or 0
  */
 template <typename T>
-inline typename apply_scalar_unary<digamma_fun, T>::return_t digamma(
-    const T& x) {
+inline auto digamma(const T& x) {
   return apply_scalar_unary<digamma_fun, T>::apply(x);
 }
 

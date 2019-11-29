@@ -29,7 +29,7 @@ struct tgamma_fun {
  * @throw std::domain_error if any value is 0 or a negative integer
  */
 template <typename T>
-inline typename apply_scalar_unary<tgamma_fun, T>::return_t tgamma(const T& x) {
+inline auto tgamma(const T& x) {
   return apply_scalar_unary<tgamma_fun, T>::apply(x);
 }
 

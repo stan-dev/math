@@ -27,7 +27,7 @@ struct expm1_fun {
  * @return Natural exponential of each value in x minus one.
  */
 template <typename T>
-inline typename apply_scalar_unary<expm1_fun, T>::return_t expm1(const T& x) {
+inline auto expm1(const T& x) {
   return apply_scalar_unary<expm1_fun, T>::apply(x);
 }
 

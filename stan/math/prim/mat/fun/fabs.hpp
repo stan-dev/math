@@ -1,7 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_FABS_HPP
 #define STAN_MATH_PRIM_MAT_FUN_FABS_HPP
 
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <cmath>
 
 namespace stan {
@@ -29,9 +31,31 @@ struct fabs_fun {
  * @tparam T Container type.
  * @return Absolute value of each value in x.
  */
-template <typename T>
+template <typename T, typename = require_not_eigen_vt<std::is_arithmetic, T>>
 inline typename apply_scalar_unary<fabs_fun, T>::return_t fabs(const T& x) {
   return apply_scalar_unary<fabs_fun, T>::apply(x);
+}
+
+/**
+ * Version of fabs() that accepts Eigen Matrix ar matrix expressions.
+ * @tparam Derived derived type of x
+ * @param x Matrix or matrix expression
+ * @return Absolute value of each value in x.
+ */
+template <typename Derived, typename = require_eigen_vt<std::is_arithmetic, Derived>>
+inline auto fabs(const Eigen::MatrixBase<Derived>& x){
+  return x.derived().array().abs().matrix();
+}
+
+/**
+ * Version of fabs() that accepts Eigen Array ar array expressions.
+ * @tparam Derived derived type of x
+ * @param x Matrix or matrix expression
+ * @return Absolute value of each value in x.
+ */
+template <typename Derived, typename = require_eigen_vt<std::is_arithmetic, Derived>>
+inline auto fabs(const Eigen::ArrayBase<Derived>& x){
+  return x.derived().abs();
 }
 
 }  // namespace math

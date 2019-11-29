@@ -35,7 +35,7 @@ struct acosh_fun {
  * @return Elementwise acosh of members of container.
  */
 template <typename T>
-inline typename apply_scalar_unary<acosh_fun, T>::return_t acosh(const T& x) {
+inline auto acosh(const T& x) {
   return apply_scalar_unary<acosh_fun, T>::apply(x);
 }
 

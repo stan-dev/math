@@ -27,8 +27,7 @@ struct log1p_exp_fun {
  * @return Natural log of (1 + exp()) applied to each value in x.
  */
 template <typename T>
-inline typename apply_scalar_unary<log1p_exp_fun, T>::return_t log1p_exp(
-    const T& x) {
+inline auto log1p_exp(const T& x) {
   return apply_scalar_unary<log1p_exp_fun, T>::apply(x);
 }
 

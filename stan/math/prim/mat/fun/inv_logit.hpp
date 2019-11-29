@@ -27,8 +27,7 @@ struct inv_logit_fun {
  * @return Inverse logit applied to each value in x.
  */
 template <typename T>
-inline typename apply_scalar_unary<inv_logit_fun, T>::return_t inv_logit(
-    const T& x) {
+inline auto inv_logit(const T& x) {
   return apply_scalar_unary<inv_logit_fun, T>::apply(x);
 }
 

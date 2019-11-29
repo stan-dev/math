@@ -12,12 +12,12 @@ namespace math {
  */
 struct trigamma_fun {
   /**
-   * Return the approximate value of the Phi() function applied to
+   * Return the trigamma() function applied to
    * the argument.
    *
    * @tparam T argument type
    * @param x argument
-   * @return aprpoximate value of Phi applied to argument.
+   * @return trigamma applied to argument.
    */
   template <typename T>
   static inline T fun(const T& x) {
@@ -36,7 +36,7 @@ struct trigamma_fun {
  * @return elementwise trigamma of container elements
  */
 template <typename T>
-inline typename apply_scalar_unary<trigamma_fun, T>::return_t trigamma(
+inline auto trigamma(
     const T& x) {
   return apply_scalar_unary<trigamma_fun, T>::apply(x);
 }

@@ -29,7 +29,7 @@ struct asinh_fun {
  * @return Inverse hyperbolic sine of each value in the container.
  */
 template <typename T>
-inline typename apply_scalar_unary<asinh_fun, T>::return_t asinh(const T& x) {
+inline auto asinh(const T& x) {
   return apply_scalar_unary<asinh_fun, T>::apply(x);
 }
 

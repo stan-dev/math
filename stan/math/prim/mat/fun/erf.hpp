@@ -29,7 +29,7 @@ struct erf_fun {
  * @return Error function applied to each value in x.
  */
 template <typename T>
-inline typename apply_scalar_unary<erf_fun, T>::return_t erf(const T& x) {
+inline auto erf(const T& x) {
   return apply_scalar_unary<erf_fun, T>::apply(x);
 }
 

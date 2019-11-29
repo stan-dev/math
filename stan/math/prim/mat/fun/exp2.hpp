@@ -36,7 +36,7 @@ struct exp2_fun {
  * @return Elementwise exp2 of members of container.
  */
 template <typename T, typename = require_vector_like_t<T>>
-inline typename apply_scalar_unary<exp2_fun, T>::return_t exp2(const T& x) {
+inline auto exp2(const T& x) {
   return apply_scalar_unary<exp2_fun, T>::apply(x);
 }
 

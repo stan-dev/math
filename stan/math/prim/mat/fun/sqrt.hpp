@@ -1,7 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_SQRT_HPP
 #define STAN_MATH_PRIM_MAT_FUN_SQRT_HPP
 
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <cmath>
 
 namespace stan {
@@ -27,9 +29,20 @@ struct sqrt_fun {
  * @tparam T Container type.
  * @return Square root of each value in x.
  */
-template <typename T>
-inline typename apply_scalar_unary<sqrt_fun, T>::return_t sqrt(const T& x) {
+template <typename T, typename = require_not_eigen_vt<std::is_arithmetic, T>>
+inline auto sqrt(const T& x) {
   return apply_scalar_unary<sqrt_fun, T>::apply(x);
+}
+
+/**
+ * Version of sqrt() that accepts Eigen Matrix ar matrix expressions.
+ * @tparam Derived derived type of x
+ * @param x Matrix or matrix expression
+ * @return Square root of each value in x.
+ */
+template <typename Derived, typename = require_eigen_vt<std::is_arithmetic, Derived>>
+inline auto sqrt(const Eigen::MatrixBase<Derived>& x){
+  return x.derived().array().sqrt().matrix();
 }
 
 }  // namespace math

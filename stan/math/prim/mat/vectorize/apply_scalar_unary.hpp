@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_MAT_VECTORIZE_APPLY_SCALAR_UNARY_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <utility>
 #include <vector>
 
 namespace stan {
@@ -39,13 +40,6 @@ struct apply_scalar_unary {
   using scalar_t = typename Eigen::internal::traits<T>::Scalar;
 
   /**
-   * Return type for applying the function elementwise to a matrix
-   * expression template of type T.
-   */
-  using return_t
-      = Eigen::Matrix<scalar_t, T::RowsAtCompileTime, T::ColsAtCompileTime>;
-
-  /**
    * Return the result of applying the function defined by the
    * template parameter F to the specified matrix argument.
    *
@@ -53,10 +47,16 @@ struct apply_scalar_unary {
    * @return Componentwise application of the function specified
    * by F to the specified matrix.
    */
-  static inline return_t apply(const T& x) {
+  static inline auto apply(const T& x) {
     return x.unaryExpr(
         [](scalar_t x) { return apply_scalar_unary<F, scalar_t>::apply(x); });
   }
+
+  /**
+   * Return type for applying the function elementwise to a matrix
+   * expression template of type T.
+   */
+  using return_t = std::decay_t<decltype(apply_scalar_unary<F,T>::apply(std::declval<T>()).eval())>;
 };
 
 /**
