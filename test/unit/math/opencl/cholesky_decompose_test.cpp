@@ -40,7 +40,6 @@ void cholesky_decompose_test(int size) {
   stan::math::matrix_d m1_cpu(size, size);
   stan::math::matrix_d m1_cl(size, size);
 
-  stan::math::check_square("cholesky_decompose", "m", m1_pos_def);
   stan::math::check_symmetric("cholesky_decompose", "m", m1_pos_def);
   Eigen::LLT<stan::math::matrix_d> llt(m1_pos_def.rows());
   llt.compute(m1_pos_def);
