@@ -15,10 +15,20 @@
 // ----------
 // 13 * 13 = 169 test combinations!  uh oh
 
-using var_t = stan::math::var;
-using cvar_t = std::complex<stan::math::var>;
-using cdouble_t = std::complex<double>;
 using mvar_t = Eigen::Matrix<stan::math::var, -1, -1>;
+
+using var_t = stan::math::var;
+using fvar_d_t = stan::math::fvar<double>;
+using fvar_fvar_d_t = stan::math::fvar<fvar_d_t>;
+using fvar_v_t = stan::math::fvar<stan::math::var>;
+using fvar_fvar_v_t = stan::math::fvar<fvar_v_t>;
+
+using cdouble_t = std::complex<double>;
+using cvar_t = std::complex<stan::math::var>;
+using cfvar_d_t = std::complex<fvar_d_t>;
+using cfvar_fvar_d_t = std::complex<fvar_fvar_d_t>;
+using cfvar_v_t = std::complex<fvar_v_t>;
+using cfvar_fvar_v_t = std::complex<fvar_fvar_v_t>;
 
 template <typename T>
 void expect_identity_matrix(const T& I) {
@@ -732,16 +742,6 @@ TEST(mathRevCore, stdAcos1) {
 TEST(mathRevCore, stdAtan1) {
   expect_complex_common([](const auto& u) { return std::acos(u); });
 }
-
-using fvar_d_t = stan::math::fvar<double>;
-using fvar_fvar_d_t = stan::math::fvar<fvar_d_t>;
-using fvar_v_t = stan::math::fvar<stan::math::var>;
-using fvar_fvar_v_t = stan::math::fvar<fvar_v_t>;
-
-using cfvar_d_t = std::complex<fvar_d_t>;
-using cfvar_fvar_d_t = std::complex<fvar_fvar_d_t>;
-using cfvar_v_t = std::complex<fvar_v_t>;
-using cfvar_fvar_v_t = std::complex<fvar_fvar_v_t>;
 
 template <typename T>
 void expectSignBit() {
