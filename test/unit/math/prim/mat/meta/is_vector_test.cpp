@@ -1,7 +1,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
-TEST(MetaTraits, is_vector) {
+TEST(MetaTraitsPrimMat, is_vector) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::is_vector;

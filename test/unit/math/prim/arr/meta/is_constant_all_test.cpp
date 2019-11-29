@@ -9,7 +9,7 @@ void expect_is_const() {
   EXPECT_TRUE(temp);
 }
 
-TEST(MetaTraits, isConstantStruct) {
+TEST(MetaTraitsPrimArr, isConstantStruct) {
   using std::vector;
   expect_is_const<vector<double>>();
   expect_is_const<vector<vector<double>>>();

@@ -5,7 +5,7 @@
 
 using stan::math::check_positive_finite;
 
-TEST(ErrorHandlingScalar, CheckPositiveFinite_Vector) {
+TEST(ErrorHandlingArr, CheckPositiveFinite_Vector) {
   const char* function = "check_positive_finite";
   std::vector<double> x = {1.5, 0.1, 1};
   ASSERT_NO_THROW(check_positive_finite(function, "x", x))
@@ -32,7 +32,7 @@ TEST(ErrorHandlingScalar, CheckPositiveFinite_Vector) {
       << "check_positive_finite should throw exception on NaN";
 }
 
-TEST(ErrorHandlingScalar, CheckPositiveFinite_nan) {
+TEST(ErrorHandlingArr, CheckPositiveFinite_nan) {
   const char* function = "check_positive_finite";
   double nan = std::numeric_limits<double>::quiet_NaN();
 

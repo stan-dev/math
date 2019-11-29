@@ -4,7 +4,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMeta, primitive) {
+TEST(MathMetaPrimMat, primitive) {
   using stan::is_eigen;
   EXPECT_FALSE((is_eigen<bool>::value));
   EXPECT_FALSE((is_eigen<double>::value));
@@ -29,7 +29,7 @@ TEST(MathMeta, primitive) {
   EXPECT_TRUE((is_eigen<decltype(a * b + a.transpose())>::value));
 }
 
-TEST(MathMeta, expression) {
+TEST(MathMetaPrimMat, expression) {
   using stan::is_eigen_matrix;
   EXPECT_FALSE((is_eigen_matrix<bool>::value));
   EXPECT_FALSE((is_eigen_matrix<double>::value));

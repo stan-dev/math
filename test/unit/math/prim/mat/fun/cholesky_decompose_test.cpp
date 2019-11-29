@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
 
-TEST(MathMatrix, cholesky_decompose) {
+TEST(MathMatrixPrimMat, cholesky_decompose) {
   stan::math::matrix_d m0;
   stan::math::matrix_d m1(2, 3);
   m1 << 1, 2, 3, 4, 5, 6;
@@ -14,7 +14,7 @@ TEST(MathMatrix, cholesky_decompose) {
                    "Expecting a square matrix");
 }
 
-TEST(MathMatrix, cholesky_decompose_exception) {
+TEST(MathMatrixPrimMat, cholesky_decompose_exception) {
   stan::math::matrix_d m;
 
   m.resize(2, 2);

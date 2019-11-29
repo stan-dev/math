@@ -1,7 +1,7 @@
 #include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 
-TEST(MetaTraits, StdVectorBuilder_false_false) {
+TEST(MetaTraitsPrimScal, StdVectorBuilder_false_false) {
   using stan::StdVectorBuilder;
   using stan::length;
 
@@ -12,7 +12,7 @@ TEST(MetaTraits, StdVectorBuilder_false_false) {
   EXPECT_THROW(dvv1.data(), std::logic_error);
 }
 
-TEST(MetaTraits, StdVectorBuilder_true_false) {
+TEST(MetaTraitsPrimScal, StdVectorBuilder_true_false) {
   using stan::StdVectorBuilder;
   using stan::length;
 
@@ -27,7 +27,7 @@ TEST(MetaTraits, StdVectorBuilder_true_false) {
   EXPECT_FLOAT_EQ(0.0, data1);
 }
 
-TEST(MetaTraits, StdVectorBuilder_type_check) {
+TEST(MetaTraitsPrimScal, StdVectorBuilder_type_check) {
   using stan::StdVectorBuilder;
   using stan::contains_std_vector;
 

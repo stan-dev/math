@@ -869,7 +869,7 @@ TEST(AgradRevMatrix, trace_gen_inv_quad_form_ldlt_grad_vvv_basic) {
   }
 }
 
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, trace_gen_inv_quad_form_ldlt_check_varis_on_stack) {
   using stan::math::matrix_d;
   using stan::math::matrix_v;
 

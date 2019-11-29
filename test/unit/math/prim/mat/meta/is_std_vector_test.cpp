@@ -4,7 +4,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMeta, is_std_vector) {
+TEST(MathMetaPrimMat, is_std_vector) {
   using stan::is_std_vector;
   EXPECT_FALSE((is_std_vector<bool>::value));
   EXPECT_FALSE((is_std_vector<double>::value));

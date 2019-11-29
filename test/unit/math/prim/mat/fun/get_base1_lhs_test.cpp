@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMatrix, failing_in_26) {
+TEST(MathMatrixPrimMat, get_base1_lhs_failing_in_26) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::get_base1_lhs;
@@ -14,7 +14,7 @@ TEST(MathMatrix, failing_in_26) {
       EXPECT_FLOAT_EQ(y(i - 1, j - 1), get_base1_lhs(y, i, j, "y", 2));
 }
 
-TEST(MathMatrix, failing_pre_20) {
+TEST(MathMatrixPrimMat, get_base1_lhs_failing_pre_20) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::get_base1_lhs;
@@ -23,7 +23,7 @@ TEST(MathMatrix, failing_pre_20) {
   double z = get_base1_lhs(y, 1, "y", 1);
   EXPECT_FLOAT_EQ(1, z);
 }
-TEST(MathMatrix, get_base1_lhs_vec1) {
+TEST(MathMatrixPrimMat, get_base1_lhs_vec1) {
   using stan::math::get_base1_lhs;
   std::vector<double> x(2);
   x[0] = 10.0;
@@ -37,7 +37,7 @@ TEST(MathMatrix, get_base1_lhs_vec1) {
   EXPECT_THROW(get_base1_lhs(x, 0, "x[0]", 0), std::out_of_range);
   EXPECT_THROW(get_base1_lhs(x, 3, "x[3]", 0), std::out_of_range);
 }
-TEST(MathMatrix, get_base1_lhs_vec2) {
+TEST(MathMatrixPrimMat, get_base1_lhs_vec2) {
   using stan::math::get_base1_lhs;
   using std::vector;
   size_t M = 3;
@@ -67,7 +67,7 @@ TEST(MathMatrix, get_base1_lhs_vec2) {
   EXPECT_THROW(get_base1_lhs(get_base1_lhs(x, 1, "", -1), 12, "", -1),
                std::out_of_range);
 }
-TEST(MathMatrix, get_base1_lhs_matrix) {
+TEST(MathMatrixPrimMat, get_base1_lhs_matrix) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::get_base1_lhs;
@@ -96,7 +96,7 @@ TEST(MathMatrix, get_base1_lhs_matrix) {
   EXPECT_THROW(get_base1_lhs(x, 0, 1, "x", 1), std::out_of_range);
   EXPECT_THROW(get_base1_lhs(x, 1, 0, "x", 1), std::out_of_range);
 }
-TEST(MathMatrix, get_base1_lhs_vector) {
+TEST(MathMatrixPrimMat, get_base1_lhs_vector) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::get_base1_lhs;
@@ -108,7 +108,7 @@ TEST(MathMatrix, get_base1_lhs_vector) {
   EXPECT_THROW(get_base1_lhs(x, 0, "x", 1), std::out_of_range);
   EXPECT_THROW(get_base1_lhs(x, 100, "x", 1), std::out_of_range);
 }
-TEST(MathMatrix, get_base1_lhs_row_vector) {
+TEST(MathMatrixPrimMat, get_base1_lhs_row_vector) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::get_base1_lhs;
@@ -120,7 +120,7 @@ TEST(MathMatrix, get_base1_lhs_row_vector) {
   EXPECT_THROW(get_base1_lhs(x, 0, "x", 1), std::out_of_range);
   EXPECT_THROW(get_base1_lhs(x, 100, "x", 1), std::out_of_range);
 }
-TEST(MathMatrix, get_base1_lhs_8) {
+TEST(MathMatrixPrimMat, get_base1_lhs_8) {
   using stan::math::get_base1_lhs;
   using std::vector;
   double x0(42.0);

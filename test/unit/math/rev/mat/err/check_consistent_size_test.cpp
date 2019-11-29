@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <limits>
 
-TEST(AgradRevErrorHandlingScalar, checkConsistentSize) {
+TEST(AgradRevErrorHandlingMatrix, checkConsistentSize) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::check_consistent_size;
@@ -21,7 +21,7 @@ TEST(AgradRevErrorHandlingScalar, checkConsistentSize) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRevErrorHandlingScalar, checkConsistentSize_nan) {
+TEST(AgradRevErrorHandlingMatrix, checkConsistentSize_nan) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::check_consistent_size;

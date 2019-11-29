@@ -58,7 +58,7 @@ inline void test_scale_matrix_exp_multiply_dv(int N, int M) {
   }
 }
 
-TEST(MathMatrix, scale_matrix_exp_multiply_dv) {
+TEST(MathMatrixRevMat, scale_matrix_exp_multiply_dv) {
   test_scale_matrix_exp_multiply_dv(1, 1);
   test_scale_matrix_exp_multiply_dv(1, 5);
   test_scale_matrix_exp_multiply_dv(5, 1);
@@ -116,7 +116,7 @@ inline void test_scale_matrix_exp_multiply_vd(int N, int M) {
   }
 }
 
-TEST(MathMatrix, scale_matrix_exp_multiply_vd) {
+TEST(MathMatrixRevMat, scale_matrix_exp_multiply_vd) {
   test_scale_matrix_exp_multiply_vd(1, 1);
   test_scale_matrix_exp_multiply_vd(1, 5);
   test_scale_matrix_exp_multiply_vd(5, 1);
@@ -174,7 +174,7 @@ inline void test_scale_matrix_exp_multiply_vv(int N, int M) {
   }
 }
 
-TEST(MathMatrix, scale_matrix_exp_multiply_vv) {
+TEST(MathMatrixRevMat, scale_matrix_exp_multiply_vv) {
   test_scale_matrix_exp_multiply_vv(1, 1);
   test_scale_matrix_exp_multiply_vv(1, 5);
   test_scale_matrix_exp_multiply_vv(5, 1);
@@ -182,7 +182,7 @@ TEST(MathMatrix, scale_matrix_exp_multiply_vv) {
   test_scale_matrix_exp_multiply_vv(8, 2);
 }
 
-TEST(MathMatrix, matrix_exp_multiply_0x0) {
+TEST(MathMatrixRevMat, scale_matrix_exp_multiply_exception_0x0) {
   using stan::math::var;
   const double t = 1.0;
   Eigen::Matrix<var, -1, -1> A(0, 0);
@@ -190,7 +190,7 @@ TEST(MathMatrix, matrix_exp_multiply_0x0) {
   EXPECT_EQ(stan::math::scale_matrix_exp_multiply(t, A, B).size(), 0);
 }
 
-TEST(MathMatrix, scale_matrix_exp_multiply_exception) {
+TEST(MathMatrixRevMat, scale_matrix_exp_multiply_exception) {
   using stan::math::var;
   const double t = 1.0;
   {  // multiplicable

@@ -2,7 +2,7 @@
 #include <stan/math/prim/scal/meta/conjunction.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathMeta, and_type) {
+TEST(MathMetaPrimScal, and_type) {
   bool temp = stan::math::conjunction<std::true_type, std::true_type,
                                       std::true_type>::value;
   EXPECT_TRUE(temp);

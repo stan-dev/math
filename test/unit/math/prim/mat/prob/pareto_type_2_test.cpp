@@ -28,7 +28,7 @@ TEST(ProbDistributionsParetoType2, errorCheck) {
  * Don't have an easy way to compute Pareto Type 2 quantiles in C++, so test
  * the distributions manually
  */
-TEST(ProbDistributionsParetoType2, chiSquareGoodnessFitTest) {
+TEST(ProbDistributionsParetoType2Mat, chiSquareGoodnessFitTest) {
   boost::random::mt19937 rng;
   int N = 10000;
 

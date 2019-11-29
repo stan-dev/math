@@ -3,7 +3,7 @@
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <vector>
 
-TEST(AgradMatrix, value_of_rec) {
+TEST(AgradMatrixRev, value_of_rec) {
   using stan::math::value_of_rec;
   using stan::math::var;
   using std::vector;

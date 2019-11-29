@@ -9,7 +9,7 @@
   for (int i = 0; i < A.size(); i++)    \
     EXPECT_NEAR(A(i), B(i), DELTA);
 
-TEST(MathMatrix, cholesky_decompose_cl_expections) {
+TEST(MathMatrixOpenCLPrim, cholesky_decompose_cl_expections) {
   using stan::math::matrix_cl;
   matrix_cl<double> m0;
   EXPECT_NO_THROW(stan::math::cholesky_decompose(m0));
@@ -32,7 +32,7 @@ TEST(MathMatrix, cholesky_decompose_cl_expections) {
   EXPECT_THROW(stan::math::cholesky_decompose(m_not_sym_cl), std::domain_error);
 }
 
-TEST(MathMatrix, cholesky_decompose_non_inplace_cpu_vs_cl_small) {
+TEST(MathMatrixOpenCLPrim, cholesky_decompose_non_inplace_cpu_vs_cl_small) {
   stan::math::matrix_d m0(3, 3);
   m0 << 25, 15, -5, 15, 18, 0, -5, 0, 11;
 
@@ -84,13 +84,13 @@ void cholesky_decompose_test(int size) {
   EXPECT_LT(max_error, 1e-8);
 }
 
-TEST(MathMatrix, cholesky_decompose_small) {
+TEST(MathMatrixOpenCLPrim, cholesky_decompose_small) {
   cholesky_decompose_test(10);
   cholesky_decompose_test(50);
   cholesky_decompose_test(100);
 }
 
-TEST(MathMatrix, cholesky_decompose_big) {
+TEST(MathMatrixOpenCLPrim, cholesky_decompose_big) {
   cholesky_decompose_test(1251);
   cholesky_decompose_test(1704);
   cholesky_decompose_test(2000);
