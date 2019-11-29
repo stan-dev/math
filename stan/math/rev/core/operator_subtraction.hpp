@@ -107,7 +107,7 @@ inline var operator-(const var& a, const var& b) {
  * @param b Second scalar operand.
  * @return Result of subtracting the scalar from the variable.
  */
-template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
+template <typename T, require_arithmetic_t<T>...>
 inline var operator-(const var& a, T b) {
   if (b == 0.0) {
     return a;
@@ -127,7 +127,7 @@ inline var operator-(const var& a, T b) {
  * @param b Second variable operand.
  * @return Result of sutracting a variable from a scalar.
  */
-template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
+template <typename T, require_arithmetic_t<T>...>
 inline var operator-(T a, const var& b) {
   return var(new internal::subtract_dv_vari(a, b.vi_));
 }

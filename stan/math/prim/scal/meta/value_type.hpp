@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_META_VALUE_TYPE_HPP
 
 #include <type_traits>
-
+#include <stan/math/prim/scal/meta/is_complex.hpp>
 namespace stan {
 
 /** \ingroup type_trait
@@ -23,6 +23,11 @@ struct value_type {
 template <typename T>
 struct value_type<T, std::enable_if_t<std::is_pointer<T>::value>> {
   using type = typename value_type<std::remove_pointer<T>>::type;
+};
+
+template<typename T>
+struct value_type<T, std::enable_if_t<is_complex<T>::value>> {
+  using type = typename std::decay_t<T>::value_type;
 };
 
 /** \ingroup type_trait

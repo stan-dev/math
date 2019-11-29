@@ -20,39 +20,11 @@ namespace math {
  * @param x scalar to convert to double
  * @return value of scalar cast to double
  */
-template <typename T>
-inline double value_of(const T x) {
-  return static_cast<double>(x);
-}
-
-/**
- * Return the specified argument.
- *
- * <p>See <code>value_of(T)</code> for a polymorphic
- * implementation using static casts.
- *
- * <p>This inline pass-through no-op should be compiled away.
- *
- * @param x value
- * @return input value
- */
-template <>
-inline double value_of<double>(double x) {
+template <typename T, require_arithmetic_t<T>...>
+inline T value_of(T x) {
   return x;
 }
 
-/**
- * Return the specified argument.
- *
- * <p>See <code>value_of(T)</code> for a polymorphic
- * implementation using static casts.
- *
- * <p>This inline pass-through no-op should be compiled away.
- *
- * @param x value
- * @return input value
- */
-inline int value_of(int x) { return x; }
 
 }  // namespace math
 }  // namespace stan

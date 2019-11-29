@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_META_SCALAR_TYPE_HPP
 
 #include <stan/math/prim/scal/meta/value_type.hpp>
+#include <stan/math/prim/scal/meta/is_complex.hpp>
 #include <type_traits>
 
 namespace stan {
@@ -28,6 +29,11 @@ struct scalar_type_base {
 template <typename T, typename = void>
 struct scalar_type {
   using type = typename scalar_type_base<std::remove_cv_t<T>>::type;
+};
+
+template<typename T>
+struct scalar_type<T, std::enable_if_t<is_complex<T>::value>> {
+  using type = typename scalar_type<typename std::decay_t<T>::value_type>::type;
 };
 
 template <typename T>

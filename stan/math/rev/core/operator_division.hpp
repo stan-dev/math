@@ -102,7 +102,7 @@ inline var operator/(const var& a, const var& b) {
  * @param b Scalar operand.
  * @return Variable result of dividing the variable by the scalar.
  */
-template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
+template <typename T, require_arithmetic_t<T>...>
 inline var operator/(const var& a, T b) {
   if (b == 1.0) {
     return a;
@@ -122,7 +122,7 @@ inline var operator/(const var& a, T b) {
  * @param b Variable operand.
  * @return Variable result of dividing the scalar by the variable.
  */
-template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
+template <typename T, require_arithmetic_t<T>...>
 inline var operator/(T a, const var& b) {
   return var(new internal::divide_dv_vari(a, b.vi_));
 }

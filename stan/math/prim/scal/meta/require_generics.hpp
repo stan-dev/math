@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/scal/meta/bool_constant.hpp>
 #include <stan/math/prim/scal/meta/is_eigen.hpp>
+#include <stan/math/prim/scal/meta/is_complex.hpp>
 #include <stan/math/prim/scal/meta/is_fvar.hpp>
 #include <stan/math/prim/scal/meta/is_var.hpp>
 #include <stan/math/prim/scal/meta/is_var_or_arithmetic.hpp>
@@ -15,6 +16,7 @@
 
 #include <type_traits>
 #include <string>
+#include <complex>
 
 namespace stan {
 
@@ -37,7 +39,7 @@ struct is_double_or_int
  * @tparam The type to check
  */
 template <typename T>
-struct is_var_or_fvar
+struct is_autodiff
     : bool_constant<math::disjunction<is_var<std::decay_t<T>>,
                                       is_fvar<std::decay_t<T>>>::value> {};
 
@@ -49,7 +51,7 @@ template <typename T>
 struct is_stan_scalar
     : bool_constant<
           math::disjunction<is_var<std::decay_t<T>>, is_fvar<std::decay_t<T>>,
-                            std::is_arithmetic<std::decay_t<T>>>::value> {};
+                            std::is_arithmetic<std::decay_t<T>>, is_complex<T>>::value> {};
 
 /**
  * Used as the base for checking whether a type is a container with
@@ -165,6 +167,23 @@ struct is_eigen_scalar_check
 template <template <class...> class TypeCheck, class... Check>
 struct is_eigen_vector_scalar_check
     : container_scalar_type_check_base<is_eigen_vector, TypeCheck, Check...> {};
+
+
+/**
+ * Meta type trait to check if type is complex and value type passes additional type trait checks.
+ */
+template <template <class...> class TypeCheck, class... Check>
+struct is_complex_value_check
+    : container_value_type_check_base<is_complex, TypeCheck, Check...> {};
+
+
+/**
+ * Meta type trait to check if type is complex and scalar type passes additional type trait checks.
+ */
+template <template <class...> class TypeCheck, class... Check>
+struct is_complex_scalar_check
+    : container_scalar_type_check_base<is_complex, TypeCheck, Check...> {};
+
 /** @}*/
 
 /** \addtogroup require_base_types
@@ -303,28 +322,28 @@ using require_any_not_same_vt
  */
 template <typename T, typename S>
 using require_convertible_t
-    = require_t<std::is_convertible<std::decay_t<T>, std::decay_t<S>>>;
+    = require_t<std::is_convertible<std::decay_t<S>, std::decay_t<T>>>;
 
 /**
  * Require T is not convertible to S
  */
 template <typename T, typename S>
 using require_not_convertible_t
-    = require_not_t<std::is_convertible<std::decay_t<T>, std::decay_t<S>>>;
+    = require_not_t<std::is_convertible<std::decay_t<S>, std::decay_t<T>>>;
 
 /**
  * Require T is convertible to all Types
  */
 template <typename T, typename... Types>
 using require_all_convertible_t = require_all_t<
-    std::is_convertible<std::decay_t<T>, std::decay_t<Types>>...>;
+    std::is_convertible<std::decay_t<Types>, std::decay_t<T>>...>;
 
 /**
  * require T is not convertible to any Types
  */
 template <typename T, typename... Types>
 using require_any_not_convertible_t = require_all_not_t<
-    std::is_convertible<std::decay_t<T>, std::decay_t<Types>>...>;
+    std::is_convertible<std::decay_t<Types>, std::decay_t<T>>...>;
 
 /**
  * Below are enablers for
@@ -336,6 +355,7 @@ using require_any_not_convertible_t = require_all_not_t<
  * - Fvar
  * - Var or Fvar
  * - Arithmetic Var or Fvar
+ * - Complex
  */
 
 template <typename T>
@@ -473,24 +493,24 @@ using require_any_not_fvar_t
     = require_any_not_t<is_fvar<std::decay_t<Types>>...>;
 
 template <typename T>
-using require_var_or_fvar_t = require_t<is_var_or_fvar<T>>;
+using require_autodiff_t = require_t<is_autodiff<T>>;
 
 template <typename T>
-using require_not_var_or_fvar_t = require_not_t<is_var_or_fvar<T>>;
+using require_not_autodiff_t = require_not_t<is_autodiff<T>>;
 
 template <typename... Types>
-using require_all_var_or_fvar_t = require_all_t<is_var_or_fvar<Types>...>;
+using require_all_autodiff_t = require_all_t<is_autodiff<Types>...>;
 
 template <typename... Types>
-using require_any_var_or_fvar_t = require_any_t<is_var_or_fvar<Types>...>;
+using require_any_autodiff_t = require_any_t<is_autodiff<Types>...>;
 
 template <typename... Types>
-using require_all_not_var_or_fvar_t
-    = require_all_not_t<is_var_or_fvar<Types>...>;
+using require_all_not_autodiff_t
+    = require_all_not_t<is_autodiff<Types>...>;
 
 template <typename... Types>
-using require_any_not_var_or_fvar_t
-    = require_any_not_t<is_var_or_fvar<Types>...>;
+using require_any_not_autodiff_t
+    = require_any_not_t<is_autodiff<Types>...>;
 
 template <typename T>
 using require_stan_scalar_t = require_t<is_stan_scalar<T>>;
@@ -511,6 +531,27 @@ using require_all_not_stan_scalar_t
 template <typename... Types>
 using require_any_not_stan_scalar_t
     = require_any_not_t<is_stan_scalar<Types>...>;
+
+template <typename T>
+using require_complex_t = require_t<is_complex<T>>;
+
+template <typename T>
+using require_not_complex_t = require_not_t<is_complex<T>>;
+
+template <typename... Types>
+using require_all_complex_t = require_all_t<is_complex<Types>...>;
+
+template <typename... Types>
+using require_any_complex_t = require_any_t<is_complex<Types>...>;
+
+template <typename... Types>
+using require_all_not_complex_t
+    = require_all_not_t<is_complex<Types>...>;
+
+template <typename... Types>
+using require_any_not_complex_t
+    = require_any_not_t<is_complex<Types>...>;
+
 /** @}*/
 
 /**
@@ -746,6 +787,32 @@ template <template <class...> class TypeCheck, class... Check>
 using require_all_not_eigen_vector_vt
     = require_all_not_t<is_eigen_vector_value_check<TypeCheck, Check>...>;
 
+
+template <template <class...> class TypeCheck, class... Check>
+using require_complex_vt
+    = require_t<is_complex_value_check<TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_not_complex_vt
+    = require_not_t<is_complex_value_check<TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_complex_vt
+    = require_any_t<is_complex_value_check<TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_not_complex_vt
+    = require_any_not_t<is_complex_value_check<TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_complex_vt
+    = require_all_t<is_complex_value_check<TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_not_complex_vt
+    = require_all_not_t<is_complex_value_check<TypeCheck, Check>...>;
+
+
 /**
  * Container Scalar check
  */
@@ -881,6 +948,30 @@ using require_all_eigen_vector_st
 template <template <class...> class TypeCheck, class... Check>
 using require_all_not_eigen_vector_st
     = require_all_not_t<is_eigen_vector_scalar_check<TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_complex_st
+    = require_t<is_complex_scalar_check<TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_not_complex_st
+    = require_not_t<is_complex_scalar_check<TypeCheck, Check...>>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_complex_st
+    = require_any_t<is_complex_scalar_check<TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_any_not_complex_st
+    = require_any_not_t<is_complex_scalar_check<TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_complex_st
+    = require_all_t<is_complex_scalar_check<TypeCheck, Check>...>;
+
+template <template <class...> class TypeCheck, class... Check>
+using require_all_not_complex_st
+    = require_all_not_t<is_complex_scalar_check<TypeCheck, Check>...>;
 
 /** @}*/
 }  // namespace stan

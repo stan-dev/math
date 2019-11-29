@@ -113,8 +113,8 @@ namespace math {
  * @param[in] v argument
  * @return `true` if the argument is negative
  */
-template <typename T>
-inline bool signbit(const T& v) {
+template <typename T, require_autodiff_t<T>...>
+inline bool signbit(T&& v) {
   using std::signbit;
   return signbit(v.val());
 }
@@ -130,8 +130,8 @@ inline bool signbit(const T& v) {
  * @param[in] v argument
  * @return true if argument is infinite
  */
-template <typename T>
-inline bool isinf(const T& v) {
+template <typename T, require_autodiff_t<T>...>
+inline bool isinf(T&& v) {
   using std::isinf;
   return isinf(v.val());
 }
@@ -147,8 +147,8 @@ inline bool isinf(const T& v) {
  * @param[in] v argument
  * @return true if argument is finite
  */
-template <typename T>
-inline bool isfinite(const T& v) {
+template <typename T, require_autodiff_t<T>...>
+inline bool isfinite(T&& v) {
   using std::isfinite;
   return isfinite(v.val());
 }
@@ -163,8 +163,8 @@ inline bool isfinite(const T& v) {
  * @param[in] v argument
  * @return true if argument is not-a-number
  */
-template <typename T>
-inline bool isnan(const T& v) {
+template <typename T, require_autodiff_t<T>...>
+inline bool isnan(T&& v) {
   using std::isnan;
   return isnan(v.val());
 }
@@ -180,8 +180,8 @@ inline bool isnan(const T& v) {
  * @param[in] v argument
  * @return true if argument is normal
  */
-template <typename T>
-inline bool isnormal(const T& v) {
+template <typename T, require_autodiff_t<T>...>
+inline bool isnormal(T&& v) {
   using std::isnormal;
   return isnormal(v.val());
 }
@@ -203,8 +203,8 @@ inline bool isnormal(const T& v) {
  * @return copy of second argument, negated if necessary to match sign
  * of first argument
  */
-template <typename T, typename U>
-inline T copysign(const T& x, const U& y) {
+template <typename T, typename U, require_all_not_complex_t<T, U>...>
+inline auto copysign(T&& x, U&& y) {
   // 0 is considered positive
   return (x < 0 && y >= 0) || (x > 0 && y < 0) ? -x : x;
 }
@@ -223,8 +223,8 @@ namespace math {
  * @param[in] complex argument
  * @return complex number with same value as argument
  */
-template <typename T>
-inline std::complex<double> value_of(const std::complex<T>& z) {
+template <typename T, require_complex_t<T>...>
+inline std::complex<double> value_of(T&& z) {
   return {value_of_rec(z.real()), value_of_rec(z.imag())};
 }
 
@@ -243,9 +243,8 @@ inline std::complex<double> value_of(const std::complex<T>& z) {
  * @return copy of second argument, with components negated if
  * necessary to match sign of first argument
  */
-template <typename T, typename U>
-inline std::complex<T> copysign(const std::complex<T>& y,
-                                const std::complex<U>& x) {
+template <typename T, typename U, require_all_complex_t<T, U>...>
+inline std::complex<return_type_t<value_type_t<T>, value_type_t<U>>> copysign(T&& y, U&& x) {
   return {copysign(y.real(), x.real()), copysign(y.imag(), x.imag())};
 }
 
@@ -259,8 +258,8 @@ inline std::complex<T> copysign(const std::complex<T>& y,
  * @param[in] z complex argument
  * @return argument multipled by `i`
  */
-template <typename T>
-inline std::complex<T> i_times(const std::complex<T>& z) {
+template <typename T, require_complex_t<T>...>
+inline std::decay_t<T> i_times(T&& z) {
   return {-z.imag(), z.real()};
 }
 
@@ -273,21 +272,24 @@ inline std::complex<T> i_times(const std::complex<T>& z) {
  * @tparam V type of second argument
  */
 template <typename U, typename V>
-struct complex_op {};
+struct complex_op_impl {};
 template <typename U, typename V>
-struct complex_op<std::complex<U>, std::complex<V>> {
+struct complex_op_impl<std::complex<U>, std::complex<V>> {
   using complex_t = std::complex<return_type_t<U, V>>;
 };
 // doc inherited from base function template
 template <typename U, typename V>
-struct complex_op<std::complex<U>, V> {
+struct complex_op_impl<std::complex<U>, V> {
   using complex_t = std::complex<return_type_t<U, V>>;
 };
 // doc inherited from base function template
 template <typename U, typename V>
-struct complex_op<U, std::complex<V>> {
+struct complex_op_impl<U, std::complex<V>> {
   using complex_t = std::complex<return_type_t<U, V>>;
 };
+
+template <typename T, typename U>
+struct complex_op : complex_op_impl<std::decay_t<T>, std::decay_t<U>>{};
 
 /**
  * The return type of complex function given a sequence of template
@@ -309,8 +311,8 @@ using complex_op_t = typename complex_op<Args...>::complex_t;
  * @param[in] z complex argument
  * @return argument multipled by `-i`
  */
-template <typename T>
-inline std::complex<T> neg_i_times(const std::complex<T>& z) {
+template <typename T, require_complex_t<T>...>
+inline std::decay_t<T> neg_i_times(T&& z) {
   return {z.imag(), -z.real()};
 }
 
@@ -321,8 +323,8 @@ inline std::complex<T> neg_i_times(const std::complex<T>& z) {
  * @param[in] z argument
  * @return negation of argument
  */
-template <typename V>
-inline std::complex<V> complex_negate(const std::complex<V>& z) {
+template <typename V, require_complex_t<V>...>
+inline std::decay_t<V> complex_negate(V&& z) {
   return {-z.real(), -z.imag()};
 }
 
@@ -336,9 +338,9 @@ inline std::complex<V> complex_negate(const std::complex<V>& z) {
  * @param[in] rhs second argument
  * @return sum of the arguments
  */
-template <typename U, typename V>
-inline complex_op_t<U, V> complex_add(const U& lhs, const V& rhs) {
-  complex_op_t<U, V> y(lhs);
+template <typename U, typename V, require_any_complex_t<U, V>...>
+inline complex_op_t<U, V> add(U&& lhs, V&& rhs) {
+  complex_op_t<U, V> y(std::forward<U>(lhs));
   y += rhs;
   return y;
 }
@@ -353,9 +355,9 @@ inline complex_op_t<U, V> complex_add(const U& lhs, const V& rhs) {
  * @param[in] rhs second argument
  * @return difference of the arguments
  */
-template <typename U, typename V>
-inline complex_op_t<U, V> complex_subtract(const U& lhs, const V& rhs) {
-  complex_op_t<U, V> y(lhs);
+template <typename U, typename V, require_any_complex_t<U, V>...>
+inline complex_op_t<U, V> subtract(U&& lhs, V&& rhs) {
+  complex_op_t<U, V> y(std::forward<U>(lhs));
   y -= rhs;
   return y;
 }
@@ -370,9 +372,9 @@ inline complex_op_t<U, V> complex_subtract(const U& lhs, const V& rhs) {
  * @param[in] rhs second argument
  * @return sum of the arguments
  */
-template <typename U, typename V>
-inline complex_op_t<U, V> complex_multiply(const U& lhs, const V& rhs) {
-  complex_op_t<U, V> y(lhs);
+template <typename U, typename V, require_any_complex_t<U, V>...>
+inline complex_op_t<U, V> multiply(U&& lhs, V&& rhs) {
+  complex_op_t<U, V> y(std::forward<U>(lhs));
   y *= rhs;
   return y;
 }
@@ -387,9 +389,9 @@ inline complex_op_t<U, V> complex_multiply(const U& lhs, const V& rhs) {
  * @param[in] rhs second argument
  * @return sum of the arguments
  */
-template <typename U, typename V>
-inline complex_op_t<U, V> complex_divide(const U& lhs, const V& rhs) {
-  complex_op_t<U, V> y(lhs);
+template <typename U, typename V, require_any_complex_t<U, V>...>
+inline complex_op_t<U, V> divide(U&& lhs, V&& rhs) {
+  complex_op_t<U, V> y(std::forward<U>(lhs));
   y /= rhs;
   return y;
 }
@@ -404,9 +406,8 @@ inline complex_op_t<U, V> complex_divide(const U& lhs, const V& rhs) {
  * @param[in] rhs second argument
  * @return `true` if the arguments are equal
  */
-template <typename U, typename V>
-inline bool complex_equal_equal(const std::complex<U>& lhs,
-                                const std::complex<V>& rhs) {
+template <typename U, typename V, require_all_complex_t<U, V>...>
+inline bool equal_equal(U&& lhs, V&& rhs) {
   return lhs.real() == rhs.real() && lhs.imag() == rhs.imag();
 }
 
@@ -421,8 +422,8 @@ inline bool complex_equal_equal(const std::complex<U>& lhs,
  * @return `true` if the complex argument has real component equal to
  * the real argument
  */
-template <typename U, typename V>
-inline bool complex_equal_equal(const U& lhs, const std::complex<V>& rhs) {
+template <typename U, typename V, require_not_complex_t<U>..., require_complex_t<V>...>
+inline bool equal_equal(U&& lhs, V&& rhs) {
   return lhs == rhs.real() && rhs.imag() == 0;
 }
 
@@ -437,8 +438,8 @@ inline bool complex_equal_equal(const U& lhs, const std::complex<V>& rhs) {
  * @return `true` if the complex argument has real component equal to
  * the real argument
  */
-template <typename U, typename V>
-inline bool complex_equal_equal(const std::complex<U>& lhs, const V& rhs) {
+template <typename U, typename V, require_complex_t<U>..., require_not_complex_t<V>...>
+inline bool equal_equal(U&& lhs, V&& rhs) {
   return lhs.real() == rhs && lhs.imag() == 0;
 }
 
@@ -452,9 +453,9 @@ inline bool complex_equal_equal(const std::complex<U>& lhs, const V& rhs) {
  * @param[in] rhs second argument
  * @return `true` if the arguments are not equal
  */
-template <typename U, typename V>
-inline bool complex_not_equal(const U& lhs, const V& rhs) {
-  return !complex_equal_equal(lhs, rhs);
+template <typename U, typename V, require_any_complex_t<U, V>...>
+inline bool not_equal(U&& lhs, V&& rhs) {
+  return !equal_equal(std::forward<U>(lhs), std::forward<V>(rhs));
 }
 
 /**
@@ -464,8 +465,8 @@ inline bool complex_not_equal(const U& lhs, const V& rhs) {
  * @param[in] z argument
  * @return real part of argument
  */
-template <typename V>
-inline V complex_real(const std::complex<V>& z) {
+template <typename V, require_complex_t<V>...>
+inline value_type_t<V> real(V&& z) {
   return z.real();
 }
 
@@ -476,8 +477,8 @@ inline V complex_real(const std::complex<V>& z) {
  * @param[in] z argument
  * @return imaginary part of argument
  */
-template <typename V>
-inline V complex_imag(const std::complex<V>& z) {
+template <typename V, require_complex_t<V>...>
+inline value_type_t<V> imag(V&& z) {
   return z.imag();
 }
 
@@ -488,8 +489,8 @@ inline V complex_imag(const std::complex<V>& z) {
  * @param[in] z argument
  * @return absolute value of the argument
  */
-template <typename V>
-inline V complex_abs(const std::complex<V>& z) {
+template <typename V, require_complex_t<V>...>
+inline value_type_t<V> abs(V&& z) {
   return hypot(real(z), imag(z));
 }
 
@@ -860,19 +861,9 @@ class complex_base {
    * @param[in] x real part
    * @param[in] y imaginary part (default 0)
    */
-  template <typename T, typename U>
-  complex_base(const T& x, const U& y = U(0))  // NOLINT(runtime/explicit)
-      : complex_base(value_type(x), value_type(y)) {}
-
-  /**
-   * Constructs complex number from real and imaginary parts.
-   *
-   * @param[in] re the real part
-   * @param[in] im the imaginary part
-   */
-  complex_base(const value_type& re = value_type(0),
-               const value_type& im = value_type(0))
-      : re_(re), im_(im) {}
+  template <typename T, typename U, require_all_convertible_t<value_type, T, U>...>
+  complex_base(T&& x, U&& y = U(0))  // NOLINT(runtime/explicit)
+      : re_(std::forward<T>(x)), im_(std::forward<U>(y)) {}
 
   /**
    * Constructs the complex number from the specified complex number
@@ -1106,7 +1097,7 @@ class complex<stan::math::var>
    * @param[in] re the real part
    */
   complex(const value_type& re = value_type(0))  // NOLINT(runtime/explicit)
-      : complex_base(re) {}
+      : complex_base(re, value_type(0)) {}
 
   /**
    * Constructs the complex number from the specified complex number.
@@ -1449,7 +1440,7 @@ namespace std {
 template <>
 inline bool operator==<stan::math::var>(const complex<stan::math::var>& lhs,
                                         const complex<stan::math::var>& rhs) {
-  return complex_equal_equal(lhs, rhs);
+  return equal_equal(lhs, rhs);
 }
 
 /**
@@ -1463,7 +1454,7 @@ inline bool operator==<stan::math::var>(const complex<stan::math::var>& lhs,
 template <>
 inline bool operator==<stan::math::var>(const complex<stan::math::var>& lhs,
                                         const stan::math::var& rhs) {
-  return complex_equal_equal(lhs, rhs);
+  return equal_equal(lhs, rhs);
 }
 
 /**
@@ -1477,7 +1468,7 @@ inline bool operator==<stan::math::var>(const complex<stan::math::var>& lhs,
 template <>
 inline bool operator==<stan::math::var>(const stan::math::var& lhs,
                                         const complex<stan::math::var>& rhs) {
-  return complex_equal_equal(lhs, rhs);
+  return equal_equal(lhs, rhs);
 }
 
 /**
@@ -1491,7 +1482,7 @@ inline bool operator==<stan::math::var>(const stan::math::var& lhs,
 template <>
 inline bool operator!=<stan::math::var>(const complex<stan::math::var>& lhs,
                                         const complex<stan::math::var>& rhs) {
-  return complex_not_equal(lhs, rhs);
+  return not_equal(lhs, rhs);
 }
 
 /**
@@ -1505,7 +1496,7 @@ inline bool operator!=<stan::math::var>(const complex<stan::math::var>& lhs,
 template <>
 inline bool operator!=<stan::math::var>(const complex<stan::math::var>& lhs,
                                         const stan::math::var& rhs) {
-  return complex_not_equal(lhs, rhs);
+  return not_equal(lhs, rhs);
 }
 
 /**
@@ -1519,7 +1510,7 @@ inline bool operator!=<stan::math::var>(const complex<stan::math::var>& lhs,
 template <>
 inline bool operator!=<stan::math::var>(const stan::math::var& lhs,
                                         const complex<stan::math::var>& rhs) {
-  return complex_not_equal(lhs, rhs);
+  return not_equal(lhs, rhs);
 }
 
 /**
@@ -1598,7 +1589,7 @@ inline complex<stan::math::var> operator-<stan::math::var>(
 template <>
 inline complex<stan::math::var> operator+<stan::math::var>(
     const complex<stan::math::var>& lhs, const complex<stan::math::var>& rhs) {
-  return complex_add(lhs, rhs);
+  return add(lhs, rhs);
 }
 
 /**
@@ -1611,7 +1602,7 @@ inline complex<stan::math::var> operator+<stan::math::var>(
 template <>
 inline complex<stan::math::var> operator+<stan::math::var>(
     const complex<stan::math::var>& lhs, const stan::math::var& rhs) {
-  return complex_add(lhs, rhs);
+  return add(lhs, rhs);
 }
 
 /**
@@ -1624,7 +1615,7 @@ inline complex<stan::math::var> operator+<stan::math::var>(
 template <>
 inline complex<stan::math::var> operator+<stan::math::var>(
     const stan::math::var& lhs, const complex<stan::math::var>& rhs) {
-  return complex_add(lhs, rhs);
+  return add(lhs, rhs);
 }
 
 /**
@@ -1638,7 +1629,7 @@ inline complex<stan::math::var> operator+<stan::math::var>(
 template <>
 inline complex<stan::math::var> operator-<stan::math::var>(
     const complex<stan::math::var>& lhs, const complex<stan::math::var>& rhs) {
-  return complex_subtract(lhs, rhs);
+  return subtract(lhs, rhs);
 }
 
 /**
@@ -1652,7 +1643,7 @@ inline complex<stan::math::var> operator-<stan::math::var>(
 template <>
 inline complex<stan::math::var> operator-<stan::math::var>(
     const complex<stan::math::var>& lhs, const stan::math::var& rhs) {
-  return complex_subtract(lhs, rhs);
+  return subtract(lhs, rhs);
 }
 
 /**
@@ -1666,7 +1657,7 @@ inline complex<stan::math::var> operator-<stan::math::var>(
 template <>
 inline complex<stan::math::var> operator-<stan::math::var>(
     const stan::math::var& lhs, const complex<stan::math::var>& rhs) {
-  return complex_subtract(lhs, rhs);
+  return subtract(lhs, rhs);
 }
 
 /**
@@ -1679,7 +1670,7 @@ inline complex<stan::math::var> operator-<stan::math::var>(
 template <>
 inline complex<stan::math::var> operator*<stan::math::var>(
     const complex<stan::math::var>& lhs, const complex<stan::math::var>& rhs) {
-  return complex_multiply(lhs, rhs);
+  return multiply(lhs, rhs);
 }
 
 /**
@@ -1692,7 +1683,7 @@ inline complex<stan::math::var> operator*<stan::math::var>(
 template <>
 inline complex<stan::math::var> operator*<stan::math::var>(
     const complex<stan::math::var>& lhs, const stan::math::var& rhs) {
-  return complex_multiply(lhs, rhs);
+  return multiply(lhs, rhs);
 }
 
 /**
@@ -1705,7 +1696,7 @@ inline complex<stan::math::var> operator*<stan::math::var>(
 template <>
 inline complex<stan::math::var> operator*<stan::math::var>(
     const stan::math::var& lhs, const complex<stan::math::var>& rhs) {
-  return complex_multiply(lhs, rhs);
+  return multiply(lhs, rhs);
 }
 
 /**
@@ -1718,7 +1709,7 @@ inline complex<stan::math::var> operator*<stan::math::var>(
 template <>
 inline complex<stan::math::var> operator/<stan::math::var>(
     const complex<stan::math::var>& lhs, const complex<stan::math::var>& rhs) {
-  return complex_divide(lhs, rhs);
+  return divide(lhs, rhs);
 }
 
 /**
@@ -1731,7 +1722,7 @@ inline complex<stan::math::var> operator/<stan::math::var>(
 template <>
 inline complex<stan::math::var> operator/<stan::math::var>(
     const complex<stan::math::var>& lhs, const stan::math::var& rhs) {
-  return complex_divide(lhs, rhs);
+  return divide(lhs, rhs);
 }
 
 /**
@@ -1744,7 +1735,7 @@ inline complex<stan::math::var> operator/<stan::math::var>(
 template <>
 inline complex<stan::math::var> operator/(const stan::math::var& lhs,
                                           const complex<stan::math::var>& rhs) {
-  return complex_divide(lhs, rhs);
+  return divide(lhs, rhs);
 }
 
 /**
@@ -1756,7 +1747,7 @@ inline complex<stan::math::var> operator/(const stan::math::var& lhs,
 template <>
 inline stan::math::var real<stan::math::var>(
     const complex<stan::math::var>& z) {
-  return complex_real(z);
+  return stan::math::real(z);
 }
 
 /**
@@ -1768,7 +1759,7 @@ inline stan::math::var real<stan::math::var>(
 template <>
 inline stan::math::var imag<stan::math::var>(
     const complex<stan::math::var>& z) {
-  return complex_imag(z);
+  return stan::math::imag(z);
 }
 
 /**
@@ -1779,7 +1770,7 @@ inline stan::math::var imag<stan::math::var>(
  */
 template <>
 inline stan::math::var abs<stan::math::var>(const complex<stan::math::var>& z) {
-  return complex_abs(z);
+  return stan::math::abs(z);
 }
 
 /**
@@ -2190,17 +2181,17 @@ inline std::complex<fvar<T>> operator-(const std::complex<var>& z) {
 template <typename U, typename V>
 inline std::complex<return_type_t<U, V>> operator+(const std::complex<U>& x,
                                                    const std::complex<V>& y) {
-  return complex_add(x, y);
+  return add(x, y);
 }
 template <typename U, typename V>
 inline std::complex<return_type_t<U, V>> operator+(const std::complex<U>& x,
                                                    const V& y) {
-  return complex_add(x, y);
+  return add(x, y);
 }
 template <typename U, typename V>
 inline std::complex<return_type_t<U, V>> operator+(const U& x,
                                                    const std::complex<V>& y) {
-  return complex_add(x, y);
+  return add(x, y);
 }
 
 /**
@@ -2215,17 +2206,17 @@ inline std::complex<return_type_t<U, V>> operator+(const U& x,
 template <typename U, typename V>
 inline std::complex<return_type_t<U, V>> operator-(const std::complex<U>& x,
                                                    const std::complex<V>& y) {
-  return complex_subtract(x, y);
+  return subtract(x, y);
 }
 template <typename U, typename V>
 inline std::complex<return_type_t<U, V>> operator-(const std::complex<U>& x,
                                                    const V& y) {
-  return complex_subtract(x, y);
+  return subtract(x, y);
 }
 template <typename U, typename V>
 inline std::complex<return_type_t<U, V>> operator-(const U& x,
                                                    const std::complex<V>& y) {
-  return complex_subtract(x, y);
+  return subtract(x, y);
 }
 
 /**
@@ -2237,116 +2228,116 @@ inline std::complex<return_type_t<U, V>> operator-(const U& x,
  */
 // var 1
 std::complex<var> operator*(int lhs, const std::complex<var>& rhs) {
-  return complex_multiply(lhs, rhs);
+  return multiply(lhs, rhs);
 }
 // var 2
 std::complex<var> operator*(double lhs, const std::complex<var>& rhs) {
-  return complex_multiply(lhs, rhs);
+  return multiply(lhs, rhs);
 }
 // var 3
 std::complex<var> operator*(const var& lhs, const std::complex<double>& rhs) {
-  return complex_multiply(lhs, rhs);
+  return multiply(lhs, rhs);
 }
 // var 4
 std::complex<var> operator*(const var& lhs, const std::complex<var>& rhs) {
-  return complex_multiply(lhs, rhs);
+  return multiply(lhs, rhs);
 }
 // var 5
 std::complex<var> operator*(const std::complex<double>& lhs, const var& rhs) {
-  return complex_multiply(lhs, rhs);
+  return multiply(lhs, rhs);
 }
 // var 6
 std::complex<var> operator*(const std::complex<double>& lhs,
                             const std::complex<var>& rhs) {
-  return complex_multiply(lhs, rhs);
+  return multiply(lhs, rhs);
 }
 // var 7
 std::complex<var> operator*(const std::complex<var>& lhs, int rhs) {
-  return complex_multiply(lhs, rhs);
+  return multiply(lhs, rhs);
 }
 // var 8
 std::complex<var> operator*(const std::complex<var>& lhs, double rhs) {
-  return complex_multiply(lhs, rhs);
+  return multiply(lhs, rhs);
 }
 // var 9
 std::complex<var> operator*(const std::complex<var>& lhs, const var& rhs) {
-  return complex_multiply(lhs, rhs);
+  return multiply(lhs, rhs);
 }
 // var 10
 std::complex<var> operator*(const std::complex<var>& lhs,
                             const std::complex<double>& rhs) {
-  return complex_multiply(lhs, rhs);
+  return multiply(lhs, rhs);
 }
 // var 11
 std::complex<var> operator*(const std::complex<var>& lhs,
                             const std::complex<var>& rhs) {
-  return complex_multiply(lhs, rhs);
+  return multiply(lhs, rhs);
 }
 // fvar 1
 template <typename T>
 inline std::complex<fvar<T>> operator*(int lhs,
                                        const std::complex<fvar<T>>& rhs) {
-  return complex_multiply(lhs, rhs);
+  return multiply(lhs, rhs);
 }
 // fvar 2
 template <typename T>
 inline std::complex<fvar<T>> operator*(double lhs,
                                        const std::complex<fvar<T>>& rhs) {
-  return complex_multiply(lhs, rhs);
+  return multiply(lhs, rhs);
 }
 // fvar 3
 template <typename T>
 inline std::complex<fvar<T>> operator*(const fvar<T>& lhs,
                                        const std::complex<double>& rhs) {
-  return complex_multiply(lhs, rhs);
+  return multiply(lhs, rhs);
 }
 // fvar 4
 template <typename T>
 inline std::complex<fvar<T>> operator*(const fvar<T>& lhs,
                                        const std::complex<fvar<T>>& rhs) {
-  return complex_multiply(lhs, rhs);
+  return multiply(lhs, rhs);
 }
 // fvar 5
 template <typename T>
 inline std::complex<fvar<T>> operator*(const std::complex<double>& lhs,
                                        const fvar<T>& rhs) {
-  return complex_multiply(lhs, rhs);
+  return multiply(lhs, rhs);
 }
 // fvar 6
 template <typename T>
 inline std::complex<fvar<T>> operator*(const std::complex<double>& lhs,
                                        const std::complex<fvar<T>>& rhs) {
-  return complex_multiply(lhs, rhs);
+  return multiply(lhs, rhs);
 }
 // fvar 7
 template <typename T>
 inline std::complex<fvar<T>> operator*(const std::complex<fvar<T>>& lhs,
                                        int rhs) {
-  return complex_multiply(lhs, rhs);
+  return multiply(lhs, rhs);
 }
 // fvar 8
 template <typename T>
 inline std::complex<fvar<T>> operator*(const std::complex<fvar<T>>& lhs,
                                        double rhs) {
-  return complex_multiply(lhs, rhs);
+  return multiply(lhs, rhs);
 }
 // fvar 9
 template <typename T>
 inline std::complex<fvar<T>> operator*(const std::complex<fvar<T>>& lhs,
                                        const fvar<T>& rhs) {
-  return complex_multiply(lhs, rhs);
+  return multiply(lhs, rhs);
 }
 // fvar 10
 template <typename T>
 inline std::complex<fvar<T>> operator*(const std::complex<fvar<T>>& lhs,
                                        const std::complex<double>& rhs) {
-  return complex_multiply(lhs, rhs);
+  return multiply(lhs, rhs);
 }
 // fvar 11
 template <typename T>
 inline std::complex<fvar<T>> operator*(const std::complex<fvar<T>>& lhs,
                                        const std::complex<fvar<T>>& rhs) {
-  return complex_multiply(lhs, rhs);
+  return multiply(lhs, rhs);
 }
 
 /**
@@ -2358,128 +2349,128 @@ inline std::complex<fvar<T>> operator*(const std::complex<fvar<T>>& lhs,
  */
 // 1
 inline std::complex<var> operator/(int lhs, const std::complex<var>& rhs) {
-  return complex_divide(lhs, rhs);
+  return divide(lhs, rhs);
 }
 // 2
 inline std::complex<var> operator/(double lhs, const std::complex<var>& rhs) {
-  return complex_divide(lhs, rhs);
+  return divide(lhs, rhs);
 }
 // 3
 inline std::complex<var> operator/(const var& lhs,
                                    const std::complex<double>& rhs) {
-  return complex_divide(lhs, rhs);
+  return divide(lhs, rhs);
 }
 // 4
 inline std::complex<var> operator/(const var& lhs,
                                    const std::complex<var>& rhs) {
-  return complex_divide(lhs, rhs);
+  return divide(lhs, rhs);
 }
 // 5
 inline std::complex<var> operator/(const std::complex<double>& lhs,
                                    const var& rhs) {
-  return complex_divide(lhs, rhs);
+  return divide(lhs, rhs);
 }
 // 6
 inline std::complex<var> operator/(const std::complex<double>& lhs,
                                    const std::complex<var>& rhs) {
-  return complex_divide(lhs, rhs);
+  return divide(lhs, rhs);
 }
 // 7
 inline std::complex<var> operator/(const std::complex<var>& lhs, int rhs) {
-  return complex_divide(lhs, rhs);
+  return divide(lhs, rhs);
 }
 // 8
 inline std::complex<var> operator/(const std::complex<var>& lhs, double rhs) {
-  return complex_divide(lhs, rhs);
+  return divide(lhs, rhs);
 }
 // 9
 inline std::complex<var> operator/(const std::complex<var>& lhs,
                                    const var& rhs) {
-  return complex_divide(lhs, rhs);
+  return divide(lhs, rhs);
 }
 // 10
 inline std::complex<var> operator/(const std::complex<var>& lhs,
                                    const std::complex<double>& rhs) {
-  return complex_divide(lhs, rhs);
+  return divide(lhs, rhs);
 }
 // 11
 inline std::complex<var> operator/(const std::complex<var>& lhs,
                                    const std::complex<var>& rhs) {
-  return complex_divide(lhs, rhs);
+  return divide(lhs, rhs);
 }
 // fvar 1
 template <typename T>
 inline std::complex<fvar<T>> operator/(int lhs,
                                        const std::complex<fvar<T>>& rhs) {
-  return complex_divide(lhs, rhs);
+  return divide(lhs, rhs);
 }
 // fvar 2
 template <typename T>
 inline std::complex<fvar<T>> operator/(double lhs,
                                        const std::complex<fvar<T>>& rhs) {
-  return complex_divide(lhs, rhs);
+  return divide(lhs, rhs);
 }
 // fvar 3
 template <typename T>
 inline std::complex<fvar<T>> operator/(const fvar<T>& lhs,
                                        const std::complex<double>& rhs) {
-  return complex_divide(lhs, rhs);
+  return divide(lhs, rhs);
 }
 // fvar 4
 template <typename T>
 inline std::complex<fvar<T>> operator/(const fvar<T>& lhs,
                                        const std::complex<fvar<T>>& rhs) {
-  return complex_divide(lhs, rhs);
+  return divide(lhs, rhs);
 }
 // fvar 5
 template <typename T>
 inline std::complex<fvar<T>> operator/(const std::complex<double>& lhs,
                                        const fvar<T>& rhs) {
-  return complex_divide(lhs, rhs);
+  return divide(lhs, rhs);
 }
 // fvar 6
 template <typename T>
 inline std::complex<fvar<T>> operator/(const std::complex<double>& lhs,
                                        const std::complex<fvar<T>>& rhs) {
-  return complex_divide(lhs, rhs);
+  return divide(lhs, rhs);
 }
 // fvar 7
 template <typename T>
 inline std::complex<fvar<T>> operator/(const std::complex<fvar<T>>& lhs,
                                        int rhs) {
-  return complex_divide(lhs, rhs);
+  return divide(lhs, rhs);
 }
 // fvar 8
 template <typename T>
 inline std::complex<fvar<T>> operator/(const std::complex<fvar<T>>& lhs,
                                        double rhs) {
-  return complex_divide(lhs, rhs);
+  return divide(lhs, rhs);
 }
 // fvar 9
 template <typename T>
 inline std::complex<fvar<T>> operator/(const std::complex<fvar<T>>& lhs,
                                        const fvar<T>& rhs) {
-  return complex_divide(lhs, rhs);
+  return divide(lhs, rhs);
 }
 // fvar 10
 template <typename T>
 inline std::complex<fvar<T>> operator/(const std::complex<fvar<T>>& lhs,
                                        const std::complex<double>& rhs) {
-  return complex_divide(lhs, rhs);
+  return divide(lhs, rhs);
 }
 // fvar 11
 template <typename T>
 inline std::complex<fvar<T>> operator/(const std::complex<fvar<T>>& lhs,
                                        const std::complex<fvar<T>>& rhs) {
-  return complex_divide(lhs, rhs);
+  return divide(lhs, rhs);
 }
 
 // var 1
-inline var abs(const std::complex<var>& z) { return complex_abs(z); }
+inline var abs(const std::complex<var>& z) { return stan::math::abs(z); }
 // fvar 1
 template <typename T>
 inline fvar<T> abs(const std::complex<fvar<T>>& z) {
-  return complex_abs(z);
+  return stan::math::abs(z);
 }
 
 // var 1
@@ -2671,7 +2662,7 @@ inline std::complex<var> sqrt(const std::complex<var>& z) {
 }
 // fvar 1
 template <typename T>
-inline inline std::complex<fvar<T>> sqrt(const std::complex<fvar<T>>& z) {
+inline std::complex<fvar<T>> sqrt(const std::complex<fvar<T>>& z) {
   return complex_sqrt(z);
 }
 

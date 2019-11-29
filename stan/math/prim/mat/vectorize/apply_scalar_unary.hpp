@@ -32,7 +32,7 @@ namespace math {
  * @tparam F Type of function to apply.
  * @tparam T Type of argument to which function is applied.
  */
-template <typename F, typename T>
+template <typename F, typename T, typename = void>
 struct apply_scalar_unary {
   /**
    * Type of underlying scalar for the matrix type T.
@@ -68,11 +68,11 @@ struct apply_scalar_unary {
  * @tparam U value type of complex numbers
  */
 template <typename F, typename U>
-struct apply_scalar_unary<F, std::complex<U>> {
+struct apply_scalar_unary<F, U, require_complex_t<U>> {
   /**
    * Complex return type.
    */
-  using return_t = std::complex<U>;
+  using return_t = std::decay_t<U>;
 
   /**
    * Apply the class-specified function to the specified complex
@@ -81,7 +81,8 @@ struct apply_scalar_unary<F, std::complex<U>> {
    * @param x complex argument
    * @return complex result of applying class template function
    */
-  static inline return_t apply(const std::complex<U>& x) { return F::fun(x); }
+  template <typename V, require_same_t<std::decay_t<V>, std::decay_t<U>>...>
+  static inline auto apply(V&& x) { return F::fun(std::forward<U>(x)); }
 };
 
 /**

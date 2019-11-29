@@ -301,6 +301,7 @@ TEST(mathRevCore, stdComplexOperatorMultiplyEquals3and7) {
 TEST(mathRevCore, stdComplexOperatorDivideEquals4and8) {
   auto f = [](auto& x1, const auto& x2) { return x1 /= x2; };
 }
+
 TEST(mathRevCore, stdComplexOperatorUnaryPlus1) {
   cdouble_t ad(1, 2);
   cdouble_t bd = +ad;
@@ -416,6 +417,7 @@ TEST(mathRevCore, stdComplexOperatorDivide11) {
   cvar_t c = a / b;
   expect_complex(cd, c);
 }
+
 TEST(mathRevCore, stdComplexOperatorDivide12) {
   double ad = 1;
   cdouble_t bd(3, 7);
@@ -565,6 +567,7 @@ TEST(mathRevCore, stanMathOperatorStreamOut1) {
   std::string s = ss.str();
   EXPECT_EQ(sd, s);
 }
+
 TEST(mathRevCore, stanMathOperatorStreamIn2) {
   std::stringstream s1;
   s1 << "(1, 2)";
@@ -681,6 +684,7 @@ TEST(mathRevCore, stdPow1) {
 TEST(mathRevCore, stdSqrt1) {
   expect_complex_common([](const auto& u) { return std::sqrt(u); });
 }
+
 TEST(mathRevCore, stdSinh1) {
   expect_complex_common([](const auto& u) { return std::sinh(u); });
 }
@@ -1514,3 +1518,4 @@ TEST(mathMix, complexSchur) {
   expectComplexSchur<fvar_v_t>();
   expectComplexSchur<fvar_fvar_v_t>();
 }
+*/
