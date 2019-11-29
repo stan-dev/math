@@ -182,8 +182,7 @@ struct bar_fun {
     return x * y;
   }
   template <typename T1, typename T2>
-  typename boost::math::tools::promote_args<T1, T2>::type operator()(
-      const T1& x, const T2& y) const {
+  stan::promote_args_t<T1, T2> operator()(const T1& x, const T2& y) const {
     return x * y;
   }
 };
@@ -357,29 +356,29 @@ struct ternary_fun {
   }
 
   template <typename T1, typename T2>
-  typename boost::math::tools::promote_args<T1, T2>::type operator()(
-      const T1& x1, const T2& x2, int x3) const {
+  stan::promote_args_t<T1, T2> operator()(const T1& x1, const T2& x2,
+                                          int x3) const {
     ++ternary_fun::calls_int3_;
     return this->operator()(x1, x2, static_cast<double>(x3));
   }
 
   template <typename T1, typename T3>
-  typename boost::math::tools::promote_args<T1, T3>::type operator()(
-      const T1& x1, int x2, const T3& x3) const {
+  stan::promote_args_t<T1, T3> operator()(const T1& x1, int x2,
+                                          const T3& x3) const {
     ++ternary_fun::calls_int2_;
     return this->operator()(x1, static_cast<double>(x2), x3);
   }
 
   template <typename T2, typename T3>
-  typename boost::math::tools::promote_args<T2, T3>::type operator()(
-      int x1, const T2& x2, const T3& x3) const {
+  stan::promote_args_t<T2, T3> operator()(int x1, const T2& x2,
+                                          const T3& x3) const {
     ++ternary_fun::calls_int1_;
     return this->operator()(static_cast<double>(x1), x2, x3);
   }
 
   template <typename T1, typename T2, typename T3>
-  typename boost::math::tools::promote_args<T1, T2, T3>::type operator()(
-      const T1& x1, const T2& x2, const T3& x3) const {
+  stan::promote_args_t<T1, T2, T3> operator()(const T1& x1, const T2& x2,
+                                              const T3& x3) const {
     ++ternary_fun::calls_int_;
     return x1 * x2 + x2 * x3 + x1 * x3;
   }

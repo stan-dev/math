@@ -17,14 +17,14 @@ namespace math {
  * That is, `trace_gen_quad_form(D, A, B) = trace(D * B' * A * B).`
  *
  * @tparam TD type of first argument scalar
- * @tparam RD row type of first argument
- * @tparam CD col type of first argument
+ * @tparam RD first argument number of rows or `Eigen::Dynamic`
+ * @tparam CD first argument number of columns or `Eigen::Dynamic`
  * @tparam TA type of second argument scalar
- * @tparam RA row type of second argument
- * @tparam CA col type of second argument
+ * @tparam RA second argument number of rows or `Eigen::Dynamic`
+ * @tparam CA second argument number of columns or `Eigen::Dynamic`
  * @tparam TB type of third argument scalar
- * @tparam RB row type of third argument
- * @tparam CB col type of third argument
+ * @tparam RB third argument number of rows or `Eigen::Dynamic`
+ * @tparam CB third argument number of columns or `Eigen::Dynamic`
  * @param D multiplier
  * @param A outside term in quadratic form
  * @param B inner term in quadratic form
@@ -51,12 +51,13 @@ inline return_type_t<TD, TA, TB> trace_gen_quad_form(
  * This is the double-only overload to allow Eigen's expression
  * templates to be used for efficiency.
  *
- * @tparam RD row type of first argument
- * @tparam CD col type of first argument
- * @tparam RA row type of second argument
- * @tparam CA col type of second argument
- * @tparam RB row type of third argument
- * @tparam CB col type of third argument
+ * @tparam RD first argument number of rows or `Eigen::Dynamic`
+ * @tparam CD first argument number of columns or `Eigen::Dynamic`
+ * @tparam RA second argument number of rows or `Eigen::Dynamic`
+ * @tparam CA second argument number of columns or `Eigen::Dynamic`
+ * @tparam TB type of third argument scalar
+ * @tparam RB third argument number of rows or `Eigen::Dynamic`
+ * @tparam CB third argument number of columns or `Eigen::Dynamic`
  * @param D multiplier
  * @param A outside term in quadratic form
  * @param B inner term in quadratic form

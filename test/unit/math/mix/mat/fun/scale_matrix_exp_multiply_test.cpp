@@ -11,6 +11,8 @@ TEST(mathMixMatFun, scaleMatrixExpMultiply) {
   Eigen::MatrixXd a00(0, 0);
   Eigen::MatrixXd b00(0, 0);
   stan::test::expect_ad(f, t, a00, b00);
+  Eigen::MatrixXd b03(0, 3);
+  stan::test::expect_ad(f, t, a00, b03);
 
   // 1 x 1
   Eigen::MatrixXd a11(1, 1);

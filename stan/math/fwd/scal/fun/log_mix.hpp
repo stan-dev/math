@@ -28,24 +28,17 @@ namespace math {
 template <typename T_theta, typename T_lambda1, typename T_lambda2, int N>
 inline void log_mix_partial_helper(
     const T_theta& theta, const T_lambda1& lambda1, const T_lambda2& lambda2,
-    typename boost::math::tools::promote_args<
-        T_theta, T_lambda1, T_lambda2>::type (&partials_array)[N]) {
-  using boost::math::tools::promote_args;
+    promote_args_t<T_theta, T_lambda1, T_lambda2> (&partials_array)[N]) {
   using std::exp;
-  using partial_return_type =
-      typename promote_args<T_theta, T_lambda1, T_lambda2>::type;
-
-  typename promote_args<T_lambda1, T_lambda2>::type lam2_m_lam1
-      = lambda2 - lambda1;
-  typename promote_args<T_lambda1, T_lambda2>::type exp_lam2_m_lam1
-      = exp(lam2_m_lam1);
-  typename promote_args<T_lambda1, T_lambda2>::type one_m_exp_lam2_m_lam1
-      = 1.0 - exp_lam2_m_lam1;
-  typename promote_args<double, T_theta>::type one_m_t = 1.0 - theta;
-  partial_return_type one_m_t_prod_exp_lam2_m_lam1 = one_m_t * exp_lam2_m_lam1;
-  partial_return_type t_plus_one_m_t_prod_exp_lam2_m_lam1
+  using partial_return_type = promote_args_t<T_theta, T_lambda1, T_lambda2>;
+  auto lam2_m_lam1 = lambda2 - lambda1;
+  auto exp_lam2_m_lam1 = exp(lam2_m_lam1);
+  auto one_m_exp_lam2_m_lam1 = 1.0 - exp_lam2_m_lam1;
+  auto one_m_t = 1.0 - theta;
+  auto one_m_t_prod_exp_lam2_m_lam1 = one_m_t * exp_lam2_m_lam1;
+  auto t_plus_one_m_t_prod_exp_lam2_m_lam1
       = theta + one_m_t_prod_exp_lam2_m_lam1;
-  partial_return_type one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1
+  auto one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1
       = 1.0 / t_plus_one_m_t_prod_exp_lam2_m_lam1;
 
   unsigned int offset = 0;
@@ -123,8 +116,7 @@ inline fvar<T> log_mix(const fvar<T>& theta, const fvar<T>& lambda1,
   }
 }
 
-template <typename T, typename P,
-          typename = std::enable_if_t<std::is_arithmetic<P>::value>>
+template <typename T, typename P, require_all_arithmetic_t<P>...>
 inline fvar<T> log_mix(const fvar<T>& theta, const fvar<T>& lambda1,
                        P lambda2) {
   if (lambda1.val_ > lambda2) {
@@ -142,8 +134,7 @@ inline fvar<T> log_mix(const fvar<T>& theta, const fvar<T>& lambda1,
   }
 }
 
-template <typename T, typename P,
-          typename = std::enable_if_t<std::is_arithmetic<P>::value>>
+template <typename T, typename P, require_all_arithmetic_t<P>...>
 inline fvar<T> log_mix(const fvar<T>& theta, P lambda1,
                        const fvar<T>& lambda2) {
   if (lambda1 > lambda2.val_) {
@@ -161,8 +152,7 @@ inline fvar<T> log_mix(const fvar<T>& theta, P lambda1,
   }
 }
 
-template <typename T, typename P,
-          typename = std::enable_if_t<std::is_arithmetic<P>::value>>
+template <typename T, typename P, require_all_arithmetic_t<P>...>
 inline fvar<T> log_mix(P theta, const fvar<T>& lambda1,
                        const fvar<T>& lambda2) {
   if (lambda1.val_ > lambda2.val_) {
@@ -181,8 +171,7 @@ inline fvar<T> log_mix(P theta, const fvar<T>& lambda1,
 }
 
 template <typename T, typename P1, typename P2,
-          typename = std::enable_if_t<std::is_arithmetic<P1>::value>,
-          typename = std::enable_if_t<std::is_arithmetic<P2>::value>>
+          require_all_arithmetic_t<P1, P2>...>
 inline fvar<T> log_mix(const fvar<T>& theta, P1 lambda1, P2 lambda2) {
   if (lambda1 > lambda2) {
     fvar<T> partial_deriv_array[1];
@@ -198,8 +187,7 @@ inline fvar<T> log_mix(const fvar<T>& theta, P1 lambda1, P2 lambda2) {
 }
 
 template <typename T, typename P1, typename P2,
-          typename = std::enable_if_t<std::is_arithmetic<P1>::value>,
-          typename = std::enable_if_t<std::is_arithmetic<P2>::value>>
+          require_all_arithmetic_t<P1, P2>...>
 inline fvar<T> log_mix(P1 theta, const fvar<T>& lambda1, P2 lambda2) {
   if (lambda1.val_ > lambda2) {
     fvar<T> partial_deriv_array[1];
@@ -215,8 +203,7 @@ inline fvar<T> log_mix(P1 theta, const fvar<T>& lambda1, P2 lambda2) {
 }
 
 template <typename T, typename P1, typename P2,
-          typename = std::enable_if_t<std::is_arithmetic<P1>::value>,
-          typename = std::enable_if_t<std::is_arithmetic<P2>::value>>
+          require_all_arithmetic_t<P1, P2>...>
 inline fvar<T> log_mix(P1 theta, P2 lambda1, const fvar<T>& lambda2) {
   if (lambda1 > lambda2.val_) {
     fvar<T> partial_deriv_array[1];
