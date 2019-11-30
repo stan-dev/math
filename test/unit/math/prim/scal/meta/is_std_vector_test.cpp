@@ -1,18 +1,19 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/arr/meta/is_vector.hpp>
 #include <stan/math/prim/scal/meta/is_vector.hpp>
 #include <Eigen/Sparse>
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMetaPrimScal, is_std_vector) {
+TEST(MathMetaPrim, is_std_vector) {
   using stan::is_std_vector;
   EXPECT_FALSE((is_std_vector<bool>::value));
   EXPECT_FALSE((is_std_vector<double>::value));
   EXPECT_FALSE((is_std_vector<int>::value));
 
-  EXPECT_FALSE((is_std_vector<std::vector<double>>::value));
-  EXPECT_FALSE((is_std_vector<const std::vector<double>>::value));
-  EXPECT_FALSE((is_std_vector<const std::vector<double>&>::value));
+  EXPECT_TRUE((is_std_vector<std::vector<double>>::value));
+  EXPECT_TRUE((is_std_vector<const std::vector<double>>::value));
+  EXPECT_TRUE((is_std_vector<const std::vector<double>&>::value));  
 
   EXPECT_FALSE((is_std_vector<Eigen::EigenBase<Eigen::MatrixXd>>::value));
   EXPECT_FALSE((is_std_vector<Eigen::Matrix<double, -1, -1>>::value));

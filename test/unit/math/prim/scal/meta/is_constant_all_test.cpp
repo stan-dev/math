@@ -1,3 +1,4 @@
+#include <stan/math/prim/arr.hpp>
 #include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 
@@ -18,4 +19,14 @@ TEST(MetaTraitsPrimScal, isConstantStruct) {
   expect_is_const<double, double, double>();
   expect_is_const<float, float, float, float>();
   expect_is_const<int32_t, int32_t, int32_t, int32_t>();
+}
+
+TEST(MetaTraitsPrimArr, isConstantStruct) {
+  using std::vector;
+  expect_is_const<vector<double>>();
+  expect_is_const<vector<vector<double>>>();
+  expect_is_const<vector<vector<vector<double>>>>();
+  expect_is_const<vector<double>, vector<double>, vector<double>>();
+  expect_is_const<vector<double>, vector<vector<double>>, vector<double>,
+                  vector<vector<double>>, vector<vector<vector<double>>>>();
 }
