@@ -12,7 +12,7 @@ using stan::math::vector_v;
 using stan::return_type;
 using std::vector;
 
-TEST(MetaTraits, ReturnTypeVarMat) {
+TEST(MetaTraitsRevMat, ReturnTypeVarMat) {
   test::expect_same_type<var, return_type<vector_v>::type>();
   test::expect_same_type<var, return_type<matrix_v>::type>();
   test::expect_same_type<var, return_type<matrix_v, double>::type>();
@@ -20,7 +20,7 @@ TEST(MetaTraits, ReturnTypeVarMat) {
   test::expect_same_type<var, return_type<matrix_d, matrix_v>::type>();
 }
 
-TEST(MetaTraits, ReturnTypeMatMultivar) {
+TEST(MetaTraitsRevMat, ReturnTypeMatMultivar) {
   // test::expect_same_type<var, return_type<vector<vector_v> >::type>();
   test::expect_same_type<var, return_type<vector<matrix_v> >::type>();
   test::expect_same_type<var, return_type<vector<matrix_v>, double>::type>();
@@ -28,7 +28,7 @@ TEST(MetaTraits, ReturnTypeMatMultivar) {
   test::expect_same_type<var, return_type<vector<matrix_d>, matrix_v>::type>();
 }
 
-TEST(MetaTraits, ReturnTypeDoubleMat) {
+TEST(MetaTraitsRevMat, ReturnTypeDoubleMat) {
   test::expect_same_type<double, return_type<vector_d>::type>();
   test::expect_same_type<double, return_type<matrix_d, double>::type>();
   test::expect_same_type<var, return_type<matrix_d, var>::type>();

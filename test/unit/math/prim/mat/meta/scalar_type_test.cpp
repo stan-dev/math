@@ -3,7 +3,7 @@
 #include <test/unit/util.hpp>
 #include <vector>
 
-TEST(MetaTraits, ScalarTypeMat) {
+TEST(MetaTraitsPrimMat, ScalarTypeMat) {
   using Eigen::MatrixXd;
   using Eigen::RowVectorXd;
   using Eigen::VectorXd;

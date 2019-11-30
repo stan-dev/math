@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <vector>
 
-TEST(MathMatrix, min) {
+TEST(MathMatrixPrimMat, min) {
   using stan::math::min;
   std::vector<int> n;
   EXPECT_THROW(min(n), std::invalid_argument);
@@ -66,7 +66,7 @@ TEST(MathMatrix, min) {
   EXPECT_FLOAT_EQ(-10.0, min(m));
 }
 
-TEST(MathMatrix, min_exception) {
+TEST(MathMatrixPrimMat, min_exception) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::numeric_limits;

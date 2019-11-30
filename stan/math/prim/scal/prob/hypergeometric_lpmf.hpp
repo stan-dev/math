@@ -5,6 +5,7 @@
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_greater.hpp>
+#include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/binomial_coefficient_log.hpp>
 
@@ -31,7 +32,7 @@ double hypergeometric_lpmf(const T_n& n, const T_N& N, const T_a& a,
 
   double logp(0.0);
   check_bounded(function, "Successes variable", n, 0, a);
-  check_greater(function, "Draws parameter", N, n);
+  check_greater_or_equal(function, "Draws parameter", N, n);
   for (size_t i = 0; i < size; i++) {
     check_bounded(function, "Draws parameter minus successes variable",
                   N_vec[i] - n_vec[i], 0, b_vec[i]);

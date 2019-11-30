@@ -4,7 +4,7 @@
 #include <gtest/gtest.h>
 #include <algorithm>
 
-TEST(MathMatrixCL, triangular_transpose_m_exception_pass) {
+TEST(MathMatrixRevCL, triangular_transpose_m_exception_pass) {
   using stan::math::TriangularMapCL;
   using stan::math::matrix_cl;
   using stan::math::var;
@@ -27,7 +27,7 @@ TEST(MathMatrixCL, triangular_transpose_m_exception_pass) {
                std::invalid_argument);
 }
 
-TEST(MathMatrixCL, triangular_transpose_m_pass) {
+TEST(MathMatrixRevCL, triangular_transpose_m_pass) {
   using stan::math::TriangularMapCL;
   using stan::math::from_matrix_cl;
   using stan::math::matrix_cl;

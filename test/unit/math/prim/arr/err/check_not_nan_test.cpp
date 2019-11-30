@@ -6,7 +6,7 @@
 
 using stan::math::check_not_nan;
 
-TEST(ErrorHandlingScalar, CheckNotNanVectorized) {
+TEST(ErrorHandlingArr, CheckNotNanVectorized) {
   int N = 5;
   const char* function = "check_not_nan";
   std::vector<double> x(N);
@@ -28,7 +28,7 @@ TEST(ErrorHandlingScalar, CheckNotNanVectorized) {
       << "check_not_nan(vector) should throw exception on NaN: " << x[0];
 }
 
-TEST(ErrorHandlingScalar, CheckNotNanVectorized_one_indexed_message) {
+TEST(ErrorHandlingArr, CheckNotNanVectorized_one_indexed_message) {
   int N = 5;
   const char* function = "check_not_nan";
   std::vector<double> x(N);

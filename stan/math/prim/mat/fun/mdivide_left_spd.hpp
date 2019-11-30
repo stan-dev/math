@@ -6,8 +6,6 @@
 #include <stan/math/prim/mat/fun/promote_common.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/prim/mat/err/check_pos_definite.hpp>
-#include <stan/math/prim/mat/err/check_symmetric.hpp>
-#include <stan/math/prim/mat/err/check_square.hpp>
 
 namespace stan {
 namespace math {
@@ -24,10 +22,8 @@ namespace math {
 template <typename T1, typename T2, int R1, int C1, int R2, int C2>
 inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_left_spd(
     const Eigen::Matrix<T1, R1, C1> &A, const Eigen::Matrix<T2, R2, C2> &b) {
-  check_symmetric("mdivide_left_spd", "A", A);
-  check_pos_definite("mdivide_left_spd", "A", A);
-  check_square("mdivide_left_spd", "A", A);
   check_multiplicable("mdivide_left_spd", "A", A, "b", b);
+  check_pos_definite("mdivide_left_spd", "A", A);
   return promote_common<Eigen::Matrix<T1, R1, C1>, Eigen::Matrix<T2, R1, C1> >(
              A)
       .llt()

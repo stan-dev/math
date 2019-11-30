@@ -7,7 +7,7 @@ void expect_is_const() {
   bool temp = is_constant_all<Ts...>::value;
   EXPECT_TRUE(temp);
 }
-TEST(MetaTraits, isConstantStruct) {
+TEST(MetaTraitsPrimScal, isConstantStruct) {
   expect_is_const<>();
   expect_is_const<int>();
   expect_is_const<double>();

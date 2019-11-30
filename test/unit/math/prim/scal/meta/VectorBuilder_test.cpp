@@ -1,7 +1,7 @@
 #include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 
-TEST(MetaTraits, VectorBuilder_false_false) {
+TEST(MetaTraitsPrimScal, VectorBuilder_false_false) {
   using stan::VectorBuilder;
   using stan::length;
 
@@ -12,7 +12,7 @@ TEST(MetaTraits, VectorBuilder_false_false) {
   EXPECT_THROW(dvv1.data(), std::logic_error);
 }
 
-TEST(MetaTraits, VectorBuilder_true_false) {
+TEST(MetaTraitsPrimScal, VectorBuilder_true_false) {
   using stan::VectorBuilder;
   using stan::length;
 

@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MetaTraits, StdVectorBuilder_false_false) {
+TEST(MetaTraitsPrimMat, StdVectorBuilder_false_false) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::StdVectorBuilder;
@@ -20,7 +20,7 @@ TEST(MetaTraits, StdVectorBuilder_false_false) {
   EXPECT_THROW(dvv4.data(), std::logic_error);
 }
 
-TEST(MetaTraits, StdVectorBuilder_true_false) {
+TEST(MetaTraitsPrimMat, StdVectorBuilder_true_false) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::StdVectorBuilder;
@@ -46,7 +46,7 @@ TEST(MetaTraits, StdVectorBuilder_true_false) {
   EXPECT_FLOAT_EQ(0.0, data4);
 }
 
-TEST(MetaTraits, StdVectorBuilder_type_check) {
+TEST(MetaTraitsPrimMat, StdVectorBuilder_type_check) {
   using stan::StdVectorBuilder;
   using stan::contains_std_vector;
 

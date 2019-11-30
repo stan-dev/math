@@ -8,7 +8,7 @@
 /**
  * Require container
  */
-TEST(requires, container_type_test) {
+TEST(requires_prim_arr, container_type_test) {
   EXPECT_FALSE((stan::container_value_type_check_base<
                 stan::is_vector, std::is_floating_point, std::string>::value));
   EXPECT_TRUE(
@@ -28,7 +28,7 @@ struct require_container_tester<
     stan::require_container_vt<ContainerCheck, TypeCheck, Check>>
     : std::true_type {};
 
-TEST(requires, generic_container_type_test) {
+TEST(requires_prim_arr, generic_container_type_test) {
   EXPECT_FALSE(
       (require_container_tester<stan::is_vector, std::is_floating_point,
                                 double>::value));
@@ -36,7 +36,7 @@ TEST(requires, generic_container_type_test) {
                                         std::vector<double>>::value));
 }
 
-TEST(requires, std_vector_t_test) {
+TEST(requires_prim_arr, std_vector_t_test) {
   using stan::test::require_scal_checker;
   require_scal_checker<stan::require_std_vector_t,
                        std::vector<double>>::unary();
@@ -52,7 +52,7 @@ TEST(requires, std_vector_t_test) {
                        std::vector<double>>::any_not();
 }
 
-TEST(requires, vector_t_test) {
+TEST(requires_prim_arr, vector_t_test) {
   using stan::test::require_scal_checker;
   require_scal_checker<stan::require_vector_t, std::vector<double>>::unary();
   require_scal_checker<stan::require_not_vector_t, std::vector<double>,
@@ -67,7 +67,7 @@ TEST(requires, vector_t_test) {
                        std::vector<double>>::any_not();
 }
 
-TEST(requires, vector_like_t_test) {
+TEST(requires_prim_arr, vector_like_t_test) {
   using stan::test::require_scal_checker;
   require_scal_checker<stan::require_vector_like_t,
                        std::vector<double>>::unary();
@@ -83,63 +83,63 @@ TEST(requires, vector_like_t_test) {
                        std::vector<double>>::any_not();
 }
 
-TEST(requires, std_vector_vt_test) {
+TEST(requires_prim_arr, std_vector_vt_test) {
   using stan::test::require_container_checker;
   require_container_checker<stan::require_std_vector_vt,
                             std::vector>::unary<std::is_floating_point>();
 }
-TEST(requires, not_std_vector_vt_test) {
+TEST(requires_prim_arr, not_std_vector_vt_test) {
   using stan::test::require_container_checker;
   require_container_checker<stan::require_not_std_vector_vt,
                             std::vector>::not_unary<std::is_floating_point>();
 }
-TEST(requires, all_std_vector_vt_test) {
+TEST(requires_prim_arr, all_std_vector_vt_test) {
   using stan::test::require_container_checker;
   require_container_checker<stan::require_all_std_vector_vt,
                             std::vector>::all<std::is_floating_point>();
 }
-TEST(requires, all_not_std_vector_vt_test) {
+TEST(requires_prim_arr, all_not_std_vector_vt_test) {
   using stan::test::require_container_checker;
   require_container_checker<stan::require_all_not_std_vector_vt,
                             std::vector>::all_not<std::is_floating_point>();
 }
-TEST(requires, any_std_vector_vt_test) {
+TEST(requires_prim_arr, any_std_vector_vt_test) {
   using stan::test::require_container_checker;
   require_container_checker<stan::require_any_std_vector_vt,
                             std::vector>::any<std::is_floating_point>();
 }
-TEST(requires, any_not_std_vector_vt_test) {
+TEST(requires_prim_arr, any_not_std_vector_vt_test) {
   using stan::test::require_container_checker;
   require_container_checker<stan::require_any_not_std_vector_vt,
                             std::vector>::any_not<std::is_floating_point>();
 }
 
-TEST(requires, vector_vt_test) {
+TEST(requires_prim_arr, vector_vt_test) {
   using stan::test::require_container_checker;
   require_container_checker<stan::require_vector_vt,
                             std::vector>::unary<std::is_floating_point>();
 }
-TEST(requires, not_vector_vt_test) {
+TEST(requires_prim_arr, not_vector_vt_test) {
   using stan::test::require_container_checker;
   require_container_checker<stan::require_not_vector_vt,
                             std::vector>::not_unary<std::is_floating_point>();
 }
-TEST(requires, all_vector_vt_test) {
+TEST(requires_prim_arr, all_vector_vt_test) {
   using stan::test::require_container_checker;
   require_container_checker<stan::require_all_vector_vt,
                             std::vector>::all<std::is_floating_point>();
 }
-TEST(requires, all_not_vector_vt_test) {
+TEST(requires_prim_arr, all_not_vector_vt_test) {
   using stan::test::require_container_checker;
   require_container_checker<stan::require_all_not_vector_vt,
                             std::vector>::all_not<std::is_floating_point>();
 }
-TEST(requires, any_vector_vt_test) {
+TEST(requires_prim_arr, any_vector_vt_test) {
   using stan::test::require_container_checker;
   require_container_checker<stan::require_any_vector_vt,
                             std::vector>::any<std::is_floating_point>();
 }
-TEST(requires, any_not_vector_vt_test) {
+TEST(requires_prim_arr, any_not_vector_vt_test) {
   using stan::test::require_container_checker;
   require_container_checker<stan::require_any_not_vector_vt,
                             std::vector>::any_not<std::is_floating_point>();
@@ -148,130 +148,130 @@ TEST(requires, any_not_vector_vt_test) {
 template <typename... Types>
 using std_vector_vector = std::vector<std::vector<Types...>>;
 
-TEST(requires, std_vector_container_vt_test) {
+TEST(requires_prim_arr, std_vector_container_vt_test) {
   using stan::test::require_container_checker;
   require_container_checker<stan::require_std_vector_vt,
                             std_vector_vector>::unary<stan::is_std_vector>();
 }
-TEST(requires, not_std_vector_container_vt_test) {
+TEST(requires_prim_arr, not_std_vector_container_vt_test) {
   using stan::test::require_container_checker;
   require_container_checker<
       stan::require_not_std_vector_vt,
       std_vector_vector>::not_unary<stan::is_std_vector>();
 }
-TEST(requires, all_std_vector_container_vt_test) {
+TEST(requires_prim_arr, all_std_vector_container_vt_test) {
   using stan::test::require_container_checker;
   require_container_checker<stan::require_all_std_vector_vt,
                             std_vector_vector>::all<stan::is_std_vector>();
 }
-TEST(requires, all_not_std_vector_container_vt_test) {
+TEST(requires_prim_arr, all_not_std_vector_container_vt_test) {
   using stan::test::require_container_checker;
   require_container_checker<stan::require_all_not_std_vector_vt,
                             std_vector_vector>::all_not<stan::is_std_vector>();
 }
-TEST(requires, any_std_vector_container_vt_test) {
+TEST(requires_prim_arr, any_std_vector_container_vt_test) {
   using stan::test::require_container_checker;
   require_container_checker<stan::require_any_std_vector_vt,
                             std_vector_vector>::any<stan::is_std_vector>();
 }
-TEST(requires, any_not_std_vector_container_vt_test) {
+TEST(requires_prim_arr, any_not_std_vector_container_vt_test) {
   using stan::test::require_container_checker;
   require_container_checker<stan::require_any_not_std_vector_vt,
                             std_vector_vector>::any_not<stan::is_std_vector>();
 }
 
-TEST(requires, vector_container_vt_test) {
+TEST(requires_prim_arr, vector_container_vt_test) {
   using stan::test::require_container_checker;
   require_container_checker<stan::require_vector_vt,
                             std_vector_vector>::unary<stan::is_vector>();
 }
-TEST(requires, not_vector_container_vt_test) {
+TEST(requires_prim_arr, not_vector_container_vt_test) {
   using stan::test::require_container_checker;
   require_container_checker<stan::require_not_vector_vt,
                             std_vector_vector>::not_unary<stan::is_vector>();
 }
-TEST(requires, all_vector_container_vt_test) {
+TEST(requires_prim_arr, all_vector_container_vt_test) {
   using stan::test::require_container_checker;
   require_container_checker<stan::require_all_vector_vt,
                             std_vector_vector>::all<stan::is_vector>();
 }
-TEST(requires, all_not_vector_container_vt_test) {
+TEST(requires_prim_arr, all_not_vector_container_vt_test) {
   using stan::test::require_container_checker;
   require_container_checker<stan::require_all_not_vector_vt,
                             std_vector_vector>::all_not<stan::is_vector>();
 }
-TEST(requires, any_vector_container_vt_test) {
+TEST(requires_prim_arr, any_vector_container_vt_test) {
   using stan::test::require_container_checker;
   require_container_checker<stan::require_any_vector_vt,
                             std_vector_vector>::any<stan::is_vector>();
 }
-TEST(requires, any_not_vector_container_vt_test) {
+TEST(requires_prim_arr, any_not_vector_container_vt_test) {
   using stan::test::require_container_checker;
   require_container_checker<stan::require_any_not_vector_vt,
                             std_vector_vector>::any_not<stan::is_vector>();
 }
 
-TEST(requires, std_vector_st_test) {
+TEST(requires_prim_arr, std_vector_st_test) {
   using stan::test::require_container_checker;
   require_container_checker<stan::require_std_vector_st,
                             std_vector_vector>::unary<std::is_floating_point>();
 }
-TEST(requires, not_std_vector_st_test) {
+TEST(requires_prim_arr, not_std_vector_st_test) {
   using stan::test::require_container_checker;
   require_container_checker<
       stan::require_not_std_vector_st,
       std_vector_vector>::not_unary<std::is_floating_point>();
 }
-TEST(requires, all_std_vector_st_test) {
+TEST(requires_prim_arr, all_std_vector_st_test) {
   using stan::test::require_container_checker;
   require_container_checker<stan::require_all_std_vector_st,
                             std_vector_vector>::all<std::is_floating_point>();
 }
-TEST(requires, all_not_std_vector_st_test) {
+TEST(requires_prim_arr, all_not_std_vector_st_test) {
   using stan::test::require_container_checker;
   require_container_checker<
       stan::require_all_not_std_vector_st,
       std_vector_vector>::all_not<std::is_floating_point>();
 }
-TEST(requires, any_std_vector_st_test) {
+TEST(requires_prim_arr, any_std_vector_st_test) {
   using stan::test::require_container_checker;
   require_container_checker<stan::require_any_std_vector_st,
                             std_vector_vector>::any<std::is_floating_point>();
 }
-TEST(requires, any_not_std_vector_st_test) {
+TEST(requires_prim_arr, any_not_std_vector_st_test) {
   using stan::test::require_container_checker;
   require_container_checker<
       stan::require_any_not_std_vector_st,
       std_vector_vector>::any_not<std::is_floating_point>();
 }
 
-TEST(requires, vector_st_test) {
+TEST(requires_prim_arr, vector_st_test) {
   using stan::test::require_container_checker;
   require_container_checker<stan::require_vector_st,
                             std_vector_vector>::unary<std::is_floating_point>();
 }
-TEST(requires, not_vector_st_test) {
+TEST(requires_prim_arr, not_vector_st_test) {
   using stan::test::require_container_checker;
   require_container_checker<stan::require_not_vector_st, std_vector_vector>::
       not_unary<std::is_floating_point>();
 }
-TEST(requires, all_vector_st_test) {
+TEST(requires_prim_arr, all_vector_st_test) {
   using stan::test::require_container_checker;
   require_container_checker<stan::require_all_vector_st,
                             std_vector_vector>::all<std::is_floating_point>();
 }
-TEST(requires, all_not_vector_st_test) {
+TEST(requires_prim_arr, all_not_vector_st_test) {
   using stan::test::require_container_checker;
   require_container_checker<
       stan::require_all_not_vector_st,
       std_vector_vector>::all_not<std::is_floating_point>();
 }
-TEST(requires, any_vector_st_test) {
+TEST(requires_prim_arr, any_vector_st_test) {
   using stan::test::require_container_checker;
   require_container_checker<stan::require_any_vector_st,
                             std_vector_vector>::any<std::is_floating_point>();
 }
-TEST(requires, any_not_vector_st_test) {
+TEST(requires_prim_arr, any_not_vector_st_test) {
   using stan::test::require_container_checker;
   require_container_checker<
       stan::require_any_not_vector_st,

@@ -31,7 +31,6 @@ namespace math {
 template <typename T>
 inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
     const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& m) {
-  check_square("cholesky_decompose", "m", m);
   check_symmetric("cholesky_decompose", "m", m);
   Eigen::LLT<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > llt(m.rows());
   llt.compute(m);
