@@ -27,7 +27,7 @@ TEST(MathMatrixCL, log1m_exp) {
   Eigen::VectorXd res = stan::math::from_matrix_cl<-1, 1>(res_cl);
 
   stan::test::expect_near_rel("log1m_exp (OpenCL)", res,
-                              stan::math::log1m_exp(a));
+                              stan::math::log1m_exp(a).eval());
 }
 
 TEST(MathMatrixCL, log1m_exp_edge_cases) {
@@ -40,7 +40,7 @@ TEST(MathMatrixCL, log1m_exp_edge_cases) {
   Eigen::VectorXd res = stan::math::from_matrix_cl<-1, 1>(res_cl);
 
   stan::test::expect_near_rel("log1m_exp (OpenCL)", res,
-                              stan::math::log1m_exp(a));
+                              stan::math::log1m_exp(a).eval());
 }
 
 #endif
