@@ -179,15 +179,14 @@ return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
       if (is_vector<T_precision>::value) {
         ops_partials.edge4_.partials_
             = 1 - y_plus_phi / (theta_exp + phi_arr) + log_phi
-              - logsumexp_theta_logphi + as_array_or_scalar(digamma(y_plus_phi))
-              - as_array_or_scalar(digamma(phi_val_vec));
+              - logsumexp_theta_logphi + digamma(y_plus_phi)
+              - digamma(phi_arr);
       } else {
         ops_partials.edge4_.partials_[0]
             = N
               + sum(-y_plus_phi / (theta_exp + phi_arr) + log_phi
-                    - logsumexp_theta_logphi
-                    + as_array_or_scalar(digamma(y_plus_phi))
-                    - as_array_or_scalar(digamma(phi_val_vec)));
+                    - logsumexp_theta_logphi + digamma(y_plus_phi)
+                    - digamma(phi_arr));
       }
     }
   }
