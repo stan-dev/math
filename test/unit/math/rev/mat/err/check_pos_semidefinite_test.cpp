@@ -1,5 +1,6 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/mat.hpp>
+#include <test/unit/util.hpp>
 #include <limits>
 
 TEST(AgradRevErrorHandlingMatrix, checkPosSemiDefiniteMatrix_nan) {
@@ -13,8 +14,9 @@ TEST(AgradRevErrorHandlingMatrix, checkPosSemiDefiniteMatrix_nan) {
 
   y.resize(1, 1);
   y << nan;
-  EXPECT_THROW(check_pos_semidefinite("checkPosDefiniteMatrix", "y", y),
-               std::domain_error);
+  EXPECT_THROW_MSG(check_pos_semidefinite("checkPosDefiniteMatrix", "y", y),
+                   std::domain_error,
+                   "checkPosDefiniteMatrix: y[1] is nan, but must not be nan!");
 
   y.resize(3, 3);
   y << 2, -1, 0, -1, 2, -1, 0, -1, 2;
@@ -42,11 +44,6 @@ TEST(AgradRevErrorHandlingMatrix, checkPosSemiDefiniteMatrixVarCheck) {
   Matrix<var, Dynamic, Dynamic> y;
   double nan = std::numeric_limits<double>::quiet_NaN();
   using stan::math::check_pos_semidefinite;
-
-  y.resize(1, 1);
-  y << nan;
-  // EXPECT_THROW(check_pos_semidefinite("checkPosDefiniteMatrix", "y", y),
-  //              std::domain_error);
 
   y.resize(3, 3);
   y << 2, -1, 0, -1, 2, -1, 0, -1, 2;
