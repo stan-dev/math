@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMeta, value_type) {
+TEST(MathMetaPrimArr, value_type) {
   using stan::value_type;
   using std::vector;
 

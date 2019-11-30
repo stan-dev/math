@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMeta, primitive) {
+TEST(MathMetaPrimScal, primitive) {
   using stan::is_eigen;
   EXPECT_FALSE((is_eigen<bool>::value));
   EXPECT_FALSE((is_eigen<double>::value));

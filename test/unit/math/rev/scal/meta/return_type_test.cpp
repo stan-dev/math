@@ -5,11 +5,11 @@
 using stan::math::var;
 using stan::return_type;
 
-TEST(MetaTraits, ReturnTypeVar) {
+TEST(MetaTraitsRevScal, ReturnTypeVar) {
   test::expect_same_type<var, return_type<var>::type>();
 }
 
-TEST(MetaTraits, ReturnTypeVarTenParams) {
+TEST(MetaTraitsRevScal, ReturnTypeVarTenParams) {
   test::expect_same_type<var,
                          return_type<double, var, double, int, double, float,
                                      float, float, var, int>::type>();

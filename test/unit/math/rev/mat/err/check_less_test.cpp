@@ -5,7 +5,7 @@
 using stan::math::check_less;
 using stan::math::var;
 
-TEST(AgradRevErrorHandlingScalar, CheckLess_Matrix) {
+TEST(AgradRevErrorHandlingMatrix, CheckLess_Matrix) {
   const char* function = "check_less";
   var x;
   var high;

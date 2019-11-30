@@ -6,7 +6,7 @@
 using stan::math::is_mat_finite;
 
 // ---------- is_mat_finite: matrix tests ----------
-TEST(ErrorHandlingScalar, isMatFinite_Matrix) {
+TEST(ErrorHandlingMat, isMatFinite_Matrix) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> x;
 
   x.resize(3);
@@ -26,7 +26,7 @@ TEST(ErrorHandlingScalar, isMatFinite_Matrix) {
   EXPECT_FALSE(is_mat_finite(x));
 }
 
-TEST(ErrorHandlingScalar, isMatFinite_nan) {
+TEST(ErrorHandlingMat, isMatFinite_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> x_mat(3);

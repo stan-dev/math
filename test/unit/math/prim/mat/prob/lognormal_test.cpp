@@ -36,10 +36,10 @@ class LogNormalTestRig : public VectorRealRNGTestRig {
   }
 };
 
-TEST(ProbDistributionsLogNormal, errorCheck) {
+TEST(ProbDistributionsLogNormalMat, errorCheck) {
   check_dist_throws_all_types(LogNormalTestRig());
 }
 
-TEST(ProbDistributionsLogNormal, chiSquareGoodnessFitTest) {
+TEST(ProbDistributionsLogNormalMat, chiSquareGoodnessFitTest) {
   check_quantiles_real_real(LogNormalTestRig());
 }

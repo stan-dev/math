@@ -1353,7 +1353,7 @@ TEST(RevMath, cov_exp_quad2_dim_mismatch_vec_eigen_mixed) {
   EXPECT_THROW(stan::math::cov_exp_quad(x_vec_2, x_rvec_2, sigma, l),
                std::invalid_argument);
 }
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, cov_exp_quad_check_varis_on_stack) {
   using stan::math::to_var;
   std::vector<double> x(3);
   double sigma = 0.2;

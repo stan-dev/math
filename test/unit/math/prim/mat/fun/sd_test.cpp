@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMatrix, sd) {
+TEST(MathMatrixPrimMat, sd) {
   using stan::math::sd;
   std::vector<double> x;
   EXPECT_THROW(sd(x), std::invalid_argument);

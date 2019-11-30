@@ -1,7 +1,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathMatrix, inverse_exception) {
+TEST(MathMatrixPrimMat, inverse_exception) {
   using stan::math::inverse;
 
   stan::math::matrix_d m0(0, 0);

@@ -1,7 +1,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathMatrix, eltDivideVec) {
+TEST(MathMatrixPrimMat, eltDivideVec) {
   stan::math::vector_d v1(2);
   stan::math::vector_d v2(2);
   v1 << 1, 2;
@@ -10,28 +10,28 @@ TEST(MathMatrix, eltDivideVec) {
   EXPECT_FLOAT_EQ(0.1, v(0));
   EXPECT_FLOAT_EQ(0.02, v(1));
 }
-TEST(MathMatrix, eltDivideVecException) {
+TEST(MathMatrixPrimMat, eltDivideVecException) {
   stan::math::vector_d v1(2);
   stan::math::vector_d v2(3);
   v1 << 1, 2;
   v2 << 10, 100, 1000;
   EXPECT_THROW(stan::math::elt_divide(v1, v2), std::invalid_argument);
 }
-TEST(MathMatrix, eltDivideVecByScalar) {
+TEST(MathMatrixPrimMat, eltDivideVecByScalar) {
   stan::math::vector_d v1(2);
   v1 << 1, 2;
   stan::math::vector_d v = stan::math::elt_divide(v1, 10);
   EXPECT_FLOAT_EQ(0.1, v(0));
   EXPECT_FLOAT_EQ(0.2, v(1));
 }
-TEST(MathMatrix, eltDivideScalarByVec) {
+TEST(MathMatrixPrimMat, eltDivideScalarByVec) {
   stan::math::vector_d v1(2);
   v1 << 1, 2;
   stan::math::vector_d v = stan::math::elt_divide(10, v1);
   EXPECT_FLOAT_EQ(10, v(0));
   EXPECT_FLOAT_EQ(5, v(1));
 }
-TEST(MathMatrix, eltDivideRowVec) {
+TEST(MathMatrixPrimMat, eltDivideRowVec) {
   stan::math::row_vector_d v1(2);
   stan::math::row_vector_d v2(2);
   v1 << 1, 2;
@@ -40,28 +40,28 @@ TEST(MathMatrix, eltDivideRowVec) {
   EXPECT_FLOAT_EQ(0.1, v(0));
   EXPECT_FLOAT_EQ(0.02, v(1));
 }
-TEST(MathMatrix, eltDivideRowVecException) {
+TEST(MathMatrixPrimMat, eltDivideRowVecException) {
   stan::math::row_vector_d v1(2);
   stan::math::row_vector_d v2(3);
   v1 << 1, 2;
   v2 << 10, 100, 1000;
   EXPECT_THROW(stan::math::elt_divide(v1, v2), std::invalid_argument);
 }
-TEST(MathMatrix, eltDivideRowVecByScalar) {
+TEST(MathMatrixPrimMat, eltDivideRowVecByScalar) {
   stan::math::row_vector_d v1(2);
   v1 << 1, 2;
   stan::math::row_vector_d v = stan::math::elt_divide(v1, 10);
   EXPECT_FLOAT_EQ(0.1, v(0));
   EXPECT_FLOAT_EQ(0.2, v(1));
 }
-TEST(MathMatrix, eltDivideScalarByRowVec) {
+TEST(MathMatrixPrimMat, eltDivideScalarByRowVec) {
   stan::math::row_vector_d v1(2);
   v1 << 1, 2;
   stan::math::row_vector_d v = stan::math::elt_divide(10, v1);
   EXPECT_FLOAT_EQ(10, v(0));
   EXPECT_FLOAT_EQ(5, v(1));
 }
-TEST(MathMatrix, eltDivideMatrix) {
+TEST(MathMatrixPrimMat, eltDivideMatrix) {
   stan::math::matrix_d m1(2, 3);
   stan::math::matrix_d m2(2, 3);
   m1 << 1, 2, 3, 4, 5, 6;
@@ -77,7 +77,7 @@ TEST(MathMatrix, eltDivideMatrix) {
   EXPECT_FLOAT_EQ(0.00005, m(1, 1));
   EXPECT_FLOAT_EQ(0.000006, m(1, 2));
 }
-TEST(MathMatrix, eltDivideMatrixException) {
+TEST(MathMatrixPrimMat, eltDivideMatrixException) {
   stan::math::matrix_d m1(2, 3);
   stan::math::matrix_d m2(2, 4);
   stan::math::matrix_d m3(4, 3);
@@ -87,7 +87,7 @@ TEST(MathMatrix, eltDivideMatrixException) {
   EXPECT_THROW(stan::math::elt_divide(m1, m2), std::invalid_argument);
   EXPECT_THROW(stan::math::elt_divide(m1, m3), std::invalid_argument);
 }
-TEST(MathMatrix, eltDivideMatrixByScalar) {
+TEST(MathMatrixPrimMat, eltDivideMatrixByScalar) {
   stan::math::matrix_d m1(2, 3);
   m1 << 1, 2, 3, 4, 5, 6;
   stan::math::matrix_d m = stan::math::elt_divide(m1, 10);
@@ -101,7 +101,7 @@ TEST(MathMatrix, eltDivideMatrixByScalar) {
   EXPECT_FLOAT_EQ(0.5, m(1, 1));
   EXPECT_FLOAT_EQ(0.6, m(1, 2));
 }
-TEST(MathMatrix, eltDivideScalarByMatrix) {
+TEST(MathMatrixPrimMat, eltDivideScalarByMatrix) {
   stan::math::matrix_d m1(2, 3);
   m1 << 10, 100, 1000, 10000, 100000, 1000000;
   stan::math::matrix_d m = stan::math::elt_divide(10, m1);

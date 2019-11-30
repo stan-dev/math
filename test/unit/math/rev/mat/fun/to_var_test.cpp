@@ -75,7 +75,7 @@ TEST(AgradRevMatrix, to_var_rowvector) {
   EXPECT_FLOAT_EQ(5, output(4).val());
 }
 
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, to_var_check_varis_on_stack) {
   stan::math::matrix_v m(2, 2);
   m << 1, 2, 3, 4;
 

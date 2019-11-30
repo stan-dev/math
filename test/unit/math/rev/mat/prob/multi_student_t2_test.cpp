@@ -173,7 +173,7 @@ struct multi_student_t_fun {
   }
 };
 
-TEST(MultiStudentT, TestGradFunctional) {
+TEST(ProbDistributionsMultiStudentT, TestGradFunctional) {
   std::vector<double> x(3 + 3 + 3 * 2 + 1);
   // y
   x[0] = 1.0;
@@ -488,14 +488,14 @@ void test_all() {
   }
 }
 
-TEST(MultiNormal, TestGradFunctionalVectorized) {
+TEST(ProbDistributionsMultiStudentT, TestGradFunctionalVectorized) {
   test_all<1, 1>();
   test_all<1, -1>();
   test_all<-1, 1>();
   test_all<-1, -1>();
 }
 
-TEST(MultiNormal, check_varis_on_stack) {
+TEST(ProbDistributionsMultiStudentT, check_varis_on_stack) {
   double nu(5);
   Matrix<double, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;

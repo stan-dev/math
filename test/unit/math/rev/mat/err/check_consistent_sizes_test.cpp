@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(AgradRevErrorHandlingScalar, checkConsistentSizes) {
+TEST(AgradRevErrorHandlingMatrix, checkConsistentSizes) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::check_consistent_sizes;

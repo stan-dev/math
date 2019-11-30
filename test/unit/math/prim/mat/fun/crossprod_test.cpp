@@ -11,7 +11,7 @@ void test_crossprod(const stan::math::matrix_d& x) {
     for (int n = 0; n < y.cols(); ++n)
       EXPECT_FLOAT_EQ(xtx(m, n), y(m, n));
 }
-TEST(MathMatrix, crossprod) {
+TEST(MathMatrixPrimMat, crossprod) {
   stan::math::matrix_d x;
   test_crossprod(x);
 

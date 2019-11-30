@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 #include <string>
 
-TEST(MathMeta, primitive_to_fvar) {
+TEST(MathMetaFwdScal, primitive_to_fvar) {
   EXPECT_TRUE(
       (stan::math::ad_promotable<bool, stan::math::fvar<double>>::value));
   EXPECT_TRUE(
@@ -40,7 +40,7 @@ TEST(MathMeta, primitive_to_fvar) {
       stan::math::ad_promotable<long double, stan::math::fvar<double>>::value));
 }
 
-TEST(MathMeta, nonprimitive_to_fvar) {
+TEST(MathMetaFwdScal, nonprimitive_to_fvar) {
   EXPECT_FALSE((
       stan::math::ad_promotable<std::string, stan::math::fvar<double>>::value));
 }

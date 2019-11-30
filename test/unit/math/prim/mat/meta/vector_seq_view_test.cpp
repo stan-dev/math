@@ -2,7 +2,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <vector>
 
-TEST(MetaTraits, VectorSeqView) {
+TEST(MetaTraitsPrimMat, VectorSeqView) {
   using Eigen::VectorXd;
   using stan::vector_seq_view;
   using std::vector;
