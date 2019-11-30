@@ -80,7 +80,8 @@ TEST_F(ErrorHandlingMatrix, checkPosSemidefinite_nan) {
                    "function: y[5] is nan, but must not be nan!");
 
   y << 2, -1, 0, -1, 2, nan, 0, nan, 2;
-  EXPECT_THROW_MSG(check_pos_semidefinite(function, "y", y), std::domain_error,
+  EXPECT_THROW_MSG(
+      check_pos_semidefinite(function, "y", y), std::domain_error,
       "function: y is not symmetric. y[2,3] = nan, but y[3,2] = nan");
 }
 
