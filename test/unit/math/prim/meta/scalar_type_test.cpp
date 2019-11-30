@@ -52,6 +52,6 @@ TEST(MetaTraitsPrimMat, ScalarTypeMat) {
   expect_same_type<double, scalar_type<MatrixXd>::type>();
   expect_same_type<double, scalar_type<VectorXd>::type>();
   expect_same_type<double, scalar_type<RowVectorXd>::type>();
-  expect_same_type<double, scalar_type<vector<double> >::type>();
-  expect_same_type<double, scalar_type<vector<MatrixXd> >::type>();
+  expect_same_type<double, scalar_type<vector<double>>::type>();
+  expect_same_type<double, scalar_type<vector<MatrixXd>>::type>();
 }

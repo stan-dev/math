@@ -42,7 +42,6 @@ TEST(MetaTraitsPrimArr, contains_std_vector_false) {
   EXPECT_FALSE(contains_std_vector<const int>::value);
 }
 
-
 TEST(MetaTraitsPrimScal, contains_std_vector_false) {
   using stan::contains_std_vector;
 

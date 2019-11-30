@@ -12,7 +12,6 @@ TEST(MetaTraitsPrimArr, get) {
   EXPECT_EQ(5.0, get(x, 1));
 }
 
-
 TEST(MetaTraitsPrimScal, get) {
   using stan::get;
 

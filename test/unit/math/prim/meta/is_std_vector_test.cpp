@@ -14,7 +14,7 @@ TEST(MathMetaPrim, is_std_vector) {
 
   EXPECT_TRUE((is_std_vector<std::vector<double>>::value));
   EXPECT_TRUE((is_std_vector<const std::vector<double>>::value));
-  EXPECT_TRUE((is_std_vector<const std::vector<double>&>::value));  
+  EXPECT_TRUE((is_std_vector<const std::vector<double>&>::value));
 
   EXPECT_FALSE((is_std_vector<Eigen::EigenBase<Eigen::MatrixXd>>::value));
   EXPECT_FALSE((is_std_vector<Eigen::Matrix<double, -1, -1>>::value));
