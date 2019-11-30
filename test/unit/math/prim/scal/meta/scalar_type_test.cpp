@@ -1,3 +1,4 @@
+#include <stan/math/prim/mat.hpp>
 #include <stan/math/prim/arr.hpp>
 #include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
@@ -38,4 +39,19 @@ TEST(MetaTraitsPrimArr, ScalarTypeArrayConstConst) {
                          scalar_type<const vector<int const*>>::type>();
   test::expect_same_type<
       double const*, scalar_type<const vector<vector<double const*>>>::type>();
+}
+
+TEST(MetaTraitsPrimMat, ScalarTypeMat) {
+  using Eigen::MatrixXd;
+  using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
+  using stan::scalar_type;
+  using std::vector;
+  using test::expect_same_type;
+
+  expect_same_type<double, scalar_type<MatrixXd>::type>();
+  expect_same_type<double, scalar_type<VectorXd>::type>();
+  expect_same_type<double, scalar_type<RowVectorXd>::type>();
+  expect_same_type<double, scalar_type<vector<double> >::type>();
+  expect_same_type<double, scalar_type<vector<MatrixXd> >::type>();
 }
