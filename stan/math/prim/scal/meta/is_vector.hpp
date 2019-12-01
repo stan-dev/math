@@ -3,7 +3,9 @@
 
 #include <stan/math/prim/scal/meta/bool_constant.hpp>
 #include <stan/math/prim/scal/meta/is_eigen.hpp>
+#include <stan/math/prim/scal/meta/is_vector.hpp>
 #include <type_traits>
+#include <vector>
 
 namespace stan {
 
@@ -75,6 +77,31 @@ struct is_eigen_vector : bool_constant<is_eigen_col_vector<T>::value
 template <typename T>
 struct is_vector
     : bool_constant<is_eigen_vector<T>::value || is_std_vector<T>::value> {};
+
+namespace internal {
+
+/** \ingroup type_trait
+ * This underlying implimentation is used when the type is not an std vector.
+ */
+template <typename T>
+struct is_std_vector_impl : std::false_type {};
+
+/** \ingroup type_trait
+ * This specialization implimentation has a static member named value when the
+ * template type is an std vector.
+ */
+template <typename... Args>
+struct is_std_vector_impl<std::vector<Args...>> : std::true_type {};
+
+}  // namespace internal
+
+/** \ingroup type_trait
+ * Checks if the decayed type of T is a standard vector.
+ */
+template <typename T>
+struct is_std_vector<
+    T, std::enable_if_t<internal::is_std_vector_impl<std::decay_t<T>>::value>>
+    : std::true_type {};
 
 }  // namespace stan
 #endif

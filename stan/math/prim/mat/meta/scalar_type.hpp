@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/meta/is_eigen.hpp>
-#include <stan/math/prim/arr/meta/scalar_type.hpp>
+#include <stan/math/prim/scal/meta/scalar_type.hpp>
 #include <type_traits>
 namespace stan {
 /** \ingroup type_trait
