@@ -1,6 +1,7 @@
-#include <stan/math/rev/scal.hpp>
-#include <gtest/gtest.h>
+#include <stan/math/rev/meta.hpp>
+#include <test/unit/math/prim/scal/fun/promote_type_test_util.hpp>
 #include <test/unit/util.hpp>
+#include <gtest/gtest.h>
 
 using stan::math::include_summand;
 using stan::math::var;
