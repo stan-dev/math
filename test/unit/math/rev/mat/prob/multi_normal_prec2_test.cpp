@@ -155,7 +155,7 @@ struct vectorized_multi_normal_prec_fun {
   }
 
   template <typename T_y, typename T_mu, typename T_sigma>
-  typename boost::math::tools::promote_args<T_y, T_mu, T_sigma>::type
+  stan::promote_args_t<T_y, T_mu, T_sigma>
   operator()(const std::vector<T_y>& y_vec, const std::vector<T_mu>& mu_vec,
              const std::vector<T_sigma>& sigma_vec) const {
     vector<Matrix<T_y, is_row_vec_y, is_row_vec_y * -1> > y(
