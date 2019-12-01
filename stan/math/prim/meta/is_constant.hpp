@@ -54,8 +54,6 @@ struct is_constant<T, require_std_vector_t<T>>
 #ifndef STAN_MATH_PRIM_META_ IS_CONSTANT_HPP
 #define STAN_MATH_PRIM_META_ IS_CONSTANT_HPP
 
-
-
 namespace stan {
 /** \ingroup type_trait
  * Defines a public enum named value and sets it to true
