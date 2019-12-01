@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MetaTraitsPrimArr, contains_vector) {
+TEST(MathMetaPrim, contains_vector_std_vector) {
   using stan::contains_vector;
   using std::vector;
 
@@ -12,7 +12,7 @@ TEST(MetaTraitsPrimArr, contains_vector) {
   EXPECT_TRUE(contains_vector<const std::vector<int> >::value);
 }
 
-TEST(MetaTraitsPrimScal, contains_vector) {
+TEST(MathMetaPrim, contains_vector_scalars) {
   using stan::contains_vector;
   EXPECT_FALSE(contains_vector<double>::value);
   EXPECT_FALSE(contains_vector<int>::value);
@@ -23,7 +23,7 @@ TEST(MetaTraitsPrimScal, contains_vector) {
   EXPECT_FALSE(contains_vector<const size_t>::value);
 }
 
-TEST(MetaTraitsPrimMat, contains_vector) {
+TEST(MathMetaPrim, contains_vector_matrices) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::contains_vector;

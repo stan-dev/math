@@ -4,23 +4,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMetaPrimScal, primitive) {
-  using stan::is_eigen;
-  EXPECT_FALSE((is_eigen<bool>::value));
-  EXPECT_FALSE((is_eigen<double>::value));
-  EXPECT_FALSE((is_eigen<int>::value));
-}
-
-TEST(MathMetaPrimArr, primitive) {
-  using stan::is_eigen;
-  EXPECT_FALSE((is_eigen<bool>::value));
-  EXPECT_FALSE((is_eigen<double>::value));
-  EXPECT_FALSE((is_eigen<int>::value));
-
-  EXPECT_FALSE((is_eigen<std::vector<double>>::value));
-}
-
-TEST(MathMetaPrimMat, primitive) {
+TEST(MathMetaPrim, primitive) {
   using stan::is_eigen;
   EXPECT_FALSE((is_eigen<bool>::value));
   EXPECT_FALSE((is_eigen<double>::value));
@@ -45,7 +29,7 @@ TEST(MathMetaPrimMat, primitive) {
   EXPECT_TRUE((is_eigen<decltype(a * b + a.transpose())>::value));
 }
 
-TEST(MathMetaPrimMat, expression) {
+TEST(MathMetaPrim, expression) {
   using stan::is_eigen_matrix;
   EXPECT_FALSE((is_eigen_matrix<bool>::value));
   EXPECT_FALSE((is_eigen_matrix<double>::value));

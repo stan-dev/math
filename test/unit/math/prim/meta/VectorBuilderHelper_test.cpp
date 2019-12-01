@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MetaTraitsPrimScal, VectorBuilderHelper_false_false) {
+TEST(MathMetaPrim, VectorBuilderHelper_false_false_scalar) {
   using stan::VectorBuilderHelper;
   using stan::length;
 
@@ -13,7 +13,7 @@ TEST(MetaTraitsPrimScal, VectorBuilderHelper_false_false) {
   EXPECT_THROW(dvv1.data(), std::logic_error);
 }
 
-TEST(MetaTraitsPrimScal, VectorBuilderHelper_true_false) {
+TEST(MathMetaPrim, VectorBuilderHelper_true_false_scalar) {
   using stan::VectorBuilderHelper;
   using stan::length;
 
@@ -28,7 +28,7 @@ TEST(MetaTraitsPrimScal, VectorBuilderHelper_true_false) {
   EXPECT_FLOAT_EQ(0.0, data);
 }
 
-TEST(MetaTraitsPrimArr, VectorBuilderHelper_false_false) {
+TEST(MathMetaPrim, VectorBuilderHelper_false_false_vector) {
   using stan::VectorBuilderHelper;
   using stan::length;
   using std::vector;
@@ -40,7 +40,7 @@ TEST(MetaTraitsPrimArr, VectorBuilderHelper_false_false) {
   EXPECT_THROW(dvv2.data(), std::logic_error);
 }
 
-TEST(MetaTraitsPrimArr, VectorBuilderHelper_true_false) {
+TEST(MathMetaPrim, VectorBuilderHelper_true_false_vector) {
   using stan::VectorBuilderHelper;
   using stan::length;
   using std::vector;
@@ -56,7 +56,7 @@ TEST(MetaTraitsPrimArr, VectorBuilderHelper_true_false) {
   EXPECT_FLOAT_EQ(0.0, data2);
 }
 
-TEST(MetaTraitsPrimMat, VectorBuilderHelper_false_false) {
+TEST(MathMetaPrim, VectorBuilderHelper_false_false_matrix) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::VectorBuilderHelper;
@@ -74,7 +74,7 @@ TEST(MetaTraitsPrimMat, VectorBuilderHelper_false_false) {
   EXPECT_THROW(dvv4.data(), std::logic_error);
 }
 
-TEST(MetaTraitsPrimMat, VectorBuilderHelper_true_false) {
+TEST(MathMetaPrim, VectorBuilderHelper_true_false_matrix) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::VectorBuilderHelper;

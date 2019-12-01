@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MetaTraitsPrimScal, ScalarSeqViewDouble) {
+TEST(MathMetaPrim, ScalarSeqViewDouble) {
   using stan::scalar_seq_view;
 
   double d = 10;
@@ -33,7 +33,7 @@ TEST(MetaTraitsPrimScal, ScalarSeqViewDouble) {
   free(d_point);
 }
 
-TEST(MetaTraitsPrimArr, ScalarSeqViewArray) {
+TEST(MathMetaPrim, ScalarSeqViewArray) {
   using stan::scalar_seq_view;
   using std::vector;
 
@@ -71,10 +71,10 @@ void expect_scalar_seq_view_values(C v) {
   EXPECT_EQ(v.size(), sv.size());
 }
 
-TEST(MetaTraitsPrimMat, ScalarSeqViewVector) {
+TEST(MathMetaPrim, ScalarSeqViewVector) {
   expect_scalar_seq_view_values(Eigen::VectorXd(4));
 }
 
-TEST(MetaTraitsPrimMat, ScalarSeqViewRowVector) {
+TEST(MathMetaPrim, ScalarSeqViewRowVector) {
   expect_scalar_seq_view_values(Eigen::RowVectorXd(4));
 }

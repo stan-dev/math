@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MetaTraitsPrimScal, length_mvt) {
+TEST(MathMetaPrim, length_mvt_scalar) {
   using stan::length_mvt;
 
   double x1;
@@ -12,7 +12,7 @@ TEST(MetaTraitsPrimScal, length_mvt) {
   EXPECT_THROW(length_mvt(x2), std::invalid_argument);
 }
 
-TEST(MetaTraitsPrimMat, length_mvt) {
+TEST(MathMetaPrim, length_mvt_matrices_vectors) {
   using stan::length_mvt;
 
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> x1(2, 3);

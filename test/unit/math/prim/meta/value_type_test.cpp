@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMetaPrimArr, value_type) {
+TEST(MathMetaPrim, value_type_vector) {
   using stan::value_type;
   using std::vector;
 
@@ -20,7 +20,7 @@ TEST(MathMetaPrimArr, value_type) {
                    value_type<const vector<vector<int> > >::type>();
 }
 
-TEST(MathMetaPrimMat, value_type) {
+TEST(MathMetaPrim, value_type_matrix) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::value_type;
