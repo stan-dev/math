@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_META_SCALAR_TYPE_HPP
 #define STAN_MATH_PRIM_SCAL_META_SCALAR_TYPE_HPP
 
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/scal/meta/is_eigen.hpp>
 #include <stan/math/prim/scal/meta/value_type.hpp>
 #include <stan/math/prim/scal/meta/is_vector.hpp>
 #include <stan/math/prim/scal/meta/scalar_type.hpp>
@@ -48,5 +50,15 @@ struct scalar_type<T, std::enable_if_t<is_std_vector<T>::value>> {
   using type = scalar_type_t<typename std::decay_t<T>::value_type>;
 };
 
+/** \ingroup type_trait
+ * Template metaprogram defining the base scalar type of
+ * values stored in an Eigen matrix.
+ *
+ * @tparam T type of matrix.
+ */
+template <typename T>
+struct scalar_type<T, std::enable_if_t<is_eigen<T>::value>> {
+  using type = scalar_type_t<typename std::decay_t<T>::Scalar>;
+};
 }  // namespace stan
 #endif

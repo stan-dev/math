@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_META_GET_HPP
 #define STAN_MATH_PRIM_SCAL_META_GET_HPP
 
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <cmath>
 #include <cstddef>
 #include <cstdlib>
@@ -23,6 +24,16 @@ inline T get(const T& x, size_t n) {
 template <typename T>
 inline T get(const std::vector<T>& x, size_t n) {
   return x[n];
+}
+
+template <typename T, int R, int C>
+inline T get(const Eigen::Matrix<T, R, C>& m, size_t n) {
+  return m(static_cast<int>(n));
+}
+
+template <typename T, int R, int C>
+inline T get(const Eigen::Array<T, R, C>& m, size_t n) {
+  return m(static_cast<int>(n));
 }
 
 }  // namespace stan
