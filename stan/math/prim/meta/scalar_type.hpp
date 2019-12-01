@@ -2,10 +2,10 @@
 #define STAN_MATH_PRIM_SCAL_META_SCALAR_TYPE_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/meta/is_eigen.hpp>
-#include <stan/math/prim/scal/meta/value_type.hpp>
-#include <stan/math/prim/scal/meta/is_vector.hpp>
-#include <stan/math/prim/scal/meta/scalar_type.hpp>
+#include <stan/math/prim/meta/is_eigen.hpp>
+#include <stan/math/prim/meta/value_type.hpp>
+#include <stan/math/prim/meta/is_vector.hpp>
+#include <stan/math/prim/meta/scalar_type.hpp>
 #include <type_traits>
 #include <vector>
 

@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_META_VECTORBUILDER_HPP
 #define STAN_MATH_PRIM_SCAL_META_VECTORBUILDER_HPP
 
-#include <stan/math/prim/scal/meta/VectorBuilderHelper.hpp>
-#include <stan/math/prim/scal/meta/contains_vector.hpp>
+#include <stan/math/prim/meta/VectorBuilderHelper.hpp>
+#include <stan/math/prim/meta/contains_vector.hpp>
 
 namespace stan {
 

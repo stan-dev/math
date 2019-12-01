@@ -5,9 +5,9 @@
 #include <stan/math/rev/core/precomputed_gradients.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/vari.hpp>
-#include <stan/math/prim/scal/meta/broadcast_array.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
-#include <stan/math/prim/scal/meta/is_vector_like.hpp>
+#include <stan/math/prim/meta/broadcast_array.hpp>
+#include <stan/math/prim/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta/is_vector_like.hpp>
 
 namespace stan {
 namespace math {

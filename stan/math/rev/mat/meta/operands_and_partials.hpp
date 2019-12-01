@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_REV_MAT_META_OPERANDS_AND_PARTIALS_HPP
 #define STAN_MATH_REV_MAT_META_OPERANDS_AND_PARTIALS_HPP
 
-#include <stan/math/prim/scal/meta/broadcast_array.hpp>
-#include <stan/math/prim/scal/meta/likely.hpp>
+#include <stan/math/prim/meta/broadcast_array.hpp>
+#include <stan/math/prim/meta/likely.hpp>
 #include <stan/math/rev/mat/fun/typedefs.hpp>
 #include <stan/math/rev/scal/meta/operands_and_partials.hpp>
-#include <stan/math/prim/scal/meta/length.hpp>
+#include <stan/math/prim/meta/length.hpp>
 #include <vector>
 
 namespace stan {

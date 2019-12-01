@@ -1,17 +1,17 @@
 #ifndef STAN_MATH_PRIM_SCAL_META_REQUIRE_GENERICS_HPP
 #define STAN_MATH_PRIM_SCAL_META_REQUIRE_GENERICS_HPP
 
-#include <stan/math/prim/scal/meta/bool_constant.hpp>
-#include <stan/math/prim/scal/meta/is_eigen.hpp>
-#include <stan/math/prim/scal/meta/is_fvar.hpp>
-#include <stan/math/prim/scal/meta/is_var.hpp>
-#include <stan/math/prim/scal/meta/is_var_or_arithmetic.hpp>
-#include <stan/math/prim/scal/meta/is_vector.hpp>
-#include <stan/math/prim/scal/meta/is_vector_like.hpp>
-#include <stan/math/prim/scal/meta/scalar_type.hpp>
-#include <stan/math/prim/scal/meta/value_type.hpp>
-#include <stan/math/prim/scal/meta/conjunction.hpp>
-#include <stan/math/prim/scal/meta/disjunction.hpp>
+#include <stan/math/prim/meta/bool_constant.hpp>
+#include <stan/math/prim/meta/is_eigen.hpp>
+#include <stan/math/prim/meta/is_fvar.hpp>
+#include <stan/math/prim/meta/is_var.hpp>
+#include <stan/math/prim/meta/is_var_or_arithmetic.hpp>
+#include <stan/math/prim/meta/is_vector.hpp>
+#include <stan/math/prim/meta/is_vector_like.hpp>
+#include <stan/math/prim/meta/scalar_type.hpp>
+#include <stan/math/prim/meta/value_type.hpp>
+#include <stan/math/prim/meta/conjunction.hpp>
+#include <stan/math/prim/meta/disjunction.hpp>
 
 #include <type_traits>
 #include <string>

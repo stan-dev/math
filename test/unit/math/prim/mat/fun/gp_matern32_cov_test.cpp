@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/meta/size_of.hpp>
+#include <stan/math/prim/meta/size_of.hpp>
 #include <cmath>
 #include <limits>
 #include <string>
