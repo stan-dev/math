@@ -42,7 +42,7 @@ TEST(MathMetaPrim, contains_std_vector_false) {
   EXPECT_FALSE(contains_std_vector<int>::value);
   EXPECT_FALSE(contains_std_vector<const double>::value);
   EXPECT_FALSE(contains_std_vector<const int>::value);
-  
+
   EXPECT_FALSE(contains_std_vector<Eigen::VectorXd>::value);
   EXPECT_FALSE(contains_std_vector<Eigen::RowVectorXd>::value);
   bool r = contains_std_vector<
