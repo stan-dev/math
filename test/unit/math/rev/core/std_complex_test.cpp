@@ -1465,12 +1465,42 @@ void expectEigenSolver() {
       = (ev.inverse() * a * ev * s.eigenvalues().asDiagonal().inverse()).real();
   expect_identity_matrix(I);
 }
+template <typename T>
+Eigen::EigenSolver<T> eigen_solver(const T& a) {
+  Eigen::EigenSolver<T> s(a);
+  return s;
+}
 TEST(mathMix, eigenSolver) {
+  // value tests
   expectEigenSolver<var_t>();
   expectEigenSolver<fvar_d_t>();
   expectEigenSolver<fvar_fvar_d_t>();
   expectEigenSolver<fvar_v_t>();
   expectEigenSolver<fvar_fvar_v_t>();
+
+  auto f1 = [](const auto& a) {
+    return eigen_solver(a).eigenvectors().real().eval();
+  };
+  auto f2 = [](const auto& a) {
+    return eigen_solver(a).eigenvectors().imag().eval();
+  };
+  auto g1 = [](const auto& a) {
+    return eigen_solver(a).eigenvalues().real().eval();
+  };
+  auto g2 = [](const auto& a) {
+    return eigen_solver(a).eigenvalues().imag().eval();
+  };
+  Eigen::MatrixXd a(2, 2);
+  a << 1, 2, 3, 0.7;
+
+  stan::test::ad_tolerances tols;
+  tols.hessian_hessian_ = 5e-3;
+  tols.hessian_fvar_hessian_ = 5e-3;
+
+  stan::test::expect_ad(tols, f1, a);
+  stan::test::expect_ad(tols, f2, a);
+  stan::test::expect_ad(tols, g1, a);
+  stan::test::expect_ad(tols, g2, a);
 }
 
 template <typename T>
@@ -1491,6 +1521,29 @@ TEST(mathMix, pseudoEigendecomposition) {
   expectPseudoEigendecomposition<fvar_fvar_d_t>();
   expectPseudoEigendecomposition<fvar_v_t>();
   expectPseudoEigendecomposition<fvar_fvar_v_t>();
+
+  auto f1 = [](const auto& a) {
+    return eigen_solver(a).pseudoEigenvectors().eval();
+  };
+  auto g1 = [](const auto& a) {
+    return eigen_solver(a).pseudoEigenvalueMatrix().eval();
+  };
+
+  stan::test::ad_tolerances tols;
+  tols.hessian_hessian_ = 1e-2;
+  tols.hessian_fvar_hessian_ = 1e-2;
+
+  Eigen::MatrixXd a11(1, 1);
+  a11 << -1.3;
+  Eigen::MatrixXd a22(2, 2);
+  a22 << 1, 2, 3, 0.7;
+  Eigen::MatrixXd a33(3, 3);
+  a33 << 1, 2, 3, 0.7, 0.11, 0.13, -5, -17, -23;
+  std::vector<Eigen::MatrixXd> as{a11, a22};
+  for (const auto& a : as) {
+    stan::test::expect_ad(tols, f1, a);
+    stan::test::expect_ad(tols, g1, a);
+  }
 }
 
 template <typename T>

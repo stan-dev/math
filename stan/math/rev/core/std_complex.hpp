@@ -221,10 +221,11 @@ namespace math {
  *
  * @tparam T value type of complex argument
  * @param[in] complex argument
- * @return complex number with same value as argument
+ * @return complex number with same `double` real and imaginary parts as the
+ * argument
  */
 template <typename T>
-inline std::complex<double> value_of(const std::complex<T>& z) {
+inline std::complex<double> value_of_rec(const std::complex<T>& z) {
   return {value_of_rec(z.real()), value_of_rec(z.imag())};
 }
 
@@ -689,7 +690,7 @@ inline std::complex<V> complex_tanh(const std::complex<V>& z) {
  */
 template <typename V>
 inline std::complex<V> complex_asinh(const std::complex<V>& z) {
-  std::complex<double> y_d = asinh(value_of(z));
+  std::complex<double> y_d = asinh(value_of_rec(z));
   auto y = log(z + sqrt(1 + z * z));
   return copysign(y, y_d);
 }
@@ -703,7 +704,7 @@ inline std::complex<V> complex_asinh(const std::complex<V>& z) {
  */
 template <typename V>
 inline std::complex<V> complex_acosh(const std::complex<V>& z) {
-  std::complex<double> y_d = acosh(value_of(z));
+  std::complex<double> y_d = acosh(value_of_rec(z));
   auto y = log(z + sqrt(z * z - 1));
   return copysign(y, y_d);
 }
@@ -717,7 +718,7 @@ inline std::complex<V> complex_acosh(const std::complex<V>& z) {
  */
 template <typename V>
 inline std::complex<V> complex_atanh(const std::complex<V>& z) {
-  std::complex<double> y_d = atanh(value_of(z));
+  std::complex<double> y_d = atanh(value_of_rec(z));
   V one(1);
   auto y = 0.5 * (log(one + z) - log(one - z));
   return copysign(y, y_d);
@@ -768,7 +769,7 @@ inline std::complex<V> complex_tan(const std::complex<V>& z) {
  */
 template <typename V>
 inline std::complex<V> complex_asin(const std::complex<V>& z) {
-  auto y_d = asin(value_of(z));
+  auto y_d = asin(value_of_rec(z));
   auto y = neg_i_times(asinh(i_times(z)));
   return copysign(y, y_d);
 }
