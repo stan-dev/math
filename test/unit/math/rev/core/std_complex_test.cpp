@@ -1453,6 +1453,19 @@ TEST(mathMix, polar) {
 
 // tests of use, not of basic interface
 
+std::vector<Eigen::MatrixXd> square_test_matrices() {
+  Eigen::MatrixXd a00(0, 0);
+  Eigen::MatrixXd a11(1, 1);
+  a11 << -1.3;
+  Eigen::MatrixXd a22(2, 2);
+  a22 << 1, 2, 3, 0.7;
+  Eigen::MatrixXd a33(3, 3);
+  a33 << 1, 2, 1.3, 0.7, 0.11, 0.13, -0.5, -1.7, 2.3;
+  // a00 fails an assertion that we'd need to prevent
+  //     if we implemented a function around this
+  // a33 too hard numerically and adds 1m to tests
+  return {a11, a22};
+}
 template <typename T>
 void expectEigenSolver() {
   // test adapted from https://github.com/stan-dev/math/pull/789/files
@@ -1477,7 +1490,7 @@ TEST(mathMix, eigenSolver) {
   expectEigenSolver<fvar_fvar_d_t>();
   expectEigenSolver<fvar_v_t>();
   expectEigenSolver<fvar_fvar_v_t>();
-
+  // derivative and value tests
   auto f1 = [](const auto& a) {
     return eigen_solver(a).eigenvectors().real().eval();
   };
@@ -1490,17 +1503,15 @@ TEST(mathMix, eigenSolver) {
   auto g2 = [](const auto& a) {
     return eigen_solver(a).eigenvalues().imag().eval();
   };
-  Eigen::MatrixXd a(2, 2);
-  a << 1, 2, 3, 0.7;
-
   stan::test::ad_tolerances tols;
   tols.hessian_hessian_ = 5e-3;
   tols.hessian_fvar_hessian_ = 5e-3;
-
-  stan::test::expect_ad(tols, f1, a);
-  stan::test::expect_ad(tols, f2, a);
-  stan::test::expect_ad(tols, g1, a);
-  stan::test::expect_ad(tols, g2, a);
+  for (const auto& a : square_test_matrices()) {
+    stan::test::expect_ad(tols, f1, a);
+    stan::test::expect_ad(tols, f2, a);
+    stan::test::expect_ad(tols, g1, a);
+    stan::test::expect_ad(tols, g2, a);
+  }
 }
 
 template <typename T>
@@ -1521,31 +1532,27 @@ TEST(mathMix, pseudoEigendecomposition) {
   expectPseudoEigendecomposition<fvar_fvar_d_t>();
   expectPseudoEigendecomposition<fvar_v_t>();
   expectPseudoEigendecomposition<fvar_fvar_v_t>();
-
-  auto f1 = [](const auto& a) {
+  // the pseudo-eigendecomposition returns real-valued matrices
+  auto f = [](const auto& a) {
     return eigen_solver(a).pseudoEigenvectors().eval();
   };
-  auto g1 = [](const auto& a) {
+  auto g = [](const auto& a) {
     return eigen_solver(a).pseudoEigenvalueMatrix().eval();
   };
-
   stan::test::ad_tolerances tols;
   tols.hessian_hessian_ = 1e-2;
   tols.hessian_fvar_hessian_ = 1e-2;
-
-  Eigen::MatrixXd a11(1, 1);
-  a11 << -1.3;
-  Eigen::MatrixXd a22(2, 2);
-  a22 << 1, 2, 3, 0.7;
-  Eigen::MatrixXd a33(3, 3);
-  a33 << 1, 2, 3, 0.7, 0.11, 0.13, -5, -17, -23;
-  std::vector<Eigen::MatrixXd> as{a11, a22};
-  for (const auto& a : as) {
-    stan::test::expect_ad(tols, f1, a);
-    stan::test::expect_ad(tols, g1, a);
+  for (const auto& a : square_test_matrices()) {
+    stan::test::expect_ad(tols, f, a);
+    stan::test::expect_ad(tols, g, a);
   }
 }
 
+template <typename T>
+Eigen::ComplexSchur<T> complex_schur(const T& a) {
+  Eigen::ComplexSchur<T> s(a);
+  return s;
+}
 template <typename T>
 void expectComplexSchur() {
   // test adapted from https://github.com/stan-dev/math/pull/789/files
@@ -1563,4 +1570,15 @@ TEST(mathMix, complexSchur) {
   expectComplexSchur<fvar_fvar_d_t>();
   expectComplexSchur<fvar_v_t>();
   expectComplexSchur<fvar_fvar_v_t>();
+  auto f
+      = [](const auto& a) { return complex_schur(a).matrixU().real().eval(); };
+  auto g
+      = [](const auto& a) { return complex_schur(a).matrixU().imag().eval(); };
+  stan::test::ad_tolerances tols;
+  tols.hessian_hessian_ = 1e-2;
+  tols.hessian_fvar_hessian_ = 1e-2;
+  for (const auto& a : square_test_matrices()) {
+    stan::test::expect_ad(tols, f, a);
+    stan::test::expect_ad(tols, g, a);
+  }
 }
