@@ -16,7 +16,6 @@ TEST(MetaTraitsRevScal, PartialsReturnTypeVarTenParams) {
                                    float, float, var, int>::type>();
 }
 
-
 TEST(MetaTraitsRevArr, partials_return_type) {
   using stan::math::var;
   using stan::partials_return_type;

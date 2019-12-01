@@ -48,7 +48,6 @@ TEST(MetaTraitsRevArr, VectorBuilder_true_true) {
   EXPECT_EQ(length(a_std_vector), data2.size());
 }
 
-
 TEST(MetaTraitsRevMat, VectorBuilder_false_true) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
