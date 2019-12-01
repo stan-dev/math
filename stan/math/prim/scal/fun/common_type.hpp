@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_SCAL_FUN_COMMON_TYPE_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <boost/math/tools/promotion.hpp>
 
 namespace stan {
 namespace math {

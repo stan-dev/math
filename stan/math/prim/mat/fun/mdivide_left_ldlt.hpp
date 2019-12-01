@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_MDIVIDE_LEFT_LDLT_HPP
 #define STAN_MATH_PRIM_MAT_FUN_MDIVIDE_LEFT_LDLT_HPP
 
-#include <boost/math/tools/promotion.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/LDLT_factor.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>

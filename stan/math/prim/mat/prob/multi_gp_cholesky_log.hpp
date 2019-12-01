@@ -4,7 +4,6 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/prob/multi_gp_cholesky_lpdf.hpp>
-#include <boost/math/tools/promotion.hpp>
 
 namespace stan {
 namespace math {
