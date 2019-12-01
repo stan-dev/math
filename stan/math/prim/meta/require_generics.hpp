@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_META_REQUIRE_GENERICS_HPP
-#define STAN_MATH_PRIM_SCAL_META_REQUIRE_GENERICS_HPP
+#ifndef STAN_MATH_PRIM_META_REQUIRE_GENERICS_HPP
+#define STAN_MATH_PRIM_META_REQUIRE_GENERICS_HPP
 
 #include <stan/math/prim/meta/bool_constant.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>

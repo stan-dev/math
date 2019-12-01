@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_META_IS_CONSTANT_HPP
-#define STAN_MATH_PRIM_SCAL_META_IS_CONSTANT_HPP
+#ifndef STAN_MATH_PRIM_META_IS_CONSTANT_HPP
+#define STAN_MATH_PRIM_META_IS_CONSTANT_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/meta/bool_constant.hpp>
@@ -51,8 +51,8 @@ struct is_constant<T, require_std_vector_t<T>>
 
 }  // namespace stan
 #endif
-#ifndef STAN_MATH_PRIM_MAT_META_IS_CONSTANT_HPP
-#define STAN_MATH_PRIM_MAT_META_IS_CONSTANT_HPP
+#ifndef STAN_MATH_PRIM_META_ IS_CONSTANT_HPP
+#define STAN_MATH_PRIM_META_ IS_CONSTANT_HPP
 
 
 

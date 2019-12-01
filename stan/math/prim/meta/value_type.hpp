@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_META_VALUE_TYPE_HPP
-#define STAN_MATH_PRIM_SCAL_META_VALUE_TYPE_HPP
+#ifndef STAN_MATH_PRIM_META_VALUE_TYPE_HPP
+#define STAN_MATH_PRIM_META_VALUE_TYPE_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
