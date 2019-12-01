@@ -6,22 +6,22 @@ using stan::math::fvar;
 using stan::math::var;
 using stan::return_type;
 
-TEST(MetaTraitsMixScal, ReturnTypeFvarVar) {
+TEST(MathMetaMix, ReturnTypeFvarVar) {
   test::expect_same_type<fvar<var>, return_type<fvar<var> >::type>();
 }
 
-TEST(MetaTraitsMixScal, ReturnTypeFvarFvarVar) {
+TEST(MathMetaMix, ReturnTypeFvarFvarVar) {
   test::expect_same_type<fvar<fvar<var> >,
                          return_type<fvar<fvar<var> > >::type>();
 }
 
-TEST(MetaTraitsMixScal, ReturnTypeFvarVarTenParams) {
+TEST(MathMetaMix, ReturnTypeFvarVarTenParams) {
   test::expect_same_type<
       fvar<var>, return_type<double, fvar<var>, double, int, double, float,
                              float, float, fvar<var>, int>::type>();
 }
 
-TEST(MetaTraitsMixScal, ReturnTypeFvarFvarVarTenParams) {
+TEST(MathMetaMix, ReturnTypeFvarFvarVarTenParams) {
   test::expect_same_type<
       fvar<fvar<var> >,
       return_type<double, fvar<fvar<var> >, double, int, double, float, float,
