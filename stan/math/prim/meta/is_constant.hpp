@@ -49,12 +49,6 @@ struct is_constant<T, require_std_vector_t<T>>
     : bool_constant<is_constant<typename std::decay_t<T>::value_type>::value> {
 };
 
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_PRIM_META_ IS_CONSTANT_HPP
-#define STAN_MATH_PRIM_META_ IS_CONSTANT_HPP
-
-namespace stan {
 /** \ingroup type_trait
  * Defines a public enum named value and sets it to true
  * if the type of the elements in the provided Eigen Matrix
