@@ -1,5 +1,5 @@
+#include <stan/math/prim/meta.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/mat.hpp>
 #include <vector>
 
 TEST(MetaTraitsPrimMat, VectorSeqView) {

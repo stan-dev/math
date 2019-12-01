@@ -1,4 +1,4 @@
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 

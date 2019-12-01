@@ -1,7 +1,6 @@
-#include <stan/math/prim/scal.hpp>
-
-#include <gtest/gtest.h>
+#include <stan/math/prim/meta.hpp>
 #include <test/unit/util.hpp>
+#include <gtest/gtest.h>
 
 using stan::partials_return_type;
 

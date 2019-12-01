@@ -1,5 +1,4 @@
-#include <stan/math/prim/scal.hpp>
-#include <stan/math/prim/scal/meta/conjunction.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathMetaPrimScal, and_type) {
