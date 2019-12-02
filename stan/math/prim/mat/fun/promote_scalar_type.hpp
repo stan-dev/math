@@ -9,57 +9,25 @@ namespace stan {
 namespace math {
 
 /**
- * Template metaprogram to calculate a type for a matrix whose
- * underlying scalar is converted from the second template
- * parameter type to the first.
- *
- * This is the case for a vector container type.
- *
- * @tparam T result scalar type.
- * @tparam S input matrix scalar type
- */
-template <typename T, typename S>
-struct promote_scalar_type<T,
-                           Eigen::Matrix<S, Eigen::Dynamic, Eigen::Dynamic> > {
-  /**
-   * The promoted type.
-   */
-  using type = Eigen::Matrix<typename promote_scalar_type<T, S>::type,
-                             Eigen::Dynamic, Eigen::Dynamic>;
-};
-
-/**
- * Template metaprogram to calculate a type for a vector whose
- * underlying scalar is converted from the second template
+ * Template metaprogram to calculate a type for a matrix, vector, row vector or
+ * Eigen::Array whose underlying scalar is converted from the second template
  * parameter type to the first.
  *
  * @tparam T result scalar type.
- * @tparam S input vector scalar type
+ * @tparam S input matrix type
  */
 template <typename T, typename S>
-struct promote_scalar_type<T, Eigen::Matrix<S, Eigen::Dynamic, 1> > {
+struct promote_scalar_type<T, S, require_eigen_t<S>> {
   /**
    * The promoted type.
    */
-  using type = Eigen::Matrix<typename promote_scalar_type<T, S>::type,
-                             Eigen::Dynamic, 1>;
-};
-
-/**
- * Template metaprogram to calculate a type for a row vector whose
- * underlying scalar is converted from the second template
- * parameter type to the first.
- *
- * @tparam T result scalar type.
- * @tparam S input row vector scalar type
- */
-template <typename T, typename S>
-struct promote_scalar_type<T, Eigen::Matrix<S, 1, Eigen::Dynamic> > {
-  /**
-   * The promoted type.
-   */
-  using type = Eigen::Matrix<typename promote_scalar_type<T, S>::type, 1,
-                             Eigen::Dynamic>;
+  using type = typename std::conditional<
+      std::is_same<typename Eigen::internal::traits<S>::XprKind,
+                   Eigen::MatrixXpr>::value,
+      Eigen::Matrix<typename promote_scalar_type<T, typename S::Scalar>::type,
+                    S::RowsAtCompileTime, S::ColsAtCompileTime>,
+      Eigen::Array<typename promote_scalar_type<T, typename S::Scalar>::type,
+                   S::RowsAtCompileTime, S::ColsAtCompileTime>>::type;
 };
 
 }  // namespace math

@@ -12,7 +12,7 @@ namespace math {
  * @tparam T result scalar type.
  * @tparam S input type
  */
-template <typename T, typename S>
+template <typename T, typename S, typename Enable = void>
 struct promote_scalar_type {
   /**
    * The promoted type.
