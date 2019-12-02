@@ -1,7 +1,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathMatrix, trace) {
+TEST(MathMatrixPrimMat, trace) {
   using stan::math::trace;
   stan::math::matrix_d m;
   EXPECT_FLOAT_EQ(0.0, trace(m));

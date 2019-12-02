@@ -5,7 +5,7 @@
 
 using stan::math::check_greater_or_equal;
 
-TEST(ErrorHandlingScalar, CheckGreaterOrEqualMatrix) {
+TEST(ErrorHandlingMat, CheckGreaterOrEqualMatrix) {
   const char* function = "check_greater_or_equal";
   double x;
   double low;
@@ -119,7 +119,7 @@ TEST(ErrorHandlingScalar, CheckGreaterOrEqualMatrix) {
       << "check_greater_or_equal: double, matrix<3, 1>";
 }
 
-TEST(ErrorHandlingScalar, CheckGreaterOrEqual_Matrix_one_indexed_message) {
+TEST(ErrorHandlingMat, CheckGreaterOrEqual_Matrix_one_indexed_message) {
   const char* function = "check_greater_or_equal";
   double x;
   double low;
@@ -177,7 +177,7 @@ TEST(ErrorHandlingScalar, CheckGreaterOrEqual_Matrix_one_indexed_message) {
       << message;
 }
 
-TEST(ErrorHandlingScalar, CheckGreaterOrEqual_nan) {
+TEST(ErrorHandlingMat, CheckGreaterOrEqual_nan) {
   const char* function = "check_greater_or_equal";
   double nan = std::numeric_limits<double>::quiet_NaN();
 

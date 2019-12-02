@@ -1,7 +1,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathMatrix, diagonal) {
+TEST(MathMatrixPrimMat, diagonal) {
   stan::math::matrix_d m0;
 
   using stan::math::diagonal;

@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MetaTraits, VectorBuilder_false_false) {
+TEST(MetaTraitsPrimArr, VectorBuilder_false_false) {
   using stan::VectorBuilder;
   using stan::length;
   using std::vector;
@@ -14,7 +14,7 @@ TEST(MetaTraits, VectorBuilder_false_false) {
   EXPECT_THROW(dvv2.data(), std::logic_error);
 }
 
-TEST(MetaTraits, VectorBuilder_true_false) {
+TEST(MetaTraitsPrimArr, VectorBuilder_true_false) {
   using stan::VectorBuilder;
   using stan::length;
   using std::vector;

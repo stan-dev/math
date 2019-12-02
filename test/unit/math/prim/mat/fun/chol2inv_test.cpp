@@ -2,7 +2,7 @@
 #include <boost/random/mersenne_twister.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathMatrix, chol2inv_exception) {
+TEST(MathMatrixPrimMat, chol2inv_exception) {
   using stan::math::chol2inv;
 
   stan::math::matrix_d m1(2, 3);
@@ -18,7 +18,7 @@ TEST(MathMatrix, chol2inv_exception) {
   EXPECT_THROW(chol2inv(m2), std::domain_error);
 }
 
-TEST(MathMatrix, chol2inv) {
+TEST(MathMatrixPrimMat, chol2inv) {
   using stan::math::chol2inv;
   using stan::math::cholesky_decompose;
   using stan::math::inverse_spd;
@@ -38,7 +38,7 @@ TEST(MathMatrix, chol2inv) {
       EXPECT_FLOAT_EQ(Y_inv(i, j), Y_inv2(i, j));
 }
 
-TEST(MathMatrix, chol2inv01) {
+TEST(MathMatrixPrimMat, chol2inv01) {
   using stan::math::chol2inv;
   using stan::math::matrix_d;
 

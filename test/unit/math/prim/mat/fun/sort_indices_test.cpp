@@ -36,7 +36,7 @@ void test_sort_indices_asc() {
   EXPECT_EQ(idx_t(0), z.size());
 }
 
-TEST(MathMatrix, sort_indices_asc) {
+TEST(MathMatrixPrimMat, sort_indices_asc) {
   using stan::math::sort_indices_asc;
 
   EXPECT_EQ(0U, sort_indices_asc(std::vector<int>(0)).size());
@@ -80,7 +80,7 @@ void test_sort_indices_desc() {
   EXPECT_EQ(idx_t(0), z.size());
 }
 
-TEST(MathMatrix, sort_indices_desc) {
+TEST(MathMatrixPrimMat, sort_indices_desc) {
   using stan::math::sort_indices_desc;
 
   EXPECT_EQ(0U, sort_indices_desc(std::vector<int>(0)).size());

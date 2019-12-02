@@ -2,14 +2,30 @@
 #define STAN_MATH_PRIM_SCAL_FUN_INC_BETA_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/scal/err/check_not_nan.hpp>
+#include <stan/math/prim/scal/fun/boost_policy.hpp>
 #include <boost/math/special_functions/beta.hpp>
 
 namespace stan {
 namespace math {
 
+/**
+ * The normalized incomplete beta function of a, b, with outcome x.
+ *
+ * Used to compute the cumulative density function for the beta
+ * distribution.
+ *
+ * @param a Shape parameter a <= 0; a and b can't both be 0
+ * @param b Shape parameter b <= 0
+ * @param x Random variate. 0 <= x <= 1
+ * @throws if constraints are violated or if any argument is NaN
+ * @return The normalized incomplete beta function.
+ */
 inline double inc_beta(double a, double b, double x) {
-  using boost::math::ibeta;
-  return ibeta(a, b, x);
+  check_not_nan("ibeta", "a", a);
+  check_not_nan("ibeta", "b", b);
+  check_not_nan("ibeta", "x", x);
+  return boost::math::ibeta(a, b, x, boost_policy_t());
 }
 
 }  // namespace math

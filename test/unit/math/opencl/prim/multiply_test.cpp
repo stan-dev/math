@@ -8,7 +8,7 @@
   for (int i = 0; i < A.size(); i++)    \
     EXPECT_NEAR(A(i), B(i), DELTA);
 
-TEST(MathMatrix, vector_row_vector) {
+TEST(MathMatrixOpenCLPrim, vector_row_vector) {
   stan::math::vector_d v(3);
   stan::math::row_vector_d rv(3);
   stan::math::matrix_cl<double> v_cl(v);
@@ -17,7 +17,7 @@ TEST(MathMatrix, vector_row_vector) {
   EXPECT_NO_THROW(m_cl = rv_cl * v_cl);
 }
 
-TEST(MathMatrix, one_dim_zero_matrix) {
+TEST(MathMatrixOpenCLPrim, one_dim_zero_matrix) {
   stan::math::matrix_d m0(5, 0);
   stan::math::matrix_d m1(0, 3);
 
@@ -32,7 +32,7 @@ TEST(MathMatrix, one_dim_zero_matrix) {
   EXPECT_NO_THROW(2.0 * m1_cl);
 }
 
-TEST(MathMatrix, zero_result_matrix) {
+TEST(MathMatrixOpenCLPrim, zero_result_matrix) {
   stan::math::matrix_d m0(0, 5);
   stan::math::matrix_d m1(5, 0);
 
@@ -41,7 +41,7 @@ TEST(MathMatrix, zero_result_matrix) {
   EXPECT_NO_THROW(m0_cl * m1_cl);
 }
 
-TEST(MathMatrix, zero_size_input_matrix) {
+TEST(MathMatrixOpenCLPrim, zero_size_input_matrix) {
   stan::math::matrix_d m0(0, 0);
   stan::math::matrix_d m1(0, 0);
 
@@ -53,7 +53,7 @@ TEST(MathMatrix, zero_size_input_matrix) {
   EXPECT_NO_THROW(2.0 * m0_cl);
 }
 
-TEST(MathMatrix, non_matching_dim_excpetion) {
+TEST(MathMatrixOpenCLPrim, non_matching_dim_excpetion) {
   stan::math::matrix_d m0(5, 3);
   stan::math::matrix_d m1(2, 6);
 
@@ -62,7 +62,7 @@ TEST(MathMatrix, non_matching_dim_excpetion) {
   EXPECT_THROW(m0_cl * m1_cl, std::invalid_argument);
 }
 
-TEST(MathMatrix, multiply_scalar) {
+TEST(MathMatrixOpenCLPrim, multiply_scalar) {
   auto v = stan::math::vector_d::Random(25).eval();
   stan::math::vector_d v_cl_res(25);
   auto rv = stan::math::row_vector_d::Random(25).eval();
@@ -91,7 +91,7 @@ TEST(MathMatrix, multiply_scalar) {
   EXPECT_MATRIX_NEAR(m, m_cl_res, 1e-10);
 }
 
-TEST(MathMatrix, row_vector_vector) {
+TEST(MathMatrixOpenCLPrim, row_vector_vector) {
   auto v = stan::math::vector_d::Random(5).eval();
   auto rv = stan::math::row_vector_d::Random(5).eval();
   stan::math::matrix_d m0(1, 1);
@@ -116,7 +116,7 @@ TEST(MathMatrix, row_vector_vector) {
   EXPECT_MATRIX_NEAR(m1, m1_cl_res, 1e-10);
 }
 
-TEST(MathMatrix, matrix_vector_small) {
+TEST(MathMatrixOpenCLPrim, matrix_vector_small) {
   auto m = stan::math::matrix_d::Random(4, 5).eval();
   auto v = stan::math::vector_d::Random(5).eval();
   stan::math::matrix_d m0(4, 1);
@@ -134,7 +134,7 @@ TEST(MathMatrix, matrix_vector_small) {
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 }
 
-TEST(MathMatrix, matrix_vector_big) {
+TEST(MathMatrixOpenCLPrim, matrix_vector_big) {
   auto m = stan::math::matrix_d::Random(400, 600).eval();
   auto v = stan::math::vector_d::Random(600).eval();
   stan::math::matrix_d m0(400, 1);
@@ -152,7 +152,7 @@ TEST(MathMatrix, matrix_vector_big) {
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 }
 
-TEST(MathMatrix, row_vector_matrix_small) {
+TEST(MathMatrixOpenCLPrim, row_vector_matrix_small) {
   auto m = stan::math::matrix_d::Random(5, 4).eval();
   auto rv = stan::math::row_vector_d::Random(5).eval();
   stan::math::matrix_d m0(1, 4);
@@ -170,7 +170,7 @@ TEST(MathMatrix, row_vector_matrix_small) {
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 }
 
-TEST(MathMatrix, row_vector_matrix_big) {
+TEST(MathMatrixOpenCLPrim, row_vector_matrix_big) {
   auto m = stan::math::matrix_d::Random(600, 400).eval();
   auto rv = stan::math::row_vector_d::Random(600).eval();
   stan::math::matrix_d m0(1, 400);
@@ -188,7 +188,7 @@ TEST(MathMatrix, row_vector_matrix_big) {
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 }
 
-TEST(MathMatrix, matrix_vector_tri_small) {
+TEST(MathMatrixOpenCLPrim, matrix_vector_tri_small) {
   auto m = stan::math::matrix_d::Random(4, 5).eval();
   auto v = stan::math::vector_d::Random(5).eval();
   stan::math::matrix_d m0(4, 1);
@@ -261,7 +261,7 @@ TEST(MathMatrix, matrix_vector_tri_small) {
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 }
 
-TEST(MathMatrix, matrix_vector_tri_big) {
+TEST(MathMatrixOpenCLPrim, matrix_vector_tri_big) {
   auto m = stan::math::matrix_d::Random(400, 600).eval();
   auto v = stan::math::vector_d::Random(600).eval();
   stan::math::matrix_d m0(400, 1);
@@ -334,7 +334,7 @@ TEST(MathMatrix, matrix_vector_tri_big) {
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 }
 
-TEST(MathMatrix, row_vector_matrix_tri_small) {
+TEST(MathMatrixOpenCLPrim, row_vector_matrix_tri_small) {
   auto m = stan::math::matrix_d::Random(5, 4).eval();
   auto rv = stan::math::row_vector_d::Random(5).eval();
   stan::math::matrix_d m0(1, 4);
@@ -412,7 +412,7 @@ TEST(MathMatrix, row_vector_matrix_tri_small) {
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 }
 
-TEST(MathMatrix, row_vector_matrix_tri_big) {
+TEST(MathMatrixOpenCLPrim, row_vector_matrix_tri_big) {
   auto m = stan::math::matrix_d::Random(600, 400).eval();
   auto rv = stan::math::row_vector_d::Random(600).eval();
   stan::math::matrix_d m0(1, 400);
@@ -490,7 +490,7 @@ TEST(MathMatrix, row_vector_matrix_tri_big) {
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
 }
 
-TEST(MathMatrix, multiply_small) {
+TEST(MathMatrixOpenCLPrim, multiply_small) {
   using stan::math::multiply;
   auto m1 = stan::math::matrix_d::Random(3, 3).eval();
   auto m2 = stan::math::matrix_d::Random(3, 3).eval();
@@ -508,7 +508,7 @@ TEST(MathMatrix, multiply_small) {
   EXPECT_MATRIX_NEAR(m3, m3_cl_res, 1e-10);
 }
 
-TEST(MathMatrix, multiply_big) {
+TEST(MathMatrixOpenCLPrim, multiply_big) {
   using stan::math::multiply;
   int size = 512;
   auto m1 = stan::math::matrix_d::Random(size, size).eval();
@@ -527,7 +527,7 @@ TEST(MathMatrix, multiply_big) {
   EXPECT_MATRIX_NEAR(m3, m3_cl_res, 1e-10);
 }
 
-TEST(MathMatrix, lower_tri_rect_multiply_small) {
+TEST(MathMatrixOpenCLPrim, lower_tri_rect_multiply_small) {
   auto m1 = stan::math::matrix_d::Random(3, 3).eval();
   auto m2 = stan::math::matrix_d::Random(3, 3).eval();
   stan::math::matrix_d m3_cl_res(3, 3);
@@ -544,7 +544,7 @@ TEST(MathMatrix, lower_tri_rect_multiply_small) {
   EXPECT_MATRIX_NEAR(m3, m3_cl_res, 1e-10);
 }
 
-TEST(MathMatrix, lower_tri_rect_multiply_big) {
+TEST(MathMatrixOpenCLPrim, lower_tri_rect_multiply_big) {
   int size = 512;
   auto m1 = stan::math::matrix_d::Random(size, size).eval();
   auto m2 = stan::math::matrix_d::Random(size, size).eval();
@@ -562,7 +562,7 @@ TEST(MathMatrix, lower_tri_rect_multiply_big) {
   EXPECT_MATRIX_NEAR(m3, m3_cl_res, 1e-10);
 }
 
-TEST(MathMatrix, lower_tri_rect_multiply_big_rect) {
+TEST(MathMatrixOpenCLPrim, lower_tri_rect_multiply_big_rect) {
   int size = 321;
   auto m1 = stan::math::matrix_d::Random(size, size).eval();
   auto m2 = stan::math::matrix_d::Random(size, size * 3).eval();
@@ -580,7 +580,7 @@ TEST(MathMatrix, lower_tri_rect_multiply_big_rect) {
   EXPECT_MATRIX_NEAR(m3, m3_cl_res, 1e-10);
 }
 
-TEST(MathMatrix, upper_tri_rect_multiply_small) {
+TEST(MathMatrixOpenCLPrim, upper_tri_rect_multiply_small) {
   auto m1 = stan::math::matrix_d::Random(3, 3).eval();
   auto m2 = stan::math::matrix_d::Random(3, 3).eval();
   stan::math::matrix_d m3_cl_res(3, 3);
@@ -597,7 +597,7 @@ TEST(MathMatrix, upper_tri_rect_multiply_small) {
   EXPECT_MATRIX_NEAR(m3, m3_cl_res, 1e-10);
 }
 
-TEST(MathMatrix, upper_tri_rect_multiply_big) {
+TEST(MathMatrixOpenCLPrim, upper_tri_rect_multiply_big) {
   int size = 472;
   auto m1 = stan::math::matrix_d::Random(size, size).eval();
   auto m2 = stan::math::matrix_d::Random(size, size).eval();
@@ -615,7 +615,7 @@ TEST(MathMatrix, upper_tri_rect_multiply_big) {
   EXPECT_MATRIX_NEAR(m3, m3_cl_res, 1e-10);
 }
 
-TEST(MathMatrix, upper_tri_rect_multiply_big_rect) {
+TEST(MathMatrixOpenCLPrim, upper_tri_rect_multiply_big_rect) {
   int size = 463;
   auto m1 = stan::math::matrix_d::Random(size, size).eval();
   auto m2 = stan::math::matrix_d::Random(size, size * 3).eval();
@@ -633,7 +633,7 @@ TEST(MathMatrix, upper_tri_rect_multiply_big_rect) {
   EXPECT_MATRIX_NEAR(m3, m3_cl_res, 1e-10);
 }
 
-TEST(MathMatrix, rect_lower_tri_multiply_small) {
+TEST(MathMatrixOpenCLPrim, rect_lower_tri_multiply_small) {
   auto m1 = stan::math::matrix_d::Random(3, 3).eval();
   auto m2 = stan::math::matrix_d::Random(3, 3).eval();
   stan::math::matrix_d m3_cl_res(3, 3);
@@ -650,7 +650,7 @@ TEST(MathMatrix, rect_lower_tri_multiply_small) {
   EXPECT_MATRIX_NEAR(m3, m3_cl_res, 1e-10);
 }
 
-TEST(MathMatrix, rect_lower_tri_multiply_big) {
+TEST(MathMatrixOpenCLPrim, rect_lower_tri_multiply_big) {
   int size = 451;
   auto m1 = stan::math::matrix_d::Random(size, size).eval();
   auto m2 = stan::math::matrix_d::Random(size, size).eval();
@@ -668,7 +668,7 @@ TEST(MathMatrix, rect_lower_tri_multiply_big) {
   EXPECT_MATRIX_NEAR(m3, m3_cl_res, 1e-10);
 }
 
-TEST(MathMatrix, rect_lower_tri_multiply_big_rect) {
+TEST(MathMatrixOpenCLPrim, rect_lower_tri_multiply_big_rect) {
   int size = 444;
   auto m1 = stan::math::matrix_d::Random(size, size).eval();
   auto m2 = stan::math::matrix_d::Random(size, size * 3).eval();
@@ -686,7 +686,7 @@ TEST(MathMatrix, rect_lower_tri_multiply_big_rect) {
   EXPECT_MATRIX_NEAR(m3, m3_cl_res, 1e-10);
 }
 
-TEST(MathMatrix, rect_upper_tri_multiply_small) {
+TEST(MathMatrixOpenCLPrim, rect_upper_tri_multiply_small) {
   auto m1 = stan::math::matrix_d::Random(3, 3).eval();
   auto m2 = stan::math::matrix_d::Random(3, 3).eval();
   stan::math::matrix_d m3_cl_res(3, 3);
@@ -703,7 +703,7 @@ TEST(MathMatrix, rect_upper_tri_multiply_small) {
   EXPECT_MATRIX_NEAR(m3, m3_cl_res, 1e-10);
 }
 
-TEST(MathMatrix, rect_upper_tri_multiply_big) {
+TEST(MathMatrixOpenCLPrim, rect_upper_tri_multiply_big) {
   int size = 468;
   auto m1 = stan::math::matrix_d::Random(size, size).eval();
   auto m2 = stan::math::matrix_d::Random(size, size).eval();
@@ -721,7 +721,7 @@ TEST(MathMatrix, rect_upper_tri_multiply_big) {
   EXPECT_MATRIX_NEAR(m3, m3_cl_res, 1e-10);
 }
 
-TEST(MathMatrix, rect_upper_tri_multiply_big_rect) {
+TEST(MathMatrixOpenCLPrim, rect_upper_tri_multiply_big_rect) {
   int size = 345;
   auto m1 = stan::math::matrix_d::Random(size * 3, size).eval();
   auto m2 = stan::math::matrix_d::Random(size, size).eval();
@@ -739,7 +739,7 @@ TEST(MathMatrix, rect_upper_tri_multiply_big_rect) {
   EXPECT_MATRIX_NEAR(m3, m3_cl_res, 1e-10);
 }
 
-TEST(MathMatrix, multiply_big_split_4) {
+TEST(MathMatrixOpenCLPrim, multiply_big_split_4) {
   using stan::math::multiply;
   int size = 512;
   auto m1 = stan::math::matrix_d::Random(size, size * 2).eval();
@@ -758,7 +758,7 @@ TEST(MathMatrix, multiply_big_split_4) {
   EXPECT_MATRIX_NEAR(m3, m3_cl_res, 1e-10);
 }
 
-TEST(MathMatrix, multiply_big_split_11) {
+TEST(MathMatrixOpenCLPrim, multiply_big_split_11) {
   using stan::math::multiply;
   int size = 433;
   auto m1 = stan::math::matrix_d::Random(size, size * 11).eval();
@@ -777,7 +777,7 @@ TEST(MathMatrix, multiply_big_split_11) {
   EXPECT_MATRIX_NEAR(m3, m3_cl_res, 1e-10);
 }
 
-TEST(MathMatrix, multiply_small_split_big) {
+TEST(MathMatrixOpenCLPrim, multiply_small_split_big) {
   using stan::math::multiply;
   int size = 32;
   auto m1 = stan::math::matrix_d::Random(size, size * 10).eval();

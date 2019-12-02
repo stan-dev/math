@@ -5,7 +5,7 @@
 
 using stan::math::check_less_or_equal;
 
-TEST(ErrorHandlingScalar, CheckLessOrEqual_Matrix) {
+TEST(ErrorHandlingMat, CheckLessOrEqual_Matrix) {
   const char* function = "check_less_or_equal";
   double x;
   double high;
@@ -83,7 +83,7 @@ TEST(ErrorHandlingScalar, CheckLessOrEqual_Matrix) {
   EXPECT_NO_THROW(check_less_or_equal(function, "x", x, high_vec));
 }
 
-TEST(ErrorHandlingScalar, CheckLessOrEqual_Matrix_one_indexed_message) {
+TEST(ErrorHandlingMat, CheckLessOrEqual_Matrix_one_indexed_message) {
   const char* function = "check_less";
   double x;
   double high;
@@ -141,7 +141,7 @@ TEST(ErrorHandlingScalar, CheckLessOrEqual_Matrix_one_indexed_message) {
       << message;
 }
 
-TEST(ErrorHandlingScalar, CheckLessOrEqual_nan) {
+TEST(ErrorHandlingMat, CheckLessOrEqual_nan) {
   const char* function = "check_less_or_equal";
   double nan = std::numeric_limits<double>::quiet_NaN();
   Eigen::Matrix<double, Eigen::Dynamic, 1> x_vec(3);

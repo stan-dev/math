@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <vector>
 
-TEST(MathMatrixCL, matrix_cl_var_creation) {
+TEST(MathMatrixRevCL, matrix_cl_var_creation) {
   using stan::math::matrix_cl;
   using stan::math::matrix_v;
   using stan::math::var;

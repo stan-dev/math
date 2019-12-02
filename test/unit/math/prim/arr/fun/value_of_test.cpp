@@ -3,7 +3,7 @@
 #include <vector>
 #include <type_traits>
 
-TEST(MathMatrix, value_of) {
+TEST(MathMatrixPrimArr, value_of) {
   using stan::math::value_of;
   using std::vector;
 

@@ -1,8 +1,9 @@
-#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
+#include <stan/math/rev/mat.hpp>
+#include <test/unit/util.hpp>
 #include <limits>
 
-TEST(AgradRevErrorHandlingMatrix, checkPosDefiniteMatrix_nan) {
+TEST(AgradRevErrorHandlingMatrix, checkPosSemiDefiniteMatrix_nan) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -13,8 +14,9 @@ TEST(AgradRevErrorHandlingMatrix, checkPosDefiniteMatrix_nan) {
 
   y.resize(1, 1);
   y << nan;
-  EXPECT_THROW(check_pos_semidefinite("checkPosDefiniteMatrix", "y", y),
-               std::domain_error);
+  EXPECT_THROW_MSG(check_pos_semidefinite("checkPosDefiniteMatrix", "y", y),
+                   std::domain_error,
+                   "checkPosDefiniteMatrix: y[1] is nan, but must not be nan!");
 
   y.resize(3, 3);
   y << 2, -1, 0, -1, 2, -1, 0, -1, 2;
@@ -34,7 +36,7 @@ TEST(AgradRevErrorHandlingMatrix, checkPosDefiniteMatrix_nan) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRevErrorHandlingMatrix, CheckPosDefiniteMatrixVarCheck) {
+TEST(AgradRevErrorHandlingMatrix, checkPosSemiDefiniteMatrixVarCheck) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -43,21 +45,16 @@ TEST(AgradRevErrorHandlingMatrix, CheckPosDefiniteMatrixVarCheck) {
   double nan = std::numeric_limits<double>::quiet_NaN();
   using stan::math::check_pos_semidefinite;
 
-  y.resize(1, 1);
-  y << nan;
-  // EXPECT_THROW(check_pos_semidefinite("checkPosDefiniteMatrix", "y", y),
-  //              std::domain_error);
-
   y.resize(3, 3);
   y << 2, -1, 0, -1, 2, -1, 0, -1, 2;
 
   size_t stack_before_call
       = stan::math::ChainableStack::instance_->var_stack_.size();
-  EXPECT_EQ(10U, stack_before_call);
+  EXPECT_EQ(9U, stack_before_call);
 
   EXPECT_NO_THROW(check_pos_semidefinite("checkPosDefiniteMatrix", "y", y));
   size_t stack_after_call
       = stan::math::ChainableStack::instance_->var_stack_.size();
 
-  EXPECT_EQ(10U, stack_after_call);
+  EXPECT_EQ(9U, stack_after_call);
 }

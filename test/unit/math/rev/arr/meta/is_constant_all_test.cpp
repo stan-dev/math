@@ -9,7 +9,7 @@ void expect_not_const() {
   EXPECT_FALSE(temp);
 }
 
-TEST(MetaTraits, isConstantStruct) {
+TEST(MetaTraitsRevArr, isConstantStruct) {
   using std::vector;
 
   expect_not_const<vector<stan::math::var> >();

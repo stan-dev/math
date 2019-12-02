@@ -6,7 +6,7 @@
 #include <gtest/gtest.h>
 #include <algorithm>
 
-TEST(MathMatrixCL, zero_m_exception_pass) {
+TEST(MathMatrixRevCL, zero_m_exception_pass) {
   stan::math::matrix_cl<double> m(1, 1);
 
   EXPECT_NO_THROW(m.zeros<stan::math::matrix_cl_view::Entire>());
@@ -35,7 +35,7 @@ TEST(MathMatrixCL, zero_m_exception_pass) {
   EXPECT_NO_THROW(m0.zeros_strict_tri<stan::math::matrix_cl_view::Upper>());
 }
 
-TEST(MathMatrixCL, zeros_strict_m_value_check) {
+TEST(MathMatrixRevCL, zeros_strict_m_value_check) {
   stan::math::matrix_d m0(2, 2);
   stan::math::matrix_d m0_dst(2, 2);
   m0 << 2, 2, 2, 2;
@@ -65,7 +65,7 @@ TEST(MathMatrixCL, zeros_strict_m_value_check) {
   EXPECT_EQ(2, m0_dst(1, 1));
 }
 
-TEST(MathMatrixCL, zeros_m_value_check) {
+TEST(MathMatrixRevCL, zeros_m_value_check) {
   stan::math::matrix_d m0(2, 2);
   stan::math::matrix_d m0_dst(2, 2);
   m0 << 2, 2, 2, 2;

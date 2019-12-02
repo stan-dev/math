@@ -27,3 +27,12 @@ TEST(ProbHypergeometric, log_matches_lpmf) {
       (stan::math::hypergeometric_lpmf<int, int, double, double>(n, N, a, b)),
       (stan::math::hypergeometric_log<int, int, double, double>(n, N, a, b)));
 }
+
+TEST(ProbHypergeometric, n_equal_N) {
+  int n = 2;
+  int N = 2;
+  int a = 2;
+  int b = 4;
+
+  EXPECT_NO_THROW(stan::math::hypergeometric_lpmf(n, N, a, b));
+}

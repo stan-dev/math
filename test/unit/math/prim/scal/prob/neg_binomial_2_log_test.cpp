@@ -4,7 +4,7 @@
 #include <boost/math/distributions.hpp>
 #include <string>
 
-TEST(ProbDistributionsNegBinomial, error_check) {
+TEST(ProbDistributionsNegBinomial2Log, error_check) {
   using std::log;
 
   boost::random::mt19937 rng;
@@ -60,7 +60,7 @@ TEST(ProbDistributionsNegBinomial, error_check) {
   }
 }
 
-TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest) {
+TEST(ProbDistributionsNegBinomial2Log, chiSquareGoodnessFitTest) {
   boost::random::mt19937 rng;
   int N = 1000;
   int K = stan::math::round(2 * std::pow(N, 0.4));
@@ -98,7 +98,7 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest) {
   EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
 }
 
-TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest2) {
+TEST(ProbDistributionsNegBinomial2Log, chiSquareGoodnessFitTest2) {
   boost::random::mt19937 rng;
   int N = 1000;
   int K = stan::math::round(2 * std::pow(N, 0.4));
@@ -136,7 +136,7 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest2) {
   EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
 }
 
-TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest3) {
+TEST(ProbDistributionsNegBinomial2Log, chiSquareGoodnessFitTest3) {
   boost::random::mt19937 rng;
   int N = 1000;
   int K = stan::math::round(2 * std::pow(N, 0.4));
