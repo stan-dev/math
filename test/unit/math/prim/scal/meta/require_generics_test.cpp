@@ -169,12 +169,18 @@ TEST(requires_prim_scal, double_or_int_test) {
 // Double or Int
 TEST(requires_prim_scal, double_or_int_test) {
   using stan::test::require_scal_checker;
-  require_scal_checker<stan::require_string_convertible_t, string, const char*>::unary();
-  require_scal_checker<stan::require_not_string_convertible_t, string, const char*>::not_unary();
-  require_scal_checker<stan::require_all_string_convertible_t, string, const char*>::all();
-  require_scal_checker<stan::require_all_not_string_convertible_t, string, const char*>::all_not();
-  require_scal_checker<stan::require_any_string_convertible_t, string, const char*>::any();
-  require_scal_checker<stan::require_any_not_string_convertible_t, string, const char*>::any_not();
+  require_scal_checker<stan::require_string_convertible_t, string,
+                       const char*>::unary();
+  require_scal_checker<stan::require_not_string_convertible_t, string,
+                       const char*>::not_unary();
+  require_scal_checker<stan::require_all_string_convertible_t, string,
+                       const char*>::all();
+  require_scal_checker<stan::require_all_not_string_convertible_t, string,
+                       const char*>::all_not();
+  require_scal_checker<stan::require_any_string_convertible_t, string,
+                       const char*>::any();
+  require_scal_checker<stan::require_any_not_string_convertible_t, string,
+                       const char*>::any_not();
 }
 
 TEST(requires_prim_scal, arithmetic_test) {
