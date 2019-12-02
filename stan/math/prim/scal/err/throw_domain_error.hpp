@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_ERR_DOMAIN_ERROR_HPP
-#define STAN_MATH_PRIM_SCAL_ERR_DOMAIN_ERROR_HPP
+#ifndef STAN_MATH_PRIM_SCAL_ERR_THROW_DOMAIN_ERROR_HPP
+#define STAN_MATH_PRIM_SCAL_ERR_THROW_DOMAIN_ERROR_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <typeinfo>
@@ -24,8 +24,8 @@ namespace math {
  * @throw std::domain_error Always.
  */
 template <typename T>
-inline void domain_error(const char* function, const char* name, const T& y,
-                         const char* msg1, const char* msg2) {
+inline void throw_domain_error(const char* function, const char* name,
+                               const T& y, const char* msg1, const char* msg2) {
   std::ostringstream message;
   // hack to remove -Waddress, -Wnonnull-compare warnings from GCC 6
   const T* y_ptr = &y;
@@ -47,9 +47,9 @@ inline void domain_error(const char* function, const char* name, const T& y,
  * @throw std::domain_error Always.
  */
 template <typename T>
-inline void domain_error(const char* function, const char* name, const T& y,
-                         const char* msg1) {
-  domain_error(function, name, y, msg1, "");
+inline void throw_domain_error(const char* function, const char* name,
+                               const T& y, const char* msg1) {
+  throw_domain_error(function, name, y, msg1, "");
 }
 
 }  // namespace math

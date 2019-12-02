@@ -7,7 +7,7 @@
 #include <stan/math/opencl/kernels/sub_block.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/scal/err/throw_domain_error.hpp>
 #include <cl.hpp>
 #include <vector>
 #include <algorithm>
@@ -35,7 +35,8 @@ inline void matrix_cl<T, require_arithmetic_t<T>>::sub_block(
   }
   if ((A_i + nrows) > A.rows() || (A_j + ncols) > A.cols()
       || (this_i + nrows) > this->rows() || (this_j + ncols) > this->cols()) {
-    domain_error("sub_block", "submatrix in *this", " is out of bounds", "");
+    throw_domain_error("sub_block", "submatrix in *this",
+                       " is out of bounds", "");
   }
   cl::CommandQueue cmdQueue = opencl_context.queue();
   if (A.view() == matrix_cl_view::Entire) {

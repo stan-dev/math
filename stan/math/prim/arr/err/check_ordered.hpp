@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_ARR_ERR_CHECK_ORDERED_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/scal/err/throw_domain_error.hpp>
 #include <sstream>
 #include <vector>
 #include <string>
@@ -32,7 +32,8 @@ void check_ordered(const char* function, const char* name,
       std::ostringstream msg2;
       msg2 << ", but should be greater than the previous element, " << y[n - 1];
       std::string msg2_str(msg2.str());
-      domain_error(function, name, y[n], msg1_str.c_str(), msg2_str.c_str());
+      throw_domain_error(function, name, y[n], msg1_str.c_str(),
+                          msg2_str.c_str());
     }
   }
 }

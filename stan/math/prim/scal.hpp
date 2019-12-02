@@ -20,8 +20,8 @@
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
-#include <stan/math/prim/scal/err/domain_error_vec.hpp>
+#include <stan/math/prim/scal/err/throw_domain_error.hpp>
+#include <stan/math/prim/scal/err/throw_domain_error_vec.hpp>
 #include <stan/math/prim/scal/err/invalid_argument.hpp>
 #include <stan/math/prim/scal/err/invalid_argument_vec.hpp>
 #include <stan/math/prim/scal/err/is_less_or_equal.hpp>

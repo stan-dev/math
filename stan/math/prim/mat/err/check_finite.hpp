@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_MAT_ERR_CHECK_FINITE_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/scal/err/throw_domain_error.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
@@ -30,8 +30,8 @@ struct finite<Eigen::Matrix<T, R, C>, true> {
     if (!value_of(y).allFinite()) {
       for (int n = 0; n < y.size(); ++n) {
         if (!(boost::math::isfinite)(y(n))) {
-          domain_error_vec(function, name, y, n, "is ",
-                           ", but must be finite!");
+          throw_domain_error_vec(function, name, y, n, "is ",
+                                 ", but must be finite!");
         }
       }
     }

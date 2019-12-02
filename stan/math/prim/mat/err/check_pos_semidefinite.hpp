@@ -5,7 +5,7 @@
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/value_of_rec.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/scal/err/throw_domain_error.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <sstream>
@@ -34,7 +34,7 @@ inline void check_pos_semidefinite(
   check_not_nan(function, name, y);
 
   if (y.rows() == 1 && !(y(0, 0) >= 0.0)) {
-    domain_error(function, name, "is not positive semi-definite.", "");
+    throw_domain_error(function, name, "is not positive semi-definite.", "");
   }
 
   using Eigen::Dynamic;
@@ -43,7 +43,7 @@ inline void check_pos_semidefinite(
   LDLT<Matrix<double, Dynamic, Dynamic> > cholesky = value_of_rec(y).ldlt();
   if (cholesky.info() != Eigen::Success
       || (cholesky.vectorD().array() < 0.0).any()) {
-    domain_error(function, name, "is not positive semi-definite.", "");
+    throw_domain_error(function, name, "is not positive semi-definite.", "");
   }
 }
 
@@ -62,7 +62,7 @@ inline void check_pos_semidefinite(const char* function, const char* name,
                                    const Eigen::LDLT<Derived>& cholesky) {
   if (cholesky.info() != Eigen::Success
       || (cholesky.vectorD().array() < 0.0).any()) {
-    domain_error(function, name, "is not positive semi-definite.", "");
+    throw_domain_error(function, name, "is not positive semi-definite.", "");
   }
 }
 
