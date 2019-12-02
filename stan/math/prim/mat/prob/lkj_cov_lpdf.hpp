@@ -56,7 +56,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_lpdf(
 }
 
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
-inline promote_args_t<T_y, T_loc, T_scale, T_shape> lkj_cov_lpdf(
+inline return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_lpdf(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
     const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& mu,
     const Eigen::Matrix<T_scale, Eigen::Dynamic, 1>& sigma,

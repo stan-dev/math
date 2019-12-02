@@ -58,8 +58,8 @@ TEST_F(Math, paper_example_2) {
 
 namespace paper {  // paper_example_3
 template <typename T1, typename T2, typename T3>
-inline stan::promote_args_t<T1, T2, T3> normal_log(const T1& y, const T2& mu,
-                                                   const T3& sigma) {
+inline stan::return_type_t<T1, T2, T3> normal_log(const T1& y, const T2& mu,
+                                                  const T3& sigma) {
   using std::log;
   using std::pow;
   return -0.5 * pow((y - mu) / sigma, 2.0) - log(sigma)
