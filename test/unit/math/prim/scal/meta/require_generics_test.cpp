@@ -167,7 +167,7 @@ TEST(requires_prim_scal, double_or_int_test) {
 }
 
 // Double or Int
-TEST(requires_prim_scal, double_or_int_test) {
+TEST(requires_prim_scal, require_string_convertible_test) {
   using stan::test::require_scal_checker;
   require_scal_checker<stan::require_string_convertible_t, string, const char*>::unary();
   require_scal_checker<stan::require_not_string_convertible_t, string, const char*>::not_unary();
