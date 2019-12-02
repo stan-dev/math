@@ -35,8 +35,8 @@ inline void matrix_cl<T, require_arithmetic_t<T>>::sub_block(
   }
   if ((A_i + nrows) > A.rows() || (A_j + ncols) > A.cols()
       || (this_i + nrows) > this->rows() || (this_j + ncols) > this->cols()) {
-    throw_domain_error("sub_block", "submatrix in *this",
-                       " is out of bounds", "");
+    throw_domain_error("sub_block", "submatrix in *this", " is out of bounds",
+                       "");
   }
   cl::CommandQueue cmdQueue = opencl_context.queue();
   if (A.view() == matrix_cl_view::Entire) {

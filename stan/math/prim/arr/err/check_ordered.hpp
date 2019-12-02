@@ -33,7 +33,7 @@ void check_ordered(const char* function, const char* name,
       msg2 << ", but should be greater than the previous element, " << y[n - 1];
       std::string msg2_str(msg2.str());
       throw_domain_error(function, name, y[n], msg1_str.c_str(),
-                          msg2_str.c_str());
+                         msg2_str.c_str());
     }
   }
 }

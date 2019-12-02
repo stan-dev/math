@@ -46,7 +46,7 @@ inline void check_corr_matrix(
           << ") is ";
       std::string msg_str(msg.str());
       throw_domain_error(function, name, y(k, k), msg_str.c_str(),
-                          ", but should be near 1.0");
+                         ", but should be near 1.0");
     }
   }
   check_pos_definite(function, "y", y);

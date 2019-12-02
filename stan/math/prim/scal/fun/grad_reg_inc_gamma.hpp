@@ -103,9 +103,9 @@ return_type_t<T1, T2> grad_reg_inc_gamma(T1 a, T2 z, T1 g, T1 dig,
         return gamma_p(a, z) * (dig - l) + exp(a * l) * S / g;
       }
     }
-    throw_domain_error("grad_reg_inc_gamma", "k (internal counter)", max_steps,
-                       "exceeded ",
-                       " iterations, gamma function gradient did not converge.");
+    throw_domain_error(
+        "grad_reg_inc_gamma", "k (internal counter)", max_steps, "exceeded ",
+        " iterations, gamma function gradient did not converge.");
     return INFTY;
   }
 }

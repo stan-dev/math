@@ -33,25 +33,30 @@ class ErrorHandlingScalar_throw_domain_error_vec : public ::testing::Test {
   template <class T>
   void test_throw(T y) {
     try {
-      stan::math::throw_domain_error_vec<T>(function_, y_name_, y, index_, msg1_,
-                                            msg2_);
-      FAIL() << "expecting call to throw_domain_error_vec<> to throw a domain_error, "
+      stan::math::throw_domain_error_vec<T>(function_, y_name_, y, index_,
+                                            msg1_, msg2_);
+      FAIL() << "expecting call to throw_domain_error_vec<> to throw a "
+                "domain_error, "
              << "but threw nothing";
     } catch (std::domain_error& e) {
       EXPECT_EQ(expected_message_with_message(y), e.what());
     } catch (...) {
-      FAIL() << "expecting call to throw_domain_error_vec<> to throw a domain_error, "
+      FAIL() << "expecting call to throw_domain_error_vec<> to throw a "
+                "domain_error, "
              << "but threw a different type";
     }
 
     try {
-      stan::math::throw_domain_error_vec<T>(function_, y_name_, y, index_, msg1_);
-      FAIL() << "expecting call to throw_domain_error_vec<> to throw a domain_error, "
+      stan::math::throw_domain_error_vec<T>(function_, y_name_, y, index_,
+                                            msg1_);
+      FAIL() << "expecting call to throw_domain_error_vec<> to throw a "
+                "domain_error, "
              << "but threw nothing";
     } catch (std::domain_error& e) {
       EXPECT_EQ(expected_message_without_message(y), e.what());
     } catch (...) {
-      FAIL() << "expecting call to throw_domain_error_vec<> to throw a domain_error, "
+      FAIL() << "expecting call to throw_domain_error_vec<> to throw a "
+                "domain_error, "
              << "but threw a different type";
     }
   }

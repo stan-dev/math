@@ -54,7 +54,7 @@ void check_simplex(const char* function, const char* name,
           << " = ";
       std::string msg_str(msg.str());
       throw_domain_error(function, name, theta[n], msg_str.c_str(),
-                   ", but should be greater than or equal to 0");
+                         ", but should be greater than or equal to 0");
     }
   }
 }

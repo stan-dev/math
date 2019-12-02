@@ -30,24 +30,28 @@ class ErrorHandlingScalar_throw_domain_error : public ::testing::Test {
   void test_throw(T y) {
     try {
       stan::math::throw_domain_error<T>(function_, y_name_, y, msg1_, msg2_);
-      FAIL() << "expecting call to throw_domain_error<> to throw a domain_error, "
-             << "but threw nothing";
+      FAIL()
+          << "expecting call to throw_domain_error<> to throw a domain_error, "
+          << "but threw nothing";
     } catch (std::domain_error& e) {
       EXPECT_EQ(expected_message_with_message(y), e.what());
     } catch (...) {
-      FAIL() << "expecting call to throw_domain_error<> to throw a domain_error, "
-             << "but threw a different type";
+      FAIL()
+          << "expecting call to throw_domain_error<> to throw a domain_error, "
+          << "but threw a different type";
     }
 
     try {
       stan::math::throw_domain_error<T>(function_, y_name_, y, msg1_);
-      FAIL() << "expecting call to throw_domain_error<> to throw a domain_error, "
-             << "but threw nothing";
+      FAIL()
+          << "expecting call to throw_domain_error<> to throw a domain_error, "
+          << "but threw nothing";
     } catch (std::domain_error& e) {
       EXPECT_EQ(expected_message_without_message(y), e.what());
     } catch (...) {
-      FAIL() << "expecting call to throw_domain_error<> to throw a domain_error, "
-             << "but threw a different type";
+      FAIL()
+          << "expecting call to throw_domain_error<> to throw a domain_error, "
+          << "but threw a different type";
     }
   }
 };
