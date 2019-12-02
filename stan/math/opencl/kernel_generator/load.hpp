@@ -132,6 +132,13 @@ class load_
    * @return view
    */
   inline matrix_cl_view view() const { return a_.view(); }
+
+  /**
+   * Evaluates the expression. \c load_ returns a const reference to stored
+   * matrix_cl.
+   * @return Result of the expression.
+   */
+  const T& eval() const { return a_; }
 };
 
 }  // namespace math
