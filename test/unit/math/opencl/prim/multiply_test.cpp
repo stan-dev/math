@@ -1,10 +1,8 @@
 #ifdef STAN_OPENCL
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/opencl/opencl.hpp>
-#include <boost/random/mersenne_twister.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
-boost::random::mt19937 rng;
 
 #define EXPECT_MATRIX_NEAR(A, B, DELTA) \
   for (int i = 0; i < A.size(); i++)    \

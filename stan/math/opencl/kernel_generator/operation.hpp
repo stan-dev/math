@@ -80,7 +80,9 @@ class operation : public operation_base {
   matrix_cl<ReturnScalar> eval() const {
     matrix_cl<ReturnScalar> res(derived().rows(), derived().cols(),
                                 derived().view());
-    this->evaluate_into(res);
+    if (res.size() > 0) {
+      this->evaluate_into(res);
+    }
     return res;
   }
 
