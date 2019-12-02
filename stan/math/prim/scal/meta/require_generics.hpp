@@ -328,7 +328,9 @@ template <typename T, typename... Types>
 using require_any_not_convertible_t = require_all_not_t<
     std::is_convertible<std::decay_t<T>, std::decay_t<Types>>...>;
 
-// Checks if type is something we would use for string_convertible
+/**
+ * Checks if type is implicitly convertible to std::string
+ */
 template <typename T>
 using require_string_convertible_t
     = require_t<is_string_convertible<std::decay_t<T>>>;
