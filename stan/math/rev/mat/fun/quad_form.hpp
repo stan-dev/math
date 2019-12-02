@@ -9,7 +9,6 @@
 #include <stan/math/prim/mat/fun/quad_form.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
-#include <stan/math/prim/mat/err/check_symmetric.hpp>
 #include <type_traits>
 
 namespace stan {

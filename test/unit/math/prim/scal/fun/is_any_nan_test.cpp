@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <limits>
 
-TEST(MathFunctions, is_any_nan_variadic) {
+TEST(MathFunctions, is_any_nan_variadic_prim) {
   using stan::math::is_any_nan;
   double infinity = std::numeric_limits<double>::infinity();
   double nan = std::numeric_limits<double>::quiet_NaN();

@@ -18,6 +18,7 @@ TEST(prob_transform, lkj_cov_matrix_rt) {
     EXPECT_FLOAT_EQ(x[i], xrt[i]);
   }
 }
+
 TEST(prob_transform, lkj_cov_matrix_free_exception) {
   Matrix<double, Dynamic, Dynamic> y(0, 0);
 

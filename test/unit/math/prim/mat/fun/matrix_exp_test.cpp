@@ -6,13 +6,13 @@
 #include <algorithm>
 #include <random>
 
-TEST(MathMatrix, matrix_exp_0x0) {
+TEST(MathMatrixPrimMat, matrix_exp_0x0) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m1(0, 0);
 
   expect_matrix_eq(m1, stan::math::matrix_exp(m1));
 }
 
-TEST(MathMatrix, matrix_exp_1x1) {
+TEST(MathMatrixPrimMat, matrix_exp_1x1) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m1(1, 1), m2(1, 1);
   m1 << 0;
   m2 << 1;
@@ -20,7 +20,7 @@ TEST(MathMatrix, matrix_exp_1x1) {
   expect_matrix_eq(m2, stan::math::matrix_exp(m1));
 }
 
-TEST(MathMatrix, matrix_exp_2x2) {
+TEST(MathMatrixPrimMat, matrix_exp_2x2) {
   // example from Moler & Van Loan, 2003
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m1(2, 2), m2(2, 2);
   m1 << -49, 24, -64, 31;
@@ -29,7 +29,7 @@ TEST(MathMatrix, matrix_exp_2x2) {
   expect_matrix_eq(m2, stan::math::matrix_exp(m1));
 }
 
-TEST(MathMatrix, matrix_exp_2x2_2) {
+TEST(MathMatrixPrimMat, matrix_exp_2x2_2) {
   // make sure matrix_exp doesn't use matrix_exp_2x2,
   // which would return NaN for this matrix
   // Compare to result from http:// comnuan.com/cmnn01015/
@@ -42,7 +42,7 @@ TEST(MathMatrix, matrix_exp_2x2_2) {
   expect_matrix_eq(exp_m, stan::math::matrix_exp(m));
 }
 
-TEST(MathMatrix, matrix_exp_3x3) {
+TEST(MathMatrixPrimMat, matrix_exp_3x3) {
   // example from http:// www.sosmath.com/matrix/expo/expo.html
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m1(3, 3), m2(3, 3);
   m1 << 0, 1, 2, 0, 0, -1, 0, 0, 0;
@@ -51,7 +51,7 @@ TEST(MathMatrix, matrix_exp_3x3) {
   expect_matrix_eq(m2, stan::math::matrix_exp(m1));
 }
 
-TEST(MathMatrix, matrix_exp_3x3_2) {
+TEST(MathMatrixPrimMat, matrix_exp_3x3_2) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m1(3, 3), m2(3, 3);
   m1 << 89, -66, -18, 20, -14, -4, 360, -270, -73;
   m2 << 245.95891, -182.43047, -49.11821, 93.41549, -67.3433, -18.68310,
@@ -60,7 +60,7 @@ TEST(MathMatrix, matrix_exp_3x3_2) {
   expect_matrix_eq(m2, stan::math::matrix_exp(m1));
 }
 
-TEST(MathMatrix, matrix_exp_100x100) {
+TEST(MathMatrixPrimMat, matrix_exp_100x100) {
   int size = 100;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> S
       = Eigen::MatrixXd::Identity(size, size),
@@ -96,7 +96,7 @@ TEST(MathMatrix, matrix_exp_100x100) {
       EXPECT_NEAR(exp_A(i, j), expm_A(i, j), rel_err);
 }
 
-TEST(MathMatrix, matrix_exp_exceptions) {
+TEST(MathMatrixPrimMat, matrix_exp_exceptions) {
   using stan::math::matrix_exp;
 
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m1(0, 0), m2(1, 2);
@@ -105,7 +105,7 @@ TEST(MathMatrix, matrix_exp_exceptions) {
   EXPECT_THROW(matrix_exp(m2), std::invalid_argument);
 }
 
-TEST(MathMatrix, NOT_A_TEST_matrix_num_err) {
+TEST(MathMatrixPrimMat, NOT_A_TEST_matrix_num_err) {
   // Code to showcase how dealing with very small
   // numbers (< 1e-10) can increase the relative
   // error. That is why the conditions for small

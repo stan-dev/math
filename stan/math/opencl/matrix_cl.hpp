@@ -437,7 +437,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
   }
 
   /** \ingroup opencl
-   * Construct from \c array of doubles with given rows and columns. The caller
+   * Construct from \c array with given rows and columns. The caller
    * must make sure that data is not deleted before copying is complete.
    *
    * That means `.wait()` must be called on the event associated on copying or
@@ -592,7 +592,7 @@ class matrix_cl<T, require_arithmetic_t<T>> {
   static void delete_it(cl_event e, cl_int status, void* container) {
     delete static_cast<U*>(container);
   }
-};  // namespace math
+};
 
 template <typename T>
 using matrix_cl_prim = matrix_cl<T, require_arithmetic_t<T>>;

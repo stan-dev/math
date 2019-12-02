@@ -1,7 +1,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathMatrix, mdivide_right_ldlt_val) {
+TEST(MathMatrixPrimMat, mdivide_right_ldlt_val) {
   stan::math::LDLT_factor<double, -1, -1> ldlt_Ad;
   stan::math::matrix_d Ad(2, 2);
   stan::math::matrix_d I;

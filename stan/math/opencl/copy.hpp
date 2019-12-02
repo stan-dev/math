@@ -43,7 +43,7 @@ namespace math {
 template <typename Mat, typename Mat_scalar = scalar_type_t<Mat>,
           require_eigen_vt<std::is_arithmetic, Mat>...>
 inline matrix_cl<Mat_scalar> to_matrix_cl(Mat&& src) {
-  return matrix_cl<Mat_scalar>(src);
+  return matrix_cl<Mat_scalar>(std::forward<Mat>(src));
 }
 
 /** \ingroup opencl
@@ -62,7 +62,7 @@ inline matrix_cl<Mat_scalar> to_matrix_cl(Mat&& src) {
 template <typename Vec, typename Vec_scalar = scalar_type_t<Vec>,
           require_std_vector_vt<std::is_arithmetic, Vec>...>
 inline matrix_cl<Vec_scalar> to_matrix_cl(Vec&& src) {
-  return matrix_cl<Vec_scalar>(src);
+  return matrix_cl<Vec_scalar>(std::forward<Vec>(src));
 }
 
 /** \ingroup opencl
@@ -243,7 +243,7 @@ inline T from_matrix_cl_error_code(const matrix_cl<T>& src) {
  */
 template <typename T, typename = require_arithmetic_t<std::decay_t<T>>>
 inline matrix_cl<std::decay_t<T>> to_matrix_cl(T&& src) {
-  return matrix_cl<std::decay_t<T>>(src);
+  return matrix_cl<std::decay_t<T>>(std::forward<T>(src));
 }
 
 }  // namespace math

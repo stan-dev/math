@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MetaTraits, max_size_mvt) {
+TEST(MetaTraitsPrimScal, max_size_mvt) {
   using stan::max_size_mvt;
 
   double x1 = 0, x2 = 1.0, x3 = -1.0, x4 = 4.0;

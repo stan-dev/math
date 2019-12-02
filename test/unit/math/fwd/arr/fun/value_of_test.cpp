@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMatrix, value_of) {
+TEST(MathMatrixFwdArr, value_of) {
   using stan::math::fvar;
   using stan::math::value_of;
   using std::vector;

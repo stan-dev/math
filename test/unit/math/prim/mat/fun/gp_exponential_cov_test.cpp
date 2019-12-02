@@ -179,7 +179,7 @@ TEST(MathPrimMat, vec_eigen_vec_eigen_ard_gp_exponential_cov1) {
   }
 }
 
-TEST(MathPrimMat, domain_err_training_sig_l) {
+TEST(MathPrimMat, domain_err_training_sig_l_gp_exp_cov) {
   double sigma = .2;
   double l = 7;
   double sigma_bad = -1.0;
@@ -258,7 +258,7 @@ TEST(MathPrimMat, domain_err_training_sig_l) {
   EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;
 }
 
-TEST(MathPrimMat, nan_error_training_sig_l) {
+TEST(MathPrimMat, nan_error_training_sig_l_gp_exp_cov) {
   double sigma = 0.2;
   double l = 5;
 
@@ -342,7 +342,7 @@ TEST(MathPrimMat, nan_error_training_sig_l) {
                std::domain_error);
 }
 
-TEST(MathPrimMat, check_dim_mismatch) {
+TEST(MathPrimMat, check_dim_mismatch_gp_exp_cov) {
   double sig = 1.0;
   double l = 1.0;
 
@@ -371,7 +371,7 @@ TEST(MathPrimMat, check_dim_mismatch) {
                std::invalid_argument);
 }
 
-TEST(MathPrimMat, zero_size) {
+TEST(MathPrimMat, zero_size_gp_exp_cov) {
   double sigma = 0.2;
 
   std::vector<double> l(0);
@@ -386,7 +386,7 @@ TEST(MathPrimMat, zero_size) {
   EXPECT_EQ(0, cov.cols());
 }
 
-TEST(MathPrimMat, calculations) {
+TEST(MathPrimMat, calculations_gp_exp_cov) {
   double sigma = 1.0;
   double l = 1.0;
 
@@ -406,7 +406,7 @@ TEST(MathPrimMat, calculations) {
   ASSERT_FLOAT_EQ(exp(-2), cov(0, 1));
 }
 
-TEST(MathPrimMat, calculations_ard) {
+TEST(MathPrimMat, calculations_ard_gp_exp_cov) {
   double sigma = 1.0;
 
   std::vector<double> l = {1, 2};

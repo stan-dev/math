@@ -4,19 +4,19 @@
 
 using stan::return_type;
 
-TEST(MetaTraits, ReturnTypeDouble) {
+TEST(MetaTraitsPrimScal, ReturnTypeDouble) {
   test::expect_same_type<double, return_type<double>::type>();
 }
 
-TEST(MetaTraits, ReturnTypeFloat) {
+TEST(MetaTraitsPrimScal, ReturnTypeFloat) {
   test::expect_same_type<double, return_type<float>::type>();
 }
 
-TEST(MetaTraits, ReturnTypeInt) {
+TEST(MetaTraitsPrimScal, ReturnTypeInt) {
   test::expect_same_type<double, return_type<int>::type>();
 }
 
-TEST(MetaTraits, ReturnTypeScalarTenParams) {
+TEST(MetaTraitsPrimScal, ReturnTypeScalarTenParams) {
   test::expect_same_type<double,
                          return_type<double, int, double, float, float, double,
                                      float, int, double, double>::type>();

@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMatrix, initialize) {
+TEST(MathMatrixPrimMat, initialize) {
   // 2nd template
   using stan::math::initialize;
   double x;
@@ -17,7 +17,7 @@ TEST(MathMatrix, initialize) {
   EXPECT_FLOAT_EQ(z, y);
 }
 
-TEST(MathMatrix, initMatrix) {
+TEST(MathMatrixPrimMat, initMatrix) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::initialize;
@@ -40,7 +40,7 @@ TEST(MathMatrix, initMatrix) {
     EXPECT_FLOAT_EQ(rv(i), 12);
 }
 
-TEST(MathMatrix, initStdVector) {
+TEST(MathMatrixPrimMat, initStdVector) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::initialize;

@@ -6,7 +6,7 @@
 
 using stan::math::check_nonnegative;
 
-TEST(ErrorHandlingScalar, CheckNonnegativeVectorized) {
+TEST(ErrorHandlingArr, CheckNonnegativeVectorized) {
   int N = 5;
   const char* function = "check_nonnegative";
   std::vector<double> x(N);
@@ -33,7 +33,7 @@ TEST(ErrorHandlingScalar, CheckNonnegativeVectorized) {
       << "check_nonnegative(vector) should throw exception on NaN: " << x[0];
 }
 
-TEST(ErrorHandlingScalar, CheckNonnegativeVectorized_one_indexed_message) {
+TEST(ErrorHandlingArr, CheckNonnegativeVectorized_one_indexed_message) {
   int N = 5;
   const char* function = "check_nonnegative";
   std::vector<double> x(N);
@@ -53,7 +53,7 @@ TEST(ErrorHandlingScalar, CheckNonnegativeVectorized_one_indexed_message) {
   EXPECT_NE(std::string::npos, message.find("[3]"));
 }
 
-TEST(ErrorHandlingScalar, CheckNonnegative_nan) {
+TEST(ErrorHandlingArr, CheckNonnegative_nan) {
   const char* function = "check_nonnegative";
   double nan = std::numeric_limits<double>::quiet_NaN();
 
