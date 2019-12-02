@@ -6,8 +6,8 @@
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/kernel_generator/type_str.hpp>
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
-#include <stan/math/opencl/kernel_generator/operation.hpp>
-#include <stan/math/opencl/kernel_generator/operation_lhs.hpp>
+#include <stan/math/opencl/kernel_generator/operation_cl.hpp>
+#include <stan/math/opencl/kernel_generator/operation_cl_lhs.hpp>
 #include <type_traits>
 #include <string>
 #include <utility>
@@ -21,14 +21,15 @@ namespace math {
  * @tparam T \c matrix_cl
  */
 template <typename T>
-class load_ : public operation_lhs<load_<T>,
-                                   typename std::remove_reference_t<T>::type> {
+class load_
+    : public operation_cl_lhs<load_<T>,
+                              typename std::remove_reference_t<T>::type> {
  protected:
   T a_;
 
  public:
   using ReturnScalar = typename std::remove_reference_t<T>::type;
-  using base = operation<load_<T>, ReturnScalar>;
+  using base = operation_cl<load_<T>, ReturnScalar>;
   using base::var_name;
   static_assert(std::is_base_of<matrix_cl<ReturnScalar>,
                                 typename std::remove_reference_t<T>>::value,
@@ -90,7 +91,7 @@ class load_ : public operation_lhs<load_<T>,
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
-  inline void set_args(std::set<const operation_base*>& generated,
+  inline void set_args(std::set<const operation_cl_base*>& generated,
                        cl::Kernel& kernel, int& arg_num) const {
     if (generated.count(this) == 0) {
       generated.insert(this);

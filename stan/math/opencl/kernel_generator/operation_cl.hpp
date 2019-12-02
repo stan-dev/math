@@ -35,10 +35,11 @@ struct kernel_parts {
  * @tparam Args types of arguments to this operation
  */
 template <typename Derived, typename ReturnScalar, typename... Args>
-class operation : public operation_base {
-  static_assert(conjunction<std::is_base_of<
-                    operation_base, std::remove_reference_t<Args>>...>::value,
-                "operation: all arguments to operation must be operations!");
+class operation_cl : public operation_cl_base {
+  static_assert(
+      conjunction<std::is_base_of<operation_cl_base,
+                                  std::remove_reference_t<Args>>...>::value,
+      "operation_cl: all arguments to operation must be operations!");
 
  protected:
   std::tuple<Args...> arguments_;
@@ -70,7 +71,7 @@ class operation : public operation_base {
    * @param arguments Arguments of this expression that are also valid
    * expressions
    */
-  explicit operation(Args&&... arguments)
+  explicit operation_cl(Args&&... arguments)
       : arguments_(std::forward<Args>(arguments)...) {}
 
   /**
@@ -131,7 +132,7 @@ class operation : public operation_base {
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts get_kernel_parts(
-      std::set<const operation_base*>& generated, name_generator& name_gen,
+      std::set<const operation_cl_base*>& generated, name_generator& name_gen,
       const std::string& i, const std::string& j) const {
     kernel_parts res{};
     if (generated.count(this) == 0) {
@@ -170,7 +171,7 @@ class operation : public operation_base {
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
-  inline void set_args(std::set<const operation_base*>& generated,
+  inline void set_args(std::set<const operation_cl_base*>& generated,
                        cl::Kernel& kernel, int& arg_num) const {
     if (generated.count(this) == 0) {
       generated.insert(this);
@@ -226,11 +227,11 @@ class operation : public operation_base {
 
 template <typename Derived, typename ReturnScalar, typename... Args>
 template <typename T_lhs>
-cl::Kernel operation<Derived, ReturnScalar, Args...>::cache<T_lhs>::kernel;
+cl::Kernel operation_cl<Derived, ReturnScalar, Args...>::cache<T_lhs>::kernel;
 
 template <typename Derived, typename ReturnScalar, typename... Args>
 template <typename T_lhs>
-std::string operation<Derived, ReturnScalar, Args...>::cache<T_lhs>::source;
+std::string operation_cl<Derived, ReturnScalar, Args...>::cache<T_lhs>::source;
 
 }  // namespace math
 }  // namespace stan

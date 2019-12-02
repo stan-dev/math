@@ -2,7 +2,7 @@
 #define STAN_MATH_OPENCL_KERNEL_GENERATOR_AS_OPERATION_HPP
 #ifdef STAN_OPENCL
 
-#include <stan/math/opencl/kernel_generator/operation.hpp>
+#include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/load.hpp>
 #include <stan/math/opencl/kernel_generator/scalar.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
@@ -22,20 +22,20 @@ namespace math {
  */
 template <typename T_operation,
           typename = std::enable_if_t<std::is_base_of<
-              operation_base, std::remove_reference_t<T_operation>>::value>>
-inline T_operation&& as_operation(T_operation&& a) {
+              operation_cl_base, std::remove_reference_t<T_operation>>::value>>
+inline T_operation&& as_operation_cl(T_operation&& a) {
   return std::forward<T_operation>(a);
 }
 
 /**
  * Converts any valid kernel generator expression into an operation. This is an
- * overload for scalars (atihmetic types). It wraps them into \c scalar_.
+ * overload for scalars (arithmetic types). It wraps them into \c scalar_.
  * @tparam T_scalar type of the input scalar
  * @param a scalar
  * @return \c scalar_ wrapping the input
  */
 template <typename T_scalar, typename = require_arithmetic_t<T_scalar>>
-inline scalar_<T_scalar> as_operation(const T_scalar a) {
+inline scalar_<T_scalar> as_operation_cl(const T_scalar a) {
   return scalar_<T_scalar>(a);
 }
 
@@ -47,23 +47,23 @@ inline scalar_<T_scalar> as_operation(const T_scalar a) {
  * @return \c load_ wrapping the input
  */
 template <typename T_matrix_cl, typename = require_matrix_cl_t<T_matrix_cl>>
-inline load_<T_matrix_cl> as_operation(T_matrix_cl&& a) {
+inline load_<T_matrix_cl> as_operation_cl(T_matrix_cl&& a) {
   return load_<T_matrix_cl>(std::forward<T_matrix_cl>(a));
 }
 
 /**
  * Type that results when converting any valid kernel generator expression into
  * operation. If a function accepts a forwarding reference T&& a, the result of
- * as_operation(a) should be stored in a variable of type as_operation_t<T>. If
- * the return value of \c as_operation() would be a rvalue reference, the
- * reference is removed, so that a variable of this type actually stores the
- * value.
+ * as_operation_cl(a) should be stored in a variable of type
+ * as_operation_cl_t<T>. If the return value of \c as_operation_cl() would be a
+ * rvalue reference, the reference is removed, so that a variable of this type
+ * actually stores the value.
  */
 template <typename T>
-using as_operation_t = std::conditional_t<
+using as_operation_cl_t = std::conditional_t<
     std::is_lvalue_reference<T>::value,
-    decltype(as_operation(std::declval<T>())),
-    std::remove_reference_t<decltype(as_operation(std::declval<T>()))>>;
+    decltype(as_operation_cl(std::declval<T>())),
+    std::remove_reference_t<decltype(as_operation_cl(std::declval<T>()))>>;
 
 }  // namespace math
 }  // namespace stan

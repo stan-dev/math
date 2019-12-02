@@ -3,8 +3,8 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/scal/err/check_positive.hpp>
-#include <stan/math/opencl/kernel_generator/operation.hpp>
-#include <stan/math/opencl/kernel_generator/as_operation.hpp>
+#include <stan/math/opencl/kernel_generator/operation_cl.hpp>
+#include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
 #include <cl.hpp>
 #include <string>
@@ -15,13 +15,13 @@ namespace math {
 
 template <typename Derived, typename ReturnScalar, typename... Args>
 template <typename T_lhs>
-void operation<Derived, ReturnScalar, Args...>::evaluate_into(
+void operation_cl<Derived, ReturnScalar, Args...>::evaluate_into(
     const T_lhs& lhs) const {
   static_assert(
       is_valid_expression<T_lhs>::value,
-      "operation::evaluate_into: left hand side is not a valid expression!");
-  using cache = operation<Derived, ReturnScalar, Args...>::cache<T_lhs>;
-  const auto& lhs_expression = as_operation(lhs);
+      "operation_cl::evaluate_into: left hand side is not a valid expression!");
+  using cache = operation_cl<Derived, ReturnScalar, Args...>::cache<T_lhs>;
+  const auto& lhs_expression = as_operation_cl(lhs);
 
   int n_rows = derived().rows();
   int n_cols = derived().cols();
@@ -40,7 +40,7 @@ void operation<Derived, ReturnScalar, Args...>::evaluate_into(
           "calculate", {view_kernel_helpers, cache::source.c_str()}, opts);
     }
     int arg_num = 0;
-    std::set<const operation_base*> generated;
+    std::set<const operation_cl_base*> generated;
     derived().set_args(generated, cache::kernel, arg_num);
     lhs_expression.set_args(generated, cache::kernel, arg_num);
 
@@ -51,7 +51,7 @@ void operation<Derived, ReturnScalar, Args...>::evaluate_into(
     derived().add_read_event(e);
     lhs_expression.add_write_event(e);
   } catch (cl::Error e) {
-    check_opencl_error("operation.evaluate_into", e);
+    check_opencl_error("operation_cl.evaluate_into", e);
   }
 }
 

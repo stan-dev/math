@@ -13,7 +13,7 @@ namespace math {
  *Non-templated base of \c operation is needed for easy checking if something is
  *a subclass of \c operation.
  */
-class operation_base {};
+class operation_cl_base {};
 
 /**
  * Determines whether a type is non-scalar type that is a valid kernel generator
@@ -21,9 +21,8 @@ class operation_base {};
  */
 template <typename T, typename = void>
 struct is_valid_expression_and_not_scalar
-    : bool_constant<
-          std::is_base_of<operation_base, std::remove_reference_t<T>>::value> {
-};
+    : bool_constant<std::is_base_of<operation_cl_base,
+                                    std::remove_reference_t<T>>::value> {};
 
 template <typename T>
 struct is_valid_expression_and_not_scalar<T, require_matrix_cl_t<T>>

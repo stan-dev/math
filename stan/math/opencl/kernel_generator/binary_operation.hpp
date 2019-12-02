@@ -8,9 +8,9 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/opencl/kernel_generator/type_str.hpp>
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
-#include <stan/math/opencl/kernel_generator/operation.hpp>
+#include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/scalar.hpp>
-#include <stan/math/opencl/kernel_generator/as_operation.hpp>
+#include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
 #include <stan/math/opencl/kernel_generator/common_return_scalar.hpp>
 #include <string>
@@ -29,10 +29,10 @@ namespace math {
  */
 template <typename Derived, typename T_a, typename T_b>
 class binary_operation
-    : public operation<Derived, common_return_scalar_t<T_a, T_b>, T_a, T_b> {
+    : public operation_cl<Derived, common_return_scalar_t<T_a, T_b>, T_a, T_b> {
  public:
   using ReturnScalar = common_return_scalar_t<T_a, T_b>;
-  using base = operation<Derived, ReturnScalar, T_a, T_b>;
+  using base = operation_cl<Derived, ReturnScalar, T_a, T_b>;
   using base::var_name;
 
  protected:
@@ -114,10 +114,10 @@ class addition_ : public binary_operation<addition_<T_a, T_b>, T_a, T_b> {
  */
 template <typename T_a, typename T_b,
           typename = require_all_valid_expressions_t<T_a, T_b>>
-inline addition_<as_operation_t<T_a>, as_operation_t<T_b>> operator+(
+inline addition_<as_operation_cl_t<T_a>, as_operation_cl_t<T_b>> operator+(
     T_a&& a, T_b&& b) {  // NOLINT
-  return {as_operation(std::forward<T_a>(a)),
-          as_operation(std::forward<T_b>(b))};
+  return {as_operation_cl(std::forward<T_a>(a)),
+          as_operation_cl(std::forward<T_b>(b))};
 }
 
 /**
@@ -148,10 +148,10 @@ class subtraction_ : public binary_operation<subtraction_<T_a, T_b>, T_a, T_b> {
  */
 template <typename T_a, typename T_b,
           typename = require_all_valid_expressions_t<T_a, T_b>>
-inline subtraction_<as_operation_t<T_a>, as_operation_t<T_b>> operator-(
+inline subtraction_<as_operation_cl_t<T_a>, as_operation_cl_t<T_b>> operator-(
     T_a&& a, T_b&& b) {  // NOLINT
-  return {as_operation(std::forward<T_a>(a)),
-          as_operation(std::forward<T_b>(b))};
+  return {as_operation_cl(std::forward<T_a>(a)),
+          as_operation_cl(std::forward<T_b>(b))};
 }
 
 /**
@@ -193,10 +193,10 @@ class elewise_multiplication_
  * @return Element-wise multiplication of given expressions
  */
 template <typename T_a, typename T_b>
-inline elewise_multiplication_<as_operation_t<T_a>, as_operation_t<T_b>>
+inline elewise_multiplication_<as_operation_cl_t<T_a>, as_operation_cl_t<T_b>>
 elewise_multiplication(T_a&& a, T_b&& b) {  // NOLINT
-  return {as_operation(std::forward<T_a>(a)),
-          as_operation(std::forward<T_b>(b))};
+  return {as_operation_cl(std::forward<T_a>(a)),
+          as_operation_cl(std::forward<T_b>(b))};
 }
 
 /**
@@ -209,10 +209,10 @@ elewise_multiplication(T_a&& a, T_b&& b) {  // NOLINT
  */
 template <typename T_a, typename T_b, typename = require_arithmetic_t<T_a>,
           typename = require_all_valid_expressions_t<T_b>>
-inline elewise_multiplication_<scalar_<T_a>, as_operation_t<T_b>> operator*(
+inline elewise_multiplication_<scalar_<T_a>, as_operation_cl_t<T_b>> operator*(
     T_a&& a, T_b&& b) {  // NOLINT
-  return {as_operation(std::forward<T_a>(a)),
-          as_operation(std::forward<T_b>(b))};
+  return {as_operation_cl(std::forward<T_a>(a)),
+          as_operation_cl(std::forward<T_b>(b))};
 }
 
 /**
@@ -226,9 +226,9 @@ inline elewise_multiplication_<scalar_<T_a>, as_operation_t<T_b>> operator*(
 template <typename T_a, typename T_b,
           typename = require_all_valid_expressions_t<T_a>,
           typename = require_arithmetic_t<T_b>>
-inline elewise_multiplication_<as_operation_t<T_a>, scalar_<T_b>> operator*(
+inline elewise_multiplication_<as_operation_cl_t<T_a>, scalar_<T_b>> operator*(
     T_a&& a, const T_b b) {  // NOLINT
-  return {as_operation(std::forward<T_a>(a)), as_operation(b)};
+  return {as_operation_cl(std::forward<T_a>(a)), as_operation_cl(b)};
 }
 
 /**
@@ -244,8 +244,8 @@ template <typename T_a, typename T_b,
           typename = require_all_valid_expressions_and_none_scalar_t<T_a, T_b>>
 inline matrix_cl<double> operator*(const T_a& a, const T_b& b) {
   // no need for perfect forwarding as operations are evaluated
-  return stan::math::opencl::multiply(as_operation(a).eval(),
-                                      as_operation(b).eval());
+  return stan::math::opencl::multiply(as_operation_cl(a).eval(),
+                                      as_operation_cl(b).eval());
 }
 
 /**
@@ -287,10 +287,10 @@ class elewise_division_
  */
 template <typename T_a, typename T_b,
           typename = require_all_valid_expressions_t<T_a, T_b>>
-inline elewise_division_<as_operation_t<T_a>, as_operation_t<T_b>>
+inline elewise_division_<as_operation_cl_t<T_a>, as_operation_cl_t<T_b>>
 elewise_division(T_a&& a, T_b&& b) {  // NOLINT
-  return {as_operation(std::forward<T_a>(a)),
-          as_operation(std::forward<T_b>(b))};
+  return {as_operation_cl(std::forward<T_a>(a)),
+          as_operation_cl(std::forward<T_b>(b))};
 }
 
 }  // namespace math

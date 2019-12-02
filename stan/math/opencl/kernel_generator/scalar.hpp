@@ -6,7 +6,7 @@
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/kernel_generator/type_str.hpp>
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
-#include <stan/math/opencl/kernel_generator/operation.hpp>
+#include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <string>
 #include <type_traits>
 #include <set>
@@ -19,7 +19,7 @@ namespace math {
  * @tparam T type of the scalar
  */
 template <typename T>
-class scalar_ : public operation<scalar_<T>, T> {
+class scalar_ : public operation_cl<scalar_<T>, T> {
  private:
   T a_;
 
@@ -27,7 +27,7 @@ class scalar_ : public operation<scalar_<T>, T> {
   static_assert(std::is_arithmetic<T>::value,
                 "class scalar_<T>: std::is_arithmetic<T> must be true!");
   using ReturnScalar = T;
-  using base = operation<scalar_<T>, T>;
+  using base = operation_cl<scalar_<T>, T>;
   using base::var_name;
 
   /**
@@ -57,7 +57,7 @@ class scalar_ : public operation<scalar_<T>, T> {
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
-  inline void set_args(std::set<const operation_base*>& generated,
+  inline void set_args(std::set<const operation_cl_base*>& generated,
                        cl::Kernel& kernel, int& arg_num) const {
     kernel.setArg(arg_num++, a_);
   }

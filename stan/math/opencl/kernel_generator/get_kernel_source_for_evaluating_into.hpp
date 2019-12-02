@@ -2,8 +2,8 @@
 #define STAN_MATH_OPENCL_KERNEL_GENERATOR_GET_KERNEL_SOURCE_FOR_EVALUATING_INTO_HPP  // NOLINT
 #ifdef STAN_OPENCL
 
-#include <stan/math/opencl/kernel_generator/operation.hpp>
-#include <stan/math/opencl/kernel_generator/as_operation.hpp>
+#include <stan/math/opencl/kernel_generator/operation_cl.hpp>
+#include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
 #include <cl.hpp>
 #include <string>
 #include <set>
@@ -13,13 +13,14 @@ namespace math {
 
 template <typename Derived, typename ReturnScalar, typename... Args>
 template <typename T_lhs>
-std::string operation<Derived, ReturnScalar, Args...>::
+std::string operation_cl<Derived, ReturnScalar, Args...>::
     get_kernel_source_for_evaluating_into(const T_lhs& lhs) const {
-  static_assert(is_valid_expression<T_lhs>::value,
-                "operation::get_kernel_source_for_evaluating_into: left hand "
-                "side is not a valid expression!");
-  auto lhs_expression = as_operation(lhs);
-  std::set<const operation_base*> generated;
+  static_assert(
+      is_valid_expression<T_lhs>::value,
+      "operation_cl::get_kernel_source_for_evaluating_into: left hand "
+      "side is not a valid expression!");
+  auto lhs_expression = as_operation_cl(lhs);
+  std::set<const operation_cl_base*> generated;
   name_generator ng;
   kernel_parts parts = derived().get_kernel_parts(generated, ng, "i", "j");
   kernel_parts out_parts
