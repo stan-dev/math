@@ -25,7 +25,8 @@
 
 namespace stan {
 namespace math {
-/**
+
+/** \ingroup opencl
  * Copies the source Eigen matrix to
  * the destination matrix that is stored
  * on the OpenCL device.
@@ -36,27 +37,10 @@ namespace math {
 template <typename Mat, typename Mat_scalar = scalar_type_t<Mat>,
           require_eigen_vt<std::is_arithmetic, Mat>...>
 inline matrix_cl<Mat_scalar> to_matrix_cl(Mat&& src) {
-  matrix_cl<Mat_scalar> dst(src.rows(), src.cols());
-  if (src.size() == 0) {
-    return dst;
-  }
-  try {
-    cl::Event transfer_event;
-    cl::CommandQueue& queue = opencl_context.queue();
-    queue.enqueueWriteBuffer(
-        dst.buffer(),
-        opencl_context.in_order()
-            || std::is_rvalue_reference<Mat_scalar&&>::value,
-        0, sizeof(Mat_scalar) * src.size(), src.eval().data(), nullptr,
-        &transfer_event);
-    dst.add_write_event(transfer_event);
-  } catch (const cl::Error& e) {
-    check_opencl_error("copy Eigen->(OpenCL)", e);
-  }
-  return dst;
+  return matrix_cl<Mat_scalar>(std::forward<Mat>(src));
 }
 
-/**
+/** \ingroup opencl
  * Copies the source std::vector to
  * the destination matrix that is stored
  * on the OpenCL device.
@@ -67,27 +51,10 @@ inline matrix_cl<Mat_scalar> to_matrix_cl(Mat&& src) {
 template <typename Vec, typename Vec_scalar = scalar_type_t<Vec>,
           require_std_vector_vt<std::is_arithmetic, Vec>...>
 inline matrix_cl<Vec_scalar> to_matrix_cl(Vec&& src) {
-  matrix_cl<Vec_scalar> dst(src.size(), 1);
-  if (src.size() == 0) {
-    return dst;
-  }
-  try {
-    cl::Event transfer_event;
-    cl::CommandQueue& queue = opencl_context.queue();
-    queue.enqueueWriteBuffer(
-        dst.buffer(),
-        opencl_context.in_order()
-            || std::is_rvalue_reference<Vec_scalar&&>::value,
-        0, sizeof(Vec_scalar) * src.size(), src.data(), nullptr,
-        &transfer_event);
-    dst.add_write_event(transfer_event);
-  } catch (const cl::Error& e) {
-    check_opencl_error("copy Eigen->(OpenCL)", e);
-  }
-  return dst;
+  return matrix_cl<Vec_scalar>(std::forward<Vec>(src));
 }
 
-/**
+/** \ingroup opencl
  * Copies the source matrix that is stored
  * on the OpenCL device to the destination Eigen
  * matrix.
@@ -104,7 +71,7 @@ inline Eigen::Matrix<T, R, C> from_matrix_cl(const matrix_cl<T>& src) {
     return dst;
   }
   try {
-    /**
+    /** \ingroup opencl
      * Reads the contents of the OpenCL buffer
      * starting at the offset 0 to the Eigen
      * matrix
@@ -125,7 +92,7 @@ inline Eigen::Matrix<T, R, C> from_matrix_cl(const matrix_cl<T>& src) {
   return dst;
 }
 
-/**
+/** \ingroup opencl
  * Packs the flat triagnular matrix on the OpenCL device and
  * copies it to the std::vector.
  *
@@ -161,7 +128,7 @@ inline std::vector<T> packed_copy(const matrix_cl<T>& src) {
   return dst;
 }
 
-/**
+/** \ingroup opencl
  * Copies the packed triangular matrix from
  * the source std::vector to an OpenCL buffer and
  * unpacks it to a flat matrix on the OpenCL device.
@@ -203,7 +170,7 @@ inline matrix_cl<Vec_scalar> packed_copy(Vec&& src, int rows) {
   return dst;
 }
 
-/**
+/** \ingroup opencl
  * Copies the source matrix to the
  * destination matrix. Both matrices
  * are stored on the OpenCL device.
@@ -215,31 +182,10 @@ inline matrix_cl<Vec_scalar> packed_copy(Vec&& src, int rows) {
  */
 template <typename T, typename = require_arithmetic_t<T>>
 inline matrix_cl<T> copy_cl(const matrix_cl<T>& src) {
-  matrix_cl<T> dst(src.rows(), src.cols(), src.view());
-  if (src.size() == 0) {
-    return dst;
-  }
-  try {
-    /**
-     * Copies the contents of the src buffer to the dst buffer
-     * see the matrix_cl(matrix_cl&) constructor
-     *  for explanation
-     */
-    cl::CommandQueue queue = opencl_context.queue();
-    const std::vector<cl::Event> mat_events
-        = vec_concat(dst.read_write_events(), src.write_events());
-    cl::Event copy_event;
-    queue.enqueueCopyBuffer(src.buffer(), dst.buffer(), 0, 0,
-                            sizeof(T) * src.size(), &mat_events, &copy_event);
-    dst.add_write_event(copy_event);
-    src.add_read_event(copy_event);
-  } catch (const cl::Error& e) {
-    check_opencl_error("copy_cl (OpenCL)->(OpenCL)", e);
-  }
-  return dst;
+  return matrix_cl<T>(src);
 }
 
-/**
+/** \ingroup opencl
  * Copy A 1 by 1 source matrix from the Device to  the host.
  * @tparam T An arithmetic type to pass the value from the OpenCL matrix to.
  * @param src A 1x1 matrix on the device.
@@ -265,7 +211,7 @@ inline T from_matrix_cl_error_code(const matrix_cl<T>& src) {
   return dst;
 }
 
-/**
+/** \ingroup opencl
  * Copy an arithmetic type to the device.
  * @tparam T An arithmetic type to pass the value from the OpenCL matrix to.
  * @param src Arithmetic to receive the matrix_cl value.
@@ -273,23 +219,7 @@ inline T from_matrix_cl_error_code(const matrix_cl<T>& src) {
  */
 template <typename T, typename = require_arithmetic_t<std::decay_t<T>>>
 inline matrix_cl<std::decay_t<T>> to_matrix_cl(T&& src) {
-  matrix_cl<std::decay_t<T>> dst(1, 1);
-  check_size_match("to_matrix_cl ((OpenCL) -> (OpenCL))", "src.rows()",
-                   dst.rows(), "dst.rows()", 1);
-  check_size_match("to_matrix_cl ((OpenCL) -> (OpenCL))", "src.cols()",
-                   dst.cols(), "dst.cols()", 1);
-  try {
-    cl::Event copy_event;
-    const cl::CommandQueue queue = opencl_context.queue();
-    queue.enqueueWriteBuffer(
-        dst.buffer(),
-        opencl_context.in_order() || std::is_rvalue_reference<T&&>::value, 0,
-        sizeof(std::decay_t<T>), &src, &dst.write_events(), &copy_event);
-    dst.add_write_event(copy_event);
-  } catch (const cl::Error& e) {
-    check_opencl_error("to_matrix_cl (OpenCL)->(OpenCL)", e);
-  }
-  return dst;
+  return matrix_cl<std::decay_t<T>>(std::forward<T>(src));
 }
 
 }  // namespace math

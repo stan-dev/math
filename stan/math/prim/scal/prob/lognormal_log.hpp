@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>lognormal_lpdf</code>
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
@@ -16,7 +16,7 @@ return_type_t<T_y, T_loc, T_scale> lognormal_log(const T_y& y, const T_loc& mu,
   return lognormal_lpdf<propto, T_y, T_loc, T_scale>(y, mu, sigma);
 }
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>lognormal_lpdf</code>
  */
 template <typename T_y, typename T_loc, typename T_scale>

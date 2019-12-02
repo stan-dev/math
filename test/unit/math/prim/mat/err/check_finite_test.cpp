@@ -6,7 +6,7 @@
 using stan::math::check_finite;
 
 // ---------- check_finite: matrix tests ----------
-TEST(ErrorHandlingScalar, CheckFinite_Matrix) {
+TEST(ErrorHandlingMat, CheckFinite_Matrix) {
   const char* function = "check_finite";
   Eigen::Matrix<double, Eigen::Dynamic, 1> x;
 
@@ -31,7 +31,7 @@ TEST(ErrorHandlingScalar, CheckFinite_Matrix) {
       << "check_finite should throw exception on NaN";
 }
 
-TEST(ErrorHandlingScalar, CheckFinite_Matrix_one_indexed_message) {
+TEST(ErrorHandlingMat, CheckFinite_Matrix_one_indexed_message) {
   const char* function = "check_finite";
   Eigen::Matrix<double, Eigen::Dynamic, 1> x;
   std::string message;
@@ -50,7 +50,7 @@ TEST(ErrorHandlingScalar, CheckFinite_Matrix_one_indexed_message) {
   EXPECT_NE(std::string::npos, message.find("[3]")) << message;
 }
 
-TEST(ErrorHandlingScalar, CheckFinite_nan) {
+TEST(ErrorHandlingMat, CheckFinite_nan) {
   const char* function = "check_finite";
   double nan = std::numeric_limits<double>::quiet_NaN();
 

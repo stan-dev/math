@@ -11,7 +11,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Return a student-t random variate for the given degrees of freedom,
  * location, and scale using the specified random number generator.
  *

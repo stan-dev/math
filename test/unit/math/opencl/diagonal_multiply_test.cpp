@@ -9,7 +9,7 @@
 using stan::math::matrix_cl;
 using stan::math::matrix_d;
 
-TEST(MathMatrix, multiply_m_exception_pass_diagonal_mul) {
+TEST(MathMatrixOpenCL, multiply_m_exception_pass_diagonal_mul) {
   auto m0 = matrix_d::Ones(3, 2).eval();
   auto m1 = matrix_d::Ones(1, 3).eval();
   matrix_cl<double> mm0(m0);
@@ -19,7 +19,7 @@ TEST(MathMatrix, multiply_m_exception_pass_diagonal_mul) {
   EXPECT_NO_THROW(stan::math::diagonal_multiply(mm1, 1.0));
 }
 
-TEST(MathMatrix, diagonal_multiply_value_check) {
+TEST(MathMatrixOpenCL, diagonal_multiply_value_check) {
   matrix_d m1(1, 1);
   matrix_d m1_dst(1, 1);
   m1 << 2;

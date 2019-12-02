@@ -4,7 +4,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMeta, index_type) {
+TEST(MathMetaPrimArr, index_type) {
   using stan::math::index_type;
   using std::vector;
 

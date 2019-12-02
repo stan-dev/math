@@ -47,7 +47,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * The log of the first passage time density function for a (Wiener)
  *  drift diffusion model for the given \f$y\f$,
  * boundary separation \f$\alpha\f$, nondecision time \f$\tau\f$,

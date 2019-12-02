@@ -9,13 +9,13 @@ namespace stan {
 
 namespace internal {
 
-/**
+/** \ingroup type_trait
  * This underlying implimentation is used when the type is not an std vector.
  */
 template <typename T>
 struct is_std_vector_impl : std::false_type {};
 
-/**
+/** \ingroup type_trait
  * This specialization implimentation has a static member named value when the
  * template type is an std vector.
  */
@@ -24,7 +24,7 @@ struct is_std_vector_impl<std::vector<Args...>> : std::true_type {};
 
 }  // namespace internal
 
-/**
+/** \ingroup type_trait
  * Checks if the decayed type of T is a standard vector.
  */
 template <typename T>

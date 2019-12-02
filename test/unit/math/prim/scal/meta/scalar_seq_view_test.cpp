@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MetaTraits, ScalarSeqViewDouble) {
+TEST(MetaTraitsPrimScal, ScalarSeqViewDouble) {
   using stan::scalar_seq_view;
 
   double d = 10;

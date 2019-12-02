@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMatrix, rep_array) {
+TEST(MathMatrixPrimArr, rep_array) {
   using stan::math::rep_array;
   std::vector<double> x = rep_array(2.0, 3);
   EXPECT_EQ(3U, x.size());
@@ -11,7 +11,7 @@ TEST(MathMatrix, rep_array) {
 
   EXPECT_THROW(rep_array(2.0, -2), std::domain_error);
 }
-TEST(MathMatrix, rep_array2D) {
+TEST(MathMatrixPrimArr, rep_array2D) {
   using stan::math::rep_array;
   using std::vector;
   vector<vector<double> > x = rep_array(2.0, 3, 4);
@@ -24,7 +24,7 @@ TEST(MathMatrix, rep_array2D) {
   EXPECT_THROW(rep_array(2.0, -2, 3), std::domain_error);
   EXPECT_THROW(rep_array(2.0, 2, -3), std::domain_error);
 }
-TEST(MathMatrix, rep_array3D) {
+TEST(MathMatrixPrimArr, rep_array3D) {
   using stan::math::rep_array;
   using std::vector;
   vector<vector<vector<int> > > x = rep_array(13, 3, 4, 5);

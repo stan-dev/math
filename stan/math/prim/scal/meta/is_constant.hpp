@@ -7,7 +7,7 @@
 
 namespace stan {
 
-/**
+/** \ingroup type_trait
  * Metaprogramming struct to detect whether a given type is constant
  * in the mathematical sense (not the C++ <code>const</code>
  * sense). If the parameter type is constant, <code>value</code>
@@ -23,7 +23,7 @@ namespace stan {
 template <typename T, typename = void>
 struct is_constant : bool_constant<std::is_convertible<T, double>::value> {};
 
-/**
+/** \ingroup type_trait
  * Metaprogram defining an enum <code>value</code> which
  * is <code>true</code> if all of the type parameters
  * are constant (i.e., primtive types) and

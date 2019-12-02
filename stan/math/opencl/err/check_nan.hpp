@@ -12,7 +12,7 @@
 
 namespace stan {
 namespace math {
-/**
+/** \ingroup opencl
  * Check if the <code>matrix_cl</code> has NaN values
  *
  * @param function Function name (for error messages)

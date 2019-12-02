@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <vector>
 
-TEST(MathMatrixGPU, matrix_cl_vector_copy) {
+TEST(MathMatrixRevCL, matrix_cl_vector_copy) {
   using stan::math::var;
   stan::math::vector_v d1_cpu(3);
   stan::math::vector_d d1_a_cpu(3);
@@ -27,7 +27,7 @@ TEST(MathMatrixGPU, matrix_cl_vector_copy) {
   EXPECT_EQ(3, d1_b_cpu(2));
 }
 
-TEST(MathMatrixCL, matrix_cl_matrix_copy) {
+TEST(MathMatrixRevCL, matrix_cl_matrix_copy) {
   using stan::math::var;
   stan::math::matrix_v d2_cpu(2, 3);
   stan::math::matrix_d d2_a_cpu(2, 3);
@@ -61,7 +61,7 @@ TEST(MathMatrixCL, matrix_cl_matrix_copy) {
   EXPECT_NO_THROW(d000_cl = stan::math::copy_cl(d00_cl));
 }
 
-TEST(MathMatrixCL, matrix_cl_pack_unpack_copy_lower) {
+TEST(MathMatrixRevCL, matrix_cl_pack_unpack_copy_lower) {
   using stan::math::var;
   using stan::math::vari;
   int size = 42;
@@ -97,7 +97,7 @@ TEST(MathMatrixCL, matrix_cl_pack_unpack_copy_lower) {
   }
 }
 
-TEST(MathMatrixCL, matrix_cl_pack_unpack_copy_upper) {
+TEST(MathMatrixRevCL, matrix_cl_pack_unpack_copy_upper) {
   using stan::math::var;
   using stan::math::vari;
   int size = 51;
@@ -133,7 +133,7 @@ TEST(MathMatrixCL, matrix_cl_pack_unpack_copy_upper) {
   }
 }
 
-TEST(MathMatrixCL, matrix_cl_pack_unpack_copy_exception) {
+TEST(MathMatrixRevCL, matrix_cl_pack_unpack_copy_exception) {
   using stan::math::var;
   using stan::math::vari;
   vari** packed_mat;

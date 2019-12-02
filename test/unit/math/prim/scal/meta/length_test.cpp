@@ -3,7 +3,7 @@
 
 using stan::length;
 
-TEST(MetaTraits, length) {
+TEST(MetaTraitsPrimScal, length) {
   using stan::length;
   EXPECT_EQ(1U, length(27.0));
   EXPECT_EQ(1U, length(3));

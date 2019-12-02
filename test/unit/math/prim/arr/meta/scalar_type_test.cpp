@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MetaTraits, ScalarTypeArray) {
+TEST(MetaTraitsPrimArr, ScalarTypeArray) {
   using stan::scalar_type;
   using std::vector;
 
@@ -12,7 +12,7 @@ TEST(MetaTraits, ScalarTypeArray) {
   test::expect_same_type<double, scalar_type<vector<vector<double>>>::type>();
 }
 
-TEST(MetaTraits, ScalarTypeArrayConst) {
+TEST(MetaTraitsPrimArr, ScalarTypeArrayConst) {
   using stan::scalar_type;
   using std::vector;
 
@@ -22,7 +22,7 @@ TEST(MetaTraits, ScalarTypeArrayConst) {
                          scalar_type<const vector<vector<double>>>::type>();
 }
 
-TEST(MetaTraits, ScalarTypeArrayConstConst) {
+TEST(MetaTraitsPrimArr, ScalarTypeArrayConstConst) {
   using stan::scalar_type;
   using std::vector;
 

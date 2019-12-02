@@ -3,7 +3,7 @@
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <limits>
 
-TEST(MathMatrix, squared_distance_vector_vector) {
+TEST(MathMatrixPrimMat, squared_distance_vector_vector) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> v1, v2;
 
   v1.resize(3);
@@ -24,7 +24,7 @@ TEST(MathMatrix, squared_distance_vector_vector) {
   EXPECT_THROW(stan::math::squared_distance(v1, v2), std::invalid_argument);
 }
 
-TEST(MathMatrix, squared_distance_rowvector_vector) {
+TEST(MathMatrixPrimMat, squared_distance_rowvector_vector) {
   Eigen::Matrix<double, 1, Eigen::Dynamic> rv;
   Eigen::Matrix<double, Eigen::Dynamic, 1> v;
 
@@ -45,7 +45,7 @@ TEST(MathMatrix, squared_distance_rowvector_vector) {
   EXPECT_THROW(stan::math::squared_distance(rv, v), std::invalid_argument);
 }
 
-TEST(MathMatrix, squared_distance_vector_rowvector) {
+TEST(MathMatrixPrimMat, squared_distance_vector_rowvector) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> v;
   Eigen::Matrix<double, 1, Eigen::Dynamic> rv;
 
@@ -66,7 +66,7 @@ TEST(MathMatrix, squared_distance_vector_rowvector) {
   EXPECT_THROW(stan::math::squared_distance(v, rv), std::invalid_argument);
 }
 
-TEST(MathMatrix, squared_distance_special_values) {
+TEST(MathMatrixPrimMat, squared_distance_special_values) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> v1, v2;
   v1.resize(1);
   v2.resize(1);

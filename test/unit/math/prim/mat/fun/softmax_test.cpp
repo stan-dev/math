@@ -1,7 +1,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathMatrix, softmax) {
+TEST(MathMatrixPrimMat, softmax) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::softmax;
@@ -28,7 +28,7 @@ TEST(MathMatrix, softmax) {
   EXPECT_FLOAT_EQ(exp(1) / (exp(-1) + exp(1) + exp(10.0)), theta3[1]);
   EXPECT_FLOAT_EQ(exp(10) / (exp(-1) + exp(1) + exp(10.0)), theta3[2]);
 }
-TEST(MathMatrix, softmax_exception) {
+TEST(MathMatrixPrimMat, softmax_exception) {
   using stan::math::softmax;
   stan::math::vector_d v0;
 

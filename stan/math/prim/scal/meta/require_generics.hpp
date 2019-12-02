@@ -20,6 +20,158 @@
 
 namespace stan {
 
+/** \addtogroup type_trait
+ *  @{
+ */
+
+/**
+ * Checks if decayed type is a double or integer
+ * @tparam The type to check
+ */
+template <typename T>
+struct is_double_or_int
+    : bool_constant<
+          math::disjunction<std::is_same<double, std::decay_t<T>>,
+                            std::is_same<int, std::decay_t<T>>>::value> {};
+
+/**
+ * Checks if decayed type is a var or fvar
+ * @tparam The type to check
+ */
+template <typename T>
+struct is_var_or_fvar
+    : bool_constant<math::disjunction<is_var<std::decay_t<T>>,
+                                      is_fvar<std::decay_t<T>>>::value> {};
+
+/**
+ * Checks if decayed type is a var, fvar, or arithmetic
+ * @tparam The type to check
+ */
+template <typename T>
+struct is_stan_scalar
+    : bool_constant<
+          math::disjunction<is_var<std::decay_t<T>>, is_fvar<std::decay_t<T>>,
+                            std::is_arithmetic<std::decay_t<T>>>::value> {};
+
+/**
+ * Used as the base for checking whether a type is a container with
+ * an underlying type
+ *
+ * @tparam ContainerCheck Templated struct or alias that wraps a static constant
+ * value called type. Used to check the container satisfies a particular type
+ * check.
+ * @tparam CheckType Templated struct or alias that wraps a static constant
+ * value called type. Used to check the container's underlying type satisfies a
+ * particular type check.
+ *
+ */
+template <template <class...> class ContainerCheck,
+          template <class...> class TypeCheck, class... Check>
+using container_value_type_check_base = bool_constant<
+    math::conjunction<ContainerCheck<std::decay_t<Check>>...,
+                      TypeCheck<value_type_t<Check>>...>::value>;
+
+/**
+ * Meta type trait to check if type is a standard vector and value type passes
+ * additional type trait check
+ */
+template <template <class...> class TypeCheck, class... Check>
+struct is_std_vector_value_check
+    : container_value_type_check_base<is_std_vector, TypeCheck, Check...> {};
+
+/**
+ * Meta type trait to check if type is a standard vector or eigen vector and
+ * value type passes additional type trait check
+ */
+template <template <class...> class TypeCheck, class... Check>
+struct is_vector_value_check
+    : container_value_type_check_base<is_vector, TypeCheck, Check...> {};
+
+/**
+ * Meta type trait to check if type is a standard vector, eigen vector, or array
+ * and value type passes additional type trait check
+ */
+template <template <class...> class TypeCheck, class... Check>
+struct is_vector_like_value_check
+    : container_value_type_check_base<is_vector_like, TypeCheck, Check...> {};
+
+/**
+ * Meta type trait to check if type inherits from EigenBase.
+ */
+template <template <class...> class TypeCheck, class... Check>
+struct is_eigen_value_check
+    : container_value_type_check_base<is_eigen, TypeCheck, Check...> {};
+
+/**
+ * Meta type trait to check if type inherits from EigenBase and has row or col
+ * values at compile time of 1.
+ */
+template <template <class...> class TypeCheck, class... Check>
+struct is_eigen_vector_value_check
+    : container_value_type_check_base<is_eigen_vector, TypeCheck, Check...> {};
+
+/**
+ * Used as the base for checking whether a type is a container with
+ * an underlying scalar type
+ *
+ * @tparam ContainerCheck Templated struct or alias that wraps a static constant
+ * scalar called type. Used to check the container satisfies a particular type
+ * check.
+ * @tparam CheckType Templated struct or alias that wraps a static constant
+ * scalar called type. Used to check the container's underlying type satisfies a
+ * particular type check.
+ *
+ */
+template <template <class...> class ContainerCheck,
+          template <class...> class TypeCheck, class... Check>
+using container_scalar_type_check_base = bool_constant<
+    math::conjunction<ContainerCheck<std::decay_t<Check>>...,
+                      TypeCheck<scalar_type_t<Check>>...>::value>;
+
+/**
+ * Meta type trait to check if type is a standard vector and scalar type passes
+ * additional type trait check
+ */
+template <template <class...> class TypeCheck, class... Check>
+struct is_std_vector_scalar_check
+    : container_scalar_type_check_base<is_std_vector, TypeCheck, Check...> {};
+
+/**
+ * Meta type trait to check if type is a standard vector or eigen vector and
+ * scalar type passes additional type trait check
+ */
+template <template <class...> class TypeCheck, class... Check>
+struct is_vector_scalar_check
+    : container_scalar_type_check_base<is_vector, TypeCheck, Check...> {};
+
+/**
+ * Meta type trait to check if type is a standard vector, eigen vector, or array
+ * and scalar type passes additional type trait check
+ */
+template <template <class...> class TypeCheck, class... Check>
+struct is_vector_like_scalar_check
+    : container_scalar_type_check_base<is_vector_like, TypeCheck, Check...> {};
+
+/**
+ * Meta type trait to check if type inherits from EigenBase and scalar type pass
+ * additional type trait check
+ */
+template <template <class...> class TypeCheck, class... Check>
+struct is_eigen_scalar_check
+    : container_scalar_type_check_base<is_eigen, TypeCheck, Check...> {};
+
+/**
+ * Meta type trait to check if type inherits from EigenBase, has 1 row or column
+ * compile time size, and scalar type passes additional type trait check
+ */
+template <template <class...> class TypeCheck, class... Check>
+struct is_eigen_vector_scalar_check
+    : container_scalar_type_check_base<is_eigen_vector, TypeCheck, Check...> {};
+/** @}*/
+
+/** \addtogroup require_base_types
+ *  @{
+ */
 /**
  * If condition is true, template is enabled
  */
@@ -214,16 +366,6 @@ using require_any_not_string_convertible_t
  * - Arithmetic Var or Fvar
  */
 
-/**
- * Checks if decayed type is a double or integer
- * @tparam The type to check
- */
-template <typename T>
-struct is_double_or_int
-    : bool_constant<
-          math::disjunction<std::is_same<double, std::decay_t<T>>,
-                            std::is_same<int, std::decay_t<T>>>::value> {};
-
 template <typename T>
 using require_double_or_int_t = require_t<is_double_or_int<std::decay_t<T>>>;
 
@@ -381,15 +523,6 @@ template <typename... Types>
 using require_any_not_fvar_t
     = require_any_not_t<is_fvar<std::decay_t<Types>>...>;
 
-/**
- * Checks if decayed type is a var or fvar
- * @tparam The type to check
- */
-template <typename T>
-struct is_var_or_fvar
-    : bool_constant<math::disjunction<is_var<std::decay_t<T>>,
-                                      is_fvar<std::decay_t<T>>>::value> {};
-
 template <typename T>
 using require_var_or_fvar_t = require_t<is_var_or_fvar<T>>;
 
@@ -410,16 +543,6 @@ template <typename... Types>
 using require_any_not_var_or_fvar_t
     = require_any_not_t<is_var_or_fvar<Types>...>;
 
-/**
- * Checks if decayed type is a var, fvar, or arithmetic
- * @tparam The type to check
- */
-template <typename T>
-struct is_stan_scalar
-    : bool_constant<
-          math::disjunction<is_var<std::decay_t<T>>, is_fvar<std::decay_t<T>>,
-                            std::is_arithmetic<std::decay_t<T>>>::value> {};
-
 template <typename T>
 using require_stan_scalar_t = require_t<is_stan_scalar<T>>;
 
@@ -439,9 +562,14 @@ using require_all_not_stan_scalar_t
 template <typename... Types>
 using require_any_not_stan_scalar_t
     = require_any_not_t<is_stan_scalar<Types>...>;
+/** @}*/
 
 /**
  * Requires for containers
+ */
+
+/** \addtogroup require_container_types
+ *  @{
  */
 
 template <typename T>
@@ -562,24 +690,6 @@ using require_any_not_container_t
     = require_any_not_t<is_container<std::decay_t<Types>>...>;
 
 /**
- * Used as the base for checking whether a type is a container with
- * an underlying type
- *
- * @tparam ContainerCheck Templated struct or alias that wraps a static constant
- * value called type. Used to check the container satisfies a particular type
- * check.
- * @tparam CheckType Templated struct or alias that wraps a static constant
- * value called type. Used to check the container's underlying type satisfies a
- * particular type check.
- *
- */
-template <template <class...> class ContainerCheck,
-          template <class...> class TypeCheck, class... Check>
-using container_value_type_check_base = bool_constant<
-    math::conjunction<ContainerCheck<std::decay_t<Check>>...,
-                      TypeCheck<value_type_t<Check>>...>::value>;
-
-/**
  * Check a templated type to see if it and it's inner type pass a condiational
  * test.
  * @tparam ContainerCheck Templated struct or alias that wraps a static constant
@@ -591,13 +701,6 @@ template <template <class...> class ContainerCheck,
           template <class...> class TypeCheck, class... Check>
 using require_container_vt = require_t<
     container_value_type_check_base<ContainerCheck, TypeCheck, Check...>>;
-
-/**
- * std vector
- */
-template <template <class...> class TypeCheck, class... Check>
-struct is_std_vector_value_check
-    : container_value_type_check_base<is_std_vector, TypeCheck, Check...> {};
 
 template <template <class...> class TypeCheck, class... Check>
 using require_std_vector_vt
@@ -623,13 +726,6 @@ template <template <class...> class TypeCheck, class... Check>
 using require_all_not_std_vector_vt
     = require_all_not_t<is_std_vector_value_check<TypeCheck, Check>...>;
 
-/**
- * Vectors
- */
-template <template <class...> class TypeCheck, class... Check>
-struct is_vector_value_check
-    : container_value_type_check_base<is_vector, TypeCheck, Check...> {};
-
 template <template <class...> class TypeCheck, class... Check>
 using require_vector_vt = require_t<is_vector_value_check<TypeCheck, Check...>>;
 
@@ -652,13 +748,6 @@ using require_all_vector_vt
 template <template <class...> class TypeCheck, class... Check>
 using require_all_not_vector_vt
     = require_all_not_t<is_vector_value_check<TypeCheck, Check>...>;
-
-/**
- * Vector Like
- */
-template <template <class...> class TypeCheck, class... Check>
-struct is_vector_like_value_check
-    : container_value_type_check_base<is_vector_like, TypeCheck, Check...> {};
 
 template <template <class...> class TypeCheck, class... Check>
 using require_vector_like_vt
@@ -684,13 +773,6 @@ template <template <class...> class TypeCheck, class... Check>
 using require_all_not_vector_like_vt
     = require_all_not_t<is_vector_like_value_check<TypeCheck, Check>...>;
 
-/**
- * Eigen
- */
-template <template <class...> class TypeCheck, class... Check>
-struct is_eigen_value_check
-    : container_value_type_check_base<is_eigen, TypeCheck, Check...> {};
-
 template <template <class...> class TypeCheck, class... Check>
 using require_eigen_vt = require_t<is_eigen_value_check<TypeCheck, Check...>>;
 
@@ -713,13 +795,6 @@ using require_all_eigen_vt
 template <template <class...> class TypeCheck, class... Check>
 using require_all_not_eigen_vt
     = require_all_not_t<is_eigen_value_check<TypeCheck, Check>...>;
-
-/**
- * Std vector
- */
-template <template <class...> class TypeCheck, class... Check>
-struct is_eigen_vector_value_check
-    : container_value_type_check_base<is_eigen_vector, TypeCheck, Check...> {};
 
 template <template <class...> class TypeCheck, class... Check>
 using require_eigen_vector_vt
@@ -750,24 +825,6 @@ using require_all_not_eigen_vector_vt
  */
 
 /**
- * Used as the base for checking whether a type is a container with
- * an underlying scalar type
- *
- * @tparam ContainerCheck Templated struct or alias that wraps a static constant
- * scalar called type. Used to check the container satisfies a particular type
- * check.
- * @tparam CheckType Templated struct or alias that wraps a static constant
- * scalar called type. Used to check the container's underlying type satisfies a
- * particular type check.
- *
- */
-template <template <class...> class ContainerCheck,
-          template <class...> class TypeCheck, class... Check>
-using container_scalar_type_check_base = bool_constant<
-    math::conjunction<ContainerCheck<std::decay_t<Check>>...,
-                      TypeCheck<scalar_type_t<Check>>...>::value>;
-
-/**
  * Check a templated type to see if it and it's inner type pass a condiational
  * test.
  * @tparam ContainerCheck Templated struct or alias that wraps a static constant
@@ -779,13 +836,6 @@ template <template <class...> class ContainerCheck,
           template <class...> class TypeCheck, class... Check>
 using require_container_st = require_t<
     container_scalar_type_check_base<ContainerCheck, TypeCheck, Check...>>;
-
-/**
- * std vector
- */
-template <template <class...> class TypeCheck, class... Check>
-struct is_std_vector_scalar_check
-    : container_scalar_type_check_base<is_std_vector, TypeCheck, Check...> {};
 
 template <template <class...> class TypeCheck, class... Check>
 using require_std_vector_st
@@ -811,13 +861,6 @@ template <template <class...> class TypeCheck, class... Check>
 using require_all_not_std_vector_st
     = require_all_not_t<is_std_vector_scalar_check<TypeCheck, Check>...>;
 
-/**
- * Vectors
- */
-template <template <class...> class TypeCheck, class... Check>
-struct is_vector_scalar_check
-    : container_scalar_type_check_base<is_vector, TypeCheck, Check...> {};
-
 template <template <class...> class TypeCheck, class... Check>
 using require_vector_st
     = require_t<is_vector_scalar_check<TypeCheck, Check...>>;
@@ -841,13 +884,6 @@ using require_all_vector_st
 template <template <class...> class TypeCheck, class... Check>
 using require_all_not_vector_st
     = require_all_not_t<is_vector_scalar_check<TypeCheck, Check>...>;
-
-/**
- * Vector Like
- */
-template <template <class...> class TypeCheck, class... Check>
-struct is_vector_like_scalar_check
-    : container_scalar_type_check_base<is_vector_like, TypeCheck, Check...> {};
 
 template <template <class...> class TypeCheck, class... Check>
 using require_vector_like_st
@@ -873,13 +909,6 @@ template <template <class...> class TypeCheck, class... Check>
 using require_all_not_vector_like_st
     = require_all_not_t<is_vector_like_scalar_check<TypeCheck, Check>...>;
 
-/**
- * Eigen
- */
-template <template <class...> class TypeCheck, class... Check>
-struct is_eigen_scalar_check
-    : container_scalar_type_check_base<is_eigen, TypeCheck, Check...> {};
-
 template <template <class...> class TypeCheck, class... Check>
 using require_eigen_st = require_t<is_eigen_scalar_check<TypeCheck, Check...>>;
 
@@ -902,13 +931,6 @@ using require_all_eigen_st
 template <template <class...> class TypeCheck, class... Check>
 using require_all_not_eigen_st
     = require_all_not_t<is_eigen_scalar_check<TypeCheck, Check>...>;
-
-/**
- * Std vector
- */
-template <template <class...> class TypeCheck, class... Check>
-struct is_eigen_vector_scalar_check
-    : container_scalar_type_check_base<is_eigen_vector, TypeCheck, Check...> {};
 
 template <template <class...> class TypeCheck, class... Check>
 using require_eigen_vector_st
@@ -934,5 +956,6 @@ template <template <class...> class TypeCheck, class... Check>
 using require_all_not_eigen_vector_st
     = require_all_not_t<is_eigen_vector_scalar_check<TypeCheck, Check>...>;
 
+/** @}*/
 }  // namespace stan
 #endif
