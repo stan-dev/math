@@ -4,7 +4,7 @@
 #include <limits>
 #include <vector>
 
-TEST(ErrorHandlingMatrix, IsNonzeroSizeMatrix) {
+TEST(ErrorHandlingArr, IsNonzeroSizeMatrix) {
   using stan::math::is_nonzero_size;
 
   std::vector<double> a{4, 3};
@@ -14,7 +14,7 @@ TEST(ErrorHandlingMatrix, IsNonzeroSizeMatrix) {
   EXPECT_FALSE(stan::math::is_nonzero_size(a));
 }
 
-TEST(ErrorHandlingMatrix, IsNonzeroSizeMatrix_nan) {
+TEST(ErrorHandlingArr, IsNonzeroSizeMatrix_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
 
   std::vector<double> a(4, nan);

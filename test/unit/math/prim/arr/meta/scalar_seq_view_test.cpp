@@ -2,7 +2,7 @@
 #include <stan/math/prim/arr.hpp>
 #include <vector>
 
-TEST(MetaTraits, ScalarSeqViewArray) {
+TEST(MetaTraitsPrimArr, ScalarSeqViewArray) {
   using stan::scalar_seq_view;
   using std::vector;
 

@@ -179,7 +179,7 @@ struct multi_normal_fun {
   }
 };
 
-TEST(MultiNormal, TestGradFunctional) {
+TEST(ProbDistributionsMultiNormal, TestGradFunctional) {
   std::vector<double> x(3 + 3 + 3 * 2);
   // y
   x[0] = 1.0;
@@ -411,7 +411,7 @@ void test_all() {
   }
 }
 
-TEST(MultiNormal, TestGradFunctionalVectorized) {
+TEST(ProbDistributionsMultiNormal, TestGradFunctionalVectorized) {
   test_all<1, 1>();
   test_all<1, -1>();
   test_all<-1, 1>();

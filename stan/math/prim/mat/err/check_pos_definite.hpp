@@ -29,6 +29,8 @@ inline void check_pos_definite(const char* function, const char* name,
                                const Eigen::Matrix<T_y, -1, -1>& y) {
   check_symmetric(function, name, y);
   check_positive(function, name, "rows", y.rows());
+  check_not_nan(function, name, y);
+
   if (y.rows() == 1 && !(y(0, 0) > CONSTRAINT_TOLERANCE)) {
     domain_error(function, name, "is not positive definite.", "");
   }
@@ -38,7 +40,6 @@ inline void check_pos_definite(const char* function, const char* name,
       || (cholesky.vectorD().array() <= 0.0).any()) {
     domain_error(function, name, "is not positive definite.", "");
   }
-  check_not_nan(function, name, y);
 }
 
 /**

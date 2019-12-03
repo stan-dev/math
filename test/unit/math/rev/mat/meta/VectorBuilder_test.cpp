@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MetaTraits, VectorBuilder_false_true) {
+TEST(MetaTraitsRevMat, VectorBuilder_false_true) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::VectorBuilder;
@@ -22,7 +22,7 @@ TEST(MetaTraits, VectorBuilder_false_true) {
   EXPECT_THROW(dvv4.data(), std::logic_error);
 }
 
-TEST(MetaTraits, VectorBuilder_true_true) {
+TEST(MetaTraitsRevMat, VectorBuilder_true_true) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::VectorBuilder;

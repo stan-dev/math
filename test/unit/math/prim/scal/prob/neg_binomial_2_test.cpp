@@ -4,7 +4,7 @@
 #include <boost/math/distributions.hpp>
 #include <string>
 
-TEST(ProbDistributionsNegBinomial, error_check) {
+TEST(ProbDistributionsNegBinomial2, error_check) {
   boost::random::mt19937 rng;
   EXPECT_NO_THROW(stan::math::neg_binomial_2_rng(6, 2, rng));
   EXPECT_NO_THROW(stan::math::neg_binomial_2_rng(0.5, 1, rng));
@@ -56,7 +56,7 @@ TEST(ProbDistributionsNegBinomial, error_check) {
   }
 }
 
-TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest) {
+TEST(ProbDistributionsNegBinomial2, chiSquareGoodnessFitTest) {
   boost::random::mt19937 rng;
   int N = 1000;
   int K = stan::math::round(2 * std::pow(N, 0.4));
@@ -93,7 +93,7 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest) {
   EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
 }
 
-TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest2) {
+TEST(ProbDistributionsNegBinomial2, chiSquareGoodnessFitTest2) {
   boost::random::mt19937 rng;
   int N = 1000;
   int K = stan::math::round(2 * std::pow(N, 0.4));
@@ -130,7 +130,7 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest2) {
   EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
 }
 
-TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest3) {
+TEST(ProbDistributionsNegBinomial2, chiSquareGoodnessFitTest3) {
   boost::random::mt19937 rng;
   int N = 1000;
   int K = stan::math::round(2 * std::pow(N, 0.4));

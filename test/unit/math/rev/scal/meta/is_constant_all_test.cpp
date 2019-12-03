@@ -8,7 +8,7 @@ void expect_not_const() {
   EXPECT_FALSE(temp);
 }
 
-TEST(MetaTraits, isConstantStruct) {
+TEST(MetaTraitsRevScal, isConstantStruct) {
   expect_not_const<stan::math::var>();
   expect_not_const<stan::math::var, double>();
   expect_not_const<stan::math::var, double, stan::math::var>();

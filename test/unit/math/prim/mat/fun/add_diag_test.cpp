@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-TEST(MathPrimMat, zero_sizes) {
+TEST(MathPrimMat, zero_sizes_add_diag) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> mat(0, 0);
   Eigen::Matrix<double, Eigen::Dynamic, 1> to_add1(0);
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> output;
@@ -14,7 +14,7 @@ TEST(MathPrimMat, zero_sizes) {
   EXPECT_EQ(0, output.cols());
 }
 
-TEST(MathPrimMat, vector_correct_size) {
+TEST(MathPrimMat, vector_correct_size_add_diag) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> mat(2, 3);
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> mat2(0, 0);
   Eigen::Matrix<double, Eigen::Dynamic, 1> to_add1(1);
@@ -27,7 +27,7 @@ TEST(MathPrimMat, vector_correct_size) {
   EXPECT_THROW(stan::math::add_diag(mat2, to_add2), std::invalid_argument);
 }
 
-TEST(MathPrimMat, row_vector_correct_size) {
+TEST(MathPrimMat, row_vector_correct_size_add_diag) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> mat(2, 3);
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> mat2(0, 0);
   Eigen::Matrix<double, 1, Eigen::Dynamic> to_add1(1);

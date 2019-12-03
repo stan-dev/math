@@ -1,7 +1,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathMatrix, trace_inv_quad_form_ldlt) {
+TEST(MathMatrixPrimMat, trace_inv_quad_form_ldlt) {
   stan::math::matrix_d A(4, 4), B(4, 2);
   stan::math::LDLT_factor<double, -1, -1> ldlt_A;
   A << 9.0, 3.0, 3.0, 3.0, 3.0, 10.0, 2.0, 2.0, 3.0, 2.0, 7.0, 1.0, 3.0, 2.0,

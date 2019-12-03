@@ -5,21 +5,21 @@
 #include <string>
 
 // Basic tests for the underlying requires
-TEST(requires, t_test) {
+TEST(requires_prim_scal, t_test) {
   using stan::require_t;
   using stan::test::unary_require_tester;
   EXPECT_TRUE((unary_require_tester<require_t, std::true_type>::value));
   EXPECT_FALSE((unary_require_tester<require_t, std::false_type>::value));
 }
 
-TEST(requires, not_test) {
+TEST(requires_prim_scal, not_test) {
   using stan::require_not_t;
   using stan::test::unary_require_tester;
   EXPECT_TRUE((unary_require_tester<require_not_t, std::false_type>::value));
   EXPECT_FALSE((unary_require_tester<require_not_t, std::true_type>::value));
 }
 
-TEST(requires, all_not_test) {
+TEST(requires_prim_scal, all_not_test) {
   using stan::require_all_not_t;
   using stan::test::require_variadic_checker;
   EXPECT_TRUE((require_variadic_checker<require_all_not_t, std::false_type,
@@ -30,7 +30,7 @@ TEST(requires, all_not_test) {
                                         std::false_type>::value));
 }
 
-TEST(requires, any_not_test) {
+TEST(requires_prim_scal, any_not_test) {
   using stan::require_any_not_t;
   using stan::test::require_variadic_checker;
   EXPECT_TRUE((require_variadic_checker<require_any_not_t, std::false_type,
@@ -41,7 +41,7 @@ TEST(requires, any_not_test) {
                                          std::false_type>::value));
 }
 
-TEST(requires, all_test) {
+TEST(requires_prim_scal, all_test) {
   using stan::require_all_t;
   using stan::test::require_variadic_checker;
   EXPECT_FALSE((require_variadic_checker<require_all_t, std::false_type,
@@ -52,7 +52,7 @@ TEST(requires, all_test) {
                                          std::false_type>::value));
 }
 
-TEST(requires, any_test) {
+TEST(requires_prim_scal, any_test) {
   using stan::require_any_t;
   using stan::test::require_variadic_checker;
   EXPECT_FALSE((require_variadic_checker<require_any_t, std::false_type,
@@ -64,7 +64,7 @@ TEST(requires, any_test) {
 }
 
 // Test same
-TEST(requires, same_test) {
+TEST(requires_prim_scal, same_test) {
   using stan::require_same_t;
   using stan::test::require_variadic_checker;
   EXPECT_FALSE(
@@ -75,7 +75,7 @@ TEST(requires, same_test) {
       (require_variadic_checker<stan::require_same_t, int, int>::value));
 }
 
-TEST(requires, not_same_test) {
+TEST(requires_prim_scal, not_same_test) {
   using stan::require_not_same_t;
   using stan::test::require_variadic_checker;
   EXPECT_TRUE(
@@ -85,7 +85,7 @@ TEST(requires, not_same_test) {
   EXPECT_FALSE((require_variadic_checker<require_not_same_t, int, int>::value));
 }
 
-TEST(requires, all_same_test) {
+TEST(requires_prim_scal, all_same_test) {
   using stan::require_all_same_t;
   using stan::test::require_variadic_checker;
   EXPECT_FALSE((require_variadic_checker<require_all_same_t, double,
@@ -96,7 +96,7 @@ TEST(requires, all_same_test) {
       (require_variadic_checker<require_all_same_t, int, int, int>::value));
 }
 
-TEST(requires, all_not_same_test) {
+TEST(requires_prim_scal, all_not_same_test) {
   using stan::require_any_not_same_t;
   using stan::test::require_variadic_checker;
   EXPECT_TRUE((require_variadic_checker<require_any_not_same_t, double, int,
@@ -108,7 +108,7 @@ TEST(requires, all_not_same_test) {
 }
 
 // Test convertible
-TEST(requires, convertible_test) {
+TEST(requires_prim_scal, convertible_test) {
   using stan::require_convertible_t;
   using stan::test::require_variadic_checker;
   EXPECT_FALSE((require_variadic_checker<stan::require_convertible_t, double,
@@ -119,7 +119,7 @@ TEST(requires, convertible_test) {
       (require_variadic_checker<stan::require_convertible_t, int, int>::value));
 }
 
-TEST(requires, not_convertible_test) {
+TEST(requires_prim_scal, not_convertible_test) {
   using stan::require_not_convertible_t;
   using stan::test::require_variadic_checker;
   EXPECT_TRUE((require_variadic_checker<require_not_convertible_t, double,
@@ -130,7 +130,7 @@ TEST(requires, not_convertible_test) {
       (require_variadic_checker<require_not_convertible_t, int, int>::value));
 }
 
-TEST(requires, all_convertible_test) {
+TEST(requires_prim_scal, all_convertible_test) {
   using stan::require_all_convertible_t;
   using stan::test::require_variadic_checker;
   EXPECT_FALSE((require_variadic_checker<require_all_convertible_t, double,
@@ -141,7 +141,7 @@ TEST(requires, all_convertible_test) {
                                         int>::value));
 }
 
-TEST(requires, all_not_convertible_test) {
+TEST(requires_prim_scal, all_not_convertible_test) {
   using stan::require_any_not_convertible_t;
   using stan::test::require_variadic_checker;
   EXPECT_TRUE((require_variadic_checker<require_any_not_convertible_t, double,
@@ -153,7 +153,7 @@ TEST(requires, all_not_convertible_test) {
 }
 
 // Double or Int
-TEST(requires, double_or_int_test) {
+TEST(requires_prim_scal, double_or_int_test) {
   using stan::test::require_scal_checker;
   require_scal_checker<stan::require_double_or_int_t, double, int>::unary();
   require_scal_checker<stan::require_not_double_or_int_t, double,
@@ -166,7 +166,7 @@ TEST(requires, double_or_int_test) {
                        int>::any_not();
 }
 
-TEST(requires, arithmetic_test) {
+TEST(requires_prim_scal, arithmetic_test) {
   using stan::test::require_scal_checker;
   require_scal_checker<stan::require_arithmetic_t, double, float, int>::unary();
   require_scal_checker<stan::require_not_arithmetic_t, double, float,
@@ -181,7 +181,7 @@ TEST(requires, arithmetic_test) {
                        int>::any_not();
 }
 
-TEST(requires, var_or_arithmetic_test) {
+TEST(requires_prim_scal, var_or_arithmetic_test) {
   using stan::test::require_scal_checker;
   require_scal_checker<stan::require_var_or_arithmetic_t, double, int>::unary();
   require_scal_checker<stan::require_not_var_or_arithmetic_t, double,

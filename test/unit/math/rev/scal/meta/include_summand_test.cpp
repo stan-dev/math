@@ -5,11 +5,11 @@
 using stan::math::include_summand;
 using stan::math::var;
 
-TEST(MetaTraits, IncludeSummandProptoTrueVar) {
+TEST(MetaTraitsRevScal, IncludeSummandProptoTrueVar) {
   EXPECT_TRUE((include_summand<true, var>::value));
 }
 
-TEST(MetaTraits, IncludeSummandProtoTrueVarTen) {
+TEST(MetaTraitsRevScal, IncludeSummandProtoTrueVarTen) {
   EXPECT_TRUE((include_summand<true, double, var, int, var, double, double, int,
                                int, var, int>::value));
 }

@@ -23,7 +23,6 @@ namespace math {
  */
 template <typename T, typename = require_floating_point_t<T>>
 inline matrix_cl<T> cholesky_decompose(matrix_cl<T>& A) {
-  check_square("cholesky_decompose", "A", A);
   check_symmetric("cholesky_decompose", "A", A);
   matrix_cl<T> res = copy_cl(A);
   if (res.rows() == 0) {

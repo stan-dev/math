@@ -1,7 +1,7 @@
 #include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 
-TEST(ProbBernoulliLogit, log_matches_lpmf) {
+TEST(ProbBernoulliLogitScal, log_matches_lpmf) {
   int n = 1;
   double theta = 1.2;
 

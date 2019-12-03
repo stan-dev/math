@@ -2,7 +2,7 @@
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathMatrix, dimensionValidation) {
+TEST(MathMatrixPrimMat, dimensionValidation) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::determinant;

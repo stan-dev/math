@@ -13,7 +13,7 @@ void test_log_sum_exp(const Eigen::Matrix<double, R, C>& as) {
   EXPECT_FLOAT_EQ(log(sum_exp), log_sum_exp(as));
 }
 
-TEST(MathFunctions, log_sum_exp) {
+TEST(MathFunctions, log_sum_exp_mat) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::log_sum_exp;

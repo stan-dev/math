@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMatrix, mean) {
+TEST(MathMatrixPrimMat, mean) {
   using stan::math::mean;
   std::vector<double> x;
   EXPECT_THROW(mean(x), std::invalid_argument);
@@ -47,7 +47,7 @@ TEST(MathMatrix, mean) {
   EXPECT_FLOAT_EQ(9.5, mean(m));
 }
 
-TEST(MathMatrix, mean_exception) {
+TEST(MathMatrixPrimMat, mean_exception) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   Matrix<double, Dynamic, Dynamic> m;

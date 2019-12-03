@@ -23,7 +23,6 @@
 #include <stan/math/prim/arr/fun/scaled_add.hpp>
 #include <stan/math/prim/arr/fun/sort_asc.hpp>
 #include <stan/math/prim/arr/fun/sort_desc.hpp>
-#include <stan/math/prim/arr/fun/sub.hpp>
 #include <stan/math/prim/arr/fun/sum.hpp>
 #include <stan/math/prim/arr/fun/value_of.hpp>
 #include <stan/math/prim/arr/fun/value_of_rec.hpp>

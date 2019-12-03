@@ -19,7 +19,7 @@ TEST(MathFunctions, sum) {
   EXPECT_FLOAT_EQ(6.0, stan::math::sum(x));
 }
 
-TEST(MathFunctions, sub_nan) {
+TEST(MathFunctions, sum_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
   std::vector<double> x(3);
 
@@ -29,7 +29,7 @@ TEST(MathFunctions, sub_nan) {
 
   EXPECT_PRED1(boost::math::isnan<double>, stan::math::sum(x));
 }
-TEST(MathMatrix, sum_vector_int) {
+TEST(MathMatrixPrimArr, sum_vector_int) {
   std::vector<int> x(3);
   EXPECT_EQ(0, stan::math::sum(x));
   x[0] = 1;

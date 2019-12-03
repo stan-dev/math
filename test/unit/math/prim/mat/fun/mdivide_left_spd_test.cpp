@@ -1,7 +1,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathMatrix, mdivide_left_spd_val) {
+TEST(MathMatrixPrimMat, mdivide_left_spd_val) {
   using stan::math::mdivide_left_spd;
   stan::math::matrix_d Ad(2, 2);
   stan::math::matrix_d I;

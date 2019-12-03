@@ -3,10 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/mat/err/check_pos_definite.hpp>
-#include <stan/math/prim/mat/err/check_symmetric.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
+#include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <sstream>
 #include <string>
@@ -38,10 +36,7 @@ inline void check_corr_matrix(
   using size_type = typename index_type<
       Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> >::type;
 
-  check_size_match(function, "Rows of correlation matrix", y.rows(),
-                   "columns of correlation matrix", y.cols());
-  check_positive(function, name, "rows", y.rows());
-  check_symmetric(function, "y", y);
+  check_square(function, name, y);
 
   for (size_type k = 0; k < y.rows(); ++k) {
     if (!(fabs(y(k, k) - 1.0) <= CONSTRAINT_TOLERANCE)) {

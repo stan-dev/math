@@ -18,7 +18,7 @@ TEST(ProbDistributionsMultiNormalPrec, MultiNormalVar) {
   EXPECT_FLOAT_EQ(-11.73908, stan::math::multi_normal_prec_log(y, mu, L).val());
 }
 
-TEST(AgradRev, check_varis_on_stack) {
+TEST(ProbDistributionsMultiNormalPrec, check_varis_on_stack) {
   using stan::math::to_var;
   Matrix<double, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;

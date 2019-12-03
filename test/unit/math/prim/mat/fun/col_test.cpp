@@ -1,7 +1,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathMatrix, col) {
+TEST(MathMatrixPrimMat, col) {
   stan::math::matrix_d m(3, 4);
   m << 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12;
   stan::math::vector_d c = m.col(0);
@@ -12,7 +12,7 @@ TEST(MathMatrix, col) {
     EXPECT_FLOAT_EQ(c[i], c2[i]);
 }
 
-TEST(MathMatrix, col_exception) {
+TEST(MathMatrixPrimMat, col_exception) {
   stan::math::matrix_d m1(2, 3);
   m1 << 1, 2, 3, 4, 5, 6;
 

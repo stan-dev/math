@@ -16,7 +16,7 @@ void correct_type_matrix(const Eigen::Matrix<double, R, C>& x) {
   EXPECT_EQ(Eigen::Dynamic, C);
 }
 
-TEST(MathMatrix, append_row) {
+TEST(MathMatrixPrimMat, append_row) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;

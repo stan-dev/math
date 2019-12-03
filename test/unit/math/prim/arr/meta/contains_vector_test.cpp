@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MetaTraits, contains_vector) {
+TEST(MetaTraitsPrimArr, contains_vector) {
   using stan::contains_vector;
   using std::vector;
 
