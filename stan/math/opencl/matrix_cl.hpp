@@ -481,6 +481,9 @@ class matrix_cl<T, require_arithmetic_t<T>> {
     this->view_ = a.view();
     this->rows_ = a.rows();
     this->cols_ = a.cols();
+    if (a.size() == 0) {
+      return *this;
+    }
     this->wait_for_read_write_events();
     initialize_buffer(a);
     return *this;
