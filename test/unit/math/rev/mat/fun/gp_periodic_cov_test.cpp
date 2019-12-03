@@ -2756,7 +2756,7 @@ TEST(RevMath, gp_periodic_cov2_dim_mismatch_vec_eigen_mixed) {
                std::invalid_argument);
 }
 
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, gp_periodic_cov_check_varis_on_stack) {
   using stan::math::to_var;
   std::vector<double> x(3);
   double sigma = 0.2;

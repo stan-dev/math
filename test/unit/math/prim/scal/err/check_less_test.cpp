@@ -35,7 +35,7 @@ TEST(ErrorHandlingScalar, CheckLess) {
       << "check_less should throw an exception with x == -Inf and lb == -Inf";
 }
 
-TEST(ErrorHandlingScalar, CheckGreaterOrEqual_nan) {
+TEST(ErrorHandlingScalar, CheckLess_nan) {
   const char* function = "check_less";
   double x = 10.0;
   double lb = 0.0;

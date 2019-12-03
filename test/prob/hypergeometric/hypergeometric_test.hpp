@@ -5,7 +5,7 @@ using stan::math::var;
 using std::numeric_limits;
 using std::vector;
 
-class AgradDistributionsNegBinomial : public AgradDistributionTest {
+class AgradDistributionsHypergeometric : public AgradDistributionTest {
  public:
   void valid_values(vector<vector<double> >& parameters,
                     vector<double>& log_prob) {
@@ -13,6 +13,14 @@ class AgradDistributionsNegBinomial : public AgradDistributionTest {
 
     param[0] = 5;   // n
     param[1] = 15;  // N
+    param[2] = 10;  // a
+    param[3] = 10;  // b
+    parameters.push_back(param);
+    log_prob.push_back(-4.119424246619123763935);  // expected log_prob
+
+    // case for n == N
+    param[0] = 5;   // n
+    param[1] = 5;   // N
     param[2] = 10;  // a
     param[3] = 10;  // b
     parameters.push_back(param);

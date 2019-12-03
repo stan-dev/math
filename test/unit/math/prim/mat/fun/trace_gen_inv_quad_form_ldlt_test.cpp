@@ -7,7 +7,7 @@
  * where D is a square matrix and the LDLT_factor of A is provided.
  */
 
-TEST(MathMatrix, trace_gen_inv_quad_form_ldlt) {
+TEST(MathMatrixPrimMat, trace_gen_inv_quad_form_ldlt) {
   using stan::math::matrix_d;
   matrix_d D(2, 2), A(4, 4), B(4, 2), gen_inv_quad_form;
 

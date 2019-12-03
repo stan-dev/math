@@ -2,7 +2,7 @@
 #include <stan/math/prim/scal/meta/disjunction.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathMeta, or_type) {
+TEST(MathMetaPrimScal, or_type) {
   bool temp = stan::math::disjunction<std::true_type, std::true_type,
                                       std::true_type>::value;
   EXPECT_TRUE(temp);

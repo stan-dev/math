@@ -22,7 +22,7 @@ struct fun1 {
   }
 };
 
-TEST(AgradAutoDiff, gradient) {
+TEST(RevFunctor, gradient) {
   fun1 f;
   Matrix<double, Dynamic, 1> x(2);
   x << 5, 7;
@@ -36,7 +36,7 @@ TEST(AgradAutoDiff, gradient) {
 }
 
 // test threaded AD if enabled
-TEST(AgradAutoDiff, gradient_threaded) {
+TEST(RevFunctor, gradient_threaded) {
   fun1 f;
   Matrix<double, Dynamic, 1> x_ref(2);
   x_ref << 5, 7;
@@ -122,7 +122,7 @@ TEST(AgradAutoDiff, gradient_threaded) {
 
 // test threaded AD through the Intel TBB whenever threading is used
 #ifdef STAN_THREADS
-TEST(AgradAutoDiff, gradient_threaded_tbb) {
+TEST(RevFunctor, gradient_threaded_tbb) {
   fun1 f;
   Matrix<double, Dynamic, 1> x_ref(2);
   x_ref << 5, 7;
@@ -205,7 +205,7 @@ stan::math::var sum_and_throw(const Matrix<stan::math::var, Dynamic, 1>& x) {
   return y;
 }
 
-TEST(AgradAutoDiff, RecoverMemory) {
+TEST(RevFunctor, RecoverMemory) {
   using Eigen::VectorXd;
   for (int i = 0; i < 100000; ++i) {
     try {

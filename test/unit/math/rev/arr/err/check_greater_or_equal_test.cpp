@@ -5,7 +5,7 @@
 using stan::math::check_greater_or_equal;
 using stan::math::var;
 
-TEST(AgradRevErrorHandlingScalar, CheckFiniteVarCheckVectorized) {
+TEST(AgradRevErrorHandlingScalar, CheckGreateOrEqualVarCheckVectorized) {
   using stan::math::check_greater_or_equal;
   using stan::math::var;
   using std::vector;

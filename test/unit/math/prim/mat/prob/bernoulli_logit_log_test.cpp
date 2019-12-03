@@ -4,7 +4,7 @@
 using Eigen::Dynamic;
 using Eigen::Matrix;
 
-TEST(ProbBernoulliLogit, log_matches_lpmf) {
+TEST(ProbBernoulliLogitMat, log_matches_lpmf) {
   Matrix<int, Dynamic, 1> n(3, 1);
   n << 0, 1, 0;
   Matrix<double, Dynamic, 1> theta(3, 1);

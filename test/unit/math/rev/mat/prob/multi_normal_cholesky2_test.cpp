@@ -43,7 +43,7 @@ struct multi_normal_cholesky_fun {
   }
 };
 
-TEST(MultiNormalCholesky, TestGradFunctional) {
+TEST(ProbDistributionsMultiNormalCholesky2, TestGradFunctional) {
   std::vector<double> x(3 + 3 + 3 * 2);
   // y
   x[0] = 1.0;
@@ -274,7 +274,7 @@ void test_all() {
   }
 }
 
-TEST(MultiNormal, TestGradFunctionalVectorized) {
+TEST(ProbDistributionsMultiNormalCholesky2, TestGradFunctionalVectorized) {
   test_all<1, 1>();
   test_all<1, -1>();
   test_all<-1, 1>();

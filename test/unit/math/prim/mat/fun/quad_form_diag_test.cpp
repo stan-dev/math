@@ -6,7 +6,7 @@ using Eigen::Dynamic;
 using Eigen::Matrix;
 using stan::math::quad_form_diag;
 
-TEST(MathMatrix, quadFormDiag) {
+TEST(MathMatrixPrimMat, quadFormDiag) {
   Matrix<double, Dynamic, Dynamic> m(1, 1);
   m << 3;
 
@@ -18,7 +18,7 @@ TEST(MathMatrix, quadFormDiag) {
 
   expect_matrix_eq(v_m * m * v_m, quad_form_diag(m, v));
 }
-TEST(MathMatrix, quadFormDiag2) {
+TEST(MathMatrixPrimMat, quadFormDiag2) {
   Matrix<double, Dynamic, Dynamic> m(3, 3);
   m << 1, 2, 3, 4, 5, 6, 7, 8, 9;
 
@@ -35,7 +35,7 @@ TEST(MathMatrix, quadFormDiag2) {
   expect_matrix_eq(v_m * m * v_m, quad_form_diag(m, rv));
 }
 
-TEST(MathMatrix, quadFormDiagException) {
+TEST(MathMatrixPrimMat, quadFormDiagException) {
   Matrix<double, Dynamic, Dynamic> m(2, 2);
   m << 2, 3, 4, 5;
   EXPECT_THROW(quad_form_diag(m, m), std::invalid_argument);

@@ -44,7 +44,6 @@
 #include <stan/math/rev/mat/fun/quad_form.hpp>
 #include <stan/math/rev/mat/fun/quad_form_sym.hpp>
 #include <stan/math/rev/mat/fun/rows_dot_product.hpp>
-#include <stan/math/rev/mat/fun/scale_matrix_exp_multiply.hpp>
 #include <stan/math/rev/mat/fun/sd.hpp>
 #include <stan/math/rev/mat/fun/simplex_constrain.hpp>
 #include <stan/math/rev/mat/fun/softmax.hpp>
