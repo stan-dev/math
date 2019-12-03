@@ -15,7 +15,7 @@ namespace math {
  * @tparam S input type for nested static function, whose underlying
  * scalar type must be assignable to T.
  */
-template <typename T, typename S>
+template <typename T, typename S, typename Enable = void>
 struct promote_scalar_struct {
   /**
    * Return the value of the input argument promoted to the type

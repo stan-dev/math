@@ -12,7 +12,7 @@ namespace math {
  * @return Negation of subtrahend.
  */
 template <typename T>
-inline T minus(const T& x) {
+inline auto minus(const T& x) {
   return -x;
 }
 
