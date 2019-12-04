@@ -15,10 +15,10 @@ namespace math {
  *   <code>.size()</code>
  * @tparam T2 Scalar type of the second matrix, requires class method
  *   <code>.size()</code>
- * @tparam R1 Rows specified at compile time of the first matrix
- * @tparam C1 Columns specified at compile time of the first matrix
- * @tparam R2 Rows specified at compile time of the second matrix
- * @tparam C2 Columns specified at compile time of the second matrix
+ * @tparam R1 number of rows or Eigen::Dynamic for first matrix
+ * @tparam C1 number of columns or Eigen::Dynamic for first matrix
+ * @tparam R2 number of rows or Eigen::Dynamic for second matrix
+ * @tparam C2 number of columns or Eigen::Dynamic for second matrix
  * @param y1 First matrix to test,
  * @param y2 Second matrix to test
  * @return <code>true</code> if the dimensions of the matrices match
@@ -38,10 +38,10 @@ inline bool is_matching_dims(const Eigen::Matrix<T1, R1, C1>& y1,
  * @tparam check_compile Whether to check the static sizes
  * @tparam T1 Scalar type of the first matrix
  * @tparam T2 Scalar type of the second matrix
- * @tparam R1 Rows specified at compile time of the first matrix
- * @tparam C1 Columns specified at compile time of the first matrix
- * @tparam R2 Rows specified at compile time of the second matrix
- * @tparam C2 Columns specified at compile time of the second matrix
+ * @tparam R1 number of rows or Eigen::Dynamic for first matrix
+ * @tparam C1 number of columns or Eigen::Dynamic for first matrix
+ * @tparam R2 number of rows or Eigen::Dynamic for second matrix
+ * @tparam C2 number of columns or Eigen::Dynamic for second matrix
  * @param y1 First matrix to test
  * @param y2 Second matrix to test
  * @return <code>true</code> if the dimensions of the matrices match

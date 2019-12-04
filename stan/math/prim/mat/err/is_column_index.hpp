@@ -8,15 +8,15 @@ namespace stan {
 namespace math {
 
 /**
- * Return <code>true</code> no index is invalid column.
+ * Return <code>true</code> if column index is in bounds.
  * By default this is a 1-indexed check (as opposed to zero-indexed).
  * Behavior can be changed by setting <code>stan::error_index::value</code>.
  * @tparam T_y Type of scalar, requires class method <code>.cols()</code>
- * @tparam R Number of rows of the matrix
- * @tparam C Number of columns of the matrix
- * @param y Matrix to test
- * @param i Index to check
- * @return <code>true</code> no index is invalid column
+ * @tparam R number of rows or Eigen::Dynamic
+ * @tparam C number of columns or Eigen::Dynamic
+ * @param y matrix to test
+ * @param i column index to check
+ * @return <code>true</code> if column index is in bounds
  */
 template <typename T_y, int R, int C>
 inline bool is_column_index(const Eigen::Matrix<T_y, R, C>& y, size_t i) {
