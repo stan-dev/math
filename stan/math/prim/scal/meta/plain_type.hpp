@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_META_PLAIN_TYPE_HPP
 #define STAN_MATH_PRIM_SCAL_META_PLAIN_TYPE_HPP
 
+#include <type_traits>
+
 namespace stan {
 namespace math {
 
@@ -11,7 +13,7 @@ namespace math {
  */
 template <typename T, typename Enable = void>
 struct plain_type {
-  using type = T;
+  using type = std::decay_t<T>;
 };
 
 template <typename T>

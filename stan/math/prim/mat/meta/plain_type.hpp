@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/scal/meta/plain_type.hpp>
 #include <stan/math/prim/scal/meta/require_generics.hpp>
+#include <type_traits>
 
 namespace stan {
 namespace math {
@@ -14,7 +15,7 @@ namespace math {
  */
 template <typename T>
 struct plain_type<T, require_eigen_t<T>> {
-  using type = typename T::PlainObject;
+  using type = typename std::decay_t<T>::PlainObject;
 };
 
 }  // namespace math
