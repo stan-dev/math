@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_META_SCALAR_SEQ_VIEW_HPP
 #define STAN_MATH_PRIM_SCAL_META_SCALAR_SEQ_VIEW_HPP
 
+#include <stan/math/prim/scal/meta/plain_type.hpp>
 #include <stan/math/prim/scal/meta/scalar_type.hpp>
 #include <stan/math/prim/scal/meta/is_vector_like.hpp>
 #include <type_traits>
@@ -33,7 +34,7 @@ class scalar_seq_view<
   int size() const { return c_.size(); }
 
  private:
-  C c_;
+  math::plain_type_t<C> c_;
 };
 
 /** \ingroup type_trait
