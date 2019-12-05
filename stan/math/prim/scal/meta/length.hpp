@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_META_LENGTH_HPP
 #define STAN_MATH_PRIM_SCAL_META_LENGTH_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <cstdlib>
 
 namespace stan {
@@ -8,7 +9,7 @@ namespace stan {
  * Returns the length of primitive scalar types
  * that are always of length 1.
  */
-template <typename T>
+template <typename T, typename = require_stan_scalar_t<T>>
 size_t length(const T& /*x*/) {
   return 1U;
 }

@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_MAT_META_LENGTH_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
 
 namespace stan {
 
@@ -10,12 +11,10 @@ namespace stan {
  *
  * @param m a const Eigen matrix
  * @tparam T type of matrix.
- * @tparam R number of rows in the input matrix.
- * @tparam C number of columns in the input matrix.
  * @return the size of the input matrix
  */
-template <typename T, int R, int C>
-size_t length(const Eigen::Matrix<T, R, C>& m) {
+template <typename T, typename = require_eigen_t<T>, typename = void>
+size_t length(const T& m) {
   return m.size();
 }
 }  // namespace stan
