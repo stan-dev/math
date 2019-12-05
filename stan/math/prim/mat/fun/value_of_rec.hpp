@@ -13,22 +13,16 @@ namespace math {
  * T must implement value_of_rec. See
  * test/unit/math/fwd/mat/fun/value_of_test.cpp for fvar and var usage.
  *
- * @tparam T Scalar type in matrix
- * @tparam R Rows of matrix
- * @tparam C Columns of matrix
+ * @tparam T Type of matrix
  * @param[in] M Matrix to be converted
  * @return Matrix of values
  **/
-template <typename T, int R, int C>
-inline Eigen::Matrix<double, R, C> value_of_rec(
-    const Eigen::Matrix<T, R, C>& M) {
-  Eigen::Matrix<double, R, C> Md(M.rows(), M.cols());
-  for (int j = 0; j < M.cols(); j++) {
-    for (int i = 0; i < M.rows(); i++) {
-      Md(i, j) = value_of_rec(M(i, j));
-    }
-  }
-  return Md;
+template <typename T,
+          typename
+          = require_t<std::negate<std::is_same<scalar_type_t<T>, double>>>,
+          typename = require_eigen_t<T>>
+inline auto value_of_rec(const T& M) {
+  return M.unaryExpr([](auto x) { return value_of_rec(x); });
 }
 
 /**
@@ -42,9 +36,10 @@ inline Eigen::Matrix<double, R, C> value_of_rec(
  * @param x Specified matrix.
  * @return Specified matrix.
  */
-template <int R, int C>
-inline const Eigen::Matrix<double, R, C>& value_of_rec(
-    const Eigen::Matrix<double, R, C>& x) {
+template <typename T,
+          typename = require_t<std::is_same<scalar_type_t<T>, double>>,
+          typename = require_eigen_t<T>>
+inline const T& value_of_rec(const T& x) {
   return x;
 }
 }  // namespace math
