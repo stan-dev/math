@@ -2,10 +2,12 @@
 #define STAN_MATH_REV_CORE_STD_COMPLEX_HPP
 
 #include <stan/math/fwd/core.hpp>
+#include <stan/math/fwd/scal/fun/value_of_rec.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
+#include <stan/math/prim/scal/fun/value_of_rec.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/scal/fun/atan2.hpp>
@@ -18,6 +20,7 @@
 #include <stan/math/rev/scal/fun/sin.hpp>
 #include <stan/math/rev/scal/fun/square.hpp>
 #include <stan/math/rev/scal/fun/sqrt.hpp>
+#include <stan/math/rev/scal/fun/value_of_rec.hpp>
 #include <cmath>
 #include <complex>
 #include <cstddef>
@@ -26,9 +29,20 @@
 
 #include <iostream>
 
-// std SPECIALIZATIONS FOR STAN W/O COMPLEX
+// BEGIN PR 1
 // ===================================================================
+// specialization of std:: and overloads
+// -------------------------------------
+// std::iterator_traits<var>         stan/math/rev/core/std_iterator_traits.hpp
+// std::iterator_traits<fvar<T>>     stan/math/fwd/core/std_iterator_traits.hpp
+// stan::math::signbit               stan/math/prim/scal/fun/signbit.hpp
+// stan::math::isinf                 stan/math/prim/scal/fun/isinf.hpp
+// stan::math::isfinite              stan/math/prim/scal/fun/isfinite.hpp
+// stan::math::isnan                 stan/math/prim/scal/fun/isnan.hpp
+// stan::math::isnormal              stan/math/prim/scal/fun/isnormal.hpp
+// stan::math::copysign              stan/math/prim/scal/fun/copysign.hpp
 
+// std SPECIALIZATIONS (no complex)
 namespace std {
 /**
  * Specialization of iterator traits for Stan math.  These all take
@@ -96,9 +110,6 @@ struct iterator_traits<stan::math::fvar<T>> {
   typedef stan::math::fvar<T>& reference;
 };
 }  // namespace std
-
-// STAN CODE W/O complex<var>
-// ===================================================================
 
 namespace stan {
 namespace math {
@@ -208,616 +219,17 @@ inline T copysign(const T& x, const U& y) {
   // 0 is considered positive
   return (x < 0 && y >= 0) || (x > 0 && y < 0) ? -x : x;
 }
-
 }  // namespace math
 }  // namespace stan
 
-// generic std::complex code w/o complex<var> or complex<fvar<T>>
-namespace stan {
-namespace math {
-/**
- * Return the complex number with real and complex parts given by the
- * `double` value of the real and complex parts of the argument.
- *
- * @tparam T value type of complex argument
- * @param[in] complex argument
- * @return complex number with same `double` real and imaginary parts as the
- * argument
- */
-template <typename T>
-inline std::complex<double> value_of_rec(const std::complex<T>& z) {
-  return {value_of_rec(z.real()), value_of_rec(z.imag())};
-}
-
-/**
- * Return the complex number composed of the real and complex parts
- * with signs copied from the real and complex parts of the first
- * arguments to the real and complex parts of the second.
- *
- * This is an overload of the standard libary `copysign` for complex
- * numbers that will be used with argument-dependent lookup.
- *
- * @tparam T value type of first argument
- * @tparam U value type of second argument
- * @param[in] x first complex argument
- * @param[in] y second complex argument
- * @return copy of second argument, with components negated if
- * necessary to match sign of first argument
- */
-template <typename T, typename U>
-inline std::complex<T> copysign(const std::complex<T>& y,
-                                const std::complex<U>& x) {
-  return {copysign(y.real(), x.real()), copysign(y.imag(), x.imag())};
-}
-
-/**
- * Return the specified complex number multiplied by `i`.
- *
- * This compound function is more efficient than mulitplying by a
- * constant `i` because it involves only a single arithmetic negation.
- *
- * @tparam value type of complex argument
- * @param[in] z complex argument
- * @return argument multipled by `i`
- */
-template <typename T>
-inline std::complex<T> i_times(const std::complex<T>& z) {
-  return {-z.imag(), z.real()};
-}
-
-/**
- * Base template class for metaprogram determining type of return for
- * arithmetic operation involving two template types through defined
- * type `complex_t`.  Works for binary functions only.
- *
- * @tparam U type of first argument
- * @tparam V type of second argument
- */
-template <typename U, typename V>
-struct complex_return {};
-template <typename U, typename V>
-struct complex_return<std::complex<U>, std::complex<V>> {
-  using complex_t = std::complex<return_type_t<U, V>>;
-};
-// doc inherited from base function template
-template <typename U, typename V>
-struct complex_return<std::complex<U>, V> {
-  using complex_t = std::complex<return_type_t<U, V>>;
-};
-// doc inherited from base function template
-template <typename U, typename V>
-struct complex_return<U, std::complex<V>> {
-  using complex_t = std::complex<return_type_t<U, V>>;
-};
-
-/**
- * The return type of complex function given a sequence of template
- * parameters for the argument types.
- *
- * @tparam Args argument types
- */
-template <typename... Args>
-using complex_return_t = typename complex_return<Args...>::complex_t;
-
-/**
- * Return the specified complex number multiplied by `-i`.
- *
- * This compound function is more efficient than mulitplying by the
- * constant `-i` because it involves only a single arithmetic
- * negation.
- *
- * @tparam value type of complex argument
- * @param[in] z complex argument
- * @return argument multipled by `-i`
- */
-template <typename T>
-inline std::complex<T> neg_i_times(const std::complex<T>& z) {
-  return {z.imag(), -z.real()};
-}
-
-/**
- * Return the complex negation of the specified complex argument.
- *
- * @tparam V value type of complex argument
- * @param[in] z argument
- * @return negation of argument
- */
-template <typename V>
-inline std::complex<V> complex_negate(const std::complex<V>& z) {
-  return {-z.real(), -z.imag()};
-}
-
-/**
- * Return the sum of the specified arguments.  At least one of the
- * arguments must be a complex number.
- *
- * @tparam U type of first argument
- * @tparam V type of second argument
- * @param[in] lhs first argument
- * @param[in] rhs second argument
- * @return sum of the arguments
- */
-template <typename U, typename V>
-inline complex_return_t<U, V> complex_add(const U& lhs, const V& rhs) {
-  complex_return_t<U, V> y(lhs);
-  y += rhs;
-  return y;
-}
-
-/**
- * Return the difference of the specified arguments.  At least one of
- * the arguments must be a complex number.
- *
- * @tparam U type of first argument
- * @tparam V type of second argument
- * @param[in] lhs first argument
- * @param[in] rhs second argument
- * @return difference of the arguments
- */
-template <typename U, typename V>
-inline complex_return_t<U, V> complex_subtract(const U& lhs, const V& rhs) {
-  complex_return_t<U, V> y(lhs);
-  y -= rhs;
-  return y;
-}
-
-/**
- * Return the product of the specified arguments.  At least one of the
- * arguments must be a complex number.
- *
- * @tparam U type of first argument
- * @tparam V type of second argument
- * @param[in] lhs first argument
- * @param[in] rhs second argument
- * @return sum of the arguments
- */
-template <typename U, typename V>
-inline complex_return_t<U, V> complex_multiply(const U& lhs, const V& rhs) {
-  complex_return_t<U, V> y(lhs);
-  y *= rhs;
-  return y;
-}
-
-/**
- * Return the quotient of the specified arguments.  At least one of
- * the arguments must be a complex number.
- *
- * @tparam U type of first argument
- * @tparam V type of second argument
- * @param[in] lhs first argument
- * @param[in] rhs second argument
- * @return sum of the arguments
- */
-template <typename U, typename V>
-inline complex_return_t<U, V> complex_divide(const U& lhs, const V& rhs) {
-  complex_return_t<U, V> y(lhs);
-  y /= rhs;
-  return y;
-}
-
-/**
- * Return `true` if the complex arguments have equal real and
- * imaginary components.
- *
- * @tparam U value type of first argument
- * @tparam V value type of second argument
- * @param[in] lhs first argument
- * @param[in] rhs second argument
- * @return `true` if the arguments are equal
- */
-template <typename U, typename V>
-inline bool complex_equal_equal(const std::complex<U>& lhs,
-                                const std::complex<V>& rhs) {
-  return lhs.real() == rhs.real() && lhs.imag() == rhs.imag();
-}
-
-/**
- * Return `true` if the complex argument has a real component equal to
- * the real argument.
- *
- * @tparam U value type of first argument
- * @tparam V type of second argument
- * @param[in] lhs first argument
- * @param[in] rhs second argument
- * @return `true` if the complex argument has real component equal to
- * the real argument
- */
-template <typename U, typename V>
-inline bool complex_equal_equal(const U& lhs, const std::complex<V>& rhs) {
-  return lhs == rhs.real() && rhs.imag() == 0;
-}
-
-/**
- * Return `true` if the complex argument has a real component equal to
- * the real argument.
- *
- * @tparam U value type of first argument
- * @tparam V type of second argument
- * @param[in] lhs first argument
- * @param[in] rhs second argument
- * @return `true` if the complex argument has real component equal to
- * the real argument
- */
-template <typename U, typename V>
-inline bool complex_equal_equal(const std::complex<U>& lhs, const V& rhs) {
-  return lhs.real() == rhs && lhs.imag() == 0;
-}
-
-/**
- * Return `true` if the arguments are not equal.  At least one of the
- * arguments must be a complex number.
- *
- * @tparam U type of first argument
- * @tparam V type of second argument
- * @param[in] lhs first argument
- * @param[in] rhs second argument
- * @return `true` if the arguments are not equal
- */
-template <typename U, typename V>
-inline bool complex_not_equal(const U& lhs, const V& rhs) {
-  return !complex_equal_equal(lhs, rhs);
-}
-
-/**
- * Return the real part of the complex argument.
- *
- * @tparam V value type of argument
- * @param[in] z argument
- * @return real part of argument
- */
-template <typename V>
-inline V complex_real(const std::complex<V>& z) {
-  return z.real();
-}
-
-/**
- * Return the imaginary part of the complex argument.
- *
- * @tparam V value type of argument
- * @param[in] z argument
- * @return imaginary part of argument
- */
-template <typename V>
-inline V complex_imag(const std::complex<V>& z) {
-  return z.imag();
-}
-
-/**
- * Return the absolute value of the complex argument.
- *
- * @tparam V value type of argument
- * @param[in] z argument
- * @return absolute value of the argument
- */
-template <typename V>
-inline V complex_abs(const std::complex<V>& z) {
-  return hypot(real(z), imag(z));
-}
-
-/**
- * Return the phase angle of the complex argument.
- *
- * @tparam V value type of argument
- * @param[in] z argument
- * @return phase angle of the argument
- */
-template <typename V>
-inline V complex_arg(const std::complex<V>& z) {
-  return atan2(imag(z), real(z));
-}
-
-/**
- * Return the squared magnitude of the complex argument.
- *
- * @tparam V value type of argument
- * @param[in] z argument
- * @return squared magnitude of the argument
- */
-template <typename V>
-inline V complex_norm(const std::complex<V>& z) {
-  return square(real(z)) + square(imag(z));
-}
-
-/**
- * Return the complex conjugate the complex argument.
- *
- * @tparam V value type of argument
- * @param[in] z argument
- * @return complex conjugate of the argument
- */
-template <typename V>
-inline std::complex<V> complex_conj(const std::complex<V>& z) {
-  return {z.real(), -z.imag()};
-}
-
-/**
- * Return the projection of the complex argument onto the Riemann
- * sphere.
- *
- * @tparam V value type of argument
- * @param[in] z argument
- * @return projection of the argument onto the Riemann sphere
- */
-template <typename V>
-inline std::complex<V> complex_proj(const std::complex<V>& z) {
-  if (is_inf(z.real()) || is_inf(z.imag())) {
-    return {std::numeric_limits<V>::infinity(), z.imag() < 0 ? -0.0 : 0.0};
-  }
-  return z;
-}
-
-/**
- * Return the natural exponent of the complex argument.
- *
- * @tparam V value type of argument
- * @param[in] z argument
- * @return exponential of the argument
- */
-template <typename V>
-inline std::complex<V> complex_exp(const std::complex<V>& z) {
-  if (is_inf(z.real()) && z.real() > 0) {
-    if (is_nan(z.imag()) || z.imag() == 0) {
-      // (+inf, nan), (+inf, 0)
-      return z;
-    } else if (is_inf(z.imag()) && z.imag() > 0) {
-      // (+inf, +inf)
-      return {z.real(), std::numeric_limits<double>::quiet_NaN()};
-    } else if (is_inf(z.imag()) && z.imag() < 0) {
-      // (+inf, -inf)
-      return {std::numeric_limits<double>::quiet_NaN(),
-              std::numeric_limits<double>::quiet_NaN()};
-    }
-  }
-  if (is_inf(z.real()) && z.real() < 0
-      && (is_nan(z.imag()) || is_inf(z.imag()))) {
-    // (-inf, nan), (-inf, -inf), (-inf, inf)
-    return {0, 0};
-  }
-  if (is_nan(z.real()) && z.imag() == -0.0) {
-    // (nan, -0)
-    return z;
-  }
-  V exp_re = exp(z.real());
-  return {exp_re * cos(z.imag()), exp_re * sin(z.imag())};
-}
-
-/**
- * Return the natural logarithm of the complex argument.
- *
- * @tparam V value type of argument
- * @param[in] z argument
- * @return natural logarithm of the argument
- */
-template <typename V>
-inline std::complex<V> complex_log(const std::complex<V>& z) {
-  static const double inf = std::numeric_limits<double>::infinity();
-  static const double nan = std::numeric_limits<double>::quiet_NaN();
-  if ((is_nan(z.real()) && is_inf(z.imag()))
-      || (is_inf(z.real()) && is_nan(z.imag()))) {
-    return {inf, nan};
-  }
-  V r = sqrt(norm(z));
-  V theta = arg(z);
-  return {log(r), theta};
-}
-
-/**
- * Return the base 10 logarithm of the complex argument.
- *
- * @tparam V value type of argument
- * @param[in] z argument
- * @return base 10 logarithm of the argument
- */
-template <typename V>
-inline std::complex<V> complex_log10(const std::complex<V>& z) {
-  static const double inv_log_10 = 1 / log(10);
-  return log(z) * V(inv_log_10);
-}
-
-/**
- * Return the first argument raised to the power of the second
- * argument.  At least one of the arguments must be a complex number.
- *
- * @tparam U type of first argument
- * @tparam V type of second argument
- * @param[in] lhs first argument
- * @param[in] rhs second argument
- * @return first argument raised to the power of the second argument
- */
-template <typename U, typename V>
-inline complex_return_t<U, V> complex_pow(const U& x, const V& y) {
-  return exp(y * log(x));
-}
-
-/**
- * Return the square root of the complex argument.
- *
- * @tparam V value type of argument
- * @param[in] z argument
- * @return square root of the argument
- */
-template <typename V>
-inline std::complex<V> complex_sqrt(const std::complex<V>& z) {
-  auto m = sqrt(hypot(z.real(), z.imag()));
-  auto at = 0.5 * atan2(z.imag(), z.real());
-  return {m * cos(at), m * sin(at)};
-}
-
-/**
- * Return the hyperbolic sine of the complex argument.
- *
- * @tparam V value type of argument
- * @param[in] z argument
- * @return hyperbolic sine of the argument
- */
-template <typename V>
-inline std::complex<V> complex_sinh(const std::complex<V>& z) {
-  return 0.5 * (exp(z) - exp(-z));
-}
-
-/**
- * Return the hyperbolic cosine of the complex argument.
- *
- * @tparam V value type of argument
- * @param[in] z argument
- * @return hyperbolic cosine of the argument
- */
-template <typename V>
-inline std::complex<V> complex_cosh(const std::complex<V>& z) {
-  return 0.5 * (exp(z) + exp(-z));
-}
-
-/**
- * Return the hyperbolic tangent of the complex argument.
- *
- * @tparam V value type of argument
- * @param[in] z argument
- * @return hyperbolic tangent of the argument
- */
-template <typename V>
-inline std::complex<V> complex_tanh(const std::complex<V>& z) {
-  auto exp_z = exp(z);
-  auto exp_neg_z = exp(-z);
-  return (exp_z - exp_neg_z) / (exp_z + exp_neg_z);
-}
-
-/**
- * Return the hyperbolic arc sine of the complex argument.
- *
- * @tparam V value type of argument
- * @param[in] z argument
- * @return hyperbolic arc sine of the argument
- */
-template <typename V>
-inline std::complex<V> complex_asinh(const std::complex<V>& z) {
-  std::complex<double> y_d = asinh(value_of_rec(z));
-  auto y = log(z + sqrt(1 + z * z));
-  return copysign(y, y_d);
-}
-
-/**
- * Return the hyperbolic arc cosine of the complex argument.
- *
- * @tparam V value type of argument
- * @param[in] z argument
- * @return hyperbolic arc cosine of the argument
- */
-template <typename V>
-inline std::complex<V> complex_acosh(const std::complex<V>& z) {
-  std::complex<double> y_d = acosh(value_of_rec(z));
-  auto y = log(z + sqrt(z * z - 1));
-  return copysign(y, y_d);
-}
-
-/**
- * Return the hyperbolic arc tangent of the complex argument.
- *
- * @tparam V value type of argument
- * @param[in] z argument
- * @return hyperbolic arc tangent of the argument
- */
-template <typename V>
-inline std::complex<V> complex_atanh(const std::complex<V>& z) {
-  std::complex<double> y_d = atanh(value_of_rec(z));
-  V one(1);
-  auto y = 0.5 * (log(one + z) - log(one - z));
-  return copysign(y, y_d);
-}
-
-/**
- * Return the sine of the complex argument.
- *
- * @tparam V value type of argument
- * @param[in] z argument
- * @return sine of the argument
- */
-template <typename V>
-inline std::complex<V> complex_sin(const std::complex<V>& z) {
-  return neg_i_times(sinh(i_times(z)));
-}
-
-/**
- * Return the cosine of the complex argument.
- *
- * @tparam V value type of argument
- * @param[in] z argument
- * @return cosine of the argument
- */
-template <typename V>
-inline std::complex<V> complex_cos(const std::complex<V>& z) {
-  return cosh(i_times(z));
-}
-
-/**
- * Return the tangent of the complex argument.
- *
- * @tparam V value type of argument
- * @param[in] z argument
- * @return tangent of the argument
- */
-template <typename V>
-inline std::complex<V> complex_tan(const std::complex<V>& z) {
-  return neg_i_times(tanh(i_times(z)));
-}
-
-/**
- * Return the arc sine of the complex argument.
- *
- * @tparam V value type of argument
- * @param[in] z argument
- * @return arc sine of the argument
- */
-template <typename V>
-inline std::complex<V> complex_asin(const std::complex<V>& z) {
-  auto y_d = asin(value_of_rec(z));
-  auto y = neg_i_times(asinh(i_times(z)));
-  return copysign(y, y_d);
-}
-
-/**
- * Return the arc cosine of the complex argument.
- *
- * @tparam V value type of argument
- * @param[in] z argument
- * @return arc cosine of the argument
- */
-template <typename V>
-inline std::complex<V> complex_acos(const std::complex<V>& z) {
-  return V(0.5 * pi()) - asin(z);
-}
-
-/**
- * Return the arc tangent of the complex argument.
- *
- * @tparam V value type of argument
- * @param[in] z argument
- * @return arc tangent of the argument
- */
-template <typename V>
-inline std::complex<V> complex_atan(const std::complex<V>& z) {
-  return neg_i_times(atanh(i_times(z)));
-}
-
-/**
- * Returns complex number with specified magnitude and phase angle.
- *
- * @param[in] r magnitude
- * @param[in] theta phase angle
- * @return complex number with magnitude and phase angle
- */
-template <typename U, typename V>
-inline std::complex<return_type_t<U, V>> complex_polar(const U& r,
-                                                       const V& theta) {
-  using std::cos;
-  using std::sin;
-  if (!(r >= 0) || is_inf(theta)) {
-    return {std::numeric_limits<double>::quiet_NaN()};
-  }
-  return {r * cos(theta), r * sin(theta)};
-}
-
-}  // namespace math
-}  // namespace stan
+// PR 2
+// =============================================================
+// complex base class and specializations for autodiff
+// ---------------------------------------------------
+// stan::math::complex_base<V>  CRTP base class
+// stan/math/prim/cplx/complex_base.hpp std::complex<var>
+// specialization    stan/math/rev/cplx/std_complex.hpp std::coplex<fvar<T>>
+// specialization    stan/math/fwd/cplx/std_complex.hpp ALT:  cplx -> core
 
 namespace stan {
 namespace math {
@@ -1431,6 +843,625 @@ class complex<stan::math::fvar<T>>
 };
 
 }  // namespace std
+
+// BEGIN PR 3
+// =======================================================
+// generic std::complex code w/o complex<var> or complex<fvar<T>>
+
+// stan::math::complex_return   stan/math/prim/cplx/meta/complex_return
+// stan::math::X                stan/math/prim/cplx/fun/X.hpp
+// stan::math::complex_Y        stan/math/prim/cplx/fun/complex_Y.hpp
+//   for X = value_of_rec, copysign, i_times, neg_i_times
+//   for Y = negate, add, ..., polar
+
+// ALTERNATIVELY: cplx -> scal
+
+namespace stan {
+namespace math {
+/**
+ * Base template class for metaprogram determining type of return for
+ * arithmetic operation involving two template types through defined
+ * type `complex_t`.  Works for binary functions only.
+ *
+ * @tparam U type of first argument
+ * @tparam V type of second argument
+ */
+template <typename U, typename V>
+struct complex_return {};
+template <typename U, typename V>
+struct complex_return<std::complex<U>, std::complex<V>> {
+  using complex_t = std::complex<return_type_t<U, V>>;
+};
+// doc inherited from base function template
+template <typename U, typename V>
+struct complex_return<std::complex<U>, V> {
+  using complex_t = std::complex<return_type_t<U, V>>;
+};
+// doc inherited from base function template
+template <typename U, typename V>
+struct complex_return<U, std::complex<V>> {
+  using complex_t = std::complex<return_type_t<U, V>>;
+};
+
+/**
+ * The return type of complex function given a sequence of template
+ * parameters for the argument types.
+ *
+ * @tparam Args argument types
+ */
+template <typename... Args>
+using complex_return_t = typename complex_return<Args...>::complex_t;
+
+/**
+ * Return the complex number with real and complex parts given by the
+ * `double` value of the real and complex parts of the argument.
+ *
+ * @tparam T value type of complex argument
+ * @param[in] complex argument
+ * @return complex number with same `double` real and imaginary parts as the
+ * argument
+ */
+template <typename T>
+inline std::complex<double> value_of_rec(const std::complex<T>& z) {
+  using stan::math::value_of_rec;
+  return {value_of_rec(z.real()), value_of_rec(z.imag())};
+}
+
+/**
+ * Return the complex number composed of the real and complex parts
+ * with signs copied from the real and complex parts of the first
+ * arguments to the real and complex parts of the second.
+ *
+ * This is an overload of the standard libary `copysign` for complex
+ * numbers that will be used with argument-dependent lookup.
+ *
+ * @tparam T value type of first argument
+ * @tparam U value type of second argument
+ * @param[in] x first complex argument
+ * @param[in] y second complex argument
+ * @return copy of second argument, with components negated if
+ * necessary to match sign of first argument
+ */
+template <typename T, typename U>
+inline std::complex<T> copysign(const std::complex<T>& y,
+                                const std::complex<U>& x) {
+  return {copysign(y.real(), x.real()), copysign(y.imag(), x.imag())};
+}
+
+/**
+ * Return the specified complex number multiplied by `i`.
+ *
+ * This compound function is more efficient than mulitplying by a
+ * constant `i` because it involves only a single arithmetic negation.
+ *
+ * @tparam value type of complex argument
+ * @param[in] z complex argument
+ * @return argument multipled by `i`
+ */
+template <typename T>
+inline std::complex<T> i_times(const std::complex<T>& z) {
+  return {-z.imag(), z.real()};
+}
+
+/**
+ * Return the specified complex number multiplied by `-i`.
+ *
+ * This compound function is more efficient than mulitplying by the
+ * constant `-i` because it involves only a single arithmetic
+ * negation.
+ *
+ * @tparam value type of complex argument
+ * @param[in] z complex argument
+ * @return argument multipled by `-i`
+ */
+template <typename T>
+inline std::complex<T> neg_i_times(const std::complex<T>& z) {
+  return {z.imag(), -z.real()};
+}
+
+/**
+ * Return the complex negation of the specified complex argument.
+ *
+ * @tparam V value type of complex argument
+ * @param[in] z argument
+ * @return negation of argument
+ */
+template <typename V>
+inline std::complex<V> complex_negate(const std::complex<V>& z) {
+  return {-z.real(), -z.imag()};
+}
+
+/**
+ * Return the sum of the specified arguments.  At least one of the
+ * arguments must be a complex number.
+ *
+ * @tparam U type of first argument
+ * @tparam V type of second argument
+ * @param[in] lhs first argument
+ * @param[in] rhs second argument
+ * @return sum of the arguments
+ */
+template <typename U, typename V>
+inline complex_return_t<U, V> complex_add(const U& lhs, const V& rhs) {
+  complex_return_t<U, V> y(lhs);
+  y += rhs;
+  return y;
+}
+
+/**
+ * Return the difference of the specified arguments.  At least one of
+ * the arguments must be a complex number.
+ *
+ * @tparam U type of first argument
+ * @tparam V type of second argument
+ * @param[in] lhs first argument
+ * @param[in] rhs second argument
+ * @return difference of the arguments
+ */
+template <typename U, typename V>
+inline complex_return_t<U, V> complex_subtract(const U& lhs, const V& rhs) {
+  complex_return_t<U, V> y(lhs);
+  y -= rhs;
+  return y;
+}
+
+/**
+ * Return the product of the specified arguments.  At least one of the
+ * arguments must be a complex number.
+ *
+ * @tparam U type of first argument
+ * @tparam V type of second argument
+ * @param[in] lhs first argument
+ * @param[in] rhs second argument
+ * @return sum of the arguments
+ */
+template <typename U, typename V>
+inline complex_return_t<U, V> complex_multiply(const U& lhs, const V& rhs) {
+  complex_return_t<U, V> y(lhs);
+  y *= rhs;
+  return y;
+}
+
+/**
+ * Return the quotient of the specified arguments.  At least one of
+ * the arguments must be a complex number.
+ *
+ * @tparam U type of first argument
+ * @tparam V type of second argument
+ * @param[in] lhs first argument
+ * @param[in] rhs second argument
+ * @return sum of the arguments
+ */
+template <typename U, typename V>
+inline complex_return_t<U, V> complex_divide(const U& lhs, const V& rhs) {
+  complex_return_t<U, V> y(lhs);
+  y /= rhs;
+  return y;
+}
+
+/**
+ * Return `true` if the complex arguments have equal real and
+ * imaginary components.
+ *
+ * @tparam U value type of first argument
+ * @tparam V value type of second argument
+ * @param[in] lhs first argument
+ * @param[in] rhs second argument
+ * @return `true` if the arguments are equal
+ */
+template <typename U, typename V>
+inline bool complex_equal_equal(const std::complex<U>& lhs,
+                                const std::complex<V>& rhs) {
+  return lhs.real() == rhs.real() && lhs.imag() == rhs.imag();
+}
+
+/**
+ * Return `true` if the complex argument has a real component equal to
+ * the real argument.
+ *
+ * @tparam U value type of first argument
+ * @tparam V type of second argument
+ * @param[in] lhs first argument
+ * @param[in] rhs second argument
+ * @return `true` if the complex argument has real component equal to
+ * the real argument
+ */
+template <typename U, typename V>
+inline bool complex_equal_equal(const U& lhs, const std::complex<V>& rhs) {
+  return lhs == rhs.real() && rhs.imag() == 0;
+}
+
+/**
+ * Return `true` if the complex argument has a real component equal to
+ * the real argument.
+ *
+ * @tparam U value type of first argument
+ * @tparam V type of second argument
+ * @param[in] lhs first argument
+ * @param[in] rhs second argument
+ * @return `true` if the complex argument has real component equal to
+ * the real argument
+ */
+template <typename U, typename V>
+inline bool complex_equal_equal(const std::complex<U>& lhs, const V& rhs) {
+  return lhs.real() == rhs && lhs.imag() == 0;
+}
+
+/**
+ * Return `true` if the arguments are not equal.  At least one of the
+ * arguments must be a complex number.
+ *
+ * @tparam U type of first argument
+ * @tparam V type of second argument
+ * @param[in] lhs first argument
+ * @param[in] rhs second argument
+ * @return `true` if the arguments are not equal
+ */
+template <typename U, typename V>
+inline bool complex_not_equal(const U& lhs, const V& rhs) {
+  return !complex_equal_equal(lhs, rhs);
+}
+
+/**
+ * Return the real part of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return real part of argument
+ */
+template <typename V>
+inline V complex_real(const std::complex<V>& z) {
+  return z.real();
+}
+
+/**
+ * Return the imaginary part of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return imaginary part of argument
+ */
+template <typename V>
+inline V complex_imag(const std::complex<V>& z) {
+  return z.imag();
+}
+
+/**
+ * Return the absolute value of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return absolute value of the argument
+ */
+template <typename V>
+inline V complex_abs(const std::complex<V>& z) {
+  return hypot(real(z), imag(z));
+}
+
+/**
+ * Return the phase angle of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return phase angle of the argument
+ */
+template <typename V>
+inline V complex_arg(const std::complex<V>& z) {
+  return atan2(imag(z), real(z));
+}
+
+/**
+ * Return the squared magnitude of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return squared magnitude of the argument
+ */
+template <typename V>
+inline V complex_norm(const std::complex<V>& z) {
+  return square(real(z)) + square(imag(z));
+}
+
+/**
+ * Return the complex conjugate the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return complex conjugate of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_conj(const std::complex<V>& z) {
+  return {z.real(), -z.imag()};
+}
+
+/**
+ * Return the projection of the complex argument onto the Riemann
+ * sphere.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return projection of the argument onto the Riemann sphere
+ */
+template <typename V>
+inline std::complex<V> complex_proj(const std::complex<V>& z) {
+  if (is_inf(z.real()) || is_inf(z.imag())) {
+    return {std::numeric_limits<V>::infinity(), z.imag() < 0 ? -0.0 : 0.0};
+  }
+  return z;
+}
+
+/**
+ * Return the natural exponent of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return exponential of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_exp(const std::complex<V>& z) {
+  if (is_inf(z.real()) && z.real() > 0) {
+    if (is_nan(z.imag()) || z.imag() == 0) {
+      // (+inf, nan), (+inf, 0)
+      return z;
+    } else if (is_inf(z.imag()) && z.imag() > 0) {
+      // (+inf, +inf)
+      return {z.real(), std::numeric_limits<double>::quiet_NaN()};
+    } else if (is_inf(z.imag()) && z.imag() < 0) {
+      // (+inf, -inf)
+      return {std::numeric_limits<double>::quiet_NaN(),
+              std::numeric_limits<double>::quiet_NaN()};
+    }
+  }
+  if (is_inf(z.real()) && z.real() < 0
+      && (is_nan(z.imag()) || is_inf(z.imag()))) {
+    // (-inf, nan), (-inf, -inf), (-inf, inf)
+    return {0, 0};
+  }
+  if (is_nan(z.real()) && z.imag() == -0.0) {
+    // (nan, -0)
+    return z;
+  }
+  V exp_re = exp(z.real());
+  return {exp_re * cos(z.imag()), exp_re * sin(z.imag())};
+}
+
+/**
+ * Return the natural logarithm of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return natural logarithm of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_log(const std::complex<V>& z) {
+  static const double inf = std::numeric_limits<double>::infinity();
+  static const double nan = std::numeric_limits<double>::quiet_NaN();
+  if ((is_nan(z.real()) && is_inf(z.imag()))
+      || (is_inf(z.real()) && is_nan(z.imag()))) {
+    return {inf, nan};
+  }
+  V r = sqrt(norm(z));
+  V theta = arg(z);
+  return {log(r), theta};
+}
+
+/**
+ * Return the base 10 logarithm of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return base 10 logarithm of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_log10(const std::complex<V>& z) {
+  static const double inv_log_10 = 1 / log(10);
+  return log(z) * V(inv_log_10);
+}
+
+/**
+ * Return the first argument raised to the power of the second
+ * argument.  At least one of the arguments must be a complex number.
+ *
+ * @tparam U type of first argument
+ * @tparam V type of second argument
+ * @param[in] lhs first argument
+ * @param[in] rhs second argument
+ * @return first argument raised to the power of the second argument
+ */
+template <typename U, typename V>
+inline complex_return_t<U, V> complex_pow(const U& x, const V& y) {
+  return exp(y * log(x));
+}
+
+/**
+ * Return the square root of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return square root of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_sqrt(const std::complex<V>& z) {
+  auto m = sqrt(hypot(z.real(), z.imag()));
+  auto at = 0.5 * atan2(z.imag(), z.real());
+  return {m * cos(at), m * sin(at)};
+}
+
+/**
+ * Return the hyperbolic sine of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return hyperbolic sine of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_sinh(const std::complex<V>& z) {
+  return 0.5 * (exp(z) - exp(-z));
+}
+
+/**
+ * Return the hyperbolic cosine of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return hyperbolic cosine of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_cosh(const std::complex<V>& z) {
+  return 0.5 * (exp(z) + exp(-z));
+}
+
+/**
+ * Return the hyperbolic tangent of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return hyperbolic tangent of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_tanh(const std::complex<V>& z) {
+  auto exp_z = exp(z);
+  auto exp_neg_z = exp(-z);
+  return (exp_z - exp_neg_z) / (exp_z + exp_neg_z);
+}
+
+/**
+ * Return the hyperbolic arc sine of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return hyperbolic arc sine of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_asinh(const std::complex<V>& z) {
+  std::complex<double> y_d = asinh(value_of_rec(z));
+  auto y = log(z + sqrt(1 + z * z));
+  return copysign(y, y_d);
+}
+
+/**
+ * Return the hyperbolic arc cosine of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return hyperbolic arc cosine of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_acosh(const std::complex<V>& z) {
+  std::complex<double> y_d = acosh(value_of_rec(z));
+  auto y = log(z + sqrt(z * z - 1));
+  return copysign(y, y_d);
+}
+
+/**
+ * Return the hyperbolic arc tangent of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return hyperbolic arc tangent of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_atanh(const std::complex<V>& z) {
+  std::complex<double> y_d = atanh(value_of_rec(z));
+  V one(1);
+  auto y = 0.5 * (log(one + z) - log(one - z));
+  return copysign(y, y_d);
+}
+
+/**
+ * Return the sine of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return sine of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_sin(const std::complex<V>& z) {
+  return neg_i_times(sinh(i_times(z)));
+}
+
+/**
+ * Return the cosine of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return cosine of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_cos(const std::complex<V>& z) {
+  return cosh(i_times(z));
+}
+
+/**
+ * Return the tangent of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return tangent of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_tan(const std::complex<V>& z) {
+  return neg_i_times(tanh(i_times(z)));
+}
+
+/**
+ * Return the arc sine of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return arc sine of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_asin(const std::complex<V>& z) {
+  auto y_d = asin(value_of_rec(z));
+  auto y = neg_i_times(asinh(i_times(z)));
+  return copysign(y, y_d);
+}
+
+/**
+ * Return the arc cosine of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return arc cosine of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_acos(const std::complex<V>& z) {
+  return V(0.5 * pi()) - asin(z);
+}
+
+/**
+ * Return the arc tangent of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return arc tangent of the argument
+ */
+template <typename V>
+inline std::complex<V> complex_atan(const std::complex<V>& z) {
+  return neg_i_times(atanh(i_times(z)));
+}
+
+/**
+ * Returns complex number with specified magnitude and phase angle.
+ *
+ * @param[in] r magnitude
+ * @param[in] theta phase angle
+ * @return complex number with magnitude and phase angle
+ */
+template <typename U, typename V>
+inline std::complex<return_type_t<U, V>> complex_polar(const U& r,
+                                                       const V& theta) {
+  using std::cos;
+  using std::sin;
+  if (!(r >= 0) || is_inf(theta)) {
+    return {std::numeric_limits<double>::quiet_NaN()};
+  }
+  return {r * cos(theta), r * sin(theta)};
+}
+
+}  // namespace math
+}  // namespace stan
 
 namespace std {
 // Function template specializations required to get around
