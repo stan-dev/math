@@ -6,7 +6,7 @@
 
 namespace stan {
 
-template <typename T>
+template <typename T, typename = require_stan_scalar_t<T>>
 inline T get(const T& x, size_t n) {
   return x;
 }
