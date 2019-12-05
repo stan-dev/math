@@ -114,44 +114,6 @@ pipeline {
                 }
             }
         }
-        stage('Linting & Doc checks') {
-            agent any
-            steps {
-                script {
-                    deleteDir()
-                    retry(3) { checkout scm }
-                    sh "git clean -xffd"
-                    stash 'MathSetup'
-                    sh "echo CXX=${env.CXX} -Werror > make/local"
-                    sh "echo BOOST_PARALLEL_JOBS=${env.PARALLEL} >> make/local"
-                    parallel(
-                        CppLint: { sh "make cpplint" },
-                        Dependencies: { sh """#!/bin/bash
-                            set -o pipefail
-                            make test-math-dependencies 2>&1 | tee dependencies.log""" } ,
-                        Documentation: { sh "make doxygen" },
-                    )
-                }
-            }
-            post {
-                always {
-                    recordIssues enabledForFailure: true, tools:
-                        [cppLint(),
-                         groovyScript(parserId: 'mathDependencies', pattern: '**/dependencies.log')]
-                    deleteDir()
-                }
-            }
-        }
-        stage('Headers check') {
-            agent any
-            steps {
-                deleteDir()
-                unstash 'MathSetup'
-                sh "echo CXX=${env.CXX} -Werror > make/local"
-                sh "make -j${env.PARALLEL} test-headers"
-            }
-            post { always { deleteDir() } }
-        }
         stage('Always-run tests part 1') {
             parallel {
                 stage('Linux Unit with MPI') {
@@ -166,144 +128,15 @@ pipeline {
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
-                stage('Full unit with GPU') {
-                    agent { label "gpu" }
-                    steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        sh "echo CXX=${env.CXX} -Werror > make/local"
-                        sh "echo STAN_OPENCL=true>> make/local"
-                        sh "echo OPENCL_PLATFORM_ID=0>> make/local"
-                        sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
-                        runTests("test/unit")
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
+				stage('Upstream tests') {
+					when { expression { env.BRANCH_NAME ==~ /PR-\d+/ } }
+					steps {
+						build(job: "Stan/${stan_pr()}",
+								parameters: [string(name: 'math_pr', value: env.BRANCH_NAME),
+											string(name: 'cmdstan_pr', value: cmdstan_pr())])
+					}
+				}
             }
-        }
-        stage('Always-run tests part 2') {
-            parallel {
-                stage('Distribution tests') {
-                    agent { label "distribution-tests" }
-                    steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        sh """
-                            echo CXX=${env.CXX} > make/local
-                            echo O=0 >> make/local
-                            echo N_TESTS=${env.N_TESTS} >> make/local
-                            """
-                        script {
-                            if (params.withRowVector || isBranch('develop') || isBranch('master')) {
-                                sh "echo CXXFLAGS+=-DSTAN_TEST_ROW_VECTORS >> make/local"
-                            }
-                        }
-                        sh "./runTests.py -j${env.PARALLEL} test/prob > dist.log 2>&1"
-                    }
-                    post {
-                        always {
-                            script { zip zipFile: "dist.log.zip", archive: true, glob: 'dist.log' }
-                            retry(3) { deleteDir() }
-                        }
-                        failure {
-                            echo "Distribution tests failed. Check out dist.log.zip artifact for test logs."
-                            }
-                    }
-                }
-                stage('Threading tests') {
-                    agent any
-                    steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        sh "echo CXX=${env.CXX} -Werror > make/local"
-                        sh "echo CPPFLAGS+=-DSTAN_THREADS >> make/local"
-                        runTests("test/unit -f thread")
-                        sh "find . -name *_test.xml | xargs rm"
-                        runTests("test/unit -f map_rect")
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
-                stage('Windows Headers & Unit') {
-                    agent { label 'windows' }
-                    steps {
-                        deleteDirWin()
-                        unstash 'MathSetup'
-                        bat "mingw32-make -j${env.PARALLEL} test-headers"
-                        runTestsWin("test/unit")
-                    }
-                }
-                stage('Windows Threading') {
-                    agent { label 'windows' }
-                    steps {
-                        deleteDirWin()
-                        unstash 'MathSetup'
-                        bat "echo CXX=${env.CXX} -Werror > make/local"
-                        bat "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
-                        runTestsWin("test/unit -f thread")
-                        runTestsWin("test/unit -f map_rect")
-                    }
-                }
-            }
-        }
-        stage('Additional merge tests') {
-            when { anyOf { branch 'develop'; branch 'master' } }
-            parallel {
-                stage('Linux Unit with Threading') {
-                    agent { label 'linux' }
-                    steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        sh "echo CXX=${GCC} >> make/local"
-                        sh "echo CXXFLAGS=-DSTAN_THREADS >> make/local"
-                        runTests("test/unit")
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
-                stage('Mac Unit with Threading') {
-                    agent  { label 'osx' }
-                    steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        sh "echo CC=${env.CXX} -Werror > make/local"
-                        sh "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
-                        runTests("test/unit")
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
-            }
-        }
-        stage('Upstream tests') {
-            when { expression { env.BRANCH_NAME ==~ /PR-\d+/ } }
-            steps {
-                build(job: "Stan/${stan_pr()}",
-                        parameters: [string(name: 'math_pr', value: env.BRANCH_NAME),
-                                    string(name: 'cmdstan_pr', value: cmdstan_pr())])
-            }
-        }
-        stage('Upload doxygen') {
-            agent any
-            when { branch 'develop'}
-            steps {
-                deleteDir()
-                retry(3) { checkout scm }
-                withCredentials([usernamePassword(credentialsId: 'a630aebc-6861-4e69-b497-fd7f496ec46b',
-                                                  usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
-                    sh """#!/bin/bash
-                        set -x
-                        make doxygen
-                        git config --global user.email "mc.stanislaw@gmail.com"
-                        git config --global user.name "Stan Jenkins"
-                        git checkout --detach
-                        git branch -D gh-pages
-                        git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/stan-dev/math.git :gh-pages
-                        git checkout --orphan gh-pages
-                        git add -f doc
-                        git commit -m "auto generated docs from Jenkins"
-                        git subtree push --prefix doc/api/html https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/stan-dev/math.git gh-pages
-                        """
-                }
-            }
-            post { always { deleteDir() } }
         }
     }
     post {
