@@ -21,7 +21,9 @@ template <typename C>
 class scalar_seq_view<
     C, std::enable_if_t<is_vector_like<std::decay_t<C>>::value>> {
  public:
-  explicit scalar_seq_view(const C& c) : c_(c) {}
+  template <typename T, typename = require_same_t<math::plain_type_t<T>,
+                                                  math::plain_type_t<C>>>
+  explicit scalar_seq_view(T& c) : c_(c) {}
 
   /** \ingroup type_trait
    * Segfaults if out of bounds.
