@@ -115,7 +115,7 @@ return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
   const auto& y_arr = as_array_or_scalar(y_val_vec);
   const auto& phi_arr = as_array_or_scalar(phi_val_vec);
 
-  Array<T_partials_return, Dynamic, 1> theta = x_val * beta_val_vec;
+  Array<T_partials_return, Dynamic, 1> theta = (x_val * beta_val_vec).array();
   theta += as_array_or_scalar(alpha_val_vec);
   check_finite(function, "Matrix of independent variables", theta);
   T_precision_val log_phi = log(phi_arr);

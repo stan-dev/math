@@ -20,7 +20,7 @@ namespace math {
  * @param x Scalar to convert to double.
  * @return Value of scalar cast to a double.
  */
-template <typename T, require_stan_scalar_t<T>>
+template <typename T, typename = require_stan_scalar_t<T>>
 inline double value_of_rec(const T x) {
   return static_cast<double>(x);
 }

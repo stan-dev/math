@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_AS_ARRAY_OR_SCALAR_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_AS_ARRAY_OR_SCALAR_HPP
 
+#include <stan/math/prim/meta.hpp>
+
 namespace stan {
 namespace math {
 
@@ -11,7 +13,7 @@ namespace math {
  * @param v Specified value.
  * @return Same value.
  */
-template <typename T>
+template <typename T, typename = require_stan_scalar_t<T>>
 inline const T& as_array_or_scalar(const T& v) {
   return v;
 }

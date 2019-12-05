@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_AS_COLUMN_VECTOR_OR_SCALAR_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <vector>
 
 namespace stan {
@@ -15,9 +16,8 @@ namespace math {
  * @param a Specified vector.
  * @return Same vector.
  */
-template <typename T>
-inline const Eigen::Matrix<T, Eigen::Dynamic, 1>& as_column_vector_or_scalar(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& a) {
+template <typename T, typename = require_t<is_eigen_col_vector<T>>>
+inline const auto& as_column_vector_or_scalar(const T& a) {
   return a;
 }
 
@@ -29,12 +29,9 @@ inline const Eigen::Matrix<T, Eigen::Dynamic, 1>& as_column_vector_or_scalar(
  * @param a Specified vector.
  * @return Transposed vector.
  */
-template <typename T>
-inline Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, 1>>
-as_column_vector_or_scalar(const Eigen::Matrix<T, 1, Eigen::Dynamic>& a) {
-  return Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, 1>>(
-      a.data(), a.size());  // uses Eigen::Map instead of .transpose() so that
-                            // there are less possible output types
+template <typename T, typename = require_t<is_eigen_row_vector<T>>>
+inline auto as_column_vector_or_scalar(const T& a) {
+  return a.transpose();
 }
 
 /** \ingroup type_trait
