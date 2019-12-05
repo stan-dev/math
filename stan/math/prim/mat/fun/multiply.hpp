@@ -51,17 +51,17 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R, C> multiply(
  * Return the product of the specified matrices.  The number of
  * columns in the first matrix must be the same as the number of rows
  * in the second matrix.
- * @tparam R1 number of rows or Eigen::Dynamic for first matrix
- * @tparam C1 number of columns or Eigen::Dynamic for first matrix
- * @tparam R2 number of rows or Eigen::Dynamic for second matrix
- * @tparam C2 number of columns or Eigen::Dynamic for second matrix
+ * @tparam R1 number of rows in the first matrix, can be Eigen::Dynamic
+ * @tparam C1 number of columns in the first matrix, can be Eigen::Dynamic
+ * @tparam R2 number of rows in the second matrix, can be Eigen::Dynamic
+ * @tparam C2 number of columns in the second matrix, can be Eigen::Dynamic
  * @tparam T1 type of elements in first matrix
  * @tparam T2 type of elements in second matrix
  * @param m1 first matrix
  * @param m2 second matrix
  * @return the product of the first and second matrices
- * @throw <code>std::invalid_argument</code> if the number of columns of m1 does not match
- *   the number of rows of m2.
+ * @throw <code>std::invalid_argument</code> if the number of columns of m1 does
+ * not match the number of rows of m2.
  */
 template <int R1, int C1, int R2, int C2, typename T1, typename T2,
           typename = require_all_arithmetic_t<T1, T2>>

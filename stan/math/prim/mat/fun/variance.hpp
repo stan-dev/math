@@ -14,8 +14,8 @@ namespace math {
  * Returns the sample variance (divide by length - 1) of the
  * coefficients in the specified standard vector.
  * @tparam T type of scalar
- * @param v specified vector.
- * @return sample variance of vector.
+ * @param v specified vector
+ * @return sample variance of vector
  * @throw <code>std::invalid_argument</code> if the vector has size zero
  */
 template <typename T>
@@ -37,9 +37,9 @@ inline return_type_t<T> variance(const std::vector<T>& v) {
  * Returns the sample variance (divide by length - 1) of the
  * coefficients in the specified matrix
  * @tparam T type of scalar
- * @tparam R number of rows in matrix
- * @tparam C number of columns in matrix
- * @param m specified vector
+ * @tparam R number of rows or Eigen::Dynamic
+ * @tparam C number of columns or Eigen::Dynamic
+ * @param m matrix
  * @return sample variance of coefficients
  * @throw <code>std::invalid_argument</code> if the matrix has size zero
  */

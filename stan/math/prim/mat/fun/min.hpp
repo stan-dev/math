@@ -28,7 +28,8 @@ inline int min(const std::vector<int>& x) {
  * column vector.
  * @tparam type of values being compared and returned
  * @param x specified vector
- * @return minimum coefficient value in the vector, or infinity if it is size zero
+ * @return minimum coefficient value in the vector, or infinity if the vector is
+ * size zero
  */
 template <typename T>
 inline T min(const std::vector<T>& x) {
@@ -46,7 +47,8 @@ inline T min(const std::vector<T>& x) {
  * @tparam R number of rows or Eigen::Dynamic
  * @tparam C number of columns or Eigen::Dynamic
  * @param m specified matrix, vector, or row vector
- * @return minimum coefficient value in the vector, or infinity if is size zero
+ * @return minimum coefficient value in the vector, or infinity if the vector is
+ * size zero
  */
 template <typename T, int R, int C>
 inline T min(const Eigen::Matrix<T, R, C>& m) {

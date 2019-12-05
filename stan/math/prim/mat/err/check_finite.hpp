@@ -17,7 +17,7 @@ namespace math {
  *   <code>.size()</code>
  * @tparam R number of rows or Eigen::Dynamic
  * @tparam C number of columns or Eigen::Dynamic
- * @param function function name (for error messages)
+ * @param function name of function (for error messages)
  * @param name variable name (for error messages)
  * @param y matrix to test
  * @return <code>true</code> if the matrix is finite

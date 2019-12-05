@@ -17,11 +17,11 @@ namespace math {
  * This function checks the runtime sizes only.
  * @tparam T1 scalar type of the first matrix
  * @tparam T2 scalar type of the second matrix
- * @tparam R1 number of rows or Eigen::Dynamic of the first matrix
- * @tparam C1 number of columns or Eigen::Dynamic of the first matrix
- * @tparam R2 number of rows or Eigen::Dynamic of the second matrix
- * @tparam C2 number of columns or Eigen::Dynamic of the second matrix
- * @param function function name (for error messages)
+ * @tparam R1 number of rows in the first matrix, can be Eigen::Dynamic
+ * @tparam C1 number of columns in the first matrix, can be Eigen::Dynamic
+ * @tparam R2 number of rows in the second matrix, can be Eigen::Dynamic
+ * @tparam C2 number of columns in the second matrix, can be Eigen::Dynamic
+ * @param function name of function (for error messages)
  * @param name1 variable name for the first matrix (for error messages)
  * @param y1 first matrix to test
  * @param name2 variable name for the second matrix (for error messages)
@@ -48,11 +48,11 @@ inline void check_matching_dims(const char* function, const char* name1,
  * @tparam check_compile Whether to check the static sizes
  * @tparam T1 scalar type of the first matrix
  * @tparam T2 scalar type of the second matrix
- * @tparam R1 number of rows or Eigen::Dynamic of the first matrix
- * @tparam C1 number of columns or Eigen::Dynamic of the first matrix
- * @tparam R2 number of rows or Eigen::Dynamic of the second matrix
- * @tparam C2 number of columns or Eigen::Dynamic of the second matrix
- * @param function function name (for error messages)
+ * @tparam R1 number of rows in the first matrix, can be Eigen::Dynamic
+ * @tparam C1 number of columns in the first matrix, can be Eigen::Dynamic
+ * @tparam R2 number of rows in the second matrix, can be Eigen::Dynamic
+ * @tparam C2 number of columns in the second matrix, can be Eigen::Dynamic
+ * @param function name of function (for error messages)
  * @param name1 variable name for the first matrix (for error messages)
  * @param y1 first matrix to test
  * @param name2 variable name for the second matrix (for error messages)
