@@ -14,8 +14,8 @@ namespace math {
  * a matrix that is not positive definite.  The check is that the
  * <code>.success()</code> method returns <code>true</code>.
  * @tparam T Type of scalar, requires class access to <code>.success()</code>
- * @tparam R Rows of the matrix
- * @tparam C Columns of the matrix
+ * @tparam R number of rows or Eigen::Dynamic
+ * @tparam C number of columns or Eigen::Dynamic
  * @param A The LDLT factor to check for validity
  * @return <code>true</code> if the LDLT factor is valid
  */
