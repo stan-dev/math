@@ -18,8 +18,8 @@ namespace math {
  * @return Matrix of values
  **/
 template <typename T,
-          typename
-          = require_t<std::negate<std::is_same<scalar_type_t<T>, double>>>,
+          typename = require_t<
+              bool_constant<!std::is_same<scalar_type_t<T>, double>::value>>,
           typename = require_eigen_t<T>>
 inline auto value_of_rec(const T& M) {
   return M.unaryExpr([](auto x) { return value_of_rec(x); });
