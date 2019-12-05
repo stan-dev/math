@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_META_GET_HPP
 #define STAN_MATH_PRIM_MAT_META_GET_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 
 namespace stan {
