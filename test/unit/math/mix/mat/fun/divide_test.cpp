@@ -53,23 +53,5 @@ TEST(MathMixMatFun, divide) {
     stan::test::expect_ad(f, u, value);
     stan::test::expect_ad(f, rv4, value);
     stan::test::expect_ad(f, p, value);
-    stan::math::vector_d v1 = u;
-    stan::math::row_vector_d rv1 = rv4;
-    stan::math::matrix_d m1 = p;
-    v1(1) = value;
-    rv1(1) = value;
-    m1(1, 1) = value;
-    // XXX TODO: These fail, because there is no check_finite usage, and the
-    // nans/infs propagate through autodiff and finite diff differently.
-    // In particular:
-    // f[x,y] = x/y
-    // f_x[x,y] = 1/y
-    // f_x[nan,1] = 1 (autodiff answer)
-    // f_x[nan,1] ~ (1/n) (f[nan+1/n,1] - f[nan,1])
-    //            = (1/n) (nan - nan)
-    //            = nan (finite diff answer)
-    // stan::test::expect_ad(f, v1, 2.0);
-    // stan::test::expect_ad(f, rv1, 2.0);
-    // stan::test::expect_ad(f, m1, 2.0);
   }
 }
