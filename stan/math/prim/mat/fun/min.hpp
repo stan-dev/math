@@ -13,9 +13,9 @@ namespace math {
 /**
  * Returns the minimum coefficient in the specified
  * column vector.
- * @param x Specified vector.
- * @return Minimum coefficient value in the vector.
- * @tparam Type of values being compared and returned
+ * @param x specified vector
+ * @return minimum coefficient value in the vector
+ * @throws <code>std::invalid_argument</code> if the vector is size zero
  */
 inline int min(const std::vector<int>& x) {
   check_nonzero_size("min", "int vector", x);
@@ -26,9 +26,10 @@ inline int min(const std::vector<int>& x) {
 /**
  * Returns the minimum coefficient in the specified
  * column vector.
- * @param x Specified vector.
- * @return Minimum coefficient value in the vector.
- * @tparam Type of values being compared and returned
+ * @tparam type of values being compared and returned
+ * @param x specified vector
+ * @return minimum coefficient value in the vector, or infinity if the vector is
+ * size zero
  */
 template <typename T>
 inline T min(const std::vector<T>& x) {
@@ -42,8 +43,12 @@ inline T min(const std::vector<T>& x) {
 /**
  * Returns the minimum coefficient in the specified
  * matrix, vector, or row vector.
- * @param m Specified matrix, vector, or row vector.
- * @return Minimum coefficient value in the vector.
+ * @tparam T type of values being compared and returned
+ * @tparam R number of rows or Eigen::Dynamic
+ * @tparam C number of columns or Eigen::Dynamic
+ * @param m specified matrix, vector, or row vector
+ * @return minimum coefficient value in the vector, or infinity if the vector is
+ * size zero
  */
 template <typename T, int R, int C>
 inline T min(const Eigen::Matrix<T, R, C>& m) {
