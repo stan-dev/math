@@ -38,7 +38,7 @@ class scalar_seq_view<
   int size() const { return c_.size(); }
 
  private:
-  const math::plain_type_keep_ref_t<C> c_;
+  math::plain_type_keep_constness_and_ref_t<C> c_;
 };
 
 /** \ingroup type_trait

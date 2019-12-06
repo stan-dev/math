@@ -25,11 +25,18 @@ using plain_type_t = typename plain_type<T>::type;
  * @tparam T type to determine plain type of
  */
 template <typename T>
-using plain_type_keep_ref_t = typename std::conditional_t<
-    std::is_lvalue_reference<T>::value, typename plain_type<T>::type&,
-    std::conditional_t<std::is_rvalue_reference<T>::value,
-                       typename plain_type<T>::type&&,
-                       typename plain_type<T>::type>>;
+struct plain_type_keep_constness_and_ref {
+  using T1 = plain_type_t<T>;
+  using T2
+      = std::conditional_t<std::is_const<std::remove_reference_t<T>>::value,
+                           const T1, T1>;
+  using T3 = std::conditional_t<std::is_lvalue_reference<T>::value, T2&, T2>;
+  using type = std::conditional_t<std::is_rvalue_reference<T>::value, T3&&, T3>;
+};
+
+template <typename T>
+using plain_type_keep_constness_and_ref_t =
+    typename plain_type_keep_constness_and_ref<T>::type;
 
 }  // namespace math
 }  // namespace stan
