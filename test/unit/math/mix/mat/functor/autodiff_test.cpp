@@ -42,7 +42,7 @@ struct norm_functor {
   }
 };
 
-TEST(AgradAutoDiff, derivative) {
+TEST(MixFunctor, derivative) {
   fun0 f;
   double x = 7;
   double fx;
@@ -52,7 +52,7 @@ TEST(AgradAutoDiff, derivative) {
   EXPECT_FLOAT_EQ(d, 5 * 3 * 7 * 7);
 }
 
-TEST(AgradAutoDiff, partialDerivative) {
+TEST(MixFunctor, partialDerivative) {
   fun1 f;
   Matrix<double, Dynamic, 1> x(2);
   x << 5, 7;
@@ -70,7 +70,7 @@ TEST(AgradAutoDiff, partialDerivative) {
   EXPECT_FLOAT_EQ(5 * 5 + 3 * 2 * 7, d2);
 }
 
-TEST(AgradAutoDiff, gradientDotVector) {
+TEST(MixFunctor, gradientDotVector) {
   using stan::math::var;
   fun1 f;
   Matrix<double, Dynamic, 1> x(2);
@@ -88,7 +88,7 @@ TEST(AgradAutoDiff, gradientDotVector) {
 
   EXPECT_FLOAT_EQ(grad_fx_dot_v_expected, grad_fx_dot_v);
 }
-TEST(AgradAutoDiff, hessianTimesVector) {
+TEST(MixFunctor, hessianTimesVector) {
   using stan::math::hessian_times_vector;
 
   fun1 f;
@@ -110,7 +110,7 @@ TEST(AgradAutoDiff, hessianTimesVector) {
   EXPECT_FLOAT_EQ(2 * x(0) * v(0) + 6 * v(1), Hv(1));
 }
 
-TEST(AgradAutoDiff, jacobian) {
+TEST(MixFunctor, jacobian) {
   using stan::math::jacobian;
 
   fun2 f;
@@ -144,7 +144,7 @@ TEST(AgradAutoDiff, jacobian) {
   EXPECT_FLOAT_EQ(6, J_rev(1, 1));
 }
 
-TEST(AgradAutoDiff, hessian) {
+TEST(MixFunctor, hessian) {
   fun1 f;
   Matrix<double, Dynamic, 1> x(2);
   x << 5, 7;
@@ -186,7 +186,7 @@ TEST(AgradAutoDiff, hessian) {
   EXPECT_FLOAT_EQ(2 * 3, H2(1, 1));
 }
 
-TEST(AgradAutoDiff, GradientTraceMatrixTimesHessian) {
+TEST(MixFunctor, GradientTraceMatrixTimesHessian) {
   Matrix<double, Dynamic, Dynamic> M(2, 2);
   M << 11, 13, 17, 23;
   fun1 f;
@@ -200,7 +200,7 @@ TEST(AgradAutoDiff, GradientTraceMatrixTimesHessian) {
   EXPECT_FLOAT_EQ(22, grad_tr_MH(1));
 }
 
-TEST(AgradAutoDiff, GradientHessian) {
+TEST(MixFunctor, GradientHessian) {
   norm_functor log_normal_density;
   third_order_mixed mixed_third_poly;
 

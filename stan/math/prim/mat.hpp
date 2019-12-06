@@ -26,7 +26,6 @@
 #include <stan/math/prim/mat/err/check_range.hpp>
 #include <stan/math/prim/mat/err/check_row_index.hpp>
 #include <stan/math/prim/mat/err/check_simplex.hpp>
-#include <stan/math/prim/mat/err/check_spsd_matrix.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/err/check_std_vector_index.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
@@ -159,6 +158,7 @@
 #include <stan/math/prim/mat/fun/make_nu.hpp>
 #include <stan/math/prim/mat/fun/matrix_exp.hpp>
 #include <stan/math/prim/mat/fun/matrix_exp_multiply.hpp>
+#include <stan/math/prim/mat/fun/matrix_power.hpp>
 #include <stan/math/prim/mat/fun/max.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left_ldlt.hpp>

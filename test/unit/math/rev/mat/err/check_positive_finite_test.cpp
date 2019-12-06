@@ -5,7 +5,7 @@
 using stan::math::check_positive_finite;
 using stan::math::var;
 
-TEST(AgradRevErrorHandlingScalar, CheckPositiveFinite_Matrix) {
+TEST(AgradRevErrorHandlingMatrix, CheckPositiveFinite_Matrix) {
   const char* function = "check_positive_finite";
   Eigen::Matrix<var, Eigen::Dynamic, 1> x;
 

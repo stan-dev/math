@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <complex>
+#include <type_traits>
 #include <vector>
 
 namespace stan {
@@ -37,14 +38,13 @@ struct apply_scalar_unary {
   /**
    * Type of underlying scalar for the matrix type T.
    */
-  using scalar_t = typename Eigen::internal::traits<T>::Scalar;
+  using scalar_t = typename T::Scalar;
 
   /**
    * Return type for applying the function elementwise to a matrix
    * expression template of type T.
    */
-  using return_t
-      = Eigen::Matrix<scalar_t, T::RowsAtCompileTime, T::ColsAtCompileTime>;
+  using return_t = T;
 
   /**
    * Return the result of applying the function defined by the

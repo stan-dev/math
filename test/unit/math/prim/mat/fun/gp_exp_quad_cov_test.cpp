@@ -213,7 +213,7 @@ TEST(MathPrimMat, vec_eigen_vec_gp_exp_quad_cov2) {
     }
 }
 
-TEST(MathPrimMat, domain_error_training_sig_l) {
+TEST(MathPrimMat, domain_error_training_sig_l_gp_cov_exp) {
   set_tuning_opts_to_use_gpu();
   double sigma = 0.2;
   double l = 5;
@@ -266,7 +266,7 @@ TEST(MathPrimMat, domain_error_training_sig_l) {
                std::domain_error);
 }
 
-TEST(MathPrimMat, nan_error_training_sig_l) {
+TEST(MathPrimMat, nan_error_training_sig_l_gp_cov_exp) {
   set_tuning_opts_to_use_gpu();
   double sigma = 0.2;
   double l = 5;
@@ -722,7 +722,7 @@ TEST(MathPrimMat, vec_length_scale_vec_eigen_vec_gp_exp_quad_cov2) {
   }
 }
 
-TEST(MathPrimMat, domain_error_training_sig_vec_length_scale) {
+TEST(MathPrimMat, domain_error_training_sig_vec_length_scale_gp_exp_quad_cov) {
   set_tuning_opts_to_use_gpu();
   double sigma = 0.2;
 
@@ -761,7 +761,7 @@ TEST(MathPrimMat, domain_error_training_sig_vec_length_scale) {
                std::domain_error);
 }
 
-TEST(MathPrimMat, nan_error_training_sig_vec_length_scale) {
+TEST(MathPrimMat, nan_error_training_sig_vec_length_scale_gp_exp_quad_cov) {
   set_tuning_opts_to_use_gpu();
   double sigma = 0.2;
 
@@ -872,7 +872,7 @@ TEST(MathPrimMat, nan_domain_error_gp_exp_quad_cov2_vec_length_scale) {
                std::domain_error);
 }
 
-TEST(MathPrimMat, zero_size) {
+TEST(MathPrimMat, zero_size_gp_exp_quad_cov) {
   set_tuning_opts_to_use_gpu();
   double sigma = 0.2;
 
@@ -889,7 +889,7 @@ TEST(MathPrimMat, zero_size) {
   EXPECT_EQ(0, cov.cols());
 }
 
-TEST(MathPrimMat, numerical_accuracy_ard) {
+TEST(MathPrimMat, numerical_accuracy_ard_gp_exp_quad_cov) {
   set_tuning_opts_to_use_gpu();
   double sigma = 1.0;
 

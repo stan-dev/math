@@ -1,7 +1,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathMatrix, singular_values) {
+TEST(MathMatrixPrimMat, singular_values) {
   stan::math::matrix_d m0(1, 1);
   m0 << 1.0;
 

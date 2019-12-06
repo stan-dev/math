@@ -9,6 +9,7 @@
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/squared_distance.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/scal/fun/sin.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
 #include <cmath>
 #include <vector>
@@ -116,6 +117,8 @@ class gp_periodic_cov_vari : public vari {
     size_t pos = 0;
     for (size_t j = 0; j < size_; ++j) {
       for (size_t i = j + 1; i < size_; ++i) {
+        using std::sin;
+        using std::exp;
         double dist = distance(x[i], x[j]);
         double sin_dist = sin(pi_div_p * dist);
         double sin_dist_sq = square(sin_dist);
@@ -123,7 +126,7 @@ class gp_periodic_cov_vari : public vari {
         sin_2_dist_[pos] = sin(2.0 * pi_div_p * dist);
         sin_dist_sq_[pos] = sin_dist_sq;
         cov_lower_[pos] = new vari(
-            sigma_sq_d_ * std::exp(sin_dist_sq * neg_two_inv_l_sq), false);
+            sigma_sq_d_ * exp(sin_dist_sq * neg_two_inv_l_sq), false);
         ++pos;
       }
       cov_diag_[j] = new vari(sigma_sq_d_, false);
@@ -248,6 +251,8 @@ class gp_periodic_cov_vari<T_x, double, T_l, T_p> : public vari {
     size_t pos = 0;
     for (size_t j = 0; j < size_; ++j) {
       for (size_t i = j + 1; i < size_; ++i) {
+        using std::sin;
+        using std::exp;
         double dist = distance(x[i], x[j]);
         double sin_dist = sin(pi_div_p * dist);
         double sin_dist_sq = square(sin_dist);
@@ -255,7 +260,7 @@ class gp_periodic_cov_vari<T_x, double, T_l, T_p> : public vari {
         sin_2_dist_[pos] = sin(2.0 * pi_div_p * dist);
         sin_dist_sq_[pos] = sin_dist_sq;
         cov_lower_[pos] = new vari(
-            sigma_sq_d_ * std::exp(sin_dist_sq * neg_two_inv_l_sq), false);
+            sigma_sq_d_ * exp(sin_dist_sq * neg_two_inv_l_sq), false);
         ++pos;
       }
       cov_diag_[j] = new vari(sigma_sq_d_, false);

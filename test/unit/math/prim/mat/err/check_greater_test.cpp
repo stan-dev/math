@@ -4,7 +4,7 @@
 #include <string>
 
 using stan::math::check_greater;
-TEST(ErrorHandlingScalar, CheckGreater_Matrix) {
+TEST(ErrorHandlingMat, CheckGreater_Matrix) {
   const char* function = "check_greater";
   double x;
   double low;
@@ -108,7 +108,7 @@ TEST(ErrorHandlingScalar, CheckGreater_Matrix) {
       << "check_greater: double, matrix<3, 1>";
 }
 
-TEST(ErrorHandlingScalar, CheckGreater_Matrix_one_indexed_message) {
+TEST(ErrorHandlingMat, CheckGreater_Matrix_one_indexed_message) {
   const char* function = "check_greater";
   double x;
   double low;
@@ -166,7 +166,7 @@ TEST(ErrorHandlingScalar, CheckGreater_Matrix_one_indexed_message) {
       << message;
 }
 
-TEST(ErrorHandlingScalar, CheckGreater_nan) {
+TEST(ErrorHandlingMat, CheckGreater_nan) {
   const char* function = "check_greater";
   double x = 10.0;
   double lb = 0.0;

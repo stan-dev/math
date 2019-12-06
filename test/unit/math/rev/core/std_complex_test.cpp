@@ -15,10 +15,20 @@
 // ----------
 // 13 * 13 = 169 test combinations!  uh oh
 
-using var_t = stan::math::var;
-using cvar_t = std::complex<stan::math::var>;
-using cdouble_t = std::complex<double>;
 using mvar_t = Eigen::Matrix<stan::math::var, -1, -1>;
+
+using var_t = stan::math::var;
+using fvar_d_t = stan::math::fvar<double>;
+using fvar_fvar_d_t = stan::math::fvar<fvar_d_t>;
+using fvar_v_t = stan::math::fvar<stan::math::var>;
+using fvar_fvar_v_t = stan::math::fvar<fvar_v_t>;
+
+using cdouble_t = std::complex<double>;
+using cvar_t = std::complex<stan::math::var>;
+using cfvar_d_t = std::complex<fvar_d_t>;
+using cfvar_fvar_d_t = std::complex<fvar_fvar_d_t>;
+using cfvar_v_t = std::complex<fvar_v_t>;
+using cfvar_fvar_v_t = std::complex<fvar_fvar_v_t>;
 
 template <typename T>
 void expect_identity_matrix(const T& I) {
@@ -77,7 +87,6 @@ template <typename F>
 void expect_complex_common(const F& f) {
   for (double a : common_vals()) {
     for (double b : common_vals()) {
-      // std:: cout << "z = " << cdouble_t{a , b} << std::endl;
       expect_complex(f(cdouble_t{a, b}), f(cvar_t{a, b}));
     }
   }
@@ -89,14 +98,11 @@ void expect_complex_common_binary(const F& f) {
   for (double x1 : common_non_neg_vals()) {
     for (double y1 : common_non_neg_vals()) {
       for (double x2 : common_non_neg_vals()) {
-        // std::cout << "x1 = " << x1 << "; y1 = "
-        // << y1 << "; x2 = " << x2 << std::endl;
         expect_complex(f(cdouble_t{x1, y1}, x2), f(cvar_t{x1, y1}, var_t{x2}));
         expect_complex(f(cdouble_t{x1, y1}, x2), f(cvar_t{x1, y1}, x2));
         expect_complex(f(x2, cdouble_t{x1, y1}), f(var_t{x2}, cvar_t{x1, y1}));
         expect_complex(f(x2, cdouble_t{x1, y1}), f(x2, cvar_t{x1, y1}));
         for (double y2 : common_non_neg_vals()) {
-          // std::cout << "    y2 = " << y2 << std::endl;
           expect_complex(f(cdouble_t{x1, y1}, cdouble_t{x2, y2}),
                          f(cvar_t{x1, y1}, cvar_t{x2, y2}));
         }
@@ -162,6 +168,26 @@ void expect_compound_assign_operator(const F& f) {
   EXPECT_EQ(ptr1, ptr2);
 }
 
+template <typename T>
+std::vector<T> to_array(const std::complex<T>& a) {
+  return {a.real(), a.imag()};
+}
+template <typename T>
+std::complex<T> from_array(const std::vector<T>& a) {
+  return {a[0], a[1]};
+}
+
+std::vector<std::vector<double>> common_complex() {
+  std::vector<std::vector<double>> zs;
+  for (double x = -1; x <= 2.1; ++x)
+    for (double y = -1; y <= 2.1; ++y)
+      zs.push_back(std::vector<double>{x, y});
+  return zs;
+}
+
+// BEGIN PR 1
+// ========================================================
+
 TEST(mathRevCore, stdIteratorTraits) {
   using itv_t = std::iterator_traits<var_t>;
   var_t v = 1.3;
@@ -179,6 +205,160 @@ TEST(mathRevCore, stdIteratorTraits) {
   EXPECT_FLOAT_EQ(9.7, v.val());
 
   itv_t::difference_type a = v_ptr - v_ptr;
+}
+
+TEST(mathFwdCore, stdIteratorTraits) {
+  using itv_t = std::iterator_traits<fvar_d_t>;
+  fvar_d_t v = 1.3;
+
+  itv_t::value_type v2 = v;
+  EXPECT_FLOAT_EQ(1.3, v2.val());
+
+  itv_t::pointer v_ptr = &v;
+  EXPECT_FLOAT_EQ(1.3, v_ptr->val());
+  *v_ptr += 2.1;
+  EXPECT_FLOAT_EQ(3.4, v.val());
+
+  itv_t::reference v_ref = v;
+  v_ref = 9.7;
+  EXPECT_FLOAT_EQ(9.7, v.val());
+
+  itv_t::difference_type a = v_ptr - v_ptr;
+}
+
+template <typename T>
+void expectSignBit() {
+  EXPECT_TRUE(signbit(-std::numeric_limits<T>::infinity()));
+  EXPECT_FALSE(signbit(std::numeric_limits<T>::infinity()));
+  EXPECT_TRUE(signbit(T{-2}));
+  EXPECT_FALSE(signbit(T{0}));
+  EXPECT_FALSE(signbit(T{3.9}));
+}
+TEST(mathFwdCore, signbit) {
+  expectSignBit<var_t>();
+  expectSignBit<fvar_d_t>();
+  expectSignBit<fvar_fvar_d_t>();
+  expectSignBit<fvar_v_t>();
+  expectSignBit<fvar_fvar_v_t>();
+}
+
+template <typename T>
+void expectIsInf() {
+  EXPECT_FALSE(isinf(std::numeric_limits<T>::quiet_NaN()));
+  EXPECT_TRUE(isinf(std::numeric_limits<T>::infinity()));
+  EXPECT_TRUE(isinf(-std::numeric_limits<T>::infinity()));
+  EXPECT_FALSE(isinf(T{-1}));
+  EXPECT_FALSE(isinf(T{0}));
+  EXPECT_FALSE(isinf(T{3e27}));
+}
+TEST(mathFwdCore, isinf) {
+  expectIsInf<var_t>();
+  expectIsInf<fvar_d_t>();
+  expectIsInf<fvar_fvar_d_t>();
+  expectIsInf<fvar_v_t>();
+  expectIsInf<fvar_fvar_v_t>();
+}
+
+template <typename T>
+void expectIsFinite() {
+  EXPECT_FALSE(isfinite(std::numeric_limits<T>::quiet_NaN()));
+  EXPECT_FALSE(isfinite(std::numeric_limits<T>::infinity()));
+  EXPECT_FALSE(isfinite(-std::numeric_limits<T>::infinity()));
+  EXPECT_TRUE(isfinite(T{-1}));
+  EXPECT_TRUE(isfinite(T{0}));
+  EXPECT_TRUE(isfinite(T{3e27}));
+}
+TEST(mathFwdCore, isfinite) {
+  expectIsFinite<var_t>();
+  expectIsFinite<fvar_d_t>();
+  expectIsFinite<fvar_fvar_d_t>();
+  expectIsFinite<fvar_v_t>();
+  expectIsFinite<fvar_fvar_v_t>();
+}
+
+template <typename T>
+void expectIsNan() {
+  EXPECT_TRUE(isnan(std::numeric_limits<T>::quiet_NaN()));
+  EXPECT_FALSE(isnan(std::numeric_limits<T>::infinity()));
+  EXPECT_FALSE(isnan(-std::numeric_limits<T>::infinity()));
+  EXPECT_FALSE(isnan(T{-1}));
+  EXPECT_FALSE(isnan(T{0}));
+  EXPECT_FALSE(isnan(T{3e27}));
+}
+TEST(mathFwdCore, isnan) {
+  expectIsNan<var_t>();
+  expectIsNan<fvar_d_t>();
+  expectIsNan<fvar_fvar_d_t>();
+  expectIsNan<fvar_v_t>();
+  expectIsNan<fvar_fvar_v_t>();
+}
+
+template <typename T>
+void expectIsNormal() {
+  EXPECT_FALSE(isnormal(std::numeric_limits<T>::quiet_NaN()));
+  EXPECT_FALSE(isnormal(std::numeric_limits<T>::infinity()));
+  EXPECT_FALSE(isnormal(-std::numeric_limits<T>::infinity()));
+  EXPECT_FALSE(isnormal(T{0}));
+  EXPECT_TRUE(isnormal(T{-1}));
+  EXPECT_TRUE(isnormal(T{3e27}));
+}
+TEST(mathFwdCore, isnormal) {
+  expectIsNormal<var_t>();
+  expectIsNormal<fvar_d_t>();
+  expectIsNormal<fvar_fvar_d_t>();
+  expectIsNormal<fvar_v_t>();
+  expectIsNormal<fvar_fvar_v_t>();
+}
+
+TEST(mathFwdCore, copysignScalar) {
+  auto f = [](const auto& x, const auto& y) {
+    using std::copysign;
+    return copysign(x, y);
+  };
+  std::vector<double> vals{-2.3, -1, 1.7};
+  for (double x : vals) {
+    for (double y : vals) {
+      stan::test::expect_ad(f, x, y);
+    }
+  }
+}
+
+// BEGIN PR 2
+// ==============================================
+
+template <typename T>
+void expect_value_of() {
+  cdouble_t zd{2.0, 3.0};
+  std::complex<T> z{2.0, 3.0};
+  EXPECT_TRUE(zd == stan::math::value_of_rec(zd));
+}
+
+TEST(mathMix, valueOfRec) {
+  expect_value_of<double>();
+  expect_value_of<var_t>();
+  expect_value_of<fvar_d_t>();
+  expect_value_of<fvar_fvar_d_t>();
+  expect_value_of<fvar_v_t>();
+  expect_value_of<fvar_fvar_v_t>();
+}
+
+TEST(mathMix, copysignComplex) {
+  auto f = [](const auto& x, const auto& y) {
+    using stan::math::copysign;
+    return to_array(copysign(from_array(x), from_array(y)));
+  };
+  std::vector<double> vals{-2.3, -1, 1.7};
+  for (double x1 : vals) {
+    for (double y1 : vals) {
+      std::vector<double> z1{x1, y1};
+      for (double x2 : vals) {
+        for (double y2 : vals) {
+          std::vector<double> z2{x2, y2};
+          stan::test::expect_ad(f, z1, z2);
+        }
+      }
+    }
+  }
 }
 
 TEST(mathRevCore, stdComplexConstructor1) {
@@ -722,165 +902,6 @@ TEST(mathRevCore, stdAtan1) {
   expect_complex_common([](const auto& u) { return std::acos(u); });
 }
 
-using fvar_d_t = stan::math::fvar<double>;
-using fvar_fvar_d_t = stan::math::fvar<fvar_d_t>;
-using fvar_v_t = stan::math::fvar<stan::math::var>;
-using fvar_fvar_v_t = stan::math::fvar<fvar_v_t>;
-
-using cfvar_d_t = std::complex<fvar_d_t>;
-using cfvar_fvar_d_t = std::complex<fvar_fvar_d_t>;
-using cfvar_v_t = std::complex<fvar_v_t>;
-using cfvar_fvar_v_t = std::complex<fvar_fvar_v_t>;
-
-TEST(mathFwdCore, stdIteratorTraits) {
-  using itv_t = std::iterator_traits<fvar_d_t>;
-  fvar_d_t v = 1.3;
-
-  itv_t::value_type v2 = v;
-  EXPECT_FLOAT_EQ(1.3, v2.val());
-
-  itv_t::pointer v_ptr = &v;
-  EXPECT_FLOAT_EQ(1.3, v_ptr->val());
-  *v_ptr += 2.1;
-  EXPECT_FLOAT_EQ(3.4, v.val());
-
-  itv_t::reference v_ref = v;
-  v_ref = 9.7;
-  EXPECT_FLOAT_EQ(9.7, v.val());
-
-  itv_t::difference_type a = v_ptr - v_ptr;
-}
-template <typename T>
-void expectSignBit() {
-  EXPECT_TRUE(signbit(-std::numeric_limits<T>::infinity()));
-  EXPECT_FALSE(signbit(std::numeric_limits<T>::infinity()));
-  EXPECT_TRUE(signbit(T{-2}));
-  EXPECT_FALSE(signbit(T{0}));
-  EXPECT_FALSE(signbit(T{3.9}));
-}
-TEST(mathFwdCore, signbit) {
-  expectSignBit<var_t>();
-  expectSignBit<fvar_d_t>();
-  expectSignBit<fvar_fvar_d_t>();
-  expectSignBit<fvar_v_t>();
-  expectSignBit<fvar_fvar_v_t>();
-}
-
-template <typename T>
-void expectIsInf() {
-  EXPECT_FALSE(isinf(std::numeric_limits<T>::quiet_NaN()));
-  EXPECT_TRUE(isinf(std::numeric_limits<T>::infinity()));
-  EXPECT_TRUE(isinf(-std::numeric_limits<T>::infinity()));
-  EXPECT_FALSE(isinf(T{-1}));
-  EXPECT_FALSE(isinf(T{0}));
-  EXPECT_FALSE(isinf(T{3e27}));
-}
-TEST(mathFwdCore, isinf) {
-  expectIsInf<var_t>();
-  expectIsInf<fvar_d_t>();
-  expectIsInf<fvar_fvar_d_t>();
-  expectIsInf<fvar_v_t>();
-  expectIsInf<fvar_fvar_v_t>();
-}
-
-template <typename T>
-void expectIsFinite() {
-  EXPECT_FALSE(isfinite(std::numeric_limits<T>::quiet_NaN()));
-  EXPECT_FALSE(isfinite(std::numeric_limits<T>::infinity()));
-  EXPECT_FALSE(isfinite(-std::numeric_limits<T>::infinity()));
-  EXPECT_TRUE(isfinite(T{-1}));
-  EXPECT_TRUE(isfinite(T{0}));
-  EXPECT_TRUE(isfinite(T{3e27}));
-}
-TEST(mathFwdCore, isfinite) {
-  expectIsFinite<var_t>();
-  expectIsFinite<fvar_d_t>();
-  expectIsFinite<fvar_fvar_d_t>();
-  expectIsFinite<fvar_v_t>();
-  expectIsFinite<fvar_fvar_v_t>();
-}
-
-template <typename T>
-void expectIsNan() {
-  EXPECT_TRUE(isnan(std::numeric_limits<T>::quiet_NaN()));
-  EXPECT_FALSE(isnan(std::numeric_limits<T>::infinity()));
-  EXPECT_FALSE(isnan(-std::numeric_limits<T>::infinity()));
-  EXPECT_FALSE(isnan(T{-1}));
-  EXPECT_FALSE(isnan(T{0}));
-  EXPECT_FALSE(isnan(T{3e27}));
-}
-TEST(mathFwdCore, isnan) {
-  expectIsNan<var_t>();
-  expectIsNan<fvar_d_t>();
-  expectIsNan<fvar_fvar_d_t>();
-  expectIsNan<fvar_v_t>();
-  expectIsNan<fvar_fvar_v_t>();
-}
-
-template <typename T>
-void expectIsNormal() {
-  EXPECT_FALSE(isnormal(std::numeric_limits<T>::quiet_NaN()));
-  EXPECT_FALSE(isnormal(std::numeric_limits<T>::infinity()));
-  EXPECT_FALSE(isnormal(-std::numeric_limits<T>::infinity()));
-  EXPECT_FALSE(isnormal(T{0}));
-  EXPECT_TRUE(isnormal(T{-1}));
-  EXPECT_TRUE(isnormal(T{3e27}));
-}
-TEST(mathFwdCore, isnormal) {
-  expectIsNormal<var_t>();
-  expectIsNormal<fvar_d_t>();
-  expectIsNormal<fvar_fvar_d_t>();
-  expectIsNormal<fvar_v_t>();
-  expectIsNormal<fvar_fvar_v_t>();
-}
-
-template <typename T>
-std::vector<T> to_array(const std::complex<T>& a) {
-  return {a.real(), a.imag()};
-}
-template <typename T>
-std::complex<T> from_array(const std::vector<T>& a) {
-  return {a[0], a[1]};
-}
-
-TEST(mathFwdCore, copysignScalar) {
-  auto f = [](const auto& x, const auto& y) {
-    using std::copysign;
-    return copysign(x, y);
-  };
-  std::vector<double> vals{-2.3, -1, 1.7};
-  for (double x : vals) {
-    for (double y : vals) {
-      stan::test::expect_ad(f, x, y);
-    }
-  }
-}
-TEST(mathMix, copysignComplex) {
-  auto f = [](const auto& x, const auto& y) {
-    using stan::math::copysign;
-    return to_array(copysign(from_array(x), from_array(y)));
-  };
-  std::vector<double> vals{-2.3, -1, 1.7};
-  for (double x1 : vals) {
-    for (double y1 : vals) {
-      std::vector<double> z1{x1, y1};
-      for (double x2 : vals) {
-        for (double y2 : vals) {
-          std::vector<double> z2{x2, y2};
-          stan::test::expect_ad(f, z1, z2);
-        }
-      }
-    }
-  }
-}
-std::vector<std::vector<double>> common_complex() {
-  std::vector<std::vector<double>> zs;
-  for (double x = -1; x <= 2.1; ++x)
-    for (double y = -1; y <= 2.1; ++y)
-      zs.push_back(std::vector<double>{x, y});
-  return zs;
-}
-
 TEST(mathMix, iTimes) {
   auto f = [](const auto& x) {
     using stan::math::i_times;
@@ -900,24 +921,6 @@ TEST(mathMix, negITimes) {
   for (const auto& z : zs) {
     stan::test::expect_ad(f, z);
   }
-}
-TEST(mathMix, valueOf) {
-  cdouble_t zd{2, 3};
-
-  cvar_t zv{2, 3};
-  expect_complex(zd, zv);
-
-  cfvar_d_t zfd{2, 3};
-  expect_complex(zd, zfd);
-
-  cfvar_fvar_d_t zffd{2, 3};
-  expect_complex(zd, zffd);
-
-  cfvar_v_t zfv{2, 3};
-  expect_complex(zd, zfv);
-
-  cfvar_fvar_v_t zffv{2, 3};
-  expect_complex(zd, zffv);
 }
 
 // type preserving/promoting to_complex
@@ -1460,6 +1463,19 @@ TEST(mathMix, polar) {
 
 // tests of use, not of basic interface
 
+std::vector<Eigen::MatrixXd> square_test_matrices() {
+  Eigen::MatrixXd a00(0, 0);
+  Eigen::MatrixXd a11(1, 1);
+  a11 << -1.3;
+  Eigen::MatrixXd a22(2, 2);
+  a22 << 1, 2, 3, 0.7;
+  Eigen::MatrixXd a33(3, 3);
+  a33 << 1, 2, 1.3, 0.7, 0.11, 0.13, -0.5, -1.7, 2.3;
+  // a00 fails an assertion that we'd need to prevent
+  //     if we implemented a function around this
+  // a33 too hard numerically and adds 1m to tests
+  return {a11, a22};
+}
 template <typename T>
 void expectEigenSolver() {
   // test adapted from https://github.com/stan-dev/math/pull/789/files
@@ -1472,12 +1488,40 @@ void expectEigenSolver() {
       = (ev.inverse() * a * ev * s.eigenvalues().asDiagonal().inverse()).real();
   expect_identity_matrix(I);
 }
+template <typename T>
+Eigen::EigenSolver<T> eigen_solver(const T& a) {
+  Eigen::EigenSolver<T> s(a);
+  return s;
+}
 TEST(mathMix, eigenSolver) {
+  // value tests
   expectEigenSolver<var_t>();
   expectEigenSolver<fvar_d_t>();
   expectEigenSolver<fvar_fvar_d_t>();
   expectEigenSolver<fvar_v_t>();
   expectEigenSolver<fvar_fvar_v_t>();
+  // derivative and value tests
+  auto f1 = [](const auto& a) {
+    return eigen_solver(a).eigenvectors().real().eval();
+  };
+  auto f2 = [](const auto& a) {
+    return eigen_solver(a).eigenvectors().imag().eval();
+  };
+  auto g1 = [](const auto& a) {
+    return eigen_solver(a).eigenvalues().real().eval();
+  };
+  auto g2 = [](const auto& a) {
+    return eigen_solver(a).eigenvalues().imag().eval();
+  };
+  stan::test::ad_tolerances tols;
+  tols.hessian_hessian_ = 5e-3;
+  tols.hessian_fvar_hessian_ = 5e-3;
+  for (const auto& a : square_test_matrices()) {
+    stan::test::expect_ad(tols, f1, a);
+    stan::test::expect_ad(tols, f2, a);
+    stan::test::expect_ad(tols, g1, a);
+    stan::test::expect_ad(tols, g2, a);
+  }
 }
 
 template <typename T>
@@ -1498,8 +1542,27 @@ TEST(mathMix, pseudoEigendecomposition) {
   expectPseudoEigendecomposition<fvar_fvar_d_t>();
   expectPseudoEigendecomposition<fvar_v_t>();
   expectPseudoEigendecomposition<fvar_fvar_v_t>();
+  // the pseudo-eigendecomposition returns real-valued matrices
+  auto f = [](const auto& a) {
+    return eigen_solver(a).pseudoEigenvectors().eval();
+  };
+  auto g = [](const auto& a) {
+    return eigen_solver(a).pseudoEigenvalueMatrix().eval();
+  };
+  stan::test::ad_tolerances tols;
+  tols.hessian_hessian_ = 1e-2;
+  tols.hessian_fvar_hessian_ = 1e-2;
+  for (const auto& a : square_test_matrices()) {
+    stan::test::expect_ad(tols, f, a);
+    stan::test::expect_ad(tols, g, a);
+  }
 }
 
+template <typename T>
+Eigen::ComplexSchur<T> complex_schur(const T& a) {
+  Eigen::ComplexSchur<T> s(a);
+  return s;
+}
 template <typename T>
 void expectComplexSchur() {
   // test adapted from https://github.com/stan-dev/math/pull/789/files
@@ -1517,5 +1580,22 @@ TEST(mathMix, complexSchur) {
   expectComplexSchur<fvar_fvar_d_t>();
   expectComplexSchur<fvar_v_t>();
   expectComplexSchur<fvar_fvar_v_t>();
+  auto f
+      = [](const auto& a) { return complex_schur(a).matrixU().real().eval(); };
+  auto g
+      = [](const auto& a) { return complex_schur(a).matrixU().imag().eval(); };
+  stan::test::ad_tolerances tols;
+  tols.hessian_hessian_ = 1e-2;
+  tols.hessian_fvar_hessian_ = 1e-2;
+  for (const auto& a : square_test_matrices()) {
+    stan::test::expect_ad(tols, f, a);
+    stan::test::expect_ad(tols, g, a);
+  }
 }
-*/
+
+TEST(mathMix, powInt) {
+  cvar_t v{3.0};
+  cvar_t fv = pow(v, 2);
+  var_t x{3.0};
+  auto fx = pow(x, 2);
+}

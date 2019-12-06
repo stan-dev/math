@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
 
-TEST(ErrorHandlingMatrix, checkSizeMatch) {
+TEST(ErrorHandlingMatrix, is_size_match) {
   using stan::math::is_size_match;
   int x = 3;
   size_t y = 4;

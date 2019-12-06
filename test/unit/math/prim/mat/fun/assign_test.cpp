@@ -252,7 +252,7 @@ TEST(MathMatrixAssign, eigenMatrixShapeMismatch) {
   EXPECT_THROW(assign(zzz, x), std::invalid_argument);
 }
 
-TEST(MathMatrix, block) {
+TEST(MathMatrixPrimMat, block) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
@@ -270,7 +270,7 @@ TEST(MathMatrix, block) {
   EXPECT_FLOAT_EQ(1000.0, m(0, 2));
 }
 
-TEST(MathMatrix, block2) {
+TEST(MathMatrixPrimMat, block2) {
   using Eigen::MatrixXd;
   using stan::math::assign;
 
@@ -290,7 +290,7 @@ TEST(MathMatrix, block2) {
   EXPECT_FLOAT_EQ(a(1, 2), 6.0);
 }
 
-TEST(MathMatrix, vectorVector) {
+TEST(MathMatrixPrimMat, vectorVector) {
   using stan::math::assign;
   using std::vector;
   vector<vector<double> > x(3, vector<double>(2));
@@ -310,7 +310,7 @@ TEST(MathMatrix, vectorVector) {
   }
 }
 
-TEST(MathMatrix, vectorVectorVector) {
+TEST(MathMatrixPrimMat, vectorVectorVector) {
   using stan::math::assign;
   using std::vector;
   vector<vector<vector<double> > > x(
@@ -336,7 +336,7 @@ TEST(MathMatrix, vectorVectorVector) {
   }
 }
 
-TEST(MathMatrix, vectorEigenVector) {
+TEST(MathMatrixPrimMat, vectorEigenVector) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
@@ -359,7 +359,7 @@ TEST(MathMatrix, vectorEigenVector) {
   }
 }
 
-TEST(MathMatrix, getAssignRow) {
+TEST(MathMatrixPrimMat, getAssignRow) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;

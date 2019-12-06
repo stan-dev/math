@@ -31,6 +31,7 @@ inline void check_pos_semidefinite(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
   check_symmetric(function, name, y);
   check_positive(function, name, "rows", y.rows());
+  check_not_nan(function, name, y);
 
   if (y.rows() == 1 && !(y(0, 0) >= 0.0)) {
     domain_error(function, name, "is not positive semi-definite.", "");
@@ -44,7 +45,6 @@ inline void check_pos_semidefinite(
       || (cholesky.vectorD().array() < 0.0).any()) {
     domain_error(function, name, "is not positive semi-definite.", "");
   }
-  check_not_nan(function, name, y);
 }
 
 /**

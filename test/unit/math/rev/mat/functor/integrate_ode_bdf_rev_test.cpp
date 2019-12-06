@@ -98,8 +98,7 @@ void sho_error_test(F harm_osc, std::vector<double>& y0, double t0,
       std::invalid_argument, error_msg);
 }
 
-// TODO(carpenter): g++6 failure
-TEST(StanAgradRevOde_integrate_ode, harmonic_oscillator_finite_diff) {
+TEST(StanAgradRevOde_integrate_ode_bdf, harmonic_oscillator_finite_diff) {
   sho_finite_diff_test(0);
   sho_finite_diff_test(2.0);
   sho_finite_diff_test(-2.0);
@@ -109,7 +108,7 @@ TEST(StanAgradRevOde_integrate_ode, harmonic_oscillator_finite_diff) {
   sho_data_finite_diff_test(-2.5);
 }
 
-TEST(StanAgradRevOde_integrate_ode, harmonic_oscillator_error) {
+TEST(StanAgradRevOde_integrate_ode_bdf, harmonic_oscillator_error) {
   using stan::math::var;
   harm_osc_ode_wrong_size_1_fun harm_osc;
 
@@ -137,8 +136,7 @@ TEST(StanAgradRevOde_integrate_ode, harmonic_oscillator_error) {
   sho_error_test<var, var>(harm_osc, y0, t0, ts, theta, x, x_int, error_msg);
 }
 
-// TODO(carpenter): g++6 failure
-TEST(StanAgradRevOde_integrate_ode, lorenz_finite_diff) {
+TEST(StanAgradRevOde_integrate_ode_bdf, lorenz_finite_diff) {
   lorenz_ode_fun lorenz;
 
   std::vector<double> y0;

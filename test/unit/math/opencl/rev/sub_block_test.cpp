@@ -8,7 +8,7 @@
 #include <gtest/gtest.h>
 #include <algorithm>
 
-TEST(MathMatrixCL, sub_block_pass_vari) {
+TEST(MathMatrixRevCL, sub_block_pass_vari) {
   using stan::math::matrix_cl;
   using stan::math::matrix_d;
   using stan::math::matrix_v;
@@ -39,7 +39,7 @@ TEST(MathMatrixCL, sub_block_pass_vari) {
   stan::math::recover_memory();
 }
 
-TEST(MathMatrixCL, sub_block_exception) {
+TEST(MathMatrixRevCL, sub_block_exception) {
   using stan::math::var;
   using stan::math::vari;
   stan::math::matrix_v d1(3, 3);
@@ -57,7 +57,7 @@ TEST(MathMatrixCL, sub_block_exception) {
   EXPECT_THROW(d22.sub_block(d11, 4, 4, 0, 0, 2, 2), std::domain_error);
 }
 
-TEST(MathMatrixCL, sub_block_triangular) {
+TEST(MathMatrixRevCL, sub_block_triangular) {
   using stan::math::var;
   Eigen::Matrix<var, -1, -1> a = Eigen::Matrix<var, -1, -1>::Zero(3, 3);
   Eigen::Matrix<var, -1, -1> b = Eigen::Matrix<var, -1, -1>::Ones(3, 3);

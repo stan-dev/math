@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMatrix, value_of_rec) {
+TEST(MathMatrixRevArr, value_of_rec) {
   using stan::math::value_of_rec;
   using stan::math::var;
   using std::vector;

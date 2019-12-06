@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/util.hpp>
 
-TEST(mathMatrix, getLp) {
+TEST(MathMatrixRevMat, getLp) {
   using stan::math::accumulator;
   using stan::math::get_lp;
   using stan::math::var;
@@ -16,7 +16,7 @@ TEST(mathMatrix, getLp) {
   EXPECT_FLOAT_EQ(17.5, get_lp(lp, lp_accum).val());
 }
 
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, get_lp_check_varis_on_stack) {
   using stan::math::accumulator;
   using stan::math::get_lp;
   using stan::math::var;

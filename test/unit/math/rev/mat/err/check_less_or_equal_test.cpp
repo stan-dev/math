@@ -5,7 +5,7 @@
 using stan::math::check_less_or_equal;
 using stan::math::var;
 
-TEST(AgradRevErrorHandlingScalar, CheckLessOrEqual_Matrix) {
+TEST(AgradRevErrorHandlingMatrix, CheckLessOrEqual_Matrix) {
   const char* function = "check_less_or_equal";
   var x;
   var high;

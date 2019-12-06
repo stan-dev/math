@@ -4,6 +4,7 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/mat/functor/adj_jac_apply.hpp>
+#include <cmath>
 #include <tuple>
 #include <vector>
 
@@ -30,6 +31,7 @@ class positive_ordered_constrain_op {
   template <std::size_t size>
   Eigen::VectorXd operator()(const std::array<bool, size>& needs_adj,
                              const Eigen::VectorXd& x) {
+    using std::exp;
     N_ = x.size();
 
     Eigen::Matrix<double, Eigen::Dynamic, 1> y(N_);

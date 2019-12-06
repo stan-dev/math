@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMatrix, num_elements) {
+TEST(MathMatrixPrimMat, num_elements) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::num_elements;

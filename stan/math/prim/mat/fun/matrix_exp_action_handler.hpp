@@ -34,10 +34,6 @@ class matrix_exp_action_handler {
   }
 
  public:
-  /* Constructor
-   */
-  matrix_exp_action_handler() {}
-
   /* Perform the matrix exponential action exp(A*t)*B
    * @param [in] mat matrix A
    * @param [in] b matrix B
