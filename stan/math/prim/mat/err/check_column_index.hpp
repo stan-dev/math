@@ -18,12 +18,12 @@ namespace math {
  * throw an <code>std::out_of_range</code> exception if
  * the index is out of bounds.
  * @tparam T_y Type of scalar
- * @tparam R Number of rows of the matrix
- * @tparam C Number of columns of the matrix
+ * @tparam R number of rows or Eigen::Dynamic
+ * @tparam C number of columns or Eigen::Dynamic
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
- * @param y Matrix to test
- * @param i Index to check
+ * @param y matrix to test
+ * @param i column index to check
  * @throw <code>std::out_of_range</code> if index is an invalid column
  */
 template <typename T_y, int R, int C>
