@@ -1588,3 +1588,10 @@ TEST(mathMix, complexSchur) {
     stan::test::expect_ad(tols, g, a);
   }
 }
+
+TEST(mathMix, powInt) {
+  cvar_t v{3.0};
+  cvar_t fv = pow(v, 2);
+  var_t x{3.0};
+  auto fx = pow(x, 2);
+}
