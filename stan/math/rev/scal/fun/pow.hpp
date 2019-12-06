@@ -159,6 +159,30 @@ inline var pow(double base, const var& exponent) {
   return var(new internal::pow_dv_vari(base, exponent.vi_));
 }
 
+/**
+ * Return the base scalar raised to the power of the exponent
+ * variable (cmath).
+ *
+ * @param base base scalar
+ * @param exponent exponent scalar
+ * @return base raised to exponent
+ */
+inline var pow(const var& base, int exponent) {
+  return pow(base, static_cast<double>(exponent));
+}
+
+/**
+ * Return the base scalar raised to the power of the exponent
+ * variable (cmath).
+ *
+ * @param base base scalar
+ * @param exponent exponent scalar
+ * @return base raised to exponent
+ */
+inline var pow(int base, const var& exponent) {
+  return pow(static_cast<double>(base), exponent);
+}
+
 }  // namespace math
 }  // namespace stan
 #endif
