@@ -215,7 +215,6 @@ TEST(requires_prim_scal, var_or_arithmetic_test) {
                        int>::any_not();
 }
 
-
 /**
  * Require container
  */
@@ -488,7 +487,6 @@ TEST(requires_prim_arr, any_not_vector_st_test) {
       stan::require_any_not_vector_st,
       std_vector_vector>::any_not<std::is_floating_point>();
 }
-
 
 template <typename T>
 using eigen_x = Eigen::Matrix<T, -1, -1>;
