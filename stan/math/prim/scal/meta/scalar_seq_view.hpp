@@ -6,6 +6,7 @@
 #include <stan/math/prim/scal/meta/scalar_type.hpp>
 #include <stan/math/prim/scal/meta/is_vector_like.hpp>
 #include <type_traits>
+#include <utility>
 
 namespace stan {
 /** \ingroup type_trait
@@ -24,7 +25,7 @@ class scalar_seq_view<
  public:
   template <typename T, typename = require_same_t<math::plain_type_t<T>,
                                                   math::plain_type_t<C>>>
-  explicit scalar_seq_view(T& c) : c_(c) {}
+  explicit scalar_seq_view(T&& c) : c_(std::forward<T>(c)) {}
 
   /** \ingroup type_trait
    * Segfaults if out of bounds.
@@ -37,7 +38,7 @@ class scalar_seq_view<
   int size() const { return c_.size(); }
 
  private:
-  const math::plain_type_t<C>& c_;
+  const math::plain_type_keep_ref_t<C> c_;
 };
 
 /** \ingroup type_trait

@@ -19,6 +19,18 @@ struct plain_type {
 template <typename T>
 using plain_type_t = typename plain_type<T>::type;
 
+/**
+ * Determines plain (non expression) type associated with \c T. For non \c Eigen
+ * types it is the input type. Result will have same reference type as input.
+ * @tparam T type to determine plain type of
+ */
+template <typename T>
+using plain_type_keep_ref_t = typename std::conditional_t<
+    std::is_lvalue_reference<T>::value, typename plain_type<T>::type&,
+    std::conditional_t<std::is_rvalue_reference<T>::value,
+                       typename plain_type<T>::type&&,
+                       typename plain_type<T>::type>>;
+
 }  // namespace math
 }  // namespace stan
 
