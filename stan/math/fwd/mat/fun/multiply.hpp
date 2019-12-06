@@ -14,8 +14,8 @@ template <typename T, int R1, int C1>
 inline Eigen::Matrix<fvar<T>, R1, C1> multiply(
     const Eigen::Matrix<fvar<T>, R1, C1>& m, const fvar<T>& c) {
   Eigen::Matrix<fvar<T>, R1, C1> res(m.rows(), m.cols());
-  for (int i = 0; i < m.rows(); i++) {
-    for (int j = 0; j < m.cols(); j++) {
+  for (int j = 0; j < m.cols(); j++) {
+    for (int i = 0; i < m.rows(); i++) {
       res(i, j) = c * m(i, j);
     }
   }
@@ -26,8 +26,8 @@ template <typename T, int R2, int C2>
 inline Eigen::Matrix<fvar<T>, R2, C2> multiply(
     const Eigen::Matrix<fvar<T>, R2, C2>& m, double c) {
   Eigen::Matrix<fvar<T>, R2, C2> res(m.rows(), m.cols());
-  for (int i = 0; i < m.rows(); i++) {
-    for (int j = 0; j < m.cols(); j++) {
+  for (int j = 0; j < m.cols(); j++) {
+    for (int i = 0; i < m.rows(); i++) {
       res(i, j) = c * m(i, j);
     }
   }
@@ -38,8 +38,8 @@ template <typename T, int R1, int C1>
 inline Eigen::Matrix<fvar<T>, R1, C1> multiply(
     const Eigen::Matrix<double, R1, C1>& m, const fvar<T>& c) {
   Eigen::Matrix<fvar<T>, R1, C1> res(m.rows(), m.cols());
-  for (int i = 0; i < m.rows(); i++) {
-    for (int j = 0; j < m.cols(); j++) {
+  for (int j = 0; j < m.cols(); j++) {
+    for (int i = 0; i < m.rows(); i++) {
       res(i, j) = c * m(i, j);
     }
   }
