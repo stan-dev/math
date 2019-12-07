@@ -17,6 +17,9 @@ namespace math {
  */
 template <typename Mtype>
 Mtype matrix_exp_2x2(const Mtype& A) {
+  using std::exp;
+  using std::cosh;
+  using std::sinh;
   using T = typename Mtype::Scalar;
   T a = A(0, 0), b = A(0, 1), c = A(1, 0), d = A(1, 1), delta;
   delta = sqrt(square(a - d) + 4 * b * c);

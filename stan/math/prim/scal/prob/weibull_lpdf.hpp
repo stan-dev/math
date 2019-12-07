@@ -35,6 +35,7 @@ return_type_t<T_y, T_shape, T_scale> weibull_lpdf(const T_y& y,
   using T_partials_return = partials_return_t<T_y, T_shape, T_scale>;
 
   using std::log;
+  using std::pow;
   check_finite(function, "Random variable", y);
   check_positive_finite(function, "Shape parameter", alpha);
   check_positive_finite(function, "Scale parameter", sigma);

@@ -38,13 +38,16 @@ struct apply_scalar_unary {
   /**
    * Type of underlying scalar for the matrix type T.
    */
-  using scalar_t = typename T::Scalar;
+  // decltype(T(0)) ?
+  using scalar_t = typename T::Scalar;  // Eigen::internal::traits<T>::Scalar;
 
   /**
    * Return type for applying the function elementwise to a matrix
    * expression template of type T.
    */
-  using return_t = T;
+  // decltype(T.eval()) ?
+  using return_t
+      = Eigen::Matrix<scalar_t, T::RowsAtCompileTime, T::ColsAtCompileTime>;
 
   /**
    * Return the result of applying the function defined by the

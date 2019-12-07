@@ -166,6 +166,7 @@ inline return_type_t<T1, T2, double> log_modified_bessel_first_kind(
     return z + log(evaluate_polynomial(P, inv(z))) - multiply_log(0.5, z);
   }
   if (z > 100) {
+    using std::pow;
     // Boost does something like this in asymptotic_bessel_i_large_x
     T lim = pow((square(v) + 2.5) / (2 * z), 3) / 24;
     if (lim < (EPSILON * 10)) {
