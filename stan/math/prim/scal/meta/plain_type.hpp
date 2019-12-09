@@ -20,23 +20,20 @@ template <typename T>
 using plain_type_t = typename plain_type<T>::type;
 
 /**
- * Determines plain (non expression) type associated with \c T. For non \c Eigen
- * types it is the input type. Result will have same reference type as input.
- * @tparam T type to determine plain type of
+ * Determines return type of calling .eval() on eigen expression. This is the
+ * same as \c plain_type, except if input is already a plain type. In such case
+ * eval return type is a const reference to plain type.
+ * @tparam T type to determine eval return type of
  */
 template <typename T>
-struct plain_type_keep_constness_and_ref {
+struct eval_return_type {
   using T1 = plain_type_t<T>;
-  using T2
-      = std::conditional_t<std::is_const<std::remove_reference_t<T>>::value,
-                           const T1, T1>;
-  using T3 = std::conditional_t<std::is_lvalue_reference<T>::value, T2&, T2>;
-  using type = std::conditional_t<std::is_rvalue_reference<T>::value, T3&&, T3>;
+  using type = std::conditional_t<std::is_same<std::decay_t<T>, T1>::value,
+                                  const T1&, T1>;
 };
 
 template <typename T>
-using plain_type_keep_constness_and_ref_t =
-    typename plain_type_keep_constness_and_ref<T>::type;
+using eval_return_type_t = typename eval_return_type<T>::type;
 
 }  // namespace math
 }  // namespace stan
