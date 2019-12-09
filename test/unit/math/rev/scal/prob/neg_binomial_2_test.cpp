@@ -38,9 +38,26 @@ TEST(ProbDistributionsNegBinomial, derivatives) {
     finite_diffs.push_back(dphi * inv2e);
 
     for (int i = 0; i < 2; ++i) {
-      EXPECT_NEAR(gradients[i], finite_diffs[i], 1.0);
+      EXPECT_NEAR(gradients[i], finite_diffs[i], 1.0) << 
+        "for mu = " << mu_dbl << "  +/- epsilon, phi = " << phi_dbl <<
+        " +/- epsilon";
     }
 
     phi_dbl *= 10;
   }
+}
+
+TEST(ProbDistributionsNegativeBinomial2, proptoAtPoissonCutoff) {
+  using stan::math::neg_binomial_2_lpmf;
+  using stan::math::var;
+  using stan::math::internal::neg_binomial_2_phi_cutoff;
+
+  var mu_var(10);
+  int y = 11.8;
+  var value_before_cutoff = neg_binomial_2_lpmf<true, int, var, double>(
+    y, mu_var, neg_binomial_2_phi_cutoff - 1e-8);
+  var value_after_cutoff = neg_binomial_2_lpmf<true, int, var, double>(
+    y, mu_var, neg_binomial_2_phi_cutoff + 1e-8);
+
+  EXPECT_NEAR(value_of(value_before_cutoff), value_of(value_after_cutoff), 1);  
 }
