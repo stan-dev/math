@@ -17,9 +17,9 @@ namespace stan {
 namespace math {
 
 namespace internal {
-  //Exposing to let me us this in tests
-  constexpr double neg_binomial_2_phi_cutoff = 1e5;
-}
+// Exposing to let me us this in tests
+constexpr double neg_binomial_2_phi_cutoff = 1e5;
+}  // namespace internal
 
 // NegBinomial(n|mu, phi)  [mu >= 0; phi > 0;  n >= 0]
 template <bool propto, typename T_n, typename T_location, typename T_precision>

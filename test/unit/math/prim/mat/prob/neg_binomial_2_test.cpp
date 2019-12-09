@@ -42,8 +42,8 @@ TEST(ProbDistributionsNegativeBinomial2, vectorAroundCutoff) {
   phi.push_back(1);
   phi.push_back(stan::math::internal::neg_binomial_2_phi_cutoff + 1);
   double vector_value = stan::math::neg_binomial_2_lpmf(y, mu, phi);
-  double scalar_value = stan::math::neg_binomial_2_lpmf(y, mu, phi[0]) +
-    stan::math::neg_binomial_2_lpmf(y, mu, phi[1]);
-  
+  double scalar_value = stan::math::neg_binomial_2_lpmf(y, mu, phi[0])
+                        + stan::math::neg_binomial_2_lpmf(y, mu, phi[1]);
+
   EXPECT_FLOAT_EQ(vector_value, scalar_value);
 }
