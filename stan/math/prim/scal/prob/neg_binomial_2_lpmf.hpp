@@ -16,6 +16,11 @@
 namespace stan {
 namespace math {
 
+namespace internal {
+  //Exposing to let me us this in tests
+  constexpr double neg_binomial_2_phi_cutoff = 1e5;
+}
+
 // NegBinomial(n|mu, phi)  [mu >= 0; phi > 0;  n >= 0]
 template <bool propto, typename T_n, typename T_location, typename T_precision>
 return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
@@ -95,7 +100,7 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
     }
 
     // if phi is large we probably overflow, defer to Poisson:
-    if (phi__[i] > 1e5) {
+    if (phi__[i] > internal::neg_binomial_2_phi_cutoff) {
       logp = poisson_lpmf(n_vec[i], mu__[i]);
     }
 

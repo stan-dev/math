@@ -214,3 +214,27 @@ TEST(ProbDistributionsNegBinomial, extreme_values) {
     EXPECT_LT(logp, 0);
   }
 }
+
+TEST(ProbDistributionsNegativeBinomial2, poissonCutoff) {
+  std::array<double, 5> mu_to_test = {0.1, 13, 150, 1621, 18432 };
+  std::array<unsigned int, 7> y_to_test = {0, 3, 16, 24, 181, 2132, 121358 };
+  constexpr double phi_cutoff = stan::math::internal::neg_binomial_2_phi_cutoff;
+  for(auto mu_iter = mu_to_test.begin(); 
+    mu_iter != mu_to_test.end(); ++mu_iter) {
+    for(auto y_iter = y_to_test.begin(); 
+      y_iter != y_to_test.end(); ++y_iter) {
+        unsigned int y = *y_iter;
+        double mu = *mu_iter;
+
+        double before_cutoff = 
+          stan::math::neg_binomial_2_lpmf(y, mu, phi_cutoff - 1e-8);
+        double after_cutoff = 
+          stan::math::neg_binomial_2_lpmf(y, mu, phi_cutoff + 1e-8);
+        double diff_at_cutoff = before_cutoff - after_cutoff;
+        EXPECT_NEAR(diff_at_cutoff, 0, 1e-8) << 
+          "neg_binomial_2_lpmf changes too much around phi cutoff for y = " <<
+          y << ", mu = " << mu << " value at cutoff - 1e-8: " << 
+          before_cutoff << ", value at cutoff + 1e-8: " << after_cutoff;
+    }
+  }  
+}
