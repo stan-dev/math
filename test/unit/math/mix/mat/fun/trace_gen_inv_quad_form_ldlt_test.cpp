@@ -2,6 +2,10 @@
 
 template <typename T>
 stan::math::LDLT_factor<T, -1, -1> to_ldlt(const Eigen::Matrix<T, -1, -1>& a) {
+  if (a.size() == 0) {
+    return {};
+  }
+
   stan::math::LDLT_factor<T, -1, -1> ldlt_a;
   ldlt_a.compute(a);
   return ldlt_a;
@@ -13,11 +17,13 @@ TEST(mathMixMatFun, traceGenInvQuadForm) {
     return stan::math::trace_gen_inv_quad_form_ldlt(c, ldlt_a, b);
   };
 
-  // TODO(carpenter): shold pass; issue #1447
-  // Eigen::MatrixXd a00(0, 0);
-  // Eigen::MatrixXd b00(0, 0);
-  // Eigen::MatrixXd c00(0, 0);
-  // stan::test::expect_ad(f, c00, a00, b00);
+  Eigen::MatrixXd a00(0, 0);
+  Eigen::MatrixXd b00(0, 0);
+  Eigen::MatrixXd c00(0, 0);
+  stan::test::expect_ad(f, c00, a00, b00);
+
+  Eigen::MatrixXd b02(0, 2);
+  stan::test::expect_ad(f, c00, a00, b02);
 
   Eigen::MatrixXd a11(1, 1);
   a11 << 1;
