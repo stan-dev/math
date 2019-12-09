@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/scal/meta/promote_args.hpp>
 #include <stan/math/prim/scal/meta/scalar_type.hpp>
-#include <boost/math/tools/promotion.hpp>
 
 namespace stan {
 

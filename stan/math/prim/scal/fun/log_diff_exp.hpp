@@ -4,7 +4,6 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/log1m_exp.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <boost/math/tools/promotion.hpp>
 
 namespace stan {
 namespace math {

@@ -3,7 +3,6 @@
 
 #include <stan/math/fwd/scal.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
-#include <boost/math/tools/promotion.hpp>
 #include <Eigen/Dense>
 #include <limits>
 
