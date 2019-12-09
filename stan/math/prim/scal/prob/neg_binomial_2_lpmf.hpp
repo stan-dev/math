@@ -83,6 +83,12 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
   }
 
   for (size_t i = 0; i < size; i++) {
+    // if phi is large we probably overflow, defer to Poisson:
+    if (phi__[i] > internal::neg_binomial_2_phi_cutoff) {
+      logp += poisson_lpmf(n_vec[i], mu__[i]);
+      continue;
+    }
+
     if (include_summand<propto>::value) {
       logp -= lgamma(n_vec[i] + 1.0);
     }
@@ -97,11 +103,6 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
     }
     if (include_summand<propto, T_precision>::value) {
       logp += lgamma(n_plus_phi[i]);
-    }
-
-    // if phi is large we probably overflow, defer to Poisson:
-    if (phi__[i] > internal::neg_binomial_2_phi_cutoff) {
-      logp = poisson_lpmf(n_vec[i], mu__[i]);
     }
 
     if (!is_constant_all<T_location>::value) {
