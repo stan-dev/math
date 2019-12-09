@@ -11,6 +11,8 @@
 #include <stan/math/laplace/laplace_likelihood.hpp>
 
 #include <iostream>
+#include <istream>  // CHECK -- do we need this?
+#include <fstream>  // CHECK -- do we need this?
 
 // Reference for calculations of marginal and its gradients:
 // Rasmussen and Williams,
@@ -276,6 +278,10 @@ namespace math {
       marginal_density_[0] = new vari(marginal_density, false);
 
       // compute derivatives of covariance matrix with respect to phi.
+
+      // TEST
+      auto start = std::chrono::system_clock::now();
+      
       covariance_sensitivities<K> f(x, delta, delta_int,
                                     covariance_function, msgs);
       Eigen::MatrixXd diff_cov;
@@ -284,6 +290,11 @@ namespace math {
         jacobian_fwd(f, value_of(phi), covariance_vector, diff_cov);
         // covariance = to_matrix(covariance_vector, theta_size, theta_size);
       }
+
+      // TEST
+      auto end = std::chrono::system_clock::now();
+      std::chrono::duration<double> elapsed_time = end - start;
+      std::cout << "Covariance differentiation: " << elapsed_time.count() << std::endl;
 
       // Now compute the full gradient (using algorithm 5.1 of R & W)
       // CHECK: is there an efficient way to solve / divide a diagonal matrix?
@@ -370,6 +381,9 @@ namespace math {
     double marginal_density_dbl;
     Eigen::MatrixXd covariance;
 
+    // TEST
+    auto start = std::chrono::system_clock::now();
+    
     marginal_density_dbl
       = laplace_marginal_density(diff_likelihood,
                                  covariance_function,
@@ -379,6 +393,14 @@ namespace math {
                                  value_of(theta_0),
                                  msgs,
                                  tolerance, max_num_steps);
+
+    // TEST
+    auto end = std::chrono::system_clock::now();
+    std::chrono::duration<double> elapsed_time = end - start;
+    std::cout << "Evaluation time: " << elapsed_time.count() << std::endl;
+    
+    // TEST
+    start = std::chrono::system_clock::now();
 
     // construct vari
     laplace_marginal_density_vari* vi0
@@ -391,6 +413,11 @@ namespace math {
                                           msgs);
 
     var marginal_density = var(vi0->marginal_density_[0]);
+    
+    // TEST
+    end = std::chrono::system_clock::now();
+    elapsed_time = end - start;
+    std::cout << "Differentiation: " << elapsed_time.count() << std::endl;
 
     return marginal_density;
   }

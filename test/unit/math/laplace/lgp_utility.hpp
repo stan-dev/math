@@ -240,3 +240,42 @@ void read_in_data(int dim_theta,
   }
   input_data.close();
 }
+
+// Overload function to read in skim data.
+// The covariates have a different structure.
+void read_in_data(int dim_theta,
+                  int dim_observations,
+                  std::string data_directory,
+                  Eigen::MatrixXd& X,
+                  std::vector<int>& y,
+                  Eigen::VectorXd& lambda) {
+  std::ifstream input_data;
+  std::string file_y = data_directory + "y.csv";
+  std::string file_X = data_directory + "X.csv";
+  std::string file_lambda = data_directory + "lambda.csv";
+
+  input_data.open(file_X);
+  double buffer = 0.0;
+  for (int m = 0; m < dim_theta; ++m)
+    for (int n = 0; n < dim_observations; ++n) {
+      input_data >> buffer;
+      X(n, m) = buffer;
+    }
+  input_data.close();
+
+  input_data.open(file_y);
+  buffer = 0.0;
+  for (int n = 0; n < dim_observations; ++n) {
+    input_data >> buffer;
+    y[n] = buffer;
+  }
+  input_data.close();
+
+  input_data.open(file_lambda);
+  buffer = 0.0;
+  for (int m = 0; m < dim_theta; ++m) {
+    input_data >> buffer;
+    lambda[m] = buffer;
+  }
+}
+
