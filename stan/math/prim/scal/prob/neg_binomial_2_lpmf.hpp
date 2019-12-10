@@ -9,6 +9,7 @@
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
+#include <stan/math/prim/scal/fun/binomial_coefficient_log.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/prob/poisson_lpmf.hpp>
 #include <cmath>
@@ -17,9 +18,11 @@ namespace stan {
 namespace math {
 
 namespace internal {
-// Exposing to let me us this in tests
-constexpr double neg_binomial_2_phi_cutoff = 1e5;
-}  // namespace internal
+  //Exposing to let me us this in tests
+  //The current tests fail when the cutoff is 1e8 and pass with 1e9, 
+  //setting 1e10 to be safe
+  constexpr double neg_binomial_2_phi_cutoff = 1e10;
+}
 
 // NegBinomial(n|mu, phi)  [mu >= 0; phi > 0;  n >= 0]
 template <bool propto, typename T_n, typename T_location, typename T_precision>
@@ -83,36 +86,61 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
   }
 
   for (size_t i = 0; i < size; i++) {
-    // if phi is large we probably overflow, defer to Poisson:
-    if (phi__[i] > internal::neg_binomial_2_phi_cutoff) {
-      logp += poisson_lpmf(n_vec[i], mu__[i]);
-      continue;
-    }
+    if(phi__[i] > internal::neg_binomial_2_phi_cutoff) {
+      //Phi is large, deferring to Poisson. 
+      //Copying the code here as just calling
+      //poisson_lpmf does not preserve propto logic correctly
+      if (include_summand<propto>::value) {
+        logp -= lgamma(n_vec[i] + 1.0);
+      }
+      if (include_summand<propto, T_location>::value) {
+        logp += multiply_log(n_vec[i], mu__[i]) - mu__[i];
+      }
 
-    if (include_summand<propto>::value) {
-      logp -= lgamma(n_vec[i] + 1.0);
-    }
-    if (include_summand<propto, T_precision>::value) {
-      logp += multiply_log(phi__[i], phi__[i]) - lgamma(phi__[i]);
-    }
-    if (include_summand<propto, T_location, T_precision>::value) {
-      logp -= (n_plus_phi[i]) * log_mu_plus_phi[i];
-    }
-    if (include_summand<propto, T_location>::value) {
-      logp += multiply_log(n_vec[i], mu__[i]);
-    }
-    if (include_summand<propto, T_precision>::value) {
-      logp += lgamma(n_plus_phi[i]);
-    }
+      // if (include_summand<propto, T_location, T_precision>::value) {
+      //   logp += (mu__[i] * (mu__[i] - 2 * n_vec[i]) +
+      //     n_vec[i] * (n_vec[i] - 1)) / ( 2 * phi__[i] ); 
+      //   // logp += (mu__[i] * mu__[i] - n_vec[i] - 
+      //   //   2 * mu__[i] * n_vec[i] + n_vec[i] * n_vec[i])/phi
+      // }
 
-    if (!is_constant_all<T_location>::value) {
-      ops_partials.edge1_.partials_[i]
-          += n_vec[i] / mu__[i] - (n_vec[i] + phi__[i]) / (mu__[i] + phi__[i]);
-    }
-    if (!is_constant_all<T_precision>::value) {
-      ops_partials.edge2_.partials_[i]
-          += 1.0 - n_plus_phi[i] / (mu__[i] + phi__[i]) + log_phi[i]
-             - log_mu_plus_phi[i] - digamma(phi__[i]) + digamma(n_plus_phi[i]);
+      if (!is_constant_all<T_location>::value) {
+        //This is the Taylor series of the full derivative for phi -> Inf
+        //Obtained in Mathematica via 
+        //Series[n/mu - (n + phi)/(mu+phi),{phi,Infinity, 1}]
+        ops_partials.edge1_.partials_[i]
+            += n_vec[i] / mu__[i]  + (mu__[i] - n_vec[i]) / phi__[i] - 1;              
+      }
+      
+      //The derivative wrt. phi = 0 + O(1/neg_binomial_2_phi_cutoff^2)      
+      //So ignoring here
+      //Obtained in Mathematica via
+      //Series[1 - (n + phi) / (mu + phi) + Log[phi] - Log[mu + phi] - 
+      //  PolyGamma[phi] + PolyGamma[n + phi],{phi,Infinity, 1}]
+
+    } else {
+      if (include_summand<propto, T_precision>::value) {
+        logp += binomial_coefficient_log(n_plus_phi[i] - 1, n_vec[i]);
+      }
+      if (include_summand<propto, T_precision>::value) {
+        logp += multiply_log(phi__[i], phi__[i]);
+      }
+      if (include_summand<propto, T_location, T_precision>::value) {
+        logp -= (n_plus_phi[i]) * log_mu_plus_phi[i];
+      }
+      if (include_summand<propto, T_location>::value) {
+        logp += multiply_log(n_vec[i], mu__[i]);
+      }
+
+      if (!is_constant_all<T_location>::value) {
+        ops_partials.edge1_.partials_[i]
+            += n_vec[i] / mu__[i] - (n_vec[i] + phi__[i]) / (mu__[i] + phi__[i]);
+      }
+      if (!is_constant_all<T_precision>::value) {
+        ops_partials.edge2_.partials_[i]
+            += 1.0 - n_plus_phi[i] / (mu__[i] + phi__[i]) + log_phi[i]
+              - log_mu_plus_phi[i] - digamma(phi__[i]) + digamma(n_plus_phi[i]);
+      }    
     }
   }
   return ops_partials.build(logp);

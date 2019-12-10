@@ -89,6 +89,17 @@ inline double lgamma(int x) {
 #endif
 }
 
+inline double lgamma(unsigned int x) {
+#if !__MINGW32__
+  int sign = 1;
+  return ::lgamma_r(x, &sign);
+#else
+  if (unlikely(x == 0.0))
+    return std::numeric_limits<double>::infinity();
+  return boost::math::lgamma(x, boost_policy_t());
+#endif
+}
+
 }  // namespace math
 }  // namespace stan
 #endif
