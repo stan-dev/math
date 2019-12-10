@@ -11,25 +11,24 @@ namespace math {
 
 namespace internal {
 template <int R, int C>
-class matrix_scalar_divide_vari_dv : public vari {
+class matrix_scalar_divide_dv_vari : public vari {
  public:
   int rows_;
   int cols_;
   vari* adjCRef_;
   vari** adjResultRef_;
-  double invc;
+  double invc_;
 
-  explicit matrix_scalar_divide_vari_dv(const Eigen::Matrix<double, R, C>& m,
+  explicit matrix_scalar_divide_dv_vari(const Eigen::Matrix<double, R, C>& m,
                                         const var& c)
-      : vari(0.0),
+      : vari(0),
         rows_(m.rows()),
         cols_(m.cols()),
         adjCRef_(c.vi_),
         adjResultRef_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
-            m.rows() * m.cols())) {
-    double c_d = c.val();
-    invc = 1.0 / c_d;
-    Eigen::Matrix<double, R, C> result = invc * m;
+            m.rows() * m.cols())),
+        invc_(1.0 / c.val()) {
+    Eigen::Matrix<double, R, C> result = invc_ * m;
     Eigen::Map<matrix_vi>(adjResultRef_, rows_, cols_)
         = result.unaryExpr([](double x) { return new vari(x, false); });
   }
@@ -37,32 +36,31 @@ class matrix_scalar_divide_vari_dv : public vari {
   virtual void chain() {
     Eigen::Map<matrix_vi> adjResult(adjResultRef_, rows_, cols_);
     adjCRef_->adj_
-        += -1.0 * invc
-           * (adjResult.adj().array() * adjResult.val().array()).sum();
+        -= invc_ * (adjResult.adj().array() * adjResult.val().array()).sum();
   }
 };
 
 template <int R, int C>
-class matrix_scalar_divide_vari_vd : public vari {
+class matrix_scalar_divide_vd_vari : public vari {
  public:
   int rows_;
   int cols_;
   vari** adjMRef_;
   vari** adjResultRef_;
-  double invc;
+  double invc_;
 
-  explicit matrix_scalar_divide_vari_vd(const Eigen::Matrix<var, R, C>& m,
+  explicit matrix_scalar_divide_vd_vari(const Eigen::Matrix<var, R, C>& m,
                                         const double& c)
-      : vari(0.0),
+      : vari(0),
         rows_(m.rows()),
         cols_(m.cols()),
         adjMRef_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
             m.rows() * m.cols())),
         adjResultRef_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
-            m.rows() * m.cols())) {
+            m.rows() * m.cols())),
+        invc_(1.0 / c) {
     Eigen::Map<matrix_vi>(adjMRef_, rows_, cols_) = m.vi();
-    invc = 1.0 / c;
-    Eigen::Matrix<double, R, C> result = invc * m.val();
+    Eigen::Matrix<double, R, C> result = invc_ * m.val();
     Eigen::Map<matrix_vi>(adjResultRef_, rows_, cols_)
         = result.unaryExpr([](double x) { return new vari(x, false); });
   }
@@ -70,34 +68,33 @@ class matrix_scalar_divide_vari_vd : public vari {
   virtual void chain() {
     Eigen::Map<matrix_vi> adjM(adjMRef_, rows_, cols_);
     Eigen::Map<matrix_vi> adjResult(adjResultRef_, rows_, cols_);
-    adjM.adj() += invc * adjResult.adj();
+    adjM.adj() += invc_ * adjResult.adj();
   }
 };
 
 template <int R, int C>
-class matrix_scalar_divide_vari_vv : public vari {
+class matrix_scalar_divide_vv_vari : public vari {
  public:
   int rows_;
   int cols_;
   vari** adjMRef_;
   vari* adjC_;
   vari** adjResultRef_;
-  double invc;
+  double invc_;
 
-  explicit matrix_scalar_divide_vari_vv(const Eigen::Matrix<var, R, C>& m,
+  explicit matrix_scalar_divide_vv_vari(const Eigen::Matrix<var, R, C>& m,
                                         const var& c)
-      : vari(0.0),
+      : vari(0),
         rows_(m.rows()),
         cols_(m.cols()),
         adjMRef_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
             m.rows() * m.cols())),
         adjC_(c.vi_),
         adjResultRef_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
-            m.rows() * m.cols())) {
+            m.rows() * m.cols())),
+        invc_(1.0 / c.val()) {
     Eigen::Map<matrix_vi>(adjMRef_, rows_, cols_) = m.vi();
-    double c_d = c.val();
-    invc = 1.0 / c_d;
-    Eigen::Matrix<double, R, C> result = invc * m.val();
+    Eigen::Matrix<double, R, C> result = invc_ * m.val();
     Eigen::Map<matrix_vi>(adjResultRef_, rows_, cols_)
         = result.unaryExpr([](double x) { return new vari(x, false); });
   }
@@ -105,9 +102,9 @@ class matrix_scalar_divide_vari_vv : public vari {
   virtual void chain() {
     Eigen::Map<matrix_vi> adjM(adjMRef_, rows_, cols_);
     Eigen::Map<matrix_vi> adjResult(adjResultRef_, rows_, cols_);
-    adjC_->adj_ += -1.0 * invc
-                   * (adjResult.adj().array() * adjResult.val().array()).sum();
-    adjM.adj() += invc * adjResult.adj();
+    adjC_->adj_
+        -= invc_ * (adjResult.adj().array() * adjResult.val().array()).sum();
+    adjM.adj() += invc_ * adjResult.adj();
   }
 };
 
@@ -124,8 +121,8 @@ class matrix_scalar_divide_vari_vv : public vari {
 template <int R, int C>
 inline Eigen::Matrix<var, R, C> divide(const Eigen::Matrix<double, R, C>& m,
                                        const var& c) {
-  internal::matrix_scalar_divide_vari_dv<R, C>* baseVari
-      = new internal::matrix_scalar_divide_vari_dv<R, C>(m, c);
+  internal::matrix_scalar_divide_dv_vari<R, C>* baseVari
+      = new internal::matrix_scalar_divide_dv_vari<R, C>(m, c);
   Eigen::Matrix<var, R, C> result(m.rows(), m.cols());
   result.vi()
       = Eigen::Map<matrix_vi>(baseVari->adjResultRef_, m.rows(), m.cols());
@@ -143,8 +140,8 @@ inline Eigen::Matrix<var, R, C> divide(const Eigen::Matrix<double, R, C>& m,
 template <int R, int C>
 inline Eigen::Matrix<var, R, C> divide(const Eigen::Matrix<var, R, C>& m,
                                        const double& c) {
-  internal::matrix_scalar_divide_vari_vd<R, C>* baseVari
-      = new internal::matrix_scalar_divide_vari_vd<R, C>(m, c);
+  internal::matrix_scalar_divide_vd_vari<R, C>* baseVari
+      = new internal::matrix_scalar_divide_vd_vari<R, C>(m, c);
   Eigen::Matrix<var, R, C> result(m.rows(), m.cols());
   result.vi()
       = Eigen::Map<matrix_vi>(baseVari->adjResultRef_, m.rows(), m.cols());
@@ -162,8 +159,8 @@ inline Eigen::Matrix<var, R, C> divide(const Eigen::Matrix<var, R, C>& m,
 template <int R, int C>
 inline Eigen::Matrix<var, R, C> divide(const Eigen::Matrix<var, R, C>& m,
                                        const var& c) {
-  internal::matrix_scalar_divide_vari_vv<R, C>* baseVari
-      = new internal::matrix_scalar_divide_vari_vv<R, C>(m, c);
+  internal::matrix_scalar_divide_vv_vari<R, C>* baseVari
+      = new internal::matrix_scalar_divide_vv_vari<R, C>(m, c);
   Eigen::Matrix<var, R, C> result(m.rows(), m.cols());
   result.vi()
       = Eigen::Map<matrix_vi>(baseVari->adjResultRef_, m.rows(), m.cols());
