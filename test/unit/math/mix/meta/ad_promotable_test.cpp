@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <string>
 
-TEST(MathMetaMixScal, primitive_to_mix) {
+TEST(MathMetaMix, primitive_to_mix) {
   EXPECT_TRUE(
       (stan::math::ad_promotable<bool,
                                  stan::math::fvar<stan::math::var>>::value));

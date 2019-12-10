@@ -3,13 +3,13 @@
 #include <Eigen/Dense>
 #include <vector>
 
-TEST(MetaTraitsPrimScal, size_of) {
+TEST(MathMetaPrim, size_of_scalar) {
   using stan::size_of;
   double x1 = 2;
   EXPECT_EQ(1U, size_of(x1));
 }
 
-TEST(MetaTraitsPrimArr, size_of) {
+TEST(MathMetaPrim, size_of_non_scalar) {
   using stan::size_of;
 
   std::vector<double> x2(3);

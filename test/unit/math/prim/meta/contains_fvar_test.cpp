@@ -1,7 +1,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <gtest/gtest.h>
 
-TEST(MetaTraitsPrimScal, containsFvar) {
+TEST(MathMetaPrim, containsFvar) {
   using stan::contains_fvar;
   EXPECT_FALSE(contains_fvar<double>::value);
   bool temp

@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMetaPrimArr, index_type) {
+TEST(MathMetaPrim, index_type_vector) {
   using stan::math::index_type;
   using std::vector;
 
@@ -20,7 +20,7 @@ TEST(MathMetaPrimArr, index_type) {
                    index_type<const vector<vector<int> > >::type>();
 }
 
-TEST(MathMetaPrimMat, index_type) {
+TEST(MathMetaPrim, index_type_matrices) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::index_type;

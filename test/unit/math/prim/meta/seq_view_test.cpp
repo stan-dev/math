@@ -19,6 +19,7 @@ TEST(matrixTest, seq_view_double_stdvector) {
   EXPECT_FLOAT_EQ(1.0, view_x[0]);
   EXPECT_FLOAT_EQ(2.0, view_x[1]);
 }
+
 TEST(matrixTest, seq_view_double_vector) {
   vector_d y(2);
   y[0] = 1.0;
@@ -28,6 +29,7 @@ TEST(matrixTest, seq_view_double_vector) {
   EXPECT_FLOAT_EQ(1.0, view_y[0]);
   EXPECT_FLOAT_EQ(2.0, view_y[1]);
 }
+
 TEST(matrixTest, seq_view_double_row_vector) {
   row_vector_d y(2);
   y[0] = 1.0;
@@ -37,6 +39,7 @@ TEST(matrixTest, seq_view_double_row_vector) {
   EXPECT_FLOAT_EQ(1.0, view_y[0]);
   EXPECT_FLOAT_EQ(2.0, view_y[1]);
 }
+
 TEST(matrixTest, seq_view_double_double) {
   double x = 2.0;
   seq_view<double, double> view_x(x);
@@ -44,6 +47,7 @@ TEST(matrixTest, seq_view_double_double) {
   EXPECT_FLOAT_EQ(2.0, view_x[0]);
   EXPECT_FLOAT_EQ(2.0, view_x[1]);
 }
+
 TEST(matrixTest, seq_view_double_matrix) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m(2, 3);
   m << 1, 2, 3, 4, 5, 6;
@@ -53,6 +57,7 @@ TEST(matrixTest, seq_view_double_matrix) {
   for (int i = 0; i < 6; ++i)
     EXPECT_FLOAT_EQ(i + 1, view_m[i]);
 }
+
 TEST(matrixTest, seq_view_vec_vec_double) {
   std::vector<std::vector<double> > x(2);
   for (size_t m = 0; m < 2; ++m)
@@ -66,6 +71,7 @@ TEST(matrixTest, seq_view_vec_vec_double) {
   for (int i = 0; i < 6; ++i)
     EXPECT_FLOAT_EQ(i + 1, view_x[i]);
 }
+
 TEST(matrixTest, seq_view_double_int) {
   std::vector<int> x(3);
   x[0] = 0;

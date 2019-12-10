@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(AgradPartialsVari, OperandsAndPartialsFvar) {
+TEST(MathMetaFwd, OperandsAndPartialsFvar) {
   using stan::math::fvar;
   using stan::math::operands_and_partials;
 
@@ -24,7 +24,7 @@ TEST(AgradPartialsVari, OperandsAndPartialsFvar) {
   EXPECT_FLOAT_EQ(-1, y.val_);
 }
 
-TEST(AgradPartialsVari, OperandsAndPartialsFvarScal) {
+TEST(MathMetaFwd, OperandsAndPartialsFvarScal) {
   using stan::math::fvar;
   using stan::math::operands_and_partials;
 
@@ -43,7 +43,7 @@ TEST(AgradPartialsVari, OperandsAndPartialsFvarScal) {
   EXPECT_FLOAT_EQ(-1, y.val_);
 }
 
-TEST(AgradPartialsVari, OperandsAndPartialsFvarVec) {
+TEST(MathMetaFwd, OperandsAndPartialsFvarVec) {
   using stan::math::fvar;
   using stan::math::operands_and_partials;
 
@@ -72,7 +72,7 @@ TEST(AgradPartialsVari, OperandsAndPartialsFvarVec) {
   EXPECT_FLOAT_EQ(-1, y.val_);
 }
 
-TEST(AgradPartialsVari, OperandsAndPartialsFvarMat) {
+TEST(MathMetaFwd, OperandsAndPartialsFvarMat) {
   using stan::math::fvar;
   using stan::math::operands_and_partials;
 

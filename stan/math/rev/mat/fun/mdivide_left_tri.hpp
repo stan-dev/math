@@ -95,7 +95,7 @@ class mdivide_left_tri_vv_vari : public vari {
       matrix_cl<double> C_cl(C_, M_, N_);
       matrix_cl<double> variRefC_cl(Map<matrix_vi>(variRefC_, M_, N_).adj());
       matrix_cl<double> adjB_cl = transpose(tri_inverse(A_cl)) * variRefC_cl;
-      matrix_cl<double> adjA_cl = multiply(adjB_cl * transpose(C_cl), -1.0);
+      matrix_cl<double> adjA_cl = adjB_cl * transpose(C_cl) * -1.0;
       adjA = from_matrix_cl(adjA_cl);
       adjB = from_matrix_cl(adjB_cl);
     } else {
@@ -277,8 +277,7 @@ class mdivide_left_tri_vd_vari : public vari {
       matrix_cl<double> C_cl(C_, M_, N_);
       matrix_cl<double> adjC_cl(adjC);
       A_cl = transpose(tri_inverse(A_cl));
-      matrix_cl<double> adjA_cl
-          = multiply(A_cl * (adjC_cl * transpose(C_cl)), -1.0);
+      matrix_cl<double> adjA_cl = A_cl * (adjC_cl * transpose(C_cl)) * -1.0;
       adjA = from_matrix_cl(adjA_cl);
     } else {
 #endif
