@@ -27,7 +27,6 @@ return_type_t<T_y, T_shape, T_scale> frechet_cdf(const T_y& y,
 
   static const char* function = "frechet_cdf";
 
-  using boost::math::tools::promote_args;
   using std::exp;
   using std::log;
 

@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_MDIVIDE_RIGHT_TRI_LOW_HPP
 #define STAN_MATH_PRIM_MAT_FUN_MDIVIDE_RIGHT_TRI_LOW_HPP
 
-#include <boost/math/tools/promotion.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/mdivide_right_tri.hpp>
 #include <stan/math/prim/mat/fun/promote_common.hpp>

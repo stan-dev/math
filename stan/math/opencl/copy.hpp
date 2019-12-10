@@ -175,7 +175,8 @@ inline matrix_cl<Vec_scalar> packed_copy(Vec&& src, int rows) {
  * destination matrix. Both matrices
  * are stored on the OpenCL device.
  *
- * @param src source matrix
+ * @tparam T An arithmetic type to pass the value from the OpenCL matrix to.
+ * @param src the source matrix
  * @return matrix_cl with copies of values in the source matrix
  * @throw <code>std::invalid_argument</code> if the
  * matrices do not have matching dimensions

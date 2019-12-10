@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_MAT_FUN_QUAD_FORM_DIAG_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <boost/math/tools/promotion.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/err/check_vector.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>

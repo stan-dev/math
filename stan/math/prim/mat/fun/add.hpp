@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_ADD_HPP
 #define STAN_MATH_PRIM_MAT_FUN_ADD_HPP
 
-#include <boost/math/tools/promotion.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/err/check_matching_dims.hpp>
 
