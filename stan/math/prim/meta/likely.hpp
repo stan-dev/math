@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_META_LIKELY_HPP
-#define STAN_MATH_PRIM_SCAL_META_LIKELY_HPP
+#ifndef STAN_MATH_PRIM_META_LIKELY_HPP
+#define STAN_MATH_PRIM_META_LIKELY_HPP
 
 #ifdef __GNUC__
 #define likely(x) __builtin_expect(!!(x), 1)

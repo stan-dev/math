@@ -1,6 +1,6 @@
 // This is not used anywhere. Should it be deleted?
-#ifndef STAN_MATH_PRIM_SCAL_META_SCALAR_TYPE_PRE_HPP
-#define STAN_MATH_PRIM_SCAL_META_SCALAR_TYPE_PRE_HPP
+#ifndef STAN_MATH_PRIM_META_SCALAR_TYPE_PRE_HPP
+#define STAN_MATH_PRIM_META_SCALAR_TYPE_PRE_HPP
 
 #include <stan/math/prim/meta/is_vector.hpp>
 #include <stan/math/prim/meta/value_type.hpp>
