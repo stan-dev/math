@@ -206,28 +206,26 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest4) {
 
 TEST(ProbDistributionsNegBinomial, extreme_values) {
   std::array<unsigned int, 5> n_to_test = {1, 5, 100, 12985, 1968422};
-  std::array<double, 6> mu_to_test = {1e-5, 0.1, 8, 713, 28311, 19850054 };
+  std::array<double, 6> mu_to_test = {1e-5, 0.1, 8, 713, 28311, 19850054};
   double phi_cutoff = stan::math::internal::neg_binomial_2_phi_cutoff;
-  for(auto mu_iter = mu_to_test.begin(); 
-      mu_iter != mu_to_test.end(); ++mu_iter) {
-    for(auto n_iter = n_to_test.begin(); 
-        n_iter != n_to_test.end(); ++n_iter) {
+  for (auto mu_iter = mu_to_test.begin(); mu_iter != mu_to_test.end();
+       ++mu_iter) {
+    for (auto n_iter = n_to_test.begin(); n_iter != n_to_test.end(); ++n_iter) {
       double mu = *mu_iter;
       unsigned int n = *n_iter;
-      //Test just before cutoff
-      double logp = stan::math::neg_binomial_2_log<false>(
-          n, mu, phi_cutoff - 1e-8);
-        EXPECT_LT(logp, 0) << "n = " << n << ", mu = " << 
-          mu << ", phi = " << (phi_cutoff - 1e-8);
+      // Test just before cutoff
+      double logp
+          = stan::math::neg_binomial_2_log<false>(n, mu, phi_cutoff - 1e-8);
+      EXPECT_LT(logp, 0) << "n = " << n << ", mu = " << mu
+                         << ", phi = " << (phi_cutoff - 1e-8);
 
-
-      //Test across a range of phi
+      // Test across a range of phi
       double phi = 1e12;
       for (int i = 0; i < 10; ++i) {
         phi *= 10;
         double logp = stan::math::neg_binomial_2_log<false>(n, mu, phi);
-        EXPECT_LT(logp, 0) << "n = " << n << ", mu = " << 
-          mu << ", phi = " << phi;
+        EXPECT_LT(logp, 0) << "n = " << n << ", mu = " << mu
+                           << ", phi = " << phi;
       }
     }
   }
@@ -235,27 +233,26 @@ TEST(ProbDistributionsNegBinomial, extreme_values) {
 
 TEST(ProbDistributionsNegativeBinomial2, poissonCutoff) {
   double phi_cutoff = stan::math::internal::neg_binomial_2_phi_cutoff;
-  std::array<double, 7> mu_to_test = 
-    {2.345e-5, 0.2, 13, 150, 1621, 18432, 73582345 };
-  std::array<unsigned int, 8> n_to_test = 
-    {0, 3, 16, 24, 181, 2132, 121358, 865422242 };
-  for(auto mu_iter = mu_to_test.begin(); 
-      mu_iter != mu_to_test.end(); ++mu_iter) {
+  std::array<double, 7> mu_to_test
+      = {2.345e-5, 0.2, 13, 150, 1621, 18432, 73582345};
+  std::array<unsigned int, 8> n_to_test
+      = {0, 3, 16, 24, 181, 2132, 121358, 865422242};
+  for (auto mu_iter = mu_to_test.begin(); mu_iter != mu_to_test.end();
+       ++mu_iter) {
     double mu = *mu_iter;
-    for(auto n_iter = n_to_test.begin(); 
-        n_iter != n_to_test.end(); ++n_iter) {
+    for (auto n_iter = n_to_test.begin(); n_iter != n_to_test.end(); ++n_iter) {
       unsigned int n = *n_iter;
 
-      double before_cutoff = 
-        stan::math::neg_binomial_2_lpmf(n, mu, phi_cutoff - 1e-8);
-      double after_cutoff = 
-        stan::math::neg_binomial_2_lpmf(n, mu, phi_cutoff + 1e-8);
+      double before_cutoff
+          = stan::math::neg_binomial_2_lpmf(n, mu, phi_cutoff - 1e-8);
+      double after_cutoff
+          = stan::math::neg_binomial_2_lpmf(n, mu, phi_cutoff + 1e-8);
       double relative_error_at_cutoff = log(before_cutoff / after_cutoff);
-      EXPECT_NEAR(relative_error_at_cutoff, 0, 1e-8) << 
-        "neg_binomial_2_lpmf changes too much around phi cutoff for n = " <<
-        n << ", mu = " << mu << ", cutoff = " << phi_cutoff << 
-        " value at cutoff - 1e-8: " << 
-        before_cutoff << ", value at cutoff + 1e-8: " << after_cutoff;
+      EXPECT_NEAR(relative_error_at_cutoff, 0, 1e-8)
+          << "neg_binomial_2_lpmf changes too much around phi cutoff for n = "
+          << n << ", mu = " << mu << ", cutoff = " << phi_cutoff
+          << " value at cutoff - 1e-8: " << before_cutoff
+          << ", value at cutoff + 1e-8: " << after_cutoff;
     }
   }
 }
