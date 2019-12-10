@@ -3,7 +3,7 @@
 #include <test/unit/util.hpp>
 #include <vector>
 
-using stan::math::plain_type_t;
+using stan::plain_type_t;
 
 TEST(MetaTraitsPrimMat, plain_type_non_eigen) {
   test::expect_same_type<double, plain_type_t<double>>();

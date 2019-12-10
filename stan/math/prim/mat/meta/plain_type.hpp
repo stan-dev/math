@@ -6,7 +6,6 @@
 #include <type_traits>
 
 namespace stan {
-namespace math {
 
 /**
  * Determines plain (non expression) type associated with \c T. For \c Eigen
@@ -18,7 +17,6 @@ struct plain_type<T, require_eigen_t<T>> {
   using type = typename std::decay_t<T>::PlainObject;
 };
 
-}  // namespace math
 }  // namespace stan
 
 #endif  // STAN_MATH_PRIM_MAT_META_PLAIN_TYPE_HPP

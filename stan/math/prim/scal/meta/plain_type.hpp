@@ -4,7 +4,6 @@
 #include <type_traits>
 
 namespace stan {
-namespace math {
 
 /**
  * Determines plain (non expression) type associated with \c T. For non \c Eigen
@@ -35,7 +34,6 @@ struct eval_return_type {
 template <typename T>
 using eval_return_type_t = typename eval_return_type<T>::type;
 
-}  // namespace math
 }  // namespace stan
 
 #endif  // STAN_MATH_PRIM_SCAL_META_PLAIN_TYPE_HPP

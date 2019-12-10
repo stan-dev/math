@@ -23,8 +23,8 @@ template <typename C>
 class scalar_seq_view<
     C, std::enable_if_t<is_vector_like<std::decay_t<C>>::value>> {
  public:
-  template <typename T, typename = require_same_t<math::plain_type_t<T>,
-                                                  math::plain_type_t<C>>>
+  template <typename T,
+            typename = require_same_t<plain_type_t<T>, plain_type_t<C>>>
   explicit scalar_seq_view(T&& c) : c_(std::forward<T>(c)) {}
 
   /** \ingroup type_trait
@@ -38,7 +38,7 @@ class scalar_seq_view<
   int size() const { return c_.size(); }
 
  private:
-  math::eval_return_type_t<C> c_;
+  eval_return_type_t<C> c_;
 };
 
 /** \ingroup type_trait
