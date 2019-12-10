@@ -1,6 +1,7 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
 #include <vector>
+#include <algorithm>
 
 struct TestValue {
   unsigned int n;
@@ -510,4 +511,4 @@ TEST(ProbDistributionsNegativeBinomial2, proptoAtPoissonCutoff) {
   EXPECT_NEAR(value_of(value_before_cutoff), value_of(value_after_cutoff), 1);
 }
 
-// TODO test continuity of derivatives at cutoff
+// TODO(martinmodrak) test continuity of derivatives at cutoff
