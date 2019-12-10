@@ -264,7 +264,7 @@ def main():
             "message": "File includes */meta/*.hpp header file. Should include meta.hpp",
         }
     ]
-    meta_exclude = ["stan/math/*/*/meta", "stan/math/*/meta.hpp"]
+    meta_exclude = ["stan/math/*/meta", "stan/math/*/meta.hpp"]
     errors.extend(grep_patterns("meta", "stan/math", meta_checks, meta_exclude))
 
     #  Check that we do not use non-reentrant safe functions from std
