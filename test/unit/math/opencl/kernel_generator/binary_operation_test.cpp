@@ -188,7 +188,8 @@ TEST(MathMatrixCL, reuse_expression_simple) {
   auto tmp2 = stan::math::elewise_multiplication(tmp, tmp);
   matrix_cl<double> res_cl;
   std::string kernel_src = tmp2.get_kernel_source_for_evaluating_into(res_cl);
-  //if the expression is correctly reused, division will only occur once in the kernel
+  // if the expression is correctly reused, division will only occur once in the
+  // kernel
   EXPECT_EQ(1, std::count(kernel_src.begin(), kernel_src.end(), '/'));
   res_cl = tmp2;
 
@@ -211,8 +212,10 @@ TEST(MathMatrixCL, reuse_expression_complicated) {
   matrix_cl<double> m1_cl(m1);
   matrix_cl<double> m2_cl(m2);
   auto tmp = m1_cl + m2_cl;
-  auto tmp2 = stan::math::elewise_division(stan::math::elewise_multiplication(tmp, tmp), m1_cl);
-  auto tmp3 = stan::math::elewise_multiplication(stan::math::elewise_division(tmp, tmp2), tmp2);
+  auto tmp2 = stan::math::elewise_division(
+      stan::math::elewise_multiplication(tmp, tmp), m1_cl);
+  auto tmp3 = stan::math::elewise_multiplication(
+      stan::math::elewise_division(tmp, tmp2), tmp2);
   matrix_cl<double> res_cl;
   std::string kernel_src = tmp3.get_kernel_source_for_evaluating_into(res_cl);
   stan::test::store_reference_kernel_if_needed(kernel_filename, kernel_src);
@@ -226,7 +229,8 @@ TEST(MathMatrixCL, reuse_expression_complicated) {
 
   auto tmp_eig = m1.array() + m2.array();
   MatrixXd tmp2_eig = (tmp_eig * tmp_eig).array() / m1.array();
-  MatrixXd tmp3_eig = (tmp_eig.array() / tmp2_eig.array()).array() * tmp2_eig.array();
+  MatrixXd tmp3_eig
+      = (tmp_eig.array() / tmp2_eig.array()).array() * tmp2_eig.array();
 
   EXPECT_MATRIX_NEAR(tmp3_eig, res, 1e-9);
 }
