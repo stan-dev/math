@@ -5,7 +5,6 @@
 #include <stan/math/prim/mat/err/check_simplex.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/mat/fun/sum.hpp>
-#include <boost/math/tools/promotion.hpp>
 #include <cmath>
 #include <vector>
 

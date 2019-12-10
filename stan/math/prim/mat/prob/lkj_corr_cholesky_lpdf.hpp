@@ -18,8 +18,6 @@ return_type_t<T_covar, T_shape> lkj_corr_cholesky_lpdf(
     const T_shape& eta) {
   static const char* function = "lkj_corr_cholesky_lpdf";
 
-  using boost::math::tools::promote_args;
-
   using lp_ret = return_type_t<T_covar, T_shape>;
   lp_ret lp(0.0);
   check_positive(function, "Shape parameter", eta);

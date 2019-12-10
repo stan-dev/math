@@ -6,7 +6,6 @@
 #include <stan/math/prim/mat/fun/mdivide_left_ldlt.hpp>
 #include <stan/math/prim/mat/fun/transpose.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
-#include <boost/math/tools/promotion.hpp>
 
 namespace stan {
 namespace math {
