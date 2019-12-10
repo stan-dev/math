@@ -12,7 +12,7 @@ namespace stan {
 namespace math {
 namespace internal {
 template <typename Dx>
-class ops_partials_edge<Dx, fvar<Dx> > {
+class ops_partials_edge<Dx, fvar<Dx>> {
  public:
   using Op = fvar<Dx>;
   Dx partial_;
@@ -67,7 +67,7 @@ class ops_partials_edge<Dx, fvar<Dx> > {
  */
 template <typename Op1, typename Op2, typename Op3, typename Op4, typename Op5,
           typename Dx>
-class operands_and_partials<Op1, Op2, Op3, Op4, Op5, fvar<Dx> > {
+class operands_and_partials<Op1, Op2, Op3, Op4, Op5, fvar<Dx>> {
  public:
   internal::ops_partials_edge<Dx, Op1> edge1_;
   internal::ops_partials_edge<Dx, Op2> edge2_;
