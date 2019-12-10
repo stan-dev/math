@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_SCAL_META_PARTIALS_RETURN_TYPE_HPP
 #define STAN_MATH_PRIM_SCAL_META_PARTIALS_RETURN_TYPE_HPP
 
-#include <stan/math/prim/scal/meta/partials_type.hpp>
-#include <stan/math/prim/scal/meta/promote_args.hpp>
-#include <stan/math/prim/scal/meta/scalar_type.hpp>
+#include <stan/math/prim/meta/partials_type.hpp>
+#include <stan/math/prim/meta/promote_args.hpp>
+#include <stan/math/prim/meta/scalar_type.hpp>
 #include <type_traits>
 
 namespace stan {

@@ -5,12 +5,12 @@
 #include <stan/math/rev/core/precomputed_gradients.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/vari.hpp>
-#include <stan/math/prim/scal/meta/broadcast_array.hpp>
-#include <stan/math/prim/scal/meta/operands_and_partials.hpp>
-#include <stan/math/prim/scal/meta/is_vector_like.hpp>
-#include <stan/math/prim/scal/meta/likely.hpp>
+#include <stan/math/prim/meta/broadcast_array.hpp>
+#include <stan/math/prim/meta/operands_and_partials.hpp>
+#include <stan/math/prim/meta/is_vector_like.hpp>
+#include <stan/math/prim/meta/likely.hpp>
 #include <stan/math/rev/mat/fun/typedefs.hpp>
-#include <stan/math/prim/scal/meta/length.hpp>
+#include <stan/math/prim/meta/length.hpp>
 #include <vector>
 
 namespace stan {

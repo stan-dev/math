@@ -2,12 +2,12 @@
 #define STAN_MATH_PRIM_SCAL_META_IS_CONSTANT_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/meta/is_eigen.hpp>
-#include <stan/math/prim/scal/meta/bool_constant.hpp>
-#include <stan/math/prim/scal/meta/conjunction.hpp>
-#include <stan/math/prim/scal/meta/is_vector.hpp>
-#include <stan/math/prim/scal/meta/is_constant.hpp>
-#include <stan/math/prim/scal/meta/require_generics.hpp>
+#include <stan/math/prim/meta/is_eigen.hpp>
+#include <stan/math/prim/meta/bool_constant.hpp>
+#include <stan/math/prim/meta/conjunction.hpp>
+#include <stan/math/prim/meta/is_vector.hpp>
+#include <stan/math/prim/meta/is_constant.hpp>
+#include <stan/math/prim/meta/require_generics.hpp>
 #include <type_traits>
 #include <vector>
 namespace stan {
