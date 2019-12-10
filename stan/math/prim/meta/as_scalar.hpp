@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_FUN_AS_SCALAR_HPP
-#define STAN_MATH_PRIM_SCAL_FUN_AS_SCALAR_HPP
+#ifndef STAN_MATH_PRIM_META_AS_SCALAR_HPP
+#define STAN_MATH_PRIM_META_AS_SCALAR_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <vector>
