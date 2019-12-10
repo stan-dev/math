@@ -1,9 +1,9 @@
-#ifndef STAN_MATH_REV_SCAL_META_PARTIALS_TYPE_HPP
-#define STAN_MATH_REV_SCAL_META_PARTIALS_TYPE_HPP
+#ifndef STAN_MATH_REV_META_PARTIALS_TYPE_HPP
+#define STAN_MATH_REV_META_PARTIALS_TYPE_HPP
 
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/meta/partials_type.hpp>
-#include <stan/math/rev/scal/meta/is_var.hpp>
+#include <stan/math/rev/meta/is_var.hpp>
 #include <type_traits>
 
 namespace stan {
