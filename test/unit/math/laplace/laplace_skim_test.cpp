@@ -38,7 +38,10 @@ struct K_functor {
     T sigma = parm[M + 3];
     double psi = delta[0];
 
-    // CHECK -- what happens when this is declared as a matrix of var
+    // Note -- when the object is declared as a scalar matrix,
+    // the differentiation slows down.
+    // Eigen::Matrix<T, -1, -1> X(N, M);
+    // Eigen::Matrix<T, -1, -1> X2(N, M);
     Eigen::MatrixXd X(N, M);
     Eigen::MatrixXd X2(N, M);
 
@@ -93,19 +96,22 @@ TEST(laplace, skm) {
 
   // DATA AND TRANSFORMED DATA BLOCK
   int N = 100;
-  int M = 200;
+  int M = 200;  // options: 2, 50, 100, 150, 200
 
-  std::string data_directory = "test/unit/math/laplace/skim_data/";
+  std::string data_directory = "test/unit/math/laplace/skim_data/" +
+    std::to_string(M) + "_" + std::to_string(N) + "/";
   MatrixXd X(N, M);
   std::vector<int> y(N);
   VectorXd lambda(M);
 
   read_in_data(M, N, data_directory, X, y, lambda);
 
+  // std::cout << X << std::endl;
+  // std::cout << lambda.transpose() << std::endl;
   // for (int i = 0; i < N; i++) std::cout << y[i] << " ";
   // std::cout << std::endl;
 
-  double alpha_base = 0, psi = 1, m0 = 2,
+  double alpha_base = 0, psi = 1, m0 = 1,  // options: m0 = 2
     slab_scale = 3,
     slab_scale2 = slab_scale * slab_scale,
     slab_df = 25,
@@ -151,6 +157,17 @@ TEST(laplace, skm) {
   parm(M + 1) = alpha;
   parm(M + 2) = phi;
   parm(M + 3) = sigma;
+
+  K_functor K;
+  // for (int i = 0; i < parm.size(); i++) std::cout << parm(i) << " ";
+  // std::cout << std::endl;
+  // std::cout << "x_tot" << std::endl;
+  // for (size_t i = 0; i < x_tot.size(); i++) std::cout << x_tot[i].transpose() << std::endl;
+  // std::cout << std::endl << std::endl;
+  // for (size_t i = 0; i < delta.size(); i++) std::cout << delta[i] << std::endl;
+  // for (size_t i = 0; i < delta_int.size(); i++) std::cout << delta_int[i] << std::endl;
+    
+  // std::cout << K(parm, x_tot, delta, delta_int, 0) << std::endl;
 
   auto start = std::chrono::system_clock::now();
   

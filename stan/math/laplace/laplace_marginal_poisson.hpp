@@ -35,11 +35,11 @@ namespace math {
    * @param[in] max_num_steps maximum number of steps before the Newton solver
    *            breaks and returns an error.
    */
-  template <typename T0, typename T1>
+  template <typename T0, typename T1, typename K>
   T1 laplace_marginal_poisson 
                (const std::vector<int>& y,
                 const std::vector<int>& n_samples,
-                // const K& covariance_function,
+                const K& covariance_function,
                 const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,
                 const std::vector<Eigen::VectorXd>& x,
                 const std::vector<double>& delta,
@@ -50,16 +50,16 @@ namespace math {
                 long int max_num_steps = 100) {
     return laplace_marginal_density(
       diff_poisson_log(to_vector(n_samples), to_vector(y)),
-      sqr_exp_kernel_functor(), phi, x, delta, delta_int,
+      covariance_function, phi, x, delta, delta_int,
       theta_0, msgs, tolerance, max_num_steps);
   }
   
-  template <typename T0, typename T1>
+  template <typename T0, typename T1, typename K>
   T1 laplace_marginal_poisson 
                (const std::vector<int>& y,
                 const std::vector<int>& n_samples,
                 const Eigen::VectorXd& ye,
-                // const K& covariance_function,
+                const K& covariance_function,
                 const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,
                 const std::vector<Eigen::VectorXd>& x,
                 const std::vector<double>& delta,
@@ -70,7 +70,7 @@ namespace math {
                 long int max_num_steps = 100) {
     return laplace_marginal_density(
       diff_poisson_log(to_vector(n_samples), to_vector(y), log(ye)),
-      sqr_exp_kernel_functor(), phi, x, delta, delta_int,
+      covariance_function, phi, x, delta, delta_int,
       theta_0, msgs, tolerance, max_num_steps);
   }
 

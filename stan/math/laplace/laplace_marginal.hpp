@@ -280,7 +280,7 @@ namespace math {
       // compute derivatives of covariance matrix with respect to phi.
 
       // TEST
-      auto start = std::chrono::system_clock::now();
+      // auto start = std::chrono::system_clock::now();
       
       covariance_sensitivities<K> f(x, delta, delta_int,
                                     covariance_function, msgs);
@@ -292,9 +292,9 @@ namespace math {
       }
 
       // TEST
-      auto end = std::chrono::system_clock::now();
-      std::chrono::duration<double> elapsed_time = end - start;
-      std::cout << "Covariance differentiation: " << elapsed_time.count() << std::endl;
+      // auto end = std::chrono::system_clock::now();
+      // std::chrono::duration<double> elapsed_time = end - start;
+      // std::cout << "Covariance differentiation: " << elapsed_time.count() << std::endl;
 
       // Now compute the full gradient (using algorithm 5.1 of R & W)
       // CHECK: is there an efficient way to solve / divide a diagonal matrix?
@@ -382,7 +382,7 @@ namespace math {
     Eigen::MatrixXd covariance;
 
     // TEST
-    auto start = std::chrono::system_clock::now();
+    // auto start = std::chrono::system_clock::now();
     
     marginal_density_dbl
       = laplace_marginal_density(diff_likelihood,
@@ -395,12 +395,12 @@ namespace math {
                                  tolerance, max_num_steps);
 
     // TEST
-    auto end = std::chrono::system_clock::now();
-    std::chrono::duration<double> elapsed_time = end - start;
-    std::cout << "Evaluation time: " << elapsed_time.count() << std::endl;
+    // auto end = std::chrono::system_clock::now();
+    // std::chrono::duration<double> elapsed_time = end - start;
+    // std::cout << "Evaluation time: " << elapsed_time.count() << std::endl;
     
     // TEST
-    start = std::chrono::system_clock::now();
+    // start = std::chrono::system_clock::now();
 
     // construct vari
     laplace_marginal_density_vari* vi0
@@ -415,9 +415,9 @@ namespace math {
     var marginal_density = var(vi0->marginal_density_[0]);
     
     // TEST
-    end = std::chrono::system_clock::now();
-    elapsed_time = end - start;
-    std::cout << "Differentiation: " << elapsed_time.count() << std::endl;
+    // end = std::chrono::system_clock::now();
+    // elapsed_time = end - start;
+    // std::cout << "Differentiation: " << elapsed_time.count() << std::endl;
 
     return marginal_density;
   }

@@ -51,7 +51,6 @@ laplace_approx_rng
   Eigen::MatrixXd V_dec = mdivide_left_tri<Eigen::Lower>(L,
                             diag_matrix(W_root_inv));
 
-  // CHECK --  test that this works!!
   return multi_normal_rng(
     theta,
     diag_matrix(square(W_root_inv)) - V_dec.transpose() * V_dec,

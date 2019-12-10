@@ -21,6 +21,7 @@ TEST(laplace, disease_map_dim_911) {
   // https://research.cs.aalto.fi/pml/software/gpstuff/demo_spatial1.shtml
   using stan::math::var;
   using stan::math::laplace_marginal_poisson;
+  using stan::math::sqr_exp_kernel_functor;
 
   int dim_theta = 911;
   int n_observations = 911;
@@ -59,8 +60,8 @@ TEST(laplace, disease_map_dim_911) {
   auto start = std::chrono::system_clock::now();
 
   var marginal_density
-    = laplace_marginal_poisson(y, n_samples, ye, phi, x, delta, delta_int,
-                               theta_0);
+    = laplace_marginal_poisson(y, n_samples, ye, sqr_exp_kernel_functor(), 
+                               phi, x, delta, delta_int, theta_0);
 
   auto end = std::chrono::system_clock::now();
   std::chrono::duration<double> elapsed_time = end - start;
@@ -106,4 +107,16 @@ TEST(laplace, disease_map_dim_911) {
   
   // Expected result
   // total time: 0.404114
+  
+  start = std::chrono::system_clock::now();
+  theta_pred = laplace_approx_poisson_rng(y, n_samples, ye,
+                                          sqr_exp_kernel_functor(),
+                                          phi, x, delta, delta_int,
+                                          theta_0, rng);
+  end = std::chrono::system_clock::now();
+  elapsed_time = end - start;
+  
+  std::cout << "LAPLACE_APPROX_POISSON_RNG" << std::endl
+            << "total time: " << elapsed_time.count() << std::endl
+            << std::endl;
 }
