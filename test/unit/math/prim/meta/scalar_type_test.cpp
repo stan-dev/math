@@ -3,12 +3,12 @@
 #include <test/unit/util.hpp>
 #include <vector>
 
-TEST(MetaTraitsPrimScal, ScalarTypeScal) {
+TEST(MathMetaPrim, ScalarTypeScal) {
   test::expect_same_type<double, stan::scalar_type<double>::type>();
   test::expect_same_type<int, stan::scalar_type<int>::type>();
 }
 
-TEST(MetaTraitsPrimArr, ScalarTypeArray) {
+TEST(MathMetaPrim, ScalarTypeArray) {
   using stan::scalar_type;
   using std::vector;
 
@@ -17,7 +17,7 @@ TEST(MetaTraitsPrimArr, ScalarTypeArray) {
   test::expect_same_type<double, scalar_type<vector<vector<double>>>::type>();
 }
 
-TEST(MetaTraitsPrimArr, ScalarTypeArrayConst) {
+TEST(MathMetaPrim, ScalarTypeArrayConst) {
   using stan::scalar_type;
   using std::vector;
 
@@ -27,7 +27,7 @@ TEST(MetaTraitsPrimArr, ScalarTypeArrayConst) {
                          scalar_type<const vector<vector<double>>>::type>();
 }
 
-TEST(MetaTraitsPrimArr, ScalarTypeArrayConstConst) {
+TEST(MathMetaPrim, ScalarTypeArrayConstConst) {
   using stan::scalar_type;
   using std::vector;
 
@@ -39,7 +39,7 @@ TEST(MetaTraitsPrimArr, ScalarTypeArrayConstConst) {
       double const*, scalar_type<const vector<vector<double const*>>>::type>();
 }
 
-TEST(MetaTraitsPrimMat, ScalarTypeMat) {
+TEST(MathMetaPrim, ScalarTypeMat) {
   using Eigen::MatrixXd;
   using Eigen::RowVectorXd;
   using Eigen::VectorXd;

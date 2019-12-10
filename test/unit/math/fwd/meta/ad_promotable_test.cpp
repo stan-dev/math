@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 #include <string>
 
-TEST(MathMetaFwdScal, primitive_to_fvar) {
+TEST(MathMetaFwd, primitive_to_fvar) {
   EXPECT_TRUE(
       (stan::math::ad_promotable<bool, stan::math::fvar<double>>::value));
   EXPECT_TRUE(

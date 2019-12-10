@@ -4,24 +4,24 @@
 
 using stan::math::include_summand;
 
-TEST(MetaTraitsPrimScal, IncludeSummandProptoFalse) {
+TEST(MathMetaPrim, IncludeSummandProptoFalse) {
   EXPECT_TRUE(include_summand<false>::value);
 }
 
-TEST(MetaTraitsPrimScal, IncludeSummandProptoTrueInt) {
+TEST(MathMetaPrim, IncludeSummandProptoTrueInt) {
   EXPECT_FALSE((include_summand<true, int>::value));
 }
 
-TEST(MetaTraitsPrimScal, IncludeSummandProptoTrueDouble) {
+TEST(MathMetaPrim, IncludeSummandProptoTrueDouble) {
   EXPECT_FALSE((include_summand<true, double>::value));
 }
 
-TEST(MetaTraitsPrimScal, IncludeSummandConstantPropToTrueTen) {
+TEST(MathMetaPrim, IncludeSummandConstantPropToTrueTen) {
   EXPECT_FALSE((include_summand<true, double, double, int, int, double, double,
                                 int, int, double, int>::value));
 }
 
-TEST(MetaTraitsPrimScal, IncludeSummandConstantProptoFalseTen) {
+TEST(MathMetaPrim, IncludeSummandConstantProptoFalseTen) {
   EXPECT_TRUE((include_summand<false, double, double, int, int, double, double,
                                int, int, double, int>::value));
 }
