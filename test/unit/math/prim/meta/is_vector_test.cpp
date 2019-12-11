@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MetaTraitsPrimScal, is_vector) {
+TEST(MathMetaPrim, is_vector_scalar) {
   using stan::is_vector;
   EXPECT_FALSE(is_vector<double>::value);
   EXPECT_FALSE(is_vector<int>::value);
@@ -14,7 +14,7 @@ TEST(MetaTraitsPrimScal, is_vector) {
   EXPECT_FALSE(is_vector<size_t*>::value);
 }
 
-TEST(MetaTraitsPrimArr, is_vector) {
+TEST(MathMetaPrim, is_vector_std_vector) {
   using stan::is_vector;
   using std::vector;
 
@@ -29,7 +29,7 @@ TEST(MetaTraitsPrimArr, is_vector) {
   EXPECT_FALSE(is_vector<double>::value);
 }
 
-TEST(MetaTraitsPrimMat, is_vector) {
+TEST(MathMetaPrim, is_vector_matrices) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::is_vector;

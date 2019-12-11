@@ -1,7 +1,7 @@
 #include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
 
-TEST(MetaTraitsFwdScal, partials_type) {
+TEST(MathMetaFwd, partials_type) {
   using stan::math::fvar;
   using stan::partials_type;
 

@@ -27,9 +27,15 @@ namespace stan {
 namespace math {
 
 /** \ingroup opencl
- * Copies the source Eigen matrix to
- * the destination matrix that is stored
- * on the OpenCL device.
+ * Copies the source Eigen matrix to the destination matrix that is stored on
+ * the OpenCL device. If a lvalue matrix is passed to this function the caller
+ * must make sure that the matrix does not go out of scope before copying is
+ * complete.
+ *
+ * That means `.wait()` must be called on the event associated on copying or
+ * any other event that requires completion of this event. This can be done by
+ * calling `.wait_for_write_events()` or `.wait_for_read_write_events()` on
+ * returned matrix or any matrix that is calculated from that one.
  *
  * @param src source Eigen matrix
  * @return matrix_cl with a copy of the data in the source matrix
@@ -41,9 +47,14 @@ inline matrix_cl<Mat_scalar> to_matrix_cl(Mat&& src) {
 }
 
 /** \ingroup opencl
- * Copies the source std::vector to
- * the destination matrix that is stored
- * on the OpenCL device.
+ * Copies the source `std::vector` to the destination matrix that is stored on
+ * the OpenCL device. If a lvalue is passed to this constructor the caller must
+ * make sure that it does not go out of scope before copying is complete.
+ *
+ * That means `.wait()` must be called on the event associated on copying or
+ * any other event that requires completion of this event. This can be done by
+ * calling `.wait_for_write_events()` or `.wait_for_read_write_events()` on
+ * returned matrix or any matrix that is calculated from that one.
  *
  * @param src source std::vector
  * @return matrix_cl with a copy of the data in the source matrix
@@ -55,9 +66,8 @@ inline matrix_cl<Vec_scalar> to_matrix_cl(Vec&& src) {
 }
 
 /** \ingroup opencl
- * Copies the source matrix that is stored
- * on the OpenCL device to the destination Eigen
- * matrix.
+ * Copies the source matrix that is stored on the OpenCL device to the
+ * destination Eigen matrix.
  *
  * @param src source matrix on the OpenCL device
  * @return Eigen matrix with a copy of the data in the source matrix
@@ -93,7 +103,7 @@ inline Eigen::Matrix<T, R, C> from_matrix_cl(const matrix_cl<T>& src) {
 }
 
 /** \ingroup opencl
- * Packs the flat triagnular matrix on the OpenCL device and
+ * Packs the flat triangular matrix on the OpenCL device and
  * copies it to the std::vector.
  *
  * @param src the flat triangular source matrix on the OpenCL device
@@ -129,9 +139,15 @@ inline std::vector<T> packed_copy(const matrix_cl<T>& src) {
 }
 
 /** \ingroup opencl
- * Copies the packed triangular matrix from
- * the source std::vector to an OpenCL buffer and
- * unpacks it to a flat matrix on the OpenCL device.
+ * Copies the packed triangular matrix from the source std::vector to an OpenCL
+ * buffer and unpacks it to a flat matrix on the OpenCL device. If a lvalue is
+ * passed to this constructor the caller must make sure that it does not go out
+ * of scope before copying is complete.
+ *
+ * That means `.wait()` must be called on the event associated on copying or
+ * any other event that requires completion of this event. This can be done by
+ * calling `.wait_for_write_events()` or `.wait_for_read_write_events()` on
+ * returned matrix or any matrix that is calculated from that one.
  *
  * @tparam matrix_view the triangularity of the source matrix
  * @param src the packed source std::vector
@@ -213,7 +229,15 @@ inline T from_matrix_cl_error_code(const matrix_cl<T>& src) {
 }
 
 /** \ingroup opencl
- * Copy an arithmetic type to the device.
+ * Copy an arithmetic type to the device. If a lvalue is passed to this
+ * constructor the caller must make sure that it does not go out of scope before
+ * copying is complete.
+ *
+ * That means `.wait()` must be called on the event associated on copying or
+ * any other event that requires completion of this event. This can be done by
+ * calling `.wait_for_write_events()` or `.wait_for_read_write_events()` on
+ * returned matrix or any matrix that is calculated from that one.
+ *
  * @tparam T An arithmetic type to pass the value from the OpenCL matrix to.
  * @param src Arithmetic to receive the matrix_cl value.
  * @return A 1x1 matrix on the device.

@@ -1,7 +1,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <gtest/gtest.h>
 
-TEST(AgradPartialsVari, OperandsAndPartials) {
+TEST(MathMetaPrim, OperandsAndPartials) {
   using stan::math::operands_and_partials;
 
   operands_and_partials<double> o1(1.0);
