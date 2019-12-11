@@ -207,7 +207,7 @@ class operation_cl : public operation_cl_base {
   inline int rows() const {
     return index_apply<N>([&](auto... Is) {
       // assuming all non-dynamic sizes match
-      return std::max(get<Is>(arguments_).rows()...);
+      return std::max({get<Is>(arguments_).rows()...});
     });
   }
 
@@ -220,7 +220,7 @@ class operation_cl : public operation_cl_base {
   inline int cols() const {
     return index_apply<N>([&](auto... Is) {
       // assuming all non-dynamic sizes match
-      return std::max(get<Is>(arguments_).cols()...);
+      return std::max({get<Is>(arguments_).cols()...});
     });
   }
 };

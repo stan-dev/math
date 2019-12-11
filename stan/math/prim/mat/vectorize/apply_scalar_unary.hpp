@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_MAT_VECTORIZE_APPLY_SCALAR_UNARY_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <vector>
 
 namespace stan {
@@ -31,7 +32,8 @@ namespace math {
  * @tparam F Type of function to apply.
  * @tparam T Type of argument to which function is applied.
  */
-template <typename F, typename T>
+template <typename F, typename T,
+          typename = require_any_t<is_stan_scalar<T>, is_vector_like<T>>>
 struct apply_scalar_unary {
   /**
    * Type of underlying scalar for the matrix type T.
