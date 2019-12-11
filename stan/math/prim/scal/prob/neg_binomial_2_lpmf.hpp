@@ -110,8 +110,7 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
         // Obtained in Mathematica via
         // Series[n/mu - (n + phi)/(mu+phi),{phi,Infinity, 1}]
         // Currently ignoring the term (mu__[i] - n_vec[i]) / phi__[i]
-        ops_partials.edge1_.partials_[i]
-            += n_vec[i] / mu__[i] - 1;
+        ops_partials.edge1_.partials_[i] += n_vec[i] / mu__[i] - 1;
       }
 
       // The derivative wrt. phi = 0 + O(1/neg_binomial_2_phi_cutoff^2),
@@ -122,8 +121,8 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
       //  PolyGamma[phi] + PolyGamma[n + phi],{phi,Infinity, 2}]
       if (!is_constant_all<T_precision>::value) {
         ops_partials.edge2_.partials_[i]
-          += (mu__[i] * (-mu__[i] + 2 * n_vec[i]) + n_vec[i] * (1 - n_vec[i]) ) 
-            / (2 * square(phi__[i]));
+            += (mu__[i] * (-mu__[i] + 2 * n_vec[i]) + n_vec[i] * (1 - n_vec[i]))
+               / (2 * square(phi__[i]));
       }
 
     } else {

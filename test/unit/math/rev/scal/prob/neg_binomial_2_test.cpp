@@ -587,7 +587,6 @@ TEST(ProbDistributionsNegativeBinomial2, proptoAtPoissonCutoff) {
   EXPECT_NEAR(value_of(value_before_cutoff), value_of(value_after_cutoff), 1);
 }
 
-
 TEST(ProbDistributionsNegBinomial, derivativesAtCutoff) {
   double phi_cutoff = stan::math::internal::neg_binomial_2_phi_cutoff;
   using stan::math::is_nan;
@@ -622,31 +621,30 @@ TEST(ProbDistributionsNegBinomial, derivativesAtCutoff) {
       std::vector<double> gradients_after;
       value_after.grad(x_after, gradients_after);
 
-
       for (int i = 0; i < 2; ++i) {
         EXPECT_FALSE(is_nan(gradients_before[i]));
         EXPECT_FALSE(is_nan(gradients_after[i]));
       }
 
-      EXPECT_NEAR(value_of(value_before), value_of(value_after), 
-        1e-8 * fabs(value_of(value_after)))
-          << "value changes too much around phi cutoff for n = "
-          << n << ", mu = " << mu << ", cutoff = " << phi_cutoff
+      EXPECT_NEAR(value_of(value_before), value_of(value_after),
+                  1e-8 * fabs(value_of(value_after)))
+          << "value changes too much around phi cutoff for n = " << n
+          << ", mu = " << mu << ", cutoff = " << phi_cutoff
           << " value at cutoff - 1e-8: " << value_of(value_before)
           << ", value at cutoff + 1e-8: " << value_of(value_after);
-      EXPECT_NEAR(gradients_before[0], gradients_after[0], 
-        1e-8 * fabs(gradients_before[0]))
-          << "grad_mu changes too much around phi cutoff for n = "
-          << n << ", mu = " << mu << ", cutoff = " << phi_cutoff
+      EXPECT_NEAR(gradients_before[0], gradients_after[0],
+                  1e-8 * fabs(gradients_before[0]))
+          << "grad_mu changes too much around phi cutoff for n = " << n
+          << ", mu = " << mu << ", cutoff = " << phi_cutoff
           << " grad_mu at cutoff - 1e-8: " << gradients_before[0]
           << ", grad_mu at cutoff + 1e-8: " << gradients_after[0];
 
-      EXPECT_NEAR(gradients_before[1], gradients_after[1], 
-        1e-8 * fabs(gradients_before[1]))
-          << "grad_phi changes too much around phi cutoff for n = "
-          << n << ", mu = " << mu << ", cutoff = " << phi_cutoff
+      EXPECT_NEAR(gradients_before[1], gradients_after[1],
+                  1e-8 * fabs(gradients_before[1]))
+          << "grad_phi changes too much around phi cutoff for n = " << n
+          << ", mu = " << mu << ", cutoff = " << phi_cutoff
           << " grad_phi at cutoff - 1e-8: " << gradients_before[1]
-          << ", grad_phi at cutoff + 1e-8: " << gradients_after[1];      
+          << ", grad_phi at cutoff + 1e-8: " << gradients_after[1];
     }
   }
 }
