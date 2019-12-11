@@ -6,7 +6,6 @@
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/require_generics.hpp>
 #include <type_traits>
-#include <type_traits>
 #include <vector>
 
 namespace stan {
