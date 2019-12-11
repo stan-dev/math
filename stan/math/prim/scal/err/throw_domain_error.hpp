@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_SCAL_ERR_THROW_DOMAIN_ERROR_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <typeinfo>
 #include <sstream>
 #include <stdexcept>
 

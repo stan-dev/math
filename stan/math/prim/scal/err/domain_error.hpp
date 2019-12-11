@@ -3,9 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/throw_domain_error.hpp>
-#include <typeinfo>
-#include <sstream>
-#include <stdexcept>
 
 namespace stan {
 namespace math {
