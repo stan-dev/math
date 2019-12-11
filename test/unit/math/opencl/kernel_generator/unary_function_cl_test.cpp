@@ -1,7 +1,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/opencl/kernel_generator/unary_function.hpp>
+#include <stan/math/opencl/kernel_generator/unary_function_cl.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <test/unit/math/opencl/kernel_generator/reference_kernel.hpp>

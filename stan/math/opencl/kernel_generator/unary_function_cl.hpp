@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_OPENCL_KERNEL_GENERATOR_UNARY_FUNCTION_HPP
-#define STAN_MATH_OPENCL_KERNEL_GENERATOR_UNARY_FUNCTION_HPP
+#ifndef STAN_MATH_OPENCL_KERNEL_GENERATOR_UNARY_FUNCTION_CL_HPP
+#define STAN_MATH_OPENCL_KERNEL_GENERATOR_UNARY_FUNCTION_CL_HPP
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/matrix_cl_view.hpp>
@@ -24,13 +24,13 @@ namespace math {
  * @tparam T type of argument
  */
 template <typename Derived, typename T>
-class unary_function
+class unary_function_cl
     : public operation_cl<
           Derived, typename std::remove_reference_t<T>::ReturnScalar, T> {
  public:
   using ReturnScalar = typename std::remove_reference_t<T>::ReturnScalar;
   static_assert(std::is_floating_point<ReturnScalar>::value,
-                "unary_function: argument must be expression with floating "
+                "unary_function_cl: argument must be expression with floating "
                 "point return type!");
   using base = operation_cl<Derived, ReturnScalar, T>;
   using base::var_name;
@@ -40,7 +40,7 @@ class unary_function
    * @param a argument expression
    * @param fun function
    */
-  unary_function(T&& a, const std::string& fun)
+  unary_function_cl(T&& a, const std::string& fun)
       : base(std::forward<T>(a)), fun_(fun) {}
 
   /**
@@ -76,10 +76,10 @@ class unary_function
  */
 #define ADD_UNARY_FUNCTION(fun)                                                \
   template <typename T>                                                        \
-  class fun##__ : public unary_function<fun##__<T>, T> {                       \
+  class fun##__ : public unary_function_cl<fun##__<T>, T> {                    \
    public:                                                                     \
     explicit fun##__(T&& a)                                                    \
-        : unary_function<fun##__<T>, T>(std::forward<T>(a), #fun) {}           \
+        : unary_function_cl<fun##__<T>, T>(std::forward<T>(a), #fun) {}        \
     inline matrix_cl_view view() const { return matrix_cl_view::Entire; }      \
   };                                                                           \
                                                                                \
@@ -96,10 +96,10 @@ class unary_function
  */
 #define ADD_UNARY_FUNCTION_PASS_ZERO(fun)                                      \
   template <typename T>                                                        \
-  class fun##__ : public unary_function<fun##__<T>, T> {                       \
+  class fun##__ : public unary_function_cl<fun##__<T>, T> {                    \
    public:                                                                     \
     explicit fun##__(T&& a)                                                    \
-        : unary_function<fun##__<T>, T>(std::forward<T>(a), #fun) {}           \
+        : unary_function_cl<fun##__<T>, T>(std::forward<T>(a), #fun) {}        \
   };                                                                           \
                                                                                \
   template <typename T, typename Cond                                          \
