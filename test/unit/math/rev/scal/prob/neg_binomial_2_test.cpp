@@ -21,14 +21,17 @@ struct TestValue {
         grad_phi(_grad_phi) {}
 };
 
-// Test data generated in Mathematica (Wolfram Cloud) via
+// Test data generated in Mathematica (Wolfram Cloud). The code can be re-ran
+// at https://www.wolframcloud.com/env/martin.modrak/NegBinomial2_Tests.nb
+// but is also presented below for conveniece:
+//
 // nb2[n_,mu_,phi_]:= LogGamma[n + phi] - LogGamma[n + 1] - LogGamma[phi ]+
 //   n * (Log[mu] - Log[mu + phi]) + phi * (Log[phi] - Log[mu + phi])
 // nb2dmu[n_,mu_,phi_]= D[nb2[n, mu, phi],mu];
 // nb2dphi[n_,mu_,phi_]= D[nb2[n, mu, phi],phi];
 // out = OpenWrite["nb_test.txt"]
-// mus= {256*10^-7,314*10^-3,15*10^-1,3,180,  1123,10586};
-//  phis=  {4*10^-4,65*10^-3,442*10^-2,800, 15324};
+// mus= {256*10^-7,314*10^-3,15*10^-1,8,180,  1123,10586};
+// phis=  {4*10^-4,65*10^-3,442*10^-2,800, 15324,150000};
 // ns = {0,6,14,1525,10233};
 //  WriteString[out, "std::array<TestValue, ",
 //      Length[mus]*Length[phis]*Length[ns], "> testValues = {"];
