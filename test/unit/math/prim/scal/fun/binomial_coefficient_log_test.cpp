@@ -20,6 +20,9 @@ TEST(MathFunctions, binomial_coefficient_log) {
 
   EXPECT_FLOAT_EQ(29979.16, binomial_coefficient_log(100000, 91116));
 
+  EXPECT_EQ(binomial_coefficient_log(50, 0), 0);
+  EXPECT_EQ(binomial_coefficient_log(10000, 0), 0);
+
   for (int n = 0; n < 1010; ++n) {
     test_binom_coefficient(1010, n);
     test_binom_coefficient(1010.0, n);
