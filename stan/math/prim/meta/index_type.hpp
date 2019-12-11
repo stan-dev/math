@@ -3,9 +3,7 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/meta/index_type.hpp>
-#include <stan/math/prim/meta/require_generics.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
-#include <stan/math/prim/meta/index_type.hpp>
 #include <stan/math/prim/meta/require_generics.hpp>
 #include <type_traits>
 #include <type_traits>

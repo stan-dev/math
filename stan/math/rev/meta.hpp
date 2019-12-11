@@ -5,6 +5,4 @@
 #include <stan/math/rev/meta/partials_type.hpp>
 #include <stan/math/rev/meta/operands_and_partials.hpp>
 
-#include <stan/math/rev/meta/operands_and_partials.hpp>
-
 #endif
