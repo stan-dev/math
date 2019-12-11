@@ -10,9 +10,8 @@ namespace math {
  * @deprecate use <code>throw_domain_error_vec</code>
  */
 template <typename T>
-inline void domain_error_vec(const char* function, const char* name,
-                             const T& y, size_t i, const char* msg1,
-                             const char* msg2) {
+inline void domain_error_vec(const char* function, const char* name, const T& y,
+                             size_t i, const char* msg1, const char* msg2) {
   throw_domain_error_vec(function, name, y, i, msg1, msg2);
 }
 
@@ -20,8 +19,8 @@ inline void domain_error_vec(const char* function, const char* name,
  * @deprecate use <code>throw_domain_error_vec</code>
  */
 template <typename T>
-inline void domain_error_vec(const char* function, const char* name,
-                             const T& y, size_t i, const char* msg1) {
+inline void domain_error_vec(const char* function, const char* name, const T& y,
+                             size_t i, const char* msg1) {
   throw_domain_error_vec(function, name, y, i, msg1, "");
 }
 
