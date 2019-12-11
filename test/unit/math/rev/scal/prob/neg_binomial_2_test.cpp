@@ -475,11 +475,11 @@ std::array<TestValue, 210> testValues = {
 };
 
 TEST(ProbDistributionsNegBinomial, derivativesPrecomputed) {
+  using stan::math::digamma;
   using stan::math::is_nan;
   using stan::math::neg_binomial_2_log;
   using stan::math::value_of;
   using stan::math::var;
-  using stan::math::digamma;
 
   for (auto iter = testValues.begin(); iter != testValues.end(); ++iter) {
     TestValue t = *iter;
@@ -499,17 +499,15 @@ TEST(ProbDistributionsNegBinomial, derivativesPrecomputed) {
       EXPECT_FALSE(is_nan(gradients[i]));
     }
 
-    auto tolerance = [](double x) { 
-      return std::max(fabs(x * 1e-8), 1e-14);
-    };
+    auto tolerance = [](double x) { return std::max(fabs(x * 1e-8), 1e-14); };
 
     EXPECT_NEAR(value_of(val), t.value, tolerance(t.value))
         << "value n = " << n << ", mu = " << t.mu << ", phi = " << t.phi;
     EXPECT_NEAR(gradients[0], t.grad_mu, tolerance(t.grad_mu))
         << "grad_mu n = " << n << ", mu = " << t.mu << ", phi = " << t.phi;
     EXPECT_NEAR(gradients[1], t.grad_phi, tolerance(t.grad_phi))
-        << "grad_phi n = " << n << ", mu = " << t.mu << ", phi = " << t.phi <<
-        ", digamma = " << digamma(t.phi) << ", " << digamma(t.n + t.phi);
+        << "grad_phi n = " << n << ", mu = " << t.mu << ", phi = " << t.phi
+        << ", digamma = " << digamma(t.phi) << ", " << digamma(t.n + t.phi);
   }
 }
 
