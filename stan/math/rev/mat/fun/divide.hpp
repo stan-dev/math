@@ -28,9 +28,8 @@ class matrix_scalar_divide_dv_vari : public vari {
         adjResultRef_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
             m.rows() * m.cols())),
         invc_(1.0 / c.val()) {
-    Eigen::Matrix<double, R, C> result = invc_ * m;
     Eigen::Map<matrix_vi>(adjResultRef_, rows_, cols_)
-        = result.unaryExpr([](double x) { return new vari(x, false); });
+        = (invc_ * m).unaryExpr([](double x) { return new vari(x, false); });
   }
 
   virtual void chain() {
@@ -60,9 +59,10 @@ class matrix_scalar_divide_vd_vari : public vari {
             m.rows() * m.cols())),
         invc_(1.0 / c) {
     Eigen::Map<matrix_vi>(adjMRef_, rows_, cols_) = m.vi();
-    Eigen::Matrix<double, R, C> result = invc_ * m.val();
     Eigen::Map<matrix_vi>(adjResultRef_, rows_, cols_)
-        = result.unaryExpr([](double x) { return new vari(x, false); });
+        = (invc_ * m.val()).unaryExpr([](double x) {
+            return new vari(x, false);
+          });
   }
 
   virtual void chain() {
@@ -94,9 +94,10 @@ class matrix_scalar_divide_vv_vari : public vari {
             m.rows() * m.cols())),
         invc_(1.0 / c.val()) {
     Eigen::Map<matrix_vi>(adjMRef_, rows_, cols_) = m.vi();
-    Eigen::Matrix<double, R, C> result = invc_ * m.val();
     Eigen::Map<matrix_vi>(adjResultRef_, rows_, cols_)
-        = result.unaryExpr([](double x) { return new vari(x, false); });
+        = (invc_ * m.val()).unaryExpr([](double x) {
+            return new vari(x, false);
+          });
   }
 
   virtual void chain() {
