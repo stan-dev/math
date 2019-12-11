@@ -98,13 +98,6 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
         logp += multiply_log(n_vec[i], mu__[i]) - mu__[i];
       }
 
-      // if (include_summand<propto, T_location, T_precision>::value) {
-      //   logp += (mu__[i] * (mu__[i] - 2 * n_vec[i]) +
-      //     n_vec[i] * (n_vec[i] - 1)) / ( 2 * phi__[i] );
-      //   // logp += (mu__[i] * mu__[i] - n_vec[i] -
-      //   //   2 * mu__[i] * n_vec[i] + n_vec[i] * n_vec[i])/phi
-      // }
-
       if (!is_constant_all<T_location>::value) {
         // This is the Taylor series of the full derivative for phi -> Inf
         // Obtained in Mathematica via
