@@ -42,6 +42,7 @@
 #include <stan/math/prim/scal/meta/get.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/index_type.hpp>
+#include <stan/math/prim/scal/meta/index_apply.hpp>
 #include <stan/math/prim/scal/meta/is_constant.hpp>
 #include <stan/math/prim/scal/meta/is_eigen.hpp>
 #include <stan/math/prim/scal/meta/is_fvar.hpp>

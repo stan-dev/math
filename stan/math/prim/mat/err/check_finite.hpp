@@ -13,13 +13,13 @@ namespace math {
 
 /*
  * Return <code>true</code> is the specified matrix is finite.
- * @tparams T Scalar type of the matrix, requires class method
+ * @tparams T scalar type of the matrix, requires class method
  *   <code>.size()</code>
- * @tparams R Compile time rows of the matrix
- * @tparams C Compile time columns of the matrix
- * @param function Function name (for error messages)
- * @param name Variable name (for error messages)
- * @param y Matrix to test
+ * @tparam R number of rows or Eigen::Dynamic
+ * @tparam C number of columns or Eigen::Dynamic
+ * @param function name of function (for error messages)
+ * @param name variable name (for error messages)
+ * @param y matrix to test
  * @return <code>true</code> if the matrix is finite
  **/
 namespace internal {

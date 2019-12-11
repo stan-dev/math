@@ -49,8 +49,6 @@ return_type_t<T_y, T_shape> lkj_corr_lpdf(
     const T_shape& eta) {
   static const char* function = "lkj_corr_lpdf";
 
-  using boost::math::tools::promote_args;
-
   return_type_t<T_y, T_shape> lp(0.0);
   check_positive(function, "Shape parameter", eta);
   check_corr_matrix(function, "Correlation matrix", y);

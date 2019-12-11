@@ -8,7 +8,6 @@
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/scal/err/throw_domain_error.hpp>
-#include <boost/math/tools/promotion.hpp>
 
 namespace stan {
 namespace math {
