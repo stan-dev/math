@@ -587,4 +587,66 @@ TEST(ProbDistributionsNegativeBinomial2, proptoAtPoissonCutoff) {
   EXPECT_NEAR(value_of(value_before_cutoff), value_of(value_after_cutoff), 1);
 }
 
-// TODO(martinmodrak) test continuity of derivatives at cutoff
+
+TEST(ProbDistributionsNegBinomial, derivativesAtCutoff) {
+  double phi_cutoff = stan::math::internal::neg_binomial_2_phi_cutoff;
+  using stan::math::is_nan;
+  using stan::math::var;
+
+  std::array<double, 7> mu_to_test
+      = {9.3e-6, 0.0028252, 4, 11, 8522, 984256, 5036842};
+  std::array<unsigned int, 8> n_to_test
+      = {0, 1, 5, 48, 1158, 224582, 48235842, 20314458};
+  for (auto mu_iter = mu_to_test.begin(); mu_iter != mu_to_test.end();
+       ++mu_iter) {
+    double mu = *mu_iter;
+    for (auto n_iter = n_to_test.begin(); n_iter != n_to_test.end(); ++n_iter) {
+      unsigned int n = *n_iter;
+      var mu_before(mu);
+      var phi_before(phi_cutoff - 1e-8);
+      var value_before = neg_binomial_2_lpmf(n, mu_before, phi_before);
+      std::vector<var> x_before;
+      x_before.push_back(mu_before);
+      x_before.push_back(phi_before);
+
+      std::vector<double> gradients_before;
+      value_before.grad(x_before, gradients_before);
+
+      var mu_after(mu);
+      var phi_after(phi_cutoff + 1e-8);
+      var value_after = neg_binomial_2_lpmf(n, mu_after, phi_after);
+      std::vector<var> x_after;
+      x_after.push_back(mu_after);
+      x_after.push_back(phi_after);
+
+      std::vector<double> gradients_after;
+      value_after.grad(x_after, gradients_after);
+
+
+      for (int i = 0; i < 2; ++i) {
+        EXPECT_FALSE(is_nan(gradients_before[i]));
+        EXPECT_FALSE(is_nan(gradients_after[i]));
+      }
+
+      EXPECT_NEAR(value_of(value_before), value_of(value_after), 
+        1e-8 * fabs(value_of(value_after)))
+          << "value changes too much around phi cutoff for n = "
+          << n << ", mu = " << mu << ", cutoff = " << phi_cutoff
+          << " value at cutoff - 1e-8: " << value_of(value_before)
+          << ", value at cutoff + 1e-8: " << value_of(value_after);
+      EXPECT_NEAR(gradients_before[0], gradients_after[0], 
+        1e-8 * fabs(gradients_before[0]))
+          << "grad_mu changes too much around phi cutoff for n = "
+          << n << ", mu = " << mu << ", cutoff = " << phi_cutoff
+          << " grad_mu at cutoff - 1e-8: " << gradients_before[0]
+          << ", grad_mu at cutoff + 1e-8: " << gradients_after[0];
+
+      EXPECT_NEAR(gradients_before[1], gradients_after[1], 
+        1e-8 * fabs(gradients_before[1]))
+          << "grad_phi changes too much around phi cutoff for n = "
+          << n << ", mu = " << mu << ", cutoff = " << phi_cutoff
+          << " grad_phi at cutoff - 1e-8: " << gradients_before[1]
+          << ", grad_phi at cutoff + 1e-8: " << gradients_after[1];      
+    }
+  }
+}

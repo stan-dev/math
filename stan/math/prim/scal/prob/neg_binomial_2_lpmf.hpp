@@ -8,6 +8,7 @@
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
+#include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/binomial_coefficient_log.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
@@ -108,15 +109,22 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
         // This is the Taylor series of the full derivative for phi -> Inf
         // Obtained in Mathematica via
         // Series[n/mu - (n + phi)/(mu+phi),{phi,Infinity, 1}]
+        // Currently ignoring the term (mu__[i] - n_vec[i]) / phi__[i]
         ops_partials.edge1_.partials_[i]
-            += n_vec[i] / mu__[i] + (mu__[i] - n_vec[i]) / phi__[i] - 1;
+            += n_vec[i] / mu__[i] - 1;
       }
 
-      // The derivative wrt. phi = 0 + O(1/neg_binomial_2_phi_cutoff^2)
-      // So ignoring here
-      // Obtained in Mathematica via
+      // The derivative wrt. phi = 0 + O(1/neg_binomial_2_phi_cutoff^2),
+      // But the quadratic term is big enough to warrant inclusion here
+      // (can be around 1e-6 at cutoff).
+      // Expansion obtained in Mathematica via
       // Series[1 - (n + phi) / (mu + phi) + Log[phi] - Log[mu + phi] -
-      //  PolyGamma[phi] + PolyGamma[n + phi],{phi,Infinity, 1}]
+      //  PolyGamma[phi] + PolyGamma[n + phi],{phi,Infinity, 2}]
+      if (!is_constant_all<T_precision>::value) {
+        ops_partials.edge2_.partials_[i]
+          += (mu__[i] * (-mu__[i] + 2 * n_vec[i]) + n_vec[i] * (1 - n_vec[i]) ) 
+            / (2 * square(phi__[i]));
+      }
 
     } else {
       if (include_summand<propto, T_precision>::value) {
