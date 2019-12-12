@@ -1,15 +1,16 @@
-#include <stan/math/prim/scal/meta/broadcast_array.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stdexcept>
-
 #ifndef STAN_MATH_PRIM_MAT_META_BROADCAST_ARRAY_HPP
 #define STAN_MATH_PRIM_MAT_META_BROADCAST_ARRAY_HPP
+
+#include <stan/math/prim/scal/meta/broadcast_array.hpp>
+#include <stan/math/prim/scal/meta/require_generics.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stdexcept>
 
 namespace stan {
 namespace math {
 namespace internal {
-template <typename ViewElt, typename OpElt, int R, int C>
-class empty_broadcast_array<ViewElt, Eigen::Matrix<OpElt, R, C> > {
+template <typename ViewElt, typename T>
+class empty_broadcast_array<ViewElt, T, require_eigen_t<T> > {
  public:
   empty_broadcast_array() {}
   /** \ingroup type_trait
@@ -23,23 +24,23 @@ class empty_broadcast_array<ViewElt, Eigen::Matrix<OpElt, R, C> > {
   /** \ingroup type_trait
    * Not implemented so cannot be called.
    */
-  void operator=(const Eigen::Matrix<ViewElt, R, C>& /*A*/);
+  void operator=(const T& /*A*/);
   /** \ingroup type_trait
    * Not implemented so cannot be called.
    */
-  void operator+=(Eigen::Matrix<ViewElt, R, C> /*A*/);
+  void operator+=(T /*A*/);
   /** \ingroup type_trait
    * Not implemented so cannot be called.
    */
-  void operator-=(Eigen::Matrix<ViewElt, R, C> /*A*/);
+  void operator-=(T /*A*/);
   /** \ingroup type_trait
    * Not implemented so cannot be called.
    */
-  Eigen::Matrix<ViewElt, 1, C>& row(int /*i*/);
+  T& row(int /*i*/);
   /** \ingroup type_trait
    * Not implemented so cannot be called.
    */
-  Eigen::Matrix<ViewElt, R, 1>& col(int /*i*/);
+  T& col(int /*i*/);
 };
 }  // namespace internal
 }  // namespace math

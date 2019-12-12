@@ -28,7 +28,7 @@ class broadcast_array {
   }
 };
 
-template <typename T, typename S>
+template <typename T, typename S, typename Enable = void>
 class empty_broadcast_array {
  public:
   empty_broadcast_array() {}
