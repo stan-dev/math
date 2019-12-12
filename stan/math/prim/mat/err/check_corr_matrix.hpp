@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_MAT_ERR_CHECK_CORR_MATRIX_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/scal/err/throw_domain_error.hpp>
 #include <stan/math/prim/mat/err/check_pos_definite.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
@@ -46,8 +46,8 @@ inline void check_corr_matrix(
           << stan::error_index::value + k << "," << stan::error_index::value + k
           << ") is ";
       std::string msg_str(msg.str());
-      domain_error(function, name, y(k, k), msg_str.c_str(),
-                   ", but should be near 1.0");
+      throw_domain_error(function, name, y(k, k), msg_str.c_str(),
+                         ", but should be near 1.0");
     }
   }
   check_pos_definite(function, "y", y);
