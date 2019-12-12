@@ -7,6 +7,7 @@
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/tgamma.hpp>
 #include <stan/math/prim/scal/fun/abs.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {

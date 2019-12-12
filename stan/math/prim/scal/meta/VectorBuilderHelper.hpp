@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_META_VECTORBUILDER_HELPER_HPP
 
 #include <stdexcept>
+#include <cmath>
 
 namespace stan {
 

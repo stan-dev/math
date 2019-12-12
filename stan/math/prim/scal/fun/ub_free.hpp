@@ -6,6 +6,7 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
 #include <limits>
+#include <cmath>
 
 namespace stan {
 namespace math {

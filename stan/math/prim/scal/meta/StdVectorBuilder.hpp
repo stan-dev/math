@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/scal/meta/VectorBuilderHelper.hpp>
 #include <stan/math/prim/scal/meta/contains_std_vector.hpp>
+#include <cmath>
 
 namespace stan {
 
