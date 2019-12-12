@@ -14,8 +14,7 @@ namespace math {
  * standard library vector, or Eigen dense matrix expression
  * template.
  *
- * <p>The base class applies to any Eigen dense matrix expression
- * template.  Specializations define applications to scalars
+ * <p>Specializations of this base define applications to scalars
  * (primitive or autodiff in the corresponding autodiff library
  * directories) or to standard library vectors of vectorizable
  * types (primitives, Eigen dense matrix expressions, or further
@@ -32,9 +31,19 @@ namespace math {
  * @tparam F Type of function to apply.
  * @tparam T Type of argument to which function is applied.
  */
-template <typename F, typename T,
-          typename = require_any_t<is_stan_scalar<T>, is_vector_like<T>>>
-struct apply_scalar_unary {
+template <typename F, typename T, typename Enable = void>
+struct apply_scalar_unary;
+
+/**
+ *
+ * Template specialization for vectorized functions applying to
+ * Eigen matrix arguments.
+ *
+ * @tparam F Type of function to apply.
+ * @tparam T Type of argument to which function is applied.
+ */
+template <typename F, typename T>
+struct apply_scalar_unary<F, T, require_eigen_t<T>> {
   /**
    * Type of underlying scalar for the matrix type T.
    */
