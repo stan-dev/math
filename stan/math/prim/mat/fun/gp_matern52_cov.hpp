@@ -45,6 +45,7 @@ inline typename Eigen::Matrix<return_type_t<T_x, T_s, T_l>, Eigen::Dynamic,
 gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
                 const T_l &length_scale) {
   using std::exp;
+  using std::sqrt;
 
   size_t x_size = x.size();
   Eigen::Matrix<return_type_t<T_x, T_s, T_l>, Eigen::Dynamic, Eigen::Dynamic>
