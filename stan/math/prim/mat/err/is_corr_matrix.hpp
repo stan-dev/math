@@ -8,6 +8,7 @@
 #include <stan/math/prim/mat/err/is_symmetric.hpp>
 #include <stan/math/prim/scal/err/is_positive.hpp>
 #include <stan/math/prim/scal/err/is_size_match.hpp>
+#include <stan/math/prim/scal/fun/fabs.hpp>
 
 namespace stan {
 namespace math {

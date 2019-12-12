@@ -6,6 +6,7 @@
 #include <stan/math/prim/scal/fun/ibeta.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/tgamma.hpp>
+#include <stan/math/prim/scal/fun/abs.hpp>
 
 namespace stan {
 namespace math {
@@ -24,7 +25,7 @@ inline double ibeta_hypergeometric_helper(double a, double b, double z,
   double k = 0;
   double a_2 = a * a;
   double bprod = 1;
-  while (std::abs(diff) > precision && ++k < max_steps) {
+  while (abs(diff) > precision && ++k < max_steps) {
     val += diff;
     bprod *= b + k - 1.0;
     diff = a_2 * std::pow(a + k, -2) * bprod * std::pow(z, k) / tgamma(k + 1);

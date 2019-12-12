@@ -5,6 +5,7 @@
 #include <stan/math/prim/arr/err/is_nonzero_size.hpp>
 #include <stan/math/prim/mat/err/constraint_tolerance.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/scal/fun/fabs.hpp>
 
 namespace stan {
 namespace math {

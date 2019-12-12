@@ -5,6 +5,7 @@
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/mat/err/check_pos_definite.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
+#include <stan/math/prim/scal/fun/fabs.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <sstream>
 #include <string>

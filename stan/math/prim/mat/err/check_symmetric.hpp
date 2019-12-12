@@ -6,6 +6,7 @@
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/err/constraint_tolerance.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/scal/fun/fabs.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <sstream>
 #include <string>
