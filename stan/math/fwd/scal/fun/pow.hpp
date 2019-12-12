@@ -3,11 +3,11 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
-
 #include <stan/math/fwd/scal/fun/sqrt.hpp>
 #include <stan/math/fwd/scal/fun/inv.hpp>
 #include <stan/math/fwd/scal/fun/inv_sqrt.hpp>
 #include <stan/math/fwd/scal/fun/inv_square.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {

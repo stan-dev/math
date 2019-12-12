@@ -11,6 +11,7 @@
 #include <limits>
 #include <ostream>
 #include <vector>
+#include <cmath>
 
 namespace stan {
 namespace math {

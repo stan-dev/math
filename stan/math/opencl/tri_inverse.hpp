@@ -58,7 +58,7 @@ inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
   if (max_1D_thread_block_size < thread_block_size_1D) {
     thread_block_size_1D = max_1D_thread_block_size;
   }
-  int max_2D_thread_block_dim = sqrt(max_1D_thread_block_size);
+  int max_2D_thread_block_dim = std::sqrt(max_1D_thread_block_size);
   if (max_2D_thread_block_dim < thread_block_2D_dim) {
     thread_block_2D_dim = max_2D_thread_block_dim;
   }

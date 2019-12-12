@@ -78,6 +78,7 @@ return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
   using std::sin;
   using std::floor;
   using std::ceil;
+  using std::sqrt;
 
   static const double WIENER_ERR = 0.000001;
   static const double PI_TIMES_WIENER_ERR = pi() * WIENER_ERR;

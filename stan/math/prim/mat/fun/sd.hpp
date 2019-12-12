@@ -4,6 +4,7 @@
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/variance.hpp>
+#include <stan/math/prim/scal/fun/sqrt.hpp>
 #include <vector>
 
 namespace stan {
