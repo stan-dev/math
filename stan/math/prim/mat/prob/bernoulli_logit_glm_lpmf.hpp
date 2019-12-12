@@ -57,6 +57,7 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::exp;
+  using Eigen::log1p;
 
   const size_t N = x.rows();
   const size_t M = x.cols();

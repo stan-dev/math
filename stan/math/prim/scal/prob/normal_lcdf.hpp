@@ -12,6 +12,7 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
+#include <stan/math/prim/scal/fun/log1p.hpp>
 #include <cmath>
 #include <limits>
 
@@ -26,7 +27,6 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lcdf(const T_y& y,
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
   using std::exp;
   using std::log;
-  using std::log1p;
   using std::pow;
   using std::sqrt;
   using std::fabs;
