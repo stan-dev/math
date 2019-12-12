@@ -75,6 +75,7 @@ return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
   using std::exp;
   using std::log;
   using std::pow;
+  using std::sin;
 
   static const double WIENER_ERR = 0.000001;
   static const double PI_TIMES_WIENER_ERR = pi() * WIENER_ERR;
