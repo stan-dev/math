@@ -9,7 +9,7 @@
 #include <stan/math/prim/mat/meta/append_return_type.hpp>
 #include <stan/math/prim/mat/meta/as_array_or_scalar.hpp>
 #include <stan/math/prim/mat/meta/as_column_vector_or_scalar.hpp>
-#include <stan/math/prim/mat/meta/assume_type.hpp>
+#include <stan/math/prim/mat/meta/forward_as.hpp>
 #include <stan/math/prim/mat/meta/broadcast_array.hpp>
 #include <stan/math/prim/mat/meta/get.hpp>
 #include <stan/math/prim/mat/meta/index_type.hpp>
@@ -31,7 +31,7 @@
 #include <stan/math/prim/scal/meta/ad_promotable.hpp>
 #include <stan/math/prim/scal/meta/as_array_or_scalar.hpp>
 #include <stan/math/prim/scal/meta/as_column_vector_or_scalar.hpp>
-#include <stan/math/prim/scal/meta/assume_type.hpp>
+#include <stan/math/prim/scal/meta/forward_as.hpp>
 #include <stan/math/prim/scal/meta/bool_constant.hpp>
 #include <stan/math/prim/scal/meta/child_type.hpp>
 #include <stan/math/prim/scal/meta/contains_fvar.hpp>

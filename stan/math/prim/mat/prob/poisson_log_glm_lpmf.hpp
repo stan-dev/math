@@ -113,7 +113,7 @@ return_type_t<T_x_scalar, T_alpha, T_beta> poisson_log_glm_lpmf(
     if (is_vector<T_y>::value) {
       logp -= sum(lgamma(as_array_or_scalar(y_val_vec) + 1));
     } else {
-      logp -= lgamma(assume_type<double>(y_val) + 1);
+      logp -= lgamma(forward_as<double>(y_val) + 1);
     }
   }
   if (include_summand<propto, T_partials_return>::value) {
@@ -128,7 +128,7 @@ return_type_t<T_x_scalar, T_alpha, T_beta> poisson_log_glm_lpmf(
   if (!is_constant_all<T_beta>::value) {
     if (T_x_rows == 1) {
       ops_partials.edge3_.partials_
-          = assume_type<Matrix<T_partials_return, 1, Dynamic>>(
+          = forward_as<Matrix<T_partials_return, 1, Dynamic>>(
               theta_derivative.sum() * x_val);
     } else {
       ops_partials.edge3_.partials_ = x_val.transpose() * theta_derivative;
@@ -137,7 +137,7 @@ return_type_t<T_x_scalar, T_alpha, T_beta> poisson_log_glm_lpmf(
   if (!is_constant_all<T_x_scalar>::value) {
     if (T_x_rows == 1) {
       ops_partials.edge1_.partials_
-          = assume_type<Array<T_partials_return, Dynamic, T_x_rows>>(
+          = forward_as<Array<T_partials_return, Dynamic, T_x_rows>>(
               beta_val_vec * theta_derivative.sum());
     } else {
       ops_partials.edge1_.partials_

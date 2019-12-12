@@ -136,7 +136,7 @@ return_type_t<T_y, T_x_scalar, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
     if (!is_constant_all<T_x_scalar>::value) {
       if (T_x_rows == 1) {
         ops_partials.edge2_.partials_
-            = assume_type<Array<T_partials_return, Dynamic, T_x_rows>>(
+            = forward_as<Array<T_partials_return, Dynamic, T_x_rows>>(
                 beta_val_vec * sum(mu_derivative));
       } else {
         ops_partials.edge2_.partials_
@@ -146,7 +146,7 @@ return_type_t<T_y, T_x_scalar, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
     if (!is_constant_all<T_beta>::value) {
       if (T_x_rows == 1) {
         ops_partials.edge4_.partials_
-            = assume_type<Matrix<T_partials_return, 1, Dynamic>>(
+            = forward_as<Matrix<T_partials_return, 1, Dynamic>>(
                 mu_derivative.sum() * x_val);
       } else {
         ops_partials.edge4_.partials_ = mu_derivative.transpose() * x_val;
@@ -167,7 +167,7 @@ return_type_t<T_y, T_x_scalar, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
       } else {
         y_scaled_sq_sum = sum(y_scaled * y_scaled);
         ops_partials.edge5_.partials_[0]
-            = (y_scaled_sq_sum - N_instances) * assume_type<double>(inv_sigma);
+            = (y_scaled_sq_sum - N_instances) * forward_as<double>(inv_sigma);
       }
     }
   } else {
@@ -191,7 +191,7 @@ return_type_t<T_y, T_x_scalar, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
     if (is_vector<T_scale>::value) {
       logp -= sum(log(sigma_val_vec));
     } else {
-      logp -= N_instances * log(assume_type<double>(sigma_val));
+      logp -= N_instances * log(forward_as<double>(sigma_val));
     }
   }
   if (include_summand<propto, T_y, T_x_scalar, T_alpha, T_beta,
