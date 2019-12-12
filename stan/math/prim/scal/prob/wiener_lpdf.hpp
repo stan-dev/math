@@ -73,11 +73,11 @@ return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
     const T_delta& delta) {
   static const char* function = "wiener_lpdf";
 
+  using std::ceil;
   using std::exp;
+  using std::floor;
   using std::log;
   using std::sin;
-  using std::floor;
-  using std::ceil;
   using std::sqrt;
 
   static const double WIENER_ERR = 0.000001;

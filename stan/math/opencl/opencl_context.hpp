@@ -106,8 +106,8 @@ class opencl_context_base {
         command_queue_ = cl::CommandQueue(context_, device_, 0, nullptr);
         in_order_ = CL_TRUE;
       }
-      int thread_block_size_sqrt
-          = static_cast<int>(std::sqrt(static_cast<double>(max_thread_block_size_)));
+      int thread_block_size_sqrt = static_cast<int>(
+          std::sqrt(static_cast<double>(max_thread_block_size_)));
       // Does a compile time check of the maximum allowed
       // dimension of a square thread block size
       // WG size of (32,32) works on all recent GPUs but would fail on some

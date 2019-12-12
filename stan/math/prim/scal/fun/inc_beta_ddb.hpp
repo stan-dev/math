@@ -37,9 +37,9 @@ T inc_beta_dda(T a, T b, T z, T digamma_a, T digamma_ab);
  */
 template <typename T>
 T inc_beta_ddb(T a, T b, T z, T digamma_b, T digamma_ab) {
+  using std::fabs;
   using std::log;
   using std::pow;
-  using std::fabs;
 
   if (b > a) {
     if ((0.1 < z && z <= 0.75 && b > 500) || (0.01 < z && z <= 0.1 && b > 2500)

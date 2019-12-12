@@ -26,10 +26,10 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lcdf(const T_y& y,
   static const char* function = "normal_lcdf";
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
   using std::exp;
+  using std::fabs;
   using std::log;
   using std::pow;
   using std::sqrt;
-  using std::fabs;
 
   T_partials_return cdf_log(0.0);
   if (size_zero(y, mu, sigma)) {

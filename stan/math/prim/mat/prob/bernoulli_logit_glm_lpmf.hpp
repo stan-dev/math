@@ -56,8 +56,8 @@ return_type_t<T_x_scalar, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
   using Eigen::Array;
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using std::exp;
   using Eigen::log1p;
+  using std::exp;
 
   using T_partials_return = partials_return_t<T_y, T_x_scalar, T_alpha, T_beta>;
   using T_y_val =
