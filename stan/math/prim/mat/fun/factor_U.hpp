@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_FACTOR_U_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <cmath>
+#include <stan/math/prim/scal/fun/atanh.hpp>
 #include <cstddef>
 #include <limits>
 #include <stdexcept>
@@ -49,7 +49,6 @@ void factor_U(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& U,
 }
 
 }  // namespace math
-
 }  // namespace stan
 
 #endif
