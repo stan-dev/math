@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_FINITE_DIFF_STEPSIZE_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_FINITE_DIFF_STEPSIZE_HPP
 
+#include <stan/math/prim/scal/fun/fabs.hpp>
 #include <cmath>
 #include <limits>
 
