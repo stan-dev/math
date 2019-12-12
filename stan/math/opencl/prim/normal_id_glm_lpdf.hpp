@@ -62,6 +62,7 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::VectorXd;
+  using std::log;
 
   const size_t N = x_cl.rows();
   const size_t M = x_cl.cols();
