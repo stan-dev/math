@@ -50,6 +50,7 @@ inline return_type_t<T1, T2, double> log_modified_bessel_first_kind(
   using boost::math::tools::evaluate_polynomial;
   using std::log;
   using std::sqrt;
+  using std::pow;
 
   using T = return_type_t<T1, T2, double>;
 

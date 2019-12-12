@@ -74,7 +74,6 @@ return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
 
   using std::exp;
   using std::log;
-  using std::pow;
   using std::sin;
   using std::floor;
   using std::ceil;
