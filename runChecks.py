@@ -31,25 +31,22 @@ def files_in_folder(folder):
     return files
 
 def check_non_unique_test_names():
-    test_files = files_in_folder("stan/math/")
+    test_files = files_in_folder("test/unit/")
     tests = {}
     duplicates = defaultdict(list)
     for filepath in test_files:
-        if os.path.isfile(filepath) and filepath.endswith(".hpp"):
+        if os.path.isfile(filepath) and filepath.endswith(testsfx):
             with open(filepath) as file:
                 test_file_content = file.read()
                 # look for TEST() and TEST_F()
-                matches = re.findall(r"std::exp", test_file_content, re.DOTALL)
-                matches1 = re.findall(r"#include \<cmath\>", test_file_content, re.DOTALL)
-                t = 0
+                matches = re.findall(r"TEST(?:_F)?\((.*?)\)", test_file_content, re.DOTALL)
                 for x in matches:
-                    t = 1;
-                p = 0
-                for x in matches1:
-                    p = 1
-                    break
-                if t==1 and p==0:
-                    print(filepath)
+                    # strips for test names written in two lines
+                    x_stripped = x.replace("\n", "").replace(" ", "").replace(",",", ")
+                    if x_stripped in tests:                        
+                        duplicates[x_stripped].append(filepath)
+                    else:
+                        tests[x_stripped] = filepath
     errors = []
     if len(duplicates)>0:
         duplicates_error_msg = ""
