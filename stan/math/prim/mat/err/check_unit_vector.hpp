@@ -6,9 +6,10 @@
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/mat/err/constraint_tolerance.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/fun/fabs.hpp>
+#include <stan/math/prim/scal/fun/abs.hpp>
 #include <sstream>
 #include <string>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -33,6 +34,7 @@ template <typename T_prob>
 void check_unit_vector(const char* function, const char* name,
                        const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
   check_nonzero_size(function, name, theta);
+  using std::fabs;
   T_prob ssq = theta.squaredNorm();
   if (!(fabs(1.0 - ssq) <= CONSTRAINT_TOLERANCE)) {
     std::stringstream msg;

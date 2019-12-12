@@ -6,7 +6,7 @@
 #include <stan/math/prim/mat/err/is_square.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
-#include <stan/math/prim/scal/fun/fabs.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {

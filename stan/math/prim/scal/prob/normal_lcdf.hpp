@@ -9,7 +9,6 @@
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/erf.hpp>
 #include <stan/math/prim/scal/fun/erfc.hpp>
-#include <stan/math/prim/scal/fun/fabs.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
@@ -30,6 +29,7 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lcdf(const T_y& y,
   using std::log1p;
   using std::pow;
   using std::sqrt;
+  using std::fabs;
 
   T_partials_return cdf_log(0.0);
   if (size_zero(y, mu, sigma)) {

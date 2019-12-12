@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/domain_error.hpp>
-#include <stan/math/prim/scal/fun/fabs.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
 #include <stan/math/prim/scal/fun/inc_beta_dda.hpp>
 #include <cmath>
@@ -40,6 +39,7 @@ template <typename T>
 T inc_beta_ddb(T a, T b, T z, T digamma_b, T digamma_ab) {
   using std::log;
   using std::pow;
+  using std::fabs;
 
   if (b > a) {
     if ((0.1 < z && z <= 0.75 && b > 500) || (0.01 < z && z <= 0.1 && b > 2500)

@@ -5,10 +5,10 @@
 #include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/mat/err/check_pos_definite.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
-#include <stan/math/prim/scal/fun/fabs.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <sstream>
 #include <string>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -38,7 +38,7 @@ inline void check_corr_matrix(
       Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> >::type;
 
   check_square(function, name, y);
-
+  using std::fabs;
   for (size_type k = 0; k < y.rows(); ++k) {
     if (!(fabs(y(k, k) - 1.0) <= CONSTRAINT_TOLERANCE)) {
       std::ostringstream msg;
