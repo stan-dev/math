@@ -55,7 +55,6 @@ return_type_t<T_y, T_dof, T_scale> wishart_lpdf(
   using Eigen::Dynamic;
   using Eigen::Lower;
   using Eigen::Matrix;
-  using boost::math::tools::promote_args;
 
   typename index_type<Matrix<T_scale, Dynamic, Dynamic> >::type k = W.rows();
   return_type_t<T_y, T_dof, T_scale> lp(0.0);

@@ -10,8 +10,7 @@
 #include <stan/math/opencl/err/check_nan.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/opencl/kernels/cholesky_decompose.hpp>
-#include <stan/math/opencl/prim/multiply.hpp>
-#include <stan/math/opencl/prim/subtract.hpp>
+#include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/prim/transpose.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <cl.hpp>

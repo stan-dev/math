@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_TO_MATRIX_HPP
 #define STAN_MATH_PRIM_MAT_FUN_TO_MATRIX_HPP
 
-#include <boost/math/tools/promotion.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/invalid_argument.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
@@ -63,7 +62,6 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> to_matrix(
 template <typename T>
 inline Eigen::Matrix<return_type_t<T, double>, Eigen::Dynamic, Eigen::Dynamic>
 to_matrix(const std::vector<std::vector<T> >& x) {
-  using boost::math::tools::promote_args;
   size_t rows = x.size();
   if (rows == 0) {
     return Eigen::Matrix<return_type_t<T, double>, Eigen::Dynamic,
