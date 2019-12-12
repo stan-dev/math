@@ -13,8 +13,7 @@ namespace math {
  * Throw a domain error with a consistently formatted message.
  * This is an abstraction for all Stan functions to use when throwing
  * domain errors. This will allow us to change the behavior for all
- * functions at once. (We've already changed behavior mulitple times up
- * to Stan v2.5.0.)
+ * functions at once.
  * The message is: "<function>: <name>[<i+error_index>] <msg1><y>"
  *    where error_index is the value of stan::error_index::value
  * which indicates whether the message should be 0 or 1 indexed.
@@ -25,7 +24,7 @@ namespace math {
  * @param i Index
  * @param msg1 Message to print before the variable
  * @param msg2 Message to print after the variable
- * @throw std::domain_error
+ * @throw std::domain_error Always.
  */
 template <typename T>
 inline void throw_domain_error_vec(const char* function, const char* name,
@@ -41,8 +40,7 @@ inline void throw_domain_error_vec(const char* function, const char* name,
  * Throw a domain error with a consistently formatted message.
  * This is an abstraction for all Stan functions to use when throwing
  * domain errors. This will allow us to change the behavior for all
- * functions at once. (We've already changed behavior mulitple times up
- * to Stan v2.5.0.)
+ * functions at once.
  * The message is: "<function>: <name>[<i+error_index>] <msg1><y>"
  *   where error_index is the value of stan::error_index::value
  * which indicates whether the message should be 0 or 1 indexed.
@@ -52,7 +50,7 @@ inline void throw_domain_error_vec(const char* function, const char* name,
  * @param y Variable
  * @param i Index
  * @param msg Message to print before the variable
- * @throw std::domain_error
+ * @throw std::domain_error Always
  */
 template <typename T>
 inline void throw_domain_error_vec(const char* function, const char* name,

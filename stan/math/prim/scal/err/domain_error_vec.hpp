@@ -7,7 +7,7 @@ namespace stan {
 namespace math {
 
 /**
- * @deprecate use <code>throw_domain_error_vec</code>
+ * @deprecated use <code>throw_domain_error_vec</code>
  */
 template <typename T>
 inline void domain_error_vec(const char* function, const char* name, const T& y,
@@ -16,7 +16,7 @@ inline void domain_error_vec(const char* function, const char* name, const T& y,
 }
 
 /**
- * @deprecate use <code>throw_domain_error_vec</code>
+ * @deprecated use <code>throw_domain_error_vec</code>
  */
 template <typename T>
 inline void domain_error_vec(const char* function, const char* name, const T& y,
