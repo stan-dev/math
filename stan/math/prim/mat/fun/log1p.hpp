@@ -35,24 +35,10 @@ struct log1p_fun {
  * @param x Container.
  * @return Elementwise log1p of members of container.
  */
-template <
-    typename T /*, typename = require_not_eigen_vt<std::is_arithmetic, T>*/>
+template <typename T>
 inline auto log1p(const T& x) {
   return apply_scalar_unary<log1p_fun, T>::apply(x);
 }
-
-// TODO(Tadej): This is inconsistent with stan's scalar version (which throws on
-// value <-1).
-///**
-// * Version of log1p() that accepts Eigen Matrix ar matrix expressions.
-// * @tparam Derived derived type of x
-// * @param x Matrix or matrix expression
-// * @return Elementwise log1p of members of container.
-// */
-// template <typename Derived, typename = require_eigen_vt<std::is_arithmetic,
-// Derived>>  inline auto log1p(const Eigen::MatrixBase<Derived>& x){
-//  return x.derived().array().log1p().matrix();
-//}
 
 }  // namespace math
 }  // namespace stan
