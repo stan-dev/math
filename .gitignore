@@ -21,6 +21,7 @@
 /test/**/*.xml
 /test/dummy.cpp
 /test/**/*.so
+*-test
 
 # other binary
 *.o
