@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/prim/scal/fun/promote_type_test_util.hpp>
 
-TEST(MathMetaMixScal, value_type) {
+TEST(MathMetaMix, value_type) {
   using stan::math::child_type;
   using stan::math::fvar;
   using stan::math::var;

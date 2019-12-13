@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(AgradPartialsVari, OperandsAndPartialsUniMixMat) {
+TEST(MathMetaMix, OperandsAndPartialsUniMixMat) {
   using stan::math::fvar;
   using stan::math::operands_and_partials;
   using stan::math::var;
@@ -45,7 +45,7 @@ TEST(AgradPartialsVari, OperandsAndPartialsUniMixMat) {
   EXPECT_FLOAT_EQ(0.0, gradient[3]);
 }
 
-TEST(AgradPartialsVari, OperandsAndPartialsUniMixMat_dbl) {
+TEST(MathMetaMix, OperandsAndPartialsUniMixMat_dbl) {
   using stan::is_constant_all;
   using stan::math::fvar;
   using stan::math::operands_and_partials;
@@ -93,7 +93,7 @@ TEST(AgradPartialsVari, OperandsAndPartialsUniMixMat_dbl) {
   EXPECT_FLOAT_EQ(0.0, gradient[3]);
 }
 
-TEST(AgradPartialsVari, OperandsAndPartialsMultiMix) {
+TEST(MathMetaMix, OperandsAndPartialsMultiMix) {
   using stan::math::fvar;
   using stan::math::operands_and_partials;
   using stan::math::var;
@@ -155,7 +155,7 @@ TEST(AgradPartialsVari, OperandsAndPartialsMultiMix) {
   EXPECT_FLOAT_EQ(0.0, gradient[3]);
 }
 
-TEST(AgradPartialsVari, OperandsAndPartialsMultiMix_dbl) {
+TEST(MathMetaMix, OperandsAndPartialsMultiMix_dbl) {
   using stan::math::fvar;
   using stan::math::operands_and_partials;
   using stan::math::var;
@@ -221,7 +221,7 @@ TEST(AgradPartialsVari, OperandsAndPartialsMultiMix_dbl) {
   EXPECT_FLOAT_EQ(0.0, gradient[3]);
 }
 
-TEST(AgradPartialsVari, OperandsAndPartialsMultiStdMix) {
+TEST(MathMetaMix, OperandsAndPartialsMultiStdMix) {
   using stan::math::fvar;
   using stan::math::operands_and_partials;
   using stan::math::var;
@@ -287,7 +287,7 @@ TEST(AgradPartialsVari, OperandsAndPartialsMultiStdMix) {
   EXPECT_FLOAT_EQ(0.0, gradient[3]);
 }
 
-TEST(AgradPartialsVari, OperandsAndPartialsMultiStdMix_dbl) {
+TEST(MathMetaMix, OperandsAndPartialsMultiStdMix_dbl) {
   using stan::math::fvar;
   using stan::math::operands_and_partials;
   using stan::math::var;
@@ -357,7 +357,7 @@ TEST(AgradPartialsVari, OperandsAndPartialsMultiStdMix_dbl) {
   EXPECT_FLOAT_EQ(0.0, gradient[3]);
 }
 
-TEST(AgradPartialsVari, OperandsAndPartialsMultiMixInt) {
+TEST(MathMetaMix, OperandsAndPartialsMultiMixInt) {
   using stan::math::operands_and_partials;
 
   typedef Eigen::Matrix<int, -1, -1> uni_mat_t;
@@ -386,7 +386,7 @@ TEST(AgradPartialsVari, OperandsAndPartialsMultiMixInt) {
   EXPECT_FLOAT_EQ(10.0, v);
 }
 
-TEST(AgradPartialsVari, OperandsAndPartialsMultiMixInt_dbl) {
+TEST(MathMetaMix, OperandsAndPartialsMultiMixInt_dbl) {
   using stan::math::operands_and_partials;
 
   typedef Eigen::Matrix<int, -1, -1> uni_mat_t;

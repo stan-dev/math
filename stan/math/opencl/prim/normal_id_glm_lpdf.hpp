@@ -15,7 +15,7 @@
 
 #include <stan/math/opencl/kernels/normal_id_glm_lpdf.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
-#include <stan/math/opencl/prim/multiply.hpp>
+#include <stan/math/opencl/kernel_generator.hpp>
 
 #include <cmath>
 
@@ -159,7 +159,7 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
           = from_matrix_cl<Dynamic, 1>(sigma_derivative_cl);
     } else {
       ops_partials.edge3_.partials_[0]
-          = (y_scaled_sq_sum - N) * as_scalar(inv_sigma);
+          = (y_scaled_sq_sum - N) * forward_as<double>(inv_sigma);
     }
   }
 
@@ -181,7 +181,7 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
     if (is_vector<T_scale>::value) {
       logp -= sum(from_matrix_cl(log_sigma_sum_cl));
     } else {
-      logp -= N * log(as_scalar(sigma_val));
+      logp -= N * log(forward_as<double>(sigma_val));
     }
   }
   if (include_summand<propto, T_alpha, T_beta, T_scale>::value) {

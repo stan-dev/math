@@ -5,7 +5,6 @@
 #include <stan/math/prim/scal/fun/inv.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
-#include <boost/math/tools/promotion.hpp>
 
 namespace stan {
 namespace math {

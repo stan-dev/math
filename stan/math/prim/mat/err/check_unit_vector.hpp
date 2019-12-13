@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/scal/err/throw_domain_error.hpp>
 #include <stan/math/prim/mat/err/constraint_tolerance.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <sstream>
@@ -38,7 +38,7 @@ void check_unit_vector(const char* function, const char* name,
     msg << "is not a valid unit vector."
         << " The sum of the squares of the elements should be 1, but is ";
     std::string msg_str(msg.str());
-    domain_error(function, name, ssq, msg_str.c_str());
+    throw_domain_error(function, name, ssq, msg_str.c_str());
   }
 }
 

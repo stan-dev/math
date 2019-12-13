@@ -6,7 +6,7 @@
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/err/constraint_tolerance.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/scal/err/throw_domain_error.hpp>
 #include <stan/math/prim/mat/fun/factor_cov_matrix.hpp>
 #include <cmath>
 
@@ -50,7 +50,8 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> corr_matrix_free(
   Array<T, Dynamic, 1> sds(k);
   bool successful = factor_cov_matrix(y, x, sds);
   if (!successful) {
-    domain_error("corr_matrix_free", "factor_cov_matrix failed on y", y, "");
+    throw_domain_error("corr_matrix_free", "factor_cov_matrix failed on y", y,
+                       "");
   }
   for (size_type i = 0; i < k; ++i) {
     check_bounded("corr_matrix_free", "log(sd)", sds[i], -CONSTRAINT_TOLERANCE,

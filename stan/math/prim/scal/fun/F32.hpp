@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_FUN_F32_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/scal/err/throw_domain_error.hpp>
 #include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <stan/math/prim/scal/err/check_3F2_converges.hpp>
 #include <cmath>
@@ -77,12 +77,12 @@ T F32(const T& a1, const T& a2, const T& a3, const T& b1, const T& b2,
     }
 
     if (is_inf(t_acc)) {
-      domain_error("F32", "sum (output)", t_acc, "overflow ",
-                   " hypergeometric function did not converge.");
+      throw_domain_error("F32", "sum (output)", t_acc, "overflow ",
+                         " hypergeometric function did not converge.");
     }
   }
-  domain_error("F32", "k (internal counter)", max_steps, "exceeded ",
-               " iterations, hypergeometric function did not converge.");
+  throw_domain_error("F32", "k (internal counter)", max_steps, "exceeded ",
+                     " iterations, hypergeometric function did not converge.");
   return t_acc;  // to silence warning.
 }
 

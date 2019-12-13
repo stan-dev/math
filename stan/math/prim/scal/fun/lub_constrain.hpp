@@ -6,7 +6,6 @@
 #include <stan/math/prim/scal/fun/lb_constrain.hpp>
 #include <stan/math/prim/scal/fun/ub_constrain.hpp>
 #include <stan/math/prim/scal/fun/fma.hpp>
-#include <boost/math/tools/promotion.hpp>
 #include <cmath>
 #include <limits>
 

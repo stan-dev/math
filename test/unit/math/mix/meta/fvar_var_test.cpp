@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <sstream>
 
-TEST(AgradMixFvar, insertion_operator) {
+TEST(MathMetaMix, insertion_operator) {
   using stan::math::fvar;
   using stan::math::var;
 

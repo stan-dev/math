@@ -54,14 +54,7 @@ inline void divide_columns(const matrix_cl<T1>& A, const matrix_cl<T2>& B) {
  */
 template <typename T1, typename T2, typename = require_all_arithmetic_t<T1, T2>>
 inline void divide_columns(const matrix_cl<T1>& A, const T2& divisor) {
-  if (A.size() == 0) {
-    return;
-  }
-  try {
-    opencl_kernels::divide_columns_scalar(cl::NDRange(A.size()), A, divisor);
-  } catch (const cl::Error& e) {
-    check_opencl_error("divide_columns", e);
-  }
+  A = elewise_division(A, divisor);
 }
 
 }  // namespace math

@@ -10,9 +10,9 @@ namespace math {
 /**
  * Return <code>true</code> is the specified matrix is finite.
  * @tparam T Scalar type of the matrix, requires class method
- *<code>.allFinite()</code>
- * @tparam R Compile time rows of the matrix
- * @tparam C Compile time columns of the matrix
+ * <code>.allFinite()</code>
+ * @tparam R number of rows or Eigen::Dynamic
+ * @tparam C number of columns or Eigen::Dynamic
  * @param y Matrix to test
  * @return <code>true</code> if the matrix is finite
  **/

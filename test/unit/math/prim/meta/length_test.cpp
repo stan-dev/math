@@ -4,19 +4,19 @@
 
 using stan::length;
 
-TEST(MetaTraitsPrimScal, length) {
+TEST(MathMetaPrim, length_scalar) {
   using stan::length;
   EXPECT_EQ(1U, length(27.0));
   EXPECT_EQ(1U, length(3));
 }
 
-TEST(MetaTraitsPrimArr, length) {
+TEST(MathMetaPrim, length_vector) {
   using stan::length;
   std::vector<double> x(10);
   EXPECT_EQ(10U, length(x));
 }
 
-TEST(MetaTraitsPrimMat, length) {
+TEST(MathMetaPrim, length_matrices) {
   using stan::length;
 
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m(2, 3);

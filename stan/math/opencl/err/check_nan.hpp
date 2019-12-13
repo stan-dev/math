@@ -6,7 +6,7 @@
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/kernels/check_nan.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/scal/err/throw_domain_error.hpp>
 
 #include <vector>
 
@@ -36,7 +36,7 @@ inline void check_nan(const char* function, const char* name,
                               y.rows(), y.cols());
     nan_flag = from_matrix_cl_error_code(nan_chk);
     if (nan_flag) {
-      domain_error(function, name, "has NaN values", "");
+      throw_domain_error(function, name, "has NaN values", "");
     }
   } catch (const cl::Error& e) {
     check_opencl_error("nan_check", e);

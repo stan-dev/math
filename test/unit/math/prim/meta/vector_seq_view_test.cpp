@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MetaTraitsPrimMat, VectorSeqView) {
+TEST(MathMetaPrim, VectorSeqView) {
   using Eigen::VectorXd;
   using stan::vector_seq_view;
   using std::vector;

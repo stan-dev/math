@@ -36,30 +36,6 @@ static const std::string divide_columns_kernel_code = STRINGIFY(
 const kernel_cl<out_buffer, in_buffer, int> divide_columns_vec(
     "divide_columns_vec", {indexing_helpers, divide_columns_kernel_code});
 
-// \cond
-static const std::string divide_column_scalar_kernel_code = STRINGIFY(
-    // \endcond
-    /** \ingroup opencl_kernels
-     * Performs element-wise division on \c A
-     * @param[out] A  Matrix to be divided elementwise
-     * @param divisor  element to divide A by elementwise
-     * @note Code is a <code>const char*</code> held in
-     * <code>divide_column_scalar_kernel_code.</code>
-     */
-    __kernel void divide_columns_scalar(__global double *A, double divisor) {
-      const int i = get_global_id(0);
-      A[i] /= divisor;
-    }
-    // \cond
-);
-// \endcond
-/** \ingroup opencl_kernels
- * See the docs for \link kernels/add.hpp add() \endlink
- */
-const kernel_cl<out_buffer, double> divide_columns_scalar(
-    "divide_columns_scalar",
-    {indexing_helpers, divide_column_scalar_kernel_code});
-
 }  // namespace opencl_kernels
 }  // namespace math
 }  // namespace stan
