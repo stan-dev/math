@@ -106,10 +106,9 @@ return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
       logp -= lgamma(as_scalar(y_val) + 1);
     }
   }
-  if (include_summand<propto, T_partials_return>::value) {
-    logp += sum(as_array_or_scalar(y_val_vec) * theta.array()
+
+  logp += sum(as_array_or_scalar(y_val_vec) * theta.array()
                 - exp(theta.array()));
-  }
 
   operands_and_partials<T_x, T_alpha, T_beta> ops_partials(x, alpha, beta);
   // Compute the necessary derivatives.
