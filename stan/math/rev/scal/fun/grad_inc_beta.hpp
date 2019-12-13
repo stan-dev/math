@@ -11,6 +11,7 @@
 #include <stan/math/rev/scal/fun/floor.hpp>
 #include <stan/math/rev/scal/fun/value_of_rec.hpp>
 #include <stan/math/rev/scal/fun/inc_beta.hpp>
+#include <stan/math/rev/scal/fun/lgamma.hpp>
 #include <stan/math/rev/scal/fun/log.hpp>
 #include <stan/math/rev/scal/fun/log1m.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
