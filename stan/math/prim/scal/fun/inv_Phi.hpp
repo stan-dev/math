@@ -7,6 +7,7 @@
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/fun/Phi.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {

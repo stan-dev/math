@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(foo, bar) {
+TEST(MathMetaMix, broadcast_array) {
   using stan::math::fvar;
   using stan::math::internal::broadcast_array;
   using stan::math::var;

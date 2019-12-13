@@ -9,7 +9,6 @@
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <boost/math/tools/promotion.hpp>
 #include <type_traits>
 
 namespace stan {

@@ -8,7 +8,6 @@
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/opencl/kernels/fill.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
 
 #include <cl.hpp>
 

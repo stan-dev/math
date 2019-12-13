@@ -4,7 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/inv.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/scal/err/throw_domain_error.hpp>
 #include <stan/math/prim/scal/err/check_3F2_converges.hpp>
 #include <cmath>
 #include <limits>
@@ -121,9 +121,9 @@ void grad_F32(T* g, const T& a1, const T& a2, const T& a3, const T& b1,
     log_t_old = log_t_new;
     log_t_old_sign = log_t_new_sign;
   }
-  domain_error("grad_F32", "k (internal counter)", max_steps, "exceeded ",
-               " iterations, hypergeometric function gradient "
-               "did not converge.");
+  throw_domain_error("grad_F32", "k (internal counter)", max_steps, "exceeded ",
+                     " iterations, hypergeometric function gradient "
+                     "did not converge.");
   return;
 }
 

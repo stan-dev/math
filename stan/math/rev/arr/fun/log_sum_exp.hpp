@@ -6,6 +6,7 @@
 #include <stan/math/prim/arr/fun/log_sum_exp.hpp>
 #include <vector>
 #include <limits>
+#include <cmath>
 
 namespace stan {
 namespace math {

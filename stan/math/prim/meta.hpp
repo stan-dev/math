@@ -9,7 +9,7 @@
 #include <stan/math/prim/mat/meta/append_return_type.hpp>
 #include <stan/math/prim/mat/meta/as_array_or_scalar.hpp>
 #include <stan/math/prim/mat/meta/as_column_vector_or_scalar.hpp>
-#include <stan/math/prim/mat/meta/as_scalar.hpp>
+#include <stan/math/prim/mat/meta/forward_as.hpp>
 #include <stan/math/prim/mat/meta/broadcast_array.hpp>
 #include <stan/math/prim/mat/meta/get.hpp>
 #include <stan/math/prim/mat/meta/index_type.hpp>
@@ -23,7 +23,6 @@
 #include <stan/math/prim/mat/meta/value_type.hpp>
 #include <stan/math/prim/mat/meta/vector_seq_view.hpp>
 
-#include <stan/math/prim/arr/meta/as_scalar.hpp>
 #include <stan/math/prim/arr/meta/is_constant.hpp>
 #include <stan/math/prim/arr/meta/scalar_type.hpp>
 #include <stan/math/prim/arr/meta/value_type.hpp>
@@ -32,7 +31,7 @@
 #include <stan/math/prim/scal/meta/ad_promotable.hpp>
 #include <stan/math/prim/scal/meta/as_array_or_scalar.hpp>
 #include <stan/math/prim/scal/meta/as_column_vector_or_scalar.hpp>
-#include <stan/math/prim/scal/meta/as_scalar.hpp>
+#include <stan/math/prim/scal/meta/forward_as.hpp>
 #include <stan/math/prim/scal/meta/bool_constant.hpp>
 #include <stan/math/prim/scal/meta/child_type.hpp>
 #include <stan/math/prim/scal/meta/contains_fvar.hpp>
@@ -42,6 +41,7 @@
 #include <stan/math/prim/scal/meta/get.hpp>
 #include <stan/math/prim/scal/meta/include_summand.hpp>
 #include <stan/math/prim/scal/meta/index_type.hpp>
+#include <stan/math/prim/scal/meta/index_apply.hpp>
 #include <stan/math/prim/scal/meta/is_constant.hpp>
 #include <stan/math/prim/scal/meta/is_eigen.hpp>
 #include <stan/math/prim/scal/meta/is_fvar.hpp>

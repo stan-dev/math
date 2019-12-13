@@ -5,6 +5,7 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/fun/inv_Phi.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {

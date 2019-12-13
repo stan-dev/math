@@ -5,8 +5,8 @@
 #include <stan/math/prim/scal/fun/identity_free.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
-#include <boost/math/tools/promotion.hpp>
 #include <limits>
+#include <cmath>
 
 namespace stan {
 namespace math {

@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_MAT_ERR_CHECK_POSITIVE_ORDERED_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/scal/err/throw_domain_error.hpp>
 #include <stan/math/prim/mat/err/check_ordered.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <sstream>
@@ -36,8 +36,8 @@ void check_positive_ordered(const char* function, const char* name,
     msg << "is not a valid positive_ordered vector."
         << " The element at " << stan::error_index::value << " is ";
     std::string msg_str(msg.str());
-    domain_error(function, name, y[0], msg_str.c_str(),
-                 ", but should be postive.");
+    throw_domain_error(function, name, y[0], msg_str.c_str(),
+                       ", but should be postive.");
   }
   check_ordered(function, name, y);
 }
