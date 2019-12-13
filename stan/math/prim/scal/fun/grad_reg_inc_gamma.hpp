@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_FUN_GRAD_REG_INC_GAMMA_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/scal/err/throw_domain_error.hpp>
 #include <stan/math/prim/scal/fun/gamma_p.hpp>
 #include <stan/math/prim/scal/fun/gamma_q.hpp>
 #include <stan/math/prim/scal/fun/is_inf.hpp>
@@ -79,7 +79,7 @@ return_type_t<T1, T2> grad_reg_inc_gamma(T1 a, T2 z, T1 g, T1 dig,
       delta = dfac / zpow;
 
       if (is_inf(delta)) {
-        domain_error("grad_reg_inc_gamma", "is not converging", "", "");
+        throw_domain_error("grad_reg_inc_gamma", "is not converging", "", "");
       }
     }
 
@@ -97,15 +97,15 @@ return_type_t<T1, T2> grad_reg_inc_gamma(T1 a, T2 z, T1 g, T1 dig,
       s_sign = -s_sign;
       log_delta = log_s - multiply_log(2, k + a);
       if (is_inf(log_delta)) {
-        domain_error("grad_reg_inc_gamma", "is not converging", "", "");
+        throw_domain_error("grad_reg_inc_gamma", "is not converging", "", "");
       }
       if (log_delta <= log(precision)) {
         return gamma_p(a, z) * (dig - l) + exp(a * l) * S / g;
       }
     }
-    domain_error("grad_reg_inc_gamma", "k (internal counter)", max_steps,
-                 "exceeded ",
-                 " iterations, gamma function gradient did not converge.");
+    throw_domain_error(
+        "grad_reg_inc_gamma", "k (internal counter)", max_steps, "exceeded ",
+        " iterations, gamma function gradient did not converge.");
     return INFTY;
   }
 }

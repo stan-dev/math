@@ -2,8 +2,8 @@
 #define STAN_MATH_PRIM_SCAL_ERR_CHECK_NOT_NAN_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
-#include <stan/math/prim/scal/err/domain_error_vec.hpp>
+#include <stan/math/prim/scal/err/throw_domain_error.hpp>
+#include <stan/math/prim/scal/err/throw_domain_error_vec.hpp>
 #include <stan/math/prim/scal/fun/value_of_rec.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 
@@ -15,7 +15,7 @@ template <typename T_y, bool is_vec>
 struct not_nan {
   static void check(const char* function, const char* name, const T_y& y) {
     if (is_nan(value_of_rec(y))) {
-      domain_error(function, name, y, "is ", ", but must not be nan!");
+      throw_domain_error(function, name, y, "is ", ", but must not be nan!");
     }
   }
 };
@@ -25,7 +25,8 @@ struct not_nan<T_y, true> {
   static void check(const char* function, const char* name, const T_y& y) {
     for (size_t n = 0; n < stan::length(y); n++) {
       if (is_nan(value_of_rec(stan::get(y, n)))) {
-        domain_error_vec(function, name, y, n, "is ", ", but must not be nan!");
+        throw_domain_error_vec(function, name, y, n, "is ",
+                               ", but must not be nan!");
       }
     }
   }

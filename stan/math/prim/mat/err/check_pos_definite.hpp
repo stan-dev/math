@@ -4,7 +4,7 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/scal/err/throw_domain_error.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
 #include <stan/math/prim/mat/err/constraint_tolerance.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
@@ -32,13 +32,13 @@ inline void check_pos_definite(const char* function, const char* name,
   check_not_nan(function, name, y);
 
   if (y.rows() == 1 && !(y(0, 0) > CONSTRAINT_TOLERANCE)) {
-    domain_error(function, name, "is not positive definite.", "");
+    throw_domain_error(function, name, "is not positive definite.", "");
   }
 
   Eigen::LDLT<Eigen::MatrixXd> cholesky = value_of_rec(y).ldlt();
   if (cholesky.info() != Eigen::Success || !cholesky.isPositive()
       || (cholesky.vectorD().array() <= 0.0).any()) {
-    domain_error(function, name, "is not positive definite.", "");
+    throw_domain_error(function, name, "is not positive definite.", "");
   }
 }
 
@@ -57,7 +57,7 @@ inline void check_pos_definite(const char* function, const char* name,
                                const Eigen::LDLT<Derived>& cholesky) {
   if (cholesky.info() != Eigen::Success || !cholesky.isPositive()
       || !(cholesky.vectorD().array() > 0.0).all()) {
-    domain_error(function, "LDLT decomposition of", " failed", name);
+    throw_domain_error(function, "LDLT decomposition of", " failed", name);
   }
 }
 
@@ -77,7 +77,7 @@ inline void check_pos_definite(const char* function, const char* name,
                                const Eigen::LLT<Derived>& cholesky) {
   if (cholesky.info() != Eigen::Success
       || !(cholesky.matrixLLT().diagonal().array() > 0.0).all()) {
-    domain_error(function, "Matrix", " is not positive definite", name);
+    throw_domain_error(function, "Matrix", " is not positive definite", name);
   }
 }
 

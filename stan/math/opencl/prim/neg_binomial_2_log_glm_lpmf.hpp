@@ -156,8 +156,9 @@ return_type_t<T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
   if (include_summand<propto, T_precision>::value
       && !is_vector<T_precision>::value) {
     logp += N
-            * (multiply_log(as_scalar(phi_val), as_scalar(phi_val))
-               - lgamma(as_scalar(phi_val)));
+            * (multiply_log(forward_as<double>(phi_val),
+                            forward_as<double>(phi_val))
+               - lgamma(forward_as<double>(phi_val)));
   }
 
   operands_and_partials<T_alpha, T_beta, T_precision> ops_partials(alpha, beta,
