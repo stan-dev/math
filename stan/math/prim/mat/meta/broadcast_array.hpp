@@ -11,6 +11,14 @@ namespace math {
 namespace internal {
 template <typename ViewElt, typename T>
 class empty_broadcast_array<ViewElt, T, require_eigen_t<T> > {
+  enum{
+    R=T::RowsAtCompileTime,
+    C=T::ColsAtCompileTime
+  };
+  using T_arg = std::conditional_t<
+      std::is_same<typename Eigen::internal::traits<T>::XprKind, Eigen::MatrixXpr>::value,
+      Eigen::Matrix<ViewElt,R,C>,
+      Eigen::Array<ViewElt,R,C>>;
  public:
   empty_broadcast_array() {}
   /** \ingroup type_trait
@@ -24,15 +32,15 @@ class empty_broadcast_array<ViewElt, T, require_eigen_t<T> > {
   /** \ingroup type_trait
    * Not implemented so cannot be called.
    */
-  void operator=(const T& /*A*/);
+  void operator=(const T_arg& /*A*/);
   /** \ingroup type_trait
    * Not implemented so cannot be called.
    */
-  void operator+=(T /*A*/);
+  void operator+=(T_arg /*A*/);
   /** \ingroup type_trait
    * Not implemented so cannot be called.
    */
-  void operator-=(T /*A*/);
+  void operator-=(T_arg /*A*/);
   /** \ingroup type_trait
    * Not implemented so cannot be called.
    */
