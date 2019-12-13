@@ -21,7 +21,7 @@ inline double erfc(double x) { return std::erfc(x); }
 
 /**
  * Return the error function of the specified argument.  This
- * version is required to disambiguate <code>erf(int)</code>.
+ * version is required to disambiguate <code>erfc(int)</code>.
  *
  * @param[in] x Argument.
  * @return Complementary error function value of the argument.
