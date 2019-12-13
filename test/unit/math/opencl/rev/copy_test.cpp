@@ -1,7 +1,7 @@
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/rev/opencl.hpp>
 #include <gtest/gtest.h>
-#include <cl.hpp>
+#include <CL/cl2.hpp>
 #include <algorithm>
 #include <vector>
 
