@@ -37,7 +37,7 @@ inline void check_symmetric(
       Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>>::type;
 
   size_type k = y.rows();
-  if (k == 1) {
+  if (k <= 1) {
     return;
   }
   for (size_type m = 0; m < k; ++m) {
