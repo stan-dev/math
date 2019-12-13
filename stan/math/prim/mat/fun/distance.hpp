@@ -5,6 +5,7 @@
 #include <stan/math/prim/mat/fun/squared_distance.hpp>
 #include <stan/math/prim/mat/err/check_vector.hpp>
 #include <stan/math/prim/arr/err/check_matching_sizes.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {

@@ -7,6 +7,7 @@
 #include <cmath>
 #include <tuple>
 #include <vector>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -33,6 +34,7 @@ class ordered_constrain_op {
                              const Eigen::VectorXd& x) {
     using std::exp;
     N_ = x.size();
+    using std::exp;
 
     Eigen::Matrix<double, Eigen::Dynamic, 1> y(N_);
     if (N_ == 0) {

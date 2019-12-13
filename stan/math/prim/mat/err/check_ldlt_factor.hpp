@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/scal/err/throw_domain_error.hpp>
 #include <stan/math/prim/mat/fun/LDLT_factor.hpp>
 #include <sstream>
 #include <string>
@@ -32,7 +32,7 @@ inline void check_ldlt_factor(const char* function, const char* name,
     msg << "is not positive definite.  last conditional variance is ";
     std::string msg_str(msg.str());
     T too_small = A.vectorD().tail(1)(0);
-    domain_error(function, name, too_small, msg_str.c_str(), ".");
+    throw_domain_error(function, name, too_small, msg_str.c_str(), ".");
   }
 }
 

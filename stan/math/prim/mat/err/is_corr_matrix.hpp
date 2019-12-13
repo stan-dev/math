@@ -8,6 +8,7 @@
 #include <stan/math/prim/mat/err/is_symmetric.hpp>
 #include <stan/math/prim/scal/err/is_positive.hpp>
 #include <stan/math/prim/scal/err/is_size_match.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -30,6 +31,7 @@ inline bool is_corr_matrix(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
   using size_type
       = index_type_t<Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>>;
+  using std::fabs;
 
   if (!is_size_match(y.rows(), y.cols())) {
     return false;

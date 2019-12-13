@@ -111,6 +111,7 @@ class gp_periodic_cov_vari : public vari {
             size_ltri_)),
         cov_diag_(
             ChainableStack::instance_->memalloc_.alloc_array<vari *>(size_)) {
+    using std::sin;
     double neg_two_inv_l_sq = -2.0 / (l_d_ * l_d_);
     double pi_div_p = pi() / p_d_;
 
@@ -245,6 +246,7 @@ class gp_periodic_cov_vari<T_x, double, T_l, T_p> : public vari {
             size_ltri_)),
         cov_diag_(
             ChainableStack::instance_->memalloc_.alloc_array<vari *>(size_)) {
+    using std::sin;
     double neg_two_inv_l_sq = -2.0 / (l_d_ * l_d_);
     double pi_div_p = pi() / p_d_;
 

@@ -5,7 +5,7 @@
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/scal/err/throw_domain_error.hpp>
 
 namespace stan {
 namespace math {
@@ -44,8 +44,8 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> cov_matrix_free_lkj(
   Array<T, Dynamic, 1> sds(k);
   bool successful = factor_cov_matrix(y, cpcs, sds);
   if (!successful) {
-    domain_error("cov_matrix_free_lkj", "factor_cov_matrix failed on y", "",
-                 "");
+    throw_domain_error("cov_matrix_free_lkj", "factor_cov_matrix failed on y",
+                       "", "");
   }
   Matrix<T, Dynamic, 1> x(k_choose_2 + k);
   size_type pos = 0;

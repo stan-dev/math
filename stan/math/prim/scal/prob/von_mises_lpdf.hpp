@@ -25,7 +25,10 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
     return 0.0;
   }
 
+  using std::cos;
+  using std::floor;
   using std::log;
+  using std::sin;
 
   T_partials_return logp = 0.0;
 

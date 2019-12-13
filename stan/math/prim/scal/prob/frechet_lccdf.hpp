@@ -40,6 +40,8 @@ return_type_t<T_y, T_shape, T_scale> frechet_lccdf(const T_y& y,
 
   using std::exp;
   using std::log;
+  using std::pow;
+
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_scale> sigma_vec(sigma);
   scalar_seq_view<T_shape> alpha_vec(alpha);
