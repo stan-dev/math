@@ -102,8 +102,7 @@ return_type_t<T_x_scalar, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
     ytheta = as_array_or_scalar(signs)
              * (ytheta_tmp + as_array_or_scalar(alpha_val_vec));
   } else {
-    ytheta
-      = (x_val * beta_val_vec).array();
+    ytheta = (x_val * beta_val_vec).array();
     ytheta = as_array_or_scalar(signs)
              * (ytheta + as_array_or_scalar(alpha_val_vec));
   }

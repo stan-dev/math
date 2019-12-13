@@ -10,15 +10,13 @@ namespace stan {
 namespace math {
 namespace internal {
 template <typename ViewElt, typename T>
-class empty_broadcast_array<ViewElt, T, require_eigen_t<T> > {
-  enum{
-    R=T::RowsAtCompileTime,
-    C=T::ColsAtCompileTime
-  };
+class empty_broadcast_array<ViewElt, T, require_eigen_t<T>> {
+  enum { R = T::RowsAtCompileTime, C = T::ColsAtCompileTime };
   using T_arg = std::conditional_t<
-      std::is_same<typename Eigen::internal::traits<T>::XprKind, Eigen::MatrixXpr>::value,
-      Eigen::Matrix<ViewElt,R,C>,
-      Eigen::Array<ViewElt,R,C>>;
+      std::is_same<typename Eigen::internal::traits<T>::XprKind,
+                   Eigen::MatrixXpr>::value,
+      Eigen::Matrix<ViewElt, R, C>, Eigen::Array<ViewElt, R, C>>;
+
  public:
   empty_broadcast_array() {}
   /** \ingroup type_trait
