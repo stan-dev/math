@@ -161,8 +161,8 @@ TEST(ProbDistributionsBernoulliLogitGLM, gpu_broadcast_y) {
 
   var res1
       = stan::math::bernoulli_logit_glm_lpmf(y_cl, x_cl, alpha_var1, beta_var1);
-  var res2
-      = stan::math::bernoulli_logit_glm_lpmf(y_vec_cl, x_cl, alpha_var2, beta_var2);
+  var res2 = stan::math::bernoulli_logit_glm_lpmf(y_vec_cl, x_cl, alpha_var2,
+                                                  beta_var2);
 
   (res1 + res2).grad();
 
