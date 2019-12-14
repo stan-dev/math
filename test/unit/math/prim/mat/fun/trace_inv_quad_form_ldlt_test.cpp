@@ -16,7 +16,6 @@ TEST(MathMatrixPrimMat, trace_inv_quad_form_ldlt) {
 }
 
 TEST(MathMatrixPrimMat, trace_inv_quad_form_ldlt_0x0) {
-
   stan::math::LDLT_factor<double, -1, -1> ldlt_A;
   stan::math::matrix_d B(0, 0), C(0, 2), D(2, 0);
 

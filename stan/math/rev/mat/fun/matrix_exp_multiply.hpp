@@ -27,7 +27,8 @@ matrix_exp_multiply(const Eigen::Matrix<Ta, -1, -1>& A,
                     const Eigen::Matrix<Tb, -1, Cb>& B) {
   check_square("matrix_exp_multiply", "input matrix", A);
   if (A.size() == 0 && B.rows() == 0) {
-    Eigen::Matrix<typename stan::return_type_t<Ta, Tb>, -1, Cb> res(0, B.cols());
+    Eigen::Matrix<typename stan::return_type_t<Ta, Tb>, -1, Cb> res(0,
+                                                                    B.cols());
     return res;
   }
 
