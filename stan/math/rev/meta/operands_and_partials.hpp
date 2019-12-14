@@ -10,7 +10,7 @@
 #include <stan/math/prim/meta/is_vector_like.hpp>
 #include <stan/math/prim/meta/likely.hpp>
 #include <stan/math/rev/mat/fun/typedefs.hpp>
-#include <stan/math/prim/meta/length.hpp>
+#include <stan/math/prim/meta/size.hpp>
 #include <vector>
 
 namespace stan {

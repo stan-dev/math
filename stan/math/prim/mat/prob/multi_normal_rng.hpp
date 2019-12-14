@@ -47,7 +47,7 @@ multi_normal_rng(const T_loc& mu,
   vector_seq_view<T_loc> mu_vec(mu);
   size_t size_mu = mu_vec[0].size();
 
-  size_t N = length_mvt(mu);
+  size_t N = size_mvt(mu);
   int size_mu_old = size_mu;
   for (size_t i = 1; i < N; i++) {
     int size_mu_new = mu_vec[i].size();
