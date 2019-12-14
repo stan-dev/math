@@ -38,7 +38,6 @@
 #include <stan/math/prim/meta/scalar_type.hpp>
 #include <stan/math/prim/meta/scalar_type_pre.hpp>
 #include <stan/math/prim/meta/seq_view.hpp>
-#include <stan/math/prim/meta/size_of.hpp>
 #include <stan/math/prim/meta/value_type.hpp>
 #include <stan/math/prim/meta/vector_seq_view.hpp>
 #include <stan/math/prim/meta/StdVectorBuilder.hpp>
