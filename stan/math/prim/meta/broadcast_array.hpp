@@ -55,6 +55,7 @@ class empty_broadcast_array<ViewElt, T, require_eigen_t<T>> {
       std::is_same<typename Eigen::internal::traits<T>::XprKind,
                    Eigen::MatrixXpr>::value,
       Eigen::Matrix<ViewElt, R, C>, Eigen::Array<ViewElt, R, C>>;
+
  public:
   empty_broadcast_array() {}
   /** \ingroup type_trait

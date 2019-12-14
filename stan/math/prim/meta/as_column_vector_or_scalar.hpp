@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_META_AS_COLUMN_VECTOR_OR_SCALAR_HPP
 #define STAN_MATH_PRIM_META_AS_COLUMN_VECTOR_OR_SCALAR_HPP
 
-
 #include <stan/math/prim/meta/require_generics.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
