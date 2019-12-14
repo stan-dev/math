@@ -11,7 +11,7 @@
 namespace stan {
 
 /** \ingroup type_trait
- * Returns the element provided element. Scalar type overload
+ * Returns the provided element. Scalar type overload
  * for the function to retrieve n-th element of a vector, 
  * \c Eigen \c Matrix or expression
  * 
