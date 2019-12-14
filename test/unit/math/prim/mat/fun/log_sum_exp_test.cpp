@@ -14,13 +14,32 @@ void test_log_sum_exp(const Eigen::Matrix<double, R, C>& as) {
 }
 
 TEST(MathFunctions, log_sum_exp_mat) {
+  using stan::math::log_sum_exp;
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using stan::math::log_sum_exp;
 
-  Matrix<double, Dynamic, Dynamic> m(3, 2);
-  m << 1, 2, 3, 4, 5, 6;
-  test_log_sum_exp(m);
+  Matrix<double, Dynamic, Dynamic> m1(3, 2);
+  m1 << 1, 2, 3, 4, 5, 6;
+  std::vector<double> st1{1, 2, 3, 4, 5, 6};
+  Matrix<double, Dynamic, Dynamic> m2(3, 2);
+  m2 << -1, -2, -3, -4, -5, -6;
+  std::vector<double> st2{-1, -2, -3, -4, -5, -6};
+  double m1_out = log_sum_exp(m1);
+  double m2_out = log_sum_exp(m2);
+  double st1_out = log_sum_exp(st1);
+  double st2_out = log_sum_exp(st2);
+  EXPECT_FLOAT_EQ(m1_out, st1_out);
+  EXPECT_FLOAT_EQ(m2_out, st2_out);
+  //test_log_sum_exp(m);
+
+  std::vector<Eigen::MatrixXd> st_m{m1,m2};
+  std::vector<std::vector<double>> st_st{st1,st2};
+  std::vector<double> m_out = log_sum_exp(st_m);
+  std::vector<double> st_out = log_sum_exp(st_st);
+  EXPECT_FLOAT_EQ(m1_out, m_out[0]);
+  EXPECT_FLOAT_EQ(m2_out, m_out[1]);
+  EXPECT_FLOAT_EQ(m1_out, st_out[0]);
+  EXPECT_FLOAT_EQ(m2_out, st_out[1]);
 
   Matrix<double, Dynamic, 1> v(3);
   v << 1, 2, 3;

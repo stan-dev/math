@@ -26,9 +26,9 @@ namespace math {
  * @param i column index to check
  * @throw <code>std::out_of_range</code> if index is an invalid column
  */
-template <typename T_y, int R, int C>
+template <typename Derived>
 inline void check_column_index(const char* function, const char* name,
-                               const Eigen::Matrix<T_y, R, C>& y, size_t i) {
+                               const Eigen::MatrixBase<Derived>& y, size_t i) {
   if (i >= stan::error_index::value
       && i < static_cast<size_t>(y.cols()) + stan::error_index::value) {
     return;

@@ -4,6 +4,8 @@
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/log_sum_exp.hpp>
+#include <stan/math/prim/mat/vectorize/apply_vector_unary.hpp>
+
 
 namespace stan {
 namespace math {
@@ -37,12 +39,12 @@ namespace math {
  * @return Unit simplex result of the softmax transform of the vector.
  */
 template <typename T>
-inline Eigen::Matrix<T, Eigen::Dynamic, 1> log_softmax(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& v) {
-  check_nonzero_size("log_softmax", "v", v);
-  return v.array() - log_sum_exp(v);
+inline auto log_softmax(const T& x) {
+  return apply_vector_unary<T>::apply(x, [](auto& v){
+    check_nonzero_size("log_softmax", "v", v);
+    return v.array() - log_sum_exp(v);
+  });
 }
-
 }  // namespace math
 }  // namespace stan
 #endif
