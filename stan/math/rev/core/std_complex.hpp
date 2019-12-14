@@ -270,12 +270,12 @@ class complex_base {
    *
    * @tparam T real type (must be assignable to `V`)
    * @tparam U imaginary type (must be assignable to `V`)
-   * @param[in] x real part
-   * @param[in] y imaginary part (default 0)
+   * @param[in] re real part
+   * @param[in] im imaginary part (default 0)
    */
   template <typename T, typename U>
-  complex_base(const T& x, const U& y = U(0))  // NOLINT(runtime/explicit)
-      : complex_base(value_type(x), value_type(y)) {}
+  complex_base(const T& re, const U& im = U(0))  // NOLINT(runtime/explicit)
+      : re_(re), im_(im) {}
 
   /**
    * Constructs complex number from real and imaginary parts.
@@ -1254,7 +1254,7 @@ inline std::complex<V> complex_log(const std::complex<V>& z) {
  */
 template <typename V>
 inline std::complex<V> complex_log10(const std::complex<V>& z) {
-  static const double inv_log_10 = 1 / log(10);
+  static const double inv_log_10 = 1 / std::log(10);
   return log(z) * V(inv_log_10);
 }
 
@@ -1270,6 +1270,8 @@ inline std::complex<V> complex_log10(const std::complex<V>& z) {
  */
 template <typename U, typename V>
 inline complex_return_t<U, V> complex_pow(const U& x, const V& y) {
+  using std::exp;
+  using std::log;
   return exp(y * log(x));
 }
 
