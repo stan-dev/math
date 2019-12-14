@@ -23,8 +23,8 @@ namespace math {
  * @return A vector of x and y concatenated together (in that order)
  */
 template <typename T1, typename T2>
-inline std::vector<return_type_t<T1, T2>>
-append_array(const std::vector<T1>& x, const std::vector<T2>& y) {
+inline std::vector<return_type_t<T1, T2>> append_array(
+    const std::vector<T1>& x, const std::vector<T2>& y) {
   std::vector<return_type_t<T1, T2>> z;
   std::vector<int> zdims;
   if (x.empty()) {
