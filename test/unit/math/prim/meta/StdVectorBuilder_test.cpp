@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MetaTraitsPrimScal, StdVectorBuilder_false_false) {
+TEST(MathMetaPrim, StdVectorBuilder_false_false_scalar) {
   using stan::StdVectorBuilder;
   using stan::length;
 
@@ -13,7 +13,7 @@ TEST(MetaTraitsPrimScal, StdVectorBuilder_false_false) {
   EXPECT_THROW(dvv1.data(), std::logic_error);
 }
 
-TEST(MetaTraitsPrimScal, StdVectorBuilder_true_false) {
+TEST(MathMetaPrim, StdVectorBuilder_true_false_scalar) {
   using stan::StdVectorBuilder;
   using stan::length;
 
@@ -28,7 +28,7 @@ TEST(MetaTraitsPrimScal, StdVectorBuilder_true_false) {
   EXPECT_FLOAT_EQ(0.0, data1);
 }
 
-TEST(MetaTraitsPrimScal, StdVectorBuilder_type_check) {
+TEST(MathMetaPrim, StdVectorBuilder_type_check_scalar) {
   using stan::StdVectorBuilder;
   using stan::contains_std_vector;
 
@@ -39,7 +39,7 @@ TEST(MetaTraitsPrimScal, StdVectorBuilder_type_check) {
   EXPECT_FALSE(r);
 }
 
-TEST(MetaTraitsPrimArr, StdVectorBuilder_false_false) {
+TEST(MathMetaPrim, StdVectorBuilder_false_false_vector) {
   using stan::StdVectorBuilder;
   using stan::length;
   using std::vector;
@@ -51,7 +51,7 @@ TEST(MetaTraitsPrimArr, StdVectorBuilder_false_false) {
   EXPECT_THROW(dvv2.data(), std::logic_error);
 }
 
-TEST(MetaTraitsPrimArr, StdVectorBuilder_true_false) {
+TEST(MathMetaPrim, StdVectorBuilder_true_false_vector) {
   using stan::StdVectorBuilder;
   using stan::length;
   using std::vector;
@@ -67,7 +67,7 @@ TEST(MetaTraitsPrimArr, StdVectorBuilder_true_false) {
   EXPECT_FLOAT_EQ(0.0, data2);
 }
 
-TEST(MetaTraitsPrimArr, StdVectorBuilder_type_check) {
+TEST(MathMetaPrim, StdVectorBuilder_type_check_vector) {
   using stan::StdVectorBuilder;
   using stan::contains_std_vector;
 
@@ -79,7 +79,7 @@ TEST(MetaTraitsPrimArr, StdVectorBuilder_type_check) {
   EXPECT_TRUE(r);
 }
 
-TEST(MetaTraitsPrimMat, StdVectorBuilder_false_false) {
+TEST(MathMetaPrim, StdVectorBuilder_false_false_matrix) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::StdVectorBuilder;
@@ -97,7 +97,7 @@ TEST(MetaTraitsPrimMat, StdVectorBuilder_false_false) {
   EXPECT_THROW(dvv4.data(), std::logic_error);
 }
 
-TEST(MetaTraitsPrimMat, StdVectorBuilder_true_false) {
+TEST(MathMetaPrim, StdVectorBuilder_true_false_matrix) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::StdVectorBuilder;
@@ -123,7 +123,7 @@ TEST(MetaTraitsPrimMat, StdVectorBuilder_true_false) {
   EXPECT_FLOAT_EQ(0.0, data4);
 }
 
-TEST(MetaTraitsPrimMat, StdVectorBuilder_type_check) {
+TEST(MathMetaPrim, StdVectorBuilder_type_check_matrix) {
   using stan::StdVectorBuilder;
   using stan::contains_std_vector;
 

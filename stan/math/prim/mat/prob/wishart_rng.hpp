@@ -7,6 +7,7 @@
 #include <stan/math/prim/scal/err/check_greater.hpp>
 #include <stan/math/prim/scal/prob/chi_square_rng.hpp>
 #include <stan/math/prim/scal/prob/normal_rng.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {

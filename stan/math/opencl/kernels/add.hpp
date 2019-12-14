@@ -10,56 +10,7 @@
 namespace stan {
 namespace math {
 namespace opencl_kernels {
-// \cond
-static const std::string add_kernel_code = STRINGIFY(
-    // \endcond
-    /** \ingroup opencl_kernels
-     * Matrix addition on the OpenCL device
-     *
-     * @param[out] C Output matrix.
-     * @param[in] A LHS of matrix addition.
-     * @param[in] B RHS of matrix addition.
-     * @param rows Number of rows for matrix A.
-     * @param cols Number of cols for matrix A.
-     * @param view_A triangular part of matrix A to use
-     * @param view_B triangular part of matrix B to use
-     * @note Code is a <code>const char*</code> held in
-     * <code>add_kernel_code.</code>
-     * This kernel uses the helper macros available in helpers.cl.
-     */
-    __kernel void add(__global double *C, __global double *A,
-                      __global double *B, unsigned int rows, unsigned int cols,
-                      int view_A, int view_B) {
-      const int i = get_global_id(0);
-      const int j = get_global_id(1);
-      if (i < rows && j < cols) {
-        double a;
-        if ((!contains_nonzero(view_A, LOWER) && j < i)
-            || (!contains_nonzero(view_A, UPPER) && j > i)) {
-          a = 0;
-        } else {
-          a = A(i, j);
-        }
-        double b;
-        if ((!contains_nonzero(view_B, LOWER) && j < i)
-            || (!contains_nonzero(view_B, UPPER) && j > i)) {
-          b = 0;
-        } else {
-          b = B(i, j);
-        }
-        C(i, j) = a + b;
-      }
-    }
-    // \cond
-);
-// \endcond
 
-/** \ingroup opencl_kernels
- * See the docs for \link kernels/add.hpp add() \endlink
- */
-const kernel_cl<out_buffer, in_buffer, in_buffer, int, int, matrix_cl_view,
-                matrix_cl_view>
-    add("add", {indexing_helpers, view_kernel_helpers, add_kernel_code});
 // \cond
 static const std::string add_batch_kernel_code = STRINGIFY(
     // \endcond

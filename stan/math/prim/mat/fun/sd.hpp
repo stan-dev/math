@@ -4,8 +4,9 @@
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/variance.hpp>
-#include <boost/math/tools/promotion.hpp>
+#include <stan/math/prim/scal/fun/sqrt.hpp>
 #include <vector>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -33,6 +34,7 @@ inline return_type_t<T> sd(const std::vector<T>& v) {
  */
 template <typename T, int R, int C>
 inline return_type_t<T> sd(const Eigen::Matrix<T, R, C>& m) {
+  using std::sqrt;
   check_nonzero_size("sd", "m", m);
   if (m.size() == 1) {
     return 0.0;

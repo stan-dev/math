@@ -31,17 +31,17 @@ TEST(MetaTraitsPrimArr, isConstantStruct) {
                   vector<vector<double>>, vector<vector<vector<double>>>>();
 }
 
-typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> const_t1;
-typedef std::vector<const_t1> const_t2;
-typedef std::vector<const_t2> const_t3;
+using const_t1 = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>;
+using const_t2 = std::vector<const_t1>;
+using const_t3 = std::vector<const_t2>;
 
-typedef Eigen::Matrix<double, Eigen::Dynamic, 1> const_u1;
-typedef std::vector<const_u1> const_u2;
-typedef std::vector<const_u2> const_u3;
+using const_u1 = Eigen::Matrix<double, Eigen::Dynamic, 1>;
+using const_u2 = std::vector<const_u1>;
+using const_u3 = std::vector<const_u2>;
 
-typedef Eigen::Matrix<double, 1, Eigen::Dynamic> const_v1;
-typedef std::vector<const_v1> const_v2;
-typedef std::vector<const_v2> const_v3;
+using const_v1 = Eigen::Matrix<double, 1, Eigen::Dynamic>;
+using const_v2 = std::vector<const_v1>;
+using const_v3 = std::vector<const_v2>;
 
 TEST(MetaTraitsPrimMat, isConstantStruct) {
   using Eigen::Dynamic;

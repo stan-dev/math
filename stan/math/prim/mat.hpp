@@ -276,6 +276,7 @@
 #include <stan/math/prim/mat/prob/categorical_lpmf.hpp>
 #include <stan/math/prim/mat/prob/categorical_rng.hpp>
 #include <stan/math/prim/mat/prob/dirichlet_log.hpp>
+#include <stan/math/prim/mat/prob/dirichlet_lpdf.hpp>
 #include <stan/math/prim/mat/prob/dirichlet_lpmf.hpp>
 #include <stan/math/prim/mat/prob/dirichlet_rng.hpp>
 #include <stan/math/prim/mat/prob/gaussian_dlm_obs_log.hpp>

@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MetaTraitsPrimArr, get) {
+TEST(MathMetaPrim, get_vector) {
   using stan::get;
 
   std::vector<double> x(3);
@@ -10,13 +10,13 @@ TEST(MetaTraitsPrimArr, get) {
   EXPECT_EQ(5.0, get(x, 1));
 }
 
-TEST(MetaTraitsPrimScal, get) {
+TEST(MathMetaPrim, get_scalar) {
   using stan::get;
 
   EXPECT_FLOAT_EQ(2.0, get(2.0, 1));
 }
 
-TEST(MetaTraitsPrimMat, get) {
+TEST(MathMetaPrim, get_matrix) {
   using stan::get;
 
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m(2, 3);

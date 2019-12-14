@@ -41,6 +41,8 @@ return_type_t<T_y, T_shape, T_scale> frechet_lpdf(const T_y& y,
     return 0;
   }
 
+  using std::pow;
+
   T_partials_return logp(0);
 
   scalar_seq_view<T_y> y_vec(y);

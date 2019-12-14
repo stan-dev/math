@@ -1,7 +1,7 @@
-#include <stan/math/prim/scal/meta/ad_promotable.hpp>
+#include <stan/math/prim/meta/ad_promotable.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathMetaPrimScal, primitive_to_double) {
+TEST(MathMetaPrim, primitive_to_double) {
   EXPECT_TRUE((stan::math::ad_promotable<bool, double>::value));
   EXPECT_TRUE((stan::math::ad_promotable<char, double>::value));
   EXPECT_TRUE((stan::math::ad_promotable<unsigned char, double>::value));
@@ -24,7 +24,7 @@ TEST(MathMetaPrimScal, primitive_to_double) {
   EXPECT_TRUE((stan::math::ad_promotable<long double, double>::value));
 }
 
-TEST(MathMetaPrimScal, primitive_to_float) {
+TEST(MathMetaPrim, primitive_to_float) {
   EXPECT_TRUE((stan::math::ad_promotable<bool, float>::value));
   EXPECT_TRUE((stan::math::ad_promotable<char, float>::value));
   EXPECT_TRUE((stan::math::ad_promotable<unsigned char, float>::value));

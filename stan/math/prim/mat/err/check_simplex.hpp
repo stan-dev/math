@@ -5,7 +5,7 @@
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/err/constraint_tolerance.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/scal/err/throw_domain_error.hpp>
 #include <sstream>
 #include <string>
 
@@ -35,7 +35,7 @@ void check_simplex(const char* function, const char* name,
                    const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
   using size_type =
       typename index_type<Eigen::Matrix<T_prob, Eigen::Dynamic, 1> >::type;
-
+  using std::fabs;
   check_nonzero_size(function, name, theta);
   if (!(fabs(1.0 - theta.sum()) <= CONSTRAINT_TOLERANCE)) {
     std::stringstream msg;
@@ -44,7 +44,7 @@ void check_simplex(const char* function, const char* name,
     msg.precision(10);
     msg << " sum(" << name << ") = " << sum << ", but should be ";
     std::string msg_str(msg.str());
-    domain_error(function, name, 1.0, msg_str.c_str());
+    throw_domain_error(function, name, 1.0, msg_str.c_str());
   }
   for (size_type n = 0; n < theta.size(); n++) {
     if (!(theta[n] >= 0)) {
@@ -53,8 +53,8 @@ void check_simplex(const char* function, const char* name,
           << n + stan::error_index::value << "]"
           << " = ";
       std::string msg_str(msg.str());
-      domain_error(function, name, theta[n], msg_str.c_str(),
-                   ", but should be greater than or equal to 0");
+      throw_domain_error(function, name, theta[n], msg_str.c_str(),
+                         ", but should be greater than or equal to 0");
     }
   }
 }

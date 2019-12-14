@@ -2,8 +2,8 @@
 #define STAN_MATH_PRIM_SCAL_ERR_CHECK_LESS_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
-#include <stan/math/prim/scal/err/domain_error_vec.hpp>
+#include <stan/math/prim/scal/err/throw_domain_error.hpp>
+#include <stan/math/prim/scal/err/throw_domain_error_vec.hpp>
 #include <functional>
 #include <string>
 
@@ -22,7 +22,7 @@ struct less {
         msg << ", but must be less than ";
         msg << high_vec[n];
         std::string msg_str(msg.str());
-        domain_error(function, name, y, "is ", msg_str.c_str());
+        throw_domain_error(function, name, y, "is ", msg_str.c_str());
       }
     }
   }
@@ -39,7 +39,7 @@ struct less<T_y, T_high, true> {
         msg << ", but must be less than ";
         msg << high_vec[n];
         std::string msg_str(msg.str());
-        domain_error_vec(function, name, y, n, "is ", msg_str.c_str());
+        throw_domain_error_vec(function, name, y, n, "is ", msg_str.c_str());
       }
     }
   }

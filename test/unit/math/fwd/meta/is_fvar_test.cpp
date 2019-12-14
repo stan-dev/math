@@ -1,7 +1,7 @@
 #include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
 
-TEST(MetaTraitsFwdScal, is_fvar) {
+TEST(MathMetaFwd, is_fvar) {
   using stan::is_fvar;
   using stan::math::fvar;
   EXPECT_TRUE(is_fvar<fvar<int>>::value);

@@ -1,9 +1,9 @@
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/scal/meta/ad_promotable.hpp>
+#include <stan/math/prim/meta/ad_promotable.hpp>
 #include <gtest/gtest.h>
 #include <string>
 
-TEST(MathMetaFwdScal, primitive_to_fvar) {
+TEST(MathMetaFwd, primitive_to_fvar) {
   EXPECT_TRUE(
       (stan::math::ad_promotable<bool, stan::math::fvar<double>>::value));
   EXPECT_TRUE(

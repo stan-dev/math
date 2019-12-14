@@ -5,7 +5,6 @@
 #include <stan/math/prim/mat/fun/promote_common.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
-#include <boost/math/tools/promotion.hpp>
 
 namespace stan {
 namespace math {

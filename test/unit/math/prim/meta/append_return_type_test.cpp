@@ -5,7 +5,7 @@
 
 using stan::math::append_return_type;
 
-TEST(MetaTraitsPrimMat, test_append_return_type) {
+TEST(MathMetaPrim, test_append_return_type) {
   test::expect_same_type<int, append_return_type<int, int>::type>();
   test::expect_same_type<double, append_return_type<double, double>::type>();
   test::expect_same_type<

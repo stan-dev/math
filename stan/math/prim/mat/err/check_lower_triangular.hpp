@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/scal/err/throw_domain_error.hpp>
 #include <sstream>
 #include <string>
 
@@ -35,7 +35,7 @@ inline void check_lower_triangular(
             << " " << name << "[" << stan::error_index::value + m << ","
             << stan::error_index::value + n << "]=";
         std::string msg_str(msg.str());
-        domain_error(function, name, y(m, n), msg_str.c_str());
+        throw_domain_error(function, name, y(m, n), msg_str.c_str());
       }
     }
   }

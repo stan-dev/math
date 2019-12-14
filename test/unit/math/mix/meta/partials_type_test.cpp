@@ -1,7 +1,7 @@
 #include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
 
-TEST(MetaTraitsMixScal, partials_type) {
+TEST(MathMetaMix, partials_type) {
   using stan::math::fvar;
   using stan::math::var;
   using stan::partials_type;

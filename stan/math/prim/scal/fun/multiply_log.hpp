@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_FUN_MULTIPLY_LOG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <boost/math/tools/promotion.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {

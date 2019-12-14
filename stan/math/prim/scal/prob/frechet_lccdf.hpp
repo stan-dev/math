@@ -27,8 +27,6 @@ return_type_t<T_y, T_shape, T_scale> frechet_lccdf(const T_y& y,
 
   static const char* function = "frechet_lccdf";
 
-  using boost::math::tools::promote_args;
-
   if (size_zero(y, alpha, sigma)) {
     return 0.0;
   }
@@ -42,6 +40,8 @@ return_type_t<T_y, T_shape, T_scale> frechet_lccdf(const T_y& y,
 
   using std::exp;
   using std::log;
+  using std::pow;
+
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_scale> sigma_vec(sigma);
   scalar_seq_view<T_shape> alpha_vec(alpha);
