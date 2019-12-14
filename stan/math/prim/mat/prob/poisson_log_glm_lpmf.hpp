@@ -118,7 +118,7 @@ return_type_t<T_x_scalar, T_alpha, T_beta> poisson_log_glm_lpmf(
   }
 
   logp += sum(as_array_or_scalar(y_val_vec) * theta.array()
-                - exp(theta.array()));
+              - exp(theta.array()));
 
   operands_and_partials<Eigen::Matrix<T_x_scalar, T_x_rows, Eigen::Dynamic>,
                         T_alpha, T_beta>

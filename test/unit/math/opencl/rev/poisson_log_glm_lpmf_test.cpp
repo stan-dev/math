@@ -333,12 +333,16 @@ TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_big) {
 TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_poisson_log_vars_propto) {
   vector<int> y{2, 0, 1, 2, 1, 0, 0, 1, 3, 0};
   Matrix<double, Dynamic, Dynamic> x(10, 3);
-  x << -1.87936, 0.55093, -2.50689, 4.78584, 0.988523, -2.46141, 1.46229, 2.21497, 1.72734, -0.916165, -0.563808, 0.165279, -0.752066, 1.43575, 0.296557, -0.738422, 0.438686, 0.664492, 0.518203, -0.27485, 2, 0, 1, 2, 1, 0, 0, 1, 3, 0;
+  x << -1.87936, 0.55093, -2.50689, 4.78584, 0.988523, -2.46141, 1.46229,
+      2.21497, 1.72734, -0.916165, -0.563808, 0.165279, -0.752066, 1.43575,
+      0.296557, -0.738422, 0.438686, 0.664492, 0.518203, -0.27485, 2, 0, 1, 2,
+      1, 0, 0, 1, 3, 0;
   Matrix<var, Dynamic, 1> beta(3, 1);
   beta << 1.17711, 1.24432, -0.596639;
   var alpha = -1.04272;
-  var lp =  stan::math::poisson_log_glm_lpmf<true>(stan::math::to_matrix_cl(y), stan::math::to_matrix_cl(x), alpha, beta);
-  var lp1 =  stan::math::poisson_log_glm_lpmf<true>(y, x, alpha, beta);
+  var lp = stan::math::poisson_log_glm_lpmf<true>(
+      stan::math::to_matrix_cl(y), stan::math::to_matrix_cl(x), alpha, beta);
+  var lp1 = stan::math::poisson_log_glm_lpmf<true>(y, x, alpha, beta);
   EXPECT_FLOAT_EQ(lp.val(), lp1.val());
 }
 

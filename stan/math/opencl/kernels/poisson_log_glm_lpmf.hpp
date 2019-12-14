@@ -95,7 +95,7 @@ static const char* poisson_log_glm_kernel_code = STRINGIFY(
       local_storage[lid] = logp;
       barrier(CLK_LOCAL_MEM_FENCE);
       for (int step = lsize / REDUCTION_STEP_SIZE; step > 0;
-            step /= REDUCTION_STEP_SIZE) {
+           step /= REDUCTION_STEP_SIZE) {
         if (lid < step) {
           for (int i = 1; i < REDUCTION_STEP_SIZE; i++) {
             local_storage[lid] += local_storage[lid + step * i];
