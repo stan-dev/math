@@ -39,6 +39,7 @@
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
+#include <stan/math/prim/scal/err/throw_domain_error.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <algorithm>
 #include <cmath>
@@ -72,9 +73,12 @@ return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
     const T_delta& delta) {
   static const char* function = "wiener_lpdf";
 
+  using std::ceil;
   using std::exp;
+  using std::floor;
   using std::log;
-  using std::pow;
+  using std::sin;
+  using std::sqrt;
 
   static const double WIENER_ERR = 0.000001;
   static const double PI_TIMES_WIENER_ERR = pi() * WIENER_ERR;
@@ -127,8 +131,8 @@ return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
       std::stringstream msg;
       msg << ", but must be greater than nondecision time = " << tau_vec[i];
       std::string msg_str(msg.str());
-      domain_error(function, "Random variable", y_vec[i], " = ",
-                   msg_str.c_str());
+      throw_domain_error(function, "Random variable", y_vec[i], " = ",
+                         msg_str.c_str());
     }
   }
 

@@ -146,6 +146,58 @@ TEST(ProbDistributionsNormalIdGLM, gpu_matches_cpu_small_simple) {
                   beta_var2.adj().eval());
 }
 
+TEST(ProbDistributionsNormalIdGLM, gpu_broadcast_y) {
+  double eps = 1e-9;
+  int N = 3;
+  int M = 2;
+
+  double y = 13;
+  Matrix<double, Dynamic, 1> y_vec
+      = Matrix<double, Dynamic, 1>::Constant(N, 1, y);
+  Matrix<double, Dynamic, Dynamic> x(N, M);
+  x << -12, 46, -42, 24, 25, 27;
+  Matrix<double, Dynamic, 1> beta(M, 1);
+  beta << 0.3, 2;
+  double alpha = 0.3;
+  double sigma = 11;
+
+  matrix_cl<double> x_cl(x);
+  matrix_cl<double> y_cl(y);
+  matrix_cl<double> y_vec_cl(y_vec);
+
+  expect_near_rel(
+      "normal_id_glm_lpdf (OpenCL)",
+      stan::math::normal_id_glm_lpdf(y_cl, x_cl, alpha, beta, sigma),
+      stan::math::normal_id_glm_lpdf(y_vec_cl, x_cl, alpha, beta, sigma));
+  expect_near_rel(
+      "normal_id_glm_lpdf (OpenCL)",
+      stan::math::normal_id_glm_lpdf<true>(y_cl, x_cl, alpha, beta, sigma),
+      stan::math::normal_id_glm_lpdf<true>(y_vec_cl, x_cl, alpha, beta, sigma));
+
+  Matrix<var, Dynamic, 1> beta_var1 = beta;
+  Matrix<var, Dynamic, 1> beta_var2 = beta;
+  var alpha_var1 = alpha;
+  var alpha_var2 = alpha;
+  var sigma_var1 = sigma;
+  var sigma_var2 = sigma;
+
+  var res1 = stan::math::normal_id_glm_lpdf(y_cl, x_cl, alpha_var1, beta_var1,
+                                            sigma_var1);
+  var res2 = stan::math::normal_id_glm_lpdf(y_vec_cl, x_cl, alpha_var2,
+                                            beta_var2, sigma_var2);
+
+  (res1 + res2).grad();
+
+  expect_near_rel("normal_id_glm_lpdf (OpenCL)", res1.val(), res2.val());
+
+  expect_near_rel("normal_id_glm_lpdf (OpenCL)", alpha_var1.adj(),
+                  alpha_var2.adj());
+  expect_near_rel("normal_id_glm_lpdf (OpenCL)", sigma_var1.adj(),
+                  sigma_var2.adj());
+  expect_near_rel("normal_id_glm_lpdf (OpenCL)", beta_var1.adj().eval(),
+                  beta_var2.adj().eval());
+}
+
 TEST(ProbDistributionsNormalIdGLM, gpu_matches_cpu_zero_instances) {
   double eps = 1e-9;
   int N = 0;

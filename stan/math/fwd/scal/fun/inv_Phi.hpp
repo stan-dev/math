@@ -6,6 +6,7 @@
 #include <stan/math/prim/scal/fun/inv_Phi.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {

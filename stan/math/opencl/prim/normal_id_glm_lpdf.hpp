@@ -36,8 +36,10 @@ namespace math {
  * @tparam T_scale type of the (positive) scale(s);
  * this can be a vector (of the same length as y, for heteroskedasticity)
  * or a scalar.
- * @param y_cl vector parameter on OpenCL device
- * @param x_cl design matrix on OpenCL device
+ * @param y_cl scalar or vector parameter on OpenCL device. If it is a scalar it
+ * will be broadcast - used for all instances.
+ * @param x_cl design matrix on OpenCL device. This overload does not support
+ * broadcasting of a row vector x!
  * @param alpha intercept (in log odds)
  * @param beta weight vector
  * @param sigma (Sequence of) scale parameters for the normal
@@ -62,20 +64,23 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::VectorXd;
+  using std::log;
 
   const size_t N = x_cl.rows();
   const size_t M = x_cl.cols();
 
   check_positive_finite(function, "Scale vector", sigma);
-  check_size_match(function, "Rows of ", "x_cl", N, "rows of ", "y_cl",
-                   y_cl.rows());
+  if (y_cl.size() != 1) {
+    check_size_match(function, "Rows of ", "x_cl", N, "rows of ", "y_cl",
+                     y_cl.size());
+  }
   check_consistent_size(function, "Weight vector", beta, M);
   if (is_vector<T_scale>::value) {
-    check_size_match(function, "Rows of ", "y_cl", N, "size of ", "sigma",
+    check_size_match(function, "Rows of ", "x_cl", N, "size of ", "sigma",
                      length(sigma));
   }
   if (is_vector<T_alpha>::value) {
-    check_size_match(function, "Rows of ", "y_cl", N, "size of ", "alpha",
+    check_size_match(function, "Rows of ", "x_cl", N, "size of ", "alpha",
                      length(alpha));
   }
 
@@ -126,8 +131,9 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
         mu_derivative_cl, mu_derivative_sum_cl,
         y_minus_mu_over_sigma_squared_sum_cl, sigma_derivative_cl,
         log_sigma_sum_cl, y_cl, x_cl, alpha_cl, beta_cl, sigma_cl, N, M,
-        length(alpha) != 1, length(sigma) != 1, need_mu_derivative,
-        need_mu_derivative_sum, need_sigma_derivative, need_log_sigma_sum);
+        y_cl.size() != 1, length(alpha) != 1, length(sigma) != 1,
+        need_mu_derivative, need_mu_derivative_sum, need_sigma_derivative,
+        need_log_sigma_sum);
   } catch (const cl::Error &e) {
     check_opencl_error(function, e);
   }
@@ -159,7 +165,7 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
           = from_matrix_cl<Dynamic, 1>(sigma_derivative_cl);
     } else {
       ops_partials.edge3_.partials_[0]
-          = (y_scaled_sq_sum - N) * as_scalar(inv_sigma);
+          = (y_scaled_sq_sum - N) * forward_as<double>(inv_sigma);
     }
   }
 
@@ -181,7 +187,7 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
     if (is_vector<T_scale>::value) {
       logp -= sum(from_matrix_cl(log_sigma_sum_cl));
     } else {
-      logp -= N * log(as_scalar(sigma_val));
+      logp -= N * log(forward_as<double>(sigma_val));
     }
   }
   if (include_summand<propto, T_alpha, T_beta, T_scale>::value) {

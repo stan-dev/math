@@ -7,7 +7,6 @@
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_greater.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/meta.hpp>
 
 namespace stan {

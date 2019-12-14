@@ -21,6 +21,7 @@
 #include <stan/math/prim/mat/fun/trace_quad_form.hpp>
 #include <stan/math/prim/mat/fun/transpose.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <cmath>
 
 /*
   TODO: time-varying system matrices
@@ -80,6 +81,7 @@ gaussian_dlm_obs_lpdf(
   int r = y.rows();  // number of variables
   int T = y.cols();  // number of observations
   int n = G.rows();  // number of states
+  using std::pow;
 
   check_finite(function, "y", y);
   check_not_nan(function, "y", y);

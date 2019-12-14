@@ -9,6 +9,7 @@
 #include <stan/math/prim/arr/err/check_ordered.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <vector>
+#include <cmath>
 
 namespace stan {
 namespace math {
