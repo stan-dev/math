@@ -2,13 +2,15 @@
 #define STAN_MATH_PRIM_MAT_ERR_CHECK_SYMMETRIC_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/scal/err/throw_domain_error.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/err/constraint_tolerance.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/scal/fun/abs.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <sstream>
 #include <string>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -30,7 +32,7 @@ inline void check_symmetric(
     const char* function, const char* name,
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
   check_square(function, name, y);
-
+  using std::fabs;
   using size_type = typename index_type<
       Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>>::type;
 
@@ -51,8 +53,8 @@ inline void check_symmetric(
         msg2 << ", but " << name << "[" << stan::error_index::value + n << ","
              << stan::error_index::value + m << "] = " << y(n, m);
         std::string msg2_str(msg2.str());
-        domain_error(function, name, y(m, n), msg1_str.c_str(),
-                     msg2_str.c_str());
+        throw_domain_error(function, name, y(m, n), msg1_str.c_str(),
+                           msg2_str.c_str());
       }
     }
   }

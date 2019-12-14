@@ -15,6 +15,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_MATRIXEXPONENTIAL_H
 
 #include <stan/math/prim/mat/fun/value_of_rec.hpp>
+#include <cmath>
 
 namespace Eigen {
 

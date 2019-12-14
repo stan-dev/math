@@ -7,9 +7,12 @@
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
+#include <stan/math/prim/scal/fun/erf.hpp>
+#include <stan/math/prim/scal/fun/erfc.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
+#include <stan/math/prim/scal/fun/log1p.hpp>
 #include <cmath>
 #include <limits>
 
@@ -23,9 +26,10 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lcdf(const T_y& y,
   static const char* function = "normal_lcdf";
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
   using std::exp;
+  using std::fabs;
   using std::log;
-  using std::log1p;
   using std::pow;
+  using std::sqrt;
 
   T_partials_return cdf_log(0.0);
   if (size_zero(y, mu, sigma)) {
@@ -46,7 +50,7 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lcdf(const T_y& y,
   scalar_seq_view<T_scale> sigma_vec(sigma);
   size_t N = max_size(y, mu, sigma);
 
-  const double SQRT_TWO_OVER_PI = std::sqrt(2.0 / pi());
+  const double SQRT_TWO_OVER_PI = sqrt(2.0 / pi());
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return mu_dbl = value_of(mu_vec[n]);

@@ -23,6 +23,7 @@ namespace math {
  */
 template <typename T>
 inline T corr_constrain(const T& x) {
+  using std::tanh;
   return tanh(x);
 }
 
@@ -42,6 +43,7 @@ inline T corr_constrain(const T& x) {
  */
 template <typename T>
 inline T corr_constrain(const T& x, T& lp) {
+  using std::tanh;
   T tanh_x = tanh(x);
   lp += log1m(square(tanh_x));
   return tanh_x;

@@ -9,7 +9,6 @@
 #include <stan/math/prim/scal/fun/log1p_exp.hpp>
 #include <stan/math/prim/scal/fun/log_inv_logit_diff.hpp>
 #include <stan/math/prim/scal/fun/is_integer.hpp>
-#include <stan/math/prim/scal/err/domain_error_vec.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>

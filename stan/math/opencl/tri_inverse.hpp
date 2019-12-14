@@ -15,7 +15,7 @@
 #include <stan/math/opencl/zeros.hpp>
 #include <stan/math/opencl/prim/transpose.hpp>
 #include <stan/math/prim/meta.hpp>
-
+#include <cmath>
 #include <string>
 #include <vector>
 
@@ -58,7 +58,7 @@ inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
   if (max_1D_thread_block_size < thread_block_size_1D) {
     thread_block_size_1D = max_1D_thread_block_size;
   }
-  int max_2D_thread_block_dim = sqrt(max_1D_thread_block_size);
+  int max_2D_thread_block_dim = std::sqrt(max_1D_thread_block_size);
   if (max_2D_thread_block_dim < thread_block_2D_dim) {
     thread_block_2D_dim = max_2D_thread_block_dim;
   }
@@ -114,6 +114,7 @@ inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
     }
     return inv_mat;
   }
+  using std::ceil;
   parts = ceil(parts / 2.0);
 
   auto result_matrix_dim = thread_block_size_1D;

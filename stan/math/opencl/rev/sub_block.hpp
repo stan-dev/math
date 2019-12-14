@@ -5,7 +5,6 @@
 #include <stan/math/opencl/opencl_context.hpp>
 #include <stan/math/opencl/sub_block.hpp>
 #include <stan/math/opencl/rev/matrix_cl.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
 #include <cl.hpp>
 #include <vector>
 
