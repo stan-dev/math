@@ -4,7 +4,7 @@
 
 TEST(MetaTraitsRevArr, VectorBuilder_false_true) {
   using stan::VectorBuilder;
-  using stan::length;
+  using stan::size;
   using stan::math::var;
   using std::vector;
 
@@ -22,7 +22,7 @@ TEST(MetaTraitsRevArr, VectorBuilder_false_true) {
 
 TEST(MetaTraitsRevArr, VectorBuilder_true_true) {
   using stan::VectorBuilder;
-  using stan::length;
+  using stan::size;
   using stan::math::var;
   using std::vector;
 
@@ -52,7 +52,7 @@ TEST(MetaTraitsRevMat, VectorBuilder_false_true) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::VectorBuilder;
-  using stan::length;
+  using stan::size;
   using stan::math::var;
 
   Matrix<var, Dynamic, 1> a_vector(4);
@@ -72,7 +72,7 @@ TEST(MetaTraitsRevMat, VectorBuilder_true_true) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::VectorBuilder;
-  using stan::length;
+  using stan::size;
   using stan::math::var;
 
   Matrix<var, Dynamic, 1> a_vector(4);

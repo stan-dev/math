@@ -4,7 +4,7 @@
 
 TEST(MathMetaPrim, StdVectorBuilder_false_false_scalar) {
   using stan::StdVectorBuilder;
-  using stan::length;
+  using stan::size;
 
   double a_double(1);
 
@@ -15,7 +15,7 @@ TEST(MathMetaPrim, StdVectorBuilder_false_false_scalar) {
 
 TEST(MathMetaPrim, StdVectorBuilder_true_false_scalar) {
   using stan::StdVectorBuilder;
-  using stan::length;
+  using stan::size;
 
   double a_double(1);
 
@@ -41,7 +41,7 @@ TEST(MathMetaPrim, StdVectorBuilder_type_check_scalar) {
 
 TEST(MathMetaPrim, StdVectorBuilder_false_false_vector) {
   using stan::StdVectorBuilder;
-  using stan::length;
+  using stan::size;
   using std::vector;
 
   std::vector<double> a_std_vector(3);
@@ -53,7 +53,7 @@ TEST(MathMetaPrim, StdVectorBuilder_false_false_vector) {
 
 TEST(MathMetaPrim, StdVectorBuilder_true_false_vector) {
   using stan::StdVectorBuilder;
-  using stan::length;
+  using stan::size;
   using std::vector;
 
   std::vector<double> a_std_vector(3);
@@ -83,7 +83,7 @@ TEST(MathMetaPrim, StdVectorBuilder_false_false_matrix) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::StdVectorBuilder;
-  using stan::length;
+  using stan::size;
 
   Matrix<double, Dynamic, 1> a_vector(4);
   Matrix<double, 1, Dynamic> a_row_vector(5);
@@ -101,7 +101,7 @@ TEST(MathMetaPrim, StdVectorBuilder_true_false_matrix) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::StdVectorBuilder;
-  using stan::length;
+  using stan::size;
 
   Matrix<double, Dynamic, 1> a_vector(4);
   Matrix<double, 1, Dynamic> a_row_vector(5);

@@ -5,7 +5,7 @@
 TEST(AgradRevErrorHandlingMatrix, checkConsistentSizes) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using stan::length;
+  using stan::size;
   using stan::math::check_consistent_sizes;
   using stan::math::var;
 

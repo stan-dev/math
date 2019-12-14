@@ -2,8 +2,8 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMetaPrim, length_mvt_scalar) {
-  using stan::length_mvt;
+TEST(MathMetaPrim, size_mvt_scalar) {
+  using stan::size_mvt;
 
   double x1;
   EXPECT_THROW(size_mvt(x1), std::invalid_argument);
@@ -12,8 +12,8 @@ TEST(MathMetaPrim, length_mvt_scalar) {
   EXPECT_THROW(size_mvt(x2), std::invalid_argument);
 }
 
-TEST(MathMetaPrim, length_mvt_matrices_vectors) {
-  using stan::length_mvt;
+TEST(MathMetaPrim, size_mvt_matrices_vectors) {
+  using stan::size_mvt;
 
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> x1(2, 3);
   EXPECT_EQ(1U, size_mvt(x1));

@@ -2,22 +2,22 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-using stan::length;
+using stan::size;
 
-TEST(MathMetaPrim, length_scalar) {
-  using stan::length;
+TEST(MathMetaPrim, size_scalar) {
+  using stan::size;
   EXPECT_EQ(1U, size(27.0));
   EXPECT_EQ(1U, size(3));
 }
 
-TEST(MathMetaPrim, length_vector) {
-  using stan::length;
+TEST(MathMetaPrim, size_vector) {
+  using stan::size;
   std::vector<double> x(10);
   EXPECT_EQ(10U, size(x));
 }
 
-TEST(MathMetaPrim, length_matrices) {
-  using stan::length;
+TEST(MathMetaPrim, size_matrices) {
+  using stan::size;
 
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m(2, 3);
   m << 1, 2, 3, 4, 5, 6;
