@@ -7,7 +7,6 @@
 #include <cmath>
 #include <tuple>
 #include <vector>
-#include <cmath>
 
 namespace stan {
 namespace math {
