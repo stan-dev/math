@@ -117,6 +117,52 @@ TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_small_simple) {
                   beta_var2.adj().eval());
 }
 
+TEST(ProbDistributionsPoissonLogGLM, gpu_broadcast_y) {
+  double eps = 1e-9;
+  int N = 3;
+  int M = 2;
+
+  int y = 4;
+  vector<int> y_vec{y, y, y};
+  Matrix<double, Dynamic, Dynamic> x(N, M);
+  x << -12, 46, -42, 24, 25, 27;
+  Matrix<double, Dynamic, 1> beta(M, 1);
+  beta << 0.3, 2;
+  double alpha = 0.3;
+
+  matrix_cl<double> x_cl(x);
+  matrix_cl<int> y_cl(y);
+  matrix_cl<int> y_vec_cl(y_vec, N, 1);
+
+  expect_near_rel(
+      "poisson_log_glm_lpmf (OpenCL)",
+      stan::math::poisson_log_glm_lpmf(y_cl, x_cl, alpha, beta),
+      stan::math::poisson_log_glm_lpmf(y_vec_cl, x_cl, alpha, beta));
+  expect_near_rel(
+      "poisson_log_glm_lpmf (OpenCL)",
+      stan::math::poisson_log_glm_lpmf<true>(y_cl, x_cl, alpha, beta),
+      stan::math::poisson_log_glm_lpmf<true>(y_vec_cl, x_cl, alpha, beta));
+
+  Matrix<var, Dynamic, 1> beta_var1 = beta;
+  Matrix<var, Dynamic, 1> beta_var2 = beta;
+  var alpha_var1 = alpha;
+  var alpha_var2 = alpha;
+
+  var res1
+      = stan::math::poisson_log_glm_lpmf(y_cl, x_cl, alpha_var1, beta_var1);
+  var res2
+      = stan::math::poisson_log_glm_lpmf(y_vec_cl, x_cl, alpha_var2, beta_var2);
+
+  (res1 + res2).grad();
+
+  expect_near_rel("poisson_log_glm_lpmf (OpenCL)", res1.val(), res2.val());
+
+  expect_near_rel("poisson_log_glm_lpmf (OpenCL)", alpha_var1.adj(),
+                  alpha_var2.adj());
+  expect_near_rel("poisson_log_glm_lpmf (OpenCL)", beta_var1.adj().eval(),
+                  beta_var2.adj().eval());
+}
+
 TEST(ProbDistributionsPoissonLogGLM, gpu_matches_cpu_zero_instances) {
   double eps = 1e-9;
   int N = 0;

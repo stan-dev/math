@@ -18,7 +18,6 @@ namespace math {
 struct round_fun {
   template <typename T>
   static inline T fun(const T& x) {
-    using stan::math::round;
     return round(x);
   }
 };

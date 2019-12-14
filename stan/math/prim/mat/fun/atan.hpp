@@ -24,7 +24,7 @@ struct atan_fun {
 };
 
 /**
- * Vectorized version of asinh().
+ * Vectorized version of atan().
  * @param x Container.
  * @tparam T Container type.
  * @return Arctan of each value in x, in radians.

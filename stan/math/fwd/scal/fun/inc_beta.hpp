@@ -10,6 +10,7 @@
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/scal/fun/lbeta.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {

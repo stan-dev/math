@@ -6,6 +6,7 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/is_any_nan.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {

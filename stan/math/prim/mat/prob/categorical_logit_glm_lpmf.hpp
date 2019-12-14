@@ -6,6 +6,7 @@
 #include <stan/math/prim/scal/err/check_consistent_size.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <Eigen/Core>
+#include <cmath>
 
 namespace stan {
 namespace math {

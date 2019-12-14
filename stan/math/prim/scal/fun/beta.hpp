@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
