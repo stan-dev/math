@@ -1595,3 +1595,43 @@ TEST(mathMix, powInt) {
   var_t x{3.0};
   auto fx = pow(x, 2);
 }
+
+template <typename T>
+void expect_complex_constructor() {
+  std::complex<T> a{1};
+  std::complex<T> b{2.0};
+  std::complex<T> c{T(1.0)};
+  std::complex<T> d{std::complex<double>(2.0)};
+  std::complex<T> e{std::complex<T>(1.0)};
+  SUCCEED();
+}
+TEST(mathMix, stdComplexConstructor) {
+  using stan::math::fvar;
+  using stan::math::var;
+  expect_complex_constructor<double>();
+  expect_complex_constructor<fvar<double>>();
+  expect_complex_constructor<fvar<fvar<double>>>();
+  expect_complex_constructor<var>();
+  expect_complex_constructor<fvar<var>>();
+  expect_complex_constructor<fvar<fvar<var>>>();
+}
+
+template <typename T>
+void expect_complex_assignment() {
+  std::complex<T> a = 1;
+  std::complex<T> b = 2.0;
+  std::complex<T> c = T(1.0);
+  std::complex<T> d = std::complex<double>(2.0);
+  std::complex<T> e = std::complex<T>(1.0);
+  SUCCEED();
+}
+TEST(mathMix, stdComplexAssignment) {
+  using stan::math::fvar;
+  using stan::math::var;
+  expect_complex_assignment<double>();
+  expect_complex_assignment<fvar<double>>();
+  expect_complex_assignment<fvar<fvar<double>>>();
+  expect_complex_assignment<var>();
+  expect_complex_assignment<fvar<var>>();
+  expect_complex_assignment<fvar<fvar<var>>>();
+}

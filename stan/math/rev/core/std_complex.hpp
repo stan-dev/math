@@ -21,6 +21,7 @@
 #include <stan/math/rev/scal/fun/square.hpp>
 #include <stan/math/rev/scal/fun/sqrt.hpp>
 #include <stan/math/rev/scal/fun/value_of_rec.hpp>
+#include <cinttypes>
 #include <cmath>
 #include <complex>
 #include <cstddef>
@@ -319,6 +320,31 @@ class complex_base {
    * @param[in] x value to assign
    * @return this complex number
    */
+  complex_type& operator=(const V& x) {
+    re_ = x;
+    im_ = 0;
+    return derived_complex_ref();
+  }
+
+  complex_type& operator=(float x) {
+    re_ = x;
+    im_ = 0;
+    return derived_complex_ref();
+  }
+
+  complex_type& operator=(double x) {
+    re_ = x;
+    im_ = 0;
+    return derived_complex_ref();
+  }
+
+  complex_type& operator=(long double x) {
+    re_ = x;
+    im_ = 0;
+    return derived_complex_ref();
+  }
+
+  // this one's not part of the std::complex spec
   template <typename T>
   complex_type& operator=(const T& x) {
     re_ = x;
@@ -337,6 +363,12 @@ class complex_base {
    */
   template <typename T>
   complex_type& operator=(const std::complex<T>& x) {
+    re_ = x.real();
+    im_ = x.imag();
+    return derived_complex_ref();
+  }
+
+  complex_type& operator=(const std::complex<V>& x) {
     re_ = x.real();
     im_ = x.imag();
     return derived_complex_ref();
@@ -530,6 +562,24 @@ class complex<stan::math::var>
   template <typename V>
   complex(const complex<V>& other) : complex_base(other) {}
 
+  complex(float x)  // NOLINT(runtime/explicit)
+      : stan::math::complex_base<stan::math::var>(x) {}
+
+  complex(double x)  // NOLINT(runtime/explicit)
+      : stan::math::complex_base<stan::math::var>(x) {}
+
+  complex(long double x)  // NOLINT(runtime/explicit)
+      : stan::math::complex_base<stan::math::var>(x) {}
+
+  complex(short int x)  // NOLINT
+      : stan::math::complex_base<stan::math::var>(static_cast<double>(x)) {}
+
+  complex(int x)  // NOLINT(runtime/explicit)
+      : stan::math::complex_base<stan::math::var>(static_cast<double>(x)) {}
+
+  complex(long int x)  // NOLINT
+      : stan::math::complex_base<stan::math::var>(static_cast<double>(x)) {}
+
   /**
    * Destroy this complex number.
    */
@@ -700,6 +750,10 @@ class complex<stan::math::fvar<T>>
   complex(const value_type& re = value_type(0))  // NOLINT(runtime/explicit)
       : stan::math::complex_base<stan::math::fvar<T>>(re) {}
 
+  // template <typename V>
+  // Ncomplex(const V& re)  // NOLINT(runtime/explicit)
+  // : stan::math::complex_base<stan::math::fvar<T>>(re) { }
+
   /**
    * Constructs the complex number from the specified complex number.
    *
@@ -709,6 +763,24 @@ class complex<stan::math::fvar<T>>
   template <typename V>
   complex(const complex<V>& other)
       : stan::math::complex_base<stan::math::fvar<T>>(other) {}
+
+  complex(float x)  // NOLINT(runtime/explicit)
+      : stan::math::complex_base<stan::math::fvar<T>>(x) {}
+
+  complex(double x)  // NOLINT(runtime/explicit)
+      : stan::math::complex_base<stan::math::fvar<T>>(x) {}
+
+  complex(long double x)  // NOLINT(runtime/explicit)
+      : stan::math::complex_base<stan::math::fvar<T>>(x) {}
+
+  complex(short int x)  // NOLINT
+      : stan::math::complex_base<stan::math::fvar<T>>(static_cast<double>(x)) {}
+
+  complex(int x)  // NOLINT(runtime/explicit)
+      : stan::math::complex_base<stan::math::fvar<T>>(static_cast<double>(x)) {}
+
+  complex(long int x)  // NOLINT
+      : stan::math::complex_base<stan::math::fvar<T>>(static_cast<double>(x)) {}
 
   /**
    * Destroy this complex number.
@@ -727,6 +799,8 @@ class complex<stan::math::fvar<T>>
   complex_type& operator=(const V& x) {
     return base_t::operator=(x);
   }
+
+  complex_type& operator=(const int& x) { return base_t::operator=(x); }
 
   /**
    * Assign the real and imaginary parts of the specified complex
