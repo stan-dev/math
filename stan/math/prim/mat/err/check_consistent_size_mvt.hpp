@@ -26,7 +26,7 @@ inline void check_consistent_size_mvt(const char* function, const char* name,
                                       const T& x, size_t expected_size) {
   size_t size_x = 0;
 
-  if (length(x) == 0) {
+  if (size(x) == 0) {
     size_x = 0;
     if (expected_size == 0) {
       return;

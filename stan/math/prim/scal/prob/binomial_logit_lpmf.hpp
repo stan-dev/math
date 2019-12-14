@@ -69,14 +69,14 @@ return_type_t<T_prob> binomial_logit_lpmf(const T_n& n, const T_N& N,
   }
 
   VectorBuilder<true, T_partials_return, T_prob> log_inv_logit_alpha(
-      length(alpha));
-  for (size_t i = 0; i < length(alpha); ++i) {
+      size(alpha));
+  for (size_t i = 0; i < size(alpha); ++i) {
     log_inv_logit_alpha[i] = log_inv_logit(value_of(alpha_vec[i]));
   }
 
   VectorBuilder<true, T_partials_return, T_prob> log_inv_logit_neg_alpha(
-      length(alpha));
-  for (size_t i = 0; i < length(alpha); ++i) {
+      size(alpha));
+  for (size_t i = 0; i < size(alpha); ++i) {
     log_inv_logit_neg_alpha[i] = log_inv_logit(-value_of(alpha_vec[i]));
   }
 
@@ -85,7 +85,7 @@ return_type_t<T_prob> binomial_logit_lpmf(const T_n& n, const T_N& N,
             + (N_vec[i] - n_vec[i]) * log_inv_logit_neg_alpha[i];
   }
 
-  if (length(alpha) == 1) {
+  if (size(alpha) == 1) {
     T_partials_return temp1 = 0;
     T_partials_return temp2 = 0;
     for (size_t i = 0; i < size; ++i) {

@@ -52,8 +52,8 @@ return_type_t<T_y, T_shape, T_scale> frechet_lpdf(const T_y& y,
 
   VectorBuilder<include_summand<propto, T_shape>::value, T_partials_return,
                 T_shape>
-      log_alpha(length(alpha));
-  for (size_t i = 0; i < length(alpha); i++) {
+      log_alpha(size(alpha));
+  for (size_t i = 0; i < size(alpha); i++) {
     if (include_summand<propto, T_shape>::value) {
       log_alpha[i] = log(value_of(alpha_vec[i]));
     }
@@ -61,8 +61,8 @@ return_type_t<T_y, T_shape, T_scale> frechet_lpdf(const T_y& y,
 
   VectorBuilder<include_summand<propto, T_y, T_shape>::value, T_partials_return,
                 T_y>
-      log_y(length(y));
-  for (size_t i = 0; i < length(y); i++) {
+      log_y(size(y));
+  for (size_t i = 0; i < size(y); i++) {
     if (include_summand<propto, T_y, T_shape>::value) {
       log_y[i] = log(value_of(y_vec[i]));
     }
@@ -70,8 +70,8 @@ return_type_t<T_y, T_shape, T_scale> frechet_lpdf(const T_y& y,
 
   VectorBuilder<include_summand<propto, T_shape, T_scale>::value,
                 T_partials_return, T_scale>
-      log_sigma(length(sigma));
-  for (size_t i = 0; i < length(sigma); i++) {
+      log_sigma(size(sigma));
+  for (size_t i = 0; i < size(sigma); i++) {
     if (include_summand<propto, T_shape, T_scale>::value) {
       log_sigma[i] = log(value_of(sigma_vec[i]));
     }
@@ -79,8 +79,8 @@ return_type_t<T_y, T_shape, T_scale> frechet_lpdf(const T_y& y,
 
   VectorBuilder<include_summand<propto, T_y, T_shape, T_scale>::value,
                 T_partials_return, T_y>
-      inv_y(length(y));
-  for (size_t i = 0; i < length(y); i++) {
+      inv_y(size(y));
+  for (size_t i = 0; i < size(y); i++) {
     if (include_summand<propto, T_y, T_shape, T_scale>::value) {
       inv_y[i] = 1.0 / value_of(y_vec[i]);
     }

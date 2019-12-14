@@ -47,21 +47,21 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lccdf(
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
-  for (size_t i = 0; i < stan::length(n); i++) {
+  for (size_t i = 0; i < size(n); i++) {
     if (value_of(n_vec[i]) < 0) {
       return ops_partials.build(0.0);
     }
   }
 
   VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
-      digammaN_vec(stan::length(alpha));
+      digammaN_vec(size(alpha));
   VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
-      digammaAlpha_vec(stan::length(alpha));
+      digammaAlpha_vec(size(alpha));
   VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
-      digammaSum_vec(stan::length(alpha));
+      digammaSum_vec(size(alpha));
 
   if (!is_constant_all<T_shape>::value) {
-    for (size_t i = 0; i < stan::length(alpha); i++) {
+    for (size_t i = 0; i < size(alpha); i++) {
       const T_partials_return n_dbl = value_of(n_vec[i]);
       const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
 

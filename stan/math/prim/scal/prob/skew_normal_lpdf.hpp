@@ -52,11 +52,11 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
   scalar_seq_view<T_shape> alpha_vec(alpha);
   size_t N = max_size(y, mu, sigma, alpha);
 
-  VectorBuilder<true, T_partials_return, T_scale> inv_sigma(length(sigma));
+  VectorBuilder<true, T_partials_return, T_scale> inv_sigma(size(sigma));
   VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
                 T_scale>
-      log_sigma(length(sigma));
-  for (size_t i = 0; i < length(sigma); i++) {
+      log_sigma(size(sigma));
+  for (size_t i = 0; i < size(sigma); i++) {
     inv_sigma[i] = 1.0 / value_of(sigma_vec[i]);
     if (include_summand<propto, T_scale>::value) {
       log_sigma[i] = log(value_of(sigma_vec[i]));

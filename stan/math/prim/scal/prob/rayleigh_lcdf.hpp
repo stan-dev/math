@@ -40,8 +40,8 @@ return_type_t<T_y, T_scale> rayleigh_lcdf(const T_y& y, const T_scale& sigma) {
   scalar_seq_view<T_scale> sigma_vec(sigma);
   size_t N = max_size(y, sigma);
 
-  VectorBuilder<true, T_partials_return, T_scale> inv_sigma(length(sigma));
-  for (size_t i = 0; i < length(sigma); i++) {
+  VectorBuilder<true, T_partials_return, T_scale> inv_sigma(size(sigma));
+  for (size_t i = 0; i < size(sigma); i++) {
     inv_sigma[i] = 1.0 / value_of(sigma_vec[i]);
   }
 

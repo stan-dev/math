@@ -243,9 +243,9 @@ class ops_partials_edge<double, std::vector<std::vector<var>>> {
   using partial_t = std::vector<double>;
   std::vector<partial_t> partials_vec_;
   explicit ops_partials_edge(const Op& ops)
-      : partials_vec_(length(ops)), operands_(ops) {
-    for (size_t i = 0; i < length(ops); ++i) {
-      partials_vec_[i] = partial_t(length(ops[i]), 0.0);
+      : partials_vec_(size(ops)), operands_(ops) {
+    for (size_t i = 0; i < size(ops); ++i) {
+      partials_vec_[i] = partial_t(size(ops[i]), 0.0);
     }
   }
 

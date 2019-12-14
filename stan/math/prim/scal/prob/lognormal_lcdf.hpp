@@ -44,7 +44,7 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lcdf(const T_y& y, const T_loc& mu,
 
   const double sqrt_pi = std::sqrt(pi());
 
-  for (size_t i = 0; i < stan::length(y); i++) {
+  for (size_t i = 0; i < size(y); i++) {
     if (value_of(y_vec[i]) == 0.0) {
       return ops_partials.build(negative_infinity());
     }

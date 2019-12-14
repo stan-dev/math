@@ -55,7 +55,7 @@ return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
   scalar_seq_view<T_dof> nu_vec(nu);
   size_t N = max_size(y, nu);
 
-  for (size_t n = 0; n < length(y); n++) {
+  for (size_t n = 0; n < size(y); n++) {
     if (value_of(y_vec[n]) < 0) {
       return LOG_ZERO;
     }
@@ -69,27 +69,27 @@ return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
 
   VectorBuilder<include_summand<propto, T_y, T_dof>::value, T_partials_return,
                 T_y>
-      log_y(length(y));
-  for (size_t i = 0; i < length(y); i++) {
+      log_y(size(y));
+  for (size_t i = 0; i < size(y); i++) {
     if (include_summand<propto, T_y, T_dof>::value) {
       log_y[i] = log(value_of(y_vec[i]));
     }
   }
 
   VectorBuilder<include_summand<propto, T_y>::value, T_partials_return, T_y>
-      inv_y(length(y));
-  for (size_t i = 0; i < length(y); i++) {
+      inv_y(size(y));
+  for (size_t i = 0; i < size(y); i++) {
     if (include_summand<propto, T_y>::value) {
       inv_y[i] = 1.0 / value_of(y_vec[i]);
     }
   }
 
   VectorBuilder<include_summand<propto, T_dof>::value, T_partials_return, T_dof>
-      lgamma_half_nu(length(nu));
+      lgamma_half_nu(size(nu));
   VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
-      digamma_half_nu_over_two(length(nu));
+      digamma_half_nu_over_two(size(nu));
 
-  for (size_t i = 0; i < length(nu); i++) {
+  for (size_t i = 0; i < size(nu); i++) {
     T_partials_return half_nu = 0.5 * value_of(nu_vec[i]);
     if (include_summand<propto, T_dof>::value) {
       lgamma_half_nu[i] = lgamma(half_nu);

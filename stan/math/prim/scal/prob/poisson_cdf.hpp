@@ -43,7 +43,7 @@ return_type_t<T_rate> poisson_cdf(const T_n& n, const T_rate& lambda) {
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
-  for (size_t i = 0; i < stan::length(n); i++) {
+  for (size_t i = 0; i < size(n); i++) {
     if (value_of(n_vec[i]) < 0) {
       return ops_partials.build(0.0);
     }
@@ -69,7 +69,7 @@ return_type_t<T_rate> poisson_cdf(const T_n& n, const T_rate& lambda) {
   }
 
   if (!is_constant_all<T_rate>::value) {
-    for (size_t i = 0; i < stan::length(lambda); ++i) {
+    for (size_t i = 0; i < size(lambda); ++i) {
       ops_partials.edge1_.partials_[i] *= P;
     }
   }

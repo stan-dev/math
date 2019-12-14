@@ -62,8 +62,8 @@ return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
   // FIXME: cache value_of for alpha_vec?  faster if only one?
   VectorBuilder<include_summand<propto, T_log_rate>::value, T_partials_return,
                 T_log_rate>
-      exp_alpha(length(alpha));
-  for (size_t i = 0; i < length(alpha); i++) {
+      exp_alpha(size(alpha));
+  for (size_t i = 0; i < size(alpha); i++) {
     if (include_summand<propto, T_log_rate>::value) {
       exp_alpha[i] = exp(value_of(alpha_vec[i]));
     }

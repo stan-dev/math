@@ -69,8 +69,8 @@ return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
     }
   }
 
-  VectorBuilder<true, T_partials_return, T_prob> log1m_theta(length(theta));
-  for (size_t i = 0; i < length(theta); ++i) {
+  VectorBuilder<true, T_partials_return, T_prob> log1m_theta(size(theta));
+  for (size_t i = 0; i < size(theta); ++i) {
     log1m_theta[i] = log1m(value_of(theta_vec[i]));
   }
 
@@ -79,7 +79,7 @@ return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
             + (N_vec[i] - n_vec[i]) * log1m_theta[i];
   }
 
-  if (length(theta) == 1) {
+  if (size(theta) == 1) {
     T_partials_return temp1 = 0;
     T_partials_return temp2 = 0;
     for (size_t i = 0; i < size; ++i) {

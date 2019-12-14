@@ -359,7 +359,7 @@ int create_files(const int& argc, const char* argv[], const int& index,
   string in_name = argv[1];
 
   size_t last_in_suffix
-      = in_name.find_last_of(in_suffix) + 1 - in_suffix.length();
+      = in_name.find_last_of(in_suffix) + 1 - in_suffix.size();
   string out_name_base = in_name.substr(0, last_in_suffix);
 
   string file = read_file(in_name);

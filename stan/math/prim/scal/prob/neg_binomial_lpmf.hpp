@@ -56,14 +56,14 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
     lambda[i] = value_of(alpha_vec[i]) / value_of(beta_vec[i]);
   }
 
-  VectorBuilder<true, T_partials_return, T_inv_scale> log1p_beta(length(beta));
-  for (size_t i = 0; i < length(beta); ++i) {
+  VectorBuilder<true, T_partials_return, T_inv_scale> log1p_beta(size(beta));
+  for (size_t i = 0; i < size(beta); ++i) {
     log1p_beta[i] = log1p(value_of(beta_vec[i]));
   }
 
   VectorBuilder<true, T_partials_return, T_inv_scale> log_beta_m_log1p_beta(
-      length(beta));
-  for (size_t i = 0; i < length(beta); ++i) {
+      size(beta));
+  for (size_t i = 0; i < size(beta); ++i) {
     log_beta_m_log1p_beta[i] = log(value_of(beta_vec[i])) - log1p_beta[i];
   }
 
@@ -76,18 +76,18 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
   }
 
   VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
-      digamma_alpha(length(alpha));
+      digamma_alpha(size(alpha));
   if (!is_constant_all<T_shape>::value) {
-    for (size_t i = 0; i < length(alpha); ++i) {
+    for (size_t i = 0; i < size(alpha); ++i) {
       digamma_alpha[i] = digamma(value_of(alpha_vec[i]));
     }
   }
 
   VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return,
                 T_inv_scale>
-      log_beta(length(beta));
+      log_beta(size(beta));
   if (!is_constant_all<T_shape>::value) {
-    for (size_t i = 0; i < length(beta); ++i) {
+    for (size_t i = 0; i < size(beta); ++i) {
       log_beta[i] = log(value_of(beta_vec[i]));
     }
   }

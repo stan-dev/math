@@ -12,7 +12,7 @@ namespace stan {
  * that are always of length 1.
  */
 template <typename T, typename = require_stan_scalar_t<T>>
-inline size_t length(const T& /*x*/) {
+inline size_t size(const T& /*x*/) {
   return 1U;
 }
 
@@ -23,7 +23,7 @@ inline size_t length(const T& /*x*/) {
  * @tparam T type of m
  */
 template <typename T, typename = require_not_stan_scalar_t<T>, typename = void>
-inline size_t length(const T& m) {
+inline size_t size(const T& m) {
   return m.size();
 }
 }  // namespace stan
