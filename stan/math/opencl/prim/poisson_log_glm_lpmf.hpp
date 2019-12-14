@@ -96,8 +96,8 @@ return_type_t<T_alpha, T_beta> poisson_log_glm_lpmf(
     opencl_kernels::poisson_log_glm(
         cl::NDRange(local_size * wgs), cl::NDRange(local_size),
         theta_derivative_cl, theta_derivative_sum_cl, logp_cl, y_cl, x_cl,
-        alpha_cl, beta_cl, N, M, y_cl.size() != 1, size(alpha) != 1,
-        need_logp1, need_logp2);
+        alpha_cl, beta_cl, N, M, y_cl.size() != 1, size(alpha) != 1, need_logp1,
+        need_logp2);
   } catch (const cl::Error& e) {
     check_opencl_error(function, e);
   }

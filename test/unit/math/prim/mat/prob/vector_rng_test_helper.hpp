@@ -234,8 +234,7 @@ struct check_dist_throws {
     resize_if_vector(p2, 4);  // No-op if p2 is a scalar
     resize_if_vector(p3, 4);  // No-op if p3 is a scalar
     if (size(p1) != 1
-        && ((p2_is_used && size(p2) != 1)
-            || (p3_is_used && size(p3) != 1))) {
+        && ((p2_is_used && size(p2) != 1) || (p3_is_used && size(p3) != 1))) {
       assign_parameter_values(p1, good_p1);
       assign_parameter_values(p2, good_p2);
       assign_parameter_values(p3, good_p3);
@@ -377,8 +376,8 @@ struct check_quantiles {
     bool p2_is_used = rig.p2_is_used();
     bool p3_is_used = rig.p3_is_used();
 
-    int M = std::max({size(p1), (p2_is_used) ? size(p2) : 1,
-                      (p3_is_used) ? size(p3) : 1});
+    int M = std::max(
+        {size(p1), (p2_is_used) ? size(p2) : 1, (p3_is_used) ? size(p3) : 1});
 
     stan::scalar_seq_view<T_param1> p1_vec(p1);
     stan::scalar_seq_view<T_param2> p2_vec(p2);
@@ -522,8 +521,8 @@ struct check_counts {
     bool p2_is_used = rig.p2_is_used();
     bool p3_is_used = rig.p3_is_used();
 
-    int M = std::max({size(p1), (p2_is_used) ? size(p2) : 1,
-                      (p3_is_used) ? size(p3) : 1});
+    int M = std::max(
+        {size(p1), (p2_is_used) ? size(p2) : 1, (p3_is_used) ? size(p3) : 1});
 
     stan::scalar_seq_view<T_param1> p1_vec(p1);
     stan::scalar_seq_view<T_param2> p2_vec(p2);
