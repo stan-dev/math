@@ -23,7 +23,7 @@ template <typename T>
 inline void check_consistent_size(const char* function, const char* name,
                                   const T& x, size_t expected_size) {
   if (!is_vector<T>::value
-      || (is_vector<T>::value && expected_size == stan::size_of(x))) {
+      || (is_vector<T>::value && expected_size == length(x))) {
     return;
   }
 
@@ -35,7 +35,7 @@ inline void check_consistent_size(const char* function, const char* name,
       << "multidimensional values of the same shape.";
   std::string msg_str(msg.str());
 
-  invalid_argument(function, name, stan::size_of(x),
+  invalid_argument(function, name, length(x),
                    "has dimension = ", msg_str.c_str());
 }
 
