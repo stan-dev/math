@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include <test/unit/util.hpp>
 #include <test/unit/math/prim/mat/util.hpp>
 #include <stan/math/prim/mat/fun/matrix_exp.hpp>
 #include <stan/math/prim/mat/fun/scale_matrix_exp_multiply.hpp>
@@ -35,6 +36,11 @@ TEST(MathMatrixPrimMat, scale_matrix_exp_multiply) {
   Eigen::MatrixXd A(0, 0);
   Eigen::MatrixXd B(0, 0);
   EXPECT_EQ(stan::math::scale_matrix_exp_multiply(t, A, B).size(), 0);
+
+  Eigen::MatrixXd C(0, 2);
+  Eigen::MatrixXd M = stan::math::scale_matrix_exp_multiply(t, A, C);
+  EXPECT_EQ(A.rows(), M.rows());
+  EXPECT_EQ(C.cols(), M.cols());
 
   test_scale_matrix_exp_multiply<1, 1>();
   test_scale_matrix_exp_multiply<1, 5>();
