@@ -4,8 +4,8 @@
 #include <stan/math/prim/meta.hpp>
 #include <boost/math/distributions/hypergeometric.hpp>
 
-#include <stan/math/prim/scal/err/check_bounded.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/prob/uniform_rng.hpp>
 
 namespace stan {

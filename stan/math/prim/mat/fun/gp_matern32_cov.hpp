@@ -5,9 +5,9 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/divide_columns.hpp>
 #include <stan/math/prim/mat/fun/distance.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/divide.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/squared_distance.hpp>

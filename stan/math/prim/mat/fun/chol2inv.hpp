@@ -6,8 +6,8 @@
 #include <stan/math/prim/mat/fun/dot_product.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left_tri_low.hpp>
 #include <stan/math/prim/scal/fun/inv_square.hpp>
-#include <stan/math/prim/mat/err/check_square.hpp>
-#include <stan/math/prim/mat/err/check_lower_triangular.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/err.hpp>
 
 namespace stan {
 namespace math {

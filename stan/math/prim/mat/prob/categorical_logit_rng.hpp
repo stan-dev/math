@@ -4,8 +4,8 @@
 #include <stan/math/prim/meta.hpp>
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/mat/err/check_simplex.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/cumulative_sum.hpp>
 #include <stan/math/prim/mat/fun/softmax.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>

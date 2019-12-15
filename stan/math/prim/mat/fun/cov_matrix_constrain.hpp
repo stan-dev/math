@@ -4,7 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/multiply_lower_tri_self_transpose.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <cmath>
 

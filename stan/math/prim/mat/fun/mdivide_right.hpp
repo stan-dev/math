@@ -3,8 +3,8 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/promote_common.hpp>
-#include <stan/math/prim/mat/err/check_multiplicable.hpp>
-#include <stan/math/prim/mat/err/check_square.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/err.hpp>
 
 namespace stan {
 namespace math {

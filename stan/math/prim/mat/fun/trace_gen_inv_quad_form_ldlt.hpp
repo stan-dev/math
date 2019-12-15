@@ -4,8 +4,8 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/LDLT_factor.hpp>
-#include <stan/math/prim/mat/err/check_multiplicable.hpp>
-#include <stan/math/prim/mat/err/check_square.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left_ldlt.hpp>
 #include <stan/math/prim/mat/fun/trace.hpp>
 #include <stan/math/prim/mat/fun/transpose.hpp>

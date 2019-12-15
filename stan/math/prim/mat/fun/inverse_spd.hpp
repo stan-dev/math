@@ -2,9 +2,9 @@
 #define STAN_MATH_PRIM_MAT_FUN_INVERSE_SPD_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/err/check_nonempty.hpp>
-#include <stan/math/prim/mat/err/check_symmetric.hpp>
-#include <stan/math/prim/scal/err/throw_domain_error.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/err.hpp>
 
 namespace stan {
 namespace math {

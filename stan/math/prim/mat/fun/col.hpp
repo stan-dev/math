@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_COL_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/err/check_column_index.hpp>
+#include <stan/math/prim/err.hpp>
 
 namespace stan {
 namespace math {

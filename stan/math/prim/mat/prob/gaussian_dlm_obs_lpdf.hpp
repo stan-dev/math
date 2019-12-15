@@ -2,12 +2,12 @@
 #define STAN_MATH_PRIM_MAT_PROB_GAUSSIAN_DLM_OBS_LPDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/mat/err/check_pos_definite.hpp>
-#include <stan/math/prim/mat/err/check_pos_semidefinite.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/add.hpp>
 #include <stan/math/prim/mat/fun/dot_product.hpp>
 #include <stan/math/prim/mat/fun/inverse_spd.hpp>

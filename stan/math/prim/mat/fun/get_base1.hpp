@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_GET_BASE1_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/err/check_range.hpp>
+#include <stan/math/prim/err.hpp>
 #include <vector>
 
 namespace stan {

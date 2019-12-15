@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/LDLT_factor.hpp>
-#include <stan/math/prim/mat/err/check_multiplicable.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/promote_common.hpp>
 #include <type_traits>
 

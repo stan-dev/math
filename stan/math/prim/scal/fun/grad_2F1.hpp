@@ -3,8 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/err/throw_domain_error.hpp>
-#include <stan/math/prim/scal/err/check_2F1_converges.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/err.hpp>
 #include <cmath>
 #include <limits>
 

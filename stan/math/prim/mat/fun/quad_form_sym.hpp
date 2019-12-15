@@ -2,8 +2,8 @@
 #define STAN_MATH_PRIM_MAT_FUN_QUAD_FORM_SYM_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/err/check_multiplicable.hpp>
-#include <stan/math/prim/mat/err/check_symmetric.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/err.hpp>
 
 namespace stan {
 namespace math {

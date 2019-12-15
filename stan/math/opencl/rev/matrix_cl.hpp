@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_OPENCL_REV_MATRIX_CL_HPP
 #define STAN_MATH_OPENCL_REV_MATRIX_CL_HPP
 #ifdef STAN_OPENCL
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/arr/fun/vec_concat.hpp>
 #include <cl.hpp>
 #include <iostream>

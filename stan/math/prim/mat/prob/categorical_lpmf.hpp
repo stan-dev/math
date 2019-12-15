@@ -2,8 +2,8 @@
 #define STAN_MATH_PRIM_MAT_PROB_CATEGORICAL_LPMF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/mat/err/check_simplex.hpp>
-#include <stan/math/prim/scal/err/check_bounded.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/sum.hpp>
 #include <cmath>
 #include <vector>

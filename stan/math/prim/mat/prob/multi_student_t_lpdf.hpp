@@ -2,14 +2,14 @@
 #define STAN_MATH_PRIM_MAT_PROB_MULTI_STUDENT_T_LPDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/mat/err/check_consistent_sizes_mvt.hpp>
-#include <stan/math/prim/mat/err/check_ldlt_factor.hpp>
-#include <stan/math/prim/mat/err/check_symmetric.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/prob/multi_normal_log.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <stan/math/prim/scal/fun/log1p.hpp>

@@ -6,7 +6,7 @@
 #include <stan/math/prim/arr/fun/value_of.hpp>
 #include <stan/math/prim/arr/functor/coupled_ode_observer.hpp>
 #include <stan/math/prim/arr/functor/coupled_ode_system.hpp>
-#include <stan/math/prim/mat/err/check_flag_sundials.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/rev/arr/functor/coupled_ode_system.hpp>
 #include <stan/math/rev/mat/functor/cvodes_utils.hpp>
 #include <stan/math/rev/mat/functor/cvodes_ode_data.hpp>

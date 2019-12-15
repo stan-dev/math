@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_SORT_ASC_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
+#include <stan/math/prim/err.hpp>
 #include <algorithm>
 
 namespace stan {
