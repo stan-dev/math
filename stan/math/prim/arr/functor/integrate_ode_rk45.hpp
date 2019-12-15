@@ -2,8 +2,7 @@
 #define STAN_MATH_PRIM_ARR_FUNCTOR_INTEGRATE_ODE_RK45_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
-#include <stan/math/prim/arr/err/check_ordered.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/arr/functor/coupled_ode_system.hpp>
 #include <stan/math/prim/arr/functor/coupled_ode_observer.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>

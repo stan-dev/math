@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/err/constraint_tolerance.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/scal/err/throw_domain_error.hpp>

@@ -1,10 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_MULTIPLY_HPP
 #define STAN_MATH_PRIM_MAT_FUN_MULTIPLY_HPP
 
-#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/arr/err/check_matching_sizes.hpp>
-#include <stan/math/prim/mat/err/check_multiplicable.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/opencl.hpp>
 #endif

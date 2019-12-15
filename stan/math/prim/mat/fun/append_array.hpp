@@ -6,8 +6,7 @@
 #include <stan/math/prim/mat/fun/dims.hpp>
 #include <stan/math/prim/mat/fun/resize.hpp>
 #include <stan/math/prim/mat/fun/assign.hpp>
-#include <stan/math/prim/arr/err/check_matching_sizes.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
+#include <stan/math/prim/err.hpp>
 #include <vector>
 
 namespace stan {
