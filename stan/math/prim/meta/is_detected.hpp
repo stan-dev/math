@@ -6,7 +6,7 @@
 
 namespace stan {
 
-template <typename, template <typename> class, typename = void>
+template <typename, template <typename...> class, typename = void>
 struct is_detected : std::false_type {};
 
 /**
