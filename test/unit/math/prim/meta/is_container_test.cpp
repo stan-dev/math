@@ -13,3 +13,10 @@ TEST(MetaTraits, is_mat_container_check) {
   EXPECT_TRUE(is_container<Eigen::MatrixXd>::value);
   EXPECT_TRUE(is_container<std::vector<double>>::value);
 }
+
+
+TEST(MetaTraits, is_container_container_check) {
+  using stan::is_container;
+  EXPECT_TRUE(is_container<std::vector<Eigen::MatrixXd>>::value);
+  EXPECT_TRUE(is_container<std::vector<std::vector<double>>>::value);
+}

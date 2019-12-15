@@ -16,7 +16,7 @@ struct is_detected : std::false_type {};
  * @tparam Op a template template type which attempts to define a member
  *  of an object.
  */
-template <typename T, template <typename> class Op>
+template <typename T, template <typename...> class Op>
 struct is_detected<T, Op, void_t<Op<T>>> : std::true_type {};
 
 }  // namespace stan

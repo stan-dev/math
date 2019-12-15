@@ -2,8 +2,6 @@
 #define STAN_MATH_PRIM_SCAL_META_VOID_T_HPP
 
 #include <stan/math/prim/meta/bool_constant.hpp>
-#include <stan/math/prim/meta/is_eigen.hpp>
-#include <stan/math/prim/meta/is_vector.hpp>
 #include <type_traits>
 
 namespace stan {
