@@ -89,15 +89,13 @@ return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
     if (include_summand<propto, T_precision>::value) {
       logp += multiply_log(phi__[i], phi__[i]) - lgamma(phi__[i]);
     }
-    if (include_summand<propto, T_log_location, T_precision>::value) {
-      logp -= (n_plus_phi[i]) * logsumexp_eta_logphi[i];
-    }
     if (include_summand<propto, T_log_location>::value) {
       logp += n_vec[i] * eta__[i];
     }
     if (include_summand<propto, T_precision>::value) {
       logp += lgamma(n_plus_phi[i]);
     }
+    logp -= (n_plus_phi[i]) * logsumexp_eta_logphi[i];
 
     if (!is_constant_all<T_log_location>::value) {
       ops_partials.edge1_.partials_[i]
