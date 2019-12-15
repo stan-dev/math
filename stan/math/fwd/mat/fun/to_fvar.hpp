@@ -48,8 +48,8 @@ inline Eigen::Matrix<fvar<T>, R, C> to_fvar(
     const Eigen::Matrix<T, R, C>& val, const Eigen::Matrix<T, R, C>& deriv) {
   check_matching_dims("to_fvar", "value", val, "deriv", deriv);
   Eigen::Matrix<fvar<T>, R, C> ret(val.rows(), val.cols());
-  for (int i = 0; i < val.rows(); i++) {
-    for (int j = 0; j < val.cols(); j++) {
+  for (int j = 0; j < val.cols(); j++) {
+    for (int i = 0; i < val.rows(); i++) {
       ret(i, j).val_ = val(i, j);
       ret(i, j).d_ = deriv(i, j);
     }
