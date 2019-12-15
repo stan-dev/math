@@ -16,6 +16,8 @@ namespace math {
  * Return the concatenation of two specified vectors in the order of
  *   the arguments.
  *
+ * The return type is computed with append_return_type
+ *
  * @tparam T1 Scalar type of first vector
  * @tparam T2 Scalar type of second vector
  * @param x First vector
@@ -23,9 +25,9 @@ namespace math {
  * @return A vector of x and y concatenated together (in that order)
  */
 template <typename T1, typename T2>
-inline std::vector<return_type_t<T1, T2>> append_array(
-    const std::vector<T1>& x, const std::vector<T2>& y) {
-  std::vector<return_type_t<T1, T2>> z;
+inline typename append_return_type<std::vector<T1>, std::vector<T2> >::type
+append_array(const std::vector<T1>& x, const std::vector<T2>& y) {
+  typename append_return_type<std::vector<T1>, std::vector<T2> >::type z;
   std::vector<int> zdims;
   if (x.empty()) {
     zdims = dims(y);
