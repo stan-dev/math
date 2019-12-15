@@ -15,7 +15,7 @@ namespace math {
  * @param v Specified value.
  * @return Same value.
  */
-template <typename T>
+template <typename T, typename = require_stan_scalar_t<T>>
 inline const T& as_array_or_scalar(const T& v) {
   return v;
 }
