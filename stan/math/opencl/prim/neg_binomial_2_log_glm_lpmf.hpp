@@ -13,9 +13,13 @@
 #include <stan/math/prim/mat/fun/lgamma.hpp>
 #include <stan/math/prim/mat/fun/value_of_rec.hpp>
 #include <stan/math/prim/arr/fun/value_of_rec.hpp>
+#include <stan/math/prim/arr/fun/sum.hpp>
 #include <stan/math/prim/scal/fun/sum.hpp>
-
+#include <stan/math/prim/mat/fun/sum.hpp>
+#include <stan/math/opencl/copy.hpp>
+#include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/kernels/neg_binomial_2_log_glm_lpmf.hpp>
+
 
 #include <vector>
 #include <cmath>
