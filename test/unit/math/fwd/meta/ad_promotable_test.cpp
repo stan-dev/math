@@ -1,5 +1,5 @@
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/scal/meta/ad_promotable.hpp>
+#include <stan/math/prim/meta/ad_promotable.hpp>
 #include <gtest/gtest.h>
 #include <string>
 

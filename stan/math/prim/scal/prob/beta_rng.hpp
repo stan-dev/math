@@ -8,6 +8,7 @@
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/fun/log_sum_exp.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {

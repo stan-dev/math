@@ -11,8 +11,11 @@
 #include <stan/math/prim/scal/fun/is_any_nan.hpp>
 #include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
+#include <stan/math/prim/scal/fun/sqrt.hpp>
+#include <stan/math/prim/scal/fun/tgamma.hpp>
 #include <stan/math/prim/scal/fun/value_of_rec.hpp>
 #include <limits>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -109,6 +112,8 @@ return_type_t<T1, T2> grad_reg_lower_inc_gamma(const T1& a, const T2& z,
   using std::exp;
   using std::log;
   using std::pow;
+  using std::sqrt;
+
   using TP = return_type_t<T1, T2>;
 
   if (is_any_nan(a, z)) {

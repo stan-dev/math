@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/mat/fun/matrix_exp_pade.hpp>
 #include <stan/math/prim/mat/fun/matrix_exp_2x2.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -64,6 +65,7 @@ inline Eigen::Matrix<T, N, N> matrix_exp(const Eigen::Matrix<T, N, N>& A) {
  */
 template <typename T>
 inline Eigen::Matrix<T, 1, 1> matrix_exp(const Eigen::Matrix<T, 1, 1>& A) {
+  using std::exp;
   Eigen::Matrix<T, 1, 1> res;
   res << exp(A(0));
   return res;

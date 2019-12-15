@@ -28,6 +28,7 @@ return_type_t<T_y, T_shape, T_scale> frechet_lcdf(const T_y& y,
   static const char* function = "frechet_lcdf";
 
   using std::log;
+  using std::pow;
 
   if (size_zero(y, alpha, sigma)) {
     return 0.0;
