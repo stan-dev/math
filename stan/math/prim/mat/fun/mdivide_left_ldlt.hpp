@@ -22,8 +22,7 @@ template <int R1, int C1, int R2, int C2, typename T1, typename T2>
 inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_left_ldlt(
     const LDLT_factor<T1, R1, C1> &A, const Eigen::Matrix<T2, R2, C2> &b) {
   if (A.cols() == 0 && b.rows() == 0) {
-    Eigen::Matrix<return_type_t<T1, T2>, R1, C2> res(0, b.cols());
-    return res;
+    return Eigen::Matrix<return_type_t<T1, T2>, R1, C2>(0, b.cols());
   }
 
   check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);
