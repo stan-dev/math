@@ -3,9 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/prob/lognormal_lpdf.hpp>
 #include <stan/math/prim/mat/prob/lkj_corr_lpdf.hpp>
 

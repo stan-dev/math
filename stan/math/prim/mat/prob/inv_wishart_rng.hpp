@@ -5,7 +5,6 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/inverse_spd.hpp>
 #include <stan/math/prim/mat/prob/wishart_rng.hpp>
-#include <stan/math/prim/err.hpp>
 
 namespace stan {
 namespace math {

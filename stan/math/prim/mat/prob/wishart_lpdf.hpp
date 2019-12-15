@@ -3,9 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/lmgamma.hpp>
 #include <stan/math/prim/mat/fun/trace.hpp>
 #include <stan/math/prim/mat/fun/log_determinant_ldlt.hpp>

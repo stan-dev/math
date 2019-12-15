@@ -4,7 +4,6 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/crossprod.hpp>
-#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/prob/chi_square_rng.hpp>
 #include <stan/math/prim/scal/prob/normal_rng.hpp>
 #include <cmath>
