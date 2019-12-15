@@ -20,7 +20,6 @@
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/kernels/neg_binomial_2_log_glm_lpmf.hpp>
 
-
 #include <vector>
 #include <cmath>
 
