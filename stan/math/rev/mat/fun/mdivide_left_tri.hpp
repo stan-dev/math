@@ -8,7 +8,9 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/mat/fun/typedefs.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
-
+#ifdef STAN_OPENCL
+#include <stan/math/opencl/opencl.hpp>
+#endif
 namespace stan {
 namespace math {
 
