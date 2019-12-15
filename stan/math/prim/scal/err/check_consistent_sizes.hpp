@@ -104,7 +104,9 @@ inline void check_consistent_sizes(const char* function, const char* name1,
                                    const T5& x5) {
   size_t max_size = std::max(
       stan::size(x1),
-      std::max(stan::size(x2), std::max(stan::size(x3), std::max(stan::size(x4), stan::size(x5)))));
+      std::max(
+          stan::size(x2),
+          std::max(stan::size(x3), std::max(stan::size(x4), stan::size(x5)))));
   check_consistent_size(function, name1, x1, max_size);
   check_consistent_size(function, name2, x2, max_size);
   check_consistent_size(function, name3, x3, max_size);
