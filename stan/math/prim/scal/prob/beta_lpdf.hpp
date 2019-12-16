@@ -77,11 +77,11 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
   operands_and_partials<T_y, T_scale_succ, T_scale_fail> ops_partials(y, alpha,
                                                                       beta);
 
-  VectorBuilder<include_summand_b<propto, T_y, T_scale_succ>,
-                T_partials_return, T_y>
+  VectorBuilder<include_summand_b<propto, T_y, T_scale_succ>, T_partials_return,
+                T_y>
       log_y(length(y));
-  VectorBuilder<include_summand_b<propto, T_y, T_scale_fail>,
-                T_partials_return, T_y>
+  VectorBuilder<include_summand_b<propto, T_y, T_scale_fail>, T_partials_return,
+                T_y>
       log1m_y(length(y));
 
   for (size_t n = 0; n < length(y); n++) {

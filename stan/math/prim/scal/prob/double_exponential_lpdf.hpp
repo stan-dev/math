@@ -63,8 +63,7 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
       inv_sigma(length(sigma));
   VectorBuilder<!is_constant_all<T_scale>::value, T_partials_return, T_scale>
       inv_sigma_squared(length(sigma));
-  VectorBuilder<include_summand_b<propto, T_scale>, T_partials_return,
-                T_scale>
+  VectorBuilder<include_summand_b<propto, T_scale>, T_partials_return, T_scale>
       log_sigma(length(sigma));
   for (size_t i = 0; i < length(sigma); i++) {
     const T_partials_return sigma_dbl = value_of(sigma_vec[i]);

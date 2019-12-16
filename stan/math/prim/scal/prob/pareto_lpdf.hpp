@@ -65,8 +65,8 @@ return_type_t<T_y, T_scale, T_shape> pareto_lpdf(const T_y& y,
     }
   }
 
-  VectorBuilder<include_summand_b<propto, T_scale, T_shape>,
-                T_partials_return, T_scale>
+  VectorBuilder<include_summand_b<propto, T_scale, T_shape>, T_partials_return,
+                T_scale>
       log_y_min(length(y_min));
   if (include_summand_b<propto, T_scale, T_shape>) {
     for (size_t n = 0; n < length(y_min); n++) {
@@ -74,8 +74,7 @@ return_type_t<T_y, T_scale, T_shape> pareto_lpdf(const T_y& y,
     }
   }
 
-  VectorBuilder<include_summand_b<propto, T_shape>, T_partials_return,
-                T_shape>
+  VectorBuilder<include_summand_b<propto, T_shape>, T_partials_return, T_shape>
       log_alpha(length(alpha));
   if (include_summand_b<propto, T_shape>) {
     for (size_t n = 0; n < length(alpha); n++) {

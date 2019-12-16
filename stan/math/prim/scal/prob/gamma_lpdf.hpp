@@ -77,8 +77,7 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
 
   using std::log;
 
-  VectorBuilder<include_summand_b<propto, T_y, T_shape>, T_partials_return,
-                T_y>
+  VectorBuilder<include_summand_b<propto, T_y, T_shape>, T_partials_return, T_y>
       log_y(length(y));
   if (include_summand_b<propto, T_y, T_shape>) {
     for (size_t n = 0; n < length(y); n++) {
@@ -88,8 +87,7 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
     }
   }
 
-  VectorBuilder<include_summand_b<propto, T_shape>, T_partials_return,
-                T_shape>
+  VectorBuilder<include_summand_b<propto, T_shape>, T_partials_return, T_shape>
       lgamma_alpha(length(alpha));
   VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
       digamma_alpha(length(alpha));

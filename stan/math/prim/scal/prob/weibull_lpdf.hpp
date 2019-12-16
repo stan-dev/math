@@ -62,8 +62,7 @@ return_type_t<T_y, T_shape, T_scale> weibull_lpdf(const T_y& y,
     }
   }
 
-  VectorBuilder<include_summand_b<propto, T_shape>, T_partials_return,
-                T_shape>
+  VectorBuilder<include_summand_b<propto, T_shape>, T_partials_return, T_shape>
       log_alpha(length(alpha));
   for (size_t i = 0; i < length(alpha); i++) {
     if (include_summand_b<propto, T_shape>) {
@@ -79,8 +78,8 @@ return_type_t<T_y, T_shape, T_scale> weibull_lpdf(const T_y& y,
     }
   }
 
-  VectorBuilder<include_summand_b<propto, T_shape, T_scale>,
-                T_partials_return, T_scale>
+  VectorBuilder<include_summand_b<propto, T_shape, T_scale>, T_partials_return,
+                T_scale>
       log_sigma(length(sigma));
   for (size_t i = 0; i < length(sigma); i++) {
     if (include_summand_b<propto, T_shape, T_scale>) {

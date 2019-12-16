@@ -91,11 +91,11 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
     log1m_y[n] = log1m(value_of(y_vec[n]));
   }
 
-  VectorBuilder<include_summand_b<propto, T_loc, T_prec>,
-                T_partials_return, T_loc, T_prec>
+  VectorBuilder<include_summand_b<propto, T_loc, T_prec>, T_partials_return,
+                T_loc, T_prec>
       lgamma_mukappa(N_mukappa);
-  VectorBuilder<include_summand_b<propto, T_loc, T_prec>,
-                T_partials_return, T_loc, T_prec>
+  VectorBuilder<include_summand_b<propto, T_loc, T_prec>, T_partials_return,
+                T_loc, T_prec>
       lgamma_kappa_mukappa(N_mukappa);
   VectorBuilder<!is_constant_all<T_loc, T_prec>::value, T_partials_return,
                 T_loc, T_prec>

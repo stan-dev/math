@@ -94,8 +94,8 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
     }
   }
 
-  VectorBuilder<include_summand_b<propto, T_dof, T_scale>,
-                T_partials_return, T_scale>
+  VectorBuilder<include_summand_b<propto, T_dof, T_scale>, T_partials_return,
+                T_scale>
       log_s(length(s));
   for (size_t i = 0; i < length(s); i++) {
     if (include_summand_b<propto, T_dof, T_scale>) {

@@ -14,9 +14,8 @@ TEST(MathMetaFwd, IncludeSummandProptoTrueFvarFvarDouble) {
 }
 
 TEST(MathMetaFwd, IncludeSummandProtoTrueFvarDoubleTen) {
-  EXPECT_TRUE(
-      (include_summand_b<true, double, fvar<double>, int, fvar<double>, double,
-                         double, int, int, fvar<double>, int>));
+  EXPECT_TRUE((include_summand_b<true, double, fvar<double>, int, fvar<double>,
+                                 double, double, int, int, fvar<double>, int>));
 }
 
 TEST(MathMetaFwd, IncludeSummandProtoTrueFvarFvarDoubleTen) {

@@ -118,8 +118,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
     }
   }
 
-  VectorBuilder<include_summand_b<propto, T_scale>, T_partials_return,
-                T_scale>
+  VectorBuilder<include_summand_b<propto, T_scale>, T_partials_return, T_scale>
       log_sigma(length(sigma));
   for (size_t i = 0; i < length(sigma); i++) {
     if (include_summand_b<propto, T_scale>) {

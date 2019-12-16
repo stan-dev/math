@@ -70,8 +70,8 @@ return_type_t<T_y, T_dof> inv_chi_square_lpdf(const T_y& y, const T_dof& nu) {
     }
   }
 
-  VectorBuilder<include_summand_b<propto, T_y>, T_partials_return, T_y>
-      inv_y(length(y));
+  VectorBuilder<include_summand_b<propto, T_y>, T_partials_return, T_y> inv_y(
+      length(y));
   for (size_t i = 0; i < length(y); i++) {
     if (include_summand_b<propto, T_y>) {
       inv_y[i] = 1.0 / value_of(y_vec[i]);
