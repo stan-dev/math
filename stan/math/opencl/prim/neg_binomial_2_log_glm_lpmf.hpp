@@ -124,7 +124,7 @@ return_type_t<T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
       need_phi_derivative ? (need_phi_derivative_sum ? wgs : N) : 0, 1);
   const bool need_logp1 = include_summand_b<propto>;
   const bool need_logp2
-      = include_summand_b<propto, T_precision> && is_vector<T_precision>;
+      = include_summand_b<propto, T_precision> && is_vector<T_precision>::value;
   const bool need_logp3
       = include_summand_b<propto, T_alpha, T_beta, T_precision>;
   const bool need_logp4 = include_summand_b<propto, T_alpha, T_beta>;
