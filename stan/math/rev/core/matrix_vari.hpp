@@ -3,8 +3,10 @@
 
 #include <stan/math/rev/mat/fun/Eigen_NumTraits.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/vari.hpp>
+#include <stan/math/rev/mat/fun/typedefs.hpp>
 
 namespace stan {
 namespace math {
@@ -15,13 +17,11 @@ class op_matrix_vari : public vari {
   vari** vis_;
 
  public:
-  template <int R, int C>
-  op_matrix_vari(double f, const Eigen::Matrix<var, R, C>& vs)
+  template <typename T, require_t<is_var<scalar_type_t<T>>>...>
+  op_matrix_vari(double f, T&& vs)
       : vari(f), size_(vs.size()) {
     vis_ = reinterpret_cast<vari**>(operator new(sizeof(vari*) * vs.size()));
-    for (int i = 0; i < vs.size(); ++i) {
-      vis_[i] = vs(i).vi_;
-    }
+    Eigen::Map<matrix_vi>(vis_, vs.rows(), vs.cols()) = vs.vi();
   }
   vari* operator[](size_t n) const { return vis_[n]; }
   size_t size() { return size_; }

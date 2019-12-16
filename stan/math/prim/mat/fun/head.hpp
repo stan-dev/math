@@ -31,8 +31,8 @@ inline Eigen::Matrix<T, Eigen::Dynamic, 1> head(
 }*/
 
 template <typename T, typename T2>
-inline auto head(const T& x, const T2& n) {
-  return apply_vector_unary<T>::apply_scalar(x, n, [](auto& v, auto& m){
+inline auto head(T&& x, const T2& n) {
+  return apply_vector_unary<T>::apply_scalar(std::forward<T>(x), n, [](auto& v, auto& m){
     if (m != 0){
       if (v.rows() == 1){
         check_column_index("head", "n", v, m);
@@ -40,7 +40,7 @@ inline auto head(const T& x, const T2& n) {
         check_row_index("head", "n", v, m);
       }
     }
-    return v.head(m);
+    return v.head(m).eval();
   });
 }
 

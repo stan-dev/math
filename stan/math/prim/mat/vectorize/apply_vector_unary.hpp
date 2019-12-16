@@ -30,7 +30,7 @@ struct apply_vector_unary<T, require_eigen_t<T>> {
 };
 
 template <typename T>
-struct apply_vector_unary<T, require_std_vector_vt<std::is_arithmetic, T>> {
+struct apply_vector_unary<T, require_std_vector_vt<is_stan_scalar, T>> {
   using scalar_t = scalar_type_t<T>;
   using map_t =
     typename Eigen::Map<const Eigen::Matrix<scalar_t,Eigen::Dynamic,1>>;
@@ -59,7 +59,7 @@ struct apply_vector_unary<T, require_std_vector_vt<std::is_arithmetic, T>> {
 
 template <typename T>
 struct apply_vector_unary<T, require_std_vector_vt<is_eigen, T>> {
-  using eigen_t = typename T::value_type;
+  using eigen_t = value_type_t<T>;
   using scalar_t = typename eigen_t::Scalar;
   using return_t = std::vector<Eigen::Matrix<scalar_t,
                                               eigen_t::RowsAtCompileTime,

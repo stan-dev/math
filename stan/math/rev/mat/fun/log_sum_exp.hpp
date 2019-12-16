@@ -14,27 +14,11 @@ namespace math {
 
 namespace internal {
 
-// these function and the following class just translate
-// log_sum_exp for std::vector for Eigen::Matrix
-
-template <int R, int C>
-inline double log_sum_exp_as_double(const Eigen::Matrix<var, R, C>& x) {
-  if (x.size() == 0) {
-    return -std::numeric_limits<double>::infinity();
-  }
-
-  const double max = x.val().maxCoeff();
-  if (!std::isfinite(max)) {
-    return max;
-  }
-  return max + std::log((x.val().array() - max).exp().sum());
-}
-
 class log_sum_exp_matrix_vari : public op_matrix_vari {
  public:
-  template <int R, int C>
-  explicit log_sum_exp_matrix_vari(const Eigen::Matrix<var, R, C>& x)
-      : op_matrix_vari(log_sum_exp_as_double(x), x) {}
+  template <typename T>
+  explicit log_sum_exp_matrix_vari(T&& x)
+      : op_matrix_vari(log_sum_exp(std::forward<T>(x).val()), std::forward<T>(x)) {}
   void chain() {
     Eigen::Map<vector_vi> vis_map(vis_, size_);
     vis_map.adj().array() += adj_ * (vis_map.val().array() - val_).exp();
@@ -47,9 +31,11 @@ class log_sum_exp_matrix_vari : public op_matrix_vari {
  *
  * @param x matrix
  */
-template <int R, int C>
-inline var log_sum_exp(const Eigen::Matrix<var, R, C>& x) {
-  return var(new internal::log_sum_exp_matrix_vari(x));
+template <typename T, require_t<is_var<scalar_type_t<T>>>...>
+inline auto log_sum_exp(T&& x) {
+  return apply_vector_unary<T>::reduce(std::forward<T>(x), [](auto& v){
+    return var(new internal::log_sum_exp_matrix_vari(v));
+  });
 }
 
 }  // namespace math
