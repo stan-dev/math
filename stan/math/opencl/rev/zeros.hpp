@@ -2,6 +2,7 @@
 #define STAN_MATH_OPENCL_REV_ZEROS_HPP
 #ifdef STAN_OPENCL
 
+#include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/opencl/opencl_context.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>

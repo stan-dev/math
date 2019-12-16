@@ -3,14 +3,19 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/meta.hpp>
+
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_consistent_size.hpp>
+#include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/mat/fun/sum.hpp>
 #include <Eigen/Core>
 
 #include <stan/math/opencl/matrix_cl.hpp>
+#include <stan/math/opencl/copy.hpp>
+#include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/kernels/categorical_logit_glm_lpmf.hpp>
+#include <stan/math/opencl/prim/transpose.hpp>
 
 namespace stan {
 namespace math {
