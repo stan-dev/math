@@ -100,8 +100,7 @@ neg_binomial_2_log_glm_lpmf(
     return 0;
   }
 
-  if (!include_summand<propto, T_x_scalar, T_alpha, T_beta,
-                       T_precision>::value) {
+  if (!include_summand_b<propto, T_x_scalar, T_alpha, T_beta, T_precision>) {
     return 0;
   }
 
@@ -138,14 +137,14 @@ neg_binomial_2_log_glm_lpmf(
   T_sum_val y_plus_phi = y_arr + phi_arr;
 
   // Compute the log-density.
-  if (include_summand<propto>::value) {
+  if (include_summand_b<propto>) {
     if (is_vector<T_y>::value) {
       logp -= sum(lgamma(y_arr + 1));
     } else {
       logp -= sum(lgamma(y_arr + 1)) * N_instances;
     }
   }
-  if (include_summand<propto, T_precision>::value) {
+  if (include_summand_b<propto, T_precision>) {
     if (is_vector<T_precision>::value) {
       scalar_seq_view<decltype(phi_val)> phi_vec(phi_val);
       for (size_t n = 0; n < N_instances; ++n) {
@@ -160,10 +159,10 @@ neg_binomial_2_log_glm_lpmf(
   }
   logp -= sum(y_plus_phi * logsumexp_theta_logphi);
 
-  if (include_summand<propto, T_x_scalar, T_alpha, T_beta>::value) {
+  if (include_summand_b<propto, T_x_scalar, T_alpha, T_beta>) {
     logp += sum(y_arr * theta);
   }
-  if (include_summand<propto, T_precision>::value) {
+  if (include_summand_b<propto, T_precision>) {
     if (is_vector<T_y>::value || is_vector<T_precision>::value) {
       logp += sum(lgamma(y_plus_phi));
     } else {

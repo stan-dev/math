@@ -71,7 +71,7 @@ return_type_t<T_alpha, T_beta> bernoulli_logit_glm_lpmf(
     return 0;
   }
 
-  if (!include_summand<propto, T_alpha, T_beta>::value) {
+  if (!include_summand_b<propto, T_alpha, T_beta>) {
     return 0;
   }
 

@@ -51,7 +51,7 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
   if (size_zero(y, nu, s)) {
     return 0;
   }
-  if (!include_summand<propto, T_y, T_dof, T_scale>::value) {
+  if (!include_summand_b<propto, T_y, T_dof, T_scale>) {
     return 0;
   }
   T_partials_return logp(0);
@@ -68,53 +68,52 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
 
   using std::log;
 
-  VectorBuilder<include_summand<propto, T_dof, T_y, T_scale>::value,
+  VectorBuilder<include_summand_b<propto, T_dof, T_y, T_scale>,
                 T_partials_return, T_dof>
       half_nu(length(nu));
   for (size_t i = 0; i < length(nu); i++) {
-    if (include_summand<propto, T_dof, T_y, T_scale>::value) {
+    if (include_summand_b<propto, T_dof, T_y, T_scale>) {
       half_nu[i] = 0.5 * value_of(nu_vec[i]);
     }
   }
 
-  VectorBuilder<include_summand<propto, T_dof, T_y>::value, T_partials_return,
-                T_y>
+  VectorBuilder<include_summand_b<propto, T_dof, T_y>, T_partials_return, T_y>
       log_y(length(y));
   for (size_t i = 0; i < length(y); i++) {
-    if (include_summand<propto, T_dof, T_y>::value) {
+    if (include_summand_b<propto, T_dof, T_y>) {
       log_y[i] = log(value_of(y_vec[i]));
     }
   }
 
-  VectorBuilder<include_summand<propto, T_dof, T_y, T_scale>::value,
+  VectorBuilder<include_summand_b<propto, T_dof, T_y, T_scale>,
                 T_partials_return, T_y>
       inv_y(length(y));
   for (size_t i = 0; i < length(y); i++) {
-    if (include_summand<propto, T_dof, T_y, T_scale>::value) {
+    if (include_summand_b<propto, T_dof, T_y, T_scale>) {
       inv_y[i] = 1.0 / value_of(y_vec[i]);
     }
   }
 
-  VectorBuilder<include_summand<propto, T_dof, T_scale>::value,
+  VectorBuilder<include_summand_b<propto, T_dof, T_scale>,
                 T_partials_return, T_scale>
       log_s(length(s));
   for (size_t i = 0; i < length(s); i++) {
-    if (include_summand<propto, T_dof, T_scale>::value) {
+    if (include_summand_b<propto, T_dof, T_scale>) {
       log_s[i] = log(value_of(s_vec[i]));
     }
   }
 
-  VectorBuilder<include_summand<propto, T_dof>::value, T_partials_return, T_dof>
+  VectorBuilder<include_summand_b<propto, T_dof>, T_partials_return, T_dof>
       log_half_nu(length(nu));
-  VectorBuilder<include_summand<propto, T_dof>::value, T_partials_return, T_dof>
+  VectorBuilder<include_summand_b<propto, T_dof>, T_partials_return, T_dof>
       lgamma_half_nu(length(nu));
   VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
       digamma_half_nu_over_two(length(nu));
   for (size_t i = 0; i < length(nu); i++) {
-    if (include_summand<propto, T_dof>::value) {
+    if (include_summand_b<propto, T_dof>) {
       lgamma_half_nu[i] = lgamma(half_nu[i]);
     }
-    if (include_summand<propto, T_dof>::value) {
+    if (include_summand_b<propto, T_dof>) {
       log_half_nu[i] = log(half_nu[i]);
     }
     if (!is_constant_all<T_dof>::value) {
@@ -126,16 +125,16 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
   for (size_t n = 0; n < N; n++) {
     const T_partials_return s_dbl = value_of(s_vec[n]);
     const T_partials_return nu_dbl = value_of(nu_vec[n]);
-    if (include_summand<propto, T_dof>::value) {
+    if (include_summand_b<propto, T_dof>) {
       logp += half_nu[n] * log_half_nu[n] - lgamma_half_nu[n];
     }
-    if (include_summand<propto, T_dof, T_scale>::value) {
+    if (include_summand_b<propto, T_dof, T_scale>) {
       logp += nu_dbl * log_s[n];
     }
-    if (include_summand<propto, T_dof, T_y>::value) {
+    if (include_summand_b<propto, T_dof, T_y>) {
       logp -= (half_nu[n] + 1.0) * log_y[n];
     }
-    if (include_summand<propto, T_dof, T_y, T_scale>::value) {
+    if (include_summand_b<propto, T_dof, T_y, T_scale>) {
       logp -= half_nu[n] * s_dbl * s_dbl * inv_y[n];
     }
 

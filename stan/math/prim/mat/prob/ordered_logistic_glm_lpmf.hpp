@@ -83,7 +83,7 @@ ordered_logistic_glm_lpmf(
   if (size_zero(y, cuts))
     return 0;
 
-  if (!include_summand<propto, T_x_scalar, T_beta_scalar, T_cuts_scalar>::value)
+  if (!include_summand_b<propto, T_x_scalar, T_beta_scalar, T_cuts_scalar>)
     return 0;
 
   const auto& x_val = value_of_rec(x);

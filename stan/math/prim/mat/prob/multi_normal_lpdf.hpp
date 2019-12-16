@@ -96,15 +96,15 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
     return lp;
   }
 
-  if (include_summand<propto>::value) {
+  if (include_summand_b<propto>) {
     lp += NEG_LOG_SQRT_TWO_PI * size_y * size_vec;
   }
 
-  if (include_summand<propto, T_covar_elem>::value) {
+  if (include_summand_b<propto, T_covar_elem>) {
     lp -= 0.5 * log_determinant_ldlt(ldlt_Sigma) * size_vec;
   }
 
-  if (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
+  if (include_summand_b<propto, T_y, T_loc, T_covar_elem>) {
     lp_type sum_lp_vec(0.0);
     for (size_t i = 0; i < size_vec; i++) {
       Eigen::Matrix<return_type_t<T_y, T_loc>, Dynamic, 1> y_minus_mu(size_y);

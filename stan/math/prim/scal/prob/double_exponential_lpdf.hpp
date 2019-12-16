@@ -48,7 +48,7 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Shape parameter", sigma);
 
-  if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
+  if (!include_summand_b<propto, T_y, T_loc, T_scale>) {
     return 0.0;
   }
 
@@ -58,18 +58,18 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
   size_t N = max_size(y, mu, sigma);
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
 
-  VectorBuilder<include_summand<propto, T_y, T_loc, T_scale>::value,
+  VectorBuilder<include_summand_b<propto, T_y, T_loc, T_scale>,
                 T_partials_return, T_scale>
       inv_sigma(length(sigma));
   VectorBuilder<!is_constant_all<T_scale>::value, T_partials_return, T_scale>
       inv_sigma_squared(length(sigma));
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
+  VectorBuilder<include_summand_b<propto, T_scale>, T_partials_return,
                 T_scale>
       log_sigma(length(sigma));
   for (size_t i = 0; i < length(sigma); i++) {
     const T_partials_return sigma_dbl = value_of(sigma_vec[i]);
     inv_sigma[i] = 1.0 / sigma_dbl;
-    if (include_summand<propto, T_scale>::value) {
+    if (include_summand_b<propto, T_scale>) {
       log_sigma[i] = log(value_of(sigma_vec[i]));
     }
     if (!is_constant_all<T_scale>::value) {
@@ -84,10 +84,10 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
     const T_partials_return y_m_mu = y_dbl - mu_dbl;
     const T_partials_return fabs_y_m_mu = fabs(y_m_mu);
 
-    if (include_summand<propto>::value) {
+    if (include_summand_b<propto>) {
       logp += NEG_LOG_TWO;
     }
-    if (include_summand<propto, T_scale>::value) {
+    if (include_summand_b<propto, T_scale>) {
       logp -= log_sigma[n];
     }
     logp -= fabs_y_m_mu * inv_sigma[n];

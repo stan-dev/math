@@ -61,37 +61,36 @@ return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
     }
   }
 
-  if (!include_summand<propto, T_y, T_dof>::value) {
+  if (!include_summand_b<propto, T_y, T_dof>) {
     return 0.0;
   }
 
   using std::log;
 
-  VectorBuilder<include_summand<propto, T_y, T_dof>::value, T_partials_return,
-                T_y>
+  VectorBuilder<include_summand_b<propto, T_y, T_dof>, T_partials_return, T_y>
       log_y(length(y));
   for (size_t i = 0; i < length(y); i++) {
-    if (include_summand<propto, T_y, T_dof>::value) {
+    if (include_summand_b<propto, T_y, T_dof>) {
       log_y[i] = log(value_of(y_vec[i]));
     }
   }
 
-  VectorBuilder<include_summand<propto, T_y>::value, T_partials_return, T_y>
+  VectorBuilder<include_summand_b<propto, T_y>, T_partials_return, T_y>
       inv_y(length(y));
   for (size_t i = 0; i < length(y); i++) {
-    if (include_summand<propto, T_y>::value) {
+    if (include_summand_b<propto, T_y>) {
       inv_y[i] = 1.0 / value_of(y_vec[i]);
     }
   }
 
-  VectorBuilder<include_summand<propto, T_dof>::value, T_partials_return, T_dof>
+  VectorBuilder<include_summand_b<propto, T_dof>, T_partials_return, T_dof>
       lgamma_half_nu(length(nu));
   VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
       digamma_half_nu_over_two(length(nu));
 
   for (size_t i = 0; i < length(nu); i++) {
     T_partials_return half_nu = 0.5 * value_of(nu_vec[i]);
-    if (include_summand<propto, T_dof>::value) {
+    if (include_summand_b<propto, T_dof>) {
       lgamma_half_nu[i] = lgamma(half_nu);
     }
     if (!is_constant_all<T_dof>::value) {
@@ -106,13 +105,13 @@ return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
     const T_partials_return half_y = 0.5 * y_dbl;
     const T_partials_return nu_dbl = value_of(nu_vec[n]);
     const T_partials_return half_nu = 0.5 * nu_dbl;
-    if (include_summand<propto, T_dof>::value) {
+    if (include_summand_b<propto, T_dof>) {
       logp += nu_dbl * NEG_LOG_TWO_OVER_TWO - lgamma_half_nu[n];
     }
-    if (include_summand<propto, T_y, T_dof>::value) {
+    if (include_summand_b<propto, T_y, T_dof>) {
       logp += (half_nu - 1.0) * log_y[n];
     }
-    if (include_summand<propto, T_y>::value) {
+    if (include_summand_b<propto, T_y>) {
       logp -= half_y;
     }
 

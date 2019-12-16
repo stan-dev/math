@@ -58,7 +58,7 @@ return_type_t<T_y, T_shape> lkj_corr_lpdf(
     return 0.0;
   }
 
-  if (include_summand<propto, T_shape>::value) {
+  if (include_summand_b<propto, T_shape>) {
     lp += do_lkj_constant(eta, K);
   }
 
@@ -67,7 +67,7 @@ return_type_t<T_y, T_shape> lkj_corr_lpdf(
     return lp;
   }
 
-  if (!include_summand<propto, T_y, T_shape>::value) {
+  if (!include_summand_b<propto, T_y, T_shape>) {
     return lp;
   }
 

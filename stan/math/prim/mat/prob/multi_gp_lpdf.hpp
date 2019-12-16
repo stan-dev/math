@@ -61,19 +61,19 @@ return_type_t<T_y, T_covar, T_w> multi_gp_lpdf(
     return lp;
   }
 
-  if (include_summand<propto>::value) {
+  if (include_summand_b<propto>) {
     lp += NEG_LOG_SQRT_TWO_PI * y.rows() * y.cols();
   }
 
-  if (include_summand<propto, T_covar>::value) {
+  if (include_summand_b<propto, T_covar>) {
     lp -= 0.5 * log_determinant_ldlt(ldlt_Sigma) * y.rows();
   }
 
-  if (include_summand<propto, T_w>::value) {
+  if (include_summand_b<propto, T_w>) {
     lp += (0.5 * y.cols()) * sum(log(w));
   }
 
-  if (include_summand<propto, T_y, T_w, T_covar>::value) {
+  if (include_summand_b<propto, T_y, T_w, T_covar>) {
     Eigen::Matrix<T_w, Eigen::Dynamic, Eigen::Dynamic> w_mat(w.asDiagonal());
     Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> yT(y.transpose());
     lp -= 0.5 * trace_gen_inv_quad_form_ldlt(w_mat, ldlt_Sigma, yT);

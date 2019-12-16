@@ -67,8 +67,7 @@ categorical_logit_glm_lpmf(
     return 0;
   }
 
-  if (!include_summand<propto, T_x_scalar, T_alpha_scalar,
-                       T_beta_scalar>::value) {
+  if (!include_summand_b<propto, T_x_scalar, T_alpha_scalar, T_beta_scalar>) {
     return 0;
   }
 

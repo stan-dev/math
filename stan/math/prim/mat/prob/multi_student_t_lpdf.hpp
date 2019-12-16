@@ -110,23 +110,23 @@ return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_lpdf(
 
   lp_type lp(0);
 
-  if (include_summand<propto, T_dof>::value) {
+  if (include_summand_b<propto, T_dof>) {
     lp += lgamma(0.5 * (nu + size_y)) * size_vec;
     lp -= lgamma(0.5 * nu) * size_vec;
     lp -= (0.5 * size_y) * log(nu) * size_vec;
   }
 
-  if (include_summand<propto>::value) {
+  if (include_summand_b<propto>) {
     lp -= (0.5 * size_y) * LOG_PI * size_vec;
   }
 
   using Eigen::Array;
 
-  if (include_summand<propto, T_scale_elem>::value) {
+  if (include_summand_b<propto, T_scale_elem>) {
     lp -= 0.5 * log_determinant_ldlt(ldlt_Sigma) * size_vec;
   }
 
-  if (include_summand<propto, T_y, T_dof, T_loc, T_scale_elem>::value) {
+  if (include_summand_b<propto, T_y, T_dof, T_loc, T_scale_elem>) {
     lp_type sum_lp_vec(0.0);
     for (size_t i = 0; i < size_vec; i++) {
       Eigen::Matrix<return_type_t<T_y, T_loc>, Eigen::Dynamic, 1> y_minus_mu(

@@ -86,8 +86,7 @@ return_type_t<T_y, T_x_scalar, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
     return 0;
   }
 
-  if (!include_summand<propto, T_y, T_x_scalar, T_alpha, T_beta,
-                       T_scale>::value) {
+  if (!include_summand_b<propto, T_y, T_x_scalar, T_alpha, T_beta, T_scale>) {
     return 0;
   }
 
@@ -184,18 +183,17 @@ return_type_t<T_y, T_x_scalar, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
 
   // Compute log probability.
   T_partials_return logp(0.0);
-  if (include_summand<propto>::value) {
+  if (include_summand_b<propto>) {
     logp += NEG_LOG_SQRT_TWO_PI * N_instances;
   }
-  if (include_summand<propto, T_scale>::value) {
+  if (include_summand_b<propto, T_scale>) {
     if (is_vector<T_scale>::value) {
       logp -= sum(log(sigma_val_vec));
     } else {
       logp -= N_instances * log(forward_as<double>(sigma_val));
     }
   }
-  if (include_summand<propto, T_y, T_x_scalar, T_alpha, T_beta,
-                      T_scale>::value) {
+  if (include_summand_b<propto, T_y, T_x_scalar, T_alpha, T_beta, T_scale>) {
     logp -= 0.5 * y_scaled_sq_sum;
   }
   return ops_partials.build(logp);

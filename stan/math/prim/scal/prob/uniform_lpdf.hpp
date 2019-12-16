@@ -57,7 +57,7 @@ return_type_t<T_y, T_low, T_high> uniform_lpdf(const T_y& y, const T_low& alpha,
                          "Lower bound parameter", alpha,
                          "Upper bound parameter", beta);
 
-  if (!include_summand<propto, T_y, T_low, T_high>::value) {
+  if (!include_summand_b<propto, T_y, T_low, T_high>) {
     return 0.0;
   }
 
@@ -73,21 +73,21 @@ return_type_t<T_y, T_low, T_high> uniform_lpdf(const T_y& y, const T_low& alpha,
     }
   }
 
-  VectorBuilder<include_summand<propto, T_low, T_high>::value,
+  VectorBuilder<include_summand_b<propto, T_low, T_high>,
                 T_partials_return, T_low, T_high>
       inv_beta_minus_alpha(max_size(alpha, beta));
   for (size_t i = 0; i < max_size(alpha, beta); i++) {
-    if (include_summand<propto, T_low, T_high>::value) {
+    if (include_summand_b<propto, T_low, T_high>) {
       inv_beta_minus_alpha[i]
           = 1.0 / (value_of(beta_vec[i]) - value_of(alpha_vec[i]));
     }
   }
 
-  VectorBuilder<include_summand<propto, T_low, T_high>::value,
+  VectorBuilder<include_summand_b<propto, T_low, T_high>,
                 T_partials_return, T_low, T_high>
       log_beta_minus_alpha(max_size(alpha, beta));
   for (size_t i = 0; i < max_size(alpha, beta); i++) {
-    if (include_summand<propto, T_low, T_high>::value) {
+    if (include_summand_b<propto, T_low, T_high>) {
       log_beta_minus_alpha[i]
           = log(value_of(beta_vec[i]) - value_of(alpha_vec[i]));
     }
@@ -95,7 +95,7 @@ return_type_t<T_y, T_low, T_high> uniform_lpdf(const T_y& y, const T_low& alpha,
 
   operands_and_partials<T_y, T_low, T_high> ops_partials(y, alpha, beta);
   for (size_t n = 0; n < N; n++) {
-    if (include_summand<propto, T_low, T_high>::value) {
+    if (include_summand_b<propto, T_low, T_high>) {
       logp -= log_beta_minus_alpha[n];
     }
 

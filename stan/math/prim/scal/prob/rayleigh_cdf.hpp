@@ -51,7 +51,7 @@ return_type_t<T_y, T_scale> rayleigh_cdf(const T_y& y, const T_scale& sigma) {
     const T_partials_return inv_sigma_sqr = inv_sigma[n] * inv_sigma[n];
     const T_partials_return exp_val = exp(-0.5 * y_sqr * inv_sigma_sqr);
 
-    if (include_summand<false, T_y, T_scale>::value) {
+    if (include_summand_b<false, T_y, T_scale>) {
       cdf *= (1.0 - exp_val);
     }
   }

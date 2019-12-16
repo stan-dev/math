@@ -77,7 +77,7 @@ return_type_t<T_x_scalar, T_alpha, T_beta> poisson_log_glm_lpmf(
     return 0;
   }
 
-  if (!include_summand<propto, T_x_scalar, T_alpha, T_beta>::value) {
+  if (!include_summand_b<propto, T_x_scalar, T_alpha, T_beta>) {
     return 0;
   }
 
@@ -109,14 +109,14 @@ return_type_t<T_x_scalar, T_alpha, T_beta> poisson_log_glm_lpmf(
     check_finite(function, "Intercept", alpha);
     check_finite(function, "Matrix of independent variables", theta);
   }
-  if (include_summand<propto>::value) {
+  if (include_summand_b<propto>) {
     if (is_vector<T_y>::value) {
       logp -= sum(lgamma(as_array_or_scalar(y_val_vec) + 1));
     } else {
       logp -= lgamma(forward_as<double>(y_val) + 1);
     }
   }
-  if (include_summand<propto, T_partials_return>::value) {
+  if (include_summand_b<propto, T_partials_return>) {
     logp += sum(as_array_or_scalar(y_val_vec) * theta.array()
                 - exp(theta.array()));
   }

@@ -44,7 +44,7 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
   check_consistent_sizes(function, "Random variable", n,
                          "Probability parameter", theta);
 
-  if (!include_summand<propto, T_prob>::value) {
+  if (!include_summand_b<propto, T_prob>) {
     return 0.0;
   }
 

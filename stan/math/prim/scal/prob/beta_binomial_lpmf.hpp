@@ -56,7 +56,7 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
                          "First prior sample size parameter", alpha,
                          "Second prior sample size parameter", beta);
 
-  if (!include_summand<propto, T_size1, T_size2>::value) {
+  if (!include_summand_b<propto, T_size1, T_size2>) {
     return 0.0;
   }
 
@@ -74,7 +74,7 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
     }
   }
 
-  if (include_summand<propto>::value) {
+  if (include_summand_b<propto>) {
     for (size_t i = 0; i < size; i++) {
       // normalizing constant
       logp += binomial_coefficient_log(N_vec[i], n_vec[i]);

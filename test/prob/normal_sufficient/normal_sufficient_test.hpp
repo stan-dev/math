@@ -96,12 +96,12 @@ class AgradDistributionNormalSufficient : public AgradDistributionTest {
     using stan::math::pi;
     using stan::math::square;
     typename stan::return_type<T_y, T_s, T_n, T_loc, T_scale>::type lp(0.0);
-    if (include_summand<true, T_scale>::value)
+    if (include_summand_b<true, T_scale>)
       lp -= n_obs * log(sigma);
 
     lp -= (s_squared + n_obs * pow(y_bar - mu, 2)) / (2 * pow(sigma, 2));
 
-    if (include_summand<true>::value)
+    if (include_summand_b<true>)
       lp -= log(sqrt(2.0 * pi()));
     return lp;
   }

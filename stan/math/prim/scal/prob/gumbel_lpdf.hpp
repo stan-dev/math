@@ -49,7 +49,7 @@ return_type_t<T_y, T_loc, T_scale> gumbel_lpdf(const T_y& y, const T_loc& mu,
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", beta);
 
-  if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
+  if (!include_summand_b<propto, T_y, T_loc, T_scale>) {
     return 0.0;
   }
 
@@ -61,12 +61,12 @@ return_type_t<T_y, T_loc, T_scale> gumbel_lpdf(const T_y& y, const T_loc& mu,
   size_t N = max_size(y, mu, beta);
 
   VectorBuilder<true, T_partials_return, T_scale> inv_beta(length(beta));
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
+  VectorBuilder<include_summand_b<propto, T_scale>, T_partials_return,
                 T_scale>
       log_beta(length(beta));
   for (size_t i = 0; i < length(beta); i++) {
     inv_beta[i] = 1.0 / value_of(beta_vec[i]);
-    if (include_summand<propto, T_scale>::value) {
+    if (include_summand_b<propto, T_scale>) {
       log_beta[i] = log(value_of(beta_vec[i]));
     }
   }
@@ -78,7 +78,7 @@ return_type_t<T_y, T_loc, T_scale> gumbel_lpdf(const T_y& y, const T_loc& mu,
     const T_partials_return y_minus_mu_over_beta
         = (y_dbl - mu_dbl) * inv_beta[n];
 
-    if (include_summand<propto, T_scale>::value) {
+    if (include_summand_b<propto, T_scale>) {
       logp -= log_beta[n];
     }
     logp += -y_minus_mu_over_beta - exp(-y_minus_mu_over_beta);

@@ -35,7 +35,7 @@ return_type_t<T_y, T_loc, T_scale> logistic_lpdf(const T_y& y, const T_loc& mu,
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma);
 
-  if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
+  if (!include_summand_b<propto, T_y, T_loc, T_scale>) {
     return 0.0;
   }
 
@@ -47,12 +47,12 @@ return_type_t<T_y, T_loc, T_scale> logistic_lpdf(const T_y& y, const T_loc& mu,
   size_t N = max_size(y, mu, sigma);
 
   VectorBuilder<true, T_partials_return, T_scale> inv_sigma(length(sigma));
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
+  VectorBuilder<include_summand_b<propto, T_scale>, T_partials_return,
                 T_scale>
       log_sigma(length(sigma));
   for (size_t i = 0; i < length(sigma); i++) {
     inv_sigma[i] = 1.0 / value_of(sigma_vec[i]);
-    if (include_summand<propto, T_scale>::value) {
+    if (include_summand_b<propto, T_scale>) {
       log_sigma[i] = log(value_of(sigma_vec[i]));
     }
   }
@@ -85,7 +85,7 @@ return_type_t<T_y, T_loc, T_scale> logistic_lpdf(const T_y& y, const T_loc& mu,
     }
 
     logp -= y_minus_mu_div_sigma;
-    if (include_summand<propto, T_scale>::value) {
+    if (include_summand_b<propto, T_scale>) {
       logp -= log_sigma[n];
     }
     logp -= 2.0 * log1p(exp_m_y_minus_mu_div_sigma);

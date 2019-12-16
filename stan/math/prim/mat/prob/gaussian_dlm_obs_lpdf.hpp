@@ -109,11 +109,11 @@ gaussian_dlm_obs_lpdf(
   }
 
   T_lp lp(0);
-  if (include_summand<propto>::value) {
+  if (include_summand_b<propto>) {
     lp -= 0.5 * LOG_TWO_PI * r * T;
   }
 
-  if (include_summand<propto, T_y, T_F, T_G, T_V, T_W, T_m0, T_C0>::value) {
+  if (include_summand_b<propto, T_y, T_F, T_G, T_V, T_W, T_m0, T_C0>) {
     Eigen::Matrix<T_lp, Eigen::Dynamic, 1> m(n);
     Eigen::Matrix<T_lp, Eigen::Dynamic, Eigen::Dynamic> C(n, n);
 
@@ -263,11 +263,11 @@ gaussian_dlm_obs_lpdf(
   }
 
   T_lp lp(0);
-  if (include_summand<propto>::value) {
+  if (include_summand_b<propto>) {
     lp += 0.5 * NEG_LOG_TWO_PI * r * T;
   }
 
-  if (include_summand<propto, T_y, T_F, T_G, T_V, T_W, T_m0, T_C0>::value) {
+  if (include_summand_b<propto, T_y, T_F, T_G, T_V, T_W, T_m0, T_C0>) {
     T_lp f;
     T_lp Q;
     T_lp Q_inv;

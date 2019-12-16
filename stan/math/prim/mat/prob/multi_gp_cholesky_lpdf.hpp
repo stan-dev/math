@@ -55,19 +55,19 @@ return_type_t<T_y, T_covar, T_w> multi_gp_cholesky_lpdf(
   }
 
   T_lp lp(0);
-  if (include_summand<propto>::value) {
+  if (include_summand_b<propto>) {
     lp += NEG_LOG_SQRT_TWO_PI * y.rows() * y.cols();
   }
 
-  if (include_summand<propto, T_covar>::value) {
+  if (include_summand_b<propto, T_covar>) {
     lp -= L.diagonal().array().log().sum() * y.rows();
   }
 
-  if (include_summand<propto, T_w>::value) {
+  if (include_summand_b<propto, T_w>) {
     lp += 0.5 * y.cols() * sum(log(w));
   }
 
-  if (include_summand<propto, T_y, T_w, T_covar>::value) {
+  if (include_summand_b<propto, T_y, T_w, T_covar>) {
     T_lp sum_lp_vec(0);
     for (int i = 0; i < y.rows(); i++) {
       Eigen::Matrix<T_y, Eigen::Dynamic, 1> y_row(y.row(i));

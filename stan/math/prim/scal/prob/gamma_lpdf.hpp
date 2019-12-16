@@ -57,7 +57,7 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
   check_consistent_sizes(function, "Random variable", y, "Shape parameter",
                          alpha, "Inverse scale parameter", beta);
 
-  if (!include_summand<propto, T_y, T_shape, T_inv_scale>::value) {
+  if (!include_summand_b<propto, T_y, T_shape, T_inv_scale>) {
     return 0.0;
   }
 
@@ -77,10 +77,10 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
 
   using std::log;
 
-  VectorBuilder<include_summand<propto, T_y, T_shape>::value, T_partials_return,
+  VectorBuilder<include_summand_b<propto, T_y, T_shape>, T_partials_return,
                 T_y>
       log_y(length(y));
-  if (include_summand<propto, T_y, T_shape>::value) {
+  if (include_summand_b<propto, T_y, T_shape>) {
     for (size_t n = 0; n < length(y); n++) {
       if (value_of(y_vec[n]) > 0) {
         log_y[n] = log(value_of(y_vec[n]));
@@ -88,13 +88,13 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
     }
   }
 
-  VectorBuilder<include_summand<propto, T_shape>::value, T_partials_return,
+  VectorBuilder<include_summand_b<propto, T_shape>, T_partials_return,
                 T_shape>
       lgamma_alpha(length(alpha));
   VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
       digamma_alpha(length(alpha));
   for (size_t n = 0; n < length(alpha); n++) {
-    if (include_summand<propto, T_shape>::value) {
+    if (include_summand_b<propto, T_shape>) {
       lgamma_alpha[n] = lgamma(value_of(alpha_vec[n]));
     }
     if (!is_constant_all<T_shape>::value) {
@@ -102,10 +102,10 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
     }
   }
 
-  VectorBuilder<include_summand<propto, T_shape, T_inv_scale>::value,
+  VectorBuilder<include_summand_b<propto, T_shape, T_inv_scale>,
                 T_partials_return, T_inv_scale>
       log_beta(length(beta));
-  if (include_summand<propto, T_shape, T_inv_scale>::value) {
+  if (include_summand_b<propto, T_shape, T_inv_scale>) {
     for (size_t n = 0; n < length(beta); n++) {
       log_beta[n] = log(value_of(beta_vec[n]));
     }
@@ -116,16 +116,16 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
     const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
     const T_partials_return beta_dbl = value_of(beta_vec[n]);
 
-    if (include_summand<propto, T_shape>::value) {
+    if (include_summand_b<propto, T_shape>) {
       logp -= lgamma_alpha[n];
     }
-    if (include_summand<propto, T_shape, T_inv_scale>::value) {
+    if (include_summand_b<propto, T_shape, T_inv_scale>) {
       logp += alpha_dbl * log_beta[n];
     }
-    if (include_summand<propto, T_y, T_shape>::value) {
+    if (include_summand_b<propto, T_y, T_shape>) {
       logp += (alpha_dbl - 1.0) * log_y[n];
     }
-    if (include_summand<propto, T_y, T_inv_scale>::value) {
+    if (include_summand_b<propto, T_y, T_inv_scale>) {
       logp -= beta_dbl * y_dbl;
     }
 

@@ -38,7 +38,7 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", kappa);
 
-  if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
+  if (!include_summand_b<propto, T_y, T_loc, T_scale>) {
     return logp;
   }
 
@@ -46,7 +46,7 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
   const bool mu_const = is_constant_all<T_loc>::value;
   const bool kappa_const = is_constant_all<T_scale>::value;
 
-  const bool compute_bessel0 = include_summand<propto, T_scale>::value;
+  const bool compute_bessel0 = include_summand_b<propto, T_scale>;
   const bool compute_bessel1 = !kappa_const;
   const double TWO_PI = 2.0 * pi();
 
@@ -55,12 +55,11 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
   scalar_seq_view<T_scale> kappa_vec(kappa);
 
   VectorBuilder<true, T_partials_return, T_scale> kappa_dbl(length(kappa));
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
-                T_scale>
+  VectorBuilder<include_summand_b<propto, T_scale>, T_partials_return, T_scale>
       log_bessel0(length(kappa));
   for (size_t i = 0; i < length(kappa); i++) {
     kappa_dbl[i] = value_of(kappa_vec[i]);
-    if (include_summand<propto, T_scale>::value) {
+    if (include_summand_b<propto, T_scale>) {
       log_bessel0[i]
           = log_modified_bessel_first_kind(0, value_of(kappa_vec[i]));
     }
@@ -86,10 +85,10 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
     const T_partials_return kappa_sin = kappa_dbl[n] * sin(mu_dbl - y_dbl);
     const T_partials_return kappa_cos = kappa_dbl[n] * cos(mu_dbl - y_dbl);
 
-    if (include_summand<propto>::value) {
+    if (include_summand_b<propto>) {
       logp -= LOG_TWO_PI;
     }
-    if (include_summand<propto, T_scale>::value) {
+    if (include_summand_b<propto, T_scale>) {
       logp -= log_bessel0[n];
     }
     logp += kappa_cos;

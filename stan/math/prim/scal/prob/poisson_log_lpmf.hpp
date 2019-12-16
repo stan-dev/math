@@ -36,7 +36,7 @@ return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
   check_consistent_sizes(function, "Random variable", n, "Log rate parameter",
                          alpha);
 
-  if (!include_summand<propto, T_log_rate>::value) {
+  if (!include_summand_b<propto, T_log_rate>) {
     return 0.0;
   }
 
@@ -60,7 +60,7 @@ return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
   operands_and_partials<T_log_rate> ops_partials(alpha);
 
   // FIXME: cache value_of for alpha_vec?  faster if only one?
-  VectorBuilder<include_summand<propto, T_log_rate>::value, T_partials_return,
+  VectorBuilder<include_summand_b<propto, T_log_rate>, T_partials_return,
                 T_log_rate>
       exp_alpha(length(alpha));
   for (size_t i = 0; i < length(alpha); i++) {
@@ -70,7 +70,7 @@ return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
   for (size_t i = 0; i < size; i++) {
     if (!(alpha_vec[i] == -std::numeric_limits<double>::infinity()
           && n_vec[i] == 0)) {
-      if (include_summand<propto>::value) {
+      if (include_summand_b<propto>) {
         logp -= lgamma(n_vec[i] + 1.0);
       }
       logp += n_vec[i] * value_of(alpha_vec[i]) - exp_alpha[i];

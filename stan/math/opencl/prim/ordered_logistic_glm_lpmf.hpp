@@ -79,7 +79,7 @@ ordered_logistic_glm_lpmf(
     return 0;
   }
 
-  if (!include_summand<propto, T_beta_scalar, T_cuts_scalar>::value) {
+  if (!include_summand_b<propto, T_beta_scalar, T_cuts_scalar>) {
     return 0;
   }
 

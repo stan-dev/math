@@ -39,7 +39,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
   check_consistent_sizes(function, "Random variable", y, "Scale parameter",
                          lambda, "Shape parameter", alpha);
 
-  if (!include_summand<propto, T_y, T_loc, T_scale, T_shape>::value) {
+  if (!include_summand_b<propto, T_y, T_loc, T_scale, T_shape>) {
     return 0.0;
   }
 
@@ -52,7 +52,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
   operands_and_partials<T_y, T_loc, T_scale, T_shape> ops_partials(
       y, mu, lambda, alpha);
 
-  VectorBuilder<include_summand<propto, T_y, T_loc, T_scale, T_shape>::value,
+  VectorBuilder<include_summand_b<propto, T_y, T_loc, T_scale, T_shape>,
                 T_partials_return, T_y, T_loc, T_scale>
       log1p_scaled_diff(N);
   for (size_t n = 0; n < N; n++) {
@@ -60,19 +60,17 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
                                  / value_of(lambda_vec[n]));
   }
 
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
-                T_scale>
+  VectorBuilder<include_summand_b<propto, T_scale>, T_partials_return, T_scale>
       log_lambda(length(lambda));
-  if (include_summand<propto, T_scale>::value) {
+  if (include_summand_b<propto, T_scale>) {
     for (size_t n = 0; n < length(lambda); n++) {
       log_lambda[n] = log(value_of(lambda_vec[n]));
     }
   }
 
-  VectorBuilder<include_summand<propto, T_shape>::value, T_partials_return,
-                T_shape>
+  VectorBuilder<include_summand_b<propto, T_shape>, T_partials_return, T_shape>
       log_alpha(length(alpha));
-  if (include_summand<propto, T_shape>::value) {
+  if (include_summand_b<propto, T_shape>) {
     for (size_t n = 0; n < length(alpha); n++) {
       log_alpha[n] = log(value_of(alpha_vec[n]));
     }
@@ -96,13 +94,13 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
     const T_partials_return alpha_div_sum = alpha_dbl / sum_dbl;
     const T_partials_return deriv_1_2 = inv_sum + alpha_div_sum;
 
-    if (include_summand<propto, T_shape>::value) {
+    if (include_summand_b<propto, T_shape>) {
       logp += log_alpha[n];
     }
-    if (include_summand<propto, T_scale>::value) {
+    if (include_summand_b<propto, T_scale>) {
       logp -= log_lambda[n];
     }
-    if (include_summand<propto, T_y, T_scale, T_shape>::value) {
+    if (include_summand_b<propto, T_y, T_scale, T_shape>) {
       logp -= (alpha_dbl + 1.0) * log1p_scaled_diff[n];
     }
 

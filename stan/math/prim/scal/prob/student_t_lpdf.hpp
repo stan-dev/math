@@ -69,7 +69,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
                          "Degrees of freedom parameter", nu,
                          "Location parameter", mu, "Scale parameter", sigma);
 
-  if (!include_summand<propto, T_y, T_dof, T_loc, T_scale>::value) {
+  if (!include_summand_b<propto, T_y, T_dof, T_loc, T_scale>) {
     return 0.0;
   }
 
@@ -81,18 +81,18 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
 
   using std::log;
 
-  VectorBuilder<include_summand<propto, T_y, T_dof, T_loc, T_scale>::value,
+  VectorBuilder<include_summand_b<propto, T_y, T_dof, T_loc, T_scale>,
                 T_partials_return, T_dof>
       half_nu(length(nu));
   for (size_t i = 0; i < length(nu); i++) {
     half_nu[i] = 0.5 * value_of(nu_vec[i]);
   }
 
-  VectorBuilder<include_summand<propto, T_dof>::value, T_partials_return, T_dof>
+  VectorBuilder<include_summand_b<propto, T_dof>, T_partials_return, T_dof>
       lgamma_half_nu(length(nu));
-  VectorBuilder<include_summand<propto, T_dof>::value, T_partials_return, T_dof>
+  VectorBuilder<include_summand_b<propto, T_dof>, T_partials_return, T_dof>
       lgamma_half_nu_plus_half(length(nu));
-  if (include_summand<propto, T_dof>::value) {
+  if (include_summand_b<propto, T_dof>) {
     for (size_t i = 0; i < length(nu); i++) {
       lgamma_half_nu[i] = lgamma(half_nu[i]);
       lgamma_half_nu_plus_half[i] = lgamma(half_nu[i] + 0.5);
@@ -110,28 +110,28 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
     }
   }
 
-  VectorBuilder<include_summand<propto, T_dof>::value, T_partials_return, T_dof>
+  VectorBuilder<include_summand_b<propto, T_dof>, T_partials_return, T_dof>
       log_nu(length(nu));
   for (size_t i = 0; i < length(nu); i++) {
-    if (include_summand<propto, T_dof>::value) {
+    if (include_summand_b<propto, T_dof>) {
       log_nu[i] = log(value_of(nu_vec[i]));
     }
   }
 
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
+  VectorBuilder<include_summand_b<propto, T_scale>, T_partials_return,
                 T_scale>
       log_sigma(length(sigma));
   for (size_t i = 0; i < length(sigma); i++) {
-    if (include_summand<propto, T_scale>::value) {
+    if (include_summand_b<propto, T_scale>) {
       log_sigma[i] = log(value_of(sigma_vec[i]));
     }
   }
 
-  VectorBuilder<include_summand<propto, T_y, T_dof, T_loc, T_scale>::value,
+  VectorBuilder<include_summand_b<propto, T_y, T_dof, T_loc, T_scale>,
                 T_partials_return, T_y, T_dof, T_loc, T_scale>
       square_y_minus_mu_over_sigma__over_nu(N);
 
-  VectorBuilder<include_summand<propto, T_y, T_dof, T_loc, T_scale>::value,
+  VectorBuilder<include_summand_b<propto, T_y, T_dof, T_loc, T_scale>,
                 T_partials_return, T_y, T_dof, T_loc, T_scale>
       log1p_exp(N);
 
@@ -152,13 +152,13 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
     const T_partials_return mu_dbl = value_of(mu_vec[n]);
     const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
     const T_partials_return nu_dbl = value_of(nu_vec[n]);
-    if (include_summand<propto>::value) {
+    if (include_summand_b<propto>) {
       logp += NEG_LOG_SQRT_PI;
     }
-    if (include_summand<propto, T_dof>::value) {
+    if (include_summand_b<propto, T_dof>) {
       logp += lgamma_half_nu_plus_half[n] - lgamma_half_nu[n] - 0.5 * log_nu[n];
     }
-    if (include_summand<propto, T_scale>::value) {
+    if (include_summand_b<propto, T_scale>) {
       logp -= log_sigma[n];
     }
     logp -= (half_nu[n] + 0.5) * log1p_exp[n];

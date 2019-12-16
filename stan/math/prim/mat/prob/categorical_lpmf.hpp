@@ -24,7 +24,7 @@ return_type_t<T_prob> categorical_lpmf(
   check_bounded(function, "Number of categories", n, lb, theta.size());
   check_simplex(function, "Probabilities parameter", theta);
 
-  if (include_summand<propto, T_prob>::value) {
+  if (include_summand_b<propto, T_prob>) {
     return log(theta(n - 1));
   }
   return 0.0;
@@ -55,7 +55,7 @@ return_type_t<T_prob> categorical_lpmf(
 
   check_simplex(function, "Probabilities parameter", theta);
 
-  if (!include_summand<propto, T_prob>::value) {
+  if (!include_summand_b<propto, T_prob>) {
     return 0.0;
   }
 

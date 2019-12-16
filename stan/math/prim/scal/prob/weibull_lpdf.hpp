@@ -45,7 +45,7 @@ return_type_t<T_y, T_shape, T_scale> weibull_lpdf(const T_y& y,
   if (size_zero(y, alpha, sigma)) {
     return 0;
   }
-  if (!include_summand<propto, T_y, T_shape, T_scale>::value) {
+  if (!include_summand_b<propto, T_y, T_shape, T_scale>) {
     return 0;
   }
 
@@ -62,41 +62,40 @@ return_type_t<T_y, T_shape, T_scale> weibull_lpdf(const T_y& y,
     }
   }
 
-  VectorBuilder<include_summand<propto, T_shape>::value, T_partials_return,
+  VectorBuilder<include_summand_b<propto, T_shape>, T_partials_return,
                 T_shape>
       log_alpha(length(alpha));
   for (size_t i = 0; i < length(alpha); i++) {
-    if (include_summand<propto, T_shape>::value) {
+    if (include_summand_b<propto, T_shape>) {
       log_alpha[i] = log(value_of(alpha_vec[i]));
     }
   }
 
-  VectorBuilder<include_summand<propto, T_y, T_shape>::value, T_partials_return,
-                T_y>
+  VectorBuilder<include_summand_b<propto, T_y, T_shape>, T_partials_return, T_y>
       log_y(length(y));
   for (size_t i = 0; i < length(y); i++) {
-    if (include_summand<propto, T_y, T_shape>::value) {
+    if (include_summand_b<propto, T_y, T_shape>) {
       log_y[i] = log(value_of(y_vec[i]));
     }
   }
 
-  VectorBuilder<include_summand<propto, T_shape, T_scale>::value,
+  VectorBuilder<include_summand_b<propto, T_shape, T_scale>,
                 T_partials_return, T_scale>
       log_sigma(length(sigma));
   for (size_t i = 0; i < length(sigma); i++) {
-    if (include_summand<propto, T_shape, T_scale>::value) {
+    if (include_summand_b<propto, T_shape, T_scale>) {
       log_sigma[i] = log(value_of(sigma_vec[i]));
     }
   }
 
-  VectorBuilder<include_summand<propto, T_y, T_shape, T_scale>::value,
+  VectorBuilder<include_summand_b<propto, T_y, T_shape, T_scale>,
                 T_partials_return, T_scale>
       inv_sigma(length(sigma));
   for (size_t i = 0; i < length(sigma); i++) {
     inv_sigma[i] = 1.0 / value_of(sigma_vec[i]);
   }
 
-  VectorBuilder<include_summand<propto, T_y, T_shape, T_scale>::value,
+  VectorBuilder<include_summand_b<propto, T_y, T_shape, T_scale>,
                 T_partials_return, T_y, T_shape, T_scale>
       y_div_sigma_pow_alpha(N);
   for (size_t i = 0; i < N; i++) {
@@ -108,13 +107,13 @@ return_type_t<T_y, T_shape, T_scale> weibull_lpdf(const T_y& y,
   operands_and_partials<T_y, T_shape, T_scale> ops_partials(y, alpha, sigma);
   for (size_t n = 0; n < N; n++) {
     const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
-    if (include_summand<propto, T_shape>::value) {
+    if (include_summand_b<propto, T_shape>) {
       logp += log_alpha[n];
     }
-    if (include_summand<propto, T_y, T_shape>::value) {
+    if (include_summand_b<propto, T_y, T_shape>) {
       logp += (alpha_dbl - 1.0) * log_y[n];
     }
-    if (include_summand<propto, T_shape, T_scale>::value) {
+    if (include_summand_b<propto, T_shape, T_scale>) {
       logp -= alpha_dbl * log_sigma[n];
     }
     logp -= y_div_sigma_pow_alpha[n];

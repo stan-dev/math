@@ -47,7 +47,7 @@ return_type_t<T_y, T_scale> rayleigh_lccdf(const T_y& y, const T_scale& sigma) {
     const T_partials_return y_sqr = y_dbl * y_dbl;
     const T_partials_return inv_sigma_sqr = inv_sigma[n] * inv_sigma[n];
 
-    if (include_summand<false, T_y, T_scale>::value) {
+    if (include_summand_b<false, T_y, T_scale>) {
       ccdf_log += -0.5 * y_sqr * inv_sigma_sqr;
     }
 

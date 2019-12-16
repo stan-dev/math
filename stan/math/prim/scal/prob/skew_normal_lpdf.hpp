@@ -39,7 +39,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma, "Shape paramter", alpha);
 
-  if (!include_summand<propto, T_y, T_loc, T_scale, T_shape>::value) {
+  if (!include_summand_b<propto, T_y, T_loc, T_scale, T_shape>) {
     return 0.0;
   }
 
@@ -53,12 +53,12 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
   size_t N = max_size(y, mu, sigma, alpha);
 
   VectorBuilder<true, T_partials_return, T_scale> inv_sigma(length(sigma));
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
+  VectorBuilder<include_summand_b<propto, T_scale>, T_partials_return,
                 T_scale>
       log_sigma(length(sigma));
   for (size_t i = 0; i < length(sigma); i++) {
     inv_sigma[i] = 1.0 / value_of(sigma_vec[i]);
-    if (include_summand<propto, T_scale>::value) {
+    if (include_summand_b<propto, T_scale>) {
       log_sigma[i] = log(value_of(sigma_vec[i]));
     }
   }
@@ -73,13 +73,13 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
         = (y_dbl - mu_dbl) * inv_sigma[n];
     const double pi_dbl = pi();
 
-    if (include_summand<propto>::value) {
+    if (include_summand_b<propto>) {
       logp -= 0.5 * log(2.0 * pi_dbl);
     }
-    if (include_summand<propto, T_scale>::value) {
+    if (include_summand_b<propto, T_scale>) {
       logp -= log(sigma_dbl);
     }
-    if (include_summand<propto, T_y, T_loc, T_scale>::value) {
+    if (include_summand_b<propto, T_y, T_loc, T_scale>) {
       logp -= y_minus_mu_over_sigma * y_minus_mu_over_sigma / 2.0;
     }
     logp += log(erfc(-alpha_dbl * y_minus_mu_over_sigma / std::sqrt(2.0)));

@@ -39,7 +39,7 @@ return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
                          "Log location parameter", eta, "Precision parameter",
                          phi);
 
-  if (!include_summand<propto, T_log_location, T_precision>::value) {
+  if (!include_summand_b<propto, T_log_location, T_precision>) {
     return 0.0;
   }
 
@@ -83,16 +83,16 @@ return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
   }
 
   for (size_t i = 0; i < size; i++) {
-    if (include_summand<propto>::value) {
+    if (include_summand_b<propto>) {
       logp -= lgamma(n_vec[i] + 1.0);
     }
-    if (include_summand<propto, T_precision>::value) {
+    if (include_summand_b<propto, T_precision>) {
       logp += multiply_log(phi__[i], phi__[i]) - lgamma(phi__[i]);
     }
-    if (include_summand<propto, T_log_location>::value) {
+    if (include_summand_b<propto, T_log_location>) {
       logp += n_vec[i] * eta__[i];
     }
-    if (include_summand<propto, T_precision>::value) {
+    if (include_summand_b<propto, T_precision>) {
       logp += lgamma(n_plus_phi[i]);
     }
     logp -= (n_plus_phi[i]) * logsumexp_eta_logphi[i];

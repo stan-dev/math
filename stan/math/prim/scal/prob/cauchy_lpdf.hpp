@@ -50,7 +50,7 @@ return_type_t<T_y, T_loc, T_scale> cauchy_lpdf(const T_y& y, const T_loc& mu,
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma);
 
-  if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
+  if (!include_summand_b<propto, T_y, T_loc, T_scale>) {
     return 0.0;
   }
 
@@ -63,14 +63,13 @@ return_type_t<T_y, T_loc, T_scale> cauchy_lpdf(const T_y& y, const T_loc& mu,
 
   VectorBuilder<true, T_partials_return, T_scale> inv_sigma(length(sigma));
   VectorBuilder<true, T_partials_return, T_scale> sigma_squared(length(sigma));
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
-                T_scale>
+  VectorBuilder<include_summand_b<propto, T_scale>, T_partials_return, T_scale>
       log_sigma(length(sigma));
   for (size_t i = 0; i < length(sigma); i++) {
     const T_partials_return sigma_dbl = value_of(sigma_vec[i]);
     inv_sigma[i] = 1.0 / sigma_dbl;
     sigma_squared[i] = sigma_dbl * sigma_dbl;
-    if (include_summand<propto, T_scale>::value) {
+    if (include_summand_b<propto, T_scale>) {
       log_sigma[i] = log(sigma_dbl);
     }
   }
@@ -87,10 +86,10 @@ return_type_t<T_y, T_loc, T_scale> cauchy_lpdf(const T_y& y, const T_loc& mu,
     const T_partials_return y_minus_mu_over_sigma_squared
         = y_minus_mu_over_sigma * y_minus_mu_over_sigma;
 
-    if (include_summand<propto>::value) {
+    if (include_summand_b<propto>) {
       logp += NEG_LOG_PI;
     }
-    if (include_summand<propto, T_scale>::value) {
+    if (include_summand_b<propto, T_scale>) {
       logp -= log_sigma[n];
     }
     logp -= log1p(y_minus_mu_over_sigma_squared);

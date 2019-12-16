@@ -76,7 +76,7 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
                          s_squared, "Number of observations", n_obs,
                          "Location parameter", mu, "Scale parameter", sigma);
   // check if no variables are involved and prop-to
-  if (!include_summand<propto, T_y, T_s, T_loc, T_scale>::value) {
+  if (!include_summand_b<propto, T_y, T_s, T_loc, T_scale>) {
     return 0.0;
   }
 
@@ -99,11 +99,11 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
     const T_partials_return sigma_dbl = value_of(sigma_vec[i]);
     const T_partials_return sigma_squared = pow(sigma_dbl, 2);
 
-    if (include_summand<propto>::value) {
+    if (include_summand_b<propto>) {
       logp += NEG_LOG_SQRT_TWO_PI * n_obs_dbl;
     }
 
-    if (include_summand<propto, T_scale>::value) {
+    if (include_summand_b<propto, T_scale>) {
       logp -= n_obs_dbl * log(sigma_dbl);
     }
 

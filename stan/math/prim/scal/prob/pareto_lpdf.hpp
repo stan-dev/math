@@ -30,7 +30,7 @@ return_type_t<T_y, T_scale, T_shape> pareto_lpdf(const T_y& y,
     return 0;
   }
 
-  if (!include_summand<propto, T_y, T_scale, T_shape>::value) {
+  if (!include_summand_b<propto, T_y, T_scale, T_shape>) {
     return 0;
   }
 
@@ -49,10 +49,9 @@ return_type_t<T_y, T_scale, T_shape> pareto_lpdf(const T_y& y,
 
   operands_and_partials<T_y, T_scale, T_shape> ops_partials(y, y_min, alpha);
 
-  VectorBuilder<include_summand<propto, T_y, T_shape>::value, T_partials_return,
-                T_y>
+  VectorBuilder<include_summand_b<propto, T_y, T_shape>, T_partials_return, T_y>
       log_y(length(y));
-  if (include_summand<propto, T_y, T_shape>::value) {
+  if (include_summand_b<propto, T_y, T_shape>) {
     for (size_t n = 0; n < length(y); n++) {
       log_y[n] = log(value_of(y_vec[n]));
     }
@@ -66,19 +65,19 @@ return_type_t<T_y, T_scale, T_shape> pareto_lpdf(const T_y& y,
     }
   }
 
-  VectorBuilder<include_summand<propto, T_scale, T_shape>::value,
+  VectorBuilder<include_summand_b<propto, T_scale, T_shape>,
                 T_partials_return, T_scale>
       log_y_min(length(y_min));
-  if (include_summand<propto, T_scale, T_shape>::value) {
+  if (include_summand_b<propto, T_scale, T_shape>) {
     for (size_t n = 0; n < length(y_min); n++) {
       log_y_min[n] = log(value_of(y_min_vec[n]));
     }
   }
 
-  VectorBuilder<include_summand<propto, T_shape>::value, T_partials_return,
+  VectorBuilder<include_summand_b<propto, T_shape>, T_partials_return,
                 T_shape>
       log_alpha(length(alpha));
-  if (include_summand<propto, T_shape>::value) {
+  if (include_summand_b<propto, T_shape>) {
     for (size_t n = 0; n < length(alpha); n++) {
       log_alpha[n] = log(value_of(alpha_vec[n]));
     }
@@ -86,13 +85,13 @@ return_type_t<T_y, T_scale, T_shape> pareto_lpdf(const T_y& y,
 
   for (size_t n = 0; n < N; n++) {
     const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
-    if (include_summand<propto, T_shape>::value) {
+    if (include_summand_b<propto, T_shape>) {
       logp += log_alpha[n];
     }
-    if (include_summand<propto, T_scale, T_shape>::value) {
+    if (include_summand_b<propto, T_scale, T_shape>) {
       logp += alpha_dbl * log_y_min[n];
     }
-    if (include_summand<propto, T_y, T_shape>::value) {
+    if (include_summand_b<propto, T_y, T_shape>) {
       logp -= alpha_dbl * log_y[n] + log_y[n];
     }
 

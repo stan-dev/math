@@ -69,7 +69,6 @@ class AgradDistributionsFrechet : public AgradDistributionTest {
   typename stan::return_type<T_y, T_shape, T_scale>::type log_prob_function(
       const T_y& y, const T_shape& alpha, const T_scale& sigma, const T3&,
       const T4&, const T5&) {
-    using stan::math::include_summand;
     using stan::math::multiply_log;
     using stan::math::value_of;
     using std::log;

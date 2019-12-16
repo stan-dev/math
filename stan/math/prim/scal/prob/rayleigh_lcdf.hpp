@@ -52,7 +52,7 @@ return_type_t<T_y, T_scale> rayleigh_lcdf(const T_y& y, const T_scale& sigma) {
     const T_partials_return exp_val = exp(-0.5 * y_sqr * inv_sigma_sqr);
     const T_partials_return exp_div_1m_exp = exp_val / (1.0 - exp_val);
 
-    if (include_summand<false, T_y, T_scale>::value) {
+    if (include_summand_b<false, T_y, T_scale>) {
       cdf_log += log1m(exp_val);
     }
 

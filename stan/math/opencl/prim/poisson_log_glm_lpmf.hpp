@@ -67,7 +67,7 @@ return_type_t<T_alpha, T_beta> poisson_log_glm_lpmf(
     return 0;
   }
 
-  if (!include_summand<propto, T_alpha, T_beta>::value) {
+  if (!include_summand_b<propto, T_alpha, T_beta>) {
     return 0;
   }
 
@@ -88,8 +88,8 @@ return_type_t<T_alpha, T_beta> poisson_log_glm_lpmf(
 
   matrix_cl<double> theta_derivative_cl(N, 1);
   matrix_cl<double> theta_derivative_sum_cl(wgs, 1);
-  const bool need_logp1 = include_summand<propto>::value;
-  const bool need_logp2 = include_summand<propto, T_partials_return>::value;
+  const bool need_logp1 = include_summand_b<propto>;
+  const bool need_logp2 = include_summand_b<propto, T_partials_return>;
   matrix_cl<double> logp_cl((need_logp1 || need_logp2) ? wgs : 0, 1);
 
   try {

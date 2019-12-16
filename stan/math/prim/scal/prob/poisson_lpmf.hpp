@@ -35,7 +35,7 @@ return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
   check_consistent_sizes(function, "Random variable", n, "Rate parameter",
                          lambda);
 
-  if (!include_summand<propto, T_rate>::value) {
+  if (!include_summand_b<propto, T_rate>) {
     return 0.0;
   }
 
@@ -58,7 +58,7 @@ return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
 
   for (size_t i = 0; i < size; i++) {
     if (!(lambda_vec[i] == 0 && n_vec[i] == 0)) {
-      if (include_summand<propto>::value) {
+      if (include_summand_b<propto>) {
         logp -= lgamma(n_vec[i] + 1.0);
       }
       logp += multiply_log(n_vec[i], value_of(lambda_vec[i]))

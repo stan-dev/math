@@ -43,7 +43,7 @@ double hypergeometric_lpmf(const T_n& n, const T_N& N, const T_a& a,
                          N, "Successes in population parameter", a,
                          "Failures in population parameter", b);
 
-  if (!include_summand<propto>::value) {
+  if (!include_summand_b<propto>) {
     return 0.0;
   }
 

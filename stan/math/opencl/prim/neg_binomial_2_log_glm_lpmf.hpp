@@ -90,7 +90,7 @@ return_type_t<T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
     return 0;
   }
 
-  if (!include_summand<propto, T_alpha, T_beta, T_precision>::value) {
+  if (!include_summand_b<propto, T_alpha, T_beta, T_precision>) {
     return 0;
   }
 
@@ -122,13 +122,13 @@ return_type_t<T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
       = !is_constant_all<T_precision>::value || need_phi_derivative_sum;
   matrix_cl<double> phi_derivative_cl(
       need_phi_derivative ? (need_phi_derivative_sum ? wgs : N) : 0, 1);
-  const bool need_logp1 = include_summand<propto>::value;
-  const bool need_logp2 = include_summand<propto, T_precision>::value
+  const bool need_logp1 = include_summand_b<propto>;
+  const bool need_logp2 = include_summand_b<propto, T_precision>
                           && is_vector<T_precision>::value;
   const bool need_logp3
-      = include_summand<propto, T_alpha, T_beta, T_precision>::value;
-  const bool need_logp4 = include_summand<propto, T_alpha, T_beta>::value;
-  const bool need_logp5 = include_summand<propto, T_precision>::value;
+      = include_summand_b<propto, T_alpha, T_beta, T_precision>;
+  const bool need_logp4 = include_summand_b<propto, T_alpha, T_beta>;
+  const bool need_logp5 = include_summand_b<propto, T_precision>;
   const bool need_logp
       = need_logp1 || need_logp2 || need_logp3 || need_logp4 || need_logp5;
   matrix_cl<double> logp_cl(need_logp ? wgs : 0, 1);
@@ -157,7 +157,7 @@ return_type_t<T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
     logp += logp_sum;
   }
 
-  if (include_summand<propto, T_precision>::value
+  if (include_summand_b<propto, T_precision>
       && !is_vector<T_precision>::value) {
     logp += N
             * (multiply_log(forward_as<double>(phi_val),

@@ -33,7 +33,7 @@ return_type_t<T_y> std_normal_lpdf(const T_y& y) {
 
   check_not_nan(function, "Random variable", y);
 
-  if (!include_summand<propto, T_y>::value) {
+  if (!include_summand_b<propto, T_y>) {
     return 0.0;
   }
 
@@ -48,7 +48,7 @@ return_type_t<T_y> std_normal_lpdf(const T_y& y) {
     }
   }
   logp *= -0.5;
-  if (include_summand<propto>::value) {
+  if (include_summand_b<propto>) {
     logp += NEG_LOG_SQRT_TWO_PI * length(y);
   }
   return ops_partials.build(logp);

@@ -25,7 +25,7 @@ return_type_t<T_prob> multinomial_lpmf(
   check_size_match(function, "Size of number of trials variable", ns.size(),
                    "rows of probabilities parameter", theta.rows());
 
-  if (include_summand<propto>::value) {
+  if (include_summand_b<propto>) {
     double sum = 1.0;
     for (int n : ns) {
       sum += n;
@@ -35,7 +35,7 @@ return_type_t<T_prob> multinomial_lpmf(
       lp -= lgamma(n + 1.0);
     }
   }
-  if (include_summand<propto, T_prob>::value) {
+  if (include_summand_b<propto, T_prob>) {
     for (unsigned int i = 0; i < ns.size(); ++i) {
       lp += multiply_log(ns[i], theta[i]);
     }

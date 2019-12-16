@@ -84,7 +84,7 @@ return_type_t<T_prob, T_prior_size> dirichlet_lpdf(const T_prob& theta,
 
   T_partials_return lp(0.0);
 
-  if (include_summand<propto, T_prior_size>::value) {
+  if (include_summand_b<propto, T_prior_size>) {
     lp += (lgamma(alpha_dbl.colwise().sum())
            - lgamma(alpha_dbl).colwise().sum())
               .sum();
@@ -93,7 +93,7 @@ return_type_t<T_prob, T_prior_size> dirichlet_lpdf(const T_prob& theta,
   const auto& alpha_m_1 = (alpha_dbl.array() - 1.0);
   const auto& theta_log = theta_dbl.array().log();
 
-  if (include_summand<propto, T_prob, T_prior_size>::value) {
+  if (include_summand_b<propto, T_prob, T_prior_size>) {
     lp += (theta_log * alpha_m_1).sum();
   }
 

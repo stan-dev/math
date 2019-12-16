@@ -51,7 +51,7 @@ return_type_t<T_prob> binomial_logit_lpmf(const T_n& n, const T_N& N,
                          "Population size parameter", N,
                          "Probability parameter", alpha);
 
-  if (!include_summand<propto, T_prob>::value) {
+  if (!include_summand_b<propto, T_prob>) {
     return 0.0;
   }
 
@@ -62,7 +62,7 @@ return_type_t<T_prob> binomial_logit_lpmf(const T_n& n, const T_N& N,
 
   operands_and_partials<T_prob> ops_partials(alpha);
 
-  if (include_summand<propto>::value) {
+  if (include_summand_b<propto>) {
     for (size_t i = 0; i < size; ++i) {
       logp += binomial_coefficient_log(N_vec[i], n_vec[i]);
     }

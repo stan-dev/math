@@ -57,7 +57,7 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
   if (size_zero(y, alpha, beta)) {
     return 0;
   }
-  if (!include_summand<propto, T_y, T_scale_succ, T_scale_fail>::value) {
+  if (!include_summand_b<propto, T_y, T_scale_succ, T_scale_fail>) {
     return 0;
   }
 
@@ -77,30 +77,30 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
   operands_and_partials<T_y, T_scale_succ, T_scale_fail> ops_partials(y, alpha,
                                                                       beta);
 
-  VectorBuilder<include_summand<propto, T_y, T_scale_succ>::value,
+  VectorBuilder<include_summand_b<propto, T_y, T_scale_succ>,
                 T_partials_return, T_y>
       log_y(length(y));
-  VectorBuilder<include_summand<propto, T_y, T_scale_fail>::value,
+  VectorBuilder<include_summand_b<propto, T_y, T_scale_fail>,
                 T_partials_return, T_y>
       log1m_y(length(y));
 
   for (size_t n = 0; n < length(y); n++) {
-    if (include_summand<propto, T_y, T_scale_succ>::value) {
+    if (include_summand_b<propto, T_y, T_scale_succ>) {
       log_y[n] = log(value_of(y_vec[n]));
     }
-    if (include_summand<propto, T_y, T_scale_fail>::value) {
+    if (include_summand_b<propto, T_y, T_scale_fail>) {
       log1m_y[n] = log1m(value_of(y_vec[n]));
     }
   }
 
-  VectorBuilder<include_summand<propto, T_scale_succ>::value, T_partials_return,
+  VectorBuilder<include_summand_b<propto, T_scale_succ>, T_partials_return,
                 T_scale_succ>
       lgamma_alpha(length(alpha));
   VectorBuilder<!is_constant_all<T_scale_succ>::value, T_partials_return,
                 T_scale_succ>
       digamma_alpha(length(alpha));
   for (size_t n = 0; n < length(alpha); n++) {
-    if (include_summand<propto, T_scale_succ>::value) {
+    if (include_summand_b<propto, T_scale_succ>) {
       lgamma_alpha[n] = lgamma(value_of(alpha_vec[n]));
     }
     if (!is_constant_all<T_scale_succ>::value) {
@@ -108,7 +108,7 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
     }
   }
 
-  VectorBuilder<include_summand<propto, T_scale_fail>::value, T_partials_return,
+  VectorBuilder<include_summand_b<propto, T_scale_fail>, T_partials_return,
                 T_scale_fail>
       lgamma_beta(length(beta));
   VectorBuilder<!is_constant_all<T_scale_fail>::value, T_partials_return,
@@ -116,7 +116,7 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
       digamma_beta(length(beta));
 
   for (size_t n = 0; n < length(beta); n++) {
-    if (include_summand<propto, T_scale_fail>::value) {
+    if (include_summand_b<propto, T_scale_fail>) {
       lgamma_beta[n] = lgamma(value_of(beta_vec[n]));
     }
     if (!is_constant_all<T_scale_fail>::value) {
@@ -124,7 +124,7 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
     }
   }
 
-  VectorBuilder<include_summand<propto, T_scale_succ, T_scale_fail>::value,
+  VectorBuilder<include_summand_b<propto, T_scale_succ, T_scale_fail>,
                 T_partials_return, T_scale_succ, T_scale_fail>
       lgamma_alpha_beta(max_size(alpha, beta));
 
@@ -135,7 +135,7 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
   for (size_t n = 0; n < max_size(alpha, beta); n++) {
     const T_partials_return alpha_beta
         = value_of(alpha_vec[n]) + value_of(beta_vec[n]);
-    if (include_summand<propto, T_scale_succ, T_scale_fail>::value) {
+    if (include_summand_b<propto, T_scale_succ, T_scale_fail>) {
       lgamma_alpha_beta[n] = lgamma(alpha_beta);
     }
     if (!is_constant_all<T_scale_succ, T_scale_fail>::value) {
@@ -148,19 +148,19 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
     const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
     const T_partials_return beta_dbl = value_of(beta_vec[n]);
 
-    if (include_summand<propto, T_scale_succ, T_scale_fail>::value) {
+    if (include_summand_b<propto, T_scale_succ, T_scale_fail>) {
       logp += lgamma_alpha_beta[n];
     }
-    if (include_summand<propto, T_scale_succ>::value) {
+    if (include_summand_b<propto, T_scale_succ>) {
       logp -= lgamma_alpha[n];
     }
-    if (include_summand<propto, T_scale_fail>::value) {
+    if (include_summand_b<propto, T_scale_fail>) {
       logp -= lgamma_beta[n];
     }
-    if (include_summand<propto, T_y, T_scale_succ>::value) {
+    if (include_summand_b<propto, T_y, T_scale_succ>) {
       logp += (alpha_dbl - 1.0) * log_y[n];
     }
-    if (include_summand<propto, T_y, T_scale_fail>::value) {
+    if (include_summand_b<propto, T_y, T_scale_fail>) {
       logp += (beta_dbl - 1.0) * log1m_y[n];
     }
 

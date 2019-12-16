@@ -23,7 +23,7 @@ return_type_t<T_prob> categorical_logit_lpmf(
                 beta.size());
   check_finite(function, "log odds parameter", beta);
 
-  if (!include_summand<propto, T_prob>::value) {
+  if (!include_summand_b<propto, T_prob>) {
     return 0.0;
   }
 
@@ -49,7 +49,7 @@ return_type_t<T_prob> categorical_logit_lpmf(
   }
   check_finite(function, "log odds parameter", beta);
 
-  if (!include_summand<propto, T_prob>::value) {
+  if (!include_summand_b<propto, T_prob>) {
     return 0.0;
   }
 

@@ -37,7 +37,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
   check_consistent_sizes(function, "Failures variable", n, "Shape parameter",
                          alpha, "Inverse scale parameter", beta);
 
-  if (!include_summand<propto, T_shape, T_inv_scale>::value) {
+  if (!include_summand_b<propto, T_shape, T_inv_scale>) {
     return 0.0;
   }
 
@@ -105,7 +105,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
 
   for (size_t i = 0; i < size; i++) {
     if (alpha_vec[i] > 1e10) {  // reduces numerically to Poisson
-      if (include_summand<propto>::value) {
+      if (include_summand_b<propto>) {
         logp -= lgamma(n_vec[i] + 1.0);
       }
       logp += multiply_log(n_vec[i], lambda[i]) - lambda[i];
@@ -119,7 +119,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
             += (lambda[i] - n_vec[i]) / value_of(beta_vec[i]);
       }
     } else {  // standard density definition
-      if (include_summand<propto, T_shape>::value) {
+      if (include_summand_b<propto, T_shape>) {
         if (n_vec[i] != 0) {
           logp += binomial_coefficient_log(
               n_vec[i] + value_of(alpha_vec[i]) - 1.0, n_vec[i]);

@@ -28,10 +28,10 @@ return_type_t<T_covar, T_shape> lkj_corr_cholesky_lpdf(
     return 0.0;
   }
 
-  if (include_summand<propto, T_shape>::value) {
+  if (include_summand_b<propto, T_shape>) {
     lp += do_lkj_constant(eta, K);
   }
-  if (include_summand<propto, T_covar, T_shape>::value) {
+  if (include_summand_b<propto, T_covar, T_shape>) {
     const int Km1 = K - 1;
     Eigen::Matrix<T_covar, Eigen::Dynamic, 1> log_diagonals
         = L.diagonal().tail(Km1).array().log();

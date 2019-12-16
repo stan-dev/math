@@ -49,36 +49,35 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
 
   using std::log;
 
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
-                T_scale>
+  VectorBuilder<include_summand_b<propto, T_scale>, T_partials_return, T_scale>
       log_sigma(length(sigma));
-  if (include_summand<propto, T_scale>::value) {
+  if (include_summand_b<propto, T_scale>) {
     for (size_t n = 0; n < length(sigma); n++) {
       log_sigma[n] = log(value_of(sigma_vec[n]));
     }
   }
 
-  VectorBuilder<include_summand<propto, T_y, T_loc, T_scale>::value,
+  VectorBuilder<include_summand_b<propto, T_y, T_loc, T_scale>,
                 T_partials_return, T_scale>
       inv_sigma(length(sigma));
-  VectorBuilder<include_summand<propto, T_y, T_loc, T_scale>::value,
+  VectorBuilder<include_summand_b<propto, T_y, T_loc, T_scale>,
                 T_partials_return, T_scale>
       inv_sigma_sq(length(sigma));
-  if (include_summand<propto, T_y, T_loc, T_scale>::value) {
+  if (include_summand_b<propto, T_y, T_loc, T_scale>) {
     for (size_t n = 0; n < length(sigma); n++) {
       inv_sigma[n] = 1 / value_of(sigma_vec[n]);
     }
   }
-  if (include_summand<propto, T_y, T_loc, T_scale>::value) {
+  if (include_summand_b<propto, T_y, T_loc, T_scale>) {
     for (size_t n = 0; n < length(sigma); n++) {
       inv_sigma_sq[n] = inv_sigma[n] * inv_sigma[n];
     }
   }
 
-  VectorBuilder<include_summand<propto, T_y, T_loc, T_scale>::value,
+  VectorBuilder<include_summand_b<propto, T_y, T_loc, T_scale>,
                 T_partials_return, T_y>
       log_y(length(y));
-  if (include_summand<propto, T_y, T_loc, T_scale>::value) {
+  if (include_summand_b<propto, T_y, T_loc, T_scale>) {
     for (size_t n = 0; n < length(y); n++) {
       log_y[n] = log(value_of(y_vec[n]));
     }
@@ -92,7 +91,7 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
     }
   }
 
-  if (include_summand<propto>::value) {
+  if (include_summand_b<propto>) {
     logp += N * NEG_LOG_SQRT_TWO_PI;
   }
 
@@ -100,7 +99,7 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
     const T_partials_return mu_dbl = value_of(mu_vec[n]);
 
     T_partials_return logy_m_mu(0);
-    if (include_summand<propto, T_y, T_loc, T_scale>::value) {
+    if (include_summand_b<propto, T_y, T_loc, T_scale>) {
       logy_m_mu = log_y[n] - mu_dbl;
     }
 
@@ -110,13 +109,13 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
       logy_m_mu_div_sigma = logy_m_mu * inv_sigma_sq[n];
     }
 
-    if (include_summand<propto, T_scale>::value) {
+    if (include_summand_b<propto, T_scale>) {
       logp -= log_sigma[n];
     }
-    if (include_summand<propto, T_y>::value) {
+    if (include_summand_b<propto, T_y>) {
       logp -= log_y[n];
     }
-    if (include_summand<propto, T_y, T_loc, T_scale>::value) {
+    if (include_summand_b<propto, T_y, T_loc, T_scale>) {
       logp -= 0.5 * logy_m_mu_sq * inv_sigma_sq[n];
     }
 

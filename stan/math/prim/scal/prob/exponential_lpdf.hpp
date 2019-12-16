@@ -61,11 +61,11 @@ return_type_t<T_y, T_inv_scale> exponential_lpdf(const T_y& y,
   scalar_seq_view<T_inv_scale> beta_vec(beta);
   size_t N = max_size(y, beta);
 
-  VectorBuilder<include_summand<propto, T_inv_scale>::value, T_partials_return,
+  VectorBuilder<include_summand_b<propto, T_inv_scale>, T_partials_return,
                 T_inv_scale>
       log_beta(length(beta));
   for (size_t i = 0; i < length(beta); i++) {
-    if (include_summand<propto, T_inv_scale>::value) {
+    if (include_summand_b<propto, T_inv_scale>) {
       log_beta[i] = log(value_of(beta_vec[i]));
     }
   }
@@ -75,10 +75,10 @@ return_type_t<T_y, T_inv_scale> exponential_lpdf(const T_y& y,
   for (size_t n = 0; n < N; n++) {
     const T_partials_return beta_dbl = value_of(beta_vec[n]);
     const T_partials_return y_dbl = value_of(y_vec[n]);
-    if (include_summand<propto, T_inv_scale>::value) {
+    if (include_summand_b<propto, T_inv_scale>) {
       logp += log_beta[n];
     }
-    if (include_summand<propto, T_y, T_inv_scale>::value) {
+    if (include_summand_b<propto, T_y, T_inv_scale>) {
       logp -= beta_dbl * y_dbl;
     }
 

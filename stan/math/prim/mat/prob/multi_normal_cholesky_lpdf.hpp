@@ -110,14 +110,14 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
   T_partials_return logp(0);
   operands_and_partials<T_y, T_loc, T_covar> ops_partials(y, mu, L);
 
-  if (include_summand<propto>::value) {
+  if (include_summand_b<propto>) {
     logp += NEG_LOG_SQRT_TWO_PI * size_y * size_vec;
   }
 
   const matrix_partials_t inv_L_dbl
       = mdivide_left_tri<Eigen::Lower>(value_of(L));
 
-  if (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
+  if (include_summand_b<propto, T_y, T_loc, T_covar_elem>) {
     for (size_t i = 0; i < size_vec; i++) {
       vector_partials_t y_minus_mu_dbl(size_y);
       for (int j = 0; j < size_y; j++) {
@@ -149,7 +149,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
     }
   }
 
-  if (include_summand<propto, T_covar_elem>::value) {
+  if (include_summand_b<propto, T_covar_elem>) {
     logp += inv_L_dbl.diagonal().array().log().sum() * size_vec;
     if (!is_constant_all<T_covar>::value) {
       ops_partials.edge3_.partials_ -= size_vec * inv_L_dbl.transpose();

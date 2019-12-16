@@ -37,7 +37,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
                          mu, "Scale parameter", sigma, "Inv_scale paramter",
                          lambda);
 
-  if (!include_summand<propto, T_y, T_loc, T_scale, T_inv_scale>::value) {
+  if (!include_summand_b<propto, T_y, T_loc, T_scale, T_inv_scale>) {
     return 0.0;
   }
 
@@ -62,10 +62,10 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
 
     const T_partials_return pi_dbl = boost::math::constants::pi<double>();
 
-    if (include_summand<propto>::value) {
+    if (include_summand_b<propto>) {
       logp -= log(2.0);
     }
-    if (include_summand<propto, T_inv_scale>::value) {
+    if (include_summand_b<propto, T_inv_scale>) {
       logp += log(lambda_dbl);
     }
     logp += lambda_dbl

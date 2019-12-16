@@ -63,7 +63,7 @@ return_type_t<T_alpha_scalar, T_beta_scalar> categorical_logit_glm_lpmf(
     return 0;
   }
 
-  if (!include_summand<propto, T_alpha_scalar, T_beta_scalar>::value) {
+  if (!include_summand_b<propto, T_alpha_scalar, T_beta_scalar>) {
     return 0;
   }
 

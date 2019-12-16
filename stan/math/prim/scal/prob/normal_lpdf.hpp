@@ -53,7 +53,7 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y,
   check_positive(function, "Scale parameter", sigma);
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma);
-  if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
+  if (!include_summand_b<propto, T_y, T_loc, T_scale>) {
     return 0.0;
   }
 
@@ -65,12 +65,12 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y,
   size_t N = max_size(y, mu, sigma);
 
   VectorBuilder<true, T_partials_return, T_scale> inv_sigma(length(sigma));
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
+  VectorBuilder<include_summand_b<propto, T_scale>, T_partials_return,
                 T_scale>
       log_sigma(length(sigma));
   for (size_t i = 0; i < length(sigma); i++) {
     inv_sigma[i] = 1.0 / value_of(sigma_vec[i]);
-    if (include_summand<propto, T_scale>::value) {
+    if (include_summand_b<propto, T_scale>) {
       log_sigma[i] = log(value_of(sigma_vec[i]));
     }
   }
@@ -86,10 +86,10 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y,
 
     static double NEGATIVE_HALF = -0.5;
 
-    if (include_summand<propto>::value) {
+    if (include_summand_b<propto>) {
       logp += NEG_LOG_SQRT_TWO_PI;
     }
-    if (include_summand<propto, T_scale>::value) {
+    if (include_summand_b<propto, T_scale>) {
       logp -= log_sigma[n];
     }
     logp += NEGATIVE_HALF * y_minus_mu_over_sigma_squared;

@@ -35,7 +35,7 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
   check_consistent_sizes(function, "Failures variable", n, "Location parameter",
                          mu, "Precision parameter", phi);
 
-  if (!include_summand<propto, T_location, T_precision>::value) {
+  if (!include_summand_b<propto, T_location, T_precision>) {
     return 0.0;
   }
 
@@ -78,16 +78,16 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
   }
 
   for (size_t i = 0; i < size; i++) {
-    if (include_summand<propto>::value) {
+    if (include_summand_b<propto>) {
       logp -= lgamma(n_vec[i] + 1.0);
     }
-    if (include_summand<propto, T_precision>::value) {
+    if (include_summand_b<propto, T_precision>) {
       logp += multiply_log(phi__[i], phi__[i]) - lgamma(phi__[i]);
     }
-    if (include_summand<propto, T_location>::value) {
+    if (include_summand_b<propto, T_location>) {
       logp += multiply_log(n_vec[i], mu__[i]);
     }
-    if (include_summand<propto, T_precision>::value) {
+    if (include_summand_b<propto, T_precision>) {
       logp += lgamma(n_plus_phi[i]);
     }
     logp -= (n_plus_phi[i]) * log_mu_plus_phi[i];

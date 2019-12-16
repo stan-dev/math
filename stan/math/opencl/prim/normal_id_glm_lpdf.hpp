@@ -84,7 +84,7 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
                      length(alpha));
   }
 
-  if (!include_summand<propto, T_alpha, T_beta, T_scale>::value) {
+  if (!include_summand_b<propto, T_alpha, T_beta, T_scale>) {
     return 0;
   }
 
@@ -122,7 +122,7 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
       = !is_constant_all<T_scale>::value && is_vector<T_scale>::value;
   matrix_cl<double> sigma_derivative_cl(need_sigma_derivative ? N : 0, 1);
   const bool need_log_sigma_sum
-      = include_summand<propto, T_scale>::value && is_vector<T_scale>::value;
+      = include_summand_b<propto, T_scale>::value && is_vector<T_scale>;
   matrix_cl<double> log_sigma_sum_cl(need_log_sigma_sum ? wgs : 0, 1);
 
   try {
@@ -180,17 +180,17 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
 
   // Compute log probability.
   T_partials_return logp(0.0);
-  if (include_summand<propto>::value) {
+  if (include_summand_b<propto>) {
     logp += NEG_LOG_SQRT_TWO_PI * N;
   }
-  if (include_summand<propto, T_scale>::value) {
+  if (include_summand_b<propto, T_scale>) {
     if (is_vector<T_scale>::value) {
       logp -= sum(from_matrix_cl(log_sigma_sum_cl));
     } else {
       logp -= N * log(forward_as<double>(sigma_val));
     }
   }
-  if (include_summand<propto, T_alpha, T_beta, T_scale>::value) {
+  if (include_summand_b<propto, T_alpha, T_beta, T_scale>) {
     logp -= 0.5 * y_scaled_sq_sum;
   }
   return ops_partials.build(logp);

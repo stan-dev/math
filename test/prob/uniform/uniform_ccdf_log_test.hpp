@@ -59,7 +59,6 @@ class AgradCcdfLogUniform : public AgradCcdfLogTest {
       const T_y& y, const T_low& alpha, const T_high& beta, const T3&,
       const T4&, const T5&) {
     using stan::math::LOG_ZERO;
-    using stan::math::include_summand;
 
     if (y < alpha || y > beta)
       return 0.0;
