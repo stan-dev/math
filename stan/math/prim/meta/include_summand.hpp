@@ -49,8 +49,10 @@ struct include_summand<propto, T>
           !propto
           || !stan::is_constant_all<typename scalar_type<T>::type>::value)> {};
 
-}  // namespace math
+template <bool propto, typename... T_pack>
+constexpr bool include_summand_b = include_summand<propto, T_pack...>::value;
 
+}  // namespace math
 }  // namespace stan
 
 #endif
