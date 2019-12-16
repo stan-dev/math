@@ -28,7 +28,7 @@ inline T get(const std::vector<T>& x, size_t n) {
 }
 
 template <typename T, typename = require_eigen_t<T>, typename = void>
-inline T get(const T& m, size_t n) {
+inline typename T::Scalar get(const T& m, size_t n) {
   return m(static_cast<int>(n));
 }
 
