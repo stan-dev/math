@@ -45,7 +45,7 @@ gp_matern32_cov(const std::vector<T_x> &x, const T_s &sigma,
   using std::pow;
   using std::sqrt;
 
-  size_t x_size = size_of(x);
+  size_t x_size = length(x);
   Eigen::Matrix<return_type_t<T_x, T_s, T_l>, Eigen::Dynamic, Eigen::Dynamic>
       cov(x_size, x_size);
 
@@ -54,10 +54,10 @@ gp_matern32_cov(const std::vector<T_x> &x, const T_s &sigma,
   }
 
   const char *function = "gp_matern32_cov";
-  size_t x_obs_size = size_of(x[0]);
+  size_t x_obs_size = length(x[0]);
   for (size_t i = 0; i < x_size; ++i) {
     check_size_match(function, "x row", x_obs_size, "x's other row",
-                     size_of(x[i]));
+                     length(x[i]));
   }
 
   for (size_t n = 0; n < x_size; ++n) {
@@ -108,7 +108,7 @@ gp_matern32_cov(const std::vector<Eigen::Matrix<T_x, -1, 1>> &x,
                 const T_s &sigma, const std::vector<T_l> &length_scale) {
   using std::exp;
 
-  size_t x_size = size_of(x);
+  size_t x_size = length(x);
   Eigen::Matrix<return_type_t<T_x, T_s, T_l>, Eigen::Dynamic, Eigen::Dynamic>
       cov(x_size, x_size);
 
@@ -128,7 +128,7 @@ gp_matern32_cov(const std::vector<Eigen::Matrix<T_x, -1, 1>> &x,
     check_not_nan(function, "length scale", length_scale[n]);
   }
 
-  check_size_match(function, "x dimension", size_of(x[0]),
+  check_size_match(function, "x dimension", length(x[0]),
                    "number of length scales", l_size);
 
   T_s sigma_sq = square(sigma);
@@ -179,8 +179,8 @@ gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
                 const T_s &sigma, const T_l &length_scale) {
   using std::exp;
 
-  size_t x1_size = size_of(x1);
-  size_t x2_size = size_of(x2);
+  size_t x1_size = length(x1);
+  size_t x2_size = length(x2);
   Eigen::Matrix<return_type_t<T_x1, T_x2, T_s, T_l>, Eigen::Dynamic,
                 Eigen::Dynamic>
       cov(x1_size, x2_size);
@@ -190,14 +190,14 @@ gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   }
 
   const char *function = "gp_matern32_cov";
-  size_t x1_obs_size = size_of(x1[0]);
+  size_t x1_obs_size = length(x1[0]);
   for (size_t i = 0; i < x1_size; ++i) {
     check_size_match(function, "x1's row", x1_obs_size, "x1's other row",
-                     size_of(x1[i]));
+                     length(x1[i]));
   }
   for (size_t i = 0; i < x2_size; ++i) {
     check_size_match(function, "x1's row", x1_obs_size, "x2's other row",
-                     size_of(x2[i]));
+                     length(x2[i]));
   }
 
   for (size_t n = 0; n < x1_size; ++n) {
@@ -256,8 +256,8 @@ gp_matern32_cov(const std::vector<Eigen::Matrix<T_x1, -1, 1>> &x1,
                 const T_s &sigma, const std::vector<T_l> &length_scale) {
   using std::exp;
 
-  size_t x1_size = size_of(x1);
-  size_t x2_size = size_of(x2);
+  size_t x1_size = length(x1);
+  size_t x2_size = length(x2);
   Eigen::Matrix<return_type_t<T_x1, T_x2, T_s, T_l>, Eigen::Dynamic,
                 Eigen::Dynamic>
       cov(x1_size, x2_size);
@@ -283,11 +283,11 @@ gp_matern32_cov(const std::vector<Eigen::Matrix<T_x1, -1, 1>> &x1,
   }
 
   for (size_t i = 0; i < x1_size; ++i) {
-    check_size_match(function, "x1's row", size_of(x1[i]),
+    check_size_match(function, "x1's row", length(x1[i]),
                      "number of length scales", l_size);
   }
   for (size_t i = 0; i < x2_size; ++i) {
-    check_size_match(function, "x2's row", size_of(x2[i]),
+    check_size_match(function, "x2's row", length(x2[i]),
                      "number of length scales", l_size);
   }
 

@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_META_LENGTH_HPP
 #define STAN_MATH_PRIM_META_LENGTH_HPP
 
+#include <stan/math/prim/meta/require_generics.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <cstdlib>
 #include <vector>
@@ -10,34 +11,19 @@ namespace stan {
  * Returns the length of primitive scalar types
  * that are always of length 1.
  */
-template <typename T>
-size_t length(const T& /*x*/) {
+template <typename T, typename = require_stan_scalar_t<T>>
+inline size_t length(const T& /*x*/) {
   return 1U;
 }
 
 /** \ingroup type_trait
- * Returns the length of the provided std::vector.
+ * Returns the size of the provided Eigen matrix, expression or std::vector.
  *
- * @param x input vector
- * @tparam T type of the elements in the vector
- * @return the length of the input vector
+ * @param m input  \c Eigen \c Matrix, expression or std::vector
+ * @tparam T type of m
  */
-template <typename T>
-size_t length(const std::vector<T>& x) {
-  return x.size();
-}
-
-/** \ingroup type_trait
- * Returns the size of the provided Eigen matrix.
- *
- * @param m a const Eigen matrix
- * @tparam T type of matrix.
- * @tparam R number of rows in the input matrix.
- * @tparam C number of columns in the input matrix.
- * @return the size of the input matrix
- */
-template <typename T, int R, int C>
-size_t length(const Eigen::Matrix<T, R, C>& m) {
+template <typename T, typename = require_not_stan_scalar_t<T>, typename = void>
+inline size_t length(const T& m) {
   return m.size();
 }
 }  // namespace stan

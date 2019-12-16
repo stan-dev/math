@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_META_AS_ARRAY_OR_SCALAR_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta/require_generics.hpp>
 #include <vector>
 
 namespace stan {
@@ -14,7 +15,7 @@ namespace math {
  * @param v Specified value.
  * @return Same value.
  */
-template <typename T>
+template <typename T, typename = require_stan_scalar_t<T>>
 inline const T& as_array_or_scalar(const T& v) {
   return v;
 }
@@ -22,30 +23,12 @@ inline const T& as_array_or_scalar(const T& v) {
 /** \ingroup type_trait
  * Converts a matrix type to an array.
  *
- * @tparam T Type of scalar element.
- * @tparam R Row type of input matrix.
- * @tparam C Column type of input matrix.
- * @param v Specified matrix.
+ * @tparam T Type of \c Eigen \c Matrix or expression
+ * @param v Specified \c Eigen \c Matrix or expression.
  * @return Matrix converted to an array.
  */
-template <typename T, int R, int C>
-inline Eigen::ArrayWrapper<const Eigen::Matrix<T, R, C>> as_array_or_scalar(
-    const Eigen::Matrix<T, R, C>& v) {
-  return v.array();
-}
-
-/** \ingroup type_trait
- * Converts a matrix type to an array.
- *
- * @tparam T Type of scalar element.
- * @tparam R Row type of input matrix.
- * @tparam C Column type of input matrix.
- * @param v Specified matrix.
- * @return Matrix converted to an array.
- */
-template <typename T, int R, int C>
-inline Eigen::ArrayWrapper<const Eigen::Map<const Eigen::Matrix<T, R, C>>>
-as_array_or_scalar(const Eigen::Map<const Eigen::Matrix<T, R, C>>& v) {
+template <typename T, typename = require_eigen_t<T>>
+inline auto as_array_or_scalar(const T& v) {
   return v.array();
 }
 
