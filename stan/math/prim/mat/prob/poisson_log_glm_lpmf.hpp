@@ -94,7 +94,7 @@ return_type_t<T_x_scalar, T_alpha, T_beta> poisson_log_glm_lpmf(
 
   Array<T_partials_return, Dynamic, 1> theta(N_instances);
   if (T_x_rows == 1) {
-    T_theta_tmp theta_tmp = x_val * beta_val_vec;
+    T_theta_tmp theta_tmp = forward_as<T_theta_tmp>((x_val * beta_val_vec)(0,0));
     theta = theta_tmp + as_array_or_scalar(alpha_val_vec);
   } else {
     theta = x_val * beta_val_vec;
