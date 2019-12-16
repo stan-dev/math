@@ -10,6 +10,15 @@
 
 namespace stan {
 
+/** \ingroup type_trait
+ * Returns the provided element. Scalar type overload
+ * for the function to retrieve n-th element of a vector,
+ * \c Eigen \c Matrix or expression
+ *
+ * @param x input scalar
+ * @param n index of the element to return
+ * @return input scalar
+ */
 template <typename T, typename = require_stan_scalar_t<T>>
 inline T get(const T& x, size_t n) {
   return x;
@@ -27,7 +36,14 @@ inline T get(const std::vector<T>& x, size_t n) {
   return x[n];
 }
 
-template <typename T, typename = require_eigen_t<T>, typename = void>
+/** \ingroup type_trait
+ * Returns the n-th element of the provided Eigen matrix.
+ *
+ * @param x input \c Eigen \c Matrix or expression
+ * @param n index of the element to return
+ * @return n-th element of the \c Eigen \c Matrix or expression
+ */
+template <typename T, typename = require_eigen_t<T>>
 inline typename T::Scalar get(const T& m, size_t n) {
   return m(static_cast<int>(n));
 }

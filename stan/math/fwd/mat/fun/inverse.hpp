@@ -15,12 +15,13 @@ namespace math {
 template <typename T, int R, int C>
 inline Eigen::Matrix<fvar<T>, R, C> inverse(
     const Eigen::Matrix<fvar<T>, R, C>& m) {
+  check_nonempty("inverse", "m", m);
   check_square("inverse", "m", m);
   Eigen::Matrix<T, R, C> m_deriv(m.rows(), m.cols());
   Eigen::Matrix<T, R, C> m_inv(m.rows(), m.cols());
 
-  for (size_type i = 0; i < m.rows(); i++) {
-    for (size_type j = 0; j < m.cols(); j++) {
+  for (size_type j = 0; j < m.cols(); j++) {
+    for (size_type i = 0; i < m.rows(); i++) {
       m_inv(i, j) = m(i, j).val_;
       m_deriv(i, j) = m(i, j).d_;
     }

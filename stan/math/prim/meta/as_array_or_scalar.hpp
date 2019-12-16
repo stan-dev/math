@@ -1,10 +1,8 @@
 #ifndef STAN_MATH_PRIM_META_AS_ARRAY_OR_SCALAR_HPP
 #define STAN_MATH_PRIM_META_AS_ARRAY_OR_SCALAR_HPP
 
-#include <stan/math/prim/meta/is_vector.hpp>
-#include <stan/math/prim/meta/require_generics.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/meta/require_generics.hpp>
 #include <vector>
 
 namespace stan {
@@ -25,10 +23,8 @@ inline const T& as_array_or_scalar(const T& v) {
 /** \ingroup type_trait
  * Converts a matrix type to an array.
  *
- * @tparam T Type of scalar element.
- * @tparam R Row type of input matrix.
- * @tparam C Column type of input matrix.
- * @param v Specified matrix.
+ * @tparam T Type of \c Eigen \c Matrix or expression
+ * @param v Specified \c Eigen \c Matrix or expression.
  * @return Matrix converted to an array.
  */
 template <typename T, typename = require_eigen_t<T>>

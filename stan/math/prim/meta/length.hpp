@@ -12,31 +12,18 @@ namespace stan {
  * that are always of length 1.
  */
 template <typename T, typename = require_stan_scalar_t<T>>
-size_t length(const T& /*x*/) {
+inline size_t length(const T& /*x*/) {
   return 1U;
 }
 
 /** \ingroup type_trait
- * Returns the length of the provided std::vector.
+ * Returns the size of the provided Eigen matrix, expression or std::vector.
  *
- * @param x input vector
- * @tparam T type of the elements in the vector
- * @return the length of the input vector
+ * @param m input  \c Eigen \c Matrix, expression or std::vector
+ * @tparam T type of m
  */
-template <typename T>
-size_t length(const std::vector<T>& x) {
-  return x.size();
-}
-
-/** \ingroup type_trait
- * Returns the size of the provided Eigen matrix.
- *
- * @param m a const Eigen matrix
- * @tparam T type of matrix.
- * @return the size of the input matrix
- */
-template <typename T, typename = require_eigen_t<T>, typename = void>
-size_t length(const T& m) {
+template <typename T, typename = require_not_stan_scalar_t<T>, typename = void>
+inline size_t length(const T& m) {
   return m.size();
 }
 }  // namespace stan
