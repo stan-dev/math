@@ -99,7 +99,8 @@ return_type_t<T_x_scalar, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
 
   Array<T_partials_return, Dynamic, 1> ytheta(N_instances);
   if (T_x_rows == 1) {
-    T_ytheta_tmp ytheta_tmp = forward_as<T_ytheta_tmp>((x_val * beta_val_vec)(0,0));
+    T_ytheta_tmp ytheta_tmp
+        = forward_as<T_ytheta_tmp>((x_val * beta_val_vec)(0, 0));
     ytheta = as_array_or_scalar(signs)
              * (ytheta_tmp + as_array_or_scalar(alpha_val_vec));
   } else {
