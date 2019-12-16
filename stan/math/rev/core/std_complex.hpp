@@ -27,6 +27,7 @@
 #include <cstddef>
 #include <iterator>
 #include <limits>
+#include <type_traits>
 
 #include <iostream>
 
@@ -2772,6 +2773,14 @@ inline std::complex<fvar<T>> pow(const std::complex<fvar<T>>& lhs,
                                  const std::complex<fvar<T>>& rhs) {
   return complex_pow(lhs, rhs);
 }
+
+// template <typename T,
+//           typename std::enable_if<!std::is_arithmetic<T>::value>::type* =
+//           nullptr>
+// inline std::complex<T> sqrt(const std::complex<T>& z) {
+//   std::cout << "HELLO new sqrt()" << std::endl;
+//   return complex_sqrt(z);
+// }
 
 // var 1
 inline std::complex<var> sqrt(const std::complex<var>& z) {
