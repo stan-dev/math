@@ -1,12 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_CORR_MATRIX_FREE_HPP
 #define STAN_MATH_PRIM_MAT_FUN_CORR_MATRIX_FREE_HPP
 
-#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/factor_cov_matrix.hpp>
 #include <cmath>
 

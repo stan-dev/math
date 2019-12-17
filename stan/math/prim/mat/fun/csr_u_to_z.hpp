@@ -1,8 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_CSR_U_TO_Z
 #define STAN_MATH_PRIM_MAT_FUN_CSR_U_TO_Z
 
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/err.hpp> 
 #include <stdexcept>
 #include <vector>
 

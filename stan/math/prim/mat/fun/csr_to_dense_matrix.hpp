@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_CSR_TO_DENSE_MATRIX_HPP
 
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/mat/err/check_range.hpp>
 #include <stan/math/prim/mat/fun/csr_u_to_z.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/dot_product.hpp>
