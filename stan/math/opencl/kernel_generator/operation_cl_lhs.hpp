@@ -24,8 +24,10 @@ class operation_cl_lhs : public operation_cl<Derived, ReturnScalar, Args...> {
   using base = operation_cl<Derived, ReturnScalar, Args...>;
   static constexpr int N = sizeof...(Args);
   using base::arguments_;
+  using base::derived;
 
  public:
+  using base::operation_cl;
   /**
    * generates kernel code for this expression if it appears on the left hand
    * side of an assigment.
@@ -38,10 +40,13 @@ class operation_cl_lhs : public operation_cl<Derived, ReturnScalar, Args...> {
   inline kernel_parts get_kernel_parts_lhs(
       std::set<const operation_cl_base*>& generated, name_generator& name_gen,
       const std::string& i, const std::string& j) const {
+    std::string i_arg = i;
+    std::string j_arg = j;
+    derived().modify_argument_indices(i_arg, j_arg);
     std::array<kernel_parts, N> args_parts = index_apply<N>([&](auto... Is) {
       return std::array<kernel_parts, N>{
           std::get<Is>(arguments_)
-              .get_kernel_parts_lhs(generated, name_gen, i, j)...};
+              .get_kernel_parts_lhs(generated, name_gen, i_arg, j_arg)...};
     });
     kernel_parts res{};
     res.body = std::accumulate(
@@ -56,8 +61,8 @@ class operation_cl_lhs : public operation_cl<Derived, ReturnScalar, Args...> {
                               return a + b.args;
                             });
       kernel_parts my_part = index_apply<N>([&](auto... Is) {
-        return this->derived().generate_lhs(
-            i, j, std::get<Is>(arguments_).var_name...);
+        return derived().generate_lhs(i, j,
+                                      std::get<Is>(arguments_).var_name...);
       });
       res.body += my_part.body;
       res.args += my_part.args;

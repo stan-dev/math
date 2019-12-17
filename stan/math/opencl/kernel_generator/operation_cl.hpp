@@ -137,10 +137,13 @@ class operation_cl : public operation_cl_base {
     kernel_parts res{};
     if (generated.count(this) == 0) {
       generated.insert(this);
+      std::string i_arg = i;
+      std::string j_arg = j;
+      derived().modify_argument_indices(i_arg, j_arg);
       std::array<kernel_parts, N> args_parts = index_apply<N>([&](auto... Is) {
         return std::array<kernel_parts, N>{
             std::get<Is>(arguments_)
-                .get_kernel_parts(generated, name_gen, i, j)...};
+                .get_kernel_parts(generated, name_gen, i_arg, j_arg)...};
       });
       res.body
           = std::accumulate(args_parts.begin(), args_parts.end(), std::string(),
@@ -162,6 +165,16 @@ class operation_cl : public operation_cl_base {
     }
     return res;
   }
+
+  /**
+   * Does nothing. Derived classes can override this to modify how indices are
+   * passed to its argument expressions. On input arguments \c i and \c j are
+   * expressions for indices of this operation. On output they are expressions
+   * for indices of argument operations.
+   * @param[in, out] i row index
+   * @param[in, out] j column index
+   */
+  inline void modify_argument_indices(std::string& i, std::string& j) {}
 
   /**
    * Sets kernel arguments for nested expressions.
