@@ -13,8 +13,9 @@ namespace math {
 
 template <typename Derived, typename Scalar, typename... Args>
 template <typename T_lhs>
-std::string operation_cl<Derived, Scalar, Args...>::
-    get_kernel_source_for_evaluating_into(const T_lhs& lhs) const {
+std::string
+operation_cl<Derived, Scalar, Args...>::get_kernel_source_for_evaluating_into(
+    const T_lhs& lhs) const {
   static_assert(
       is_valid_expression<T_lhs>::value,
       "operation_cl::get_kernel_source_for_evaluating_into: left hand "

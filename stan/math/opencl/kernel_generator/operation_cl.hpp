@@ -79,8 +79,7 @@ class operation_cl : public operation_cl_base {
    * @return Result of the expression.
    */
   matrix_cl<Scalar> eval() const {
-    matrix_cl<Scalar> res(derived().rows(), derived().cols(),
-                                derived().view());
+    matrix_cl<Scalar> res(derived().rows(), derived().cols(), derived().view());
     if (res.size() > 0) {
       this->evaluate_into(res);
     }

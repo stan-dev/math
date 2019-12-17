@@ -25,8 +25,8 @@ namespace math {
  */
 template <typename Derived, typename T>
 class unary_function_cl
-    : public operation_cl<
-          Derived, typename std::remove_reference_t<T>::Scalar, T> {
+    : public operation_cl<Derived, typename std::remove_reference_t<T>::Scalar,
+                          T> {
  public:
   using Scalar = typename std::remove_reference_t<T>::Scalar;
   static_assert(std::is_floating_point<Scalar>::value,
