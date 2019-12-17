@@ -16,6 +16,8 @@ namespace math {
  * input matrix.
  * @param[in] A Matrix to exponentiate.
  * @return Matrix exponential, dynamically-sized.
+ * @throw <code>std::invalid_argument</code> if the input matrix
+ * is not square.
  */
 template <typename T>
 inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> matrix_exp(
@@ -34,7 +36,7 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> matrix_exp(
 
 /**
  * Return the matrix exponential of the input
- * statically-sized matrix.
+ * statically-sized square matrix.
  *
  * @tparam T type of scalar of the elements of
  * input matrix.
