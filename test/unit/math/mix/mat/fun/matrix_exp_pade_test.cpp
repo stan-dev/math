@@ -6,6 +6,9 @@ TEST(MathMixMatFun, matrixExpPade) {
   Eigen::MatrixXd m00(0, 0);
   stan::test::expect_ad(f, m00);
 
+  Eigen::MatrixXd m02(0, 2);
+  stan::test::expect_ad(f, m02);
+
   Eigen::MatrixXd a1(1, 1);
   a1 << 1;
   stan::test::expect_ad(f, a1);

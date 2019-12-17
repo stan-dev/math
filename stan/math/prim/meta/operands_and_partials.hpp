@@ -4,7 +4,6 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/meta/broadcast_array.hpp>
 #include <stan/math/prim/meta/return_type.hpp>
-#include <stan/math/prim/meta/operands_and_partials.hpp>
 #include <vector>
 
 namespace stan {

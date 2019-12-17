@@ -64,9 +64,7 @@ return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
                 T_log_rate>
       exp_alpha(length(alpha));
   for (size_t i = 0; i < length(alpha); i++) {
-    if (include_summand<propto, T_log_rate>::value) {
-      exp_alpha[i] = exp(value_of(alpha_vec[i]));
-    }
+    exp_alpha[i] = exp(value_of(alpha_vec[i]));
   }
 
   for (size_t i = 0; i < size; i++) {
@@ -75,9 +73,7 @@ return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
       if (include_summand<propto>::value) {
         logp -= lgamma(n_vec[i] + 1.0);
       }
-      if (include_summand<propto, T_log_rate>::value) {
-        logp += n_vec[i] * value_of(alpha_vec[i]) - exp_alpha[i];
-      }
+      logp += n_vec[i] * value_of(alpha_vec[i]) - exp_alpha[i];
     }
 
     if (!is_constant_all<T_log_rate>::value) {
