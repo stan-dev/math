@@ -31,10 +31,10 @@ struct kernel_parts {
 /**
  * Base for all kernel generator operations.
  * @tparam Derived derived type
- * @tparam ReturnScalar scalar type of the result
+ * @tparam Scalar scalar type of the result
  * @tparam Args types of arguments to this operation
  */
-template <typename Derived, typename ReturnScalar, typename... Args>
+template <typename Derived, typename Scalar, typename... Args>
 class operation_cl : public operation_cl_base {
   static_assert(
       conjunction<std::is_base_of<operation_cl_base,
@@ -78,9 +78,8 @@ class operation_cl : public operation_cl_base {
    * Evaluates the expression.
    * @return Result of the expression.
    */
-  matrix_cl<ReturnScalar> eval() const {
-    matrix_cl<ReturnScalar> res(derived().rows(), derived().cols(),
-                                derived().view());
+  matrix_cl<Scalar> eval() const {
+    matrix_cl<Scalar> res(derived().rows(), derived().cols(), derived().view());
     if (res.size() > 0) {
       this->evaluate_into(res);
     }
@@ -91,7 +90,7 @@ class operation_cl : public operation_cl_base {
    * Converting to \c matrix_cl evaluates the expression. Used when assigning to
    * a \c matrix_cl.
    */
-  operator matrix_cl<ReturnScalar>() const { return derived().eval(); }
+  operator matrix_cl<Scalar>() const { return derived().eval(); }
 
   /**
    * Evaluates \c this expression into given left-hand-side expression.
@@ -220,7 +219,7 @@ class operation_cl : public operation_cl_base {
   inline int rows() const {
     return index_apply<N>([&](auto... Is) {
       // assuming all non-dynamic sizes match
-      return std::max(get<Is>(arguments_).rows()...);
+      return std::max({get<Is>(arguments_).rows()...});
     });
   }
 
@@ -233,18 +232,18 @@ class operation_cl : public operation_cl_base {
   inline int cols() const {
     return index_apply<N>([&](auto... Is) {
       // assuming all non-dynamic sizes match
-      return std::max(get<Is>(arguments_).cols()...);
+      return std::max({get<Is>(arguments_).cols()...});
     });
   }
 };
 
-template <typename Derived, typename ReturnScalar, typename... Args>
+template <typename Derived, typename Scalar, typename... Args>
 template <typename T_lhs>
-cl::Kernel operation_cl<Derived, ReturnScalar, Args...>::cache<T_lhs>::kernel;
+cl::Kernel operation_cl<Derived, Scalar, Args...>::cache<T_lhs>::kernel;
 
-template <typename Derived, typename ReturnScalar, typename... Args>
+template <typename Derived, typename Scalar, typename... Args>
 template <typename T_lhs>
-std::string operation_cl<Derived, ReturnScalar, Args...>::cache<T_lhs>::source;
+std::string operation_cl<Derived, Scalar, Args...>::cache<T_lhs>::source;
 
 }  // namespace math
 }  // namespace stan

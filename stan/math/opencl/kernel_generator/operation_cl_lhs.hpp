@@ -15,13 +15,13 @@ namespace math {
  * Base for all kernel generator operations that can be used on left hand side
  * of an expression.
  * @tparam Derived derived type
- * @tparam ReturnScalar scalar type of the result
+ * @tparam Scalar scalar type of the result
  * @tparam Args types of arguments to this operation
  */
-template <typename Derived, typename ReturnScalar, typename... Args>
-class operation_cl_lhs : public operation_cl<Derived, ReturnScalar, Args...> {
+template <typename Derived, typename Scalar, typename... Args>
+class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...> {
  protected:
-  using base = operation_cl<Derived, ReturnScalar, Args...>;
+  using base = operation_cl<Derived, Scalar, Args...>;
   static constexpr int N = sizeof...(Args);
   using base::arguments_;
   using base::derived;

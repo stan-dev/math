@@ -14,6 +14,7 @@
 #include <stan/math/opencl/kernel_generator/load.hpp>
 #include <stan/math/opencl/kernel_generator/scalar.hpp>
 #include <stan/math/opencl/kernel_generator/binary_operation.hpp>
+#include <stan/math/opencl/kernel_generator/unary_function_cl.hpp>
 
 #endif
 #endif
