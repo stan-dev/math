@@ -182,7 +182,7 @@ $(BOOST)/user-config.jam:
 $(BOOST)/stage/lib/mpi.so: $(BOOST)/user-config.jam
 	@mkdir -p $(dir $@)
 	cd $(BOOST); ./bootstrap.sh
-	cd $(BOOST); ./b2 --user-config=user-config.jam --layout=system --with-mpi --with-serialization -j$(BOOST_PARALLEL_JOBS) variant=release link=shared threading=multi runtime-link=shared hardcode-dll-paths=true dll-path="$(BOOST_LIBRARY_ABSOLUTE_PATH)"
+	cd $(BOOST); ./b2 --user-config=user-config.jam --layout=system --with-mpi --with-serialization -j$(BOOST_PARALLEL_JOBS) variant=release link=shared threading=multi runtime-link=shared hardcode-dll-paths=true dll-path="$(BOOST_LIBRARY_ABSOLUTE_PATH)" cxxstd=11
 
 $(BOOST)/stage/lib/libboost_serialization.so: $(BOOST)/stage/lib/mpi.so
 $(BOOST)/stage/lib/libboost_mpi.so: $(BOOST)/stage/lib/mpi.so
