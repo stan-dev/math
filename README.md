@@ -12,7 +12,7 @@ Required Libraries
 ------------------
 Stan Math depends on four libraries:
 
-- Boost (version 1.69.0): [Boost Home Page](http://www.boost.org)
+- Boost (version 1.72.0): [Boost Home Page](http://www.boost.org)
 - Eigen (version 3.3.3): [Eigen Home Page](http://eigen.tuxfamily.org/index.php?title=Main_Page)
 - SUNDIALS (version 4.1.0): [Sundials Home Page](http://computation.llnl.gov/projects/sundials/sundials-software)
 - Intel TBB (version 2019_U8): [Intel TBB Home Page](https://www.threadingbuildingblocks.org)
@@ -61,10 +61,10 @@ The `-I` includes provide paths pointing to the five necessary includes:
 Note that the paths should *not* include the final directories `stan`, `Eigen`, or `boost` on the paths.  An example of a real instantiation:
 
 ```
-clang++ -std=c++1y -I ~/stan-dev/math -I ~/stan-dev/math/lib/eigen_3.3.3/ -I ~/stan-dev/math/lib/boost_1.69.0/ -I ~/stan-dev/math/lib/sundials_4.1.0/include  -I ~/stan-dev/math/lib/tbb_2019_U8/include -L ~/stan-dev/math/lib/tbb -ltbb -Wl,-rpath,"~/stan-dev/math/lib/tbb" -D_REENTRANT foo.cpp
+clang++ -std=c++1y -I ~/stan-dev/math -I ~/stan-dev/math/lib/eigen_3.3.3/ -I ~/stan-dev/math/lib/boost_1.72.0/ -I ~/stan-dev/math/lib/sundials_4.1.0/include  -I ~/stan-dev/math/lib/tbb_2019_U8/include -L ~/stan-dev/math/lib/tbb -ltbb -Wl,-rpath,"~/stan-dev/math/lib/tbb" -D_REENTRANT foo.cpp
 ```
 
-The following directories all exist below the links given to `-I`: `~/stan-dev/math/stan` and `~/stan-dev/math/lib/eigen_3.3.3/Eigen` and `~/stan-dev/math/lib/boost_1.69.0/boost` and `~/stan-dev/math/lib/sundials_4.1.0/include` and `~/stan-dev/math/lib/tbb_2019_U8/include`. The `~/stan-dev/math/lib/tbb` directory is created by the stan-math makefiles automatically when running any unit test (for example with `./runTests.py test/unit/math/rev/core/agrad_test.cpp`). The `-Wl,-rpath,...` instruct the linker to hard-code the path to the Intel TBB library inside the stan-math directory into the final binary. This way the Intel TBB is found when executing the program.
+The following directories all exist below the links given to `-I`: `~/stan-dev/math/stan` and `~/stan-dev/math/lib/eigen_3.3.3/Eigen` and `~/stan-dev/math/lib/boost_1.72.0/boost` and `~/stan-dev/math/lib/sundials_4.1.0/include` and `~/stan-dev/math/lib/tbb_2019_U8/include`. The `~/stan-dev/math/lib/tbb` directory is created by the stan-math makefiles automatically when running any unit test (for example with `./runTests.py test/unit/math/rev/core/agrad_test.cpp`). The `-Wl,-rpath,...` instruct the linker to hard-code the path to the Intel TBB library inside the stan-math directory into the final binary. This way the Intel TBB is found when executing the program.
 
 Other Compilers
 ---------------
