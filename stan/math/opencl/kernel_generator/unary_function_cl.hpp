@@ -26,13 +26,13 @@ namespace math {
 template <typename Derived, typename T>
 class unary_function_cl
     : public operation_cl<
-          Derived, typename std::remove_reference_t<T>::ReturnScalar, T> {
+          Derived, typename std::remove_reference_t<T>::Scalar, T> {
  public:
-  using ReturnScalar = typename std::remove_reference_t<T>::ReturnScalar;
-  static_assert(std::is_floating_point<ReturnScalar>::value,
+  using Scalar = typename std::remove_reference_t<T>::Scalar;
+  static_assert(std::is_floating_point<Scalar>::value,
                 "unary_function_cl: argument must be expression with floating "
                 "point return type!");
-  using base = operation_cl<Derived, ReturnScalar, T>;
+  using base = operation_cl<Derived, Scalar, T>;
   using base::var_name;
 
   /**
@@ -53,7 +53,7 @@ class unary_function_cl
   inline kernel_parts generate(const std::string& i, const std::string& j,
                                const std::string& var_name_arg) const {
     kernel_parts res{};
-    res.body = type_str<ReturnScalar>() + " " + var_name + " = " + fun_ + "("
+    res.body = type_str<Scalar>() + " " + var_name + " = " + fun_ + "("
                + var_name_arg + ");\n";
     return res;
   }
@@ -71,41 +71,43 @@ class unary_function_cl
 };
 
 /**
- * generates a class and function for an unary function.
+ * generates a class and function for a general unary function that is defined
+ * by OpenCL.
  * @param fun function
  */
-#define ADD_UNARY_FUNCTION(fun)                                                \
-  template <typename T>                                                        \
-  class fun##__ : public unary_function_cl<fun##__<T>, T> {                    \
-   public:                                                                     \
-    explicit fun##__(T&& a)                                                    \
-        : unary_function_cl<fun##__<T>, T>(std::forward<T>(a), #fun) {}        \
-    inline matrix_cl_view view() const { return matrix_cl_view::Entire; }      \
-  };                                                                           \
-                                                                               \
-  template <typename T, typename Cond                                          \
-                        = require_all_valid_expressions_and_none_scalar_t<T>>  \
-  inline fun##__<as_operation_cl_t<T>> fun(T&& a) {                            \
-    return fun##__<as_operation_cl_t<T>>(as_operation_cl(std::forward<T>(a))); \
+#define ADD_UNARY_FUNCTION(fun)                                               \
+  template <typename T>                                                       \
+  class fun##_ : public unary_function_cl<fun##_<T>, T> {                     \
+   public:                                                                    \
+    explicit fun##_(T&& a)                                                    \
+        : unary_function_cl<fun##_<T>, T>(std::forward<T>(a), #fun) {}        \
+    inline matrix_cl_view view() const { return matrix_cl_view::Entire; }     \
+  };                                                                          \
+                                                                              \
+  template <typename T, typename Cond                                         \
+                        = require_all_valid_expressions_and_none_scalar_t<T>> \
+  inline fun##_<as_operation_cl_t<T>> fun(T&& a) {                            \
+    return fun##_<as_operation_cl_t<T>>(as_operation_cl(std::forward<T>(a))); \
   }
 
 /**
- * generates a class and function for an unary function that passes trough
- * zeros.
- * @param fun function
+ * generates a class and function for an unary function, defined by OpenCL with
+ * special property that it passes trough zero. That is \f$ f(0)=0 \f$. Such a
+ * function can have triangular view equal to its argument's.
+ * @param fun function name
  */
-#define ADD_UNARY_FUNCTION_PASS_ZERO(fun)                                      \
-  template <typename T>                                                        \
-  class fun##__ : public unary_function_cl<fun##__<T>, T> {                    \
-   public:                                                                     \
-    explicit fun##__(T&& a)                                                    \
-        : unary_function_cl<fun##__<T>, T>(std::forward<T>(a), #fun) {}        \
-  };                                                                           \
-                                                                               \
-  template <typename T, typename Cond                                          \
-                        = require_all_valid_expressions_and_none_scalar_t<T>>  \
-  inline fun##__<as_operation_cl_t<T>> fun(T&& a) {                            \
-    return fun##__<as_operation_cl_t<T>>(as_operation_cl(std::forward<T>(a))); \
+#define ADD_UNARY_FUNCTION_PASS_ZERO(fun)                                     \
+  template <typename T>                                                       \
+  class fun##_ : public unary_function_cl<fun##_<T>, T> {                     \
+   public:                                                                    \
+    explicit fun##_(T&& a)                                                    \
+        : unary_function_cl<fun##_<T>, T>(std::forward<T>(a), #fun) {}        \
+  };                                                                          \
+                                                                              \
+  template <typename T, typename Cond                                         \
+                        = require_all_valid_expressions_and_none_scalar_t<T>> \
+  inline fun##_<as_operation_cl_t<T>> fun(T&& a) {                            \
+    return fun##_<as_operation_cl_t<T>>(as_operation_cl(std::forward<T>(a))); \
   }
 
 ADD_UNARY_FUNCTION(rsqrt)

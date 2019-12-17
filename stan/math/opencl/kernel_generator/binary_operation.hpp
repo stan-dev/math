@@ -29,10 +29,10 @@ namespace math {
  */
 template <typename Derived, typename T_a, typename T_b>
 class binary_operation
-    : public operation_cl<Derived, common_return_scalar_t<T_a, T_b>, T_a, T_b> {
+    : public operation_cl<Derived, common_scalar_t<T_a, T_b>, T_a, T_b> {
  public:
-  using ReturnScalar = common_return_scalar_t<T_a, T_b>;
-  using base = operation_cl<Derived, ReturnScalar, T_a, T_b>;
+  using Scalar = common_scalar_t<T_a, T_b>;
+  using base = operation_cl<Derived, Scalar, T_a, T_b>;
   using base::var_name;
 
  protected:
@@ -71,7 +71,7 @@ class binary_operation
                                const std::string& var_name_a,
                                const std::string& var_name_b) const {
     kernel_parts res{};
-    res.body = type_str<ReturnScalar>() + " " + var_name + " = " + var_name_a
+    res.body = type_str<Scalar>() + " " + var_name + " = " + var_name_a
                + " " + op_ + " " + var_name_b + ";\n";
     return res;
   }
