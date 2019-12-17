@@ -8,13 +8,18 @@
 namespace stan {
 namespace math {
 
-template <typename T, int R, int C>
-fvar<T> log_sum_exp(const Eigen::Matrix<fvar<T>, R, C>& v) {
-  Eigen::Matrix<T, R, C> vals = v.val();
-  Eigen::Matrix<T, R, C> exp_vals = vals.array().exp();
+template <typename T, require_t<is_fvar<scalar_type_t<T>>>...>
+inline auto log_sum_exp(T&& x) {
+  return apply_vector_unary<T>::reduce(std::forward<T>(x), [](auto& v){
+    using T_scalar = value_type_t<T>;
+    using T_fvar = typename T_scalar::Scalar;
+    using mat_type = Eigen::Matrix<T_fvar, Eigen::Dynamic, Eigen::Dynamic>;
+    mat_type vals = v.val();
+    mat_type exp_vals = vals.array().exp();
 
-  return fvar<T>(log_sum_exp(vals),
-                 v.d().cwiseProduct(exp_vals).sum() / exp_vals.sum());
+    return fvar<T_fvar>(log_sum_exp(vals),
+                   v.d().cwiseProduct(exp_vals).sum() / exp_vals.sum());
+  });
 }
 
 }  // namespace math

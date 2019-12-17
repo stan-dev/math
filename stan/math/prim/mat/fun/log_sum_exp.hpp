@@ -24,20 +24,6 @@ namespace math {
  * @param[in] x Matrix of specified values
  * @return The log of the sum of the exponentiated vector values.
  */
-  /*
-template <int R, int C>
-double log_sum_exp(const Eigen::Matrix<double, R, C>& x) {
-  if (x.size() == 0) {
-    return -std::numeric_limits<double>::infinity();
-  }
-
-  const double max = x.maxCoeff();
-  if (!std::isfinite(max)) {
-    return max;
-  }
-  return max + std::log((x.array() - max).exp().sum());
-}*/
-
 template <typename T, require_t<std::is_arithmetic<scalar_type_t<T>>>...>
 inline auto log_sum_exp(T&& x) {
   return apply_vector_unary<T>::reduce(std::forward<T>(x), [](auto& v){

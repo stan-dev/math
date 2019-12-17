@@ -39,11 +39,11 @@ TEST(MathMixMatFun, logSumExp) {
   stan::test::expect_ad(f, x23);
 
   std::vector<double> a1{0};
-  stan::test::expect_ad(f, a1);
+  stan::test::expect_ad(tols, f, a1);
 
   std::vector<double> a2{5, 2};
-  stan::test::expect_ad(f, a2);
+  stan::test::expect_ad(tols, f, a2);
 
   std::vector<double> a4{1, 2, 3, 4};
-  stan::test::expect_ad(f, a4);
+  stan::test::expect_ad(tols, f, a4);
 }
