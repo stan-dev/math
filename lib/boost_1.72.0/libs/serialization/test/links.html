@@ -1,0 +1,748 @@
+<html>
+<head>
+<title>Boost Library Status Error Log</title>
+</head>
+<body bgcolor="#ffffff" text="#000000">
+<table border="0">
+<h1>Library Status: serialization/test</h1>
+<b>Run Date:</b> 21:44:22 UTC, Friday 11 October 2019
+<br></table>
+<br>
+<h2><a name="bin.v2/libs/serialization/test/test_check.test/clang-darwin-03/debug/threading-multi/visibility-hidden">bin.v2/libs/serialization/test/test_check.test/clang-darwin-03/debug/threading-multi/visibility-hidden</a></h2>
+<h3>Compiler output:</h3><pre>
+In file included from test_check.cpp:18:
+In file included from ../../../boost/archive/text_iarchive.hpp:24:
+In file included from ../../../boost/archive/basic_text_iarchive.hpp:30:
+In file included from ../../../boost/archive/detail/common_iarchive.hpp:23:
+In file included from ../../../boost/archive/detail/interface_iarchive.hpp:22:
+In file included from ../../../boost/archive/detail/iserializer.hpp:90:
+../../../boost/archive/detail/check.hpp:78:5: error: implicit instantiation of undefined template 'boost::STATIC_ASSERTION_FAILURE&amp;lt;false&amp;gt;'
+    BOOST_STATIC_ASSERT(typex::value);
+    ^
+../../../boost/static_assert.hpp:154:13: note: expanded from macro 'BOOST_STATIC_ASSERT'
+            sizeof(::boost::STATIC_ASSERTION_FAILURE&amp;lt; BOOST_STATIC_ASSERT_BOOL_CAST( __VA_ARGS__ ) &amp;gt;)&amp;gt;\
+            ^
+../../../boost/archive/detail/oserializer.hpp:314:9: note: in instantiation of function template specialization 'boost::archive::detail::check_object_versioning&amp;lt;check2&amp;gt;' requested here
+        check_object_versioning&amp;lt; T &amp;gt;();
+        ^
+../../../boost/archive/detail/oserializer.hpp:539:12: note: in instantiation of function template specialization 'boost::archive::detail::save_non_pointer_type&amp;lt;boost::archive::text_oarchive&amp;gt;::invoke&amp;lt;check2&amp;gt;' requested here
+    typex::invoke(ar, t);
+           ^
+../../../boost/archive/detail/common_oarchive.hpp:71:18: note: in instantiation of function template specialization 'boost::archive::save&amp;lt;boost::archive::text_oarchive, const check2&amp;gt;' requested here
+        archive::save(* this-&amp;gt;This(), t);
+                 ^
+../../../boost/archive/basic_text_oarchive.hpp:83:39: note: in instantiation of function template specialization 'boost::archive::detail::common_oarchive&amp;lt;boost::archive::text_oarchive&amp;gt;::save_override&amp;lt;const check2&amp;gt;' requested here
+        this-&amp;gt;detail_common_oarchive::save_override(t);
+                                      ^
+../../../boost/archive/detail/interface_oarchive.hpp:70:23: note: in instantiation of function template specialization 'boost::archive::basic_text_oarchive&amp;lt;boost::archive::text_oarchive&amp;gt;::save_override&amp;lt;const check2&amp;gt;' requested here
+        this-&amp;gt;This()-&amp;gt;save_override(t);
+                      ^
+test_check.cpp:85:12: note: in instantiation of function template specialization 'boost::archive::detail::interface_oarchive&amp;lt;boost::archive::text_oarchive&amp;gt;::operator&amp;lt;&amp;lt;&amp;lt;check2&amp;gt;' requested here
+        oa &amp;lt;&amp;lt; c2_out; // error check_object_versioning
+           ^
+../../../boost/static_assert.hpp:79:26: note: template is declared here
+template &amp;lt;bool x&amp;gt; struct STATIC_ASSERTION_FAILURE;
+                         ^
+In file included from test_check.cpp:18:
+In file included from ../../../boost/archive/text_iarchive.hpp:24:
+In file included from ../../../boost/archive/basic_text_iarchive.hpp:30:
+In file included from ../../../boost/archive/detail/common_iarchive.hpp:23:
+In file included from ../../../boost/archive/detail/interface_iarchive.hpp:22:
+In file included from ../../../boost/archive/detail/iserializer.hpp:90:
+../../../boost/archive/detail/check.hpp:162:5: error: implicit instantiation of undefined template 'boost::STATIC_ASSERTION_FAILURE&amp;lt;false&amp;gt;'
+    BOOST_STATIC_ASSERT(typex::value);
+    ^
+../../../boost/static_assert.hpp:154:13: note: expanded from macro 'BOOST_STATIC_ASSERT'
+            sizeof(::boost::STATIC_ASSERTION_FAILURE&amp;lt; BOOST_STATIC_ASSERT_BOOL_CAST( __VA_ARGS__ ) &amp;gt;)&amp;gt;\
+            ^
+../../../boost/archive/detail/iserializer.hpp:609:13: note: in instantiation of function template specialization 'boost::archive::detail::check_const_loading&amp;lt;const check1&amp;gt;' requested here
+    detail::check_const_loading&amp;lt; T &amp;gt;();
+            ^
+../../../boost/archive/detail/common_iarchive.hpp:67:18: note: in instantiation of function template specialization 'boost::archive::load&amp;lt;boost::archive::text_iarchive, const check1&amp;gt;' requested here
+        archive::load(* this-&amp;gt;This(), t);
+                 ^
+../../../boost/archive/basic_text_iarchive.hpp:70:39: note: in instantiation of function template specialization 'boost::archive::detail::common_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;const check1&amp;gt;' requested here
+        this-&amp;gt;detail_common_iarchive::load_override(t);
+                                      ^
+../../../boost/archive/text_iarchive.hpp:82:39: note: in instantiation of function template specialization 'boost::archive::basic_text_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;const check1&amp;gt;' requested here
+        basic_text_iarchive&amp;lt;Archive&amp;gt;::load_override(t);
+                                      ^
+../../../boost/archive/detail/interface_iarchive.hpp:68:23: note: in instantiation of function template specialization 'boost::archive::text_iarchive_impl&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;const check1&amp;gt;' requested here
+        this-&amp;gt;This()-&amp;gt;load_override(t);
+                      ^
+test_check.cpp:91:12: note: in instantiation of function template specialization 'boost::archive::detail::interface_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::operator&amp;gt;&amp;gt;&amp;lt;const check1&amp;gt;' requested here
+        ia &amp;gt;&amp;gt; c1_in; // check_const_loading
+           ^
+../../../boost/static_assert.hpp:79:26: note: template is declared here
+template &amp;lt;bool x&amp;gt; struct STATIC_ASSERTION_FAILURE;
+                         ^
+2 errors generated.
+(failed-as-expected) ../../../bin.v2/libs/serialization/test/test_check.test/clang-darwin-03/debug/threading-multi/visibility-hidden/test_check.o
+</pre>
+<h2><a name="bin.v2/libs/serialization/test/test_dll_exported_polymorphic_xml_warchive.test/clang-darwin-03/debug/threading-multi/visibility-hidden">bin.v2/libs/serialization/test/test_dll_exported_polymorphic_xml_warchive.test/clang-darwin-03/debug/threading-multi/visibility-hidden</a></h2>
+<h3>Compiler output:</h3><pre>
+In file included from test_dll_exported.cpp:51:
+./polymorphic_base.hpp:29:13: warning: polymorphic_base imported [-W#pragma-messages]
+    #pragma message (&quot;polymorphic_base imported&quot;)
+            ^
+In file included from test_dll_exported.cpp:56:
+./polymorphic_derived2.hpp:29:13: warning: polymorphic_derived2 imported [-W#pragma-messages]
+    #pragma message (&quot;polymorphic_derived2 imported&quot;)
+            ^
+2 warnings generated.
+</pre>
+<h2><a name="bin.v2/libs/serialization/test/test_not_serializable.test/clang-darwin-03/debug/threading-multi/visibility-hidden">bin.v2/libs/serialization/test/test_not_serializable.test/clang-darwin-03/debug/threading-multi/visibility-hidden</a></h2>
+<h3>Compiler output:</h3><pre>
+In file included from test_not_serializable.cpp:14:
+In file included from ./test_tools.hpp:246:
+In file included from ./text_archive.hpp:8:
+In file included from ../../../boost/archive/text_oarchive.hpp:31:
+In file included from ../../../boost/archive/basic_text_oarchive.hpp:29:
+In file included from ../../../boost/archive/detail/common_oarchive.hpp:22:
+In file included from ../../../boost/archive/detail/interface_oarchive.hpp:23:
+In file included from ../../../boost/archive/detail/oserializer.hpp:40:
+In file included from ../../../boost/serialization/extended_type_info_typeid.hpp:37:
+../../../boost/serialization/access.hpp:116:11: error: no member named 'serialize' in 'A'
+        t.serialize(ar, file_version);
+        ~ ^
+../../../boost/serialization/serialization.hpp:68:13: note: in instantiation of function template specialization 'boost::serialization::access::serialize&amp;lt;boost::archive::text_oarchive, A&amp;gt;' requested here
+    access::serialize(ar, t, static_cast&amp;lt;unsigned int&amp;gt;(file_version));
+            ^
+../../../boost/serialization/serialization.hpp:126:5: note: in instantiation of function template specialization 'boost::serialization::serialize&amp;lt;boost::archive::text_oarchive, A&amp;gt;' requested here
+    serialize(ar, t, v);
+    ^
+../../../boost/archive/detail/oserializer.hpp:153:27: note: in instantiation of function template specialization 'boost::serialization::serialize_adl&amp;lt;boost::archive::text_oarchive, A&amp;gt;' requested here
+    boost::serialization::serialize_adl(
+                          ^
+../../../boost/serialization/singleton.hpp:147:5: note: in instantiation of member function 'boost::archive::detail::oserializer&amp;lt;boost::archive::text_oarchive, A&amp;gt;::save_object_data' requested here
+    singleton_wrapper(){
+    ^
+../../../boost/serialization/singleton.hpp:171:47: note: in instantiation of member function 'boost::serialization::detail::singleton_wrapper&amp;lt;boost::archive::detail::oserializer&amp;lt;boost::archive::text_oarchive, A&amp;gt; &amp;gt;::singleton_wrapper' requested here
+        static detail::singleton_wrapper&amp;lt; T &amp;gt; t;
+                                              ^
+../../../boost/serialization/singleton.hpp:196:16: note: (skipping 15 contexts in backtrace; use -ftemplate-backtrace-limit=0 to see all)
+        return get_instance();
+               ^
+../../../boost/archive/detail/oserializer.hpp:539:12: note: in instantiation of function template specialization 'boost::archive::detail::save_non_pointer_type&amp;lt;boost::archive::text_oarchive&amp;gt;::invoke&amp;lt;boost::serialization::nvp&amp;lt;A&amp;gt; &amp;gt;' requested here
+    typex::invoke(ar, t);
+           ^
+../../../boost/archive/detail/common_oarchive.hpp:71:18: note: in instantiation of function template specialization 'boost::archive::save&amp;lt;boost::archive::text_oarchive, const boost::serialization::nvp&amp;lt;A&amp;gt; &amp;gt;' requested here
+        archive::save(* this-&amp;gt;This(), t);
+                 ^
+../../../boost/archive/basic_text_oarchive.hpp:83:39: note: in instantiation of function template specialization 'boost::archive::detail::common_oarchive&amp;lt;boost::archive::text_oarchive&amp;gt;::save_override&amp;lt;const boost::serialization::nvp&amp;lt;A&amp;gt; &amp;gt;' requested here
+        this-&amp;gt;detail_common_oarchive::save_override(t);
+                                      ^
+../../../boost/archive/detail/interface_oarchive.hpp:70:23: note: in instantiation of function template specialization 'boost::archive::basic_text_oarchive&amp;lt;boost::archive::text_oarchive&amp;gt;::save_override&amp;lt;const boost::serialization::nvp&amp;lt;A&amp;gt; &amp;gt;' requested here
+        this-&amp;gt;This()-&amp;gt;save_override(t);
+                      ^
+test_not_serializable.cpp:28:8: note: in instantiation of function template specialization 'boost::archive::detail::interface_oarchive&amp;lt;boost::archive::text_oarchive&amp;gt;::operator&amp;lt;&amp;lt;&amp;lt;boost::serialization::nvp&amp;lt;A&amp;gt; &amp;gt;' requested here
+    oa &amp;lt;&amp;lt; BOOST_SERIALIZATION_NVP(a);
+       ^
+In file included from test_not_serializable.cpp:14:
+In file included from ./test_tools.hpp:246:
+In file included from ./text_archive.hpp:8:
+In file included from ../../../boost/archive/text_oarchive.hpp:31:
+In file included from ../../../boost/archive/basic_text_oarchive.hpp:29:
+In file included from ../../../boost/archive/detail/common_oarchive.hpp:22:
+In file included from ../../../boost/archive/detail/interface_oarchive.hpp:23:
+In file included from ../../../boost/archive/detail/oserializer.hpp:70:
+../../../boost/archive/detail/check.hpp:60:5: error: implicit instantiation of undefined template 'boost::STATIC_ASSERTION_FAILURE&amp;lt;false&amp;gt;'
+    BOOST_STATIC_ASSERT(typex::value);
+    ^
+../../../boost/static_assert.hpp:154:13: note: expanded from macro 'BOOST_STATIC_ASSERT'
+            sizeof(::boost::STATIC_ASSERTION_FAILURE&amp;lt; BOOST_STATIC_ASSERT_BOOL_CAST( __VA_ARGS__ ) &amp;gt;)&amp;gt;\
+            ^
+../../../boost/archive/detail/iserializer.hpp:460:9: note: in instantiation of function template specialization 'boost::archive::detail::check_object_level&amp;lt;A&amp;gt;' requested here
+        check_object_level&amp;lt; T &amp;gt;();
+        ^
+../../../boost/archive/detail/iserializer.hpp:624:12: note: in instantiation of function template specialization 'boost::archive::detail::load_non_pointer_type&amp;lt;boost::archive::text_iarchive&amp;gt;::invoke&amp;lt;A&amp;gt;' requested here
+    typex::invoke(ar, t);
+           ^
+../../../boost/archive/detail/common_iarchive.hpp:67:18: note: in instantiation of function template specialization 'boost::archive::load&amp;lt;boost::archive::text_iarchive, A&amp;gt;' requested here
+        archive::load(* this-&amp;gt;This(), t);
+                 ^
+../../../boost/archive/basic_text_iarchive.hpp:70:39: note: in instantiation of function template specialization 'boost::archive::detail::common_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;A&amp;gt;' requested here
+        this-&amp;gt;detail_common_iarchive::load_override(t);
+                                      ^
+../../../boost/archive/text_iarchive.hpp:82:39: note: in instantiation of function template specialization 'boost::archive::basic_text_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;A&amp;gt;' requested here
+        basic_text_iarchive&amp;lt;Archive&amp;gt;::load_override(t);
+                                      ^
+../../../boost/archive/detail/interface_iarchive.hpp:68:23: note: (skipping 9 contexts in backtrace; use -ftemplate-backtrace-limit=0 to see all)
+        this-&amp;gt;This()-&amp;gt;load_override(t);
+                      ^
+../../../boost/archive/detail/common_iarchive.hpp:67:18: note: in instantiation of function template specialization 'boost::archive::load&amp;lt;boost::archive::text_iarchive, const boost::serialization::nvp&amp;lt;A&amp;gt; &amp;gt;' requested here
+        archive::load(* this-&amp;gt;This(), t);
+                 ^
+../../../boost/archive/basic_text_iarchive.hpp:70:39: note: in instantiation of function template specialization 'boost::archive::detail::common_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;const boost::serialization::nvp&amp;lt;A&amp;gt; &amp;gt;' requested here
+        this-&amp;gt;detail_common_iarchive::load_override(t);
+                                      ^
+../../../boost/archive/text_iarchive.hpp:82:39: note: in instantiation of function template specialization 'boost::archive::basic_text_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;const boost::serialization::nvp&amp;lt;A&amp;gt; &amp;gt;' requested here
+        basic_text_iarchive&amp;lt;Archive&amp;gt;::load_override(t);
+                                      ^
+../../../boost/archive/detail/interface_iarchive.hpp:68:23: note: in instantiation of function template specialization 'boost::archive::text_iarchive_impl&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;const boost::serialization::nvp&amp;lt;A&amp;gt; &amp;gt;' requested here
+        this-&amp;gt;This()-&amp;gt;load_override(t);
+                      ^
+test_not_serializable.cpp:35:8: note: in instantiation of function template specialization 'boost::archive::detail::interface_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::operator&amp;gt;&amp;gt;&amp;lt;const boost::serialization::nvp&amp;lt;A&amp;gt; &amp;gt;' requested here
+    ia &amp;gt;&amp;gt; BOOST_SERIALIZATION_NVP(a);
+       ^
+../../../boost/static_assert.hpp:79:26: note: template is declared here
+template &amp;lt;bool x&amp;gt; struct STATIC_ASSERTION_FAILURE;
+                         ^
+In file included from test_not_serializable.cpp:14:
+In file included from ./test_tools.hpp:246:
+In file included from ./text_archive.hpp:8:
+In file included from ../../../boost/archive/text_oarchive.hpp:31:
+In file included from ../../../boost/archive/basic_text_oarchive.hpp:29:
+In file included from ../../../boost/archive/detail/common_oarchive.hpp:22:
+In file included from ../../../boost/archive/detail/interface_oarchive.hpp:23:
+In file included from ../../../boost/archive/detail/oserializer.hpp:40:
+In file included from ../../../boost/serialization/extended_type_info_typeid.hpp:37:
+../../../boost/serialization/access.hpp:116:11: error: no member named 'serialize' in 'A'
+        t.serialize(ar, file_version);
+        ~ ^
+../../../boost/serialization/serialization.hpp:68:13: note: in instantiation of function template specialization 'boost::serialization::access::serialize&amp;lt;boost::archive::text_iarchive, A&amp;gt;' requested here
+    access::serialize(ar, t, static_cast&amp;lt;unsigned int&amp;gt;(file_version));
+            ^
+../../../boost/serialization/serialization.hpp:126:5: note: in instantiation of function template specialization 'boost::serialization::serialize&amp;lt;boost::archive::text_iarchive, A&amp;gt;' requested here
+    serialize(ar, t, v);
+    ^
+../../../boost/archive/detail/iserializer.hpp:187:27: note: in instantiation of function template specialization 'boost::serialization::serialize_adl&amp;lt;boost::archive::text_iarchive, A&amp;gt;' requested here
+    boost::serialization::serialize_adl(
+                          ^
+../../../boost/serialization/singleton.hpp:147:5: note: in instantiation of member function 'boost::archive::detail::iserializer&amp;lt;boost...
+   (remainder deleted because of excessive size)
+</pre>
+<h2><a name="bin.v2/libs/serialization/test/test_const_load_fail2.test/clang-darwin-03/debug/threading-multi/visibility-hidden">bin.v2/libs/serialization/test/test_const_load_fail2.test/clang-darwin-03/debug/threading-multi/visibility-hidden</a></h2>
+<h3>Compiler output:</h3><pre>
+In file included from test_const_load_fail2.cpp:11:
+In file included from ../../../boost/archive/text_iarchive.hpp:24:
+In file included from ../../../boost/archive/basic_text_iarchive.hpp:30:
+In file included from ../../../boost/archive/detail/common_iarchive.hpp:23:
+In file included from ../../../boost/archive/detail/interface_iarchive.hpp:22:
+In file included from ../../../boost/archive/detail/iserializer.hpp:90:
+../../../boost/archive/detail/check.hpp:162:5: error: implicit instantiation of undefined template 'boost::STATIC_ASSERTION_FAILURE&amp;lt;false&amp;gt;'
+    BOOST_STATIC_ASSERT(typex::value);
+    ^
+../../../boost/static_assert.hpp:154:13: note: expanded from macro 'BOOST_STATIC_ASSERT'
+            sizeof(::boost::STATIC_ASSERTION_FAILURE&amp;lt; BOOST_STATIC_ASSERT_BOOL_CAST( __VA_ARGS__ ) &amp;gt;)&amp;gt;\
+            ^
+../../../boost/archive/detail/iserializer.hpp:609:13: note: in instantiation of function template specialization 'boost::archive::detail::check_const_loading&amp;lt;A *const&amp;gt;' requested here
+    detail::check_const_loading&amp;lt; T &amp;gt;();
+            ^
+../../../boost/archive/detail/common_iarchive.hpp:67:18: note: in instantiation of function template specialization 'boost::archive::load&amp;lt;boost::archive::text_iarchive, A *const&amp;gt;' requested here
+        archive::load(* this-&amp;gt;This(), t);
+                 ^
+../../../boost/archive/basic_text_iarchive.hpp:70:39: note: in instantiation of function template specialization 'boost::archive::detail::common_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;A *const&amp;gt;' requested here
+        this-&amp;gt;detail_common_iarchive::load_override(t);
+                                      ^
+../../../boost/archive/text_iarchive.hpp:82:39: note: in instantiation of function template specialization 'boost::archive::basic_text_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;A *const&amp;gt;' requested here
+        basic_text_iarchive&amp;lt;Archive&amp;gt;::load_override(t);
+                                      ^
+../../../boost/archive/detail/interface_iarchive.hpp:68:23: note: in instantiation of function template specialization 'boost::archive::text_iarchive_impl&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;A *const&amp;gt;' requested here
+        this-&amp;gt;This()-&amp;gt;load_override(t);
+                      ^
+test_const_load_fail2.cpp:22:8: note: in instantiation of function template specialization 'boost::archive::detail::interface_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::operator&amp;gt;&amp;gt;&amp;lt;A *const&amp;gt;' requested here
+    ia &amp;gt;&amp;gt; a;
+       ^
+../../../boost/static_assert.hpp:79:26: note: template is declared here
+template &amp;lt;bool x&amp;gt; struct STATIC_ASSERTION_FAILURE;
+                         ^
+In file included from test_const_load_fail2.cpp:11:
+In file included from ../../../boost/archive/text_iarchive.hpp:24:
+In file included from ../../../boost/archive/basic_text_iarchive.hpp:30:
+In file included from ../../../boost/archive/detail/common_iarchive.hpp:23:
+In file included from ../../../boost/archive/detail/interface_iarchive.hpp:22:
+../../../boost/archive/detail/iserializer.hpp:552:15: error: cannot assign to variable 't' with const-qualified type 'A *const &amp;amp;'
+            t = pointer_tweak(newbpis_ptr-&amp;gt;get_eti(), t, *t);
+            ~ ^
+../../../boost/archive/detail/iserializer.hpp:624:12: note: in instantiation of function template specialization 'boost::archive::detail::load_pointer_type&amp;lt;boost::archive::text_iarchive&amp;gt;::invoke&amp;lt;A *const&amp;gt;' requested here
+    typex::invoke(ar, t);
+           ^
+../../../boost/archive/detail/common_iarchive.hpp:67:18: note: in instantiation of function template specialization 'boost::archive::load&amp;lt;boost::archive::text_iarchive, A *const&amp;gt;' requested here
+        archive::load(* this-&amp;gt;This(), t);
+                 ^
+../../../boost/archive/basic_text_iarchive.hpp:70:39: note: in instantiation of function template specialization 'boost::archive::detail::common_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;A *const&amp;gt;' requested here
+        this-&amp;gt;detail_common_iarchive::load_override(t);
+                                      ^
+../../../boost/archive/text_iarchive.hpp:82:39: note: in instantiation of function template specialization 'boost::archive::basic_text_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;A *const&amp;gt;' requested here
+        basic_text_iarchive&amp;lt;Archive&amp;gt;::load_override(t);
+                                      ^
+../../../boost/archive/detail/interface_iarchive.hpp:68:23: note: in instantiation of function template specialization 'boost::archive::text_iarchive_impl&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;A *const&amp;gt;' requested here
+        this-&amp;gt;This()-&amp;gt;load_override(t);
+                      ^
+test_const_load_fail2.cpp:22:8: note: in instantiation of function template specialization 'boost::archive::detail::interface_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::operator&amp;gt;&amp;gt;&amp;lt;A *const&amp;gt;' requested here
+    ia &amp;gt;&amp;gt; a;
+       ^
+../../../boost/archive/detail/iserializer.hpp:538:45: note: variable 't' declared const here
+    static void invoke(Archive &amp;amp; ar, Tptr &amp;amp; t){
+                                     ~~~~~~~^
+2 errors generated.
+(failed-as-expected) ../../../bin.v2/libs/serialization/test/test_const_load_fail2.test/clang-darwin-03/debug/threading-multi/visibility-hidden/test_const_load_fail2.o
+</pre>
+<h2><a name="bin.v2/libs/serialization/test/test_const_load_fail1_nvp.test/clang-darwin-03/debug/threading-multi/visibility-hidden">bin.v2/libs/serialization/test/test_const_load_fail1_nvp.test/clang-darwin-03/debug/threading-multi/visibility-hidden</a></h2>
+<h3>Compiler output:</h3><pre>
+In file included from test_const_load_fail1_nvp.cpp:11:
+In file included from ../../../boost/archive/text_iarchive.hpp:24:
+In file included from ../../../boost/archive/basic_text_iarchive.hpp:30:
+In file included from ../../../boost/archive/detail/common_iarchive.hpp:23:
+In file included from ../../../boost/archive/detail/interface_iarchive.hpp:22:
+In file included from ../../../boost/archive/detail/iserializer.hpp:90:
+../../../boost/archive/detail/check.hpp:162:5: error: implicit instantiation of undefined template 'boost::STATIC_ASSERTION_FAILURE&amp;lt;false&amp;gt;'
+    BOOST_STATIC_ASSERT(typex::value);
+    ^
+../../../boost/static_assert.hpp:154:13: note: expanded from macro 'BOOST_STATIC_ASSERT'
+            sizeof(::boost::STATIC_ASSERTION_FAILURE&amp;lt; BOOST_STATIC_ASSERT_BOOL_CAST( __VA_ARGS__ ) &amp;gt;)&amp;gt;\
+            ^
+../../../boost/archive/detail/iserializer.hpp:609:13: note: in instantiation of function template specialization 'boost::archive::detail::check_const_loading&amp;lt;const A&amp;gt;' requested here
+    detail::check_const_loading&amp;lt; T &amp;gt;();
+            ^
+../../../boost/archive/detail/common_iarchive.hpp:67:18: note: in instantiation of function template specialization 'boost::archive::load&amp;lt;boost::archive::text_iarchive, const A&amp;gt;' requested here
+        archive::load(* this-&amp;gt;This(), t);
+                 ^
+../../../boost/archive/basic_text_iarchive.hpp:70:39: note: in instantiation of function template specialization 'boost::archive::detail::common_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;const A&amp;gt;' requested here
+        this-&amp;gt;detail_common_iarchive::load_override(t);
+                                      ^
+../../../boost/archive/text_iarchive.hpp:82:39: note: in instantiation of function template specialization 'boost::archive::basic_text_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;const A&amp;gt;' requested here
+        basic_text_iarchive&amp;lt;Archive&amp;gt;::load_override(t);
+                                      ^
+../../../boost/archive/detail/interface_iarchive.hpp:68:23: note: in instantiation of function template specialization 'boost::archive::text_iarchive_impl&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;const A&amp;gt;' requested here
+        this-&amp;gt;This()-&amp;gt;load_override(t);
+                      ^
+../../../boost/serialization/nvp.hpp:56:8: note: (skipping 8 contexts in backtrace; use -ftemplate-backtrace-limit=0 to see all)
+    ar &amp;gt;&amp;gt; t.value();
+       ^
+../../../boost/archive/detail/common_iarchive.hpp:67:18: note: in instantiation of function template specialization 'boost::archive::load&amp;lt;boost::archive::text_iarchive, const boost::serialization::nvp&amp;lt;const A&amp;gt; &amp;gt;' requested here
+        archive::load(* this-&amp;gt;This(), t);
+                 ^
+../../../boost/archive/basic_text_iarchive.hpp:70:39: note: in instantiation of function template specialization 'boost::archive::detail::common_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;const boost::serialization::nvp&amp;lt;const A&amp;gt; &amp;gt;' requested here
+        this-&amp;gt;detail_common_iarchive::load_override(t);
+                                      ^
+../../../boost/archive/text_iarchive.hpp:82:39: note: in instantiation of function template specialization 'boost::archive::basic_text_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;const boost::serialization::nvp&amp;lt;const A&amp;gt; &amp;gt;' requested here
+        basic_text_iarchive&amp;lt;Archive&amp;gt;::load_override(t);
+                                      ^
+../../../boost/archive/detail/interface_iarchive.hpp:68:23: note: in instantiation of function template specialization 'boost::archive::text_iarchive_impl&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;const boost::serialization::nvp&amp;lt;const A&amp;gt; &amp;gt;' requested here
+        this-&amp;gt;This()-&amp;gt;load_override(t);
+                      ^
+test_const_load_fail1_nvp.cpp:23:8: note: in instantiation of function template specialization 'boost::archive::detail::interface_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::operator&amp;gt;&amp;gt;&amp;lt;const boost::serialization::nvp&amp;lt;const A&amp;gt; &amp;gt;' requested here
+    ia &amp;gt;&amp;gt; BOOST_SERIALIZATION_NVP(a);
+       ^
+../../../boost/static_assert.hpp:79:26: note: template is declared here
+template &amp;lt;bool x&amp;gt; struct STATIC_ASSERTION_FAILURE;
+                         ^
+1 error generated.
+(failed-as-expected) ../../../bin.v2/libs/serialization/test/test_const_load_fail1_nvp.test/clang-darwin-03/debug/threading-multi/visibility-hidden/test_const_load_fail1_nvp.o
+</pre>
+<h2><a name="bin.v2/libs/serialization/test/test_const_load_fail3.test/clang-darwin-03/debug/threading-multi/visibility-hidden">bin.v2/libs/serialization/test/test_const_load_fail3.test/clang-darwin-03/debug/threading-multi/visibility-hidden</a></h2>
+<h3>Compiler output:</h3><pre>
+In file included from test_const_load_fail3.cpp:11:
+In file included from ../../../boost/archive/text_iarchive.hpp:24:
+In file included from ../../../boost/archive/basic_text_iarchive.hpp:30:
+In file included from ../../../boost/archive/detail/common_iarchive.hpp:23:
+In file included from ../../../boost/archive/detail/interface_iarchive.hpp:22:
+In file included from ../../../boost/archive/detail/iserializer.hpp:90:
+../../../boost/archive/detail/check.hpp:162:5: error: implicit instantiation of undefined template 'boost::STATIC_ASSERTION_FAILURE&amp;lt;false&amp;gt;'
+    BOOST_STATIC_ASSERT(typex::value);
+    ^
+../../../boost/static_assert.hpp:154:13: note: expanded from macro 'BOOST_STATIC_ASSERT'
+            sizeof(::boost::STATIC_ASSERTION_FAILURE&amp;lt; BOOST_STATIC_ASSERT_BOOL_CAST( __VA_ARGS__ ) &amp;gt;)&amp;gt;\
+            ^
+../../../boost/archive/detail/iserializer.hpp:609:13: note: in instantiation of function template specialization 'boost::archive::detail::check_const_loading&amp;lt;const A *const&amp;gt;' requested here
+    detail::check_const_loading&amp;lt; T &amp;gt;();
+            ^
+../../../boost/archive/detail/common_iarchive.hpp:67:18: note: in instantiation of function template specialization 'boost::archive::load&amp;lt;boost::archive::text_iarchive, const A *const&amp;gt;' requested here
+        archive::load(* this-&amp;gt;This(), t);
+                 ^
+../../../boost/archive/basic_text_iarchive.hpp:70:39: note: in instantiation of function template specialization 'boost::archive::detail::common_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;const A *const&amp;gt;' requested here
+        this-&amp;gt;detail_common_iarchive::load_override(t);
+                                      ^
+../../../boost/archive/text_iarchive.hpp:82:39: note: in instantiation of function template specialization 'boost::archive::basic_text_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;const A *const&amp;gt;' requested here
+        basic_text_iarchive&amp;lt;Archive&amp;gt;::load_override(t);
+                                      ^
+../../../boost/archive/detail/interface_iarchive.hpp:68:23: note: in instantiation of function template specialization 'boost::archive::text_iarchive_impl&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;const A *const&amp;gt;' requested here
+        this-&amp;gt;This()-&amp;gt;load_override(t);
+                      ^
+test_const_load_fail3.cpp:21:8: note: in instantiation of function template specialization 'boost::archive::detail::interface_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::operator&amp;gt;&amp;gt;&amp;lt;const A *const&amp;gt;' requested here
+    ia &amp;gt;&amp;gt; a;
+       ^
+../../../boost/static_assert.hpp:79:26: note: template is declared here
+template &amp;lt;bool x&amp;gt; struct STATIC_ASSERTION_FAILURE;
+                         ^
+In file included from test_const_load_fail3.cpp:11:
+In file included from ../../../boost/archive/text_iarchive.hpp:24:
+In file included from ../../../boost/archive/basic_text_iarchive.hpp:30:
+In file included from ../../../boost/archive/detail/common_iarchive.hpp:23:
+In file included from ../../../boost/archive/detail/interface_iarchive.hpp:22:
+../../../boost/archive/detail/iserializer.hpp:552:15: error: cannot assign to variable 't' with const-qualified type 'const A *const &amp;amp;'
+            t = pointer_tweak(newbpis_ptr-&amp;gt;get_eti(), t, *t);
+            ~ ^
+../../../boost/archive/detail/iserializer.hpp:624:12: note: in instantiation of function template specialization 'boost::archive::detail::load_pointer_type&amp;lt;boost::archive::text_iarchive&amp;gt;::invoke&amp;lt;const A *const&amp;gt;' requested here
+    typex::invoke(ar, t);
+           ^
+../../../boost/archive/detail/common_iarchive.hpp:67:18: note: in instantiation of function template specialization 'boost::archive::load&amp;lt;boost::archive::text_iarchive, const A *const&amp;gt;' requested here
+        archive::load(* this-&amp;gt;This(), t);
+                 ^
+../../../boost/archive/basic_text_iarchive.hpp:70:39: note: in instantiation of function template specialization 'boost::archive::detail::common_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;const A *const&amp;gt;' requested here
+        this-&amp;gt;detail_common_iarchive::load_override(t);
+                                      ^
+../../../boost/archive/text_iarchive.hpp:82:39: note: in instantiation of function template specialization 'boost::archive::basic_text_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;const A *const&amp;gt;' requested here
+        basic_text_iarchive&amp;lt;Archive&amp;gt;::load_override(t);
+                                      ^
+../../../boost/archive/detail/interface_iarchive.hpp:68:23: note: in instantiation of function template specialization 'boost::archive::text_iarchive_impl&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;const A *const&amp;gt;' requested here
+        this-&amp;gt;This()-&amp;gt;load_override(t);
+                      ^
+test_const_load_fail3.cpp:21:8: note: in instantiation of function template specialization 'boost::archive::detail::interface_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::operator&amp;gt;&amp;gt;&amp;lt;const A *const&amp;gt;' requested here
+    ia &amp;gt;&amp;gt; a;
+       ^
+../../../boost/archive/detail/iserializer.hpp:538:45: note: variable 't' declared const here
+    static void invoke(Archive &amp;amp; ar, Tptr &amp;amp; t){
+                                     ~~~~~~~^
+2 errors generated.
+(failed-as-expected) ../../../bin.v2/libs/serialization/test/test_const_load_fail3.test/clang-darwin-03/debug/threading-multi/visibility-hidden/test_const_load_fail3.o
+</pre>
+<h2><a name="bin.v2/libs/serialization/test/test_dll_exported_polymorphic_text_archive.test/clang-darwin-03/debug/threading-multi/visibility-hidden">bin.v2/libs/serialization/test/test_dll_exported_polymorphic_text_archive.test/clang-darwin-03/debug/threading-multi/visibility-hidden</a></h2>
+<h3>Compiler output:</h3><pre>
+In file included from test_dll_exported.cpp:51:
+./polymorphic_base.hpp:29:13: warning: polymorphic_base imported [-W#pragma-messages]
+    #pragma message (&quot;polymorphic_base imported&quot;)
+            ^
+In file included from test_dll_exported.cpp:56:
+./polymorphic_derived2.hpp:29:13: warning: polymorphic_derived2 imported [-W#pragma-messages]
+    #pragma message (&quot;polymorphic_derived2 imported&quot;)
+            ^
+2 warnings generated.
+</pre>
+<h2><a name="bin.v2/libs/serialization/test/test_singleton_plain.test/clang-darwin-03/debug/threading-multi/visibility-hidden">bin.v2/libs/serialization/test/test_singleton_plain.test/clang-darwin-03/debug/threading-multi/visibility-hidden</a></h2>
+<h3>Compiler output:</h3><pre>
+test_singleton_plain.cpp:25:32: warning: unknown warning group '-Wterminate', ignored [-Wunknown-warning-option]
+#pragma GCC diagnostic ignored &quot;-Wterminate&quot;
+                               ^
+1 warning generated.
+</pre>
+<h2><a name="bin.v2/libs/serialization/test/test_singleton_inherited.test/clang-darwin-03/debug/threading-multi/visibility-hidden">bin.v2/libs/serialization/test/test_singleton_inherited.test/clang-darwin-03/debug/threading-multi/visibility-hidden</a></h2>
+<h3>Compiler output:</h3><pre>
+test_singleton_inherited.cpp:26:32: warning: unknown warning group '-Wterminate', ignored [-Wunknown-warning-option]
+#pragma GCC diagnostic ignored &quot;-Wterminate&quot;
+                               ^
+1 warning generated.
+</pre>
+<h2><a name="bin.v2/libs/serialization/test/test_dll_simple.test/clang-darwin-03/debug/threading-multi/visibility-hidden">bin.v2/libs/serialization/test/test_dll_simple.test/clang-darwin-03/debug/threading-multi/visibility-hidden</a></h2>
+<h3>Compiler output:</h3><pre>
+In file included from test_dll_simple.cpp:33:
+./A.hpp:37:13: warning: A imported [-W#pragma-messages]
+    #pragma message(&quot;A imported&quot;)
+            ^
+1 warning generated.
+</pre>
+<h2><a name="bin.v2/libs/serialization/test/test_dll_exported_polymorphic_binary_archive.test/clang-darwin-03/debug/threading-multi/visibility-hidden">bin.v2/libs/serialization/test/test_dll_exported_polymorphic_binary_archive.test/clang-darwin-03/debug/threading-multi/visibility-hidden</a></h2>
+<h3>Compiler output:</h3><pre>
+In file included from test_dll_exported.cpp:51:
+./polymorphic_base.hpp:29:13: warning: polymorphic_base imported [-W#pragma-messages]
+    #pragma message (&quot;polymorphic_base imported&quot;)
+            ^
+In file included from test_dll_exported.cpp:56:
+./polymorphic_derived2.hpp:29:13: warning: polymorphic_derived2 imported [-W#pragma-messages]
+    #pragma message (&quot;polymorphic_derived2 imported&quot;)
+            ^
+2 warnings generated.
+</pre>
+<h2><a name="bin.v2/libs/serialization/test/test_traits_fail.test/clang-darwin-03/debug/threading-multi/visibility-hidden">bin.v2/libs/serialization/test/test_traits_fail.test/clang-darwin-03/debug/threading-multi/visibility-hidden</a></h2>
+<h3>Compiler output:</h3><pre>
+test_traits_fail.cpp:24:1: error: implicit instantiation of undefined template 'boost::STATIC_ASSERTION_FAILURE&amp;lt;false&amp;gt;'
+BOOST_CLASS_TRACKING(A, boost::serialization::track_never) 
+^
+../../../boost/serialization/tracking.hpp:108:5: note: expanded from macro 'BOOST_CLASS_TRACKING'
+    BOOST_STATIC_ASSERT((                    \
+    ^
+../../../boost/static_assert.hpp:154:13: note: expanded from macro 'BOOST_STATIC_ASSERT'
+            sizeof(::boost::STATIC_ASSERTION_FAILURE&amp;lt; BOOST_STATIC_ASSERT_BOOL_CAST( __VA_ARGS__ ) &amp;gt;)&amp;gt;\
+            ^
+../../../boost/static_assert.hpp:79:26: note: template is declared here
+template &amp;lt;bool x&amp;gt; struct STATIC_ASSERTION_FAILURE;
+                         ^
+1 error generated.
+(failed-as-expected) ../../../bin.v2/libs/serialization/test/test_traits_fail.test/clang-darwin-03/debug/threading-multi/visibility-hidden/test_traits_fail.o
+</pre>
+<h2><a name="bin.v2/libs/serialization/test/test_const_load_fail1.test/clang-darwin-03/debug/threading-multi/visibility-hidden">bin.v2/libs/serialization/test/test_const_load_fail1.test/clang-darwin-03/debug/threading-multi/visibility-hidden</a></h2>
+<h3>Compiler output:</h3><pre>
+In file included from test_const_load_fail1.cpp:11:
+In file included from ../../../boost/archive/text_iarchive.hpp:24:
+In file included from ../../../boost/archive/basic_text_iarchive.hpp:30:
+In file included from ../../../boost/archive/detail/common_iarchive.hpp:23:
+In file included from ../../../boost/archive/detail/interface_iarchive.hpp:22:
+In file included from ../../../boost/archive/detail/iserializer.hpp:90:
+../../../boost/archive/detail/check.hpp:162:5: error: implicit instantiation of undefined template 'boost::STATIC_ASSERTION_FAILURE&amp;lt;false&amp;gt;'
+    BOOST_STATIC_ASSERT(typex::value);
+    ^
+../../../boost/static_assert.hpp:154:13: note: expanded from macro 'BOOST_STATIC_ASSERT'
+            sizeof(::boost::STATIC_ASSERTION_FAILURE&amp;lt; BOOST_STATIC_ASSERT_BOOL_CAST( __VA_ARGS__ ) &amp;gt;)&amp;gt;\
+            ^
+../../../boost/archive/detail/iserializer.hpp:609:13: note: in instantiation of function template specialization 'boost::archive::detail::check_const_loading&amp;lt;const A&amp;gt;' requested here
+    detail::check_const_loading&amp;lt; T &amp;gt;();
+            ^
+../../../boost/archive/detail/common_iarchive.hpp:67:18: note: in instantiation of function template specialization 'boost::archive::load&amp;lt;boost::archive::text_iarchive, const A&amp;gt;' requested here
+        archive::load(* this-&amp;gt;This(), t);
+                 ^
+../../../boost/archive/basic_text_iarchive.hpp:70:39: note: in instantiation of function template specialization 'boost::archive::detail::common_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;const A&amp;gt;' requested here
+        this-&amp;gt;detail_common_iarchive::load_override(t);
+                                      ^
+../../../boost/archive/text_iarchive.hpp:82:39: note: in instantiation of function template specialization 'boost::archive::basic_text_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;const A&amp;gt;' requested here
+        basic_text_iarchive&amp;lt;Archive&amp;gt;::load_override(t);
+                                      ^
+../../../boost/archive/detail/interface_iarchive.hpp:68:23: note: in instantiation of function template specialization 'boost::archive::text_iarchive_impl&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;const A&amp;gt;' requested here
+        this-&amp;gt;This()-&amp;gt;load_override(t);
+                      ^
+test_const_load_fail1.cpp:22:8: note: in instantiation of function template specialization 'boost::archive::detail::interface_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::operator&amp;gt;&amp;gt;&amp;lt;const A&amp;gt;' requested here
+    ia &amp;gt;&amp;gt; a;
+       ^
+../../../boost/static_assert.hpp:79:26: note: template is declared here
+template &amp;lt;bool x&amp;gt; struct STATIC_ASSERTION_FAILURE;
+                         ^
+1 error generated.
+(failed-as-expected) ../../../bin.v2/libs/serialization/test/test_const_load_fail1.test/clang-darwin-03/debug/threading-multi/visibility-hidden/test_const_load_fail1.o
+</pre>
+<h2><a name="bin.v2/libs/serialization/test/test_smart_cast.test/clang-darwin-03/debug/threading-multi/visibility-hidden">bin.v2/libs/serialization/test/test_smart_cast.test/clang-darwin-03/debug/threading-multi/visibility-hidden</a></h2>
+<h3>Compiler output:</h3><pre>
+test_smart_cast.cpp:20:10: warning: private field 'a' is not used [-Wunused-private-field]
+    char a;
+         ^
+test_smart_cast.cpp:25:9: warning: private field 'b' is not used [-Wunused-private-field]
+    int b;
+        ^
+test_smart_cast.cpp:35:10: warning: private field 'c' is not used [-Wunused-private-field]
+    long c;
+         ^
+test_smart_cast.cpp:122:10: warning: private field 'a' is not used [-Wunused-private-field]
+    char a;
+         ^
+test_smart_cast.cpp:129:9: warning: private field 'b' is not used [-Wunused-private-field]
+    int b;
+        ^
+test_smart_cast.cpp:141:10: warning: private field 'c' is not used [-Wunused-private-field]
+    long c;
+         ^
+6 warnings generated.
+</pre>
+<h2><a name="bin.v2/libs/serialization/test/test_const_load_fail2_nvp.test/clang-darwin-03/debug/threading-multi/visibility-hidden">bin.v2/libs/serialization/test/test_const_load_fail2_nvp.test/clang-darwin-03/debug/threading-multi/visibility-hidden</a></h2>
+<h3>Compiler output:</h3><pre>
+In file included from test_const_load_fail2_nvp.cpp:11:
+In file included from ../../../boost/archive/text_iarchive.hpp:24:
+In file included from ../../../boost/archive/basic_text_iarchive.hpp:30:
+In file included from ../../../boost/archive/detail/common_iarchive.hpp:23:
+In file included from ../../../boost/archive/detail/interface_iarchive.hpp:22:
+In file included from ../../../boost/archive/detail/iserializer.hpp:90:
+../../../boost/archive/detail/check.hpp:162:5: error: implicit instantiation of undefined template 'boost::STATIC_ASSERTION_FAILURE&amp;lt;false&amp;gt;'
+    BOOST_STATIC_ASSERT(typex::value);
+    ^
+../../../boost/static_assert.hpp:154:13: note: expanded from macro 'BOOST_STATIC_ASSERT'
+            sizeof(::boost::STATIC_ASSERTION_FAILURE&amp;lt; BOOST_STATIC_ASSERT_BOOL_CAST( __VA_ARGS__ ) &amp;gt;)&amp;gt;\
+            ^
+../../../boost/archive/detail/iserializer.hpp:609:13: note: in instantiation of function template specialization 'boost::archive::detail::check_const_loading&amp;lt;A *const&amp;gt;' requested here
+    detail::check_const_loading&amp;lt; T &amp;gt;();
+            ^
+../../../boost/archive/detail/common_iarchive.hpp:67:18: note: in instantiation of function template specialization 'boost::archive::load&amp;lt;boost::archive::text_iarchive, A *const&amp;gt;' requested here
+        archive::load(* this-&amp;gt;This(), t);
+                 ^
+../../../boost/archive/basic_text_iarchive.hpp:70:39: note: in instantiation of function template specialization 'boost::archive::detail::common_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;A *const&amp;gt;' requested here
+        this-&amp;gt;detail_common_iarchive::load_override(t);
+                                      ^
+../../../boost/archive/text_iarchive.hpp:82:39: note: in instantiation of function template specialization 'boost::archive::basic_text_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;A *const&amp;gt;' requested here
+        basic_text_iarchive&amp;lt;Archive&amp;gt;::load_override(t);
+                                      ^
+../../../boost/archive/detail/interface_iarchive.hpp:68:23: note: in instantiation of function template specialization 'boost::archive::text_iarchive_impl&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;A *const&amp;gt;' requested here
+        this-&amp;gt;This()-&amp;gt;load_override(t);
+                      ^
+../../../boost/serialization/nvp.hpp:56:8: note: (skipping 8 contexts in backtrace; use -ftemplate-backtrace-limit=0 to see all)
+    ar &amp;gt;&amp;gt; t.value();
+       ^
+../../../boost/archive/detail/common_iarchive.hpp:67:18: note: in instantiation of function template specialization 'boost::archive::load&amp;lt;boost::archive::text_iarchive, const boost::serialization::nvp&amp;lt;A *const&amp;gt; &amp;gt;' requested here
+        archive::load(* this-&amp;gt;This(), t);
+                 ^
+../../../boost/archive/basic_text_iarchive.hpp:70:39: note: in instantiation of function template specialization 'boost::archive::detail::common_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;const boost::serialization::nvp&amp;lt;A *const&amp;gt; &amp;gt;' requested here
+        this-&amp;gt;detail_common_iarchive::load_override(t);
+                                      ^
+../../../boost/archive/text_iarchive.hpp:82:39: note: in instantiation of function template specialization 'boost::archive::basic_text_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;const boost::serialization::nvp&amp;lt;A *const&amp;gt; &amp;gt;' requested here
+        basic_text_iarchive&amp;lt;Archive&amp;gt;::load_override(t);
+                                      ^
+../../../boost/archive/detail/interface_iarchive.hpp:68:23: note: in instantiation of function template specialization 'boost::archive::text_iarchive_impl&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;const boost::serialization::nvp&amp;lt;A *const&amp;gt; &amp;gt;' requested here
+        this-&amp;gt;This()-&amp;gt;load_override(t);
+                      ^
+test_const_load_fail2_nvp.cpp:23:8: note: in instantiation of function template specialization 'boost::archive::detail::interface_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::operator&amp;gt;&amp;gt;&amp;lt;const boost::serialization::nvp&amp;lt;A *const&amp;gt; &amp;gt;' requested here
+    ia &amp;gt;&amp;gt; BOOST_SERIALIZATION_NVP(a);
+       ^
+../../../boost/static_assert.hpp:79:26: note: template is declared here
+template &amp;lt;bool x&amp;gt; struct STATIC_ASSERTION_FAILURE;
+                         ^
+In file included from test_const_load_fail2_nvp.cpp:11:
+In file included from ../../../boost/archive/text_iarchive.hpp:24:
+In file included from ../../../boost/archive/basic_text_iarchive.hpp:30:
+In file included from ../../../boost/archive/detail/common_iarchive.hpp:23:
+In file included from ../../../boost/archive/detail/interface_iarchive.hpp:22:
+../../../boost/archive/detail/iserializer.hpp:552:15: error: cannot assign to variable 't' with const-qualified type 'A *const &amp;amp;'
+            t = pointer_tweak(newbpis_ptr-&amp;gt;get_eti(), t, *t);
+            ~ ^
+../../../boost/archive/detail/iserializer.hpp:624:12: note: in instantiation of function template specialization 'boost::archive::detail::load_pointer_type&amp;lt;boost::archive::text_iarchive&amp;gt;::invoke&amp;lt;A *const&amp;gt;' requested here
+    typex::invoke(ar, t);
+           ^
+../../../boost/archive/detail/common_iarchive.hpp:67:18: note: in instantiation of function template specialization 'boost::archive::load&amp;lt;boost::archive::text_iarchive, A *const&amp;gt;' requested here
+        archive::load(* this-&amp;gt;This(), t);
+                 ^
+../../../boost/archive/basic_text_iarchive.hpp:70:39: note: in instantiation of function template specialization 'boost::archive::detail::common_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;A *const&amp;gt;' requested here
+        this-&amp;gt;detail_common_iarchive::load_override(t);
+                                      ^
+../../../boost/archive/text_iarchive.hpp:82:39: note: in instantiation of function template specialization 'boost::archive::basic_text_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;A *const&amp;gt;' requested here
+        basic_text_iarchive&amp;lt;Archive&amp;gt;::load_override(t);
+                                      ^
+../../../boost/archive/detail/interface_iarchive.hpp:68:23: note: in instantiation of function template specialization 'boost::archive::text_iarchive_impl&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;A *const&amp;gt;' requested here
+        this-&amp;gt;This()-&amp;gt;load_override(t);
+                      ^
+../../../boost/serialization/nvp.hpp:56:8: note: (skipping 8 contexts in backtrace; use -ftemplate-backtrace-limit=0 to see all)
+    ar &amp;gt;&amp;gt; t.value();
+       ^
+../../../boost/archive/detail/common_iarchive.hpp:67:18: note: in instantiation of function template specialization 'boost::archive::load&amp;lt;boost::archive::text_iarchive, const boost::serialization::nvp&amp;lt;A *const&amp;gt; &amp;gt;' requested here
+        archive::load(* this-&amp;gt;This(), t);
+                 ^
+../../../boost/archive/basic_text_iarchive.hpp:70:39: note: in instantiation of function template specialization 'boost::archive::detail::common_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;const boost::serialization::nvp&amp;lt;A *const&amp;gt; &amp;gt;' requested here
+        this-&amp;gt;detail_common_iarchive::load_override(t);
+                                      ^
+../../../boost/archive/text_iarchive.hpp:82:39: note: in instantiation of function template specialization 'boost::archive::basic_text_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;const boost::serialization::nvp&amp;lt;A *const&amp;gt; &amp;gt;' requested here
+        basic_text_iarchive&amp;lt;Archive&amp;gt;::load_override(t);
+                                      ^
+../../../boost/archive/detail/interface_iarchive.hpp:68:23: note: in instantiation of function template specialization 'boost::archive::text_iarchive_impl&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;const boost::serialization::nvp&amp;lt;A *const&amp;gt; &amp;gt;' requested here
+        this-&amp;gt;This()-&amp;gt;load_override(t);
+                      ^
+test_const_load_fail2_nvp.cpp:23:8: note: in instantiation of function template specialization 'boost::archive::detail::interface_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::operator&amp;gt;&amp;gt;&amp;lt;const boost::serialization::nvp&amp;lt;A *const&amp;gt; &amp;gt;' requested here
+    ia &amp;gt;&amp;gt; BOOST_SERIALIZATION_NVP(a);
+       ^
+../../../boost/archive/detail/iserializer.hpp:538:45: note: variable 't' declared const here
+    static void invoke(Archive &amp;amp; ar, Tptr &amp;amp; t){
+                                     ~~~~~~~^
+2 errors generated.
+(failed-as-expected) ../../../bin.v2/libs/serialization/test/test_const_load_fail2_nvp.test/clang-darwin-03/debug/threading-multi/visibility-hidden/test_const_load_fail2_nvp.o
+</pre>
+<h2><a name="bin.v2/libs/serialization/test/test_const_load_fail3_nvp.test/clang-darwin-03/debug/threading-multi/visibility-hidden">bin.v2/libs/serialization/test/test_const_load_fail3_nvp.test/clang-darwin-03/debug/threading-multi/visibility-hidden</a></h2>
+<h3>Compiler output:</h3><pre>
+In file included from test_const_load_fail3_nvp.cpp:11:
+In file included from ../../../boost/archive/text_iarchive.hpp:24:
+In file included from ../../../boost/archive/basic_text_iarchive.hpp:30:
+In file included from ../../../boost/archive/detail/common_iarchive.hpp:23:
+In file included from ../../../boost/archive/detail/interface_iarchive.hpp:22:
+In file included from ../../../boost/archive/detail/iserializer.hpp:90:
+../../../boost/archive/detail/check.hpp:162:5: error: implicit instantiation of undefined template 'boost::STATIC_ASSERTION_FAILURE&amp;lt;false&amp;gt;'
+    BOOST_STATIC_ASSERT(typex::value);
+    ^
+../../../boost/static_assert.hpp:154:13: note: expanded from macro 'BOOST_STATIC_ASSERT'
+            sizeof(::boost::STATIC_ASSERTION_FAILURE&amp;lt; BOOST_STATIC_ASSERT_BOOL_CAST( __VA_ARGS__ ) &amp;gt;)&amp;gt;\
+            ^
+../../../boost/archive/detail/iserializer.hpp:609:13: note: in instantiation of function template specialization 'boost::archive::detail::check_const_loading&amp;lt;const A *const&amp;gt;' requested here
+    detail::check_const_loading&amp;lt; T &amp;gt;();
+            ^
+../../../boost/archive/detail/common_iarchive.hpp:67:18: note: in instantiation of function template specialization 'boost::archive::load&amp;lt;boost::archive::text_iarchive, const A *const&amp;gt;' requested here
+        archive::load(* this-&amp;gt;This(), t);
+                 ^
+../../../boost/archive/basic_text_iarchive.hpp:70:39: note: in instantiation of function template specialization 'boost::archive::detail::common_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;const A *const&amp;gt;' requested here
+        this-&amp;gt;detail_common_iarchive::load_override(t);
+                                      ^
+../../../boost/archive/text_iarchive.hpp:82:39: note: in instantiation of function template specialization 'boost::archive::basic_text_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;const A *const&amp;gt;' requested here
+        basic_text_iarchive&amp;lt;Archive&amp;gt;::load_override(t);
+                                      ^
+../../../boost/archive/detail/interface_iarchive.hpp:68:23: note: in instantiation of function template specialization 'boost::archive::text_iarchive_impl&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;const A *const&amp;gt;' requested here
+        this-&amp;gt;This()-&amp;gt;load_override(t);
+                      ^
+../../../boost/serialization/nvp.hpp:56:8: note: (skipping 8 contexts in backtrace; use -ftemplate-backtrace-limit=0 to see all)
+    ar &amp;gt;&amp;gt; t.value();
+       ^
+../../../boost/archive/detail/common_iarchive.hpp:67:18: note: in instantiation of function template specialization 'boost::archive::load&amp;lt;boost::archive::text_iarchive, const boost::serialization::nvp&amp;lt;const A *const&amp;gt; &amp;gt;' requested here
+        archive::load(* this-&amp;gt;This(), t);
+                 ^
+../../../boost/archive/basic_text_iarchive.hpp:70:39: note: in instantiation of function template specialization 'boost::archive::detail::common_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;const boost::serialization::nvp&amp;lt;const A *const&amp;gt; &amp;gt;' requested here
+        this-&amp;gt;detail_common_iarchive::load_override(t);
+                                      ^
+../../../boost/archive/text_iarchive.hpp:82:39: note: in instantiation of function template specialization 'boost::archive::basic_text_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;const boost::serialization::nvp&amp;lt;const A *const&amp;gt; &amp;gt;' requested here
+        basic_text_iarchive&amp;lt;Archive&amp;gt;::load_override(t);
+                                      ^
+../../../boost/archive/detail/interface_iarchive.hpp:68:23: note: in instantiation of function template specialization 'boost::archive::text_iarchive_impl&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;const boost::serialization::nvp&amp;lt;const A *const&amp;gt; &amp;gt;' requested here
+        this-&amp;gt;This()-&amp;gt;load_override(t);
+                      ^
+test_const_load_fail3_nvp.cpp:23:8: note: in instantiation of function template specialization 'boost::archive::detail::interface_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::operator&amp;gt;&amp;gt;&amp;lt;const boost::serialization::nvp&amp;lt;const A *const&amp;gt; &amp;gt;' requested here
+    ia &amp;gt;&amp;gt; BOOST_SERIALIZATION_NVP(a);
+       ^
+../../../boost/static_assert.hpp:79:26: note: template is declared here
+template &amp;lt;bool x&amp;gt; struct STATIC_ASSERTION_FAILURE;
+                         ^
+In file included from test_const_load_fail3_nvp.cpp:11:
+In file included from ../../../boost/archive/text_iarchive.hpp:24:
+In file included from ../../../boost/archive/basic_text_iarchive.hpp:30:
+In file included from ../../../boost/archive/detail/common_iarchive.hpp:23:
+In file included from ../../../boost/archive/detail/interface_iarchive.hpp:22:
+../../../boost/archive/detail/iserializer.hpp:552:15: error: cannot assign to variable 't' with const-qualified type 'const A *const &amp;amp;'
+            t = pointer_tweak(newbpis_ptr-&amp;gt;get_eti(), t, *t);
+            ~ ^
+../../../boost/archive/detail/iserializer.hpp:624:12: note: in instantiation of function template specialization 'boost::archive::detail::load_pointer_type&amp;lt;boost::archive::text_iarchive&amp;gt;::invoke&amp;lt;const A *const&amp;gt;' requested here
+    typex::invoke(ar, t);
+           ^
+../../../boost/archive/detail/common_iarchive.hpp:67:18: note: in instantiation of function template specialization 'boost::archive::load&amp;lt;boost::archive::text_iarchive, const A *const&amp;gt;' requested here
+        archive::load(* this-&amp;gt;This(), t);
+                 ^
+../../../boost/archive/basic_text_iarchive.hpp:70:39: note: in instantiation of function template specialization 'boost::archive::detail::common_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;const A *const&amp;gt;' requested here
+        this-&amp;gt;detail_common_iarchive::load_override(t);
+                                      ^
+../../../boost/archive/text_iarchive.hpp:82:39: note: in instantiation of function template specialization 'boost::archive::basic_text_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;const A *const&amp;gt;' requested here
+        basic_text_iarchive&amp;lt;Archive&amp;gt;::load_override(t);
+                                      ^
+../../../boost/archive/detail/interface_iarchive.hpp:68:23: note: in instantiation of function template specialization 'boost::archive::text_iarchive_impl&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;const A *const&amp;gt;' requested here
+        this-&amp;gt;This()-&amp;gt;load_override(t);
+                      ^
+../../../boost/serialization/nvp.hpp:56:8: note: (skipping 8 contexts in backtrace; use -ftemplate-backtrace-limit=0 to see all)
+    ar &amp;gt;&amp;gt; t.value();
+       ^
+../../../boost/archive/detail/common_iarchive.hpp:67:18: note: in instantiation of function template specialization 'boost::archive::load&amp;lt;boost::archive::text_iarchive, const boost::serialization::nvp&amp;lt;const A *const&amp;gt; &amp;gt;' requested here
+        archive::load(* this-&amp;gt;This(), t);
+                 ^
+../../../boost/archive/basic_text_iarchive.hpp:70:39: note: in instantiation of function template specialization 'boost::archive::detail::common_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;const boost::serialization::nvp&amp;lt;const A *const&amp;gt; &amp;gt;' requested here
+        this-&amp;gt;detail_common_iarchive::load_override(t);
+                                      ^
+../../../boost/archive/text_iarchive.hpp:82:39: note: in instantiation of function template specialization 'boost::archive::basic_text_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;const boost::serialization::nvp&amp;lt;const A *const&amp;gt; &amp;gt;' requested here
+        basic_text_iarchive&amp;lt;Archive&amp;gt;::load_override(t);
+                                      ^
+../../../boost/archive/detail/interface_iarchive.hpp:68:23: note: in instantiation of function template specialization 'boost::archive::text_iarchive_impl&amp;lt;boost::archive::text_iarchive&amp;gt;::load_override&amp;lt;const boost::serialization::nvp&amp;lt;const A *const&amp;gt; &amp;gt;' requested here
+        this-&amp;gt;This()-&amp;gt;load_override(t);
+                      ^
+test_const_load_fail3_nvp.cpp:23:8: note: in instantiation of function template specialization 'boost::archive::detail::interface_iarchive&amp;lt;boost::archive::text_iarchive&amp;gt;::operator&amp;gt;&amp;gt;&amp;lt;const boost::serialization::nvp&amp;lt;const A *const&amp;gt; &amp;gt;' requested here
+    ia &amp;gt;&amp;gt; BOOST_SERIALIZATION_NVP(a);
+       ^
+../../../boost/archive/detail/iserializer.hpp:538:45: note: variable 't' declared const here
+    static void invoke(Archive &amp;amp; ar, Tptr &amp;amp; t){
+                                     ~~~~~~~^
+2 errors generated.
+(failed-as-expected) ../../../bin.v2/libs/serialization/test/test_const_load_fail3_nvp.test/clang-darwin-03/debug/threading-multi/visibility-hidden/test_const_load_fail3_nvp.o
+</pre>
+<h2><a name="bin.v2/libs/serialization/test/test_dll_exported_polymorphic_text_warchive.test/clang-darwin-03/debug/threading-multi/visibility-hidden">bin.v2/libs/serialization/test/test_dll_exported_polymorphic_text_warchive.test/clang-darwin-03/debug/threading-multi/visibility-hidden</a></h2>
+<h3>Compiler output:</h3><pre>
+In file included from test_dll_exported.cpp:51:
+./polymorphic_base.hpp:29:13: warning: polymorphic_base imported [-W#pragma-messages]
+    #pragma message (&quot;polymorphic_base imported&quot;)
+            ^
+In file included from test_dll_exported.cpp:56:
+./polymorphic_derived2.hpp:29:13: warning: polymorphic_derived2 imported [-W#pragma-messages]
+    #pragma message (&quot;polymorphic_derived2 imported&quot;)
+            ^
+2 warnings generated.
+</pre>
+<h2><a name="bin.v2/libs/serialization/test/test_void_cast.test/clang-darwin-03/debug/threading-multi/visibility-hidden">bin.v2/libs/serialization/test/test_void_cast.test/clang-darwin-03/debug/threading-multi/visibility-hidden</a></h2>
+<h3>Compiler output:</h3><pre>
+test_void_cast.cpp:18:10: warning: private field 'a' is not used [-Wunused-private-field]
+    char a;
+         ^
+test_void_cast.cpp:23:9: warning: private field 'b' is not used [-Wunused-private-field]
+    int b;
+        ^
+test_void_cast.cpp:28:10: warning: private field 'c' is not used [-Wunused-private-field]
+    long c;
+         ^
+test_void_cast.cpp:33:10: warning: private field 'd' is not used [-Wunused-private-field]
+    char d[32];
+         ^
+4 warnings generated.
+</pre>
+</body>
+</html>

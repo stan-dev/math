@@ -1,0 +1,2 @@
+/root/project/boost/circular_buffer/base.hpp:419: warning: unable to resolve link to `operator[](size_type)' for \link command
+/root/project/boost/circular_buffer/base.hpp:438: warning: unable to resolve link to `operator[](size_type)const ' for \link command
