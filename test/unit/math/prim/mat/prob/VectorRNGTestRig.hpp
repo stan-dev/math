@@ -43,8 +43,8 @@
  *
  * The output of generate_samples must be of
  *   size(out) == size(p1) if only p1 is used
- *   size(out) == stan::max_size(p1, p2) if p1 and p2 are used
- *   size(out) == stan::max_size(p1, p2, p3) if all parameters are used
+ *   size(out) == max_size(p1, p2) if p1 and p2 are used
+ *   size(out) == max_size(p1, p2, p3) if all parameters are used
  * It must be defined to take three arguments, but not all must be used.
  *
  * good_p1_ and bad_p1_ should be initialized to lists of valid and invalid

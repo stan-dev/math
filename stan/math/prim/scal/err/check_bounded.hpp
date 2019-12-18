@@ -22,7 +22,7 @@ struct bounded {
                     const T_low& low, const T_high& high) {
     scalar_seq_view<T_low> low_vec(low);
     scalar_seq_view<T_high> high_vec(high);
-    for (size_t n = 0; n < stan::max_size(low, high); n++) {
+    for (size_t n = 0; n < max_size(low, high); n++) {
       if (!(low_vec[n] <= y && y <= high_vec[n])) {
         std::stringstream msg;
         msg << ", but must be in the interval ";

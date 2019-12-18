@@ -7,7 +7,7 @@ TEST(AgradRevErrorHandlingMatrix, checkConsistentSizes) {
   using Eigen::Matrix;
   using stan::math::check_consistent_sizes;
   using stan::math::var;
-  using stan::size;
+  using stan::math::size;
 
   const char* function = "testConsSizes";
   const char* name1 = "name1";

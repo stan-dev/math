@@ -7,6 +7,7 @@
 #include <vector>
 
 namespace stan {
+namespace math {
 /** \ingroup type_trait
  * Returns the length of primitive scalar types
  * that are always of length 1.
@@ -26,5 +27,6 @@ template <typename T, typename = require_not_stan_scalar_t<T>, typename = void>
 inline size_t size(const T& m) {
   return m.size();
 }
+}  // namespace math
 }  // namespace stan
 #endif

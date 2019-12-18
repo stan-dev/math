@@ -5,6 +5,7 @@
 #include <cstdlib>
 
 namespace stan {
+namespace math {
 
 template <typename T1, typename T2>
 size_t max_size_mvt(const T1& x1, const T2& x2) {
@@ -29,6 +30,6 @@ size_t max_size_mvt(const T1& x1, const T2& x2, const T3& x3, const T4& x4) {
   result = result > size_mvt(x4) ? result : size_mvt(x4);
   return result;
 }
-
+}  // namespace math
 }  // namespace stan
 #endif
