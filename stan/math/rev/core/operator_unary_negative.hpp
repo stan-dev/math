@@ -4,6 +4,7 @@
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/v_vari.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <limits>
 
 namespace stan {
@@ -44,10 +45,12 @@ class neg_vari : public op_v_vari {
    \end{cases}
    \f]
  *
+ * @tparam A var autodiff type
  * @param a Argument variable.
  * @return Negation of variable.
  */
-inline var operator-(const var& a) {
+template <typename T, require_var_t<T>...>
+inline var operator-(T&& a) {
   return var(new internal::neg_vari(a.vi_));
 }
 

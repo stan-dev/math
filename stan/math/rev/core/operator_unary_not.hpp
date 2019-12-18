@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_CORE_OPERATOR_UNARY_NOT_HPP
 
 #include <stan/math/rev/core/var.hpp>
+#include <stan/math/prim/meta.hpp>
 
 namespace stan {
 namespace math {
@@ -10,10 +11,12 @@ namespace math {
  * Return the negation of the value of the argument as defined by
  * <code>!</code>.
  *
+ * @tparam A var autodiff type
  * @param[in] x argument
  * @return negation of argument value
  */
-inline bool operator!(const var& x) { return !x.val(); }
+template <typename T, require_var_t<T>...>
+inline bool operator!(T&& x) { return !x.val(); }
 
 }  // namespace math
 }  // namespace stan

@@ -4,6 +4,7 @@
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/v_vari.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <limits>
 
 namespace stan {
@@ -33,10 +34,12 @@ class decrement_vari : public op_v_vari {
  * does, but is faster and uses less memory.  In particular,
  * the result is an assignable lvalue.
  *
+ * @tparam A var autodiff type
  * @param a Variable to decrement.
  * @return Reference the result of decrementing this input variable.
  */
-inline var& operator--(var& a) {
+template <typename T, require_var_t<T>...>
+inline var& operator--(T&& a) {
   a.vi_ = new internal::decrement_vari(a.vi_);
   return a;
 }
@@ -49,10 +52,12 @@ inline var& operator--(var& a) {
  *
  * <code>var temp = a;  a = a - 1.0;  return temp;</code>
  *
+ * @tparam A var autodiff type
  * @param a Variable to decrement.
  * @return Input variable.
  */
-inline var operator--(var& a, int /*dummy*/) {
+template <typename T, require_var_t<T>...>
+inline var operator--(T&& a, int /*dummy*/) {
   var temp(a);
   a.vi_ = new internal::decrement_vari(a.vi_);
   return temp;

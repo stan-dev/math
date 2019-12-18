@@ -5,6 +5,7 @@
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/rev/core/precomp_v_vari.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/meta.hpp>
 
 namespace stan {
 namespace math {
@@ -37,10 +38,12 @@ namespace math {
  \end{cases}
  \f]
  *
+ * @tparam A var autodiff type
  * @param a Argument variable.
  * @return The input reference.
  */
-inline var operator+(const var& a) {
+template <typename T, require_var_t<T>>
+inline var operator+(T&& a) {
   if (unlikely(is_nan(a.vi_->val_))) {
     return var(new precomp_v_vari(NOT_A_NUMBER, a.vi_, NOT_A_NUMBER));
   }

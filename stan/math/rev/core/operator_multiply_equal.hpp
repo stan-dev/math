@@ -3,16 +3,19 @@
 
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/operator_multiplication.hpp>
+#include <stan/math/prim/meta.hpp>
 
 namespace stan {
 namespace math {
 
-inline var& var::operator*=(const var& b) {
+template <typename T, require_var_t<T>...>
+inline var& var::operator*=(T&& b) {
   vi_ = new internal::multiply_vv_vari(vi_, b.vi_);
   return *this;
 }
 
-inline var& var::operator*=(double b) {
+template <typename T, require_arithmetic_t<T>...>
+inline var& var::operator*=(T b) {
   if (b == 1.0) {
     return *this;
   }

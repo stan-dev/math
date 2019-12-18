@@ -5,6 +5,7 @@
 #include <stan/math/rev/core/vv_vari.hpp>
 #include <stan/math/rev/core/vd_vari.hpp>
 #include <stan/math/prim/scal/fun/is_any_nan.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <limits>
 
 namespace stan {
@@ -72,11 +73,14 @@ class multiply_vd_vari : public op_vd_vari {
    \end{cases}
    \f]
  *
+ * @tparam LHS value type of a var
+ * @tparam RHS value type of a var
  * @param a First variable operand.
  * @param b Second variable operand.
  * @return Variable result of multiplying operands.
  */
-inline var operator*(const var& a, const var& b) {
+template <typename LHS, typename RHS, require_all_var_t<LHS, RHS>...>
+inline var operator*(LHS&& a, RHS&& b) {
   return var(new internal::multiply_vv_vari(a.vi_, b.vi_));
 }
 
@@ -87,11 +91,15 @@ inline var operator*(const var& a, const var& b) {
  *
  * \f$\frac{\partial}{\partial x} (x * c) = c\f$, and
  *
+ * @tparam LHS value type of a var
+ * @tparam RHS An arithmetic type
  * @param a Variable operand.
  * @param b Scalar operand.
  * @return Variable result of multiplying operands.
  */
-inline var operator*(const var& a, double b) {
+template <typename LHS, typename RHS,
+ require_var_t<LHS>..., require_arithmetic_t<RHS>...>
+inline var operator*(LHS&& a, RHS b) {
   if (b == 1.0) {
     return a;
   }
@@ -105,11 +113,15 @@ inline var operator*(const var& a, double b) {
  *
  * \f$\frac{\partial}{\partial y} (c * y) = c\f$.
  *
+ * @tparam LHS An arithmetic type
+ * @tparam RHS value type of a var
  * @param a Scalar operand.
  * @param b Variable operand.
  * @return Variable result of multiplying the operands.
  */
-inline var operator*(double a, const var& b) {
+template <typename LHS, typename RHS,
+ require_arithmetic_t<LHS>..., require_var_t<RHS>...>
+inline var operator*(LHS a, RHS&& b) {
   if (a == 1.0) {
     return b;
   }

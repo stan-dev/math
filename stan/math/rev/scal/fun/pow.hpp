@@ -105,7 +105,8 @@ class pow_dv_vari : public op_dv_vari {
  * @param exponent Exponent variable.
  * @return Base raised to the exponent.
  */
-inline var pow(const var& base, const var& exponent) {
+template <typename Var1, typename Var2, require_all_var_t<Var1, Var2>...>
+inline auto pow(Var1&& base, Var2&& exponent) {
   return var(new internal::pow_vv_vari(base.vi_, exponent.vi_));
 }
 
@@ -121,26 +122,27 @@ inline var pow(const var& base, const var& exponent) {
  * @param exponent Exponent scalar.
  * @return Base raised to the exponent.
  */
-inline var pow(const var& base, double exponent) {
+template<typename Var, typename Arith, require_var_t<Var>..., require_arithmetic_t<Arith>...>
+inline var pow(Var&& base, Arith exponent) {
   if (exponent == 0.5) {
-    return sqrt(base);
+    return sqrt(std::forward<Var>(base));
   }
   if (exponent == 1.0) {
     return base;
   }
   if (exponent == 2.0) {
-    return square(base);
+    return square(std::forward<Var>(base));
   }
   if (exponent == -2.0) {
-    return inv_square(base);
+    return inv_square(std::forward<Var>(base));
   }
   if (exponent == -1.0) {
-    return inv(base);
+    return inv(std::forward<Var>(base));
   }
   if (exponent == -0.5) {
-    return inv_sqrt(base);
+    return inv_sqrt(std::forward<Var>(base));
   }
-  return var(new internal::pow_vd_vari(base.vi_, exponent));
+  return var(new internal::pow_vd_vari(base.vi_, static_cast<double>(exponent)));
 }
 
 /**
@@ -155,7 +157,8 @@ inline var pow(const var& base, double exponent) {
  * @param exponent Exponent variable.
  * @return Base raised to the exponent.
  */
-inline var pow(double base, const var& exponent) {
+template <typename Arith, typename Var, require_var_t<Var>..., require_arithmetic_t<Arith>...>
+inline var pow(Arith base, Var&& exponent) {
   return var(new internal::pow_dv_vari(base, exponent.vi_));
 }
 

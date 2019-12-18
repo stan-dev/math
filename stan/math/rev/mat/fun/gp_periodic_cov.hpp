@@ -9,6 +9,7 @@
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/squared_distance.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/scal/fun/sin.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
 #include <cmath>
 #include <vector>
@@ -111,6 +112,7 @@ class gp_periodic_cov_vari : public vari {
         cov_diag_(
             ChainableStack::instance_->memalloc_.alloc_array<vari *>(size_)) {
     using std::sin;
+    using std::exp;
     double neg_two_inv_l_sq = -2.0 / (l_d_ * l_d_);
     double pi_div_p = pi() / p_d_;
 
@@ -124,7 +126,7 @@ class gp_periodic_cov_vari : public vari {
         sin_2_dist_[pos] = sin(2.0 * pi_div_p * dist);
         sin_dist_sq_[pos] = sin_dist_sq;
         cov_lower_[pos] = new vari(
-            sigma_sq_d_ * std::exp(sin_dist_sq * neg_two_inv_l_sq), false);
+            sigma_sq_d_ * exp(sin_dist_sq * neg_two_inv_l_sq), false);
         ++pos;
       }
       cov_diag_[j] = new vari(sigma_sq_d_, false);
@@ -244,6 +246,7 @@ class gp_periodic_cov_vari<T_x, double, T_l, T_p> : public vari {
         cov_diag_(
             ChainableStack::instance_->memalloc_.alloc_array<vari *>(size_)) {
     using std::sin;
+    using std::exp;
     double neg_two_inv_l_sq = -2.0 / (l_d_ * l_d_);
     double pi_div_p = pi() / p_d_;
 
@@ -257,7 +260,7 @@ class gp_periodic_cov_vari<T_x, double, T_l, T_p> : public vari {
         sin_2_dist_[pos] = sin(2.0 * pi_div_p * dist);
         sin_dist_sq_[pos] = sin_dist_sq;
         cov_lower_[pos] = new vari(
-            sigma_sq_d_ * std::exp(sin_dist_sq * neg_two_inv_l_sq), false);
+            sigma_sq_d_ * exp(sin_dist_sq * neg_two_inv_l_sq), false);
         ++pos;
       }
       cov_diag_[j] = new vari(sigma_sq_d_, false);

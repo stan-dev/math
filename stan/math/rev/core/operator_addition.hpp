@@ -5,6 +5,7 @@
 #include <stan/math/rev/core/vv_vari.hpp>
 #include <stan/math/rev/core/vd_vari.hpp>
 #include <stan/math/prim/scal/fun/is_any_nan.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <limits>
 
 namespace stan {
@@ -73,11 +74,14 @@ class add_vd_vari : public op_vd_vari {
    \end{cases}
    \f]
  *
+ * @tparam LHS value type of a var
+ * @tparam RHS value type of a var
  * @param a First variable operand.
  * @param b Second variable operand.
  * @return Variable result of adding two variables.
  */
-inline var operator+(const var& a, const var& b) {
+template <typename LHS, typename RHS, require_all_var_t<LHS, RHS>...>
+inline auto operator+(LHS&& a, RHS&& b) {
   return var(new internal::add_vv_vari(a.vi_, b.vi_));
 }
 
@@ -88,11 +92,15 @@ inline var operator+(const var& a, const var& b) {
  *
  * \f$\frac{d}{dx} (x + c) = 1\f$.
  *
+ * @tparam LHS value type of a var
+ * @tparam RHS An arithmetic type
  * @param a First variable operand.
  * @param b Second scalar operand.
  * @return Result of adding variable and scalar.
  */
-inline var operator+(const var& a, double b) {
+template <typename LHS, typename RHS,
+ require_var_t<LHS>..., require_arithmetic_t<RHS>...>
+inline auto operator+(LHS&& a, RHS b) {
   if (b == 0.0) {
     return a;
   }
@@ -106,11 +114,15 @@ inline var operator+(const var& a, double b) {
  *
  * \f$\frac{d}{dy} (c + y) = 1\f$.
  *
+ * @tparam LHS An arithmetic type
+ * @tparam RHS value type of a var
  * @param a First scalar operand.
  * @param b Second variable operand.
  * @return Result of adding variable and scalar.
  */
-inline var operator+(double a, const var& b) {
+template <typename LHS, typename RHS,
+ require_arithmetic_t<LHS>..., require_var_t<RHS>...>
+inline auto operator+(LHS a, RHS&& b) {
   if (a == 0.0) {
     return b;
   }
