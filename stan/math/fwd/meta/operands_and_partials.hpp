@@ -198,9 +198,9 @@ class ops_partials_edge<Dx, std::vector<std::vector<fvar<Dx>>>> {
   using partial_t = std::vector<Dx>;
   std::vector<partial_t> partials_vec_;
   explicit ops_partials_edge(const Op& ops)
-      : partials_vec_(size(ops)), operands_(ops) {
-    for (size_t i = 0; i < size(ops); ++i) {
-      partials_vec_[i] = partial_t(size(ops[i]), 0.0);
+      : partials_vec_(stan::math::size(ops)), operands_(ops) {
+    for (size_t i = 0; i < stan::math::size(ops); ++i) {
+      partials_vec_[i] = partial_t(stan::math::size(ops[i]), 0.0);
     }
   }
 
