@@ -88,8 +88,8 @@ class divide_dv_vari : public op_dv_vari {
  * @return Variable result of dividing the first variable by the
  * second.
  */
- template <typename Var1, typename Var2, require_all_var_t<Var1, Var2>...>
- inline auto operator/(Var1&& a, Var2&& b) {
+template <typename Var1, typename Var2, require_all_var_t<Var1, Var2>...>
+inline auto operator/(Var1&& a, Var2&& b) {
   return var(new internal::divide_vv_vari(a.vi_, b.vi_));
 }
 
@@ -106,8 +106,8 @@ class divide_dv_vari : public op_dv_vari {
  * @param b Scalar operand.
  * @return Variable result of dividing the variable by the scalar.
  */
- template <typename Var, typename Arith,
-  require_var_t<Var>..., require_arithmetic_t<Arith>...>
+template <typename Var, typename Arith, require_var_t<Var>...,
+          require_arithmetic_t<Arith>...>
 inline var operator/(Var&& a, Arith b) {
   if (b == 1.0) {
     return a;
@@ -128,8 +128,8 @@ inline var operator/(Var&& a, Arith b) {
  * @param b Variable operand.
  * @return Variable result of dividing the scalar by the variable.
  */
-template <typename Arith, typename Var,
- require_arithmetic_t<Arith>..., require_var_t<Var>...>
+template <typename Arith, typename Var, require_arithmetic_t<Arith>...,
+          require_var_t<Var>...>
 inline auto operator/(Arith a, Var&& b) {
   return var(new internal::divide_dv_vari(a, b.vi_));
 }

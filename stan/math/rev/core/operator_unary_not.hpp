@@ -16,7 +16,9 @@ namespace math {
  * @return negation of argument value
  */
 template <typename T, require_var_t<T>...>
-inline bool operator!(T&& x) { return !x.val(); }
+inline bool operator!(T&& x) {
+  return !x.val();
+}
 
 }  // namespace math
 }  // namespace stan
