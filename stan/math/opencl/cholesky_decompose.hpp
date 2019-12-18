@@ -13,7 +13,7 @@
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/prim/transpose.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <cl.hpp>
+#include <CL/cl2.hpp>
 #include <algorithm>
 #include <cmath>
 

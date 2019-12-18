@@ -9,7 +9,7 @@
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/prim/arr/fun/vec_concat.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
-#include <cl.hpp>
+#include <CL/cl2.hpp>
 #include <algorithm>
 #include <iostream>
 #include <string>
