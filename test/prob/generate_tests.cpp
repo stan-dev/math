@@ -1,3 +1,4 @@
+#include <stan/math/prim/meta.hpp>
 #include <ostream>
 #include <iostream>
 #include <fstream>
@@ -370,9 +371,9 @@ int create_files(const int& argc, const char* argv[], const int& index,
 
   int num_tests;
   if (index == 1)
-    num_tests = size(argument_sequence);
+    num_tests = stan::math::size(argument_sequence);
   else
-    num_tests = size(argument_sequence)
+    num_tests = stan::math::size(argument_sequence)
                 - std::pow(3 + ROW_VECTORS, num_ints(arguments))
                       * std::pow(3 + ROW_VECTORS, num_doubles(arguments));
 
