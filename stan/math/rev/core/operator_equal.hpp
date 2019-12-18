@@ -42,9 +42,11 @@ inline bool operator==(Var1&& a, Var2&& b) {
  * @return True if the first variable's value is the same as the
  * second value.
  */
-template <typename Arith, typename Var,
- require_var_t<Var>..., require_arithmetic_t<Arith>...>
-inline bool operator==(Var&& a, Arith b) { return a.val() == b; }
+template <typename Arith, typename Var, require_var_t<Var>...,
+          require_arithmetic_t<Arith>...>
+inline bool operator==(Var&& a, Arith b) {
+  return a.val() == b;
+}
 
 /**
  * Equality operator comparing a scalar and a variable's value
@@ -56,9 +58,11 @@ inline bool operator==(Var&& a, Arith b) { return a.val() == b; }
  * @param b Second variable.
  * @return True if the variable's value is equal to the scalar.
  */
-template <typename Arith, typename Var,
- require_arithmetic_t<Arith>..., require_var_t<Var>...>
-inline bool operator==(Arith a, Var&& b) { return a == b.val(); }
+template <typename Arith, typename Var, require_arithmetic_t<Arith>...,
+          require_var_t<Var>...>
+inline bool operator==(Arith a, Var&& b) {
+  return a == b.val();
+}
 
 }  // namespace math
 }  // namespace stan

@@ -80,7 +80,7 @@ class add_vd_vari : public op_vd_vari {
  * @param b Second variable operand.
  * @return Variable result of adding two variables.
  */
- template <typename Var1, typename Var2, require_all_var_t<Var1, Var2>...>
+template <typename Var1, typename Var2, require_all_var_t<Var1, Var2>...>
 inline auto operator+(Var1&& a, Var2&& b) {
   return var(new internal::add_vv_vari(a.vi_, b.vi_));
 }
@@ -98,8 +98,8 @@ inline auto operator+(Var1&& a, Var2&& b) {
  * @param b Second scalar operand.
  * @return Result of adding variable and scalar.
  */
-template <typename Var, typename Arith,
- require_var_t<Var>..., require_arithmetic_t<Arith>...>
+template <typename Var, typename Arith, require_var_t<Var>...,
+          require_arithmetic_t<Arith>...>
 inline auto operator+(Var&& a, Arith b) {
   if (b == 0.0) {
     return a;
@@ -120,8 +120,8 @@ inline auto operator+(Var&& a, Arith b) {
  * @param b Second variable operand.
  * @return Result of adding variable and scalar.
  */
-template <typename Arith, typename Var,
- require_arithmetic_t<Arith>..., require_var_t<Var>...>
+template <typename Arith, typename Var, require_arithmetic_t<Arith>...,
+          require_var_t<Var>...>
 inline auto operator+(Arith a, Var&& b) {
   if (a == 0.0) {
     return b;

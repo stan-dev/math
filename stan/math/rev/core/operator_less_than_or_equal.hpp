@@ -42,9 +42,11 @@ inline bool operator<=(Var1&& a, Var2&& b) {
  * @return True if first variable's value is less than or equal to
  * the second value.
  */
- template <typename Var, typename Arith,
-  require_var_t<Var>..., require_arithmetic_t<Arith>...>
-inline bool operator<=(Var&& a, Arith b) { return a.val() <= b; }
+template <typename Var, typename Arith, require_var_t<Var>...,
+          require_arithmetic_t<Arith>...>
+inline bool operator<=(Var&& a, Arith b) {
+  return a.val() <= b;
+}
 
 /**
  * Less than or equal operator comparing a double and variable's
@@ -57,9 +59,11 @@ inline bool operator<=(Var&& a, Arith b) { return a.val() <= b; }
  * @return True if first value is less than or equal to the second
  * variable's value.
  */
- template <typename Var, typename Arith,
-  require_var_t<Var>..., require_arithmetic_t<Arith>...>
-inline bool operator<=(Arith a, Var&& b) { return a <= b.val(); }
+template <typename Var, typename Arith, require_var_t<Var>...,
+          require_arithmetic_t<Arith>...>
+inline bool operator<=(Arith a, Var&& b) {
+  return a <= b.val();
+}
 
 }  // namespace math
 }  // namespace stan

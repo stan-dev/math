@@ -122,7 +122,8 @@ inline auto pow(Var1&& base, Var2&& exponent) {
  * @param exponent Exponent scalar.
  * @return Base raised to the exponent.
  */
-template<typename Var, typename Arith, require_var_t<Var>..., require_arithmetic_t<Arith>...>
+template <typename Var, typename Arith, require_var_t<Var>...,
+          require_arithmetic_t<Arith>...>
 inline var pow(Var&& base, Arith exponent) {
   if (exponent == 0.5) {
     return sqrt(std::forward<Var>(base));
@@ -142,7 +143,8 @@ inline var pow(Var&& base, Arith exponent) {
   if (exponent == -0.5) {
     return inv_sqrt(std::forward<Var>(base));
   }
-  return var(new internal::pow_vd_vari(base.vi_, static_cast<double>(exponent)));
+  return var(
+      new internal::pow_vd_vari(base.vi_, static_cast<double>(exponent)));
 }
 
 /**
@@ -157,7 +159,8 @@ inline var pow(Var&& base, Arith exponent) {
  * @param exponent Exponent variable.
  * @return Base raised to the exponent.
  */
-template <typename Arith, typename Var, require_var_t<Var>..., require_arithmetic_t<Arith>...>
+template <typename Arith, typename Var, require_var_t<Var>...,
+          require_arithmetic_t<Arith>...>
 inline var pow(Arith base, Var&& exponent) {
   return var(new internal::pow_dv_vari(base, exponent.vi_));
 }

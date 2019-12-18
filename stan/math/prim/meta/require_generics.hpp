@@ -485,12 +485,10 @@ template <typename... Types>
 using require_any_autodiff_t = require_any_t<is_autodiff<Types>...>;
 
 template <typename... Types>
-using require_all_not_autodiff_t
-    = require_all_not_t<is_autodiff<Types>...>;
+using require_all_not_autodiff_t = require_all_not_t<is_autodiff<Types>...>;
 
 template <typename... Types>
-using require_any_not_autodiff_t
-    = require_any_not_t<is_autodiff<Types>...>;
+using require_any_not_autodiff_t = require_any_not_t<is_autodiff<Types>...>;
 
 template <typename T>
 using require_stan_scalar_t = require_t<is_stan_scalar<T>>;
