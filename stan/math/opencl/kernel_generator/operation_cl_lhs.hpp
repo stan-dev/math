@@ -2,6 +2,7 @@
 #define STAN_MATH_OPENCL_KERNEL_GENERATOR_OPERATION_LHS_HPP
 #ifdef STAN_OPENCL
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <string>
 #include <set>
@@ -28,6 +29,7 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...> {
 
  public:
   using base::operation_cl;
+
   /**
    * generates kernel code for this expression if it appears on the left hand
    * side of an assigment.
@@ -40,6 +42,9 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...> {
   inline kernel_parts get_kernel_parts_lhs(
       std::set<const operation_cl_base*>& generated, name_generator& name_gen,
       const std::string& i, const std::string& j) const {
+    if (generated.count(this) == 0) {
+      this->var_name = name_gen.generate();
+    }
     std::string i_arg = i;
     std::string j_arg = j;
     derived().modify_argument_indices(i_arg, j_arg);
@@ -54,7 +59,6 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...> {
         [](const std::string& a, const kernel_parts& b) { return a + b.body; });
     if (generated.count(this) == 0) {
       generated.insert(this);
-      this->var_name = name_gen.generate();
       res.args
           = std::accumulate(args_parts.begin(), args_parts.end(), std::string(),
                             [](const std::string& a, const kernel_parts& b) {
@@ -68,6 +72,17 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...> {
       res.args += my_part.args;
     }
     return res;
+  }
+
+  /**
+   * Adds write event to any matrices used by nested expressions.
+   * @param e the event to add
+   */
+  inline void add_write_event(cl::Event& e) const {
+    index_apply<N>([&](auto... Is) {
+      (void)std::initializer_list<int>{
+          (std::get<Is>(arguments_).add_write_event(e), 0)...};
+    });
   }
 };
 

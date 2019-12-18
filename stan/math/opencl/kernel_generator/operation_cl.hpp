@@ -135,6 +135,7 @@ class operation_cl : public operation_cl_base {
       const std::string& i, const std::string& j) const {
     kernel_parts res{};
     if (generated.count(this) == 0) {
+      this->var_name = name_gen.generate();
       generated.insert(this);
       std::string i_arg = i;
       std::string j_arg = j;
@@ -154,7 +155,6 @@ class operation_cl : public operation_cl_base {
                             [](const std::string& a, const kernel_parts& b) {
                               return a + b.args;
                             });
-      this->var_name = name_gen.generate();
       kernel_parts my_part = index_apply<N>([&](auto... Is) {
         return this->derived().generate(i, j,
                                         std::get<Is>(arguments_).var_name...);
@@ -173,7 +173,7 @@ class operation_cl : public operation_cl_base {
    * @param[in, out] i row index
    * @param[in, out] j column index
    */
-  inline void modify_argument_indices(std::string& i, std::string& j) {}
+  inline void modify_argument_indices(std::string& i, std::string& j) const {}
 
   /**
    * Sets kernel arguments for nested expressions.
@@ -228,7 +228,6 @@ class operation_cl : public operation_cl_base {
    * expression. Some subclasses may need to override this.
    * @return number of columns
    */
-  template <size_t... I>
   inline int cols() const {
     return index_apply<N>([&](auto... Is) {
       // assuming all non-dynamic sizes match

@@ -25,11 +25,11 @@ namespace math {
  */
 template <typename T>
 class block_
-    : public operation_cl_lhs<
-          block_<T>, typename std::remove_reference_t<T>::ReturnScalar, T> {
+    : public operation_cl_lhs<block_<T>,
+                              typename std::remove_reference_t<T>::Scalar, T> {
  public:
-  using ReturnScalar = typename std::remove_reference_t<T>::ReturnScalar;
-  using base = operation_cl_lhs<block_<T>, ReturnScalar, T>;
+  using Scalar = typename std::remove_reference_t<T>::Scalar;
+  using base = operation_cl_lhs<block_<T>, Scalar, T>;
   using base::var_name;
 
  protected:
@@ -68,8 +68,8 @@ class block_
   inline kernel_parts generate(const std::string& i, const std::string& j,
                                const std::string& var_name_arg) const {
     kernel_parts res;
-    res.body = type_str<ReturnScalar>() + " " + var_name + " = " + var_name_arg
-               + ";\n";
+    res.body
+        = type_str<Scalar>() + " " + var_name + " = " + var_name_arg + ";\n";
     res.args = "int " + var_name + "_i, int " + var_name + "_j, ";
     return res;
   }
@@ -79,7 +79,7 @@ class block_
    * @param[in, out] i row index
    * @param[in, out] j column index
    */
-  inline void modify_argument_indices(std::string& i, std::string& j) {
+  inline void modify_argument_indices(std::string& i, std::string& j) const {
     i = "(" + i + " + " + var_name + "_i)";
     j = "(" + j + " + " + var_name + "_j)";
   }
@@ -93,9 +93,8 @@ class block_
    * @param j column index variable name
    * @return part of kernel with code for this and nested expressions
    */
-  inline kernel_parts generate_lhs(std::set<int>& generated, name_generator& ng,
-                                   const std::string& i,
-                                   const std::string& j) const {
+  inline kernel_parts generate_lhs(const std::string& i, const std::string& j,
+                                   const std::string& var_name_arg) const {
     kernel_parts res;
     res.args = "int " + var_name + "_i, int " + var_name + "_j, ";
     return res;
@@ -124,6 +123,20 @@ class block_
    * @return view
    */
   inline matrix_cl_view view() const { return std::get<0>(arguments_).view(); }
+
+  /**
+   * Number of rows of a matrix that would be the result of evaluating this
+   * expression.
+   * @return number of rows
+   */
+  inline int rows() const { return rows_; }
+
+  /**
+   * Number of columns of a matrix that would be the result of evaluating this
+   * expression.
+   * @return number of columns
+   */
+  inline int cols() const { return cols_; }
 
   /**
    * Evaluates an expression and assigns it to the block.

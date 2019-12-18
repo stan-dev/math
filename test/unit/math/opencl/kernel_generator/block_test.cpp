@@ -1,6 +1,7 @@
 #ifdef STAN_OPENCL
 
-#include <stan/math/opencl/kernel_generator/block.hpp>
+#include <stan/math/opencl/kernel_generator.hpp>
+#include <test/unit/math/opencl/kernel_generator/reference_kernel.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <Eigen/Dense>
@@ -37,12 +38,20 @@ TEST(MathMatrixCL, block_errors) {
 
 TEST(MathMatrixCL, block_test) {
   using stan::math::block;
+  std::string kernel_filename = "block.cl";
   MatrixXd m = MatrixXd::Random(7, 9);
 
   matrix_cl<double> m_cl(m);
 
   auto tmp = block(m_cl, 2, 4, 3, 5);
-  matrix_cl<double> res_cl = tmp;
+  matrix_cl<double> res_cl;
+  std::string kernel_src = tmp.get_kernel_source_for_evaluating_into(res_cl);
+  stan::test::store_reference_kernel_if_needed(kernel_filename, kernel_src);
+  std::string expected_kernel_src
+      = stan::test::load_reference_kernel(kernel_filename);
+  EXPECT_EQ(expected_kernel_src, kernel_src);
+
+  res_cl = tmp;
   MatrixXd res = stan::math::from_matrix_cl(res_cl);
 
   MatrixXd correct = m.block(2, 4, 3, 5);
