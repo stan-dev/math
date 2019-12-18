@@ -219,7 +219,7 @@ class operation_cl : public operation_cl_base {
   inline int rows() const {
     return index_apply<N>([&](auto... Is) {
       // assuming all non-dynamic sizes match
-      return std::max({get<Is>(arguments_).rows()...});
+      return std::max({std::get<Is>(arguments_).rows()...});
     });
   }
 
@@ -231,7 +231,29 @@ class operation_cl : public operation_cl_base {
   inline int cols() const {
     return index_apply<N>([&](auto... Is) {
       // assuming all non-dynamic sizes match
-      return std::max({get<Is>(arguments_).cols()...});
+      return std::max({std::get<Is>(arguments_).cols()...});
+    });
+  }
+
+  /**
+   * Determine index of bottom diagonal written. Some subclasses may need to
+   * override this.
+   * @return number of columns
+   */
+  inline int bottom_diagonal() const {
+    return index_apply<N>([&](auto... Is) {
+      return std::min({std::get<Is>(arguments_).bottom_diagonal()...});
+    });
+  }
+
+  /**
+   * Determine index of top diagonal written. Some subclasses may need to
+   * override this.
+   * @return number of columns
+   */
+  inline int top_diagonal() const {
+    return index_apply<N>([&](auto... Is) {
+      return std::max({std::get<Is>(arguments_).top_diagonal()...});
     });
   }
 };

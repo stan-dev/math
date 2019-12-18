@@ -47,10 +47,10 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...> {
     }
     std::string i_arg = i;
     std::string j_arg = j;
-    derived().modify_argument_indices(i_arg, j_arg);
+    this->derived().modify_argument_indices(i_arg, j_arg);
     std::array<kernel_parts, N> args_parts = index_apply<N>([&](auto... Is) {
       return std::array<kernel_parts, N>{
-          std::get<Is>(arguments_)
+          std::get<Is>(this->arguments_)
               .get_kernel_parts_lhs(generated, name_gen, i_arg, j_arg)...};
     });
     kernel_parts res{};
@@ -65,13 +65,37 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...> {
                               return a + b.args;
                             });
       kernel_parts my_part = index_apply<N>([&](auto... Is) {
-        return derived().generate_lhs(i, j,
-                                      std::get<Is>(arguments_).var_name...);
+        return this->derived().generate_lhs(
+            i, j, std::get<Is>(this->arguments_).var_name...);
       });
       res.body += my_part.body;
       res.args += my_part.args;
     }
     return res;
+  }
+
+  /**
+   * Sets view of the underlying matrix depending on which part is written.
+   * @param top_diagonal Index of the top sub- or super- diagonal written with
+   * nonzero elements.
+   * @param bottom_diagonal Index of the top sub- or super- diagonal written
+   * with nonzero elements.
+   * @param top_zero_diagonal Index of the top sub- or super- diagonal written
+   * with zeros if it ie more extreme than \c top_diagonal. Otherwise it should
+   * be set to equal value as \c top_diagonal.
+   * @param bottom_zero_diagonal Index of the top sub- or super- diagonal
+   * written with zeros if it ie more extreme than \c bottom_diagonal. Otherwise
+   * it should be set to equal value as \c bottom_diagonal.
+   */
+  inline void set_view(int bottom_diagonal, int top_diagonal,
+                       int bottom_zero_diagonal, int top_zero_diagonal) const {
+    index_apply<N>([&](auto... Is) {
+      (void)std::initializer_list<int>{
+          (std::get<Is>(this->arguments_)
+               .set_view(bottom_diagonal, top_diagonal, bottom_zero_diagonal,
+                         top_zero_diagonal),
+           0)...};
+    });
   }
 
   /**
@@ -81,7 +105,7 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...> {
   inline void add_write_event(cl::Event& e) const {
     index_apply<N>([&](auto... Is) {
       (void)std::initializer_list<int>{
-          (std::get<Is>(arguments_).add_write_event(e), 0)...};
+          (std::get<Is>(this->arguments_).add_write_event(e), 0)...};
     });
   }
 };

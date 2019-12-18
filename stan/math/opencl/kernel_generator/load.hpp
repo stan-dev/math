@@ -134,6 +134,51 @@ class load_
   inline matrix_cl_view view() const { return a_.view(); }
 
   /**
+   * Sets view of the matrix depending on which part is written.
+   * @param top_diagonal Index of the top sub- or super- diagonal written with
+   * nonzero elements.
+   * @param bottom_diagonal Index of the top sub- or super- diagonal written
+   * with nonzero elements.
+   * @param top_zero_diagonal Index of the top sub- or super- diagonal written
+   * with zeros if it ie more extreme than \c top_diagonal. Otherwise it should
+   * be set to equal value as \c top_diagonal.
+   * @param bottom_zero_diagonal Index of the top sub- or super- diagonal
+   * written with zeros if it ie more extreme than \c bottom_diagonal. Otherwise
+   * it should be set to equal value as \c bottom_diagonal.
+   */
+  inline void set_view(int bottom_diagonal, int top_diagonal,
+                       int bottom_zero_diagonal, int top_zero_diagonal) const {
+    if (bottom_diagonal < 0) {
+      a_.view(either(a_.view(), matrix_cl_view::Lower));
+    } else if (bottom_zero_diagonal <= 1 - a_.rows()) {
+      a_.view(both(a_.view(), matrix_cl_view::Upper));
+    }
+    if (top_diagonal > 0) {
+      a_.view(either(a_.view(), matrix_cl_view::Upper));
+    } else if (top_zero_diagonal >= a_.cols() - 1) {
+      a_.view(both(a_.view(), matrix_cl_view::Lower));
+    }
+  }
+
+  /**
+   * Determine index of bottom diagonal written.
+   * @return number of columns
+   */
+  inline int bottom_diagonal() const {
+    return contains_nonzero(a_.view(), matrix_cl_view::Lower) ? -a_.rows() + 1
+                                                              : 0;
+  }
+
+  /**
+   * Determine index of top diagonal written.
+   * @return number of columns
+   */
+  inline int top_diagonal() const {
+    return contains_nonzero(a_.view(), matrix_cl_view::Upper) ? a_.cols() - 1
+                                                              : 0;
+  }
+
+  /**
    * Evaluates the expression. \c load_ returns a const reference to stored
    * matrix_cl.
    * @return Result of the expression.

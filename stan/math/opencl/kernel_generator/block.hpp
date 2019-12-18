@@ -139,6 +139,47 @@ class block_
   inline int cols() const { return cols_; }
 
   /**
+   * Sets view of the underlying matrix depending on which part is written.
+   * @param top_diagonal Index of the top sub- or super- diagonal written with
+   * nonzero elements.
+   * @param bottom_diagonal Index of the top sub- or super- diagonal written
+   * with nonzero elements.
+   * @param top_zero_diagonal Index of the top sub- or super- diagonal written
+   * with zeros if it ie more extreme than \c top_diagonal. Otherwise it should
+   * be set to equal value as \c top_diagonal.
+   * @param bottom_zero_diagonal Index of the top sub- or super- diagonal
+   * written with zeros if it ie more extreme than \c bottom_diagonal. Otherwise
+   * it should be set to equal value as \c bottom_diagonal.
+   */
+  inline void set_view(int bottom_diagonal, int top_diagonal,
+                       int bottom_zero_diagonal, int top_zero_diagonal) const {
+    int change = start_col_ - start_row_;
+    std::get<0>(arguments_)
+        .set_view(bottom_diagonal + change, top_diagonal + change,
+                  bottom_zero_diagonal + change, top_zero_diagonal + change);
+  }
+
+  /**
+   * Determine index of bottom diagonal written.
+   * @return number of columns
+   */
+  inline int bottom_diagonal() const {
+    return std::max(
+        std::get<0>(arguments_).bottom_diagonal() - start_col_ + start_row_,
+        1 - rows_);
+  }
+
+  /**
+   * Determine index of top diagonal written.
+   * @return number of columns
+   */
+  inline int top_diagonal() const {
+    return std::min(
+        std::get<0>(arguments_).top_diagonal() - start_col_ + start_row_,
+        cols_ - 1);
+  }
+
+  /**
    * Evaluates an expression and assigns it to the block.
    * @tparam T_expression type of expression
    * @param rhs input expression
@@ -153,6 +194,9 @@ class block_
                      "cols of ", "*this", this->cols());
     auto expression = as_operation_cl(std::forward<T_expression>(rhs));
     expression.evaluate_into(*this);
+
+    this->set_view(rhs.bottom_diagonal(), rhs.top_diagonal(), 1 - rhs.rows(),
+                   rhs.cols() - 1);
     return *this;
   }
 };
