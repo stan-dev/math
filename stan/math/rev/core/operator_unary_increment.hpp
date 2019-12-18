@@ -34,7 +34,7 @@ class increment_vari : public op_v_vari {
  * @param a Variable to increment.
  * @return Reference the result of incrementing this input variable.
  */
-  template <typename Var, require_var_t<Var>...>
+template <typename Var, require_var_t<Var>...>
 inline var& operator++(Var&& a) {
   a.vi_ = new internal::increment_vari(a.vi_);
   return a;
@@ -52,7 +52,7 @@ inline var& operator++(Var&& a) {
  * @param a Variable to increment.
  * @return Input variable.
  */
-  template <typename Var, require_var_t<Var>...>
+template <typename Var, require_var_t<Var>...>
 inline var operator++(Var&& a, int /*dummy*/) {
   var temp(a);
   a.vi_ = new internal::increment_vari(a.vi_);

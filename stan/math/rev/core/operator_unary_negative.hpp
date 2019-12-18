@@ -49,7 +49,7 @@ class neg_vari : public op_v_vari {
  * @param a Argument variable.
  * @return Negation of variable.
  */
-  template <typename Var, require_var_t<Var>...>
+template <typename Var, require_var_t<Var>...>
 inline var operator-(Var&& a) {
   return var(new internal::neg_vari(a.vi_));
 }

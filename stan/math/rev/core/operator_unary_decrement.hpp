@@ -38,7 +38,7 @@ class decrement_vari : public op_v_vari {
  * @param a Variable to decrement.
  * @return Reference the result of decrementing this input variable.
  */
-  template <typename Var, require_var_t<Var>...>
+template <typename Var, require_var_t<Var>...>
 inline var& operator--(Var&& a) {
   a.vi_ = new internal::decrement_vari(a.vi_);
   return a;
@@ -56,7 +56,7 @@ inline var& operator--(Var&& a) {
  * @param a Variable to decrement.
  * @return Input variable.
  */
-  template <typename Var, require_var_t<Var>...>
+template <typename Var, require_var_t<Var>...>
 inline var operator--(Var&& a, int /*dummy*/) {
   var temp(a);
   a.vi_ = new internal::decrement_vari(a.vi_);
