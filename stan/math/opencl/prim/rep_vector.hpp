@@ -7,7 +7,6 @@
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/kernels/rep_matrix.hpp>
 
-
 namespace stan {
 namespace math {
 /** \ingroup opencl

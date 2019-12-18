@@ -11,7 +11,6 @@
 #include <stan/math/prim/mat/fun/cholesky_decompose.hpp>
 #include <stan/math/prim/mat/fun/value_of_rec.hpp>
 
-
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/rev/opencl.hpp>
 #endif
