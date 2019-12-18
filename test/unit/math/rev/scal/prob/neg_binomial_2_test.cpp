@@ -1,4 +1,5 @@
 #include <stan/math/rev/scal.hpp>
+#include <boost/math/tools/numerical_differentiation.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 #include <algorithm>
@@ -512,7 +513,16 @@ TEST(ProbDistributionsNegBinomial, derivativesPrecomputed) {
   }
 }
 
-TEST(ProbDistributionsNegBinomial, derivativesFiniteDiffs) {
+namespace test_internal {
+  template<typename T_mu, typename T_phi>
+  double //TDO
+  nb2_log_for_test(int n, const T_mu& mu, const T_phi& phi) {
+        return  binomial_coefficient_log(n + phi - 1, n) + phi__ * (log(phi) - log(mu + phi)) 
+                - n * log(mu + phi) + multiply_log(n, mu);
+  }
+}
+
+TEST(ProbDistributionsNegBinomial, derivativesComplexStep) {
   using stan::math::is_nan;
   using stan::math::neg_binomial_2_log;
   using stan::math::var;
@@ -521,6 +531,9 @@ TEST(ProbDistributionsNegBinomial, derivativesFiniteDiffs) {
   std::array<double, 2> mu_to_test = {8, 24};
   // std::array<unsigned int, 5> n_to_test = {0, 7, 100, 835};
   // std::array<double, 6> mu_to_test = {0.8, 8, 24, 271};
+
+
+
   double phi_cutoff = stan::math::internal::neg_binomial_2_phi_cutoff;
   for (auto mu_iter = mu_to_test.begin(); mu_iter != mu_to_test.end();
        ++mu_iter) {
