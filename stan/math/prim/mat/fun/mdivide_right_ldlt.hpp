@@ -22,7 +22,7 @@ template <typename T1, typename T2, int R1, int C1, int R2, int C2>
 inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_right_ldlt(
     const Eigen::Matrix<T1, R1, C1> &b, const LDLT_factor<T2, R2, C2> &A) {
   if (b.cols() == 0 && A.rows() == 0) {
-    return {};
+    return Eigen::Matrix<return_type_t<T1, T2>, R1, C2>(b.rows(), 0);
   }
 
   check_multiplicable("mdivide_right_ldlt", "b", b, "A", A);
@@ -35,7 +35,7 @@ inline Eigen::Matrix<double, R1, C2> mdivide_right_ldlt(
     const Eigen::Matrix<double, R1, C1> &b,
     const LDLT_factor<double, R2, C2> &A) {
   if (b.cols() == 0 && A.rows() == 0) {
-    return {};
+    return Eigen::Matrix<double, R1, C2>(b.rows(), 0);
   }
 
   check_multiplicable("mdivide_right_ldlt", "b", b, "A", A);

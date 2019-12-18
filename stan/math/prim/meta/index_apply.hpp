@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_META_APPLY_HPP
-#define STAN_MATH_PRIM_META_APPLY_HPP
+#ifndef STAN_MATH_PRIM_META_INDEX_APPLY_HPP
+#define STAN_MATH_PRIM_META_INDEX_APPLY_HPP
 #include <utility>
 #include <cstddef>
 

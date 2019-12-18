@@ -78,9 +78,7 @@ return_type_t<T_y, T_loc, T_scale> gumbel_lpdf(const T_y& y, const T_loc& mu,
     if (include_summand<propto, T_scale>::value) {
       logp -= log_beta[n];
     }
-    if (include_summand<propto, T_y, T_loc, T_scale>::value) {
-      logp += -y_minus_mu_over_beta - exp(-y_minus_mu_over_beta);
-    }
+    logp += -y_minus_mu_over_beta - exp(-y_minus_mu_over_beta);
 
     T_partials_return scaled_diff = inv_beta[n] * exp(-y_minus_mu_over_beta);
     if (!is_constant_all<T_y>::value) {

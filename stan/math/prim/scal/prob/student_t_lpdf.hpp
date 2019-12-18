@@ -82,9 +82,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
                 T_partials_return, T_dof>
       half_nu(length(nu));
   for (size_t i = 0; i < length(nu); i++) {
-    if (include_summand<propto, T_y, T_dof, T_loc, T_scale>::value) {
-      half_nu[i] = 0.5 * value_of(nu_vec[i]);
-    }
+    half_nu[i] = 0.5 * value_of(nu_vec[i]);
   }
 
   VectorBuilder<include_summand<propto, T_dof>::value, T_partials_return, T_dof>
@@ -135,15 +133,13 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
       log1p_exp(N);
 
   for (size_t i = 0; i < N; i++) {
-    if (include_summand<propto, T_y, T_dof, T_loc, T_scale>::value) {
-      const T_partials_return y_dbl = value_of(y_vec[i]);
-      const T_partials_return mu_dbl = value_of(mu_vec[i]);
-      const T_partials_return sigma_dbl = value_of(sigma_vec[i]);
-      const T_partials_return nu_dbl = value_of(nu_vec[i]);
-      square_y_minus_mu_over_sigma__over_nu[i]
-          = square((y_dbl - mu_dbl) / sigma_dbl) / nu_dbl;
-      log1p_exp[i] = log1p(square_y_minus_mu_over_sigma__over_nu[i]);
-    }
+    const T_partials_return y_dbl = value_of(y_vec[i]);
+    const T_partials_return mu_dbl = value_of(mu_vec[i]);
+    const T_partials_return sigma_dbl = value_of(sigma_vec[i]);
+    const T_partials_return nu_dbl = value_of(nu_vec[i]);
+    square_y_minus_mu_over_sigma__over_nu[i]
+        = square((y_dbl - mu_dbl) / sigma_dbl) / nu_dbl;
+    log1p_exp[i] = log1p(square_y_minus_mu_over_sigma__over_nu[i]);
   }
 
   operands_and_partials<T_y, T_dof, T_loc, T_scale> ops_partials(y, nu, mu,
@@ -162,9 +158,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
     if (include_summand<propto, T_scale>::value) {
       logp -= log_sigma[n];
     }
-    if (include_summand<propto, T_y, T_dof, T_loc, T_scale>::value) {
-      logp -= (half_nu[n] + 0.5) * log1p_exp[n];
-    }
+    logp -= (half_nu[n] + 0.5) * log1p_exp[n];
 
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n]

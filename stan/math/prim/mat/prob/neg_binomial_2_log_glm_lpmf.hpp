@@ -155,10 +155,8 @@ neg_binomial_2_log_glm_lpmf(
                  - lgamma(forward_as<double>(phi_val)));
     }
   }
-  if (include_summand<propto, T_x_scalar, T_alpha, T_beta,
-                      T_precision>::value) {
-    logp -= sum(y_plus_phi * logsumexp_theta_logphi);
-  }
+  logp -= sum(y_plus_phi * logsumexp_theta_logphi);
+
   if (include_summand<propto, T_x_scalar, T_alpha, T_beta>::value) {
     logp += sum(y_arr * theta);
   }

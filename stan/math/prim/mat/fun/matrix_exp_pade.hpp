@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_MATRIX_EXP_PADE_HPP
 #define STAN_MATH_PRIM_MAT_FUN_MATRIX_EXP_PADE_HPP
 
+#include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/fun/MatrixExponential.h>
 
 namespace stan {
@@ -18,10 +19,13 @@ namespace math {
  */
 template <typename MatrixType>
 MatrixType matrix_exp_pade(const MatrixType& arg) {
+  check_square("matrix_exp_pade", "arg", arg);
+  if (arg.size() == 0) {
+    return {};
+  }
+
   MatrixType U, V;
   int squarings;
-  if (arg.size() == 0)
-    return {};
 
   Eigen::matrix_exp_computeUV<MatrixType>::run(arg, U, V, squarings, arg(0, 0));
   // Pade approximant is

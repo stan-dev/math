@@ -89,9 +89,7 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y,
     if (include_summand<propto, T_scale>::value) {
       logp -= log_sigma[n];
     }
-    if (include_summand<propto, T_y, T_loc, T_scale>::value) {
-      logp += NEGATIVE_HALF * y_minus_mu_over_sigma_squared;
-    }
+    logp += NEGATIVE_HALF * y_minus_mu_over_sigma_squared;
 
     T_partials_return scaled_diff = inv_sigma[n] * y_minus_mu_over_sigma;
     if (!is_constant_all<T_y>::value) {

@@ -59,10 +59,8 @@ return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
       if (include_summand<propto>::value) {
         logp -= lgamma(n_vec[i] + 1.0);
       }
-      if (include_summand<propto, T_rate>::value) {
-        logp += multiply_log(n_vec[i], value_of(lambda_vec[i]))
-                - value_of(lambda_vec[i]);
-      }
+      logp += multiply_log(n_vec[i], value_of(lambda_vec[i]))
+              - value_of(lambda_vec[i]);
     }
 
     if (!is_constant_all<T_rate>::value) {

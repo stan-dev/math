@@ -79,9 +79,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
     if (include_summand<propto, T_y, T_loc, T_scale>::value) {
       logp -= y_minus_mu_over_sigma * y_minus_mu_over_sigma / 2.0;
     }
-    if (include_summand<propto, T_y, T_loc, T_scale, T_shape>::value) {
-      logp += log(erfc(-alpha_dbl * y_minus_mu_over_sigma / std::sqrt(2.0)));
-    }
+    logp += log(erfc(-alpha_dbl * y_minus_mu_over_sigma / std::sqrt(2.0)));
 
     T_partials_return deriv_logerf
         = 2.0 / std::sqrt(pi_dbl)

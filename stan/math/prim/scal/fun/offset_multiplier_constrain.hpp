@@ -90,7 +90,7 @@ inline return_type_t<T, M, S> offset_multiplier_constrain(const T& x,
     return mu + x;
   }
   check_positive_finite("offset_multiplier_constrain", "multiplier", sigma);
-  lp += multiply_log(size_of(x), sigma);
+  lp += multiply_log(length(x), sigma);
   return fma(sigma, x, mu);
 }
 

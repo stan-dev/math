@@ -76,23 +76,17 @@ return_type_t<T_y, T_loc, T_scale> logistic_lpdf(const T_y& y, const T_loc& mu,
     const T_partials_return y_minus_mu = y_dbl - mu_dbl;
     const T_partials_return y_minus_mu_div_sigma = y_minus_mu * inv_sigma[n];
     T_partials_return exp_m_y_minus_mu_div_sigma(0);
-    if (include_summand<propto, T_y, T_loc, T_scale>::value) {
-      exp_m_y_minus_mu_div_sigma = exp(-y_minus_mu_div_sigma);
-    }
+    exp_m_y_minus_mu_div_sigma = exp(-y_minus_mu_div_sigma);
     T_partials_return inv_1p_exp_y_minus_mu_div_sigma(0);
     if (!is_constant_all<T_y, T_scale>::value) {
       inv_1p_exp_y_minus_mu_div_sigma = 1 / (1 + exp(y_minus_mu_div_sigma));
     }
 
-    if (include_summand<propto, T_y, T_loc, T_scale>::value) {
-      logp -= y_minus_mu_div_sigma;
-    }
+    logp -= y_minus_mu_div_sigma;
     if (include_summand<propto, T_scale>::value) {
       logp -= log_sigma[n];
     }
-    if (include_summand<propto, T_y, T_loc, T_scale>::value) {
-      logp -= 2.0 * log1p(exp_m_y_minus_mu_div_sigma);
-    }
+    logp -= 2.0 * log1p(exp_m_y_minus_mu_div_sigma);
 
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n]

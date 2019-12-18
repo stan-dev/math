@@ -26,7 +26,7 @@ class scalar_ : public operation_cl<scalar_<T>, T> {
  public:
   static_assert(std::is_arithmetic<T>::value,
                 "class scalar_<T>: std::is_arithmetic<T> must be true!");
-  using ReturnScalar = T;
+  using Scalar = T;
   using base = operation_cl<scalar_<T>, T>;
   using base::var_name;
 
@@ -45,7 +45,7 @@ class scalar_ : public operation_cl<scalar_<T>, T> {
   inline kernel_parts generate(const std::string& i,
                                const std::string& j) const {
     kernel_parts res{};
-    res.args = type_str<ReturnScalar>() + " " + var_name + ", ";
+    res.args = type_str<Scalar>() + " " + var_name + ", ";
     return res;
   }
 
