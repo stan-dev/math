@@ -23,8 +23,7 @@ TEST(requires_mix_scal, autodiff_all_mix_test) {
   using stan::math::fvar;
   using stan::math::var;
   using stan::test::require_scal_checker;
-  require_scal_checker<stan::require_all_autodiff_t, var,
-                       fvar<double>>::all();
+  require_scal_checker<stan::require_all_autodiff_t, var, fvar<double>>::all();
 }
 TEST(requires_mix_scal, autodiff_all_not_mix_test) {
   using stan::math::fvar;
@@ -37,8 +36,7 @@ TEST(requires_mix_scal, autodiff_any_mix_test) {
   using stan::math::fvar;
   using stan::math::var;
   using stan::test::require_scal_checker;
-  require_scal_checker<stan::require_any_autodiff_t, var,
-                       fvar<double>>::any();
+  require_scal_checker<stan::require_any_autodiff_t, var, fvar<double>>::any();
 }
 TEST(requires_mix_scal, autodiff_any_not_mix_test) {
   using stan::math::fvar;

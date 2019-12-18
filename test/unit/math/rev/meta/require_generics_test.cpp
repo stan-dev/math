@@ -54,8 +54,7 @@ TEST(requires_rev_scal, autodiff_all_test) {
 TEST(requires_rev_scal, autodiff_all_not_test) {
   using stan::math::var;
   using stan::test::require_scal_checker;
-  require_scal_checker<stan::require_all_not_autodiff_t, var,
-                       var>::all_not();
+  require_scal_checker<stan::require_all_not_autodiff_t, var, var>::all_not();
 }
 TEST(requires_rev_scal, autodiff_any_test) {
   using stan::math::var;
@@ -65,8 +64,7 @@ TEST(requires_rev_scal, autodiff_any_test) {
 TEST(requires_rev_scal, autodiff_any_not_test) {
   using stan::math::var;
   using stan::test::require_scal_checker;
-  require_scal_checker<stan::require_any_not_autodiff_t, var,
-                       var>::any_not();
+  require_scal_checker<stan::require_any_not_autodiff_t, var, var>::any_not();
 }
 
 TEST(requires_rev_scal, stan_scalar_test) {
