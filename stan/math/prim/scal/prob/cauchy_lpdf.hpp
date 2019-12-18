@@ -93,9 +93,7 @@ return_type_t<T_y, T_loc, T_scale> cauchy_lpdf(const T_y& y, const T_loc& mu,
     if (include_summand<propto, T_scale>::value) {
       logp -= log_sigma[n];
     }
-    if (include_summand<propto, T_y, T_loc, T_scale>::value) {
-      logp -= log1p(y_minus_mu_over_sigma_squared);
-    }
+    logp -= log1p(y_minus_mu_over_sigma_squared);
 
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n]

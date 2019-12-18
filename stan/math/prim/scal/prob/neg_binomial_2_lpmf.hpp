@@ -84,15 +84,13 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
     if (include_summand<propto, T_precision>::value) {
       logp += multiply_log(phi__[i], phi__[i]) - lgamma(phi__[i]);
     }
-    if (include_summand<propto, T_location, T_precision>::value) {
-      logp -= (n_plus_phi[i]) * log_mu_plus_phi[i];
-    }
     if (include_summand<propto, T_location>::value) {
       logp += multiply_log(n_vec[i], mu__[i]);
     }
     if (include_summand<propto, T_precision>::value) {
       logp += lgamma(n_plus_phi[i]);
     }
+    logp -= (n_plus_phi[i]) * log_mu_plus_phi[i];
 
     // if phi is large we probably overflow, defer to Poisson:
     if (phi__[i] > 1e5) {

@@ -81,20 +81,16 @@ return_type_t<T_y, T_shape, T_scale> frechet_lpdf(const T_y& y,
                 T_partials_return, T_y>
       inv_y(size(y));
   for (size_t i = 0; i < size(y); i++) {
-    if (include_summand<propto, T_y, T_shape, T_scale>::value) {
-      inv_y[i] = 1.0 / value_of(y_vec[i]);
-    }
+    inv_y[i] = 1.0 / value_of(y_vec[i]);
   }
 
   VectorBuilder<include_summand<propto, T_y, T_shape, T_scale>::value,
                 T_partials_return, T_y, T_shape, T_scale>
       sigma_div_y_pow_alpha(N);
   for (size_t i = 0; i < N; i++) {
-    if (include_summand<propto, T_y, T_shape, T_scale>::value) {
-      const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
-      sigma_div_y_pow_alpha[i]
-          = pow(inv_y[i] * value_of(sigma_vec[i]), alpha_dbl);
-    }
+    const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
+    sigma_div_y_pow_alpha[i]
+        = pow(inv_y[i] * value_of(sigma_vec[i]), alpha_dbl);
   }
 
   operands_and_partials<T_y, T_shape, T_scale> ops_partials(y, alpha, sigma);
@@ -109,9 +105,7 @@ return_type_t<T_y, T_shape, T_scale> frechet_lpdf(const T_y& y,
     if (include_summand<propto, T_shape, T_scale>::value) {
       logp += alpha_dbl * log_sigma[n];
     }
-    if (include_summand<propto, T_y, T_shape, T_scale>::value) {
-      logp -= sigma_div_y_pow_alpha[n];
-    }
+    logp -= sigma_div_y_pow_alpha[n];
 
     if (!is_constant_all<T_y>::value) {
       const T_partials_return inv_y_dbl = value_of(inv_y[n]);

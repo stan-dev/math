@@ -13,7 +13,10 @@
 #include <stan/math/prim/mat/fun/log1m_exp.hpp>
 #include <stan/math/prim/mat/fun/sum.hpp>
 #include <stan/math/prim/meta.hpp>
+
+#include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
+#include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/kernels/ordered_logistic_glm_lpmf.hpp>
 #include <cmath>
 

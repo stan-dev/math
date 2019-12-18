@@ -25,7 +25,6 @@ namespace math {
  * @param name Name of the variable
  * @param y Matrix to test
  * @throw <code>std::invalid_argument</code> if the matrix is not square
- *   or if the matrix is 0x0
  * @throw <code>std::domain_error</code> if the matrix is non-symmetric,
  *   diagonals not near 1, not positive definite, or any of the
  *   elements nan
@@ -39,6 +38,10 @@ inline void check_corr_matrix(
 
   check_square(function, name, y);
   using std::fabs;
+  if (y.size() == 0) {
+    return;
+  }
+
   for (size_type k = 0; k < y.rows(); ++k) {
     if (!(fabs(y(k, k) - 1.0) <= CONSTRAINT_TOLERANCE)) {
       std::ostringstream msg;

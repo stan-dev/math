@@ -55,11 +55,9 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
   VectorBuilder<include_summand<propto, T_y, T_loc, T_scale, T_shape>::value,
                 T_partials_return, T_y, T_loc, T_scale>
       log1p_scaled_diff(N);
-  if (include_summand<propto, T_y, T_loc, T_scale, T_shape>::value) {
-    for (size_t n = 0; n < N; n++) {
-      log1p_scaled_diff[n] = log1p((value_of(y_vec[n]) - value_of(mu_vec[n]))
-                                   / value_of(lambda_vec[n]));
-    }
+  for (size_t n = 0; n < N; n++) {
+    log1p_scaled_diff[n] = log1p((value_of(y_vec[n]) - value_of(mu_vec[n]))
+                                 / value_of(lambda_vec[n]));
   }
 
   VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
