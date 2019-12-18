@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_MAT_FUN_DIAG_PRE_MULTIPLY_HPP
 
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 
 namespace stan {

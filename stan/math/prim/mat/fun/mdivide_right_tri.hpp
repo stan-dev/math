@@ -6,8 +6,6 @@
 #include <stan/math/prim/mat/fun/promote_common.hpp>
 #include <stan/math/prim/mat/fun/transpose.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/err.hpp>
 
 namespace stan {
 namespace math {
