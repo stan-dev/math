@@ -16,7 +16,7 @@
 #include <stan/math/opencl/err.hpp>
 #include <stan/math/prim/arr/fun/vec_concat.hpp>
 
-#include <cl.hpp>
+#include <CL/cl2.hpp>
 #include <algorithm>
 #include <iostream>
 #include <type_traits>

@@ -8,7 +8,7 @@
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/kernels/sub_block.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
-#include <cl.hpp>
+#include <CL/cl2.hpp>
 #include <vector>
 #include <algorithm>
 
