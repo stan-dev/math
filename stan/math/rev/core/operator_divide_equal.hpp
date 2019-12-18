@@ -7,14 +7,14 @@
 
 namespace stan {
 namespace math {
-template <typename T, require_var_t<T>...>
-inline var& var::operator/=(T&& b) {
+  template <typename Var, require_var_t<Var>...>
+inline var& var::operator/=(Var&& b) {
   vi_ = new internal::divide_vv_vari(vi_, b.vi_);
   return *this;
 }
 
-template <typename T, require_arithmetic_t<T>...>
-inline var& var::operator/=(T b) {
+template <typename Arith, require_arithmetic_t<Arith>...>
+inline var& var::operator/=(Arith b) {
   if (b == 1.0) {
     return *this;
   }

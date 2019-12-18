@@ -372,8 +372,8 @@ class var {
    * @param b The variable to add to this variable.
    * @return The result of adding the specified variable to this variable.
    */
-  template <typename T, require_var_t<T>...>
-  inline var& operator+=(T&& b);
+  template <typename Var, require_var_t<Var>...>
+  inline var& operator+=(Var&& b);
 
   /**
    * The compound add/assignment operator for scalars (C++).
@@ -385,8 +385,8 @@ class var {
    * @param b The scalar to add to this variable.
    * @return The result of adding the specified variable to this variable.
    */
-  template <typename T, require_arithmetic_t<T>...>
-  inline var& operator+=(T b);
+  template <typename Arith, require_arithmetic_t<Arith>...>
+  inline var& operator+=(Arith b);
 
   /**
    * The compound subtract/assignment operator for variables (C++).
@@ -399,8 +399,8 @@ class var {
    * @return The result of subtracting the specified variable from
    * this variable.
    */
-  template <typename T, require_var_t<T>...>
-  inline var& operator-=(T&& b);
+  template <typename Var, require_var_t<Var>...>
+  inline var& operator-=(Var&& b);
 
   /**
    * The compound subtract/assignment operator for scalars (C++).
@@ -413,8 +413,8 @@ class var {
    * @return The result of subtracting the specified variable from this
    * variable.
    */
-  template <typename T, require_arithmetic_t<T>...>
-  inline var& operator-=(T b);
+  template <typename Arith, require_arithmetic_t<Arith>...>
+  inline var& operator-=(Arith b);
 
   /**
    * The compound multiply/assignment operator for variables (C++).
@@ -427,8 +427,8 @@ class var {
    * @return The result of multiplying this variable by the
    * specified variable.
    */
-  template <typename T, require_var_t<T>...>
-  inline var& operator*=(T&& b);
+  template <typename Var, require_var_t<Var>...>
+  inline var& operator*=(Var&& b);
 
   /**
    * The compound multiply/assignment operator for scalars (C++).
@@ -441,8 +441,8 @@ class var {
    * @return The result of multplying this variable by the specified
    * variable.
    */
-  template <typename T, require_arithmetic_t<T>...>
-  inline var& operator*=(T b);
+  template <typename Arith, require_arithmetic_t<Arith>...>
+  inline var& operator*=(Arith b);
 
   /**
    * The compound divide/assignment operator for variables (C++).  If this
@@ -454,8 +454,8 @@ class var {
    * @return The result of dividing this variable by the
    * specified variable.
    */
-  template <typename T, require_var_t<T>...>
-  inline var& operator/=(T&& b);
+  template <typename Var, require_var_t<Var>...>
+  inline var& operator/=(Var&& b);
 
   /**
    * The compound divide/assignment operator for scalars (C++).
@@ -468,8 +468,8 @@ class var {
    * @return The result of dividing this variable by the specified
    * variable.
    */
-  template <typename T, require_arithmetic_t<T>...>
-  inline var& operator/=(T b);
+  template <typename Arith, require_arithmetic_t<Arith>...>
+  inline var& operator/=(Arith b);
 
   /**
    * Write the value of this auto-dif variable and its adjoint to
@@ -479,8 +479,8 @@ class var {
    * @param v Variable to write.
    * @return Reference to the specified output stream.
    */
-  template <typename T, require_var_t<T>...>
-  friend std::ostream& operator<<(std::ostream& os, T&& v) {
+  template <typename Var, require_var_t<Var>...>
+  friend std::ostream& operator<<(std::ostream& os, Var&& v) {
     if (v.vi_ == nullptr) {
       return os << "uninitialized";
     }

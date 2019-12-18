@@ -42,8 +42,8 @@ namespace math {
  * @param a Argument variable.
  * @return The input reference.
  */
-template <typename T, require_var_t<T>>
-inline var operator+(T&& a) {
+  template <typename Var, require_var_t<Var>...>
+inline var operator+(Var&& a) {
   if (unlikely(is_nan(a.vi_->val_))) {
     return var(new precomp_v_vari(NOT_A_NUMBER, a.vi_, NOT_A_NUMBER));
   }
