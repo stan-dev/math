@@ -35,11 +35,6 @@
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <algorithm>
 #include <cmath>

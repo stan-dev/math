@@ -6,7 +6,6 @@
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/fma.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/err.hpp>
 #include <cmath>
 #include <limits>
 

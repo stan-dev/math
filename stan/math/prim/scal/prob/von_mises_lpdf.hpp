@@ -3,8 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/log_modified_bessel_first_kind.hpp>
 #include <stan/math/prim/scal/fun/modified_bessel_first_kind.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>

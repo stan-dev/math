@@ -3,8 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/random/variate_generator.hpp>

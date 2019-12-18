@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/log_sum_exp.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <cmath>

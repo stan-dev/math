@@ -5,7 +5,6 @@
 #include <stan/math/prim/scal/fun/inv.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/err.hpp>
 #include <cmath>
 #include <limits>
 

@@ -5,7 +5,6 @@
 #include <boost/math/special_functions/factorials.hpp>
 #include <stan/math/prim/scal/fun/boost_policy.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/err.hpp>
 #include <limits>
 
 namespace stan {

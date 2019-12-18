@@ -5,10 +5,6 @@
 #include <boost/random/weibull_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
