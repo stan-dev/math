@@ -6,6 +6,7 @@
 #include <stan/math/opencl/copy.hpp>
 #include <Eigen/Dense>
 #include <gtest/gtest.h>
+#include <string>
 
 using Eigen::Matrix;
 using Eigen::MatrixXd;
@@ -58,7 +59,7 @@ TEST(MathMatrixCL, block_test) {
   EXPECT_MATRIX_NEAR(res, correct, 1e-9);
 }
 
-TEST(MathMatrixCL, multiple_operations_test) {
+TEST(MathMatrixCL, block_multiple_operations_test) {
   using stan::math::block;
   MatrixXd m = MatrixXd::Random(7, 9);
 
@@ -73,7 +74,7 @@ TEST(MathMatrixCL, multiple_operations_test) {
   EXPECT_MATRIX_NEAR(res, correct, 1e-9);
 }
 
-TEST(MathMatrixCL, multiple_operations_accept_lvalue_test) {
+TEST(MathMatrixCL, block_multiple_operations_accept_lvalue_test) {
   using stan::math::block;
   MatrixXd m = MatrixXd::Random(7, 9);
 
