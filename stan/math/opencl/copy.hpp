@@ -13,8 +13,7 @@
 #include <stan/math/opencl/kernels/copy.hpp>
 #include <stan/math/opencl/kernels/pack.hpp>
 #include <stan/math/opencl/kernels/unpack.hpp>
-#include <stan/math/opencl/err/check_opencl.hpp>
-#include <stan/math/opencl/err/check_triangular.hpp>
+#include <stan/math/opencl/err.hpp>
 #include <stan/math/prim/arr/fun/vec_concat.hpp>
 
 #include <cl.hpp>

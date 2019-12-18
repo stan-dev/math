@@ -6,7 +6,7 @@
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
-#include <stan/math/opencl/err/check_square.hpp>
+#include <stan/math/opencl/err.hpp>
 #include <stan/math/opencl/kernels/check_symmetric.hpp>
 #include <vector>
 namespace stan {
