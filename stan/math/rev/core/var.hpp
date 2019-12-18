@@ -479,8 +479,7 @@ class var {
    * @param v Variable to write.
    * @return Reference to the specified output stream.
    */
-  template <typename Var, require_var_t<Var>...>
-  friend std::ostream& operator<<(std::ostream& os, Var&& v) {
+  friend std::ostream& operator<<(std::ostream& os, const var& v) {
     if (v.vi_ == nullptr) {
       return os << "uninitialized";
     }
