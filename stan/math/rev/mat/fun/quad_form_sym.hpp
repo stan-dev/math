@@ -5,7 +5,6 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/err.hpp>
 #include <stan/math/rev/mat/fun/quad_form.hpp>
 #include <type_traits>
 

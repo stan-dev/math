@@ -2,9 +2,8 @@
 #define STAN_MATH_REV_MAT_FUN_MATRIX_EXP_MULTIPLY_HPP
 
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/matrix_exp.hpp>
 #include <stan/math/rev/mat/fun/multiply.hpp>
 #include <stan/math/rev/core.hpp>

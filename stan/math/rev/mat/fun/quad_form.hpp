@@ -8,7 +8,6 @@
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/prim/mat/fun/quad_form.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/err.hpp>
 #include <type_traits>
 
 namespace stan {
