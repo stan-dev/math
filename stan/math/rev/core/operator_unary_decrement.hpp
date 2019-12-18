@@ -34,7 +34,7 @@ class decrement_vari : public op_v_vari {
  * does, but is faster and uses less memory.  In particular,
  * the result is an assignable lvalue.
  *
- * @tparam A var autodiff type
+ * @tparam T A var autodiff type
  * @param a Variable to decrement.
  * @return Reference the result of decrementing this input variable.
  */
@@ -52,7 +52,7 @@ inline var& operator--(T&& a) {
  *
  * <code>var temp = a;  a = a - 1.0;  return temp;</code>
  *
- * @tparam A var autodiff type
+ * @tparam T A var autodiff type
  * @param a Variable to decrement.
  * @return Input variable.
  */

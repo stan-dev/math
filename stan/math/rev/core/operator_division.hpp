@@ -81,15 +81,15 @@ class divide_dv_vari : public op_dv_vari {
    \end{cases}
    \f]
  *
- * @tparam LHS value type of a var
- * @tparam RHS value type of a var
+ * @tparam Var1 value type of a var
+ * @tparam Var2 value type of a var
  * @param a First variable operand.
  * @param b Second variable operand.
  * @return Variable result of dividing the first variable by the
  * second.
  */
- template <typename LHS, typename RHS, require_all_var_t<LHS, RHS>...>
- inline auto operator/(LHS&& a, RHS&& b) {
+ template <typename Var1, typename Var2, require_all_var_t<Var1, Var2>...>
+ inline auto operator/(Var1&& a, Var2&& b) {
   return var(new internal::divide_vv_vari(a.vi_, b.vi_));
 }
 
@@ -100,15 +100,15 @@ class divide_dv_vari : public op_dv_vari {
  *
  * \f$\frac{\partial}{\partial x} (x/c) = 1/c\f$.
  *
- * @tparam LHS value type of a var
- * @tparam RHS An arithmetic type
+ * @tparam Var value type of a var
+ * @tparam Arith An arithmetic type
  * @param a Variable operand.
  * @param b Scalar operand.
  * @return Variable result of dividing the variable by the scalar.
  */
- template <typename LHS, typename RHS,
-  require_var_t<LHS>..., require_arithmetic_t<RHS>...>
-inline var operator/(LHS&& a, RHS b) {
+ template <typename Var, typename Arith,
+  require_var_t<Var>..., require_arithmetic_t<Arith>...>
+inline var operator/(Var&& a, Arith b) {
   if (b == 1.0) {
     return a;
   }
@@ -122,15 +122,15 @@ inline var operator/(LHS&& a, RHS b) {
  *
  * \f$\frac{d}{d y} (c/y) = -c / y^2\f$.
  *
- * @tparam LHS An arithmetic type
- * @tparam RHS value type of a var
+ * @tparam Arith An arithmetic type
+ * @tparam Var value type of a var
  * @param a Scalar operand.
  * @param b Variable operand.
  * @return Variable result of dividing the scalar by the variable.
  */
-template <typename LHS, typename RHS,
- require_arithmetic_t<LHS>..., require_var_t<RHS>...>
-inline auto operator/(LHS a, RHS&& b) {
+template <typename Arith, typename Var,
+ require_arithmetic_t<Arith>..., require_var_t<Var>...>
+inline auto operator/(Arith a, Var&& b) {
   return var(new internal::divide_dv_vari(a, b.vi_));
 }
 

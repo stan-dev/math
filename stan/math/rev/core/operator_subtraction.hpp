@@ -86,15 +86,15 @@ class subtract_dv_vari : public op_dv_vari {
    \end{cases}
    \f]
  *
- * @tparam LHS value type of a var
- * @tparam RHS value type of a var
+ * @tparam Var1 value type of a var
+ * @tparam Var2 value type of a var
  * @param a First variable operand.
  * @param b Second variable operand.
  * @return Variable result of subtracting the second variable from
  * the first.
  */
-template <typename LHS, typename RHS, require_all_var_t<LHS, RHS>...>
-inline var operator-(LHS&& a, RHS&& b) {
+template <typename Var1, typename Var2, require_all_var_t<Var1, Var2>...>
+inline var operator-(Var1&& a, Var2&& b) {
   return var(new internal::subtract_vv_vari(a.vi_, b.vi_));
 }
 
@@ -105,15 +105,15 @@ inline var operator-(LHS&& a, RHS&& b) {
  *
  * \f$\frac{\partial}{\partial x} (x-c) = 1\f$, and
  *
- * @tparam LHS value type of a var
- * @tparam RHS An arithmetic type
+ * @tparam Var value type of a var
+ * @tparam Arith An arithmetic type
  * @param a First variable operand.
  * @param b Second scalar operand.
  * @return Result of subtracting the scalar from the variable.
  */
-template <typename LHS, typename RHS,
- require_var_t<LHS>..., require_arithmetic_t<RHS>...>
-inline var operator-(RHS&& a, LHS b) {
+ template <typename Var, typename Arith,
+  require_var_t<Var>..., require_arithmetic_t<Arith>...>
+inline var operator-(Var&& a, Arith b) {
   if (b == 0.0) {
     return a;
   }
@@ -127,15 +127,15 @@ inline var operator-(RHS&& a, LHS b) {
  *
  * \f$\frac{\partial}{\partial y} (c-y) = -1\f$, and
  *
- * @tparam LHS An arithmetic type
- * @tparam RHS value type of a var
+ * @tparam Var value type of a var
+ * @tparam Arith An arithmetic type
  * @param a First scalar operand.
  * @param b Second variable operand.
  * @return Result of sutracting a variable from a scalar.
  */
-template <typename LHS, typename RHS,
- require_arithmetic_t<LHS>..., require_var_t<RHS>...>
-inline var operator-(RHS a, LHS&& b) {
+ template <typename Var, typename Arith,
+  require_var_t<Var>..., require_arithmetic_t<Arith>...>
+inline var operator-(Arith a, Var&& b) {
   return var(new internal::subtract_dv_vari(a, b.vi_));
 }
 

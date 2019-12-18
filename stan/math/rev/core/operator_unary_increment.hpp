@@ -30,7 +30,7 @@ class increment_vari : public op_v_vari {
  * but is faster and uses less memory.  In particular, the
  * result is an assignable lvalue.
  *
- * @tparam A var autodiff type
+ * @tparam T A var autodiff type
  * @param a Variable to increment.
  * @return Reference the result of incrementing this input variable.
  */
@@ -47,7 +47,7 @@ inline var& operator++(T&& a) {
  * the sequence of operations
  *
  * <code>var temp = a;  a = a + 1.0;  return temp;</code>
- * @tparam A var autodiff type
+ * @tparam T A var autodiff type
  *
  * @param a Variable to increment.
  * @return Input variable.

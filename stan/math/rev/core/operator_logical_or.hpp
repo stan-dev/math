@@ -11,14 +11,14 @@ namespace math {
  * Return the logical disjunction of the values of the two
  * arguments as defined by <code>||</code>.
  *
- * @tparam LHS value type of a var
- * @tparam RHS value type of a var
+ * @tparam Var1 value type of a var
+ * @tparam Var2 value type of a var
  * @param[in] x first argument
  * @param[in] y second argument
  * @return disjuntion of the argument's values
  */
-template <typename LHS, typename RHS, require_all_var_t<LHS, RHS>...>
-inline bool operator||(LHS&& x, RHS&& y) {
+template <typename Var1, typename Var2, require_all_var_t<Var1, Var2>...>
+inline bool operator||(Var1&& x, Var2&& y) {
   return x.val() || y.val();
 }
 
@@ -26,16 +26,16 @@ inline bool operator||(LHS&& x, RHS&& y) {
  * Return the logical disjunction of the values of the two
  * arguments as defined by <code>||</code>.
  *
- * @tparam LHS value type of a var
- * @tparam RHS An arithmetic type
+ * @tparam Var value type of a var
+ * @tparam Arith An arithmetic type
  * @param[in] x first argument
  * @param[in] y second argument
  * @return disjunction of first argument's value and second
  * argument
  */
- template <typename LHS, typename RHS,
-  require_var_t<LHS>..., require_arithmetic_t<RHS>...>
-inline bool operator||(LHS&& x, RHS y) {
+ template <typename Var, typename Arith,
+  require_var_t<Var>..., require_arithmetic_t<Arith>...>
+inline bool operator||(Var&& x, Arith y) {
   return x.val() || y;
 }
 
@@ -43,16 +43,16 @@ inline bool operator||(LHS&& x, RHS y) {
  * Return the logical disjunction of the values of the two
  * arguments as defined by <code>||</code>.
  *
- * @tparam LHS An arithmetic type
- * @tparam RHS value type of a var
+ * @tparam Var value type of a var
+ * @tparam Arith An arithmetic type
  * @param[in] x first argument
  * @param[in] y second argument
  * @return disjunction of first argument and the second
  * argument's value
  */
-template <typename LHS, typename RHS,
- require_arithmetic_t<LHS>..., require_var_t<RHS>...>
-inline bool operator||(LHS x, RHS&& y) {
+ template <typename Var, typename Arith,
+  require_var_t<Var>..., require_arithmetic_t<Arith>...>
+inline bool operator||(Arith x, Var&& y) {
   return x || y.val();
 }
 

@@ -74,14 +74,14 @@ class add_vd_vari : public op_vd_vari {
    \end{cases}
    \f]
  *
- * @tparam LHS value type of a var
- * @tparam RHS value type of a var
+ * @tparam Var1 value type of a var
+ * @tparam Var2 value type of a var
  * @param a First variable operand.
  * @param b Second variable operand.
  * @return Variable result of adding two variables.
  */
-template <typename LHS, typename RHS, require_all_var_t<LHS, RHS>...>
-inline auto operator+(LHS&& a, RHS&& b) {
+ template <typename Var1, typename Var2, require_all_var_t<Var1, Var2>...>
+inline auto operator+(Var1&& a, Var2&& b) {
   return var(new internal::add_vv_vari(a.vi_, b.vi_));
 }
 
@@ -92,15 +92,15 @@ inline auto operator+(LHS&& a, RHS&& b) {
  *
  * \f$\frac{d}{dx} (x + c) = 1\f$.
  *
- * @tparam LHS value type of a var
- * @tparam RHS An arithmetic type
+ * @tparam Var value type of a var
+ * @tparam Arith An arithmetic type
  * @param a First variable operand.
  * @param b Second scalar operand.
  * @return Result of adding variable and scalar.
  */
-template <typename LHS, typename RHS,
- require_var_t<LHS>..., require_arithmetic_t<RHS>...>
-inline auto operator+(LHS&& a, RHS b) {
+template <typename Var, typename Arith,
+ require_var_t<Var>..., require_arithmetic_t<Arith>...>
+inline auto operator+(Var&& a, Arith b) {
   if (b == 0.0) {
     return a;
   }
@@ -114,15 +114,15 @@ inline auto operator+(LHS&& a, RHS b) {
  *
  * \f$\frac{d}{dy} (c + y) = 1\f$.
  *
- * @tparam LHS An arithmetic type
- * @tparam RHS value type of a var
+ * @tparam Arith An arithmetic type
+ * @tparam Var value type of a var
  * @param a First scalar operand.
  * @param b Second variable operand.
  * @return Result of adding variable and scalar.
  */
-template <typename LHS, typename RHS,
- require_arithmetic_t<LHS>..., require_var_t<RHS>...>
-inline auto operator+(LHS a, RHS&& b) {
+template <typename Arith, typename Var,
+ require_arithmetic_t<Arith>..., require_var_t<Var>...>
+inline auto operator+(Arith a, Var&& b) {
   if (a == 0.0) {
     return b;
   }
