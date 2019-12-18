@@ -195,8 +195,8 @@ class block_
     auto expression = as_operation_cl(std::forward<T_expression>(rhs));
     expression.evaluate_into(*this);
 
-    this->set_view(rhs.bottom_diagonal(), rhs.top_diagonal(), 1 - rhs.rows(),
-                   rhs.cols() - 1);
+    this->set_view(expression.bottom_diagonal(), expression.top_diagonal(),
+                   1 - expression.rows(), expression.cols() - 1);
     return *this;
   }
 };
