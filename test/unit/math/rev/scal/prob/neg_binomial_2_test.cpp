@@ -26,7 +26,7 @@ struct TestValue {
 
 // Test data generated in Mathematica (Wolfram Cloud). The code can be re-ran
 // at https://www.wolframcloud.com/env/martin.modrak/NegBinomial2_Tests.nb
-// but is also presented below for conveniece:
+// but is also presented below for convenience:
 //
 // nb2[n_,mu_,phi_]:= LogGamma[n + phi] - LogGamma[n + 1] - LogGamma[phi ]+
 //   n * (Log[mu] - Log[mu + phi]) + phi * (Log[phi] - Log[mu + phi])
@@ -530,8 +530,9 @@ TEST(ProbDistributionsNegBinomial, derivativesComplexStep) {
 
   auto nb2_log_for_test = [](int n, const std::complex<double>& mu,
                              const std::complex<double>& phi) {
-    // Encoding the explicit derivative (digamma) so that it is compatible with
-    // Complex-step differentiation...
+    // Using first-order Taylor expansion of lgamma(a + b*i) around b = 0
+    // Which happens to work nice in this case, as b is always 0 or the very 
+    // small complex step
     auto lgamma_c_approx = [](const std::complex<double>& x) {
       return std::complex<double>(lgamma(x.real()),
                                   x.imag() * boost::math::digamma(x.real()));
