@@ -7,7 +7,7 @@
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/meta.hpp>
 
-#include <cl.hpp>
+#include <CL/cl2.hpp>
 
 namespace stan {
 namespace math {

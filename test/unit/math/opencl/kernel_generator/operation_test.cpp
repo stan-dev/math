@@ -5,7 +5,7 @@
 #include <stan/math/opencl/copy.hpp>
 #include <Eigen/Dense>
 #include <gtest/gtest.h>
-#include <cl.hpp>
+#include <CL/cl2.hpp>
 #include <exception>
 
 using Eigen::MatrixXd;
