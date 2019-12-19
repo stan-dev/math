@@ -274,7 +274,9 @@ def main():
             "message": "File includes */err/*.hpp header file. Should include err.hpp",
         }
     ]
-    err_exclude = ["stan/math/*/*/err", "stan/math/*/err.hpp"]
+    err_exclude = ["stan/math/*/*/err", "stan/math/*/err.hpp",
+                   "stan/math/opencl/matrix_cl.hpp", "stan/math/opencl/opencl_context.hpp",
+                   "stan/math/opencl/kernel_cl.hpp", "stan/math/opencl/copy.hpp"]
     errors.extend(grep_patterns("err", "stan/math", err_checks, err_exclude))
 
     #  Check that we do not use non-reentrant safe functions from std
