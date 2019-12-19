@@ -579,9 +579,21 @@ template <typename T1, typename T2, int R2, int C2,
           typename = require_any_var_t<T1, T2>>
 inline Eigen::Matrix<var, R2, C2> multiply(const T1& c,
                                            const Eigen::Matrix<T2, R2, C2>& m) {
-  // TODO(trangucci) pull out to eliminate overpromotion of one side
-  // move to matrix.hpp w. promotion?
   return to_var(m) * to_var(c);
+}
+
+template <typename T1, int R2, int C2,
+typename = require_arithmetic_t<T1>>
+inline Eigen::Matrix<var, R2, C2> multiply(
+    const T1& c, const Eigen::Matrix<var, R2, C2>& m) {
+  return m * c;
+}
+
+template <typename T2, int R2, int C2,
+          typename = require_arithmetic_t<T2>>
+inline Eigen::Matrix<var, R2, C2> multiply(const var& c,
+                                           const Eigen::Matrix<T2, R2, C2>& m) {
+  return m * c;
 }
 
 /**
@@ -598,9 +610,21 @@ template <typename T1, int R1, int C1, typename T2,
           typename = require_any_var_t<T1, T2>>
 inline Eigen::Matrix<var, R1, C1> multiply(const Eigen::Matrix<T1, R1, C1>& m,
                                            const T2& c) {
-  // TODO(trangucci) pull out to eliminate overpromotion of one side
-  // move to matrix.hpp w. promotion?
   return to_var(m) * to_var(c);
+}
+
+template <typename T1, int R1, int C1,
+          typename = require_arithmetic_t<T1>>
+inline Eigen::Matrix<var, R1, C1> multiply(const Eigen::Matrix<T1, R1, C1>& m,
+                                           const var& c) {
+  return m * c;
+}
+
+template <int R1, int C1, typename T2,
+          typename = require_arithmetic_t<T2>>
+inline Eigen::Matrix<var, R1, C1> multiply(const Eigen::Matrix<var, R1, C1>& m,
+                                           const T2& c) {
+  return m * c;
 }
 
 /**
