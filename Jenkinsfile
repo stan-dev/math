@@ -22,6 +22,8 @@ def deleteDirWin() {
     deleteDir()
 }
 
+String checkOs() { isUnix() ? "unix" : "windows" }
+
 def utils = new org.stan.Utils()
 
 def isBranch(String b) { env.BRANCH_NAME == b }
@@ -56,6 +58,13 @@ pipeline {
         STAN_NUM_THREADS = '4'
     }
     stages {
+        stage("Determine OS"){
+            steps{
+                script{
+                    env.OS = checkOs()
+                }
+            }
+        }
         stage('Kill previous builds') {
             when {
                 not { branch 'develop' }
@@ -154,7 +163,10 @@ pipeline {
                 }
                 post { always { deleteDir() } }
               }
-              stage('Headers check with OpenCL') {
+              stage('Headers check with OpenCL on unix') {
+                when {
+                    environment name: "OS", value: "unix"
+                }
                 agent { label "gpu" }
                 steps {
                     deleteDir()
@@ -166,6 +178,22 @@ pipeline {
                     sh "make -j${env.PARALLEL} test-headers"
                 }
                 post { always { deleteDir() } }
+              }
+              stage('Headers check with OpenCL on windows') {
+                when {
+                    environment name: "OS", value: "windows"
+                }
+                agent { label "gpu" }
+                steps {
+                    deleteDirWin()
+                    unstash 'MathSetup'
+                    bat "bash -cl \"echo CXX=${env.CXX} -Werror > make/local\""
+                    bat "bash -cl \"echo STAN_OPENCL=true>> make/local\""
+                    bat "bash -cl \"echo OPENCL_PLATFORM_ID=0>> make/local\""
+                    bat "bash -cl \"echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local\""
+                    bat "bash -cl \"make -j${env.PARALLEL} test-headers\""
+                }
+                post { always { deleteDirWin() } }
               }
            }
         }
@@ -183,7 +211,10 @@ pipeline {
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
-                stage('Full unit with GPU') {
+                stage('Full unit with GPU on unix') {
+                    when {
+                        environment name: "OS", value: "unix"
+                    }                        
                     agent { label "gpu" }
                     steps {
                         deleteDir()
@@ -193,6 +224,25 @@ pipeline {
                         sh "echo OPENCL_PLATFORM_ID=0>> make/local"
                         sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
                         runTests("test/unit")
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
+                stage('Full unit with GPU on windows') {
+                    when {
+                        environment name: "OS", value: "windows"
+                    }  
+                    agent { label "gpu" }
+                    steps {
+                        deleteDir()
+                        unstash 'MathSetup'
+                        bat "bash -cl \"echo CXX=${env.CXX} -Werror > make/local\""
+                        bat "bash -cl \"echo STAN_OPENCL=true>> make/local\""
+                        bat "bash -cl \"echo OPENCL_PLATFORM_ID=0>> make/local\""
+                        bat "bash -cl \"echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local\""
+                        bat """
+                            bash -cl \"echo LDFLAGS_OPENCL= -L \\\\\\\"C:\\\\\\Program Files\\\\\\NVIDIA GPU Computing Toolkit\\\\\\CUDA\\\\\\v10.1\\\\\\lib\\\\\\x64\\\\\\\" -lOpenCL >> make/local\"
+                        """
+                        runTestsWin("test/unit")
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
