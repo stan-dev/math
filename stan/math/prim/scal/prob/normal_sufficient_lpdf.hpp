@@ -10,6 +10,7 @@
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -50,6 +51,7 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
   using T_partials_return = partials_return_t<T_y, T_s, T_n, T_loc, T_scale>;
 
   using std::log;
+  using std::pow;
 
   // check if any vectors are zero length
   if (size_zero(y_bar, s_squared, n_obs, mu, sigma)) {

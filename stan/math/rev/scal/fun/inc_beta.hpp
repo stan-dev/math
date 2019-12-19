@@ -7,6 +7,7 @@
 #include <stan/math/rev/scal/fun/pow.hpp>
 #include <stan/math/prim/scal/fun/beta.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {

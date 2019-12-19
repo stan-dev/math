@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/mat/fun/matrix_exp_pade.hpp>
 #include <stan/math/prim/mat/fun/matrix_exp_2x2.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -15,6 +16,8 @@ namespace math {
  * input matrix.
  * @param[in] A Matrix to exponentiate.
  * @return Matrix exponential, dynamically-sized.
+ * @throw <code>std::invalid_argument</code> if the input matrix
+ * is not square.
  */
 template <typename T>
 inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> matrix_exp(
@@ -33,7 +36,7 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> matrix_exp(
 
 /**
  * Return the matrix exponential of the input
- * statically-sized matrix.
+ * statically-sized square matrix.
  *
  * @tparam T type of scalar of the elements of
  * input matrix.
@@ -64,6 +67,7 @@ inline Eigen::Matrix<T, N, N> matrix_exp(const Eigen::Matrix<T, N, N>& A) {
  */
 template <typename T>
 inline Eigen::Matrix<T, 1, 1> matrix_exp(const Eigen::Matrix<T, 1, 1>& A) {
+  using std::exp;
   Eigen::Matrix<T, 1, 1> res;
   res << exp(A(0));
   return res;

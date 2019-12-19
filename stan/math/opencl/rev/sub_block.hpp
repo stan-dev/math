@@ -2,11 +2,11 @@
 #define STAN_MATH_OPENCL_REV_SUB_BLOCK_HPP
 #ifdef STAN_OPENCL
 
+#include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/opencl/opencl_context.hpp>
-#include <stan/math/opencl/sub_block.hpp>
 #include <stan/math/opencl/rev/matrix_cl.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
-#include <cl.hpp>
+#include <stan/math/opencl/sub_block.hpp>
+#include <CL/cl2.hpp>
 #include <vector>
 
 namespace stan {

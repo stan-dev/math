@@ -29,6 +29,7 @@ return_type_t<T_y, T_shape, T_scale> frechet_cdf(const T_y& y,
 
   using std::exp;
   using std::log;
+  using std::pow;
 
   if (size_zero(y, alpha, sigma)) {
     return 1.0;

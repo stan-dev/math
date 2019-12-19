@@ -17,6 +17,7 @@
 #include <stan/math/prim/scal/fun/log1p.hpp>
 #include <stan/math/prim/scal/fun/log1p_exp.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -48,6 +49,7 @@ inline return_type_t<T1, T2, double> log_modified_bessel_first_kind(
 
   using boost::math::tools::evaluate_polynomial;
   using std::log;
+  using std::pow;
   using std::sqrt;
 
   using T = return_type_t<T1, T2, double>;

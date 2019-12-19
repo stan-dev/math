@@ -3,9 +3,11 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
+#include <stan/math/prim/scal/fun/sqrt.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/mat/fun/sum.hpp>
 #include <cstddef>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -35,6 +37,7 @@ template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
     const Eigen::Array<T, Eigen::Dynamic, 1>& CPCs,  // on (-1, 1)
     size_t K) {
+  using std::sqrt;
   Eigen::Array<T, Eigen::Dynamic, 1> temp;
   Eigen::Array<T, Eigen::Dynamic, 1> acc(K - 1);
   acc.setOnes();

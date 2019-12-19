@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_MAT_VECTORIZE_APPLY_SCALAR_UNARY_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <vector>
 
 namespace stan {
@@ -13,8 +14,7 @@ namespace math {
  * standard library vector, or Eigen dense matrix expression
  * template.
  *
- * <p>The base class applies to any Eigen dense matrix expression
- * template.  Specializations define applications to scalars
+ * <p>Specializations of this base define applications to scalars
  * (primitive or autodiff in the corresponding autodiff library
  * directories) or to standard library vectors of vectorizable
  * types (primitives, Eigen dense matrix expressions, or further
@@ -31,8 +31,19 @@ namespace math {
  * @tparam F Type of function to apply.
  * @tparam T Type of argument to which function is applied.
  */
+template <typename F, typename T, typename Enable = void>
+struct apply_scalar_unary;
+
+/**
+ *
+ * Template specialization for vectorized functions applying to
+ * Eigen matrix arguments.
+ *
+ * @tparam F Type of function to apply.
+ * @tparam T Type of argument to which function is applied.
+ */
 template <typename F, typename T>
-struct apply_scalar_unary {
+struct apply_scalar_unary<F, T, require_eigen_t<T>> {
   /**
    * Type of underlying scalar for the matrix type T.
    */
@@ -121,7 +132,7 @@ struct apply_scalar_unary<F, int> {
  * @tparam T Type of element contained in standard vector.
  */
 template <typename F, typename T>
-struct apply_scalar_unary<F, std::vector<T> > {
+struct apply_scalar_unary<F, std::vector<T>> {
   /**
    * Return type, which is calculated recursively as a standard
    * vector of the return type of the contained type T.

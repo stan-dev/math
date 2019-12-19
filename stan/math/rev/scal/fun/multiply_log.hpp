@@ -7,6 +7,7 @@
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/is_any_nan.hpp>
 #include <limits>
+#include <cmath>
 
 namespace stan {
 namespace math {

@@ -14,7 +14,7 @@
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/prim/scal/err/system_error.hpp>
 
-#include <cl.hpp>
+#include <CL/cl2.hpp>
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -107,7 +107,7 @@ class opencl_context_base {
         in_order_ = CL_TRUE;
       }
       int thread_block_size_sqrt
-          = static_cast<int>(sqrt(static_cast<double>(max_thread_block_size_)));
+          = static_cast<int>(std::sqrt(max_thread_block_size_));
       // Does a compile time check of the maximum allowed
       // dimension of a square thread block size
       // WG size of (32,32) works on all recent GPUs but would fail on some

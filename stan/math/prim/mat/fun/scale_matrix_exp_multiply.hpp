@@ -24,11 +24,12 @@ template <int Cb>
 inline Eigen::Matrix<double, -1, Cb> scale_matrix_exp_multiply(
     const double& t, const Eigen::MatrixXd& A,
     const Eigen::Matrix<double, -1, Cb>& B) {
-  if (A.size() == 0 && B.size() == 0)
-    return {};
+  check_square("scale_matrix_exp_multiply", "input matrix", A);
+  if (A.size() == 0 && B.rows() == 0) {
+    return Eigen::Matrix<double, -1, Cb>(0, B.cols());
+  }
 
   check_multiplicable("scale_matrix_exp_multiply", "A", A, "B", B);
-  check_square("scale_matrix_exp_multiply", "input matrix", A);
 
   return matrix_exp_action_handler().action(A, B, t);
 }
@@ -51,11 +52,13 @@ template <typename Tt, typename Ta, typename Tb, int Cb>
 inline Eigen::Matrix<stan::return_type_t<Tt, Ta, Tb>, -1, Cb>
 scale_matrix_exp_multiply(const Tt& t, const Eigen::Matrix<Ta, -1, -1>& A,
                           const Eigen::Matrix<Tb, -1, Cb>& B) {
-  check_multiplicable("scale_matrix_exp_multiply", "A", A, "B", B);
   check_square("scale_matrix_exp_multiply", "input matrix", A);
-  if (A.size() == 0 && B.size() == 0) {
-    return {};
+  if (A.size() == 0 && B.rows() == 0) {
+    return Eigen::Matrix<stan::return_type_t<Tt, Ta, Tb>, -1, Cb>(0, B.cols());
   }
+
+  check_multiplicable("scale_matrix_exp_multiply", "A", A, "B", B);
+
   return multiply(matrix_exp(multiply(A, t)), B);
 }
 

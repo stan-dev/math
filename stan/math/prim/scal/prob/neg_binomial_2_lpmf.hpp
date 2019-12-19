@@ -122,10 +122,10 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
       if (include_summand<propto, T_precision>::value) {
         logp += binomial_coefficient_log(n_plus_phi[i] - 1, n_vec[i]);
       }
-      if (include_summand<propto, T_location, T_precision>::value) {
-        logp += phi__[i] * (log_phi[i] - log_mu_plus_phi[i])
-                - (n_vec[i]) * log_mu_plus_phi[i];
-      }
+
+      logp += phi__[i] * (log_phi[i] - log_mu_plus_phi[i])
+              - (n_vec[i]) * log_mu_plus_phi[i];
+
       if (include_summand<propto, T_location>::value) {
         logp += multiply_log(n_vec[i], mu__[i]);
       }

@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <limits>
 
 TEST(MathMixMatFun, divide) {
   auto f
@@ -31,10 +32,26 @@ TEST(MathMixMatFun, divide) {
   u << 100, 0, -3, 4;
   stan::test::expect_ad(f, u, x2);
 
-  Eigen::MatrixXd m00(0, 0);
   Eigen::VectorXd v0(0);
   Eigen::RowVectorXd rv0(0);
+  Eigen::MatrixXd m00(0, 0);
   stan::test::expect_ad(f, v0, x1);
   stan::test::expect_ad(f, rv0, x1);
   stan::test::expect_ad(f, m00, x1);
+
+  stan::test::expect_ad(f, u, 0.0);
+  stan::test::expect_ad(f, rv, 0.0);
+  stan::test::expect_ad(f, p, 0.0);
+
+  Eigen::RowVectorXd rv4(4);
+  rv4 << -5, 10, 7, 8.2;
+  stan::test::expect_ad(f, rv4, x2);
+
+  double inf = std::numeric_limits<double>::infinity();
+  double nan = std::numeric_limits<double>::quiet_NaN();
+  for (double value : {inf, -inf, nan}) {
+    stan::test::expect_ad(f, u, value);
+    stan::test::expect_ad(f, rv4, value);
+    stan::test::expect_ad(f, p, value);
+  }
 }
