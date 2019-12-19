@@ -59,9 +59,11 @@ pipeline {
     }
     stages {
         stage("Determine OS"){
+            agent { label "gpu" }
             steps{
                 script{
                     env.OS = checkOs()
+                    env.ASSIGNED_NODE = "${NODE_NAME}"
                 }
             }
         }
@@ -167,7 +169,7 @@ pipeline {
                 when {
                     environment name: "OS", value: "unix"
                 }
-                agent { label "gpu" }
+                agent { label "${env.ASSIGNED_NODE}" }
                 steps {
                     deleteDir()
                     unstash 'MathSetup'
@@ -183,7 +185,7 @@ pipeline {
                 when {
                     environment name: "OS", value: "windows"
                 }
-                agent { label "gpu" }
+                agent { label "${env.ASSIGNED_NODE}" }
                 steps {
                     deleteDirWin()
                     unstash 'MathSetup'
@@ -215,7 +217,7 @@ pipeline {
                     when {
                         environment name: "OS", value: "unix"
                     }                        
-                    agent { label "gpu" }
+                    agent { label "${env.ASSIGNED_NODE}" }
                     steps {
                         deleteDir()
                         unstash 'MathSetup'
@@ -231,7 +233,7 @@ pipeline {
                     when {
                         environment name: "OS", value: "windows"
                     }  
-                    agent { label "gpu" }
+                    agent { label "${env.ASSIGNED_NODE}" }
                     steps {
                         deleteDir()
                         unstash 'MathSetup'
