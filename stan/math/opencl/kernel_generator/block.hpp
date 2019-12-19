@@ -193,6 +193,9 @@ class block_
     check_size_match("block.operator=", "Cols of ", "rhs", rhs.cols(),
                      "cols of ", "*this", this->cols());
     auto expression = as_operation_cl(std::forward<T_expression>(rhs));
+    if (rows_ * cols_ == 0) {
+      return *this;
+    }
     expression.evaluate_into(*this);
 
     this->set_view(expression.bottom_diagonal(), expression.top_diagonal(),
