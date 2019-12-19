@@ -124,7 +124,7 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
       }
 
       logp += phi__[i] * (log_phi[i] - log_mu_plus_phi[i])
-                - (n_vec[i]) * log_mu_plus_phi[i];
+              - (n_vec[i]) * log_mu_plus_phi[i];
 
       if (include_summand<propto, T_location>::value) {
         logp += multiply_log(n_vec[i], mu__[i]);
