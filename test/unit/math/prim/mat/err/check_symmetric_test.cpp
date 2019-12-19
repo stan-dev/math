@@ -6,6 +6,13 @@
 TEST(ErrorHandlingMatrix, checkSymmetric) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y;
 
+  y.resize(0, 0);
+  EXPECT_NO_THROW(stan::math::check_symmetric("checkSymmetric", "y", y));
+
+  y.resize(1, 1);
+  y << 1;
+  EXPECT_NO_THROW(stan::math::check_symmetric("checkSymmetric", "y", y));
+
   y.resize(2, 2);
   y << 1, 3, 3, 1;
   EXPECT_NO_THROW(stan::math::check_symmetric("checkSymmetric", "y", y));

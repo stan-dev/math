@@ -17,3 +17,16 @@ TEST(MathMatrixPrimMat, mdivide_right_ldlt_val) {
   EXPECT_NEAR(0.0, I(1, 0), 1.0E-12);
   EXPECT_NEAR(1.0, I(1, 1), 1.0e-12);
 }
+
+TEST(MathMatrixPrimMat, mdivide_right_ldlt_val_0x0) {
+  stan::math::LDLT_factor<double, -1, -1> ldlt_A;
+  stan::math::matrix_d B(0, 0), C(2, 0);
+
+  auto M = mdivide_right_ldlt(B, ldlt_A);
+  EXPECT_EQ(0, M.rows());
+  EXPECT_EQ(B.cols(), M.cols());
+
+  auto N = mdivide_right_ldlt(C, ldlt_A);
+  EXPECT_EQ(C.rows(), N.rows());
+  EXPECT_EQ(0, N.cols());
+}

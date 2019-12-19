@@ -22,7 +22,7 @@ template <typename T1, typename T2, int R2, int C2, int R3, int C3,
           typename = require_any_not_var_t<T1, T2>>
 inline return_type_t<T1, T2> trace_inv_quad_form_ldlt(
     const LDLT_factor<T1, R2, C2> &A, const Eigen::Matrix<T2, R3, C3> &B) {
-  if (A.rows() == 0 && B.size() == 0) {
+  if (A.rows() == 0 && B.rows() == 0) {
     return 0;
   }
 

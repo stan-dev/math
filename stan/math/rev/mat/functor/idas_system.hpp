@@ -14,6 +14,7 @@
 #include <nvector/nvector_serial.h>
 #include <ostream>
 #include <vector>
+#include <cmath>
 
 #define CHECK_IDAS_CALL(call) idas_check(call, #call)
 
