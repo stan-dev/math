@@ -235,7 +235,7 @@ pipeline {
                     }  
                     agent { label "${env.ASSIGNED_NODE}" }
                     steps {
-                        deleteDir()
+                        deleteDirWin()
                         unstash 'MathSetup'
                         bat "bash -cl \"echo CXX=${env.CXX} -Werror > make/local\""
                         bat "bash -cl \"echo STAN_OPENCL=true>> make/local\""
@@ -246,7 +246,7 @@ pipeline {
                         """
                         runTestsWin("test/unit")
                     }
-                    post { always { retry(3) { deleteDir() } } }
+                    post { always { retry(3) { deleteDirWin() } } }
                 }
             }
         }
