@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_META_BROADCAST_ARRAY_HPP
 
 #include <stan/math/prim/meta/require_generics.hpp>
+#include <stan/math/prim/mat/fun/promote_scalar_type.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stdexcept>
 
@@ -50,10 +51,7 @@ class empty_broadcast_array {
 template <typename ViewElt, typename T>
 class empty_broadcast_array<ViewElt, T, require_eigen_t<T>> {
   enum { R = T::RowsAtCompileTime, C = T::ColsAtCompileTime };
-  using T_arg = std::conditional_t<
-      std::is_same<typename Eigen::internal::traits<T>::XprKind,
-                   Eigen::MatrixXpr>::value,
-      Eigen::Matrix<ViewElt, R, C>, Eigen::Array<ViewElt, R, C>>;
+  using T_arg = promote_scalar_t<ViewElt, T>;
 
  public:
   empty_broadcast_array() {}

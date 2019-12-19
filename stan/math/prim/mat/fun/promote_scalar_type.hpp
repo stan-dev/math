@@ -22,7 +22,7 @@ struct promote_scalar_type<T, S, require_eigen_t<S>> {
    * The promoted type.
    */
   using type = typename std::conditional<
-      std::is_same<typename Eigen::internal::traits<S>::XprKind,
+      std::is_same<typename Eigen::internal::traits<std::decay_t<S>>::XprKind,
                    Eigen::MatrixXpr>::value,
       Eigen::Matrix<typename promote_scalar_type<T, typename S::Scalar>::type,
                     S::RowsAtCompileTime, S::ColsAtCompileTime>,
