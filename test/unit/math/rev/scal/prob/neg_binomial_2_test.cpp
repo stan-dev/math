@@ -531,7 +531,7 @@ TEST(ProbDistributionsNegBinomial, derivativesComplexStep) {
   auto nb2_log_for_test = [](int n, const std::complex<double>& mu,
                              const std::complex<double>& phi) {
     // Using first-order Taylor expansion of lgamma(a + b*i) around b = 0
-    // Which happens to work nice in this case, as b is always 0 or the very 
+    // Which happens to work nice in this case, as b is always 0 or the very
     // small complex step
     auto lgamma_c_approx = [](const std::complex<double>& x) {
       return std::complex<double>(lgamma(x.real()),
