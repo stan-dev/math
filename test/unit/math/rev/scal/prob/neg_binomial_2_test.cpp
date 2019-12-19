@@ -480,15 +480,15 @@ std::array<TestValue, 210> testValues = {
               -2.2067081495436014e-6),
 };
 
-} // namespace neg_binomial_2_test_internal 
+}  // namespace neg_binomial_2_test_internal
 
 TEST(ProbDistributionsNegBinomial, derivativesPrecomputed) {
+  using neg_binomial_2_test_internal::TestValue;
+  using neg_binomial_2_test_internal::testValues;
   using stan::math::is_nan;
   using stan::math::neg_binomial_2_log;
   using stan::math::value_of;
   using stan::math::var;
-  using neg_binomial_2_test_internal::TestValue;
-  using neg_binomial_2_test_internal::testValues;
 
   for (auto iter = testValues.begin(); iter != testValues.end(); ++iter) {
     TestValue t = *iter;
