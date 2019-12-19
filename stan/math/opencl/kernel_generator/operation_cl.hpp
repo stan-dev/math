@@ -9,7 +9,7 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <cl.hpp>
+#include <CL/cl2.hpp>
 #include <algorithm>
 #include <string>
 #include <tuple>
