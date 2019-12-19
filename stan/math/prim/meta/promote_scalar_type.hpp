@@ -23,6 +23,22 @@ struct promote_scalar_type {
 };
 
 /**
+ * Template metaprogram to calculate a type for a container whose
+ * underlying scalar is converted from the second template
+ * parameter type to the first.
+ *
+ * @tparam T result scalar type.
+ * @tparam S input type
+ */
+template <typename T, typename S>
+struct promote_scalar_type<T, std::vector<S>> {
+  /**
+   * The promoted type.
+   */
+  using type = std::vector<typename promote_scalar_type<T, S>::type>;
+};
+
+/**
  * Template metaprogram to calculate a type for a matrix, vector, row vector or
  * Eigen::Array whose underlying scalar is converted from the second template
  * parameter type to the first.
