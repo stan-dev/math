@@ -515,29 +515,28 @@ TEST(ProbDistributionsNegBinomial, derivativesPrecomputed) {
 }
 
 TEST(ProbDistributionsNegBinomial, derivativesComplexStep) {
+  using boost::math::tools::complex_step_derivative;
   using stan::math::is_nan;
   using stan::math::neg_binomial_2_log;
   using stan::math::var;
-  using boost::math::tools::complex_step_derivative;
 
   std::array<unsigned int, 5> n_to_test = {0, 7, 100, 835, 14238};
   std::array<double, 6> mu_to_test = {0.8, 8, 24, 271, 2586, 33294};
 
-  auto nb2_log_for_test = [](
-      int n, const std::complex<double>& mu, const std::complex<double>& phi) {
-    //Encoding the explicit derivative (digamma) so that it is compatible with
-    //Complex-step differentiation...
+  auto nb2_log_for_test = [](int n, const std::complex<double>& mu,
+                             const std::complex<double>& phi) {
+    // Encoding the explicit derivative (digamma) so that it is compatible with
+    // Complex-step differentiation...
     auto lgamma_c_approx = [](const std::complex<double>& x) {
-      return std::complex<double>(
-        lgamma(x.real()), x.imag() * boost::math::digamma(x.real()));
+      return std::complex<double>(lgamma(x.real()),
+                                  x.imag() * boost::math::digamma(x.real()));
     };
 
-   
     const double n_(n);
-    return  lgamma_c_approx(n_ + phi) - lgamma(n + 1) - lgamma_c_approx(phi) + 
-     phi * (log(phi) - log(mu + phi)) - n_ * log(mu + phi) + n_ * log(mu);
+    return lgamma_c_approx(n_ + phi) - lgamma(n + 1) - lgamma_c_approx(phi)
+           + phi * (log(phi) - log(mu + phi)) - n_ * log(mu + phi)
+           + n_ * log(mu);
   };
-
 
   double phi_cutoff = stan::math::internal::neg_binomial_2_phi_cutoff;
   for (auto mu_iter = mu_to_test.begin(); mu_iter != mu_to_test.end();
@@ -566,18 +565,17 @@ TEST(ProbDistributionsNegBinomial, derivativesComplexStep) {
           EXPECT_FALSE(is_nan(gradients[i]));
         }
 
-        auto nb2_log_mu= [n, phi_dbl, nb2_log_for_test](
-            const std::complex<double>& mu) {
-          return nb2_log_for_test(n, mu, phi_dbl);
-        };
-        auto nb2_log_phi = [n, mu_dbl, nb2_log_for_test](
-            const std::complex<double>& phi) {
-          return nb2_log_for_test(n, mu_dbl, phi);
-        };
-        double complex_step_dmu = 
-          complex_step_derivative(nb2_log_mu, mu_dbl);
-        double complex_step_dphi = 
-          complex_step_derivative(nb2_log_phi, phi_dbl);
+        auto nb2_log_mu
+            = [n, phi_dbl, nb2_log_for_test](const std::complex<double>& mu) {
+                return nb2_log_for_test(n, mu, phi_dbl);
+              };
+        auto nb2_log_phi
+            = [n, mu_dbl, nb2_log_for_test](const std::complex<double>& phi) {
+                return nb2_log_for_test(n, mu_dbl, phi);
+              };
+        double complex_step_dmu = complex_step_derivative(nb2_log_mu, mu_dbl);
+        double complex_step_dphi
+            = complex_step_derivative(nb2_log_phi, phi_dbl);
 
         EXPECT_NEAR(gradients[0], complex_step_dmu,
                     std::max(1e-10, fabs(gradients[0]) * 1e-5))
