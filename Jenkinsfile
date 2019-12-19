@@ -64,6 +64,7 @@ pipeline {
                 script{
                     env.OS = checkOs()
                     env.ASSIGNED_NODE = "${NODE_NAME}"
+                    println("${NODE_NAME}")
                 }
             }
         }
