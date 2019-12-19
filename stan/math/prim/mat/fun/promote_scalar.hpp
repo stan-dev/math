@@ -2,8 +2,8 @@
 #define STAN_MATH_PRIM_MAT_FUN_PROMOTE_SCALAR_HPP
 
 #include <stan/math/prim/scal/fun/promote_scalar.hpp>
-#include <stan/math/prim/meta/promote_scalar_type.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
 
 namespace stan {
 namespace math {
