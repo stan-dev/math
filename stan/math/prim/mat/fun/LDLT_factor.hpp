@@ -55,9 +55,9 @@ namespace math {
  * decomposed as LDL' where L is unit lower-triangular and D is
  * diagonal with positive diagonal elements.
  *
- * @tparam T scalare type held in the matrix
- * @tparam R rows (as in Eigen)
- * @tparam C columns (as in Eigen)
+ * @tparam T type of elements in the matrix
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
  */
 template <typename T, int R, int C>
 class LDLT_factor {
@@ -126,4 +126,5 @@ class LDLT_factor {
 
 }  // namespace math
 }  // namespace stan
+
 #endif

@@ -21,12 +21,13 @@ namespace math {
  * (vector, vector)
  * and the output is always a matrix.
  *
- * @tparam T1 Scalar type of first matrix.
- * @tparam T2 Scalar type of second matrix.
- * @tparam R1 Row specification of first matrix.
- * @tparam C1 Column specification of first matrix.
- * @tparam R2 Row specification of second matrix.
- * @tparam C2 Column specification of second matrix.
+ * @tparam T1 type of elements in the first matrix
+ * @tparam T2 type of elements in the second matrix
+ * @tparam R1 number of rows in the first matrix, can be Eigen::Dynamic
+ * @tparam C1 number of columns in the first matrix, can be Eigen::Dynamic
+ * @tparam R2 number of rows in the second matrix, can be Eigen::Dynamic
+ * @tparam C2 number of columns in the second matrix, can be Eigen::Dynamic
+ *
  * @param A First matrix.
  * @param B Second matrix.
  * @return Result of appending the first matrix followed by the
@@ -68,10 +69,11 @@ append_col(const Eigen::Matrix<T1, R1, C1>& A,
  * This function applies to (row_vector, row_vector) and returns a
  * row_vector.
  *
- * @tparam T1 Scalar type of first row vector.
- * @tparam T2 Scalar type of second row vector.
- * @tparam C1 Column specification of first row vector.
- * @tparam C2 Column specification of second row vector.
+ * @tparam T1 type of elements in the first row vector
+ * @tparam T2 type of elements in the second row vector
+ * @tparam C1 number of columns in the first row vector, can be Eigen::Dynamic
+ * @tparam C2 number of columns in the second row vector, can be Eigen::Dynamic
+ *
  * @param A First vector.
  * @param B Second vector
  * @return Result of appending the second row vector to the right
@@ -109,11 +111,12 @@ inline Eigen::Matrix<return_type_t<T1, T2>, 1, Eigen::Dynamic> append_col(
  * (vector, vector),
  * and the output is always a matrix.
  *
- * @tparam T Scalar type of both matrices.
- * @tparam R1 Row specification of first matrix.
- * @tparam C1 Column specification of first matrix.
- * @tparam R2 Row specification of second matrix.
- * @tparam C2 Column specification of second matrix.
+ * @tparam T type of elements in both matrices
+ * @tparam R1 number of rows in the first matrix, can be Eigen::Dynamic
+ * @tparam C1 number of columns in the first matrix, can be Eigen::Dynamic
+ * @tparam R2 number of rows in the second matrix, can be Eigen::Dynamic
+ * @tparam C2 number of columns in the second matrix, can be Eigen::Dynamic
+ *
  * @param A First matrix.
  * @param B Second matrix.
  * @return Result of appending the first matrix followed by the
@@ -140,9 +143,10 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> append_col(
  * This function applies to (row_vector, row_vector) and returns a
  * row_vector.
  *
- * @tparam T Scalar type of both vectors.
- * @tparam C1 Column specification of first row vector.
- * @tparam C2 Column specification of second row vector.
+ * @tparam T type of elements in both vectors
+ * @tparam C1 number of columns in the first row vector, can be Eigen::Dynamic
+ * @tparam C2 number of columns in the second row vector, can be Eigen::Dynamic
+ *
  * @param A First vector.
  * @param B Second vector
  * @return Result of appending the second row vector to the right
@@ -166,9 +170,11 @@ inline Eigen::Matrix<T, 1, Eigen::Dynamic> append_col(
  * This function applies to (scalar, row vector) and returns a
  * row vector.
  *
- * @tparam T1 Scalar type of the scalar
- * @tparam T2 Scalar type of the row vector.
- * @tparam R Row specification of the row vector.
+ * @tparam T1 type of the scalar
+ * @tparam T2 type of elements in the row vector
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ *
  * @param A scalar.
  * @param B row vector.
  * @return Result of stacking the scalar on top of the row vector.
@@ -192,9 +198,11 @@ inline Eigen::Matrix<return_type_t<T1, T2>, 1, Eigen::Dynamic> append_col(
  * This function applies to (row vector, scalar) and returns a
  * row vector.
  *
- * @tparam T1 Scalar type of the row vector.
- * @tparam T2 Scalar type of the scalar
- * @tparam R Row specification of the row vector.
+ * @tparam T1 type of elements in the row vector
+ * @tparam T2 type of the scalar
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ *
  * @param A row vector.
  * @param B scalar.
  * @return Result of stacking the row vector on top of the scalar.
@@ -210,8 +218,8 @@ inline Eigen::Matrix<return_type_t<T1, T2>, 1, Eigen::Dynamic> append_col(
   result << A.template cast<return_type>(), B;
   return result;
 }
-}  // namespace math
 
+}  // namespace math
 }  // namespace stan
 
 #endif

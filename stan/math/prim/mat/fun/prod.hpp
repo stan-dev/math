@@ -10,6 +10,8 @@ namespace math {
 /**
  * Returns the product of the coefficients of the specified
  * standard vector.
+ *
+ * @tparam T type of elements in the vector
  * @param v Specified vector.
  * @return Product of coefficients of vector.
  */
@@ -25,6 +27,8 @@ inline T prod(const std::vector<T>& v) {
 /**
  * Returns the product of the coefficients of the specified
  * column vector.
+ *
+ * @tparam T type of elements in the vector
  * @param v Specified vector.
  * @return Product of coefficients of vector.
  */
@@ -38,4 +42,5 @@ inline T prod(const Eigen::Matrix<T, R, C>& v) {
 
 }  // namespace math
 }  // namespace stan
+
 #endif

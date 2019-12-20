@@ -11,6 +11,7 @@ namespace math {
  * Return the degrees of freedom for the t distribution that
  * corresponds to the shape parameter in the LKJ distribution.
  *
+ * @tparam T scalar type
  * @param eta LKJ distribution parameter in (0, inf)
  * @param K number of variables in correlation matrix
  */
@@ -42,4 +43,5 @@ Eigen::Array<T, Eigen::Dynamic, 1> make_nu(const T& eta, size_t K) {
 
 }  // namespace math
 }  // namespace stan
+
 #endif

@@ -11,10 +11,11 @@ namespace math {
  *
  * The specified matrix is filled by element.
  *
- * @tparam T Type of scalar for matrix container.
- * @tparam R Row type of matrix.
- * @tparam C Column type of matrix.
+ * @tparam T type of elements in the matrix
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
  * @tparam S Type of value.
+ *
  * @param x Container.
  * @param y Value.
  */
@@ -25,4 +26,5 @@ void fill(Eigen::Matrix<T, R, C>& x, const S& y) {
 
 }  // namespace math
 }  // namespace stan
+
 #endif

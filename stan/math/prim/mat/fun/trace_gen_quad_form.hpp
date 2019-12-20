@@ -12,19 +12,21 @@
 
 namespace stan {
 namespace math {
+
 /**
  * Return the trace of D times the quadratic form of B and A.
  * That is, `trace_gen_quad_form(D, A, B) = trace(D * B' * A * B).`
  *
- * @tparam TD type of first argument scalar
- * @tparam RD first argument number of rows or `Eigen::Dynamic`
- * @tparam CD first argument number of columns or `Eigen::Dynamic`
- * @tparam TA type of second argument scalar
- * @tparam RA second argument number of rows or `Eigen::Dynamic`
- * @tparam CA second argument number of columns or `Eigen::Dynamic`
- * @tparam TB type of third argument scalar
- * @tparam RB third argument number of rows or `Eigen::Dynamic`
- * @tparam CB third argument number of columns or `Eigen::Dynamic`
+ * @tparam TD type of elements in the first matrix
+ * @tparam TA type of elements in the second matrix
+ * @tparam TB type of elements in the third matrix
+ * @tparam RD number of rows in the first matrix, can be Eigen::Dynamic
+ * @tparam CD number of columns in the first matrix, can be Eigen::Dynamic
+ * @tparam RA number of rows in the second matrix, can be Eigen::Dynamic
+ * @tparam CA number of columns in the second matrix, can be Eigen::Dynamic
+ * @tparam RB number of rows in the third matrix, can be Eigen::Dynamic
+ * @tparam CB number of columns in the third matrix, can be Eigen::Dynamic
+ *
  * @param D multiplier
  * @param A outside term in quadratic form
  * @param B inner term in quadratic form
@@ -51,13 +53,13 @@ inline return_type_t<TD, TA, TB> trace_gen_quad_form(
  * This is the double-only overload to allow Eigen's expression
  * templates to be used for efficiency.
  *
- * @tparam RD first argument number of rows or `Eigen::Dynamic`
- * @tparam CD first argument number of columns or `Eigen::Dynamic`
- * @tparam RA second argument number of rows or `Eigen::Dynamic`
- * @tparam CA second argument number of columns or `Eigen::Dynamic`
- * @tparam TB type of third argument scalar
- * @tparam RB third argument number of rows or `Eigen::Dynamic`
- * @tparam CB third argument number of columns or `Eigen::Dynamic`
+ * @tparam RD number of rows in the first matrix, can be Eigen::Dynamic
+ * @tparam CD number of columns in the first matrix, can be Eigen::Dynamic
+ * @tparam RA number of rows in the second matrix, can be Eigen::Dynamic
+ * @tparam CA number of columns in the second matrix, can be Eigen::Dynamic
+ * @tparam RB number of rows in the third matrix, can be Eigen::Dynamic
+ * @tparam CB number of columns in the third matrix, can be Eigen::Dynamic
+ *
  * @param D multiplier
  * @param A outside term in quadratic form
  * @param B inner term in quadratic form
@@ -66,7 +68,7 @@ inline return_type_t<TD, TA, TB> trace_gen_quad_form(
  * @throw std::domain_error if A cannot be multiplied by B or B cannot
  * be multiplied by D.
  */
-template <int RD, int CD, int RA, int CA, typename TB, int RB, int CB>
+template <int RD, int CD, int RA, int CA, int RB, int CB>
 inline double trace_gen_quad_form(const Eigen::Matrix<double, RD, CD> &D,
                                   const Eigen::Matrix<double, RA, CA> &A,
                                   const Eigen::Matrix<double, RB, CB> &B) {
@@ -79,4 +81,5 @@ inline double trace_gen_quad_form(const Eigen::Matrix<double, RD, CD> &D,
 
 }  // namespace math
 }  // namespace stan
+
 #endif

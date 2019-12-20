@@ -10,7 +10,8 @@ namespace math {
 /**
  * Return product of exp(A) and B, where A is a NxN double matrix,
  * B is a NxCb double matrix, and t is a double
- * @tparam Cb Columns matrix B
+ *
+ * @tparam Cb number of columns in matrix B, can be Eigen::Dynamic
  * @param[in] A Matrix
  * @param[in] B Matrix
  * @return exponential of A multiplies B
@@ -30,4 +31,5 @@ inline Eigen::Matrix<double, -1, Cb> matrix_exp_multiply(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

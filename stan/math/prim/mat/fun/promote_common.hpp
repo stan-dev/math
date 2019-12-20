@@ -15,6 +15,7 @@ namespace math {
  * @tparam T1 first type
  * @tparam T2 second type
  * @tparam F type of container elements, must be either T1 or T2
+ *
  * @param u elements to promote
  * @return the result of promoting elements
  */

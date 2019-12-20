@@ -14,9 +14,9 @@ struct log1p_fun {
   /**
    * Return the inverse hypberbolic cosine of the specified argument.
    *
-   * @param x Argument.
+   * @tparam T type of argument
+   * @param x argument
    * @return Inverse hyperbolic cosine of the argument.
-   * @tparam T Argument type.
    */
   template <typename T>
   static inline T fun(const T& x) {
@@ -30,8 +30,8 @@ struct log1p_fun {
  * underlying scalar argument type to double if it is an integer,
  * and otherwise is the argument type.
  *
- * @tparam T Container type.
- * @param x Container.
+ * @tparam T type of container
+ * @param x container
  * @return Elementwise log1p of members of container.
  */
 template <typename T>

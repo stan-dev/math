@@ -11,6 +11,8 @@ namespace math {
 
 /**
  * Returns the inverse of the specified symmetric, pos/neg-definite matrix.
+ *
+ * @tparam T type of elements in the matrix
  * @param m Specified matrix.
  * @return Inverse of the matrix.
  */
@@ -42,4 +44,5 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> inverse_spd(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

@@ -9,8 +9,9 @@ namespace math {
 
 /**
  * Structure to wrap ceil() so it can be vectorized.
- * @param x Variable.
- * @tparam T Variable type.
+ *
+ * @tparam T type of variable
+ * @param x variable
  * @return Least integer >= x.
  */
 struct ceil_fun {
@@ -23,8 +24,9 @@ struct ceil_fun {
 
 /**
  * Vectorized version of ceil().
- * @param x Container.
- * @tparam T Container type.
+ *
+ * @tparam T type of container
+ * @param x container
  * @return Least integer >= each value in x.
  */
 template <typename T>

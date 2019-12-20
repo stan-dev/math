@@ -11,6 +11,7 @@ namespace math {
  * This is the function that should be called prior to evaluating
  * the density of any elliptical distribution
  *
+ * @tparam T type of elements in the arrays
  * @param CPCs on (-1, 1)
  * @param sds on (0, inf)
  * @param log_prob the log probability value to increment with the Jacobian
@@ -29,4 +30,5 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_cov_L(
 
 }  // namespace math
 }  // namespace stan
+
 #endif
