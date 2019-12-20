@@ -53,7 +53,7 @@ void test_sort_indices_asc(Eigen::Matrix<T, R, C> val) {
 
   const size_t val_size = val.size();
 
-  AVEC x(size);
+  AVEC x(val_size);
   for (size_t i = 0U; i < val_size; i++)
     x.data()[i] = AVAR(val[i]);
 
@@ -79,7 +79,7 @@ void test_sort_indices_desc(Eigen::Matrix<T, R, C> val) {
 
   const size_t val_size = val.size();
 
-  AVEC x(size);
+  AVEC x(val_size);
   for (size_t i = 0U; i < val_size; i++)
     x.data()[i] = AVAR(val[i]);
 
