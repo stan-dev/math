@@ -20,7 +20,7 @@ namespace math {
  *
  * @tparam T type of elements in the simplex
  * @param x Simplex of dimensionality K.
- * @return Free vector of dimensionality (K-1) that transfroms to
+ * @return Free vector of dimensionality (K-1) that transforms to
  * the simplex.
  * @throw std::domain_error if x is not a valid simplex
  */

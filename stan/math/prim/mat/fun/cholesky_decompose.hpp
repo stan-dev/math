@@ -17,7 +17,7 @@ namespace math {
 /**
  * Return the lower-triangular Cholesky factor (i.e., matrix
  * square root) of the specified square, symmetric matrix.  The return
- * value \f$L\f$ will be a lower-traingular matrix such that the
+ * value \f$L\f$ will be a lower-triangular matrix such that the
  * original matrix \f$A\f$ is given by
  * <p>\f$A = L \times L^T\f$.
  *
@@ -43,7 +43,7 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
 /**
  * Return the lower-triangular Cholesky factor (i.e., matrix
  * square root) of the specified square, symmetric matrix.  The return
- * value \f$L\f$ will be a lower-traingular matrix such that the
+ * value \f$L\f$ will be a lower-triangular matrix such that the
  * original matrix \f$A\f$ is given by
  * <p>\f$A = L \times L^T\f$.
  *

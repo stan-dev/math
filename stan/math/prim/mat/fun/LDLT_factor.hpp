@@ -18,12 +18,12 @@ namespace math {
  * <code>boost::shared_ptr</code>, which ensures that is freed
  * when the object is released.
  *
- * After the constructor and/or compute() is called users of
+ * After the constructor and/or compute() is called, users of
  * LDLT_factor are responsible for calling success() to
  * check whether the factorization has succeeded.  Use of an LDLT_factor
  * object (e.g., in mdivide_left_ldlt) is undefined if success() is false.
  *
- * It's usage pattern is:
+ * Its usage pattern is:
  *
  * ~~~
  * Eigen::Matrix<T, R, C> A1, A2;

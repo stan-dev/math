@@ -12,11 +12,11 @@ namespace math {
  */
 struct log1p_fun {
   /**
-   * Return the inverse hypberbolic cosine of the specified argument.
+   * Return the natural logarithm of one plus the specified value.
    *
    * @tparam T type of argument
    * @param x argument
-   * @return Inverse hyperbolic cosine of the argument.
+   * @return natural log of one plus the argument
    */
   template <typename T>
   static inline T fun(const T& x) {

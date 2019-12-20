@@ -17,7 +17,7 @@ namespace math {
  * <p>The constraining transform is defined as for
  * <code>cov_matrix_constrain(Matrix, size_t)</code>.  The
  * inverse first factors out the deviations, then applies the
- * freeing transfrom of <code>corr_matrix_free(Matrix&)</code>.
+ * freeing transform of <code>corr_matrix_free(Matrix&)</code>.
  *
  * @tparam T type of elements in the matrix
  * @param y Covariance matrix to free.

@@ -62,7 +62,7 @@ append_col(const Eigen::Matrix<T1, R1, C1>& A,
 }
 
 /**
- * Return the result of concatenaing the first row vector followed
+ * Return the result of concatenating the first row vector followed
  * by the second row vector side by side, with the result being a
  * row vector.
  *
@@ -136,7 +136,7 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> append_col(
 }
 
 /**
- * Return the result of concatenaing the first row vector followed
+ * Return the result of concatenating the first row vector followed
  * by the second row vector side by side, with the result being a
  * row vector.
  *

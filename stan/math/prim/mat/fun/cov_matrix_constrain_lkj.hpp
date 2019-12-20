@@ -57,7 +57,7 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cov_matrix_constrain_lkj(
  * composing the log absolute Jacobian determinant for the
  * underlying correlation matrix as defined in
  * <code>cov_matrix_constrain(Matrix, size_t, T&)</code> with
- * the Jacobian of the transfrom of the correlation matrix
+ * the Jacobian of the transform of the correlation matrix
  * into a covariance matrix by scaling by standard deviations.
  *
  * @tparam T type of elements in the vector

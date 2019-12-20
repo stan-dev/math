@@ -17,7 +17,7 @@ struct trigamma_fun {
    *
    * @tparam T type of argument
    * @param x argument
-   * @return aprpoximate value of Phi applied to argument.
+   * @return approximate value of Phi applied to argument
    */
   template <typename T>
   static inline T fun(const T& x) {
