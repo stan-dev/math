@@ -267,19 +267,6 @@ def main():
     meta_exclude = ["stan/math/*/meta", "stan/math/*/meta.hpp"]
     errors.extend(grep_patterns("meta", "stan/math", meta_checks, meta_exclude))
 
-    # Check for includes of stan/math/*/*/err/*.hpp inside stan/math, excluding err.hpp files and the /err subfolder
-    err_checks = [
-        {
-            "pattern": "<stan/math/.*/err/.*hpp",
-            "message": "File includes */err/*.hpp header file. Should include err.hpp",
-        }
-    ]
-    err_exclude = ["stan/math/*/*/err", "stan/math/*/err.hpp",
-                   "stan/math/opencl/matrix_cl.hpp", "stan/math/opencl/opencl_context.hpp",
-                   "stan/math/opencl/kernel_cl.hpp", "stan/math/opencl/copy.hpp",
-                   "stan/math/prim/core", "stan/math/rev/core"]
-    errors.extend(grep_patterns("err", "stan/math", err_checks, err_exclude))
-
     #  Check that we do not use non-reentrant safe functions from std
     thread_safe_checks = [
         {
