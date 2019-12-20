@@ -57,17 +57,20 @@ return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
   size_t len_np = max_size(n, phi);
 
   VectorBuilder<true, T_partials_return, T_log_location> eta__(size(eta));
-  for (size_t i = 0, max_size_seq_view = size(eta); i < max_size_seq_view; ++i) {
+  for (size_t i = 0, max_size_seq_view = size(eta); i < max_size_seq_view;
+       ++i) {
     eta__[i] = value_of(eta_vec[i]);
   }
 
   VectorBuilder<true, T_partials_return, T_precision> phi__(size(phi));
-  for (size_t i = 0, max_size_seq_view = size(phi); i < max_size_seq_view; ++i) {
+  for (size_t i = 0, max_size_seq_view = size(phi); i < max_size_seq_view;
+       ++i) {
     phi__[i] = value_of(phi_vec[i]);
   }
 
   VectorBuilder<true, T_partials_return, T_precision> log_phi(size(phi));
-  for (size_t i = 0, max_size_seq_view = size(phi); i < max_size_seq_view; ++i) {
+  for (size_t i = 0, max_size_seq_view = size(phi); i < max_size_seq_view;
+       ++i) {
     log_phi[i] = log(phi__[i]);
   }
 
