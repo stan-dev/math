@@ -53,7 +53,7 @@ return_type_t<T_prob> binomial_cdf(const T_n& n, const T_N& N,
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_N> N_vec(N);
   scalar_seq_view<T_prob> theta_vec(theta);
-  size_t size = max_size(n, N, theta);
+  size_t max_size_seq_view = max_size(n, N, theta);
 
   using std::exp;
   using std::pow;
@@ -68,7 +68,7 @@ return_type_t<T_prob> binomial_cdf(const T_n& n, const T_N& N,
     }
   }
 
-  for (size_t i = 0; i < size; i++) {
+  for (size_t i = 0; i < max_size_seq_view; i++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
     if (value_of(n_vec[i]) >= value_of(N_vec[i])) {

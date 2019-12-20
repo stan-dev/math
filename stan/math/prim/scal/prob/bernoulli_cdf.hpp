@@ -42,7 +42,7 @@ return_type_t<T_prob> bernoulli_cdf(const T_n& n, const T_prob& theta) {
 
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_prob> theta_vec(theta);
-  size_t size = max_size(n, theta);
+  size_t max_size_seq_view = max_size(n, theta);
 
   operands_and_partials<T_prob> ops_partials(theta);
 
@@ -54,7 +54,7 @@ return_type_t<T_prob> bernoulli_cdf(const T_n& n, const T_prob& theta) {
     }
   }
 
-  for (size_t i = 0; i < size; i++) {
+  for (size_t i = 0; i < max_size_seq_view; i++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
     if (value_of(n_vec[i]) >= 1) {

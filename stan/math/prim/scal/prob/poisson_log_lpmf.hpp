@@ -42,15 +42,15 @@ return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
 
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_log_rate> alpha_vec(alpha);
-  size_t size = max_size(n, alpha);
+  size_t max_size_seq_view = max_size(n, alpha);
 
-  // FIXME: first loop size of alpha_vec, second loop if-ed for size==1
-  for (size_t i = 0; i < size; i++) {
+  // FIXME: first loop size of alpha_vec, second loop if-ed for max_size_seq_view==1
+  for (size_t i = 0; i < max_size_seq_view; i++) {
     if (std::numeric_limits<double>::infinity() == alpha_vec[i]) {
       return LOG_ZERO;
     }
   }
-  for (size_t i = 0; i < size; i++) {
+  for (size_t i = 0; i < max_size_seq_view; i++) {
     if (-std::numeric_limits<double>::infinity() == alpha_vec[i]
         && n_vec[i] != 0) {
       return LOG_ZERO;
@@ -67,7 +67,7 @@ return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
     exp_alpha[i] = exp(value_of(alpha_vec[i]));
   }
 
-  for (size_t i = 0; i < size; i++) {
+  for (size_t i = 0; i < max_size_seq_view; i++) {
     if (!(alpha_vec[i] == -std::numeric_limits<double>::infinity()
           && n_vec[i] == 0)) {
       if (include_summand<propto>::value) {

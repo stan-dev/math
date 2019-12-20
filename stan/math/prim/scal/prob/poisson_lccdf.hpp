@@ -33,7 +33,7 @@ return_type_t<T_rate> poisson_lccdf(const T_n& n, const T_rate& lambda) {
 
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_rate> lambda_vec(lambda);
-  size_t size = max_size(n, lambda);
+  size_t max_size_seq_view = max_size(n, lambda);
 
   using std::exp;
   using std::log;
@@ -48,7 +48,7 @@ return_type_t<T_rate> poisson_lccdf(const T_n& n, const T_rate& lambda) {
     }
   }
 
-  for (size_t i = 0; i < size; i++) {
+  for (size_t i = 0; i < max_size_seq_view; i++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
     if (value_of(n_vec[i]) == std::numeric_limits<int>::max()) {

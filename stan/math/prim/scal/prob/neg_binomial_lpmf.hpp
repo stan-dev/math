@@ -46,7 +46,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_shape> alpha_vec(alpha);
   scalar_seq_view<T_inv_scale> beta_vec(beta);
-  size_t size = max_size(n, alpha, beta);
+  size_t max_size_seq_view = max_size(n, alpha, beta);
 
   operands_and_partials<T_shape, T_inv_scale> ops_partials(alpha, beta);
 
@@ -103,7 +103,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
     }
   }
 
-  for (size_t i = 0; i < size; i++) {
+  for (size_t i = 0; i < max_size_seq_view; i++) {
     if (alpha_vec[i] > 1e10) {  // reduces numerically to Poisson
       if (include_summand<propto>::value) {
         logp -= lgamma(n_vec[i] + 1.0);
