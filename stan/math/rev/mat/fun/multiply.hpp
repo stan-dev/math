@@ -578,12 +578,30 @@ inline Eigen::Matrix<var, R, C> multiply(const var& c,
   return m * c;
 }
 
+/**
+ * Return the product of scalar and matrix.
+ * @tparam Arith an arithmetic type
+ * @tparam R number of rows or Eigen::Dynamic
+ * @tparam C number of columns or Eigen::Dynamic
+ * @param[in] c scalar of arithmetic type
+ * @param[in] m matrix of var type
+ * @return Product of scalar and matrix
+ */
 template <typename Arith, int R, int C, typename = require_arithmetic_t<Arith>>
 inline Eigen::Matrix<var, R, C> multiply(const Arith& c,
                                          const Eigen::Matrix<var, R, C>& m) {
   return m * c;
 }
 
+/**
+ * Return the product of scalar and matrix.
+ * @tparam Arith an arithmetic type
+ * @tparam R number of rows or Eigen::Dynamic
+ * @tparam C number of columns or Eigen::Dynamic
+ * @param[in] c scalar of var type
+ * @param[in] m matrix of arithmetic type
+ * @return Product of scalar and matrix
+ */
 template <typename Arith, int R, int C, typename = require_arithmetic_t<Arith>>
 inline Eigen::Matrix<var, R, C> multiply(const var& c,
                                          const Eigen::Matrix<Arith, R, C>& m) {
@@ -604,12 +622,30 @@ inline Eigen::Matrix<var, R, C> multiply(const Eigen::Matrix<var, R, C>& m,
   return m * c;
 }
 
+/**
+ * Return the product of matrix and scalar.
+ * @tparam Arith an arithmetic type
+ * @tparam R number of rows or Eigen::Dynamic
+ * @tparam C number of columns or Eigen::Dynamic
+ * @param[in] m matrix of arithmetic type
+ * @param[in] c scalar of var type
+ * @return Product of matrix and scalar
+ */
 template <typename Arith, int R, int C, typename = require_arithmetic_t<Arith>>
 inline Eigen::Matrix<var, R, C> multiply(const Eigen::Matrix<Arith, R, C>& m,
                                          const var& c) {
   return m * c;
 }
 
+/**
+ * Return the product of matrix and scalar.
+ * @tparam Arith an arithmetic type
+ * @tparam R number of rows or Eigen::Dynamic
+ * @tparam C number of columns or Eigen::Dynamic
+ * @param[in] m matrix of var type
+ * @param[in] c scalar of arithmetic type
+ * @return Product of matrix and scalar
+ */
 template <typename Arith, int R, int C, typename = require_arithmetic_t<Arith>>
 inline Eigen::Matrix<var, R, C> multiply(const Eigen::Matrix<var, R, C>& m,
                                          const Arith& c) {
