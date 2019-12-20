@@ -90,7 +90,7 @@ void test_sort_indices_asc2(Eigen::Matrix<T, R, C> val) {
 
   const size_t val_size = val.size();
 
-  AVEC x(size);
+  AVEC x(val_size);
   for (size_t i = 0U; i < val_size; i++)
     x.data()[i] = fvar<var>(val[i]);
 
@@ -114,7 +114,7 @@ void test_sort_indices_asc4(Eigen::Matrix<T, R, C> val) {
 
   const size_t val_size = val.size();
 
-  AVEC x(size);
+  AVEC x(val_size);
   for (size_t i = 0U; i < val_size; i++)
     x.data()[i] = fvar<fvar<var> >(val[i]);
 
@@ -138,7 +138,7 @@ void test_sort_indices_desc2(Eigen::Matrix<T, R, C> val) {
 
   const size_t val_size = val.size();
 
-  AVEC x(size);
+  AVEC x(val_size); changes
   for (size_t i = 0U; i < val_size; i++)
     x.data()[i] = fvar<var>(val[i]);
 
@@ -162,7 +162,7 @@ void test_sort_indices_desc4(Eigen::Matrix<T, R, C> val) {
 
   const size_t val_size = val.size();
 
-  AVEC x(size);
+  AVEC x(val_size);
   for (size_t i = 0U; i < val_size; i++)
     x.data()[i] = fvar<fvar<var> >(val[i]);
 
