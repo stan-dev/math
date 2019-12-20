@@ -139,7 +139,7 @@ void test_sort_indices_desc2(Eigen::Matrix<T, R, C> val) {
   const size_t val_size = val.size();
 
   AVEC x(val_size);
-  changes for (size_t i = 0U; i < val_size; i++) x.data()[i]
+  for (size_t i = 0U; i < val_size; i++) x.data()[i]
       = fvar<var>(val[i]);
 
   std::vector<int> val_sorted = sort_indices_desc(val);
