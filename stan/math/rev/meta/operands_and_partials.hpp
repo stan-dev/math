@@ -108,8 +108,8 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, var> {
    * @return the node to be stored in the expression graph for autodiff
    */
   var build(double value) {
-    size_t edges_size = edge1_.size() + edge2_.size() + edge3_.size() + edge4_.size()
-                  + edge5_.size();
+    size_t edges_size = edge1_.size() + edge2_.size() + edge3_.size()
+                        + edge4_.size() + edge5_.size();
     vari** varis
         = ChainableStack::instance_->memalloc_.alloc_array<vari*>(edges_size);
     double* partials
@@ -126,7 +126,8 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, var> {
     edge5_.dump_operands(&varis[idx += edge4_.size()]);
     edge5_.dump_partials(&partials[idx]);
 
-    return var(new precomputed_gradients_vari(value, edges_size, varis, partials));
+    return var(
+        new precomputed_gradients_vari(value, edges_size, varis, partials));
   }
 };
 
