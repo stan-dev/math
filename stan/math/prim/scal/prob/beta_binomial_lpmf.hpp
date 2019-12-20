@@ -66,16 +66,16 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
   const scalar_seq_view<T_N> N_vec(N);
   const scalar_seq_view<T_size1> alpha_vec(alpha);
   const scalar_seq_view<T_size2> beta_vec(beta);
-  const auto size = max_size(n, N, alpha, beta);
+  const auto max_size_seq_view = max_size(n, N, alpha, beta);
 
-  for (size_t i = 0; i < size; i++) {
+  for (size_t i = 0; i < max_size_seq_view; i++) {
     if (n_vec[i] < 0 || n_vec[i] > N_vec[i]) {
       return ops_partials.build(LOG_ZERO);
     }
   }
 
   if (include_summand<propto>::value) {
-    for (size_t i = 0; i < size; i++) {
+    for (size_t i = 0; i < max_size_seq_view; i++) {
       // normalizing constant
       logp += binomial_coefficient_log(N_vec[i], n_vec[i]);
       // log numerator - denominator
@@ -87,12 +87,12 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
 
   VectorBuilder<!is_constant_all<T_size1, T_size2>::value, T_partials, T_N,
                 T_size1, T_size2>
-      digamma_N_plus_alpha_plus_beta(size);
+      digamma_N_plus_alpha_plus_beta(max_size_seq_view);
   VectorBuilder<!is_constant_all<T_size1, T_size2>::value, T_partials, T_size1,
                 T_size2>
-      digamma_alpha_plus_beta(size);
+      digamma_alpha_plus_beta(max_size_seq_view);
   if (!is_constant_all<T_size1, T_size2>::value) {
-    for (size_t i = 0; i < size; i++) {
+    for (size_t i = 0; i < max_size_seq_view; i++) {
       digamma_N_plus_alpha_plus_beta[i]
           = digamma(N_vec[i] + value_of(alpha_vec[i]) + value_of(beta_vec[i]));
       digamma_alpha_plus_beta[i]
@@ -101,7 +101,7 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
   }
 
   if (!is_constant_all<T_size1>::value) {
-    for (size_t i = 0; i < size; i++) {
+    for (size_t i = 0; i < max_size_seq_view; i++) {
       ops_partials.edge1_.partials_[i]
           += digamma(n_vec[i] + value_of(alpha_vec[i]))
              - digamma_N_plus_alpha_plus_beta[i] + digamma_alpha_plus_beta[i]
@@ -110,7 +110,7 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
   }
 
   if (!is_constant_all<T_size2>::value) {
-    for (size_t i = 0; i < size; i++) {
+    for (size_t i = 0; i < max_size_seq_view; i++) {
       ops_partials.edge2_.partials_[i]
           += digamma(value_of(N_vec[i] - n_vec[i] + beta_vec[i]))
              - digamma_N_plus_alpha_plus_beta[i] + digamma_alpha_plus_beta[i]

@@ -36,7 +36,7 @@ return_type_t<T_location, T_precision> neg_binomial_2_cdf(
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_location> mu_vec(mu);
   scalar_seq_view<T_precision> phi_vec(phi);
-  size_t size = max_size(n, mu, phi);
+  size_t max_size_seq_view = max_size(n, mu, phi);
 
   operands_and_partials<T_location, T_precision> ops_partials(mu, phi);
 
@@ -66,7 +66,7 @@ return_type_t<T_location, T_precision> neg_binomial_2_cdf(
     }
   }
 
-  for (size_t i = 0; i < size; i++) {
+  for (size_t i = 0; i < max_size_seq_view; i++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
     if (value_of(n_vec[i]) == std::numeric_limits<int>::max()) {
