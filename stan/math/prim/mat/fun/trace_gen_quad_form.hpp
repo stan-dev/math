@@ -57,6 +57,7 @@ inline return_type_t<TD, TA, TB> trace_gen_quad_form(
  * @tparam CD number of columns in the first matrix, can be Eigen::Dynamic
  * @tparam RA number of rows in the second matrix, can be Eigen::Dynamic
  * @tparam CA number of columns in the second matrix, can be Eigen::Dynamic
+ * @tparam TB type of elements in the third matrix
  * @tparam RB number of rows in the third matrix, can be Eigen::Dynamic
  * @tparam CB number of columns in the third matrix, can be Eigen::Dynamic
  *
@@ -68,7 +69,7 @@ inline return_type_t<TD, TA, TB> trace_gen_quad_form(
  * @throw std::domain_error if A cannot be multiplied by B or B cannot
  * be multiplied by D.
  */
-template <int RD, int CD, int RA, int CA, int RB, int CB>
+template <int RD, int CD, int RA, int CA, typename TB, int RB, int CB>
 inline double trace_gen_quad_form(const Eigen::Matrix<double, RD, CD> &D,
                                   const Eigen::Matrix<double, RA, CA> &A,
                                   const Eigen::Matrix<double, RB, CB> &B) {
