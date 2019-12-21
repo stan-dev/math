@@ -40,12 +40,9 @@ TEST(mathMixScalFun, gammaP) {
   }
 }
 
-
 // separate tests when a is positive_infinity
 TEST(mathMixScalFun, gammaP_pos_inf) {
-  auto g = [](const auto& x) {
-    return stan::math::gamma_p(x(0), x(1));
-  };  
+  auto g = [](const auto& x) { return stan::math::gamma_p(x(0), x(1)); };
   stan::math::vector_d x(2);
   x << 0.5001, stan::math::positive_infinity();
   Eigen::Matrix<double, Eigen::Dynamic, 1> grad_ad;
