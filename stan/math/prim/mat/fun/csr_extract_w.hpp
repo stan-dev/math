@@ -12,7 +12,7 @@ namespace math {
 
 /* Extract the non-zero values from a sparse matrix.
  *
- * @tparam T Type of matrix entries.
+ * @tparam T type of elements in the matrix
  * @param[in] A sparse matrix.
  * @return Vector of non-zero entries of A.
  */
@@ -30,7 +30,10 @@ const Eigen::Matrix<T, Eigen::Dynamic, 1> csr_extract_w(
 /* Extract the non-zero values from a dense matrix by converting
  * to sparse and calling the sparse matrix extractor.
  *
- * @tparam T Type of matrix entries.
+ * @tparam T type of elements in the matrix
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ *
  * @param[in] A dense matrix.
  * @return Vector of non-zero entries of A.
  */
@@ -45,4 +48,5 @@ const Eigen::Matrix<T, Eigen::Dynamic, 1> csr_extract_w(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

@@ -11,6 +11,7 @@ namespace math {
 /**
  * Return a nrows x 1 subcolumn starting at (i-1, j-1).
  *
+ * @tparam T type of elements in the matrix
  * @param m Matrix.
  * @param i Starting row + 1.
  * @param j Starting column + 1.
@@ -31,4 +32,5 @@ inline Eigen::Matrix<T, Eigen::Dynamic, 1> sub_col(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

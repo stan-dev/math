@@ -15,6 +15,8 @@ namespace math {
  *
  * @tparam T type of promoted elements
  * @tparam S type of input elements, must be assignable to T
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
  */
 template <typename T, typename S, int R, int C>
 struct promote_elements<Eigen::Matrix<T, R, C>, Eigen::Matrix<S, R, C> > {
@@ -39,7 +41,9 @@ struct promote_elements<Eigen::Matrix<T, R, C>, Eigen::Matrix<S, R, C> > {
  *
  * <p>This specialization promotes matrix elements of the same type.
  *
- * @tparam T type of elements
+ * @tparam T type of elements in the matrices
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
  */
 template <typename T, int R, int C>
 struct promote_elements<Eigen::Matrix<T, R, C>, Eigen::Matrix<T, R, C> > {

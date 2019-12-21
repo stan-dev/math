@@ -10,6 +10,10 @@ namespace math {
 /**
  * Returns the log absolute determinant of the specified square matrix.
  *
+ * @tparam T type of elements in the matrix
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ *
  * @param m Specified matrix.
  * @return log absolute determinant of the matrix.
  * @throw std::domain_error if matrix is not square.
@@ -25,4 +29,5 @@ inline T log_determinant(const Eigen::Matrix<T, R, C>& m) {
 
 }  // namespace math
 }  // namespace stan
+
 #endif

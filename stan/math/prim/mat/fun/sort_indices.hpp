@@ -75,4 +75,5 @@ std::vector<int> sort_indices(const C& xs) {
 
 }  // namespace math
 }  // namespace stan
+
 #endif

@@ -12,6 +12,7 @@ namespace math {
  * The matrix is not required to be square.  Returns 0 if
  * matrix is empty.
  *
+ * @tparam T type of the elements in the matrix
  * @param[in] m Specified matrix.
  * @return Trace of the matrix.
  */
@@ -24,6 +25,8 @@ template <typename T>
 inline T trace(const T& m) {
   return m;
 }
+
 }  // namespace math
 }  // namespace stan
+
 #endif

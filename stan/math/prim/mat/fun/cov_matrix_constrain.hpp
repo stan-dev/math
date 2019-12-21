@@ -9,7 +9,6 @@
 #include <cmath>
 
 namespace stan {
-
 namespace math {
 
 /**
@@ -19,6 +18,7 @@ namespace math {
  *
  * <p>See <code>cov_matrix_free()</code> for the inverse transform.
  *
+ * @tparam T type of elements in the vector
  * @param x The vector to convert to a covariance matrix.
  * @param K The number of rows and columns of the resulting
  * covariance matrix.
@@ -56,6 +56,7 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cov_matrix_constrain(
  *
  * <p>See <code>cov_matrix_free()</code> for the inverse transform.
  *
+ * @tparam T type of elements in the vector
  * @param x The vector to convert to a covariance matrix.
  * @param K The dimensions of the resulting covariance matrix.
  * @param lp Reference
@@ -95,4 +96,5 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cov_matrix_constrain(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

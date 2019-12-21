@@ -17,6 +17,16 @@ namespace math {
  * Compute the trace of an inverse quadratic form.  I.E., this computes
  *       trace(B^T A^-1 B)
  * where the LDLT_factor of A is provided.
+ *
+ * @tparam T1 type of elements in the first matrix and the LDLT_factor
+ * @tparam T2 type of elements in the second matrix
+ * @tparam R1 number of rows in the first matrix, can be Eigen::Dynamic
+ * @tparam C1 number of columns in the first matrix, can be Eigen::Dynamic
+ * @tparam R2 number of rows in the LDLT_factor, can be Eigen::Dynamic
+ * @tparam C2 number of columns in the LDLT_factor, can be Eigen::Dynamic
+ * @tparam R3 number of rows in the third matrix, can be Eigen::Dynamic
+ * @tparam C3 number of columns in the third matrix, can be Eigen::Dynamic
+ *
  */
 template <typename T1, typename T2, int R2, int C2, int R3, int C3,
           typename = require_any_not_var_t<T1, T2>>
@@ -33,4 +43,5 @@ inline return_type_t<T1, T2> trace_inv_quad_form_ldlt(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

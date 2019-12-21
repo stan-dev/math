@@ -16,7 +16,7 @@ namespace math {
 /**
  * Extract the NZE index for each entry from a sparse matrix.
  *
- * @tparam T Type of matrix entries.
+ * @tparam T type of elements in the matrix
  * @param A Sparse matrix.
  * @return Vector of indexes into non-zero entries of A.
  */
@@ -33,7 +33,9 @@ const std::vector<int> csr_extract_u(
 /**
  * Extract the NZE index for each entry from a sparse matrix.
  *
- * @tparam T Type of matrix entries.
+ * @tparam T type of elements in the matrix
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
  * @param A Dense matrix.
  * @return Vector of indexes into non-zero entries of A.
  */

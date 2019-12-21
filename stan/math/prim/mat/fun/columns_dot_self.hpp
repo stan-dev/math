@@ -8,8 +8,12 @@ namespace math {
 
 /**
  * Returns the dot product of each column of a matrix with itself.
+ *
+ * @tparam T type of elements in the matrix
+ * @tparam R number of rows or Eigen::Dynamic
+ * @tparam C number of columns or Eigen::Dynamic
+ *
  * @param x Matrix.
- * @tparam T scalar type
  */
 template <typename T, int R, int C>
 inline Eigen::Matrix<T, 1, C> columns_dot_self(
@@ -19,4 +23,5 @@ inline Eigen::Matrix<T, 1, C> columns_dot_self(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

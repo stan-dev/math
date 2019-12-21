@@ -8,15 +8,17 @@
 
 namespace stan {
 namespace math {
+
 /**
  * Returns a matrix with dynamic dimensions constructed from an
  * Eigen matrix which is either a row vector, column vector,
  * or matrix.
  * The runtime dimensions will be the same as the input.
  *
- * @tparam T type of the scalar
- * @tparam R number of rows
- * @tparam C number of columns
+ * @tparam T type of the elements in the matrix
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ *
  * @param x matrix
  * @return the matrix representation of the input
  */
@@ -30,7 +32,7 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> to_matrix(
  * Returns a matrix representation of a standard vector of Eigen
  * row vectors with the same dimensions and indexing order.
  *
- * @tparam T type of the scalar
+ * @tparam T type of the elements in the vector
  * @param x Eigen vector of vectors of scalar values
  * @return the matrix representation of the input
  */
@@ -55,7 +57,7 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> to_matrix(
  * Returns a matrix representation of the standard vector of
  * standard vectors with the same dimensions and indexing order.
  *
- * @tparam T type of the scalar
+ * @tparam T type of elements in the vector
  * @param x vector of vectors of scalar values
  * @return the matrix representation of the input
  */
@@ -82,7 +84,10 @@ to_matrix(const std::vector<std::vector<T> >& x) {
  * Returns a matrix representation of the vector in column-major
  * order with the specified number of rows and columns.
  *
- * @tparam T type of the scalar
+ * @tparam T type of elements in the matrix
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ *
  * @param x matrix
  * @param m rows
  * @param n columns
@@ -104,7 +109,7 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> to_matrix(
  * Returns a matrix representation of the vector in column-major
  * order with the specified number of rows and columns.
  *
- * @tparam T type of the scalar
+ * @tparam T type of elements in the vector
  * @param x vector of values
  * @param m rows
  * @param n columns
@@ -148,7 +153,10 @@ inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> to_matrix(
  * Returns a matrix representation of the vector in column-major
  * order with the specified number of rows and columns.
  *
- * @tparam T type of the scalar
+ * @tparam T type of elements in the matrix
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ *
  * @param x matrix
  * @param m rows
  * @param n columns
@@ -181,7 +189,7 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> to_matrix(
  * Returns a matrix representation of the vector in column-major
  * order with the specified number of rows and columns.
  *
- * @tparam T type of the scalar
+ * @tparam T type of elements in the vector
  * @param x vector of values
  * @param m rows
  * @param n columns
@@ -213,4 +221,5 @@ to_matrix(const std::vector<T>& x, int m, int n, bool col_major) {
 
 }  // namespace math
 }  // namespace stan
+
 #endif
