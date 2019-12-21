@@ -12,8 +12,7 @@ namespace math {
  * approximation, coupled with scaling and
  * squaring.
  *
- * @tparam MatrixType scalar type of the elements
- * in the input matrix.
+ * @tparam MatrixType type of elements in the matrix
  * @param[in] arg matrix to exponentiate.
  * @return Matrix exponential of input matrix.
  */
@@ -39,6 +38,8 @@ MatrixType matrix_exp_pade(const MatrixType& arg) {
   // repeated squaring
   return pade_approximation;
 }
+
 }  // namespace math
 }  // namespace stan
+
 #endif

@@ -11,8 +11,9 @@ namespace math {
 
 /**
  * Returns the orthogonal factor of the fat QR decomposition
+ *
+ * @tparam T type of elements in the matrix
  * @param m Matrix.
- * @tparam T scalar type
  * @return Orthogonal matrix with maximal columns
  */
 template <typename T>
@@ -34,4 +35,5 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> qr_Q(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

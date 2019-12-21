@@ -14,10 +14,10 @@ namespace math {
  * However, we are just fixing the unidentified radius to 1.
  * Thus, the transformation is just the identity
  *
+ * @tparam T type of elements in the vector
  * @param x unit vector of dimension K
  * @return Unit vector of dimension K considered "free"
- * @tparam T Scalar type.
- **/
+ */
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, 1> unit_vector_free(
     const Eigen::Matrix<T, Eigen::Dynamic, 1>& x) {
@@ -27,4 +27,5 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> unit_vector_free(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

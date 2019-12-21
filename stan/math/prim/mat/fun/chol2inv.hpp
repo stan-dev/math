@@ -14,7 +14,8 @@ namespace math {
 
 /**
  * Returns the inverse of the matrix whose Cholesky factor is L
- * @tparam T The scalar type of the matrix
+ *
+ * @tparam T type of elements in the matrix
  * @param L Matrix that is a Cholesky factor.
  * @return The matrix inverse of L * L'
  * @throw std::domain_error If the input matrix is not square or
@@ -50,4 +51,5 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> chol2inv(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

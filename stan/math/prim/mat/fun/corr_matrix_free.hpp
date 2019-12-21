@@ -23,10 +23,10 @@ namespace math {
  * needs to compute the \f$k \choose 2\f$ partial correlations
  * and then free those.
  *
+ * @tparam T type of scalar
  * @param y The correlation matrix to free.
  * @return Vector of unconstrained values that produce the
  * specified correlation matrix when transformed.
- * @tparam T Type of scalar.
  * @throw std::domain_error if the correlation matrix has no
  *    elements or is not a square matrix.
  * @throw std::runtime_error if the correlation matrix cannot be
@@ -59,6 +59,8 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> corr_matrix_free(
   }
   return x.matrix();
 }
+
 }  // namespace math
 }  // namespace stan
+
 #endif

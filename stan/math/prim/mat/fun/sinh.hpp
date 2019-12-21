@@ -9,8 +9,9 @@ namespace math {
 
 /**
  * Structure to wrap sinh() so that it can be vectorized.
- * @param x Angle in radians.
- * @tparam T Variable type.
+ *
+ * @tparam T type of argument
+ * @param x angle in radians
  * @return Hyperbolic sine of x.
  */
 struct sinh_fun {
@@ -23,8 +24,9 @@ struct sinh_fun {
 
 /**
  * Vectorized version of sinh().
- * @param x Container of variables.
- * @tparam T Container type.
+ *
+ * @tparam T type of container
+ * @param x container
  * @return Hyperbolic sine of each variable in x.
  */
 template <typename T>
