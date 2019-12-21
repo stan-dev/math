@@ -1,7 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
 #include <test/unit/math/expect_near_rel.hpp>
-#include <stan/math/prim/mat.hpp>
 #include <stan/math/mix/mat.hpp>
+#include <vector>
 
 TEST(mathMixScalFun, gammaP) {
   auto f = [](const auto& x1, const auto& x2) {
