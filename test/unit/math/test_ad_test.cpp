@@ -1,5 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 #include <gtest/gtest.h>
+#include <gtest/gtest-spi.h>
 #include <limits>
 #include <type_traits>
 #include <vector>
@@ -28,6 +29,79 @@ TEST(test_unit_math_test_ad, test_ad_binary) {
 
   double y2 = std::numeric_limits<double>::quiet_NaN();
   stan::test::expect_ad(g, x, y2);
+}
+
+template <typename G, typename F, typename... Ts>
+void expect_test_combinator_to_fail(const G& test_combinator, const F& f,
+                                    const Ts&... xs) {
+  // EXPECT_NOTFATAL_FAILURE succeeds if there is exactly one failure.
+  // This function succeeds if there is one or more failures.
+  EXPECT_NONFATAL_FAILURE(
+      EXPECT_NONFATAL_FAILURE(ADD_FAILURE() << "irrelevant failure message";
+                              test_combinator(f, xs...), ""),
+      "Expected: 1 non-fatal failure");
+}
+
+TEST(test_unit_math_test_mix, test_expect_test_combinator_to_fail) {
+  auto combinator_that_succeeds = [](auto& f) {};
+  auto combinator_that_fails = [](auto& f) { ADD_FAILURE() << ""; };
+  auto combinator_that_fails_twice = [](auto& f) {
+    ADD_FAILURE() << "";
+    ADD_FAILURE() << "";
+  };
+  auto combinator_that_fails_fatally = [](auto& f) { FAIL() << ""; };
+  auto combinator_that_fails_nonfatally_and_fatally = [](auto& f) {
+    ADD_FAILURE() << "";
+    FAIL() << "";
+  };
+  int fails = 0;
+  auto combinator_that_tries_to_fail_fatally_twice = [&fails](auto& f) {
+    ++fails;
+    FAIL() << "";
+    // this point not reached
+    ++fails;
+    FAIL() << "";
+  };
+
+  auto f = []() {};
+
+  combinator_that_succeeds(f);
+  EXPECT_NONFATAL_FAILURE(combinator_that_fails(f), "");
+  EXPECT_NONFATAL_FAILURE(
+      EXPECT_NONFATAL_FAILURE(combinator_that_fails_twice(f), ""),
+      "Actual: 2 failures");
+  EXPECT_NONFATAL_FAILURE(
+      EXPECT_NONFATAL_FAILURE(combinator_that_fails_fatally(f), ""),
+      "Fatal failure");
+  EXPECT_NONFATAL_FAILURE(
+      EXPECT_NONFATAL_FAILURE(combinator_that_fails_nonfatally_and_fatally(f),
+                              ""),
+      "Actual: 2 failures");
+
+  EXPECT_NONFATAL_FAILURE(
+      expect_test_combinator_to_fail(combinator_that_succeeds, f),
+      "Actual: 0 failures");
+  expect_test_combinator_to_fail(combinator_that_fails, f);
+  expect_test_combinator_to_fail(combinator_that_fails_twice, f);
+  expect_test_combinator_to_fail(combinator_that_fails_fatally, f);
+  expect_test_combinator_to_fail(combinator_that_fails_nonfatally_and_fatally,
+                                 f);
+  fails = 0;
+  expect_test_combinator_to_fail(combinator_that_tries_to_fail_fatally_twice,
+                                 f);
+  EXPECT_EQ(fails, 1);
+}
+
+template <typename F, typename... Ts>
+void expect_expect_ad_failure(const F& f, const Ts&... xs) {
+  auto g = [](auto& f, auto&... xs) {
+    try {
+      stan::test::expect_ad(f, xs...);
+    } catch (...) {
+      ADD_FAILURE();
+    }
+  };
+  expect_test_combinator_to_fail(g, f, xs...);
 }
 
 // VECTORIZED UNARY FUNCTION THAT PASSES
@@ -64,8 +138,7 @@ stan::math::var f_mismatch(const stan::math::var& x) { return 2 * x; }
 TEST(test_ad, mismatch) {
   double x = 3.2;
   auto g = [](const auto& u) { return f_mismatch(u); };
-  // include following line to show exception error behavior
-  // stan::test::expect_ad(g, x);
+  expect_expect_ad_failure(g, x);
 }
 
 // OVERLOAD THAT FAILS DUE TO MISMATCHED EXCEPTION CONDITIONS
@@ -83,8 +156,7 @@ double f_misthrow(const double& x) {
 TEST(test_ad, misthrow) {
   double x = 1.73;
   auto h = [](const auto& u) { return f_misthrow(u); };
-  // include following line to show exception error behavior
-  // stan::test::expect_ad(h, x);
+  expect_expect_ad_failure(h, x);
 }
 
 struct foo_fun {
