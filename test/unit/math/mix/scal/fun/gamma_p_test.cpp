@@ -3,13 +3,6 @@
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/mix/mat.hpp>
 
-struct fun1 {
-  template <typename T>
-  inline T operator()(const Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
-    return stan::math::gamma_p(x(0), x(1));
-  }
-};
-
 TEST(mathMixScalFun, gammaP) {
   auto f = [](const auto& x1, const auto& x2) {
     return stan::math::gamma_p(x1, x2);
