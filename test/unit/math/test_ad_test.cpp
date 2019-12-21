@@ -69,7 +69,7 @@ void expect_test_combinator_to_fail(const G& test_combinator, const F& f,
       "Expected: 1 non-fatal failure");
 }
 
-TEST(test_unit_math_test_mix, test_expect_test_combinator_to_fail) {
+TEST(test_unit_math_test_ad, test_expect_test_combinator_to_fail) {
   auto combinator_that_succeeds = [](auto& f) {};
   auto combinator_that_fails = [](auto& f) { ADD_FAILURE() << ""; };
   auto combinator_that_fails_twice = [](auto& f) {
@@ -148,7 +148,7 @@ T f_match(const T& x) {
   return -2 * x;
 }
 double f_match(const double& x) { return -2 * x; }
-TEST(test_ad, match) {
+TEST(test_unit_math_test_ad, match) {
   double x = 3.2;
   auto g = [](const auto& u) { return f_match(u); };
   stan::test::expect_ad(g, x);
@@ -162,7 +162,7 @@ T f_mismatch(const T& x) {
   return -2 * x;
 }
 stan::math::var f_mismatch(const stan::math::var& x) { return 2 * x; }
-TEST(test_ad, mismatch) {
+TEST(test_unit_math_test_ad, mismatch) {
   double x = 3.2;
   auto g = [](const auto& u) { return f_mismatch(u); };
   expect_expect_ad_failure(g, x);
@@ -180,7 +180,7 @@ double f_misthrow(const double& x) {
   return -2 * x;
 }
 
-TEST(test_ad, misthrow) {
+TEST(test_unit_math_test_ad, misthrow) {
   double x = 1.73;
   auto h = [](const auto& u) { return f_misthrow(u); };
   expect_expect_ad_failure(h, x);
@@ -203,7 +203,7 @@ stan::return_type_t<T1> binary_function_misthrow(T1 x1, int x2) {
   return x1vec[0] + x2vec[0];
 }
 
-TEST(test_ad, misthrow_binary) {
+TEST(test_unit_math_test_ad, misthrow_binary) {
   auto g = [](const auto& x1, const auto& x2) {
     return binary_function_misthrow(x1, x2);
   };
@@ -234,7 +234,7 @@ stan::return_type_t<T1, stan::math::var> binary_function_misthrow_2(
   return x1vec[0] + x2vec[0];
 }
 
-TEST(test_ad, misthrow_binary_2) {
+TEST(test_unit_math_test_ad, misthrow_binary_2) {
   auto g = [](const auto& x1, const auto& x2) {
     return binary_function_misthrow_2(x1, x2);
   };
@@ -263,7 +263,7 @@ stan::return_type_t<T1, T2> ternary_function_misthrow(T1 x1, T2 x2, int x3) {
   return x1vec[0] + x2vec[0] + x3vec[0];
 }
 
-TEST(test_ad, misthrow_ternary) {
+TEST(test_unit_math_test_ad, misthrow_ternary) {
   auto g = [](const auto& x1, const auto& x2, const auto& x3) {
     return ternary_function_misthrow(x1, x2, x3);
   };
@@ -299,7 +299,7 @@ stan::return_type_t<T1, T2, stan::math::var> ternary_function_misthrow_2(
   return x1vec[0] + x2vec[0] + x3vec[0];
 }
 
-TEST(test_ad, misthrow_ternary_2) {
+TEST(test_unit_math_test_ad, misthrow_ternary_2) {
   auto g = [](const auto& x1, const auto& x2, const auto& x3) {
     return ternary_function_misthrow_2(x1, x2, x3);
   };
@@ -332,7 +332,7 @@ struct foo_fun {
 int foo_fun::calls_int_ = -1;
 int foo_fun::calls_t_ = -1;
 
-TEST(test_ad, integerGetsPassed) {
+TEST(test_unit_math_test_ad, integerGetsPassed) {
   // double arguments will not call int version
   foo_fun h;
   foo_fun::calls_int_ = 0;
@@ -416,7 +416,7 @@ int bar_fun::calls_int1_ = -1;
 int bar_fun::calls_int2_ = -1;
 int bar_fun::calls_int12_ = -1;
 
-TEST(testAd, integerGetsPassedBinary) {
+TEST(test_unit_math_test_ad, integerGetsPassedBinary) {
   bar_fun f;
 
   bar_fun::reset();
@@ -485,7 +485,7 @@ inline typename stan::math::apply_scalar_unary<baz_fun, T>::return_t baz(
   return stan::math::apply_scalar_unary<baz_fun, T>::apply(x);
 }
 
-TEST(testAd, integerGetsPassedVectorized) {
+TEST(test_unit_math_test_ad, integerGetsPassedVectorized) {
   auto h = [&](auto x) { return baz(x); };
 
   baz_int = 0;
@@ -617,7 +617,7 @@ int ternary_fun::calls_int13_ = 0;
 int ternary_fun::calls_int23_ = 0;
 int ternary_fun::calls_int123_ = 0;
 
-TEST(testUnitMath, testAdTernaryIntPassed) {
+TEST(test_unit_math_test_ad, testAdTernaryIntPassed) {
   ternary_fun f;
 
   // { }
