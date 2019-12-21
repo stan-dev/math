@@ -487,13 +487,6 @@ void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1,
 
 template <typename F, typename T2>
 void expect_ad_vv(const ad_tolerances& tols, const F& f, int x1, const T2& x2) {
-  try {
-    f(x1, x2);
-  } catch (...) {
-    expect_all_throw(f, x1, x2);
-    return;
-  }
-
   double x1_dbl = static_cast<double>(x1);
 
   // expect same result with int or and cast to double
@@ -509,13 +502,6 @@ void expect_ad_vv(const ad_tolerances& tols, const F& f, int x1, const T2& x2) {
 
 template <typename F, typename T1>
 void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1, int x2) {
-  try {
-    f(x1, x2);
-  } catch (...) {
-    expect_all_throw(f, x1, x2);
-    return;
-  }
-
   double x2_dbl = static_cast<double>(x2);
 
   // expect same result with int or and cast to double
@@ -647,13 +633,6 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
 template <typename F, typename T3>
 void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, int x2,
                    const T3& x3) {
-  try {
-    f(x1, x2, x3);
-  } catch (...) {
-    expect_all_throw(f, x1, x2, x3);
-    return;
-  }
-
   double x1_dbl = static_cast<double>(x1);
   double x2_dbl = static_cast<double>(x2);
 
@@ -689,13 +668,6 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, int x2,
 template <typename F, typename T2, typename T3>
 void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, const T2& x2,
                    const T3& x3) {
-  try {
-    f(x1, x2, x3);
-  } catch (...) {
-    expect_all_throw(f, x1, x2, x3);
-    return;
-  }
-
   double x1_dbl = static_cast<double>(x1);
 
   // test all promotion patterns
@@ -726,13 +698,6 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, const T2& x2,
 template <typename F, typename T1, typename T3>
 void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1, int x2,
                    const T3& x3) {
-  try {
-    f(x1, x2, x3);
-  } catch (...) {
-    expect_all_throw(f, x1, x2, x3);
-    return;
-  }
-
   double x2_dbl = static_cast<double>(x2);
 
   // test promotion
@@ -763,13 +728,6 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1, int x2,
 template <typename F, typename T1, typename T2>
 void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
                    const T2& x2, int x3) {
-  try {
-    f(x1, x2, x3);
-  } catch (...) {
-    expect_all_throw(f, x1, x2, x3);
-    return;
-  }
-
   double x3_dbl = static_cast<double>(x3);
 
   // test promotion
@@ -799,13 +757,6 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
 template <typename F, typename T2>
 void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, const T2& x2,
                    int x3) {
-  try {
-    f(x1, x2, x3);
-  } catch (...) {
-    expect_all_throw(f, x1, x2, x3);
-    return;
-  }
-
   double x1_dbl = static_cast<double>(x1);
   double x3_dbl = static_cast<double>(x3);
 
@@ -840,13 +791,6 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, const T2& x2,
 template <typename F, typename T1>
 void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1, int x2,
                    int x3) {
-  try {
-    f(x1, x2, x3);
-  } catch (...) {
-    expect_all_throw(f, x1, x2, x3);
-    return;
-  }
-
   double x2_dbl = static_cast<double>(x2);
   double x3_dbl = static_cast<double>(x3);
 

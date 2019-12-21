@@ -29,6 +29,33 @@ TEST(test_unit_math_test_ad, test_ad_binary) {
 
   double y2 = std::numeric_limits<double>::quiet_NaN();
   stan::test::expect_ad(g, x, y2);
+
+  int y3 = -3;
+  stan::test::expect_ad(g, x, y3);
+}
+
+template <typename T1, typename T2, typename T3>
+stan::return_type_t<T1, T2, T3> arbitrary_ternary_function(T1 x1, T2 x2,
+                                                           T3 x3) {
+  stan::scalar_seq_view<T1> x1vec(x1);
+  stan::scalar_seq_view<T2> x2vec(x2);
+  stan::scalar_seq_view<T3> x3vec(x3);
+  return x1vec[0] + x2vec[0] + x3vec[0];
+}
+
+TEST(test_unit_math_test_ad, test_ad_ternary) {
+  auto g = [](const auto& x1, const auto& x2, const auto& x3) {
+    return arbitrary_ternary_function(x1, x2, x3);
+  };
+  std::vector<double> v{1, 2, 3};
+  double d = 1;
+  int i = 1;
+  stan::test::expect_ad(g, d, v, v);
+  stan::test::expect_ad(g, i, v, v);
+  stan::test::expect_ad(g, v, d, v);
+  stan::test::expect_ad(g, v, i, v);
+  stan::test::expect_ad(g, v, v, d);
+  stan::test::expect_ad(g, v, v, i);
 }
 
 template <typename G, typename F, typename... Ts>
@@ -157,6 +184,130 @@ TEST(test_ad, misthrow) {
   double x = 1.73;
   auto h = [](const auto& u) { return f_misthrow(u); };
   expect_expect_ad_failure(h, x);
+}
+
+// ANOTHER OVERLOAD THAT FAILS DUE TO MISMATCHED EXCEPTION CONDITIONS
+
+template <typename T1, typename T2>
+stan::return_type_t<T1, T2> binary_function_misthrow(T1 x1, T2 x2) {
+  stan::scalar_seq_view<T1> x1vec(x1);
+  stan::scalar_seq_view<T2> x2vec(x2);
+  return x1vec[0] + x2vec[0];
+}
+
+template <typename T1>
+stan::return_type_t<T1> binary_function_misthrow(T1 x1, int x2) {
+  throw std::runtime_error("binary_function_misthrow(T1, int) called");
+  stan::scalar_seq_view<T1> x1vec(x1);
+  stan::scalar_seq_view<int> x2vec(x2);
+  return x1vec[0] + x2vec[0];
+}
+
+TEST(test_ad, misthrow_binary) {
+  auto g = [](const auto& x1, const auto& x2) {
+    return binary_function_misthrow(x1, x2);
+  };
+  std::vector<double> v{1, 2, 3};
+  double d = 1;
+  int i = 1;
+  stan::test::expect_ad(g, d, v);
+  stan::test::expect_ad(g, i, v);
+  stan::test::expect_ad(g, v, d);
+  expect_expect_ad_failure(g, v, i);
+}
+
+// ANOTHER OVERLOAD THAT FAILS DUE TO MISMATCHED EXCEPTION CONDITIONS
+
+template <typename T1, typename T2>
+stan::return_type_t<T1, T2> binary_function_misthrow_2(T1 x1, T2 x2) {
+  stan::scalar_seq_view<T1> x1vec(x1);
+  stan::scalar_seq_view<T2> x2vec(x2);
+  return x1vec[0] + x2vec[0];
+}
+
+template <typename T1>
+stan::return_type_t<T1, stan::math::var> binary_function_misthrow_2(
+    T1 x1, stan::math::var x2) {
+  throw std::runtime_error("binary_function_misthrow(T1, var) called");
+  stan::scalar_seq_view<T1> x1vec(x1);
+  stan::scalar_seq_view<stan::math::var> x2vec(x2);
+  return x1vec[0] + x2vec[0];
+}
+
+TEST(test_ad, misthrow_binary_2) {
+  auto g = [](const auto& x1, const auto& x2) {
+    return binary_function_misthrow_2(x1, x2);
+  };
+  std::vector<double> v{1, 2, 3};
+  double d = 1;
+  stan::test::expect_ad(g, d, v);
+  expect_expect_ad_failure(g, v, d);
+}
+
+// ANOTHER OVERLOAD THAT FAILS DUE TO MISMATCHED EXCEPTION CONDITIONS
+
+template <typename T1, typename T2, typename T3>
+stan::return_type_t<T1, T2, T3> ternary_function_misthrow(T1 x1, T2 x2, T3 x3) {
+  stan::scalar_seq_view<T1> x1vec(x1);
+  stan::scalar_seq_view<T2> x2vec(x2);
+  stan::scalar_seq_view<T3> x3vec(x3);
+  return x1vec[0] + x2vec[0] + x3vec[0];
+}
+
+template <typename T1, typename T2>
+stan::return_type_t<T1, T2> ternary_function_misthrow(T1 x1, T2 x2, int x3) {
+  throw std::runtime_error("ternary_function_misthrow(T1, T2, int) called");
+  stan::scalar_seq_view<T1> x1vec(x1);
+  stan::scalar_seq_view<T2> x2vec(x2);
+  stan::scalar_seq_view<int> x3vec(x3);
+  return x1vec[0] + x2vec[0] + x3vec[0];
+}
+
+TEST(test_ad, misthrow_ternary) {
+  auto g = [](const auto& x1, const auto& x2, const auto& x3) {
+    return ternary_function_misthrow(x1, x2, x3);
+  };
+  std::vector<double> v{1, 2, 3};
+  double d = 1;
+  int i = 1;
+  stan::test::expect_ad(g, d, v, v);
+  stan::test::expect_ad(g, i, v, v);
+  stan::test::expect_ad(g, v, d, v);
+  stan::test::expect_ad(g, v, i, v);
+  stan::test::expect_ad(g, v, v, d);
+  expect_expect_ad_failure(g, v, v, i);
+}
+
+// ANOTHER OVERLOAD THAT FAILS DUE TO MISMATCHED EXCEPTION CONDITIONS
+
+template <typename T1, typename T2, typename T3>
+stan::return_type_t<T1, T2, T3> ternary_function_misthrow_2(T1 x1, T2 x2,
+                                                            T3 x3) {
+  stan::scalar_seq_view<T1> x1vec(x1);
+  stan::scalar_seq_view<T2> x2vec(x2);
+  stan::scalar_seq_view<T3> x3vec(x3);
+  return x1vec[0] + x2vec[0] + x3vec[0];
+}
+
+template <typename T1, typename T2>
+stan::return_type_t<T1, T2, stan::math::var> ternary_function_misthrow_2(
+    T1 x1, T2 x2, stan::math::var x3) {
+  throw std::runtime_error("ternary_function_misthrow(T1, T2, var) called");
+  stan::scalar_seq_view<T1> x1vec(x1);
+  stan::scalar_seq_view<T2> x2vec(x2);
+  stan::scalar_seq_view<stan::math::var> x3vec(x3);
+  return x1vec[0] + x2vec[0] + x3vec[0];
+}
+
+TEST(test_ad, misthrow_ternary_2) {
+  auto g = [](const auto& x1, const auto& x2, const auto& x3) {
+    return ternary_function_misthrow_2(x1, x2, x3);
+  };
+  std::vector<double> v{1, 2, 3};
+  double d = 1;
+  stan::test::expect_ad(g, d, v, v);
+  stan::test::expect_ad(g, v, d, v);
+  expect_expect_ad_failure(g, v, v, d);
 }
 
 struct foo_fun {
