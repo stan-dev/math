@@ -47,14 +47,18 @@ TEST(mathMixScalFun, gammaP) {
   }
 }
 
+
 // separate tests when a is positive_infinity
 TEST(mathMixScalFun, gammaP_pos_inf) {
+  auto g = [](const auto& x) {
+    return stan::math::gamma_p(x(0), x(1));
+  };  
   stan::math::vector_d x(2);
   x << 0.5001, stan::math::positive_infinity();
   Eigen::Matrix<double, Eigen::Dynamic, 1> grad_ad;
   double fx_ad = 1;
-  fun1 g;
-  stan::math::gradient<fun1>(g, x, fx_ad, grad_ad);
+
+  stan::math::gradient(g, x, fx_ad, grad_ad);
   stan::test::expect_near_rel("gradient() val", 1, fx_ad, 1e-8);
   stan::test::expect_near_rel("gradient() grad z", stan::math::not_a_number(),
                               grad_ad(0), 1e-3);
@@ -62,7 +66,7 @@ TEST(mathMixScalFun, gammaP_pos_inf) {
                               grad_ad(1), 1e-3);
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> grad_ad_fvar;
-  stan::math::gradient<double, fun1>(g, x, fx_ad, grad_ad_fvar);
+  stan::math::gradient<double>(g, x, fx_ad, grad_ad_fvar);
   stan::test::expect_near_rel("gradient_fvar() val", 1, fx_ad, 1e-8);
   stan::test::expect_near_rel("gradient_fvar() grad z",
                               stan::math::not_a_number(), grad_ad_fvar(0),
