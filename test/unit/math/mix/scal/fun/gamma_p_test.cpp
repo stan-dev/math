@@ -34,7 +34,12 @@ TEST(mathMixScalFun, gammaP) {
     for (int x2 : int_args) {
       stan::test::expect_ad(f, x1, x2);
     }
-  stan::test::expect_ad(f, 0.5001, 1.0001);
+  for (double x2 : args) {
+      stan::test::expect_ad(f, stan::math::positive_infinity(), x2);
+    }
+  for (int x2 : int_args) {
+      stan::test::expect_ad(f, stan::math::positive_infinity(), x2);
+    }
 }
 
 // separate tests when a is positive_infinity
