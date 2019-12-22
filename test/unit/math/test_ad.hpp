@@ -492,7 +492,8 @@ void expect_ad_vv(const ad_tolerances& tols, const F& f, int x1, const T2& x2) {
   // test value, exception handling checked recursively
   try {
     expect_near_rel("expect_ad_vv(int, T2)", f(x1, x2), f(x1_dbl, x2));
-  } catch (...) {}
+  } catch (...) {
+  }
 
   // expect autodiff to work at double value
   expect_ad_vv(tols, f, x1_dbl, x2);
@@ -509,7 +510,8 @@ void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1, int x2) {
   // test value, exception handling checked recursively
   try {
     expect_near_rel("expect_ad_vv(T1, int)", f(x1, x2), f(x1, x2_dbl));
-  } catch (...) {}
+  } catch (...) {
+  }
 
   // expect autodiff to work at double value
   expect_ad_vv(tols, f, x1, x2_dbl);
@@ -648,7 +650,8 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, int x2,
   try {
     expect_near_rel("expect_ad_vvv(int, int, T3)", f(x1, x2, x3),
                     f(x1_dbl, x2_dbl, x3));
-  } catch (...) {}
+  } catch (...) {
+  }
 
   // bind ints and test autodiff
   auto g23 = [=](const auto& u2, const auto& u3) { return f(x1, u2, u3); };
@@ -683,7 +686,8 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, const T2& x2,
   try {
     expect_near_rel("expect_ad_vvv(int, T2, T3)", f(x1, x2, x3),
                     f(x1_dbl, x2, x3));
-  } catch (...) {}
+  } catch (...) {
+  }
 
   // bind ints and test autodiff
   auto g23 = [=](const auto& u2, const auto& u3) { return f(x1, u2, u3); };
@@ -715,7 +719,8 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1, int x2,
   try {
     expect_near_rel("expect_ad_vvv(T1, int, T3)", f(x1, x2, x3),
                     f(x1, x2_dbl, x3));
-  } catch (...) {}
+  } catch (...) {
+  }
 
   // bind ints and test autodiff
   auto g13 = [=](const auto& u1, const auto& u3) { return f(u1, x2, u3); };
@@ -747,7 +752,8 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
   try {
     expect_near_rel("expect_ad_vvv(T1, T2, int)", f(x1, x2, x3),
                     f(x1, x2, x3_dbl));
-  } catch (...) {}
+  } catch (...) {
+  }
 
   // bind ints and test autodiff
   auto g12 = [=](const auto& u1, const auto& u2) { return f(u1, u2, x3); };
@@ -780,7 +786,8 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, const T2& x2,
   try {
     expect_near_rel("expect_ad_vvv(int, T2, int)", f(x1, x2, x3),
                     f(x1_dbl, x2, x3_dbl));
-  } catch (...) {}
+  } catch (...) {
+  }
 
   // bind ints and test autodiff
   auto g23 = [=](const auto& u2, const auto& u3) { return f(x1, u2, u3); };
@@ -816,7 +823,8 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1, int x2,
   try {
     expect_near_rel("expect_ad_vvv(T1, int, int)", f(x1, x2, x3),
                     f(x1, x2_dbl, x3_dbl));
-  } catch (...) {}
+  } catch (...) {
+  }
 
   // bind ints and test autodiff
   auto g13 = [=](const auto& u1, const auto& u3) { return f(u1, x2, u3); };
@@ -1430,8 +1438,8 @@ void expect_unary_vectorized(const ad_tolerances& tols, const F& f, Ts... xs) {
 /**
  * Test that the specified unary function produces derivatives and
  * values for the specified values that are consistent with primitive
- * values and finite differences.  Tests both scalars and containers.
- *
+ * values and finite differences.  Tests both scalars and containers.  Uses
+ * default tolerances.
  * @tparam F type of function to test
  * @tparam T type of first argument to test
  * @tparam Ts type of remaining arguments to test

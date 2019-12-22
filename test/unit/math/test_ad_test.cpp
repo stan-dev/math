@@ -247,7 +247,8 @@ TEST(test_unit_math_test_ad, misthrow_in_double_version) {
 // OVERLOAD THAT FAILS BECAUSE INT VERSION HAS MISMATCHED EXCEPTION CONDITIONS
 
 template <typename T1, typename... Ts>
-stan::return_type_t<T1, Ts...> int_version_throws(const T1& x1, const Ts&... xs) {
+stan::return_type_t<T1, Ts...> int_version_throws(const T1& x1,
+                                                  const Ts&... xs) {
   stan::scalar_seq_view<T1> x1vec(x1);
   return x1vec[0];
 }
@@ -259,9 +260,7 @@ int int_version_throws(const int& x1, const Ts&... xs) {
 }
 
 TEST(test_unit_math_test_ad, misthrow_in_int_version) {
-  auto g = [](const auto&... xs) {
-             return int_version_throws(xs...);
-           };
+  auto g = [](const auto&... xs) { return int_version_throws(xs...); };
   std::vector<double> v{1, 2, 3};
   int i = 1;
   expect_expect_ad_failure(g, i);
@@ -284,9 +283,7 @@ stan::math::var var_version_throws(const stan::math::var& x1, const Ts&... xs) {
 }
 
 TEST(test_unit_math_test_ad, misthrow_in_var_version) {
-  auto g = [](const auto&... xs) {
-             return var_version_throws(xs...);
-           };
+  auto g = [](const auto&... xs) { return var_version_throws(xs...); };
   std::vector<double> v{1, 2, 3};
   double d = 1;
   expect_expect_ad_failure(g, d);
@@ -298,11 +295,13 @@ TEST(test_unit_math_test_ad, misthrow_in_var_version) {
 
 template <typename T, typename... Ts>
 stan::return_type_t<T, Ts...> bad_int_handling(const T& x, const Ts&... xs) {
-  return x/2;
+  return x / 2;
 }
 
 TEST(test_unit_math_test_ad, bad_int_handling_caught) {
-  auto f = [](const auto& x, const auto&... xs) { return bad_int_handling(x, xs...); };
+  auto f = [](const auto& x, const auto&... xs) {
+    return bad_int_handling(x, xs...);
+  };
   expect_expect_ad_failure(f, 1);
   expect_expect_ad_failure(f, 1, 1.0);
   expect_expect_ad_failure(f, 1, 1.0, 1.0);
