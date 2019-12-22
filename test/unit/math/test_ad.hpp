@@ -489,8 +489,10 @@ template <typename F, typename T2>
 void expect_ad_vv(const ad_tolerances& tols, const F& f, int x1, const T2& x2) {
   double x1_dbl = static_cast<double>(x1);
 
-  // expect same result with int or and cast to double
-  expect_near_rel("expect_ad_vv(int, T2)", f(x1, x2), f(x1_dbl, x2));
+  // test value, exception handling checked recursively
+  try {
+    expect_near_rel("expect_ad_vv(int, T2)", f(x1, x2), f(x1_dbl, x2));
+  } catch (...) {}
 
   // expect autodiff to work at double value
   expect_ad_vv(tols, f, x1_dbl, x2);
@@ -504,8 +506,10 @@ template <typename F, typename T1>
 void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1, int x2) {
   double x2_dbl = static_cast<double>(x2);
 
-  // expect same result with int or and cast to double
-  expect_near_rel("expect_ad_vv(T1, int)", f(x1, x2), f(x1, x2_dbl));
+  // test value, exception handling checked recursively
+  try {
+    expect_near_rel("expect_ad_vv(T1, int)", f(x1, x2), f(x1, x2_dbl));
+  } catch (...) {}
 
   // expect autodiff to work at double value
   expect_ad_vv(tols, f, x1, x2_dbl);
@@ -640,9 +644,11 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, int x2,
   expect_ad_vvv(tols, f, x1_dbl, x2, x3);
   expect_ad_vvv(tols, f, x1, x2_dbl, x3);
 
-  // test value
-  expect_near_rel("expect_ad_vvv(int, int, T3)", f(x1, x2, x3),
-                  f(x1_dbl, x2_dbl, x3));
+  // test value, exception handling checked recursively
+  try {
+    expect_near_rel("expect_ad_vvv(int, int, T3)", f(x1, x2, x3),
+                    f(x1_dbl, x2_dbl, x3));
+  } catch (...) {}
 
   // bind ints and test autodiff
   auto g23 = [=](const auto& u2, const auto& u3) { return f(x1, u2, u3); };
@@ -673,9 +679,11 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, const T2& x2,
   // test all promotion patterns
   expect_ad_vvv(tols, f, x1_dbl, x2, x3);
 
-  // test value
-  expect_near_rel("expect_ad_vvv(int, T2, T3)", f(x1, x2, x3),
-                  f(x1_dbl, x2, x3));
+  // test value, exception handling checked recursively
+  try {
+    expect_near_rel("expect_ad_vvv(int, T2, T3)", f(x1, x2, x3),
+                    f(x1_dbl, x2, x3));
+  } catch (...) {}
 
   // bind ints and test autodiff
   auto g23 = [=](const auto& u2, const auto& u3) { return f(x1, u2, u3); };
@@ -703,9 +711,11 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1, int x2,
   // test promotion
   expect_ad_vvv(tols, f, x1, x2_dbl, x3);
 
-  // test value
-  expect_near_rel("expect_ad_vvv(T1, int, T3)", f(x1, x2, x3),
-                  f(x1, x2_dbl, x3));
+  // test value, exception handling checked recursively
+  try {
+    expect_near_rel("expect_ad_vvv(T1, int, T3)", f(x1, x2, x3),
+                    f(x1, x2_dbl, x3));
+  } catch (...) {}
 
   // bind ints and test autodiff
   auto g13 = [=](const auto& u1, const auto& u3) { return f(u1, x2, u3); };
@@ -733,9 +743,11 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
   // test promotion
   expect_ad_vvv(tols, f, x1, x2, x3_dbl);
 
-  // test value
-  expect_near_rel("expect_ad_vvv(T1, T2, int)", f(x1, x2, x3),
-                  f(x1, x2, x3_dbl));
+  // test value, exception handling checked recursively
+  try {
+    expect_near_rel("expect_ad_vvv(T1, T2, int)", f(x1, x2, x3),
+                    f(x1, x2, x3_dbl));
+  } catch (...) {}
 
   // bind ints and test autodiff
   auto g12 = [=](const auto& u1, const auto& u2) { return f(u1, u2, x3); };
@@ -764,9 +776,11 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, const T2& x2,
   expect_ad_vvv(tols, f, x1_dbl, x2, x3);
   expect_ad_vvv(tols, f, x1, x2, x3_dbl);
 
-  // test value
-  expect_near_rel("expect_ad_vvv(int, T2, int)", f(x1, x2, x3),
-                  f(x1_dbl, x2, x3_dbl));
+  // test value, exception handling checked recursively
+  try {
+    expect_near_rel("expect_ad_vvv(int, T2, int)", f(x1, x2, x3),
+                    f(x1_dbl, x2, x3_dbl));
+  } catch (...) {}
 
   // bind ints and test autodiff
   auto g23 = [=](const auto& u2, const auto& u3) { return f(x1, u2, u3); };
@@ -798,9 +812,11 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1, int x2,
   expect_ad_vvv(tols, f, x1, x2_dbl, x3);
   expect_ad_vvv(tols, f, x1, x2, x3_dbl);
 
-  // test value
-  expect_near_rel("expect_ad_vvv(T1, int, int)", f(x1, x2, x3),
-                  f(x1, x2_dbl, x3_dbl));
+  // test value, exception handling checked recursively
+  try {
+    expect_near_rel("expect_ad_vvv(T1, int, int)", f(x1, x2, x3),
+                    f(x1, x2_dbl, x3_dbl));
+  } catch (...) {}
 
   // bind ints and test autodiff
   auto g13 = [=](const auto& u1, const auto& u3) { return f(u1, x2, u3); };
