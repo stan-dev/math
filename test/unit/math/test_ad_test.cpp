@@ -716,3 +716,15 @@ TEST(test_unit_math_test_ad, testAdTernaryIntPassed) {
   EXPECT_LT(0, ternary_fun::calls_int23_);
   EXPECT_LT(0, ternary_fun::calls_int123_);
 }
+
+template <typename T>
+stan::return_type_t<T> prim_throws(const T& x) {
+  throw std::runtime_error("prim_throws(T) called");
+}
+
+TEST(test_unit_math_test_ad, int_arguments_safe_when_prim_throws) {
+  auto f = [](const auto& x) { return prim_throws(x); };
+  stan::test::expect_ad(f, 1.0);
+  // TODO(peterwicksstringfield) This is the problem with my first PR.
+  expect_expect_ad_failure(f, 1);
+}
