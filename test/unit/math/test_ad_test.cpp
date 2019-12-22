@@ -154,6 +154,40 @@ TEST(test_unit_math_test_ad, match) {
   stan::test::expect_ad(g, x);
 }
 
+// AN ALWAYS THROWING FUNCTION THAT PASSES
+
+template <typename... Ts>
+stan::return_type_t<Ts...> always_throws(const Ts&... xs) {
+  throw std::runtime_error("always_throws(Ts...) called");
+  // simulates calling a function with bad arguments
+}
+
+TEST(test_unit_math_test_ad, always_throws_case_handled_correctly) {
+  auto f = [](const auto&... xs) { return always_throws(xs...); };
+  std::vector<double> v{1, 2, 3};
+  stan::test::expect_ad(f, 1.0);
+  stan::test::expect_ad(f, 1.0, 1.0);
+  stan::test::expect_ad(f, v, 1.0);
+  stan::test::expect_ad(f, 1.0, v);
+  stan::test::expect_ad(f, 1.0, 1.0, 1.0);
+  stan::test::expect_ad(f, v, 1.0, 1.0);
+  stan::test::expect_ad(f, 1.0, v, 1.0);
+  stan::test::expect_ad(f, 1.0, 1.0, v);
+  stan::test::expect_ad(f, 1);
+  stan::test::expect_ad(f, 1, 1);
+  stan::test::expect_ad(f, v, 1);
+  stan::test::expect_ad(f, 1, v);
+  stan::test::expect_ad(f, 1, 1.0, 1.0);
+  stan::test::expect_ad(f, 1.0, 1, 1.0);
+  stan::test::expect_ad(f, 1.0, 1.0, 1);
+  stan::test::expect_ad(f, v, 1, 1.0);
+  stan::test::expect_ad(f, v, 1.0, 1);
+  stan::test::expect_ad(f, 1, v, 1.0);
+  stan::test::expect_ad(f, 1.0, v, 1);
+  stan::test::expect_ad(f, 1, 1.0, v);
+  stan::test::expect_ad(f, 1.0, 1, v);
+}
+
 // OVERLOAD THAT FAILS DUE TO MISMATCHED VALUE / DERIVATIVE
 
 // double overload does not match template behavior for value
@@ -170,7 +204,7 @@ TEST(test_unit_math_test_ad, mismatch) {
 
 // OVERLOAD THAT FAILS DUE TO MISMATCHED EXCEPTION CONDITIONS
 
-// double overload does not match template behavior for exceptionsalue
+// double overload does not match template behavior for exceptions
 template <typename T>
 T f_misthrow(const T& x) {
   return -2 * x;
@@ -186,163 +220,78 @@ TEST(test_unit_math_test_ad, misthrow) {
   expect_expect_ad_failure(h, x);
 }
 
-// ANOTHER OVERLOAD THAT FAILS DUE TO MISMATCHED EXCEPTION CONDITIONS
+// OVERLOAD THAT FAILS BECAUSE DOUBLE VERSION HAS MISMATCHED EXCEPTION CONDITIONS
 
-template <typename T1, typename T2>
-stan::return_type_t<T1, T2> binary_function_misthrow(T1 x1, T2 x2) {
+template <typename T1, typename... Ts>
+stan::return_type_t<T1, Ts...> double_version_throws(const T1& x1,
+                                                     const Ts&... xs) {
   stan::scalar_seq_view<T1> x1vec(x1);
-  stan::scalar_seq_view<T2> x2vec(x2);
-  return x1vec[0] + x2vec[0];
+  return x1vec[0];
 }
-
-template <typename T1>
-stan::return_type_t<T1> binary_function_misthrow(T1 x1, int x2) {
-  throw std::runtime_error("binary_function_misthrow(T1, int) called");
-  stan::scalar_seq_view<T1> x1vec(x1);
-  stan::scalar_seq_view<int> x2vec(x2);
-  return x1vec[0] + x2vec[0];
-}
-
-TEST(test_unit_math_test_ad, misthrow_binary) {
-  auto g = [](const auto& x1, const auto& x2) {
-    return binary_function_misthrow(x1, x2);
-  };
-  std::vector<double> v{1, 2, 3};
-  double d = 1;
-  int i = 1;
-  stan::test::expect_ad(g, d, v);
-  stan::test::expect_ad(g, i, v);
-  stan::test::expect_ad(g, v, d);
-  expect_expect_ad_failure(g, v, i);
-}
-
-// ANOTHER OVERLOAD THAT FAILS DUE TO MISMATCHED EXCEPTION CONDITIONS
-
-template <typename T1, typename T2>
-stan::return_type_t<T1, T2> binary_function_misthrow_2(T1 x1, T2 x2) {
-  stan::scalar_seq_view<T1> x1vec(x1);
-  stan::scalar_seq_view<T2> x2vec(x2);
-  return x1vec[0] + x2vec[0];
-}
-
-template <typename T1>
-stan::return_type_t<T1, stan::math::var> binary_function_misthrow_2(
-    T1 x1, stan::math::var x2) {
-  throw std::runtime_error("binary_function_misthrow(T1, var) called");
-  stan::scalar_seq_view<T1> x1vec(x1);
-  stan::scalar_seq_view<stan::math::var> x2vec(x2);
-  return x1vec[0] + x2vec[0];
-}
-
-TEST(test_unit_math_test_ad, misthrow_binary_2) {
-  auto g = [](const auto& x1, const auto& x2) {
-    return binary_function_misthrow_2(x1, x2);
-  };
-  std::vector<double> v{1, 2, 3};
-  double d = 1;
-  stan::test::expect_ad(g, d, v);
-  expect_expect_ad_failure(g, v, d);
-}
-
-// ANOTHER OVERLOAD THAT FAILS DUE TO MISMATCHED EXCEPTION CONDITIONS
-
-template <typename T1, typename T2, typename T3>
-stan::return_type_t<T1, T2, T3> ternary_function_misthrow(T1 x1, T2 x2, T3 x3) {
-  stan::scalar_seq_view<T1> x1vec(x1);
-  stan::scalar_seq_view<T2> x2vec(x2);
-  stan::scalar_seq_view<T3> x3vec(x3);
-  return x1vec[0] + x2vec[0] + x3vec[0];
-}
-
-template <typename T1, typename T2>
-stan::return_type_t<T1, T2> ternary_function_misthrow(T1 x1, T2 x2, int x3) {
-  throw std::runtime_error("ternary_function_misthrow(T1, T2, int) called");
-  stan::scalar_seq_view<T1> x1vec(x1);
-  stan::scalar_seq_view<T2> x2vec(x2);
-  stan::scalar_seq_view<int> x3vec(x3);
-  return x1vec[0] + x2vec[0] + x3vec[0];
-}
-
-TEST(test_unit_math_test_ad, misthrow_ternary) {
-  auto g = [](const auto& x1, const auto& x2, const auto& x3) {
-    return ternary_function_misthrow(x1, x2, x3);
-  };
-  std::vector<double> v{1, 2, 3};
-  double d = 1;
-  int i = 1;
-  stan::test::expect_ad(g, d, v, v);
-  stan::test::expect_ad(g, i, v, v);
-  stan::test::expect_ad(g, v, d, v);
-  stan::test::expect_ad(g, v, i, v);
-  stan::test::expect_ad(g, v, v, d);
-  expect_expect_ad_failure(g, v, v, i);
-}
-
-// ANOTHER OVERLOAD THAT FAILS DUE TO MISMATCHED EXCEPTION CONDITIONS
-
-template <typename T1, typename T2, typename T3>
-stan::return_type_t<T1, T2, T3> ternary_function_misthrow_2(T1 x1, T2 x2,
-                                                            T3 x3) {
-  stan::scalar_seq_view<T1> x1vec(x1);
-  stan::scalar_seq_view<T2> x2vec(x2);
-  stan::scalar_seq_view<T3> x3vec(x3);
-  return x1vec[0] + x2vec[0] + x3vec[0];
-}
-
-template <typename T1, typename T2>
-stan::return_type_t<T1, T2, stan::math::var> ternary_function_misthrow_2(
-    T1 x1, T2 x2, stan::math::var x3) {
-  throw std::runtime_error("ternary_function_misthrow(T1, T2, var) called");
-  stan::scalar_seq_view<T1> x1vec(x1);
-  stan::scalar_seq_view<T2> x2vec(x2);
-  stan::scalar_seq_view<stan::math::var> x3vec(x3);
-  return x1vec[0] + x2vec[0] + x3vec[0];
-}
-
-TEST(test_unit_math_test_ad, misthrow_ternary_2) {
-  auto g = [](const auto& x1, const auto& x2, const auto& x3) {
-    return ternary_function_misthrow_2(x1, x2, x3);
-  };
-  std::vector<double> v{1, 2, 3};
-  double d = 1;
-  stan::test::expect_ad(g, d, v, v);
-  stan::test::expect_ad(g, v, d, v);
-  expect_expect_ad_failure(g, v, v, d);
-}
-
-// AN ALWAYS THROWING FUNCTION THAT PASSES
 
 template <typename... Ts>
-stan::return_type_t<Ts...> always_throws(const Ts&... xs) {
-  throw std::runtime_error("always_throws(Ts...) called");
-  // simulates calling a function with bad arguments
+int double_version_throws(const double& x1, const Ts&... xs) {
+  throw std::runtime_error("double_version_throws(int, Ts...) called");
+  return x1;
 }
 
-TEST(test_unit_math_test_ad, always_throws_case_handled_correctly) {
-  auto f = [](const auto&... xs) { return always_throws(xs...); };
-  Eigen::MatrixXd m(2, 2);
-  m << 1, 2, 3, 4;
-  stan::test::expect_ad(f, 1.0);
-  stan::test::expect_ad(f, 1.0, 1.0);
-  stan::test::expect_ad(f, m, 1.0);
-  stan::test::expect_ad(f, 1.0, m);
-  stan::test::expect_ad(f, 1.0, 1.0, 1.0);
-  stan::test::expect_ad(f, m, 1.0, 1.0);
-  stan::test::expect_ad(f, 1.0, m, 1.0);
-  stan::test::expect_ad(f, 1.0, 1.0, m);
-  expect_expect_ad_failure(f, 1);
-  expect_expect_ad_failure(f, 1, 1);
-  expect_expect_ad_failure(f, m, 1);
-  expect_expect_ad_failure(f, 1, m);
-  expect_expect_ad_failure(f, 1, 1.0, 1.0);
-  expect_expect_ad_failure(f, 1.0, 1, 1.0);
-  expect_expect_ad_failure(f, 1.0, 1.0, 1);
-  expect_expect_ad_failure(f, m, 1, 1.0);
-  expect_expect_ad_failure(f, m, 1.0, 1);
-  expect_expect_ad_failure(f, 1, m, 1.0);
-  expect_expect_ad_failure(f, 1.0, m, 1);
-  expect_expect_ad_failure(f, 1, 1.0, m);
-  expect_expect_ad_failure(f, 1.0, 1, m);
+TEST(test_unit_math_test_ad, misthrow_in_double_version) {
+  auto g = [](const auto&... xs) { return double_version_throws(xs...); };
+  std::vector<double> v{1, 2, 3};
+  double d = 1;
+  expect_expect_ad_failure(g, d);
+  expect_expect_ad_failure(g, d, v);
+  expect_expect_ad_failure(g, d, v, v);
+}
+
+// OVERLOAD THAT FAILS BECAUSE INT VERSION HAS MISMATCHED EXCEPTION CONDITIONS
+
+template <typename T1, typename... Ts>
+stan::return_type_t<T1, Ts...> int_version_throws(const T1& x1, const Ts&... xs) {
+  stan::scalar_seq_view<T1> x1vec(x1);
+  return x1vec[0];
+}
+
+template <typename... Ts>
+int int_version_throws(const int& x1, const Ts&... xs) {
+  throw std::runtime_error("int_version_throws(int, Ts...) called");
+  return x1;
+}
+
+TEST(test_unit_math_test_ad, misthrow_in_int_version) {
+  auto g = [](const auto&... xs) {
+             return int_version_throws(xs...);
+           };
+  std::vector<double> v{1, 2, 3};
+  int i = 1;
+  expect_expect_ad_failure(g, i);
+  expect_expect_ad_failure(g, i, v);
+  expect_expect_ad_failure(g, i, v, v);
+}
+
+// OVERLOAD THAT FAILS BECAUSE VAR VERSION HAS MISMATCHED EXCEPTION CONDITIONS
+
+template <typename T1, typename... Ts>
+stan::return_type_t<T1> var_version_throws(const T1& x1, const Ts&... xs) {
+  stan::scalar_seq_view<T1> x1vec(x1);
+  return x1vec[0];
+}
+
+template <typename... Ts>
+stan::math::var var_version_throws(const stan::math::var& x1, const Ts&... xs) {
+  throw std::runtime_error("var_version_throws(var, Ts...) called");
+  return x1;
+}
+
+TEST(test_unit_math_test_ad, misthrow_in_var_version) {
+  auto g = [](const auto&... xs) {
+             return var_version_throws(xs...);
+           };
+  std::vector<double> v{1, 2, 3};
+  double d = 1;
+  expect_expect_ad_failure(g, d);
+  expect_expect_ad_failure(g, d, v);
+  expect_expect_ad_failure(g, d, v, v);
 }
 
 // OVERLOAD THAT FAILS DUE TO VALUE MISMATCH BETWEEN DOUBLE/INT
@@ -354,9 +303,6 @@ stan::return_type_t<T, Ts...> bad_int_handling(const T& x, const Ts&... xs) {
 
 TEST(test_unit_math_test_ad, bad_int_handling_caught) {
   auto f = [](const auto& x, const auto&... xs) { return bad_int_handling(x, xs...); };
-  stan::test::expect_ad(f, 1.0);
-  stan::test::expect_ad(f, 1.0, 1.0);
-  stan::test::expect_ad(f, 1.0, 1.0, 1.0);
   expect_expect_ad_failure(f, 1);
   expect_expect_ad_failure(f, 1, 1.0);
   expect_expect_ad_failure(f, 1, 1.0, 1.0);
