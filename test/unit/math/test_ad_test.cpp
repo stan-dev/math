@@ -310,6 +310,58 @@ TEST(test_unit_math_test_ad, misthrow_ternary_2) {
   expect_expect_ad_failure(g, v, v, d);
 }
 
+// AN ALWAYS THROWING FUNCTION THAT PASSES
+
+template <typename... Ts>
+stan::return_type_t<Ts...> always_throws(const Ts&... xs) {
+  throw std::runtime_error("always_throws(Ts...) called");
+  // simulates calling a function with bad arguments
+}
+
+TEST(test_unit_math_test_ad, always_throws_case_handled_correctly) {
+  auto f = [](const auto&... xs) { return always_throws(xs...); };
+  Eigen::MatrixXd m(2, 2);
+  m << 1, 2, 3, 4;
+  stan::test::expect_ad(f, 1.0);
+  stan::test::expect_ad(f, 1.0, 1.0);
+  stan::test::expect_ad(f, m, 1.0);
+  stan::test::expect_ad(f, 1.0, m);
+  stan::test::expect_ad(f, 1.0, 1.0, 1.0);
+  stan::test::expect_ad(f, m, 1.0, 1.0);
+  stan::test::expect_ad(f, 1.0, m, 1.0);
+  stan::test::expect_ad(f, 1.0, 1.0, m);
+  expect_expect_ad_failure(f, 1);
+  expect_expect_ad_failure(f, 1, 1);
+  expect_expect_ad_failure(f, m, 1);
+  expect_expect_ad_failure(f, 1, m);
+  expect_expect_ad_failure(f, 1, 1.0, 1.0);
+  expect_expect_ad_failure(f, 1.0, 1, 1.0);
+  expect_expect_ad_failure(f, 1.0, 1.0, 1);
+  expect_expect_ad_failure(f, m, 1, 1.0);
+  expect_expect_ad_failure(f, m, 1.0, 1);
+  expect_expect_ad_failure(f, 1, m, 1.0);
+  expect_expect_ad_failure(f, 1.0, m, 1);
+  expect_expect_ad_failure(f, 1, 1.0, m);
+  expect_expect_ad_failure(f, 1.0, 1, m);
+}
+
+// OVERLOAD THAT FAILS DUE TO VALUE MISMATCH BETWEEN DOUBLE/INT
+
+template <typename T, typename... Ts>
+stan::return_type_t<T, Ts...> bad_int_handling(const T& x, const Ts&... xs) {
+  return x/2;
+}
+
+TEST(test_unit_math_test_ad, bad_int_handling_caught) {
+  auto f = [](const auto& x, const auto&... xs) { return bad_int_handling(x, xs...); };
+  stan::test::expect_ad(f, 1.0);
+  stan::test::expect_ad(f, 1.0, 1.0);
+  stan::test::expect_ad(f, 1.0, 1.0, 1.0);
+  expect_expect_ad_failure(f, 1);
+  expect_expect_ad_failure(f, 1, 1.0);
+  expect_expect_ad_failure(f, 1, 1.0, 1.0);
+}
+
 struct foo_fun {
   // must be static because operator() must be const
   static int calls_int_;
@@ -715,16 +767,4 @@ TEST(test_unit_math_test_ad, testAdTernaryIntPassed) {
   EXPECT_LT(0, ternary_fun::calls_int13_);
   EXPECT_LT(0, ternary_fun::calls_int23_);
   EXPECT_LT(0, ternary_fun::calls_int123_);
-}
-
-template <typename T>
-stan::return_type_t<T> prim_throws(const T& x) {
-  throw std::runtime_error("prim_throws(T) called");
-}
-
-TEST(test_unit_math_test_ad, int_arguments_safe_when_prim_throws) {
-  auto f = [](const auto& x) { return prim_throws(x); };
-  stan::test::expect_ad(f, 1.0);
-  // TODO(peterwicksstringfield) This is the problem with my first PR.
-  expect_expect_ad_failure(f, 1);
 }
