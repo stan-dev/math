@@ -4,17 +4,18 @@
 
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
-#include <cl.hpp>
+#include <CL/cl2.hpp>
 #include <string>
 #include <set>
 
 namespace stan {
 namespace math {
 
-template <typename Derived, typename ReturnScalar, typename... Args>
+template <typename Derived, typename Scalar, typename... Args>
 template <typename T_lhs>
-std::string operation_cl<Derived, ReturnScalar, Args...>::
-    get_kernel_source_for_evaluating_into(const T_lhs& lhs) const {
+std::string
+operation_cl<Derived, Scalar, Args...>::get_kernel_source_for_evaluating_into(
+    const T_lhs& lhs) const {
   static_assert(
       is_valid_expression<T_lhs>::value,
       "operation_cl::get_kernel_source_for_evaluating_into: left hand "

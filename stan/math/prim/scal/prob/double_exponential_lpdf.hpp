@@ -68,9 +68,7 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
       log_sigma(length(sigma));
   for (size_t i = 0; i < length(sigma); i++) {
     const T_partials_return sigma_dbl = value_of(sigma_vec[i]);
-    if (include_summand<propto, T_y, T_loc, T_scale>::value) {
-      inv_sigma[i] = 1.0 / sigma_dbl;
-    }
+    inv_sigma[i] = 1.0 / sigma_dbl;
     if (include_summand<propto, T_scale>::value) {
       log_sigma[i] = log(value_of(sigma_vec[i]));
     }
@@ -92,9 +90,7 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
     if (include_summand<propto, T_scale>::value) {
       logp -= log_sigma[n];
     }
-    if (include_summand<propto, T_y, T_loc, T_scale>::value) {
-      logp -= fabs_y_m_mu * inv_sigma[n];
-    }
+    logp -= fabs_y_m_mu * inv_sigma[n];
 
     T_partials_return sign_y_m_mu_times_inv_sigma(0);
     if (!is_constant_all<T_y, T_loc>::value) {

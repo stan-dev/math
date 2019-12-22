@@ -1,4 +1,4 @@
-#include <stan/math/prim/scal/meta/ad_promotable.hpp>
+#include <stan/math/prim/meta/ad_promotable.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathMetaPrim, primitive_to_double) {

@@ -7,8 +7,10 @@ TEST(MathMixMatFun, traceInvQuadFormLdlt) {
   };
 
   Eigen::MatrixXd m00(0, 0);
+  Eigen::MatrixXd m02(0, 2);
   Eigen::VectorXd v0(0);
   stan::test::expect_ad(f, m00, m00);
+  stan::test::expect_ad(f, m00, m02);
   stan::test::expect_ad(f, m00, v0);
 
   Eigen::MatrixXd a11(1, 1);

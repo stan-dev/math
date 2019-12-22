@@ -9,9 +9,10 @@ namespace math {
 
 /**
  * Returns the dot product of the specified vector with itself.
+ *
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
  * @param v Vector.
- * @tparam R number of rows or <code>Eigen::Dynamic</code> for dynamic
- * @tparam C number of rows or <code>Eigen::Dyanmic</code> for dynamic
  * @throw std::domain_error If v is not vector dimensioned.
  */
 template <int R, int C>
@@ -22,4 +23,5 @@ inline double dot_self(const Eigen::Matrix<double, R, C>& v) {
 
 }  // namespace math
 }  // namespace stan
+
 #endif

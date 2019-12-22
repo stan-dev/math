@@ -12,6 +12,16 @@ namespace math {
 
 /**
  * Returns the solution of the system xA=b given an LDLT_factor of A
+ *
+ * @tparam T1 type of elements in right-hand side matrix or vector
+ * @tparam T2 type of elements in the LDLT_factor
+ * @tparam R1 number of rows in the right-hand side matrix, can be
+ *         Eigen::Dynamic
+ * @tparam C1 number of columns in the right-hand side matrix, can be
+ *         Eigen::Dynamic
+ * @tparam R2 number of rows in the LDLT_factor, can be Eigen::Dynamic
+ * @tparam C2 number of columns in the LDLT_factor, can be Eigen::Dynamic
+ *
  * @param A LDLT_factor
  * @param b Right hand side matrix or vector.
  * @return x = b A^-1, solution of the linear system.
@@ -22,7 +32,7 @@ template <typename T1, typename T2, int R1, int C1, int R2, int C2>
 inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_right_ldlt(
     const Eigen::Matrix<T1, R1, C1> &b, const LDLT_factor<T2, R2, C2> &A) {
   if (b.cols() == 0 && A.rows() == 0) {
-    return {};
+    return Eigen::Matrix<return_type_t<T1, T2>, R1, C2>(b.rows(), 0);
   }
 
   check_multiplicable("mdivide_right_ldlt", "b", b, "A", A);
@@ -35,7 +45,7 @@ inline Eigen::Matrix<double, R1, C2> mdivide_right_ldlt(
     const Eigen::Matrix<double, R1, C1> &b,
     const LDLT_factor<double, R2, C2> &A) {
   if (b.cols() == 0 && A.rows() == 0) {
-    return {};
+    return Eigen::Matrix<double, R1, C2>(b.rows(), 0);
   }
 
   check_multiplicable("mdivide_right_ldlt", "b", b, "A", A);
@@ -45,4 +55,5 @@ inline Eigen::Matrix<double, R1, C2> mdivide_right_ldlt(
 
 }  // namespace math
 }  // namespace stan
+
 #endif
