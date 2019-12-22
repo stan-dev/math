@@ -919,6 +919,199 @@ class complex<stan::math::fvar<T>>
 
 }  // namespace std
 
+// BEGIN PR 2.5
+// =======================================================
+// traits for Eigen
+
+// namespace stan {
+
+// template <typename T>
+// struct is_complex {
+//   enum { value = 0 };
+// };
+// template <typename T>
+// struct is_complex<std::complex<T>> {
+//   enum { value = 1 };
+// };
+
+// template <typename T>
+// struct is_arithmetic {
+//   enum { value = std::is_arithmetic<T>::value };
+// };
+// template <>
+// struct is_arithmetic<stan::math::var> {
+//   enum { value = 1 };
+// };
+// template <typename T>
+// struct is_arithmetic<stan::math::fvar<T>> {
+//   enum { value = 1 };
+// };
+
+// template <typename T>
+// struct rm_complex {
+//   typedef T type;
+// };
+// template <typename T>
+// struct rm_complex<std::complex<T>> {
+//   typedef T type;
+// };
+
+// template <typename T>
+// using rm_complex_t = typename rm_complex<T>::type;
+
+// }  // namespace stan
+
+// namespace Eigen {
+
+// template <class Op>
+// struct ScalarBinaryOpTraits<std::complex<stan::math::var>,
+//                             std::complex<stan::math::var>,
+//                             Op> {
+//   typedef std::complex<stan::math::var> ReturnType;
+// };
+// template <class Op>
+// struct ScalarBinaryOpTraits<std::complex<stan::math::var>,
+//                             std::complex<double>,
+//                             Op> {
+//   typedef std::complex<stan::math::var> ReturnType;
+// };
+// template <class Op>
+// struct ScalarBinaryOpTraits<std::complex<stan::math::var>,
+//                             stan::math::var,
+//                             Op> {
+//   typedef std::complex<stan::math::var> ReturnType;
+// };
+// template <class Op>
+// struct ScalarBinaryOpTraits<std::complex<stan::math::var>,
+//                             double,
+//                             Op> {
+//   typedef std::complex<stan::math::var> ReturnType;
+// };
+
+// template <class Op>
+// struct ScalarBinaryOpTraits<std::complex<double>,
+//                             std::complex<stan::math::var>,
+//                             Op> {
+//   typedef std::complex<stan::math::var> ReturnType;
+// };
+// template <class Op>
+// struct ScalarBinaryOpTraits<std::complex<double>,
+//                             stan::math::var,
+//                             Op> {
+//   typedef std::complex<stan::math::var> ReturnType;
+// };
+
+// template <class Op>
+// struct ScalarBinaryOpTraits<stan::math::var,
+//                             std::complex<stan::math::var>,
+//                             Op> {
+//   typedef std::complex<stan::math::var> ReturnType;
+// };
+// template <class Op>
+// struct ScalarBinaryOpTraits<stan::math::var,
+//                             std::complex<double>,
+//                             Op> {
+//   typedef std::complex<stan::math::var> ReturnType;
+// };
+
+// generic complex<T> defined in Eigen
+// template <>
+// struct NumTraits<std::complex<stan::math::var>> :
+// GenericNumTraits<std::complex<stan::math::var>> {
+//   using Real = std::complex<stan::math::var>;
+//   using NonInteger = std::complex<stan::math::var>;
+//   using Nested = std::complex<stan::math::var>;
+
+//   /**
+//    * Return the precision for <code>std::complex<stan::math::var></code>.
+//    *
+//    * @return precision
+//    */
+//   static inline std::complex<stan::math::var> dummy_precision() {
+//     return NumTraits<double>::dummy_precision();
+//   }
+
+//   enum {
+//     /**
+//      * complex<var> is complex.
+//      */
+//     IsComplex = 1,
+
+//     /**
+//      * complex<var> is not an integer.
+//      */
+//     IsInteger = 0,
+
+//     /**
+//      * complex<var> is signed.
+//      */
+//     IsSigned = 1,
+
+//     /**
+//      * complex<var> does not require initialization.
+//      */
+//     RequireInitialization = 0,
+
+//     /**
+//      * Quadruple the cost of copying a double.
+//      */
+//     ReadCost = NumTraits<std::complex<double>>::ReadCost,
+
+//     /**
+//      * This is just forward cost, but it's the cost of a single
+//      * addition (plus memory overhead) in the forward direction.
+//      */
+//     AddCost = NumTraits<std::complex<double>>::AddCost,
+
+//     /**
+//      * Multiply cost is single multiply going forward, but there's
+//      * also memory allocation cost.
+//      */
+//     MulCost = NumTraits<std::complex<double>>::MulCost
+//   };
+
+//   /**
+//    * Return the number of decimal digits that can be represented
+//    * without change.  Delegates to
+//    * <code>std::numeric_limits<double>::digits10()</code>.
+//    */
+//   static int digits10() { return std::numeric_limits<double>::digits10; }
+// };
+
+// template <class T1, class T2, template <class, class> class OP>
+// struct ScalarBinaryOpTraits<
+//     T1,
+//     std::enable_if_t<
+//         (stan::is_complex<T1>::value || stan::is_arithmetic<T1>::value)
+//             && (stan::is_complex<T2>::value ||
+//             stan::is_arithmetic<T2>::value)
+//             && !std::is_same<T1, T2>::value &&  // avoid Eigen's template
+//             ((stan::is_complex<T1>::value &&    // next boolean avoids Eigen
+//               !std::is_same<stan::rm_complex_t<T1>,
+//                             stan::rm_complex_t<T2>>::value)
+//              || (stan::is_complex<T2>::value &&  // next bool avoids Eigen
+//                  !std::is_same<stan::rm_complex_t<T1>,
+//                                stan::rm_complex_t<T2>>::value)),
+//         T2>,
+//     OP<T1, T2>> {
+//   typedef std::complex<typename stan::return_type<stan::rm_complex_t<T1>,
+//                                                   stan::rm_complex_t<T2>>::type>
+//       ReturnType;
+// };
+
+// namespace internal {
+// /**
+//  * Partial specialization of Eigen's remove_all struct to stop
+//  * Eigen removing pointer from vari* variables
+//  */
+// template <>
+// struct remove_all<std::complex<stan::math::var>> {
+//   using type = std::complex<stan::math::var>;
+// };
+// }  // namespace internal
+
+// } // namespace Eigen
+
 // BEGIN PR 3
 // =======================================================
 // generic std::complex code w/o complex<var> or complex<fvar<T>>

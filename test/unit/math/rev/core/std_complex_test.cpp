@@ -1635,3 +1635,34 @@ TEST(mathMix, stdComplexAssignment) {
   expect_complex_assignment<fvar<var>>();
   expect_complex_assignment<fvar<fvar<var>>>();
 }
+// TEST(mathMix, traitsMeta) {
+//   EXPECT_FALSE(stan::is_complex<int>::value);
+//   EXPECT_FALSE(stan::is_complex<double>::value);
+//   EXPECT_FALSE(stan::is_complex<stan::math::var>::value);
+//   EXPECT_TRUE(stan::is_complex<std::complex<double>>::value);
+//   EXPECT_TRUE(stan::is_complex<std::complex<stan::math::var>>::value);
+
+//   EXPECT_TRUE(stan::is_arithmetic<int>::value);
+//   EXPECT_TRUE(stan::is_arithmetic<double>::value);
+//   EXPECT_TRUE(stan::is_arithmetic<stan::math::var>::value);
+//   EXPECT_TRUE(stan::is_arithmetic<stan::math::fvar<double>>::value);
+//   EXPECT_FALSE(stan::is_arithmetic<std::complex<double>>::value);
+//   EXPECT_FALSE(stan::is_arithmetic<std::complex<stan::math::var>>::value);
+//   EXPECT_FALSE(stan::is_arithmetic<std::string>::value);
+// }
+// TEST(mathMix, multiplicationPatterns) {
+//   Eigen::Matrix<cvar_t, -1, -1> x(2, 2);
+//   x << 1, 2, 3, 4;
+//   Eigen::Matrix<cdouble_t, -1, -1> y(2, 2);
+//   y << 5, 6, 7, 8;
+
+//   auto z = x * y;
+
+//   auto a = z(0);
+
+//   Eigen::MatrixXd y2(2, 2);
+//   y2 << 10, 11, 12, 13;
+//   auto z2 = x * y2;
+
+//   // std::cout << a << std::endl;
+// }
