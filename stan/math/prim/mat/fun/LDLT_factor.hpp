@@ -18,12 +18,12 @@ namespace math {
  * <code>boost::shared_ptr</code>, which ensures that is freed
  * when the object is released.
  *
- * After the constructor and/or compute() is called users of
+ * After the constructor and/or compute() is called, users of
  * LDLT_factor are responsible for calling success() to
  * check whether the factorization has succeeded.  Use of an LDLT_factor
  * object (e.g., in mdivide_left_ldlt) is undefined if success() is false.
  *
- * It's usage pattern is:
+ * Its usage pattern is:
  *
  * ~~~
  * Eigen::Matrix<T, R, C> A1, A2;
@@ -55,9 +55,9 @@ namespace math {
  * decomposed as LDL' where L is unit lower-triangular and D is
  * diagonal with positive diagonal elements.
  *
- * @tparam T scalare type held in the matrix
- * @tparam R rows (as in Eigen)
- * @tparam C columns (as in Eigen)
+ * @tparam T type of elements in the matrix
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
  */
 template <typename T, int R, int C>
 class LDLT_factor {
@@ -126,4 +126,5 @@ class LDLT_factor {
 
 }  // namespace math
 }  // namespace stan
+
 #endif

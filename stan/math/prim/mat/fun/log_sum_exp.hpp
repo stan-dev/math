@@ -20,6 +20,9 @@ namespace math {
  * \f$\log \sum_{n=1}^N \exp(x_n) = \max(x) + \log \sum_{n=1}^N \exp(x_n -
  * \max(x))\f$.
  *
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ *
  * @param[in] x Matrix of specified values
  * @return The log of the sum of the exponentiated vector values.
  */

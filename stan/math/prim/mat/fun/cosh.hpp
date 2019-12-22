@@ -9,8 +9,9 @@ namespace math {
 
 /**
  * Structure to wrap cosh() so it can be vectorized.
- * @param x Angle in radians.
- * @tparam T Variable type.
+ *
+ * @tparam T type of argument
+ * @param x angle in radians
  * @return Hyperbolic cosine of x.
  */
 struct cosh_fun {
@@ -23,8 +24,9 @@ struct cosh_fun {
 
 /**
  * Vectorized version of cosh().
- * @param x Angle in radians.
- * @tparam T Variable type.
+ *
+ * @tparam T type of container
+ * @param x angles in radians
  * @return Hyberbolic cosine of x.
  */
 template <typename T>

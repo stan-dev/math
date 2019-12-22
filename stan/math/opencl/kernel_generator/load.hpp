@@ -28,14 +28,14 @@ class load_
   T a_;
 
  public:
-  using ReturnScalar = typename std::remove_reference_t<T>::type;
-  using base = operation_cl<load_<T>, ReturnScalar>;
+  using Scalar = typename std::remove_reference_t<T>::type;
+  using base = operation_cl<load_<T>, Scalar>;
   using base::var_name;
-  static_assert(std::is_base_of<matrix_cl<ReturnScalar>,
+  static_assert(std::is_base_of<matrix_cl<Scalar>,
                                 typename std::remove_reference_t<T>>::value,
                 "load_: argument a must be a matrix_cl<T>!");
   static_assert(
-      std::is_arithmetic<ReturnScalar>::value,
+      std::is_arithmetic<Scalar>::value,
       "load_: T in \"matrix_cl<T> a\" argument must be an arithmetic type!");
 
   /**
@@ -53,7 +53,7 @@ class load_
   inline kernel_parts generate(const std::string& i,
                                const std::string& j) const {
     kernel_parts res{};
-    std::string type = type_str<ReturnScalar>();
+    std::string type = type_str<Scalar>();
     res.body = type + " " + var_name + " = 0;"
                " if (!((!contains_nonzero(" + var_name + "_view, LOWER) && "
                + j + " < " + i + ") || (!contains_nonzero(" + var_name +
@@ -75,7 +75,7 @@ class load_
   inline kernel_parts generate_lhs(const std::string& i,
                                    const std::string& j) const {
     kernel_parts res;
-    std::string type = type_str<ReturnScalar>();
+    std::string type = type_str<Scalar>();
     res.args = "__global " + type + "* " + var_name + "_global, int " + var_name
                + "_rows, int " + var_name + "_view, ";
     res.body

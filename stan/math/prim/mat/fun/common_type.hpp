@@ -6,15 +6,16 @@
 
 namespace stan {
 namespace math {
+
 /**
  * Struct which calculates type promotion over two types.
  *
  * <p>This specialization is for matrix types.
  *
- * @tparam T1 type of elements contained in Eigen::Matrix<T1>
- * @tparam T2 type of elements contained in Eigen::Matrix<T2>
- * @tparam R number of rows
- * @tparam C number of columns
+ * @tparam T1 type of elements in the first matrix
+ * @tparam T2 type of elements in the second matrix
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
  */
 template <typename T1, typename T2, int R, int C>
 struct common_type<Eigen::Matrix<T1, R, C>, Eigen::Matrix<T2, R, C> > {

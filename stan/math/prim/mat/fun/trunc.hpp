@@ -15,7 +15,7 @@ struct trunc_fun {
    * Return the truncation of the specified argument to the
    * nearest value.
    *
-   * @tparam T argument type
+   * @tparam T type of argument
    * @param x argument
    * @return truncation of the argument
    */
@@ -31,7 +31,7 @@ struct trunc_fun {
  * underlying scalar argument type to double if it is an integer,
  * and otherwise is the argument type.
  *
- * @tparam T container type
+ * @tparam T type of container
  * @param x container
  * @return elementwise trunc of container elements
  */

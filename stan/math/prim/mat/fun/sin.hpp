@@ -9,8 +9,9 @@ namespace math {
 
 /**
  * Structure to wrap sin() so it can be vectorized.
- * @param x Angle in radians.
- * @tparam T Argument type.
+ *
+ * @tparam T type of argument
+ * @param x angle in radians
  * @return Sine of x.
  */
 struct sin_fun {
@@ -23,8 +24,9 @@ struct sin_fun {
 
 /**
  * Vectorized version of sin().
- * @param x Container of angles in radians.
- * @tparam T Container type.
+ *
+ * @tparam T type of container
+ * @param x angles in radians
  * @return Sine of each value in x.
  */
 template <typename T>

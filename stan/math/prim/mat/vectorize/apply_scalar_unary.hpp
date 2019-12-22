@@ -2,9 +2,9 @@
 #define STAN_MATH_PRIM_MAT_VECTORIZE_APPLY_SCALAR_UNARY_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <complex>
-#include <type_traits>
+#include <stan/math/prim/meta.hpp>
 #include <vector>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -15,8 +15,7 @@ namespace math {
  * standard library vector, or Eigen dense matrix expression
  * template.
  *
- * <p>The base class applies to any Eigen dense matrix expression
- * template.  Specializations define applications to scalars
+ * <p>Specializations of this base define applications to scalars
  * (primitive or autodiff in the corresponding autodiff library
  * directories) or to standard library vectors of vectorizable
  * types (primitives, Eigen dense matrix expressions, or further
@@ -33,19 +32,28 @@ namespace math {
  * @tparam F Type of function to apply.
  * @tparam T Type of argument to which function is applied.
  */
+template <typename F, typename T, typename Enable = void>
+struct apply_scalar_unary;
+
+/**
+ *
+ * Template specialization for vectorized functions applying to
+ * Eigen matrix arguments.
+ *
+ * @tparam F Type of function to apply.
+ * @tparam T Type of argument to which function is applied.
+ */
 template <typename F, typename T>
-struct apply_scalar_unary {
+struct apply_scalar_unary<F, T, require_eigen_t<T>> {
   /**
    * Type of underlying scalar for the matrix type T.
    */
-  // decltype(T(0)) ?
-  using scalar_t = typename T::Scalar;  // Eigen::internal::traits<T>::Scalar;
+  using scalar_t = typename T::Scalar;
 
   /**
    * Return type for applying the function elementwise to a matrix
    * expression template of type T.
    */
-  // decltype(T.eval()) ?
   using return_t
       = Eigen::Matrix<scalar_t, T::RowsAtCompileTime, T::ColsAtCompileTime>;
 

@@ -14,6 +14,8 @@ namespace math {
 /**
  * Returns the unbiased sample standard deviation of the
  * coefficients in the specified column vector.
+ *
+ * @tparam T type of elements in the vector
  * @param v Specified vector.
  * @return Sample variance of vector.
  */
@@ -29,6 +31,11 @@ inline return_type_t<T> sd(const std::vector<T>& v) {
 /**
  * Returns the unbiased sample standard deviation of the
  * coefficients in the specified vector, row vector, or matrix.
+ *
+ * @tparam T type of elements in the vector, row vector, or matrix
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ *
  * @param m Specified vector, row vector or matrix.
  * @return Sample variance.
  */
@@ -44,4 +51,5 @@ inline return_type_t<T> sd(const Eigen::Matrix<T, R, C>& m) {
 
 }  // namespace math
 }  // namespace stan
+
 #endif

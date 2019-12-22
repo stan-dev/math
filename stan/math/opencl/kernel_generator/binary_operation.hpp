@@ -29,10 +29,10 @@ namespace math {
  */
 template <typename Derived, typename T_a, typename T_b>
 class binary_operation
-    : public operation_cl<Derived, common_return_scalar_t<T_a, T_b>, T_a, T_b> {
+    : public operation_cl<Derived, common_scalar_t<T_a, T_b>, T_a, T_b> {
  public:
-  using ReturnScalar = common_return_scalar_t<T_a, T_b>;
-  using base = operation_cl<Derived, ReturnScalar, T_a, T_b>;
+  using Scalar = common_scalar_t<T_a, T_b>;
+  using base = operation_cl<Derived, Scalar, T_a, T_b>;
   using base::var_name;
 
  protected:
@@ -71,8 +71,8 @@ class binary_operation
                                const std::string& var_name_a,
                                const std::string& var_name_b) const {
     kernel_parts res{};
-    res.body = type_str<ReturnScalar>() + " " + var_name + " = " + var_name_a
-               + " " + op_ + " " + var_name_b + ";\n";
+    res.body = type_str<Scalar>() + " " + var_name + " = " + var_name_a + " "
+               + op_ + " " + var_name_b + ";\n";
     return res;
   }
 
@@ -101,7 +101,7 @@ class addition_ : public binary_operation<addition_<T_a, T_b>, T_a, T_b> {
    */
   addition_(T_a&& a, T_b&& b)  // NOLINT
       : binary_operation<addition_<T_a, T_b>, T_a, T_b>(
-            std::forward<T_a>(a), std::forward<T_b>(b), "+") {}
+          std::forward<T_a>(a), std::forward<T_b>(b), "+") {}
 };
 
 /**
@@ -135,7 +135,7 @@ class subtraction_ : public binary_operation<subtraction_<T_a, T_b>, T_a, T_b> {
    */
   subtraction_(T_a&& a, T_b&& b)  // NOLINT
       : binary_operation<subtraction_<T_a, T_b>, T_a, T_b>(
-            std::forward<T_a>(a), std::forward<T_b>(b), "-") {}
+          std::forward<T_a>(a), std::forward<T_b>(b), "-") {}
 };
 
 /**
@@ -171,7 +171,7 @@ class elewise_multiplication_
    */
   elewise_multiplication_(T_a&& a, T_b&& b)  // NOLINT
       : binary_operation<elewise_multiplication_<T_a, T_b>, T_a, T_b>(
-            std::forward<T_a>(a), std::forward<T_b>(b), "*") {}
+          std::forward<T_a>(a), std::forward<T_b>(b), "*") {}
 
   /**
    * View of a matrix that would be the result of evaluating this expression.
@@ -264,7 +264,7 @@ class elewise_division_
    */
   elewise_division_(T_a&& a, T_b&& b)  // NOLINT
       : binary_operation<elewise_division_<T_a, T_b>, T_a, T_b>(
-            std::forward<T_a>(a), std::forward<T_b>(b), "/") {}
+          std::forward<T_a>(a), std::forward<T_b>(b), "/") {}
 
   /**
    * View of a matrix that would be the result of evaluating this expression.

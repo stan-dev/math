@@ -3,7 +3,7 @@
 #include <type_traits>
 
 template <typename... Types>
-using common_return_scalar_t = typename std::common_type_t<
-    typename std::remove_reference_t<Types>::ReturnScalar...>;
+using common_scalar_t = typename std::common_type_t<
+    typename std::remove_reference_t<Types>::Scalar...>;
 
 #endif

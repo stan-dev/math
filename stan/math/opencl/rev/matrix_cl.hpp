@@ -7,7 +7,7 @@
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/arr/fun/vec_concat.hpp>
-#include <cl.hpp>
+#include <CL/cl2.hpp>
 #include <iostream>
 #include <string>
 #include <vector>

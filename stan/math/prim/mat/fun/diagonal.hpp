@@ -9,6 +9,8 @@ namespace math {
 /**
  * Return a column vector of the diagonal elements of the
  * specified matrix.  The matrix is not required to be square.
+ *
+ * @tparam T type of elements in the matrix
  * @param m Specified matrix.
  * @return Diagonal of the matrix.
  */
@@ -20,4 +22,5 @@ inline Eigen::Matrix<T, Eigen::Dynamic, 1> diagonal(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

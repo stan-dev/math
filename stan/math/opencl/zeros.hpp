@@ -9,7 +9,7 @@
 #include <stan/math/opencl/kernels/fill.hpp>
 #include <stan/math/prim/meta.hpp>
 
-#include <cl.hpp>
+#include <CL/cl2.hpp>
 
 namespace stan {
 namespace math {
