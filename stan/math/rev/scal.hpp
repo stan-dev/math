@@ -19,7 +19,6 @@
 #include <stan/math/rev/scal/fun/bessel_second_kind.hpp>
 #include <stan/math/rev/scal/fun/beta.hpp>
 #include <stan/math/rev/scal/fun/binary_log_loss.hpp>
-#include <stan/math/rev/scal/fun/boost_fpclassify.hpp>
 #include <stan/math/rev/scal/fun/calculate_chain.hpp>
 #include <stan/math/rev/scal/fun/cbrt.hpp>
 #include <stan/math/rev/scal/fun/ceil.hpp>
