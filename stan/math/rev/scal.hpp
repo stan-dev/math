@@ -20,7 +20,6 @@
 #include <stan/math/rev/scal/fun/beta.hpp>
 #include <stan/math/rev/scal/fun/binary_log_loss.hpp>
 #include <stan/math/rev/scal/fun/boost_fpclassify.hpp>
-#include <stan/math/rev/scal/fun/boost_isfinite.hpp>
 #include <stan/math/rev/scal/fun/boost_isnormal.hpp>
 #include <stan/math/rev/scal/fun/calculate_chain.hpp>
 #include <stan/math/rev/scal/fun/cbrt.hpp>
