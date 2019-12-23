@@ -1,6 +1,5 @@
 #include <stan/math/prim/scal.hpp>
 #include <boost/math/special_functions/gamma.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
 #include <limits>
@@ -12,7 +11,7 @@ TEST(MathFunctions, lgammaStanMathUsing) { using stan::math::lgamma; }
 TEST(MathFunctions, lgamma_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
   EXPECT_TRUE(std::isnan(stan::math::lgamma(nan)));
-  EXPECT_PRED1(boost::math::isinf<double>, stan::math::lgamma(0));
+  EXPECT_TRUE(std::isinf(stan::math::lgamma(0)));
   // up to boost 1.70.0 the boost::math::lgamma return NaN for large
   // arguments (large is greater than sqrt(largest double of 1E308)
   // when used with the stan::math::boost_policy_t which avoids
