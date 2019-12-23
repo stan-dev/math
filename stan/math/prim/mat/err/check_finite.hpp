@@ -5,6 +5,7 @@
 #include <stan/math/prim/scal/err/throw_domain_error.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
+#include <stan/math/prim/mat/fun/value_of_rec.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <cmath>
 
