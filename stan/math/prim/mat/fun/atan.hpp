@@ -11,8 +11,9 @@ namespace math {
 
 /**
  * Structure to wrap atan() so it can be vectorized.
- * @param x Variable.
- * @tparam T Variable type.
+ *
+ * @tparam T type of variable
+ * @param x variable
  * @return Arctan of x in radians.
  */
 struct atan_fun {
@@ -25,8 +26,9 @@ struct atan_fun {
 
 /**
  * Vectorized version of atan().
- * @param x Container.
- * @tparam T Container type.
+ *
+ * @tparam T type of container
+ * @param x container
  * @return Arctan of each value in x, in radians.
  */
 template <typename T, typename = require_not_eigen_vt<std::is_arithmetic, T>>

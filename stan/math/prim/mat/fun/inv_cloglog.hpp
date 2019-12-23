@@ -10,8 +10,9 @@ namespace math {
 
 /**
  * Structure to wrap inv_cloglog() so that it can be vectorized.
- * @param x Variable.
- * @tparam T Variable type.
+ *
+ * @tparam T type of variable
+ * @param x variable
  * @return 1 - exp(-exp(x)).
  */
 struct inv_cloglog_fun {
@@ -23,8 +24,9 @@ struct inv_cloglog_fun {
 
 /**
  * Vectorized version of inv_cloglog().
- * @param x Container.
- * @tparam T Container type.
+ *
+ * @tparam T type of container
+ * @param x container
  * @return 1 - exp(-exp()) applied to each value in x.
  */
 template <typename T, typename = require_not_eigen_vt<std::is_arithmetic, T>>

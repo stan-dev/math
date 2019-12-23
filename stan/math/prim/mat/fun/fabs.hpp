@@ -12,8 +12,8 @@ namespace math {
 /**
  * Structure to wrap fabs() so that it can be vectorized.
  *
- * @param x Variable.
- * @tparam T Variable type.
+ * @tparam T type of variable
+ * @param x variable
  * @return Absolute value of x.
  */
 struct fabs_fun {
@@ -27,8 +27,8 @@ struct fabs_fun {
 /**
  * Vectorized version of fabs().
  *
- * @param x Container.
- * @tparam T Container type.
+ * @tparam T type of container
+ * @param x container
  * @return Absolute value of each value in x.
  */
 template <typename T, typename = require_not_eigen_vt<std::is_arithmetic, T>>

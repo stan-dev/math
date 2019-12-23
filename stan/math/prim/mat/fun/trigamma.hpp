@@ -15,7 +15,7 @@ struct trigamma_fun {
    * Return the trigamma() function applied to
    * the argument.
    *
-   * @tparam T argument type
+   * @tparam T type of argument
    * @param x argument
    * @return trigamma applied to argument.
    */
@@ -31,7 +31,7 @@ struct trigamma_fun {
  * underlying scalar argument type to double if it is an integer,
  * and otherwise is the argument type.
  *
- * @tparam T container type
+ * @tparam T type of container
  * @param x container
  * @return elementwise trigamma of container elements
  */

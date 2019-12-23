@@ -9,8 +9,9 @@ namespace math {
 
 /**
  * Structure to wrap lgamma() so that it can be vectorized.
- * @param x Variable.
- * @tparam T Variable type.
+ *
+ * @tparam T type of variable
+ * @param x variable
  * @return Natural log of the gamma function applied to x.
  * @throw std::domain_error if x is a negative integer or 0.
  */
@@ -23,8 +24,9 @@ struct lgamma_fun {
 
 /**
  * Vectorized version of lgamma().
- * @param x Container.
- * @tparam T Container type.
+ *
+ * @tparam T type of container
+ * @param x container
  * @return Natural log of the gamma function
  *         applied to each value in x.
  * @throw std::domain_error if any value is a negative integer or 0.

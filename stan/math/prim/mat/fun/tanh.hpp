@@ -11,8 +11,9 @@ namespace math {
 
 /**
  * Structure to wrap tanh() so that it can be vectorized.
- * @param x Angle in radians.
- * @tparam T Variable type.
+ *
+ * @tparam T type of argument
+ * @param x angle in radians
  * @return Hyperbolic tangent of x.
  */
 struct tanh_fun {
@@ -25,8 +26,9 @@ struct tanh_fun {
 
 /**
  * Vectorized version of tanh().
- * @param x Container of angles in radians.
- * @tparam T Container type.
+ *
+ * @tparam T type of container
+ * @param x angles in radians
  * @return Hyperbolic tangent of each value in x.
  */
 template <typename T, typename = require_not_eigen_vt<std::is_arithmetic, T>>

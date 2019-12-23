@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_MAT_FUN_TO_ROW_VECTOR_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-// stan::scalar_type
 #include <vector>
 
 namespace stan {

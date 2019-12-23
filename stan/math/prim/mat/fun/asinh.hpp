@@ -24,8 +24,8 @@ struct asinh_fun {
 /**
  * Vectorized version of asinh().
  *
- * @tparam T Container type.
- * @param x Container.
+ * @tparam T type of container
+ * @param x container
  * @return Inverse hyperbolic sine of each value in the container.
  */
 template <typename T>

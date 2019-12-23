@@ -6,7 +6,16 @@
 namespace stan {
 namespace math {
 
-// Returns log(abs(det(A))) given a LDLT_factor of A
+/**
+ * Returns log(abs(det(A))) given a LDLT_factor of A
+ *
+ * @tparam T type of elements in the LDLT_factor
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ *
+ * @param A LDLT_factor
+ * @return the log(abs(det(A))
+ */
 template <int R, int C, typename T>
 inline T log_determinant_ldlt(LDLT_factor<T, R, C> &A) {
   if (A.rows() == 0) {
@@ -18,4 +27,5 @@ inline T log_determinant_ldlt(LDLT_factor<T, R, C> &A) {
 
 }  // namespace math
 }  // namespace stan
+
 #endif

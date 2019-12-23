@@ -11,8 +11,9 @@ namespace math {
 
 /**
  * Structure to wrap inv() so that it can be vectorized.
- * @param x Variable.
- * @tparam T Variable type.
+ *
+ * @tparam T type of variable
+ * @param x variable
  * @return 1 / x.
  */
 struct inv_fun {
@@ -24,8 +25,9 @@ struct inv_fun {
 
 /**
  * Vectorized version of inv().
- * @param x Container.
- * @tparam T Container type.
+ *
+ * @tparam T type of container
+ * @param x container
  * @return 1 divided by each value in x.
  */
 template <typename T, typename = require_not_eigen_vt<std::is_arithmetic, T>>

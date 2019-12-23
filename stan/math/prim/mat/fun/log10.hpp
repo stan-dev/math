@@ -11,8 +11,9 @@ namespace math {
 
 /**
  * Structure to wrap log10() so it can be vectorized.
- * @param x Variable.
- * @tparam T Variable type.
+ *
+ * @tparam T type of variable
+ * @param x variable
  * @return Log base-10 of x.
  */
 struct log10_fun {
@@ -25,8 +26,9 @@ struct log10_fun {
 
 /**
  * Vectorized version of log10().
- * @param x Container.
- * @tparam T Container type.
+ *
+ * @tparam T type of container
+ * @param x container
  * @return Log base-10 applied to each value in x.
  */
 template <typename T, typename = require_not_eigen_vt<std::is_arithmetic, T>>

@@ -15,10 +15,12 @@ namespace math {
 
 /**
  * Return specified matrix multiplied by specified scalar.
- * @tparam R number of rows or Eigen::Dynamic
- * @tparam C number of columns or Eigen::Dynamic
- * @tparam T1 type of elements in matrix
+ *
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ * @tparam T1 type of elements in the matrix
  * @tparam T2 type of scalar
+ *
  * @param m matrix
  * @param c scalar
  * @return product of matrix and scalar
@@ -32,10 +34,12 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R, C> multiply(
 
 /**
  * Return specified scalar multiplied by specified matrix.
- * @tparam R number of rows or Eigen::Dynamic
- * @tparam C number of columns or Eigen::Dynamic
+ *
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
  * @tparam T1 type of scalar
- * @tparam T2 type of elements in matrix
+ * @tparam T2 type of elements in the matrix
+ *
  * @param c scalar
  * @param m matrix
  * @return product of scalar and matrix
@@ -51,12 +55,14 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R, C> multiply(
  * Return the product of the specified matrices.  The number of
  * columns in the first matrix must be the same as the number of rows
  * in the second matrix.
+ *
  * @tparam R1 number of rows in the first matrix, can be Eigen::Dynamic
  * @tparam C1 number of columns in the first matrix, can be Eigen::Dynamic
  * @tparam R2 number of rows in the second matrix, can be Eigen::Dynamic
  * @tparam C2 number of columns in the second matrix, can be Eigen::Dynamic
  * @tparam T1 type of elements in first matrix
  * @tparam T2 type of elements in second matrix
+ *
  * @param m1 first matrix
  * @param m2 second matrix
  * @return the product of the first and second matrices
@@ -87,10 +93,12 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> multiply(
  * Return the scalar product of the specified row vector and
  * specified column vector.  The return is the same as the dot
  * product.  The two vectors must be the same size.
+ *
  * @tparam C1 number of columns in row vector, can be Eigen::Dynamic
  * @tparam R2 number of rows in column vector, can be Eigen::Dynamic
  * @tparam T1 type of elements in row vector
  * @tparam T2 type of elements in column vector
+ *
  * @param rv row vector
  * @param v column vector
  * @return scalar result of multiplying row vector by column vector
@@ -106,6 +114,7 @@ inline return_type_t<T1, T2> multiply(const Eigen::Matrix<T1, 1, C1>& rv,
 
 /**
  * Return product of scalars.
+ *
  * @tparam T1 type of first scalar
  * @tparam T2 type of second scalar
  * @param m scalar
@@ -119,4 +128,5 @@ inline return_type_t<T1, T2> multiply(T1 m, T2 c) {
 
 }  // namespace math
 }  // namespace stan
+
 #endif

@@ -11,8 +11,9 @@ namespace math {
 
 /**
  * Structure to wrap cos() so it can be vectorized.
- * @param x Angle in radians.
- * @tparam T Variable type.
+ *
+ * @tparam T type of variable
+ * @param x angle in radians
  * @return Cosine of x.
  */
 struct cos_fun {
@@ -25,8 +26,9 @@ struct cos_fun {
 
 /**
  * Vectorized version of cos().
- * @param x Container of angles in radians.
- * @tparam T Container type.
+ *
+ * @tparam T type of container
+ * @param x angles in radians
  * @return Cosine of each value in x.
  */
 template <typename T, typename = require_not_eigen_vt<std::is_arithmetic, T>>

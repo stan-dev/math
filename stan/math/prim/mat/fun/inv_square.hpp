@@ -9,8 +9,9 @@ namespace math {
 
 /**
  * Vectorized version of inv_square().
- * @param x Container.
- * @tparam T Container type.
+ *
+ * @tparam T type of container
+ * @param x container
  * @return 1 / the square of each value in x.
  */
 template <typename T>

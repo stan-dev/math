@@ -9,8 +9,9 @@ namespace math {
 
 /**
  * Structure to wrap cbrt() so it can be vectorized.
- * @param x Variable.
- * @tparam T Variable type.
+ *
+ * @tparam T type of variable
+ * @param x variable
  * @return Cube root of x.
  */
 struct cbrt_fun {
@@ -22,8 +23,9 @@ struct cbrt_fun {
 
 /**
  * Vectorized version of cbrt().
- * @param x Container of variables.
- * @tparam T Container type.
+ *
+ * @tparam T type of container
+ * @param x container
  * @return Cube root of each value in x.
  */
 template <typename T>

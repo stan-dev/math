@@ -9,8 +9,9 @@ namespace math {
 
 /**
  * Structure to wrap erfc() so that it can be vectorized.
- * @param x Variable.
- * @tparam T Variable type.
+ *
+ * @tparam T type of variable
+ * @param x variable
  * @return Complementary error function applied to x.
  */
 struct erfc_fun {
@@ -22,8 +23,9 @@ struct erfc_fun {
 
 /**
  * Vectorized version of erfc().
- * @param x Container.
- * @tparam T Container type.
+ *
+ * @tparam T type of container
+ * @param x container
  * @return Complementary error function applied to each value in x.
  */
 template <typename T>

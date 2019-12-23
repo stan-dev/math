@@ -14,7 +14,7 @@ struct logit_fun {
   /**
    * Return the log odds of the specified argument.
    *
-   * @tparam T argument type
+   * @tparam T type of argument
    * @param x argument
    * @return log odds of the argument
    */
@@ -30,7 +30,7 @@ struct logit_fun {
  * underlying scalar argument type to double if it is an integer,
  * and otherwise is the argument type.
  *
- * @tparam T container type
+ * @tparam T type of container
  * @param x container
  * @return elementwise logit of container elements
  */

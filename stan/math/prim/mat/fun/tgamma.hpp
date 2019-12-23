@@ -9,8 +9,9 @@ namespace math {
 
 /**
  * Structure to wrap tgamma() so that it can be vectorized.
- * @param x Variable.
- * @tparam T Variable type.
+ *
+ * @tparam T type of variable
+ * @param x variable
  * @return Gamma function applied to x.
  * @throw std::domain_error if x is 0 or a negative integer
  */
@@ -23,8 +24,9 @@ struct tgamma_fun {
 
 /**
  * Vectorized version of tgamma().
- * @param x Container.
- * @tparam T Container type.
+ *
+ * @tparam T type of container
+ * @param x container
  * @return Gamma function applied to each value in x.
  * @throw std::domain_error if any value is 0 or a negative integer
  */

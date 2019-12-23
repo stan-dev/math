@@ -13,11 +13,11 @@ namespace math {
  */
 struct log1p_fun {
   /**
-   * Return the inverse hypberbolic cosine of the specified argument.
+   * Return the natural logarithm of one plus the specified value.
    *
-   * @param x Argument.
-   * @return Inverse hyperbolic cosine of the argument.
-   * @tparam T Argument type.
+   * @tparam T type of argument
+   * @param x argument
+   * @return natural log of one plus the argument
    */
   template <typename T>
   static inline T fun(const T& x) {
@@ -31,8 +31,8 @@ struct log1p_fun {
  * underlying scalar argument type to double if it is an integer,
  * and otherwise is the argument type.
  *
- * @tparam T Container type.
- * @param x Container.
+ * @tparam T type of container
+ * @param x container
  * @return Elementwise log1p of members of container.
  */
 template <typename T>

@@ -18,4 +18,5 @@ inline auto minus(const T& x) {
 
 }  // namespace math
 }  // namespace stan
+
 #endif
