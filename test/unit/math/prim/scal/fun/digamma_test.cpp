@@ -2,6 +2,7 @@
 #include <boost/math/special_functions/digamma.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <cmath>
 #include <limits>
 
 TEST(MathFunctions, digamma) {
@@ -16,5 +17,5 @@ TEST(MathFunctions, digamma_nan) {
 
   EXPECT_PRED1(boost::math::isnan<double>, stan::math::digamma(-1));
 
-  EXPECT_PRED1(boost::math::isnormal<double>, stan::math::digamma(1.0E50));
+  EXPECT_TRUE(std::isnormal(stan::math::digamma(1.0E50)));
 }
