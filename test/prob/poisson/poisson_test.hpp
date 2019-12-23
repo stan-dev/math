@@ -1,5 +1,6 @@
 // Arguments: Ints, Doubles
 #include <stan/math/prim/scal.hpp>
+#include <stan/math/prim/mat/fun/value_of_rec.hpp>
 #include <cmath>
 
 using stan::math::var;
@@ -71,7 +72,7 @@ class AgradDistributionsPoisson : public AgradDistributionTest {
     if (lambda == 0)
       return n == 0 ? 0 : LOG_ZERO;
 
-    if (std::isinf(lambda))
+    if (std::isinf(stan::math::value_of_rec(lambda)))
       return LOG_ZERO;
 
     return -lgamma(n + 1.0) + multiply_log(n, lambda) - lambda;
