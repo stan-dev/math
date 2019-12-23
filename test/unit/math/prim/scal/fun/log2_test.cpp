@@ -1,6 +1,6 @@
 #include <stan/math/prim/scal.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <cmath>
 #include <limits>
 
 TEST(MathFunctions, log2_fun) {
@@ -20,5 +20,5 @@ TEST(MathFunctions, log2) {
 TEST(MathFunctions, log2_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
 
-  EXPECT_PRED1(boost::math::isnan<double>, stan::math::log2(nan));
+  EXPECT_TRUE(std::isnan(stan::math::log2(nan)));
 }

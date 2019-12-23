@@ -2,8 +2,8 @@
 #define TEST_UNIT_MATH_FWD_SCAL_FUN_NAN_UTIL_HPP
 
 #include <stan/math/fwd/scal.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <Eigen/Dense>
+#include <cmath>
 #include <limits>
 
 template <typename F>
@@ -122,7 +122,7 @@ void test_nan_fwd(const F& f, const double& arg1, const double& arg2,
 template <typename F>
 void test_nan_fd(const F& f, const double& arg1, const double& arg2,
                  const double& arg3, const bool& throws) {
-  using boost::math::isnan;
+  using std::isnan;
   using stan::math::fvar;
   fvar<double> arg1_v(arg1, 1.0);
   fvar<double> arg2_v(arg2, 1.0);
@@ -155,7 +155,7 @@ void test_nan_fd(const F& f, const double& arg1, const double& arg2,
 template <typename F>
 void test_nan_ffd(const F& f, const double& arg1, const double& arg2,
                   const double& arg3, const bool& throws) {
-  using boost::math::isnan;
+  using std::isnan;
   using stan::math::fvar;
   fvar<fvar<double> > arg1_v(arg1, 1.0);
   fvar<fvar<double> > arg2_v(arg2, 1.0);
