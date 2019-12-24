@@ -19,8 +19,6 @@ return_type_t<T_prob> multinomial_lpmf(
     const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
   static const char* function = "multinomial_lpmf";
 
-  using boost::math::tools::promote_args;
-
   return_type_t<T_prob> lp(0.0);
   check_nonnegative(function, "Number of trials variable", ns);
   check_simplex(function, "Probabilities parameter", theta);
@@ -29,15 +27,18 @@ return_type_t<T_prob> multinomial_lpmf(
 
   if (include_summand<propto>::value) {
     double sum = 1.0;
-    for (int n : ns)
+    for (int n : ns) {
       sum += n;
+    }
     lp += lgamma(sum);
-    for (int n : ns)
+    for (int n : ns) {
       lp -= lgamma(n + 1.0);
+    }
   }
   if (include_summand<propto, T_prob>::value) {
-    for (unsigned int i = 0; i < ns.size(); ++i)
+    for (unsigned int i = 0; i < ns.size(); ++i) {
       lp += multiply_log(ns[i], theta[i]);
+    }
   }
   return lp;
 }

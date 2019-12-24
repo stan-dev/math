@@ -7,12 +7,12 @@
 #include <stan/math/opencl/err/check_square.hpp>
 #include <stan/math/opencl/kernels/check_symmetric.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/scal/err/throw_domain_error.hpp>
 #include <stan/math/prim/mat/err/constraint_tolerance.hpp>
 #include <vector>
 namespace stan {
 namespace math {
-/**
+/** \ingroup opencl
  * Check if the <code>matrix_cl</code> is symmetric
  *
  * @param function Function name (for error messages)
@@ -22,11 +22,12 @@ namespace math {
  * @throw <code>std::domain_error</code> if
  *    the matrix is not symmetric.
  */
-template <typename T, typename = enable_if_arithmetic<T>>
+template <typename T, typename = require_arithmetic_t<T>>
 inline void check_symmetric(const char* function, const char* name,
                             const matrix_cl<T>& y) {
-  if (y.size() == 0)
+  if (y.size() == 0) {
     return;
+  }
   check_square(function, name, y);
   try {
     int symmetric_flag = 1;
@@ -37,7 +38,7 @@ inline void check_symmetric(const char* function, const char* name,
                                     math::CONSTRAINT_TOLERANCE);
     symmetric_flag = from_matrix_cl_error_code(symm_flag);
     if (!symmetric_flag) {
-      domain_error(function, name, "is not symmetric", "");
+      throw_domain_error(function, name, "is not symmetric", "");
     }
   } catch (const cl::Error& e) {
     check_opencl_error("symmetric_check", e);

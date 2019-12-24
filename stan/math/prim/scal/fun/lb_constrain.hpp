@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_SCAL_FUN_LB_CONSTRAIN_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <boost/math/tools/promotion.hpp>
 #include <stan/math/prim/scal/fun/identity_constrain.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <cmath>
@@ -32,8 +31,9 @@ namespace math {
 template <typename T, typename L>
 inline return_type_t<T, L> lb_constrain(const T& x, const L& lb) {
   using std::exp;
-  if (lb == NEGATIVE_INFTY)
+  if (lb == NEGATIVE_INFTY) {
     return identity_constrain(x);
+  }
   return exp(x) + lb;
 }
 
@@ -56,8 +56,9 @@ inline return_type_t<T, L> lb_constrain(const T& x, const L& lb) {
 template <typename T, typename L>
 inline return_type_t<T, L> lb_constrain(const T& x, const L& lb, T& lp) {
   using std::exp;
-  if (lb == NEGATIVE_INFTY)
+  if (lb == NEGATIVE_INFTY) {
     return identity_constrain(x, lp);
+  }
   lp += x;
   return exp(x) + lb;
 }

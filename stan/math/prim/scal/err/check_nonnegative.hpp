@@ -2,8 +2,8 @@
 #define STAN_MATH_PRIM_SCAL_ERR_CHECK_NONNEGATIVE_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
-#include <stan/math/prim/scal/err/domain_error_vec.hpp>
+#include <stan/math/prim/scal/err/throw_domain_error.hpp>
+#include <stan/math/prim/scal/err/throw_domain_error_vec.hpp>
 #include <type_traits>
 
 namespace stan {
@@ -15,8 +15,9 @@ struct nonnegative {
   static void check(const char* function, const char* name, const T_y& y) {
     // have to use not is_unsigned. is_signed will be false
     // floating point types that have no unsigned versions.
-    if (!std::is_unsigned<T_y>::value && !(y >= 0))
-      domain_error(function, name, y, "is ", ", but must be >= 0!");
+    if (!std::is_unsigned<T_y>::value && !(y >= 0)) {
+      throw_domain_error(function, name, y, "is ", ", but must be >= 0!");
+    }
   }
 };
 
@@ -25,8 +26,10 @@ struct nonnegative<T_y, true> {
   static void check(const char* function, const char* name, const T_y& y) {
     for (size_t n = 0; n < stan::length(y); n++) {
       if (!std::is_unsigned<typename value_type<T_y>::type>::value
-          && !(stan::get(y, n) >= 0))
-        domain_error_vec(function, name, y, n, "is ", ", but must be >= 0!");
+          && !(stan::get(y, n) >= 0)) {
+        throw_domain_error_vec(function, name, y, n, "is ",
+                               ", but must be >= 0!");
+      }
     }
   }
 };

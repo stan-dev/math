@@ -43,7 +43,7 @@ struct multi_normal_cholesky_fun {
   }
 };
 
-TEST(MultiNormalCholesky, TestGradFunctional) {
+TEST(ProbDistributionsMultiNormalCholesky2, TestGradFunctional) {
   std::vector<double> x(3 + 3 + 3 * 2);
   // y
   x[0] = 1.0;
@@ -92,9 +92,9 @@ struct vectorized_multi_normal_cholesky_fun {
   }
 
   template <typename T_y, typename T_mu, typename T_sigma>
-  typename boost::math::tools::promote_args<T_y, T_mu, T_sigma>::type
-  operator()(const std::vector<T_y>& y_vec, const std::vector<T_mu>& mu_vec,
-             const std::vector<T_sigma>& sigma_vec) const {
+  stan::promote_args_t<T_y, T_mu, T_sigma> operator()(
+      const std::vector<T_y>& y_vec, const std::vector<T_mu>& mu_vec,
+      const std::vector<T_sigma>& sigma_vec) const {
     vector<Matrix<T_y, is_row_vec_y, is_row_vec_y * -1> > y(
         L_, Matrix<T_y, is_row_vec_y, is_row_vec_y * -1>(K_));
     vector<Matrix<T_mu, is_row_vec_mu, is_row_vec_mu * -1> > mu(
@@ -274,7 +274,7 @@ void test_all() {
   }
 }
 
-TEST(MultiNormal, TestGradFunctionalVectorized) {
+TEST(ProbDistributionsMultiNormalCholesky2, TestGradFunctionalVectorized) {
   test_all<1, 1>();
   test_all<1, -1>();
   test_all<-1, 1>();

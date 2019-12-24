@@ -7,6 +7,7 @@
 #include <stan/math/prim/scal/err/check_greater.hpp>
 #include <stan/math/prim/scal/prob/chi_square_rng.hpp>
 #include <stan/math/prim/scal/prob/normal_rng.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -24,8 +25,9 @@ inline Eigen::MatrixXd wishart_rng(double nu, const Eigen::MatrixXd& S,
 
   MatrixXd B = MatrixXd::Zero(k, k);
   for (int j = 0; j < k; ++j) {
-    for (int i = 0; i < j; ++i)
+    for (int i = 0; i < j; ++i) {
       B(i, j) = normal_rng(0, 1, rng);
+    }
     B(j, j) = std::sqrt(chi_square_rng(nu - j, rng));
   }
   return crossprod(B * S.llt().matrixU());

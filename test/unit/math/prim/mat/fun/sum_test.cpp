@@ -4,7 +4,7 @@
 #include <type_traits>
 #include <vector>
 
-TEST(MathMatrix, sumVector) {
+TEST(MathMatrixPrimMat, sumVector) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::sum;
@@ -23,7 +23,7 @@ TEST(MathMatrix, sumVector) {
   EXPECT_FLOAT_EQ(115.0, sum(v));
 }
 
-TEST(MathMatrix, sumRowVector) {
+TEST(MathMatrixPrimMat, sumRowVector) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::sum;
@@ -42,7 +42,7 @@ TEST(MathMatrix, sumRowVector) {
   EXPECT_FLOAT_EQ(115.0, sum(rv));
 }
 
-TEST(MathMatrix, sumMatrix) {
+TEST(MathMatrixPrimMat, sumMatrix) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::sum;
@@ -61,7 +61,7 @@ TEST(MathMatrix, sumMatrix) {
 template <typename T>
 using sum_return_t = decltype(stan::math::sum(std::declval<T>()));
 
-TEST(MathMatrix, sumIsTemplated) {
+TEST(MathMatrixPrimMat, sumIsTemplated) {
   using Eigen::Matrix;
   test::expect_same_type<int, sum_return_t<Matrix<int, 2, 3>>>();
   test::expect_same_type<double, sum_return_t<Matrix<double, 4, 2>>>();

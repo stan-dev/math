@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_MAT_ERR_CHECK_MATCHING_DIMS_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/invalid_argument.hpp>
@@ -15,17 +14,17 @@ namespace math {
 /**
  * Check if the two matrices are of the same size.
  * This function checks the runtime sizes only.
- * @tparam T1 Scalar type of the first matrix
- * @tparam T2 Scalar type of the second matrix
- * @tparam R1 Rows specified at compile time of the first matrix
- * @tparam C1 Columns specified at compile time of the first matrix
- * @tparam R2 Rows specified at compile time of the second matrix
- * @tparam C2 Columns specified at compile time of the second matrix
- * @param function Function name (for error messages)
- * @param name1 Variable name for the first matrix (for error messages)
- * @param y1 First matrix to test
- * @param name2 Variable name for the second matrix (for error messages)
- * @param y2 Second matrix to test
+ * @tparam T1 scalar type of the first matrix
+ * @tparam T2 scalar type of the second matrix
+ * @tparam R1 number of rows in the first matrix, can be Eigen::Dynamic
+ * @tparam C1 number of columns in the first matrix, can be Eigen::Dynamic
+ * @tparam R2 number of rows in the second matrix, can be Eigen::Dynamic
+ * @tparam C2 number of columns in the second matrix, can be Eigen::Dynamic
+ * @param function name of function (for error messages)
+ * @param name1 variable name for the first matrix (for error messages)
+ * @param y1 first matrix to test
+ * @param name2 variable name for the second matrix (for error messages)
+ * @param y2 second matrix to test
  * @throw <code>std::invalid_argument</code> if the dimensions of the
  *    matrices do not match
  */
@@ -46,17 +45,17 @@ inline void check_matching_dims(const char* function, const char* name1,
  * sizes as well. For example, a 4x1 matrix is not the same as a vector
  * with 4 elements.
  * @tparam check_compile Whether to check the static sizes
- * @tparam T1 Scalar type of the first matrix
- * @tparam T2 Scalar type of the second matrix
- * @tparam R1 Rows specified at compile time of the first matrix
- * @tparam C1 Columns specified at compile time of the first matrix
- * @tparam R2 Rows specified at compile time of the second matrix
- * @tparam C2 Columns specified at compile time of the second matrix
- * @param function Function name (for error messages)
- * @param name1 Variable name for the first matrix (for error messages)
- * @param y1 First matrix to test
- * @param name2 Variable name for the second matrix (for error messages)
- * @param y2 Second matrix to test
+ * @tparam T1 scalar type of the first matrix
+ * @tparam T2 scalar type of the second matrix
+ * @tparam R1 number of rows in the first matrix, can be Eigen::Dynamic
+ * @tparam C1 number of columns in the first matrix, can be Eigen::Dynamic
+ * @tparam R2 number of rows in the second matrix, can be Eigen::Dynamic
+ * @tparam C2 number of columns in the second matrix, can be Eigen::Dynamic
+ * @param function name of function (for error messages)
+ * @param name1 variable name for the first matrix (for error messages)
+ * @param y1 first matrix to test
+ * @param name2 variable name for the second matrix (for error messages)
+ * @param y2 second matrix to test
  * @throw <code>std::invalid_argument</code> if the dimensions of the matrices
  *    do not match
  */

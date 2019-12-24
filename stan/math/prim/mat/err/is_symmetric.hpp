@@ -6,6 +6,7 @@
 #include <stan/math/prim/mat/err/is_square.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -20,20 +21,23 @@ namespace math {
 template <typename T_y>
 inline bool is_symmetric(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
-  if (!is_square(y))
+  if (!is_square(y)) {
     return false;
+  }
 
-  typedef typename index_type<
-      Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>>::type size_type;
+  using size_type = typename index_type<
+      Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>>::type;
 
   size_type k = y.rows();
-  if (k == 1)
+  if (k == 1) {
     return true;
+  }
   for (size_type m = 0; m < k; ++m) {
     for (size_type n = m + 1; n < k; ++n) {
       if (!(fabs(value_of(y(m, n)) - value_of(y(n, m)))
-            <= CONSTRAINT_TOLERANCE))
+            <= CONSTRAINT_TOLERANCE)) {
         return false;
+      }
     }
   }
   return true;

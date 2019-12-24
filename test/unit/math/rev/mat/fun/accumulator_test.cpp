@@ -127,7 +127,7 @@ TEST(AgradRevMathMatrix, accumulateCollection) {
   test_sum(a, pos - 1);
 }
 
-TEST(AgradRevMatrix, check_varis_on_stack) {
+TEST(AgradRevMatrix, accumulator_check_varis_on_stack) {
   stan::math::accumulator<stan::math::var> a;
   test::check_varis_on_stack(a.sum());
   a.add(1);

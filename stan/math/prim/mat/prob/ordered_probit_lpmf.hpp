@@ -9,11 +9,12 @@
 #include <stan/math/prim/arr/err/check_ordered.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <vector>
+#include <cmath>
 
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup multivar_dists
  * Returns the (natural) log probability of the specified integer
  * outcome given the continuous location and specified cutpoints
  * in an ordered probit model.
@@ -69,7 +70,7 @@ return_type_t<T_loc, T_cut> ordered_probit_lpmf(
   return ordered_probit_lpmf<false>(y, lambda, c);
 }
 
-/**
+/** \ingroup multivar_dists
  * Returns the (natural) log probability of the specified array
  * of integers given the vector of continuous locations and
  * specified cutpoints in an ordered probit model.
@@ -137,7 +138,7 @@ return_type_t<T_loc, T_cut> ordered_probit_lpmf(
   return ordered_probit_lpmf<false>(y, lambda, c);
 }
 
-/**
+/** \ingroup multivar_dists
  * Returns the (natural) log probability of the specified array
  * of integers given the vector of continuous locations and
  * array of specified cutpoints in an ordered probit model.

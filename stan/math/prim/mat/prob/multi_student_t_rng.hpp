@@ -10,11 +10,12 @@
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/gamma_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup multivar_dists
  * Return a multivariate student-t random variate with the given degrees of
  * freedom location and covariance using the specified random number generator.
  *
@@ -81,8 +82,9 @@ multi_student_t_rng(
   double w = 1.0 / gamma_rng();
   for (size_t n = 0; n < N; ++n) {
     Eigen::VectorXd z(S.cols());
-    for (int i = 0; i < S.cols(); i++)
+    for (int i = 0; i < S.cols(); i++) {
       z(i) = std::sqrt(w) * std_normal_rng();
+    }
 
     output[n] = Eigen::VectorXd(mu_vec[n]) + llt_of_S.matrixL() * z;
   }

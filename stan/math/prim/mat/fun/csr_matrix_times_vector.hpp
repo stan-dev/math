@@ -7,11 +7,11 @@
 #include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/mat/err/check_range.hpp>
-#include <boost/math/tools/promotion.hpp>
 #include <vector>
 
 namespace stan {
 namespace math {
+
 /**
  * @defgroup csr_format Compressed Sparse Row matrix format.
  *  A compressed Sparse Row (CSR) sparse matrix is defined by four
@@ -42,6 +42,7 @@ namespace math {
  */
 
 /**
+ * \addtogroup csr_format
  * Return the multiplication of the sparse matrix (specified by
  * by values and indexing) by the specified dense vector.
  *
@@ -50,8 +51,8 @@ namespace math {
  * column index of each value), the integer array u (containing
  * one-based indexes of where each row starts in w).
  *
- * @tparam T1 Type of sparse matrix entries.
- * @tparam T2 Type of dense vector entries.
+ * @tparam T1 type of elements in the sparse matrix
+ * @tparam T2 type of elements in the dense vector
  * @param m Number of rows in matrix.
  * @param n Number of columns in matrix.
  * @param w Vector of non-zero values in matrix.
@@ -70,15 +71,13 @@ namespace math {
  *   for a given sparse matrix.
  * @throw std::out_of_range if any of the indexes are out of range.
  */
-/** \addtogroup csr_format
- */
 template <typename T1, typename T2>
 inline Eigen::Matrix<return_type_t<T1, T2>, Eigen::Dynamic, 1>
 csr_matrix_times_vector(int m, int n,
                         const Eigen::Matrix<T1, Eigen::Dynamic, 1>& w,
                         const std::vector<int>& v, const std::vector<int>& u,
                         const Eigen::Matrix<T2, Eigen::Dynamic, 1>& b) {
-  typedef return_type_t<T1, T2> result_t;
+  using result_t = return_type_t<T1, T2>;
 
   check_positive("csr_matrix_times_vector", "m", m);
   check_positive("csr_matrix_times_vector", "n", n);
@@ -87,8 +86,9 @@ csr_matrix_times_vector(int m, int n,
   check_size_match("csr_matrix_times_vector", "w", w.size(), "v", v.size());
   check_size_match("csr_matrix_times_vector", "u/z",
                    u[m - 1] + csr_u_to_z(u, m - 1) - 1, "v", v.size());
-  for (int i : v)
+  for (int i : v) {
     check_range("csr_matrix_times_vector", "v[]", n, i);
+  }
 
   Eigen::Matrix<result_t, Eigen::Dynamic, 1> result(m);
   result.setZero();
@@ -109,8 +109,8 @@ csr_matrix_times_vector(int m, int n,
   }
   return result;
 }
-/** @}*/  // end of csr_format group
 
 }  // namespace math
 }  // namespace stan
+
 #endif

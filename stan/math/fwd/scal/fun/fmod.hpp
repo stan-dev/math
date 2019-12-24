@@ -6,6 +6,7 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/is_any_nan.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -21,10 +22,11 @@ inline fvar<T> fmod(const fvar<T>& x1, const fvar<T>& x2) {
 template <typename T>
 inline fvar<T> fmod(const fvar<T>& x1, double x2) {
   using std::fmod;
-  if (unlikely(is_any_nan(value_of(x1.val_), x2)))
+  if (unlikely(is_any_nan(value_of(x1.val_), x2))) {
     return fvar<T>(fmod(x1.val_, x2), NOT_A_NUMBER);
-  else
-    return fvar<T>(fmod(x1.val_, x2), x1.d_ / x2);
+  } else {
+    return fvar<T>(fmod(x1.val_, x2), x1.d_);
+  }
 }
 
 template <typename T>

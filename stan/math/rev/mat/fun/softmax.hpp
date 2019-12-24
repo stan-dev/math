@@ -18,7 +18,7 @@ class softmax_op {
   double* y_;  // Holds the results of the softmax
 
  public:
-  softmax_op() : N_(0), y_(NULL) {}
+  softmax_op() : N_(0), y_(nullptr) {}
 
   /*
    * Compute the softmax of the unconstrained input vector
@@ -33,8 +33,9 @@ class softmax_op {
     y_ = ChainableStack::instance_->memalloc_.alloc_array<double>(N_);
 
     auto y = softmax(alpha);
-    for (int n = 0; n < N_; ++n)
+    for (int n = 0; n < N_; ++n) {
       y_[n] = y(n);
+    }
     return y;
   }
 

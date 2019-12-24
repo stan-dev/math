@@ -5,8 +5,8 @@
 #include <stan/math/prim/scal/fun/identity_free.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/err/check_less_or_equal.hpp>
-#include <boost/math/tools/promotion.hpp>
 #include <limits>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -36,8 +36,9 @@ namespace math {
 template <typename T, typename U>
 inline return_type_t<T, U> ub_free(const T& y, const U& ub) {
   using std::log;
-  if (ub == INFTY)
+  if (ub == INFTY) {
     return identity_free(y);
+  }
   check_less_or_equal("ub_free", "Upper bounded variable", y, ub);
   return log(ub - y);
 }

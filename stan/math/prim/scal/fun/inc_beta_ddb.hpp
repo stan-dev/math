@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_FUN_INC_BETA_DDB_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/scal/err/throw_domain_error.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
 #include <stan/math/prim/scal/fun/inc_beta_dda.hpp>
 #include <cmath>
@@ -37,17 +37,21 @@ T inc_beta_dda(T a, T b, T z, T digamma_a, T digamma_ab);
  */
 template <typename T>
 T inc_beta_ddb(T a, T b, T z, T digamma_b, T digamma_ab) {
+  using std::fabs;
   using std::log;
   using std::pow;
 
-  if (b > a)
+  if (b > a) {
     if ((0.1 < z && z <= 0.75 && b > 500) || (0.01 < z && z <= 0.1 && b > 2500)
-        || (0.001 < z && z <= 0.01 && b > 1e5))
+        || (0.001 < z && z <= 0.01 && b > 1e5)) {
       return -inc_beta_dda(b, a, 1 - z, digamma_b, digamma_ab);
+    }
+  }
 
   if ((z > 0.75 && a < 500) || (z > 0.9 && a < 2500) || (z > 0.99 && a < 1e5)
-      || (z > 0.999))
+      || (z > 0.999)) {
     return -inc_beta_dda(b, a, 1 - z, digamma_b, digamma_ab);
+  }
 
   double threshold = 1e-10;
 
@@ -74,9 +78,10 @@ T inc_beta_ddb(T a, T b, T z, T digamma_b, T digamma_ab) {
     ++k;
     summand *= z / k;
 
-    if (k > 1e5)
-      domain_error("inc_beta_ddb", "did not converge within 100000 iterations",
-                   "", "");
+    if (k > 1e5) {
+      throw_domain_error("inc_beta_ddb",
+                         "did not converge within 100000 iterations", "", "");
+    }
   }
 
   return inc_beta(a, b, z) * (log(1 - z) - digamma_b + sum_numer / sum_denom);

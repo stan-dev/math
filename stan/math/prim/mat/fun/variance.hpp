@@ -4,7 +4,6 @@
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/mean.hpp>
-#include <boost/math/tools/promotion.hpp>
 #include <vector>
 
 namespace stan {
@@ -13,16 +12,18 @@ namespace math {
 /**
  * Returns the sample variance (divide by length - 1) of the
  * coefficients in the specified standard vector.
- * @param v Specified vector.
- * @return Sample variance of vector.
- * @throws std::domain_error if the size of the vector is less
- * than 1.
+ *
+ * @tparam T type of elements in the vector
+ * @param v specified vector
+ * @return sample variance of vector
+ * @throw <code>std::invalid_argument</code> if the vector has size zero
  */
 template <typename T>
 inline return_type_t<T> variance(const std::vector<T>& v) {
   check_nonzero_size("variance", "v", v);
-  if (v.size() == 1)
+  if (v.size() == 1) {
     return 0.0;
+  }
   T v_mean(mean(v));
   T sum_sq_diff(0);
   for (size_t i = 0; i < v.size(); ++i) {
@@ -34,16 +35,23 @@ inline return_type_t<T> variance(const std::vector<T>& v) {
 
 /**
  * Returns the sample variance (divide by length - 1) of the
- * coefficients in the specified column vector.
- * @param m Specified vector.
- * @return Sample variance of vector.
+ * coefficients in the specified matrix
+ *
+ * @tparam T type of elements in the vector
+ * @tparam R number of rows in the matrix, can be Eigen::Dynamic
+ * @tparam C number of columns in the matrix, can be Eigen::Dynamic
+ *
+ * @param m matrix
+ * @return sample variance of coefficients
+ * @throw <code>std::invalid_argument</code> if the matrix has size zero
  */
 template <typename T, int R, int C>
 inline return_type_t<T> variance(const Eigen::Matrix<T, R, C>& m) {
   check_nonzero_size("variance", "m", m);
 
-  if (m.size() == 1)
+  if (m.size() == 1) {
     return 0.0;
+  }
   return_type_t<T> mn(mean(m));
   return_type_t<T> sum_sq_diff(0);
   for (int i = 0; i < m.size(); ++i) {
@@ -55,4 +63,5 @@ inline return_type_t<T> variance(const Eigen::Matrix<T, R, C>& m) {
 
 }  // namespace math
 }  // namespace stan
+
 #endif

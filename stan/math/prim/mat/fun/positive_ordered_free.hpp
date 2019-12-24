@@ -8,6 +8,7 @@
 
 namespace stan {
 namespace math {
+
 /**
  * Return the vector of unconstrained scalars that transform to
  * the specified positive ordered vector.
@@ -15,9 +16,9 @@ namespace math {
  * <p>This function inverts the constraining operation defined in
  * <code>positive_ordered_constrain(Matrix)</code>,
  *
+ * @tparam T type of elements in the vector
  * @param y Vector of positive, ordered scalars.
  * @return Free vector that transforms into the input vector.
- * @tparam T Type of scalar.
  * @throw std::domain_error if y is not a vector of positive,
  *   ordered scalars.
  */
@@ -27,19 +28,23 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> positive_ordered_free(
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::log;
-  typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
+  using size_type = typename index_type<Matrix<T, Dynamic, 1>>::type;
 
   check_positive_ordered("stan::math::positive_ordered_free",
                          "Positive ordered variable", y);
   size_type k = y.size();
   Matrix<T, Dynamic, 1> x(k);
-  if (k == 0)
+  if (k == 0) {
     return x;
+  }
   x[0] = log(y[0]);
-  for (size_type i = 1; i < k; ++i)
+  for (size_type i = 1; i < k; ++i) {
     x[i] = log(y[i] - y[i - 1]);
+  }
   return x;
 }
+
 }  // namespace math
 }  // namespace stan
+
 #endif

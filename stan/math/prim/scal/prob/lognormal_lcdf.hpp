@@ -6,6 +6,7 @@
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/scal/fun/erfc.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
@@ -18,15 +19,16 @@ template <typename T_y, typename T_loc, typename T_scale>
 return_type_t<T_y, T_loc, T_scale> lognormal_lcdf(const T_y& y, const T_loc& mu,
                                                   const T_scale& sigma) {
   static const char* function = "lognormal_lcdf";
-  typedef partials_return_type_t<T_y, T_loc, T_scale> T_partials_return;
+  using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
 
   T_partials_return cdf_log = 0.0;
 
   using std::exp;
   using std::log;
 
-  if (size_zero(y, mu, sigma))
+  if (size_zero(y, mu, sigma)) {
     return cdf_log;
+  }
 
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
@@ -43,8 +45,9 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lcdf(const T_y& y, const T_loc& mu,
   const double sqrt_pi = std::sqrt(pi());
 
   for (size_t i = 0; i < stan::length(y); i++) {
-    if (value_of(y_vec[i]) == 0.0)
+    if (value_of(y_vec[i]) == 0.0) {
       return ops_partials.build(negative_infinity());
+    }
   }
 
   const double log_half = std::log(0.5);
@@ -61,13 +64,16 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lcdf(const T_y& y, const T_loc& mu,
     const T_partials_return erfc_calc = erfc(-scaled_diff);
     cdf_log += log_half + log(erfc_calc);
 
-    if (!is_constant_all<T_y>::value)
+    if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] += rep_deriv / erfc_calc / y_dbl;
-    if (!is_constant_all<T_loc>::value)
+    }
+    if (!is_constant_all<T_loc>::value) {
       ops_partials.edge2_.partials_[n] -= rep_deriv / erfc_calc;
-    if (!is_constant_all<T_scale>::value)
+    }
+    if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n]
           -= rep_deriv * scaled_diff * SQRT_2 / erfc_calc;
+    }
   }
   return ops_partials.build(cdf_log);
 }

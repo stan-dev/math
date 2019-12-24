@@ -19,8 +19,9 @@ namespace math {
  */
 template <typename T, int R, int C>
 inline fvar<T> sum(const Eigen::Matrix<fvar<T>, R, C>& m) {
-  if (m.size() == 0)
+  if (m.size() == 0) {
     return 0.0;
+  }
   Eigen::Matrix<T, Eigen::Dynamic, 1> vals(m.size());
   Eigen::Matrix<T, Eigen::Dynamic, 1> tans(m.size());
   for (int i = 0; i < m.size(); ++i) {

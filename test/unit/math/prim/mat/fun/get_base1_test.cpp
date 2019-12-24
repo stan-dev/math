@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMatrix, failing_pre_20) {
+TEST(MathMatrixPrimMat, get_base1_failing_pre_20) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::get_base1;
@@ -10,7 +10,7 @@ TEST(MathMatrix, failing_pre_20) {
   y << 1, 2, 3;
   EXPECT_FLOAT_EQ(1, get_base1(y, 1, "y", 1));
 }
-TEST(MathMatrix, get_base1_vec1) {
+TEST(MathMatrixPrimMat, get_base1_vec1) {
   using stan::math::get_base1;
   std::vector<double> x(2);
   x[0] = 10.0;
@@ -25,7 +25,7 @@ TEST(MathMatrix, get_base1_vec1) {
   EXPECT_THROW(get_base1(x, 0, "x[0]", 0), std::out_of_range);
   EXPECT_THROW(get_base1(x, 3, "x[3]", 0), std::out_of_range);
 }
-TEST(MathMatrix, get_base1_vec2) {
+TEST(MathMatrixPrimMat, get_base1_vec2) {
   using stan::math::get_base1;
   using std::vector;
   size_t M = 3;
@@ -55,7 +55,7 @@ TEST(MathMatrix, get_base1_vec2) {
   EXPECT_THROW(get_base1(get_base1(x, 1, "", -1), 12, "", -1),
                std::out_of_range);
 }
-TEST(MathMatrix, get_base1_matrix) {
+TEST(MathMatrixPrimMat, get_base1_matrix) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::get_base1;
@@ -79,7 +79,7 @@ TEST(MathMatrix, get_base1_matrix) {
   EXPECT_THROW(get_base1(x, 0, 1, "x", 1), std::out_of_range);
   EXPECT_THROW(get_base1(x, 1, 0, "x", 1), std::out_of_range);
 }
-TEST(MathMatrix, get_base1_vector) {
+TEST(MathMatrixPrimMat, get_base1_vector) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::get_base1;
@@ -91,7 +91,7 @@ TEST(MathMatrix, get_base1_vector) {
   EXPECT_THROW(get_base1(x, 0, "x", 1), std::out_of_range);
   EXPECT_THROW(get_base1(x, 100, "x", 1), std::out_of_range);
 }
-TEST(MathMatrix, get_base1_row_vector) {
+TEST(MathMatrixPrimMat, get_base1_row_vector) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::get_base1;
@@ -103,7 +103,7 @@ TEST(MathMatrix, get_base1_row_vector) {
   EXPECT_THROW(get_base1(x, 0, "x", 1), std::out_of_range);
   EXPECT_THROW(get_base1(x, 100, "x", 1), std::out_of_range);
 }
-TEST(MathMatrix, get_base1_8) {
+TEST(MathMatrixPrimMat, get_base1_8) {
   using stan::math::get_base1;
   using std::vector;
   double x0(42.0);

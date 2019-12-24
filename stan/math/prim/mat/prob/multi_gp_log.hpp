@@ -4,12 +4,11 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/prob/multi_gp_lpdf.hpp>
-#include <boost/math/tools/promotion.hpp>
 
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup multivar_dists
  * The log of a multivariate Gaussian Process for the given y, Sigma, and
  * w.  y is a dxN matrix, where each column is a different observation and each
  * row is a different output dimension.  The Gaussian Process is assumed to
@@ -38,7 +37,7 @@ return_type_t<T_y, T_covar, T_w> multi_gp_log(
   return multi_gp_lpdf<propto, T_y, T_covar, T_w>(y, Sigma, w);
 }
 
-/**
+/** \ingroup multivar_dists
  * @deprecated use <code>multi_gp_lpdf</code>
  */
 template <typename T_y, typename T_covar, typename T_w>

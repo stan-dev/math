@@ -31,6 +31,17 @@ TEST(MathFunctions, log_diff_exp) {
   EXPECT_FLOAT_EQ(0.0, log_diff_exp(0.0, -10000.0));
 }
 
+TEST(MathFunctions, log_diff_exp_inf) {
+  using stan::math::log_diff_exp;
+  double inf = std::numeric_limits<double>::infinity();
+  test_log_diff_exp(0.0, 0.0);
+  test_log_diff_exp(-10.21, -10.21);
+  test_log_diff_exp(0.0, -inf);
+  test_log_diff_exp(-inf, -inf);
+  EXPECT_FLOAT_EQ(inf, log_diff_exp(inf, 3.0));
+  EXPECT_PRED1(boost::math::isnan<double>, log_diff_exp(inf, inf));
+}
+
 TEST(MathFunctions, log_diff_exp_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
 

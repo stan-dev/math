@@ -4,12 +4,11 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/prob/inv_wishart_lpdf.hpp>
-#include <boost/math/tools/promotion.hpp>
 
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup multivar_dists
  * The log of the Inverse-Wishart density for the given W, degrees
  * of freedom, and scale matrix.
  *
@@ -37,7 +36,7 @@ return_type_t<T_y, T_dof, T_scale> inv_wishart_log(
   return inv_wishart_lpdf<propto, T_y, T_dof, T_scale>(W, nu, S);
 }
 
-/**
+/** \ingroup multivar_dists
  * @deprecated use <code>inverse_wishart_lpdf</code>
  */
 template <typename T_y, typename T_dof, typename T_scale>

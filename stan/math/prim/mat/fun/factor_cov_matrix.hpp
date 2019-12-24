@@ -15,6 +15,7 @@ namespace math {
  * The transformations are hard coded as log for standard
  * deviations and Fisher transformations (atanh()) of CPCs
  *
+ * @tparam T type of elements in the matrix and arrays
  * @param[in] Sigma covariance matrix
  * @param[out] CPCs fill this unbounded (does not resize)
  * @param[out] sds fill this unbounded (does not resize)
@@ -28,8 +29,9 @@ bool factor_cov_matrix(
   size_t K = sds.rows();
 
   sds = Sigma.diagonal().array();
-  if ((sds <= 0.0).any())
+  if ((sds <= 0.0).any()) {
     return false;
+  }
   sds = sds.sqrt();
 
   Eigen::DiagonalMatrix<T, Eigen::Dynamic> D(K);
@@ -41,15 +43,15 @@ bool factor_cov_matrix(
   R.diagonal().setOnes();
   Eigen::LDLT<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > ldlt;
   ldlt = R.ldlt();
-  if (!ldlt.isPositive())
+  if (!ldlt.isPositive()) {
     return false;
+  }
   Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> U = ldlt.matrixU();
   factor_U(U, CPCs);
   return true;
 }
 
 }  // namespace math
-
 }  // namespace stan
 
 #endif

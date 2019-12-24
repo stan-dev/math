@@ -2,10 +2,7 @@
 #include <gtest/gtest.h>
 
 #ifdef STAN_OPENCL
-#include <stan/math/opencl/opencl_context.hpp>
-#include <stan/math/opencl/multiply.hpp>
-#include <stan/math/opencl/copy.hpp>
-#include <stan/math/opencl/tri_inverse.hpp>
+#include <stan/math/opencl/opencl.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #endif
 
@@ -13,7 +10,7 @@
   for (int i = 0; i < A.size(); i++)    \
     EXPECT_NEAR(A(i), B(i), DELTA);
 
-TEST(MathMatrix, mdivide_left_tri_val) {
+TEST(MathMatrixPrimMat, mdivide_left_tri_val) {
   using stan::math::mdivide_left_tri;
   stan::math::matrix_d Ad(2, 2);
   stan::math::matrix_d Ad_inv(2, 2);

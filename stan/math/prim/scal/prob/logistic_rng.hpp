@@ -7,11 +7,12 @@
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <boost/random/exponential_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Return a Logistic random variate for the given location and scale
  * using the specified random number generator.
  *
@@ -48,8 +49,9 @@ inline typename VectorBuilder<true, double, T_loc, T_scale>::type logistic_rng(
 
   variate_generator<RNG&, exponential_distribution<> > exp_rng(
       rng, exponential_distribution<>(1));
-  for (size_t n = 0; n < N; ++n)
+  for (size_t n = 0; n < N; ++n) {
     output[n] = mu_vec[n] - sigma_vec[n] * std::log(exp_rng() / exp_rng());
+  }
 
   return output.data();
 }

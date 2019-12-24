@@ -95,6 +95,125 @@ TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_vars) {
     }
   }
 }
+
+TEST(ProbDistributionsPoissonLogGLM, broadcast_x) {
+  vector<int> y{1, 0, 5};
+  Matrix<double, 1, Dynamic> x(1, 2);
+  x << -12, 46;
+  Matrix<var, 1, Dynamic> x1 = x;
+  Matrix<var, Dynamic, Dynamic> x_mat = x.replicate(3, 1);
+  Matrix<double, Dynamic, 1> beta(2, 1);
+  beta << 0.3, 2;
+  Matrix<var, Dynamic, 1> beta1 = beta;
+  Matrix<var, Dynamic, 1> beta2 = beta;
+  var alpha1 = 0.3;
+  var alpha2 = 0.3;
+
+  var lp1 = stan::math::poisson_log_glm_lpmf(y, x1, alpha1, beta1);
+  var lp2 = stan::math::poisson_log_glm_lpmf(y, x_mat, alpha2, beta2);
+
+  EXPECT_DOUBLE_EQ(lp1.val(), lp2.val());
+
+  (lp1 + lp2).grad();
+
+  for (int i = 0; i < 2; i++) {
+    EXPECT_DOUBLE_EQ(x1[i].adj(), x_mat.col(i).adj().sum());
+    EXPECT_DOUBLE_EQ(beta1[i].adj(), beta2[i].adj());
+  }
+  EXPECT_DOUBLE_EQ(alpha1.adj(), alpha2.adj());
+}
+
+TEST(ProbDistributionsPoissonLogGLM, broadcast_y) {
+  int y = 13;
+  Matrix<int, Dynamic, 1> y_vec = Matrix<int, Dynamic, 1>::Constant(3, 1, y);
+  Matrix<double, Dynamic, Dynamic> x(3, 2);
+  x << -12, 46, -42, 24, 25, 27;
+  Matrix<var, Dynamic, Dynamic> x1 = x;
+  Matrix<var, Dynamic, Dynamic> x2 = x;
+  Matrix<double, Dynamic, 1> beta(2, 1);
+  beta << 0.3, 2;
+  Matrix<var, Dynamic, 1> beta1 = beta;
+  Matrix<var, Dynamic, 1> beta2 = beta;
+  var alpha1 = 0.3;
+  var alpha2 = 0.3;
+
+  var lp1 = stan::math::poisson_log_glm_lpmf(y, x1, alpha1, beta1);
+  var lp2 = stan::math::poisson_log_glm_lpmf(y_vec, x2, alpha2, beta2);
+
+  EXPECT_DOUBLE_EQ(lp1.val(), lp2.val());
+
+  (lp1 + lp2).grad();
+
+  for (int i = 0; i < 2; i++) {
+    for (int j = 0; j < 2; j++) {
+      EXPECT_DOUBLE_EQ(x1(j, i).adj(), x2(j, i).adj());
+    }
+    EXPECT_DOUBLE_EQ(beta1[i].adj(), beta2[i].adj());
+  }
+  EXPECT_DOUBLE_EQ(alpha1.adj(), alpha2.adj());
+}
+
+TEST(ProbDistributionsPoissonLogGLM,
+     glm_matches_poisson_log_vars_zero_instances) {
+  vector<int> y{};
+  Matrix<var, Dynamic, Dynamic> x(0, 2);
+  Matrix<var, Dynamic, 1> beta(2, 1);
+  beta << 0.3, 2;
+  var alpha = 0.3;
+  Matrix<var, Dynamic, 1> theta(0, 1);
+  var lp = stan::math::poisson_log_lpmf(y, theta);
+  lp.grad();
+
+  double lp_val = lp.val();
+  double alpha_adj = alpha.adj();
+  Matrix<double, Dynamic, 1> beta_adj(2, 1);
+  for (size_t i = 0; i < 2; i++) {
+    beta_adj[i] = beta[i].adj();
+  }
+
+  stan::math::recover_memory();
+
+  vector<int> y2{};
+  Matrix<var, Dynamic, Dynamic> x2(0, 2);
+  Matrix<var, Dynamic, 1> beta2(2, 1);
+  beta2 << 0.3, 2;
+  var alpha2 = 0.3;
+  var lp2 = stan::math::poisson_log_glm_lpmf(y2, x2, alpha2, beta2);
+  lp2.grad();
+  EXPECT_FLOAT_EQ(lp_val, lp2.val());
+  EXPECT_FLOAT_EQ(alpha_adj, alpha2.adj());
+  for (size_t i = 0; i < 2; i++) {
+    EXPECT_FLOAT_EQ(beta_adj[i], beta2[i].adj());
+  }
+}
+
+TEST(ProbDistributionsPoissonLogGLM,
+     glm_matches_poisson_log_vars_zero_attributes) {
+  vector<int> y{14, 2, 5};
+  Matrix<var, Dynamic, Dynamic> x(3, 0);
+  Matrix<var, Dynamic, 1> beta(0, 1);
+  var alpha = 0.3;
+  Matrix<var, Dynamic, 1> alphavec = alpha * Matrix<double, 3, 1>::Ones();
+  Matrix<var, Dynamic, 1> theta(3, 1);
+  theta = x * beta + alphavec;
+  var lp = stan::math::poisson_log_lpmf(y, theta);
+  lp.grad();
+
+  double lp_val = lp.val();
+  double alpha_adj = alpha.adj();
+
+  stan::math::recover_memory();
+
+  vector<int> y2{14, 2, 5};
+  Matrix<var, Dynamic, Dynamic> x2(3, 0);
+  Matrix<var, Dynamic, 1> beta2(0, 1);
+  var alpha2 = 0.3;
+  var lp2 = stan::math::poisson_log_glm_lpmf(y2, x2, alpha2, beta2);
+  lp2.grad();
+  EXPECT_FLOAT_EQ(lp_val, lp2.val());
+  EXPECT_FLOAT_EQ(alpha_adj, alpha2.adj());
+}
+
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives.
 TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_vars_rand) {
@@ -258,7 +377,7 @@ TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_interface_types) {
   double value2 = 0;
 
   int i = 1;
-  std::vector<double> vi = {{1, 0}};
+  std::vector<int> vi = {{1, 0}};
   double d = 1.0;
   std::vector<double> vd = {{1.0, 2.0}};
   Eigen::VectorXd ev(2);

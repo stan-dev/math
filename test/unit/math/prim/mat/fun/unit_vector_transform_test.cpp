@@ -38,7 +38,7 @@ TEST(prob_transform, unit_vector_rt) {
 TEST(prob_transform, unit_vector_match) {
   Matrix<double, Dynamic, 1> x(3);
   x << 1.0, -1.0, 2.0;
-  double lp;
+  double lp = 0;
   using stan::math::unit_vector_constrain;
   Matrix<double, Dynamic, 1> y = unit_vector_constrain(x);
   Matrix<double, Dynamic, 1> y2 = stan::math::unit_vector_constrain(x, lp);

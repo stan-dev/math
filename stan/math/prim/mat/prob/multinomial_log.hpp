@@ -4,13 +4,12 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/prob/multinomial_lpmf.hpp>
-#include <boost/math/tools/promotion.hpp>
 #include <vector>
 
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup multivar_dists
  * @deprecated use <code>multinomial_lpmf</code>
  */
 template <bool propto, typename T_prob>
@@ -20,7 +19,7 @@ return_type_t<T_prob> multinomial_log(
   return multinomial_lpmf<propto, T_prob>(ns, theta);
 }
 
-/**
+/** \ingroup multivar_dists
  * @deprecated use <code>multinomial_lpmf</code>
  */
 template <typename T_prob>

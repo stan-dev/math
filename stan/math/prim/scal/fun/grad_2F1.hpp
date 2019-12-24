@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/scal/err/throw_domain_error.hpp>
 #include <stan/math/prim/scal/err/check_2F1_converges.hpp>
 #include <cmath>
 #include <limits>
@@ -45,8 +45,9 @@ void grad_2F1(T& g_a1, T& g_b1, const T& a1, const T& a2, const T& b1,
   g_b1 = 0.0;
 
   T log_g_old[2];
-  for (auto& i : log_g_old)
+  for (auto& i : log_g_old) {
     i = NEGATIVE_INFTY;
+  }
 
   T log_t_old = 0.0;
   T log_t_new = 0.0;
@@ -56,13 +57,15 @@ void grad_2F1(T& g_a1, T& g_b1, const T& a1, const T& a2, const T& b1,
   double log_t_new_sign = 1.0;
   double log_t_old_sign = 1.0;
   double log_g_old_sign[2];
-  for (double& x : log_g_old_sign)
+  for (double& x : log_g_old_sign) {
     x = 1.0;
+  }
 
   for (int k = 0; k <= max_steps; ++k) {
     T p = (a1 + k) * (a2 + k) / ((b1 + k) * (1 + k));
-    if (p == 0)
+    if (p == 0) {
       return;
+    }
 
     log_t_new += log(fabs(p)) + log_z;
     log_t_new_sign = p >= 0.0 ? log_t_new_sign : -log_t_new_sign;
@@ -80,15 +83,16 @@ void grad_2F1(T& g_a1, T& g_b1, const T& a1, const T& a2, const T& b1,
     g_a1 += log_g_old_sign[0] > 0 ? exp(log_g_old[0]) : -exp(log_g_old[0]);
     g_b1 += log_g_old_sign[1] > 0 ? exp(log_g_old[1]) : -exp(log_g_old[1]);
 
-    if (log_t_new <= log(precision))
+    if (log_t_new <= log(precision)) {
       return;  // implicit abs
+    }
 
     log_t_old = log_t_new;
     log_t_old_sign = log_t_new_sign;
   }
-  domain_error("grad_2F1", "k (internal counter)", max_steps, "exceeded ",
-               " iterations, hypergeometric function gradient "
-               "did not converge.");
+  throw_domain_error("grad_2F1", "k (internal counter)", max_steps, "exceeded ",
+                     " iterations, hypergeometric function gradient "
+                     "did not converge.");
   return;
 }
 

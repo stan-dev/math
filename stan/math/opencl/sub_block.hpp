@@ -7,15 +7,15 @@
 #include <stan/math/opencl/kernels/sub_block.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
-#include <CL/cl.hpp>
+#include <stan/math/prim/scal/err/throw_domain_error.hpp>
+#include <CL/cl2.hpp>
 #include <vector>
 #include <algorithm>
 
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup opencl
  * Write the contents of A into
  * <code>this</code> starting at the top left of <code>this</code>
  * @param A input matrix
@@ -27,24 +27,22 @@ namespace math {
  * @param ncols the number of columns in the submatrix
  */
 template <typename T>
-inline void matrix_cl<T, enable_if_arithmetic<T>>::sub_block(
-    const matrix_cl<T, enable_if_arithmetic<T>>& A, size_t A_i, size_t A_j,
+inline void matrix_cl<T, require_arithmetic_t<T>>::sub_block(
+    const matrix_cl<T, require_arithmetic_t<T>>& A, size_t A_i, size_t A_j,
     size_t this_i, size_t this_j, size_t nrows, size_t ncols) try {
   if (nrows == 0 || ncols == 0) {
     return;
   }
   if ((A_i + nrows) > A.rows() || (A_j + ncols) > A.cols()
       || (this_i + nrows) > this->rows() || (this_j + ncols) > this->cols()) {
-    domain_error("sub_block", "submatrix in *this", " is out of bounds", "");
+    throw_domain_error("sub_block", "submatrix in *this", " is out of bounds",
+                       "");
   }
   cl::CommandQueue cmdQueue = opencl_context.queue();
   if (A.view() == matrix_cl_view::Entire) {
-    cl::size_t<3> src_offset
-        = opencl::to_size_t<3>({A_i * sizeof(double), A_j, 0});
-    cl::size_t<3> dst_offset
-        = opencl::to_size_t<3>({this_i * sizeof(double), this_j, 0});
-    cl::size_t<3> size
-        = opencl::to_size_t<3>({nrows * sizeof(double), ncols, 1});
+    std::array<size_t, 3> src_offset({A_i * sizeof(double), A_j, 0});
+    std::array<size_t, 3> dst_offset({this_i * sizeof(double), this_j, 0});
+    std::array<size_t, 3> size({nrows * sizeof(double), ncols, 1});
     std::vector<cl::Event> kernel_events
         = vec_concat(A.write_events(), this->read_write_events());
     cl::Event copy_event;

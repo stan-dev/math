@@ -35,11 +35,12 @@ class log_falling_factorial_vd_vari : public op_vd_vari {
   log_falling_factorial_vd_vari(vari* avi, double b)
       : op_vd_vari(log_falling_factorial(avi->val_, b), avi, b) {}
   void chain() {
-    if (unlikely(is_any_nan(avi_->val_, bd_)))
+    if (unlikely(is_any_nan(avi_->val_, bd_))) {
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
-    else
+    } else {
       avi_->adj_
           += adj_ * (digamma(avi_->val_ + 1) - digamma(avi_->val_ - bd_ + 1));
+    }
   }
 };
 
@@ -48,10 +49,11 @@ class log_falling_factorial_dv_vari : public op_dv_vari {
   log_falling_factorial_dv_vari(double a, vari* bvi)
       : op_dv_vari(log_falling_factorial(a, bvi->val_), a, bvi) {}
   void chain() {
-    if (unlikely(is_any_nan(ad_, bvi_->val_)))
+    if (unlikely(is_any_nan(ad_, bvi_->val_))) {
       bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
-    else
+    } else {
       bvi_->adj_ += adj_ * digamma(ad_ - bvi_->val_ + 1);
+    }
   }
 };
 }  // namespace internal

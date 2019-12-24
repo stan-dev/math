@@ -18,7 +18,7 @@ namespace math {
 /**
  * Construct a dense Eigen matrix from the CSR format components.
  *
- * @tparam T Type of matrix entries.
+ * @tparam T type of elements in the matrix
  * @param[in] m Number of matrix rows.
  * @param[in] n Number of matrix columns.
  * @param[in] w Values of non-zero matrix entries.
@@ -45,8 +45,9 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> csr_to_dense_matrix(
   check_size_match("csr_to_dense_matrix", "w", w.size(), "v", v.size());
   check_size_match("csr_to_dense_matrix", "u/z",
                    u[m - 1] + csr_u_to_z(u, m - 1) - 1, "v", v.size());
-  for (int i : v)
+  for (int i : v) {
     check_range("csr_to_dense_matrix", "v[]", n, i);
+  }
 
   Matrix<T, Dynamic, Dynamic> result(m, n);
   result.setZero();
@@ -66,4 +67,5 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> csr_to_dense_matrix(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

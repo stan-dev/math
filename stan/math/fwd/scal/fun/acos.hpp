@@ -15,7 +15,6 @@ inline fvar<T> acos(const fvar<T>& x) {
   using std::sqrt;
   return fvar<T>(acos(x.val_), x.d_ / -sqrt(1 - square(x.val_)));
 }
-
 }  // namespace math
 }  // namespace stan
 #endif

@@ -10,18 +10,25 @@ namespace math {
 /**
  * Returns the result of post-multiplying a matrix by its
  * own transpose.
+ *
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
  * @param M Matrix to multiply.
  * @return M times its transpose.
  */
-inline matrix_d tcrossprod(const matrix_d& M) {
-  if (M.rows() == 0)
+template <int R, int C>
+inline Eigen::MatrixXd tcrossprod(const Eigen::Matrix<double, R, C>& M) {
+  if (M.rows() == 0) {
     return matrix_d(0, 0);
-  if (M.rows() == 1)
+  }
+  if (M.rows() == 1) {
     return M * M.transpose();
+  }
   matrix_d result(M.rows(), M.rows());
   return result.setZero().selfadjointView<Eigen::Upper>().rankUpdate(M);
 }
 
 }  // namespace math
 }  // namespace stan
+
 #endif

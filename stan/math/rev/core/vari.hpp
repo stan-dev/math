@@ -60,10 +60,11 @@ class vari {
   }
 
   vari(double x, bool stacked) : val_(x), adj_(0.0) {
-    if (stacked)
+    if (stacked) {
       ChainableStack::instance_->var_stack_.push_back(this);
-    else
+    } else {
       ChainableStack::instance_->var_nochain_stack_.push_back(this);
+    }
   }
 
   /**

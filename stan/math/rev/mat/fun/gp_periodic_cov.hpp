@@ -110,6 +110,7 @@ class gp_periodic_cov_vari : public vari {
             size_ltri_)),
         cov_diag_(
             ChainableStack::instance_->memalloc_.alloc_array<vari *>(size_)) {
+    using std::sin;
     double neg_two_inv_l_sq = -2.0 / (l_d_ * l_d_);
     double pi_div_p = pi() / p_d_;
 
@@ -242,6 +243,7 @@ class gp_periodic_cov_vari<T_x, double, T_l, T_p> : public vari {
             size_ltri_)),
         cov_diag_(
             ChainableStack::instance_->memalloc_.alloc_array<vari *>(size_)) {
+    using std::sin;
     double neg_two_inv_l_sq = -2.0 / (l_d_ * l_d_);
     double pi_div_p = pi() / p_d_;
 
@@ -308,12 +310,14 @@ gp_periodic_cov(const std::vector<T_x> &x, const var &sigma, const var &l,
   check_positive(fun, "length-scale", l);
   check_positive(fun, "period", p);
   size_t x_size = x.size();
-  for (size_t i = 0; i < x_size; ++i)
+  for (size_t i = 0; i < x_size; ++i) {
     check_not_nan(fun, "element of x", x[i]);
+  }
 
   Eigen::Matrix<var, -1, -1> cov(x_size, x_size);
-  if (x_size == 0)
+  if (x_size == 0) {
     return cov;
+  }
 
   gp_periodic_cov_vari<T_x, var, var, var> *baseVari
       = new gp_periodic_cov_vari<T_x, var, var, var>(x, sigma, l, p);
@@ -360,12 +364,14 @@ gp_periodic_cov(const std::vector<T_x> &x, double sigma, const var &l,
   check_positive(fun, "length-scale", l);
   check_positive(fun, "period", p);
   size_t x_size = x.size();
-  for (size_t i = 0; i < x_size; ++i)
+  for (size_t i = 0; i < x_size; ++i) {
     check_not_nan(fun, "element of x", x[i]);
+  }
 
   Eigen::Matrix<var, -1, -1> cov(x_size, x_size);
-  if (x_size == 0)
+  if (x_size == 0) {
     return cov;
+  }
 
   gp_periodic_cov_vari<T_x, double, var, var> *baseVari
       = new gp_periodic_cov_vari<T_x, double, var, var>(x, sigma, l, p);

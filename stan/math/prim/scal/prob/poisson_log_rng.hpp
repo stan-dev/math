@@ -6,11 +6,12 @@
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <boost/random/poisson_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Return a Poisson random variate with specified log rate parameter
  * using the given random number generator.
  *

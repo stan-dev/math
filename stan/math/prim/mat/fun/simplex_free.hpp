@@ -18,10 +18,10 @@ namespace math {
  * <p>The simplex transform is defined through a centered
  * stick-breaking process.
  *
+ * @tparam T type of elements in the simplex
  * @param x Simplex of dimensionality K.
- * @return Free vector of dimensionality (K-1) that transfroms to
+ * @return Free vector of dimensionality (K-1) that transforms to
  * the simplex.
- * @tparam T Type of scalar.
  * @throw std::domain_error if x is not a valid simplex
  */
 template <typename T>
@@ -31,7 +31,7 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> simplex_free(
   using Eigen::Matrix;
   using std::log;
 
-  typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
+  using size_type = typename index_type<Matrix<T, Dynamic, 1>>::type;
 
   check_simplex("stan::math::simplex_free", "Simplex variable", x);
   int Km1 = x.size() - 1;
@@ -48,4 +48,5 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> simplex_free(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

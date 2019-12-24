@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_FUN_GRAD_REG_INC_GAMMA_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/scal/err/throw_domain_error.hpp>
 #include <stan/math/prim/scal/fun/gamma_p.hpp>
 #include <stan/math/prim/scal/fun/gamma_q.hpp>
 #include <stan/math/prim/scal/fun/is_inf.hpp>
@@ -52,10 +52,11 @@ return_type_t<T1, T2> grad_reg_inc_gamma(T1 a, T2 z, T1 g, T1 dig,
   using std::exp;
   using std::fabs;
   using std::log;
-  typedef return_type_t<T1, T2> TP;
+  using TP = return_type_t<T1, T2>;
 
-  if (is_any_nan(a, z, g, dig))
+  if (is_any_nan(a, z, g, dig)) {
     return std::numeric_limits<TP>::quiet_NaN();
+  }
 
   T2 l = log(z);
   if (z >= a && z >= 8) {
@@ -77,8 +78,9 @@ return_type_t<T1, T2> grad_reg_inc_gamma(T1 a, T2 z, T1 g, T1 dig,
       fac *= a_minus_one_minus_k;
       delta = dfac / zpow;
 
-      if (is_inf(delta))
-        domain_error("grad_reg_inc_gamma", "is not converging", "", "");
+      if (is_inf(delta)) {
+        throw_domain_error("grad_reg_inc_gamma", "is not converging", "", "");
+      }
     }
 
     return gamma_q(a, z) * (l - dig) + exp(-z + (a - 1) * l) * S / g;
@@ -94,14 +96,16 @@ return_type_t<T1, T2> grad_reg_inc_gamma(T1 a, T2 z, T1 g, T1 dig,
       log_s += log_z - log(k);
       s_sign = -s_sign;
       log_delta = log_s - multiply_log(2, k + a);
-      if (is_inf(log_delta))
-        domain_error("grad_reg_inc_gamma", "is not converging", "", "");
-      if (log_delta <= log(precision))
+      if (is_inf(log_delta)) {
+        throw_domain_error("grad_reg_inc_gamma", "is not converging", "", "");
+      }
+      if (log_delta <= log(precision)) {
         return gamma_p(a, z) * (dig - l) + exp(a * l) * S / g;
+      }
     }
-    domain_error("grad_reg_inc_gamma", "k (internal counter)", max_steps,
-                 "exceeded ",
-                 " iterations, gamma function gradient did not converge.");
+    throw_domain_error(
+        "grad_reg_inc_gamma", "k (internal counter)", max_steps, "exceeded ",
+        " iterations, gamma function gradient did not converge.");
     return INFTY;
   }
 }

@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_MAT_FUN_TO_ROW_VECTOR_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-// stan::scalar_type
 #include <vector>
 
 namespace stan {
@@ -30,8 +29,9 @@ inline Eigen::Matrix<double, 1, Eigen::Dynamic> to_row_vector(
     const std::vector<int>& vec) {
   int C = vec.size();
   Eigen::Matrix<double, 1, Eigen::Dynamic> result(C);
-  for (int i = 0; i < C; i++)
+  for (int i = 0; i < C; i++) {
     result(i) = vec[i];
+  }
   return result;
 }
 

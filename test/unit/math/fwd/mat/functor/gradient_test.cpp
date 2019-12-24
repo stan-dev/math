@@ -13,7 +13,7 @@ struct fun1 {
   }
 };
 
-TEST(AgradAutoDiff, gradient) {
+TEST(FwdFunctor, gradient) {
   fun1 f;
   Matrix<double, Dynamic, 1> x(2);
   x << 5, 7;

@@ -55,9 +55,10 @@ void grad_hessian(
       for (int j = i; j < d; ++j) {
         start_nested();
         Matrix<fvar<fvar<var> >, Dynamic, 1> x_ffvar(d);
-        for (int k = 0; k < d; ++k)
+        for (int k = 0; k < d; ++k) {
           x_ffvar(k)
               = fvar<fvar<var> >(fvar<var>(x(k), i == k), fvar<var>(j == k, 0));
+        }
         fvar<fvar<var> > fx_ffvar = f(x_ffvar);
         H(i, j) = fx_ffvar.d_.d_.val();
         H(j, i) = H(i, j);

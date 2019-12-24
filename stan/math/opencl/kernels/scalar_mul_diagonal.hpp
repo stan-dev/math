@@ -4,14 +4,15 @@
 
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/opencl/buffer_types.hpp>
+#include <string>
 
 namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const char *scalar_mul_diagonal_kernel_code = STRINGIFY(
+static const std::string scalar_mul_diagonal_kernel_code = STRINGIFY(
     // \endcond
-    /**
+    /** \ingroup opencl_kernels
      * Multiplication of the matrix A diagonal with a scalar
      *
      * @param[in, out] A matrix A
@@ -31,7 +32,7 @@ static const char *scalar_mul_diagonal_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/**
+/** \ingroup opencl_kernels
  * See the docs for \link kernels/scalar_mul_diagonal.hpp add() \endlink
  */
 const kernel_cl<in_out_buffer, double, int, int> scalar_mul_diagonal(

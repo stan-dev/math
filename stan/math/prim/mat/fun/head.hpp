@@ -14,7 +14,7 @@ namespace math {
  * Return the specified number of elements as a vector
  * from the front of the specified vector.
  *
- * @tparam T Type of value in vector.
+ * @tparam T type of elements in the vector
  * @param v Vector input.
  * @param n Size of return.
  * @return The first n elements of v.
@@ -23,8 +23,9 @@ namespace math {
 template <typename T>
 inline Eigen::Matrix<T, Eigen::Dynamic, 1> head(
     const Eigen::Matrix<T, Eigen::Dynamic, 1>& v, size_t n) {
-  if (n != 0)
+  if (n != 0) {
     check_row_index("head", "n", v, n);
+  }
   return v.head(n);
 }
 
@@ -32,7 +33,7 @@ inline Eigen::Matrix<T, Eigen::Dynamic, 1> head(
  * Return the specified number of elements as a row vector
  * from the front of the specified row vector.
  *
- * @tparam T Type of value in vector.
+ * @tparam T type of elements in the vector
  * @param rv Row vector.
  * @param n Size of return row vector.
  * @return The first n elements of rv.
@@ -41,8 +42,9 @@ inline Eigen::Matrix<T, Eigen::Dynamic, 1> head(
 template <typename T>
 inline Eigen::Matrix<T, 1, Eigen::Dynamic> head(
     const Eigen::Matrix<T, 1, Eigen::Dynamic>& rv, size_t n) {
-  if (n != 0)
+  if (n != 0) {
     check_column_index("head", "n", rv, n);
+  }
   return rv.head(n);
 }
 
@@ -50,7 +52,7 @@ inline Eigen::Matrix<T, 1, Eigen::Dynamic> head(
  * Return the specified number of elements as a standard vector
  * from the front of the specified standard vector.
  *
- * @tparam T Type of value in vector.
+ * @tparam T type of elements in the vector
  * @param sv Standard vector.
  * @param n Size of return.
  * @return The first n elements of sv.
@@ -58,15 +60,18 @@ inline Eigen::Matrix<T, 1, Eigen::Dynamic> head(
  */
 template <typename T>
 std::vector<T> head(const std::vector<T>& sv, size_t n) {
-  if (n != 0)
+  if (n != 0) {
     check_std_vector_index("head", "n", sv, n);
+  }
 
   std::vector<T> s;
-  for (size_t i = 0; i < n; ++i)
+  for (size_t i = 0; i < n; ++i) {
     s.push_back(sv[i]);
+  }
   return s;
 }
 
 }  // namespace math
 }  // namespace stan
+
 #endif

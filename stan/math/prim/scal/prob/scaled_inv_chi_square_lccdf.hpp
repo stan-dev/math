@@ -22,10 +22,11 @@ namespace math {
 template <typename T_y, typename T_dof, typename T_scale>
 return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lccdf(
     const T_y& y, const T_dof& nu, const T_scale& s) {
-  typedef partials_return_type_t<T_y, T_dof, T_scale> T_partials_return;
+  using T_partials_return = partials_return_t<T_y, T_dof, T_scale>;
 
-  if (size_zero(y, nu, s))
+  if (size_zero(y, nu, s)) {
     return 0.0;
+  }
 
   static const char* function = "scaled_inv_chi_square_lccdf";
 
@@ -49,8 +50,9 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lccdf(
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
   for (size_t i = 0; i < stan::length(y); i++) {
-    if (value_of(y_vec[i]) == 0)
+    if (value_of(y_vec[i]) == 0) {
       return ops_partials.build(0.0);
+    }
   }
 
   using std::exp;
@@ -92,19 +94,22 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lccdf(
 
     P += log(Pn);
 
-    if (!is_constant_all<T_y>::value)
+    if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n]
           -= half_nu_s2_overx_dbl * y_inv_dbl * gamma_p_deriv / Pn;
-    if (!is_constant_all<T_dof>::value)
+    }
+    if (!is_constant_all<T_dof>::value) {
       ops_partials.edge2_.partials_[n]
           -= (0.5
                   * grad_reg_inc_gamma(half_nu_dbl, half_nu_s2_overx_dbl,
                                        gamma_vec[n], digamma_vec[n])
               - half_s2_overx_dbl * gamma_p_deriv)
              / Pn;
-    if (!is_constant_all<T_scale>::value)
+    }
+    if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n]
           += 2.0 * half_nu_dbl * s_dbl * y_inv_dbl * gamma_p_deriv / Pn;
+    }
   }
   return ops_partials.build(P);
 }

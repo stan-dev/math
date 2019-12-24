@@ -28,7 +28,17 @@ inline void test_matrix_exp_multiply() {
   }
 }
 
-TEST(MathMatrix, matrix_exp_multiply) {
+TEST(MathMatrixPrimMat, matrix_exp_multiply) {
+  // the helper above doesn't handle 0 size inputs
+  Eigen::MatrixXd A(0, 0);
+  Eigen::MatrixXd B(0, 0);
+  EXPECT_EQ(stan::math::matrix_exp_multiply(A, B).size(), 0);
+
+  Eigen::MatrixXd C(0, 2);
+  Eigen::MatrixXd M = stan::math::matrix_exp_multiply(A, C);
+  EXPECT_EQ(A.rows(), M.rows());
+  EXPECT_EQ(C.cols(), M.cols());
+
   test_matrix_exp_multiply<1, 1>();
   test_matrix_exp_multiply<1, 5>();
   test_matrix_exp_multiply<5, 1>();
@@ -36,9 +46,9 @@ TEST(MathMatrix, matrix_exp_multiply) {
   test_matrix_exp_multiply<20, 2>();
 }
 
-TEST(MathMatrix, matrix_exp_multiply_exception) {
+TEST(MathMatrixPrimMat, matrix_exp_multiply_exception) {
   using stan::math::matrix_exp_multiply;
-  {  // nonzero size
+  {  // multiplicable
     Eigen::MatrixXd A(0, 0);
     Eigen::MatrixXd B = Eigen::MatrixXd::Random(1, 2);
     EXPECT_THROW(matrix_exp_multiply(A, B), std::invalid_argument);
@@ -48,6 +58,12 @@ TEST(MathMatrix, matrix_exp_multiply_exception) {
   {  // multiplicable
     Eigen::MatrixXd A = Eigen::MatrixXd::Random(2, 2);
     Eigen::MatrixXd B = Eigen::MatrixXd::Random(3, 2);
+    EXPECT_THROW(matrix_exp_multiply(A, B), std::invalid_argument);
+  }
+
+  {  // square
+    Eigen::MatrixXd A(0, 1);
+    Eigen::MatrixXd B(1, 2);
     EXPECT_THROW(matrix_exp_multiply(A, B), std::invalid_argument);
   }
 

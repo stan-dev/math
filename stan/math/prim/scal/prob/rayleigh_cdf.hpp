@@ -17,14 +17,15 @@ namespace math {
 template <typename T_y, typename T_scale>
 return_type_t<T_y, T_scale> rayleigh_cdf(const T_y& y, const T_scale& sigma) {
   static const char* function = "rayleigh_cdf";
-  typedef partials_return_type_t<T_y, T_scale> T_partials_return;
+  using T_partials_return = partials_return_t<T_y, T_scale>;
 
   using std::exp;
 
   T_partials_return cdf(1.0);
 
-  if (size_zero(y, sigma))
+  if (size_zero(y, sigma)) {
     return cdf;
+  }
 
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
@@ -50,8 +51,9 @@ return_type_t<T_y, T_scale> rayleigh_cdf(const T_y& y, const T_scale& sigma) {
     const T_partials_return inv_sigma_sqr = inv_sigma[n] * inv_sigma[n];
     const T_partials_return exp_val = exp(-0.5 * y_sqr * inv_sigma_sqr);
 
-    if (include_summand<false, T_y, T_scale>::value)
+    if (include_summand<false, T_y, T_scale>::value) {
       cdf *= (1.0 - exp_val);
+    }
   }
 
   for (size_t n = 0; n < N; n++) {
@@ -61,12 +63,14 @@ return_type_t<T_y, T_scale> rayleigh_cdf(const T_y& y, const T_scale& sigma) {
     const T_partials_return exp_val = exp(-0.5 * y_sqr * inv_sigma_sqr);
     const T_partials_return exp_div_1m_exp = exp_val / (1.0 - exp_val);
 
-    if (!is_constant_all<T_y>::value)
+    if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n]
           += y_dbl * inv_sigma_sqr * exp_div_1m_exp * cdf;
-    if (!is_constant_all<T_scale>::value)
+    }
+    if (!is_constant_all<T_scale>::value) {
       ops_partials.edge2_.partials_[n]
           -= y_sqr * inv_sigma_sqr * inv_sigma[n] * exp_div_1m_exp * cdf;
+    }
   }
   return ops_partials.build(cdf);
 }

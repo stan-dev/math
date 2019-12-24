@@ -30,10 +30,11 @@ inline int hypergeometric_rng(int N, int a, int b, RNG& rng) {
   int max = a - 1;
   while (min < max) {
     int mid = (min + max) / 2;
-    if (cdf(dist, mid + 1) > u)
+    if (cdf(dist, mid + 1) > u) {
       max = mid;
-    else
+    } else {
       min = mid + 1;
+    }
   }
   return min + 1;
 }

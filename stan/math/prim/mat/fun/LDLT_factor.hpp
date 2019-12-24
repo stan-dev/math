@@ -18,12 +18,12 @@ namespace math {
  * <code>boost::shared_ptr</code>, which ensures that is freed
  * when the object is released.
  *
- * After the constructor and/or compute() is called users of
+ * After the constructor and/or compute() is called, users of
  * LDLT_factor are responsible for calling success() to
  * check whether the factorization has succeeded.  Use of an LDLT_factor
  * object (e.g., in mdivide_left_ldlt) is undefined if success() is false.
  *
- * It's usage pattern is:
+ * Its usage pattern is:
  *
  * ~~~
  * Eigen::Matrix<T, R, C> A1, A2;
@@ -55,18 +55,18 @@ namespace math {
  * decomposed as LDL' where L is unit lower-triangular and D is
  * diagonal with positive diagonal elements.
  *
- * @tparam T scalare type held in the matrix
- * @tparam R rows (as in Eigen)
- * @tparam C columns (as in Eigen)
+ * @tparam T type of elements in the matrix
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
  */
 template <typename T, int R, int C>
 class LDLT_factor {
  public:
-  typedef Eigen::Matrix<T, Eigen::Dynamic, 1> vector_t;
-  typedef Eigen::Matrix<T, R, C> matrix_t;
-  typedef Eigen::LDLT<matrix_t> ldlt_t;
-  typedef size_t size_type;
-  typedef double value_type;
+  using vector_t = Eigen::Matrix<T, Eigen::Dynamic, 1>;
+  using matrix_t = Eigen::Matrix<T, R, C>;
+  using ldlt_t = Eigen::LDLT<matrix_t>;
+  using size_type = size_t;
+  using value_type = double;
 
   LDLT_factor() : N_(0), ldltP_(new ldlt_t()) {}
 
@@ -81,14 +81,18 @@ class LDLT_factor {
   }
 
   inline bool success() const {
-    if (ldltP_->info() != Eigen::Success)
+    if (ldltP_->info() != Eigen::Success) {
       return false;
-    if (!(ldltP_->isPositive()))
+    }
+    if (!(ldltP_->isPositive())) {
       return false;
+    }
     vector_t ldltP_diag(ldltP_->vectorD());
-    for (int i = 0; i < ldltP_diag.size(); ++i)
-      if (ldltP_diag(i) <= 0 || is_nan(ldltP_diag(i)))
+    for (int i = 0; i < ldltP_diag.size(); ++i) {
+      if (ldltP_diag(i) <= 0 || is_nan(ldltP_diag(i))) {
         return false;
+      }
+    }
     return true;
   }
 
@@ -99,19 +103,11 @@ class LDLT_factor {
     ldltP_->solveInPlace(invA);
   }
 
-#if EIGEN_VERSION_AT_LEAST(3, 3, 0)
   template <typename Rhs>
   inline const Eigen::Solve<ldlt_t, Rhs> solve(
       const Eigen::MatrixBase<Rhs>& b) const {
     return ldltP_->solve(b);
   }
-#else
-  template <typename Rhs>
-  inline const Eigen::internal::solve_retval<ldlt_t, Rhs> solve(
-      const Eigen::MatrixBase<Rhs>& b) const {
-    return ldltP_->solve(b);
-  }
-#endif
 
   inline matrix_t solveRight(const matrix_t& B) const {
     return ldltP_->solve(B.transpose()).transpose();
@@ -130,4 +126,5 @@ class LDLT_factor {
 
 }  // namespace math
 }  // namespace stan
+
 #endif

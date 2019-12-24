@@ -11,6 +11,7 @@ namespace math {
 /**
  * Return a 1 x nrows subrow starting at (i-1, j-1).
  *
+ * @tparam T type of elements in the matrix
  * @param m Matrix Input matrix.
  * @param i Starting row + 1.
  * @param j Starting column + 1.
@@ -23,11 +24,13 @@ inline Eigen::Matrix<T, 1, Eigen::Dynamic> sub_row(
     size_t j, size_t ncols) {
   check_row_index("sub_row", "i", m, i);
   check_column_index("sub_row", "j", m, j);
-  if (ncols > 0)
+  if (ncols > 0) {
     check_column_index("sub_col", "j+ncols-1", m, j + ncols - 1);
+  }
   return m.block(i - 1, j - 1, 1, ncols);
 }
 
 }  // namespace math
 }  // namespace stan
+
 #endif

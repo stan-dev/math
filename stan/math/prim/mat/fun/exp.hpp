@@ -16,8 +16,8 @@ struct exp_fun {
   /**
    * Return the exponential of the specified scalar argument.
    *
-   * @tparam T Scalar argument type.
-   * @param[in] x Argument.
+   * @tparam T type of argument
+   * @param[in] x argument
    * @return Exponential of argument.
    */
   template <typename T>
@@ -32,8 +32,8 @@ struct exp_fun {
  * which may be a scalar or any Stan container of numeric scalars.
  * The return type is the same as the argument type.
  *
- * @tparam T Argument type.
- * @param[in] x Argument.
+ * @tparam T type of container
+ * @param[in] x container
  * @return Elementwise application of exponentiation to the argument.
  */
 template <typename T>

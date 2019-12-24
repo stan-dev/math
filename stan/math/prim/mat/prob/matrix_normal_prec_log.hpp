@@ -4,11 +4,10 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/prob/matrix_normal_prec_lpdf.hpp>
-#include <boost/math/tools/promotion.hpp>
 
 namespace stan {
 namespace math {
-/**
+/** \ingroup multivar_dists
  * The log of the matrix normal density for the given y, mu, Sigma and D
  * where Sigma and D are given as precision matrices, not covariance
  * matrices.
@@ -40,7 +39,7 @@ return_type_t<T_y, T_Mu, T_Sigma, T_D> matrix_normal_prec_log(
                                                                   D);
 }
 
-/**
+/** \ingroup multivar_dists
  * @deprecated use <code>matrix_normal_prec_lpdf</code>
  */
 template <typename T_y, typename T_Mu, typename T_Sigma, typename T_D>

@@ -21,10 +21,12 @@ template <typename T>
 void resize(std::vector<T>& x, const std::vector<int>& dims, int pos) {
   x.resize(dims[pos]);
   ++pos;
-  if (pos >= static_cast<int>(dims.size()))
+  if (pos >= static_cast<int>(dims.size())) {
     return;  // skips lowest loop to scalar
-  for (size_t i = 0; i < x.size(); ++i)
+  }
+  for (size_t i = 0; i < x.size(); ++i) {
     resize(x[i], dims, pos);
+  }
 }
 }  // namespace internal
 
@@ -33,9 +35,9 @@ void resize(std::vector<T>& x, const std::vector<int>& dims, int pos) {
  * which must bottom out at scalar values, Eigen vectors
  * or Eigen matrices.
  *
+ * @tparam T type of object being resized
  * @param x Array-like object to resize.
  * @param dims New dimensions.
- * @tparam T Type of object being resized.
  */
 template <typename T>
 inline void resize(T& x, std::vector<int> dims) {
@@ -44,4 +46,5 @@ inline void resize(T& x, std::vector<int> dims) {
 
 }  // namespace math
 }  // namespace stan
+
 #endif

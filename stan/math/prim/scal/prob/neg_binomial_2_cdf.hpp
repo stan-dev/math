@@ -20,12 +20,12 @@ template <typename T_n, typename T_location, typename T_precision>
 return_type_t<T_location, T_precision> neg_binomial_2_cdf(
     const T_n& n, const T_location& mu, const T_precision& phi) {
   static const char* function = "neg_binomial_2_cdf";
-  typedef partials_return_type_t<T_n, T_location, T_precision>
-      T_partials_return;
+  using T_partials_return = partials_return_t<T_n, T_location, T_precision>;
 
   T_partials_return P(1.0);
-  if (size_zero(n, mu, phi))
+  if (size_zero(n, mu, phi)) {
     return P;
+  }
 
   check_positive_finite(function, "Location parameter", mu);
   check_positive_finite(function, "Precision parameter", phi);
@@ -43,8 +43,9 @@ return_type_t<T_location, T_precision> neg_binomial_2_cdf(
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
   for (size_t i = 0; i < stan::length(n); i++) {
-    if (value_of(n_vec[i]) < 0)
+    if (value_of(n_vec[i]) < 0) {
       return ops_partials.build(0.0);
+    }
   }
 
   VectorBuilder<!is_constant_all<T_precision>::value, T_partials_return,
@@ -68,8 +69,9 @@ return_type_t<T_location, T_precision> neg_binomial_2_cdf(
   for (size_t i = 0; i < size; i++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
-    if (value_of(n_vec[i]) == std::numeric_limits<int>::max())
+    if (value_of(n_vec[i]) == std::numeric_limits<int>::max()) {
       return ops_partials.build(1.0);
+    }
 
     const T_partials_return n_dbl = value_of(n_vec[i]);
     const T_partials_return mu_dbl = value_of(mu_vec[i]);
@@ -83,9 +85,10 @@ return_type_t<T_location, T_precision> neg_binomial_2_cdf(
 
     P *= P_i;
 
-    if (!is_constant_all<T_location>::value)
+    if (!is_constant_all<T_location>::value) {
       ops_partials.edge1_.partials_[i]
           += -inc_beta_ddz(phi_dbl, n_dbl + 1.0, p_dbl) * phi_dbl * d_dbl / P_i;
+    }
 
     if (!is_constant_all<T_precision>::value) {
       ops_partials.edge2_.partials_[i]
@@ -97,13 +100,15 @@ return_type_t<T_location, T_precision> neg_binomial_2_cdf(
   }
 
   if (!is_constant_all<T_location>::value) {
-    for (size_t i = 0; i < stan::length(mu); ++i)
+    for (size_t i = 0; i < stan::length(mu); ++i) {
       ops_partials.edge1_.partials_[i] *= P;
+    }
   }
 
   if (!is_constant_all<T_precision>::value) {
-    for (size_t i = 0; i < stan::length(phi); ++i)
+    for (size_t i = 0; i < stan::length(phi); ++i) {
       ops_partials.edge2_.partials_[i] *= P;
+    }
   }
 
   return ops_partials.build(P);

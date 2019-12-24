@@ -1,7 +1,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathMatrix, multiply_c_v) {
+TEST(MathMatrixPrimMat, multiply_c_v) {
   stan::math::vector_d v(3);
   v << 1, 2, 3;
   stan::math::vector_d result = stan::math::multiply(2.0, v);
@@ -9,7 +9,7 @@ TEST(MathMatrix, multiply_c_v) {
   EXPECT_FLOAT_EQ(4.0, result(1));
   EXPECT_FLOAT_EQ(6.0, result(2));
 }
-TEST(MathMatrix, multiply_c_rv) {
+TEST(MathMatrixPrimMat, multiply_c_rv) {
   stan::math::row_vector_d rv(3);
   rv << 1, 2, 3;
   stan::math::row_vector_d result = stan::math::multiply(2.0, rv);
@@ -17,7 +17,7 @@ TEST(MathMatrix, multiply_c_rv) {
   EXPECT_FLOAT_EQ(4.0, result(1));
   EXPECT_FLOAT_EQ(6.0, result(2));
 }
-TEST(MathMatrix, multiply_c_m) {
+TEST(MathMatrixPrimMat, multiply_c_m) {
   stan::math::matrix_d m(2, 3);
   m << 1, 2, 3, 4, 5, 6;
   stan::math::matrix_d result = stan::math::multiply(2.0, m);
@@ -29,7 +29,7 @@ TEST(MathMatrix, multiply_c_m) {
   EXPECT_FLOAT_EQ(12.0, result(1, 2));
 }
 
-TEST(MathMatrix, multiply_rv_v_exception) {
+TEST(MathMatrixPrimMat, multiply_rv_v_exception) {
   stan::math::row_vector_d rv;
   stan::math::vector_d v;
 
@@ -45,7 +45,7 @@ TEST(MathMatrix, multiply_rv_v_exception) {
   v.resize(3);
   EXPECT_THROW(stan::math::multiply(rv, v), std::invalid_argument);
 }
-TEST(MathMatrix, multiply_m_v_exception) {
+TEST(MathMatrixPrimMat, multiply_m_v_exception) {
   stan::math::matrix_d m;
   stan::math::vector_d v;
 
@@ -61,7 +61,7 @@ TEST(MathMatrix, multiply_m_v_exception) {
   v.resize(2);
   EXPECT_THROW(stan::math::multiply(m, v), std::invalid_argument);
 }
-TEST(MathMatrix, multiply_rv_m_exception) {
+TEST(MathMatrixPrimMat, multiply_rv_m_exception) {
   stan::math::row_vector_d rv;
   stan::math::matrix_d m;
 
@@ -77,7 +77,7 @@ TEST(MathMatrix, multiply_rv_m_exception) {
   m.resize(2, 3);
   EXPECT_THROW(stan::math::multiply(rv, m), std::invalid_argument);
 }
-TEST(MathMatrix, multiply_m_m_exception) {
+TEST(MathMatrixPrimMat, multiply_m_m_exception) {
   stan::math::matrix_d m1, m2;
 
   m1.resize(1, 3);
@@ -93,7 +93,7 @@ TEST(MathMatrix, multiply_m_m_exception) {
   EXPECT_THROW(stan::math::multiply(m1, m2), std::invalid_argument);
 }
 
-TEST(MathMatrix, multiply) {
+TEST(MathMatrixPrimMat, multiply) {
   stan::math::vector_d v0;
   stan::math::row_vector_d rv0;
   stan::math::matrix_d m0;
@@ -107,7 +107,7 @@ TEST(MathMatrix, multiply) {
   EXPECT_NO_THROW(multiply(2.0, m0));
 }
 
-TEST(AgradRevMatrix, multiply_int) {
+TEST(MathMatrixPrimMat, multiply_int) {
   using stan::math::assign;
   using stan::math::multiply;
 
@@ -120,7 +120,7 @@ TEST(AgradRevMatrix, multiply_int) {
   assign(t_vec, multiply(vec, d_int));
 }
 
-TEST(AgradRevMatrix, multiply_vector_int) {
+TEST(MathMatrixPrimMat, multiply_vector_int) {
   using stan::math::multiply;
   using stan::math::vector_d;
 
@@ -133,3 +133,31 @@ TEST(AgradRevMatrix, multiply_vector_int) {
   EXPECT_EQ(4.0, prod_vec[1]);
   EXPECT_EQ(6.0, prod_vec[2]);
 }
+
+#ifdef STAN_OPENCL
+#define EXPECT_MATRIX_NEAR(A, B, DELTA) \
+  for (int i = 0; i < A.size(); i++)    \
+    EXPECT_NEAR(A(i), B(i), DELTA);
+
+TEST(MathMatrixPrimMat, multiply_opencl) {
+  int multiply_dim_prod_worth_transfer
+      = stan::math::opencl_context.tuning_opts()
+            .multiply_dim_prod_worth_transfer;
+  stan::math::opencl_context.tuning_opts().multiply_dim_prod_worth_transfer = 0;
+  using stan::math::multiply;
+  int size = 400;
+  stan::math::matrix_d m1 = stan::math::matrix_d::Random(size, size).eval();
+  stan::math::matrix_d m2 = stan::math::matrix_d::Random(size, size).eval();
+
+  stan::math::matrix_d m3_cl = multiply(m1, m2);
+  // to make sure we dont use OpenCL
+  stan::math::opencl_context.tuning_opts().multiply_dim_prod_worth_transfer
+      = INT_MAX;
+
+  stan::math::matrix_d m3 = multiply(m1, m2);
+
+  EXPECT_MATRIX_NEAR(m3_cl, m3, 1e-10);
+  stan::math::opencl_context.tuning_opts().multiply_dim_prod_worth_transfer
+      = multiply_dim_prod_worth_transfer;
+}
+#endif

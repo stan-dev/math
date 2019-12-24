@@ -1,7 +1,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathMatrix, quad_form_mat) {
+TEST(MathMatrixPrimMat, quad_form_mat) {
   using stan::math::matrix_d;
   using stan::math::quad_form;
 
@@ -20,7 +20,7 @@ TEST(MathMatrix, quad_form_mat) {
   EXPECT_FLOAT_EQ(725, resd(1, 1));
 }
 
-TEST(MathMatrix, quad_form_sym_mat) {
+TEST(MathMatrixPrimMat, quad_form_sym_mat) {
   using stan::math::matrix_d;
   using stan::math::quad_form_sym;
 
@@ -39,7 +39,7 @@ TEST(MathMatrix, quad_form_sym_mat) {
   EXPECT_FLOAT_EQ(725, resd(1, 1));
 }
 
-TEST(MathMatrix, quad_form_vec) {
+TEST(MathMatrixPrimMat, quad_form_vec) {
   using stan::math::matrix_d;
   using stan::math::quad_form;
   using stan::math::vector_d;
@@ -57,7 +57,7 @@ TEST(MathMatrix, quad_form_vec) {
   EXPECT_FLOAT_EQ(26033, res);
 }
 
-TEST(MathMatrix, quad_form_sym_vec) {
+TEST(MathMatrixPrimMat, quad_form_sym_vec) {
   using stan::math::matrix_d;
   using stan::math::quad_form_sym;
   using stan::math::vector_d;
@@ -75,7 +75,7 @@ TEST(MathMatrix, quad_form_sym_vec) {
   EXPECT_FLOAT_EQ(25433, res);
 }
 
-TEST(MathMatrix, quad_form_sym_symmetry) {
+TEST(MathMatrixPrimMat, quad_form_sym_symmetry) {
   using stan::math::matrix_d;
   using stan::math::quad_form_sym;
 
@@ -98,7 +98,7 @@ TEST(MathMatrix, quad_form_sym_symmetry) {
   EXPECT_EQ(resd(2, 1), resd(1, 2));
 }
 
-TEST(MathMatrix, quad_form_sym_asymmetric) {
+TEST(MathMatrixPrimMat, quad_form_sym_asymmetric) {
   using stan::math::matrix_d;
   using stan::math::quad_form_sym;
 

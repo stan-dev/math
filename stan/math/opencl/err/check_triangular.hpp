@@ -9,7 +9,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup opencl
  * Check if the <code>matrix_cl</code> is either upper triangular or lower
  * triangular.
  *

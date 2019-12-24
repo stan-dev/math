@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>von_mises_lpdf</code>
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
@@ -16,7 +16,7 @@ return_type_t<T_y, T_loc, T_scale> von_mises_log(T_y const& y, T_loc const& mu,
   return von_mises_lpdf<propto, T_y, T_loc, T_scale>(y, mu, kappa);
 }
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>von_mises_lpdf</code>
  */
 template <typename T_y, typename T_loc, typename T_scale>

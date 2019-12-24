@@ -3,13 +3,11 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/rev/mat/fun/to_var.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <boost/math/tools/promotion.hpp>
 #include <type_traits>
 
 namespace stan {
@@ -85,20 +83,53 @@ class multiply_mat_vari : public vari {
     Map<matrix_d> Bd(Bd_, A_cols_, B_cols_);
     Ad = A.val();
     Bd = B.val();
-
+#ifdef STAN_OPENCL
+    if (Ad.rows() * Ad.cols() * Bd.cols()
+        > opencl_context.tuning_opts().multiply_dim_prod_worth_transfer) {
+      matrix_cl<double> Ad_cl(Ad);
+      matrix_cl<double> Bd_cl(Bd);
+      matrix_cl<double> variRefAB_cl = Ad_cl * Bd_cl;
+      matrix_d temp = from_matrix_cl(variRefAB_cl);
+      Map<matrix_vi>(variRefAB_, A_rows_, B_cols_)
+          = temp.unaryExpr([](double x) { return new vari(x, false); });
+    } else {
+      Map<matrix_vi>(variRefAB_, A_rows_, B_cols_)
+          = (Ad * Bd).unaryExpr([](double x) { return new vari(x, false); });
+    }
+#else
     Map<matrix_vi>(variRefAB_, A_rows_, B_cols_)
         = (Ad * Bd).unaryExpr([](double x) { return new vari(x, false); });
+#endif
   }
 
   virtual void chain() {
     using Eigen::Map;
     matrix_d adjAB(A_rows_, B_cols_);
-
     adjAB = Map<matrix_vi>(variRefAB_, A_rows_, B_cols_).adj();
+#ifdef STAN_OPENCL
+    if (A_rows_ * A_cols_ * B_cols_
+        > opencl_context.tuning_opts().multiply_dim_prod_worth_transfer) {
+      matrix_cl<double> adjAB_cl(adjAB);
+      matrix_cl<double> Ad_cl(Ad_, A_rows_, A_cols_);
+      matrix_cl<double> Bd_cl(Bd_, A_cols_, B_cols_);
+      matrix_cl<double> variRefA_cl = adjAB_cl * transpose(Bd_cl);
+      matrix_cl<double> variRefB_cl = transpose(Ad_cl) * adjAB_cl;
+      matrix_d temp_variRefA = from_matrix_cl(variRefA_cl);
+      matrix_d temp_variRefB = from_matrix_cl(variRefB_cl);
+      Map<matrix_vi>(variRefA_, A_rows_, A_cols_).adj() += temp_variRefA;
+      Map<matrix_vi>(variRefB_, A_cols_, B_cols_).adj() += temp_variRefB;
+    } else {
+      Map<matrix_vi>(variRefA_, A_rows_, A_cols_).adj()
+          += adjAB * Map<matrix_d>(Bd_, A_cols_, B_cols_).transpose();
+      Map<matrix_vi>(variRefB_, A_cols_, B_cols_).adj()
+          += Map<matrix_d>(Ad_, A_rows_, A_cols_).transpose() * adjAB;
+    }
+#else
     Map<matrix_vi>(variRefA_, A_rows_, A_cols_).adj()
         += adjAB * Map<matrix_d>(Bd_, A_cols_, B_cols_).transpose();
     Map<matrix_vi>(variRefB_, A_cols_, B_cols_).adj()
         += Map<matrix_d>(Ad_, A_rows_, A_cols_).transpose() * adjAB;
+#endif
   }
 };
 
@@ -238,17 +269,44 @@ class multiply_mat_vari<double, Ra, Ca, Tb, Cb> : public vari {
     Map<matrix_d> Bd(Bd_, A_cols_, B_cols_);
     Ad = A;
     Bd = B.val();
-
+#ifdef STAN_OPENCL
+    if (Ad.rows() * Ad.cols() * Bd.cols()
+        > opencl_context.tuning_opts().multiply_dim_prod_worth_transfer) {
+      matrix_cl<double> Ad_cl(Ad);
+      matrix_cl<double> Bd_cl(Bd);
+      matrix_cl<double> variRefAB_cl = Ad_cl * Bd_cl;
+      matrix_d temp = from_matrix_cl(variRefAB_cl);
+      Map<matrix_vi>(variRefAB_, A_rows_, B_cols_)
+          = temp.unaryExpr([](double x) { return new vari(x, false); });
+    } else {
+      Map<matrix_vi>(variRefAB_, A_rows_, B_cols_)
+          = (Ad * Bd).unaryExpr([](double x) { return new vari(x, false); });
+    }
+#else
     Map<matrix_vi>(variRefAB_, A_rows_, B_cols_)
         = (Ad * Bd).unaryExpr([](double x) { return new vari(x, false); });
+#endif
   }
 
   virtual void chain() {
     using Eigen::Map;
     matrix_d adjAB = Map<matrix_vi>(variRefAB_, A_rows_, B_cols_).adj();
-
+#ifdef STAN_OPENCL
+    if (A_rows_ * A_cols_ * B_cols_
+        > opencl_context.tuning_opts().multiply_dim_prod_worth_transfer) {
+      matrix_cl<double> adjAB_cl(adjAB);
+      matrix_cl<double> Ad_cl(Ad_, A_rows_, A_cols_);
+      matrix_cl<double> variRefB_cl = transpose(Ad_cl) * adjAB_cl;
+      matrix_d temp_variRefB = from_matrix_cl(variRefB_cl);
+      Map<matrix_vi>(variRefB_, A_cols_, B_cols_).adj() += temp_variRefB;
+    } else {
+      Map<matrix_vi>(variRefB_, A_cols_, B_cols_).adj()
+          += Map<matrix_d>(Ad_, A_rows_, A_cols_).transpose() * adjAB;
+    }
+#else
     Map<matrix_vi>(variRefB_, A_cols_, B_cols_).adj()
         += Map<matrix_d>(Ad_, A_rows_, A_cols_).transpose() * adjAB;
+#endif
   }
 };
 
@@ -381,17 +439,44 @@ class multiply_mat_vari<Ta, Ra, Ca, double, Cb> : public vari {
     Map<matrix_d> Bd(Bd_, A_cols_, B_cols_);
     Ad = A.val();
     Bd = B.val();
-
+#ifdef STAN_OPENCL
+    if (Ad.rows() * Ad.cols() * Bd.cols()
+        > opencl_context.tuning_opts().multiply_dim_prod_worth_transfer) {
+      matrix_cl<double> Ad_cl(Ad);
+      matrix_cl<double> Bd_cl(Bd);
+      matrix_cl<double> variRefAB_cl = Ad_cl * Bd_cl;
+      matrix_d temp = from_matrix_cl(variRefAB_cl);
+      Map<matrix_vi>(variRefAB_, A_rows_, B_cols_)
+          = temp.unaryExpr([](double x) { return new vari(x, false); });
+    } else {
+      Map<matrix_vi>(variRefAB_, A_rows_, B_cols_)
+          = (Ad * Bd).unaryExpr([](double x) { return new vari(x, false); });
+    }
+#else
     Map<matrix_vi>(variRefAB_, A_rows_, B_cols_)
         = (Ad * Bd).unaryExpr([](double x) { return new vari(x, false); });
+#endif
   }
 
   virtual void chain() {
     using Eigen::Map;
     matrix_d adjAB = Map<matrix_vi>(variRefAB_, A_rows_, B_cols_).adj();
-
+#ifdef STAN_OPENCL
+    if (A_rows_ * A_cols_ * B_cols_
+        > opencl_context.tuning_opts().multiply_dim_prod_worth_transfer) {
+      matrix_cl<double> adjAB_cl(adjAB);
+      matrix_cl<double> Bd_cl(Bd_, A_cols_, B_cols_);
+      matrix_cl<double> variRefA_cl = adjAB_cl * transpose(Bd_cl);
+      matrix_d temp_variRefA = from_matrix_cl(variRefA_cl);
+      Map<matrix_vi>(variRefA_, A_rows_, A_cols_).adj() += temp_variRefA;
+    } else {
+      Map<matrix_vi>(variRefA_, A_rows_, A_cols_).adj()
+          += adjAB * Map<matrix_d>(Bd_, A_cols_, B_cols_).transpose();
+    }
+#else
     Map<matrix_vi>(variRefA_, A_rows_, A_cols_).adj()
         += adjAB * Map<matrix_d>(Bd_, A_cols_, B_cols_).transpose();
+#endif
   }
 };
 
@@ -473,48 +558,98 @@ class multiply_mat_vari<Ta, 1, Ca, double, 1> : public vari {
  * @return Product of scalars
  */
 template <typename T1, typename T2,
-          typename = enable_if_all_var_or_arithmetic<T1, T2>,
-          typename = enable_if_any_var<T1, T2>>
+          typename = require_all_var_or_arithmetic_t<T1, T2>,
+          typename = require_any_var_t<T1, T2>>
 inline return_type_t<T1, T2> multiply(const T1& v, const T2& c) {
   return v * c;
 }
 
 /**
  * Return the product of scalar and matrix.
- * @tparam T1 scalar type v
- * @tparam T2 scalar type matrix m
- * @tparam R2 Rows matrix m
- * @tparam C2 Columns matrix m
- * @param[in] c Specified scalar
- * @param[in] m Matrix
+ * @tparam R number of rows or Eigen::Dynamic
+ * @tparam C number of columns or Eigen::Dynamic
+ * @param[in] c scalar of var type
+ * @param[in] m matrix of var type
  * @return Product of scalar and matrix
  */
-template <typename T1, typename T2, int R2, int C2,
-          typename = enable_if_any_var<T1, T2>>
-inline Eigen::Matrix<var, R2, C2> multiply(const T1& c,
-                                           const Eigen::Matrix<T2, R2, C2>& m) {
-  // TODO(trangucci) pull out to eliminate overpromotion of one side
-  // move to matrix.hpp w. promotion?
-  return to_var(m) * to_var(c);
+template <int R, int C>
+inline Eigen::Matrix<var, R, C> multiply(const var& c,
+                                         const Eigen::Matrix<var, R, C>& m) {
+  return m * c;
 }
 
 /**
  * Return the product of scalar and matrix.
- * @tparam T1 scalar type matrix m
- * @tparam T2 scalar type v
- * @tparam R1 Rows matrix m
- * @tparam C1 Columns matrix m
- * @param[in] c Specified scalar
- * @param[in] m Matrix
+ * @tparam Arith an arithmetic type
+ * @tparam R number of rows or Eigen::Dynamic
+ * @tparam C number of columns or Eigen::Dynamic
+ * @param[in] c scalar of arithmetic type
+ * @param[in] m matrix of var type
  * @return Product of scalar and matrix
  */
-template <typename T1, int R1, int C1, typename T2,
-          typename = enable_if_any_var<T1, T2>>
-inline Eigen::Matrix<var, R1, C1> multiply(const Eigen::Matrix<T1, R1, C1>& m,
-                                           const T2& c) {
-  // TODO(trangucci) pull out to eliminate overpromotion of one side
-  // move to matrix.hpp w. promotion?
-  return to_var(m) * to_var(c);
+template <typename Arith, int R, int C, typename = require_arithmetic_t<Arith>>
+inline Eigen::Matrix<var, R, C> multiply(const Arith& c,
+                                         const Eigen::Matrix<var, R, C>& m) {
+  return m * c;
+}
+
+/**
+ * Return the product of scalar and matrix.
+ * @tparam Arith an arithmetic type
+ * @tparam R number of rows or Eigen::Dynamic
+ * @tparam C number of columns or Eigen::Dynamic
+ * @param[in] c scalar of var type
+ * @param[in] m matrix of arithmetic type
+ * @return Product of scalar and matrix
+ */
+template <typename Arith, int R, int C, typename = require_arithmetic_t<Arith>>
+inline Eigen::Matrix<var, R, C> multiply(const var& c,
+                                         const Eigen::Matrix<Arith, R, C>& m) {
+  return m * c;
+}
+
+/**
+ * Return the product of matrix and scalar.
+ * @tparam R number of rows or Eigen::Dynamic
+ * @tparam C number of columns or Eigen::Dynamic
+ * @param[in] m matrix of var type
+ * @param[in] c scalar of var type
+ * @return Product of matrix and scalar
+ */
+template <int R, int C>
+inline Eigen::Matrix<var, R, C> multiply(const Eigen::Matrix<var, R, C>& m,
+                                         const var& c) {
+  return m * c;
+}
+
+/**
+ * Return the product of matrix and scalar.
+ * @tparam Arith an arithmetic type
+ * @tparam R number of rows or Eigen::Dynamic
+ * @tparam C number of columns or Eigen::Dynamic
+ * @param[in] m matrix of arithmetic type
+ * @param[in] c scalar of var type
+ * @return Product of matrix and scalar
+ */
+template <typename Arith, int R, int C, typename = require_arithmetic_t<Arith>>
+inline Eigen::Matrix<var, R, C> multiply(const Eigen::Matrix<Arith, R, C>& m,
+                                         const var& c) {
+  return m * c;
+}
+
+/**
+ * Return the product of matrix and scalar.
+ * @tparam Arith an arithmetic type
+ * @tparam R number of rows or Eigen::Dynamic
+ * @tparam C number of columns or Eigen::Dynamic
+ * @param[in] m matrix of var type
+ * @param[in] c scalar of arithmetic type
+ * @return Product of matrix and scalar
+ */
+template <typename Arith, int R, int C, typename = require_arithmetic_t<Arith>>
+inline Eigen::Matrix<var, R, C> multiply(const Eigen::Matrix<var, R, C>& m,
+                                         const Arith& c) {
+  return m * c;
 }
 
 /**
@@ -530,7 +665,7 @@ inline Eigen::Matrix<var, R1, C1> multiply(const Eigen::Matrix<T1, R1, C1>& m,
  * @return Product of scalar and matrix.
  */
 template <typename Ta, int Ra, int Ca, typename Tb, int Cb,
-          typename = enable_if_any_var<Ta, Tb>>
+          typename = require_any_var_t<Ta, Tb>>
 inline Eigen::Matrix<var, Ra, Cb> multiply(const Eigen::Matrix<Ta, Ra, Ca>& A,
                                            const Eigen::Matrix<Tb, Ca, Cb>& B) {
   check_multiplicable("multiply", "A", A, "B", B);
@@ -558,7 +693,7 @@ inline Eigen::Matrix<var, Ra, Cb> multiply(const Eigen::Matrix<Ta, Ra, Ca>& A,
  * @return Scalar product of row vector and vector
  */
 template <typename Ta, int Ca, typename Tb,
-          typename = enable_if_any_var<Ta, Tb>>
+          typename = require_any_var_t<Ta, Tb>>
 inline var multiply(const Eigen::Matrix<Ta, 1, Ca>& A,
                     const Eigen::Matrix<Tb, Ca, 1>& B) {
   check_multiplicable("multiply", "A", A, "B", B);

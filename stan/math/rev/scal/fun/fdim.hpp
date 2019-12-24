@@ -29,10 +29,11 @@ class fdim_vd_vari : public op_vd_vari {
  public:
   fdim_vd_vari(vari* avi, double b) : op_vd_vari(avi->val_ - b, avi, b) {}
   void chain() {
-    if (unlikely(is_any_nan(avi_->val_, bd_)))
+    if (unlikely(is_any_nan(avi_->val_, bd_))) {
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
-    else
+    } else {
       avi_->adj_ += adj_;
+    }
   }
 };
 
@@ -40,10 +41,11 @@ class fdim_dv_vari : public op_dv_vari {
  public:
   fdim_dv_vari(double a, vari* bvi) : op_dv_vari(a - bvi->val_, a, bvi) {}
   void chain() {
-    if (unlikely(is_any_nan(bvi_->val_, ad_)))
+    if (unlikely(is_any_nan(bvi_->val_, ad_))) {
       bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
-    else
+    } else {
       bvi_->adj_ -= adj_;
+    }
   }
 };
 }  // namespace internal

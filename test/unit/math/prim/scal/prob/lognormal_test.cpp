@@ -6,7 +6,7 @@
 #include <limits>
 #include <vector>
 
-TEST(ProbDistributionsLogNormal, error_check) {
+TEST(ProbDistributionsLogNormalPrim, error_check) {
   boost::random::mt19937 rng;
   EXPECT_NO_THROW(stan::math::lognormal_rng(2.0, 1.0, rng));
 
@@ -19,7 +19,7 @@ TEST(ProbDistributionsLogNormal, error_check) {
       std::domain_error);
 }
 
-TEST(ProbDistributionsLogNormal, chiSquareGoodnessFitTest) {
+TEST(ProbDistributionsLogNormalPrim, chiSquareGoodnessFitTest) {
   boost::random::mt19937 rng;
   int N = 10000;
   int K = stan::math::round(2 * std::pow(N, 0.4));

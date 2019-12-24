@@ -6,7 +6,7 @@
 // https://github.com/bstatcomp/math/pull/7
 // and https://github.com/stan-dev/math/pull/966
 #ifndef STRINGIFY
-#define STRINGIFY(src) #src
+#define STRINGIFY(...) #__VA_ARGS__
 #endif
 
 #endif  // STAN_MATH_OPENCL_STRINGIFY_HPP

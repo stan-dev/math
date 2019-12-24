@@ -4,7 +4,7 @@
 
 using stan::math::var;
 
-TEST(AgradRevErrorHandlingScalar, CheckPositive) {
+TEST(AgradRevErrorHandlingArray, CheckPositive) {
   using stan::math::check_positive;
   const char* function = "check_positive";
 

@@ -9,11 +9,12 @@
 #include <stan/math/prim/scal/prob/normal_rng.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Return a Pareto type 2 random variate for the given location,
  * scale, and shape using the specified random number generator.
  *
@@ -56,10 +57,11 @@ pareto_type_2_rng(const T_loc& mu, const T_scale& lambda, const T_shape& alpha,
 
   variate_generator<RNG&, uniform_real_distribution<> > uniform_rng(
       rng, uniform_real_distribution<>(0.0, 1.0));
-  for (size_t n = 0; n < N; ++n)
+  for (size_t n = 0; n < N; ++n) {
     output[n] = (std::pow(1.0 - uniform_rng(), -1.0 / alpha_vec[n]) - 1.0)
                     * lambda_vec[n]
                 + mu_vec[n];
+  }
 
   return output.data();
 }

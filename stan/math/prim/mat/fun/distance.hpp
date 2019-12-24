@@ -5,7 +5,7 @@
 #include <stan/math/prim/mat/fun/squared_distance.hpp>
 #include <stan/math/prim/mat/err/check_vector.hpp>
 #include <stan/math/prim/arr/err/check_matching_sizes.hpp>
-#include <boost/math/tools/promotion.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -13,6 +13,8 @@ namespace math {
 /**
  * Returns the distance between the specified vectors.
  *
+ * @tparam T1 type of elements in first vector
+ * @tparam T2 type of elements in second vector
  * @param v1 First vector.
  * @param v2 Second vector.
  * @return Dot product of the vectors.
@@ -31,4 +33,5 @@ inline return_type_t<T1, T2> distance(const Eigen::Matrix<T1, R1, C1>& v1,
 
 }  // namespace math
 }  // namespace stan
+
 #endif

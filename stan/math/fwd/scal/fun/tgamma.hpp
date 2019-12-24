@@ -19,7 +19,6 @@ namespace math {
  */
 template <typename T>
 inline fvar<T> tgamma(const fvar<T>& x) {
-  using boost::math::digamma;
   T u = tgamma(x.val_);
   return fvar<T>(u, x.d_ * u * digamma(x.val_));
 }

@@ -39,7 +39,6 @@
 #include <stan/math/fwd/mat/fun/sum.hpp>
 #include <stan/math/fwd/mat/fun/tcrossprod.hpp>
 #include <stan/math/fwd/mat/fun/to_fvar.hpp>
-#include <stan/math/fwd/mat/fun/trace_gen_quad_form.hpp>
 #include <stan/math/fwd/mat/fun/trace_quad_form.hpp>
 #include <stan/math/fwd/mat/fun/typedefs.hpp>
 #include <stan/math/fwd/mat/fun/unit_vector_constrain.hpp>

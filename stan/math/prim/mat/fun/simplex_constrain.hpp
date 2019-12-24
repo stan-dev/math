@@ -20,9 +20,9 @@ namespace math {
  *
  * The transform is based on a centered stick-breaking process.
  *
+ * @tparam T type of elements in the vector
  * @param y Free vector input of dimensionality K - 1.
  * @return Simplex of dimensionality K.
- * @tparam T Type of scalar.
  */
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, 1> simplex_constrain(
@@ -31,7 +31,7 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> simplex_constrain(
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::log;
-  typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
+  using size_type = typename index_type<Matrix<T, Dynamic, 1>>::type;
 
   int Km1 = y.size();
   Matrix<T, Dynamic, 1> x(Km1 + 1);
@@ -53,10 +53,10 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> simplex_constrain(
  * The simplex transform is defined through a centered
  * stick-breaking process.
  *
+ * @tparam T type of elements in the vector
  * @param y Free vector input of dimensionality K - 1.
  * @param lp Log probability reference to increment.
  * @return Simplex of dimensionality K.
- * @tparam T Type of scalar.
  */
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, 1> simplex_constrain(
@@ -65,7 +65,7 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> simplex_constrain(
   using Eigen::Matrix;
   using std::log;
 
-  typedef typename index_type<Matrix<T, Dynamic, 1> >::type size_type;
+  using size_type = typename index_type<Matrix<T, Dynamic, 1>>::type;
 
   int Km1 = y.size();  // K = Km1 + 1
   Matrix<T, Dynamic, 1> x(Km1 + 1);
@@ -85,7 +85,6 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> simplex_constrain(
 }
 
 }  // namespace math
-
 }  // namespace stan
 
 #endif

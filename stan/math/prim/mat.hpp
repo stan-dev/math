@@ -2,6 +2,8 @@
 #define STAN_MATH_PRIM_MAT_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+
+#include <stan/math/prim/core.hpp>
 #include <stan/math/prim/meta.hpp>
 
 #include <stan/math/prim/mat/err/check_cholesky_factor.hpp>
@@ -16,6 +18,7 @@
 #include <stan/math/prim/mat/err/check_lower_triangular.hpp>
 #include <stan/math/prim/mat/err/check_matching_dims.hpp>
 #include <stan/math/prim/mat/err/check_multiplicable.hpp>
+#include <stan/math/prim/mat/err/check_nonempty.hpp>
 #include <stan/math/prim/mat/err/check_ordered.hpp>
 #include <stan/math/prim/mat/err/check_pos_definite.hpp>
 #include <stan/math/prim/mat/err/check_pos_semidefinite.hpp>
@@ -23,7 +26,6 @@
 #include <stan/math/prim/mat/err/check_range.hpp>
 #include <stan/math/prim/mat/err/check_row_index.hpp>
 #include <stan/math/prim/mat/err/check_simplex.hpp>
-#include <stan/math/prim/mat/err/check_spsd_matrix.hpp>
 #include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/err/check_std_vector_index.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
@@ -157,6 +159,7 @@
 #include <stan/math/prim/mat/fun/make_nu.hpp>
 #include <stan/math/prim/mat/fun/matrix_exp.hpp>
 #include <stan/math/prim/mat/fun/matrix_exp_multiply.hpp>
+#include <stan/math/prim/mat/fun/matrix_power.hpp>
 #include <stan/math/prim/mat/fun/max.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left_ldlt.hpp>
@@ -274,6 +277,7 @@
 #include <stan/math/prim/mat/prob/categorical_lpmf.hpp>
 #include <stan/math/prim/mat/prob/categorical_rng.hpp>
 #include <stan/math/prim/mat/prob/dirichlet_log.hpp>
+#include <stan/math/prim/mat/prob/dirichlet_lpdf.hpp>
 #include <stan/math/prim/mat/prob/dirichlet_lpmf.hpp>
 #include <stan/math/prim/mat/prob/dirichlet_rng.hpp>
 #include <stan/math/prim/mat/prob/gaussian_dlm_obs_log.hpp>
@@ -317,6 +321,7 @@
 #include <stan/math/prim/mat/prob/normal_id_glm_log.hpp>
 #include <stan/math/prim/mat/prob/normal_id_glm_lpdf.hpp>
 #include <stan/math/prim/mat/prob/ordered_logistic_log.hpp>
+#include <stan/math/prim/mat/prob/ordered_logistic_glm_lpmf.hpp>
 #include <stan/math/prim/mat/prob/ordered_logistic_lpmf.hpp>
 #include <stan/math/prim/mat/prob/ordered_logistic_rng.hpp>
 #include <stan/math/prim/mat/prob/ordered_probit_log.hpp>

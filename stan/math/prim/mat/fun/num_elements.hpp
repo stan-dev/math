@@ -10,6 +10,7 @@ namespace math {
 /**
  * Returns 1, the number of elements in a primitive type.
  *
+ * @tparam T scalar type
  * @param x Argument of primitive type.
  * @return 1
  */
@@ -20,6 +21,10 @@ inline int num_elements(const T& x) {
 
 /**
  * Returns the size of the specified matrix.
+ *
+ * @tparam T type of elements in the matrix
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
  *
  * @param m argument matrix
  * @return size of matrix
@@ -34,16 +39,19 @@ inline int num_elements(const Eigen::Matrix<T, R, C>& m) {
  * This assumes it is not ragged and that each of its contained
  * elements has the same number of elements.
  *
+ * @tparam T type of elements in the vector
  * @param v argument vector
  * @return number of contained arguments
  */
 template <typename T>
 inline int num_elements(const std::vector<T>& v) {
-  if (v.size() == 0)
+  if (v.size() == 0) {
     return 0;
+  }
   return v.size() * num_elements(v[0]);
 }
 
 }  // namespace math
 }  // namespace stan
+
 #endif

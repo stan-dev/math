@@ -16,9 +16,11 @@ inline std::vector<std::vector<T> > to_array_2d(
   int C = matrix.cols();
   int R = matrix.rows();
   vector<vector<T> > result(R, vector<T>(C));
-  for (int i = 0, ij = 0; i < C; i++)
-    for (int j = 0; j < R; j++, ij++)
+  for (int i = 0, ij = 0; i < C; i++) {
+    for (int j = 0; j < R; j++, ij++) {
       result[j][i] = datap[ij];
+    }
+  }
   return result;
 }
 

@@ -8,11 +8,12 @@
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Return a double exponential random variate with the given location
  * and scale using the specified random number generator.
  *

@@ -23,8 +23,6 @@ return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_lpdf(
     const T_shape& eta) {
   static const char* function = "lkj_cov_lpdf";
 
-  using boost::math::tools::promote_args;
-
   return_type_t<T_y, T_loc, T_scale, T_shape> lp(0.0);
   check_size_match(function, "Rows of location parameter", mu.rows(),
                    "columns of scale parameter", sigma.rows());
@@ -34,9 +32,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_lpdf(
   check_positive(function, "Shape parameter", eta);
   check_finite(function, "Location parameter", mu);
   check_finite(function, "Scale parameter", sigma);
-  for (int m = 0; m < y.rows(); ++m)
-    for (int n = 0; n < y.cols(); ++n)
-      check_finite(function, "Covariance matrix", y(m, n));
+  check_finite(function, "Covariance matrix", y);
 
   const unsigned int K = y.rows();
   const Eigen::Array<T_y, Eigen::Dynamic, 1> sds = y.diagonal().array().sqrt();
@@ -56,12 +52,11 @@ return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_lpdf(
 }
 
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
-inline typename boost::math::tools::promote_args<T_y, T_loc, T_scale,
-                                                 T_shape>::type
-lkj_cov_lpdf(const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
-             const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& mu,
-             const Eigen::Matrix<T_scale, Eigen::Dynamic, 1>& sigma,
-             const T_shape& eta) {
+inline return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_lpdf(
+    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
+    const Eigen::Matrix<T_loc, Eigen::Dynamic, 1>& mu,
+    const Eigen::Matrix<T_scale, Eigen::Dynamic, 1>& sigma,
+    const T_shape& eta) {
   return lkj_cov_lpdf<false>(y, mu, sigma, eta);
 }
 
@@ -78,6 +73,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_lpdf(
   check_positive(function, "Shape parameter", eta);
   check_finite(function, "Location parameter", mu);
   check_finite(function, "Scale parameter", sigma);
+  check_finite(function, "Covariance matrix", y);
 
   const unsigned int K = y.rows();
   const Eigen::Array<T_y, Eigen::Dynamic, 1> sds = y.diagonal().array().sqrt();

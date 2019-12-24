@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/meta/size_of.hpp>
 #include <cmath>
 #include <limits>
 #include <string>
@@ -201,7 +200,7 @@ TEST(MathPrimMat, vec_eigen_vec_eigen_gp_matern32_cov1) {
   }
 }
 
-TEST(MathPrimMat, domain_err_training_sig_l_gamma) {
+TEST(MathPrimMat, domain_err_training_sig_l_gamma_gp_matern32_cov) {
   double sigma = .2;
   double l = 7;
   double sigma_bad = -1.0;
@@ -302,7 +301,7 @@ TEST(MathPrimMat, domain_err_training_sig_l_gamma) {
   EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;
 }
 
-TEST(MathPrimMat, nan_error_training_sig_l_gamma) {
+TEST(MathPrimMat, nan_error_training_sig_l_gamma_gp_matern32_cov) {
   double sigma = 0.2;
   double l = 5;
 
@@ -483,7 +482,7 @@ TEST(MathPrimMat, dim_mismatch_vec_eigen_mixed_gp_matern32_cov) {
                std::invalid_argument);
 }
 
-TEST(MathPrimMat, zero_size) {
+TEST(MathPrimMat, zero_size_gp_matern32_cov) {
   double sigma = 0.2;
 
   std::vector<double> l(0);
@@ -498,7 +497,7 @@ TEST(MathPrimMat, zero_size) {
   EXPECT_EQ(0, cov.cols());
 }
 
-TEST(MathPrimMat, calculations) {
+TEST(MathPrimMat, calculations_gp_matern32_cov) {
   double sigma = 1.0;
   double l = 1.0;
 
@@ -523,7 +522,7 @@ TEST(MathPrimMat, calculations) {
   ASSERT_FLOAT_EQ((1.0 + sqrt(3) * 2.0) * exp(-sqrt(3) * 2.0), cov(0, 1));
 }
 
-TEST(MathPrimMat, calculations_ard) {
+TEST(MathPrimMat, calculations_ard_gp_matern32_cov) {
   double sigma = 1.0;
 
   std::vector<double> l(2);
@@ -559,7 +558,7 @@ TEST(MathPrimMat, calculations_ard) {
   EXPECT_FLOAT_EQ(1.0, cov2(1, 1));
 }
 
-TEST(MathPrimMat, check_dim_mismatch) {
+TEST(MathPrimMat, check_dim_mismatch_gp_matern32_cov) {
   double sig = 1.0;
   double l = 1.0;
 

@@ -6,12 +6,12 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernels/check_diagonal_zeros.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/scal/err/throw_domain_error.hpp>
 #include <vector>
 
 namespace stan {
 namespace math {
-/**
+/** \ingroup opencl
  * Check if the <code>matrix_cl</code> has zeros on the diagonal
  *
  * @param function Function name (for error messages)
@@ -21,11 +21,12 @@ namespace math {
  * @throw <code>std::domain_error</code> if
  *    any diagonal element of the matrix is zero.
  */
-template <typename T, typename = enable_if_arithmetic<T>>
+template <typename T, typename = require_arithmetic_t<T>>
 inline void check_diagonal_zeros(const char* function, const char* name,
                                  const matrix_cl<T>& y) {
-  if (y.size() == 0)
+  if (y.size() == 0) {
     return;
+  }
   cl::CommandQueue cmd_queue = opencl_context.queue();
   cl::Context ctx = opencl_context.context();
   try {
@@ -37,7 +38,7 @@ inline void check_diagonal_zeros(const char* function, const char* name,
     zero_on_diagonal_flag = from_matrix_cl_error_code(zeros_flag);
     //  if zeros were found on the diagonal
     if (zero_on_diagonal_flag) {
-      domain_error(function, name, "has zeros on the diagonal.", "");
+      throw_domain_error(function, name, "has zeros on the diagonal.", "");
     }
   } catch (const cl::Error& e) {
     check_opencl_error("diag_zeros_check", e);

@@ -4,14 +4,15 @@
 
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/opencl/buffer_types.hpp>
+#include <string>
 
 namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const char* neg_rect_lower_tri_multiply_kernel_code = STRINGIFY(
+static const std::string neg_rect_lower_tri_multiply_kernel_code = STRINGIFY(
     // \endcond
-    /**
+    /** \ingroup opencl_kernels
      * Calculates C = -B * A where B is rectangular and A is a lower
      * triangular.
      *  For a full guide to the inverse lower triangular kernels see the link
@@ -114,7 +115,7 @@ static const char* neg_rect_lower_tri_multiply_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/**
+/** \ingroup opencl_kernels
  * See the docs
  * for \link kernels/neg_rect_lower_tri_multiply.hpp
  * neg_rect_lower_tri_multiply() \endlink

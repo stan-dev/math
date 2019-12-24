@@ -16,7 +16,7 @@ namespace math {
 /**
  * Extract the NZE index for each entry from a sparse matrix.
  *
- * @tparam T Type of matrix entries.
+ * @tparam T type of elements in the matrix
  * @param A Sparse matrix.
  * @return Vector of indexes into non-zero entries of A.
  */
@@ -24,15 +24,18 @@ template <typename T>
 const std::vector<int> csr_extract_u(
     const Eigen::SparseMatrix<T, Eigen::RowMajor>& A) {
   std::vector<int> u(A.outerSize() + 1);  // last entry is garbage.
-  for (int nze = 0; nze <= A.outerSize(); ++nze)
+  for (int nze = 0; nze <= A.outerSize(); ++nze) {
     u[nze] = *(A.outerIndexPtr() + nze) + stan::error_index::value;
+  }
   return u;
 }
 
 /**
  * Extract the NZE index for each entry from a sparse matrix.
  *
- * @tparam T Type of matrix entries.
+ * @tparam T type of elements in the matrix
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
  * @param A Dense matrix.
  * @return Vector of indexes into non-zero entries of A.
  */

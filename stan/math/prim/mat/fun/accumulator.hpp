@@ -46,7 +46,7 @@ class accumulator {
    * @tparam S Type of argument
    * @param x Value to add
    */
-  template <typename S, typename = enable_if_arithmetic<S>>
+  template <typename S, typename = require_arithmetic_t<S>>
   void add(S x) {
     buf_.push_back(static_cast<T>(x));
   }
@@ -63,8 +63,8 @@ class accumulator {
    * @tparam S Type of argument
    * @param x Value to add
    */
-  template <typename S, typename = enable_if_not_arithmetic<S>,
-            typename = enable_if_same<S, T>>
+  template <typename S, typename = require_not_arithmetic_t<S>,
+            typename = require_same_t<S, T>>
   void add(const S& x) {
     buf_.push_back(x);
   }
@@ -74,14 +74,15 @@ class accumulator {
    * of values to the buffer.
    *
    * @tparam S type of values in matrix
-   * @tparam R number of rows in matrix
-   * @tparam C number of columns in matrix
+   * @tparam R number of rows, can be Eigen::Dynamic
+   * @tparam C number of columns, can be Eigen::Dynamic
    * @param m Matrix of values to add
    */
   template <typename S, int R, int C>
   void add(const Eigen::Matrix<S, R, C>& m) {
-    for (int i = 0; i < m.size(); ++i)
+    for (int i = 0; i < m.size(); ++i) {
       this->add(m(i));
+    }
   }
 
   /**
@@ -95,8 +96,9 @@ class accumulator {
    */
   template <typename S>
   void add(const std::vector<S>& xs) {
-    for (size_t i = 0; i < xs.size(); ++i)
+    for (size_t i = 0; i < xs.size(); ++i) {
       this->add(xs[i]);
+    }
   }
 
   /**

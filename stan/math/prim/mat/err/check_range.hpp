@@ -24,8 +24,9 @@ namespace math {
 inline void check_range(const char* function, const char* name, int max,
                         int index, int nested_level, const char* error_msg) {
   if ((index >= stan::error_index::value)
-      && (index < max + stan::error_index::value))
+      && (index < max + stan::error_index::value)) {
     return;
+  }
 
   std::stringstream msg;
   msg << "; index position = " << nested_level;
@@ -48,8 +49,9 @@ inline void check_range(const char* function, const char* name, int max,
 inline void check_range(const char* function, const char* name, int max,
                         int index, const char* error_msg) {
   if ((index >= stan::error_index::value)
-      && (index < max + stan::error_index::value))
+      && (index < max + stan::error_index::value)) {
     return;
+  }
 
   out_of_range(function, max, index, error_msg);
 }
@@ -67,8 +69,9 @@ inline void check_range(const char* function, const char* name, int max,
 inline void check_range(const char* function, const char* name, int max,
                         int index) {
   if ((index >= stan::error_index::value)
-      && (index < max + stan::error_index::value))
+      && (index < max + stan::error_index::value)) {
     return;
+  }
 
   out_of_range(function, max, index);
 }

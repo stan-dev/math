@@ -5,7 +5,6 @@
 #include <stan/math/prim/scal/fun/identity_free.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
-#include <boost/math/tools/promotion.hpp>
 #include <cmath>
 #include <limits>
 
@@ -43,8 +42,9 @@ inline return_type_t<T, L, S> offset_multiplier_free(const T& y, const L& mu,
                                                      const S& sigma) {
   check_finite("offset_multiplier_free", "offset", mu);
   if (sigma == 1) {
-    if (mu == 0)
+    if (mu == 0) {
       return identity_free(y);
+    }
     return y - mu;
   }
   check_positive_finite("offset_multiplier_free", "multiplier", sigma);

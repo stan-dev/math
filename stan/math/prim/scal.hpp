@@ -30,6 +30,8 @@
 #include <stan/math/prim/scal/err/is_scal_finite.hpp>
 #include <stan/math/prim/scal/err/is_size_match.hpp>
 #include <stan/math/prim/scal/err/out_of_range.hpp>
+#include <stan/math/prim/scal/err/throw_domain_error.hpp>
+#include <stan/math/prim/scal/err/throw_domain_error_vec.hpp>
 
 #include <stan/math/prim/scal/fun/abs.hpp>
 #include <stan/math/prim/scal/fun/acosh.hpp>
@@ -96,8 +98,6 @@
 #include <stan/math/prim/scal/fun/ldexp.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/lmgamma.hpp>
-#include <stan/math/prim/scal/fun/locscale_constrain.hpp>
-#include <stan/math/prim/scal/fun/locscale_free.hpp>
 #include <stan/math/prim/scal/fun/log.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/log1m_exp.hpp>

@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_SCAL_FUN_LMGAMMA_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <boost/math/tools/promotion.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 
@@ -55,8 +54,9 @@ template <typename T>
 inline return_type_t<T> lmgamma(int k, T x) {
   return_type_t<T> result = k * (k - 1) * LOG_PI_OVER_FOUR;
 
-  for (int j = 1; j <= k; ++j)
+  for (int j = 1; j <= k; ++j) {
     result += lgamma(x + (1.0 - j) / 2.0);
+  }
   return result;
 }
 

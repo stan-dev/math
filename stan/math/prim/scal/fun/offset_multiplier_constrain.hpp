@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_OFFSET_MULTIPLIER_CONSTRAIN_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_OFFSET_MULTIPLIER_CONSTRAIN_HPP
 
-#include <boost/math/tools/promotion.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/identity_constrain.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
@@ -43,8 +42,9 @@ inline return_type_t<T, M, S> offset_multiplier_constrain(const T& x,
                                                           const S& sigma) {
   check_finite("offset_multiplier_constrain", "offset", mu);
   if (sigma == 1) {
-    if (mu == 0)
+    if (mu == 0) {
       return identity_constrain(x);
+    }
     return mu + x;
   }
   check_positive_finite("offset_multiplier_constrain", "multiplier", sigma);
@@ -85,12 +85,13 @@ inline return_type_t<T, M, S> offset_multiplier_constrain(const T& x,
   using std::log;
   check_finite("offset_multiplier_constrain", "offset", mu);
   if (sigma == 1) {
-    if (mu == 0)
+    if (mu == 0) {
       return identity_constrain(x);
+    }
     return mu + x;
   }
   check_positive_finite("offset_multiplier_constrain", "multiplier", sigma);
-  lp += multiply_log(size_of(x), sigma);
+  lp += multiply_log(length(x), sigma);
   return fma(sigma, x, mu);
 }
 

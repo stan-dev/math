@@ -46,12 +46,13 @@ namespace math {
 inline double log1m_exp(double a) {
   using std::exp;
   using std::log;
-  if (a >= 0)
+  if (a >= 0) {
     return NOT_A_NUMBER;
-  else if (a > -0.693147)
+  } else if (a > -0.693147) {
     return log(-expm1(a));  // 0.693147 ~= log(2)
-  else
+  } else {
     return log1m(exp(a));
+  }
 }
 
 }  // namespace math

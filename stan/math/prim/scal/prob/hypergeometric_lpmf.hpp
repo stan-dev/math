@@ -5,6 +5,7 @@
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_bounded.hpp>
 #include <stan/math/prim/scal/err/check_greater.hpp>
+#include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/binomial_coefficient_log.hpp>
 
@@ -19,8 +20,9 @@ double hypergeometric_lpmf(const T_n& n, const T_N& N, const T_a& a,
                            const T_b& b) {
   static const char* function = "hypergeometric_lpmf";
 
-  if (size_zero(n, N, a, b))
+  if (size_zero(n, N, a, b)) {
     return 0.0;
+  }
 
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_N> N_vec(N);
@@ -30,7 +32,7 @@ double hypergeometric_lpmf(const T_n& n, const T_N& N, const T_a& a,
 
   double logp(0.0);
   check_bounded(function, "Successes variable", n, 0, a);
-  check_greater(function, "Draws parameter", N, n);
+  check_greater_or_equal(function, "Draws parameter", N, n);
   for (size_t i = 0; i < size; i++) {
     check_bounded(function, "Draws parameter minus successes variable",
                   N_vec[i] - n_vec[i], 0, b_vec[i]);
@@ -41,13 +43,15 @@ double hypergeometric_lpmf(const T_n& n, const T_N& N, const T_a& a,
                          N, "Successes in population parameter", a,
                          "Failures in population parameter", b);
 
-  if (!include_summand<propto>::value)
+  if (!include_summand<propto>::value) {
     return 0.0;
+  }
 
-  for (size_t i = 0; i < size; i++)
+  for (size_t i = 0; i < size; i++) {
     logp += math::binomial_coefficient_log(a_vec[i], n_vec[i])
             + math::binomial_coefficient_log(b_vec[i], N_vec[i] - n_vec[i])
             - math::binomial_coefficient_log(a_vec[i] + b_vec[i], N_vec[i]);
+  }
   return logp;
 }
 

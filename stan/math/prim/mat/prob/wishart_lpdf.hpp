@@ -15,7 +15,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup multivar_dists
  * The log of the Wishart density for the given W, degrees of freedom,
  * and scale matrix.
  *
@@ -55,7 +55,6 @@ return_type_t<T_y, T_dof, T_scale> wishart_lpdf(
   using Eigen::Dynamic;
   using Eigen::Lower;
   using Eigen::Matrix;
-  using boost::math::tools::promote_args;
 
   typename index_type<Matrix<T_scale, Dynamic, Dynamic> >::type k = W.rows();
   return_type_t<T_y, T_dof, T_scale> lp(0.0);
@@ -71,14 +70,17 @@ return_type_t<T_y, T_dof, T_scale> wishart_lpdf(
   LDLT_factor<T_scale, Eigen::Dynamic, Eigen::Dynamic> ldlt_S(S);
   check_ldlt_factor(function, "LDLT_Factor of scale parameter", ldlt_S);
 
-  if (include_summand<propto, T_dof>::value)
+  if (include_summand<propto, T_dof>::value) {
     lp += nu * k * NEG_LOG_TWO_OVER_TWO;
+  }
 
-  if (include_summand<propto, T_dof>::value)
+  if (include_summand<propto, T_dof>::value) {
     lp -= lmgamma(k, 0.5 * nu);
+  }
 
-  if (include_summand<propto, T_dof, T_scale>::value)
+  if (include_summand<propto, T_dof, T_scale>::value) {
     lp -= 0.5 * nu * log_determinant_ldlt(ldlt_S);
+  }
 
   if (include_summand<propto, T_scale, T_y>::value) {
     Matrix<return_type_t<T_y, T_scale>, Dynamic, Dynamic> Sinv_W(
@@ -87,8 +89,9 @@ return_type_t<T_y, T_dof, T_scale> wishart_lpdf(
     lp -= 0.5 * trace(Sinv_W);
   }
 
-  if (include_summand<propto, T_y, T_dof>::value && nu != (k + 1))
+  if (include_summand<propto, T_y, T_dof>::value && nu != (k + 1)) {
     lp += 0.5 * (nu - k - 1.0) * log_determinant_ldlt(ldlt_W);
+  }
   return lp;
 }
 

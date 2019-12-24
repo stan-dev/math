@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>neg_binomial_lpmf</code>
  */
 template <bool propto, typename T_n, typename T_shape, typename T_inv_scale>
@@ -17,7 +17,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_log(const T_n& n,
   return neg_binomial_lpmf<propto, T_n, T_shape, T_inv_scale>(n, alpha, beta);
 }
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>neg_binomial_lpmf</code>
  */
 template <typename T_n, typename T_shape, typename T_inv_scale>

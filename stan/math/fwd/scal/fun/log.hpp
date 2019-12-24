@@ -4,6 +4,7 @@
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -11,10 +12,11 @@ namespace math {
 template <typename T>
 inline fvar<T> log(const fvar<T>& x) {
   using std::log;
-  if (x.val_ < 0.0)
+  if (x.val_ < 0.0) {
     return fvar<T>(NOT_A_NUMBER, NOT_A_NUMBER);
-  else
+  } else {
     return fvar<T>(log(x.val_), x.d_ / x.val_);
+  }
 }
 }  // namespace math
 }  // namespace stan

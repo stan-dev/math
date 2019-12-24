@@ -127,9 +127,8 @@ map_rect(const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
          const std::vector<std::vector<int>>& x_i,
          std::ostream* msgs = nullptr) {
   static const char* function = "map_rect";
-  typedef Eigen::Matrix<return_type_t<T_shared_param, T_job_param>,
-                        Eigen::Dynamic, 1>
-      return_t;
+  using return_t = Eigen::Matrix<return_type_t<T_shared_param, T_job_param>,
+                                 Eigen::Dynamic, 1>;
 
   check_matching_sizes(function, "job parameters", job_params, "real data",
                        x_r);
@@ -164,8 +163,9 @@ map_rect(const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
                      size_x_i);
   }
 
-  if (job_params_dims[0] == 0)
+  if (job_params_dims[0] == 0) {
     return return_t();
+  }
 
 #ifdef STAN_MPI
   return internal::map_rect_mpi<call_id, F, T_shared_param, T_job_param>(

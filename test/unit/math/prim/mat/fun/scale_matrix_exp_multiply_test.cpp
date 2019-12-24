@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include <test/unit/util.hpp>
 #include <test/unit/math/prim/mat/util.hpp>
 #include <stan/math/prim/mat/fun/matrix_exp.hpp>
 #include <stan/math/prim/mat/fun/scale_matrix_exp_multiply.hpp>
@@ -29,7 +30,18 @@ inline void test_scale_matrix_exp_multiply() {
   }
 }
 
-TEST(MathMatrix, scale_matrix_exp_multiply) {
+TEST(MathMatrixPrimMat, scale_matrix_exp_multiply) {
+  // the helper above doesn't handle 0 size inputs
+  const double t = 1.0;
+  Eigen::MatrixXd A(0, 0);
+  Eigen::MatrixXd B(0, 0);
+  EXPECT_EQ(stan::math::scale_matrix_exp_multiply(t, A, B).size(), 0);
+
+  Eigen::MatrixXd C(0, 2);
+  Eigen::MatrixXd M = stan::math::scale_matrix_exp_multiply(t, A, C);
+  EXPECT_EQ(A.rows(), M.rows());
+  EXPECT_EQ(C.cols(), M.cols());
+
   test_scale_matrix_exp_multiply<1, 1>();
   test_scale_matrix_exp_multiply<1, 5>();
   test_scale_matrix_exp_multiply<5, 1>();
@@ -37,10 +49,10 @@ TEST(MathMatrix, scale_matrix_exp_multiply) {
   test_scale_matrix_exp_multiply<20, 2>();
 }
 
-TEST(MathMatrix, scale_matrix_exp_multiply_exception) {
+TEST(MathMatrixPrimMat, scale_matrix_exp_multiply_exception) {
   using stan::math::scale_matrix_exp_multiply;
   const double t = 1.0;
-  {  // nonzero size
+  {  // multiplicable
     Eigen::MatrixXd A(0, 0);
     Eigen::MatrixXd B = Eigen::MatrixXd::Random(1, 2);
     EXPECT_THROW(scale_matrix_exp_multiply(t, A, B), std::invalid_argument);
@@ -50,6 +62,12 @@ TEST(MathMatrix, scale_matrix_exp_multiply_exception) {
   {  // multiplicable
     Eigen::MatrixXd A = Eigen::MatrixXd::Random(2, 2);
     Eigen::MatrixXd B = Eigen::MatrixXd::Random(3, 2);
+    EXPECT_THROW(scale_matrix_exp_multiply(t, A, B), std::invalid_argument);
+  }
+
+  {  // square
+    Eigen::MatrixXd A(0, 1);
+    Eigen::MatrixXd B(1, 2);
     EXPECT_THROW(scale_matrix_exp_multiply(t, A, B), std::invalid_argument);
   }
 

@@ -5,14 +5,15 @@
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/opencl/buffer_types.hpp>
 #include <algorithm>
+#include <string>
 
 namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const char *copy_kernel_code = STRINGIFY(
+static const std::string copy_kernel_code = STRINGIFY(
     // \endcond
-    /**
+    /** \ingroup opencl_kernels
      * Copy one matrix to another
      * @param[in] A The matrix to copy.
      * @param[out] B The matrix to copy A to.
@@ -35,7 +36,7 @@ static const char *copy_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/**
+/** \ingroup opencl_kernels
  * See the docs for \link kernels/copy.hpp copy() \endlink
  */
 const kernel_cl<in_buffer, out_buffer, int, int> copy("copy",

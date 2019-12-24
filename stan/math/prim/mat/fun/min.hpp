@@ -13,9 +13,10 @@ namespace math {
 /**
  * Returns the minimum coefficient in the specified
  * column vector.
- * @param x Specified vector.
- * @return Minimum coefficient value in the vector.
- * @tparam Type of values being compared and returned
+ *
+ * @param x specified vector
+ * @return minimum coefficient value in the vector
+ * @throws <code>std::invalid_argument</code> if the vector is size zero
  */
 inline int min(const std::vector<int>& x) {
   check_nonzero_size("min", "int vector", x);
@@ -26,14 +27,17 @@ inline int min(const std::vector<int>& x) {
 /**
  * Returns the minimum coefficient in the specified
  * column vector.
- * @param x Specified vector.
- * @return Minimum coefficient value in the vector.
- * @tparam Type of values being compared and returned
+ *
+ * @tparam T type of elements in the vector
+ * @param x specified vector
+ * @return minimum coefficient value in the vector, or infinity if the vector is
+ * size zero
  */
 template <typename T>
 inline T min(const std::vector<T>& x) {
-  if (x.size() == 0)
+  if (x.size() == 0) {
     return std::numeric_limits<T>::infinity();
+  }
   Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, 1>> m(&x[0], x.size());
   return m.minCoeff();
 }
@@ -41,16 +45,23 @@ inline T min(const std::vector<T>& x) {
 /**
  * Returns the minimum coefficient in the specified
  * matrix, vector, or row vector.
- * @param m Specified matrix, vector, or row vector.
- * @return Minimum coefficient value in the vector.
+ *
+ * @tparam T type of elements in the matrix, vector or row vector
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ * @param m specified matrix, vector, or row vector
+ * @return minimum coefficient value in the vector, or infinity if the vector is
+ * size zero
  */
 template <typename T, int R, int C>
 inline T min(const Eigen::Matrix<T, R, C>& m) {
-  if (m.size() == 0)
+  if (m.size() == 0) {
     return std::numeric_limits<double>::infinity();
+  }
   return m.minCoeff();
 }
 
 }  // namespace math
 }  // namespace stan
+
 #endif

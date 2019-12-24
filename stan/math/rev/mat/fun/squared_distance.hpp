@@ -24,7 +24,7 @@ class squared_distance_vv_vari : public vari {
   inline static double var_squared_distance(
       const Eigen::Matrix<var, R1, C1>& v1,
       const Eigen::Matrix<var, R2, C2>& v2) {
-    typedef typename index_type<matrix_v>::type idx_t;
+    using idx_t = typename index_type<matrix_v>::type;
 
     return (Eigen::Ref<const vector_v>(v1).val()
             - Eigen::Ref<const vector_v>(v2).val())
@@ -61,7 +61,7 @@ class squared_distance_vd_vari : public vari {
   inline static double var_squared_distance(
       const Eigen::Matrix<var, R1, C1>& v1,
       const Eigen::Matrix<double, R2, C2>& v2) {
-    typedef typename index_type<matrix_d>::type idx_t;
+    using idx_t = typename index_type<matrix_d>::type;
 
     return (Eigen::Ref<const vector_v>(v1).val()
             - Eigen::Ref<const vector_d>(v2))

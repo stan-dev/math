@@ -10,7 +10,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup multivar_dists
  * Return a multivariate normal random variate with the given location and
  * Cholesky factorization of the covariance using the specified random number
  * generator.
@@ -63,8 +63,9 @@ multi_normal_cholesky_rng(
 
   for (size_t n = 0; n < N; ++n) {
     Eigen::VectorXd z(L.cols());
-    for (int i = 0; i < L.cols(); i++)
+    for (int i = 0; i < L.cols(); i++) {
       z(i) = std_normal_rng();
+    }
 
     output[n] = Eigen::VectorXd(mu_vec[n]) + L * z;
   }

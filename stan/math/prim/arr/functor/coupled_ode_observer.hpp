@@ -28,10 +28,10 @@ namespace math {
  */
 template <typename F, typename T1, typename T2, typename T_t0, typename T_ts>
 struct coupled_ode_observer {
-  typedef return_type_t<T1, T2, T_t0, T_ts> return_t;
+  using return_t = return_type_t<T1, T2, T_t0, T_ts>;
 
-  typedef operands_and_partials<std::vector<T1>, std::vector<T2>, T_t0, T_ts>
-      ops_partials_t;
+  using ops_partials_t
+      = operands_and_partials<std::vector<T1>, std::vector<T2>, T_t0, T_ts>;
 
   const F& f_;
   const std::vector<T1>& y0_;
@@ -122,14 +122,16 @@ struct coupled_ode_observer {
     for (size_t j = 0; j < N_; j++) {
       // iterate over parameters for each equation
       if (!is_constant_all<T1>::value) {
-        for (std::size_t k = 0; k < N_; k++)
+        for (std::size_t k = 0; k < N_; k++) {
           ops_partials.edge1_.partials_[k] = coupled_state[N_ + N_ * k + j];
+        }
       }
 
       if (!is_constant_all<T2>::value) {
-        for (std::size_t k = 0; k < M_; k++)
+        for (std::size_t k = 0; k < M_; k++) {
           ops_partials.edge2_.partials_[k]
               = coupled_state[N_ + index_offset_theta_ + N_ * k + j];
+        }
       }
 
       if (!is_constant_all<T_ts>::value) {

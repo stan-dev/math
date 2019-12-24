@@ -8,11 +8,12 @@
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/fun/log_sum_exp.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Return a Beta random variate with the supplied success and failure
  * parameters using the given random number generator.
  *

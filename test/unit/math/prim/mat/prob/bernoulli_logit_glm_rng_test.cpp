@@ -76,29 +76,29 @@ TEST(ProbDistributionsBernoulliLogitGlm, errorCheck) {
   int W = 4;
 
   Eigen::MatrixXd x = Eigen::MatrixXd::Random(N, M);
-  Eigen::MatrixXd xw1 = Eigen::MatrixXd::Random(W, M);
-  Eigen::MatrixXd xw2 = Eigen::MatrixXd::Random(N, W);
-  Eigen::MatrixXd xw3 = Eigen::MatrixXd::Random(N, M) * NAN;
   Eigen::VectorXd alpha = Eigen::VectorXd::Random(N, 1);
-  Eigen::VectorXd alphaw1 = Eigen::VectorXd::Random(W, 1);
-  Eigen::VectorXd alphaw2 = Eigen::VectorXd::Random(N, 1) * NAN;
   Eigen::VectorXd beta = Eigen::VectorXd::Random(M, 1);
-  Eigen::VectorXd betaw1 = Eigen::VectorXd::Random(W, 1);
-  Eigen::VectorXd betaw2 = Eigen::VectorXd::Random(M, 1) * NAN;
 
   EXPECT_NO_THROW(stan::math::bernoulli_logit_glm_rng(x, alpha, beta, rng));
+  Eigen::MatrixXd xw1 = Eigen::MatrixXd::Random(W, M);
   EXPECT_THROW(stan::math::bernoulli_logit_glm_rng(xw1, alpha, beta, rng),
                std::invalid_argument);
+  Eigen::MatrixXd xw2 = Eigen::MatrixXd::Random(N, W);
   EXPECT_THROW(stan::math::bernoulli_logit_glm_rng(xw2, alpha, beta, rng),
                std::invalid_argument);
+  Eigen::MatrixXd xw3 = Eigen::MatrixXd::Random(N, M) * NAN;
   EXPECT_THROW(stan::math::bernoulli_logit_glm_rng(xw3, alpha, beta, rng),
                std::domain_error);
+  Eigen::VectorXd alphaw1 = Eigen::VectorXd::Random(W, 1);
   EXPECT_THROW(stan::math::bernoulli_logit_glm_rng(x, alphaw1, beta, rng),
                std::invalid_argument);
+  Eigen::VectorXd alphaw2 = Eigen::VectorXd::Random(N, 1) * NAN;
   EXPECT_THROW(stan::math::bernoulli_logit_glm_rng(x, alphaw2, beta, rng),
                std::domain_error);
+  Eigen::VectorXd betaw1 = Eigen::VectorXd::Random(W, 1);
   EXPECT_THROW(stan::math::bernoulli_logit_glm_rng(x, alpha, betaw1, rng),
                std::invalid_argument);
+  Eigen::VectorXd betaw2 = Eigen::VectorXd::Random(M, 1) * NAN;
   EXPECT_THROW(stan::math::bernoulli_logit_glm_rng(x, alpha, betaw2, rng),
                std::domain_error);
 }

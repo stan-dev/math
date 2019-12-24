@@ -23,10 +23,11 @@ namespace math {
  */
 template <int N>
 inline void print_mat_size(std::ostream& o) {
-  if (N == Eigen::Dynamic)
+  if (N == Eigen::Dynamic) {
     o << "dynamically sized";
-  else
+  } else {
     o << N;
+  }
 }
 
 /**
@@ -60,10 +61,11 @@ inline void assign(T_lhs& x, const T_rhs& y) {
  *
  * @tparam T_lhs Type of left-hand side matrix elements.
  * @tparam T_rhs Type of right-hand side matrix elements.
- * @tparam R1 Row shape of left-hand side matrix.
- * @tparam C1 Column shape of left-hand side matrix.
- * @tparam R2 Row shape of right-hand side matrix.
- * @tparam C2 Column shape of right-hand side matrix.
+ * @tparam R1 number of rows in the left-hand side matrix or Eigen::Dynamic
+ * @tparam C1 number of columns in the left-hand side matrix or Eigen::Dynamic
+ * @tparam R2 number of rows in the right-hand side matrix or Eigen::Dynamic
+ * @tparam C2 number of columns in the right-hand side matrix or Eigen::Dynamic
+ *
  * @param x Left-hand side matrix.
  * @param y Right-hand side matrix.
  * @throw std::invalid_argument
@@ -97,8 +99,9 @@ inline void assign(Eigen::Matrix<T_lhs, R1, C1>& x,
  *
  * @tparam T_lhs Type of left-hand side matrix elements.
  * @tparam T_rhs Type of right-hand side matrix elements.
- * @tparam R Row shape of both matrices.
- * @tparam C Column shape of both mtarices.
+ * @tparam R number of rows or Eigen::Dynamic
+ * @tparam C number of columns or Eigen::Dynamic
+ *
  * @param x Left-hand side matrix.
  * @param y Right-hand side matrix.
  * @throw std::invalid_argument if sizes do not match.
@@ -107,8 +110,9 @@ template <typename T_lhs, typename T_rhs, int R, int C>
 inline void assign(Eigen::Matrix<T_lhs, R, C>& x,
                    const Eigen::Matrix<T_rhs, R, C>& y) {
   check_matching_dims("assign", "left-hand-side", x, "right-hand-side", y);
-  for (int i = 0; i < x.size(); ++i)
+  for (int i = 0; i < x.size(); ++i) {
     assign(x(i), y(i));
+  }
 }
 
 /**
@@ -128,8 +132,9 @@ inline void assign(Eigen::Matrix<T_lhs, R, C>& x,
  *
  * @tparam T_lhs Type of matrix block elements.
  * @tparam T Type of right-hand side matrix elements.
- * @tparam R Row shape for right-hand side matrix.
- * @tparam C Column shape for right-hand side matrix.
+ * @tparam R number of rows or Eigen::Dynamic
+ * @tparam C number of columns or Eigen::Dynamic
+ *
  * @param x Left-hand side block view of matrix.
  * @param y Right-hand side matrix.
  * @throw std::invalid_argument if sizes do not match.
@@ -140,9 +145,11 @@ inline void assign(Eigen::Block<T_lhs> x, const Eigen::Matrix<T, R, C>& y) {
                    "right-hand side rows", y.rows());
   check_size_match("assign", "left-hand side cols", x.cols(),
                    "right-hand side cols", y.cols());
-  for (int n = 0; n < y.cols(); ++n)
-    for (int m = 0; m < y.rows(); ++m)
+  for (int n = 0; n < y.cols(); ++n) {
+    for (int m = 0; m < y.rows(); ++m) {
       assign(x(m, n), y(m, n));
+    }
+  }
 }
 
 /**
@@ -167,10 +174,12 @@ inline void assign(Eigen::Block<T_lhs> x, const Eigen::Matrix<T, R, C>& y) {
 template <typename T_lhs, typename T_rhs>
 inline void assign(std::vector<T_lhs>& x, const std::vector<T_rhs>& y) {
   check_matching_sizes("assign", "left-hand side", x, "right-hand side", y);
-  for (size_t i = 0; i < x.size(); ++i)
+  for (size_t i = 0; i < x.size(); ++i) {
     assign(x[i], y[i]);
+  }
 }
 
 }  // namespace math
 }  // namespace stan
+
 #endif

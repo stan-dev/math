@@ -5,6 +5,7 @@
 #include <stan/math/prim/arr/err/is_nonzero_size.hpp>
 #include <stan/math/prim/mat/err/constraint_tolerance.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -25,6 +26,7 @@ namespace math {
 template <typename T_prob>
 inline bool is_unit_vector(
     const Eigen::Matrix<T_prob, Eigen::Dynamic, 1>& theta) {
+  using std::fabs;
   if (is_nonzero_size(theta)) {
     T_prob seq = theta.squaredNorm();
     return fabs(1.0 - seq) <= CONSTRAINT_TOLERANCE;

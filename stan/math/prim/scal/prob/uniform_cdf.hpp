@@ -16,10 +16,11 @@ template <typename T_y, typename T_low, typename T_high>
 return_type_t<T_y, T_low, T_high> uniform_cdf(const T_y& y, const T_low& alpha,
                                               const T_high& beta) {
   static const char* function = "uniform_cdf";
-  typedef partials_return_type_t<T_y, T_low, T_high> T_partials_return;
+  using T_partials_return = partials_return_t<T_y, T_low, T_high>;
 
-  if (size_zero(y, alpha, beta))
+  if (size_zero(y, alpha, beta)) {
     return 1.0;
+  }
 
   T_partials_return cdf(1.0);
   check_not_nan(function, "Random variable", y);
@@ -37,8 +38,9 @@ return_type_t<T_y, T_low, T_high> uniform_cdf(const T_y& y, const T_low& alpha,
 
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
-    if (y_dbl < value_of(alpha_vec[n]) || y_dbl > value_of(beta_vec[n]))
+    if (y_dbl < value_of(alpha_vec[n]) || y_dbl > value_of(beta_vec[n])) {
       return 0.0;
+    }
   }
 
   operands_and_partials<T_y, T_low, T_high> ops_partials(y, alpha, beta);
@@ -51,26 +53,32 @@ return_type_t<T_y, T_low, T_high> uniform_cdf(const T_y& y, const T_low& alpha,
 
     cdf *= cdf_;
 
-    if (!is_constant_all<T_y>::value)
+    if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] += 1.0 / b_min_a / cdf_;
-    if (!is_constant_all<T_low>::value)
+    }
+    if (!is_constant_all<T_low>::value) {
       ops_partials.edge2_.partials_[n]
           += (y_dbl - beta_dbl) / b_min_a / b_min_a / cdf_;
-    if (!is_constant_all<T_high>::value)
+    }
+    if (!is_constant_all<T_high>::value) {
       ops_partials.edge3_.partials_[n] -= 1.0 / b_min_a;
+    }
   }
 
   if (!is_constant_all<T_y>::value) {
-    for (size_t n = 0; n < stan::length(y); ++n)
+    for (size_t n = 0; n < stan::length(y); ++n) {
       ops_partials.edge1_.partials_[n] *= cdf;
+    }
   }
   if (!is_constant_all<T_low>::value) {
-    for (size_t n = 0; n < stan::length(alpha); ++n)
+    for (size_t n = 0; n < stan::length(alpha); ++n) {
       ops_partials.edge2_.partials_[n] *= cdf;
+    }
   }
   if (!is_constant_all<T_high>::value) {
-    for (size_t n = 0; n < stan::length(beta); ++n)
+    for (size_t n = 0; n < stan::length(beta); ++n) {
       ops_partials.edge3_.partials_[n] *= cdf;
+    }
   }
 
   return ops_partials.build(cdf);

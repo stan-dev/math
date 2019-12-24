@@ -1,11 +1,11 @@
 //  Copyright (c) 2006 Xiaogang Zhang
 //  Copyright (c) 2007, 2017 John Maddock
 
-#include <stan/math/prim/meta.hpp>
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LOG_MODIFIED_BESSEL_FIRST_KIND_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LOG_MODIFIED_BESSEL_FIRST_KIND_HPP
 
 #include <boost/math/tools/rational.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
@@ -17,6 +17,7 @@
 #include <stan/math/prim/scal/fun/log1p.hpp>
 #include <stan/math/prim/scal/fun/log1p_exp.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -48,19 +49,23 @@ inline return_type_t<T1, T2, double> log_modified_bessel_first_kind(
 
   using boost::math::tools::evaluate_polynomial;
   using std::log;
+  using std::pow;
   using std::sqrt;
 
-  typedef return_type_t<T1, T2, double> T;
+  using T = return_type_t<T1, T2, double>;
 
   if (z == 0) {
-    if (v == 0)
+    if (v == 0) {
       return 0.0;
-    if (v > 0)
+    }
+    if (v > 0) {
       return NEGATIVE_INFTY;
+    }
     return INFTY;
   }
-  if (is_inf(z))
+  if (is_inf(z)) {
     return z;
+  }
   if (v == 0) {
     // WARNING: will not autodiff for v = 0 correctly
     // modified from Boost's bessel_i0_imp in the double precision case,

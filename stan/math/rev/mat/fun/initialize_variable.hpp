@@ -32,8 +32,9 @@ inline void initialize_variable(Eigen::Matrix<var, R, C>& matrix,
  */
 template <typename T>
 inline void initialize_variable(std::vector<T>& variables, const var& value) {
-  for (size_t i = 0; i < variables.size(); ++i)
+  for (size_t i = 0; i < variables.size(); ++i) {
     initialize_variable(variables[i], value);
+  }
 }
 
 }  // namespace math

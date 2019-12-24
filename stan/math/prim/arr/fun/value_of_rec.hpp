@@ -23,8 +23,9 @@ template <typename T>
 inline std::vector<double> value_of_rec(const std::vector<T>& x) {
   size_t size = x.size();
   std::vector<double> result(size);
-  for (size_t i = 0; i < size; i++)
+  for (size_t i = 0; i < size; i++) {
     result[i] = value_of_rec(x[i]);
+  }
   return result;
 }
 

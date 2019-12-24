@@ -4,13 +4,12 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/prob/categorical_lpmf.hpp>
-#include <boost/math/tools/promotion.hpp>
 #include <vector>
 
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup multivar_dists
  * @deprecated use <code>categorical_lpmf</code>
  */
 template <bool propto, typename T_prob>
@@ -19,7 +18,7 @@ return_type_t<T_prob> categorical_log(
   return categorical_lpmf<propto, T_prob>(n, theta);
 }
 
-/**
+/** \ingroup multivar_dists
  * @deprecated use <code>categorical_lpmf</code>
  */
 template <typename T_prob>
@@ -29,7 +28,7 @@ return_type_t<T_prob> categorical_log(
   return categorical_lpmf<T_prob>(n, theta);
 }
 
-/**
+/** \ingroup multivar_dists
  * @deprecated use <code>categorical_lpmf</code>
  */
 template <bool propto, typename T_prob>
@@ -39,7 +38,7 @@ return_type_t<T_prob> categorical_log(
   return categorical_lpmf<propto, T_prob>(ns, theta);
 }
 
-/**
+/** \ingroup multivar_dists
  * @deprecated use <code>categorical_lpmf</code>
  */
 template <typename T_prob>

@@ -5,14 +5,15 @@
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/opencl/buffer_types.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
+#include <string>
 
 namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const char *copy_triangular_kernel_code = STRINGIFY(
+static const std::string copy_triangular_kernel_code = STRINGIFY(
     // \endcond
-    /**
+    /** \ingroup opencl_kernels
      * Copies the lower or upper
      * triangular of the source matrix to
      * the destination matrix.
@@ -51,7 +52,7 @@ static const char *copy_triangular_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/**
+/** \ingroup opencl_kernels
  * See the docs for \link kernels/copy_triangular.hpp copy_triangular() \endlink
  */
 const kernel_cl<out_buffer, in_buffer, int, int, matrix_cl_view>

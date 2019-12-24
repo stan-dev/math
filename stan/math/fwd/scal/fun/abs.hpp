@@ -12,14 +12,15 @@ namespace math {
 
 template <typename T>
 inline fvar<T> abs(const fvar<T>& x) {
-  if (x.val_ > 0.0)
+  if (x.val_ > 0.0) {
     return x;
-  else if (x.val_ < 0.0)
+  } else if (x.val_ < 0.0) {
     return fvar<T>(-x.val_, -x.d_);
-  else if (x.val_ == 0.0)
+  } else if (x.val_ == 0.0) {
     return fvar<T>(0, 0);
-  else
+  } else {
     return fvar<T>(abs(x.val_), NOT_A_NUMBER);
+  }
 }
 
 }  // namespace math

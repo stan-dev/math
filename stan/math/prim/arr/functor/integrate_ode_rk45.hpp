@@ -96,15 +96,18 @@ std::vector<std::vector<return_type_t<T1, T2, T_t0, T_ts>>> integrate_ode_rk45(
   check_ordered("integrate_ode_rk45", "times", ts_dbl);
   check_less("integrate_ode_rk45", "initial time", t0_dbl, ts_dbl[0]);
 
-  if (relative_tolerance <= 0)
+  if (relative_tolerance <= 0) {
     invalid_argument("integrate_ode_rk45", "relative_tolerance,",
                      relative_tolerance, "", ", must be greater than 0");
-  if (absolute_tolerance <= 0)
+  }
+  if (absolute_tolerance <= 0) {
     invalid_argument("integrate_ode_rk45", "absolute_tolerance,",
                      absolute_tolerance, "", ", must be greater than 0");
-  if (max_num_steps <= 0)
+  }
+  if (max_num_steps <= 0) {
     invalid_argument("integrate_ode_rk45", "max_num_steps,", max_num_steps, "",
                      ", must be greater than 0");
+  }
 
   // creates basic or coupled system by template specializations
   coupled_ode_system<F, T1, T2> coupled_system(f, y0, theta, x, x_int, msgs);

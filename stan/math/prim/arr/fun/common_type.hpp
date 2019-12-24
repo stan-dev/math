@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/common_type.hpp>
-#include <boost/math/tools/promotion.hpp>
 #include <vector>
 
 namespace stan {
@@ -18,7 +17,7 @@ namespace math {
  */
 template <typename T1, typename T2>
 struct common_type<std::vector<T1>, std::vector<T2> > {
-  typedef std::vector<typename common_type<T1, T2>::type> type;
+  using type = std::vector<typename common_type<T1, T2>::type>;
 };
 
 }  // namespace math

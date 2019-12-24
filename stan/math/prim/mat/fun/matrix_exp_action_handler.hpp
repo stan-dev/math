@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <vector>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -34,10 +35,6 @@ class matrix_exp_action_handler {
   }
 
  public:
-  /* Constructor
-   */
-  matrix_exp_action_handler() {}
-
   /* Perform the matrix exponential action exp(A*t)*B
    * @param [in] mat matrix A
    * @param [in] b matrix B
@@ -79,8 +76,9 @@ class matrix_exp_action_handler {
         }
         F *= eta;
         B = F;
-        if (conv)
+        if (conv) {
           break;
+        }
       }
       res.col(col) = F;
     }  // loop b columns

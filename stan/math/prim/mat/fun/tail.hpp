@@ -15,7 +15,7 @@ namespace math {
  * Return the specified number of elements as a vector
  * from the back of the specified vector.
  *
- * @tparam T Type of value in vector.
+ * @tparam T type of elements in the vector
  * @param v Vector input.
  * @param n Size of return.
  * @return The last n elements of v.
@@ -24,8 +24,9 @@ namespace math {
 template <typename T>
 inline Eigen::Matrix<T, Eigen::Dynamic, 1> tail(
     const Eigen::Matrix<T, Eigen::Dynamic, 1>& v, size_t n) {
-  if (n != 0)
+  if (n != 0) {
     check_row_index("tail", "n", v, n);
+  }
   return v.tail(n);
 }
 
@@ -33,7 +34,7 @@ inline Eigen::Matrix<T, Eigen::Dynamic, 1> tail(
  * Return the specified number of elements as a row vector
  * from the back of the specified row vector.
  *
- * @tparam T Type of value in vector.
+ * @tparam T type of elements in the vector
  * @param rv Row vector.
  * @param n Size of return row vector.
  * @return The last n elements of rv.
@@ -42,8 +43,9 @@ inline Eigen::Matrix<T, Eigen::Dynamic, 1> tail(
 template <typename T>
 inline Eigen::Matrix<T, 1, Eigen::Dynamic> tail(
     const Eigen::Matrix<T, 1, Eigen::Dynamic>& rv, size_t n) {
-  if (n != 0)
+  if (n != 0) {
     check_column_index("tail", "n", rv, n);
+  }
   return rv.tail(n);
 }
 
@@ -51,7 +53,7 @@ inline Eigen::Matrix<T, 1, Eigen::Dynamic> tail(
  * Return the specified number of elements as a standard vector
  * from the back of the specified standard vector.
  *
- * @tparam T Type of value in vector.
+ * @tparam T type of elements in the vector
  * @param sv Standard vector.
  * @param n Size of return.
  * @return The last n elements of sv.
@@ -59,15 +61,18 @@ inline Eigen::Matrix<T, 1, Eigen::Dynamic> tail(
  */
 template <typename T>
 std::vector<T> tail(const std::vector<T>& sv, size_t n) {
-  typedef typename index_type<std::vector<T> >::type idx_t;
-  if (n != 0)
+  using idx_t = typename index_type<std::vector<T> >::type;
+  if (n != 0) {
     check_std_vector_index("tail", "n", sv, n);
+  }
   std::vector<T> s;
-  for (idx_t i = sv.size() - n; i < sv.size(); ++i)
+  for (idx_t i = sv.size() - n; i < sv.size(); ++i) {
     s.push_back(sv[i]);
+  }
   return s;
 }
 
 }  // namespace math
 }  // namespace stan
+
 #endif

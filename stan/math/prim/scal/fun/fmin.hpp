@@ -2,8 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_FUN_FMIN_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
-#include <boost/math/tools/promotion.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -16,13 +15,10 @@ namespace math {
  * @param y Second argument.
  * @return Minimum of x or y and if one is NaN return the other
  */
-template <typename T1, typename T2>
-inline return_type_t<T1, T2> fmin(const T1& x, const T2& y) {
-  if (is_nan(x))
-    return y;
-  if (is_nan(y))
-    return x;
-  return y > x ? x : y;
+template <typename T1, typename T2, typename = require_all_arithmetic_t<T1, T2>>
+inline double fmin(T1 x, T2 y) {
+  using std::fmin;
+  return fmin(x, y);
 }
 
 }  // namespace math

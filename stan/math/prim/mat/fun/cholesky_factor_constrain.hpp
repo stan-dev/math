@@ -17,7 +17,7 @@ namespace math {
  * specified vector.  A total of (N choose 2) + N + (M - N) * N
  * elements are required to read an M by N Cholesky factor.
  *
- * @tparam T Type of scalars in matrix
+ * @tparam T type of elements in the matrix
  * @param x Vector of unconstrained values
  * @param M Number of rows
  * @param N Number of columns
@@ -38,16 +38,20 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_factor_constrain(
   int pos = 0;
 
   for (int m = 0; m < N; ++m) {
-    for (int n = 0; n < m; ++n)
+    for (int n = 0; n < m; ++n) {
       y(m, n) = x(pos++);
+    }
     y(m, m) = exp(x(pos++));
-    for (int n = m + 1; n < N; ++n)
+    for (int n = m + 1; n < N; ++n) {
       y(m, n) = zero;
+    }
   }
 
-  for (int m = N; m < M; ++m)
-    for (int n = 0; n < N; ++n)
+  for (int m = N; m < M; ++m) {
+    for (int n = 0; n < N; ++n) {
       y(m, n) = x(pos++);
+    }
+  }
   return y;
 }
 
@@ -58,7 +62,7 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_factor_constrain(
  * of (N choose 2) + N + N * (M - N) free parameters are required to read
  * an M by N Cholesky factor.
  *
- * @tparam T Type of scalars in matrix
+ * @tparam T type of elements in the matrix
  * @param x Vector of unconstrained values
  * @param M Number of rows
  * @param N Number of columns
@@ -83,4 +87,5 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_factor_constrain(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

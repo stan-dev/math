@@ -20,8 +20,9 @@ namespace math {
 template <typename T_y>
 inline bool is_not_nan(const T_y& y) {
   for (size_t n = 0; n < stan::length(y); ++n) {
-    if (is_nan(value_of_rec(stan::get(y, n))))
+    if (is_nan(value_of_rec(stan::get(y, n)))) {
       return false;
+    }
   }
   return true;
 }

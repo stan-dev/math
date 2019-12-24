@@ -16,8 +16,8 @@ namespace math {
  * This function checks the runtime size of the matrix to check
  * whether it is a row or column vector.
  * @tparam T Scalar type of the matrix
- * @tparam R Compile time rows of the matrix
- * @tparam C Compile time columns of the matrix
+ * @tparam R number of rows or Eigen::Dynamic
+ * @tparam C number of columns or Eigen::Dynamic
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param x Matrix
@@ -27,12 +27,15 @@ namespace math {
 template <typename T, int R, int C>
 inline void check_vector(const char* function, const char* name,
                          const Eigen::Matrix<T, R, C>& x) {
-  if (R == 1)
+  if (R == 1) {
     return;
-  if (C == 1)
+  }
+  if (C == 1) {
     return;
-  if (x.rows() == 1 || x.cols() == 1)
+  }
+  if (x.rows() == 1 || x.cols() == 1) {
     return;
+  }
 
   std::ostringstream msg;
   msg << ") has " << x.rows() << " rows and " << x.cols()

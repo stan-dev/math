@@ -50,8 +50,9 @@ inline double inv_logit(double a) {
   using std::exp;
   if (a < 0) {
     double exp_a = exp(a);
-    if (a < LOG_EPSILON)
+    if (a < LOG_EPSILON) {
       return exp_a;
+    }
     return exp_a / (1 + exp_a);
   }
   return inv(1 + exp(-a));

@@ -4,6 +4,7 @@
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/arr/fun/log_sum_exp.hpp>
 #include <vector>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -12,8 +13,9 @@ template <typename T>
 fvar<T> log_sum_exp(const std::vector<fvar<T> >& v) {
   using std::exp;
   std::vector<T> vals(v.size());
-  for (size_t i = 0; i < v.size(); ++i)
+  for (size_t i = 0; i < v.size(); ++i) {
     vals[i] = v[i].val_;
+  }
   T deriv(0.0);
   T denominator(0.0);
   for (size_t i = 0; i < v.size(); ++i) {

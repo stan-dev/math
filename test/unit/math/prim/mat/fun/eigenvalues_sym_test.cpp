@@ -1,7 +1,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathMatrix, eigenvalues_sym) {
+TEST(MathMatrixPrimMat, eigenvalues_sym) {
   stan::math::matrix_d m0;
   stan::math::matrix_d m1(2, 3);
   m1 << 1, 2, 3, 4, 5, 6;

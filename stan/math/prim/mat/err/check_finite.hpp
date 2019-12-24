@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_MAT_ERR_CHECK_FINITE_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/scal/err/throw_domain_error.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
@@ -13,13 +13,13 @@ namespace math {
 
 /*
  * Return <code>true</code> is the specified matrix is finite.
- * @tparams T Scalar type of the matrix, requires class method
+ * @tparams T scalar type of the matrix, requires class method
  *   <code>.size()</code>
- * @tparams R Compile time rows of the matrix
- * @tparams C Compile time columns of the matrix
- * @param function Function name (for error messages)
- * @param name Variable name (for error messages)
- * @param y Matrix to test
+ * @tparam R number of rows or Eigen::Dynamic
+ * @tparam C number of columns or Eigen::Dynamic
+ * @param function name of function (for error messages)
+ * @param name variable name (for error messages)
+ * @param y matrix to test
  * @return <code>true</code> if the matrix is finite
  **/
 namespace internal {
@@ -29,9 +29,10 @@ struct finite<Eigen::Matrix<T, R, C>, true> {
                     const Eigen::Matrix<T, R, C>& y) {
     if (!value_of(y).allFinite()) {
       for (int n = 0; n < y.size(); ++n) {
-        if (!(boost::math::isfinite)(y(n)))
-          domain_error_vec(function, name, y, n, "is ",
-                           ", but must be finite!");
+        if (!(boost::math::isfinite)(y(n))) {
+          throw_domain_error_vec(function, name, y, n, "is ",
+                                 ", but must be finite!");
+        }
       }
     }
   }

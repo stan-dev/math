@@ -12,14 +12,15 @@
 
 namespace stan {
 namespace math {
+
 /**
  * Return the concatenation of two specified vectors in the order of
  *   the arguments.
  *
  * The return type is computed with append_return_type
  *
- * @tparam T1 Scalar type of first vector
- * @tparam T2 Scalar type of second vector
+ * @tparam T1 type of elements in first vector
+ * @tparam T2 type of elements in second vector
  * @param x First vector
  * @param y Second vector
  * @return A vector of x and y concatenated together (in that order)
@@ -37,10 +38,12 @@ append_array(const std::vector<T1>& x, const std::vector<T2>& y) {
     zdims[0] += y.size();
   }
   resize(z, zdims);
-  for (size_t i = 0; i < x.size(); ++i)
+  for (size_t i = 0; i < x.size(); ++i) {
     assign(z[i], x[i]);
-  for (size_t i = 0; i < y.size(); ++i)
+  }
+  for (size_t i = 0; i < y.size(); ++i) {
     assign(z[i + x.size()], y[i]);
+  }
   return z;
 }
 
@@ -48,7 +51,7 @@ append_array(const std::vector<T1>& x, const std::vector<T2>& y) {
  * Return the concatenation of two specified vectors in the order of
  *   the arguments.
  *
- * @tparam T1 Type of vectors
+ * @tparam T1 type of elements in both vectors
  * @param x First vector
  * @param y Second vector
  * @return A vector of x and y concatenated together (in that order)
@@ -73,6 +76,8 @@ inline std::vector<T1> append_array(const std::vector<T1>& x,
   z.insert(z.end(), y.begin(), y.end());
   return z;
 }
+
 }  // namespace math
 }  // namespace stan
+
 #endif
