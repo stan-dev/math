@@ -56,14 +56,13 @@ class log_softmax_elt_vari : public vari {
  */
 template <typename T, require_t<is_var<scalar_type_t<T>>>...>
 inline auto log_softmax(T&& x) {
-  return apply_vector_unary<T>::apply(std::forward<T>(x), [](auto& alpha){
+  return apply_vector_unary<T>::apply(std::forward<T>(x), [&](auto& alpha){
     const int a_size = alpha.size();
 
     check_nonzero_size("log_softmax", "alpha", alpha);
 
-    // TODO(carpenter): replace with array alloc
     vari** alpha_vi_array
-        = reinterpret_cast<vari**>(vari::operator new(sizeof(vari*) * a_size));
+        = ChainableStack::instance_->memalloc_.alloc_array<vari*>(a_size);
     Eigen::Map<vector_vi>(alpha_vi_array, a_size) = alpha.vi();
 
     vector_d alpha_d = alpha.val();
@@ -74,14 +73,13 @@ inline auto log_softmax(T&& x) {
     vector_d diff = (alpha_d.array() - alpha_d.maxCoeff());
     vector_d softmax_alpha_d = diff.array().exp();
     double sum = softmax_alpha_d.sum();
-    softmax_alpha_d.array() /= sum;
     vector_d log_softmax_alpha_d = diff.array() - std::log(sum);
 
     // end fold
-    // TODO(carpenter): replace with array alloc
     double* softmax_alpha_d_array
-        = reinterpret_cast<double*>(vari::operator new(sizeof(double) * a_size));
-    Eigen::Map<vector_d>(softmax_alpha_d_array, a_size) = softmax_alpha_d;
+        = ChainableStack::instance_->memalloc_.alloc_array<double>(a_size);
+    Eigen::Map<vector_d>(softmax_alpha_d_array, a_size)
+                                            = softmax_alpha_d.array() / sum;
 
     vector_v log_softmax_alpha(a_size);
     for (int k = 0; k < a_size; ++k) {

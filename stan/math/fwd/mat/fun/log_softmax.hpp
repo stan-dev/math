@@ -13,22 +13,22 @@ namespace math {
 
 template <typename T, require_t<is_fvar<scalar_type_t<T>>>...>
 inline auto log_softmax(T&& x) {
-  return apply_vector_unary<T>::apply(std::forward<T>(x), [](auto& alpha){
+  return apply_vector_unary<T>::apply(std::forward<T>(x), [&](auto& alpha){
     using Eigen::Dynamic;
     using Eigen::Matrix;
 
-    using T_scalar = value_type_t<T>;
-    using T_fvar = typename T_scalar::Scalar;
+    using T_value_type = value_type_t<T>;
+    using T_scalar_type = typename T_value_type::Scalar;
 
-    Matrix<T_fvar, Dynamic, 1> alpha_t = alpha.val();
-    Matrix<T_fvar, Dynamic, 1> softmax_alpha_t = softmax(alpha_t);
+    Matrix<T_scalar_type, Dynamic, 1> alpha_t = alpha.val();
+    Matrix<T_scalar_type, Dynamic, 1> softmax_alpha_t = softmax(alpha_t);
 
-    Matrix<T_scalar, Dynamic, 1> log_softmax_alpha(alpha.size());
+    Matrix<T_value_type, Dynamic, 1> log_softmax_alpha(alpha.size());
     log_softmax_alpha.val() = log_softmax(alpha_t);
     log_softmax_alpha.d().setZero();
 
     for (int m = 0; m < alpha.size(); ++m) {
-      T_fvar negative_alpha_m_d_times_softmax_alpha_t_m
+      T_scalar_type negative_alpha_m_d_times_softmax_alpha_t_m
           = -alpha(m).d_ * softmax_alpha_t(m);
       for (int k = 0; k < alpha.size(); ++k) {
         if (m == k) {
