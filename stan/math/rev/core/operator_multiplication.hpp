@@ -97,8 +97,7 @@ inline var operator*(Var1&& a, Var2&& b) {
  * @param b Scalar operand.
  * @return Variable result of multiplying operands.
  */
-template <typename Var, typename Arith, require_var_t<Var>...,
-          require_arithmetic_t<Arith>...>
+ template <typename Var, typename Arith, require_var_t<Var>..., require_arithmetic_t<Arith>...>
 inline var operator*(Var&& a, Arith b) {
   if (b == 1.0) {
     return a;
@@ -119,8 +118,7 @@ inline var operator*(Var&& a, Arith b) {
  * @param b Variable operand.
  * @return Variable result of multiplying the operands.
  */
-template <typename Var, typename Arith, require_var_t<Var>...,
-          require_arithmetic_t<Arith>...>
+ template <typename Arith, typename Var, require_arithmetic_t<Arith>..., require_var_t<Var>...>
 inline var operator*(Arith a, Var&& b) {
   if (a == 1.0) {
     return b;
