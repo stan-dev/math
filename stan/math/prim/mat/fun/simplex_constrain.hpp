@@ -20,9 +20,9 @@ namespace math {
  *
  * The transform is based on a centered stick-breaking process.
  *
+ * @tparam T type of elements in the vector
  * @param y Free vector input of dimensionality K - 1.
  * @return Simplex of dimensionality K.
- * @tparam T Type of scalar.
  */
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, 1> simplex_constrain(
@@ -53,10 +53,10 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> simplex_constrain(
  * The simplex transform is defined through a centered
  * stick-breaking process.
  *
+ * @tparam T type of elements in the vector
  * @param y Free vector input of dimensionality K - 1.
  * @param lp Log probability reference to increment.
  * @return Simplex of dimensionality K.
- * @tparam T Type of scalar.
  */
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, 1> simplex_constrain(
@@ -85,7 +85,6 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> simplex_constrain(
 }
 
 }  // namespace math
-
 }  // namespace stan
 
 #endif

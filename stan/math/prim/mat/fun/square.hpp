@@ -9,8 +9,9 @@ namespace math {
 
 /**
  * Structure to wrap square() so that it can be vectorized.
- * @param x Variable.
- * @tparam T Variable type.
+ *
+ * @tparam T type of variable
+ * @param x variable
  * @return x squared.
  */
 struct square_fun {
@@ -22,8 +23,9 @@ struct square_fun {
 
 /**
  * Vectorized version of square().
- * @param x Container.
- * @tparam T Container type.
+ *
+ * @tparam T type of container
+ * @param x container
  * @return Each value in x squared.
  */
 template <typename T>

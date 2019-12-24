@@ -193,7 +193,8 @@ static const char* neg_binomial_2_log_glm_kernel_code = STRINGIFY(
 // \endcond
 
 /** \ingroup opencl_kernels
- * See the docs for \link kernels/subtract.hpp subtract() \endlink
+ * See the docs for \link kernels/neg_binomial_2_log_glm_lpmf.hpp
+ * neg_binomial_2_log_glm_lpmf() \endlink
  */
 const kernel_cl<out_buffer, out_buffer, out_buffer, out_buffer, in_buffer,
                 in_buffer, in_buffer, in_buffer, in_buffer, int, int, int, int,
