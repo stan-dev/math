@@ -12,9 +12,9 @@ Required Libraries
 ------------------
 Stan Math depends on four libraries:
 
-- Boost (version 1.69.0): [Boost Home Page](http://www.boost.org)
-- Eigen (version 3.3.3): [Eigen Home Page](http://eigen.tuxfamily.org/index.php?title=Main_Page)
-- SUNDIALS (version 4.1.0): [Sundials Home Page](http://computation.llnl.gov/projects/sundials/sundials-software)
+- Boost (version 1.69.0): [Boost Home Page](https://www.boost.org)
+- Eigen (version 3.3.3): [Eigen Home Page](https://eigen.tuxfamily.org/index.php?title=Main_Page)
+- SUNDIALS (version 4.1.0): [Sundials Home Page](https://computation.llnl.gov/projects/sundials/sundials-software)
 - Intel TBB (version 2019_U8): [Intel TBB Home Page](https://www.threadingbuildingblocks.org)
 
 These are distributed under the `lib/` subdirectory. Only these versions of the dependent libraries have been tested with Stan Math.
@@ -22,7 +22,7 @@ These are distributed under the `lib/` subdirectory. Only these versions of the 
 Documentation
 ------------
 
-Documentation for Stan math is available at [mc-stan.org/math](http://mc-stan.org/math/)
+Documentation for Stan math is available at [mc-stan.org/math](https://mc-stan.org/math/)
 
 Installation
 ------------
