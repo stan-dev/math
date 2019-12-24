@@ -19,7 +19,7 @@ namespace math {
  */
 template <typename T, require_var_t<T>...>
 inline bool is_nan(T&& v) {
-  return is_nan(std::forward<decltype(v.val())>(v.val()));
+  return is_nan(v.val());
 }
 
 }  // namespace math
