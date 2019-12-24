@@ -37,7 +37,7 @@ For implementation details of the Math library's automatic differentiation, plea
 
 # Licensing
 
-We're committed to having a permissive open-source license. The Math library is [licensed with the BSD 3-Clause License](https://github.com/stan-dev/math/blob/develop/LICENSE.md) and we only accept changes to the code base that compatible with this license.
+We're committed to having a permissive open-source license. The Math library is [licensed with the BSD 3-Clause License](https://github.com/stan-dev/math/blob/develop/LICENSE%2Emd) and we only accept changes to the code base that compatible with this license.
 
 # Contributing
 
