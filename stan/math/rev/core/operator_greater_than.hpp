@@ -40,7 +40,8 @@ inline bool operator>(Var1&& a, Var2&& b) {
  * @param b Second value.
  * @return True if first variable's value is greater than second value.
  */
-template <typename Var, typename Arith, require_var_t<Var>..., require_arithmetic_t<Arith>...>
+template <typename Var, typename Arith, require_var_t<Var>...,
+          require_arithmetic_t<Arith>...>
 inline bool operator>(Var&& a, Arith b) {
   return a.val() > b;
 }
@@ -55,7 +56,8 @@ inline bool operator>(Var&& a, Arith b) {
  * @param b Second variable.
  * @return True if first value is greater than second variable's value.
  */
-template <typename Arith, typename Var, require_arithmetic_t<Arith>..., require_var_t<Var>...>
+template <typename Arith, typename Var, require_arithmetic_t<Arith>...,
+          require_var_t<Var>...>
 inline bool operator>(Arith a, Var&& b) {
   return a > b.val();
 }
