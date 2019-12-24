@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_META_VOID_T_HPP
-#define STAN_MATH_PRIM_SCAL_META_VOID_T_HPP
+#ifndef STAN_MATH_PRIM_SCAL_VOID_T_HPP
+#define STAN_MATH_PRIM_SCAL_VOID_T_HPP
 
 #include <stan/math/prim/meta/bool_constant.hpp>
 #include <type_traits>
