@@ -28,8 +28,8 @@ TEST(ErrorHandlingMatrix, checkRange_6_arg_std_vector) {
         "index 0 out of range; "
         "container is empty and cannot be indexed; "
         "index position = 4";
-  EXPECT_THROW_MSG(check_range("function", "x", 0, 0, 4, ""),
-                   std::out_of_range, expected_message_empty_container);
+  EXPECT_THROW_MSG(check_range("function", "x", 0, 0, 4, ""), std::out_of_range,
+                   expected_message_empty_container);
 }
 
 TEST(ErrorHandlingMatrix, checkRange_4_arg_std_vector) {
@@ -54,6 +54,6 @@ TEST(ErrorHandlingMatrix, checkRange_4_arg_std_vector) {
       = "function: accessing element out of range. "
         "index 0 out of range; "
         "container is empty and cannot be indexed";
-  EXPECT_THROW_MSG(check_range("function", "x", 0, 0),
-                   std::out_of_range, expected_message_empty_container);
+  EXPECT_THROW_MSG(check_range("function", "x", 0, 0), std::out_of_range,
+                   expected_message_empty_container);
 }

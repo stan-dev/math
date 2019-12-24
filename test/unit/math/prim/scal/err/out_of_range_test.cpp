@@ -45,8 +45,8 @@ class ErrorHandlingScalar_out_of_range : public ::testing::Test {
     expected_message << "function: "
                      << "accessing element out of range. "
                      << "index " << i << " out of range; "
-                     << "container is empty and cannot be indexed"
-                     << msg1_ << msg2_;
+                     << "container is empty and cannot be indexed" << msg1_
+                     << msg2_;
     return expected_message.str();
   }
 
