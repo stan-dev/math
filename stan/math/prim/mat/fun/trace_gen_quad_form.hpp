@@ -36,7 +36,7 @@ namespace math {
  * be multiplied by D.
  */
 template <typename TD, int RD, int CD, typename TA, int RA, int CA, typename TB,
-          int RB, int CB, typename = require_any_not_var_t<TD, TA, TB>>
+          int RB, int CB, typename = require_all_not_var_t<TD, TA, TB>>
 inline return_type_t<TD, TA, TB> trace_gen_quad_form(
     const Eigen::Matrix<TD, RD, CD> &D, const Eigen::Matrix<TA, RA, CA> &A,
     const Eigen::Matrix<TB, RB, CB> &B) {

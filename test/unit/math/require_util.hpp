@@ -107,9 +107,8 @@ struct require_scal_checker {
 
   static void all_not() {
     using stan::test::require_variadic_checker;
-    EXPECT_TRUE((require_variadic_checker<checker, dummy, Types...>::value));
-    EXPECT_TRUE((require_variadic_checker<checker, Types..., dummy>::value));
-    EXPECT_FALSE((require_variadic_checker<checker, Types...>::value));
+    EXPECT_TRUE((require_variadic_checker<checker, dummy, dummy>::value));
+    EXPECT_FALSE((require_variadic_checker<checker, Types..., dummy>::value));
   }
 
   static void any() {
@@ -120,8 +119,9 @@ struct require_scal_checker {
 
   static void any_not() {
     using stan::test::require_variadic_checker;
-    EXPECT_TRUE((require_variadic_checker<checker, dummy, dummy>::value));
-    EXPECT_FALSE((require_variadic_checker<checker, Types..., dummy>::value));
+    EXPECT_TRUE((require_variadic_checker<checker, dummy, Types...>::value));
+    EXPECT_TRUE((require_variadic_checker<checker, Types..., dummy>::value));
+    EXPECT_FALSE((require_variadic_checker<checker, Types...>::value));
   }
 };
 
@@ -221,17 +221,17 @@ struct require_container_checker {
     EXPECT_FALSE((variadic_container_require_tester<checker, ContainerCheck,
                                                     Container<double>,
                                                     Container<double>>::value));
-    EXPECT_FALSE((variadic_container_require_tester<checker, ContainerCheck,
-                                                    Container<float>,
-                                                    Container<double>>::value));
-    EXPECT_TRUE(
+    EXPECT_FALSE(
         (variadic_container_require_tester<checker, ContainerCheck, double,
                                            Container<double>>::value));
-    EXPECT_TRUE(
+    EXPECT_FALSE(
         (variadic_container_require_tester<checker, ContainerCheck,
                                            Container<double>, double>::value));
+    EXPECT_FALSE((variadic_container_require_tester<checker, ContainerCheck,
+                                                    Container<std::string>,
+                                                    Container<double>>::value));
     EXPECT_TRUE((variadic_container_require_tester<checker, ContainerCheck, int,
-                                                   std::string>::value));
+                                                   float>::value));
     EXPECT_TRUE((variadic_container_require_tester<checker, ContainerCheck,
                                                    double, double>::value));
   }
@@ -263,17 +263,17 @@ struct require_container_checker {
     EXPECT_FALSE((variadic_container_require_tester<checker, ContainerCheck,
                                                     Container<double>,
                                                     Container<double>>::value));
-    EXPECT_FALSE(
+    EXPECT_FALSE((variadic_container_require_tester<checker, ContainerCheck,
+                                                    Container<float>,
+                                                    Container<double>>::value));
+    EXPECT_TRUE(
         (variadic_container_require_tester<checker, ContainerCheck, double,
                                            Container<double>>::value));
-    EXPECT_FALSE(
+    EXPECT_TRUE(
         (variadic_container_require_tester<checker, ContainerCheck,
                                            Container<double>, double>::value));
-    EXPECT_FALSE((variadic_container_require_tester<checker, ContainerCheck,
-                                                    Container<std::string>,
-                                                    Container<double>>::value));
     EXPECT_TRUE((variadic_container_require_tester<checker, ContainerCheck, int,
-                                                   float>::value));
+                                                   std::string>::value));
     EXPECT_TRUE((variadic_container_require_tester<checker, ContainerCheck,
                                                    double, double>::value));
   }

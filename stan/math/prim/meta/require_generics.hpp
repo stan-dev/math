@@ -204,7 +204,7 @@ using require_any_t = std::enable_if_t<math::disjunction<Checks...>::value>;
  */
 template <class... Checks>
 using require_all_not_t
-    = std::enable_if_t<!math::conjunction<Checks...>::value>;
+    = std::enable_if_t<!math::disjunction<Checks...>::value>;
 
 /**
  * If any condition is false, template is enabled.
@@ -213,7 +213,7 @@ using require_all_not_t
  */
 template <class... Checks>
 using require_any_not_t
-    = std::enable_if_t<!math::disjunction<Checks...>::value>;
+    = std::enable_if_t<!math::conjunction<Checks...>::value>;
 
 /**
  * Require both types to be the same
@@ -236,9 +236,12 @@ template <typename T, typename... Types>
 using require_all_same_t
     = require_all_t<std::is_same<std::decay_t<T>, std::decay_t<Types>>...>;
 
+/**
+ * Require the first type to differ from at least one of the rest
+ */
 template <typename T, typename... Types>
 using require_any_not_same_t
-    = require_all_not_t<std::is_same<std::decay_t<T>, std::decay_t<Types>>...>;
+    = require_any_not_t<std::is_same<std::decay_t<T>, std::decay_t<Types>>...>;
 
 /**
  * Require both types to be the same
@@ -268,7 +271,7 @@ using require_all_same_st
  */
 template <typename T, typename... Types>
 using require_any_not_same_st
-    = require_all_not_t<std::is_same<scalar_type_t<std::decay_t<T>>,
+    = require_any_not_t<std::is_same<scalar_type_t<std::decay_t<T>>,
                                      scalar_type_t<std::decay_t<Types>>>...>;
 
 /**
@@ -295,7 +298,7 @@ using require_all_same_vt
 
 template <typename T, typename... Types>
 using require_any_not_same_vt
-    = require_all_not_t<std::is_same<value_type_t<std::decay_t<T>>,
+    = require_any_not_t<std::is_same<value_type_t<std::decay_t<T>>,
                                      value_type_t<std::decay_t<Types>>>...>;
 
 /**
@@ -323,7 +326,7 @@ using require_all_convertible_t = require_all_t<
  * require T is not convertible to any Types
  */
 template <typename T, typename... Types>
-using require_any_not_convertible_t = require_all_not_t<
+using require_any_not_convertible_t = require_any_not_t<
     std::is_convertible<std::decay_t<T>, std::decay_t<Types>>...>;
 
 /**
