@@ -44,11 +44,9 @@ namespace math {
 template <typename T>
 inline Eigen::Matrix<T, Eigen::Dynamic, 1> softmax(
     const Eigen::Matrix<T, Eigen::Dynamic, 1>& v) {
-  using std::exp;
   check_nonzero_size("softmax", "v", v);
-  Eigen::Matrix<T, Eigen::Dynamic, 1> theta(v.size());
-  theta = (v.array() - v.maxCoeff()).exp();
-  return theta.array() / theta.sum();
+  Eigen::Matrix<T, Eigen::Dynamic, 1> theta{(v.array() - v.maxCoeff()).exp()};
+  return theta / theta.sum();
 }
 
 }  // namespace math

@@ -31,12 +31,10 @@ class softmax_op {
                              const Eigen::VectorXd& alpha) {
     N_ = alpha.size();
     y_ = ChainableStack::instance_->memalloc_.alloc_array<double>(N_);
-
-    auto y = softmax(alpha);
-    for (int n = 0; n < N_; ++n) {
-      y_[n] = y(n);
-    }
-    return y;
+    Eigen::Map<Eigen::VectorXd> theta(y_, alpha.size());
+    theta = (alpha.array() - alpha.maxCoeff()).exp();
+    theta /= theta.sum();
+    return theta;
   }
 
   /*
@@ -45,19 +43,17 @@ class softmax_op {
    * without actually computing the Jacobian and doing the vector-matrix
    * product.
    *
-   * @param adj Eigen::VectorXd of adjoints at the output of the softmax
-   * @return Eigen::VectorXd of adjoints propagated through softmax operation
+   * @tparam size size template parameter of ignored argument
+   * @param[in] needs_adj ignored
+   * @param[in] adj Eigen::VectorXd of adjoints on outputs of softmax
+   * @return Eigen::VectorXd of adjoints propagated through softmax
    */
   template <std::size_t size>
   std::tuple<Eigen::VectorXd> multiply_adjoint_jacobian(
       const std::array<bool, size>& needs_adj,
       const Eigen::VectorXd& adj) const {
-    vector_d adj_times_jac(N_);
     Eigen::Map<vector_d> y(y_, N_);
-
-    adj_times_jac = -y * adj.dot(y) + y.cwiseProduct(adj);
-
-    return std::make_tuple(adj_times_jac);
+    return {y * -adj.dot(y) + y.cwiseProduct(adj)};
   }
 };
 }  // namespace internal
@@ -73,7 +69,6 @@ class softmax_op {
 inline Eigen::Matrix<var, Eigen::Dynamic, 1> softmax(
     const Eigen::Matrix<var, Eigen::Dynamic, 1>& alpha) {
   check_nonzero_size("softmax", "alpha", alpha);
-
   return adj_jac_apply<internal::softmax_op>(alpha);
 }
 
