@@ -18,8 +18,8 @@ namespace math {
  * @return <code>true</code> if the value is NaN.
  */
 template <typename T>
-inline bool is_any_nan(const T& x) {
-  return is_nan(x);
+inline bool is_any_nan(T&& x) {
+  return is_nan(std::forward<T>(x));
 }
 
 /**
@@ -32,8 +32,8 @@ inline bool is_any_nan(const T& x) {
  * @return <code>true</code> if any value is NaN
  */
 template <typename T, typename... Ts>
-inline bool is_any_nan(const T& x, const Ts&... xs) {
-  return is_any_nan(x) || is_any_nan(std::forward<const Ts>(xs)...);
+inline bool is_any_nan(T&& x, Ts&&... xs) {
+  return is_any_nan(std::forward<T>(x)) || is_any_nan(std::forward<Ts>(xs)...);
 }
 }  // namespace math
 }  // namespace stan
