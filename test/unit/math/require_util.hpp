@@ -124,28 +124,28 @@ struct require_scal_checker {
   }
   static void all() {
     using stan::test::require_variadic_checker;
-    EXPECT_FALSE((require_variadic_checker<checker, dummy, dummy>::value));
+    EXPECT_FALSE((require_variadic_checker<checker, dummy>::value));
     EXPECT_FALSE((require_variadic_checker<checker, dummy, Types...>::value));
     EXPECT_FALSE((require_variadic_checker<checker, Types..., dummy>::value));
     EXPECT_TRUE((require_variadic_checker<checker, Types...>::value));
   }
   static void all_not() {
     using stan::test::require_variadic_checker;
-    EXPECT_TRUE((require_variadic_checker<checker, dummy, dummy>::value));
+    EXPECT_TRUE((require_variadic_checker<checker, dummy>::value));
     EXPECT_FALSE((require_variadic_checker<checker, dummy, Types...>::value));
     EXPECT_FALSE((require_variadic_checker<checker, Types..., dummy>::value));
     EXPECT_FALSE((require_variadic_checker<checker, Types...>::value));
   }
   static void any() {
     using stan::test::require_variadic_checker;
-    EXPECT_FALSE((require_variadic_checker<checker, dummy, dummy>::value));
+    EXPECT_FALSE((require_variadic_checker<checker, dummy>::value));
     EXPECT_TRUE((require_variadic_checker<checker, dummy, Types...>::value));
     EXPECT_TRUE((require_variadic_checker<checker, Types..., dummy>::value));
     EXPECT_TRUE((require_variadic_checker<checker, Types...>::value));
   }
   static void any_not() {
     using stan::test::require_variadic_checker;
-    EXPECT_TRUE((require_variadic_checker<checker, dummy, dummy>::value));
+    EXPECT_TRUE((require_variadic_checker<checker, dummy>::value));
     EXPECT_TRUE((require_variadic_checker<checker, dummy, Types...>::value));
     EXPECT_TRUE((require_variadic_checker<checker, Types..., dummy>::value));
     EXPECT_FALSE((require_variadic_checker<checker, Types...>::value));
