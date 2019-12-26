@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <stan/math/prim/scal/err/check_finite.hpp>
+#include <stan/math/prim/scal/err/check_nonnegative.hpp>
 #include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <stan/math/prim/scal/fun/log_modified_bessel_first_kind.hpp>
 #include <stan/math/prim/scal/fun/modified_bessel_first_kind.hpp>
@@ -33,8 +34,9 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
   T_partials_return logp = 0.0;
 
   check_finite(function, "Random variable", y);
-  check_finite(function, "Location paramter", mu);
-  check_positive_finite(function, "Scale parameter", kappa);
+  check_finite(function, "Location parameter", mu);
+  check_nonnegative(function, "Scale parameter", kappa);
+  check_finite(function, "Scale parameter", kappa);
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", kappa);
 
