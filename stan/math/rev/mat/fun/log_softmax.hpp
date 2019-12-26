@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_MAT_FUN_LOG_SOFTMAX_HPP
 
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>
+#include <stan/math/prim/mat/vectorize/apply_vector_unary.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/log_softmax.hpp>
 #include <stan/math/prim/mat/fun/softmax.hpp>
@@ -50,7 +51,8 @@ class log_softmax_elt_vari : public vari {
  *
  * The gradient calculations are unfolded.
  *
- * @param alpha Unconstrained input vector.
+ * @tparam T Type of input vector or matrix.
+ * @param[in] x Unconstrained input vector.
  * @return Softmax of the input.
  * @throw std::domain_error If the input vector is size 0.
  */

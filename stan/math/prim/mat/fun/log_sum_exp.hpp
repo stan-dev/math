@@ -13,7 +13,7 @@ namespace math {
 /**
  * Return the log of the sum of the exponentiated values of the specified
  * matrix of values.  The matrix may be a full matrix, a vector,
- * or a row vector.
+ * a row vector, or a container of these.
  *
  * The function is defined as follows to prevent overflow in exponential
  * calculations.
@@ -21,12 +21,13 @@ namespace math {
  * \f$\log \sum_{n=1}^N \exp(x_n) = \max(x) + \log \sum_{n=1}^N \exp(x_n -
  * \max(x))\f$.
  *
- * @param[in] x Matrix of specified values
+ * @tparam T Type of input vector or matrix.
+ * @param[in] x Matrix of specified values.
  * @return The log of the sum of the exponentiated vector values.
  */
 template <typename T, require_t<std::is_arithmetic<scalar_type_t<T>>>...>
 inline auto log_sum_exp(T&& x) {
-  return apply_vector_unary<T>::reduce(std::forward<T>(x), [](auto& v){
+  return apply_vector_unary<T>::reduce(std::forward<T>(x), [&](auto& v){
     if (v.size() == 0) {
       return -std::numeric_limits<double>::infinity();
     }
