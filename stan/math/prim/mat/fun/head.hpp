@@ -26,8 +26,8 @@ template <typename T, typename T2>
 inline auto head(T&& x, const T2& n) {
   return apply_vector_unary<T>::apply_scalar(std::forward<T>(x), n,
                                              [&](auto& v, auto& m){
-    if (m != 0){
-      if (v.rows() == 1){
+    if (m != 0) {
+      if (v.rows() == 1) {
         check_column_index("head", "n", v, m);
       } else {
         check_row_index("head", "n", v, m);

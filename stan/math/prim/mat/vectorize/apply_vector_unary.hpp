@@ -8,7 +8,7 @@
 namespace stan {
 namespace math {
 
-//Forward declaration to allow specialisations
+// Forward declaration to allow specialisations
 template <typename T, typename Enable = void>
 struct apply_vector_unary {};
 
@@ -101,7 +101,7 @@ struct apply_vector_unary<T, require_std_vector_vt<is_stan_scalar, T>> {
   static inline std::vector<scalar_t> apply(const T& x, const F& f) {
     Eigen::Matrix<scalar_t, -1, 1> result
           = apply_vector_unary<map_t>::apply(as_column_vector_or_scalar(x), f);
-    return std::vector<scalar_t>(result.data(), 
+    return std::vector<scalar_t>(result.data(),
                                  result.data() + result.size());
   }
 
@@ -125,8 +125,8 @@ struct apply_vector_unary<T, require_std_vector_vt<is_stan_scalar, T>> {
     Eigen::Matrix<scalar_t, -1, 1> result
        = apply_vector_unary<map_t>::apply_scalar(as_column_vector_or_scalar(x),
                                                  y, f);
-    return std::vector<scalar_t>(result.data(), 
-                                   result.data() + result.size());
+    return std::vector<scalar_t>(result.data(),
+                                 result.data() + result.size());
   }
 
   /**
@@ -145,6 +145,9 @@ struct apply_vector_unary<T, require_std_vector_vt<is_stan_scalar, T>> {
   }
 };
 
+/**
+ * Specialisation for use with std::vectors of Eigen types
+ */
 template <typename T>
 struct apply_vector_unary<T, require_std_vector_vt<is_eigen, T>> {
   using eigen_t = value_type_t<T>;
@@ -157,7 +160,7 @@ struct apply_vector_unary<T, require_std_vector_vt<is_eigen, T>> {
   static inline return_t apply(const T& x, const F& f) {
     size_t x_size = x.size();
     return_t result(x_size);
-    for(size_t i = 0; i < x_size; ++i)
+    for (size_t i = 0; i < x_size; ++i)
       result[i] = apply_vector_unary<eigen_t>::apply(x[i], f);
     return result;
   }
@@ -167,7 +170,7 @@ struct apply_vector_unary<T, require_std_vector_vt<is_eigen, T>> {
     scalar_seq_view<T2> y_vec(y);
     size_t x_size = x.size();
     return_t result(x_size);
-    for(size_t i = 0; i < x_size; ++i)
+    for (size_t i = 0; i < x_size; ++i)
       result[i] = apply_vector_unary<eigen_t>::apply_scalar(x[i], y_vec[i], f);
     return result;
   }
@@ -176,7 +179,7 @@ struct apply_vector_unary<T, require_std_vector_vt<is_eigen, T>> {
   static inline std::vector<scalar_t> reduce(const T& x, const F& f) {
     size_t x_size = x.size();
     std::vector<scalar_t> result(x_size);
-    for(size_t i = 0; i < x_size; ++i)
+    for (size_t i = 0; i < x_size; ++i)
       result[i] = apply_vector_unary<eigen_t>::reduce(x[i], f);
     return result;
   }
@@ -194,10 +197,10 @@ struct apply_vector_unary<T, require_std_vector_vt<is_std_vector, T>> {
     size_t x_size = x.size();
     return_t result(x_size);
     Eigen::Matrix<scalar_t, -1, 1> inter;
-    for(size_t i = 0; i < x_size; ++i){
+    for (size_t i = 0; i < x_size; ++i) {
       inter = apply_vector_unary<map_t>::apply(as_column_vector_or_scalar(x[i]),
                                                f);
-      result[i] = std::vector<scalar_t>(inter.data(), 
+      result[i] = std::vector<scalar_t>(inter.data(),
                                         inter.data() + inter.size());
     }
     return result;
@@ -209,10 +212,10 @@ struct apply_vector_unary<T, require_std_vector_vt<is_std_vector, T>> {
     size_t x_size = x.size();
     return_t result(x_size);
     Eigen::Matrix<scalar_t, -1, 1> inter;
-    for(size_t i = 0; i < x_size; ++i){
+    for (size_t i = 0; i < x_size; ++i) {
       inter = apply_vector_unary<map_t>::apply_scalar(
                     as_column_vector_or_scalar(x[i]), y_vec[i], f);
-      result[i] = std::vector<scalar_t>(inter.data(), 
+      result[i] = std::vector<scalar_t>(inter.data(),
                                         inter.data() + inter.size());
     }
     return result;
@@ -222,7 +225,7 @@ struct apply_vector_unary<T, require_std_vector_vt<is_std_vector, T>> {
   static inline std::vector<scalar_t> reduce(const T& x, const F& f) {
     size_t x_size = x.size();
     std::vector<scalar_t> result(x_size);
-    for(size_t i = 0; i < x_size; ++i){
+    for (size_t i = 0; i < x_size; ++i) {
       result[i] = apply_vector_unary<map_t>::reduce(
                     as_column_vector_or_scalar(x[i]), f);
     }

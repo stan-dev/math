@@ -1,8 +1,9 @@
 #include <test/unit/math/test_ad.hpp>
+#include <vector>
 
 TEST(MathMixMatFun, logSoftmax) {
   auto f = [](const auto& x) { return stan::math::log_softmax(x).eval(); };
-  //Column Vectors
+  // Column Vectors
   Eigen::VectorXd x0(0);  // error case
   stan::test::expect_ad(f, x0);
 
@@ -26,7 +27,7 @@ TEST(MathMixMatFun, logSoftmax) {
   x3c << 2, 1, 1;
   stan::test::expect_ad(f, x3c);
 
-  //Row Vectors
+  // Row Vectors
   Eigen::RowVectorXd rx0(0);  // error case
   stan::test::expect_ad(f, rx0);
 
@@ -52,7 +53,7 @@ TEST(MathMixMatFun, logSoftmax) {
 
   auto g = [](const auto& x) { return stan::math::log_softmax(x); };
 
-  //std vectors
+  // std vectors
   std::vector<double> stx0(0);  // error case
   stan::test::expect_ad(g, stx0);
 
@@ -71,7 +72,7 @@ TEST(MathMixMatFun, logSoftmax) {
   std::vector<double> stx3c{2, 1, 1};
   stan::test::expect_ad(g, stx3c);
 
-  //Nested containers
+  // Nested containers
   std::vector<Eigen::VectorXd> stvx0{x0, x0};  // error case
   stan::test::expect_ad(g, stvx0);
 

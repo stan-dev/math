@@ -54,7 +54,7 @@ TEST(MathMatrixHead, HeadRowVector4) {
   using stan::math::head;
   Eigen::RowVectorXd v(3);
   v << 1, 2, 3;
-  std::vector<size_t> vind{1,2,1};
+  std::vector<size_t> vind{1, 2, 1};
 
   std::vector<Eigen::RowVectorXd> st_v{v, v, v};
   std::vector<Eigen::RowVectorXd> st_t = head(st_v, vind);

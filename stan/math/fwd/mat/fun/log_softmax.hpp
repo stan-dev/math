@@ -23,10 +23,9 @@ namespace math {
 template <typename T, require_t<is_fvar<scalar_type_t<T>>>...>
 inline auto log_softmax(T&& x) {
   return apply_vector_unary<T>::apply(std::forward<T>(x), [&](auto& alpha){
-
     using T_fvar = value_type_t<decltype(alpha)>;
     using T_fvar_inner = typename T_fvar::Scalar;
-  
+
     Eigen::Matrix<T_fvar_inner, -1, 1> alpha_t = alpha.val();
     Eigen::Matrix<T_fvar_inner, -1, 1> softmax_alpha_t = softmax(alpha_t);
 
