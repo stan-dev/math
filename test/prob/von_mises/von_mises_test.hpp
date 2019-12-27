@@ -53,9 +53,6 @@ class AgradDistributionVonMises : public AgradDistributionTest {
 
     // kappa
     index.push_back(2U);
-    value.push_back(0.0);
-
-    index.push_back(2U);
     value.push_back(-1.0);
   }
 
