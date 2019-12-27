@@ -20,7 +20,7 @@ class op_matrix_vari : public vari {
   template <typename T, require_t<is_var<scalar_type_t<T>>>...>
   op_matrix_vari(double f, T&& vs)
       : vari(f), size_(vs.size()) {
-    vis_ = reinterpret_cast<vari**>(operator new(sizeof(vari*) * vs.size()));
+    vis_ = ChainableStack::instance_->memalloc_.alloc_array<vari*>(size_);
     Eigen::Map<matrix_vi>(vis_, vs.rows(), vs.cols()) = vs.vi();
   }
   vari* operator[](size_t n) const { return vis_[n]; }
