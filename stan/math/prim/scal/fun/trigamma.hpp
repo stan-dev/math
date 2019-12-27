@@ -48,14 +48,14 @@ inline T trigamma_impl(const T& x) {
 
   // negative integers and zero return postiive infinity
   // see http://mathworld.wolfram.com/PolygammaFunction.html
-  if ((x <= 0.0) && (floor(x) == x)) {
+  if (x <= 0.0 && floor(x) == x) {
     value = positive_infinity();
     return value;
   }
 
   // negative non-integers: use the reflection formula
   // see http://mathworld.wolfram.com/PolygammaFunction.html
-  if ((x <= 0) && (floor(x) != x)) {
+  if (x <= 0 && floor(x) != x) {
     value = -trigamma_impl(-x + 1.0) + square(pi() / sin(-pi() * x));
     return value;
   }

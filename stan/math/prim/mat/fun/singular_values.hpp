@@ -11,6 +11,8 @@ namespace math {
  * in decreasing order of magnitude.
  * <p>See the documentation for <code>svd()</code> for
  * information on the singular values.
+ *
+ * @tparam T type of elements in the matrix
  * @param m Specified matrix.
  * @return Singular values of the matrix.
  */
@@ -26,4 +28,5 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> singular_values(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

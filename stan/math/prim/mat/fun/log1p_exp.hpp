@@ -9,8 +9,9 @@ namespace math {
 
 /**
  * Structure to wrap log1m_exp() so that it can be vectorized.
- * @param x Variable.
- * @tparam T Variable type.
+ *
+ * @tparam T type of variable
+ * @param x variable
  * @return Natural log of (1 + exp(x)).
  */
 struct log1p_exp_fun {
@@ -22,8 +23,9 @@ struct log1p_exp_fun {
 
 /**
  * Vectorized version of log1m_exp().
- * @param x Container.
- * @tparam T Container type.
+ *
+ * @tparam T type of container
+ * @param x container
  * @return Natural log of (1 + exp()) applied to each value in x.
  */
 template <typename T>

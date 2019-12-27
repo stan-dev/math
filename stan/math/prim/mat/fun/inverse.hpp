@@ -10,6 +10,11 @@ namespace math {
 
 /**
  * Returns the inverse of the specified matrix.
+ *
+ * @tparam T type of elements in the matrix
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ *
  * @param m Specified matrix.
  * @return Inverse of the matrix.
  */
@@ -22,4 +27,5 @@ inline Eigen::Matrix<T, R, C> inverse(const Eigen::Matrix<T, R, C>& m) {
 
 }  // namespace math
 }  // namespace stan
+
 #endif

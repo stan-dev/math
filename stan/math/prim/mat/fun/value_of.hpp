@@ -14,9 +14,10 @@ namespace math {
  * T must implement value_of. See
  * test/math/fwd/mat/fun/value_of.cpp for fvar and var usage.
  *
- * @tparam T Scalar type in matrix
- * @tparam R Rows of matrix
- * @tparam C Columns of matrix
+ * @tparam T type of elements in the matrix
+ * @tparam R number of rows in the matrix, can be Eigen::Dynamic
+ * @tparam C number of columns in the matrix, can be Eigen::Dynamic
+ *
  * @param[in] M Matrix to be converted
  * @return Matrix of values
  **/
@@ -40,6 +41,9 @@ inline Eigen::Matrix<typename child_type<T>::type, R, C> value_of(
  *
  * <p>This inline pass-through no-op should be compiled away.
  *
+ * @tparam R number of rows in the matrix, can be Eigen::Dynamic
+ * @tparam C number of columns in the matrix, can be Eigen::Dynamic
+ *
  * @param x Specified matrix.
  * @return Specified matrix.
  */
@@ -56,6 +60,9 @@ inline const Eigen::Matrix<double, R, C>& value_of(
  * implementation using static casts.
  *
  * <p>This inline pass-through no-op should be compiled away.
+ *
+ * @tparam R number of rows in the matrix, can be Eigen::Dynamic
+ * @tparam C number of columns in the matrix, can be Eigen::Dynamic
  *
  * @param x Specified matrix.
  * @return Specified matrix.
