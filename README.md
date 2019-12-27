@@ -70,7 +70,7 @@ The `math-libs` target must only be called a single time and can be omitted for 
 
 The standalone makefile ensure that all the required `-I` include statements are given to the compiler and the necessary libraries are linked: `~/stan-dev/math/stan` and `~/stan-dev/math/lib/eigen_3.3.3/Eigen` and `~/stan-dev/math/lib/boost_1.69.0/boost` and `~/stan-dev/math/lib/sundials_4.1.0/include` and `~/stan-dev/math/lib/tbb_2019_U8/include`. The `~/stan-dev/math/lib/tbb` directory is created by the math-libs makefile target automatically. The `-Wl,-rpath,...` instruct the linker to hard-code the path to the Intel TBB library inside the stan-math directory into the final binary. This way the Intel TBB is found when executing the program.
 
-Note for Windows users: On Windows the rpath feature to hardcode an absolute path to a dynamically loaded library does not work. On Windows the TBB dynamic library tbb.dll is located in the math/lib/tbb directory. The user can choose to either copy this file to the same directory of the executable or to add the directory path/to/math/lib/tbb as absolute path to the system wide PATH variable.
+Note for Windows users: On Windows the rpath feature as used by Stan Math to hardcode an absolute path to a dynamically loaded library does not work. On Windows the TBB dynamic library `tbb.dll` is located in the `math/lib/tbb` directory. The user can choose to either copy this file to the same directory of the executable or to add the directory `path/to/math/lib/tbb` as absolute path to the system wide `PATH` variable.
 
 Other Compilers
 ---------------
