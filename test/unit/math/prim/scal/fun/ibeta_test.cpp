@@ -23,6 +23,9 @@ TEST(MathFunctions, ibeta) {
   EXPECT_FLOAT_EQ(0.9897264, ibeta(0.1, 1.5, 0.75))
       << "reasonable values for a, b, x";
   EXPECT_FLOAT_EQ(1.0, ibeta(0.1, 1.5, 1.0)) << "reasonable values for a, b, x";
+
+  EXPECT_FLOAT_EQ(0.3121373, ibeta(0.6, 0.3, 0.5)) << "reasonable values for a, b, x";
+  EXPECT_FLOAT_EQ(0.0272, ibeta(3, 2, 0.2)) << "reasonable values for a, b, x";
 }
 
 TEST(MathFunctions, ibeta_a_boundary) {
