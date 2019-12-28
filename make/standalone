@@ -14,18 +14,24 @@
 
 MATH_MAKE ?=$(dir $(abspath $(firstword $(MAKEFILE_LIST))))
 MATH ?= $(realpath $(MATH_MAKE)..)/
-include $(MATH)make/compiler_flags
-include $(MATH)make/libraries
+-include $(HOME)/.config/stan/make.local
+-include $(MATH)make/local
+-include $(MATH)make/compiler_flags
+-include $(MATH)make/libraries
 
 # Stan math programs must include the TBB.
 # The sundials libraries are only needed for
 # programs using the stiff ode solver or the
 # algebra solver
-MATH_LIBS ?= $(TBB_TARGETS) $(LIBSUNDIALS)
+MATH_LIBS ?= $(TBB_TARGETS) $(LIBSUNDIALS) $(MPI_TARGETS)
 
 LDFLAGS += $(MATH_LIBS)
 
 math-libs : $(MATH_LIBS)
+
+.PHONY: math-clean
+math-clean : clean-libraries
+
 
 ##
 # Debug target that allows you to print a variable
