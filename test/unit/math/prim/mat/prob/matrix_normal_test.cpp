@@ -2,21 +2,20 @@
 #include <gtest/gtest.h>
 #include <limits>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
+using Eigen::MatrixXd;
 
 TEST(ProbDistributionsMatrixNormal, MatrixNormalPrec) {
-  Matrix<double, Dynamic, Dynamic> y(3, 5);
+
+  MatrixXd y(3, 5);
   y << 2.0, -2.0, 11.0, 4.0, -2.0, 11.0, 2.0, -5.0, 11.0, 0.0, -2.0, 11.0, 2.0,
       -2.0, -11.0;
 
-  Matrix<double, Dynamic, Dynamic> mu(3, 5);
-  mu.setZero();
+  MatrixXd mu = MatrixXd::Zero(3, 5);
 
-  Matrix<double, Dynamic, Dynamic> Sigma(3, 3);
+  MatrixXd Sigma(3, 3);
   Sigma << 1.0, 0.5, 0.1, 0.5, 1.0, 0.2, 0.1, 0.2, 1.0;
 
-  Matrix<double, Dynamic, Dynamic> D(5, 5);
+  MatrixXd D(5, 5);
   D << 9.0, -3.0, 0.0, 0.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.0, 1.0,
       0.0, 0.0, 0.0, 1.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0;
 
@@ -26,17 +25,16 @@ TEST(ProbDistributionsMatrixNormal, MatrixNormalPrec) {
 }
 
 TEST(ProbDistributionsMatrixNormal, ErrorSigma) {
-  Matrix<double, Dynamic, Dynamic> y(3, 5);
+  MatrixXd y(3, 5);
   y << 2.0, -2.0, 11.0, 4.0, -2.0, 11.0, 2.0, -5.0, 11.0, 0.0, -2.0, 11.0, 2.0,
       -2.0, -11.0;
 
-  Matrix<double, Dynamic, Dynamic> mu(3, 5);
-  mu.setZero();
+  MatrixXd mu = MatrixXd::Zero(3, 5);
 
-  Matrix<double, Dynamic, Dynamic> Sigma(3, 3);
+  MatrixXd Sigma(3, 3);
   Sigma << 1.0, 0.5, 0.1, 0.5, 1.0, 0.2, 0.1, 0.2, 1.0;
 
-  Matrix<double, Dynamic, Dynamic> D(5, 5);
+  MatrixXd D(5, 5);
   D << 9.0, -3.0, 0.0, 0.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.0, 1.0,
       0.0, 0.0, 0.0, 1.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0;
 
@@ -54,17 +52,16 @@ TEST(ProbDistributionsMatrixNormal, ErrorSigma) {
 }
 
 TEST(ProbDistributionsMatrixNormal, ErrorD) {
-  Matrix<double, Dynamic, Dynamic> y(3, 5);
+  MatrixXd y(3, 5);
   y << 2.0, -2.0, 11.0, 4.0, -2.0, 11.0, 2.0, -5.0, 11.0, 0.0, -2.0, 11.0, 2.0,
       -2.0, -11.0;
 
-  Matrix<double, Dynamic, Dynamic> mu(3, 5);
-  mu.setZero();
+  MatrixXd mu = MatrixXd::Zero(3, 5);
 
-  Matrix<double, Dynamic, Dynamic> Sigma(3, 3);
+  MatrixXd Sigma(3, 3);
   Sigma << 1.0, 0.5, 0.1, 0.5, 1.0, 0.2, 0.1, 0.2, 1.0;
 
-  Matrix<double, Dynamic, Dynamic> D(5, 5);
+  MatrixXd D(5, 5);
   D << 9.0, -3.0, 0.0, 0.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.0, 1.0,
       0.0, 0.0, 0.0, 1.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0;
 
@@ -82,17 +79,16 @@ TEST(ProbDistributionsMatrixNormal, ErrorD) {
 }
 
 TEST(ProbDistributionsMatrixNormal, ErrorY) {
-  Matrix<double, Dynamic, Dynamic> y(3, 5);
+  MatrixXd y(3, 5);
   y << 2.0, -2.0, 11.0, 4.0, -2.0, 11.0, 2.0, -5.0, 11.0, 0.0, -2.0, 11.0, 2.0,
       -2.0, -11.0;
 
-  Matrix<double, Dynamic, Dynamic> mu(3, 5);
-  mu.setZero();
+  MatrixXd mu = MatrixXd::Zero(3, 5);
 
-  Matrix<double, Dynamic, Dynamic> Sigma(3, 3);
+  MatrixXd Sigma(3, 3);
   Sigma << 1.0, 0.5, 0.1, 0.5, 1.0, 0.2, 0.1, 0.2, 1.0;
 
-  Matrix<double, Dynamic, Dynamic> D(5, 5);
+  MatrixXd D(5, 5);
   D << 9.0, -3.0, 0.0, 0.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.0, 1.0,
       0.0, 0.0, 0.0, 1.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0;
 

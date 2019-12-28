@@ -2,17 +2,18 @@
 #include <gtest/gtest.h>
 
 TEST(ProbMatrixNormalPrec, log_matches_lpmf) {
-  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y(3, 5);
+  using Eigen::MatrixXd;
+
+  MatrixXd y(3, 5);
   y << 2.0, -2.0, 11.0, 4.0, -2.0, 11.0, 2.0, -5.0, 11.0, 0.0, -2.0, 11.0, 2.0,
       -2.0, -11.0;
 
-  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> mu(3, 5);
-  mu.setZero();
+  MatrixXd mu = MatrixXd::Zero(3, 5);
 
-  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> Sigma(3, 3);
+  MatrixXd Sigma(3, 3);
   Sigma << 1.0, 0.5, 0.1, 0.5, 1.0, 0.2, 0.1, 0.2, 1.0;
 
-  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> D(5, 5);
+  MatrixXd D(5, 5);
   D << 9.0, -3.0, 0.0, 0.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.0, 1.0,
       0.0, 0.0, 0.0, 1.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0;
 
