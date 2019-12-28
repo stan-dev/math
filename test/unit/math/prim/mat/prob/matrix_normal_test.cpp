@@ -5,7 +5,6 @@
 using Eigen::MatrixXd;
 
 TEST(ProbDistributionsMatrixNormal, MatrixNormalPrec) {
-
   MatrixXd y(3, 5);
   y << 2.0, -2.0, 11.0, 4.0, -2.0, 11.0, 2.0, -5.0, 11.0, 0.0, -2.0, 11.0, 2.0,
       -2.0, -11.0;
