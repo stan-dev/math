@@ -26,7 +26,7 @@ Documentation for Stan math is available at [mc-stan.org/math](https://mc-stan.o
 
 Installation
 ------------
-The Stan Math Library is a C++ library which depends on the Intel TBB library and requires for some functionality (ordinary differential equations and root solving) on the Sundials library. As build system the make facility is used to manage all dependencies.
+The Stan Math Library is a C++ library which depends on the Intel TBB library and requires for some functionality (ordinary differential equations and root solving) on the Sundials library. The build system used is the make facility, which is used to manage all dependencies.
 
 A simple hello world program using Stan Math is as follows:
 
@@ -51,7 +51,7 @@ If this is in the file `/path/to/foo/foo.cpp`, then you can compile and run this
 log normal(1 | 2, 3)=-2.07311
 ```
 
-The first make command with the `math-libs` target ensures that all binary dependencies are build and ready to use. The second make command ensures that all dependencies of Stan Math are available to the compiler which are:
+The first make command with the `math-libs` target ensures that all binary dependencies are build and ready to use. The second make command ensures that all dependencies of Stan Math are available to the compiler. These are:
 
 * Stan Math Library:  path to source directory that contains `stan` as a subdirectory
 * Eigen C++ Matrix Library:  path to source directory that contains `Eigen` as a subdirectory
@@ -66,12 +66,20 @@ Note that the paths should *not* include the final directories `stan`, `Eigen`, 
 > make -f ~/stan-dev/math/make/standalone foo
 ```
 
-The `math-libs` target must only be called a single time and can be omitted for subsequent compilations.
+The `math-libs` target has to be called only once, and can be omitted for subsequent compilations.
 
-The standalone makefile ensure that all the required `-I` include statements are given to the compiler and the necessary libraries are linked: `~/stan-dev/math/stan` and `~/stan-dev/math/lib/eigen_3.3.3/Eigen` and `~/stan-dev/math/lib/boost_1.69.0/boost` and `~/stan-dev/math/lib/sundials_4.1.0/include` and `~/stan-dev/math/lib/tbb_2019_U8/include`. The `~/stan-dev/math/lib/tbb` directory is created by the math-libs makefile target automatically. The `-Wl,-rpath,...` instruct the linker to hard-code the path to the Intel TBB library inside the stan-math directory into the final binary. This way the Intel TBB is found when executing the program.
+The standalone makefile ensures that all the required `-I` include statements are given to the compiler and the necessary libraries are linked: `~/stan-dev/math/stan` and `~/stan-dev/math/lib/eigen_3.3.3/Eigen` and `~/stan-dev/math/lib/boost_1.69.0/boost` and `~/stan-dev/math/lib/sundials_4.1.0/include` and `~/stan-dev/math/lib/tbb_2019_U8/include`. The `~/stan-dev/math/lib/tbb` directory is created by the `math-libs` makefile target automatically. The flags `-Wl,-rpath,...` instruct the linker to hard-code the path to the Intel TBB library inside the stan-math directory into the final binary. This way the Intel TBB is found when executing the program.
 
-Note for Windows users: On Windows the rpath feature as used by Stan Math to hardcode an absolute path to a dynamically loaded library does not work. On Windows the TBB dynamic library `tbb.dll` is located in the `math/lib/tbb` directory. The user can choose to either copy this file to the same directory of the executable or to add the directory `path/to/math/lib/tbb` as absolute path to the system wide `PATH` variable.
+Note for Windows users: On Windows the `-rpath` feature as used by Stan Math to hardcode an absolute path to a dynamically loaded library does not work. On Windows the Intel TBB dynamic library `tbb.dll` is located in the `math/lib/tbb` directory. The user can choose to copy this file to the same directory of the executable or to add the directory `path/to/math/lib/tbb` as absolute path to the system-wide `PATH` variable.
 
-Other Compilers
----------------
-There's nothing special about `clang++` --- the `g++` compiler behaves the same way.  You'll need to modify the commands for other compilers, which will need to be up-to-date enough to compile the Stan Math Library.
+Compilers
+---------
+The above example will use the default compiler of the system as determined by `make`. On Linux this is usually `g++`, on MacOS `clang++`, and for Windows this is `g++` if the RTools for Windows are used. There's nothing special about any of these and they can be changed through the `CXX` variable of `make`. The recommended way to set this variable for the Stan Math library is by creating a `path/to/math/make/local` file. Defining `CXX=g++` in this file will ensure that always the GNU C++ compiler is used, for example. The compiler must be able to fully support C++11 and partially the C++14 standard. The `g++` 4.9.3 version part of RTools for Windows currently defines the minimal C++ feature set required by the Stan Math library.
+
+Note that whenever the compiler is changed, the user usually must clean all binary dependencies with the command
+```bash
+> make -f path/to/stan-math/make/standalone math-clean
+> make -f path/to/stan-math/make/standalone math-libs
+```
+in order to clean and rebuild the binary dependencies with the new compiler.
+
