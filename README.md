@@ -51,7 +51,7 @@ If this is in the file `/path/to/foo/foo.cpp`, then you can compile and run this
 log normal(1 | 2, 3)=-2.07311
 ```
 
-The first make command with the `math-libs` target ensures that all binary dependencies are build and ready to use. The second make command ensures that all dependencies of Stan Math are available to the compiler. These are:
+The first make command with the `math-libs` target ensures that all binary dependencies are built and ready to use. The second make command ensures that all dependencies of Stan Math are available to the compiler. These are:
 
 * Stan Math Library:  path to source directory that contains `stan` as a subdirectory
 * Eigen C++ Matrix Library:  path to source directory that contains `Eigen` as a subdirectory
@@ -74,12 +74,12 @@ Note for Windows users: On Windows the `-rpath` feature as used by Stan Math to 
 
 Compilers
 ---------
-The above example will use the default compiler of the system as determined by `make`. On Linux this is usually `g++`, on MacOS `clang++`, and for Windows this is `g++` if the RTools for Windows are used. There's nothing special about any of these and they can be changed through the `CXX` variable of `make`. The recommended way to set this variable for the Stan Math library is by creating a `path/to/math/make/local` file. Defining `CXX=g++` in this file will ensure that always the GNU C++ compiler is used, for example. The compiler must be able to fully support C++11 and partially the C++14 standard. The `g++` 4.9.3 version part of RTools for Windows currently defines the minimal C++ feature set required by the Stan Math library.
+The above example will use the default compiler of the system as determined by `make`. On Linux this is usually `g++`, on MacOS `clang++`, and for Windows this is `g++` if the RTools for Windows are used. There's nothing special about any of these and they can be changed through the `CXX` variable of `make`. The recommended way to set this variable for the Stan Math library is by creating a `make/local` file within the Stan Math library directory. Defining `CXX=g++` in this file will ensure that the GNU C++ compiler is always used, for example. The compiler must be able to fully support C++11 and partially the C++14 standard. The `g++` 4.9.3 version part of RTools for Windows currently defines the minimal C++ feature set required by the Stan Math library.
 
-Note that whenever the compiler is changed, the user usually must clean all binary dependencies with the command
+Note that whenever the compiler is changed, the user usually must clean and rebuild all binary dependencies with the commands:
 ```bash
 > make -f path/to/stan-math/make/standalone math-clean
 > make -f path/to/stan-math/make/standalone math-libs
 ```
-in order to clean and rebuild the binary dependencies with the new compiler.
+This ensures that the binary dependencies are created with the new compiler.
 
