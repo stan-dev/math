@@ -14,8 +14,8 @@ namespace math {
  * Used to compute the cumulative density function for the beta
  * distribution.
  *
- * @param a Shape parameter a <= 0; a and b can't both be 0
- * @param b Shape parameter b <= 0
+ * @param a Shape parameter a >= 0; a and b can't both be 0
+ * @param b Shape parameter b >= 0
  * @param x Random variate. 0 <= x <= 1
  * @throws if constraints are violated or if any argument is NaN
  *
