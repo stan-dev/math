@@ -3,12 +3,10 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/rev/mat/fun/to_var.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/mat/err/check_multiplicable.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
 #include <type_traits>
 
 namespace stan {
@@ -567,40 +565,90 @@ inline return_type_t<T1, T2> multiply(const T1& v, const T2& c) {
 
 /**
  * Return the product of scalar and matrix.
- * @tparam T1 scalar type v
- * @tparam T2 scalar type matrix m
- * @tparam R2 Rows matrix m
- * @tparam C2 Columns matrix m
- * @param[in] c Specified scalar
- * @param[in] m Matrix
+ * @tparam R number of rows or Eigen::Dynamic
+ * @tparam C number of columns or Eigen::Dynamic
+ * @param[in] c scalar of var type
+ * @param[in] m matrix of var type
  * @return Product of scalar and matrix
  */
-template <typename T1, typename T2, int R2, int C2,
-          typename = require_any_var_t<T1, T2>>
-inline Eigen::Matrix<var, R2, C2> multiply(const T1& c,
-                                           const Eigen::Matrix<T2, R2, C2>& m) {
-  // TODO(trangucci) pull out to eliminate overpromotion of one side
-  // move to matrix.hpp w. promotion?
-  return to_var(m) * to_var(c);
+template <int R, int C>
+inline Eigen::Matrix<var, R, C> multiply(const var& c,
+                                         const Eigen::Matrix<var, R, C>& m) {
+  return m * c;
 }
 
 /**
  * Return the product of scalar and matrix.
- * @tparam T1 scalar type matrix m
- * @tparam T2 scalar type v
- * @tparam R1 Rows matrix m
- * @tparam C1 Columns matrix m
- * @param[in] c Specified scalar
- * @param[in] m Matrix
+ * @tparam Arith an arithmetic type
+ * @tparam R number of rows or Eigen::Dynamic
+ * @tparam C number of columns or Eigen::Dynamic
+ * @param[in] c scalar of arithmetic type
+ * @param[in] m matrix of var type
  * @return Product of scalar and matrix
  */
-template <typename T1, int R1, int C1, typename T2,
-          typename = require_any_var_t<T1, T2>>
-inline Eigen::Matrix<var, R1, C1> multiply(const Eigen::Matrix<T1, R1, C1>& m,
-                                           const T2& c) {
-  // TODO(trangucci) pull out to eliminate overpromotion of one side
-  // move to matrix.hpp w. promotion?
-  return to_var(m) * to_var(c);
+template <typename Arith, int R, int C, typename = require_arithmetic_t<Arith>>
+inline Eigen::Matrix<var, R, C> multiply(const Arith& c,
+                                         const Eigen::Matrix<var, R, C>& m) {
+  return m * c;
+}
+
+/**
+ * Return the product of scalar and matrix.
+ * @tparam Arith an arithmetic type
+ * @tparam R number of rows or Eigen::Dynamic
+ * @tparam C number of columns or Eigen::Dynamic
+ * @param[in] c scalar of var type
+ * @param[in] m matrix of arithmetic type
+ * @return Product of scalar and matrix
+ */
+template <typename Arith, int R, int C, typename = require_arithmetic_t<Arith>>
+inline Eigen::Matrix<var, R, C> multiply(const var& c,
+                                         const Eigen::Matrix<Arith, R, C>& m) {
+  return m * c;
+}
+
+/**
+ * Return the product of matrix and scalar.
+ * @tparam R number of rows or Eigen::Dynamic
+ * @tparam C number of columns or Eigen::Dynamic
+ * @param[in] m matrix of var type
+ * @param[in] c scalar of var type
+ * @return Product of matrix and scalar
+ */
+template <int R, int C>
+inline Eigen::Matrix<var, R, C> multiply(const Eigen::Matrix<var, R, C>& m,
+                                         const var& c) {
+  return m * c;
+}
+
+/**
+ * Return the product of matrix and scalar.
+ * @tparam Arith an arithmetic type
+ * @tparam R number of rows or Eigen::Dynamic
+ * @tparam C number of columns or Eigen::Dynamic
+ * @param[in] m matrix of arithmetic type
+ * @param[in] c scalar of var type
+ * @return Product of matrix and scalar
+ */
+template <typename Arith, int R, int C, typename = require_arithmetic_t<Arith>>
+inline Eigen::Matrix<var, R, C> multiply(const Eigen::Matrix<Arith, R, C>& m,
+                                         const var& c) {
+  return m * c;
+}
+
+/**
+ * Return the product of matrix and scalar.
+ * @tparam Arith an arithmetic type
+ * @tparam R number of rows or Eigen::Dynamic
+ * @tparam C number of columns or Eigen::Dynamic
+ * @param[in] m matrix of var type
+ * @param[in] c scalar of arithmetic type
+ * @return Product of matrix and scalar
+ */
+template <typename Arith, int R, int C, typename = require_arithmetic_t<Arith>>
+inline Eigen::Matrix<var, R, C> multiply(const Eigen::Matrix<var, R, C>& m,
+                                         const Arith& c) {
+  return m * c;
 }
 
 /**

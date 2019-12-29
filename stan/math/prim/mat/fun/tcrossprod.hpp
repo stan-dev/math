@@ -10,6 +10,9 @@ namespace math {
 /**
  * Returns the result of post-multiplying a matrix by its
  * own transpose.
+ *
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
  * @param M Matrix to multiply.
  * @return M times its transpose.
  */
@@ -27,4 +30,5 @@ inline Eigen::MatrixXd tcrossprod(const Eigen::Matrix<double, R, C>& M) {
 
 }  // namespace math
 }  // namespace stan
+
 #endif

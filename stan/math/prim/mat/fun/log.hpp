@@ -15,8 +15,8 @@ struct log_fun {
   /**
    * Return natural log of specified argument.
    *
-   * @tparam T Scalar argument type.
-   * @param[in] x Argument.
+   * @tparam T type of argument
+   * @param[in] x argument
    * @return Natural log of x.
    */
   template <typename T>
@@ -31,8 +31,8 @@ struct log_fun {
  * which may be a scalar or any Stan container of numeric scalars.
  * The return type is the same as the argument type.
  *
- * @tparam T Argument type.
- * @param[in] x Argument.
+ * @tparam T type of container
+ * @param[in] x container
  * @return Elementwise application of natural log to the argument.
  */
 template <typename T>

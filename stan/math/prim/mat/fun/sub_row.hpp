@@ -1,9 +1,8 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_SUB_ROW_HPP
 #define STAN_MATH_PRIM_MAT_FUN_SUB_ROW_HPP
 
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/err/check_row_index.hpp>
-#include <stan/math/prim/mat/err/check_column_index.hpp>
 
 namespace stan {
 namespace math {
@@ -11,6 +10,7 @@ namespace math {
 /**
  * Return a 1 x nrows subrow starting at (i-1, j-1).
  *
+ * @tparam T type of elements in the matrix
  * @param m Matrix Input matrix.
  * @param i Starting row + 1.
  * @param j Starting column + 1.
@@ -31,4 +31,5 @@ inline Eigen::Matrix<T, 1, Eigen::Dynamic> sub_row(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

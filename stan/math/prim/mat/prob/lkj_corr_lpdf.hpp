@@ -2,8 +2,7 @@
 #define STAN_MATH_PRIM_MAT_PROB_LKJ_CORR_LPDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/mat/err/check_corr_matrix.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 
@@ -62,8 +61,7 @@ return_type_t<T_y, T_shape> lkj_corr_lpdf(
     lp += do_lkj_constant(eta, K);
   }
 
-  if ((eta == 1.0)
-      && stan::is_constant_all<typename stan::scalar_type<T_shape> >::value) {
+  if (eta == 1.0 && is_constant_all<scalar_type<T_shape>>::value) {
     return lp;
   }
 

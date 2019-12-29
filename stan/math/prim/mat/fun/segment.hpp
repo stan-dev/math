@@ -1,9 +1,8 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_SEGMENT_HPP
 #define STAN_MATH_PRIM_MAT_FUN_SEGMENT_HPP
 
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/err/check_greater.hpp>
-#include <stan/math/prim/scal/err/check_less_or_equal.hpp>
 #include <vector>
 
 namespace stan {
@@ -12,6 +11,8 @@ namespace math {
 /**
  * Return the specified number of elements as a vector starting
  * from the specified element - 1 of the specified vector.
+ *
+ * @tparam T type of elements in the vector
  */
 template <typename T>
 inline Eigen::Matrix<T, Eigen::Dynamic, 1> segment(
@@ -58,4 +59,5 @@ std::vector<T> segment(const std::vector<T>& sv, size_t i, size_t n) {
 
 }  // namespace math
 }  // namespace stan
+
 #endif

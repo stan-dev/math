@@ -1,13 +1,13 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_DOT_PRODUCT_HPP
 #define STAN_MATH_PRIM_MAT_FUN_DOT_PRODUCT_HPP
 
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/err/check_vector.hpp>
-#include <stan/math/prim/arr/err/check_matching_sizes.hpp>
 #include <vector>
 
 namespace stan {
 namespace math {
+
 /**
  * Returns the dot product of the specified vectors.
  *
@@ -25,8 +25,10 @@ inline double dot_product(const Eigen::Matrix<double, R1, C1> &v1,
   check_matching_sizes("dot_product", "v1", v1, "v2", v2);
   return v1.dot(v2);
 }
+
 /**
  * Returns the dot product of the specified arrays of doubles.
+ *
  * @param v1 First array.
  * @param v2 Second array.
  * @param length Length of both arrays.
@@ -38,8 +40,10 @@ inline double dot_product(const double *v1, const double *v2, size_t length) {
   }
   return result;
 }
+
 /**
  * Returns the dot product of the specified arrays of doubles.
+ *
  * @param v1 First array.
  * @param v2 Second array.
  * @throw std::domain_error if the vectors are not the same size.
@@ -49,6 +53,8 @@ inline double dot_product(const std::vector<double> &v1,
   check_matching_sizes("dot_product", "v1", v1, "v2", v2);
   return dot_product(&v1[0], &v2[0], v1.size());
 }
+
 }  // namespace math
 }  // namespace stan
+
 #endif

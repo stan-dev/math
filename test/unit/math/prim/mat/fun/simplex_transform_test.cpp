@@ -36,7 +36,7 @@ TEST(prob_transform, simplex_rt) {
 TEST(prob_transform, simplex_match) {
   Matrix<double, Dynamic, 1> x(3);
   x << 1.0, -1.0, 2.0;
-  double lp;
+  double lp = 0;
   Matrix<double, Dynamic, 1> y = stan::math::simplex_constrain(x);
   Matrix<double, Dynamic, 1> y2 = stan::math::simplex_constrain(x, lp);
 

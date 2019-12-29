@@ -10,11 +10,11 @@
 #error OPENCL_PLATFORM_ID_NOT_SET
 #endif
 
+#include <stan/math/prim/err.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
-#include <stan/math/prim/scal/err/system_error.hpp>
 
-#include <cl.hpp>
+#include <CL/cl2.hpp>
 #include <string>
 #include <iostream>
 #include <fstream>

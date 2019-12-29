@@ -3,9 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/mat/fun/value_of_rec.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
@@ -191,9 +189,8 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
       logp -= N * log(forward_as<double>(sigma_val));
     }
   }
-  if (include_summand<propto, T_alpha, T_beta, T_scale>::value) {
-    logp -= 0.5 * y_scaled_sq_sum;
-  }
+  logp -= 0.5 * y_scaled_sq_sum;
+
   return ops_partials.build(logp);
 }
 

@@ -2,8 +2,8 @@
 #define STAN_MATH_PRIM_MAT_FUN_CORR_MATRIX_CONSTRAIN_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/fun/corr_constrain.hpp>
 #include <stan/math/prim/mat/fun/read_corr_matrix.hpp>
 #include <stdexcept>
@@ -29,9 +29,9 @@ namespace math {
  * <p>The free vector entries are first constrained to be
  * valid correlation values using <code>corr_constrain(T)</code>.
  *
+ * @tparam T type of scalar
  * @param x Vector of unconstrained partial correlations.
  * @param k Dimensionality of returned correlation matrix.
- * @tparam T Type of scalar.
  * @throw std::invalid_argument if x is not a valid correlation
  * matrix.
  */
@@ -67,10 +67,10 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> corr_matrix_constrain(
  * defined in <code>corr_constrain(T, double)</code> for
  * this function.
  *
+ * @tparam T type of scalar
  * @param x Vector of unconstrained partial correlations.
  * @param k Dimensionality of returned correlation matrix.
  * @param lp Log probability reference to increment.
- * @tparam T Type of scalar.
  */
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> corr_matrix_constrain(
@@ -94,4 +94,5 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> corr_matrix_constrain(
 
 }  // namespace math
 }  // namespace stan
+
 #endif
