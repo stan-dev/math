@@ -83,7 +83,8 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
       bessel1 = modified_bessel_first_kind(-1, kappa_dbl[n]);
     }
     const T_partials_return kappa_sin = kappa_dbl[n] * sin(mu_dbl - y_dbl);
-    const T_partials_return kappa_cos = kappa_dbl[n] * cos(mu_dbl - y_dbl);
+    const T_partials_return cos_mu_minus_y = cos(mu_dbl - y_dbl);
+    const T_partials_return kappa_cos = kappa_dbl[n] * kappa_cos;
 
     if (include_summand<propto>::value) {
       logp -= LOG_TWO_PI;
@@ -100,8 +101,7 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
       ops_partials.edge2_.partials_[n] -= kappa_sin;
     }
     if (!kappa_const) {
-      ops_partials.edge3_.partials_[n]
-          += kappa_cos / kappa_dbl[n] - bessel1 / bessel0;
+      ops_partials.edge3_.partials_[n] += cos_mu_minus_y - bessel1 / bessel0;
     }
   }
   return ops_partials.build(logp);
