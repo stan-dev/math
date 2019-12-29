@@ -2,9 +2,8 @@
 #define STAN_MATH_PRIM_SCAL_FUN_F32_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/throw_domain_error.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/is_inf.hpp>
-#include <stan/math/prim/scal/err/check_3F2_converges.hpp>
 #include <cmath>
 
 namespace stan {

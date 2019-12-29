@@ -2,10 +2,8 @@
 #define STAN_MATH_PRIM_MAT_PROB_BERNOULLI_LOGIT_GLM_RNG_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/err/check_bounded.hpp>
-#include <stan/math/prim/scal/err/check_consistent_size.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
 #include <stan/math/prim/scal/fun/inv_logit.hpp>
 #include <boost/random/bernoulli_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
