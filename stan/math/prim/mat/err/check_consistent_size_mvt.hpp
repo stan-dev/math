@@ -32,7 +32,7 @@ inline void check_consistent_size_mvt(const char* function, const char* name,
       return;
     }
   } else {
-    size_t size_x = stan::size_mvt(x);
+    size_t size_x = size_mvt(x);
     bool x_contains_vectors = is_vector<
         typename std::remove_reference<decltype(x[0])>::type>::value;
 

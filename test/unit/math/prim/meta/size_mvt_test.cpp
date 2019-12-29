@@ -3,7 +3,7 @@
 #include <vector>
 
 TEST(MathMetaPrim, size_mvt_scalar) {
-  using stan::size_mvt;
+  using stan::math::size_mvt;
 
   double x1;
   EXPECT_THROW(size_mvt(x1), std::invalid_argument);
@@ -13,7 +13,7 @@ TEST(MathMetaPrim, size_mvt_scalar) {
 }
 
 TEST(MathMetaPrim, size_mvt_matrices_vectors) {
-  using stan::size_mvt;
+  using stan::math::size_mvt;
 
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> x1(2, 3);
   EXPECT_EQ(1U, size_mvt(x1));

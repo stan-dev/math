@@ -7,6 +7,7 @@
 #include <vector>
 
 namespace stan {
+namespace math {
 
 /** \ingroup type_trait
  * Provides the size of a multivariate argument.
@@ -35,5 +36,6 @@ size_t size_mvt(const std::vector<Eigen::Matrix<T, R, C> >& x) {
   return x.size();
 }
 
+}  // namespace math
 }  // namespace stan
 #endif
