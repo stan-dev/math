@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_ERR_DOMAIN_ERROR_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/throw_domain_error.hpp>
+#include <stan/math/prim/err/throw_domain_error.hpp>
 
 namespace stan {
 namespace math {

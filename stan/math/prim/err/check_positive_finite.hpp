@@ -2,8 +2,8 @@
 #define STAN_MATH_PRIM_SCAL_ERR_CHECK_POSITIVE_FINITE_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
+#include <stan/math/prim/err/check_positive.hpp>
+#include <stan/math/prim/err/check_finite.hpp>
 
 namespace stan {
 namespace math {

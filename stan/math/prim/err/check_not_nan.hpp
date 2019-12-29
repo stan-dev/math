@@ -2,8 +2,8 @@
 #define STAN_MATH_PRIM_SCAL_ERR_CHECK_NOT_NAN_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/throw_domain_error.hpp>
-#include <stan/math/prim/scal/err/throw_domain_error_vec.hpp>
+#include <stan/math/prim/err/throw_domain_error.hpp>
+#include <stan/math/prim/err/throw_domain_error_vec.hpp>
 #include <stan/math/prim/scal/fun/value_of_rec.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 
