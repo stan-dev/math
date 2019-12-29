@@ -1,9 +1,8 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_QR_THIN_R_HPP
 #define STAN_MATH_PRIM_MAT_FUN_QR_THIN_R_HPP
 
-#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
 #include <algorithm>
 
 namespace stan {

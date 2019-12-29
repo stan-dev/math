@@ -1,13 +1,13 @@
 #ifndef STAN_MATH_OPENCL_PRIM_REP_MATRIX_HPP
 #define STAN_MATH_OPENCL_PRIM_REP_MATRIX_HPP
 #ifdef STAN_OPENCL
+
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/kernels/rep_matrix.hpp>
-#include <stan/math/opencl/err/check_opencl.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
-#include <stan/math/prim/scal/err/check_greater.hpp>
-#include <stan/math/prim/meta.hpp>
+#include <stan/math/opencl/err.hpp>
 
 namespace stan {
 namespace math {
