@@ -17,9 +17,7 @@ namespace math {
  * <code>stan::error_index::value</code>. This function will
  * throw an <code>std::out_of_range</code> exception if
  * the index is out of bounds.
- * @tparam T_y Type of scalar
- * @tparam R number of rows or Eigen::Dynamic
- * @tparam C number of columns or Eigen::Dynamic
+ * @tparam Derived Type of Eigen object
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y matrix to test

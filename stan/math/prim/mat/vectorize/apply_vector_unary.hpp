@@ -15,7 +15,8 @@ struct apply_vector_unary {};
 /**
  * Base template class for vectorization of unary vector functions
  * defined by applying a functor to a standard library vector, Eigen dense
- * matrix expression template, or container of these.
+ * matrix expression template, or container of these. For each specialisation,
+ * the same vector type as the input is returned.
  *
  * Three taxonomies of unary vector functions are implemented:
  * - f(vector) -> vector
@@ -81,11 +82,12 @@ struct apply_vector_unary<T, require_eigen_t<T>> {
 /**
  * Specialisation for use with (non-nested) std::vectors. Inputs are mapped
  * to Eigen column vectors and then passed to the base (Eigen) template.
+ * An std::vector (or scalar) is then returned as the result.
  */
 template <typename T>
 struct apply_vector_unary<T, require_std_vector_vt<is_stan_scalar, T>> {
-  using scalar_t = scalar_type_t<T>;
-  using map_t = typename Eigen::Map<const Eigen::Matrix<scalar_t, -1, 1>>;
+  using T_scalar = scalar_type_t<T>;
+  using T_map = typename Eigen::Map<const Eigen::Matrix<T_scalar, -1, 1>>;
 
   /**
    * Member function for applying a functor to a vector and subsequently
@@ -98,17 +100,16 @@ struct apply_vector_unary<T, require_std_vector_vt<is_stan_scalar, T>> {
    * @return std::vector with result of applying functor to input.
    */
   template <typename F>
-  static inline std::vector<scalar_t> apply(const T& x, const F& f) {
-    Eigen::Matrix<scalar_t, -1, 1> result
-          = apply_vector_unary<map_t>::apply(as_column_vector_or_scalar(x), f);
-    return std::vector<scalar_t>(result.data(),
+  static inline std::vector<T_scalar> apply(const T& x, const F& f) {
+    Eigen::Matrix<T_scalar, -1, 1> result
+          = apply_vector_unary<T_map>::apply(as_column_vector_or_scalar(x), f);
+    return std::vector<T_scalar>(result.data(),
                                  result.data() + result.size());
   }
 
   /**
    * Member function for applying a functor to a vector and a scalar
-   * and subsequently returning a vector. The 'auto' return type is
-   * used here so that an expression template is returned.
+   * and subsequently returning a vector. 
    *
    * @tparam T Type of argument to which functor is applied.
    * @tparam T2 Type of scalar to pass to functor.
@@ -119,13 +120,13 @@ struct apply_vector_unary<T, require_std_vector_vt<is_stan_scalar, T>> {
    * @return std::vector with result of applying functor and scalar to input.
    */
   template <typename F, typename T2>
-  static inline std::vector<scalar_t> apply_scalar(const T& x,
+  static inline std::vector<T_scalar> apply_scalar(const T& x,
                                                    const T2& y,
                                                    const F& f) {
-    Eigen::Matrix<scalar_t, -1, 1> result
-       = apply_vector_unary<map_t>::apply_scalar(as_column_vector_or_scalar(x),
+    Eigen::Matrix<T_scalar, -1, 1> result
+       = apply_vector_unary<T_map>::apply_scalar(as_column_vector_or_scalar(x),
                                                  y, f);
-    return std::vector<scalar_t>(result.data(),
+    return std::vector<T_scalar>(result.data(),
                                  result.data() + result.size());
   }
 
@@ -140,93 +141,176 @@ struct apply_vector_unary<T, require_std_vector_vt<is_stan_scalar, T>> {
    * @return scalar result of applying functor to input vector.
    */
   template <typename F>
-  static inline scalar_t reduce(const T& x, const F& f) {
-    return apply_vector_unary<map_t>::reduce(as_column_vector_or_scalar(x), f);
+  static inline T_scalar reduce(const T& x, const F& f) {
+    return apply_vector_unary<T_map>::reduce(as_column_vector_or_scalar(x), f);
   }
 };
 
 /**
- * Specialisation for use with std::vectors of Eigen types
+ * Specialisation for use with nested containers (std::vectors) of Eigen types.
+ * For each of the member functions, an std::vector with the appropriate
+ * type (vector or scalar) is returned.
+ * 
  */
 template <typename T>
 struct apply_vector_unary<T, require_std_vector_vt<is_eigen, T>> {
-  using eigen_t = value_type_t<T>;
-  using scalar_t = typename eigen_t::Scalar;
-  using return_t = std::vector<Eigen::Matrix<scalar_t,
-                                              eigen_t::RowsAtCompileTime,
-                                              eigen_t::ColsAtCompileTime>>;
+  using T_eigen = value_type_t<T>;
+  using T_scalar = typename T_eigen::Scalar;
+  using T_return = std::vector<Eigen::Matrix<T_scalar,
+                                              T_eigen::RowsAtCompileTime,
+                                              T_eigen::ColsAtCompileTime>>;
 
+  /**
+   * Member function for applying a functor to each Eigen type in an std::vector
+   * and subsequently returning an std::vector of evaluated Eigen expressions.
+   *
+   * @tparam T Type of argument to which functor is applied.
+   * @tparam F Type of functor to apply.
+   * @param x std::vector of Eigen inputs to which operation is applied.
+   * @param f functor to apply to vector input.
+   * @return std::vector of Eigen objects with result of applying functor to
+   *         input.
+   */
   template <typename F>
-  static inline return_t apply(const T& x, const F& f) {
+  static inline T_return apply(const T& x, const F& f) {
     size_t x_size = x.size();
-    return_t result(x_size);
+    T_return result(x_size);
     for (size_t i = 0; i < x_size; ++i)
-      result[i] = apply_vector_unary<eigen_t>::apply(x[i], f);
+      result[i] = apply_vector_unary<T_eigen>::apply(x[i], f);
     return result;
   }
 
+  /**
+   * Member function for applying a functor to each Eigen type in an
+   * std::vector, as well as a scalar and subsequently returning an
+   * std::vector of evaluated Eigen expressions. The provided scalar can either
+   * be a single scalar which is applied to every Eigen object, or a vector of
+   * scalars to be applied, one for each Eigen object in the std::vector
+   *
+   * @tparam T Type of argument to which functor is applied.
+   * @tparam T2 Type of scalar (or vector) to pass to functor.
+   * @tparam F Type of functor to apply.
+   * @param x std::vector of Eigen inputs to which operation is applied.
+   * @param y scalar (or vector) passed to functor.
+   * @param f functor to apply to vector input.
+   * @return std::vector of Eigen objects with result of applying functor and
+   *         scalar to input.
+   */
   template <typename F, typename T2>
-  static inline return_t apply_scalar(const T& x, const T2& y, const F& f) {
+  static inline T_return apply_scalar(const T& x, const T2& y, const F& f) {
     scalar_seq_view<T2> y_vec(y);
     size_t x_size = x.size();
-    return_t result(x_size);
+    T_return result(x_size);
     for (size_t i = 0; i < x_size; ++i)
-      result[i] = apply_vector_unary<eigen_t>::apply_scalar(x[i], y_vec[i], f);
+      result[i] = apply_vector_unary<T_eigen>::apply_scalar(x[i], y_vec[i], f);
     return result;
   }
 
+  /**
+   * Member function for applying a functor to each Eigen type in an
+   * std::vector and subsequently returning an std::vector of scalars.
+   *
+   * @tparam T Type of argument to which functor is applied.
+   * @tparam F Type of functor to apply.
+   * @param x std::vector of Eigen inputs to which operation is applied.
+   * @param f functor to apply to vector input.
+   * @return std::vector of scalars with result of applying functor to input.
+   */
   template <typename F>
-  static inline std::vector<scalar_t> reduce(const T& x, const F& f) {
+  static inline std::vector<T_scalar> reduce(const T& x, const F& f) {
     size_t x_size = x.size();
-    std::vector<scalar_t> result(x_size);
+    std::vector<T_scalar> result(x_size);
     for (size_t i = 0; i < x_size; ++i)
-      result[i] = apply_vector_unary<eigen_t>::reduce(x[i], f);
+      result[i] = apply_vector_unary<T_eigen>::reduce(x[i], f);
     return result;
   }
 };
 
+/**
+ * Specialisation for use with nested containers (std::vectors) of std::vectors.
+ * For each of the member functions, an std::vector with the appropriate
+ * type (vector or scalar) is returned.
+ * 
+ */
 template <typename T>
 struct apply_vector_unary<T, require_std_vector_vt<is_std_vector, T>> {
-  using scalar_t = scalar_type_t<T>;
-  using return_t = typename std::vector<std::vector<scalar_t>>;
-  using map_t =
-    typename Eigen::Map<const Eigen::Matrix<scalar_t, -1, 1>>;
+  using T_scalar = scalar_type_t<T>;
+  using T_return = typename std::vector<std::vector<T_scalar>>;
+  using T_map =
+    typename Eigen::Map<const Eigen::Matrix<T_scalar, -1, 1>>;
 
+  /**
+   * Member function for applying a functor to each std::vector in an
+   * std::vector and subsequently returning an std::vector of std::vectors.
+   *
+   * @tparam T Type of argument to which functor is applied.
+   * @tparam F Type of functor to apply.
+   * @param x std::vector of std::vector to which operation is applied.
+   * @param f functor to apply to vector input.
+   * @return std::vector of std::vectors with result of applying functor to
+   *         input.
+   */
   template <typename F>
-  static inline return_t apply(const T& x, const F& f) {
+  static inline T_return apply(const T& x, const F& f) {
     size_t x_size = x.size();
-    return_t result(x_size);
-    Eigen::Matrix<scalar_t, -1, 1> inter;
+    T_return result(x_size);
+    Eigen::Matrix<T_scalar, -1, 1> inter;
     for (size_t i = 0; i < x_size; ++i) {
-      inter = apply_vector_unary<map_t>::apply(as_column_vector_or_scalar(x[i]),
+      inter = apply_vector_unary<T_map>::apply(as_column_vector_or_scalar(x[i]),
                                                f);
-      result[i] = std::vector<scalar_t>(inter.data(),
+      result[i] = std::vector<T_scalar>(inter.data(),
                                         inter.data() + inter.size());
     }
     return result;
   }
 
+  /**
+   * Member function for applying a functor to each std::vector in an
+   * std::vector, as well as a scalar and subsequently returning an
+   * std::vector of evaluated std::vectors. The provided scalar can either
+   * be a single scalar which is applied to every std::vector, or a vector of
+   * scalars to be applied, one for each std::vector in the std::vector
+   *
+   * @tparam T Type of argument to which functor is applied.
+   * @tparam T2 Type of scalar (or vector) to pass to functor.
+   * @tparam F Type of functor to apply.
+   * @param x std::vector of std::vectors to which operation is applied.
+   * @param y scalar (or vector) passed to functor.
+   * @param f functor to apply to vector input.
+   * @return std::vector of std::vectors with result of applying functor and
+   *         scalar to input.
+   */
   template <typename F, typename T2>
-  static inline return_t apply_scalar(const T& x, const T2& y, const F& f) {
+  static inline T_return apply_scalar(const T& x, const T2& y, const F& f) {
     scalar_seq_view<T2> y_vec(y);
     size_t x_size = x.size();
-    return_t result(x_size);
-    Eigen::Matrix<scalar_t, -1, 1> inter;
+    T_return result(x_size);
+    Eigen::Matrix<T_scalar, -1, 1> inter;
     for (size_t i = 0; i < x_size; ++i) {
-      inter = apply_vector_unary<map_t>::apply_scalar(
+      inter = apply_vector_unary<T_map>::apply_scalar(
                     as_column_vector_or_scalar(x[i]), y_vec[i], f);
-      result[i] = std::vector<scalar_t>(inter.data(),
+      result[i] = std::vector<T_scalar>(inter.data(),
                                         inter.data() + inter.size());
     }
     return result;
   }
 
+  /**
+   * Member function for applying a functor to each std::vector in an
+   * std::vector and subsequently returning an std::vector of scalars.
+   *
+   * @tparam T Type of argument to which functor is applied.
+   * @tparam F Type of functor to apply.
+   * @param x std::vector of std::vectors to which operation is applied.
+   * @param f functor to apply to vector input.
+   * @return std::vector of scalars with result of applying functor to input.
+   */
   template <typename F>
-  static inline std::vector<scalar_t> reduce(const T& x, const F& f) {
+  static inline std::vector<T_scalar> reduce(const T& x, const F& f) {
     size_t x_size = x.size();
-    std::vector<scalar_t> result(x_size);
+    std::vector<T_scalar> result(x_size);
     for (size_t i = 0; i < x_size; ++i) {
-      result[i] = apply_vector_unary<map_t>::reduce(
+      result[i] = apply_vector_unary<T_map>::reduce(
                     as_column_vector_or_scalar(x[i]), f);
     }
     return result;

@@ -14,9 +14,7 @@ namespace math {
  * Check if the specified index is a valid row of the matrix
  * This check is 1-indexed by default. This behavior can be changed
  * by setting <code>stan::error_index::value</code>.
- * @tparam T Scalar type
- * @tparam R number of rows or Eigen::Dynamic
- * @tparam C number of columns or Eigen::Dynamic
+ * @tparam Derived Type of Eigen object
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y matrix to test

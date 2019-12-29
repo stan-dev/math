@@ -55,9 +55,11 @@ TEST(MathMatrixHead, HeadRowVector4) {
   Eigen::RowVectorXd v(3);
   v << 1, 2, 3;
   std::vector<size_t> vind{1, 2, 1};
+  std::vector<int> ns{2, 2, 2};
 
   std::vector<Eigen::RowVectorXd> st_v{v, v, v};
   std::vector<Eigen::RowVectorXd> st_t = head(st_v, vind);
+  std::vector<Eigen::RowVectorXd> st_t2 = head(st_v, ns);
 
   Eigen::RowVectorXd v01 = head(v, 2);
   EXPECT_EQ(2, v01.size());
@@ -87,8 +89,10 @@ TEST(MathMatrixHead, HeadStdVector3) {
   v.push_back(1);
   v.push_back(2);
   v.push_back(3);
+  std::vector<int> ns{2, 2, 2};
   std::vector<std::vector<int>> st_v{v, v, v};
   std::vector<std::vector<int>> st_t = head(st_v, 2);
+  std::vector<std::vector<int>> st_t2 = head(st_v, ns);
   EXPECT_THROW(head(v, 4), std::out_of_range);
 }
 TEST(MathMatrixHead, HeadStdVector4) {

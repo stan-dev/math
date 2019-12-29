@@ -17,11 +17,12 @@ class op_matrix_vari : public vari {
   vari** vis_;
 
  public:
-  template <typename T, require_t<is_var<scalar_type_t<T>>>...>
-  op_matrix_vari(double f, T&& vs)
+  template <typename Derived, require_t<is_var<typename Derived::Scalar>>...>
+  op_matrix_vari(double f, const Eigen::MatrixBase<Derived>& vs)
       : vari(f), size_(vs.size()) {
     vis_ = ChainableStack::instance_->memalloc_.alloc_array<vari*>(size_);
-    Eigen::Map<matrix_vi>(vis_, vs.rows(), vs.cols()) = vs.vi();
+    Eigen::Map<Eigen::Matrix<vari*, -1, -1>>(vis_, vs.rows(),
+                                             vs.cols()) = vs.vi();
   }
   vari* operator[](size_t n) const { return vis_[n]; }
   size_t size() { return size_; }
