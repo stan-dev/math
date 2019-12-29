@@ -84,7 +84,7 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
     }
     const T_partials_return kappa_sin = kappa_dbl[n] * sin(mu_dbl - y_dbl);
     const T_partials_return cos_mu_minus_y = cos(mu_dbl - y_dbl);
-    const T_partials_return kappa_cos = kappa_dbl[n] * kappa_cos;
+    const T_partials_return kappa_cos = kappa_dbl[n] * cos_mu_minus_y;
 
     if (include_summand<propto>::value) {
       logp -= LOG_TWO_PI;
