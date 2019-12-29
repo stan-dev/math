@@ -2,12 +2,9 @@
 #define STAN_MATH_REV_MAT_FUNCTOR_IDAS_RESIDUAL_HPP
 
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/arr/fun/value_of.hpp>
 #include <stan/math/prim/arr/fun/dot_self.hpp>
-#include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
-#include <stan/math/prim/scal/err/check_less_or_equal.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/rev/mat/fun/typedefs.hpp>
 #include <idas/idas.h>

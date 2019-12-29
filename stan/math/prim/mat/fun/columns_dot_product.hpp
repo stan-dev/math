@@ -1,14 +1,19 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_COLUMNS_DOT_PRODUCT_HPP
 #define STAN_MATH_PRIM_MAT_FUN_COLUMNS_DOT_PRODUCT_HPP
 
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/arr/err/check_matching_sizes.hpp>
 
 namespace stan {
 namespace math {
 
 /**
  * Returns the dot product of the specified vectors.
+ *
+ * @tparam R1 number of rows, can be Eigen::Dynamic
+ * @tparam C1 number of columns, can be Eigen::Dynamic
+ * @tparam R2 number of rows, can be Eigen::Dynamic
+ * @tparam C2 number of columns, can be Eigen::Dynamic
  *
  * @param v1 First vector.
  * @param v2 Second vector.
@@ -26,4 +31,5 @@ inline Eigen::Matrix<double, 1, C1> columns_dot_product(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

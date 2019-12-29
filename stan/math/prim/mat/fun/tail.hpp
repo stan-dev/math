@@ -2,9 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_TAIL_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/mat/err/check_column_index.hpp>
-#include <stan/math/prim/mat/err/check_row_index.hpp>
-#include <stan/math/prim/mat/err/check_std_vector_index.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <vector>
 
@@ -15,7 +13,7 @@ namespace math {
  * Return the specified number of elements as a vector
  * from the back of the specified vector.
  *
- * @tparam T Type of value in vector.
+ * @tparam T type of elements in the vector
  * @param v Vector input.
  * @param n Size of return.
  * @return The last n elements of v.
@@ -34,7 +32,7 @@ inline Eigen::Matrix<T, Eigen::Dynamic, 1> tail(
  * Return the specified number of elements as a row vector
  * from the back of the specified row vector.
  *
- * @tparam T Type of value in vector.
+ * @tparam T type of elements in the vector
  * @param rv Row vector.
  * @param n Size of return row vector.
  * @return The last n elements of rv.
@@ -53,7 +51,7 @@ inline Eigen::Matrix<T, 1, Eigen::Dynamic> tail(
  * Return the specified number of elements as a standard vector
  * from the back of the specified standard vector.
  *
- * @tparam T Type of value in vector.
+ * @tparam T type of elements in the vector
  * @param sv Standard vector.
  * @param n Size of return.
  * @return The last n elements of sv.
@@ -74,4 +72,5 @@ std::vector<T> tail(const std::vector<T>& sv, size_t n) {
 
 }  // namespace math
 }  // namespace stan
+
 #endif

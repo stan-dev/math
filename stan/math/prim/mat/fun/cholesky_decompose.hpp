@@ -1,10 +1,8 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_CHOLESKY_DECOMPOSE_HPP
 #define STAN_MATH_PRIM_MAT_FUN_CHOLESKY_DECOMPOSE_HPP
 
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/err/check_pos_definite.hpp>
-#include <stan/math/prim/mat/err/check_square.hpp>
-#include <stan/math/prim/mat/err/check_symmetric.hpp>
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/opencl.hpp>
 #endif
@@ -17,9 +15,11 @@ namespace math {
 /**
  * Return the lower-triangular Cholesky factor (i.e., matrix
  * square root) of the specified square, symmetric matrix.  The return
- * value \f$L\f$ will be a lower-traingular matrix such that the
+ * value \f$L\f$ will be a lower-triangular matrix such that the
  * original matrix \f$A\f$ is given by
  * <p>\f$A = L \times L^T\f$.
+ *
+ * @tparam T type of elements in the matrix
  * @param m Symmetrix matrix.
  * @return Square root of matrix.
  * @note Because OpenCL only works on doubles there are two
@@ -41,9 +41,10 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
 /**
  * Return the lower-triangular Cholesky factor (i.e., matrix
  * square root) of the specified square, symmetric matrix.  The return
- * value \f$L\f$ will be a lower-traingular matrix such that the
+ * value \f$L\f$ will be a lower-triangular matrix such that the
  * original matrix \f$A\f$ is given by
  * <p>\f$A = L \times L^T\f$.
+ *
  * @param m Symmetrix matrix.
  * @return Square root of matrix.
  * @note Because OpenCL only works on doubles there are two
@@ -77,7 +78,8 @@ inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
   return llt.matrixL();
 #endif
 }
-}  // namespace math
 
+}  // namespace math
 }  // namespace stan
+
 #endif

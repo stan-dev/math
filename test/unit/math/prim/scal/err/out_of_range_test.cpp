@@ -40,6 +40,17 @@ class ErrorHandlingScalar_out_of_range : public ::testing::Test {
   }
 
   template <class T>
+  std::string expected_message_empty_container(T y, size_t i) {
+    std::stringstream expected_message;
+    expected_message << "function: "
+                     << "accessing element out of range. "
+                     << "index " << i << " out of range; "
+                     << "container is empty and cannot be indexed" << msg1_
+                     << msg2_;
+    return expected_message.str();
+  }
+
+  template <class T>
   void test_throw(T y, size_t i) {
     using stan::math::out_of_range;
 
@@ -52,6 +63,14 @@ class ErrorHandlingScalar_out_of_range : public ::testing::Test {
     EXPECT_THROW_MSG(out_of_range(function_, y.size(), i), std::out_of_range,
                      expected_message_with_0_messages(y, i));
   }
+
+  template <class T>
+  void test_throw_empty(T y, size_t i) {
+    using stan::math::out_of_range;
+
+    EXPECT_THROW_MSG(out_of_range(function_, y.size(), i, msg1_, msg2_),
+                     std::out_of_range, expected_message_empty_container(y, i));
+  }
 };
 
 TEST_F(ErrorHandlingScalar_out_of_range, double_prim_scal) {
@@ -59,4 +78,9 @@ TEST_F(ErrorHandlingScalar_out_of_range, double_prim_scal) {
 
   test_throw(y, 0);
   test_throw(y, 5);
+
+  std::vector<double> z;
+
+  test_throw_empty(z, 0);
+  test_throw_empty(z, 5);
 }

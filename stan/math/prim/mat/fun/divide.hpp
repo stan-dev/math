@@ -10,9 +10,10 @@ namespace math {
 
 /**
  * Return matrix divided by scalar.
- * @tparam R number of rows or Eigen::Dynamic
- * @tparam C number of columns or Eigen::Dynamic
- * @tparam T1 type of coefficients in matrix
+ *
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ * @tparam T1 type of elements in the matrix
  * @tparam T2 type of scalar
  * @param[in] m specified matrix
  * @param[in] c specified scalar
@@ -27,4 +28,5 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R, C> divide(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

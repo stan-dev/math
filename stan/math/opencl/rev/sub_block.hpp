@@ -6,7 +6,7 @@
 #include <stan/math/opencl/opencl_context.hpp>
 #include <stan/math/opencl/rev/matrix_cl.hpp>
 #include <stan/math/opencl/sub_block.hpp>
-#include <cl.hpp>
+#include <CL/cl2.hpp>
 #include <vector>
 
 namespace stan {

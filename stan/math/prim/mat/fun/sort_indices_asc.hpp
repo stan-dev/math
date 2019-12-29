@@ -24,4 +24,5 @@ std::vector<int> sort_indices_asc(const C& xs) {
 
 }  // namespace math
 }  // namespace stan
+
 #endif

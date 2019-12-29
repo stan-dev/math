@@ -1,19 +1,19 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_MATRIX_POWER_HPP
 #define STAN_MATH_PRIM_MAT_FUN_MATRIX_POWER_HPP
 
-#include <stan/math/prim/scal/err/invalid_argument.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/err/check_finite.hpp>
-#include <stan/math/prim/mat/err/check_square.hpp>
 
 namespace stan {
 namespace math {
+
 /**
  * Returns the nth power of the specific matrix. M^n = M * M * ... * M.
  *
  * @tparam T type of elements in the matrix
- * @tparam R number of rows in matrix
- * @tparam C number of columns in matrix
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ *
  * @param[in] M a square matrix
  * @param[in] n exponent
  * @return nth power of M
@@ -53,4 +53,5 @@ inline Eigen::Matrix<T, R, C> operator^(const Eigen::Matrix<T, R, C> &M,
 
 }  // namespace math
 }  // namespace stan
+
 #endif

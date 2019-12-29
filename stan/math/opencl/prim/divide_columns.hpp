@@ -1,13 +1,13 @@
 #ifndef STAN_MATH_OPENCL_PRIM_DIVIDE_COLUMNS_HPP
 #define STAN_MATH_OPENCL_PRIM_DIVIDE_COLUMNS_HPP
 #ifdef STAN_OPENCL
+
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernels/divide_columns.hpp>
-#include <stan/math/opencl/err/check_vector.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
-#include <stan/math/prim/meta.hpp>
-
-#include <cl.hpp>
+#include <stan/math/opencl/err.hpp>
+#include <CL/cl2.hpp>
 
 namespace stan {
 namespace math {

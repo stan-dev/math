@@ -9,6 +9,8 @@ namespace math {
 /**
  * Return a square diagonal matrix with the specified vector of
  * coefficients as the diagonal values.
+ *
+ * @tparam T type of elements in the vector
  * @param[in] v Specified vector.
  * @return Diagonal matrix with vector as diagonal values.
  */
@@ -20,4 +22,5 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> diag_matrix(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

@@ -9,7 +9,7 @@
 #include <stan/math/opencl/rev/matrix_cl.hpp>
 #include <stan/math/opencl/zeros.hpp>
 
-#include <cl.hpp>
+#include <CL/cl2.hpp>
 
 namespace stan {
 namespace math {
