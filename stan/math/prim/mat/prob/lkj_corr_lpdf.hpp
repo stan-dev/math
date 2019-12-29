@@ -61,8 +61,7 @@ return_type_t<T_y, T_shape> lkj_corr_lpdf(
     lp += do_lkj_constant(eta, K);
   }
 
-  if ((eta == 1.0)
-      && stan::is_constant_all<typename stan::scalar_type<T_shape> >::value) {
+  if (eta == 1.0 && is_constant_all<scalar_type<T_shape>>::value) {
     return lp;
   }
 

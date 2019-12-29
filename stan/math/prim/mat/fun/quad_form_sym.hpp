@@ -26,4 +26,5 @@ inline T quad_form_sym(const Eigen::Matrix<T, RA, CA>& A,
 
 }  // namespace math
 }  // namespace stan
+
 #endif

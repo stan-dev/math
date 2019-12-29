@@ -68,9 +68,7 @@ return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
                 T_y>
       log_y(length(y));
   for (size_t i = 0; i < length(y); i++) {
-    if (include_summand<propto, T_y, T_dof>::value) {
-      log_y[i] = log(value_of(y_vec[i]));
-    }
+    log_y[i] = log(value_of(y_vec[i]));
   }
 
   VectorBuilder<include_summand<propto, T_y>::value, T_partials_return, T_y>
@@ -106,9 +104,8 @@ return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
     if (include_summand<propto, T_dof>::value) {
       logp += nu_dbl * NEG_LOG_TWO_OVER_TWO - lgamma_half_nu[n];
     }
-    if (include_summand<propto, T_y, T_dof>::value) {
-      logp += (half_nu - 1.0) * log_y[n];
-    }
+    logp += (half_nu - 1.0) * log_y[n];
+
     if (include_summand<propto, T_y>::value) {
       logp -= half_y;
     }

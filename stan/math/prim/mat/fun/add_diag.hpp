@@ -8,11 +8,13 @@
 
 namespace stan {
 namespace math {
+
 /**
  * Returns a Matrix with values added along the main diagonal
  *
  * @tparam T_m type of element in Eigen::Matrix
  * @tparam T_a Type of element to add along the diagonal
+ *
  * @param mat a matrix
  * @param to_add value to add along the diagonal
  * @return a matrix with to_add added along main diagonal
@@ -33,6 +35,9 @@ add_diag(const Eigen::Matrix<T_m, Eigen::Dynamic, Eigen::Dynamic> &mat,
  *
  * @tparam T_m type of element in Eigen::Matrix
  * @tparam T_a Type of element to add along the diagonal
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ *
  * @param mat a matrix
  * @param to_add Sequence of values to add along the diagonal
  * @return a matrix with to_add added along main diagonal
@@ -53,6 +58,8 @@ add_diag(const Eigen::Matrix<T_m, Eigen::Dynamic, Eigen::Dynamic> &mat,
   out.diagonal() += to_add;
   return out;
 }
+
 }  // namespace math
 }  // namespace stan
+
 #endif

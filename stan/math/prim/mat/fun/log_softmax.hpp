@@ -32,7 +32,7 @@ namespace math {
  * \right.
  * \f$
  *
- * @tparam T Scalar type of values in vector.
+ * @tparam T type of elements in the vector
  * @param[in] v Vector to transform.
  * @return Unit simplex result of the softmax transform of the vector.
  */
@@ -45,4 +45,5 @@ inline Eigen::Matrix<T, Eigen::Dynamic, 1> log_softmax(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

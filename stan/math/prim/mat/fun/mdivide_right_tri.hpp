@@ -11,7 +11,19 @@ namespace stan {
 namespace math {
 
 /**
- * Returns the solution of the system Ax=b when A is triangular
+ * Returns the solution of the system xA=b when A is triangular
+ *
+ * @tparam TriView Specifies whether A is upper (Eigen::Upper)
+ * or lower triangular (Eigen::Lower).
+ * @tparam T1 type of elements in the right-hand side matrix or vector
+ * @tparam T2 type of elements in the triangular matrix
+ * @tparam R1 number of rows in the right-hand side matrix, can be
+ *         Eigen::Dynamic
+ * @tparam C1 number of columns in the right-hand side matrix, can be
+ *         Eigen::Dynamic
+ * @tparam R2 number of rows in the triangular matrix, can be Eigen::Dynamic
+ * @tparam C2 number of columns in the triangular matrix, can be Eigen::Dynamic
+ *
  * @param A Triangular matrix.  Specify upper or lower with TriView
  * being Eigen::Upper or Eigen::Lower.
  * @param b Right hand side matrix or vector.
@@ -42,8 +54,18 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_right_tri(
 }
 
 /**
- * Returns the solution of the system Ax=b when A is triangular
+ * Returns the solution of the system xA=b when A is triangular
  * and A and b are matrices of doubles.
+ *
+ * @tparam TriView Specifies whether A is upper (Eigen::Upper)
+ * or lower triangular (Eigen::Lower).
+ * @tparam R1 number of rows in the right-hand side matrix, can be
+ *         Eigen::Dynamic
+ * @tparam C1 number of columns in the right-hand side matrix, can be
+ *         Eigen::Dynamic
+ * @tparam R2 number of rows in the triangular matrix, can be Eigen::Dynamic
+ * @tparam C2 number of columns in the triangular matrix, can be Eigen::Dynamic
+ *
  * @param A Triangular matrix.  Specify upper or lower with TriView
  * being Eigen::Upper or Eigen::Lower.
  * @param b Right hand side matrix or vector.
@@ -78,4 +100,5 @@ inline Eigen::Matrix<double, R1, C2> mdivide_right_tri(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

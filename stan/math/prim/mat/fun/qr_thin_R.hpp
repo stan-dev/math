@@ -10,8 +10,9 @@ namespace math {
 
 /**
  * Returns the upper triangular factor of the thin QR decomposition
+ *
+ * @tparam T type of elements in the matrix
  * @param m Matrix.
- * @tparam T scalar type
  * @return Upper triangular matrix with minimal rows
  */
 template <typename T>
@@ -36,4 +37,5 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> qr_thin_R(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

@@ -11,10 +11,11 @@ namespace math {
  * Return the elementwise multiplication of the specified
  * matrices.
  *
- * @tparam T1 Type of scalars in first matrix.
- * @tparam T2 Type of scalars in second matrix.
- * @tparam R Row type of both matrices.
- * @tparam C Column type of both matrices.
+ * @tparam T1 type of elements in first matrix
+ * @tparam T2 type of elements in second matrix
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ *
  * @param m1 First matrix
  * @param m2 Second matrix
  * @return Elementwise product of matrices.
@@ -28,4 +29,5 @@ Eigen::Matrix<return_type_t<T1, T2>, R, C> elt_multiply(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

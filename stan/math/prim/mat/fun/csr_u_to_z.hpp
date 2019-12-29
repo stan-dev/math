@@ -30,4 +30,5 @@ inline int csr_u_to_z(const std::vector<int>& u, int i) {
 
 }  // namespace math
 }  // namespace stan
+
 #endif

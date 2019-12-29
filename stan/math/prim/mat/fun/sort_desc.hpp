@@ -13,7 +13,10 @@ namespace math {
 /**
  * Return the specified vector in descending order.
  *
- * @tparam T Type of elements contained in vector.
+ * @tparam T type of elements in the vector
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ *
  * @param xs Vector to order.
  * @return Vector in descending order.
  * @throw std::domain_error If any of the values are NaN.
@@ -27,4 +30,5 @@ inline Eigen::Matrix<T, R, C> sort_desc(Eigen::Matrix<T, R, C> xs) {
 
 }  // namespace math
 }  // namespace stan
+
 #endif

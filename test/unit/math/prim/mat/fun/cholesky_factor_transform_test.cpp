@@ -29,7 +29,7 @@ TEST(ProbTransform, choleskyFactorLogJacobian) {
   using Eigen::Matrix;
   using stan::math::cholesky_factor_constrain;
 
-  double lp;
+  double lp = 0;
   Matrix<double, Dynamic, 1> x(3);
 
   x.resize(1);

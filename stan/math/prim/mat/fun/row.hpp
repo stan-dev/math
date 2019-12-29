@@ -14,7 +14,7 @@ namespace math {
  * This is equivalent to calling <code>m.row(i - 1)</code> and
  * assigning the resulting template expression to a row vector.
  *
- * @tparam T Scalar value type for matrix.
+ * @tparam T type of elements in the matrix
  * @param m Matrix.
  * @param i Row index (count from 1).
  * @return Specified row of the matrix.
@@ -30,4 +30,5 @@ inline Eigen::Matrix<T, 1, Eigen::Dynamic> row(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

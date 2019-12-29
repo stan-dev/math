@@ -56,17 +56,17 @@ inline return_type_t<T, L, U> lub_constrain(const T& x, const L& lb,
   if (x > 0) {
     inv_logit_x = inv_logit(x);
     // Prevent x from reaching one unless it really really should.
-    if ((x < INFTY) && (inv_logit_x == 1)) {
+    if (x < INFTY && inv_logit_x == 1) {
       inv_logit_x = 1 - 1e-15;
     }
   } else {
     inv_logit_x = inv_logit(x);
     // Prevent x from reaching zero unless it really really should.
-    if ((x > NEGATIVE_INFTY) && (inv_logit_x == 0)) {
+    if (x > NEGATIVE_INFTY && inv_logit_x == 0) {
       inv_logit_x = 1e-15;
     }
   }
-  return fma((ub - lb), inv_logit_x, lb);
+  return fma(ub - lb, inv_logit_x, lb);
 }
 
 /**
@@ -128,7 +128,7 @@ inline return_type_t<T, L, U> lub_constrain(const T& x, const L& lb,
     inv_logit_x = inv_logit(x);
     lp += log(ub - lb) - x - 2 * log1p(exp_minus_x);
     // Prevent x from reaching one unless it really really should.
-    if ((x < INFTY) && (inv_logit_x == 1)) {
+    if (x < INFTY && inv_logit_x == 1) {
       inv_logit_x = 1 - 1e-15;
     }
   } else {
@@ -136,11 +136,11 @@ inline return_type_t<T, L, U> lub_constrain(const T& x, const L& lb,
     inv_logit_x = inv_logit(x);
     lp += log(ub - lb) + x - 2 * log1p(exp_x);
     // Prevent x from reaching zero unless it really really should.
-    if ((x > NEGATIVE_INFTY) && (inv_logit_x == 0)) {
+    if (x > NEGATIVE_INFTY && inv_logit_x == 0) {
       inv_logit_x = 1e-15;
     }
   }
-  return fma((ub - lb), inv_logit_x, lb);
+  return fma(ub - lb, inv_logit_x, lb);
 }
 
 }  // namespace math

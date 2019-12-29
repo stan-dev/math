@@ -8,6 +8,7 @@
 
 namespace stan {
 namespace math {
+
 /**
  * Return the vector of unconstrained scalars that transform to
  * the specified positive ordered vector.
@@ -15,9 +16,9 @@ namespace math {
  * <p>This function inverts the constraining operation defined in
  * <code>positive_ordered_constrain(Matrix)</code>,
  *
+ * @tparam T type of elements in the vector
  * @param y Vector of positive, ordered scalars.
  * @return Free vector that transforms into the input vector.
- * @tparam T Type of scalar.
  * @throw std::domain_error if y is not a vector of positive,
  *   ordered scalars.
  */
@@ -42,6 +43,8 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> positive_ordered_free(
   }
   return x;
 }
+
 }  // namespace math
 }  // namespace stan
+
 #endif

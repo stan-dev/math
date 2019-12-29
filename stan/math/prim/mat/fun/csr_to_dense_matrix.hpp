@@ -16,7 +16,7 @@ namespace math {
 /**
  * Construct a dense Eigen matrix from the CSR format components.
  *
- * @tparam T Type of matrix entries.
+ * @tparam T type of elements in the matrix
  * @param[in] m Number of matrix rows.
  * @param[in] n Number of matrix columns.
  * @param[in] w Values of non-zero matrix entries.
@@ -65,4 +65,5 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> csr_to_dense_matrix(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

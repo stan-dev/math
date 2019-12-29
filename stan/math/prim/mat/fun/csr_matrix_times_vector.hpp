@@ -9,6 +9,7 @@
 
 namespace stan {
 namespace math {
+
 /**
  * @defgroup csr_format Compressed Sparse Row matrix format.
  *  A compressed Sparse Row (CSR) sparse matrix is defined by four
@@ -48,8 +49,8 @@ namespace math {
  * column index of each value), the integer array u (containing
  * one-based indexes of where each row starts in w).
  *
- * @tparam T1 Type of sparse matrix entries.
- * @tparam T2 Type of dense vector entries.
+ * @tparam T1 type of elements in the sparse matrix
+ * @tparam T2 type of elements in the dense vector
  * @param m Number of rows in matrix.
  * @param n Number of columns in matrix.
  * @param w Vector of non-zero values in matrix.
@@ -109,4 +110,5 @@ csr_matrix_times_vector(int m, int n,
 
 }  // namespace math
 }  // namespace stan
+
 #endif

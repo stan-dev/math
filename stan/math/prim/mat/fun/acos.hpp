@@ -9,8 +9,9 @@ namespace math {
 
 /**
  * Structure to wrap acos() so it can be vectorized.
- * @param x Variable.
- * @tparam T Variable type.
+ *
+ * @tparam T type of variable
+ * @param x variable
  * @return Arc cosine of variable in radians.
  */
 struct acos_fun {
@@ -23,8 +24,9 @@ struct acos_fun {
 
 /**
  * Vectorized version of acos().
- * @param x Container of variables.
- * @tparam T Container type.
+ *
+ * @tparam T type of container
+ * @param x container
  * @return Arc cosine of each variable in the container, in radians.
  */
 template <typename T>

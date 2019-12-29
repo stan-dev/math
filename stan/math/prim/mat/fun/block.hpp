@@ -10,6 +10,7 @@ namespace math {
 /**
  * Return a nrows x ncols submatrix starting at (i-1, j-1).
  *
+ * @tparam T type of elements in the matrix
  * @param m Matrix.
  * @param i Starting row.
  * @param j Starting column.
@@ -30,4 +31,5 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> block(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

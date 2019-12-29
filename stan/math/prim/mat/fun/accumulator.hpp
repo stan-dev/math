@@ -74,8 +74,8 @@ class accumulator {
    * of values to the buffer.
    *
    * @tparam S type of values in matrix
-   * @tparam R number of rows in matrix
-   * @tparam C number of columns in matrix
+   * @tparam R number of rows, can be Eigen::Dynamic
+   * @tparam C number of columns, can be Eigen::Dynamic
    * @param m Matrix of values to add
    */
   template <typename S, int R, int C>

@@ -9,7 +9,7 @@ namespace math {
 /**
  * Return the size of the specified standard vector.
  *
- * @tparam T Type of elements.
+ * @tparam T type of elements in the vector
  * @param[in] x Input vector.
  * @return Size of input vector.
  */
@@ -20,4 +20,5 @@ inline int size(const std::vector<T>& x) {
 
 }  // namespace math
 }  // namespace stan
+
 #endif

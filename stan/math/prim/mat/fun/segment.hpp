@@ -11,6 +11,8 @@ namespace math {
 /**
  * Return the specified number of elements as a vector starting
  * from the specified element - 1 of the specified vector.
+ *
+ * @tparam T type of elements in the vector
  */
 template <typename T>
 inline Eigen::Matrix<T, Eigen::Dynamic, 1> segment(
@@ -57,4 +59,5 @@ std::vector<T> segment(const std::vector<T>& sv, size_t i, size_t n) {
 
 }  // namespace math
 }  // namespace stan
+
 #endif

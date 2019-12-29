@@ -24,6 +24,7 @@ namespace math {
  * function to work), the symmetric view of its lower-triangular
  * view must be positive definite.
  *
+ * @tparam T type of elements in the matrix
  * @param y Matrix of dimensions K by K such that he symmetric
  * view of the lower-triangular view is positive definite.
  * @return Vector of size K plus (K choose 2) in (-inf, inf)
@@ -60,4 +61,5 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> cov_matrix_free(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

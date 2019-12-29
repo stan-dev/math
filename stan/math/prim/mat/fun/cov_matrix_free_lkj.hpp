@@ -15,12 +15,12 @@ namespace math {
  * <p>The constraining transform is defined as for
  * <code>cov_matrix_constrain(Matrix, size_t)</code>.  The
  * inverse first factors out the deviations, then applies the
- * freeing transfrom of <code>corr_matrix_free(Matrix&)</code>.
+ * freeing transform of <code>corr_matrix_free(Matrix&)</code>.
  *
+ * @tparam T type of elements in the matrix
  * @param y Covariance matrix to free.
  * @return Vector of unconstrained values that transforms to the
  * specified covariance matrix.
- * @tparam T Type of scalar.
  * @throw std::domain_error if the correlation matrix has no
  *    elements or is not a square matrix.
  * @throw std::runtime_error if the correlation matrix cannot be
@@ -58,4 +58,5 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> cov_matrix_free_lkj(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

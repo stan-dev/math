@@ -10,6 +10,16 @@ namespace math {
 
 /**
  * Returns the solution of the system Ax=b.
+ *
+ * @tparam T1 type of elements in first matrix
+ * @tparam T2 type of elements in right-hand side matrix or vector
+ * @tparam R1 number of rows in the first matrix, can be Eigen::Dynamic
+ * @tparam C1 number of columns in the first matrix, can be Eigen::Dynamic
+ * @tparam R2 number of rows in the right-hand side matrix, can be
+ *         Eigen::Dynamic
+ * @tparam C2 number of columns in the right-hand side matrix, can be
+ *         Eigen::Dynamic
+ *
  * @param A Matrix.
  * @param b Right hand side matrix or vector.
  * @return x = A^-1 b, solution of the linear system.
@@ -31,4 +41,5 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_left(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

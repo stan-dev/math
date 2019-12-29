@@ -118,7 +118,8 @@ static const char* poisson_log_glm_kernel_code = STRINGIFY(
 // \endcond
 
 /** \ingroup opencl_kernels
- * See the docs for \link kernels/subtract.hpp subtract() \endlink
+ * See the docs for \link kernels/poisson_log_glm_lpmf.hpp
+ * poisson_log_glm_lpmf() \endlink
  */
 const kernel_cl<out_buffer, out_buffer, out_buffer, in_buffer, in_buffer,
                 in_buffer, in_buffer, int, int, int, int, int, int>

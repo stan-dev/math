@@ -13,6 +13,7 @@ namespace math {
 /**
  * Returns the maximum coefficient in the specified
  * column vector.
+ *
  * @param x specified vector
  * @return maximum coefficient value in the vector
  * @throws <code>std::invalid_argument</code> if the vector is size zero
@@ -26,7 +27,8 @@ inline int max(const std::vector<int>& x) {
 /**
  * Returns the maximum coefficient in the specified
  * column vector.
- * @tparam type of values being compared and returned
+ *
+ * @tparam type of elements in the vector
  * @param x specified vector
  * @return maximum coefficient value in the vector, or -infinity if the vector
  * is size zero
@@ -43,9 +45,11 @@ inline T max(const std::vector<T>& x) {
 /**
  * Returns the maximum coefficient in the specified
  * matrix, vector, or row vector.
- * @tparam T type of values being compared and returned
- * @tparam R number of rows or Eigen::Dynamic
- * @tparam C number of columns or Eigen::Dynamic
+ *
+ * @tparam T type of elements in the matrix
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ *
  * @param m specified matrix, vector, or row vector
  * @return maximum coefficient value in the vector, or -infinity if the vector
  * is size zero
@@ -60,4 +64,5 @@ inline T max(const Eigen::Matrix<T, R, C>& m) {
 
 }  // namespace math
 }  // namespace stan
+
 #endif

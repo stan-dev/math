@@ -31,4 +31,5 @@ inline int rank(const C& v, int s) {
 
 }  // namespace math
 }  // namespace stan
+
 #endif

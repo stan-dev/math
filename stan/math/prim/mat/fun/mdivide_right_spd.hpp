@@ -10,10 +10,20 @@ namespace stan {
 namespace math {
 
 /**
- * Returns the solution of the system Ax=b where A is symmetric
+ * Returns the solution of the system xA=b where A is symmetric
  * positive definite.
- * @param A Matrix.
- * @param b Right hand side matrix or vector.
+ *
+ * @tparam T1 type of elements in the right-hand side matrix or vector
+ * @tparam T2 type of elements in the second matrix
+ * @tparam R1 number of rows in the right-hand side matrix, can be
+ *         Eigen::Dynamic
+ * @tparam C1 number of columns in the right-hand side matrix, can be
+ *         Eigen::Dynamic
+ * @tparam R2 number of rows in the second matrix, can be Eigen::Dynamic
+ * @tparam C2 number of columns in the second matrix, can be Eigen::Dynamic
+ *
+ * @param b right-hand side matrix or vector
+ * @param A matrix
  * @return x = b A^-1, solution of the linear system.
  * @throws std::domain_error if A is not square or the rows of b don't
  * match the size of A.
@@ -30,4 +40,5 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_right_spd(
 
 }  // namespace math
 }  // namespace stan
+
 #endif
