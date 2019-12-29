@@ -2,8 +2,10 @@
 #define STAN_MATH_PRIM_SCAL_ERR_CHECK_FINITE_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/throw_domain_error.hpp>
-#include <stan/math/prim/scal/err/throw_domain_error_vec.hpp>
+#include <stan/math/prim/err/throw_domain_error.hpp>
+#include <stan/math/prim/err/throw_domain_error_vec.hpp>
+#include <stan/math/prim/mat/fun/value_of.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/fun/value_of_rec.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 
@@ -47,21 +49,6 @@ template <typename T_y>
 inline void check_finite(const char* function, const char* name, const T_y& y) {
   internal::finite<T_y, is_vector_like<T_y>::value>::check(function, name, y);
 }
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_PRIM_MAT_ERR_CHECK_FINITE_HPP
-#define STAN_MATH_PRIM_MAT_ERR_CHECK_FINITE_HPP
-
-#include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/throw_domain_error.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/mat/fun/value_of.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
-
-namespace stan {
-namespace math {
 
 /*
  * Return <code>true</code> is the specified matrix is finite.
