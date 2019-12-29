@@ -3,7 +3,6 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-
 TEST(AgradRevErrorHandlingScalar, CheckFiniteVarCheckVectorized) {
   using stan::math::check_finite;
   using stan::math::var;
