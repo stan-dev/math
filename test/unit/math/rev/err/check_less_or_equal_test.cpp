@@ -1,4 +1,6 @@
 #include <stan/math/rev/arr.hpp>
+#include <stan/math/rev/mat.hpp>
+#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
@@ -33,12 +35,6 @@ TEST(AgradRevErrorHandlingScalar, CheckLessOrEqualVarCheckVectorized) {
 
   stan::math::recover_memory();
 }
-#include <stan/math/rev/mat.hpp>
-#include <gtest/gtest.h>
-#include <limits>
-
-using stan::math::check_less_or_equal;
-using stan::math::var;
 
 TEST(AgradRevErrorHandlingMatrix, CheckLessOrEqual_Matrix) {
   const char* function = "check_less_or_equal";
@@ -118,12 +114,6 @@ TEST(AgradRevErrorHandlingMatrix, CheckLessOrEqual_Matrix) {
   EXPECT_NO_THROW(check_less_or_equal(function, "x", x, high_vec));
   stan::math::recover_memory();
 }
-#include <stan/math/rev/scal.hpp>
-#include <gtest/gtest.h>
-#include <limits>
-
-using stan::math::check_less_or_equal;
-using stan::math::var;
 
 TEST(AgradRevErrorHandlingScalar, CheckLessOrEqual) {
   const char* function = "check_less_or_equal";

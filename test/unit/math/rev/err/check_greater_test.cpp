@@ -1,6 +1,9 @@
 #include <stan/math/rev/arr.hpp>
+#include <stan/math/rev/mat.hpp>
+#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
 #include <vector>
+#include <limits>
 
 using stan::math::check_greater;
 using stan::math::var;
@@ -33,12 +36,6 @@ TEST(AgradRevErrorHandlingScalar, CheckGreaterVarCheckVectorized) {
 
   stan::math::recover_memory();
 }
-#include <stan/math/rev/mat.hpp>
-#include <gtest/gtest.h>
-#include <limits>
-
-using stan::math::check_greater;
-using stan::math::var;
 
 TEST(AgradRevErrorHandlingMatrix, CheckGreaterMatrix) {
   const char* function = "check_greater";
@@ -145,12 +142,6 @@ TEST(AgradRevErrorHandlingMatrix, CheckGreaterMatrix) {
       << "check_greater: double, matrix<3, 1>";
   stan::math::recover_memory();
 }
-#include <stan/math/rev/scal.hpp>
-#include <gtest/gtest.h>
-#include <limits>
-
-using stan::math::check_greater;
-using stan::math::var;
 
 TEST(AgradRevErrorHandlingScalar, CheckGreater) {
   const char* function = "check_greater";

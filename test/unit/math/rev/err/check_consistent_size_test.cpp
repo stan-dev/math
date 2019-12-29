@@ -1,4 +1,5 @@
 #include <stan/math/rev/arr.hpp>
+#include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
@@ -24,9 +25,6 @@ TEST(AgradRevErrorHandlingScalar, CheckConsistentSizeVarCheckVectorized) {
   EXPECT_EQ(5U, stack_size_after_call);
   stan::math::recover_memory();
 }
-#include <stan/math/rev/mat.hpp>
-#include <gtest/gtest.h>
-#include <limits>
 
 TEST(AgradRevErrorHandlingMatrix, checkConsistentSize) {
   using Eigen::Dynamic;

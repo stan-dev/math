@@ -1,4 +1,5 @@
 #include <stan/math/rev/arr.hpp>
+#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
@@ -47,9 +48,6 @@ TEST(ErrorHandlingScalar, CheckNotNanVarCheckVectorized) {
   EXPECT_EQ(5U, stack_size_after_call);
   stan::math::recover_memory();
 }
-#include <stan/math/rev/scal.hpp>
-#include <gtest/gtest.h>
-#include <limits>
 
 TEST(AgradRevErrorHandlingScalar, CheckNotNan) {
   using stan::math::check_not_nan;

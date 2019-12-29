@@ -1,4 +1,6 @@
 #include <stan/math/rev/arr.hpp>
+#include <stan/math/rev/mat.hpp>
+#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 #include <vector>
@@ -83,12 +85,6 @@ TEST(AgradRevErrorHandlingScalar, CheckPositiveFiniteVarCheckVectorized) {
   EXPECT_EQ(6U, stack_size_after_call);
   stan::math::recover_memory();
 }
-#include <stan/math/rev/mat.hpp>
-#include <gtest/gtest.h>
-#include <limits>
-
-using stan::math::check_positive_finite;
-using stan::math::var;
 
 TEST(AgradRevErrorHandlingMatrix, CheckPositiveFinite_Matrix) {
   const char* function = "check_positive_finite";
@@ -125,12 +121,6 @@ TEST(AgradRevErrorHandlingMatrix, CheckPositiveFinite_Matrix) {
       << "check_positive_finite should throw exception on NaN";
   stan::math::recover_memory();
 }
-#include <stan/math/rev/scal.hpp>
-#include <gtest/gtest.h>
-#include <limits>
-
-using stan::math::check_positive_finite;
-using stan::math::var;
 
 TEST(AgradRevErrorHandlingScalar, CheckPositiveFinite) {
   const char* function = "check_positive_finite";

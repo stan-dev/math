@@ -1,4 +1,5 @@
 #include <stan/math/rev/arr.hpp>
+#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 #include <vector>
@@ -75,12 +76,6 @@ TEST(AgradRevErrorHandlingScalar, CheckNonnegativeVarCheckVectorized) {
 
   stan::math::recover_memory();
 }
-#include <stan/math/rev/scal.hpp>
-#include <gtest/gtest.h>
-#include <limits>
-
-using stan::math::check_nonnegative;
-using stan::math::var;
 
 TEST(AgradRevErrorHandlingScalar, CheckNonnegative) {
   const char* function = "check_nonnegative";

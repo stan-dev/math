@@ -1,4 +1,6 @@
 #include <stan/math/rev/arr.hpp>
+#include <stan/math/rev/mat.hpp>
+#include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
@@ -33,12 +35,6 @@ TEST(AgradRevErrorHandlingScalar, CheckLessVarCheckVectorized) {
 
   stan::math::recover_memory();
 }
-#include <stan/math/rev/mat.hpp>
-#include <gtest/gtest.h>
-#include <limits>
-
-using stan::math::check_less;
-using stan::math::var;
 
 TEST(AgradRevErrorHandlingMatrix, CheckLess_Matrix) {
   const char* function = "check_less";
@@ -115,12 +111,6 @@ TEST(AgradRevErrorHandlingMatrix, CheckLess_Matrix) {
   EXPECT_THROW(check_less(function, "x", x, high_vec), std::domain_error);
   stan::math::recover_memory();
 }
-#include <stan/math/rev/scal.hpp>
-#include <gtest/gtest.h>
-#include <limits>
-
-using stan::math::check_less;
-using stan::math::var;
 
 TEST(AgradRevErrorHandlingScalar, CheckLess) {
   const char* function = "check_less";
