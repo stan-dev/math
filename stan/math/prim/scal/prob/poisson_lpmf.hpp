@@ -65,19 +65,19 @@ return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
   }
 
   for (size_t i = 0; i < size; i++) {
-    if (!(lambda_vec[i] == 0 && n_vec[i] == 0)) {
+    const auto& lambda_val = value_of(lambda_vec[i]);
+    if (!(lambda_val == 0 && n_vec[i] == 0)) {
       if (include_summand<propto>::value) {
         logp -= lgamma_n_plus_one[i];
       }
-      logp += multiply_log(n_vec[i], value_of(lambda_vec[i]))
-              - value_of(lambda_vec[i]);
+      logp += multiply_log(n_vec[i], lambda_val) - lambda_val;
     }
 
     if (!is_constant_all<T_rate>::value) {
-      ops_partials.edge1_.partials_[i]
-          += n_vec[i] / value_of(lambda_vec[i]) - 1.0;
+      ops_partials.edge1_.partials_[i] += n_vec[i] / lambda_val - 1.0;
     }
   }
+
   return ops_partials.build(logp);
 }
 
