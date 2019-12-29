@@ -55,7 +55,7 @@ void test_cholesky_correlation_values(
       EXPECT_FLOAT_EQ(L(m, n), x(m, n));
 
   // test transform roundtrip with Jacobian (Jacobian itself tested above)
-  double lp;
+  double lp = 0;
   Matrix<double, Dynamic, Dynamic> x2
       = stan::math::cholesky_corr_constrain(y, K, lp);
 
