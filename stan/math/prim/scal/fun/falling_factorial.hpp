@@ -4,8 +4,8 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/boost_policy.hpp>
 #include <stan/math/prim/err.hpp>
-#include <limits>
 #include <boost/math/special_functions/factorials.hpp>
+#include <limits>
 
 namespace stan {
 namespace math {
