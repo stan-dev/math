@@ -3,12 +3,11 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <cmath>
-#include <limits>
 
 namespace stan {
 namespace math {
@@ -44,13 +43,12 @@ return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
 
   // FIXME: first loop size of alpha_vec, second loop if-ed for size==1
   for (size_t i = 0; i < size; i++) {
-    if (std::numeric_limits<double>::infinity() == alpha_vec[i]) {
+    if (INFTY == alpha_vec[i]) {
       return LOG_ZERO;
     }
   }
   for (size_t i = 0; i < size; i++) {
-    if (-std::numeric_limits<double>::infinity() == alpha_vec[i]
-        && n_vec[i] != 0) {
+    if (NEGATIVE_INFTY == alpha_vec[i] && n_vec[i] != 0) {
       return LOG_ZERO;
     }
   }
@@ -66,8 +64,7 @@ return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
   }
 
   for (size_t i = 0; i < size; i++) {
-    if (!(alpha_vec[i] == -std::numeric_limits<double>::infinity()
-          && n_vec[i] == 0)) {
+    if (!(alpha_vec[i] == NEGATIVE_INFTY && n_vec[i] == 0)) {
       if (include_summand<propto>::value) {
         logp -= lgamma(n_vec[i] + 1.0);
       }

@@ -3,13 +3,13 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/beta.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
-#include <limits>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
+#include <stan/math/prim/scal/fun/value_of.hpp>
 #include <cmath>
 
 namespace stan {
@@ -47,7 +47,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_cdf(const T_y& y,
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
   for (size_t i = 0; i < stan::length(y); i++) {
-    if (value_of(y_vec[i]) == -std::numeric_limits<double>::infinity()) {
+    if (value_of(y_vec[i]) == NEGATIVE_INFTY) {
       return ops_partials.build(0.0);
     }
   }
@@ -78,7 +78,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_cdf(const T_y& y,
   for (size_t n = 0; n < N; n++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
-    if (value_of(y_vec[n]) == std::numeric_limits<double>::infinity()) {
+    if (value_of(y_vec[n]) == INFTY) {
       continue;
     }
 

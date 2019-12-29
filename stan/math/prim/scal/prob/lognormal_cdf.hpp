@@ -40,8 +40,6 @@ return_type_t<T_y, T_loc, T_scale> lognormal_cdf(const T_y& y, const T_loc& mu,
   scalar_seq_view<T_scale> sigma_vec(sigma);
   size_t N = max_size(y, mu, sigma);
 
-  const double sqrt_pi = std::sqrt(pi());
-
   for (size_t i = 0; i < stan::length(y); i++) {
     if (value_of(y_vec[i]) == 0.0) {
       return ops_partials.build(0.0);
@@ -54,7 +52,7 @@ return_type_t<T_y, T_loc, T_scale> lognormal_cdf(const T_y& y, const T_loc& mu,
     const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
     const T_partials_return scaled_diff
         = (log(y_dbl) - mu_dbl) / (sigma_dbl * SQRT_TWO);
-    const T_partials_return rep_deriv = SQRT_TWO * 0.5 / sqrt_pi
+    const T_partials_return rep_deriv = SQRT_TWO * 0.5 / SQRT_PI
                                         * exp(-scaled_diff * scaled_diff)
                                         / sigma_dbl;
 

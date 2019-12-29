@@ -3,9 +3,9 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/erfc.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <cmath>
 
@@ -40,15 +40,11 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lccdf(const T_y& y,
   scalar_seq_view<T_scale> sigma_vec(sigma);
   size_t N = max_size(y, mu, sigma);
 
-  const double sqrt_pi = std::sqrt(pi());
-
   for (size_t i = 0; i < stan::length(y); i++) {
     if (value_of(y_vec[i]) == 0.0) {
       return ops_partials.build(0.0);
     }
   }
-
-  const double log_half = std::log(0.5);
 
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
@@ -57,10 +53,10 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lccdf(const T_y& y,
     const T_partials_return scaled_diff
         = (log(y_dbl) - mu_dbl) / (sigma_dbl * SQRT_TWO);
     const T_partials_return rep_deriv
-        = SQRT_TWO / sqrt_pi * exp(-scaled_diff * scaled_diff) / sigma_dbl;
+        = SQRT_TWO / SQRT_PI * exp(-scaled_diff * scaled_diff) / sigma_dbl;
 
     const T_partials_return erfc_calc = erfc(scaled_diff);
-    ccdf_log += log_half + log(erfc_calc);
+    ccdf_log += LOG_HALF + log(erfc_calc);
 
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] -= rep_deriv / erfc_calc / y_dbl;

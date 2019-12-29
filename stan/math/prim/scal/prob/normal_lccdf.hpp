@@ -3,13 +3,12 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/erf.hpp>
 #include <stan/math/prim/scal/fun/erfc.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <cmath>
-#include <limits>
 
 namespace stan {
 namespace math {
@@ -42,7 +41,6 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lccdf(const T_y& y,
   scalar_seq_view<T_loc> mu_vec(mu);
   scalar_seq_view<T_scale> sigma_vec(sigma);
   size_t N = max_size(y, mu, sigma);
-  double log_half = std::log(0.5);
 
   const double SQRT_TWO_OVER_PI = std::sqrt(2.0 / pi());
   for (size_t n = 0; n < N; n++) {
@@ -64,12 +62,12 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lccdf(const T_y& y,
       one_m_erf = 1.0 - erf(scaled_diff);
     }
 
-    ccdf_log += log_half + log(one_m_erf);
+    ccdf_log += LOG_HALF + log(one_m_erf);
 
     if (!is_constant_all<T_y, T_loc, T_scale>::value) {
       const T_partials_return rep_deriv_div_sigma
           = scaled_diff > 8.25 * INV_SQRT_TWO
-                ? std::numeric_limits<double>::infinity()
+                ? INFTY
                 : SQRT_TWO_OVER_PI * exp(-scaled_diff * scaled_diff) / one_m_erf
                       / sigma_dbl;
       if (!is_constant_all<T_y>::value) {

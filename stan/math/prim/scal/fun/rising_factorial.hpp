@@ -5,7 +5,6 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/boost_policy.hpp>
 #include <boost/math/special_functions/factorials.hpp>
-#include <limits>
 
 namespace stan {
 namespace math {
@@ -67,6 +66,7 @@ inline return_type_t<T> rising_factorial(const T& x, int n) {
   check_nonnegative(function, "second argument", n);
   return boost::math::rising_factorial(x, n, boost_policy_t());
 }
+
 }  // namespace math
 }  // namespace stan
 #endif

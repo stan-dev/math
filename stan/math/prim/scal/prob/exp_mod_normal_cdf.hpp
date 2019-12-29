@@ -47,7 +47,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
   scalar_seq_view<T_scale> sigma_vec(sigma);
   scalar_seq_view<T_inv_scale> lambda_vec(lambda);
   size_t N = max_size(y, mu, sigma, lambda);
-  const double sqrt_pi = std::sqrt(pi());
+
   for (size_t n = 0; n < N; n++) {
     if (is_inf(y_vec[n])) {
       if (y_vec[n] < 0.0) {
@@ -70,14 +70,14 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
     const T_partials_return deriv_1
         = lambda_dbl * exp(0.5 * v_sq - u) * erf_calc;
     const T_partials_return deriv_2
-        = SQRT_TWO / sqrt_pi * 0.5
+        = SQRT_TWO / SQRT_PI * 0.5
           * exp(0.5 * v_sq
                 - (scaled_diff - (v / SQRT_TWO))
                       * (scaled_diff - (v / SQRT_TWO))
                 - u)
           / sigma_dbl;
     const T_partials_return deriv_3
-        = SQRT_TWO / sqrt_pi * 0.5 * exp(-scaled_diff_sq) / sigma_dbl;
+        = SQRT_TWO / SQRT_PI * 0.5 * exp(-scaled_diff_sq) / sigma_dbl;
 
     const T_partials_return cdf_ = 0.5 * (1 + erf(u / (v * SQRT_TWO)))
                                    - exp(-u + v_sq * 0.5) * (erf_calc);
@@ -102,7 +102,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
     if (!is_constant_all<T_inv_scale>::value) {
       ops_partials.edge4_.partials_[n]
           += exp(0.5 * v_sq - u)
-             * (SQRT_TWO / sqrt_pi * 0.5 * sigma_dbl
+             * (SQRT_TWO / SQRT_PI * 0.5 * sigma_dbl
                     * exp(-(v / SQRT_TWO - scaled_diff)
                           * (v / SQRT_TWO - scaled_diff))
                 - (v * sigma_dbl + mu_dbl - y_dbl) * erf_calc)

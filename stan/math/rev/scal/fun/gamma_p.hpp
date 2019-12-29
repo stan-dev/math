@@ -3,11 +3,11 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/scal/fun/is_inf.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/gamma_p.hpp>
-#include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_lower_inc_gamma.hpp>
-#include <limits>
+#include <stan/math/prim/scal/fun/is_inf.hpp>
+#include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <cmath>
 
 namespace stan {
@@ -24,13 +24,13 @@ class gamma_p_vv_vari : public op_vv_vari {
     using std::log;
 
     if (is_inf(avi_->val_)) {
-      avi_->adj_ += std::numeric_limits<double>::quiet_NaN();
-      bvi_->adj_ += std::numeric_limits<double>::quiet_NaN();
+      avi_->adj_ += NOT_A_NUMBER;
+      bvi_->adj_ += NOT_A_NUMBER;
       return;
     }
     if (is_inf(bvi_->val_)) {
-      avi_->adj_ += std::numeric_limits<double>::quiet_NaN();
-      bvi_->adj_ += std::numeric_limits<double>::quiet_NaN();
+      avi_->adj_ += NOT_A_NUMBER;
+      bvi_->adj_ += NOT_A_NUMBER;
       return;
     }
 
@@ -54,11 +54,11 @@ class gamma_p_vd_vari : public op_vd_vari {
       : op_vd_vari(gamma_p(avi->val_, b), avi, b) {}
   void chain() {
     if (is_inf(avi_->val_)) {
-      avi_->adj_ += std::numeric_limits<double>::quiet_NaN();
+      avi_->adj_ += NOT_A_NUMBER;
       return;
     }
     if (is_inf(bd_)) {
-      avi_->adj_ += std::numeric_limits<double>::quiet_NaN();
+      avi_->adj_ += NOT_A_NUMBER;
       return;
     }
 
@@ -78,11 +78,11 @@ class gamma_p_dv_vari : public op_dv_vari {
       : op_dv_vari(gamma_p(a, bvi->val_), a, bvi) {}
   void chain() {
     if (is_inf(ad_)) {
-      bvi_->adj_ += std::numeric_limits<double>::quiet_NaN();
+      bvi_->adj_ += NOT_A_NUMBER;
       return;
     }
     if (is_inf(bvi_->val_)) {
-      bvi_->adj_ += std::numeric_limits<double>::quiet_NaN();
+      bvi_->adj_ += NOT_A_NUMBER;
       return;
     }
 
