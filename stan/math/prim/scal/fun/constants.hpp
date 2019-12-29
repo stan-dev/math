@@ -20,25 +20,25 @@ const double E = boost::math::constants::e<double>();
  * The value of the square root of 2,
  * \f$ \sqrt{2} \f$.
  */
-const double SQRT_2 = std::sqrt(2.0);
+const double SQRT_TWO = std::sqrt(2.0);
 
 /**
  * The value of 1 over the square root of 2,
  * \f$ 1 / \sqrt{2} \f$.
  */
-const double INV_SQRT_2 = inv(SQRT_2);
+const double INV_SQRT_TWO = inv(SQRT_TWO);
 
 /**
  * The natural logarithm of 2,
  * \f$ \log 2 \f$.
  */
-const double LOG_2 = std::log(2.0);
+const double LOG_TWO = std::log(2.0);
 
 /**
  * The natural logarithm of 10,
  * \f$ \log 10 \f$.
  */
-const double LOG_10 = std::log(10.0);
+const double LOG_TEN = std::log(10.0);
 
 /**
  * Positive infinity.
@@ -89,14 +89,14 @@ inline double e() { return E; }
  *
  * @return Square root of two.
  */
-inline double sqrt2() { return SQRT_2; }
+inline double sqrt2() { return SQRT_TWO; }
 
 /**
  * Return natural logarithm of ten.
  *
  * @return Natural logarithm of ten.
  */
-inline double log10() { return LOG_10; }
+inline double log10() { return LOG_TEN; }
 
 /**
  * Return positive infinity.
@@ -129,7 +129,7 @@ inline double machine_precision() { return EPSILON; }
 
 const double SQRT_PI = std::sqrt(pi());
 
-const double SQRT_2_TIMES_SQRT_PI = SQRT_2 * SQRT_PI;
+const double SQRT_TWO_TIMES_SQRT_PI = SQRT_TWO * SQRT_PI;
 
 const double TWO_OVER_SQRT_PI = 2.0 / SQRT_PI;
 
@@ -151,7 +151,7 @@ const double LOG_ZERO = std::log(0.0);
 
 const double LOG_HALF = std::log(0.5);
 
-const double NEG_LOG_TWO = -LOG_2;
+const double NEG_LOG_TWO = -LOG_TWO;
 
 const double NEG_LOG_SQRT_TWO_PI = -std::log(SQRT_TWO_PI);
 
@@ -159,13 +159,14 @@ const double NEG_LOG_PI = -LOG_PI;
 
 const double NEG_LOG_SQRT_PI = -LOG_SQRT_PI;
 
-const double NEG_LOG_TWO_OVER_TWO = -LOG_2 / 2.0;
+const double NEG_LOG_TWO_OVER_TWO = -LOG_TWO / 2.0;
 
-const double LOG_TWO_PI = LOG_2 + LOG_PI;
+const double LOG_TWO_PI = LOG_TWO + LOG_PI;
 
 const double NEG_LOG_TWO_PI = -LOG_TWO_PI;
 
 const double LOG_EPSILON = std::log(EPSILON);
+
 }  // namespace math
 }  // namespace stan
 

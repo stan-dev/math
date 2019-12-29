@@ -56,7 +56,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lccdf(
     const T_partials_return alpha_dbl_sq = alpha_dbl * alpha_dbl;
     const T_partials_return diff = (y_dbl - mu_dbl) / sigma_dbl;
     const T_partials_return diff_sq = diff * diff;
-    const T_partials_return scaled_diff = diff / SQRT_2;
+    const T_partials_return scaled_diff = diff / SQRT_TWO;
     const T_partials_return scaled_diff_sq = diff_sq * 0.5;
     const T_partials_return ccdf_log_
         = 1.0 - 0.5 * erfc(-scaled_diff) + 2 * owens_t(diff, alpha_dbl);

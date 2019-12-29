@@ -70,7 +70,7 @@ inline double inv_Phi(double p) {
 
   if (x < 37.6) {  // gradient blows up past here
     double e = Phi(x) - p;
-    double u = e * SQRT_2_TIMES_SQRT_PI * std::exp(0.5 * square(x));
+    double u = e * SQRT_TWO_TIMES_SQRT_PI * std::exp(0.5 * square(x));
     x -= u / (1.0 + 0.5 * x * u);
   }
 
