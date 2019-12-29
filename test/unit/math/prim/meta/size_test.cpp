@@ -12,6 +12,15 @@ TEST(MathMetaPrim, size_vector) {
   using stan::math::size;
   std::vector<double> x(10);
   EXPECT_EQ(10U, size(x));
+
+  std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> x2(3);
+  EXPECT_EQ(3U, size(x2));
+
+  std::vector<Eigen::Matrix<double, 1, Eigen::Dynamic>> x3(7);
+  EXPECT_EQ(7U, size(x3));
+
+  std::vector<Eigen::Matrix<double, Eigen::Dynamic, 1>> x4(9);
+  EXPECT_EQ(9U, size(x4));
 }
 
 TEST(MathMetaPrim, size_matrices) {

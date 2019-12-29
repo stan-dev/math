@@ -21,6 +21,9 @@ TEST(MathMetaPrim, size_mvt_matrices_vectors) {
   std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> x2(3);
   EXPECT_EQ(3U, size_mvt(x2));
 
-  std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> x3(7);
+  std::vector<Eigen::Matrix<double, 1, Eigen::Dynamic>> x3(7);
   EXPECT_EQ(7U, size_mvt(x3));
+
+  std::vector<Eigen::Matrix<double, Eigen::Dynamic, 1>> x4(7);
+  EXPECT_EQ(7U, size_mvt(x4));
 }
