@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_MAT_ERR_IS_SYMMETRIC_HPP
-#define STAN_MATH_PRIM_MAT_ERR_IS_SYMMETRIC_HPP
+#ifndef STAN_MATH_PRIM_ERR_IS_SYMMETRIC_HPP
+#define STAN_MATH_PRIM_ERR_IS_SYMMETRIC_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/err/constraint_tolerance.hpp>

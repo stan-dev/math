@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_MAT_ERR_IS_LDLT_FACTOR_HPP
-#define STAN_MATH_PRIM_MAT_ERR_IS_LDLT_FACTOR_HPP
+#ifndef STAN_MATH_PRIM_ERR_IS_LDLT_FACTOR_HPP
+#define STAN_MATH_PRIM_ERR_IS_LDLT_FACTOR_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>

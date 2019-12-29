@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_MAT_ERR_CHECK_UNIT_VECTOR_HPP
-#define STAN_MATH_PRIM_MAT_ERR_CHECK_UNIT_VECTOR_HPP
+#ifndef STAN_MATH_PRIM_ERR_CHECK_UNIT_VECTOR_HPP
+#define STAN_MATH_PRIM_ERR_CHECK_UNIT_VECTOR_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/arr/err/check_nonzero_size.hpp>

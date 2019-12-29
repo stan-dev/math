@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_MAT_ERR_IS_POS_DEFINITE_HPP
-#define STAN_MATH_PRIM_MAT_ERR_IS_POS_DEFINITE_HPP
+#ifndef STAN_MATH_PRIM_ERR_IS_POS_DEFINITE_HPP
+#define STAN_MATH_PRIM_ERR_IS_POS_DEFINITE_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/is_positive.hpp>

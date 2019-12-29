@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_ARR_ERR_IS_MATCHING_SIZE_HPP
-#define STAN_MATH_PRIM_ARR_ERR_IS_MATCHING_SIZE_HPP
+#ifndef STAN_MATH_PRIM_ERR_IS_MATCHING_SIZE_HPP
+#define STAN_MATH_PRIM_ERR_IS_MATCHING_SIZE_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/is_size_match.hpp>

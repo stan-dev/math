@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_ERR_CHECK_BOUNDED_HPP
-#define STAN_MATH_PRIM_SCAL_ERR_CHECK_BOUNDED_HPP
+#ifndef STAN_MATH_PRIM_ERR_CHECK_BOUNDED_HPP
+#define STAN_MATH_PRIM_ERR_CHECK_BOUNDED_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/throw_domain_error.hpp>

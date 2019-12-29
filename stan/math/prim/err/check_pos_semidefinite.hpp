@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_MAT_ERR_CHECK_POS_SEMIDEFINITE_HPP
-#define STAN_MATH_PRIM_MAT_ERR_CHECK_POS_SEMIDEFINITE_HPP
+#ifndef STAN_MATH_PRIM_ERR_CHECK_POS_SEMIDEFINITE_HPP
+#define STAN_MATH_PRIM_ERR_CHECK_POS_SEMIDEFINITE_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/err/check_symmetric.hpp>
