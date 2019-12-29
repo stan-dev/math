@@ -5,7 +5,7 @@
 #include <stan/math/prim/mat/fun/to_vector.hpp>
 #include <stan/math/rev/mat/functor/kinsol_data.hpp>
 #include <stan/math/rev/mat/functor/algebra_system.hpp>
-#include <stan/math/prim/mat/err/check_flag_sundials.hpp>
+#include <stan/math/prim/err.hpp>
 
 #include <kinsol/kinsol.h>
 #include <sunmatrix/sunmatrix_dense.h>

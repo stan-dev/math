@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_FUN_INC_BETA_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/boost_policy.hpp>
 #include <boost/math/special_functions/beta.hpp>
 

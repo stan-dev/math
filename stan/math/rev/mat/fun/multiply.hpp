@@ -4,10 +4,9 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/mat/err/check_multiplicable.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
 #include <type_traits>
 
 namespace stan {
