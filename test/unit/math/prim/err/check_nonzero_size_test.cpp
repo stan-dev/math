@@ -5,7 +5,6 @@
 #include <limits>
 #include <vector>
 
-
 TEST(ErrorHandlingArr, checkNonzeroSizeMatrix) {
   using stan::math::check_nonzero_size;
 

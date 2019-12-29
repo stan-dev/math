@@ -4,7 +4,6 @@
 #include <limits>
 #include <vector>
 
-
 TEST(ErrorHandling, checkMatchingSizes) {
   std::vector<double> a;
   std::vector<double> b;
