@@ -8,11 +8,6 @@
 #include <limits>
 #include <vector>
 
-
-
-
-
-
 class UniformTestRig : public VectorRealRNGTestRig {
  public:
   UniformTestRig(std::vector<double> good_p1, std::vector<int> good_p1_int,

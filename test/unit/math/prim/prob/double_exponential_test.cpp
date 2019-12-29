@@ -10,8 +10,6 @@
 #include <limits>
 #include <vector>
 
-
-
 class DoubleExponentialTestRig : public VectorRealRNGTestRig {
  public:
   DoubleExponentialTestRig()
