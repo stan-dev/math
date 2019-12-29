@@ -1,4 +1,4 @@
-#include <stan/math/prim/scal/prob/wiener_log.hpp>
+#include <stan/math/prim/prob.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
