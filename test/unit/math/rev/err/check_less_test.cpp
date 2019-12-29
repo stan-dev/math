@@ -3,6 +3,7 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
 #include <vector>
+#include <limits>
 
 using stan::math::check_less;
 using stan::math::var;

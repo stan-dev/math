@@ -2,6 +2,7 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
 #include <vector>
+#include <limits>
 
 TEST(AgradRevErrorHandlingScalar, CheckNotNanVarCheckVectorized) {
   using stan::math::check_not_nan;
