@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_CORE_INIT_THREADPOOL_TBB_HPP
 #define STAN_MATH_PRIM_CORE_INIT_THREADPOOL_TBB_HPP
 
-#include <stan/math/prim/scal/err/invalid_argument.hpp>
+#include <stan/math/prim/err/invalid_argument.hpp>
 
 #include <boost/lexical_cast.hpp>
 

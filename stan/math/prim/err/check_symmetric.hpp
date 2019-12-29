@@ -2,9 +2,9 @@
 #define STAN_MATH_PRIM_ERR_CHECK_SYMMETRIC_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/throw_domain_error.hpp>
-#include <stan/math/prim/mat/err/check_square.hpp>
-#include <stan/math/prim/mat/err/constraint_tolerance.hpp>
+#include <stan/math/prim/err/throw_domain_error.hpp>
+#include <stan/math/prim/err/check_square.hpp>
+#include <stan/math/prim/err/constraint_tolerance.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/fun/abs.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>

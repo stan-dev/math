@@ -3,8 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/err/is_cholesky_factor.hpp>
-#include <stan/math/prim/mat/err/is_unit_vector.hpp>
+#include <stan/math/prim/err/is_cholesky_factor.hpp>
+#include <stan/math/prim/err/is_unit_vector.hpp>
 
 namespace stan {
 namespace math {

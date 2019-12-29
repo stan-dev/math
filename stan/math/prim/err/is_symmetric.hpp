@@ -2,8 +2,8 @@
 #define STAN_MATH_PRIM_ERR_IS_SYMMETRIC_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/mat/err/constraint_tolerance.hpp>
-#include <stan/math/prim/mat/err/is_square.hpp>
+#include <stan/math/prim/err/constraint_tolerance.hpp>
+#include <stan/math/prim/err/is_square.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <cmath>
