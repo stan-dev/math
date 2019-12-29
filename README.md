@@ -4,7 +4,7 @@ The <b>Stan Math Library</b> is a C++, reverse-mode automatic differentiation li
 
 Licensing
 ---------
-The Stan Math Library is licensed under the [new BSD license](https://github.com/stan-dev/math/blob/develop/LICENSE.md).
+The Stan Math Library is licensed under the [new BSD license](https://github.com/stan-dev/math/blob/develop/LICENSE%2Emd).
 
 The Stan Math Library depends on the Intel TBB library which is licensed under the Apache 2.0 license. This dependency implies an additional restriction as compared to the new BSD lincense alone. The Apache 2.0 license is incompatible with GPL-2 licensed code if distributed as a unitary binary. You may refer to the Apache 2.0 evaluation page on the [Stan Math wiki](https://github.com/stan-dev/math/wiki/Apache-2.0-License-Evaluation).
 
@@ -12,9 +12,9 @@ Required Libraries
 ------------------
 Stan Math depends on four libraries:
 
-- Boost (version 1.69.0): [Boost Home Page](http://www.boost.org)
-- Eigen (version 3.3.3): [Eigen Home Page](http://eigen.tuxfamily.org/index.php?title=Main_Page)
-- SUNDIALS (version 4.1.0): [Sundials Home Page](http://computation.llnl.gov/projects/sundials/sundials-software)
+- Boost (version 1.69.0): [Boost Home Page](https://www.boost.org)
+- Eigen (version 3.3.3): [Eigen Home Page](https://eigen.tuxfamily.org/index.php?title=Main_Page)
+- SUNDIALS (version 4.1.0): [Sundials Home Page](https://computation.llnl.gov/projects/sundials/sundials-software)
 - Intel TBB (version 2019_U8): [Intel TBB Home Page](https://www.threadingbuildingblocks.org)
 
 These are distributed under the `lib/` subdirectory. Only these versions of the dependent libraries have been tested with Stan Math.
@@ -22,7 +22,7 @@ These are distributed under the `lib/` subdirectory. Only these versions of the 
 Documentation
 ------------
 
-Documentation for Stan math is available at [mc-stan.org/math](http://mc-stan.org/math/)
+Documentation for Stan math is available at [mc-stan.org/math](https://mc-stan.org/math/)
 
 Installation
 ------------

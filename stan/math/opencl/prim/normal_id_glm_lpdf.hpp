@@ -191,9 +191,8 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
       logp -= N * log(forward_as<double>(sigma_val));
     }
   }
-  if (include_summand<propto, T_alpha, T_beta, T_scale>::value) {
-    logp -= 0.5 * y_scaled_sq_sum;
-  }
+  logp -= 0.5 * y_scaled_sq_sum;
+
   return ops_partials.build(logp);
 }
 
