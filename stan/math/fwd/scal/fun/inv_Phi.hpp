@@ -3,8 +3,8 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/scal/fun/inv_Phi.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/fun/inv_Phi.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <cmath>
 
@@ -15,8 +15,9 @@ template <typename T>
 inline fvar<T> inv_Phi(const fvar<T>& p) {
   using std::exp;
   T xv = inv_Phi(p.val_);
-  return fvar<T>(xv, p.d_ / exp(-0.5 * square(xv)) * SQRT_TWO_TIMES_SQRT_PI);
+  return fvar<T>(xv, p.d_ / exp(-0.5 * square(xv)) * SQRT_TWO_PI);
 }
+
 }  // namespace math
 }  // namespace stan
 #endif

@@ -129,8 +129,6 @@ inline double machine_precision() { return EPSILON; }
 
 const double SQRT_PI = std::sqrt(pi());
 
-const double SQRT_TWO_TIMES_SQRT_PI = SQRT_TWO * SQRT_PI;
-
 const double TWO_OVER_SQRT_PI = 2.0 / SQRT_PI;
 
 const double NEG_TWO_OVER_SQRT_PI = -TWO_OVER_SQRT_PI;
