@@ -36,7 +36,7 @@ namespace math {
  *
  * @tparam T Type of input vector to transform.
  * @param[in] x Vector to transform.
- * @return Unit simplex result of the softmax transform of the vector.
+ * @return log unit simplex result of the softmax transform of the vector.
  */
 template <typename T, require_t<std::is_arithmetic<scalar_type_t<T>>>...>
 inline auto log_softmax(T&& x) {

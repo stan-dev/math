@@ -12,8 +12,7 @@ namespace stan {
 namespace math {
 
 /**
- * Return the softmax of the specified vector or container of vectors. 
- * Softmax is guaranteed to return a simplex.
+ * Return the log softmax of the specified vector or container of vectors.
  *
  * @tparam T Type of input vector or matrix.
  * @param[in] x Unconstrained input vector.

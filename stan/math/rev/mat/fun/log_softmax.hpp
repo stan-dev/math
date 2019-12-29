@@ -46,8 +46,7 @@ class log_softmax_elt_vari : public vari {
 }  // namespace internal
 
 /**
- * Return the softmax of the specified Eigen vector.  Softmax is
- * guaranteed to return a simplex.
+ * Return the log softmax of the specified vector or container of vectors.
  *
  * The gradient calculations are unfolded.
  *
