@@ -1,8 +1,11 @@
 #include <stan/math/prim/arr.hpp>
+#include <stan/math/prim/mat.hpp>
+#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 #include <vector>
 #include <string>
+#include <stdexcept>
 
 using stan::math::check_not_nan;
 
@@ -47,10 +50,6 @@ TEST(ErrorHandlingArr, CheckNotNanVectorized_one_indexed_message) {
 
   EXPECT_NE(std::string::npos, message.find("[3]")) << message;
 }
-#include <stan/math/prim/mat.hpp>
-#include <gtest/gtest.h>
-#include <stdexcept>
-#include <limits>
 
 TEST(ErrorHandlingMatrix, checkNotNanEigenRow) {
   stan::math::vector_d y;
@@ -65,11 +64,6 @@ TEST(ErrorHandlingMatrix, checkNotNanEigenRow) {
   EXPECT_THROW(stan::math::check_not_nan("checkNotNanEigenRow", "y", y),
                std::domain_error);
 }
-#include <stan/math/prim/scal.hpp>
-#include <gtest/gtest.h>
-#include <limits>
-
-using stan::math::check_not_nan;
 
 TEST(ErrorHandlingScalar, CheckNotNan) {
   const char* function = "check_not_nan";

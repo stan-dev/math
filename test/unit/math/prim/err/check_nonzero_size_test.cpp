@@ -1,8 +1,10 @@
 #include <stan/math/prim/arr.hpp>
-#include <gtest/gtest.h>
+#include <stan/math/prim/mat.hpp>
 #include <test/unit/util.hpp>
+#include <gtest/gtest.h>
 #include <limits>
 #include <vector>
+
 
 TEST(ErrorHandlingArr, checkNonzeroSizeMatrix) {
   using stan::math::check_nonzero_size;
@@ -31,10 +33,6 @@ TEST(ErrorHandlingArr, checkNonzeroSizeMatrix_nan) {
   EXPECT_THROW_MSG(stan::math::check_nonzero_size("checkNonzeroSize", "a", a),
                    std::invalid_argument, "has size 0");
 }
-#include <stan/math/prim/mat.hpp>
-#include <gtest/gtest.h>
-#include <test/unit/util.hpp>
-#include <limits>
 
 TEST(ErrorHandlingMatrix, checkNonzeroSizeMatrix) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y;

@@ -1,4 +1,5 @@
 #include <stan/math/prim/mat.hpp>
+#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 #include <string>
@@ -216,11 +217,6 @@ TEST(ErrorHandlingMat, CheckGreaterOrEqual_nan) {
     }
   }
 }
-#include <stan/math/prim/scal.hpp>
-#include <gtest/gtest.h>
-#include <limits>
-
-using stan::math::check_greater_or_equal;
 
 TEST(ErrorHandlingScalar, CheckGreaterOrEqual) {
   const char* function = "check_greater_or_equal";

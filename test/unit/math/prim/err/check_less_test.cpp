@@ -1,4 +1,5 @@
 #include <stan/math/prim/mat.hpp>
+#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 #include <string>
@@ -174,11 +175,6 @@ TEST(ErrorHandlingMat, CheckLess_nan) {
     }
   }
 }
-#include <stan/math/prim/scal.hpp>
-#include <gtest/gtest.h>
-#include <limits>
-
-using stan::math::check_less;
 
 TEST(ErrorHandlingScalar, CheckLess) {
   const char* function = "check_less";

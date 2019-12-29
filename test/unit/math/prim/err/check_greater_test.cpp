@@ -1,9 +1,11 @@
 #include <stan/math/prim/mat.hpp>
+#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 #include <string>
 
 using stan::math::check_greater;
+
 TEST(ErrorHandlingMat, CheckGreater_Matrix) {
   const char* function = "check_greater";
   double x;
@@ -176,11 +178,6 @@ TEST(ErrorHandlingMat, CheckGreater_nan) {
   EXPECT_THROW(check_greater(function, "x", x, nan), std::domain_error);
   EXPECT_THROW(check_greater(function, "x", nan, nan), std::domain_error);
 }
-#include <stan/math/prim/scal.hpp>
-#include <gtest/gtest.h>
-#include <limits>
-
-using stan::math::check_greater;
 
 TEST(ErrorHandlingScalar, CheckGreater) {
   const char* function = "check_greater";

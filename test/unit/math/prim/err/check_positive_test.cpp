@@ -1,4 +1,6 @@
 #include <stan/math/prim/arr.hpp>
+#include <stan/math/prim/mat.hpp>
+#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 #include <vector>
@@ -28,9 +30,6 @@ TEST(ErrorHandlingArr, CheckPositive_nan) {
     x[i] = i;
   }
 }
-#include <stan/math/prim/mat.hpp>
-#include <gtest/gtest.h>
-#include <limits>
 
 TEST(ErrorHandlingMat, CheckPositive) {
   using stan::math::check_positive;
@@ -60,9 +59,6 @@ TEST(ErrorHandlingMat, CheckPositive_nan) {
     x_mat(i) = i;
   }
 }
-#include <stan/math/prim/scal.hpp>
-#include <gtest/gtest.h>
-#include <limits>
 
 TEST(ErrorHandlingScalar, CheckPositive) {
   using stan::math::check_positive;

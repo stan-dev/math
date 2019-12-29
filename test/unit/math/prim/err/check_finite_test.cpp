@@ -1,7 +1,10 @@
 #include <stan/math/prim/arr.hpp>
+#include <stan/math/prim/mat.hpp>
+#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 #include <vector>
+#include <string>
 
 using stan::math::check_finite;
 
@@ -38,12 +41,6 @@ TEST(ErrorHandlingArr, CheckFinite_nan) {
   x = {1, 0, nan};
   EXPECT_THROW(check_finite(function, "x", x), std::domain_error);
 }
-#include <stan/math/prim/mat.hpp>
-#include <gtest/gtest.h>
-#include <limits>
-#include <string>
-
-using stan::math::check_finite;
 
 // ---------- check_finite: matrix tests ----------
 TEST(ErrorHandlingMat, CheckFinite_Matrix) {
@@ -104,11 +101,6 @@ TEST(ErrorHandlingMat, CheckFinite_nan) {
   x_mat << 1, 0, nan;
   EXPECT_THROW(check_finite(function, "x_mat", x_mat), std::domain_error);
 }
-#include <stan/math/prim/scal.hpp>
-#include <gtest/gtest.h>
-#include <limits>
-
-using stan::math::check_finite;
 
 TEST(ErrorHandlingScalar, CheckFinite) {
   const char* function = "check_finite";

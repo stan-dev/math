@@ -1,7 +1,10 @@
 #include <stan/math/prim/arr.hpp>
+#include <stan/math/prim/mat.hpp>
+#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 #include <limits>
+#include <string>
 
 using stan::math::check_positive_finite;
 
@@ -44,12 +47,6 @@ TEST(ErrorHandlingArr, CheckPositiveFinite_nan) {
     x[i] = i;
   }
 }
-#include <stan/math/prim/mat.hpp>
-#include <gtest/gtest.h>
-#include <limits>
-#include <string>
-
-using stan::math::check_positive_finite;
 
 TEST(ErrorHandlingMat, CheckPositiveFinite_Matrix) {
   const char* function = "check_positive_finite";
@@ -155,11 +152,6 @@ TEST(ErrorHandlingMat, CheckPositiveFinite_nan) {
     x_mat(i) = i;
   }
 }
-#include <stan/math/prim/scal.hpp>
-#include <gtest/gtest.h>
-#include <limits>
-
-using stan::math::check_positive_finite;
 
 TEST(ErrorHandlingScalar, CheckPositiveFinite) {
   const char* function = "check_positive_finite";

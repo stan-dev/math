@@ -1,4 +1,5 @@
 #include <stan/math/prim/arr.hpp>
+#include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 #include <limits>
@@ -65,11 +66,6 @@ TEST(ErrorHandlingArr, CheckNonnegative_nan) {
     x[i] = i;
   }
 }
-#include <stan/math/prim/scal.hpp>
-#include <gtest/gtest.h>
-#include <limits>
-
-using stan::math::check_nonnegative;
 
 TEST(ErrorHandlingScalar, CheckNonnegative) {
   const char* function = "check_nonnegative";

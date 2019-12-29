@@ -1,4 +1,5 @@
 #include <stan/math/prim/arr.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 #include <string>
@@ -59,12 +60,6 @@ TEST(ErrorHandling, checkOrdered_nan) {
     EXPECT_THROW(check_ordered("check_ordered", "y", y), std::domain_error);
   }
 }
-#include <stan/math/prim/mat.hpp>
-#include <gtest/gtest.h>
-#include <limits>
-#include <string>
-
-using stan::math::check_ordered;
 
 TEST(ErrorHandlingMatrix, checkOrdered) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> y;
