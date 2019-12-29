@@ -6,7 +6,6 @@
 #include <stan/math/prim/mat/fun/log_sum_exp.hpp>
 #include <stan/math/prim/mat/vectorize/apply_vector_unary.hpp>
 
-
 namespace stan {
 namespace math {
 
@@ -40,7 +39,7 @@ namespace math {
  */
 template <typename T, require_t<std::is_arithmetic<scalar_type_t<T>>>...>
 inline auto log_softmax(T&& x) {
-  return apply_vector_unary<T>::apply(std::forward<T>(x), [&](auto& v){
+  return apply_vector_unary<T>::apply(std::forward<T>(x), [&](auto& v) {
     check_nonzero_size("log_softmax", "v", v);
     return (v.array() - log_sum_exp(v)).matrix();
   });

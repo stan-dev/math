@@ -15,9 +15,9 @@ void test_log_sum_exp(const Eigen::Matrix<double, R, C>& as) {
 }
 
 TEST(MathFunctions, log_sum_exp_mat) {
-  using stan::math::log_sum_exp;
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using stan::math::log_sum_exp;
 
   Matrix<double, Dynamic, Dynamic> m1(3, 2);
   m1 << 1, 2, 3, 4, 5, 6;

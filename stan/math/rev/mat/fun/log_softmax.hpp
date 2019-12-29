@@ -57,7 +57,7 @@ class log_softmax_elt_vari : public vari {
  */
 template <typename T, require_t<is_var<scalar_type_t<T>>>...>
 inline auto log_softmax(T&& x) {
-  return apply_vector_unary<T>::apply(std::forward<T>(x), [&](auto& alpha){
+  return apply_vector_unary<T>::apply(std::forward<T>(x), [&](auto& alpha) {
     const int a_size = alpha.size();
 
     check_nonzero_size("log_softmax", "alpha", alpha);
@@ -80,7 +80,7 @@ inline auto log_softmax(T&& x) {
     double* softmax_alpha_d_array
         = ChainableStack::instance_->memalloc_.alloc_array<double>(a_size);
     Eigen::Map<vector_d>(softmax_alpha_d_array, a_size)
-                                            = softmax_alpha_d.array() / sum;
+        = softmax_alpha_d.array() / sum;
 
     vector_v log_softmax_alpha(a_size);
     for (int k = 0; k < a_size; ++k) {

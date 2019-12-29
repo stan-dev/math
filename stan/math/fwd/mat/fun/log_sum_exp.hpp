@@ -26,14 +26,14 @@ namespace math {
  */
 template <typename T, require_t<is_fvar<scalar_type_t<T>>>...>
 inline auto log_sum_exp(T&& x) {
-  return apply_vector_unary<T>::reduce(std::forward<T>(x), [&](auto& v){
+  return apply_vector_unary<T>::reduce(std::forward<T>(x), [&](auto& v) {
     using T_fvar_inner = typename value_type_t<decltype(v)>::Scalar;
     using mat_type = Eigen::Matrix<T_fvar_inner, -1, -1>;
     mat_type vals = v.val();
     mat_type exp_vals = vals.array().exp();
 
-    return fvar<T_fvar_inner>(log_sum_exp(vals),
-                   v.d().cwiseProduct(exp_vals).sum() / exp_vals.sum());
+    return fvar<T_fvar_inner>(
+        log_sum_exp(vals), v.d().cwiseProduct(exp_vals).sum() / exp_vals.sum());
   });
 }
 

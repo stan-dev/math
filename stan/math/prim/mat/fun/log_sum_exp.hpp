@@ -27,7 +27,7 @@ namespace math {
  */
 template <typename T, require_t<std::is_arithmetic<scalar_type_t<T>>>...>
 inline auto log_sum_exp(T&& x) {
-  return apply_vector_unary<T>::reduce(std::forward<T>(x), [&](auto& v){
+  return apply_vector_unary<T>::reduce(std::forward<T>(x), [&](auto& v) {
     if (v.size() == 0) {
       return -std::numeric_limits<double>::infinity();
     }

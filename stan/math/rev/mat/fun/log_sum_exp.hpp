@@ -36,7 +36,7 @@ class log_sum_exp_matrix_vari : public op_matrix_vari {
  */
 template <typename T, require_t<is_var<scalar_type_t<T>>>...>
 inline auto log_sum_exp(T&& x) {
-  return apply_vector_unary<T>::reduce(std::forward<T>(x), [&](auto& v){
+  return apply_vector_unary<T>::reduce(std::forward<T>(x), [&](auto& v) {
     return var(new internal::log_sum_exp_matrix_vari(v));
   });
 }

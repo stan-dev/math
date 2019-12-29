@@ -32,11 +32,10 @@ TEST(MathMixMatFun, logSumExp) {
     stan::test::expect_ad(tols, f, x);
     Eigen::RowVectorXd rx = x;
     stan::test::expect_ad(tols, f, rx);
-    std::vector<double> stx = std::vector<double>(x.data(),
-                                                  x.data() + x.size());
+    std::vector<double> stx
+        = std::vector<double>(x.data(), x.data() + x.size());
     stan::test::expect_ad(tols, f, stx);
   }
-
 
   Eigen::MatrixXd x23(2, 2);
   x23 << 1, 2, 3, 4;
@@ -44,14 +43,12 @@ TEST(MathMixMatFun, logSumExp) {
 
   std::vector<Eigen::VectorXd> stvx{x2, x2b, x2c};
   stan::test::expect_ad(tols, f, stvx);
-  std::vector<Eigen::RowVectorXd> strx{x2.transpose(),
-                                       x2b.transpose(),
+  std::vector<Eigen::RowVectorXd> strx{x2.transpose(), x2b.transpose(),
                                        x2c.transpose()};
   stan::test::expect_ad(tols, f, strx);
   std::vector<std::vector<double>> ststx{
-    std::vector<double>(x2.data(), x2.data() + x2.size()),
-    std::vector<double>(x2b.data(), x2b.data() + x2b.size()),
-    std::vector<double>(x2c.data(), x2c.data() + x2c.size())
-  };
+      std::vector<double>(x2.data(), x2.data() + x2.size()),
+      std::vector<double>(x2b.data(), x2b.data() + x2b.size()),
+      std::vector<double>(x2c.data(), x2c.data() + x2c.size())};
   stan::test::expect_ad(tols, f, ststx);
 }
