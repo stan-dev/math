@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_OPENCL_KERNEL_CL_HPP
 #define STAN_MATH_OPENCL_KERNEL_CL_HPP
 #ifdef STAN_OPENCL
+
 #include <stan/math/opencl/buffer_types.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/opencl_context.hpp>

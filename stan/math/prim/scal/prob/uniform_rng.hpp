@@ -2,11 +2,11 @@
 #define STAN_MATH_PRIM_SCAL_PROB_UNIFORM_RNG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <boost/random/uniform_real_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
+#include <boost/random/uniform_real_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 
 namespace stan {
 namespace math {

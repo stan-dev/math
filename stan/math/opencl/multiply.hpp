@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_OPENCL_MULTIPLY_HPP
 #define STAN_MATH_OPENCL_MULTIPLY_HPP
 #ifdef STAN_OPENCL
+
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/err.hpp>
 #include <stan/math/opencl/kernels/matrix_multiply.hpp>

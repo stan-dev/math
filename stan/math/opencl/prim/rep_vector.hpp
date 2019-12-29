@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_OPENCL_PRIM_REP_VECTOR_HPP
 #define STAN_MATH_OPENCL_PRIM_REP_VECTOR_HPP
 #ifdef STAN_OPENCL
+
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>

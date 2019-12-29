@@ -1,12 +1,13 @@
 #ifndef STAN_MATH_OPENCL_CHOLESKY_DECOMPOSE_HPP
 #define STAN_MATH_OPENCL_CHOLESKY_DECOMPOSE_HPP
 #ifdef STAN_OPENCL
+
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
+#include <stan/math/opencl/err.hpp>
 #include <stan/math/opencl/multiply_transpose.hpp>
 #include <stan/math/opencl/tri_inverse.hpp>
 #include <stan/math/opencl/sub_block.hpp>
-#include <stan/math/opencl/err.hpp>
 #include <stan/math/opencl/kernels/cholesky_decompose.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/prim/transpose.hpp>

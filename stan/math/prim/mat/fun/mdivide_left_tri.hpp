@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_MDIVIDE_LEFT_TRI_HPP
 #define STAN_MATH_PRIM_MAT_FUN_MDIVIDE_LEFT_TRI_HPP
 
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/promote_common.hpp>
-#include <stan/math/prim/err.hpp>
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/opencl.hpp>
 #endif

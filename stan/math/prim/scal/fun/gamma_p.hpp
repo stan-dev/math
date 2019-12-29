@@ -4,8 +4,8 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/err.hpp>
-#include <boost/math/special_functions/gamma.hpp>
 #include <stan/math/prim/scal/fun/boost_policy.hpp>
+#include <boost/math/special_functions/gamma.hpp>
 
 namespace stan {
 namespace math {

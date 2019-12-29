@@ -2,11 +2,11 @@
 #define STAN_MATH_PRIM_SCAL_PROB_BETA_RNG_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/scal/fun/log_sum_exp.hpp>
 #include <boost/random/gamma_distribution.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/log_sum_exp.hpp>
 #include <cmath>
 
 namespace stan {

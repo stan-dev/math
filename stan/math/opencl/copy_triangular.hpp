@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_OPENCL_COPY_TRIANGULAR_HPP
 #define STAN_MATH_OPENCL_COPY_TRIANGULAR_HPP
 #ifdef STAN_OPENCL
+
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>

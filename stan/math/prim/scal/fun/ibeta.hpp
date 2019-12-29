@@ -2,8 +2,8 @@
 #define STAN_MATH_PRIM_SCAL_FUN_IBETA_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <boost/math/special_functions/beta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <boost/math/special_functions/beta.hpp>
 
 namespace stan {
 namespace math {

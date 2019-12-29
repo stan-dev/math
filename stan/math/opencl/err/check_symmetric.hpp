@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_OPENCL_ERR_CHECK_SYMMETRIC_HPP
 #define STAN_MATH_OPENCL_ERR_CHECK_SYMMETRIC_HPP
 #ifdef STAN_OPENCL
+
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
@@ -9,6 +10,7 @@
 #include <stan/math/opencl/err.hpp>
 #include <stan/math/opencl/kernels/check_symmetric.hpp>
 #include <vector>
+
 namespace stan {
 namespace math {
 /** \ingroup opencl
