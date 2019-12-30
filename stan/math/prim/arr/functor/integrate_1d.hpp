@@ -58,9 +58,7 @@ inline double integrate(const F& f, double a, double b,
   size_t levels;
   double Q = 0.0;
   if (std::isinf(a) && std::isinf(b)) {
-    auto f_wrap = [&](double x) {
-      return f(x, NOT_A_NUMBER);
-    };
+    auto f_wrap = [&](double x) { return f(x, NOT_A_NUMBER); };
     boost::math::quadrature::sinh_sinh<double> integrator;
     Q = integrator.integrate(f_wrap, relative_tolerance, &error1, &L1, &levels);
   } else if (std::isinf(a)) {
@@ -71,16 +69,12 @@ inline double integrate(const F& f, double a, double b,
      * https://www.boost.org/doc/libs/1_66_0/libs/math/doc/html/math_toolkit/double_exponential/de_caveats.html)
      */
     if (b <= 0.0) {
-      auto f_wrap = [&](double x) {
-        return f(-(x + b), NOT_A_NUMBER);
-      };
+      auto f_wrap = [&](double x) { return f(-(x + b), NOT_A_NUMBER); };
       Q = integrator.integrate(f_wrap, relative_tolerance, &error1, &L1,
                                &levels);
     } else {
       boost::math::quadrature::tanh_sinh<double> integrator_right;
-      auto f_wrap = [&](double x) {
-        return f(-x, NOT_A_NUMBER);
-      };
+      auto f_wrap = [&](double x) { return f(-x, NOT_A_NUMBER); };
       Q = integrator.integrate(f_wrap, relative_tolerance, &error1, &L1,
                                &levels)
           + integrator_right.integrate(f_wrap, -b, 0, relative_tolerance,
@@ -90,16 +84,12 @@ inline double integrate(const F& f, double a, double b,
   } else if (std::isinf(b)) {
     boost::math::quadrature::exp_sinh<double> integrator;
     if (a >= 0.0) {
-      auto f_wrap = [&](double x) {
-        return f(x + a, NOT_A_NUMBER);
-      };
+      auto f_wrap = [&](double x) { return f(x + a, NOT_A_NUMBER); };
       Q = integrator.integrate(f_wrap, relative_tolerance, &error1, &L1,
                                &levels);
     } else {
       boost::math::quadrature::tanh_sinh<double> integrator_right;
-      auto f_wrap = [&](double x) {
-        return f(x, NOT_A_NUMBER);
-      };
+      auto f_wrap = [&](double x) { return f(x, NOT_A_NUMBER); };
       Q = integrator.integrate(f_wrap, relative_tolerance, &error1, &L1,
                                &levels)
           + integrator_right.integrate(f_wrap, a, 0, relative_tolerance,
@@ -192,11 +182,12 @@ inline double integrate(const F& f, double a, double b,
  * @return numeric integral of function f
  */
 template <typename F>
-inline double integrate_1d(
-    const F& f, const double a, const double b,
-    const std::vector<double>& theta, const std::vector<double>& x_r,
-    const std::vector<int>& x_i, std::ostream* msgs,
-    const double relative_tolerance = std::sqrt(EPSILON)) {
+inline double integrate_1d(const F& f, const double a, const double b,
+                           const std::vector<double>& theta,
+                           const std::vector<double>& x_r,
+                           const std::vector<int>& x_i, std::ostream* msgs,
+                           const double relative_tolerance
+                           = std::sqrt(EPSILON)) {
   static const char* function = "integrate_1d";
   check_less_or_equal(function, "lower limit", a, b);
 
