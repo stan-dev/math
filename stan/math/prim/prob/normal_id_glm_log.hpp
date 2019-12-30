@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_MAT_PROB_NORMAL_ID_GLM_LOG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/mat/prob/normal_id_glm_lpdf.hpp>
+#include <stan/math/prim/prob/normal_id_glm_lpdf.hpp>
 
 namespace stan {
 namespace math {

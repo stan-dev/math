@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/prob/multi_normal_cholesky_lpdf.hpp>
+#include <stan/math/prim/prob/multi_normal_cholesky_lpdf.hpp>
 
 namespace stan {
 namespace math {

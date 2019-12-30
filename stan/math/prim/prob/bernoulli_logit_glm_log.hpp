@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_MAT_PROB_BERNOULLI_LOGIT_GLM_LOG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/mat/prob/bernoulli_logit_glm_lpmf.hpp>
+#include <stan/math/prim/prob/bernoulli_logit_glm_lpmf.hpp>
 
 namespace stan {
 namespace math {

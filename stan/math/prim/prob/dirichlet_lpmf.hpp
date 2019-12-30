@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_MAT_PROB_DIRICHLET_LPMF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/mat/prob/dirichlet_lpdf.hpp>
+#include <stan/math/prim/prob/dirichlet_lpdf.hpp>
 
 namespace stan {
 namespace math {

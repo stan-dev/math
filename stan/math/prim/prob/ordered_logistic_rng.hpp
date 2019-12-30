@@ -4,7 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/inv_logit.hpp>
-#include <stan/math/prim/mat/prob/categorical_rng.hpp>
+#include <stan/math/prim/prob/categorical_rng.hpp>
 #include <boost/random/variate_generator.hpp>
 
 namespace stan {

@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_MAT_PROB_ORDERED_PROBIT_LOG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/mat/prob/ordered_probit_lpmf.hpp>
+#include <stan/math/prim/prob/ordered_probit_lpmf.hpp>
 
 namespace stan {
 namespace math {

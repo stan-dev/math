@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/prob/categorical_logit_lpmf.hpp>
+#include <stan/math/prim/prob/categorical_logit_lpmf.hpp>
 #include <vector>
 
 namespace stan {
