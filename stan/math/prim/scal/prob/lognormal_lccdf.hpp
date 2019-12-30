@@ -53,7 +53,7 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lccdf(const T_y& y,
     const T_partials_return scaled_diff
         = (log(y_dbl) - mu_dbl) / (sigma_dbl * SQRT_TWO);
     const T_partials_return rep_deriv
-        = SQRT_TWO / SQRT_PI * exp(-scaled_diff * scaled_diff) / sigma_dbl;
+        = SQRT_TWO_OVER_SQRT_PI * exp(-scaled_diff * scaled_diff) / sigma_dbl;
 
     const T_partials_return erfc_calc = erfc(scaled_diff);
     ccdf_log += LOG_HALF + log(erfc_calc);

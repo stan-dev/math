@@ -4,8 +4,8 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/inv.hpp>
 #include <boost/math/constants/constants.hpp>
-#include <limits>
 #include <cmath>
+#include <limits>
 
 namespace stan {
 namespace math {
@@ -135,7 +135,7 @@ const double TWO_OVER_SQRT_PI = 2.0 / SQRT_PI;
 
 const double NEG_TWO_OVER_SQRT_PI = -TWO_OVER_SQRT_PI;
 
-const double SQRT_TWO_OVER_PI = SQRT_TWO / pi();
+const double SQRT_TWO_OVER_SQRT_PI = SQRT_TWO / SQRT_PI;
 
 const double SQRT_TWO_PI = std::sqrt(2.0 * pi());
 
