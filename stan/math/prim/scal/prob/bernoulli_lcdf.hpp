@@ -2,9 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_BERNOULLI_LCDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_bounded.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
@@ -43,20 +41,20 @@ return_type_t<T_prob> bernoulli_lcdf(const T_n& n, const T_prob& theta) {
 
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_prob> theta_vec(theta);
-  size_t size = max_size(n, theta);
+  size_t max_size_seq_view = max_size(n, theta);
 
   using std::log;
   operands_and_partials<T_prob> ops_partials(theta);
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
-  for (size_t i = 0; i < stan::length(n); i++) {
+  for (size_t i = 0; i < size(n); i++) {
     if (value_of(n_vec[i]) < 0) {
       return ops_partials.build(negative_infinity());
     }
   }
 
-  for (size_t i = 0; i < size; i++) {
+  for (size_t i = 0; i < max_size_seq_view; i++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
     if (value_of(n_vec[i]) >= 1) {

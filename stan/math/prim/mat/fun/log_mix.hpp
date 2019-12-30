@@ -5,10 +5,7 @@
 #include <stan/math/prim/mat/fun/log_sum_exp.hpp>
 #include <stan/math/prim/mat/fun/log.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
-#include <stan/math/prim/scal/err/check_bounded.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <vector>
 
@@ -45,7 +42,7 @@ return_type_t<T_theta, T_lam> log_mix(const T_theta& theta,
 
   using T_partials_vec = typename Eigen::Matrix<T_partials_return, -1, 1>;
 
-  const int N = length(theta);
+  const int N = size(theta);
 
   check_bounded(function, "theta", theta, 0, 1);
   check_not_nan(function, "lambda", lambda);
@@ -130,7 +127,7 @@ return_type_t<T_theta, std::vector<Eigen::Matrix<T_lam, R, C>>> log_mix(
 
   using T_lamvec_type = typename std::vector<Eigen::Matrix<T_lam, R, C>>;
 
-  const int N = length(lambda);
+  const int N = size(lambda);
   const int M = theta.size();
 
   check_bounded(function, "theta", theta, 0, 1);
@@ -221,7 +218,7 @@ return_type_t<T_theta, std::vector<std::vector<T_lam>>> log_mix(
   using T_partials_mat = typename Eigen::Matrix<T_partials_return, -1, -1>;
   using T_lamvec_type = typename std::vector<std::vector<T_lam>>;
 
-  const int N = length(lambda);
+  const int N = size(lambda);
   const int M = theta.size();
 
   check_bounded(function, "theta", theta, 0, 1);

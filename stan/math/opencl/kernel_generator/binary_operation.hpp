@@ -3,7 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/matrix_cl_view.hpp>
-#include <stan/math/opencl/err/check_matching_dims.hpp>
+#include <stan/math/opencl/err.hpp>
 #include <stan/math/opencl/multiply.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/opencl/kernel_generator/type_str.hpp>

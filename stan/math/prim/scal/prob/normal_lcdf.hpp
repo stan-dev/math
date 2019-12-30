@@ -2,10 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_NORMAL_LCDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/erf.hpp>
 #include <stan/math/prim/scal/fun/erfc.hpp>
@@ -57,9 +54,9 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lcdf(const T_y& y,
     const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
 
     const T_partials_return scaled_diff
-        = (y_dbl - mu_dbl) / (sigma_dbl * SQRT_2);
+        = (y_dbl - mu_dbl) / (sigma_dbl * SQRT_TWO);
 
-    const T_partials_return sigma_sqrt2 = sigma_dbl * SQRT_2;
+    const T_partials_return sigma_sqrt2 = sigma_dbl * SQRT_TWO;
     const T_partials_return x2 = square(scaled_diff);
 
     // Rigorous numerical approximations are applied here to deal with values

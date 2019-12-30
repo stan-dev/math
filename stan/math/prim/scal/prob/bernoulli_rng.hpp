@@ -2,8 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_BERNOULLI_RNG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_bounded.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
+#include <stan/math/prim/err.hpp>
 #include <boost/random/bernoulli_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 
@@ -36,7 +35,7 @@ inline typename VectorBuilder<true, int, T_theta>::type bernoulli_rng(
   check_bounded(function, "Probability parameter", theta, 0.0, 1.0);
 
   scalar_seq_view<T_theta> theta_vec(theta);
-  size_t N = length(theta);
+  size_t N = size(theta);
   VectorBuilder<true, int, T_theta> output(N);
 
   for (size_t n = 0; n < N; ++n) {

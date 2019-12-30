@@ -4,22 +4,22 @@
 
 TEST(MathMetaPrim, StdVectorBuilder_false_false_scalar) {
   using stan::StdVectorBuilder;
-  using stan::length;
+  using stan::math::size;
 
   double a_double(1);
 
-  StdVectorBuilder<false, double, double> dvv1(length(a_double));
+  StdVectorBuilder<false, double, double> dvv1(size(a_double));
   EXPECT_THROW(dvv1[0], std::logic_error);
   EXPECT_THROW(dvv1.data(), std::logic_error);
 }
 
 TEST(MathMetaPrim, StdVectorBuilder_true_false_scalar) {
   using stan::StdVectorBuilder;
-  using stan::length;
+  using stan::math::size;
 
   double a_double(1);
 
-  StdVectorBuilder<true, double, double> dvv1(length(a_double));
+  StdVectorBuilder<true, double, double> dvv1(size(a_double));
   EXPECT_FLOAT_EQ(0.0, dvv1[0]);
   EXPECT_FLOAT_EQ(0.0, dvv1[1]);
   EXPECT_FLOAT_EQ(0.0, dvv1[100]);
@@ -41,24 +41,24 @@ TEST(MathMetaPrim, StdVectorBuilder_type_check_scalar) {
 
 TEST(MathMetaPrim, StdVectorBuilder_false_false_vector) {
   using stan::StdVectorBuilder;
-  using stan::length;
+  using stan::math::size;
   using std::vector;
 
   std::vector<double> a_std_vector(3);
 
-  StdVectorBuilder<false, double, double> dvv2(length(a_std_vector));
+  StdVectorBuilder<false, double, double> dvv2(size(a_std_vector));
   EXPECT_THROW(dvv2[0], std::logic_error);
   EXPECT_THROW(dvv2.data(), std::logic_error);
 }
 
 TEST(MathMetaPrim, StdVectorBuilder_true_false_vector) {
   using stan::StdVectorBuilder;
-  using stan::length;
+  using stan::math::size;
   using std::vector;
 
   std::vector<double> a_std_vector(3);
 
-  StdVectorBuilder<true, double, double> dvv2(length(a_std_vector));
+  StdVectorBuilder<true, double, double> dvv2(size(a_std_vector));
   EXPECT_FLOAT_EQ(0.0, dvv2[0]);
   EXPECT_FLOAT_EQ(0.0, dvv2[1]);
   EXPECT_FLOAT_EQ(0.0, dvv2[2]);
@@ -83,16 +83,16 @@ TEST(MathMetaPrim, StdVectorBuilder_false_false_matrix) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::StdVectorBuilder;
-  using stan::length;
+  using stan::math::size;
 
   Matrix<double, Dynamic, 1> a_vector(4);
   Matrix<double, 1, Dynamic> a_row_vector(5);
 
-  StdVectorBuilder<false, double, double> dvv3(length(a_vector));
+  StdVectorBuilder<false, double, double> dvv3(size(a_vector));
   EXPECT_THROW(dvv3[0], std::logic_error);
   EXPECT_THROW(dvv3.data(), std::logic_error);
 
-  StdVectorBuilder<false, double, double> dvv4(length(a_row_vector));
+  StdVectorBuilder<false, double, double> dvv4(size(a_row_vector));
   EXPECT_THROW(dvv4[0], std::logic_error);
   EXPECT_THROW(dvv4.data(), std::logic_error);
 }
@@ -101,12 +101,12 @@ TEST(MathMetaPrim, StdVectorBuilder_true_false_matrix) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::StdVectorBuilder;
-  using stan::length;
+  using stan::math::size;
 
   Matrix<double, Dynamic, 1> a_vector(4);
   Matrix<double, 1, Dynamic> a_row_vector(5);
 
-  StdVectorBuilder<true, double, double> dvv3(length(a_vector));
+  StdVectorBuilder<true, double, double> dvv3(size(a_vector));
   EXPECT_FLOAT_EQ(0.0, dvv3[0]);
   EXPECT_FLOAT_EQ(0.0, dvv3[1]);
   EXPECT_FLOAT_EQ(0.0, dvv3[2]);
@@ -114,7 +114,7 @@ TEST(MathMetaPrim, StdVectorBuilder_true_false_matrix) {
   EXPECT_NO_THROW(data3 = dvv3.data());
   EXPECT_FLOAT_EQ(0.0, data3);
 
-  StdVectorBuilder<true, double, double> dvv4(length(a_row_vector));
+  StdVectorBuilder<true, double, double> dvv4(size(a_row_vector));
   EXPECT_FLOAT_EQ(0.0, dvv4[0]);
   EXPECT_FLOAT_EQ(0.0, dvv4[1]);
   EXPECT_FLOAT_EQ(0.0, dvv4[2]);
