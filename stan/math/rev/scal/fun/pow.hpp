@@ -106,8 +106,8 @@ class pow_dv_vari : public op_dv_vari {
  * @return Base raised to the exponent.
  */
 template <typename Var1, typename Var2, require_all_var_t<Var1, Var2>...>
-inline auto pow(Var1&& base, Var2&& exponent) {
-  return var(new internal::pow_vv_vari(base.vi_, exponent.vi_));
+inline var pow(Var1&& base, Var2&& exponent) {
+  return {new internal::pow_vv_vari(base.vi_, exponent.vi_)};
 }
 
 /**
@@ -143,8 +143,7 @@ inline var pow(Var&& base, Arith exponent) {
   if (exponent == -0.5) {
     return inv_sqrt(std::forward<Var>(base));
   }
-  return var(
-      new internal::pow_vd_vari(base.vi_, static_cast<double>(exponent)));
+  return {new internal::pow_vd_vari(base.vi_, exponent)};
 }
 
 /**
@@ -162,7 +161,7 @@ inline var pow(Var&& base, Arith exponent) {
 template <typename Arith, typename Var, require_var_t<Var>...,
           require_arithmetic_t<Arith>...>
 inline var pow(Arith base, Var&& exponent) {
-  return var(new internal::pow_dv_vari(base, exponent.vi_));
+  return {new internal::pow_dv_vari(base, exponent.vi_)};
 }
 
 }  // namespace math
