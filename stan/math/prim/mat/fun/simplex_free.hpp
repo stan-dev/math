@@ -2,8 +2,8 @@
 #define STAN_MATH_PRIM_MAT_FUN_SIMPLEX_FREE_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/err/check_simplex.hpp>
 #include <stan/math/prim/scal/fun/logit.hpp>
 #include <cmath>
 
@@ -18,10 +18,10 @@ namespace math {
  * <p>The simplex transform is defined through a centered
  * stick-breaking process.
  *
+ * @tparam T type of elements in the simplex
  * @param x Simplex of dimensionality K.
- * @return Free vector of dimensionality (K-1) that transfroms to
+ * @return Free vector of dimensionality (K-1) that transforms to
  * the simplex.
- * @tparam T Type of scalar.
  * @throw std::domain_error if x is not a valid simplex
  */
 template <typename T>
@@ -48,4 +48,5 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> simplex_free(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

@@ -50,8 +50,8 @@ inline bool operator&&(Var&& x, Arith y) {
  * @return conjunction of first argument and second argument's
  * value
  */
-template <typename Var, typename Arith, require_var_t<Var>...,
-          require_arithmetic_t<Arith>...>
+template <typename Arith, typename Var, require_arithmetic_t<Arith>...,
+          require_var_t<Var>...>
 inline bool operator&&(Arith x, Var&& y) {
   return x && y.val();
 }

@@ -7,8 +7,7 @@
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/prim/mat/fun/quad_form.hpp>
-#include <stan/math/prim/mat/err/check_multiplicable.hpp>
-#include <stan/math/prim/mat/err/check_square.hpp>
+#include <stan/math/prim/err.hpp>
 #include <type_traits>
 
 namespace stan {

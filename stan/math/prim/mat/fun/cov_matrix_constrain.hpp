@@ -2,14 +2,13 @@
 #define STAN_MATH_PRIM_MAT_FUN_COV_MATRIX_CONSTRAIN_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/multiply_lower_tri_self_transpose.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <cmath>
 
 namespace stan {
-
 namespace math {
 
 /**
@@ -19,6 +18,7 @@ namespace math {
  *
  * <p>See <code>cov_matrix_free()</code> for the inverse transform.
  *
+ * @tparam T type of elements in the vector
  * @param x The vector to convert to a covariance matrix.
  * @param K The number of rows and columns of the resulting
  * covariance matrix.
@@ -56,6 +56,7 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cov_matrix_constrain(
  *
  * <p>See <code>cov_matrix_free()</code> for the inverse transform.
  *
+ * @tparam T type of elements in the vector
  * @param x The vector to convert to a covariance matrix.
  * @param K The dimensions of the resulting covariance matrix.
  * @param lp Reference
@@ -86,7 +87,7 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cov_matrix_constrain(
     }
   }
   // Jacobian for complete transform, including exp() above
-  lp += (K * LOG_2);  // needless constant; want propto
+  lp += (K * LOG_TWO);  // needless constant; want propto
   for (index_t k = 0; k < K; ++k) {
     lp += (K - k + 1) * log(L(k, k));  // only +1 because index from 0
   }
@@ -95,4 +96,5 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cov_matrix_constrain(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

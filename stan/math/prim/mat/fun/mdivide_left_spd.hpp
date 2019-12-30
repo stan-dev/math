@@ -1,10 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_MDIVIDE_LEFT_SPD_HPP
 #define STAN_MATH_PRIM_MAT_FUN_MDIVIDE_LEFT_SPD_HPP
 
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/promote_common.hpp>
-#include <stan/math/prim/mat/err/check_multiplicable.hpp>
-#include <stan/math/prim/mat/err/check_pos_definite.hpp>
 
 namespace stan {
 namespace math {
@@ -12,6 +11,16 @@ namespace math {
 /**
  * Returns the solution of the system Ax=b where A is symmetric positive
  * definite.
+ *
+ * @tparam T1 type of elements in the first matrix
+ * @tparam T2 type of elements in the right-hand side matrix or vector
+ * @tparam R1 number of rows in the first matrix, can be Eigen::Dynamic
+ * @tparam C1 number of columns in the first matrix, can be Eigen::Dynamic
+ * @tparam R2 number of rows in the right-hand side matrix, can be
+ *         Eigen::Dynamic
+ * @tparam C2 number of columns in the right-hand side matrix, can be
+ *         Eigen::Dynamic
+ *
  * @param A Matrix.
  * @param b Right hand side matrix or vector.
  * @return x = A^-1 b, solution of the linear system.
@@ -33,4 +42,5 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_left_spd(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

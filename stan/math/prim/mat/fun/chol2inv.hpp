@@ -1,20 +1,20 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_CHOL2INV_HPP
 #define STAN_MATH_PRIM_MAT_FUN_CHOL2INV_HPP
 
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/dot_self.hpp>
 #include <stan/math/prim/mat/fun/dot_product.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left_tri_low.hpp>
 #include <stan/math/prim/scal/fun/inv_square.hpp>
-#include <stan/math/prim/mat/err/check_square.hpp>
-#include <stan/math/prim/mat/err/check_lower_triangular.hpp>
 
 namespace stan {
 namespace math {
 
 /**
  * Returns the inverse of the matrix whose Cholesky factor is L
- * @tparam T The scalar type of the matrix
+ *
+ * @tparam T type of elements in the matrix
  * @param L Matrix that is a Cholesky factor.
  * @return The matrix inverse of L * L'
  * @throw std::domain_error If the input matrix is not square or
@@ -50,4 +50,5 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> chol2inv(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

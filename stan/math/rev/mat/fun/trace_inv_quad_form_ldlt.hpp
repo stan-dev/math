@@ -8,7 +8,7 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/mat/fun/LDLT_alloc.hpp>
 #include <stan/math/rev/mat/fun/LDLT_factor.hpp>
-#include <stan/math/prim/mat/err/check_multiplicable.hpp>
+#include <stan/math/prim/err.hpp>
 #include <type_traits>
 
 namespace stan {

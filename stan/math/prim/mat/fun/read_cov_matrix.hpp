@@ -12,6 +12,7 @@ namespace math {
  * A generally worse alternative to call prior to evaluating the
  * density of an elliptical distribution
  *
+ * @tparam T type of elements in the arrays
  * @param CPCs on (-1, 1)
  * @param sds on (0, inf)
  * @param log_prob the log probability value to increment with the Jacobian
@@ -30,6 +31,7 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_cov_matrix(
  *
  * Builds a covariance matrix from CPCs and standard deviations
  *
+ * @tparam T type of elements in the arrays
  * @param CPCs in (-1, 1)
  * @param sds in (0, inf)
  */
@@ -45,7 +47,6 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_cov_matrix(
 }
 
 }  // namespace math
-
 }  // namespace stan
 
 #endif

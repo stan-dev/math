@@ -2,10 +2,9 @@
 #define STAN_MATH_PRIM_SCAL_FUN_RISING_FACTORIAL_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <boost/math/special_functions/factorials.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/boost_policy.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
+#include <boost/math/special_functions/factorials.hpp>
 #include <limits>
 
 namespace stan {

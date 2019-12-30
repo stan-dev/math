@@ -81,7 +81,7 @@ class multiply_vd_vari : public op_vd_vari {
  */
 template <typename Var1, typename Var2, require_all_var_t<Var1, Var2>...>
 inline var operator*(Var1&& a, Var2&& b) {
-  return var(new internal::multiply_vv_vari(a.vi_, b.vi_));
+  return {new internal::multiply_vv_vari(a.vi_, b.vi_)};
 }
 
 /**
@@ -103,7 +103,7 @@ inline var operator*(Var&& a, Arith b) {
   if (b == 1.0) {
     return a;
   }
-  return var(new internal::multiply_vd_vari(a.vi_, b));
+  return {new internal::multiply_vd_vari(a.vi_, b)};
 }
 
 /**
@@ -119,13 +119,13 @@ inline var operator*(Var&& a, Arith b) {
  * @param b Variable operand.
  * @return Variable result of multiplying the operands.
  */
-template <typename Var, typename Arith, require_var_t<Var>...,
-          require_arithmetic_t<Arith>...>
+template <typename Arith, typename Var, require_arithmetic_t<Arith>...,
+          require_var_t<Var>...>
 inline var operator*(Arith a, Var&& b) {
   if (a == 1.0) {
     return b;
   }
-  return var(new internal::multiply_vd_vari(b.vi_, a));  // by symmetry
+  return {new internal::multiply_vd_vari(b.vi_, a)};  // by symmetry
 }
 
 }  // namespace math

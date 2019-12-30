@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_SOFTMAX_HPP
 #define STAN_MATH_PRIM_MAT_FUN_SOFTMAX_HPP
 
-#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <cmath>
 
@@ -37,7 +37,7 @@ namespace math {
  * \end{array}
  * \f$
  *
- * @tparam T Scalar type of values in vector.
+ * @tparam T type of elements in the vector
  * @param[in] v Vector to transform.
  * @return Unit simplex result of the softmax transform of the vector.
  */
@@ -53,4 +53,5 @@ inline Eigen::Matrix<T, Eigen::Dynamic, 1> softmax(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

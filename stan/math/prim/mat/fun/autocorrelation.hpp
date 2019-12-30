@@ -195,4 +195,5 @@ void autocorrelation(const Eigen::MatrixBase<DerivedA>& y,
 
 }  // namespace math
 }  // namespace stan
+
 #endif

@@ -2,8 +2,7 @@
 #define STAN_MATH_PRIM_MAT_PROB_POISSON_LOG_GLM_LPMF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
@@ -64,7 +63,7 @@ return_type_t<T_x_scalar, T_alpha, T_beta> poisson_log_glm_lpmf(
       typename std::conditional_t<T_x_rows == 1, T_partials_return,
                                   Array<T_partials_return, Dynamic, 1>>;
 
-  const size_t N_instances = T_x_rows == 1 ? length(y) : x.rows();
+  const size_t N_instances = T_x_rows == 1 ? size(y) : x.rows();
   const size_t N_attributes = x.cols();
 
   check_consistent_size(function, "Vector of dependent variables", y,

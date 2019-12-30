@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_MAT_PROB_LKJ_CORR_CHOLESKY_LPDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/make_nu.hpp>
 #include <stan/math/prim/mat/prob/lkj_corr_log.hpp>
 #include <stan/math/prim/mat/fun/multiply.hpp>
@@ -39,8 +39,7 @@ return_type_t<T_covar, T_shape> lkj_corr_cholesky_lpdf(
     for (int k = 0; k < Km1; k++) {
       values(k) = (Km1 - k - 1) * log_diagonals(k);
     }
-    if ((eta == 1.0)
-        && stan::is_constant_all<typename stan::scalar_type<T_shape> >::value) {
+    if (eta == 1.0 && is_constant_all<scalar_type<T_shape>>::value) {
       lp += sum(values);
       return (lp);
     }

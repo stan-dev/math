@@ -2,10 +2,8 @@
 #define STAN_MATH_PRIM_MAT_FUN_COV_MATRIX_FREE_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/err/check_square.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
 #include <cmath>
 
 namespace stan {
@@ -26,6 +24,7 @@ namespace math {
  * function to work), the symmetric view of its lower-triangular
  * view must be positive definite.
  *
+ * @tparam T type of elements in the matrix
  * @param y Matrix of dimensions K by K such that he symmetric
  * view of the lower-triangular view is positive definite.
  * @return Vector of size K plus (K choose 2) in (-inf, inf)
@@ -62,4 +61,5 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> cov_matrix_free(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

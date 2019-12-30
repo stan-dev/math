@@ -15,7 +15,10 @@ namespace std {
  * @param a Variable to test.
  * @return <code>true</code> if value is not a number.
  */
-inline int isnan(const stan::math::var& a) { return isnan(a.val()); }
+template <typename Var, stan::require_var_t<Var>...>
+inline bool isnan(Var&& a) {
+  return isnan(a.val());
+}
 
 }  // namespace std
 #endif

@@ -2,10 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_SKEW_NORMAL_LCCDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/erf.hpp>
 #include <stan/math/prim/scal/fun/erfc.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
@@ -59,7 +56,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lccdf(
     const T_partials_return alpha_dbl_sq = alpha_dbl * alpha_dbl;
     const T_partials_return diff = (y_dbl - mu_dbl) / sigma_dbl;
     const T_partials_return diff_sq = diff * diff;
-    const T_partials_return scaled_diff = diff / SQRT_2;
+    const T_partials_return scaled_diff = diff / SQRT_TWO;
     const T_partials_return scaled_diff_sq = diff_sq * 0.5;
     const T_partials_return ccdf_log_
         = 1.0 - 0.5 * erfc(-scaled_diff) + 2 * owens_t(diff, alpha_dbl);

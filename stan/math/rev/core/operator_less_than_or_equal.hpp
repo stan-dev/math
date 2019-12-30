@@ -59,8 +59,8 @@ inline bool operator<=(Var&& a, Arith b) {
  * @return True if first value is less than or equal to the second
  * variable's value.
  */
-template <typename Var, typename Arith, require_var_t<Var>...,
-          require_arithmetic_t<Arith>...>
+template <typename Arith, typename Var, require_arithmetic_t<Arith>...,
+          require_var_t<Var>...>
 inline bool operator<=(Arith a, Var&& b) {
   return a <= b.val();
 }

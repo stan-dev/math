@@ -17,7 +17,7 @@ namespace math {
  * Extract the column indexes for non-zero value from a sparse
  * matrix.
  *
- * @tparam T Type of matrix entries.
+ * @tparam T type of elements in the matrix
  * @param A Sparse matrix.
  * @return Vector of column indexes for non-zero entries of A.
  */
@@ -36,7 +36,10 @@ const std::vector<int> csr_extract_v(
  * matrix by converting to sparse and calling the sparse matrix
  * extractor.
  *
- * @tparam T Type of matrix entries.
+ * @tparam T type of elements in the matrix
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ *
  * @param[in] A dense matrix.
  * @return Vector of column indexes to non-zero entries of A.
  */
@@ -48,6 +51,7 @@ const std::vector<int> csr_extract_v(const Eigen::Matrix<T, R, C>& A) {
 }
 
 /** @} */  // end of csr_format group
+
 }  // namespace math
 }  // namespace stan
 

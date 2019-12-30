@@ -2,9 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_BETA_BINOMIAL_LCDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/beta.hpp>
@@ -27,6 +25,7 @@ namespace math {
  * @tparam T_N type of population size parameter
  * @tparam T_size1 type of prior success parameter
  * @tparam T_size2 type of prior failure parameter
+ *
  * @param n success parameter
  * @param N population size parameter
  * @param alpha prior success parameter
@@ -60,7 +59,7 @@ return_type_t<T_size1, T_size2> beta_binomial_lcdf(const T_n& n, const T_N& N,
   scalar_seq_view<T_N> N_vec(N);
   scalar_seq_view<T_size1> alpha_vec(alpha);
   scalar_seq_view<T_size2> beta_vec(beta);
-  size_t size = max_size(n, N, alpha, beta);
+  size_t max_size_seq_view = max_size(n, N, alpha, beta);
 
   using std::exp;
   using std::log;
@@ -69,13 +68,13 @@ return_type_t<T_size1, T_size2> beta_binomial_lcdf(const T_n& n, const T_N& N,
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as neg infinity
-  for (size_t i = 0; i < stan::length(n); i++) {
-    if (value_of(n_vec[i]) <= 0) {
+  for (size_t i = 0; i < size(n); i++) {
+    if (value_of(n_vec[i]) < 0) {
       return ops_partials.build(negative_infinity());
     }
   }
 
-  for (size_t i = 0; i < size; i++) {
+  for (size_t i = 0; i < max_size_seq_view; i++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
     if (value_of(n_vec[i]) >= value_of(N_vec[i])) {

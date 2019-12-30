@@ -13,7 +13,8 @@ namespace std {
  * @param a Argument.
  * @return 1 if argument is infinite and 0 otherwise.
  */
-inline int isinf(const stan::math::var& a) {
+template <typename Var, stan::require_var_t<Var>...>
+inline bool isinf(Var&& a) {
   return stan::math::is_inf(a.val());
 }
 

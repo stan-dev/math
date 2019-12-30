@@ -1,12 +1,10 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_CSR_TO_DENSE_MATRIX_HPP
 #define STAN_MATH_PRIM_MAT_FUN_CSR_TO_DENSE_MATRIX_HPP
 
-#include <stan/math/prim/mat/err/check_range.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/csr_u_to_z.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/dot_product.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
 #include <vector>
 
 namespace stan {
@@ -18,7 +16,7 @@ namespace math {
 /**
  * Construct a dense Eigen matrix from the CSR format components.
  *
- * @tparam T Type of matrix entries.
+ * @tparam T type of elements in the matrix
  * @param[in] m Number of matrix rows.
  * @param[in] n Number of matrix columns.
  * @param[in] w Values of non-zero matrix entries.
@@ -67,4 +65,5 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> csr_to_dense_matrix(
 
 }  // namespace math
 }  // namespace stan
+
 #endif
