@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_DOUBLE_EXPONENTIAL_CDF_LOG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/prob/double_exponential_lcdf.hpp>
+#include <stan/math/prim/prob/double_exponential_lcdf.hpp>
 
 namespace stan {
 namespace math {

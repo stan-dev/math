@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_EXP_MOD_NORMAL_LOG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/prob/exp_mod_normal_lpdf.hpp>
+#include <stan/math/prim/prob/exp_mod_normal_lpdf.hpp>
 
 namespace stan {
 namespace math {

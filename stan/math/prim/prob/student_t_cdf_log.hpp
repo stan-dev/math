@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_STUDENT_T_CDF_LOG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/prob/student_t_lcdf.hpp>
+#include <stan/math/prim/prob/student_t_lcdf.hpp>
 
 namespace stan {
 namespace math {

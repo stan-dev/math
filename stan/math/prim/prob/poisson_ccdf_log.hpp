@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_POISSON_CCDF_LOG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/prob/poisson_lccdf.hpp>
+#include <stan/math/prim/prob/poisson_lccdf.hpp>
 
 namespace stan {
 namespace math {

@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_BERNOULLI_LOG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/prob/bernoulli_lpmf.hpp>
+#include <stan/math/prim/prob/bernoulli_lpmf.hpp>
 
 namespace stan {
 namespace math {

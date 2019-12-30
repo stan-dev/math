@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/prob/beta_rng.hpp>
+#include <stan/math/prim/prob/beta_rng.hpp>
 #include <stan/math/prim/mat/fun/read_corr_L.hpp>
 
 namespace stan {

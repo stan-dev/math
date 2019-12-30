@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_VON_MISES_LOG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/prob/von_mises_lpdf.hpp>
+#include <stan/math/prim/prob/von_mises_lpdf.hpp>
 
 namespace stan {
 namespace math {

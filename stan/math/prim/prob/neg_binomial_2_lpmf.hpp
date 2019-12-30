@@ -8,7 +8,7 @@
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/prob/poisson_lpmf.hpp>
+#include <stan/math/prim/prob/poisson_lpmf.hpp>
 #include <cmath>
 
 namespace stan {

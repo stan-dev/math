@@ -5,7 +5,7 @@
 #include <boost/math/distributions/hypergeometric.hpp>
 
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/prob/uniform_rng.hpp>
+#include <stan/math/prim/prob/uniform_rng.hpp>
 
 namespace stan {
 namespace math {

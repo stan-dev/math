@@ -2,7 +2,7 @@
 #include <stan/math/prim/scal.hpp>
 #include <test/unit/math/prim/prob/vector_rng_test_helper.hpp>
 #include <test/unit/math/prim/prob/VectorIntRNGTestRig.hpp>
-#include <test/unit/math/prim/scal/prob/util.hpp>
+#include <test/unit/math/prim/prob/util.hpp>
 #include <boost/math/distributions.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <gtest/gtest.h>

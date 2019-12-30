@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_CAUCHY_CCDF_LOG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/prob/cauchy_lccdf.hpp>
+#include <stan/math/prim/prob/cauchy_lccdf.hpp>
 
 namespace stan {
 namespace math {

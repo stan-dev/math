@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_BETA_BINOMIAL_CCDF_LOG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/prob/beta_binomial_lccdf.hpp>
+#include <stan/math/prim/prob/beta_binomial_lccdf.hpp>
 
 namespace stan {
 namespace math {

@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_PARETO_TYPE_2_CDF_LOG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/prob/pareto_type_2_lcdf.hpp>
+#include <stan/math/prim/prob/pareto_type_2_lcdf.hpp>
 
 namespace stan {
 namespace math {

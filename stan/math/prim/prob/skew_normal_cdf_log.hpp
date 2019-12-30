@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_SKEW_NORMAL_CDF_LOG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/prob/skew_normal_lcdf.hpp>
+#include <stan/math/prim/prob/skew_normal_lcdf.hpp>
 
 namespace stan {
 namespace math {

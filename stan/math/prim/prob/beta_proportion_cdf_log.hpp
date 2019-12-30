@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_BETA_PROPORTION_CDF_LOG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/prob/beta_proportion_lcdf.hpp>
+#include <stan/math/prim/prob/beta_proportion_lcdf.hpp>
 
 namespace stan {
 namespace math {

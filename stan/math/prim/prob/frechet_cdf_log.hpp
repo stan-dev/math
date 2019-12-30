@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_FRECHET_CDF_LOG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/prob/frechet_lcdf.hpp>
+#include <stan/math/prim/prob/frechet_lcdf.hpp>
 
 namespace stan {
 namespace math {

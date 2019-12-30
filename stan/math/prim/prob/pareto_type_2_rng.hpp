@@ -3,8 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/prob/exponential_rng.hpp>
-#include <stan/math/prim/scal/prob/normal_rng.hpp>
+#include <stan/math/prim/prob/exponential_rng.hpp>
+#include <stan/math/prim/prob/normal_rng.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>

@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_INV_CHI_SQUARE_LOG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/prob/inv_chi_square_lpdf.hpp>
+#include <stan/math/prim/prob/inv_chi_square_lpdf.hpp>
 
 namespace stan {
 namespace math {

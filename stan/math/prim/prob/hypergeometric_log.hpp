@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_HYPERGEOMETRIC_LOG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/prob/hypergeometric_lpmf.hpp>
+#include <stan/math/prim/prob/hypergeometric_lpmf.hpp>
 
 namespace stan {
 namespace math {

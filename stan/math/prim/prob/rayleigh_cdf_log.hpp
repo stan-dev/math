@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_RAYLEIGH_CDF_LOG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/prob/rayleigh_lcdf.hpp>
+#include <stan/math/prim/prob/rayleigh_lcdf.hpp>
 
 namespace stan {
 namespace math {

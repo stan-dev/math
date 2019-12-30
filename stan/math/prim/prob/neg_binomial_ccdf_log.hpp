@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_CCDF_LOG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/prob/neg_binomial_lccdf.hpp>
+#include <stan/math/prim/prob/neg_binomial_lccdf.hpp>
 
 namespace stan {
 namespace math {

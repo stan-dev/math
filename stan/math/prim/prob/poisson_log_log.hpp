@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_POISSON_LOG_LOG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/prob/poisson_log_lpmf.hpp>
+#include <stan/math/prim/prob/poisson_log_lpmf.hpp>
 
 namespace stan {
 namespace math {

@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_NORMAL_SUFFICIENT_LOG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/prob/normal_sufficient_lpdf.hpp>
+#include <stan/math/prim/prob/normal_sufficient_lpdf.hpp>
 
 namespace stan {
 namespace math {
