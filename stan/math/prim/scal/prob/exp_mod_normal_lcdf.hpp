@@ -3,10 +3,11 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/erf.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/fun/erf.hpp>
 #include <stan/math/prim/scal/fun/is_inf.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
+#include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <cmath>
 
@@ -65,20 +66,18 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf(
     const T_partials_return u = lambda_dbl * (y_dbl - mu_dbl);
     const T_partials_return v = lambda_dbl * sigma_dbl;
     const T_partials_return v_sq = v * v;
+    const T_partials_return v_over_sqrt_two = v / SQRT_TWO;
     const T_partials_return scaled_diff
         = (y_dbl - mu_dbl) / (SQRT_TWO * sigma_dbl);
     const T_partials_return scaled_diff_sq = scaled_diff * scaled_diff;
     const T_partials_return erf_calc1 = 0.5 * (1 + erf(u / (v * SQRT_TWO)));
     const T_partials_return erf_calc2
-        = 0.5 * (1 + erf(u / (v * SQRT_TWO) - v / SQRT_TWO));
+        = 0.5 * (1 + erf(u / (v * SQRT_TWO) - v_over_sqrt_two));
     const T_partials_return deriv_1
         = lambda_dbl * exp(0.5 * v_sq - u) * erf_calc2;
     const T_partials_return deriv_2
         = SQRT_TWO / SQRT_PI * 0.5
-          * exp(0.5 * v_sq
-                - (-scaled_diff + (v / SQRT_TWO))
-                      * (-scaled_diff + (v / SQRT_TWO))
-                - u)
+          * exp(0.5 * v_sq - square(-scaled_diff + v_over_sqrt_two) - u)
           / sigma_dbl;
     const T_partials_return deriv_3
         = SQRT_TWO / SQRT_PI * 0.5 * exp(-scaled_diff_sq) / sigma_dbl;
@@ -109,8 +108,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf(
       ops_partials.edge4_.partials_[n]
           += exp(0.5 * v_sq - u)
              * (SQRT_TWO / SQRT_PI * 0.5 * sigma_dbl
-                    * exp(-(v / SQRT_TWO - scaled_diff)
-                          * (v / SQRT_TWO - scaled_diff))
+                    * exp(-square(v_over_sqrt_two - scaled_diff))
                 - (v * sigma_dbl + mu_dbl - y_dbl) * erf_calc2)
              / denom;
     }
