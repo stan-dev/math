@@ -129,15 +129,17 @@ inline double machine_precision() { return EPSILON; }
 
 const double SQRT_PI = std::sqrt(pi());
 
+const double INV_SQRT_PI = inv(SQRT_PI);
+
 const double TWO_OVER_SQRT_PI = 2.0 / SQRT_PI;
 
 const double NEG_TWO_OVER_SQRT_PI = -TWO_OVER_SQRT_PI;
 
+const double SQRT_TWO_OVER_PI = SQRT_TWO / pi();
+
 const double SQRT_TWO_PI = std::sqrt(2.0 * pi());
 
 const double INV_SQRT_TWO_PI = inv(SQRT_TWO_PI);
-
-const double INV_SQRT_PI = inv(SQRT_PI);
 
 const double LOG_PI = std::log(pi());
 

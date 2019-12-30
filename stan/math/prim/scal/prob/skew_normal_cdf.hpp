@@ -45,7 +45,6 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_cdf(
   scalar_seq_view<T_scale> sigma_vec(sigma);
   scalar_seq_view<T_shape> alpha_vec(alpha);
   size_t N = max_size(y, mu, sigma, alpha);
-  const double SQRT_TWO_OVER_PI = std::sqrt(2.0 / pi());
 
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
