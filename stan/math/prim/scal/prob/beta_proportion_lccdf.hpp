@@ -76,7 +76,7 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lccdf(const T_y& y,
       digamma_kappa_mukappa(max_size(mu, kappa));
   VectorBuilder<!is_constant_all<T_loc, T_prec>::value, T_partials_return,
                 T_prec>
-      digamma_kappa(length(kappa));
+      digamma_kappa(size(kappa));
 
   if (!is_constant_all<T_loc, T_prec>::value) {
     for (size_t i = 0; i < max_size(mu, kappa); i++) {
@@ -89,7 +89,7 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lccdf(const T_y& y,
       digamma_kappa_mukappa[i] = digamma(kappa_mukappa_dbl);
     }
 
-    for (size_t i = 0; i < length(kappa); i++) {
+    for (size_t i = 0; i < size(kappa); i++) {
       digamma_kappa[i] = digamma(value_of(kappa_vec[i]));
     }
   }
