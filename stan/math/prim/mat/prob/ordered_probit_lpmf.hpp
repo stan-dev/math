@@ -2,11 +2,8 @@
 #define STAN_MATH_PRIM_MAT_PROB_ORDERED_PROBIT_LPMF_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/Phi.hpp>
-#include <stan/math/prim/scal/err/check_bounded.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_greater.hpp>
-#include <stan/math/prim/arr/err/check_ordered.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <vector>
 #include <cmath>

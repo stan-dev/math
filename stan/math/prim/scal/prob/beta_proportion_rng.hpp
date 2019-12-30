@@ -2,11 +2,8 @@
 #define STAN_MATH_PRIM_SCAL_PROB_BETA_PROPORTION_RNG_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_less.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
 
 namespace stan {
 namespace math {

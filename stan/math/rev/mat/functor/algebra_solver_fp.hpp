@@ -8,10 +8,9 @@
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/rev/mat/functor/algebra_system.hpp>
 #include <stan/math/rev/mat/functor/kinsol_data.hpp>
-#include <stan/math/prim/mat/err/check_flag_sundials.hpp>
 
 #include <kinsol/kinsol.h>
 #include <sunmatrix/sunmatrix_dense.h>
