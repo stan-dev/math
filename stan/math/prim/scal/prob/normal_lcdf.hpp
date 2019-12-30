@@ -54,9 +54,9 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lcdf(const T_y& y,
     const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
 
     const T_partials_return scaled_diff
-        = (y_dbl - mu_dbl) / (sigma_dbl * SQRT_2);
+        = (y_dbl - mu_dbl) / (sigma_dbl * SQRT_TWO);
 
-    const T_partials_return sigma_sqrt2 = sigma_dbl * SQRT_2;
+    const T_partials_return sigma_sqrt2 = sigma_dbl * SQRT_TWO;
     const T_partials_return x2 = square(scaled_diff);
 
     // Rigorous numerical approximations are applied here to deal with values
