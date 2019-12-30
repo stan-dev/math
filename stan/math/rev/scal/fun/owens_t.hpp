@@ -24,7 +24,7 @@ class owens_t_vv_vari : public op_vv_vari {
     avi_->adj_ += adj_ * erf(bvi_->val_ * avi_->val_ * INV_SQRT_TWO)
                   * std::exp(neg_avi_sq_div_2) * INV_SQRT_TWO_PI * -0.5;
     bvi_->adj_ += adj_ * std::exp(neg_avi_sq_div_2 * one_p_bvi_sq)
-                  / (one_p_bvi_sq * 2.0 * pi());
+                  / (one_p_bvi_sq * TWO_PI);
   }
 };
 
@@ -46,7 +46,7 @@ class owens_t_dv_vari : public op_dv_vari {
   void chain() {
     const double one_p_bvi_sq = 1.0 + square(bvi_->val_);
     bvi_->adj_ += adj_ * std::exp(-0.5 * square(ad_) * one_p_bvi_sq)
-                  / (one_p_bvi_sq * 2.0 * pi());
+                  / (one_p_bvi_sq * TWO_PI);
   }
 };
 }  // namespace internal

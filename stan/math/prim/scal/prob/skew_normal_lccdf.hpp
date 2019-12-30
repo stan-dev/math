@@ -66,7 +66,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lccdf(
         = SQRT_TWO_OVER_SQRT_PI * 0.5 * exp(-scaled_diff_sq) / sigma_dbl;
     const T_partials_return deriv_owens
         = erf(alpha_dbl * scaled_diff) * exp(-scaled_diff_sq)
-          / SQRT_TWO_OVER_SQRT_PI / (-2.0 * pi()) / sigma_dbl;
+          / SQRT_TWO_OVER_SQRT_PI / (-TWO_PI) / sigma_dbl;
     const T_partials_return rep_deriv
         = (-2.0 * deriv_owens + deriv_erfc) / ccdf_log_;
 
@@ -82,7 +82,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lccdf(
     if (!is_constant_all<T_shape>::value) {
       ops_partials.edge4_.partials_[n]
           -= -2.0 * exp(-0.5 * diff_sq * (1.0 + alpha_dbl_sq))
-             / ((1 + alpha_dbl_sq) * 2.0 * pi()) / ccdf_log_;
+             / ((1 + alpha_dbl_sq) * TWO_PI) / ccdf_log_;
     }
   }
   return ops_partials.build(ccdf_log);
