@@ -2,9 +2,7 @@
 #define STAN_MATH_PRIM_MAT_PROB_DIRICHLET_LPDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
-#include <stan/math/prim/mat/err/check_simplex.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/lgamma.hpp>
 #include <stan/math/prim/mat/fun/digamma.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>

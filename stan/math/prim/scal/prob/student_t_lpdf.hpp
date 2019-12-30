@@ -2,10 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_STUDENT_T_LPDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
@@ -83,36 +80,36 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
 
   VectorBuilder<include_summand<propto, T_y, T_dof, T_loc, T_scale>::value,
                 T_partials_return, T_dof>
-      half_nu(length(nu));
-  for (size_t i = 0; i < length(nu); i++) {
+      half_nu(size(nu));
+  for (size_t i = 0; i < size(nu); i++) {
     half_nu[i] = 0.5 * value_of(nu_vec[i]);
   }
 
   VectorBuilder<include_summand<propto, T_dof>::value, T_partials_return, T_dof>
-      lgamma_half_nu(length(nu));
+      lgamma_half_nu(size(nu));
   VectorBuilder<include_summand<propto, T_dof>::value, T_partials_return, T_dof>
-      lgamma_half_nu_plus_half(length(nu));
+      lgamma_half_nu_plus_half(size(nu));
   if (include_summand<propto, T_dof>::value) {
-    for (size_t i = 0; i < length(nu); i++) {
+    for (size_t i = 0; i < size(nu); i++) {
       lgamma_half_nu[i] = lgamma(half_nu[i]);
       lgamma_half_nu_plus_half[i] = lgamma(half_nu[i] + 0.5);
     }
   }
 
   VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
-      digamma_half_nu(length(nu));
+      digamma_half_nu(size(nu));
   VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
-      digamma_half_nu_plus_half(length(nu));
+      digamma_half_nu_plus_half(size(nu));
   if (!is_constant_all<T_dof>::value) {
-    for (size_t i = 0; i < length(nu); i++) {
+    for (size_t i = 0; i < size(nu); i++) {
       digamma_half_nu[i] = digamma(half_nu[i]);
       digamma_half_nu_plus_half[i] = digamma(half_nu[i] + 0.5);
     }
   }
 
   VectorBuilder<include_summand<propto, T_dof>::value, T_partials_return, T_dof>
-      log_nu(length(nu));
-  for (size_t i = 0; i < length(nu); i++) {
+      log_nu(size(nu));
+  for (size_t i = 0; i < size(nu); i++) {
     if (include_summand<propto, T_dof>::value) {
       log_nu[i] = log(value_of(nu_vec[i]));
     }
@@ -120,8 +117,8 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
 
   VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
                 T_scale>
-      log_sigma(length(sigma));
-  for (size_t i = 0; i < length(sigma); i++) {
+      log_sigma(size(sigma));
+  for (size_t i = 0; i < size(sigma); i++) {
     if (include_summand<propto, T_scale>::value) {
       log_sigma[i] = log(value_of(sigma_vec[i]));
     }

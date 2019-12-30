@@ -2,7 +2,7 @@
 #define STAN_MATH_FWD_META_OPERANDS_AND_PARTIALS_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/meta/length.hpp>
+#include <stan/math/prim/meta/size.hpp>
 #include <stan/math/prim/meta/broadcast_array.hpp>
 #include <stan/math/prim/meta/operands_and_partials.hpp>
 #include <stan/math/fwd/core/fvar.hpp>
@@ -198,9 +198,9 @@ class ops_partials_edge<Dx, std::vector<std::vector<fvar<Dx>>>> {
   using partial_t = std::vector<Dx>;
   std::vector<partial_t> partials_vec_;
   explicit ops_partials_edge(const Op& ops)
-      : partials_vec_(length(ops)), operands_(ops) {
-    for (size_t i = 0; i < length(ops); ++i) {
-      partials_vec_[i] = partial_t(length(ops[i]), 0.0);
+      : partials_vec_(stan::math::size(ops)), operands_(ops) {
+    for (size_t i = 0; i < stan::math::size(ops); ++i) {
+      partials_vec_[i] = partial_t(stan::math::size(ops[i]), 0.0);
     }
   }
 

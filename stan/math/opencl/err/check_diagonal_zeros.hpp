@@ -1,12 +1,14 @@
 #ifndef STAN_MATH_OPENCL_ERR_CHECK_DIAGONAL_ZEROS_HPP
 #define STAN_MATH_OPENCL_ERR_CHECK_DIAGONAL_ZEROS_HPP
 #ifdef STAN_OPENCL
+
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
+#include <stan/math/opencl/opencl_context.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernels/check_diagonal_zeros.hpp>
-#include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/throw_domain_error.hpp>
 #include <vector>
 
 namespace stan {

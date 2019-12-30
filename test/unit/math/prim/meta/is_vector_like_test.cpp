@@ -11,7 +11,7 @@ TEST(is_vector_like, double_pointer) {
 }
 
 TEST(is_vector_like, vector) {
-  EXPECT_TRUE(stan::is_vector_like<std::vector<double> >::value);
+  EXPECT_TRUE(stan::is_vector_like<std::vector<double>>::value);
 }
 
 TEST(is_vector_like, MatrixXd) {
@@ -19,7 +19,7 @@ TEST(is_vector_like, MatrixXd) {
 }
 
 TEST(is_vector_like, vector_of_MatrixXd) {
-  EXPECT_TRUE(stan::is_vector_like<std::vector<Eigen::MatrixXd> >::value);
+  EXPECT_TRUE(stan::is_vector_like<std::vector<Eigen::MatrixXd>>::value);
 }
 
 TEST(is_vector_like, VectorXd) {
@@ -27,7 +27,7 @@ TEST(is_vector_like, VectorXd) {
 }
 
 TEST(is_vector_like, vector_of_VectorXd) {
-  EXPECT_TRUE(stan::is_vector_like<std::vector<Eigen::VectorXd> >::value);
+  EXPECT_TRUE(stan::is_vector_like<std::vector<Eigen::VectorXd>>::value);
 }
 
 TEST(is_vector_like, RowVectorXd) {
@@ -35,5 +35,18 @@ TEST(is_vector_like, RowVectorXd) {
 }
 
 TEST(is_vector_like, vector_of_RowVectorXd) {
-  EXPECT_TRUE(stan::is_vector_like<std::vector<Eigen::RowVectorXd> >::value);
+  EXPECT_TRUE(stan::is_vector_like<std::vector<Eigen::RowVectorXd>>::value);
+}
+
+template <typename T>
+class is_vector_like_test_class {
+ public:
+  std::vector<T> blah_{1, 2, 3, 4};
+  auto operator[](T v) { return blah_[v]; }
+};
+
+TEST(is_vector_like, size_t_op) {
+  EXPECT_TRUE(stan::is_vector_like<is_vector_like_test_class<size_t>>::value);
+  EXPECT_TRUE(
+      stan::is_vector_like<is_vector_like_test_class<unsigned int>>::value);
 }

@@ -2,9 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_2_LPMF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
@@ -44,25 +42,28 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_location> mu_vec(mu);
   scalar_seq_view<T_precision> phi_vec(phi);
-  size_t size = max_size(n, mu, phi);
+  size_t max_size_seq_view = max_size(n, mu, phi);
 
   operands_and_partials<T_location, T_precision> ops_partials(mu, phi);
 
   size_t len_ep = max_size(mu, phi);
   size_t len_np = max_size(n, phi);
 
-  VectorBuilder<true, T_partials_return, T_location> mu__(length(mu));
-  for (size_t i = 0, size = length(mu); i < size; ++i) {
+  VectorBuilder<true, T_partials_return, T_location> mu__(size(mu));
+
+  for (size_t i = 0, max_size_seq_view = size(mu); i < max_size_seq_view; ++i) {
     mu__[i] = value_of(mu_vec[i]);
   }
 
-  VectorBuilder<true, T_partials_return, T_precision> phi__(length(phi));
-  for (size_t i = 0, size = length(phi); i < size; ++i) {
+  VectorBuilder<true, T_partials_return, T_precision> phi__(size(phi));
+  for (size_t i = 0, max_size_seq_view = size(phi); i < max_size_seq_view;
+       ++i) {
     phi__[i] = value_of(phi_vec[i]);
   }
 
-  VectorBuilder<true, T_partials_return, T_precision> log_phi(length(phi));
-  for (size_t i = 0, size = length(phi); i < size; ++i) {
+  VectorBuilder<true, T_partials_return, T_precision> log_phi(size(phi));
+  for (size_t i = 0, max_size_seq_view = size(phi); i < max_size_seq_view;
+       ++i) {
     log_phi[i] = log(phi__[i]);
   }
 
@@ -77,7 +78,7 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
     n_plus_phi[i] = n_vec[i] + phi__[i];
   }
 
-  for (size_t i = 0; i < size; i++) {
+  for (size_t i = 0; i < max_size_seq_view; i++) {
     if (include_summand<propto>::value) {
       logp -= lgamma(n_vec[i] + 1.0);
     }

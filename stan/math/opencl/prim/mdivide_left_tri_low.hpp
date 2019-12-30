@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_OPENCL_PRIM_MDIVIDE_LEFT_TRI_LOW_HPP
 #define STAN_MATH_OPENCL_PRIM_MDIVIDE_LEFT_TRI_LOW_HPP
 #ifdef STAN_OPENCL
-#include <stan/math/prim/mat/err/check_square.hpp>
-#include <stan/math/prim/mat/err/check_multiplicable.hpp>
+
+#include <stan/math/prim/err.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/multiply.hpp>
 #include <stan/math/opencl/tri_inverse.hpp>

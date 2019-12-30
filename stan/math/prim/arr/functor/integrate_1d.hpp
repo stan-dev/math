@@ -2,8 +2,7 @@
 #define STAN_MATH_PRIM_ARR_FUNCTOR_integrate_1d_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_less_or_equal.hpp>
-#include <stan/math/prim/scal/err/throw_domain_error.hpp>
+#include <stan/math/prim/err.hpp>
 #include <boost/math/quadrature/exp_sinh.hpp>
 #include <boost/math/quadrature/sinh_sinh.hpp>
 #include <boost/math/quadrature/tanh_sinh.hpp>

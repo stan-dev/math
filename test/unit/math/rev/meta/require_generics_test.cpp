@@ -3,6 +3,7 @@
 #include <test/unit/math/require_util.hpp>
 #include <gtest/gtest.h>
 #include <type_traits>
+#include <vector>
 #include <string>
 
 TEST(requires_rev_scal, var_test) {

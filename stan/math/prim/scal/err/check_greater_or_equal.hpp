@@ -15,7 +15,7 @@ struct greater_or_equal {
   static void check(const char* function, const char* name, const T_y& y,
                     const T_low& low) {
     scalar_seq_view<T_low> low_vec(low);
-    for (size_t n = 0; n < stan::length(low); n++) {
+    for (size_t n = 0; n < size(low); n++) {
       if (!(y >= low_vec[n])) {
         std::stringstream msg;
         msg << ", but must be greater than or equal to ";
@@ -32,7 +32,7 @@ struct greater_or_equal<T_y, T_low, true> {
   static void check(const char* function, const char* name, const T_y& y,
                     const T_low& low) {
     scalar_seq_view<T_low> low_vec(low);
-    for (size_t n = 0; n < stan::length(y); n++) {
+    for (size_t n = 0; n < size(y); n++) {
       if (!(stan::get(y, n) >= low_vec[n])) {
         std::stringstream msg;
         msg << ", but must be greater than or equal to ";
