@@ -4,8 +4,6 @@
 #include <test/unit/math/prim/scal/prob/util.hpp>
 #include <boost/math/distributions.hpp>
 #include <boost/random/mersenne_twister.hpp>
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/math/distributions.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 #include <vector>
