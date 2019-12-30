@@ -10,7 +10,7 @@
 #include <stan/math/prim/scal/fun/sum.hpp>
 #include <stan/math/prim/arr/fun/value_of_rec.hpp>
 #include <stan/math/prim/mat/fun/sum.hpp>
-#include <stan/math/prim/prob.hpp>
+#include <stan/math/prim/mat/prob/normal_id_glm_lpdf.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/kernels/normal_id_glm_lpdf.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
