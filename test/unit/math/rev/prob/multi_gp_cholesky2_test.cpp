@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/prob/expect_eq_diffs.hpp>
 #include <test/unit/math/rev/mat/prob/test_gradients.hpp>
-#include <test/unit/math/prim/mat/prob/agrad_distributions_multi_gp_cholesky.hpp>
+#include <test/unit/math/prim/prob/agrad_distributions_multi_gp_cholesky.hpp>
 #include <test/unit/math/rev/mat/util.hpp>
 #include <string>
 #include <vector>
