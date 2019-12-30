@@ -55,9 +55,9 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lccdf(const T_y& y,
     const T_partials_return mu_dbl = value_of(mu_vec[n]);
     const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
     const T_partials_return scaled_diff
-        = (log(y_dbl) - mu_dbl) / (sigma_dbl * SQRT_2);
+        = (log(y_dbl) - mu_dbl) / (sigma_dbl * SQRT_TWO);
     const T_partials_return rep_deriv
-        = SQRT_2 / sqrt_pi * exp(-scaled_diff * scaled_diff) / sigma_dbl;
+        = SQRT_TWO / sqrt_pi * exp(-scaled_diff * scaled_diff) / sigma_dbl;
 
     const T_partials_return erfc_calc = erfc(scaled_diff);
     ccdf_log += log_half + log(erfc_calc);
@@ -70,7 +70,7 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lccdf(const T_y& y,
     }
     if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n]
-          += rep_deriv * scaled_diff * SQRT_2 / erfc_calc;
+          += rep_deriv * scaled_diff * SQRT_TWO / erfc_calc;
     }
   }
   return ops_partials.build(ccdf_log);

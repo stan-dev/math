@@ -13,7 +13,7 @@ namespace internal {
 class log2_vari : public op_v_vari {
  public:
   explicit log2_vari(vari* avi) : op_v_vari(log2(avi->val_), avi) {}
-  void chain() { avi_->adj_ += adj_ / (LOG_2 * avi_->val_); }
+  void chain() { avi_->adj_ += adj_ / (LOG_TWO * avi_->val_); }
 };
 }  // namespace internal
 

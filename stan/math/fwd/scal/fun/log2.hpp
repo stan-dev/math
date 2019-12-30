@@ -21,7 +21,7 @@ inline fvar<T> log2(const fvar<T>& x) {
   if (x.val_ < 0.0) {
     return fvar<T>(NOT_A_NUMBER, NOT_A_NUMBER);
   } else {
-    return fvar<T>(log2(x.val_), x.d_ / (x.val_ * LOG_2));
+    return fvar<T>(log2(x.val_), x.d_ / (x.val_ * LOG_TWO));
   }
 }
 
