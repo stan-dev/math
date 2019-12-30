@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_FWD_MAT_FUN_MDIVIDE_LEFT_LDLT_HPP
 #define STAN_MATH_FWD_MAT_FUN_MDIVIDE_LEFT_LDLT_HPP
 
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/LDLT_factor.hpp>
-#include <stan/math/prim/mat/err/check_multiplicable.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left_ldlt.hpp>
 #include <stan/math/fwd/mat/fun/to_fvar.hpp>
 
@@ -26,8 +26,8 @@ inline Eigen::Matrix<fvar<T2>, R1, C2> mdivide_left_ldlt(
 
   Eigen::Matrix<T2, R2, C2> b_val(b.rows(), b.cols());
   Eigen::Matrix<T2, R2, C2> b_der(b.rows(), b.cols());
-  for (int i = 0; i < b.rows(); i++) {
-    for (int j = 0; j < b.cols(); j++) {
+  for (int j = 0; j < b.cols(); j++) {
+    for (int i = 0; i < b.rows(); i++) {
       b_val(i, j) = b(i, j).val_;
       b_der(i, j) = b(i, j).d_;
     }

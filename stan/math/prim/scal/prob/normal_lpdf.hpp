@@ -2,10 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_NORMAL_LPDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
@@ -64,11 +61,11 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y,
   scalar_seq_view<T_scale> sigma_vec(sigma);
   size_t N = max_size(y, mu, sigma);
 
-  VectorBuilder<true, T_partials_return, T_scale> inv_sigma(length(sigma));
+  VectorBuilder<true, T_partials_return, T_scale> inv_sigma(size(sigma));
   VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
                 T_scale>
-      log_sigma(length(sigma));
-  for (size_t i = 0; i < length(sigma); i++) {
+      log_sigma(size(sigma));
+  for (size_t i = 0; i < size(sigma); i++) {
     inv_sigma[i] = 1.0 / value_of(sigma_vec[i]);
     if (include_summand<propto, T_scale>::value) {
       log_sigma[i] = log(value_of(sigma_vec[i]));
@@ -92,9 +89,7 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y,
     if (include_summand<propto, T_scale>::value) {
       logp -= log_sigma[n];
     }
-    if (include_summand<propto, T_y, T_loc, T_scale>::value) {
-      logp += NEGATIVE_HALF * y_minus_mu_over_sigma_squared;
-    }
+    logp += NEGATIVE_HALF * y_minus_mu_over_sigma_squared;
 
     T_partials_return scaled_diff = inv_sigma[n] * y_minus_mu_over_sigma;
     if (!is_constant_all<T_y>::value) {

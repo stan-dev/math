@@ -2,11 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_PARETO_TYPE_2_LPDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/log1p.hpp>
@@ -55,35 +51,33 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
   VectorBuilder<include_summand<propto, T_y, T_loc, T_scale, T_shape>::value,
                 T_partials_return, T_y, T_loc, T_scale>
       log1p_scaled_diff(N);
-  if (include_summand<propto, T_y, T_loc, T_scale, T_shape>::value) {
-    for (size_t n = 0; n < N; n++) {
-      log1p_scaled_diff[n] = log1p((value_of(y_vec[n]) - value_of(mu_vec[n]))
-                                   / value_of(lambda_vec[n]));
-    }
+  for (size_t n = 0; n < N; n++) {
+    log1p_scaled_diff[n] = log1p((value_of(y_vec[n]) - value_of(mu_vec[n]))
+                                 / value_of(lambda_vec[n]));
   }
 
   VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
                 T_scale>
-      log_lambda(length(lambda));
+      log_lambda(size(lambda));
   if (include_summand<propto, T_scale>::value) {
-    for (size_t n = 0; n < length(lambda); n++) {
+    for (size_t n = 0; n < size(lambda); n++) {
       log_lambda[n] = log(value_of(lambda_vec[n]));
     }
   }
 
   VectorBuilder<include_summand<propto, T_shape>::value, T_partials_return,
                 T_shape>
-      log_alpha(length(alpha));
+      log_alpha(size(alpha));
   if (include_summand<propto, T_shape>::value) {
-    for (size_t n = 0; n < length(alpha); n++) {
+    for (size_t n = 0; n < size(alpha); n++) {
       log_alpha[n] = log(value_of(alpha_vec[n]));
     }
   }
 
   VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
-      inv_alpha(length(alpha));
+      inv_alpha(size(alpha));
   if (!is_constant_all<T_shape>::value) {
-    for (size_t n = 0; n < length(alpha); n++) {
+    for (size_t n = 0; n < size(alpha); n++) {
       inv_alpha[n] = 1 / value_of(alpha_vec[n]);
     }
   }

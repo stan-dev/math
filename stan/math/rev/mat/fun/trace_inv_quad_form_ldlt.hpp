@@ -8,7 +8,7 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/mat/fun/LDLT_alloc.hpp>
 #include <stan/math/rev/mat/fun/LDLT_factor.hpp>
-#include <stan/math/prim/mat/err/check_multiplicable.hpp>
+#include <stan/math/prim/err.hpp>
 #include <type_traits>
 
 namespace stan {
@@ -147,7 +147,7 @@ template <typename T2, int R2, int C2, typename T3, int R3, int C3,
           typename = require_any_var_t<T2, T3>>
 inline return_type_t<T2, T3> trace_inv_quad_form_ldlt(
     const LDLT_factor<T2, R2, C2> &A, const Eigen::Matrix<T3, R3, C3> &B) {
-  if (A.rows() == 0 && B.size() == 0) {
+  if (A.rows() == 0 && B.rows() == 0) {
     return 0;
   }
 

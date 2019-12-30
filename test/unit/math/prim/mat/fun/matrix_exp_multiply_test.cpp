@@ -34,6 +34,11 @@ TEST(MathMatrixPrimMat, matrix_exp_multiply) {
   Eigen::MatrixXd B(0, 0);
   EXPECT_EQ(stan::math::matrix_exp_multiply(A, B).size(), 0);
 
+  Eigen::MatrixXd C(0, 2);
+  Eigen::MatrixXd M = stan::math::matrix_exp_multiply(A, C);
+  EXPECT_EQ(A.rows(), M.rows());
+  EXPECT_EQ(C.cols(), M.cols());
+
   test_matrix_exp_multiply<1, 1>();
   test_matrix_exp_multiply<1, 5>();
   test_matrix_exp_multiply<5, 1>();

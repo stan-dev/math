@@ -10,7 +10,8 @@ namespace math {
 /**
  * Return product of exp(A) and B, where A is a NxN double matrix,
  * B is a NxCb double matrix, and t is a double
- * @tparam Cb Columns matrix B
+ *
+ * @tparam Cb number of columns in matrix B, can be Eigen::Dynamic
  * @param[in] A Matrix
  * @param[in] B Matrix
  * @return exponential of A multiplies B
@@ -18,15 +19,17 @@ namespace math {
 template <int Cb>
 inline Eigen::Matrix<double, -1, Cb> matrix_exp_multiply(
     const Eigen::MatrixXd& A, const Eigen::Matrix<double, -1, Cb>& B) {
-  if (A.size() == 0 && B.size() == 0)
-    return {};
+  check_square("matrix_exp_multiply", "input matrix", A);
+  if (A.size() == 0 && B.rows() == 0) {
+    return Eigen::Matrix<double, -1, Cb>(0, B.cols());
+  }
 
   check_multiplicable("matrix_exp_multiply", "A", A, "B", B);
-  check_square("matrix_exp_multiply", "input matrix", A);
 
   return matrix_exp_action_handler().action(A, B);
 }
 
 }  // namespace math
 }  // namespace stan
+
 #endif

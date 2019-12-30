@@ -2,12 +2,8 @@
 #define STAN_MATH_PRIM_MAT_PROB_MATRIX_NORMAL_PREC_RNG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/mat/err/check_pos_semidefinite.hpp>
-#include <stan/math/prim/mat/err/check_symmetric.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 
@@ -98,8 +94,8 @@ inline Eigen::MatrixXd matrix_normal_prec_rng(const Eigen::MatrixXd &Mu,
       = Sigma_ldlt.vectorD().array().inverse().sqrt().matrix();
   Eigen::VectorXd col_stddev
       = D_ldlt.vectorD().array().inverse().sqrt().matrix();
-  for (int row = 0; row < m; ++row) {
-    for (int col = 0; col < n; ++col) {
+  for (int col = 0; col < n; ++col) {
+    for (int row = 0; row < m; ++row) {
       double stddev = row_stddev(row) * col_stddev(col);
       // C(row, col) = std_normal_rng();
       X(row, col) = stddev * std_normal_rng();

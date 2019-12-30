@@ -11,8 +11,8 @@ namespace math {
  * Returns the sum of the coefficients of the specified
  * Eigen Matrix, Array or expression.
  *
- * @tparam Derived Derived argument type.
- * @param v Specified argument.
+ * @tparam Derived type of argument
+ * @param v argument
  * @return Sum of coefficients of argument.
  */
 template <typename Derived>
@@ -23,4 +23,5 @@ inline typename Eigen::DenseBase<Derived>::Scalar sum(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

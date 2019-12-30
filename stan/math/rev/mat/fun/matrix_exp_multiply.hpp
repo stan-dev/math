@@ -2,9 +2,8 @@
 #define STAN_MATH_REV_MAT_FUN_MATRIX_EXP_MULTIPLY_HPP
 
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/err/check_multiplicable.hpp>
-#include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/prim/mat/fun/matrix_exp.hpp>
 #include <stan/math/rev/mat/fun/multiply.hpp>
 #include <stan/math/rev/core.hpp>
@@ -25,11 +24,13 @@ template <typename Ta, typename Tb, int Cb>
 inline Eigen::Matrix<typename stan::return_type<Ta, Tb>::type, -1, Cb>
 matrix_exp_multiply(const Eigen::Matrix<Ta, -1, -1>& A,
                     const Eigen::Matrix<Tb, -1, Cb>& B) {
-  if (A.size() == 0 && B.size() == 0)
-    return {};
+  check_square("matrix_exp_multiply", "input matrix", A);
+  if (A.size() == 0 && B.rows() == 0) {
+    return Eigen::Matrix<typename stan::return_type_t<Ta, Tb>, -1, Cb>(
+        0, B.cols());
+  }
 
   check_multiplicable("matrix_exp_multiply", "A", A, "B", B);
-  check_square("matrix_exp_multiply", "input matrix", A);
 
   return multiply(matrix_exp(A), B);
 }

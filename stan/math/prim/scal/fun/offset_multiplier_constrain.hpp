@@ -5,8 +5,7 @@
 #include <stan/math/prim/scal/fun/identity_constrain.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/fma.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
+#include <stan/math/prim/err.hpp>
 #include <cmath>
 #include <limits>
 
@@ -91,7 +90,7 @@ inline return_type_t<T, M, S> offset_multiplier_constrain(const T& x,
     return mu + x;
   }
   check_positive_finite("offset_multiplier_constrain", "multiplier", sigma);
-  lp += multiply_log(size_of(x), sigma);
+  lp += multiply_log(size(x), sigma);
   return fma(sigma, x, mu);
 }
 

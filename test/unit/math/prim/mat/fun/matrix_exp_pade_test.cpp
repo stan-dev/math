@@ -84,3 +84,9 @@ TEST(MathMatrixPrimMat, matrix_exp_pade_100x100) {
     for (int j = 0; j < size; j++)
       EXPECT_NEAR(exp_A(i, j), expm_A(i, j), rel_err);
 }
+
+TEST(MathMatrixPrimMat, matrix_exp_pade_0x1) {
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m1(0, 1);
+
+  EXPECT_THROW(stan::math::matrix_exp_pade(m1), std::invalid_argument);
+}

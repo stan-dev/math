@@ -5,7 +5,7 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/distance.hpp>
 #include <stan/math/prim/mat/fun/divide_columns.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/distance.hpp>
 #include <cmath>
@@ -39,7 +39,7 @@ gp_exponential_cov(const std::vector<T_x> &x, const T_s &sigma,
   using std::exp;
   using std::pow;
 
-  size_t x_size = size_of(x);
+  size_t x_size = size(x);
   Eigen::Matrix<return_type_t<T_x, T_s, T_l>, Eigen::Dynamic, Eigen::Dynamic>
       cov(x_size, x_size);
   if (x_size == 0) {
@@ -47,10 +47,10 @@ gp_exponential_cov(const std::vector<T_x> &x, const T_s &sigma,
   }
 
   const char *function = "gp_exponential_cov";
-  size_t x_obs_size = size_of(x[0]);
+  size_t x_obs_size = size(x[0]);
   for (size_t i = 0; i < x_size; ++i) {
     check_size_match(function, "x row", x_obs_size, "x's other row",
-                     size_of(x[i]));
+                     size(x[i]));
   }
 
   for (size_t i = 0; i < x_size; ++i) {
@@ -97,7 +97,7 @@ gp_exponential_cov(const std::vector<Eigen::Matrix<T_x, -1, 1>> &x,
   using std::exp;
   using std::pow;
 
-  size_t x_size = size_of(x);
+  size_t x_size = size(x);
   Eigen::Matrix<return_type_t<T_x, T_s, T_l>, Eigen::Dynamic, Eigen::Dynamic>
       cov(x_size, x_size);
   if (x_size == 0) {
@@ -159,8 +159,8 @@ gp_exponential_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   using std::exp;
   using std::pow;
 
-  size_t x1_size = size_of(x1);
-  size_t x2_size = size_of(x2);
+  size_t x1_size = size(x1);
+  size_t x2_size = size(x2);
   Eigen::Matrix<return_type_t<T_x1, T_x2, T_s, T_l>, Eigen::Dynamic,
                 Eigen::Dynamic>
       cov(x1_size, x2_size);
@@ -169,14 +169,14 @@ gp_exponential_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   }
 
   const char *function = "gp_exponential_cov";
-  size_t x1_obs_size = size_of(x1[0]);
+  size_t x1_obs_size = size(x1[0]);
   for (size_t i = 0; i < x1_size; ++i) {
     check_size_match(function, "x1's row", x1_obs_size, "x1's other row",
-                     size_of(x1[i]));
+                     size(x1[i]));
   }
   for (size_t i = 0; i < x2_size; ++i) {
     check_size_match(function, "x1's row", x1_obs_size, "x2's other row",
-                     size_of(x2[i]));
+                     size(x2[i]));
   }
 
   for (size_t n = 0; n < x1_size; ++n) {
@@ -229,9 +229,9 @@ gp_exponential_cov(const std::vector<Eigen::Matrix<T_x1, -1, 1>> &x1,
   using std::exp;
   using std::pow;
 
-  size_t x1_size = size_of(x1);
-  size_t x2_size = size_of(x2);
-  size_t l_size = size_of(length_scale);
+  size_t x1_size = size(x1);
+  size_t x2_size = size(x2);
+  size_t l_size = size(length_scale);
   Eigen::Matrix<return_type_t<T_x1, T_x2, T_s, T_l>, Eigen::Dynamic,
                 Eigen::Dynamic>
       cov(x1_size, x2_size);
@@ -251,11 +251,11 @@ gp_exponential_cov(const std::vector<Eigen::Matrix<T_x1, -1, 1>> &x1,
   check_positive_finite(function, "length scale", length_scale);
 
   for (size_t i = 0; i < x1_size; ++i) {
-    check_size_match(function, "x1's row", size_of(x1[i]),
+    check_size_match(function, "x1's row", size(x1[i]),
                      "number of length scales", l_size);
   }
   for (size_t i = 0; i < x2_size; ++i) {
-    check_size_match(function, "x2's row", size_of(x2[i]),
+    check_size_match(function, "x2's row", size(x2[i]),
                      "number of length scales", l_size);
   }
 

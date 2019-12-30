@@ -1,9 +1,8 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_SQUARED_DISTANCE_HPP
 #define STAN_MATH_PRIM_MAT_FUN_SQUARED_DISTANCE_HPP
 
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/err/check_vector.hpp>
-#include <stan/math/prim/arr/err/check_matching_sizes.hpp>
 #include <stan/math/prim/scal/fun/squared_distance.hpp>
 
 namespace stan {
@@ -13,8 +12,8 @@ namespace math {
  * Returns the squared distance between the specified vectors
  * of the same dimensions.
  *
- * @tparam R Rows at compile time of vector inputs
- * @tparam C columns at compile time of vector inputs
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
  * @param v1 First vector.
  * @param v2 Second vector.
  * @return Dot product of the vectors.
@@ -34,10 +33,11 @@ inline double squared_distance(const Eigen::Matrix<double, R, C>& v1,
  * Returns the squared distance between the specified vectors
  * of the same dimensions.
  *
- * @tparam R1 Rows at compile time of first vector input
- * @tparam C1 Columns at compile time of first vector input
- * @tparam R2 Rows at compile time of second vector input
- * @tparam C2 Columns at compile time of second vector input
+ * @tparam R1 number of rows in the first vector, can be Eigen::Dynamic
+ * @tparam C1 number of columns in the first vector, can be Eigen::Dynamic
+ * @tparam R2 number of rows in the second vector, can be Eigen::Dynamic
+ * @tparam C2 number of columns in the second vector, can be Eigen::Dynamic
+ *
  * @param v1 First vector.
  * @param v2 Second vector.
  * @return Dot product of the vectors.
@@ -55,4 +55,5 @@ inline double squared_distance(const Eigen::Matrix<double, R1, C1>& v1,
 
 }  // namespace math
 }  // namespace stan
+
 #endif

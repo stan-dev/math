@@ -2,8 +2,9 @@
 #define STAN_MATH_OPENCL_ERR_CHECK_OPENCL_HPP
 #ifdef STAN_OPENCL
 
-#include <stan/math/prim/scal/err/system_error.hpp>
-#include <cl.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
+#include <CL/cl2.hpp>
 #include <iostream>
 #include <stdexcept>
 #include <string>

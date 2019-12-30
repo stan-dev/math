@@ -2,10 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_UNIFORM_CDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_greater.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 
@@ -66,17 +63,17 @@ return_type_t<T_y, T_low, T_high> uniform_cdf(const T_y& y, const T_low& alpha,
   }
 
   if (!is_constant_all<T_y>::value) {
-    for (size_t n = 0; n < stan::length(y); ++n) {
+    for (size_t n = 0; n < size(y); ++n) {
       ops_partials.edge1_.partials_[n] *= cdf;
     }
   }
   if (!is_constant_all<T_low>::value) {
-    for (size_t n = 0; n < stan::length(alpha); ++n) {
+    for (size_t n = 0; n < size(alpha); ++n) {
       ops_partials.edge2_.partials_[n] *= cdf;
     }
   }
   if (!is_constant_all<T_high>::value) {
-    for (size_t n = 0; n < stan::length(beta); ++n) {
+    for (size_t n = 0; n < size(beta); ++n) {
       ops_partials.edge3_.partials_[n] *= cdf;
     }
   }

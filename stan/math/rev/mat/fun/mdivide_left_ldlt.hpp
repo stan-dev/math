@@ -3,11 +3,11 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/rev/mat/fun/LDLT_alloc.hpp>
 #include <stan/math/rev/mat/fun/LDLT_factor.hpp>
-#include <stan/math/prim/mat/err/check_multiplicable.hpp>
 
 namespace stan {
 namespace math {
@@ -178,9 +178,8 @@ template <int R1, int C1, int R2, int C2>
 inline Eigen::Matrix<var, R1, C2> mdivide_left_ldlt(
     const LDLT_factor<var, R1, C1> &A, const Eigen::Matrix<var, R2, C2> &b) {
   Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
-
   if (A.cols() == 0 && b.rows() == 0) {
-    return {};
+    return res;
   }
 
   check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);
@@ -205,7 +204,7 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_ldlt(
     const LDLT_factor<var, R1, C1> &A, const Eigen::Matrix<double, R2, C2> &b) {
   Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
   if (A.cols() == 0 && b.rows() == 0) {
-    return {};
+    return res;
   }
 
   check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);
@@ -230,7 +229,7 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_ldlt(
     const LDLT_factor<double, R1, C1> &A, const Eigen::Matrix<var, R2, C2> &b) {
   Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
   if (A.cols() == 0 && b.rows() == 0) {
-    return {};
+    return res;
   }
 
   check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);

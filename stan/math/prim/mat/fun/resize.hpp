@@ -35,9 +35,9 @@ void resize(std::vector<T>& x, const std::vector<int>& dims, int pos) {
  * which must bottom out at scalar values, Eigen vectors
  * or Eigen matrices.
  *
+ * @tparam T type of object being resized
  * @param x Array-like object to resize.
  * @param dims New dimensions.
- * @tparam T Type of object being resized.
  */
 template <typename T>
 inline void resize(T& x, std::vector<int> dims) {
@@ -46,4 +46,5 @@ inline void resize(T& x, std::vector<int> dims) {
 
 }  // namespace math
 }  // namespace stan
+
 #endif

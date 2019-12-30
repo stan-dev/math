@@ -9,8 +9,9 @@ namespace math {
 
 /**
  * Structure to wrap asin() so it can be vectorized.
- * @param x Argument variable.
- * @tparam T Argument type.
+ *
+ * @tparam T type of argument
+ * @param x argument
  * @return Arcsine of x in radians.
  */
 struct asin_fun {
@@ -23,8 +24,9 @@ struct asin_fun {
 
 /**
  * Vectorized version of asin().
- * @param x Container of variables.
- * @tparam T Container type.
+ *
+ * @tparam T type of container
+ * @param x container
  * @return Arcsine of each variable in the container, in radians.
  */
 template <typename T>

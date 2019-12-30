@@ -1,16 +1,15 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_CSR_MATRIX_TIMES_VECTOR_HPP
 #define STAN_MATH_PRIM_MAT_FUN_CSR_MATRIX_TIMES_VECTOR_HPP
 
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/csr_u_to_z.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/dot_product.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
-#include <stan/math/prim/mat/err/check_range.hpp>
 #include <vector>
 
 namespace stan {
 namespace math {
+
 /**
  * @defgroup csr_format Compressed Sparse Row matrix format.
  *  A compressed Sparse Row (CSR) sparse matrix is defined by four
@@ -50,8 +49,8 @@ namespace math {
  * column index of each value), the integer array u (containing
  * one-based indexes of where each row starts in w).
  *
- * @tparam T1 Type of sparse matrix entries.
- * @tparam T2 Type of dense vector entries.
+ * @tparam T1 type of elements in the sparse matrix
+ * @tparam T2 type of elements in the dense vector
  * @param m Number of rows in matrix.
  * @param n Number of columns in matrix.
  * @param w Vector of non-zero values in matrix.
@@ -111,4 +110,5 @@ csr_matrix_times_vector(int m, int n,
 
 }  // namespace math
 }  // namespace stan
+
 #endif

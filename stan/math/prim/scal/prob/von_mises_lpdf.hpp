@@ -2,9 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_VON_MISES_LPDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/log_modified_bessel_first_kind.hpp>
 #include <stan/math/prim/scal/fun/modified_bessel_first_kind.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
@@ -54,11 +52,11 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
   scalar_seq_view<T_loc> mu_vec(mu);
   scalar_seq_view<T_scale> kappa_vec(kappa);
 
-  VectorBuilder<true, T_partials_return, T_scale> kappa_dbl(length(kappa));
+  VectorBuilder<true, T_partials_return, T_scale> kappa_dbl(size(kappa));
   VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
                 T_scale>
-      log_bessel0(length(kappa));
-  for (size_t i = 0; i < length(kappa); i++) {
+      log_bessel0(size(kappa));
+  for (size_t i = 0; i < size(kappa); i++) {
     kappa_dbl[i] = value_of(kappa_vec[i]);
     if (include_summand<propto, T_scale>::value) {
       log_bessel0[i]
@@ -92,9 +90,7 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
     if (include_summand<propto, T_scale>::value) {
       logp -= log_bessel0[n];
     }
-    if (include_summand<propto, T_y, T_loc, T_scale>::value) {
-      logp += kappa_cos;
-    }
+    logp += kappa_cos;
 
     if (!y_const) {
       ops_partials.edge1_.partials_[n] += kappa_sin;

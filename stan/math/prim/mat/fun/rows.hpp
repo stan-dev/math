@@ -10,9 +10,10 @@ namespace math {
  * Return the number of rows in the specified
  * matrix, vector, or row vector.
  *
- * @tparam T Type of matrix entries.
- * @tparam R Row type of matrix.
- * @tparam C Column type of matrix.
+ * @tparam T type of elements in the matrix
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ *
  * @param[in] m Input matrix, vector, or row vector.
  * @return Number of rows.
  */
@@ -23,4 +24,5 @@ inline int rows(const Eigen::Matrix<T, R, C>& m) {
 
 }  // namespace math
 }  // namespace stan
+
 #endif

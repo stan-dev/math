@@ -6,7 +6,6 @@
 #include <stan/math/prim/meta/bool_constant.hpp>
 #include <stan/math/prim/meta/conjunction.hpp>
 #include <stan/math/prim/meta/is_vector.hpp>
-#include <stan/math/prim/meta/is_constant.hpp>
 #include <stan/math/prim/meta/require_generics.hpp>
 #include <type_traits>
 #include <vector>

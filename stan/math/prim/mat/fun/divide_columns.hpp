@@ -2,25 +2,23 @@
 #define STAN_MATH_PRIM_MAT_FUN_DIVIDE_COLUMNS_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/fun/divide.hpp>
 #include <vector>
 
 namespace stan {
 namespace math {
+
 /**
  * Takes Stan data type vector[n] x[D] and divides column
  * vector in x element-wise by the values in vec
  *
  * @tparam T_x Type of dividend
  * @tparam T_v Scalar type of divisor
- * @tparam R   Row type of Eigen Matrices
- * @tparam C   Column type of Eigen Matrices
- *
  * @param x    std::vector of matrices
  * @param vec  std::vector of divisors
  * @throw std::invalid argument if D != length of vector
- *
  */
 template <typename T_x, typename T_v>
 inline typename std::vector<
@@ -43,6 +41,7 @@ divide_columns(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
   }
   return out;
 }
+
 }  // namespace math
 }  // namespace stan
 

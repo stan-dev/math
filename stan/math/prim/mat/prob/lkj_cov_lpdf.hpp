@@ -2,10 +2,7 @@
 #define STAN_MATH_PRIM_MAT_PROB_LKJ_COV_LPDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
-#include <stan/math/prim/mat/err/check_square.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/prob/lognormal_lpdf.hpp>
 #include <stan/math/prim/mat/prob/lkj_corr_lpdf.hpp>
 
@@ -32,11 +29,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_lpdf(
   check_positive(function, "Shape parameter", eta);
   check_finite(function, "Location parameter", mu);
   check_finite(function, "Scale parameter", sigma);
-  for (int m = 0; m < y.rows(); ++m) {
-    for (int n = 0; n < y.cols(); ++n) {
-      check_finite(function, "Covariance matrix", y(m, n));
-    }
-  }
+  check_finite(function, "Covariance matrix", y);
 
   const unsigned int K = y.rows();
   const Eigen::Array<T_y, Eigen::Dynamic, 1> sds = y.diagonal().array().sqrt();
@@ -77,6 +70,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_lpdf(
   check_positive(function, "Shape parameter", eta);
   check_finite(function, "Location parameter", mu);
   check_finite(function, "Scale parameter", sigma);
+  check_finite(function, "Covariance matrix", y);
 
   const unsigned int K = y.rows();
   const Eigen::Array<T_y, Eigen::Dynamic, 1> sds = y.diagonal().array().sqrt();

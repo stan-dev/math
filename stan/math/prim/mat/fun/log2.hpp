@@ -15,7 +15,7 @@ struct log2_fun {
   /**
    * Return the base two logarithm of the specified argument.
    *
-   * @tparam T argument type
+   * @tparam T type of argument
    * @param x argument
    * @return base two log of the argument
    */
@@ -31,7 +31,7 @@ struct log2_fun {
  * underlying scalar argument type to double if it is an integer,
  * and otherwise is the argument type.
  *
- * @tparam T container type
+ * @tparam T type of container
  * @param x container
  * @return elementwise log2 of container elements
  */

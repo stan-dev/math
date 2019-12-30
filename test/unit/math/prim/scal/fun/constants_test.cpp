@@ -4,13 +4,13 @@
 
 TEST(MathsConstants, e) { EXPECT_FLOAT_EQ(std::exp(1.0), stan::math::E); }
 TEST(MathsConstants, sqrt2) {
-  EXPECT_FLOAT_EQ(std::sqrt(2.0), stan::math::SQRT_2);
+  EXPECT_FLOAT_EQ(std::sqrt(2.0), stan::math::SQRT_TWO);
 }
 TEST(MathsConstants, log2) {
-  EXPECT_FLOAT_EQ(std::log(2.0), stan::math::LOG_2);
+  EXPECT_FLOAT_EQ(std::log(2.0), stan::math::LOG_TWO);
 }
 TEST(MathsConstants, log10) {
-  EXPECT_FLOAT_EQ(std::log(10.0), stan::math::LOG_10);
+  EXPECT_FLOAT_EQ(std::log(10.0), stan::math::LOG_TEN);
 }
 
 TEST(MathsConstants, infty) {
