@@ -63,7 +63,7 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_cdf(const T_y& y,
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
-  for (size_t i = 0; i < stan::length(y); i++) {
+  for (size_t i = 0; i < size(y); i++) {
     if (value_of(y_vec[i]) == 0) {
       return ops_partials.build(0.0);
     }
@@ -73,12 +73,12 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_cdf(const T_y& y,
   using std::pow;
 
   VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
-      gamma_vec(stan::length(alpha));
+      gamma_vec(size(alpha));
   VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
-      digamma_vec(stan::length(alpha));
+      digamma_vec(size(alpha));
 
   if (!is_constant_all<T_shape>::value) {
-    for (size_t i = 0; i < stan::length(alpha); i++) {
+    for (size_t i = 0; i < size(alpha); i++) {
       const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
       gamma_vec[i] = tgamma(alpha_dbl);
       digamma_vec[i] = digamma(alpha_dbl);
@@ -119,17 +119,17 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_cdf(const T_y& y,
   }
 
   if (!is_constant_all<T_y>::value) {
-    for (size_t n = 0; n < stan::length(y); ++n) {
+    for (size_t n = 0; n < size(y); ++n) {
       ops_partials.edge1_.partials_[n] *= P;
     }
   }
   if (!is_constant_all<T_shape>::value) {
-    for (size_t n = 0; n < stan::length(alpha); ++n) {
+    for (size_t n = 0; n < size(alpha); ++n) {
       ops_partials.edge2_.partials_[n] *= P;
     }
   }
   if (!is_constant_all<T_inv_scale>::value) {
-    for (size_t n = 0; n < stan::length(beta); ++n) {
+    for (size_t n = 0; n < size(beta); ++n) {
       ops_partials.edge3_.partials_[n] *= P;
     }
   }

@@ -45,7 +45,7 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lccdf(
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
-  for (size_t i = 0; i < stan::length(y); i++) {
+  for (size_t i = 0; i < size(y); i++) {
     if (value_of(y_vec[i]) == 0) {
       return ops_partials.build(0.0);
     }
@@ -56,12 +56,12 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lccdf(
   using std::pow;
 
   VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
-      gamma_vec(stan::length(nu));
+      gamma_vec(size(nu));
   VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
-      digamma_vec(stan::length(nu));
+      digamma_vec(size(nu));
 
   if (!is_constant_all<T_dof>::value) {
-    for (size_t i = 0; i < stan::length(nu); i++) {
+    for (size_t i = 0; i < size(nu); i++) {
       const T_partials_return half_nu_dbl = 0.5 * value_of(nu_vec[i]);
       gamma_vec[i] = tgamma(half_nu_dbl);
       digamma_vec[i] = digamma(half_nu_dbl);

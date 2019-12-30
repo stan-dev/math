@@ -52,11 +52,11 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
   scalar_seq_view<T_loc> mu_vec(mu);
   scalar_seq_view<T_scale> kappa_vec(kappa);
 
-  VectorBuilder<true, T_partials_return, T_scale> kappa_dbl(length(kappa));
+  VectorBuilder<true, T_partials_return, T_scale> kappa_dbl(size(kappa));
   VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
                 T_scale>
-      log_bessel0(length(kappa));
-  for (size_t i = 0; i < length(kappa); i++) {
+      log_bessel0(size(kappa));
+  for (size_t i = 0; i < size(kappa); i++) {
     kappa_dbl[i] = value_of(kappa_vec[i]);
     if (include_summand<propto, T_scale>::value) {
       log_bessel0[i]

@@ -46,7 +46,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lcdf(const T_y& y,
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
-  for (size_t i = 0; i < stan::length(y); i++) {
+  for (size_t i = 0; i < size(y); i++) {
     if (value_of(y_vec[i]) == NEGATIVE_INFTY) {
       return ops_partials.build(negative_infinity());
     }
@@ -59,16 +59,16 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lcdf(const T_y& y,
   T_partials_return digammaHalf = 0;
 
   VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
-      digamma_vec(stan::length(nu));
+      digamma_vec(size(nu));
   VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
-      digammaNu_vec(stan::length(nu));
+      digammaNu_vec(size(nu));
   VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
-      digammaNuPlusHalf_vec(stan::length(nu));
+      digammaNuPlusHalf_vec(size(nu));
 
   if (!is_constant_all<T_dof>::value) {
     digammaHalf = digamma(0.5);
 
-    for (size_t i = 0; i < stan::length(nu); i++) {
+    for (size_t i = 0; i < size(nu); i++) {
       const T_partials_return nu_dbl = value_of(nu_vec[i]);
 
       digammaNu_vec[i] = digamma(0.5 * nu_dbl);

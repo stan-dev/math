@@ -74,17 +74,17 @@ return_type_t<T_y, T_loc, T_scale> gumbel_cdf(const T_y& y, const T_loc& mu,
   }
 
   if (!is_constant_all<T_y>::value) {
-    for (size_t n = 0; n < stan::length(y); ++n) {
+    for (size_t n = 0; n < size(y); ++n) {
       ops_partials.edge1_.partials_[n] *= cdf;
     }
   }
   if (!is_constant_all<T_loc>::value) {
-    for (size_t n = 0; n < stan::length(mu); ++n) {
+    for (size_t n = 0; n < size(mu); ++n) {
       ops_partials.edge2_.partials_[n] *= cdf;
     }
   }
   if (!is_constant_all<T_scale>::value) {
-    for (size_t n = 0; n < stan::length(beta); ++n) {
+    for (size_t n = 0; n < size(beta); ++n) {
       ops_partials.edge3_.partials_[n] *= cdf;
     }
   }

@@ -59,7 +59,7 @@ ordered_logistic_glm_lpmf(
 
   const size_t N_instances = x_cl.rows();
   const size_t N_attributes = x_cl.cols();
-  const size_t N_classes = length(cuts) + 1;
+  const size_t N_classes = size(cuts) + 1;
 
   if (y_cl.size() != 1) {
     check_size_match(function, "Rows of ", "x_cl", N_instances, "rows of ",
