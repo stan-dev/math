@@ -51,7 +51,7 @@ class neg_vari : public op_v_vari {
  */
 template <typename Var, require_var_t<Var>...>
 inline var operator-(Var&& a) {
-  return var(new internal::neg_vari(a.vi_));
+  return {new internal::neg_vari(a.vi_)};
 }
 
 }  // namespace math

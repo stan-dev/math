@@ -13,11 +13,11 @@ namespace stan {
 namespace math {
 
 namespace internal {
-// (a/b)' = a' * (1 / b) - b' * (a / [b * b])
+// (dividend/divisor)' = dividend' * (1 / divisor) - divisor' * (dividend / [divisor * divisor])
 class divide_vv_vari : public op_vv_vari {
  public:
-  divide_vv_vari(vari* avi, vari* bvi)
-      : op_vv_vari(avi->val_ / bvi->val_, avi, bvi) {}
+  divide_vv_vari(vari* dividend_vi, vari* divisor_vi)
+      : op_vv_vari(dividend_vi->val_ / divisor_vi->val_, dividend_vi, divisor_vi) {}
   void chain() {
     if (unlikely(is_any_nan(avi_->val_, bvi_->val_))) {
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
@@ -31,7 +31,7 @@ class divide_vv_vari : public op_vv_vari {
 
 class divide_vd_vari : public op_vd_vari {
  public:
-  divide_vd_vari(vari* avi, double b) : op_vd_vari(avi->val_ / b, avi, b) {}
+  divide_vd_vari(vari* dividend_vi, double divisor) : op_vd_vari(dividend_vi->val_ / divisor, dividend_vi, divisor) {}
   void chain() {
     if (unlikely(is_any_nan(avi_->val_, bd_))) {
       avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
@@ -43,7 +43,7 @@ class divide_vd_vari : public op_vd_vari {
 
 class divide_dv_vari : public op_dv_vari {
  public:
-  divide_dv_vari(double a, vari* bvi) : op_dv_vari(a / bvi->val_, a, bvi) {}
+  divide_dv_vari(double dividend, vari* divisor_vi) : op_dv_vari(dividend / divisor_vi->val_, dividend, divisor_vi) {}
   void chain() { bvi_->adj_ -= adj_ * ad_ / (bvi_->val_ * bvi_->val_); }
 };
 }  // namespace internal
@@ -83,14 +83,14 @@ class divide_dv_vari : public op_dv_vari {
  *
  * @tparam Var1 value type of a var
  * @tparam Var2 value type of a var
- * @param a First variable operand.
- * @param b Second variable operand.
+ * @param dividend First variable operand.
+ * @param divisor Second variable operand.
  * @return Variable result of dividing the first variable by the
  * second.
  */
 template <typename Var1, typename Var2, require_all_var_t<Var1, Var2>...>
-inline auto operator/(Var1&& a, Var2&& b) {
-  return var(new internal::divide_vv_vari(a.vi_, b.vi_));
+inline var operator/(Var1&& dividend, Var2&& divisor) {
+  return {new internal::divide_vv_vari(dividend.vi_, divisor.vi_)};
 }
 
 /**
@@ -102,17 +102,17 @@ inline auto operator/(Var1&& a, Var2&& b) {
  *
  * @tparam Var value type of a var
  * @tparam Arith An arithmetic type
- * @param a Variable operand.
- * @param b Scalar operand.
+ * @param dividend Variable operand.
+ * @param divisor Scalar operand.
  * @return Variable result of dividing the variable by the scalar.
  */
 template <typename Var, typename Arith, require_var_t<Var>...,
           require_arithmetic_t<Arith>...>
-inline var operator/(Var&& a, Arith b) {
-  if (b == 1.0) {
-    return a;
+inline var operator/(Var&& dividend, Arith divisor) {
+  if (divisor == 1.0) {
+    return dividend;
   }
-  return var(new internal::divide_vd_vari(a.vi_, b));
+  return {new internal::divide_vd_vari(dividend.vi_, divisor)};
 }
 
 /**
@@ -124,14 +124,14 @@ inline var operator/(Var&& a, Arith b) {
  *
  * @tparam Arith An arithmetic type
  * @tparam Var value type of a var
- * @param a Scalar operand.
- * @param b Variable operand.
- * @return Variable result of dividing the scalar by the variable.
+ * @param dividend Scalar operand.
+ * @param divisor Variable operand.
+ * @return Quotient of the dividend and divisor.
  */
 template <typename Arith, typename Var, require_arithmetic_t<Arith>...,
           require_var_t<Var>...>
-inline auto operator/(Arith a, Var&& b) {
-  return var(new internal::divide_dv_vari(a, b.vi_));
+inline var operator/(Arith dividend, Var&& divisor) {
+  return {new internal::divide_dv_vari(dividend, divisor.vi_)};
 }
 
 }  // namespace math

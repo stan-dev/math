@@ -45,7 +45,7 @@ namespace math {
 template <typename Var, require_var_t<Var>...>
 inline var operator+(Var&& a) {
   if (unlikely(is_nan(a.vi_->val_))) {
-    return var(new precomp_v_vari(NOT_A_NUMBER, a.vi_, NOT_A_NUMBER));
+    return {new precomp_v_vari(NOT_A_NUMBER, a.vi_, NOT_A_NUMBER)};
   }
   return a;
 }
