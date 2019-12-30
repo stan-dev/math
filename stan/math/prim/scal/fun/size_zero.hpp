@@ -16,7 +16,7 @@ namespace math {
  */
 template <typename T>
 inline bool size_zero(T& x) {
-  return !length(x);
+  return !size(x);
 }
 
 /**

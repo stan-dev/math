@@ -2,8 +2,8 @@
 #define STAN_MATH_PRIM_MAT_FUN_CORR_MATRIX_CONSTRAIN_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/fun/corr_constrain.hpp>
 #include <stan/math/prim/mat/fun/read_corr_matrix.hpp>
 #include <stdexcept>

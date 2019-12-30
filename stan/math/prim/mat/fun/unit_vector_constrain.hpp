@@ -1,11 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_UNIT_VECTOR_CONSTRAIN_HPP
 #define STAN_MATH_PRIM_MAT_FUN_UNIT_VECTOR_CONSTRAIN_HPP
 
-#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
-#include <stan/math/prim/mat/err/check_vector.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/dot_self.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <cmath>
 
 namespace stan {

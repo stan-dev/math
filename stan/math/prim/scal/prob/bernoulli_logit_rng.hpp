@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/inv_logit.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
+#include <stan/math/prim/err.hpp>
 #include <boost/random/bernoulli_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 
@@ -34,7 +34,7 @@ inline typename VectorBuilder<true, int, T_t>::type bernoulli_logit_rng(
                t);
 
   scalar_seq_view<T_t> t_vec(t);
-  size_t N = length(t);
+  size_t N = size(t);
   VectorBuilder<true, int, T_t> output(N);
 
   for (size_t n = 0; n < N; ++n) {

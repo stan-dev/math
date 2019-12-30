@@ -98,10 +98,9 @@ template <typename Arith, typename VecVar, typename VecArith,
           require_vector_like_vt<is_var, VecVar>...,
           require_vector_like_vt<std::is_arithmetic, VecArith>...>
 inline var precomputed_gradients(Arith value, VecVar&& operands,
-                                  VecArith&& gradients) {
-  return {new precomputed_gradients_vari(value,
-                                            std::forward<VecVar>(operands),
-                                            std::forward<VecArith>(gradients))};
+                                 VecArith&& gradients) {
+  return {new precomputed_gradients_vari(value, std::forward<VecVar>(operands),
+                                         std::forward<VecArith>(gradients))};
 }
 }  // namespace math
 }  // namespace stan

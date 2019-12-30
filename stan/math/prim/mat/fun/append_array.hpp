@@ -2,12 +2,11 @@
 #define STAN_MATH_PRIM_MAT_FUN_APPEND_ARRAY_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/dims.hpp>
 #include <stan/math/prim/mat/fun/resize.hpp>
 #include <stan/math/prim/mat/fun/assign.hpp>
-#include <stan/math/prim/arr/err/check_matching_sizes.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <vector>
 
 namespace stan {

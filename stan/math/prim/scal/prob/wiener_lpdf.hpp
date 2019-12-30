@@ -34,12 +34,7 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_bounded.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
-#include <stan/math/prim/scal/err/throw_domain_error.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <algorithm>
 #include <cmath>
@@ -83,10 +78,10 @@ return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
   static const double WIENER_ERR = 0.000001;
   static const double PI_TIMES_WIENER_ERR = pi() * WIENER_ERR;
   static const double LOG_PI_LOG_WIENER_ERR = LOG_PI + log(WIENER_ERR);
-  static const double TWO_TIMES_SQRT_2_TIMES_SQRT_PI_TIMES_WIENER_ERR
-      = 2.0 * SQRT_2_TIMES_SQRT_PI * WIENER_ERR;
+  static const double TWO_TIMES_SQRT_TWO_PI_TIMES_WIENER_ERR
+      = 2.0 * SQRT_TWO_PI * WIENER_ERR;
   static const double LOG_TWO_OVER_TWO_PLUS_LOG_SQRT_PI
-      = LOG_2 / 2 + LOG_SQRT_PI;
+      = LOG_TWO / 2 + LOG_SQRT_PI;
   static const double SQUARE_PI_OVER_TWO = square(pi()) * 0.5;
   static const double TWO_TIMES_LOG_SQRT_PI = 2.0 * LOG_SQRT_PI;
 
@@ -162,8 +157,7 @@ return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
     }
     // calculate number of terms needed for small t:
     // if error threshold is set low enough
-    T_return_type tmp_expr0
-        = TWO_TIMES_SQRT_2_TIMES_SQRT_PI_TIMES_WIENER_ERR * sqrt_x;
+    T_return_type tmp_expr0 = TWO_TIMES_SQRT_TWO_PI_TIMES_WIENER_ERR * sqrt_x;
     if (tmp_expr0 < 1) {
       // compute bound
       ks = 2.0 + sqrt_x * sqrt(-2 * log(tmp_expr0));
