@@ -39,7 +39,6 @@ TEST(AgradRevErrorHandlingMatrix, CheckPositive) {
   stan::math::recover_memory();
 }
 
-
 TEST(AgradRevErrorHandlingScalar, CheckPositive) {
   using stan::math::check_positive;
   const char* function = "check_positive";
