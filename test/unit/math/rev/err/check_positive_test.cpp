@@ -6,8 +6,6 @@
 #include <limits>
 #include <vector>
 
-
-
 TEST(AgradRevErrorHandlingArray, CheckPositive) {
   using stan::math::check_positive;
   using stan::math::var;
