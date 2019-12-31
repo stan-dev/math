@@ -4,9 +4,9 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/fun/log.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/is_any_nan.hpp>
-#include <limits>
 #include <cmath>
 
 namespace stan {
@@ -20,12 +20,12 @@ class multiply_log_vv_vari : public op_vv_vari {
   void chain() {
     using std::log;
     if (unlikely(is_any_nan(avi_->val_, bvi_->val_))) {
-      avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
-      bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
+      avi_->adj_ = NOT_A_NUMBER;
+      bvi_->adj_ = NOT_A_NUMBER;
     } else {
       avi_->adj_ += adj_ * log(bvi_->val_);
       if (bvi_->val_ == 0.0 && avi_->val_ == 0) {
-        bvi_->adj_ += adj_ * std::numeric_limits<double>::infinity();
+        bvi_->adj_ += adj_ * INFTY;
       } else {
         bvi_->adj_ += adj_ * avi_->val_ / bvi_->val_;
       }
@@ -39,7 +39,7 @@ class multiply_log_vd_vari : public op_vd_vari {
   void chain() {
     using std::log;
     if (unlikely(is_any_nan(avi_->val_, bd_))) {
-      avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
+      avi_->adj_ = NOT_A_NUMBER;
     } else {
       avi_->adj_ += adj_ * log(bd_);
     }
@@ -51,7 +51,7 @@ class multiply_log_dv_vari : public op_dv_vari {
       : op_dv_vari(multiply_log(a, bvi->val_), a, bvi) {}
   void chain() {
     if (bvi_->val_ == 0.0 && ad_ == 0.0) {
-      bvi_->adj_ += adj_ * std::numeric_limits<double>::infinity();
+      bvi_->adj_ += adj_ * INFTY;
     } else {
       bvi_->adj_ += adj_ * ad_ / bvi_->val_;
     }
