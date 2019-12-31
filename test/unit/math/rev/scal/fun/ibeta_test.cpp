@@ -5,6 +5,37 @@
 #include <boost/math/special_functions/beta.hpp>
 #include <limits>
 
+TEST(AgradRev, ibeta_show_broken_derivative) {
+  using stan::math::ibeta;
+  using stan::math::var;
+
+  auto f = [](const auto& a, const auto& b, const auto& c) { auto x = ibeta(a, b, c); return x*x; };
+
+  AVAR a = 0.6;
+  AVAR b = 0.3;
+  AVAR c = 0.5;
+  AVAR xx = f(a, b, c);
+
+  AVEC v = createAVEC(a, b, c);
+  VEC grad_f;
+  xx.grad(v, grad_f);
+
+  double h = 1e-5;
+  double df_da = (1/h) * (f(a.val() + h, b.val(), c.val()) - f(a.val(), b.val(), c.val()));
+  double df_db = (1/h) * (f(a.val(), b.val() + h, c.val()) - f(a.val(), b.val(), c.val()));
+  double df_dc = (1/h) * (f(a.val(), b.val(), c.val() + h) - f(a.val(), b.val(), c.val()));
+
+  // std::cout << df_da << " " << grad_f[0] << std::endl;
+  // std::cout << df_db << " " << grad_f[1] << std::endl;
+  // std::cout << df_dc << " " << grad_f[2] << std::endl;
+
+  // Hand coded derivatives inconsistent with finite differences.
+  EXPECT_TRUE(fabs(df_da - grad_f[0]) > 1e-1);
+
+  EXPECT_TRUE(fabs(df_db - grad_f[1]) < 1e-5);
+  EXPECT_TRUE(fabs(df_dc - grad_f[2]) < 1e-5);
+}
+
 TEST(AgradRev, ibeta_vvv) {
   using stan::math::ibeta;
   using stan::math::var;
