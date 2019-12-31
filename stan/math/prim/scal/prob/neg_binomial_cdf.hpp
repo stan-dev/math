@@ -36,26 +36,26 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_cdf(const T_n& n,
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_shape> alpha_vec(alpha);
   scalar_seq_view<T_inv_scale> beta_vec(beta);
-  size_t size = max_size(n, alpha, beta);
+  size_t max_size_seq_view = max_size(n, alpha, beta);
 
   operands_and_partials<T_shape, T_inv_scale> ops_partials(alpha, beta);
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
-  for (size_t i = 0; i < stan::length(n); i++) {
+  for (size_t i = 0; i < size(n); i++) {
     if (value_of(n_vec[i]) < 0) {
       return ops_partials.build(0.0);
     }
   }
 
   VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
-      digamma_alpha_vec(stan::length(alpha));
+      digamma_alpha_vec(size(alpha));
 
   VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
-      digamma_sum_vec(stan::length(alpha));
+      digamma_sum_vec(size(alpha));
 
   if (!is_constant_all<T_shape>::value) {
-    for (size_t i = 0; i < stan::length(alpha); i++) {
+    for (size_t i = 0; i < size(alpha); i++) {
       const T_partials_return n_dbl = value_of(n_vec[i]);
       const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
 
@@ -64,7 +64,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_cdf(const T_n& n,
     }
   }
 
-  for (size_t i = 0; i < size; i++) {
+  for (size_t i = 0; i < max_size_seq_view; i++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
     if (value_of(n_vec[i]) == std::numeric_limits<int>::max()) {
@@ -96,13 +96,13 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_cdf(const T_n& n,
   }
 
   if (!is_constant_all<T_shape>::value) {
-    for (size_t i = 0; i < stan::length(alpha); ++i) {
+    for (size_t i = 0; i < size(alpha); ++i) {
       ops_partials.edge1_.partials_[i] *= P;
     }
   }
 
   if (!is_constant_all<T_inv_scale>::value) {
-    for (size_t i = 0; i < stan::length(beta); ++i) {
+    for (size_t i = 0; i < size(beta); ++i) {
       ops_partials.edge2_.partials_[i] *= P;
     }
   }

@@ -139,10 +139,10 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> to_matrix(
 inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> to_matrix(
     const std::vector<int>& x, int m, int n) {
   static const char* function = "to_matrix(array)";
-  int size = x.size();
-  check_size_match(function, "rows * columns", m * n, "vector size", size);
+  int x_size = x.size();
+  check_size_match(function, "rows * columns", m * n, "vector size", x_size);
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> result(m, n);
-  for (int i = 0; i < size; i++) {
+  for (int i = 0; i < x_size; i++) {
     result(i) = x[i];
   }
   return result;

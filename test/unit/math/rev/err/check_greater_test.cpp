@@ -5,17 +5,13 @@
 #include <vector>
 #include <limits>
 
-using stan::math::check_greater;
-using stan::math::var;
-
 TEST(AgradRevErrorHandlingScalar, CheckGreaterVarCheckVectorized) {
   using stan::math::check_greater;
   using stan::math::var;
-  using std::vector;
 
   int N = 5;
   const char* function = "check_greater";
-  vector<var> a;
+  std::vector<var> a;
 
   for (int i = 0; i < N; ++i)
     a.push_back(var(i));
@@ -38,6 +34,9 @@ TEST(AgradRevErrorHandlingScalar, CheckGreaterVarCheckVectorized) {
 }
 
 TEST(AgradRevErrorHandlingMatrix, CheckGreaterMatrix) {
+  using stan::math::check_greater;
+  using stan::math::var;
+
   const char* function = "check_greater";
   var x;
   var low;
@@ -144,6 +143,9 @@ TEST(AgradRevErrorHandlingMatrix, CheckGreaterMatrix) {
 }
 
 TEST(AgradRevErrorHandlingScalar, CheckGreater) {
+  using stan::math::check_greater;
+  using stan::math::var;
+
   const char* function = "check_greater";
   var x = 10.0;
   var lb = 0.0;

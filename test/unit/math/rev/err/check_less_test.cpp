@@ -2,20 +2,16 @@
 #include <stan/math/rev/mat.hpp>
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <vector>
 #include <limits>
-
-using stan::math::check_less;
-using stan::math::var;
+#include <vector>
 
 TEST(AgradRevErrorHandlingScalar, CheckLessVarCheckVectorized) {
   using stan::math::check_less;
   using stan::math::var;
-  using std::vector;
 
   int N = 5;
   const char* function = "check_less";
-  vector<var> a;
+  std::vector<var> a;
 
   for (int i = 0; i < N; ++i)
     a.push_back(var(i));
@@ -38,6 +34,9 @@ TEST(AgradRevErrorHandlingScalar, CheckLessVarCheckVectorized) {
 }
 
 TEST(AgradRevErrorHandlingMatrix, CheckLess_Matrix) {
+  using stan::math::check_less;
+  using stan::math::var;
+
   const char* function = "check_less";
   var x;
   var high;
@@ -114,6 +113,9 @@ TEST(AgradRevErrorHandlingMatrix, CheckLess_Matrix) {
 }
 
 TEST(AgradRevErrorHandlingScalar, CheckLess) {
+  using stan::math::check_less;
+  using stan::math::var;
+
   const char* function = "check_less";
   var x = -10.0;
   var lb = 0.0;

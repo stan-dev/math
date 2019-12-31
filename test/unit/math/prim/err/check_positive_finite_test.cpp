@@ -2,9 +2,9 @@
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
-#include <vector>
 #include <limits>
 #include <string>
+#include <vector>
 
 using stan::math::check_positive_finite;
 

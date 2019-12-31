@@ -2,14 +2,14 @@
 #include <stan/math/rev/mat.hpp>
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <vector>
 #include <exception>
 #include <limits>
-
-using stan::math::var;
+#include <vector>
 
 TEST(AgradRevErrorHandlingArray, CheckPositive) {
   using stan::math::check_positive;
+  using stan::math::var;
+
   const char* function = "check_positive";
 
   std::vector<var> x;
@@ -24,6 +24,8 @@ TEST(AgradRevErrorHandlingArray, CheckPositive) {
 
 TEST(AgradRevErrorHandlingMatrix, CheckPositive) {
   using stan::math::check_positive;
+  using stan::math::var;
+
   const char* function = "check_positive";
 
   Eigen::Matrix<var, Eigen::Dynamic, 1> x_mat(3);
@@ -41,6 +43,8 @@ TEST(AgradRevErrorHandlingMatrix, CheckPositive) {
 
 TEST(AgradRevErrorHandlingScalar, CheckPositive) {
   using stan::math::check_positive;
+  using stan::math::var;
+
   const char* function = "check_positive";
 
   var x = std::numeric_limits<var>::quiet_NaN();

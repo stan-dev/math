@@ -3,9 +3,9 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/fun/trunc.hpp>
-#include <limits>
 
 namespace stan {
 namespace math {
@@ -16,7 +16,7 @@ class trunc_vari : public op_v_vari {
   explicit trunc_vari(vari* avi) : op_v_vari(trunc(avi->val_), avi) {}
   void chain() {
     if (unlikely(is_nan(avi_->val_))) {
-      avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
+      avi_->adj_ = NOT_A_NUMBER;
     }
   }
 };

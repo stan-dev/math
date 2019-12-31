@@ -51,7 +51,7 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
   size_t N = max_size(n, theta);
   operands_and_partials<T_prob> ops_partials(theta);
 
-  if (length(theta) == 1) {
+  if (size(theta) == 1) {
     size_t sum = 0;
     for (size_t n = 0; n < N; n++) {
       sum += value_of(n_vec[n]);

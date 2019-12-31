@@ -26,13 +26,13 @@ inline void check_consistent_size_mvt(const char* function, const char* name,
                                       const T& x, size_t expected_size) {
   size_t size_x = 0;
 
-  if (length(x) == 0) {
+  if (size(x) == 0) {
     size_x = 0;
     if (expected_size == 0) {
       return;
     }
   } else {
-    size_t size_x = stan::length_mvt(x);
+    size_t size_x = size_mvt(x);
     bool x_contains_vectors = is_vector<
         typename std::remove_reference<decltype(x[0])>::type>::value;
 
