@@ -27,13 +27,15 @@ static inline void recover_memory_global() {
   }
   */
 
+  std::size_t i = 0;
+
   for (auto& kv : internal::global_observer.thread_tape_map_) {
     ChainableStack::AutodiffStackStorage* instance_ = kv.second->active_instance_;
-    std::cout << "reference ptr: " << instance_ << std::endl;
     if (instance_ == nullptr) {
-      std::cout << "nullptr ??" << std::endl;
+      std::cout << "nullptr for thread " << i << " ?? "<< std::endl;
       continue;
     }
+    i++;
     instance_->var_stack_.clear();
     instance_->var_nochain_stack_.clear();
     for (auto& x : instance_->var_alloc_stack_) {
