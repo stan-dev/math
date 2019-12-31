@@ -5,10 +5,10 @@
 #include <limits>
 #include <vector>
 
-using stan::math::check_positive_finite;
-using stan::math::var;
-
 TEST(AgradRevErrorHandlingScalar, CheckPositiveFinite_Vector) {
+  using stan::math::check_positive_finite;
+  using stan::math::var;
+
   const char* function = "check_positive_finite";
   std::vector<var> x;
 
@@ -59,11 +59,10 @@ TEST(AgradRevErrorHandlingScalar, CheckPositiveFinite_Vector) {
 TEST(AgradRevErrorHandlingScalar, CheckPositiveFiniteVarCheckVectorized) {
   using stan::math::check_positive_finite;
   using stan::math::var;
-  using std::vector;
 
   int N = 5;
   const char* function = "check_positive_finite";
-  vector<var> a;
+  std::vector<var> a;
 
   for (int i = 0; i < N; ++i)
     a.push_back(var(i));
@@ -87,6 +86,9 @@ TEST(AgradRevErrorHandlingScalar, CheckPositiveFiniteVarCheckVectorized) {
 }
 
 TEST(AgradRevErrorHandlingMatrix, CheckPositiveFinite_Matrix) {
+  using stan::math::check_positive_finite;
+  using stan::math::var;
+
   const char* function = "check_positive_finite";
   Eigen::Matrix<var, Eigen::Dynamic, 1> x;
 
@@ -123,6 +125,9 @@ TEST(AgradRevErrorHandlingMatrix, CheckPositiveFinite_Matrix) {
 }
 
 TEST(AgradRevErrorHandlingScalar, CheckPositiveFinite) {
+  using stan::math::check_positive_finite;
+  using stan::math::var;
+
   const char* function = "check_positive_finite";
   var x = 1;
 

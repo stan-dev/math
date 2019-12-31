@@ -1,8 +1,8 @@
 #include <stan/math/rev/arr.hpp>
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
-#include <vector>
 #include <limits>
+#include <vector>
 
 TEST(AgradRevErrorHandlingScalar, CheckConsistentSizeVarCheckVectorized) {
   using stan::math::check_consistent_size;

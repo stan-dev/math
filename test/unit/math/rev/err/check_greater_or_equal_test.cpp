@@ -2,11 +2,8 @@
 #include <stan/math/rev/mat.hpp>
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <vector>
 #include <limits>
-
-using stan::math::check_greater_or_equal;
-using stan::math::var;
+#include <vector>
 
 TEST(AgradRevErrorHandlingScalar, CheckGreateOrEqualVarCheckVectorized) {
   using stan::math::check_greater_or_equal;
@@ -39,6 +36,8 @@ TEST(AgradRevErrorHandlingScalar, CheckGreateOrEqualVarCheckVectorized) {
 }
 
 TEST(AgradRevErrorHandlingMatrix, CheckGreaterOrEqualMatrix) {
+  using stan::math::check_greater_or_equal;
+  using stan::math::var;
   const char* function = "check_greater_or_equal";
   var x;
   var low;
@@ -154,6 +153,8 @@ TEST(AgradRevErrorHandlingMatrix, CheckGreaterOrEqualMatrix) {
 }
 
 TEST(AgradRevErrorHandlingScalar, CheckGreaterOrEqual) {
+  using stan::math::check_greater_or_equal;
+  using stan::math::var;
   const char* function = "check_greater_or_equal";
   var x = 10.0;
   var lb = 0.0;

@@ -1,17 +1,16 @@
 #include <stan/math/rev/arr.hpp>
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <vector>
 #include <limits>
+#include <vector>
 
 TEST(AgradRevErrorHandlingScalar, CheckNotNanVarCheckVectorized) {
   using stan::math::check_not_nan;
   using stan::math::var;
-  using std::vector;
 
   int N = 5;
   const char* function = "check_not_nan";
-  vector<var> a;
+  std::vector<var> a;
 
   for (int i = 0; i < N; ++i)
     a.push_back(var(i));
@@ -30,11 +29,10 @@ TEST(AgradRevErrorHandlingScalar, CheckNotNanVarCheckVectorized) {
 TEST(ErrorHandlingScalar, CheckNotNanVarCheckVectorized) {
   using stan::math::check_not_nan;
   using stan::math::var;
-  using std::vector;
 
   int N = 5;
   const char* function = "check_not_nan";
-  vector<var> a;
+  std::vector<var> a;
 
   for (int i = 0; i < N; ++i)
     a.push_back(var(i));
