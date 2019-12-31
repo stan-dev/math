@@ -34,7 +34,7 @@ inline typename VectorBuilder<true, double, T_scale>::type rayleigh_rng(
   check_positive_finite(function, "Scale parameter", sigma);
 
   scalar_seq_view<T_scale> sigma_vec(sigma);
-  size_t N = length(sigma);
+  size_t N = size(sigma);
   VectorBuilder<true, double, T_scale> output(N);
 
   variate_generator<RNG&, uniform_real_distribution<> > uniform_rng(

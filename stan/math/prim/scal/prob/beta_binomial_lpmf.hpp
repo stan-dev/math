@@ -62,9 +62,9 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
   scalar_seq_view<T_N> N_vec(N);
   scalar_seq_view<T_size1> alpha_vec(alpha);
   scalar_seq_view<T_size2> beta_vec(beta);
-  size_t size = max_size(n, N, alpha, beta);
+  size_t max_size_seq_view = max_size(n, N, alpha, beta);
 
-  for (size_t i = 0; i < size; i++) {
+  for (size_t i = 0; i < max_size_seq_view; i++) {
     if (n_vec[i] < 0 || n_vec[i] > N_vec[i]) {
       return ops_partials.build(LOG_ZERO);
     }
@@ -78,8 +78,8 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
 
   VectorBuilder<include_summand<propto, T_size1, T_size2>::value,
                 T_partials_return, T_n, T_N, T_size1, T_size2>
-      lbeta_numerator(size);
-  for (size_t i = 0; i < size; i++)
+      lbeta_numerator(max_size_seq_view);
+  for (size_t i = 0; i < max_size_seq_view; i++)
     lbeta_numerator[i] = lbeta(n_vec[i] + value_of(alpha_vec[i]),
                                N_vec[i] - n_vec[i] + value_of(beta_vec[i]));
 
@@ -113,18 +113,18 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
           = digamma(value_of(alpha_vec[i]) + value_of(beta_vec[i]));
 
   VectorBuilder<!is_constant_all<T_size1>::value, T_partials_return, T_size1>
-      digamma_alpha(length(alpha));
-  for (size_t i = 0; i < length(alpha); i++)
+      digamma_alpha(size(alpha));
+  for (size_t i = 0; i < size(alpha); i++)
     if (!is_constant_all<T_size1>::value)
       digamma_alpha[i] = digamma(value_of(alpha_vec[i]));
 
   VectorBuilder<!is_constant_all<T_size2>::value, T_partials_return, T_size2>
-      digamma_beta(length(beta));
-  for (size_t i = 0; i < length(beta); i++)
+      digamma_beta(size(beta));
+  for (size_t i = 0; i < size(beta); i++)
     if (!is_constant_all<T_size2>::value)
       digamma_beta[i] = digamma(value_of(beta_vec[i]));
 
-  for (size_t i = 0; i < size; i++) {
+  for (size_t i = 0; i < max_size_seq_view; i++) {
     if (include_summand<propto>::value)
       logp += normalizing_constant[i];
     logp += lbeta_numerator[i] - lbeta_denominator[i];

@@ -3,10 +3,10 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/gamma_p.hpp>
-#include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_lower_inc_gamma.hpp>
-#include <limits>
+#include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <cmath>
 
 namespace stan {
@@ -19,10 +19,10 @@ inline fvar<T> gamma_p(const fvar<T> &x1, const fvar<T> &x2) {
 
   T u = gamma_p(x1.val_, x2.val_);
   if (is_inf(x1.val_)) {
-    return fvar<T>(u, std::numeric_limits<double>::quiet_NaN());
+    return fvar<T>(u, NOT_A_NUMBER);
   }
   if (is_inf(x2.val_)) {
-    return fvar<T>(u, std::numeric_limits<double>::quiet_NaN());
+    return fvar<T>(u, NOT_A_NUMBER);
   }
 
   T der1 = grad_reg_lower_inc_gamma(x1.val_, x2.val_, 1.0e-10);
@@ -35,10 +35,10 @@ template <typename T>
 inline fvar<T> gamma_p(const fvar<T> &x1, double x2) {
   T u = gamma_p(x1.val_, x2);
   if (is_inf(x1.val_)) {
-    return fvar<T>(u, std::numeric_limits<double>::quiet_NaN());
+    return fvar<T>(u, NOT_A_NUMBER);
   }
   if (is_inf(x2)) {
-    return fvar<T>(u, std::numeric_limits<double>::quiet_NaN());
+    return fvar<T>(u, NOT_A_NUMBER);
   }
 
   T der1 = grad_reg_lower_inc_gamma(x1.val_, x2, 1.0e-10);
@@ -53,13 +53,14 @@ inline fvar<T> gamma_p(double x1, const fvar<T> &x2) {
 
   T u = gamma_p(x1, x2.val_);
   if (is_inf(x1)) {
-    return fvar<T>(u, std::numeric_limits<double>::quiet_NaN());
+    return fvar<T>(u, NOT_A_NUMBER);
   }
 
   T der2 = exp(-x2.val_ + (x1 - 1.0) * log(x2.val_) - lgamma(x1));
 
   return fvar<T>(u, x2.d_ * der2);
 }
+
 }  // namespace math
 }  // namespace stan
 #endif

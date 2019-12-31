@@ -24,11 +24,11 @@ return_type_t<double, T_shape> do_lkj_constant(const T_shape& eta,
     }
     constant = -denominator.sum();
     if ((K % 2) == 1) {
-      constant -= 0.25 * (K * K - 1) * LOG_PI - 0.25 * (Km1 * Km1) * LOG_2
+      constant -= 0.25 * (K * K - 1) * LOG_PI - 0.25 * (Km1 * Km1) * LOG_TWO
                   - Km1 * lgamma(0.5 * (K + 1));
     } else {
       constant -= 0.25 * K * (K - 2) * LOG_PI
-                  + 0.25 * (3 * K * K - 4 * K) * LOG_2 + K * lgamma(0.5 * K)
+                  + 0.25 * (3 * K * K - 4 * K) * LOG_TWO + K * lgamma(0.5 * K)
                   - Km1 * lgamma(static_cast<double>(K));
     }
   } else {
