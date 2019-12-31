@@ -143,7 +143,7 @@ TEST_F(ErrorHandlingMatrix, checkPosDefinite_nan) {
   y << nan;
 
   std::stringstream expected_msg;
-  expected_msg << "function: y is not positive definite.";
+  expected_msg << "function: y[1] is nan, but must not be nan!";
   EXPECT_THROW_MSG(check_pos_definite(function, "y", y), std::domain_error,
                    expected_msg.str());
 

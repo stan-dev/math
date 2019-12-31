@@ -1,20 +1,16 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_GP_PERIODIC_COV_HPP
 #define STAN_MATH_PRIM_MAT_FUN_GP_PERIODIC_COV_HPP
 
-#include <math.h>
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/distance.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/distance.hpp>
 #include <stan/math/prim/scal/fun/inv.hpp>
 #include <stan/math/prim/scal/fun/inv_square.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <cmath>
-
 #include <vector>
 
 namespace stan {
@@ -51,6 +47,7 @@ inline typename Eigen::Matrix<return_type_t<T_x, T_sigma, T_l, T_p>,
 gp_periodic_cov(const std::vector<T_x> &x, const T_sigma &sigma, const T_l &l,
                 const T_p &p) {
   using std::exp;
+  using std::sin;
   const char *fun = "gp_periodic_cov";
   check_positive(fun, "signal standard deviation", sigma);
   check_positive(fun, "length-scale", l);
@@ -122,6 +119,7 @@ inline typename Eigen::Matrix<return_type_t<T_x1, T_x2, T_sigma, T_l, T_p>,
 gp_periodic_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
                 const T_sigma &sigma, const T_l &l, const T_p &p) {
   using std::exp;
+  using std::sin;
   const char *fun = "gp_periodic_cov";
   check_positive(fun, "signal standard deviation", sigma);
   check_positive(fun, "length-scale", l);

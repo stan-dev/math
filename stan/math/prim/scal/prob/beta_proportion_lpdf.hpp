@@ -2,12 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_BETA_PROPORTION_LPDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_less.hpp>
-#include <stan/math/prim/scal/err/check_less_or_equal.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
@@ -19,7 +14,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * The log of the beta density for specified y, location, and
  * precision: beta_proportion_lpdf(y | mu, kappa) = beta_lpdf(y | mu *
  * kappa, (1 - mu) * kappa).  Any arguments other than scalars must be
@@ -81,16 +76,13 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
 
   VectorBuilder<include_summand<propto, T_y, T_loc, T_prec>::value,
                 T_partials_return, T_y>
-      log_y(length(y));
+      log_y(size(y));
   VectorBuilder<include_summand<propto, T_y, T_loc, T_prec>::value,
                 T_partials_return, T_y>
-      log1m_y(length(y));
-
-  for (size_t n = 0; n < length(y); n++) {
-    if (include_summand<propto, T_y, T_loc, T_prec>::value) {
-      log_y[n] = log(value_of(y_vec[n]));
-      log1m_y[n] = log1m(value_of(y_vec[n]));
-    }
+      log1m_y(size(y));
+  for (size_t n = 0; n < size(y); n++) {
+    log_y[n] = log(value_of(y_vec[n]));
+    log1m_y[n] = log1m(value_of(y_vec[n]));
   }
 
   VectorBuilder<include_summand<propto, T_loc, T_prec>::value,
@@ -125,11 +117,11 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
 
   VectorBuilder<include_summand<propto, T_prec>::value, T_partials_return,
                 T_prec>
-      lgamma_kappa(length(kappa));
+      lgamma_kappa(size(kappa));
   VectorBuilder<!is_constant_all<T_prec>::value, T_partials_return, T_prec>
-      digamma_kappa(length(kappa));
+      digamma_kappa(size(kappa));
 
-  for (size_t n = 0; n < length(kappa); n++) {
+  for (size_t n = 0; n < size(kappa); n++) {
     if (include_summand<propto, T_prec>::value) {
       lgamma_kappa[n] = lgamma(value_of(kappa_vec[n]));
     }
@@ -150,11 +142,9 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
     if (include_summand<propto, T_loc, T_prec>::value) {
       logp -= lgamma_mukappa[n] + lgamma_kappa_mukappa[n];
     }
-    if (include_summand<propto, T_y, T_loc, T_prec>::value) {
-      const T_partials_return mukappa_dbl = mu_dbl * kappa_dbl;
-      logp += (mukappa_dbl - 1) * log_y[n]
-              + (kappa_dbl - mukappa_dbl - 1) * log1m_y[n];
-    }
+    const T_partials_return mukappa_dbl = mu_dbl * kappa_dbl;
+    logp += (mukappa_dbl - 1) * log_y[n]
+            + (kappa_dbl - mukappa_dbl - 1) * log1m_y[n];
 
     if (!is_constant_all<T_y>::value) {
       const T_partials_return mukappa_dbl = mu_dbl * kappa_dbl;

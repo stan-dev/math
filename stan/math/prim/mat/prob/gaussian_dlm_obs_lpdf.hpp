@@ -2,12 +2,7 @@
 #define STAN_MATH_PRIM_MAT_PROB_GAUSSIAN_DLM_OBS_LPDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/mat/err/check_pos_definite.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
-#include <stan/math/prim/mat/err/check_spsd_matrix.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/add.hpp>
 #include <stan/math/prim/mat/fun/dot_product.hpp>
 #include <stan/math/prim/mat/fun/inverse_spd.hpp>
@@ -21,6 +16,7 @@
 #include <stan/math/prim/mat/fun/trace_quad_form.hpp>
 #include <stan/math/prim/mat/fun/transpose.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <cmath>
 
 /*
   TODO: time-varying system matrices
@@ -30,7 +26,7 @@
 */
 namespace stan {
 namespace math {
-/**
+/** \ingroup multivar_dists
  * The log of a Gaussian dynamic linear model (GDLM).
  * This distribution is equivalent to, for \f$t = 1:T\f$,
  * \f{eqnarray*}{
@@ -80,6 +76,7 @@ gaussian_dlm_obs_lpdf(
   int r = y.rows();  // number of variables
   int T = y.cols();  // number of observations
   int n = G.rows();  // number of states
+  using std::pow;
 
   check_finite(function, "y", y);
   check_not_nan(function, "y", y);
@@ -91,11 +88,11 @@ gaussian_dlm_obs_lpdf(
   check_size_match(function, "rows of V", V.rows(), "rows of y", y.rows());
   // TODO(anyone): incorporate support for infinite V
   check_finite(function, "V", V);
-  check_spsd_matrix(function, "V", V);
+  check_pos_semidefinite(function, "V", V);
   check_size_match(function, "rows of W", W.rows(), "rows of G", G.rows());
   // TODO(anyone): incorporate support for infinite W
   check_finite(function, "W", W);
-  check_spsd_matrix(function, "W", W);
+  check_pos_semidefinite(function, "W", W);
   check_size_match(function, "size of m0", m0.size(), "rows of G", G.rows());
   check_finite(function, "m0", m0);
   check_size_match(function, "rows of C0", C0.rows(), "rows of G", G.rows());
@@ -176,7 +173,7 @@ gaussian_dlm_obs_lpdf(
   return gaussian_dlm_obs_lpdf<false>(y, F, G, V, W, m0, C0);
 }
 
-/**
+/** \ingroup multivar_dists
  * The log of a Gaussian dynamic linear model (GDLM) with
  * uncorrelated observation disturbances.
  * This distribution is equivalent to, for \f$t = 1:T\f$,
@@ -245,18 +242,16 @@ gaussian_dlm_obs_lpdf(
   // TODO(anyone): support infinite V
   check_finite(function, "V", V);
   check_not_nan(function, "V", V);
-  check_spsd_matrix(function, "W", W);
+  check_pos_semidefinite(function, "W", W);
   check_size_match(function, "rows of W", W.rows(), "rows of G", G.rows());
   // TODO(anyone): support infinite W
   check_finite(function, "W", W);
-  check_not_nan(function, "W", W);
   check_size_match(function, "size of m0", m0.size(), "rows of G", G.rows());
   check_finite(function, "m0", m0);
   check_not_nan(function, "m0", m0);
   check_pos_definite(function, "C0", C0);
   check_size_match(function, "rows of C0", C0.rows(), "rows of G", G.rows());
   check_finite(function, "C0", C0);
-  check_not_nan(function, "C0", C0);
 
   if (y.cols() == 0 || y.rows() == 0) {
     return 0;

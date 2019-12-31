@@ -2,9 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_EXPONENTIAL_CDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <cmath>
@@ -12,7 +10,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Calculates the exponential cumulative distribution function for
  * the given y and beta.
  *

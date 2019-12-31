@@ -2,15 +2,15 @@
 #define STAN_MATH_PRIM_MAT_PROB_CATEGORICAL_LOGIT_GLM_LPMF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_bounded.hpp>
-#include <stan/math/prim/scal/err/check_consistent_size.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <Eigen/Core>
+#include <cmath>
 
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup multivar_dists
  * Returns the log PMF of the Generalized Linear Model (GLM)
  * with categorical distribution and logit (softmax) link function.
  *
@@ -50,14 +50,12 @@ categorical_logit_glm_lpmf(
   using std::exp;
   using std::log;
 
-  const size_t N_instances = T_x_rows == 1 ? length(y) : x.rows();
+  const size_t N_instances = T_x_rows == 1 ? size(y) : x.rows();
   const size_t N_attributes = x.cols();
   const size_t N_classes = beta.cols();
 
-  if (is_vector<T_y>::value && T_x_rows != 1) {
-    check_consistent_size(function, "Vector of dependent variables", y,
-                          N_instances);
-  }
+  check_consistent_size(function, "Vector of dependent variables", y,
+                        N_instances);
   check_consistent_size(function, "Intercept vector", alpha, N_classes);
   check_size_match(function, "x.cols()", N_attributes, "beta.rows()",
                    beta.rows());

@@ -31,7 +31,7 @@ void test_cumulative_sum() {
   EXPECT_FLOAT_EQ(g[0] + g[1] + g[2], h[2]);
 }
 
-TEST(MathMatrix, cumulative_sum) {
+TEST(MathMatrixPrimMat, cumulative_sum) {
   using stan::math::cumulative_sum;
 
   EXPECT_FLOAT_EQ(0, cumulative_sum(std::vector<double>(0)).size());

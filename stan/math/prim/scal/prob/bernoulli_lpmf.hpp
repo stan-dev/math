@@ -2,9 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_BERNOULLI_LPMF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_bounded.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
@@ -13,7 +11,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Returns the log PMF of the Bernoulli distribution. If containers are
  * supplied, returns the log sum of the probabilities.
  *
@@ -53,7 +51,7 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
   size_t N = max_size(n, theta);
   operands_and_partials<T_prob> ops_partials(theta);
 
-  if (length(theta) == 1) {
+  if (size(theta) == 1) {
     size_t sum = 0;
     for (size_t n = 0; n < N; n++) {
       sum += value_of(n_vec[n]);

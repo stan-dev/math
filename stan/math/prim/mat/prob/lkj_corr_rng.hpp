@@ -4,12 +4,12 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/multiply_lower_tri_self_transpose.hpp>
 #include <stan/math/prim/mat/prob/lkj_corr_cholesky_rng.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
+#include <stan/math/prim/err.hpp>
 
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup multivar_dists
  * Return a random correlation matrix (symmetric, positive
  * definite, unit diagonal) of the specified dimensionality drawn
  * from the LKJ distribution with the specified degrees of freedom

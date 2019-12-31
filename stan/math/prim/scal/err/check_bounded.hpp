@@ -2,8 +2,8 @@
 #define STAN_MATH_PRIM_SCAL_ERR_CHECK_BOUNDED_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
-#include <stan/math/prim/scal/err/domain_error_vec.hpp>
+#include <stan/math/prim/scal/err/throw_domain_error.hpp>
+#include <stan/math/prim/scal/err/throw_domain_error_vec.hpp>
 #include <string>
 
 namespace stan {
@@ -22,13 +22,13 @@ struct bounded {
                     const T_low& low, const T_high& high) {
     scalar_seq_view<T_low> low_vec(low);
     scalar_seq_view<T_high> high_vec(high);
-    for (size_t n = 0; n < stan::max_size(low, high); n++) {
+    for (size_t n = 0; n < max_size(low, high); n++) {
       if (!(low_vec[n] <= y && y <= high_vec[n])) {
         std::stringstream msg;
         msg << ", but must be in the interval ";
         msg << "[" << low_vec[n] << ", " << high_vec[n] << "]";
         std::string msg_str(msg.str());
-        domain_error(function, name, y, "is ", msg_str.c_str());
+        throw_domain_error(function, name, y, "is ", msg_str.c_str());
       }
     }
   }
@@ -40,13 +40,13 @@ struct bounded<T_y, T_low, T_high, true> {
                     const T_low& low, const T_high& high) {
     scalar_seq_view<T_low> low_vec(low);
     scalar_seq_view<T_high> high_vec(high);
-    for (size_t n = 0; n < stan::length(y); n++) {
+    for (size_t n = 0; n < size(y); n++) {
       if (!(low_vec[n] <= stan::get(y, n) && stan::get(y, n) <= high_vec[n])) {
         std::stringstream msg;
         msg << ", but must be in the interval ";
         msg << "[" << low_vec[n] << ", " << high_vec[n] << "]";
         std::string msg_str(msg.str());
-        domain_error_vec(function, name, y, n, "is ", msg_str.c_str());
+        throw_domain_error_vec(function, name, y, n, "is ", msg_str.c_str());
       }
     }
   }

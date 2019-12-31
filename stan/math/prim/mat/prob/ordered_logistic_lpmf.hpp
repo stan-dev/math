@@ -2,25 +2,18 @@
 #define STAN_MATH_PRIM_MAT_PROB_ORDERED_LOGISTIC_LPMF_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
-#include <stan/math/prim/mat/fun/size.hpp>
-#include <stan/math/prim/mat/err/check_ordered.hpp>
 #include <stan/math/prim/scal/fun/inv_logit.hpp>
 #include <stan/math/prim/scal/fun/log1p_exp.hpp>
 #include <stan/math/prim/scal/fun/log_inv_logit_diff.hpp>
 #include <stan/math/prim/scal/fun/is_integer.hpp>
-#include <stan/math/prim/scal/err/domain_error_vec.hpp>
-#include <stan/math/prim/scal/err/check_bounded.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_greater.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
 #include <vector>
 
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup multivar_dists
  * Returns the (natural) log probability of the specified array
  * of integers given the vector of continuous locations and
  * specified cutpoints in an ordered logistic model.
@@ -82,8 +75,8 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
   vector_seq_view<T_cut> c_vec(c);
 
   int K = c_vec[0].size() + 1;
-  int N = length(lambda);
-  int C_l = length_mvt(c);
+  int N = size(lambda);
+  int C_l = size_mvt(c);
 
   check_consistent_sizes(function, "Integers", y, "Locations", lambda);
   if (C_l > 1) {

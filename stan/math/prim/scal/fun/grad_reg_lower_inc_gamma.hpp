@@ -2,8 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_FUN_LOWER_REG_INC_GAMMA_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <stan/math/prim/scal/fun/gamma_p.hpp>
 #include <stan/math/prim/scal/fun/log1p.hpp>
@@ -11,8 +10,11 @@
 #include <stan/math/prim/scal/fun/is_any_nan.hpp>
 #include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
+#include <stan/math/prim/scal/fun/sqrt.hpp>
+#include <stan/math/prim/scal/fun/tgamma.hpp>
 #include <stan/math/prim/scal/fun/value_of_rec.hpp>
 #include <limits>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -109,6 +111,8 @@ return_type_t<T1, T2> grad_reg_lower_inc_gamma(const T1& a, const T2& z,
   using std::exp;
   using std::log;
   using std::pow;
+  using std::sqrt;
+
   using TP = return_type_t<T1, T2>;
 
   if (is_any_nan(a, z)) {
@@ -146,10 +150,10 @@ return_type_t<T1, T2> grad_reg_lower_inc_gamma(const T1& a, const T2& z,
       break;
     }
     if (n >= max_steps) {
-      domain_error("grad_reg_lower_inc_gamma", "n (internal counter)",
-                   max_steps, "exceeded ",
-                   " iterations, gamma_p(a,z) gradient (a) "
-                   "did not converge.");
+      throw_domain_error("grad_reg_lower_inc_gamma", "n (internal counter)",
+                         max_steps, "exceeded ",
+                         " iterations, gamma_p(a,z) gradient (a) "
+                         "did not converge.");
     }
     ++n;
     lgamma_a_plus_n_plus_1 += log1p(a_plus_n);
@@ -168,10 +172,10 @@ return_type_t<T1, T2> grad_reg_lower_inc_gamma(const T1& a, const T2& z,
       return emz * (log_z * sum_a - sum_b);
     }
     if (n >= max_steps) {
-      domain_error("grad_reg_lower_inc_gamma", "n (internal counter)",
-                   max_steps, "exceeded ",
-                   " iterations, gamma_p(a,z) gradient (a) "
-                   "did not converge.");
+      throw_domain_error("grad_reg_lower_inc_gamma", "n (internal counter)",
+                         max_steps, "exceeded ",
+                         " iterations, gamma_p(a,z) gradient (a) "
+                         "did not converge.");
     }
     ++n;
     lgamma_a_plus_n_plus_1 += log1p(a_plus_n);

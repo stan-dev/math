@@ -1,9 +1,8 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_MEAN_HPP
 #define STAN_MATH_PRIM_MAT_FUN_MEAN_HPP
 
-#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <boost/math/tools/promotion.hpp>
 #include <vector>
 
 namespace stan {
@@ -12,6 +11,8 @@ namespace math {
 /**
  * Returns the sample mean (i.e., average) of the coefficients
  * in the specified standard vector.
+ *
+ * @tparam T type of elements in the vector
  * @param v Specified vector.
  * @return Sample mean of vector coefficients.
  * @throws std::domain_error if the size of the vector is less
@@ -27,6 +28,11 @@ inline return_type_t<T> mean(const std::vector<T>& v) {
 /**
  * Returns the sample mean (i.e., average) of the coefficients
  * in the specified vector, row vector, or matrix.
+ *
+ * @tparam T type of elements in the matrix
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ *
  * @param m Specified vector, row vector, or matrix.
  * @return Sample mean of vector coefficients.
  */
@@ -38,4 +44,5 @@ inline return_type_t<T> mean(const Eigen::Matrix<T, R, C>& m) {
 
 }  // namespace math
 }  // namespace stan
+
 #endif

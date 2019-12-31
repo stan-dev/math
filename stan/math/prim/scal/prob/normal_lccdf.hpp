@@ -2,10 +2,9 @@
 #define STAN_MATH_PRIM_SCAL_PROB_NORMAL_LCCDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/scal/fun/erf.hpp>
+#include <stan/math/prim/scal/fun/erfc.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
@@ -52,14 +51,14 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lccdf(const T_y& y,
     const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
 
     const T_partials_return scaled_diff
-        = (y_dbl - mu_dbl) / (sigma_dbl * SQRT_2);
+        = (y_dbl - mu_dbl) / (sigma_dbl * SQRT_TWO);
 
     T_partials_return one_m_erf;
-    if (scaled_diff < -37.5 * INV_SQRT_2) {
+    if (scaled_diff < -37.5 * INV_SQRT_TWO) {
       one_m_erf = 2.0;
-    } else if (scaled_diff < -5.0 * INV_SQRT_2) {
+    } else if (scaled_diff < -5.0 * INV_SQRT_TWO) {
       one_m_erf = 2.0 - erfc(-scaled_diff);
-    } else if (scaled_diff > 8.25 * INV_SQRT_2) {
+    } else if (scaled_diff > 8.25 * INV_SQRT_TWO) {
       one_m_erf = 0.0;
     } else {
       one_m_erf = 1.0 - erf(scaled_diff);
@@ -69,7 +68,7 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lccdf(const T_y& y,
 
     if (!is_constant_all<T_y, T_loc, T_scale>::value) {
       const T_partials_return rep_deriv_div_sigma
-          = scaled_diff > 8.25 * INV_SQRT_2
+          = scaled_diff > 8.25 * INV_SQRT_TWO
                 ? std::numeric_limits<double>::infinity()
                 : SQRT_TWO_OVER_PI * exp(-scaled_diff * scaled_diff) / one_m_erf
                       / sigma_dbl;
@@ -81,7 +80,7 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lccdf(const T_y& y,
       }
       if (!is_constant_all<T_scale>::value) {
         ops_partials.edge3_.partials_[n]
-            += rep_deriv_div_sigma * scaled_diff * SQRT_2;
+            += rep_deriv_div_sigma * scaled_diff * SQRT_TWO;
       }
     }
   }

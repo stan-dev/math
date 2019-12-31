@@ -2,11 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_PARETO_TYPE_2_CDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <cmath>
@@ -27,6 +23,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_cdf(
   static const char* function = "pareto_type_2_cdf";
 
   using std::log;
+  using std::pow;
 
   T_partials_return P(1.0);
 
@@ -99,22 +96,22 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_cdf(
   }
 
   if (!is_constant_all<T_y>::value) {
-    for (size_t n = 0; n < stan::length(y); ++n) {
+    for (size_t n = 0; n < size(y); ++n) {
       ops_partials.edge1_.partials_[n] *= P;
     }
   }
   if (!is_constant_all<T_loc>::value) {
-    for (size_t n = 0; n < stan::length(mu); ++n) {
+    for (size_t n = 0; n < size(mu); ++n) {
       ops_partials.edge2_.partials_[n] *= P;
     }
   }
   if (!is_constant_all<T_scale>::value) {
-    for (size_t n = 0; n < stan::length(lambda); ++n) {
+    for (size_t n = 0; n < size(lambda); ++n) {
       ops_partials.edge3_.partials_[n] *= P;
     }
   }
   if (!is_constant_all<T_shape>::value) {
-    for (size_t n = 0; n < stan::length(alpha); ++n) {
+    for (size_t n = 0; n < size(alpha); ++n) {
       ops_partials.edge4_.partials_[n] *= P;
     }
   }

@@ -4,6 +4,7 @@
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -15,7 +16,7 @@ inline fvar<T> log10(const fvar<T>& x) {
   if (x.val_ < 0.0) {
     return fvar<T>(NOT_A_NUMBER, NOT_A_NUMBER);
   } else {
-    return fvar<T>(log10(x.val_), x.d_ / (x.val_ * LOG_10));
+    return fvar<T>(log10(x.val_), x.d_ / (x.val_ * LOG_TEN));
   }
 }
 

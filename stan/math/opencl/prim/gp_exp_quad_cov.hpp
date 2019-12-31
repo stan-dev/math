@@ -1,16 +1,17 @@
 #ifndef STAN_MATH_OPENCL_PRIM_GP_EXP_QUAD_COV_HPP
 #define STAN_MATH_OPENCL_PRIM_GP_EXP_QUAD_COV_HPP
 #ifdef STAN_OPENCL
+
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernels/gp_exp_quad_cov.hpp>
-#include <stan/math/opencl/err/check_matching_dims.hpp>
-#include <cl.hpp>
+#include <stan/math/opencl/err.hpp>
+#include <CL/cl2.hpp>
 
 namespace stan {
 namespace math {
-/**
+/** \ingroup opencl
  * Squared exponential kernel on the GPU.
  *
  * @tparam T1 Type of the matrix
@@ -37,7 +38,7 @@ inline matrix_cl<return_type_t<T1, T2, T3>> gp_exp_quad_cov(
   return res;
 }
 
-/**
+/** \ingroup opencl
  * Squared exponential kernel on the GPU.
  *
  * This function is for the cross covariance

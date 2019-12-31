@@ -2,16 +2,14 @@
 #define STAN_MATH_PRIM_SCAL_PROB_GAMMA_RNG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/err.hpp>
 #include <boost/random/gamma_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Return a gamma random variate for the given shape and inverse
  * scale parameters using the specified random number generator.
  *

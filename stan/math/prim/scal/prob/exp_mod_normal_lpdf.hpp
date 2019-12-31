@@ -2,10 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_EXP_MOD_NORMAL_LPDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/erfc.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
@@ -68,12 +65,10 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
     if (include_summand<propto, T_inv_scale>::value) {
       logp += log(lambda_dbl);
     }
-    if (include_summand<propto, T_y, T_loc, T_scale, T_inv_scale>::value) {
-      logp += lambda_dbl
-                  * (mu_dbl + 0.5 * lambda_dbl * sigma_dbl * sigma_dbl - y_dbl)
-              + log(erfc((mu_dbl + lambda_dbl * sigma_dbl * sigma_dbl - y_dbl)
-                         / (sqrt(2.0) * sigma_dbl)));
-    }
+    logp += lambda_dbl
+                * (mu_dbl + 0.5 * lambda_dbl * sigma_dbl * sigma_dbl - y_dbl)
+            + log(erfc((mu_dbl + lambda_dbl * sigma_dbl * sigma_dbl - y_dbl)
+                       / (sqrt(2.0) * sigma_dbl)));
 
     const T_partials_return deriv_logerfc
         = -2.0 / sqrt(pi_dbl)

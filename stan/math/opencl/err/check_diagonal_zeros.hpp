@@ -1,17 +1,19 @@
 #ifndef STAN_MATH_OPENCL_ERR_CHECK_DIAGONAL_ZEROS_HPP
 #define STAN_MATH_OPENCL_ERR_CHECK_DIAGONAL_ZEROS_HPP
 #ifdef STAN_OPENCL
+
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
+#include <stan/math/opencl/opencl_context.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernels/check_diagonal_zeros.hpp>
-#include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
 #include <vector>
 
 namespace stan {
 namespace math {
-/**
+/** \ingroup opencl
  * Check if the <code>matrix_cl</code> has zeros on the diagonal
  *
  * @param function Function name (for error messages)
@@ -38,7 +40,7 @@ inline void check_diagonal_zeros(const char* function, const char* name,
     zero_on_diagonal_flag = from_matrix_cl_error_code(zeros_flag);
     //  if zeros were found on the diagonal
     if (zero_on_diagonal_flag) {
-      domain_error(function, name, "has zeros on the diagonal.", "");
+      throw_domain_error(function, name, "has zeros on the diagonal.", "");
     }
   } catch (const cl::Error& e) {
     check_opencl_error("diag_zeros_check", e);

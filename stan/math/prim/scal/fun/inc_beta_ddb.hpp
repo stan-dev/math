@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_FUN_INC_BETA_DDB_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
 #include <stan/math/prim/scal/fun/inc_beta_dda.hpp>
 #include <cmath>
@@ -37,6 +37,7 @@ T inc_beta_dda(T a, T b, T z, T digamma_a, T digamma_ab);
  */
 template <typename T>
 T inc_beta_ddb(T a, T b, T z, T digamma_b, T digamma_ab) {
+  using std::fabs;
   using std::log;
   using std::pow;
 
@@ -78,8 +79,8 @@ T inc_beta_ddb(T a, T b, T z, T digamma_b, T digamma_ab) {
     summand *= z / k;
 
     if (k > 1e5) {
-      domain_error("inc_beta_ddb", "did not converge within 100000 iterations",
-                   "", "");
+      throw_domain_error("inc_beta_ddb",
+                         "did not converge within 100000 iterations", "", "");
     }
   }
 

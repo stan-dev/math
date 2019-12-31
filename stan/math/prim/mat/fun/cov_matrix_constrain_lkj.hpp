@@ -21,12 +21,12 @@ namespace math {
  * in <code>corr_matrix_constrain(Matrix, size_t)</code>
  * with the constrained deviations.
  *
+ * @tparam T type of elements in the vector
  * @param x Input vector of unconstrained partial correlations and
  * standard deviations.
  * @param k Dimensionality of returned covariance matrix.
  * @return Covariance matrix derived from the unconstrained partial
  * correlations and deviations.
- * @tparam T Type of scalar.
  */
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cov_matrix_constrain_lkj(
@@ -57,16 +57,16 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cov_matrix_constrain_lkj(
  * composing the log absolute Jacobian determinant for the
  * underlying correlation matrix as defined in
  * <code>cov_matrix_constrain(Matrix, size_t, T&)</code> with
- * the Jacobian of the transfrom of the correlation matrix
+ * the Jacobian of the transform of the correlation matrix
  * into a covariance matrix by scaling by standard deviations.
  *
+ * @tparam T type of elements in the vector
  * @param x Input vector of unconstrained partial correlations and
  * standard deviations.
  * @param k Dimensionality of returned covariance matrix.
  * @param lp Log probability reference to increment.
  * @return Covariance matrix derived from the unconstrained partial
  * correlations and deviations.
- * @tparam T Type of scalar.
  */
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cov_matrix_constrain_lkj(
@@ -85,7 +85,6 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cov_matrix_constrain_lkj(
 }
 
 }  // namespace math
-
 }  // namespace stan
 
 #endif

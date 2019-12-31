@@ -2,10 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_INV_CHI_SQUARE_LCDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
@@ -19,7 +16,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Returns the inverse chi square log cumulative distribution function for
  * the given variate and degrees of freedom. If given containers of
  * matching sizes, returns the log sum of probabilities.
@@ -58,7 +55,7 @@ return_type_t<T_y, T_dof> inv_chi_square_lcdf(const T_y& y, const T_dof& nu) {
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
-  for (size_t i = 0; i < stan::length(y); i++) {
+  for (size_t i = 0; i < size(y); i++) {
     if (value_of(y_vec[i]) == 0) {
       return ops_partials.build(negative_infinity());
     }
@@ -69,12 +66,12 @@ return_type_t<T_y, T_dof> inv_chi_square_lcdf(const T_y& y, const T_dof& nu) {
   using std::pow;
 
   VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
-      gamma_vec(stan::length(nu));
+      gamma_vec(size(nu));
   VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
-      digamma_vec(stan::length(nu));
+      digamma_vec(size(nu));
 
   if (!is_constant_all<T_dof>::value) {
-    for (size_t i = 0; i < stan::length(nu); i++) {
+    for (size_t i = 0; i < size(nu); i++) {
       const T_partials_return nu_dbl = value_of(nu_vec[i]);
       gamma_vec[i] = tgamma(0.5 * nu_dbl);
       digamma_vec[i] = digamma(0.5 * nu_dbl);

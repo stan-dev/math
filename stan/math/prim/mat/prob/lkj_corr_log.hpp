@@ -4,12 +4,11 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/prob/lkj_corr_lpdf.hpp>
-#include <boost/math/tools/promotion.hpp>
 
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup multivar_dists
  * @deprecated use <code>lkj_corr_lpdf</code>
  */
 template <bool propto, typename T_y, typename T_shape>
@@ -19,7 +18,7 @@ return_type_t<T_y, T_shape> lkj_corr_log(
   return lkj_corr_lpdf<propto, T_y, T_shape>(y, eta);
 }
 
-/**
+/** \ingroup multivar_dists
  * @deprecated use <code>lkj_corr_lpdf</code>
  */
 template <typename T_y, typename T_shape>

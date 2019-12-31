@@ -2,26 +2,25 @@
 #define STAN_MATH_OPENCL_TRI_INVERSE_HPP
 
 #ifdef STAN_OPENCL
+
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/kernels/diag_inv.hpp>
 #include <stan/math/opencl/kernels/inv_lower_tri_multiply.hpp>
 #include <stan/math/opencl/kernels/neg_rect_lower_tri_multiply.hpp>
-#include <stan/math/opencl/err/check_opencl.hpp>
+#include <stan/math/opencl/err.hpp>
 #include <stan/math/opencl/identity.hpp>
-#include <stan/math/opencl/err/check_square.hpp>
-#include <stan/math/opencl/err/check_triangular.hpp>
 #include <stan/math/opencl/sub_block.hpp>
 #include <stan/math/opencl/zeros.hpp>
 #include <stan/math/opencl/prim/transpose.hpp>
 #include <stan/math/prim/meta.hpp>
-
+#include <cmath>
 #include <string>
 #include <vector>
 
 namespace stan {
 namespace math {
-/**
+/** \ingroup opencl
  * Computes the inverse of a triangular matrix
  *
  * For a full guide to how this works and fits into Cholesky decompositions,
@@ -58,7 +57,7 @@ inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
   if (max_1D_thread_block_size < thread_block_size_1D) {
     thread_block_size_1D = max_1D_thread_block_size;
   }
-  int max_2D_thread_block_dim = sqrt(max_1D_thread_block_size);
+  int max_2D_thread_block_dim = std::sqrt(max_1D_thread_block_size);
   if (max_2D_thread_block_dim < thread_block_2D_dim) {
     thread_block_2D_dim = max_2D_thread_block_dim;
   }
@@ -114,6 +113,7 @@ inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
     }
     return inv_mat;
   }
+  using std::ceil;
   parts = ceil(parts / 2.0);
 
   auto result_matrix_dim = thread_block_size_1D;

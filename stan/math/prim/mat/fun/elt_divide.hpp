@@ -1,9 +1,8 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_ELT_DIVIDE_HPP
 #define STAN_MATH_PRIM_MAT_FUN_ELT_DIVIDE_HPP
 
-#include <boost/math/tools/promotion.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/err/check_matching_dims.hpp>
 
 namespace stan {
 namespace math {
@@ -11,10 +10,11 @@ namespace math {
 /**
  * Return the elementwise division of the specified matrices.
  *
- * @tparam T1 Type of scalars in first matrix.
- * @tparam T2 Type of scalars in second matrix.
- * @tparam R Row type of both matrices.
- * @tparam C Column type of both matrices.
+ * @tparam T1 type of elements in first matrix
+ * @tparam T2 type of elements in second matrix
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ *
  * @param m1 First matrix
  * @param m2 Second matrix
  * @return Elementwise division of matrices.
@@ -31,10 +31,11 @@ Eigen::Matrix<return_type_t<T1, T2>, R, C> elt_divide(
  * Return the elementwise division of the specified matrix
  * by the specified scalar.
  *
- * @tparam T1 Type of scalars in the matrix.
- * @tparam T2 Type of the scalar.
- * @tparam R Row type of the matrix.
- * @tparam C Column type of the matrix.
+ * @tparam T1 type of elements in the matrix
+ * @tparam T2 type of the scalar
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ *
  * @param m matrix
  * @param s scalar
  * @return Elementwise division of a scalar by matrix.
@@ -49,10 +50,11 @@ Eigen::Matrix<return_type_t<T1, T2>, R, C> elt_divide(
  * Return the elementwise division of the specified scalar
  * by the specified matrix.
  *
- * @tparam T1 Type of the scalar.
- * @tparam T2 Type of scalars in the matrix.
- * @tparam R Row type of the matrix.
- * @tparam C Column type of the matrix.
+ * @tparam T1 type of the scalar
+ * @tparam T2 type of elements in the matrix
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ *
  * @param s scalar
  * @param m matrix
  * @return Elementwise division of a scalar by matrix.
@@ -65,4 +67,5 @@ Eigen::Matrix<return_type_t<T1, T2>, R, C> elt_divide(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

@@ -3,6 +3,7 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
+#include <stan/math/prim/scal/fun/cbrt.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 
 namespace stan {

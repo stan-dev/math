@@ -2,10 +2,8 @@
 #define STAN_MATH_PRIM_SCAL_PROB_EXP_MOD_NORMAL_CDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/scal/fun/erf.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/is_inf.hpp>
@@ -65,23 +63,24 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
     const T_partials_return v = lambda_dbl * sigma_dbl;
     const T_partials_return v_sq = v * v;
     const T_partials_return scaled_diff
-        = (y_dbl - mu_dbl) / (SQRT_2 * sigma_dbl);
+        = (y_dbl - mu_dbl) / (SQRT_TWO * sigma_dbl);
     const T_partials_return scaled_diff_sq = scaled_diff * scaled_diff;
     const T_partials_return erf_calc
-        = 0.5 * (1 + erf(-v / SQRT_2 + scaled_diff));
+        = 0.5 * (1 + erf(-v / SQRT_TWO + scaled_diff));
     const T_partials_return deriv_1
         = lambda_dbl * exp(0.5 * v_sq - u) * erf_calc;
     const T_partials_return deriv_2
-        = SQRT_2 / sqrt_pi * 0.5
+        = SQRT_TWO / sqrt_pi * 0.5
           * exp(0.5 * v_sq
-                - (scaled_diff - (v / SQRT_2)) * (scaled_diff - (v / SQRT_2))
+                - (scaled_diff - (v / SQRT_TWO))
+                      * (scaled_diff - (v / SQRT_TWO))
                 - u)
           / sigma_dbl;
     const T_partials_return deriv_3
-        = SQRT_2 / sqrt_pi * 0.5 * exp(-scaled_diff_sq) / sigma_dbl;
+        = SQRT_TWO / sqrt_pi * 0.5 * exp(-scaled_diff_sq) / sigma_dbl;
 
-    const T_partials_return cdf_
-        = 0.5 * (1 + erf(u / (v * SQRT_2))) - exp(-u + v_sq * 0.5) * (erf_calc);
+    const T_partials_return cdf_ = 0.5 * (1 + erf(u / (v * SQRT_TWO)))
+                                   - exp(-u + v_sq * 0.5) * (erf_calc);
 
     cdf *= cdf_;
 
@@ -93,41 +92,41 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
     }
     if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n]
-          += (-deriv_1 * v - deriv_3 * scaled_diff * SQRT_2
-              - deriv_2 * sigma_dbl * SQRT_2
-                    * (-SQRT_2 * 0.5
-                           * (-lambda_dbl + scaled_diff * SQRT_2 / sigma_dbl)
-                       - SQRT_2 * lambda_dbl))
+          += (-deriv_1 * v - deriv_3 * scaled_diff * SQRT_TWO
+              - deriv_2 * sigma_dbl * SQRT_TWO
+                    * (-SQRT_TWO * 0.5
+                           * (-lambda_dbl + scaled_diff * SQRT_TWO / sigma_dbl)
+                       - SQRT_TWO * lambda_dbl))
              / cdf_;
     }
     if (!is_constant_all<T_inv_scale>::value) {
       ops_partials.edge4_.partials_[n]
           += exp(0.5 * v_sq - u)
-             * (SQRT_2 / sqrt_pi * 0.5 * sigma_dbl
-                    * exp(-(v / SQRT_2 - scaled_diff)
-                          * (v / SQRT_2 - scaled_diff))
+             * (SQRT_TWO / sqrt_pi * 0.5 * sigma_dbl
+                    * exp(-(v / SQRT_TWO - scaled_diff)
+                          * (v / SQRT_TWO - scaled_diff))
                 - (v * sigma_dbl + mu_dbl - y_dbl) * erf_calc)
              / cdf_;
     }
   }
 
   if (!is_constant_all<T_y>::value) {
-    for (size_t n = 0; n < stan::length(y); ++n) {
+    for (size_t n = 0; n < size(y); ++n) {
       ops_partials.edge1_.partials_[n] *= cdf;
     }
   }
   if (!is_constant_all<T_loc>::value) {
-    for (size_t n = 0; n < stan::length(mu); ++n) {
+    for (size_t n = 0; n < size(mu); ++n) {
       ops_partials.edge2_.partials_[n] *= cdf;
     }
   }
   if (!is_constant_all<T_scale>::value) {
-    for (size_t n = 0; n < stan::length(sigma); ++n) {
+    for (size_t n = 0; n < size(sigma); ++n) {
       ops_partials.edge3_.partials_[n] *= cdf;
     }
   }
   if (!is_constant_all<T_inv_scale>::value) {
-    for (size_t n = 0; n < stan::length(lambda); ++n) {
+    for (size_t n = 0; n < size(lambda); ++n) {
       ops_partials.edge4_.partials_[n] *= cdf;
     }
   }

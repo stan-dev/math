@@ -4,6 +4,7 @@
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/arr/fun/log_sum_exp.hpp>
 #include <vector>
+#include <cmath>
 
 namespace stan {
 namespace math {

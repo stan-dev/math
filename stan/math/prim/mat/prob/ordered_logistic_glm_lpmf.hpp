@@ -1,22 +1,18 @@
 #ifndef STAN_MATH_PRIM_MAT_PROB_ORDERED_LOGISTIC_GLM_LPMF_HPP
 #define STAN_MATH_PRIM_MAT_PROB_ORDERED_LOGISTIC_GLM_LPMF_HPP
 
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_bounded.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/value_of_rec.hpp>
 #include <stan/math/prim/arr/fun/value_of_rec.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <stan/math/prim/mat/err/check_ordered.hpp>
-#include <stan/math/prim/arr/err/check_ordered.hpp>
 #include <stan/math/prim/mat/fun/log1m_exp.hpp>
-#include <stan/math/prim/meta.hpp>
 #include <cmath>
 
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup multivar_dists
  * Returns the log PMF of the ordinal regression Generalized Linear Model (GLM).
  * This is equivalent to and faster than ordered_logistic_lpmf(y, x * beta,
  * cuts).
@@ -64,14 +60,12 @@ ordered_logistic_glm_lpmf(
 
   static const char* function = "ordered_logistic_glm_lpmf";
 
-  const size_t N_instances = T_x_rows == 1 ? length(y) : x.rows();
+  const size_t N_instances = T_x_rows == 1 ? size(y) : x.rows();
   const size_t N_attributes = x.cols();
-  const size_t N_classes = length(cuts) + 1;
+  const size_t N_classes = size(cuts) + 1;
 
-  if (is_vector<T_y>::value && T_x_rows != 1) {
-    check_consistent_size(function, "Vector of dependent variables", y,
-                          N_instances);
-  }
+  check_consistent_size(function, "Vector of dependent variables", y,
+                        N_instances);
   check_consistent_size(function, "Weight vector", beta, N_attributes);
   check_bounded(function, "Vector of dependent variables", y, 1, N_classes);
   check_ordered(function, "Cut-points", cuts);

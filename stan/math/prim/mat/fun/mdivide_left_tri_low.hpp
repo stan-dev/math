@@ -1,11 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_MDIVIDE_LEFT_TRI_LOW_HPP
 #define STAN_MATH_PRIM_MAT_FUN_MDIVIDE_LEFT_TRI_LOW_HPP
 
-#include <boost/math/tools/promotion.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left_tri.hpp>
-#include <stan/math/prim/mat/err/check_square.hpp>
-#include <stan/math/prim/mat/err/check_multiplicable.hpp>
 
 namespace stan {
 namespace math {
@@ -17,12 +15,13 @@ namespace math {
  * <code>b</code> is more arithmetically stable than calling
  * <code>inv(A) * b</code>.
  *
- * @tparam T1 type of divisor matrix
- * @tparam T2 type of dividend matrix
- * @tparam R1 rows of divisor matrix
- * @tparam C1 columns of divisor matrix
- * @tparam R2 rows of dividen matrix
- * @tparam C2 rows of divisor matrix
+ * @tparam T1 type of elements in the divisor matrix
+ * @tparam T2 type of elements in the dividend matrix
+ * @tparam R1 number rows in the divisor matrix, can be Eigen::Dynamic
+ * @tparam C1 number columns in the divisor matrix, can be Eigen::Dynamic
+ * @tparam R2 number rows in the dividend matrix, can be Eigen::Dynamic
+ * @tparam C2 number columns in the dividend matrix, can be Eigen::Dynamic
+ *
  * @param A divisor, an invertible square matrix
  * @param b dividend, a matrix or vector with the same number of
  *   rows as the divisor has columns
@@ -48,4 +47,5 @@ inline Eigen::Matrix<T, R1, C1> mdivide_left_tri_low(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

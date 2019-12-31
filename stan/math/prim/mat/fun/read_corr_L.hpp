@@ -3,9 +3,11 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
+#include <stan/math/prim/scal/fun/sqrt.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/mat/fun/sum.hpp>
 #include <cstddef>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -23,18 +25,18 @@ namespace math {
  * <p>See <code>read_corr_matrix(Array, size_t, T)</code>
  * for more information.
  *
+ * @tparam T type of elements in the array
  * @param CPCs The (K choose 2) canonical partial correlations in
  * (-1, 1).
  * @param K Dimensionality of correlation matrix.
  * @return Cholesky factor of correlation matrix for specified
  * canonical partial correlations.
-
- * @tparam T Type of underlying scalar.
  */
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
     const Eigen::Array<T, Eigen::Dynamic, 1>& CPCs,  // on (-1, 1)
     size_t K) {
+  using std::sqrt;
   Eigen::Array<T, Eigen::Dynamic, 1> temp;
   Eigen::Array<T, Eigen::Dynamic, 1> acc(K - 1);
   acc.setOnes();
@@ -75,6 +77,7 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
  * extended onion method Journal of Multivariate Analysis 100
  * (2009) 1989–2001 </li></ul>
  *
+ * @tparam T type of elements in the array
  * @param CPCs The (K choose 2) canonical partial correlations in
  * (-1, 1).
  * @param K Dimensionality of correlation matrix.
@@ -82,7 +85,6 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
  * Jacobian determinant.
  * @return Cholesky factor of correlation matrix for specified
  * partial correlations.
- * @tparam T Type of underlying scalar.
  */
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
@@ -105,4 +107,5 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

@@ -1,27 +1,25 @@
 #ifndef STAN_MATH_OPENCL_CHOLESKY_DECOMPOSE_HPP
 #define STAN_MATH_OPENCL_CHOLESKY_DECOMPOSE_HPP
 #ifdef STAN_OPENCL
+
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
+#include <stan/math/opencl/err.hpp>
 #include <stan/math/opencl/multiply_transpose.hpp>
 #include <stan/math/opencl/tri_inverse.hpp>
 #include <stan/math/opencl/sub_block.hpp>
-#include <stan/math/opencl/err/check_diagonal_zeros.hpp>
-#include <stan/math/opencl/err/check_nan.hpp>
-#include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/opencl/kernels/cholesky_decompose.hpp>
-#include <stan/math/opencl/prim/multiply.hpp>
-#include <stan/math/opencl/prim/subtract.hpp>
+#include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/prim/transpose.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <cl.hpp>
+#include <CL/cl2.hpp>
 #include <algorithm>
 #include <cmath>
 
 namespace stan {
 namespace math {
 namespace opencl {
-/**
+/** \ingroup opencl
  * Performs an in-place computation of the lower-triangular Cholesky factor
  * (i.e., matrix square root) of the specified square, symmetric matrix. The
  * return value \f$L\f$ will be a lower-traingular matrix such that the original

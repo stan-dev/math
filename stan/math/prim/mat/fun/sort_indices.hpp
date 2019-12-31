@@ -62,10 +62,10 @@ class index_comparator {
 template <bool ascending, typename C>
 std::vector<int> sort_indices(const C& xs) {
   using idx_t = typename index_type<C>::type;
-  idx_t size = xs.size();
+  idx_t xs_size = xs.size();
   std::vector<int> idxs;
-  idxs.resize(size);
-  for (idx_t i = 0; i < size; ++i) {
+  idxs.resize(xs_size);
+  for (idx_t i = 0; i < xs_size; ++i) {
     idxs[i] = i + 1;
   }
   internal::index_comparator<ascending, C> comparator(xs);
@@ -75,4 +75,5 @@ std::vector<int> sort_indices(const C& xs) {
 
 }  // namespace math
 }  // namespace stan
+
 #endif

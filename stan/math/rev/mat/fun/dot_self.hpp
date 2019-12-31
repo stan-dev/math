@@ -2,8 +2,8 @@
 #define STAN_MATH_REV_MAT_FUN_DOT_SELF_HPP
 
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/err/check_vector.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/rev/core.hpp>
 #include <vector>

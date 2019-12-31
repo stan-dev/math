@@ -2,6 +2,8 @@
 #define STAN_MATH_OPENCL_COPY_HPP
 #ifdef STAN_OPENCL
 
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/opencl/buffer_types.hpp>
 #include <stan/math/opencl/kernel_cl.hpp>
@@ -13,11 +15,9 @@
 #include <stan/math/opencl/kernels/unpack.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/opencl/err/check_triangular.hpp>
-#include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <stan/math/prim/arr/fun/vec_concat.hpp>
 
-#include <cl.hpp>
+#include <CL/cl2.hpp>
 #include <algorithm>
 #include <iostream>
 #include <type_traits>
@@ -25,72 +25,49 @@
 
 namespace stan {
 namespace math {
-/**
- * Copies the source Eigen matrix to
- * the destination matrix that is stored
- * on the OpenCL device.
+
+/** \ingroup opencl
+ * Copies the source Eigen matrix to the destination matrix that is stored on
+ * the OpenCL device. If a lvalue matrix is passed to this function the caller
+ * must make sure that the matrix does not go out of scope before copying is
+ * complete.
+ *
+ * That means `.wait()` must be called on the event associated on copying or
+ * any other event that requires completion of this event. This can be done by
+ * calling `.wait_for_write_events()` or `.wait_for_read_write_events()` on
+ * returned matrix or any matrix that is calculated from that one.
  *
  * @param src source Eigen matrix
  * @return matrix_cl with a copy of the data in the source matrix
  */
 template <typename Mat, typename Mat_scalar = scalar_type_t<Mat>,
-          require_eigen_t<Mat>...>
+          require_eigen_vt<std::is_arithmetic, Mat>...>
 inline matrix_cl<Mat_scalar> to_matrix_cl(Mat&& src) {
-  matrix_cl<Mat_scalar> dst(src.rows(), src.cols());
-  if (src.size() == 0) {
-    return dst;
-  }
-  try {
-    cl::Event transfer_event;
-    cl::CommandQueue& queue = opencl_context.queue();
-    queue.enqueueWriteBuffer(
-        dst.buffer(),
-        opencl_context.in_order()
-            || std::is_rvalue_reference<Mat_scalar&&>::value,
-        0, sizeof(Mat_scalar) * src.size(), src.eval().data(), nullptr,
-        &transfer_event);
-    dst.add_write_event(transfer_event);
-  } catch (const cl::Error& e) {
-    check_opencl_error("copy Eigen->(OpenCL)", e);
-  }
-  return dst;
+  return matrix_cl<Mat_scalar>(std::forward<Mat>(src));
 }
 
-/**
- * Copies the source std::vector to
- * the destination matrix that is stored
- * on the OpenCL device.
+/** \ingroup opencl
+ * Copies the source `std::vector` to the destination matrix that is stored on
+ * the OpenCL device. If a lvalue is passed to this constructor the caller must
+ * make sure that it does not go out of scope before copying is complete.
+ *
+ * That means `.wait()` must be called on the event associated on copying or
+ * any other event that requires completion of this event. This can be done by
+ * calling `.wait_for_write_events()` or `.wait_for_read_write_events()` on
+ * returned matrix or any matrix that is calculated from that one.
  *
  * @param src source std::vector
  * @return matrix_cl with a copy of the data in the source matrix
  */
 template <typename Vec, typename Vec_scalar = scalar_type_t<Vec>,
-          require_std_vector_t<Vec>...>
+          require_std_vector_vt<std::is_arithmetic, Vec>...>
 inline matrix_cl<Vec_scalar> to_matrix_cl(Vec&& src) {
-  matrix_cl<Vec_scalar> dst(src.size(), 1);
-  if (src.size() == 0) {
-    return dst;
-  }
-  try {
-    cl::Event transfer_event;
-    cl::CommandQueue& queue = opencl_context.queue();
-    queue.enqueueWriteBuffer(
-        dst.buffer(),
-        opencl_context.in_order()
-            || std::is_rvalue_reference<Vec_scalar&&>::value,
-        0, sizeof(Vec_scalar) * src.size(), src.data(), nullptr,
-        &transfer_event);
-    dst.add_write_event(transfer_event);
-  } catch (const cl::Error& e) {
-    check_opencl_error("copy Eigen->(OpenCL)", e);
-  }
-  return dst;
+  return matrix_cl<Vec_scalar>(std::forward<Vec>(src));
 }
 
-/**
- * Copies the source matrix that is stored
- * on the OpenCL device to the destination Eigen
- * matrix.
+/** \ingroup opencl
+ * Copies the source matrix that is stored on the OpenCL device to the
+ * destination Eigen matrix.
  *
  * @param src source matrix on the OpenCL device
  * @return Eigen matrix with a copy of the data in the source matrix
@@ -104,7 +81,7 @@ inline Eigen::Matrix<T, R, C> from_matrix_cl(const matrix_cl<T>& src) {
     return dst;
   }
   try {
-    /**
+    /** \ingroup opencl
      * Reads the contents of the OpenCL buffer
      * starting at the offset 0 to the Eigen
      * matrix
@@ -125,8 +102,8 @@ inline Eigen::Matrix<T, R, C> from_matrix_cl(const matrix_cl<T>& src) {
   return dst;
 }
 
-/**
- * Packs the flat triagnular matrix on the OpenCL device and
+/** \ingroup opencl
+ * Packs the flat triangular matrix on the OpenCL device and
  * copies it to the std::vector.
  *
  * @param src the flat triangular source matrix on the OpenCL device
@@ -161,10 +138,16 @@ inline std::vector<T> packed_copy(const matrix_cl<T>& src) {
   return dst;
 }
 
-/**
- * Copies the packed triangular matrix from
- * the source std::vector to an OpenCL buffer and
- * unpacks it to a flat matrix on the OpenCL device.
+/** \ingroup opencl
+ * Copies the packed triangular matrix from the source std::vector to an OpenCL
+ * buffer and unpacks it to a flat matrix on the OpenCL device. If a lvalue is
+ * passed to this constructor the caller must make sure that it does not go out
+ * of scope before copying is complete.
+ *
+ * That means `.wait()` must be called on the event associated on copying or
+ * any other event that requires completion of this event. This can be done by
+ * calling `.wait_for_write_events()` or `.wait_for_read_write_events()` on
+ * returned matrix or any matrix that is calculated from that one.
  *
  * @tparam matrix_view the triangularity of the source matrix
  * @param src the packed source std::vector
@@ -176,7 +159,7 @@ inline std::vector<T> packed_copy(const matrix_cl<T>& src) {
  */
 template <matrix_cl_view matrix_view, typename Vec,
           typename Vec_scalar = scalar_type_t<Vec>,
-          require_std_vector_t<Vec>...>
+          require_vector_vt<std::is_arithmetic, Vec>...>
 inline matrix_cl<Vec_scalar> packed_copy(Vec&& src, int rows) {
   const int packed_size = rows * (rows + 1) / 2;
   check_size_match("copy (packed std::vector -> OpenCL)", "src.size()",
@@ -203,43 +186,23 @@ inline matrix_cl<Vec_scalar> packed_copy(Vec&& src, int rows) {
   return dst;
 }
 
-/**
+/** \ingroup opencl
  * Copies the source matrix to the
  * destination matrix. Both matrices
  * are stored on the OpenCL device.
  *
- * @param src source matrix
+ * @tparam T An arithmetic type to pass the value from the OpenCL matrix to.
+ * @param src the source matrix
  * @return matrix_cl with copies of values in the source matrix
  * @throw <code>std::invalid_argument</code> if the
  * matrices do not have matching dimensions
  */
 template <typename T, typename = require_arithmetic_t<T>>
 inline matrix_cl<T> copy_cl(const matrix_cl<T>& src) {
-  matrix_cl<T> dst(src.rows(), src.cols(), src.view());
-  if (src.size() == 0) {
-    return dst;
-  }
-  try {
-    /**
-     * Copies the contents of the src buffer to the dst buffer
-     * see the matrix_cl(matrix_cl&) constructor
-     *  for explanation
-     */
-    cl::CommandQueue queue = opencl_context.queue();
-    const std::vector<cl::Event> mat_events
-        = vec_concat(dst.read_write_events(), src.write_events());
-    cl::Event copy_event;
-    queue.enqueueCopyBuffer(src.buffer(), dst.buffer(), 0, 0,
-                            sizeof(T) * src.size(), &mat_events, &copy_event);
-    dst.add_write_event(copy_event);
-    src.add_read_event(copy_event);
-  } catch (const cl::Error& e) {
-    check_opencl_error("copy_cl (OpenCL)->(OpenCL)", e);
-  }
-  return dst;
+  return matrix_cl<T>(src);
 }
 
-/**
+/** \ingroup opencl
  * Copy A 1 by 1 source matrix from the Device to  the host.
  * @tparam T An arithmetic type to pass the value from the OpenCL matrix to.
  * @param src A 1x1 matrix on the device.
@@ -265,31 +228,23 @@ inline T from_matrix_cl_error_code(const matrix_cl<T>& src) {
   return dst;
 }
 
-/**
- * Copy an arithmetic type to the device.
+/** \ingroup opencl
+ * Copy an arithmetic type to the device. If a lvalue is passed to this
+ * constructor the caller must make sure that it does not go out of scope before
+ * copying is complete.
+ *
+ * That means `.wait()` must be called on the event associated on copying or
+ * any other event that requires completion of this event. This can be done by
+ * calling `.wait_for_write_events()` or `.wait_for_read_write_events()` on
+ * returned matrix or any matrix that is calculated from that one.
+ *
  * @tparam T An arithmetic type to pass the value from the OpenCL matrix to.
  * @param src Arithmetic to receive the matrix_cl value.
  * @return A 1x1 matrix on the device.
  */
 template <typename T, typename = require_arithmetic_t<std::decay_t<T>>>
 inline matrix_cl<std::decay_t<T>> to_matrix_cl(T&& src) {
-  matrix_cl<std::decay_t<T>> dst(1, 1);
-  check_size_match("to_matrix_cl ((OpenCL) -> (OpenCL))", "src.rows()",
-                   dst.rows(), "dst.rows()", 1);
-  check_size_match("to_matrix_cl ((OpenCL) -> (OpenCL))", "src.cols()",
-                   dst.cols(), "dst.cols()", 1);
-  try {
-    cl::Event copy_event;
-    const cl::CommandQueue queue = opencl_context.queue();
-    queue.enqueueWriteBuffer(
-        dst.buffer(),
-        opencl_context.in_order() || std::is_rvalue_reference<T&&>::value, 0,
-        sizeof(std::decay_t<T>), &src, &dst.write_events(), &copy_event);
-    dst.add_write_event(copy_event);
-  } catch (const cl::Error& e) {
-    check_opencl_error("to_matrix_cl (OpenCL)->(OpenCL)", e);
-  }
-  return dst;
+  return matrix_cl<std::decay_t<T>>(std::forward<T>(src));
 }
 
 }  // namespace math

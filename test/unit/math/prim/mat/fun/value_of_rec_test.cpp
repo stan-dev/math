@@ -1,7 +1,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathMatrix, value_of_rec) {
+TEST(MathMatrixPrimMat, value_of_rec) {
   using stan::math::value_of_rec;
 
   Eigen::Matrix<double, 2, 5> a;

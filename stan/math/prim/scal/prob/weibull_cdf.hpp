@@ -2,8 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_WEIBULL_CDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <cmath>
@@ -11,7 +10,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Returns the Weibull cumulative distribution function for the given
  * location and scale. Given containers of matching sizes, returns the
  * product of probabilities.
@@ -35,6 +34,7 @@ return_type_t<T_y, T_shape, T_scale> weibull_cdf(const T_y& y,
 
   using std::exp;
   using std::log;
+  using std::pow;
 
   if (size_zero(y, alpha, sigma)) {
     return 1.0;
@@ -74,17 +74,17 @@ return_type_t<T_y, T_shape, T_scale> weibull_cdf(const T_y& y,
   }
 
   if (!is_constant_all<T_y>::value) {
-    for (size_t n = 0; n < stan::length(y); ++n) {
+    for (size_t n = 0; n < size(y); ++n) {
       ops_partials.edge1_.partials_[n] *= cdf;
     }
   }
   if (!is_constant_all<T_shape>::value) {
-    for (size_t n = 0; n < stan::length(alpha); ++n) {
+    for (size_t n = 0; n < size(alpha); ++n) {
       ops_partials.edge2_.partials_[n] *= cdf;
     }
   }
   if (!is_constant_all<T_scale>::value) {
-    for (size_t n = 0; n < stan::length(sigma); ++n) {
+    for (size_t n = 0; n < size(sigma); ++n) {
       ops_partials.edge3_.partials_[n] *= cdf;
     }
   }

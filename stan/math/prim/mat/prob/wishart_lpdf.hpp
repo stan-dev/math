@@ -2,10 +2,7 @@
 #define STAN_MATH_PRIM_MAT_PROB_WISHART_LPDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
-#include <stan/math/prim/mat/err/check_ldlt_factor.hpp>
-#include <stan/math/prim/mat/err/check_square.hpp>
-#include <stan/math/prim/scal/err/check_greater.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/lmgamma.hpp>
 #include <stan/math/prim/mat/fun/trace.hpp>
 #include <stan/math/prim/mat/fun/log_determinant_ldlt.hpp>
@@ -15,7 +12,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup multivar_dists
  * The log of the Wishart density for the given W, degrees of freedom,
  * and scale matrix.
  *
@@ -55,7 +52,6 @@ return_type_t<T_y, T_dof, T_scale> wishart_lpdf(
   using Eigen::Dynamic;
   using Eigen::Lower;
   using Eigen::Matrix;
-  using boost::math::tools::promote_args;
 
   typename index_type<Matrix<T_scale, Dynamic, Dynamic> >::type k = W.rows();
   return_type_t<T_y, T_dof, T_scale> lp(0.0);

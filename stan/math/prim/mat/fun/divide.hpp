@@ -9,12 +9,15 @@ namespace stan {
 namespace math {
 
 /**
- * Return specified matrix divided by specified scalar.
- * @tparam R Row type for matrix.
- * @tparam C Column type for matrix.
- * @param m Matrix.
- * @param c Scalar.
- * @return Matrix divided by scalar.
+ * Return matrix divided by scalar.
+ *
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ * @tparam T1 type of elements in the matrix
+ * @tparam T2 type of scalar
+ * @param[in] m specified matrix
+ * @param[in] c specified scalar
+ * @return matrix divided by the scalar
  */
 template <int R, int C, typename T1, typename T2,
           typename = require_all_arithmetic_t<T1, T2>>
@@ -25,4 +28,5 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R, C> divide(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

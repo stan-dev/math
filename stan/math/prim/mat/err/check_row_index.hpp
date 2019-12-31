@@ -15,12 +15,12 @@ namespace math {
  * This check is 1-indexed by default. This behavior can be changed
  * by setting <code>stan::error_index::value</code>.
  * @tparam T Scalar type
- * @tparam R Compile time rows
- * @tparam C Compile time columns
+ * @tparam R number of rows or Eigen::Dynamic
+ * @tparam C number of columns or Eigen::Dynamic
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
- * @param y Matrix to test
- * @param i is index
+ * @param y matrix to test
+ * @param i row index to check
  * @throw <code>std::out_of_range</code> if the index is out of range.
  */
 template <typename T_y, int R, int C>

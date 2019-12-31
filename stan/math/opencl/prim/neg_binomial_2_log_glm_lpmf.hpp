@@ -3,18 +3,18 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/mat/fun/lgamma.hpp>
 #include <stan/math/prim/mat/fun/value_of_rec.hpp>
 #include <stan/math/prim/arr/fun/value_of_rec.hpp>
+#include <stan/math/prim/arr/fun/sum.hpp>
 #include <stan/math/prim/scal/fun/sum.hpp>
-
+#include <stan/math/prim/mat/fun/sum.hpp>
+#include <stan/math/opencl/copy.hpp>
+#include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/kernels/neg_binomial_2_log_glm_lpmf.hpp>
 
 #include <vector>
@@ -23,7 +23,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup opencl
  * Returns the log PMF of the Generalized Linear Model (GLM)
  * with Negative-Binomial-2 distribution and log link function.
  * The idea is that neg_binomial_2_log_glm_lpmf(y, x, alpha, beta, phi) should
@@ -41,8 +41,10 @@ namespace math {
  * @tparam T_precision type of the (positive) precision(s);
  * this can be a vector (of the same length as y, for heteroskedasticity)
  * or a scalar.
- * @param y_cl failures count vector parameter on OpenCL device
- * @param x_cl design matrix on OpenCL device
+ * @param y_cl failures count scalar or vector parameter on OpenCL device. If it
+ * is a scalar it will be broadcast - used for all instances.
+ * @param x_cl design matrix on OpenCL device. This overload does not support
+ * broadcasting of a row vector x!
  * @param alpha intercept (in log odds)
  * @param beta weight vector
  * @param phi (vector of) precision parameter(s)
@@ -69,16 +71,18 @@ return_type_t<T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
   const size_t N = x_cl.rows();
   const size_t M = x_cl.cols();
 
-  check_size_match(function, "Rows of ", "x_cl", N, "rows of ", "y_cl",
-                   y_cl.rows());
+  if (y_cl.size() != 1) {
+    check_size_match(function, "Rows of ", "x_cl", N, "rows of ", "y_cl",
+                     y_cl.rows());
+  }
   check_consistent_size(function, "Weight vector", beta, M);
   if (is_vector<T_precision>::value) {
-    check_size_match(function, "Rows of ", "y_cl", N, "size of ", "phi",
-                     length(phi));
+    check_size_match(function, "Rows of ", "x_cl", N, "size of ", "phi",
+                     size(phi));
   }
   if (is_vector<T_alpha>::value) {
-    check_size_match(function, "Rows of ", "y_cl", N, "size of ", "alpha",
-                     length(alpha));
+    check_size_match(function, "Rows of ", "x_cl", N, "size of ", "alpha",
+                     size(alpha));
   }
   check_positive_finite(function, "Precision parameter", phi);
 
@@ -133,10 +137,10 @@ return_type_t<T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
     opencl_kernels::neg_binomial_2_log_glm(
         cl::NDRange(local_size * wgs), cl::NDRange(local_size), logp_cl,
         theta_derivative_cl, theta_derivative_sum_cl, phi_derivative_cl, y_cl,
-        x_cl, alpha_cl, beta_cl, phi_cl, N, M, length(alpha) != 1,
-        length(phi) != 1, need_theta_derivative, need_theta_derivative_sum,
-        need_phi_derivative, need_phi_derivative_sum, need_logp1, need_logp2,
-        need_logp3, need_logp4, need_logp5);
+        x_cl, alpha_cl, beta_cl, phi_cl, N, M, y_cl.size() != 1,
+        size(alpha) != 1, size(phi) != 1, need_theta_derivative,
+        need_theta_derivative_sum, need_phi_derivative, need_phi_derivative_sum,
+        need_logp1, need_logp2, need_logp3, need_logp4, need_logp5);
   } catch (const cl::Error& e) {
     check_opencl_error(function, e);
   }
@@ -156,8 +160,9 @@ return_type_t<T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
   if (include_summand<propto, T_precision>::value
       && !is_vector<T_precision>::value) {
     logp += N
-            * (multiply_log(as_scalar(phi_val), as_scalar(phi_val))
-               - lgamma(as_scalar(phi_val)));
+            * (multiply_log(forward_as<double>(phi_val),
+                            forward_as<double>(phi_val))
+               - lgamma(forward_as<double>(phi_val)));
   }
 
   operands_and_partials<T_alpha, T_beta, T_precision> ops_partials(alpha, beta,

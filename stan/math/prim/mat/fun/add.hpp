@@ -1,9 +1,8 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_ADD_HPP
 #define STAN_MATH_PRIM_MAT_FUN_ADD_HPP
 
-#include <boost/math/tools/promotion.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/err/check_matching_dims.hpp>
 
 namespace stan {
 namespace math {
@@ -11,10 +10,12 @@ namespace math {
 /**
  * Return the sum of the specified matrices.  The two matrices
  * must have the same dimensions.
- * @tparam T1 Scalar type of first matrix.
- * @tparam T2 Scalar type of second matrix.
- * @tparam R Row type of matrices.
- * @tparam C Column type of matrices.
+ *
+ * @tparam T1 type of elements in the first matrix
+ * @tparam T2 type of elements in the second matrix
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ *
  * @param m1 First matrix.
  * @param m2 Second matrix.
  * @return Sum of the matrices.
@@ -31,8 +32,10 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R, C> add(
 /**
  * Return the sum of the specified matrix and specified scalar.
  *
- * @tparam T1 Scalar type of matrix.
- * @tparam T2 Type of scalar.
+ * @tparam T1 type of elements in the matrix
+ * @tparam T2 type of scalar
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
  * @param m Matrix.
  * @param c Scalar.
  * @return The matrix plus the scalar.
@@ -46,8 +49,10 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R, C> add(
 /**
  * Return the sum of the specified scalar and specified matrix.
  *
- * @tparam T1 Type of scalar.
- * @tparam T2 Scalar type of matrix.
+ * @tparam T1 type of scalar
+ * @tparam T2 type of elements in the matrix
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
  * @param c Scalar.
  * @param m Matrix.
  * @return The scalar plus the matrix.
@@ -60,4 +65,5 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R, C> add(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

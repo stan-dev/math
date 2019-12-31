@@ -10,6 +10,7 @@ namespace math {
 /**
  * Returns the result of multiplying the lower triangular
  * portion of the input matrix by its own transpose.
+ *
  * @param L Matrix to multiply.
  * @return The lower triangular values in L times their own
  * transpose.
@@ -40,4 +41,5 @@ inline matrix_d multiply_lower_tri_self_transpose(const matrix_d& L) {
 
 }  // namespace math
 }  // namespace stan
+
 #endif

@@ -2,6 +2,8 @@
 #define STAN_MATH_PRIM_MAT_FUN_MATRIX_EXP_2X2_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/scal/fun/sqrt.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -11,12 +13,17 @@ namespace math {
  * algorithm: http://mathworld.wolfram.com/MatrixExponential.html
  * Note: algorithm only works if delta > 0;
  *
- * @tparam T type of scalar of the elements of input matrix.
+ * @tparam Mtype type of elements in the matrix
  * @param[in] A 2x2 matrix to exponentiate.
  * @return Matrix exponential of A.
  */
 template <typename Mtype>
 Mtype matrix_exp_2x2(const Mtype& A) {
+  using std::cosh;
+  using std::exp;
+  using std::sinh;
+  using std::sqrt;
+
   using T = typename Mtype::Scalar;
   T a = A(0, 0), b = A(0, 1), c = A(1, 0), d = A(1, 1), delta;
   delta = sqrt(square(a - d) + 4 * b * c);
@@ -37,6 +44,8 @@ Mtype matrix_exp_2x2(const Mtype& A) {
 
   return B / delta;
 }
+
 }  // namespace math
 }  // namespace stan
+
 #endif

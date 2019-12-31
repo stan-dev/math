@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_OPENCL_KERNELS_DEVICE_FUNCTIONS_LOG1M_EXP_HPP
 #define STAN_MATH_OPENCL_KERNELS_DEVICE_FUNCTIONS_LOG1M_EXP_HPP
 #ifdef STAN_OPENCL
+
+#include <stan/math/opencl/stringify.hpp>
 #include <string>
 
 namespace stan {
@@ -10,7 +12,7 @@ namespace opencl_kernels {
 // \cond
 static const std::string log1m_exp_device_function = STRINGIFY(
     // \endcond
-    /**
+    /** \ingroup opencl_kernels
      * Calculates the natural logarithm of one minus the exponential
      * of the specified value without overflow,
      *

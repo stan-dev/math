@@ -2,9 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_SCALED_INV_CHI_SQUARE_LPDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
@@ -16,7 +14,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * The log of a scaled inverse chi-squared density for y with the
  * specified degrees of freedom parameter and scale parameter.
  *
@@ -70,8 +68,8 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
 
   VectorBuilder<include_summand<propto, T_dof, T_y, T_scale>::value,
                 T_partials_return, T_dof>
-      half_nu(length(nu));
-  for (size_t i = 0; i < length(nu); i++) {
+      half_nu(size(nu));
+  for (size_t i = 0; i < size(nu); i++) {
     if (include_summand<propto, T_dof, T_y, T_scale>::value) {
       half_nu[i] = 0.5 * value_of(nu_vec[i]);
     }
@@ -79,8 +77,8 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
 
   VectorBuilder<include_summand<propto, T_dof, T_y>::value, T_partials_return,
                 T_y>
-      log_y(length(y));
-  for (size_t i = 0; i < length(y); i++) {
+      log_y(size(y));
+  for (size_t i = 0; i < size(y); i++) {
     if (include_summand<propto, T_dof, T_y>::value) {
       log_y[i] = log(value_of(y_vec[i]));
     }
@@ -88,8 +86,8 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
 
   VectorBuilder<include_summand<propto, T_dof, T_y, T_scale>::value,
                 T_partials_return, T_y>
-      inv_y(length(y));
-  for (size_t i = 0; i < length(y); i++) {
+      inv_y(size(y));
+  for (size_t i = 0; i < size(y); i++) {
     if (include_summand<propto, T_dof, T_y, T_scale>::value) {
       inv_y[i] = 1.0 / value_of(y_vec[i]);
     }
@@ -97,20 +95,20 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
 
   VectorBuilder<include_summand<propto, T_dof, T_scale>::value,
                 T_partials_return, T_scale>
-      log_s(length(s));
-  for (size_t i = 0; i < length(s); i++) {
+      log_s(size(s));
+  for (size_t i = 0; i < size(s); i++) {
     if (include_summand<propto, T_dof, T_scale>::value) {
       log_s[i] = log(value_of(s_vec[i]));
     }
   }
 
   VectorBuilder<include_summand<propto, T_dof>::value, T_partials_return, T_dof>
-      log_half_nu(length(nu));
+      log_half_nu(size(nu));
   VectorBuilder<include_summand<propto, T_dof>::value, T_partials_return, T_dof>
-      lgamma_half_nu(length(nu));
+      lgamma_half_nu(size(nu));
   VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
-      digamma_half_nu_over_two(length(nu));
-  for (size_t i = 0; i < length(nu); i++) {
+      digamma_half_nu_over_two(size(nu));
+  for (size_t i = 0; i < size(nu); i++) {
     if (include_summand<propto, T_dof>::value) {
       lgamma_half_nu[i] = lgamma(half_nu[i]);
     }

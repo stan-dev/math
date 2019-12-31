@@ -2,14 +2,14 @@
 #define STAN_MATH_OPENCL_ERR_CHECK_MAT_SIZE_ONE_HPP
 #ifdef STAN_OPENCL
 
+#include <stan/math/prim/err.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
-#include <stan/math/prim/scal/err/invalid_argument.hpp>
 
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup opencl
  * Check if the <code>matrix_cl</code> has a single element.
  *
  * @param function Function name (for error messages)
@@ -27,7 +27,7 @@ inline void check_mat_size_one(const char* function, const char* name,
   }
 }
 
-/**
+/** \ingroup opencl
  * Check if the <code>matrix_cl</code> has a single element.
  *
  * @param function Function name (for error messages)

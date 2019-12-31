@@ -2,16 +2,14 @@
 #define STAN_MATH_PRIM_SCAL_PROB_SCALED_INV_CHI_SQUARE_RNG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/err.hpp>
 #include <boost/random/chi_squared_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Return a scaled chi square random variate for the given
  * number of degrees of freedom and scale using the specified random
  * number generator.

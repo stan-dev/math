@@ -1,7 +1,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathMatrix, qr_thin_R) {
+TEST(MathMatrixPrimMat, qr_thin_R) {
   stan::math::matrix_d m0(0, 0);
   stan::math::matrix_d m1(4, 2);
   m1 << 1, 2, 3, 4, 5, 6, 7, 8;

@@ -3,8 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
-#include <stan/math/prim/scal/err/check_2F1_converges.hpp>
+#include <stan/math/prim/err.hpp>
 #include <cmath>
 #include <limits>
 
@@ -90,9 +89,9 @@ void grad_2F1(T& g_a1, T& g_b1, const T& a1, const T& a2, const T& b1,
     log_t_old = log_t_new;
     log_t_old_sign = log_t_new_sign;
   }
-  domain_error("grad_2F1", "k (internal counter)", max_steps, "exceeded ",
-               " iterations, hypergeometric function gradient "
-               "did not converge.");
+  throw_domain_error("grad_2F1", "k (internal counter)", max_steps, "exceeded ",
+                     " iterations, hypergeometric function gradient "
+                     "did not converge.");
   return;
 }
 

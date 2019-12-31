@@ -2,8 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_WEIBULL_LCCDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <cmath>
@@ -11,7 +10,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Returns the Weibull log complementary cumulative distribution function
  * for the given location and scale. Given containers of matching sizes,
  * returns the log sum of probabilities.
@@ -34,6 +33,7 @@ return_type_t<T_y, T_shape, T_scale> weibull_lccdf(const T_y& y,
   static const char* function = "weibull_lccdf";
 
   using std::log;
+  using std::pow;
 
   if (size_zero(y, alpha, sigma)) {
     return 0.0;

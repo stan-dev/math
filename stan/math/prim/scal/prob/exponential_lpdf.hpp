@@ -2,9 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_EXPONENTIAL_LPDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
@@ -13,7 +11,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * The log of an exponential density for y with the specified
  * inverse scale parameter.
  * Inverse scale parameter must be greater than 0.
@@ -63,8 +61,8 @@ return_type_t<T_y, T_inv_scale> exponential_lpdf(const T_y& y,
 
   VectorBuilder<include_summand<propto, T_inv_scale>::value, T_partials_return,
                 T_inv_scale>
-      log_beta(length(beta));
-  for (size_t i = 0; i < length(beta); i++) {
+      log_beta(size(beta));
+  for (size_t i = 0; i < size(beta); i++) {
     if (include_summand<propto, T_inv_scale>::value) {
       log_beta[i] = log(value_of(beta_vec[i]));
     }

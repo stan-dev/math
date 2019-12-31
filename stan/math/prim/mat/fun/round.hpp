@@ -9,22 +9,23 @@ namespace math {
 
 /**
  * Structure to wrap round() so it can be vectorized.
- * @param x Argument variable.
- * @tparam T Argument type.
+ *
+ * @tparam T type of argument
+ * @param x argument variable
  * @return Rounded value of x.
  */
 struct round_fun {
   template <typename T>
   static inline T fun(const T& x) {
-    using stan::math::round;
     return round(x);
   }
 };
 
 /**
  * Vectorized version of round.
- * @param x Container.
- * @tparam T Container type.
+ *
+ * @tparam T type of container
+ * @param x container
  * @return Rounded value of each value in x.
  */
 template <typename T>

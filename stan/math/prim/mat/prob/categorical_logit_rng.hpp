@@ -2,17 +2,16 @@
 #define STAN_MATH_PRIM_MAT_PROB_CATEGORICAL_LOGIT_RNG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <boost/random/uniform_01.hpp>
-#include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/mat/err/check_simplex.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/cumulative_sum.hpp>
 #include <stan/math/prim/mat/fun/softmax.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <boost/random/uniform_01.hpp>
+#include <boost/random/variate_generator.hpp>
 
 namespace stan {
 namespace math {
-/**
+/** \ingroup multivar_dists
  * Return a draw from a Categorical distribution given a
  * a vector of unnormalized log probabilities and a psuedo-random
  * number generator.

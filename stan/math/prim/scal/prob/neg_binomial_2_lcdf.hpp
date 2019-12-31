@@ -2,9 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_2_LCDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/prob/beta_cdf_log.hpp>
 #include <cmath>
@@ -40,7 +38,7 @@ return_type_t<T_location, T_precision> neg_binomial_2_lcdf(
     phi_mu[i] = phi_vec[i] / (phi_vec[i] + mu_vec[i]);
   }
 
-  size_t size_n = length(n);
+  size_t size_n = size(n);
   VectorBuilder<true, return_type_t<T_n>, T_n> np1(size_n);
   for (size_t i = 0; i < size_n; i++) {
     if (n_vec[i] < 0) {

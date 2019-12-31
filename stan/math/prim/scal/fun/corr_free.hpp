@@ -2,8 +2,8 @@
 #define STAN_MATH_PRIM_SCAL_FUN_CORR_FREE_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_bounded.hpp>
-#include <cmath>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/scal/fun/atanh.hpp>
 
 namespace stan {
 namespace math {

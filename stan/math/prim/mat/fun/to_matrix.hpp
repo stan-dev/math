@@ -1,23 +1,23 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_TO_MATRIX_HPP
 #define STAN_MATH_PRIM_MAT_FUN_TO_MATRIX_HPP
 
-#include <boost/math/tools/promotion.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
-#include <stan/math/prim/scal/err/invalid_argument.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <vector>
 
 namespace stan {
 namespace math {
+
 /**
  * Returns a matrix with dynamic dimensions constructed from an
  * Eigen matrix which is either a row vector, column vector,
  * or matrix.
  * The runtime dimensions will be the same as the input.
  *
- * @tparam T type of the scalar
- * @tparam R number of rows
- * @tparam C number of columns
+ * @tparam T type of the elements in the matrix
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ *
  * @param x matrix
  * @return the matrix representation of the input
  */
@@ -31,7 +31,7 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> to_matrix(
  * Returns a matrix representation of a standard vector of Eigen
  * row vectors with the same dimensions and indexing order.
  *
- * @tparam T type of the scalar
+ * @tparam T type of the elements in the vector
  * @param x Eigen vector of vectors of scalar values
  * @return the matrix representation of the input
  */
@@ -56,14 +56,13 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> to_matrix(
  * Returns a matrix representation of the standard vector of
  * standard vectors with the same dimensions and indexing order.
  *
- * @tparam T type of the scalar
+ * @tparam T type of elements in the vector
  * @param x vector of vectors of scalar values
  * @return the matrix representation of the input
  */
 template <typename T>
 inline Eigen::Matrix<return_type_t<T, double>, Eigen::Dynamic, Eigen::Dynamic>
 to_matrix(const std::vector<std::vector<T> >& x) {
-  using boost::math::tools::promote_args;
   size_t rows = x.size();
   if (rows == 0) {
     return Eigen::Matrix<return_type_t<T, double>, Eigen::Dynamic,
@@ -84,7 +83,10 @@ to_matrix(const std::vector<std::vector<T> >& x) {
  * Returns a matrix representation of the vector in column-major
  * order with the specified number of rows and columns.
  *
- * @tparam T type of the scalar
+ * @tparam T type of elements in the matrix
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ *
  * @param x matrix
  * @param m rows
  * @param n columns
@@ -106,7 +108,7 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> to_matrix(
  * Returns a matrix representation of the vector in column-major
  * order with the specified number of rows and columns.
  *
- * @tparam T type of the scalar
+ * @tparam T type of elements in the vector
  * @param x vector of values
  * @param m rows
  * @param n columns
@@ -137,10 +139,10 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> to_matrix(
 inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> to_matrix(
     const std::vector<int>& x, int m, int n) {
   static const char* function = "to_matrix(array)";
-  int size = x.size();
-  check_size_match(function, "rows * columns", m * n, "vector size", size);
+  int x_size = x.size();
+  check_size_match(function, "rows * columns", m * n, "vector size", x_size);
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> result(m, n);
-  for (int i = 0; i < size; i++) {
+  for (int i = 0; i < x_size; i++) {
     result(i) = x[i];
   }
   return result;
@@ -150,7 +152,10 @@ inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> to_matrix(
  * Returns a matrix representation of the vector in column-major
  * order with the specified number of rows and columns.
  *
- * @tparam T type of the scalar
+ * @tparam T type of elements in the matrix
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ *
  * @param x matrix
  * @param m rows
  * @param n columns
@@ -183,7 +188,7 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> to_matrix(
  * Returns a matrix representation of the vector in column-major
  * order with the specified number of rows and columns.
  *
- * @tparam T type of the scalar
+ * @tparam T type of elements in the vector
  * @param x vector of values
  * @param m rows
  * @param n columns
@@ -215,4 +220,5 @@ to_matrix(const std::vector<T>& x, int m, int n, bool col_major) {
 
 }  // namespace math
 }  // namespace stan
+
 #endif

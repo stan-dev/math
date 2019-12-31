@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_FUN_INC_BETA_DDA_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
 #include <stan/math/prim/scal/fun/inc_beta_ddb.hpp>
 #include <cmath>
@@ -34,6 +34,7 @@ namespace math {
  */
 template <typename T>
 T inc_beta_dda(T a, T b, T z, T digamma_a, T digamma_ab) {
+  using std::fabs;
   using std::log;
   using std::pow;
 
@@ -87,8 +88,8 @@ T inc_beta_dda(T a, T b, T z, T digamma_a, T digamma_ab) {
     summand *= z / k;
 
     if (k > 1e5) {
-      domain_error("inc_beta_dda", "did not converge within 10000 iterations",
-                   "", "");
+      throw_domain_error("inc_beta_dda",
+                         "did not converge within 10000 iterations", "", "");
     }
   }
   return inc_beta(a, b, z) * (log(z) + sum_numer / sum_denom);

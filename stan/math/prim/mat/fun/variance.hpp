@@ -1,10 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_VARIANCE_HPP
 #define STAN_MATH_PRIM_MAT_FUN_VARIANCE_HPP
 
-#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/mean.hpp>
-#include <boost/math/tools/promotion.hpp>
 #include <vector>
 
 namespace stan {
@@ -13,10 +12,11 @@ namespace math {
 /**
  * Returns the sample variance (divide by length - 1) of the
  * coefficients in the specified standard vector.
- * @param v Specified vector.
- * @return Sample variance of vector.
- * @throws std::domain_error if the size of the vector is less
- * than 1.
+ *
+ * @tparam T type of elements in the vector
+ * @param v specified vector
+ * @return sample variance of vector
+ * @throw <code>std::invalid_argument</code> if the vector has size zero
  */
 template <typename T>
 inline return_type_t<T> variance(const std::vector<T>& v) {
@@ -35,9 +35,15 @@ inline return_type_t<T> variance(const std::vector<T>& v) {
 
 /**
  * Returns the sample variance (divide by length - 1) of the
- * coefficients in the specified column vector.
- * @param m Specified vector.
- * @return Sample variance of vector.
+ * coefficients in the specified matrix
+ *
+ * @tparam T type of elements in the vector
+ * @tparam R number of rows in the matrix, can be Eigen::Dynamic
+ * @tparam C number of columns in the matrix, can be Eigen::Dynamic
+ *
+ * @param m matrix
+ * @return sample variance of coefficients
+ * @throw <code>std::invalid_argument</code> if the matrix has size zero
  */
 template <typename T, int R, int C>
 inline return_type_t<T> variance(const Eigen::Matrix<T, R, C>& m) {
@@ -57,4 +63,5 @@ inline return_type_t<T> variance(const Eigen::Matrix<T, R, C>& m) {
 
 }  // namespace math
 }  // namespace stan
+
 #endif

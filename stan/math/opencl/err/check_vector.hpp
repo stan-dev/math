@@ -1,9 +1,10 @@
 #ifndef STAN_MATH_OPENCL_ERR_CHECK_VECTOR_HPP
 #define STAN_MATH_OPENCL_ERR_CHECK_VECTOR_HPP
 #ifdef STAN_OPENCL
+
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
-#include <stan/math/prim/scal/err/invalid_argument.hpp>
 #include <sstream>
 #include <string>
 #include <typeinfo>
@@ -11,7 +12,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup opencl
  * Check if the matrix is either a row vector or column vector.
  * This function checks the runtime size of the matrix to check
  * whether it is a row or column vector.

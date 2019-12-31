@@ -3,8 +3,8 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
-
 #include <stan/math/prim/scal/fun/inv_sqrt.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {

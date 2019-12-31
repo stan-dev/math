@@ -2,7 +2,8 @@
 #define STAN_MATH_PRIM_MAT_FUN_FACTOR_U_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <cmath>
+#include <stan/math/prim/scal/fun/atanh.hpp>
+#include <stan/math/prim/scal/fun/sqrt.hpp>
 #include <cstddef>
 #include <limits>
 #include <stdexcept>
@@ -15,6 +16,7 @@ namespace math {
  * This function is intended to make starting values, given a unit
  * upper-triangular matrix U such that U'DU is a correlation matrix
  *
+ * @tparam T type of elements in the matrix
  * @param U Sigma matrix
  * @param CPCs fill this unbounded
  */
@@ -49,7 +51,6 @@ void factor_U(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& U,
 }
 
 }  // namespace math
-
 }  // namespace stan
 
 #endif

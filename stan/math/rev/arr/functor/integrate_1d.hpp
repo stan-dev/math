@@ -2,19 +2,19 @@
 #define STAN_MATH_REV_ARR_FUNCTOR_integrate_1d_HPP
 
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/arr/fun/value_of.hpp>
 #include <stan/math/prim/arr/functor/integrate_1d.hpp>
-#include <stan/math/prim/scal/err/check_less_or_equal.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
 #include <stan/math/rev/scal/fun/is_nan.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
-#include <stan/math/prim/meta.hpp>
 #include <type_traits>
 #include <string>
 #include <vector>
 #include <functional>
 #include <ostream>
 #include <limits>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -47,8 +47,8 @@ inline double gradient_of_f(const F &f, const double &x, const double &xc,
       if (fx.val() == 0) {
         gradient = 0;
       } else {
-        domain_error("gradient_of_f", "The gradient of f", n,
-                     "is nan for parameter ", "");
+        throw_domain_error("gradient_of_f", "The gradient of f", n,
+                           "is nan for parameter ", "");
       }
     }
   } catch (const std::exception &e) {
@@ -127,8 +127,8 @@ inline return_type_t<T_a, T_b, T_theta> integrate_1d(
 
   if (value_of(a) == value_of(b)) {
     if (is_inf(a)) {
-      domain_error(function, "Integration endpoints are both", value_of(a), "",
-                   "");
+      throw_domain_error(function, "Integration endpoints are both",
+                         value_of(a), "", "");
     }
     return var(0.0);
   } else {

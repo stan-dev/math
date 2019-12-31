@@ -2,9 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_POISSON_RNG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_less.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <boost/random/poisson_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
@@ -12,7 +10,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Return a Poisson random variate with specified rate parameter
  * using the given random number generator.
  *
@@ -38,7 +36,7 @@ inline typename VectorBuilder<true, int, T_rate>::type poisson_rng(
   check_less(function, "Rate parameter", lambda, POISSON_MAX_RATE);
 
   scalar_seq_view<T_rate> lambda_vec(lambda);
-  size_t N = length(lambda);
+  size_t N = size(lambda);
   VectorBuilder<true, int, T_rate> output(N);
 
   for (size_t n = 0; n < N; ++n) {

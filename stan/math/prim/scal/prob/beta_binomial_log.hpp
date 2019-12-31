@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>beta_binomial_lpmf</code>
  */
 template <bool propto, typename T_n, typename T_N, typename T_size1,
@@ -19,7 +19,7 @@ return_type_t<T_size1, T_size2> beta_binomial_log(const T_n& n, const T_N& N,
                                                                 beta);
 }
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>beta_binomial_lpmf</code>
  */
 template <typename T_n, typename T_N, typename T_size1, typename T_size2>

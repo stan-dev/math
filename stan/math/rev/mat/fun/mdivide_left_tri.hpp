@@ -2,13 +2,14 @@
 #define STAN_MATH_REV_MAT_FUN_MDIVIDE_LEFT_TRI_HPP
 
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/err/check_multiplicable.hpp>
-#include <stan/math/prim/mat/err/check_square.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/mat/fun/typedefs.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
-
+#ifdef STAN_OPENCL
+#include <stan/math/opencl/opencl.hpp>
+#endif
 namespace stan {
 namespace math {
 
@@ -86,7 +87,7 @@ class mdivide_left_tri_vv_vari : public vari {
       matrix_cl<double> C_cl(C_, M_, N_);
       matrix_cl<double> variRefC_cl(Map<matrix_vi>(variRefC_, M_, N_).adj());
       matrix_cl<double> adjB_cl = transpose(tri_inverse(A_cl)) * variRefC_cl;
-      matrix_cl<double> adjA_cl = multiply(adjB_cl * transpose(C_cl), -1.0);
+      matrix_cl<double> adjA_cl = adjB_cl * transpose(C_cl) * -1.0;
       adjA = from_matrix_cl(adjA_cl);
       adjB = from_matrix_cl(adjB_cl);
     } else {
@@ -253,8 +254,7 @@ class mdivide_left_tri_vd_vari : public vari {
       matrix_cl<double> C_cl(C_, M_, N_);
       matrix_cl<double> adjC_cl(adjC);
       A_cl = transpose(tri_inverse(A_cl));
-      matrix_cl<double> adjA_cl
-          = multiply(A_cl * (adjC_cl * transpose(C_cl)), -1.0);
+      matrix_cl<double> adjA_cl = A_cl * (adjC_cl * transpose(C_cl)) * -1.0;
       adjA = from_matrix_cl(adjA_cl);
     } else {
 #endif

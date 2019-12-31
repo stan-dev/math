@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_MAX_HPP
 #define STAN_MATH_PRIM_MAT_FUN_MAX_HPP
 
-#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <algorithm>
 #include <limits>
@@ -13,10 +13,10 @@ namespace math {
 /**
  * Returns the maximum coefficient in the specified
  * column vector.
- * @param x Specified vector.
- * @return Maximum coefficient value in the vector.
- * @tparam Type of values being compared and returned
- * @throw std::domain_error If the size of the vector is zero.
+ *
+ * @param x specified vector
+ * @return maximum coefficient value in the vector
+ * @throws <code>std::invalid_argument</code> if the vector is size zero
  */
 inline int max(const std::vector<int>& x) {
   check_nonzero_size("max", "int vector", x);
@@ -27,9 +27,11 @@ inline int max(const std::vector<int>& x) {
 /**
  * Returns the maximum coefficient in the specified
  * column vector.
- * @param x Specified vector.
- * @return Maximum coefficient value in the vector.
- * @tparam T Type of values being compared and returned
+ *
+ * @tparam type of elements in the vector
+ * @param x specified vector
+ * @return maximum coefficient value in the vector, or -infinity if the vector
+ * is size zero
  */
 template <typename T>
 inline T max(const std::vector<T>& x) {
@@ -42,9 +44,15 @@ inline T max(const std::vector<T>& x) {
 
 /**
  * Returns the maximum coefficient in the specified
- * vector, row vector, or matrix.
- * @param m Specified vector, row vector, or matrix.
- * @return Maximum coefficient value in the vector.
+ * matrix, vector, or row vector.
+ *
+ * @tparam T type of elements in the matrix
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ *
+ * @param m specified matrix, vector, or row vector
+ * @return maximum coefficient value in the vector, or -infinity if the vector
+ * is size zero
  */
 template <typename T, int R, int C>
 inline T max(const Eigen::Matrix<T, R, C>& m) {
@@ -56,4 +64,5 @@ inline T max(const Eigen::Matrix<T, R, C>& m) {
 
 }  // namespace math
 }  // namespace stan
+
 #endif

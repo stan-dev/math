@@ -347,7 +347,7 @@ TEST_F(degenerate_eq_test, powell_guess_saddle_point_dbl) {
 
 // unit test to demo issue #696
 // system functor init bug issue #696
-TEST(MathMatrix, system_functor_constructor) {
+TEST(MathMatrixRevMat, system_functor_constructor) {
   using stan::math::system_functor;
 
   Eigen::VectorXd y(2);
@@ -482,14 +482,14 @@ TEST_F(max_steps_test, newton_dbl) {
   max_num_steps_test(y, is_newton);
 }
 
-TEST(MathMatrix, unsolvable_flag_newton) {
+TEST(MathMatrixRevMat, unsolvable_flag_newton) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y(2);
   y << 1, 1;
 
   unsolvable_flag_test(y);
 }
 
-TEST(MathMatrix, unsolvable_flag_newton_dbl) {
+TEST(MathMatrixRevMat, unsolvable_flag_newton_dbl) {
   Eigen::VectorXd y(2);
   y << 1, 1;
 

@@ -6,6 +6,7 @@
 #include <stan/math/rev/mat/functor/adj_jac_apply.hpp>
 #include <tuple>
 #include <vector>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -31,7 +32,7 @@ class positive_ordered_constrain_op {
   Eigen::VectorXd operator()(const std::array<bool, size>& needs_adj,
                              const Eigen::VectorXd& x) {
     N_ = x.size();
-
+    using std::exp;
     Eigen::Matrix<double, Eigen::Dynamic, 1> y(N_);
     if (N_ == 0) {
       return y;

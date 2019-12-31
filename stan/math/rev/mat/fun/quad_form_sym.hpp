@@ -3,10 +3,8 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/err/check_multiplicable.hpp>
-#include <stan/math/prim/mat/err/check_square.hpp>
-#include <stan/math/prim/mat/err/check_symmetric.hpp>
 #include <stan/math/rev/mat/fun/quad_form.hpp>
 #include <type_traits>
 
@@ -17,7 +15,6 @@ template <typename Ta, int Ra, int Ca, typename Tb, int Rb, int Cb,
           require_any_var_t<Ta, Tb>...>
 inline Eigen::Matrix<var, Cb, Cb> quad_form_sym(
     const Eigen::Matrix<Ta, Ra, Ca>& A, const Eigen::Matrix<Tb, Rb, Cb>& B) {
-  check_square("quad_form", "A", A);
   check_symmetric("quad_form_sym", "A", A);
   check_multiplicable("quad_form_sym", "A", A, "B", B);
 
@@ -31,7 +28,6 @@ template <typename Ta, int Ra, int Ca, typename Tb, int Rb,
           require_any_var_t<Ta, Tb>...>
 inline var quad_form_sym(const Eigen::Matrix<Ta, Ra, Ca>& A,
                          const Eigen::Matrix<Tb, Rb, 1>& B) {
-  check_square("quad_form", "A", A);
   check_symmetric("quad_form_sym", "A", A);
   check_multiplicable("quad_form_sym", "A", A, "B", B);
 

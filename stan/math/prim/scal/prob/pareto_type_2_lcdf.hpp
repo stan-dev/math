@@ -2,11 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_PARETO_TYPE_2_LCDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
@@ -28,6 +24,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lcdf(
   static const char* function = "pareto_type_2_lcdf";
 
   using std::log;
+  using std::pow;
 
   T_partials_return P(0.0);
 

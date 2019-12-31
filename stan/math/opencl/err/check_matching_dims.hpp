@@ -1,12 +1,13 @@
 #ifndef STAN_MATH_OPENCL_ERR_CHECK_MATCHING_DIMS_HPP
 #define STAN_MATH_OPENCL_ERR_CHECK_MATCHING_DIMS_HPP
 #ifdef STAN_OPENCL
+
+#include <stan/math/prim/err.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
 
 namespace stan {
 namespace math {
-/**
+/** \ingroup opencl
  * Check if two <code>matrix_cl</code>s have the same dimensions.
  *
  * @param function Function name (for error messages)

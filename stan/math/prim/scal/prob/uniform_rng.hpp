@@ -2,19 +2,16 @@
 #define STAN_MATH_PRIM_SCAL_PROB_UNIFORM_RNG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <boost/random/uniform_real_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_greater.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
+#include <boost/random/uniform_real_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Return a uniform random variate for the given upper and lower bounds using
  * the specified random number generator.
  *

@@ -2,20 +2,17 @@
 #define STAN_MATH_OPENCL_ERR_CHECK_OPENCL_HPP
 #ifdef STAN_OPENCL
 
-#include <stan/math/prim/scal/err/system_error.hpp>
-#include <cl.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
+#include <CL/cl2.hpp>
 #include <iostream>
 #include <stdexcept>
 #include <string>
 
-/** @file stan/math/opencl/err/check_opencl.hpp
- *    @brief checking OpenCL error numbers
- */
-
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup opencl
  * Throws the domain error with specifying the OpenCL error that
  * occured. It outputs the OpenCL errors that are specified
  * in OpenCL 2.0. If no matching error number is found,

@@ -1,12 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_CORR_MATRIX_FREE_HPP
 #define STAN_MATH_PRIM_MAT_FUN_CORR_MATRIX_FREE_HPP
 
-#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
-#include <stan/math/prim/mat/err/constraint_tolerance.hpp>
-#include <stan/math/prim/mat/err/check_square.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/factor_cov_matrix.hpp>
 #include <cmath>
 
@@ -23,10 +20,10 @@ namespace math {
  * needs to compute the \f$k \choose 2\f$ partial correlations
  * and then free those.
  *
+ * @tparam T type of scalar
  * @param y The correlation matrix to free.
  * @return Vector of unconstrained values that produce the
  * specified correlation matrix when transformed.
- * @tparam T Type of scalar.
  * @throw std::domain_error if the correlation matrix has no
  *    elements or is not a square matrix.
  * @throw std::runtime_error if the correlation matrix cannot be
@@ -50,7 +47,8 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> corr_matrix_free(
   Array<T, Dynamic, 1> sds(k);
   bool successful = factor_cov_matrix(y, x, sds);
   if (!successful) {
-    domain_error("corr_matrix_free", "factor_cov_matrix failed on y", y, "");
+    throw_domain_error("corr_matrix_free", "factor_cov_matrix failed on y", y,
+                       "");
   }
   for (size_type i = 0; i < k; ++i) {
     check_bounded("corr_matrix_free", "log(sd)", sds[i], -CONSTRAINT_TOLERANCE,
@@ -58,6 +56,8 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> corr_matrix_free(
   }
   return x.matrix();
 }
+
 }  // namespace math
 }  // namespace stan
+
 #endif

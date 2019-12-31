@@ -4,11 +4,10 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/prob/multi_normal_cholesky_lpdf.hpp>
-#include <boost/math/tools/promotion.hpp>
 
 namespace stan {
 namespace math {
-/**
+/** \ingroup multivar_dists
  * The log of the multivariate normal density for the given y, mu, and
  * a Cholesky factor L of the variance matrix.
  * Sigma = LL', a square, semi-positive definite matrix.
@@ -33,7 +32,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_log(const T_y& y,
   return multi_normal_cholesky_lpdf<propto, T_y, T_loc, T_covar>(y, mu, L);
 }
 
-/**
+/** \ingroup multivar_dists
  * @deprecated use <code>multi_normal_cholesky_lpdf</code>
  */
 template <typename T_y, typename T_loc, typename T_covar>

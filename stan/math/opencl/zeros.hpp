@@ -5,17 +5,16 @@
 #include <stan/math/opencl/opencl_context.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
-#include <stan/math/opencl/err/check_opencl.hpp>
+#include <stan/math/opencl/err.hpp>
 #include <stan/math/opencl/kernels/fill.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
 
-#include <cl.hpp>
+#include <CL/cl2.hpp>
 
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup opencl
  * Stores zeros in the matrix on the OpenCL device.
  * Supports writing zeroes to the lower and upper triangular or
  * the whole matrix.
@@ -38,7 +37,7 @@ inline void matrix_cl<T, require_arithmetic_t<T>>::zeros() try {
   check_opencl_error("zeros", e);
 }
 
-/**
+/** \ingroup opencl
  * Stores zeros in the stricts triangular part (excluding the diagonal)
  * of a matrix on the OpenCL device.
  * Supports writing zeroes to the lower and upper triangular.

@@ -2,8 +2,7 @@
 #define STAN_MATH_PRIM_ARR_FUNCTOR_integrate_1d_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_less_or_equal.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
+#include <stan/math/prim/err.hpp>
 #include <boost/math/quadrature/exp_sinh.hpp>
 #include <boost/math/quadrature/sinh_sinh.hpp>
 #include <boost/math/quadrature/tanh_sinh.hpp>
@@ -11,6 +10,7 @@
 #include <limits>
 #include <ostream>
 #include <vector>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -124,20 +124,20 @@ inline double integrate(const F& f, double a, double b,
   static const char* function = "integrate";
   if (used_two_integrals) {
     if (error1 > relative_tolerance * L1) {
-      domain_error(function, "error estimate of integral below zero", error1,
-                   "",
-                   " exceeds the given relative tolerance times norm of "
-                   "integral below zero");
+      throw_domain_error(function, "error estimate of integral below zero",
+                         error1, "",
+                         " exceeds the given relative tolerance times norm of "
+                         "integral below zero");
     }
     if (error2 > relative_tolerance * L2) {
-      domain_error(function, "error estimate of integral above zero", error2,
-                   "",
-                   " exceeds the given relative tolerance times norm of "
-                   "integral above zero");
+      throw_domain_error(function, "error estimate of integral above zero",
+                         error2, "",
+                         " exceeds the given relative tolerance times norm of "
+                         "integral above zero");
     }
   } else {
     if (error1 > relative_tolerance * L1) {
-      domain_error(
+      throw_domain_error(
           function, "error estimate of integral", error1, "",
           " exceeds the given relative tolerance times norm of integral");
     }
@@ -203,7 +203,7 @@ inline double integrate_1d(
 
   if (a == b) {
     if (std::isinf(a)) {
-      domain_error(function, "Integration endpoints are both", a, "", "");
+      throw_domain_error(function, "Integration endpoints are both", a, "", "");
     }
     return 0.0;
   } else {

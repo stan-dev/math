@@ -173,7 +173,7 @@ struct multi_student_t_fun {
   }
 };
 
-TEST(MultiStudentT, TestGradFunctional) {
+TEST(ProbDistributionsMultiStudentT, TestGradFunctional) {
   std::vector<double> x(3 + 3 + 3 * 2 + 1);
   // y
   x[0] = 1.0;
@@ -226,9 +226,9 @@ struct vectorized_multi_student_t_fun {
   }
 
   template <typename T_y, typename T_mu, typename T_sigma, typename T_nu>
-  typename boost::math::tools::promote_args<T_y, T_mu, T_sigma, T_nu>::type
-  operator()(const std::vector<T_y>& y_vec, const std::vector<T_mu>& mu_vec,
-             const std::vector<T_sigma>& sigma_vec, const T_nu& nu) const {
+  stan::return_type_t<T_y, T_mu, T_sigma, T_nu> operator()(
+      const std::vector<T_y>& y_vec, const std::vector<T_mu>& mu_vec,
+      const std::vector<T_sigma>& sigma_vec, const T_nu& nu) const {
     vector<Matrix<T_y, is_row_vec_y, is_row_vec_y * -1> > y(
         L_, Matrix<T_y, is_row_vec_y, is_row_vec_y * -1>(K_));
     vector<Matrix<T_mu, is_row_vec_mu, is_row_vec_mu * -1> > mu(
@@ -488,14 +488,14 @@ void test_all() {
   }
 }
 
-TEST(MultiNormal, TestGradFunctionalVectorized) {
+TEST(ProbDistributionsMultiStudentT, TestGradFunctionalVectorized) {
   test_all<1, 1>();
   test_all<1, -1>();
   test_all<-1, 1>();
   test_all<-1, -1>();
 }
 
-TEST(MultiNormal, check_varis_on_stack) {
+TEST(ProbDistributionsMultiStudentT, check_varis_on_stack) {
   double nu(5);
   Matrix<double, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;

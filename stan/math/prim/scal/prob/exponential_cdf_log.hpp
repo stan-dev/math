@@ -7,7 +7,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * @deprecated use <code>exponential_lcdf</code>
  */
 template <typename T_y, typename T_inv_scale>

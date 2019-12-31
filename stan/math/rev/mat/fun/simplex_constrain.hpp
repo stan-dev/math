@@ -7,6 +7,7 @@
 #include <stan/math/rev/mat/functor/adj_jac_apply.hpp>
 #include <tuple>
 #include <vector>
+#include <cmath>
 
 namespace stan {
 namespace math {

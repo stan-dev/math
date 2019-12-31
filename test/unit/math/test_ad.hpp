@@ -27,6 +27,7 @@ namespace internal {
  * documentation for `expect_near`.
  *
  * @tparam F type of functor
+ * @param tols tolerances for test
  * @param f functor to test
  * @param x value to test
  * @param fx expected value
@@ -65,6 +66,7 @@ void test_gradient(const ad_tolerances& tols, const F& f,
  * documentation for `expect_near`.
  *
  * @tparam F type of functor
+ * @param tols tolerances for test
  * @param f functor to test
  * @param x value to test
  * @param fx expected value
@@ -104,6 +106,7 @@ void test_gradient_fvar(const ad_tolerances& tols, const F& f,
  * documentation for `expect_near`.
  *
  * @tparam F type of functor
+ * @param tols tolerances for test
  * @param f functor to test
  * @param x value to test
  * @param fx expected value
@@ -147,6 +150,7 @@ void test_hessian_fvar(const ad_tolerances& tols, const F& f,
  * documentation for `expect_near`.
  *
  * @tparam F type of functor
+ * @param tols tolerances for test
  * @param f functor to test
  * @param x value to test
  * @param fx expected value
@@ -188,6 +192,7 @@ void test_hessian(const ad_tolerances& tols, const F& f,
  * documentation for `expect_near`.
  *
  * @tparam F type of functor
+ * @param tols tolerances for test
  * @param f functor to test
  * @param x value to test
  * @param fx expected value
@@ -218,7 +223,7 @@ void test_grad_hessian(const ad_tolerances& tols, const F& f,
 
 /**
  * For the specified functor and argument, test that automatic
- * differentiation provides the value as the double-based version and
+ * differentiation provides the same value as the double-based version and
  * the same derivatives as finite differences over the double
  * version.  It also tests that an autodiff version throws an
  * exception if and only if the double-based version throws an
@@ -228,14 +233,8 @@ void test_grad_hessian(const ad_tolerances& tols, const F& f,
  * <p>The functor to test must define `T operator()(const
  * Matrix<T, -1, 1>& x) const;` for relevant `double` and autodiff types.
  *
- * <p>All results are tested for relative tolerance at thresholds
- * `1e-8` for values, `1e-4` for gradients (1st order derivatives),
- * `1e-3` for Hessians (2nd order derivatives), and `1e-2` for
- * gradients of Hessians (3rd order derivatives).  The reason for such
- * seemingly lax tests is that finite differences can be highly
- * unstable.
- *
  * @tparam G type of polymorphic functor
+ * @param tols tolerances for test
  * @param g polymorphic functor from vectors to scalars
  * @param x argument to test
  */
@@ -315,7 +314,8 @@ void expect_all_throw(const F& f, double x1) {
 
 /**
  * Succeeds if the specified function applied to the specified
- * argument thorws an exception at every level of autodiff.
+ * argument throws an exception at every level of autodiff.
+ *
  * @tparam F type of function
  * @param f function to evaluate
  * @param x1 first argument
@@ -326,6 +326,24 @@ void expect_all_throw(const F& f, double x1, double x2) {
   auto h = [&](auto v) { return serialize_return(f(v(0), v(1))); };
   Eigen::VectorXd x(2);
   x << x1, x2;
+  expect_all_throw(h, x);
+}
+
+/**
+ * Succeeds if the specified function applied to the specified
+ * argument thorws an exception at every level of autodiff.
+ *
+ * @tparam F type of function
+ * @param f function to evaluate
+ * @param x1 first argument
+ * @param x2 second argument
+ * @param x3 third argument
+ */
+template <typename F>
+void expect_all_throw(const F& f, double x1, double x2, double x3) {
+  auto h = [&](auto v) { return serialize_return(f(v(0), v(1), v(2))); };
+  Eigen::VectorXd x(3);
+  x << x1, x2, x3;
   expect_all_throw(h, x);
 }
 
@@ -341,6 +359,7 @@ void expect_all_throw(const F& f, double x1, double x2) {
  * returning a single component of the value
  * @tparam Ts type pack for arguments to original functor with double
  * scalar types
+ * @param tols tolerances for test
  * @param f functor to evaluate
  * @param g serialized functor taking an Eigen vector and returning a
  * serialized container of the original output
@@ -377,6 +396,7 @@ void expect_ad_helper(const ad_tolerances& tols, const F& f, const G& g,
  *
  * @tparam F type of functor to test
  * @tparam T type of first argument with double-based scalar
+ * @param tols tolerances for test
  * @param f functor to test
  * @param x argument to test
  */
@@ -402,6 +422,7 @@ void expect_ad_v(const ad_tolerances& tols, const F& f, const T& x) {
  *
  * @tparam F type of functor to test
  * @tparam T type of first argument with double-based scalar
+ * @param tols tolerances for test
  * @param f functor to test
  * @param x argument to test
  */
@@ -434,22 +455,23 @@ void expect_ad_v(const ad_tolerances& tols, const F& f, int x) {
  * @tparam F type of functor to test
  * @tparam T1 type of first argument with double-based scalar
  * @tparam T2 type of second argument with double-based scalar
+ * @param tols tolerances for test
+ * @param f functor to test
  * @param x1 first argument
  * @param x2 second argument
  */
 template <typename F, typename T1, typename T2>
 void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1,
                   const T2& x2) {
-  // derivs w.r.t. x1 and x2
-  auto g = [&](const auto& v) {
+  // d.x1
+  auto g1 = [&](const auto& v) {
     auto ds = to_deserializer(v);
     auto x1ds = ds.read(x1);
-    auto x2ds = ds.read(x2);
-    return serialize_return(f(x1ds, x2ds));
+    return serialize_return(f(x1ds, x2));
   };
-  internal::expect_ad_helper(tols, f, g, serialize_args(x1, x2), x1, x2);
+  internal::expect_ad_helper(tols, f, g1, serialize_args(x1), x1, x2);
 
-  // x1 fixed
+  // d.x2
   auto g2 = [&](const auto& v) {
     auto ds = to_deserializer(v);
     auto x2ds = ds.read(x2);
@@ -457,13 +479,14 @@ void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1,
   };
   internal::expect_ad_helper(tols, f, g2, serialize_args(x2), x1, x2);
 
-  // x2 fixed
-  auto g3 = [&](const auto& v) {
+  // d.x1, d.x2
+  auto g12 = [&](const auto& v) {
     auto ds = to_deserializer(v);
     auto x1ds = ds.read(x1);
-    return serialize_return(f(x1ds, x2));
+    auto x2ds = ds.read(x2);
+    return serialize_return(f(x1ds, x2ds));
   };
-  internal::expect_ad_helper(tols, f, g3, serialize_args(x1), x1, x2);
+  internal::expect_ad_helper(tols, f, g12, serialize_args(x1, x2), x1, x2);
 }
 
 template <typename F, typename T2>
@@ -483,7 +506,7 @@ void expect_ad_vv(const ad_tolerances& tols, const F& f, int x1, const T2& x2) {
   // expect autodiff to work at double value
   expect_ad_vv(tols, f, x1_dbl, x2);
 
-  // expect autodiff to work when binding int
+  // expect autodiff to work when binding int; includes expect-all-throw test
   auto g = [&](const auto& u) { return f(x1, u); };
   expect_ad_v(tols, g, x2);
 }
@@ -500,18 +523,19 @@ void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1, int x2) {
   double x2_dbl = static_cast<double>(x2);
 
   // expect same result with int or and cast to double
-  expect_near_rel("expect_ad_vv(T1,int)", f(x1, x2), f(x1, x2_dbl));
+  expect_near_rel("expect_ad_vv(T1, int)", f(x1, x2), f(x1, x2_dbl));
 
   // expect autodiff to work at double value
   expect_ad_vv(tols, f, x1, x2_dbl);
 
-  // expect autodiff to work when binding int
+  // expect autodiff to work when binding int; includes expect-all-throw test
   auto g = [&](const auto& u) { return f(u, x2); };
   expect_ad_v(tols, g, x1);
 }
 
 template <typename F>
 void expect_ad_vv(const ad_tolerances& tols, const F& f, int x1, int x2) {
+  // this one needs throw test because it's not handled by recursion
   try {
     f(x1, x2);
   } catch (...) {
@@ -530,6 +554,282 @@ void expect_ad_vv(const ad_tolerances& tols, const F& f, int x1, int x2) {
   // they also take care of binding int tests
   expect_ad_vv(tols, f, x1, x2_dbl);
   expect_ad_vv(tols, f, x1_dbl, x2);
+}
+
+/**
+ * Test that the specified ternary functor and arguments produce for
+ * every autodiff type the same value as the double-based version and
+ * the same derivatives as finite differences when both arguments are
+ * autodiff variables.
+ *
+ * @tparam F type of functor to test
+ * @tparam T1 type of first argument with double-based scalar
+ * @tparam T2 type of second argument with double-based scalar
+ * @tparam T3 type of third argument with double-based scalar
+ * @param tols tolerances for test
+ * @param f functor to test
+ * @param x1 first argument
+ * @param x2 second argument
+ * @param x3 third argument
+ */
+template <typename F, typename T1, typename T2, typename T3>
+void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
+                   const T2& x2, const T3& x3) {
+  // d.x1
+  auto g1 = [&](const auto& v) {
+    auto ds = to_deserializer(v);
+    auto x1ds = ds.read(x1);
+    return serialize_return(f(x1ds, x2, x3));
+  };
+  internal::expect_ad_helper(tols, f, g1, serialize_args(x1), x1, x2, x3);
+
+  // d.x2
+  auto g2 = [&](const auto& v) {
+    auto ds = to_deserializer(v);
+    auto x2ds = ds.read(x2);
+    return serialize_return(f(x1, x2ds, x3));
+  };
+  internal::expect_ad_helper(tols, f, g2, serialize_args(x2), x1, x2, x3);
+
+  // d.x3
+  auto g3 = [&](const auto& v) {
+    auto ds = to_deserializer(v);
+    auto x3ds = ds.read(x3);
+    return serialize_return(f(x1, x2, x3ds));
+  };
+  internal::expect_ad_helper(tols, f, g3, serialize_args(x3), x1, x2, x3);
+
+  // d.x1 d.x2
+  auto g12 = [&](const auto& v) {
+    auto ds = to_deserializer(v);
+    auto x1ds = ds.read(x1);
+    auto x2ds = ds.read(x2);
+    return serialize_return(f(x1ds, x2ds, x3));
+  };
+  internal::expect_ad_helper(tols, f, g12, serialize_args(x1, x2), x1, x2, x3);
+
+  // d.x1 d.x3
+  auto g13 = [&](const auto& v) {
+    auto ds = to_deserializer(v);
+    auto x1ds = ds.read(x1);
+    auto x3ds = ds.read(x3);
+    return serialize_return(f(x1ds, x2, x3ds));
+  };
+  internal::expect_ad_helper(tols, f, g13, serialize_args(x1, x3), x1, x2, x3);
+
+  // d.x2 d.x3
+  auto g23 = [&](const auto& v) {
+    auto ds = to_deserializer(v);
+    auto x2ds = ds.read(x2);
+    auto x3ds = ds.read(x3);
+    return serialize_return(f(x1, x2ds, x3ds));
+  };
+  internal::expect_ad_helper(tols, f, g23, serialize_args(x2, x3), x1, x2, x3);
+
+  // d.x1 d.x2 d.x3
+  auto g123 = [&](const auto& v) {
+    auto ds = to_deserializer(v);
+    auto x1ds = ds.read(x1);
+    auto x2ds = ds.read(x2);
+    auto x3ds = ds.read(x3);
+    return serialize_return(f(x1ds, x2ds, x3ds));
+  };
+  internal::expect_ad_helper(tols, f, g123, serialize_args(x1, x2, x3), x1, x2,
+                             x3);
+}
+
+template <typename F, typename T3>
+void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, int x2,
+                   const T3& x3) {
+  try {
+    f(x1, x2, x3);
+  } catch (...) {
+    expect_all_throw(f, x1, x2, x3);
+    return;
+  }
+
+  double x1_dbl = static_cast<double>(x1);
+  double x2_dbl = static_cast<double>(x2);
+
+  // test all promotion patterns;  includes x1_dbl & x2_dbl recursively
+  expect_ad_vvv(tols, f, x1_dbl, x2, x3);
+  expect_ad_vvv(tols, f, x1, x2_dbl, x3);
+
+  // test value
+  expect_near_rel("expect_ad_vvv(int, int, T3)", f(x1, x2, x3),
+                  f(x1_dbl, x2_dbl, x3));
+
+  // bind ints and test autodiff
+  auto g23 = [=](const auto& u2, const auto& u3) { return f(x1, u2, u3); };
+  expect_ad_vv(tols, g23, x2, x3);
+
+  auto g13 = [=](const auto& u1, const auto& u3) { return f(u1, x2, u3); };
+  expect_ad_vv(tols, g13, x1, x3);
+}
+
+template <typename F, typename T2, typename T3>
+void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, const T2& x2,
+                   const T3& x3) {
+  try {
+    f(x1, x2, x3);
+  } catch (...) {
+    expect_all_throw(f, x1, x2, x3);
+    return;
+  }
+
+  double x1_dbl = static_cast<double>(x1);
+
+  // test all promotion patterns
+  expect_ad_vvv(tols, f, x1_dbl, x2, x3);
+
+  // test value
+  expect_near_rel("expect_ad_vvv(int, int, T3)", f(x1, x2, x3),
+                  f(x1_dbl, x2, x3));
+
+  // bind ints and test autodiff
+  auto g23 = [=](const auto& u2, const auto& u3) { return f(x1, u2, u3); };
+  expect_ad_vv(tols, g23, x2, x3);
+}
+
+template <typename F, typename T1, typename T3>
+void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1, int x2,
+                   const T3& x3) {
+  try {
+    f(x1, x2, x3);
+  } catch (...) {
+    expect_all_throw(f, x1, x2, x3);
+    return;
+  }
+
+  double x2_dbl = static_cast<double>(x2);
+
+  // test promotion
+  expect_ad_vvv(tols, f, x1, x2_dbl, x3);
+
+  // test value
+  expect_near_rel("expect_ad_vvv(int, int, T3)", f(x1, x2, x3),
+                  f(x1, x2_dbl, x3));
+
+  // bind ints and test autodiff
+  auto g13 = [=](const auto& u1, const auto& u3) { return f(u1, x2, u3); };
+  expect_ad_vv(tols, g13, x1, x3);
+}
+
+template <typename F, typename T1, typename T2>
+void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
+                   const T2& x2, int x3) {
+  try {
+    f(x1, x2, x3);
+  } catch (...) {
+    expect_all_throw(f, x1, x2, x3);
+    return;
+  }
+
+  double x3_dbl = static_cast<double>(x3);
+
+  // test promotion
+  expect_ad_vvv(tols, f, x1, x2, x3_dbl);
+
+  // test value
+  expect_near_rel("expect_ad_vvv(int, int, T3)", f(x1, x2, x3),
+                  f(x1, x2, x3_dbl));
+
+  // bind ints and test autodiff
+  auto g12 = [=](const auto& u1, const auto& u2) { return f(u1, u2, x3); };
+  expect_ad_vv(tols, g12, x1, x2);
+}
+
+template <typename F, typename T2>
+void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, const T2& x2,
+                   int x3) {
+  try {
+    f(x1, x2, x3);
+  } catch (...) {
+    expect_all_throw(f, x1, x2, x3);
+    return;
+  }
+
+  double x1_dbl = static_cast<double>(x1);
+  double x3_dbl = static_cast<double>(x3);
+
+  // test promotion recursively
+  expect_ad_vvv(tols, f, x1_dbl, x2, x3);
+  expect_ad_vvv(tols, f, x1, x2, x3_dbl);
+
+  // test value
+  expect_near_rel("expect_ad_vvv(int, int, T3)", f(x1, x2, x3),
+                  f(x1_dbl, x2, x3_dbl));
+
+  // bind ints and test autodiff
+  auto g23 = [=](const auto& u2, const auto& u3) { return f(x1, u2, u3); };
+  expect_ad_vv(tols, g23, x2, x3);
+
+  auto g12 = [=](const auto& u1, const auto& u2) { return f(u1, u2, x3); };
+  expect_ad_vv(tols, g12, x1, x2);
+}
+
+template <typename F, typename T1>
+void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1, int x2,
+                   int x3) {
+  try {
+    f(x1, x2, x3);
+  } catch (...) {
+    expect_all_throw(f, x1, x2, x3);
+    return;
+  }
+
+  double x2_dbl = static_cast<double>(x2);
+  double x3_dbl = static_cast<double>(x3);
+
+  // test promotion recursively
+  expect_ad_vvv(tols, f, x1, x2_dbl, x3);
+  expect_ad_vvv(tols, f, x1, x2, x3_dbl);
+
+  // test value
+  expect_near_rel("expect_ad_vvv(int, int, T3)", f(x1, x2, x3),
+                  f(x1, x2_dbl, x3_dbl));
+
+  // bind ints and test autodiff
+  auto g13 = [=](const auto& u1, const auto& u3) { return f(u1, x2, u3); };
+  expect_ad_vv(tols, g13, x1, x3);
+
+  auto g12 = [=](const auto& u1, const auto& u2) { return f(u1, u2, x3); };
+  expect_ad_vv(tols, g12, x1, x2);
+}
+
+template <typename F>
+void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, int x2,
+                   int x3) {
+  // test exception behavior; other exception cases tested recursively
+  try {
+    f(x1, x2, x3);
+  } catch (...) {
+    expect_all_throw(f, x1, x2, x3);
+    return;
+  }
+
+  double x1_dbl = static_cast<double>(x1);
+  double x2_dbl = static_cast<double>(x2);
+  double x3_dbl = static_cast<double>(x3);
+
+  // test value
+  expect_near_rel("expect_ad_vvv(int, int, T3)", f(x1, x2, x3),
+                  f(x1_dbl, x2_dbl, x3_dbl));
+
+  // test all promotion patterns;  includes all combos recursively
+  expect_ad_vvv(tols, f, x1_dbl, x2, x3);
+  expect_ad_vvv(tols, f, x1, x2_dbl, x3);
+  expect_ad_vvv(tols, f, x1, x2, x3_dbl);
+
+  // bind ints and test recursively
+  auto g12 = [=](const auto& u1, const auto& u2) { return f(u1, u2, x3); };
+  expect_ad_vv(tols, g12, x1, x2);
+
+  auto g13 = [=](const auto& u1, const auto& u3) { return f(u1, x2, u3); };
+  expect_ad_vv(tols, g13, x1, x3);
+
+  auto g23 = [=](const auto& u2, const auto& u3) { return f(x1, u2, u3); };
+  expect_ad_vv(tols, g23, x2, x3);
 }
 
 /**
@@ -639,6 +939,11 @@ void expect_all_throw(const F& f, double x) {
 template <typename F>
 void expect_all_throw(const F& f, double x1, double x2) {
   internal::expect_all_throw(f, x1, x2);
+}
+
+template <typename F>
+void expect_all_throw(const F& f, double x1, double x2, double x3) {
+  internal::expect_all_throw(f, x1, x2, x3);
 }
 
 /**
@@ -761,7 +1066,7 @@ void expect_ad(const F& f, const T& x) {
  * @tparam T2 type of double- or int-based second argument
  * @param tols tolerances for test
  * @param f functor to test
- * param x1 first argument to test
+ * @param x1 first argument to test
  * @param x2 second argument to test
  */
 template <typename F, typename T1, typename T2>
@@ -773,19 +1078,61 @@ void expect_ad(const ad_tolerances& tols, const F& f, const T1& x1,
 /**
  * Test that the specified binary function produces autodiff values
  * and derivatives consistent with primitive int and double inputs and
- * finite differences.  Uses default tolerances.
+ * finite differences at default tolerances.
  *
  * @tparam F type of binary polymorphic functor to test
  * @tparam T1 type of double- or int-based first argument
  * @tparam T2 type of double- or int-based second argument
  * @param f functor to test
- * param x1 first argument to test
+ * @param x1 first argument to test
  * @param x2 second argument to test
  */
 template <typename F, typename T1, typename T2>
 void expect_ad(const F& f, const T1& x1, const T2& x2) {
   ad_tolerances tols;
   expect_ad(tols, f, x1, x2);
+}
+
+/**
+ * Test that the specified ternary function produces autodiff values
+ * and 1st-, 2nd-, and 3rd-order derivatives consistent with primitive
+ * int and double inputs and finite differences at the specified
+ * tolerances.
+ *
+ * @tparam F type of binary polymorphic functor to test
+ * @tparam T1 type of double- or int-based first argument
+ * @tparam T2 type of double- or int-based second argument
+ * @tparam T3 type of double- or int-based third argument
+ * @param tols tolerances for test
+ * @param f functor to test
+ * @param x1 first argument to test
+ * @param x2 second argument to test
+ * @param x3 third argument to test
+ */
+template <typename F, typename T1, typename T2, typename T3>
+void expect_ad(const ad_tolerances& tols, const F& f, const T1& x1,
+               const T2& x2, const T3& x3) {
+  internal::expect_ad_vvv(tols, f, x1, x2, x3);
+}
+
+/**
+ * Test that the specified ternary function produces autodiff values
+ * and derivatives consistent with primitive int and double inputs and
+ * finite differences at default tolerances.
+ *
+ * @tparam F type of binary polymorphic functor to test
+ * @tparam T1 type of double- or int-based first argument
+ * @tparam T2 type of double- or int-based second argument
+ * @tparam T3 type of double- or int-based third argument
+ * @param f functor to test
+ * @param x1 first argument to test
+ * @param x2 second argument to test
+ * @param x3 third argument to test
+ */
+template <typename F, typename T1, typename T2, typename T3>
+void expect_ad(const F& f, const T1& x1, const T2& x2, const T3& x3) {
+  ad_tolerances tols;
+  expect_ad(tols, f, x1, x2, x3);
 }
 
 /**
@@ -796,6 +1143,7 @@ void expect_ad(const F& f, const T1& x1, const T2& x2) {
  *
  * @tparam F type of poymorphic, vectorized functor to test
  * @tparam T1 type of first argument (integer or double)
+ * @param tols tolerances for test
  * @param f functor to test
  * @param x1 value to test
  */
@@ -1035,8 +1383,8 @@ void expect_unary_vectorized_helper(const ad_tolerances& tols, const F& f, T x,
 }  // namespace internal
 
 /**
- * Teset that the specified vectorized unary function has value and
- * derivative behavior matching the primtive instantiation with finite
+ * Test that the specified vectorized unary function has value and
+ * derivative behavior matching the primitive instantiation with finite
  * differences.  Tests both scalar and container behavior.  Integer
  * arguments will be preserved through to function calls.
  *
@@ -1057,10 +1405,8 @@ void expect_unary_vectorized(const ad_tolerances& tols, const F& f, Ts... xs) {
  * values and finite differences.  Tests both scalars and containers.
  *
  * @tparam F type of function to test
- * @tparam T type of first argument to test
  * @tparam Ts type of remaining arguments to test
  * @param f function to test
- * @param x argument to test
  * @param xs arguments to test
  */
 template <typename F, typename... Ts>
@@ -1119,7 +1465,7 @@ void expect_common_comparison(const F& f) {
 /**
  * Test that the two specified functions either both throw or have the
  * same return value for the specified argument.  If the argument is
- * an intger, it will be passed through to the functions as such.
+ * an integer, it will be passed through to the functions as such.
  *
  * @tparam F1 type of first function
  * @tparam F2 type of second function
@@ -1288,6 +1634,10 @@ Eigen::VectorXd to_row_vector(const Eigen::Matrix<double, R, C>& x) {
 template <typename T>
 auto ldlt_factor(const Eigen::Matrix<T, -1, -1>& x) {
   stan::math::LDLT_factor<T, -1, -1> ldlt_x;
+  if (x.size() == 0) {
+    return ldlt_x;
+  }
+
   Eigen::Matrix<T, -1, -1> x_sym = (x + x.transpose()) * 0.5;
   ldlt_x.compute(x_sym);
   return ldlt_x;

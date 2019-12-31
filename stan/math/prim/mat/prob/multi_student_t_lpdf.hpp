@@ -2,14 +2,8 @@
 #define STAN_MATH_PRIM_MAT_PROB_MULTI_STUDENT_T_LPDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/mat/err/check_consistent_sizes_mvt.hpp>
-#include <stan/math/prim/mat/err/check_ldlt_factor.hpp>
-#include <stan/math/prim/mat/err/check_symmetric.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/prob/multi_normal_log.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <stan/math/prim/scal/fun/log1p.hpp>
@@ -20,7 +14,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup multivar_dists
  * Return the log of the multivariate Student t distribution
  * at the specified arguments.
  *
@@ -45,8 +39,8 @@ return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_lpdf(
   using Eigen::Matrix;
   using std::vector;
 
-  size_t number_of_y = length_mvt(y);
-  size_t number_of_mu = length_mvt(mu);
+  size_t number_of_y = size_mvt(y);
+  size_t number_of_mu = size_mvt(mu);
   if (number_of_y == 0 || number_of_mu == 0) {
     return 0;
   }
@@ -61,7 +55,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_lpdf(
   if (size_vec > 1) {
     int size_y_old = size_y;
     int size_y_new;
-    for (size_t i = 1, size_ = length_mvt(y); i < size_; i++) {
+    for (size_t i = 1, size_ = size_mvt(y); i < size_; i++) {
       int size_y_new = y_vec[i].size();
       check_size_match(
           function, "Size of one of the vectors of the random variable",
@@ -71,7 +65,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_lpdf(
     }
     int size_mu_old = size_mu;
     int size_mu_new;
-    for (size_t i = 1, size_ = length_mvt(mu); i < size_; i++) {
+    for (size_t i = 1, size_ = size_mvt(mu); i < size_; i++) {
       int size_mu_new = mu_vec[i].size();
       check_size_match(function,
                        "Size of one of the vectors "

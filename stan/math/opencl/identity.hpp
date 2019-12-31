@@ -1,17 +1,18 @@
 #ifndef STAN_MATH_OPENCL_IDENTITY_HPP
 #define STAN_MATH_OPENCL_IDENTITY_HPP
 #ifdef STAN_OPENCL
+
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
-#include <stan/math/opencl/err/check_opencl.hpp>
+#include <stan/math/opencl/err.hpp>
 #include <stan/math/opencl/kernels/identity.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <cl.hpp>
+#include <CL/cl2.hpp>
 
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup opencl
  * Returns the identity matrix stored on the OpenCL device
  *
  * @param rows_cols the number of rows and columns

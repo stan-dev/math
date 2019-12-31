@@ -4,11 +4,10 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/prob/multi_gp_cholesky_lpdf.hpp>
-#include <boost/math/tools/promotion.hpp>
 
 namespace stan {
 namespace math {
-/**
+/** \ingroup multivar_dists
  * The log of a multivariate Gaussian Process for the given y, w, and
  * a Cholesky factor L of the kernel matrix Sigma.
  * Sigma = LL', a square, semi-positive definite matrix.
@@ -39,7 +38,7 @@ return_type_t<T_y, T_covar, T_w> multi_gp_cholesky_log(
   return multi_gp_cholesky_lpdf<propto, T_y, T_covar, T_w>(y, L, w);
 }
 
-/**
+/** \ingroup multivar_dists
  * @deprecated use <code>multi_gp_cholesky_lpdf</code>
  */
 template <typename T_y, typename T_covar, typename T_w>

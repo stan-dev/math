@@ -11,8 +11,8 @@ def runTests(String testPath) {
 def runTestsWin(String testPath) {
     withEnv(['PATH+TBB=./lib/tbb']) {
        bat "echo $PATH"
-       bat "runTests.py -j12 ${testPath} --make-only"
-       try { bat "runTests.py -j12 ${testPath}" }
+       bat "runTests.py -j${env.PARALLEL} ${testPath} --make-only"
+       try { bat "runTests.py -j${env.PARALLEL} ${testPath}" }
        finally { junit 'test/**/*.xml' }
     }
 }
@@ -142,15 +142,32 @@ pipeline {
                 }
             }
         }
-        stage('Headers check') {
-            agent any
-            steps {
-                deleteDir()
-                unstash 'MathSetup'
-                sh "echo CXX=${env.CXX} -Werror > make/local"
-                sh "make -j${env.PARALLEL} test-headers"
-            }
-            post { always { deleteDir() } }
+        stage('Headers checks') {
+            parallel {
+              stage('Headers check') {
+                agent any
+                steps {
+                    deleteDir()
+                    unstash 'MathSetup'
+                    sh "echo CXX=${env.CXX} -Werror > make/local"
+                    sh "make -j${env.PARALLEL} test-headers"
+                }
+                post { always { deleteDir() } }
+              }
+              stage('Headers check with OpenCL') {
+                agent { label "gpu" }
+                steps {
+                    deleteDir()
+                    unstash 'MathSetup'
+                    sh "echo CXX=${env.CXX} -Werror > make/local"
+                    sh "echo STAN_OPENCL=true>> make/local"
+                    sh "echo OPENCL_PLATFORM_ID=0>> make/local"
+                    sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
+                    sh "make -j${env.PARALLEL} test-headers"
+                }
+                post { always { deleteDir() } }
+              }
+           }
         }
         stage('Always-run tests part 1') {
             parallel {
@@ -160,7 +177,7 @@ pipeline {
                         deleteDir()
                         unstash 'MathSetup'
                         sh "echo CXX=${MPICXX} >> make/local"
-                        sh "echo CXX_TYPE=gcc >> make/local"
+                        sh "echo CXX_TYPE=gcc >> make/local"                        
                         sh "echo STAN_MPI=true >> make/local"
                         runTests("test/unit")
                     }
@@ -282,7 +299,7 @@ pipeline {
         }
         stage('Upload doxygen') {
             agent any
-            when { branch 'master'}
+            when { branch 'develop'}
             steps {
                 deleteDir()
                 retry(3) { checkout scm }

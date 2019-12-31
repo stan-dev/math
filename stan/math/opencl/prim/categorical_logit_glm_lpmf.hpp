@@ -3,19 +3,21 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_bounded.hpp>
-#include <stan/math/prim/scal/err/check_consistent_size.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/mat/fun/sum.hpp>
 #include <Eigen/Core>
 
 #include <stan/math/opencl/matrix_cl.hpp>
+#include <stan/math/opencl/copy.hpp>
+#include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/kernels/categorical_logit_glm_lpmf.hpp>
+#include <stan/math/opencl/prim/transpose.hpp>
 
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup opencl
  * Returns the log PMF of the Generalized Linear Model (GLM)
  * with categorical distribution and logit (softmax) link function.
  * This is an overload of the GLM in
@@ -26,7 +28,7 @@ namespace math {
  * @param y_cl a scalar or vector of classes. If it is a scalar it will be
  * broadcast - used for all instances. Values should be between 1 and number of
  * classes, including endpoints.
- * @param x_cl design matrix or row vector. This overload does not support
+ * @param x_cl design matrix on OpenCL device. This overload does not support
  * broadcasting of a row vector x!
  * @param alpha intercept vector (in log odds)
  * @param beta weight matrix

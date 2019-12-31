@@ -2,7 +2,7 @@
 #define STAN_MATH_REV_MAT_FUN_DETERMINANT_HPP
 
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/prim/mat/err/check_square.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/mat/fun/typedefs.hpp>
 #include <stan/math/rev/core.hpp>
@@ -44,6 +44,10 @@ class determinant_vari : public vari {
 template <int R, int C>
 inline var determinant(const Eigen::Matrix<var, R, C>& m) {
   check_square("determinant", "m", m);
+  if (m.size() == 0) {
+    return 1;
+  }
+
   return var(new internal::determinant_vari<R, C>(m));
 }
 

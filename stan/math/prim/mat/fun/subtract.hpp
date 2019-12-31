@@ -1,9 +1,8 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_SUBTRACT_HPP
 #define STAN_MATH_PRIM_MAT_FUN_SUBTRACT_HPP
 
-#include <boost/math/tools/promotion.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/err/check_matching_dims.hpp>
 
 namespace stan {
 namespace math {
@@ -13,10 +12,11 @@ namespace math {
  * from the first specified matrix.  The return scalar type is the
  * promotion of the input types.
  *
- * @tparam T1 Scalar type of first matrix.
- * @tparam T2 Scalar type of second matrix.
- * @tparam R Row type of matrices.
- * @tparam C Column type of matrices.
+ * @tparam T1 type of elements in the first matrix
+ * @tparam T2 type of elements in the second matrix
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ *
  * @param m1 First matrix.
  * @param m2 Second matrix.
  * @return Difference between first matrix and second matrix.
@@ -42,4 +42,5 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R, C> subtract(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

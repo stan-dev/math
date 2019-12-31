@@ -2,10 +2,9 @@
 #define STAN_MATH_PRIM_SCAL_PROB_SKEW_NORMAL_CDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/scal/fun/erf.hpp>
+#include <stan/math/prim/scal/fun/erfc.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/owens_t.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
@@ -56,7 +55,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_cdf(
     const T_partials_return alpha_dbl_sq = alpha_dbl * alpha_dbl;
     const T_partials_return diff = (y_dbl - mu_dbl) / sigma_dbl;
     const T_partials_return diff_sq = diff * diff;
-    const T_partials_return scaled_diff = diff / SQRT_2;
+    const T_partials_return scaled_diff = diff / SQRT_TWO;
     const T_partials_return scaled_diff_sq = diff_sq * 0.5;
     const T_partials_return cdf_
         = 0.5 * erfc(-scaled_diff) - 2 * owens_t(diff, alpha_dbl);
@@ -88,22 +87,22 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_cdf(
   }
 
   if (!is_constant_all<T_y>::value) {
-    for (size_t n = 0; n < stan::length(y); ++n) {
+    for (size_t n = 0; n < size(y); ++n) {
       ops_partials.edge1_.partials_[n] *= cdf;
     }
   }
   if (!is_constant_all<T_loc>::value) {
-    for (size_t n = 0; n < stan::length(mu); ++n) {
+    for (size_t n = 0; n < size(mu); ++n) {
       ops_partials.edge2_.partials_[n] *= cdf;
     }
   }
   if (!is_constant_all<T_scale>::value) {
-    for (size_t n = 0; n < stan::length(sigma); ++n) {
+    for (size_t n = 0; n < size(sigma); ++n) {
       ops_partials.edge3_.partials_[n] *= cdf;
     }
   }
   if (!is_constant_all<T_shape>::value) {
-    for (size_t n = 0; n < stan::length(alpha); ++n) {
+    for (size_t n = 0; n < size(alpha); ++n) {
       ops_partials.edge4_.partials_[n] *= cdf;
     }
   }

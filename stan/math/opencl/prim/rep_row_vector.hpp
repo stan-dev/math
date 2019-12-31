@@ -1,15 +1,16 @@
 #ifndef STAN_MATH_OPENCL_PRIM_REP_ROW_VECTOR_HPP
 #define STAN_MATH_OPENCL_PRIM_REP_ROW_VECTOR_HPP
 #ifdef STAN_OPENCL
+
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/kernels/rep_matrix.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
-#include <stan/math/prim/meta.hpp>
 
 namespace stan {
 namespace math {
-/**
+/** \ingroup opencl
  * Creates a matrix_cl representing a row_vector
  * by replicating the value of the only element
  * in the input 1x1 matrix_cl.

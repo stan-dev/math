@@ -2,9 +2,8 @@
 #define STAN_MATH_REV_MAT_FUN_GP_PERIODIC_COV_HPP
 
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/squared_distance.hpp>
@@ -105,6 +104,7 @@ class gp_periodic_cov_vari : public vari {
         p_vari_(p.vi_),
         cov_lower_(ChainableStack::alloc_array<vari *>(size_ltri_)),
         cov_diag_(ChainableStack::alloc_array<vari *>(size_)) {
+    using std::sin;
     double neg_two_inv_l_sq = -2.0 / (l_d_ * l_d_);
     double pi_div_p = pi() / p_d_;
 
@@ -232,6 +232,7 @@ class gp_periodic_cov_vari<T_x, double, T_l, T_p> : public vari {
         p_vari_(p.vi_),
         cov_lower_(ChainableStack::alloc_array<vari *>(size_ltri_)),
         cov_diag_(ChainableStack::alloc_array<vari *>(size_)) {
+    using std::sin;
     double neg_two_inv_l_sq = -2.0 / (l_d_ * l_d_);
     double pi_div_p = pi() / p_d_;
 

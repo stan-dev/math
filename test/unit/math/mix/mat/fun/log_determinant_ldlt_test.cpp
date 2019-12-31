@@ -7,6 +7,9 @@ TEST(MathMixMatFun, logDeterminantLdlt) {
     return stan::math::log_determinant_ldlt(y);
   };
 
+  Eigen::MatrixXd a00(0, 0);
+  stan::test::expect_ad(f, a00);
+
   Eigen::MatrixXd a(2, 2);
   a << 3, 0, 0, 4;
   stan::test::expect_ad(f, a);

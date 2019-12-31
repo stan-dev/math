@@ -15,6 +15,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_MATRIXEXPONENTIAL_H
 
 #include <stan/math/prim/mat/fun/value_of_rec.hpp>
+#include <cmath>
 
 namespace Eigen {
 
@@ -55,7 +56,7 @@ namespace Eigen {
   };
 
 
-  /** \brief Compute the (5,5)-Pad&eacute; approximant to the exponential.
+  /** \brief Compute the (3,3)-Pad&eacute; approximant to the exponential.
    *
    *  After exit, \f$ (V+U)(V-U)^{-1} \f$ is the Pad&eacute;
    *  approximant of \f$ \exp(A) \f$ around \f$ A = 0 \f$.

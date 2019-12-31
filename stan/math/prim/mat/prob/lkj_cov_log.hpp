@@ -4,12 +4,11 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/prob/lkj_cov_lpdf.hpp>
-#include <boost/math/tools/promotion.hpp>
 
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup multivar_dists
  * @deprecated use <code>lkj_cov_lpdf</code>
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
@@ -22,7 +21,7 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_log(
   return lkj_cov_lpdf<propto, T_y, T_loc, T_scale, T_shape>(y, mu, sigma, eta);
 }
 
-/**
+/** \ingroup multivar_dists
  * @deprecated use <code>lkj_cov_lpdf</code>
  */
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
@@ -34,7 +33,7 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_log(
   return lkj_cov_lpdf<T_y, T_loc, T_scale, T_shape>(y, mu, sigma, eta);
 }
 
-/**
+/** \ingroup multivar_dists
  * @deprecated use <code>lkj_cov_lpdf</code>
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
@@ -45,7 +44,7 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_log(
   return lkj_cov_lpdf<propto, T_y, T_loc, T_scale, T_shape>(y, mu, sigma, eta);
 }
 
-/**
+/** \ingroup multivar_dists
  * @deprecated use <code>lkj_cov_lpdf</code>
  */
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape>

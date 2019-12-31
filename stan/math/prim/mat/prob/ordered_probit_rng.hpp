@@ -2,10 +2,8 @@
 #define STAN_MATH_PRIM_MAT_PROB_ORDERED_PROBIT_RNG_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/Phi.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_greater.hpp>
-#include <stan/math/prim/mat/err/check_ordered.hpp>
 #include <stan/math/prim/mat/prob/categorical_rng.hpp>
 
 namespace stan {

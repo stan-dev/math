@@ -2,9 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_DOUBLE_EXPONENTIAL_LPDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
@@ -14,7 +12,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Returns the double exponential log probability density function. Given
  * containers of matching sizes, returns the log sum of densities.
  *
@@ -60,17 +58,15 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
 
   VectorBuilder<include_summand<propto, T_y, T_loc, T_scale>::value,
                 T_partials_return, T_scale>
-      inv_sigma(length(sigma));
+      inv_sigma(size(sigma));
   VectorBuilder<!is_constant_all<T_scale>::value, T_partials_return, T_scale>
-      inv_sigma_squared(length(sigma));
+      inv_sigma_squared(size(sigma));
   VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
                 T_scale>
-      log_sigma(length(sigma));
-  for (size_t i = 0; i < length(sigma); i++) {
+      log_sigma(size(sigma));
+  for (size_t i = 0; i < size(sigma); i++) {
     const T_partials_return sigma_dbl = value_of(sigma_vec[i]);
-    if (include_summand<propto, T_y, T_loc, T_scale>::value) {
-      inv_sigma[i] = 1.0 / sigma_dbl;
-    }
+    inv_sigma[i] = 1.0 / sigma_dbl;
     if (include_summand<propto, T_scale>::value) {
       log_sigma[i] = log(value_of(sigma_vec[i]));
     }
@@ -92,9 +88,7 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
     if (include_summand<propto, T_scale>::value) {
       logp -= log_sigma[n];
     }
-    if (include_summand<propto, T_y, T_loc, T_scale>::value) {
-      logp -= fabs_y_m_mu * inv_sigma[n];
-    }
+    logp -= fabs_y_m_mu * inv_sigma[n];
 
     T_partials_return sign_y_m_mu_times_inv_sigma(0);
     if (!is_constant_all<T_y, T_loc>::value) {

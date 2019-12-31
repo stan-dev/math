@@ -2,16 +2,14 @@
 #define STAN_MATH_PRIM_SCAL_PROB_CHI_SQUARE_RNG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/err.hpp>
 #include <boost/random/chi_squared_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * Return a chi squared random variate with nu degrees of
  * freedom using the specified random number generator.
  *
@@ -35,7 +33,7 @@ inline typename VectorBuilder<true, double, T_deg>::type chi_square_rng(
   check_positive_finite(function, "Degrees of freedom parameter", nu);
 
   scalar_seq_view<T_deg> nu_vec(nu);
-  size_t N = length(nu);
+  size_t N = size(nu);
   VectorBuilder<true, double, T_deg> output(N);
 
   for (size_t n = 0; n < N; ++n) {

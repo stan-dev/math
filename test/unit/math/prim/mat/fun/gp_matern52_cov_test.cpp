@@ -291,7 +291,7 @@ TEST(MathPrimMat, rvec_eigen_gp_matern52_cov1) {
   }
 }
 
-TEST(MathPrimMat, domain_err_training_sig_l_gamma) {
+TEST(MathPrimMat, domain_err_training_sig_l_gamma_gp_matern52_cov) {
   double sigma = .2;
   double l = 7;
   double sigma_bad = -1.0;
@@ -379,7 +379,7 @@ TEST(MathPrimMat, domain_err_training_sig_l_gamma) {
   EXPECT_TRUE(std::string::npos != msg3.find(" magnitude")) << msg3;
 }
 
-TEST(MathPrimMat, nan_error_training_sig_l_gamma) {
+TEST(MathPrimMat, nan_error_training_sig_l_gamma_gp_matern52_cov) {
   double sigma = 0.2;
   double l = 5;
 
@@ -511,7 +511,7 @@ TEST(MathPrimMat, ard_size_err_gp_matern52_cov) {
                std::invalid_argument);
 }
 
-TEST(MathPrimMat, zero_size) {
+TEST(MathPrimMat, zero_size_gp_matern52_cov) {
   double sigma = 0.2;
 
   std::vector<double> l(0);

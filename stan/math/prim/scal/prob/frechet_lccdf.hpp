@@ -2,18 +2,14 @@
 #define STAN_MATH_PRIM_SCAL_PROB_FRECHET_LCCDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <boost/random/weibull_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <boost/random/weibull_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 #include <cmath>
 
 namespace stan {
@@ -26,8 +22,6 @@ return_type_t<T_y, T_shape, T_scale> frechet_lccdf(const T_y& y,
   using T_partials_return = partials_return_t<T_y, T_shape, T_scale>;
 
   static const char* function = "frechet_lccdf";
-
-  using boost::math::tools::promote_args;
 
   if (size_zero(y, alpha, sigma)) {
     return 0.0;
@@ -42,6 +36,8 @@ return_type_t<T_y, T_shape, T_scale> frechet_lccdf(const T_y& y,
 
   using std::exp;
   using std::log;
+  using std::pow;
+
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_scale> sigma_vec(sigma);
   scalar_seq_view<T_shape> alpha_vec(alpha);

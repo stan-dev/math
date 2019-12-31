@@ -2,11 +2,12 @@
 #define STAN_MATH_PRIM_SCAL_FUN_INV_PHI_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/square.hpp>
-#include <stan/math/prim/scal/err/check_bounded.hpp>
-#include <stan/math/prim/scal/fun/Phi.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
+#include <stan/math/prim/scal/fun/Phi.hpp>
+#include <stan/math/prim/scal/fun/square.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -69,7 +70,7 @@ inline double inv_Phi(double p) {
 
   if (x < 37.6) {  // gradient blows up past here
     double e = Phi(x) - p;
-    double u = e * SQRT_2_TIMES_SQRT_PI * std::exp(0.5 * square(x));
+    double u = e * SQRT_TWO_PI * std::exp(0.5 * square(x));
     x -= u / (1.0 + 0.5 * x * u);
   }
 

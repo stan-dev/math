@@ -1,18 +1,18 @@
 #ifndef STAN_MATH_OPENCL_ERR_CHECK_NAN_HPP
 #define STAN_MATH_OPENCL_ERR_CHECK_NAN_HPP
 #ifdef STAN_OPENCL
+
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/kernels/check_nan.hpp>
-#include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
-
 #include <vector>
 
 namespace stan {
 namespace math {
-/**
+/** \ingroup opencl
  * Check if the <code>matrix_cl</code> has NaN values
  *
  * @param function Function name (for error messages)
@@ -36,7 +36,7 @@ inline void check_nan(const char* function, const char* name,
                               y.rows(), y.cols());
     nan_flag = from_matrix_cl_error_code(nan_chk);
     if (nan_flag) {
-      domain_error(function, name, "has NaN values", "");
+      throw_domain_error(function, name, "has NaN values", "");
     }
   } catch (const cl::Error& e) {
     check_opencl_error("nan_check", e);

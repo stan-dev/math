@@ -3,18 +3,16 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/prob/normal_lpdf.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup prob_dists
  * The log of the normal density for the specified scalar(s) given
  * the specified mean(s) and deviation(s).
  * y, s_quared, mu, or sigma can each be either
@@ -50,6 +48,7 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
   using T_partials_return = partials_return_t<T_y, T_s, T_n, T_loc, T_scale>;
 
   using std::log;
+  using std::pow;
 
   // check if any vectors are zero length
   if (size_zero(y_bar, s_squared, n_obs, mu, sigma)) {

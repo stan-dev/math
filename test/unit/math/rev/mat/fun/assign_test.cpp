@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 
-TEST(MathMatrix, getAssignRowVar) {
+TEST(MathMatrixRevMat, getAssignRowVar) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;

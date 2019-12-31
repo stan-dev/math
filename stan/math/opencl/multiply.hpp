@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_OPENCL_MULTIPLY_HPP
 #define STAN_MATH_OPENCL_MULTIPLY_HPP
 #ifdef STAN_OPENCL
+
 #include <stan/math/opencl/matrix_cl.hpp>
-#include <stan/math/opencl/err/check_opencl.hpp>
-#include <stan/math/opencl/kernels/scalar_mul.hpp>
+#include <stan/math/opencl/err.hpp>
 #include <stan/math/opencl/kernels/matrix_multiply.hpp>
 #include <stan/math/opencl/kernels/add.hpp>
 #include <stan/math/opencl/sub_block.hpp>
@@ -15,7 +15,7 @@
 namespace stan {
 namespace math {
 namespace opencl {
-/**
+/** \ingroup opencl
  * Computes the product of the specified matrices with the option
  * of specifying the triangularity of either input matrices.
  *

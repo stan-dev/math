@@ -1,18 +1,17 @@
 #ifndef STAN_MATH_OPENCL_PRIM_REP_MATRIX_HPP
 #define STAN_MATH_OPENCL_PRIM_REP_MATRIX_HPP
 #ifdef STAN_OPENCL
+
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/kernels/rep_matrix.hpp>
-#include <stan/math/opencl/err/check_opencl.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
-#include <stan/math/prim/scal/err/check_greater.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
-#include <stan/math/prim/meta.hpp>
+#include <stan/math/opencl/err.hpp>
 
 namespace stan {
 namespace math {
-/**
+/** \ingroup opencl
  * Creates a matrix_cl by replicating the value of
  * the only element in the input 1x1 matrix_cl. The
  * element must be of arithmetic type.
@@ -48,7 +47,7 @@ inline matrix_cl<T> rep_matrix(const matrix_cl<T>& x, int n, int m) {
   return A;
 }
 
-/**
+/** \ingroup opencl
  * Creates a matrix_cl by replicating the input
  * vector or row_vector.  The elements of the
  * vector or row_vector must be of arithmetic type.

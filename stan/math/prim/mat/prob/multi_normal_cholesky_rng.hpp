@@ -2,15 +2,14 @@
 #define STAN_MATH_PRIM_MAT_PROB_MULTI_NORMAL_CHOLESKY_RNG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
+#include <stan/math/prim/err.hpp>
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup multivar_dists
  * Return a multivariate normal random variate with the given location and
  * Cholesky factorization of the covariance using the specified random number
  * generator.
@@ -38,7 +37,7 @@ multi_normal_cholesky_rng(
   vector_seq_view<T_loc> mu_vec(mu);
   size_t size_mu = mu_vec[0].size();
 
-  size_t N = length_mvt(mu);
+  size_t N = size_mvt(mu);
   int size_mu_old = size_mu;
   for (size_t i = 1; i < N; i++) {
     int size_mu_new = mu_vec[i].size();

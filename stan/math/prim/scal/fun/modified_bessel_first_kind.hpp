@@ -2,8 +2,8 @@
 #define STAN_MATH_PRIM_SCAL_FUN_MODIFIED_BESSEL_FIRST_KIND_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
 #include <boost/math/special_functions/bessel.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
 
 namespace stan {
 namespace math {
