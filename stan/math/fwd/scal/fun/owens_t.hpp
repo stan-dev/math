@@ -31,7 +31,7 @@ inline fvar<T> owens_t(const fvar<T>& x1, const fvar<T>& x2) {
                          * (erf(x2.val_ * x1.val_ * INV_SQRT_TWO)
                             * exp(neg_x1_sq_div_2) * INV_SQRT_TWO_PI * 0.5)
                      + x2.d_ * exp(neg_x1_sq_div_2 * one_p_x2_sq)
-                           / (one_p_x2_sq * 2.0 * pi()));
+                           / (one_p_x2_sq * TWO_PI));
 }
 
 /**
@@ -49,7 +49,7 @@ inline fvar<T> owens_t(double x1, const fvar<T>& x2) {
   T one_p_x2_sq = 1.0 + square(x2.val_);
   return fvar<T>(
       owens_t(x1, x2.val_),
-      x2.d_ * exp(neg_x1_sq_div_2 * one_p_x2_sq) / (one_p_x2_sq * 2.0 * pi()));
+      x2.d_ * exp(neg_x1_sq_div_2 * one_p_x2_sq) / (one_p_x2_sq * TWO_PI));
 }
 
 /**
