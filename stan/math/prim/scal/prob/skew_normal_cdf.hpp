@@ -3,12 +3,12 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/erf.hpp>
 #include <stan/math/prim/scal/fun/erfc.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/owens_t.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
 #include <cmath>
 
 namespace stan {
@@ -45,7 +45,6 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_cdf(
   scalar_seq_view<T_scale> sigma_vec(sigma);
   scalar_seq_view<T_shape> alpha_vec(alpha);
   size_t N = max_size(y, mu, sigma, alpha);
-  const double SQRT_TWO_OVER_PI = std::sqrt(2.0 / pi());
 
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
@@ -63,10 +62,10 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_cdf(
     cdf *= cdf_;
 
     const T_partials_return deriv_erfc
-        = SQRT_TWO_OVER_PI * 0.5 * exp(-scaled_diff_sq) / sigma_dbl;
+        = SQRT_TWO_OVER_SQRT_PI * 0.5 * exp(-scaled_diff_sq) / sigma_dbl;
     const T_partials_return deriv_owens
-        = erf(alpha_dbl * scaled_diff) * exp(-scaled_diff_sq) / SQRT_TWO_OVER_PI
-          / (-2.0 * pi()) / sigma_dbl;
+        = erf(alpha_dbl * scaled_diff) * exp(-scaled_diff_sq)
+          / SQRT_TWO_OVER_SQRT_PI / (-TWO_PI) / sigma_dbl;
     const T_partials_return rep_deriv
         = (-2.0 * deriv_owens + deriv_erfc) / cdf_;
 
@@ -82,7 +81,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_cdf(
     if (!is_constant_all<T_shape>::value) {
       ops_partials.edge4_.partials_[n]
           += -2.0 * exp(-0.5 * diff_sq * (1.0 + alpha_dbl_sq))
-             / ((1 + alpha_dbl_sq) * 2.0 * pi()) / cdf_;
+             / ((1 + alpha_dbl_sq) * TWO_PI) / cdf_;
     }
   }
 

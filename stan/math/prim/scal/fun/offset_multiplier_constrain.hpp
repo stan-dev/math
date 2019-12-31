@@ -2,12 +2,11 @@
 #define STAN_MATH_PRIM_SCAL_FUN_OFFSET_MULTIPLIER_CONSTRAIN_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/scal/fun/fma.hpp>
 #include <stan/math/prim/scal/fun/identity_constrain.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
-#include <stan/math/prim/scal/fun/fma.hpp>
-#include <stan/math/prim/err.hpp>
 #include <cmath>
-#include <limits>
 
 namespace stan {
 namespace math {
@@ -95,7 +94,6 @@ inline return_type_t<T, M, S> offset_multiplier_constrain(const T& x,
 }
 
 }  // namespace math
-
 }  // namespace stan
 
 #endif

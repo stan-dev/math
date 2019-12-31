@@ -16,9 +16,7 @@
 #include <stan/math/opencl/multiply.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/kernels/poisson_log_glm_lpmf.hpp>
-
 #include <cmath>
-#include <limits>
 
 namespace stan {
 namespace math {
