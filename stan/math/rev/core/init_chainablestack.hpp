@@ -53,16 +53,15 @@ class ad_tape_observer : public tbb::task_scheduler_observer {
     }
   }
 
- private:
   ad_map thread_tape_map_;
   std::mutex thread_tape_map_mutex_;
 };
 
-namespace {
+namespace internal {
 
-ad_tape_observer global_observer;
+static ad_tape_observer global_observer;
 
-}  // namespace
+}  // namespace internal
 }  // namespace math
 }  // namespace stan
 

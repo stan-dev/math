@@ -72,6 +72,46 @@ struct parallel_reduce_sum_impl<ReduceFunction, InputIt, T, Arg1, double> {
 };
 }  // namespace internal
 
+/*
+ * The ReduceFunction is expected to have an operator with the
+ * signature
+ *
+ * inline T operator()(std::size_t start, std::size_t end,
+ *                     std::vector<int>& sub_slice, std::vector<T>& lambda,
+ *                     const std::vector<int>& gidx) const
+ *
+ * So the input data is sliced into smaller pieces and given into the
+ * reducer. Which exact sub-slice is given to the function is defined
+ * by start and end index. These can be used to map data to groups,
+ * for example. It would be good to extend this signature in two ways:
+ *
+ * 1. The large std::vector which is sliced into smaller pieces should
+ *    be allowed to be any data (so int, double, vectors, matrices,
+ *    ...). In a second step this should also be extended to vars
+ *    which will require more considerations, but is beneficial. One
+ *    could leave this generalization to a future version.
+ *
+ * 2. The arguments past sub_slice should be variable. So the
+ *    arguments past sub_slice would need to be represented by the
+ *    "..." thing in C++. The complication for this is managing all
+ *    the calls.
+ *
+ * So the parallel_reduce_sum signature should look like
+ *
+ * template <class ReduceFunction, class InputIt, class T, ...>
+ * constexpr T parallel_reduce_sum(InputIt first, InputIt last, T init,
+ *                                std::size_t grainsize, ...)
+ *
+ * which corresponds to a ReduceFunction which looks like
+ *
+ * inline T operator()(std::size_t start, std::size_t end,
+ *                     std::vector<InputIt*>& sub_slice, ...)
+ *
+ * Note that the ReduceFunction is only passed in as type to prohibit
+ * that any internal state of the functor is causing trouble. Thus,
+ * the functor must be default constructible without any arguments.
+ *
+ */
 template <class ReduceFunction, class InputIt, class T, class Arg1>
 constexpr T parallel_reduce_sum(InputIt first, InputIt last, T init,
                                 std::size_t grainsize, std::vector<Arg1>& varg1,
