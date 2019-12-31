@@ -2,19 +2,18 @@
 #define STAN_MATH_REV_ARR_FUNCTOR_integrate_1d_HPP
 
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/arr/fun/value_of.hpp>
 #include <stan/math/prim/arr/functor/integrate_1d.hpp>
-#include <stan/math/prim/scal/err/check_less_or_equal.hpp>
-#include <stan/math/prim/scal/err/throw_domain_error.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/rev/scal/fun/is_nan.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
-#include <stan/math/prim/meta.hpp>
 #include <type_traits>
 #include <string>
 #include <vector>
 #include <functional>
 #include <ostream>
-#include <limits>
 #include <cmath>
 
 namespace stan {
@@ -120,9 +119,7 @@ template <typename F, typename T_a, typename T_b, typename T_theta,
 inline return_type_t<T_a, T_b, T_theta> integrate_1d(
     const F &f, const T_a &a, const T_b &b, const std::vector<T_theta> &theta,
     const std::vector<double> &x_r, const std::vector<int> &x_i,
-    std::ostream *msgs,
-    const double relative_tolerance
-    = std::sqrt(std::numeric_limits<double>::epsilon())) {
+    std::ostream *msgs, const double relative_tolerance = std::sqrt(EPSILON)) {
   static const char *function = "integrate_1d";
   check_less_or_equal(function, "lower limit", a, b);
 

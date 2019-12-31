@@ -4,8 +4,7 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left_spd.hpp>
 #include <stan/math/prim/mat/fun/transpose.hpp>
-#include <stan/math/prim/mat/err/check_multiplicable.hpp>
-#include <stan/math/prim/mat/err/check_pos_definite.hpp>
+#include <stan/math/prim/err.hpp>
 
 namespace stan {
 namespace math {

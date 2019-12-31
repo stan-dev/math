@@ -2,13 +2,13 @@
 #define STAN_MATH_PRIM_SCAL_FUN_LUB_CONSTRAIN_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_less.hpp>
-#include <stan/math/prim/scal/fun/lb_constrain.hpp>
-#include <stan/math/prim/scal/fun/ub_constrain.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/fma.hpp>
+#include <stan/math/prim/scal/fun/lb_constrain.hpp>
 #include <stan/math/prim/scal/fun/log1p.hpp>
+#include <stan/math/prim/scal/fun/ub_constrain.hpp>
 #include <cmath>
-#include <limits>
 
 namespace stan {
 namespace math {

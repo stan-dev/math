@@ -23,18 +23,18 @@ TEST(AgradRevMatrix, mdivide_left_tri_val_cl) {
   using stan::math::matrix_d;
   using stan::math::matrix_v;
   using stan::math::mdivide_left_tri;
-  int size = 111;
-  matrix_v Av(size, size);
-  matrix_d Ad(size, size);
+  int mat_size = 111;
+  matrix_v Av(mat_size, mat_size);
+  matrix_d Ad(mat_size, mat_size);
   matrix_v I, I_cl;
-  for (int i = 0; i < size; i++) {
+  for (int i = 0; i < mat_size; i++) {
     for (int j = 0; j < i; j++) {
       Ad(i, j) = stan::math::uniform_rng(-5, 5, rng);
       Av(i, j) = Ad(i, j);
     }
     Ad(i, i) = 20.0;
     Av(i, i) = Ad(i, i);
-    for (int j = i + 1; j < size; j++) {
+    for (int j = i + 1; j < mat_size; j++) {
       Ad(i, j) = 0.0;
       Av(i, j) = Ad(i, j);
     }
@@ -73,14 +73,14 @@ TEST(AgradRevMatrix, mdivide_left_tri_val_cl) {
   I = Av * Av_inv;
   EXPECT_MATRIX_NEAR(I, I_cl, 1.0E-12);
 
-  for (int i = 0; i < size; i++) {
+  for (int i = 0; i < mat_size; i++) {
     for (int j = 0; j < i; j++) {
       Ad(i, j) = 0.0;
       Av(i, j) = Ad(i, j);
     }
     Ad(i, i) = 20.0;
     Av(i, i) = Ad(i, i);
-    for (int j = i + 1; j < size; j++) {
+    for (int j = i + 1; j < mat_size; j++) {
       Ad(i, j) = stan::math::uniform_rng(-5, 5, rng);
       Av(i, j) = Ad(i, j);
     }
@@ -123,21 +123,21 @@ TEST(AgradRevMatrix, mdivide_left_tri_lower_grad_vv_cl) {
   using stan::math::matrix_v;
   using stan::math::mdivide_left_tri;
   using stan::math::multiply;
-  int size = 256;
+  int mat_size = 256;
 
-  matrix_v Av(size, size);
-  matrix_v Bv(size, size);
-  matrix_v Cv(size, size);
-  matrix_v Cv_cl(size, size);
-  for (int i = 0; i < size; i++) {
+  matrix_v Av(mat_size, mat_size);
+  matrix_v Bv(mat_size, mat_size);
+  matrix_v Cv(mat_size, mat_size);
+  matrix_v Cv_cl(mat_size, mat_size);
+  for (int i = 0; i < mat_size; i++) {
     for (int j = 0; j < i; j++) {
       Av(i, j) = stan::math::uniform_rng(-5, 5, rng);
     }
     Av(i, i) = 20.0;
-    for (int j = i + 1; j < size; j++) {
+    for (int j = i + 1; j < mat_size; j++) {
       Av(i, j) = 0.0;
     }
-    for (int j = 0; j < size; j++) {
+    for (int j = 0; j < mat_size; j++) {
       Bv(i, j) = stan::math::uniform_rng(-5, 5, rng);
     }
   }
@@ -164,21 +164,21 @@ TEST(AgradRevMatrix, mdivide_left_tri_lower_grad_dv_cl) {
   using stan::math::matrix_v;
   using stan::math::mdivide_left_tri;
   using stan::math::multiply;
-  int size = 213;
+  int mat_size = 213;
 
-  matrix_d Ad(size, size);
-  matrix_v Bv(size, size);
-  matrix_v Cv(size, size);
-  matrix_v Cv_cl(size, size);
-  for (int i = 0; i < size; i++) {
+  matrix_d Ad(mat_size, mat_size);
+  matrix_v Bv(mat_size, mat_size);
+  matrix_v Cv(mat_size, mat_size);
+  matrix_v Cv_cl(mat_size, mat_size);
+  for (int i = 0; i < mat_size; i++) {
     for (int j = 0; j < i; j++) {
       Ad(i, j) = stan::math::uniform_rng(-5, 5, rng);
     }
     Ad(i, i) = 20.0;
-    for (int j = i + 1; j < size; j++) {
+    for (int j = i + 1; j < mat_size; j++) {
       Ad(i, j) = 0.0;
     }
-    for (int j = 0; j < size; j++) {
+    for (int j = 0; j < mat_size; j++) {
       Bv(i, j) = stan::math::uniform_rng(-5, 5, rng);
     }
   }
@@ -205,21 +205,21 @@ TEST(AgradRevMatrix, mdivide_left_tri_lower_grad_vd_cl) {
   using stan::math::matrix_v;
   using stan::math::mdivide_left_tri;
   using stan::math::multiply;
-  int size = 250;
+  int mat_size = 250;
 
-  matrix_d Av(size, size);
-  matrix_v Bd(size, size);
-  matrix_v Cv(size, size);
-  matrix_v Cv_cl(size, size);
-  for (int i = 0; i < size; i++) {
+  matrix_d Av(mat_size, mat_size);
+  matrix_v Bd(mat_size, mat_size);
+  matrix_v Cv(mat_size, mat_size);
+  matrix_v Cv_cl(mat_size, mat_size);
+  for (int i = 0; i < mat_size; i++) {
     for (int j = 0; j < i; j++) {
       Av(i, j) = stan::math::uniform_rng(-5, 5, rng);
     }
     Av(i, i) = 20.0;
-    for (int j = i + 1; j < size; j++) {
+    for (int j = i + 1; j < mat_size; j++) {
       Av(i, j) = 0.0;
     }
-    for (int j = 0; j < size; j++) {
+    for (int j = 0; j < mat_size; j++) {
       Bd(i, j) = stan::math::uniform_rng(-5, 5, rng);
     }
   }
@@ -246,21 +246,21 @@ TEST(AgradRevMatrix, mdivide_left_tri_upper_grad_vv_cl) {
   using stan::math::matrix_v;
   using stan::math::mdivide_left_tri;
   using stan::math::multiply;
-  int size = 299;
+  int mat_size = 299;
 
-  matrix_v Av(size, size);
-  matrix_v Bv(size, size);
-  matrix_v Cv(size, size);
-  matrix_v Cv_cl(size, size);
-  for (int i = 0; i < size; i++) {
+  matrix_v Av(mat_size, mat_size);
+  matrix_v Bv(mat_size, mat_size);
+  matrix_v Cv(mat_size, mat_size);
+  matrix_v Cv_cl(mat_size, mat_size);
+  for (int i = 0; i < mat_size; i++) {
     for (int j = 0; j < i; j++) {
       Av(i, j) = 0.0;
     }
     Av(i, i) = 20.0;
-    for (int j = i + 1; j < size; j++) {
+    for (int j = i + 1; j < mat_size; j++) {
       Av(i, j) = stan::math::uniform_rng(-5, 5, rng);
     }
-    for (int j = 0; j < size; j++) {
+    for (int j = 0; j < mat_size; j++) {
       Bv(i, j) = stan::math::uniform_rng(-5, 5, rng);
     }
   }
@@ -287,21 +287,21 @@ TEST(AgradRevMatrix, mdivide_left_tri_upper_grad_dv_cl) {
   using stan::math::matrix_v;
   using stan::math::mdivide_left_tri;
   using stan::math::multiply;
-  int size = 301;
+  int mat_size = 301;
 
-  matrix_d Ad(size, size);
-  matrix_v Bv(size, size);
-  matrix_v Cv(size, size);
-  matrix_v Cv_cl(size, size);
-  for (int i = 0; i < size; i++) {
+  matrix_d Ad(mat_size, mat_size);
+  matrix_v Bv(mat_size, mat_size);
+  matrix_v Cv(mat_size, mat_size);
+  matrix_v Cv_cl(mat_size, mat_size);
+  for (int i = 0; i < mat_size; i++) {
     for (int j = 0; j < i; j++) {
       Ad(i, j) = 0.0;
     }
     Ad(i, i) = 20.0;
-    for (int j = i + 1; j < size; j++) {
+    for (int j = i + 1; j < mat_size; j++) {
       Ad(i, j) = stan::math::uniform_rng(-5, 5, rng);
     }
-    for (int j = 0; j < size; j++) {
+    for (int j = 0; j < mat_size; j++) {
       Bv(i, j) = stan::math::uniform_rng(-5, 5, rng);
     }
   }
@@ -328,21 +328,21 @@ TEST(AgradRevMatrix, mdivide_left_tri_upper_grad_vd_cl) {
   using stan::math::matrix_v;
   using stan::math::mdivide_left_tri;
   using stan::math::multiply;
-  int size = 300;
+  int mat_size = 300;
 
-  matrix_d Av(size, size);
-  matrix_v Bd(size, size);
-  matrix_v Cv(size, size);
-  matrix_v Cv_cl(size, size);
-  for (int i = 0; i < size; i++) {
+  matrix_d Av(mat_size, mat_size);
+  matrix_v Bd(mat_size, mat_size);
+  matrix_v Cv(mat_size, mat_size);
+  matrix_v Cv_cl(mat_size, mat_size);
+  for (int i = 0; i < mat_size; i++) {
     for (int j = 0; j < i; j++) {
       Av(i, j) = 0.0;
     }
     Av(i, i) = 20.0;
-    for (int j = i + 1; j < size; j++) {
+    for (int j = i + 1; j < mat_size; j++) {
       Av(i, j) = stan::math::uniform_rng(-5, 5, rng);
     }
-    for (int j = 0; j < size; j++) {
+    for (int j = 0; j < mat_size; j++) {
       Bd(i, j) = stan::math::uniform_rng(-5, 5, rng);
     }
   }

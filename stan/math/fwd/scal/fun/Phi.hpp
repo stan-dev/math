@@ -3,8 +3,8 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/scal/fun/Phi.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/fun/Phi.hpp>
 #include <cmath>
 
 namespace stan {
@@ -15,7 +15,7 @@ inline fvar<T> Phi(const fvar<T>& x) {
   using std::exp;
   using std::sqrt;
   T xv = x.val_;
-  return fvar<T>(Phi(xv), x.d_ * exp(xv * xv / -2.0) / sqrt(2.0 * pi()));
+  return fvar<T>(Phi(xv), x.d_ * exp(xv * xv / -2.0) * INV_SQRT_TWO_PI);
 }
 
 }  // namespace math

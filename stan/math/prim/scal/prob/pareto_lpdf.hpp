@@ -2,9 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_PARETO_LPDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
@@ -51,35 +49,35 @@ return_type_t<T_y, T_scale, T_shape> pareto_lpdf(const T_y& y,
 
   VectorBuilder<include_summand<propto, T_y, T_shape>::value, T_partials_return,
                 T_y>
-      log_y(length(y));
+      log_y(size(y));
   if (include_summand<propto, T_y, T_shape>::value) {
-    for (size_t n = 0; n < length(y); n++) {
+    for (size_t n = 0; n < size(y); n++) {
       log_y[n] = log(value_of(y_vec[n]));
     }
   }
 
   VectorBuilder<!is_constant_all<T_y, T_shape>::value, T_partials_return, T_y>
-      inv_y(length(y));
+      inv_y(size(y));
   if (!is_constant_all<T_y, T_shape>::value) {
-    for (size_t n = 0; n < length(y); n++) {
+    for (size_t n = 0; n < size(y); n++) {
       inv_y[n] = 1 / value_of(y_vec[n]);
     }
   }
 
   VectorBuilder<include_summand<propto, T_scale, T_shape>::value,
                 T_partials_return, T_scale>
-      log_y_min(length(y_min));
+      log_y_min(size(y_min));
   if (include_summand<propto, T_scale, T_shape>::value) {
-    for (size_t n = 0; n < length(y_min); n++) {
+    for (size_t n = 0; n < size(y_min); n++) {
       log_y_min[n] = log(value_of(y_min_vec[n]));
     }
   }
 
   VectorBuilder<include_summand<propto, T_shape>::value, T_partials_return,
                 T_shape>
-      log_alpha(length(alpha));
+      log_alpha(size(alpha));
   if (include_summand<propto, T_shape>::value) {
-    for (size_t n = 0; n < length(alpha); n++) {
+    for (size_t n = 0; n < size(alpha); n++) {
       log_alpha[n] = log(value_of(alpha_vec[n]));
     }
   }

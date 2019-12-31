@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_FINITE_DIFF_STEPSIZE_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_FINITE_DIFF_STEPSIZE_HPP
 
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <cmath>
-#include <limits>
 
 namespace stan {
 namespace math {
@@ -19,10 +19,10 @@ namespace math {
  */
 inline double finite_diff_stepsize(double u) {
   using std::fabs;
-  static const double cbrt_epsilon
-      = std::cbrt(std::numeric_limits<double>::epsilon());
+  static const double cbrt_epsilon = std::cbrt(EPSILON);
   return cbrt_epsilon * std::fmax(1, fabs(u));
 }
+
 }  // namespace math
 }  // namespace stan
 #endif

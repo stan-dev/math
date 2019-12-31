@@ -2,15 +2,12 @@
 #define STAN_MATH_PRIM_SCAL_PROB_POISSON_LOG_LPMF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <cmath>
-#include <limits>
 
 namespace stan {
 namespace math {
@@ -42,17 +39,17 @@ return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
 
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_log_rate> alpha_vec(alpha);
-  size_t size = max_size(n, alpha);
+  size_t max_size_seq_view = max_size(n, alpha);
 
-  // FIXME: first loop size of alpha_vec, second loop if-ed for size==1
-  for (size_t i = 0; i < size; i++) {
-    if (std::numeric_limits<double>::infinity() == alpha_vec[i]) {
+  // FIXME: first loop size of alpha_vec, second loop if-ed for
+  // max_size_seq_view==1
+  for (size_t i = 0; i < max_size_seq_view; i++) {
+    if (INFTY == alpha_vec[i]) {
       return LOG_ZERO;
     }
   }
-  for (size_t i = 0; i < size; i++) {
-    if (-std::numeric_limits<double>::infinity() == alpha_vec[i]
-        && n_vec[i] != 0) {
+  for (size_t i = 0; i < max_size_seq_view; i++) {
+    if (NEGATIVE_INFTY == alpha_vec[i] && n_vec[i] != 0) {
       return LOG_ZERO;
     }
   }
@@ -62,14 +59,13 @@ return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
   // FIXME: cache value_of for alpha_vec?  faster if only one?
   VectorBuilder<include_summand<propto, T_log_rate>::value, T_partials_return,
                 T_log_rate>
-      exp_alpha(length(alpha));
-  for (size_t i = 0; i < length(alpha); i++) {
+      exp_alpha(size(alpha));
+  for (size_t i = 0; i < size(alpha); i++) {
     exp_alpha[i] = exp(value_of(alpha_vec[i]));
   }
 
-  for (size_t i = 0; i < size; i++) {
-    if (!(alpha_vec[i] == -std::numeric_limits<double>::infinity()
-          && n_vec[i] == 0)) {
+  for (size_t i = 0; i < max_size_seq_view; i++) {
+    if (!(alpha_vec[i] == NEGATIVE_INFTY && n_vec[i] == 0)) {
       if (include_summand<propto>::value) {
         logp -= lgamma(n_vec[i] + 1.0);
       }

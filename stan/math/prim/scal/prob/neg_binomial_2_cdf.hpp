@@ -2,9 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_2_CDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
 #include <stan/math/prim/scal/fun/inc_beta.hpp>
@@ -36,13 +34,13 @@ return_type_t<T_location, T_precision> neg_binomial_2_cdf(
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_location> mu_vec(mu);
   scalar_seq_view<T_precision> phi_vec(phi);
-  size_t size = max_size(n, mu, phi);
+  size_t max_size_seq_view = max_size(n, mu, phi);
 
   operands_and_partials<T_location, T_precision> ops_partials(mu, phi);
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
-  for (size_t i = 0; i < stan::length(n); i++) {
+  for (size_t i = 0; i < size(n); i++) {
     if (value_of(n_vec[i]) < 0) {
       return ops_partials.build(0.0);
     }
@@ -50,14 +48,14 @@ return_type_t<T_location, T_precision> neg_binomial_2_cdf(
 
   VectorBuilder<!is_constant_all<T_precision>::value, T_partials_return,
                 T_precision>
-      digamma_phi_vec(stan::length(phi));
+      digamma_phi_vec(size(phi));
 
   VectorBuilder<!is_constant_all<T_precision>::value, T_partials_return,
                 T_precision>
-      digamma_sum_vec(stan::length(phi));
+      digamma_sum_vec(size(phi));
 
   if (!is_constant_all<T_precision>::value) {
-    for (size_t i = 0; i < stan::length(phi); i++) {
+    for (size_t i = 0; i < size(phi); i++) {
       const T_partials_return n_dbl = value_of(n_vec[i]);
       const T_partials_return phi_dbl = value_of(phi_vec[i]);
 
@@ -66,7 +64,7 @@ return_type_t<T_location, T_precision> neg_binomial_2_cdf(
     }
   }
 
-  for (size_t i = 0; i < size; i++) {
+  for (size_t i = 0; i < max_size_seq_view; i++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
     if (value_of(n_vec[i]) == std::numeric_limits<int>::max()) {
@@ -100,13 +98,13 @@ return_type_t<T_location, T_precision> neg_binomial_2_cdf(
   }
 
   if (!is_constant_all<T_location>::value) {
-    for (size_t i = 0; i < stan::length(mu); ++i) {
+    for (size_t i = 0; i < size(mu); ++i) {
       ops_partials.edge1_.partials_[i] *= P;
     }
   }
 
   if (!is_constant_all<T_precision>::value) {
-    for (size_t i = 0; i < stan::length(phi); ++i) {
+    for (size_t i = 0; i < size(phi); ++i) {
       ops_partials.edge2_.partials_[i] *= P;
     }
   }

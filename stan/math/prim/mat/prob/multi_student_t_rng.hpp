@@ -2,11 +2,7 @@
 #define STAN_MATH_PRIM_MAT_PROB_MULTI_STUDENT_T_RNG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
-#include <stan/math/prim/mat/err/check_symmetric.hpp>
-#include <stan/math/prim/mat/err/check_pos_definite.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
+#include <stan/math/prim/err.hpp>
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/gamma_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
@@ -54,7 +50,7 @@ multi_student_t_rng(
   vector_seq_view<T_loc> mu_vec(mu);
   size_t size_mu = mu_vec[0].size();
 
-  size_t N = length_mvt(mu);
+  size_t N = size_mvt(mu);
   int size_mu_old = size_mu;
   for (size_t i = 1; i < N; i++) {
     int size_mu_new = mu_vec[i].size();

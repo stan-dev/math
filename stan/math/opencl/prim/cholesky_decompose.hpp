@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_OPENCL_PRIM_CHOLESKY_DECOMPOSE_HPP
 #define STAN_MATH_OPENCL_PRIM_CHOLESKY_DECOMPOSE_HPP
 #ifdef STAN_OPENCL
+
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/cholesky_decompose.hpp>
 #include <stan/math/opencl/copy_triangular.hpp>

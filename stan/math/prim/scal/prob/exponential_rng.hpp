@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_EXPONENTIAL_RNG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/err.hpp>
 #include <boost/random/exponential_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 
@@ -33,7 +33,7 @@ inline typename VectorBuilder<true, double, T_inv>::type exponential_rng(
   check_positive_finite(function, "Inverse scale parameter", beta);
 
   scalar_seq_view<T_inv> beta_vec(beta);
-  size_t N = length(beta);
+  size_t N = size(beta);
   VectorBuilder<true, double, T_inv> output(N);
 
   for (size_t n = 0; n < N; ++n) {

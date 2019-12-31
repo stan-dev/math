@@ -2,9 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_LPMF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
@@ -46,7 +44,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_shape> alpha_vec(alpha);
   scalar_seq_view<T_inv_scale> beta_vec(beta);
-  size_t size = max_size(n, alpha, beta);
+  size_t max_size_seq_view = max_size(n, alpha, beta);
 
   operands_and_partials<T_shape, T_inv_scale> ops_partials(alpha, beta);
 
@@ -56,14 +54,14 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
     lambda[i] = value_of(alpha_vec[i]) / value_of(beta_vec[i]);
   }
 
-  VectorBuilder<true, T_partials_return, T_inv_scale> log1p_beta(length(beta));
-  for (size_t i = 0; i < length(beta); ++i) {
+  VectorBuilder<true, T_partials_return, T_inv_scale> log1p_beta(size(beta));
+  for (size_t i = 0; i < size(beta); ++i) {
     log1p_beta[i] = log1p(value_of(beta_vec[i]));
   }
 
   VectorBuilder<true, T_partials_return, T_inv_scale> log_beta_m_log1p_beta(
-      length(beta));
-  for (size_t i = 0; i < length(beta); ++i) {
+      size(beta));
+  for (size_t i = 0; i < size(beta); ++i) {
     log_beta_m_log1p_beta[i] = log(value_of(beta_vec[i])) - log1p_beta[i];
   }
 
@@ -76,18 +74,18 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
   }
 
   VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
-      digamma_alpha(length(alpha));
+      digamma_alpha(size(alpha));
   if (!is_constant_all<T_shape>::value) {
-    for (size_t i = 0; i < length(alpha); ++i) {
+    for (size_t i = 0; i < size(alpha); ++i) {
       digamma_alpha[i] = digamma(value_of(alpha_vec[i]));
     }
   }
 
   VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return,
                 T_inv_scale>
-      log_beta(length(beta));
+      log_beta(size(beta));
   if (!is_constant_all<T_shape>::value) {
-    for (size_t i = 0; i < length(beta); ++i) {
+    for (size_t i = 0; i < size(beta); ++i) {
       log_beta[i] = log(value_of(beta_vec[i]));
     }
   }
@@ -103,7 +101,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
     }
   }
 
-  for (size_t i = 0; i < size; i++) {
+  for (size_t i = 0; i < max_size_seq_view; i++) {
     if (alpha_vec[i] > 1e10) {  // reduces numerically to Poisson
       if (include_summand<propto>::value) {
         logp -= lgamma(n_vec[i] + 1.0);

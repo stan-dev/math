@@ -5,7 +5,7 @@
 #include <stan/math/prim/scal/fun/erf.hpp>
 #include <stan/math/prim/scal/fun/erfc.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
+#include <stan/math/prim/err.hpp>
 
 namespace stan {
 namespace math {
@@ -32,11 +32,11 @@ inline double Phi(double x) {
   if (x < -37.5) {
     return 0;
   } else if (x < -5.0) {
-    return 0.5 * erfc(-INV_SQRT_2 * x);
+    return 0.5 * erfc(-INV_SQRT_TWO * x);
   } else if (x > 8.25) {
     return 1;
   } else {
-    return 0.5 * (1.0 + erf(INV_SQRT_2 * x));
+    return 0.5 * (1.0 + erf(INV_SQRT_TWO * x));
   }
 }
 

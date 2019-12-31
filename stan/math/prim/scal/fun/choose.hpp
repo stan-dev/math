@@ -2,11 +2,10 @@
 #define STAN_MATH_PRIM_SCAL_FUN_CHOOSE_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
-#include <stan/math/prim/scal/err/check_less_or_equal.hpp>
+#include <stan/math/prim/err.hpp>
 #include <boost/math/special_functions/binomial.hpp>
-#include <limits>
 #include <cmath>
+#include <limits>
 
 namespace stan {
 namespace math {

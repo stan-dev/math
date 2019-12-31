@@ -28,9 +28,14 @@ inline void out_of_range(const char* function, int max, int index,
                          const char* msg1 = "", const char* msg2 = "") {
   std::ostringstream message;
   message << function << ": accessing element out of range. "
-          << "index " << index << " out of range; "
-          << "expecting index to be between " << stan::error_index::value
-          << " and " << stan::error_index::value - 1 + max << msg1 << msg2;
+          << "index " << index << " out of range; ";
+
+  if (max == 0) {
+    message << "container is empty and cannot be indexed" << msg1 << msg2;
+  } else {
+    message << "expecting index to be between " << stan::error_index::value
+            << " and " << stan::error_index::value - 1 + max << msg1 << msg2;
+  }
   throw std::out_of_range(message.str());
 }
 

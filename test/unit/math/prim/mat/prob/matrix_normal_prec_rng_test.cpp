@@ -8,7 +8,6 @@
 #include <vector>
 
 using Eigen::MatrixXd;
-
 using stan::math::matrix_normal_prec_rng;
 
 TEST(ProbDistributionsMatrixNormalPrecRng, ErrorSigma) {
@@ -17,44 +16,43 @@ TEST(ProbDistributionsMatrixNormalPrecRng, ErrorSigma) {
   double inf = std::numeric_limits<double>::infinity();
   double ninf = -std::numeric_limits<double>::infinity();
 
-  MatrixXd Mu(3, 5);
-  Mu.setZero();
+  MatrixXd Mu = MatrixXd::Zero(3, 5);
 
-  MatrixXd Sigma(5, 5);
-  Sigma << 9.0, -3.0, 0.0, 0.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.0,
-      1.0, 0.0, 0.0, 0.0, 1.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0;
+  MatrixXd Sigma(3, 3);
+  Sigma << 1.0, 0.5, 0.1, 0.5, 1.0, 0.2, 0.1, 0.2, 1.0;
 
-  MatrixXd D(3, 3);
-  D << 1.0, 0.5, 0.1, 0.5, 1.0, 0.2, 0.1, 0.2, 1.0;
+  MatrixXd D(5, 5);
+  D << 9.0, -3.0, 0.0, 0.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.0, 1.0,
+      0.0, 0.0, 0.0, 1.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0;
 
-  EXPECT_NO_THROW(matrix_normal_prec_rng(Mu, D, Sigma, rng));
+  EXPECT_NO_THROW(matrix_normal_prec_rng(Mu, Sigma, D, rng));
 
   // non-symmetric
   Sigma(0, 1) = -2.5;
-  EXPECT_THROW(matrix_normal_prec_rng(Mu, D, Sigma, rng), std::domain_error);
+  EXPECT_THROW(matrix_normal_prec_rng(Mu, Sigma, D, rng), std::domain_error);
   Sigma(0, 1) = Sigma(1, 0);
 
   // non-spd
   Sigma(0, 0) = -3.0;
-  EXPECT_THROW(matrix_normal_prec_rng(Mu, D, Sigma, rng), std::domain_error);
+  EXPECT_THROW(matrix_normal_prec_rng(Mu, Sigma, D, rng), std::domain_error);
   Sigma(0, 0) = 9.0;
 
   // NaN
   Sigma(0, 0) = nan;
-  EXPECT_THROW(matrix_normal_prec_rng(Mu, D, Sigma, rng), std::domain_error);
+  EXPECT_THROW(matrix_normal_prec_rng(Mu, Sigma, D, rng), std::domain_error);
   Sigma(0, 0) = 9.0;
 
   // inf
   Sigma(0, 0) = inf;
-  EXPECT_THROW(matrix_normal_prec_rng(Mu, D, Sigma, rng), std::domain_error);
+  EXPECT_THROW(matrix_normal_prec_rng(Mu, Sigma, D, rng), std::domain_error);
   Sigma(0, 0) = ninf;
-  EXPECT_THROW(matrix_normal_prec_rng(Mu, D, Sigma, rng), std::domain_error);
+  EXPECT_THROW(matrix_normal_prec_rng(Mu, Sigma, D, rng), std::domain_error);
   Sigma(0, 0) = 9.0;
 
   // non square
   MatrixXd rect_Sigma(2, 3);
   rect_Sigma << 1, 0, 0, 0, 1, 0;
-  EXPECT_THROW(matrix_normal_prec_rng(Mu, D, rect_Sigma, rng),
+  EXPECT_THROW(matrix_normal_prec_rng(Mu, rect_Sigma, D, rng),
                std::invalid_argument);
 }
 
@@ -64,67 +62,65 @@ TEST(ProbDistributionsMatrixNormalPrecRng, ErrorD) {
   double inf = std::numeric_limits<double>::infinity();
   double ninf = -std::numeric_limits<double>::infinity();
 
-  MatrixXd Mu(3, 5);
-  Mu.setZero();
+  MatrixXd Mu = MatrixXd::Zero(3, 5);
 
-  MatrixXd Sigma(5, 5);
-  Sigma << 9.0, -3.0, 0.0, 0.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.0,
-      1.0, 0.0, 0.0, 0.0, 1.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0;
+  MatrixXd Sigma(3, 3);
+  Sigma << 1.0, 0.5, 0.1, 0.5, 1.0, 0.2, 0.1, 0.2, 1.0;
 
-  MatrixXd D(3, 3);
-  D << 1.0, 0.5, 0.1, 0.5, 1.0, 0.2, 0.1, 0.2, 1.0;
+  MatrixXd D(5, 5);
+  D << 9.0, -3.0, 0.0, 0.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.0, 1.0,
+      0.0, 0.0, 0.0, 1.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0;
 
-  EXPECT_NO_THROW(matrix_normal_prec_rng(Mu, D, Sigma, rng));
+  EXPECT_NO_THROW(matrix_normal_prec_rng(Mu, Sigma, D, rng));
 
   // non-symmetric
   D(0, 1) = -2.5;
-  EXPECT_THROW(matrix_normal_prec_rng(Mu, D, Sigma, rng), std::domain_error);
+  EXPECT_THROW(matrix_normal_prec_rng(Mu, Sigma, D, rng), std::domain_error);
   D(0, 1) = Sigma(1, 0);
 
   // non-spd
   D(0, 0) = -3.0;
-  EXPECT_THROW(matrix_normal_prec_rng(Mu, D, Sigma, rng), std::domain_error);
+  EXPECT_THROW(matrix_normal_prec_rng(Mu, Sigma, D, rng), std::domain_error);
   D(0, 0) = 1.0;
 
   // NaN
   D(0, 0) = nan;
-  EXPECT_THROW(matrix_normal_prec_rng(Mu, D, Sigma, rng), std::domain_error);
+  EXPECT_THROW(matrix_normal_prec_rng(Mu, Sigma, D, rng), std::domain_error);
   D(0, 0) = 1.0;
 
   // inf
   D(0, 0) = inf;
-  EXPECT_THROW(matrix_normal_prec_rng(Mu, D, Sigma, rng), std::domain_error);
+  EXPECT_THROW(matrix_normal_prec_rng(Mu, Sigma, D, rng), std::domain_error);
   D(0, 0) = ninf;
-  EXPECT_THROW(matrix_normal_prec_rng(Mu, D, Sigma, rng), std::domain_error);
+  EXPECT_THROW(matrix_normal_prec_rng(Mu, Sigma, D, rng), std::domain_error);
   D(0, 0) = 1.0;
 
   // non square
   MatrixXd rect_D(2, 3);
   rect_D << 1, 0, 0, 0, 1, 0;
-  EXPECT_THROW(matrix_normal_prec_rng(Mu, rect_D, Sigma, rng),
+  EXPECT_THROW(matrix_normal_prec_rng(Mu, Sigma, rect_D, rng),
                std::invalid_argument);
 }
 
 TEST(ProbDistributionsMatrixNormalPrecRng, ErrorSize) {
   boost::random::mt19937 rng;
 
-  MatrixXd Mu(3, 5);
-  Mu.setZero();
+  MatrixXd Mu = MatrixXd::Zero(3, 5);
 
-  MatrixXd Sigma(5, 5);
+  MatrixXd Sigma(3, 3);
   MatrixXd SigmaWrong(4, 4);
-  Sigma << 9.0, -3.0, 0.0, 0.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.0,
-      1.0, 0.0, 0.0, 0.0, 1.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0;
+  Sigma << 1.0, 0.5, 0.1, 0.5, 1.0, 0.2, 0.1, 0.2, 1.0;
   SigmaWrong << 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1;
 
-  MatrixXd D(3, 3);
+  MatrixXd D(5, 5);
   MatrixXd DWrong(4, 4);
-  D << 1.0, 0.5, 0.1, 0.5, 1.0, 0.2, 0.1, 0.2, 1.0;
+  D << 9.0, -3.0, 0.0, 0.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.0, 1.0,
+      0.0, 0.0, 0.0, 1.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0;
   DWrong << 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1;
 
-  EXPECT_THROW(matrix_normal_prec_rng(Mu, D, SigmaWrong, rng),
+  EXPECT_THROW(matrix_normal_prec_rng(Mu, SigmaWrong, D, rng),
                std::invalid_argument);
-  EXPECT_THROW(matrix_normal_prec_rng(Mu, DWrong, Sigma, rng),
+  EXPECT_THROW(matrix_normal_prec_rng(Mu, Sigma, DWrong, rng),
                std::invalid_argument);
 }
 

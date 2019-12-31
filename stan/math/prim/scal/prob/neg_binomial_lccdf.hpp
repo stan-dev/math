@@ -2,8 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_NEG_BINOMIAL_LCCDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
@@ -37,7 +36,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lccdf(
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_shape> alpha_vec(alpha);
   scalar_seq_view<T_inv_scale> beta_vec(beta);
-  size_t size = max_size(n, alpha, beta);
+  size_t max_size_seq_view = max_size(n, alpha, beta);
 
   using std::exp;
   using std::log;
@@ -47,21 +46,21 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lccdf(
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
-  for (size_t i = 0; i < stan::length(n); i++) {
+  for (size_t i = 0; i < size(n); i++) {
     if (value_of(n_vec[i]) < 0) {
       return ops_partials.build(0.0);
     }
   }
 
   VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
-      digammaN_vec(stan::length(alpha));
+      digammaN_vec(size(alpha));
   VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
-      digammaAlpha_vec(stan::length(alpha));
+      digammaAlpha_vec(size(alpha));
   VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
-      digammaSum_vec(stan::length(alpha));
+      digammaSum_vec(size(alpha));
 
   if (!is_constant_all<T_shape>::value) {
-    for (size_t i = 0; i < stan::length(alpha); i++) {
+    for (size_t i = 0; i < size(alpha); i++) {
       const T_partials_return n_dbl = value_of(n_vec[i]);
       const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
 
@@ -71,7 +70,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lccdf(
     }
   }
 
-  for (size_t i = 0; i < size; i++) {
+  for (size_t i = 0; i < max_size_seq_view; i++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
     if (value_of(n_vec[i]) == std::numeric_limits<int>::max()) {

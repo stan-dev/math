@@ -5,7 +5,6 @@
 #include <stan/math/prim/scal/fun/atanh.hpp>
 #include <stan/math/prim/scal/fun/sqrt.hpp>
 #include <cstddef>
-#include <limits>
 #include <stdexcept>
 #include <vector>
 

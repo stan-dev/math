@@ -15,7 +15,7 @@ class log10_vari : public op_v_vari {
   const double exp_val_;
   explicit log10_vari(vari* avi)
       : op_v_vari(std::log10(avi->val_), avi), exp_val_(avi->val_) {}
-  void chain() { avi_->adj_ += adj_ / (LOG_10 * exp_val_); }
+  void chain() { avi_->adj_ += adj_ / (LOG_TEN * exp_val_); }
 };
 }  // namespace internal
 

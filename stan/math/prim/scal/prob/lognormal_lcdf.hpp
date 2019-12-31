@@ -2,13 +2,10 @@
 #define STAN_MATH_PRIM_SCAL_PROB_LOGNORMAL_LCDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/erfc.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <cmath>
 
@@ -42,9 +39,7 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lcdf(const T_y& y, const T_loc& mu,
   scalar_seq_view<T_scale> sigma_vec(sigma);
   size_t N = max_size(y, mu, sigma);
 
-  const double sqrt_pi = std::sqrt(pi());
-
-  for (size_t i = 0; i < stan::length(y); i++) {
+  for (size_t i = 0; i < size(y); i++) {
     if (value_of(y_vec[i]) == 0.0) {
       return ops_partials.build(negative_infinity());
     }
@@ -57,9 +52,9 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lcdf(const T_y& y, const T_loc& mu,
     const T_partials_return mu_dbl = value_of(mu_vec[n]);
     const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
     const T_partials_return scaled_diff
-        = (log(y_dbl) - mu_dbl) / (sigma_dbl * SQRT_2);
+        = (log(y_dbl) - mu_dbl) / (sigma_dbl * SQRT_TWO);
     const T_partials_return rep_deriv
-        = SQRT_2 / sqrt_pi * exp(-scaled_diff * scaled_diff) / sigma_dbl;
+        = SQRT_TWO_OVER_SQRT_PI * exp(-scaled_diff * scaled_diff) / sigma_dbl;
 
     const T_partials_return erfc_calc = erfc(-scaled_diff);
     cdf_log += log_half + log(erfc_calc);
@@ -72,7 +67,7 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lcdf(const T_y& y, const T_loc& mu,
     }
     if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n]
-          -= rep_deriv * scaled_diff * SQRT_2 / erfc_calc;
+          -= rep_deriv * scaled_diff * SQRT_TWO / erfc_calc;
     }
   }
   return ops_partials.build(cdf_log);

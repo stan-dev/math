@@ -2,8 +2,8 @@
 #define STAN_MATH_PRIM_SCAL_PROB_POISSON_LOG_RNG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_less.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <boost/random/poisson_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
@@ -31,13 +31,13 @@ inline typename VectorBuilder<true, int, T_rate>::type poisson_log_rng(
   using boost::variate_generator;
 
   static const char* function = "poisson_log_rng";
-  static const double POISSON_MAX_LOG_RATE = 30 * std::log(2);
+  static const double POISSON_MAX_LOG_RATE = 30 * LOG_TWO;
 
   check_finite(function, "Log rate parameter", alpha);
   check_less(function, "Log rate parameter", alpha, POISSON_MAX_LOG_RATE);
 
   scalar_seq_view<T_rate> alpha_vec(alpha);
-  size_t N = length(alpha);
+  size_t N = size(alpha);
   VectorBuilder<true, int, T_rate> output(N);
 
   for (size_t n = 0; n < N; ++n) {

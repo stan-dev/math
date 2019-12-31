@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_FWD_MAT_FUN_TO_FVAR_HPP
 #define STAN_MATH_FWD_MAT_FUN_TO_FVAR_HPP
 
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/scal/fun/to_fvar.hpp>
-#include <stan/math/prim/mat/err/check_matching_dims.hpp>
 
 namespace stan {
 namespace math {
