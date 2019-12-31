@@ -5,7 +5,7 @@
 #include <boost/math/special_functions/beta.hpp>
 #include <limits>
 
-TEST(AgradRev, ibeta_show_broken_derivative) {
+TEST(AgradRev, ibeta_compare_to_finite_differences) {
   using stan::math::ibeta;
   using stan::math::var;
 
@@ -25,13 +25,7 @@ TEST(AgradRev, ibeta_show_broken_derivative) {
   double df_db = (1/h) * (f(a.val(), b.val() + h, c.val()) - f(a.val(), b.val(), c.val()));
   double df_dc = (1/h) * (f(a.val(), b.val(), c.val() + h) - f(a.val(), b.val(), c.val()));
 
-  // std::cout << df_da << " " << grad_f[0] << std::endl;
-  // std::cout << df_db << " " << grad_f[1] << std::endl;
-  // std::cout << df_dc << " " << grad_f[2] << std::endl;
-
-  // Hand coded derivatives inconsistent with finite differences.
-  EXPECT_TRUE(fabs(df_da - grad_f[0]) > 1e-1);
-
+  EXPECT_TRUE(fabs(df_da - grad_f[0]) < 1e-5);
   EXPECT_TRUE(fabs(df_db - grad_f[1]) < 1e-5);
   EXPECT_TRUE(fabs(df_dc - grad_f[2]) < 1e-5);
 }
