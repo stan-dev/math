@@ -1,12 +1,8 @@
 #ifndef STAN_MATH_MEMORY_STACK_ALLOC_HPP
 #define STAN_MATH_MEMORY_STACK_ALLOC_HPP
 
-// Sets the alignment for memory returns by boost::aligned_alloc
-#ifndef STAN_MALLOC_ALIGNMENT
-#define STAN_MALLOC_ALIGNMENT 64
-#endif
 #include <stan/math/prim/meta.hpp>
-#include <boost/align/aligned_allocator.hpp>
+#include <Eigen/src/Core/util/Memory.h>
 #include <stdint.h>
 #include <cstdlib>
 #include <cstddef>
@@ -28,9 +24,7 @@ const size_t DEFAULT_INITIAL_NBYTES = 1 << 16;  // 64KB
  * \c STAN_MALLOC_ALIGNMENT.
  */
 inline byte* aligned_malloc(size_t size) noexcept {
-  byte* ptr = static_cast<byte*>(
-      boost::alignment::aligned_alloc(STAN_MALLOC_ALIGNMENT, size));
-  return ptr;
+  return static_cast<unsigned char*>(Eigen::internal::aligned_malloc(size));
 }
 }  // namespace internal
 
@@ -133,7 +127,7 @@ class stack_alloc {
     // free ALL blocks
     for (auto& block : blocks_) {
       if (block) {
-        boost::alignment::aligned_free(block);
+        Eigen::internal::aligned_free(block);
       }
     }
   }
@@ -223,7 +217,7 @@ class stack_alloc {
     // frees all BUT the first (index 0) block
     for (size_t i = 1; i < blocks_.size(); ++i) {
       if (blocks_[i]) {
-        boost::alignment::aligned_free(blocks_[i]);
+        Eigen::internal::aligned_free(blocks_[i]);
       }
     }
     sizes_.resize(1);
