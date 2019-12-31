@@ -153,7 +153,6 @@ struct apply_vector_unary<T, require_std_vector_vt<is_container, T>> {
   }
 };
 
-
 }  // namespace math
 }  // namespace stan
 #endif
