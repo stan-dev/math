@@ -3,10 +3,10 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/erf.hpp>
 #include <stan/math/prim/scal/fun/erfc.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <cmath>
 
@@ -55,20 +55,19 @@ inline return_type_t<T_y, T_loc, T_scale> normal_cdf(const T_y& y,
   scalar_seq_view<T_loc> mu_vec(mu);
   scalar_seq_view<T_scale> sigma_vec(sigma);
   size_t N = max_size(y, mu, sigma);
-  const double SQRT_TWO_OVER_PI = std::sqrt(2.0 / pi());
 
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return mu_dbl = value_of(mu_vec[n]);
     const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
     const T_partials_return scaled_diff
-        = (y_dbl - mu_dbl) / (sigma_dbl * SQRT_2);
+        = (y_dbl - mu_dbl) / (sigma_dbl * SQRT_TWO);
     T_partials_return cdf_;
-    if (scaled_diff < -37.5 * INV_SQRT_2) {
+    if (scaled_diff < -37.5 * INV_SQRT_TWO) {
       cdf_ = 0.0;
-    } else if (scaled_diff < -5.0 * INV_SQRT_2) {
+    } else if (scaled_diff < -5.0 * INV_SQRT_TWO) {
       cdf_ = 0.5 * erfc(-scaled_diff);
-    } else if (scaled_diff > 8.25 * INV_SQRT_2) {
+    } else if (scaled_diff > 8.25 * INV_SQRT_TWO) {
       cdf_ = 1;
     } else {
       cdf_ = 0.5 * (1.0 + erf(scaled_diff));
@@ -78,9 +77,9 @@ inline return_type_t<T_y, T_loc, T_scale> normal_cdf(const T_y& y,
 
     if (!is_constant_all<T_y, T_loc, T_scale>::value) {
       const T_partials_return rep_deriv
-          = (scaled_diff < -37.5 * INV_SQRT_2)
+          = (scaled_diff < -37.5 * INV_SQRT_TWO)
                 ? 0.0
-                : SQRT_TWO_OVER_PI * 0.5 * exp(-scaled_diff * scaled_diff)
+                : SQRT_TWO_OVER_SQRT_PI * 0.5 * exp(-scaled_diff * scaled_diff)
                       / cdf_ / sigma_dbl;
       if (!is_constant_all<T_y>::value) {
         ops_partials.edge1_.partials_[n] += rep_deriv;
@@ -89,23 +88,23 @@ inline return_type_t<T_y, T_loc, T_scale> normal_cdf(const T_y& y,
         ops_partials.edge2_.partials_[n] -= rep_deriv;
       }
       if (!is_constant_all<T_scale>::value) {
-        ops_partials.edge3_.partials_[n] -= rep_deriv * scaled_diff * SQRT_2;
+        ops_partials.edge3_.partials_[n] -= rep_deriv * scaled_diff * SQRT_TWO;
       }
     }
   }
 
   if (!is_constant_all<T_y>::value) {
-    for (size_t n = 0; n < stan::length(y); ++n) {
+    for (size_t n = 0; n < size(y); ++n) {
       ops_partials.edge1_.partials_[n] *= cdf;
     }
   }
   if (!is_constant_all<T_loc>::value) {
-    for (size_t n = 0; n < stan::length(mu); ++n) {
+    for (size_t n = 0; n < size(mu); ++n) {
       ops_partials.edge2_.partials_[n] *= cdf;
     }
   }
   if (!is_constant_all<T_scale>::value) {
-    for (size_t n = 0; n < stan::length(sigma); ++n) {
+    for (size_t n = 0; n < size(sigma); ++n) {
       ops_partials.edge3_.partials_[n] *= cdf;
     }
   }

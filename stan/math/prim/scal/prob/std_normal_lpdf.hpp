@@ -40,7 +40,7 @@ return_type_t<T_y> std_normal_lpdf(const T_y& y) {
   operands_and_partials<T_y> ops_partials(y);
   scalar_seq_view<T_y> y_vec(y);
   T_partials_return logp(0.0);
-  for (size_t n = 0; n < length(y); n++) {
+  for (size_t n = 0; n < size(y); n++) {
     const T_partials_return y_val = value_of(y_vec[n]);
     logp += y_val * y_val;
     if (!is_constant_all<T_y>::value) {
@@ -49,7 +49,7 @@ return_type_t<T_y> std_normal_lpdf(const T_y& y) {
   }
   logp *= -0.5;
   if (include_summand<propto>::value) {
-    logp += NEG_LOG_SQRT_TWO_PI * length(y);
+    logp += NEG_LOG_SQRT_TWO_PI * size(y);
   }
   return ops_partials.build(logp);
 }

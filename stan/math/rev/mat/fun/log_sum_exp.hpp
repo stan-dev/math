@@ -8,7 +8,6 @@
 #include <stan/math/prim/mat/vectorize/apply_vector_unary.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <cmath>
-#include <limits>
 
 namespace stan {
 namespace math {

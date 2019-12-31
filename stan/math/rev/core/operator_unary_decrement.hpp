@@ -3,8 +3,8 @@
 
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/v_vari.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
-#include <limits>
 
 namespace stan {
 namespace math {
@@ -15,7 +15,7 @@ class decrement_vari : public op_v_vari {
   explicit decrement_vari(vari* avi) : op_v_vari(avi->val_ - 1.0, avi) {}
   void chain() {
     if (unlikely(is_nan(avi_->val_))) {
-      avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
+      avi_->adj_ = NOT_A_NUMBER;
     } else {
       avi_->adj_ += adj_;
     }

@@ -76,12 +76,11 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
 
   VectorBuilder<include_summand<propto, T_y, T_loc, T_prec>::value,
                 T_partials_return, T_y>
-      log_y(length(y));
+      log_y(size(y));
   VectorBuilder<include_summand<propto, T_y, T_loc, T_prec>::value,
                 T_partials_return, T_y>
-      log1m_y(length(y));
-
-  for (size_t n = 0; n < length(y); n++) {
+      log1m_y(size(y));
+  for (size_t n = 0; n < size(y); n++) {
     log_y[n] = log(value_of(y_vec[n]));
     log1m_y[n] = log1m(value_of(y_vec[n]));
   }
@@ -118,11 +117,11 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
 
   VectorBuilder<include_summand<propto, T_prec>::value, T_partials_return,
                 T_prec>
-      lgamma_kappa(length(kappa));
+      lgamma_kappa(size(kappa));
   VectorBuilder<!is_constant_all<T_prec>::value, T_partials_return, T_prec>
-      digamma_kappa(length(kappa));
+      digamma_kappa(size(kappa));
 
-  for (size_t n = 0; n < length(kappa); n++) {
+  for (size_t n = 0; n < size(kappa); n++) {
     if (include_summand<propto, T_prec>::value) {
       lgamma_kappa[n] = lgamma(value_of(kappa_vec[n]));
     }

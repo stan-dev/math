@@ -40,9 +40,7 @@ return_type_t<T_y, T_loc, T_scale> lognormal_cdf(const T_y& y, const T_loc& mu,
   scalar_seq_view<T_scale> sigma_vec(sigma);
   size_t N = max_size(y, mu, sigma);
 
-  const double sqrt_pi = std::sqrt(pi());
-
-  for (size_t i = 0; i < stan::length(y); i++) {
+  for (size_t i = 0; i < size(y); i++) {
     if (value_of(y_vec[i]) == 0.0) {
       return ops_partials.build(0.0);
     }
@@ -53,9 +51,10 @@ return_type_t<T_y, T_loc, T_scale> lognormal_cdf(const T_y& y, const T_loc& mu,
     const T_partials_return mu_dbl = value_of(mu_vec[n]);
     const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
     const T_partials_return scaled_diff
-        = (log(y_dbl) - mu_dbl) / (sigma_dbl * SQRT_2);
-    const T_partials_return rep_deriv
-        = SQRT_2 * 0.5 / sqrt_pi * exp(-scaled_diff * scaled_diff) / sigma_dbl;
+        = (log(y_dbl) - mu_dbl) / (sigma_dbl * SQRT_TWO);
+    const T_partials_return rep_deriv = SQRT_TWO_OVER_SQRT_PI * 0.5
+                                        * exp(-scaled_diff * scaled_diff)
+                                        / sigma_dbl;
 
     const T_partials_return cdf_ = 0.5 * erfc(-scaled_diff);
     cdf *= cdf_;
@@ -68,22 +67,22 @@ return_type_t<T_y, T_loc, T_scale> lognormal_cdf(const T_y& y, const T_loc& mu,
     }
     if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n]
-          -= rep_deriv * scaled_diff * SQRT_2 / cdf_;
+          -= rep_deriv * scaled_diff * SQRT_TWO / cdf_;
     }
   }
 
   if (!is_constant_all<T_y>::value) {
-    for (size_t n = 0; n < stan::length(y); ++n) {
+    for (size_t n = 0; n < size(y); ++n) {
       ops_partials.edge1_.partials_[n] *= cdf;
     }
   }
   if (!is_constant_all<T_loc>::value) {
-    for (size_t n = 0; n < stan::length(mu); ++n) {
+    for (size_t n = 0; n < size(mu); ++n) {
       ops_partials.edge2_.partials_[n] *= cdf;
     }
   }
   if (!is_constant_all<T_scale>::value) {
-    for (size_t n = 0; n < stan::length(sigma); ++n) {
+    for (size_t n = 0; n < size(sigma); ++n) {
       ops_partials.edge3_.partials_[n] *= cdf;
     }
   }

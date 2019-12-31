@@ -3,9 +3,9 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/vectorize/apply_vector_unary.hpp>
-#include <vector>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <cmath>
-#include <limits>
+#include <vector>
 
 namespace stan {
 namespace math {
@@ -29,9 +29,8 @@ template <typename T, require_t<std::is_arithmetic<scalar_type_t<T>>>...>
 inline auto log_sum_exp(T&& x) {
   return apply_vector_unary<T>::reduce(std::forward<T>(x), [&](auto& v) {
     if (v.size() == 0) {
-      return -std::numeric_limits<double>::infinity();
+      return NEGATIVE_INFTY;
     }
-
     const double max = v.maxCoeff();
     if (!std::isfinite(max)) {
       return max;

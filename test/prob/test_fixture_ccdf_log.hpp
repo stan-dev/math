@@ -59,7 +59,7 @@ class AgradCcdfLogTest {
     cdf_log_function(const T_y& y, const T_loc& mu, const T_scale& sigma,
     const T3&, const T4&, const T5&, const T6&, const T7&, const T8&, const T9&)
     { using stan::math::erf; return (0.5 + 0.5 * erf((y - mu) / (sigma *
-    SQRT_2)));
+    SQRT_TWO)));
     }
   */
 };

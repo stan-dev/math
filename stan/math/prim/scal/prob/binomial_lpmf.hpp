@@ -56,30 +56,30 @@ return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_N> N_vec(N);
   scalar_seq_view<T_prob> theta_vec(theta);
-  size_t size = max_size(n, N, theta);
+  size_t max_size_seq_view = max_size(n, N, theta);
 
   operands_and_partials<T_prob> ops_partials(theta);
 
   if (include_summand<propto>::value) {
-    for (size_t i = 0; i < size; ++i) {
+    for (size_t i = 0; i < max_size_seq_view; ++i) {
       logp += binomial_coefficient_log(N_vec[i], n_vec[i]);
     }
   }
 
-  VectorBuilder<true, T_partials_return, T_prob> log1m_theta(length(theta));
-  for (size_t i = 0; i < length(theta); ++i) {
+  VectorBuilder<true, T_partials_return, T_prob> log1m_theta(size(theta));
+  for (size_t i = 0; i < size(theta); ++i) {
     log1m_theta[i] = log1m(value_of(theta_vec[i]));
   }
 
-  for (size_t i = 0; i < size; ++i) {
+  for (size_t i = 0; i < max_size_seq_view; ++i) {
     logp += multiply_log(n_vec[i], value_of(theta_vec[i]))
             + (N_vec[i] - n_vec[i]) * log1m_theta[i];
   }
 
-  if (length(theta) == 1) {
+  if (size(theta) == 1) {
     T_partials_return temp1 = 0;
     T_partials_return temp2 = 0;
-    for (size_t i = 0; i < size; ++i) {
+    for (size_t i = 0; i < max_size_seq_view; ++i) {
       temp1 += n_vec[i];
       temp2 += N_vec[i] - n_vec[i];
     }
@@ -90,7 +90,7 @@ return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
     }
   } else {
     if (!is_constant_all<T_prob>::value) {
-      for (size_t i = 0; i < size; ++i) {
+      for (size_t i = 0; i < max_size_seq_view; ++i) {
         ops_partials.edge1_.partials_[i]
             += n_vec[i] / value_of(theta_vec[i])
                - (N_vec[i] - n_vec[i]) / (1.0 - value_of(theta_vec[i]));
