@@ -6,6 +6,8 @@
 #include <stan/math/rev/core/empty_nested.hpp>
 #include <stdexcept>
 
+#include <iostream>
+
 namespace stan {
 namespace math {
 
@@ -25,15 +27,20 @@ static inline void recover_memory_global() {
   }
   */
 
-  for (const auto& kv : internal::global_observer.thread_tape_map) {
-    ChainableStack& instance_ = *(kv.second->active_instance_);
-    instance_.var_stack_.clear();
-    instance_.var_nochain_stack_.clear();
-    for (auto& x : instance_.var_alloc_stack_) {
+  for (auto& kv : internal::global_observer.thread_tape_map_) {
+    ChainableStack::AutodiffStackStorage* instance_ = kv.second->active_instance_;
+    std::cout << "reference ptr: " << instance_ << std::endl;
+    if (instance_ == nullptr) {
+      std::cout << "nullptr ??" << std::endl;
+      continue;
+    }
+    instance_->var_stack_.clear();
+    instance_->var_nochain_stack_.clear();
+    for (auto& x : instance_->var_alloc_stack_) {
       delete x;
     }
-    instance_.var_alloc_stack_.clear();
-    instance_.memalloc_.recover_all();
+    instance_->var_alloc_stack_.clear();
+    instance_->memalloc_.recover_all();
   }
 }
 

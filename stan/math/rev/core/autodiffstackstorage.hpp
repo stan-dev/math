@@ -91,7 +91,9 @@ struct AutodiffStackSingleton {
       = AutodiffStackSingleton<ChainableT, ChainableAllocT>;
 
   AutodiffStackSingleton()
-      : own_instance_(init()), active_instance_(instance_) {}
+      : own_instance_(init()), active_instance_(nullptr) {
+    active_instance_ = AutodiffStackSingleton_t::instance_;
+  }
   ~AutodiffStackSingleton() {
     if (own_instance_) {
       delete instance_;
