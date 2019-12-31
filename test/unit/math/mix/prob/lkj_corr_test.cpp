@@ -1,6 +1,6 @@
 #include <stan/math/mix/mat.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/prob/lkj_corr_cholesky_test_functors.hpp>
+#include <test/unit/math/rev/prob/lkj_corr_cholesky_test_functors.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
 #include <test/unit/math/mix/mat/prob/higher_order_utils.hpp>
