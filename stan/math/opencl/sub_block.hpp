@@ -8,7 +8,6 @@
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernel_generator/block.hpp>
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/throw_domain_error.hpp>
 #include <CL/cl2.hpp>
 #include <vector>
