@@ -8,9 +8,9 @@
 #include <stan/math/rev/scal/fun/inv_square.hpp>
 #include <stan/math/rev/scal/fun/sqrt.hpp>
 #include <stan/math/rev/scal/fun/square.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/is_any_nan.hpp>
 #include <cmath>
-#include <limits>
 
 namespace stan {
 namespace math {
@@ -22,8 +22,8 @@ class pow_vv_vari : public op_vv_vari {
       : op_vv_vari(std::pow(avi->val_, bvi->val_), avi, bvi) {}
   void chain() {
     if (unlikely(is_any_nan(avi_->val_, bvi_->val_))) {
-      avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
-      bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
+      avi_->adj_ = NOT_A_NUMBER;
+      bvi_->adj_ = NOT_A_NUMBER;
     } else {
       if (avi_->val_ == 0.0) {
         return;  // partials zero, avoids 0 & log(0)
@@ -40,7 +40,7 @@ class pow_vd_vari : public op_vd_vari {
       : op_vd_vari(std::pow(avi->val_, b), avi, b) {}
   void chain() {
     if (unlikely(is_any_nan(avi_->val_, bd_))) {
-      avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
+      avi_->adj_ = NOT_A_NUMBER;
     } else {
       if (avi_->val_ == 0.0) {
         return;  // partials zero, avoids 0 & log(0)
@@ -56,7 +56,7 @@ class pow_dv_vari : public op_dv_vari {
       : op_dv_vari(std::pow(a, bvi->val_), a, bvi) {}
   void chain() {
     if (unlikely(is_any_nan(bvi_->val_, ad_))) {
-      bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
+      bvi_->adj_ = NOT_A_NUMBER;
     } else {
       if (ad_ == 0.0) {
         return;  // partials zero, avoids 0 & log(0)

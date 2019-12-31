@@ -5,9 +5,9 @@
 #include <stan/math/rev/core/vv_vari.hpp>
 #include <stan/math/rev/core/vd_vari.hpp>
 #include <stan/math/rev/core/dv_vari.hpp>
-#include <stan/math/prim/scal/fun/is_any_nan.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <limits>
+#include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/fun/is_any_nan.hpp>
 
 namespace stan {
 namespace math {
@@ -22,8 +22,8 @@ class divide_vv_vari : public op_vv_vari {
                    divisor_vi) {}
   void chain() {
     if (unlikely(is_any_nan(avi_->val_, bvi_->val_))) {
-      avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
-      bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
+      avi_->adj_ = NOT_A_NUMBER;
+      bvi_->adj_ = NOT_A_NUMBER;
     } else {
       avi_->adj_ += adj_ / bvi_->val_;
       bvi_->adj_ -= adj_ * avi_->val_ / (bvi_->val_ * bvi_->val_);
@@ -37,7 +37,7 @@ class divide_vd_vari : public op_vd_vari {
       : op_vd_vari(dividend_vi->val_ / divisor, dividend_vi, divisor) {}
   void chain() {
     if (unlikely(is_any_nan(avi_->val_, bd_))) {
-      avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
+      avi_->adj_ = NOT_A_NUMBER;
     } else {
       avi_->adj_ += adj_ / bd_;
     }

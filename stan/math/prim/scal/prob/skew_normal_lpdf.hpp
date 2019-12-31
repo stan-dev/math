@@ -3,11 +3,11 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/erf.hpp>
 #include <stan/math/prim/scal/fun/erfc.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
 #include <cmath>
 
 namespace stan {
@@ -68,10 +68,9 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
 
     const T_partials_return y_minus_mu_over_sigma
         = (y_dbl - mu_dbl) * inv_sigma[n];
-    const double pi_dbl = pi();
 
     if (include_summand<propto>::value) {
-      logp -= 0.5 * log(2.0 * pi_dbl);
+      logp -= 0.5 * LOG_TWO_PI;
     }
     if (include_summand<propto, T_scale>::value) {
       logp -= log(sigma_dbl);
@@ -79,33 +78,33 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
     if (include_summand<propto, T_y, T_loc, T_scale>::value) {
       logp -= y_minus_mu_over_sigma * y_minus_mu_over_sigma / 2.0;
     }
-    logp += log(erfc(-alpha_dbl * y_minus_mu_over_sigma / std::sqrt(2.0)));
+    logp += log(erfc(-alpha_dbl * y_minus_mu_over_sigma / SQRT_TWO));
 
     T_partials_return deriv_logerf
-        = 2.0 / std::sqrt(pi_dbl)
-          * exp(-alpha_dbl * y_minus_mu_over_sigma / std::sqrt(2.0) * alpha_dbl
-                * y_minus_mu_over_sigma / std::sqrt(2.0))
-          / (1 + erf(alpha_dbl * y_minus_mu_over_sigma / std::sqrt(2.0)));
+        = TWO_OVER_SQRT_PI
+          * exp(-alpha_dbl * y_minus_mu_over_sigma / SQRT_TWO * alpha_dbl
+                * y_minus_mu_over_sigma / SQRT_TWO)
+          / (1 + erf(alpha_dbl * y_minus_mu_over_sigma / SQRT_TWO));
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n]
           += -y_minus_mu_over_sigma / sigma_dbl
-             + deriv_logerf * alpha_dbl / (sigma_dbl * std::sqrt(2.0));
+             + deriv_logerf * alpha_dbl / (sigma_dbl * SQRT_TWO);
     }
     if (!is_constant_all<T_loc>::value) {
       ops_partials.edge2_.partials_[n]
           += y_minus_mu_over_sigma / sigma_dbl
-             + deriv_logerf * -alpha_dbl / (sigma_dbl * std::sqrt(2.0));
+             + deriv_logerf * -alpha_dbl / (sigma_dbl * SQRT_TWO);
     }
     if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n]
           += -1.0 / sigma_dbl
              + y_minus_mu_over_sigma * y_minus_mu_over_sigma / sigma_dbl
              - deriv_logerf * y_minus_mu_over_sigma * alpha_dbl
-                   / (sigma_dbl * std::sqrt(2.0));
+                   / (sigma_dbl * SQRT_TWO);
     }
     if (!is_constant_all<T_shape>::value) {
       ops_partials.edge4_.partials_[n]
-          += deriv_logerf * y_minus_mu_over_sigma / std::sqrt(2.0);
+          += deriv_logerf * y_minus_mu_over_sigma / SQRT_TWO;
     }
   }
   return ops_partials.build(logp);

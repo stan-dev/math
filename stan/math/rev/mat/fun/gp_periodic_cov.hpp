@@ -11,8 +11,8 @@
 #include <stan/math/rev/scal/fun/sin.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
 #include <cmath>
-#include <vector>
 #include <type_traits>
+#include <vector>
 
 namespace stan {
 namespace math {
@@ -150,7 +150,7 @@ class gp_periodic_cov_vari : public vari {
     double l_d_sq = l_d_ * l_d_;
     l_vari_->adj_ += adjl * 4 / (l_d_sq * l_d_);
     sigma_vari_->adj_ += adjsigma * 2 / sigma_d_;
-    p_vari_->adj_ += adjp * 2 * pi() / l_d_sq / (p_d_ * p_d_);
+    p_vari_->adj_ += adjp * TWO_PI / l_d_sq / (p_d_ * p_d_);
   }
 };
 
@@ -276,7 +276,7 @@ class gp_periodic_cov_vari<T_x, double, T_l, T_p> : public vari {
     }
     double l_d_sq = l_d_ * l_d_;
     l_vari_->adj_ += adjl * 4 / (l_d_sq * l_d_);
-    p_vari_->adj_ += adjp * 2 * pi() / l_d_sq / (p_d_ * p_d_);
+    p_vari_->adj_ += adjp * TWO_PI / l_d_sq / (p_d_ * p_d_);
   }
 };
 
