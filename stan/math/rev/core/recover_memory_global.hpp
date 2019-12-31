@@ -25,15 +25,15 @@ static inline void recover_memory_global() {
   }
   */
 
-  for (auto & [ thread, instance ] :
-       internal::global_observer.thread_tape_map) {
-    instance_->var_stack_.clear();
-    instance_->var_nochain_stack_.clear();
-    for (auto &x : instance_->var_alloc_stack_) {
+  for (const auto& kv : internal::global_observer.thread_tape_map) {
+    ChainableStack& instance_ = *(kv.second->active_instance_);
+    instance_.var_stack_.clear();
+    instance_.var_nochain_stack_.clear();
+    for (auto& x : instance_.var_alloc_stack_) {
       delete x;
     }
-    instance_->var_alloc_stack_.clear();
-    instance_->memalloc_.recover_all();
+    instance_.var_alloc_stack_.clear();
+    instance_.memalloc_.recover_all();
   }
 }
 
