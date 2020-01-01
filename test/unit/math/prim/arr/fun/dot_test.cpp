@@ -1,6 +1,6 @@
 #include <stan/math/prim/arr.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <cmath>
 #include <limits>
 #include <vector>
 
@@ -31,14 +31,14 @@ TEST(MathFunctions, dot_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
   x[2] = nan;
 
-  EXPECT_PRED1(boost::math::isnan<double>, stan::math::dot(x, y));
-  EXPECT_PRED1(boost::math::isnan<double>, stan::math::dot(y, x));
+  EXPECT_TRUE(std::isnan(stan::math::dot(x, y)));
+  EXPECT_TRUE(std::isnan(stan::math::dot(y, x)));
 
   x[0] = nan;
   x[1] = nan;
   x[2] = nan;
-  EXPECT_PRED1(boost::math::isnan<double>, stan::math::dot(x, y));
-  EXPECT_PRED1(boost::math::isnan<double>, stan::math::dot(y, x));
+  EXPECT_TRUE(std::isnan(stan::math::dot(x, y)));
+  EXPECT_TRUE(std::isnan(stan::math::dot(y, x)));
 
-  EXPECT_PRED1(boost::math::isnan<double>, stan::math::dot(x, x));
+  EXPECT_TRUE(std::isnan(stan::math::dot(x, x)));
 }

@@ -1,6 +1,6 @@
 #include <stan/math/prim/scal.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <cmath>
 #include <limits>
 
 TEST(MathFunctions, bessel_second_kind) {
@@ -16,6 +16,5 @@ TEST(MathFunctions, bessel_second_kind) {
 TEST(MathFunctions, bessel_second_kind_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::bessel_second_kind(1, nan));
+  EXPECT_TRUE(std::isnan(stan::math::bessel_second_kind(1, nan)));
 }
