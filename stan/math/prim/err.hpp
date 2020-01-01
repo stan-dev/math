@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_ERR_HPP
 #define STAN_MATH_PRIM_ERR_HPP
 
-
 #include <stan/math/prim/err/check_2F1_converges.hpp>
 #include <stan/math/prim/err/check_3F2_converges.hpp>
 #include <stan/math/prim/err/check_bounded.hpp>
