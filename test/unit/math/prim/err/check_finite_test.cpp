@@ -121,6 +121,7 @@ TEST(ErrorHandlingScalar, CheckFinite) {
 }
 
 TEST(ErrorHandlingScalar, CheckFinite_nan) {
+  const char* function = "check_finite";
   double nan = std::numeric_limits<double>::quiet_NaN();
 
   EXPECT_THROW(check_finite(function, "x", nan), std::domain_error);
