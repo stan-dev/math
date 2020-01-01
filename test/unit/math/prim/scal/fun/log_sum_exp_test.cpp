@@ -1,7 +1,7 @@
 #include <stan/math/prim/scal.hpp>
 #include <stan/math/prim/arr/fun/log_sum_exp.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <cmath>
 #include <limits>
 #include <vector>
 
@@ -65,9 +65,9 @@ TEST(MathFunctions, log_sum_exp_2_inf) {
 TEST(MathFunctions, log_sum_exp_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
 
-  EXPECT_PRED1(boost::math::isnan<double>, stan::math::log_sum_exp(1.0, nan));
+  EXPECT_TRUE(std::isnan(stan::math::log_sum_exp(1.0, nan)));
 
-  EXPECT_PRED1(boost::math::isnan<double>, stan::math::log_sum_exp(nan, 1.0));
+  EXPECT_TRUE(std::isnan(stan::math::log_sum_exp(nan, 1.0)));
 
-  EXPECT_PRED1(boost::math::isnan<double>, stan::math::log_sum_exp(nan, nan));
+  EXPECT_TRUE(std::isnan(stan::math::log_sum_exp(nan, nan)));
 }

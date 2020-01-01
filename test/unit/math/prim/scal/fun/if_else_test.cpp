@@ -1,6 +1,6 @@
 #include <stan/math/prim/scal.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <cmath>
 #include <limits>
 
 TEST(MathFunctions, if_else) {
@@ -38,13 +38,11 @@ TEST(MathFunctions, if_else_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
 
   EXPECT_FLOAT_EQ(1.2, stan::math::if_else(true, 1.2, nan));
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::if_else(false, 1.2, nan));
+  EXPECT_TRUE(std::isnan(stan::math::if_else(false, 1.2, nan)));
 
-  EXPECT_PRED1(boost::math::isnan<double>, stan::math::if_else(true, nan, 2.4));
+  EXPECT_TRUE(std::isnan(stan::math::if_else(true, nan, 2.4)));
   EXPECT_FLOAT_EQ(2.4, stan::math::if_else(false, nan, 2.4));
 
-  EXPECT_PRED1(boost::math::isnan<double>, stan::math::if_else(true, nan, nan));
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::if_else(false, nan, nan));
+  EXPECT_TRUE(std::isnan(stan::math::if_else(true, nan, nan)));
+  EXPECT_TRUE(std::isnan(stan::math::if_else(false, nan, nan)));
 }

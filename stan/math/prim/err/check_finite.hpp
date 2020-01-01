@@ -2,12 +2,13 @@
 #define STAN_MATH_PRIM_ERR_CHECK_FINITE_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err/is_scal_finite.hpp>
 #include <stan/math/prim/err/throw_domain_error.hpp>
 #include <stan/math/prim/err/throw_domain_error_vec.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
+#include <stan/math/prim/mat/fun/value_of_rec.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/fun/value_of_rec.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -16,7 +17,7 @@ namespace internal {
 template <typename T_y, bool is_vec>
 struct finite {
   static void check(const char* function, const char* name, const T_y& y) {
-    if (!(boost::math::isfinite(value_of_rec(y)))) {
+    if (!is_scal_finite(y)) {
       throw_domain_error(function, name, y, "is ", ", but must be finite!");
     }
   }
@@ -26,7 +27,7 @@ template <typename T_y>
 struct finite<T_y, true> {
   static void check(const char* function, const char* name, const T_y& y) {
     for (size_t n = 0; n < size(y); n++) {
-      if (!(boost::math::isfinite(value_of_rec(stan::get(y, n))))) {
+      if (!is_scal_finite(stan::get(y, n))) {
         throw_domain_error_vec(function, name, y, n, "is ",
                                ", but must be finite!");
       }
@@ -52,10 +53,11 @@ inline void check_finite(const char* function, const char* name, const T_y& y) {
 
 /*
  * Return <code>true</code> is the specified matrix is finite.
- * @tparams T scalar type of the matrix, requires class method
- *   <code>.size()</code>
- * @tparam R number of rows or Eigen::Dynamic
- * @tparam C number of columns or Eigen::Dynamic
+ *
+ * @tparam T type of elements in the matrix
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ *
  * @param function name of function (for error messages)
  * @param name variable name (for error messages)
  * @param y matrix to test
@@ -68,7 +70,7 @@ struct finite<Eigen::Matrix<T, R, C>, true> {
                     const Eigen::Matrix<T, R, C>& y) {
     if (!value_of(y).allFinite()) {
       for (int n = 0; n < y.size(); ++n) {
-        if (!(boost::math::isfinite)(y(n))) {
+        if (!std::isfinite(value_of_rec(y(n)))) {
           throw_domain_error_vec(function, name, y, n, "is ",
                                  ", but must be finite!");
         }
@@ -76,6 +78,7 @@ struct finite<Eigen::Matrix<T, R, C>, true> {
     }
   }
 };
+
 }  // namespace internal
 }  // namespace math
 }  // namespace stan

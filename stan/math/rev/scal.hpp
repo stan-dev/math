@@ -19,9 +19,6 @@
 #include <stan/math/rev/scal/fun/bessel_second_kind.hpp>
 #include <stan/math/rev/scal/fun/beta.hpp>
 #include <stan/math/rev/scal/fun/binary_log_loss.hpp>
-#include <stan/math/rev/scal/fun/boost_fpclassify.hpp>
-#include <stan/math/rev/scal/fun/boost_isfinite.hpp>
-#include <stan/math/rev/scal/fun/boost_isnormal.hpp>
 #include <stan/math/rev/scal/fun/calculate_chain.hpp>
 #include <stan/math/rev/scal/fun/cbrt.hpp>
 #include <stan/math/rev/scal/fun/ceil.hpp>
@@ -45,7 +42,6 @@
 #include <stan/math/rev/scal/fun/gamma_q.hpp>
 #include <stan/math/rev/scal/fun/grad_inc_beta.hpp>
 #include <stan/math/rev/scal/fun/hypot.hpp>
-#include <stan/math/rev/scal/fun/ibeta.hpp>
 #include <stan/math/rev/scal/fun/if_else.hpp>
 #include <stan/math/rev/scal/fun/inc_beta.hpp>
 #include <stan/math/rev/scal/fun/inv.hpp>
