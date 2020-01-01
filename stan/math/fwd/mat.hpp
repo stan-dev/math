@@ -6,7 +6,7 @@
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/meta.hpp>
 
-#include <stan/math/fwd/mat/vectorize/apply_scalar_unary.hpp>
+#include <stan/math/fwd/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/fwd/arr.hpp>
 
