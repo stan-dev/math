@@ -48,7 +48,6 @@
 #include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_lower_inc_gamma.hpp>
 #include <stan/math/prim/scal/fun/hypot.hpp>
-#include <stan/math/prim/scal/fun/ibeta.hpp>
 #include <stan/math/prim/scal/fun/identity_constrain.hpp>
 #include <stan/math/prim/scal/fun/identity_free.hpp>
 #include <stan/math/prim/scal/fun/if_else.hpp>

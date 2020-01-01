@@ -3,15 +3,14 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/fun/gamma_p.hpp>
 #include <stan/math/prim/scal/fun/digamma.hpp>
-#include <stan/math/prim/scal/fun/tgamma.hpp>
+#include <stan/math/prim/scal/fun/gamma_p.hpp>
 #include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
+#include <stan/math/prim/scal/fun/tgamma.hpp>
+#include <stan/math/prim/scal/fun/value_of.hpp>
 #include <cmath>
-#include <limits>
 
 namespace stan {
 namespace math {
@@ -54,7 +53,7 @@ return_type_t<T_y, T_dof> chi_square_lcdf(const T_y& y, const T_dof& nu) {
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
-  for (size_t i = 0; i < stan::length(y); i++) {
+  for (size_t i = 0; i < size(y); i++) {
     if (value_of(y_vec[i]) == 0) {
       return ops_partials.build(negative_infinity());
     }
@@ -65,12 +64,12 @@ return_type_t<T_y, T_dof> chi_square_lcdf(const T_y& y, const T_dof& nu) {
   using std::pow;
 
   VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
-      gamma_vec(stan::length(nu));
+      gamma_vec(size(nu));
   VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
-      digamma_vec(stan::length(nu));
+      digamma_vec(size(nu));
 
   if (!is_constant_all<T_dof>::value) {
-    for (size_t i = 0; i < stan::length(nu); i++) {
+    for (size_t i = 0; i < size(nu); i++) {
       const T_partials_return alpha_dbl = value_of(nu_vec[i]) * 0.5;
       gamma_vec[i] = tgamma(alpha_dbl);
       digamma_vec[i] = digamma(alpha_dbl);
@@ -80,7 +79,7 @@ return_type_t<T_y, T_dof> chi_square_lcdf(const T_y& y, const T_dof& nu) {
   for (size_t n = 0; n < N; n++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
-    if (value_of(y_vec[n]) == std::numeric_limits<double>::infinity()) {
+    if (value_of(y_vec[n]) == INFTY) {
       return ops_partials.build(0.0);
     }
 

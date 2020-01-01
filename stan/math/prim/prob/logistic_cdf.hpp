@@ -3,11 +3,11 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/prob/logistic_log.hpp>
 #include <cmath>
-#include <limits>
 
 namespace stan {
 namespace math {
@@ -43,8 +43,8 @@ return_type_t<T_y, T_loc, T_scale> logistic_cdf(const T_y& y, const T_loc& mu,
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
-  for (size_t i = 0; i < stan::length(y); i++) {
-    if (value_of(y_vec[i]) == -std::numeric_limits<double>::infinity()) {
+  for (size_t i = 0; i < size(y); i++) {
+    if (value_of(y_vec[i]) == NEGATIVE_INFTY) {
       return ops_partials.build(0.0);
     }
   }
@@ -52,7 +52,7 @@ return_type_t<T_y, T_loc, T_scale> logistic_cdf(const T_y& y, const T_loc& mu,
   for (size_t n = 0; n < N; n++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
-    if (value_of(y_vec[n]) == std::numeric_limits<double>::infinity()) {
+    if (value_of(y_vec[n]) == INFTY) {
       continue;
     }
 
@@ -82,17 +82,17 @@ return_type_t<T_y, T_loc, T_scale> logistic_cdf(const T_y& y, const T_loc& mu,
   }
 
   if (!is_constant_all<T_y>::value) {
-    for (size_t n = 0; n < stan::length(y); ++n) {
+    for (size_t n = 0; n < size(y); ++n) {
       ops_partials.edge1_.partials_[n] *= P;
     }
   }
   if (!is_constant_all<T_loc>::value) {
-    for (size_t n = 0; n < stan::length(mu); ++n) {
+    for (size_t n = 0; n < size(mu); ++n) {
       ops_partials.edge2_.partials_[n] *= P;
     }
   }
   if (!is_constant_all<T_scale>::value) {
-    for (size_t n = 0; n < stan::length(sigma); ++n) {
+    for (size_t n = 0; n < size(sigma); ++n) {
       ops_partials.edge3_.partials_[n] *= P;
     }
   }

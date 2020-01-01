@@ -45,7 +45,6 @@
 #include <stan/math/rev/scal/fun/gamma_q.hpp>
 #include <stan/math/rev/scal/fun/grad_inc_beta.hpp>
 #include <stan/math/rev/scal/fun/hypot.hpp>
-#include <stan/math/rev/scal/fun/ibeta.hpp>
 #include <stan/math/rev/scal/fun/if_else.hpp>
 #include <stan/math/rev/scal/fun/inc_beta.hpp>
 #include <stan/math/rev/scal/fun/inv.hpp>

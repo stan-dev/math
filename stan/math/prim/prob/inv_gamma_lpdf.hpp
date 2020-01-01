@@ -54,7 +54,7 @@ return_type_t<T_y, T_shape, T_scale> inv_gamma_lpdf(const T_y& y,
   scalar_seq_view<T_shape> alpha_vec(alpha);
   scalar_seq_view<T_scale> beta_vec(beta);
 
-  for (size_t n = 0; n < length(y); n++) {
+  for (size_t n = 0; n < size(y); n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
     if (y_dbl <= 0) {
       return LOG_ZERO;
@@ -68,11 +68,11 @@ return_type_t<T_y, T_shape, T_scale> inv_gamma_lpdf(const T_y& y,
 
   VectorBuilder<include_summand<propto, T_y, T_shape>::value, T_partials_return,
                 T_y>
-      log_y(length(y));
+      log_y(size(y));
   VectorBuilder<include_summand<propto, T_y, T_scale>::value, T_partials_return,
                 T_y>
-      inv_y(length(y));
-  for (size_t n = 0; n < length(y); n++) {
+      inv_y(size(y));
+  for (size_t n = 0; n < size(y); n++) {
     if (include_summand<propto, T_y, T_shape>::value) {
       if (value_of(y_vec[n]) > 0) {
         log_y[n] = log(value_of(y_vec[n]));
@@ -85,10 +85,10 @@ return_type_t<T_y, T_shape, T_scale> inv_gamma_lpdf(const T_y& y,
 
   VectorBuilder<include_summand<propto, T_shape>::value, T_partials_return,
                 T_shape>
-      lgamma_alpha(length(alpha));
+      lgamma_alpha(size(alpha));
   VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
-      digamma_alpha(length(alpha));
-  for (size_t n = 0; n < length(alpha); n++) {
+      digamma_alpha(size(alpha));
+  for (size_t n = 0; n < size(alpha); n++) {
     if (include_summand<propto, T_shape>::value) {
       lgamma_alpha[n] = lgamma(value_of(alpha_vec[n]));
     }
@@ -99,9 +99,9 @@ return_type_t<T_y, T_shape, T_scale> inv_gamma_lpdf(const T_y& y,
 
   VectorBuilder<include_summand<propto, T_shape, T_scale>::value,
                 T_partials_return, T_scale>
-      log_beta(length(beta));
+      log_beta(size(beta));
   if (include_summand<propto, T_shape, T_scale>::value) {
-    for (size_t n = 0; n < length(beta); n++) {
+    for (size_t n = 0; n < size(beta); n++) {
       log_beta[n] = log(value_of(beta_vec[n]));
     }
   }
