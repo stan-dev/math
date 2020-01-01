@@ -1,11 +1,13 @@
 #include <stan/math/prim/scal.hpp>
-#include <gtest/gtest.h>
+#include <test/unit/math/prim/scal/prob/util.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
+#include <gtest/gtest.h>
 
 TEST(ProbDistributionsVonMises, error_check) {
   boost::random::mt19937 rng;
   EXPECT_NO_THROW(stan::math::von_mises_rng(1.0, 2.0, rng));
+  EXPECT_NO_THROW(stan::math::von_mises_rng(1.0, 0.0, rng));
 
   EXPECT_THROW(
       stan::math::von_mises_rng(stan::math::negative_infinity(), 2.0, rng),
@@ -151,4 +153,23 @@ TEST(ProbDistributionsVonMises, chiSquareGoodnessFitTest3) {
   }
 
   EXPECT_LT(chi, quantile(complement(mydist, 1e-6)));
+}
+
+TEST(ProbDistributionsVonMises, chiSquareGoodnessFitTest4) {
+  boost::random::mt19937 rng;
+  int N = 10000;
+  int K = stan::math::round(2 * std::pow(N, 0.4));
+
+  std::vector<double> samples;
+  for (int i = 0; i < N; ++i) {
+    samples.push_back(stan::math::von_mises_rng(stan::math::pi(), 0.0, rng));
+  }
+
+  std::vector<double> quantiles;
+  for (int i = 1; i <= K; ++i) {
+    double frac = static_cast<double>(i) * stan::math::TWO_PI / K;
+    quantiles.push_back(0.0 + frac);
+  }
+
+  assert_matches_quantiles(samples, quantiles, 1e-6);
 }

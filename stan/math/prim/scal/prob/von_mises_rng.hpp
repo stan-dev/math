@@ -26,16 +26,15 @@ namespace math {
  * Journal of the Royal Statistical Society. Series C (Applied Statistics),
  * Vol. 28, No. 2 (1979), pp. 152-157
  *
- * See licenses/stan-license.txt for Stan license.
- *
- * @tparam T_loc Type of location parameter
- * @tparam T_conc Type of concentration parameter
+ * @tparam T_loc type of location parameter
+ * @tparam T_conc type of scale (concentration) parameter
  * @tparam RNG type of random number generator
+ *
  * @param mu (Sequence of) location parameter(s)
- * @param kappa (Sequence of) positive concentration parameter(s)
+ * @param kappa (Sequence of) non-negative scale (concentration) parameter(s)
  * @param rng random number generator
  * @return (Sequence of) von Mises random variate(s)
- * @throw std::domain_error if mu is infinite or kappa is nonpositive
+ * @throw std::domain_error if mu is infinite or kappa is negative
  * @throw std::invalid_argument if non-scalar arguments are of different
  * sizes
  */
@@ -46,10 +45,11 @@ inline typename VectorBuilder<true, double, T_loc, T_conc>::type von_mises_rng(
   using boost::variate_generator;
   static const char* function = "von_mises_rng";
 
-  check_finite(function, "mean", mu);
-  check_positive_finite(function, "inverse of variance", kappa);
+  check_finite(function, "Location parameter", mu);
+  check_nonnegative(function, "Scale parameter", kappa);
+  check_finite(function, "Scale parameter", kappa);
   check_consistent_sizes(function, "Location parameter", mu,
-                         "Concentration Parameter", kappa);
+                         "Scale parameter", kappa);
 
   scalar_seq_view<T_loc> mu_vec(mu);
   scalar_seq_view<T_conc> kappa_vec(kappa);
@@ -60,6 +60,13 @@ inline typename VectorBuilder<true, double, T_loc, T_conc>::type von_mises_rng(
       rng, uniform_real_distribution<>(0.0, 1.0));
 
   for (size_t n = 0; n < N; ++n) {
+    // for kappa sufficiently close to zero, it reduces to a
+    // circular uniform distribution centered at mu
+    if (kappa_vec[n] < 1e-8) {
+      output[n] = mu_vec[n] + (uniform_rng() - 0.5) * TWO_PI;
+      continue;
+    }
+
     double r = 1 + std::pow((1 + 4 * kappa_vec[n] * kappa_vec[n]), 0.5);
     double rho = 0.5 * (r - std::pow(2 * r, 0.5)) / kappa_vec[n];
     double s = 0.5 * (1 + rho * rho) / rho;
