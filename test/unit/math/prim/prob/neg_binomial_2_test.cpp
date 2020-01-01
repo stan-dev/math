@@ -1,6 +1,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/prim/scal.hpp>
 #include <test/unit/math/prim/prob/vector_rng_test_helper.hpp>
+#include <test/unit/math/prim/prob/NegativeBinomial2LogTestRig.hpp>
 #include <test/unit/math/prim/prob/VectorIntRNGTestRig.hpp>
 #include <gtest/gtest.h>
 #include <boost/random/mersenne_twister.hpp>
@@ -246,4 +247,8 @@ TEST(ProbDistributionsNegBinomial, extreme_values) {
     double logp = stan::math::neg_binomial_2_log<false>(N, mu, phi);
     EXPECT_LT(logp, 0);
   }
+}
+
+TEST(ProbDistributionsNegativeBinomial2Log, distributionCheck) {
+  check_counts_real_real(NegativeBinomial2LogTestRig());
 }
