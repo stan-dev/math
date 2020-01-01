@@ -51,20 +51,20 @@ void test_sort_indices_asc(Eigen::Matrix<T, R, C> val) {
 
   typedef Eigen::Matrix<AVAR, R, C> AVEC;
 
-  const size_t size = val.size();
+  const size_t val_size = val.size();
 
-  AVEC x(size);
-  for (size_t i = 0U; i < size; i++)
+  AVEC x(val_size);
+  for (size_t i = 0U; i < val_size; i++)
     x.data()[i] = AVAR(val[i]);
 
   std::vector<int> val_sorted = sort_indices_asc(val);
   std::vector<int> x_sorted = sort_indices_asc(x);
 
-  for (size_t i = 0U; i < size; i++)
+  for (size_t i = 0U; i < val_size; i++)
     EXPECT_EQ(val_sorted.data()[i], x_sorted.data()[i]);
 
-  for (size_t i = 0U; i < size; i++)
-    for (size_t j = 0U; j < size; j++)
+  for (size_t i = 0U; i < val_size; i++)
+    for (size_t j = 0U; j < val_size; j++)
       if (val_sorted.data()[i] == val.data()[j])
         EXPECT_EQ(x_sorted.data()[i], x.data()[j]);
       else
@@ -77,20 +77,20 @@ void test_sort_indices_desc(Eigen::Matrix<T, R, C> val) {
 
   typedef Eigen::Matrix<AVAR, R, C> AVEC;
 
-  const size_t size = val.size();
+  const size_t val_size = val.size();
 
-  AVEC x(size);
-  for (size_t i = 0U; i < size; i++)
+  AVEC x(val_size);
+  for (size_t i = 0U; i < val_size; i++)
     x.data()[i] = AVAR(val[i]);
 
   std::vector<int> val_sorted = sort_indices_desc(val);
   std::vector<int> x_sorted = sort_indices_desc(x);
 
-  for (size_t i = 0U; i < size; i++)
+  for (size_t i = 0U; i < val_size; i++)
     EXPECT_EQ(val_sorted.data()[i], x_sorted.data()[i]);
 
-  for (size_t i = 0U; i < size; i++)
-    for (size_t j = 0U; j < size; j++)
+  for (size_t i = 0U; i < val_size; i++)
+    for (size_t j = 0U; j < val_size; j++)
       if (val_sorted.data()[i] == val.data()[j])
         EXPECT_EQ(x_sorted.data()[i], x.data()[j]);
       else

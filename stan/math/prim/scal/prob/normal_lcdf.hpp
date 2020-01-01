@@ -3,13 +3,13 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/erf.hpp>
 #include <stan/math/prim/scal/fun/erfc.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/log1p.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
+#include <stan/math/prim/scal/fun/square.hpp>
+#include <stan/math/prim/scal/fun/value_of.hpp>
 #include <cmath>
 #include <limits>
 
@@ -47,16 +47,15 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lcdf(const T_y& y,
   scalar_seq_view<T_scale> sigma_vec(sigma);
   size_t N = max_size(y, mu, sigma);
 
-  const double SQRT_TWO_OVER_PI = sqrt(2.0 / pi());
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return mu_dbl = value_of(mu_vec[n]);
     const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
 
     const T_partials_return scaled_diff
-        = (y_dbl - mu_dbl) / (sigma_dbl * SQRT_2);
+        = (y_dbl - mu_dbl) / (sigma_dbl * SQRT_TWO);
 
-    const T_partials_return sigma_sqrt2 = sigma_dbl * SQRT_2;
+    const T_partials_return sigma_sqrt2 = sigma_dbl * SQRT_TWO;
     const T_partials_return x2 = square(scaled_diff);
 
     // Rigorous numerical approximations are applied here to deal with values

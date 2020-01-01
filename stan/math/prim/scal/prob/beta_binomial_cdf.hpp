@@ -59,7 +59,7 @@ return_type_t<T_size1, T_size2> beta_binomial_cdf(const T_n& n, const T_N& N,
   scalar_seq_view<T_N> N_vec(N);
   scalar_seq_view<T_size1> alpha_vec(alpha);
   scalar_seq_view<T_size2> beta_vec(beta);
-  size_t size = max_size(n, N, alpha, beta);
+  size_t max_size_seq_view = max_size(n, N, alpha, beta);
 
   using std::exp;
 
@@ -67,13 +67,13 @@ return_type_t<T_size1, T_size2> beta_binomial_cdf(const T_n& n, const T_N& N,
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
-  for (size_t i = 0; i < stan::length(n); i++) {
+  for (size_t i = 0; i < size(n); i++) {
     if (value_of(n_vec[i]) < 0) {
       return ops_partials.build(0.0);
     }
   }
 
-  for (size_t i = 0; i < size; i++) {
+  for (size_t i = 0; i < max_size_seq_view; i++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
     if (value_of(n_vec[i]) >= value_of(N_vec[i])) {
@@ -129,12 +129,12 @@ return_type_t<T_size1, T_size2> beta_binomial_cdf(const T_n& n, const T_N& N,
   }
 
   if (!is_constant_all<T_size1>::value) {
-    for (size_t i = 0; i < stan::length(alpha); ++i) {
+    for (size_t i = 0; i < size(alpha); ++i) {
       ops_partials.edge1_.partials_[i] *= P;
     }
   }
   if (!is_constant_all<T_size2>::value) {
-    for (size_t i = 0; i < stan::length(beta); ++i) {
+    for (size_t i = 0; i < size(beta); ++i) {
       ops_partials.edge2_.partials_[i] *= P;
     }
   }

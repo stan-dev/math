@@ -137,7 +137,7 @@ inline return_type_t<T1, T2, double> log_modified_bessel_first_kind(
              1.332898928162290861e-23};
       T a = square(z) * 0.25;
       T Q[3] = {1, 0.5, evaluate_polynomial(P, a)};
-      return log(z) + log(evaluate_polynomial(Q, a)) - LOG_2;
+      return log(z) + log(evaluate_polynomial(Q, a)) - LOG_TWO;
     }
     if (z < 500) {
       // Max error in interpolated form: 1.796e-16

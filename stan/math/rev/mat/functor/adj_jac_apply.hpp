@@ -4,8 +4,8 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>
-#include <limits>
 #include <tuple>
 #include <vector>
 
@@ -319,8 +319,7 @@ struct adj_jac_vari : public vari {
    * is a var (and false if not)
    */
   adj_jac_vari()
-      : vari(std::numeric_limits<double>::quiet_NaN()),  // The val_ in this
-                                                         // vari is unused
+      : vari(NOT_A_NUMBER),  // The val_ in this vari is unused
         is_var_({{is_var<typename scalar_type<Targs>::type>::value...}}),
         x_vis_(nullptr),
         y_vi_(nullptr) {}

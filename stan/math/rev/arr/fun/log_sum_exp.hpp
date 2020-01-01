@@ -4,8 +4,8 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/fun/calculate_chain.hpp>
 #include <stan/math/prim/arr/fun/log_sum_exp.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <vector>
-#include <limits>
 #include <cmath>
 
 namespace stan {
@@ -15,8 +15,7 @@ namespace internal {
 inline double log_sum_exp_as_double(const std::vector<var>& x) {
   using std::exp;
   using std::log;
-  using std::numeric_limits;
-  double max = -numeric_limits<double>::infinity();
+  double max = NEGATIVE_INFTY;
   for (size_t i = 0; i < x.size(); ++i) {
     if (x[i] > max) {
       max = x[i].val();
@@ -24,7 +23,7 @@ inline double log_sum_exp_as_double(const std::vector<var>& x) {
   }
   double sum = 0.0;
   for (size_t i = 0; i < x.size(); ++i) {
-    if (x[i] != -numeric_limits<double>::infinity()) {
+    if (x[i] != NEGATIVE_INFTY) {
       sum += exp(x[i].val() - max);
     }
   }

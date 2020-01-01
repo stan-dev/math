@@ -2,10 +2,9 @@
 #define STAN_MATH_PRIM_SCAL_FUN_GRAD_2F1_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <cmath>
-#include <limits>
 
 namespace stan {
 namespace math {

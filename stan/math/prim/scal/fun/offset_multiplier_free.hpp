@@ -2,10 +2,9 @@
 #define STAN_MATH_PRIM_SCAL_FUN_OFFSET_MULTIPLIER_FREE_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/identity_free.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/scal/fun/identity_free.hpp>
 #include <cmath>
-#include <limits>
 
 namespace stan {
 namespace math {
