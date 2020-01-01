@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/mat/functor/finite_diff_gradient_auto.hpp>
+#include <stan/math/prim/functor/finite_diff_gradient_auto.hpp>
 #include <stan/math/mix/functor/hessian.hpp>
 #include <vector>
 

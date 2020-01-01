@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_MAT_FUNCTOR_MAP_RECT_COMBINE_HPP
-#define STAN_MATH_PRIM_MAT_FUNCTOR_MAP_RECT_COMBINE_HPP
+#ifndef STAN_MATH_PRIM_FUNCTOR_MAP_RECT_COMBINE_HPP
+#define STAN_MATH_PRIM_FUNCTOR_MAP_RECT_COMBINE_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/arr/fun/sum.hpp>

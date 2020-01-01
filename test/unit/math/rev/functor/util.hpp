@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <stan/math/prim/arr/functor/integrate_ode_rk45.hpp>
+#include <stan/math/prim/functor/integrate_ode_rk45.hpp>
 #include <stan/math/rev/core.hpp>
 #include <test/unit/util.hpp>
 #include <sstream>

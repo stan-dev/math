@@ -3,9 +3,9 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
-#include <stan/math/prim/mat/functor/map_rect_concurrent.hpp>
-#include <stan/math/prim/mat/functor/map_rect_reduce.hpp>
-#include <stan/math/prim/mat/functor/map_rect_combine.hpp>
+#include <stan/math/prim/functor/map_rect_concurrent.hpp>
+#include <stan/math/prim/functor/map_rect_reduce.hpp>
+#include <stan/math/prim/functor/map_rect_combine.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
 
 #include <tbb/parallel_for.h>

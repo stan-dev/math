@@ -1,9 +1,9 @@
 #ifdef STAN_MPI
 
-#ifndef STAN_MATH_PRIM_ARR_FUNCTOR_MPI_CLUSTER_HPP
-#define STAN_MATH_PRIM_ARR_FUNCTOR_MPI_CLUSTER_HPP
+#ifndef STAN_MATH_PRIM_FUNCTOR_MPI_CLUSTER_HPP
+#define STAN_MATH_PRIM_FUNCTOR_MPI_CLUSTER_HPP
 
-#include <stan/math/prim/arr/functor/mpi_command.hpp>
+#include <stan/math/prim/functor/mpi_command.hpp>
 
 #include <boost/mpi/allocator.hpp>
 #include <boost/mpi/collectives.hpp>

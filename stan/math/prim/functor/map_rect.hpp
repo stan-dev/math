@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_MAT_FUNCTOR_MAP_RECT_HPP
-#define STAN_MATH_PRIM_MAT_FUNCTOR_MAP_RECT_HPP
+#ifndef STAN_MATH_PRIM_FUNCTOR_MAP_RECT_HPP
+#define STAN_MATH_PRIM_FUNCTOR_MAP_RECT_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
@@ -9,9 +9,9 @@
 #define STAN_REGISTER_MAP_RECT(CALLID, FUNCTOR)
 
 #ifdef STAN_MPI
-#include <stan/math/prim/mat/functor/map_rect_mpi.hpp>
+#include <stan/math/prim/functor/map_rect_mpi.hpp>
 #else
-#include <stan/math/prim/mat/functor/map_rect_concurrent.hpp>
+#include <stan/math/prim/functor/map_rect_concurrent.hpp>
 #endif
 
 #include <vector>

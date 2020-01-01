@@ -1,7 +1,7 @@
 #ifdef STAN_MPI
 
-#ifndef STAN_MATH_PRIM_ARR_FUNCTOR_MPI_COMMAND_HPP
-#define STAN_MATH_PRIM_ARR_FUNCTOR_MPI_COMMAND_HPP
+#ifndef STAN_MATH_PRIM_FUNCTOR_MPI_COMMAND_HPP
+#define STAN_MATH_PRIM_FUNCTOR_MPI_COMMAND_HPP
 
 #include <boost/serialization/serialization.hpp>
 #include <boost/serialization/access.hpp>

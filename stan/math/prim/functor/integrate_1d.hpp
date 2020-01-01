@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_ARR_FUNCTOR_integrate_1d_HPP
-#define STAN_MATH_PRIM_ARR_FUNCTOR_integrate_1d_HPP
+#ifndef STAN_MATH_PRIM_FUNCTOR_integrate_1d_HPP
+#define STAN_MATH_PRIM_FUNCTOR_integrate_1d_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>

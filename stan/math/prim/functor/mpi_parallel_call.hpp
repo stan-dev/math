@@ -1,11 +1,11 @@
 #ifdef STAN_MPI
 
-#ifndef STAN_MATH_PRIM_MAT_FUNCTOR_MPI_PARALLEL_CALL_HPP
+#ifndef STAN_MATH_PRIM_FUNCTOR_MPI_PARALLEL_CALL_HPP
 #include <stan/math/prim/meta.hpp>
-#define STAN_MATH_PRIM_MAT_FUNCTOR_MPI_PARALLEL_CALL_HPP
+#define STAN_MATH_PRIM_FUNCTOR_MPI_PARALLEL_CALL_HPP
 
-#include <stan/math/prim/arr/functor/mpi_cluster.hpp>
-#include <stan/math/prim/arr/functor/mpi_distributed_apply.hpp>
+#include <stan/math/prim/functor/mpi_cluster.hpp>
+#include <stan/math/prim/functor/mpi_distributed_apply.hpp>
 #include <stan/math/prim/mat/fun/to_array_1d.hpp>
 #include <stan/math/prim/mat/fun/dims.hpp>
 

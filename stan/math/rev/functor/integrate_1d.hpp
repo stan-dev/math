@@ -5,7 +5,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/arr/fun/value_of.hpp>
-#include <stan/math/prim/arr/functor/integrate_1d.hpp>
+#include <stan/math/prim/functor/integrate_1d.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/rev/scal/fun/is_nan.hpp>
 #include <stan/math/rev/scal/fun/value_of.hpp>

@@ -255,15 +255,15 @@
 #include <stan/math/prim/mat/fun/welford_covar_estimator.hpp>
 #include <stan/math/prim/mat/fun/welford_var_estimator.hpp>
 
-#include <stan/math/prim/mat/functor/finite_diff_gradient.hpp>
-#include <stan/math/prim/mat/functor/finite_diff_gradient_auto.hpp>
-#include <stan/math/prim/mat/functor/finite_diff_hessian.hpp>
-#include <stan/math/prim/mat/functor/finite_diff_hessian_auto.hpp>
-#include <stan/math/prim/mat/functor/finite_diff_hessian_helper.hpp>
-#include <stan/math/prim/mat/functor/map_rect.hpp>
-#include <stan/math/prim/mat/functor/map_rect_combine.hpp>
-#include <stan/math/prim/mat/functor/map_rect_concurrent.hpp>
-#include <stan/math/prim/mat/functor/map_rect_reduce.hpp>
+#include <stan/math/prim/functor/finite_diff_gradient.hpp>
+#include <stan/math/prim/functor/finite_diff_gradient_auto.hpp>
+#include <stan/math/prim/functor/finite_diff_hessian.hpp>
+#include <stan/math/prim/functor/finite_diff_hessian_auto.hpp>
+#include <stan/math/prim/functor/finite_diff_hessian_helper.hpp>
+#include <stan/math/prim/functor/map_rect.hpp>
+#include <stan/math/prim/functor/map_rect_combine.hpp>
+#include <stan/math/prim/functor/map_rect_concurrent.hpp>
+#include <stan/math/prim/functor/map_rect_reduce.hpp>
 #include <stan/math/prim/prob/bernoulli_logit_glm_log.hpp>
 #include <stan/math/prim/prob/bernoulli_logit_glm_lpmf.hpp>
 #include <stan/math/prim/prob/bernoulli_logit_glm_rng.hpp>
