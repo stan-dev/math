@@ -9,7 +9,6 @@
 #include <vector>
 #include <string>
 
-
 TEST(ProbDistributionsNegativeBinomial2Log, errorCheck) {
   check_dist_throws_all_types(NegativeBinomial2LogTestRig());
 }
