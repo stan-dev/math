@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/err/is_size_match.hpp>
+#include <stan/math/prim/err/is_size_match.hpp>
 
 namespace stan {
 namespace math {

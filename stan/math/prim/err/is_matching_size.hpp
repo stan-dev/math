@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_ERR_IS_MATCHING_SIZE_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/is_size_match.hpp>
+#include <stan/math/prim/err/is_size_match.hpp>
 
 namespace stan {
 namespace math {

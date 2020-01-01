@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_ERR_CHECK_COLUMN_INDEX_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/out_of_range.hpp>
+#include <stan/math/prim/err/out_of_range.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <sstream>
 #include <string>

@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_ERR_CHECK_CONSISTENT_SIZES_MVT_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/mat/err/check_consistent_size_mvt.hpp>
+#include <stan/math/prim/err/check_consistent_size_mvt.hpp>
 #include <algorithm>
 
 namespace stan {

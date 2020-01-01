@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_ERR_CHECK_NONZERO_SIZE_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/invalid_argument.hpp>
+#include <stan/math/prim/err/invalid_argument.hpp>
 
 namespace stan {
 namespace math {

@@ -2,8 +2,8 @@
 #define STAN_MATH_PRIM_ERR_CHECK_POSITIVE_ORDERED_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/throw_domain_error.hpp>
-#include <stan/math/prim/mat/err/check_ordered.hpp>
+#include <stan/math/prim/err/throw_domain_error.hpp>
+#include <stan/math/prim/err/check_ordered.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <sstream>
 #include <string>
