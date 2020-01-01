@@ -90,10 +90,7 @@ struct AutodiffStackSingleton {
   using AutodiffStackSingleton_t
       = AutodiffStackSingleton<ChainableT, ChainableAllocT>;
 
-  AutodiffStackSingleton()
-      : own_instance_(init()), active_instance_(nullptr) {
-    active_instance_ = AutodiffStackSingleton_t::instance_;
-  }
+  AutodiffStackSingleton() : own_instance_(init()) {}
   ~AutodiffStackSingleton() {
     if (own_instance_) {
       delete instance_;
@@ -119,8 +116,6 @@ struct AutodiffStackSingleton {
   AutodiffStackSingleton &operator=(const AutodiffStackSingleton_t &) = delete;
 
   static STAN_THREADS_DEF AutodiffStackStorage *instance_;
-
-  AutodiffStackStorage *active_instance_;
 
  private:
   static bool init() {
