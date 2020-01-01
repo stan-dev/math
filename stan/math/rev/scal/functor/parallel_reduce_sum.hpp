@@ -21,14 +21,15 @@ namespace internal {
 
 template <class ReduceFunction, class InputIt, class T, class Arg1>
 struct parallel_reduce_sum_impl<ReduceFunction, InputIt, T, Arg1, var> {
-  using ops_partials_t = operands_and_partials<std::vector<Arg1>>;
+  using ops_partials_t
+      = operands_and_partials<std::vector<Arg1>, const std::vector<int>>;
 
   struct recursive_reducer {
     InputIt first_;
     std::vector<Arg1>& varg1_;
     const std::vector<int>& idata1_;
-    std::vector<std::vector<double>> terms_adjs_;
-    std::vector<double> terms_vals_;
+    ops_partials_t terms_partials_;
+    double terms_sum_;
     typedef typename std::iterator_traits<InputIt>::value_type elem_t;
 
     recursive_reducer(InputIt first, const T& init, std::vector<Arg1>& varg1,
@@ -36,16 +37,15 @@ struct parallel_reduce_sum_impl<ReduceFunction, InputIt, T, Arg1, var> {
         : first_(first),
           varg1_(varg1),
           idata1_(idata1),
-          terms_adjs_(1, std::vector<double>(varg1.size(), 0.0)),
-          terms_vals_(1, init.val()) {}
+          terms_partials_(varg1_, idata1_),
+          terms_sum_(init.val()) {}
 
     recursive_reducer(recursive_reducer& other, tbb::split)
         : first_(other.first_),
           varg1_(other.varg1_),
           idata1_(other.idata1_),
-          terms_adjs_(),
-          terms_vals_() {}
-    // terms_adjs_(other.terms_adjs_), terms_vals_(other.terms_vals_) {}
+          terms_partials_(varg1_, idata1_),
+          terms_sum_(0.0) {}
 
     void operator()(const tbb::blocked_range<size_t>& r) {
       if (r.empty())
@@ -64,7 +64,13 @@ struct parallel_reduce_sum_impl<ReduceFunction, InputIt, T, Arg1, var> {
         // right now we discard that it is a var if it would be)
         std::vector<elem_t> sub_slice(start, end);
 
-        // create a deep copy of arg1 which is not tied to the outer AD tree
+        // create a deep copy of arg1 which is not tied to the outer
+        // AD tree
+        // todo: these copies can be put onto a thread-local storage
+        // object such that we only create these once per thread which
+        // should significantly boost performance as many copies are
+        // avoided... this comes at the cost that the adjoints have to
+        // be zeroed "manually"
         std::vector<Arg1> varg1;
         varg1.reserve(varg1_.size());
 
@@ -76,13 +82,10 @@ struct parallel_reduce_sum_impl<ReduceFunction, InputIt, T, Arg1, var> {
 
         sub_sum_v.grad();
 
-        terms_vals_.push_back(sub_sum_v.val());
+        terms_sum_ += sub_sum_v.val();
 
-        std::vector<double> varg1_adj;
-        for (const Arg1& elem : varg1)
-          varg1_adj.push_back(elem.adj());
-
-        terms_adjs_.push_back(varg1_adj);
+        for (std::size_t i = 0; i != varg1.size(); ++i)
+          terms_partials_.edge1_.partials_[i] += varg1[i].adj();
 
       } catch (const std::exception& e) {
         recover_memory_nested();
@@ -90,11 +93,13 @@ struct parallel_reduce_sum_impl<ReduceFunction, InputIt, T, Arg1, var> {
       }
       recover_memory_nested();
     }
+
     void join(const recursive_reducer& child) {
-      terms_adjs_.insert(terms_adjs_.end(), child.terms_adjs_.begin(),
-                         child.terms_adjs_.end());
-      terms_vals_.insert(terms_vals_.end(), child.terms_vals_.begin(),
-                         child.terms_vals_.end());
+      terms_sum_ += child.terms_sum_;
+
+      for (std::size_t i = 0; i != varg1_.size(); ++i)
+        terms_partials_.edge1_.partials_[i]
+            += child.terms_partials_.edge1_.partials_[i];
     }
   };
 
@@ -104,14 +109,7 @@ struct parallel_reduce_sum_impl<ReduceFunction, InputIt, T, Arg1, var> {
     recursive_reducer worker(first, init, varg1, idata);
     tbb::parallel_reduce(
         tbb::blocked_range<std::size_t>(0, num_jobs, grainsize), worker);
-    ops_partials_t ops_sum(varg1);
-    double sum = 0.0;
-    for (std::size_t i = 0; i != worker.terms_adjs_.size(); ++i) {
-      sum += worker.terms_vals_[i];
-      for (std::size_t j = 0; j != worker.terms_adjs_[i].size(); ++j)
-        ops_sum.edge1_.partials_[j] += worker.terms_adjs_[i][j];
-    }
-    return ops_sum.build(sum);
+    return worker.terms_partials_.build(worker.terms_sum_);
   }
 };
 }  // namespace internal
