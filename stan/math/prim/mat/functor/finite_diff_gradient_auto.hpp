@@ -4,7 +4,6 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/fun/finite_diff_stepsize.hpp>
 #include <cmath>
-#include <limits>
 
 namespace stan {
 namespace math {
@@ -82,6 +81,7 @@ void finite_diff_gradient_auto(const F& f, const Eigen::VectorXd& x, double& fx,
     grad_fx(i) = delta_f;
   }
 }
+
 }  // namespace math
 }  // namespace stan
 #endif

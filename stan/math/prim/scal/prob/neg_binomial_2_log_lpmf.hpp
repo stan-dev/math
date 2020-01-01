@@ -47,25 +47,28 @@ return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_log_location> eta_vec(eta);
   scalar_seq_view<T_precision> phi_vec(phi);
-  size_t size = max_size(n, eta, phi);
+  size_t max_size_seq_view = max_size(n, eta, phi);
 
   operands_and_partials<T_log_location, T_precision> ops_partials(eta, phi);
 
   size_t len_ep = max_size(eta, phi);
   size_t len_np = max_size(n, phi);
 
-  VectorBuilder<true, T_partials_return, T_log_location> eta__(length(eta));
-  for (size_t i = 0, size = length(eta); i < size; ++i) {
+  VectorBuilder<true, T_partials_return, T_log_location> eta__(size(eta));
+  for (size_t i = 0, max_size_seq_view = size(eta); i < max_size_seq_view;
+       ++i) {
     eta__[i] = value_of(eta_vec[i]);
   }
 
-  VectorBuilder<true, T_partials_return, T_precision> phi__(length(phi));
-  for (size_t i = 0, size = length(phi); i < size; ++i) {
+  VectorBuilder<true, T_partials_return, T_precision> phi__(size(phi));
+  for (size_t i = 0, max_size_seq_view = size(phi); i < max_size_seq_view;
+       ++i) {
     phi__[i] = value_of(phi_vec[i]);
   }
 
-  VectorBuilder<true, T_partials_return, T_precision> log_phi(length(phi));
-  for (size_t i = 0, size = length(phi); i < size; ++i) {
+  VectorBuilder<true, T_partials_return, T_precision> log_phi(size(phi));
+  for (size_t i = 0, max_size_seq_view = size(phi); i < max_size_seq_view;
+       ++i) {
     log_phi[i] = log(phi__[i]);
   }
 
@@ -80,7 +83,7 @@ return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
     n_plus_phi[i] = n_vec[i] + phi__[i];
   }
 
-  for (size_t i = 0; i < size; i++) {
+  for (size_t i = 0; i < max_size_seq_view; i++) {
     if (include_summand<propto>::value) {
       logp -= lgamma(n_vec[i] + 1.0);
     }

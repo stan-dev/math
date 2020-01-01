@@ -14,9 +14,9 @@ namespace math {
 template <typename T, int R, int C>
 inline std::vector<T> to_array_1d(const Eigen::Matrix<T, R, C>& matrix) {
   const T* datap = matrix.data();
-  int size = matrix.size();
-  std::vector<T> result(size);
-  for (int i = 0; i < size; i++) {
+  int matrix_size = matrix.size();
+  std::vector<T> result(matrix_size);
+  for (int i = 0; i < matrix_size; i++) {
     result[i] = datap[i];
   }
   return result;

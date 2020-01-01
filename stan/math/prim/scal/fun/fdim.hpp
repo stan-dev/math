@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_SCAL_FUN_FDIM_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <limits>
 
 namespace stan {
 namespace math {

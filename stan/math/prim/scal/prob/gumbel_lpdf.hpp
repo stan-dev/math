@@ -57,11 +57,11 @@ return_type_t<T_y, T_loc, T_scale> gumbel_lpdf(const T_y& y, const T_loc& mu,
   scalar_seq_view<T_scale> beta_vec(beta);
   size_t N = max_size(y, mu, beta);
 
-  VectorBuilder<true, T_partials_return, T_scale> inv_beta(length(beta));
+  VectorBuilder<true, T_partials_return, T_scale> inv_beta(size(beta));
   VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
                 T_scale>
-      log_beta(length(beta));
-  for (size_t i = 0; i < length(beta); i++) {
+      log_beta(size(beta));
+  for (size_t i = 0; i < size(beta); i++) {
     inv_beta[i] = 1.0 / value_of(beta_vec[i]);
     if (include_summand<propto, T_scale>::value) {
       log_beta[i] = log(value_of(beta_vec[i]));
