@@ -1,6 +1,6 @@
 #include <stan/math/prim/arr.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <cmath>
 #include <limits>
 #include <vector>
 
@@ -38,9 +38,9 @@ TEST(MathFunctions, scaled_add_nan) {
   lambda = 0.5;
 
   EXPECT_NO_THROW(stan::math::scaled_add(x, y, nan));
-  EXPECT_PRED1(boost::math::isnan<double>, x[0]);
-  EXPECT_PRED1(boost::math::isnan<double>, x[1]);
-  EXPECT_PRED1(boost::math::isnan<double>, x[2]);
+  EXPECT_TRUE(std::isnan(x[0]));
+  EXPECT_TRUE(std::isnan(x[1]));
+  EXPECT_TRUE(std::isnan(x[2]));
 
   x[0] = 0;
   x[1] = 0;
@@ -48,14 +48,14 @@ TEST(MathFunctions, scaled_add_nan) {
   y[1] = nan;
   EXPECT_NO_THROW(stan::math::scaled_add(x, y, lambda));
   EXPECT_FLOAT_EQ(1.0, x[0]);
-  EXPECT_PRED1(boost::math::isnan<double>, x[1]);
+  EXPECT_TRUE(std::isnan(x[1]));
   EXPECT_FLOAT_EQ(2.0, x[2]);
 
   x[0] = 0;
   x[1] = 0;
   x[2] = 0;
   EXPECT_NO_THROW(stan::math::scaled_add(x, y, nan));
-  EXPECT_PRED1(boost::math::isnan<double>, x[0]);
-  EXPECT_PRED1(boost::math::isnan<double>, x[1]);
-  EXPECT_PRED1(boost::math::isnan<double>, x[2]);
+  EXPECT_TRUE(std::isnan(x[0]));
+  EXPECT_TRUE(std::isnan(x[1]));
+  EXPECT_TRUE(std::isnan(x[2]));
 }
