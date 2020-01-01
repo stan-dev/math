@@ -48,8 +48,8 @@ inline typename VectorBuilder<true, double, T_loc, T_conc>::type von_mises_rng(
   check_finite(function, "Location parameter", mu);
   check_nonnegative(function, "Scale parameter", kappa);
   check_finite(function, "Scale parameter", kappa);
-  check_consistent_sizes(function, "Location parameter", mu,
-                         "Scale parameter", kappa);
+  check_consistent_sizes(function, "Location parameter", mu, "Scale parameter",
+                         kappa);
 
   scalar_seq_view<T_loc> mu_vec(mu);
   scalar_seq_view<T_conc> kappa_vec(kappa);
