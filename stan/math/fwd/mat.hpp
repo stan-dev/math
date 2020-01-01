@@ -43,8 +43,8 @@
 #include <stan/math/fwd/mat/fun/typedefs.hpp>
 #include <stan/math/fwd/mat/fun/unit_vector_constrain.hpp>
 
-#include <stan/math/fwd/mat/functor/gradient.hpp>
-#include <stan/math/fwd/mat/functor/hessian.hpp>
-#include <stan/math/fwd/mat/functor/jacobian.hpp>
+#include <stan/math/fwd/functor/gradient.hpp>
+#include <stan/math/fwd/functor/hessian.hpp>
+#include <stan/math/fwd/functor/jacobian.hpp>
 
 #endif
