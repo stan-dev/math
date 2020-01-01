@@ -1,6 +1,6 @@
 #include <stan/math/prim/scal.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <cmath>
 #include <limits>
 
 void test_log_diff_exp(double a, double b) {
@@ -39,15 +39,15 @@ TEST(MathFunctions, log_diff_exp_inf) {
   test_log_diff_exp(0.0, -inf);
   test_log_diff_exp(-inf, -inf);
   EXPECT_FLOAT_EQ(inf, log_diff_exp(inf, 3.0));
-  EXPECT_PRED1(boost::math::isnan<double>, log_diff_exp(inf, inf));
+  EXPECT_TRUE(std::isnan(log_diff_exp(inf, inf)));
 }
 
 TEST(MathFunctions, log_diff_exp_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
 
-  EXPECT_PRED1(boost::math::isnan<double>, stan::math::log_diff_exp(3.0, nan));
+  EXPECT_TRUE(std::isnan(stan::math::log_diff_exp(3.0, nan)));
 
-  EXPECT_PRED1(boost::math::isnan<double>, stan::math::log_diff_exp(nan, 2.0));
+  EXPECT_TRUE(std::isnan(stan::math::log_diff_exp(nan, 2.0)));
 
-  EXPECT_PRED1(boost::math::isnan<double>, stan::math::log_diff_exp(nan, nan));
+  EXPECT_TRUE(std::isnan(stan::math::log_diff_exp(nan, nan)));
 }

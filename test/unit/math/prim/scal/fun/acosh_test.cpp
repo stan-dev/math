@@ -1,9 +1,8 @@
 #include <stan/math/prim/scal.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <cmath>
 #include <limits>
 #include <stdexcept>
-#include <cmath>
 
 TEST(MathFunctions, acosh) {
   using stan::math::acosh;
@@ -24,6 +23,6 @@ TEST(MathFunctions, acosh_inf_return) {
 
 TEST(MathFunctions, acosh_nan) {
   using stan::math::acosh;
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::acosh(std::numeric_limits<double>::quiet_NaN()));
+  double nan = std::numeric_limits<double>::quiet_NaN();
+  EXPECT_TRUE(std::isnan(stan::math::acosh(nan)));
 }

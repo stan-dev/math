@@ -1,6 +1,5 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <limits>
 
 TEST(MathMatrixPrimMat, squared_distance_vector_vector) {
