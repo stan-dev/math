@@ -1,13 +1,13 @@
-#ifndef STAN_MATH_REV_MAT_FUNCTOR_IDAS_FORWARD_SYSTEM_HPP
-#define STAN_MATH_REV_MAT_FUNCTOR_IDAS_FORWARD_SYSTEM_HPP
+#ifndef STAN_MATH_REV_FUNCTOR_IDAS_FORWARD_SYSTEM_HPP
+#define STAN_MATH_REV_FUNCTOR_IDAS_FORWARD_SYSTEM_HPP
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/arr/fun/value_of.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/rev/mat/fun/typedefs.hpp>
-#include <stan/math/rev/mat/functor/idas_system.hpp>
-#include <stan/math/rev/mat/functor/jacobian.hpp>
+#include <stan/math/rev/functor/idas_system.hpp>
+#include <stan/math/rev/functor/jacobian.hpp>
 #include <idas/idas.h>
 #include <nvector/nvector_serial.h>
 #include <ostream>

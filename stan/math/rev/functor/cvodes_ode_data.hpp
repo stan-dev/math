@@ -1,9 +1,9 @@
-#ifndef STAN_MATH_REV_MAT_FUNCTOR_CVODES_ODE_DATA_HPP
-#define STAN_MATH_REV_MAT_FUNCTOR_CVODES_ODE_DATA_HPP
+#ifndef STAN_MATH_REV_FUNCTOR_CVODES_ODE_DATA_HPP
+#define STAN_MATH_REV_FUNCTOR_CVODES_ODE_DATA_HPP
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/arr/functor/coupled_ode_system.hpp>
-#include <stan/math/rev/arr/functor/coupled_ode_system.hpp>
+#include <stan/math/rev/functor/coupled_ode_system.hpp>
 #include <cvodes/cvodes.h>
 #include <sunmatrix/sunmatrix_dense.h>
 #include <sunlinsol/sunlinsol_dense.h>

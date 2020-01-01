@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_REV_MAT_FUNCTOR_MAP_RECT_REDUCE_HPP
-#define STAN_MATH_REV_MAT_FUNCTOR_MAP_RECT_REDUCE_HPP
+#ifndef STAN_MATH_REV_FUNCTOR_MAP_RECT_REDUCE_HPP
+#define STAN_MATH_REV_FUNCTOR_MAP_RECT_REDUCE_HPP
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/mat/functor/map_rect_reduce.hpp>

@@ -1,9 +1,9 @@
-#ifndef STAN_MATH_REV_MAT_FUNCTOR_IDAS_INTEGRATOR_HPP
-#define STAN_MATH_REV_MAT_FUNCTOR_IDAS_INTEGRATOR_HPP
+#ifndef STAN_MATH_REV_FUNCTOR_IDAS_INTEGRATOR_HPP
+#define STAN_MATH_REV_FUNCTOR_IDAS_INTEGRATOR_HPP
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/rev/mat/functor/idas_forward_system.hpp>
+#include <stan/math/rev/functor/idas_forward_system.hpp>
 #include <idas/idas.h>
 #include <sunmatrix/sunmatrix_dense.h>
 #include <sunlinsol/sunlinsol_dense.h>

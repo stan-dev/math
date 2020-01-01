@@ -1,9 +1,9 @@
-#ifndef STAN_MATH_REV_MAT_FUNCTOR_ALGEBRA_SOLVER_POWELL_HPP
-#define STAN_MATH_REV_MAT_FUNCTOR_ALGEBRA_SOLVER_POWELL_HPP
+#ifndef STAN_MATH_REV_FUNCTOR_ALGEBRA_SOLVER_POWELL_HPP
+#define STAN_MATH_REV_FUNCTOR_ALGEBRA_SOLVER_POWELL_HPP
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/mat/functor/algebra_system.hpp>
+#include <stan/math/rev/functor/algebra_system.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>

@@ -1,14 +1,14 @@
-#ifndef STAN_MATH_REV_MAT_FUNCTOR_INTEGRATE_ODE_CVODES_HPP
-#define STAN_MATH_REV_MAT_FUNCTOR_INTEGRATE_ODE_CVODES_HPP
+#ifndef STAN_MATH_REV_FUNCTOR_INTEGRATE_ODE_CVODES_HPP
+#define STAN_MATH_REV_FUNCTOR_INTEGRATE_ODE_CVODES_HPP
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/arr/fun/value_of.hpp>
 #include <stan/math/prim/arr/functor/coupled_ode_observer.hpp>
 #include <stan/math/prim/arr/functor/coupled_ode_system.hpp>
-#include <stan/math/rev/arr/functor/coupled_ode_system.hpp>
-#include <stan/math/rev/mat/functor/cvodes_utils.hpp>
-#include <stan/math/rev/mat/functor/cvodes_ode_data.hpp>
+#include <stan/math/rev/functor/coupled_ode_system.hpp>
+#include <stan/math/rev/functor/cvodes_utils.hpp>
+#include <stan/math/rev/functor/cvodes_ode_data.hpp>
 #include <cvodes/cvodes.h>
 #include <sunlinsol/sunlinsol_dense.h>
 #include <algorithm>

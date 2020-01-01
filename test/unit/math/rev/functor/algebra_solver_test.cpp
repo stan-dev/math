@@ -1,6 +1,6 @@
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/mat/functor/algebra_solver_powell.hpp>
-#include <stan/math/rev/mat/functor/algebra_solver_newton.hpp>
+#include <stan/math/rev/functor/algebra_solver_powell.hpp>
+#include <stan/math/rev/functor/algebra_solver_newton.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/functor/util_algebra_solver.hpp>
 #include <test/unit/util.hpp>

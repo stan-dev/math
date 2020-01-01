@@ -1,10 +1,10 @@
-#ifndef STAN_MATH_REV_MAT_FUNCTOR_KINSOL_SOLVE_HPP
-#define STAN_MATH_REV_MAT_FUNCTOR_KINSOL_SOLVE_HPP
+#ifndef STAN_MATH_REV_FUNCTOR_KINSOL_SOLVE_HPP
+#define STAN_MATH_REV_FUNCTOR_KINSOL_SOLVE_HPP
 
 #include <stan/math/prim/mat/fun/to_array_1d.hpp>
 #include <stan/math/prim/mat/fun/to_vector.hpp>
-#include <stan/math/rev/mat/functor/kinsol_data.hpp>
-#include <stan/math/rev/mat/functor/algebra_system.hpp>
+#include <stan/math/rev/functor/kinsol_data.hpp>
+#include <stan/math/rev/functor/algebra_system.hpp>
 #include <stan/math/prim/err.hpp>
 
 #include <kinsol/kinsol.h>

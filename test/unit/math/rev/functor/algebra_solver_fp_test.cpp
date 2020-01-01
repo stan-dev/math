@@ -1,5 +1,5 @@
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/mat/functor/algebra_solver_fp.hpp>
+#include <stan/math/rev/functor/algebra_solver_fp.hpp>
 #include <stan/math/prim/mat/functor/finite_diff_gradient_auto.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
 #include <test/unit/math/rev/mat/functor/util_algebra_solver.hpp>

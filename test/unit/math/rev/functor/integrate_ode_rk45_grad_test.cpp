@@ -3,7 +3,7 @@
 // std::vector<var> edges needed in coupled_ode_observer
 #include <stan/math/rev/mat.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/rev/mat/functor/gradient.hpp>
+#include <stan/math/rev/functor/gradient.hpp>
 #include <iostream>
 #include <sstream>
 #include <vector>

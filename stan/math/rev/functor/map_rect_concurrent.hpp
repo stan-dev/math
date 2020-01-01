@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_REV_MAT_FUNCTOR_MAP_RECT_CONCURRENT_HPP
-#define STAN_MATH_REV_MAT_FUNCTOR_MAP_RECT_CONCURRENT_HPP
+#ifndef STAN_MATH_REV_FUNCTOR_MAP_RECT_CONCURRENT_HPP
+#define STAN_MATH_REV_FUNCTOR_MAP_RECT_CONCURRENT_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>

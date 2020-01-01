@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_REV_MAT_FUNCTOR_ADJ_JAC_APPLY_HPP
-#define STAN_MATH_REV_MAT_FUNCTOR_ADJ_JAC_APPLY_HPP
+#ifndef STAN_MATH_REV_FUNCTOR_ADJ_JAC_APPLY_HPP
+#define STAN_MATH_REV_FUNCTOR_ADJ_JAC_APPLY_HPP
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>

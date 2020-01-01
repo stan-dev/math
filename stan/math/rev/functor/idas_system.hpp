@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_REV_MAT_FUNCTOR_IDAS_RESIDUAL_HPP
-#define STAN_MATH_REV_MAT_FUNCTOR_IDAS_RESIDUAL_HPP
+#ifndef STAN_MATH_REV_FUNCTOR_IDAS_RESIDUAL_HPP
+#define STAN_MATH_REV_FUNCTOR_IDAS_RESIDUAL_HPP
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/err.hpp>

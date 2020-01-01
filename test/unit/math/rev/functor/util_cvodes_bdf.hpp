@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <stan/math/rev/mat/functor/integrate_ode_bdf.hpp>
+#include <stan/math/rev/functor/integrate_ode_bdf.hpp>
 #include <test/unit/util.hpp>
 #include <sstream>
 #include <vector>

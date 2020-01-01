@@ -1,7 +1,7 @@
 #include <stan/math.hpp>
 #include <stan/math/rev/core.hpp>
 #include <test/unit/math/rev/mat/fun/util.hpp>
-#include <stan/math/rev/mat/functor/integrate_dae.hpp>
+#include <stan/math/rev/functor/integrate_dae.hpp>
 
 #include <nvector/nvector_serial.h>
 

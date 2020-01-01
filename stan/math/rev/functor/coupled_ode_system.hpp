@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_REV_ARR_FUNCTOR_COUPLED_ODE_SYSTEM_HPP
-#define STAN_MATH_REV_ARR_FUNCTOR_COUPLED_ODE_SYSTEM_HPP
+#ifndef STAN_MATH_REV_FUNCTOR_COUPLED_ODE_SYSTEM_HPP
+#define STAN_MATH_REV_FUNCTOR_COUPLED_ODE_SYSTEM_HPP
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/arr/functor/coupled_ode_system.hpp>

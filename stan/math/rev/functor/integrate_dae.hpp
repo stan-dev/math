@@ -1,9 +1,9 @@
-#ifndef STAN_MATH_REV_MAT_FUNCTOR_INTEGRATOR_DAE_HPP
-#define STAN_MATH_REV_MAT_FUNCTOR_INTEGRATOR_DAE_HPP
+#ifndef STAN_MATH_REV_FUNCTOR_INTEGRATOR_DAE_HPP
+#define STAN_MATH_REV_FUNCTOR_INTEGRATOR_DAE_HPP
 
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/mat/functor/idas_forward_system.hpp>
-#include <stan/math/rev/mat/functor/idas_integrator.hpp>
+#include <stan/math/rev/functor/idas_forward_system.hpp>
+#include <stan/math/rev/functor/idas_integrator.hpp>
 #include <ostream>
 #include <vector>
 
