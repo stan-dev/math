@@ -35,5 +35,4 @@ class NegativeBinomial2LogTestRig : public VectorIntRNGTestRig {
   }
 };
 
-
 #endif
