@@ -3,14 +3,14 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/mat/fun/mdivide_left.hpp>
 #include <stan/math/prim/mat/fun/to_array_1d.hpp>
 #include <stan/math/prim/mat/fun/to_vector.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
-#include <stan/math/rev/scal/fun/value_of.hpp>
-#include <stan/math/prim/mat/fun/mdivide_left.hpp>
-#include <stan/math/prim/err.hpp>
 #include <stan/math/rev/mat/functor/algebra_system.hpp>
 #include <stan/math/rev/mat/functor/kinsol_data.hpp>
+#include <stan/math/rev/scal/fun/value_of.hpp>
 
 #include <kinsol/kinsol.h>
 #include <sunmatrix/sunmatrix_dense.h>
@@ -70,11 +70,11 @@ struct KinsolFixedPointEnv {
       : f_(f),
         y_dummy(),
         y_(y),
+        N_(x.size()),
+        M_(y.size()),
         x_r_(x_r),
         x_i_(x_i),
         msgs_(msgs),
-        N_(x.size()),
-        M_(y.size()),
         mem_(KINCreate()),
         nv_x_(N_VNew_Serial(N_)),
         nv_u_scal_(N_VNew_Serial(N_)),
@@ -97,11 +97,11 @@ struct KinsolFixedPointEnv {
       : f_(f),
         y_dummy(stan::math::value_of(y)),
         y_(y_dummy),
+        N_(x.size()),
+        M_(y.size()),
         x_r_(x_r),
         x_i_(x_i),
         msgs_(msgs),
-        N_(x.size()),
-        M_(y.size()),
         mem_(KINCreate()),
         nv_x_(N_VNew_Serial(N_)),
         nv_u_scal_(N_VNew_Serial(N_)),
