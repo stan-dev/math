@@ -1,10 +1,10 @@
-#ifndef STAN_MATH_MIX_MAT_FUNCTOR_GRAD_TR_MAT_TIMES_HESSIAN_HPP
-#define STAN_MATH_MIX_MAT_FUNCTOR_GRAD_TR_MAT_TIMES_HESSIAN_HPP
+#ifndef STAN_MATH_MIX_FUNCTOR_GRAD_TR_MAT_TIMES_HESSIAN_HPP
+#define STAN_MATH_MIX_FUNCTOR_GRAD_TR_MAT_TIMES_HESSIAN_HPP
 
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/mix/mat/functor/gradient_dot_vector.hpp>
+#include <stan/math/mix/functor/gradient_dot_vector.hpp>
 #include <stdexcept>
 #include <vector>
 
