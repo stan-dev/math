@@ -26,13 +26,14 @@ struct parallel_reduce_sum_impl<ReduceFunction, InputIt, T, Arg1, var> {
 
   struct recursive_reducer {
     InputIt first_;
-    std::vector<Arg1>& varg1_;
+    const std::vector<Arg1>& varg1_;
     const std::vector<int>& idata1_;
     ops_partials_t terms_partials_;
     double terms_sum_;
     typedef typename std::iterator_traits<InputIt>::value_type elem_t;
 
-    recursive_reducer(InputIt first, const T& init, std::vector<Arg1>& varg1,
+    recursive_reducer(InputIt first, const T& init,
+                      const std::vector<Arg1>& varg1,
                       const std::vector<int>& idata1)
         : first_(first),
           varg1_(varg1),
@@ -81,7 +82,7 @@ struct parallel_reduce_sum_impl<ReduceFunction, InputIt, T, Arg1, var> {
 
         // but this should actually do the same if we simply
         // instantiate the var from a double representation
-        std::vector<double> varg1_d = value_of(varg1_);
+        const std::vector<double> varg1_d = value_of(varg1_);
         std::vector<Arg1> varg1(varg1_d.begin(), varg1_d.end());
 
         T sub_sum_v = ReduceFunction()(r.begin(), r.end() - 1, sub_slice, varg1,
@@ -111,11 +112,14 @@ struct parallel_reduce_sum_impl<ReduceFunction, InputIt, T, Arg1, var> {
   };
 
   T operator()(InputIt first, InputIt last, T init, std::size_t grainsize,
-               std::vector<Arg1>& varg1, const std::vector<int>& idata) const {
+               const std::vector<Arg1>& varg1,
+               const std::vector<int>& idata) const {
     const std::size_t num_jobs = std::distance(first, last);
     recursive_reducer worker(first, init, varg1, idata);
-    tbb::parallel_reduce(
-        tbb::blocked_range<std::size_t>(0, num_jobs, grainsize), worker);
+    tbb::static_partitioner work_partitioner;
+    tbb::parallel_deterministic_reduce(
+        tbb::blocked_range<std::size_t>(0, num_jobs, grainsize), worker,
+        work_partitioner);
     return worker.terms_partials_.build(worker.terms_sum_);
   }
 };

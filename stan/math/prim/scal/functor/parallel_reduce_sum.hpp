@@ -28,12 +28,13 @@ template <class ReduceFunction, class InputIt, class T, class Arg1>
 struct parallel_reduce_sum_impl<ReduceFunction, InputIt, T, Arg1, double> {
   struct recursive_reducer {
     InputIt first_;
-    std::vector<Arg1>& varg1_;
+    const std::vector<Arg1>& varg1_;
     const std::vector<int>& idata1_;
     T sum_;
     typedef typename std::iterator_traits<InputIt>::value_type elem_t;
 
-    recursive_reducer(InputIt first, const T& init, std::vector<Arg1>& varg1,
+    recursive_reducer(InputIt first, const T& init,
+                      const std::vector<Arg1>& varg1,
                       const std::vector<int>& idata1)
         : first_(first), varg1_(varg1), idata1_(idata1), sum_(init) {}
 
@@ -62,7 +63,8 @@ struct parallel_reduce_sum_impl<ReduceFunction, InputIt, T, Arg1, double> {
   };
 
   T operator()(InputIt first, InputIt last, T init, std::size_t grainsize,
-               std::vector<Arg1>& varg1, const std::vector<int>& idata1) const {
+               const std::vector<Arg1>& varg1,
+               const std::vector<int>& idata1) const {
     const std::size_t num_jobs = std::distance(first, last);
     recursive_reducer worker(first, init, varg1, idata1);
     tbb::parallel_reduce(
@@ -114,7 +116,8 @@ struct parallel_reduce_sum_impl<ReduceFunction, InputIt, T, Arg1, double> {
  */
 template <class ReduceFunction, class InputIt, class T, class Arg1>
 constexpr T parallel_reduce_sum(InputIt first, InputIt last, T init,
-                                std::size_t grainsize, std::vector<Arg1>& varg1,
+                                std::size_t grainsize,
+                                const std::vector<Arg1>& varg1,
                                 const std::vector<int>& idata1) {
   typedef T return_base_t;
   return internal::parallel_reduce_sum_impl<ReduceFunction, InputIt, T, Arg1,
