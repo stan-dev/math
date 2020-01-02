@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 #include <algorithm>
+#include <limits>
 
 namespace weibull_test_internal {
 struct TestValue {
