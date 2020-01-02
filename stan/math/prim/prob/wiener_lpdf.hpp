@@ -28,8 +28,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef STAN_MATH_PRIM_MAT_PROB_WIENER_LPDF_HPP
-#define STAN_MATH_PRIM_MAT_PROB_WIENER_LPDF_HPP
+#ifndef STAN_MATH_PRIM_PROB_WIENER_LPDF_HPP
+#define STAN_MATH_PRIM_PROB_WIENER_LPDF_HPP
 
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>

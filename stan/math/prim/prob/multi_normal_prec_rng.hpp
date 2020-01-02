@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_MAT_PROB_MULTI_NORMAL_PREC_RNG_HPP
-#define STAN_MATH_PRIM_MAT_PROB_MULTI_NORMAL_PREC_RNG_HPP
+#ifndef STAN_MATH_PRIM_PROB_MULTI_NORMAL_PREC_RNG_HPP
+#define STAN_MATH_PRIM_PROB_MULTI_NORMAL_PREC_RNG_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>

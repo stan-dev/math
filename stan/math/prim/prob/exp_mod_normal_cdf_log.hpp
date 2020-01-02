@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_PROB_EXP_MOD_NORMAL_CDF_LOG_HPP
-#define STAN_MATH_PRIM_SCAL_PROB_EXP_MOD_NORMAL_CDF_LOG_HPP
+#ifndef STAN_MATH_PRIM_PROB_EXP_MOD_NORMAL_CDF_LOG_HPP
+#define STAN_MATH_PRIM_PROB_EXP_MOD_NORMAL_CDF_LOG_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/prob/exp_mod_normal_lcdf.hpp>

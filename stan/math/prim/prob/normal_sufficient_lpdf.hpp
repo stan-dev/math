@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_PROB_NORMAL_SUFFICIENT_LPDF_HPP
-#define STAN_MATH_PRIM_SCAL_PROB_NORMAL_SUFFICIENT_LPDF_HPP
+#ifndef STAN_MATH_PRIM_PROB_NORMAL_SUFFICIENT_LPDF_HPP
+#define STAN_MATH_PRIM_PROB_NORMAL_SUFFICIENT_LPDF_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/prob/normal_lpdf.hpp>
