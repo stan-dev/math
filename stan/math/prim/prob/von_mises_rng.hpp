@@ -26,6 +26,8 @@ namespace math {
  * Journal of the Royal Statistical Society. Series C (Applied Statistics),
  * Vol. 28, No. 2 (1979), pp. 152-157
  *
+ * For kappa < 1.4e-8, this reduces to a uniform distribution.
+ *
  * @tparam T_loc type of location parameter
  * @tparam T_conc type of scale (concentration) parameter
  * @tparam RNG type of random number generator
@@ -62,8 +64,9 @@ inline typename VectorBuilder<true, double, T_loc, T_conc>::type von_mises_rng(
   for (size_t n = 0; n < N; ++n) {
     // for kappa sufficiently close to zero, it reduces to a
     // circular uniform distribution centered at mu
-    if (kappa_vec[n] < 1e-8) {
-      output[n] = mu_vec[n] + (uniform_rng() - 0.5) * TWO_PI;
+    if (kappa_vec[n] < 1.4e-8) {
+      output[n] = (uniform_rng() - 0.5) * TWO_PI
+                  + std::fmod(std::fmod(mu_vec[n], TWO_PI) + TWO_PI, TWO_PI);
       continue;
     }
 
