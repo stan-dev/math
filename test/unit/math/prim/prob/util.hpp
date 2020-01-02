@@ -1,5 +1,5 @@
-#ifndef TEST_UNIT_MATH_PRIM_SCAL_PROB_HPP
-#define TEST_UNIT_MATH_PRIM_SCAL_PROB_HPP
+#ifndef TEST_UNIT_MATH_PRIM_PROB_HPP
+#define TEST_UNIT_MATH_PRIM_PROB_HPP
 
 #include <boost/math/distributions.hpp>
 #include <gtest/gtest.h>
