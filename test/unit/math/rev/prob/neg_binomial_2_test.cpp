@@ -490,8 +490,7 @@ TEST(ProbDistributionsNegBinomial, derivativesPrecomputed) {
   using stan::math::value_of;
   using stan::math::var;
 
-  for (auto iter = testValues.begin(); iter != testValues.end(); ++iter) {
-    TestValue t = *iter;
+  for (TestValue t: testValues) {
     unsigned int n = t.n;
     var mu(t.mu);
     var phi(t.phi);
@@ -545,11 +544,8 @@ TEST(ProbDistributionsNegBinomial, derivativesComplexStep) {
   };
 
   double phi_cutoff = stan::math::internal::neg_binomial_2_phi_cutoff;
-  for (auto mu_iter = mu_to_test.begin(); mu_iter != mu_to_test.end();
-       ++mu_iter) {
-    for (auto n_iter = n_to_test.begin(); n_iter != n_to_test.end(); ++n_iter) {
-      double mu_dbl = *mu_iter;
-      unsigned int n = *n_iter;
+  for (double mu_dbl : mu_to_test) {
+    for (unsigned int n : n_to_test) {
       double phi_dbl = 1.5;
 
       for (int k = 0; k < 20; ++k) {
@@ -622,11 +618,8 @@ TEST(ProbDistributionsNegBinomial, derivativesAtCutoff) {
       = {9.3e-6, 0.0028252, 4, 11, 8522, 984256, 5036842};
   std::array<unsigned int, 8> n_to_test
       = {0, 1, 5, 48, 1158, 224582, 48235842, 20314458};
-  for (auto mu_iter = mu_to_test.begin(); mu_iter != mu_to_test.end();
-       ++mu_iter) {
-    double mu = *mu_iter;
-    for (auto n_iter = n_to_test.begin(); n_iter != n_to_test.end(); ++n_iter) {
-      unsigned int n = *n_iter;
+  for (double mu : mu_to_test) {
+    for (unsigned int n : n_to_test) {
       var mu_before(mu);
       var phi_before(phi_cutoff - 1e-8);
       var value_before = neg_binomial_2_lpmf(n, mu_before, phi_before);
