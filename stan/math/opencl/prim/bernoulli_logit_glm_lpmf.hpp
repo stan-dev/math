@@ -24,7 +24,7 @@ namespace math {
 /** \ingroup opencl
  * Returns the log PMF of the Generalized Linear Model (GLM)
  * with Bernoulli distribution and logit link function.
- * This is an overload of the GLM in prim/mat/prob/bernoulli_logit_glm_lpmf.hpp
+ * This is an overload of the GLM in prim/prob/bernoulli_logit_glm_lpmf.hpp
  * that is implemented in OpenCL.
  * @tparam T_alpha type of the intercept(s);
  * this can be a vector (of the same length as y) of intercepts or a single

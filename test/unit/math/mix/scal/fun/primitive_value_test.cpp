@@ -1,6 +1,5 @@
 #include <stan/math/mix/scal.hpp>
 #include <gtest/gtest.h>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <test/unit/math/rev/scal/fun/util.hpp>
 #include <limits>
 

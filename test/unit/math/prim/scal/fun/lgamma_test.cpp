@@ -1,7 +1,7 @@
 #include <stan/math/prim/scal.hpp>
 #include <boost/math/special_functions/gamma.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <cmath>
 #include <limits>
 
 TEST(MathFunctions, lgamma) { EXPECT_TRUE(stan::math::is_inf(lgamma(0.0))); }
@@ -10,8 +10,8 @@ TEST(MathFunctions, lgammaStanMathUsing) { using stan::math::lgamma; }
 
 TEST(MathFunctions, lgamma_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
-  EXPECT_PRED1(boost::math::isnan<double>, stan::math::lgamma(nan));
-  EXPECT_PRED1(boost::math::isinf<double>, stan::math::lgamma(0));
+  EXPECT_TRUE(std::isnan(stan::math::lgamma(nan)));
+  EXPECT_TRUE(std::isinf(stan::math::lgamma(0)));
   // up to boost 1.70.0 the boost::math::lgamma return NaN for large
   // arguments (large is greater than sqrt(largest double of 1E308)
   // when used with the stan::math::boost_policy_t which avoids
@@ -23,6 +23,6 @@ TEST(MathFunctions, lgamma_nan) {
   // ensure that boost::math::lgamma contains the needed bugfixes we
   // test here specifically the boost::math::lgamma by testing for a
   // finite return for a large argument.
-  EXPECT_PRED1(boost::math::isnormal<double>,
-               boost::math::lgamma(1.0E50, stan::math::boost_policy_t()));
+  EXPECT_TRUE(
+      std::isnormal(boost::math::lgamma(1.0E50, stan::math::boost_policy_t())));
 }

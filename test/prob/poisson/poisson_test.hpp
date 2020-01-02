@@ -1,6 +1,6 @@
 // Arguments: Ints, Doubles
 #include <stan/math/prim/scal.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
+#include <cmath>
 
 using stan::math::var;
 using std::numeric_limits;
@@ -71,7 +71,7 @@ class AgradDistributionsPoisson : public AgradDistributionTest {
     if (lambda == 0)
       return n == 0 ? 0 : LOG_ZERO;
 
-    if (boost::math::isinf(lambda))
+    if (stan::math::is_inf(lambda))
       return LOG_ZERO;
 
     return -lgamma(n + 1.0) + multiply_log(n, lambda) - lambda;

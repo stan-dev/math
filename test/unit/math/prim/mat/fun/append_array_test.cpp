@@ -1,5 +1,6 @@
 #include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
+#include <cmath>
 #include <limits>
 #include <vector>
 
@@ -14,10 +15,10 @@ TEST(MathFunctions, append_array_nan) {
   y[1] = 1.0;
 
   EXPECT_NO_THROW(result = stan::math::append_array(x, y));
-  EXPECT_PRED1(boost::math::isnan<double>, result[2]);
+  EXPECT_TRUE(std::isnan(result[2]));
 
   EXPECT_NO_THROW(result = stan::math::append_array(y, x));
-  EXPECT_PRED1(boost::math::isnan<double>, result[4]);
+  EXPECT_TRUE(std::isnan(result[4]));
 }
 
 TEST(MathFunctions, append_array_check_size_vector1) {

@@ -121,6 +121,6 @@ cat <<EOF
 
     Please check the upgrade worked by running a test that uses Boost
     Example (from Math home directory):
-      ./runTests.py test/unit/math/prim/mat/prob/multi_normal_test.cpp
+      ./runTests.py test/unit/math/prim/prob/multi_normal_test.cpp
 
 EOF
