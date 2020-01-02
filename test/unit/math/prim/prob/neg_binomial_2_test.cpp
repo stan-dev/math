@@ -304,7 +304,6 @@ TEST(ProbDistributionsNegativeBinomial2, vectorAroundCutoff) {
   EXPECT_FLOAT_EQ(vector_value, scalar_value);
 }
 
-
 TEST(ProbDistributionsNegativeBinomial2Log, distributionCheck) {
   check_counts_real_real(NegativeBinomial2LogTestRig());
 }
