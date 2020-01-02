@@ -1,7 +1,7 @@
 #include <stan/math/prim/scal.hpp>
 #include <boost/math/special_functions/owens_t.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <cmath>
 #include <limits>
 
 TEST(MathFunctions, owens_t) {
@@ -13,7 +13,7 @@ TEST(MathFunctions, owens_t) {
 TEST(MathFunctions, owens_t_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
 
-  EXPECT_PRED1(boost::math::isnan<double>, stan::math::owens_t(1.0, nan));
-  EXPECT_PRED1(boost::math::isnan<double>, stan::math::owens_t(nan, 2.0));
-  EXPECT_PRED1(boost::math::isnan<double>, stan::math::owens_t(nan, nan));
+  EXPECT_TRUE(std::isnan(stan::math::owens_t(1.0, nan)));
+  EXPECT_TRUE(std::isnan(stan::math::owens_t(nan, 2.0)));
+  EXPECT_TRUE(std::isnan(stan::math::owens_t(nan, nan)));
 }

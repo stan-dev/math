@@ -1,6 +1,6 @@
 #include <stan/math/prim/arr.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <cmath>
 #include <limits>
 #include <vector>
 
@@ -27,7 +27,7 @@ TEST(MathFunctions, sum_nan) {
   x[1] = 2.0;
   x[2] = nan;
 
-  EXPECT_PRED1(boost::math::isnan<double>, stan::math::sum(x));
+  EXPECT_TRUE(std::isnan(stan::math::sum(x)));
 }
 TEST(MathMatrixPrimArr, sum_vector_int) {
   std::vector<int> x(3);
