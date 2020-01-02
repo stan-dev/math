@@ -20,56 +20,62 @@ namespace math {
 namespace internal {
 
 // base definition => compile error
-template <class ReduceFunction, class InputIt, class T, class Arg1,
+template <class ReduceFunction, class M, class T, class Arg1, class Arg2,
           class T_return_type>
 struct parallel_reduce_sum_impl {};
 
-template <class ReduceFunction, class InputIt, class T, class Arg1>
-struct parallel_reduce_sum_impl<ReduceFunction, InputIt, T, Arg1, double> {
-  struct recursive_reducer {
-    InputIt first_;
-    const std::vector<Arg1>& varg1_;
-    const std::vector<int>& idata1_;
-    T sum_;
-    typedef typename std::iterator_traits<InputIt>::value_type elem_t;
+template <class ReduceFunction, class M, class T, class Arg1, class Arg2>
+struct parallel_reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, double> {
+  using vmapped_t = std::vector<M>;
+  using arg1_t = std::vector<Arg1>;
+  using arg2_t = std::vector<Arg2>;
 
-    recursive_reducer(InputIt first, const T& init,
-                      const std::vector<Arg1>& varg1,
-                      const std::vector<int>& idata1)
-        : first_(first), varg1_(varg1), idata1_(idata1), sum_(init) {}
+  struct recursive_reducer {
+    const vmapped_t& vmapped_;
+    const arg1_t& arg1_;
+    const arg2_t& arg2_;
+    T terms_sum_;
+
+    recursive_reducer(const vmapped_t& vmapped, const T& init,
+                      const arg1_t& arg1, const arg2_t& arg2)
+        : vmapped_(vmapped),
+          arg1_(arg1),
+          arg2_(arg2),
+          terms_sum_(value_of(init)) {}
 
     recursive_reducer(recursive_reducer& other, tbb::split)
-        : first_(other.first_),
-          varg1_(other.varg1_),
-          idata1_(other.idata1_),
-          sum_(T(0.0)) {}
+        : vmapped_(other.vmapped_),
+          arg1_(other.arg1_),
+          arg2_(other.arg2_),
+          terms_sum_(0.0) {}
 
     void operator()(const tbb::blocked_range<size_t>& r) {
       if (r.empty())
         return;
 
-      auto start = first_;
+      auto start = vmapped_.begin();
       std::advance(start, r.begin());
-      auto end = first_;
+      auto end = vmapped_.begin();
       std::advance(end, r.end());
 
-      std::vector<elem_t> sub_slice(start, end);
+      vmapped_t sub_slice(start, end);
 
-      sum_ += ReduceFunction()(r.begin(), r.end() - 1, sub_slice, varg1_,
-                               idata1_);
+      terms_sum_
+          += ReduceFunction()(r.begin(), r.end() - 1, sub_slice, arg1_, arg2_);
     }
 
-    void join(const recursive_reducer& child) { sum_ += child.sum_; }
+    void join(const recursive_reducer& child) {
+      terms_sum_ += child.terms_sum_;
+    }
   };
 
-  T operator()(InputIt first, InputIt last, T init, std::size_t grainsize,
-               const std::vector<Arg1>& varg1,
-               const std::vector<int>& idata1) const {
-    const std::size_t num_jobs = std::distance(first, last);
-    recursive_reducer worker(first, init, varg1, idata1);
+  T operator()(const vmapped_t& vmapped, T init, std::size_t grainsize,
+               const arg1_t& arg1, const arg2_t& arg2) const {
+    const std::size_t num_jobs = vmapped.size();
+    recursive_reducer worker(vmapped, init, arg1, arg2);
     tbb::parallel_reduce(
         tbb::blocked_range<std::size_t>(0, num_jobs, grainsize), worker);
-    return std::move(worker.sum_);
+    return std::move(worker.terms_sum_);
   }
 };
 }  // namespace internal
@@ -114,15 +120,15 @@ struct parallel_reduce_sum_impl<ReduceFunction, InputIt, T, Arg1, double> {
  * the functor must be default constructible without any arguments.
  *
  */
-template <class ReduceFunction, class InputIt, class T, class Arg1>
-constexpr T parallel_reduce_sum(InputIt first, InputIt last, T init,
+template <class ReduceFunction, class M, class T, class Arg1, class Arg2>
+constexpr T parallel_reduce_sum(const std::vector<M>& vmapped, T init,
                                 std::size_t grainsize,
-                                const std::vector<Arg1>& varg1,
-                                const std::vector<int>& idata1) {
+                                const std::vector<Arg1>& arg1,
+                                const std::vector<Arg2>& arg2) {
   typedef T return_base_t;
-  return internal::parallel_reduce_sum_impl<ReduceFunction, InputIt, T, Arg1,
+  return internal::parallel_reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2,
                                             return_base_t>()(
-      first, last, init, grainsize, varg1, idata1);
+      vmapped, init, grainsize, arg1, arg2);
 }
 
 }  // namespace math

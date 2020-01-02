@@ -14,7 +14,8 @@ struct count_lpdf {
 
   // does the reduction in the sub-slice start to end
   inline T operator()(std::size_t start, std::size_t end,
-                      std::vector<int>& sub_slice, std::vector<T>& lambda,
+                      const std::vector<int>& sub_slice,
+                      const std::vector<T>& lambda,
                       const std::vector<int>& idata) const {
     return stan::math::poisson_lpmf(sub_slice, lambda[0]);
   }
@@ -37,7 +38,7 @@ TEST(parallel_v3_reduce_sum, value) {
   typedef boost::counting_iterator<std::size_t> count_iter;
 
   double poisson_lpdf = stan::math::parallel_reduce_sum<count_lpdf<double>>(
-      data.begin(), data.end(), 0.0, 5, vlambda_d, idata);
+      data, 0.0, 5, vlambda_d, idata);
 
   double poisson_lpdf_ref = stan::math::poisson_lpmf(data, lambda_d);
 
@@ -70,7 +71,7 @@ TEST(parallel_v3_reduce_sum, gradient) {
   std::vector<var> vlambda_v(1, lambda_v);
 
   var poisson_lpdf = stan::math::parallel_reduce_sum<count_lpdf<var>>(
-      data.begin(), data.end(), var(0.0), 5, vlambda_v, idata);
+      data, var(0.0), 5, vlambda_v, idata);
 
   var lambda_ref = lambda_d;
   var poisson_lpdf_ref = stan::math::poisson_lpmf(data, lambda_ref);
@@ -109,10 +110,11 @@ struct nesting_count_lpdf {
 
   // does the reduction in the sub-slice start to end
   inline T operator()(std::size_t start, std::size_t end,
-                      std::vector<int>& sub_slice, std::vector<T>& lambda,
+                      const std::vector<int>& sub_slice,
+                      const std::vector<T>& lambda,
                       const std::vector<int>& idata) const {
-    return stan::math::parallel_reduce_sum<count_lpdf<T>>(
-        sub_slice.begin(), sub_slice.end(), T(0.0), 5, lambda, idata);
+    return stan::math::parallel_reduce_sum<count_lpdf<T>>(sub_slice, T(0.0), 5,
+                                                          lambda, idata);
   }
 };
 
@@ -133,7 +135,7 @@ TEST(parallel_v3_reduce_sum, nesting_value) {
   typedef boost::counting_iterator<std::size_t> count_iter;
 
   double poisson_lpdf = stan::math::parallel_reduce_sum<count_lpdf<double>>(
-      data.begin(), data.end(), 0.0, 5, vlambda_d, idata);
+      data, 0.0, 5, vlambda_d, idata);
 
   double poisson_lpdf_ref = stan::math::poisson_lpmf(data, lambda_d);
 
@@ -166,7 +168,7 @@ TEST(parallel_v3_reduce_sum, nesting_gradient) {
   std::vector<var> vlambda_v(1, lambda_v);
 
   var poisson_lpdf = stan::math::parallel_reduce_sum<nesting_count_lpdf<var>>(
-      data.begin(), data.end(), var(0.0), 5, vlambda_v, idata);
+      data, var(0.0), 5, vlambda_v, idata);
 
   var lambda_ref = lambda_d;
   var poisson_lpdf_ref = stan::math::poisson_lpmf(data, lambda_ref);
@@ -245,7 +247,7 @@ TEST(parallel_v3_reduce_sum, grouped_gradient) {
   var lambda_v = vlambda_v[0];
 
   var poisson_lpdf = stan::math::parallel_reduce_sum<grouped_count_lpdf<var>>(
-      data.begin(), data.end(), var(0.0), 5, vlambda_v, gidx);
+      data, var(0.0), 5, vlambda_v, gidx);
 
   std::vector<var> vref_lambda_v;
   for (std::size_t i = 0; i != elems; ++i) {
