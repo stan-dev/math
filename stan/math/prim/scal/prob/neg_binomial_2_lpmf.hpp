@@ -53,25 +53,24 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_location> mu_vec(mu);
   scalar_seq_view<T_precision> phi_vec(phi);
-  size_t size = max_size(n, mu, phi);
+  size_t size_max = max_size(n, mu, phi);
 
   operands_and_partials<T_location, T_precision> ops_partials(mu, phi);
 
   size_t len_ep = max_size(mu, phi);
   size_t len_np = max_size(n, phi);
 
-  VectorBuilder<true, T_partials_return, T_location> mu__(length(mu));
-  for (size_t i = 0, size = length(mu); i < size; ++i) {
+  size_t len_mu = length(mu);
+  VectorBuilder<true, T_partials_return, T_location> mu__(len_mu);
+  for (size_t i = 0; i < len_mu; ++i) {
     mu__[i] = value_of(mu_vec[i]);
   }
 
-  VectorBuilder<true, T_partials_return, T_precision> phi__(length(phi));
-  for (size_t i = 0, size = length(phi); i < size; ++i) {
+  size_t len_phi = length(phi);
+  VectorBuilder<true, T_partials_return, T_precision> phi__(len_phi);
+  VectorBuilder<true, T_partials_return, T_precision> log_phi(len_phi);
+  for (size_t i = 0; i < len_phi; ++i) {
     phi__[i] = value_of(phi_vec[i]);
-  }
-
-  VectorBuilder<true, T_partials_return, T_precision> log_phi(length(phi));
-  for (size_t i = 0, size = length(phi); i < size; ++i) {
     log_phi[i] = log(phi__[i]);
   }
 
@@ -86,7 +85,7 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
     n_plus_phi[i] = n_vec[i] + phi__[i];
   }
 
-  for (size_t i = 0; i < size; i++) {
+  for (size_t i = 0; i < size_max; i++) {
     if (phi__[i] > internal::neg_binomial_2_phi_cutoff) {
       // Phi is large, deferring to Poisson.
       // Copying the code here as just calling
