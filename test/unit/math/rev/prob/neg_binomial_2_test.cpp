@@ -490,7 +490,7 @@ TEST(ProbDistributionsNegBinomial, derivativesPrecomputed) {
   using stan::math::value_of;
   using stan::math::var;
 
-  for (TestValue t: testValues) {
+  for (TestValue t : testValues) {
     unsigned int n = t.n;
     var mu(t.mu);
     var phi(t.phi);
