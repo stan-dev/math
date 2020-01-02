@@ -58,13 +58,13 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
   size_t len_ep = max_size(mu, phi);
   size_t len_np = max_size(n, phi);
 
-  size_t len_mu = length(mu);
+  size_t len_mu = size(mu);
   VectorBuilder<true, T_partials_return, T_location> mu__(len_mu);
   for (size_t i = 0; i < len_mu; ++i) {
     mu__[i] = value_of(mu_vec[i]);
   }
 
-  size_t len_phi = length(phi);
+  size_t len_phi = size(phi);
   VectorBuilder<true, T_partials_return, T_precision> phi__(len_phi);
   VectorBuilder<true, T_partials_return, T_precision> log_phi(len_phi);
   for (size_t i = 0; i < len_phi; ++i) {
@@ -83,7 +83,7 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
     n_plus_phi[i] = n_vec[i] + phi__[i];
   }
 
-  for (size_t i = 0; i < size_max; i++) {
+  for (size_t i = 0; i < max_size_seq_view; i++) {
     if (phi__[i] > internal::neg_binomial_2_phi_cutoff) {
       // Phi is large, deferring to Poisson.
       // Copying the code here as just calling
