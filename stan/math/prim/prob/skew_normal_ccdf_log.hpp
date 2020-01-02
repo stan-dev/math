@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_PROB_SKEW_NORMAL_CCDF_LOG_HPP
-#define STAN_MATH_PRIM_SCAL_PROB_SKEW_NORMAL_CCDF_LOG_HPP
+#ifndef STAN_MATH_PRIM_PROB_SKEW_NORMAL_CCDF_LOG_HPP
+#define STAN_MATH_PRIM_PROB_SKEW_NORMAL_CCDF_LOG_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/prob/skew_normal_lccdf.hpp>

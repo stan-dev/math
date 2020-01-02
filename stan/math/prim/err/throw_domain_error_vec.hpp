@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_ERR_THROW_DOMAIN_ERROR_VEC_HPP
-#define STAN_MATH_PRIM_SCAL_ERR_THROW_DOMAIN_ERROR_VEC_HPP
+#ifndef STAN_MATH_PRIM_ERR_THROW_DOMAIN_ERROR_VEC_HPP
+#define STAN_MATH_PRIM_ERR_THROW_DOMAIN_ERROR_VEC_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/throw_domain_error.hpp>

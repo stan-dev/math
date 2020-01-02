@@ -5,8 +5,8 @@
 #include <stan/math/prim/meta/return_type.hpp>
 #include <stan/math/prim/err/check_consistent_size.hpp>
 #include <stan/math/prim/prob.hpp>
-#include <vector>
 #include <cmath>
+#include <vector>
 
 using Eigen::Dynamic;
 using Eigen::Matrix;

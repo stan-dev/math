@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_MAT_PROB_LKJ_CORR_RNG_HPP
-#define STAN_MATH_PRIM_MAT_PROB_LKJ_CORR_RNG_HPP
+#ifndef STAN_MATH_PRIM_PROB_LKJ_CORR_RNG_HPP
+#define STAN_MATH_PRIM_PROB_LKJ_CORR_RNG_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/mat/fun/multiply_lower_tri_self_transpose.hpp>

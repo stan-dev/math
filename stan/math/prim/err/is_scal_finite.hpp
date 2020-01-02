@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_ERR_IS_SCAL_FINITE_HPP
-#define STAN_MATH_PRIM_SCAL_ERR_IS_SCAL_FINITE_HPP
+#ifndef STAN_MATH_PRIM_ERR_IS_SCAL_FINITE_HPP
+#define STAN_MATH_PRIM_ERR_IS_SCAL_FINITE_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/value_of_rec.hpp>

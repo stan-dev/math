@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_MAT_PROB_ORDERED_LOGISTIC_LOG_HPP
-#define STAN_MATH_PRIM_MAT_PROB_ORDERED_LOGISTIC_LOG_HPP
+#ifndef STAN_MATH_PRIM_PROB_ORDERED_LOGISTIC_LOG_HPP
+#define STAN_MATH_PRIM_PROB_ORDERED_LOGISTIC_LOG_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/prob/ordered_logistic_lpmf.hpp>

@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_PROB_NORMAL_CDF_HPP
-#define STAN_MATH_PRIM_SCAL_PROB_NORMAL_CDF_HPP
+#ifndef STAN_MATH_PRIM_PROB_NORMAL_CDF_HPP
+#define STAN_MATH_PRIM_PROB_NORMAL_CDF_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>

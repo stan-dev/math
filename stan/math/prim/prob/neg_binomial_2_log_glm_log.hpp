@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_MAT_PROB_NEG_BINOMIAL_2_LOG_GLM_LOG_HPP
-#define STAN_MATH_PRIM_MAT_PROB_NEG_BINOMIAL_2_LOG_GLM_LOG_HPP
+#ifndef STAN_MATH_PRIM_PROB_NEG_BINOMIAL_2_LOG_GLM_LOG_HPP
+#define STAN_MATH_PRIM_PROB_NEG_BINOMIAL_2_LOG_GLM_LOG_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/prob/neg_binomial_2_log_glm_lpmf.hpp>

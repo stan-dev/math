@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_PROB_STUDENT_T_LCDF_HPP
-#define STAN_MATH_PRIM_SCAL_PROB_STUDENT_T_LCDF_HPP
+#ifndef STAN_MATH_PRIM_PROB_STUDENT_T_LCDF_HPP
+#define STAN_MATH_PRIM_PROB_STUDENT_T_LCDF_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
