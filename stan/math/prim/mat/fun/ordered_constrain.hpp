@@ -13,6 +13,7 @@ namespace math {
  * free vector.  The returned constrained vector will have the
  * same dimensionality as the specified free vector.
  *
+ * @tparam T type of elements in the vector
  * @param x Free vector of scalars.
  * @return Positive, increasing ordered vector.
  * @tparam T Type of scalar.
@@ -45,10 +46,10 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> ordered_constrain(
  * of the transform.  The returned constrained vector
  * will have the same dimensionality as the specified free vector.
  *
+ * @tparam T type of elements in the vector
  * @param x Free vector of scalars.
  * @param lp Log probability reference.
  * @return Positive, increasing ordered vector.
- * @tparam T Type of scalar.
  */
 template <typename T>
 inline Eigen::Matrix<T, Eigen::Dynamic, 1> ordered_constrain(
@@ -65,7 +66,6 @@ inline Eigen::Matrix<T, Eigen::Dynamic, 1> ordered_constrain(
 }
 
 }  // namespace math
-
 }  // namespace stan
 
 #endif

@@ -2,11 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_LOGNORMAL_LPDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
@@ -39,7 +35,7 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
   scalar_seq_view<T_scale> sigma_vec(sigma);
   size_t N = max_size(y, mu, sigma);
 
-  for (size_t n = 0; n < length(y); n++) {
+  for (size_t n = 0; n < size(y); n++) {
     if (value_of(y_vec[n]) <= 0) {
       return LOG_ZERO;
     }
@@ -51,43 +47,43 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
 
   VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
                 T_scale>
-      log_sigma(length(sigma));
+      log_sigma(size(sigma));
   if (include_summand<propto, T_scale>::value) {
-    for (size_t n = 0; n < length(sigma); n++) {
+    for (size_t n = 0; n < size(sigma); n++) {
       log_sigma[n] = log(value_of(sigma_vec[n]));
     }
   }
 
   VectorBuilder<include_summand<propto, T_y, T_loc, T_scale>::value,
                 T_partials_return, T_scale>
-      inv_sigma(length(sigma));
+      inv_sigma(size(sigma));
   VectorBuilder<include_summand<propto, T_y, T_loc, T_scale>::value,
                 T_partials_return, T_scale>
-      inv_sigma_sq(length(sigma));
+      inv_sigma_sq(size(sigma));
   if (include_summand<propto, T_y, T_loc, T_scale>::value) {
-    for (size_t n = 0; n < length(sigma); n++) {
+    for (size_t n = 0; n < size(sigma); n++) {
       inv_sigma[n] = 1 / value_of(sigma_vec[n]);
     }
   }
   if (include_summand<propto, T_y, T_loc, T_scale>::value) {
-    for (size_t n = 0; n < length(sigma); n++) {
+    for (size_t n = 0; n < size(sigma); n++) {
       inv_sigma_sq[n] = inv_sigma[n] * inv_sigma[n];
     }
   }
 
   VectorBuilder<include_summand<propto, T_y, T_loc, T_scale>::value,
                 T_partials_return, T_y>
-      log_y(length(y));
+      log_y(size(y));
   if (include_summand<propto, T_y, T_loc, T_scale>::value) {
-    for (size_t n = 0; n < length(y); n++) {
+    for (size_t n = 0; n < size(y); n++) {
       log_y[n] = log(value_of(y_vec[n]));
     }
   }
 
   VectorBuilder<!is_constant_all<T_y>::value, T_partials_return, T_y> inv_y(
-      length(y));
+      size(y));
   if (!is_constant_all<T_y>::value) {
-    for (size_t n = 0; n < length(y); n++) {
+    for (size_t n = 0; n < size(y); n++) {
       inv_y[n] = 1 / value_of(y_vec[n]);
     }
   }

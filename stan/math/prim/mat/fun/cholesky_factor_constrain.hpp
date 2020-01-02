@@ -1,10 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_CHOLESKY_FACTOR_CONSTRAIN_HPP
 #define STAN_MATH_PRIM_MAT_FUN_CHOLESKY_FACTOR_CONSTRAIN_HPP
 
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/sum.hpp>
-#include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <cmath>
 #include <stdexcept>
 #include <vector>
@@ -17,7 +16,7 @@ namespace math {
  * specified vector.  A total of (N choose 2) + N + (M - N) * N
  * elements are required to read an M by N Cholesky factor.
  *
- * @tparam T Type of scalars in matrix
+ * @tparam T type of elements in the matrix
  * @param x Vector of unconstrained values
  * @param M Number of rows
  * @param N Number of columns
@@ -62,7 +61,7 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_factor_constrain(
  * of (N choose 2) + N + N * (M - N) free parameters are required to read
  * an M by N Cholesky factor.
  *
- * @tparam T Type of scalars in matrix
+ * @tparam T type of elements in the matrix
  * @param x Vector of unconstrained values
  * @param M Number of rows
  * @param N Number of columns
@@ -87,4 +86,5 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_factor_constrain(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

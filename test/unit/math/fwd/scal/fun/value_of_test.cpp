@@ -1,6 +1,5 @@
 #include <stan/math/fwd/scal.hpp>
 #include <gtest/gtest.h>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <limits>
 
 TEST(AgradFwd, value_of) {

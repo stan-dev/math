@@ -15,7 +15,7 @@ struct log1m_inv_logit_fun {
    * Return the natural logarithm of one minus the inverse logit
    * of the specified argument.
    *
-   * @tparam T argument scalar type
+   * @tparam T type of argument
    * @param x argument
    * @return natural log of one minus inverse logit of argument
    */
@@ -31,8 +31,8 @@ struct log1m_inv_logit_fun {
  * The return type promotes the underlying scalar argument type to
  * double if it is an integer, and otherwise is the argument type.
  *
- * @tparam T Container type.
- * @param x Container.
+ * @tparam T type of container
+ * @param x container
  * @return Elementwise log1m_inv_logit of members of container.
  */
 template <typename T>

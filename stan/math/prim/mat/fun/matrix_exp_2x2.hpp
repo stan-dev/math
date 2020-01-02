@@ -13,7 +13,7 @@ namespace math {
  * algorithm: http://mathworld.wolfram.com/MatrixExponential.html
  * Note: algorithm only works if delta > 0;
  *
- * @tparam T type of scalar of the elements of input matrix.
+ * @tparam Mtype type of elements in the matrix
  * @param[in] A 2x2 matrix to exponentiate.
  * @return Matrix exponential of A.
  */
@@ -44,6 +44,8 @@ Mtype matrix_exp_2x2(const Mtype& A) {
 
   return B / delta;
 }
+
 }  // namespace math
 }  // namespace stan
+
 #endif

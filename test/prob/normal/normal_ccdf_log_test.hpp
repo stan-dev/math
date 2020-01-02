@@ -77,8 +77,8 @@ class AgradCcdfLogNormal : public AgradCcdfLogTest {
   typename stan::return_type<T_y, T_loc, T_scale>::type ccdf_log_function(
       const T_y& y, const T_loc& mu, const T_scale& sigma, const T3&, const T4&,
       const T5&) {
-    using stan::math::SQRT_2;
+    using stan::math::SQRT_TWO;
     using std::log;
-    return log(0.5 - 0.5 * erf((y - mu) / (sigma * SQRT_2)));
+    return log(0.5 - 0.5 * erf((y - mu) / (sigma * SQRT_TWO)));
   }
 };

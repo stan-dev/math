@@ -1,9 +1,10 @@
 #ifndef STAN_MATH_OPENCL_PRIM_TRANSPOSE_HPP
 #define STAN_MATH_OPENCL_PRIM_TRANSPOSE_HPP
 #ifdef STAN_OPENCL
+
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernels/transpose.hpp>
-#include <stan/math/opencl/err/check_opencl.hpp>
+#include <stan/math/opencl/err.hpp>
 #include <stan/math/prim/meta.hpp>
 
 #include <CL/cl2.hpp>

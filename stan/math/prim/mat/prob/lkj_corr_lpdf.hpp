@@ -2,8 +2,7 @@
 #define STAN_MATH_PRIM_MAT_PROB_LKJ_CORR_LPDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/mat/err/check_corr_matrix.hpp>
-#include <stan/math/prim/scal/err/check_positive.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 
@@ -25,11 +24,11 @@ return_type_t<double, T_shape> do_lkj_constant(const T_shape& eta,
     }
     constant = -denominator.sum();
     if ((K % 2) == 1) {
-      constant -= 0.25 * (K * K - 1) * LOG_PI - 0.25 * (Km1 * Km1) * LOG_2
+      constant -= 0.25 * (K * K - 1) * LOG_PI - 0.25 * (Km1 * Km1) * LOG_TWO
                   - Km1 * lgamma(0.5 * (K + 1));
     } else {
       constant -= 0.25 * K * (K - 2) * LOG_PI
-                  + 0.25 * (3 * K * K - 4 * K) * LOG_2 + K * lgamma(0.5 * K)
+                  + 0.25 * (3 * K * K - 4 * K) * LOG_TWO + K * lgamma(0.5 * K)
                   - Km1 * lgamma(static_cast<double>(K));
     }
   } else {
@@ -62,8 +61,7 @@ return_type_t<T_y, T_shape> lkj_corr_lpdf(
     lp += do_lkj_constant(eta, K);
   }
 
-  if ((eta == 1.0)
-      && stan::is_constant_all<typename stan::scalar_type<T_shape> >::value) {
+  if (eta == 1.0 && is_constant_all<scalar_type<T_shape>>::value) {
     return lp;
   }
 

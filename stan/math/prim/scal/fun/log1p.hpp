@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_FUN_LOG1P_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <cmath>
 

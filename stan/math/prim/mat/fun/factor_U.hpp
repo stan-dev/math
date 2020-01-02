@@ -5,7 +5,6 @@
 #include <stan/math/prim/scal/fun/atanh.hpp>
 #include <stan/math/prim/scal/fun/sqrt.hpp>
 #include <cstddef>
-#include <limits>
 #include <stdexcept>
 #include <vector>
 
@@ -16,6 +15,7 @@ namespace math {
  * This function is intended to make starting values, given a unit
  * upper-triangular matrix U such that U'DU is a correlation matrix
  *
+ * @tparam T type of elements in the matrix
  * @param U Sigma matrix
  * @param CPCs fill this unbounded
  */

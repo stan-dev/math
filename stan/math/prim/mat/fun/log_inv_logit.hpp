@@ -31,7 +31,7 @@ struct log_inv_logit_fun {
  * The return type promotes the underlying scalar argument type to
  * double if it is an integer, and otherwise is the argument type.
  *
- * @tparam T container type
+ * @tparam T type of container
  * @param x container
  * @return elementwise log_inv_logit of members of container
  */

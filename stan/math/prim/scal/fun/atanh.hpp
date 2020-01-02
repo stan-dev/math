@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
-#include <stan/math/prim/scal/err/check_bounded.hpp>
+#include <stan/math/prim/err.hpp>
 #include <cmath>
 
 namespace stan {

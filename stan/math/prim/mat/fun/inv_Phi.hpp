@@ -9,8 +9,9 @@ namespace math {
 
 /**
  * Structure to wrap inv_Phi() so it can be vectorized.
- * @param x Variable in range [0, 1].
- * @tparam T Variable type.
+ *
+ * @tparam T type of variable
+ * @param x variable in range [0, 1]
  * @return Inverse unit normal CDF of x.
  * @throw std::domain_error if x is not between 0 and 1.
  */
@@ -23,8 +24,9 @@ struct inv_Phi_fun {
 
 /**
  * Vectorized version of inv_Phi().
- * @param x Container of variables in range [0, 1].
- * @tparam T Container type.
+ *
+ * @tparam T type of container
+ * @param x variables in range [0, 1]
  * @return Inverse unit normal CDF of each value in x.
  * @throw std::domain_error if any value is not between 0 and 1.
  */

@@ -1,8 +1,7 @@
 #include <stan/math/prim/scal.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
-#include <limits>
 #include <cmath>
+#include <limits>
 
 // this is just testing the nan behavior of the built-in fma
 // there is no longer a stan::math::fma, just the agrad versions
@@ -20,17 +19,17 @@ TEST(MathFunctions, fma_nan) {
   using stan::math::fma;
   double nan = std::numeric_limits<double>::quiet_NaN();
 
-  EXPECT_PRED1(boost::math::isnan<double>, fma(1.0, 2.0, nan));
+  EXPECT_TRUE(std::isnan(fma(1.0, 2.0, nan)));
 
-  EXPECT_PRED1(boost::math::isnan<double>, fma(1.0, nan, 3.0));
+  EXPECT_TRUE(std::isnan(fma(1.0, nan, 3.0)));
 
-  EXPECT_PRED1(boost::math::isnan<double>, fma(1.0, nan, nan));
+  EXPECT_TRUE(std::isnan(fma(1.0, nan, nan)));
 
-  EXPECT_PRED1(boost::math::isnan<double>, fma(nan, 2.0, 3.0));
+  EXPECT_TRUE(std::isnan(fma(nan, 2.0, 3.0)));
 
-  EXPECT_PRED1(boost::math::isnan<double>, fma(nan, 2.0, nan));
+  EXPECT_TRUE(std::isnan(fma(nan, 2.0, nan)));
 
-  EXPECT_PRED1(boost::math::isnan<double>, fma(nan, nan, 3.0));
+  EXPECT_TRUE(std::isnan(fma(nan, nan, 3.0)));
 
-  EXPECT_PRED1(boost::math::isnan<double>, fma(nan, nan, nan));
+  EXPECT_TRUE(std::isnan(fma(nan, nan, nan)));
 }

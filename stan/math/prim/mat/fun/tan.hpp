@@ -9,8 +9,9 @@ namespace math {
 
 /**
  * Structure to wrap tan() so that it can be vectorized.
- * @param x Angle in radians.
- * @tparam T Variable type.
+ *
+ * @tparam T type of argument
+ * @param x angle in radians
  * @return Tangent of x.
  */
 struct tan_fun {
@@ -23,8 +24,9 @@ struct tan_fun {
 
 /**
  * Vectorized version of tan().
- * @param x Container of angles in radians.
- * @tparam T Container type.
+ *
+ * @tparam T type of container
+ * @param x angles in radians
  * @return Tangent of each value in x.
  */
 template <typename T>

@@ -167,6 +167,24 @@ TEST(requires_prim_scal, double_or_int_test) {
                        int>::any_not();
 }
 
+// Double or Int
+TEST(requires_prim_scal, require_string_convertible_test) {
+  using stan::test::require_scal_checker;
+  using std::string;
+  require_scal_checker<stan::require_string_convertible_t, string,
+                       const char*>::unary();
+  require_scal_checker<stan::require_not_string_convertible_t, string,
+                       const char*>::not_unary();
+  require_scal_checker<stan::require_all_string_convertible_t, string,
+                       const char*>::all();
+  require_scal_checker<stan::require_all_not_string_convertible_t, string,
+                       const char*>::all_not();
+  require_scal_checker<stan::require_any_string_convertible_t, string,
+                       const char*>::any();
+  require_scal_checker<stan::require_any_not_string_convertible_t, string,
+                       const char*>::any_not();
+}
+
 TEST(requires_prim_scal, arithmetic_test) {
   using stan::test::require_scal_checker;
   require_scal_checker<stan::require_arithmetic_t, double, float, int>::unary();
@@ -669,16 +687,32 @@ TEST(requires_prim_mat, eigen_std_vector_t_test) {
 
 TEST(requires_prim_mat, eigen_vector_like_t_test) {
   using stan::test::require_scal_checker;
-  require_scal_checker<stan::require_vector_like_t, eigen_x<double>,
+  require_scal_checker<stan::require_vector_like_t, std::vector<double>,
                        eigen_vector_x<double>>::unary();
-  require_scal_checker<stan::require_not_vector_like_t, eigen_x<double>,
+}
+
+TEST(requires, not_eigen_vector_like_t_test) {
+  using stan::test::require_scal_checker;
+  require_scal_checker<stan::require_not_vector_like_t, std::vector<double>,
                        eigen_vector_x<double>>::not_unary();
-  require_scal_checker<stan::require_all_vector_like_t, eigen_x<double>,
+}
+TEST(requires, all_eigen_vector_like_t_test) {
+  using stan::test::require_scal_checker;
+  require_scal_checker<stan::require_all_vector_like_t, std::vector<double>,
                        eigen_vector_x<double>>::all();
-  require_scal_checker<stan::require_all_not_vector_like_t, eigen_x<double>,
+}
+TEST(requires, all_not_eigen_vector_like_t_test) {
+  using stan::test::require_scal_checker;
+  require_scal_checker<stan::require_all_not_vector_like_t, std::vector<double>,
                        eigen_vector_x<double>>::all_not();
-  require_scal_checker<stan::require_any_vector_like_t, eigen_x<double>,
+}
+TEST(requires, any_eigen_vector_like_t_test) {
+  using stan::test::require_scal_checker;
+  require_scal_checker<stan::require_any_vector_like_t, std::vector<double>,
                        eigen_vector_x<double>>::any();
+}
+TEST(requires, any_not_eigen_vector_like_t_test) {
+  using stan::test::require_scal_checker;
   require_scal_checker<stan::require_any_not_vector_like_t, std::vector<double>,
                        std::vector<double>>::any_not();
 }

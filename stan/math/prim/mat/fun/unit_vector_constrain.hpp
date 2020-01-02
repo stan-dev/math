@@ -1,11 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_UNIT_VECTOR_CONSTRAIN_HPP
 #define STAN_MATH_PRIM_MAT_FUN_UNIT_VECTOR_CONSTRAIN_HPP
 
-#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
-#include <stan/math/prim/mat/err/check_vector.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/dot_self.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
 #include <cmath>
 
 namespace stan {
@@ -18,7 +16,7 @@ namespace math {
  * href="https://en.wikipedia.org/wiki/N-sphere#Generating_random_points">the
  * Wikipedia page on generating random points on an N-sphere</a>.
  *
- * @tparam T Scalar type.
+ * @tparam T type of elements in the vector
  * @param y vector of K unrestricted variables
  * @return Unit length vector of dimension K
  */
@@ -36,10 +34,13 @@ Eigen::Matrix<T, R, C> unit_vector_constrain(const Eigen::Matrix<T, R, C>& y) {
  * Return the unit length vector corresponding to the free vector y.
  * See https://en.wikipedia.org/wiki/N-sphere#Generating_random_points
  *
+ * @tparam T type of elements in the vector
+ * @tparam R number of rows in the matrix, can be Eigen::Dynamic
+ * @tparam C number of columns in the matrix, can be Eigen::Dynamic
+ *
  * @param y vector of K unrestricted variables
  * @return Unit length vector of dimension K
  * @param lp Log probability reference to increment.
- * @tparam T Scalar type.
  */
 template <typename T, int R, int C>
 Eigen::Matrix<T, R, C> unit_vector_constrain(const Eigen::Matrix<T, R, C>& y,
@@ -55,4 +56,5 @@ Eigen::Matrix<T, R, C> unit_vector_constrain(const Eigen::Matrix<T, R, C>& y,
 
 }  // namespace math
 }  // namespace stan
+
 #endif

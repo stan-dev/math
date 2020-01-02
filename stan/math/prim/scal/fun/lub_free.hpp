@@ -2,11 +2,10 @@
 #define STAN_MATH_PRIM_SCAL_FUN_LUB_FREE_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_bounded.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/logit.hpp>
 #include <stan/math/prim/scal/fun/lb_free.hpp>
 #include <stan/math/prim/scal/fun/ub_free.hpp>
-#include <limits>
 
 namespace stan {
 namespace math {

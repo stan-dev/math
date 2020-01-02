@@ -2,11 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_VON_MISES_RNG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_greater.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
@@ -86,10 +82,8 @@ inline typename VectorBuilder<true, double, T_loc, T_conc>::type von_mises_rng(
     double sign = ((U3 >= 0) - (U3 <= 0));
 
     //  it's really an fmod() with a positivity constraint
-    output[n]
-        = sign * std::acos(W)
-          + std::fmod(std::fmod(mu_vec[n], 2 * pi()) + 2 * stan::math::pi(),
-                      2 * pi());
+    output[n] = sign * std::acos(W)
+                + std::fmod(std::fmod(mu_vec[n], TWO_PI) + TWO_PI, TWO_PI);
   }
 
   return output.data();
