@@ -4,9 +4,9 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/throw_domain_error.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <vector>
 #include <sstream>
 #include <string>
+#include <vector>
 
 namespace stan {
 namespace math {
