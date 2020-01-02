@@ -71,11 +71,18 @@ struct parallel_reduce_sum_impl<ReduceFunction, InputIt, T, Arg1, var> {
         // should significantly boost performance as many copies are
         // avoided... this comes at the cost that the adjoints have to
         // be zeroed "manually"
+        /* using the var_nochain_stack_ tape avoids up-propagation of chain
         std::vector<Arg1> varg1;
         varg1.reserve(varg1_.size());
 
         for (Arg1& elem : varg1_)
           varg1.emplace_back(var(new vari(elem.val(), false)));
+        */
+
+        // but this should actually do the same if we simply
+        // instantiate the var from a double representation
+        std::vector<double> varg1_d = value_of(varg1_);
+        std::vector<Arg1> varg1(varg1_d.begin(), varg1_d.end());
 
         T sub_sum_v = ReduceFunction()(r.begin(), r.end() - 1, sub_slice, varg1,
                                        idata1_);
