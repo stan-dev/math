@@ -69,15 +69,15 @@ TEST(ProbDistributionsBernoulliLogit, logitChiSquareGoodnessFitTest) {
 TEST(ProbDistributionsBernoulliLogit, cutoff) {
   double cutoff = 20;
   for (int n = 0; n <= 1; ++n) {
-    for (int sign: {-1, 1}) {
+    for (int sign : {-1, 1}) {
       double before_cutoff
           = stan::math::bernoulli_logit_lpmf(n, sign * cutoff - 1e-14);
       double after_cutoff
           = stan::math::bernoulli_logit_lpmf(n, sign * cutoff + 1e-14);
       double relative_error_at_cutoff = log(before_cutoff / after_cutoff);
       EXPECT_NEAR(relative_error_at_cutoff, 0, 1e-8)
-          << "bernoulli_logit_lpmf changes too much around cutoff for n = "
-          << n << ", cutoff = " << (sign * cutoff) 
+          << "bernoulli_logit_lpmf changes too much around cutoff for n = " << n
+          << ", cutoff = " << (sign * cutoff)
           << ", value at cutoff - 1e-14: " << before_cutoff
           << ", value at cutoff + 1e-14: " << after_cutoff;
     }
