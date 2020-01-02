@@ -1,15 +1,14 @@
 #ifdef STAN_MPI
 
 #ifndef STAN_MATH_PRIM_FUNCTOR_MAP_RECT_MPI_HPP
-#include <stan/math/prim/meta.hpp>
 #define STAN_MATH_PRIM_FUNCTOR_MAP_RECT_MPI_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/functor/map_rect_concurrent.hpp>
 #include <stan/math/prim/functor/mpi_distributed_apply.hpp>
 #include <stan/math/prim/functor/map_rect_reduce.hpp>
 #include <stan/math/prim/functor/map_rect_combine.hpp>
 #include <stan/math/prim/functor/mpi_parallel_call.hpp>
-
 #include <vector>
 
 namespace stan {
