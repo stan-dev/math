@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_LOG_INV_LOGIT_HPP
 #define STAN_MATH_PRIM_MAT_FUN_LOG_INV_LOGIT_HPP
 
-#include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/scal/fun/log_inv_logit.hpp>
 
 namespace stan {
