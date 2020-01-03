@@ -481,7 +481,7 @@ std::vector<TestValue> testValues = {
 
 }  // namespace neg_binomial_2_test_internal
 
-TEST(ProbDistributionsNegBinomial, derivativesPrecomputed) {
+TEST(ProbDistributionsNegativeBinomial2, derivativesPrecomputed) {
   using neg_binomial_2_test_internal::TestValue;
   using neg_binomial_2_test_internal::testValues;
   using stan::math::is_nan;
@@ -517,13 +517,14 @@ TEST(ProbDistributionsNegBinomial, derivativesPrecomputed) {
   }
 }
 
-TEST(ProbDistributionsNegBinomial, derivativesComplexStep) {
+TEST(ProbDistributionsNegBinomial2, derivativesComplexStep) {
   using boost::math::tools::complex_step_derivative;
   using stan::math::is_nan;
   using stan::math::neg_binomial_2_log;
   using stan::math::var;
 
-  std::vector<unsigned int> n_to_test = {0, 7, 100, 835, 14238};
+  std::vector<unsigned int> n_to_test = 
+    {0, 7, 100, 835, 14238, 385000, 1000000};
   std::vector<double> mu_to_test = {0.8, 8, 24, 271, 2586, 33294};
 
   auto nb2_log_for_test = [](int n, const std::complex<double>& mu,
@@ -576,20 +577,28 @@ TEST(ProbDistributionsNegBinomial, derivativesComplexStep) {
         double complex_step_dphi
             = complex_step_derivative(nb2_log_phi, phi_dbl);
 
+        std::ostringstream message;
+        message << ", n = " << n << ", mu = " << mu_dbl 
+          << ", phi = " << phi_dbl;
+
         EXPECT_NEAR(gradients[0], complex_step_dmu,
                     std::max(1e-10, fabs(gradients[0]) * 1e-5))
-            << "grad_mu, n = " << n << ", mu = " << mu_dbl
-            << ", phi = " << phi_dbl;
-        EXPECT_NEAR(gradients[1], complex_step_dphi,
-                    std::max(1e-10, fabs(gradients[1]) * 1e-5))
-            << "grad_phi, n = " << n << ", mu = " << mu_dbl
-            << ", phi = " << phi_dbl;
+            << "grad_mu" << message.str();
+
+        double tolerance_phi;
+        if(phi < phi_cutoff || n < 100000) {
+          tolerance_phi = std::max(1e-10, fabs(gradients[1]) * 1e-5);
+        } else {
+          tolerance_phi = std::max(1e-8, fabs(gradients[1]) * 1e-5);
+        }
+        EXPECT_NEAR(gradients[1], complex_step_dphi, tolerance_phi)                    
+            << "grad_phi" << message.str();
       }
     }
   }
 }
 
-TEST(ProbDistributionsNegativeBinomial2, proptoAtPoissonCutoff) {
+TEST(ProbDistributionsNegBinomial2, proptoAtPoissonCutoff) {
   using stan::math::internal::neg_binomial_2_phi_cutoff;
   using stan::math::neg_binomial_2_lpmf;
   using stan::math::var;
@@ -604,7 +613,7 @@ TEST(ProbDistributionsNegativeBinomial2, proptoAtPoissonCutoff) {
   EXPECT_NEAR(value_of(value_before_cutoff), value_of(value_after_cutoff), 1);
 }
 
-TEST(ProbDistributionsNegBinomial, derivativesAtCutoff) {
+TEST(ProbDistributionsNegBinomial2, derivativesAtCutoff) {
   double phi_cutoff = stan::math::internal::neg_binomial_2_phi_cutoff;
   using stan::math::is_nan;
   using stan::math::var;

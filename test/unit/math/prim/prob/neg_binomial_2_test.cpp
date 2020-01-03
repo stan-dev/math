@@ -30,11 +30,11 @@ class NegativeBinomial2TestRig : public VectorIntRNGTestRig {
   }
 };
 
-TEST(ProbDistributionsNegativeBinomial2, errorCheck) {
+TEST(ProbDistributionsNegBinomial2, errorCheck) {
   check_dist_throws_all_types(NegativeBinomial2TestRig());
 }
 
-TEST(ProbDistributionsNegativeBinomial2, distributionCheck) {
+TEST(ProbDistributionsNegBinomial2, distributionCheck) {
   check_counts_real_real(NegativeBinomial2TestRig());
 }
 
@@ -201,7 +201,7 @@ TEST(ProbDistributionsNegBinomial2, chiSquareGoodnessFitTest3) {
   EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
 }
 
-TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest4) {
+TEST(ProbDistributionsNegBinomial2, chiSquareGoodnessFitTest4) {
   boost::random::mt19937 rng;
   int N = 1000;
   int K = stan::math::round(2 * std::pow(N, 0.4));
@@ -238,7 +238,7 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest4) {
   EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
 }
 
-TEST(ProbDistributionsNegBinomial, extreme_values) {
+TEST(ProbDistributionsNegBinomial2, extreme_values) {
   std::vector<unsigned int> n_to_test = {1, 5, 100, 12985, 1968422};
   std::vector<double> mu_to_test = {1e-5, 0.1, 8, 713, 28311, 19850054};
   double phi_cutoff = stan::math::internal::neg_binomial_2_phi_cutoff;
@@ -260,7 +260,7 @@ TEST(ProbDistributionsNegBinomial, extreme_values) {
   }
 }
 
-TEST(ProbDistributionsNegativeBinomial2, poissonCutoff) {
+TEST(ProbDistributionsNegBinomial2, poissonCutoff) {
   double phi_cutoff = stan::math::internal::neg_binomial_2_phi_cutoff;
   std::vector<double> mu_to_test
       = {2.345e-5, 0.2, 13, 150, 1621, 18432, 73582345};
@@ -282,7 +282,7 @@ TEST(ProbDistributionsNegativeBinomial2, poissonCutoff) {
   }
 }
 
-TEST(ProbDistributionsNegativeBinomial2, vectorAroundCutoff) {
+TEST(ProbDistributionsNegBinomial2, vectorAroundCutoff) {
   int y = 10;
   double mu = 9.36;
   std::vector<double> phi;
