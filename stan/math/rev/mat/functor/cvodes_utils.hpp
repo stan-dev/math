@@ -2,7 +2,7 @@
 #define STAN_MATH_REV_MAT_FUNCTOR_CVODES_UTILS_HPP
 
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/prim/mat/err/check_flag_sundials.hpp>
+#include <stan/math/prim/err.hpp>
 #include <cvodes/cvodes.h>
 #include <sstream>
 #include <stdexcept>

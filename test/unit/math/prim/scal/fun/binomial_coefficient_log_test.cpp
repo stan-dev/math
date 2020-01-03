@@ -1,8 +1,7 @@
 #include <stan/math/prim/scal.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
-#include <limits>
 #include <cmath>
+#include <limits>
 
 template <typename T_N, typename T_n>
 void test_binom_coefficient(const T_N& N, const T_n& n) {
@@ -35,10 +34,7 @@ TEST(MathFunctions, binomial_coefficient_log) {
 TEST(MathFunctions, binomial_coefficient_log_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::binomial_coefficient_log(2.0, nan));
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::binomial_coefficient_log(nan, 2.0));
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::binomial_coefficient_log(nan, nan));
+  EXPECT_TRUE(std::isnan(stan::math::binomial_coefficient_log(2.0, nan)));
+  EXPECT_TRUE(std::isnan(stan::math::binomial_coefficient_log(nan, 2.0)));
+  EXPECT_TRUE(std::isnan(stan::math::binomial_coefficient_log(nan, nan)));
 }

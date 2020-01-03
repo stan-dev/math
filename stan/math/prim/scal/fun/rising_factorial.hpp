@@ -2,11 +2,9 @@
 #define STAN_MATH_PRIM_SCAL_FUN_RISING_FACTORIAL_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <boost/math/special_functions/factorials.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/boost_policy.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
-#include <limits>
+#include <boost/math/special_functions/factorials.hpp>
 
 namespace stan {
 namespace math {
@@ -68,6 +66,7 @@ inline return_type_t<T> rising_factorial(const T& x, int n) {
   check_nonnegative(function, "second argument", n);
   return boost::math::rising_factorial(x, n, boost_policy_t());
 }
+
 }  // namespace math
 }  // namespace stan
 #endif

@@ -1,10 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_CHOLESKY_FACTOR_CONSTRAIN_HPP
 #define STAN_MATH_PRIM_MAT_FUN_CHOLESKY_FACTOR_CONSTRAIN_HPP
 
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/sum.hpp>
-#include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
 #include <cmath>
 #include <stdexcept>
 #include <vector>

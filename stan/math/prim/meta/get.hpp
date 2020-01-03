@@ -40,7 +40,7 @@ inline T get(const std::vector<T>& x, size_t n) {
 /** \ingroup type_trait
  * Returns the n-th element of the provided Eigen matrix.
  *
- * @param x input \c Eigen \c Matrix or expression
+ * @param m input \c Eigen \c Matrix or expression
  * @param n index of the element to return
  * @return n-th element of the \c Eigen \c Matrix or expression
  */

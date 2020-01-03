@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_MAX_HPP
 #define STAN_MATH_PRIM_MAT_FUN_MAX_HPP
 
-#include <stan/math/prim/arr/err/check_nonzero_size.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <algorithm>
-#include <limits>
 #include <vector>
 
 namespace stan {
@@ -36,7 +36,7 @@ inline int max(const std::vector<int>& x) {
 template <typename T>
 inline T max(const std::vector<T>& x) {
   if (x.size() == 0) {
-    return -std::numeric_limits<T>::infinity();
+    return NEGATIVE_INFTY;
   }
   Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, 1>> m(&x[0], x.size());
   return m.maxCoeff();
@@ -57,7 +57,7 @@ inline T max(const std::vector<T>& x) {
 template <typename T, int R, int C>
 inline T max(const Eigen::Matrix<T, R, C>& m) {
   if (m.size() == 0) {
-    return -std::numeric_limits<double>::infinity();
+    return NEGATIVE_INFTY;
   }
   return m.maxCoeff();
 }

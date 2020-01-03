@@ -3,9 +3,9 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/scal/fun/round.hpp>
-#include <limits>
 
 namespace stan {
 namespace math {
@@ -22,9 +22,7 @@ namespace math {
  */
 template <typename T>
 inline fvar<T> round(const fvar<T>& x) {
-  return fvar<T>(round(x.val_), is_nan(x.val_)
-                                    ? std::numeric_limits<double>::quiet_NaN()
-                                    : 0.0);
+  return fvar<T>(round(x.val_), is_nan(x.val_) ? NOT_A_NUMBER : 0.0);
 }
 
 }  // namespace math

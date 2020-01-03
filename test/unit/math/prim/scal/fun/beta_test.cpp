@@ -1,5 +1,6 @@
 #include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
+#include <cmath>
 
 TEST(MathFunctions, beta) {
   using stan::math::beta;
@@ -13,9 +14,9 @@ TEST(MathFunctions, beta_nan) {
   using stan::math::NOT_A_NUMBER;
   using stan::math::beta;
 
-  EXPECT_PRED1(boost::math::isnan<double>, beta(NOT_A_NUMBER, 2.16));
-  EXPECT_PRED1(boost::math::isnan<double>, beta(1.65, NOT_A_NUMBER));
+  EXPECT_TRUE(std::isnan(beta(NOT_A_NUMBER, 2.16)));
+  EXPECT_TRUE(std::isnan(beta(1.65, NOT_A_NUMBER)));
 
-  EXPECT_PRED1(boost::math::isnan<double>, beta(INFTY, 2.16));
-  EXPECT_PRED1(boost::math::isnan<double>, beta(1.65, INFTY));
+  EXPECT_TRUE(std::isnan(beta(INFTY, 2.16)));
+  EXPECT_TRUE(std::isnan(beta(1.65, INFTY)));
 }

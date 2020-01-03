@@ -17,14 +17,14 @@
 #include <stan/math/prim/meta/index_type.hpp>
 #include <stan/math/prim/meta/index_apply.hpp>
 #include <stan/math/prim/meta/is_constant.hpp>
+#include <stan/math/prim/meta/is_container.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/is_fvar.hpp>
+#include <stan/math/prim/meta/is_string_convertible.hpp>
 #include <stan/math/prim/meta/is_var.hpp>
 #include <stan/math/prim/meta/is_var_or_arithmetic.hpp>
 #include <stan/math/prim/meta/is_vector.hpp>
 #include <stan/math/prim/meta/is_vector_like.hpp>
-#include <stan/math/prim/meta/length.hpp>
-#include <stan/math/prim/meta/length_mvt.hpp>
 #include <stan/math/prim/meta/likely.hpp>
 #include <stan/math/prim/meta/max_size.hpp>
 #include <stan/math/prim/meta/max_size_mvt.hpp>
@@ -39,9 +39,12 @@
 #include <stan/math/prim/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/meta/scalar_type.hpp>
 #include <stan/math/prim/meta/scalar_type_pre.hpp>
+#include <stan/math/prim/meta/size.hpp>
+#include <stan/math/prim/meta/size_mvt.hpp>
 #include <stan/math/prim/meta/seq_view.hpp>
 #include <stan/math/prim/meta/value_type.hpp>
 #include <stan/math/prim/meta/vector_seq_view.hpp>
+#include <stan/math/prim/meta/void_t.hpp>
 #include <stan/math/prim/meta/StdVectorBuilder.hpp>
 #include <stan/math/prim/meta/VectorBuilder.hpp>
 

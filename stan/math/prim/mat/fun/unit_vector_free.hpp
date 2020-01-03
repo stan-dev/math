@@ -2,8 +2,8 @@
 #define STAN_MATH_PRIM_MAT_FUN_UNIT_VECTOR_FREE_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/err/check_unit_vector.hpp>
 #include <cmath>
 
 namespace stan {
