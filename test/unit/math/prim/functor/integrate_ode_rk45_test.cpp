@@ -1,8 +1,8 @@
 #include <stan/math/prim/arr.hpp>
 #include <gtest/gtest.h>
 #include <boost/numeric/odeint.hpp>
-#include <test/unit/math/prim/arr/functor/harmonic_oscillator.hpp>
-#include <test/unit/math/prim/arr/functor/lorenz.hpp>
+#include <test/unit/math/prim/functor/harmonic_oscillator.hpp>
+#include <test/unit/math/prim/functor/lorenz.hpp>
 #include <test/unit/util.hpp>
 #include <iostream>
 #include <sstream>

@@ -1,8 +1,8 @@
 // mat is needed to get operands_and_partials working with
 // std::vector<var> edges needed in coupled_ode_observer
 #include <stan/math/rev/mat.hpp>
-#include <test/unit/math/prim/arr/functor/harmonic_oscillator.hpp>
-#include <test/unit/math/prim/arr/functor/mock_ode_functor.hpp>
+#include <test/unit/math/prim/functor/harmonic_oscillator.hpp>
+#include <test/unit/math/prim/functor/mock_ode_functor.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>

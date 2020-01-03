@@ -1,7 +1,7 @@
 #include <stan/math/rev/mat.hpp>
 #include <boost/numeric/odeint.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/prim/arr/functor/harmonic_oscillator.hpp>
+#include <test/unit/math/prim/functor/harmonic_oscillator.hpp>
 #include <test/unit/util.hpp>
 #include <iostream>
 #include <sstream>

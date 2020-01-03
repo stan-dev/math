@@ -6,8 +6,8 @@
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
 
-#include <test/unit/math/prim/mat/functor/hard_work.hpp>
-#include <test/unit/math/prim/mat/functor/faulty_functor.hpp>
+#include <test/unit/math/prim/functor/hard_work.hpp>
+#include <test/unit/math/prim/functor/faulty_functor.hpp>
 
 #include <iostream>
 #include <vector>
