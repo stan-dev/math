@@ -39,8 +39,7 @@ struct TestValue {
 // alphas= {76*10^-7,811*10^-3,21*10^-1,2,621,  856,34251};
 // betas=  {25*10^-7,31*10^-3,234*10^-2,368, 94256};
 // ys = {10^-7,10^-3,3,961,64587};
-//  WriteString[out, "std::array<TestValue, ",
-//         Length[alphas]*Length[betas]*Length[ys], "> testValues = {"];
+//  WriteString[out, "std::vector<TestValue> testValues = {"];
 //    Block[{$MaxPrecision = 80, $MinPrecision = 40}, {
 //      For[i = 1, i <= Length[alphas], i++, {
 //        For[j = 1, j <= Length[betas], j++, {
@@ -62,7 +61,7 @@ struct TestValue {
 //  WriteString[out,"};"];
 //  Close[out];
 //  FilePrint[%]
-std::array<TestValue, 175> testValues = {
+std::vector<TestValue> testValues = {
     TestValue(1.e-7, 7.6e-6, 2.5e-6, -20.66923780946585, 2.39999924e8,
               131582.7434474094, -9.99999696e6),
     TestValue(0.001, 7.6e-6, 2.5e-6, -4.882148180028864, -997.5076,

@@ -197,11 +197,11 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest3) {
 }
 
 TEST(ProbDistributionsNegBinomial, extreme_values) {
-  std::array<unsigned int, 5> n_to_test = {1, 5, 100, 12985, 1968422};
-  std::array<double, 6> beta_to_test = {1e-5, 0.1, 8, 713, 28311, 19850054};
+  std::vector<int> n_to_test = {1, 5, 100, 12985, 1968422};
+  std::vector<double> beta_to_test = {1e-5, 0.1, 8, 713, 28311, 19850054};
   double alpha_cutoff = stan::math::internal::neg_binomial_alpha_cutoff;
   for (double beta : beta_to_test) {
-    for (unsigned int n : n_to_test) {
+    for (int n : n_to_test) {
       // Test just before cutoff
       double logp
           = stan::math::neg_binomial_lpmf<false>(n, alpha_cutoff - 1e-8, beta);
@@ -209,9 +209,7 @@ TEST(ProbDistributionsNegBinomial, extreme_values) {
                          << ", beta = " << beta;
 
       // Test across a range of alpha
-      double alpha = 1e12;
-      for (int i = 0; i < 10; ++i) {
-        alpha *= 10;
+      for (double alpha = 1e12; alpha < 1e22; alpha *= 10) {
         double logp = stan::math::neg_binomial_lpmf<false>(n, alpha, beta);
         EXPECT_LT(logp, 0) << "n = " << n << ", alpha = " << alpha
                            << ", beta = " << beta;
@@ -222,12 +220,12 @@ TEST(ProbDistributionsNegBinomial, extreme_values) {
 
 TEST(ProbDistributionsNegBinomial, poissonCutoff) {
   double alpha_cutoff = stan::math::internal::neg_binomial_alpha_cutoff;
-  std::array<double, 7> beta_to_test
+  std::vector<double> beta_to_test
       = {2.345e-5, 0.2, 13, 150, 1621, 18432, 73582345};
-  std::array<unsigned int, 8> n_to_test
+  std::vector<int> n_to_test
       = {0, 3, 16, 24, 181, 2132, 121358, 865422242};
   for (double beta : beta_to_test) {
-    for (unsigned int n : n_to_test) {
+    for (int n : n_to_test) {
       double before_cutoff
           = stan::math::neg_binomial_lpmf(n, alpha_cutoff - 1e-8, beta);
       double after_cutoff

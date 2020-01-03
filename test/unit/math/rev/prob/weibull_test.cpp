@@ -42,8 +42,7 @@ constexpr double infinity = std::numeric_limits<double>::infinity();
 // alphas= {3*10^-7,22*10^-3,4*10^-1,7,21, 6334, 92345};
 // sigmas=  {2*10^-7,1*10^-3,82*10^-2,22, 32145};
 // ys = {10^-7,2*10^-3,8,105,32879};
-//  WriteString[out, "std::array<TestValue, ",
-//        Length[alphas]*Length[sigmas]*Length[ys], "> testValues = {"];
+//  WriteString[out, "std::vector<TestValue> testValues = {"];
 //    Block[{$MaxPrecision = 80, $MinPrecision = 40}, {
 //      For[i = 1, i <= Length[alphas], i++, {
 //        For[j = 1, j <= Length[sigmas], j++, {
@@ -66,7 +65,7 @@ constexpr double infinity = std::numeric_limits<double>::infinity();
 //  Close[out];
 //  FilePrint[%]
 
-std::array<TestValue, 175> testValues = {
+std::vector<TestValue> testValues = {
     TestValue(1.e-7, 3.e-7, 2.e-7, 0.09861228866808958, -9.999999999999376e6,
               3.333333333333189e6, -3.1191619886961064e-7),
     TestValue(0.002, 3.e-7, 2.e-7, -9.804875263871836, -500.00000000041445,
