@@ -61,6 +61,10 @@ class VectorIntRNGTestRig : public VectorRNGTestRig {
                       std::vector<double> bad_p1, std::vector<int> bad_p1_int)
       : VectorIntRNGTestRig(N, M, test_points, good_p1, good_p1_int, bad_p1,
                             bad_p1_int, {}, {}, {}, {}, {}, {}, {}, {}) {}
+
+  VectorIntRNGTestRig(int N, int M, std::vector<int> test_points)
+      : VectorIntRNGTestRig(N, M, test_points, {}, {}, {}, {}, {}, {}, {}, {},
+                            {}, {}, {}, {}) {}
 };
 
 #endif

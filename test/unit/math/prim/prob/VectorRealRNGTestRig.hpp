@@ -10,7 +10,7 @@
  *
  * A test rig that inherits from VectorRealRNGTestRig must implement the
  * function "generate_quantiles" on top of the requirements listed in the docs
- * for VectorRngTestRig.
+ * for VectorRNGTestRig.
  *
  * The generate_quantiles callable must have the signature:
  *  std::vector<double> generate_samples(double p1, double p2, double p3)
@@ -59,6 +59,10 @@ class VectorRealRNGTestRig : public VectorRNGTestRig {
                        std::vector<int> bad_p1_int)
       : VectorRNGTestRig(N, M, good_p1, good_p1_int, bad_p1, bad_p1_int, {}, {},
                          {}, {}, {}, {}, {}, {}) {}
+
+  VectorRealRNGTestRig(int N, int M)
+      : VectorRNGTestRig(N, M, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}) {
+  }
 };
 
 #endif

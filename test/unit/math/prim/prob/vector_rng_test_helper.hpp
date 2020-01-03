@@ -135,8 +135,8 @@ void resize_if_vector(int& v, int N) {}
  * combinations with an invalid (bad) parameter, generate_samples should throw
  * domain_errors.
  *
- * If rig.good_p2_ or rig.good_p3_ are empty, then it is assumed that those
- * parameters are unused and will not be tested.
+ * If rig.good_p1_, rig.good_p2_ or rig.good_p3_ are empty, then it is assumed
+ * that those parameters are unused and will not be tested.
  *
  * rig.generate_samples will also be passed various other guaranteed invalid
  * values like positive infinity, negative infinity, and NaNs (these should also
@@ -165,6 +165,7 @@ struct check_dist_throws {
     using T_scalar_param2 = typename stan::scalar_type<T_param2>::type;
     using T_scalar_param3 = typename stan::scalar_type<T_param3>::type;
 
+    bool p1_is_used = rig.p1_is_used();
     bool p2_is_used = rig.p2_is_used();
     bool p3_is_used = rig.p3_is_used();
 
@@ -199,11 +200,13 @@ struct check_dist_throws {
     }
 
     // Now try putting incompatible values in first parameter
-    for (auto bad_p1_value : bad_p1) {
-      assign_parameter_values(p1, {bad_p1_value});
-      assign_parameter_values(p2, good_p2);
-      assign_parameter_values(p3, good_p3);
-      EXPECT_THROW(rig.generate_samples(p1, p2, p3, rng), std::domain_error);
+    if (p1_is_used) {
+      for (auto bad_p1_value : bad_p1) {
+        assign_parameter_values(p1, {bad_p1_value});
+        assign_parameter_values(p2, good_p2);
+        assign_parameter_values(p3, good_p3);
+        EXPECT_THROW(rig.generate_samples(p1, p2, p3, rng), std::domain_error);
+      }
     }
 
     // Now try putting incompatible values in second parameter
@@ -376,10 +379,11 @@ struct check_quantiles {
         p3,
         rig.template get_good_p3<typename stan::scalar_type<T_param3>::type>());
 
+    bool p1_is_used = rig.p1_is_used();
     bool p2_is_used = rig.p2_is_used();
     bool p3_is_used = rig.p3_is_used();
 
-    int M = std::max({stan::math::size(p1),
+    int M = std::max({(p1_is_used) ? stan::math::size(p1) : 1,
                       (p2_is_used) ? stan::math::size(p2) : 1,
                       (p3_is_used) ? stan::math::size(p3) : 1});
 
