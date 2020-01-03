@@ -23,7 +23,6 @@ inline return_type_t<T_y> std_normal_lcdf(const T_y& y) {
   using std::fabs;
   using std::log;
   using std::pow;
-  using std::sqrt;
 
   static const char* function = "std_normal_lcdf";
 
