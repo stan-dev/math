@@ -44,24 +44,24 @@ inline return_type_t<T_y> std_normal_cdf(const T_y& y) {
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return scaled_y = y_dbl * INV_SQRT_TWO;
-    T_partials_return cdf_;
+    T_partials_return cdf_n;
     if (y_dbl < -37.5) {
-      cdf_ = 0.0;
+      cdf_n = 0.0;
     } else if (y_dbl < -5.0) {
-      cdf_ = 0.5 * erfc(-scaled_y);
+      cdf_n = 0.5 * erfc(-scaled_y);
     } else if (y_dbl > 8.25) {
-      cdf_ = 1;
+      cdf_n = 1;
     } else {
-      cdf_ = 0.5 * (1.0 + erf(scaled_y));
+      cdf_n = 0.5 * (1.0 + erf(scaled_y));
     }
 
-    cdf *= cdf_;
+    cdf *= cdf_n;
 
     if (!is_constant_all<T_y>::value) {
       const T_partials_return rep_deriv
           = (y_dbl < -37.5) ? 0.0
                             : SQRT_TWO_OVER_SQRT_PI * 0.5
-                                  * exp(-scaled_y * scaled_y) / cdf_;
+                                  * exp(-scaled_y * scaled_y) / cdf_n;
       if (!is_constant_all<T_y>::value) {
         ops_partials.edge1_.partials_[n] += rep_deriv;
       }
