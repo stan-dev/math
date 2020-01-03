@@ -1,7 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
 #include <limits>
 
-TEST(mathMixScalFun, lcdf_derivatives) {
+TEST(mathMixScalFun, std_normal_lcdf_derivatives) {
   auto f = [](const auto& y) { return stan::math::std_normal_lcdf(y); };
 
   stan::test::expect_ad(f, -50.0);
