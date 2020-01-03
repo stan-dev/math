@@ -222,7 +222,7 @@ TEST(ProbDistributionsNegBinomial, derivativesAtCutoff) {
       std::vector<double> gradients_before;
       value_before.grad(x_before, gradients_before);
 
-      var alpha_after(alpha_cutoff - 1e-8);
+      var alpha_after(alpha_cutoff + 1e-8);
       var beta_after(beta);
       var value_after = neg_binomial_lpmf(n, alpha_after, beta_after);
       std::vector<var> x_after;
