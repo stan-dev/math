@@ -523,8 +523,8 @@ TEST(ProbDistributionsNegBinomial2, derivativesComplexStep) {
   using stan::math::neg_binomial_2_log;
   using stan::math::var;
 
-  std::vector<unsigned int> n_to_test = 
-    {0, 7, 100, 835, 14238, 385000, 1000000};
+  std::vector<unsigned int> n_to_test
+      = {0, 7, 100, 835, 14238, 385000, 1000000};
   std::vector<double> mu_to_test = {0.8, 8, 24, 271, 2586, 33294};
 
   auto nb2_log_for_test = [](int n, const std::complex<double>& mu,
@@ -578,20 +578,20 @@ TEST(ProbDistributionsNegBinomial2, derivativesComplexStep) {
             = complex_step_derivative(nb2_log_phi, phi_dbl);
 
         std::ostringstream message;
-        message << ", n = " << n << ", mu = " << mu_dbl 
-          << ", phi = " << phi_dbl;
+        message << ", n = " << n << ", mu = " << mu_dbl
+                << ", phi = " << phi_dbl;
 
         EXPECT_NEAR(gradients[0], complex_step_dmu,
                     std::max(1e-10, fabs(gradients[0]) * 1e-5))
             << "grad_mu" << message.str();
 
         double tolerance_phi;
-        if(phi < phi_cutoff || n < 100000) {
+        if (phi < phi_cutoff || n < 100000) {
           tolerance_phi = std::max(1e-10, fabs(gradients[1]) * 1e-5);
         } else {
           tolerance_phi = std::max(1e-8, fabs(gradients[1]) * 1e-5);
         }
-        EXPECT_NEAR(gradients[1], complex_step_dphi, tolerance_phi)                    
+        EXPECT_NEAR(gradients[1], complex_step_dphi, tolerance_phi)
             << "grad_phi" << message.str();
       }
     }
