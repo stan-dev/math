@@ -17,6 +17,11 @@
 namespace stan {
 namespace math {
 
+template <>
+struct child_type<int> {
+  using type = int;
+};
+
 namespace internal {
 
 template <class ReduceFunction, class M, class T, class Arg1, class Arg2>
@@ -27,8 +32,7 @@ struct parallel_reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, var> {
 
   using vmapped_value_t = std::vector<typename child_type<M>::type>;
   using arg1_value_t = std::vector<typename child_type<Arg1>::type>;
-  // using arg2_value_t = std::vector<typename child_type<Arg2>::type>;
-  using arg2_value_t = std::vector<int>;
+  using arg2_value_t = std::vector<typename child_type<Arg2>::type>;
 
   using ops_partials_t
       = operands_and_partials<vmapped_t, std::vector<Arg1>, std::vector<Arg2>>;
@@ -113,18 +117,20 @@ struct parallel_reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, var> {
 
         terms_sum_ += sub_sum_v.val();
 
-        /*
+        /**/
         if (!is_constant_all<M>::value) {
           for (std::size_t i = 0; i != r.size(); ++i)
-            terms_partials_mapped_.edge1_.partials_[r.begin() + i] +=
-        local_sub_slice[i].adj();
+            terms_partials_mapped_.edge1_.partials_[r.begin() + i]
+                += local_sub_slice[i].adj();
         }
-        */
+        /**/
 
+        /*
         if (!is_constant_all<Arg1>::value) {
           for (std::size_t i = 0; i != local_arg1.size(); ++i)
             terms_partials_args_.edge2_.partials_[i] += local_arg1[i].adj();
         }
+        */
 
         /*
         if (!is_constant_all<Arg2>::value) {
@@ -143,11 +149,13 @@ struct parallel_reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, var> {
     void join(const recursive_reducer& child) {
       terms_sum_ += child.terms_sum_;
 
+      /*
       if (!is_constant_all<Arg1>::value) {
         for (std::size_t i = 0; i != arg1_.size(); ++i)
           terms_partials_args_.edge2_.partials_[i]
               += child.terms_partials_args_.edge2_.partials_[i];
       }
+      */
 
       /*
       if (!is_constant_all<Arg2>::value) {
