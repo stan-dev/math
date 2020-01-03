@@ -111,8 +111,8 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
     if (alpha_vec[i] > internal::neg_binomial_alpha_cutoff) {
       // reduces numerically to Poisson
       // The derivatives are obtained via Taylor series at alpha -> Inf
-      // via Mathematica as:      
-      // nb[n_,alpha_,beta_]:= LogGamma[n + alpha] - LogGamma[n + 1] - 
+      // via Mathematica as:
+      // nb[n_,alpha_,beta_]:= LogGamma[n + alpha] - LogGamma[n + 1] -
       //   LogGamma[alpha ] + alpha * Log[beta/ (1 + beta)] - n * Log[1 + beta];
       // nbdalpha[n_,alpha_,beta_]= D[nb[n, alpha, beta],alpha];
       // nbdbeta[n_,alpha_,beta_]= D[nb[n, alpha, beta],beta];
@@ -127,7 +127,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
 
       if (!is_constant_all<T_shape>::value) {
         ops_partials.edge1_.partials_[i]
-            += n_vec[i] / value_of(alpha_vec[i]) + log_beta_m_log1p_beta[i];               
+            += n_vec[i] / value_of(alpha_vec[i]) + log_beta_m_log1p_beta[i];
       }
       if (!is_constant_all<T_inv_scale>::value) {
         ops_partials.edge2_.partials_[i]
