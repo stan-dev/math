@@ -88,10 +88,10 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
       // Phi is large, deferring to Poisson.
       // Copying the code here as just calling
       // poisson_lpmf does not preserve propto logic correctly.
-      // Note that Poisson can be seen as first term of Taylor series for 
+      // Note that Poisson can be seen as first term of Taylor series for
       // phi -> Inf. Similarly, the derivativew wrt. mu and phi can be obtained
       // via the Same Taylor expansions:
-      // 
+      //
       // For mu, the expansions can be obtained in Mathematica via
       // Series[n/mu - (n + phi)/(mu+phi),{phi,Infinity, 1}]
       // Currently ignoring the 2nd order term (mu__[i] - n_vec[i]) / phi__[i]
