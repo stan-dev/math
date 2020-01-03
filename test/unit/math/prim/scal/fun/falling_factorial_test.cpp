@@ -1,6 +1,6 @@
 #include <stan/math/prim/scal.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <cmath>
 #include <limits>
 
 TEST(MathFunctions, falling_factorial) {
@@ -13,5 +13,5 @@ TEST(MathFunctions, falling_factorial) {
   EXPECT_THROW(falling_factorial(1, -4), std::domain_error);
   EXPECT_THROW(falling_factorial(nan, 1), std::domain_error);
   // see comments in test/unit/math/prim/scal/fun/lgamma_test.cpp
-  EXPECT_PRED1(boost::math::isnormal<double>, falling_factorial(1.0E30, 5));
+  EXPECT_TRUE(std::isnormal(falling_factorial(1.0E30, 5)));
 }

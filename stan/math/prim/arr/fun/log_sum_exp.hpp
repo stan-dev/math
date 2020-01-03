@@ -2,9 +2,8 @@
 #define STAN_MATH_PRIM_ARR_FUN_LOG_SUM_EXP_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <cmath>
-#include <cstdlib>
-#include <limits>
 #include <vector>
 
 namespace stan {
@@ -26,8 +25,7 @@ namespace math {
 inline double log_sum_exp(const std::vector<double>& x) {
   using std::exp;
   using std::log;
-  using std::numeric_limits;
-  double max = -numeric_limits<double>::infinity();
+  double max = NEGATIVE_INFTY;
   for (double xx : x) {
     if (xx > max) {
       max = xx;
@@ -36,7 +34,7 @@ inline double log_sum_exp(const std::vector<double>& x) {
 
   double sum = 0.0;
   for (size_t ii = 0; ii < x.size(); ii++) {
-    if (x[ii] != -numeric_limits<double>::infinity()) {
+    if (x[ii] != NEGATIVE_INFTY) {
       sum += exp(x[ii] - max);
     }
   }

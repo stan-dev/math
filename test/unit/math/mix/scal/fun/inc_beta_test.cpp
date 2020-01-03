@@ -19,7 +19,7 @@ TEST(mathMixScalFun, inc_beta) {
 
   // test all nan instantiations
   double nan = std::numeric_limits<double>::quiet_NaN();
-  // stan::test::expect_ad(f, 0.6, 0.3, nan);
+  stan::test::expect_ad(f, 0.6, 0.3, nan);
   stan::test::expect_ad(f, 0.6, nan, 0.5);
   stan::test::expect_ad(f, 0.6, nan, nan);
   stan::test::expect_ad(f, nan, 0.3, 0.5);

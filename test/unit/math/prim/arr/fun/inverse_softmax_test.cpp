@@ -1,6 +1,6 @@
 #include <stan/math/prim/arr.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <cmath>
 #include <limits>
 #include <vector>
 
@@ -33,7 +33,6 @@ TEST(MathFunctions, inverse_softmax_nan) {
   simplex[1] = nan;
 
   stan::math::inverse_softmax(simplex, y);
-  EXPECT_PRED1(boost::math::isnan<double>, y[0]);
-
-  EXPECT_PRED1(boost::math::isnan<double>, y[1]);
+  EXPECT_TRUE(std::isnan(y[0]));
+  EXPECT_TRUE(std::isnan(y[1]));
 }

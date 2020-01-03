@@ -78,11 +78,11 @@ return_type_t<T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
   check_consistent_size(function, "Weight vector", beta, M);
   if (is_vector<T_precision>::value) {
     check_size_match(function, "Rows of ", "x_cl", N, "size of ", "phi",
-                     length(phi));
+                     size(phi));
   }
   if (is_vector<T_alpha>::value) {
     check_size_match(function, "Rows of ", "x_cl", N, "size of ", "alpha",
-                     length(alpha));
+                     size(alpha));
   }
   check_positive_finite(function, "Precision parameter", phi);
 
@@ -138,7 +138,7 @@ return_type_t<T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
         cl::NDRange(local_size * wgs), cl::NDRange(local_size), logp_cl,
         theta_derivative_cl, theta_derivative_sum_cl, phi_derivative_cl, y_cl,
         x_cl, alpha_cl, beta_cl, phi_cl, N, M, y_cl.size() != 1,
-        length(alpha) != 1, length(phi) != 1, need_theta_derivative,
+        size(alpha) != 1, size(phi) != 1, need_theta_derivative,
         need_theta_derivative_sum, need_phi_derivative, need_phi_derivative_sum,
         need_logp1, need_logp2, need_logp3, need_logp4, need_logp5);
   } catch (const cl::Error& e) {

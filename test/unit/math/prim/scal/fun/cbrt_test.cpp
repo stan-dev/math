@@ -1,9 +1,8 @@
 #include <stan/math/prim/scal.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <cmath>
 #include <limits>
 #include <stdexcept>
-#include <cmath>
 
 TEST(MathFunctions, cbrt) {
   using stan::math::cbrt;
@@ -22,6 +21,6 @@ TEST(MathFunctions, cbrt_inf_return) {
 
 TEST(MathFunctions, cbrt_nan) {
   using stan::math::cbrt;
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::cbrt(std::numeric_limits<double>::quiet_NaN()));
+  double nan = std::numeric_limits<double>::quiet_NaN();
+  EXPECT_TRUE(std::isnan(stan::math::cbrt(nan)));
 }
