@@ -44,7 +44,7 @@ inline auto exp(const T& x) {
 }
 
 /**
- * Version of exp() that accepts Eigen Matrix ar matrix expressions.
+ * Version of exp() that accepts Eigen Matrix or matrix expressions.
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
  * @return Elementwise application of exponentiation to the argument.

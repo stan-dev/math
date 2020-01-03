@@ -9,7 +9,7 @@ namespace stan {
 
 /**
  * Determines plain (non expression) type associated with \c T. For non \c Eigen
- * types it is the input type.
+ * types it is the decayed input type.
  * @tparam T type to determine plain type of
  */
 template <typename T, typename Enable = void>
@@ -21,9 +21,13 @@ template <typename T>
 using plain_type_t = typename plain_type<T>::type;
 
 /**
- * Determines return type of calling .eval() on eigen expression. This is the
- * same as \c plain_type, except if input is already a plain type. In such case
- * eval return type is a const reference to plain type.
+ * Determines return type of calling \c .eval() on Eigen expression.
+ *
+ * If input type \c T is a plain type (\c plain_type_t<T> equals \c
+ * std::decay<T>), than member \c type is defined as <code> const
+ * plain_type_t<T>& </code>. Otherwise member \c type is defined as \c
+ * plain_type_t<T>.
+ *
  * @tparam T type to determine eval return type of
  */
 template <typename T>
