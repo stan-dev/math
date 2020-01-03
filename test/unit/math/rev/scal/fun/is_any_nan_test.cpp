@@ -1,7 +1,7 @@
 #include <stan/math/rev/scal.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/scal/fun/nan_util.hpp>
 #include <test/unit/math/rev/scal/util.hpp>
+#include <test/unit/math/rev/scal/fun/util.hpp>
 #include <limits>
 
 TEST(MathFunctions, is_any_nan_variadic_rev) {

@@ -1,6 +1,6 @@
 #include <stan/math/prim/scal.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <cmath>
 #include <limits>
 
 TEST(MathFunctions, log_rising_factorial) {
@@ -14,6 +14,5 @@ TEST(MathFunctions, log_rising_factorial) {
 TEST(MathFunctions, log_rising_factorial_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
 
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::log_rising_factorial(nan, 3));
+  EXPECT_TRUE(std::isnan(stan::math::log_rising_factorial(nan, 3)));
 }
