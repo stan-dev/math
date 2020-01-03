@@ -87,7 +87,21 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
     if (phi__[i] > internal::neg_binomial_2_phi_cutoff) {
       // Phi is large, deferring to Poisson.
       // Copying the code here as just calling
-      // poisson_lpmf does not preserve propto logic correctly
+      // poisson_lpmf does not preserve propto logic correctly.
+      // Note that Poisson can be seen as first term of Taylor series for 
+      // phi -> Inf. Similarly, the derivativew wrt. mu and phi can be obtained
+      // via the Same Taylor expansions:
+      // 
+      // For mu, the expansions can be obtained in Mathematica via
+      // Series[n/mu - (n + phi)/(mu+phi),{phi,Infinity, 1}]
+      // Currently ignoring the 2nd order term (mu__[i] - n_vec[i]) / phi__[i]
+      //
+      // The derivative wrt. phi = 0 + O(1/neg_binomial_2_phi_cutoff^2),
+      // But the quadratic term is big enough to warrant inclusion here
+      // (can be around 1e-6 at cutoff).
+      // Expansion obtained in Mathematica via
+      // Series[1 - (n + phi) / (mu + phi) + Log[phi] - Log[mu + phi] -
+      //  PolyGamma[phi] + PolyGamma[n + phi],{phi,Infinity, 2}]
       if (include_summand<propto>::value) {
         logp -= lgamma(n_vec[i] + 1.0);
       }
@@ -96,36 +110,22 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
       }
 
       if (!is_constant_all<T_location>::value) {
-        // This is the Taylor series of the full derivative for phi -> Inf
-        // Obtained in Mathematica via
-        // Series[n/mu - (n + phi)/(mu+phi),{phi,Infinity, 1}]
-        // Currently ignoring the term (mu__[i] - n_vec[i]) / phi__[i]
         ops_partials.edge1_.partials_[i] += n_vec[i] / mu__[i] - 1;
       }
-
-      // The derivative wrt. phi = 0 + O(1/neg_binomial_2_phi_cutoff^2),
-      // But the quadratic term is big enough to warrant inclusion here
-      // (can be around 1e-6 at cutoff).
-      // Expansion obtained in Mathematica via
-      // Series[1 - (n + phi) / (mu + phi) + Log[phi] - Log[mu + phi] -
-      //  PolyGamma[phi] + PolyGamma[n + phi],{phi,Infinity, 2}]
       if (!is_constant_all<T_precision>::value) {
         ops_partials.edge2_.partials_[i]
             += (mu__[i] * (-mu__[i] + 2 * n_vec[i]) + n_vec[i] * (1 - n_vec[i]))
                / (2 * square(phi__[i]));
       }
-
     } else {
       if (include_summand<propto, T_precision>::value) {
         logp += binomial_coefficient_log(n_plus_phi[i] - 1, n_vec[i]);
       }
-
-      logp += phi__[i] * (log_phi[i] - log_mu_plus_phi[i])
-              - (n_vec[i]) * log_mu_plus_phi[i];
-
       if (include_summand<propto, T_location>::value) {
         logp += multiply_log(n_vec[i], mu__[i]);
       }
+      logp += phi__[i] * (log_phi[i] - log_mu_plus_phi[i])
+              - n_vec[i] * log_mu_plus_phi[i];
 
       if (!is_constant_all<T_location>::value) {
         ops_partials.edge1_.partials_[i]

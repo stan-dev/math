@@ -239,8 +239,8 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest4) {
 }
 
 TEST(ProbDistributionsNegBinomial, extreme_values) {
-  std::array<unsigned int, 5> n_to_test = {1, 5, 100, 12985, 1968422};
-  std::array<double, 6> mu_to_test = {1e-5, 0.1, 8, 713, 28311, 19850054};
+  std::vector<unsigned int> n_to_test = {1, 5, 100, 12985, 1968422};
+  std::vector<double> mu_to_test = {1e-5, 0.1, 8, 713, 28311, 19850054};
   double phi_cutoff = stan::math::internal::neg_binomial_2_phi_cutoff;
   for (double mu : mu_to_test) {
     for (unsigned int n : n_to_test) {
@@ -251,9 +251,7 @@ TEST(ProbDistributionsNegBinomial, extreme_values) {
                          << ", phi = " << (phi_cutoff - 1e-8);
 
       // Test across a range of phi
-      double phi = 1e12;
-      for (int i = 0; i < 10; ++i) {
-        phi *= 10;
+      for (double phi = 1e12; phi < 1e22; phi *= 10) {
         double logp = stan::math::neg_binomial_2_log<false>(n, mu, phi);
         EXPECT_LT(logp, 0) << "n = " << n << ", mu = " << mu
                            << ", phi = " << phi;
@@ -264,9 +262,9 @@ TEST(ProbDistributionsNegBinomial, extreme_values) {
 
 TEST(ProbDistributionsNegativeBinomial2, poissonCutoff) {
   double phi_cutoff = stan::math::internal::neg_binomial_2_phi_cutoff;
-  std::array<double, 7> mu_to_test
+  std::vector<double> mu_to_test
       = {2.345e-5, 0.2, 13, 150, 1621, 18432, 73582345};
-  std::array<unsigned int, 8> n_to_test
+  std::vector<unsigned int> n_to_test
       = {0, 3, 16, 24, 181, 2132, 121358, 865422242};
   for (double mu : mu_to_test) {
     for (unsigned int n : n_to_test) {

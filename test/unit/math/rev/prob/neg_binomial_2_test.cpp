@@ -36,8 +36,7 @@ struct TestValue {
 // mus= {256*10^-7,314*10^-3,15*10^-1,8,180,  1123,10586};
 // phis=  {4*10^-4,65*10^-3,442*10^-2,800, 15324,150000};
 // ns = {0,6,14,1525,10233};
-//  WriteString[out, "std::array<TestValue, ",
-//      Length[mus]*Length[phis]*Length[ns], "> testValues = {"];
+//  WriteString[out, "std::vector<TestValue> testValues = {"];
 //    Block[{$MaxPrecision = 80, $MinPrecision = 40}, {
 //      For[i = 1, i <= Length[mus], i++, {
 //        For[j = 1, j <= Length[phis], j++, {
@@ -57,7 +56,7 @@ struct TestValue {
 //  WriteString[out,"};"];
 //  Close[out];
 //  FilePrint[%]
-std::array<TestValue, 210> testValues = {
+std::vector<TestValue> testValues = {
     TestValue(0, 0.0000256, 0.0004, -0.000024814156367780882,
               -0.9398496240601504, -0.0018850149796021398),
     TestValue(0, 0.0000256, 0.065, -0.000025594960092480967,
@@ -524,8 +523,8 @@ TEST(ProbDistributionsNegBinomial, derivativesComplexStep) {
   using stan::math::neg_binomial_2_log;
   using stan::math::var;
 
-  std::array<unsigned int, 5> n_to_test = {0, 7, 100, 835, 14238};
-  std::array<double, 6> mu_to_test = {0.8, 8, 24, 271, 2586, 33294};
+  std::vector<unsigned int> n_to_test = {0, 7, 100, 835, 14238};
+  std::vector<double> mu_to_test = {0.8, 8, 24, 271, 2586, 33294};
 
   auto nb2_log_for_test = [](int n, const std::complex<double>& mu,
                              const std::complex<double>& phi) {
@@ -546,9 +545,7 @@ TEST(ProbDistributionsNegBinomial, derivativesComplexStep) {
   double phi_cutoff = stan::math::internal::neg_binomial_2_phi_cutoff;
   for (double mu_dbl : mu_to_test) {
     for (unsigned int n : n_to_test) {
-      double phi_dbl = 1.5;
-
-      for (int k = 0; k < 20; ++k) {
+      for (double phi_dbl = 1.5; phi_dbl < 1e22; phi_dbl *= 10) {
         var mu(mu_dbl);
         var phi(phi_dbl);
         var val = neg_binomial_2_lpmf(n, mu, phi);
@@ -587,8 +584,6 @@ TEST(ProbDistributionsNegBinomial, derivativesComplexStep) {
                     std::max(1e-10, fabs(gradients[1]) * 1e-5))
             << "grad_phi, n = " << n << ", mu = " << mu_dbl
             << ", phi = " << phi_dbl;
-
-        phi_dbl *= 10;
       }
     }
   }
@@ -614,9 +609,9 @@ TEST(ProbDistributionsNegBinomial, derivativesAtCutoff) {
   using stan::math::is_nan;
   using stan::math::var;
 
-  std::array<double, 7> mu_to_test
+  std::vector<double> mu_to_test
       = {9.3e-6, 0.0028252, 4, 11, 8522, 984256, 5036842};
-  std::array<unsigned int, 8> n_to_test
+  std::vector<unsigned int> n_to_test
       = {0, 1, 5, 48, 1158, 224582, 48235842, 20314458};
   for (double mu : mu_to_test) {
     for (unsigned int n : n_to_test) {
