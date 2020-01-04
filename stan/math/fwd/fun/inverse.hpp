@@ -4,10 +4,10 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/multiply.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/fun/to_fvar.hpp>
-#include <stan/math/fwd/fun/multiply.hpp>
 #include <stan/math/prim/mat/fun/inverse.hpp>
+#include <stan/math/fwd/core.hpp>
+#include <stan/math/fwd/fun/multiply.hpp>
+#include <stan/math/fwd/fun/to_fvar.hpp>
 
 namespace stan {
 namespace math {
