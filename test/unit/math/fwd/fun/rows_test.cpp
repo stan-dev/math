@@ -1,4 +1,4 @@
-#include <stan/math/fwd/mat.hpp>
+#include <stan/math/fwd.hpp>
 #include <gtest/gtest.h>
 
 TEST(AgradFwdMatrixRows, fd_vector) {

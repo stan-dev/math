@@ -8,7 +8,7 @@
 
 #include <stan/math/rev/mat.hpp>
 
-#include <stan/math/fwd/mat.hpp>
+#include <stan/math/fwd.hpp>
 
 #include <stan/math/prim/mat.hpp>
 

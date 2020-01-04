@@ -1,6 +1,4 @@
-#include <stan/math/fwd/arr.hpp>
-#include <stan/math/fwd/mat.hpp>
-#include <stan/math/fwd/scal.hpp>
+#include <stan/math/fwd.hpp>
 #include <stan/math/fwd/core.hpp>
 #include <gtest/gtest.h>
 #include <vector>

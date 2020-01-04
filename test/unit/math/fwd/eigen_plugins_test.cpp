@@ -1,4 +1,4 @@
-#include <stan/math/fwd/mat.hpp>
+#include <stan/math/fwd.hpp>
 #include <test/unit/math/prim/mat/fun/expect_matrix_eq.hpp>
 #include <gtest/gtest.h>
 
