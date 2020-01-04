@@ -59,17 +59,17 @@ return_type_t<T_y, T_loc, T_scale> gumbel_cdf(const T_y& y, const T_loc& mu,
     const T_partials_return scaled_diff = (y_dbl - mu_dbl) / beta_dbl;
     const T_partials_return rep_deriv
         = exp(-scaled_diff - exp(-scaled_diff)) / beta_dbl;
-    const T_partials_return cdf_ = exp(-exp(-scaled_diff));
-    cdf *= cdf_;
+    const T_partials_return cdf_n = exp(-exp(-scaled_diff));
+    cdf *= cdf_n;
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] += rep_deriv / cdf_;
+      ops_partials.edge1_.partials_[n] += rep_deriv / cdf_n;
     }
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_[n] -= rep_deriv / cdf_;
+      ops_partials.edge2_.partials_[n] -= rep_deriv / cdf_n;
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_[n] -= rep_deriv * scaled_diff / cdf_;
+      ops_partials.edge3_.partials_[n] -= rep_deriv * scaled_diff / cdf_n;
     }
   }
 
