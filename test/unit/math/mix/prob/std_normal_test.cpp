@@ -23,8 +23,8 @@ TEST(ProbAgradDistributionsStdNormal, derivatives) {
 
   std::vector<double> grad = test_fun(0);
 
-  fvar<double> lp = std_normal_lpdf<false>(0);
-  EXPECT_FLOAT_EQ(grad[2], lp.tangent());
+  fvar<double> lp = std_normal_lpdf<false>(fvar<double>(0));
+  EXPECT_FLOAT_EQ(grad[0], lp.tangent());
 
   fvar<fvar<double>> y(1.0);
   fvar<double> x(1.0, 2.0);
