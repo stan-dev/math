@@ -58,7 +58,7 @@ namespace math {
    * @param[in, out] covariance the evaluated covariance function for the
    *                 latent gaussian variable.
    * @param[in, out] theta a vector to store the mode.
-   * @param[in, out] W_root a vector to store the square root of the 
+   * @param[in, out] W_root a vector to store the square root of the
    *                 diagonal negative Hessian.
    * @param[in, out] L cholesky decomposition of stabilized inverse covariance.
    * @param[in, out] a element in the Newton step
@@ -242,7 +242,7 @@ namespace math {
     int phi_size_;
     /* global parameters. */
     vari** phi_;
-    /* the marginal density of the observation, conditional on the 
+    /* the marginal density of the observation, conditional on the
      * globl parameters. */
     vari** marginal_density_;
     /* An object to store the sensitivities of phi. */
@@ -280,8 +280,8 @@ namespace math {
       // compute derivatives of covariance matrix with respect to phi.
 
       // TEST
-      // auto start = std::chrono::system_clock::now();
-      
+      auto start = std::chrono::system_clock::now();
+
       covariance_sensitivities<K> f(x, delta, delta_int,
                                     covariance_function, msgs);
       Eigen::MatrixXd diff_cov;
@@ -292,9 +292,9 @@ namespace math {
       }
 
       // TEST
-      // auto end = std::chrono::system_clock::now();
-      // std::chrono::duration<double> elapsed_time = end - start;
-      // std::cout << "Covariance differentiation: " << elapsed_time.count() << std::endl;
+      auto end = std::chrono::system_clock::now();
+      std::chrono::duration<double> elapsed_time = end - start;
+      std::cout << "Covariance differentiation: " << elapsed_time.count() << std::endl;
 
       // Now compute the full gradient (using algorithm 5.1 of R & W)
       // CHECK: is there an efficient way to solve / divide a diagonal matrix?
@@ -327,7 +327,7 @@ namespace math {
       }
     }
 
-    void chain() { 
+    void chain() {
       for (int j = 0; j < phi_size_; j++)
         phi_[j]->adj_ += marginal_density_[0]->adj_ * phi_adj_[j];
     }
@@ -354,7 +354,7 @@ namespace math {
    * @tparam K structure type for the covariance object.
    * @param[in] D structure to compute and differentiate the log likelihood.
    *            The object stores the sufficient stats for the observations.
-   * @param[in] K structure to compute the covariance function.        
+   * @param[in] K structure to compute the covariance function.
    * @param[in] phi the global parameter (input for the covariance function).
    * @param[in] x data for the covariance function.
    * @param[in] delta addition real data for covariance function.
@@ -382,8 +382,8 @@ namespace math {
     Eigen::MatrixXd covariance;
 
     // TEST
-    // auto start = std::chrono::system_clock::now();
-    
+    auto start = std::chrono::system_clock::now();
+
     marginal_density_dbl
       = laplace_marginal_density(diff_likelihood,
                                  covariance_function,
@@ -395,10 +395,10 @@ namespace math {
                                  tolerance, max_num_steps);
 
     // TEST
-    // auto end = std::chrono::system_clock::now();
-    // std::chrono::duration<double> elapsed_time = end - start;
-    // std::cout << "Evaluation time: " << elapsed_time.count() << std::endl;
-    
+    auto end = std::chrono::system_clock::now();
+    std::chrono::duration<double> elapsed_time = end - start;
+    std::cout << "Evaluation time: " << elapsed_time.count() << std::endl;
+
     // TEST
     // start = std::chrono::system_clock::now();
 
@@ -413,7 +413,7 @@ namespace math {
                                           msgs);
 
     var marginal_density = var(vi0->marginal_density_[0]);
-    
+
     // TEST
     // end = std::chrono::system_clock::now();
     // elapsed_time = end - start;
@@ -421,8 +421,8 @@ namespace math {
 
     return marginal_density;
   }
-          
-  
+
+
 }  // namespace math
 }  // namespace stan
 
