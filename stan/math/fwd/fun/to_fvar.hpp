@@ -3,6 +3,9 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <vector>
 
 namespace stan {
 namespace math {
@@ -35,19 +38,6 @@ template <typename T>
 inline fvar<T>& to_fvar(fvar<T>& x) {
   return x;
 }
-
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_FWD_ARR_FUN_TO_FVAR_HPP
-#define STAN_MATH_FWD_ARR_FUN_TO_FVAR_HPP
-
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/scal/fun/to_fvar.hpp>
-#include <vector>
-
-namespace stan {
-namespace math {
 
 template <typename T>
 inline std::vector<fvar<T>> to_fvar(const std::vector<T>& v) {
@@ -91,20 +81,6 @@ template <typename T>
 inline std::vector<fvar<T>>& to_fvar(std::vector<fvar<T>>& v) {
   return v;
 }
-
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_FWD_MAT_FUN_TO_FVAR_HPP
-#define STAN_MATH_FWD_MAT_FUN_TO_FVAR_HPP
-
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/scal/fun/to_fvar.hpp>
-
-namespace stan {
-namespace math {
 
 /**
  * Specialization of to_fvar for const matrices of fvars

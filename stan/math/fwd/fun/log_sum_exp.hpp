@@ -3,9 +3,13 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
+#include <stan/math/prim/arr/fun/log_sum_exp.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/mat/fun/log_sum_exp.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/log_sum_exp.hpp>
 #include <cmath>
+#include <vector>
 
 namespace stan {
 namespace math {
@@ -36,20 +40,6 @@ inline fvar<T> log_sum_exp(const fvar<T>& x1, double x2) {
   return fvar<T>(log_sum_exp(x1.val_, x2), x1.d_ / (1 + exp(x2 - x1.val_)));
 }
 
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_FWD_ARR_FUN_LOG_SUM_EXP_HPP
-#define STAN_MATH_FWD_ARR_FUN_LOG_SUM_EXP_HPP
-
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/arr/fun/log_sum_exp.hpp>
-#include <vector>
-#include <cmath>
-
-namespace stan {
-namespace math {
-
 template <typename T>
 fvar<T> log_sum_exp(const std::vector<fvar<T> >& v) {
   using std::exp;
@@ -66,19 +56,6 @@ fvar<T> log_sum_exp(const std::vector<fvar<T> >& v) {
   }
   return fvar<T>(log_sum_exp(vals), deriv / denominator);
 }
-
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_FWD_MAT_FUN_LOG_SUM_EXP_HPP
-#define STAN_MATH_FWD_MAT_FUN_LOG_SUM_EXP_HPP
-
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/mat/fun/log_sum_exp.hpp>
-
-namespace stan {
-namespace math {
 
 template <typename T, int R, int C>
 fvar<T> log_sum_exp(const Eigen::Matrix<fvar<T>, R, C>& v) {
