@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_FWD_SCAL_FUN_ERFC_HPP
-#define STAN_MATH_FWD_SCAL_FUN_ERFC_HPP
+#ifndef STAN_MATH_FWD_FUN_ERFC_HPP
+#define STAN_MATH_FWD_FUN_ERFC_HPP
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>

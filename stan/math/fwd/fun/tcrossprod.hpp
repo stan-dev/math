@@ -1,8 +1,8 @@
-#ifndef STAN_MATH_FWD_MAT_FUN_TCROSSPROD_HPP
-#define STAN_MATH_FWD_MAT_FUN_TCROSSPROD_HPP
+#ifndef STAN_MATH_FWD_FUN_TCROSSPROD_HPP
+#define STAN_MATH_FWD_FUN_TCROSSPROD_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/fwd/mat/fun/multiply.hpp>
+#include <stan/math/fwd/fun/multiply.hpp>
 #include <stan/math/prim/mat/fun/transpose.hpp>
 
 namespace stan {

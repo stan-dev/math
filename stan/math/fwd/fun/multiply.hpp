@@ -1,11 +1,11 @@
-#ifndef STAN_MATH_FWD_MAT_FUN_MULTIPLY_HPP
-#define STAN_MATH_FWD_MAT_FUN_MULTIPLY_HPP
+#ifndef STAN_MATH_FWD_FUN_MULTIPLY_HPP
+#define STAN_MATH_FWD_FUN_MULTIPLY_HPP
 
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/mat/fun/typedefs.hpp>
-#include <stan/math/fwd/mat/fun/dot_product.hpp>
+#include <stan/math/fwd/fun/typedefs.hpp>
+#include <stan/math/fwd/fun/dot_product.hpp>
 
 namespace stan {
 namespace math {

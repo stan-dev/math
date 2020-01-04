@@ -1,8 +1,8 @@
-#ifndef STAN_MATH_FWD_MAT_FUN_TRACE_QUAD_FORM_HPP
-#define STAN_MATH_FWD_MAT_FUN_TRACE_QUAD_FORM_HPP
+#ifndef STAN_MATH_FWD_FUN_TRACE_QUAD_FORM_HPP
+#define STAN_MATH_FWD_FUN_TRACE_QUAD_FORM_HPP
 
 #include <stan/math/prim/err.hpp>
-#include <stan/math/fwd/mat/fun/multiply.hpp>
+#include <stan/math/fwd/fun/multiply.hpp>
 #include <stan/math/prim/mat/fun/multiply.hpp>
 #include <stan/math/prim/mat/fun/transpose.hpp>
 #include <stan/math/prim/mat/fun/trace.hpp>

@@ -1,9 +1,9 @@
-#ifndef STAN_MATH_FWD_MAT_FUN_TYPEDEFS_HPP
-#define STAN_MATH_FWD_MAT_FUN_TYPEDEFS_HPP
+#ifndef STAN_MATH_FWD_FUN_TYPEDEFS_HPP
+#define STAN_MATH_FWD_FUN_TYPEDEFS_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/mat/fun/Eigen_NumTraits.hpp>
+#include <stan/math/fwd/fun/Eigen_NumTraits.hpp>
 
 namespace stan {
 namespace math {

@@ -1,12 +1,12 @@
-#ifndef STAN_MATH_FWD_SCAL_FUN_POW_HPP
-#define STAN_MATH_FWD_SCAL_FUN_POW_HPP
+#ifndef STAN_MATH_FWD_FUN_POW_HPP
+#define STAN_MATH_FWD_FUN_POW_HPP
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/scal/fun/sqrt.hpp>
-#include <stan/math/fwd/scal/fun/inv.hpp>
-#include <stan/math/fwd/scal/fun/inv_sqrt.hpp>
-#include <stan/math/fwd/scal/fun/inv_square.hpp>
+#include <stan/math/fwd/fun/sqrt.hpp>
+#include <stan/math/fwd/fun/inv.hpp>
+#include <stan/math/fwd/fun/inv_sqrt.hpp>
+#include <stan/math/fwd/fun/inv_square.hpp>
 #include <cmath>
 
 namespace stan {

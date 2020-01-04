@@ -1,9 +1,9 @@
-#ifndef STAN_MATH_FWD_MAT_FUN_DOT_PRODUCT_HPP
-#define STAN_MATH_FWD_MAT_FUN_DOT_PRODUCT_HPP
+#ifndef STAN_MATH_FWD_FUN_DOT_PRODUCT_HPP
+#define STAN_MATH_FWD_FUN_DOT_PRODUCT_HPP
 
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/fwd/mat/fun/typedefs.hpp>
+#include <stan/math/fwd/fun/typedefs.hpp>
 #include <vector>
 
 namespace stan {

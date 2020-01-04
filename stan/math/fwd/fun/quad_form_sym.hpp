@@ -1,9 +1,9 @@
-#ifndef STAN_MATH_FWD_MAT_FUN_QUAD_FORM_SYM_HPP
-#define STAN_MATH_FWD_MAT_FUN_QUAD_FORM_SYM_HPP
+#ifndef STAN_MATH_FWD_FUN_QUAD_FORM_SYM_HPP
+#define STAN_MATH_FWD_FUN_QUAD_FORM_SYM_HPP
 
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/mat/fun/multiply.hpp>
-#include <stan/math/fwd/mat/fun/dot_product.hpp>
+#include <stan/math/fwd/fun/multiply.hpp>
+#include <stan/math/fwd/fun/dot_product.hpp>
 
 namespace stan {
 namespace math {

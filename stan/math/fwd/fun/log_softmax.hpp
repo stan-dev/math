@@ -1,8 +1,8 @@
-#ifndef STAN_MATH_FWD_MAT_FUN_LOG_SOFTMAX_HPP
-#define STAN_MATH_FWD_MAT_FUN_LOG_SOFTMAX_HPP
+#ifndef STAN_MATH_FWD_FUN_LOG_SOFTMAX_HPP
+#define STAN_MATH_FWD_FUN_LOG_SOFTMAX_HPP
 
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/mat/fun/softmax.hpp>
+#include <stan/math/fwd/fun/softmax.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/log_softmax.hpp>
 #include <stan/math/prim/mat/fun/softmax.hpp>

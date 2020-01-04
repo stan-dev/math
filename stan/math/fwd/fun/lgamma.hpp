@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_FWD_SCAL_FUN_LGAMMA_HPP
-#define STAN_MATH_FWD_SCAL_FUN_LGAMMA_HPP
+#ifndef STAN_MATH_FWD_FUN_LGAMMA_HPP
+#define STAN_MATH_FWD_FUN_LGAMMA_HPP
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>

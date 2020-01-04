@@ -7,8 +7,8 @@
 #include <stan/math/prim/arr.hpp>
 #include <stan/math/fwd/scal.hpp>
 
-#include <stan/math/fwd/arr/fun/log_sum_exp.hpp>
-#include <stan/math/fwd/arr/fun/sum.hpp>
-#include <stan/math/fwd/arr/fun/to_fvar.hpp>
+#include <stan/math/fwd/fun/log_sum_exp.hpp>
+#include <stan/math/fwd/fun/sum.hpp>
+#include <stan/math/fwd/fun/to_fvar.hpp>
 
 #endif
