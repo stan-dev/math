@@ -1,6 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 #include <test/unit/math/expect_near_rel.hpp>
-#include <stan/math/mix/mat.hpp>
+#include <stan/math/mix.hpp>
 #include <vector>
 
 TEST(mathMixScalFun, gammaP) {

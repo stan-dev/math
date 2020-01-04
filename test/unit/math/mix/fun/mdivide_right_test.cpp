@@ -1,6 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 
-#include <stan/math/mix/mat.hpp>
+#include <stan/math/mix.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 

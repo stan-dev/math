@@ -1,4 +1,4 @@
-#include <stan/math/mix/mat.hpp>
+#include <stan/math/mix.hpp>
 #include <gtest/gtest.h>
 
 using Eigen::Dynamic;
