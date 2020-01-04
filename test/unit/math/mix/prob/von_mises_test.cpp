@@ -1,12 +1,11 @@
 #include <stan/math/mix/scal.hpp>
-#include <gtest/gtest.h>
 #include <test/unit/math/rev/scal/fun/util.hpp>
+#include <gtest/gtest.h>
 #include <vector>
-
-using stan::math::von_mises_lpdf;
 
 std::vector<double> test_fun(double y, double mu, double kappa) {
   using stan::math::var;
+  using stan::math::von_mises_lpdf;
 
   var y_var = y;
   var mu_var = mu;
@@ -25,6 +24,7 @@ std::vector<double> test_fun(double y, double mu, double kappa) {
 
 TEST(ProbAgradDistributionsVonMises, derivatives) {
   using stan::math::fvar;
+  using stan::math::von_mises_lpdf;
 
   std::vector<double> grad = test_fun(0, 1, 0);
 
@@ -42,6 +42,7 @@ TEST(ProbAgradDistributionsVonMises, derivatives) {
 TEST(ProbAgradDistributionsVonMises, FvarVar_1stDeriv) {
   using stan::math::fvar;
   using stan::math::var;
+  using stan::math::von_mises_lpdf;
 
   fvar<var> y_(0, 1);
   double mu(1);
@@ -58,6 +59,7 @@ TEST(ProbAgradDistributionsVonMises, FvarVar_1stDeriv) {
 TEST(ProbAgradDistributionsVonMises, FvarVar_2ndDeriv1) {
   using stan::math::fvar;
   using stan::math::var;
+  using stan::math::von_mises_lpdf;
 
   double y_(0);
   fvar<var> mu(1, 1);
@@ -73,6 +75,7 @@ TEST(ProbAgradDistributionsVonMises, FvarVar_2ndDeriv1) {
 TEST(ProbAgradDistributionsVonMises, FvarVar_2ndDeriv2) {
   using stan::math::fvar;
   using stan::math::var;
+  using stan::math::von_mises_lpdf;
 
   double y_(0);
   double mu(1);
