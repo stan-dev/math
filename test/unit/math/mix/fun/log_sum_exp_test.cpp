@@ -1,5 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 #include <limits>
+#include <vector>
 
 TEST(mathMixScalFun, logSumExp) {
   auto f = [](const auto& x1, const auto& x2) {
@@ -38,9 +39,6 @@ TEST(mathMixScalFun, logSumExp) {
 
   stan::test::expect_value(f, 1000.0, 10.0);
 }
-#include <test/unit/math/test_ad.hpp>
-#include <limits>
-#include <vector>
 
 TEST(MathMixMatFun, logSumExp) {
   auto f = [](const auto& x) { return stan::math::log_sum_exp(x); };

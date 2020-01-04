@@ -1,5 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 #include <limits>
+#include <vector>
 
 TEST(mathMixScalFun, logMix) {
   auto f = [](const auto& x1, const auto& x2, const auto& x3) {
@@ -54,8 +55,6 @@ TEST(mathMixScalFun, logMix) {
   stan::test::expect_ad(tols2, g, 0, 1, 1.0);
   stan::test::expect_ad(tols2, g, 0, 1, 1);
 }
-#include <test/unit/math/test_ad.hpp>
-#include <vector>
 
 void expect_log_mix(const std::vector<double>& p,
                     const std::vector<double>& d) {

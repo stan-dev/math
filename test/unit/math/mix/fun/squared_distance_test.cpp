@@ -1,5 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 #include <limits>
+#include <vector>
 
 TEST(mathMixScalFun, squaredDistance) {
   auto f = [](const auto& x1, const auto& x2) {
@@ -15,10 +16,6 @@ TEST(mathMixScalFun, squaredDistance) {
   stan::test::expect_ad(f, nan, 1.0);
   stan::test::expect_ad(f, nan, nan);
 }
-#include <test/unit/math/test_ad.hpp>
-#include <limits>
-#include <vector>
-
 void expect_squared_distance(const std::vector<double>& sv1,
                              const std::vector<double>& sv2,
                              const stan::test::ad_tolerances& tols
