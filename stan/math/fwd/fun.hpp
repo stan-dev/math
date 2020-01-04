@@ -74,7 +74,6 @@
 #include <stan/math/fwd/fun/log_rising_factorial.hpp>
 #include <stan/math/fwd/fun/log_softmax.hpp>
 #include <stan/math/fwd/fun/log_sum_exp.hpp>
-#include <stan/math/fwd/fun/log_sum_exp.hpp>
 #include <stan/math/fwd/fun/logit.hpp>
 #include <stan/math/fwd/fun/mdivide_left.hpp>
 #include <stan/math/fwd/fun/mdivide_left_ldlt.hpp>
@@ -109,7 +108,6 @@
 #include <stan/math/fwd/fun/tanh.hpp>
 #include <stan/math/fwd/fun/tcrossprod.hpp>
 #include <stan/math/fwd/fun/tgamma.hpp>
-#include <stan/math/fwd/fun/to_fvar.hpp>
 #include <stan/math/fwd/fun/to_fvar.hpp>
 #include <stan/math/fwd/fun/trace_quad_form.hpp>
 #include <stan/math/fwd/fun/trigamma.hpp>
