@@ -3,7 +3,6 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-
 TEST(AgradFwd, value_of_rec) {
   using stan::math::fvar;
 
