@@ -8,14 +8,14 @@ void test_log_softmax(const Eigen::Matrix<double, Eigen::Dynamic, 1>& theta) {
   using stan::math::softmax;
   using std::log;
 
-  int size = theta.size();
+  int theta_size = theta.size();
 
   Matrix<double, Dynamic, 1> log_softmax_theta = log_softmax(theta);
 
   Matrix<double, Dynamic, 1> softmax_theta = softmax(theta);
 
-  Matrix<double, Dynamic, 1> log_softmax_theta_expected(size);
-  for (int i = 0; i < size; ++i)
+  Matrix<double, Dynamic, 1> log_softmax_theta_expected(theta_size);
+  for (int i = 0; i < theta_size; ++i)
     log_softmax_theta_expected(i) = log(softmax_theta(i));
 
   EXPECT_EQ(log_softmax_theta_expected.size(), log_softmax_theta.size());

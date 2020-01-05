@@ -2,11 +2,10 @@
 #define STAN_MATH_PRIM_SCAL_FUN_LOG1M_EXP_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/expm1.hpp>
 #include <stan/math/prim/scal/fun/log1m.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
 #include <cmath>
-#include <limits>
 
 namespace stan {
 namespace math {

@@ -1,0 +1,136 @@
+#ifndef STAN_MATH_PRIM_PROB_EXP_MOD_NORMAL_CDF_HPP
+#define STAN_MATH_PRIM_PROB_EXP_MOD_NORMAL_CDF_HPP
+
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/scal/fun/erf.hpp>
+#include <stan/math/prim/scal/fun/is_inf.hpp>
+#include <stan/math/prim/scal/fun/size_zero.hpp>
+#include <stan/math/prim/scal/fun/square.hpp>
+#include <stan/math/prim/scal/fun/value_of.hpp>
+#include <cmath>
+
+namespace stan {
+namespace math {
+
+template <typename T_y, typename T_loc, typename T_scale, typename T_inv_scale>
+return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
+    const T_y& y, const T_loc& mu, const T_scale& sigma,
+    const T_inv_scale& lambda) {
+  using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_inv_scale>;
+
+  static const char* function = "exp_mod_normal_cdf";
+
+  T_partials_return cdf(1.0);
+  if (size_zero(y, mu, sigma, lambda)) {
+    return cdf;
+  }
+
+  check_not_nan(function, "Random variable", y);
+  check_finite(function, "Location parameter", mu);
+  check_not_nan(function, "Scale parameter", sigma);
+  check_positive_finite(function, "Scale parameter", sigma);
+  check_positive_finite(function, "Inv_scale parameter", lambda);
+  check_not_nan(function, "Inv_scale parameter", lambda);
+  check_consistent_sizes(function, "Random variable", y, "Location parameter",
+                         mu, "Scale parameter", sigma, "Inv_scale paramter",
+                         lambda);
+
+  operands_and_partials<T_y, T_loc, T_scale, T_inv_scale> ops_partials(
+      y, mu, sigma, lambda);
+
+  using std::exp;
+
+  scalar_seq_view<T_y> y_vec(y);
+  scalar_seq_view<T_loc> mu_vec(mu);
+  scalar_seq_view<T_scale> sigma_vec(sigma);
+  scalar_seq_view<T_inv_scale> lambda_vec(lambda);
+  size_t N = max_size(y, mu, sigma, lambda);
+
+  for (size_t n = 0; n < N; n++) {
+    if (is_inf(y_vec[n])) {
+      if (y_vec[n] < 0.0) {
+        return ops_partials.build(0.0);
+      }
+    }
+
+    const T_partials_return y_dbl = value_of(y_vec[n]);
+    const T_partials_return mu_dbl = value_of(mu_vec[n]);
+    const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
+    const T_partials_return lambda_dbl = value_of(lambda_vec[n]);
+    const T_partials_return u = lambda_dbl * (y_dbl - mu_dbl);
+    const T_partials_return v = lambda_dbl * sigma_dbl;
+    const T_partials_return v_sq = v * v;
+    const T_partials_return v_over_sqrt_two = v / SQRT_TWO;
+    const T_partials_return scaled_diff
+        = (y_dbl - mu_dbl) / (SQRT_TWO * sigma_dbl);
+    const T_partials_return scaled_diff_sq = scaled_diff * scaled_diff;
+    const T_partials_return erf_calc
+        = 0.5 * (1 + erf(-v_over_sqrt_two + scaled_diff));
+    const T_partials_return deriv_1
+        = lambda_dbl * exp(0.5 * v_sq - u) * erf_calc;
+    const T_partials_return deriv_2
+        = SQRT_TWO_OVER_SQRT_PI * 0.5
+          * exp(0.5 * v_sq - square(scaled_diff - v_over_sqrt_two) - u)
+          / sigma_dbl;
+    const T_partials_return deriv_3
+        = SQRT_TWO_OVER_SQRT_PI * 0.5 * exp(-scaled_diff_sq) / sigma_dbl;
+
+    const T_partials_return cdf_n = 0.5 * (1 + erf(u / (v * SQRT_TWO)))
+                                    - exp(-u + v_sq * 0.5) * (erf_calc);
+
+    cdf *= cdf_n;
+
+    if (!is_constant_all<T_y>::value) {
+      ops_partials.edge1_.partials_[n] += (deriv_1 - deriv_2 + deriv_3) / cdf_n;
+    }
+    if (!is_constant_all<T_loc>::value) {
+      ops_partials.edge2_.partials_[n]
+          += (-deriv_1 + deriv_2 - deriv_3) / cdf_n;
+    }
+    if (!is_constant_all<T_scale>::value) {
+      ops_partials.edge3_.partials_[n]
+          += (-deriv_1 * v - deriv_3 * scaled_diff * SQRT_TWO
+              - deriv_2 * sigma_dbl * SQRT_TWO
+                    * (-SQRT_TWO * 0.5
+                           * (-lambda_dbl + scaled_diff * SQRT_TWO / sigma_dbl)
+                       - SQRT_TWO * lambda_dbl))
+             / cdf_n;
+    }
+    if (!is_constant_all<T_inv_scale>::value) {
+      ops_partials.edge4_.partials_[n]
+          += exp(0.5 * v_sq - u)
+             * (SQRT_TWO_OVER_SQRT_PI * 0.5 * sigma_dbl
+                    * exp(-square(v_over_sqrt_two - scaled_diff))
+                - (v * sigma_dbl + mu_dbl - y_dbl) * erf_calc)
+             / cdf_n;
+    }
+  }
+
+  if (!is_constant_all<T_y>::value) {
+    for (size_t n = 0; n < size(y); ++n) {
+      ops_partials.edge1_.partials_[n] *= cdf;
+    }
+  }
+  if (!is_constant_all<T_loc>::value) {
+    for (size_t n = 0; n < size(mu); ++n) {
+      ops_partials.edge2_.partials_[n] *= cdf;
+    }
+  }
+  if (!is_constant_all<T_scale>::value) {
+    for (size_t n = 0; n < size(sigma); ++n) {
+      ops_partials.edge3_.partials_[n] *= cdf;
+    }
+  }
+  if (!is_constant_all<T_inv_scale>::value) {
+    for (size_t n = 0; n < size(lambda); ++n) {
+      ops_partials.edge4_.partials_[n] *= cdf;
+    }
+  }
+  return ops_partials.build(cdf);
+}
+
+}  // namespace math
+}  // namespace stan
+#endif

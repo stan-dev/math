@@ -4,10 +4,10 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/mat/fun/typedefs.hpp>
+#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/log_sum_exp.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <cmath>
-#include <limits>
 
 namespace stan {
 namespace math {
@@ -20,7 +20,7 @@ namespace internal {
 template <int R, int C>
 inline double log_sum_exp_as_double(const Eigen::Matrix<var, R, C>& x) {
   if (x.size() == 0) {
-    return -std::numeric_limits<double>::infinity();
+    return NEGATIVE_INFTY;
   }
 
   const double max = x.val().maxCoeff();

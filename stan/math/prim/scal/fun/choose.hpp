@@ -4,8 +4,8 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <boost/math/special_functions/binomial.hpp>
-#include <limits>
 #include <cmath>
+#include <limits>
 
 namespace stan {
 namespace math {

@@ -4,8 +4,8 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/inv.hpp>
 #include <boost/math/constants/constants.hpp>
-#include <limits>
 #include <cmath>
+#include <limits>
 
 namespace stan {
 namespace math {
@@ -129,15 +129,19 @@ inline double machine_precision() { return EPSILON; }
 
 const double SQRT_PI = std::sqrt(pi());
 
+const double INV_SQRT_PI = inv(SQRT_PI);
+
 const double TWO_OVER_SQRT_PI = 2.0 / SQRT_PI;
 
 const double NEG_TWO_OVER_SQRT_PI = -TWO_OVER_SQRT_PI;
 
-const double SQRT_TWO_PI = std::sqrt(2.0 * pi());
+const double SQRT_TWO_OVER_SQRT_PI = SQRT_TWO / SQRT_PI;
+
+const double TWO_PI = 2.0 * pi();
+
+const double SQRT_TWO_PI = std::sqrt(TWO_PI);
 
 const double INV_SQRT_TWO_PI = inv(SQRT_TWO_PI);
-
-const double INV_SQRT_PI = inv(SQRT_PI);
 
 const double LOG_PI = std::log(pi());
 

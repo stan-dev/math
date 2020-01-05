@@ -2,7 +2,7 @@
 # Library locations
 
 MATH ?=
-BOOST ?= $(MATH)lib/boost_1.69.0
+BOOST ?= $(MATH)lib/boost_1.72.0
 EIGEN ?= $(MATH)lib/eigen_3.3.3
 OPENCL ?= $(MATH)lib/opencl_2.2.0
 TBB ?= $(MATH)lib/tbb_2019_U8
@@ -182,7 +182,7 @@ $(BOOST)/user-config.jam:
 $(BOOST)/stage/lib/mpi.so: $(BOOST)/user-config.jam
 	@mkdir -p $(dir $@)
 	cd $(BOOST); ./bootstrap.sh
-	cd $(BOOST); ./b2 --user-config=user-config.jam --layout=system --with-mpi --with-serialization -j$(BOOST_PARALLEL_JOBS) variant=release link=shared threading=multi runtime-link=shared hardcode-dll-paths=true dll-path="$(BOOST_LIBRARY_ABSOLUTE_PATH)"
+	cd $(BOOST); ./b2 --user-config=user-config.jam --layout=system --with-mpi --with-serialization -j$(BOOST_PARALLEL_JOBS) variant=release link=shared threading=multi runtime-link=shared hardcode-dll-paths=true dll-path="$(BOOST_LIBRARY_ABSOLUTE_PATH)" cxxstd=11
 
 $(BOOST)/stage/lib/libboost_serialization.so: $(BOOST)/stage/lib/mpi.so
 $(BOOST)/stage/lib/libboost_mpi.so: $(BOOST)/stage/lib/mpi.so

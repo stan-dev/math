@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_REV_CORE_PRECOMPUTED_GRADIENTS_HPP
 #define STAN_MATH_REV_CORE_PRECOMPUTED_GRADIENTS_HPP
 
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
+#include <stan/math/prim/err/check_consistent_sizes.hpp>
 #include <stan/math/rev/core/vari.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <algorithm>

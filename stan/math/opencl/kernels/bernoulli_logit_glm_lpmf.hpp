@@ -1,4 +1,3 @@
-
 #ifndef STAN_MATH_OPENCL_KERNELS_BERNOULLI_LOGIT_GLM_LPMF_HPP
 #define STAN_MATH_OPENCL_KERNELS_BERNOULLI_LOGIT_GLM_LPMF_HPP
 #ifdef STAN_OPENCL
@@ -62,9 +61,9 @@ static const char* bernoulli_logit_glm_kernel_code = STRINGIFY(
           ytheta += x[j + gid] * beta[i];
         }
         const int y = y_global[gid * is_y_vector];
-        const double sign_ = 2 * y - 1;
+        const double sign = 2 * y - 1;
         ytheta += alpha[gid * is_alpha_vector];
-        ytheta *= sign_;
+        ytheta *= sign;
         if (y > 1 || y < 0 || !isfinite(ytheta)) {
           // this signals that an exception must be raised
           logp = NAN;
@@ -77,10 +76,10 @@ static const char* bernoulli_logit_glm_kernel_code = STRINGIFY(
           theta_derivative = -exp_m_ytheta;
         } else if (ytheta < -cutoff) {
           logp += ytheta;
-          theta_derivative = sign_;
+          theta_derivative = sign;
         } else {
           logp += -log1p(exp_m_ytheta);
-          theta_derivative = sign_ * exp_m_ytheta / (exp_m_ytheta + 1);
+          theta_derivative = sign * exp_m_ytheta / (exp_m_ytheta + 1);
         }
 
         if (need_theta_derivative) {

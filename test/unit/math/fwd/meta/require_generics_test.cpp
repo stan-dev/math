@@ -1,4 +1,4 @@
-#include <stan/math/fwd/scal.hpp>
+#include <stan/math/fwd.hpp>
 #include <stan/math/prim/scal.hpp>
 #include <test/unit/math/require_util.hpp>
 #include <gtest/gtest.h>

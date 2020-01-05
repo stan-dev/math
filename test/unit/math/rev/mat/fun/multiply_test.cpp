@@ -18,12 +18,12 @@ TEST(AgradRevMatrix, multiply_val_vv_cl) {
   using stan::math::matrix_d;
   using stan::math::matrix_v;
   using stan::math::multiply;
-  int size = 234;
-  matrix_v Av(size, size);
-  matrix_v Bv(size, size);
+  int mat_size = 234;
+  matrix_v Av(mat_size, mat_size);
+  matrix_v Bv(mat_size, mat_size);
   matrix_v C, C_cl;
-  for (int i = 0; i < size; i++) {
-    for (int j = 0; j < size; j++) {
+  for (int i = 0; i < mat_size; i++) {
+    for (int j = 0; j < mat_size; j++) {
       Av(i, j) = stan::math::uniform_rng(-5, 5, rng);
       Bv(i, j) = stan::math::uniform_rng(-5, 5, rng);
     }
@@ -49,12 +49,12 @@ TEST(AgradRevMatrix, multiply_val_vd_cl) {
   using stan::math::matrix_d;
   using stan::math::matrix_v;
   using stan::math::multiply;
-  int size = 256;
-  matrix_v Av(size, size);
-  matrix_v Bd(size, size);
+  int mat_size = 256;
+  matrix_v Av(mat_size, mat_size);
+  matrix_v Bd(mat_size, mat_size);
   matrix_v C, C_cl;
-  for (int i = 0; i < size; i++) {
-    for (int j = 0; j < size; j++) {
+  for (int i = 0; i < mat_size; i++) {
+    for (int j = 0; j < mat_size; j++) {
       Av(i, j) = stan::math::uniform_rng(-5, 5, rng);
       Bd(i, j) = stan::math::uniform_rng(-5, 5, rng);
     }
@@ -81,12 +81,12 @@ TEST(AgradRevMatrix, multiply_val_dv_cl) {
   using stan::math::matrix_d;
   using stan::math::matrix_v;
   using stan::math::multiply;
-  int size = 321;
-  matrix_v Ad(size, size);
-  matrix_v Bv(size, size);
+  int mat_size = 321;
+  matrix_v Ad(mat_size, mat_size);
+  matrix_v Bv(mat_size, mat_size);
   matrix_v C, C_cl;
-  for (int i = 0; i < size; i++) {
-    for (int j = 0; j < size; j++) {
+  for (int i = 0; i < mat_size; i++) {
+    for (int j = 0; j < mat_size; j++) {
       Ad(i, j) = stan::math::uniform_rng(-5, 5, rng);
       Bv(i, j) = stan::math::uniform_rng(-5, 5, rng);
     }

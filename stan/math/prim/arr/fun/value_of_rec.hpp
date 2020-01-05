@@ -13,7 +13,7 @@ namespace math {
  * Convert a std::vector of type T to a std::vector of doubles.
  *
  * T must implement value_of_rec. See
- * test/math/fwd/mat/fun/value_of_rec.cpp for fvar and var usage.
+ * test/math/fwd/fun/value_of_rec.cpp for fvar and var usage.
  *
  * @tparam T Scalar type in std::vector
  * @param[in] x std::vector to be converted
@@ -21,9 +21,9 @@ namespace math {
  **/
 template <typename T>
 inline std::vector<double> value_of_rec(const std::vector<T>& x) {
-  size_t size = x.size();
-  std::vector<double> result(size);
-  for (size_t i = 0; i < size; i++) {
+  size_t x_size = x.size();
+  std::vector<double> result(x_size);
+  for (size_t i = 0; i < x_size; i++) {
     result[i] = value_of_rec(x[i]);
   }
   return result;
