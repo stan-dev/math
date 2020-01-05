@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_REV_SCAL_FUNCTOR_PARALLEL_REDUCE_SUM_HPP
-#define STAN_MATH_REV_SCAL_FUNCTOR_PARALLEL_REDUCE_SUM_HPP
+#ifndef STAN_MATH_REV_SCAL_FUNCTOR_REDUCE_SUM_HPP
+#define STAN_MATH_REV_SCAL_FUNCTOR_REDUCE_SUM_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/mat/fun/typedefs.hpp>
@@ -25,7 +25,7 @@ struct child_type<int> {
 namespace internal {
 
 template <class ReduceFunction, class M, class T, class Arg1, class Arg2>
-struct parallel_reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, var> {
+struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, var> {
   using vmapped_t = std::vector<M>;
   using arg1_t = std::vector<Arg1>;
   using arg2_t = std::vector<Arg2>;
@@ -117,20 +117,20 @@ struct parallel_reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, var> {
 
         terms_sum_ += sub_sum_v.val();
 
-        /**/
+        /*
         if (!is_constant_all<M>::value) {
           for (std::size_t i = 0; i != r.size(); ++i)
             terms_partials_mapped_.edge1_.partials_[r.begin() + i]
                 += local_sub_slice[i].adj();
         }
-        /**/
+        */
 
-        /*
+        /**/
         if (!is_constant_all<Arg1>::value) {
           for (std::size_t i = 0; i != local_arg1.size(); ++i)
             terms_partials_args_.edge2_.partials_[i] += local_arg1[i].adj();
         }
-        */
+        /**/
 
         /*
         if (!is_constant_all<Arg2>::value) {
@@ -149,13 +149,13 @@ struct parallel_reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, var> {
     void join(const recursive_reducer& child) {
       terms_sum_ += child.terms_sum_;
 
-      /*
+      /**/
       if (!is_constant_all<Arg1>::value) {
         for (std::size_t i = 0; i != arg1_.size(); ++i)
           terms_partials_args_.edge2_.partials_[i]
               += child.terms_partials_args_.edge2_.partials_[i];
       }
-      */
+      /**/
 
       /*
       if (!is_constant_all<Arg2>::value) {

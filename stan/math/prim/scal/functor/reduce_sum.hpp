@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_FUNCTOR_PARALLEL_REDUCE_SUM_HPP
-#define STAN_MATH_PRIM_SCAL_FUNCTOR_PARALLEL_REDUCE_SUM_HPP
+#ifndef STAN_MATH_PRIM_SCAL_FUNCTOR_REDUCE_SUM_HPP
+#define STAN_MATH_PRIM_SCAL_FUNCTOR_REDUCE_SUM_HPP
 
 #include <stan/math/prim/meta/return_type.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
@@ -22,10 +22,10 @@ namespace internal {
 // base definition => compile error
 template <class ReduceFunction, class M, class T, class Arg1, class Arg2,
           class T_return_type>
-struct parallel_reduce_sum_impl {};
+struct reduce_sum_impl {};
 
 template <class ReduceFunction, class M, class T, class Arg1, class Arg2>
-struct parallel_reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, double> {
+struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, double> {
   using vmapped_t = std::vector<M>;
   using arg1_t = std::vector<Arg1>;
   using arg2_t = std::vector<Arg2>;
@@ -104,10 +104,10 @@ struct parallel_reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, double> {
  *    "..." thing in C++. The complication for this is managing all
  *    the calls.
  *
- * So the parallel_reduce_sum signature should look like
+ * So the reduce_sum signature should look like
  *
  * template <class ReduceFunction, class InputIt, class T, ...>
- * constexpr T parallel_reduce_sum(InputIt first, InputIt last, T init,
+ * constexpr T reduce_sum(InputIt first, InputIt last, T init,
  *                                std::size_t grainsize, ...)
  *
  * which corresponds to a ReduceFunction which looks like
@@ -121,12 +121,12 @@ struct parallel_reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, double> {
  *
  */
 template <class ReduceFunction, class M, class T, class Arg1, class Arg2>
-constexpr T parallel_reduce_sum(const std::vector<M>& vmapped, T init,
+constexpr T reduce_sum(const std::vector<M>& vmapped, T init,
                                 std::size_t grainsize,
                                 const std::vector<Arg1>& arg1,
                                 const std::vector<Arg2>& arg2) {
   typedef T return_base_t;
-  return internal::parallel_reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2,
+  return internal::reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2,
                                             return_base_t>()(
       vmapped, init, grainsize, arg1, arg2);
 }
