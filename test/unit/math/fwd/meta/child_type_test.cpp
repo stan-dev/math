@@ -1,4 +1,4 @@
-#include <stan/math/fwd/scal.hpp>
+#include <stan/math/fwd.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/prim/scal/fun/promote_type_test_util.hpp>
 

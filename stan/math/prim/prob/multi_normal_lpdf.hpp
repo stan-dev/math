@@ -44,7 +44,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
   if (size_vec > 1) {
     int size_y_old = size_y;
     int size_y_new;
-    for (size_t i = 1, size_ = size_mvt(y); i < size_; i++) {
+    for (size_t i = 1, size_mvt_y = size_mvt(y); i < size_mvt_y; i++) {
       int size_y_new = y_vec[i].size();
       check_size_match(function,
                        "Size of one of the vectors of "
@@ -57,7 +57,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
     }
     int size_mu_old = size_mu;
     int size_mu_new;
-    for (size_t i = 1, size_ = size_mvt(mu); i < size_; i++) {
+    for (size_t i = 1, size_mvt_mu = size_mvt(mu); i < size_mvt_mu; i++) {
       int size_mu_new = mu_vec[i].size();
       check_size_match(function,
                        "Size of one of the vectors of "

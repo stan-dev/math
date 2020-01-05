@@ -4,7 +4,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/log_sum_exp.hpp>
-#include <stan/math/prim/mat/vectorize/apply_vector_unary.hpp>
+#include <stan/math/prim/vectorize/apply_vector_unary.hpp>
 
 namespace stan {
 namespace math {

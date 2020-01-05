@@ -4,9 +4,9 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/mat/fun/typedefs.hpp>
-#include <stan/math/prim/scal/fun/log_sum_exp.hpp>
-#include <stan/math/prim/mat/vectorize/apply_vector_unary.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/scal/fun/log_sum_exp.hpp>
+#include <stan/math/prim/vectorize/apply_vector_unary.hpp>
 #include <cmath>
 
 namespace stan {
