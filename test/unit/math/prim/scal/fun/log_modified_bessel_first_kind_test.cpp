@@ -1,5 +1,4 @@
 #include <stan/math/prim/scal.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <boost/math/special_functions/bessel.hpp>
 #include <gtest/gtest.h>
 #include <limits>
