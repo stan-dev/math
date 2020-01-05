@@ -19,8 +19,9 @@ namespace math {
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, 1> singular_values(
     const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& m) {
-  if (m.size() == 0)
-    return Eigen::Matrix<T, 0, 1>();
+  if (m.size() == 0) {
+    return {};
+  }
 
   return Eigen::JacobiSVD<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> >(m)
       .singularValues();
