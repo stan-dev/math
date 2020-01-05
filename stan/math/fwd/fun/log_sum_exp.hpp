@@ -41,7 +41,7 @@ inline fvar<T> log_sum_exp(const fvar<T>& x1, double x2) {
 }
 
 template <typename T>
-fvar<T> log_sum_exp(const std::vector<fvar<T> >& v) {
+fvar<T> log_sum_exp(const std::vector<fvar<T>>& v) {
   using std::exp;
   std::vector<T> vals(v.size());
   for (size_t i = 0; i < v.size(); ++i) {
