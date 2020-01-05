@@ -8,7 +8,7 @@
 
 #include <stan/math/rev/mat/fun/Eigen_NumTraits.hpp>
 
-#include <stan/math/rev/mat/vectorize/apply_scalar_unary.hpp>
+#include <stan/math/rev/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/rev/arr.hpp>
 
@@ -60,17 +60,17 @@
 #include <stan/math/rev/mat/fun/typedefs.hpp>
 #include <stan/math/rev/mat/fun/variance.hpp>
 
-#include <stan/math/rev/mat/functor/adj_jac_apply.hpp>
-#include <stan/math/rev/mat/functor/algebra_solver_powell.hpp>
-#include <stan/math/rev/mat/functor/algebra_solver_newton.hpp>
-#include <stan/math/rev/mat/functor/gradient.hpp>
-#include <stan/math/rev/mat/functor/jacobian.hpp>
-#include <stan/math/rev/mat/functor/cvodes_utils.hpp>
-#include <stan/math/rev/mat/functor/cvodes_ode_data.hpp>
-#include <stan/math/rev/mat/functor/integrate_ode_adams.hpp>
-#include <stan/math/rev/mat/functor/integrate_ode_bdf.hpp>
-#include <stan/math/rev/mat/functor/integrate_dae.hpp>
-#include <stan/math/rev/mat/functor/map_rect_concurrent.hpp>
-#include <stan/math/rev/mat/functor/map_rect_reduce.hpp>
+#include <stan/math/rev/functor/adj_jac_apply.hpp>
+#include <stan/math/rev/functor/algebra_solver_powell.hpp>
+#include <stan/math/rev/functor/algebra_solver_newton.hpp>
+#include <stan/math/rev/functor/gradient.hpp>
+#include <stan/math/rev/functor/jacobian.hpp>
+#include <stan/math/rev/functor/cvodes_utils.hpp>
+#include <stan/math/rev/functor/cvodes_ode_data.hpp>
+#include <stan/math/rev/functor/integrate_ode_adams.hpp>
+#include <stan/math/rev/functor/integrate_ode_bdf.hpp>
+#include <stan/math/rev/functor/integrate_dae.hpp>
+#include <stan/math/rev/functor/map_rect_concurrent.hpp>
+#include <stan/math/rev/functor/map_rect_reduce.hpp>
 
 #endif

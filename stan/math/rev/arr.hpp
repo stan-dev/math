@@ -8,7 +8,7 @@
 #include <stan/math/rev/scal.hpp>
 
 #include <stan/math/rev/arr/fun/to_var.hpp>
-#include <stan/math/rev/arr/functor/coupled_ode_system.hpp>
-#include <stan/math/rev/arr/functor/integrate_1d.hpp>
+#include <stan/math/rev/functor/coupled_ode_system.hpp>
+#include <stan/math/rev/functor/integrate_1d.hpp>
 
 #endif
