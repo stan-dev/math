@@ -81,9 +81,6 @@ TEST(MathMixMatFun, subtract_scalar_mat) {
 TEST(MathMixMatFun, subtract_vec_mat) {
   auto f
       = [](const auto& x, const auto& y) { return stan::math::subtract(x, y); };
-  stan::test::ad_tolerances tols;
-  tols.hessian_hessian_ = 5e-3;
-  tols.hessian_fvar_hessian_ = 5e-3;
 
   Eigen::VectorXd v5(5);
   v5 << 1, 2, 3, 4, 5;
@@ -93,8 +90,8 @@ TEST(MathMixMatFun, subtract_vec_mat) {
   rv5 << 1, 2, 3, 4, 5;
   Eigen::VectorXd rv5b(5);
   rv5b << 2, 3, 4, 5, 6;
-  stan::test::expect_ad(tols, f, v5, v5b);
-  stan::test::expect_ad(tols, f, rv5, rv5b);
+  stan::test::expect_ad(f, v5, v5b);
+  stan::test::expect_ad(f, rv5, rv5b);
 }
 
 TEST(MathMixMatFun, subtract_mat_mat) {
