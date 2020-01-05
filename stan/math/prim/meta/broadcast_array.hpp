@@ -37,6 +37,7 @@ class empty_broadcast_array {
    * Not implemented so cannot be called.
    */
   T& operator[](int /*i*/);
+  T& operator[](int /*i*/) const;
 
   /** \ingroup type_trait
    * Not implemented so cannot be called.
