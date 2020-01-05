@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_FWD_FUN_TO_FVAR_HPP
 #define STAN_MATH_FWD_FUN_TO_FVAR_HPP
 
-#include <stan/math/fwd/meta.hpp>
-#include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/fwd/meta.hpp>
+#include <stan/math/fwd/core.hpp>
 #include <vector>
 
 namespace stan {
@@ -18,7 +18,6 @@ inline fvar<T> to_fvar(const T& x) {
 /**
  * Specialization of to_fvar for const fvars
  *
- *
  * @param[in,out] x A forward automatic differentation variables.
  * @return The input forward automatic differentiation variables.
  */
@@ -29,7 +28,6 @@ inline const fvar<T>& to_fvar(const fvar<T>& x) {
 
 /**
  * Specialization of to_fvar for non-const fvars
- *
  *
  * @param[in,out] x A forward automatic differentation variables.
  * @return The input forward automatic differentiation variables.
@@ -85,7 +83,6 @@ inline std::vector<fvar<T>>& to_fvar(std::vector<fvar<T>>& v) {
 /**
  * Specialization of to_fvar for const matrices of fvars
  *
- *
  * @param[in,out] m A matrix of forward automatic differentation variables.
  * @return The input matrix of forward automatic differentiation variables.
  */
@@ -96,7 +93,6 @@ inline const Eigen::Matrix<T, R, C>& to_fvar(const Eigen::Matrix<T, R, C>& m) {
 
 /**
  * Specialization of to_fvar for non-const matrices of fvars
- *
  *
  * @param[in,out] m A matrix of forward automatic differentation variables.
  * @return The input matrix of forward automatic differentiation variables.
