@@ -221,10 +221,10 @@ struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, var> {
                const arg1_t& arg1, const arg2_t& arg2, const arg3_t& arg3,
                const arg4_t& arg4) const {
     const std::size_t num_jobs = vmapped.size();
-    arg1_value_t arg1_value = value_of(arg1);
-    arg2_value_t arg2_value = value_of(arg2);
-    arg3_value_t arg3_value = value_of(arg3);
-    arg4_value_t arg4_value = value_of(arg4);
+    const arg1_value_t arg1_value = value_of(arg1);
+    const arg2_value_t arg2_value = value_of(arg2);
+    const arg3_value_t arg3_value = value_of(arg3);
+    const arg4_value_t arg4_value = value_of(arg4);
 
     ops_partials_t ops(vmapped, arg1, arg2, arg3, arg4);
 

@@ -90,6 +90,14 @@ struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, double> {
   }
 };
 
+/* The reduce_function_arg_adapter adapts the user functor to
+ * conventions used in the reduce_sum functions. While the user
+ * functor is allowed to specify optionally up to 4 additional
+ * arguments, the reduce_sum functions always expect 4
+ * arguments. Thus, the call of the reduce_sum functions with 4
+ * arguments get adapted to the user functors by dropping the
+ * arguments which are not used.
+ */
 // default gives a compile time error
 template <class ReduceFunction, int optional_args>
 struct reduce_function_arg_adapter {};
@@ -102,7 +110,7 @@ struct reduce_function_arg_adapter<ReduceFunction, 4> {
                          const std::vector<Arg1>& arg1,
                          const std::vector<Arg2>& arg2,
                          const std::vector<Arg3>& arg3,
-                         const std::vector<Arg4>& arg4) {
+                         const std::vector<Arg4>& arg4) const {
     return ReduceFunction()(start, end, vmapped_slice, arg1, arg2, arg3, arg4);
   }
 };
@@ -115,7 +123,7 @@ struct reduce_function_arg_adapter<ReduceFunction, 3> {
                          const std::vector<Arg1>& arg1,
                          const std::vector<Arg2>& arg2,
                          const std::vector<Arg3>& arg3,
-                         const std::vector<Arg4>& arg4) {
+                         const std::vector<Arg4>& arg4) const {
     return ReduceFunction()(start, end, vmapped_slice, arg1, arg2, arg3);
   }
 };
@@ -128,7 +136,7 @@ struct reduce_function_arg_adapter<ReduceFunction, 2> {
                          const std::vector<Arg1>& arg1,
                          const std::vector<Arg2>& arg2,
                          const std::vector<Arg3>& arg3,
-                         const std::vector<Arg4>& arg4) {
+                         const std::vector<Arg4>& arg4) const {
     return ReduceFunction()(start, end, vmapped_slice, arg1, arg2);
   }
 };
@@ -141,7 +149,7 @@ struct reduce_function_arg_adapter<ReduceFunction, 1> {
                          const std::vector<Arg1>& arg1,
                          const std::vector<Arg2>& arg2,
                          const std::vector<Arg3>& arg3,
-                         const std::vector<Arg4>& arg4) {
+                         const std::vector<Arg4>& arg4) const {
     return ReduceFunction()(start, end, vmapped_slice, arg1);
   }
 };
@@ -154,7 +162,7 @@ struct reduce_function_arg_adapter<ReduceFunction, 0> {
                          const std::vector<Arg1>& arg1,
                          const std::vector<Arg2>& arg2,
                          const std::vector<Arg3>& arg3,
-                         const std::vector<Arg4>& arg4) {
+                         const std::vector<Arg4>& arg4) const {
     return ReduceFunction()(start, end, vmapped_slice);
   }
 };
@@ -165,7 +173,6 @@ struct reduce_function_arg_adapter<ReduceFunction, 0> {
  * Note that the ReduceFunction is only passed in as type to prohibit
  * that any internal state of the functor is causing trouble. Thus,
  * the functor must be default constructible without any arguments.
- *
  */
 template <class ReduceFunction, class M, class T, class Arg1, class Arg2,
           class Arg3, class Arg4>
