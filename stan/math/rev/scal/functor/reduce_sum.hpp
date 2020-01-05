@@ -47,6 +47,8 @@ struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, var> {
   using vmapped_t = std::vector<M>;
   using arg1_t = std::vector<Arg1>;
   using arg2_t = std::vector<Arg2>;
+  using arg3_t = std::vector<Arg3>;
+  using arg4_t = std::vector<Arg4>;
 
   using vmapped_value_t = std::vector<typename child_type<M>::type>;
   using arg1_value_t = std::vector<typename child_type<Arg1>::type>;
@@ -172,14 +174,14 @@ struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, var> {
             terms_partials_args_.edge3_.partials_[i] += arg2_adjoint[i];
         }
         if (!is_constant_all<Arg3>::value) {
-          arg3_value_t arg3_adjoint = adjoint_of(local_arg1);
+          arg3_value_t arg3_adjoint = adjoint_of(local_arg3);
           for (std::size_t i = 0; i != local_arg3.size(); ++i)
             terms_partials_args_.edge4_.partials_[i] += arg3_adjoint[i];
         }
         if (!is_constant_all<Arg4>::value) {
           arg4_value_t arg4_adjoint = adjoint_of(local_arg4);
           for (std::size_t i = 0; i != local_arg2.size(); ++i)
-            terms_partials_args_.edge5_.partials_[i] += arg2_adjoint[i];
+            terms_partials_args_.edge5_.partials_[i] += arg4_adjoint[i];
         }
 
       } catch (const std::exception& e) {
