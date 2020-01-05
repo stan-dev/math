@@ -84,11 +84,11 @@ TEST(MathMixMatFun, add_vec_mat) {
   Eigen::VectorXd v5(5);
   v5 << 1, 2, 3, 4, 5;
   Eigen::VectorXd v5b(5);
-  v5 << 2, 3, 4, 5, 6;
+  v5b << 2, 3, 4, 5, 6;
   Eigen::VectorXd rv5(5);
-  v5 << 1, 2, 3, 4, 5;
+  rv5 << 1, 2, 3, 4, 5;
   Eigen::VectorXd rv5b(5);
-  v5 << 2, 3, 4, 5, 6;
+  rv5b << 2, 3, 4, 5, 6;
   stan::test::expect_ad(tols, f, v5, v5b);
   stan::test::expect_ad(tols, f, rv5, rv5b);
 }
