@@ -115,34 +115,14 @@ struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, var> {
       try {
         start_nested();
 
-        // elem_t should better be a non-var!!! Otherwise we interfere
-        // with the outer AD tree as we mess with the adjoints (and
-        // right now we discard that it is a var if it would be)
+        // create a deep copy of all var's so that these are not
+        // linked to any outer AD tree
+
         vmapped_t local_sub_slice;
 
         local_sub_slice.reserve(r.size());
         for (std::size_t i = r.begin(); i != r.end(); ++i)
           local_sub_slice.emplace_back(value_of(vmapped_[i]));
-
-        // create a deep copy of arg1 which is not tied to the outer
-        // AD tree
-        // todo: these copies can be put onto a thread-local storage
-        // object such that we only create these once per thread which
-        // should significantly boost performance as many copies are
-        // avoided... this comes at the cost that the adjoints have to
-        // be zeroed "manually"
-        /* using the var_nochain_stack_ tape avoids up-propagation of chain
-        std::vector<Arg1> varg1;
-        varg1.reserve(varg1_.size());
-
-        for (Arg1& elem : varg1_)
-          varg1.emplace_back(var(new vari(elem.val(), false)));
-        */
-
-        // but this should actually do the same if we simply
-        // instantiate the var from a double representation
-        // const std::vector<double> varg1_d = value_of(varg1_);
-        // std::vector<Arg1> varg1(varg1_d.begin(), varg1_d.end());
 
         const arg1_t local_arg1(arg1_value_.begin(), arg1_value_.end());
         const arg2_t local_arg2(arg2_value_.begin(), arg2_value_.end());
