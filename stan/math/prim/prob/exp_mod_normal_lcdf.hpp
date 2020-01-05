@@ -18,10 +18,9 @@ template <typename T_y, typename T_loc, typename T_scale, typename T_inv_scale>
 return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma,
     const T_inv_scale& lambda) {
+  using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_inv_scale>;
+
   static const char* function = "exp_mod_normal_lcdf";
-  typedef
-      typename stan::partials_return_type<T_y, T_loc, T_scale,
-                                          T_inv_scale>::type T_partials_return;
 
   T_partials_return cdf_log(0.0);
   if (size_zero(y, mu, sigma, lambda)) {
@@ -82,18 +81,17 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf(
     const T_partials_return deriv_3
         = SQRT_TWO_OVER_SQRT_PI * 0.5 * exp(-scaled_diff_sq) / sigma_dbl;
 
-    const T_partials_return denom = erf_calc1 - erf_calc2 * exp(0.5 * v_sq - u);
-    const T_partials_return cdf_
+    const T_partials_return cdf_n
         = erf_calc1 - exp(-u + v_sq * 0.5) * (erf_calc2);
 
-    cdf_log += log(cdf_);
+    cdf_log += log(cdf_n);
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] += (deriv_1 - deriv_2 + deriv_3) / denom;
+      ops_partials.edge1_.partials_[n] += (deriv_1 - deriv_2 + deriv_3) / cdf_n;
     }
     if (!is_constant_all<T_loc>::value) {
       ops_partials.edge2_.partials_[n]
-          += (-deriv_1 + deriv_2 - deriv_3) / denom;
+          += (-deriv_1 + deriv_2 - deriv_3) / cdf_n;
     }
     if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n]
@@ -102,7 +100,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf(
                     * (-SQRT_TWO * 0.5
                            * (-lambda_dbl + scaled_diff * SQRT_TWO / sigma_dbl)
                        - SQRT_TWO * lambda_dbl))
-             / denom;
+             / cdf_n;
     }
     if (!is_constant_all<T_inv_scale>::value) {
       ops_partials.edge4_.partials_[n]
@@ -110,7 +108,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf(
              * (SQRT_TWO_OVER_SQRT_PI * 0.5 * sigma_dbl
                     * exp(-square(v_over_sqrt_two - scaled_diff))
                 - (v * sigma_dbl + mu_dbl - y_dbl) * erf_calc2)
-             / denom;
+             / cdf_n;
     }
   }
   return ops_partials.build(cdf_log);

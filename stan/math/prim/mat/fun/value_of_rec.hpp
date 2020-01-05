@@ -11,7 +11,7 @@ namespace math {
  * Convert a matrix of type T to a matrix of doubles.
  *
  * T must implement value_of_rec. See
- * test/unit/math/fwd/mat/fun/value_of_test.cpp for fvar and var usage.
+ * test/unit/math/fwd/fun/value_of_test.cpp for fvar and var usage.
  *
  * @tparam T Type of matrix
  * @param[in] M Matrix to be converted

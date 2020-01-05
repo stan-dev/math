@@ -12,7 +12,7 @@ namespace math {
  * Convert a matrix of type T to a matrix of doubles.
  *
  * T must implement value_of. See
- * test/math/fwd/mat/fun/value_of.cpp for fvar and var usage.
+ * test/math/fwd/fun/value_of.cpp for fvar and var usage.
  *
  * @tparam T type of elements in the matrix
  * @tparam R number of rows in the matrix, can be Eigen::Dynamic

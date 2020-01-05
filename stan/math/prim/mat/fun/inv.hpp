@@ -2,9 +2,9 @@
 #define STAN_MATH_PRIM_MAT_FUN_INV_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/inv.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 
 namespace stan {
 namespace math {

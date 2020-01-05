@@ -3,6 +3,8 @@
 
 #include <stan/math/prim/mat/fun/inv.hpp>
 #include <stan/math/prim/mat/fun/square.hpp>
+#include <stan/math/prim/scal/fun/inv_square.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 
 namespace stan {
 namespace math {

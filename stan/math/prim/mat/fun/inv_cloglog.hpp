@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_INV_CLOGLOG_HPP
 #define STAN_MATH_PRIM_MAT_FUN_INV_CLOGLOG_HPP
 
-#include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/mat/fun/exp.hpp>
 #include <stan/math/prim/scal/fun/inv_cloglog.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 
 namespace stan {
 namespace math {

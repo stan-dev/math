@@ -2,7 +2,7 @@
 
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
-#include <test/unit/math/prim/mat/functor/utils_threads.hpp>
+#include <test/unit/math/prim/functor/utils_threads.hpp>
 
 TEST(get_num_threads, correct_values) {
   set_n_threads("10");
