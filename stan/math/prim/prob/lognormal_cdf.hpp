@@ -56,18 +56,18 @@ return_type_t<T_y, T_loc, T_scale> lognormal_cdf(const T_y& y, const T_loc& mu,
                                         * exp(-scaled_diff * scaled_diff)
                                         / sigma_dbl;
 
-    const T_partials_return cdf_ = 0.5 * erfc(-scaled_diff);
-    cdf *= cdf_;
+    const T_partials_return cdf_n = 0.5 * erfc(-scaled_diff);
+    cdf *= cdf_n;
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] += rep_deriv / cdf_ / y_dbl;
+      ops_partials.edge1_.partials_[n] += rep_deriv / cdf_n / y_dbl;
     }
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_[n] -= rep_deriv / cdf_;
+      ops_partials.edge2_.partials_[n] -= rep_deriv / cdf_n;
     }
     if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n]
-          -= rep_deriv * scaled_diff * SQRT_TWO / cdf_;
+          -= rep_deriv * scaled_diff * SQRT_TWO / cdf_n;
     }
   }
 

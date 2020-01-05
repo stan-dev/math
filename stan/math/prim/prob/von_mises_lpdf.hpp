@@ -68,8 +68,8 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
   size_t N = max_size(y, mu, kappa);
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_ = value_of(y_vec[n]);
-    const T_partials_return y_dbl = y_ - floor(y_ / TWO_PI) * TWO_PI;
+    const T_partials_return y_val = value_of(y_vec[n]);
+    const T_partials_return y_dbl = y_val - floor(y_val / TWO_PI) * TWO_PI;
     const T_partials_return mu_dbl = value_of(mu_vec[n]);
 
     T_partials_return bessel0 = 0;

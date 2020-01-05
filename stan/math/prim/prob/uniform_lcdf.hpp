@@ -54,16 +54,16 @@ return_type_t<T_y, T_low, T_high> uniform_lcdf(const T_y& y, const T_low& alpha,
     const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
     const T_partials_return beta_dbl = value_of(beta_vec[n]);
     const T_partials_return b_min_a = beta_dbl - alpha_dbl;
-    const T_partials_return cdf_log_ = (y_dbl - alpha_dbl) / b_min_a;
+    const T_partials_return cdf_log_n = (y_dbl - alpha_dbl) / b_min_a;
 
-    cdf_log += log(cdf_log_);
+    cdf_log += log(cdf_log_n);
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] += 1.0 / b_min_a / cdf_log_;
+      ops_partials.edge1_.partials_[n] += 1.0 / (b_min_a * cdf_log_n);
     }
     if (!is_constant_all<T_low>::value) {
       ops_partials.edge2_.partials_[n]
-          += (y_dbl - beta_dbl) / b_min_a / b_min_a / cdf_log_;
+          += (y_dbl - beta_dbl) / (b_min_a * b_min_a * cdf_log_n);
     }
     if (!is_constant_all<T_high>::value) {
       ops_partials.edge3_.partials_[n] -= 1.0 / b_min_a;
