@@ -10,8 +10,11 @@ TEST(MathFunctions, gamma_p) {
   EXPECT_FLOAT_EQ(0.82755178, gamma_p(0.1, 0.1));
   EXPECT_FLOAT_EQ(0.76189667, gamma_p(3.0, 4.0));
   EXPECT_FLOAT_EQ(0.35276812, gamma_p(4.0, 3.0));
+  EXPECT_FLOAT_EQ(1, gamma_p(1.0, stan::math::positive_infinity()));
   EXPECT_THROW(gamma_p(-4.0, 3.0), std::domain_error);
   EXPECT_THROW(gamma_p(4.0, -3.0), std::domain_error);
+  EXPECT_THROW(gamma_p(1.0, stan::math::negative_infinity()),
+               std::domain_error);
 }
 
 TEST(MathFunctions, gamma_p_nan) {
