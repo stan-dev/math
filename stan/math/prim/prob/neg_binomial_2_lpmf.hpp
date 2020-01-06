@@ -94,7 +94,8 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
       //
       // For mu, the expansions can be obtained in Mathematica via
       // Series[n/mu - (n + phi)/(mu+phi),{phi,Infinity, 1}]
-      // Currently ignoring the 2nd order term (mu_val[i] - n_vec[i]) / phi_val[i]
+      // Currently ignoring the 2nd order term (mu_val[i] - n_vec[i]) /
+      // phi_val[i]
       //
       // The derivative wrt phi = 0 + O(1/phi^2),
       // But the quadratic term is big enough to warrant inclusion here
@@ -114,7 +115,8 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
       }
       if (!is_constant_all<T_precision>::value) {
         ops_partials.edge2_.partials_[i]
-            += (mu_val[i] * (-mu_val[i] + 2 * n_vec[i]) + n_vec[i] * (1 - n_vec[i]))
+            += (mu_val[i] * (-mu_val[i] + 2 * n_vec[i])
+                + n_vec[i] * (1 - n_vec[i]))
                / (2 * square(phi_val[i]));
       }
     } else {
