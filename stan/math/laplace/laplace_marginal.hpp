@@ -9,7 +9,6 @@
 #include <stan/math/prim/mat/fun/sqrt.hpp>
 #include <stan/math/rev/mat/fun/cholesky_decompose.hpp>
 #include <stan/math/laplace/laplace_likelihood.hpp>
-
 #include <stan/math/laplace/laplace_pseudo_target.hpp>
 
 #include <iostream>
@@ -318,15 +317,28 @@ namespace math {
      phi_adj_ = Eigen::VectorXd(phi_size_);
      start_nested();
      try {
-
        start = std::chrono::system_clock::now();
        Matrix<var, Dynamic, 1> phi_v = value_of(phi);
        Matrix<var, Dynamic, Dynamic>
          K_var = covariance_function(phi_v, x, delta, delta_int, msgs);
-       var s1 = 0.5 * quad_form(K_var, a) - 0.5 * trace(multiply(R, K_var));
-       Matrix<var, Dynamic, 1> b = multiply(K_var, l_grad);
-       Matrix<var, Dynamic, 1> s3 = b - covariance * (R * b);
-       var Z = s1 + dot_product(s2, s3);
+
+       // var s1 = 0.5 * quad_form(K_var, a) - 0.5 * trace(multiply(R, K_var));
+       // Matrix<var, Dynamic, 1> b = multiply(K_var, l_grad);
+       // Matrix<var, Dynamic, 1> s3 = b - covariance * (R * b);
+       // var Z = dot_product(s2, s3);
+       // var Z = s1 + dot_product(s2, s3);
+
+       var Z = laplace_pseudo_target(K_var, a, R, l_grad, s2);
+
+       /* Eigen::MatrixXd A = Eigen::MatrixXd::Identity(theta_size, theta_size)
+         - value_of(K_var) * R;
+       double an_diff = l_grad(0) * s2.transpose() * A.col(0);
+       std::cout << "an_diff(1, 1): " << an_diff << std::endl;
+       an_diff = l_grad(theta_size - 1) * s2.transpose()
+         * A.col(theta_size - 1);
+       std::cout << "an_diff(n, n): " << an_diff << std::endl;
+       */
+
        end = std::chrono::system_clock::now();
        time = end - start;
        std::cout << "algo 10 -14 time: " << time.count() << std::endl;
@@ -334,6 +346,11 @@ namespace math {
        start = std::chrono::system_clock::now();
        set_zero_all_adjoints_nested();
        grad(Z.vi_);
+
+       /* std::cout << "matrix adjoint: "
+                 << K_var(0, 0).adj() << " "
+                 << K_var(499, 499).adj() << std::endl; */
+
        for (int j = 0; j < phi_size_; j++)
          phi_adj_[j] = phi_v(j).adj();
      } catch (const std::exception& e) {
