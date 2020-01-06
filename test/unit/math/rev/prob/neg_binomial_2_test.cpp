@@ -594,7 +594,6 @@ TEST(ProbDistributionsNegBinomial2, derivativesComplexStep) {
           tolerance_mu = std::max(1e-8, fabs(gradients[0]) * 1e-5);
         }
 
-
         EXPECT_NEAR(gradients[0], complex_step_dmu, tolerance_mu)
             << "grad_mu" << message.str();
 
