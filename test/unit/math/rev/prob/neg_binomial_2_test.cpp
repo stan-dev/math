@@ -1,5 +1,5 @@
 #include <stan/math/rev/scal.hpp>
-#include <boost/math/differentiaton/finite_difference.hpp>
+#include <boost/math/differentiation/finite_difference.hpp>
 #include <boost/math/special_functions/digamma.hpp>
 #include <gtest/gtest.h>
 #include <vector>
