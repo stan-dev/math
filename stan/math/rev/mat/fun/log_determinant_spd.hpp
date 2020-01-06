@@ -4,6 +4,8 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/mat/fun/log.hpp>
+#include <stan/math/prim/mat/fun/sum.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/rev/core.hpp>
 
@@ -35,7 +37,7 @@ inline var log_determinant_spd(const Eigen::Matrix<var, R, C>& m) {
                        "matrix is negative definite");
   }
 
-  double val = ldlt.vectorD().array().log().sum();
+  double val = sum(log(ldlt.vectorD()));
 
   check_finite("log_determinant_spd",
                "log determininant of the matrix argument", val);
