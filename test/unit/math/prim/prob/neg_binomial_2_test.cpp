@@ -264,8 +264,7 @@ TEST(ProbDistributionsNegBinomial2, poissonCutoff) {
   double phi_cutoff = stan::math::internal::neg_binomial_2_phi_cutoff;
   std::vector<double> mu_to_test
       = {2.345e-5, 0.2, 13, 150, 1621, 18432, 73582345};
-  std::vector<int> n_to_test
-      = {0, 3, 16, 24, 181, 2132, 121358, 865422242};
+  std::vector<int> n_to_test = {0, 3, 16, 24, 181, 2132, 121358, 865422242};
   for (double mu : mu_to_test) {
     for (int n : n_to_test) {
       double before_cutoff

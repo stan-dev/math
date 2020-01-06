@@ -14,8 +14,8 @@ struct TestValue {
   double grad_mu;
   double grad_phi;
 
-  TestValue(int _n, double _mu, double _phi, double _value,
-            double _grad_mu, double _grad_phi)
+  TestValue(int _n, double _mu, double _phi, double _value, double _grad_mu,
+            double _grad_phi)
       : n(_n),
         mu(_mu),
         phi(_phi),
@@ -523,8 +523,7 @@ TEST(ProbDistributionsNegBinomial2, derivativesComplexStep) {
   using stan::math::neg_binomial_2_log;
   using stan::math::var;
 
-  std::vector<int> n_to_test
-      = {0, 7, 100, 835, 14238, 385000, 1000000};
+  std::vector<int> n_to_test = {0, 7, 100, 835, 14238, 385000, 1000000};
   std::vector<double> mu_to_test = {0.8, 8, 24, 271, 2586, 33294};
 
   auto nb2_log_for_test = [](int n, const std::complex<double>& mu,
@@ -620,8 +619,7 @@ TEST(ProbDistributionsNegBinomial2, derivativesAtCutoff) {
 
   std::vector<double> mu_to_test
       = {9.3e-6, 0.0028252, 4, 11, 8522, 984256, 5036842};
-  std::vector<int> n_to_test
-      = {0, 1, 5, 48, 1158, 224582, 48235842, 20314458};
+  std::vector<int> n_to_test = {0, 1, 5, 48, 1158, 224582, 48235842, 20314458};
   for (double mu : mu_to_test) {
     for (int n : n_to_test) {
       var mu_before(mu);
