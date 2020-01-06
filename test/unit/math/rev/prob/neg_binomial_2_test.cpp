@@ -580,16 +580,24 @@ TEST(ProbDistributionsNegBinomial2, derivativesComplexStep) {
         message << ", n = " << n << ", mu = " << mu_dbl
                 << ", phi = " << phi_dbl;
 
-        EXPECT_NEAR(gradients[0], complex_step_dmu,
-                    std::max(1e-10, fabs(gradients[0]) * 1e-5))
-            << "grad_mu" << message.str();
-
         double tolerance_phi;
+        double tolerance_mu;
         if (phi < phi_cutoff || n < 100000) {
-          tolerance_phi = std::max(1e-10, fabs(gradients[1]) * 1e-5);
+          tolerance_phi = std::max(1e-10, fabs(gradients[1]) * 1e-8);
         } else {
           tolerance_phi = std::max(1e-8, fabs(gradients[1]) * 1e-5);
         }
+
+        if (phi < phi_cutoff) {
+          tolerance_mu = std::max(1e-10, fabs(gradients[0]) * 1e-8);
+        } else {
+          tolerance_mu = std::max(1e-8, fabs(gradients[0]) * 1e-5);
+        }
+
+
+        EXPECT_NEAR(gradients[0], complex_step_dmu, tolerance_mu)
+            << "grad_mu" << message.str();
+
         EXPECT_NEAR(gradients[1], complex_step_dphi, tolerance_phi)
             << "grad_phi" << message.str();
       }
