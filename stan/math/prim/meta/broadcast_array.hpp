@@ -16,6 +16,7 @@ class broadcast_array {
   explicit broadcast_array(T& prim) : prim_(prim) {}
 
   T& operator[](int /*i*/) { return prim_; }
+  T& operator[](int /*i*/) const { return prim_; }
 
   /** \ingroup type_trait
    * We can assign any right hand side which allows for indexing to a
@@ -26,6 +27,10 @@ class broadcast_array {
   template <typename Y>
   void operator=(const Y& m) {
     prim_ = m[0];
+  }
+  broadcast_array& operator=(broadcast_array other) {
+    prim_ = other.prim_;
+    return *this;
   }
 };
 
@@ -44,6 +49,9 @@ class empty_broadcast_array {
    */
   template <typename Y>
   void operator=(const Y& /*A*/);
+
+  template <typename R>
+  void operator+=(R);
 };
 
 template <typename ViewElt, typename OpElt, int R, int C>
