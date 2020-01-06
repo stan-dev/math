@@ -17,9 +17,7 @@ namespace math {
  *
  * @return <code>1</code> if the value is NaN and <code>0</code> otherwise.
  */
-inline bool is_nan(const var& v) {
-  return is_nan(v.val());
-}
+inline bool is_nan(const var& v) { return is_nan(v.val()); }
 
 }  // namespace math
 }  // namespace stan
