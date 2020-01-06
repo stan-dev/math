@@ -1,4 +1,4 @@
-#include <stan/math/fwd/scal.hpp>
+#include <stan/math/fwd.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathMetaFwd, is_fvar) {
