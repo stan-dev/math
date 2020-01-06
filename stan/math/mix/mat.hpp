@@ -8,18 +8,18 @@
 
 #include <stan/math/rev/mat.hpp>
 
-#include <stan/math/fwd/mat.hpp>
+#include <stan/math/fwd.hpp>
 
 #include <stan/math/prim/mat.hpp>
 
-#include <stan/math/mix/mat/functor/derivative.hpp>
-#include <stan/math/mix/mat/functor/finite_diff_grad_hessian.hpp>
-#include <stan/math/mix/mat/functor/finite_diff_grad_hessian_auto.hpp>
-#include <stan/math/mix/mat/functor/grad_hessian.hpp>
-#include <stan/math/mix/mat/functor/grad_tr_mat_times_hessian.hpp>
-#include <stan/math/mix/mat/functor/gradient_dot_vector.hpp>
-#include <stan/math/mix/mat/functor/hessian.hpp>
-#include <stan/math/mix/mat/functor/hessian_times_vector.hpp>
-#include <stan/math/mix/mat/functor/partial_derivative.hpp>
+#include <stan/math/mix/functor/derivative.hpp>
+#include <stan/math/mix/functor/finite_diff_grad_hessian.hpp>
+#include <stan/math/mix/functor/finite_diff_grad_hessian_auto.hpp>
+#include <stan/math/mix/functor/grad_hessian.hpp>
+#include <stan/math/mix/functor/grad_tr_mat_times_hessian.hpp>
+#include <stan/math/mix/functor/gradient_dot_vector.hpp>
+#include <stan/math/mix/functor/hessian.hpp>
+#include <stan/math/mix/functor/hessian_times_vector.hpp>
+#include <stan/math/mix/functor/partial_derivative.hpp>
 
 #endif
