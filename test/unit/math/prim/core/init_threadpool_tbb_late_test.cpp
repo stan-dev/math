@@ -2,7 +2,7 @@
 
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
-#include <test/unit/math/prim/mat/functor/utils_threads.hpp>
+#include <test/unit/math/prim/functor/utils_threads.hpp>
 
 #include <tbb/task_scheduler_init.h>
 #include <tbb/task_arena.h>

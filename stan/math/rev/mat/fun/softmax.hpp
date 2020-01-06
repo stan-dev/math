@@ -5,7 +5,7 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/prim/mat/fun/softmax.hpp>
-#include <stan/math/rev/mat/functor/adj_jac_apply.hpp>
+#include <stan/math/rev/functor/adj_jac_apply.hpp>
 #include <vector>
 #include <tuple>
 
