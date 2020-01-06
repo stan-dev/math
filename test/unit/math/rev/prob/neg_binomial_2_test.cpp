@@ -1,5 +1,5 @@
 #include <stan/math/rev/scal.hpp>
-#include <boost/math/tools/numerical_differentiation.hpp>
+#include <boost/math/differentiaton/finite_difference.hpp>
 #include <boost/math/special_functions/digamma.hpp>
 #include <gtest/gtest.h>
 #include <vector>
@@ -518,7 +518,7 @@ TEST(ProbDistributionsNegativeBinomial2, derivativesPrecomputed) {
 }
 
 TEST(ProbDistributionsNegBinomial2, derivativesComplexStep) {
-  using boost::math::tools::complex_step_derivative;
+  using boost::math::differentiation::complex_step_derivative;
   using stan::math::is_nan;
   using stan::math::neg_binomial_2_log;
   using stan::math::var;
