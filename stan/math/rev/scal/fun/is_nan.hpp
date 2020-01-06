@@ -17,8 +17,7 @@ namespace math {
  *
  * @return <code>1</code> if the value is NaN and <code>0</code> otherwise.
  */
-template <typename T, require_var_t<T>...>
-inline bool is_nan(T&& v) {
+inline bool is_nan(const var& v) {
   return is_nan(v.val());
 }
 

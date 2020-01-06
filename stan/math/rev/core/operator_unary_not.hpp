@@ -11,12 +11,10 @@ namespace math {
  * Return the negation of the value of the argument as defined by
  * <code>!</code>.
  *
- * @tparam A var autodiff type
  * @param[in] x argument
  * @return negation of argument value
  */
-template <typename Var, require_var_t<Var>...>
-inline bool operator!(Var&& x) {
+inline bool operator!(const var& x) {
   return !x.val();
 }
 

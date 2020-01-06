@@ -93,8 +93,7 @@ class subtract_dv_vari : public op_dv_vari {
  * @return Variable result of subtracting the second variable from
  * the first.
  */
-template <typename Var1, typename Var2, require_all_var_t<Var1, Var2>...>
-inline var operator-(Var1&& a, Var2&& b) {
+inline var operator-(const var& a, const var& b) {
   return {new internal::subtract_vv_vari(a.vi_, b.vi_)};
 }
 
@@ -111,9 +110,8 @@ inline var operator-(Var1&& a, Var2&& b) {
  * @param b Second scalar operand.
  * @return Result of subtracting the scalar from the variable.
  */
-template <typename Var, typename Arith, require_var_t<Var>...,
-          require_arithmetic_t<Arith>...>
-inline var operator-(Var&& a, Arith b) {
+template <typename Arith, require_arithmetic_t<Arith>...>
+inline var operator-(const var& a, Arith b) {
   if (b == 0.0) {
     return a;
   }
@@ -133,9 +131,8 @@ inline var operator-(Var&& a, Arith b) {
  * @param b Second variable operand.
  * @return Result of sutracting a variable from a scalar.
  */
-template <typename Arith, typename Var, require_arithmetic_t<Arith>...,
-          require_var_t<Var>...>
-inline var operator-(Arith a, Var&& b) {
+template <typename Arith, require_arithmetic_t<Arith>...>
+inline var operator-(Arith a, const var& b) {
   return {new internal::subtract_dv_vari(a, b.vi_)};
 }
 

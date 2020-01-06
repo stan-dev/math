@@ -7,8 +7,7 @@
 
 namespace stan {
 namespace math {
-template <typename Var, require_var_t<Var>...>
-inline var& var::operator/=(Var&& b) {
+inline var& var::operator/=(const var& b) {
   vi_ = new internal::divide_vv_vari(vi_, b.vi_);
   return *this;
 }

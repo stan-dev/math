@@ -73,14 +73,11 @@ class multiply_vd_vari : public op_vd_vari {
    \end{cases}
    \f]
  *
- * @tparam Var1 value type of a var
- * @tparam Var2 value type of a var
  * @param a First variable operand.
  * @param b Second variable operand.
  * @return Variable result of multiplying operands.
  */
-template <typename Var1, typename Var2, require_all_var_t<Var1, Var2>...>
-inline var operator*(Var1&& a, Var2&& b) {
+inline var operator*(const var& a, const var& b) {
   return {new internal::multiply_vv_vari(a.vi_, b.vi_)};
 }
 
@@ -91,15 +88,13 @@ inline var operator*(Var1&& a, Var2&& b) {
  *
  * \f$\frac{\partial}{\partial x} (x * c) = c\f$, and
  *
- * @tparam Var value type of a var
  * @tparam Arith An arithmetic type
  * @param a Variable operand.
  * @param b Scalar operand.
  * @return Variable result of multiplying operands.
  */
-template <typename Var, typename Arith, require_var_t<Var>...,
-          require_arithmetic_t<Arith>...>
-inline var operator*(Var&& a, Arith b) {
+template <typename Arith, require_arithmetic_t<Arith>...>
+inline var operator*(const var& a, Arith b) {
   if (b == 1.0) {
     return a;
   }
@@ -113,15 +108,13 @@ inline var operator*(Var&& a, Arith b) {
  *
  * \f$\frac{\partial}{\partial y} (c * y) = c\f$.
  *
- * @tparam Var value type of a var
  * @tparam Arith An arithmetic type
  * @param a Scalar operand.
  * @param b Variable operand.
  * @return Variable result of multiplying the operands.
  */
-template <typename Arith, typename Var, require_arithmetic_t<Arith>...,
-          require_var_t<Var>...>
-inline var operator*(Arith a, Var&& b) {
+template <typename Arith, require_arithmetic_t<Arith>...>
+inline var operator*(Arith a, const var& b) {
   if (a == 1.0) {
     return b;
   }

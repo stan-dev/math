@@ -19,15 +19,12 @@ namespace math {
    \end{cases}
    \f]
  *
- * @tparam Var1 value type of a var
- * @tparam Var2 value type of a var
  * @param a First variable.
  * @param b Second variable.
  * @return True if first variable's value is less than or equal to
  * the second's.
  */
-template <typename Var1, typename Var2, require_all_var_t<Var1, Var2>...>
-inline bool operator<=(Var1&& a, Var2&& b) {
+inline bool operator<=(const var& a, const var& b) {
   return a.val() <= b.val();
 }
 
@@ -35,16 +32,14 @@ inline bool operator<=(Var1&& a, Var2&& b) {
  * Less than or equal operator comparing a variable's value and a
  * scalar (C++).
  *
- * @tparam Var value type of a var
  * @tparam Arith An arithmetic type
  * @param a First variable.
  * @param b Second value.
  * @return True if first variable's value is less than or equal to
  * the second value.
  */
-template <typename Var, typename Arith, require_var_t<Var>...,
-          require_arithmetic_t<Arith>...>
-inline bool operator<=(Var&& a, Arith b) {
+template <typename Arith, require_arithmetic_t<Arith>...>
+inline bool operator<=(const var& a, Arith b) {
   return a.val() <= b;
 }
 
@@ -52,16 +47,14 @@ inline bool operator<=(Var&& a, Arith b) {
  * Less than or equal operator comparing a double and variable's
  * value (C++).
  *
- * @tparam Var value type of a var
  * @tparam Arith An arithmetic type
  * @param a First value.
  * @param b Second variable.
  * @return True if first value is less than or equal to the second
  * variable's value.
  */
-template <typename Arith, typename Var, require_arithmetic_t<Arith>...,
-          require_var_t<Var>...>
-inline bool operator<=(Arith a, Var&& b) {
+template <typename Arith, require_arithmetic_t<Arith>...>
+inline bool operator<=(Arith a, const var& b) {
   return a <= b.val();
 }
 

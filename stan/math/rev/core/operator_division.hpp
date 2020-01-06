@@ -85,15 +85,12 @@ class divide_dv_vari : public op_dv_vari {
    \end{cases}
    \f]
  *
- * @tparam Var1 value type of a var
- * @tparam Var2 value type of a var
  * @param dividend First variable operand.
  * @param divisor Second variable operand.
  * @return Variable result of dividing the first variable by the
  * second.
  */
-template <typename Var1, typename Var2, require_all_var_t<Var1, Var2>...>
-inline var operator/(Var1&& dividend, Var2&& divisor) {
+inline var operator/(const var& dividend, const var& divisor) {
   return {new internal::divide_vv_vari(dividend.vi_, divisor.vi_)};
 }
 
@@ -110,9 +107,8 @@ inline var operator/(Var1&& dividend, Var2&& divisor) {
  * @param divisor Scalar operand.
  * @return Variable result of dividing the variable by the scalar.
  */
-template <typename Var, typename Arith, require_var_t<Var>...,
-          require_arithmetic_t<Arith>...>
-inline var operator/(Var&& dividend, Arith divisor) {
+template <typename Arith, require_arithmetic_t<Arith>...>
+inline var operator/(const var& dividend, Arith divisor) {
   if (divisor == 1.0) {
     return dividend;
   }
@@ -127,14 +123,12 @@ inline var operator/(Var&& dividend, Arith divisor) {
  * \f$\frac{d}{d y} (c/y) = -c / y^2\f$.
  *
  * @tparam Arith An arithmetic type
- * @tparam Var value type of a var
  * @param dividend Scalar operand.
  * @param divisor Variable operand.
  * @return Quotient of the dividend and divisor.
  */
-template <typename Arith, typename Var, require_arithmetic_t<Arith>...,
-          require_var_t<Var>...>
-inline var operator/(Arith dividend, Var&& divisor) {
+template <typename Arith, require_arithmetic_t<Arith>...>
+inline var operator/(Arith dividend, const var& divisor) {
   return {new internal::divide_dv_vari(dividend, divisor.vi_)};
 }
 

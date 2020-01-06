@@ -372,8 +372,7 @@ class var {
    * @param b The variable to add to this variable.
    * @return The result of adding the specified variable to this variable.
    */
-  template <typename Var, require_var_t<Var>...>
-  inline var& operator+=(Var&& b);
+  inline var& operator+=(const var& b);
 
   /**
    * The compound add/assignment operator for scalars (C++).
@@ -399,8 +398,7 @@ class var {
    * @return The result of subtracting the specified variable from
    * this variable.
    */
-  template <typename Var, require_var_t<Var>...>
-  inline var& operator-=(Var&& b);
+  inline var& operator-=(const var& b);
 
   /**
    * The compound subtract/assignment operator for scalars (C++).
@@ -427,8 +425,7 @@ class var {
    * @return The result of multiplying this variable by the
    * specified variable.
    */
-  template <typename Var, require_var_t<Var>...>
-  inline var& operator*=(Var&& b);
+  inline var& operator*=(const var& b);
 
   /**
    * The compound multiply/assignment operator for scalars (C++).
@@ -454,8 +451,7 @@ class var {
    * @return The result of dividing this variable by the
    * specified variable.
    */
-  template <typename Var, require_var_t<Var>...>
-  inline var& operator/=(Var&& b);
+  inline var& operator/=(const var& b);
 
   /**
    * The compound divide/assignment operator for scalars (C++).

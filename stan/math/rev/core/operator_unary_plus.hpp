@@ -38,12 +38,10 @@ namespace math {
  \end{cases}
  \f]
  *
- * @tparam A var autodiff type
  * @param a Argument variable.
  * @return The input reference.
  */
-template <typename Var, require_var_t<Var>...>
-inline var operator+(Var&& a) {
+inline var operator+(const var& a) {
   if (unlikely(is_nan(a.vi_->val_))) {
     return {new precomp_v_vari(NOT_A_NUMBER, a.vi_, NOT_A_NUMBER)};
   }

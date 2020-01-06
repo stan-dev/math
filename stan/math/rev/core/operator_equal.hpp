@@ -19,15 +19,12 @@ namespace math {
    \end{cases}
    \f]
  *
- * @tparam Var1 value type of a var
- * @tparam Var2 value type of a var
  * @param a First variable.
  * @param b Second variable.
  * @return True if the first variable's value is the same as the
  * second's.
  */
-template <typename Var1, typename Var2, require_all_var_t<Var1, Var2>...>
-inline bool operator==(Var1&& a, Var2&& b) {
+inline bool operator==(const var& a, const var& b) {
   return a.val() == b.val();
 }
 
@@ -36,15 +33,13 @@ inline bool operator==(Var1&& a, Var2&& b) {
  * (C++).
  *
  * @tparam Arith An arithmetic type
- * @tparam Var value type of a var
  * @param a First variable.
  * @param b Second value.
  * @return True if the first variable's value is the same as the
  * second value.
  */
-template <typename Arith, typename Var, require_var_t<Var>...,
-          require_arithmetic_t<Arith>...>
-inline bool operator==(Var&& a, Arith b) {
+template <typename Arith, require_arithmetic_t<Arith>...>
+inline bool operator==(const var& a, Arith b) {
   return a.val() == b;
 }
 
@@ -53,14 +48,12 @@ inline bool operator==(Var&& a, Arith b) {
  * (C++).
  *
  * @tparam Arith An arithmetic type
- * @tparam Var value type of a var
  * @param a First scalar.
  * @param b Second variable.
  * @return True if the variable's value is equal to the scalar.
  */
-template <typename Arith, typename Var, require_arithmetic_t<Arith>...,
-          require_var_t<Var>...>
-inline bool operator==(Arith a, Var&& b) {
+template <typename Arith, require_arithmetic_t<Arith>...>
+inline bool operator==(Arith a, const var& b) {
   return a == b.val();
 }
 

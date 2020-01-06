@@ -30,12 +30,10 @@ class increment_vari : public op_v_vari {
  * but is faster and uses less memory.  In particular, the
  * result is an assignable lvalue.
  *
- * @tparam T A var autodiff type
  * @param a Variable to increment.
  * @return Reference the result of incrementing this input variable.
  */
-template <typename Var, require_var_t<Var>...>
-inline var& operator++(Var&& a) {
+inline var& operator++(var& a) {
   a.vi_ = new internal::increment_vari(a.vi_);
   return a;
 }
@@ -47,13 +45,11 @@ inline var& operator++(Var&& a) {
  * the sequence of operations
  *
  * <code>var temp = a;  a = a + 1.0;  return temp;</code>
- * @tparam T A var autodiff type
  *
  * @param a Variable to increment.
  * @return Input variable.
  */
-template <typename Var, require_var_t<Var>...>
-inline var operator++(Var&& a, int /*dummy*/) {
+inline var operator++(var& a, int /*dummy*/) {
   var temp(a);
   a.vi_ = new internal::increment_vari(a.vi_);
   return temp;

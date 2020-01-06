@@ -45,12 +45,10 @@ class neg_vari : public op_v_vari {
    \end{cases}
    \f]
  *
- * @tparam A var autodiff type
  * @param a Argument variable.
  * @return Negation of variable.
  */
-template <typename Var, require_var_t<Var>...>
-inline var operator-(Var&& a) {
+inline var operator-(const var& a) {
   return {new internal::neg_vari(a.vi_)};
 }
 
