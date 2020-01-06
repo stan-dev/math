@@ -1,5 +1,5 @@
 #include <stan/math/rev/scal.hpp>
-#include <boost/math/tools/numerical_differentiation.hpp>
+#include <boost/math/differentiation/finite_difference.hpp>
 #include <boost/math/special_functions/digamma.hpp>
 #include <gtest/gtest.h>
 #include <vector>
@@ -452,7 +452,7 @@ TEST(ProbDistributionsNegBinomial, derivativesPrecomputed) {
 }
 
 TEST(ProbDistributionsNegBinomial, derivativesComplexStep) {
-  using boost::math::tools::complex_step_derivative;
+  using boost::math::differentiation::complex_step_derivative;
   using stan::math::internal::neg_binomial_alpha_cutoff;
   using stan::math::is_nan;
   using stan::math::neg_binomial_lpmf;
@@ -530,7 +530,7 @@ TEST(ProbDistributionsNegBinomial, derivativesComplexStep) {
 
         double tolerance_alpha;
         if (alpha < neg_binomial_alpha_cutoff || n < 100000) {
-          tolerance_alpha = std::max(1e-10, fabs(gradients[0]) * 1e-5);
+          tolerance_alpha = std::max(1e-10, fabs(gradients[0]) * 1e-8);
         } else {
           // Not sure why the test fails in this case with strict tolerance
           // but the error is still quite small, so just increasing tolerance
@@ -540,7 +540,7 @@ TEST(ProbDistributionsNegBinomial, derivativesComplexStep) {
             << "grad_alpha, n = " << n << ", alpha = " << alpha_dbl
             << ", beta = " << beta_dbl;
         EXPECT_NEAR(gradients[1], complex_step_dbeta,
-                    std::max(1e-10, fabs(gradients[1]) * 1e-5))
+                    std::max(1e-10, fabs(gradients[1]) * 1e-8))
             << "grad_beta, n = " << n << ", alpha = " << alpha_dbl
             << ", beta = " << beta_dbl;
       }
