@@ -239,11 +239,11 @@ TEST(ProbDistributionsNegBinomial2, chiSquareGoodnessFitTest4) {
 }
 
 TEST(ProbDistributionsNegBinomial2, extreme_values) {
-  std::vector<unsigned int> n_to_test = {1, 5, 100, 12985, 1968422};
+  std::vector<int> n_to_test = {1, 5, 100, 12985, 1968422};
   std::vector<double> mu_to_test = {1e-5, 0.1, 8, 713, 28311, 19850054};
   double phi_cutoff = stan::math::internal::neg_binomial_2_phi_cutoff;
   for (double mu : mu_to_test) {
-    for (unsigned int n : n_to_test) {
+    for (int n : n_to_test) {
       // Test just before cutoff
       double logp
           = stan::math::neg_binomial_2_log<false>(n, mu, phi_cutoff - 1e-8);
@@ -264,10 +264,10 @@ TEST(ProbDistributionsNegBinomial2, poissonCutoff) {
   double phi_cutoff = stan::math::internal::neg_binomial_2_phi_cutoff;
   std::vector<double> mu_to_test
       = {2.345e-5, 0.2, 13, 150, 1621, 18432, 73582345};
-  std::vector<unsigned int> n_to_test
+  std::vector<int> n_to_test
       = {0, 3, 16, 24, 181, 2132, 121358, 865422242};
   for (double mu : mu_to_test) {
-    for (unsigned int n : n_to_test) {
+    for (int n : n_to_test) {
       double before_cutoff
           = stan::math::neg_binomial_2_lpmf(n, mu, phi_cutoff - 1e-8);
       double after_cutoff

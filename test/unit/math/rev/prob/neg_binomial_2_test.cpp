@@ -7,14 +7,14 @@
 
 namespace neg_binomial_2_test_internal {
 struct TestValue {
-  unsigned int n;
+  int n;
   double mu;
   double phi;
   double value;
   double grad_mu;
   double grad_phi;
 
-  TestValue(unsigned int _n, double _mu, double _phi, double _value,
+  TestValue(int _n, double _mu, double _phi, double _value,
             double _grad_mu, double _grad_phi)
       : n(_n),
         mu(_mu),
@@ -490,7 +490,7 @@ TEST(ProbDistributionsNegativeBinomial2, derivativesPrecomputed) {
   using stan::math::var;
 
   for (TestValue t : testValues) {
-    unsigned int n = t.n;
+    int n = t.n;
     var mu(t.mu);
     var phi(t.phi);
     var val = neg_binomial_2_log(n, mu, phi);
@@ -523,7 +523,7 @@ TEST(ProbDistributionsNegBinomial2, derivativesComplexStep) {
   using stan::math::neg_binomial_2_log;
   using stan::math::var;
 
-  std::vector<unsigned int> n_to_test
+  std::vector<int> n_to_test
       = {0, 7, 100, 835, 14238, 385000, 1000000};
   std::vector<double> mu_to_test = {0.8, 8, 24, 271, 2586, 33294};
 
@@ -545,7 +545,7 @@ TEST(ProbDistributionsNegBinomial2, derivativesComplexStep) {
 
   double phi_cutoff = stan::math::internal::neg_binomial_2_phi_cutoff;
   for (double mu_dbl : mu_to_test) {
-    for (unsigned int n : n_to_test) {
+    for (int n : n_to_test) {
       for (double phi_dbl = 1.5; phi_dbl < 1e22; phi_dbl *= 10) {
         var mu(mu_dbl);
         var phi(phi_dbl);
@@ -620,10 +620,10 @@ TEST(ProbDistributionsNegBinomial2, derivativesAtCutoff) {
 
   std::vector<double> mu_to_test
       = {9.3e-6, 0.0028252, 4, 11, 8522, 984256, 5036842};
-  std::vector<unsigned int> n_to_test
+  std::vector<int> n_to_test
       = {0, 1, 5, 48, 1158, 224582, 48235842, 20314458};
   for (double mu : mu_to_test) {
-    for (unsigned int n : n_to_test) {
+    for (int n : n_to_test) {
       var mu_before(mu);
       var phi_before(phi_cutoff - 1e-8);
       var value_before = neg_binomial_2_lpmf(n, mu_before, phi_before);
