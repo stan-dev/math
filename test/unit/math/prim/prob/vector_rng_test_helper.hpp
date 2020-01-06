@@ -414,6 +414,19 @@ struct check_quantiles {
 
 /*
  * Call check_quantiles on the given test rig for a continuous distribution that
+ * has no parameters.
+ *
+ * @tparam T_rig Type of test rig for random number generator
+ * @param T_rig Test rig for random number generator
+ */
+template <typename T_rig>
+void check_quantiles_no_params(const T_rig& rig) {
+  apply_template_permutations<std::tuple<double>, std::tuple<double>,
+                              std::tuple<double>>(check_quantiles{}, rig);
+}
+
+/*
+ * Call check_quantiles on the given test rig for a continuous distribution that
  * has one parameter that can be an int, std::vector<int>,
  * double, std::vector<double>, Eigen::VectorXd, or an Eigen::RowVectorXd
  *

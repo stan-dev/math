@@ -65,7 +65,7 @@ TEST(ProbDistributionsStdNormal, distributionTest) {
    *
    * It does so for all possible combinations of calling arguments.
    */
-  check_quantiles_real_real(StdNormalTestRig());
+  check_quantiles_no_params(StdNormalTestRig());
 }
 
 TEST(ProbDistributionsStdNormal, error_check) {
