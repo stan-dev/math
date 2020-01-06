@@ -11,7 +11,6 @@ def runTests(String testPath) {
 def runTestsWin(String testPath) {
     withEnv(['PATH+TBB=./lib/tbb']) {
        bat "echo $PATH"
-       bat "bash -cl \"echo CXXFLAGS+= -Wa,-mbig-obj >> make/local\""
        bat "runTests.py -j${env.PARALLEL} ${testPath} --make-only"
        try { bat "runTests.py -j${env.PARALLEL} ${testPath}" }
        finally { junit 'test/**/*.xml' }
