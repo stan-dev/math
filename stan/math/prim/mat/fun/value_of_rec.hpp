@@ -31,6 +31,7 @@ inline auto value_of_rec(const T& M) {
  *
  * <p>This inline pass-through no-op should be compiled away.
  *
+ * @tparam T Type of matrix.
  * @param x Specified matrix.
  * @return Specified matrix.
  */

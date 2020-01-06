@@ -37,7 +37,7 @@ inline auto sinh(const T& x) {
 }
 
 /**
- * Version of sinh() that accepts Eigen Matrix ar matrix expressions.
+ * Version of sinh() that accepts Eigen Matrix or matrix expressions.
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
  * @return Hyperbolic sine of each variable in x.
@@ -49,7 +49,7 @@ inline auto sinh(const Eigen::MatrixBase<Derived>& x) {
 }
 
 /**
- * Version of acos() that accepts Eigen Array ar array expressions.
+ * Version of acos() that accepts Eigen Array or array expressions.
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
  * @return Hyperbolic sine of each variable in x.

@@ -37,7 +37,7 @@ inline auto ceil(const T& x) {
 }
 
 /**
- * Version of ceil() that accepts Eigen Matrix ar matrix expressions.
+ * Version of ceil() that accepts Eigen Matrix or matrix expressions.
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
  * @return Least integer >= each value in x.

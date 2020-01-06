@@ -37,7 +37,7 @@ inline auto tan(const T& x) {
 }
 
 /**
- * Version of tan() that accepts Eigen Matrix ar matrix expressions.
+ * Version of tan() that accepts Eigen Matrix or matrix expressions.
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
  * @return Tangent of each value in x.

@@ -36,7 +36,7 @@ inline auto inv_sqrt(const T& x) {
 }
 
 /**
- * Version of inv_sqrt() that accepts Eigen Matrix ar matrix expressions.
+ * Version of inv_sqrt() that accepts Eigen Matrix or matrix expressions.
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
  * @return Arc cosine of each variable in the container, in radians.
@@ -48,7 +48,7 @@ inline auto inv_sqrt(const Eigen::MatrixBase<Derived>& x) {
 }
 
 /**
- * Version of inv_sqrt() that accepts Eigen Array ar array expressions.
+ * Version of inv_sqrt() that accepts Eigen Array or array expressions.
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
  * @return Arc cosine of each variable in the container, in radians.

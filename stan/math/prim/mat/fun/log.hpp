@@ -43,7 +43,7 @@ inline auto log(const T& x) {
 }
 
 /**
- * Version of log() that accepts Eigen Matrix ar matrix expressions.
+ * Version of log() that accepts Eigen Matrix or matrix expressions.
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
  * @return Arc cosine of each variable in the container, in radians.
