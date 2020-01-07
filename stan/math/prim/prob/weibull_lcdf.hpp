@@ -55,13 +55,13 @@ return_type_t<T_y, T_shape, T_scale> weibull_lcdf(const T_y& y,
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
     const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
-    const T_partials_return pow_ = pow(y_dbl / sigma_dbl, alpha_dbl);
-    const T_partials_return exp_ = exp(-pow_);
-    const T_partials_return cdf_ = 1.0 - exp_;
+    const T_partials_return pow_n = pow(y_dbl / sigma_dbl, alpha_dbl);
+    const T_partials_return exp_n = exp(-pow_n);
+    const T_partials_return cdf_n = 1.0 - exp_n;
 
-    cdf_log += log(cdf_);
+    cdf_log += log(cdf_n);
 
-    const T_partials_return rep_deriv = pow_ / (1.0 / exp_ - 1.0);
+    const T_partials_return rep_deriv = pow_n / (1.0 / exp_n - 1.0);
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] += rep_deriv * alpha_dbl / y_dbl;
     }

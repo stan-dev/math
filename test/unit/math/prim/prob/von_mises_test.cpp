@@ -1,19 +1,19 @@
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/prim/scal.hpp>
+#include <test/unit/math/prim/prob/util.hpp>
 #include <test/unit/math/prim/prob/vector_rng_test_helper.hpp>
-#include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
+#include <boost/random/mersenne_twister.hpp>
 #include <gtest/gtest.h>
-#include <limits>
 #include <vector>
 
 class VonMisesTestRig : public VectorRNGTestRig {
  public:
   VonMisesTestRig()
       : VectorRNGTestRig(10000, 10, {-2.5, -1.7, -0.1, 0.0, 2.0, 5.8},
-                         {-3, -2, -1, 0, 2, 6}, {}, {}, {0.1, 1.0, 2.5, 4.0},
-                         {1, 2, 3, 4}, {-2.7, -1.5, -0.5, 0.0},
-                         {-3, -2, -1, 0}) {}
+                         {-3, -2, -1, 0, 2, 6}, {}, {},
+                         {0.0, 0.1, 1.0, 2.5, 4.0}, {0, 1, 2, 3, 4},
+                         {-2.7, -1.5, -0.5}, {-3, -2, -1}) {}
 
   template <typename T1, typename T2, typename T3, typename T_rng>
   auto generate_samples(const T1& mu, const T2& kappa, const T3& unused,
@@ -78,6 +78,7 @@ TEST(ProbDistributionsVonMises, chiSquareGoodnessFitTest) {
 TEST(ProbDistributionsVonMises, error_check) {
   boost::random::mt19937 rng;
   EXPECT_NO_THROW(stan::math::von_mises_rng(1.0, 2.0, rng));
+  EXPECT_NO_THROW(stan::math::von_mises_rng(1.0, 0.0, rng));
 
   EXPECT_THROW(
       stan::math::von_mises_rng(stan::math::negative_infinity(), 2.0, rng),
@@ -223,4 +224,23 @@ TEST(ProbDistributionsVonMises, chiSquareGoodnessFitTest3) {
   }
 
   EXPECT_LT(chi, quantile(complement(mydist, 1e-6)));
+}
+
+TEST(ProbDistributionsVonMises, chiSquareGoodnessFitTest4) {
+  boost::random::mt19937 rng;
+  int N = 10000;
+  int K = stan::math::round(2 * std::pow(N, 0.4));
+
+  std::vector<double> samples;
+  for (int i = 0; i < N; ++i) {
+    samples.push_back(stan::math::von_mises_rng(stan::math::pi(), 0.0, rng));
+  }
+
+  std::vector<double> quantiles;
+  for (int i = 1; i <= K; ++i) {
+    double frac = static_cast<double>(i) * stan::math::TWO_PI / K;
+    quantiles.push_back(0.0 + frac);
+  }
+
+  assert_matches_quantiles(samples, quantiles, 1e-6);
 }

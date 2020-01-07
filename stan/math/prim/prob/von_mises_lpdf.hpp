@@ -31,8 +31,9 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
   T_partials_return logp = 0.0;
 
   check_finite(function, "Random variable", y);
-  check_finite(function, "Location paramter", mu);
-  check_positive_finite(function, "Scale parameter", kappa);
+  check_finite(function, "Location parameter", mu);
+  check_nonnegative(function, "Scale parameter", kappa);
+  check_finite(function, "Scale parameter", kappa);
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", kappa);
 
@@ -68,8 +69,8 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
   size_t N = max_size(y, mu, kappa);
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_ = value_of(y_vec[n]);
-    const T_partials_return y_dbl = y_ - floor(y_ / TWO_PI) * TWO_PI;
+    const T_partials_return y_val = value_of(y_vec[n]);
+    const T_partials_return y_dbl = y_val - floor(y_val / TWO_PI) * TWO_PI;
     const T_partials_return mu_dbl = value_of(mu_vec[n]);
 
     T_partials_return bessel0 = 0;
@@ -81,7 +82,8 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
       bessel1 = modified_bessel_first_kind(-1, kappa_dbl[n]);
     }
     const T_partials_return kappa_sin = kappa_dbl[n] * sin(mu_dbl - y_dbl);
-    const T_partials_return kappa_cos = kappa_dbl[n] * cos(mu_dbl - y_dbl);
+    const T_partials_return cos_mu_minus_y = cos(mu_dbl - y_dbl);
+    const T_partials_return kappa_cos = kappa_dbl[n] * cos_mu_minus_y;
 
     if (include_summand<propto>::value) {
       logp -= LOG_TWO_PI;
@@ -98,8 +100,7 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
       ops_partials.edge2_.partials_[n] -= kappa_sin;
     }
     if (!kappa_const) {
-      ops_partials.edge3_.partials_[n]
-          += kappa_cos / kappa_dbl[n] - bessel1 / bessel0;
+      ops_partials.edge3_.partials_[n] += cos_mu_minus_y - bessel1 / bessel0;
     }
   }
   return ops_partials.build(logp);
