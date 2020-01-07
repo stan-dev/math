@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_PROB_STD_NORMAL_RNG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/err.hpp>
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 
