@@ -108,71 +108,71 @@ pipeline {
                 }
             }
         }
-    stage('Always-run tests part 3') {
-            parallel {
-                stage('Windows Headers & Unit') {
-                    agent { label 'windows' }
-                    steps {
-                        deleteDirWin()
-                        unstash 'MathSetup'
-                        bat "mingw32-make -j${env.PARALLEL} test-headers"
-                        runTestsWin("test/unit/math/rev/functor")
+        stage('Always-run tests part 3') {
+                parallel {
+                    stage('Windows Headers & Unit') {
+                        agent { label 'windows' }
+                        steps {
+                            deleteDirWin()
+                            unstash 'MathSetup'
+                            bat "mingw32-make -j${env.PARALLEL} test-headers"
+                            runTestsWin("test/unit/math/rev/functor")
+                        }
                     }
                 }
-            }
-    }
-    stage('Always-run tests part 4') {
-            parallel {
-                stage('Windows Headers & Unit') {
-                    agent { label 'windows' }
-                    steps {
-                        deleteDirWin()
-                        unstash 'MathSetup'
-                        bat "mingw32-make -j${env.PARALLEL} test-headers"
-                        runTestsWin("test/unit/math/rev/functor")
+        }
+        stage('Always-run tests part 4') {
+                parallel {
+                    stage('Windows Headers & Unit') {
+                        agent { label 'windows' }
+                        steps {
+                            deleteDirWin()
+                            unstash 'MathSetup'
+                            bat "mingw32-make -j${env.PARALLEL} test-headers"
+                            runTestsWin("test/unit/math/rev/functor")
+                        }
                     }
                 }
-            }
-    }
-    stage('Always-run tests part 5') {
-            parallel {
-                stage('Windows Headers & Unit') {
-                    agent { label 'windows' }
-                    steps {
-                        deleteDirWin()
-                        unstash 'MathSetup'
-                        bat "mingw32-make -j${env.PARALLEL} test-headers"
-                        runTestsWin("test/unit/math/rev/functor")
+        }
+        stage('Always-run tests part 5') {
+                parallel {
+                    stage('Windows Headers & Unit') {
+                        agent { label 'windows' }
+                        steps {
+                            deleteDirWin()
+                            unstash 'MathSetup'
+                            bat "mingw32-make -j${env.PARALLEL} test-headers"
+                            runTestsWin("test/unit/math/rev/functor")
+                        }
                     }
                 }
-            }
-    }
-    stage('Always-run tests part 6') {
-            parallel {
-                stage('Windows Headers & Unit') {
-                    agent { label 'windows' }
-                    steps {
-                        deleteDirWin()
-                        unstash 'MathSetup'
-                        bat "mingw32-make -j${env.PARALLEL} test-headers"
-                        runTestsWin("test/unit/math/rev/functor")
+        }
+        stage('Always-run tests part 6') {
+                parallel {
+                    stage('Windows Headers & Unit') {
+                        agent { label 'windows' }
+                        steps {
+                            deleteDirWin()
+                            unstash 'MathSetup'
+                            bat "mingw32-make -j${env.PARALLEL} test-headers"
+                            runTestsWin("test/unit/math/rev/functor")
+                        }
                     }
                 }
-            }
-    }
-    stage('Always-run tests part 7') {
-            parallel {
-                stage('Windows Headers & Unit') {
-                    agent { label 'windows' }
-                    steps {
-                        deleteDirWin()
-                        unstash 'MathSetup'
-                        bat "mingw32-make -j${env.PARALLEL} test-headers"
-                        runTestsWin("test/unit/math/rev/functor")
+        }
+        stage('Always-run tests part 7') {
+                parallel {
+                    stage('Windows Headers & Unit') {
+                        agent { label 'windows' }
+                        steps {
+                            deleteDirWin()
+                            unstash 'MathSetup'
+                            bat "mingw32-make -j${env.PARALLEL} test-headers"
+                            runTestsWin("test/unit/math/rev/functor")
+                        }
                     }
                 }
-            }
-    }
+        }
     }
     post {
         always {
