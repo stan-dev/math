@@ -17,10 +17,10 @@ namespace stan {
 namespace math {
 
 namespace internal {
-// Exposing to let me us this in tests
+// When to switch to approximations for neg. binom for large phi
 // The current tests fail when the cutoff is 1e8 and pass with 1e9,
 // setting 1e10 to be safe
-constexpr double neg_binomial_2_phi_cutoff = 1e10;
+constexpr double neg_binomial_2_phi_cutoff = 1e15;
 }  // namespace internal
 
 // NegBinomial(n|mu, phi)  [mu >= 0; phi > 0;  n >= 0]
@@ -84,12 +84,13 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
   }
 
   for (size_t i = 0; i < max_size_seq_view; i++) {
-    if (phi_val[i] > internal::neg_binomial_2_phi_cutoff) {
+    if(false) {
+    //if (phi_val[i] > internal::neg_binomial_2_phi_cutoff) {
       // Phi is large, delegate to Poisson.
       // Copying the code here as just calling
       // poisson_lpmf does not preserve propto logic correctly.
       // Note that Poisson can be seen as first term of Taylor series for
-      // phi -> Inf. Similarly, the derivative wrt mu and phi can be obtained
+      // phi -> Inf. Similarly, the derivative w.r.t. mu and phi can be obtained
       // via the Same Taylor expansions:
       //
       // For mu, the expansions can be obtained in Mathematica via
@@ -97,27 +98,31 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
       // Currently ignoring the 2nd order term (mu_val[i] - n_vec[i]) /
       // phi_val[i]
       //
-      // The derivative wrt phi = 0 + O(1/phi^2),
+      // The derivative w.r.t. phi = 0 + O(1/phi^2),
       // But the quadratic term is big enough to warrant inclusion here
       // (can be around 1e-6 at cutoff).
       // Expansion obtained in Mathematica via
       // Series[1 - (n + phi) / (mu + phi) + Log[phi] - Log[mu + phi] -
       //  PolyGamma[phi] + PolyGamma[n + phi],{phi,Infinity, 2}]
-      if (include_summand<propto>::value) {
-        logp -= lgamma(n_vec[i] + 1.0);
-      }
-      if (include_summand<propto, T_location>::value) {
-        logp += multiply_log(n_vec[i], mu_val[i]) - mu_val[i];
-      }
+      if(n_vec[i] == 0) {
+        logp += phi_val[i] * (-log1p(mu_val[i] / phi_val[i]));
+      } else {
+        if (include_summand<propto>::value) {
+          logp -= lgamma(n_vec[i] + 1.0);
+        }
+        if (include_summand<propto, T_location>::value) {
+          logp += multiply_log(n_vec[i], mu_val[i]) - mu_val[i];
+        }
 
-      if (!is_constant_all<T_location>::value) {
-        ops_partials.edge1_.partials_[i] += n_vec[i] / mu_val[i] - 1;
-      }
-      if (!is_constant_all<T_precision>::value) {
-        ops_partials.edge2_.partials_[i]
-            += (mu_val[i] * (-mu_val[i] + 2 * n_vec[i])
-                + n_vec[i] * (1 - n_vec[i]))
-               / (2 * square(phi_val[i]));
+        if (!is_constant_all<T_location>::value) {
+          ops_partials.edge1_.partials_[i] += n_vec[i] / mu_val[i] - 1;
+        }
+        if (!is_constant_all<T_precision>::value) {
+          ops_partials.edge2_.partials_[i]
+              += (mu_val[i] * (-mu_val[i] + 2 * n_vec[i])
+                  + n_vec[i] * (1 - n_vec[i]))
+                / (2 * square(phi_val[i]));
+        }
       }
     } else {
       if (include_summand<propto, T_precision>::value) {
@@ -126,7 +131,8 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
       if (include_summand<propto, T_location>::value) {
         logp += multiply_log(n_vec[i], mu_val[i]);
       }
-      logp += phi_val[i] * (log_phi[i] - log_mu_plus_phi[i])
+      // logp += phi_val[i] * (log_phi[i] - log_mu_plus_phi[i])
+      logp += - phi_val[i] * (log1p(mu_val[i] / phi_val[i]))
               - n_vec[i] * log_mu_plus_phi[i];
 
       if (!is_constant_all<T_location>::value) {

@@ -3,6 +3,8 @@
 #include <test/unit/math/prim/prob/vector_rng_test_helper.hpp>
 #include <test/unit/math/prim/prob/NegativeBinomial2LogTestRig.hpp>
 #include <test/unit/math/prim/prob/VectorIntRNGTestRig.hpp>
+#include <test/unit/math/prim/prob/neg_binomial_2_test_tools.hpp>
+#include <test/unit/math/expect_near_rel.hpp>
 #include <gtest/gtest.h>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
@@ -239,7 +241,7 @@ TEST(ProbDistributionsNegBinomial2, chiSquareGoodnessFitTest4) {
 }
 
 TEST(ProbDistributionsNegBinomial2, extreme_values) {
-  std::vector<int> n_to_test = {1, 5, 100, 12985, 1968422};
+  std::vector<int> n_to_test = {0, 1, 5, 100, 12985, 1968422};
   std::vector<double> mu_to_test = {1e-5, 0.1, 8, 713, 28311, 19850054};
   double phi_cutoff = stan::math::internal::neg_binomial_2_phi_cutoff;
   for (double mu : mu_to_test) {
@@ -261,24 +263,58 @@ TEST(ProbDistributionsNegBinomial2, extreme_values) {
 }
 
 TEST(ProbDistributionsNegBinomial2, poissonCutoff) {
-  double phi_cutoff = stan::math::internal::neg_binomial_2_phi_cutoff;
+  using stan::test::expect_near_rel;
+  using namespace stan::test::neg_binomial_2_test_internal;
+
+  // std::vector<double> mu_to_test
+  //     = {2.345e-5, 0.2, 13, 150, 1621, 18432, 73582345, 
+  //       static_cast<double>(std::numeric_limits<int>::max()) };
+  // std::vector<int> n_to_test = {0, 1, 3, 16, 24, 181, 2132, 121358, 865422242};
   std::vector<double> mu_to_test
-      = {2.345e-5, 0.2, 13, 150, 1621, 18432, 73582345};
-  std::vector<int> n_to_test = {0, 3, 16, 24, 181, 2132, 121358, 865422242};
+      = {10};
+  std::vector<int> n_to_test = {16};
   for (double mu : mu_to_test) {
     for (int n : n_to_test) {
       double before_cutoff
-          = stan::math::neg_binomial_2_lpmf(n, mu, phi_cutoff - 1e-8);
+          = stan::math::neg_binomial_2_lpmf(n, mu, just_below_phi_cutoff);
       double after_cutoff
-          = stan::math::neg_binomial_2_lpmf(n, mu, phi_cutoff + 1e-8);
-      double relative_error_at_cutoff = log(before_cutoff / after_cutoff);
-      EXPECT_NEAR(relative_error_at_cutoff, 0, 1e-8)
-          << "neg_binomial_2_lpmf changes too much around phi cutoff for n = "
-          << n << ", mu = " << mu << ", cutoff = " << phi_cutoff
-          << " value at cutoff - 1e-8: " << before_cutoff
-          << ", value at cutoff + 1e-8: " << after_cutoff;
+          = stan::math::neg_binomial_2_lpmf(n, mu, just_above_phi_cutoff);
+      std::ostringstream msg;
+      msg << "neg_binomial_2_lpmf changes too much around phi cutoff for n = "
+          << std::setprecision(17) << n << ", mu = " << mu 
+          << ", below cutoff = "  << just_below_phi_cutoff 
+          << ", above cutoff = " << just_above_phi_cutoff;
+      expect_near_rel(msg.str(), before_cutoff, after_cutoff);
+          
     }
   }
+}
+
+TEST(ProbDistributionsNegBinomial2, zeroOne) { 
+  using stan::test::expect_near_rel;
+  using namespace stan::test::neg_binomial_2_test_internal;
+
+  std::vector<double> mu_to_test
+      = {2.345e-5, 0.2, 13, 150, 1621, 18432, phi_cutoff };
+  double phi_start = 1e-8;
+  double phi_max = just_above_phi_cutoff * 1e10;
+  for (double mu : mu_to_test) {
+    for(double phi = phi_start; phi < phi_max; 
+        phi *= stan::math::pi()) {
+
+      std::ostringstream msg;
+      msg << ", mu = " << mu << ", phi = " << phi;
+
+      double expected_value_0 = phi * (-log1p(mu / phi)); 
+      double value_0 = stan::math::neg_binomial_2_lpmf(0, mu, phi);
+      expect_near_rel("n = 0 " + msg.str(), value_0, expected_value_0);
+
+      double expected_value_1 = (phi + 1) * (-log1p(mu / phi)) + log(mu);
+      double value_1 = stan::math::neg_binomial_2_lpmf(1, mu, phi);
+      expect_near_rel("n = 1 " + msg.str(), value_1, expected_value_1);
+    }
+  }
+
 }
 
 TEST(ProbDistributionsNegBinomial2, vectorAroundCutoff) {
