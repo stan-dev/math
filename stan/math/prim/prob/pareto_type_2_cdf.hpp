@@ -48,13 +48,14 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_cdf(
     const T_partials_return mu_dbl = value_of(mu_vec[n]);
     const T_partials_return lambda_dbl = value_of(lambda_vec[n]);
     const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
-    const T_partials_return temp = lambda_dbl + y_dbl - mu_dbl;
+    const T_partials_return sum_dbl = lambda_dbl + y_dbl - mu_dbl;
+    const T_partials_return temp = sum_dbl / lambda_dbl;
 
     const T_partials_return p1_pow_alpha = pow(temp, -alpha_dbl);
     const T_partials_return grad_1_2
         = is_constant_all<T_y, T_loc, T_scale>::value
               ? 0
-              : p1_pow_alpha / temp * alpha_dbl;
+              : p1_pow_alpha / sum_dbl * alpha_dbl;
 
     const T_partials_return Pn = 1.0 - p1_pow_alpha;
 
@@ -71,8 +72,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_cdf(
           += (mu_dbl - y_dbl) * grad_1_2 / (lambda_dbl * Pn);
     }
     if (!is_constant_all<T_shape>::value) {
-      ops_partials.edge4_.partials_[n]
-          += log(temp / lambda_dbl) * p1_pow_alpha / Pn;
+      ops_partials.edge4_.partials_[n] += log(temp) * p1_pow_alpha / Pn;
     }
   }
 
