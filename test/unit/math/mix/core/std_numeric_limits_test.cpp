@@ -1,4 +1,4 @@
-#include <stan/math/mix/scal.hpp>
+#include <stan/math/mix.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 

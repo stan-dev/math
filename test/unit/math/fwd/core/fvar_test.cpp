@@ -3,7 +3,7 @@
 #include <sstream>
 
 // thorough tests for operators with fvar<double>, fvar<fvar<double>>,
-// fvar<var>, and fvar<fvar<var>> are in test/unit/math/mix/core/operator_*
+// fvar<var>, and fvar<fvar<var>> are in test/unit/math/core/operator_*
 
 TEST(mathFwdCoreFvar, copyCtor) {
   using stan::math::fvar;
