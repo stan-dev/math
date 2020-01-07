@@ -5,8 +5,8 @@ TEST(mathMixScalFun, std_normal_cdf_derivatives) {
   auto f = [](const auto& y) { return stan::math::std_normal_cdf(y); };
 
   stan::test::expect_ad(f, -50.0);
-//stan::test::expect_ad(f, -20.0 * stan::math::SQRT_TWO);
-//stan::test::expect_ad(f, -10.0);
+  // stan::test::expect_ad(f, -20.0 * stan::math::SQRT_TWO);
+  // stan::test::expect_ad(f, -10.0);
   stan::test::expect_ad(f, -5.5);
   stan::test::expect_ad(f, 0.0);
   stan::test::expect_ad(f, 0.15);

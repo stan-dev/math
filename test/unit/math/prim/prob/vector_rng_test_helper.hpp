@@ -301,7 +301,7 @@ void check_dist_throws_all_types(const T_rig& rig) {
  */
 template <typename T_rig>
 void check_dist_throws_int_first_argument(const T_rig& rig) {
-  apply_template_permutations<std::tuple<int, std::vector<int> >, ArgumentTypes,
+  apply_template_permutations<std::tuple<int, std::vector<int>>, ArgumentTypes,
                               ArgumentTypes>(check_dist_throws{}, rig);
 }
 
@@ -317,7 +317,7 @@ void check_dist_throws_int_first_argument(const T_rig& rig) {
  */
 template <typename T_rig>
 void check_dist_throws_real_first_argument(const T_rig& rig) {
-  apply_template_permutations<std::tuple<double, std::vector<double> >,
+  apply_template_permutations<std::tuple<double, std::vector<double>>,
                               ArgumentTypes, ArgumentTypes>(check_dist_throws{},
                                                             rig);
 }
@@ -391,7 +391,7 @@ struct check_quantiles {
     stan::scalar_seq_view<T_param2> p2_vec(p2);
     stan::scalar_seq_view<T_param3> p3_vec(p3);
 
-    std::vector<std::vector<double> > samples_to_test_transpose;
+    std::vector<std::vector<double>> samples_to_test_transpose;
     for (int n = 0; n < rig.N_; ++n) {
       // If p1, p2, and p3 are scalars, the output is a scalar. Need to promote
       // it to a std::vector
@@ -436,7 +436,7 @@ void check_quantiles_no_params(const T_rig& rig) {
 template <typename T_rig>
 void check_quantiles_real(const T_rig& rig) {
   apply_template_permutations<ArgumentTypes, std::tuple<double>,
-                              std::tuple<double> >(check_quantiles{}, rig);
+                              std::tuple<double>>(check_quantiles{}, rig);
 }
 
 /*
@@ -449,8 +449,8 @@ void check_quantiles_real(const T_rig& rig) {
  */
 template <typename T_rig>
 void check_quantiles_real_real(const T_rig& rig) {
-  apply_template_permutations<ArgumentTypes, ArgumentTypes,
-                              std::tuple<double> >(check_quantiles{}, rig);
+  apply_template_permutations<ArgumentTypes, ArgumentTypes, std::tuple<double>>(
+      check_quantiles{}, rig);
 }
 
 /*
@@ -465,8 +465,8 @@ void check_quantiles_real_real(const T_rig& rig) {
  */
 template <typename T_rig>
 void check_quantiles_real_first_argument(const T_rig& rig) {
-  apply_template_permutations<std::tuple<double, std::vector<double> >,
-                              ArgumentTypes, std::tuple<double> >(
+  apply_template_permutations<std::tuple<double, std::vector<double>>,
+                              ArgumentTypes, std::tuple<double>>(
       check_quantiles{}, rig);
 }
 
@@ -550,7 +550,7 @@ struct check_counts {
     stan::scalar_seq_view<T_param2> p2_vec(p2);
     stan::scalar_seq_view<T_param3> p3_vec(p3);
 
-    std::vector<std::vector<int> > samples_to_test_transpose;
+    std::vector<std::vector<int>> samples_to_test_transpose;
     for (int n = 0; n < rig.N_; ++n) {
       // If p1, p2, and p3 are scalars, the output is a scalar. Need to promote
       // it to a std::vector
@@ -628,7 +628,7 @@ struct check_counts {
 template <typename T_rig>
 void check_counts_real(const T_rig& rig) {
   apply_template_permutations<ArgumentTypes, std::tuple<double>,
-                              std::tuple<double> >(check_counts{}, rig);
+                              std::tuple<double>>(check_counts{}, rig);
 }
 
 /*
@@ -641,8 +641,8 @@ void check_counts_real(const T_rig& rig) {
  */
 template <typename T_rig>
 void check_counts_real_real(const T_rig& rig) {
-  apply_template_permutations<ArgumentTypes, ArgumentTypes,
-                              std::tuple<double> >(check_counts{}, rig);
+  apply_template_permutations<ArgumentTypes, ArgumentTypes, std::tuple<double>>(
+      check_counts{}, rig);
 }
 
 /*
@@ -670,8 +670,8 @@ void check_counts_real_real_real(const T_rig& rig) {
  */
 template <typename T_rig>
 void check_counts_int_real(const T_rig& rig) {
-  apply_template_permutations<std::tuple<int, std::vector<int> >, ArgumentTypes,
-                              std::tuple<double> >(check_counts{}, rig);
+  apply_template_permutations<std::tuple<int, std::vector<int>>, ArgumentTypes,
+                              std::tuple<double>>(check_counts{}, rig);
 }
 
 /*
@@ -685,7 +685,7 @@ void check_counts_int_real(const T_rig& rig) {
  */
 template <typename T_rig>
 void check_counts_int_real_real(const T_rig& rig) {
-  apply_template_permutations<std::tuple<int, std::vector<int> >, ArgumentTypes,
+  apply_template_permutations<std::tuple<int, std::vector<int>>, ArgumentTypes,
                               ArgumentTypes>(check_counts{}, rig);
 }
 
