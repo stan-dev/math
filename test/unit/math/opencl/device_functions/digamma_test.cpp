@@ -26,8 +26,7 @@ TEST(MathMatrixCL, digamma) {
   digamma(cl::NDRange(1000), res_cl, a_cl);
   Eigen::VectorXd res = stan::math::from_matrix_cl<-1, 1>(res_cl);
 
-  stan::test::expect_near_rel("digamma (OpenCL)", res,
-                              stan::math::digamma(a).eval());
+  stan::test::expect_near_rel("digamma (OpenCL)", res, stan::math::digamma(a));
 }
 
 TEST(MathMatrixCL, digamma_edge_cases) {
@@ -39,8 +38,7 @@ TEST(MathMatrixCL, digamma_edge_cases) {
   digamma(cl::NDRange(3), res_cl, a_cl);
   Eigen::VectorXd res = stan::math::from_matrix_cl<-1, 1>(res_cl);
 
-  stan::test::expect_near_rel("digamma (OpenCL)", res,
-                              stan::math::digamma(a).eval());
+  stan::test::expect_near_rel("digamma (OpenCL)", res, stan::math::digamma(a));
 }
 
 #endif
