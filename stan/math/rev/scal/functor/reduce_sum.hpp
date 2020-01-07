@@ -130,93 +130,82 @@ inline const Eigen::Matrix<int, R, C>& as_value(
 
 namespace internal {
 
+template <typename T>
+inline void add_adjoint(T& sum, const T term) {
+  sum += term;
+}
+
+template <typename T>
+inline void add_adjoint(std::vector<T>& sum, const std::vector<T>& term,
+                        int offset = 0) {
+  const size_t size = term.size();
+  for (size_t i = 0; i != size; ++i) {
+    add_adjoint<T>(sum[offset + i], term[i]);
+  }
+}
+
+template <typename T, int R, int C>
+inline void add_adjoint(Eigen::Matrix<T, R, C>& sum,
+                        const Eigen::Matrix<T, R, C>& term) {
+  sum += term;
+}
+
 template <typename Op>
-void add_adjoints(ops_partials_edge<double, std::vector<Op>>& edge,
-                  const std::vector<typename value_type<Op>::type>& adjoint,
-                  std::size_t offset = 0) {
+inline void add_adjoints(
+    ops_partials_edge<double, std::vector<Op>>& edge,
+    const std::vector<typename value_type<Op>::type>& adjoint,
+    std::size_t offset = 0) {
   for (std::size_t i = 0; i != adjoint.size(); ++i)
     edge.partials_[offset + i] += adjoint[i];
 }
 
-template <typename Op>
-void sum_adjoints(ops_partials_edge<double, std::vector<Op>>& edge1,
-                  const ops_partials_edge<double, std::vector<Op>>& edge2) {
-  for (std::size_t i = 0; i != edge1.partials_.size(); ++i)
-    edge1.partials_[i] += edge2.partials_[i];
+inline vari** register_operands(const var& op, vari** varis) {
+  (*varis) = op.vi_;
+  return varis + 1;
 }
-
-template <typename Op>
-void add_adjoints(
-    ops_partials_edge<double, std::vector<std::vector<Op>>>& edge,
-    const std::vector<std::vector<typename value_type<Op>::type>>& adjoint,
-    std::size_t offset = 0) {
-  for (std::size_t i = 0; i != adjoint.size(); ++i)
-    for (std::size_t j = 0; j != adjoint[i].size(); ++j)
-      edge.partials_vec_[offset + i][j] += adjoint[i][j];
-}
-
-template <typename Op>
-void sum_adjoints(
-    ops_partials_edge<double, std::vector<std::vector<Op>>>& edge1,
-    const ops_partials_edge<double, std::vector<std::vector<Op>>>& edge2) {
-  for (std::size_t i = 0; i != edge1.partials_.size(); ++i)
-    for (std::size_t j = 0; j != edge1.partials_vec_[i].size(); ++j)
-      edge1.partials_vec_[i][j] += edge2.partials_vec_[i][j];
-}
-
-template <typename Op, int R, int C>
-void add_adjoints(
-    ops_partials_edge<double, std::vector<Eigen::Matrix<Op, R, C>>>& edge,
-    const std::vector<typename value_type<Eigen::Matrix<Op, R, C>>::type>&
-        adjoint,
-    std::size_t offset = 0) {
-  for (std::size_t i = 0; i != adjoint.size(); ++i)
-    for (std::size_t j = 0; j != adjoint[i].size(); ++j)
-      edge.partials_vec_[offset + i](j) += adjoint[i](j);
-}
-
-template <typename Op, int R, int C>
-void sum_adjoints(
-    ops_partials_edge<double, std::vector<Eigen::Matrix<Op, R, C>>>& edge1,
-    const ops_partials_edge<double, std::vector<Eigen::Matrix<Op, R, C>>>&
-        edge2) {
-  for (std::size_t i = 0; i != edge1.partials_vec_.size(); ++i)
-    for (std::size_t j = 0; j != edge1.partials_vec_[i].size(); ++j)
-      edge1.partials_vec_[i](j) += edge2.partials_vec_[i](j);
-}
-
-template <>
-void add_adjoints(ops_partials_edge<double, std::vector<int>>& edge,
-                  const std::vector<typename value_type<int>::type>& adjoint,
-                  std::size_t offset) {}
-
-template <>
-void sum_adjoints(ops_partials_edge<double, std::vector<int>>& edge1,
-                  const ops_partials_edge<double, std::vector<int>>& edge2) {}
-
-template <>
-void add_adjoints(
-    ops_partials_edge<double, std::vector<std::vector<int>>>& edge,
-    const std::vector<std::vector<typename value_type<int>::type>>& adjoint,
-    std::size_t offset) {}
-
-template <>
-void sum_adjoints(
-    ops_partials_edge<double, std::vector<std::vector<int>>>& edge1,
-    const ops_partials_edge<double, std::vector<std::vector<int>>>& edge2) {}
 
 template <int R, int C>
-void add_adjoints(
-    ops_partials_edge<double, std::vector<Eigen::Matrix<int, R, C>>>& edge,
-    const std::vector<typename value_type<Eigen::Matrix<int, R, C>>::type>&
-        adjoint,
-    std::size_t offset) {}
+inline vari** register_operands(const Eigen::Matrix<var, R, C>& M_op,
+                                vari** varis) {
+  const size_t size = M_op.size();
+  for (size_t i = 0; i != M_op.cols(); ++i) {
+    for (size_t j = 0; j != M_op.rows(); ++j, ++varis) {
+      *varis = M_op(i, j).vi_;
+    }
+  }
+  return varis;
+}
+
+template <typename T>
+inline vari** register_operands(const std::vector<T>& op, vari** varis) {
+  const size_t size = op.size();
+  for (size_t i = 0; i != size; ++i) {
+    varis = register_operands(op[i], varis);
+  }
+  return varis;
+}
+
+inline double* register_partials(const double grad, double* partials) {
+  (*partials) = grad;
+  return partials + 1;
+}
 
 template <int R, int C>
-void sum_adjoints(
-    ops_partials_edge<double, std::vector<Eigen::Matrix<int, R, C>>>& edge1,
-    const ops_partials_edge<double, std::vector<Eigen::Matrix<int, R, C>>>&
-        edge2) {}
+inline double* register_partials(const Eigen::Matrix<double, R, C>& M_grad,
+                                 double* partials) {
+  const size_t size = M_grad.size();
+  std::copy(M_grad.data(), M_grad.data() + size, partials);
+  return partials + size;
+}
+
+template <typename T>
+inline double* register_partials(const std::vector<T>& grad, double* partials) {
+  const size_t size = grad.size();
+  for (size_t i = 0; i != size; ++i) {
+    partials = register_partials(grad[i], partials);
+  }
+  return partials;
+}
 
 template <class ReduceFunction, class M, class T, class Arg1, class Arg2,
           class Arg3, class Arg4>
@@ -233,12 +222,9 @@ struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, var> {
   using arg3_value_t = std::vector<typename value_type<Arg3>::type>;
   using arg4_value_t = std::vector<typename value_type<Arg4>::type>;
 
-  using ops_partials_t
-      = operands_and_partials<vmapped_t, std::vector<Arg1>, std::vector<Arg2>,
-                              std::vector<Arg3>, std::vector<Arg4>>;
-
   struct recursive_reducer {
     const vmapped_t& vmapped_;
+    vmapped_value_t& vmapped_adjoint_;
     const arg1_t& arg1_;
     const arg1_value_t& arg1_value_;
     const arg2_t& arg2_;
@@ -248,17 +234,23 @@ struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, var> {
     const arg4_t& arg4_;
     const arg4_value_t& arg4_value_;
 
-    ops_partials_t& terms_partials_mapped_;
-    ops_partials_t terms_partials_args_;
+    arg1_value_t arg1_adjoint_;
+    arg2_value_t arg2_adjoint_;
+    arg3_value_t arg3_adjoint_;
+    arg4_value_t arg4_adjoint_;
+
     double terms_sum_;
 
-    recursive_reducer(const vmapped_t& vmapped, const T& init,
+    recursive_reducer(const vmapped_t& vmapped,
+                      vmapped_value_t& vmapped_adjoint, const T& init,
                       const arg1_t& arg1, const arg1_value_t& arg1_value,
                       const arg2_t& arg2, const arg2_value_t& arg2_value,
                       const arg3_t& arg3, const arg3_value_t& arg3_value,
-                      const arg4_t& arg4, const arg4_value_t& arg4_value,
-                      ops_partials_t& terms_partials_mapped)
+                      const arg4_t& arg4, const arg4_value_t& arg4_value
+                      // ops_partials_t& terms_partials_mapped,
+                      )
         : vmapped_(vmapped),
+          vmapped_adjoint_(vmapped_adjoint),
           arg1_(arg1),
           arg1_value_(arg1_value),
           arg2_(arg2),
@@ -267,12 +259,19 @@ struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, var> {
           arg3_value_(arg3_value),
           arg4_(arg4),
           arg4_value_(arg4_value),
-          terms_partials_mapped_(terms_partials_mapped),
-          terms_partials_args_(vmapped, arg1, arg2, arg3, arg4),
+          arg1_adjoint_(is_constant<arg1_t>::value ? arg1_value_t()
+                                                   : adjoint_of(arg1_value)),
+          arg2_adjoint_(is_constant<arg2_t>::value ? arg2_value_t()
+                                                   : adjoint_of(arg2_value)),
+          arg3_adjoint_(is_constant<arg3_t>::value ? arg3_value_t()
+                                                   : adjoint_of(arg3_value)),
+          arg4_adjoint_(is_constant<arg4_t>::value ? arg4_value_t()
+                                                   : adjoint_of(arg4_value)),
           terms_sum_(as_value(init)) {}
 
     recursive_reducer(recursive_reducer& other, tbb::split)
         : vmapped_(other.vmapped_),
+          vmapped_adjoint_(other.vmapped_adjoint_),
           arg1_(other.arg1_),
           arg1_value_(other.arg1_value_),
           arg2_(other.arg2_),
@@ -281,8 +280,10 @@ struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, var> {
           arg3_value_(other.arg3_value_),
           arg4_(other.arg4_),
           arg4_value_(other.arg4_value_),
-          terms_partials_mapped_(other.terms_partials_mapped_),
-          terms_partials_args_(vmapped_, arg1_, arg2_, arg3_, arg4_),
+          arg1_adjoint_(adjoint_of(arg1_value_)),
+          arg2_adjoint_(adjoint_of(arg2_value_)),
+          arg3_adjoint_(adjoint_of(arg3_value_)),
+          arg4_adjoint_(adjoint_of(arg4_value_)),
           terms_sum_(0.0) {}
 
     void operator()(const tbb::blocked_range<size_t>& r) {
@@ -316,27 +317,21 @@ struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, var> {
 
         if (!is_constant_all<M>::value) {
           vmapped_value_t sub_slice_adjoint = adjoint_of(local_sub_slice);
-          add_adjoints(terms_partials_mapped_.edge1_, sub_slice_adjoint,
-                       r.begin());
+          add_adjoint(vmapped_adjoint_, sub_slice_adjoint, r.begin());
         }
 
-        if (!is_constant_all<Arg1>::value) {
-          arg1_value_t arg1_adjoint = adjoint_of(local_arg1);
-          add_adjoints(terms_partials_args_.edge2_, arg1_adjoint);
+        if (!is_constant<Arg1>::value) {
+          add_adjoint(arg1_adjoint_, adjoint_of(local_arg1));
         }
-        if (!is_constant_all<Arg2>::value) {
-          arg2_value_t arg2_adjoint = adjoint_of(local_arg2);
-          add_adjoints(terms_partials_args_.edge3_, arg2_adjoint);
+        if (!is_constant<Arg2>::value) {
+          add_adjoint(arg2_adjoint_, adjoint_of(local_arg2));
         }
-        if (!is_constant_all<Arg3>::value) {
-          arg3_value_t arg3_adjoint = adjoint_of(local_arg3);
-          add_adjoints(terms_partials_args_.edge4_, arg3_adjoint);
+        if (!is_constant<Arg3>::value) {
+          add_adjoint(arg3_adjoint_, adjoint_of(local_arg3));
         }
-        if (!is_constant_all<Arg4>::value) {
-          arg4_value_t arg4_adjoint = adjoint_of(local_arg4);
-          add_adjoints(terms_partials_args_.edge5_, arg4_adjoint);
+        if (!is_constant<Arg4>::value) {
+          add_adjoint(arg4_adjoint_, adjoint_of(local_arg4));
         }
-
       } catch (const std::exception& e) {
         recover_memory_nested();
         throw;
@@ -348,20 +343,16 @@ struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, var> {
       terms_sum_ += child.terms_sum_;
 
       if (!is_constant_all<Arg1>::value) {
-        sum_adjoints(terms_partials_args_.edge2_,
-                     child.terms_partials_args_.edge2_);
+        add_adjoint(arg1_adjoint_, child.arg1_adjoint_);
       }
       if (!is_constant_all<Arg2>::value) {
-        sum_adjoints(terms_partials_args_.edge3_,
-                     child.terms_partials_args_.edge3_);
+        add_adjoint(arg2_adjoint_, child.arg2_adjoint_);
       }
       if (!is_constant_all<Arg3>::value) {
-        sum_adjoints(terms_partials_args_.edge4_,
-                     child.terms_partials_args_.edge4_);
+        add_adjoint(arg3_adjoint_, child.arg3_adjoint_);
       }
       if (!is_constant_all<Arg4>::value) {
-        sum_adjoints(terms_partials_args_.edge5_,
-                     child.terms_partials_args_.edge5_);
+        add_adjoint(arg4_adjoint_, child.arg4_adjoint_);
       }
     }
   };
@@ -370,37 +361,70 @@ struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, var> {
                const arg1_t& arg1, const arg2_t& arg2, const arg3_t& arg3,
                const arg4_t& arg4) const {
     const std::size_t num_jobs = vmapped.size();
+    vmapped_value_t vmapped_adjoint = adjoint_of(as_value(vmapped));
     const arg1_value_t arg1_value = as_value(arg1);
     const arg2_value_t arg2_value = as_value(arg2);
     const arg3_value_t arg3_value = as_value(arg3);
     const arg4_value_t arg4_value = as_value(arg4);
 
-    ops_partials_t ops(vmapped, arg1, arg2, arg3, arg4);
-
-    recursive_reducer worker(vmapped, init, arg1, arg1_value, arg2, arg2_value,
-                             arg3, arg3_value, arg4, arg4_value, ops);
+    recursive_reducer worker(vmapped, vmapped_adjoint, init, arg1, arg1_value,
+                             arg2, arg2_value, arg3, arg3_value, arg4,
+                             arg4_value);
 
     tbb::parallel_reduce(
         tbb::blocked_range<std::size_t>(0, num_jobs, grainsize), worker);
 
-    if (!is_constant_all<Arg1>::value) {
-      ops.edge2_.partials_vec_
-          = worker.terms_partials_args_.edge2_.partials_vec_;
-    }
-    if (!is_constant_all<Arg2>::value) {
-      ops.edge3_.partials_vec_
-          = worker.terms_partials_args_.edge3_.partials_vec_;
-    }
-    if (!is_constant_all<Arg3>::value) {
-      ops.edge4_.partials_vec_
-          = worker.terms_partials_args_.edge4_.partials_vec_;
-    }
-    if (!is_constant_all<Arg4>::value) {
-      ops.edge5_.partials_vec_
-          = worker.terms_partials_args_.edge5_.partials_vec_;
+    std::vector<std::size_t> num_terms_arg(5, 0);
+
+    if (!is_constant<vmapped_t>::value)
+      num_terms_arg[0] = num_elements(vmapped_adjoint);
+    if (!is_constant<Arg1>::value)
+      num_terms_arg[1] = num_elements(arg1_value);
+    if (!is_constant<Arg2>::value)
+      num_terms_arg[2] = num_elements(arg2_value);
+    if (!is_constant<Arg3>::value)
+      num_terms_arg[3] = num_elements(arg3_value);
+    if (!is_constant<Arg4>::value)
+      num_terms_arg[4] = num_elements(arg4_value);
+
+    const std::size_t num_terms = sum(num_terms_arg);
+
+    vari** varis
+        = ChainableStack::instance_->memalloc_.alloc_array<vari*>(num_terms);
+    double* partials
+        = ChainableStack::instance_->memalloc_.alloc_array<double>(num_terms);
+
+    std::size_t idx = 0;
+
+    if (!is_constant<vmapped_t>::value) {
+      register_operands(vmapped, &varis[idx]);
+      register_partials(vmapped_adjoint, &partials[idx]);
+      idx += num_terms_arg[0];
     }
 
-    return ops.build(worker.terms_sum_);
+    if (!is_constant<Arg1>::value) {
+      register_operands(arg1, &varis[idx]);
+      register_partials(worker.arg1_adjoint_, &partials[idx]);
+      idx += num_terms_arg[1];
+    }
+    if (!is_constant<Arg2>::value) {
+      register_operands(arg2, &varis[idx]);
+      register_partials(worker.arg3_adjoint_, &partials[idx]);
+      idx += num_terms_arg[2];
+    }
+    if (!is_constant<Arg3>::value) {
+      register_operands(arg3, &varis[idx]);
+      register_partials(worker.arg3_adjoint_, &partials[idx]);
+      idx += num_terms_arg[3];
+    }
+    if (!is_constant<Arg4>::value) {
+      register_operands(arg4, &varis[idx]);
+      register_partials(worker.arg4_adjoint_, &partials[idx]);
+      idx += num_terms_arg[4];
+    }
+
+    return var(new precomputed_gradients_vari(worker.terms_sum_, num_terms,
+                                              varis, partials));
   }
 };
 }  // namespace internal
