@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_REV_MAT_FUN_LDLT_ALLOC_HPP
-#define STAN_MATH_REV_MAT_FUN_LDLT_ALLOC_HPP
+#ifndef STAN_MATH_REV_FUN_LDLT_ALLOC_HPP
+#define STAN_MATH_REV_FUN_LDLT_ALLOC_HPP
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>

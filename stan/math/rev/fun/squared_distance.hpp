@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_REV_SCAL_FUN_SQUARED_DISTANCE_HPP
-#define STAN_MATH_REV_SCAL_FUN_SQUARED_DISTANCE_HPP
+#ifndef STAN_MATH_REV_FUN_SQUARED_DISTANCE_HPP
+#define STAN_MATH_REV_FUN_SQUARED_DISTANCE_HPP
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
@@ -53,8 +53,8 @@ inline var squared_distance(double a, const var& b) {
 }  // namespace math
 }  // namespace stan
 #endif
-#ifndef STAN_MATH_REV_MAT_FUN_SQUARED_DISTANCE_HPP
-#define STAN_MATH_REV_MAT_FUN_SQUARED_DISTANCE_HPP
+#ifndef STAN_MATH_REV_FUN_SQUARED_DISTANCE_HPP
+#define STAN_MATH_REV_FUN_SQUARED_DISTANCE_HPP
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>

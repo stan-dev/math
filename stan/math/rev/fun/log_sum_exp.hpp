@@ -1,10 +1,10 @@
-#ifndef STAN_MATH_REV_SCAL_FUN_LOG_SUM_EXP_HPP
-#define STAN_MATH_REV_SCAL_FUN_LOG_SUM_EXP_HPP
+#ifndef STAN_MATH_REV_FUN_LOG_SUM_EXP_HPP
+#define STAN_MATH_REV_FUN_LOG_SUM_EXP_HPP
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/scal/fun/calculate_chain.hpp>
-#include <stan/math/rev/mat/fun/typedefs.hpp>
+#include <stan/math/rev/fun/calculate_chain.hpp>
+#include <stan/math/rev/fun/typedefs.hpp>
 #include <stan/math/prim/arr/fun/log_sum_exp.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>

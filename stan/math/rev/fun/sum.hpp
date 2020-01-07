@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_REV_ARR_FUN_SUM_HPP
-#define STAN_MATH_REV_ARR_FUN_SUM_HPP
+#ifndef STAN_MATH_REV_FUN_SUM_HPP
+#define STAN_MATH_REV_FUN_SUM_HPP
 
 #include <stan/math/rev/core.hpp>
 #include <vector>
@@ -61,13 +61,13 @@ inline var sum(const std::vector<var>& m) {
 }  // namespace math
 }  // namespace stan
 #endif
-#ifndef STAN_MATH_REV_MAT_FUN_SUM_HPP
-#define STAN_MATH_REV_MAT_FUN_SUM_HPP
+#ifndef STAN_MATH_REV_FUN_SUM_HPP
+#define STAN_MATH_REV_FUN_SUM_HPP
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/arr/fun/sum.hpp>
+#include <stan/math/rev/fun/sum.hpp>
 
 namespace stan {
 namespace math {

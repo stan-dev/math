@@ -1,9 +1,9 @@
-#ifndef STAN_MATH_REV_SCAL_FUN_MULTIPLY_LOG_HPP
-#define STAN_MATH_REV_SCAL_FUN_MULTIPLY_LOG_HPP
+#ifndef STAN_MATH_REV_FUN_MULTIPLY_LOG_HPP
+#define STAN_MATH_REV_FUN_MULTIPLY_LOG_HPP
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/scal/fun/log.hpp>
+#include <stan/math/rev/fun/log.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/multiply_log.hpp>
 #include <stan/math/prim/scal/fun/is_any_nan.hpp>

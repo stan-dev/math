@@ -1,8 +1,8 @@
-#ifndef STAN_MATH_REV_SCAL_FUN_ABS_HPP
-#define STAN_MATH_REV_SCAL_FUN_ABS_HPP
+#ifndef STAN_MATH_REV_FUN_ABS_HPP
+#define STAN_MATH_REV_FUN_ABS_HPP
 
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/scal/fun/fabs.hpp>
+#include <stan/math/rev/fun/fabs.hpp>
 
 namespace stan {
 namespace math {

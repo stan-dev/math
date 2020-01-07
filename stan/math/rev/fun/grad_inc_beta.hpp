@@ -1,20 +1,20 @@
-#ifndef STAN_MATH_REV_SCAL_FUN_GRAD_INC_BETA_HPP
-#define STAN_MATH_REV_SCAL_FUN_GRAD_INC_BETA_HPP
+#ifndef STAN_MATH_REV_FUN_GRAD_INC_BETA_HPP
+#define STAN_MATH_REV_FUN_GRAD_INC_BETA_HPP
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/fun/beta.hpp>
 #include <stan/math/prim/scal/fun/grad_2F1.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/rev/scal/fun/exp.hpp>
-#include <stan/math/rev/scal/fun/fabs.hpp>
-#include <stan/math/rev/scal/fun/floor.hpp>
-#include <stan/math/rev/scal/fun/value_of_rec.hpp>
-#include <stan/math/rev/scal/fun/inc_beta.hpp>
-#include <stan/math/rev/scal/fun/lgamma.hpp>
-#include <stan/math/rev/scal/fun/log.hpp>
-#include <stan/math/rev/scal/fun/log1m.hpp>
-#include <stan/math/rev/scal/fun/value_of.hpp>
+#include <stan/math/rev/fun/exp.hpp>
+#include <stan/math/rev/fun/fabs.hpp>
+#include <stan/math/rev/fun/floor.hpp>
+#include <stan/math/rev/fun/value_of_rec.hpp>
+#include <stan/math/rev/fun/inc_beta.hpp>
+#include <stan/math/rev/fun/lgamma.hpp>
+#include <stan/math/rev/fun/log.hpp>
+#include <stan/math/rev/fun/log1m.hpp>
+#include <stan/math/rev/fun/value_of.hpp>
 #include <cmath>
 
 namespace stan {

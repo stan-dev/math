@@ -1,9 +1,9 @@
-#ifndef STAN_MATH_REV_MAT_FUN_TRACE_GEN_INV_QUAD_FORM_LDLT_HPP
-#define STAN_MATH_REV_MAT_FUN_TRACE_GEN_INV_QUAD_FORM_LDLT_HPP
+#ifndef STAN_MATH_REV_FUN_TRACE_GEN_INV_QUAD_FORM_LDLT_HPP
+#define STAN_MATH_REV_FUN_TRACE_GEN_INV_QUAD_FORM_LDLT_HPP
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/mat/fun/trace_inv_quad_form_ldlt.hpp>
+#include <stan/math/rev/fun/trace_inv_quad_form_ldlt.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <type_traits>

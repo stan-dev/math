@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_REV_SCAL_FUN_LDEXP_HPP
-#define STAN_MATH_REV_SCAL_FUN_LDEXP_HPP
+#ifndef STAN_MATH_REV_FUN_LDEXP_HPP
+#define STAN_MATH_REV_FUN_LDEXP_HPP
 
 #include <stan/math/prim/scal/fun/ldexp.hpp>
 #include <stan/math/rev/core.hpp>

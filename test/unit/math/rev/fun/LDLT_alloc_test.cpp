@@ -1,4 +1,4 @@
-#include <stan/math/rev/mat.hpp>
+#include <stan/math/rev.hpp>
 #include <gtest/gtest.h>
 
 TEST(AgradRevMatrix, LDLT_alloc_default_constructor) {

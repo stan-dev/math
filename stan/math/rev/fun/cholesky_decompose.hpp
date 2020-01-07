@@ -1,9 +1,9 @@
-#ifndef STAN_MATH_REV_MAT_FUN_CHOLESKY_DECOMPOSE_HPP
-#define STAN_MATH_REV_MAT_FUN_CHOLESKY_DECOMPOSE_HPP
+#ifndef STAN_MATH_REV_FUN_CHOLESKY_DECOMPOSE_HPP
+#define STAN_MATH_REV_FUN_CHOLESKY_DECOMPOSE_HPP
 
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/scal/fun/value_of_rec.hpp>
-#include <stan/math/rev/scal/fun/value_of.hpp>
+#include <stan/math/rev/fun/value_of_rec.hpp>
+#include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>

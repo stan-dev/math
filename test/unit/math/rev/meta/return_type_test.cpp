@@ -1,6 +1,6 @@
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/mat.hpp>
-#include <stan/math/rev/mat/fun/typedefs.hpp>
+#include <stan/math/rev.hpp>
+#include <stan/math/rev/fun/typedefs.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>

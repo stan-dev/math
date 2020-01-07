@@ -7,7 +7,7 @@
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/prim/mat/fun/dot_self.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/mat/fun/dot_self.hpp>
+#include <stan/math/rev/fun/dot_self.hpp>
 #include <cmath>
 
 namespace stan {

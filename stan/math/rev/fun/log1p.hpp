@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_REV_SCAL_FUN_LOG1P_HPP
-#define STAN_MATH_REV_SCAL_FUN_LOG1P_HPP
+#ifndef STAN_MATH_REV_FUN_LOG1P_HPP
+#define STAN_MATH_REV_FUN_LOG1P_HPP
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>

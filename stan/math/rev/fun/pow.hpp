@@ -1,13 +1,13 @@
-#ifndef STAN_MATH_REV_SCAL_FUN_POW_HPP
-#define STAN_MATH_REV_SCAL_FUN_POW_HPP
+#ifndef STAN_MATH_REV_FUN_POW_HPP
+#define STAN_MATH_REV_FUN_POW_HPP
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/scal/fun/inv.hpp>
-#include <stan/math/rev/scal/fun/inv_sqrt.hpp>
-#include <stan/math/rev/scal/fun/inv_square.hpp>
-#include <stan/math/rev/scal/fun/sqrt.hpp>
-#include <stan/math/rev/scal/fun/square.hpp>
+#include <stan/math/rev/fun/inv.hpp>
+#include <stan/math/rev/fun/inv_sqrt.hpp>
+#include <stan/math/rev/fun/inv_square.hpp>
+#include <stan/math/rev/fun/sqrt.hpp>
+#include <stan/math/rev/fun/square.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/is_any_nan.hpp>
 #include <cmath>

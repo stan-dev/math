@@ -1,9 +1,9 @@
-#ifndef STAN_MATH_REV_MAT_FUN_CROSSPROD_HPP
-#define STAN_MATH_REV_MAT_FUN_CROSSPROD_HPP
+#ifndef STAN_MATH_REV_FUN_CROSSPROD_HPP
+#define STAN_MATH_REV_FUN_CROSSPROD_HPP
 
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/mat/fun/typedefs.hpp>
-#include <stan/math/rev/mat/fun/tcrossprod.hpp>
+#include <stan/math/rev/fun/typedefs.hpp>
+#include <stan/math/rev/fun/tcrossprod.hpp>
 
 namespace stan {
 namespace math {

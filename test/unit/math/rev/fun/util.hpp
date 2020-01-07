@@ -1,8 +1,7 @@
 #ifndef TEST_UNIT_MATH_REV_FUN_UTIL_HPP
 #define TEST_UNIT_MATH_REV_FUN_UTIL_HPP
 
-#include <stan/math/rev/scal.hpp>
-#include <stan/math/rev/mat.hpp>
+#include <stan/math/rev.hpp>
 #include <test/unit/math/rev/util.hpp>
 #include <vector>
 

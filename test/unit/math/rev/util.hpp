@@ -1,9 +1,7 @@
-#ifndef TEST_UNIT_MATH_REV_SCAL_UTIL_HPP
-#define TEST_UNIT_MATH_REV_SCAL_UTIL_HPP
+#ifndef TEST_UNIT_MATH_REV_UTIL_HPP
+#define TEST_UNIT_MATH_REV_UTIL_HPP
 
-#include <stan/math/rev/scal.hpp>
-#include <stan/math/rev/arr.hpp>
-#include <stan/math/rev/mat.hpp>
+#include <stan/math/rev.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 

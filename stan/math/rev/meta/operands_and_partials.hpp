@@ -9,7 +9,7 @@
 #include <stan/math/prim/meta/operands_and_partials.hpp>
 #include <stan/math/prim/meta/is_vector_like.hpp>
 #include <stan/math/prim/meta/likely.hpp>
-#include <stan/math/rev/mat/fun/typedefs.hpp>
+#include <stan/math/rev/fun/typedefs.hpp>
 #include <stan/math/prim/meta/size.hpp>
 #include <vector>
 

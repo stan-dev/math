@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_REV_MAT_FUN_SD_HPP
-#define STAN_MATH_REV_MAT_FUN_SD_HPP
+#ifndef STAN_MATH_REV_FUN_SD_HPP
+#define STAN_MATH_REV_FUN_SD_HPP
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/err.hpp>

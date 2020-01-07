@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_REV_MAT_FUN_GP_PERIODIC_COV_HPP
-#define STAN_MATH_REV_MAT_FUN_GP_PERIODIC_COV_HPP
+#ifndef STAN_MATH_REV_FUN_GP_PERIODIC_COV_HPP
+#define STAN_MATH_REV_FUN_GP_PERIODIC_COV_HPP
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/err.hpp>
@@ -8,7 +8,7 @@
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/squared_distance.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/scal/fun/value_of.hpp>
+#include <stan/math/rev/fun/value_of.hpp>
 #include <cmath>
 #include <type_traits>
 #include <vector>
