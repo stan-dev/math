@@ -1,8 +1,9 @@
-#ifndef TEST_UNIT_MATH_REV_SCAL_FUN_UTIL_HPP
-#define TEST_UNIT_MATH_REV_SCAL_FUN_UTIL_HPP
+#ifndef TEST_UNIT_MATH_REV_FUN_UTIL_HPP
+#define TEST_UNIT_MATH_REV_FUN_UTIL_HPP
 
 #include <stan/math/rev/scal.hpp>
-#include <test/unit/math/rev/scal/util.hpp>
+#include <stan/math/rev/mat.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <vector>
 
 typedef stan::math::var AVAR;
@@ -81,31 +82,12 @@ VEC cgrad(AVAR f, AVAR x1, AVAR x2, AVAR x3, AVAR x4) {
   f.grad(x, g);
   return g;
 }
-#endif
-#ifndef TEST_UNIT_MATH_REV_ARR_FUN_UTIL_HPP
-#define TEST_UNIT_MATH_REV_ARR_FUN_UTIL_HPP
-
-#include <test/unit/math/rev/scal/fun/util.hpp>
-#include <test/unit/math/rev/arr/util.hpp>
-#include <vector>
-
-typedef std::vector<AVAR> AVEC;
-typedef std::vector<double> VEC;
 
 VEC cgradvec(AVAR f, AVEC x) {
   VEC g;
   f.grad(x, g);
   return g;
 }
-
-#endif
-#ifndef TEST_UNIT_MATH_REV_MAT_FUN_UTIL_HPP
-#define TEST_UNIT_MATH_REV_MAT_FUN_UTIL_HPP
-
-#include <test/unit/math/rev/arr/fun/util.hpp>
-#include <stan/math/rev/mat.hpp>
-#include <test/unit/math/rev/mat/util.hpp>
-#include <vector>
 
 double relative_diff(double u, double v) {
   return 2 * (u - v) / (fabs(u) + fabs(v));

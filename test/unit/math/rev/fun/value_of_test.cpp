@@ -1,5 +1,7 @@
 #include <stan/math/rev/scal.hpp>
+#include <test/unit/math/rev/fun/util.hpp>
 #include <gtest/gtest.h>
+#include <vector>
 
 TEST(AgradRev, value_of) {
   using stan::math::value_of;
@@ -11,9 +13,6 @@ TEST(AgradRev, value_of) {
   EXPECT_FLOAT_EQ(5.0, value_of(5.0));
   EXPECT_FLOAT_EQ(5.0, value_of(5));
 }
-#include <stan/math/rev/arr.hpp>
-#include <gtest/gtest.h>
-#include <vector>
 
 TEST(MathMatrixRevArr, value_of) {
   using stan::math::value_of;
@@ -44,10 +43,6 @@ TEST(MathMatrixRevArr, value_of) {
   for (int i = 0; i < 10; ++i)
     EXPECT_FLOAT_EQ(a[i].val(), d_a[i]);
 }
-#include <stan/math/rev/mat.hpp>
-#include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
-#include <vector>
 
 TEST(AgradMatrix, value_of) {
   using stan::math::value_of;
