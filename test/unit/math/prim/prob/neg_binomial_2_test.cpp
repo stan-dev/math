@@ -267,11 +267,11 @@ TEST(ProbDistributionsNegBinomial2, poissonCutoff) {
   using namespace stan::test::neg_binomial_2_test_internal;
 
   // std::vector<double> mu_to_test
-  //     = {2.345e-5, 0.2, 13, 150, 1621, 18432, 73582345, 
+  //     = {2.345e-5, 0.2, 13, 150, 1621, 18432, 73582345,
   //       static_cast<double>(std::numeric_limits<int>::max()) };
-  // std::vector<int> n_to_test = {0, 1, 3, 16, 24, 181, 2132, 121358, 865422242};
-  std::vector<double> mu_to_test
-      = {10};
+  // std::vector<int> n_to_test = {0, 1, 3, 16, 24, 181, 2132, 121358,
+  // 865422242};
+  std::vector<double> mu_to_test = {10};
   std::vector<int> n_to_test = {16};
   for (double mu : mu_to_test) {
     for (int n : n_to_test) {
@@ -281,31 +281,28 @@ TEST(ProbDistributionsNegBinomial2, poissonCutoff) {
           = stan::math::neg_binomial_2_lpmf(n, mu, just_above_phi_cutoff);
       std::ostringstream msg;
       msg << "neg_binomial_2_lpmf changes too much around phi cutoff for n = "
-          << std::setprecision(17) << n << ", mu = " << mu 
-          << ", below cutoff = "  << just_below_phi_cutoff 
+          << std::setprecision(17) << n << ", mu = " << mu
+          << ", below cutoff = " << just_below_phi_cutoff
           << ", above cutoff = " << just_above_phi_cutoff;
       expect_near_rel(msg.str(), before_cutoff, after_cutoff);
-          
     }
   }
 }
 
-TEST(ProbDistributionsNegBinomial2, zeroOne) { 
+TEST(ProbDistributionsNegBinomial2, zeroOne) {
   using stan::test::expect_near_rel;
   using namespace stan::test::neg_binomial_2_test_internal;
 
   std::vector<double> mu_to_test
-      = {2.345e-5, 0.2, 13, 150, 1621, 18432, phi_cutoff };
+      = {2.345e-5, 0.2, 13, 150, 1621, 18432, phi_cutoff};
   double phi_start = 1e-8;
   double phi_max = just_above_phi_cutoff * 1e10;
   for (double mu : mu_to_test) {
-    for(double phi = phi_start; phi < phi_max; 
-        phi *= stan::math::pi()) {
-
+    for (double phi = phi_start; phi < phi_max; phi *= stan::math::pi()) {
       std::ostringstream msg;
       msg << ", mu = " << mu << ", phi = " << phi;
 
-      double expected_value_0 = phi * (-log1p(mu / phi)); 
+      double expected_value_0 = phi * (-log1p(mu / phi));
       double value_0 = stan::math::neg_binomial_2_lpmf(0, mu, phi);
       expect_near_rel("n = 0 " + msg.str(), value_0, expected_value_0);
 
@@ -314,7 +311,6 @@ TEST(ProbDistributionsNegBinomial2, zeroOne) {
       expect_near_rel("n = 1 " + msg.str(), value_1, expected_value_1);
     }
   }
-
 }
 
 TEST(ProbDistributionsNegBinomial2, vectorAroundCutoff) {

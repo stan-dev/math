@@ -84,8 +84,8 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
   }
 
   for (size_t i = 0; i < max_size_seq_view; i++) {
-    if(false) {
-    //if (phi_val[i] > internal::neg_binomial_2_phi_cutoff) {
+    if (false) {
+      // if (phi_val[i] > internal::neg_binomial_2_phi_cutoff) {
       // Phi is large, delegate to Poisson.
       // Copying the code here as just calling
       // poisson_lpmf does not preserve propto logic correctly.
@@ -104,7 +104,7 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
       // Expansion obtained in Mathematica via
       // Series[1 - (n + phi) / (mu + phi) + Log[phi] - Log[mu + phi] -
       //  PolyGamma[phi] + PolyGamma[n + phi],{phi,Infinity, 2}]
-      if(n_vec[i] == 0) {
+      if (n_vec[i] == 0) {
         logp += phi_val[i] * (-log1p(mu_val[i] / phi_val[i]));
       } else {
         if (include_summand<propto>::value) {
@@ -121,7 +121,7 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
           ops_partials.edge2_.partials_[i]
               += (mu_val[i] * (-mu_val[i] + 2 * n_vec[i])
                   + n_vec[i] * (1 - n_vec[i]))
-                / (2 * square(phi_val[i]));
+                 / (2 * square(phi_val[i]));
         }
       }
     } else {
@@ -132,7 +132,7 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
         logp += multiply_log(n_vec[i], mu_val[i]);
       }
       // logp += phi_val[i] * (log_phi[i] - log_mu_plus_phi[i])
-      logp += - phi_val[i] * (log1p(mu_val[i] / phi_val[i]))
+      logp += -phi_val[i] * (log1p(mu_val[i] / phi_val[i]))
               - n_vec[i] * log_mu_plus_phi[i];
 
       if (!is_constant_all<T_location>::value) {
