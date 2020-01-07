@@ -100,7 +100,6 @@ pipeline {
             steps {
                 deleteDirWin()
                 unstash 'MathSetup'
-                bat "mingw32-make -j${env.PARALLEL} test-headers"
                 runTestsWin("test/unit/math/rev/functor")
             }
         }
@@ -109,7 +108,6 @@ pipeline {
             steps {
                 deleteDirWin()
                 unstash 'MathSetup'
-                bat "mingw32-make -j${env.PARALLEL} test-headers"
                 runTestsWin("test/unit/math/rev/functor")
             }
         }
@@ -118,7 +116,6 @@ pipeline {
             steps {
                 deleteDirWin()
                 unstash 'MathSetup'
-                bat "mingw32-make -j${env.PARALLEL} test-headers"
                 runTestsWin("test/unit/math/rev/functor")
             }
         }
@@ -127,7 +124,6 @@ pipeline {
             steps {
                 deleteDirWin()
                 unstash 'MathSetup'
-                bat "mingw32-make -j${env.PARALLEL} test-headers"
                 runTestsWin("test/unit/math/rev/functor")
             }
         }
@@ -136,7 +132,6 @@ pipeline {
             steps {
                 deleteDirWin()
                 unstash 'MathSetup'
-                bat "mingw32-make -j${env.PARALLEL} test-headers"
                 runTestsWin("test/unit/math/rev/functor")
             }
         }
@@ -145,7 +140,6 @@ pipeline {
             steps {
                 deleteDirWin()
                 unstash 'MathSetup'
-                bat "mingw32-make -j${env.PARALLEL} test-headers"
                 runTestsWin("test/unit/math/rev/functor")
             }
         }
@@ -154,7 +148,6 @@ pipeline {
             steps {
                 deleteDirWin()
                 unstash 'MathSetup'
-                bat "mingw32-make -j${env.PARALLEL} test-headers"
                 runTestsWin("test/unit/math/rev/functor")
             }
         }
@@ -163,7 +156,6 @@ pipeline {
             steps {
                 deleteDirWin()
                 unstash 'MathSetup'
-                bat "mingw32-make -j${env.PARALLEL} test-headers"
                 runTestsWin("test/unit/math/rev/functor")
             }
         }
@@ -172,7 +164,6 @@ pipeline {
             steps {
                 deleteDirWin()
                 unstash 'MathSetup'
-                bat "mingw32-make -j${env.PARALLEL} test-headers"
                 runTestsWin("test/unit/math/rev/functor")
             }
         }
@@ -181,7 +172,6 @@ pipeline {
             steps {
                 deleteDirWin()
                 unstash 'MathSetup'
-                bat "mingw32-make -j${env.PARALLEL} test-headers"
                 runTestsWin("test/unit/math/rev/functor")
             }
         }
@@ -190,7 +180,6 @@ pipeline {
             steps {
                 deleteDirWin()
                 unstash 'MathSetup'
-                bat "mingw32-make -j${env.PARALLEL} test-headers"
                 runTestsWin("test/unit/math/rev/functor")
             }
         }
@@ -199,7 +188,6 @@ pipeline {
             steps {
                 deleteDirWin()
                 unstash 'MathSetup'
-                bat "mingw32-make -j${env.PARALLEL} test-headers"
                 runTestsWin("test/unit/math/rev/functor")
             }
         }
@@ -208,7 +196,6 @@ pipeline {
             steps {
                 deleteDirWin()
                 unstash 'MathSetup'
-                bat "mingw32-make -j${env.PARALLEL} test-headers"
                 runTestsWin("test/unit/math/rev/functor")
             }
         }
@@ -217,7 +204,6 @@ pipeline {
             steps {
                 deleteDirWin()
                 unstash 'MathSetup'
-                bat "mingw32-make -j${env.PARALLEL} test-headers"
                 runTestsWin("test/unit/math/rev/functor")
             }
         }
@@ -226,7 +212,6 @@ pipeline {
             steps {
                 deleteDirWin()
                 unstash 'MathSetup'
-                bat "mingw32-make -j${env.PARALLEL} test-headers"
                 runTestsWin("test/unit/math/rev/functor")
             }
         }
@@ -235,7 +220,6 @@ pipeline {
             steps {
                 deleteDirWin()
                 unstash 'MathSetup'
-                bat "mingw32-make -j${env.PARALLEL} test-headers"
                 runTestsWin("test/unit/math/rev/functor")
             }
         }
@@ -244,7 +228,6 @@ pipeline {
             steps {
                 deleteDirWin()
                 unstash 'MathSetup'
-                bat "mingw32-make -j${env.PARALLEL} test-headers"
                 runTestsWin("test/unit/math/rev/functor")
             }
         }
@@ -253,7 +236,6 @@ pipeline {
             steps {
                 deleteDirWin()
                 unstash 'MathSetup'
-                bat "mingw32-make -j${env.PARALLEL} test-headers"
                 runTestsWin("test/unit/math/rev/functor")
             }
         }
@@ -262,7 +244,6 @@ pipeline {
             steps {
                 deleteDirWin()
                 unstash 'MathSetup'
-                bat "mingw32-make -j${env.PARALLEL} test-headers"
                 runTestsWin("test/unit/math/rev/functor")
             }
         }
@@ -271,7 +252,6 @@ pipeline {
             steps {
                 deleteDirWin()
                 unstash 'MathSetup'
-                bat "mingw32-make -j${env.PARALLEL} test-headers"
                 runTestsWin("test/unit/math/rev/functor")
             }
         }
