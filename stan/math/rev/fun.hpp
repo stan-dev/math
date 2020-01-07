@@ -92,7 +92,6 @@
 #include <stan/math/rev/fun/log_rising_factorial.hpp>
 #include <stan/math/rev/fun/log_softmax.hpp>
 #include <stan/math/rev/fun/log_sum_exp.hpp>
-#include <stan/math/rev/fun/log_sum_exp.hpp>
 #include <stan/math/rev/fun/logit.hpp>
 #include <stan/math/rev/fun/matrix_exp_multiply.hpp>
 #include <stan/math/rev/fun/matrix_power.hpp>
@@ -123,7 +122,6 @@
 #include <stan/math/rev/fun/sqrt.hpp>
 #include <stan/math/rev/fun/square.hpp>
 #include <stan/math/rev/fun/squared_distance.hpp>
-#include <stan/math/rev/fun/squared_distance.hpp>
 #include <stan/math/rev/fun/stan_print.hpp>
 #include <stan/math/rev/fun/step.hpp>
 #include <stan/math/rev/fun/sum.hpp>
@@ -131,7 +129,6 @@
 #include <stan/math/rev/fun/tanh.hpp>
 #include <stan/math/rev/fun/tcrossprod.hpp>
 #include <stan/math/rev/fun/tgamma.hpp>
-#include <stan/math/rev/fun/to_var.hpp>
 #include <stan/math/rev/fun/to_var.hpp>
 #include <stan/math/rev/fun/trace_gen_inv_quad_form_ldlt.hpp>
 #include <stan/math/rev/fun/trace_gen_quad_form.hpp>
