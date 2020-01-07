@@ -2,6 +2,9 @@
 #define STAN_MATH_REV_FUN_SUM_HPP
 
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/meta.hpp>
+#include <stan/math/rev/fun/sum.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <vector>
 
 namespace stan {
@@ -57,20 +60,6 @@ inline var sum(const std::vector<var>& m) {
   }
   return var(new sum_v_vari(m));
 }
-
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_REV_FUN_SUM_HPP
-#define STAN_MATH_REV_FUN_SUM_HPP
-
-#include <stan/math/rev/meta.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/rev/fun/sum.hpp>
-
-namespace stan {
-namespace math {
 
 /**
  * Class for representing sums with constructors for Eigen.

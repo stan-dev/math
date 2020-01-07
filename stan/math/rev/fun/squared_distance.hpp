@@ -4,6 +4,10 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/scal/fun/squared_distance.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/mat/fun/typedefs.hpp>
+#include <vector>
 
 namespace stan {
 namespace math {
@@ -49,22 +53,6 @@ inline var squared_distance(const var& a, double b) {
 inline var squared_distance(double a, const var& b) {
   return var(new scal_squared_distance_dv_vari(a, b.vi_));
 }
-
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_REV_FUN_SQUARED_DISTANCE_HPP
-#define STAN_MATH_REV_FUN_SQUARED_DISTANCE_HPP
-
-#include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
-#include <vector>
-
-namespace stan {
-namespace math {
 
 namespace internal {
 
