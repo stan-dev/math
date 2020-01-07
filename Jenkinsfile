@@ -11,7 +11,7 @@ def runTests(String testPath) {
 def runTestsWin(String testPath) {
     withEnv(['PATH+TBB=./lib/tbb']) {
        bat "echo $PATH"
-       bat "runTests.py -j40 ${testPath} --make-only"
+       bat "runTests.py -j${env.PARALLEL} ${testPath} --make-only"
        try { bat "runTests.py -j${env.PARALLEL} ${testPath}" }
        finally { junit 'test/**/*.xml' }
     }
@@ -173,7 +173,7 @@ pipeline {
                         runTestsWin("test/unit/math/rev/functor")
                     }
                 }
-            }}
+            }
     }
     post {
         always {
