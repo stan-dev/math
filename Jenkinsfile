@@ -135,7 +135,6 @@ pipeline {
                     }
                 }
             }
-        }
     }
     stage('Always-run tests part 5') {
             parallel {
@@ -149,7 +148,6 @@ pipeline {
                     }
                 }
             }
-        }
     }
     stage('Always-run tests part 6') {
             parallel {
@@ -163,7 +161,6 @@ pipeline {
                     }
                 }
             }
-        }
     }
     stage('Always-run tests part 7') {
             parallel {
@@ -176,8 +173,7 @@ pipeline {
                         runTestsWin("test/unit/math/rev/functor")
                     }
                 }
-            }
-        }
+            }}
     }
     post {
         always {
