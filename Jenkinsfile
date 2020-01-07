@@ -77,13 +77,6 @@ pipeline {
                     stash 'MathSetup'
                     sh "echo CXX=${env.CXX} -Werror > make/local"
                     sh "echo BOOST_PARALLEL_JOBS=${env.PARALLEL} >> make/local"
-                    parallel(
-                        CppLint: { sh "make cpplint" },
-                        Dependencies: { sh """#!/bin/bash
-                            set -o pipefail
-                            make test-math-dependencies 2>&1 | tee dependencies.log""" } ,
-                        Documentation: { sh "make doxygen" },
-                    )
                 }
             }
             post {
