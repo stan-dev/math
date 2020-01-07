@@ -5,7 +5,6 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-
 namespace test {
 
 void check_varis_on_stack(const stan::math::var& x) {

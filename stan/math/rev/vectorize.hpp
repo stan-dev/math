@@ -3,5 +3,4 @@
 
 #include <stan/math/rev/vectorize/apply_scalar_unary.hpp>
 
-
 #endif
