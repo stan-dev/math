@@ -47,16 +47,6 @@ typename value_type<T>::type adjoint_of(const T x) {
   return typename value_type<T>::type(0);
 }
 
-template <typename T>
-typename value_type<std::vector<T>>::type adjoint_of(const std::vector<T>& x) {
-  const size_t size = x.size();
-  typename value_type<std::vector<T>>::type result(size);
-  for (size_t i = 0; i != size; ++i) {
-    result[i] = adjoint_of(x[i]);
-  }
-  return result;
-}
-
 double adjoint_of(const var& x) { return x.vi_->adj_; }
 
 template <typename T, int R, int C>
@@ -72,15 +62,24 @@ inline Eigen::Matrix<typename value_type<T>::type, R, C> adjoint_of(
 }
 
 template <int R, int C>
-inline const Eigen::Matrix<double, R, C>& adjoint_of(
+inline Eigen::Matrix<double, R, C> adjoint_of(
     const Eigen::Matrix<double, R, C>& x) {
   return Eigen::Matrix<double, R, C>::Zero(x.rows(), x.cols());
 }
 
 template <int R, int C>
-inline const Eigen::Matrix<int, R, C>& adjoint_of(
-    const Eigen::Matrix<int, R, C>& x) {
+inline Eigen::Matrix<int, R, C> adjoint_of(const Eigen::Matrix<int, R, C>& x) {
   return Eigen::Matrix<int, R, C>::Zero(x.rows(), x.cols());
+}
+
+template <typename T>
+typename value_type<std::vector<T>>::type adjoint_of(const std::vector<T>& x) {
+  const size_t size = x.size();
+  typename value_type<std::vector<T>>::type result(size);
+  for (size_t i = 0; i != size; ++i) {
+    result[i] = adjoint_of(x[i]);
+  }
+  return result;
 }
 
 // as_value is similar to value_of... with the difference that it
@@ -135,28 +134,19 @@ inline void add_adjoint(T& sum, const T term) {
   sum += term;
 }
 
-template <typename T>
-inline void add_adjoint(std::vector<T>& sum, const std::vector<T>& term,
-                        int offset = 0) {
-  const size_t size = term.size();
-  for (size_t i = 0; i != size; ++i) {
-    add_adjoint<T>(sum[offset + i], term[i]);
-  }
-}
-
 template <typename T, int R, int C>
 inline void add_adjoint(Eigen::Matrix<T, R, C>& sum,
                         const Eigen::Matrix<T, R, C>& term) {
   sum += term;
 }
 
-template <typename Op>
-inline void add_adjoints(
-    ops_partials_edge<double, std::vector<Op>>& edge,
-    const std::vector<typename value_type<Op>::type>& adjoint,
-    std::size_t offset = 0) {
-  for (std::size_t i = 0; i != adjoint.size(); ++i)
-    edge.partials_[offset + i] += adjoint[i];
+template <typename T>
+inline void add_adjoint(std::vector<T>& sum, const std::vector<T>& term,
+                        int offset = 0) {
+  const size_t size = term.size();
+  for (size_t i = 0; i != size; ++i) {
+    add_adjoint(sum[offset + i], term[i]);
+  }
 }
 
 inline vari** register_operands(const var& op, vari** varis) {
@@ -170,7 +160,7 @@ inline vari** register_operands(const Eigen::Matrix<var, R, C>& M_op,
   const size_t size = M_op.size();
   for (size_t i = 0; i != M_op.cols(); ++i) {
     for (size_t j = 0; j != M_op.rows(); ++j, ++varis) {
-      *varis = M_op(i, j).vi_;
+      *varis = M_op(j, i).vi_;
     }
   }
   return varis;
@@ -259,14 +249,14 @@ struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, var> {
           arg3_value_(arg3_value),
           arg4_(arg4),
           arg4_value_(arg4_value),
-          arg1_adjoint_(is_constant<arg1_t>::value ? arg1_value_t()
-                                                   : adjoint_of(arg1_value)),
-          arg2_adjoint_(is_constant<arg2_t>::value ? arg2_value_t()
-                                                   : adjoint_of(arg2_value)),
-          arg3_adjoint_(is_constant<arg3_t>::value ? arg3_value_t()
-                                                   : adjoint_of(arg3_value)),
-          arg4_adjoint_(is_constant<arg4_t>::value ? arg4_value_t()
-                                                   : adjoint_of(arg4_value)),
+          arg1_adjoint_(is_constant<Arg1>::value ? arg1_value_t()
+                                                 : adjoint_of(arg1_value_)),
+          arg2_adjoint_(is_constant<Arg2>::value ? arg2_value_t()
+                                                 : adjoint_of(arg2_value_)),
+          arg3_adjoint_(is_constant<Arg3>::value ? arg3_value_t()
+                                                 : adjoint_of(arg3_value_)),
+          arg4_adjoint_(is_constant<Arg4>::value ? arg4_value_t()
+                                                 : adjoint_of(arg4_value_)),
           terms_sum_(as_value(init)) {}
 
     recursive_reducer(recursive_reducer& other, tbb::split)
@@ -315,9 +305,8 @@ struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, var> {
 
         terms_sum_ += sub_sum_v.val();
 
-        if (!is_constant_all<M>::value) {
-          vmapped_value_t sub_slice_adjoint = adjoint_of(local_sub_slice);
-          add_adjoint(vmapped_adjoint_, sub_slice_adjoint, r.begin());
+        if (!is_constant<M>::value) {
+          add_adjoint(vmapped_adjoint_, adjoint_of(local_sub_slice), r.begin());
         }
 
         if (!is_constant<Arg1>::value) {
@@ -342,16 +331,16 @@ struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, var> {
     void join(const recursive_reducer& child) {
       terms_sum_ += child.terms_sum_;
 
-      if (!is_constant_all<Arg1>::value) {
+      if (!is_constant<Arg1>::value) {
         add_adjoint(arg1_adjoint_, child.arg1_adjoint_);
       }
-      if (!is_constant_all<Arg2>::value) {
+      if (!is_constant<Arg2>::value) {
         add_adjoint(arg2_adjoint_, child.arg2_adjoint_);
       }
-      if (!is_constant_all<Arg3>::value) {
+      if (!is_constant<Arg3>::value) {
         add_adjoint(arg3_adjoint_, child.arg3_adjoint_);
       }
-      if (!is_constant_all<Arg4>::value) {
+      if (!is_constant<Arg4>::value) {
         add_adjoint(arg4_adjoint_, child.arg4_adjoint_);
       }
     }
@@ -371,12 +360,19 @@ struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, var> {
                              arg2, arg2_value, arg3, arg3_value, arg4,
                              arg4_value);
 
+#ifdef STAN_DETERMINISTIC
+    tbb::static_partitioner partitioner;
+    tbb::parallel_deterministic_reduce(
+        tbb::blocked_range<std::size_t>(0, num_jobs, grainsize), worker,
+        partitioner);
+#else
     tbb::parallel_reduce(
         tbb::blocked_range<std::size_t>(0, num_jobs, grainsize), worker);
+#endif
 
     std::vector<std::size_t> num_terms_arg(5, 0);
 
-    if (!is_constant<vmapped_t>::value)
+    if (!is_constant<M>::value)
       num_terms_arg[0] = num_elements(vmapped_adjoint);
     if (!is_constant<Arg1>::value)
       num_terms_arg[1] = num_elements(arg1_value);
@@ -409,7 +405,7 @@ struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, var> {
     }
     if (!is_constant<Arg2>::value) {
       register_operands(arg2, &varis[idx]);
-      register_partials(worker.arg3_adjoint_, &partials[idx]);
+      register_partials(worker.arg2_adjoint_, &partials[idx]);
       idx += num_terms_arg[2];
     }
     if (!is_constant<Arg3>::value) {
