@@ -3,6 +3,10 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/mat/fun/typedefs.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/mat/fun/typedefs.hpp>
+#include <vector>
 
 namespace stan {
 namespace math {
@@ -34,19 +38,6 @@ inline var& to_var(var& x) { return x; }
  * @return The input automatic differentiation variable.
  */
 inline const var& to_var(const var& x) { return x; }
-
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_REV_ARR_FUN_TO_VAR_HPP
-#define STAN_MATH_REV_ARR_FUN_TO_VAR_HPP
-
-#include <stan/math/rev/core.hpp>
-#include <stan/math/rev/scal/fun/to_var.hpp>
-#include <vector>
-
-namespace stan {
-namespace math {
 
 /**
  * Converts argument to an automatic differentiation variable.
@@ -83,22 +74,6 @@ inline const std::vector<var>& to_var(const std::vector<var>& v) { return v; }
  * @return The input std::vector<var>
  */
 inline std::vector<var>& to_var(std::vector<var>& v) { return v; }
-
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_REV_MAT_FUN_TO_VAR_HPP
-#define STAN_MATH_REV_MAT_FUN_TO_VAR_HPP
-
-#include <stan/math/rev/meta.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/rev/mat/fun/typedefs.hpp>
-#include <stan/math/rev/scal/fun/to_var.hpp>
-
-namespace stan {
-namespace math {
 
 /**
  * Converts argument to an automatic differentiation variable.

@@ -4,8 +4,13 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/scal/fun/calculate_chain.hpp>
+#include <stan/math/rev/mat/fun/typedefs.hpp>
+#include <stan/math/prim/arr/fun/log_sum_exp.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/log_sum_exp.hpp>
+#include <cmath>
+#include <vector>
 
 namespace stan {
 namespace math {
@@ -67,22 +72,6 @@ inline var log_sum_exp(double a, const var& b) {
   return var(new internal::log_sum_exp_dv_vari(a, b.vi_));
 }
 
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_REV_ARR_FUN_LOG_SUM_EXP_HPP
-#define STAN_MATH_REV_ARR_FUN_LOG_SUM_EXP_HPP
-
-#include <stan/math/rev/core.hpp>
-#include <stan/math/rev/scal/fun/calculate_chain.hpp>
-#include <stan/math/prim/arr/fun/log_sum_exp.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <vector>
-#include <cmath>
-
-namespace stan {
-namespace math {
-
 namespace internal {
 inline double log_sum_exp_as_double(const std::vector<var>& x) {
   using std::exp;
@@ -120,23 +109,6 @@ class log_sum_exp_vector_vari : public op_vector_vari {
 inline var log_sum_exp(const std::vector<var>& x) {
   return var(new internal::log_sum_exp_vector_vari(x));
 }
-
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_REV_MAT_FUN_LOG_SUM_EXP_HPP
-#define STAN_MATH_REV_MAT_FUN_LOG_SUM_EXP_HPP
-
-#include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/rev/mat/fun/typedefs.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/log_sum_exp.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <cmath>
-
-namespace stan {
-namespace math {
 
 namespace internal {
 
