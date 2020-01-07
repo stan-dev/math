@@ -66,6 +66,34 @@ pipeline {
                     utils.killOldBuilds()
                 }
             }
+        }        
+        stage('Linting & Doc checks') {
+            agent any
+            steps {
+                script {
+                    deleteDir()
+                    retry(3) { checkout scm }
+                    sh "git clean -xffd"
+                    stash 'MathSetup'
+                    sh "echo CXX=${env.CXX} -Werror > make/local"
+                    sh "echo BOOST_PARALLEL_JOBS=${env.PARALLEL} >> make/local"
+                    parallel(
+                        CppLint: { sh "make cpplint" },
+                        Dependencies: { sh """#!/bin/bash
+                            set -o pipefail
+                            make test-math-dependencies 2>&1 | tee dependencies.log""" } ,
+                        Documentation: { sh "make doxygen" },
+                    )
+                }
+            }
+            post {
+                always {
+                    recordIssues enabledForFailure: true, tools:
+                        [cppLint(),
+                         groovyScript(parserId: 'mathDependencies', pattern: '**/dependencies.log')]
+                    deleteDir()
+                }
+            }
         }
         stage('Always-run tests part 2') {
             parallel {
