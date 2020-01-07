@@ -3,6 +3,8 @@
 
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/mat/fun/log.hpp>
+#include <stan/math/prim/mat/fun/sum.hpp>
 #include <cmath>
 
 namespace stan {
@@ -26,7 +28,7 @@ inline T log_determinant_spd(const Eigen::Matrix<T, R, C>& m) {
   if (m.size() == 0)
     return 0;
 
-  return m.ldlt().vectorD().array().log().sum();
+  return sum(log(m.ldlt().vectorD().array()));
 }
 
 }  // namespace math

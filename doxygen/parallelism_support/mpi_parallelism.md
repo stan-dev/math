@@ -75,21 +75,21 @@ To illustrate what is happening let's consider two examples (assuming MPI is ena
 
 - conventional test:
 ```
-./runTests.py test/unit/math/prim/mat/functor/map_rect_test.cpp
+./runTests.py test/unit/math/prim/functor/map_rect_test.cpp
 # => compilation with mpicxx
 # => execution with mpirun using a single process
-# mpirun -np 1 test/unit/math/prim/mat/functor/map_rect_test
+# mpirun -np 1 test/unit/math/prim/functor/map_rect_test
 ```
 
 - dedicated MPI test:
 ```
-./runTests.py test/unit/math/prim/arr/functor/mpi_cluster_test.cpp
+./runTests.py test/unit/math/prim/functor/mpi_cluster_test.cpp
 # => compilation with mpicxx
 # => execution with mpirun using at least two processes
-# mpirun -np 2 test/unit/math/prim/arr/functor/mpi_cluster_test
+# mpirun -np 2 test/unit/math/prim/functor/mpi_cluster_test
 
-./runTests.py -j8 test/unit/math/prim/arr/functor/mpi_cluster_test.cpp
+./runTests.py -j8 test/unit/math/prim/functor/mpi_cluster_test.cpp
 # => compilation with mpicxx
 # => execution with mpirun using 8 processes
-# mpirun -np 8 test/unit/math/prim/arr/functor/mpi_cluster_test
+# mpirun -np 8 test/unit/math/prim/functor/mpi_cluster_test
 ```

@@ -4,7 +4,7 @@
 #include <stan/math/mix/meta.hpp>
 
 #include <stan/math/prim/scal.hpp>
-#include <stan/math/fwd/scal.hpp>
+#include <stan/math/fwd.hpp>
 #include <stan/math/rev/scal.hpp>
 
 #endif

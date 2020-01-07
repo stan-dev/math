@@ -3,10 +3,13 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/mat/fun/log.hpp>
+#include <stan/math/prim/mat/fun/sum.hpp>
 #include <stan/math/rev/core.hpp>
 
 namespace stan {
 namespace math {
+
 /**
  * This object stores the actual (double typed) LDLT factorization of
  * an Eigen::Matrix<var> along with pointers to its vari's which allow the
@@ -36,13 +39,14 @@ class LDLT_alloc : public chainable_alloc {
 
   // Compute the log(abs(det(A))).  This is just a convenience function.
   inline double log_abs_det() const {
-    return ldlt_.vectorD().array().log().sum();
+    return sum(log(ldlt_.vectorD().array()));
   }
 
   size_t N_;
   Eigen::LDLT<Eigen::Matrix<double, R, C> > ldlt_;
   Eigen::Matrix<vari *, R, C> variA_;
 };
+
 }  // namespace math
 }  // namespace stan
 #endif
