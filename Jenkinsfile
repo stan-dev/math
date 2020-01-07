@@ -108,7 +108,6 @@ pipeline {
                 }
             }
         }
-    }
     stage('Always-run tests part 3') {
             parallel {
                 stage('Windows Headers & Unit') {
@@ -121,7 +120,6 @@ pipeline {
                     }
                 }
             }
-        }
     }
     stage('Always-run tests part 4') {
             parallel {
@@ -174,6 +172,7 @@ pipeline {
                     }
                 }
             }
+    }
     }
     post {
         always {
