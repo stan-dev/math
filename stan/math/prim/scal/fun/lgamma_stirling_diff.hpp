@@ -6,10 +6,9 @@
 namespace stan {
 namespace math {
 
-double lgamma_stirling_diff(const double x) {
-    return std::log1p(1 / (12 * x));
-}
+double lgamma_stirling_diff(const double x) { return std::log1p(1 / (12 * x)); }
 
-}} //namespace
+}  // namespace math
+}  // namespace stan
 
 #endif

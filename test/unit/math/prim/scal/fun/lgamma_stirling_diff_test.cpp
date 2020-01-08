@@ -6,7 +6,7 @@
 #include <test/unit/math/expect_near_rel.hpp>
 
 TEST(MathFunctions, lgamma_stirling_diff_errors) {
-    //TODO[martinmodrak] nan, negative values, ...
+  // TODO[martinmodrak] nan, negative values, ...
 }
 
 TEST(MathFunctions, lgamma_stirling_diff_accuracy) {
@@ -14,15 +14,15 @@ TEST(MathFunctions, lgamma_stirling_diff_accuracy) {
   using stan::test::expect_near_rel;
 
   double start = std::nextafter(10, 11);
-  for(double x = start; x < 1e150; x *= 1.5) {
-      double stirling = x * (log(x) - 1) + log(x) 
-        + 0.5 * (stan::math::LOG_SQRT_PI + stan::math::LOG_TWO - log(x));
-      double lgamma_res = stan::math::lgamma(x);
-      double diff = lgamma_stirling_diff(x);
+  for (double x = start; x < 1e150; x *= 1.5) {
+    double stirling
+        = x * (log(x) - 1) + log(x)
+          + 0.5 * (stan::math::LOG_SQRT_PI + stan::math::LOG_TWO - log(x));
+    double lgamma_res = stan::math::lgamma(x);
+    double diff = lgamma_stirling_diff(x);
 
-      std::ostringstream msg;
-      msg << "x = " << x;
-      expect_near_rel(msg.str(), stirling + diff, lgamma_res);
+    std::ostringstream msg;
+    msg << "x = " << x;
+    expect_near_rel(msg.str(), stirling + diff, lgamma_res);
   }
 }
-
