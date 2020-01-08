@@ -140,8 +140,8 @@ void expect_near_rel(const std::string& msg, EigMat1&& x1, EigMat2&& x2,
 }
 
 template <typename T1, typename T2, require_all_std_vector_t<T1, T2>...>
-void expect_near_rel(const std::string& msg, const T1& x1,
-                     const T2& x2, double tol = 1e-8) {
+void expect_near_rel(const std::string& msg, const T1& x1, const T2& x2,
+                     double tol = 1e-8) {
   EXPECT_EQ(x1.size(), x2.size()) << "expect_near_rel (std::vector):"
                                   << " vectors must be same size."
                                   << " x1.size() = " << x1.size()
