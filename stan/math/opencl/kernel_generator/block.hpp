@@ -122,7 +122,18 @@ class block_
    * View of a matrix that would be the result of evaluating this expression.
    * @return view
    */
-  inline matrix_cl_view view() const { return std::get<0>(arguments_).view(); }
+  inline matrix_cl_view view() const {
+    matrix_cl_view view;
+    if (bottom_diagonal() < 0) {
+      view = matrix_cl_view::Lower;
+    } else {
+      view = matrix_cl_view::Diagonal;
+    }
+    if (top_diagonal() > 0) {
+      view = either(view, matrix_cl_view::Upper);
+    }
+    return view;
+  }
 
   /**
    * Number of rows of a matrix that would be the result of evaluating this
