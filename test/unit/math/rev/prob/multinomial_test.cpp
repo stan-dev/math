@@ -1,7 +1,7 @@
 #include <stan/math/rev.hpp>
-#include <gtest/gtest.h>
-#include <test/unit/math/rev/prob/expect_eq_diffs.hpp>
 #include <test/unit/math/rev/util.hpp>
+#include <test/unit/math/rev/prob/expect_eq_diffs.hpp>
+#include <gtest/gtest.h>
 #include <string>
 #include <vector>
 

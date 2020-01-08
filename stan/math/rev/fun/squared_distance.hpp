@@ -3,8 +3,8 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/scal/fun/squared_distance.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/scal/fun/squared_distance.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <vector>
@@ -36,19 +36,19 @@ class scal_squared_distance_dv_vari : public op_dv_vari {
 };
 
 /**
- * Returns the log sum of exponentials.
+ * Returns the squared distance.
  */
 inline var squared_distance(const var& a, const var& b) {
   return var(new scal_squared_distance_vv_vari(a.vi_, b.vi_));
 }
 /**
- * Returns the log sum of exponentials.
+ * Returns the squared distance.
  */
 inline var squared_distance(const var& a, double b) {
   return var(new scal_squared_distance_vd_vari(a.vi_, b));
 }
 /**
- * Returns the log sum of exponentials.
+ * Returns the squared distance.
  */
 inline var squared_distance(double a, const var& b) {
   return var(new scal_squared_distance_dv_vari(a, b.vi_));

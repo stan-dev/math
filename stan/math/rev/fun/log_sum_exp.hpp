@@ -143,6 +143,8 @@ class log_sum_exp_matrix_vari : public op_matrix_vari {
 /**
  * Returns the log sum of exponentials.
  *
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
  * @param x matrix
  */
 template <int R, int C>

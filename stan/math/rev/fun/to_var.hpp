@@ -24,7 +24,6 @@ inline var to_var(double x) { return var(x); }
 /**
  * Specialization of to_var for non-const var input
  *
- *
  * @param[in,out] x An automatic differentiation variable.
  * @return The input automatic differentiation variable.
  */
@@ -32,7 +31,6 @@ inline var& to_var(var& x) { return x; }
 
 /**
  * Specialization of to_var for const var input
- *
  *
  * @param[in,out] x An automatic differentiation variable.
  * @return The input automatic differentiation variable.
@@ -91,7 +89,6 @@ inline matrix_v to_var(const matrix_d& m) {
 /**
  * Specialization of to_var for non-const matrices of vars
  *
- *
  * @param[in,out] m A matrix of automatic differentation variables.
  * @return The input matrix of automatic differentiation variables.
  */
@@ -99,7 +96,6 @@ inline matrix_v& to_var(matrix_v& m) { return m; }
 
 /**
  * Specialization of to_var for const matrices of vars
- *
  *
  * @param[in,out] m A matrix of automatic differentation variables.
  * @return The input matrix of automatic differentiation variables.
@@ -123,7 +119,6 @@ inline vector_v to_var(const vector_d& v) {
 /**
  * Specialization of to_var for const column vector of vars
  *
- *
  * @param[in,out] v A column vector of automatic differentation variables.
  * @return The input column vector of automatic differentiation variables.
  */
@@ -131,7 +126,6 @@ inline const vector_v& to_var(const vector_v& v) { return v; }
 
 /**
  * Specialization of to_var for non-const column vector of vars
- *
  *
  * @param[in,out] v A column vector of automatic differentation variables.
  * @return The input column vector of automatic differentiation variables.
@@ -155,7 +149,6 @@ inline row_vector_v to_var(const row_vector_d& rv) {
 /**
  * Specialization of to_var for const row vector of vars
  *
- *
  * @param[in,out] rv A column vector of automatic differentation variables.
  * @return The input row vector of automatic differentiation variables.
  */
@@ -163,7 +156,6 @@ inline const row_vector_v& to_var(const row_vector_v& rv) { return rv; }
 
 /**
  * Specialization of to_var for non-const row vector of vars
- *
  *
  * @param[in,out] rv A column vector of automatic differentation variables.
  * @return The input row vector of automatic differentiation variables.
