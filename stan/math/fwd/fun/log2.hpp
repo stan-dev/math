@@ -12,7 +12,7 @@ namespace math {
 /**
  * Return the base two logarithm of the specified argument.
  *
- * @tparam T scalar type
+ * @tparam T inner type of the fvar
  * @param x argument
  * @return base two logarithm of argument
  */

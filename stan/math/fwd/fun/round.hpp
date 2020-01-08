@@ -16,7 +16,7 @@ namespace math {
  *
  * The derivative is always zero.
  *
- * @tparam T Scalar type for autodiff variable.
+ * @tparam T inner type of the fvar
  * @param x Argument.
  * @return The rounded value of the argument.
  */

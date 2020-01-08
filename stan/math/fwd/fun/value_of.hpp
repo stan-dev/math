@@ -10,6 +10,7 @@ namespace math {
 /**
  * Return the value of the specified variable.
  *
+ * @tparam T inner type of the fvar
  * @param v Variable.
  * @return Value of variable.
  */

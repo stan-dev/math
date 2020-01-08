@@ -42,7 +42,7 @@ namespace math {
    \end{cases}
    \f]
  *
- * @tparam T Type of values.
+ * @tparam T inner type of the fvar
  * @param x1 First value
  * @param x2 Second value
  * @return Fvar with result beta function of arguments and gradients.
@@ -69,6 +69,7 @@ inline fvar<T> beta(const fvar<T>& x1, double x2) {
   return fvar<T>(beta_ab,
                  x1.d_ * (digamma(x1.val_) - digamma(x1.val_ + x2)) * beta_ab);
 }
+
 }  // namespace math
 }  // namespace stan
 #endif

@@ -11,9 +11,7 @@ namespace math {
 /**
  * Return the value of the specified variable.
  *
- * T must implement value_of_rec.
- *
- * @tparam T Scalar type
+ * @tparam T inner type of the fvar, must implement value_of_rec
  * @param v Variable.
  * @return Value of variable.
  */

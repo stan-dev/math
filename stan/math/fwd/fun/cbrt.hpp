@@ -12,7 +12,7 @@ namespace math {
 /**
  * Return cube root of specified argument.
  *
- * @tparam T Scalar type of autodiff variable.
+ * @tparam T inner type of the fvar
  * @param x Argument.
  * @return Cube root of argument.
  */

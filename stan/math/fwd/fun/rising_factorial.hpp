@@ -16,7 +16,7 @@ namespace math {
  * Will throw for NaN x and for negative n, as
  * implemented in primitive function.
  *
- * @tparam T Scalar type of autodiff variable.
+ * @tparam T inner type of the fvar
  * @param x Argument.
  * @param n Argument
  * @return tangent of rising factorial at arguments.
@@ -28,6 +28,7 @@ inline fvar<T> rising_factorial(const fvar<T>& x, int n) {
   return fvar<T>(rising_fact,
                  rising_fact * x.d_ * (digamma(x.val_ + n) - digamma(x.val_)));
 }
+
 }  // namespace math
 }  // namespace stan
 #endif
