@@ -33,6 +33,9 @@ inline auto inv_logit(const T& x) {
   return apply_scalar_unary<inv_logit_fun, T>::apply(x);
 }
 
+// TODO(Tadej): Eigen is introducing their implementation logistic() of this
+// in 3.4. Use that once we switch to Eigen 3.4
+
 }  // namespace math
 }  // namespace stan
 
