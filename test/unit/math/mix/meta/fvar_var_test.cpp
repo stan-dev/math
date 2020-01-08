@@ -1,4 +1,4 @@
-#include <stan/math/mix/arr.hpp>
+#include <stan/math/mix.hpp>
 #include <gtest/gtest.h>
 #include <sstream>
 

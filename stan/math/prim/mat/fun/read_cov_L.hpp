@@ -2,6 +2,8 @@
 #define STAN_MATH_PRIM_MAT_FUN_READ_COV_L_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/mat/fun/log.hpp>
+#include <stan/math/prim/mat/fun/sum.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 
 namespace stan {
@@ -24,7 +26,7 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_cov_L(
     const Eigen::Array<T, Eigen::Dynamic, 1>& sds, T& log_prob) {
   size_t K = sds.rows();
   // adjust due to transformation from correlations to covariances
-  log_prob += (sds.log().sum() + LOG_TWO) * K;
+  log_prob += (sum(log(sds)) + LOG_TWO) * K;
   return sds.matrix().asDiagonal() * read_corr_L(CPCs, K, log_prob);
 }
 

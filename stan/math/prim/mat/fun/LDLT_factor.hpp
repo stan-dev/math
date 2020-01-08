@@ -3,6 +3,8 @@
 
 #include <stan/math/prim/err/check_square.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/mat/fun/log.hpp>
+#include <stan/math/prim/mat/fun/sum.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <boost/shared_ptr.hpp>
 
@@ -96,7 +98,7 @@ class LDLT_factor {
     return true;
   }
 
-  inline T log_abs_det() const { return ldltP_->vectorD().array().log().sum(); }
+  inline T log_abs_det() const { return sum(log(ldltP_->vectorD())); }
 
   inline void inverse(matrix_t& invA) const {
     invA.setIdentity(N_);
