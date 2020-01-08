@@ -98,7 +98,7 @@ namespace math {
 
       int rank() const {return r;}
 
-      void set_comm(MPI_Comm other) {
+      void set_comm(const MPI_Comm& other) {
         c = other;
         MPI_Comm_size(c, &s);
         MPI_Comm_rank(c, &r);
@@ -168,10 +168,6 @@ namespace math {
         return MPI_COMM_INTER_CHAIN;                                                
       }
 
-      static const MPI_Comm& mpi_comm_inter_chain() {
-        return mpi_comm_inter_chain(NUM_MPI_CHAINS);
-      }
-      
       /*
        * Return intra-chain communicator. When called first
        * time, the communicator is populated with proper
@@ -206,40 +202,28 @@ namespace math {
         return MPI_COMM_INTRA_CHAIN;
       }
 
-      static const MPI_Comm& mpi_comm_intra_chain() {
-        return mpi_comm_intra_chain(NUM_MPI_CHAINS);
-      }
-
       static const Communicator& inter_chain_comm(int num_mpi_chains) {
-        if (inter_chain.comm() == MPI_COMM_NULL) {
-          inter_chain.set_comm(mpi_comm_inter_chain(num_mpi_chains));
+        if (inter_chain.comm() == MPI_COMM_NULL && intra_chain.comm() == MPI_COMM_NULL) {
+          mpi_comm_inter_chain(num_mpi_chains);
+          mpi_comm_intra_chain(num_mpi_chains);
+          if (MPI_COMM_INTER_CHAIN != MPI_COMM_NULL) {
+            inter_chain.set_comm(MPI_COMM_INTER_CHAIN);
+          }
         }
         return inter_chain;
       }
         
-      static const Communicator& inter_chain_comm() {
-        if (inter_chain.comm() == MPI_COMM_NULL) {
-          inter_chain.set_comm(mpi_comm_inter_chain());
-        }
-        return inter_chain;
-      }
-
       static const Communicator& intra_chain_comm(int num_mpi_chains) {
         if (intra_chain.comm() == MPI_COMM_NULL) {
-          intra_chain.set_comm(mpi_comm_intra_chain(num_mpi_chains));
+          mpi_comm_inter_chain(num_mpi_chains);
+          mpi_comm_intra_chain(num_mpi_chains);
+          intra_chain.set_comm(MPI_COMM_INTRA_CHAIN);
         }
         return intra_chain;
       }
         
-      static const Communicator& intra_chain_comm() {
-        if (intra_chain.comm() == MPI_COMM_NULL) {
-          intra_chain.set_comm(mpi_comm_intra_chain());
-        }
-        return intra_chain;
-      }
-        
-      static bool is_in_inter_chain_comm() {
-        return inter_chain_comm().rank() >= 0;
+      static bool is_in_inter_chain_comm(int num_mpi_chains) {
+        return inter_chain_comm(num_mpi_chains).rank() >= 0;
       }
 
     };
