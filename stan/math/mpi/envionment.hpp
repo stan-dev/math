@@ -15,7 +15,8 @@
 #define NUM_MPI_CHAINS 1
 #endif
 
-namespace STAN_LANG {
+namespace stan {
+namespace math {
   namespace mpi {
 
     /*
@@ -237,6 +238,10 @@ namespace STAN_LANG {
         return intra_chain;
       }
         
+      static bool is_in_inter_chain_comm() {
+        return inter_chain_comm().rank() >= 0;
+      }
+
     };
 
     Envionment Session::env;
@@ -245,6 +250,7 @@ namespace STAN_LANG {
     Communicator Session::inter_chain(MPI_COMM_NULL);
     Communicator Session::intra_chain(MPI_COMM_NULL);
   }
+}
 }
 
 #endif
