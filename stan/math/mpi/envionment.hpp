@@ -10,11 +10,6 @@
 // called as library.
 #define MPI_COMM_STAN MPI_COMM_WORLD
 
-// by default there are no warmup-pulling chains.
-#ifndef NUM_MPI_CHAINS
-#define NUM_MPI_CHAINS 1
-#endif
-
 namespace stan {
 namespace math {
   namespace mpi {
