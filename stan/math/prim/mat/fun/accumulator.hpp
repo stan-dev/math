@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_ACCUMULATOR_HPP
 #define STAN_MATH_PRIM_MAT_FUN_ACCUMULATOR_HPP
 
-#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/sum.hpp>
 #include <vector>
 #include <type_traits>
@@ -74,8 +74,8 @@ class accumulator {
    * of values to the buffer.
    *
    * @tparam S type of values in matrix
-   * @tparam R number of rows in matrix
-   * @tparam C number of columns in matrix
+   * @tparam R number of rows, can be Eigen::Dynamic
+   * @tparam C number of columns, can be Eigen::Dynamic
    * @param m Matrix of values to add
    */
   template <typename S, int R, int C>

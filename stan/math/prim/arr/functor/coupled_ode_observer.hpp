@@ -2,8 +2,7 @@
 #define STAN_MATH_PRIM_ARR_FUNCTOR_COUPLED_ODE_OBSERVER_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
-#include <stan/math/prim/scal/err/check_less.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/arr/fun/sum.hpp>
 
 #include <vector>

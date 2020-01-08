@@ -25,13 +25,12 @@ namespace math {
  * <p>See <code>read_corr_matrix(Array, size_t, T)</code>
  * for more information.
  *
+ * @tparam T type of elements in the array
  * @param CPCs The (K choose 2) canonical partial correlations in
  * (-1, 1).
  * @param K Dimensionality of correlation matrix.
  * @return Cholesky factor of correlation matrix for specified
  * canonical partial correlations.
-
- * @tparam T Type of underlying scalar.
  */
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
@@ -78,6 +77,7 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
  * extended onion method Journal of Multivariate Analysis 100
  * (2009) 1989–2001 </li></ul>
  *
+ * @tparam T type of elements in the array
  * @param CPCs The (K choose 2) canonical partial correlations in
  * (-1, 1).
  * @param K Dimensionality of correlation matrix.
@@ -85,7 +85,6 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
  * Jacobian determinant.
  * @return Cholesky factor of correlation matrix for specified
  * partial correlations.
- * @tparam T Type of underlying scalar.
  */
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
@@ -108,4 +107,5 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
 
 }  // namespace math
 }  // namespace stan
+
 #endif

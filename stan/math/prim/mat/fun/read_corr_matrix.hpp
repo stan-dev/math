@@ -15,11 +15,11 @@ namespace math {
  * <p>See <code>read_corr_matrix(Array, size_t, T)</code>
  * for more information.
  *
+ * @tparam T type of elements in the array
  * @param CPCs The (K choose 2) canonical partial correlations in (-1, 1).
  * @param K Dimensionality of correlation matrix.
  * @return Cholesky factor of correlation matrix for specified
  * canonical partial correlations.
- * @tparam T Type of underlying scalar.
  */
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_corr_matrix(
@@ -41,13 +41,13 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_corr_matrix(
  * the Cholesky factor of the correlation matrix rather than the
  * correlation matrix itself in statistical calculations.
  *
+ * @tparam T type of elements in the array
  * @param CPCs The (K choose 2) canonical partial correlations in
  * (-1, 1).
  * @param K Dimensionality of correlation matrix.
  * @param log_prob Reference to variable to increment with the log
  * Jacobian determinant.
  * @return Correlation matrix for specified partial correlations.
- * @tparam T Type of underlying scalar.
  */
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_corr_matrix(
@@ -61,7 +61,6 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_corr_matrix(
 }
 
 }  // namespace math
-
 }  // namespace stan
 
 #endif

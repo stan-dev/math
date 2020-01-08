@@ -57,6 +57,7 @@ TEST(MathMatrixOpenCLPrim, cholesky_decompose_non_inplace_cpu_vs_cl_small) {
   EXPECT_MATRIX_NEAR(m1, m1_res, 1e-8);
 }
 
+namespace {
 void cholesky_decompose_test(int size) {
   stan::math::matrix_d m1 = stan::math::matrix_d::Random(size, size);
   stan::math::matrix_d m1_pos_def
@@ -81,8 +82,8 @@ void cholesky_decompose_test(int size) {
       max_error = std::max(max_error, a);
     }
   }
-  EXPECT_LT(max_error, 1e-8);
 }
+}  // namespace
 
 TEST(MathMatrixOpenCLPrim, cholesky_decompose_small) {
   cholesky_decompose_test(10);

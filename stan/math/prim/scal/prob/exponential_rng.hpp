@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_PROB_EXPONENTIAL_RNG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
+#include <stan/math/prim/err.hpp>
 #include <boost/random/exponential_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 

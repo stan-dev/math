@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_GET_BASE1_HPP
 #define STAN_MATH_PRIM_MAT_FUN_GET_BASE1_HPP
 
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/err/check_range.hpp>
 #include <vector>
 
 namespace stan {
@@ -14,13 +14,13 @@ namespace math {
  * a <code>std::out_of_range</code> exception with the specified
  * error message and index indicated.
  *
+ * @tparam T type of value
  * @param x Vector from which to get a value.
  * @param i Index into vector plus 1.
  * @param error_msg Error message if the index is out of range.
  * @param idx Nested index level to report in error message if
  * the index is out of range.
  * @return Value of vector at <code>i - 1</code>
- * @tparam T type of value.
  * @throw std::out_of_range if idx is out of range.
  */
 template <typename T>
@@ -36,6 +36,7 @@ inline const T& get_base1(const std::vector<T>& x, size_t i,
  * a <code>std::out_of_range</code> exception with the specified
  * error message and index indicated.
  *
+ * @tparam T type of value
  * @param x Vector from which to get a value.
  * @param i1 First index plus 1.
  * @param i2 Second index plus 1.
@@ -43,7 +44,6 @@ inline const T& get_base1(const std::vector<T>& x, size_t i,
  * @param idx Nested index level to report in error message if
  * the index is out of range.
  * @return Value of vector at indexes.
- * @tparam T type of value.
  * @throw std::out_of_range if idx is out of range.
  */
 template <typename T>
@@ -59,6 +59,7 @@ inline const T& get_base1(const std::vector<std::vector<T> >& x, size_t i1,
  * a <code>std::out_of_range</code> exception with the specified
  * error message and index indicated.
  *
+ * @tparam T type of value
  * @param x Vector from which to get a value.
  * @param i1 First index plus 1.
  * @param i2 Second index plus 1.
@@ -67,7 +68,6 @@ inline const T& get_base1(const std::vector<std::vector<T> >& x, size_t i1,
  * @param idx Nested index level to report in error message if
  * the index is out of range.
  * @return Value of vector at indexes.
- * @tparam T type of value.
  * @throw std::out_of_range if idx is out of range.
  */
 template <typename T>
@@ -84,6 +84,7 @@ inline const T& get_base1(const std::vector<std::vector<std::vector<T> > >& x,
  * a <code>std::out_of_range</code> exception with the specified
  * error message and index indicated.
  *
+ * @tparam T type of value
  * @param x Vector from which to get a value.
  * @param i1 First index plus 1.
  * @param i2 Second index plus 1.
@@ -93,7 +94,6 @@ inline const T& get_base1(const std::vector<std::vector<std::vector<T> > >& x,
  * @param idx Nested index level to report in error message if
  * the index is out of range.
  * @return Value of vector at indexes.
- * @tparam T type of value.
  * @throw std::out_of_range if idx is out of range.
  */
 template <typename T>
@@ -111,6 +111,7 @@ inline const T& get_base1(
  * a <code>std::out_of_range</code> exception with the specified
  * error message and index indicated.
  *
+ * @tparam T type of value
  * @param x Vector from which to get a value.
  * @param i1 First index plus 1.
  * @param i2 Second index plus 1.
@@ -121,7 +122,6 @@ inline const T& get_base1(
  * @param idx Nested index level to report in error message if
  * the index is out of range.
  * @return Value of vector at indexes.
- * @tparam T type of value.
  * @throw std::out_of_range if idx is out of range.
  */
 template <typename T>
@@ -140,6 +140,7 @@ inline const T& get_base1(
  * a <code>std::out_of_range</code> exception with the specified
  * error message and index indicated.
  *
+ * @tparam T type of value
  * @param x Vector from which to get a value.
  * @param i1 First index plus 1.
  * @param i2 Second index plus 1.
@@ -151,7 +152,6 @@ inline const T& get_base1(
  * @param idx Nested index level to report in error message if
  * the index is out of range.
  * @return Value of vector at indexes.
- * @tparam T type of value.
  * @throw std::out_of_range if idx is out of range.
  */
 template <typename T>
@@ -170,6 +170,7 @@ inline const T& get_base1(
  * a <code>std::out_of_range</code> exception with the specified
  * error message and index indicated.
  *
+ * @tparam T type of value
  * @param x Vector from which to get a value.
  * @param i1 First index plus 1.
  * @param i2 Second index plus 1.
@@ -182,7 +183,6 @@ inline const T& get_base1(
  * @param idx Nested index level to report in error message if
  * the index is out of range.
  * @return Value of vector at indexes.
- * @tparam T type of value.
  * @throw std::out_of_range if idx is out of range.
  */
 template <typename T>
@@ -201,6 +201,7 @@ inline const T& get_base1(
  * a <code>std::out_of_range</code> exception with the specified
  * error message and index indicated.
  *
+ * @tparam T type of value
  * @param x Vector from which to get a value.
  * @param i1 First index plus 1.
  * @param i2 Second index plus 1.
@@ -214,7 +215,6 @@ inline const T& get_base1(
  * @param idx Nested index level to report in error message if
  * the index is out of range.
  * @return Value of vector at indexes.
- * @tparam T type of value.
  * @throw std::out_of_range if idx is out of range.
  */
 template <typename T>
@@ -238,13 +238,13 @@ inline const T& get_base1(
  * to get a row then using a second call to get the value at
  a specified column.
  *
+ * @tparam T type of value
  * @param x Matrix from which to get a row
  * @param m Index into matrix plus 1.
  * @param error_msg Error message if the index is out of range.
  * @param idx Nested index level to report in error message if
  * the index is out of range.
  * @return Row of matrix at <code>i - 1</code>.
- * @tparam T type of value.
  * @throw std::out_of_range if idx is out of range.
  */
 template <typename T>
@@ -261,6 +261,7 @@ inline Eigen::Matrix<T, 1, Eigen::Dynamic> get_base1(
  * throw a <code>std::out_of_range</code> exception with the
  * specified error message and index indicated.
  *
+ * @tparam T type of value
  * @param x Matrix from which to get a row
  * @param m Row index plus 1.
  * @param n Column index plus 1.
@@ -269,7 +270,6 @@ inline Eigen::Matrix<T, 1, Eigen::Dynamic> get_base1(
  * either index is out of range.
  * @return Value of matrix at row <code>m - 1</code> and column
  * <code>n - 1</code>.
- * @tparam T type of value.
  * @throw std::out_of_range if idx is out of range.
  */
 template <typename T>
@@ -287,13 +287,13 @@ inline const T& get_base1(
  * throw a <code>std::out_of_range</code> exception with the
  * specified error message and index indicated.
  *
+ * @tparam T type of value
  * @param x Column vector from which to get a value.
  * @param m Row index plus 1.
  * @param error_msg Error message if the index is out of range.
  * @param idx Nested index level to report in error message if
  * the index is out of range.
  * @return Value of column vector at row <code>m - 1</code>.
- * @tparam T type of value.
  * @throw std::out_of_range if idx is out of range.
  */
 template <typename T>
@@ -309,13 +309,13 @@ inline const T& get_base1(const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
  * throw a <code>std::out_of_range</code> exception with the
  * specified error message and index indicated.
  *
+ * @tparam T type of value
  * @param x Row vector from which to get a value.
  * @param n Column index plus 1.
  * @param error_msg Error message if the index is out of range.
  * @param idx Nested index level to report in error message if
  * the index is out of range.
  * @return Value of row vector at column <code>n - 1</code>.
- * @tparam T type of value.
  * @throw std::out_of_range if idx is out of range.
  */
 template <typename T>
@@ -327,4 +327,5 @@ inline const T& get_base1(const Eigen::Matrix<T, 1, Eigen::Dynamic>& x,
 
 }  // namespace math
 }  // namespace stan
+
 #endif

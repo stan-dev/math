@@ -4,7 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/fun/log1p.hpp>
 #include <stan/math/prim/scal/fun/is_nan.hpp>
-#include <stan/math/prim/scal/err/check_less_or_equal.hpp>
+#include <stan/math/prim/err.hpp>
 
 namespace stan {
 namespace math {

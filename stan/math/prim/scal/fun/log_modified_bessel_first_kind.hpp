@@ -1,14 +1,11 @@
 //  Copyright (c) 2006 Xiaogang Zhang
 //  Copyright (c) 2007, 2017 John Maddock
 
-#include <stan/math/prim/meta.hpp>
 #ifndef STAN_MATH_PRIM_SCAL_FUN_LOG_MODIFIED_BESSEL_FIRST_KIND_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_LOG_MODIFIED_BESSEL_FIRST_KIND_HPP
 
-#include <boost/math/tools/rational.hpp>
-#include <stan/math/prim/scal/err/check_not_nan.hpp>
-#include <stan/math/prim/scal/err/check_nonnegative.hpp>
-#include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/inv.hpp>
 #include <stan/math/prim/scal/fun/is_inf.hpp>
@@ -17,6 +14,7 @@
 #include <stan/math/prim/scal/fun/log1p.hpp>
 #include <stan/math/prim/scal/fun/log1p_exp.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
+#include <boost/math/tools/rational.hpp>
 #include <cmath>
 
 namespace stan {

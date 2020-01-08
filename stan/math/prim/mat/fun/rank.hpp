@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_RANK_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/mat/err/check_range.hpp>
+#include <stan/math/prim/err.hpp>
 
 namespace stan {
 namespace math {
@@ -31,4 +31,5 @@ inline int rank(const C& v, int s) {
 
 }  // namespace math
 }  // namespace stan
+
 #endif

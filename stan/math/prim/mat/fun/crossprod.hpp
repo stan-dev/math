@@ -10,6 +10,7 @@ namespace math {
 /**
  * Returns the result of pre-multiplying a matrix by its
  * own transpose.
+ *
  * @param M Matrix to multiply.
  * @return Transpose of M times M
  */
@@ -19,4 +20,5 @@ inline matrix_d crossprod(const matrix_d& M) {
 
 }  // namespace math
 }  // namespace stan
+
 #endif

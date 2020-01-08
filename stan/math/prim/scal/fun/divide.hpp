@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_FUN_DIVIDE_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/throw_domain_error.hpp>
+#include <stan/math/prim/err.hpp>
 #include <cstddef>
 #include <cstdlib>
 
