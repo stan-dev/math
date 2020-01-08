@@ -135,16 +135,16 @@ class load_
 
   /**
    * Sets view of the matrix depending on which part is written.
-   * @param top_diagonal Index of the top sub- or super- diagonal written with
-   * nonzero elements.
    * @param bottom_diagonal Index of the top sub- or super- diagonal written
    * with nonzero elements.
-   * @param top_zero_diagonal Index of the top sub- or super- diagonal written
-   * with zeros if it ie more extreme than \c top_diagonal. Otherwise it should
-   * be set to equal value as \c top_diagonal.
+   * @param top_diagonal Index of the top sub- or super- diagonal written with
+   * nonzero elements.
    * @param bottom_zero_diagonal Index of the top sub- or super- diagonal
    * written with zeros if it ie more extreme than \c bottom_diagonal. Otherwise
    * it should be set to equal value as \c bottom_diagonal.
+   * @param top_zero_diagonal Index of the top sub- or super- diagonal written
+   * with zeros if it ie more extreme than \c top_diagonal. Otherwise it should
+   * be set to equal value as \c top_diagonal.
    */
   inline void set_view(int bottom_diagonal, int top_diagonal,
                        int bottom_zero_diagonal, int top_zero_diagonal) const {

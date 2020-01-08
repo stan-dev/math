@@ -2,17 +2,17 @@
 #define STAN_MATH_OPENCL_KERNEL_GENERATOR_BLOCK_HPP
 #ifdef STAN_OPENCL
 
-#include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/scal/err/throw_domain_error.hpp>
+#include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/kernel_generator/type_str.hpp>
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl_lhs.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
+#include <set>
 #include <string>
 #include <type_traits>
-#include <set>
 #include <utility>
 
 namespace stan {
@@ -58,12 +58,12 @@ class block_
   }
 
   /**
-   * generates kernel code for this and nested expressions.
-   * @param[in,out] generated set of already generated operation_cls
-   * @param ng name generator for this kernel
+   * Generates kernel code for this expression.
    * @param i row index variable name
    * @param j column index variable name
-   * @return part of kernel with code for this and nested expressions
+   * @param var_name_arg name of the variable in kernel that holds argument to
+   * this expression
+   * @return part of kernel with code for this expression
    */
   inline kernel_parts generate(const std::string& i, const std::string& j,
                                const std::string& var_name_arg) const {
@@ -85,13 +85,13 @@ class block_
   }
 
   /**
-   * generates kernel code for this and nested expressions if this expression
+   * Generates kernel code for this and nested expressions if this expression
    * appears on the left hand side of an assignment.
-   * @param[in,out] generated set of already generated operation_cls
-   * @param ng name generator for this kernel
    * @param i row index variable name
    * @param j column index variable name
-   * @return part of kernel with code for this and nested expressions
+   * @param var_name_arg name of the variable in kernel that holds argument to
+   * this expression
+   * @return part of kernel with code for this expression
    */
   inline kernel_parts generate_lhs(const std::string& i, const std::string& j,
                                    const std::string& var_name_arg) const {
@@ -140,16 +140,16 @@ class block_
 
   /**
    * Sets view of the underlying matrix depending on which part is written.
-   * @param top_diagonal Index of the top sub- or super- diagonal written with
-   * nonzero elements.
    * @param bottom_diagonal Index of the top sub- or super- diagonal written
    * with nonzero elements.
-   * @param top_zero_diagonal Index of the top sub- or super- diagonal written
-   * with zeros if it ie more extreme than \c top_diagonal. Otherwise it should
-   * be set to equal value as \c top_diagonal.
+   * @param top_diagonal Index of the top sub- or super- diagonal written with
+   * nonzero elements.
    * @param bottom_zero_diagonal Index of the top sub- or super- diagonal
    * written with zeros if it ie more extreme than \c bottom_diagonal. Otherwise
    * it should be set to equal value as \c bottom_diagonal.
+   * @param top_zero_diagonal Index of the top sub- or super- diagonal written
+   * with zeros if it ie more extreme than \c top_diagonal. Otherwise it should
+   * be set to equal value as \c top_diagonal.
    */
   inline void set_view(int bottom_diagonal, int top_diagonal,
                        int bottom_zero_diagonal, int top_zero_diagonal) const {
@@ -208,6 +208,10 @@ class block_
  * Block of a kernel generator expression.
  * @tparam T type of argument
  * @param a input argument
+ * @param start_row first row of block
+ * @param start_col first column of a block
+ * @param rows number of rows in block
+ * @param cols number of columns in block
  * @return Block of given expression
  */
 template <typename T,
