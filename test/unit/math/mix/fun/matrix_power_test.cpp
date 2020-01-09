@@ -1,4 +1,4 @@
-#include <stan/math/rev/mat.hpp>
+#include <stan/math/rev.hpp>
 #include <test/unit/math/test_ad.hpp>
 #include <gtest/gtest.h>
 #include <limits>

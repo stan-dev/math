@@ -1,4 +1,4 @@
-#include <stan/math/rev/arr.hpp>
+#include <stan/math/rev.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
 #include <test/unit/math/prim/functor/harmonic_oscillator.hpp>

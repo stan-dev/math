@@ -6,7 +6,7 @@
 #endif
 
 #include <gtest/gtest.h>
-#include <stan/math/rev/mat.hpp>
+#include <stan/math/rev.hpp>
 
 #include <test/unit/math/prim/functor/hard_work.hpp>
 #include <test/unit/math/prim/functor/utils_threads.hpp>

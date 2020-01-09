@@ -7,10 +7,7 @@
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/prim/scal.hpp>
 #include <stan/math/fwd.hpp>
-#include <stan/math/rev/arr.hpp>
-#include <stan/math/rev/mat.hpp>
-#include <stan/math/rev/scal.hpp>
-
+#include <stan/math/rev.hpp>
 #include <stan/math/mix/fun.hpp>
 #include <stan/math/mix/functor.hpp>
 
