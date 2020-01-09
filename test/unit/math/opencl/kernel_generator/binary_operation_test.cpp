@@ -94,7 +94,7 @@ TEST(MathMatrixCL, elewise_division_test) {
   EXPECT_MATRIX_NEAR(res, correct, 1e-9);
 }
 
-TEST(MathMatrixCL, multiple_operations) {
+TEST(MathMatrixCL, binary_operation_multiple_operations) {
   MatrixXd m1(3, 3);
   m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
   MatrixXi m2(3, 3);
@@ -114,7 +114,7 @@ TEST(MathMatrixCL, multiple_operations) {
   EXPECT_MATRIX_NEAR(res, correct, 1e-9);
 }
 
-TEST(MathMatrixCL, multiple_operations_accepts_lvalue) {
+TEST(MathMatrixCL, binary_operation_multiple_operations_accepts_lvalue) {
   MatrixXd m1(3, 3);
   m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
   MatrixXi m2(3, 3);
