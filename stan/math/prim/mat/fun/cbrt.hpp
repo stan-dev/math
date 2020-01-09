@@ -29,7 +29,7 @@ struct cbrt_fun {
  * @return Cube root of each value in x.
  */
 template <typename T>
-inline typename apply_scalar_unary<cbrt_fun, T>::return_t cbrt(const T& x) {
+inline auto cbrt(const T& x) {
   return apply_scalar_unary<cbrt_fun, T>::apply(x);
 }
 

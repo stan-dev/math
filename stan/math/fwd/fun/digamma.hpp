@@ -14,7 +14,7 @@ namespace math {
  * Return the derivative of the log gamma function at the
  * specified argument.
  *
- * @tparam T scalar type of autodiff variable
+ * @tparam T inner type of the fvar
  * @param[in] x argument
  * @return derivative of the log gamma function at the specified
  * argument
@@ -23,6 +23,7 @@ template <typename T>
 inline fvar<T> digamma(const fvar<T>& x) {
   return fvar<T>(digamma(x.val_), x.d_ * trigamma(x.val_));
 }
+
 }  // namespace math
 }  // namespace stan
 #endif

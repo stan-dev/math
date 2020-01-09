@@ -36,8 +36,7 @@ struct log_inv_logit_fun {
  * @return elementwise log_inv_logit of members of container
  */
 template <typename T>
-inline typename apply_scalar_unary<log_inv_logit_fun, T>::return_t
-log_inv_logit(const T& x) {
+inline auto log_inv_logit(const T& x) {
   return apply_scalar_unary<log_inv_logit_fun, T>::apply(x);
 }
 

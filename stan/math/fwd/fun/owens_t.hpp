@@ -16,6 +16,7 @@ namespace math {
  * Return Owen's T function applied to the specified
  * arguments.
  *
+ * @tparam T inner type of the fvar
  * @param x1 First argument.
  * @param x2 Second argument.
  * @return Owen's T function applied to the specified arguments.
@@ -37,6 +38,7 @@ inline fvar<T> owens_t(const fvar<T>& x1, const fvar<T>& x2) {
 /**
  * Return Owen's T function applied to the specified arguments.
  *
+ * @tparam T inner type of the fvar
  * @param x1 First argument.
  * @param x2 Second argument.
  * @return Owen's T function applied to the specified arguments.
@@ -55,6 +57,7 @@ inline fvar<T> owens_t(double x1, const fvar<T>& x2) {
 /**
  * Return Owen's T function applied to the specified arguments.
  *
+ * @tparam T inner type of the fvar
  * @param x1 First argument.
  * @param x2 Second argument.
  * @return Owen's T function applied to the specified arguments.

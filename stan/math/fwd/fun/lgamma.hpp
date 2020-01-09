@@ -13,7 +13,7 @@ namespace math {
  * Return the natural logarithm of the gamma function applied to
  * the specified argument.
  *
- * @tparam T Scalar type of autodiff variable.
+ * @tparam T inner type of the fvar
  * @param x Argument.
  * @return natural logarithm of the gamma function of argument.
  */
