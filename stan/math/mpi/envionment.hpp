@@ -94,9 +94,11 @@ namespace math {
       int rank() const {return r;}
 
       void set_comm(const MPI_Comm& other) {
-        c = other;
-        MPI_Comm_size(c, &s);
-        MPI_Comm_rank(c, &r);
+        if (other != MPI_COMM_NULL) {
+          c = other;
+          MPI_Comm_size(c, &s);
+          MPI_Comm_rank(c, &r);
+        }
       }
 
       /*
