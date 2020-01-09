@@ -5,6 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/erfc.hpp>
+#include <stan/math/prim/scal/fun/inv.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
@@ -57,8 +58,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
     const T_partials_return mu_dbl = value_of(mu_vec[n]);
     const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
     const T_partials_return lambda_dbl = value_of(lambda_vec[n]);
-
-    const T_partials_return inv_sigma = 1 / sigma_dbl;
+    const T_partials_return inv_sigma = inv(sigma_dbl);
     const T_partials_return sigma_sq = square(sigma_dbl);
     const T_partials_return lambda_sigma_sq = lambda_dbl * sigma_sq;
     const T_partials_return mu_minus_y = mu_dbl - y_dbl;
@@ -90,7 +90,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
              + deriv_logerfc * (-mu_minus_y / sigma_sq + lambda_dbl);
     }
     if (!is_constant_all<T_inv_scale>::value) {
-      ops_partials.edge4_.partials_[n] += 1 / lambda_dbl + lambda_sigma_sq
+      ops_partials.edge4_.partials_[n] += inv(lambda_dbl) + lambda_sigma_sq
                                           + mu_minus_y
                                           + deriv_logerfc * sigma_dbl;
     }

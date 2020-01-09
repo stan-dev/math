@@ -5,6 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/erf.hpp>
+#include <stan/math/prim/scal/fun/inv.hpp>
 #include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
@@ -59,10 +60,10 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
     const T_partials_return mu_dbl = value_of(mu_vec[n]);
     const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
     const T_partials_return lambda_dbl = value_of(lambda_vec[n]);
+    const T_partials_return inv_sigma = inv(sigma_dbl);
     const T_partials_return u = lambda_dbl * (y_dbl - mu_dbl);
     const T_partials_return v = lambda_dbl * sigma_dbl;
     const T_partials_return v_over_sqrt_two = v * INV_SQRT_TWO;
-    const T_partials_return inv_sigma = 1 / sigma_dbl;
     const T_partials_return scaled_diff
         = (y_dbl - mu_dbl) * INV_SQRT_TWO * inv_sigma;
     const T_partials_return scaled_diff_sq = scaled_diff * scaled_diff;
@@ -78,7 +79,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
         = SQRT_TWO_OVER_SQRT_PI * 0.5 * exp(-scaled_diff_sq) * inv_sigma;
 
     const T_partials_return cdf_n
-        = 0.5 * (1 + erf(u / (v * SQRT_TWO))) - exp_term * erf_calc;
+        = 0.5 + 0.5 * erf(u / (v * SQRT_TWO)) - exp_term * erf_calc;
 
     cdf *= cdf_n;
 
