@@ -1,7 +1,10 @@
 #include <stan/math/prim/arr.hpp>
+#include <stan/math/prim/mat.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
 #include <limits>
+#include <type_traits>
 #include <vector>
 
 TEST(MathFunctions, sumZeroSize) {
@@ -37,11 +40,6 @@ TEST(MathMatrixPrimArr, sum_vector_int) {
   x[2] = 3;
   EXPECT_EQ(6, stan::math::sum(x));
 }
-#include <stan/math/prim/mat.hpp>
-#include <gtest/gtest.h>
-#include <test/unit/util.hpp>
-#include <type_traits>
-#include <vector>
 
 TEST(MathMatrixPrimMat, sumVector) {
   using Eigen::Dynamic;

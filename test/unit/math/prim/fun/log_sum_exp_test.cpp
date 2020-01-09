@@ -1,4 +1,5 @@
 #include <stan/math/prim/scal.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <stan/math/prim/arr/fun/log_sum_exp.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
@@ -71,9 +72,6 @@ TEST(MathFunctions, log_sum_exp_nan) {
 
   EXPECT_TRUE(std::isnan(stan::math::log_sum_exp(nan, nan)));
 }
-#include <stan/math/prim/mat.hpp>
-#include <gtest/gtest.h>
-#include <limits>
 
 template <int R, int C>
 void test_log_sum_exp(const Eigen::Matrix<double, R, C>& as) {

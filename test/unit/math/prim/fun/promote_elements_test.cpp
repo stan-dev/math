@@ -1,11 +1,16 @@
 #include <stan/math/prim/scal.hpp>
+#include <stan/math/prim/mat.hpp>
+#include <stan/math/prim/arr.hpp>
 #include <stan/math/rev/core/var.hpp>
-#include <gtest/gtest.h>
 #include <boost/typeof/typeof.hpp>
+#include <gtest/gtest.h>
 #include <type_traits>
+#include <vector>
 
 using stan::math::promote_elements;
 using stan::math::var;
+using std::vector;
+using Eigen::Matrix;
 
 TEST(MathFunctionsScalPromote_Elements, int2double) {
   int from;
@@ -30,16 +35,6 @@ TEST(MathFunctionsScalPromote_Elements, double2var) {
   bool same = std::is_same<var, result_t>::value;
   EXPECT_TRUE(same);
 }
-#include <stan/math/prim/arr.hpp>
-#include <stan/math/rev/core/var.hpp>
-#include <gtest/gtest.h>
-#include <boost/typeof/typeof.hpp>
-#include <type_traits>
-#include <vector>
-
-using stan::math::promote_elements;
-using stan::math::var;
-using std::vector;
 
 TEST(MathFunctionsArrPromote_Elements, intVec2doubleVec) {
   vector<int> from;
@@ -73,15 +68,6 @@ TEST(MathFunctionsArrPromote_Elements, doubleVec2varVec) {
   bool same = std::is_same<vector<var>, result_t>::value;
   EXPECT_TRUE(same);
 }
-#include <stan/math/prim/mat.hpp>
-#include <stan/math/rev/core/var.hpp>
-#include <gtest/gtest.h>
-#include <boost/typeof/typeof.hpp>
-#include <type_traits>
-
-using Eigen::Matrix;
-using stan::math::promote_elements;
-using stan::math::var;
 
 TEST(MathFunctionsMatPromote_Elements, doubleMat2doubleMat) {
   stan::math::matrix_d m1(2, 3);

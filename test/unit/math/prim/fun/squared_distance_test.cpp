@@ -1,4 +1,5 @@
 #include <stan/math/prim/scal.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 
@@ -29,9 +30,6 @@ TEST(MathFunctions, squared_distance_inf) {
   EXPECT_THROW(stan::math::squared_distance(inf, x), std::domain_error);
   EXPECT_THROW(stan::math::squared_distance(inf, inf), std::domain_error);
 }
-#include <stan/math/prim/mat.hpp>
-#include <gtest/gtest.h>
-#include <limits>
 
 TEST(MathMatrixPrimMat, squared_distance_vector_vector) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> v1, v2;

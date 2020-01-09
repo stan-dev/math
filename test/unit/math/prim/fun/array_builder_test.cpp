@@ -1,8 +1,15 @@
 #include <stan/math/prim/arr.hpp>
 #include <gtest/gtest.h>
 #include <vector>
+#include <stan/math/prim/mat.hpp>
+#include <gtest/gtest.h>
+#include <vector>
 
+using Eigen::Dynamic;
+using Eigen::Matrix;
 using stan::math::array_builder;
+using stan::math::to_matrix;
+using stan::math::to_row_vector;
 using std::vector;
 
 TEST(MathArray, arrayBuilder) {
@@ -31,16 +38,6 @@ TEST(MathArray, arrayBuilder) {
   EXPECT_EQ(5, v3v2[2][0]);
   EXPECT_EQ(6, v3v2[2][1]);
 }
-#include <stan/math/prim/mat.hpp>
-#include <gtest/gtest.h>
-#include <vector>
-
-using Eigen::Dynamic;
-using Eigen::Matrix;
-using stan::math::array_builder;
-using stan::math::to_matrix;
-using stan::math::to_row_vector;
-using std::vector;
 
 TEST(MathMatrixPrimMat, arrayBuilder) {
   vector<Matrix<double, 1, Dynamic> > mEmpty

@@ -1,7 +1,11 @@
+#include <stan/math/prim/arr.hpp>
 #include <stan/math/prim/scal.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
 #include <limits>
+#include <type_traits>
+#include <vector>
 
 TEST(MathFunctions, value_of) {
   using stan::math::value_of;
@@ -15,10 +19,6 @@ TEST(MathFunctions, value_of_nan) {
 
   EXPECT_TRUE(std::isnan(stan::math::value_of(nan)));
 }
-#include <stan/math/prim/arr.hpp>
-#include <gtest/gtest.h>
-#include <vector>
-#include <type_traits>
 
 TEST(MathMatrixPrimArr, value_of) {
   using stan::math::value_of;
@@ -65,9 +65,6 @@ TEST(MathFunctions, value_of_double_return_type_short_circuit) {
   EXPECT_TRUE((std::is_same<decltype(stan::math::value_of(a)),
                             const std::vector<double>&>::value));
 }
-#include <stan/math/prim/mat.hpp>
-#include <gtest/gtest.h>
-#include <type_traits>
 
 TEST(MathMatrixPrimMat, value_of) {
   using stan::math::value_of;

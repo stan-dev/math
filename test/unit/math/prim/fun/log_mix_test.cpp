@@ -1,8 +1,14 @@
 #include <stan/math/prim/scal.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
 #include <limits>
 #include <stdexcept>
+#include <vector>
+
+using stan::math::log_mix;
+using stan::math::row_vector_d;
+using stan::math::vector_d;
 
 TEST(MathFunctions, log_mix_exceptions) {
   using stan::math::log_mix;
@@ -27,20 +33,6 @@ TEST(MathFunctions, log_mix_values) {
   test_log_mix(0.0001, 197, -3000);
   test_log_mix(0.999999, 197, -3000);
 }
-#include <stan/math/prim/mat/fun/log_mix.hpp>
-#include <stan/math/prim/scal/fun/log_mix.hpp>
-#include <stan/math/prim/mat/fun/log_sum_exp.hpp>
-#include <stan/math/prim/mat/fun/log.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/mat.hpp>
-#include <gtest/gtest.h>
-#include <limits>
-#include <vector>
-
-using stan::math::log_mix;
-using stan::math::row_vector_d;
-using stan::math::vector_d;
 
 template <typename T_a, typename T_b>
 void val_test(T_a a, T_b b) {

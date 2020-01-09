@@ -1,4 +1,5 @@
 #include <stan/math/prim/arr.hpp>
+#include <stan/math/prim/mat.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
 #include <limits>
@@ -33,8 +34,6 @@ TEST(MathFunctions, dot_self_nan) {
   x[2] = nan;
   EXPECT_TRUE(std::isnan(stan::math::dot_self(x)));
 }
-#include <stan/math/prim/mat.hpp>
-#include <gtest/gtest.h>
 
 TEST(MathMatrixPrimMat, dot_self) {
   using stan::math::dot_self;

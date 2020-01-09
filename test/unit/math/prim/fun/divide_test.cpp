@@ -1,5 +1,8 @@
 #include <stan/math/prim/scal.hpp>
+#include <stan/math/prim/mat.hpp>
+#include <test/unit/math/prim/mat/fun/expect_matrix_eq.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 
 TEST(MathFunctions, divide) {
   using stan::math::divide;
@@ -52,10 +55,6 @@ TEST(MathFunctions, int_divide_by_0) {
   int y = 0;
   EXPECT_THROW(stan::math::divide(x, y), std::domain_error);
 }
-#include <stan/math/prim/mat.hpp>
-#include <test/unit/math/prim/mat/fun/expect_matrix_eq.hpp>
-#include <gtest/gtest.h>
-#include <limits>
 
 TEST(MathMatrixPrimMat, divide) {
   using stan::math::divide;

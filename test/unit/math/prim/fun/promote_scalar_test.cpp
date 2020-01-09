@@ -1,6 +1,9 @@
 #include <stan/math/prim/scal.hpp>
-#include <test/unit/math/prim/scal/fun/promote_type_test_util.hpp>
+#include <stan/math/prim/arr.hpp>
+#include <stan/math/prim/mat.hpp>
+#include <test/unit/math/prim/fun/promote_type_test_util.hpp>
 #include <gtest/gtest.h>
+#include <vector>
 
 TEST(MathFunctionsPromoteScalar, Match) {
   using stan::math::promote_scalar;
@@ -15,10 +18,6 @@ TEST(MathFunctionsPromoteScalar, Mismatch) {
   EXPECT_FLOAT_EQ(2.0, promote_scalar<double>(2));
   expect_type<double>(promote_scalar<double>(2));
 }
-#include <stan/math/prim/arr.hpp>
-#include <test/unit/math/prim/scal/fun/promote_type_test_util.hpp>
-#include <gtest/gtest.h>
-#include <vector>
 
 TEST(MathFunctionsPromoteScalar, VectorMismatch) {
   using stan::math::promote_scalar;
@@ -82,10 +81,6 @@ TEST(MathFunctionsPromoteScalar, Vector2Match) {
   EXPECT_FLOAT_EQ(5.5, y[1][1]);
   EXPECT_FLOAT_EQ(6.6, y[1][2]);
 }
-#include <stan/math/prim/mat.hpp>
-#include <test/unit/math/prim/scal/fun/promote_type_test_util.hpp>
-#include <gtest/gtest.h>
-#include <vector>
 
 TEST(MathMatrixPromoteScalar, MatrixMismatch) {
   using Eigen::Dynamic;

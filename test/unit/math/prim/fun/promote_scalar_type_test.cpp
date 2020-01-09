@@ -1,16 +1,15 @@
 #include <stan/math/prim/scal.hpp>
+#include <stan/math/prim/arr.hpp>
+#include <stan/math/prim/mat.hpp>
+#include <test/unit/math/prim/fun/promote_type_test_util.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/prim/scal/fun/promote_type_test_util.hpp>
+#include <vector>
 
 TEST(MathFunctionsPromoteScalarType, primitive) {
   using std::vector;
   expect_promote_type<double, double, double>();
   expect_promote_type<double, double, int>();
 }
-#include <stan/math/prim/arr.hpp>
-#include <gtest/gtest.h>
-#include <test/unit/math/prim/scal/fun/promote_type_test_util.hpp>
-#include <vector>
 
 TEST(MathFunctionsPromoteScalarType, StdVector) {
   using std::vector;
@@ -19,10 +18,6 @@ TEST(MathFunctionsPromoteScalarType, StdVector) {
   expect_promote_type<vector<vector<double> >, double,
                       vector<vector<double> > >();
 }
-#include <stan/math/prim/mat.hpp>
-#include <test/unit/math/prim/scal/fun/promote_type_test_util.hpp>
-#include <gtest/gtest.h>
-#include <vector>
 
 TEST(MathFunctionsPromoteScalar, TypeArray) {
   using Eigen::Array;
