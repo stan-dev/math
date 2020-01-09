@@ -58,14 +58,15 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
     const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
     const T_partials_return lambda_dbl = value_of(lambda_vec[n]);
 
-    const T_partials_return inv_sqrt2_inv_sigma = INV_SQRT_TWO / sigma_dbl;
+    const T_partials_return inv_sigma = 1 / sigma_dbl;
     const T_partials_return sigma_sq = square(sigma_dbl);
     const T_partials_return lambda_sigma_sq = lambda_dbl * sigma_sq;
-    const T_partials_return term1 = lambda_sigma_sq - y_dbl;
-    const T_partials_return term2 = (mu_dbl + term1) * inv_sqrt2_inv_sigma;
-    const T_partials_return erfc_term2 = erfc(term2);
+    const T_partials_return mu_minus_y = mu_dbl - y_dbl;
+    const T_partials_return inner_term
+        = (mu_minus_y + lambda_sigma_sq) * INV_SQRT_TWO * inv_sigma;
+    const T_partials_return erfc_calc = erfc(inner_term);
     const T_partials_return deriv_logerfc
-        = NEG_TWO_OVER_SQRT_PI * exp(-square(term2)) / erfc_term2;
+        = -SQRT_TWO_OVER_SQRT_PI * exp(-square(inner_term)) / erfc_calc;
 
     if (include_summand<propto>::value) {
       logp -= LOG_TWO;
@@ -73,27 +74,25 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
     if (include_summand<propto, T_inv_scale>::value) {
       logp += log(lambda_dbl);
     }
-    logp += lambda_dbl * (mu_dbl + 0.5 * (term1 - y_dbl)) + log(erfc_term2);
+    logp += lambda_dbl * (mu_minus_y + 0.5 * lambda_sigma_sq) + log(erfc_calc);
 
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n]
-          -= lambda_dbl + deriv_logerfc * inv_sqrt2_inv_sigma;
+          -= lambda_dbl + deriv_logerfc * inv_sigma;
     }
     if (!is_constant_all<T_loc>::value) {
       ops_partials.edge2_.partials_[n]
-          += lambda_dbl + deriv_logerfc * inv_sqrt2_inv_sigma;
+          += lambda_dbl + deriv_logerfc * inv_sigma;
     }
     if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n]
-          += sigma_dbl * lambda_dbl * lambda_dbl
-             + deriv_logerfc
-                   * ((y_dbl - mu_dbl) / sigma_sq
-                      + lambda_dbl) * INV_SQRT_TWO;
+          += sigma_dbl * square(lambda_dbl)
+             + deriv_logerfc * (-mu_minus_y / sigma_sq + lambda_dbl);
     }
     if (!is_constant_all<T_inv_scale>::value) {
-      ops_partials.edge4_.partials_[n]
-          += 1 / lambda_dbl + lambda_sigma_sq + mu_dbl - y_dbl
-             + deriv_logerfc * sigma_dbl * INV_SQRT_TWO;
+      ops_partials.edge4_.partials_[n] += 1 / lambda_dbl + lambda_sigma_sq
+                                          + mu_minus_y
+                                          + deriv_logerfc * sigma_dbl;
     }
   }
   return ops_partials.build(logp);
