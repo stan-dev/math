@@ -59,7 +59,7 @@ inline std::vector<fvar<T>> to_fvar(const std::vector<T>& v,
 /**
  * Specialization of to_fvar for const fvar input
  *
- * @tparam The inner type of the fvar.
+ * @tparam T inner type of the fvar
  * @param[in,out] v A vector of forward automatic differentiation variable.
  * @return The input vector of forward automatic differentiation variable.
  */
@@ -71,7 +71,7 @@ inline const std::vector<fvar<T>>& to_fvar(const std::vector<fvar<T>>& v) {
 /**
  * Specialization of to_fvar for non-const fvar input
  *
- * @tparam The inner type of the fvar.
+ * @tparam T inner type of the fvar
  * @param[in,out] v A vector of forward automatic differentiation variable.
  * @return The input vector of forward automatic differentiation variable.
  */
@@ -83,10 +83,14 @@ inline std::vector<fvar<T>>& to_fvar(std::vector<fvar<T>>& v) {
 /**
  * Specialization of to_fvar for const matrices of fvars
  *
+ * @tparam T type of elements in the matrix
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ *
  * @param[in,out] m A matrix of forward automatic differentation variables.
  * @return The input matrix of forward automatic differentiation variables.
  */
-template <int R, int C, typename T>
+template <typename T, int R, int C>
 inline const Eigen::Matrix<T, R, C>& to_fvar(const Eigen::Matrix<T, R, C>& m) {
   return m;
 }
@@ -94,10 +98,14 @@ inline const Eigen::Matrix<T, R, C>& to_fvar(const Eigen::Matrix<T, R, C>& m) {
 /**
  * Specialization of to_fvar for non-const matrices of fvars
  *
+ * @tparam T type of elements in the matrix
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ *
  * @param[in,out] m A matrix of forward automatic differentation variables.
  * @return The input matrix of forward automatic differentiation variables.
  */
-template <int R, int C, typename T>
+template <typename T, int R, int C>
 inline Eigen::Matrix<T, R, C>& to_fvar(Eigen::Matrix<T, R, C>& m) {
   return m;
 }

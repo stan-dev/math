@@ -31,7 +31,9 @@
 #include <stan/math/prim/meta/operands_and_partials.hpp>
 #include <stan/math/prim/meta/partials_return_type.hpp>
 #include <stan/math/prim/meta/partials_type.hpp>
+#include <stan/math/prim/meta/plain_type.hpp>
 #include <stan/math/prim/meta/promote_args.hpp>
+#include <stan/math/prim/meta/promote_scalar_type.hpp>
 #include <stan/math/prim/meta/require_generics.hpp>
 #include <stan/math/prim/meta/return_type.hpp>
 #include <stan/math/prim/meta/scalar_seq_view.hpp>

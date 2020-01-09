@@ -13,7 +13,7 @@ namespace math {
  * Return the result of applying the gamma function to the
  * specified argument.
  *
- * @tparam T Scalar type of autodiff variable.
+ * @tparam T inner type of the fvar
  * @param x Argument.
  * @return Gamma function applied to argument.
  */
@@ -22,6 +22,7 @@ inline fvar<T> tgamma(const fvar<T>& x) {
   T u = tgamma(x.val_);
   return fvar<T>(u, x.d_ * u * digamma(x.val_));
 }
+
 }  // namespace math
 }  // namespace stan
 #endif

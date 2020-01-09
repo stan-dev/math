@@ -16,6 +16,64 @@ namespace test {
 namespace internal {
 
 /**
+ * Evaluates expression. A no-op for scalars.
+ * @tparam T nested type of fvar
+ * @param x value
+ * @return value
+ */
+template <typename T>
+auto eval(const stan::math::fvar<T>& x) {
+  return x;
+}
+
+/**
+ * Evaluates expression. A no-op for scalars.
+ * @param x value
+ * @return value
+ */
+auto eval(const stan::math::var& x) { return x; }
+
+/**
+ * Evaluates expression. A no-op for scalars.
+ * @param x value
+ * @return value
+ */
+auto eval(double x) { return x; }
+
+/**
+ * Evaluates expression. A no-op for scalars.
+ * @param x value
+ * @return value
+ */
+auto eval(int x) { return x; }
+
+/**
+ * Evaluates expression.
+ * @tparam Derived derived type of the expression
+ * @param x expression
+ * @return evaluated expression
+ */
+template <typename Derived>
+auto eval(const Eigen::EigenBase<Derived>& x) {
+  return x.derived().eval();
+}
+/**
+ * Evaluates expressions in a \c std::vector.
+ * @tparam T type of \c std::vector elements
+ * @param x a \c std::vector of expressions
+ * @return a \cstd::vector of evaluated expressions
+ */
+template <typename T>
+auto eval(const std::vector<T>& x) {
+  using T_res = decltype(eval(std::declval<T>()));
+  std::vector<T_res> res;
+  for (auto& i : x) {
+    res.push_back(eval(i));
+  }
+  return res;
+}
+
+/**
  * Tests that the specified function applied to the specified argument
  * yields the values and gradients consistent with finite differences
  * applied to the `double` values.  Gradients are calculated using the
@@ -306,7 +364,7 @@ void expect_all_throw(const F& f, const Eigen::VectorXd& x) {
  */
 template <typename F>
 void expect_all_throw(const F& f, double x1) {
-  auto h = [&](auto v) { return serialize_return(f(v(0))); };
+  auto h = [&](auto v) { return serialize_return(eval(f(v(0)))); };
   Eigen::VectorXd x(1);
   x << x1;
   expect_all_throw(h, x);
@@ -323,7 +381,7 @@ void expect_all_throw(const F& f, double x1) {
  */
 template <typename F>
 void expect_all_throw(const F& f, double x1, double x2) {
-  auto h = [&](auto v) { return serialize_return(f(v(0), v(1))); };
+  auto h = [&](auto v) { return serialize_return(eval(f(v(0), v(1)))); };
   Eigen::VectorXd x(2);
   x << x1, x2;
   expect_all_throw(h, x);
@@ -375,8 +433,8 @@ void expect_ad_helper(const ad_tolerances& tols, const F& f, const G& g,
       = [&](const int i) { return [&g, i](const auto& v) { return g(v)[i]; }; };
   size_t result_size = 0;
   try {
-    auto y1 = f(xs...);  // original types, including int
-    auto y2 = g(x);      // all int cast to double
+    auto y1 = eval(f(xs...));  // original types, including int
+    auto y2 = eval(g(x));      // all int cast to double
     auto y1_serial = serialize<double>(y1);
     expect_near_rel("expect_ad_helper", y1_serial, y2, 1e-10);
     result_size = y1_serial.size();
@@ -405,7 +463,7 @@ void expect_ad_v(const ad_tolerances& tols, const F& f, const T& x) {
   auto g = [&](const auto& v) {
     auto ds = to_deserializer(v);
     auto xds = ds.read(x);
-    return serialize_return(f(xds));
+    return serialize_return(eval(f(xds)));
   };
   internal::expect_ad_helper(tols, f, g, serialize_args(x), x);
 }

@@ -15,7 +15,7 @@ namespace math {
  * Return the natural logarithm of one minus the
  * exponentiation of the specified argument.
  *
- * @tparam T Scalar type of autodiff variable.
+ * @tparam T inner type of the fvar
  * @param x Argument.
  * @return log of one minus the exponentiation of the argument.
  */

@@ -12,8 +12,7 @@ namespace math {
 /**
  * Returns the inverse logit function applied to the argument.
  *
- * @tparam T scalar type of forward-mode autodiff variable
- * argument.
+ * @tparam T inner type of the fvar
  * @param x argument
  * @return inverse logit of argument
  */
@@ -24,6 +23,7 @@ inline fvar<T> inv_logit(const fvar<T>& x) {
   return fvar<T>(inv_logit(x.val_),
                  x.d_ * inv_logit(x.val_) * (1 - inv_logit(x.val_)));
 }
+
 }  // namespace math
 }  // namespace stan
 #endif
