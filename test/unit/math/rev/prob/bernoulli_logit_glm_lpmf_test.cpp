@@ -1,6 +1,6 @@
 #include <stan/math/rev.hpp>
+#include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/fun/value_of.hpp>
 #include <vector>
 #include <cmath>
 // For speed comparisons

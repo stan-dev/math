@@ -1,5 +1,5 @@
+#include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/fun/F32.hpp>
 
 // converge
 TEST(MathPrimScalFun, F32_converges_by_z) {

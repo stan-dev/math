@@ -1,5 +1,4 @@
 #include <stan/math/prim.hpp>
-#include <stan/math/prim.hpp>
 #include <test/unit/math/prim/fun/promote_type_test_util.hpp>
 #include <gtest/gtest.h>
 #include <vector>

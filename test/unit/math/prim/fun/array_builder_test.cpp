@@ -1,9 +1,6 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 #include <vector>
-#include <stan/math/prim.hpp>
-#include <gtest/gtest.h>
-#include <vector>
 
 using Eigen::Dynamic;
 using Eigen::Matrix;

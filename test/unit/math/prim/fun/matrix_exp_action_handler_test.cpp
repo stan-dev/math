@@ -1,7 +1,6 @@
-#include <gtest/gtest.h>
+#include <stan/math/prim.hpp>
 #include <test/unit/math/prim/util.hpp>
-#include <stan/math/prim/fun/matrix_exp.hpp>
-#include <stan/math/prim/fun/matrix_exp_action_handler.hpp>
+#include <gtest/gtest.h>
 #include <vector>
 
 TEST(MathMatrixRevMat, matrix_exp_action_diag) {

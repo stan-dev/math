@@ -1,7 +1,5 @@
+#include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/fun/digamma.hpp>
-#include <stan/math/prim/fun/tgamma.hpp>
-#include <stan/math/prim/fun/grad_reg_inc_gamma.hpp>
 
 // converge
 TEST(MathPrimScalFun, grad_reg_inc_gamma_1) {

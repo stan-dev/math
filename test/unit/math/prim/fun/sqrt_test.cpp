@@ -1,5 +1,4 @@
 #include <stan/math.hpp>
-#include <stan/math/prim/fun/sqrt.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathFunctions, sqrtInt) {
