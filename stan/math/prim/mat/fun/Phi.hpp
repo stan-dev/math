@@ -29,7 +29,7 @@ struct Phi_fun {
  * @return Unit normal CDF of each value in x.
  */
 template <typename T>
-inline typename apply_scalar_unary<Phi_fun, T>::return_t Phi(const T& x) {
+inline auto Phi(const T& x) {
   return apply_scalar_unary<Phi_fun, T>::apply(x);
 }
 

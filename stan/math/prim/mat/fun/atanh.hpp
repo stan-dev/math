@@ -35,7 +35,7 @@ struct atanh_fun {
  * @return Elementwise atanh of members of container.
  */
 template <typename T>
-inline typename apply_scalar_unary<atanh_fun, T>::return_t atanh(const T& x) {
+inline auto atanh(const T& x) {
   return apply_scalar_unary<atanh_fun, T>::apply(x);
 }
 

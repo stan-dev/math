@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_TAN_HPP
 #define STAN_MATH_PRIM_MAT_FUN_TAN_HPP
 
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
@@ -29,9 +31,21 @@ struct tan_fun {
  * @param x angles in radians
  * @return Tangent of each value in x.
  */
-template <typename T>
-inline typename apply_scalar_unary<tan_fun, T>::return_t tan(const T& x) {
+template <typename T, typename = require_not_eigen_vt<std::is_arithmetic, T>>
+inline auto tan(const T& x) {
   return apply_scalar_unary<tan_fun, T>::apply(x);
+}
+
+/**
+ * Version of tan() that accepts Eigen Matrix or matrix expressions.
+ * @tparam Derived derived type of x
+ * @param x Matrix or matrix expression
+ * @return Tangent of each value in x.
+ */
+template <typename Derived,
+          typename = require_eigen_vt<std::is_arithmetic, Derived>>
+inline auto tan(const Eigen::MatrixBase<Derived>& x) {
+  return x.derived().array().tan().matrix();
 }
 
 }  // namespace math

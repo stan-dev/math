@@ -173,3 +173,39 @@ TEST(MathMatrixPromoteScalar, VectorRowVectorMismatch) {
   EXPECT_FLOAT_EQ(20, y[1](1));
   EXPECT_FLOAT_EQ(30, y[1](2));
 }
+
+TEST(MathMatrixPromoteScalar, Array) {
+  using Eigen::Array;
+  using Eigen::Dynamic;
+  using stan::math::promote_scalar;
+
+  Array<int, Dynamic, Dynamic> x(2, 3);
+  x << 1, 2, 3, 4, 5, 6;
+
+  Array<double, Dynamic, Dynamic> y = promote_scalar<double>(x);
+  EXPECT_EQ(6, y.size());
+  EXPECT_FLOAT_EQ(1.0, y(0, 0));
+  EXPECT_FLOAT_EQ(2.0, y(0, 1));
+  EXPECT_FLOAT_EQ(3.0, y(0, 2));
+  EXPECT_FLOAT_EQ(4.0, y(1, 0));
+  EXPECT_FLOAT_EQ(5.0, y(1, 1));
+  EXPECT_FLOAT_EQ(6.0, y(1, 2));
+}
+
+TEST(MathMatrixPromoteScalar, Expression) {
+  using Eigen::Array;
+  using Eigen::Dynamic;
+  using stan::math::promote_scalar;
+
+  Array<int, Dynamic, Dynamic> x(2, 3);
+  x << 1, 2, 3, 4, 5, 6;
+
+  Array<double, Dynamic, Dynamic> y = promote_scalar<double>(x - 1);
+  EXPECT_EQ(6, y.size());
+  EXPECT_FLOAT_EQ(0.0, y(0, 0));
+  EXPECT_FLOAT_EQ(1.0, y(0, 1));
+  EXPECT_FLOAT_EQ(2.0, y(0, 2));
+  EXPECT_FLOAT_EQ(3.0, y(1, 0));
+  EXPECT_FLOAT_EQ(4.0, y(1, 1));
+  EXPECT_FLOAT_EQ(5.0, y(1, 2));
+}
