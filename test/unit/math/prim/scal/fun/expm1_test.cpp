@@ -1,9 +1,8 @@
 #include <stan/math/prim/scal.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <cmath>
 #include <limits>
 #include <stdexcept>
-#include <cmath>
 
 TEST(MathFunctions, expm1) {
   using stan::math::expm1;
@@ -21,6 +20,6 @@ TEST(MathFunctions, expm1_inf_return) {
 
 TEST(MathFunctions, expm1_nan) {
   using stan::math::expm1;
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::expm1(std::numeric_limits<double>::quiet_NaN()));
+  double nan = std::numeric_limits<double>::quiet_NaN();
+  EXPECT_TRUE(std::isnan(stan::math::expm1(nan)));
 }

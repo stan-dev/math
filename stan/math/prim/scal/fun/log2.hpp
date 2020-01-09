@@ -29,7 +29,7 @@ inline double log2(T u) {
  *
  * @return Natural logarithm of two.
  */
-inline double log2() { return LOG_2; }
+inline double log2() { return LOG_TWO; }
 
 }  // namespace math
 }  // namespace stan

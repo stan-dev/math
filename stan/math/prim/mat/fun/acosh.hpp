@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_ACOSH_HPP
 #define STAN_MATH_PRIM_MAT_FUN_ACOSH_HPP
 
-#include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/scal/fun/acosh.hpp>
 
 namespace stan {
@@ -35,7 +35,7 @@ struct acosh_fun {
  * @return Elementwise acosh of members of container.
  */
 template <typename T>
-inline typename apply_scalar_unary<acosh_fun, T>::return_t acosh(const T& x) {
+inline auto acosh(const T& x) {
   return apply_scalar_unary<acosh_fun, T>::apply(x);
 }
 

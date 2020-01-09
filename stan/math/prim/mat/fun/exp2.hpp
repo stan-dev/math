@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_EXP2_HPP
 #define STAN_MATH_PRIM_MAT_FUN_EXP2_HPP
 
-#include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/scal/fun/exp2.hpp>
 #include <stan/math/prim/meta.hpp>
 
@@ -36,7 +36,7 @@ struct exp2_fun {
  * @return Elementwise exp2 of members of container.
  */
 template <typename T, typename = require_vector_like_t<T>>
-inline typename apply_scalar_unary<exp2_fun, T>::return_t exp2(const T& x) {
+inline auto exp2(const T& x) {
   return apply_scalar_unary<exp2_fun, T>::apply(x);
 }
 

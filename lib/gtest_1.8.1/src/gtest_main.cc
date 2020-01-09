@@ -29,7 +29,7 @@
 
 #include <stdio.h>
 #include "gtest/gtest.h"
-#include <stan/math/prim/arr/functor/mpi_cluster.hpp>
+#include <stan/math/prim/functor/mpi_cluster.hpp>
 
 GTEST_API_ int main(int argc, char **argv) {
 #ifdef STAN_MPI

@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_TGAMMA_HPP
 #define STAN_MATH_PRIM_MAT_FUN_TGAMMA_HPP
 
-#include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/scal/fun/tgamma.hpp>
 
 namespace stan {
@@ -31,7 +31,7 @@ struct tgamma_fun {
  * @throw std::domain_error if any value is 0 or a negative integer
  */
 template <typename T>
-inline typename apply_scalar_unary<tgamma_fun, T>::return_t tgamma(const T& x) {
+inline auto tgamma(const T& x) {
   return apply_scalar_unary<tgamma_fun, T>::apply(x);
 }
 

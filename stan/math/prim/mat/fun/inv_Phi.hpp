@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_INV_PHI_HPP
 #define STAN_MATH_PRIM_MAT_FUN_INV_PHI_HPP
 
-#include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/scal/fun/inv_Phi.hpp>
 
 namespace stan {
@@ -31,8 +31,7 @@ struct inv_Phi_fun {
  * @throw std::domain_error if any value is not between 0 and 1.
  */
 template <typename T>
-inline typename apply_scalar_unary<inv_Phi_fun, T>::return_t inv_Phi(
-    const T& x) {
+inline auto inv_Phi(const T& x) {
   return apply_scalar_unary<inv_Phi_fun, T>::apply(x);
 }
 

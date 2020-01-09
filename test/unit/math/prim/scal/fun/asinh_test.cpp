@@ -1,9 +1,8 @@
 #include <stan/math/prim/scal.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
 #include <gtest/gtest.h>
+#include <cmath>
 #include <limits>
 #include <stdexcept>
-#include <cmath>
 
 TEST(MathFunctions, asinh) {
   using stan::math::asinh;
@@ -20,7 +19,6 @@ TEST(MathFunctions, asinh_inf_return) {
 }
 
 TEST(MathFunctions, asinh_nan) {
-  using stan::math::asinh;
-  EXPECT_PRED1(boost::math::isnan<double>,
-               stan::math::asinh(std::numeric_limits<double>::quiet_NaN()));
+  double nan = std::numeric_limits<double>::quiet_NaN();
+  EXPECT_TRUE(std::isnan(stan::math::asinh(nan)));
 }

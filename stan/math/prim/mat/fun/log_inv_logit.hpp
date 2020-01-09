@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_LOG_INV_LOGIT_HPP
 #define STAN_MATH_PRIM_MAT_FUN_LOG_INV_LOGIT_HPP
 
-#include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/scal/fun/log_inv_logit.hpp>
 
 namespace stan {
@@ -36,8 +36,7 @@ struct log_inv_logit_fun {
  * @return elementwise log_inv_logit of members of container
  */
 template <typename T>
-inline typename apply_scalar_unary<log_inv_logit_fun, T>::return_t
-log_inv_logit(const T& x) {
+inline auto log_inv_logit(const T& x) {
   return apply_scalar_unary<log_inv_logit_fun, T>::apply(x);
 }
 

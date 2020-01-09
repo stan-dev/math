@@ -16,9 +16,7 @@
 #include <stan/math/opencl/multiply.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/kernels/poisson_log_glm_lpmf.hpp>
-
 #include <cmath>
-#include <limits>
 
 namespace stan {
 namespace math {
@@ -26,7 +24,7 @@ namespace math {
 /** \ingroup opencl
  * Returns the log PMF of the Generalized Linear Model (GLM)
  * with Poisson distribution and log link function.
- * This is an overload of the GLM in prim/mat/prob/poisson_log_glm_lpmf.hpp
+ * This is an overload of the GLM in prim/prob/poisson_log_glm_lpmf.hpp
  * that is implemented in OpenCL.
  * @tparam T_alpha type of the intercept(s);
  * this can be a vector (of the same length as y) of intercepts or a single
@@ -65,7 +63,7 @@ return_type_t<T_alpha, T_beta> poisson_log_glm_lpmf(
   check_consistent_size(function, "Weight vector", beta, M);
   if (is_vector<T_alpha>::value) {
     check_size_match(function, "Rows of ", "x_cl", N, "size of ", "alpha",
-                     length(alpha));
+                     size(alpha));
   }
   if (N == 0) {
     return 0;
@@ -92,27 +90,23 @@ return_type_t<T_alpha, T_beta> poisson_log_glm_lpmf(
 
   matrix_cl<double> theta_derivative_cl(N, 1);
   matrix_cl<double> theta_derivative_sum_cl(wgs, 1);
-  const bool need_logp1 = include_summand<propto>::value;
-  const bool need_logp2 = include_summand<propto, T_partials_return>::value;
-  matrix_cl<double> logp_cl((need_logp1 || need_logp2) ? wgs : 0, 1);
+  const bool need_logp = include_summand<propto>::value;
+  matrix_cl<double> logp_cl(wgs, 1);
 
   try {
     opencl_kernels::poisson_log_glm(
         cl::NDRange(local_size * wgs), cl::NDRange(local_size),
         theta_derivative_cl, theta_derivative_sum_cl, logp_cl, y_cl, x_cl,
-        alpha_cl, beta_cl, N, M, y_cl.size() != 1, length(alpha) != 1,
-        need_logp1, need_logp2);
+        alpha_cl, beta_cl, N, M, y_cl.size() != 1, size(alpha) != 1, need_logp);
   } catch (const cl::Error& e) {
     check_opencl_error(function, e);
   }
   Matrix<T_partials_return, Dynamic, 1> theta_derivative_partial_sum(wgs);
   theta_derivative_partial_sum = from_matrix_cl(theta_derivative_sum_cl);
   double theta_derivative_sum = sum(theta_derivative_partial_sum);
-  if (need_logp1 || need_logp2) {
-    Eigen::VectorXd logp_partial_sum(wgs);
-    logp_partial_sum = from_matrix_cl(logp_cl);
-    logp += sum(logp_partial_sum);
-  }
+  Eigen::VectorXd logp_partial_sum(wgs);
+  logp_partial_sum = from_matrix_cl(logp_cl);
+  logp += sum(logp_partial_sum);
   if (!std::isfinite(theta_derivative_sum)) {
     check_nonnegative(function, "Vector of dependent variables",
                       from_matrix_cl(y_cl));

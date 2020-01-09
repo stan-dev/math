@@ -11,25 +11,16 @@ namespace math {
  * Convert a matrix of type T to a matrix of doubles.
  *
  * T must implement value_of_rec. See
- * test/unit/math/fwd/mat/fun/value_of_test.cpp for fvar and var usage.
+ * test/unit/math/fwd/fun/value_of_test.cpp for fvar and var usage.
  *
- * @tparam T type of elements in the matrix
- * @tparam R number of rows in the matrix, can be Eigen::Dynamic
- * @tparam C number of columns in the matrix, can be Eigen::Dynamic
- *
+ * @tparam T Type of matrix
  * @param[in] M Matrix to be converted
  * @return Matrix of values
  **/
-template <typename T, int R, int C>
-inline Eigen::Matrix<double, R, C> value_of_rec(
-    const Eigen::Matrix<T, R, C>& M) {
-  Eigen::Matrix<double, R, C> Md(M.rows(), M.cols());
-  for (int j = 0; j < M.cols(); j++) {
-    for (int i = 0; i < M.rows(); i++) {
-      Md(i, j) = value_of_rec(M(i, j));
-    }
-  }
-  return Md;
+template <typename T, typename = require_not_same_st<T, double>,
+          typename = require_eigen_t<T>>
+inline auto value_of_rec(const T& M) {
+  return M.unaryExpr([](auto x) { return value_of_rec(x); });
 }
 
 /**
@@ -40,15 +31,13 @@ inline Eigen::Matrix<double, R, C> value_of_rec(
  *
  * <p>This inline pass-through no-op should be compiled away.
  *
- * @tparam R number of rows in the matrix, can be Eigen::Dynamic
- * @tparam C number of columns in the matrix, can be Eigen::Dynamic
- *
+ * @tparam T Type of matrix.
  * @param x Specified matrix.
  * @return Specified matrix.
  */
-template <int R, int C>
-inline const Eigen::Matrix<double, R, C>& value_of_rec(
-    const Eigen::Matrix<double, R, C>& x) {
+template <typename T, typename = require_same_st<T, double>,
+          typename = require_eigen_t<T>>
+inline const T& value_of_rec(const T& x) {
   return x;
 }
 }  // namespace math

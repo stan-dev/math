@@ -5,12 +5,14 @@
 #include <stan/math/rev/core/precomputed_gradients.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/vari.hpp>
+#include <stan/math/prim/meta/require_generics.hpp>
 #include <stan/math/prim/meta/broadcast_array.hpp>
 #include <stan/math/prim/meta/operands_and_partials.hpp>
 #include <stan/math/prim/meta/is_vector_like.hpp>
 #include <stan/math/prim/meta/likely.hpp>
+#include <stan/math/prim/meta/promote_scalar_type.hpp>
 #include <stan/math/rev/mat/fun/typedefs.hpp>
-#include <stan/math/prim/meta/length.hpp>
+#include <stan/math/prim/meta/size.hpp>
 #include <vector>
 
 namespace stan {
@@ -108,12 +110,12 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, var> {
    * @return the node to be stored in the expression graph for autodiff
    */
   var build(double value) {
-    size_t size = edge1_.size() + edge2_.size() + edge3_.size() + edge4_.size()
-                  + edge5_.size();
+    size_t edges_size = edge1_.size() + edge2_.size() + edge3_.size()
+                        + edge4_.size() + edge5_.size();
     vari** varis
-        = ChainableStack::instance_->memalloc_.alloc_array<vari*>(size);
+        = ChainableStack::instance_->memalloc_.alloc_array<vari*>(edges_size);
     double* partials
-        = ChainableStack::instance_->memalloc_.alloc_array<double>(size);
+        = ChainableStack::instance_->memalloc_.alloc_array<double>(edges_size);
     int idx = 0;
     edge1_.dump_operands(&varis[idx]);
     edge1_.dump_partials(&partials[idx]);
@@ -126,7 +128,8 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, var> {
     edge5_.dump_operands(&varis[idx += edge4_.size()]);
     edge5_.dump_partials(&partials[idx]);
 
-    return var(new precomputed_gradients_vari(value, size, varis, partials));
+    return var(
+        new precomputed_gradients_vari(value, edges_size, varis, partials));
   }
 };
 
@@ -162,11 +165,10 @@ class ops_partials_edge<double, std::vector<var>> {
   int size() { return this->operands_.size(); }
 };
 
-template <int R, int C>
-class ops_partials_edge<double, Eigen::Matrix<var, R, C>> {
+template <typename Op>
+class ops_partials_edge<double, Op, require_eigen_st<is_var, Op>> {
  public:
-  using Op = Eigen::Matrix<var, R, C>;
-  using partials_t = Eigen::Matrix<double, R, C>;
+  using partials_t = promote_scalar_t<double, Op>;
   partials_t partials_;                       // For univariate use-cases
   broadcast_array<partials_t> partials_vec_;  // For multivariate
   explicit ops_partials_edge(const Op& ops)
@@ -243,9 +245,9 @@ class ops_partials_edge<double, std::vector<std::vector<var>>> {
   using partial_t = std::vector<double>;
   std::vector<partial_t> partials_vec_;
   explicit ops_partials_edge(const Op& ops)
-      : partials_vec_(length(ops)), operands_(ops) {
-    for (size_t i = 0; i < length(ops); ++i) {
-      partials_vec_[i] = partial_t(length(ops[i]), 0.0);
+      : partials_vec_(stan::math::size(ops)), operands_(ops) {
+    for (size_t i = 0; i < stan::math::size(ops); ++i) {
+      partials_vec_[i] = partial_t(stan::math::size(ops[i]), 0.0);
     }
   }
 

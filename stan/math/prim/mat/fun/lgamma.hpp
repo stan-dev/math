@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_LGAMMA_HPP
 #define STAN_MATH_PRIM_MAT_FUN_LGAMMA_HPP
 
-#include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 
 namespace stan {
@@ -32,7 +32,7 @@ struct lgamma_fun {
  * @throw std::domain_error if any value is a negative integer or 0.
  */
 template <typename T>
-inline typename apply_scalar_unary<lgamma_fun, T>::return_t lgamma(const T& x) {
+inline auto lgamma(const T& x) {
   return apply_scalar_unary<lgamma_fun, T>::apply(x);
 }
 

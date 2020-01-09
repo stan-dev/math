@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_PHI_APPROX_HPP
 #define STAN_MATH_PRIM_MAT_FUN_PHI_APPROX_HPP
 
-#include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/scal/fun/Phi_approx.hpp>
 
 namespace stan {
@@ -36,8 +36,7 @@ struct Phi_approx_fun {
  * @return elementwise Phi_approx of container elements
  */
 template <typename T>
-inline typename apply_scalar_unary<Phi_approx_fun, T>::return_t Phi_approx(
-    const T& x) {
+inline auto Phi_approx(const T& x) {
   return apply_scalar_unary<Phi_approx_fun, T>::apply(x);
 }
 

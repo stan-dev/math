@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_LOGIT_HPP
 #define STAN_MATH_PRIM_MAT_FUN_LOGIT_HPP
 
-#include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/scal/fun/logit.hpp>
 
 namespace stan {
@@ -35,7 +35,7 @@ struct logit_fun {
  * @return elementwise logit of container elements
  */
 template <typename T>
-inline typename apply_scalar_unary<logit_fun, T>::return_t logit(const T& x) {
+inline auto logit(const T& x) {
   return apply_scalar_unary<logit_fun, T>::apply(x);
 }
 

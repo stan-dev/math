@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_INV_LOGIT_HPP
 #define STAN_MATH_PRIM_MAT_FUN_INV_LOGIT_HPP
 
-#include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/scal/fun/inv_logit.hpp>
 
 namespace stan {
@@ -29,10 +29,12 @@ struct inv_logit_fun {
  * @return Inverse logit applied to each value in x.
  */
 template <typename T>
-inline typename apply_scalar_unary<inv_logit_fun, T>::return_t inv_logit(
-    const T& x) {
+inline auto inv_logit(const T& x) {
   return apply_scalar_unary<inv_logit_fun, T>::apply(x);
 }
+
+// TODO(Tadej): Eigen is introducing their implementation logistic() of this
+// in 3.4. Use that once we switch to Eigen 3.4
 
 }  // namespace math
 }  // namespace stan

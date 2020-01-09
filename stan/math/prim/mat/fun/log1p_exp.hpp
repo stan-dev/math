@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_LOG1P_EXP_HPP
 #define STAN_MATH_PRIM_MAT_FUN_LOG1P_EXP_HPP
 
-#include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/scal/fun/log1p_exp.hpp>
 
 namespace stan {
@@ -29,8 +29,7 @@ struct log1p_exp_fun {
  * @return Natural log of (1 + exp()) applied to each value in x.
  */
 template <typename T>
-inline typename apply_scalar_unary<log1p_exp_fun, T>::return_t log1p_exp(
-    const T& x) {
+inline auto log1p_exp(const T& x) {
   return apply_scalar_unary<log1p_exp_fun, T>::apply(x);
 }
 

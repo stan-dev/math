@@ -1,8 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_LOG1P_HPP
 #define STAN_MATH_PRIM_MAT_FUN_LOG1P_HPP
 
-#include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/fun/log1p.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 
 namespace stan {
 namespace math {
@@ -35,7 +36,7 @@ struct log1p_fun {
  * @return Elementwise log1p of members of container.
  */
 template <typename T>
-inline typename apply_scalar_unary<log1p_fun, T>::return_t log1p(const T& x) {
+inline auto log1p(const T& x) {
   return apply_scalar_unary<log1p_fun, T>::apply(x);
 }
 

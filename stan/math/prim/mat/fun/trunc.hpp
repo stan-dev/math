@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_TRUNC_HPP
 #define STAN_MATH_PRIM_MAT_FUN_TRUNC_HPP
 
-#include <stan/math/prim/mat/vectorize/apply_scalar_unary.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/scal/fun/trunc.hpp>
 
 namespace stan {
@@ -36,7 +36,7 @@ struct trunc_fun {
  * @return elementwise trunc of container elements
  */
 template <typename T>
-inline typename apply_scalar_unary<trunc_fun, T>::return_t trunc(const T& x) {
+inline auto trunc(const T& x) {
   return apply_scalar_unary<trunc_fun, T>::apply(x);
 }
 

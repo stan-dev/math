@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_SCAL_FUN_PROMOTE_SCALAR_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/promote_scalar_type.hpp>
 
 namespace stan {
 namespace math {
@@ -15,7 +14,7 @@ namespace math {
  * @tparam S input type for nested static function, whose underlying
  * scalar type must be assignable to T.
  */
-template <typename T, typename S>
+template <typename T, typename S, typename Enable = void>
 struct promote_scalar_struct {
   /**
    * Return the value of the input argument promoted to the type
