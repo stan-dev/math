@@ -1,5 +1,4 @@
 #include <stan/math/prim.hpp>
-#include <stan/math/prim.hpp>
 #include <stan/math/prim/arr.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <boost/typeof/typeof.hpp>

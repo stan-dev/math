@@ -2,7 +2,6 @@
 #define TEST_UNIT_MATH_PRIM_PROB_NEGATIVE_BINOMIAL_2_LOG_TEST_RIG_HPP
 
 #include <stan/math/prim.hpp>
-#include <stan/math/prim.hpp>
 #include <test/unit/math/prim/prob/VectorRNGTestRig.hpp>
 #include <cmath>
 
