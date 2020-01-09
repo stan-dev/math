@@ -1,5 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/fun/constants.hpp>
 
 TEST(mathMixScalFun, ldexp) {
   auto f = [](const auto& x1) { return stan::math::ldexp(x1, 5); };

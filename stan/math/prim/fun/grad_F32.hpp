@@ -3,8 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/inv.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/inv.hpp>
 #include <cmath>
 
 namespace stan {

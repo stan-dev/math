@@ -2,6 +2,8 @@
 #define STAN_MATH_PRIM_SCAL_FUN_PROMOTE_SCALAR_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <vector>
 
 namespace stan {
 namespace math {
@@ -62,19 +64,6 @@ typename promote_scalar_type<T, S>::type promote_scalar(const S& x) {
   return promote_scalar_struct<T, S>::apply(x);
 }
 
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_PRIM_ARR_FUN_PROMOTE_SCALAR_HPP
-#define STAN_MATH_PRIM_ARR_FUN_PROMOTE_SCALAR_HPP
-
-#include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/promote_scalar.hpp>
-#include <vector>
-
-namespace stan {
-namespace math {
-
 /**
  * Struct to hold static function for promoting underlying scalar
  * types.  This specialization is for standard vector inputs.
@@ -105,19 +94,6 @@ struct promote_scalar_struct<T, std::vector<S> > {
     return y;
   }
 };
-
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_PRIM_MAT_FUN_PROMOTE_SCALAR_HPP
-#define STAN_MATH_PRIM_MAT_FUN_PROMOTE_SCALAR_HPP
-
-#include <stan/math/prim/scal/fun/promote_scalar.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/meta.hpp>
-
-namespace stan {
-namespace math {
 
 /**
  * Struct to hold static function for promoting underlying scalar

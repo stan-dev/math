@@ -2,6 +2,9 @@
 #define STAN_MATH_PRIM_SCAL_FUN_FILL_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <vector>
+
 namespace stan {
 namespace math {
 
@@ -20,19 +23,6 @@ void fill(T& x, const S& y) {
   x = y;
 }
 
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_PRIM_ARR_FUN_FILL_HPP
-#define STAN_MATH_PRIM_ARR_FUN_FILL_HPP
-
-#include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/fill.hpp>
-#include <vector>
-
-namespace stan {
-namespace math {
-
 /**
  * Fill the specified container with the specified value.
  *
@@ -50,17 +40,6 @@ void fill(std::vector<T>& x, const S& y) {
     fill(x[i], y);
   }
 }
-
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_PRIM_MAT_FUN_FILL_HPP
-#define STAN_MATH_PRIM_MAT_FUN_FILL_HPP
-
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-
-namespace stan {
-namespace math {
 
 /**
  * Fill the specified container with the specified value.

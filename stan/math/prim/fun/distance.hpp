@@ -3,7 +3,10 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/abs.hpp>
+#include <stan/math/prim/fun/abs.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/squared_distance.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -22,19 +25,6 @@ inline return_type_t<T1, T2> distance(const T1& x1, const T2& x2) {
   check_finite("distance", "x2", x2);
   return abs(x1 - x2);
 }
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_PRIM_MAT_FUN_DISTANCE_HPP
-#define STAN_MATH_PRIM_MAT_FUN_DISTANCE_HPP
-
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/squared_distance.hpp>
-#include <cmath>
-
-namespace stan {
-namespace math {
 
 /**
  * Returns the distance between the specified vectors.

@@ -1,5 +1,5 @@
-#include <stan/math/prim/scal/fun/log_inv_logit_diff.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/fun/log_inv_logit_diff.hpp>
+#include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/scal.hpp>
 #include <gtest/gtest.h>
 #include <cmath>

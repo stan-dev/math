@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_QR_R_HPP
 
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <algorithm>
 
 namespace stan {

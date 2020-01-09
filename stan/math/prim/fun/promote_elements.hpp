@@ -2,6 +2,10 @@
 #define STAN_MATH_PRIM_SCAL_FUN_PROMOTE_ELEMENTS_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <cstddef>
+#include <vector>
+
 namespace stan {
 namespace math {
 
@@ -41,21 +45,6 @@ struct promote_elements<T, T> {
    */
   inline static const T& promote(const T& u) { return u; }
 };
-
-}  // namespace math
-}  // namespace stan
-
-#endif
-#ifndef STAN_MATH_PRIM_ARR_FUN_PROMOTE_ELEMENTS_HPP
-#define STAN_MATH_PRIM_ARR_FUN_PROMOTE_ELEMENTS_HPP
-
-#include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/promote_elements.hpp>
-#include <vector>
-#include <cstddef>
-
-namespace stan {
-namespace math {
 
 /**
  * Struct with static function for elementwise type promotion.
@@ -103,19 +92,6 @@ struct promote_elements<std::vector<T>, std::vector<T> > {
     return u;
   }
 };
-
-}  // namespace math
-}  // namespace stan
-
-#endif
-#ifndef STAN_MATH_PRIM_MAT_FUN_PROMOTE_ELEMENTS_HPP
-#define STAN_MATH_PRIM_MAT_FUN_PROMOTE_ELEMENTS_HPP
-
-#include <stan/math/prim/arr/fun/promote_elements.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-
-namespace stan {
-namespace math {
 
 /**
  * Struct with static function for elementwise type promotion.

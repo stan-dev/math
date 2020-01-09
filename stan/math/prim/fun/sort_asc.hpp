@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <algorithm>
 #include <vector>
 
@@ -23,19 +24,6 @@ inline std::vector<T> sort_asc(std::vector<T> xs) {
   std::sort(xs.begin(), xs.end());
   return xs;
 }
-
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_PRIM_MAT_FUN_SORT_ASC_HPP
-#define STAN_MATH_PRIM_MAT_FUN_SORT_ASC_HPP
-
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <algorithm>
-
-namespace stan {
-namespace math {
 
 /**
  * Return the specified vector in ascending order.

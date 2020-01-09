@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_FUN_LOGIT_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -51,18 +52,6 @@ inline double logit(double u) {
  * @return log odds of argument
  */
 inline double logit(int u) { return logit(static_cast<double>(u)); }
-
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_PRIM_MAT_FUN_LOGIT_HPP
-#define STAN_MATH_PRIM_MAT_FUN_LOGIT_HPP
-
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
-#include <stan/math/prim/scal/fun/logit.hpp>
-
-namespace stan {
-namespace math {
 
 /**
  * Structure to wrap logit() so it can be vectorized.

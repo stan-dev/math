@@ -3,11 +3,11 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
-#include <stan/math/prim/arr/fun/vec_concat.hpp>
+#include <stan/math/prim/fun/typedefs.hpp>
+#include <stan/math/prim/fun/vec_concat.hpp>
 #include <CL/cl2.hpp>
 #include <iostream>
 #include <string>

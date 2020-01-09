@@ -1,6 +1,6 @@
 #include <stan/math.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/mat/fun/Eigen.hpp>  // only used for stack tests
+#include <stan/math/prim/fun/Eigen.hpp>  // only used for stack tests
 #include <stan/math/rev/fun/quad_form.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
 #include <string>

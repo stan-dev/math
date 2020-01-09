@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_FINITE_DIFF_STEPSIZE_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_FINITE_DIFF_STEPSIZE_HPP
 
-#include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/fun/constants.hpp>
 #include <cmath>
 
 namespace stan {

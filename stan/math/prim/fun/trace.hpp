@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_TRACE_HPP
 #define STAN_MATH_PRIM_MAT_FUN_TRACE_HPP
 
-#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 
 namespace stan {
 namespace math {

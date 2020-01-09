@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_FUN_TRUNC_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -24,18 +25,6 @@ inline double trunc(double x) { return std::trunc(x); }
  * @return The truncated argument.
  */
 inline double trunc(int x) { return std::trunc(x); }
-
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_PRIM_MAT_FUN_TRUNC_HPP
-#define STAN_MATH_PRIM_MAT_FUN_TRUNC_HPP
-
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
-#include <stan/math/prim/scal/fun/trunc.hpp>
-
-namespace stan {
-namespace math {
 
 /**
  * Structure to wrap trunc() so it can be vectorized.

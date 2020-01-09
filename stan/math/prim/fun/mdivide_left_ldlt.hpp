@@ -2,9 +2,9 @@
 #define STAN_MATH_PRIM_MAT_FUN_MDIVIDE_LEFT_LDLT_HPP
 
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/LDLT_factor.hpp>
-#include <stan/math/prim/mat/fun/promote_common.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/LDLT_factor.hpp>
+#include <stan/math/prim/fun/promote_common.hpp>
 #include <type_traits>
 
 namespace stan {

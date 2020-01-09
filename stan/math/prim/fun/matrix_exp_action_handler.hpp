@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_MATRIX_EXP_ACTION_HANDLER_HPP
 #define STAN_MATH_PRIM_MAT_FUN_MATRIX_EXP_ACTION_HANDLER_HPP
 
-#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <vector>
 #include <cmath>
 

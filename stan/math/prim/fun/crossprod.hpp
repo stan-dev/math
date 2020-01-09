@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_CROSSPROD_HPP
 #define STAN_MATH_PRIM_MAT_FUN_CROSSPROD_HPP
 
-#include <stan/math/prim/mat/fun/typedefs.hpp>
-#include <stan/math/prim/mat/fun/tcrossprod.hpp>
+#include <stan/math/prim/fun/typedefs.hpp>
+#include <stan/math/prim/fun/tcrossprod.hpp>
 
 namespace stan {
 namespace math {

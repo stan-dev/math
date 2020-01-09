@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <stan/math/prim/scal/fun/grad_F32.hpp>
+#include <stan/math/prim/fun/grad_F32.hpp>
 #include <vector>
 
 // converge

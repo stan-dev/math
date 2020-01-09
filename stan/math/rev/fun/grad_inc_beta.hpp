@@ -3,9 +3,9 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/scal/fun/beta.hpp>
-#include <stan/math/prim/scal/fun/grad_2F1.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
+#include <stan/math/prim/fun/beta.hpp>
+#include <stan/math/prim/fun/grad_2F1.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/rev/fun/exp.hpp>
 #include <stan/math/rev/fun/fabs.hpp>
 #include <stan/math/rev/fun/floor.hpp>

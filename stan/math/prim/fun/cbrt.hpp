@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_FUN_CBRT_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -24,18 +25,6 @@ inline double cbrt(double x) { return std::cbrt(x); }
  * @throw std::domain_error If argument is less than 1.
  */
 inline double cbrt(int x) { return std::cbrt(x); }
-
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_PRIM_MAT_FUN_CBRT_HPP
-#define STAN_MATH_PRIM_MAT_FUN_CBRT_HPP
-
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
-#include <stan/math/prim/scal/fun/cbrt.hpp>
-
-namespace stan {
-namespace math {
 
 /**
  * Structure to wrap cbrt() so it can be vectorized.

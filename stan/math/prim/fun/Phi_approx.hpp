@@ -2,7 +2,8 @@
 #define STAN_MATH_PRIM_SCAL_FUN_PHI_APPROX_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/inv_logit.hpp>
+#include <stan/math/prim/fun/inv_logit.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -32,19 +33,6 @@ inline double Phi_approx(double x) {
  * equal to argument.
  */
 inline double Phi_approx(int x) { return Phi_approx(static_cast<double>(x)); }
-
-}  // namespace math
-}  // namespace stan
-
-#endif
-#ifndef STAN_MATH_PRIM_MAT_FUN_PHI_APPROX_HPP
-#define STAN_MATH_PRIM_MAT_FUN_PHI_APPROX_HPP
-
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
-#include <stan/math/prim/scal/fun/Phi_approx.hpp>
-
-namespace stan {
-namespace math {
 
 /**
  * Structure to wrap Phi_approx() so it can be vectorized.

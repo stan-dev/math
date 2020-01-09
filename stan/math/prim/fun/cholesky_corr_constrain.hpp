@@ -2,10 +2,10 @@
 #define STAN_MATH_PRIM_MAT_FUN_CHOLESKY_CORR_CONSTRAIN_HPP
 
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/fun/log1m.hpp>
-#include <stan/math/prim/scal/fun/square.hpp>
-#include <stan/math/prim/scal/fun/corr_constrain.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/log1m.hpp>
+#include <stan/math/prim/fun/square.hpp>
+#include <stan/math/prim/fun/corr_constrain.hpp>
 #include <cmath>
 
 namespace stan {

@@ -2,8 +2,8 @@
 #define STAN_MATH_PRIM_MAT_FUN_MAX_HPP
 
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/constants.hpp>
 #include <algorithm>
 #include <vector>
 

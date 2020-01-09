@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_GET_LP_HPP
 #define STAN_MATH_PRIM_MAT_FUN_GET_LP_HPP
 
-#include <stan/math/prim/mat/fun/accumulator.hpp>
+#include <stan/math/prim/fun/accumulator.hpp>
 
 namespace stan {
 namespace math {

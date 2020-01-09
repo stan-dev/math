@@ -2,9 +2,10 @@
 #define STAN_MATH_PRIM_SCAL_FUN_LOG1M_EXP_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/expm1.hpp>
-#include <stan/math/prim/scal/fun/log1m.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/expm1.hpp>
+#include <stan/math/prim/fun/log1m.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -53,19 +54,6 @@ inline double log1m_exp(double a) {
     return log1m(exp(a));
   }
 }
-
-}  // namespace math
-}  // namespace stan
-
-#endif
-#ifndef STAN_MATH_PRIM_MAT_FUN_LOG1M_EXP_HPP
-#define STAN_MATH_PRIM_MAT_FUN_LOG1M_EXP_HPP
-
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
-#include <stan/math/prim/scal/fun/log1m_exp.hpp>
-
-namespace stan {
-namespace math {
 
 /**
  * Structure to wrap log1m_exp() so it can be vectorized.

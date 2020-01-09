@@ -2,7 +2,7 @@
 #define STAN_MATH_REV_FUN_COLUMNS_DOT_SELF_HPP
 
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/typedefs.hpp>
 #include <stan/math/rev/fun/dot_self.hpp>

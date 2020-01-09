@@ -7,7 +7,7 @@
 "plugin add the eigen_plugin.h file to your plugin."
 #endif
 #else
-#define EIGEN_MATRIXBASE_PLUGIN "stan/math/prim/mat/eigen_plugins.h"
+#define EIGEN_MATRIXBASE_PLUGIN "stan/math/prim/eigen_plugins.h"
 #endif
 
 #include <Eigen/Dense>

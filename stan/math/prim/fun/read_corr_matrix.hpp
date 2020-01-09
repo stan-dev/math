@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_READ_CORR_MATRIX_HPP
 #define STAN_MATH_PRIM_MAT_FUN_READ_CORR_MATRIX_HPP
 
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/read_corr_L.hpp>
-#include <stan/math/prim/mat/fun/multiply_lower_tri_self_transpose.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/read_corr_L.hpp>
+#include <stan/math/prim/fun/multiply_lower_tri_self_transpose.hpp>
 
 namespace stan {
 namespace math {

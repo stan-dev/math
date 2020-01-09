@@ -2,7 +2,8 @@
 #define STAN_MATH_PRIM_SCAL_FUN_DIGAMMA_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/boost_policy.hpp>
+#include <stan/math/prim/fun/boost_policy.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <boost/math/special_functions/digamma.hpp>
 
 namespace stan {
@@ -46,18 +47,6 @@ namespace math {
 inline double digamma(double x) {
   return boost::math::digamma(x, boost_policy_t());
 }
-
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_PRIM_MAT_FUN_DIGAMMA_HPP
-#define STAN_MATH_PRIM_MAT_FUN_DIGAMMA_HPP
-
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
-#include <stan/math/prim/scal/fun/digamma.hpp>
-
-namespace stan {
-namespace math {
 
 /**
  * Structure to wrap digamma() so it can be vectorized.

@@ -24,11 +24,12 @@
 #else
 // MinGW compilers on Windows do not provide the reentrant lgamma_r
 // such that we fall back to boost whenever we are on MinGW.
-#include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/boost_policy.hpp>
+#include <stan/math/prim/fun/boost_policy.hpp>
 #include <boost/math/special_functions/gamma.hpp>
 #include <limits>
 #endif
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 
 namespace stan {
 namespace math {
@@ -88,18 +89,6 @@ inline double lgamma(int x) {
   return boost::math::lgamma(x, boost_policy_t());
 #endif
 }
-
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_PRIM_MAT_FUN_LGAMMA_HPP
-#define STAN_MATH_PRIM_MAT_FUN_LGAMMA_HPP
-
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
-#include <stan/math/prim/scal/fun/lgamma.hpp>
-
-namespace stan {
-namespace math {
 
 /**
  * Structure to wrap lgamma() so that it can be vectorized.

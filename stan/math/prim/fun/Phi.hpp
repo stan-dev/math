@@ -2,10 +2,13 @@
 #define STAN_MATH_PRIM_SCAL_FUN_PHI_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/erf.hpp>
-#include <stan/math/prim/scal/fun/erfc.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/erf.hpp>
+#include <stan/math/prim/fun/erfc.hpp>
+#include <stan/math/prim/fun/Phi.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
+
 
 namespace stan {
 namespace math {
@@ -39,18 +42,6 @@ inline double Phi(double x) {
     return 0.5 * (1.0 + erf(INV_SQRT_TWO * x));
   }
 }
-
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_PRIM_MAT_FUN_PHI_HPP
-#define STAN_MATH_PRIM_MAT_FUN_PHI_HPP
-
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
-#include <stan/math/prim/scal/fun/Phi.hpp>
-
-namespace stan {
-namespace math {
 
 /**
  * Structure to wrap Phi() so it can be vectorized.

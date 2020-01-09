@@ -3,10 +3,11 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/log1m.hpp>
-#include <stan/math/prim/scal/fun/Phi.hpp>
-#include <stan/math/prim/scal/fun/square.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/log1m.hpp>
+#include <stan/math/prim/fun/Phi.hpp>
+#include <stan/math/prim/fun/square.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -76,18 +77,6 @@ inline double inv_Phi(double p) {
 
   return x;
 }
-
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_PRIM_MAT_FUN_INV_PHI_HPP
-#define STAN_MATH_PRIM_MAT_FUN_INV_PHI_HPP
-
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
-#include <stan/math/prim/scal/fun/inv_Phi.hpp>
-
-namespace stan {
-namespace math {
 
 /**
  * Structure to wrap inv_Phi() so it can be vectorized.

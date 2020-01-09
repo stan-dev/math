@@ -2,9 +2,9 @@
 #define STAN_MATH_REV_CORE_OPERATOR_UNARY_PLUS_HPP
 
 #include <stan/math/rev/core/var.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <stan/math/prim/fun/is_nan.hpp>
 #include <stan/math/rev/core/precomp_v_vari.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/fun/constants.hpp>
 
 namespace stan {
 namespace math {

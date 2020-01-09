@@ -2,8 +2,8 @@
 #define STAN_MATH_PRIM_SCAL_FUN_LOG_INV_LOGIT_DIFF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/log1m_exp.hpp>
-#include <stan/math/prim/scal/fun/log1p_exp.hpp>
+#include <stan/math/prim/fun/log1m_exp.hpp>
+#include <stan/math/prim/fun/log1p_exp.hpp>
 
 namespace stan {
 namespace math {

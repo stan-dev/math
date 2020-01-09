@@ -3,7 +3,7 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/scal/fun/is_uninitialized.hpp>
+#include <stan/math/prim/fun/is_uninitialized.hpp>
 
 namespace stan {
 namespace math {

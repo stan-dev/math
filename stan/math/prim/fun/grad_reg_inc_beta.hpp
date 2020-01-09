@@ -2,9 +2,9 @@
 #define STAN_MATH_PRIM_SCAL_FUN_GRAD_REG_INC_BETA_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/grad_inc_beta.hpp>
-#include <stan/math/prim/scal/fun/inc_beta.hpp>
-#include <stan/math/prim/scal/fun/beta.hpp>
+#include <stan/math/prim/fun/grad_inc_beta.hpp>
+#include <stan/math/prim/fun/inc_beta.hpp>
+#include <stan/math/prim/fun/beta.hpp>
 #include <cmath>
 
 namespace stan {

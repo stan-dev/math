@@ -3,8 +3,10 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <cstddef>
 #include <cstdlib>
+#include <type_traits>
 
 namespace stan {
 namespace math {
@@ -27,19 +29,6 @@ inline int divide(int x, int y) {
   }
   return x / y;
 }
-
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_PRIM_MAT_FUN_DIVIDE_HPP
-#define STAN_MATH_PRIM_MAT_FUN_DIVIDE_HPP
-
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/meta.hpp>
-#include <type_traits>
-
-namespace stan {
-namespace math {
 
 /**
  * Return matrix divided by scalar.

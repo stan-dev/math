@@ -2,8 +2,8 @@
 #define STAN_MATH_REV_FUNCTOR_ALGEBRA_SOLVER_NEWTON_HPP
 
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/mat/fun/mdivide_left.hpp>
-#include <stan/math/prim/mat/fun/value_of.hpp>
+#include <stan/math/prim/fun/mdivide_left.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/rev/functor/algebra_system.hpp>
 #include <stan/math/rev/functor/algebra_solver_powell.hpp>
 #include <stan/math/rev/functor/kinsol_solve.hpp>

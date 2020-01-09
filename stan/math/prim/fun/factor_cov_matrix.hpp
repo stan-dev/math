@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_FACTOR_COV_MATRIX_HPP
 #define STAN_MATH_PRIM_MAT_FUN_FACTOR_COV_MATRIX_HPP
 
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/factor_U.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/factor_U.hpp>
 #include <cstddef>
 
 namespace stan {

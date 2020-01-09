@@ -3,8 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/inc_beta.hpp>
-#include <stan/math/prim/scal/fun/inc_beta_ddb.hpp>
+#include <stan/math/prim/fun/inc_beta.hpp>
+#include <stan/math/prim/fun/inc_beta_ddb.hpp>
 #include <cmath>
 
 namespace stan {

@@ -2,7 +2,8 @@
 #define STAN_MATH_PRIM_SCAL_FUN_LOG1M_INV_LOGIT_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/log1p.hpp>
+#include <stan/math/prim/fun/log1p.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -50,18 +51,6 @@ inline double log1m_inv_logit(double u) {
 inline double log1m_inv_logit(int u) {
   return log1m_inv_logit(static_cast<double>(u));
 }
-
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_PRIM_MAT_FUN_LOG1M_INV_LOGIT_HPP
-#define STAN_MATH_PRIM_MAT_FUN_LOG1M_INV_LOGIT_HPP
-
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
-#include <stan/math/prim/scal/fun/log1m_inv_logit.hpp>
-
-namespace stan {
-namespace math {
 
 /**
  * Structure to wrap log1m_inv_logit() so it can be vectorized.

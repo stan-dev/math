@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_FUN_EXPM1_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -24,18 +25,6 @@ inline double expm1(double x) { return std::expm1(x); }
  * @return Natural exponentiation of argument minus one.
  */
 inline double expm1(int x) { return std::expm1(x); }
-
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_PRIM_MAT_FUN_EXPM1_HPP
-#define STAN_MATH_PRIM_MAT_FUN_EXPM1_HPP
-
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
-#include <stan/math/prim/scal/fun/expm1.hpp>
-
-namespace stan {
-namespace math {
 
 /**
  * Structure to wrap expm1() so that it can be vectorized.

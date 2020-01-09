@@ -2,7 +2,8 @@
 #define STAN_MATH_PRIM_SCAL_FUN_LOG1P_EXP_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/log1p.hpp>
+#include <stan/math/prim/fun/log1p.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -48,19 +49,6 @@ inline double log1p_exp(double a) {
   }
   return log1p(exp(a));
 }
-
-}  // namespace math
-}  // namespace stan
-
-#endif
-#ifndef STAN_MATH_PRIM_MAT_FUN_LOG1P_EXP_HPP
-#define STAN_MATH_PRIM_MAT_FUN_LOG1P_EXP_HPP
-
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
-#include <stan/math/prim/scal/fun/log1p_exp.hpp>
-
-namespace stan {
-namespace math {
 
 /**
  * Structure to wrap log1m_exp() so that it can be vectorized.

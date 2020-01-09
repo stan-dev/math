@@ -3,7 +3,7 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/arr/fun/value_of.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/coupled_ode_observer.hpp>
 #include <stan/math/prim/functor/coupled_ode_system.hpp>
 #include <stan/math/rev/functor/coupled_ode_system.hpp>

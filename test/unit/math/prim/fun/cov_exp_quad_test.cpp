@@ -1,5 +1,5 @@
 #include <stan/math/prim/mat.hpp>
-#include <stan/math/prim/mat/fun/squared_distance.hpp>
+#include <stan/math/prim/fun/squared_distance.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 #include <string>

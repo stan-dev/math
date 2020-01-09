@@ -2,7 +2,9 @@
 #define STAN_MATH_PRIM_SCAL_FUN_LOG2_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/log2.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -30,20 +32,6 @@ inline double log2(T u) {
  * @return Natural logarithm of two.
  */
 inline double log2() { return LOG_TWO; }
-
-}  // namespace math
-}  // namespace stan
-
-#endif
-#ifndef STAN_MATH_PRIM_MAT_FUN_LOG2_HPP
-#define STAN_MATH_PRIM_MAT_FUN_LOG2_HPP
-
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
-#include <stan/math/prim/scal/fun/log2.hpp>
-#include <stan/math/prim/meta.hpp>
-
-namespace stan {
-namespace math {
 
 /**
  * Structure to wrap log2() so it can be vectorized.

@@ -2,8 +2,10 @@
 #define STAN_MATH_PRIM_ARR_FUN_DOT_SELF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <vector>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <cstddef>
+#include <vector>
 
 namespace stan {
 namespace math {
@@ -15,18 +17,6 @@ inline double dot_self(const std::vector<double>& x) {
   }
   return sum;
 }
-
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_PRIM_MAT_FUN_DOT_SELF_HPP
-#define STAN_MATH_PRIM_MAT_FUN_DOT_SELF_HPP
-
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-
-namespace stan {
-namespace math {
 
 /**
  * Returns the dot product of the specified vector with itself.

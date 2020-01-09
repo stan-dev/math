@@ -2,6 +2,8 @@
 #define STAN_MATH_PRIM_SCAL_FUN_INV_CLOGLOG_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -49,20 +51,6 @@ inline double inv_cloglog(double x) {
   using std::exp;
   return 1 - exp(-exp(x));
 }
-
-}  // namespace math
-}  // namespace stan
-
-#endif
-#ifndef STAN_MATH_PRIM_MAT_FUN_INV_CLOGLOG_HPP
-#define STAN_MATH_PRIM_MAT_FUN_INV_CLOGLOG_HPP
-
-#include <stan/math/prim/mat/fun/exp.hpp>
-#include <stan/math/prim/scal/fun/inv_cloglog.hpp>
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
-
-namespace stan {
-namespace math {
 
 /**
  * Structure to wrap inv_cloglog() so that it can be vectorized.

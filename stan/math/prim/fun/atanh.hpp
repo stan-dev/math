@@ -2,8 +2,9 @@
 #define STAN_MATH_PRIM_SCAL_FUN_ATANH_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/is_nan.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -43,18 +44,6 @@ inline double atanh(int x) {
     return std::atanh(x);
   }
 }
-
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_PRIM_MAT_FUN_ATANH_HPP
-#define STAN_MATH_PRIM_MAT_FUN_ATANH_HPP
-
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
-#include <stan/math/prim/scal/fun/atanh.hpp>
-
-namespace stan {
-namespace math {
 
 /**
  * Structure to wrap atanh() so it can be vectorized.

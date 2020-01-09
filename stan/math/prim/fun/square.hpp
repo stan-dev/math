@@ -1,6 +1,10 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_SQUARE_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_SQUARE_HPP
 
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/square.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -20,21 +24,6 @@ namespace math {
  * @return Square of input.
  */
 inline double square(double x) { return std::pow(x, 2); }
-
-}  // namespace math
-}  // namespace stan
-
-#endif
-#ifndef STAN_MATH_PRIM_MAT_FUN_SQUARE_HPP
-#define STAN_MATH_PRIM_MAT_FUN_SQUARE_HPP
-
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/square.hpp>
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
-
-namespace stan {
-namespace math {
 
 /**
  * Structure to wrap square() so that it can be vectorized.

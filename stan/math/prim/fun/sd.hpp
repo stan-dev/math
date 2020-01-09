@@ -2,9 +2,9 @@
 #define STAN_MATH_PRIM_MAT_FUN_SD_HPP
 
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/variance.hpp>
-#include <stan/math/prim/scal/fun/sqrt.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/variance.hpp>
+#include <stan/math/prim/fun/sqrt.hpp>
 #include <vector>
 #include <cmath>
 

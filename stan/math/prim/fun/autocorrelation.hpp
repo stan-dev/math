@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_AUTOCORRELATION_HPP
 #define STAN_MATH_PRIM_MAT_FUN_AUTOCORRELATION_HPP
 
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/mean.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/mean.hpp>
 #include <unsupported/Eigen/FFT>
 #include <complex>
 #include <vector>

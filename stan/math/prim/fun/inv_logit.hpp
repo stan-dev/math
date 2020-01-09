@@ -2,7 +2,8 @@
 #define STAN_MATH_PRIM_SCAL_FUN_INV_LOGIT_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -57,18 +58,6 @@ inline double inv_logit(double a) {
   }
   return inv(1 + exp(-a));
 }
-
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_PRIM_MAT_FUN_INV_LOGIT_HPP
-#define STAN_MATH_PRIM_MAT_FUN_INV_LOGIT_HPP
-
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
-#include <stan/math/prim/scal/fun/inv_logit.hpp>
-
-namespace stan {
-namespace math {
 
 /**
  * Structure to wrap inv_logit() so that it can be vectorized.

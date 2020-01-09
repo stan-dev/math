@@ -2,9 +2,10 @@
 #define STAN_MATH_PRIM_SCAL_FUN_ACOSH_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
-#include <stan/math/prim/scal/fun/is_inf.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/is_inf.hpp>
+#include <stan/math/prim/fun/is_nan.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -57,8 +58,6 @@ inline double acosh(int x) {
 #ifndef STAN_MATH_PRIM_MAT_FUN_ACOSH_HPP
 #define STAN_MATH_PRIM_MAT_FUN_ACOSH_HPP
 
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
-#include <stan/math/prim/scal/fun/acosh.hpp>
 
 namespace stan {
 namespace math {

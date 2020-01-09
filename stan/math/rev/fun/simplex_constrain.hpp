@@ -2,8 +2,8 @@
 #define STAN_MATH_REV_FUN_SIMPLEX_CONSTRAIN_HPP
 
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/fun/inv_logit.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/inv_logit.hpp>
 #include <stan/math/rev/functor/adj_jac_apply.hpp>
 #include <tuple>
 #include <vector>

@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_LOG_DETERMINANT_LDLT_HPP
 #define STAN_MATH_PRIM_MAT_FUN_LOG_DETERMINANT_LDLT_HPP
 
-#include <stan/math/prim/mat/fun/LDLT_factor.hpp>
+#include <stan/math/prim/fun/LDLT_factor.hpp>
 
 namespace stan {
 namespace math {

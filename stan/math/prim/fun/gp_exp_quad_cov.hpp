@@ -3,11 +3,11 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/divide_columns.hpp>
-#include <stan/math/prim/mat/fun/squared_distance.hpp>
-#include <stan/math/prim/scal/fun/exp.hpp>
-#include <stan/math/prim/scal/fun/square.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/divide_columns.hpp>
+#include <stan/math/prim/fun/squared_distance.hpp>
+#include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/fun/square.hpp>
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/opencl.hpp>
 #endif

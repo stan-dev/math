@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_FUN_ASINH_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -25,18 +26,6 @@ inline double asinh(double x) { return std::asinh(x); }
  * @return Inverse hyperbolic sine of the argument.
  */
 inline double asinh(int x) { return std::asinh(x); }
-
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_PRIM_MAT_FUN_ASINH_HPP
-#define STAN_MATH_PRIM_MAT_FUN_ASINH_HPP
-
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
-#include <stan/math/prim/scal/fun/asinh.hpp>
-
-namespace stan {
-namespace math {
 
 /**
  * Structure to wrap asinh() so it can be vectorized.

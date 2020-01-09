@@ -3,7 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/is_nonpositive_integer.hpp>
+#include <stan/math/prim/fun/is_nonpositive_integer.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -21,18 +22,6 @@ inline double tgamma(double x) {
   }
   return std::tgamma(x);
 }
-
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_PRIM_MAT_FUN_TGAMMA_HPP
-#define STAN_MATH_PRIM_MAT_FUN_TGAMMA_HPP
-
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
-#include <stan/math/prim/scal/fun/tgamma.hpp>
-
-namespace stan {
-namespace math {
 
 /**
  * Structure to wrap tgamma() so that it can be vectorized.

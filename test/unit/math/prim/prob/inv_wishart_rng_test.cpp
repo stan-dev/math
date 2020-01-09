@@ -1,5 +1,5 @@
 #include <stan/math/prim/mat.hpp>
-#include <test/unit/math/prim/mat/util.hpp>
+#include <test/unit/math/prim/util.hpp>
 #include <boost/math/distributions/chi_squared.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <gtest/gtest.h>

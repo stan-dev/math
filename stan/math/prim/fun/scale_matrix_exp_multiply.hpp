@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/mat.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/mat/fun/matrix_exp_action_handler.hpp>
+#include <stan/math/prim/fun/matrix_exp_action_handler.hpp>
 
 namespace stan {
 namespace math {

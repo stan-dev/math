@@ -3,8 +3,8 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/matrix_exp.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/matrix_exp.hpp>
 #include <stan/math/rev/fun/multiply.hpp>
 #include <stan/math/rev/core.hpp>
 

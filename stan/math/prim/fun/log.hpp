@@ -2,6 +2,9 @@
 #define STAN_MATH_PRIM_SCAL_FUN_LOG_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -15,21 +18,6 @@ namespace math {
  * @return Natural log of argument.
  */
 inline double log(int x) { return std::log(x); }
-
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_PRIM_MAT_FUN_LOG_HPP
-#define STAN_MATH_PRIM_MAT_FUN_LOG_HPP
-
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/log.hpp>
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
-#include <cmath>
-
-namespace stan {
-namespace math {
 
 /**
  * Structure to wrap log() so that it can be vectorized.

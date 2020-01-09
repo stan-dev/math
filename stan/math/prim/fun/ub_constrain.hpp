@@ -2,8 +2,8 @@
 #define STAN_MATH_PRIM_SCAL_FUN_UB_CONSTRAIN_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/identity_constrain.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/fun/identity_constrain.hpp>
+#include <stan/math/prim/fun/constants.hpp>
 #include <cmath>
 
 namespace stan {

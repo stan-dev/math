@@ -2,9 +2,9 @@
 #define STAN_MATH_PRIM_SCAL_FUN_BINOMIAL_COEFFICIENT_LOG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/inv.hpp>
-#include <stan/math/prim/scal/fun/lgamma.hpp>
-#include <stan/math/prim/scal/fun/multiply_log.hpp>
+#include <stan/math/prim/fun/inv.hpp>
+#include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/fun/multiply_log.hpp>
 
 namespace stan {
 namespace math {

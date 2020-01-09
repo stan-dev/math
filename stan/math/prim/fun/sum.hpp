@@ -2,6 +2,11 @@
 #define STAN_MATH_PRIM_SCAL_FUN_SUM_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <cstddef>
+#include <numeric>
+#include <vector>
+
 namespace stan {
 namespace math {
 
@@ -23,20 +28,6 @@ inline double sum(double v) { return v; }
  */
 inline int sum(int v) { return v; }
 
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_PRIM_ARR_FUN_SUM_HPP
-#define STAN_MATH_PRIM_ARR_FUN_SUM_HPP
-
-#include <stan/math/prim/meta.hpp>
-#include <cstddef>
-#include <vector>
-#include <numeric>
-
-namespace stan {
-namespace math {
-
 /**
  * Return the sum of the values in the specified standard vector.
  *
@@ -48,18 +39,6 @@ template <typename T>
 inline T sum(const std::vector<T>& xs) {
   return std::accumulate(xs.begin(), xs.end(), T{0});
 }
-
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_PRIM_MAT_FUN_SUM_HPP
-#define STAN_MATH_PRIM_MAT_FUN_SUM_HPP
-
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/arr/fun/sum.hpp>
-
-namespace stan {
-namespace math {
 
 /**
  * Returns the sum of the coefficients of the specified

@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/logit.hpp>
+#include <stan/math/prim/fun/logit.hpp>
 
 namespace stan {
 namespace math {

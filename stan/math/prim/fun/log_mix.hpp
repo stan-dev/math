@@ -3,8 +3,11 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/log_sum_exp.hpp>
-#include <stan/math/prim/scal/fun/log1m.hpp>
+#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/log1m.hpp>
+#include <stan/math/prim/fun/log_sum_exp.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
+#include <vector>
 #include <cmath>
 
 namespace stan {
@@ -112,23 +115,6 @@ inline double log_mix(int theta, int lambda1, int lambda2) {
   return log_mix(static_cast<double>(theta), static_cast<double>(lambda1),
                  static_cast<double>(lambda2));
 }
-
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_PRIM_MAT_FUN_LOG_MIX_HPP
-#define STAN_MATH_PRIM_MAT_FUN_LOG_MIX_HPP
-
-#include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/mat/fun/log_sum_exp.hpp>
-#include <stan/math/prim/mat/fun/log.hpp>
-#include <stan/math/prim/mat/fun/value_of.hpp>
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
-#include <vector>
-
-namespace stan {
-namespace math {
 
 /**
  * Return the log mixture density with specified mixing proportions

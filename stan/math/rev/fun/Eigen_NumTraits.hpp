@@ -2,7 +2,7 @@
 #define STAN_MATH_REV_FUN_EIGEN_NUMTRAITS_HPP
 
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/core/std_numeric_limits.hpp>
 #include <limits>

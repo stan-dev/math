@@ -2,6 +2,8 @@
 #define STAN_MATH_PRIM_SCAL_FUN_ERFC_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/erfc.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -27,18 +29,6 @@ inline double erfc(double x) { return std::erfc(x); }
  * @return Complementary error function value of the argument.
  */
 inline double erfc(int x) { return std::erfc(x); }
-
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_PRIM_MAT_FUN_ERFC_HPP
-#define STAN_MATH_PRIM_MAT_FUN_ERFC_HPP
-
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
-#include <stan/math/prim/scal/fun/erfc.hpp>
-
-namespace stan {
-namespace math {
 
 /**
  * Structure to wrap erfc() so that it can be vectorized.

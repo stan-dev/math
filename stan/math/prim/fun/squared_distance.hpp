@@ -3,7 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/square.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/square.hpp>
 
 namespace stan {
 namespace math {
@@ -23,18 +24,6 @@ inline return_type_t<T1, T2> squared_distance(const T1& x1, const T2& x2) {
   check_finite("squared_distance", "x2", x2);
   return square(x1 - x2);
 }
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_PRIM_MAT_FUN_SQUARED_DISTANCE_HPP
-#define STAN_MATH_PRIM_MAT_FUN_SQUARED_DISTANCE_HPP
-
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/fun/squared_distance.hpp>
-
-namespace stan {
-namespace math {
 
 /**
  * Returns the squared distance between the specified vectors

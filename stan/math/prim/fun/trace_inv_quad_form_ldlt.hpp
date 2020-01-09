@@ -3,12 +3,12 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/LDLT_factor.hpp>
-#include <stan/math/prim/mat/fun/mdivide_left_ldlt.hpp>
-#include <stan/math/prim/mat/fun/trace.hpp>
-#include <stan/math/prim/mat/fun/transpose.hpp>
-#include <stan/math/prim/mat/fun/multiply.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/LDLT_factor.hpp>
+#include <stan/math/prim/fun/mdivide_left_ldlt.hpp>
+#include <stan/math/prim/fun/trace.hpp>
+#include <stan/math/prim/fun/transpose.hpp>
+#include <stan/math/prim/fun/multiply.hpp>
 
 namespace stan {
 namespace math {

@@ -3,9 +3,9 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/logit.hpp>
-#include <stan/math/prim/scal/fun/lb_free.hpp>
-#include <stan/math/prim/scal/fun/ub_free.hpp>
+#include <stan/math/prim/fun/logit.hpp>
+#include <stan/math/prim/fun/lb_free.hpp>
+#include <stan/math/prim/fun/ub_free.hpp>
 
 namespace stan {
 namespace math {

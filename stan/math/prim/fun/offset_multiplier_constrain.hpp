@@ -3,9 +3,9 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/fma.hpp>
-#include <stan/math/prim/scal/fun/identity_constrain.hpp>
-#include <stan/math/prim/scal/fun/multiply_log.hpp>
+#include <stan/math/prim/fun/fma.hpp>
+#include <stan/math/prim/fun/identity_constrain.hpp>
+#include <stan/math/prim/fun/multiply_log.hpp>
 #include <cmath>
 
 namespace stan {

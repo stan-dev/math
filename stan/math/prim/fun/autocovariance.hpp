@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_AUTOCOVARIANCE_HPP
 #define STAN_MATH_PRIM_MAT_FUN_AUTOCOVARIANCE_HPP
 
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/autocorrelation.hpp>
-#include <stan/math/prim/mat/fun/variance.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/autocorrelation.hpp>
+#include <stan/math/prim/fun/variance.hpp>
 #include <vector>
 
 namespace stan {

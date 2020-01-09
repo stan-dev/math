@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_FUN_EXP2_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -23,19 +24,6 @@ inline double exp2(T y) {
   using std::exp2;
   return exp2(y);
 }
-
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_PRIM_MAT_FUN_EXP2_HPP
-#define STAN_MATH_PRIM_MAT_FUN_EXP2_HPP
-
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
-#include <stan/math/prim/scal/fun/exp2.hpp>
-#include <stan/math/prim/meta.hpp>
-
-namespace stan {
-namespace math {
 
 /**
  * Structure to wrap exp2() so it can be vectorized.

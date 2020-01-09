@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_MATRIX_EXP_MULTIPLY_HPP
 
 #include <stan/math/prim/mat.hpp>
-#include <stan/math/prim/mat/fun/matrix_exp_action_handler.hpp>
+#include <stan/math/prim/fun/matrix_exp_action_handler.hpp>
 
 namespace stan {
 namespace math {

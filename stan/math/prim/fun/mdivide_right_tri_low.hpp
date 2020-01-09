@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_MDIVIDE_RIGHT_TRI_LOW_HPP
 #define STAN_MATH_PRIM_MAT_FUN_MDIVIDE_RIGHT_TRI_LOW_HPP
 
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/mdivide_right_tri.hpp>
-#include <stan/math/prim/mat/fun/promote_common.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/mdivide_right_tri.hpp>
+#include <stan/math/prim/fun/promote_common.hpp>
 
 namespace stan {
 namespace math {

@@ -2,17 +2,18 @@
 #define STAN_MATH_PRIM_SCAL_FUN_TRIGAMMA_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/square.hpp>
+#include <stan/math/prim/fun/inv_square.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
+#include <cmath>
+
 // Reference:
 //   BE Schneider,
 //   Algorithm AS 121:
 //   Trigamma Function,
 //   Applied Statistics,
 //   Volume 27, Number 1, pages 97-99, 1978.
-
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/square.hpp>
-#include <stan/math/prim/scal/fun/inv_square.hpp>
-#include <cmath>
 
 namespace stan {
 namespace math {
@@ -123,19 +124,6 @@ inline double trigamma(double u) { return trigamma_impl(u); }
  * @return second derivative of log Gamma function at argument
  */
 inline double trigamma(int u) { return trigamma(static_cast<double>(u)); }
-
-}  // namespace math
-}  // namespace stan
-
-#endif
-#ifndef STAN_MATH_PRIM_MAT_FUN_TRIGAMMA_HPP
-#define STAN_MATH_PRIM_MAT_FUN_TRIGAMMA_HPP
-
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
-#include <stan/math/prim/scal/fun/trigamma.hpp>
-
-namespace stan {
-namespace math {
 
 /**
  * Structure to wrap trigamma() so it can be vectorized.

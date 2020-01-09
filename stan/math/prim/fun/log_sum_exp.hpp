@@ -2,8 +2,11 @@
 #define STAN_MATH_PRIM_SCAL_FUN_LOG_SUM_EXP_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/log1p_exp.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/log1p_exp.hpp>
+#include <cmath>
+#include <vector>
 
 namespace stan {
 namespace math {
@@ -57,21 +60,6 @@ inline return_type_t<T1, T2> log_sum_exp(const T2& a, const T1& b) {
   return b + log1p_exp(a - b);
 }
 
-}  // namespace math
-}  // namespace stan
-
-#endif
-#ifndef STAN_MATH_PRIM_ARR_FUN_LOG_SUM_EXP_HPP
-#define STAN_MATH_PRIM_ARR_FUN_LOG_SUM_EXP_HPP
-
-#include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <cmath>
-#include <vector>
-
-namespace stan {
-namespace math {
-
 /**
  * Return the log of the sum of the exponentiated values of the specified
  * sequence of values.
@@ -104,21 +92,6 @@ inline double log_sum_exp(const std::vector<double>& x) {
 
   return max + log(sum);
 }
-
-}  // namespace math
-}  // namespace stan
-
-#endif
-#ifndef STAN_MATH_PRIM_MAT_FUN_LOG_SUM_EXP_HPP
-#define STAN_MATH_PRIM_MAT_FUN_LOG_SUM_EXP_HPP
-
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <cmath>
-#include <vector>
-
-namespace stan {
-namespace math {
 
 /**
  * Return the log of the sum of the exponentiated values of the specified

@@ -3,7 +3,7 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/scal/fun/log1p_exp.hpp>
+#include <stan/math/prim/fun/log1p_exp.hpp>
 #include <cmath>
 
 namespace stan {

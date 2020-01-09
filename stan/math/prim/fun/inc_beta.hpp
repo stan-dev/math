@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/boost_policy.hpp>
+#include <stan/math/prim/fun/boost_policy.hpp>
 #include <boost/math/special_functions/beta.hpp>
 
 namespace stan {

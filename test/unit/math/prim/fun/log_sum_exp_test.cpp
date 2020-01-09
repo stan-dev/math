@@ -1,6 +1,6 @@
 #include <stan/math/prim/scal.hpp>
 #include <stan/math/prim/mat.hpp>
-#include <stan/math/prim/arr/fun/log_sum_exp.hpp>
+#include <stan/math/prim/fun/log_sum_exp.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
 #include <limits>

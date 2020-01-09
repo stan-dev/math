@@ -2,25 +2,13 @@
 #define STAN_MATH_PRIM_SCAL_FUN_INV_HPP
 
 #include <stan/math/prim/meta.hpp>
-namespace stan {
-namespace math {
-
-inline double inv(double x) { return 1.0 / x; }
-
-}  // namespace math
-}  // namespace stan
-
-#endif
-#ifndef STAN_MATH_PRIM_MAT_FUN_INV_HPP
-#define STAN_MATH_PRIM_MAT_FUN_INV_HPP
-
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/inv.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 
 namespace stan {
 namespace math {
+
+inline double inv(double x) { return 1.0 / x; }
 
 /**
  * Structure to wrap inv() so that it can be vectorized.

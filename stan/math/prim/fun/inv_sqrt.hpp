@@ -2,7 +2,9 @@
 #define STAN_MATH_PRIM_SCAL_FUN_INV_SQRT_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/inv.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/inv.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -12,21 +14,6 @@ inline double inv_sqrt(double x) {
   using std::sqrt;
   return inv(sqrt(x));
 }
-
-}  // namespace math
-}  // namespace stan
-
-#endif
-#ifndef STAN_MATH_PRIM_MAT_FUN_INV_SQRT_HPP
-#define STAN_MATH_PRIM_MAT_FUN_INV_SQRT_HPP
-
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
-#include <stan/math/prim/scal/fun/inv_sqrt.hpp>
-
-namespace stan {
-namespace math {
 
 /**
  * Structure to wrap inv_sqrt() so that it can be vectorized.

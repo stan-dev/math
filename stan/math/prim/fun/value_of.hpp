@@ -2,6 +2,10 @@
 #define STAN_MATH_PRIM_SCAL_FUN_VALUE_OF_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <cstddef>
+#include <vector>
+
 namespace stan {
 namespace math {
 
@@ -54,20 +58,6 @@ inline double value_of<double>(double x) {
  */
 inline int value_of(int x) { return x; }
 
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_PRIM_ARR_FUN_VALUE_OF_HPP
-#define STAN_MATH_PRIM_ARR_FUN_VALUE_OF_HPP
-
-#include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
-#include <vector>
-#include <cstddef>
-
-namespace stan {
-namespace math {
-
 /**
  * Convert a std::vector of type T to a std::vector of
  * child_type<T>::type.
@@ -114,20 +104,6 @@ inline const std::vector<double>& value_of(const std::vector<double>& x) {
  * @return Specified std::vector.
  */
 inline const std::vector<int>& value_of(const std::vector<int>& x) { return x; }
-
-}  // namespace math
-}  // namespace stan
-
-#endif
-#ifndef STAN_MATH_PRIM_MAT_FUN_VALUE_OF_HPP
-#define STAN_MATH_PRIM_MAT_FUN_VALUE_OF_HPP
-
-#include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-
-namespace stan {
-namespace math {
 
 /**
  * Convert a matrix of type T to a matrix of doubles.

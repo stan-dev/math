@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_SCAL_FUN_ERF_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -27,18 +28,6 @@ inline double erf(double x) { return std::erf(x); }
  * @return Error function of the argument.
  */
 inline double erf(int x) { return std::erf(x); }
-
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_PRIM_MAT_FUN_ERF_HPP
-#define STAN_MATH_PRIM_MAT_FUN_ERF_HPP
-
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
-#include <stan/math/prim/scal/fun/erf.hpp>
-
-namespace stan {
-namespace math {
 
 /**
  * Structure to wrap erf() so it can be vectorized.

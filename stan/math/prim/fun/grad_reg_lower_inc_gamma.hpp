@@ -3,16 +3,16 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/lgamma.hpp>
-#include <stan/math/prim/scal/fun/gamma_p.hpp>
-#include <stan/math/prim/scal/fun/log1p.hpp>
-#include <stan/math/prim/scal/fun/digamma.hpp>
-#include <stan/math/prim/scal/fun/is_any_nan.hpp>
-#include <stan/math/prim/scal/fun/is_inf.hpp>
-#include <stan/math/prim/scal/fun/grad_reg_inc_gamma.hpp>
-#include <stan/math/prim/scal/fun/sqrt.hpp>
-#include <stan/math/prim/scal/fun/tgamma.hpp>
-#include <stan/math/prim/scal/fun/value_of_rec.hpp>
+#include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/fun/gamma_p.hpp>
+#include <stan/math/prim/fun/log1p.hpp>
+#include <stan/math/prim/fun/digamma.hpp>
+#include <stan/math/prim/fun/is_any_nan.hpp>
+#include <stan/math/prim/fun/is_inf.hpp>
+#include <stan/math/prim/fun/grad_reg_inc_gamma.hpp>
+#include <stan/math/prim/fun/sqrt.hpp>
+#include <stan/math/prim/fun/tgamma.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 #include <limits>
 #include <cmath>
 

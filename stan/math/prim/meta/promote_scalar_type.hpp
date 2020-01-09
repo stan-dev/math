@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_SCAL_META_PROMOTE_SCALAR_TYPE_HPP
 #define STAN_MATH_PRIM_SCAL_META_PROMOTE_SCALAR_TYPE_HPP
 
-#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/require_generics.hpp>
 #include <vector>
 
