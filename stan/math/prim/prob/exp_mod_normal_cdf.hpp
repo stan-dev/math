@@ -61,12 +61,11 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
     const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
     const T_partials_return lambda_dbl = value_of(lambda_vec[n]);
     const T_partials_return inv_sigma = inv(sigma_dbl);
-    const T_partials_return u = lambda_dbl * (y_dbl - mu_dbl);
+    const T_partials_return diff = y_dbl - mu_dbl;
+    const T_partials_return scaled_diff = diff * INV_SQRT_TWO * inv_sigma;
+    const T_partials_return u = lambda_dbl * diff;
     const T_partials_return v = lambda_dbl * sigma_dbl;
     const T_partials_return v_over_sqrt_two = v * INV_SQRT_TWO;
-    const T_partials_return scaled_diff
-        = (y_dbl - mu_dbl) * INV_SQRT_TWO * inv_sigma;
-    const T_partials_return scaled_diff_sq = scaled_diff * scaled_diff;
     const T_partials_return erf_calc
         = 0.5 * (1 + erf(-v_over_sqrt_two + scaled_diff));
     const T_partials_return exp_term = exp(0.5 * square(v) - u);
@@ -76,7 +75,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
         = SQRT_TWO_OVER_SQRT_PI * 0.5 * exp_term
           * exp(-square(scaled_diff - v_over_sqrt_two)) * inv_sigma;
     const T_partials_return deriv_3
-        = SQRT_TWO_OVER_SQRT_PI * 0.5 * exp(-scaled_diff_sq) * inv_sigma;
+        = SQRT_TWO_OVER_SQRT_PI * 0.5 * exp(-square(scaled_diff)) * inv_sigma;
 
     const T_partials_return cdf_n
         = 0.5 + 0.5 * erf(u / (v * SQRT_TWO)) - exp_term * erf_calc;
@@ -100,7 +99,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
           += exp_term
              * (SQRT_TWO_OVER_SQRT_PI * 0.5 * sigma_dbl
                     * exp(-square(v_over_sqrt_two - scaled_diff))
-                - (v * sigma_dbl + mu_dbl - y_dbl) * erf_calc)
+                - (v * sigma_dbl - diff) * erf_calc)
              / cdf_n;
     }
   }
