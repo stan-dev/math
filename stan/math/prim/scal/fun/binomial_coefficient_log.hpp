@@ -65,13 +65,13 @@ namespace math {
  */
 
 namespace internal {
-  constexpr double lbeta_stirling_bound = 10;
+constexpr double lbeta_stirling_bound = 10;
 }
 
 inline double lbeta(const double a, const double b) {
-  double x; //x is the smaller of the two
+  double x;  // x is the smaller of the two
   double y;
-  if( a < b ) {
+  if (a < b) {
     x = a;
     y = b;
   } else {
@@ -79,21 +79,26 @@ inline double lbeta(const double a, const double b) {
     y = a;
   }
 
-  if(y < internal::lbeta_stirling_bound) {
-    //both small
+  if (y < internal::lbeta_stirling_bound) {
+    // both small
     return lgamma(x) + lgamma(y) - lgamma(x + y);
   } else if (x < internal::lbeta_stirling_bound) {
-    //y large, x small    
-    double stirling_diff = lgamma_stirling_diff(y) - lgamma_stirling_diff(x + y);
-    double log_x_y = log(x + y);//log_sum_exp(log(x), log(y));
-    double stirling = (y - 0.5) * log1p(-x/(x+y)) + x * (1 - log_x_y);
+    // y large, x small
+    double stirling_diff
+        = lgamma_stirling_diff(y) - lgamma_stirling_diff(x + y);
+    double log_x_y = log(x + y);  // log_sum_exp(log(x), log(y));
+    double stirling = (y - 0.5) * log1p(-x / (x + y)) + x * (1 - log_x_y);
     // std::cout << std::setprecision(18) << x << " " << y << std::endl;
-    // std::cout << std::setprecision(18) << lgamma_stirling_diff(y) << " " << lgamma(y) << " " << lgamma_stirling_diff(x + y) << " " << lgamma(x + y) << std::endl;
+    // std::cout << std::setprecision(18) << lgamma_stirling_diff(y) << " " <<
+    // lgamma(y) << " " << lgamma_stirling_diff(x + y) << " " << lgamma(x + y)
+    // << std::endl;
     return stirling + lgamma(x) + stirling_diff;
   } else {
-    //both large
-    double stirling_diff = lgamma_stirling_diff(x) + lgamma_stirling_diff(y) - lgamma_stirling_diff(x + y);
-    double stirling = (x - 0.5) *log(x/(x+y)) + y * log1p(- x /(x+y)) + 0.5*( log(2 * stan::math::pi())  -log(y));
+    // both large
+    double stirling_diff = lgamma_stirling_diff(x) + lgamma_stirling_diff(y)
+                           - lgamma_stirling_diff(x + y);
+    double stirling = (x - 0.5) * log(x / (x + y)) + y * log1p(-x / (x + y))
+                      + 0.5 * (log(2 * stan::math::pi()) - log(y));
     return stirling + stirling_diff;
   }
 }
@@ -103,7 +108,7 @@ inline return_type_t<T_N, T_n> binomial_coefficient_log(const T_N N,
                                                         const T_n n) {
   const double CUTOFF = 1000;
   const T_N N_plus_1 = N + 1;
-  if(n == 0) {
+  if (n == 0) {
     return 0;
   } else if (N - n < CUTOFF) {
     return lgamma(N_plus_1) - lgamma(n + 1) - lgamma(N_plus_1 - n);
@@ -111,7 +116,8 @@ inline return_type_t<T_N, T_n> binomial_coefficient_log(const T_N N,
     return -lbeta(N - n + 1, n + 1) - log(N_plus_1);
     // return_type_t<T_N, T_n> N_minus_n = N - n;
     // const double one_twelfth = inv(12);
-    // return multiply_log(n, N_minus_n) + multiply_log((N + 0.5), N / N_minus_n)
+    // return multiply_log(n, N_minus_n) + multiply_log((N + 0.5), N /
+    // N_minus_n)
     //        + one_twelfth / N - n - one_twelfth / N_minus_n - lgamma(n + 1);
   }
 }
