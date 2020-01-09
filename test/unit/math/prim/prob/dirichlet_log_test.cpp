@@ -1,5 +1,5 @@
 #include <stan/math/prim/fun/typedefs.hpp>
-#include <stan/math/prim/mat.hpp>
+#include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 
 TEST(ProbDirichlet, log_matches_lpdf) {

@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 
-#include <stan/math/prim/mat.hpp>
+#include <stan/math/prim.hpp>
 
 #include <stan/math/rev/fun/LDLT_alloc.hpp>
 #include <stan/math/rev/fun/LDLT_factor.hpp>

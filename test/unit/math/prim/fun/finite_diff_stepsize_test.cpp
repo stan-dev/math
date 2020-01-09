@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 #include <cmath>
 #include <limits>
 

@@ -1,7 +1,7 @@
-#include <stan/math/prim/arr.hpp>
+#include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 #include <vector>
-#include <stan/math/prim/mat.hpp>
+#include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
