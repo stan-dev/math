@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_IS_CONTAINER_HPP
-#define STAN_MATH_PRIM_SCAL_IS_CONTAINER_HPP
+#ifndef STAN_MATH_PRIM_IS_CONTAINER_HPP
+#define STAN_MATH_PRIM_IS_CONTAINER_HPP
 
 #include <stan/math/prim/meta/bool_constant.hpp>
 #include <stan/math/prim/meta/disjunction.hpp>

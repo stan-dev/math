@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_FUN_PHI_APPROX_HPP
-#define STAN_MATH_PRIM_SCAL_FUN_PHI_APPROX_HPP
+#ifndef STAN_MATH_PRIM_FUN_PHI_APPROX_HPP
+#define STAN_MATH_PRIM_FUN_PHI_APPROX_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/inv_logit.hpp>

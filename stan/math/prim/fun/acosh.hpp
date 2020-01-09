@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_FUN_ACOSH_HPP
-#define STAN_MATH_PRIM_SCAL_FUN_ACOSH_HPP
+#ifndef STAN_MATH_PRIM_FUN_ACOSH_HPP
+#define STAN_MATH_PRIM_FUN_ACOSH_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
@@ -55,8 +55,8 @@ inline double acosh(int x) {
 }  // namespace math
 }  // namespace stan
 #endif
-#ifndef STAN_MATH_PRIM_MAT_FUN_ACOSH_HPP
-#define STAN_MATH_PRIM_MAT_FUN_ACOSH_HPP
+#ifndef STAN_MATH_PRIM_FUN_ACOSH_HPP
+#define STAN_MATH_PRIM_FUN_ACOSH_HPP
 
 
 namespace stan {

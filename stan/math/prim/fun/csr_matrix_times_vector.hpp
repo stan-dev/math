@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_MAT_FUN_CSR_MATRIX_TIMES_VECTOR_HPP
-#define STAN_MATH_PRIM_MAT_FUN_CSR_MATRIX_TIMES_VECTOR_HPP
+#ifndef STAN_MATH_PRIM_FUN_CSR_MATRIX_TIMES_VECTOR_HPP
+#define STAN_MATH_PRIM_FUN_CSR_MATRIX_TIMES_VECTOR_HPP
 
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/csr_u_to_z.hpp>

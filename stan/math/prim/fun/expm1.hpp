@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_FUN_EXPM1_HPP
-#define STAN_MATH_PRIM_SCAL_FUN_EXPM1_HPP
+#ifndef STAN_MATH_PRIM_FUN_EXPM1_HPP
+#define STAN_MATH_PRIM_FUN_EXPM1_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>

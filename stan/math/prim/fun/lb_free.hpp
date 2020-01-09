@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_FUN_LB_FREE_HPP
-#define STAN_MATH_PRIM_SCAL_FUN_LB_FREE_HPP
+#ifndef STAN_MATH_PRIM_FUN_LB_FREE_HPP
+#define STAN_MATH_PRIM_FUN_LB_FREE_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/identity_free.hpp>

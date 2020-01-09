@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_MAT_FUN_ELT_DIVIDE_HPP
-#define STAN_MATH_PRIM_MAT_FUN_ELT_DIVIDE_HPP
+#ifndef STAN_MATH_PRIM_FUN_ELT_DIVIDE_HPP
+#define STAN_MATH_PRIM_FUN_ELT_DIVIDE_HPP
 
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>

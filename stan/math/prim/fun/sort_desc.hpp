@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_ARR_FUN_SORT_DESC_HPP
-#define STAN_MATH_PRIM_ARR_FUN_SORT_DESC_HPP
+#ifndef STAN_MATH_PRIM_FUN_SORT_DESC_HPP
+#define STAN_MATH_PRIM_FUN_SORT_DESC_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>

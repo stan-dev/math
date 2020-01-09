@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_MAT_FUN_TRACE_HPP
-#define STAN_MATH_PRIM_MAT_FUN_TRACE_HPP
+#ifndef STAN_MATH_PRIM_FUN_TRACE_HPP
+#define STAN_MATH_PRIM_FUN_TRACE_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
 

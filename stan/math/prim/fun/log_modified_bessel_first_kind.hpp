@@ -1,8 +1,8 @@
 //  Copyright (c) 2006 Xiaogang Zhang
 //  Copyright (c) 2007, 2017 John Maddock
 
-#ifndef STAN_MATH_PRIM_SCAL_FUN_LOG_MODIFIED_BESSEL_FIRST_KIND_HPP
-#define STAN_MATH_PRIM_SCAL_FUN_LOG_MODIFIED_BESSEL_FIRST_KIND_HPP
+#ifndef STAN_MATH_PRIM_FUN_LOG_MODIFIED_BESSEL_FIRST_KIND_HPP
+#define STAN_MATH_PRIM_FUN_LOG_MODIFIED_BESSEL_FIRST_KIND_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>

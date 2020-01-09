@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_FUN_LGAMMA_HPP
-#define STAN_MATH_PRIM_SCAL_FUN_LGAMMA_HPP
+#ifndef STAN_MATH_PRIM_FUN_LGAMMA_HPP
+#define STAN_MATH_PRIM_FUN_LGAMMA_HPP
 
 /*
  * The lgamma implementation in stan-math is based on either the

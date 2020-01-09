@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_FUN_INV_SQUARE_HPP
-#define STAN_MATH_PRIM_SCAL_FUN_INV_SQUARE_HPP
+#ifndef STAN_MATH_PRIM_FUN_INV_SQUARE_HPP
+#define STAN_MATH_PRIM_FUN_INV_SQUARE_HPP
 
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/square.hpp>

@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_FUN_SQRT_HPP
-#define STAN_MATH_PRIM_SCAL_FUN_SQRT_HPP
+#ifndef STAN_MATH_PRIM_FUN_SQRT_HPP
+#define STAN_MATH_PRIM_FUN_SQRT_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>

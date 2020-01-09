@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_MAT_FUN_MAKE_NU_HPP
-#define STAN_MATH_PRIM_MAT_FUN_MAKE_NU_HPP
+#ifndef STAN_MATH_PRIM_FUN_MAKE_NU_HPP
+#define STAN_MATH_PRIM_FUN_MAKE_NU_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>

@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_FUN_GAMMA_Q_HPP
-#define STAN_MATH_PRIM_SCAL_FUN_GAMMA_Q_HPP
+#ifndef STAN_MATH_PRIM_FUN_GAMMA_Q_HPP
+#define STAN_MATH_PRIM_FUN_GAMMA_Q_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <boost/math/special_functions/gamma.hpp>

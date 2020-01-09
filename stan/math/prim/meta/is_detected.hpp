@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_IS_DETECTED_HPP
-#define STAN_MATH_PRIM_SCAL_IS_DETECTED_HPP
+#ifndef STAN_MATH_PRIM_IS_DETECTED_HPP
+#define STAN_MATH_PRIM_IS_DETECTED_HPP
 
 #include <stan/math/prim/meta/void_t.hpp>
 #include <type_traits>

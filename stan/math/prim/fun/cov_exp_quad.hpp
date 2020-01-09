@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_MAT_FUN_COV_EXP_QUAD_HPP
-#define STAN_MATH_PRIM_MAT_FUN_COV_EXP_QUAD_HPP
+#ifndef STAN_MATH_PRIM_FUN_COV_EXP_QUAD_HPP
+#define STAN_MATH_PRIM_FUN_COV_EXP_QUAD_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>

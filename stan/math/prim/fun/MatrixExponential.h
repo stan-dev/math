@@ -11,8 +11,8 @@
 // This file was edited for to the Stan math library to create
 // the matrix exponential function (matrix_exp), 2016.
 
-#ifndef STAN_MATH_PRIM_MAT_FUN_MATRIXEXPONENTIAL_H
-#define STAN_MATH_PRIM_MAT_FUN_MATRIXEXPONENTIAL_H
+#ifndef STAN_MATH_PRIM_FUN_MATRIXEXPONENTIAL_H
+#define STAN_MATH_PRIM_FUN_MATRIXEXPONENTIAL_H
 
 #include <stan/math/prim/fun/value_of_rec.hpp>
 #include <cmath>

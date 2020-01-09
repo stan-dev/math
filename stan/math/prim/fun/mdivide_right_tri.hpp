@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_MAT_FUN_MDIVIDE_RIGHT_TRI_HPP
-#define STAN_MATH_PRIM_MAT_FUN_MDIVIDE_RIGHT_TRI_HPP
+#ifndef STAN_MATH_PRIM_FUN_MDIVIDE_RIGHT_TRI_HPP
+#define STAN_MATH_PRIM_FUN_MDIVIDE_RIGHT_TRI_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/mdivide_left_tri.hpp>
