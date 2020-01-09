@@ -88,8 +88,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf(
       ops_partials.edge1_.partials_[n] += (deriv_1 - deriv_2 + deriv_3) / cdf_n;
     }
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_[n]
-          -= (deriv_1 - deriv_2 + deriv_3) / cdf_n;
+      ops_partials.edge2_.partials_[n] -= (deriv_1 - deriv_2 + deriv_3) / cdf_n;
     }
     if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n]
