@@ -1,5 +1,4 @@
 #include <stan/math/prim.hpp>
-#include <stan/math/prim/arr/fun/log_sum_exp.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
 #include <limits>

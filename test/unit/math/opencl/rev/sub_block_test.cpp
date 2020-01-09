@@ -1,5 +1,4 @@
 #ifdef STAN_OPENCL
-#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim.hpp>
 #include <stan/math/opencl/rev/copy.hpp>
 #include <stan/math/opencl/rev/matrix_cl.hpp>
