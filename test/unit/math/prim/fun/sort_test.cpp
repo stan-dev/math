@@ -1,4 +1,4 @@
-#include <stan/math/prim/mat.hpp>
+#include <stan/math/prim.hpp>
 #include <test/unit/math/prim/mat/fun/sort_test_util.hpp>
 #include <gtest/gtest.h>
 #include <limits>

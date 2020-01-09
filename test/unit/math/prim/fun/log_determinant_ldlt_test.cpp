@@ -1,4 +1,4 @@
-#include <stan/math/prim/mat.hpp>
+#include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathMatrixPrimMat, log_determinant_ldlt) {

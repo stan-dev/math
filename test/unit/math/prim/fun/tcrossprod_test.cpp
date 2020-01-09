@@ -1,4 +1,4 @@
-#include <stan/math/prim/mat.hpp>
+#include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 
 void test_tcrossprod(const stan::math::matrix_d& x) {

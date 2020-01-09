@@ -1,4 +1,4 @@
-#include <stan/math/prim/mat.hpp>
+#include <stan/math/prim.hpp>
 #include <stan/math/prim/mat/fun/matrix_exp_pade.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/prim/mat/fun/expect_matrix_eq.hpp>

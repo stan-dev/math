@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 #include <vector>
 
 TEST(MathPrimScalFun, grad2F1_1) {

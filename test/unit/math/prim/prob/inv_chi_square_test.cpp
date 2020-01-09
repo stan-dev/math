@@ -1,5 +1,5 @@
-#include <stan/math/prim/mat.hpp>
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
+#include <stan/math/prim.hpp>
 #include <test/unit/math/prim/prob/vector_rng_test_helper.hpp>
 #include <test/unit/math/prim/prob/util.hpp>
 #include <boost/random/mersenne_twister.hpp>

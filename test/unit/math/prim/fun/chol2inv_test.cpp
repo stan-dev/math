@@ -1,4 +1,4 @@
-#include <stan/math/prim/mat.hpp>
+#include <stan/math/prim.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <gtest/gtest.h>
 

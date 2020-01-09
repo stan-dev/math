@@ -1,4 +1,4 @@
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 #include <boost/math/special_functions/owens_t.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
