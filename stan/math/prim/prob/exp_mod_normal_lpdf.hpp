@@ -6,6 +6,7 @@
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/erfc.hpp>
 #include <stan/math/prim/scal/fun/size_zero.hpp>
+#include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <cmath>
 
@@ -57,46 +58,42 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
     const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
     const T_partials_return lambda_dbl = value_of(lambda_vec[n]);
 
+    const T_partials_return inv_sqrt2_inv_sigma = INV_SQRT_TWO / sigma_dbl;
+    const T_partials_return sigma_sq = square(sigma_dbl);
+    const T_partials_return lambda_sigma_sq = lambda_dbl * sigma_sq;
+    const T_partials_return term1 = lambda_sigma_sq - y_dbl;
+    const T_partials_return term2 = (mu_dbl + term1) * inv_sqrt2_inv_sigma;
+    const T_partials_return erfc_term2 = erfc(term2);
+    const T_partials_return deriv_logerfc
+        = NEG_TWO_OVER_SQRT_PI * exp(-square(term2)) / erfc_term2;
+
     if (include_summand<propto>::value) {
       logp -= LOG_TWO;
     }
     if (include_summand<propto, T_inv_scale>::value) {
       logp += log(lambda_dbl);
     }
-    logp += lambda_dbl
-                * (mu_dbl + 0.5 * lambda_dbl * sigma_dbl * sigma_dbl - y_dbl)
-            + log(erfc((mu_dbl + lambda_dbl * sigma_dbl * sigma_dbl - y_dbl)
-                       / (SQRT_TWO * sigma_dbl)));
-
-    const T_partials_return deriv_logerfc
-        = NEG_TWO_OVER_SQRT_PI
-          * exp(-(mu_dbl + lambda_dbl * sigma_dbl * sigma_dbl - y_dbl)
-                / (SQRT_TWO * sigma_dbl)
-                * (mu_dbl + lambda_dbl * sigma_dbl * sigma_dbl - y_dbl)
-                / (sigma_dbl * SQRT_TWO))
-          / erfc((mu_dbl + lambda_dbl * sigma_dbl * sigma_dbl - y_dbl)
-                 / (sigma_dbl * SQRT_TWO));
+    logp += lambda_dbl * (mu_dbl + 0.5 * (term1 - y_dbl)) + log(erfc_term2);
 
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n]
-          += -lambda_dbl + deriv_logerfc * -1.0 / (sigma_dbl * SQRT_TWO);
+          -= lambda_dbl + deriv_logerfc * inv_sqrt2_inv_sigma;
     }
     if (!is_constant_all<T_loc>::value) {
       ops_partials.edge2_.partials_[n]
-          += lambda_dbl + deriv_logerfc / (sigma_dbl * SQRT_TWO);
+          += lambda_dbl + deriv_logerfc * inv_sqrt2_inv_sigma;
     }
     if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n]
           += sigma_dbl * lambda_dbl * lambda_dbl
              + deriv_logerfc
-                   * (-mu_dbl / (sigma_dbl * sigma_dbl * SQRT_TWO)
-                      + lambda_dbl / SQRT_TWO
-                      + y_dbl / (sigma_dbl * sigma_dbl * SQRT_TWO));
+                   * ((y_dbl - mu_dbl) / sigma_sq
+                      + lambda_dbl) * INV_SQRT_TWO;
     }
     if (!is_constant_all<T_inv_scale>::value) {
       ops_partials.edge4_.partials_[n]
-          += 1 / lambda_dbl + lambda_dbl * sigma_dbl * sigma_dbl + mu_dbl
-             - y_dbl + deriv_logerfc * sigma_dbl / SQRT_TWO;
+          += 1 / lambda_dbl + lambda_sigma_sq + mu_dbl - y_dbl
+             + deriv_logerfc * sigma_dbl * INV_SQRT_TWO;
     }
   }
   return ops_partials.build(logp);
