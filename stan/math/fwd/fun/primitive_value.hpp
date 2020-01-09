@@ -13,7 +13,7 @@ namespace math {
  * autodiff variable.  This function applies recursively to
  * higher-order autodiff types to return a primitive double value.
  *
- * @tparam T scalar type for autodiff variable.
+ * @tparam T inner type of the fvar
  * @param v input variable.
  * @return primitive value of input.
  */
@@ -23,7 +23,6 @@ inline double primitive_value(const fvar<T>& v) {
 }
 
 }  // namespace math
-
 }  // namespace stan
 
 #endif

@@ -12,7 +12,7 @@ namespace math {
  * Return the nearest integral value that is not larger in
  * magnitude than the specified argument.
  *
- * @tparam T Scalar type of autodiff variable.
+ * @tparam T inner type of the fvar
  * @param[in] x Argument.
  * @return The truncated argument.
  */
