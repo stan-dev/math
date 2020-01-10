@@ -29,8 +29,8 @@ namespace math {
  * of functions with appropriately general namespace imports that
  * eventually depend on functions defined in Stan.
  *
- * @tparam T Type of underlying scalar
- * @tparam F Type of function
+ * @tparam T type of elements in the vector and matrix
+ * @tparam F type of function
  * @param[in] f Function
  * @param[in] x Argument to function
  * @param[out] fx Function applied to argument

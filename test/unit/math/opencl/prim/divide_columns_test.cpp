@@ -1,5 +1,5 @@
 #ifdef STAN_OPENCL
-#include <stan/math/prim/mat/fun/typedefs.hpp>
+#include <stan/math/prim.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/prim/divide_columns.hpp>
 #include <gtest/gtest.h>

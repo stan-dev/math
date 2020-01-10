@@ -1,5 +1,5 @@
-#include <stan/math/rev/mat.hpp>
-#include <test/unit/math/rev/mat/util.hpp>
+#include <stan/math/rev.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 
 using Eigen::Dynamic;

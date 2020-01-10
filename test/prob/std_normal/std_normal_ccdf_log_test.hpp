@@ -1,5 +1,5 @@
 // Arguments: Doubles
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 
 using std::vector;
 

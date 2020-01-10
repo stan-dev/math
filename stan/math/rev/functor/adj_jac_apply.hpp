@@ -5,7 +5,7 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/rev/scal/fun/value_of.hpp>
+#include <stan/math/rev/fun/value_of.hpp>
 #include <tuple>
 #include <vector>
 

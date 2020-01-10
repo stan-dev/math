@@ -11,6 +11,7 @@ def runTests(String testPath) {
 def runTestsWin(String testPath) {
     withEnv(['PATH+TBB=./lib/tbb']) {
        bat "echo $PATH"
+       bat "mingw32-make.exe -f make/standalone math-libs"
        bat "runTests.py -j${env.PARALLEL} ${testPath} --make-only"
        try { bat "runTests.py -j${env.PARALLEL} ${testPath}" }
        finally { junit 'test/**/*.xml' }

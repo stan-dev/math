@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_COS_HPP
 #define STAN_MATH_PRIM_MAT_FUN_COS_HPP
 
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
@@ -29,9 +31,21 @@ struct cos_fun {
  * @param x angles in radians
  * @return Cosine of each value in x.
  */
-template <typename T>
-inline typename apply_scalar_unary<cos_fun, T>::return_t cos(const T& x) {
+template <typename T, typename = require_not_eigen_vt<std::is_arithmetic, T>>
+inline auto cos(const T& x) {
   return apply_scalar_unary<cos_fun, T>::apply(x);
+}
+
+/**
+ * Version of cos() that accepts Eigen Matrix or matrix expressions.
+ * @tparam Derived derived type of x
+ * @param x Matrix or matrix expression
+ * @return Cosine of each value in x.
+ */
+template <typename Derived,
+          typename = require_eigen_vt<std::is_arithmetic, Derived>>
+inline auto cos(const Eigen::MatrixBase<Derived>& x) {
+  return x.derived().array().cos().matrix();
 }
 
 }  // namespace math

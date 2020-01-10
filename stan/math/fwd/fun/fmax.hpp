@@ -14,6 +14,7 @@ namespace math {
  * Return the greater of the two specified arguments.  If one is
  * not-a-number, return the other.
  *
+ * @tparam T inner type of the fvar
  * @param x1 First argument.
  * @param x2 Second argument.
  * @return maximum of arguments, and if one is NaN return the other
@@ -41,6 +42,7 @@ inline fvar<T> fmax(const fvar<T>& x1, const fvar<T>& x2) {
  * Return the greater of the two specified arguments.  If one is
  * not-a-number, return the other.
  *
+ * @tparam T inner type of the fvar
  * @param x1 First argument.
  * @param x2 Second argument.
  * @return maximum of arguments, and if one is NaN return the other
@@ -68,6 +70,7 @@ inline fvar<T> fmax(double x1, const fvar<T>& x2) {
  * Return the greater of the two specified arguments.  If one is
  * not-a-number, return the other.
  *
+ * @tparam T inner type of the fvar
  * @param x1 First argument.
  * @param x2 Second argument.
  * @return maximum of arguments, and if one is NaN return the other
@@ -90,6 +93,7 @@ inline fvar<T> fmax(const fvar<T>& x1, double x2) {
     return fvar<T>(x2, 0.0);
   }
 }
+
 }  // namespace math
 }  // namespace stan
 #endif

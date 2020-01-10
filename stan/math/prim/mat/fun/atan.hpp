@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_ATAN_HPP
 #define STAN_MATH_PRIM_MAT_FUN_ATAN_HPP
 
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
@@ -29,9 +31,21 @@ struct atan_fun {
  * @param x container
  * @return Arctan of each value in x, in radians.
  */
-template <typename T>
+template <typename T, typename = require_not_eigen_vt<std::is_arithmetic, T>>
 inline typename apply_scalar_unary<atan_fun, T>::return_t atan(const T& x) {
   return apply_scalar_unary<atan_fun, T>::apply(x);
+}
+
+/**
+ * Version of atan() that accepts Eigen Matrix or matrix expressions.
+ * @tparam Derived derived type of x
+ * @param x Matrix or matrix expression
+ * @return Elementwise atan of members of container.
+ */
+template <typename Derived,
+          typename = require_eigen_vt<std::is_arithmetic, Derived>>
+inline auto atan(const Eigen::MatrixBase<Derived>& x) {
+  return x.derived().array().atan().matrix();
 }
 
 }  // namespace math

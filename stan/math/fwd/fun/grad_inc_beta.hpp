@@ -23,7 +23,7 @@ namespace math {
  * Uses the equivalence to a hypergeometric function. See
  * http://dlmf.nist.gov/8.17#ii
  *
- * @tparam T type of fvar
+ * @tparam T inner type of the fvar
  * @param[out] g1 d/da
  * @param[out] g2 d/db
  * @param[in] a a

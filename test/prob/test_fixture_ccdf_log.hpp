@@ -1,7 +1,7 @@
 #ifndef TEST_PROB_TEST_FIXTURE_CCDF_LOG_HPP
 #define TEST_PROB_TEST_FIXTURE_CCDF_LOG_HPP
 
-#include <stan/math/rev/mat.hpp>
+#include <stan/math/rev.hpp>
 #include <test/prob/utility.hpp>
 #include <type_traits>
 

@@ -184,7 +184,6 @@
 #include <stan/math/prim/mat/fun/promote_common.hpp>
 #include <stan/math/prim/mat/fun/promote_elements.hpp>
 #include <stan/math/prim/mat/fun/promote_scalar.hpp>
-#include <stan/math/prim/mat/fun/promote_scalar_type.hpp>
 #include <stan/math/prim/mat/fun/qr_Q.hpp>
 #include <stan/math/prim/mat/fun/qr_R.hpp>
 #include <stan/math/prim/mat/fun/qr_thin_Q.hpp>

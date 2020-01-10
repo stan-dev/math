@@ -1,4 +1,4 @@
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 
 TEST(ProbSkewNormal, ccdf_log_matches_lccdf) {

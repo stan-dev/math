@@ -13,6 +13,7 @@ namespace math {
  *
  * Delegates to <code>is_inf</code>.
  *
+ * @tparam T inner type of the fvar
  * @param x Value to test.
  * @return <code>1</code> if the value is infinite and <code>0</code> otherwise.
  */
