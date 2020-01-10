@@ -6,6 +6,7 @@
 #include <test/unit/math/opencl/kernel_generator/reference_kernel.hpp>
 #include <Eigen/Dense>
 #include <gtest/gtest.h>
+#include <string>
 
 using Eigen::Matrix;
 using Eigen::MatrixXd;

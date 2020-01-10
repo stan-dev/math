@@ -45,7 +45,7 @@ class select_ : public operation_cl<select_<T_condition, T_then, T_else>,
    * @param then then expression
    * @param els else expression
    */
-  select_(T_condition&& condition, T_then&& then, T_else&& els)
+  select_(T_condition&& condition, T_then&& then, T_else&& els)   // NOLINT
       : base(std::forward<T_condition>(condition), std::forward<T_then>(then),
              std::forward<T_else>(els)) {
     if (condition.rows() != base::dynamic && then.rows() != base::dynamic) {
@@ -114,7 +114,7 @@ template <typename T_condition, typename T_then, typename T_else,
           = require_all_valid_expressions_t<T_condition, T_then, T_else>>
 inline select_<as_operation_cl_t<T_condition>, as_operation_cl_t<T_then>,
                as_operation_cl_t<T_else>>
-select(T_condition&& condition, T_then&& then, T_else&& els) {
+select(T_condition&& condition, T_then&& then, T_else&& els) {  // NOLINT
   return {as_operation_cl(std::forward<T_condition>(condition)),
           as_operation_cl(std::forward<T_then>(then)),
           as_operation_cl(std::forward<T_else>(els))};
