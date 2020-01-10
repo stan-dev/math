@@ -61,11 +61,6 @@ const double NOT_A_NUMBER = std::numeric_limits<double>::quiet_NaN();
 const double EPSILON = std::numeric_limits<double>::epsilon();
 
 /**
- * Largest negative value (i.e., smallest absolute value).
- */
-const double NEGATIVE_EPSILON = -EPSILON;
-
-/**
  * Largest rate parameter allowed in Poisson RNG
  */
 const double POISSON_MAX_RATE = std::pow(2.0, 30);
@@ -83,20 +78,6 @@ inline double pi() { return boost::math::constants::pi<double>(); }
  * @return Base of natural logarithm.
  */
 inline double e() { return E; }
-
-/**
- * Return the square root of two.
- *
- * @return Square root of two.
- */
-inline double sqrt2() { return SQRT_TWO; }
-
-/**
- * Return natural logarithm of ten.
- *
- * @return Natural logarithm of ten.
- */
-inline double log10() { return LOG_TEN; }
 
 /**
  * Return positive infinity.
@@ -133,8 +114,6 @@ const double INV_SQRT_PI = inv(SQRT_PI);
 
 const double TWO_OVER_SQRT_PI = 2.0 / SQRT_PI;
 
-const double NEG_TWO_OVER_SQRT_PI = -TWO_OVER_SQRT_PI;
-
 const double SQRT_TWO_OVER_SQRT_PI = SQRT_TWO / SQRT_PI;
 
 const double TWO_PI = 2.0 * pi();
@@ -153,19 +132,11 @@ const double LOG_ZERO = std::log(0.0);
 
 const double LOG_HALF = std::log(0.5);
 
-const double NEG_LOG_TWO = -LOG_TWO;
-
 const double NEG_LOG_SQRT_TWO_PI = -std::log(SQRT_TWO_PI);
-
-const double NEG_LOG_PI = -LOG_PI;
-
-const double NEG_LOG_SQRT_PI = -LOG_SQRT_PI;
 
 const double NEG_LOG_TWO_OVER_TWO = -LOG_TWO / 2.0;
 
 const double LOG_TWO_PI = LOG_TWO + LOG_PI;
-
-const double NEG_LOG_TWO_PI = -LOG_TWO_PI;
 
 const double LOG_EPSILON = std::log(EPSILON);
 
