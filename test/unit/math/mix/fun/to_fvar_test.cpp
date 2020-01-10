@@ -1,6 +1,6 @@
 #include <stan/math/mix.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/fun/util.hpp>
 
 TEST(AgradMixMatrixToFvar, fv_vector) {
   using stan::math::vector_d;

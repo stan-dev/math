@@ -1,5 +1,4 @@
-#include <stan/math/rev/arr.hpp>
-#include <stan/math/rev/mat.hpp>
+#include <stan/math/rev.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 #include <vector>

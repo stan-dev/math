@@ -1,4 +1,4 @@
-#include <stan/math/rev/mat.hpp>
+#include <stan/math/rev.hpp>
 #include <gtest/gtest.h>
 #include <boost/numeric/odeint.hpp>
 #include <test/unit/math/rev/functor/util_cvodes_adams.hpp>

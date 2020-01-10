@@ -1,4 +1,4 @@
-#include <stan/math/rev/mat.hpp>
+#include <stan/math/rev.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/prob/expect_eq_diffs.hpp>
 #include <string>
