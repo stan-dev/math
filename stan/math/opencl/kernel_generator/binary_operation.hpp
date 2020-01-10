@@ -24,14 +24,14 @@ namespace math {
 /**
  * Represents a binary operation in kernel generator expressions.
  * @tparam Derived derived type
+ * @tparam T_res scalar type of the result
  * @tparam T_a type of first argument
  * @tparam T_b type of second argument
  */
-template <typename Derived, typename T_a, typename T_b>
-class binary_operation
-    : public operation_cl<Derived, common_scalar_t<T_a, T_b>, T_a, T_b> {
+template <typename Derived, typename T_res, typename T_a, typename T_b>
+class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
  public:
-  using Scalar = common_scalar_t<T_a, T_b>;
+  using Scalar = T_res;
   using base = operation_cl<Derived, Scalar, T_a, T_b>;
   using base::var_name;
 
@@ -92,7 +92,8 @@ class binary_operation
  * @tparam T_b type of second expression
  */
 template <typename T_a, typename T_b>
-class addition_ : public binary_operation<addition_<T_a, T_b>, T_a, T_b> {
+class addition_
+    : public binary_operation<addition_<T_a, T_b>, common_scalar_t<T_a, T_b>, T_a, T_b> {
  public:
   /**
    * Constructor.
@@ -100,8 +101,8 @@ class addition_ : public binary_operation<addition_<T_a, T_b>, T_a, T_b> {
    * @param b second expression
    */
   addition_(T_a&& a, T_b&& b)  // NOLINT
-      : binary_operation<addition_<T_a, T_b>, T_a, T_b>(
-            std::forward<T_a>(a), std::forward<T_b>(b), "+") {}
+      : binary_operation<addition_<T_a, T_b>, common_scalar_t<T_a, T_b>, T_a, T_b>(
+          std::forward<T_a>(a), std::forward<T_b>(b), "+") {}
 };
 
 /**
@@ -126,7 +127,8 @@ inline addition_<as_operation_cl_t<T_a>, as_operation_cl_t<T_b>> operator+(
  * @tparam T_b type of second expression
  */
 template <typename T_a, typename T_b>
-class subtraction_ : public binary_operation<subtraction_<T_a, T_b>, T_a, T_b> {
+class subtraction_
+    : public binary_operation<subtraction_<T_a, T_b>, common_scalar_t<T_a, T_b>, T_a, T_b> {
  public:
   /**
    * Constructor.
@@ -134,8 +136,8 @@ class subtraction_ : public binary_operation<subtraction_<T_a, T_b>, T_a, T_b> {
    * @param b second expression
    */
   subtraction_(T_a&& a, T_b&& b)  // NOLINT
-      : binary_operation<subtraction_<T_a, T_b>, T_a, T_b>(
-            std::forward<T_a>(a), std::forward<T_b>(b), "-") {}
+      : binary_operation<subtraction_<T_a, T_b>, common_scalar_t<T_a, T_b>, T_a, T_b>(
+          std::forward<T_a>(a), std::forward<T_b>(b), "-") {}
 };
 
 /**
@@ -162,7 +164,8 @@ inline subtraction_<as_operation_cl_t<T_a>, as_operation_cl_t<T_b>> operator-(
 template <typename T_a, typename T_b,
           typename = require_all_valid_expressions_t<T_a, T_b>>
 class elewise_multiplication_
-    : public binary_operation<elewise_multiplication_<T_a, T_b>, T_a, T_b> {
+    : public binary_operation<elewise_multiplication_<T_a, T_b>, common_scalar_t<T_a, T_b>, T_a,
+                                         T_b> {
  public:
   /**
    * Constructor.
@@ -170,15 +173,17 @@ class elewise_multiplication_
    * @param b second expression
    */
   elewise_multiplication_(T_a&& a, T_b&& b)  // NOLINT
-      : binary_operation<elewise_multiplication_<T_a, T_b>, T_a, T_b>(
-            std::forward<T_a>(a), std::forward<T_b>(b), "*") {}
+      : binary_operation<elewise_multiplication_<T_a, T_b>, common_scalar_t<T_a, T_b>, T_a,
+                                    T_b>(std::forward<T_a>(a),
+                                         std::forward<T_b>(b), "*") {}
 
   /**
    * View of a matrix that would be the result of evaluating this expression.
    * @return view
    */
   inline matrix_cl_view view() const {
-    using base = binary_operation<elewise_multiplication_<T_a, T_b>, T_a, T_b>;
+    using base = binary_operation<elewise_multiplication_<T_a, T_b>, common_scalar_t<T_a, T_b>,
+                                             T_a, T_b>;
     return both(std::get<0>(base::arguments_).view(),
                 std::get<1>(base::arguments_).view());
   }
@@ -255,7 +260,8 @@ inline matrix_cl<double> operator*(const T_a& a, const T_b& b) {
  */
 template <typename T_a, typename T_b>
 class elewise_division_
-    : public binary_operation<elewise_division_<T_a, T_b>, T_a, T_b> {
+    : public binary_operation<elewise_division_<T_a, T_b>, common_scalar_t<T_a, T_b>, T_a,
+                                         T_b> {
  public:
   /**
    * Constructor.
@@ -263,15 +269,16 @@ class elewise_division_
    * @param b second expression
    */
   elewise_division_(T_a&& a, T_b&& b)  // NOLINT
-      : binary_operation<elewise_division_<T_a, T_b>, T_a, T_b>(
-            std::forward<T_a>(a), std::forward<T_b>(b), "/") {}
+      : binary_operation<elewise_division_<T_a, T_b>, common_scalar_t<T_a, T_b>, T_a, T_b>(
+          std::forward<T_a>(a), std::forward<T_b>(b), "/") {}
 
   /**
    * View of a matrix that would be the result of evaluating this expression.
    * @return view
    */
   inline matrix_cl_view view() const {
-    using base = binary_operation<elewise_division_<T_a, T_b>, T_a, T_b>;
+    using base
+        = binary_operation<elewise_division_<T_a, T_b>, common_scalar_t<T_a, T_b>, T_a, T_b>;
     return either(std::get<0>(base::arguments_).view(),
                   invert(std::get<1>(base::arguments_).view()));
   }
@@ -289,6 +296,311 @@ template <typename T_a, typename T_b,
           typename = require_all_valid_expressions_t<T_a, T_b>>
 inline elewise_division_<as_operation_cl_t<T_a>, as_operation_cl_t<T_b>>
 elewise_division(T_a&& a, T_b&& b) {  // NOLINT
+  return {as_operation_cl(std::forward<T_a>(a)),
+          as_operation_cl(std::forward<T_b>(b))};
+}
+
+/**
+ * Represents less than comparison in kernel generator expressions.
+ * @tparam T_a type of first expression
+ * @tparam T_b type of second expression
+ */
+template <typename T_a, typename T_b>
+class less_than_ : public binary_operation<less_than_<T_a, T_b>, bool, T_a, T_b> {
+ public:
+  /**
+   * Constructor.
+   * @param a first expression
+   * @param b second expression
+   */
+  less_than_(T_a&& a, T_b&& b)  // NOLINT
+      : binary_operation<less_than_<T_a, T_b>, bool, T_a, T_b>(
+          std::forward<T_a>(a), std::forward<T_b>(b), "<") {}
+};
+
+/**
+ * Element-wise less than comparison between two kernel generator expressions.
+ * @tparam T_a type of first expression
+ * @tparam T_b type of second expression
+ * @param a first expression
+ * @param b second expression
+ * @return Element-wise division of given expressions
+ */
+template <typename T_a, typename T_b,
+          typename = require_all_valid_expressions_t<T_a, T_b>>
+inline less_than_<as_operation_cl_t<T_a>, as_operation_cl_t<T_b>> operator<(
+    T_a&& a, T_b&& b) {  // NOLINT
+  return {as_operation_cl(std::forward<T_a>(a)),
+          as_operation_cl(std::forward<T_b>(b))};
+}
+
+/**
+ * Represents operation less than or equal in kernel generator expressions.
+ * @tparam T_a type of first expression
+ * @tparam T_b type of second expression
+ */
+template <typename T_a, typename T_b>
+class less_than_or_equal_
+    : public binary_operation<less_than_or_equal_<T_a, T_b>, bool, T_a, T_b> {
+ public:
+  /**
+   * Constructor.
+   * @param a first expression
+   * @param b second expression
+   */
+  less_than_or_equal_(T_a&& a, T_b&& b)  // NOLINT
+      : binary_operation<less_than_or_equal_<T_a, T_b>, bool, T_a, T_b>(
+          std::forward<T_a>(a), std::forward<T_b>(b), "<=") {}
+
+  /**
+   * View of a matrix that would be the result of evaluating this expression.
+   * @return view
+   */
+  inline matrix_cl_view view() const {
+    using base = binary_operation<less_than_or_equal_<T_a, T_b>, bool, T_a, T_b>;
+    return matrix_cl_view::Entire;
+  }
+};
+
+/**
+ * Element-wise less than or equal comparison between two kernel generator
+ * expressions.
+ * @tparam T_a type of first expression
+ * @tparam T_b type of second expression
+ * @param a first expression
+ * @param b second expression
+ * @return Element-wise division of given expressions
+ */
+template <typename T_a, typename T_b,
+          typename = require_all_valid_expressions_t<T_a, T_b>>
+inline less_than_or_equal_<as_operation_cl_t<T_a>, as_operation_cl_t<T_b>>
+operator<=(T_a&& a, T_b&& b) {  // NOLINT
+  return {as_operation_cl(std::forward<T_a>(a)),
+          as_operation_cl(std::forward<T_b>(b))};
+}
+
+/**
+ * Represents greater than comparison in kernel generator expressions.
+ * @tparam T_a type of first expression
+ * @tparam T_b type of second expression
+ */
+template <typename T_a, typename T_b>
+class greater_than_
+    : public binary_operation<greater_than_<T_a, T_b>, bool, T_a, T_b> {
+ public:
+  /**
+   * Constructor.
+   * @param a first expression
+   * @param b second expression
+   */
+  greater_than_(T_a&& a, T_b&& b)  // NOLINT
+      : binary_operation<greater_than_<T_a, T_b>, bool, T_a, T_b>(
+          std::forward<T_a>(a), std::forward<T_b>(b), ">") {}
+};
+
+/**
+ * Element-wise greater than comparison between two kernel generator
+ * expressions.
+ * @tparam T_a type of first expression
+ * @tparam T_b type of second expression
+ * @param a first expression
+ * @param b second expression
+ * @return Element-wise division of given expressions
+ */
+template <typename T_a, typename T_b,
+          typename = require_all_valid_expressions_t<T_a, T_b>>
+inline greater_than_<as_operation_cl_t<T_a>, as_operation_cl_t<T_b>> operator>(
+    T_a&& a, T_b&& b) {  // NOLINT
+  return {as_operation_cl(std::forward<T_a>(a)),
+          as_operation_cl(std::forward<T_b>(b))};
+}
+
+/**
+ * Represents operation less than or equal in kernel generator expressions.
+ * @tparam T_a type of first expression
+ * @tparam T_b type of second expression
+ */
+template <typename T_a, typename T_b>
+class greater_than_or_equal_
+    : public binary_operation<greater_than_or_equal_<T_a, T_b>, bool, T_a, T_b> {
+ public:
+  /**
+   * Constructor.
+   * @param a first expression
+   * @param b second expression
+   */
+  greater_than_or_equal_(T_a&& a, T_b&& b)  // NOLINT
+      : binary_operation<greater_than_or_equal_<T_a, T_b>, bool, T_a, T_b>(
+          std::forward<T_a>(a), std::forward<T_b>(b), ">=") {}
+
+  /**
+   * View of a matrix that would be the result of evaluating this expression.
+   * @return view
+   */
+  inline matrix_cl_view view() const {
+    using base = binary_operation<greater_than_or_equal_<T_a, T_b>, bool, T_a, T_b>;
+    return matrix_cl_view::Entire;
+  }
+};
+
+/**
+ * Element-wise greater than or equal comparison between two kernel generator
+ * expressions.
+ * @tparam T_a type of first expression
+ * @tparam T_b type of second expression
+ * @param a first expression
+ * @param b second expression
+ * @return Element-wise greater than or equal comparison of given expressions
+ */
+template <typename T_a, typename T_b,
+          typename = require_all_valid_expressions_t<T_a, T_b>>
+inline greater_than_or_equal_<as_operation_cl_t<T_a>, as_operation_cl_t<T_b>>
+operator>=(T_a&& a, T_b&& b) {  // NOLINT
+  return {as_operation_cl(std::forward<T_a>(a)),
+          as_operation_cl(std::forward<T_b>(b))};
+}
+
+/**
+ * Represents equals comparison in kernel generator expressions.
+ * @tparam T_a type of first expression
+ * @tparam T_b type of second expression
+ */
+template <typename T_a, typename T_b>
+class equals_ : public binary_operation<equals_<T_a, T_b>, bool, T_a, T_b> {
+ public:
+  /**
+   * Constructor.
+   * @param a first expression
+   * @param b second expression
+   */
+  equals_(T_a&& a, T_b&& b)  // NOLINT
+      : binary_operation<equals_<T_a, T_b>, bool, T_a, T_b>(
+          std::forward<T_a>(a), std::forward<T_b>(b), "==") {}
+
+  /**
+   * View of a matrix that would be the result of evaluating this expression.
+   * @return view
+   */
+  inline matrix_cl_view view() const {
+    using base = binary_operation<equals_<T_a, T_b>, bool, T_a, T_b>;
+    return matrix_cl_view::Entire;
+  }
+};
+
+/**
+ * Element-wise equals comparison between two kernel generator expressions.
+ * @tparam T_a type of first expression
+ * @tparam T_b type of second expression
+ * @param a first expression
+ * @param b second expression
+ * @return Element-wise equals comparison of given expressions
+ */
+template <typename T_a, typename T_b,
+          typename = require_all_valid_expressions_t<T_a, T_b>>
+inline equals_<as_operation_cl_t<T_a>, as_operation_cl_t<T_b>> operator==(
+    T_a&& a, T_b&& b) {  // NOLINT
+  return {as_operation_cl(std::forward<T_a>(a)),
+          as_operation_cl(std::forward<T_b>(b))};
+}
+
+/**
+ * Represents not equals comparison in kernel generator expressions.
+ * @tparam T_a type of first expression
+ * @tparam T_b type of second expression
+ */
+template <typename T_a, typename T_b>
+class not_equals_ : public binary_operation<not_equals_<T_a, T_b>, bool, T_a, T_b> {
+ public:
+  /**
+   * Constructor.
+   * @param a first expression
+   * @param b second expression
+   */
+  not_equals_(T_a&& a, T_b&& b)  // NOLINT
+      : binary_operation<not_equals_<T_a, T_b>, bool, T_a, T_b>(
+          std::forward<T_a>(a), std::forward<T_b>(b), "!=") {}
+};
+
+/**
+ * Element-wise not equals comparison between two kernel generator expressions.
+ * @tparam T_a type of first expression
+ * @tparam T_b type of second expression
+ * @param a first expression
+ * @param b second expression
+ * @return Element-wise equals comparison of given expressions
+ */
+template <typename T_a, typename T_b,
+          typename = require_all_valid_expressions_t<T_a, T_b>>
+inline not_equals_<as_operation_cl_t<T_a>, as_operation_cl_t<T_b>> operator!=(
+    T_a&& a, T_b&& b) {  // NOLINT
+  return {as_operation_cl(std::forward<T_a>(a)),
+          as_operation_cl(std::forward<T_b>(b))};
+}
+
+/**
+ * Represents logical or operation in kernel generator expressions.
+ * @tparam T_a type of first expression
+ * @tparam T_b type of second expression
+ */
+template <typename T_a, typename T_b>
+class logical_or : public binary_operation<logical_or<T_a, T_b>, bool, T_a, T_b> {
+ public:
+  /**
+   * Constructor.
+   * @param a first expression
+   * @param b second expression
+   */
+  logical_or(T_a&& a, T_b&& b)  // NOLINT
+      : binary_operation<logical_or<T_a, T_b>, bool, T_a, T_b>(
+          std::forward<T_a>(a), std::forward<T_b>(b), "||") {}
+};
+
+/**
+ * Element-wise logical or operation between two kernel generator expressions.
+ * @tparam T_a type of first expression
+ * @tparam T_b type of second expression
+ * @param a first expression
+ * @param b second expression
+ * @return Element-wise logical or of given expressions
+ */
+template <typename T_a, typename T_b,
+          typename = require_all_valid_expressions_t<T_a, T_b>>
+inline logical_or<as_operation_cl_t<T_a>, as_operation_cl_t<T_b>> operator||(
+    T_a&& a, T_b&& b) {  // NOLINT
+  return {as_operation_cl(std::forward<T_a>(a)),
+          as_operation_cl(std::forward<T_b>(b))};
+}
+
+/**
+ * Represents logical and operator in kernel generator expressions.
+ * @tparam T_a type of first expression
+ * @tparam T_b type of second expression
+ */
+template <typename T_a, typename T_b>
+class logical_and : public binary_operation<logical_and<T_a, T_b>, bool, T_a, T_b> {
+ public:
+  /**
+   * Constructor.
+   * @param a first expression
+   * @param b second expression
+   */
+  logical_and(T_a&& a, T_b&& b)  // NOLINT
+      : binary_operation<logical_and<T_a, T_b>, bool, T_a, T_b>(
+          std::forward<T_a>(a), std::forward<T_b>(b), "&&") {}
+};
+
+/**
+ * Element-wise logical and operation between two kernel generator expressions.
+ * @tparam T_a type of first expression
+ * @tparam T_b type of second expression
+ * @param a first expression
+ * @param b second expression
+ * @return Element-wise equals comparison of given expressions
+ */
+template <typename T_a, typename T_b,
+          typename = require_all_valid_expressions_t<T_a, T_b>>
+inline logical_and<as_operation_cl_t<T_a>, as_operation_cl_t<T_b>> operator&&(
+    T_a&& a, T_b&& b) {  // NOLINT
   return {as_operation_cl(std::forward<T_a>(a)),
           as_operation_cl(std::forward<T_b>(b))};
 }
