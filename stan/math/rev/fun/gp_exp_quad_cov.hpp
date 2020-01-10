@@ -4,8 +4,8 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/fun/exp.hpp>
-#include <stan/math/prim/scal/fun/squared_distance.hpp>
+#include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/fun/squared_distance.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 #include <vector>

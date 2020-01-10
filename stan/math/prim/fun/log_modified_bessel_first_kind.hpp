@@ -1,19 +1,19 @@
 //  Copyright (c) 2006 Xiaogang Zhang
 //  Copyright (c) 2007, 2017 John Maddock
 
-#ifndef STAN_MATH_PRIM_SCAL_FUN_LOG_MODIFIED_BESSEL_FIRST_KIND_HPP
-#define STAN_MATH_PRIM_SCAL_FUN_LOG_MODIFIED_BESSEL_FIRST_KIND_HPP
+#ifndef STAN_MATH_PRIM_FUN_LOG_MODIFIED_BESSEL_FIRST_KIND_HPP
+#define STAN_MATH_PRIM_FUN_LOG_MODIFIED_BESSEL_FIRST_KIND_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/inv.hpp>
-#include <stan/math/prim/scal/fun/is_inf.hpp>
-#include <stan/math/prim/scal/fun/lgamma.hpp>
-#include <stan/math/prim/scal/fun/log_sum_exp.hpp>
-#include <stan/math/prim/scal/fun/log1p.hpp>
-#include <stan/math/prim/scal/fun/log1p_exp.hpp>
-#include <stan/math/prim/scal/fun/square.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/inv.hpp>
+#include <stan/math/prim/fun/is_inf.hpp>
+#include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/fun/log_sum_exp.hpp>
+#include <stan/math/prim/fun/log1p.hpp>
+#include <stan/math/prim/fun/log1p_exp.hpp>
+#include <stan/math/prim/fun/square.hpp>
 #include <boost/math/tools/rational.hpp>
 #include <cmath>
 

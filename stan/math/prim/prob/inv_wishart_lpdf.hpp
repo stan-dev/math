@@ -5,8 +5,8 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/log_determinant_ldlt.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left_ldlt.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/lmgamma.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/lmgamma.hpp>
 #include <stan/math/prim/mat/fun/trace.hpp>
 
 namespace stan {

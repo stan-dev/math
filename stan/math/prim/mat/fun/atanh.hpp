@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_ATANH_HPP
 
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
-#include <stan/math/prim/scal/fun/atanh.hpp>
+#include <stan/math/prim/fun/atanh.hpp>
 
 namespace stan {
 namespace math {

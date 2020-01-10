@@ -1,12 +1,12 @@
-#ifndef STAN_MATH_PRIM_SCAL_FUN_INV_PHI_HPP
-#define STAN_MATH_PRIM_SCAL_FUN_INV_PHI_HPP
+#ifndef STAN_MATH_PRIM_FUN_INV_PHI_HPP
+#define STAN_MATH_PRIM_FUN_INV_PHI_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/log1m.hpp>
-#include <stan/math/prim/scal/fun/Phi.hpp>
-#include <stan/math/prim/scal/fun/square.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/log1m.hpp>
+#include <stan/math/prim/fun/Phi.hpp>
+#include <stan/math/prim/fun/square.hpp>
 #include <cmath>
 
 namespace stan {

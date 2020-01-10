@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_ARR_FUN_PROMOTE_ELEMENTS_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/promote_elements.hpp>
+#include <stan/math/prim/fun/promote_elements.hpp>
 #include <vector>
 #include <cstddef>
 

@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_FUN_LGAMMA_HPP
-#define STAN_MATH_PRIM_SCAL_FUN_LGAMMA_HPP
+#ifndef STAN_MATH_PRIM_FUN_LGAMMA_HPP
+#define STAN_MATH_PRIM_FUN_LGAMMA_HPP
 
 /*
  * The lgamma implementation in stan-math is based on either the
@@ -25,7 +25,7 @@
 // MinGW compilers on Windows do not provide the reentrant lgamma_r
 // such that we fall back to boost whenever we are on MinGW.
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/boost_policy.hpp>
+#include <stan/math/prim/fun/boost_policy.hpp>
 #include <boost/math/special_functions/gamma.hpp>
 #include <limits>
 #endif

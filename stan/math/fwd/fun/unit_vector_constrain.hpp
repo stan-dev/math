@@ -10,7 +10,7 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/tcrossprod.hpp>
 #include <stan/math/prim/mat/fun/unit_vector_constrain.hpp>
-#include <stan/math/prim/scal/fun/inv.hpp>
+#include <stan/math/prim/fun/inv.hpp>
 #include <cmath>
 
 namespace stan {

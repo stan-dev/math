@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_LOG1M_INV_LOGIT_HPP
 
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
-#include <stan/math/prim/scal/fun/log1m_inv_logit.hpp>
+#include <stan/math/prim/fun/log1m_inv_logit.hpp>
 
 namespace stan {
 namespace math {

@@ -5,11 +5,11 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/mat/fun/value_of_rec.hpp>
 #include <stan/math/prim/mat/fun/sum.hpp>
 #include <stan/math/prim/arr/fun/value_of_rec.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/prim/arr/fun/value_of.hpp>
 #include <stan/math/opencl/copy.hpp>

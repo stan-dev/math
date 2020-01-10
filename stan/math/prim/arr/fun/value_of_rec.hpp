@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_ARR_FUN_VALUE_OF_REC_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/value_of_rec.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 #include <vector>
 #include <cstddef>
 

@@ -1,8 +1,8 @@
-#ifndef STAN_MATH_PRIM_SCAL_FUN_INV_SQRT_HPP
-#define STAN_MATH_PRIM_SCAL_FUN_INV_SQRT_HPP
+#ifndef STAN_MATH_PRIM_FUN_INV_SQRT_HPP
+#define STAN_MATH_PRIM_FUN_INV_SQRT_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/inv.hpp>
+#include <stan/math/prim/fun/inv.hpp>
 #include <cmath>
 
 namespace stan {

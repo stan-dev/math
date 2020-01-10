@@ -6,7 +6,7 @@
 #include <stan/math/prim/mat/fun/dot_self.hpp>
 #include <stan/math/prim/mat/fun/dot_product.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left_tri_low.hpp>
-#include <stan/math/prim/scal/fun/inv_square.hpp>
+#include <stan/math/prim/fun/inv_square.hpp>
 
 namespace stan {
 namespace math {

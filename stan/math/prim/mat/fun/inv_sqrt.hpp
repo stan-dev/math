@@ -4,7 +4,7 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
-#include <stan/math/prim/scal/fun/inv_sqrt.hpp>
+#include <stan/math/prim/fun/inv_sqrt.hpp>
 
 namespace stan {
 namespace math {

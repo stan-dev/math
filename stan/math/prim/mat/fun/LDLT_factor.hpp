@@ -5,7 +5,7 @@
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/log.hpp>
 #include <stan/math/prim/mat/fun/sum.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <stan/math/prim/fun/is_nan.hpp>
 #include <boost/shared_ptr.hpp>
 
 namespace stan {

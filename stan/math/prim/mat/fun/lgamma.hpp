@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_LGAMMA_HPP
 
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
-#include <stan/math/prim/scal/fun/lgamma.hpp>
+#include <stan/math/prim/fun/lgamma.hpp>
 
 namespace stan {
 namespace math {

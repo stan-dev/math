@@ -1,8 +1,8 @@
-#ifndef STAN_MATH_PRIM_SCAL_FUN_LOG2_HPP
-#define STAN_MATH_PRIM_SCAL_FUN_LOG2_HPP
+#ifndef STAN_MATH_PRIM_FUN_LOG2_HPP
+#define STAN_MATH_PRIM_FUN_LOG2_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/fun/constants.hpp>
 #include <cmath>
 
 namespace stan {

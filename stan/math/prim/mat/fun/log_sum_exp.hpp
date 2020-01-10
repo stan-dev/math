@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_LOG_SUM_EXP_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/fun/constants.hpp>
 #include <cmath>
 #include <vector>
 

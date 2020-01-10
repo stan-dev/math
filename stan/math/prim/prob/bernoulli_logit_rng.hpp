@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_PROB_BERNOULLI_LOGIT_RNG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/inv_logit.hpp>
+#include <stan/math/prim/fun/inv_logit.hpp>
 #include <stan/math/prim/err.hpp>
 #include <boost/random/bernoulli_distribution.hpp>
 #include <boost/random/variate_generator.hpp>

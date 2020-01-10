@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_EXPM1_HPP
 
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
-#include <stan/math/prim/scal/fun/expm1.hpp>
+#include <stan/math/prim/fun/expm1.hpp>
 
 namespace stan {
 namespace math {

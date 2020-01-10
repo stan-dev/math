@@ -2,8 +2,8 @@
 #define STAN_MATH_PRIM_MAT_FUN_FACTOR_U_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/fun/atanh.hpp>
-#include <stan/math/prim/scal/fun/sqrt.hpp>
+#include <stan/math/prim/fun/atanh.hpp>
+#include <stan/math/prim/fun/sqrt.hpp>
 #include <cstddef>
 #include <stdexcept>
 #include <vector>

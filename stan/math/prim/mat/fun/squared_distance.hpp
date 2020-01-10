@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/fun/squared_distance.hpp>
+#include <stan/math/prim/fun/squared_distance.hpp>
 
 namespace stan {
 namespace math {

@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_FUN_TRIGAMMA_HPP
-#define STAN_MATH_PRIM_SCAL_FUN_TRIGAMMA_HPP
+#ifndef STAN_MATH_PRIM_FUN_TRIGAMMA_HPP
+#define STAN_MATH_PRIM_FUN_TRIGAMMA_HPP
 
 #include <stan/math/prim/meta.hpp>
 // Reference:
@@ -9,9 +9,9 @@
 //   Applied Statistics,
 //   Volume 27, Number 1, pages 97-99, 1978.
 
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/square.hpp>
-#include <stan/math/prim/scal/fun/inv_square.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/square.hpp>
+#include <stan/math/prim/fun/inv_square.hpp>
 #include <cmath>
 
 namespace stan {

@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/exp.hpp>
+#include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 

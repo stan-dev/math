@@ -5,7 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/trace_inv_quad_form_ldlt.hpp>
 #include <stan/math/prim/mat/fun/log_determinant_ldlt.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/fun/constants.hpp>
 
 namespace stan {
 namespace math {

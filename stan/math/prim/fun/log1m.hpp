@@ -1,9 +1,9 @@
-#ifndef STAN_MATH_PRIM_SCAL_FUN_LOG1M_HPP
-#define STAN_MATH_PRIM_SCAL_FUN_LOG1M_HPP
+#ifndef STAN_MATH_PRIM_FUN_LOG1M_HPP
+#define STAN_MATH_PRIM_FUN_LOG1M_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/log1p.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <stan/math/prim/fun/log1p.hpp>
+#include <stan/math/prim/fun/is_nan.hpp>
 #include <stan/math/prim/err.hpp>
 
 namespace stan {

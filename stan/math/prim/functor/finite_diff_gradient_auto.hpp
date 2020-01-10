@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_FUNCTOR_FINITE_DIFF_GRADIENT_AUTO_HPP
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/fun/finite_diff_stepsize.hpp>
+#include <stan/math/prim/fun/finite_diff_stepsize.hpp>
 #include <cmath>
 
 namespace stan {

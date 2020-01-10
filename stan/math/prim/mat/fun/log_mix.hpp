@@ -6,7 +6,7 @@
 #include <stan/math/prim/mat/fun/log.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <vector>
 
 namespace stan {

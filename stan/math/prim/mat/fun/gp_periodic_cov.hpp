@@ -5,11 +5,11 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/distance.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/distance.hpp>
-#include <stan/math/prim/scal/fun/inv.hpp>
-#include <stan/math/prim/scal/fun/inv_square.hpp>
-#include <stan/math/prim/scal/fun/square.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/distance.hpp>
+#include <stan/math/prim/fun/inv.hpp>
+#include <stan/math/prim/fun/inv_square.hpp>
+#include <stan/math/prim/fun/square.hpp>
 #include <cmath>
 #include <vector>
 

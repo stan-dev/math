@@ -8,7 +8,7 @@
 #include <stan/math/prim/mat/fun/sum.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left_tri.hpp>
 #include <stan/math/prim/mat/fun/transpose.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/fun/constants.hpp>
 
 namespace stan {
 namespace math {

@@ -29,6 +29,6 @@
 #include <stan/math/prim/functor/mpi_distributed_apply.hpp>
 #include <stan/math/prim/functor/mpi_cluster.hpp>
 
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 
 #endif

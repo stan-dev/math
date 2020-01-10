@@ -1,8 +1,8 @@
-#ifndef STAN_MATH_PRIM_SCAL_FUN_LBETA_HPP
-#define STAN_MATH_PRIM_SCAL_FUN_LBETA_HPP
+#ifndef STAN_MATH_PRIM_FUN_LBETA_HPP
+#define STAN_MATH_PRIM_FUN_LBETA_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/lgamma.hpp>
+#include <stan/math/prim/fun/lgamma.hpp>
 
 namespace stan {
 namespace math {

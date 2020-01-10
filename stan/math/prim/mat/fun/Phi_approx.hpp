@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_MAT_FUN_PHI_APPROX_HPP
 
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
-#include <stan/math/prim/scal/fun/Phi_approx.hpp>
+#include <stan/math/prim/fun/Phi_approx.hpp>
 
 namespace stan {
 namespace math {

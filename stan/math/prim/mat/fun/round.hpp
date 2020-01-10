@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/round.hpp>
+#include <stan/math/prim/fun/round.hpp>
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 
 namespace stan {

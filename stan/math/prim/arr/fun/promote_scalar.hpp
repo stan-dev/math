@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_ARR_FUN_PROMOTE_SCALAR_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/promote_scalar.hpp>
+#include <stan/math/prim/fun/promote_scalar.hpp>
 #include <vector>
 
 namespace stan {

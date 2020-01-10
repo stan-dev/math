@@ -1,10 +1,10 @@
-#ifndef STAN_MATH_PRIM_SCAL_FUN_LOG_MIX_HPP
-#define STAN_MATH_PRIM_SCAL_FUN_LOG_MIX_HPP
+#ifndef STAN_MATH_PRIM_FUN_LOG_MIX_HPP
+#define STAN_MATH_PRIM_FUN_LOG_MIX_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/log_sum_exp.hpp>
-#include <stan/math/prim/scal/fun/log1m.hpp>
+#include <stan/math/prim/fun/log_sum_exp.hpp>
+#include <stan/math/prim/fun/log1m.hpp>
 #include <cmath>
 
 namespace stan {
