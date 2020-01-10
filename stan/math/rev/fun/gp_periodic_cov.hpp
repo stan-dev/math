@@ -2,13 +2,13 @@
 #define STAN_MATH_REV_FUN_GP_PERIODIC_COV_HPP
 
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/squared_distance.hpp>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/rev/fun/value_of.hpp>
 #include <cmath>
 #include <type_traits>
 #include <vector>
@@ -180,6 +180,7 @@ class gp_periodic_cov_vari : public vari {
  * \sin^2(\pi|\mathbf{x}-\mathbf{x}^\prime|/p) \f$\n \f$ \frac{\partial
  * k}{\partial p} = \frac{2k\pi|\mathbf{x}-\mathbf{x}^\prime|}{\ell^2p^2}
  * \sin(2\pi|\mathbf{x}-\mathbf{x}^\prime|/p) \f$\n
+ *
  * @tparam T_x type of std::vector elements of x
  *   T_x can be a scalar, an Eigen::Vector, or an Eigen::RowVector.
  * @tparam T_l type of length-scale
@@ -289,6 +290,7 @@ class gp_periodic_cov_vari<T_x, double, T_l, T_p> : public vari {
  * \f$, \f$ \ell \f$ and \f$ p \f$ are the signal variance, length-scale and
  * period.
  *
+ * @tparam T_x type of elements in the std::vector
  * @param x std::vector of input elements.
  *   Assumes that all elements of x have the same size.
  * @param sigma standard deviation of the signal
@@ -343,6 +345,7 @@ gp_periodic_cov(const std::vector<T_x> &x, const var &sigma, const var &l,
  * \f$, \f$ \ell \f$ and \f$ p \f$ are the signal variance, length-scale and
  * period.
  *
+ * @tparam T_x type of elements in the std::vector
  * @param x std::vector of input elements.
  *   Assumes that all elements of x have the same size.
  * @param sigma standard deviation of the signal
@@ -387,6 +390,7 @@ gp_periodic_cov(const std::vector<T_x> &x, double sigma, const var &l,
   cov.coeffRef(x_size - 1, x_size - 1).vi_ = baseVari->cov_diag_[x_size - 1];
   return cov;
 }
+
 }  // namespace math
 }  // namespace stan
 #endif

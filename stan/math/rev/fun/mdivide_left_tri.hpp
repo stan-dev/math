@@ -2,18 +2,20 @@
 #define STAN_MATH_REV_FUN_MDIVIDE_LEFT_TRI_HPP
 
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/typedefs.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/opencl.hpp>
 #endif
+
 namespace stan {
 namespace math {
 
 namespace internal {
+
 template <Eigen::UpLoType TriView, int R1, int C1, int R2, int C2>
 class mdivide_left_tri_vv_vari : public vari {
  public:

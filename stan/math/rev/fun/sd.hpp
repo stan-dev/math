@@ -2,17 +2,16 @@
 #define STAN_MATH_REV_FUN_SD_HPP
 
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/rev/core.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/prim/scal/fun/inv_sqrt.hpp>
-#include <stan/math/rev/core.hpp>
 #include <cmath>
 #include <vector>
 
 namespace stan {
 namespace math {
-
 namespace internal {
 
 // if x.size() = N, and x[i] = x[j] =
@@ -66,8 +65,8 @@ inline var sd(const std::vector<var>& v) {
  * row vector, or matrix.  Raise domain error if size is not
  * greater than zero.
  *
- * @tparam R number of rows
- * @tparam C number of columns
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
  * @param[in] m input matrix
  * @return sample standard deviation of specified matrix
  */

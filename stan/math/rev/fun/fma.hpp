@@ -118,6 +118,7 @@ inline var fma(const var& a, const var& b, const var& c) {
  *
  * \f$\frac{\partial}{\partial y} (x * y) + c = x\f$.
  *
+ * @tparam Tc type of the summand
  * @param a First multiplicand.
  * @param b Second multiplicand.
  * @param c Summand.
@@ -138,6 +139,10 @@ inline var fma(const var& a, const var& b, Tc&& c) {
  * \f$\frac{\partial}{\partial x} (x * c) + z = c\f$, and
  *
  * \f$\frac{\partial}{\partial z} (x * c) + z = 1\f$.
+ *
+ * @tparam Ta type of the first multiplicand
+ * @tparam Tb type of the second multiplicand
+ * @tparam Tc type of the summand
  *
  * @param a First multiplicand.
  * @param b Second multiplicand.
@@ -164,6 +169,9 @@ inline var fma(Ta&& a, Tb&& b, Tc&& c) {
  *
  * \f$\frac{d}{d x} (x * c) + d = c\f$.
  *
+ * @tparam Tb type of the second multiplicand
+ * @tparam Tc type of the summand
+ *
  * @param a First multiplicand.
  * @param b Second multiplicand.
  * @param c Summand.
@@ -183,6 +191,9 @@ inline var fma(const var& a, Tb&& b, Tc&& c) {
  *
  * \f$\frac{d}{d y} (c * y) + d = c\f$, and
  *
+ * @tparam Ta type of the first multiplicand
+ * @tparam Tc type of the summand
+ *
  * @param a First multiplicand.
  * @param b Second multiplicand.
  * @param c Summand.
@@ -201,6 +212,9 @@ inline var fma(Ta&& a, const var& b, Tc&& c) {
  * The derivative is
  *
  * \f$\frac{\partial}{\partial z} (c * d) + z = 1\f$.
+ *
+ * @tparam Ta type of the first multiplicand
+ * @tparam Tb type of the second multiplicand
  *
  * @param a First multiplicand.
  * @param b Second multiplicand.
@@ -223,6 +237,7 @@ inline var fma(Ta&& a, Tb&& b, const var& c) {
  *
  * \f$\frac{\partial}{\partial z} (c * y) + z = 1\f$.
  *
+ * @tparam Ta type of the first multiplicand
  * @param a First multiplicand.
  * @param b Second multiplicand.
  * @param c Summand.

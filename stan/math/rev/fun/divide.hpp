@@ -2,14 +2,15 @@
 #define STAN_MATH_REV_FUN_DIVIDE_HPP
 
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/to_var.hpp>
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+
 namespace stan {
 namespace math {
-
 namespace internal {
+
 template <int R, int C>
 class matrix_scalar_divide_dv_vari : public vari {
  public:
@@ -113,8 +114,9 @@ class matrix_scalar_divide_vv_vari : public vari {
 
 /**
  * Return matrix divided by scalar.
- * @tparam R number of rows or Eigen::Dynamic
- * @tparam C number of columns or Eigen::Dynamic
+ *
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
  * @param[in] m specified matrix
  * @param[in] c specified scalar
  * @return matrix divided by the scalar
@@ -132,8 +134,9 @@ inline Eigen::Matrix<var, R, C> divide(const Eigen::Matrix<double, R, C>& m,
 
 /**
  * Return matrix divided by scalar.
- * @tparam R number of rows or Eigen::Dynamic
- * @tparam C number of columns or Eigen::Dynamic
+ *
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
  * @param[in] m specified matrix
  * @param[in] c specified scalar
  * @return matrix divided by the scalar
@@ -151,8 +154,9 @@ inline Eigen::Matrix<var, R, C> divide(const Eigen::Matrix<var, R, C>& m,
 
 /**
  * Return matrix divided by scalar.
- * @tparam R number of rows or Eigen::Dynamic
- * @tparam C number of columns or Eigen::Dynamic
+ *
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
  * @param[in] m specified matrix
  * @param[in] c specified scalar
  * @return matrix divided by the scalar

@@ -2,10 +2,10 @@
 #define STAN_MATH_REV_FUN_DOT_SELF_HPP
 
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/rev/core.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/fun/square.hpp>
-#include <stan/math/rev/core.hpp>
 #include <vector>
 
 namespace stan {
@@ -53,15 +53,14 @@ class dot_self_vari : public vari {
   }
 };
 }  // namespace internal
+
 /**
  * Returns the dot product of a vector with itself.
  *
+ * @tparam R number of rows, can be Eigen::Dynamic; one of R or C must be 1
+ * @tparam C number of columns, can be Eigen::Dynamic; one of R or C must be 1
  * @param[in] v Vector.
  * @return Dot product of the vector with itself.
- * @tparam R number of rows or <code>Eigen::Dynamic</code> for
- * dynamic; one of R or C must be 1
- * @tparam C number of rows or <code>Eigen::Dyanmic</code> for
- * dynamic; one of R or C must be 1
  */
 template <int R, int C>
 inline var dot_self(const Eigen::Matrix<var, R, C>& v) {

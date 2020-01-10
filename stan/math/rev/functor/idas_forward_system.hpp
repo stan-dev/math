@@ -2,12 +2,12 @@
 #define STAN_MATH_REV_FUNCTOR_IDAS_FORWARD_SYSTEM_HPP
 
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/prim/arr/fun/value_of.hpp>
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/rev/fun/typedefs.hpp>
 #include <stan/math/rev/functor/idas_system.hpp>
 #include <stan/math/rev/functor/jacobian.hpp>
+#include <stan/math/prim/arr/fun/value_of.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <idas/idas.h>
 #include <nvector/nvector_serial.h>
 #include <ostream>
@@ -62,7 +62,7 @@ class idas_forward_system : public idas_system<F, Tyy, Typ, Tpar> {
   }
 
   /**
-   * destructor to deallocate IDAS solution memory and workspace.
+   * Destructor to deallocate IDAS solution memory and workspace.
    */
   ~idas_forward_system() {
     if (this->need_sens) {
@@ -72,24 +72,24 @@ class idas_forward_system : public idas_system<F, Tyy, Typ, Tpar> {
   }
 
   /**
-   * return N_Vector pointer array of sensitivity
+   * Return N_Vector pointer array of sensitivity
    */
   N_Vector* nv_yys() { return nv_yys_; }
 
   /**
-   * return N_Vector pointer array of sensitivity time derivative
+   * Return N_Vector pointer array of sensitivity time derivative
    */
   N_Vector* nv_yps() { return nv_yps_; }
 
   /**
-   * convert to void pointer for IDAS callbacks
+   * Convert to void pointer for IDAS callbacks
    */
   void* to_user_data() {  // prepare to inject DAE info
     return static_cast<void*>(this);
   }
 
   /**
-   * return a lambda for sensitivity residual callback.
+   * Return a lambda for sensitivity residual callback.
    */
   IDASensResFn sensitivity_residual() const {
     return [](int ns, double t, N_Vector yy, N_Vector yp, N_Vector res,

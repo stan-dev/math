@@ -3,15 +3,16 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/LDLT_alloc.hpp>
+#include <stan/math/rev/fun/LDLT_factor.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
-#include <stan/math/rev/fun/LDLT_alloc.hpp>
-#include <stan/math/rev/fun/LDLT_factor.hpp>
 
 namespace stan {
 namespace math {
 namespace internal {
+
 template <int R1, int C1, int R2, int C2>
 class mdivide_left_ldlt_alloc : public chainable_alloc {
  public:
@@ -35,7 +36,14 @@ class mdivide_left_ldlt_alloc : public chainable_alloc {
  * set by the "master" vari.
  *
  * This class handles the var/var case.
- **/
+ *
+ * @tparam R1 number of rows in the LDLT_factor, can be Eigen::Dynamic
+ * @tparam C1 number of columns in the LDLT_factor, can be Eigen::Dynamic
+ * @tparam R2 number of rows in the right-hand side matrix, can be
+ *         Eigen::Dynamic
+ * @tparam C2 number of columns in the right-hand side matrix, can be
+ *         Eigen::Dynamic
+ */
 template <int R1, int C1, int R2, int C2>
 class mdivide_left_ldlt_vv_vari : public vari {
  public:
@@ -86,7 +94,14 @@ class mdivide_left_ldlt_vv_vari : public vari {
  * set by the "master" vari.
  *
  * This class handles the double/var case.
- **/
+ *
+ * @tparam R1 number of rows in the LDLT_factor, can be Eigen::Dynamic
+ * @tparam C1 number of columns in the LDLT_factor, can be Eigen::Dynamic
+ * @tparam R2 number of rows in the right-hand side matrix, can be
+ *         Eigen::Dynamic
+ * @tparam C2 number of columns in the right-hand side matrix, can be
+ *         Eigen::Dynamic
+ */
 template <int R1, int C1, int R2, int C2>
 class mdivide_left_ldlt_dv_vari : public vari {
  public:
@@ -132,7 +147,14 @@ class mdivide_left_ldlt_dv_vari : public vari {
  * set by the "master" vari.
  *
  * This class handles the var/double case.
- **/
+ *
+ * @tparam R1 number of rows in the LDLT_factor, can be Eigen::Dynamic
+ * @tparam C1 number of columns in the LDLT_factor, can be Eigen::Dynamic
+ * @tparam R2 number of rows in the right-hand side matrix, can be
+ *         Eigen::Dynamic
+ * @tparam C2 number of columns in the right-hand side matrix, can be
+ *         Eigen::Dynamic
+ */
 template <int R1, int C1, int R2, int C2>
 class mdivide_left_ldlt_vd_vari : public vari {
  public:
@@ -169,6 +191,14 @@ class mdivide_left_ldlt_vd_vari : public vari {
 
 /**
  * Returns the solution of the system Ax=b given an LDLT_factor of A
+ *
+ * @tparam R1 number of rows in the LDLT_factor, can be Eigen::Dynamic
+ * @tparam C1 number of columns in the LDLT_factor, can be Eigen::Dynamic
+ * @tparam R2 number of rows in the right-hand side matrix, can be
+ *         Eigen::Dynamic
+ * @tparam C2 number of columns in the right-hand side matrix, can be
+ *         Eigen::Dynamic
+ *
  * @param A LDLT_factor
  * @param b Right hand side matrix or vector.
  * @return x = A^-1 b, solution of the linear system.
@@ -194,6 +224,14 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_ldlt(
 
 /**
  * Returns the solution of the system Ax=b given an LDLT_factor of A
+ *
+ * @tparam R1 number of rows in the LDLT_factor, can be Eigen::Dynamic
+ * @tparam C1 number of columns in the LDLT_factor, can be Eigen::Dynamic
+ * @tparam R2 number of rows in the right-hand side matrix, can be
+ *         Eigen::Dynamic
+ * @tparam C2 number of columns in the right-hand side matrix, can be
+ *         Eigen::Dynamic
+ *
  * @param A LDLT_factor
  * @param b Right hand side matrix or vector.
  * @return x = A^-1 b, solution of the linear system.
@@ -219,6 +257,14 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_ldlt(
 
 /**
  * Returns the solution of the system Ax=b given an LDLT_factor of A
+ *
+ * @tparam R1 number of rows in the LDLT_factor, can be Eigen::Dynamic
+ * @tparam C1 number of columns in the LDLT_factor, can be Eigen::Dynamic
+ * @tparam R2 number of rows in the right-hand side matrix, can be
+ *         Eigen::Dynamic
+ * @tparam C2 number of columns in the right-hand side matrix, can be
+ *         Eigen::Dynamic
+ *
  * @param A LDLT_factor
  * @param b Right hand side matrix or vector.
  * @return x = A^-1 b, solution of the linear system.

@@ -2,13 +2,13 @@
 #define STAN_MATH_REV_FUNCTOR_integrate_1d_HPP
 
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/rev/fun/is_nan.hpp>
+#include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/arr/fun/value_of.hpp>
 #include <stan/math/prim/functor/integrate_1d.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/rev/fun/is_nan.hpp>
-#include <stan/math/rev/fun/value_of.hpp>
 #include <type_traits>
 #include <string>
 #include <vector>
@@ -26,6 +26,8 @@ namespace math {
  * Gradients that evaluate to NaN are set to zero if the function itself
  * evaluates to zero. If the function is not zero and the gradient evaluates to
  * NaN, a std::domain_error is thrown
+ *
+ * @tparam F type of f
  */
 template <typename F>
 inline double gradient_of_f(const F &f, const double &x, const double &xc,
@@ -104,6 +106,7 @@ inline double gradient_of_f(const F &f, const double &x, const double &xc,
  * @tparam T_b type of second limit
  * @tparam T_theta type of parameters
  * @tparam T Type of f
+ *
  * @param f the functor to integrate
  * @param a lower limit of integration
  * @param b upper limit of integration

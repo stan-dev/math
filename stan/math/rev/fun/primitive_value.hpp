@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 
 /**
- * Return the primitive double value for the specified auto-diff
+ * Return the primitive double value for the specified autodiff
  * variable.
  *
  * @param v input variable.

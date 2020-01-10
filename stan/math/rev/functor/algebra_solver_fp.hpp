@@ -3,24 +3,22 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/value_of.hpp>
+#include <stan/math/rev/functor/algebra_system.hpp>
+#include <stan/math/rev/functor/kinsol_data.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left.hpp>
 #include <stan/math/prim/mat/fun/to_array_1d.hpp>
 #include <stan/math/prim/mat/fun/to_vector.hpp>
 #include <stan/math/prim/mat/fun/value_of.hpp>
-#include <stan/math/rev/fun/value_of.hpp>
-#include <stan/math/rev/functor/algebra_system.hpp>
-#include <stan/math/rev/functor/kinsol_data.hpp>
-
 #include <kinsol/kinsol.h>
 #include <sunmatrix/sunmatrix_dense.h>
 #include <sunlinsol/sunlinsol_dense.h>
 #include <nvector/nvector_serial.h>
-
+#include <algorithm>
 #include <iostream>
 #include <string>
 #include <vector>
-#include <algorithm>
 
 namespace stan {
 namespace math {
@@ -200,7 +198,7 @@ struct FixedPointADJac {
  *
  * x = F(x; theta)
  *
- * with x as unkowns and theta parameters.
+ * with x as unknowns and theta parameters.
  *
  * The solution for FP iteration
  * doesn't involve derivatives but only data types.
@@ -261,6 +259,7 @@ struct FixedPointSolver<KinsolFixedPointEnv<F>, fp_jac_type> {
 
   /*
    * Solve data-only FP problem so no need to calculate jacobian.
+   *
    * @tparam T1 type of init point of iterations
    *
    * @param x initial point and final solution.
@@ -281,6 +280,7 @@ struct FixedPointSolver<KinsolFixedPointEnv<F>, fp_jac_type> {
 
   /*
    * Solve FP problem and calculate jacobian.
+   *
    * @tparam T1 type of init point of iterations
    *
    * @param x initial point and final solution.
@@ -329,6 +329,7 @@ struct FixedPointSolver<KinsolFixedPointEnv<F>, fp_jac_type> {
  *             it to be @c var because scaling could be parameter
  *             dependent. Internally these params are converted to data
  *             because scaling is applied.
+ *
  * @param[in] f Functor that evaluated the system of equations.
  * @param[in] x Vector of starting values.
  * @param[in] y Parameter vector for the equation system. The function
@@ -347,7 +348,7 @@ struct FixedPointSolver<KinsolFixedPointEnv<F>, fp_jac_type> {
  *                    (ref. KINSOL user guide chap.2 sec. "Scaling")
  * @param[in] f_tol Function-norm stopping tolerance.
  * @param[in] max_num_steps maximum number of function evaluations.
- *  * @throw <code>std::invalid_argument</code> if x has size zero.
+ * @throw <code>std::invalid_argument</code> if x has size zero.
  * @throw <code>std::invalid_argument</code> if x has non-finite elements.
  * @throw <code>std::invalid_argument</code> if y has non-finite elements.
  * @throw <code>std::invalid_argument</code> if dat has non-finite elements.
