@@ -1,10 +1,6 @@
 #include <stan/math/rev.hpp>
-#include <stan/math.hpp>
+#include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/meta/return_type.hpp>
-#include <stan/math/prim/err/check_consistent_size.hpp>
-#include <stan/math/prim/prob.hpp>
 #include <cmath>
 #include <vector>
 

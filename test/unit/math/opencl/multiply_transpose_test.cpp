@@ -1,6 +1,6 @@
 #ifdef STAN_OPENCL
 
-#include <stan/math/prim/mat.hpp>
+#include <stan/math/prim.hpp>
 #include <stan/math/opencl/multiply_transpose.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <boost/random/mersenne_twister.hpp>

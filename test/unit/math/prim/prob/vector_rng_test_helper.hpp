@@ -4,7 +4,7 @@
 #include <gtest/gtest.h>
 #include <boost/math/distributions.hpp>
 #include <boost/random/mersenne_twister.hpp>
-#include <stan/math/prim/mat.hpp>
+#include <stan/math/prim.hpp>
 #include <test/unit/math/prim/meta/apply_template_permutations.hpp>
 #include <test/unit/math/prim/prob/util.hpp>
 #include <test/unit/math/prim/prob/VectorRealRNGTestRig.hpp>
