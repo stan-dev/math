@@ -7,10 +7,6 @@ TEST(mathMixScalFun, normal_cdf_derivatives) {
   };
 
   stan::test::expect_ad(f(0.0, 1.0), -50.0);
-  // the following fails because AD returns -nan in the Hessian
-  // stan::test::expect_ad(f(0.0, 1.0), -20.0 * stan::math::SQRT_TWO);
-  // the following fails because AD returns inf in the Hessian
-  // stan::test::expect_ad(f(0.0, 1.0), -20.0);
   stan::test::expect_ad(f(0.0, 1.0), -19.0);
   stan::test::expect_ad(f(0.0, 1.0), -5.5);
   stan::test::expect_ad(f(0.0, 1.0), 0.0);
