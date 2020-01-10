@@ -135,11 +135,15 @@ class operation_cl : public operation_cl_base {
       const std::string& i, const std::string& j) const {
     kernel_parts res{};
     if (generated.count(this) == 0) {
+      this->var_name = name_gen.generate();
       generated.insert(this);
+      std::string i_arg = i;
+      std::string j_arg = j;
+      derived().modify_argument_indices(i_arg, j_arg);
       std::array<kernel_parts, N> args_parts = index_apply<N>([&](auto... Is) {
         return std::array<kernel_parts, N>{
             std::get<Is>(arguments_)
-                .get_kernel_parts(generated, name_gen, i, j)...};
+                .get_kernel_parts(generated, name_gen, i_arg, j_arg)...};
       });
       res.body
           = std::accumulate(args_parts.begin(), args_parts.end(), std::string(),
@@ -151,7 +155,6 @@ class operation_cl : public operation_cl_base {
                             [](const std::string& a, const kernel_parts& b) {
                               return a + b.args;
                             });
-      this->var_name = name_gen.generate();
       kernel_parts my_part = index_apply<N>([&](auto... Is) {
         return this->derived().generate(i, j,
                                         std::get<Is>(arguments_).var_name...);
@@ -161,6 +164,16 @@ class operation_cl : public operation_cl_base {
     }
     return res;
   }
+
+  /**
+   * Does nothing. Derived classes can override this to modify how indices are
+   * passed to its argument expressions. On input arguments \c i and \c j are
+   * expressions for indices of this operation. On output they are expressions
+   * for indices of argument operations.
+   * @param[in, out] i row index
+   * @param[in, out] j column index
+   */
+  inline void modify_argument_indices(std::string& i, std::string& j) const {}
 
   /**
    * Sets kernel arguments for nested expressions.
@@ -206,7 +219,7 @@ class operation_cl : public operation_cl_base {
   inline int rows() const {
     return index_apply<N>([&](auto... Is) {
       // assuming all non-dynamic sizes match
-      return std::max({get<Is>(arguments_).rows()...});
+      return std::max({std::get<Is>(arguments_).rows()...});
     });
   }
 
@@ -215,11 +228,32 @@ class operation_cl : public operation_cl_base {
    * expression. Some subclasses may need to override this.
    * @return number of columns
    */
-  template <size_t... I>
   inline int cols() const {
     return index_apply<N>([&](auto... Is) {
       // assuming all non-dynamic sizes match
-      return std::max({get<Is>(arguments_).cols()...});
+      return std::max({std::get<Is>(arguments_).cols()...});
+    });
+  }
+
+  /**
+   * Determine index of bottom diagonal written. Some subclasses may need to
+   * override this.
+   * @return number of columns
+   */
+  inline int bottom_diagonal() const {
+    return index_apply<N>([&](auto... Is) {
+      return std::min({std::get<Is>(arguments_).bottom_diagonal()...});
+    });
+  }
+
+  /**
+   * Determine index of top diagonal written. Some subclasses may need to
+   * override this.
+   * @return number of columns
+   */
+  inline int top_diagonal() const {
+    return index_apply<N>([&](auto... Is) {
+      return std::max({std::get<Is>(arguments_).top_diagonal()...});
     });
   }
 };

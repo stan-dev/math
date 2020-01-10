@@ -1,16 +1,14 @@
-#include <stan/math/prim/scal.hpp>
-#include <stan/math/prim/mat.hpp>
-#include <stan/math/prim/arr.hpp>
+#include <stan/math/prim.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <boost/typeof/typeof.hpp>
 #include <gtest/gtest.h>
 #include <type_traits>
 #include <vector>
 
+using Eigen::Matrix;
 using stan::math::promote_elements;
 using stan::math::var;
 using std::vector;
-using Eigen::Matrix;
 
 TEST(MathFunctionsScalPromote_Elements, int2double) {
   int from;

@@ -1,7 +1,6 @@
-#include <stan/math/prim/mat.hpp>
-#include <stan/math/prim/mat/fun/matrix_exp_pade.hpp>
+#include <stan/math/prim.hpp>
+#include <test/unit/math/prim/fun/expect_matrix_eq.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/prim/mat/fun/expect_matrix_eq.hpp>
 #include <algorithm>
 #include <random>
 
