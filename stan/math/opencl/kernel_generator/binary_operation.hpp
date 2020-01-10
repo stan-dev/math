@@ -87,6 +87,7 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
 };
 
 #define COMMA ,
+// NOLINTNEXTLINE
 #define ADD_BINARY_OPERATION(class_name, function_name, scalar_type_expr,     \
                              operation)                                       \
   template <typename T_a, typename T_b>                                       \
@@ -106,6 +107,7 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
             as_operation_cl(std::forward<T_b>(b))};                           \
   }  // NOLINT
 
+// NOLINTNEXTLINE
 #define ADD_BINARY_OPERATION_WITH_CUSTOM_VIEW(                                \
     class_name, function_name, scalar_type_expr, operation, ...)              \
   template <typename T_a, typename T_b>                                       \
