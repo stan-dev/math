@@ -52,7 +52,8 @@ namespace internal {
 
 double lgamma_stirling_diff(const double x) {     
     if (x < internal::lgamma_stirling_diff_big) {
-        return std::lgamma(x) - lgamma_stirling(x);
+        return std::lgamma(static_cast<long double>(x)) - lgamma_stirling(static_cast<long double>(x));
+
         // double ten_over_x = 10.0 / x;
         // double t = ten_over_x * ten_over_x * 2 - 1;
         // return internal::lgamma_stirling_diff_chebyshev(t); 
