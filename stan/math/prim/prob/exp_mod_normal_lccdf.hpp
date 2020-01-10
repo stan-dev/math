@@ -72,10 +72,10 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lccdf(
 
     const T_partials_return deriv_1 = lambda_dbl * exp_term * erf_calc;
     const T_partials_return deriv_2
-        = SQRT_TWO_OVER_SQRT_PI * 0.5 * exp_term
+        = INV_SQRT_TWO_PI * exp_term
           * exp(-square(-scaled_diff + v_over_sqrt_two)) * inv_sigma;
     const T_partials_return deriv_3
-        = SQRT_TWO_OVER_SQRT_PI * 0.5 * exp(-square(scaled_diff)) * inv_sigma;
+        = INV_SQRT_TWO_PI * exp(-square(scaled_diff)) * inv_sigma;
 
     const T_partials_return ccdf_n
         = 0.5 - 0.5 * erf(u / (v * SQRT_TWO)) + exp_term * erf_calc;
@@ -99,7 +99,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lccdf(
     if (!is_constant_all<T_inv_scale>::value) {
       ops_partials.edge4_.partials_[n]
           -= exp_term
-             * (SQRT_TWO_OVER_SQRT_PI * 0.5 * sigma_dbl
+             * (INV_SQRT_TWO_PI * sigma_dbl
                     * exp(-square(v_over_sqrt_two - scaled_diff))
                 - (v * sigma_dbl - diff) * erf_calc)
              / ccdf_n;

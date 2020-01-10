@@ -52,9 +52,8 @@ return_type_t<T_y, T_loc, T_scale> lognormal_cdf(const T_y& y, const T_loc& mu,
     const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
     const T_partials_return scaled_diff
         = (log(y_dbl) - mu_dbl) / (sigma_dbl * SQRT_TWO);
-    const T_partials_return rep_deriv = SQRT_TWO_OVER_SQRT_PI * 0.5
-                                        * exp(-scaled_diff * scaled_diff)
-                                        / sigma_dbl;
+    const T_partials_return rep_deriv
+        = INV_SQRT_TWO_PI * exp(-scaled_diff * scaled_diff) / sigma_dbl;
 
     const T_partials_return cdf_n = 0.5 * erfc(-scaled_diff);
     cdf *= cdf_n;
