@@ -9,9 +9,9 @@
 #include <algorithm>
 #include <string>
 
+using Eigen::Matrix;
 using Eigen::MatrixXd;
 using Eigen::MatrixXi;
-using Eigen::Matrix;
 using stan::math::matrix_cl;
 
 #define EXPECT_MATRIX_NEAR(A, B, DELTA) \
@@ -44,23 +44,24 @@ TEST(MathMatrixCL, addition_test) {
   EXPECT_MATRIX_NEAR(res, correct, 1e-9);
 }
 
-#define BINARY_OPERATION_TEST(test_name, operation, res_type) \
-TEST(MathMatrixCL, test_name) { \
-  MatrixXd m1(3, 3); \
-  m1 << 1, 2.5, 3, 4, 5, 6.3, 7, -8, -9.5; \
-  MatrixXi m2(3, 3); \
-  m2 << 1, 100, 1000, 0, -10, -12, 2, -8, 8; \
- \
-  matrix_cl<double> m1_cl(m1); \
-  matrix_cl<int> m2_cl(m2); \
- \
-  auto tmp = m1_cl operation m2_cl; \
-  matrix_cl<res_type> res_cl = tmp; \
-  Matrix<res_type, -1,-1> res = stan::math::from_matrix_cl(res_cl); \
- \
-  Matrix<res_type, -1,-1> correct = m1.array() operation m2.cast<double>().array(); \
-  EXPECT_MATRIX_NEAR(res, correct, 1e-9); \
-}
+#define BINARY_OPERATION_TEST(test_name, operation, res_type)          \
+  TEST(MathMatrixCL, test_name) {                                      \
+    MatrixXd m1(3, 3);                                                 \
+    m1 << 1, 2.5, 3, 4, 5, 6.3, 7, -8, -9.5;                           \
+    MatrixXi m2(3, 3);                                                 \
+    m2 << 1, 100, 1000, 0, -10, -12, 2, -8, 8;                         \
+                                                                       \
+    matrix_cl<double> m1_cl(m1);                                       \
+    matrix_cl<int> m2_cl(m2);                                          \
+                                                                       \
+    auto tmp = m1_cl operation m2_cl;                                  \
+    matrix_cl<res_type> res_cl = tmp;                                  \
+    Matrix<res_type, -1, -1> res = stan::math::from_matrix_cl(res_cl); \
+                                                                       \
+    Matrix<res_type, -1, -1> correct                                   \
+        = m1.array() operation m2.cast<double>().array();              \
+    EXPECT_MATRIX_NEAR(res, correct, 1e-9);                            \
+  }
 
 BINARY_OPERATION_TEST(subtraction_test, -, double);
 
@@ -106,9 +107,9 @@ BINARY_OPERATION_TEST(equals_test, ==, bool);
 BINARY_OPERATION_TEST(not_equals_test, !=, bool);
 
 TEST(MathMatrixCL, logical_or_test) {
-  Matrix<bool,-1,-1> m1(3, 3);
+  Matrix<bool, -1, -1> m1(3, 3);
   m1 << true, true, true, false, false, true, true, false, false;
-  Matrix<bool,-1,-1> m2(3, 3);
+  Matrix<bool, -1, -1> m2(3, 3);
   m2 << true, false, false, true, false, true, false, true, false;
 
   matrix_cl<bool> m1_cl(m1);
@@ -116,16 +117,16 @@ TEST(MathMatrixCL, logical_or_test) {
 
   auto tmp = m1_cl || m2_cl;
   matrix_cl<bool> res_cl = tmp;
-  Matrix<bool,-1,-1> res = stan::math::from_matrix_cl(res_cl);
+  Matrix<bool, -1, -1> res = stan::math::from_matrix_cl(res_cl);
 
-  Matrix<bool,-1,-1> correct = m1 || m2;
+  Matrix<bool, -1, -1> correct = m1 || m2;
   EXPECT_MATRIX_NEAR(res, correct, 1e-9);
 }
 
 TEST(MathMatrixCL, logical_and_test) {
-  Matrix<bool,-1,-1> m1(3, 3);
+  Matrix<bool, -1, -1> m1(3, 3);
   m1 << true, true, true, false, false, true, true, false, false;
-  Matrix<bool,-1,-1> m2(3, 3);
+  Matrix<bool, -1, -1> m2(3, 3);
   m2 << true, false, false, true, false, true, false, true, false;
 
   matrix_cl<bool> m1_cl(m1);
@@ -133,9 +134,9 @@ TEST(MathMatrixCL, logical_and_test) {
 
   auto tmp = m1_cl && m2_cl;
   matrix_cl<bool> res_cl = tmp;
-  Matrix<bool,-1,-1> res = stan::math::from_matrix_cl(res_cl);
+  Matrix<bool, -1, -1> res = stan::math::from_matrix_cl(res_cl);
 
-  Matrix<bool,-1,-1> correct = m1 && m2;
+  Matrix<bool, -1, -1> correct = m1 && m2;
   EXPECT_MATRIX_NEAR(res, correct, 1e-9);
 }
 
