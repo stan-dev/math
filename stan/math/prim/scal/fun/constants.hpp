@@ -153,10 +153,10 @@ const double INV_SQRT_TWO_PI = inv(SQRT_TWO_PI);
 const double TWO_OVER_SQRT_PI = 2.0 / SQRT_PI;
 
 /**
- * The value of minus half the natural logarithm 2,
- * \f$ -\log(2) / 2 \f$.
+ * The value of half the natural logarithm 2,
+ * \f$ \log(2) / 2 \f$.
  */
-const double NEG_LOG_TWO_OVER_TWO = -0.5 * LOG_TWO;
+const double HALF_LOG_TWO = 0.5 * LOG_TWO;
 
 /**
  * The value of minus the natural logarithm of the square root of \f$ 2\pi \f$,
