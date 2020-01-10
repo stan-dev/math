@@ -2,7 +2,7 @@
 #define STAN_MATH_REV_SCAL_FUNCTOR_REDUCE_SUM_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/rev/mat/fun/typedefs.hpp>
+#include <stan/math/rev/fun/typedefs.hpp>
 
 #include <tbb/task_arena.h>
 #include <tbb/parallel_reduce.h>
@@ -47,7 +47,7 @@ typename value_type<T>::type adjoint_of(const T x) {
   return typename value_type<T>::type(0);
 }
 
-double adjoint_of(const var& x) { return x.vi_->adj_; }
+inline double adjoint_of(const var& x) { return x.vi_->adj_; }
 
 template <typename T, int R, int C>
 inline Eigen::Matrix<typename value_type<T>::type, R, C> adjoint_of(
@@ -101,7 +101,7 @@ typename value_type<std::vector<T>>::type as_value(const std::vector<T>& x) {
   return result;
 }
 
-double as_value(const var& x) { return x.vi_->val_; }
+inline double as_value(const var& x) { return x.vi_->val_; }
 
 template <typename T, int R, int C>
 inline Eigen::Matrix<typename value_type<T>::type, R, C> as_value(
@@ -237,6 +237,15 @@ struct local_operand_and_partials {
     }
   }
 
+  /*
+  inline void add_local_adjoint() {
+    if (!is_constant<T>::value) {
+      add_adjoint(partials_, adjoint_of(local_op_), local_op_start_);
+      local_op_ = Op_t();
+    }
+  }
+  */
+
   inline void add_other_adjoint(const local_operand_and_partials<T>& other) {
     if (!is_constant<T>::value) {
       add_adjoint(partials_, other.partials_);
@@ -245,9 +254,9 @@ struct local_operand_and_partials {
 
   inline const Op_t local_op(std::size_t start = 0, std::size_t end = -1) {
     // local_op_start_ = start;
-    const Op_t local_op
-        = Op_t(op_value_.begin() + start,
-               (end == -1 ? op_value_.end() : op_value_.begin() + end));
+    const Op_t local_op(
+        op_value_.begin() + start,
+        (end == -1 ? op_value_.end() : op_value_.begin() + end));
     return std::move(local_op);
   }
 
@@ -287,7 +296,7 @@ struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, var> {
   using arg4_local_op_t = local_operand_and_partials<Arg4>;
 
   struct recursive_reducer {
-    vmapped_op_t op_vmapped_;
+    vmapped_op_t& op_vmapped_;
     arg1_local_op_t op_arg1_;
     arg2_local_op_t op_arg2_;
     arg3_local_op_t op_arg3_;
@@ -295,13 +304,12 @@ struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, var> {
 
     double terms_sum_;
 
-    recursive_reducer(const vmapped_t& vmapped,
-                      const vmapped_value_t& vmapped_value, const T& init,
+    recursive_reducer(vmapped_op_t& op_vmapped, const T& init,
                       const arg1_t& arg1, const arg1_value_t& arg1_value,
                       const arg2_t& arg2, const arg2_value_t& arg2_value,
                       const arg3_t& arg3, const arg3_value_t& arg3_value,
                       const arg4_t& arg4, const arg4_value_t& arg4_value)
-        : op_vmapped_(vmapped, vmapped_value),
+        : op_vmapped_(op_vmapped),
           op_arg1_(arg1, arg1_value),
           op_arg2_(arg2, arg2_value),
           op_arg3_(arg3, arg3_value),
@@ -328,7 +336,6 @@ struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, var> {
 
         const vmapped_t local_sub_slice
             = op_vmapped_.local_op(r.begin(), r.end());
-
         const arg1_t local_arg1 = op_arg1_.local_op();
         const arg2_t local_arg2 = op_arg2_.local_op();
         const arg3_t local_arg3 = op_arg3_.local_op();
@@ -338,15 +345,6 @@ struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, var> {
             = ReduceFunction()(r.begin(), r.end() - 1, local_sub_slice,
                                local_arg1, local_arg2, local_arg3, local_arg4);
 
-        /*
-        T sub_sum_v
-            = ReduceFunction()(r.begin(), r.end() - 1,
-                               op_vmapped_.local_op(r.begin(), r.end()),
-                               op_arg1_.local_op(),
-                               op_arg2_.local_op(),
-                               op_arg3_.local_op(),
-                               op_arg4_.local_op());
-        */
         sub_sum_v.grad();
 
         terms_sum_ += sub_sum_v.val();
@@ -386,9 +384,10 @@ struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, var> {
     const arg3_value_t arg3_value = as_value(arg3);
     const arg4_value_t arg4_value = as_value(arg4);
 
-    recursive_reducer worker(vmapped, vmapped_value, init, arg1, arg1_value,
-                             arg2, arg2_value, arg3, arg3_value, arg4,
-                             arg4_value);
+    vmapped_op_t op_vmapped(vmapped, vmapped_value);
+
+    recursive_reducer worker(op_vmapped, init, arg1, arg1_value, arg2,
+                             arg2_value, arg3, arg3_value, arg4, arg4_value);
 
 #ifdef STAN_DETERMINISTIC
     tbb::static_partitioner partitioner;
@@ -402,7 +401,7 @@ struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, var> {
 
     std::vector<std::size_t> num_terms_arg(5, 0);
 
-    num_terms_arg[0] = worker.op_vmapped_.num_elements();
+    num_terms_arg[0] = op_vmapped.num_elements();
     num_terms_arg[1] = worker.op_arg1_.num_elements();
     num_terms_arg[2] = worker.op_arg2_.num_elements();
     num_terms_arg[3] = worker.op_arg3_.num_elements();
@@ -417,7 +416,7 @@ struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, var> {
 
     std::size_t idx = 0;
 
-    worker.op_vmapped_.build(&varis[idx], &partials[idx]);
+    op_vmapped.build(&varis[idx], &partials[idx]);
     idx += num_terms_arg[0];
     worker.op_arg1_.build(&varis[idx], &partials[idx]);
     idx += num_terms_arg[1];
