@@ -6,10 +6,10 @@
 #include <stan/math/fwd/fun/dot_self.hpp>
 #include <stan/math/fwd/fun/tcrossprod.hpp>
 #include <stan/math/fwd/fun/sqrt.hpp>
-#include <stan/math/prim/fun/divide.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/tcrossprod.hpp>
-#include <stan/math/prim/fun/unit_vector_constrain.hpp>
+#include <stan/math/prim/mat/fun/divide.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/mat/fun/tcrossprod.hpp>
+#include <stan/math/prim/mat/fun/unit_vector_constrain.hpp>
 #include <stan/math/prim/fun/inv.hpp>
 #include <cmath>
 
