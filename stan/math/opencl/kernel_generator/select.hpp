@@ -45,7 +45,7 @@ class select_ : public operation_cl<select_<T_condition, T_then, T_else>,
    * @param then then expression
    * @param els else expression
    */
-  select_(T_condition&& condition, T_then&& then, T_else&& els)   // NOLINT
+  select_(T_condition&& condition, T_then&& then, T_else&& els)  // NOLINT
       : base(std::forward<T_condition>(condition), std::forward<T_then>(then),
              std::forward<T_else>(els)) {
     if (condition.rows() != base::dynamic && then.rows() != base::dynamic) {
