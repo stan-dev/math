@@ -2,14 +2,13 @@
 #define STAN_MATH_PRIM_FUN_GP_MATERN32_COV_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/divide.hpp>
 #include <stan/math/prim/fun/divide_columns.hpp>
 #include <stan/math/prim/fun/distance.hpp>
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/divide.hpp>
 #include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/squared_distance.hpp>
-#include <stan/math/prim/fun/distance.hpp>
 #include <cmath>
 #include <vector>
 
