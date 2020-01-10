@@ -5,11 +5,13 @@
 #include <stan/math/rev/core/precomputed_gradients.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/vari.hpp>
+#include <stan/math/rev/fun/typedefs.hpp>
+#include <stan/math/prim/meta/require_generics.hpp>
 #include <stan/math/prim/meta/broadcast_array.hpp>
 #include <stan/math/prim/meta/operands_and_partials.hpp>
 #include <stan/math/prim/meta/is_vector_like.hpp>
 #include <stan/math/prim/meta/likely.hpp>
-#include <stan/math/rev/mat/fun/typedefs.hpp>
+#include <stan/math/prim/meta/promote_scalar_type.hpp>
 #include <stan/math/prim/meta/size.hpp>
 #include <vector>
 
@@ -163,11 +165,10 @@ class ops_partials_edge<double, std::vector<var>> {
   int size() { return this->operands_.size(); }
 };
 
-template <int R, int C>
-class ops_partials_edge<double, Eigen::Matrix<var, R, C>> {
+template <typename Op>
+class ops_partials_edge<double, Op, require_eigen_st<is_var, Op>> {
  public:
-  using Op = Eigen::Matrix<var, R, C>;
-  using partials_t = Eigen::Matrix<double, R, C>;
+  using partials_t = promote_scalar_t<double, Op>;
   partials_t partials_;                       // For univariate use-cases
   broadcast_array<partials_t> partials_vec_;  // For multivariate
   explicit ops_partials_edge(const Op& ops)

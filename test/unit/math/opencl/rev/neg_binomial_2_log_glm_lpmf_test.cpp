@@ -20,6 +20,7 @@ TEST(ProbDistributionsNegBinomial2LogGLM, error_checking) {
 
   vector<int> y{0, 1, 5};
   vector<int> y_size{0, 1, 5, 0};
+
   vector<int> y_value{1, 4, -23};
   Matrix<double, Dynamic, Dynamic> x(N, M);
   x << -12, 46, -42, 24, 25, 27;

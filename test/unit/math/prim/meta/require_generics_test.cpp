@@ -27,8 +27,8 @@ TEST(requires_prim_scal, all_not_test) {
                                         std::false_type>::value));
   EXPECT_FALSE((require_variadic_checker<require_all_not_t, std::true_type,
                                          std::true_type>::value));
-  EXPECT_TRUE((require_variadic_checker<require_all_not_t, std::true_type,
-                                        std::false_type>::value));
+  EXPECT_FALSE((require_variadic_checker<require_all_not_t, std::true_type,
+                                         std::false_type>::value));
 }
 
 TEST(requires_prim_scal, any_not_test) {
@@ -38,8 +38,8 @@ TEST(requires_prim_scal, any_not_test) {
                                         std::false_type>::value));
   EXPECT_FALSE((require_variadic_checker<require_any_not_t, std::true_type,
                                          std::true_type>::value));
-  EXPECT_FALSE((require_variadic_checker<require_any_not_t, std::true_type,
-                                         std::false_type>::value));
+  EXPECT_TRUE((require_variadic_checker<require_any_not_t, std::true_type,
+                                        std::false_type>::value));
 }
 
 TEST(requires_prim_scal, all_test) {
@@ -97,9 +97,11 @@ TEST(requires_prim_scal, all_same_test) {
       (require_variadic_checker<require_all_same_t, int, int, int>::value));
 }
 
-TEST(requires_prim_scal, all_not_same_test) {
+TEST(requires_prim_scal, any_not_same_test) {
   using stan::require_any_not_same_t;
   using stan::test::require_variadic_checker;
+  EXPECT_TRUE((require_variadic_checker<require_any_not_same_t, double, int,
+                                        int>::value));
   EXPECT_TRUE((require_variadic_checker<require_any_not_same_t, double, int,
                                         double>::value));
   EXPECT_FALSE((require_variadic_checker<require_any_not_same_t, double, double,
@@ -135,6 +137,8 @@ TEST(requires_prim_scal, all_convertible_test) {
   using stan::require_all_convertible_t;
   using stan::test::require_variadic_checker;
   EXPECT_FALSE((require_variadic_checker<require_all_convertible_t, double,
+                                         std::string, std::string>::value));
+  EXPECT_FALSE((require_variadic_checker<require_all_convertible_t, double,
                                          std::string, double>::value));
   EXPECT_TRUE((require_variadic_checker<require_all_convertible_t, double, int,
                                         int>::value));
@@ -142,9 +146,11 @@ TEST(requires_prim_scal, all_convertible_test) {
                                         int>::value));
 }
 
-TEST(requires_prim_scal, all_not_convertible_test) {
+TEST(requires_prim_scal, any_not_convertible_test) {
   using stan::require_any_not_convertible_t;
   using stan::test::require_variadic_checker;
+  EXPECT_TRUE((require_variadic_checker<require_any_not_convertible_t, double,
+                                        std::string, std::string>::value));
   EXPECT_TRUE((require_variadic_checker<require_any_not_convertible_t, double,
                                         int, std::string>::value));
   EXPECT_FALSE((require_variadic_checker<require_any_not_convertible_t, double,
@@ -526,9 +532,12 @@ TEST(requires_prim_mat, all_same_vtest) {
                                         eigen_x<int>, eigen_x<int>>::value));
 }
 
-TEST(requires_prim_mat, all_not_same_vtest) {
+TEST(requires_prim_mat, any_not_same_vtest) {
   using stan::require_any_not_same_vt;
   using stan::test::require_variadic_checker;
+  EXPECT_TRUE(
+      (require_variadic_checker<require_any_not_same_vt, eigen_x<double>,
+                                eigen_x<int>, eigen_x<int>>::value));
   EXPECT_TRUE(
       (require_variadic_checker<require_any_not_same_vt, eigen_x<double>,
                                 eigen_x<int>, eigen_x<double>>::value));
@@ -574,9 +583,12 @@ TEST(requires_prim_mat, all_same_stest) {
                                         eigen_x<int>, eigen_x<int>>::value));
 }
 
-TEST(requires_prim_mat, all_not_same_stest) {
+TEST(requires_prim_mat, any_not_same_stest) {
   using stan::require_any_not_same_st;
   using stan::test::require_variadic_checker;
+  EXPECT_TRUE(
+      (require_variadic_checker<require_any_not_same_st, eigen_x<double>,
+                                eigen_x<int>, eigen_x<int>>::value));
   EXPECT_TRUE(
       (require_variadic_checker<require_any_not_same_st, eigen_x<double>,
                                 eigen_x<int>, eigen_x<double>>::value));

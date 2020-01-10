@@ -5,12 +5,14 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/dot_self.hpp>
 #include <stan/math/prim/mat/fun/log.hpp>
+#include <stan/math/prim/mat/fun/sum.hpp>
 #include <stan/math/prim/mat/fun/mdivide_left_tri.hpp>
 #include <stan/math/prim/mat/fun/transpose.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 
 namespace stan {
 namespace math {
+
 /** \ingroup multivar_dists
  * The log of the multivariate normal density for the given y, mu, and
  * a Cholesky factor L of the variance matrix.
@@ -147,7 +149,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
   }
 
   if (include_summand<propto, T_covar_elem>::value) {
-    logp += inv_L_dbl.diagonal().array().log().sum() * size_vec;
+    logp += sum(log(inv_L_dbl.diagonal())) * size_vec;
     if (!is_constant_all<T_covar>::value) {
       ops_partials.edge3_.partials_ -= size_vec * inv_L_dbl.transpose();
     }

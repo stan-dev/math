@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <stan/math/rev/mat.hpp>
+#include <stan/math/rev.hpp>
 #include <test/unit/util.hpp>
 #include <limits>
 

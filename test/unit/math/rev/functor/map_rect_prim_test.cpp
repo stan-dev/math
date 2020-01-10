@@ -1,4 +1,4 @@
-#include <stan/math/rev/mat.hpp>
+#include <stan/math/rev.hpp>
 #include <gtest/gtest.h>
 
 #include <test/unit/math/prim/functor/hard_work.hpp>

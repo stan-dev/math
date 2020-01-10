@@ -28,8 +28,7 @@ namespace math {
     \frac{\partial }{\partial x} = -\frac{e^y}{e^x-e^y}-\frac{e^y}{e^y+1}
    \f]
  *
- * @tparam T1 Type of x argument.
- * @tparam T2 Type of y argument.
+ * @tparam T inner type of the fvar
  * @param x Argument.
  * @param y Argument.
  * @return Fvar with result of log difference of inverse logits of arguments
