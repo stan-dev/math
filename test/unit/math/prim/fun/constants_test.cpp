@@ -2,7 +2,6 @@
 #include <gtest/gtest.h>
 #include <limits>
 
-TEST(MathsConstants, e) { EXPECT_FLOAT_EQ(std::exp(1.0), stan::math::E); }
 TEST(MathsConstants, sqrt2) {
   EXPECT_FLOAT_EQ(std::sqrt(2.0), stan::math::SQRT_TWO);
 }
