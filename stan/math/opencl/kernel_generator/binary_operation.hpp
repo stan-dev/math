@@ -87,8 +87,8 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
 };
 
 #define COMMA ,
-#define BINARY_OPERATION(class_name, function_name, scalar_type_expr,         \
-                         operation)                                           \
+#define ADD_BINARY_OPERATION(class_name, function_name, scalar_type_expr,     \
+                             operation)                                       \
   template <typename T_a, typename T_b>                                       \
   class class_name : public binary_operation<class_name<T_a, T_b>,            \
                                              scalar_type_expr, T_a, T_b> {    \
@@ -106,8 +106,8 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
             as_operation_cl(std::forward<T_b>(b))};                           \
   }  // NOLINT
 
-#define BINARY_OPERATION_WITH_CUSTOM_VIEW(class_name, function_name,          \
-                                          scalar_type_expr, operation, ...)   \
+#define ADD_BINARY_OPERATION_WITH_CUSTOM_VIEW(                                \
+    class_name, function_name, scalar_type_expr, operation, ...)              \
   template <typename T_a, typename T_b>                                       \
   class class_name : public binary_operation<class_name<T_a, T_b>,            \
                                              scalar_type_expr, T_a, T_b> {    \
@@ -126,33 +126,34 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
             as_operation_cl(std::forward<T_b>(b))};                           \
   }  // NOLINT
 
-BINARY_OPERATION(addition_, operator+, common_scalar_t<T_a COMMA T_b>, "+");
-BINARY_OPERATION(subtraction_, operator-, common_scalar_t<T_a COMMA T_b>, "-");
-BINARY_OPERATION_WITH_CUSTOM_VIEW(
+ADD_BINARY_OPERATION(addition_, operator+, common_scalar_t<T_a COMMA T_b>, "+");
+ADD_BINARY_OPERATION(subtraction_, operator-, common_scalar_t<T_a COMMA T_b>,
+                     "-");
+ADD_BINARY_OPERATION_WITH_CUSTOM_VIEW(
     elewise_multiplication_, elewise_multiplication,
     common_scalar_t<T_a COMMA T_b>, "*",
     using base = binary_operation<elewise_multiplication_<T_a, T_b>,
                                   common_scalar_t<T_a, T_b>, T_a, T_b>;
     return both(std::get<0>(base::arguments_).view(),
                 std::get<1>(base::arguments_).view()););
-BINARY_OPERATION_WITH_CUSTOM_VIEW(
+ADD_BINARY_OPERATION_WITH_CUSTOM_VIEW(
     elewise_division_, elewise_division, common_scalar_t<T_a COMMA T_b>, "/",
     using base = binary_operation<elewise_division_<T_a, T_b>,
                                   common_scalar_t<T_a, T_b>, T_a, T_b>;
     return either(std::get<0>(base::arguments_).view(),
                   invert(std::get<1>(base::arguments_).view())););
-BINARY_OPERATION(less_than_, operator<, bool, "<");
-BINARY_OPERATION_WITH_CUSTOM_VIEW(less_than_or_equal_, operator<=, bool,
-                                  "<=", return matrix_cl_view::Entire);
-BINARY_OPERATION(greater_than_, operator>, bool, ">");
-BINARY_OPERATION_WITH_CUSTOM_VIEW(greater_than_or_equal, operator>=, bool,
-                                  ">=", return matrix_cl_view::Entire);
-BINARY_OPERATION_WITH_CUSTOM_VIEW(equals_, operator==, bool,
-                                  "==", return matrix_cl_view::Entire);
-BINARY_OPERATION(not_equals_, operator!=, bool, "!=");
+ADD_BINARY_OPERATION(less_than_, operator<, bool, "<");
+ADD_BINARY_OPERATION_WITH_CUSTOM_VIEW(less_than_or_equal_, operator<=, bool,
+                                      "<=", return matrix_cl_view::Entire);
+ADD_BINARY_OPERATION(greater_than_, operator>, bool, ">");
+ADD_BINARY_OPERATION_WITH_CUSTOM_VIEW(greater_than_or_equal, operator>=, bool,
+                                      ">=", return matrix_cl_view::Entire);
+ADD_BINARY_OPERATION_WITH_CUSTOM_VIEW(equals_, operator==, bool,
+                                      "==", return matrix_cl_view::Entire);
+ADD_BINARY_OPERATION(not_equals_, operator!=, bool, "!=");
 
-BINARY_OPERATION(logical_or, operator||, bool, "||");
-BINARY_OPERATION(logical_and, operator&&, bool, "&&");
+ADD_BINARY_OPERATION(logical_or, operator||, bool, "||");
+ADD_BINARY_OPERATION(logical_and, operator&&, bool, "&&");
 
 /**
  * Multiplication of a scalar and a kernel generator expression.
@@ -202,6 +203,10 @@ inline matrix_cl<double> operator*(const T_a& a, const T_b& b) {
   return stan::math::opencl::multiply(as_operation_cl(a).eval(),
                                       as_operation_cl(b).eval());
 }
+
+#undef COMMA
+#undef ADD_BINARY_OPERATION
+#undef ADD_BINARY_OPERATION_WITH_CUSTOM_VIEW
 
 }  // namespace math
 }  // namespace stan
