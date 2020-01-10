@@ -58,7 +58,6 @@ inline double acosh(int x) {
 #ifndef STAN_MATH_PRIM_FUN_ACOSH_HPP
 #define STAN_MATH_PRIM_FUN_ACOSH_HPP
 
-
 namespace stan {
 namespace math {
 

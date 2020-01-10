@@ -74,7 +74,7 @@ typename promote_scalar_type<T, S>::type promote_scalar(const S& x) {
  * assignable to T.
  */
 template <typename T, typename S>
-struct promote_scalar_struct<T, std::vector<S> > {
+struct promote_scalar_struct<T, std::vector<S>> {
   /**
    * Return the standard vector consisting of the recursive
    * promotion of the elements of the input standard vector to the
