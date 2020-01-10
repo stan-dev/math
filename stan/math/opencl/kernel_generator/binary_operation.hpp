@@ -87,46 +87,44 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
 };
 
 #define COMMA ,
-// NOLINTNEXTLINE
 #define ADD_BINARY_OPERATION(class_name, function_name, scalar_type_expr,     \
                              operation)                                       \
   template <typename T_a, typename T_b>                                       \
   class class_name : public binary_operation<class_name<T_a, T_b>,            \
                                              scalar_type_expr, T_a, T_b> {    \
    public:                                                                    \
-    class_name(T_a&& a, T_b&& b)                                              \
+    class_name(T_a&& a, T_b&& b) /* NOLINT */                                 \
         : binary_operation<class_name<T_a, T_b>, scalar_type_expr, T_a, T_b>( \
-              std::forward<T_a>(a), std::forward<T_b>(b), operation) {}       \
+            std::forward<T_a>(a), std::forward<T_b>(b), operation) {}         \
   };                                                                          \
                                                                               \
   template <typename T_a, typename T_b,                                       \
             typename = require_all_valid_expressions_t<T_a, T_b>>             \
   inline class_name<as_operation_cl_t<T_a>, as_operation_cl_t<T_b>>           \
-  function_name(T_a&& a, T_b&& b) {                                           \
+  function_name(T_a&& a, T_b&& b) { /* NOLINT */                              \
     return {as_operation_cl(std::forward<T_a>(a)),                            \
             as_operation_cl(std::forward<T_b>(b))};                           \
-  }  // NOLINT
+  }
 
-// NOLINTNEXTLINE
 #define ADD_BINARY_OPERATION_WITH_CUSTOM_VIEW(                                \
     class_name, function_name, scalar_type_expr, operation, ...)              \
   template <typename T_a, typename T_b>                                       \
   class class_name : public binary_operation<class_name<T_a, T_b>,            \
                                              scalar_type_expr, T_a, T_b> {    \
    public:                                                                    \
-    class_name(T_a&& a, T_b&& b)                                              \
+    class_name(T_a&& a, T_b&& b) /* NOLINT */                                 \
         : binary_operation<class_name<T_a, T_b>, scalar_type_expr, T_a, T_b>( \
-              std::forward<T_a>(a), std::forward<T_b>(b), operation) {}       \
+            std::forward<T_a>(a), std::forward<T_b>(b), operation) {}         \
     inline matrix_cl_view view() const { __VA_ARGS__; }                       \
   };                                                                          \
                                                                               \
   template <typename T_a, typename T_b,                                       \
             typename = require_all_valid_expressions_t<T_a, T_b>>             \
   inline class_name<as_operation_cl_t<T_a>, as_operation_cl_t<T_b>>           \
-  function_name(T_a&& a, T_b&& b) {                                           \
+  function_name(T_a&& a, T_b&& b) { /* NOLINT */                              \
     return {as_operation_cl(std::forward<T_a>(a)),                            \
             as_operation_cl(std::forward<T_b>(b))};                           \
-  }  // NOLINT
+  }
 
 ADD_BINARY_OPERATION(addition_, operator+, common_scalar_t<T_a COMMA T_b>, "+");
 ADD_BINARY_OPERATION(subtraction_, operator-, common_scalar_t<T_a COMMA T_b>,
