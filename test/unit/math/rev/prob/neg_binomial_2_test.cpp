@@ -1,4 +1,4 @@
-#include <stan/math/rev/scal.hpp>
+#include <stan/math/rev.hpp>
 #include <boost/math/differentiation/finite_difference.hpp>
 #include <boost/math/special_functions/digamma.hpp>
 #include <test/unit/math/expect_near_rel.hpp>

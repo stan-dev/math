@@ -14,6 +14,6 @@ TEST(mathMixScalFun, gammaQ) {
   stan::test::expect_ad(f, nan, 1.0);
   stan::test::expect_ad(f, nan, nan);
 
-  // this still fails forward mode; left regression test in rev/scal/fun
+  // this still fails forward mode; left regression test in rev/fun
   // stan::test::expect_value(f, 8.01006, 2.47579e+215);
 }

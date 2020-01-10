@@ -5,8 +5,8 @@
 #include <stan/math/prim/functor/map_rect_reduce.hpp>
 #include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/rev/core/var.hpp>
-#include <stan/math/rev/mat/fun/typedefs.hpp>
-#include <stan/math/rev/mat/fun/to_var.hpp>
+#include <stan/math/rev/fun/typedefs.hpp>
+#include <stan/math/rev/fun/to_var.hpp>
 
 #include <vector>
 

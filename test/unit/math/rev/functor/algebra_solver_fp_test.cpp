@@ -1,7 +1,7 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/functor/algebra_solver_fp.hpp>
 #include <stan/math/prim/functor/finite_diff_gradient_auto.hpp>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/fun/util.hpp>
 #include <test/unit/math/rev/functor/util_algebra_solver.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>

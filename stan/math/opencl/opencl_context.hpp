@@ -166,7 +166,7 @@ class opencl_context_base {
     int cholesky_min_L11_size = 256;
     int cholesky_partition = 4;
     int cholesky_size_worth_transfer = 1250;
-    // Used in math/rev/mat/fun/cholesky_decompose
+    // Used in math/rev/fun/cholesky_decompose
     int cholesky_rev_min_block_size = 512;
     int cholesky_rev_block_partition = 8;
     // used in math/opencl/multiply
@@ -175,10 +175,10 @@ class opencl_context_base {
     double gp_exp_quad_cov_complex = 1'000'000;
     double gp_exp_quad_cov_simple = 1'250;
     // used in math/prim/mat/fun/multiply
-    // and math/rev/mat/fun/multiply
+    // and math/rev/fun/multiply
     int multiply_dim_prod_worth_transfer = 2000000;
     // used in math/prim/mat/fun/mdivide_left_tri
-    // and math/rev/mat/fun/mdivide_left_tri
+    // and math/rev/fun/mdivide_left_tri
     int tri_inverse_size_worth_transfer = 100;
   } tuning_opts_;
 
