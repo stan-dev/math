@@ -1,5 +1,5 @@
-#ifndef TEST_MATH_UNIT_PRIM_MAT_UTIL_HPP
-#define TEST_MATH_UNIT_PRIM_MAT_UTIL_HPP
+#ifndef TEST_MATH_UNIT_PRIM_UTIL_HPP
+#define TEST_MATH_UNIT_PRIM_UTIL_HPP
 
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>

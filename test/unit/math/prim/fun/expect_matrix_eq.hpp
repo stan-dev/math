@@ -1,6 +1,7 @@
-#ifndef TEST_MATH_MATRIX_EXPECT_MATRIX_EQ_HPP
-#define TEST_MATH_MATRIX_EXPECT_MATRIX_EQ_HPP
+#ifndef TEST_MATH_MATH_PRIM_FUN_EXPECT_MATRIX_EQ_HPP
+#define TEST_MATH_MATH_PRIM_FUN_EXPECT_MATRIX_EQ_HPP
 
+#include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 
 void expect_matrix_eq(

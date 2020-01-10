@@ -1,3 +1,4 @@
+#include <stan/math/prim.hpp>
 #include <test/unit/math/test_ad.hpp>
 
 TEST(primScalFun, sinh) {
