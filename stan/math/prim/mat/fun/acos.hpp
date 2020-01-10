@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_ACOS_HPP
 #define STAN_MATH_PRIM_MAT_FUN_ACOS_HPP
 
+#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
@@ -29,9 +31,21 @@ struct acos_fun {
  * @param x container
  * @return Arc cosine of each variable in the container, in radians.
  */
-template <typename T>
-inline typename apply_scalar_unary<acos_fun, T>::return_t acos(const T& x) {
+template <typename T, typename = require_not_eigen_vt<std::is_arithmetic, T>>
+inline auto acos(const T& x) {
   return apply_scalar_unary<acos_fun, T>::apply(x);
+}
+
+/**
+ * Version of acos() that accepts Eigen Matrix or matrix expressions.
+ * @tparam Derived derived type of x
+ * @param x Matrix or matrix expression
+ * @return Arc cosine of each variable in the container, in radians.
+ */
+template <typename Derived,
+          typename = require_eigen_vt<std::is_arithmetic, Derived>>
+inline auto acos(const Eigen::MatrixBase<Derived>& x) {
+  return x.derived().array().acos().matrix();
 }
 
 }  // namespace math

@@ -29,6 +29,7 @@ namespace math {
  * fully unfolded expression for the function applied to the
  * argument, independently of dimension.
  *
+ * @tparam T type of the elements in the vector
  * @tparam F Type of function
  * @param[in] f Function
  * @param[in] x Argument to function

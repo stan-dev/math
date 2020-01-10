@@ -1,6 +1,6 @@
-#include <stan/math/mix/scal.hpp>
+#include <stan/math/mix.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/scal/fun/util.hpp>
+#include <test/unit/math/rev/fun/util.hpp>
 #include <vector>
 
 std::vector<double> test_fun(double y, double mu, double sigma) {

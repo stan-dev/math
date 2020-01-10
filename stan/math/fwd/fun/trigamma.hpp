@@ -13,6 +13,7 @@ namespace math {
  * argument (i.e., the second derivative of the log Gamma function
  * at the specified argument).
  *
+ * @tparam T inner type of the fvar
  * @param u argument
  * @return trigamma function at argument
  */

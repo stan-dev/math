@@ -12,12 +12,20 @@ namespace math {
 
 /**
  * Returns the solution of the system Ax=b given an LDLT_factor of A
+ *
+ * @tparam R1 number of rows in the LDLT_factor, can be Eigen::Dynamic
+ * @tparam C1 number of columns in the LDLT_factor, can be Eigen::Dynamic
+ * @tparam R2 number of rows in the right-hand side matrix, can be
+ *         Eigen::Dynamic
+ * @tparam C2 number of columns in the right-hand side matrix, can be
+ *         Eigen::Dynamic
+ * @tparam T2 type of elements in the right-hand side matrix or vector
+ *
  * @param A LDLT_factor
- * @param b Right hand side matrix or vector.
+ * @param b right-hand side matrix or vector
  * @return x = b A^-1, solution of the linear system.
  * @throws std::domain_error if rows of b don't match the size of A.
  */
-
 template <int R1, int C1, int R2, int C2, typename T2>
 inline Eigen::Matrix<fvar<T2>, R1, C2> mdivide_left_ldlt(
     const LDLT_factor<double, R1, C1> &A,

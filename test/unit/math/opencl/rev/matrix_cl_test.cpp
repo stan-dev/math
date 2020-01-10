@@ -1,5 +1,5 @@
 #ifdef STAN_OPENCL
-#include <stan/math/rev/mat/fun/typedefs.hpp>
+#include <stan/math/rev/fun/typedefs.hpp>
 #include <stan/math/opencl/opencl_context.hpp>
 #include <stan/math/opencl/rev/matrix_cl.hpp>
 #include <gtest/gtest.h>

@@ -1,9 +1,12 @@
 #ifndef STAN_MATH_PRIM_META_SCALAR_SEQ_VIEW_HPP
 #define STAN_MATH_PRIM_META_SCALAR_SEQ_VIEW_HPP
 
+#include <stan/math/prim/meta/plain_type.hpp>
+#include <stan/math/prim/meta/require_generics.hpp>
 #include <stan/math/prim/meta/scalar_type.hpp>
 #include <stan/math/prim/meta/is_vector_like.hpp>
 #include <type_traits>
+#include <utility>
 
 namespace stan {
 /** \ingroup type_trait
@@ -20,7 +23,9 @@ template <typename C>
 class scalar_seq_view<
     C, std::enable_if_t<is_vector_like<std::decay_t<C>>::value>> {
  public:
-  explicit scalar_seq_view(const C& c) : c_(c) {}
+  template <typename T,
+            typename = require_same_t<plain_type_t<T>, plain_type_t<C>>>
+  explicit scalar_seq_view(T&& c) : c_(std::forward<T>(c)) {}
 
   /** \ingroup type_trait
    * Segfaults if out of bounds.
@@ -33,7 +38,7 @@ class scalar_seq_view<
   int size() const { return c_.size(); }
 
  private:
-  C c_;
+  eval_return_type_t<C> c_;
 };
 
 /** \ingroup type_trait

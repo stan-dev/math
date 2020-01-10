@@ -36,8 +36,7 @@ struct Phi_approx_fun {
  * @return elementwise Phi_approx of container elements
  */
 template <typename T>
-inline typename apply_scalar_unary<Phi_approx_fun, T>::return_t Phi_approx(
-    const T& x) {
+inline auto Phi_approx(const T& x) {
   return apply_scalar_unary<Phi_approx_fun, T>::apply(x);
 }
 

@@ -1,4 +1,4 @@
-#include <stan/math/rev/mat.hpp>
+#include <stan/math/rev.hpp>
 #include <gtest/gtest.h>
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <vector>
@@ -469,4 +469,24 @@ TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_error_checking) {
                std::invalid_argument);
   EXPECT_THROW(stan::math::poisson_log_glm_lpmf(y, x, alpha, betaw2),
                std::domain_error);
+}
+
+TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_vars_propto) {
+  vector<int> y{2, 0, 1, 2, 1, 0, 0, 1, 3, 0};
+  Matrix<double, Dynamic, Dynamic> x(10, 3);
+  x << -1.87936, 0.55093, -2.50689, 4.78584, 0.988523, -2.46141, 1.46229,
+      2.21497, 1.72734, -0.916165, -0.563808, 0.165279, -0.752066, 1.43575,
+      0.296557, -0.738422, 0.438686, 0.664492, 0.518203, -0.27485, 2, 0, 1, 2,
+      1, 0, 0, 1, 3, 0;
+  Matrix<var, Dynamic, 1> beta(3, 1);
+  beta << 1.17711, 1.24432, -0.596639;
+  var alpha = -1.04272;
+  Matrix<var, Dynamic, 1> alphavec = alpha * Matrix<var, 10, 1>::Ones();
+  Matrix<var, Dynamic, 1> theta(10, 1);
+  theta = x * beta + alphavec;
+  var lp = stan::math::poisson_log_lpmf<true>(y, theta);
+  double lp_val = lp.val();
+  var lp1 = stan::math::poisson_log_glm_lpmf<true>(y, x, alpha, beta);
+  double lp1_val = lp1.val();
+  EXPECT_FLOAT_EQ(lp_val, lp1_val);
 }
