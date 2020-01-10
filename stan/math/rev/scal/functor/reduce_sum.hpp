@@ -197,6 +197,74 @@ inline double* register_partials(const std::vector<T>& grad, double* partials) {
   return partials;
 }
 
+template <typename T>
+struct local_operand_and_partials {
+  using Op_t = std::vector<T>;
+  using Op_value_t = std::vector<typename value_type<T>::type>;
+  // will be either a const var to get local copies or a const value&
+  // ref to avoid copying data... TODO
+  using Op_local_t = Op_value_t;
+  // using partials_t = Eigen::VectorXd;
+  using partials_t = Op_value_t;
+
+  const Op_t& op_;
+  const Op_value_t& op_value_;
+  // Op_t local_op_;
+  // std::size_t local_op_start_;
+  partials_t partials_;
+
+  explicit local_operand_and_partials(const Op_t& op,
+                                      const Op_value_t& op_value)
+      : op_(op),
+        op_value_(op_value),
+        // local_op_(),
+        // local_op_start_(0),
+        partials_(is_constant<T>::value ? Op_value_t()
+                                        : adjoint_of(op_value_)) {}
+
+  local_operand_and_partials(const local_operand_and_partials<T>& other)
+      : op_(other.op_),
+        op_value_(other.op_value_),
+        // local_op_(),
+        // local_op_start_(0),
+        partials_(is_constant<T>::value ? Op_value_t()
+                                        : adjoint_of(other.op_value_)) {}
+
+  inline void add_local_adjoint(const Op_t& local_op, std::size_t offset = 0) {
+    if (!is_constant<T>::value) {
+      add_adjoint(partials_, adjoint_of(local_op), offset);
+      // local_op_ = Op_t();
+    }
+  }
+
+  inline void add_other_adjoint(const local_operand_and_partials<T>& other) {
+    if (!is_constant<T>::value) {
+      add_adjoint(partials_, other.partials_);
+    }
+  }
+
+  inline const Op_t local_op(std::size_t start = 0, std::size_t end = -1) {
+    // local_op_start_ = start;
+    const Op_t local_op
+        = Op_t(op_value_.begin() + start,
+               (end == -1 ? op_value_.end() : op_value_.begin() + end));
+    return std::move(local_op);
+  }
+
+  inline std::size_t num_elements() {
+    if (!is_constant<T>::value)
+      return stan::math::num_elements(op_value_);
+    return 0;
+  }
+
+  inline void build(vari** varis, double* partials) {
+    if (!is_constant<T>::value) {
+      register_operands(op_, varis);
+      register_partials(partials_, partials);
+    }
+  }
+};
+
 template <class ReduceFunction, class M, class T, class Arg1, class Arg2,
           class Arg3, class Arg4>
 struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, var> {
@@ -212,68 +280,40 @@ struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, var> {
   using arg3_value_t = std::vector<typename value_type<Arg3>::type>;
   using arg4_value_t = std::vector<typename value_type<Arg4>::type>;
 
-  struct recursive_reducer {
-    const vmapped_t& vmapped_;
-    vmapped_value_t& vmapped_adjoint_;
-    const arg1_t& arg1_;
-    const arg1_value_t& arg1_value_;
-    const arg2_t& arg2_;
-    const arg2_value_t& arg2_value_;
-    const arg3_t& arg3_;
-    const arg3_value_t& arg3_value_;
-    const arg4_t& arg4_;
-    const arg4_value_t& arg4_value_;
+  using vmapped_op_t = local_operand_and_partials<M>;
+  using arg1_local_op_t = local_operand_and_partials<Arg1>;
+  using arg2_local_op_t = local_operand_and_partials<Arg2>;
+  using arg3_local_op_t = local_operand_and_partials<Arg3>;
+  using arg4_local_op_t = local_operand_and_partials<Arg4>;
 
-    arg1_value_t arg1_adjoint_;
-    arg2_value_t arg2_adjoint_;
-    arg3_value_t arg3_adjoint_;
-    arg4_value_t arg4_adjoint_;
+  struct recursive_reducer {
+    vmapped_op_t op_vmapped_;
+    arg1_local_op_t op_arg1_;
+    arg2_local_op_t op_arg2_;
+    arg3_local_op_t op_arg3_;
+    arg4_local_op_t op_arg4_;
 
     double terms_sum_;
 
     recursive_reducer(const vmapped_t& vmapped,
-                      vmapped_value_t& vmapped_adjoint, const T& init,
+                      const vmapped_value_t& vmapped_value, const T& init,
                       const arg1_t& arg1, const arg1_value_t& arg1_value,
                       const arg2_t& arg2, const arg2_value_t& arg2_value,
                       const arg3_t& arg3, const arg3_value_t& arg3_value,
-                      const arg4_t& arg4, const arg4_value_t& arg4_value
-                      // ops_partials_t& terms_partials_mapped,
-                      )
-        : vmapped_(vmapped),
-          vmapped_adjoint_(vmapped_adjoint),
-          arg1_(arg1),
-          arg1_value_(arg1_value),
-          arg2_(arg2),
-          arg2_value_(arg2_value),
-          arg3_(arg3),
-          arg3_value_(arg3_value),
-          arg4_(arg4),
-          arg4_value_(arg4_value),
-          arg1_adjoint_(is_constant<Arg1>::value ? arg1_value_t()
-                                                 : adjoint_of(arg1_value_)),
-          arg2_adjoint_(is_constant<Arg2>::value ? arg2_value_t()
-                                                 : adjoint_of(arg2_value_)),
-          arg3_adjoint_(is_constant<Arg3>::value ? arg3_value_t()
-                                                 : adjoint_of(arg3_value_)),
-          arg4_adjoint_(is_constant<Arg4>::value ? arg4_value_t()
-                                                 : adjoint_of(arg4_value_)),
+                      const arg4_t& arg4, const arg4_value_t& arg4_value)
+        : op_vmapped_(vmapped, vmapped_value),
+          op_arg1_(arg1, arg1_value),
+          op_arg2_(arg2, arg2_value),
+          op_arg3_(arg3, arg3_value),
+          op_arg4_(arg4, arg4_value),
           terms_sum_(as_value(init)) {}
 
     recursive_reducer(recursive_reducer& other, tbb::split)
-        : vmapped_(other.vmapped_),
-          vmapped_adjoint_(other.vmapped_adjoint_),
-          arg1_(other.arg1_),
-          arg1_value_(other.arg1_value_),
-          arg2_(other.arg2_),
-          arg2_value_(other.arg2_value_),
-          arg3_(other.arg3_),
-          arg3_value_(other.arg3_value_),
-          arg4_(other.arg4_),
-          arg4_value_(other.arg4_value_),
-          arg1_adjoint_(adjoint_of(arg1_value_)),
-          arg2_adjoint_(adjoint_of(arg2_value_)),
-          arg3_adjoint_(adjoint_of(arg3_value_)),
-          arg4_adjoint_(adjoint_of(arg4_value_)),
+        : op_vmapped_(other.op_vmapped_),
+          op_arg1_(other.op_arg1_),
+          op_arg2_(other.op_arg2_),
+          op_arg3_(other.op_arg3_),
+          op_arg4_(other.op_arg4_),
           terms_sum_(0.0) {}
 
     void operator()(const tbb::blocked_range<size_t>& r) {
@@ -286,41 +326,38 @@ struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, var> {
         // create a deep copy of all var's so that these are not
         // linked to any outer AD tree
 
-        vmapped_t local_sub_slice;
+        const vmapped_t local_sub_slice
+            = op_vmapped_.local_op(r.begin(), r.end());
 
-        local_sub_slice.reserve(r.size());
-        for (std::size_t i = r.begin(); i != r.end(); ++i)
-          local_sub_slice.emplace_back(as_value(vmapped_[i]));
-
-        const arg1_t local_arg1(arg1_value_.begin(), arg1_value_.end());
-        const arg2_t local_arg2(arg2_value_.begin(), arg2_value_.end());
-        const arg3_t local_arg3(arg3_value_.begin(), arg3_value_.end());
-        const arg4_t local_arg4(arg4_value_.begin(), arg4_value_.end());
+        const arg1_t local_arg1 = op_arg1_.local_op();
+        const arg2_t local_arg2 = op_arg2_.local_op();
+        const arg3_t local_arg3 = op_arg3_.local_op();
+        const arg4_t local_arg4 = op_arg4_.local_op();
 
         T sub_sum_v
             = ReduceFunction()(r.begin(), r.end() - 1, local_sub_slice,
                                local_arg1, local_arg2, local_arg3, local_arg4);
 
+        /*
+        T sub_sum_v
+            = ReduceFunction()(r.begin(), r.end() - 1,
+                               op_vmapped_.local_op(r.begin(), r.end()),
+                               op_arg1_.local_op(),
+                               op_arg2_.local_op(),
+                               op_arg3_.local_op(),
+                               op_arg4_.local_op());
+        */
         sub_sum_v.grad();
 
         terms_sum_ += sub_sum_v.val();
 
-        if (!is_constant<M>::value) {
-          add_adjoint(vmapped_adjoint_, adjoint_of(local_sub_slice), r.begin());
-        }
+        op_vmapped_.add_local_adjoint(local_sub_slice, r.begin());
 
-        if (!is_constant<Arg1>::value) {
-          add_adjoint(arg1_adjoint_, adjoint_of(local_arg1));
-        }
-        if (!is_constant<Arg2>::value) {
-          add_adjoint(arg2_adjoint_, adjoint_of(local_arg2));
-        }
-        if (!is_constant<Arg3>::value) {
-          add_adjoint(arg3_adjoint_, adjoint_of(local_arg3));
-        }
-        if (!is_constant<Arg4>::value) {
-          add_adjoint(arg4_adjoint_, adjoint_of(local_arg4));
-        }
+        op_arg1_.add_local_adjoint(local_arg1);
+        op_arg2_.add_local_adjoint(local_arg2);
+        op_arg3_.add_local_adjoint(local_arg3);
+        op_arg4_.add_local_adjoint(local_arg4);
+
       } catch (const std::exception& e) {
         recover_memory_nested();
         throw;
@@ -331,18 +368,10 @@ struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, var> {
     void join(const recursive_reducer& child) {
       terms_sum_ += child.terms_sum_;
 
-      if (!is_constant<Arg1>::value) {
-        add_adjoint(arg1_adjoint_, child.arg1_adjoint_);
-      }
-      if (!is_constant<Arg2>::value) {
-        add_adjoint(arg2_adjoint_, child.arg2_adjoint_);
-      }
-      if (!is_constant<Arg3>::value) {
-        add_adjoint(arg3_adjoint_, child.arg3_adjoint_);
-      }
-      if (!is_constant<Arg4>::value) {
-        add_adjoint(arg4_adjoint_, child.arg4_adjoint_);
-      }
+      op_arg1_.add_other_adjoint(child.op_arg1_);
+      op_arg2_.add_other_adjoint(child.op_arg2_);
+      op_arg3_.add_other_adjoint(child.op_arg3_);
+      op_arg4_.add_other_adjoint(child.op_arg4_);
     }
   };
 
@@ -350,13 +379,14 @@ struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, var> {
                const arg1_t& arg1, const arg2_t& arg2, const arg3_t& arg3,
                const arg4_t& arg4) const {
     const std::size_t num_jobs = vmapped.size();
-    vmapped_value_t vmapped_adjoint = adjoint_of(as_value(vmapped));
+
+    const vmapped_value_t vmapped_value = as_value(vmapped);
     const arg1_value_t arg1_value = as_value(arg1);
     const arg2_value_t arg2_value = as_value(arg2);
     const arg3_value_t arg3_value = as_value(arg3);
     const arg4_value_t arg4_value = as_value(arg4);
 
-    recursive_reducer worker(vmapped, vmapped_adjoint, init, arg1, arg1_value,
+    recursive_reducer worker(vmapped, vmapped_value, init, arg1, arg1_value,
                              arg2, arg2_value, arg3, arg3_value, arg4,
                              arg4_value);
 
@@ -372,16 +402,11 @@ struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, var> {
 
     std::vector<std::size_t> num_terms_arg(5, 0);
 
-    if (!is_constant<M>::value)
-      num_terms_arg[0] = num_elements(vmapped_adjoint);
-    if (!is_constant<Arg1>::value)
-      num_terms_arg[1] = num_elements(arg1_value);
-    if (!is_constant<Arg2>::value)
-      num_terms_arg[2] = num_elements(arg2_value);
-    if (!is_constant<Arg3>::value)
-      num_terms_arg[3] = num_elements(arg3_value);
-    if (!is_constant<Arg4>::value)
-      num_terms_arg[4] = num_elements(arg4_value);
+    num_terms_arg[0] = worker.op_vmapped_.num_elements();
+    num_terms_arg[1] = worker.op_arg1_.num_elements();
+    num_terms_arg[2] = worker.op_arg2_.num_elements();
+    num_terms_arg[3] = worker.op_arg3_.num_elements();
+    num_terms_arg[4] = worker.op_arg4_.num_elements();
 
     const std::size_t num_terms = sum(num_terms_arg);
 
@@ -392,32 +417,15 @@ struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, var> {
 
     std::size_t idx = 0;
 
-    if (!is_constant<vmapped_t>::value) {
-      register_operands(vmapped, &varis[idx]);
-      register_partials(vmapped_adjoint, &partials[idx]);
-      idx += num_terms_arg[0];
-    }
-
-    if (!is_constant<Arg1>::value) {
-      register_operands(arg1, &varis[idx]);
-      register_partials(worker.arg1_adjoint_, &partials[idx]);
-      idx += num_terms_arg[1];
-    }
-    if (!is_constant<Arg2>::value) {
-      register_operands(arg2, &varis[idx]);
-      register_partials(worker.arg2_adjoint_, &partials[idx]);
-      idx += num_terms_arg[2];
-    }
-    if (!is_constant<Arg3>::value) {
-      register_operands(arg3, &varis[idx]);
-      register_partials(worker.arg3_adjoint_, &partials[idx]);
-      idx += num_terms_arg[3];
-    }
-    if (!is_constant<Arg4>::value) {
-      register_operands(arg4, &varis[idx]);
-      register_partials(worker.arg4_adjoint_, &partials[idx]);
-      idx += num_terms_arg[4];
-    }
+    worker.op_vmapped_.build(&varis[idx], &partials[idx]);
+    idx += num_terms_arg[0];
+    worker.op_arg1_.build(&varis[idx], &partials[idx]);
+    idx += num_terms_arg[1];
+    worker.op_arg2_.build(&varis[idx], &partials[idx]);
+    idx += num_terms_arg[2];
+    worker.op_arg3_.build(&varis[idx], &partials[idx]);
+    idx += num_terms_arg[3];
+    worker.op_arg4_.build(&varis[idx], &partials[idx]);
 
     return var(new precomputed_gradients_vari(worker.terms_sum_, num_terms,
                                               varis, partials));
