@@ -1,7 +1,7 @@
+#include <stan/math/mix.hpp>
 #include <test/unit/math/test_ad.hpp>
-#include <limits>
 
-TEST(mathMixScalFun, normal_cdf_derivatives) {
+TEST(mathMixScalFun, normal_cdf) {
   auto f = [](const double mu, const double sigma) {
     return [=](const auto& y) { return stan::math::normal_cdf(y, mu, sigma); };
   };
