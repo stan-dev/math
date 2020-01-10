@@ -159,6 +159,12 @@ const double TWO_OVER_SQRT_PI = 2.0 / SQRT_PI;
 const double HALF_LOG_TWO = 0.5 * LOG_TWO;
 
 /**
+ * The value of half the natural logarithm \f$ 2\pi \f$,
+ * \f$ \log(2\pi) / 2 \f$.
+ */
+const double HALF_LOG_TWO_PI = 0.5 * LOG_TWO_PI;
+
+/**
  * The value of minus the natural logarithm of the square root of \f$ 2\pi \f$,
  * \f$ -\log(\sqrt{2\pi}) \f$.
  */
