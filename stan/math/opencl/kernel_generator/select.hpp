@@ -53,8 +53,8 @@ class select_ : public operation_cl<select_<T_condition, T_then, T_else>,
                        "rows of ", "then", then.rows());
     }
     if (condition.cols() != base::dynamic && then.cols() != base::dynamic) {
-      check_size_match("select", "Columns of ", "condition",
-                       condition.cols(), "columns of ", "then", then.cols());
+      check_size_match("select", "Columns of ", "condition", condition.cols(),
+                       "columns of ", "then", then.cols());
     }
 
     if (condition.rows() != base::dynamic && els.rows() != base::dynamic) {
@@ -62,8 +62,8 @@ class select_ : public operation_cl<select_<T_condition, T_then, T_else>,
                        "rows of ", "else", els.rows());
     }
     if (condition.cols() != base::dynamic && els.cols() != base::dynamic) {
-      check_size_match("select", "Columns of ", "condition",
-                       condition.cols(), "columns of ", "else", els.cols());
+      check_size_match("select", "Columns of ", "condition", condition.cols(),
+                       "columns of ", "else", els.cols());
     }
   }
 
