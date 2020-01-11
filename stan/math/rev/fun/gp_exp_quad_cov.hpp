@@ -2,15 +2,15 @@
 #define STAN_MATH_REV_FUN_GP_EXP_QUAD_COV_HPP
 
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/scal/fun/exp.hpp>
 #include <stan/math/prim/scal/fun/squared_distance.hpp>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/rev/fun/value_of.hpp>
-#include <vector>
 #include <cmath>
 #include <type_traits>
+#include <vector>
 
 namespace stan {
 namespace math {
@@ -199,6 +199,7 @@ class gp_exp_quad_cov_vari<T_x, double, T_l> : public vari {
 /**
  * Returns a squared exponential kernel.
  *
+ * @tparam T_x type of elements in the vector
  * @param x std::vector input that can be used in square distance
  *    Assumes each element of x is the same size
  * @param sigma standard deviation
@@ -243,6 +244,7 @@ inline Eigen::Matrix<var, -1, -1> gp_exp_quad_cov(const std::vector<T_x> &x,
 /**
  * Returns a squared exponential kernel.
  *
+ * @tparam T_x type of elements in the vector
  * @param x std::vector input that can be used in square distance
  *    Assumes each element of x is the same size
  * @param sigma standard deviation

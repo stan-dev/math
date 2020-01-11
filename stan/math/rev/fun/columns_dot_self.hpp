@@ -2,18 +2,20 @@
 #define STAN_MATH_REV_FUN_COLUMNS_DOT_SELF_HPP
 
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/typedefs.hpp>
 #include <stan/math/rev/fun/dot_self.hpp>
+#include <stan/math/prim/mat/fun/Eigen.hpp>
 
 namespace stan {
 namespace math {
 
 /**
  * Returns the dot product of each column of a matrix with itself.
+ *
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
  * @param x Matrix.
- * @tparam T scalar type
  */
 template <int R, int C>
 inline Eigen::Matrix<var, 1, C> columns_dot_self(

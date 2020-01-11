@@ -12,9 +12,9 @@ namespace math {
  * Allocates and populates a flat array of vari pointers in the autodiff arena
  * with the varis pointed to by the vars in the input Eigen matrix
  *
- * @tparam R Eigen row type of x
- * @tparam C Eigen column type of x
- * @param x Input
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ * @param x input matrix
  * @return Flat array of vari pointers
  */
 template <int R, int C>

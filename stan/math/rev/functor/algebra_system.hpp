@@ -2,9 +2,9 @@
 #define STAN_MATH_REV_FUNCTOR_ALGEBRA_SYSTEM_HPP
 
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/rev/functor/jacobian.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/rev/functor/jacobian.hpp>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -17,6 +17,7 @@ namespace math {
  * the independent variable. If x_is_iv = true, than the
  * Jacobian is computed w.r.t x, else it is computed
  * w.r.t y.
+ *
  * @tparam F type for algebraic system functor
  * @tparam T0 type for unknowns
  * @tparam T1 type for auxiliary parameters
@@ -67,6 +68,7 @@ struct system_functor {
 /**
  * A structure which gets passed to Eigen's dogleg
  * algebraic solver.
+ *
  * @tparam T scalar type of independent variable.
  * @tparam NX number of rows
  * @tparam NY number of columns
@@ -88,6 +90,7 @@ struct nlo_functor {
  * algebraic solver.
  * It is also used in the vari classes of the algebraic solvers
  * to compute the requisite sensitivities.
+ *
  * @tparam S wrapper around the algebraic system functor. Has the
  * signature required for jacobian (i.e takes only one argument).
  * @tparam F algebraic system functor

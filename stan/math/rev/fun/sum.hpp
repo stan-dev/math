@@ -89,8 +89,8 @@ class sum_eigen_v_vari : public sum_v_vari {
  * Returns the sum of the coefficients of the specified
  * matrix, column vector or row vector.
  *
- * @tparam R Row type for matrix.
- * @tparam C Column type for matrix.
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
  * @param m Specified matrix or vector.
  * @return Sum of coefficients of matrix.
  */
