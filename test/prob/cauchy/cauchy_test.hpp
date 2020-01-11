@@ -77,8 +77,7 @@ class AgradDistributionsCauchy : public AgradDistributionTest {
       const T5&) {
     using stan::math::log1p;
     using stan::math::square;
-    return stan::math::NEG_LOG_PI - log(sigma)
-           - log1p(square((y - mu) / sigma));
+    return -stan::math::LOG_PI - log(sigma) - log1p(square((y - mu) / sigma));
   }
 };
 

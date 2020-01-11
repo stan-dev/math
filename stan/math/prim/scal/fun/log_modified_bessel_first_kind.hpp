@@ -181,7 +181,7 @@ inline return_type_t<T1, T2, double> log_modified_bessel_first_kind(
       num *= mu - 25;
       denom *= ex * 3;
       s -= num / denom;
-      s = z - log(sqrt(2 * z * pi())) + log(s);
+      s = z - log(sqrt(z * TWO_PI)) + log(s);
       return s;
     }
   }

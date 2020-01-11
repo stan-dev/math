@@ -63,7 +63,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lccdf(
     ccdf_log += log(ccdf_log_);
 
     const T_partials_return deriv_erfc
-        = SQRT_TWO_OVER_SQRT_PI * 0.5 * exp(-scaled_diff_sq) / sigma_dbl;
+        = INV_SQRT_TWO_PI * exp(-scaled_diff_sq) / sigma_dbl;
     const T_partials_return deriv_owens
         = erf(alpha_dbl * scaled_diff) * exp(-scaled_diff_sq)
           / SQRT_TWO_OVER_SQRT_PI / (-TWO_PI) / sigma_dbl;

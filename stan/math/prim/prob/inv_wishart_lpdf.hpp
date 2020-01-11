@@ -91,7 +91,7 @@ return_type_t<T_y, T_dof, T_scale> inv_wishart_lpdf(
     lp -= 0.5 * trace(Winv_S);
   }
   if (include_summand<propto, T_dof, T_scale>::value) {
-    lp += nu * k * NEG_LOG_TWO_OVER_TWO;
+    lp -= nu * k * HALF_LOG_TWO;
   }
   return lp;
 }
