@@ -52,15 +52,6 @@ inline double acosh(int x) {
   }
 }
 
-}  // namespace math
-}  // namespace stan
-#endif
-#ifndef STAN_MATH_PRIM_FUN_ACOSH_HPP
-#define STAN_MATH_PRIM_FUN_ACOSH_HPP
-
-namespace stan {
-namespace math {
-
 /**
  * Structure to wrap acosh() so it can be vectorized.
  */
