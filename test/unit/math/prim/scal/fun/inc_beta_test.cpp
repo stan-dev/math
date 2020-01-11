@@ -51,7 +51,7 @@ TEST(MathFunctions, inc_beta_b_boundary) {
   const double inf = std::numeric_limits<double>::infinity();
 
   EXPECT_NO_THROW(stan::math::inc_beta(a, 0.0, x));
-  EXPECT_NO_THROW(stan::math::inc_beta(inf, 1.0, x));
+  EXPECT_NO_THROW(stan::math::inc_beta(a, inf, x));
   EXPECT_THROW(stan::math::inc_beta(a, -0.01, x), std::domain_error);
 }
 
