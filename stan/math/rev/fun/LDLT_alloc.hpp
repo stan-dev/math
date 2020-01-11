@@ -2,10 +2,10 @@
 #define STAN_MATH_REV_FUN_LDLT_ALLOC_HPP
 
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/rev/core.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/sum.hpp>
-#include <stan/math/rev/core.hpp>
 
 namespace stan {
 namespace math {
@@ -19,6 +19,9 @@ namespace math {
  *
  * This class should only be instantiated as part of an LDLT_factor object
  * and is only used in *ldlt_ functions.
+ *
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
  **/
 template <int R, int C>
 class LDLT_alloc : public chainable_alloc {

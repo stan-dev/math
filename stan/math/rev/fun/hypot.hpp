@@ -27,7 +27,7 @@ class hypot_vd_vari : public op_v_vari {
 }  // namespace internal
 
 /**
- * Returns the length of the hypoteneuse of a right triangle
+ * Returns the length of the hypotenuse of a right triangle
  * with sides of the specified lengths (C99).
  *
  * The partial derivatives are given by
@@ -40,14 +40,14 @@ class hypot_vd_vari : public op_v_vari {
  *
  * @param[in] a Length of first side.
  * @param[in] b Length of second side.
- * @return Length of hypoteneuse.
+ * @return Length of hypotenuse.
  */
 inline var hypot(const var& a, const var& b) {
   return var(new internal::hypot_vv_vari(a.vi_, b.vi_));
 }
 
 /**
- * Returns the length of the hypoteneuse of a right triangle
+ * Returns the length of the hypotenuse of a right triangle
  * with sides of the specified lengths (C99).
  *
  * The derivative is
@@ -56,14 +56,14 @@ inline var hypot(const var& a, const var& b) {
  *
  * @param[in] a Length of first side.
  * @param[in] b Length of second side.
- * @return Length of hypoteneuse.
+ * @return Length of hypotenuse.
  */
 inline var hypot(const var& a, double b) {
   return var(new internal::hypot_vd_vari(a.vi_, b));
 }
 
 /**
- * Returns the length of the hypoteneuse of a right triangle
+ * Returns the length of the hypotenuse of a right triangle
  * with sides of the specified lengths (C99).
  *
  * The derivative is
@@ -99,7 +99,7 @@ inline var hypot(const var& a, double b) {
  *
  * @param[in] a Length of first side.
  * @param[in] b Length of second side.
- * @return Length of hypoteneuse.
+ * @return Length of hypotenuse.
  */
 inline var hypot(double a, const var& b) {
   return var(new internal::hypot_vd_vari(b.vi_, a));

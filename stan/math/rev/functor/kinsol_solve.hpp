@@ -1,17 +1,15 @@
 #ifndef STAN_MATH_REV_FUNCTOR_KINSOL_SOLVE_HPP
 #define STAN_MATH_REV_FUNCTOR_KINSOL_SOLVE_HPP
 
-#include <stan/math/prim/fun/to_array_1d.hpp>
-#include <stan/math/prim/fun/to_vector.hpp>
 #include <stan/math/rev/functor/kinsol_data.hpp>
 #include <stan/math/rev/functor/algebra_system.hpp>
 #include <stan/math/prim/err.hpp>
-
+#include <stan/math/prim/fun/to_array_1d.hpp>
+#include <stan/math/prim/fun/to_vector.hpp>
 #include <kinsol/kinsol.h>
 #include <sunmatrix/sunmatrix_dense.h>
 #include <sunlinsol/sunlinsol_dense.h>
 #include <nvector/nvector_serial.h>
-
 #include <vector>
 
 namespace stan {
@@ -23,6 +21,7 @@ namespace math {
  *
  * @tparam F type of equation system function.
  * @tparam T type of initial guess vector.
+ *
  * @param[in] f Functor that evaluated the system of equations.
  * @param[in] x Vector of starting values.
  * @param[in] y Parameter vector for the equation system. The function

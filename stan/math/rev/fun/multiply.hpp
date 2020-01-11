@@ -2,11 +2,8 @@
 #define STAN_MATH_REV_FUN_MULTIPLY_HPP
 
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim.hpp>
-#include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/err.hpp>
 #include <type_traits>
 
 namespace stan {
@@ -23,11 +20,11 @@ namespace math {
  * also instantiates and stores pointers to
  * varis for all elements of A * B.
  *
- * @tparam Ta Scalar type for matrix A
- * @tparam Ra Rows for matrix A
- * @tparam Ca Columns for matrix A, Rows for matrix B
- * @tparam Tb Scalar type for matrix B
- * @tparam Cb Columns for matrix B
+ * @tparam Ta type of elements in matrix A
+ * @tparam Ra number of rows in matrix A, can be Eigen::Dynamic
+ * @tparam Ca number of columns in matrix A and rows in matrix B
+ * @tparam Tb type of elements in matrix B
+ * @tparam Cb number of columns in matrix B, can be Eigen::Dynamic
  */
 template <typename Ta, int Ra, int Ca, typename Tb, int Cb>
 class multiply_mat_vari : public vari {
@@ -53,7 +50,7 @@ class multiply_mat_vari : public vari {
    * that the constructor create new varis that aren't
    * popped onto the var_stack_, but rather are
    * popped onto the var_nochain_stack_. This is
-   * controlled to the second argument to
+   * controlled by the second argument to
    * vari's constructor.
    *
    * @param A matrix
@@ -143,9 +140,9 @@ class multiply_mat_vari : public vari {
  * also instantiates and stores pointers to
  * varis for all elements of A * B.
  *
- * @tparam Ta Scalar type for matrix A
- * @tparam Ca Columns for matrix A, Rows for matrix B
- * @tparam Tb Scalar type for matrix B
+ * @tparam Ta type of elements in matrix A
+ * @tparam Ca number of columns in matrix A and rows in matrix B
+ * @tparam Tb type of elements in matrix B
  */
 template <typename Ta, int Ca, typename Tb>
 class multiply_mat_vari<Ta, 1, Ca, Tb, 1> : public vari {
@@ -167,7 +164,7 @@ class multiply_mat_vari<Ta, 1, Ca, Tb, 1> : public vari {
    * that the constructor create new varis that aren't
    * popped onto the var_stack_, but rather are
    * popped onto the var_nochain_stack_. This is
-   * controlled to the second argument to
+   * controlled by the second argument to
    * vari's constructor.
    *
    * @param A row vector
@@ -214,10 +211,10 @@ class multiply_mat_vari<Ta, 1, Ca, Tb, 1> : public vari {
  * also instantiates and stores pointers to
  * varis for all elements of A * B.
  *
- * @tparam Ra Rows for matrix A
- * @tparam Ca Columns for matrix A, Rows for matrix B
- * @tparam Tb Scalar type for matrix B
- * @tparam Cb Columns for matrix B
+ * @tparam Ra number of rows in matrix A, can be Eigen::Dynamic
+ * @tparam Ca number of columns in matrix A and rows in matrix B
+ * @tparam Tb type of elements in matrix B
+ * @tparam Cb number of columns in matrix B, can be Eigen::Dynamic
  */
 template <int Ra, int Ca, typename Tb, int Cb>
 class multiply_mat_vari<double, Ra, Ca, Tb, Cb> : public vari {
@@ -242,7 +239,7 @@ class multiply_mat_vari<double, Ra, Ca, Tb, Cb> : public vari {
    * that the constructor create new varis that aren't
    * popped onto the var_stack_, but rather are
    * popped onto the var_nochain_stack_. This is
-   * controlled to the second argument to
+   * controlled by the second argument to
    * vari's constructor.
    *
    * @param A row vector
@@ -321,8 +318,8 @@ class multiply_mat_vari<double, Ra, Ca, Tb, Cb> : public vari {
  * also instantiates and stores pointers to
  * varis for all elements of A * B.
  *
- * @tparam Ca Columns for matrix A, Rows for matrix B
- * @tparam Tb Scalar type for matrix B
+ * @tparam Ca number of columns in matrix A and rows in matrix B
+ * @tparam Tb type of elements in matrix B
  */
 template <int Ca, typename Tb>
 class multiply_mat_vari<double, 1, Ca, Tb, 1> : public vari {
@@ -343,7 +340,7 @@ class multiply_mat_vari<double, 1, Ca, Tb, 1> : public vari {
    * that the constructor create new varis that aren't
    * popped onto the var_stack_, but rather are
    * popped onto the var_nochain_stack_. This is
-   * controlled to the second argument to
+   * controlled by the second argument to
    * vari's constructor.
    *
    * @param A row vector
@@ -384,10 +381,10 @@ class multiply_mat_vari<double, 1, Ca, Tb, 1> : public vari {
  * also instantiates and stores pointers to
  * varis for all elements of A * B.
  *
- * @tparam Ta Scalar type for matrix A
- * @tparam Ra Rows for matrix A
- * @tparam Ca Columns for matrix A, Rows for matrix B
- * @tparam Cb Columns for matrix B
+ * @tparam Ta type of elements in matrix A
+ * @tparam Ra number of rows in matrix A, can be Eigen::Dynamic
+ * @tparam Ca number of columns in matrix A and rows in matrix B
+ * @tparam Cb number of columns in matrix B, can be Eigen::Dynamic
  */
 template <typename Ta, int Ra, int Ca, int Cb>
 class multiply_mat_vari<Ta, Ra, Ca, double, Cb> : public vari {
@@ -412,7 +409,7 @@ class multiply_mat_vari<Ta, Ra, Ca, double, Cb> : public vari {
    * that the constructor create new varis that aren't
    * popped onto the var_stack_, but rather are
    * popped onto the var_nochain_stack_. This is
-   * controlled to the second argument to
+   * controlled by the second argument to
    * vari's constructor.
    *
    * @param A row vector
@@ -491,11 +488,8 @@ class multiply_mat_vari<Ta, Ra, Ca, double, Cb> : public vari {
  * also instantiates and stores pointers to
  * varis for all elements of A * B.
  *
- * @tparam Ta Scalar type for matrix A
- * @tparam Ra Rows for matrix A
- * @tparam Ca Columns for matrix A, Rows for matrix B
- * @tparam Tb Scalar type for matrix B
- * @tparam Cb Columns for matrix B
+ * @tparam Ta type of elements in matrix A
+ * @tparam Ca number of columns in matrix A and rows in matrix B
  */
 template <typename Ta, int Ca>
 class multiply_mat_vari<Ta, 1, Ca, double, 1> : public vari {
@@ -516,7 +510,7 @@ class multiply_mat_vari<Ta, 1, Ca, double, 1> : public vari {
    * that the constructor create new varis that aren't
    * popped onto the var_stack_, but rather are
    * popped onto the var_nochain_stack_. This is
-   * controlled to the second argument to
+   * controlled by the second argument to
    * vari's constructor.
    *
    * @param A row vector
@@ -550,6 +544,7 @@ class multiply_mat_vari<Ta, 1, Ca, double, 1> : public vari {
 
 /**
  * Return the product of two scalars.
+ *
  * @tparam T1 scalar type of v
  * @tparam T2 scalar type of c
  * @param[in] v First scalar
@@ -565,8 +560,9 @@ inline return_type_t<T1, T2> multiply(const T1& v, const T2& c) {
 
 /**
  * Return the product of scalar and matrix.
- * @tparam R number of rows or Eigen::Dynamic
- * @tparam C number of columns or Eigen::Dynamic
+ *
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
  * @param[in] c scalar of var type
  * @param[in] m matrix of var type
  * @return Product of scalar and matrix
@@ -579,9 +575,11 @@ inline Eigen::Matrix<var, R, C> multiply(const var& c,
 
 /**
  * Return the product of scalar and matrix.
+ *
  * @tparam Arith an arithmetic type
- * @tparam R number of rows or Eigen::Dynamic
- * @tparam C number of columns or Eigen::Dynamic
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ *
  * @param[in] c scalar of arithmetic type
  * @param[in] m matrix of var type
  * @return Product of scalar and matrix
@@ -594,9 +592,11 @@ inline Eigen::Matrix<var, R, C> multiply(const Arith& c,
 
 /**
  * Return the product of scalar and matrix.
+ *
  * @tparam Arith an arithmetic type
- * @tparam R number of rows or Eigen::Dynamic
- * @tparam C number of columns or Eigen::Dynamic
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ *
  * @param[in] c scalar of var type
  * @param[in] m matrix of arithmetic type
  * @return Product of scalar and matrix
@@ -609,8 +609,9 @@ inline Eigen::Matrix<var, R, C> multiply(const var& c,
 
 /**
  * Return the product of matrix and scalar.
- * @tparam R number of rows or Eigen::Dynamic
- * @tparam C number of columns or Eigen::Dynamic
+ *
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
  * @param[in] m matrix of var type
  * @param[in] c scalar of var type
  * @return Product of matrix and scalar
@@ -623,9 +624,11 @@ inline Eigen::Matrix<var, R, C> multiply(const Eigen::Matrix<var, R, C>& m,
 
 /**
  * Return the product of matrix and scalar.
+ *
  * @tparam Arith an arithmetic type
- * @tparam R number of rows or Eigen::Dynamic
- * @tparam C number of columns or Eigen::Dynamic
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ *
  * @param[in] m matrix of arithmetic type
  * @param[in] c scalar of var type
  * @return Product of matrix and scalar
@@ -638,9 +641,11 @@ inline Eigen::Matrix<var, R, C> multiply(const Eigen::Matrix<Arith, R, C>& m,
 
 /**
  * Return the product of matrix and scalar.
+ *
  * @tparam Arith an arithmetic type
- * @tparam R number of rows or Eigen::Dynamic
- * @tparam C number of columns or Eigen::Dynamic
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ *
  * @param[in] m matrix of var type
  * @param[in] c scalar of arithmetic type
  * @return Product of matrix and scalar
@@ -653,12 +658,13 @@ inline Eigen::Matrix<var, R, C> multiply(const Eigen::Matrix<var, R, C>& m,
 
 /**
  * Return the product of two matrices.
- * @tparam Ta scalar type matrix A
- * @tparam Ra Rows matrix A
- * @tparam Ca Columns matrix A
- * @tparam Tb scalar type matrix B
- * @tparam RB Rows matrix B
- * @tparam Cb Columns matrix B
+ *
+ * @tparam Ta type of elements in matrix A
+ * @tparam Ra number of rows in matrix A, can be Eigen::Dynamic
+ * @tparam Ca number of columns in matrix A and rows in matrix B
+ * @tparam Tb type of elements in matrix B
+ * @tparam Cb number of columns in matrix B, can be Eigen::Dynamic
+ *
  * @param[in] A Matrix
  * @param[in] B Matrix
  * @return Product of scalar and matrix.
@@ -684,9 +690,11 @@ inline Eigen::Matrix<var, Ra, Cb> multiply(const Eigen::Matrix<Ta, Ra, Ca>& A,
 /**
  * Return the scalar product of a row vector and
  * a vector.
- * @tparam Ta scalar type row vector A
- * @tparam Ca Columns matrix A
- * @tparam Tb scalar type vector B
+ *
+ * @tparam Ta type of elements in matrix A
+ * @tparam Ca number of columns in matrix A and rows in matrix B
+ * @tparam Tb type of elements in matrix B
+ *
  * @param[in] A Row vector
  * @param[in] B Column vector
  * @return Scalar product of row vector and vector
@@ -706,6 +714,7 @@ inline var multiply(const Eigen::Matrix<Ta, 1, Ca>& A,
   AB_v.vi_ = baseVari->variRefAB_;
   return AB_v;
 }
+
 }  // namespace math
 }  // namespace stan
 #endif

@@ -2,13 +2,13 @@
 #define STAN_MATH_REV_FUNCTOR_INTEGRATE_ODE_CVODES_HPP
 
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/rev/functor/coupled_ode_system.hpp>
+#include <stan/math/rev/functor/cvodes_utils.hpp>
+#include <stan/math/rev/functor/cvodes_ode_data.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/coupled_ode_observer.hpp>
 #include <stan/math/prim/functor/coupled_ode_system.hpp>
-#include <stan/math/rev/functor/coupled_ode_system.hpp>
-#include <stan/math/rev/functor/cvodes_utils.hpp>
-#include <stan/math/rev/functor/cvodes_ode_data.hpp>
 #include <cvodes/cvodes.h>
 #include <sunlinsol/sunlinsol_dense.h>
 #include <algorithm>
@@ -21,6 +21,7 @@ namespace math {
 /**
  * Integrator interface for CVODES' ODE solvers (Adams & BDF
  * methods).
+ *
  * @tparam Lmm ID of ODE solver (1: ADAMS, 2: BDF)
  */
 template <int Lmm>
@@ -51,6 +52,7 @@ class cvodes_integrator {
    * @tparam T_param type of scalars for parameters.
    * @tparam T_t0 type of scalar of initial time point.
    * @tparam T_ts type of time-points where ODE solution is returned.
+   *
    * @param[in] f functor for the base ordinary differential equation.
    * @param[in] y0 initial state.
    * @param[in] t0 initial time.
@@ -188,6 +190,7 @@ class cvodes_integrator {
     return y;
   }
 };  // cvodes integrator
+
 }  // namespace math
 }  // namespace stan
 #endif

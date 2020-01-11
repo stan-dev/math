@@ -1,13 +1,13 @@
 #ifndef STAN_MATH_REV_FUNCTOR_ALGEBRA_SOLVER_NEWTON_HPP
 #define STAN_MATH_REV_FUNCTOR_ALGEBRA_SOLVER_NEWTON_HPP
 
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/mdivide_left.hpp>
-#include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/rev/core.hpp>
 #include <stan/math/rev/functor/algebra_system.hpp>
 #include <stan/math/rev/functor/algebra_solver_powell.hpp>
 #include <stan/math/rev/functor/kinsol_solve.hpp>
-#include <stan/math/rev/core.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/mdivide_left.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <unsupported/Eigen/NonLinearOptimization>
 #include <iostream>
 #include <string>
@@ -27,6 +27,7 @@ namespace math {
  *
  * @tparam F type of equation system function.
  * @tparam T type of initial guess vector.
+ *
  * @param[in] f Functor that evaluated the system of equations.
  * @param[in] x Vector of starting values.
  * @param[in] y Parameter vector for the equation system. The function
@@ -88,6 +89,7 @@ Eigen::VectorXd algebra_solver_newton(
  *
  * @tparam F type of equation system function.
  * @tparam T type of initial guess vector.
+ *
  * @param[in] f Functor that evaluated the system of equations.
  * @param[in] x Vector of starting values.
  * @param[in] y Parameter vector for the equation system. The function

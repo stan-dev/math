@@ -2,16 +2,24 @@
 #define STAN_MATH_REV_FUN_LOG_DETERMINANT_SPD_HPP
 
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/rev/core.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
-#include <stan/math/rev/core.hpp>
 
 namespace stan {
 namespace math {
 
+/**
+ * Returns the log det of a symmetric, positive-definite matrix
+ *
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ * @param m a symmetric, positive-definite matrix
+ * @return The log determinant of the specified matrix
+ */
 template <int R, int C>
 inline var log_determinant_spd(const Eigen::Matrix<var, R, C>& m) {
   check_symmetric("log_determinant_spd", "m", m);
@@ -55,6 +63,5 @@ inline var log_determinant_spd(const Eigen::Matrix<var, R, C>& m) {
 }
 
 }  // namespace math
-
 }  // namespace stan
 #endif

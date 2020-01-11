@@ -2,17 +2,17 @@
 #define STAN_MATH_REV_FUNCTOR_ADJ_JAC_APPLY_HPP
 
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/rev/fun/value_of.hpp>
 #include <tuple>
 #include <vector>
 
 namespace stan {
 namespace math {
-
 namespace internal {
+
 /**
  * Invoke the functor f with arguments given in t and indexed in the index
  * sequence I
@@ -21,6 +21,7 @@ namespace internal {
  * @tparam Tuple Type of tuple containing arguments
  * @tparam I Index sequence going from 0 to std::tuple_size<T>::value - 1
  * inclusive
+ *
  * @param f functor callable
  * @param t tuple of arguments
  * @param i placeholder variable for index sequence
@@ -53,7 +54,7 @@ constexpr auto apply(const F& f, const Tuple& t) {
  *
  * @tparam size dimensionality of M
  * @param[in] y_vi pointer to pointer to vari
- * @param[in] M
+ * @param[in] M shape of y_adj
  * @param[out] y_adj reference to variable where adjoint is to be stored
  */
 template <size_t size>
@@ -82,6 +83,9 @@ void build_y_adj(vari** y_vi, const std::array<int, size>& M,
  * Store the adjoints from y_vi in y_adj
  *
  * @tparam size dimensionality of M
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ *
  * @param[in] y_vi pointer to pointers to varis
  * @param[in] M shape of y_adj
  * @param[out] y_adj reference to Eigen::Matrix where adjoints are to be stored
@@ -105,7 +109,7 @@ struct compute_dims {};
 
 /**
  * Compute the dimensionality of the given template argument. Double
- * types hav dimensionality zero.
+ * types have dimensionality zero.
  */
 template <>
 struct compute_dims<double> {
@@ -122,8 +126,12 @@ struct compute_dims<std::vector<T>> {
 };
 
 /**
- * compute the dimensionality of the given template argument.
- * Eigen::Matrix types all have dimension two
+ * Compute the dimensionality of the given template argument.
+ * Eigen::Matrix types all have dimension two.
+ *
+ * @tparam T type of elements in the matrix
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
  */
 template <typename T, int R, int C>
 struct compute_dims<Eigen::Matrix<T, R, C>> {
@@ -139,11 +147,9 @@ struct compute_dims<Eigen::Matrix<T, R, C>> {
  * The requirements on the functor F are described in the documentation for
  * adj_jac_apply
  *
- * Targs (the input argument types) can be any mix of double, var, or
- * Eigen::Matrices with double or var scalar components
- *
  * @tparam F class of functor
- * @tparam Targs Types of arguments
+ * @tparam Targs types of arguments: can be any mix of double, var, or
+ * Eigen::Matrices with double or var scalar components
  */
 template <typename F, typename... Targs>
 struct adj_jac_vari : public vari {
@@ -172,9 +178,10 @@ struct adj_jac_vari : public vari {
    * types, a std::vector with var, double, or int scalar types, or a var, a
    * double, or an int.
    *
-   * @tparam R Eigen Matrix row type
-   * @tparam C Eigen Matrix column type
+   * @tparam R number of rows, can be Eigen::Dynamic
+   * @tparam C number of columns, can be Eigen::Dynamic
    * @tparam Pargs Types of rest of arguments
+   *
    * @param count rolling count of number of varis that must be allocated
    * @param x next argument to have its varis counted
    * @param args the rest of the arguments (that will be iterated through
@@ -256,9 +263,10 @@ struct adj_jac_vari : public vari {
    * types, a std::vector with var, double, or int scalar types, or a var, a
    * double, or an int.
    *
-   * @tparam R Eigen Matrix row type
-   * @tparam C Eigen Matrix column type
+   * @tparam R number of rows, can be Eigen::Dynamic
+   * @tparam C number of columns, can be Eigen::Dynamic
    * @tparam Pargs Types of the rest of the arguments to be processed
+   *
    * @param x next argument to have its vari pointers copied if necessary
    * @param args the rest of the arguments (that will be iterated through
    * recursively)
@@ -364,8 +372,8 @@ struct adj_jac_vari : public vari {
    * initialized with the values of val_y. The shape of the new matrix comes
    * from M_
    *
-   * @tparam R Eigen row type
-   * @tparam C Eigen column type
+   * @tparam R number of rows, can be Eigen::Dynamic
+   * @tparam C number of columns, can be Eigen::Dynamic
    * @param val_y output of F::operator()
    * @return Eigen::Matrix of vars
    */
@@ -420,9 +428,10 @@ struct adj_jac_vari : public vari {
    * of x_vis_. Recursively calls accumulate_adjoints on the rest of the
    * arguments.
    *
-   * @tparam R Eigen Matrix row type
-   * @tparam C Eigen Matrix column type
+   * @tparam R number of rows, can be Eigen::Dynamic
+   * @tparam C number of columns, can be Eigen::Dynamic
    * @tparam Pargs Types of the rest of adjoints to accumulate
+   *
    * @param y_adj_jac set of values to be accumulated in adjoints
    * @param args the rest of the arguments (that will be iterated through
    * recursively)

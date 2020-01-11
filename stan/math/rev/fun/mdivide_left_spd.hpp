@@ -3,16 +3,16 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/typedefs.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/rev/fun/typedefs.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
 #include <vector>
 
 namespace stan {
 namespace math {
-
 namespace internal {
+
 template <int R1, int C1, int R2, int C2>
 class mdivide_left_spd_alloc : public chainable_alloc {
  public:

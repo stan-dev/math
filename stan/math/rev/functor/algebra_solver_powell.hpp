@@ -94,6 +94,7 @@ struct algebra_solver_vari : public vari {
  *
  * @tparam F type of equation system function.
  * @tparam T type of initial guess vector.
+ *
  * @param[in] f Functor that evaluates the system of equations.
  * @param[in] x Vector of starting values.
  * @param[in] y parameter vector for the equation system. The function
@@ -192,9 +193,10 @@ Eigen::VectorXd algebra_solver_powell(
  * algebraic solver defined above and builds a vari object on
  * top, using the algebra_solver_vari class.
  *
- * @tparam F type of equation system function.
- * @tparam T1  Type of elements in x vector.
- * @tparam T2  Type of elements in y vector.
+ * @tparam F type of equation system function
+ * @tparam T1 type of elements in the x vector
+ * @tparam T2 type of elements in the y vector
+ *
  * @param[in] f Functor that evaluates the system of equations.
  * @param[in] x Vector of starting values (initial guess).
  * @param[in] y parameter vector for the equation system.
@@ -270,9 +272,10 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver_powell(
  * Signature to maintain backward compatibility, will be removed
  * in the future.
  *
- * @tparam F type of equation system function.
- * @tparam T1  Type of elements in x vector.
- * @tparam T2  Type of elements in y vector.
+ * @tparam F type of equation system function
+ * @tparam T1 type of elements in the x vector
+ * @tparam T2 type of elements in the y vector
+ *
  * @param[in] f Functor that evaluates the system of equations.
  * @param[in] x Vector of starting values (initial guess).
  * @param[in] y parameter vector for the equation system.

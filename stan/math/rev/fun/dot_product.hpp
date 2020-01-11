@@ -2,20 +2,20 @@
 #define STAN_MATH_REV_FUN_DOT_PRODUCT_HPP
 
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/value_of.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/rev/fun/value_of.hpp>
-#include <stan/math/prim/meta.hpp>
 #include <type_traits>
 #include <vector>
 
 namespace stan {
 namespace math {
-
 namespace internal {
+
 template <typename T>
 struct dot_product_store_type;
 
@@ -183,6 +183,13 @@ class dot_product_vari : public vari {
 /**
  * Returns the dot product.
  *
+ * @tparam T1 type of elements in the first vector
+ * @tparam R1 number of rows, can be Eigen::Dynamic
+ * @tparam C1 number of columns, can be Eigen::Dynamic
+ * @tparam T2 type of elements in the second vector
+ * @tparam R2 number of rows, can be Eigen::Dynamic
+ * @tparam C2 number of columns, can be Eigen::Dynamic
+ *
  * @param[in] v1 First column vector.
  * @param[in] v2 Second column vector.
  * @return Dot product of the vectors.
@@ -197,8 +204,12 @@ inline return_type_t<T1, T2> dot_product(const Eigen::Matrix<T1, R1, C1>& v1,
   check_matching_sizes("dot_product", "v1", v1, "v2", v2);
   return var(new internal::dot_product_vari<T1, T2>(v1, v2));
 }
+
 /**
  * Returns the dot product.
+ *
+ * @tparam T1 type of elements in the first vector
+ * @tparam T2 type of elements in the second vector
  *
  * @param[in] v1 First array.
  * @param[in] v2 Second array.
@@ -213,6 +224,9 @@ inline return_type_t<T1, T2> dot_product(const T1* v1, const T2* v2,
 
 /**
  * Returns the dot product.
+ *
+ * @tparam T1 type of elements in the first vector
+ * @tparam T2 type of elements in the second vector
  *
  * @param[in] v1 First vector.
  * @param[in] v2 Second vector.

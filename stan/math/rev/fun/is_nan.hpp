@@ -13,8 +13,8 @@ namespace math {
  *
  * Delegates to <code>is_nan(double)</code>.
  *
- * @param v Value to test.
- *
+ * @tparam T type of input
+ * @param v value to test
  * @return <code>1</code> if the value is NaN and <code>0</code> otherwise.
  */
 template <typename T, require_var_t<T>...>

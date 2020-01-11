@@ -15,6 +15,7 @@
 namespace stan {
 namespace math {
 namespace internal {
+
 template <typename Td, int Rd, int Cd, typename Ta, int Ra, int Ca, typename Tb,
           int Rb, int Cb>
 class trace_gen_quad_form_vari_alloc : public chainable_alloc {

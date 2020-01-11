@@ -2,18 +2,18 @@
 #define STAN_MATH_PRIM_FUN_UNIT_VECTOR_CONSTRAIN_HPP
 
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/dot_self.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
 #include <stan/math/prim/fun/dot_self.hpp>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/rev/fun/dot_self.hpp>
 #include <cmath>
 
 namespace stan {
 namespace math {
-
 namespace internal {
+
 class unit_vector_elt_vari : public vari {
  private:
   vari** y_;
@@ -47,9 +47,10 @@ class unit_vector_elt_vari : public vari {
  * Return the unit length vector corresponding to the free vector y.
  * See https://en.wikipedia.org/wiki/N-sphere#Generating_random_points
  *
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
  * @param y vector of K unrestricted variables
  * @return Unit length vector of dimension K
- * @tparam T Scalar type.
  **/
 template <int R, int C>
 Eigen::Matrix<var, R, C> unit_vector_constrain(
@@ -81,10 +82,11 @@ Eigen::Matrix<var, R, C> unit_vector_constrain(
  * Return the unit length vector corresponding to the free vector y.
  * See https://en.wikipedia.org/wiki/N-sphere#Generating_random_points
  *
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
  * @param y vector of K unrestricted variables
  * @return Unit length vector of dimension K
  * @param lp Log probability reference to increment.
- * @tparam T Scalar type.
  **/
 template <int R, int C>
 Eigen::Matrix<var, R, C> unit_vector_constrain(
