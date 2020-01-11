@@ -59,10 +59,10 @@ struct K_functor {
     // Eigen::Matrix<T, -1, 1> one_matrix(N, N);
     // for (int i = 0; i < N; i++)
     //   for (int j = 0; j < N; j++) one_matrix(i, j) = 1;
-    
+
     // std::cout << X.rows() << " " << X.cols() << std::endl
     //           << lambda_tilde.size() << std::endl
-    //           << lambda_tilde.transpose() << std::endl; 
+    //           << lambda_tilde.transpose() << std::endl;
               // << diag_post_multiply(X, lambda_tilde).rows() << std::endl;
 
     Eigen::Matrix<T, -1, -1>
@@ -96,7 +96,7 @@ TEST(laplace, skm) {
 
   // DATA AND TRANSFORMED DATA BLOCK
   int N = 100;
-  int M = 200;  // options: 2, 50, 100, 150, 200
+  int M = 2;  // options: 2, 50, 100, 150, 200
 
   std::string data_directory = "test/unit/math/laplace/skim_data/" +
     std::to_string(M) + "_" + std::to_string(N) + "/";
@@ -133,21 +133,21 @@ TEST(laplace, skm) {
     for (int n = 0; n < N; n++) x_tot[n] = X.block(n, 0, 1, M).transpose();
     for (int n = 0; n < N; n++) x_tot[N + n] = X2.block(n, 0, 1, M).transpose();
   }
-  
+
   // PARAMETERS BLOCK
   // lambda term is defined above
   var c2_tilde = 1.112843,
     tau_tilde = 7.615908,
     sigma = 1.708423,
     eta_base = 0.9910583;
-  
+
   // TRANSFORMED PARAMETERS BLOCK
   var phi = (m0 / (M - m0)) * (sigma / sqrt(N)) * tau_tilde,
     c2 = slab_scale2 * c2_tilde,
     eta = square(phi) / c2 * eta_base,
     alpha = square(phi) / c2 * alpha_base;
-  
-  Vector_v lambda_tilde = 
+
+  Vector_v lambda_tilde =
     c2 * elt_divide(square(lambda),
                     add(c2, multiply(square(phi), square(lambda))));
 
@@ -166,17 +166,17 @@ TEST(laplace, skm) {
   // std::cout << std::endl << std::endl;
   // for (size_t i = 0; i < delta.size(); i++) std::cout << delta[i] << std::endl;
   // for (size_t i = 0; i < delta_int.size(); i++) std::cout << delta_int[i] << std::endl;
-    
+
   // std::cout << K(parm, x_tot, delta, delta_int, 0) << std::endl;
 
   auto start = std::chrono::system_clock::now();
-  
+
   var marginal_density = laplace_marginal_bernoulli(y, n_samples, K_functor(),
                                       parm, x_tot, delta, delta_int, theta_0);
-  
+
   auto end = std::chrono::system_clock::now();
   std::chrono::duration<double> elapsed_time = end - start;
-  
+
   VEC g;
   AVEC parm_vec(M);
   for (int m = 0; m < M; m++) parm_vec[m] = parm(m);
