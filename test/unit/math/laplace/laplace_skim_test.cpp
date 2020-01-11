@@ -96,7 +96,7 @@ TEST(laplace, skm) {
 
   // DATA AND TRANSFORMED DATA BLOCK
   int N = 100;
-  int M = 100;  // options: 2, 50, 100, 150, 200
+  int M = 2;  // options: 2, 50, 100, 150, 200
 
   std::string data_directory = "test/unit/math/laplace/skim_data/" +
     std::to_string(M) + "_" + std::to_string(N) + "/";

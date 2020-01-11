@@ -307,13 +307,6 @@ namespace math {
                  - (C.transpose() * C).diagonal())
                  .cwiseProduct(diff_likelihood.third_diff(theta));
 
-     auto end = std::chrono::system_clock::now();
-     std::chrono::duration<double> time = end - start;
-
-     std::cout << "algo 1 - 9 time: " << time.count() << std::endl;
-
-     start = std::chrono::system_clock::now();
-
      phi_adj_ = Eigen::VectorXd(phi_size_);
      start_nested();
      try {
@@ -330,26 +323,8 @@ namespace math {
 
        var Z = laplace_pseudo_target(K_var, a, R, l_grad, s2);
 
-       /* Eigen::MatrixXd A = Eigen::MatrixXd::Identity(theta_size, theta_size)
-         - value_of(K_var) * R;
-       double an_diff = l_grad(0) * s2.transpose() * A.col(0);
-       std::cout << "an_diff(1, 1): " << an_diff << std::endl;
-       an_diff = l_grad(theta_size - 1) * s2.transpose()
-         * A.col(theta_size - 1);
-       std::cout << "an_diff(n, n): " << an_diff << std::endl;
-       */
-
-       end = std::chrono::system_clock::now();
-       time = end - start;
-       std::cout << "algo 10 -14 time: " << time.count() << std::endl;
-
-       start = std::chrono::system_clock::now();
        set_zero_all_adjoints_nested();
        grad(Z.vi_);
-
-       /* std::cout << "matrix adjoint: "
-                 << K_var(0, 0).adj() << " "
-                 << K_var(499, 499).adj() << std::endl; */
 
        for (int j = 0; j < phi_size_; j++)
          phi_adj_[j] = phi_v(j).adj();
@@ -359,9 +334,9 @@ namespace math {
      }
      recover_memory_nested();
 
-     end = std::chrono::system_clock::now();
-     time = end - start;
-     std::cout << "algo 15 time: " << time.count() << std::endl;
+     auto end = std::chrono::system_clock::now();
+     std::chrono::duration<double> time = end - start;
+     std::cout << "diffentiation time: " << time.count() << std::endl;
 
       // Implementation with fwd mode computation of C,
       // and then following R&W's scheme.
@@ -479,11 +454,6 @@ namespace math {
                                           msgs);
 
     var marginal_density = var(vi0->marginal_density_[0]);
-
-    // TEST
-    // end = std::chrono::system_clock::now();
-    // elapsed_time = end - start;
-    // std::cout << "Differentiation: " << elapsed_time.count() << std::endl;
 
     return marginal_density;
   }

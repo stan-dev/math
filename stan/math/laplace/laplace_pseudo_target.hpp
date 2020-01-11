@@ -55,25 +55,12 @@ namespace math {
           for (int i = 0; i < dim_theta; i++)
             K_[j * dim_theta + i] = K(i, j).vi_;
 
-        // for (int i = 0; i < dim_theta; i++)
-        //  for (int j = 0; j < dim_theta; j++)
-        //    K_[j * dim_theta + i] = K(i, j).vi_;
-
         pseudo_target_[0] = this;
         pseudo_target_[0] = new vari(pseudo_target, false);
 
-        /*K_adj_ = 0.5 * a * a.transpose() - 0.5 * R.transpose()
-          + s2 * l.transpose()
-          - (value_of(K) * R.transpose() * s2) * l.transpose(); */
-
-        /*std::cout << "dim l: " << l.rows() << " " << l.cols() << std::endl;
-        std::cout << "dim s2: " << s2.rows() << " " << s2.cols() << std::endl;
-        std::cout << "dim R: " << R.rows() << " " << R.cols() << std::endl;
-        std::cout << "dim K: " << K.rows() << " " << K.cols() << std::endl;
-        std::cout << "cols A: " << (value_of(K) * R * l).cols()
-        << " rows s2: " << s2.rows() << std::endl; */
         K_adj_ = 0.5 * a * a.transpose() - 0.5 * R
-          + s2 * l.transpose() - (R.transpose() * (value_of(K) * s2)) * l.transpose();
+           + s2 * l.transpose()
+           - (R * (value_of(K) * s2)) * l.transpose();
       }
 
       void chain() {
