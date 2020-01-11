@@ -5,6 +5,7 @@
 #include <stan/math/prim/scal/fun/lgamma.hpp>
 #include <boost/math/special_functions/beta.hpp>
 #include <cmath>
+#include <stan/math/prim/scal/fun/boost_policy.hpp>
 
 namespace stan {
 namespace math {
@@ -34,7 +35,7 @@ T inc_beta_ddz(T a, T b, T z) {
 template <>
 inline double inc_beta_ddz(double a, double b, double z) {
   using boost::math::ibeta_derivative;
-  return ibeta_derivative(a, b, z);
+  return ibeta_derivative(a, b, z, boost_policy_t());
 }
 
 }  // namespace math

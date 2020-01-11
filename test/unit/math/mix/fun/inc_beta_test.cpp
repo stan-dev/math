@@ -68,8 +68,8 @@ TEST(mathMixScalFun, inc_beta_b_boundary) {
 }
 
 TEST(mathMixScalFun, inc_beta_x_boundary) {
-  // stan::test::expect_value(f, 0.5, 0.5, 0);
-  // stan::test::expect_value(f, 0.5, 0.5, 1);
+  stan::test::expect_value(f, 0.5, 0.5, 0);
+  stan::test::expect_value(f, 0.5, 0.5, 1);
   stan::test::expect_ad(f, 0.5, 0.5, -0.1);
   stan::test::expect_ad(f, 0.5, 0.5, 1.1);
 }
