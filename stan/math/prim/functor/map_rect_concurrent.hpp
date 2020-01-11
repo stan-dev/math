@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
-
 #include <vector>
 
 namespace stan {

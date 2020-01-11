@@ -2,8 +2,8 @@
 #define STAN_MATH_REV_FUN_ASINH_HPP
 
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/prim/fun/asinh.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/prim/fun/asinh.hpp>
 #include <cmath>
 
 namespace stan {

@@ -31,11 +31,11 @@
 #ifndef STAN_MATH_PRIM_PROB_WIENER_LPDF_HPP
 #define STAN_MATH_PRIM_PROB_WIENER_LPDF_HPP
 
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/size_zero.hpp>
 #include <algorithm>
 #include <cmath>
 #include <string>

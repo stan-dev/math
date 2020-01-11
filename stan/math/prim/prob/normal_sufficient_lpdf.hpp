@@ -2,11 +2,11 @@
 #define STAN_MATH_PRIM_PROB_NORMAL_SUFFICIENT_LPDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/prob/normal_lpdf.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/prob/normal_lpdf.hpp>
 #include <cmath>
 
 namespace stan {

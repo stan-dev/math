@@ -4,7 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/sort_indices.hpp>
-#include <algorithm>  // std::sort
+#include <algorithm>
 #include <vector>
 
 namespace stan {

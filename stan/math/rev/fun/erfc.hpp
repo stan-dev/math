@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_REV_FUN_ERFC_HPP
 #define STAN_MATH_REV_FUN_ERFC_HPP
 
+#include <stan/math/rev/core.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/erfc.hpp>
-#include <stan/math/rev/core.hpp>
 #include <cmath>
 
 namespace stan {
