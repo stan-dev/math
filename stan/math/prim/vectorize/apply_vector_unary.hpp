@@ -84,7 +84,7 @@ struct apply_vector_unary<T, require_std_vector_vt<is_stan_scalar, T>> {
   static inline std::vector<T_vt> apply(const T& x, const F& f) {
     std::vector<T_vt> result(x.size());
     Eigen::Map<Eigen::Matrix<T_vt, -1, 1>>(result.data(), result.size())
-      = apply_vector_unary<T_map>::apply(as_column_vector_or_scalar(x), f);
+        = apply_vector_unary<T_map>::apply(as_column_vector_or_scalar(x), f);
     return result;
   }
 
