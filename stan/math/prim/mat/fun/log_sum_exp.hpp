@@ -26,8 +26,8 @@ namespace math {
  * @return The log of the sum of the exponentiated vector values.
  */
 template <typename T, require_t<std::is_arithmetic<scalar_type_t<T>>>...>
-inline auto log_sum_exp(T&& x) {
-  return apply_vector_unary<T>::reduce(std::forward<T>(x), [&](auto& v) {
+inline auto log_sum_exp(const T& x) {
+  return apply_vector_unary<T>::reduce(x, [&](auto& v) {
     if (v.size() == 0) {
       return NEGATIVE_INFTY;
     }
