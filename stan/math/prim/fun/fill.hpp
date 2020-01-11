@@ -11,6 +11,24 @@ namespace math {
 /**
  * Fill the specified container with the specified value.
  *
+ * The specified matrix is filled by element.
+ *
+ * @tparam T type of elements in the matrix
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ * @tparam S Type of value.
+ *
+ * @param x Container.
+ * @param y Value.
+ */
+template <typename T, int R, int C, typename S>
+void fill(Eigen::Matrix<T, R, C>& x, const S& y) {
+  x.fill(y);
+}
+
+/**
+ * Fill the specified container with the specified value.
+ *
  * This base case simply assigns the value to the container.
  *
  * @tparam T Type of reference container.
@@ -39,24 +57,6 @@ void fill(std::vector<T>& x, const S& y) {
   for (typename std::vector<T>::size_type i = 0; i < x.size(); ++i) {
     fill(x[i], y);
   }
-}
-
-/**
- * Fill the specified container with the specified value.
- *
- * The specified matrix is filled by element.
- *
- * @tparam T type of elements in the matrix
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
- * @tparam S Type of value.
- *
- * @param x Container.
- * @param y Value.
- */
-template <typename T, int R, int C, typename S>
-void fill(Eigen::Matrix<T, R, C>& x, const S& y) {
-  x.fill(y);
 }
 
 }  // namespace math
