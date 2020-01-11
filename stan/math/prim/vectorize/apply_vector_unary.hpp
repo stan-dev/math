@@ -45,7 +45,8 @@ struct apply_vector_unary<T, require_eigen_t<T>> {
 
   /**
    * Member function for applying a functor to a vector and subsequently
-   * returning a scalar.
+   * returning a scalar. The reduction to a scalar needs to be implemented
+   * in the definition of the functor.
    *
    * @tparam T Type of argument to which functor is applied.
    * @tparam F Type of functor to apply.
@@ -81,9 +82,10 @@ struct apply_vector_unary<T, require_std_vector_vt<is_stan_scalar, T>> {
    */
   template <typename F>
   static inline std::vector<T_vt> apply(const T& x, const F& f) {
-    Eigen::Matrix<T_vt, -1, 1> result
-        = apply_vector_unary<T_map>::apply(as_column_vector_or_scalar(x), f);
-    return std::vector<T_vt>(result.data(), result.data() + result.size());
+    std::vector<T_vt> result(x.size());
+    Eigen::Map<Eigen::Matrix<T_vt, -1, 1>>(result.data(), result.size())
+      = apply_vector_unary<T_map>::apply(as_column_vector_or_scalar(x), f);
+    return result;
   }
 
   /**

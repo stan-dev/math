@@ -20,8 +20,8 @@ namespace math {
  * @throw std::domain_error If the input vector is size 0.
  */
 template <typename T, require_t<is_fvar<scalar_type_t<T>>>...>
-inline auto log_softmax(T&& x) {
-  return apply_vector_unary<T>::apply(std::forward<T>(x), [&](auto& alpha) {
+inline auto log_softmax(const T& x) {
+  return apply_vector_unary<T>::apply(x, [&](auto& alpha) {
     using T_fvar = value_type_t<decltype(alpha)>;
     using T_fvar_inner = typename T_fvar::Scalar;
 

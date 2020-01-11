@@ -6,7 +6,6 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/vari.hpp>
-#include <stan/math/rev/mat/fun/typedefs.hpp>
 
 namespace stan {
 namespace math {
@@ -17,9 +16,8 @@ class op_matrix_vari : public vari {
   vari** vis_;
 
  public:
-  template <typename Derived, require_t<is_var<typename Derived::Scalar>>...>
-  op_matrix_vari(double f, const Eigen::MatrixBase<Derived>& vs)
-      : vari(f), size_(vs.size()) {
+  template <typename T, require_eigen_vt<is_var, T>...>
+  op_matrix_vari(double f, T&& vs) : vari(f), size_(vs.size()) {
     vis_ = ChainableStack::instance_->memalloc_.alloc_array<vari*>(size_);
     Eigen::Map<Eigen::Matrix<vari*, -1, -1>>(vis_, vs.rows(), vs.cols())
         = vs.vi();

@@ -38,8 +38,8 @@ namespace math {
  * @return log unit simplex result of the softmax transform of the vector.
  */
 template <typename T, require_t<std::is_arithmetic<scalar_type_t<T>>>...>
-inline auto log_softmax(T&& x) {
-  return apply_vector_unary<T>::apply(std::forward<T>(x), [&](auto& v) {
+inline auto log_softmax(const T& x) {
+  return apply_vector_unary<T>::apply(x, [&](auto& v) {
     check_nonzero_size("log_softmax", "v", v);
     return (v.array() - log_sum_exp(v)).matrix();
   });

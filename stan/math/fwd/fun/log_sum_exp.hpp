@@ -32,28 +32,7 @@ inline fvar<T> log_sum_exp(double x1, const fvar<T>& x2) {
 
 template <typename T>
 inline fvar<T> log_sum_exp(const fvar<T>& x1, double x2) {
-  using std::exp;
-  if (x2 == NEGATIVE_INFTY) {
-    return fvar<T>(x1.val_, x1.d_);
-  }
-  return fvar<T>(log_sum_exp(x1.val_, x2), x1.d_ / (1 + exp(x2 - x1.val_)));
-}
-
-template <typename T>
-fvar<T> log_sum_exp(const std::vector<fvar<T>>& v) {
-  using std::exp;
-  std::vector<T> vals(v.size());
-  for (size_t i = 0; i < v.size(); ++i) {
-    vals[i] = v[i].val_;
-  }
-  T deriv(0.0);
-  T denominator(0.0);
-  for (size_t i = 0; i < v.size(); ++i) {
-    T exp_vi = exp(vals[i]);
-    denominator += exp_vi;
-    deriv += v[i].d_ * exp_vi;
-  }
-  return fvar<T>(log_sum_exp(vals), deriv / denominator);
+  return log_sum_exp(x2, x1);
 }
 
 /**
@@ -72,8 +51,8 @@ fvar<T> log_sum_exp(const std::vector<fvar<T>>& v) {
  * @return The log of the sum of the exponentiated vector values.
  */
 template <typename T, require_t<is_fvar<scalar_type_t<T>>>...>
-inline auto log_sum_exp(T&& x) {
-  return apply_vector_unary<T>::reduce(std::forward<T>(x), [&](auto& v) {
+inline auto log_sum_exp(const T& x) {
+  return apply_vector_unary<T>::reduce(x, [&](auto& v) {
     using T_fvar_inner = typename value_type_t<decltype(v)>::Scalar;
     using mat_type = Eigen::Matrix<T_fvar_inner, -1, -1>;
     mat_type vals = v.val();
