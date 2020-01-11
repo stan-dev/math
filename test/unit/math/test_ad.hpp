@@ -1044,7 +1044,7 @@ void expect_value(const F& f, const T& x) {
  * @tparam T2 type of second scalar argument
  * @param f function to test
  * @param x1 first argument to test
- * @param x1 second argument to test
+ * @param x2 second argument to test
  */
 template <typename F, typename T1, typename T2>
 void expect_value(const F& f, const T1& x1, const T2& x2) {
@@ -1077,6 +1077,82 @@ void expect_value(const F& f, const T1& x1, const T2& x2) {
   EXPECT_FLOAT_EQ(fx, f(x1, ffd(x2)).val().val());
   EXPECT_FLOAT_EQ(fx, f(x1, fv(x2)).val().val());
   EXPECT_FLOAT_EQ(fx, f(x1, ffv(x2)).val().val().val());
+}
+
+/**
+ * Test that the specified function has the same value when applied to
+ * type `T1`, `T2`, and `T3` to all of the autodiff types
+ * (`var`, `fvar<double>`, `fvar<fvar<double>>`, `fvar<var>`,
+ * `fvar<fvar<var>>`).
+ *
+ * @tparam F type of function to test
+ * @tparam T1 type of first scalar argument
+ * @tparam T2 type of second scalar argument
+ * @tparam T3 type of third scalar argument
+ * @param f function to test
+ * @param x1 first argument to test
+ * @param x2 second argument to test
+ * @param x3 third argument to test
+ */
+template <typename F, typename T1, typename T2, typename T3>
+void expect_value(const F& f, const T1& x1, const T2& x2, const T3& x3) {
+  using stan::math::fvar;
+  using stan::math::var;
+  typedef var v;
+  typedef fvar<double> fd;
+  typedef fvar<fvar<double>> ffd;
+  typedef fvar<var> fv;
+  typedef fvar<fvar<var>> ffv;
+  double fx = f(x1, x2, x3);
+
+  // vdd
+  EXPECT_FLOAT_EQ(fx, f(v(x1), x2, x3).val());
+  EXPECT_FLOAT_EQ(fx, f(fd(x1), x2, x3).val());
+  EXPECT_FLOAT_EQ(fx, f(ffd(x1), x2, x3).val().val());
+  EXPECT_FLOAT_EQ(fx, f(fv(x1), x2, x3).val().val());
+  EXPECT_FLOAT_EQ(fx, f(ffv(x1), x2, x3).val().val().val());
+
+  // dvd
+  EXPECT_FLOAT_EQ(fx, f(x1, v(x2), x3).val());
+  EXPECT_FLOAT_EQ(fx, f(x1, fd(x2), x3).val());
+  EXPECT_FLOAT_EQ(fx, f(x1, ffd(x2), x3).val().val());
+  EXPECT_FLOAT_EQ(fx, f(x1, fv(x2), x3).val().val());
+  EXPECT_FLOAT_EQ(fx, f(x1, ffv(x2), x3).val().val().val());
+
+  // ddv
+  EXPECT_FLOAT_EQ(fx, f(x1, v(x2), v(x3)).val());
+  EXPECT_FLOAT_EQ(fx, f(x1, fd(x2), fd(x3)).val());
+  EXPECT_FLOAT_EQ(fx, f(x1, ffd(x2), ffd(x3)).val().val());
+  EXPECT_FLOAT_EQ(fx, f(x1, fv(x2), fv(x3)).val().val());
+  EXPECT_FLOAT_EQ(fx, f(x1, ffv(x2), ffv(x3)).val().val().val());
+
+  // dvv
+  EXPECT_FLOAT_EQ(fx, f(x1, v(x2), v(x3)).val());
+  EXPECT_FLOAT_EQ(fx, f(x1, fd(x2), fd(x3)).val());
+  EXPECT_FLOAT_EQ(fx, f(x1, ffd(x2), ffd(x3)).val().val());
+  EXPECT_FLOAT_EQ(fx, f(x1, fv(x2), fv(x3)).val().val());
+  EXPECT_FLOAT_EQ(fx, f(x1, ffv(x2), ffv(x3)).val().val().val());
+
+  // vdv
+  EXPECT_FLOAT_EQ(fx, f(v(x1), x2, v(x3)).val());
+  EXPECT_FLOAT_EQ(fx, f(fd(x1), x2, fd(x3)).val());
+  EXPECT_FLOAT_EQ(fx, f(ffd(x1), x2, ffd(x3)).val().val());
+  EXPECT_FLOAT_EQ(fx, f(fv(x1), x2, fv(x3)).val().val());
+  EXPECT_FLOAT_EQ(fx, f(ffv(x1), x2, ffv(x3)).val().val().val());
+
+  // vvd
+  EXPECT_FLOAT_EQ(fx, f(v(x1), v(x2), x3).val());
+  EXPECT_FLOAT_EQ(fx, f(fd(x1), fd(x2), x3).val());
+  EXPECT_FLOAT_EQ(fx, f(ffd(x1), ffd(x2), x3).val().val());
+  EXPECT_FLOAT_EQ(fx, f(fv(x1), fv(x2), x3).val().val());
+  EXPECT_FLOAT_EQ(fx, f(ffv(x1), ffv(x2), x3).val().val().val());
+
+  // vvv
+  EXPECT_FLOAT_EQ(fx, f(v(x1), v(x2), v(x3)).val());
+  EXPECT_FLOAT_EQ(fx, f(fd(x1), fd(x2), fd(x3)).val());
+  EXPECT_FLOAT_EQ(fx, f(ffd(x1), ffd(x2), ffd(x3)).val().val());
+  EXPECT_FLOAT_EQ(fx, f(fv(x1), fv(x2), fv(x3)).val().val());
+  EXPECT_FLOAT_EQ(fx, f(ffv(x1), ffv(x2), ffv(x3)).val().val().val());
 }
 
 /**

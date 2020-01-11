@@ -30,6 +30,25 @@ TEST(test_unit_math_test_ad, test_ad_binary) {
   stan::test::expect_ad(g, x, y2);
 }
 
+// DEMONSTRATING expect_value
+
+TEST(test_unit_math_test_ad, test_expect_value) {
+  auto g1 = [](const auto& x1) {
+    stan::math::check_nonnegative(
+        "test_unit_math_test_add.test_expect_value::g1", "x1", x1);
+    return x1;
+  };
+  auto g2 = [&g1](const auto& x1, const auto& x2) { return g1(x1 + x2); };
+  auto g3 = [&g1](const auto& x1, const auto& x2, const auto& x3) {
+    return g1(x1 + x2 + x3);
+  };
+  stan::test::expect_value(g1, 0);
+  stan::test::expect_value(g2, 0, 0);
+  stan::test::expect_value(g3, 0, 0, 0);
+  // Can not finite difference next to boundary, but we can still check values.
+  // expect_ad(g1, 0)
+}
+
 // VECTORIZED UNARY FUNCTION THAT PASSES
 
 // log10 is vectorized, so uses vectorized test
@@ -66,6 +85,8 @@ TEST(test_ad, mismatch) {
   auto g = [](const auto& u) { return f_mismatch(u); };
   // include following line to show exception error behavior
   // stan::test::expect_ad(g, x);
+  // this line would also fail
+  // stan::test::expect_value(g, x);
 }
 
 // OVERLOAD THAT FAILS DUE TO MISMATCHED EXCEPTION CONDITIONS
