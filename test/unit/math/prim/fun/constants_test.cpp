@@ -26,6 +26,12 @@ TEST(MathsConstants, pi_fun) {
   EXPECT_FLOAT_EQ(4.0 * std::atan(1.0), stan::math::pi());
 }
 TEST(MathsConstants, e_fun) { EXPECT_FLOAT_EQ(std::exp(1.0), stan::math::e()); }
+TEST(MathsConstants, sqrt2_fun) {
+  EXPECT_FLOAT_EQ(std::sqrt(2.0), stan::math::sqrt2());
+}
+TEST(MathsConstants, log10_fun) {
+  EXPECT_FLOAT_EQ(std::log(10.0), stan::math::log10());
+}
 
 TEST(MathsConstants, infty_fun) {
   EXPECT_FLOAT_EQ(std::numeric_limits<double>::infinity(),

@@ -10,6 +10,8 @@
 namespace stan {
 namespace math {
 
+// TODO(anyone) Use constexpr when moving to C++17
+
 /**
  * Return the base of the natural logarithm.
  *
@@ -203,6 +205,20 @@ inline double not_a_number() { return NOT_A_NUMBER; }
  * @return Minimum positive number.
  */
 inline double machine_precision() { return EPSILON; }
+
+/**
+ * Returns the natural logarithm of ten.
+ *
+ * @return Natural logarithm of ten.
+ */
+inline double log10() { return LOG_TEN; }
+
+/**
+ * Returns the square root of two.
+ *
+ * @return Square root of two.
+ */
+inline double sqrt2() { return SQRT_TWO; }
 
 }  // namespace math
 }  // namespace stan
