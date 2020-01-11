@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_PRIM_FUN_MDIVIDE_RIGHT_TRI_HPP
 #define STAN_MATH_PRIM_FUN_MDIVIDE_RIGHT_TRI_HPP
 
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/mdivide_left_tri.hpp>
 #include <stan/math/prim/fun/promote_common.hpp>
 #include <stan/math/prim/fun/transpose.hpp>
-#include <stan/math/prim/err.hpp>
 
 namespace stan {
 namespace math {

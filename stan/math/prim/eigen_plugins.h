@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_EIGEN_PLUGINS_H
 #define STAN_MATH_PRIM_EIGEN_PLUGINS_H
 
-
 /**
  * Reimplements is_fvar without requiring external math headers
  *

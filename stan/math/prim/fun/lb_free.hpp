@@ -2,9 +2,9 @@
 #define STAN_MATH_PRIM_FUN_LB_FREE_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/identity_free.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/err.hpp>
 #include <cmath>
 
 namespace stan {

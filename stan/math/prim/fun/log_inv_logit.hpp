@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/log1p.hpp>
-#include <stan/math/prim/fun/log_inv_logit.hpp>
 #include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 

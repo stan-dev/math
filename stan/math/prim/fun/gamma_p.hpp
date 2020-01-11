@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_FUN_GAMMA_P_HPP
 #define STAN_MATH_PRIM_FUN_GAMMA_P_HPP
 
-#include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/is_nan.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/boost_policy.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/is_nan.hpp>
 #include <boost/math/special_functions/gamma.hpp>
 
 namespace stan {
