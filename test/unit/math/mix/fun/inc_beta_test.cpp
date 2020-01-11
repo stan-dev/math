@@ -1,5 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
 #include <limits>
+#include <boost/math/special_functions/beta.hpp>
+#include <stan/math/prim/scal/fun/boost_policy.hpp>
 
 TEST(mathMixScalFun, inc_beta) {
   auto f = [](const auto& x1, const auto& x2, const auto& x3) {
@@ -26,4 +28,18 @@ TEST(mathMixScalFun, inc_beta) {
   stan::test::expect_ad(f, nan, 0.3, nan);
   stan::test::expect_ad(f, nan, nan, 0.5);
   stan::test::expect_ad(f, nan, nan, nan);
+}
+
+TEST(mathMixScalFun, ibeta_vs_ibeta_derivative) {
+  using stan::math::boost_policy_t;
+  EXPECT_NO_THROW(boost::math::ibeta(0, 0.5, 0.5, boost_policy_t()));
+  EXPECT_NO_THROW(boost::math::ibeta(0.5, 0, 0.5, boost_policy_t()));
+  EXPECT_THROW(boost::math::ibeta(0, 0, 0.5, boost_policy_t()),
+               std::domain_error);
+  EXPECT_THROW(boost::math::ibeta_derivative(0, 0.5, 0.5, boost_policy_t()),
+               std::domain_error);
+  EXPECT_THROW(boost::math::ibeta_derivative(0.5, 0, 0.5, boost_policy_t()),
+               std::domain_error);
+  EXPECT_THROW(boost::math::ibeta_derivative(0, 0, 0.5, boost_policy_t()),
+               std::domain_error);
 }
