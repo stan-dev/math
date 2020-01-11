@@ -68,7 +68,7 @@ return_type_t<T_y, T_dof, T_scale> wishart_lpdf(
   check_ldlt_factor(function, "LDLT_Factor of scale parameter", ldlt_S);
 
   if (include_summand<propto, T_dof>::value) {
-    lp += nu * k * NEG_LOG_TWO_OVER_TWO;
+    lp -= nu * k * HALF_LOG_TWO;
   }
 
   if (include_summand<propto, T_dof>::value) {

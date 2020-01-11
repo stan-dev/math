@@ -79,7 +79,7 @@ inline return_type_t<T_y, T_loc, T_scale> normal_cdf(const T_y& y,
       const T_partials_return rep_deriv
           = (scaled_diff < -37.5 * INV_SQRT_TWO)
                 ? 0.0
-                : SQRT_TWO_OVER_SQRT_PI * 0.5 * exp(-scaled_diff * scaled_diff)
+                : INV_SQRT_TWO_PI * exp(-scaled_diff * scaled_diff)
                       / (cdf_n * sigma_dbl);
       if (!is_constant_all<T_y>::value) {
         ops_partials.edge1_.partials_[n] += rep_deriv;

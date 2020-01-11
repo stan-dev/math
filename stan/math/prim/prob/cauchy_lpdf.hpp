@@ -85,7 +85,7 @@ return_type_t<T_y, T_loc, T_scale> cauchy_lpdf(const T_y& y, const T_loc& mu,
         = y_minus_mu_over_sigma * y_minus_mu_over_sigma;
 
     if (include_summand<propto>::value) {
-      logp += NEG_LOG_PI;
+      logp -= LOG_PI;
     }
     if (include_summand<propto, T_scale>::value) {
       logp -= log_sigma[n];

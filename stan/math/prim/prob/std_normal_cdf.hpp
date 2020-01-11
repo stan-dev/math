@@ -59,9 +59,9 @@ inline return_type_t<T_y> std_normal_cdf(const T_y& y) {
 
     if (!is_constant_all<T_y>::value) {
       const T_partials_return rep_deriv
-          = (y_dbl < -37.5) ? 0.0
-                            : SQRT_TWO_OVER_SQRT_PI * 0.5
-                                  * exp(-scaled_y * scaled_y) / cdf_n;
+          = (y_dbl < -37.5)
+                ? 0.0
+                : INV_SQRT_TWO_PI * exp(-scaled_y * scaled_y) / cdf_n;
       if (!is_constant_all<T_y>::value) {
         ops_partials.edge1_.partials_[n] += rep_deriv;
       }
