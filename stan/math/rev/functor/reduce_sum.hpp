@@ -40,48 +40,6 @@ struct value_type<Eigen::Matrix<T_value, R, C>> {
   using type = Eigen::Matrix<typename value_type<T_value>::type, R, C>;
 };
 
-// adjoint_of grabs the adjoint of some data structure
-
-template <typename T>
-typename value_type<T>::type adjoint_of(const T x) {
-  return typename value_type<T>::type(0);
-}
-
-inline double adjoint_of(const var& x) { return x.vi_->adj_; }
-
-template <typename T, int R, int C>
-inline Eigen::Matrix<typename value_type<T>::type, R, C> adjoint_of(
-    const Eigen::Matrix<T, R, C>& M) {
-  Eigen::Matrix<typename value_type<T>::type, R, C> Md(M.rows(), M.cols());
-  for (int j = 0; j < M.cols(); j++) {
-    for (int i = 0; i < M.rows(); i++) {
-      Md(i, j) = adjoint_of(M(i, j));
-    }
-  }
-  return Md;
-}
-
-template <int R, int C>
-inline Eigen::Matrix<double, R, C> adjoint_of(
-    const Eigen::Matrix<double, R, C>& x) {
-  return Eigen::Matrix<double, R, C>::Zero(x.rows(), x.cols());
-}
-
-template <int R, int C>
-inline Eigen::Matrix<int, R, C> adjoint_of(const Eigen::Matrix<int, R, C>& x) {
-  return Eigen::Matrix<int, R, C>::Zero(x.rows(), x.cols());
-}
-
-template <typename T>
-typename value_type<std::vector<T>>::type adjoint_of(const std::vector<T>& x) {
-  const size_t size = x.size();
-  typename value_type<std::vector<T>>::type result(size);
-  for (size_t i = 0; i != size; ++i) {
-    result[i] = adjoint_of(x[i]);
-  }
-  return result;
-}
-
 // as_value is similar to value_of... with the difference that it
 // keeps nested container structures which is not the case for
 // value_of
@@ -128,28 +86,6 @@ inline const Eigen::Matrix<int, R, C>& as_value(
 }
 
 namespace internal {
-
-/*
-template <typename T>
-inline void add_adjoint(T& sum, const T term) {
-  sum += term;
-}
-
-template <typename T, int R, int C>
-inline void add_adjoint(Eigen::Matrix<T, R, C>& sum,
-                        const Eigen::Matrix<T, R, C>& term) {
-  sum += term;
-}
-
-template <typename T>
-inline void add_adjoint(std::vector<T>& sum, const std::vector<T>& term,
-                        int offset = 0) {
-  const size_t size = term.size();
-  for (size_t i = 0; i != size; ++i) {
-    add_adjoint(sum[offset + i], term[i]);
-  }
-}
-*/
 
 inline int add_adjoint(const var& op, int offset_partials,
                        Eigen::VectorXd& partials) {
@@ -228,35 +164,6 @@ inline vari** register_operands(const std::vector<T>& op, vari** varis) {
   return varis;
 }
 
-inline double* register_partials(const double grad, double* partials) {
-  (*partials) = grad;
-  return partials + 1;
-}
-
-template <int R, int C>
-inline double* register_partials(const Eigen::Matrix<double, R, C>& M_grad,
-                                 double* partials) {
-  const size_t size = M_grad.size();
-  std::copy(M_grad.data(), M_grad.data() + size, partials);
-  return partials + size;
-}
-
-template <typename T>
-inline double* register_partials(const std::vector<T>& grad, double* partials) {
-  const size_t size = grad.size();
-  for (size_t i = 0; i != size; ++i) {
-    partials = register_partials(grad[i], partials);
-  }
-  return partials;
-}
-
-/*
-template <typename T_base>
-const T_base initialize_from_value(const typename value_type<T_base>::type&
-value) { const T_base base(value); return base;
-}
-*/
-
 template <typename T_base>
 const std::vector<T_base> initialize_from_value(
     const std::vector<typename value_type<T_base>::type>& value) {
@@ -279,37 +186,23 @@ struct local_operand_and_partials {
   // ref to avoid copying data... TODO
   using Op_local_t = Op_value_t;
   using partials_t = Eigen::VectorXd;
-  // using partials_t = Op_value_t;
 
   const Op_t& op_;
-  // const Op_value_t& op_value_;
   std::shared_ptr<const Op_value_t> op_value_ptr_;
   const Op_value_t& op_value_;
-  // Op_t local_op_;
-  // std::size_t local_op_start_;
   partials_t partials_;
 
   explicit local_operand_and_partials(const Op_t& op)
       : op_(op),
         op_value_ptr_(new Op_value_t(as_value(op))),
         op_value_(*op_value_ptr_),
-        // local_op_(),
-        // local_op_start_(0),
-        partials_(Eigen::VectorXd::Zero(num_elements()))
-  // partials_(is_constant<T>::value ? Op_value_t()
-  //                                : adjoint_of(op_value_))
-  {}
+        partials_(Eigen::VectorXd::Zero(num_elements())) {}
 
   local_operand_and_partials(const local_operand_and_partials<T>& other)
       : op_(other.op_),
         op_value_ptr_(other.op_value_ptr_),
         op_value_(other.op_value_),
-        // local_op_(),
-        // local_op_start_(0),
-        partials_(Eigen::VectorXd::Zero(num_elements()))
-  // partials_(is_constant<T>::value ? Op_value_t()
-  //                                : adjoint_of(other.op_value_))
-  {}
+        partials_(Eigen::VectorXd::Zero(num_elements())) {}
 
   inline void add_local_adjoint(const Op_t& local_op, std::size_t offset = 0) {
     if (!is_constant<T>::value) {
@@ -317,18 +210,8 @@ struct local_operand_and_partials {
     }
   }
 
-  /*
-  inline void add_local_adjoint() {
-    if (!is_constant<T>::value) {
-      add_adjoint(partials_, adjoint_of(local_op_), local_op_start_);
-      local_op_ = Op_t();
-    }
-  }
-  */
-
   inline void add_other_adjoint(const local_operand_and_partials<T>& other) {
     if (!is_constant<T>::value) {
-      // add_adjoint(partials_, other.partials_);
       partials_ += other.partials_;
     }
   }
@@ -338,13 +221,6 @@ struct local_operand_and_partials {
   inline const Op_t local_op(std::size_t start, std::size_t end) {
     const Op_value_t slice(op_value_.begin() + start, op_value_.begin() + end);
     return initialize_from_value<T>(slice);
-    /*
-    // local_op_start_ = start;
-    const Op_t local_op(
-        op_value_.begin() + start,
-        (end == -1 ? op_value_.end() : op_value_.begin() + end));
-    return std::move(local_op);
-    */
   }
 
   inline std::size_t num_elements() {
@@ -370,14 +246,6 @@ struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, var> {
   using arg2_t = std::vector<Arg2>;
   using arg3_t = std::vector<Arg3>;
   using arg4_t = std::vector<Arg4>;
-
-  /*
-  using vmapped_value_t = std::vector<typename value_type<M>::type>;
-  using arg1_value_t = std::vector<typename value_type<Arg1>::type>;
-  using arg2_value_t = std::vector<typename value_type<Arg2>::type>;
-  using arg3_value_t = std::vector<typename value_type<Arg3>::type>;
-  using arg4_value_t = std::vector<typename value_type<Arg4>::type>;
-  */
 
   using vmapped_op_t = local_operand_and_partials<M>;
   using arg1_local_op_t = local_operand_and_partials<Arg1>;
