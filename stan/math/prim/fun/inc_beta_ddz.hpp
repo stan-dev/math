@@ -4,8 +4,8 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <boost/math/special_functions/beta.hpp>
-#include <cmath>
 #include <stan/math/prim/fun/boost_policy.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
