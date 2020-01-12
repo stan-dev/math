@@ -197,6 +197,27 @@ inline double* register_partials(const std::vector<T>& grad, double* partials) {
   return partials;
 }
 
+/*
+template <typename T_base>
+const T_base initialize_from_value(const typename value_type<T_base>::type&
+value) { const T_base base(value); return base;
+}
+*/
+
+template <typename T_base>
+const std::vector<T_base> initialize_from_value(
+    const std::vector<typename value_type<T_base>::type>& value) {
+  const std::vector<T_base> base(value.begin(), value.end());
+  return base;
+}
+
+/*
+template <typename T_base>
+const T_base initialize_from_value(const typename value_type<T_base>::type&
+value) { const T_base base(value.begin(), value.end()); return base;
+}
+*/
+
 template <typename T>
 struct local_operand_and_partials {
   using Op_t = std::vector<T>;
@@ -208,15 +229,17 @@ struct local_operand_and_partials {
   using partials_t = Op_value_t;
 
   const Op_t& op_;
+  // const Op_value_t& op_value_;
+  std::shared_ptr<const Op_value_t> op_value_ptr_;
   const Op_value_t& op_value_;
   // Op_t local_op_;
   // std::size_t local_op_start_;
   partials_t partials_;
 
-  explicit local_operand_and_partials(const Op_t& op,
-                                      const Op_value_t& op_value)
+  explicit local_operand_and_partials(const Op_t& op)
       : op_(op),
-        op_value_(op_value),
+        op_value_ptr_(new Op_value_t(as_value(op))),
+        op_value_(*op_value_ptr_),
         // local_op_(),
         // local_op_start_(0),
         partials_(is_constant<T>::value ? Op_value_t()
@@ -224,6 +247,7 @@ struct local_operand_and_partials {
 
   local_operand_and_partials(const local_operand_and_partials<T>& other)
       : op_(other.op_),
+        op_value_ptr_(other.op_value_ptr_),
         op_value_(other.op_value_),
         // local_op_(),
         // local_op_start_(0),
@@ -252,12 +276,18 @@ struct local_operand_and_partials {
     }
   }
 
-  inline const Op_t local_op(std::size_t start = 0, std::size_t end = -1) {
+  inline const Op_t local_op() { return initialize_from_value<T>(op_value_); }
+
+  inline const Op_t local_op(std::size_t start, std::size_t end) {
+    const Op_value_t slice(op_value_.begin() + start, op_value_.begin() + end);
+    return initialize_from_value<T>(slice);
+    /*
     // local_op_start_ = start;
     const Op_t local_op(
         op_value_.begin() + start,
         (end == -1 ? op_value_.end() : op_value_.begin() + end));
     return std::move(local_op);
+    */
   }
 
   inline std::size_t num_elements() {
@@ -283,11 +313,13 @@ struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, var> {
   using arg3_t = std::vector<Arg3>;
   using arg4_t = std::vector<Arg4>;
 
+  /*
   using vmapped_value_t = std::vector<typename value_type<M>::type>;
   using arg1_value_t = std::vector<typename value_type<Arg1>::type>;
   using arg2_value_t = std::vector<typename value_type<Arg2>::type>;
   using arg3_value_t = std::vector<typename value_type<Arg3>::type>;
   using arg4_value_t = std::vector<typename value_type<Arg4>::type>;
+  */
 
   using vmapped_op_t = local_operand_and_partials<M>;
   using arg1_local_op_t = local_operand_and_partials<Arg1>;
@@ -305,15 +337,13 @@ struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, var> {
     double terms_sum_;
 
     recursive_reducer(vmapped_op_t& op_vmapped, const T& init,
-                      const arg1_t& arg1, const arg1_value_t& arg1_value,
-                      const arg2_t& arg2, const arg2_value_t& arg2_value,
-                      const arg3_t& arg3, const arg3_value_t& arg3_value,
-                      const arg4_t& arg4, const arg4_value_t& arg4_value)
+                      const arg1_t& arg1, const arg2_t& arg2,
+                      const arg3_t& arg3, const arg4_t& arg4)
         : op_vmapped_(op_vmapped),
-          op_arg1_(arg1, arg1_value),
-          op_arg2_(arg2, arg2_value),
-          op_arg3_(arg3, arg3_value),
-          op_arg4_(arg4, arg4_value),
+          op_arg1_(arg1),
+          op_arg2_(arg2),
+          op_arg3_(arg3),
+          op_arg4_(arg4),
           terms_sum_(as_value(init)) {}
 
     recursive_reducer(recursive_reducer& other, tbb::split)
@@ -378,16 +408,9 @@ struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, var> {
                const arg4_t& arg4) const {
     const std::size_t num_jobs = vmapped.size();
 
-    const vmapped_value_t vmapped_value = as_value(vmapped);
-    const arg1_value_t arg1_value = as_value(arg1);
-    const arg2_value_t arg2_value = as_value(arg2);
-    const arg3_value_t arg3_value = as_value(arg3);
-    const arg4_value_t arg4_value = as_value(arg4);
+    vmapped_op_t op_vmapped(vmapped);
 
-    vmapped_op_t op_vmapped(vmapped, vmapped_value);
-
-    recursive_reducer worker(op_vmapped, init, arg1, arg1_value, arg2,
-                             arg2_value, arg3, arg3_value, arg4, arg4_value);
+    recursive_reducer worker(op_vmapped, init, arg1, arg2, arg3, arg4);
 
 #ifdef STAN_DETERMINISTIC
     tbb::static_partitioner partitioner;
