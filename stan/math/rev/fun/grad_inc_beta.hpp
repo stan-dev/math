@@ -12,6 +12,7 @@
 #include <stan/math/rev/fun/log.hpp>
 #include <stan/math/rev/fun/log1m.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
+#include <stan/math/rev/vectorize/apply_scalar_unary.hpp>
 #include <stan/math/prim/fun/beta.hpp>
 #include <stan/math/prim/fun/grad_2F1.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
