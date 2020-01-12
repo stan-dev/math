@@ -27,19 +27,12 @@ TEST(mathMixScalFun, inc_beta_dda_integer) {
 
 TEST(mathMixScalFun, inc_beta_dda_a_boundary) {
   const double inf = stan::math::INFTY;
-  // stan::test::expect_value(f, 0, 0.5, 0.5);
   stan::test::expect_ad(f, inf, 0.5, 0.5);
 }
 
 TEST(mathMixScalFun, inc_beta_dda_b_boundary) {
   const double inf = stan::math::INFTY;
-  // stan::test::expect_value(f, 0.5, 0, 0.5);
   stan::test::expect_ad(f, 0.5, inf, 0.5);
-}
-
-TEST(mathMixScalFun, inc_beta_dda_x_boundary) {
-  // stan::test::expect_value(f, 0.5, 0.5, 0);
-  // stan::test::expect_value(f, 0.5, 0.5, 1);
 }
 
 TEST(mathMixScalFun, inc_beta_dda_a_b_boundary) {

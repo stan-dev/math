@@ -45,7 +45,7 @@ TEST(test_unit_math_test_ad, test_expect_value) {
   stan::test::expect_value(g1, 0);
   stan::test::expect_value(g2, 0, 0);
   stan::test::expect_value(g3, 0, 0, 0);
-  // Can not finite difference next to boundary, but we can still check values.
+  // Can not finite difference next to boundary. This would fail:
   // expect_ad(g1, 0)
 }
 

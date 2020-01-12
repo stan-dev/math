@@ -32,7 +32,3 @@ TEST(mathMixScalFun, inc_beta_ddz_b_boundary) {
   const double inf = stan::math::INFTY;
   stan::test::expect_ad(f, 0.5, inf, 0.5);
 }
-
-TEST(mathMixScalFun, inc_beta_ddz_x_boundary) {
-  // stan::test::expect_value(f, 0.5, 0.5, 1);
-}
