@@ -3,7 +3,7 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/scal/fun/trunc.hpp>
+#include <stan/math/prim/fun/trunc.hpp>
 
 namespace stan {
 namespace math {

@@ -5,9 +5,9 @@
 #include <stan/math/rev/fun/typedefs.hpp>
 #include <stan/math/rev/functor/idas_system.hpp>
 #include <stan/math/rev/functor/jacobian.hpp>
-#include <stan/math/prim/arr/fun/value_of.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
+#include <stan/math/prim/fun/typedefs.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <idas/idas.h>
 #include <nvector/nvector_serial.h>
 #include <ostream>

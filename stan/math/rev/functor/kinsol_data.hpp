@@ -3,14 +3,12 @@
 
 #include <stan/math/rev/functor/algebra_system.hpp>
 #include <stan/math/rev/functor/jacobian.hpp>
-#include <stan/math/prim/mat/fun/to_array_1d.hpp>
-#include <stan/math/prim/mat/fun/to_vector.hpp>
-
+#include <stan/math/prim/fun/to_array_1d.hpp>
+#include <stan/math/prim/fun/to_vector.hpp>
 #include <kinsol/kinsol.h>
 #include <sunmatrix/sunmatrix_dense.h>
 #include <sunlinsol/sunlinsol_dense.h>
 #include <nvector/nvector_serial.h>
-
 #include <vector>
 
 namespace stan {

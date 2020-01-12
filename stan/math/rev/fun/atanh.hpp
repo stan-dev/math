@@ -2,8 +2,8 @@
 #define STAN_MATH_REV_FUN_ATANH_HPP
 
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/prim/scal/fun/atanh.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/prim/fun/atanh.hpp>
 
 namespace stan {
 namespace math {

@@ -4,9 +4,9 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/calculate_chain.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/expm1.hpp>
-#include <stan/math/prim/scal/fun/log_diff_exp.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/expm1.hpp>
+#include <stan/math/prim/fun/log_diff_exp.hpp>
 
 namespace stan {
 namespace math {

@@ -3,19 +3,19 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/mat/fun/add.hpp>
-#include <stan/math/prim/mat/fun/dot_product.hpp>
-#include <stan/math/prim/mat/fun/inverse_spd.hpp>
-#include <stan/math/prim/mat/fun/log.hpp>
-#include <stan/math/prim/mat/fun/log_determinant_spd.hpp>
-#include <stan/math/prim/mat/fun/multiply.hpp>
-#include <stan/math/prim/mat/fun/quad_form.hpp>
-#include <stan/math/prim/mat/fun/quad_form_sym.hpp>
-#include <stan/math/prim/mat/fun/subtract.hpp>
-#include <stan/math/prim/mat/fun/tcrossprod.hpp>
-#include <stan/math/prim/mat/fun/trace_quad_form.hpp>
-#include <stan/math/prim/mat/fun/transpose.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/fun/add.hpp>
+#include <stan/math/prim/fun/dot_product.hpp>
+#include <stan/math/prim/fun/inverse_spd.hpp>
+#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/log_determinant_spd.hpp>
+#include <stan/math/prim/fun/multiply.hpp>
+#include <stan/math/prim/fun/quad_form.hpp>
+#include <stan/math/prim/fun/quad_form_sym.hpp>
+#include <stan/math/prim/fun/subtract.hpp>
+#include <stan/math/prim/fun/tcrossprod.hpp>
+#include <stan/math/prim/fun/trace_quad_form.hpp>
+#include <stan/math/prim/fun/transpose.hpp>
+#include <stan/math/prim/fun/constants.hpp>
 #include <cmath>
 
 /*

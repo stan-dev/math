@@ -2,7 +2,7 @@
 #define STAN_MATH_FWD_FUN_LDEXP_HPP
 
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/scal/fun/ldexp.hpp>
+#include <stan/math/prim/fun/ldexp.hpp>
 #include <cmath>
 
 namespace stan {
