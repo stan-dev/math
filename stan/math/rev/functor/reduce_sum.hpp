@@ -164,6 +164,15 @@ inline vari** register_operands(const std::vector<T>& op, vari** varis) {
   return varis;
 }
 
+/* this template is not picked up when it should??
+template <typename T_base>
+const std::vector< std::vector<T_base>> initialize_from_value(
+    const std::vector<std::vector<typename value_type<T_base>::type>>& value) {
+  std::vector<std::vector<T_base>> base(value.size(),
+std::vector<T_base>(value.size(), 0)); return base;
+}
+*/
+
 template <typename T_base>
 const std::vector<T_base> initialize_from_value(
     const std::vector<typename value_type<T_base>::type>& value) {
@@ -260,16 +269,19 @@ struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, var> {
     arg3_local_op_t op_arg3_;
     arg4_local_op_t op_arg4_;
 
+    const std::size_t num_vmapped_adjoints_per_element_;
     double terms_sum_;
 
-    recursive_reducer(vmapped_op_t& op_vmapped, const T& init,
-                      const arg1_t& arg1, const arg2_t& arg2,
+    recursive_reducer(vmapped_op_t& op_vmapped,
+                      std::size_t num_vmapped_adjoints_per_element,
+                      const T& init, const arg1_t& arg1, const arg2_t& arg2,
                       const arg3_t& arg3, const arg4_t& arg4)
         : op_vmapped_(op_vmapped),
           op_arg1_(arg1),
           op_arg2_(arg2),
           op_arg3_(arg3),
           op_arg4_(arg4),
+          num_vmapped_adjoints_per_element_(num_vmapped_adjoints_per_element),
           terms_sum_(as_value(init)) {}
 
     recursive_reducer(recursive_reducer& other, tbb::split)
@@ -278,6 +290,8 @@ struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, var> {
           op_arg2_(other.op_arg2_),
           op_arg3_(other.op_arg3_),
           op_arg4_(other.op_arg4_),
+          num_vmapped_adjoints_per_element_(
+              other.num_vmapped_adjoints_per_element_),
           terms_sum_(0.0) {}
 
     void operator()(const tbb::blocked_range<size_t>& r) {
@@ -305,7 +319,8 @@ struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, var> {
 
         terms_sum_ += sub_sum_v.val();
 
-        op_vmapped_.add_local_adjoint(local_sub_slice, r.begin());
+        op_vmapped_.add_local_adjoint(
+            local_sub_slice, num_vmapped_adjoints_per_element_ * r.begin());
 
         op_arg1_.add_local_adjoint(local_arg1);
         op_arg2_.add_local_adjoint(local_arg2);
@@ -334,9 +349,13 @@ struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, var> {
                const arg4_t& arg4) const {
     const std::size_t num_jobs = vmapped.size();
 
+    if (num_jobs == 0)
+      return init;
+
     vmapped_op_t op_vmapped(vmapped);
 
-    recursive_reducer worker(op_vmapped, init, arg1, arg2, arg3, arg4);
+    recursive_reducer worker(op_vmapped, num_elements(vmapped[0]), init, arg1,
+                             arg2, arg3, arg4);
 
 #ifdef STAN_DETERMINISTIC
     tbb::static_partitioner partitioner;
