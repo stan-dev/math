@@ -173,6 +173,8 @@ std::vector<T_base>(value.size(), 0)); return base;
 }
 */
 
+// use enable_if style to allow constuction of scalars and Eigen
+// things as well.
 template <typename T_base>
 const std::vector<T_base> initialize_from_value(
     const std::vector<typename value_type<T_base>::type>& value) {
@@ -187,13 +189,19 @@ value) { const T_base base(value.begin(), value.end()); return base;
 }
 */
 
+/*
+ * we should apply some meta magic to defined
+ * local_operands_and_partials based on wether is_constant<T> is true
+ * or false (instead of having this as if in every function). As a
+ * work-around I have below partial template specializations which
+ * give me the same effect with much less generality.
+ */
 template <typename T>
 struct local_operand_and_partials {
   using Op_t = std::vector<T>;
   using Op_value_t = std::vector<typename value_type<T>::type>;
-  // will be either a const var to get local copies or a const value&
-  // ref to avoid copying data... TODO
-  using Op_local_t = Op_value_t;
+  using Op_local_t = Op_t;
+  using Op_local_slice_t = Op_t;
   using partials_t = Eigen::VectorXd;
 
   const Op_t& op_;
@@ -225,20 +233,23 @@ struct local_operand_and_partials {
     }
   }
 
-  inline const Op_t local_op() { return initialize_from_value<T>(op_value_); }
+  inline const Op_local_t local_op() const {
+    return initialize_from_value<T>(op_value_);
+  }
 
-  inline const Op_t local_op(std::size_t start, std::size_t end) {
+  inline const Op_local_slice_t local_op(std::size_t start,
+                                         std::size_t end) const {
     const Op_value_t slice(op_value_.begin() + start, op_value_.begin() + end);
     return initialize_from_value<T>(slice);
   }
 
-  inline std::size_t num_elements() {
+  inline std::size_t num_elements() const {
     if (!is_constant<T>::value)
       return stan::math::num_elements(op_value_);
     return 0;
   }
 
-  inline void build(vari** varis, double* partials) {
+  inline void build(vari** varis, double* partials) const {
     if (!is_constant<T>::value) {
       register_operands(op_, varis);
       std::copy(partials_.data(), partials_.data() + partials_.size(),
@@ -246,6 +257,77 @@ struct local_operand_and_partials {
     }
   }
 };
+
+/* for types which are constants (non-vars), the implemtation can be
+ * seriously simplified and based on constant refs being returned
+ */
+
+template <>
+struct local_operand_and_partials<double> {
+  using Op_t = std::vector<double>;
+  using Op_local_t = const Op_t&;
+  using Op_local_slice_t = Op_t;
+
+  const Op_t& op_;
+
+  explicit local_operand_and_partials(const Op_t& op) : op_(op) {}
+
+  local_operand_and_partials(const local_operand_and_partials<double>& other)
+      : op_(other.op_) {}
+
+  inline void add_local_adjoint(const Op_t& local_op, std::size_t offset = 0) {}
+
+  inline void add_other_adjoint(
+      const local_operand_and_partials<double>& other) {}
+
+  inline Op_local_t local_op() const { return op_; }
+
+  inline const Op_local_slice_t local_op(std::size_t start,
+                                         std::size_t end) const {
+    const Op_local_slice_t slice(op_.begin() + start, op_.begin() + end);
+    return slice;
+  }
+
+  inline std::size_t num_elements() const { return 0; }
+
+  inline void build(vari** varis, double* partials) const {}
+};
+
+template <>
+struct local_operand_and_partials<int> {
+  using Op_t = std::vector<int>;
+  using Op_local_t = const Op_t&;
+  using Op_local_slice_t = Op_t;
+
+  const Op_t& op_;
+
+  explicit local_operand_and_partials(const Op_t& op) : op_(op) {}
+
+  local_operand_and_partials(const local_operand_and_partials<int>& other)
+      : op_(other.op_) {}
+
+  inline void add_local_adjoint(const Op_t& local_op, std::size_t offset = 0) {}
+
+  inline void add_other_adjoint(const local_operand_and_partials<int>& other) {}
+
+  inline Op_local_t local_op() const { return op_; }
+
+  inline const Op_local_slice_t local_op(std::size_t start,
+                                         std::size_t end) const {
+    const Op_local_slice_t slice(op_.begin() + start, op_.begin() + end);
+    return slice;
+  }
+
+  inline std::size_t num_elements() const { return 0; }
+
+  inline void build(vari** varis, double* partials) const {}
+};
+
+/*
+template <typename T, typename = void>
+struct local_operand_and_partials<T, > {
+};
+*/
 
 template <class ReduceFunction, class M, class T, class Arg1, class Arg2,
           class Arg3, class Arg4>
@@ -304,12 +386,16 @@ struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, var> {
         // create a deep copy of all var's so that these are not
         // linked to any outer AD tree
 
-        const vmapped_t local_sub_slice
+        const typename vmapped_op_t::Op_local_slice_t local_sub_slice
             = op_vmapped_.local_op(r.begin(), r.end());
-        const arg1_t local_arg1 = op_arg1_.local_op();
-        const arg2_t local_arg2 = op_arg2_.local_op();
-        const arg3_t local_arg3 = op_arg3_.local_op();
-        const arg4_t local_arg4 = op_arg4_.local_op();
+        const typename arg1_local_op_t::Op_local_t local_arg1
+            = op_arg1_.local_op();
+        const typename arg2_local_op_t::Op_local_t local_arg2
+            = op_arg2_.local_op();
+        const typename arg3_local_op_t::Op_local_t local_arg3
+            = op_arg3_.local_op();
+        const typename arg4_local_op_t::Op_local_t local_arg4
+            = op_arg4_.local_op();
 
         T sub_sum_v
             = ReduceFunction()(r.begin(), r.end() - 1, local_sub_slice,
