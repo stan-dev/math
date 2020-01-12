@@ -129,6 +129,7 @@ inline const Eigen::Matrix<int, R, C>& as_value(
 
 namespace internal {
 
+/*
 template <typename T>
 inline void add_adjoint(T& sum, const T term) {
   sum += term;
@@ -147,6 +148,58 @@ inline void add_adjoint(std::vector<T>& sum, const std::vector<T>& term,
   for (size_t i = 0; i != size; ++i) {
     add_adjoint(sum[offset + i], term[i]);
   }
+}
+*/
+
+inline int add_adjoint(const var& op, int offset_partials,
+                       Eigen::VectorXd& partials) {
+  partials(offset_partials) += op.vi_->adj_;
+  return ++offset_partials;
+}
+
+// template<typename Operand>
+inline int add_adjoint(const int op, int offset_partials,
+                       Eigen::VectorXd& partials) {
+  // no-op, does nothing
+  return offset_partials;
+}
+
+inline int add_adjoint(const double op, int offset_partials,
+                       Eigen::VectorXd& partials) {
+  // no-op, does nothing
+  return offset_partials;
+}
+
+template <int R, int C>
+inline int add_adjoint(const Eigen::Matrix<double, R, C>& op,
+                       int offset_partials, Eigen::VectorXd& partials) {
+  return offset_partials;
+}
+
+template <int R, int C>
+inline int add_adjoint(const Eigen::Matrix<int, R, C>& op, int offset_partials,
+                       Eigen::VectorXd& partials) {
+  return offset_partials;
+}
+
+template <int R, int C>
+inline int add_adjoint(const Eigen::Matrix<var, R, C>& op, int offset_partials,
+                       Eigen::VectorXd& partials) {
+  for (int j = 0; j != op.cols(); ++j) {
+    for (int i = 0; i != op.rows(); ++i, ++offset_partials) {
+      partials(offset_partials) += op(i, j).vi_->adj_;
+    }
+  }
+  return offset_partials;
+}
+
+template <typename Operand>
+inline int add_adjoint(const std::vector<Operand>& op, int offset_partials,
+                       Eigen::VectorXd& partials) {
+  for (size_t i = 0; i != op.size(); ++i) {
+    offset_partials = add_adjoint(op[i], offset_partials, partials);
+  }
+  return offset_partials;
 }
 
 inline vari** register_operands(const var& op, vari** varis) {
@@ -225,8 +278,8 @@ struct local_operand_and_partials {
   // will be either a const var to get local copies or a const value&
   // ref to avoid copying data... TODO
   using Op_local_t = Op_value_t;
-  // using partials_t = Eigen::VectorXd;
-  using partials_t = Op_value_t;
+  using partials_t = Eigen::VectorXd;
+  // using partials_t = Op_value_t;
 
   const Op_t& op_;
   // const Op_value_t& op_value_;
@@ -242,8 +295,10 @@ struct local_operand_and_partials {
         op_value_(*op_value_ptr_),
         // local_op_(),
         // local_op_start_(0),
-        partials_(is_constant<T>::value ? Op_value_t()
-                                        : adjoint_of(op_value_)) {}
+        partials_(Eigen::VectorXd::Zero(num_elements()))
+  // partials_(is_constant<T>::value ? Op_value_t()
+  //                                : adjoint_of(op_value_))
+  {}
 
   local_operand_and_partials(const local_operand_and_partials<T>& other)
       : op_(other.op_),
@@ -251,13 +306,14 @@ struct local_operand_and_partials {
         op_value_(other.op_value_),
         // local_op_(),
         // local_op_start_(0),
-        partials_(is_constant<T>::value ? Op_value_t()
-                                        : adjoint_of(other.op_value_)) {}
+        partials_(Eigen::VectorXd::Zero(num_elements()))
+  // partials_(is_constant<T>::value ? Op_value_t()
+  //                                : adjoint_of(other.op_value_))
+  {}
 
   inline void add_local_adjoint(const Op_t& local_op, std::size_t offset = 0) {
     if (!is_constant<T>::value) {
-      add_adjoint(partials_, adjoint_of(local_op), offset);
-      // local_op_ = Op_t();
+      add_adjoint(local_op, offset, partials_);
     }
   }
 
@@ -272,7 +328,8 @@ struct local_operand_and_partials {
 
   inline void add_other_adjoint(const local_operand_and_partials<T>& other) {
     if (!is_constant<T>::value) {
-      add_adjoint(partials_, other.partials_);
+      // add_adjoint(partials_, other.partials_);
+      partials_ += other.partials_;
     }
   }
 
@@ -299,7 +356,8 @@ struct local_operand_and_partials {
   inline void build(vari** varis, double* partials) {
     if (!is_constant<T>::value) {
       register_operands(op_, varis);
-      register_partials(partials_, partials);
+      std::copy(partials_.data(), partials_.data() + partials_.size(),
+                partials);
     }
   }
 };
