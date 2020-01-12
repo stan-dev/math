@@ -3,10 +3,10 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/lgamma.hpp>
-#include <stan/math/prim/mat/fun/log.hpp>
-#include <stan/math/prim/mat/fun/sum.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/sum.hpp>
 
 namespace stan {
 namespace math {

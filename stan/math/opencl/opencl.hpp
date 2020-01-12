@@ -10,7 +10,7 @@
  * \ingroup opencl
  * \defgroup opencl_kernels OpenCL Kernels
  */
-#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/opencl_context.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>

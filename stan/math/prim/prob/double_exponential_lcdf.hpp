@@ -3,9 +3,10 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/fun/log1m.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/log1m.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <cmath>
 
 namespace stan {
@@ -51,7 +52,6 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lcdf(
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_loc> mu_vec(mu);
   scalar_seq_view<T_scale> sigma_vec(sigma);
-  const double log_half = std::log(0.5);
   size_t N = max_size(y, mu, sigma);
 
   for (size_t n = 0; n < N; n++) {
@@ -61,7 +61,7 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lcdf(
     const T_partials_return scaled_diff = (y_dbl - mu_dbl) / sigma_dbl;
     const T_partials_return inv_sigma = 1.0 / sigma_dbl;
     if (y_dbl < mu_dbl) {
-      cdf_log += log_half + scaled_diff;
+      cdf_log += LOG_HALF + scaled_diff;
 
       if (!is_constant_all<T_y>::value) {
         ops_partials.edge1_.partials_[n] += inv_sigma;

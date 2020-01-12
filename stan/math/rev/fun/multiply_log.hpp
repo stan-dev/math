@@ -4,9 +4,9 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/log.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/multiply_log.hpp>
-#include <stan/math/prim/scal/fun/is_any_nan.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/multiply_log.hpp>
+#include <stan/math/prim/fun/is_any_nan.hpp>
 #include <cmath>
 
 namespace stan {

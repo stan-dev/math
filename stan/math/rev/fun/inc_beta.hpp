@@ -3,10 +3,10 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/scal/fun/inc_beta_dda.hpp>
-#include <stan/math/prim/scal/fun/inc_beta_ddb.hpp>
-#include <stan/math/prim/scal/fun/inc_beta_ddz.hpp>
-#include <stan/math/prim/scal/fun/digamma.hpp>
+#include <stan/math/prim/fun/inc_beta_dda.hpp>
+#include <stan/math/prim/fun/inc_beta_ddb.hpp>
+#include <stan/math/prim/fun/inc_beta_ddz.hpp>
+#include <stan/math/prim/fun/digamma.hpp>
 
 namespace stan {
 namespace math {

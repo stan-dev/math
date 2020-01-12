@@ -5,7 +5,7 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/LDLT_alloc.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/mat/fun/LDLT_factor.hpp>
+#include <stan/math/prim/fun/LDLT_factor.hpp>
 
 namespace stan {
 namespace math {
@@ -42,6 +42,8 @@ namespace math {
  * d2 = log_determinant_ldlt(ldlt_A2);
  * ~~~
  *
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
  */
 template <int R, int C>
 class LDLT_factor<var, R, C> {

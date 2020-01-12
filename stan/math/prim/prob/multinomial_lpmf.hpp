@@ -3,8 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/multiply_log.hpp>
-#include <stan/math/prim/scal/fun/lgamma.hpp>
+#include <stan/math/prim/fun/multiply_log.hpp>
+#include <stan/math/prim/fun/lgamma.hpp>
 #include <vector>
 
 namespace stan {

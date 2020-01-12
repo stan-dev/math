@@ -6,8 +6,8 @@
 #include <stan/math/prim/err/check_positive.hpp>
 #include <stan/math/prim/err/check_symmetric.hpp>
 #include <stan/math/prim/err/throw_domain_error.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/value_of_rec.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 #include <sstream>
 
 namespace stan {

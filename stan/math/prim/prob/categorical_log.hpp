@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_PROB_CATEGORICAL_LOG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/prob/categorical_lpmf.hpp>
 #include <vector>
 

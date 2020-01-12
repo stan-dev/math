@@ -3,9 +3,9 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/fun/log1p.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/fun/log1p.hpp>
 #include <cmath>
 
 namespace stan {

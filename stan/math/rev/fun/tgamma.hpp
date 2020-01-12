@@ -2,9 +2,9 @@
 #define STAN_MATH_REV_FUN_TGAMMA_HPP
 
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/prim/scal/fun/digamma.hpp>
-#include <stan/math/prim/scal/fun/tgamma.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/prim/fun/digamma.hpp>
+#include <stan/math/prim/fun/tgamma.hpp>
 
 namespace stan {
 namespace math {

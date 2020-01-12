@@ -3,9 +3,9 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
-#include <stan/math/prim/scal/fun/trunc.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/is_nan.hpp>
+#include <stan/math/prim/fun/trunc.hpp>
 
 namespace stan {
 namespace math {

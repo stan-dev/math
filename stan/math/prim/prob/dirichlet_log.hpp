@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/prob/dirichlet_lpdf.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 
 namespace stan {
 namespace math {

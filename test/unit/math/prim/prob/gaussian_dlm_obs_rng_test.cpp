@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <stan/math/prim/mat.hpp>
+#include <stan/math/prim.hpp>
 #include <boost/math/distributions.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <test/unit/math/prim/prob/util.hpp>
