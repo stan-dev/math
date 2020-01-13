@@ -3,7 +3,7 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/scal/fun/inv_square.hpp>
+#include <stan/math/prim/fun/inv_square.hpp>
 
 namespace stan {
 namespace math {

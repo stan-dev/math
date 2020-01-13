@@ -1,5 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
@@ -80,6 +80,6 @@ class AgradDistributionNormal : public AgradDistributionTest {
                     const T3&, const T4&, const T5&) {
     using stan::math::pi;
     return -0.5 * (y - mu) * (y - mu) / (sigma * sigma) - log(sigma)
-           - log(sqrt(2.0 * pi()));
+           - log(stan::math::SQRT_TWO_PI);
   }
 };

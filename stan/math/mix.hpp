@@ -3,9 +3,7 @@
 
 #include <stan/math/mix/meta.hpp>
 
-#include <stan/math/prim/arr.hpp>
-#include <stan/math/prim/mat.hpp>
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 #include <stan/math/fwd.hpp>
 #include <stan/math/rev.hpp>
 #include <stan/math/mix/fun.hpp>

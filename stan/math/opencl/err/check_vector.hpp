@@ -3,7 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <sstream>
 #include <string>

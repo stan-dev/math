@@ -2,20 +2,22 @@
 #define STAN_MATH_REV_FUN_MATRIX_EXP_MULTIPLY_HPP
 
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/matrix_exp.hpp>
-#include <stan/math/rev/fun/multiply.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/multiply.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/matrix_exp.hpp>
 
 namespace stan {
 namespace math {
 
 /**
  * Wrapper of matrix_exp_action function for a more literal name
+ *
  * @tparam Ta scalar type matrix A
  * @tparam Tb scalar type matrix B
  * @tparam Cb Columns matrix B
+ *
  * @param[in] A Matrix
  * @param[in] B Matrix
  * @return exponential of A multiplies B

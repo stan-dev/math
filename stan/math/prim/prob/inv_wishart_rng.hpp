@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/mat/fun/inverse_spd.hpp>
+#include <stan/math/prim/fun/inverse_spd.hpp>
 #include <stan/math/prim/prob/wishart_rng.hpp>
 
 namespace stan {

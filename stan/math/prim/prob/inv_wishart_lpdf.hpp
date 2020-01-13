@@ -3,11 +3,11 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/mat/fun/log_determinant_ldlt.hpp>
-#include <stan/math/prim/mat/fun/mdivide_left_ldlt.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/lmgamma.hpp>
-#include <stan/math/prim/mat/fun/trace.hpp>
+#include <stan/math/prim/fun/log_determinant_ldlt.hpp>
+#include <stan/math/prim/fun/mdivide_left_ldlt.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/lmgamma.hpp>
+#include <stan/math/prim/fun/trace.hpp>
 
 namespace stan {
 namespace math {
@@ -91,7 +91,7 @@ return_type_t<T_y, T_dof, T_scale> inv_wishart_lpdf(
     lp -= 0.5 * trace(Winv_S);
   }
   if (include_summand<propto, T_dof, T_scale>::value) {
-    lp += nu * k * NEG_LOG_TWO_OVER_TWO;
+    lp -= nu * k * HALF_LOG_TWO;
   }
   return lp;
 }

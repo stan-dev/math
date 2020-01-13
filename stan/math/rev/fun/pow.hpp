@@ -8,8 +8,8 @@
 #include <stan/math/rev/fun/inv_square.hpp>
 #include <stan/math/rev/fun/sqrt.hpp>
 #include <stan/math/rev/fun/square.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/is_any_nan.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/is_any_nan.hpp>
 #include <cmath>
 
 namespace stan {

@@ -3,11 +3,11 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/fun/digamma.hpp>
-#include <stan/math/prim/scal/fun/lgamma.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/fun/digamma.hpp>
+#include <stan/math/prim/fun/lgamma.hpp>
 #include <cmath>
 
 namespace stan {
@@ -102,7 +102,7 @@ return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
     const T_partials_return nu_dbl = value_of(nu_vec[n]);
     const T_partials_return half_nu = 0.5 * nu_dbl;
     if (include_summand<propto, T_dof>::value) {
-      logp += nu_dbl * NEG_LOG_TWO_OVER_TWO - lgamma_half_nu[n];
+      logp -= nu_dbl * HALF_LOG_TWO + lgamma_half_nu[n];
     }
     logp += (half_nu - 1.0) * log_y[n];
 
@@ -114,9 +114,8 @@ return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
       ops_partials.edge1_.partials_[n] += (half_nu - 1.0) * inv_y[n] - 0.5;
     }
     if (!is_constant_all<T_dof>::value) {
-      ops_partials.edge2_.partials_[n] += NEG_LOG_TWO_OVER_TWO
-                                          - digamma_half_nu_over_two[n]
-                                          + log_y[n] * 0.5;
+      ops_partials.edge2_.partials_[n]
+          -= HALF_LOG_TWO + digamma_half_nu_over_two[n] - log_y[n] * 0.5;
     }
   }
   return ops_partials.build(logp);

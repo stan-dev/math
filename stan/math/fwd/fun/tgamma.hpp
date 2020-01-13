@@ -3,7 +3,7 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/scal/fun/tgamma.hpp>
+#include <stan/math/prim/fun/tgamma.hpp>
 #include <boost/math/special_functions/digamma.hpp>
 
 namespace stan {

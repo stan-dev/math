@@ -2,8 +2,7 @@
 #define STAN_MATH_PRIM_FUNCTOR_MAP_RECT_CONCURRENT_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
-
+#include <stan/math/prim/fun/typedefs.hpp>
 #include <vector>
 
 namespace stan {

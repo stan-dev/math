@@ -2,8 +2,8 @@
 #define STAN_MATH_REV_FUN_EXPM1_HPP
 
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/prim/scal/fun/expm1.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/prim/fun/expm1.hpp>
 
 namespace stan {
 namespace math {

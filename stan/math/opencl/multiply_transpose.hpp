@@ -7,7 +7,7 @@
 #include <stan/math/opencl/err.hpp>
 #include <stan/math/opencl/sub_block.hpp>
 
-#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 
 namespace stan {
