@@ -3,8 +3,8 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/fun/log_mix.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/fun/log_mix.hpp>
 #include <cmath>
 #include <type_traits>
 
@@ -87,8 +87,7 @@ inline void log_mix_partial_helper(
  * {\left( \theta \exp(\lambda_1) + (1 - \theta) \exp(\lambda_2) \right)}
  * \f]
  *
- * @tparam T scalar type.
- *
+ * @tparam T inner type of the fvar
  * @param[in] theta mixing proportion in [0, 1].
  * @param[in] lambda1 first log density.
  * @param[in] lambda2 second log density.

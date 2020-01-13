@@ -5,7 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/functor/coupled_ode_system.hpp>
 #include <stan/math/prim/functor/coupled_ode_observer.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <boost/version.hpp>
 #if BOOST_VERSION == 106400
 #include <boost/serialization/array_wrapper.hpp>

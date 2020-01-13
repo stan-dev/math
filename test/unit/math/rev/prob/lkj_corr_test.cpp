@@ -1,7 +1,7 @@
 #include <stan/math.hpp>
 #include <test/unit/math/rev/prob/lkj_corr_cholesky_test_functors.hpp>
 #include <test/unit/math/rev/prob/test_gradients.hpp>
-#include <test/unit/math/rev/mat/util.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
 #include <gtest/gtest.h>

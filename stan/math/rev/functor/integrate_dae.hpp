@@ -9,6 +9,7 @@
 
 namespace stan {
 namespace math {
+
 /**
  * Return the solutions for a semi-explicit DAE system with residual
  * specified by functor F,
@@ -16,6 +17,7 @@ namespace math {
  *
  * @tparam DAE type of DAE system
  * @tparam Tpar scalar type of parameter theta
+ *
  * @param[in] f functor for the base ordinary differential equation
  * @param[in] yy0 initial state
  * @param[in] yp0 initial derivative state
@@ -53,6 +55,7 @@ std::vector<std::vector<Tpar> > integrate_dae(
 
   return solver.integrate(dae, t0, ts);
 }
+
 }  // namespace math
 }  // namespace stan
 

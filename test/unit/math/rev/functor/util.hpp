@@ -1,10 +1,10 @@
-#include <gtest/gtest.h>
-#include <stan/math/prim/functor/integrate_ode_rk45.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/prim.hpp>
 #include <test/unit/util.hpp>
+#include <gtest/gtest.h>
+#include <limits>
 #include <sstream>
 #include <vector>
-#include <limits>
 
 // calculates finite diffs for integrate_ode_rk45 with varying parameters
 template <typename F>

@@ -2,11 +2,11 @@
 #define STAN_MATH_REV_FUNCTOR_IDAS_RESIDUAL_HPP
 
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/rev/fun/typedefs.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/arr/fun/value_of.hpp>
-#include <stan/math/prim/arr/fun/dot_self.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
-#include <stan/math/rev/mat/fun/typedefs.hpp>
+#include <stan/math/prim/fun/dot_self.hpp>
+#include <stan/math/prim/fun/typedefs.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <idas/idas.h>
 #include <nvector/nvector_serial.h>
 #include <ostream>
@@ -16,7 +16,7 @@
 #define CHECK_IDAS_CALL(call) idas_check(call, #call)
 
 /**
- * check IDAS return flag & throw runtime error
+ * Check IDAS return flag & throw runtime error.
  *
  * @param[in] flag routine return flag
  * @param[in] func routine name
@@ -30,7 +30,7 @@ inline void idas_check(int flag, const char* func) {
 }
 
 /**
- * copy NV_Vector* array to Eigen::MatrixXd
+ * Copy NV_Vector* array to Eigen::MatrixXd.
  *
  * @param[in] nv N_Vector* array.
  * @param[in] nv_size length of nv.
@@ -51,7 +51,7 @@ inline Eigen::MatrixXd matrix_d_from_NVarray(const N_Vector* nv,
 }
 
 /**
- * copy Eigen::MatrixXd to NV_Vector* array.
+ * Copy Eigen::MatrixXd to NV_Vector* array.
  *
  * @param[in] mat Eigen::MatrixXd to be converted
  * @param[out] nv N_Vector* array
@@ -121,8 +121,8 @@ class idas_system {
    * @param[in] f DAE residual functor
    * @param[in] eq_id array for DAE's variable ID(1 for *
    *                  derivative variables, 0 for algebraic variables).
-   * @param[in] yy0 initial condiiton
-   * @param[in] yp0 initial condiiton for derivatives
+   * @param[in] yy0 initial condition
+   * @param[in] yp0 initial condition for derivatives
    * @param[in] theta parameters of the base DAE.
    * @param[in] x_r continuous data vector for the DAE.
    * @param[in] x_i integer data vector for the DAE.
@@ -179,7 +179,7 @@ class idas_system {
   }
 
   /**
-   * destructor to deallocate IDAS solution memory and workspace.
+   * Destructor to deallocate IDAS solution memory and workspace.
    */
   ~idas_system() {
     N_VDestroy_Serial(nv_yy_);
@@ -190,70 +190,70 @@ class idas_system {
   }
 
   /**
-   * return reference to current N_Vector of unknown variable
+   * Return reference to current N_Vector of unknown variable
    *
    * @return reference to current N_Vector of unknown variable
    */
   N_Vector& nv_yy() { return nv_yy_; }
 
   /**
-   * return reference to current N_Vector of derivative variable
+   * Return reference to current N_Vector of derivative variable
    *
    * @return reference to current N_Vector of derivative variable
    */
   N_Vector& nv_yp() { return nv_yp_; }
 
   /**
-   * return reference to current N_Vector of residual workspace
+   * Return reference to current N_Vector of residual workspace
    *
    * @return reference to current N_Vector of residual workspace
    */
   N_Vector& nv_rr() { return nv_rr_; }
 
   /**
-   * return reference to DAE variable IDs
+   * Return reference to DAE variable IDs
    *
    * @return reference to DAE variable IDs.
    */
   N_Vector& id() { return id_; }
 
   /**
-   * return reference to current solution vector value
+   * Return reference to current solution vector value
    *
    * @return reference to current solution vector value
    */
   const std::vector<double>& yy_val() { return yy_val_; }
 
   /**
-   * return reference to current solution derivative vector value
+   * Return reference to current solution derivative vector value
    *
    * @return reference to current solution derivative vector value
    */
   const std::vector<double>& yp_val() { return yp_val_; }
 
   /**
-   * return reference to initial condition
+   * Return reference to initial condition
    *
    * @return reference to initial condition
    */
   const std::vector<Tyy>& yy0() const { return yy_; }
 
   /**
-   * return reference to derivative initial condition
+   * Return reference to derivative initial condition
    *
    * @return reference to derivative initial condition
    */
   const std::vector<Typ>& yp0() const { return yp_; }
 
   /**
-   * return reference to parameter
+   * Return reference to parameter
    *
    * @return reference to parameter
    */
   const std::vector<Tpar>& theta() const { return theta_; }
 
   /**
-   * return a vector of vars for that contains the initial
+   * Return a vector of vars for that contains the initial
    * condition and parameters in case they are vars. The
    * sensitivity with respect to this vector will be
    * calculated by IDAS.
@@ -276,37 +276,37 @@ class idas_system {
   }
 
   /**
-   * return number of unknown variables
+   * Return number of unknown variables
    */
   const size_t n() { return N_; }
 
   /**
-   * return number of sensitivity parameters
+   * Return number of sensitivity parameters
    */
   const size_t ns() { return ns_; }
 
   /**
-   * return size of DAE system for primary and sensitivity unknowns
+   * Return size of DAE system for primary and sensitivity unknowns
    */
   const size_t n_sys() { return N_ * (ns_ + 1); }
 
   /**
-   * return theta size
+   * Return theta size
    */
   const size_t n_par() { return theta_.size(); }
 
   /**
-   * return IDAS memory handle
+   * Return IDAS memory handle
    */
   void* mem() { return mem_; }
 
   /**
-   * return reference to DAE functor
+   * Return reference to DAE functor
    */
   const F& f() { return f_; }
 
   /**
-   * return a closure for IDAS residual callback
+   * Return a closure for IDAS residual callback
    */
   IDAResFn residual() {  // a non-capture lambda
     return [](double t, N_Vector yy, N_Vector yp, N_Vector rr,

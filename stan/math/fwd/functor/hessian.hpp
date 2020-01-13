@@ -2,7 +2,7 @@
 #define STAN_MATH_FWD_FUNCTOR_HESSIAN_HPP
 
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 
 namespace stan {
 namespace math {
@@ -29,8 +29,8 @@ namespace math {
  * of functions with appropriately general namespace imports that
  * eventually depend on functions defined in Stan.
  *
- * @tparam T Type of underlying scalar
- * @tparam F Type of function
+ * @tparam T type of elements in the vector and matrix
+ * @tparam F type of function
  * @param[in] f Function
  * @param[in] x Argument to function
  * @param[out] fx Function applied to argument

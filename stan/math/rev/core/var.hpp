@@ -25,7 +25,7 @@ static void grad(vari* vi);
  * an arena-based memory manager scoped to a single gradient
  * calculation.
  *
- * An var is constructed with a double and used like any
+ * A var is constructed with a double and used like any
  * other scalar.  Arithmetical functions like negation, addition,
  * and subtraction, as well as a range of mathematical functions
  * like exponentiation and powers are overridden to operate on
@@ -468,7 +468,7 @@ class var {
   inline var& operator/=(Arith b);
 
   /**
-   * Write the value of this auto-dif variable and its adjoint to
+   * Write the value of this autodiff variable and its adjoint to
    * the specified output stream.
    *
    * @param os Output stream to which to write.

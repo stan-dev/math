@@ -3,13 +3,12 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/multiply_log.hpp>
-#include <stan/math/prim/scal/fun/digamma.hpp>
-#include <stan/math/prim/mat/fun/lgamma.hpp>
-#include <stan/math/prim/mat/fun/value_of_rec.hpp>
-#include <stan/math/prim/arr/fun/value_of_rec.hpp>
-#include <stan/math/prim/scal/fun/sum.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/digamma.hpp>
+#include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/fun/multiply_log.hpp>
+#include <stan/math/prim/fun/sum.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 #include <vector>
 #include <cmath>
 
@@ -119,10 +118,11 @@ neg_binomial_2_log_glm_lpmf(
 
   Array<T_partials_return, Dynamic, 1> theta(N_instances);
   if (T_x_rows == 1) {
-    T_theta_tmp theta_tmp = x_val * beta_val_vec;
+    T_theta_tmp theta_tmp
+        = forward_as<T_theta_tmp>((x_val * beta_val_vec)(0, 0));
     theta = theta_tmp + as_array_or_scalar(alpha_val_vec);
   } else {
-    theta = x_val * beta_val_vec;
+    theta = (x_val * beta_val_vec).array();
     theta += as_array_or_scalar(alpha_val_vec);
   }
   check_finite(function, "Matrix of independent variables", theta);
@@ -208,15 +208,13 @@ neg_binomial_2_log_glm_lpmf(
       if (is_vector<T_precision>::value) {
         ops_partials.edge4_.partials_
             = 1 - y_plus_phi / (theta_exp + phi_arr) + log_phi
-              - logsumexp_theta_logphi + as_array_or_scalar(digamma(y_plus_phi))
-              - as_array_or_scalar(digamma(phi_val_vec));
+              - logsumexp_theta_logphi + digamma(y_plus_phi) - digamma(phi_arr);
       } else {
         ops_partials.edge4_.partials_[0]
             = N_instances
               + sum(-y_plus_phi / (theta_exp + phi_arr) + log_phi
-                    - logsumexp_theta_logphi
-                    + as_array_or_scalar(digamma(y_plus_phi))
-                    - as_array_or_scalar(digamma(phi_val_vec)));
+                    - logsumexp_theta_logphi + digamma(y_plus_phi)
+                    - digamma(phi_arr));
       }
     }
   }

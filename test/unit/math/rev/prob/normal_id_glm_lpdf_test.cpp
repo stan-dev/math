@@ -1,6 +1,6 @@
-#include <stan/math/rev/mat.hpp>
+#include <stan/math/rev.hpp>
+#include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim/scal/fun/value_of.hpp>
 #include <vector>
 #include <cmath>
 

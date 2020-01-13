@@ -3,7 +3,7 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/scal/fun/fdim.hpp>
+#include <stan/math/prim/fun/fdim.hpp>
 
 namespace stan {
 namespace math {
@@ -11,7 +11,7 @@ namespace math {
 /**
  * Return the positive difference of the specified values (C++11).
  *
- * @tparam T Scalar type of autodiff variables.
+ * @tparam T inner type of the fvar
  * @param x First argument.
  * @param y Second argument.
  * @return Return the differences of the arguments if it is
@@ -29,7 +29,7 @@ inline fvar<T> fdim(const fvar<T>& x, const fvar<T>& y) {
 /**
  * Return the positive difference of the specified values (C++11).
  *
- * @tparam T Scalar type of autodiff variables.
+ * @tparam T inner type of the fvar
  * @param x First argument.
  * @param y Second argument.
  * @return Return the differences of the arguments if it is
@@ -47,7 +47,7 @@ inline fvar<T> fdim(const fvar<T>& x, double y) {
 /**
  * Return the positive difference of the specified values (C++11).
  *
- * @tparam T Scalar type of autodiff variables.
+ * @tparam T inner type of the fvar
  * @param x First argument.
  * @param y Second argument.
  * @return Return the differences of the arguments if it is

@@ -3,9 +3,9 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
-#include <stan/math/prim/scal/fun/round.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/is_nan.hpp>
+#include <stan/math/prim/fun/round.hpp>
 
 namespace stan {
 namespace math {
@@ -16,7 +16,7 @@ namespace math {
  *
  * The derivative is always zero.
  *
- * @tparam T Scalar type for autodiff variable.
+ * @tparam T inner type of the fvar
  * @param x Argument.
  * @return The rounded value of the argument.
  */

@@ -1,6 +1,6 @@
-#include <stan/math/mix/mat.hpp>
+#include <stan/math/mix.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/fun/util.hpp>
 #include <vector>
 
 template <typename F>

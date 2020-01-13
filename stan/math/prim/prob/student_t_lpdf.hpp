@@ -3,13 +3,13 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/square.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/fun/lgamma.hpp>
-#include <stan/math/prim/scal/fun/log1p.hpp>
-#include <stan/math/prim/scal/fun/digamma.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/square.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/fun/log1p.hpp>
+#include <stan/math/prim/fun/digamma.hpp>
 #include <cmath>
 
 namespace stan {
@@ -150,7 +150,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
     const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
     const T_partials_return nu_dbl = value_of(nu_vec[n]);
     if (include_summand<propto>::value) {
-      logp += NEG_LOG_SQRT_PI;
+      logp -= LOG_SQRT_PI;
     }
     if (include_summand<propto, T_dof>::value) {
       logp += lgamma_half_nu_plus_half[n] - lgamma_half_nu[n] - 0.5 * log_nu[n];

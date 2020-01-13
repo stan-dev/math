@@ -2,8 +2,8 @@
 #define STAN_MATH_FWD_FUN_SQUARED_DISTANCE_HPP
 
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/subtract.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/subtract.hpp>
 #include <stan/math/fwd/fun/dot_self.hpp>
 
 namespace stan {
@@ -13,9 +13,10 @@ namespace math {
  * Returns the squared distance between the specified vectors
  * of the same dimensions.
  *
- * @tparam R Rows at compile time of vector inputs
- * @tparam C columns at compile time of vector inputs
- * @tparam T Child scalar type of fvar vector input
+ * @tparam T inner type of the fvar vector
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ *
  * @param v1 First vector.
  * @param v2 Second vector.
  * @return Dot product of the vectors.
@@ -36,11 +37,12 @@ inline fvar<T> squared_distance(const Eigen::Matrix<fvar<T>, R, C>& v1,
  * Returns the squared distance between the specified vectors
  * of the same dimensions.
  *
- * @tparam R1 Rows at compile time of first vector input
- * @tparam C1 Columns at compile time of first vector input
- * @tparam R2 Rows at compile time of second vector input
- * @tparam C2 Columns at compile time of second vector input
- * @tparam T Child scalar type of fvar vector input
+ * @tparam T inner type of the fvar vector
+ * @tparam R1 number of rows in the first vector, can be Eigen::Dynamic
+ * @tparam C1 number of columns in the first vector, can be Eigen::Dynamic
+ * @tparam R2 number of rows in the second vector, can be Eigen::Dynamic
+ * @tparam C2 number of columns in the second vector, can be Eigen::Dynamic
+ *
  * @param v1 First vector.
  * @param v2 Second vector.
  * @return Dot product of the vectors.
@@ -62,9 +64,10 @@ inline fvar<T> squared_distance(const Eigen::Matrix<fvar<T>, R1, C1>& v1,
  * Returns the squared distance between the specified vectors
  * of the same dimensions.
  *
- * @tparam R Rows at compile time of vector inputs
- * @tparam C columns at compile time of vector inputs
- * @tparam T Child scalar type of fvar vector input
+ * @tparam T inner type of the fvar vector
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ *
  * @param v1 First vector.
  * @param v2 Second vector.
  * @return Dot product of the vectors.
@@ -85,11 +88,12 @@ inline fvar<T> squared_distance(const Eigen::Matrix<double, R, C>& v1,
  * Returns the squared distance between the specified vectors
  * of the same dimensions.
  *
- * @tparam R1 Rows at compile time of first vector input
- * @tparam C1 Columns at compile time of first vector input
- * @tparam R2 Rows at compile time of second vector input
- * @tparam C2 Columns at compile time of second vector input
- * @tparam T Child scalar type of fvar vector input
+ * @tparam T inner type of the fvar vector
+ * @tparam R1 number of rows in the first vector, can be Eigen::Dynamic
+ * @tparam C1 number of columns in the first vector, can be Eigen::Dynamic
+ * @tparam R2 number of rows in the second vector, can be Eigen::Dynamic
+ * @tparam C2 number of columns in the second vector, can be Eigen::Dynamic
+ *
  * @param v1 First vector.
  * @param v2 Second vector.
  * @return Dot product of the vectors.
@@ -106,13 +110,15 @@ inline fvar<T> squared_distance(const Eigen::Matrix<double, R1, C1>& v1,
   Eigen::Matrix<fvar<T>, R2, C2> v3 = subtract(t_v1, v2);
   return dot_self(v3);
 }
+
 /**
  * Returns the squared distance between the specified vectors
  * of the same dimensions.
  *
- * @tparam R Rows at compile time of vector inputs
- * @tparam C columns at compile time of vector inputs
- * @tparam T Child scalar type of fvar vector input
+ * @tparam T inner type of the fvar vector
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ *
  * @param v1 First vector.
  * @param v2 Second vector.
  * @return Dot product of the vectors.
@@ -133,11 +139,12 @@ inline fvar<T> squared_distance(const Eigen::Matrix<fvar<T>, R, C>& v1,
  * Returns the squared distance between the specified vectors
  * of the same dimensions.
  *
- * @tparam R1 Rows at compile time of first vector input
- * @tparam C1 Columns at compile time of first vector input
- * @tparam R2 Rows at compile time of second vector input
- * @tparam C2 Columns at compile time of second vector input
- * @tparam T Child scalar type of fvar vector input
+ * @tparam T inner type of the fvar vector
+ * @tparam R1 number of rows in the first vector, can be Eigen::Dynamic
+ * @tparam C1 number of columns in the first vector, can be Eigen::Dynamic
+ * @tparam R2 number of rows in the second vector, can be Eigen::Dynamic
+ * @tparam C2 number of columns in the second vector, can be Eigen::Dynamic
+ *
  * @param v1 First vector.
  * @param v2 Second vector.
  * @return Dot product of the vectors.

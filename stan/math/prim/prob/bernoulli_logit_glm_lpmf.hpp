@@ -3,12 +3,10 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/mat/fun/value_of_rec.hpp>
-#include <stan/math/prim/arr/fun/value_of_rec.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
-
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 #include <cmath>
 
 namespace stan {
@@ -97,11 +95,12 @@ return_type_t<T_x_scalar, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
 
   Array<T_partials_return, Dynamic, 1> ytheta(N_instances);
   if (T_x_rows == 1) {
-    T_ytheta_tmp ytheta_tmp = x_val * beta_val_vec;
+    T_ytheta_tmp ytheta_tmp
+        = forward_as<T_ytheta_tmp>((x_val * beta_val_vec)(0, 0));
     ytheta = as_array_or_scalar(signs)
              * (ytheta_tmp + as_array_or_scalar(alpha_val_vec));
   } else {
-    ytheta = x_val * beta_val_vec;
+    ytheta = (x_val * beta_val_vec).array();
     ytheta = as_array_or_scalar(signs)
              * (ytheta + as_array_or_scalar(alpha_val_vec));
   }

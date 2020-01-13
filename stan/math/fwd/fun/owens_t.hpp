@@ -3,10 +3,10 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/erf.hpp>
-#include <stan/math/prim/scal/fun/owens_t.hpp>
-#include <stan/math/prim/scal/fun/square.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/erf.hpp>
+#include <stan/math/prim/fun/owens_t.hpp>
+#include <stan/math/prim/fun/square.hpp>
 #include <cmath>
 
 namespace stan {
@@ -16,6 +16,7 @@ namespace math {
  * Return Owen's T function applied to the specified
  * arguments.
  *
+ * @tparam T inner type of the fvar
  * @param x1 First argument.
  * @param x2 Second argument.
  * @return Owen's T function applied to the specified arguments.
@@ -37,6 +38,7 @@ inline fvar<T> owens_t(const fvar<T>& x1, const fvar<T>& x2) {
 /**
  * Return Owen's T function applied to the specified arguments.
  *
+ * @tparam T inner type of the fvar
  * @param x1 First argument.
  * @param x2 Second argument.
  * @return Owen's T function applied to the specified arguments.
@@ -55,6 +57,7 @@ inline fvar<T> owens_t(double x1, const fvar<T>& x2) {
 /**
  * Return Owen's T function applied to the specified arguments.
  *
+ * @tparam T inner type of the fvar
  * @param x1 First argument.
  * @param x2 Second argument.
  * @return Owen's T function applied to the specified arguments.

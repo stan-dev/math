@@ -2,7 +2,7 @@
 #define STAN_MATH_FWD_CORE_FVAR_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <stan/math/prim/fun/is_nan.hpp>
 #include <ostream>
 #include <type_traits>
 
@@ -20,7 +20,7 @@ namespace math {
  * direction of a single independent variable.
  *
  * By using reverse-mode automatic derivative variables, second-order
- * derivatives may be calculated.  By using fvar&lt;<var&gt;
+ * derivatives may be calculated.  By using fvar&lt;var&gt;
  * instances, third-order derivatives may be calculated.  These are
  * called mixed-mode automatic differentiation variable in Stan.
  *
@@ -262,6 +262,7 @@ struct fvar {
     return os << v.val_;
   }
 };
+
 }  // namespace math
 }  // namespace stan
 #endif

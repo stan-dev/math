@@ -3,7 +3,7 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/scal/fun/log1m_inv_logit.hpp>
+#include <stan/math/prim/fun/log1m_inv_logit.hpp>
 #include <cmath>
 
 namespace stan {
@@ -13,8 +13,7 @@ namespace math {
  * Return the natural logarithm of one minus the inverse logit of
  * the specified argument.
  *
- * @tparam T scalar type of forward-mode autodiff variable
- * argument.
+ * @tparam T inner type of the fvar
  * @param x argument
  * @return log of one minus the inverse logit of the argument
  */

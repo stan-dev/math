@@ -3,10 +3,10 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/scal/fun/log_inv_logit_diff.hpp>
-#include <stan/math/prim/scal/fun/inv_logit.hpp>
-#include <stan/math/prim/scal/fun/inv.hpp>
-#include <stan/math/prim/scal/fun/expm1.hpp>
+#include <stan/math/prim/fun/log_inv_logit_diff.hpp>
+#include <stan/math/prim/fun/inv_logit.hpp>
+#include <stan/math/prim/fun/inv.hpp>
+#include <stan/math/prim/fun/expm1.hpp>
 
 namespace stan {
 namespace math {
@@ -28,8 +28,7 @@ namespace math {
     \frac{\partial }{\partial x} = -\frac{e^y}{e^x-e^y}-\frac{e^y}{e^y+1}
    \f]
  *
- * @tparam T1 Type of x argument.
- * @tparam T2 Type of y argument.
+ * @tparam T inner type of the fvar
  * @param x Argument.
  * @param y Argument.
  * @return Fvar with result of log difference of inverse logits of arguments

@@ -1,12 +1,12 @@
 #ifndef STAN_MATH_REV_CORE_OPERATOR_MULTIPLICATION_HPP
 #define STAN_MATH_REV_CORE_OPERATOR_MULTIPLICATION_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/vv_vari.hpp>
 #include <stan/math/rev/core/vd_vari.hpp>
-#include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/is_any_nan.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/is_any_nan.hpp>
 
 namespace stan {
 namespace math {

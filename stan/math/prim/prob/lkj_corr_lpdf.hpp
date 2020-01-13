@@ -3,8 +3,10 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/lgamma.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/sum.hpp>
 
 namespace stan {
 namespace math {
@@ -69,9 +71,8 @@ return_type_t<T_y, T_shape> lkj_corr_lpdf(
     return lp;
   }
 
-  Eigen::Matrix<T_y, Eigen::Dynamic, 1> values
-      = y.ldlt().vectorD().array().log().matrix();
-  lp += (eta - 1.0) * sum(values);
+  T_y sum_values = sum(log(y.ldlt().vectorD()));
+  lp += (eta - 1.0) * sum_values;
   return lp;
 }
 

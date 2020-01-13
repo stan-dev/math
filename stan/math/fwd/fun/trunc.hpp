@@ -3,7 +3,7 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/scal/fun/trunc.hpp>
+#include <stan/math/prim/fun/trunc.hpp>
 
 namespace stan {
 namespace math {
@@ -12,7 +12,7 @@ namespace math {
  * Return the nearest integral value that is not larger in
  * magnitude than the specified argument.
  *
- * @tparam T Scalar type of autodiff variable.
+ * @tparam T inner type of the fvar
  * @param[in] x Argument.
  * @return The truncated argument.
  */

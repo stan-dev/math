@@ -3,9 +3,10 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/mat/fun/make_nu.hpp>
+#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/make_nu.hpp>
+#include <stan/math/prim/fun/multiply.hpp>
 #include <stan/math/prim/prob/lkj_corr_log.hpp>
-#include <stan/math/prim/mat/fun/multiply.hpp>
 
 namespace stan {
 namespace math {
@@ -34,7 +35,7 @@ return_type_t<T_covar, T_shape> lkj_corr_cholesky_lpdf(
   if (include_summand<propto, T_covar, T_shape>::value) {
     const int Km1 = K - 1;
     Eigen::Matrix<T_covar, Eigen::Dynamic, 1> log_diagonals
-        = L.diagonal().tail(Km1).array().log();
+        = log(L.diagonal().tail(Km1).array());
     Eigen::Matrix<lp_ret, Eigen::Dynamic, 1> values(Km1);
     for (int k = 0; k < Km1; k++) {
       values(k) = (Km1 - k - 1) * log_diagonals(k);

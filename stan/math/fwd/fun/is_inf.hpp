@@ -3,7 +3,7 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/scal/fun/is_inf.hpp>
+#include <stan/math/prim/fun/is_inf.hpp>
 
 namespace stan {
 namespace math {
@@ -13,6 +13,7 @@ namespace math {
  *
  * Delegates to <code>is_inf</code>.
  *
+ * @tparam T inner type of the fvar
  * @param x Value to test.
  * @return <code>1</code> if the value is infinite and <code>0</code> otherwise.
  */

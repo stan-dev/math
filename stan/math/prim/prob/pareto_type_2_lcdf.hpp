@@ -3,9 +3,9 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/fun/log1m.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/fun/log1m.hpp>
 #include <cmath>
 
 namespace stan {
@@ -16,12 +16,11 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lcdf(
     const T_y& y, const T_loc& mu, const T_scale& lambda,
     const T_shape& alpha) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_shape>;
+  static const char* function = "pareto_type_2_lcdf";
 
   if (size_zero(y, mu, lambda, alpha)) {
     return 0.0;
   }
-
-  static const char* function = "pareto_type_2_lcdf";
 
   using std::log;
   using std::pow;
@@ -45,40 +44,25 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lcdf(
   operands_and_partials<T_y, T_loc, T_scale, T_shape> ops_partials(
       y, mu, lambda, alpha);
 
-  VectorBuilder<true, T_partials_return, T_y, T_loc, T_scale, T_shape> cdf_log(
-      N);
-
-  VectorBuilder<true, T_partials_return, T_y, T_loc, T_scale, T_shape>
-      inv_p1_pow_alpha_minus_one(N);
-
-  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_y, T_loc,
-                T_scale, T_shape>
-      log_1p_y_over_lambda(N);
-
-  for (size_t i = 0; i < N; i++) {
-    const T_partials_return temp = 1.0
-                                   + (value_of(y_vec[i]) - value_of(mu_vec[i]))
-                                         / value_of(lambda_vec[i]);
-    const T_partials_return p1_pow_alpha = pow(temp, value_of(alpha_vec[i]));
-    cdf_log[i] = log1m(1.0 / p1_pow_alpha);
-
-    inv_p1_pow_alpha_minus_one[i] = 1.0 / (p1_pow_alpha - 1.0);
-
-    if (!is_constant_all<T_shape>::value) {
-      log_1p_y_over_lambda[i] = log(temp);
-    }
-  }
-
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return mu_dbl = value_of(mu_vec[n]);
     const T_partials_return lambda_dbl = value_of(lambda_vec[n]);
     const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
+    const T_partials_return temp = 1.0 + (y_dbl - mu_dbl) / lambda_dbl;
 
-    const T_partials_return grad_1_2 = alpha_dbl * inv_p1_pow_alpha_minus_one[n]
-                                       / (lambda_dbl - mu_dbl + y_dbl);
+    const T_partials_return p1_pow_alpha = pow(temp, alpha_dbl);
+    const T_partials_return inv_p1_pow_alpha_minus_one
+        = inv(p1_pow_alpha - 1.0);
+    const T_partials_return grad_1_2
+        = is_constant_all<T_y, T_loc, T_scale>::value
+              ? 0
+              : alpha_dbl * inv_p1_pow_alpha_minus_one
+                    / (lambda_dbl - mu_dbl + y_dbl);
 
-    P += cdf_log[n];
+    const T_partials_return cdf_log = log1m(1.0 / p1_pow_alpha);
+
+    P += cdf_log;
 
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] += grad_1_2;
@@ -92,9 +76,10 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lcdf(
     }
     if (!is_constant_all<T_shape>::value) {
       ops_partials.edge4_.partials_[n]
-          += log_1p_y_over_lambda[n] * inv_p1_pow_alpha_minus_one[n];
+          += log(temp) * inv_p1_pow_alpha_minus_one;
     }
   }
+
   return ops_partials.build(P);
 }
 

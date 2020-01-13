@@ -3,9 +3,9 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/vec_concat.hpp>
 #include <stan/math/opencl/rev/opencl.hpp>
-#include <stan/math/prim/arr/fun/vec_concat.hpp>
 
 #include <CL/cl2.hpp>
 #include <iostream>

@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_FWD_FUN_VALUE_OF_REC_HPP
 #define STAN_MATH_FWD_FUN_VALUE_OF_REC_HPP
 
+#include <stan/math/prim/fun/value_of_rec.hpp>
 #include <stan/math/fwd/meta.hpp>
-#include <stan/math/prim/scal/fun/value_of_rec.hpp>
 #include <stan/math/fwd/core.hpp>
 
 namespace stan {
@@ -11,9 +11,7 @@ namespace math {
 /**
  * Return the value of the specified variable.
  *
- * T must implement value_of_rec.
- *
- * @tparam T Scalar type
+ * @tparam T inner type of the fvar, must implement value_of_rec
  * @param v Variable.
  * @return Value of variable.
  */

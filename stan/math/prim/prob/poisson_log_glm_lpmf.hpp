@@ -3,11 +3,10 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/lgamma.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <stan/math/prim/mat/fun/value_of_rec.hpp>
-#include <stan/math/prim/arr/fun/value_of_rec.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 #include <cmath>
 
 namespace stan {
@@ -92,7 +91,8 @@ return_type_t<T_x_scalar, T_alpha, T_beta> poisson_log_glm_lpmf(
 
   Array<T_partials_return, Dynamic, 1> theta(N_instances);
   if (T_x_rows == 1) {
-    T_theta_tmp theta_tmp = x_val * beta_val_vec;
+    T_theta_tmp theta_tmp
+        = forward_as<T_theta_tmp>((x_val * beta_val_vec)(0, 0));
     theta = theta_tmp + as_array_or_scalar(alpha_val_vec);
   } else {
     theta = x_val * beta_val_vec;
@@ -114,10 +114,9 @@ return_type_t<T_x_scalar, T_alpha, T_beta> poisson_log_glm_lpmf(
       logp -= lgamma(forward_as<double>(y_val) + 1);
     }
   }
-  if (include_summand<propto, T_partials_return>::value) {
-    logp += sum(as_array_or_scalar(y_val_vec) * theta.array()
-                - exp(theta.array()));
-  }
+
+  logp += sum(as_array_or_scalar(y_val_vec) * theta.array()
+              - exp(theta.array()));
 
   operands_and_partials<Eigen::Matrix<T_x_scalar, T_x_rows, Eigen::Dynamic>,
                         T_alpha, T_beta>

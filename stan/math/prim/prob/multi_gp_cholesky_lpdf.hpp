@@ -3,14 +3,15 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/mat/fun/dot_self.hpp>
-#include <stan/math/prim/mat/fun/log.hpp>
-#include <stan/math/prim/mat/fun/mdivide_left_tri_low.hpp>
-#include <stan/math/prim/mat/fun/sum.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/dot_self.hpp>
+#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/mdivide_left_tri_low.hpp>
+#include <stan/math/prim/fun/sum.hpp>
 
 namespace stan {
 namespace math {
+
 /** \ingroup multivar_dists
  * The log of a multivariate Gaussian Process for the given y, w, and
  * a Cholesky factor L of the kernel matrix Sigma.
@@ -21,6 +22,10 @@ namespace math {
  * This distribution is equivalent to:
  *    for (i in 1:d) row(y, i) ~ multi_normal(0, (1/w[i])*LL').
  *
+ * @tparam T_y type of scalar
+ * @tparam T_covar type of kernel
+ * @tparam T_w type of weight
+ *
  * @param y A dxN matrix
  * @param L The Cholesky decomposition of a kernel matrix
  * @param w A d-dimensional vector of positve inverse scale parameters for each
@@ -28,9 +33,6 @@ namespace math {
  * @return The log of the multivariate GP density.
  * @throw std::domain_error if Sigma is not square, not symmetric,
  * or not semi-positive definite.
- * @tparam T_y Type of scalar.
- * @tparam T_covar Type of kernel.
- * @tparam T_w Type of weight.
  */
 template <bool propto, typename T_y, typename T_covar, typename T_w>
 return_type_t<T_y, T_covar, T_w> multi_gp_cholesky_lpdf(
@@ -58,7 +60,7 @@ return_type_t<T_y, T_covar, T_w> multi_gp_cholesky_lpdf(
   }
 
   if (include_summand<propto, T_covar>::value) {
-    lp -= L.diagonal().array().log().sum() * y.rows();
+    lp -= sum(log(L.diagonal())) * y.rows();
   }
 
   if (include_summand<propto, T_w>::value) {

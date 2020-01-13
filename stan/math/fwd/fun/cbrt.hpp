@@ -3,8 +3,8 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/scal/fun/cbrt.hpp>
-#include <stan/math/prim/scal/fun/square.hpp>
+#include <stan/math/prim/fun/cbrt.hpp>
+#include <stan/math/prim/fun/square.hpp>
 
 namespace stan {
 namespace math {
@@ -12,7 +12,7 @@ namespace math {
 /**
  * Return cube root of specified argument.
  *
- * @tparam T Scalar type of autodiff variable.
+ * @tparam T inner type of the fvar
  * @param x Argument.
  * @return Cube root of argument.
  */

@@ -3,8 +3,8 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/log2.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/log2.hpp>
 
 namespace stan {
 namespace math {
@@ -12,7 +12,7 @@ namespace math {
 /**
  * Return the base two logarithm of the specified argument.
  *
- * @tparam T scalar type
+ * @tparam T inner type of the fvar
  * @param x argument
  * @return base two logarithm of argument
  */

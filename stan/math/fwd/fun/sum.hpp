@@ -2,9 +2,8 @@
 #define STAN_MATH_FWD_FUN_SUM_HPP
 
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/arr/fun/sum.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/sum.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/sum.hpp>
 #include <vector>
 
 namespace stan {
@@ -14,7 +13,7 @@ namespace math {
  * Return the sum of the entries of the specified standard
  * vector.
  *
- * @tparam T Type of vector entries.
+ * @tparam T type of elements in the vector
  * @param m Vector.
  * @return Sum of vector entries.
  */
@@ -35,9 +34,10 @@ inline fvar<T> sum(const std::vector<fvar<T> >& m) {
 /**
  * Return the sum of the entries of the specified matrix.
  *
- * @tparam T Type of matrix entries.
- * @tparam R Row type of matrix.
- * @tparam C Column type of matrix.
+ * @tparam T inner type of the fvar matrix
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ *
  * @param m Matrix.
  * @return Sum of matrix entries.
  */

@@ -2,7 +2,7 @@
 #define STAN_MATH_FWD_FUNCTOR_GRADIENT_HPP
 
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 
 namespace stan {
 namespace math {
@@ -29,6 +29,7 @@ namespace math {
  * fully unfolded expression for the function applied to the
  * argument, independently of dimension.
  *
+ * @tparam T type of the elements in the vector
  * @tparam F Type of function
  * @param[in] f Function
  * @param[in] x Argument to function

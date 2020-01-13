@@ -1,7 +1,7 @@
 #ifndef TEST_PROB_UTILITY_HPP
 #define TEST_PROB_UTILITY_HPP
 
-#include <stan/math/mix/mat.hpp>
+#include <stan/math/mix.hpp>
 
 using stan::is_constant_all;
 using stan::is_vector;

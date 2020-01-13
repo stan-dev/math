@@ -3,10 +3,10 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/gamma_p.hpp>
-#include <stan/math/prim/scal/fun/grad_reg_lower_inc_gamma.hpp>
-#include <stan/math/prim/scal/fun/lgamma.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/gamma_p.hpp>
+#include <stan/math/prim/fun/grad_reg_lower_inc_gamma.hpp>
+#include <stan/math/prim/fun/lgamma.hpp>
 #include <cmath>
 
 namespace stan {

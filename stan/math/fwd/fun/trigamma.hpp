@@ -3,7 +3,7 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/scal/fun/trigamma.hpp>
+#include <stan/math/prim/fun/trigamma.hpp>
 
 namespace stan {
 namespace math {
@@ -13,6 +13,7 @@ namespace math {
  * argument (i.e., the second derivative of the log Gamma function
  * at the specified argument).
  *
+ * @tparam T inner type of the fvar
  * @param u argument
  * @return trigamma function at argument
  */

@@ -3,10 +3,9 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/mat/fun/value_of_rec.hpp>
-#include <stan/math/prim/arr/fun/value_of_rec.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <stan/math/prim/mat/fun/log1m_exp.hpp>
+#include <stan/math/prim/fun/log1m_exp.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 #include <cmath>
 
 namespace stan {
@@ -54,8 +53,7 @@ ordered_logistic_glm_lpmf(
 
   typedef typename partials_return_type<T_y, T_x_scalar, T_beta_scalar,
                                         T_cuts_scalar>::type T_partials_return;
-  typedef typename std::conditional_t<T_x_rows == 1, double,
-                                      Array<double, Dynamic, 1>>
+  typedef typename std::conditional_t<T_x_rows == 1, double, VectorXd>
       T_location;
 
   static const char* function = "ordered_logistic_glm_lpmf";
@@ -111,8 +109,8 @@ ordered_logistic_glm_lpmf(
     check_finite(function, "Matrix of independent variables", x);
   }
 
-  Array<double, Dynamic, 1> cut2 = location - cuts_y2;
-  Array<double, Dynamic, 1> cut1 = location - cuts_y1;
+  Array<double, Dynamic, 1> cut2 = as_array_or_scalar(location) - cuts_y2;
+  Array<double, Dynamic, 1> cut1 = as_array_or_scalar(location) - cuts_y1;
 
   // Not immediately evaluating next two expressions benefits performance
   auto m_log_1p_exp_cut1

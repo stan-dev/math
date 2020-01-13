@@ -3,8 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <cmath>
 
 namespace stan {
@@ -15,12 +15,11 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_cdf(
     const T_y& y, const T_loc& mu, const T_scale& lambda,
     const T_shape& alpha) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_shape>;
+  static const char* function = "pareto_type_2_cdf";
 
   if (size_zero(y, mu, lambda, alpha)) {
     return 1.0;
   }
-
-  static const char* function = "pareto_type_2_cdf";
 
   using std::log;
   using std::pow;
@@ -44,54 +43,36 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_cdf(
   operands_and_partials<T_y, T_loc, T_scale, T_shape> ops_partials(
       y, mu, lambda, alpha);
 
-  VectorBuilder<true, T_partials_return, T_y, T_loc, T_scale, T_shape>
-      p1_pow_alpha(N);
-
-  VectorBuilder<!is_constant_all<T_y, T_loc, T_scale>::value, T_partials_return,
-                T_y, T_loc, T_scale, T_shape>
-      grad_1_2(N);
-
-  VectorBuilder<!is_constant_all<T_shape, T_y>::value, T_partials_return, T_y,
-                T_loc, T_scale, T_shape>
-      grad_3(N);
-
-  for (size_t i = 0; i < N; i++) {
-    const T_partials_return lambda_dbl = value_of(lambda_vec[i]);
-    const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
-    const T_partials_return temp
-        = 1 + (value_of(y_vec[i]) - value_of(mu_vec[i])) / lambda_dbl;
-    p1_pow_alpha[i] = pow(temp, -alpha_dbl);
-
-    if (!is_constant_all<T_y, T_loc, T_scale>::value) {
-      grad_1_2[i] = p1_pow_alpha[i] / temp * alpha_dbl / lambda_dbl;
-    }
-
-    if (!is_constant_all<T_shape>::value) {
-      grad_3[i] = log(temp) * p1_pow_alpha[i];
-    }
-  }
-
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return mu_dbl = value_of(mu_vec[n]);
     const T_partials_return lambda_dbl = value_of(lambda_vec[n]);
+    const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
+    const T_partials_return sum_dbl = lambda_dbl + y_dbl - mu_dbl;
+    const T_partials_return temp = sum_dbl / lambda_dbl;
 
-    const T_partials_return Pn = 1.0 - p1_pow_alpha[n];
+    const T_partials_return p1_pow_alpha = pow(temp, -alpha_dbl);
+    const T_partials_return grad_1_2
+        = is_constant_all<T_y, T_loc, T_scale>::value
+              ? 0
+              : p1_pow_alpha / sum_dbl * alpha_dbl;
+
+    const T_partials_return Pn = 1.0 - p1_pow_alpha;
 
     P *= Pn;
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] += grad_1_2[n] / Pn;
+      ops_partials.edge1_.partials_[n] += grad_1_2 / Pn;
     }
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_[n] -= grad_1_2[n] / Pn;
+      ops_partials.edge2_.partials_[n] -= grad_1_2 / Pn;
     }
     if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n]
-          += (mu_dbl - y_dbl) * grad_1_2[n] / lambda_dbl / Pn;
+          += (mu_dbl - y_dbl) * grad_1_2 / (lambda_dbl * Pn);
     }
     if (!is_constant_all<T_shape>::value) {
-      ops_partials.edge4_.partials_[n] += grad_3[n] / Pn;
+      ops_partials.edge4_.partials_[n] += log(temp) * p1_pow_alpha / Pn;
     }
   }
 

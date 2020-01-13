@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_FWD_FUN_GRAD_INC_BETA_HPP
 #define STAN_MATH_FWD_FUN_GRAD_INC_BETA_HPP
 
-#include <stan/math/prim/scal/fun/grad_2F1.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
+#include <stan/math/prim/fun/grad_2F1.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/fun/beta.hpp>
@@ -23,7 +23,7 @@ namespace math {
  * Uses the equivalence to a hypergeometric function. See
  * http://dlmf.nist.gov/8.17#ii
  *
- * @tparam T type of fvar
+ * @tparam T inner type of the fvar
  * @param[out] g1 d/da
  * @param[out] g2 d/db
  * @param[in] a a

@@ -3,11 +3,11 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/log_modified_bessel_first_kind.hpp>
-#include <stan/math/prim/scal/fun/modified_bessel_first_kind.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/log_modified_bessel_first_kind.hpp>
+#include <stan/math/prim/fun/modified_bessel_first_kind.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <cmath>
 
 namespace stan {
@@ -31,8 +31,9 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
   T_partials_return logp = 0.0;
 
   check_finite(function, "Random variable", y);
-  check_finite(function, "Location paramter", mu);
-  check_positive_finite(function, "Scale parameter", kappa);
+  check_finite(function, "Location parameter", mu);
+  check_nonnegative(function, "Scale parameter", kappa);
+  check_finite(function, "Scale parameter", kappa);
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", kappa);
 
@@ -81,7 +82,8 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
       bessel1 = modified_bessel_first_kind(-1, kappa_dbl[n]);
     }
     const T_partials_return kappa_sin = kappa_dbl[n] * sin(mu_dbl - y_dbl);
-    const T_partials_return kappa_cos = kappa_dbl[n] * cos(mu_dbl - y_dbl);
+    const T_partials_return cos_mu_minus_y = cos(mu_dbl - y_dbl);
+    const T_partials_return kappa_cos = kappa_dbl[n] * cos_mu_minus_y;
 
     if (include_summand<propto>::value) {
       logp -= LOG_TWO_PI;
@@ -98,8 +100,7 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
       ops_partials.edge2_.partials_[n] -= kappa_sin;
     }
     if (!kappa_const) {
-      ops_partials.edge3_.partials_[n]
-          += kappa_cos / kappa_dbl[n] - bessel1 / bessel0;
+      ops_partials.edge3_.partials_[n] += cos_mu_minus_y - bessel1 / bessel0;
     }
   }
   return ops_partials.build(logp);

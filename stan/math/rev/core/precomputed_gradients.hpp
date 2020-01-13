@@ -90,8 +90,8 @@ class precomputed_gradients_vari : public vari {
  * @param[in] operands operands.
  * @param[in] gradients vector of partial derivatives of result with
  * respect to operands.
- * @return An auto-diff variable that uses the precomputed
- *   gradients provided.
+ * @return An autodiff variable that uses the precomputed
+ * gradients provided.
  */
 template <typename Arith, typename VecVar, typename VecArith,
           require_arithmetic_t<Arith>...,
@@ -102,6 +102,7 @@ inline var precomputed_gradients(Arith value, VecVar&& operands,
   return {new precomputed_gradients_vari(value, std::forward<VecVar>(operands),
                                          std::forward<VecArith>(gradients))};
 }
+
 }  // namespace math
 }  // namespace stan
 #endif
