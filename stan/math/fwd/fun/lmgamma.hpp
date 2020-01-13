@@ -3,8 +3,8 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/scal/fun/digamma.hpp>
-#include <stan/math/prim/scal/fun/lmgamma.hpp>
+#include <stan/math/prim/fun/digamma.hpp>
+#include <stan/math/prim/fun/lmgamma.hpp>
 #include <cmath>
 
 namespace stan {

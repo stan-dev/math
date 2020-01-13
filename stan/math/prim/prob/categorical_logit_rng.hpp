@@ -3,9 +3,9 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/mat/fun/cumulative_sum.hpp>
-#include <stan/math/prim/mat/fun/softmax.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/fun/cumulative_sum.hpp>
+#include <stan/math/prim/fun/softmax.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/variate_generator.hpp>
 

@@ -3,10 +3,10 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/digamma.hpp>
-#include <stan/math/prim/scal/fun/is_any_nan.hpp>
-#include <stan/math/prim/scal/fun/log_falling_factorial.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/digamma.hpp>
+#include <stan/math/prim/fun/is_any_nan.hpp>
+#include <stan/math/prim/fun/log_falling_factorial.hpp>
 
 namespace stan {
 namespace math {

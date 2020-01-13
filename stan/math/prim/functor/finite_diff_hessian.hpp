@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_FUNCTOR_FINITE_DIFF_HESSIAN_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/functor/finite_diff_gradient.hpp>
 #include <stan/math/prim/functor/finite_diff_hessian_helper.hpp>
 

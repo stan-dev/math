@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_ERR_CHECK_MULTIPLICABLE_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/err/check_size_match.hpp>
 #include <stan/math/prim/err/check_positive.hpp>
 

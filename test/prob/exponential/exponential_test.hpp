@@ -1,5 +1,5 @@
 // Arguments: Doubles, Doubles
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
@@ -70,10 +70,6 @@ class AgradDistributionsExponential : public AgradDistributionTest {
   typename stan::return_type<T_y, T_inv_scale>::type log_prob_function(
       const T_y& y, const T_inv_scale& beta, const T2&, const T3&, const T4&,
       const T5&) {
-    using boost::math::lgamma;
-    using stan::math::NEG_LOG_TWO_OVER_TWO;
-    using stan::math::multiply_log;
-
     return log(beta) - beta * y;
   }
 };

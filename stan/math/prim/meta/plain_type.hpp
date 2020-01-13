@@ -52,4 +52,4 @@ struct plain_type<T, require_eigen_t<T>> {
 
 }  // namespace stan
 
-#endif  // STAN_MATH_PRIM_MAT_META_PLAIN_TYPE_HPP
+#endif  // STAN_MATH_PRIM_META_PLAIN_TYPE_HPP

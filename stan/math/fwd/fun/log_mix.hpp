@@ -3,8 +3,8 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/fun/log_mix.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/fun/log_mix.hpp>
 #include <cmath>
 #include <type_traits>
 

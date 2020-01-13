@@ -5,8 +5,8 @@
 #include <stan/math/prim/err/check_nonzero_size.hpp>
 #include <stan/math/prim/err/throw_domain_error.hpp>
 #include <stan/math/prim/err/constraint_tolerance.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/fun/abs.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/abs.hpp>
 #include <sstream>
 #include <string>
 #include <cmath>

@@ -2,17 +2,15 @@
 #define STAN_MATH_OPENCL_PRIM_ORDERED_LOGISTIC_GLM_LPMF_HPP
 #ifdef STAN_OPENCL
 
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/mat/fun/value_of_rec.hpp>
-#include <stan/math/prim/arr/fun/value_of_rec.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <stan/math/prim/mat/fun/log1m_exp.hpp>
-#include <stan/math/prim/mat/fun/sum.hpp>
 #include <stan/math/prim/meta.hpp>
-
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/log1m_exp.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/sum.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 #include <stan/math/opencl/copy.hpp>
-#include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
+#include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernels/ordered_logistic_glm_lpmf.hpp>
 #include <cmath>
 

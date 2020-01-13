@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/prob/neg_binomial_ccdf_log.hpp>
 
 namespace stan {
