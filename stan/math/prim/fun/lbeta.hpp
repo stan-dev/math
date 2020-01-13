@@ -63,9 +63,9 @@ template <typename T1, typename T2>
 inline return_type_t<T1, T2> lbeta(const T1 a, const T2 b) {
   typedef return_type_t<T1, T2> T_ret;
 
-  if(is_nan(value_of_rec(a)) || is_nan(value_of_rec(b))) {
+  if (is_nan(value_of_rec(a)) || is_nan(value_of_rec(b))) {
     return std::numeric_limits<double>::quiet_NaN();
-  } 
+  }
 
   static const char* function = "lbeta";
   check_nonnegative(function, "first argument", a);
@@ -91,17 +91,16 @@ inline return_type_t<T1, T2> lbeta(const T1 a, const T2 b) {
     return lgamma(x) + lgamma(y) - lgamma(x + y);
   } else if (x < lgamma_stirling_diff_useful) {
     // y large, x small
-    T_ret stirling_diff
-        = lgamma_stirling_diff(y) - lgamma_stirling_diff(x + y);
-    T_ret log_x_y = log(x + y); 
+    T_ret stirling_diff = lgamma_stirling_diff(y) - lgamma_stirling_diff(x + y);
+    T_ret log_x_y = log(x + y);
     T_ret stirling = (y - 0.5) * log1p(-x / (x + y)) + x * (1 - log_x_y);
     return stirling + lgamma(x) + stirling_diff;
   } else {
     // both large
     T_ret stirling_diff = lgamma_stirling_diff(x) + lgamma_stirling_diff(y)
-                           - lgamma_stirling_diff(x + y);
+                          - lgamma_stirling_diff(x + y);
     T_ret stirling = (x - 0.5) * log(x / (x + y)) + y * log1p(-x / (x + y))
-                      + 0.5 * (log(2 * stan::math::pi()) - log(y));
+                     + 0.5 * (log(2 * stan::math::pi()) - log(y));
     return stirling + stirling_diff;
   }
 }

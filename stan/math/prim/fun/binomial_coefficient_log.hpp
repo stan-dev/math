@@ -25,13 +25,14 @@ namespace math {
  *
  * \f$ \log {N \choose n}
  * = \log \ \Gamma(N+1) - \log \Gamma(n+1) - \log \Gamma(N-n+1)\f$.
- * 
+ *
  *
  * TODO[martinmodrak] figure out the cases for x < 0 and for partials
    \f[
    \mbox{binomial\_coefficient\_log}(x, y) =
    \begin{cases}
-     \textrm{error} & \mbox{if } y > x + 1 \textrm{ or } y < -1 \textrm{ or } x < 0\\
+     \textrm{error} & \mbox{if } y > x + 1 \textrm{ or } y < -1 \textrm{ or } x
+ < 0\\
      \textrm{-\infty} & \mbox{if } y = x + 1 \textrm{ or } y = -1\\
      \ln\Gamma(x+1) & \mbox{if } -1 < y < x + 1 \\
      \quad -\ln\Gamma(y+1)& \\
@@ -70,22 +71,22 @@ namespace math {
 template <typename T_N, typename T_n>
 inline return_type_t<T_N, T_n> binomial_coefficient_log(const T_N N,
                                                         const T_n n) {
-  if(is_nan(value_of_rec(N)) || is_nan(value_of_rec(n))) {
+  if (is_nan(value_of_rec(N)) || is_nan(value_of_rec(n))) {
     return std::numeric_limits<double>::quiet_NaN();
-  } 
-  
+  }
+
   // For some uses it is important this works even when N < 0 and therefore
   // it is before checks
   if (n == 0) {
     return 0;
-  }                                                  
+  }
   const T_N N_plus_1 = N + 1;
 
   static const char* function = "binomial_coefficient_log";
   check_nonnegative(function, "first argument", N);
   check_greater_or_equal(function, "second argument", n, -1);
-  check_greater_or_equal(function, "(first argument - second argument + 1)", 
-    N - n + 1, 0.0);
+  check_greater_or_equal(function, "(first argument - second argument + 1)",
+                         N - n + 1, 0.0);
 
   if (N / 2 < n) {
     return binomial_coefficient_log(N, N - n);
