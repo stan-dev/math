@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_SCAL_FUN_LGAMMA_STIRLING_HPP
-#define STAN_MATH_PRIM_SCAL_FUN_LGAMMA_STIRLING_HPP
+#ifndef STAN_MATH_PRIM_FUN_LGAMMA_STIRLING_HPP
+#define STAN_MATH_PRIM_FUN_LGAMMA_STIRLING_HPP
 
 #include <cmath>
 #include <stan/math/prim/fun/constants.hpp>
