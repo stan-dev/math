@@ -57,7 +57,7 @@ class log_softmax_elt_vari : public vari {
  */
 template <typename T, require_t<is_var<scalar_type_t<T>>>...>
 inline auto log_softmax(const T& x) {
-  return apply_vector_unary<T>::apply(x, [&](auto& alpha) {
+  return apply_vector_unary<T>::apply(x, [&](const auto& alpha) {
     const int a_size = alpha.size();
 
     check_nonzero_size("log_softmax", "alpha", alpha);

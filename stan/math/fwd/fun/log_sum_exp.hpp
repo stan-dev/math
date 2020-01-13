@@ -52,7 +52,7 @@ inline fvar<T> log_sum_exp(const fvar<T>& x1, double x2) {
  */
 template <typename T, require_t<is_fvar<scalar_type_t<T>>>...>
 inline auto log_sum_exp(const T& x) {
-  return apply_vector_unary<T>::reduce(x, [&](auto& v) {
+  return apply_vector_unary<T>::reduce(x, [&](const auto& v) {
     using T_fvar_inner = typename value_type_t<decltype(v)>::Scalar;
     using mat_type = Eigen::Matrix<T_fvar_inner, -1, -1>;
     mat_type vals = v.val();

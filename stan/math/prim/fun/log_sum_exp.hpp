@@ -78,7 +78,7 @@ inline return_type_t<T1, T2> log_sum_exp(const T2& a, const T1& b) {
  */
 template <typename T, require_t<std::is_arithmetic<scalar_type_t<T>>>...>
 inline auto log_sum_exp(const T& x) {
-  return apply_vector_unary<T>::reduce(x, [&](auto& v) {
+  return apply_vector_unary<T>::reduce(x, [&](const auto& v) {
     if (v.size() == 0) {
       return NEGATIVE_INFTY;
     }

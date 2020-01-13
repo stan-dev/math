@@ -65,8 +65,8 @@ namespace internal {
 class log_sum_exp_matrix_vari : public op_matrix_vari {
  public:
   template <typename T>
-  explicit log_sum_exp_matrix_vari(T&& x)
-      : op_matrix_vari(log_sum_exp(x.val()), std::forward<T>(x)) {}
+  explicit log_sum_exp_matrix_vari(const T& x)
+      : op_matrix_vari(log_sum_exp(x.val()), x) {}
   void chain() {
     Eigen::Map<vector_vi> vis_map(vis_, size_);
     vis_map.adj().array() += adj_ * (vis_map.val().array() - val_).exp();
@@ -82,7 +82,7 @@ class log_sum_exp_matrix_vari : public op_matrix_vari {
  */
 template <typename T, require_t<is_var<scalar_type_t<T>>>...>
 inline auto log_sum_exp(const T& x) {
-  return apply_vector_unary<T>::reduce(x, [&](auto& v) {
+  return apply_vector_unary<T>::reduce(x, [&](const auto& v) {
     return var(new internal::log_sum_exp_matrix_vari(v));
   });
 }

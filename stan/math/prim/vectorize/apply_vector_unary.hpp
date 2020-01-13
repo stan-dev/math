@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_VECTORIZE_APPLY_VECTOR_UNARY_HPP
 #define STAN_MATH_PRIM_VECTORIZE_APPLY_VECTOR_UNARY_HPP
 
-#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <vector>
 
