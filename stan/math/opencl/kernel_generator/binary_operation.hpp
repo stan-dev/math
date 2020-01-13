@@ -112,7 +112,7 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
    public:                                                                    \
     class_name(T_a&& a, T_b&& b) /* NOLINT */                                 \
         : binary_operation<class_name<T_a, T_b>, scalar_type_expr, T_a, T_b>( \
-            std::forward<T_a>(a), std::forward<T_b>(b), operation) {}         \
+              std::forward<T_a>(a), std::forward<T_b>(b), operation) {}       \
   };                                                                          \
                                                                               \
   template <typename T_a, typename T_b,                                       \
@@ -149,7 +149,7 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
    public:                                                                    \
     class_name(T_a&& a, T_b&& b) /* NOLINT */                                 \
         : binary_operation<class_name<T_a, T_b>, scalar_type_expr, T_a, T_b>( \
-            std::forward<T_a>(a), std::forward<T_b>(b), operation) {}         \
+              std::forward<T_a>(a), std::forward<T_b>(b), operation) {}       \
     inline matrix_cl_view view() const { __VA_ARGS__; }                       \
   };                                                                          \
                                                                               \
