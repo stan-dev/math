@@ -146,14 +146,14 @@ ADD_BINARY_OPERATION(less_than_, operator<, bool, "<");
 ADD_BINARY_OPERATION_WITH_CUSTOM_VIEW(less_than_or_equal_, operator<=, bool,
                                       "<=", return matrix_cl_view::Entire);
 ADD_BINARY_OPERATION(greater_than_, operator>, bool, ">");
-ADD_BINARY_OPERATION_WITH_CUSTOM_VIEW(greater_than_or_equal, operator>=, bool,
+ADD_BINARY_OPERATION_WITH_CUSTOM_VIEW(greater_than_or_equal_, operator>=, bool,
                                       ">=", return matrix_cl_view::Entire);
 ADD_BINARY_OPERATION_WITH_CUSTOM_VIEW(equals_, operator==, bool,
                                       "==", return matrix_cl_view::Entire);
 ADD_BINARY_OPERATION(not_equals_, operator!=, bool, "!=");
 
-ADD_BINARY_OPERATION(logical_or, operator||, bool, "||");
-ADD_BINARY_OPERATION(logical_and, operator&&, bool, "&&");
+ADD_BINARY_OPERATION(logical_or_, operator||, bool, "||");
+ADD_BINARY_OPERATION(logical_and_, operator&&, bool, "&&");
 
 /**
  * Multiplication of a scalar and a kernel generator expression.
