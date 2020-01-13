@@ -38,7 +38,7 @@ TEST(MathMatrixCL, select_errors) {
   EXPECT_THROW(select(m_bool, m_double, m_cols), std::invalid_argument);
 }
 
-TEST(MathMatrixCL, select_zero_size){
+TEST(MathMatrixCL, select_zero_size) {
   matrix_cl<double> m_bool_zero(0, 0);
   matrix_cl<double> m_double_zero(0, 0);
   matrix_cl<int> m_int_zero(0, 0);
@@ -47,7 +47,8 @@ TEST(MathMatrixCL, select_zero_size){
   EXPECT_NO_THROW(select(m_bool_zero, m_double_zero, m_double_zero));
   EXPECT_NO_THROW(select(m_bool_zero, m_double_zero, m_int_zero));
   EXPECT_NO_THROW(select(m_bool_zero, m_int_zero, m_double_zero));
-  EXPECT_THROW(select(m_bool_zero, m_double_zero, m_int_zero_rows), std::invalid_argument);
+  EXPECT_THROW(select(m_bool_zero, m_double_zero, m_int_zero_rows),
+               std::invalid_argument);
 }
 
 TEST(MathMatrixCL, select_test) {
@@ -110,11 +111,11 @@ TEST(MathMatrixCL, multiple_operations) {
 TEST(MathMatrixCL, multiple_operations_size_zero) {
   using stan::math::select;
 
-  matrix_cl<double> m1_cl(0,0);
-  matrix_cl<int> m2_cl(0,0);
-  matrix_cl<double> m3_cl(0,0);
-  matrix_cl<bool> m_cond_cl(0,0);
-  matrix_cl<bool> m_cond2_cl(0,0);
+  matrix_cl<double> m1_cl(0, 0);
+  matrix_cl<int> m2_cl(0, 0);
+  matrix_cl<double> m3_cl(0, 0);
+  matrix_cl<bool> m_cond_cl(0, 0);
+  matrix_cl<bool> m_cond2_cl(0, 0);
   auto tmp = select(m_cond_cl, m1_cl, select(m_cond2_cl, m2_cl, m3_cl));
   matrix_cl<double> res_cl = tmp;
 
