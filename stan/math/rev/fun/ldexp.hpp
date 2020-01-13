@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_REV_FUN_LDEXP_HPP
 #define STAN_MATH_REV_FUN_LDEXP_HPP
 
-#include <stan/math/prim/scal/fun/ldexp.hpp>
+#include <stan/math/prim/fun/ldexp.hpp>
 #include <stan/math/rev/core.hpp>
 
 namespace stan {

@@ -2,8 +2,8 @@
 #define STAN_MATH_REV_FUN_ACOSH_HPP
 
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/prim/scal/fun/acosh.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/prim/fun/acosh.hpp>
 #include <cmath>
 
 namespace stan {

@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/arr/fun/sum.hpp>
+#include <stan/math/prim/fun/sum.hpp>
 
 #include <vector>
 

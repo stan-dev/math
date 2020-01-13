@@ -87,7 +87,7 @@ class AgradDistributionVonMises : public AgradDistributionTest {
     using stan::math::pi;
     using std::log;
 
-    return -log(2.0 * stan::math::pi())
-           - log(modified_bessel_first_kind(0, kappa)) + kappa * cos(mu - y);
+    return -stan::math::LOG_TWO_PI - log(modified_bessel_first_kind(0, kappa))
+           + kappa * cos(mu - y);
   }
 };

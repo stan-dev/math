@@ -6,8 +6,8 @@
 #include <stan/math/prim/err/is_not_nan.hpp>
 #include <stan/math/prim/err/is_symmetric.hpp>
 #include <stan/math/prim/err/constraint_tolerance.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/value_of_rec.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 
 namespace stan {
 namespace math {

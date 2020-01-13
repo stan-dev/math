@@ -1,23 +1,21 @@
 #ifndef STAN_MATH_REV_FUNCTOR_KINSOL_DATA_HPP
 #define STAN_MATH_REV_FUNCTOR_KINSOL_DATA_HPP
 
-#include <stan/math/prim/mat/fun/to_array_1d.hpp>
-#include <stan/math/prim/mat/fun/to_vector.hpp>
 #include <stan/math/rev/functor/algebra_system.hpp>
 #include <stan/math/rev/functor/jacobian.hpp>
-
+#include <stan/math/prim/fun/to_array_1d.hpp>
+#include <stan/math/prim/fun/to_vector.hpp>
 #include <kinsol/kinsol.h>
 #include <sunmatrix/sunmatrix_dense.h>
 #include <sunlinsol/sunlinsol_dense.h>
 #include <nvector/nvector_serial.h>
-
 #include <vector>
 
 namespace stan {
 namespace math {
 
 /**
- * Default Jacobian builder using revser-mode autodiff.
+ * Default Jacobian builder using reverse-mode autodiff.
  */
 struct kinsol_J_f {
   template <typename F>

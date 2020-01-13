@@ -3,7 +3,7 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
+#include <stan/math/prim/fun/is_nan.hpp>
 
 namespace stan {
 namespace math {
@@ -13,8 +13,8 @@ namespace math {
  *
  * Delegates to <code>is_nan(double)</code>.
  *
- * @param v Value to test.
- *
+ * @tparam T type of input
+ * @param v value to test
  * @return <code>1</code> if the value is NaN and <code>0</code> otherwise.
  */
 template <typename T, require_var_t<T>...>

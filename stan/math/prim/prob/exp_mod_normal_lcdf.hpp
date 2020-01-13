@@ -3,13 +3,13 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/erf.hpp>
-#include <stan/math/prim/scal/fun/inv.hpp>
-#include <stan/math/prim/scal/fun/is_inf.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <stan/math/prim/scal/fun/square.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/erf.hpp>
+#include <stan/math/prim/fun/inv.hpp>
+#include <stan/math/prim/fun/is_inf.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/square.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <cmath>
 
 namespace stan {
@@ -73,10 +73,10 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf(
 
     const T_partials_return deriv_1 = lambda_dbl * exp_term * erf_calc;
     const T_partials_return deriv_2
-        = SQRT_TWO_OVER_SQRT_PI * 0.5 * exp_term
+        = INV_SQRT_TWO_PI * exp_term
           * exp(-square(scaled_diff - v_over_sqrt_two)) * inv_sigma;
     const T_partials_return deriv_3
-        = SQRT_TWO_OVER_SQRT_PI * 0.5 * exp(-square(scaled_diff)) * inv_sigma;
+        = INV_SQRT_TWO_PI * exp(-square(scaled_diff)) * inv_sigma;
 
     const T_partials_return cdf_n
         = 0.5 + 0.5 * erf(u / (v * SQRT_TWO)) - exp_term * erf_calc;
@@ -98,7 +98,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf(
     if (!is_constant_all<T_inv_scale>::value) {
       ops_partials.edge4_.partials_[n]
           += exp_term
-             * (SQRT_TWO_OVER_SQRT_PI * 0.5 * sigma_dbl
+             * (INV_SQRT_TWO_PI * sigma_dbl
                     * exp(-square(v_over_sqrt_two - scaled_diff))
                 - (v * sigma_dbl - diff) * erf_calc)
              / cdf_n;

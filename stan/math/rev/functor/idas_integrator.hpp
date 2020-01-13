@@ -2,8 +2,8 @@
 #define STAN_MATH_REV_FUNCTOR_IDAS_INTEGRATOR_HPP
 
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/prim/err.hpp>
 #include <stan/math/rev/functor/idas_forward_system.hpp>
+#include <stan/math/prim/err.hpp>
 #include <idas/idas.h>
 #include <sunmatrix/sunmatrix_dense.h>
 #include <sunlinsol/sunlinsol_dense.h>
@@ -31,7 +31,7 @@ class idas_integrator {
   void init_sensitivity(Dae& dae);
 
   /**
-   * Placeholder for data-only idas_forword_system, no sensitivty
+   * Placeholder for data-only idas_forward_system, no sensitivty
    *
    * @tparam F DAE functor type.
    * @param[in] dae DAE system
@@ -47,12 +47,13 @@ class idas_integrator {
   // \endcond
 
   /**
-   *  idas adjoint sens calculation requires different initialization
+   * IDAS adjoint sens calculation requires different initialization
    *
    * @tparam F type of DAE RHS functor
    * @tparam Tyy type of DAE primary unknowns
    * @tparam Typ type of DAE derivative unknowns
    * @tparam Tpar type of DAE parameters.
+   *
    * @param[out] dae DAE system
    * @param[in] t0 initial time.
    * @param[in] ts times of the desired solutions
@@ -265,6 +266,7 @@ void idas_integrator::solve(Dae& dae, const double& t0,
     ++i;
   });
 }
+
 }  //   namespace math
 }  //   namespace stan
 

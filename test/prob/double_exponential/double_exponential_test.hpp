@@ -102,11 +102,11 @@ class AgradDistributionsDoubleExponential : public AgradDistributionTest {
   typename stan::return_type<T_y, T_loc, T_scale>::type log_prob_function(
       const T_y& y, const T_loc& mu, const T_scale& sigma, const T3&, const T4&,
       const T5&) {
-    using stan::math::NEG_LOG_TWO;
+    using stan::math::LOG_TWO;
     using std::fabs;
     using std::log;
 
-    return NEG_LOG_TWO - log(sigma) - fabs(y - mu) / sigma;
+    return -LOG_TWO - log(sigma) - fabs(y - mu) / sigma;
   }
 };
 
