@@ -59,9 +59,8 @@ T lgamma_stirling_diff(const T x) {
     T inv_x_squared = square(inv_x);
     T inv_x_cubed = inv_x * inv_x_squared;
     T inv_x_fifth = inv_x_cubed * inv_x_squared;
-    return stirling_series[0] * inv_x 
-      + stirling_series[1] * inv_x_cubed
-      + stirling_series[2] * inv_x_fifth;
+    return stirling_series[0] * inv_x + stirling_series[1] * inv_x_cubed
+           + stirling_series[2] * inv_x_fifth;
   }
 }
 
