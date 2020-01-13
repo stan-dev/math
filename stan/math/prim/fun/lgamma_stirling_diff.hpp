@@ -55,13 +55,13 @@ T lgamma_stirling_diff(const T x) {
         -0.000595238095238095238095238,
     };
     constexpr int n_stirling_terms = 3;
-    T result(0.0);
-    T multiplier = inv(x);
-    T inv_x_squared = inv(square(x));
-    for (int n = 0; n < n_stirling_terms; n++, multiplier *= inv_x_squared) {
-      result += stirling_series[n] * multiplier;
-    }
-    return result;
+    T inv_x = inv(x);
+    T inv_x_squared = square(inv_x);
+    T inv_x_cubed = inv_x * inv_x_squared;
+    T inv_x_fifth = inv_x_cubed * inv_x_squared;
+    return stirling_series[0] * inv_x 
+      + stirling_series[1] * inv_x_cubed
+      + stirling_series[2] * inv_x_fifth;
   }
 }
 
