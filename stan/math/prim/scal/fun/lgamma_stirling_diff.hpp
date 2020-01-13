@@ -2,63 +2,67 @@
 #define STAN_MATH_PRIM_SCAL_FUN_LGAMMA_STIRLING_DIFF_HPP
 
 #include <cmath>
-//#include <boost/math/special_functions/chebyshev_transform.hpp>
+#include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/constants.hpp>
 #include <stan/math/prim/scal/fun/lgamma.hpp>
+#include <stan/math/prim/scal/fun/inv.hpp>
+#include <stan/math/prim/scal/fun/square.hpp>
 #include <stan/math/prim/scal/fun/lgamma_stirling.hpp>
+#include <stan/math/prim/err/check_nonnegative.hpp>
+
 
 namespace stan {
 namespace math {
 
-namespace internal {
-constexpr double lgamma_stirling_diff_big = 1e10;
-}
+constexpr double lgamma_stirling_diff_useful = 10;
 
-// namespace lgamma_stirling_diff_internal {
-//     typedef long double Real;
+/**
+ * Return the difference between log of the gamma function and it's Stirling 
+ * approximation.
+ * This is useful to stably compute log of ratios of gamma functions with large
+ * arguments where the Stirling approximation allows for analytic solution 
+ * and the (small) differences can be added afterwards. 
+ * This is for example used in the implementation of lbeta.
+ * 
+ * The function will return correct value for all arguments, but the can add
+ * precision only when x >= lgamma_stirling_diff_useful.
+ *
+   \f[
+   \mbox{lgamma_stirling_diff}(x) =
+    \log(\Gamma(x)) - \frac{1}{2} \log(2\pi) + 
+    (x-\frac{1}{2})*\log(x) - x
+   \f]
 
-//     boost::math::chebyshev_transform<Real>
-//     build_lgamma_stirling_diff_chebyshev() {
-//         std::cout << "Size: " << sizeof(Real) << std::endl;
-//         auto f = [](Real t) {
-//             Real x = 10 * std::sqrt(2 / (t + 1));
-//             if(x > internal::lgamma_stirling_diff_big) {
-//                 return 1.0 / (12.0 * x);
-//             } else {
-//                 Real stirling = 0.5
-//                     * std::log(2* static_cast<Real>(stan::math::pi()))
-//                     + (x - 0.5)*std::log(x) -x;
-//                 return (std::lgamma(x) - stirling);
-//             }
-//         };
-//         auto transform = boost::math::chebyshev_transform<Real>(f, -1, 1,
-//         1e-8); std::cout << "Coeffs: " << transform.coefficients().size() <<
-//         std::endl;
-//         //std::cout << transform.coefficients()[0];
-//         size_t coeffs_to_print =
-//             std::min(size_t(20), transform.coefficients().size());
-//         for(size_t i = 0; i < coeffs_to_print ; i ++) {
-//             std::cout << std::setprecision(17) << transform.coefficients()[i]
-//                 << std::endl;
-//         }
-//         return transform;
-//     }
+ *
+ * @param x value
+ * @return Difference between lgamma(x) and it's Stirling approximation.
+ * @tparam T Type of  value.
+ */
 
-//     boost::math::chebyshev_transform<Real> lgamma_stirling_diff_chebyshev =
-//         build_lgamma_stirling_diff_chebyshev();
-// }
+template <typename T>
+T lgamma_stirling_diff(const T x) {  
+    static const char* function = "lgamma_stirling_diff";
+    check_nonnegative(function, "argument", x);
 
-double lgamma_stirling_diff(const double x) {
-  if (x < internal::lgamma_stirling_diff_big) {
-    return std::lgamma(static_cast<long double>(x))
-           - lgamma_stirling(static_cast<long double>(x));
-
-    // double ten_over_x = 10.0 / x;
-    // double t = ten_over_x * ten_over_x * 2 - 1;
-    // return internal::lgamma_stirling_diff_chebyshev(t);
-  } else {
-    return 1.0 / (12.0 * x);
-  }
+    if (value_of(x) < lgamma_stirling_diff_useful) {
+        return lgamma(x) - lgamma_stirling(x);
+    } else {
+        // Using the Stirling series as expressed in formula 5.11.1. at
+        // https://dlmf.nist.gov/5.11
+        constexpr double stirling_series[] = {
+            0.0833333333333333333333333,  -0.00277777777777777777777778,
+            0.000793650793650793650793651,-0.000595238095238095238095238,
+            };
+        constexpr int n_stirling_terms = 3;
+        T result(0.0);
+        T multiplier = inv(x);
+        T inv_x_squared = inv(square(x));
+        for(int n = 0; n < n_stirling_terms; 
+                n++, multiplier *= inv_x_squared) {
+            result += stirling_series[n] * multiplier;
+        }
+        return result;
+    }
 }
 
 }  // namespace math
