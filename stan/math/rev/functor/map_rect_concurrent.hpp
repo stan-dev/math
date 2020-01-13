@@ -2,7 +2,7 @@
 #define STAN_MATH_REV_FUNCTOR_MAP_RECT_CONCURRENT_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
+#include <stan/math/prim/fun/typedefs.hpp>
 #include <stan/math/prim/functor/map_rect_concurrent.hpp>
 #include <stan/math/prim/functor/map_rect_reduce.hpp>
 #include <stan/math/prim/functor/map_rect_combine.hpp>

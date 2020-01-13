@@ -3,10 +3,10 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/mat/fun/log_determinant_ldlt.hpp>
-#include <stan/math/prim/mat/fun/sum.hpp>
-#include <stan/math/prim/mat/fun/trace_gen_inv_quad_form_ldlt.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/fun/log_determinant_ldlt.hpp>
+#include <stan/math/prim/fun/sum.hpp>
+#include <stan/math/prim/fun/trace_gen_inv_quad_form_ldlt.hpp>
+#include <stan/math/prim/fun/constants.hpp>
 
 namespace stan {
 namespace math {

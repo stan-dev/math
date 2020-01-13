@@ -3,10 +3,10 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/mat/fun/make_nu.hpp>
+#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/make_nu.hpp>
+#include <stan/math/prim/fun/multiply.hpp>
 #include <stan/math/prim/prob/lkj_corr_log.hpp>
-#include <stan/math/prim/mat/fun/log.hpp>
-#include <stan/math/prim/mat/fun/multiply.hpp>
 
 namespace stan {
 namespace math {

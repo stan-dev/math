@@ -3,11 +3,11 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/erf.hpp>
-#include <stan/math/prim/scal/fun/erfc.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/erf.hpp>
+#include <stan/math/prim/fun/erfc.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <cmath>
 
 namespace stan {
@@ -70,7 +70,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
         = (y_dbl - mu_dbl) * inv_sigma[n];
 
     if (include_summand<propto>::value) {
-      logp -= 0.5 * LOG_TWO_PI;
+      logp -= HALF_LOG_TWO_PI;
     }
     if (include_summand<propto, T_scale>::value) {
       logp -= log(sigma_dbl);

@@ -1,5 +1,5 @@
 // Arguments: Ints, Ints, Doubles, Doubles
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 #include <boost/math/special_functions/binomial.hpp>
 
 using stan::math::var;

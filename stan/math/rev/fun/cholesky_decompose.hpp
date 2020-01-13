@@ -2,14 +2,14 @@
 #define STAN_MATH_REV_FUN_CHOLESKY_DECOMPOSE_HPP
 
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/value_of_rec.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
-#include <stan/math/rev/core.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
-#include <stan/math/prim/mat/fun/cholesky_decompose.hpp>
-#include <stan/math/prim/mat/fun/value_of_rec.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/typedefs.hpp>
+#include <stan/math/prim/fun/cholesky_decompose.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/rev/opencl.hpp>
@@ -20,8 +20,8 @@
 
 namespace stan {
 namespace math {
-
 namespace internal {
+
 /**
  * Set the lower right triangular of a var matrix given a set of vari**
  *
@@ -45,6 +45,7 @@ inline void set_lower_tri_coeff_ref(Eigen::Matrix<var, -1, -1>& L,
   return;
 }
 }  // namespace internal
+
 class cholesky_block : public vari {
  public:
   int M_;
@@ -54,7 +55,7 @@ class cholesky_block : public vari {
   vari** vari_ref_L_;
 
   /**
-   * Constructor for cholesky function.
+   * Constructor for Cholesky function.
    *
    * Stores varis for A.  Instantiates and stores varis for L.
    * Instantiates and stores dummy vari for upper triangular part of var
@@ -67,7 +68,7 @@ class cholesky_block : public vari {
    * block_size_ determined using the same calculation Eigen/LLT.h
    *
    * @param A matrix
-   * @param L_A matrix, cholesky factor of A
+   * @param L_A matrix, Cholesky factor of A
    */
   cholesky_block(const Eigen::Matrix<var, -1, -1>& A,
                  const Eigen::Matrix<double, -1, -1>& L_A)
@@ -90,9 +91,9 @@ class cholesky_block : public vari {
   }
 
   /**
-   * Symbolic adjoint calculation for cholesky factor A
+   * Symbolic adjoint calculation for Cholesky factor A
    *
-   * @param L cholesky factor
+   * @param L Cholesky factor
    * @param L_adj matrix of adjoints of L
    */
   inline void symbolic_rev(Block_& L, Block_& L_adj) {
@@ -108,7 +109,7 @@ class cholesky_block : public vari {
   }
 
   /**
-   * Reverse mode differentiation algorithm refernce:
+   * Reverse mode differentiation algorithm reference:
    *
    * Iain Murray: Differentiation of the Cholesky decomposition, 2016.
    *
@@ -170,9 +171,9 @@ class cholesky_scalar : public vari {
   vari** vari_ref_L_;
 
   /**
-   * Constructor for cholesky function.
+   * Constructor for Cholesky function.
    *
-   * Stores varis for A Instantiates and stores varis for L Instantiates
+   * Stores varis for A.  Instantiates and stores varis for L.  Instantiates
    * and stores dummy vari for upper triangular part of var result returned
    * in cholesky_decompose function call
    *
@@ -181,7 +182,7 @@ class cholesky_scalar : public vari {
    * cholesky_decompose.
    *
    * @param A matrix
-   * @param L_A matrix, cholesky factor of A
+   * @param L_A matrix, Cholesky factor of A
    */
   cholesky_scalar(const Eigen::Matrix<var, -1, -1>& A,
                   const Eigen::Matrix<double, -1, -1>& L_A)
@@ -206,7 +207,7 @@ class cholesky_scalar : public vari {
   }
 
   /**
-   * Reverse mode differentiation algorithm refernce:
+   * Reverse mode differentiation algorithm reference:
    *
    * Mike Giles. An extended collection of matrix derivative results for
    * forward and reverse mode AD.  Jan. 2008.
@@ -251,6 +252,7 @@ class cholesky_scalar : public vari {
     }
   }
 };
+
 #ifdef STAN_OPENCL
 class cholesky_opencl : public vari {
  public:
@@ -259,7 +261,7 @@ class cholesky_opencl : public vari {
   vari** vari_ref_L_;
 
   /**
-   * Constructor for OpenCL cholesky function.
+   * Constructor for OpenCL Cholesky function.
    *
    * Stores varis for A.  Instantiates and stores varis for L.
    * Instantiates and stores dummy vari for upper triangular part of var
@@ -269,9 +271,8 @@ class cholesky_opencl : public vari {
    * and computation. Note that varis for L are constructed externally in
    * cholesky_decompose.
    *
-   *
    * @param A matrix
-   * @param L_A matrix, cholesky factor of A
+   * @param L_A Cholesky factor of A
    */
   cholesky_opencl(const Eigen::Matrix<var, -1, -1>& A,
                   const Eigen::Matrix<double, -1, -1>& L_A)
@@ -292,9 +293,9 @@ class cholesky_opencl : public vari {
   }
 
   /**
-   * Symbolic adjoint calculation for cholesky factor A
+   * Symbolic adjoint calculation for Cholesky factor A
    *
-   * @param L cholesky factor
+   * @param L Cholesky factor
    */
   inline void symbolic_rev(matrix_cl<var>& L) {
     L.adj() = transpose(L.val()) * L.adj();
@@ -363,7 +364,7 @@ class cholesky_opencl : public vari {
 #endif
 
 /**
- * Reverse mode specialization of cholesky decomposition
+ * Reverse mode specialization of Cholesky decomposition
  *
  * Internally calls Eigen::LLT rather than using
  * stan::math::cholesky_decompose in order to use an inplace decomposition.
@@ -371,7 +372,7 @@ class cholesky_opencl : public vari {
  * Note chainable stack varis are created below in Matrix<var, -1, -1>
  *
  * @param A Matrix
- * @return L cholesky factor of A
+ * @return L Cholesky factor of A
  */
 inline Eigen::Matrix<var, -1, -1> cholesky_decompose(
     const Eigen::Matrix<var, -1, -1>& A) {
@@ -423,6 +424,7 @@ inline Eigen::Matrix<var, -1, -1> cholesky_decompose(
 
   return L;
 }
+
 }  // namespace math
 }  // namespace stan
 #endif

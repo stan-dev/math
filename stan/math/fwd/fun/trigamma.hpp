@@ -3,7 +3,7 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/scal/fun/trigamma.hpp>
+#include <stan/math/prim/fun/trigamma.hpp>
 
 namespace stan {
 namespace math {

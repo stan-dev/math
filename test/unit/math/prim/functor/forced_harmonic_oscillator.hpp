@@ -1,7 +1,7 @@
 #ifndef TEST_UNIT_MATH_ODE_FORCED_HARMONIC_OSCILLATOR
 #define TEST_UNIT_MATH_ODE_FORCED_HARMONIC_OSCILLATOR
 
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 #include <stdexcept>
 #include <vector>
 

@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_FWD_FUN_MULTIPLY_LOWER_TRI_SELF_TRANSPOSE_HPP
 #define STAN_MATH_FWD_FUN_MULTIPLY_LOWER_TRI_SELF_TRANSPOSE_HPP
 
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/transpose.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/transpose.hpp>
 #include <stan/math/fwd/fun/multiply.hpp>
 #include <vector>
 

@@ -3,10 +3,10 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
-#include <stan/math/prim/scal/fun/log1p.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/fun/log1p.hpp>
 #include <cmath>
 
 namespace stan {
@@ -85,7 +85,7 @@ return_type_t<T_y, T_loc, T_scale> cauchy_lpdf(const T_y& y, const T_loc& mu,
         = y_minus_mu_over_sigma * y_minus_mu_over_sigma;
 
     if (include_summand<propto>::value) {
-      logp += NEG_LOG_PI;
+      logp -= LOG_PI;
     }
     if (include_summand<propto, T_scale>::value) {
       logp -= log_sigma[n];

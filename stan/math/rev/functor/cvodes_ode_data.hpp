@@ -2,8 +2,8 @@
 #define STAN_MATH_REV_FUNCTOR_CVODES_ODE_DATA_HPP
 
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/prim/functor/coupled_ode_system.hpp>
 #include <stan/math/rev/functor/coupled_ode_system.hpp>
+#include <stan/math/prim/functor/coupled_ode_system.hpp>
 #include <cvodes/cvodes.h>
 #include <sunmatrix/sunmatrix_dense.h>
 #include <sunlinsol/sunlinsol_dense.h>
@@ -22,7 +22,6 @@ namespace math {
  * @tparam T_initial type of initial values
  * @tparam T_param type of parameters
  */
-
 template <typename F, typename T_initial, typename T_param>
 class cvodes_ode_data {
   const F& f_;

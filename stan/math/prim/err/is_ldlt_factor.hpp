@@ -2,8 +2,8 @@
 #define STAN_MATH_PRIM_ERR_IS_LDLT_FACTOR_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/LDLT_factor.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/LDLT_factor.hpp>
 
 namespace stan {
 namespace math {

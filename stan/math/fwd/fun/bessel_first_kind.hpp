@@ -3,7 +3,7 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/scal/fun/bessel_first_kind.hpp>
+#include <stan/math/prim/fun/bessel_first_kind.hpp>
 
 namespace stan {
 namespace math {
