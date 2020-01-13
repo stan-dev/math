@@ -25,7 +25,7 @@ namespace math {
 template <typename T>
 T lgamma_stirling(const T x) {
   using std::log;
-  return 0.5 * log(2 * stan::math::pi()) + (x - 0.5) * log(x) - x;
+  return 0.5 * LOG_TWO_PI + (x - 0.5) * log(x) - x;
 }
 
 }  // namespace math
