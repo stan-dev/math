@@ -86,7 +86,24 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
   }
 };
 
+/**
+  This macro is used to allow passing comma as part of a parameter in another
+  macro.
+  */
 #define COMMA ,
+
+/**
+  Defines a new binary operation in kernel generator.
+  @param class_name The name of the class this macro will define to represent
+  this operation
+  @param function_name The name of the function this macro will define that will
+  be used to create this operation.
+  @param scalar_type_expr The type of the scalar in the result of this
+  operation. Can be a C++ expression that uses \c T_a and \c T_b as types of the
+  scalars in the arguments to this operation.
+  @param operation String containing operator that is used to implement this
+  operation in kernel. Should be a valid infix operator in OpenCL C.
+  */
 #define ADD_BINARY_OPERATION(class_name, function_name, scalar_type_expr,     \
                              operation)                                       \
   template <typename T_a, typename T_b>                                       \
@@ -95,7 +112,7 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
    public:                                                                    \
     class_name(T_a&& a, T_b&& b) /* NOLINT */                                 \
         : binary_operation<class_name<T_a, T_b>, scalar_type_expr, T_a, T_b>( \
-              std::forward<T_a>(a), std::forward<T_b>(b), operation) {}       \
+            std::forward<T_a>(a), std::forward<T_b>(b), operation) {}         \
   };                                                                          \
                                                                               \
   template <typename T_a, typename T_b,                                       \
@@ -106,6 +123,24 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
             as_operation_cl(std::forward<T_b>(b))};                           \
   }
 
+/**
+  Defines a new binary operation in kernel generator that needs to implement
+  custom function that determines the view of the result.
+  @param class_name The name of the class this macro will define to represent
+  this operation
+  @param function_name The name of the function this macro will define that will
+  be used to create this operation.
+  @param scalar_type_expr The type of the scalar in the result of this
+  operation. Can be a C++ expression that uses \c T_a and \c T_b as types of the
+  scalars in the arguments to this operation.
+  @param operation String containing operator that is used to implement this
+  operation in kernel. Should be a valid infix operator in OpenCL C.
+  @param ... Code that implements body of the \c .view() member function of the
+  class that represents this expression. Should return an object of type
+  matrix_cl_view. Can use \c base::arguments_ to access arguments to this
+  expression. This is a variadic argument to allow commas in code with no
+  special handling.
+  */
 #define ADD_BINARY_OPERATION_WITH_CUSTOM_VIEW(                                \
     class_name, function_name, scalar_type_expr, operation, ...)              \
   template <typename T_a, typename T_b>                                       \
@@ -114,7 +149,7 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
    public:                                                                    \
     class_name(T_a&& a, T_b&& b) /* NOLINT */                                 \
         : binary_operation<class_name<T_a, T_b>, scalar_type_expr, T_a, T_b>( \
-              std::forward<T_a>(a), std::forward<T_b>(b), operation) {}       \
+            std::forward<T_a>(a), std::forward<T_b>(b), operation) {}         \
     inline matrix_cl_view view() const { __VA_ARGS__; }                       \
   };                                                                          \
                                                                               \
