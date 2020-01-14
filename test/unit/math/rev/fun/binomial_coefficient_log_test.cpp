@@ -19,8 +19,45 @@ constexpr double NaN = std::numeric_limits<double>::quiet_NaN();
 // Test values generated in Mathematica, reproducible notebook at
 // https://www.wolframcloud.com/obj/martin.modrak/Published/binomial_coefficient_log.nb
 // Mathematica Code reproduced below for convenience:
-// TODO
 
+// bclog[n_,k_]:= LogGamma[n + 1] - LogGamma[k + 1] - LogGamma[n + 1 -k ]
+// dbclogdn[n_,k_]= D[bclog[n,k],n];
+// dbclogdk[n_,k_]= D[bclog[n,k],k];
+
+// singleTest[x_,y_]:= Module[{val, cdn,cdk},{
+// val = N[bclog[x,y],24];
+// cdn = If[x > 10^6 || y > 10^6,"NaN", CForm[N[dbclogdn[x,y],24]]];
+// cdk = If[x > 10^6 || y > 10^6,"NaN", CForm[N[dbclogdk[x,y],24]]];
+// WriteString[out,"  {",CForm[x],",",CForm[y],",",
+//            CForm[val],",",cdn,",",cdk,"},"]
+// }];
+
+// out = OpenWrite["bc_test.txt"];
+// ns= {-0.1,3*10^-5,2*10^-3,1,8, 1325,845*10^3};
+// ratios =  {-1,10^- 10,10^-5,10^-2,1/5,1/2,1-3*10^-2,1-6*10^-8, 1 -3*10^-9,2};
+// WriteString[out, "std::vector<TestValue> testValues = {"];
+// For[i = 1, i <= Length[ns], i++, {
+//   For[j = 1, j <= Length[ratios], j++, {
+//     cn = ns[[i]];
+//     ck = If[ratios[[j]] < 0,-9/10,
+//     If[ratios[[j]] > 1,cn + 9/10,cn * ratios[[j]] ]];
+//     singleTest[cn,ck];
+//   }]
+// }]
+
+// extremeNs = {3*10^15+1/2,10^20 + 1/2};
+// lowKs = {3, 100, 12895};
+// For[i = 1, i <= Length[extremeNs], i++, {
+//   For[j = 1, j <= Length[lowKs], j++, {
+//     cn = extremeNs[[i]];
+//     ck = lowKs[[j]];
+//     singleTest[cn,ck];
+//   }]
+// }]
+
+// WriteString[out,"};"];
+// Close[out];
+// FilePrint[%]
 std::vector<TestValue> testValues = {
     {-0.1, -0.9, -2.1152525390850903, -1.039918383240913, 10.708746373704937},
     {-0.1, -1.0000000000000001e-11, 1.7771062399418724e-12,
