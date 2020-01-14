@@ -53,7 +53,7 @@ TEST(MathFunctions, lbeta_identities) {
       = {1e-100, 1e-8, 1e-1, 1, 1 + 1e-6, 1e3, 1e30, 1e100};
   for (double x : to_test) {
     for (double y : to_test) {
-      std::ostringstream msg;
+      std::stringstream msg;
       msg << "successors: x = " << x << "; y = " << y;
       expect_near_rel(
           msg.str(), lbeta(x, y),
@@ -63,7 +63,7 @@ TEST(MathFunctions, lbeta_identities) {
 
   for (double x : to_test) {
     if (x < 1) {
-      std::ostringstream msg;
+      std::stringstream msg;
       msg << "sin: x = " << x;
       expect_near_rel(msg.str(), lbeta(x, 1.0 - x),
                       log(pi()) - log(sin(pi() * x)));
@@ -71,7 +71,7 @@ TEST(MathFunctions, lbeta_identities) {
   }
 
   for (double x : to_test) {
-    std::ostringstream msg;
+    std::stringstream msg;
     msg << "inv: x = " << x;
     expect_near_rel(msg.str(), lbeta(x, 1.0), -log(x));
   }
@@ -79,21 +79,22 @@ TEST(MathFunctions, lbeta_identities) {
 
 TEST(MathFunctions, lbeta_stirling_cutoff) {
   using stan::test::expect_near_rel;
+  using stan::math::lgamma_stirling_diff_useful;
 
   double after_stirling
-      = std::nextafter(stan::math::lgamma_stirling_diff_useful,
-                       std::numeric_limits<double>::infinity());
+      = std::nextafter(lgamma_stirling_diff_useful,
+                       stan::math::INFTY);
   double before_stirling
-      = std::nextafter(stan::math::lgamma_stirling_diff_useful, 0);
+      = std::nextafter(lgamma_stirling_diff_useful, 0);
   using stan::math::lbeta;
 
   std::vector<double> to_test
       = {1e-100,          1e-8,          1e-1, 1, 1 + 1e-6, 1e3, 1e30, 1e100,
          before_stirling, after_stirling};
   for (double x : to_test) {
-    std::ostringstream msg;
+    std::stringstream msg;
     msg << "before and after cutoff: x = " << x
-        << "; cutoff = " << stan::math::lgamma_stirling_diff_useful;
+        << "; cutoff = " << lgamma_stirling_diff_useful;
     expect_near_rel(msg.str(), lbeta(x, before_stirling),
                     lbeta(x, after_stirling));
     expect_near_rel(msg.str(), lbeta(before_stirling, x),

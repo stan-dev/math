@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_FUN_LGAMMA_STIRLING_HPP
 #define STAN_MATH_PRIM_FUN_LGAMMA_STIRLING_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
-#include <stan/math/prim/meta/return_type.hpp>
 #include <cmath>
 
 namespace stan {
@@ -19,9 +19,9 @@ namespace math {
    \f]
 
  *
+ * @tparam T Type of value.
  * @param x value
  * @return Stirling's approximation to lgamma(x).
- * @tparam T Type of  value.
  */
 template <typename T>
 return_type_t<T> lgamma_stirling(const T x) {

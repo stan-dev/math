@@ -1,7 +1,6 @@
-#include <gtest/gtest.h>
-#include <test/unit/math/expect_near_rel.hpp>
 #include <stan/math/prim.hpp>
-#include <stan/math/prim/fun/lgamma_stirling_diff.hpp>
+#include <test/unit/math/expect_near_rel.hpp>
+#include <gtest/gtest.h>
 #include <limits>
 #include <vector>
 #include <cmath>

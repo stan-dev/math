@@ -1,5 +1,5 @@
-#include <test/unit/math/expect_near_rel.hpp>
 #include <stan/math/prim.hpp>
+#include <test/unit/math/expect_near_rel.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 #include <vector>
@@ -16,7 +16,7 @@ struct TestValue {
 };
 
 constexpr double NaN = std::numeric_limits<double>::quiet_NaN();
-// Test values generated in Mathematice, reproducible notebook at
+// Test values generated in Mathematica, reproducible notebook at
 // https://www.wolframcloud.com/obj/martin.modrak/Published/lbeta.nb
 // Mathematica Code reproduced below for convenience:
 //
