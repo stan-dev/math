@@ -4,13 +4,14 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/is_any_nan.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/lgamma_stirling.hpp>
 #include <stan/math/prim/fun/lgamma_stirling_diff.hpp>
 #include <stan/math/prim/fun/log_sum_exp.hpp>
+#include <stan/math/prim/fun/log1m.hpp>
 #include <stan/math/prim/fun/multiply_log.hpp>
-#include <stan/math/prim/fun/inv.hpp>
 
 namespace stan {
 namespace math {
