@@ -9,6 +9,7 @@
 #include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/lgamma_stirling.hpp>
 #include <stan/math/prim/err/check_nonnegative.hpp>
+#include <stan/math/prim/meta/return_type.hpp>
 
 namespace stan {
 namespace math {
@@ -39,11 +40,18 @@ constexpr double lgamma_stirling_diff_useful = 10;
  */
 
 template <typename T>
-T lgamma_stirling_diff(const T x) {
+return_type_t<T> lgamma_stirling_diff(const T x) {
+  if (is_nan(value_of_rec(x))) {
+    return std::numeric_limits<double>::quiet_NaN();
+  }
+  typedef return_type_t<T> T_Ret;
+
   static const char* function = "lgamma_stirling_diff";
   check_nonnegative(function, "argument", x);
 
-  if (value_of(x) < lgamma_stirling_diff_useful) {
+  if(x == 0) {
+    return std::numeric_limits<double>::infinity();
+  } else if (value_of(x) < lgamma_stirling_diff_useful) {
     return lgamma(x) - lgamma_stirling(x);
   } else {
     // Using the Stirling series as expressed in formula 5.11.1. at
@@ -55,10 +63,10 @@ T lgamma_stirling_diff(const T x) {
         -0.000595238095238095238095238,
     };
     constexpr int n_stirling_terms = 3;
-    T inv_x = inv(x);
-    T inv_x_squared = square(inv_x);
-    T inv_x_cubed = inv_x * inv_x_squared;
-    T inv_x_fifth = inv_x_cubed * inv_x_squared;
+    T_Ret inv_x = inv(x);
+    T_Ret inv_x_squared = square(inv_x);
+    T_Ret inv_x_cubed = inv_x * inv_x_squared;
+    T_Ret inv_x_fifth = inv_x_cubed * inv_x_squared;
     return stirling_series[0] * inv_x + stirling_series[1] * inv_x_cubed
            + stirling_series[2] * inv_x_fifth;
   }

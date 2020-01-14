@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <limits>
+#include <algorithm>
 
 namespace stan {
 namespace test {

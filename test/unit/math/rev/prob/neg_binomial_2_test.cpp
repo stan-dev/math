@@ -16,11 +16,37 @@ struct TestValue {
   double grad_phi;
 };
 
-// Test data generated in Mathematica (Wolfram Cloud). The code can be re-ran
-// at https://www.wolframcloud.com/env/martin.modrak/NegBinomial2_Tests.nb
+// Test data generated in Mathematica (Wolfram Cloud). The code can be re-ran at
+// https://www.wolframcloud.com/obj/martin.modrak/Published/neg_binomial_2_lpmf.nb
 // but is also presented below for convenience:
-//
-// TODO[martinmodrak] add updated code here
+// 
+// nb2[n_,mu_,phi_]:= LogGamma[n + phi] - LogGamma[n + 1] - LogGamma[phi] + 
+//    n * (Log[mu] - Log[mu + phi]) + phi * (Log[phi] - Log[mu + phi])
+// nb2dmu[n_,mu_,phi_]= D[nb2[n, mu, phi],mu];
+// nb2dphi[n_,mu_,phi_]= D[nb2[n, mu, phi],phi];
+// out = OpenWrite["nb_test.txt"] 
+// mus= {256*10^-7,314*10^-3,15*10^-1,3,180,  1123,10586};
+// phis=  {4*10^-4,65*10^-3,442*10^-2,800, 15324};
+// ns = {0,6,14,1525,10233};
+// WriteString[out, "std::vector<TestValue> testValues = {"];
+//   For[k = 1, k <= Length[ns], k++, {
+//     For[i = 1, i <= Length[mus], i++, {
+//       For[j = 1, j <= Length[phis], j++, {
+//         cmu = mus[[i]];
+//         cphi = phis[[j]];
+//         cn=ns[[k]];
+//         val = N[nb2[cn,cmu,cphi], 24];
+//         ddmu= N[nb2dmu[cn,cmu,cphi], 24];
+//         ddphi= N[nb2dphi[cn,cmu,cphi], 24];
+//         WriteString[out," {",CForm[cn],",",CForm[cmu],",",
+//           CForm[cphi],",", CForm[val],",",CForm[ddmu],",",CForm[ddphi],"},"]
+//       }]
+//     }]
+//   }]
+// WriteString[out,"};"];
+// Close[out];
+// FilePrint[%]
+// 
 std::vector<TestValue> testValues = {
     {0, 0.0000256, 0.0004, -0.0000248141563677810565248409,
      -0.93984962406015037593985, -0.0018850149796030172519518},
@@ -438,7 +464,6 @@ TEST(ProbDistributionsNegBinomial2, derivativesComplexStep) {
            + n_ * log(mu);
   };
 
-  double phi_cutoff = stan::math::internal::neg_binomial_2_phi_cutoff;
   for (double mu_dbl : mu_to_test) {
     for (int n : n_to_test) {
       for (double phi_dbl = 1.5; phi_dbl < 1e22; phi_dbl *= 10) {
@@ -478,17 +503,17 @@ TEST(ProbDistributionsNegBinomial2, derivativesComplexStep) {
 
         double tolerance_phi;
         double tolerance_mu;
-        if (phi < phi_cutoff || n < 100000) {
-          tolerance_phi = std::max(1e-10, fabs(gradients[1]) * 1e-8);
-        } else {
+        // if (phi < phi_cutoff || n < 100000) {
+        //   tolerance_phi = std::max(1e-10, fabs(gradients[1]) * 1e-8);
+        // } else {
           tolerance_phi = std::max(1e-8, fabs(gradients[1]) * 1e-5);
-        }
+        // }
 
-        if (phi < phi_cutoff) {
+        // if (phi < phi_cutoff) {
           tolerance_mu = std::max(1e-10, fabs(gradients[0]) * 1e-8);
-        } else {
-          tolerance_mu = std::max(1e-8, fabs(gradients[0]) * 1e-5);
-        }
+        // } else {
+        //   tolerance_mu = std::max(1e-8, fabs(gradients[0]) * 1e-5);
+        // }
 
         EXPECT_NEAR(gradients[0], complex_step_dmu, tolerance_mu)
             << "grad_mu" << message.str();
@@ -546,79 +571,6 @@ TEST(ProbDistributionsNegBinomial2, derivativesZeroOne) {
       double expected_dmu_1
           = (phi_dbl * (1 - mu_dbl)) / (mu_dbl * (mu_dbl + phi_dbl));
       expect_near_rel("dmu, n = 1 " + msg.str(), gradients1[0], expected_dmu_1);
-    }
-  }
-}
-
-TEST(ProbDistributionsNegBinomial2, proptoAtPoissonCutoff) {
-  using stan::math::internal::neg_binomial_2_phi_cutoff;
-  using stan::math::neg_binomial_2_lpmf;
-  using stan::math::var;
-
-  var mu_var(10);
-  int y = 11;
-  var value_before_cutoff = neg_binomial_2_lpmf<true, int, var, double>(
-      y, mu_var, neg_binomial_2_phi_cutoff - 1e-8);
-  var value_after_cutoff = neg_binomial_2_lpmf<true, int, var, double>(
-      y, mu_var, neg_binomial_2_phi_cutoff + 1e-8);
-
-  EXPECT_NEAR(value_of(value_before_cutoff), value_of(value_after_cutoff), 1);
-}
-
-TEST(ProbDistributionsNegBinomial2, derivativesAtCutoff) {
-  double phi_cutoff = stan::math::internal::neg_binomial_2_phi_cutoff;
-  using stan::math::is_nan;
-  using stan::math::var;
-
-  std::vector<double> mu_to_test
-      = {9.3e-6, 0.0028252, 4, 11, 8522, 984256, 5036842};
-  std::vector<int> n_to_test = {0, 1, 5, 48, 1158, 224582, 48235842, 20314458};
-  for (double mu : mu_to_test) {
-    for (int n : n_to_test) {
-      var mu_before(mu);
-      var phi_before(phi_cutoff - 1e-8);
-      var value_before = neg_binomial_2_lpmf(n, mu_before, phi_before);
-      std::vector<var> x_before;
-      x_before.push_back(mu_before);
-      x_before.push_back(phi_before);
-
-      std::vector<double> gradients_before;
-      value_before.grad(x_before, gradients_before);
-
-      var mu_after(mu);
-      var phi_after(phi_cutoff + 1e-8);
-      var value_after = neg_binomial_2_lpmf(n, mu_after, phi_after);
-      std::vector<var> x_after;
-      x_after.push_back(mu_after);
-      x_after.push_back(phi_after);
-
-      std::vector<double> gradients_after;
-      value_after.grad(x_after, gradients_after);
-
-      for (int i = 0; i < 2; ++i) {
-        EXPECT_FALSE(is_nan(gradients_before[i]));
-        EXPECT_FALSE(is_nan(gradients_after[i]));
-      }
-
-      EXPECT_NEAR(value_of(value_before), value_of(value_after),
-                  1e-8 * fabs(value_of(value_after)))
-          << "value changes too much around phi cutoff for n = " << n
-          << ", mu = " << mu << ", cutoff = " << phi_cutoff
-          << " value at cutoff - 1e-8: " << value_of(value_before)
-          << ", value at cutoff + 1e-8: " << value_of(value_after);
-      EXPECT_NEAR(gradients_before[0], gradients_after[0],
-                  1e-8 * fabs(gradients_before[0]))
-          << "grad_mu changes too much around phi cutoff for n = " << n
-          << ", mu = " << mu << ", cutoff = " << phi_cutoff
-          << " grad_mu at cutoff - 1e-8: " << gradients_before[0]
-          << ", grad_mu at cutoff + 1e-8: " << gradients_after[0];
-
-      EXPECT_NEAR(gradients_before[1], gradients_after[1],
-                  1e-8 * fabs(gradients_before[1]))
-          << "grad_phi changes too much around phi cutoff for n = " << n
-          << ", mu = " << mu << ", cutoff = " << phi_cutoff
-          << " grad_phi at cutoff - 1e-8: " << gradients_before[1]
-          << ", grad_phi at cutoff + 1e-8: " << gradients_after[1];
     }
   }
 }

@@ -4,6 +4,7 @@
 #include <cmath>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/meta/return_type.hpp>
 
 namespace stan {
 namespace math {
@@ -23,8 +24,7 @@ namespace math {
  * @tparam T Type of  value.
  */
 template <typename T>
-T lgamma_stirling(const T x) {
-  using std::log;
+return_type_t<T> lgamma_stirling(const T x) {
   return 0.5 * LOG_TWO_PI + (x - 0.5) * log(x) - x;
 }
 
