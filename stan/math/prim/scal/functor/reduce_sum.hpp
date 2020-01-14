@@ -19,49 +19,40 @@ namespace math {
 
 namespace internal {
 
+
 // base definition => compile error
-template <class ReduceFunction, class M, class T, class Arg1, class Arg2,
-          class Arg3, class Arg4, class T_return_type>
+template <typename ReduceFunction, typename Enable = void, typename M, typename T, typename... Args>
 struct reduce_sum_impl {};
 
-template <class ReduceFunction, class M, class T, class Arg1, class Arg2,
-          class Arg3, class Arg4>
-struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, double> {
+// todo, double check if I need enable if here
+template <typename ReduceFunction, typename M, typename T, typename... Args>
+struct reduce_sum_impl<ReduceFunction, M, T, double, Args...> {
   using vmapped_t = std::vector<M>;
   using arg1_t = std::vector<Arg1>;
   using arg2_t = std::vector<Arg2>;
   using arg3_t = std::vector<Arg3>;
   using arg4_t = std::vector<Arg4>;
-
-  struct recursive_reducer {
-    const vmapped_t& vmapped_;
-    const arg1_t& arg1_;
-    const arg2_t& arg2_;
-    const arg3_t& arg3_;
-    const arg4_t& arg4_;
-    T terms_sum_;
-
-    recursive_reducer(const vmapped_t& vmapped, const T& init,
-                      const arg1_t& arg1, const arg2_t& arg2,
-                      const arg3_t& arg3, const arg4_t& arg4)
+  std::tuple<std::vector<Args>...> arg_;
+  const vmapped_t& vmapped_;
+  const arg1_t& arg1_;
+  const arg2_t& arg2_;
+  const arg3_t& arg3_;
+  const arg4_t& arg4_;
+  T terms_sum_;
+    reduce_sum_impl(const vmapped_t& vmapped, const T& init, Args&&... args)
         : vmapped_(vmapped),
-          arg1_(arg1),
-          arg2_(arg2),
-          arg3_(arg3),
-          arg4_(arg4),
+          arg_(std::make_tuple(std::forward<Args>(args)...))
           terms_sum_(value_of(init)) {}
 
-    recursive_reducer(recursive_reducer& other, tbb::split)
+    reduce_sum_impl(reduce_sum_impl& other, tbb::split)
         : vmapped_(other.vmapped_),
-          arg1_(other.arg1_),
-          arg2_(other.arg2_),
-          arg3_(other.arg3_),
-          arg4_(other.arg4_),
-          terms_sum_(0.0) {}
+        arg_(other.arg_),
+        terms_sum_(0.0) {}
 
     void operator()(const tbb::blocked_range<size_t>& r) {
-      if (r.empty())
+      if (r.empty()) {
         return;
+      }
 
       auto start = vmapped_.begin();
       std::advance(start, r.begin());
@@ -74,96 +65,19 @@ struct reduce_sum_impl<ReduceFunction, M, T, Arg1, Arg2, Arg3, Arg4, double> {
                                      arg2_, arg3_, arg4_);
     }
 
-    void join(const recursive_reducer& child) {
+    void join(const reduce_sum_impl& child) {
       terms_sum_ += child.terms_sum_;
     }
-  };
 
+  // Todo: Better name for this than operator(), collect()?
+  template <typename... OtherArgs>
   T operator()(const vmapped_t& vmapped, T init, std::size_t grainsize,
-               const arg1_t& arg1, const arg2_t& arg2, const arg3_t& arg3,
-               const arg4_t& arg4) const {
+               Args&&... args) const {
     const std::size_t num_jobs = vmapped.size();
-    recursive_reducer worker(vmapped, init, arg1, arg2, arg3, arg4);
+    reduce_sum_impl<ReduceFunction, M, T, OtherArgs...> worker(vmapped, init, args...);
     tbb::parallel_reduce(
         tbb::blocked_range<std::size_t>(0, num_jobs, grainsize), worker);
     return std::move(worker.terms_sum_);
-  }
-};
-
-/* The reduce_function_arg_adapter adapts the user functor to
- * conventions used in the reduce_sum functions. While the user
- * functor is allowed to specify optionally up to 4 additional
- * arguments, the reduce_sum functions always expect 4
- * arguments. Thus, the call of the reduce_sum functions with 4
- * arguments get adapted to the user functors by dropping the
- * arguments which are not used.
- */
-// default gives a compile time error
-template <class ReduceFunction, int optional_args>
-struct reduce_function_arg_adapter {};
-
-template <class ReduceFunction>
-struct reduce_function_arg_adapter<ReduceFunction, 4> {
-  template <class M, class Arg1, class Arg2, class Arg3, class Arg4>
-  inline auto operator()(std::size_t start, std::size_t end,
-                         const std::vector<M>& vmapped_slice,
-                         const std::vector<Arg1>& arg1,
-                         const std::vector<Arg2>& arg2,
-                         const std::vector<Arg3>& arg3,
-                         const std::vector<Arg4>& arg4) const {
-    return ReduceFunction()(start, end, vmapped_slice, arg1, arg2, arg3, arg4);
-  }
-};
-
-template <class ReduceFunction>
-struct reduce_function_arg_adapter<ReduceFunction, 3> {
-  template <class M, class Arg1, class Arg2, class Arg3, class Arg4>
-  inline auto operator()(std::size_t start, std::size_t end,
-                         const std::vector<M>& vmapped_slice,
-                         const std::vector<Arg1>& arg1,
-                         const std::vector<Arg2>& arg2,
-                         const std::vector<Arg3>& arg3,
-                         const std::vector<Arg4>& arg4) const {
-    return ReduceFunction()(start, end, vmapped_slice, arg1, arg2, arg3);
-  }
-};
-
-template <class ReduceFunction>
-struct reduce_function_arg_adapter<ReduceFunction, 2> {
-  template <class M, class Arg1, class Arg2, class Arg3, class Arg4>
-  inline auto operator()(std::size_t start, std::size_t end,
-                         const std::vector<M>& vmapped_slice,
-                         const std::vector<Arg1>& arg1,
-                         const std::vector<Arg2>& arg2,
-                         const std::vector<Arg3>& arg3,
-                         const std::vector<Arg4>& arg4) const {
-    return ReduceFunction()(start, end, vmapped_slice, arg1, arg2);
-  }
-};
-
-template <class ReduceFunction>
-struct reduce_function_arg_adapter<ReduceFunction, 1> {
-  template <class M, class Arg1, class Arg2, class Arg3, class Arg4>
-  inline auto operator()(std::size_t start, std::size_t end,
-                         const std::vector<M>& vmapped_slice,
-                         const std::vector<Arg1>& arg1,
-                         const std::vector<Arg2>& arg2,
-                         const std::vector<Arg3>& arg3,
-                         const std::vector<Arg4>& arg4) const {
-    return ReduceFunction()(start, end, vmapped_slice, arg1);
-  }
-};
-
-template <class ReduceFunction>
-struct reduce_function_arg_adapter<ReduceFunction, 0> {
-  template <class M, class Arg1, class Arg2, class Arg3, class Arg4>
-  inline auto operator()(std::size_t start, std::size_t end,
-                         const std::vector<M>& vmapped_slice,
-                         const std::vector<Arg1>& arg1,
-                         const std::vector<Arg2>& arg2,
-                         const std::vector<Arg3>& arg3,
-                         const std::vector<Arg4>& arg4) const {
-    return ReduceFunction()(start, end, vmapped_slice);
   }
 };
 
@@ -174,64 +88,16 @@ struct reduce_function_arg_adapter<ReduceFunction, 0> {
  * that any internal state of the functor is causing trouble. Thus,
  * the functor must be default constructible without any arguments.
  */
-template <class ReduceFunction, class M, class T, class Arg1, class Arg2,
-          class Arg3, class Arg4>
+template <typename ReduceFunction, typename M, typename T, typename... Args>
 constexpr T reduce_sum(const std::vector<M>& vmapped, T init,
-                       std::size_t grainsize, const std::vector<Arg1>& arg1,
-                       const std::vector<Arg2>& arg2,
-                       const std::vector<Arg3>& arg3,
-                       const std::vector<Arg4>& arg4) {
+                       std::size_t grainsize, Args&&... args) {
   typedef T return_base_t;
-  return internal::reduce_sum_impl<
-      internal::reduce_function_arg_adapter<ReduceFunction, 4>, M, T, Arg1,
-      Arg2, Arg3, Arg4, return_base_t>()(vmapped, init, grainsize, arg1, arg2,
-                                         arg3, arg4);
+  // void here but need to figure out enable_if stuff
+  // We do this somewhere in the opencl code
+  return internal::reduce_sum_impl<ReduceFunction, M, T, void, Args...>()(
+    vmapped, init, grainsize, std::forward<Args>(args)...);
 }
 
-template <class ReduceFunction, class M, class T, class Arg1, class Arg2,
-          class Arg3>
-constexpr T reduce_sum(const std::vector<M>& vmapped, T init,
-                       std::size_t grainsize, const std::vector<Arg1>& arg1,
-                       const std::vector<Arg2>& arg2,
-                       const std::vector<Arg3>& arg3) {
-  typedef T return_base_t;
-  return internal::reduce_sum_impl<
-      internal::reduce_function_arg_adapter<ReduceFunction, 3>, M, T, Arg1,
-      Arg2, Arg3, int, return_base_t>()(vmapped, init, grainsize, arg1, arg2,
-                                        arg3, std::vector<int>());
-}
-
-template <class ReduceFunction, class M, class T, class Arg1, class Arg2>
-constexpr T reduce_sum(const std::vector<M>& vmapped, T init,
-                       std::size_t grainsize, const std::vector<Arg1>& arg1,
-                       const std::vector<Arg2>& arg2) {
-  typedef T return_base_t;
-  return internal::reduce_sum_impl<
-      internal::reduce_function_arg_adapter<ReduceFunction, 2>, M, T, Arg1,
-      Arg2, int, int, return_base_t>()(vmapped, init, grainsize, arg1, arg2,
-                                       std::vector<int>(), std::vector<int>());
-}
-template <class ReduceFunction, class M, class T, class Arg1>
-constexpr T reduce_sum(const std::vector<M>& vmapped, T init,
-                       std::size_t grainsize, const std::vector<Arg1>& arg1) {
-  typedef T return_base_t;
-  return internal::reduce_sum_impl<
-      internal::reduce_function_arg_adapter<ReduceFunction, 1>, M, T, Arg1, int,
-      int, int, return_base_t>()(vmapped, init, grainsize, arg1,
-                                 std::vector<int>(), std::vector<int>(),
-                                 std::vector<int>());
-}
-
-template <class ReduceFunction, class M, class T>
-constexpr T reduce_sum(const std::vector<M>& vmapped, T init,
-                       std::size_t grainsize) {
-  typedef T return_base_t;
-  return internal::reduce_sum_impl<
-      internal::reduce_function_arg_adapter<ReduceFunction, 0>, M, T, int, int,
-      int, int, return_base_t>()(vmapped, init, grainsize, std::vector<int>(),
-                                 std::vector<int>(), std::vector<int>(),
-                                 std::vector<int>());
-}
 
 }  // namespace math
 }  // namespace stan
