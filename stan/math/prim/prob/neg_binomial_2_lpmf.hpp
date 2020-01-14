@@ -3,12 +3,12 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/size_zero.hpp>
-#include <stan/math/prim/fun/multiply_log.hpp>
-#include <stan/math/prim/fun/digamma.hpp>
-#include <stan/math/prim/fun/square.hpp>
-#include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/binomial_coefficient_log.hpp>
+#include <stan/math/prim/fun/digamma.hpp>
+#include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/fun/multiply_log.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/prob/poisson_lpmf.hpp>
 #include <cmath>
@@ -66,9 +66,12 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
   }
 
   VectorBuilder<true, T_partials_return, T_location, T_precision>
+      mu_plus_phi(len_ep);
+  VectorBuilder<true, T_partials_return, T_location, T_precision>
       log_mu_plus_phi(len_ep);
   for (size_t i = 0; i < len_ep; ++i) {
-    log_mu_plus_phi[i] = log(mu_val[i] + phi_val[i]);
+    mu_plus_phi[i] = mu_val[i] + phi_val[i];
+    log_mu_plus_phi[i] = log(mu_plus_phi[i]);
   }
 
   VectorBuilder<true, T_partials_return, T_n, T_precision> n_plus_phi(len_np);
@@ -90,17 +93,17 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
     if (!is_constant_all<T_location>::value) {
       ops_partials.edge1_.partials_[i]
           += n_vec[i] / mu_val[i]
-             - (n_vec[i] + phi_val[i]) / (mu_val[i] + phi_val[i]);
+             - (n_vec[i] + phi_val[i]) / (mu_plus_phi[i]);
     }
     if (!is_constant_all<T_precision>::value) {
       T_partials_return log_term;
       if (mu_val[i] < phi_val[i]) {
-        log_term = log1p(-mu_val[i] / (mu_val[i] + phi_val[i]));
+        log_term = log1p(-mu_val[i] / (mu_plus_phi[i]));
       } else {
         log_term = log_phi[i] - log_mu_plus_phi[i];
       }
       ops_partials.edge2_.partials_[i]
-          += (mu_val[i] - n_vec[i]) / (mu_val[i] + phi_val[i]) + log_term
+          += (mu_val[i] - n_vec[i]) / (mu_plus_phi[i]) + log_term
              - (digamma(phi_val[i]) - digamma(n_plus_phi[i]));
     }
   }

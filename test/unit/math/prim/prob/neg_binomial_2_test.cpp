@@ -261,7 +261,7 @@ TEST(ProbDistributionsNegBinomial2, zeroOne) {
   double phi_max = 1e22;
   for (double mu : mu_to_test) {
     for (double phi = phi_start; phi < phi_max; phi *= stan::math::pi()) {
-      std::ostringstream msg;
+      std::stringstream msg;
       msg << ", mu = " << mu << ", phi = " << phi;
 
       double expected_value_0 = phi * (-log1p(mu / phi));

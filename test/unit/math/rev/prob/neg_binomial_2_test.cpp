@@ -1,8 +1,8 @@
 #include <stan/math/rev.hpp>
-#include <boost/math/differentiation/finite_difference.hpp>
-#include <boost/math/special_functions/digamma.hpp>
 #include <test/unit/math/expect_near_rel.hpp>
 #include <gtest/gtest.h>
+#include <boost/math/differentiation/finite_difference.hpp>
+#include <boost/math/special_functions/digamma.hpp>
 #include <vector>
 #include <algorithm>
 
@@ -408,7 +408,6 @@ TEST(ProbDistributionsNegativeBinomial2, derivativesPrecomputed) {
   using stan::math::neg_binomial_2_log;
   using stan::math::value_of;
   using stan::math::var;
-  using stan::test::internal::expect_near_rel_finite;
 
   for (TestValue t : testValues) {
     int n = t.n;
@@ -497,23 +496,12 @@ TEST(ProbDistributionsNegBinomial2, derivativesComplexStep) {
         double complex_step_dphi
             = complex_step_derivative(nb2_log_phi, phi_dbl);
 
-        std::ostringstream message;
+        std::stringstream message;
         message << ", n = " << n << ", mu = " << mu_dbl
                 << ", phi = " << phi_dbl;
 
-        double tolerance_phi;
-        double tolerance_mu;
-        // if (phi < phi_cutoff || n < 100000) {
-        //   tolerance_phi = std::max(1e-10, fabs(gradients[1]) * 1e-8);
-        // } else {
-        tolerance_phi = std::max(1e-8, fabs(gradients[1]) * 1e-5);
-        // }
-
-        // if (phi < phi_cutoff) {
-        tolerance_mu = std::max(1e-10, fabs(gradients[0]) * 1e-8);
-        // } else {
-        //   tolerance_mu = std::max(1e-8, fabs(gradients[0]) * 1e-5);
-        // }
+        double tolerance_phi = std::max(1e-8, fabs(gradients[1]) * 1e-5);
+        double tolerance_mu = std::max(1e-10, fabs(gradients[0]) * 1e-8);
 
         EXPECT_NEAR(gradients[0], complex_step_dmu, tolerance_mu)
             << "grad_mu" << message.str();
@@ -535,7 +523,7 @@ TEST(ProbDistributionsNegBinomial2, derivativesZeroOne) {
   for (double mu_dbl : mu_to_test) {
     for (double phi_dbl = phi_start; phi_dbl < phi_max;
          phi_dbl *= stan::math::pi()) {
-      std::ostringstream msg;
+      std::stringstream msg;
       msg << std::setprecision(20) << ", mu = " << mu_dbl
           << ", phi = " << phi_dbl;
 
