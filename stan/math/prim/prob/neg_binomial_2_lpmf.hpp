@@ -65,8 +65,8 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
     log_phi[i] = log(phi_val[i]);
   }
 
-  VectorBuilder<true, T_partials_return, T_location, T_precision>
-      mu_plus_phi(len_ep);
+  VectorBuilder<true, T_partials_return, T_location, T_precision> mu_plus_phi(
+      len_ep);
   VectorBuilder<true, T_partials_return, T_location, T_precision>
       log_mu_plus_phi(len_ep);
   for (size_t i = 0; i < len_ep; ++i) {
@@ -92,8 +92,7 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
 
     if (!is_constant_all<T_location>::value) {
       ops_partials.edge1_.partials_[i]
-          += n_vec[i] / mu_val[i]
-             - (n_vec[i] + phi_val[i]) / (mu_plus_phi[i]);
+          += n_vec[i] / mu_val[i] - (n_vec[i] + phi_val[i]) / (mu_plus_phi[i]);
     }
     if (!is_constant_all<T_precision>::value) {
       T_partials_return log_term;
