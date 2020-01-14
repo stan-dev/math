@@ -1,4 +1,3 @@
-#include <test/unit/math/expect_near_rel.hpp>
 #include <stan/math/prim.hpp>
 #include <test/unit/math/expect_near_rel.hpp>
 #include <gtest/gtest.h>
