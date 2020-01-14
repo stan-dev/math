@@ -1,8 +1,15 @@
-#ifndef STAN_MATH_PRIM_FUN_LBETA_HPP
-#define STAN_MATH_PRIM_FUN_LBETA_HPP
+#ifndef STAN_MATH_PRIM_SCAL_FUN_LBETA_HPP
+#define STAN_MATH_PRIM_SCAL_FUN_LBETA_HPP
 
+#include <limits>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/fun/lgamma_stirling.hpp>
+#include <stan/math/prim/fun/log_sum_exp.hpp>
+#include <stan/math/prim/fun/lgamma_stirling_diff.hpp>
+#include <stan/math/prim/fun/multiply_log.hpp>
+#include <stan/math/prim/fun/inv.hpp>
+#include <stan/math/prim/err/check_nonnegative.hpp>
 
 namespace stan {
 namespace math {
@@ -22,7 +29,7 @@ namespace math {
  *
  * See stan::math::lgamma() for the double-based and stan::math for the
  * variable-based log Gamma function.
- *
+ * This function is numerically more stable than naive evaluation via lgamma
  *
    \f[
    \mbox{lbeta}(\alpha, \beta) =
@@ -55,7 +62,48 @@ namespace math {
  */
 template <typename T1, typename T2>
 inline return_type_t<T1, T2> lbeta(const T1 a, const T2 b) {
-  return lgamma(a) + lgamma(b) - lgamma(a + b);
+  typedef return_type_t<T1, T2> T_ret;
+
+  if (is_nan(value_of_rec(a)) || is_nan(value_of_rec(b))) {
+    return std::numeric_limits<double>::quiet_NaN();
+  }
+
+  static const char* function = "lbeta";
+  check_nonnegative(function, "first argument", a);
+  check_nonnegative(function, "second argument", b);
+  T_ret x;  // x is the smaller of the two
+  T_ret y;
+  if (a < b) {
+    x = a;
+    y = b;
+  } else {
+    x = b;
+    y = a;
+  }
+
+  // For large x or y, separate the lgamma values into Stirling approximations
+  // and appropriate corrections. The Stirling approximations allow for
+  // analytic simplifaction and the corrections are added later.
+  //
+  // The overall approach is inspired by the code in R, where the algorithm is
+  // credited to W. Fullerton of Los Alamos Scientific Laboratory
+  if (y < lgamma_stirling_diff_useful) {
+    // both small
+    return lgamma(x) + lgamma(y) - lgamma(x + y);
+  } else if (x < lgamma_stirling_diff_useful) {
+    // y large, x small
+    T_ret stirling_diff = lgamma_stirling_diff(y) - lgamma_stirling_diff(x + y);
+    T_ret log_x_y = log(x + y);
+    T_ret stirling = (y - 0.5) * log1p(-x / (x + y)) + x * (1 - log_x_y);
+    return stirling + lgamma(x) + stirling_diff;
+  } else {
+    // both large
+    T_ret stirling_diff = lgamma_stirling_diff(x) + lgamma_stirling_diff(y)
+                          - lgamma_stirling_diff(x + y);
+    T_ret stirling = (x - 0.5) * log(x / (x + y)) + y * log1p(-x / (x + y))
+                     + 0.5 * (LOG_TWO_PI - log(y));
+    return stirling + stirling_diff;
+  }
 }
 
 }  // namespace math
