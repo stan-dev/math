@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_FUN_LGAMMA_STIRLING_DIFF_HPP
 #define STAN_MATH_PRIM_FUN_LGAMMA_STIRLING_DIFF_HPP
 
-#include <cmath>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
@@ -10,6 +9,8 @@
 #include <stan/math/prim/fun/lgamma_stirling.hpp>
 #include <stan/math/prim/err/check_nonnegative.hpp>
 #include <stan/math/prim/meta/return_type.hpp>
+#include <limits>
+#include <cmath>
 
 namespace stan {
 namespace math {

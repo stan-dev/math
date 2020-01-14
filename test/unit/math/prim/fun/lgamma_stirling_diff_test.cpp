@@ -1,10 +1,10 @@
-#include <cmath>
-#include <limits>
-#include <vector>
 #include <gtest/gtest.h>
 #include <test/unit/math/expect_near_rel.hpp>
 #include <stan/math/prim.hpp>
 #include <stan/math/prim/fun/lgamma_stirling_diff.hpp>
+#include <limits>
+#include <vector>
+#include <cmath>
 
 TEST(MathFunctions, lgamma_stirling_diff_errors_special_cases) {
   using stan::math::lgamma_stirling_diff;
@@ -15,8 +15,7 @@ TEST(MathFunctions, lgamma_stirling_diff_errors_special_cases) {
   EXPECT_TRUE(std::isnan(lgamma_stirling_diff(nan)));
   EXPECT_FLOAT_EQ(lgamma_stirling_diff(inf), 0);
   EXPECT_THROW(std::isnan(lgamma_stirling_diff(-1.0)), std::domain_error);
-  EXPECT_TRUE(std::isinf(lgamma_stirling_diff(0.0)));
-  EXPECT_TRUE(lgamma_stirling_diff(0) > 0);
+  EXPECT_FLOAT_EQ(lgamma_stirling_diff(0.0), inf);
 }
 
 TEST(MathFunctions, lgamma_stirling_diff_accuracy) {

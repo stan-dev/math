@@ -10,6 +10,7 @@
 #include <stan/math/prim/fun/multiply_log.hpp>
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/err/check_nonnegative.hpp>
+#include <limits>
 
 namespace stan {
 namespace math {
@@ -61,7 +62,7 @@ namespace math {
  * @tparam T2 Type of second value.
  */
 template <typename T1, typename T2>
-inline return_type_t<T1, T2> lbeta(const T1 a, const T2 b) {
+return_type_t<T1, T2> lbeta(const T1 a, const T2 b) {
   typedef return_type_t<T1, T2> T_ret;
 
   if (is_nan(value_of_rec(a)) || is_nan(value_of_rec(b))) {
@@ -79,6 +80,13 @@ inline return_type_t<T1, T2> lbeta(const T1 a, const T2 b) {
   } else {
     x = b;
     y = a;
+  }
+
+  // Special cases
+  if (x == 0) {
+    return std::numeric_limits<double>::infinity();
+  } else if (is_inf(y)) {
+    return -std::numeric_limits<double>::infinity();
   }
 
   // For large x or y, separate the lgamma values into Stirling approximations
