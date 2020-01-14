@@ -1,8 +1,7 @@
-#include <test/unit/math/expect_near_rel.hpp>
 #include <stan/math/prim.hpp>
+#include <test/unit/math/expect_near_rel.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
-#include <limits>
 
 template <typename T_N, typename T_n>
 void test_binom_coefficient(const T_N& N, const T_n& n) {
@@ -52,7 +51,8 @@ TEST(MathFunctions, binomial_coefficient_log_nan) {
 
 TEST(MathFunctions, binomial_coefficient_log_errors_edge_cases) {
   using stan::math::binomial_coefficient_log;
-  double inf = std::numeric_limits<double>::infinity();
+  using stan::math::INFTY;
+
   EXPECT_NO_THROW(binomial_coefficient_log(10, 11));
   EXPECT_THROW(binomial_coefficient_log(10, 11.01), std::domain_error);
   EXPECT_THROW(binomial_coefficient_log(10, -1.1), std::domain_error);
@@ -60,9 +60,9 @@ TEST(MathFunctions, binomial_coefficient_log_errors_edge_cases) {
   EXPECT_NO_THROW(binomial_coefficient_log(-0.5, 0.49));
   EXPECT_NO_THROW(binomial_coefficient_log(10, -0.9));
 
-  EXPECT_FLOAT_EQ(binomial_coefficient_log(0, -1), -inf);
+  EXPECT_FLOAT_EQ(binomial_coefficient_log(0, -1), -INFTY);
   EXPECT_FLOAT_EQ(binomial_coefficient_log(-1, 0), 0);
-  EXPECT_FLOAT_EQ(binomial_coefficient_log(-1, -0.3), inf);
-  EXPECT_FLOAT_EQ(binomial_coefficient_log(0.3, -1), -inf);
-  EXPECT_FLOAT_EQ(binomial_coefficient_log(5.0, 6.0), -inf);
+  EXPECT_FLOAT_EQ(binomial_coefficient_log(-1, -0.3), INFTY);
+  EXPECT_FLOAT_EQ(binomial_coefficient_log(0.3, -1), -INFTY);
+  EXPECT_FLOAT_EQ(binomial_coefficient_log(5.0, 6.0), -INFTY);
 }

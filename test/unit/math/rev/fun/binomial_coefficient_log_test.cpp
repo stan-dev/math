@@ -1,7 +1,6 @@
-#include <test/unit/math/expect_near_rel.hpp>
 #include <stan/math/prim.hpp>
+#include <test/unit/math/expect_near_rel.hpp>
 #include <gtest/gtest.h>
-#include <limits>
 #include <vector>
 #include <string>
 #include <cmath>
@@ -15,7 +14,7 @@ struct TestValue {
   double dk;
 };
 
-constexpr double NaN = std::numeric_limits<double>::quiet_NaN();
+constexpr double NaN = stan::math::NOT_A_NUMBER;
 // Test values generated in Mathematica, reproducible notebook at
 // https://www.wolframcloud.com/obj/martin.modrak/Published/binomial_coefficient_log.nb
 // Mathematica Code reproduced below for convenience:
@@ -211,7 +210,7 @@ TEST(MathFunctions, binomial_coefficient_log_precomputed) {
   using stan::test::expect_near_rel;
 
   for (TestValue t : testValues) {
-    std::ostringstream msg;
+    std::stringstream msg;
     msg << std::setprecision(22) << "n = " << t.n << ", k = " << t.k;
 
     var n(t.n);
