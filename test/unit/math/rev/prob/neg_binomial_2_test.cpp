@@ -19,12 +19,12 @@ struct TestValue {
 // Test data generated in Mathematica (Wolfram Cloud). The code can be re-ran at
 // https://www.wolframcloud.com/obj/martin.modrak/Published/neg_binomial_2_lpmf.nb
 // but is also presented below for convenience:
-// 
-// nb2[n_,mu_,phi_]:= LogGamma[n + phi] - LogGamma[n + 1] - LogGamma[phi] + 
+//
+// nb2[n_,mu_,phi_]:= LogGamma[n + phi] - LogGamma[n + 1] - LogGamma[phi] +
 //    n * (Log[mu] - Log[mu + phi]) + phi * (Log[phi] - Log[mu + phi])
 // nb2dmu[n_,mu_,phi_]= D[nb2[n, mu, phi],mu];
 // nb2dphi[n_,mu_,phi_]= D[nb2[n, mu, phi],phi];
-// out = OpenWrite["nb_test.txt"] 
+// out = OpenWrite["nb_test.txt"]
 // mus= {256*10^-7,314*10^-3,15*10^-1,3,180,  1123,10586};
 // phis=  {4*10^-4,65*10^-3,442*10^-2,800, 15324};
 // ns = {0,6,14,1525,10233};
@@ -46,7 +46,7 @@ struct TestValue {
 // WriteString[out,"};"];
 // Close[out];
 // FilePrint[%]
-// 
+//
 std::vector<TestValue> testValues = {
     {0, 0.0000256, 0.0004, -0.0000248141563677810565248409,
      -0.93984962406015037593985, -0.0018850149796030172519518},
@@ -506,11 +506,11 @@ TEST(ProbDistributionsNegBinomial2, derivativesComplexStep) {
         // if (phi < phi_cutoff || n < 100000) {
         //   tolerance_phi = std::max(1e-10, fabs(gradients[1]) * 1e-8);
         // } else {
-          tolerance_phi = std::max(1e-8, fabs(gradients[1]) * 1e-5);
+        tolerance_phi = std::max(1e-8, fabs(gradients[1]) * 1e-5);
         // }
 
         // if (phi < phi_cutoff) {
-          tolerance_mu = std::max(1e-10, fabs(gradients[0]) * 1e-8);
+        tolerance_mu = std::max(1e-10, fabs(gradients[0]) * 1e-8);
         // } else {
         //   tolerance_mu = std::max(1e-8, fabs(gradients[0]) * 1e-5);
         // }

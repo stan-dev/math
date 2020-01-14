@@ -8,7 +8,7 @@
 
 TEST(MathFunctions, lgamma_stirling_diff_errors_special_cases) {
   using stan::math::lgamma_stirling_diff;
-  
+
   double nan = std::numeric_limits<double>::quiet_NaN();
   double inf = std::numeric_limits<double>::infinity();
 
@@ -91,10 +91,10 @@ std::vector<TestValue> testValues = {
 }  // namespace lgamma_stirling_diff_test_internal
 
 TEST(MathFunctions, lgamma_stirling_diff_precomputed) {
-  using stan::math::lgamma_stirling_diff;
-  using stan::test::expect_near_rel;
   using lgamma_stirling_diff_test_internal::TestValue;
   using lgamma_stirling_diff_test_internal::testValues;
+  using stan::math::lgamma_stirling_diff;
+  using stan::test::expect_near_rel;
 
   for (TestValue t : testValues) {
     std::ostringstream msg;

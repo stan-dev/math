@@ -256,8 +256,7 @@ TEST(ProbDistributionsNegBinomial2, extreme_values) {
 TEST(ProbDistributionsNegBinomial2, zeroOne) {
   using stan::test::expect_near_rel;
 
-  std::vector<double> mu_to_test
-      = {2.345e-5, 0.2, 13, 150, 1621, 18432, 1e10};
+  std::vector<double> mu_to_test = {2.345e-5, 0.2, 13, 150, 1621, 18432, 1e10};
   double phi_start = 1e-8;
   double phi_max = 1e22;
   for (double mu : mu_to_test) {
