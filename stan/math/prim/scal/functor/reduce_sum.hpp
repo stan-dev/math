@@ -28,17 +28,9 @@ struct reduce_sum_impl {};
 template <typename ReduceFunction, typename M, typename T, typename... Args>
 struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<T>, M, T, Args...> {
   using vmapped_t = std::vector<M>;
-  using arg1_t = std::vector<Arg1>;
-  using arg2_t = std::vector<Arg2>;
-  using arg3_t = std::vector<Arg3>;
-  using arg4_t = std::vector<Arg4>;
   // todo(Steve): Need helper funcs for manipulating / iterating tuples
   std::tuple<std::vector<Args>...> arg_;
   const vmapped_t& vmapped_;
-  const arg1_t& arg1_;
-  const arg2_t& arg2_;
-  const arg3_t& arg3_;
-  const arg4_t& arg4_;
   T terms_sum_;
 
   // todo(Steve): put back recursive reducer
