@@ -2,12 +2,11 @@
 #define STAN_MATH_PRIM_FUN_BINOMIAL_COEFFICIENT_LOG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/lgamma.hpp>
-#include <stan/math/prim/fun/lbeta.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/err/check_nonnegative.hpp>
-#include <stan/math/prim/err/check_greater_or_equal.hpp>
-#include <limits>
+#include <stan/math/prim/fun/is_any_nan.hpp>
+#include <stan/math/prim/fun/lbeta.hpp>
+#include <stan/math/prim/fun/lgamma.hpp>
 
 namespace stan {
 namespace math {
@@ -64,6 +63,8 @@ namespace math {
  *
  *  This function is numerically more stable than naive evaluation via lgamma.
  *
+ * @tparam T_N type of N.
+ * @tparam T_n type of n.
  * @param N total number of objects.
  * @param n number of objects chosen.
  * @return log (N choose n).
@@ -72,30 +73,28 @@ namespace math {
 template <typename T_N, typename T_n>
 inline return_type_t<T_N, T_n> binomial_coefficient_log(const T_N N,
                                                         const T_n n) {
-  if (is_nan(value_of_rec(N)) || is_nan(value_of_rec(n))) {
-    return std::numeric_limits<double>::quiet_NaN();
+  if (is_any_nan(N, n)) {
+    return stan::math::NOT_A_NUMBER;
   }
 
-  // For some uses it is important this works even when N < 0 and therefore
-  // it is before checks
-  if (n == 0) {
-    return 0;
-  }
   const T_N N_plus_1 = N + 1;
 
   static const char* function = "binomial_coefficient_log";
   check_greater_or_equal(function, "first argument", N, -1);
   check_greater_or_equal(function, "second argument", n, -1);
   check_greater_or_equal(function, "(first argument - second argument + 1)",
-                         N - n + 1, 0.0);
+                         N_plus_1 - n, 0.0);
 
+  if (n == 0) {
+    return 0;
+  }
   if (N / 2 < n) {
     return binomial_coefficient_log(N, N - n);
-  } else if (N_plus_1 < lgamma_stirling_diff_useful) {
+  } 
+  if (N_plus_1 < lgamma_stirling_diff_useful) {
     return lgamma(N_plus_1) - lgamma(n + 1) - lgamma(N_plus_1 - n);
-  } else {
-    return -lbeta(N - n + 1, n + 1) - log(N_plus_1);
-  }
+  } 
+  return -lbeta(N - n + 1, n + 1) - log(N_plus_1);
 }
 
 }  // namespace math
