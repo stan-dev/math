@@ -64,8 +64,7 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<T>, M, T, Args...> {
 
       const vmapped_t sub_slice(start, end);
 
-      terms_sum_ += ReduceFunction()(r.begin(), r.end() - 1, sub_slice, arg1_,
-                                     arg2_, arg3_, arg4_);
+      terms_sum_ += ReduceFunction()(r.begin(), r.end() - 1, sub_slice, unpack_tuple_func(args));
     }
 
     void join(const reduce_sum_impl& child) {
