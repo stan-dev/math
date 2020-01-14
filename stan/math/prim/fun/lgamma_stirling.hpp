@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_FUN_LGAMMA_STIRLING_HPP
 #define STAN_MATH_PRIM_FUN_LGAMMA_STIRLING_HPP
 
-#include <cmath>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/meta/return_type.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {

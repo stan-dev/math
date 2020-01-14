@@ -1,10 +1,10 @@
-#include <cmath>
-#include <limits>
-#include <vector>
 #include <gtest/gtest.h>
 #include <test/unit/math/expect_near_rel.hpp>
 #include <stan/math/prim.hpp>
 #include <stan/math/prim/fun/lgamma_stirling_diff.hpp>
+#include <limits>
+#include <vector>
+#include <cmath>
 
 TEST(MathFunctions, lgamma_stirling_diff_errors_special_cases) {
   using stan::math::lgamma_stirling_diff;

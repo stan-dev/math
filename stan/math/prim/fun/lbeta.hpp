@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_FUN_LBETA_HPP
 #define STAN_MATH_PRIM_FUN_LBETA_HPP
 
-#include <limits>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/lgamma_stirling.hpp>
@@ -10,6 +9,7 @@
 #include <stan/math/prim/fun/multiply_log.hpp>
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/err/check_nonnegative.hpp>
+#include <limits>
 
 namespace stan {
 namespace math {

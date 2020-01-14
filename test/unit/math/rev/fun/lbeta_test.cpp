@@ -1,9 +1,10 @@
 #include <test/unit/math/expect_near_rel.hpp>
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
-#include <cmath>
 #include <limits>
 #include <vector>
+#include <string>
+#include <cmath>
 
 namespace lbeta_test_internal {
 struct TestValue {
