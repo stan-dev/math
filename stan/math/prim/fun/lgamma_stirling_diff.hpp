@@ -24,7 +24,7 @@ constexpr double lgamma_stirling_diff_useful = 10;
  * and the (small) differences can be added afterwards.
  * This is for example used in the implementation of lbeta.
  *
- * The function will return correct value for all arguments, but using it can 
+ * The function will return correct value for all arguments, but using it can
  * lead to a loss of precision when x < lgamma_stirling_diff_useful.
  *
    \f[
@@ -51,18 +51,17 @@ return_type_t<T> lgamma_stirling_diff(const T x) {
 
   if (x == 0) {
     return INFTY;
-  } 
+  }
   if (value_of(x) < lgamma_stirling_diff_useful) {
     return lgamma(x) - lgamma_stirling(x);
-  } 
+  }
 
   // Using the Stirling series as expressed in formula 5.11.1. at
   // https://dlmf.nist.gov/5.11
-  constexpr double stirling_series[] {
-      0.0833333333333333333333333,
-      -0.00277777777777777777777778,
+  constexpr double stirling_series[]{
+      0.0833333333333333333333333, -0.00277777777777777777777778,
       0.000793650793650793650793651,
-      -0.000595238095238095238095238, //currently not used
+      -0.000595238095238095238095238,  // currently not used
   };
   constexpr int n_stirling_terms = 3;
   T_Ret inv_x = inv(x);
@@ -70,7 +69,7 @@ return_type_t<T> lgamma_stirling_diff(const T x) {
   T_Ret inv_x_cubed = inv_x * inv_x_squared;
   T_Ret inv_x_fifth = inv_x_cubed * inv_x_squared;
   return stirling_series[0] * inv_x + stirling_series[1] * inv_x_cubed
-          + stirling_series[2] * inv_x_fifth;
+         + stirling_series[2] * inv_x_fifth;
 }
 
 }  // namespace math

@@ -78,14 +78,12 @@ TEST(MathFunctions, lbeta_identities) {
 }
 
 TEST(MathFunctions, lbeta_stirling_cutoff) {
-  using stan::test::expect_near_rel;
   using stan::math::lgamma_stirling_diff_useful;
+  using stan::test::expect_near_rel;
 
   double after_stirling
-      = std::nextafter(lgamma_stirling_diff_useful,
-                       stan::math::INFTY);
-  double before_stirling
-      = std::nextafter(lgamma_stirling_diff_useful, 0);
+      = std::nextafter(lgamma_stirling_diff_useful, stan::math::INFTY);
+  double before_stirling = std::nextafter(lgamma_stirling_diff_useful, 0);
   using stan::math::lbeta;
 
   std::vector<double> to_test

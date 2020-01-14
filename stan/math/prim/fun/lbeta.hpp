@@ -85,7 +85,7 @@ return_type_t<T1, T2> lbeta(const T1 a, const T2 b) {
   // Special cases
   if (x == 0) {
     return INFTY;
-  } 
+  }
   if (is_inf(y)) {
     return NEGATIVE_INFTY;
   }
@@ -99,14 +99,14 @@ return_type_t<T1, T2> lbeta(const T1 a, const T2 b) {
   if (y < lgamma_stirling_diff_useful) {
     // both small
     return lgamma(x) + lgamma(y) - lgamma(x + y);
-  } 
+  }
   T_ret x_over_xy = x / (x + y);
   if (x < lgamma_stirling_diff_useful) {
     // y large, x small
     T_ret stirling_diff = lgamma_stirling_diff(y) - lgamma_stirling_diff(x + y);
     T_ret stirling = (y - 0.5) * log1m(x_over_xy) + x * (1 - log(x + y));
     return stirling + lgamma(x) + stirling_diff;
-  } 
+  }
 
   // both large
   T_ret stirling_diff = lgamma_stirling_diff(x) + lgamma_stirling_diff(y)
