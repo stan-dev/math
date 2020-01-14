@@ -1,9 +1,10 @@
-#include <test/unit/math/expect_near_rel.hpp>
-#include <stan/math/prim.hpp>
-#include <gtest/gtest.h>
 #include <cmath>
 #include <limits>
+#include <string>
 #include <vector>
+#include <gtest/gtest.h>
+#include <stan/math/prim.hpp>
+#include <test/unit/math/expect_near_rel.hpp>
 
 TEST(MathFunctions, lbeta) {
   using stan::math::lbeta;

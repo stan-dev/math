@@ -5,6 +5,8 @@
 #include <gtest/gtest.h>
 #include <string>
 #include <vector>
+#include <limits>
+#include <algorithm>
 
 namespace stan {
 namespace test {
@@ -32,23 +34,36 @@ namespace internal {
  */
 template <typename T1, typename T2, require_all_stan_scalar_t<T1, T2>...>
 void expect_near_rel_finite(const std::string& msg, const T1& x1, const T2& x2,
-                            double tol = 1e-8) {
+                            double tol_rel = 1e-8,
+                            double tol_min
+                            = std::numeric_limits<double>::quiet_NaN()) {
   using stan::math::fabs;
   // if either arg near zero, must use absolute tolerance as rel tol -> 2
-  if (fabs(x1) < tol || fabs(x2) < tol) {
-    EXPECT_NEAR(x1, x2, tol) << "expect_near_rel_finite(" << x1 << ", " << x2
-                             << ", absolute tolerance = " << tol << ")"
-                             << "; absolute diff = " << fabs(x1 - x2)
-                             << "    in: " << msg << std::endl;
-    return;
+  // if (fabs(x1) < tol || fabs(x2) < tol) {
+  //   EXPECT_NEAR(x1, x2, tol) << "expect_near_rel_finite(" << x1 << ", " << x2
+  //                            << ", absolute tolerance = " << tol << ")"
+  //                            << "; absolute diff = " << fabs(x1 - x2)
+  //                            << "    in: " << msg << std::endl;
+  //   return;
+  // }
+  // auto avg = 0.5 * (fabs(x1) + fabs(x2));
+  // auto relative_diff = (x1 - x2) / avg;
+  // EXPECT_NEAR(0, relative_diff, tol)
+  //     << "expect_near_rel_finite(" << x1 << ", " << x2
+  //     << ", relative tolerance = " << tol << ")"
+  //     << "; relative diff = " << relative_diff << std::endl
+  //     << "    in: " << msg << std::endl;
+  if (stan::math::is_nan(tol_min)) {
+    tol_min = tol_rel * tol_rel;
   }
   auto avg = 0.5 * (fabs(x1) + fabs(x2));
+  auto tol = std::max(avg * tol_rel, tol_min);
   auto relative_diff = (x1 - x2) / avg;
-  EXPECT_NEAR(0, relative_diff, tol)
-      << "expect_near_rel_finite(" << x1 << ", " << x2
-      << ", relative tolerance = " << tol << ")"
-      << "; relative diff = " << relative_diff << std::endl
-      << "    in: " << msg << std::endl;
+  EXPECT_NEAR(x1, x2, tol) << "expect_near_rel_finite(" << x1 << ", " << x2
+                           << ", relative tolerance = " << tol_rel << ")"
+                           << ", minimum tolerance = " << tol_min << ")"
+                           << "; relative diff = " << relative_diff << std::endl
+                           << "    in: " << msg << std::endl;
 }
 
 template <typename EigMat1, typename EigMat2,
@@ -89,7 +104,9 @@ void expect_near_rel_finite(const std::string& msg, const std::vector<T1>& x1,
  */
 template <typename T1, typename T2, require_all_stan_scalar_t<T1, T2>...>
 void expect_near_rel(const std::string& msg, const T1& x1, const T2& x2,
-                     double tol = 1e-8) {
+                     double tol_rel = 1e-8,
+                     double tol_min
+                     = std::numeric_limits<double>::quiet_NaN()) {
   if (stan::math::is_nan(x1) || stan::math::is_nan(x2))
     EXPECT_TRUE(stan::math::is_nan(x1) && stan::math::is_nan(x2))
         << "expect_near_rel(" << x1 << ", " << x2 << ")" << std::endl
@@ -99,7 +116,7 @@ void expect_near_rel(const std::string& msg, const T1& x1, const T2& x2,
                       << std::endl
                       << msg << std::endl;
   else
-    internal::expect_near_rel_finite(msg, x1, x2, tol);
+    internal::expect_near_rel_finite(msg, x1, x2, tol_rel, tol_min);
 }
 
 /**
