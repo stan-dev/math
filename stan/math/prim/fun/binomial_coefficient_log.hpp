@@ -1,13 +1,13 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUN_BINOMIAL_COEFFICIENT_LOG_HPP
 #define STAN_MATH_PRIM_SCAL_FUN_BINOMIAL_COEFFICIENT_LOG_HPP
 
-#include <limits>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/lbeta.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/err/check_nonnegative.hpp>
 #include <stan/math/prim/err/check_greater_or_equal.hpp>
+#include <limits>
 
 namespace stan {
 namespace math {
@@ -28,13 +28,11 @@ namespace math {
  * = \log \ \Gamma(N+1) - \log \Gamma(n+1) - \log \Gamma(N-n+1)\f$.
  *
  *
- * TODO[martinmodrak] figure out the cases for x < 0 and for partials
    \f[
    \mbox{binomial\_coefficient\_log}(x, y) =
    \begin{cases}
      \textrm{error} & \mbox{if } y > x + 1 \textrm{ or } y < -1 \textrm{ or } x
  < -1\\
-     \textrm{-\infty} & \mbox{if } y = x + 1 \textrm{ or } y = -1\\
      \ln\Gamma(x+1) & \mbox{if } -1 < y < x + 1 \\
      \quad -\ln\Gamma(y+1)& \\
      \quad -\ln\Gamma(x-y+1)& \\[6pt]
@@ -45,7 +43,8 @@ namespace math {
    \f[
    \frac{\partial\, \mbox{binomial\_coefficient\_log}(x, y)}{\partial x} =
    \begin{cases}
-     \textrm{error} & \mbox{if } y > x \textrm{ or } y < 0\\
+     \textrm{error} & \mbox{if } y > x + 1 \textrm{ or } y < -1 \textrm{ or } x
+ < -1\\
      \Psi(x+1) & \mbox{if } 0\leq y \leq x \\
      \quad -\Psi(x-y+1)& \\[6pt]
      \textrm{NaN} & \mbox{if } x = \textrm{NaN or } y = \textrm{NaN}
@@ -55,14 +54,15 @@ namespace math {
    \f[
    \frac{\partial\, \mbox{binomial\_coefficient\_log}(x, y)}{\partial y} =
    \begin{cases}
-     \textrm{error} & \mbox{if } y > x \textrm{ or } y < 0\\
+     \textrm{error} & \mbox{if } y > x + 1 \textrm{ or } y < -1 \textrm{ or } x
+ < -1\\
      -\Psi(y+1) & \mbox{if } 0\leq y \leq x \\
      \quad +\Psi(x-y+1)& \\[6pt]
      \textrm{NaN} & \mbox{if } x = \textrm{NaN or } y = \textrm{NaN}
    \end{cases}
    \f]
  *
- *  This function is numerically more stable than naive evaluation via lgamma
+ *  This function is numerically more stable than naive evaluation via lgamma.
  *
  * @param N total number of objects.
  * @param n number of objects chosen.
