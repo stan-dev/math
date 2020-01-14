@@ -90,10 +90,10 @@ inline return_type_t<T_N, T_n> binomial_coefficient_log(const T_N N,
   }
   if (N / 2 < n) {
     return binomial_coefficient_log(N, N - n);
-  } 
+  }
   if (N_plus_1 < lgamma_stirling_diff_useful) {
     return lgamma(N_plus_1) - lgamma(n + 1) - lgamma(N_plus_1 - n);
-  } 
+  }
   return -lbeta(N - n + 1, n + 1) - log(N_plus_1);
 }
 

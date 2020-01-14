@@ -50,8 +50,8 @@ TEST(MathFunctions, binomial_coefficient_log_nan) {
 }
 
 TEST(MathFunctions, binomial_coefficient_log_errors_edge_cases) {
-  using stan::math::binomial_coefficient_log;
   using stan::math::INFTY;
+  using stan::math::binomial_coefficient_log;
 
   EXPECT_NO_THROW(binomial_coefficient_log(10, 11));
   EXPECT_THROW(binomial_coefficient_log(10, 11.01), std::domain_error);
