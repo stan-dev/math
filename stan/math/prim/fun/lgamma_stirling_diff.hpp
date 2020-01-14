@@ -49,7 +49,7 @@ return_type_t<T> lgamma_stirling_diff(const T x) {
   static const char* function = "lgamma_stirling_diff";
   check_nonnegative(function, "argument", x);
 
-  if(x == 0) {
+  if (x == 0) {
     return std::numeric_limits<double>::infinity();
   } else if (value_of(x) < lgamma_stirling_diff_useful) {
     return lgamma(x) - lgamma_stirling(x);
