@@ -39,6 +39,8 @@ struct reduce_sum_impl<ReduceFunction, M, T, double, Args...> {
   const arg3_t& arg3_;
   const arg4_t& arg4_;
   T terms_sum_;
+
+  // todo(Steve): put back recursive reducer
     reduce_sum_impl(const vmapped_t& vmapped, const T& init, Args&&... args)
         : vmapped_(vmapped),
           arg_(std::make_tuple(std::forward<Args>(args)...))
