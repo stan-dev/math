@@ -176,20 +176,20 @@ struct is_eigen_vector_scalar_check
  * If condition is true, template is enabled
  */
 template <class Check>
-using require_t = std::enable_if_t<Check::value>;
+using require_t = std::enable_if_t<Check::value, int>;
 
 /**
  * If condition is false, template is disabled
  */
 template <typename Check>
-using require_not_t = std::enable_if_t<!Check::value>;
+using require_not_t = std::enable_if_t<!Check::value, int>;
 
 /**
  * If all conditions are true, template is enabled
  * Returns a type void if all conditions are true and otherwise fails.
  */
 template <class... Checks>
-using require_all_t = std::enable_if_t<math::conjunction<Checks...>::value>;
+using require_all_t = std::enable_if_t<math::conjunction<Checks...>::value, int>;
 
 /**
  * If any condition is true, template is enabled.
@@ -197,7 +197,7 @@ using require_all_t = std::enable_if_t<math::conjunction<Checks...>::value>;
  * Returns a type void if any of the conditions are true and otherwise fails.
  */
 template <class... Checks>
-using require_any_t = std::enable_if_t<math::disjunction<Checks...>::value>;
+using require_any_t = std::enable_if_t<math::disjunction<Checks...>::value, int>;
 
 /**
  * If all conditions are false, template is enabled.
@@ -206,7 +206,7 @@ using require_any_t = std::enable_if_t<math::disjunction<Checks...>::value>;
  */
 template <class... Checks>
 using require_all_not_t
-    = std::enable_if_t<!math::disjunction<Checks...>::value>;
+    = std::enable_if_t<!math::disjunction<Checks...>::value, int>;
 
 /**
  * If any condition is false, template is enabled.
@@ -215,7 +215,7 @@ using require_all_not_t
  */
 template <class... Checks>
 using require_any_not_t
-    = std::enable_if_t<!math::conjunction<Checks...>::value>;
+    = std::enable_if_t<!math::conjunction<Checks...>::value, int>;
 
 /**
  * Require both types to be the same
