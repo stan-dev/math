@@ -1,0 +1,37 @@
+
+Adjoint Sensitivity Example for Chemical Kinetics
+-------------------------------------------------
+
+DAE: dy1/dt + p1*y1 - p2*y2*y3 = 0
+     dy2/dt - p1*y1 + p2*y2*y3 + p3*(y2)^2 = 0
+               y1  +  y2  +  y3 = 0
+
+Find dG/dp for
+     G = int_t0^tB0 g(t,p,y) dt
+     g(t,p,y) = y3
+
+
+Create and allocate IDAS memory for forward runs
+Forward integration ... done ( nst = 774 )
+--------------------------------------------------------
+G:            4.0000e+10 
+--------------------------------------------------------
+
+Create and allocate IDAS memory for backward run
+Backward integration ... done ( nst = 1272 )
+--------------------------------------------------------
+tB0:          4.0000e+10
+dG/dp:        1.4878e+06  -5.9467e+00   9.9112e-04
+lambda(t0):  -2.4998e+01   1.6442e-03   1.0000e+00
+--------------------------------------------------------
+
+Re-initialize IDAS memory for backward run
+Backward integration ... done ( nst = 428 )
+--------------------------------------------------------
+tB0:          5.0000e+01
+dG/dp:        1.7341e+02  -5.0592e-04   8.4323e-08
+lambda(t0):  -7.6780e+00  -1.2758e-04   1.0000e+00
+--------------------------------------------------------
+
+Free memory
+

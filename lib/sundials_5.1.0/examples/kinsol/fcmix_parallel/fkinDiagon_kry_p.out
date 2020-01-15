@@ -1,0 +1,24 @@
+Example program fkinDiagon_kry_p:
+
+ This FKINSOL example solves a 128 eqn diagonal algebraic system.
+ Its purpose is to demonstrate the use of the Fortran interface
+ in a parallel environment.
+
+ FKINSOL return code is    0
+
+ The resultant values of uu (process 0) are:
+
+   1   1.000000   2.000000   3.000000   4.000000
+   5   5.000000   6.000000   7.000000   8.000000
+   9   9.000000  10.000000  11.000000  12.000000
+  13  13.000000  14.000000  15.000000  16.000000
+  17  17.000000  18.000000  19.000000  20.000000
+  21  21.000000  22.000000  23.000000  24.000000
+  25  25.000000  26.000000  27.000000  28.000000
+  29  29.000000  30.000000  31.000000  32.000000
+
+Final statistics:
+
+  nni =   7,  nli  =  21
+  nfe =   8,  npe  =   2
+  nps =  28,  ncfl =   0

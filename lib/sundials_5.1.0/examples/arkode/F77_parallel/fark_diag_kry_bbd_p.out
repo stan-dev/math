@@ -1,0 +1,87 @@
+Diagonal test problem:
+
+ NEQ =  40
+ NLOCAL =  10
+ parameter alpha =   10.000
+ ydot_i = -alpha*i * y_i (i = 1,...,NEQ)
+ RTOL, ATOL =    0.1E-04   0.1E-09
+ Method is DIRK/NEWTON/SPGMR
+ Precond is band-block-diagonal, using ARKBBDPRE
+ Number of processors =   4
+
+
+Preconditioning on left
+
+ t =   0.10E+00     no. steps =   173   no. attempts =   173   no. fe-s =     0   no. fi-s =  1846
+ t =   0.20E+00     no. steps =   221   no. attempts =   221   no. fe-s =     0   no. fi-s =  2362
+ t =   0.30E+00     no. steps =   248   no. attempts =   248   no. fe-s =     0   no. fi-s =  2650
+ t =   0.40E+00     no. steps =   266   no. attempts =   266   no. fe-s =     0   no. fi-s =  2848
+ t =   0.50E+00     no. steps =   281   no. attempts =   281   no. fe-s =     0   no. fi-s =  3007
+ t =   0.60E+00     no. steps =   291   no. attempts =   291   no. fe-s =     0   no. fi-s =  3116
+ t =   0.70E+00     no. steps =   300   no. attempts =   300   no. fe-s =     0   no. fi-s =  3215
+ t =   0.80E+00     no. steps =   306   no. attempts =   306   no. fe-s =     0   no. fi-s =  3275
+ t =   0.90E+00     no. steps =   312   no. attempts =   312   no. fe-s =     0   no. fi-s =  3335
+ t =   0.10E+01     no. steps =   319   no. attempts =   319   no. fe-s =     0   no. fi-s =  3410
+
+Max. absolute error is  0.76E-10
+
+
+Final statistics:
+
+ number of steps        =   319
+ number of steps att.   =   319
+ number of fe evals.    =     0
+ number of fi evals.    =  3410
+ number of prec. setups =    25
+ number of prec. evals. =     6
+ number of prec. solves =  3380
+ number of nonl. iters. =  1812
+ number of lin. iters.  =  1785
+ average Krylov subspace dimension (NLI/NNI) =   0.9851
+ number of conv. failures.. nonlinear =   0  linear =   0
+ number of error test failures =   0
+ main solver real/int workspace sizes   =   740  240
+ linear solver real/int workspace sizes =   535  126
+In ARKBBDPRE:
+ real/int local workspace =   160   72
+ number of g evals. =    12
+
+
+------------------------------------------------------------
+
+
+Preconditioning on right
+
+ t =   0.10E+00     no. steps =   173   no. attempts =   173   no. fe-s =     0   no. fi-s =  1846
+ t =   0.20E+00     no. steps =   221   no. attempts =   221   no. fe-s =     0   no. fi-s =  2362
+ t =   0.30E+00     no. steps =   248   no. attempts =   248   no. fe-s =     0   no. fi-s =  2650
+ t =   0.40E+00     no. steps =   266   no. attempts =   266   no. fe-s =     0   no. fi-s =  2848
+ t =   0.50E+00     no. steps =   281   no. attempts =   281   no. fe-s =     0   no. fi-s =  3007
+ t =   0.60E+00     no. steps =   291   no. attempts =   291   no. fe-s =     0   no. fi-s =  3116
+ t =   0.70E+00     no. steps =   300   no. attempts =   300   no. fe-s =     0   no. fi-s =  3215
+ t =   0.80E+00     no. steps =   306   no. attempts =   306   no. fe-s =     0   no. fi-s =  3275
+ t =   0.90E+00     no. steps =   312   no. attempts =   312   no. fe-s =     0   no. fi-s =  3335
+ t =   0.10E+01     no. steps =   319   no. attempts =   319   no. fe-s =     0   no. fi-s =  3410
+
+Max. absolute error is  0.76E-10
+
+
+Final statistics:
+
+ number of steps        =   319
+ number of steps att.   =   319
+ number of fe evals.    =     0
+ number of fi evals.    =  3410
+ number of prec. setups =    25
+ number of prec. evals. =     6
+ number of prec. solves =  3380
+ number of nonl. iters. =  1812
+ number of lin. iters.  =  1785
+ average Krylov subspace dimension (NLI/NNI) =   0.9851
+ number of conv. failures.. nonlinear =   0  linear =   0
+ number of error test failures =   0
+ main solver real/int workspace sizes   =   780  248
+ linear solver real/int workspace sizes =   535  126
+In ARKBBDPRE:
+ real/int local workspace =   160   72
+ number of g evals. =    12

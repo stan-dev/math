@@ -1,0 +1,4 @@
+List of CUDA CVODE examples
+
+  cvAdvDiff_kry_cuda                 : 2-D advection-diffusion (nonstiff)
+  cvRoberts_block_cusolversp_batchq  : block diagonal example with cuSOLVER sparse batched QR

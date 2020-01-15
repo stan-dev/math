@@ -1,0 +1,76 @@
+Diagonal test problem:
+
+ NEQ =  20
+ parameter alpha =   10.000
+ ydot_i = -alpha*i * y_i (i = 1,...,NEQ)
+ RTOL, ATOL =    0.1E-04   0.1E-09
+ Method is BDF/NEWTON/SPGMR
+ Preconditioner is band-block-diagonal, using CVBBDPRE
+ Number of processors =   2
+
+
+Preconditioning on left
+
+ t =   0.10E+00     no. steps =   174   no. f-s =   213
+ t =   0.20E+00     no. steps =   222   no. f-s =   262
+ t =   0.30E+00     no. steps =   247   no. f-s =   288
+ t =   0.40E+00     no. steps =   265   no. f-s =   307
+ t =   0.50E+00     no. steps =   278   no. f-s =   321
+ t =   0.60E+00     no. steps =   290   no. f-s =   333
+ t =   0.70E+00     no. steps =   300   no. f-s =   344
+ t =   0.80E+00     no. steps =   307   no. f-s =   351
+ t =   0.90E+00     no. steps =   312   no. f-s =   357
+ t =   0.10E+01     no. steps =   317   no. f-s =   362
+
+Max. absolute error is  0.90E-08
+
+
+Final statistics:
+
+ number of steps        =   317     number of f evals.     =   362
+ number of prec. setups =    33
+ number of prec. evals. =     6     number of prec. solves =   644
+ number of nonl. iters. =   359     number of lin. iters.  =   322
+ average Krylov subspace dimension (NLI/NNI) =   0.8969
+ number of conv. failures.. nonlinear =   0  linear =   0
+ number of error test failures =   5
+ main solver real/int workspace sizes   =   349   92
+ linear solver real/int workspace sizes =   294   78
+In CVBBDPRE:
+ real/int local workspace =   100   60
+ number of g evals. =    12
+
+
+------------------------------------------------------------
+
+
+Preconditioning on right
+
+ t =   0.10E+00     no. steps =   174   no. f-s =   213
+ t =   0.20E+00     no. steps =   222   no. f-s =   262
+ t =   0.30E+00     no. steps =   247   no. f-s =   288
+ t =   0.40E+00     no. steps =   265   no. f-s =   307
+ t =   0.50E+00     no. steps =   278   no. f-s =   321
+ t =   0.60E+00     no. steps =   290   no. f-s =   333
+ t =   0.70E+00     no. steps =   300   no. f-s =   344
+ t =   0.80E+00     no. steps =   307   no. f-s =   351
+ t =   0.90E+00     no. steps =   312   no. f-s =   357
+ t =   0.10E+01     no. steps =   317   no. f-s =   362
+
+Max. absolute error is  0.90E-08
+
+
+Final statistics:
+
+ number of steps        =   317     number of f evals.     =   362
+ number of prec. setups =    33
+ number of prec. evals. =     6     number of prec. solves =   644
+ number of nonl. iters. =   359     number of lin. iters.  =   322
+ average Krylov subspace dimension (NLI/NNI) =   0.8969
+ number of conv. failures.. nonlinear =   0  linear =   0
+ number of error test failures =   5
+ main solver real/int workspace sizes   =   349   92
+ linear solver real/int workspace sizes =   294   78
+In CVBBDPRE:
+ real/int local workspace =   100   60
+ number of g evals. =    12

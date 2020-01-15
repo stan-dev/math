@@ -1,0 +1,38 @@
+CVODE example based on PETSc TS ex7.c: Nonlinear, time-dependent PDE in 2d.
+
+timestep 0 time 0. norm 1.9391
+  0 SNES Function norm < 1.e-11
+  1 SNES Function norm < 1.e-11
+timestep 1 time 2.02546e-09 norm 1.9391
+  0 SNES Function norm 3.89123e-05 
+  1 SNES Function norm 1.914e-11 
+  2 SNES Function norm < 1.e-11
+timestep 2 time 2.02566e-05 norm 1.93261
+  0 SNES Function norm 0.000467204 
+  1 SNES Function norm 3.68436e-09 
+  2 SNES Function norm < 1.e-11
+timestep 3 time 9.08689e-05 norm 1.91043
+  0 SNES Function norm 0.000453649 
+  1 SNES Function norm 3.32903e-09 
+  2 SNES Function norm < 1.e-11
+timestep 4 time 0.000161481 norm 1.88869
+  0 SNES Function norm 0.000440607 
+  1 SNES Function norm 2.95855e-09 
+  2 SNES Function norm < 1.e-11
+timestep 5 time 0.000232093 norm 1.8674
+  0 SNES Function norm 0.000428052 
+  1 SNES Function norm 2.5776e-09 
+  2 SNES Function norm < 1.e-11
+timestep 6 time 0.000302706 norm 1.84652
+  0 SNES Function norm 0.000415963 
+  1 SNES Function norm 2.19266e-09 
+  2 SNES Function norm < 1.e-11
+timestep 7 time 0.000373318 norm 1.82607
+  0 SNES Function norm 0.000404318 
+  1 SNES Function norm 1.81429e-09 
+  2 SNES Function norm < 1.e-11
+timestep 8 time 0.00044393 norm 1.80601
+  0 SNES Function norm 0.000393097 
+  1 SNES Function norm 1.4624e-09 
+  2 SNES Function norm < 1.e-11
+timestep 9 time 0.000514542 norm 1.78634
