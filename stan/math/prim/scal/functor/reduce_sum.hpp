@@ -40,7 +40,7 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
     recursive_reducer(recursive_reducer& other, tbb::split)
         : vmapped_(other.vmapped_),
           args_tuple_(other.args_tuple_),
-          sum_(other.sum_) {}
+          sum_(0.0) {}
 
     void operator()(const tbb::blocked_range<size_t>& r) {
       if (r.empty()) {
@@ -98,7 +98,7 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
 template <typename ReduceFunction, typename M, typename... Args>
 constexpr auto reduce_sum(const std::vector<M>& vmapped, std::size_t grainsize,
                           const Args&... args) {
-  using return_type = return_type_t<Args...>;
+  using return_type = return_type_t<M, Args...>;
   return internal::reduce_sum_impl<ReduceFunction, void, return_type, M,
                                    Args...>()(vmapped, grainsize, args...);
 }

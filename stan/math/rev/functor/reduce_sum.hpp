@@ -46,7 +46,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, M,
         : num_terms_(other.num_terms_),
           vmapped_(other.vmapped_),
           args_tuple_(other.args_tuple_),
-          sum_(other.sum_),
+          sum_(0.0),
           args_adjoints_(other.args_adjoints_) {}
 
     template <typename T>
@@ -117,13 +117,17 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, M,
       auto end = vmapped_.begin();
       std::advance(end, r.end());
 
-      const std::vector<M> sub_slice(start, end);
-
       try {
         start_nested();
 
         // create a deep copy of all var's so that these are not
         // linked to any outer AD tree
+        std::vector<M> sub_slice;
+        sub_slice.reserve(r.size());
+        for(auto iter = start; iter != end; ++iter) {
+          sub_slice.emplace_back(value_of(*iter));
+        }
+
         auto args_tuple_local_copy = apply(
             [&](auto&&... args) { return std::make_tuple(deep_copy(args)...); },
             args_tuple_);
