@@ -100,7 +100,6 @@ TEST(v3_reduce_sum, gradient) {
 // ********************************
 // test if nested parallelism works
 // ********************************
-/*
 template <typename T>
 struct nesting_count_lpdf {
   nesting_count_lpdf() {}
@@ -161,12 +160,12 @@ TEST(v3_reduce_sum, nesting_gradient) {
 
   stan::math::recover_memory();
 }
-*/
+
 // ********************************
 // basic performance test for a hierarchical model
 // ********************************
 
-/*
+
 template <typename T>
 struct grouped_count_lpdf {
   grouped_count_lpdf() {}
@@ -245,11 +244,11 @@ TEST(v3_reduce_sum, grouped_gradient) {
 
   stan::math::recover_memory();
 }
-*/
+
 // ********************************
 // slice over the grouping variable which is a var
 // ********************************
-/*
+
 template <typename T>
 struct slice_group_count_lpdf {
   slice_group_count_lpdf() {}
@@ -335,4 +334,4 @@ TEST(v3_reduce_sum, slice_group_gradient) {
   ;
   stan::math::recover_memory();
 }
-*/
+
