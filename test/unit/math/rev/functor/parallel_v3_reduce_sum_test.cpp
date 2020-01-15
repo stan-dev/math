@@ -37,7 +37,8 @@ TEST(v3_reduce_sum, value) {
 
   typedef boost::counting_iterator<std::size_t> count_iter;
 
-  double poisson_lpdf = stan::math::reduce_sum<count_lpdf<double>>(data, 5, vlambda_d, idata);
+  double poisson_lpdf
+      = stan::math::reduce_sum<count_lpdf<double>>(data, 5, vlambda_d, idata);
 
   double poisson_lpdf_ref = stan::math::poisson_lpmf(data, lambda_d);
 
@@ -67,8 +68,8 @@ TEST(v3_reduce_sum, gradient) {
   std::vector<int> idata;
   std::vector<var> vlambda_v(1, lambda_v);
 
-  var poisson_lpdf = stan::math::reduce_sum<count_lpdf<var>>(data, 5,
-								 vlambda_v, idata);
+  var poisson_lpdf
+      = stan::math::reduce_sum<count_lpdf<var>>(data, 5, vlambda_v, idata);
 
   var lambda_ref = lambda_d;
   var poisson_lpdf_ref = stan::math::poisson_lpmf(data, lambda_ref);

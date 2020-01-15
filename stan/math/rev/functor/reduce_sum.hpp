@@ -16,8 +16,10 @@ namespace stan {
 namespace math {
 namespace internal {
 
-template <typename ReduceFunction, typename ReturnType, typename M, typename... Args>
-struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, M, Args...> {
+template <typename ReduceFunction, typename ReturnType, typename M,
+          typename... Args>
+struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, M,
+                       Args...> {
   struct recursive_reducer {
     size_t num_terms_;
     const std::vector<M>& vmapped_;
@@ -26,74 +28,77 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, M,
     double sum_;
     Eigen::VectorXd args_adjoints_;
 
-    recursive_reducer(size_t num_terms, const std::vector<M>& vmapped, const Args&... args)
-      : num_terms_(num_terms),
-	vmapped_(vmapped),
-	args_tuple_(args...),
-	sum_(0.0),
-	args_adjoints_(Eigen::VectorXd::Zero(num_terms)) {}
+    recursive_reducer(size_t num_terms, const std::vector<M>& vmapped,
+                      const Args&... args)
+        : num_terms_(num_terms),
+          vmapped_(vmapped),
+          args_tuple_(args...),
+          sum_(0.0),
+          args_adjoints_(Eigen::VectorXd::Zero(num_terms)) {}
 
     recursive_reducer(recursive_reducer& other, tbb::split)
-      : num_terms_(other.num_terms_),
-	vmapped_(other.vmapped_),
-	args_tuple_(other.args_tuple_),
-	sum_(other.sum_),
-	args_adjoints_(other.args_adjoints_) {}
+        : num_terms_(other.num_terms_),
+          vmapped_(other.vmapped_),
+          args_tuple_(other.args_tuple_),
+          sum_(other.sum_),
+          args_adjoints_(other.args_adjoints_) {}
 
-    template<typename T>
+    template <typename T>
     T& deep_copy(T& arg) {
       return arg;
     }
 
-    var deep_copy(const var& arg) {
-      return var(arg.val());
-    }
+    var deep_copy(const var& arg) { return var(arg.val()); }
 
     std::vector<var> deep_copy(const std::vector<var>& arg) {
       std::vector<var> copy(arg.size());
-      for(size_t i = 0; i < arg.size(); ++i) {
-	copy[i] = arg[i].val();
+      for (size_t i = 0; i < arg.size(); ++i) {
+        copy[i] = arg[i].val();
       }
       return copy;
     }
 
-    template<int RowType, int ColType>
-    Eigen::Matrix<var, RowType, ColType> deep_copy(const Eigen::Matrix<var, RowType, ColType>& arg) {
+    template <int RowType, int ColType>
+    Eigen::Matrix<var, RowType, ColType> deep_copy(
+        const Eigen::Matrix<var, RowType, ColType>& arg) {
       Eigen::Matrix<var, RowType, ColType> copy(arg.size());
-      for(size_t i = 0; i < arg.size(); ++i) {
-	copy(i) = arg(i).val();
+      for (size_t i = 0; i < arg.size(); ++i) {
+        copy(i) = arg(i).val();
       }
       return copy;
     }
 
-    template<typename... Pargs>
-    void accumulate_adjoints(double *dest, const var& x, const Pargs&... args) {
+    template <typename... Pargs>
+    void accumulate_adjoints(double* dest, const var& x, const Pargs&... args) {
       *dest += x.adj();
       accumulate_adjoints(dest + 1, args...);
     }
 
-    template<typename... Pargs>
-    void accumulate_adjoints(double *dest, const std::vector<var>& x, const Pargs&... args) {
-      for(size_t i = 0; i < x.size(); ++i) {
-	dest[i] += x[i].adj();
+    template <typename... Pargs>
+    void accumulate_adjoints(double* dest, const std::vector<var>& x,
+                             const Pargs&... args) {
+      for (size_t i = 0; i < x.size(); ++i) {
+        dest[i] += x[i].adj();
       }
       accumulate_adjoints(dest + x.size(), args...);
     }
 
-    template<typename... Pargs, int RowType, int ColType>
-    void accumulate_adjoints(double *dest, const Eigen::Matrix<var, RowType, ColType>& x, const Pargs&... args) {
-      for(size_t i = 0; i < x.size(); ++i) {
-	dest[i] += x(i).adj();
+    template <typename... Pargs, int RowType, int ColType>
+    void accumulate_adjoints(double* dest,
+                             const Eigen::Matrix<var, RowType, ColType>& x,
+                             const Pargs&... args) {
+      for (size_t i = 0; i < x.size(); ++i) {
+        dest[i] += x(i).adj();
       }
       accumulate_adjoints(dest + x.size(), args...);
     }
 
-    template<typename R, typename... Pargs>
-    void accumulate_adjoints(double *dest, const R& x, const Pargs&... args) {
+    template <typename R, typename... Pargs>
+    void accumulate_adjoints(double* dest, const R& x, const Pargs&... args) {
       accumulate_adjoints(dest, args...);
     }
 
-    void accumulate_adjoints(double *) {}
+    void accumulate_adjoints(double*) {}
 
     void operator()(const tbb::blocked_range<size_t>& r) {
       if (r.empty())
@@ -111,25 +116,28 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, M,
 
         // create a deep copy of all var's so that these are not
         // linked to any outer AD tree
-	auto args_tuple_local_copy = apply([&](auto&&... args) {
-	    return std::make_tuple(deep_copy(args)...);
-	  }, args_tuple_);
+        auto args_tuple_local_copy = apply(
+            [&](auto&&... args) { return std::make_tuple(deep_copy(args)...); },
+            args_tuple_);
 
-	var sub_sum_v = apply([&](auto&&... args) {
-	    return ReduceFunction()(r.begin(), r.end() - 1, sub_slice,
-				    args...);
-	  },
-	  args_tuple_local_copy);
+        var sub_sum_v = apply(
+            [&](auto&&... args) {
+              return ReduceFunction()(r.begin(), r.end() - 1, sub_slice,
+                                      args...);
+            },
+            args_tuple_local_copy);
 
-	sub_sum_v.grad();
+        sub_sum_v.grad();
 
-	sum_ += sub_sum_v.val();
+        sum_ += sub_sum_v.val();
 
-	// This should accumulate the adjoints from args_tuple_local_copy into
-	//  the memory of args_adjoints_
-	apply([&](auto&&... args) {
-	    accumulate_adjoints(args_adjoints_.data(), args...);
-	  }, args_tuple_local_copy);
+        // This should accumulate the adjoints from args_tuple_local_copy into
+        //  the memory of args_adjoints_
+        apply(
+            [&](auto&&... args) {
+              accumulate_adjoints(args_adjoints_.data(), args...);
+            },
+            args_tuple_local_copy);
       } catch (const std::exception& e) {
         recover_memory_nested();
         throw;
@@ -144,19 +152,21 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, M,
   };
 
   template <typename... Pargs, int RowType, int ColType>
-  size_t count_var_impl(size_t count, const Eigen::Matrix<var, RowType, ColType>& x,
-		      const Pargs&... args) const {
+  size_t count_var_impl(size_t count,
+                        const Eigen::Matrix<var, RowType, ColType>& x,
+                        const Pargs&... args) const {
     return count_var_impl(count + x.size(), args...);
   }
 
   template <typename... Pargs>
   size_t count_var_impl(size_t count, const std::vector<var>& x,
-		      const Pargs&... args) const {
+                        const Pargs&... args) const {
     return count_var_impl(count + x.size(), args...);
   }
 
   template <typename... Pargs>
-  size_t count_var_impl(size_t count, const var& x, const Pargs&... args) const {
+  size_t count_var_impl(size_t count, const var& x,
+                        const Pargs&... args) const {
     return count_var_impl(count + 1, args...);
   }
 
@@ -178,37 +188,39 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, M,
     return count_var_impl(0, args...);
   }
 
-  template<typename... Pargs>
-  void save_varis(vari **dest, const var& x, const Pargs&... args) const {
+  template <typename... Pargs>
+  void save_varis(vari** dest, const var& x, const Pargs&... args) const {
     *dest = x.vi_;
     save_varis(dest + 1, args...);
   }
 
-  template<typename... Pargs>
-  void save_varis(vari **dest, const std::vector<var>& x, const Pargs&... args) const {
-    for(size_t i = 0; i < x.size(); ++i) {
+  template <typename... Pargs>
+  void save_varis(vari** dest, const std::vector<var>& x,
+                  const Pargs&... args) const {
+    for (size_t i = 0; i < x.size(); ++i) {
       dest[i] = x[i].vi_;
     }
     save_varis(dest + x.size(), args...);
   }
 
-  template<typename... Pargs, int RowType, int ColType>
-  void save_varis(vari **dest, const Eigen::Matrix<var, RowType, ColType>& x, const Pargs&... args) const {
-    for(size_t i = 0; i < x.size(); ++i) {
+  template <typename... Pargs, int RowType, int ColType>
+  void save_varis(vari** dest, const Eigen::Matrix<var, RowType, ColType>& x,
+                  const Pargs&... args) const {
+    for (size_t i = 0; i < x.size(); ++i) {
       dest[i] = x(i).vi_;
     }
     save_varis(dest + x.size(), args...);
   }
 
-  template<typename R, typename... Pargs>
-  void save_varis(vari **dest, const R& x, const Pargs&... args) const {
+  template <typename R, typename... Pargs>
+  void save_varis(vari** dest, const R& x, const Pargs&... args) const {
     save_varis(dest, args...);
   }
 
-  void save_varis(vari **) const {}
+  void save_varis(vari**) const {}
 
   var operator()(const std::vector<M>& vmapped, std::size_t grainsize,
-		 const Args&... args) const {
+                 const Args&... args) const {
     const std::size_t num_jobs = vmapped.size();
 
     if (num_jobs == 0)
@@ -235,16 +247,15 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, M,
 
     save_varis(varis, args...);
 
-    for(size_t i = 0; i < num_terms; ++i) {
+    for (size_t i = 0; i < num_terms; ++i) {
       partials[i] = worker.args_adjoints_(i);
     }
 
-    return var(new precomputed_gradients_vari(worker.sum_, num_terms,
-                                              varis, partials));
+    return var(new precomputed_gradients_vari(worker.sum_, num_terms, varis,
+                                              partials));
   }
 };
 }  // namespace internal
-
 
 }  // namespace math
 }  // namespace stan

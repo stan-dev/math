@@ -19,12 +19,14 @@ namespace math {
 
 namespace internal {
 
-template <typename ReduceFunction, typename Enable, typename ReturnType, typename M, typename... Args>
+template <typename ReduceFunction, typename Enable, typename ReturnType,
+          typename M, typename... Args>
 struct reduce_sum_impl {};
 
-
-template <typename ReduceFunction, typename ReturnType, typename M, typename... Args>
-struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>, ReturnType, M, Args...> {
+template <typename ReduceFunction, typename ReturnType, typename M,
+          typename... Args>
+struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
+                       ReturnType, M, Args...> {
   struct recursive_reducer {
     using vmapped_t = std::vector<M>;
     std::tuple<const Args&...> args_tuple_;
@@ -32,18 +34,16 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>, ReturnT
     double sum_;
 
     recursive_reducer(const vmapped_t& vmapped, const Args&... args)
-      : vmapped_(vmapped),
-	args_tuple_(args...),
-	sum_(0.0) {}
+        : vmapped_(vmapped), args_tuple_(args...), sum_(0.0) {}
 
     recursive_reducer(recursive_reducer& other, tbb::split)
-      : vmapped_(other.vmapped_),
-	args_tuple_(other.args_tuple_),
-	sum_(other.sum_) {}
+        : vmapped_(other.vmapped_),
+          args_tuple_(other.args_tuple_),
+          sum_(other.sum_) {}
 
     void operator()(const tbb::blocked_range<size_t>& r) {
       if (r.empty()) {
-	return;
+        return;
       }
 
       auto start = vmapped_.begin();
@@ -53,18 +53,18 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>, ReturnT
 
       const vmapped_t sub_slice(start, end);
 
-      sum_ += apply([&](auto&&... args) {
-	  return ReduceFunction()(r.begin(), r.end() - 1, sub_slice, args...);
-	}, args_tuple_);
+      sum_ += apply(
+          [&](auto&&... args) {
+            return ReduceFunction()(r.begin(), r.end() - 1, sub_slice, args...);
+          },
+          args_tuple_);
     }
 
-    void join(const recursive_reducer& child) {
-      sum_ += child.sum_;
-    }
+    void join(const recursive_reducer& child) { sum_ += child.sum_; }
   };
 
   double operator()(const std::vector<M>& vmapped, std::size_t grainsize,
-	       const Args&... args) const {
+                    const Args&... args) const {
     const std::size_t num_jobs = vmapped.size();
 
     if (num_jobs == 0)
@@ -94,11 +94,11 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>, ReturnT
  * the functor must be default constructible without any arguments.
  */
 template <typename ReduceFunction, typename M, typename... Args>
-constexpr auto reduce_sum(const std::vector<M>& vmapped,
-			    std::size_t grainsize, const Args&... args) {
+constexpr auto reduce_sum(const std::vector<M>& vmapped, std::size_t grainsize,
+                          const Args&... args) {
   using return_type = return_type_t<Args...>;
-  return internal::reduce_sum_impl<ReduceFunction, void, return_type, M, Args...>()
-    (vmapped, grainsize, args...);
+  return internal::reduce_sum_impl<ReduceFunction, void, return_type, M,
+                                   Args...>()(vmapped, grainsize, args...);
 }
 
 }  // namespace math
