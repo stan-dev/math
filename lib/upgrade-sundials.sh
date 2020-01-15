@@ -146,10 +146,6 @@ find src -name "*.c_orig" -exec rm {} \;
 git add src include/stan_sundials_printf_override.hpp
 git commit -m "upgrading to sundials v${sundials_version}; removing printf and fprintf for CRAN"
 
-# 7. Get rid of troublesome c files not needed
-#git rm src/sundials/sundials_spfgmr.c src/sundials/sundials_spgmr.c
-#git commit -m "upgrading to sundials v${sundials_version}; removing troublesome and not needed sundials c modules"
-
 cat <<EOF
 
 
