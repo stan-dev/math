@@ -18,11 +18,11 @@ namespace math {
  */
 template <size_t index, class Op, class... Types>
 constexpr auto left_fold(Op op, const std::tuple<Types...>& t) {
-    if (index == sizeof...(Types) - 1) {
-        return std::get<index>(t);
-    } else {
-        return op(std::get<index>(t), left_fold<1 + index>(op, t));
-    }
+  if (index == sizeof...(Types) - 1) {
+    return std::get<index>(t);
+  } else {
+    return op(std::get<index>(t), left_fold<1 + index>(op, t));
+  }
 }
 
 /**
@@ -30,11 +30,11 @@ constexpr auto left_fold(Op op, const std::tuple<Types...>& t) {
  * @tparam Types types of the tuple's elements
  * @param t tuple whose elements are to be summed
  */
-template <typename ... Types, require_stan_scalar_t<Types>...>
-constexpr auto sum(const std::tuple<Types...> & t)  {
+template <typename... Types, require_stan_scalar_t<Types>...>
+constexpr auto sum(const std::tuple<Types...>& t) {
   return left_fold<0>(std::plus<>{}, t);
 }
 
-}
-}
+}  // namespace math
+}  // namespace stan
 #endif
