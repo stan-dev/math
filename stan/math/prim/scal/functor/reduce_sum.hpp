@@ -32,7 +32,7 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
     std::tuple<const Args&...> args_tuple_;
     size_t tuple_size_ = sizeof...(Args);
     const vmapped_t& vmapped_;
-    double sum_;
+    return_type_t<M, Args...> sum_;
 
     recursive_reducer(const vmapped_t& vmapped, const Args&... args)
         : vmapped_(vmapped), args_tuple_(args...), sum_(0.0) {}
@@ -64,7 +64,7 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
     void join(const recursive_reducer& child) { sum_ += child.sum_; }
   };
 
-  double operator()(const std::vector<M>& vmapped, std::size_t grainsize,
+  return_type_t<M, Args...> operator()(const std::vector<M>& vmapped, std::size_t grainsize,
                     const Args&... args) const {
     const std::size_t num_jobs = vmapped.size();
 

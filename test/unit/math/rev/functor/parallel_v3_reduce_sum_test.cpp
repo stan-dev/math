@@ -245,7 +245,7 @@ TEST(v3_reduce_sum, grouped_gradient) {
   stan::math::recover_memory();
 }
 
-/*
+
 // ********************************
 // slice over the grouping variable which is a var
 // ********************************
@@ -336,4 +336,3 @@ TEST(v3_reduce_sum, slice_group_gradient) {
   ;
   stan::math::recover_memory();
 }
-*/
