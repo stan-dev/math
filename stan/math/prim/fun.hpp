@@ -197,6 +197,7 @@
 #include <stan/math/prim/fun/num_elements.hpp>
 #include <stan/math/prim/fun/offset_multiplier_constrain.hpp>
 #include <stan/math/prim/fun/offset_multiplier_free.hpp>
+#include <stan/math/prim/fun/one_hot_vector.hpp>
 #include <stan/math/prim/fun/ones_vector.hpp>
 #include <stan/math/prim/fun/ordered_constrain.hpp>
 #include <stan/math/prim/fun/ordered_free.hpp>
@@ -241,6 +242,7 @@
 #include <stan/math/prim/fun/scaled_add.hpp>
 #include <stan/math/prim/fun/sd.hpp>
 #include <stan/math/prim/fun/segment.hpp>
+#include <stan/math/prim/fun/set_spaced_vector.hpp>
 #include <stan/math/prim/fun/sign.hpp>
 #include <stan/math/prim/fun/simplex_constrain.hpp>
 #include <stan/math/prim/fun/simplex_free.hpp>
@@ -284,6 +286,7 @@
 #include <stan/math/prim/fun/typedefs.hpp>
 #include <stan/math/prim/fun/ub_constrain.hpp>
 #include <stan/math/prim/fun/ub_free.hpp>
+#include <stan/math/prim/fun/uniform_simplex.hpp>
 #include <stan/math/prim/fun/unit_vector_constrain.hpp>
 #include <stan/math/prim/fun/unit_vector_free.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
