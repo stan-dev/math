@@ -30,6 +30,7 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
   struct recursive_reducer {
     using vmapped_t = std::vector<M>;
     std::tuple<const Args&...> args_tuple_;
+    size_t tuple_size_ = sizeof...(Args);
     const vmapped_t& vmapped_;
     double sum_;
 

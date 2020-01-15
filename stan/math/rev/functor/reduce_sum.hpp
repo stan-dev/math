@@ -16,19 +16,21 @@ namespace stan {
 namespace math {
 namespace internal {
 
+
 template <typename ReduceFunction, typename ReturnType, typename M,
           typename... Args>
 struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, M,
                        Args...> {
-   // TODO(Steve): Move this somewhere smarter
-   // Fails to compile if type T does not have member operator(Integral)
-   template <typename T>
-   using operator_paren_access_t = decltype(std::declval<T>()(int{}));
+  // TODO(Steve): Move this somewhere smarter
+  // Fails to compile if type T does not have member operator(Integral)
+  template <typename T>
+  using operator_paren_access_t = decltype(std::declval<T>()(int{}));
 
   struct recursive_reducer {
     size_t num_terms_;
     const std::vector<M>& vmapped_;
     std::tuple<const Args&...> args_tuple_;
+    size_t tuple_size_ = sizeof...(Args);
 
     double sum_;
     Eigen::VectorXd args_adjoints_;
@@ -89,15 +91,12 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, M,
       accumulate_adjoints(dest + x.size(), args...);
     }
 
-
     // Works on anything with a operator()
     template <typename... Pargs, typename Mat,
               require_t<is_detected<Mat, operator_paren_access_t>>...,
               require_t<is_var<value_type_t<Mat>>>...>
     void accumulate_adjoints(double* dest, const Mat& x, const Pargs&... args) {
-      for (size_t i = 0; i < x.size(); ++i) {
-        dest[i] += x(i).adj();
-      }
+      Eigen::Map<matrix_vi>(dest, x.size()) += x.adj();
       accumulate_adjoints(dest + x.size(), args...);
     }
 
@@ -214,19 +213,19 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, M,
     save_varis(dest + 1, args...);
   }
 
-  template <typename... Pargs, typename Vec, require_vector_like_vt<is_var, Vec>...>
-  void save_varis(vari** dest, const Vec& x,
-                  const Pargs&... args) const {
+  template <typename... Pargs, typename Vec,
+            require_vector_like_vt<is_var, Vec>...>
+  void save_varis(vari** dest, const Vec& x, const Pargs&... args) const {
     for (size_t i = 0; i < x.size(); ++i) {
       dest[i] = x[i].vi_;
     }
     save_varis(dest + x.size(), args...);
   }
 
-  template <typename... Pargs, typename Mat, require_t<is_detected<Mat, operator_paren_access_t>>...,
-  require_t<is_var<value_type_t<Mat>>>...>
-  void save_varis(vari** dest, const Mat& x,
-                  const Pargs&... args) const {
+  template <typename... Pargs, typename Mat,
+            require_t<is_detected<Mat, operator_paren_access_t>>...,
+            require_t<is_var<value_type_t<Mat>>>...>
+  void save_varis(vari** dest, const Mat& x, const Pargs&... args) const {
     for (size_t i = 0; i < x.size(); ++i) {
       dest[i] = x(i).vi_;
     }
