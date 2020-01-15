@@ -80,9 +80,9 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, M,
     }
 
     // Works with anything that has operator[Integral] defined
-    template <typename... Pargs, typename Vec, require_vector_like_vt<is_var, Vec>...>
-    void accumulate_adjoints(double* dest, const Vec& x,
-                             const Pargs&... args) {
+    template <typename... Pargs, typename Vec,
+              require_vector_like_vt<is_var, Vec>...>
+    void accumulate_adjoints(double* dest, const Vec& x, const Pargs&... args) {
       for (size_t i = 0; i < x.size(); ++i) {
         dest[i] += x[i].adj();
       }
@@ -91,11 +91,10 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, M,
 
 
     // Works on anything with a operator()
-    template <typename... Pargs, typename Mat, require_t<is_detected<Mat, operator_paren_access_t>>...,
-    require_t<is_var<value_type_t<Mat>>>...>
-    void accumulate_adjoints(double* dest,
-                             const Mat& x,
-                             const Pargs&... args) {
+    template <typename... Pargs, typename Mat,
+              require_t<is_detected<Mat, operator_paren_access_t>>...,
+              require_t<is_var<value_type_t<Mat>>>...>
+    void accumulate_adjoints(double* dest, const Mat& x, const Pargs&... args) {
       for (size_t i = 0; i < x.size(); ++i) {
         dest[i] += x(i).adj();
       }
@@ -103,7 +102,8 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, M,
     }
 
     // Anything with a scalar type of Arithmetic gets tossed
-    template <typename Arith, require_arithmetic_t<scalar_type_t<Arith>>..., typename... Pargs>
+    template <typename Arith, require_arithmetic_t<scalar_type_t<Arith>>...,
+              typename... Pargs>
     void accumulate_adjoints(double* dest, Arith&& x, const Pargs&... args) {
       accumulate_adjoints(dest, args...);
     }
@@ -189,7 +189,8 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, M,
     return count_var_impl(count + 1, args...);
   }
 
-  template <typename... Pargs, typename Arith, require_arithmetic_t<scalar_type_t<Arith>>...>
+  template <typename... Pargs, typename Arith,
+            require_arithmetic_t<scalar_type_t<Arith>>...>
   size_t count_var_impl(size_t count, Arith& x, const Pargs&... args) const {
     return count_var_impl(count, args...);
   }
