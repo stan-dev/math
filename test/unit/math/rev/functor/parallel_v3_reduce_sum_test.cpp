@@ -165,7 +165,6 @@ TEST(v3_reduce_sum, nesting_gradient) {
 // basic performance test for a hierarchical model
 // ********************************
 
-
 template <typename T>
 struct grouped_count_lpdf {
   grouped_count_lpdf() {}
@@ -334,4 +333,3 @@ TEST(v3_reduce_sum, slice_group_gradient) {
   ;
   stan::math::recover_memory();
 }
-
