@@ -129,6 +129,7 @@
 #include <stan/math/prim/scal/fun/value_of.hpp>
 #include <stan/math/prim/scal/fun/value_of_rec.hpp>
 
+#include <stan/math/prim/scal/functor/apply.hpp>
 #include <stan/math/prim/scal/functor/reduce_sum.hpp>
 
 #include <stan/math/prim/prob/bernoulli_ccdf_log.hpp>

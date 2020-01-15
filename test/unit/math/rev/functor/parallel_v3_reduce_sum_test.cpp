@@ -37,18 +37,15 @@ TEST(v3_reduce_sum, value) {
 
   typedef boost::counting_iterator<std::size_t> count_iter;
 
-  double poisson_lpdf = stan::math::reduce_sum<count_lpdf<double>>(
-      data, 0.0, 5, vlambda_d, idata);
+  double poisson_lpdf = stan::math::reduce_sum<count_lpdf<double>>(data, 5, vlambda_d, idata);
 
   double poisson_lpdf_ref = stan::math::poisson_lpmf(data, lambda_d);
 
   EXPECT_FLOAT_EQ(poisson_lpdf, poisson_lpdf_ref);
 
   std::cout << "ref value of poisson lpdf : " << poisson_lpdf_ref << std::endl;
-  ;
 
   std::cout << "value of poisson lpdf : " << poisson_lpdf << std::endl;
-  ;
 }
 
 TEST(v3_reduce_sum, gradient) {
@@ -70,8 +67,8 @@ TEST(v3_reduce_sum, gradient) {
   std::vector<int> idata;
   std::vector<var> vlambda_v(1, lambda_v);
 
-  var poisson_lpdf = stan::math::reduce_sum<count_lpdf<var>>(data, var(0.0), 5,
-                                                             vlambda_v, idata);
+  var poisson_lpdf = stan::math::reduce_sum_var<count_lpdf<var>>(data, 5,
+								 vlambda_v, idata);
 
   var lambda_ref = lambda_d;
   var poisson_lpdf_ref = stan::math::poisson_lpmf(data, lambda_ref);
@@ -89,14 +86,13 @@ TEST(v3_reduce_sum, gradient) {
 
   std::cout << "ref value of poisson lpdf : " << poisson_lpdf_ref.val()
             << std::endl;
-  ;
+
   std::cout << "ref gradient wrt to lambda: " << lambda_ref_adj << std::endl;
-  ;
 
   std::cout << "value of poisson lpdf : " << poisson_lpdf.val() << std::endl;
-  ;
+
   std::cout << "gradient wrt to lambda: " << lambda_adj << std::endl;
-  ;
+
   stan::math::recover_memory();
 }
 
@@ -113,40 +109,9 @@ struct nesting_count_lpdf {
                       const std::vector<int>& sub_slice,
                       const std::vector<T>& lambda,
                       const std::vector<int>& idata) const {
-    return stan::math::reduce_sum<count_lpdf<T>>(sub_slice, T(0.0), 5, lambda,
-                                                 idata);
+    return stan::math::reduce_sum_var<count_lpdf<T>>(sub_slice, 5, lambda, idata);
   }
 };
-
-TEST(v3_reduce_sum, nesting_value) {
-  stan::math::init_threadpool_tbb();
-
-  double lambda_d = 10.0;
-  const std::size_t elems = 10000;
-  const std::size_t num_iter = 1000;
-  std::vector<int> data(elems);
-
-  for (std::size_t i = 0; i != elems; ++i)
-    data[i] = i;
-
-  std::vector<int> idata;
-  std::vector<double> vlambda_d(1, lambda_d);
-
-  typedef boost::counting_iterator<std::size_t> count_iter;
-
-  double poisson_lpdf = stan::math::reduce_sum<count_lpdf<double>>(
-      data, 0.0, 5, vlambda_d, idata);
-
-  double poisson_lpdf_ref = stan::math::poisson_lpmf(data, lambda_d);
-
-  EXPECT_FLOAT_EQ(poisson_lpdf, poisson_lpdf_ref);
-
-  std::cout << "ref value of poisson lpdf : " << poisson_lpdf_ref << std::endl;
-  ;
-
-  std::cout << "value of poisson lpdf : " << poisson_lpdf << std::endl;
-  ;
-}
 
 TEST(v3_reduce_sum, nesting_gradient) {
   stan::math::init_threadpool_tbb();
@@ -167,8 +132,8 @@ TEST(v3_reduce_sum, nesting_gradient) {
   std::vector<int> idata;
   std::vector<var> vlambda_v(1, lambda_v);
 
-  var poisson_lpdf = stan::math::reduce_sum<nesting_count_lpdf<var>>(
-      data, var(0.0), 5, vlambda_v, idata);
+  var poisson_lpdf = stan::math::reduce_sum_var<nesting_count_lpdf<var>>(
+      data, 5, vlambda_v, idata);
 
   var lambda_ref = lambda_d;
   var poisson_lpdf_ref = stan::math::poisson_lpmf(data, lambda_ref);
@@ -186,14 +151,12 @@ TEST(v3_reduce_sum, nesting_gradient) {
 
   std::cout << "ref value of poisson lpdf : " << poisson_lpdf_ref.val()
             << std::endl;
-  ;
+
   std::cout << "ref gradient wrt to lambda: " << lambda_ref_adj << std::endl;
-  ;
 
   std::cout << "value of poisson lpdf : " << poisson_lpdf.val() << std::endl;
-  ;
+
   std::cout << "gradient wrt to lambda: " << lambda_adj << std::endl;
-  ;
 
   stan::math::recover_memory();
 }
@@ -247,8 +210,8 @@ TEST(v3_reduce_sum, grouped_gradient) {
 
   var lambda_v = vlambda_v[0];
 
-  var poisson_lpdf = stan::math::reduce_sum<grouped_count_lpdf<var>>(
-      data, var(0.0), 5, vlambda_v, gidx);
+  var poisson_lpdf = stan::math::reduce_sum_var<grouped_count_lpdf<var>>(
+      data, 5, vlambda_v, gidx);
 
   std::vector<var> vref_lambda_v;
   for (std::size_t i = 0; i != elems; ++i) {
@@ -271,17 +234,17 @@ TEST(v3_reduce_sum, grouped_gradient) {
 
   std::cout << "ref value of poisson lpdf : " << poisson_lpdf_ref.val()
             << std::endl;
-  ;
+
   std::cout << "ref gradient wrt to lambda: " << lambda_ref_adj << std::endl;
-  ;
 
   std::cout << "value of poisson lpdf : " << poisson_lpdf.val() << std::endl;
-  ;
+
   std::cout << "gradient wrt to lambda: " << lambda_adj << std::endl;
-  ;
+
   stan::math::recover_memory();
 }
 
+/*
 // ********************************
 // slice over the grouping variable which is a var
 // ********************************
@@ -319,6 +282,7 @@ TEST(v3_reduce_sum, slice_group_gradient) {
   std::vector<int> gidx(elems);
   std::vector<int> gsidx(groups + 1);
 
+  
   for (std::size_t i = 0, k = 0; i != groups; ++i) {
     gsidx[i] = k;
     for (std::size_t j = 0; j != elems_per_group; ++j, ++k) {
@@ -337,116 +301,12 @@ TEST(v3_reduce_sum, slice_group_gradient) {
 
   var lambda_v = vlambda_v[0];
 
-  var poisson_lpdf = stan::math::reduce_sum<slice_group_count_lpdf<var>>(
-      vlambda_v, var(0.0), 5, data, gsidx);
+  var poisson_lpdf = stan::math::reduce_sum_var<slice_group_count_lpdf<var>>(
+      vlambda_v, 5, data, gsidx);
 
   std::vector<var> vref_lambda_v;
   for (std::size_t i = 0; i != elems; ++i) {
     vref_lambda_v.push_back(vlambda_v[gidx[i]]);
-  }
-  var lambda_ref = vlambda_v[0];
-
-  var poisson_lpdf_ref = stan::math::poisson_lpmf(data, vref_lambda_v);
-
-  EXPECT_FLOAT_EQ(value_of(poisson_lpdf), value_of(poisson_lpdf_ref));
-
-  stan::math::grad(poisson_lpdf_ref.vi_);
-  const double lambda_ref_adj = lambda_ref.adj();
-
-  stan::math::set_zero_all_adjoints();
-  stan::math::grad(poisson_lpdf.vi_);
-  const double lambda_adj = lambda_v.adj();
-
-  EXPECT_FLOAT_EQ(lambda_adj, lambda_ref_adj);
-
-  std::cout << "ref value of poisson lpdf : " << poisson_lpdf_ref.val()
-            << std::endl;
-  ;
-  std::cout << "ref gradient wrt to lambda: " << lambda_ref_adj << std::endl;
-  ;
-
-  std::cout << "value of poisson lpdf : " << poisson_lpdf.val() << std::endl;
-  ;
-  std::cout << "gradient wrt to lambda: " << lambda_adj << std::endl;
-  ;
-  stan::math::recover_memory();
-}
-
-// ********************************
-// slice over the grouping variable which is a var and the slicing
-// variable itself has more structure than just being a vector of vars.
-// ********************************
-
-template <typename T>
-struct slice_groupNested_count_lpdf {
-  slice_groupNested_count_lpdf() {}
-
-  // does the reduction in the sub-slice start to end
-  inline T operator()(std::size_t start, std::size_t end,
-                      const std::vector<std::vector<T>>& lambda_slice,
-                      const std::vector<int>& y,
-                      const std::vector<int>& gsidx) const {
-    const std::size_t num_groups = end - start + 1;
-    T result = 0.0;
-    for (std::size_t i = 0; i != num_groups; ++i) {
-      std::vector<int> y_group(y.begin() + gsidx[start + i],
-                               y.begin() + gsidx[start + i + 1]);
-      result += stan::math::poisson_lpmf(
-          y_group, lambda_slice[i][0] + lambda_slice[i][1]);
-    }
-    return result;
-  }
-};
-
-/* this should be supported if possible. it requires to allow
- * initialization from nested structures and it requires that the
- * offset handling is correct in the slicing code which right now
- * assumes that each array element which we slice only has a single adjoint.
- */
-/*
-TEST(v3_reduce_sum, slice_groupNested_gradient) {
-  stan::math::init_threadpool_tbb();
-
-  double lambda_d = 10.0;
-  const std::size_t groups = 10;
-  const std::size_t elems_per_group = 1000;
-  const std::size_t elems = groups * elems_per_group;
-  const std::size_t num_iter = 1000;
-
-  std::vector<int> data(elems);
-  std::vector<int> gidx(elems);
-  std::vector<int> gsidx(groups + 1);
-
-  for (std::size_t i = 0, k = 0; i != groups; ++i) {
-    gsidx[i] = k;
-    for (std::size_t j = 0; j != elems_per_group; ++j, ++k) {
-      data[k] = k;
-      gidx[k] = i;
-    }
-    gsidx[i + 1] = k;
-  }
-
-  using stan::math::var;
-
-  std::vector<std::vector<var>> vlambda_v;
-
-  for (std::size_t i = 0; i != groups; ++i) {
-    var l1 = i + 0.2;
-    var l2 = 2*i + 0.2;
-    std::vector<var> terms;
-    terms.push_back(l1);
-    terms.push_back(l2);
-    vlambda_v.push_back(terms);
-  }
-
-  var lambda_v = vlambda_v[0][0];
-
-  var poisson_lpdf = stan::math::reduce_sum<slice_groupNested_count_lpdf<var>>(
-      vlambda_v, var(0.0), 5, data, gsidx);
-
-  std::vector<var> vref_lambda_v;
-  for (std::size_t i = 0; i != elems; ++i) {
-    vref_lambda_v.push_back(vlambda_v[gidx[i]][0] + vlambda_v[gidx[i]][1]);
   }
   var lambda_ref = vlambda_v[0];
 

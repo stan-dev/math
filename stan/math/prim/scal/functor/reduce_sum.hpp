@@ -19,59 +19,66 @@ namespace math {
 
 namespace internal {
 
+template <typename ReduceFunction, typename M, typename... Args>
+struct reduce_sum_impl {
+  struct recursive_reducer {
+    using vmapped_t = std::vector<M>;
+    std::tuple<const Args&...> args_tuple_;
+    const vmapped_t& vmapped_;
+    double sum_;
 
-// base definition => compile error
-template <typename ReduceFunction, typename Enable = void, typename M, typename T, typename... Args>
-struct reduce_sum_impl {};
+    recursive_reducer(const vmapped_t& vmapped, const Args&... args)
+      : vmapped_(vmapped),
+	args_tuple_(args...),
+	sum_(0.0) {}
 
-// todo, double check if I need enable if here
-template <typename ReduceFunction, typename M, typename T, typename... Args>
-struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<T>, M, T, Args...> {
-  using vmapped_t = std::vector<M>;
-  // todo(Steve): Need helper funcs for manipulating / iterating tuples
-  std::tuple<std::vector<Args>...> arg_;
-  const vmapped_t& vmapped_;
-  T terms_sum_;
-
-  // todo(Steve): put back recursive reducer
-    reduce_sum_impl(const vmapped_t& vmapped, const T& init, Args&&... args)
-        : vmapped_(vmapped),
-          arg_(std::make_tuple(std::forward<Args>(args)...))
-          terms_sum_(value_of(init)) {}
-
-    reduce_sum_impl(reduce_sum_impl& other, tbb::split)
-        : vmapped_(other.vmapped_),
-        arg_(other.arg_),
-        terms_sum_(0.0) {}
+    recursive_reducer(recursive_reducer& other, tbb::split)
+      : vmapped_(other.vmapped_),
+	args_tuple_(other.args_tuple_),
+	sum_(other.sum_) {}
 
     void operator()(const tbb::blocked_range<size_t>& r) {
       if (r.empty()) {
-        return;
+	return;
       }
-
+    
       auto start = vmapped_.begin();
       std::advance(start, r.begin());
       auto end = vmapped_.begin();
       std::advance(end, r.end());
-
+    
       const vmapped_t sub_slice(start, end);
-
-      terms_sum_ += ReduceFunction()(r.begin(), r.end() - 1, sub_slice, unpack_tuple_func(args));
+    
+      sum_ += apply([&](auto&&... args) {
+	  return ReduceFunction()(r.begin(), r.end() - 1, sub_slice, args...);
+	}, args_tuple_);
     }
-
-    void join(const reduce_sum_impl& child) {
-      terms_sum_ += child.terms_sum_;
+  
+    void join(const recursive_reducer& child) {
+      sum_ += child.sum_;
     }
+  };
 
-  // Todo: Better name for this than operator(), collect()?
-  template <typename... OtherArgs>
-  T operator()(const vmapped_t& vmapped, T init, std::size_t grainsize,
-               Args&&... args) const {
+  double operator()(const std::vector<M>& vmapped, std::size_t grainsize,
+	       const Args&... args) const {
     const std::size_t num_jobs = vmapped.size();
-    reduce_sum_impl<ReduceFunction, M, T, OtherArgs...> worker(vmapped, init, args...);
+
+    if (num_jobs == 0)
+      return 0.0;
+
+    recursive_reducer worker(vmapped, args...);
+
+#ifdef STAN_DETERMINISTIC
+    tbb::static_partitioner partitioner;
+    tbb::parallel_deterministic_reduce(
+        tbb::blocked_range<std::size_t>(0, num_jobs, grainsize), worker,
+        partitioner);
+#else
     tbb::parallel_reduce(
         tbb::blocked_range<std::size_t>(0, num_jobs, grainsize), worker);
-    return std::move(worker.terms_sum_);
+#endif
+
+    return worker.sum_;
   }
 };
 
@@ -82,16 +89,12 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<T>, M, T, Args...> {
  * that any internal state of the functor is causing trouble. Thus,
  * the functor must be default constructible without any arguments.
  */
-template <typename ReduceFunction, typename M, typename T, typename... Args>
-constexpr T reduce_sum(const std::vector<M>& vmapped, T init,
-                       std::size_t grainsize, Args&&... args) {
-  typedef T return_base_t;
-  // void here but need to figure out enable_if stuff
-  // We do this somewhere in the opencl code
-  return internal::reduce_sum_impl<ReduceFunction, M, T, void, Args...>()(
-    vmapped, init, grainsize, std::forward<Args>(args)...);
+template <typename ReduceFunction, typename M, typename... Args>
+constexpr double reduce_sum(const std::vector<M>& vmapped,
+			    std::size_t grainsize, const Args&... args) {
+  return internal::reduce_sum_impl<ReduceFunction, M, Args...>()
+    (vmapped, grainsize, args...);
 }
-
 
 }  // namespace math
 }  // namespace stan
