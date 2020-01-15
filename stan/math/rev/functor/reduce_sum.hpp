@@ -16,7 +16,6 @@ namespace stan {
 namespace math {
 namespace internal {
 
-
 template <typename ReduceFunction, typename ReturnType, typename M,
           typename... Args>
 struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, M,
