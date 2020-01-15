@@ -245,7 +245,6 @@ TEST(v3_reduce_sum, grouped_gradient) {
   stan::math::recover_memory();
 }
 
-
 // ********************************
 // slice over the grouping variable which is a var
 // ********************************
@@ -282,7 +281,6 @@ TEST(v3_reduce_sum, slice_group_gradient) {
   std::vector<int> data(elems);
   std::vector<int> gidx(elems);
   std::vector<int> gsidx(groups + 1);
-
 
   for (std::size_t i = 0, k = 0; i != groups; ++i) {
     gsidx[i] = k;
