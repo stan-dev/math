@@ -16,8 +16,8 @@ namespace stan {
 namespace math {
 namespace internal {
 
-template <class ReduceFunction, class M, typename... Args>
-struct reduce_sum_var_impl {
+template <typename ReduceFunction, typename ReturnType, typename M, typename... Args>
+struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, M, Args...> {
   struct recursive_reducer {
     size_t num_terms_;
     const std::vector<M>& vmapped_;
@@ -65,13 +65,13 @@ struct reduce_sum_var_impl {
       }
       return copy;
     }
-    
+
     template<typename... Pargs>
     void accumulate_adjoints(double *dest, const var& x, const Pargs&... args) {
       *dest += x.adj();
       accumulate_adjoints(dest + 1, args...);
     }
-    
+
     template<typename... Pargs>
     void accumulate_adjoints(double *dest, const std::vector<var>& x, const Pargs&... args) {
       for(size_t i = 0; i < x.size(); ++i) {
@@ -79,7 +79,7 @@ struct reduce_sum_var_impl {
       }
       accumulate_adjoints(dest + x.size(), args...);
     }
-    
+
     template<typename... Pargs, int RowType, int ColType>
     void accumulate_adjoints(double *dest, const Eigen::Matrix<var, RowType, ColType>& x, const Pargs&... args) {
       for(size_t i = 0; i < x.size(); ++i) {
@@ -87,7 +87,7 @@ struct reduce_sum_var_impl {
       }
       accumulate_adjoints(dest + x.size(), args...);
     }
-    
+
     template<typename R, typename... Pargs>
     void accumulate_adjoints(double *dest, const R& x, const Pargs&... args) {
       accumulate_adjoints(dest, args...);
@@ -103,9 +103,9 @@ struct reduce_sum_var_impl {
       std::advance(start, r.begin());
       auto end = vmapped_.begin();
       std::advance(end, r.end());
-      
+
       const std::vector<M> sub_slice(start, end);
-      
+
       try {
         start_nested();
 
@@ -120,11 +120,11 @@ struct reduce_sum_var_impl {
 				    args...);
 	  },
 	  args_tuple_local_copy);
-      
+
 	sub_sum_v.grad();
-	
+
 	sum_ += sub_sum_v.val();
-	
+
 	// This should accumulate the adjoints from args_tuple_local_copy into
 	//  the memory of args_adjoints_
 	apply([&](auto&&... args) {
@@ -148,18 +148,18 @@ struct reduce_sum_var_impl {
 		      const Pargs&... args) const {
     return count_var_impl(count + x.size(), args...);
   }
-    
+
   template <typename... Pargs>
   size_t count_var_impl(size_t count, const std::vector<var>& x,
 		      const Pargs&... args) const {
     return count_var_impl(count + x.size(), args...);
   }
-    
+
   template <typename... Pargs>
   size_t count_var_impl(size_t count, const var& x, const Pargs&... args) const {
     return count_var_impl(count + 1, args...);
   }
-    
+
   template <typename R, typename... Pargs>
   size_t count_var_impl(size_t count, const R& x, const Pargs&... args) const {
     return count_var_impl(count, args...);
@@ -183,7 +183,7 @@ struct reduce_sum_var_impl {
     *dest = x.vi_;
     save_varis(dest + 1, args...);
   }
-    
+
   template<typename... Pargs>
   void save_varis(vari **dest, const std::vector<var>& x, const Pargs&... args) const {
     for(size_t i = 0; i < x.size(); ++i) {
@@ -191,7 +191,7 @@ struct reduce_sum_var_impl {
     }
     save_varis(dest + x.size(), args...);
   }
-    
+
   template<typename... Pargs, int RowType, int ColType>
   void save_varis(vari **dest, const Eigen::Matrix<var, RowType, ColType>& x, const Pargs&... args) const {
     for(size_t i = 0; i < x.size(); ++i) {
@@ -199,12 +199,12 @@ struct reduce_sum_var_impl {
     }
     save_varis(dest + x.size(), args...);
   }
-    
+
   template<typename R, typename... Pargs>
   void save_varis(vari **dest, const R& x, const Pargs&... args) const {
     save_varis(dest, args...);
   }
-  
+
   void save_varis(vari **) const {}
 
   var operator()(const std::vector<M>& vmapped, std::size_t grainsize,
@@ -245,17 +245,6 @@ struct reduce_sum_var_impl {
 };
 }  // namespace internal
 
-/*
- * Note that the ReduceFunction is only passed in as type to prohibit
- * that any internal state of the functor is causing trouble. Thus,
- * the functor must be default constructible without any arguments.
- */
-template <typename ReduceFunction, typename M, typename... Args>
-var reduce_sum_var(const std::vector<M>& vmapped,
-		   std::size_t grainsize, const Args&... args) {
-  return internal::reduce_sum_var_impl<ReduceFunction, M, Args...>()
-    (vmapped, grainsize, args...);
-}
 
 }  // namespace math
 }  // namespace stan

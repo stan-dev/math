@@ -19,8 +19,12 @@ namespace math {
 
 namespace internal {
 
-template <typename ReduceFunction, typename M, typename... Args>
-struct reduce_sum_impl {
+template <typename ReduceFunction, typename Enable, typename ReturnType, typename M, typename... Args>
+struct reduce_sum_impl {};
+
+
+template <typename ReduceFunction, typename ReturnType, typename M, typename... Args>
+struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>, ReturnType, M, Args...> {
   struct recursive_reducer {
     using vmapped_t = std::vector<M>;
     std::tuple<const Args&...> args_tuple_;
@@ -41,19 +45,19 @@ struct reduce_sum_impl {
       if (r.empty()) {
 	return;
       }
-    
+
       auto start = vmapped_.begin();
       std::advance(start, r.begin());
       auto end = vmapped_.begin();
       std::advance(end, r.end());
-    
+
       const vmapped_t sub_slice(start, end);
-    
+
       sum_ += apply([&](auto&&... args) {
 	  return ReduceFunction()(r.begin(), r.end() - 1, sub_slice, args...);
 	}, args_tuple_);
     }
-  
+
     void join(const recursive_reducer& child) {
       sum_ += child.sum_;
     }
@@ -90,9 +94,10 @@ struct reduce_sum_impl {
  * the functor must be default constructible without any arguments.
  */
 template <typename ReduceFunction, typename M, typename... Args>
-constexpr double reduce_sum(const std::vector<M>& vmapped,
+constexpr auto reduce_sum(const std::vector<M>& vmapped,
 			    std::size_t grainsize, const Args&... args) {
-  return internal::reduce_sum_impl<ReduceFunction, M, Args...>()
+  using return_type = return_type_t<Args...>;
+  return internal::reduce_sum_impl<ReduceFunction, void, return_type, M, Args...>()
     (vmapped, grainsize, args...);
 }
 

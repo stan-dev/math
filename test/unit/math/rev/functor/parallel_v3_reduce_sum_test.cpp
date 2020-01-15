@@ -67,7 +67,7 @@ TEST(v3_reduce_sum, gradient) {
   std::vector<int> idata;
   std::vector<var> vlambda_v(1, lambda_v);
 
-  var poisson_lpdf = stan::math::reduce_sum_var<count_lpdf<var>>(data, 5,
+  var poisson_lpdf = stan::math::reduce_sum<count_lpdf<var>>(data, 5,
 								 vlambda_v, idata);
 
   var lambda_ref = lambda_d;
@@ -109,7 +109,7 @@ struct nesting_count_lpdf {
                       const std::vector<int>& sub_slice,
                       const std::vector<T>& lambda,
                       const std::vector<int>& idata) const {
-    return stan::math::reduce_sum_var<count_lpdf<T>>(sub_slice, 5, lambda, idata);
+    return stan::math::reduce_sum<count_lpdf<T>>(sub_slice, 5, lambda, idata);
   }
 };
 
@@ -132,7 +132,7 @@ TEST(v3_reduce_sum, nesting_gradient) {
   std::vector<int> idata;
   std::vector<var> vlambda_v(1, lambda_v);
 
-  var poisson_lpdf = stan::math::reduce_sum_var<nesting_count_lpdf<var>>(
+  var poisson_lpdf = stan::math::reduce_sum<nesting_count_lpdf<var>>(
       data, 5, vlambda_v, idata);
 
   var lambda_ref = lambda_d;
@@ -210,7 +210,7 @@ TEST(v3_reduce_sum, grouped_gradient) {
 
   var lambda_v = vlambda_v[0];
 
-  var poisson_lpdf = stan::math::reduce_sum_var<grouped_count_lpdf<var>>(
+  var poisson_lpdf = stan::math::reduce_sum<grouped_count_lpdf<var>>(
       data, 5, vlambda_v, gidx);
 
   std::vector<var> vref_lambda_v;
@@ -282,7 +282,7 @@ TEST(v3_reduce_sum, slice_group_gradient) {
   std::vector<int> gidx(elems);
   std::vector<int> gsidx(groups + 1);
 
-  
+
   for (std::size_t i = 0, k = 0; i != groups; ++i) {
     gsidx[i] = k;
     for (std::size_t j = 0; j != elems_per_group; ++j, ++k) {
@@ -301,7 +301,7 @@ TEST(v3_reduce_sum, slice_group_gradient) {
 
   var lambda_v = vlambda_v[0];
 
-  var poisson_lpdf = stan::math::reduce_sum_var<slice_group_count_lpdf<var>>(
+  var poisson_lpdf = stan::math::reduce_sum<slice_group_count_lpdf<var>>(
       vlambda_v, 5, data, gsidx);
 
   std::vector<var> vref_lambda_v;
