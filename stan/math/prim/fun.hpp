@@ -40,6 +40,7 @@
 #include <stan/math/prim/fun/columns_dot_product.hpp>
 #include <stan/math/prim/fun/columns_dot_self.hpp>
 #include <stan/math/prim/fun/common_type.hpp>
+#include <stan/math/prim/fun/constant_vector.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/corr_constrain.hpp>
 #include <stan/math/prim/fun/corr_free.hpp>
@@ -196,6 +197,7 @@
 #include <stan/math/prim/fun/num_elements.hpp>
 #include <stan/math/prim/fun/offset_multiplier_constrain.hpp>
 #include <stan/math/prim/fun/offset_multiplier_free.hpp>
+#include <stan/math/prim/fun/ones_vector.hpp>
 #include <stan/math/prim/fun/ordered_constrain.hpp>
 #include <stan/math/prim/fun/ordered_free.hpp>
 #include <stan/math/prim/fun/owens_t.hpp>
@@ -289,5 +291,6 @@
 #include <stan/math/prim/fun/variance.hpp>
 #include <stan/math/prim/fun/welford_covar_estimator.hpp>
 #include <stan/math/prim/fun/welford_var_estimator.hpp>
+#include <stan/math/prim/fun/zeros_vector.hpp>
 
 #endif
