@@ -186,7 +186,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, M,
     return count_var_impl(count + 1, args...);
   }
 
-  template <typename... Pargs, typename Arith, require_arithmetic_t<Arith>...>
+  template <typename... Pargs, typename Arith, require_arithmetic_t<scalar_type_t<Arith>>...>
   size_t count_var_impl(size_t count, Arith& x, const Pargs&... args) const {
     return count_var_impl(count, args...);
   }
