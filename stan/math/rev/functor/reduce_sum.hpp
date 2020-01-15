@@ -74,18 +74,24 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, M,
       accumulate_adjoints(dest + 1, args...);
     }
 
-    template <typename... Pargs>
-    void accumulate_adjoints(double* dest, const std::vector<var>& x,
+    // Works with anything that has operator[Integral] defined
+    template <typename... Pargs, typename Vec, require_vector_like_vt<is_var, Vec>...>
+    void accumulate_adjoints(double* dest, const Vec& x,
                              const Pargs&... args) {
       for (size_t i = 0; i < x.size(); ++i) {
         dest[i] += x[i].adj();
       }
       accumulate_adjoints(dest + x.size(), args...);
     }
+    // Fails to compile if type T does not have member operator(Integral)
+    template <typename T>
+    using operator_paren_access_t = decltype(std::declval<T>()(int{}));
 
-    template <typename... Pargs, int RowType, int ColType>
+    // Works on anything with a operator()
+    template <typename... Pargs, typename Mat, require_t<is_detected<Mat, operator_paren_access_t>>...,
+    require_t<is_var<value_type_t<Mat>>>...>
     void accumulate_adjoints(double* dest,
-                             const Eigen::Matrix<var, RowType, ColType>& x,
+                             const Mat& x,
                              const Pargs&... args) {
       for (size_t i = 0; i < x.size(); ++i) {
         dest[i] += x(i).adj();
@@ -93,8 +99,9 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, M,
       accumulate_adjoints(dest + x.size(), args...);
     }
 
-    template <typename R, typename... Pargs>
-    void accumulate_adjoints(double* dest, const R& x, const Pargs&... args) {
+    // Anything with a scalar type of Arithmetic gets tossed
+    template <typename Arith, require_arithmetic_t<scalar_type_t<Arith>>..., typename... Pargs>
+    void accumulate_adjoints(double* dest, Arith&& x, const Pargs&... args) {
       accumulate_adjoints(dest, args...);
     }
 
