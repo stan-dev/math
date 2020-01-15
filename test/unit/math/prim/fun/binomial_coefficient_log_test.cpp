@@ -24,10 +24,8 @@ TEST(MathFunctions, binomial_coefficient_log) {
   EXPECT_EQ(binomial_coefficient_log(50, 0), 0);
   EXPECT_EQ(binomial_coefficient_log(10000, 0), 0);
 
-  EXPECT_EQ(binomial_coefficient_log(10, 11),
-            stan::math::NEGATIVE_INFTY);
-  EXPECT_EQ(binomial_coefficient_log(10, -1),
-            stan::math::NEGATIVE_INFTY);
+  EXPECT_EQ(binomial_coefficient_log(10, 11), stan::math::NEGATIVE_INFTY);
+  EXPECT_EQ(binomial_coefficient_log(10, -1), stan::math::NEGATIVE_INFTY);
 
   for (int n = 0; n < 1010; ++n) {
     test_binom_coefficient(1010, n);
