@@ -16,7 +16,7 @@ namespace math {
  * @return A vector of length K with elements linearly spaced between
  * low and high.
  */
-Eigen::VectorXd set_spaced_vector(long K, double low, double high) {
+Eigen::VectorXd set_spaced_vector(int K, double low, double high) {
   static const char* function = "set_spaced_vector";
   check_nonnegative(function, "length", K);
   check_finite(function, "low", low);

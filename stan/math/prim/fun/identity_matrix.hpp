@@ -13,7 +13,7 @@ namespace math {
  * @param K size of the matrix
  * @return An identity matrix of size K.
  */
-Eigen::MatrixXd identity_matrix(long K) {
+Eigen::MatrixXd identity_matrix(int K) {
   check_nonnegative("identity_matrix", "size", K);
   return Eigen::MatrixXd::Identity(K, K);
 }

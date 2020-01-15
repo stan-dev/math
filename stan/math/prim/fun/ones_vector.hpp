@@ -13,7 +13,7 @@ namespace math {
  * @param K length of the vector
  * @return A vector of length K with all elements initialised to 1.
  */
-Eigen::VectorXd ones_vector(long K) {
+Eigen::VectorXd ones_vector(int K) {
   check_nonnegative("ones_vector", "length", K);
   return Eigen::VectorXd::Constant(K, 1);
 }

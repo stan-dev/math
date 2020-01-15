@@ -15,7 +15,7 @@ namespace math {
  * @return A vector of length K with all elements initialised to zero
  * and a 1 in the k-th position.
  */
-Eigen::VectorXd one_hot_vector(long K, long k) {
+Eigen::VectorXd one_hot_vector(int K, int k) {
   static const char* function = "one_hot_vector";
   check_nonnegative(function, "length", K);
   check_bounded(function, "k", k, 1, K);
