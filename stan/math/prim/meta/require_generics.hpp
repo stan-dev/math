@@ -189,7 +189,8 @@ using require_not_t = std::enable_if_t<!Check::value, int>;
  * Returns a type void if all conditions are true and otherwise fails.
  */
 template <class... Checks>
-using require_all_t = std::enable_if_t<math::conjunction<Checks...>::value, int>;
+using require_all_t
+    = std::enable_if_t<math::conjunction<Checks...>::value, int>;
 
 /**
  * If any condition is true, template is enabled.
@@ -197,7 +198,8 @@ using require_all_t = std::enable_if_t<math::conjunction<Checks...>::value, int>
  * Returns a type void if any of the conditions are true and otherwise fails.
  */
 template <class... Checks>
-using require_any_t = std::enable_if_t<math::disjunction<Checks...>::value, int>;
+using require_any_t
+    = std::enable_if_t<math::disjunction<Checks...>::value, int>;
 
 /**
  * If all conditions are false, template is enabled.
