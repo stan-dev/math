@@ -34,20 +34,19 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, M,
     double sum_;
     Eigen::VectorXd args_adjoints_;
 
-    recursive_reducer(size_t num_terms, const std::vector<M>& vmapped,
-                      const Args&... args)
-        : num_terms_(num_terms),
-          vmapped_(vmapped),
-          args_tuple_(args...),
-          sum_(0.0),
-          args_adjoints_(Eigen::VectorXd::Zero(num_terms)) {}
+    recursive_reducer(size_t num_terms, const std::vector<M>& vmapped, const Args&... args)
+      : num_terms_(num_terms),
+	vmapped_(vmapped),
+	args_tuple_(args...),
+	sum_(0.0),
+	args_adjoints_(Eigen::VectorXd::Zero(num_terms_)) {}
 
     recursive_reducer(recursive_reducer& other, tbb::split)
-        : num_terms_(other.num_terms_),
-          vmapped_(other.vmapped_),
-          args_tuple_(other.args_tuple_),
-          sum_(0.0),
-          args_adjoints_(other.args_adjoints_) {}
+      : num_terms_(other.num_terms_),
+	vmapped_(other.vmapped_),
+	args_tuple_(other.args_tuple_),
+	sum_(0.0),
+	args_adjoints_(Eigen::VectorXd::Zero(num_terms_)) {}
 
     template <typename T>
     T& deep_copy(T& arg) {
