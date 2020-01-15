@@ -38,9 +38,7 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
         : vmapped_(vmapped), args_tuple_(args...), sum_(0.0) {}
 
     recursive_reducer(recursive_reducer& other, tbb::split)
-        : vmapped_(other.vmapped_),
-          args_tuple_(other.args_tuple_),
-          sum_(0.0) {}
+        : vmapped_(other.vmapped_), args_tuple_(other.args_tuple_), sum_(0.0) {}
 
     void operator()(const tbb::blocked_range<size_t>& r) {
       if (r.empty()) {

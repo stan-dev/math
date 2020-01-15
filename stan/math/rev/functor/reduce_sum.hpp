@@ -124,7 +124,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, M,
         // linked to any outer AD tree
         std::vector<M> sub_slice;
         sub_slice.reserve(r.size());
-        for(auto iter = start; iter != end; ++iter) {
+        for (auto iter = start; iter != end; ++iter) {
           sub_slice.emplace_back(value_of(*iter));
         }
 
