@@ -21,7 +21,7 @@ template <typename ReduceFunction, typename ReturnType, typename M,
 struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, M,
                        Args...> {
   template <typename T>
-  static T& deep_copy(T& arg) {
+  static const T& deep_copy(const T& arg) {
     return arg;
   }
 
@@ -95,14 +95,16 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, M,
     size_t tuple_size_ = sizeof...(Args);
 
     double sum_;
+    double* sliced_partials_;
     Eigen::VectorXd args_adjoints_;
 
-    recursive_reducer(size_t num_shared_terms, const std::vector<M>& vmapped,
-                      const Args&... args)
+    recursive_reducer(size_t num_shared_terms, double* sliced_partials,
+                      const std::vector<M>& vmapped, const Args&... args)
         : num_shared_terms_(num_shared_terms),
           vmapped_(vmapped),
           args_tuple_(args...),
           sum_(0.0),
+          sliced_partials_(sliced_partials),
           args_adjoints_(Eigen::VectorXd::Zero(num_shared_terms_)) {}
 
     recursive_reducer(recursive_reducer& other, tbb::split)
@@ -110,31 +112,36 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, M,
           vmapped_(other.vmapped_),
           args_tuple_(other.args_tuple_),
           sum_(0.0),
+          sliced_partials_(other.sliced_partials_),
           args_adjoints_(Eigen::VectorXd::Zero(num_shared_terms_)) {}
 
     void operator()(const tbb::blocked_range<size_t>& r) {
       if (r.empty())
         return;
 
-      auto start = vmapped_.begin();
-      std::advance(start, r.begin());
-      auto end = vmapped_.begin();
-      std::advance(end, r.end());
+      std::vector<M> sub_slice;
+      sub_slice.reserve(r.end() - r.begin());
+      for (int i = r.begin(); i < r.end(); ++i) {
+        sub_slice.emplace_back(vmapped_[i]);
+      }
 
       try {
         start_nested();
 
         // create a deep copy of all var's so that these are not
         // linked to any outer AD tree
-        const std::vector<M> sub_slice(start, end);
+        auto local_sub_slice = deep_copy(sub_slice);
 
         auto args_tuple_local_copy = apply(
-            [&](auto&&... args) { return std::make_tuple(deep_copy(args)...); },
+            [&](auto&&... args) {
+              return std::tuple<decltype(deep_copy(args))...>(
+                  deep_copy(args)...);
+            },
             args_tuple_);
 
         var sub_sum_v = apply(
-            [&r, &sub_slice](auto&&... args) {
-              return ReduceFunction()(r.begin(), r.end() - 1, sub_slice,
+            [&r, &local_sub_slice](auto&&... args) {
+              return ReduceFunction()(r.begin(), r.end() - 1, local_sub_slice,
                                       args...);
             },
             args_tuple_local_copy);
@@ -143,8 +150,8 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, M,
 
         sum_ += sub_sum_v.val();
 
-        // This should accumulate the adjoints from args_tuple_local_copy into
-        //  the memory of args_adjoints_
+        accumulate_adjoints(sliced_partials_ + r.begin(), local_sub_slice);
+
         apply(
             [&](auto&&... args) {
               return accumulate_adjoints(args_adjoints_.data(), args...);
@@ -260,43 +267,31 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, M,
     double* partials = ChainableStack::instance_->memalloc_.alloc_array<double>(
         num_sliced_terms + num_shared_terms);
 
+    for (size_t i = 0; i < num_sliced_terms; ++i)
+      partials[i] = 0.0;
+
     double sum = 0;
 
-    try {
-      start_nested();
-
-      auto vmapped_copy = deep_copy(vmapped);
-
-      recursive_reducer worker(num_shared_terms, vmapped_copy, args...);
+    recursive_reducer worker(num_shared_terms, partials, vmapped, args...);
 
 #ifdef STAN_DETERMINISTIC
-      tbb::static_partitioner partitioner;
-      tbb::parallel_deterministic_reduce(
-          tbb::blocked_range<std::size_t>(0, num_jobs, grainsize), worker,
-          partitioner);
+    tbb::static_partitioner partitioner;
+    tbb::parallel_deterministic_reduce(
+        tbb::blocked_range<std::size_t>(0, num_jobs, grainsize), worker,
+        partitioner);
 #else
-      tbb::parallel_reduce(
-          tbb::blocked_range<std::size_t>(0, num_jobs, grainsize), worker);
+    tbb::parallel_reduce(
+        tbb::blocked_range<std::size_t>(0, num_jobs, grainsize), worker);
 #endif
 
-      save_varis(varis, vmapped);
-      save_varis(varis + num_sliced_terms, args...);
+    save_varis(varis, vmapped);
+    save_varis(varis + num_sliced_terms, args...);
 
-      for (size_t i = 0; i < num_sliced_terms; ++i)
-        partials[i] = 0.0;
-      accumulate_adjoints(partials, vmapped_copy);
-
-      for (size_t i = 0; i < num_shared_terms; ++i) {
-        partials[num_sliced_terms + i] = worker.args_adjoints_(i);
-      }
-
-      sum = worker.sum_;
-
-    } catch (const std::exception& e) {
-      recover_memory_nested();
-      throw;
+    for (size_t i = 0; i < num_shared_terms; ++i) {
+      partials[num_sliced_terms + i] = worker.args_adjoints_(i);
     }
-    recover_memory_nested();
+
+    sum = worker.sum_;
 
     return var(new precomputed_gradients_vari(
         sum, num_sliced_terms + num_shared_terms, varis, partials));
