@@ -13,7 +13,7 @@ namespace math {
  * @param K length of the simplex
  * @return A vector of length K with all elements initialised to 1 / K.
  */
-Eigen::VectorXd uniform_simplex(int K) {
+inline Eigen::VectorXd uniform_simplex(int K) {
   check_nonnegative("uniform_simplex", "length", K);
   return Eigen::VectorXd::Constant(K, 1.0 / K);
 }

@@ -15,7 +15,7 @@ namespace math {
  * @return A vector of length K with all elements initialised to
  * the same constant.
  */
-Eigen::VectorXd constant_vector(int K, double c) {
+inline Eigen::VectorXd constant_vector(int K, double c) {
   check_nonnegative("constant_vector", "length", K);
   return Eigen::VectorXd::Constant(K, c);
 }
