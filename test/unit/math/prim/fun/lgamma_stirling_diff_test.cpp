@@ -32,21 +32,22 @@ TEST(MathFunctions, lgamma_stirling_diff_accuracy) {
     double diff = lgamma_stirling_diff(x);
     double tol = std::max(1e-06 * 0.5 * (fabs(diff_actual) + fabs(diff)), 1e-6);
 
-    EXPECT_NEAR(diff, diff_actual, tol)  << "x = " << x 
-      << "; lgamma = " << lgamma_res << "; stirling = " << stirling;
+    EXPECT_NEAR(diff, diff_actual, tol)
+        << "x = " << x << "; lgamma = " << lgamma_res
+        << "; stirling = " << stirling;
   }
 
   double before_useful = std::nextafter(lgamma_stirling_diff_useful, 0);
   double after_useful = std::nextafter(lgamma_stirling_diff_useful,
-                                    stan::math::positive_infinity());
+                                       stan::math::positive_infinity());
 
-  double value_before = lgamma_stirling_diff(before_useful);                                  
+  double value_before = lgamma_stirling_diff(before_useful);
   double value_at = lgamma_stirling_diff(lgamma_stirling_diff_useful);
   double value_after = lgamma_stirling_diff(after_useful);
   double diff_before = value_at - value_before;
   double diff_after = value_after - value_at;
-  double tol = std::max(
-      1e-14 * (0.5 * (fabs(diff_before) + fabs(diff_after))), 1e-14);
+  double tol
+      = std::max(1e-14 * (0.5 * (fabs(diff_before) + fabs(diff_after))), 1e-14);
   EXPECT_NEAR(diff_before, diff_after, tol) << "diff around useful cutoff";
 }
 
