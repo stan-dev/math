@@ -99,7 +99,7 @@ TEST(MathFunctions, lgamma_stirling_diff_precomputed) {
     std::ostringstream msg;
     msg << "x = " << t.x;
     double tol = 1e-15;
-    if(t.x < lgamma_stirling_diff_useful) {
+    if (t.x < lgamma_stirling_diff_useful) {
       tol = 1e-12;
     }
     expect_near_rel(msg.str(), lgamma_stirling_diff(t.x), t.val, tol);

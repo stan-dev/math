@@ -58,19 +58,18 @@ return_type_t<T> lgamma_stirling_diff(const T x) {
 
   // Using the Stirling series as expressed in formula 5.11.1. at
   // https://dlmf.nist.gov/5.11
-  constexpr double stirling_series[] {
-   0.0833333333333333333333333,-0.00277777777777777777777778,
-   0.000793650793650793650793651,-0.000595238095238095238095238,
-   0.000841750841750841750841751,-0.00191752691752691752691753,
-   0.00641025641025641025641026,-0.0295506535947712418300654
-  };
+  constexpr double stirling_series[]{
+      0.0833333333333333333333333,   -0.00277777777777777777777778,
+      0.000793650793650793650793651, -0.000595238095238095238095238,
+      0.000841750841750841750841751, -0.00191752691752691752691753,
+      0.00641025641025641025641026,  -0.0295506535947712418300654};
 
   constexpr int n_stirling_terms = 6;
   T result(0.0);
   T multiplier = inv(x);
   T inv_x_squared = inv(square(x));
   for (int n = 0; n < n_stirling_terms; n++) {
-    if(n > 0) {
+    if (n > 0) {
       multiplier *= inv_x_squared;
     }
     result += stirling_series[n] * multiplier;

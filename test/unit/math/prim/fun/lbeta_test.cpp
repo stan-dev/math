@@ -52,7 +52,7 @@ TEST(MathFunctions, lbeta_identities) {
   std::vector<double> to_test
       = {1e-100, 1e-8, 1e-1, 1, 1 + 1e-6, 1e3, 1e30, 1e100};
   auto tol = [](double x, double y) {
-     return std::max(1e-15 * (0.5 * (fabs(x) + fabs(y))), 1e-15);
+    return std::max(1e-15 * (0.5 * (fabs(x) + fabs(y))), 1e-15);
   };
 
   for (double x : to_test) {
