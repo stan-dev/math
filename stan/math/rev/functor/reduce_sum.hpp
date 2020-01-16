@@ -120,13 +120,13 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, M,
       std::advance(start, r.begin());
       auto end = vmapped_.begin();
       std::advance(end, r.end());
-      std::vector<M> sub_slice(start, end);
 
       try {
         start_nested();
 
         // create a deep copy of all var's so that these are not
         // linked to any outer AD tree
+        const std::vector<M> sub_slice(start, end);
 
         auto args_tuple_local_copy = apply(
             [&](auto&&... args) { return std::make_tuple(deep_copy(args)...); },
@@ -255,38 +255,51 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, M,
     const std::size_t num_sliced_terms = count_var(vmapped);
     const std::size_t num_shared_terms = count_var(args...);
 
-    auto vmapped_copy = deep_copy(vmapped);
-
-    recursive_reducer worker(num_shared_terms, vmapped_copy, args...);
-
-#ifdef STAN_DETERMINISTIC
-    tbb::static_partitioner partitioner;
-    tbb::parallel_deterministic_reduce(
-        tbb::blocked_range<std::size_t>(0, num_jobs, grainsize), worker,
-        partitioner);
-#else
-    tbb::parallel_reduce(
-        tbb::blocked_range<std::size_t>(0, num_jobs, grainsize), worker);
-#endif
-
     vari** varis = ChainableStack::instance_->memalloc_.alloc_array<vari*>(
         num_sliced_terms + num_shared_terms);
     double* partials = ChainableStack::instance_->memalloc_.alloc_array<double>(
         num_sliced_terms + num_shared_terms);
 
-    save_varis(varis, vmapped);
-    save_varis(varis + num_sliced_terms, args...);
+    double sum = 0;
 
-    for (size_t i = 0; i < num_sliced_terms; ++i)
-      partials[i] = 0.0;
-    accumulate_adjoints(partials, vmapped_copy);
+    try {
+      start_nested();
 
-    for (size_t i = 0; i < num_shared_terms; ++i) {
-      partials[num_sliced_terms + i] = worker.args_adjoints_(i);
+      auto vmapped_copy = deep_copy(vmapped);
+
+      recursive_reducer worker(num_shared_terms, vmapped_copy, args...);
+
+#ifdef STAN_DETERMINISTIC
+      tbb::static_partitioner partitioner;
+      tbb::parallel_deterministic_reduce(
+          tbb::blocked_range<std::size_t>(0, num_jobs, grainsize), worker,
+          partitioner);
+#else
+      tbb::parallel_reduce(
+          tbb::blocked_range<std::size_t>(0, num_jobs, grainsize), worker);
+#endif
+
+      save_varis(varis, vmapped);
+      save_varis(varis + num_sliced_terms, args...);
+
+      for (size_t i = 0; i < num_sliced_terms; ++i)
+        partials[i] = 0.0;
+      accumulate_adjoints(partials, vmapped_copy);
+
+      for (size_t i = 0; i < num_shared_terms; ++i) {
+        partials[num_sliced_terms + i] = worker.args_adjoints_(i);
+      }
+
+      sum = worker.sum_;
+
+    } catch (const std::exception& e) {
+      recover_memory_nested();
+      throw;
     }
+    recover_memory_nested();
 
     return var(new precomputed_gradients_vari(
-        worker.sum_, num_sliced_terms + num_shared_terms, varis, partials));
+        sum, num_sliced_terms + num_shared_terms, varis, partials));
   }
 };
 }  // namespace internal
