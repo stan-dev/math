@@ -14,7 +14,7 @@ struct TestValue {
   double dk;
 };
 
-constexpr double NaN = stan::math::NOT_A_NUMBER;
+const double NaN = stan::math::NOT_A_NUMBER;
 // Test values generated in Mathematica, reproducible notebook at
 // https://www.wolframcloud.com/obj/martin.modrak/Published/binomial_coefficient_log.nb
 // Mathematica Code reproduced below for convenience:
