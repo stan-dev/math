@@ -119,18 +119,18 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, M,
       if (r.empty())
         return;
 
-      std::vector<M> sub_slice;
-      sub_slice.reserve(r.end() - r.begin());
-      for (int i = r.begin(); i < r.end(); ++i) {
-        sub_slice.emplace_back(vmapped_[i]);
-      }
-
       try {
         start_nested();
 
         // create a deep copy of all var's so that these are not
         // linked to any outer AD tree
-        auto local_sub_slice = deep_copy(sub_slice);
+        std::vector<M> local_sub_slice;
+        local_sub_slice.reserve(r.size());
+        for (int i = r.begin(); i < r.end(); ++i) {
+          local_sub_slice.emplace_back(deep_copy(vmapped_[i]));
+        }
+
+        // auto local_sub_slice = deep_copy(sub_slice);
 
         auto args_tuple_local_copy = apply(
             [&](auto&&... args) {
