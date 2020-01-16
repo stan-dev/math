@@ -79,23 +79,25 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
   }
 
   for (size_t i = 0; i < max_size_seq_view; i++) {
-    if (include_summand<propto>::value) {
-      logp -= lgamma(n_vec[i] + 1.0);
-    }
-    if (include_summand<propto, T_precision>::value) {
-      logp += multiply_log(phi__[i], phi__[i]) - lgamma(phi__[i]);
-    }
-    if (include_summand<propto, T_location>::value) {
-      logp += multiply_log(n_vec[i], mu__[i]);
-    }
-    if (include_summand<propto, T_precision>::value) {
-      logp += lgamma(n_plus_phi[i]);
-    }
-    logp -= (n_plus_phi[i]) * log_mu_plus_phi[i];
-
     // if phi is large we probably overflow, defer to Poisson:
-    if (phi__[i] > 1e5) {
-      logp = poisson_lpmf(n_vec[i], mu__[i]);
+    if (phi__[i] > 1e10) {
+      // TODO(martinmodrak) This is wrong, but shouldn't brake most models.
+      // Will be adressed better in PR #1497
+      logp += poisson_lpmf(n_vec[i], mu__[i]);
+    } else {
+      if (include_summand<propto>::value) {
+        logp -= lgamma(n_vec[i] + 1.0);
+      }
+      if (include_summand<propto, T_precision>::value) {
+        logp += multiply_log(phi__[i], phi__[i]) - lgamma(phi__[i]);
+      }
+      if (include_summand<propto, T_location>::value) {
+        logp += multiply_log(n_vec[i], mu__[i]);
+      }
+      if (include_summand<propto, T_precision>::value) {
+        logp += lgamma(n_plus_phi[i]);
+      }
+      logp -= (n_plus_phi[i]) * log_mu_plus_phi[i];
     }
 
     if (!is_constant_all<T_location>::value) {
