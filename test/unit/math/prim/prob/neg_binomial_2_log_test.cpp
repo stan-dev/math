@@ -207,3 +207,32 @@ TEST(ProbNegBinomial2, log_matches_lpmf) {
       (stan::math::neg_binomial_2_lpmf<double, double, double>(y, mu, phi)),
       (stan::math::neg_binomial_2_log<double, double, double>(y, mu, phi)));
 }
+
+TEST(ProbDistributionsNegBinomial2Log, 
+  neg_binomial_2_log_grid_test) {
+  std::vector<double> mu_log_to_test = 
+    {-101,-27, -3, -1, -0.132, 0, 4, 10, 87 };
+  std::vector<double> phi_to_test = {2e-5,0.36,1, 2.3e5, 1.8e10, 6e16  };
+  std::vector<int> n_to_test = {0, 1, 10, 39, 101, 3048, 150054 };
+
+  // TODO(martinmdorak) Only weak tolerance for this quick fix
+  auto tolerance = [](double x) { return std::max(fabs(x * 1e-8), 1e-8); };
+
+  for(double mu_log : mu_log_to_test) { 
+    for(double phi : phi_to_test) {
+      for(int n : n_to_test) {
+          double val_log = stan::math::neg_binomial_2_log_lpmf(n, mu_log, phi);
+          EXPECT_LE(val_log, 0) << "neg_binomial_2_log_lpmf yields " << 
+            val_log << " which si greater than 0 for n = " << n << 
+            ", mu_log = " << mu_log << ", phi = " << phi << ".";
+          double val_orig = 
+            stan::math::neg_binomial_2_lpmf(n, std::exp(mu_log), phi);
+          EXPECT_NEAR(val_log, val_orig, tolerance(val_orig)) <<
+            "neg_binomial_2_log_lpmf yields different result (" << val_log << 
+            ") than neg_binomial_2_lpmf (" << val_orig << ") for n = " << n << 
+            ", mu_log = " << mu_log << ", phi = " << phi << ".";
+      }
+    }
+  }
+  
+}
