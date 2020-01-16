@@ -92,11 +92,16 @@ TEST(MathFunctions, lgamma_stirling_diff_precomputed) {
   using lgamma_stirling_diff_test_internal::TestValue;
   using lgamma_stirling_diff_test_internal::testValues;
   using stan::math::lgamma_stirling_diff;
+  using stan::math::lgamma_stirling_diff_useful;
   using stan::test::expect_near_rel;
 
   for (TestValue t : testValues) {
     std::ostringstream msg;
     msg << "x = " << t.x;
-    expect_near_rel(msg.str(), lgamma_stirling_diff(t.x), t.val, 1e-10);
+    double tol = 1e-15;
+    if(t.x < lgamma_stirling_diff_useful) {
+      tol = 1e-12;
+    }
+    expect_near_rel(msg.str(), lgamma_stirling_diff(t.x), t.val, tol);
   }
 }
