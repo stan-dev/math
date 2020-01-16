@@ -15,7 +15,7 @@ struct TestValue {
   double dy;
 };
 
-constexpr double NaN = std::numeric_limits<double>::quiet_NaN();
+const double NaN = std::numeric_limits<double>::quiet_NaN();
 // Test values generated in Mathematica, reproducible notebook at
 // https://www.wolframcloud.com/obj/martin.modrak/Published/lbeta.nb
 // Mathematica Code reproduced below for convenience:
