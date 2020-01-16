@@ -1,10 +1,10 @@
 #include <stan/math/prim.hpp>
-#include <test/unit/math/expect_near_rel.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
 #include <limits>
 #include <string>
 #include <vector>
+#include <algorithm>
 
 TEST(MathFunctions, lbeta) {
   using stan::math::lbeta;
@@ -47,7 +47,6 @@ TEST(MathFunctions, lbeta_extremes_errors) {
 TEST(MathFunctions, lbeta_identities) {
   using stan::math::lbeta;
   using stan::math::pi;
-  using stan::test::expect_near_rel;
 
   std::vector<double> to_test
       = {1e-100, 1e-8, 1e-1, 1, 1 + 1e-6, 1e3, 1e30, 1e100};
@@ -86,7 +85,6 @@ TEST(MathFunctions, lbeta_identities) {
 
 TEST(MathFunctions, lbeta_stirling_cutoff) {
   using stan::math::lgamma_stirling_diff_useful;
-  using stan::test::expect_near_rel;
 
   double after_stirling
       = std::nextafter(lgamma_stirling_diff_useful, stan::math::INFTY);
@@ -96,13 +94,18 @@ TEST(MathFunctions, lbeta_stirling_cutoff) {
   std::vector<double> to_test
       = {1e-100,          1e-8,          1e-1, 1, 1 + 1e-6, 1e3, 1e30, 1e100,
          before_stirling, after_stirling};
-  for (double x : to_test) {
-    std::stringstream msg;
-    msg << "before and after cutoff: x = " << x
-        << "; cutoff = " << lgamma_stirling_diff_useful;
-    expect_near_rel(msg.str(), lbeta(x, before_stirling),
-                    lbeta(x, after_stirling));
-    expect_near_rel(msg.str(), lbeta(before_stirling, x),
-                    lbeta(after_stirling, x));
+  for (const double x : to_test) {
+    double before = lbeta(x, before_stirling);
+    double at = lbeta(x, lgamma_stirling_diff_useful);
+    double after = lbeta(x, after_stirling);
+
+    double diff_before = at - before;
+    double diff_after = after - at;
+    double tol = std::max(
+      1e-15 * (0.5 * (fabs(diff_before) + fabs(diff_after))), 1e-14);
+
+    EXPECT_NEAR(diff_before, diff_after, tol) 
+      << "diff before and after cutoff: x = " << x
+      << "; cutoff = " << lgamma_stirling_diff_useful;
   }
 }

@@ -1,10 +1,12 @@
 #include <stan/math/prim.hpp>
-#include <test/unit/math/expect_near_rel.hpp>
+#include <stan/math/rev.hpp>
 #include <gtest/gtest.h>
 #include <limits>
+#include <algorithm>
 #include <vector>
 #include <string>
 #include <cmath>
+#include <functional>
 
 namespace lbeta_test_internal {
 struct TestValue {
@@ -150,7 +152,6 @@ TEST(MathFunctions, lbeta_precomputed) {
   using stan::math::is_nan;
   using stan::math::value_of;
   using stan::math::var;
-  using stan::test::expect_near_rel;
 
   for (TestValue t : testValues) {
     std::ostringstream msg;
@@ -171,21 +172,20 @@ TEST(MathFunctions, lbeta_precomputed) {
       EXPECT_FALSE(is_nan(gradients[i]));
     }
 
-    expect_near_rel(msg.str(), value_of(val), t.val, 1e-15);
+    double tol = std::max(fabs(t.val) * 1e-15, 1e-16);
+    EXPECT_NEAR(value_of(val), t.val, tol) << msg.str();
 
-    double tol_grad;
+    std::function<double(double)> tol_grad;
     if (x < 1e-4 || y < 1e-4) {
-      tol_grad = 1e-7;
+      tol_grad = [](double x) { return std::max(fabs(x) * 1e-8, 1e-7); };
     } else {
-      tol_grad = 1e-8;
+      tol_grad = [](double x) { return std::max(fabs(x) * 1e-10, 1e-8); };
     }
     if (!is_nan(t.dx)) {
-      expect_near_rel(std::string("dx: ") + msg.str(), gradients[0], t.dx,
-                      tol_grad);
+      EXPECT_NEAR(gradients[0], t.dx, tol_grad(t.dx)) << "dx: " << msg.str();
     }
     if (!is_nan(t.dy)) {
-      expect_near_rel(std::string("dy: ") + msg.str(), gradients[1], t.dy,
-                      tol_grad);
+      EXPECT_NEAR(gradients[1], t.dy, tol_grad(t.dy)) << "dy: " << msg.str();
     }
   }
 }
