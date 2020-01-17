@@ -184,17 +184,6 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, Ve
     return count_var_impl(count + x.size(), args...);
   }
 
-  // TODO(Steve): add this back if you want it cause Ben commented it out cause
-  //  it was causing ambiguities
-  /*template <typename Container,
-            require_t<is_detected<Container, member_size_t>>...,
-            require_t<std::is_arithmetic<value_type_t<Container>>>...,
-            typename... Pargs>
-  size_t count_var_impl(size_t count, const Container& x,
-                        const Pargs&... args) const {
-    return count_var_impl(count, args...);
-    }*/
-
   template <typename... Pargs>
   size_t count_var_impl(size_t count, const var& x,
                         const Pargs&... args) const {
