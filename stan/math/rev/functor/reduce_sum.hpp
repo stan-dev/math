@@ -18,8 +18,8 @@ namespace internal {
 
 template <typename ReduceFunction, typename ReturnType, typename Vec,
           typename... Args>
-struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, Vec,
-                       Args...> {
+struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
+                       Vec, Args...> {
   template <typename T>
   static const T& deep_copy(const T& arg) {
     return arg;
@@ -69,8 +69,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, Ve
   }
 
   // Works on anything with a operator()
-  template <typename... Pargs, typename Mat,
-            require_eigen_vt<is_var, Mat>...>
+  template <typename... Pargs, typename Mat, require_eigen_vt<is_var, Mat>...>
   static double* accumulate_adjoints(double* dest, const Mat& x,
                                      const Pargs&... args) {
     Eigen::Map<Eigen::Matrix<double, -1, 1>>(dest, x.size()) += x.adj().eval();
@@ -124,7 +123,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, Ve
         // create a deep copy of all var's so that these are not
         // linked to any outer AD tree
         Vec local_sub_slice(r.size());
-        //local_sub_slice.reserve(r.size());
+        // local_sub_slice.reserve(r.size());
         int ii = 0;
         for (int i = r.begin(); i < r.end(); ++i) {
           local_sub_slice[ii] = deep_copy(vmapped_[i]);
@@ -224,8 +223,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, Ve
     save_varis(dest + x.size(), args...);
   }
 
-  template <typename... Pargs, typename Mat,
-            require_eigen_vt<is_var, Mat>...>
+  template <typename... Pargs, typename Mat, require_eigen_vt<is_var, Mat>...>
   void save_varis(vari** dest, const Mat& x, const Pargs&... args) const {
     for (size_t i = 0; i < x.size(); ++i) {
       dest[i] = x(i).vi_;
