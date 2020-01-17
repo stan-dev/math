@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_FUNCTOR_FINITE_DIFF_GRADIENT_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 
 namespace stan {
 namespace math {

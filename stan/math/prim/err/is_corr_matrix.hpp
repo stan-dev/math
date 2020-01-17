@@ -7,7 +7,7 @@
 #include <stan/math/prim/err/is_positive.hpp>
 #include <stan/math/prim/err/is_size_match.hpp>
 #include <stan/math/prim/err/is_symmetric.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <cmath>
 
 namespace stan {

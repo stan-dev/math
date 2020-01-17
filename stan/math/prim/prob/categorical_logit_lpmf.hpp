@@ -3,10 +3,9 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/arr/fun/log_sum_exp.hpp>
-#include <stan/math/prim/mat/fun/log_softmax.hpp>
-#include <stan/math/prim/mat/fun/log_sum_exp.hpp>
-#include <stan/math/prim/mat/fun/sum.hpp>
+#include <stan/math/prim/fun/log_softmax.hpp>
+#include <stan/math/prim/fun/log_sum_exp.hpp>
+#include <stan/math/prim/fun/sum.hpp>
 #include <vector>
 
 namespace stan {

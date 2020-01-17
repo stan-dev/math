@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_FWD_FUN_INC_BETA_HPP
 #define STAN_MATH_FWD_FUN_INC_BETA_HPP
 
-#include <stan/math/prim/scal/fun/digamma.hpp>
-#include <stan/math/prim/scal/fun/grad_reg_inc_beta.hpp>
-#include <stan/math/prim/scal/fun/lbeta.hpp>
+#include <stan/math/prim/fun/digamma.hpp>
+#include <stan/math/prim/fun/grad_reg_inc_beta.hpp>
+#include <stan/math/prim/fun/lbeta.hpp>
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/fun/beta.hpp>

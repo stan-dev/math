@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_FWD_FUN_EXPM1_HPP
 #define STAN_MATH_FWD_FUN_EXPM1_HPP
 
+#include <stan/math/prim/fun/expm1.hpp>
 #include <stan/math/fwd/meta.hpp>
-#include <stan/math/prim/scal/fun/expm1.hpp>
 #include <stan/math/fwd/core.hpp>
 #include <cmath>
 

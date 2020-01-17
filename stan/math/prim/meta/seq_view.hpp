@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_META_SEQ_VIEW_HPP
 #define STAN_MATH_PRIM_META_SEQ_VIEW_HPP
 
-#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <vector>
 
 namespace stan {

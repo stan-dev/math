@@ -71,11 +71,11 @@ namespace math {
  * inlining to get maximal performance. However, the design suffers
  * from "the static init order fiasco"[0]. Whenever the static init
  * order fiasco occurs, the C++ client of the library may instantiate
- * a AutodiffStackSingleton object at the adequate code position prior
+ * an AutodiffStackSingleton object at the adequate code position prior
  * to any AD tape access to ensure proper initialization order. In
  * exchange, we get a more performant singleton pattern with automatic
  * initialization of the AD stack for the main thread. There has been
- * some discussion on earlier designs using the Mayer singleton
+ * some discussion on earlier designs using the Meyer singleton
  * approach; see [1] and [2] and the discussions those PRs link to as
  * well.
  *

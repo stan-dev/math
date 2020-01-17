@@ -5,8 +5,8 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/functor/algebra_system.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/mat/fun/mdivide_left.hpp>
-#include <stan/math/prim/mat/fun/value_of.hpp>
+#include <stan/math/prim/fun/mdivide_left.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <unsupported/Eigen/NonLinearOptimization>
 #include <iostream>
 #include <string>
@@ -94,6 +94,7 @@ struct algebra_solver_vari : public vari {
  *
  * @tparam F type of equation system function.
  * @tparam T type of initial guess vector.
+ *
  * @param[in] f Functor that evaluates the system of equations.
  * @param[in] x Vector of starting values.
  * @param[in] y parameter vector for the equation system. The function
@@ -192,9 +193,10 @@ Eigen::VectorXd algebra_solver_powell(
  * algebraic solver defined above and builds a vari object on
  * top, using the algebra_solver_vari class.
  *
- * @tparam F type of equation system function.
- * @tparam T1  Type of elements in x vector.
- * @tparam T2  Type of elements in y vector.
+ * @tparam F type of equation system function
+ * @tparam T1 type of elements in the x vector
+ * @tparam T2 type of elements in the y vector
+ *
  * @param[in] f Functor that evaluates the system of equations.
  * @param[in] x Vector of starting values (initial guess).
  * @param[in] y parameter vector for the equation system.
@@ -270,9 +272,10 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver_powell(
  * Signature to maintain backward compatibility, will be removed
  * in the future.
  *
- * @tparam F type of equation system function.
- * @tparam T1  Type of elements in x vector.
- * @tparam T2  Type of elements in y vector.
+ * @tparam F type of equation system function
+ * @tparam T1 type of elements in the x vector
+ * @tparam T2 type of elements in the y vector
+ *
  * @param[in] f Functor that evaluates the system of equations.
  * @param[in] x Vector of starting values (initial guess).
  * @param[in] y parameter vector for the equation system.

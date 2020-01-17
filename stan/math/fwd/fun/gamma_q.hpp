@@ -3,8 +3,8 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/scal/fun/tgamma.hpp>
-#include <stan/math/prim/scal/fun/gamma_q.hpp>
+#include <stan/math/prim/fun/tgamma.hpp>
+#include <stan/math/prim/fun/gamma_q.hpp>
 #include <cmath>
 
 namespace stan {

@@ -3,7 +3,7 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/scal/fun/binary_log_loss.hpp>
+#include <stan/math/prim/fun/binary_log_loss.hpp>
 
 namespace stan {
 namespace math {
