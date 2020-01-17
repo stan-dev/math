@@ -1,5 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 #include <limits>
+#include <vector>
 
 template <typename T>
 T sum_(const T& arg) {

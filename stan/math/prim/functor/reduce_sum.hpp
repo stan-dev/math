@@ -12,6 +12,7 @@
 
 #include <iostream>
 #include <iterator>
+#include <tuple>
 #include <vector>
 
 namespace stan {

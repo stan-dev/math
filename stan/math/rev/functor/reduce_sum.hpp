@@ -10,6 +10,8 @@
 
 #include <iostream>
 #include <iterator>
+#include <tuple>
+#include <algorithm>
 #include <vector>
 
 namespace stan {
@@ -239,7 +241,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     save_varis(dest, args...);
   }
 
-  void save_varis(vari**) const {}
+  void save_varis(vari** /* v */) const {}
 
   var operator()(const Vec& vmapped, std::size_t grainsize,
                  const Args&... args) const {
