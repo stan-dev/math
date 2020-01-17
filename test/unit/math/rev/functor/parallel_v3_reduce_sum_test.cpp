@@ -181,6 +181,7 @@ struct grouped_count_lpdf {
     VecT lambda_slice(num_terms);
     for (std::size_t i = 0; i != num_terms; ++i)
       lambda_slice[i] = lambda[gidx[start + i]];
+
     return stan::math::poisson_lpmf(sub_slice, lambda_slice);
   }
 };
@@ -219,7 +220,6 @@ TEST(v3_reduce_sum, grouped_gradient) {
     vref_lambda_v.push_back(vlambda_v[gidx[i]]);
   }
   var lambda_ref = vlambda_v[0];
-
   var poisson_lpdf_ref = stan::math::poisson_lpmf(data, vref_lambda_v);
 
   EXPECT_FLOAT_EQ(value_of(poisson_lpdf), value_of(poisson_lpdf_ref));
@@ -261,18 +261,16 @@ TEST(v3_reduce_sum, grouped_gradient_eigen) {
     data[i] = i;
     gidx[i] = i / elems_per_group;
   }
-
   using stan::math::var;
 
-  Eigen::Matrix<var, -1, 1> vlambda_v;
+  Eigen::Matrix<var, -1, 1> vlambda_v(groups);
 
   for (std::size_t i = 0; i != groups; ++i)
     vlambda_v[i] = i + 0.2;
-
   var lambda_v = vlambda_v[0];
 
   var poisson_lpdf = stan::math::reduce_sum<grouped_count_lpdf<var>>(
-      data, 5, vlambda_v, gidx);
+    data, 5, vlambda_v, gidx);
 
   std::vector<var> vref_lambda_v;
   for (std::size_t i = 0; i != elems; ++i) {

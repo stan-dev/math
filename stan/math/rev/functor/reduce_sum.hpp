@@ -73,7 +73,9 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, Ve
             require_eigen_vt<is_var, Mat>...>
   static double* accumulate_adjoints(double* dest, const Mat& x,
                                      const Pargs&... args) {
-    Eigen::Map<Eigen::Matrix<double, -1, 1>>(dest, x.size()) += x.adj().eval();
+     for (size_t i = 0; i < x.size(); ++i) {
+       dest[i] += x[i].adj();
+     }
     return accumulate_adjoints(dest + x.size(), args...);
   }
 
@@ -184,6 +186,17 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, Ve
     return count_var_impl(count + x.size(), args...);
   }
 
+  // TODO(Steve): add this back if you want it cause Ben commented it out cause
+  //  it was causing ambiguities
+  /*template <typename Container,
+            require_t<is_detected<Container, member_size_t>>...,
+            require_t<std::is_arithmetic<value_type_t<Container>>>...,
+            typename... Pargs>
+  size_t count_var_impl(size_t count, const Container& x,
+                        const Pargs&... args) const {
+    return count_var_impl(count, args...);
+    }*/
+
   template <typename... Pargs>
   size_t count_var_impl(size_t count, const var& x,
                         const Pargs&... args) const {
@@ -216,7 +229,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, Ve
   }
 
   template <typename... Pargs, typename VecVar,
-            require_std_vector_vt<is_var, VecVar>...>
+            require_vector_like_vt<is_var, VecVar>...>
   void save_varis(vari** dest, const VecVar& x, const Pargs&... args) const {
     for (size_t i = 0; i < x.size(); ++i) {
       dest[i] = x[i].vi_;
@@ -225,7 +238,8 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, Ve
   }
 
   template <typename... Pargs, typename Mat,
-            require_eigen_vt<is_var, Mat>...>
+            require_eigen_vt<is_var, Mat>...,
+            require_not_vector_like_t<Mat>...>
   void save_varis(vari** dest, const Mat& x, const Pargs&... args) const {
     for (size_t i = 0; i < x.size(); ++i) {
       dest[i] = x(i).vi_;
