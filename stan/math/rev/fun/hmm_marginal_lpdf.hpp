@@ -87,10 +87,14 @@ struct hmm_marginal_lpdf_vari : public vari {
   vari** Gamma_;
   /** initial state */
   vari** rho_;
-  /** matrix of state probabilities */
-  Eigen::MatriXd alpha_;
-  /** vector sum of max coeff for each alpha column */
-  Eigen::VectorXd alpha_log_norms_;
+  /** Jacobian adjoint product for log omega */
+  double* log_omega_jacad_;
+  /** Jacobian adjoint product for Gamma */
+  double* Gamma_jacad_;
+  /** Jacobian adjoint product for rho */
+  double* rho_jacad_;
+
+  // CHECK -- store jacad as eigen matrices or pointers?
 
   hmm_marginal_lpdf_vari(const Eigen::MatrixXd& log_omegas,
                          const Eigen::MatrixXd& Gamma,
@@ -107,13 +111,18 @@ struct hmm_marginal_lpdf_vari : public vari {
              n_transitions_ * n_states_)),
       rho_(ChainableStack::instance_->memalloc.alloc_array<vari*>(
            n_states_)),
-      alpha_(alpha), alpha_log_norms_(alpha_log_norms) { }
-
-  void chain() {
+      log_omega_jacad_(ChainableStack::instance_->memalloc.alloc_array<vari*>(
+        n_transitions_ * n_states_)),
+      Gamma_jacad_(ChainableStack::instance_->memalloc.alloc_array<vari*>(
+        n_transitions_ * n_state_)),
+      rho_jacad_(ChainableStack::instance_->memalloc.alloc_array<vari*>(
+        n_state_)) {
     // CHECK -- should we store omega and not recompute it?
     // CHECK -- do we need the .array()?
     Eigen::MatrixXd omegas = log_omegas.array.exp();
 
+    // CHECK -- do we need to initialize those matrices,
+    // or is it enough to work with map?
     Eigen::MatrixXd log_omega_jacad(n_transitions_, n_states_);
     Eigen::MatrixXd Gamma_jacad(n_transitions_, n_states_);
     Eigen::VectorXd rho_jacad(n_states_);
@@ -123,7 +132,7 @@ struct hmm_marginal_lpdf_vari : public vari {
     Gamma_jacad.setZero();
     rho_jacad.setZero();
 
-    // Backard pass with running normalization
+    // Backward pass with running normalization
     Eigen::VectorXd kappa = Eigen::VectorXd::Ones(n_states_);
     Eigen::VectorXd kappa_log_norms(n_transitions_);
     kappa_log_norms(n_transitions_ - 1) = 0;
@@ -133,7 +142,7 @@ struct hmm_marginal_lpdf_vari : public vari {
       = std::exp(alpha_log_norms(n_transitions_ - 1) - norm_norm);
     Gamma_jacad += grad_corr
                      * kappa.cwiseProduct(omegas.col(n_transitions_))
-                     * alphas_.col(n_transitions_ - 1).transpose();
+                     * alphas.col(n_transitions_ - 1).transpose();
 
     for (int n = n_transitions_ - 2; n >= 0; n--) {
       kappa = Gamma.transpose() * (omegas.col(n + 2).cwiseProduct(kappa));
@@ -142,17 +151,16 @@ struct hmm_marginal_lpdf_vari : public vari {
       kappa /= norm;
       kappa_log_norms(n) = std::log(norm) + kappa_log_norms(n + 1);
 
-      grad_corr = std::exp(alpha_log_norms_(n) + kappa_log_norms_(n + 1));
+      grad_corr = std::exp(alpha_log_norms(n) + kappa_log_norms(n + 1));
       log_omega_jacad.col(n + 1) = grad_corr
         * kappa.cwiseProduct(omegas.col(n + 1)) * alphas.col(n).transpose();
     }
 
-      // Boundary terms
-      grad_corr = std::exp(kappa_log_norms_(0) - norm_norm);
-      Eigen::VectorXd c = Gamma.transpose()
-        * (omegas.col(1).cwiseProduct(kappa));
-      log_omega_jacad.col(0) = grad_corr * c.cwiseProduct(rho);
-      
+    // Boundary terms
+    grad_corr = std::exp(kappa_log_norms(0) - norm_norm);
+    Eigen::VectorXd c = Gamma.transpose()
+      * (omegas.col(1).cwiseProduct(kappa));
+    log_omega_jacad.col(0) = grad_corr * c.cwiseProduct(rho);
   }
 
 }
