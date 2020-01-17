@@ -2,8 +2,8 @@
 #define STAN_MATH_REV_SCAL_FUNCTOR_REDUCE_SUM_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/rev/fun/typedefs.hpp>
-
+#include <stan/math/prim/functor.hpp>
+#include <stan/math/rev/fun.hpp>
 #include <tbb/task_arena.h>
 #include <tbb/parallel_reduce.h>
 #include <tbb/blocked_range.h>

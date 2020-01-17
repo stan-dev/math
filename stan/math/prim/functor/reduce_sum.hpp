@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_SCAL_FUNCTOR_REDUCE_SUM_HPP
 #define STAN_MATH_PRIM_SCAL_FUNCTOR_REDUCE_SUM_HPP
 
-#include <stan/math/prim/meta/return_type.hpp>
-#include <stan/math/prim/fun/typedefs.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun.hpp>
 
 #include <boost/iterator/counting_iterator.hpp>
 

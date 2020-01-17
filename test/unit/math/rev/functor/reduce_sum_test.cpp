@@ -1,4 +1,4 @@
-#include <stan/math/prim/core/init_threadpool_tbb.hpp>
+#include <stan/math/prim/core.hpp>
 #include <stan/math.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
