@@ -1,6 +1,5 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
-#include <limits>
 
 TEST(MathFunctions, zeros_vector) {
   using Eigen::VectorXd;
@@ -27,10 +26,6 @@ TEST(MathFunctions, zeros_vector) {
 
 TEST(MathFunctions, zeros_vector_throw) {
   using stan::math::zeros_vector;
-  double inf = std::numeric_limits<double>::infinity();
-  double nan = std::numeric_limits<double>::quiet_NaN();
 
   EXPECT_THROW(zeros_vector(-1), std::domain_error);
-  EXPECT_THROW(zeros_vector(inf), std::domain_error);
-  EXPECT_THROW(zeros_vector(nan), std::domain_error);
 }

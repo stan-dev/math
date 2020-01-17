@@ -42,8 +42,6 @@ TEST(MathFunctions, set_spaced_vector_throw) {
   double high = 6;
 
   EXPECT_THROW(set_spaced_vector(-1, low, high), std::domain_error);
-  EXPECT_THROW(set_spaced_vector(inf, low, high), std::domain_error);
-  EXPECT_THROW(set_spaced_vector(nan, low, high), std::domain_error);
 
   EXPECT_THROW(set_spaced_vector(K, inf, high), std::domain_error);
   EXPECT_THROW(set_spaced_vector(K, nan, high), std::domain_error);

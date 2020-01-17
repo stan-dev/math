@@ -1,6 +1,5 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
-#include <limits>
 
 TEST(MathFunctions, constant_vector) {
   using Eigen::VectorXd;
@@ -28,11 +27,7 @@ TEST(MathFunctions, constant_vector) {
 
 TEST(MathFunctions, constant_vector_throw) {
   using stan::math::constant_vector;
-  double inf = std::numeric_limits<double>::infinity();
-  double nan = std::numeric_limits<double>::quiet_NaN();
   double c = 3.14;
 
   EXPECT_THROW(constant_vector(-1, c), std::domain_error);
-  EXPECT_THROW(constant_vector(inf, c), std::domain_error);
-  EXPECT_THROW(constant_vector(nan, c), std::domain_error);
 }

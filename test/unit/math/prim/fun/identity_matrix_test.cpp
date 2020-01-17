@@ -1,6 +1,5 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
-#include <limits>
 
 TEST(MathFunctions, identity_matrix) {
   using Eigen::MatrixXd;
@@ -32,10 +31,6 @@ TEST(MathFunctions, identity_matrix) {
 
 TEST(MathFunctions, identity_matrix_throw) {
   using stan::math::identity_matrix;
-  double inf = std::numeric_limits<double>::infinity();
-  double nan = std::numeric_limits<double>::quiet_NaN();
 
   EXPECT_THROW(identity_matrix(-1), std::domain_error);
-  EXPECT_THROW(identity_matrix(inf), std::domain_error);
-  EXPECT_THROW(identity_matrix(nan), std::domain_error);
 }

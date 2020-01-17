@@ -1,6 +1,5 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
-#include <limits>
 
 TEST(MathFunctions, uniform_simplex) {
   using Eigen::VectorXd;
@@ -27,10 +26,6 @@ TEST(MathFunctions, uniform_simplex) {
 
 TEST(MathFunctions, uniform_simplex_throw) {
   using stan::math::uniform_simplex;
-  double inf = std::numeric_limits<double>::infinity();
-  double nan = std::numeric_limits<double>::quiet_NaN();
 
   EXPECT_THROW(uniform_simplex(-1), std::domain_error);
-  EXPECT_THROW(uniform_simplex(inf), std::domain_error);
-  EXPECT_THROW(uniform_simplex(nan), std::domain_error);
 }
