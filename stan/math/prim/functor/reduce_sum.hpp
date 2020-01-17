@@ -107,7 +107,7 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
 template <typename ReduceFunction, typename Vec, require_vector_like_t<Vec>...,
           typename... Args>
 auto reduce_sum(const Vec& vmapped, std::size_t grainsize,
-                          const Args&... args) {
+                const Args&... args) {
   using return_type = return_type_t<Vec, Args...>;
   return internal::reduce_sum_impl<ReduceFunction, void, return_type, Vec,
                                    Args...>()(vmapped, grainsize, args...);

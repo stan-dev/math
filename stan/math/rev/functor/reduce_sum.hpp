@@ -281,7 +281,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     }
 
     sum = worker.sum_;
-    
+
     return var(new precomputed_gradients_vari(
         sum, num_sliced_terms + num_shared_terms, varis, partials));
   }

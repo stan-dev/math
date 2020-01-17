@@ -19,12 +19,14 @@ auto sum_(const Eigen::Matrix<T, RowType, ColType>& arg) {
 struct sum_lpdf {
   template <typename T, typename... Args>
   inline auto operator()(std::size_t start, std::size_t end,
-			 const std::vector<T>& sub_slice,
-			 const Args&... args) const {
+                         const std::vector<T>& sub_slice,
+                         const Args&... args) const {
     using return_type = stan::return_type_t<T, Args...>;
 
-    return stan::math::sum(sub_slice) +
-      sub_slice.size() * stan::math::sum(std::vector<return_type>{ return_type(sum_(args))... });
+    return stan::math::sum(sub_slice)
+           + sub_slice.size()
+                 * stan::math::sum(
+                       std::vector<return_type>{return_type(sum_(args))...});
   }
 };
 
@@ -32,14 +34,15 @@ TEST(MathMix_reduce_sum, double_slice) {
   auto f = [](const auto& data) {
     return stan::math::reduce_sum<sum_lpdf>(data, 0);
   };
-  
+
   std::vector<double> data(5, 10.0);
 
   stan::test::expect_ad(f, data);
 }
 
 auto fi = [](const auto&... args) {
-  return stan::math::reduce_sum<sum_lpdf>(std::vector<int>(2, 10.0), 0, args...);
+  return stan::math::reduce_sum<sum_lpdf>(std::vector<int>(2, 10.0), 0,
+                                          args...);
 };
 
 auto fd = [](const auto& data, const auto&... args) {
@@ -47,12 +50,10 @@ auto fd = [](const auto& data, const auto&... args) {
 };
 
 TEST(MathMix_reduce_sum, int_arg) {
- std::vector<double> data(2, 1.0);
+  std::vector<double> data(2, 1.0);
   int arg = 5.0;
 
-  stan::test::expect_ad([&](const auto& data) {
-      return fd(data, arg);
-    }, data);
+  stan::test::expect_ad([&](const auto& data) { return fd(data, arg); }, data);
 }
 
 TEST(MathMix_reduce_sum, double_arg) {
@@ -67,9 +68,7 @@ TEST(MathMix_reduce_sum, std_vector_int_arg) {
   std::vector<double> data(2, 10.0);
   std::vector<int> arg(2, 10);
 
-  stan::test::expect_ad([&](const auto& data) {
-      return fd(data, arg);
-    }, data);
+  stan::test::expect_ad([&](const auto& data) { return fd(data, arg); }, data);
 }
 
 TEST(MathMix_reduce_sum, std_vector_double_arg) {
@@ -125,9 +124,11 @@ TEST(MathMix_reduce_sum, eigen_three_args_with_ints1) {
   Eigen::RowVectorXd arg2 = Eigen::RowVectorXd::Ones(2);
   Eigen::MatrixXd arg3 = Eigen::MatrixXd::Ones(2, 2);
 
-  stan::test::expect_ad([&](const auto& arg1, const auto& arg2, const auto& arg3) {
-      return fi(1, arg1, std::vector<int>{1, 2, 3}, arg2, 3, arg3);
-    }, arg1, arg2, arg3);
+  stan::test::expect_ad(
+      [&](const auto& arg1, const auto& arg2, const auto& arg3) {
+        return fi(1, arg1, std::vector<int>{1, 2, 3}, arg2, 3, arg3);
+      },
+      arg1, arg2, arg3);
 }
 
 TEST(MathMix_reduce_sum, eigen_three_args_with_ints2) {
@@ -135,9 +136,11 @@ TEST(MathMix_reduce_sum, eigen_three_args_with_ints2) {
   std::vector<double> arg2(2, 1.0);
   Eigen::MatrixXd arg3 = Eigen::MatrixXd::Ones(2, 2);
 
-  stan::test::expect_ad([&](const auto& arg1, const auto& arg2, const auto& arg3) {
-      return fi(1, arg1, std::vector<int>{1, 2, 3}, arg2, 3, arg3);
-    }, arg1, arg2, arg3);
+  stan::test::expect_ad(
+      [&](const auto& arg1, const auto& arg2, const auto& arg3) {
+        return fi(1, arg1, std::vector<int>{1, 2, 3}, arg2, 3, arg3);
+      },
+      arg1, arg2, arg3);
 }
 
 TEST(MathMix_reduce_sum, eigen_three_args_with_doubles1) {
@@ -145,9 +148,12 @@ TEST(MathMix_reduce_sum, eigen_three_args_with_doubles1) {
   Eigen::RowVectorXd arg2 = Eigen::RowVectorXd::Ones(2);
   Eigen::MatrixXd arg3 = Eigen::MatrixXd::Ones(2, 2);
 
-  stan::test::expect_ad([&](const auto& arg1, const auto& arg2, const auto& arg3) {
-      return fi(std::vector<double>{1.0, 2.0, 3.0}, arg1, 3.0, arg2, std::vector<double>{1.0, 2.0, 3.0}, arg3);
-    }, arg1, arg2, arg3);
+  stan::test::expect_ad(
+      [&](const auto& arg1, const auto& arg2, const auto& arg3) {
+        return fi(std::vector<double>{1.0, 2.0, 3.0}, arg1, 3.0, arg2,
+                  std::vector<double>{1.0, 2.0, 3.0}, arg3);
+      },
+      arg1, arg2, arg3);
 }
 
 TEST(MathMix_reduce_sum, eigen_three_args_with_doubles2) {
@@ -155,7 +161,10 @@ TEST(MathMix_reduce_sum, eigen_three_args_with_doubles2) {
   std::vector<double> arg2(2, 1.0);
   Eigen::MatrixXd arg3 = Eigen::MatrixXd::Ones(2, 2);
 
-  stan::test::expect_ad([&](const auto& arg1, const auto& arg2, const auto& arg3) {
-      return fi(std::vector<double>{1.0, 2.0, 3.0}, arg1, 3.0, arg2, std::vector<double>{1.0, 2.0, 3.0}, arg3);
-    }, arg1, arg2, arg3);
+  stan::test::expect_ad(
+      [&](const auto& arg1, const auto& arg2, const auto& arg3) {
+        return fi(std::vector<double>{1.0, 2.0, 3.0}, arg1, 3.0, arg2,
+                  std::vector<double>{1.0, 2.0, 3.0}, arg3);
+      },
+      arg1, arg2, arg3);
 }

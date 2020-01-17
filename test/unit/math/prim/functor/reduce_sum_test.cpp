@@ -88,14 +88,14 @@ TEST(StanMath_reduce_sum, nesting_value) {
 
 struct int_slice_lpdf {
   inline auto operator()(std::size_t start, std::size_t end,
-                      const std::vector<int>& sub_slice) const {
+                         const std::vector<int>& sub_slice) const {
     return stan::math::sum(sub_slice);
   }
 };
 
 struct double_slice_lpdf {
   inline auto operator()(std::size_t start, std::size_t end,
-                      const std::vector<double>& sub_slice) const {
+                         const std::vector<double>& sub_slice) const {
     return stan::math::sum(sub_slice);
   }
 };
@@ -104,7 +104,7 @@ TEST(StanMath_reduce_sum, int_slice) {
   stan::math::init_threadpool_tbb();
 
   std::vector<int> data(5, 10);
-  
+
   EXPECT_EQ(50, stan::math::reduce_sum<int_slice_lpdf>(data, 0));
 }
 
@@ -112,62 +112,62 @@ TEST(StanMath_reduce_sum, double_slice) {
   stan::math::init_threadpool_tbb();
 
   std::vector<double> data(5, 10.0);
-  
+
   EXPECT_DOUBLE_EQ(50.0, stan::math::reduce_sum<double_slice_lpdf>(data, 0));
 }
 
 struct int_arg_lpdf {
   inline auto operator()(std::size_t start, std::size_t end,
-			 const std::vector<double>& sub_slice,
-			 const int& arg) const {
+                         const std::vector<double>& sub_slice,
+                         const int& arg) const {
     return stan::math::sum(sub_slice) + sub_slice.size() * arg;
   }
 };
 
 struct double_arg_lpdf {
   inline auto operator()(std::size_t start, std::size_t end,
-			 const std::vector<double>& sub_slice,
-			 const double& arg) const {
+                         const std::vector<double>& sub_slice,
+                         const double& arg) const {
     return stan::math::sum(sub_slice) + sub_slice.size() * arg;
   }
 };
 
 struct std_vector_int_arg_lpdf {
   inline auto operator()(std::size_t start, std::size_t end,
-			 const std::vector<double>& sub_slice,
-			 const std::vector<int>& arg) const {
+                         const std::vector<double>& sub_slice,
+                         const std::vector<int>& arg) const {
     return stan::math::sum(sub_slice) + sub_slice.size() * stan::math::sum(arg);
   }
 };
 
 struct std_vector_double_arg_lpdf {
   inline auto operator()(std::size_t start, std::size_t end,
-			 const std::vector<double>& sub_slice,
-			 const std::vector<double>& arg) const {
+                         const std::vector<double>& sub_slice,
+                         const std::vector<double>& arg) const {
     return stan::math::sum(sub_slice) + sub_slice.size() * stan::math::sum(arg);
   }
 };
 
 struct eigen_vector_arg_lpdf {
   inline auto operator()(std::size_t start, std::size_t end,
-			 const std::vector<double>& sub_slice,
-			 const Eigen::VectorXd& arg) const {
+                         const std::vector<double>& sub_slice,
+                         const Eigen::VectorXd& arg) const {
     return stan::math::sum(sub_slice) + sub_slice.size() * stan::math::sum(arg);
   }
 };
 
 struct eigen_row_vector_arg_lpdf {
   inline auto operator()(std::size_t start, std::size_t end,
-			 const std::vector<double>& sub_slice,
-			 const Eigen::RowVectorXd& arg) const {
+                         const std::vector<double>& sub_slice,
+                         const Eigen::RowVectorXd& arg) const {
     return stan::math::sum(sub_slice) + sub_slice.size() * stan::math::sum(arg);
   }
 };
 
 struct eigen_matrix_arg_lpdf {
   inline auto operator()(std::size_t start, std::size_t end,
-			 const std::vector<double>& sub_slice,
-			 const Eigen::MatrixXd& arg) const {
+                         const std::vector<double>& sub_slice,
+                         const Eigen::MatrixXd& arg) const {
     return stan::math::sum(sub_slice) + sub_slice.size() * stan::math::sum(arg);
   }
 };
@@ -177,8 +177,9 @@ TEST(StanMath_reduce_sum, int_arg) {
 
   std::vector<double> data(5, 10.0);
   int arg = 5;
-  
-  EXPECT_DOUBLE_EQ(5 * (10 + 5), stan::math::reduce_sum<int_arg_lpdf>(data, 0, arg));
+
+  EXPECT_DOUBLE_EQ(5 * (10 + 5),
+                   stan::math::reduce_sum<int_arg_lpdf>(data, 0, arg));
 }
 
 TEST(StanMath_reduce_sum, double_arg) {
@@ -186,8 +187,9 @@ TEST(StanMath_reduce_sum, double_arg) {
 
   std::vector<double> data(5, 10.0);
   double arg = 5.0;
-  
-  EXPECT_DOUBLE_EQ(5 * (10.0 + 5.0), stan::math::reduce_sum<double_arg_lpdf>(data, 0, arg));
+
+  EXPECT_DOUBLE_EQ(5 * (10.0 + 5.0),
+                   stan::math::reduce_sum<double_arg_lpdf>(data, 0, arg));
 }
 
 TEST(StanMath_reduce_sum, std_vector_int_arg) {
@@ -195,8 +197,10 @@ TEST(StanMath_reduce_sum, std_vector_int_arg) {
 
   std::vector<double> data(5, 10.0);
   std::vector<int> arg(5, 10);
-  
-  EXPECT_DOUBLE_EQ(5 * (10 + 5 * 10), stan::math::reduce_sum<std_vector_int_arg_lpdf>(data, 0, arg));
+
+  EXPECT_DOUBLE_EQ(
+      5 * (10 + 5 * 10),
+      stan::math::reduce_sum<std_vector_int_arg_lpdf>(data, 0, arg));
 }
 
 TEST(StanMath_reduce_sum, std_vector_double_arg) {
@@ -204,8 +208,10 @@ TEST(StanMath_reduce_sum, std_vector_double_arg) {
 
   std::vector<double> data(5, 10.0);
   std::vector<double> arg(5, 10.0);
-  
-  EXPECT_DOUBLE_EQ(5 * (10 + 5 * 10), stan::math::reduce_sum<std_vector_double_arg_lpdf>(data, 0, arg));
+
+  EXPECT_DOUBLE_EQ(
+      5 * (10 + 5 * 10),
+      stan::math::reduce_sum<std_vector_double_arg_lpdf>(data, 0, arg));
 }
 
 TEST(StanMath_reduce_sum, eigen_vector_arg) {
@@ -213,8 +219,9 @@ TEST(StanMath_reduce_sum, eigen_vector_arg) {
 
   std::vector<double> data(5, 10.0);
   Eigen::VectorXd arg = Eigen::VectorXd::Ones(5);
-  
-  EXPECT_DOUBLE_EQ(5 * (10 + 5), stan::math::reduce_sum<eigen_vector_arg_lpdf>(data, 0, arg));
+
+  EXPECT_DOUBLE_EQ(5 * (10 + 5),
+                   stan::math::reduce_sum<eigen_vector_arg_lpdf>(data, 0, arg));
 }
 
 TEST(StanMath_reduce_sum, eigen_row_vector_arg) {
@@ -222,8 +229,10 @@ TEST(StanMath_reduce_sum, eigen_row_vector_arg) {
 
   std::vector<double> data(5, 10.0);
   Eigen::RowVectorXd arg = Eigen::RowVectorXd::Ones(5);
-  
-  EXPECT_DOUBLE_EQ(5 * (10 + 5), stan::math::reduce_sum<eigen_row_vector_arg_lpdf>(data, 0, arg));
+
+  EXPECT_DOUBLE_EQ(
+      5 * (10 + 5),
+      stan::math::reduce_sum<eigen_row_vector_arg_lpdf>(data, 0, arg));
 }
 
 TEST(StanMath_reduce_sum, eigen_matrix_arg) {
@@ -231,25 +240,24 @@ TEST(StanMath_reduce_sum, eigen_matrix_arg) {
 
   std::vector<double> data(5, 10.0);
   Eigen::MatrixXd arg = Eigen::MatrixXd::Ones(5, 5);
-  
-  EXPECT_DOUBLE_EQ(5 * (10 + 5 * 5), stan::math::reduce_sum<eigen_matrix_arg_lpdf>(data, 0, arg));
+
+  EXPECT_DOUBLE_EQ(5 * (10 + 5 * 5),
+                   stan::math::reduce_sum<eigen_matrix_arg_lpdf>(data, 0, arg));
 }
 
 struct sum_lpdf {
   inline auto operator()(std::size_t start, std::size_t end,
-			 const std::vector<double>& sub_slice,
-			 const int& arg1,
-			 const double& arg2,
-			 const std::vector<int>& arg3,
-			 const std::vector<double>& arg4,
-			 const Eigen::VectorXd& arg5,
-			 const Eigen::RowVectorXd& arg6,
-			 const Eigen::MatrixXd& arg7) const {
-    return stan::math::sum(sub_slice) +
-      sub_slice.size() * (arg1 + arg2 +
-			  stan::math::sum(arg3) + stan::math::sum(arg4) +
-			  stan::math::sum(arg5) + stan::math::sum(arg6) +
-			  stan::math::sum(arg7));
+                         const std::vector<double>& sub_slice, const int& arg1,
+                         const double& arg2, const std::vector<int>& arg3,
+                         const std::vector<double>& arg4,
+                         const Eigen::VectorXd& arg5,
+                         const Eigen::RowVectorXd& arg6,
+                         const Eigen::MatrixXd& arg7) const {
+    return stan::math::sum(sub_slice)
+           + sub_slice.size()
+                 * (arg1 + arg2 + stan::math::sum(arg3) + stan::math::sum(arg4)
+                    + stan::math::sum(arg5) + stan::math::sum(arg6)
+                    + stan::math::sum(arg7));
   }
 };
 
@@ -264,9 +272,8 @@ TEST(StanMath_reduce_sum, sum) {
   Eigen::VectorXd arg5 = Eigen::VectorXd::Ones(5);
   Eigen::RowVectorXd arg6 = Eigen::RowVectorXd::Ones(5);
   Eigen::MatrixXd arg7 = Eigen::MatrixXd::Ones(5, 5);
-  
+
   EXPECT_DOUBLE_EQ(5 + 5 * (1 + 1 + 5 + 5 + 5 + 5 + 25),
-		   stan::math::reduce_sum<sum_lpdf>(data, 0, arg1, arg2,
-						    arg3, arg4, arg5, arg6,
-						    arg7));
+                   stan::math::reduce_sum<sum_lpdf>(data, 0, arg1, arg2, arg3,
+                                                    arg4, arg5, arg6, arg7));
 }
