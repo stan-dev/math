@@ -1,10 +1,10 @@
 #include <stan/math/prim.hpp>
-#include <test/unit/math/expect_near_rel.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
 #include <limits>
 #include <string>
 #include <vector>
+#include <algorithm>
 
 TEST(MathFunctions, lbeta) {
   using stan::math::lbeta;
@@ -47,39 +47,44 @@ TEST(MathFunctions, lbeta_extremes_errors) {
 TEST(MathFunctions, lbeta_identities) {
   using stan::math::lbeta;
   using stan::math::pi;
-  using stan::test::expect_near_rel;
 
   std::vector<double> to_test
       = {1e-100, 1e-8, 1e-1, 1, 1 + 1e-6, 1e3, 1e30, 1e100};
+  auto tol = [](double x, double y) {
+    return std::max(1e-15 * (0.5 * (fabs(x) + fabs(y))), 1e-15);
+  };
+
   for (double x : to_test) {
     for (double y : to_test) {
       std::stringstream msg;
-      msg << "successors: x = " << x << "; y = " << y;
-      expect_near_rel(
-          msg.str(), lbeta(x, y),
-          stan::math::log_sum_exp(lbeta(x + 1, y), lbeta(x, y + 1)));
+      msg << std::setprecision(22) << "successors: x = " << x << "; y = " << y;
+      double lh = lbeta(x, y);
+      double rh = stan::math::log_sum_exp(lbeta(x + 1, y), lbeta(x, y + 1));
+      EXPECT_NEAR(lh, rh, tol(lh, rh)) << msg.str();
     }
   }
 
   for (double x : to_test) {
     if (x < 1) {
       std::stringstream msg;
-      msg << "sin: x = " << x;
-      expect_near_rel(msg.str(), lbeta(x, 1.0 - x),
-                      log(pi()) - log(sin(pi() * x)));
+      msg << std::setprecision(22) << "sin: x = " << x;
+      double lh = lbeta(x, 1.0 - x);
+      double rh = log(pi()) - log(sin(pi() * x));
+      EXPECT_NEAR(lh, rh, tol(lh, rh)) << msg.str();
     }
   }
 
   for (double x : to_test) {
     std::stringstream msg;
-    msg << "inv: x = " << x;
-    expect_near_rel(msg.str(), lbeta(x, 1.0), -log(x));
+    msg << std::setprecision(22) << "inv: x = " << x;
+    double lh = lbeta(x, 1.0);
+    double rh = -log(x);
+    EXPECT_NEAR(lh, rh, tol(lh, rh)) << msg.str();
   }
 }
 
 TEST(MathFunctions, lbeta_stirling_cutoff) {
   using stan::math::lgamma_stirling_diff_useful;
-  using stan::test::expect_near_rel;
 
   double after_stirling
       = std::nextafter(lgamma_stirling_diff_useful, stan::math::INFTY);
@@ -89,13 +94,18 @@ TEST(MathFunctions, lbeta_stirling_cutoff) {
   std::vector<double> to_test
       = {1e-100,          1e-8,          1e-1, 1, 1 + 1e-6, 1e3, 1e30, 1e100,
          before_stirling, after_stirling};
-  for (double x : to_test) {
-    std::stringstream msg;
-    msg << "before and after cutoff: x = " << x
+  for (const double x : to_test) {
+    double before = lbeta(x, before_stirling);
+    double at = lbeta(x, lgamma_stirling_diff_useful);
+    double after = lbeta(x, after_stirling);
+
+    double diff_before = at - before;
+    double diff_after = after - at;
+    double tol = std::max(
+        1e-15 * (0.5 * (fabs(diff_before) + fabs(diff_after))), 5e-14);
+
+    EXPECT_NEAR(diff_before, diff_after, tol)
+        << "diff before and after cutoff: x = " << x
         << "; cutoff = " << lgamma_stirling_diff_useful;
-    expect_near_rel(msg.str(), lbeta(x, before_stirling),
-                    lbeta(x, after_stirling));
-    expect_near_rel(msg.str(), lbeta(before_stirling, x),
-                    lbeta(after_stirling, x));
   }
 }

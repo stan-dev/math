@@ -1,6 +1,6 @@
 #include <stan/math/prim.hpp>
-#include <test/unit/math/expect_near_rel.hpp>
 #include <gtest/gtest.h>
+#include <algorithm>
 #include <limits>
 #include <vector>
 #include <cmath>
@@ -20,7 +20,6 @@ TEST(MathFunctions, lgamma_stirling_diff_errors_special_cases) {
 TEST(MathFunctions, lgamma_stirling_diff_accuracy) {
   using stan::math::lgamma_stirling_diff;
   using stan::math::lgamma_stirling_diff_useful;
-  using stan::test::expect_near_rel;
 
   double start = std::nextafter(10, 11);
   for (double x = start; x < 1e8; x *= 1.5) {
@@ -31,18 +30,25 @@ TEST(MathFunctions, lgamma_stirling_diff_accuracy) {
     long double lgamma_res = std::lgamma(x_l);
     double diff_actual = static_cast<double>(lgamma_res - stirling);
     double diff = lgamma_stirling_diff(x);
+    double tol = std::max(1e-06 * 0.5 * (fabs(diff_actual) + fabs(diff)), 1e-6);
 
-    std::ostringstream msg;
-    msg << "x = " << x << "; lgamma = " << lgamma_res
+    EXPECT_NEAR(diff, diff_actual, tol)
+        << "x = " << x << "; lgamma = " << lgamma_res
         << "; stirling = " << stirling;
-    expect_near_rel(msg.str(), diff, diff_actual, 1e-4);
   }
 
-  double before_big = std::nextafter(lgamma_stirling_diff_useful, 0);
-  double after_big = std::nextafter(lgamma_stirling_diff_useful,
-                                    stan::math::positive_infinity());
-  expect_near_rel("big cutoff", lgamma_stirling_diff(before_big),
-                  lgamma_stirling_diff(after_big));
+  double before_useful = std::nextafter(lgamma_stirling_diff_useful, 0);
+  double after_useful = std::nextafter(lgamma_stirling_diff_useful,
+                                       stan::math::positive_infinity());
+
+  double value_before = lgamma_stirling_diff(before_useful);
+  double value_at = lgamma_stirling_diff(lgamma_stirling_diff_useful);
+  double value_after = lgamma_stirling_diff(after_useful);
+  double diff_before = value_at - value_before;
+  double diff_after = value_after - value_at;
+  double tol
+      = std::max(1e-14 * (0.5 * (fabs(diff_before) + fabs(diff_after))), 1e-14);
+  EXPECT_NEAR(diff_before, diff_after, tol) << "diff around useful cutoff";
 }
 
 namespace lgamma_stirling_diff_test_internal {
@@ -92,11 +98,13 @@ TEST(MathFunctions, lgamma_stirling_diff_precomputed) {
   using lgamma_stirling_diff_test_internal::TestValue;
   using lgamma_stirling_diff_test_internal::testValues;
   using stan::math::lgamma_stirling_diff;
-  using stan::test::expect_near_rel;
+  using stan::math::lgamma_stirling_diff_useful;
 
   for (TestValue t : testValues) {
-    std::ostringstream msg;
-    msg << "x = " << t.x;
-    expect_near_rel(msg.str(), lgamma_stirling_diff(t.x), t.val, 1e-10);
+    double tol = std::max(1e-16 * fabs(t.val), 1e-17);
+    if (t.x < lgamma_stirling_diff_useful) {
+      tol = std::max(1e-14 * fabs(t.val), 1e-14);
+    }
+    EXPECT_NEAR(lgamma_stirling_diff(t.x), t.val, tol) << "x = " << t.x;
   }
 }
