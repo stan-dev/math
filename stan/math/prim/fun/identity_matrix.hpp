@@ -12,6 +12,7 @@ namespace math {
  *
  * @param K size of the matrix
  * @return An identity matrix of size K.
+ * @throw std::domain_error if K is negative.
  */
 inline Eigen::MatrixXd identity_matrix(int K) {
   check_nonnegative("identity_matrix", "size", K);

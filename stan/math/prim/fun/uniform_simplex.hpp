@@ -8,13 +8,15 @@ namespace stan {
 namespace math {
 
 /**
- * Return a uniform simplex of length K
+ * Return a uniform simplex of size K
  *
- * @param K length of the simplex
- * @return A vector of length K with all elements initialised to 1 / K.
+ * @param K size of the simplex
+ * @return A vector of size K with all elements initialised to 1 / K,
+ * so that their sum is equal to 1.
+ * @throw std::domain_error if K is not positive.
  */
 inline Eigen::VectorXd uniform_simplex(int K) {
-  check_nonnegative("uniform_simplex", "length", K);
+  check_positive("uniform_simplex", "size", K);
   return Eigen::VectorXd::Constant(K, 1.0 / K);
 }
 

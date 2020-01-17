@@ -1,4 +1,5 @@
 #include <stan/math/prim.hpp>
+#include <test/unit/math/prim/fun/expect_matrix_eq.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathFunctions, identity_matrix) {
@@ -9,28 +10,12 @@ TEST(MathFunctions, identity_matrix) {
   EXPECT_EQ(0, u0.rows());
   EXPECT_EQ(0, u0.cols());
 
-  MatrixXd u1 = identity_matrix(1);
-  MatrixXd m1(1, 1);
-  m1 << 1;
-
-  EXPECT_EQ(1, u1.rows());
-  EXPECT_EQ(1, u1.cols());
-  EXPECT_EQ(u1(0), m1(0));
-
-  int K = 3;
-  MatrixXd u2 = identity_matrix(K);
-  MatrixXd m2(K, K);
-  m2 << 1, 0, 0, 0, 1, 0, 0, 0, 1;
-
-  EXPECT_EQ(K, u2.rows());
-  EXPECT_EQ(K, u2.cols());
-  for (int i = 0; i < m2.size(); i++) {
-    EXPECT_EQ(u2(i), m2(i));
+  for (int K = 1; K < 5; K++) {
+    MatrixXd m = Eigen::MatrixXd::Identity(K, K);
+    expect_matrix_eq(m, identity_matrix(K));
   }
 }
 
 TEST(MathFunctions, identity_matrix_throw) {
-  using stan::math::identity_matrix;
-
-  EXPECT_THROW(identity_matrix(-1), std::domain_error);
+  EXPECT_THROW(stan::math::identity_matrix(-1), std::domain_error);
 }

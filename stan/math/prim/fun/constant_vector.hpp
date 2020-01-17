@@ -10,13 +10,14 @@ namespace math {
 /**
  * Return a vector with elements set to the same constant
  *
- * @param K length of the vector
+ * @param K size of the vector
  * @param c constant value
- * @return A vector of length K with all elements initialised to
+ * @return A vector of size K with all elements initialised to
  * the same constant.
+ * @throw std::domain_error if K is negative.
  */
 inline Eigen::VectorXd constant_vector(int K, double c) {
-  check_nonnegative("constant_vector", "length", K);
+  check_nonnegative("constant_vector", "size", K);
   return Eigen::VectorXd::Constant(K, c);
 }
 

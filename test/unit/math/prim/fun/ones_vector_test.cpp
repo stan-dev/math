@@ -1,4 +1,5 @@
 #include <stan/math/prim.hpp>
+#include <test/unit/math/prim/fun/expect_matrix_eq.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathFunctions, ones_vector) {
@@ -8,24 +9,12 @@ TEST(MathFunctions, ones_vector) {
   VectorXd u0 = ones_vector(0);
   EXPECT_EQ(0, u0.size());
 
-  VectorXd u1 = ones_vector(1);
-  VectorXd v1(1);
-  v1 << 1;
-  EXPECT_EQ(1, u1.size());
-  EXPECT_EQ(u1[0], v1[0]);
-
-  int K = 4;
-  VectorXd u2 = ones_vector(K);
-  VectorXd v2(K);
-  v2 << 1, 1, 1, 1;
-  EXPECT_EQ(K, u2.size());
-  for (int i = 0; i < K; i++) {
-    EXPECT_EQ(u2[i], v2[i]);
+  for (int K = 1; K < 5; K++) {
+    Eigen::VectorXd y = Eigen::VectorXd::Constant(K, 1);
+    expect_matrix_eq(y, ones_vector(K));
   }
 }
 
 TEST(MathFunctions, ones_vector_throw) {
-  using stan::math::ones_vector;
-
-  EXPECT_THROW(ones_vector(-1), std::domain_error);
+  EXPECT_THROW(stan::math::ones_vector(-1), std::domain_error);
 }

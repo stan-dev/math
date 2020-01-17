@@ -10,15 +10,21 @@ namespace math {
 /**
  * Return a vector of linearly spaced elements
  *
- * @param K length of the vector
+ * This produces a vector from low to high (included) with elements spaced
+ * as (high - low) / (K - 1). For K=1, the vector will contain the high value;
+ * for K=0 it returns an empty vector.
+ *
+ * @param K size of the vector
  * @param low smallest value
  * @param high largest value
- * @return A vector of length K with elements linearly spaced between
+ * @return A vector of size K with elements linearly spaced between
  * low and high.
+ * @throw std::domain_error if K is negative, if low is nan or infinite,
+ * if high is nan or infinite, or if high is less than low.
  */
 inline Eigen::VectorXd set_spaced_vector(int K, double low, double high) {
   static const char* function = "set_spaced_vector";
-  check_nonnegative(function, "length", K);
+  check_nonnegative(function, "size", K);
   check_finite(function, "low", low);
   check_finite(function, "high", high);
   check_greater_or_equal(function, "high", high, low);

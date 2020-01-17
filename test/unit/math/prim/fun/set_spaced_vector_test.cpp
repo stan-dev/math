@@ -9,27 +9,29 @@ TEST(MathFunctions, set_spaced_vector) {
   VectorXd u0 = set_spaced_vector(0, 1, 2);
   EXPECT_EQ(0, u0.size());
 
+  double low = 1;
+  double high = 5;
+  VectorXd u11 = set_spaced_vector(1, low, high);
+  EXPECT_EQ(1, u11.size());
+  EXPECT_FLOAT_EQ(high, u11[0]);
+
   int K = 5;
-  double low1 = 1;
-  double high1 = 5;
-  VectorXd u1 = set_spaced_vector(K, low1, high1);
+  VectorXd u1 = set_spaced_vector(K, 1, 5);
   VectorXd v1(K);
   v1 << 1, 2, 3, 4, 5;
 
   EXPECT_EQ(K, u1.size());
   for (int i = 0; i < K; i++) {
-    EXPECT_EQ(u1[i], v1[i]);
+    EXPECT_FLOAT_EQ(u1[i], v1[i]);
   }
 
-  double low2 = -2;
-  double high2 = 2;
-  VectorXd u2 = set_spaced_vector(K, low2, high2);
+  VectorXd u2 = set_spaced_vector(K, -2, 2);
   VectorXd v2(K);
   v2 << -2, -1, 0, 1, 2;
 
   EXPECT_EQ(K, u2.size());
   for (int i = 0; i < K; i++) {
-    EXPECT_EQ(u2[i], v2[i]);
+    EXPECT_FLOAT_EQ(u2[i], v2[i]);
   }
 }
 

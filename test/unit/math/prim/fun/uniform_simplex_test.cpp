@@ -1,31 +1,19 @@
 #include <stan/math/prim.hpp>
+#include <test/unit/math/prim/fun/expect_matrix_eq.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathFunctions, uniform_simplex) {
   using Eigen::VectorXd;
   using stan::math::uniform_simplex;
 
-  VectorXd u0 = uniform_simplex(0);
-  EXPECT_EQ(0, u0.size());
-
-  VectorXd u1 = uniform_simplex(1);
-  VectorXd v1(1);
-  v1 << 1;
-  EXPECT_EQ(1, u1.size());
-  EXPECT_EQ(u1[0], v1[0]);
-
-  int K = 4;
-  VectorXd u2 = uniform_simplex(K);
-  VectorXd v2(K);
-  v2 << 0.25, 0.25, 0.25, 0.25;
-  EXPECT_EQ(K, u2.size());
-  for (int i = 0; i < K; i++) {
-    EXPECT_EQ(u2[i], v2[i]);
+  for (int K = 1; K < 5; K++) {
+    Eigen::VectorXd v = Eigen::VectorXd::Constant(K, 1.0 / K);
+    expect_matrix_eq(v, uniform_simplex(K));
   }
 }
 
 TEST(MathFunctions, uniform_simplex_throw) {
   using stan::math::uniform_simplex;
-
   EXPECT_THROW(uniform_simplex(-1), std::domain_error);
+  EXPECT_THROW(uniform_simplex(0), std::domain_error);
 }
