@@ -384,7 +384,6 @@ TEST(v3_reduce_sum, slice_group_gradient) {
 
   std::cout << "ref gradient wrt to lambda: " << lambda_ref_adj << std::endl;
 
-
   std::cout << "value of poisson lpdf : " << poisson_lpdf.val() << std::endl;
 
   std::cout << "gradient wrt to lambda: " << lambda_adj << std::endl;
