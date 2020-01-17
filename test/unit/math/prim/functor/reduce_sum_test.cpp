@@ -37,7 +37,8 @@ TEST(v3_reduce_sum, value) {
 
   typedef boost::counting_iterator<std::size_t> count_iter;
 
-  double poisson_lpdf = stan::math::reduce_sum<count_lpdf<double>>(data, 5, vlambda_d, idata);
+  double poisson_lpdf
+      = stan::math::reduce_sum<count_lpdf<double>>(data, 5, vlambda_d, idata);
 
   double poisson_lpdf_ref = stan::math::poisson_lpmf(data, lambda_d);
 
@@ -47,7 +48,6 @@ TEST(v3_reduce_sum, value) {
 
   std::cout << "value of poisson lpdf : " << poisson_lpdf << std::endl;
 }
-
 
 // ********************************
 // test if nested parallelism works
@@ -62,8 +62,7 @@ struct nesting_count_lpdf {
                       const std::vector<int>& sub_slice,
                       const std::vector<T>& lambda,
                       const std::vector<int>& idata) const {
-    return stan::math::reduce_sum<count_lpdf<T>>(sub_slice, 5, lambda,
-                                                 idata);
+    return stan::math::reduce_sum<count_lpdf<T>>(sub_slice, 5, lambda, idata);
   }
 };
 
@@ -83,8 +82,8 @@ TEST(v3_reduce_sum, nesting_value) {
 
   typedef boost::counting_iterator<std::size_t> count_iter;
 
-  double poisson_lpdf = stan::math::reduce_sum<count_lpdf<double>>(
-      data, 5, vlambda_d, idata);
+  double poisson_lpdf
+      = stan::math::reduce_sum<count_lpdf<double>>(data, 5, vlambda_d, idata);
 
   double poisson_lpdf_ref = stan::math::poisson_lpmf(data, lambda_d);
 
