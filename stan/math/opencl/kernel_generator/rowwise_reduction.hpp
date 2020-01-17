@@ -60,16 +60,17 @@ class rowwise_reduction
   inline kernel_parts generate(const std::string& i, const std::string& j,
                                const std::string& var_name_arg) const {
     kernel_parts res;
-    res.body_start = type_str<Scalar>() + " " + var_name + " = " + init_ + ";\n";
+    res.body_start
+        = type_str<Scalar>() + " " + var_name + " = " + init_ + ";\n";
     if (PassZero) {
-      res.body_start += "for(int " + var_name + "_j = contains_nonzero(" + var_name
-                  + "_view, LOWER) ? 0 : " + i + "; " + var_name
-                  + "_j < (contains_nonzero(" + var_name + "_view, UPPER) ? "
-                  + var_name + "_cols : " + i + " + 1); " + var_name
-                  + "_j++){\n";
+      res.body_start += "for(int " + var_name + "_j = contains_nonzero("
+                        + var_name + "_view, LOWER) ? 0 : " + i + "; "
+                        + var_name + "_j < (contains_nonzero(" + var_name
+                        + "_view, UPPER) ? " + var_name + "_cols : " + i
+                        + " + 1); " + var_name + "_j++){\n";
     } else {
       res.body_start += "for(int " + var_name + "_j = 0; " + var_name + "_j < "
-                  + var_name + "_cols; " + var_name + "_j++){\n";
+                        + var_name + "_cols; " + var_name + "_j++){\n";
     }
     res.body += var_name + " = " + operation::generate(var_name, var_name_arg)
                 + ";\n}\n";
@@ -145,11 +146,12 @@ struct sum_op {
  * @tparam T type of expression
  */
 template <typename T>
-class rowwise_sum_ : public rowwise_reduction<rowwise_sum_<T>, T, sum_op, true> {
+class rowwise_sum_
+    : public rowwise_reduction<rowwise_sum_<T>, T, sum_op, true> {
  public:
   explicit rowwise_sum_(T&& a)
       : rowwise_reduction<rowwise_sum_<T>, T, sum_op, true>(std::forward<T>(a),
-                                                           "0") {}
+                                                            "0") {}
 };
 
 /**
@@ -161,7 +163,8 @@ class rowwise_sum_ : public rowwise_reduction<rowwise_sum_<T>, T, sum_op, true> 
 template <typename T,
           typename = require_all_valid_expressions_and_none_scalar_t<T>>
 inline rowwise_sum_<as_operation_cl_t<T>> rowwise_sum(T&& a) {
-  return rowwise_sum_<as_operation_cl_t<T>>(as_operation_cl(std::forward<T>(a)));
+  return rowwise_sum_<as_operation_cl_t<T>>(
+      as_operation_cl(std::forward<T>(a)));
 }
 
 /**
@@ -205,7 +208,7 @@ class rowwise_max_
   using op = max_op<typename std::remove_reference_t<T>::Scalar>;
   explicit rowwise_max_(T&& a)
       : rowwise_reduction<rowwise_max_<T>, T, op, false>(std::forward<T>(a),
-                                                        op::init()) {}
+                                                         op::init()) {}
 };
 
 /**
@@ -217,7 +220,8 @@ class rowwise_max_
 template <typename T,
           typename = require_all_valid_expressions_and_none_scalar_t<T>>
 inline rowwise_max_<as_operation_cl_t<T>> rowwise_max(T&& a) {
-  return rowwise_max_<as_operation_cl_t<T>>(as_operation_cl(std::forward<T>(a)));
+  return rowwise_max_<as_operation_cl_t<T>>(
+      as_operation_cl(std::forward<T>(a)));
 }
 
 /**
@@ -261,7 +265,7 @@ class rowwise_min_
   using op = min_op<typename std::remove_reference_t<T>::Scalar>;
   explicit rowwise_min_(T&& a)
       : rowwise_reduction<rowwise_min_<T>, T, op, false>(std::forward<T>(a),
-                                                        op::init()) {}
+                                                         op::init()) {}
 };
 
 /**
@@ -273,7 +277,8 @@ class rowwise_min_
 template <typename T,
           typename = require_all_valid_expressions_and_none_scalar_t<T>>
 inline rowwise_min_<as_operation_cl_t<T>> rowwise_min(T&& a) {
-  return rowwise_min_<as_operation_cl_t<T>>(as_operation_cl(std::forward<T>(a)));
+  return rowwise_min_<as_operation_cl_t<T>>(
+      as_operation_cl(std::forward<T>(a)));
 }
 
 }  // namespace math
