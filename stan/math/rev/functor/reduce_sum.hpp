@@ -38,7 +38,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
   template <int RowType, int ColType>
   static Eigen::Matrix<var, RowType, ColType> deep_copy(
       const Eigen::Matrix<var, RowType, ColType>& arg) {
-    Eigen::Matrix<var, RowType, ColType> copy(arg.size());
+    Eigen::Matrix<var, RowType, ColType> copy(arg.rows(), arg.cols());
     for (size_t i = 0; i < arg.size(); ++i) {
       copy(i) = arg(i).val();
     }
@@ -73,7 +73,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
   static double* accumulate_adjoints(double* dest, const Mat& x,
                                      const Pargs&... args) {
     for (size_t i = 0; i < x.size(); ++i) {
-      dest[i] += x[i].adj();
+      dest[i] += x(i).adj();
     }
     return accumulate_adjoints(dest + x.size(), args...);
   }
@@ -281,7 +281,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     }
 
     sum = worker.sum_;
-
+    
     return var(new precomputed_gradients_vari(
         sum, num_sliced_terms + num_shared_terms, varis, partials));
   }

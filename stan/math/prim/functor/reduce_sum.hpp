@@ -21,7 +21,18 @@ namespace internal {
 
 template <typename ReduceFunction, typename Enable, typename ReturnType,
           typename Vec, typename... Args>
-struct reduce_sum_impl {};
+struct reduce_sum_impl {
+  return_type_t<Vec, Args...> operator()(const Vec& vmapped,
+                                         std::size_t grainsize,
+                                         const Args&... args) const {
+    const std::size_t num_jobs = vmapped.size();
+
+    if (num_jobs == 0)
+      return 0.0;
+
+    return ReduceFunction()(0, vmapped.size() - 1, vmapped, args...);
+  }
+};
 
 template <typename ReduceFunction, typename ReturnType, typename Vec,
           typename... Args>
@@ -95,7 +106,7 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
  */
 template <typename ReduceFunction, typename Vec, require_vector_like_t<Vec>...,
           typename... Args>
-constexpr auto reduce_sum(const Vec& vmapped, std::size_t grainsize,
+auto reduce_sum(const Vec& vmapped, std::size_t grainsize,
                           const Args&... args) {
   using return_type = return_type_t<Vec, Args...>;
   return internal::reduce_sum_impl<ReduceFunction, void, return_type, Vec,
