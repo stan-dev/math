@@ -14,7 +14,7 @@ namespace math {
  * @return returns input vector.
  */
 template <typename T>
-inline const std::vector<T>& vec_concat(const std::vector<T>& v1) {
+inline std::vector<T>& vec_concat(const std::vector<T>& v1) {
   return v1;
 }
 
@@ -27,8 +27,8 @@ inline const std::vector<T>& vec_concat(const std::vector<T>& v1) {
  */
 template <typename T, typename... Args>
 inline const std::vector<T> vec_concat(const std::vector<T>& v1,
-                                       const Args... args) {
-  std::vector<T> vec = vec_concat(args...);
+                                       Args&&... args) {
+  std::vector<T> vec = vec_concat(std::forward<Args>(args)...);
   vec.insert(vec.end(), v1.begin(), v1.end());
   return vec;
 }
