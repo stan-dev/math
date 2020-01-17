@@ -10,7 +10,7 @@ namespace stan {
 namespace math {
 
 /**
- * Return the Stirling approximation to the gamma function.
+ * Return the Stirling approximation to the lgamma function.
  *
 
    \f[
@@ -25,7 +25,7 @@ namespace math {
  */
 template <typename T>
 return_type_t<T> lgamma_stirling(const T x) {
-  return 0.5 * LOG_TWO_PI + (x - 0.5) * log(x) - x;
+  return HALF_LOG_TWO_PI + (x - 0.5) * log(x) - x;
 }
 
 }  // namespace math
