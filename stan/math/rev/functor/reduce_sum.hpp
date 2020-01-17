@@ -72,9 +72,9 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
   template <typename... Pargs, typename Mat, require_eigen_vt<is_var, Mat>...>
   static double* accumulate_adjoints(double* dest, const Mat& x,
                                      const Pargs&... args) {
-     for (size_t i = 0; i < x.size(); ++i) {
-       dest[i] += x[i].adj();
-     }
+    for (size_t i = 0; i < x.size(); ++i) {
+      dest[i] += x[i].adj();
+    }
     return accumulate_adjoints(dest + x.size(), args...);
   }
 

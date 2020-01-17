@@ -269,7 +269,7 @@ TEST(v3_reduce_sum, grouped_gradient_eigen) {
   var lambda_v = vlambda_v[0];
 
   var poisson_lpdf = stan::math::reduce_sum<grouped_count_lpdf<var>>(
-    data, 5, vlambda_v, gidx);
+      data, 5, vlambda_v, gidx);
 
   std::vector<var> vref_lambda_v;
   for (std::size_t i = 0; i != elems; ++i) {
