@@ -26,8 +26,8 @@ namespace math {
 struct kernel_parts {
   std::string body_start;  // the code that should be placed at the start of the
                            // kernel body
-  std::string body;  // the body of the kernel - code executing operations
-  std::string args;  // kernel arguments
+  std::string body;        // the body of the kernel - code executing operations
+  std::string args;        // kernel arguments
 };
 
 /**
