@@ -16,9 +16,9 @@ namespace stan {
 namespace math {
 namespace internal {
 
-template <typename ReduceFunction, typename ReturnType, typename M,
+template <typename ReduceFunction, typename ReturnType, typename Vec,
           typename... Args>
-struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, M,
+struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, Vec,
                        Args...> {
   template <typename T>
   static const T& deep_copy(const T& arg) {
@@ -58,9 +58,9 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, M,
   }
 
   // Works with anything that has operator[Integral] defined
-  template <typename... Pargs, typename Vec,
-            require_vector_like_vt<is_var, Vec>...>
-  static double* accumulate_adjoints(double* dest, const Vec& x,
+  template <typename... Pargs, typename VecVar,
+            require_std_vector_vt<is_var, VecVar>...>
+  static double* accumulate_adjoints(double* dest, const VecVar& x,
                                      const Pargs&... args) {
     for (size_t i = 0; i < x.size(); ++i) {
       dest[i] += x[i].adj();
@@ -70,11 +70,10 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, M,
 
   // Works on anything with a operator()
   template <typename... Pargs, typename Mat,
-            require_t<is_detected<Mat, operator_paren_access_t>>...,
-            require_t<is_var<value_type_t<Mat>>>...>
+            require_eigen_vt<is_var, Mat>...>
   static double* accumulate_adjoints(double* dest, const Mat& x,
                                      const Pargs&... args) {
-    Eigen::Map<matrix_vi>(dest, x.size()) += x.adj();
+    Eigen::Map<Eigen::Matrix<double, -1, 1>>(dest, x.size()) += x.adj().eval();
     return accumulate_adjoints(dest + x.size(), args...);
   }
 
@@ -90,7 +89,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, M,
 
   struct recursive_reducer {
     size_t num_shared_terms_;
-    const std::vector<M>& vmapped_;
+    const Vec& vmapped_;
     std::tuple<const Args&...> args_tuple_;
     size_t tuple_size_ = sizeof...(Args);
 
@@ -99,7 +98,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, M,
     Eigen::VectorXd args_adjoints_;
 
     recursive_reducer(size_t num_shared_terms, double* sliced_partials,
-                      const std::vector<M>& vmapped, const Args&... args)
+                      const Vec& vmapped, const Args&... args)
         : num_shared_terms_(num_shared_terms),
           vmapped_(vmapped),
           args_tuple_(args...),
@@ -124,10 +123,12 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, M,
 
         // create a deep copy of all var's so that these are not
         // linked to any outer AD tree
-        std::vector<M> local_sub_slice;
-        local_sub_slice.reserve(r.size());
+        Vec local_sub_slice(r.size());
+        //local_sub_slice.reserve(r.size());
+        int ii = 0;
         for (int i = r.begin(); i < r.end(); ++i) {
-          local_sub_slice.emplace_back(deep_copy(vmapped_[i]));
+          local_sub_slice[ii] = deep_copy(vmapped_[i]);
+          ii++;
         }
 
         // auto local_sub_slice = deep_copy(sub_slice);
@@ -225,9 +226,9 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, M,
     save_varis(dest + 1, args...);
   }
 
-  template <typename... Pargs, typename Vec,
-            require_vector_like_vt<is_var, Vec>...>
-  void save_varis(vari** dest, const Vec& x, const Pargs&... args) const {
+  template <typename... Pargs, typename VecVar,
+            require_std_vector_vt<is_var, VecVar>...>
+  void save_varis(vari** dest, const VecVar& x, const Pargs&... args) const {
     for (size_t i = 0; i < x.size(); ++i) {
       dest[i] = x[i].vi_;
     }
@@ -235,8 +236,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, M,
   }
 
   template <typename... Pargs, typename Mat,
-            require_t<is_detected<Mat, operator_paren_access_t>>...,
-            require_t<is_var<value_type_t<Mat>>>...>
+            require_eigen_vt<is_var, Mat>...>
   void save_varis(vari** dest, const Mat& x, const Pargs&... args) const {
     for (size_t i = 0; i < x.size(); ++i) {
       dest[i] = x(i).vi_;
@@ -252,7 +252,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, M,
 
   void save_varis(vari**) const {}
 
-  var operator()(const std::vector<M>& vmapped, std::size_t grainsize,
+  var operator()(const Vec& vmapped, std::size_t grainsize,
                  const Args&... args) const {
     const std::size_t num_jobs = vmapped.size();
 

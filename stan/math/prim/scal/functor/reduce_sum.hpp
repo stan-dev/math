@@ -20,19 +20,19 @@ namespace math {
 namespace internal {
 
 template <typename ReduceFunction, typename Enable, typename ReturnType,
-          typename M, typename... Args>
+          typename Vec, typename... Args>
 struct reduce_sum_impl {};
 
-template <typename ReduceFunction, typename ReturnType, typename M,
+template <typename ReduceFunction, typename ReturnType, typename Vec,
           typename... Args>
 struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
-                       ReturnType, M, Args...> {
+                       ReturnType, Vec, Args...> {
   struct recursive_reducer {
-    using vmapped_t = std::vector<M>;
+    using vmapped_t = Vec;
     std::tuple<const Args&...> args_tuple_;
     size_t tuple_size_ = sizeof...(Args);
     const vmapped_t& vmapped_;
-    return_type_t<M, Args...> sum_;
+    return_type_t<Vec, Args...> sum_;
 
     recursive_reducer(const vmapped_t& vmapped, const Args&... args)
         : vmapped_(vmapped), args_tuple_(args...), sum_(0.0) {}
@@ -62,7 +62,7 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
     void join(const recursive_reducer& child) { sum_ += child.sum_; }
   };
 
-  return_type_t<M, Args...> operator()(const std::vector<M>& vmapped,
+  return_type_t<Vec, Args...> operator()(const Vec& vmapped,
                                        std::size_t grainsize,
                                        const Args&... args) const {
     const std::size_t num_jobs = vmapped.size();
@@ -93,11 +93,11 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
  * that any internal state of the functor is causing trouble. Thus,
  * the functor must be default constructible without any arguments.
  */
-template <typename ReduceFunction, typename M, typename... Args>
-constexpr auto reduce_sum(const std::vector<M>& vmapped, std::size_t grainsize,
+template <typename ReduceFunction, typename Vec, require_vector_like_t<Vec>..., typename... Args>
+constexpr auto reduce_sum(const Vec& vmapped, std::size_t grainsize,
                           const Args&... args) {
-  using return_type = return_type_t<M, Args...>;
-  return internal::reduce_sum_impl<ReduceFunction, void, return_type, M,
+  using return_type = return_type_t<Vec, Args...>;
+  return internal::reduce_sum_impl<ReduceFunction, void, return_type, Vec,
                                    Args...>()(vmapped, grainsize, args...);
 }
 
