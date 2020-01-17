@@ -80,9 +80,10 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
 
   for (size_t i = 0; i < max_size_seq_view; i++) {
     // if phi is large we probably overflow, defer to Poisson:
-    if (phi__[i] > 1e10) {
+    if (phi__[i] > 1e5) {
       // TODO(martinmodrak) This is wrong (doesn't pass propto information),
       // and inaccurate for n = 0, but shouldn't break most models.
+      // Also the 1e5 cutoff is too small.
       // Will be adressed better in PR #1497
       logp += poisson_lpmf(n_vec[i], mu__[i]);
     } else {
