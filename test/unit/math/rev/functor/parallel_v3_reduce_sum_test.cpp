@@ -172,8 +172,7 @@ struct grouped_count_lpdf {
   // does the reduction in the sub-slice start to end
   template <typename VecInt1, typename VecT, typename VecInt2>
   inline T operator()(std::size_t start, std::size_t end,
-                      const VecInt1& sub_slice,
-                      const VecT& lambda,
+                      const VecInt1& sub_slice, const VecT& lambda,
                       const VecInt2& gidx) const {
     const std::size_t num_terms = end - start + 1;
     // std::cout << "sub-slice " << start << " - " << end << "; num_terms = " <<
@@ -302,7 +301,6 @@ TEST(v3_reduce_sum, grouped_gradient_eigen) {
 
   stan::math::recover_memory();
 }
-
 
 // ********************************
 // slice over the grouping variable which is a var

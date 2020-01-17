@@ -63,8 +63,8 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
   };
 
   return_type_t<Vec, Args...> operator()(const Vec& vmapped,
-                                       std::size_t grainsize,
-                                       const Args&... args) const {
+                                         std::size_t grainsize,
+                                         const Args&... args) const {
     const std::size_t num_jobs = vmapped.size();
 
     if (num_jobs == 0)
@@ -93,7 +93,8 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
  * that any internal state of the functor is causing trouble. Thus,
  * the functor must be default constructible without any arguments.
  */
-template <typename ReduceFunction, typename Vec, require_vector_like_t<Vec>..., typename... Args>
+template <typename ReduceFunction, typename Vec, require_vector_like_t<Vec>...,
+          typename... Args>
 constexpr auto reduce_sum(const Vec& vmapped, std::size_t grainsize,
                           const Args&... args) {
   using return_type = return_type_t<Vec, Args...>;

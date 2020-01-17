@@ -18,8 +18,8 @@ namespace internal {
 
 template <typename ReduceFunction, typename ReturnType, typename Vec,
           typename... Args>
-struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, Vec,
-                       Args...> {
+struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
+                       Vec, Args...> {
   template <typename T>
   static const T& deep_copy(const T& arg) {
     return arg;
@@ -69,8 +69,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, Ve
   }
 
   // Works on anything with a operator()
-  template <typename... Pargs, typename Mat,
-            require_eigen_vt<is_var, Mat>...>
+  template <typename... Pargs, typename Mat, require_eigen_vt<is_var, Mat>...>
   static double* accumulate_adjoints(double* dest, const Mat& x,
                                      const Pargs&... args) {
      for (size_t i = 0; i < x.size(); ++i) {
@@ -126,7 +125,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, Ve
         // create a deep copy of all var's so that these are not
         // linked to any outer AD tree
         Vec local_sub_slice(r.size());
-        //local_sub_slice.reserve(r.size());
+        // local_sub_slice.reserve(r.size());
         int ii = 0;
         for (int i = r.begin(); i < r.end(); ++i) {
           local_sub_slice[ii] = deep_copy(vmapped_[i]);
@@ -186,17 +185,6 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, Ve
     return count_var_impl(count + x.size(), args...);
   }
 
-  // TODO(Steve): add this back if you want it cause Ben commented it out cause
-  //  it was causing ambiguities
-  /*template <typename Container,
-            require_t<is_detected<Container, member_size_t>>...,
-            require_t<std::is_arithmetic<value_type_t<Container>>>...,
-            typename... Pargs>
-  size_t count_var_impl(size_t count, const Container& x,
-                        const Pargs&... args) const {
-    return count_var_impl(count, args...);
-    }*/
-
   template <typename... Pargs>
   size_t count_var_impl(size_t count, const var& x,
                         const Pargs&... args) const {
@@ -229,7 +217,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, Ve
   }
 
   template <typename... Pargs, typename VecVar,
-            require_vector_like_vt<is_var, VecVar>...>
+            require_std_vector_vt<is_var, VecVar>...>
   void save_varis(vari** dest, const VecVar& x, const Pargs&... args) const {
     for (size_t i = 0; i < x.size(); ++i) {
       dest[i] = x[i].vi_;
@@ -237,9 +225,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, Ve
     save_varis(dest + x.size(), args...);
   }
 
-  template <typename... Pargs, typename Mat,
-            require_eigen_vt<is_var, Mat>...,
-            require_not_vector_like_t<Mat>...>
+  template <typename... Pargs, typename Mat, require_eigen_vt<is_var, Mat>...>
   void save_varis(vari** dest, const Mat& x, const Pargs&... args) const {
     for (size_t i = 0; i < x.size(); ++i) {
       dest[i] = x(i).vi_;
