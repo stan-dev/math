@@ -7,6 +7,7 @@
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/fun/beta.hpp>
 #include <stan/math/fwd/fun/exp.hpp>
+#include <stan/math/fwd/fun/inv.hpp>
 #include <stan/math/fwd/fun/inc_beta.hpp>
 #include <stan/math/fwd/fun/log.hpp>
 #include <stan/math/fwd/fun/log1m.hpp>
@@ -41,7 +42,7 @@ void grad_inc_beta(fvar<T>& g1, fvar<T>& g2, fvar<T> a, fvar<T> b, fvar<T> z) {
   fvar<T> dF1 = 0;
   fvar<T> dF2 = 0;
 
-  if (value_of(value_of(C))) {
+  if (C != 0) {
     grad_2F1(dF1, dF2, a + b, fvar<T>(1.0), a + 1, z);
   }
 
