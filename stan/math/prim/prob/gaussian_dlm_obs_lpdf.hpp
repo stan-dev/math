@@ -112,15 +112,8 @@ gaussian_dlm_obs_lpdf(
     Eigen::Matrix<T_lp, Eigen::Dynamic, 1> m(n);
     Eigen::Matrix<T_lp, Eigen::Dynamic, Eigen::Dynamic> C(n, n);
 
-    // TODO(anyone): how to recast matrices
-    for (int i = 0; i < m0.size(); i++) {
-      m(i) = m0(i);
-    }
-    for (int i = 0; i < C0.rows(); i++) {
-      for (int j = 0; j < C0.cols(); j++) {
-        C(i, j) = C0(i, j);
-      }
-    }
+    m = m0;
+    C = C0;
 
     Eigen::Matrix<return_type_t<T_y>, Eigen::Dynamic, 1> yi(r);
     Eigen::Matrix<T_lp, Eigen::Dynamic, 1> a(n);
@@ -272,15 +265,8 @@ gaussian_dlm_obs_lpdf(
     Eigen::Matrix<T_lp, Eigen::Dynamic, 1> m(n);
     Eigen::Matrix<T_lp, Eigen::Dynamic, Eigen::Dynamic> C(n, n);
 
-    // TODO(anyone): how to recast matrices
-    for (int i = 0; i < m0.size(); i++) {
-      m(i) = m0(i);
-    }
-    for (int i = 0; i < C0.rows(); i++) {
-      for (int j = 0; j < C0.cols(); j++) {
-        C(i, j) = C0(i, j);
-      }
-    }
+    m = m0;
+    C = C0;
 
     for (int i = 0; i < y.cols(); i++) {
       // Predict state
