@@ -2,6 +2,8 @@
 #include <limits>
 #include <vector>
 
+std::ostream* msgs = nullptr;
+
 template <typename T>
 T sum_(const T& arg) {
   return arg;
@@ -21,6 +23,7 @@ struct sum_lpdf {
   template <typename T, typename... Args>
   inline auto operator()(std::size_t start, std::size_t end,
                          const std::vector<T>& sub_slice,
+			 std::ostream* msgs,
                          const Args&... args) const {
     using return_type = stan::return_type_t<T, Args...>;
 
@@ -33,7 +36,7 @@ struct sum_lpdf {
 
 TEST(MathMix_reduce_sum, double_slice) {
   auto f = [](const auto& data) {
-    return stan::math::reduce_sum<sum_lpdf>(data, 0);
+    return stan::math::reduce_sum<sum_lpdf>(data, 0, msgs);
   };
 
   std::vector<double> data(5, 10.0);
@@ -42,12 +45,12 @@ TEST(MathMix_reduce_sum, double_slice) {
 }
 
 auto fi = [](const auto&... args) {
-  return stan::math::reduce_sum<sum_lpdf>(std::vector<int>(2, 10.0), 0,
+  return stan::math::reduce_sum<sum_lpdf>(std::vector<int>(2, 10.0), 0, msgs,
                                           args...);
 };
 
 auto fd = [](const auto& data, const auto&... args) {
-  return stan::math::reduce_sum<sum_lpdf>(data, 0, args...);
+  return stan::math::reduce_sum<sum_lpdf>(data, 0, msgs, args...);
 };
 
 TEST(MathMix_reduce_sum, int_arg) {
