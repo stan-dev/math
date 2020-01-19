@@ -16,8 +16,7 @@ struct count_lpdf {
 
   // does the reduction in the sub-slice start to end
   inline T operator()(std::size_t start, std::size_t end,
-                      const std::vector<int>& sub_slice,
-		      std::ostream* msgs,
+                      const std::vector<int>& sub_slice, std::ostream* msgs,
                       const std::vector<T>& lambda,
                       const std::vector<int>& idata) const {
     return stan::math::poisson_lpmf(sub_slice, lambda[0]);
@@ -40,8 +39,8 @@ TEST(v3_reduce_sum, value) {
 
   typedef boost::counting_iterator<std::size_t> count_iter;
 
-  double poisson_lpdf
-    = stan::math::reduce_sum<count_lpdf<double>>(data, 5, msgs, vlambda_d, idata);
+  double poisson_lpdf = stan::math::reduce_sum<count_lpdf<double>>(
+      data, 5, msgs, vlambda_d, idata);
 
   double poisson_lpdf_ref = stan::math::poisson_lpmf(data, lambda_d);
 
@@ -71,8 +70,8 @@ TEST(v3_reduce_sum, gradient) {
   std::vector<int> idata;
   std::vector<var> vlambda_v(1, lambda_v);
 
-  var poisson_lpdf
-    = stan::math::reduce_sum<count_lpdf<var>>(data, 5, msgs, vlambda_v, idata);
+  var poisson_lpdf = stan::math::reduce_sum<count_lpdf<var>>(data, 5, msgs,
+                                                             vlambda_v, idata);
 
   var lambda_ref = lambda_d;
   var poisson_lpdf_ref = stan::math::poisson_lpmf(data, lambda_ref);
@@ -109,11 +108,11 @@ struct nesting_count_lpdf {
 
   // does the reduction in the sub-slice start to end
   inline T operator()(std::size_t start, std::size_t end,
-                      const std::vector<int>& sub_slice,
-		      std::ostream* msgs,
+                      const std::vector<int>& sub_slice, std::ostream* msgs,
                       const std::vector<T>& lambda,
                       const std::vector<int>& idata) const {
-    return stan::math::reduce_sum<count_lpdf<T>>(sub_slice, 5, msgs, lambda, idata);
+    return stan::math::reduce_sum<count_lpdf<T>>(sub_slice, 5, msgs, lambda,
+                                                 idata);
   }
 };
 
@@ -136,7 +135,8 @@ TEST(v3_reduce_sum, nesting_gradient) {
   std::vector<int> idata;
   std::vector<var> vlambda_v(1, lambda_v);
 
-  var poisson_lpdf = stan::math::reduce_sum<nesting_count_lpdf<var>>(data, 5, msgs, vlambda_v, idata);
+  var poisson_lpdf = stan::math::reduce_sum<nesting_count_lpdf<var>>(
+      data, 5, msgs, vlambda_v, idata);
 
   var lambda_ref = lambda_d;
   var poisson_lpdf_ref = stan::math::poisson_lpmf(data, lambda_ref);
@@ -175,10 +175,8 @@ struct grouped_count_lpdf {
   // does the reduction in the sub-slice start to end
   template <typename VecInt1, typename VecT, typename VecInt2>
   inline T operator()(std::size_t start, std::size_t end,
-                      const VecInt1& sub_slice,
-		      std::ostream* msgs,
-		      const VecT& lambda,
-                      const VecInt2& gidx) const {
+                      const VecInt1& sub_slice, std::ostream* msgs,
+                      const VecT& lambda, const VecInt2& gidx) const {
     const std::size_t num_terms = end - start + 1;
     // std::cout << "sub-slice " << start << " - " << end << "; num_terms = " <<
     // num_terms << "; size = " << sub_slice.size() << std::endl;
@@ -216,7 +214,8 @@ TEST(v3_reduce_sum, grouped_gradient) {
 
   var lambda_v = vlambda_v[0];
 
-  var poisson_lpdf = stan::math::reduce_sum<grouped_count_lpdf<var>>(data, 5, msgs, vlambda_v, gidx);
+  var poisson_lpdf = stan::math::reduce_sum<grouped_count_lpdf<var>>(
+      data, 5, msgs, vlambda_v, gidx);
 
   std::vector<var> vref_lambda_v;
   for (std::size_t i = 0; i != elems; ++i) {
@@ -272,7 +271,8 @@ TEST(v3_reduce_sum, grouped_gradient_eigen) {
     vlambda_v[i] = i + 0.2;
   var lambda_v = vlambda_v[0];
 
-  var poisson_lpdf = stan::math::reduce_sum<grouped_count_lpdf<var>>(data, 5, msgs, vlambda_v, gidx);
+  var poisson_lpdf = stan::math::reduce_sum<grouped_count_lpdf<var>>(
+      data, 5, msgs, vlambda_v, gidx);
 
   std::vector<var> vref_lambda_v;
   for (std::size_t i = 0; i != elems; ++i) {
@@ -315,8 +315,7 @@ struct slice_group_count_lpdf {
 
   // does the reduction in the sub-slice start to end
   inline T operator()(std::size_t start, std::size_t end,
-                      const std::vector<T>& lambda_slice,
-		      std::ostream* msgs,
+                      const std::vector<T>& lambda_slice, std::ostream* msgs,
                       const std::vector<int>& y,
                       const std::vector<int>& gsidx) const {
     const std::size_t num_groups = end - start + 1;
@@ -361,7 +360,8 @@ TEST(v3_reduce_sum, slice_group_gradient) {
 
   var lambda_v = vlambda_v[0];
 
-  var poisson_lpdf = stan::math::reduce_sum<slice_group_count_lpdf<var>>(vlambda_v, 5, msgs, data, gsidx);
+  var poisson_lpdf = stan::math::reduce_sum<slice_group_count_lpdf<var>>(
+      vlambda_v, 5, msgs, data, gsidx);
 
   std::vector<var> vref_lambda_v;
   for (std::size_t i = 0; i != elems; ++i) {

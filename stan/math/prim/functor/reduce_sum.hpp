@@ -25,7 +25,7 @@ template <typename ReduceFunction, typename Enable, typename ReturnType,
 struct reduce_sum_impl {
   return_type_t<Vec, Args...> operator()(const Vec& vmapped,
                                          std::size_t grainsize,
-					 std::ostream* msgs,
+                                         std::ostream* msgs,
                                          const Args&... args) const {
     const std::size_t num_jobs = vmapped.size();
 
@@ -47,11 +47,15 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
     std::tuple<const Args&...> args_tuple_;
     return_type_t<Vec, Args...> sum_;
 
-    recursive_reducer(const vmapped_t& vmapped, std::ostream* msgs, const Args&... args)
-      : vmapped_(vmapped), msgs_(msgs), args_tuple_(args...), sum_(0.0) {}
+    recursive_reducer(const vmapped_t& vmapped, std::ostream* msgs,
+                      const Args&... args)
+        : vmapped_(vmapped), msgs_(msgs), args_tuple_(args...), sum_(0.0) {}
 
     recursive_reducer(recursive_reducer& other, tbb::split)
-      : vmapped_(other.vmapped_), msgs_(other.msgs_), args_tuple_(other.args_tuple_), sum_(0.0) {}
+        : vmapped_(other.vmapped_),
+          msgs_(other.msgs_),
+          args_tuple_(other.args_tuple_),
+          sum_(0.0) {}
 
     void operator()(const tbb::blocked_range<size_t>& r) {
       if (r.empty()) {
@@ -67,7 +71,8 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
 
       sum_ += apply(
           [&](auto&&... args) {
-            return ReduceFunction()(r.begin(), r.end() - 1, sub_slice, msgs_, args...);
+            return ReduceFunction()(r.begin(), r.end() - 1, sub_slice, msgs_,
+                                    args...);
           },
           args_tuple_);
     }
@@ -77,7 +82,7 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
 
   return_type_t<Vec, Args...> operator()(const Vec& vmapped,
                                          std::size_t grainsize,
-					 std::ostream* msgs,
+                                         std::ostream* msgs,
                                          const Args&... args) const {
     const std::size_t num_jobs = vmapped.size();
 
@@ -113,7 +118,8 @@ auto reduce_sum(const Vec& vmapped, std::size_t grainsize, std::ostream* msgs,
                 const Args&... args) {
   using return_type = return_type_t<Vec, Args...>;
   return internal::reduce_sum_impl<ReduceFunction, void, return_type, Vec,
-                                   Args...>()(vmapped, grainsize, msgs, args...);
+                                   Args...>()(vmapped, grainsize, msgs,
+                                              args...);
 }
 
 }  // namespace math

@@ -101,11 +101,12 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     Eigen::VectorXd args_adjoints_;
 
     recursive_reducer(size_t num_shared_terms, double* sliced_partials,
-                      const Vec& vmapped, std::ostream* msgs, const Args&... args)
+                      const Vec& vmapped, std::ostream* msgs,
+                      const Args&... args)
         : num_shared_terms_(num_shared_terms),
           sliced_partials_(sliced_partials),
           vmapped_(vmapped),
-	  msgs_(msgs),
+          msgs_(msgs),
           args_tuple_(args...),
           sum_(0.0),
           args_adjoints_(Eigen::VectorXd::Zero(num_shared_terms_)) {}
@@ -114,7 +115,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
         : num_shared_terms_(other.num_shared_terms_),
           sliced_partials_(other.sliced_partials_),
           vmapped_(other.vmapped_),
-	  msgs_(other.msgs_),
+          msgs_(other.msgs_),
           args_tuple_(other.args_tuple_),
           sum_(0.0),
           args_adjoints_(Eigen::VectorXd::Zero(num_shared_terms_)) {}
@@ -142,10 +143,12 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
             },
             args_tuple_);
 
-        var sub_sum_v = apply([&](auto&&... args) {
-	    return ReduceFunction()(r.begin(), r.end() - 1, local_sub_slice, msgs_, args...);
-	  },
-	  args_tuple_local_copy);
+        var sub_sum_v = apply(
+            [&](auto&&... args) {
+              return ReduceFunction()(r.begin(), r.end() - 1, local_sub_slice,
+                                      msgs_, args...);
+            },
+            args_tuple_local_copy);
 
         sub_sum_v.grad();
 
@@ -240,8 +243,8 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
 
   void save_varis(vari** /* v */) const {}
 
-  var operator()(const Vec& vmapped, std::size_t grainsize,
-		 std::ostream* msgs, const Args&... args) const {
+  var operator()(const Vec& vmapped, std::size_t grainsize, std::ostream* msgs,
+                 const Args&... args) const {
     const std::size_t num_jobs = vmapped.size();
 
     if (num_jobs == 0)
@@ -260,7 +263,8 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
 
     double sum = 0;
 
-    recursive_reducer worker(num_shared_terms, partials, vmapped, msgs, args...);
+    recursive_reducer worker(num_shared_terms, partials, vmapped, msgs,
+                             args...);
 
 #ifdef STAN_DETERMINISTIC
     tbb::static_partitioner partitioner;

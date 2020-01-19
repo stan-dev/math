@@ -22,8 +22,7 @@ auto sum_(const Eigen::Matrix<T, RowType, ColType>& arg) {
 struct sum_lpdf {
   template <typename T, typename... Args>
   inline auto operator()(std::size_t start, std::size_t end,
-                         const std::vector<T>& sub_slice,
-			 std::ostream* msgs,
+                         const std::vector<T>& sub_slice, std::ostream* msgs,
                          const Args&... args) const {
     using return_type = stan::return_type_t<T, Args...>;
 
