@@ -1,20 +1,19 @@
-#include <stan/math/mix.hpp>
-#include <gtest/gtest.h>
-#include <test/unit/math/rev/fun/util.hpp>
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/rev/fun/util.hpp>
 #include <limits>
 
 auto f = [](const auto& a, const auto& b, const auto& z) {
-  typedef decltype(a + b + z) T;
+  using T = std::remove_const_t<std::remove_reference_t<
+      stan::return_type_t<decltype(a), decltype(b), decltype(z)> > >;
   T g1 = 0;
   T g2 = 0;
-  T aT = a;
-  T bT = b;
-  T zT = z;
-  T digamma_a = stan::math::digamma(a);
-  T digamma_b = stan::math::digamma(b);
-  T digamma_ab = stan::math::digamma(a + b);
-  T beta_ab = stan::math::beta(a, b);
+  const T aT = a;
+  const T bT = b;
+  const T zT = z;
+  const T digamma_a = stan::math::digamma(a);
+  const T digamma_b = stan::math::digamma(b);
+  const T digamma_ab = stan::math::digamma(a + b);
+  const T beta_ab = stan::math::beta(a, b);
   stan::math::grad_reg_inc_beta(g1, g2, aT, bT, zT, digamma_a, digamma_b,
                                 digamma_ab, beta_ab);
   return g1 + g2;

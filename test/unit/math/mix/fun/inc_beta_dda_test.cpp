@@ -2,7 +2,8 @@
 #include <limits>
 
 auto f = [](const auto& a, const auto& b, const auto& z) {
-  typedef stan::return_type_t<decltype(a), decltype(b), decltype(z)> T;
+  using T = std::remove_const_t<std::remove_reference_t<
+      stan::return_type_t<decltype(a), decltype(b), decltype(z)> > >;
   T digamma_a = stan::math::digamma(a);
   T digamma_ab = stan::math::digamma(a + b);
   T aT = a;
