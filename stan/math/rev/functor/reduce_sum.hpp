@@ -22,8 +22,7 @@ template <typename ReduceFunction, typename ReturnType, typename Vec,
           typename... Args>
 struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
                        Vec, Args...> {
-  template <typename T,
-	    require_arithmetic_t<scalar_type_t<T>>...>
+  template <typename T, require_arithmetic_t<scalar_type_t<T>>...>
   static const T& deep_copy(const T& arg) {
     return arg;
   }
@@ -38,8 +37,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     return copy;
   }
 
-  template <typename T,
-	    require_t<is_var<scalar_type_t<T>>>...>
+  template <typename T, require_t<is_var<scalar_type_t<T>>>...>
   static std::vector<T> deep_copy(const std::vector<T>& arg) {
     std::vector<T> copy(arg.size());
     for (size_t i = 0; i < arg.size(); ++i) {
@@ -79,9 +77,8 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     return accumulate_adjoints(dest + x.size(), args...);
   }
 
-  template <typename T,
-	    require_t<is_var<scalar_type_t<T>>>...,
-	    typename... Pargs>
+  template <typename T, require_t<is_var<scalar_type_t<T>>>...,
+            typename... Pargs>
   static double* accumulate_adjoints(double* dest, const std::vector<T>& x,
                                      const Pargs&... args) {
     for (size_t i = 0; i < x.size(); ++i) {
@@ -204,12 +201,11 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     return count_var_impl(count + x.size(), args...);
   }
 
-  template <typename T,
-	    require_t<is_var<scalar_type_t<T>>>...,
-	    typename... Pargs>
+  template <typename T, require_t<is_var<scalar_type_t<T>>>...,
+            typename... Pargs>
   size_t count_var_impl(size_t count, const std::vector<T>& x,
                         const Pargs&... args) const {
-    for(size_t i = 0; i < x.size(); i++) {
+    for (size_t i = 0; i < x.size(); i++) {
       count = count_var_impl(count, x[i]);
     }
     return count_var_impl(count, args...);
@@ -253,17 +249,18 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
   }
 
   template <typename... Pargs>
-  vari** save_varis(vari** dest, const std::vector<var>& x, const Pargs&... args) const {
+  vari** save_varis(vari** dest, const std::vector<var>& x,
+                    const Pargs&... args) const {
     for (size_t i = 0; i < x.size(); ++i) {
       dest[i] = x[i].vi_;
     }
     return save_varis(dest + x.size(), args...);
   }
 
-  template <typename T,
-	    require_t<is_var<scalar_type_t<T>>>...,
-	    typename... Pargs>
-  vari** save_varis(vari** dest, const std::vector<T>& x, const Pargs&... args) const {
+  template <typename T, require_t<is_var<scalar_type_t<T>>>...,
+            typename... Pargs>
+  vari** save_varis(vari** dest, const std::vector<T>& x,
+                    const Pargs&... args) const {
     for (size_t i = 0; i < x.size(); ++i) {
       dest = save_varis(dest, x[i]);
     }

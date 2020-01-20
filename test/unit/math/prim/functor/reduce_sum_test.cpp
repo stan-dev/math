@@ -261,7 +261,7 @@ struct std_vector_std_vector_double_arg_lpdf {
                          std::ostream* msgs,
                          const std::vector<std::vector<double>>& arg) const {
     double sum = 0.0;
-    for(size_t i = 0; i < arg.size(); ++i)
+    for (size_t i = 0; i < arg.size(); ++i)
       sum += stan::math::sum(arg[i]);
     return stan::math::sum(sub_slice) + sub_slice.size() * sum;
   }
@@ -270,9 +270,10 @@ struct std_vector_std_vector_double_arg_lpdf {
 struct std_vector_eigen_vector_arg_lpdf {
   inline auto operator()(std::size_t start, std::size_t end,
                          const std::vector<double>& sub_slice,
-                         std::ostream* msgs, const std::vector<Eigen::VectorXd>& arg) const {
+                         std::ostream* msgs,
+                         const std::vector<Eigen::VectorXd>& arg) const {
     double sum = 0.0;
-    for(size_t i = 0; i < arg.size(); ++i)
+    for (size_t i = 0; i < arg.size(); ++i)
       sum += stan::math::sum(arg[i]);
     return stan::math::sum(sub_slice) + sub_slice.size() * sum;
   }
@@ -286,7 +287,8 @@ TEST(StanMath_reduce_sum, std_vector_std_vector_double_arg) {
 
   EXPECT_DOUBLE_EQ(
       5 * (10 + 250),
-      stan::math::reduce_sum<std_vector_std_vector_double_arg_lpdf>(data, 0, msgs, arg));
+      stan::math::reduce_sum<std_vector_std_vector_double_arg_lpdf>(data, 0,
+                                                                    msgs, arg));
 }
 
 TEST(StanMath_reduce_sum, std_vector_eigen_vector_arg) {
@@ -295,33 +297,30 @@ TEST(StanMath_reduce_sum, std_vector_eigen_vector_arg) {
   std::vector<double> data(5, 10.0);
   std::vector<Eigen::VectorXd> arg(2, Eigen::VectorXd::Ones(5));
 
-  EXPECT_DOUBLE_EQ(5 * (10 + 10), stan::math::reduce_sum<std_vector_eigen_vector_arg_lpdf>(
-                                     data, 0, msgs, arg));
+  EXPECT_DOUBLE_EQ(5 * (10 + 10),
+                   stan::math::reduce_sum<std_vector_eigen_vector_arg_lpdf>(
+                       data, 0, msgs, arg));
 }
 
 struct sum_lpdf {
-  inline auto operator()(std::size_t start, std::size_t end,
-                         const std::vector<double>& sub_slice,
-                         std::ostream* msgs, const int& arg1,
-                         const double& arg2, const std::vector<int>& arg3,
-                         const std::vector<double>& arg4,
-                         const Eigen::VectorXd& arg5,
-                         const Eigen::RowVectorXd& arg6,
-                         const Eigen::MatrixXd& arg7,
-			 const std::vector<std::vector<double>>& arg8,
-			 const std::vector<Eigen::VectorXd>& arg9) const {
+  inline auto operator()(
+      std::size_t start, std::size_t end, const std::vector<double>& sub_slice,
+      std::ostream* msgs, const int& arg1, const double& arg2,
+      const std::vector<int>& arg3, const std::vector<double>& arg4,
+      const Eigen::VectorXd& arg5, const Eigen::RowVectorXd& arg6,
+      const Eigen::MatrixXd& arg7, const std::vector<std::vector<double>>& arg8,
+      const std::vector<Eigen::VectorXd>& arg9) const {
     double sum8 = 0.0;
     double sum9 = 0.0;
-    for(size_t i = 0; i < arg8.size(); ++i)
+    for (size_t i = 0; i < arg8.size(); ++i)
       sum8 += stan::math::sum(arg8[i]);
-    for(size_t i = 0; i < arg9.size(); ++i)
+    for (size_t i = 0; i < arg9.size(); ++i)
       sum9 += stan::math::sum(arg9[i]);
     return stan::math::sum(sub_slice)
            + sub_slice.size()
                  * (arg1 + arg2 + stan::math::sum(arg3) + stan::math::sum(arg4)
                     + stan::math::sum(arg5) + stan::math::sum(arg6)
-                    + stan::math::sum(arg7)
-		    + sum8 + sum9);
+                    + stan::math::sum(arg7) + sum8 + sum9);
   }
 };
 

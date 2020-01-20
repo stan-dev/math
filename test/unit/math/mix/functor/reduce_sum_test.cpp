@@ -17,7 +17,7 @@ auto sum_(const Eigen::Matrix<T, RowType, ColType>& arg) {
 template <typename T>
 auto sum_(const std::vector<T>& arg) {
   stan::scalar_type_t<T> sum = 0;
-  for(size_t i = 0; i < arg.size(); ++i) {
+  for (size_t i = 0; i < arg.size(); ++i) {
     sum += sum_(arg[i]);
   }
   return sum;
@@ -224,4 +224,3 @@ TEST(MathMix_reduce_sum, eigen_three_args_with_doubles3) {
       },
       arg1, arg2, arg3);
 }
-
