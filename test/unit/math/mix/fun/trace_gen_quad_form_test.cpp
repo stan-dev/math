@@ -19,8 +19,8 @@ TEST(mathMixMatFun, traceGenQuadForm) {
   stan::test::expect_ad(f, c11, a11, b11);
 
   stan::test::ad_tolerances tols;
-  tols.hessian_hessian_ = 1e-1;
-  tols.hessian_fvar_hessian_ = 1e-1;
+  tols.hessian_hessian_ = 0.15;
+  tols.hessian_fvar_hessian_ = 0.15;
 
   Eigen::MatrixXd a(4, 4);
   a << 2, 3, 4, 5, 6, 10, 2, 2, 7, 2, 7, 1, 8, 2, 1, 112;
