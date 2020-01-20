@@ -18,7 +18,8 @@ namespace math {
  * @throw std::domain_error If the vectors are not the same
  * size or if they are both not vector dimensioned.
  */
-template <typename T1, typename T2, typename = require_all_eigen_vector_t<T1,T2>>
+template <typename T1, typename T2,
+          typename = require_all_eigen_vector_t<T1, T2>>
 inline auto dot_product(const T1 &v1, const T2 &v2) {
   check_matching_sizes("dot_product", "v1", v1, "v2", v2);
   return v1.dot(v2);

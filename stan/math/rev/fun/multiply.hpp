@@ -557,8 +557,8 @@ class multiply_mat_vari<Ta, 1, Ca, double, 1> : public vari {
  */
 template <typename T1, typename T2, typename = require_all_eigen_t<T1, T2>,
           typename = require_any_var_t<value_type_t<T1>, value_type_t<T2>>,
-          typename = require_t<bool_constant<T1::ColsAtCompileTime
-                                                  == T2::RowsAtCompileTime>>,
+          typename = require_t<
+              bool_constant<T1::ColsAtCompileTime == T2::RowsAtCompileTime>>,
           typename = require_not_t<
               conjunction<is_eigen_row_vector<T1>, is_eigen_col_vector<T2>>>>
 inline auto multiply(const T1& A, const T2& B) {
@@ -595,8 +595,8 @@ inline auto multiply(const T1& A, const T2& B) {
  */
 template <
     typename T1, typename T2,
-    typename = require_t<bool_constant<T1::ColsAtCompileTime
-                                            == T2::RowsAtCompileTime>>,
+    typename
+    = require_t<bool_constant<T1::ColsAtCompileTime == T2::RowsAtCompileTime>>,
     typename = require_any_var_t<value_type_t<T1>, value_type_t<T2>>,
     typename
     = require_t<conjunction<is_eigen_row_vector<T1>, is_eigen_col_vector<T2>>>>
