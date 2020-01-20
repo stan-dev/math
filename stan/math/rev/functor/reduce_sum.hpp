@@ -22,7 +22,8 @@ template <typename ReduceFunction, typename ReturnType, typename Vec,
           typename... Args>
 struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
                        Vec, Args...> {
-  template <typename T>
+  template <typename T,
+	    require_arithmetic_t<scalar_type_t<T>>...>
   static const T& deep_copy(const T& arg) {
     return arg;
   }
@@ -33,6 +34,16 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     std::vector<var> copy(arg.size());
     for (size_t i = 0; i < arg.size(); ++i) {
       copy[i] = arg[i].val();
+    }
+    return copy;
+  }
+
+  template <typename T,
+	    require_t<is_var<scalar_type_t<T>>>...>
+  static std::vector<T> deep_copy(const std::vector<T>& arg) {
+    std::vector<T> copy(arg.size());
+    for (size_t i = 0; i < arg.size(); ++i) {
+      copy[i] = deep_copy(arg[i]);
     }
     return copy;
   }
@@ -59,15 +70,24 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     return accumulate_adjoints(dest + 1, args...);
   }
 
-  // Works with anything that has operator[Integral] defined
-  template <typename... Pargs, typename VecVar,
-            require_std_vector_vt<is_var, VecVar>...>
-  static double* accumulate_adjoints(double* dest, const VecVar& x,
+  template <typename... Pargs>
+  static double* accumulate_adjoints(double* dest, const std::vector<var>& x,
                                      const Pargs&... args) {
     for (size_t i = 0; i < x.size(); ++i) {
       dest[i] += x[i].adj();
     }
     return accumulate_adjoints(dest + x.size(), args...);
+  }
+
+  template <typename T,
+	    require_t<is_var<scalar_type_t<T>>>...,
+	    typename... Pargs>
+  static double* accumulate_adjoints(double* dest, const std::vector<T>& x,
+                                     const Pargs&... args) {
+    for (size_t i = 0; i < x.size(); ++i) {
+      dest = accumulate_adjoints(dest, x[i]);
+    }
+    return accumulate_adjoints(dest, args...);
   }
 
   // Works on anything with a operator()
@@ -178,11 +198,25 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
   template <typename T>
   using member_size_t = decltype(std::declval<T>().size());
 
-  // TODO(Steve): add requires for generic containers
-  template <typename Container,
-            require_t<is_detected<Container, member_size_t>>...,
-            require_t<is_var<value_type_t<Container>>>..., typename... Pargs>
-  size_t count_var_impl(size_t count, const Container& x,
+  template <typename... Pargs>
+  size_t count_var_impl(size_t count, const std::vector<var>& x,
+                        const Pargs&... args) const {
+    return count_var_impl(count + x.size(), args...);
+  }
+
+  template <typename T,
+	    require_t<is_var<scalar_type_t<T>>>...,
+	    typename... Pargs>
+  size_t count_var_impl(size_t count, const std::vector<T>& x,
+                        const Pargs&... args) const {
+    for(size_t i = 0; i < x.size(); i++) {
+      count = count_var_impl(count, x[i]);
+    }
+    return count_var_impl(count, args...);
+  }
+
+  template <typename Mat, require_eigen_vt<is_var, Mat>..., typename... Pargs>
+  size_t count_var_impl(size_t count, const Mat& x,
                         const Pargs&... args) const {
     return count_var_impl(count + x.size(), args...);
   }
@@ -213,35 +247,44 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
   }
 
   template <typename... Pargs>
-  void save_varis(vari** dest, const var& x, const Pargs&... args) const {
+  vari** save_varis(vari** dest, const var& x, const Pargs&... args) const {
     *dest = x.vi_;
-    save_varis(dest + 1, args...);
+    return save_varis(dest + 1, args...);
   }
 
-  template <typename... Pargs, typename VecVar,
-            require_std_vector_vt<is_var, VecVar>...>
-  void save_varis(vari** dest, const VecVar& x, const Pargs&... args) const {
+  template <typename... Pargs>
+  vari** save_varis(vari** dest, const std::vector<var>& x, const Pargs&... args) const {
     for (size_t i = 0; i < x.size(); ++i) {
       dest[i] = x[i].vi_;
     }
-    save_varis(dest + x.size(), args...);
+    return save_varis(dest + x.size(), args...);
+  }
+
+  template <typename T,
+	    require_t<is_var<scalar_type_t<T>>>...,
+	    typename... Pargs>
+  vari** save_varis(vari** dest, const std::vector<T>& x, const Pargs&... args) const {
+    for (size_t i = 0; i < x.size(); ++i) {
+      dest = save_varis(dest, x[i]);
+    }
+    return save_varis(dest, args...);
   }
 
   template <typename... Pargs, typename Mat, require_eigen_vt<is_var, Mat>...>
-  void save_varis(vari** dest, const Mat& x, const Pargs&... args) const {
+  vari** save_varis(vari** dest, const Mat& x, const Pargs&... args) const {
     for (size_t i = 0; i < x.size(); ++i) {
       dest[i] = x(i).vi_;
     }
-    save_varis(dest + x.size(), args...);
+    return save_varis(dest + x.size(), args...);
   }
 
   template <typename R, require_arithmetic_t<scalar_type_t<R>>...,
             typename... Pargs>
-  void save_varis(vari** dest, const R& x, const Pargs&... args) const {
-    save_varis(dest, args...);
+  vari** save_varis(vari** dest, const R& x, const Pargs&... args) const {
+    return save_varis(dest, args...);
   }
 
-  void save_varis(vari** /* v */) const {}
+  vari** save_varis(vari** dest) const { return dest; }
 
   var operator()(const Vec& vmapped, std::size_t grainsize, std::ostream* msgs,
                  const Args&... args) const {
