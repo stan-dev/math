@@ -27,7 +27,9 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     return arg;
   }
 
-  static var deep_copy(const var& arg) { return var(new vari(arg.val(), false)); }
+  static var deep_copy(const var& arg) {
+    return var(new vari(arg.val(), false));
+  }
 
   static std::vector<var> deep_copy(const std::vector<var>& arg) {
     std::vector<var> copy(arg.size());
