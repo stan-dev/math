@@ -22,18 +22,7 @@ template <
     int = 0>
 inline auto multiply(const T1& m1, const T2& m2) {
   check_multiplicable("multiply", "m1", m1, "m2", m2);
-  Eigen::Matrix<value_type_t<T1>, T1::RowsAtCompileTime,
-                T2::ColsAtCompileTime>
-      result(m1.rows(), m2.cols());
-  for (size_type i = 0; i < m1.rows(); i++) {
-    Eigen::Matrix<value_type_t<T1>, 1, T1::ColsAtCompileTime> crow
-        = m1.row(i);
-    for (size_type j = 0; j < m2.cols(); j++) {
-      auto ccol = m2.col(j);
-      result(i, j) = dot_product(crow, ccol);
-    }
-  }
-  return result;
+  return m1 * m2;
 }
 
 template <typename T1, typename T2, typename = require_all_eigen_t<T1, T2>,
