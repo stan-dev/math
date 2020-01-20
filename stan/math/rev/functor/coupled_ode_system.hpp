@@ -119,7 +119,10 @@ struct coupled_ode_system<F, double, var> {
     try {
       start_nested();
 
-      const vector<var> y_vars(z.begin(), z.begin() + N_);
+      vector<var> y_vars;
+      y_vars.reserve(N_);
+      for (std::size_t i = 0; i < N_; ++i)
+        y_vars.emplace_back(var(new vari(z[i], false)));
 
       vector<var> dy_dt_vars = f_(t, y_vars, theta_nochain_, x_, x_int_, msgs_);
 
@@ -276,7 +279,10 @@ struct coupled_ode_system<F, var, double> {
     try {
       start_nested();
 
-      const vector<var> y_vars(z.begin(), z.begin() + N_);
+      vector<var> y_vars;
+      y_vars.reserve(N_);
+      for (std::size_t i = 0; i < N_; ++i)
+        y_vars.emplace_back(var(new vari(z[i], false)));
 
       vector<var> dy_dt_vars = f_(t, y_vars, theta_dbl_, x_, x_int_, msgs_);
 
@@ -454,7 +460,10 @@ struct coupled_ode_system<F, var, var> {
     try {
       start_nested();
 
-      const vector<var> y_vars(z.begin(), z.begin() + N_);
+      vector<var> y_vars;
+      y_vars.reserve(N_);
+      for (std::size_t i = 0; i < N_; ++i)
+        y_vars.emplace_back(var(new vari(z[i], false)));
 
       vector<var> dy_dt_vars = f_(t, y_vars, theta_nochain_, x_, x_int_, msgs_);
 
