@@ -109,12 +109,8 @@ gaussian_dlm_obs_lpdf(
   }
 
   if (include_summand<propto, T_y, T_F, T_G, T_V, T_W, T_m0, T_C0>::value) {
-    Eigen::Matrix<T_lp, Eigen::Dynamic, 1> m(n);
-    Eigen::Matrix<T_lp, Eigen::Dynamic, Eigen::Dynamic> C(n, n);
-
-    m = m0;
-    C = C0;
-
+    Eigen::Matrix<T_lp, Eigen::Dynamic, 1> m{m0};
+    Eigen::Matrix<T_lp, Eigen::Dynamic, Eigen::Dynamic> C{C0};
     Eigen::Matrix<return_type_t<T_y>, Eigen::Dynamic, 1> yi(r);
     Eigen::Matrix<T_lp, Eigen::Dynamic, 1> a(n);
     Eigen::Matrix<T_lp, Eigen::Dynamic, Eigen::Dynamic> R(n, n);
@@ -262,11 +258,8 @@ gaussian_dlm_obs_lpdf(
     T_lp e;
     Eigen::Matrix<T_lp, Eigen::Dynamic, 1> A(n);
     Eigen::Matrix<T_lp, Eigen::Dynamic, 1> Fj(n);
-    Eigen::Matrix<T_lp, Eigen::Dynamic, 1> m(n);
-    Eigen::Matrix<T_lp, Eigen::Dynamic, Eigen::Dynamic> C(n, n);
-
-    m = m0;
-    C = C0;
+    Eigen::Matrix<T_lp, Eigen::Dynamic, 1> m{m0};
+    Eigen::Matrix<T_lp, Eigen::Dynamic, Eigen::Dynamic> C{C0};
 
     for (int i = 0; i < y.cols(); i++) {
       // Predict state
