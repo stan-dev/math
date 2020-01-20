@@ -25,6 +25,17 @@ TEST(prob_transform, corr_matrix_j2x2) {
   expect_matrix_eq(x, xrt);
 }
 
+TEST(prob_transform, corr_matrix_j1x1) {
+  // tests K=1, which has a different implementation
+  size_t K = 1;
+  size_t K_choose_2 = 0;
+  Eigen::VectorXd x(K_choose_2);
+  double lp = -12.9;
+  Eigen::MatrixXd y = stan::math::corr_matrix_constrain(x, K, lp);
+  Eigen::VectorXd xrt = stan::math::corr_matrix_free(y);
+  expect_matrix_eq(x, xrt);
+}
+
 TEST(prob_transform, corr_matrix_constrain_exception) {
   unsigned int K = 4;
   unsigned int K_choose_2 = 6;
