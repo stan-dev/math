@@ -27,12 +27,12 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     return arg;
   }
 
-  static var deep_copy(const var& arg) { return var(arg.val()); }
+  static var deep_copy(const var& arg) { return var(new vari(arg.val(), false)); }
 
   static std::vector<var> deep_copy(const std::vector<var>& arg) {
     std::vector<var> copy(arg.size());
     for (size_t i = 0; i < arg.size(); ++i) {
-      copy[i] = arg[i].val();
+      copy[i] = new vari(arg[i].val(), false);
     }
     return copy;
   }
@@ -51,7 +51,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       const Eigen::Matrix<var, RowType, ColType>& arg) {
     Eigen::Matrix<var, RowType, ColType> copy(arg.rows(), arg.cols());
     for (size_t i = 0; i < arg.size(); ++i) {
-      copy(i) = arg(i).val();
+      copy(i) = new vari(arg(i).val(), false);
     }
     return copy;
   }
