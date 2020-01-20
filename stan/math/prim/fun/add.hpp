@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_FUN_ADD_HPP
 #define STAN_MATH_PRIM_FUN_ADD_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 
@@ -11,20 +12,17 @@ namespace math {
  * Return the sum of the specified matrices.  The two matrices
  * must have the same dimensions.
  *
- * @tparam T1 type of elements in the first matrix
- * @tparam T2 type of elements in the second matrix
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
+ * @tparam T1 type of the first matrix or expression
+ * @tparam T2 type of the second matrix or expression
  *
- * @param m1 First matrix.
- * @param m2 Second matrix.
+ * @param m1 First matrix or expression.
+ * @param m2 Second matrix or expression.
  * @return Sum of the matrices.
  * @throw std::invalid_argument if m1 and m2 do not have the same
  * dimensions.
  */
-template <typename T1, typename T2, int R, int C>
-inline Eigen::Matrix<return_type_t<T1, T2>, R, C> add(
-    const Eigen::Matrix<T1, R, C>& m1, const Eigen::Matrix<T2, R, C>& m2) {
+template <typename T1, typename T2, typename = require_all_eigen_t<T1, T2>>
+inline auto add(const T1& m1, const T2& m2) {
   check_matching_dims("add", "m1", m1, "m2", m2);
   return m1 + m2;
 }
@@ -32,35 +30,31 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R, C> add(
 /**
  * Return the sum of the specified matrix and specified scalar.
  *
- * @tparam T1 type of elements in the matrix
- * @tparam T2 type of scalar
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
- * @param m Matrix.
+ * @tparam T1 type of the matrix or expression
+ * @tparam T2 type of the scalar
+ * @param m Matrix or expression.
  * @param c Scalar.
  * @return The matrix plus the scalar.
  */
-template <typename T1, typename T2, int R, int C>
-inline Eigen::Matrix<return_type_t<T1, T2>, R, C> add(
-    const Eigen::Matrix<T1, R, C>& m, const T2& c) {
-  return m.array() + c;
+template <typename T1, typename T2, typename = require_eigen_t<T1>,
+          typename = require_stan_scalar_t<T2>>
+inline auto add(const T1& m, const T2 c) {
+  return (m.array() + c).matrix();
 }
 
 /**
  * Return the sum of the specified scalar and specified matrix.
  *
- * @tparam T1 type of scalar
- * @tparam T2 type of elements in the matrix
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
+ * @tparam T1 type of the scalar
+ * @tparam T2 type of the matrix or expression
  * @param c Scalar.
  * @param m Matrix.
  * @return The scalar plus the matrix.
  */
-template <typename T1, typename T2, int R, int C>
-inline Eigen::Matrix<return_type_t<T1, T2>, R, C> add(
-    const T1& c, const Eigen::Matrix<T2, R, C>& m) {
-  return c + m.array();
+template <typename T1, typename T2, typename = require_stan_scalar_t<T1>,
+          typename = require_eigen_t<T2>>
+inline auto add(const T1 c, const T2& m) {
+  return (c + m.array()).matrix();
 }
 
 }  // namespace math

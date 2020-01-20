@@ -14,12 +14,8 @@ namespace math {
 /**
  * Check if the two matrices are of the same size.
  * This function checks the runtime sizes only.
- * @tparam T1 scalar type of the first matrix
- * @tparam T2 scalar type of the second matrix
- * @tparam R1 number of rows in the first matrix, can be Eigen::Dynamic
- * @tparam C1 number of columns in the first matrix, can be Eigen::Dynamic
- * @tparam R2 number of rows in the second matrix, can be Eigen::Dynamic
- * @tparam C2 number of columns in the second matrix, can be Eigen::Dynamic
+ * @tparam T1 type of the first matrix
+ * @tparam T2 type of the second matrix
  * @param function name of function (for error messages)
  * @param name1 variable name for the first matrix (for error messages)
  * @param y1 first matrix to test
@@ -28,11 +24,9 @@ namespace math {
  * @throw <code>std::invalid_argument</code> if the dimensions of the
  *    matrices do not match
  */
-template <typename T1, typename T2, int R1, int C1, int R2, int C2>
+template <typename T1, typename T2, typename = require_all_eigen_t<T1, T2>>
 inline void check_matching_dims(const char* function, const char* name1,
-                                const Eigen::Matrix<T1, R1, C1>& y1,
-                                const char* name2,
-                                const Eigen::Matrix<T2, R2, C2>& y2) {
+                                const T1& y1, const char* name2, const T2& y2) {
   check_size_match(function, "Rows of ", name1, y1.rows(), "rows of ", name2,
                    y2.rows());
   check_size_match(function, "Columns of ", name1, y1.cols(), "columns of ",
@@ -47,10 +41,6 @@ inline void check_matching_dims(const char* function, const char* name1,
  * @tparam check_compile Whether to check the static sizes
  * @tparam T1 scalar type of the first matrix
  * @tparam T2 scalar type of the second matrix
- * @tparam R1 number of rows in the first matrix, can be Eigen::Dynamic
- * @tparam C1 number of columns in the first matrix, can be Eigen::Dynamic
- * @tparam R2 number of rows in the second matrix, can be Eigen::Dynamic
- * @tparam C2 number of columns in the second matrix, can be Eigen::Dynamic
  * @param function name of function (for error messages)
  * @param name1 variable name for the first matrix (for error messages)
  * @param y1 first matrix to test
@@ -59,13 +49,15 @@ inline void check_matching_dims(const char* function, const char* name1,
  * @throw <code>std::invalid_argument</code> if the dimensions of the matrices
  *    do not match
  */
-template <bool check_compile, typename T1, typename T2, int R1, int C1, int R2,
-          int C2>
+template <bool check_compile, typename T1, typename T2,
+          typename = require_all_eigen_t<T1, T2>>
 inline void check_matching_dims(const char* function, const char* name1,
-                                const Eigen::Matrix<T1, R1, C1>& y1,
-                                const char* name2,
-                                const Eigen::Matrix<T2, R2, C2>& y2) {
-  if (check_compile && (R1 != R2 || C1 != C2)) {
+                                const T1& y1, const char* name2, const T2& y2) {
+  if (check_compile
+      && (static_cast<int>(T1::RowsAtCompileTime)
+              != static_cast<int>(T2::RowsAtCompileTime)
+          || static_cast<int>(T1::ColsAtCompileTime)
+                 != static_cast<int>(T2::ColsAtCompileTime))) {
     std::ostringstream msg;
     msg << "Static rows and cols of " << name1 << " and " << name2
         << " must match in size.";

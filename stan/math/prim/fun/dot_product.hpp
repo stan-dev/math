@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_FUN_DOT_PRODUCT_HPP
 #define STAN_MATH_PRIM_FUN_DOT_PRODUCT_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <vector>
@@ -17,11 +18,8 @@ namespace math {
  * @throw std::domain_error If the vectors are not the same
  * size or if they are both not vector dimensioned.
  */
-template <int R1, int C1, int R2, int C2>
-inline double dot_product(const Eigen::Matrix<double, R1, C1> &v1,
-                          const Eigen::Matrix<double, R2, C2> &v2) {
-  check_vector("dot_product", "v1", v1);
-  check_vector("dot_product", "v2", v2);
+template <typename T1, typename T2, typename = require_all_eigen_vector_t<T1,T2>>
+inline auto dot_product(const T1 &v1, const T2 &v2) {
   check_matching_sizes("dot_product", "v1", v1, "v2", v2);
   return v1.dot(v2);
 }
