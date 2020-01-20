@@ -16,15 +16,9 @@ namespace math {
  * Return the trace of D times the quadratic form of B and A.
  * That is, `trace_gen_quad_form(D, A, B) = trace(D * B' * A * B).`
  *
- * @tparam TD type of elements in the first matrix
- * @tparam TA type of elements in the second matrix
- * @tparam TB type of elements in the third matrix
- * @tparam RD number of rows in the first matrix, can be Eigen::Dynamic
- * @tparam CD number of columns in the first matrix, can be Eigen::Dynamic
- * @tparam RA number of rows in the second matrix, can be Eigen::Dynamic
- * @tparam CA number of columns in the second matrix, can be Eigen::Dynamic
- * @tparam RB number of rows in the third matrix, can be Eigen::Dynamic
- * @tparam CB number of columns in the third matrix, can be Eigen::Dynamic
+ * @tparam TD type of the first matrix or expression
+ * @tparam TA type of the second matrix or expression
+ * @tparam TB type of the third matrix or expression
  *
  * @param D multiplier
  * @param A outside term in quadratic form
@@ -34,11 +28,13 @@ namespace math {
  * @throw std::domain_error if A cannot be multiplied by B or B cannot
  * be multiplied by D.
  */
-template <typename TD, int RD, int CD, typename TA, int RA, int CA, typename TB,
-          int RB, int CB, typename = require_all_not_var_t<TD, TA, TB>>
-inline return_type_t<TD, TA, TB> trace_gen_quad_form(
-    const Eigen::Matrix<TD, RD, CD> &D, const Eigen::Matrix<TA, RA, CA> &A,
-    const Eigen::Matrix<TB, RB, CB> &B) {
+template <typename TD, typename TA, typename TB,
+          typename = require_all_not_var_t<value_type_t<TD>, value_type_t<TA>,
+                                           value_type_t<TB>>,
+          typename = require_any_not_same_t<double, value_type_t<TD>,
+                                            value_type_t<TA>, value_type_t<TB>>,
+          typename = require_all_eigen_t<TD, TA, TB>>
+inline auto trace_gen_quad_form(const TD &D, const TA &A, const TB &B) {
   check_square("trace_gen_quad_form", "A", A);
   check_square("trace_gen_quad_form", "D", D);
   check_multiplicable("trace_gen_quad_form", "A", A, "B", B);
@@ -52,13 +48,9 @@ inline return_type_t<TD, TA, TB> trace_gen_quad_form(
  * This is the double-only overload to allow Eigen's expression
  * templates to be used for efficiency.
  *
- * @tparam RD number of rows in the first matrix, can be Eigen::Dynamic
- * @tparam CD number of columns in the first matrix, can be Eigen::Dynamic
- * @tparam RA number of rows in the second matrix, can be Eigen::Dynamic
- * @tparam CA number of columns in the second matrix, can be Eigen::Dynamic
- * @tparam TB type of elements in the third matrix
- * @tparam RB number of rows in the third matrix, can be Eigen::Dynamic
- * @tparam CB number of columns in the third matrix, can be Eigen::Dynamic
+ * @tparam TD type of the first matrix or expression
+ * @tparam TA type of the second matrix or expression
+ * @tparam TB type of the third matrix or expression
  *
  * @param D multiplier
  * @param A outside term in quadratic form
@@ -68,10 +60,11 @@ inline return_type_t<TD, TA, TB> trace_gen_quad_form(
  * @throw std::domain_error if A cannot be multiplied by B or B cannot
  * be multiplied by D.
  */
-template <int RD, int CD, int RA, int CA, typename TB, int RB, int CB>
-inline double trace_gen_quad_form(const Eigen::Matrix<double, RD, CD> &D,
-                                  const Eigen::Matrix<double, RA, CA> &A,
-                                  const Eigen::Matrix<double, RB, CB> &B) {
+template <typename TD, typename TA, typename TB,
+          typename = require_all_same_t<double, value_type_t<TD>,
+                                        value_type_t<TA>, value_type_t<TB>>,
+          typename = require_all_eigen_t<TD, TA, TB>>
+inline double trace_gen_quad_form(const TD &D, const TA &A, const TB &B) {
   check_square("trace_gen_quad_form", "A", A);
   check_square("trace_gen_quad_form", "D", D);
   check_multiplicable("trace_gen_quad_form", "A", A, "B", B);
