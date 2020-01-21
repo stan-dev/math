@@ -248,9 +248,6 @@
 #include <stan/math/prim/fun/scaled_add.hpp>
 #include <stan/math/prim/fun/sd.hpp>
 #include <stan/math/prim/fun/segment.hpp>
-#include <stan/math/prim/fun/set_spaced_array.hpp>
-#include <stan/math/prim/fun/set_spaced_row_vector.hpp>
-#include <stan/math/prim/fun/set_spaced_vector.hpp>
 #include <stan/math/prim/fun/sign.hpp>
 #include <stan/math/prim/fun/simplex_constrain.hpp>
 #include <stan/math/prim/fun/simplex_free.hpp>
@@ -264,6 +261,9 @@
 #include <stan/math/prim/fun/sort_indices.hpp>
 #include <stan/math/prim/fun/sort_indices_asc.hpp>
 #include <stan/math/prim/fun/sort_indices_desc.hpp>
+#include <stan/math/prim/fun/spaced_array.hpp>
+#include <stan/math/prim/fun/spaced_row_vector.hpp>
+#include <stan/math/prim/fun/spaced_vector.hpp>
 #include <stan/math/prim/fun/sqrt.hpp>
 #include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/squared_distance.hpp>

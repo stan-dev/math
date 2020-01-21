@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_FUN_SET_SPACED_ARRAY_HPP
-#define STAN_MATH_PRIM_FUN_SET_SPACED_ARRAY_HPP
+#ifndef STAN_MATH_PRIM_FUN_SPACED_ARRAY_HPP
+#define STAN_MATH_PRIM_FUN_SPACED_ARRAY_HPP
 
 #include <stan/math/prim/err.hpp>
 #include <vector>
@@ -22,8 +22,8 @@ namespace math {
  * @throw std::domain_error if K is negative, if low is nan or infinite,
  * if high is nan or infinite, or if high is less than low.
  */
-inline std::vector<double> set_spaced_array(int K, double low, double high) {
-  static const char* function = "set_spaced_array";
+inline std::vector<double> spaced_array(int K, double low, double high) {
+  static const char* function = "spaced_array";
   check_nonnegative(function, "size", K);
   check_finite(function, "low", low);
   check_finite(function, "high", high);
