@@ -19,7 +19,9 @@ namespace stan {
 namespace math {
 
 /**
- * Represents a selection operation in kernel generator expressions.
+ * Represents a selection operation in kernel generator expressions. This is
+ * element wise ternary operator <code>condition ? then : els</code>, also
+ * equivalent to Eigen's \c .select().
  * @tparam Derived derived type
  * @tparam T_condition type of condition
  * @tparam T_then type of then expression
