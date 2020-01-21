@@ -3,10 +3,9 @@
 #include <gtest/gtest.h>
 
 TEST(MathFunctions, ones_row_vector) {
-  using Eigen::RowVectorXd;
   using stan::math::ones_row_vector;
 
-  RowVectorXd u0 = ones_row_vector(0);
+  Eigen::RowVectorXd u0 = ones_row_vector(0);
   EXPECT_EQ(0, u0.size());
 
   for (int K = 1; K < 5; K++) {
