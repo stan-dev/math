@@ -591,11 +591,10 @@ inline auto multiply(const T1& A, const T2& B) {
  * @param[in] B Column vector
  * @return Scalar product of row vector and vector
  */
-template <
-    typename T1, typename T2,
-    typename = require_any_var_t<value_type_t<T1>, value_type_t<T2>>,
-    typename
-    = require_t<conjunction<is_eigen_row_vector<T1>, is_eigen_col_vector<T2>>>>
+template <typename T1, typename T2,
+          typename = require_any_var_t<value_type_t<T1>, value_type_t<T2>>,
+          typename = require_t<
+              conjunction<is_eigen_row_vector<T1>, is_eigen_col_vector<T2>>>>
 inline var multiply(const T1& A, const T2& B) {
   using Ta = value_type_t<T1>;
   using Tb = value_type_t<T2>;

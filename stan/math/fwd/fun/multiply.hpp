@@ -11,13 +11,13 @@
 namespace stan {
 namespace math {
 
-template <
-    typename T1, typename T2, typename = require_all_eigen_vt<is_fvar, T1, T2>,
-    typename = require_same_t<typename value_type_t<T1>::Scalar,
-                              typename value_type_t<T2>::Scalar>,
-    typename = require_not_t<
-        conjunction<is_eigen_row_vector<T1>, is_eigen_col_vector<T2>>>,
-    int = 0>
+template <typename T1, typename T2,
+          typename = require_all_eigen_vt<is_fvar, T1, T2>,
+          typename = require_same_t<typename value_type_t<T1>::Scalar,
+                                    typename value_type_t<T2>::Scalar>,
+          typename = require_not_t<
+              conjunction<is_eigen_row_vector<T1>, is_eigen_col_vector<T2>>>,
+          int = 0>
 inline auto multiply(const T1& m1, const T2& m2) {
   check_multiplicable("multiply", "m1", m1, "m2", m2);
   return m1 * m2;

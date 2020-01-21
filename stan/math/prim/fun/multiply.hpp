@@ -59,13 +59,13 @@ inline auto multiply(T1 c, const T2& m) {
  * @throw <code>std::invalid_argument</code> if the number of columns of m1 does
  * not match the number of rows of m2.
  */
-template <
-    typename T1, typename T2, typename = require_all_eigen_t<T1, T2>,
-    typename = require_all_arithmetic_t<value_type_t<T1>, value_type_t<T2>>,
-    typename
-    = require_any_not_same_t<double, value_type_t<T1>, value_type_t<T2>>,
-    typename = require_not_t<
-        conjunction<is_eigen_row_vector<T1>, is_eigen_col_vector<T2>>>>
+template <typename T1, typename T2, typename = require_all_eigen_t<T1, T2>,
+          typename
+          = require_all_arithmetic_t<value_type_t<T1>, value_type_t<T2>>,
+          typename
+          = require_any_not_same_t<double, value_type_t<T1>, value_type_t<T2>>,
+          typename = require_not_t<
+              conjunction<is_eigen_row_vector<T1>, is_eigen_col_vector<T2>>>>
 inline auto multiply(const T1& m1, const T2& m2) {
   check_multiplicable("multiply", "m1", m1, "m2", m2);
   return m1 * m2;
@@ -86,11 +86,11 @@ inline auto multiply(const T1& m1, const T2& m2) {
  * @throw <code>std::invalid_argument</code> if the number of columns of m1 does
  * not match the number of rows of m2.
  */
-template <
-    typename T1, typename T2, typename = require_all_eigen_t<T1, T2>,
-    typename = require_all_same_t<double, value_type_t<T1>, value_type_t<T2>>,
-    typename = require_not_t<
-        conjunction<is_eigen_row_vector<T1>, is_eigen_col_vector<T2>>>>
+template <typename T1, typename T2, typename = require_all_eigen_t<T1, T2>,
+          typename
+          = require_all_same_t<double, value_type_t<T1>, value_type_t<T2>>,
+          typename = require_not_t<
+              conjunction<is_eigen_row_vector<T1>, is_eigen_col_vector<T2>>>>
 inline auto multiply(const T1& m1, const T2& m2) -> decltype((m1 * m2).eval()) {
   check_multiplicable("multiply", "m1", m1, "m2", m2);
 #ifdef STAN_OPENCL
