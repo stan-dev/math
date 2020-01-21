@@ -70,7 +70,7 @@ class select_ : public operation_cl<select_<T_condition, T_then, T_else>,
   }
 
   /**
-   * generates kernel code for this expression.
+   * generates kernel code for this (select) operation.
    * @param i row index variable name
    * @param j column index variable name
    * @param var_name_condition variable name of the condition expression
