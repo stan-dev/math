@@ -40,10 +40,6 @@
 #include <stan/math/prim/fun/columns_dot_product.hpp>
 #include <stan/math/prim/fun/columns_dot_self.hpp>
 #include <stan/math/prim/fun/common_type.hpp>
-#include <stan/math/prim/fun/constant_array.hpp>
-#include <stan/math/prim/fun/constant_int_array.hpp>
-#include <stan/math/prim/fun/constant_row_vector.hpp>
-#include <stan/math/prim/fun/constant_vector.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/corr_constrain.hpp>
 #include <stan/math/prim/fun/corr_free.hpp>
