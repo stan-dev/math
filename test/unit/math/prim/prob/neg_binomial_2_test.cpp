@@ -248,6 +248,19 @@ TEST(ProbDistributionsNegBinomial, extreme_values) {
   }
 }
 
+TEST(ProbDistributionsNegBinomial2, vectorAroundCutoff) {
+  int y = 10;
+  double mu = 9.36;
+  std::vector<double> phi;
+  phi.push_back(1);
+  phi.push_back(1e15);
+  double vector_value = stan::math::neg_binomial_2_lpmf(y, mu, phi);
+  double scalar_value = stan::math::neg_binomial_2_lpmf(y, mu, phi[0])
+                        + stan::math::neg_binomial_2_lpmf(y, mu, phi[1]);
+
+  EXPECT_FLOAT_EQ(vector_value, scalar_value);
+}
+
 TEST(ProbDistributionsNegativeBinomial2Log, distributionCheck) {
   check_counts_real_real(NegativeBinomial2LogTestRig());
 }
