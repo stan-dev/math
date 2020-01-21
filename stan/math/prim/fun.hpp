@@ -40,6 +40,7 @@
 #include <stan/math/prim/fun/columns_dot_product.hpp>
 #include <stan/math/prim/fun/columns_dot_self.hpp>
 #include <stan/math/prim/fun/common_type.hpp>
+#include <stan/math/prim/fun/constant_array.hpp>
 #include <stan/math/prim/fun/constant_row_vector.hpp>
 #include <stan/math/prim/fun/constant_vector.hpp>
 #include <stan/math/prim/fun/constants.hpp>
@@ -199,8 +200,10 @@
 #include <stan/math/prim/fun/num_elements.hpp>
 #include <stan/math/prim/fun/offset_multiplier_constrain.hpp>
 #include <stan/math/prim/fun/offset_multiplier_free.hpp>
+#include <stan/math/prim/fun/one_hot_array.hpp>
 #include <stan/math/prim/fun/one_hot_row_vector.hpp>
 #include <stan/math/prim/fun/one_hot_vector.hpp>
+#include <stan/math/prim/fun/ones_array.hpp>
 #include <stan/math/prim/fun/ones_row_vector.hpp>
 #include <stan/math/prim/fun/ones_vector.hpp>
 #include <stan/math/prim/fun/ordered_constrain.hpp>
@@ -246,6 +249,7 @@
 #include <stan/math/prim/fun/scaled_add.hpp>
 #include <stan/math/prim/fun/sd.hpp>
 #include <stan/math/prim/fun/segment.hpp>
+#include <stan/math/prim/fun/set_spaced_array.hpp>
 #include <stan/math/prim/fun/set_spaced_row_vector.hpp>
 #include <stan/math/prim/fun/set_spaced_vector.hpp>
 #include <stan/math/prim/fun/sign.hpp>
@@ -299,6 +303,7 @@
 #include <stan/math/prim/fun/variance.hpp>
 #include <stan/math/prim/fun/welford_covar_estimator.hpp>
 #include <stan/math/prim/fun/welford_var_estimator.hpp>
+#include <stan/math/prim/fun/zeros_array.hpp>
 #include <stan/math/prim/fun/zeros_row_vector.hpp>
 #include <stan/math/prim/fun/zeros_vector.hpp>
 
