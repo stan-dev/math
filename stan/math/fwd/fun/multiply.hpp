@@ -15,8 +15,6 @@ template <
     typename T1, typename T2, typename = require_all_eigen_vt<is_fvar, T1, T2>,
     typename = require_same_t<typename value_type_t<T1>::Scalar,
                               typename value_type_t<T2>::Scalar>,
-    typename
-    = require_t<bool_constant<T1::ColsAtCompileTime == T2::RowsAtCompileTime>>,
     typename = require_not_t<
         conjunction<is_eigen_row_vector<T1>, is_eigen_col_vector<T2>>>,
     int = 0>
@@ -28,8 +26,6 @@ inline auto multiply(const T1& m1, const T2& m2) {
 template <typename T1, typename T2, typename = require_all_eigen_t<T1, T2>,
           typename = require_fvar_t<value_type_t<T1>>,
           typename = require_same_vt<double, T2>,
-          typename = require_t<
-              bool_constant<T1::ColsAtCompileTime == T2::RowsAtCompileTime>>,
           typename = require_not_t<
               conjunction<is_eigen_row_vector<T1>, is_eigen_col_vector<T2>>>,
           int = 0>
@@ -50,8 +46,6 @@ inline auto multiply(const T1& m1, const T2& m2) {
 template <typename T1, typename T2, typename = require_all_eigen_t<T1, T2>,
           typename = require_same_vt<double, T1>,
           typename = require_fvar_t<value_type_t<T2>>,
-          typename = require_t<
-              bool_constant<T1::ColsAtCompileTime == T2::RowsAtCompileTime>>,
           typename = require_not_t<
               conjunction<is_eigen_row_vector<T1>, is_eigen_col_vector<T2>>>,
           char = 0>
