@@ -12,12 +12,12 @@ void expect_isnan() {
   EXPECT_FALSE(isnan(inf));
   EXPECT_FALSE(isnan(-inf));
   EXPECT_TRUE(isnan(nan));
-  EXPECT_FALSE(isinf(T(1)));
-  EXPECT_FALSE(isinf(T(1.0)));
-  EXPECT_FALSE(isinf(T(0)));
-  EXPECT_FALSE(isinf(T(0.0)));
-  EXPECT_FALSE(isinf(T(-1)));
-  EXPECT_FALSE(isinf(T(-1.0)));
+  EXPECT_FALSE(isnan(T(1)));
+  EXPECT_FALSE(isnan(T(1.0)));
+  EXPECT_FALSE(isnan(T(0)));
+  EXPECT_FALSE(isnan(T(0.0)));
+  EXPECT_FALSE(isnan(T(-1)));
+  EXPECT_FALSE(isnan(T(-1.0)));
 }
 
 TEST(mixFun, isnan) {
