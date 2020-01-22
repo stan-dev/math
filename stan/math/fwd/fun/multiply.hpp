@@ -21,11 +21,9 @@ inline auto multiply(const T1& m1, const T2& m2) {
   return m1 * m2;
 }
 
-template <typename T1, typename T2,
-          typename = require_eigen_vt<is_fvar,T1>,
+template <typename T1, typename T2, typename = require_eigen_vt<is_fvar, T1>,
           typename = require_eigen_vt<std::is_floating_point,T2>,
-          typename = require_not_eigen_row_and_col_t<T1,T2>,
-          int = 0>
+          typename = require_not_eigen_row_and_col_t<T1, T2>, int = 0>
 inline auto multiply(const T1& m1, const T2& m2) {
   check_multiplicable("multiply", "m1", m1, "m2", m2);
   Eigen::Matrix<value_type_t<T1>, T1::RowsAtCompileTime, T2::ColsAtCompileTime>
@@ -43,8 +41,7 @@ inline auto multiply(const T1& m1, const T2& m2) {
 template <typename T1, typename T2,
           typename = require_eigen_vt<std::is_floating_point,T1>,
           typename = require_eigen_vt<is_fvar,T2>,
-          typename = require_not_eigen_row_and_col_t<T1,T2>,
-          char = 0>
+          typename = require_not_eigen_row_and_col_t<T1, T2>, char = 0>
 inline auto multiply(const T1& m1, const T2& m2) {
   check_multiplicable("multiply", "m1", m1, "m2", m2);
   Eigen::Matrix<value_type_t<T2>, T1::RowsAtCompileTime, T2::ColsAtCompileTime>
