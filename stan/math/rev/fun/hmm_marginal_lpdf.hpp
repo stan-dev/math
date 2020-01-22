@@ -6,6 +6,10 @@
 namespace stan {
 namespace math {
 
+// EXPERIMENT: it seems the better option is to use the
+// operands_and_partials method, see the hmm_marginal_lpdf
+// file under prim/prob.
+
 /**
  * For a Hidden Markov Model with observation y, hidden state x,
  * and parameters theta, return the log marginal density log
