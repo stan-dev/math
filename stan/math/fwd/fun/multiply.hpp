@@ -15,7 +15,7 @@ template <typename T1, typename T2,
           typename = require_all_eigen_vt<is_fvar, T1, T2>,
           typename = require_same_vt<T1, T2>,
           typename = require_not_eigen_row_and_col_t<T1,T2>,
-          long = 0>
+          unsigned int = 0>
 inline auto multiply(const T1& m1, const T2& m2) {
   check_multiplicable("multiply", "m1", m1, "m2", m2);
   return m1 * m2;
