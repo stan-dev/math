@@ -42,6 +42,7 @@
 #include <stan/math/prim/fun/common_type.hpp>
 #include <stan/math/prim/fun/constant_vector.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/copysign.hpp>
 #include <stan/math/prim/fun/corr_constrain.hpp>
 #include <stan/math/prim/fun/corr_free.hpp>
 #include <stan/math/prim/fun/corr_matrix_constrain.hpp>
@@ -128,6 +129,10 @@
 #include <stan/math/prim/fun/inverse.hpp>
 #include <stan/math/prim/fun/inverse_softmax.hpp>
 #include <stan/math/prim/fun/inverse_spd.hpp>
+#include <stan/math/prim/fun/isfinite.hpp>
+#include <stan/math/prim/fun/isinf.hpp>
+#include <stan/math/prim/fun/isnan.hpp>
+#include <stan/math/prim/fun/isnormal.hpp>
 #include <stan/math/prim/fun/is_any_nan.hpp>
 #include <stan/math/prim/fun/is_inf.hpp>
 #include <stan/math/prim/fun/is_nan.hpp>
@@ -245,6 +250,7 @@
 #include <stan/math/prim/fun/segment.hpp>
 #include <stan/math/prim/fun/set_spaced_vector.hpp>
 #include <stan/math/prim/fun/sign.hpp>
+#include <stan/math/prim/fun/signbit.hpp>
 #include <stan/math/prim/fun/simplex_constrain.hpp>
 #include <stan/math/prim/fun/simplex_free.hpp>
 #include <stan/math/prim/fun/sin.hpp>
