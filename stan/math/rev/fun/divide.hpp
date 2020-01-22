@@ -141,8 +141,7 @@ inline auto divide(const T& m, const var& c) {
  * @return matrix divided by the scalar
  */
 template <typename T, typename = require_eigen_vt<is_var, T>>
-inline Eigen::Matrix<var, T::RowsAtCompileTime, T::ColsAtCompileTime> divide(
-    const T& m, const double& c) {
+inline auto divide(const T& m, const double& c) {
   auto* baseVari
       = new internal::matrix_scalar_divide_vd_vari<T::RowsAtCompileTime,
                                                    T::ColsAtCompileTime>(m, c);

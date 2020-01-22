@@ -961,6 +961,12 @@ template <template <class...> class TypeCheck, class... Check>
 using require_all_not_eigen_vector_st
     = require_all_not_t<is_eigen_vector_scalar_check<TypeCheck, Check>...>;
 
+template <typename Row, typename Col>
+using require_eigen_row_and_col_t = require_t<math::conjunction<is_eigen_row_vector<Row>, is_eigen_col_vector<Col>>>;
+
+template <typename Row, typename Col>
+using require_not_eigen_row_and_col_t = require_not_t<math::conjunction<is_eigen_row_vector<Row>, is_eigen_col_vector<Col>>>;
+
 /** @}*/
 }  // namespace stan
 #endif
