@@ -963,13 +963,9 @@ class complex<stan::math::fvar<T>>
 
 namespace Eigen {
 
-// these next 4 from philipm on Discourse:
-
-template <typename BinaryOp>
-struct Eigen::ScalarBinaryOpTraits<std::complex<stan::math::var>, double,
-                                   BinaryOp> {
-  typedef std::complex<stan::math::var> ReturnType;
-};
+// only need patterns with at least one var and at least one complex
+// see:
+// https://discourse.mc-stan.org/t/help-testing-release-candidate-for-std-complex/12314/54
 
 template <typename BinaryOp>
 struct Eigen::ScalarBinaryOpTraits<double, std::complex<stan::math::var>,
@@ -978,14 +974,38 @@ struct Eigen::ScalarBinaryOpTraits<double, std::complex<stan::math::var>,
 };
 
 template <typename BinaryOp>
-struct Eigen::ScalarBinaryOpTraits<std::complex<stan::math::var>,
-                                   std::complex<double>, BinaryOp> {
+struct Eigen::ScalarBinaryOpTraits<stan::math::var, std::complex<double>,
+                                   BinaryOp> {
   typedef std::complex<stan::math::var> ReturnType;
 };
 
 template <typename BinaryOp>
 struct Eigen::ScalarBinaryOpTraits<std::complex<double>,
                                    std::complex<stan::math::var>, BinaryOp> {
+  typedef std::complex<stan::math::var> ReturnType;
+};
+
+template <typename BinaryOp>
+struct Eigen::ScalarBinaryOpTraits<std::complex<double>, stan::math::var,
+                                   BinaryOp> {
+  typedef std::complex<stan::math::var> ReturnType;
+};
+
+template <typename BinaryOp>
+struct Eigen::ScalarBinaryOpTraits<std::complex<stan::math::var>, double,
+                                   BinaryOp> {
+  typedef std::complex<stan::math::var> ReturnType;
+};
+
+template <typename BinaryOp>
+struct Eigen::ScalarBinaryOpTraits<std::complex<stan::math::var>,
+                                   stan::math::var, BinaryOp> {
+  typedef std::complex<stan::math::var> ReturnType;
+};
+
+template <typename BinaryOp>
+struct Eigen::ScalarBinaryOpTraits<std::complex<stan::math::var>,
+                                   std::complex<double>, BinaryOp> {
   typedef std::complex<stan::math::var> ReturnType;
 };
 

@@ -1650,19 +1650,33 @@ TEST(mathMix, stdComplexAssignment) {
 //   EXPECT_FALSE(stan::is_arithmetic<std::complex<stan::math::var>>::value);
 //   EXPECT_FALSE(stan::is_arithmetic<std::string>::value);
 // }
-// TEST(mathMix, multiplicationPatterns) {
-//   Eigen::Matrix<cvar_t, -1, -1> x(2, 2);
-//   x << 1, 2, 3, 4;
-//   Eigen::Matrix<cdouble_t, -1, -1> y(2, 2);
-//   y << 5, 6, 7, 8;
+TEST(mathMix, multiplicationPatterns) {
+  Eigen::MatrixXd d(2, 2);
+  d << 1, 2, 3, 4;
+  Eigen::Matrix<var_t, -1, -1> v(2, 2);
+  v << 1, 2, 3, 4;
+  Eigen::Matrix<cdouble_t, -1, -1> cd(2, 2);
+  cd << 1, 2, 3, 4;
+  Eigen::Matrix<cvar_t, -1, -1> cv(2, 2);
+  cv << 1, 2, 3, 4;
 
-//   auto z = x * y;
+  auto d_d = d * d;
+  auto d_v = d * v;
+  auto d_cd = d * cd;
+  auto d_cv = d * cv;
 
-//   auto a = z(0);
+  auto v_d = v * d;
+  auto v_v = v * v;
+  auto v_cd = v * cd;
+  auto v_cv = v * cv;
 
-//   Eigen::MatrixXd y2(2, 2);
-//   y2 << 10, 11, 12, 13;
-//   auto z2 = x * y2;
+  auto cd_d = cd * d;
+  auto cd_v = cd * v;
+  auto cd_cd = cd * cd;
+  auto cd_cv = cd * cv;
 
-//   // std::cout << a << std::endl;
-// }
+  auto cv_d = cv * d;
+  auto cv_v = cv * v;
+  auto cv_cd = cv * cd;
+  auto cv_cv = cv * cv;
+}
