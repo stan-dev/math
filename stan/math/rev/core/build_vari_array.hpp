@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_REV_CORE_BUILD_VARI_ARRAY_HPP
 #define STAN_MATH_REV_CORE_BUILD_VARI_ARRAY_HPP
 
-#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/vari.hpp>
 
@@ -12,9 +12,9 @@ namespace math {
  * Allocates and populates a flat array of vari pointers in the autodiff arena
  * with the varis pointed to by the vars in the input Eigen matrix
  *
- * @tparam R Eigen row type of x
- * @tparam C Eigen column type of x
- * @param x Input
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
+ * @param x input matrix
  * @return Flat array of vari pointers
  */
 template <int R, int C>

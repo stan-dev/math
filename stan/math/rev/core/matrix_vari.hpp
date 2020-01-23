@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_REV_CORE_MATRIX_VARI_HPP
 #define STAN_MATH_REV_CORE_MATRIX_VARI_HPP
 
-#include <stan/math/rev/mat/fun/Eigen_NumTraits.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/rev/fun/Eigen_NumTraits.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/vari.hpp>
 

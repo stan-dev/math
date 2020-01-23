@@ -1,12 +1,12 @@
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/mat.hpp>
-#include <stan/math/rev/mat/fun/typedefs.hpp>
+#include <stan/math/rev.hpp>
+#include <stan/math/rev/fun/typedefs.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
-using stan::math::var;
 using stan::return_type;
+using stan::math::var;
 
 TEST(MetaTraitsRevScal, ReturnTypeVar) {
   test::expect_same_type<var, return_type<var>::type>();

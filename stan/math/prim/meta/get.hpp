@@ -2,7 +2,8 @@
 #define STAN_MATH_PRIM_META_GET_HPP
 
 #include <stan/math/prim/meta/require_generics.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta/scalar_type.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <cmath>
 #include <cstddef>
 #include <cstdlib>
@@ -39,12 +40,12 @@ inline T get(const std::vector<T>& x, size_t n) {
 /** \ingroup type_trait
  * Returns the n-th element of the provided Eigen matrix.
  *
- * @param x input \c Eigen \c Matrix or expression
+ * @param m input \c Eigen \c Matrix or expression
  * @param n index of the element to return
  * @return n-th element of the \c Eigen \c Matrix or expression
  */
 template <typename T, typename = require_eigen_t<T>>
-inline auto get(const T& m, size_t n) {
+inline scalar_type_t<T> get(const T& m, size_t n) {
   return m(static_cast<int>(n));
 }
 

@@ -2,7 +2,7 @@
 
 Thanks for checking out these docs. This is where you'll find information on contributing to the [Math library](https://github.com/stan-dev/math), how the source code is laid out, and other technical details that could help. This wiki focuses on things relevant to the Math library. There's also a separate [Stan wiki](https://github.com/stan-dev/stan/wiki) for things related to the language, services, algorithms.
 
-This wiki is a work in progress. If you have suggestions, please update the wiki or mention it on our forums on [this thread](http://discourse.mc-stan.org/t/what-doc-would-help-developers-of-the-math-library/).
+This wiki is a work in progress. If you have suggestions, please update the wiki or mention it on our forums on [this thread](https://discourse.mc-stan.org/t/what-doc-would-help-developers-of-the-math-library/).
 
 -----------------
 
@@ -37,7 +37,7 @@ For implementation details of the Math library's automatic differentiation, plea
 
 # Licensing
 
-We're committed to having a permissive open-source license. The Math library is [licensed with the BSD 3-Clause License](https://github.com/stan-dev/math/blob/develop/LICENSE.md) and we only accept changes to the code base that compatible with this license.
+We're committed to having a permissive open-source license. The Math library is [licensed with the BSD 3-Clause License](https://github.com/stan-dev/math/blob/develop/LICENSE%2Emd) and we only accept changes to the code base that compatible with this license.
 
 # Contributing
 
@@ -92,7 +92,7 @@ See the [Code Review Guidelines](https://github.com/stan-dev/math/wiki/Developer
 
 ## Discussion
 
-For general questions, please ask on the forums with the ["Developers" tag](http://discourse.mc-stan.org/c/stan-dev).
+For general questions, please ask on the forums with the ["Developers" tag](https://discourse.mc-stan.org/c/stan-dev).
 
 
 
@@ -388,7 +388,7 @@ See [Discourse: Boost defines](https://discourse.mc-stan.org/t/boost-defines/100
 - Description of how to use/print the gradient functions in Stan, and any other diagnostic tools for making sure our code/math is accurate ( some_var_.grad(vars, grad)) and then (for (auto g : grad) { std::cout << g << std::endl;}
 
 - How does the architecture from rev-> prim work? I threw some print statements in gp_exp_quad_cov formerly (cov_exp_quad) to see how it works. rev fuctions are precompiled, and then call some of the prim functions on runtime? How does this work exactly? What kind of templating it happening to make sure rev is going to which prim? Can we have a quick visualization on a simple stan program to know what’s happening?
-- where to find doxygen: http://mc-stan.org/math
+- where to find doxygen: https://mc-stan.org/math
 
 - Intro to C++ concepts needed to develop for Stan.
 - Description of directory structure of the Stan source

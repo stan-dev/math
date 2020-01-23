@@ -1,7 +1,7 @@
 #ifndef TEST_PROB_TEST_FIXTURE_DISTR_HPP
 #define TEST_PROB_TEST_FIXTURE_DISTR_HPP
 
-#include <stan/math/mix/mat.hpp>
+#include <stan/math/mix.hpp>
 #include <test/prob/utility.hpp>
 #include <type_traits>
 #include <stdexcept>
@@ -10,10 +10,10 @@ using Eigen::Dynamic;
 using Eigen::Matrix;
 using stan::is_constant_all;
 using stan::is_vector;
+using stan::scalar_type;
 using stan::math::fvar;
 using stan::math::value_of;
 using stan::math::var;
-using stan::scalar_type;
 using std::vector;
 
 /**

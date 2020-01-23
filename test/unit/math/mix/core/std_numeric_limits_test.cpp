@@ -1,10 +1,10 @@
-#include <stan/math/mix/scal.hpp>
+#include <stan/math/mix.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 
 TEST(AgradMixNumericLimits, All_Fvar) {
-  using stan::math::INFTY;
   using stan::math::fvar;
+  using stan::math::INFTY;
   using stan::math::var;
   using std::isnan;
 

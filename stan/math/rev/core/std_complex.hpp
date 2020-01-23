@@ -2,25 +2,25 @@
 #define STAN_MATH_REV_CORE_STD_COMPLEX_HPP
 
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/scal/fun/value_of_rec.hpp>
+#include <stan/math/fwd/fun/value_of_rec.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/fun/is_inf.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
-#include <stan/math/prim/scal/fun/square.hpp>
-#include <stan/math/prim/scal/fun/value_of_rec.hpp>
+#include <stan/math/prim/fun/is_inf.hpp>
+#include <stan/math/prim/fun/is_nan.hpp>
+#include <stan/math/prim/fun/square.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/scal/fun/atan2.hpp>
-#include <stan/math/rev/scal/fun/cos.hpp>
-#include <stan/math/rev/scal/fun/exp.hpp>
-#include <stan/math/rev/scal/fun/hypot.hpp>
-#include <stan/math/rev/scal/fun/is_inf.hpp>
-#include <stan/math/rev/scal/fun/is_nan.hpp>
-#include <stan/math/rev/scal/fun/log.hpp>
-#include <stan/math/rev/scal/fun/sin.hpp>
-#include <stan/math/rev/scal/fun/square.hpp>
-#include <stan/math/rev/scal/fun/sqrt.hpp>
-#include <stan/math/rev/scal/fun/value_of_rec.hpp>
+#include <stan/math/rev/fun/atan2.hpp>
+#include <stan/math/rev/fun/cos.hpp>
+#include <stan/math/rev/fun/exp.hpp>
+#include <stan/math/rev/fun/hypot.hpp>
+#include <stan/math/rev/fun/is_inf.hpp>
+#include <stan/math/rev/fun/is_nan.hpp>
+#include <stan/math/rev/fun/log.hpp>
+#include <stan/math/rev/fun/sin.hpp>
+#include <stan/math/rev/fun/square.hpp>
+#include <stan/math/rev/fun/sqrt.hpp>
+#include <stan/math/rev/fun/value_of_rec.hpp>
 #include <cinttypes>
 #include <cmath>
 #include <complex>
@@ -37,12 +37,12 @@
 // -------------------------------------
 // std::iterator_traits<var>         stan/math/rev/core/std_iterator_traits.hpp
 // std::iterator_traits<fvar<T>>     stan/math/fwd/core/std_iterator_traits.hpp
-// stan::math::signbit               stan/math/prim/scal/fun/signbit.hpp
-// stan::math::isinf                 stan/math/prim/scal/fun/isinf.hpp
-// stan::math::isfinite              stan/math/prim/scal/fun/isfinite.hpp
-// stan::math::isnan                 stan/math/prim/scal/fun/isnan.hpp
-// stan::math::isnormal              stan/math/prim/scal/fun/isnormal.hpp
-// stan::math::copysign              stan/math/prim/scal/fun/copysign.hpp
+// stan::math::signbit               stan/math/prim/fun/signbit.hpp
+// stan::math::isinf                 stan/math/prim/fun/isinf.hpp
+// stan::math::isfinite              stan/math/prim/fun/isfinite.hpp
+// stan::math::isnan                 stan/math/prim/fun/isnan.hpp
+// stan::math::isnormal              stan/math/prim/fun/isnormal.hpp
+// stan::math::copysign              stan/math/prim/fun/copysign.hpp
 
 // std SPECIALIZATIONS (no complex)
 namespace std {
@@ -962,6 +962,34 @@ class complex<stan::math::fvar<T>>
 // }  // namespace stan
 
 // namespace Eigen {
+
+// these next 4 from philipm on Discourse:
+// https://discourse.mc-stan.org/t/help-testing-release-candidate-for-std-complex/12314/55
+template <typename BinaryOp>
+struct Eigen::ScalarBinaryOpTraits<std::complex<stan::math::var>, double,
+                                   BinaryOp> {
+  typedef std::complex<stan::math::var> ReturnType;
+};
+
+template <typename BinaryOp>
+struct Eigen::ScalarBinaryOpTraits<double, std::complex<stan::math::var>,
+                                   BinaryOp> {
+  typedef std::complex<stan::math::var> ReturnType;
+};
+
+template <typename BinaryOp>
+struct Eigen::ScalarBinaryOpTraits<std::complex<stan::math::var>,
+                                   std::complex<double>, BinaryOp> {
+  typedef std::complex<stan::math::var> ReturnType;
+};
+
+template <typename BinaryOp>
+struct Eigen::ScalarBinaryOpTraits<std::complex<double>,
+                                   std::complex<stan::math::var>, BinaryOp> {
+  typedef std::complex<stan::math::var> ReturnType;
+};
+
+// these are what I originally had
 
 // template <class Op>
 // struct ScalarBinaryOpTraits<std::complex<stan::math::var>,

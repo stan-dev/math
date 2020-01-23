@@ -5,7 +5,7 @@
 #include <test/unit/math/is_finite.hpp>
 #include <test/unit/math/expect_near_rel.hpp>
 #include <test/unit/math/serializer.hpp>
-#include <stan/math/mix/mat.hpp>
+#include <stan/math/mix.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
 #include <string>
@@ -14,6 +14,64 @@
 namespace stan {
 namespace test {
 namespace internal {
+
+/**
+ * Evaluates expression. A no-op for scalars.
+ * @tparam T nested type of fvar
+ * @param x value
+ * @return value
+ */
+template <typename T>
+auto eval(const stan::math::fvar<T>& x) {
+  return x;
+}
+
+/**
+ * Evaluates expression. A no-op for scalars.
+ * @param x value
+ * @return value
+ */
+auto eval(const stan::math::var& x) { return x; }
+
+/**
+ * Evaluates expression. A no-op for scalars.
+ * @param x value
+ * @return value
+ */
+auto eval(double x) { return x; }
+
+/**
+ * Evaluates expression. A no-op for scalars.
+ * @param x value
+ * @return value
+ */
+auto eval(int x) { return x; }
+
+/**
+ * Evaluates expression.
+ * @tparam Derived derived type of the expression
+ * @param x expression
+ * @return evaluated expression
+ */
+template <typename Derived>
+auto eval(const Eigen::EigenBase<Derived>& x) {
+  return x.derived().eval();
+}
+/**
+ * Evaluates expressions in a \c std::vector.
+ * @tparam T type of \c std::vector elements
+ * @param x a \c std::vector of expressions
+ * @return a \cstd::vector of evaluated expressions
+ */
+template <typename T>
+auto eval(const std::vector<T>& x) {
+  using T_res = decltype(eval(std::declval<T>()));
+  std::vector<T_res> res;
+  for (auto& i : x) {
+    res.push_back(eval(i));
+  }
+  return res;
+}
 
 /**
  * Tests that the specified function applied to the specified argument
@@ -27,6 +85,7 @@ namespace internal {
  * documentation for `expect_near`.
  *
  * @tparam F type of functor
+ * @param tols tolerances for test
  * @param f functor to test
  * @param x value to test
  * @param fx expected value
@@ -65,6 +124,7 @@ void test_gradient(const ad_tolerances& tols, const F& f,
  * documentation for `expect_near`.
  *
  * @tparam F type of functor
+ * @param tols tolerances for test
  * @param f functor to test
  * @param x value to test
  * @param fx expected value
@@ -104,6 +164,7 @@ void test_gradient_fvar(const ad_tolerances& tols, const F& f,
  * documentation for `expect_near`.
  *
  * @tparam F type of functor
+ * @param tols tolerances for test
  * @param f functor to test
  * @param x value to test
  * @param fx expected value
@@ -147,6 +208,7 @@ void test_hessian_fvar(const ad_tolerances& tols, const F& f,
  * documentation for `expect_near`.
  *
  * @tparam F type of functor
+ * @param tols tolerances for test
  * @param f functor to test
  * @param x value to test
  * @param fx expected value
@@ -188,6 +250,7 @@ void test_hessian(const ad_tolerances& tols, const F& f,
  * documentation for `expect_near`.
  *
  * @tparam F type of functor
+ * @param tols tolerances for test
  * @param f functor to test
  * @param x value to test
  * @param fx expected value
@@ -218,7 +281,7 @@ void test_grad_hessian(const ad_tolerances& tols, const F& f,
 
 /**
  * For the specified functor and argument, test that automatic
- * differentiation provides the value as the double-based version and
+ * differentiation provides the same value as the double-based version and
  * the same derivatives as finite differences over the double
  * version.  It also tests that an autodiff version throws an
  * exception if and only if the double-based version throws an
@@ -228,14 +291,8 @@ void test_grad_hessian(const ad_tolerances& tols, const F& f,
  * <p>The functor to test must define `T operator()(const
  * Matrix<T, -1, 1>& x) const;` for relevant `double` and autodiff types.
  *
- * <p>All results are tested for relative tolerance at thresholds
- * `1e-8` for values, `1e-4` for gradients (1st order derivatives),
- * `1e-3` for Hessians (2nd order derivatives), and `1e-2` for
- * gradients of Hessians (3rd order derivatives).  The reason for such
- * seemingly lax tests is that finite differences can be highly
- * unstable.
- *
  * @tparam G type of polymorphic functor
+ * @param tols tolerances for test
  * @param g polymorphic functor from vectors to scalars
  * @param x argument to test
  */
@@ -307,7 +364,7 @@ void expect_all_throw(const F& f, const Eigen::VectorXd& x) {
  */
 template <typename F>
 void expect_all_throw(const F& f, double x1) {
-  auto h = [&](auto v) { return serialize_return(f(v(0))); };
+  auto h = [&](auto v) { return serialize_return(eval(f(v(0)))); };
   Eigen::VectorXd x(1);
   x << x1;
   expect_all_throw(h, x);
@@ -324,7 +381,7 @@ void expect_all_throw(const F& f, double x1) {
  */
 template <typename F>
 void expect_all_throw(const F& f, double x1, double x2) {
-  auto h = [&](auto v) { return serialize_return(f(v(0), v(1))); };
+  auto h = [&](auto v) { return serialize_return(eval(f(v(0), v(1)))); };
   Eigen::VectorXd x(2);
   x << x1, x2;
   expect_all_throw(h, x);
@@ -360,6 +417,7 @@ void expect_all_throw(const F& f, double x1, double x2, double x3) {
  * returning a single component of the value
  * @tparam Ts type pack for arguments to original functor with double
  * scalar types
+ * @param tols tolerances for test
  * @param f functor to evaluate
  * @param g serialized functor taking an Eigen vector and returning a
  * serialized container of the original output
@@ -375,8 +433,8 @@ void expect_ad_helper(const ad_tolerances& tols, const F& f, const G& g,
       = [&](const int i) { return [&g, i](const auto& v) { return g(v)[i]; }; };
   size_t result_size = 0;
   try {
-    auto y1 = f(xs...);  // original types, including int
-    auto y2 = g(x);      // all int cast to double
+    auto y1 = eval(f(xs...));  // original types, including int
+    auto y2 = eval(g(x));      // all int cast to double
     auto y1_serial = serialize<double>(y1);
     expect_near_rel("expect_ad_helper", y1_serial, y2, 1e-10);
     result_size = y1_serial.size();
@@ -396,6 +454,7 @@ void expect_ad_helper(const ad_tolerances& tols, const F& f, const G& g,
  *
  * @tparam F type of functor to test
  * @tparam T type of first argument with double-based scalar
+ * @param tols tolerances for test
  * @param f functor to test
  * @param x argument to test
  */
@@ -404,7 +463,7 @@ void expect_ad_v(const ad_tolerances& tols, const F& f, const T& x) {
   auto g = [&](const auto& v) {
     auto ds = to_deserializer(v);
     auto xds = ds.read(x);
-    return serialize_return(f(xds));
+    return serialize_return(eval(f(xds)));
   };
   internal::expect_ad_helper(tols, f, g, serialize_args(x), x);
 }
@@ -421,6 +480,7 @@ void expect_ad_v(const ad_tolerances& tols, const F& f, const T& x) {
  *
  * @tparam F type of functor to test
  * @tparam T type of first argument with double-based scalar
+ * @param tols tolerances for test
  * @param f functor to test
  * @param x argument to test
  */
@@ -453,6 +513,8 @@ void expect_ad_v(const ad_tolerances& tols, const F& f, int x) {
  * @tparam F type of functor to test
  * @tparam T1 type of first argument with double-based scalar
  * @tparam T2 type of second argument with double-based scalar
+ * @param tols tolerances for test
+ * @param f functor to test
  * @param x1 first argument
  * @param x2 second argument
  */
@@ -562,6 +624,8 @@ void expect_ad_vv(const ad_tolerances& tols, const F& f, int x1, int x2) {
  * @tparam T1 type of first argument with double-based scalar
  * @tparam T2 type of second argument with double-based scalar
  * @tparam T3 type of third argument with double-based scalar
+ * @param tols tolerances for test
+ * @param f functor to test
  * @param x1 first argument
  * @param x2 second argument
  * @param x3 third argument
@@ -632,18 +696,6 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
                              x3);
 }
 
-/**
- * Test that the specified binary functor and arguments produce for
- * every autodiff type the same value as the double-based version and
- * the same derivatives as finite differences when both arguments are
- * autodiff variables.
- *
- * @tparam F type of functor to test
- * @tparam T3 type of third argument with double-based scalar
- * @param x1 first argument
- * @param x2 second argument
- * @param x3 third argument
- */
 template <typename F, typename T3>
 void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, int x2,
                    const T3& x3) {
@@ -673,19 +725,6 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, int x2,
   expect_ad_vv(tols, g13, x1, x3);
 }
 
-/**
- * Test that the specified ternary functor and arguments produce for
- * every autodiff type the same value as the double-based version and
- * the same derivatives as finite differences when both arguments are
- * autodiff variables.
- *
- * @tparam F type of functor to test
- * @tparam T2 type of second argument with double-based scalar
- * @tparam T3 type of third argument with double-based scalar
- * @param x1 first argument
- * @param x2 second argument
- * @param x3 third argument
- */
 template <typename F, typename T2, typename T3>
 void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, const T2& x2,
                    const T3& x3) {
@@ -710,19 +749,6 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, const T2& x2,
   expect_ad_vv(tols, g23, x2, x3);
 }
 
-/**
- * Test that the specified ternary functor and arguments produce for
- * every autodiff type the same value as the double-based version and
- * the same derivatives as finite differences when both arguments are
- * autodiff variables.
- *
- * @tparam F type of functor to test
- * @tparam T1 type of first argument with double-based scalar
- * @tparam T3 type of third argument with double-based scalar
- * @param x1 first argument
- * @param x2 second argument
- * @param x3 third argument
- */
 template <typename F, typename T1, typename T3>
 void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1, int x2,
                    const T3& x3) {
@@ -747,19 +773,6 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1, int x2,
   expect_ad_vv(tols, g13, x1, x3);
 }
 
-/**
- * Test that the specified ternary functor and arguments produce for
- * every autodiff type the same value as the double-based version and
- * the same derivatives as finite differences when both arguments are
- * autodiff variables.
- *
- * @tparam F type of functor to test
- * @tparam T1 type of first argument with double-based scalar
- * @tparam T2 type of second argument with double-based scalar
- * @param x1 first argument
- * @param x2 second argument
- * @param x3 third argument
- */
 template <typename F, typename T1, typename T2>
 void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
                    const T2& x2, int x3) {
@@ -784,18 +797,6 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
   expect_ad_vv(tols, g12, x1, x2);
 }
 
-/**
- * Test that the specified ternary functor and arguments produce for
- * every autodiff type the same value as the double-based version and
- * the same derivatives as finite differences when both arguments are
- * autodiff variables.
- *
- * @tparam F type of functor to test
- * @tparam T2 type of second argument with double-based scalar
- * @param x1 first argument
- * @param x2 second argument
- * @param x3 third argument
- */
 template <typename F, typename T2>
 void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, const T2& x2,
                    int x3) {
@@ -825,18 +826,6 @@ void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, const T2& x2,
   expect_ad_vv(tols, g12, x1, x2);
 }
 
-/**
- * Test that the specified ternary functor and arguments produce for
- * every autodiff type the same value as the double-based version and
- * the same derivatives as finite differences when both arguments are
- * autodiff variables.
- *
- * @tparam F type of functor to test
- * @tparam T1 type of first argument with double-based scalar
- * @param x1 first argument
- * @param x2 second argument
- * @param x3 third argument
- */
 template <typename F, typename T1>
 void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1, int x2,
                    int x3) {
@@ -1135,7 +1124,7 @@ void expect_ad(const F& f, const T& x) {
  * @tparam T2 type of double- or int-based second argument
  * @param tols tolerances for test
  * @param f functor to test
- * param x1 first argument to test
+ * @param x1 first argument to test
  * @param x2 second argument to test
  */
 template <typename F, typename T1, typename T2>
@@ -1147,13 +1136,13 @@ void expect_ad(const ad_tolerances& tols, const F& f, const T1& x1,
 /**
  * Test that the specified binary function produces autodiff values
  * and derivatives consistent with primitive int and double inputs and
- * finite differences.  Uses default tolerances.
+ * finite differences at default tolerances.
  *
  * @tparam F type of binary polymorphic functor to test
  * @tparam T1 type of double- or int-based first argument
  * @tparam T2 type of double- or int-based second argument
  * @param f functor to test
- * param x1 first argument to test
+ * @param x1 first argument to test
  * @param x2 second argument to test
  */
 template <typename F, typename T1, typename T2>
@@ -1174,7 +1163,7 @@ void expect_ad(const F& f, const T1& x1, const T2& x2) {
  * @tparam T3 type of double- or int-based third argument
  * @param tols tolerances for test
  * @param f functor to test
- * param x1 first argument to test
+ * @param x1 first argument to test
  * @param x2 second argument to test
  * @param x3 third argument to test
  */
@@ -1187,14 +1176,14 @@ void expect_ad(const ad_tolerances& tols, const F& f, const T1& x1,
 /**
  * Test that the specified ternary function produces autodiff values
  * and derivatives consistent with primitive int and double inputs and
- * finite differences.  Uses default tolerances.
+ * finite differences at default tolerances.
  *
  * @tparam F type of binary polymorphic functor to test
  * @tparam T1 type of double- or int-based first argument
  * @tparam T2 type of double- or int-based second argument
  * @tparam T3 type of double- or int-based third argument
  * @param f functor to test
- * param x1 first argument to test
+ * @param x1 first argument to test
  * @param x2 second argument to test
  * @param x3 third argument to test
  */
@@ -1212,6 +1201,7 @@ void expect_ad(const F& f, const T1& x1, const T2& x2, const T3& x3) {
  *
  * @tparam F type of poymorphic, vectorized functor to test
  * @tparam T1 type of first argument (integer or double)
+ * @param tols tolerances for test
  * @param f functor to test
  * @param x1 value to test
  */
@@ -1451,8 +1441,8 @@ void expect_unary_vectorized_helper(const ad_tolerances& tols, const F& f, T x,
 }  // namespace internal
 
 /**
- * Teset that the specified vectorized unary function has value and
- * derivative behavior matching the primtive instantiation with finite
+ * Test that the specified vectorized unary function has value and
+ * derivative behavior matching the primitive instantiation with finite
  * differences.  Tests both scalar and container behavior.  Integer
  * arguments will be preserved through to function calls.
  *
@@ -1473,10 +1463,8 @@ void expect_unary_vectorized(const ad_tolerances& tols, const F& f, Ts... xs) {
  * values and finite differences.  Tests both scalars and containers.
  *
  * @tparam F type of function to test
- * @tparam T type of first argument to test
  * @tparam Ts type of remaining arguments to test
  * @param f function to test
- * @param x argument to test
  * @param xs arguments to test
  */
 template <typename F, typename... Ts>
@@ -1535,7 +1523,7 @@ void expect_common_comparison(const F& f) {
 /**
  * Test that the two specified functions either both throw or have the
  * same return value for the specified argument.  If the argument is
- * an intger, it will be passed through to the functions as such.
+ * an integer, it will be passed through to the functions as such.
  *
  * @tparam F1 type of first function
  * @tparam F2 type of second function

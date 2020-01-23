@@ -1,0 +1,40 @@
+# makefile to be used for standalone compliation of
+# C++ programs. Note that the dependend libraries
+# must be compiled first by the math-libs target
+#
+# Example for hello-math.cpp C++ program:
+#
+# make -f path/to/math/make/standalone math-libs
+# make -f path/to/math/make/standalone hello-math
+#
+# in case this makefile is used within another makefile
+# via an include statement then the user is advised to
+# define the MATH variable to point to the stan-math root
+# directory (with a trailing "/").
+
+MATH_MAKE ?=$(dir $(abspath $(firstword $(MAKEFILE_LIST))))
+MATH ?= $(realpath $(MATH_MAKE)..)/
+-include $(HOME)/.config/stan/make.local
+-include $(MATH)make/local
+-include $(MATH)make/compiler_flags
+-include $(MATH)make/libraries
+
+# Stan math programs must include the TBB.
+# The sundials libraries are only needed for
+# programs using the stiff ode solver or the
+# algebra solver
+MATH_LIBS ?= $(LIBSUNDIALS) $(MPI_TARGETS) $(TBB_TARGETS)
+
+LDLIBS += $(MATH_LIBS)
+
+math-libs : $(MATH_LIBS)
+
+.PHONY: math-clean
+math-clean : clean-libraries
+
+
+##
+# Debug target that allows you to print a variable
+##
+print-%  : ; @echo $* = $($*)
+

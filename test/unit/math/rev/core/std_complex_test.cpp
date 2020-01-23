@@ -1,7 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
 #include <test/unit/math/expect_near_rel.hpp>
 #include <stan/math/rev/core.hpp>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/fun/util.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
 #include <limits>

@@ -1,12 +1,10 @@
-#include <stan/math/fwd/arr.hpp>
-#include <stan/math/fwd/scal.hpp>
-#include <stan/math/fwd/meta.hpp>
+#include <stan/math/fwd.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
-using stan::math::fvar;
 using stan::partials_return_type;
+using stan::math::fvar;
 
 TEST(MathMetaFwd, PartialsReturnTypeFvarDouble) {
   test::expect_same_type<double, partials_return_type<fvar<double> >::type>();

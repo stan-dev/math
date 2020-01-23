@@ -1,5 +1,5 @@
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/prim/meta/is_var_or_arithmetic.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 

@@ -1,11 +1,11 @@
-#include <stan/math/mix/scal.hpp>
+#include <stan/math/mix.hpp>
 
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
 
+using stan::partials_return_type;
 using stan::math::fvar;
 using stan::math::var;
-using stan::partials_return_type;
 
 TEST(MathMetaMix, PartialsReturnTypeFvarVar) {
   test::expect_same_type<var, partials_return_type<fvar<var> >::type>();

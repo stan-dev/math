@@ -3,21 +3,16 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/err/check_positive_finite.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/mat/fun/value_of_rec.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <stan/math/prim/scal/fun/sum.hpp>
-#include <stan/math/prim/arr/fun/value_of_rec.hpp>
-#include <stan/math/prim/mat/fun/sum.hpp>
-#include <stan/math/prim/mat/prob/normal_id_glm_lpdf.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/sum.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
+#include <stan/math/prim/prob/normal_id_glm_lpdf.hpp>
 #include <stan/math/opencl/copy.hpp>
-#include <stan/math/opencl/kernels/normal_id_glm_lpdf.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
+#include <stan/math/opencl/kernels/normal_id_glm_lpdf.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
-
 #include <cmath>
 
 namespace stan {
@@ -78,11 +73,11 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   check_consistent_size(function, "Weight vector", beta, M);
   if (is_vector<T_scale>::value) {
     check_size_match(function, "Rows of ", "x_cl", N, "size of ", "sigma",
-                     length(sigma));
+                     size(sigma));
   }
   if (is_vector<T_alpha>::value) {
     check_size_match(function, "Rows of ", "x_cl", N, "size of ", "alpha",
-                     length(alpha));
+                     size(alpha));
   }
 
   if (!include_summand<propto, T_alpha, T_beta, T_scale>::value) {
@@ -132,7 +127,7 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
         mu_derivative_cl, mu_derivative_sum_cl,
         y_minus_mu_over_sigma_squared_sum_cl, sigma_derivative_cl,
         log_sigma_sum_cl, y_cl, x_cl, alpha_cl, beta_cl, sigma_cl, N, M,
-        y_cl.size() != 1, length(alpha) != 1, length(sigma) != 1,
+        y_cl.size() != 1, size(alpha) != 1, size(sigma) != 1,
         need_mu_derivative, need_mu_derivative_sum, need_sigma_derivative,
         need_log_sigma_sum);
   } catch (const cl::Error &e) {
@@ -191,9 +186,8 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
       logp -= N * log(forward_as<double>(sigma_val));
     }
   }
-  if (include_summand<propto, T_alpha, T_beta, T_scale>::value) {
-    logp -= 0.5 * y_scaled_sq_sum;
-  }
+  logp -= 0.5 * y_scaled_sq_sum;
+
   return ops_partials.build(logp);
 }
 

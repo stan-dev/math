@@ -2,7 +2,10 @@
 #define STAN_MATH_OPENCL_COPY_HPP
 #ifdef STAN_OPENCL
 
-#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/vec_concat.hpp>
 #include <stan/math/opencl/buffer_types.hpp>
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
@@ -13,9 +16,6 @@
 #include <stan/math/opencl/kernels/unpack.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/opencl/err/check_triangular.hpp>
-#include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
-#include <stan/math/prim/arr/fun/vec_concat.hpp>
 
 #include <CL/cl2.hpp>
 #include <algorithm>

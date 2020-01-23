@@ -1,9 +1,9 @@
-#include <stan/math/fwd/scal.hpp>
+#include <stan/math/fwd.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
 
-using stan::math::fvar;
 using stan::return_type;
+using stan::math::fvar;
 
 TEST(MathMetaFwd, ReturnTypeFvarDouble) {
   test::expect_same_type<fvar<double>, return_type<fvar<double> >::type>();

@@ -1,10 +1,10 @@
-#include <stan/math/mix/scal.hpp>
+#include <stan/math/mix.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
 
+using stan::return_type;
 using stan::math::fvar;
 using stan::math::var;
-using stan::return_type;
 
 TEST(MathMetaMix, ReturnTypeFvarVar) {
   test::expect_same_type<fvar<var>, return_type<fvar<var> >::type>();

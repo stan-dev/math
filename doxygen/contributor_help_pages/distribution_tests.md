@@ -140,7 +140,7 @@ Details:
     The types of arguments that are valid are: `Int`, `Double`, `Ints`, and `Doubles`. The first two indicate that the argument is not vectorized and only takes single, scalar values. The last two plural versions indicate that the argument types are vectorized.
 3. The next lines are includes. Most of the files will have:
 ```
-\#include <stan/math/prim/scal.hpp>
+\#include <stan/math/prim.hpp>
 \#include <stdexcept>
 
 ```
