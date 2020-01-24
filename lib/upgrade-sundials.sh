@@ -114,7 +114,7 @@ cd build
 cmake ..
 cd ..
 
-git rm -rf INSTALL_GUIDE.pdf config/ doc/ examples/ test/ */cvode */ida */arkode */kinsol
+git rm -rf INSTALL_GUIDE.pdf config/ doc/ examples/ test/ */cvode */ida */arkode
 find . -name CMakeLists.txt -exec git rm {} \;
 git commit -m "upgrading to sundials v${sundials_version}; pruning files"
 
@@ -145,10 +145,6 @@ find src -name "*.c" -type f -exec sed -E -i _orig  's#fprintf\(#STAN_SUNDIALS_F
 find src -name "*.c_orig" -exec rm {} \;
 git add src include/stan_sundials_printf_override.hpp
 git commit -m "upgrading to sundials v${sundials_version}; removing printf and fprintf for CRAN"
-
-# 7. Get rid of troublesome c files not needed
-git rm src/sundials/sundials_spfgmr.c src/sundials/sundials_spgmr.c
-git commit -m "upgrading to sundials v${sundials_version}; removing troublesome and not needed sundials c modules"
 
 cat <<EOF
 
