@@ -33,6 +33,7 @@ double state_simu(double normal_variate, double abs_mu, double sigma,
 
 TEST(hmm_marginal_lpdf, two_state) {
   using stan::math::hmm_marginal_lpdf;
+  using stan::math::var;
 
   int n_states = 2,
       n_transitions = 10;
@@ -97,4 +98,10 @@ TEST(hmm_marginal_lpdf, two_state) {
   std::cout << density << std::endl;
 
   // TEST GRADIENT EVALUATIONS
+  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
+    log_omegas_v = log_omegas;
+  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> Gamma_v = Gamma;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> rho_v = rho;
+
+  var density_v = hmm_marginal_lpdf(log_omegas_v, Gamma_v, rho_v);
 }

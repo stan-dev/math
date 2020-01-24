@@ -3,6 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/rev/fun/value_of.hpp>
+#include <stan/math/rev/core.hpp>
 #include <Eigen/Core>
 #include <iostream>
 
@@ -37,7 +39,7 @@ namespace math {
                            Eigen::VectorXd& alpha_log_norms,
                            Eigen::MatrixXd& omegas) {
     omegas = log_omegas.array().exp();  // CHECK -- why the .array()?
-    int n_transitions = log_omegas.rows();
+    int n_transitions = log_omegas.rows() - 1;
     int n_states = log_omegas.cols();
 
     alphas.col(0) = omegas.col(0).cwiseProduct(rho);
@@ -81,7 +83,7 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
   //   ops_partials(log_omegas, Gamma, rho);
 
   int n_states = log_omegas.rows();
-  int n_transitions = log_omegas.cols();
+  int n_transitions = log_omegas.cols() - 1;
   Eigen::MatrixXd alphas(n_states, n_transitions + 1);
   Eigen::VectorXd alpha_log_norms(n_transitions + 1);
   Eigen::MatrixXd omegas;
@@ -100,9 +102,10 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
   double grad_corr;
 
   if (!is_constant_all<T_Gamma>::value) {
-    Eigen::MatrixXd Gamma_jacad(n_transitions, n_states);
+    Eigen::MatrixXd Gamma_jacad(n_states, n_states);
     Gamma_jacad.setZero();
     grad_corr = std::exp(alpha_log_norms(n_transitions - 1) - norm_norm);
+
     Gamma_jacad += grad_corr
                      * kappa.cwiseProduct(omegas.col(n_transitions))
                      * alphas.col(n_transitions - 1).transpose();
@@ -113,39 +116,38 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
   bool sensitivities_for_omega_or_rho
     = (!is_constant_all<T_omega>::value) || (!is_constant_all<T_rho>::value);
 
-  std::cout << "Check variable types: "
-            << !is_constant_all<T_Gamma>::value << " "
-            << sensitivities_for_omega_or_rho << std::endl;
-
   // boundary terms
   if (sensitivities_for_omega_or_rho) {
-    Eigen::MatrixXd log_omega_jacad(n_transitions, n_states);
+    Eigen::MatrixXd log_omega_jacad(n_states, n_transitions + 1);
     log_omega_jacad.setZero();
 
     for (int n = n_transitions - 2; n >= 0; n--) {
-      kappa = Gamma.transpose() * (omegas.col(n + 2).cwiseProduct(kappa));
+      // CHECK -- is it worth creating a Gamma_dbl object?
+      kappa = value_of(Gamma).transpose()
+        * (omegas.col(n + 2).cwiseProduct(kappa));
+
       double norm = kappa.maxCoeff();
       kappa /= norm;
       kappa_log_norms(n) = std::log(norm) + kappa_log_norms(n + 1);
 
       if (!is_constant_all<T_omega>::value) {
         grad_corr = std::exp(alpha_log_norms(n) + kappa_log_norms(n + 1));
+
         log_omega_jacad.col(n + 1) = grad_corr
-          * kappa.cwiseProduct(omegas.col(n + 1)) * alphas.col(n).transpose();
+          * kappa.cwiseProduct(value_of(Gamma) * alphas.col(n));
       }
     }
 
     grad_corr = std::exp(kappa_log_norms(0) - norm_norm);
-    Eigen::VectorXd c = Gamma.transpose()
+    Eigen::VectorXd c = value_of(Gamma).transpose()
       * omegas.col(1).cwiseProduct(kappa);
 
     if (!is_constant_all<T_omega>::value) {
-      log_omega_jacad.col(0) = grad_corr * c.cwiseProduct(rho);
+      log_omega_jacad.col(0) = grad_corr * c.cwiseProduct(value_of(rho));
       ops_partials.edge1_.partials_ = log_omega_jacad;
     }
 
     if (!is_constant_all<T_rho>::value) {
-      // rho_jacad = grad_corr * c.cwiseProduct(omegas.col(0));
       ops_partials.edge3_.partials_
         = grad_corr * c.cwiseProduct(omegas.col(0));
     }
