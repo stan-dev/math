@@ -2,7 +2,9 @@
 #define STAN_MATH_REV_FUN_HMM_MARGINAL_LPDF_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <Eigen/Core>
+#include <iostream>
 
 namespace stan {
 namespace math {
@@ -34,14 +36,9 @@ namespace math {
                            Eigen::MatrixXd& alphas,
                            Eigen::VectorXd& alpha_log_norms,
                            Eigen::MatrixXd& omegas) {
-    omegas = log_omegas.array().exp();
-    // CHECK -- why the .array()?
+    omegas = log_omegas.array().exp();  // CHECK -- why the .array()?
     int n_transitions = log_omegas.rows();
     int n_states = log_omegas.cols();
-
-    // Forward pass with running normalization
-    // Eigen::MatrixXd alphas(n_states, n_transitions + 1);
-    // Eigen::VectorXd alpha_log_norms(n_transitions + 1);
 
     alphas.col(0) = omegas.col(0).cwiseProduct(rho);
 
@@ -73,22 +70,29 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
   const Eigen::Matrix<T_rho, Eigen::Dynamic, 1>& rho) {
   // CHECK -- do I need to pass n_states ?
   using T_partials_return = partials_return_t<T_omega, T_Gamma, T_rho>;
-  operands_and_partials<T_omega, T_Gamma, T_rho>
-    ops_partials(log_omegas, Gamma, rho);
+
+  operands_and_partials<
+    Eigen::Matrix<T_omega, Eigen::Dynamic, Eigen::Dynamic>,
+    Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic>,
+    Eigen::Matrix<T_rho, Eigen::Dynamic, 1>
+  > ops_partials(log_omegas, Gamma, rho);
+
+  // operands_and_partials<T_omega, T_Gamma, T_rho>
+  //   ops_partials(log_omegas, Gamma, rho);
 
   int n_states = log_omegas.rows();
-  Eigen::MatrixXd alphas;
-  Eigen::MatrixXd alpha_log_norms;
+  int n_transitions = log_omegas.cols();
+  Eigen::MatrixXd alphas(n_states, n_transitions + 1);
+  Eigen::VectorXd alpha_log_norms(n_transitions + 1);
   Eigen::MatrixXd omegas;
 
   T_partials_return log_marginal_density
     = hmm_marginal_lpdf(value_of(log_omegas),
                         value_of(Gamma),
-                        value_of(rho), n_states,
+                        value_of(rho),
                         alphas, alpha_log_norms, omegas);
 
   // Variables required for all three Jacobian-adjoint products.
-  int n_transitions = log_omegas.cols();
   Eigen::VectorXd kappa = Eigen::VectorXd::Ones(n_states);
   Eigen::VectorXd kappa_log_norms(n_transitions);
   kappa_log_norms(n_transitions - 1) = 0;
@@ -108,6 +112,10 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
 
   bool sensitivities_for_omega_or_rho
     = (!is_constant_all<T_omega>::value) || (!is_constant_all<T_rho>::value);
+
+  std::cout << "Check variable types: "
+            << !is_constant_all<T_Gamma>::value << " "
+            << sensitivities_for_omega_or_rho << std::endl;
 
   // boundary terms
   if (sensitivities_for_omega_or_rho) {
