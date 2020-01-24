@@ -1650,14 +1650,16 @@ TEST(mathMix, stdComplexAssignment) {
 //   EXPECT_FALSE(stan::is_arithmetic<std::complex<stan::math::var>>::value);
 //   EXPECT_FALSE(stan::is_arithmetic<std::string>::value);
 // }
-TEST(mathMix, multiplicationPatterns) {
-  Eigen::MatrixXd d(2, 2);
+
+template <typename T>
+void instantiate_multiply() {
+  Eigen::Matrix<double, -1, -1> d(2, 2);
   d << 1, 2, 3, 4;
-  Eigen::Matrix<var_t, -1, -1> v(2, 2);
+  Eigen::Matrix<T, -1, -1> v(2, 2);
   v << 1, 2, 3, 4;
-  Eigen::Matrix<cdouble_t, -1, -1> cd(2, 2);
+  Eigen::Matrix<std::complex<double>, -1, -1> cd(2, 2);
   cd << 1, 2, 3, 4;
-  Eigen::Matrix<cvar_t, -1, -1> cv(2, 2);
+  Eigen::Matrix<std::complex<T>, -1, -1> cv(2, 2);
   cv << 1, 2, 3, 4;
 
   auto d_d = d * d;
@@ -1679,4 +1681,14 @@ TEST(mathMix, multiplicationPatterns) {
   auto cv_v = cv * v;
   auto cv_cd = cv * cd;
   auto cv_cv = cv * cv;
+}
+
+TEST(mathMix, multiplicationPatterns) {
+  using stan::math::fvar;
+  using stan::math::var;
+  instantiate_multiply<var>();
+  instantiate_multiply<fvar<double>>();
+  instantiate_multiply<fvar<fvar<double>>>();
+  instantiate_multiply<fvar<var>>();
+  instantiate_multiply<fvar<fvar<var>>>();
 }
