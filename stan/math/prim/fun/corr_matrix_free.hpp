@@ -50,10 +50,8 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> corr_matrix_free(
     throw_domain_error("corr_matrix_free", "factor_cov_matrix failed on y", y,
                        "");
   }
-  for (size_type i = 0; i < k; ++i) {
-    check_bounded("corr_matrix_free", "log(sd)", sds[i], -CONSTRAINT_TOLERANCE,
-                  CONSTRAINT_TOLERANCE);
-  }
+  check_bounded("corr_matrix_free", "log(sd)", sds, -CONSTRAINT_TOLERANCE,
+                CONSTRAINT_TOLERANCE);
   return x.matrix();
 }
 
