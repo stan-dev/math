@@ -31,13 +31,13 @@ namespace math {
   double hmm_marginal_lpdf(const Eigen::MatrixXd& log_omegas,
                            const Eigen::MatrixXd& Gamma,
                            const Eigen::VectorXd& rho,
-                           int n_states,
                            Eigen::MatrixXd& alphas,
                            Eigen::VectorXd& alpha_log_norms,
                            Eigen::MatrixXd& omegas) {
     omegas = log_omegas.array().exp();
     // CHECK -- why the .array()?
     int n_transitions = log_omegas.rows();
+    int n_states = log_omegas.cols();
 
     // Forward pass with running normalization
     // Eigen::MatrixXd alphas(n_states, n_transitions + 1);

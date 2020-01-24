@@ -165,6 +165,7 @@ struct hmm_marginal_lpdf_vari : public vari {
     Eigen::VectorXd c = Gamma.transpose()
       * (omegas.col(1).cwiseProduct(kappa));
     log_omega_jacad.col(0) = grad_corr * c.cwiseProduct(rho);
+    rho_jacad = grad_corr * c.cwiseProduct(omegas.col(0));
   }
 
 }
