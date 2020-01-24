@@ -5,6 +5,7 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/log1p_exp.hpp>
+#include <stan/math/prim/vectorize/apply_vector_unary.hpp>
 #include <cmath>
 #include <vector>
 
@@ -62,41 +63,8 @@ inline return_type_t<T1, T2> log_sum_exp(const T2& a, const T1& b) {
 
 /**
  * Return the log of the sum of the exponentiated values of the specified
- * sequence of values.
- *
- * The function is defined as follows to prevent overflow in exponential
- * calculations.
- *
- * \f$\log \sum_{n=1}^N \exp(x_n) = \max(x) + \log \sum_{n=1}^N \exp(x_n -
- * \max(x))\f$.
- *
- * @param[in] x array of specified values
- * @return The log of the sum of the exponentiated vector values.
- */
-inline double log_sum_exp(const std::vector<double>& x) {
-  using std::exp;
-  using std::log;
-  double max = NEGATIVE_INFTY;
-  for (double xx : x) {
-    if (xx > max) {
-      max = xx;
-    }
-  }
-
-  double sum = 0.0;
-  for (size_t ii = 0; ii < x.size(); ii++) {
-    if (x[ii] != NEGATIVE_INFTY) {
-      sum += exp(x[ii] - max);
-    }
-  }
-
-  return max + log(sum);
-}
-
-/**
- * Return the log of the sum of the exponentiated values of the specified
  * matrix of values.  The matrix may be a full matrix, a vector,
- * or a row vector.
+ * a row vector, or a container of these.
  *
  * The function is defined as follows to prevent overflow in exponential
  * calculations.
@@ -104,23 +72,22 @@ inline double log_sum_exp(const std::vector<double>& x) {
  * \f$\log \sum_{n=1}^N \exp(x_n) = \max(x) + \log \sum_{n=1}^N \exp(x_n -
  * \max(x))\f$.
  *
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
- *
- * @param[in] x Matrix of specified values
+ * @tparam T Type of input vector or matrix.
+ * @param[in] x Matrix of specified values.
  * @return The log of the sum of the exponentiated vector values.
  */
-template <int R, int C>
-double log_sum_exp(const Eigen::Matrix<double, R, C>& x) {
-  if (x.size() == 0) {
-    return NEGATIVE_INFTY;
-  }
-
-  const double max = x.maxCoeff();
-  if (!std::isfinite(max)) {
-    return max;
-  }
-  return max + std::log((x.array() - max).exp().sum());
+template <typename T, require_t<std::is_arithmetic<scalar_type_t<T>>>...>
+inline auto log_sum_exp(const T& x) {
+  return apply_vector_unary<T>::reduce(x, [&](const auto& v) {
+    if (v.size() == 0) {
+      return NEGATIVE_INFTY;
+    }
+    const double max = v.maxCoeff();
+    if (!std::isfinite(max)) {
+      return max;
+    }
+    return max + std::log((v.array() - max).exp().sum());
+  });
 }
 
 }  // namespace math
