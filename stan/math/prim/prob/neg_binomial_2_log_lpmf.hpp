@@ -9,6 +9,7 @@
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/log_sum_exp.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/prob/poisson_log_lpmf.hpp>
 #include <cmath>
 
 namespace stan {
@@ -84,19 +85,27 @@ return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
   }
 
   for (size_t i = 0; i < max_size_seq_view; i++) {
-    if (include_summand<propto>::value) {
-      logp -= lgamma(n_vec[i] + 1.0);
+    if (phi__[i] > 1e5) {
+      // TODO(martinmodrak) This is wrong (doesn't pass propto information),
+      // and inaccurate for n = 0, but shouldn't break most models.
+      // Also the 1e5 cutoff is way too low.
+      // Will be adressed better once PR #1497 is merged
+      logp += poisson_log_lpmf(n_vec[i], eta__[i]);
+    } else {
+      if (include_summand<propto>::value) {
+        logp -= lgamma(n_vec[i] + 1.0);
+      }
+      if (include_summand<propto, T_precision>::value) {
+        logp += multiply_log(phi__[i], phi__[i]) - lgamma(phi__[i]);
+      }
+      if (include_summand<propto, T_log_location>::value) {
+        logp += n_vec[i] * eta__[i];
+      }
+      if (include_summand<propto, T_precision>::value) {
+        logp += lgamma(n_plus_phi[i]);
+      }
+      logp -= (n_plus_phi[i]) * logsumexp_eta_logphi[i];
     }
-    if (include_summand<propto, T_precision>::value) {
-      logp += multiply_log(phi__[i], phi__[i]) - lgamma(phi__[i]);
-    }
-    if (include_summand<propto, T_log_location>::value) {
-      logp += n_vec[i] * eta__[i];
-    }
-    if (include_summand<propto, T_precision>::value) {
-      logp += lgamma(n_plus_phi[i]);
-    }
-    logp -= (n_plus_phi[i]) * logsumexp_eta_logphi[i];
 
     if (!is_constant_all<T_log_location>::value) {
       ops_partials.edge1_.partials_[i]

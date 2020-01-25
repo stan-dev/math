@@ -192,6 +192,10 @@ TEST(ProbDistributionOrderedLogistic, error_check) {
   c << -inf, 2.0, -5, inf;
   EXPECT_THROW(stan::math::ordered_logistic_rng(4.0, c, rng),
                std::domain_error);
+
+  c << -2, 5, 2.0, 10;
+  EXPECT_THROW(stan::math::ordered_logistic_rng(4.0, c, rng),
+               std::domain_error);
 }
 
 TEST(ProbDistributionOrderedLogistic, chiSquareGoodnessFitTest) {

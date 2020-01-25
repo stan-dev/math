@@ -93,10 +93,8 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
                      size_c_old);
   }
 
-  for (int n = 0; n < N; n++) {
-    check_bounded(function, "Random variable", y_vec[n], 1, K);
-    check_finite(function, "Location parameter", lam_vec[n]);
-  }
+  check_bounded(function, "Random variable", y, 1, K);
+  check_finite(function, "Location parameter", lambda);
 
   for (int i = 0; i < C_l; i++) {
     check_ordered(function, "Cut-points", c_vec[i]);
