@@ -90,7 +90,7 @@ class divide_dv_vari : public op_dv_vari {
  * @return Variable result of dividing the first variable by the
  * second.
  */
-inline var operator/(const var& dividend, const var& divisor) {
+inline var operator/(var dividend, var divisor) {
   return {new internal::divide_vv_vari(dividend.vi_, divisor.vi_)};
 }
 
@@ -108,7 +108,7 @@ inline var operator/(const var& dividend, const var& divisor) {
  * @return Variable result of dividing the variable by the scalar.
  */
 template <typename Arith, require_arithmetic_t<Arith>...>
-inline var operator/(const var& dividend, Arith divisor) {
+inline var operator/(var dividend, Arith divisor) {
   if (divisor == 1.0) {
     return dividend;
   }
@@ -128,7 +128,7 @@ inline var operator/(const var& dividend, Arith divisor) {
  * @return Quotient of the dividend and divisor.
  */
 template <typename Arith, require_arithmetic_t<Arith>...>
-inline var operator/(Arith dividend, const var& divisor) {
+inline var operator/(Arith dividend, var divisor) {
   return {new internal::divide_dv_vari(dividend, divisor.vi_)};
 }
 

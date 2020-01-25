@@ -15,7 +15,7 @@ namespace math {
  * @param[in] y second argument
  * @return disjuntion of the argument's values
  */
-inline bool operator&&(const var& x, const var& y) {
+inline bool operator&&(var x, var y) {
   return x.val() && y.val();
 }
 
@@ -31,7 +31,7 @@ inline bool operator&&(const var& x, const var& y) {
  * argument
  */
 template <typename Arith, require_arithmetic_t<Arith>...>
-inline bool operator&&(const var& x, Arith y) {
+inline bool operator&&(var x, Arith y) {
   return x.val() && y;
 }
 
@@ -47,7 +47,7 @@ inline bool operator&&(const var& x, Arith y) {
  * value
  */
 template <typename Arith, require_arithmetic_t<Arith>...>
-inline bool operator&&(Arith x, const var& y) {
+inline bool operator&&(Arith x, var y) {
   return x && y.val();
 }
 

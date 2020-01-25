@@ -25,7 +25,7 @@ namespace math {
  * @return True if first variable's value is greater than or equal
  * to the second's.
  */
-inline bool operator>=(const var& a, const var& b) {
+inline bool operator>=(var a, var b) {
   return a.val() >= b.val();
 }
 
@@ -40,7 +40,7 @@ inline bool operator>=(const var& a, const var& b) {
  * to second value.
  */
 template <typename Arith, require_arithmetic_t<Arith>...>
-inline bool operator>=(const var& a, Arith b) {
+inline bool operator>=(var a, Arith b) {
   return a.val() >= b;
 }
 
@@ -55,7 +55,7 @@ inline bool operator>=(const var& a, Arith b) {
  * second variable's value.
  */
 template <typename Arith, typename Var, require_arithmetic_t<Arith>...>
-inline bool operator>=(Arith a, const var& b) {
+inline bool operator>=(Arith a, var b) {
   return a >= b.val();
 }
 

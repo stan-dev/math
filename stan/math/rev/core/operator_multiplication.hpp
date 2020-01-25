@@ -77,7 +77,7 @@ class multiply_vd_vari : public op_vd_vari {
  * @param b Second variable operand.
  * @return Variable result of multiplying operands.
  */
-inline var operator*(const var& a, const var& b) {
+inline var operator*(var a, var b) {
   return {new internal::multiply_vv_vari(a.vi_, b.vi_)};
 }
 
@@ -94,7 +94,7 @@ inline var operator*(const var& a, const var& b) {
  * @return Variable result of multiplying operands.
  */
 template <typename Arith, require_arithmetic_t<Arith>...>
-inline var operator*(const var& a, Arith b) {
+inline var operator*(var a, Arith b) {
   if (b == 1.0) {
     return a;
   }
@@ -114,7 +114,7 @@ inline var operator*(const var& a, Arith b) {
  * @return Variable result of multiplying the operands.
  */
 template <typename Arith, require_arithmetic_t<Arith>...>
-inline var operator*(Arith a, const var& b) {
+inline var operator*(Arith a, var b) {
   if (a == 1.0) {
     return b;
   }

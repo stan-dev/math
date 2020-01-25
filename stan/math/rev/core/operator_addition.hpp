@@ -78,7 +78,7 @@ class add_vd_vari : public op_vd_vari {
  * @param b Second variable operand.
  * @return Variable result of adding two variables.
  */
-inline var operator+(const var& a, const var& b) {
+inline var operator+(var a, var b) {
   return {new internal::add_vv_vari(a.vi_, b.vi_)};
 }
 
@@ -95,7 +95,7 @@ inline var operator+(const var& a, const var& b) {
  * @return Result of adding variable and scalar.
  */
 template <typename Arith, require_arithmetic_t<Arith>...>
-inline var operator+(const var& a, Arith b) {
+inline var operator+(var a, Arith b) {
   if (b == 0.0) {
     return a;
   }
@@ -115,7 +115,7 @@ inline var operator+(const var& a, Arith b) {
  * @return Result of adding variable and scalar.
  */
 template <typename Arith, require_arithmetic_t<Arith>...>
-inline var operator+(Arith a, const var& b) {
+inline var operator+(Arith a, var b) {
   if (a == 0.0) {
     return b;
   }
