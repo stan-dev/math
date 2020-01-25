@@ -104,4 +104,34 @@ TEST(hmm_marginal_lpdf, two_state) {
   Eigen::Matrix<var, Eigen::Dynamic, 1> rho_v = rho;
 
   var density_v = hmm_marginal_lpdf(log_omegas_v, Gamma_v, rho_v);
+
+
+  // finite diff computation
+  double diff = 1e-6;
+  Eigen::MatrixXd Gamma_l = Gamma, Gamma_u = Gamma;
+  Gamma_l(0, 0) = Gamma(0, 0) - diff;
+  Gamma_u(0, 0) = Gamma(0, 0) + diff;
+  double gamma_diff
+    = (hmm_marginal_lpdf(log_omegas, Gamma_u, rho)
+      - hmm_marginal_lpdf(log_omegas, Gamma_l, rho)) / (2 * diff);
+
+  std::cout << "gamma_diff: " << gamma_diff << std::endl;
+
+  Eigen::VectorXd rho_l = rho, rho_u = rho;
+  rho_l(0) = rho(0) - diff;
+  rho_u(0) = rho(0) + diff;
+  double rho_diff
+  = (hmm_marginal_lpdf(log_omegas, Gamma, rho_u)
+    - hmm_marginal_lpdf(log_omegas, Gamma, rho_l)) / (2 * diff);
+
+  std::cout << "rho diff: " << rho_diff << std::endl;
+
+  Eigen::MatrixXd log_omegas_u = log_omegas, log_omegas_l = log_omegas;
+  log_omegas_l(0, 0) = log_omegas(0, 0) - diff;
+  log_omegas_u(0, 0) = log_omegas(0, 0) + diff;
+  double omegas_diff
+    = (hmm_marginal_lpdf(log_omegas_u, Gamma, rho)
+      - hmm_marginal_lpdf(log_omegas_l, Gamma, rho)) / (2 * diff);
+
+  std::cout << "omegas_diff: " << omegas_diff << std::endl;
 }

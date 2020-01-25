@@ -39,8 +39,8 @@ namespace math {
                            Eigen::VectorXd& alpha_log_norms,
                            Eigen::MatrixXd& omegas) {
     omegas = log_omegas.array().exp();  // CHECK -- why the .array()?
-    int n_transitions = log_omegas.rows() - 1;
-    int n_states = log_omegas.cols();
+    int n_states = log_omegas.rows();
+    int n_transitions = log_omegas.cols() - 1;
 
     alphas.col(0) = omegas.col(0).cwiseProduct(rho);
 
@@ -48,7 +48,7 @@ namespace math {
     alphas.col(0) /= norm;
     alpha_log_norms(0) = std::log(norm);
 
-    for (int n = 0; n < n_transitions; n++) {
+    for (int n = 0; n < n_transitions; ++n) {
       alphas.col(n + 1)
         = omegas.col(n + 1).cwiseProduct(Gamma * alphas.col(n));
 
@@ -57,8 +57,12 @@ namespace math {
       alpha_log_norms(n + 1) = std::log(norm) + alpha_log_norms(n);
     }
 
+    // std::cout << "alpha in scope: " << std::endl
+    //           << alphas << std::endl
+    //           << "n_transitions: " << n_transitions << std::endl;
+
     // CHECK -- do we need to "unnormalize" this?
-    return alphas.col(n_transitions).sum();
+    return log(alphas.col(n_transitions).sum());
   }
 
 
@@ -87,71 +91,109 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
   Eigen::MatrixXd alphas(n_states, n_transitions + 1);
   Eigen::VectorXd alpha_log_norms(n_transitions + 1);
   Eigen::MatrixXd omegas;
+  Eigen::MatrixXd Gamma_dbl = value_of(Gamma);
 
   T_partials_return log_marginal_density
     = hmm_marginal_lpdf(value_of(log_omegas),
-                        value_of(Gamma),
+                        Gamma_dbl,
                         value_of(rho),
                         alphas, alpha_log_norms, omegas);
 
   // Variables required for all three Jacobian-adjoint products.
-  Eigen::VectorXd kappa = Eigen::VectorXd::Ones(n_states);
+  double norm_norm = alpha_log_norms(n_transitions);
+  double unnormed_marginal = alphas.col(n_transitions).sum();
+
+  // std::cout << "alphas: " << std::endl << alphas << std::endl;
+  // std::cout << "unormed marginal: " << unnormed_marginal << std::endl;
+  // std::cout << "log_marginal_density: "
+  //           << value_of(log_marginal_density) << std::endl
+  //           << "n_transitions: " << n_transitions;
+
+  std::vector<Eigen::VectorXd> kappa(n_transitions);
+  kappa[n_transitions - 1] = Eigen::VectorXd::Ones(n_states);
   Eigen::VectorXd kappa_log_norms(n_transitions);
   kappa_log_norms(n_transitions - 1) = 0;
-  double norm_norm = alpha_log_norms(n_transitions);
-  double grad_corr;
+  std::vector<double> grad_corr(n_transitions);
+  grad_corr[n_transitions - 1]
+    = std::exp(alpha_log_norms(n_transitions - 1) - norm_norm);
+
+  for (int n = n_transitions - 2; n >= 0; --n) {
+    kappa[n] = Gamma_dbl.transpose()
+      * (omegas.col(n + 2).cwiseProduct(kappa[n + 1]));
+
+    double norm = kappa[n].maxCoeff();
+    kappa[n] /= norm;
+    kappa_log_norms(n) = std::log(norm) + kappa_log_norms(n + 1);
+    grad_corr[n] = std::exp(alpha_log_norms(n) + kappa_log_norms(n)
+                     - norm_norm);
+  }
 
   if (!is_constant_all<T_Gamma>::value) {
     Eigen::MatrixXd Gamma_jacad(n_states, n_states);
     Gamma_jacad.setZero();
-    grad_corr = std::exp(alpha_log_norms(n_transitions - 1) - norm_norm);
 
-    Gamma_jacad += grad_corr
-                     * kappa.cwiseProduct(omegas.col(n_transitions))
-                     * alphas.col(n_transitions - 1).transpose();
+    for (int n = n_transitions - 1; n >= 0; --n) {
+      // std::cout << "kappa: " << kappa[n] << std::endl
+      //           << "omegas: " << omegas.col(n + 1) << std::endl
+      //           << "alphas: " << alphas.col(n).transpose() << std::endl
+      //           << "grad_corr: " << grad_corr[n] << std::endl;
+      Gamma_jacad += grad_corr[n]
+                      * kappa[n].cwiseProduct(omegas.col(n + 1))
+                      * alphas.col(n).transpose();
+    }
 
+    Gamma_jacad /= unnormed_marginal;
     ops_partials.edge2_.partials_ = Gamma_jacad;
+
+    // TEST
+    std::cout << "Gamma jacad: " << std::endl
+    << Gamma_jacad << std::endl;
   }
 
   bool sensitivities_for_omega_or_rho
-    = (!is_constant_all<T_omega>::value) || (!is_constant_all<T_rho>::value);
+    = (!is_constant_all<T_omega>::value)
+      || (!is_constant_all<T_rho>::value);
 
   // boundary terms
   if (sensitivities_for_omega_or_rho) {
     Eigen::MatrixXd log_omega_jacad(n_states, n_transitions + 1);
     log_omega_jacad.setZero();
 
-    for (int n = n_transitions - 2; n >= 0; n--) {
-      // CHECK -- is it worth creating a Gamma_dbl object?
-      kappa = value_of(Gamma).transpose()
-        * (omegas.col(n + 2).cwiseProduct(kappa));
-
-      double norm = kappa.maxCoeff();
-      kappa /= norm;
-      kappa_log_norms(n) = std::log(norm) + kappa_log_norms(n + 1);
-
-      if (!is_constant_all<T_omega>::value) {
-        grad_corr = std::exp(alpha_log_norms(n) + kappa_log_norms(n + 1));
-
-        log_omega_jacad.col(n + 1) = grad_corr
-          * kappa.cwiseProduct(value_of(Gamma) * alphas.col(n));
-      }
+    if (!is_constant_all<T_omega>::value) {
+      for (int n = n_transitions - 1; n >= 0; --n)
+        log_omega_jacad.col(n + 1) = grad_corr[n]
+          * kappa[n].cwiseProduct(Gamma_dbl * alphas.col(n));
     }
 
-    grad_corr = std::exp(kappa_log_norms(0) - norm_norm);
-    Eigen::VectorXd c = value_of(Gamma).transpose()
-      * omegas.col(1).cwiseProduct(kappa);
+    // Boundary terms
+    double grad_corr_boundary = std::exp(kappa_log_norms(0) - norm_norm);
+    Eigen::VectorXd c = Gamma_dbl.transpose()
+                         * omegas.col(1).cwiseProduct(kappa[0]);
 
     if (!is_constant_all<T_omega>::value) {
-      log_omega_jacad.col(0) = grad_corr * c.cwiseProduct(value_of(rho));
+      log_omega_jacad.col(0) = grad_corr_boundary
+                                 * c.cwiseProduct(value_of(rho));
+      log_omega_jacad
+        = log_omega_jacad.cwiseProduct(omegas / unnormed_marginal);
       ops_partials.edge1_.partials_ = log_omega_jacad;
+
+      std::cout << "log_omega_jacad" << std::endl
+      << log_omega_jacad << std::endl;
     }
 
     if (!is_constant_all<T_rho>::value) {
       ops_partials.edge3_.partials_
-        = grad_corr * c.cwiseProduct(omegas.col(0));
+        = grad_corr_boundary * c.cwiseProduct(omegas.col(0))
+            / unnormed_marginal;
+
+      std::cout << "rho adjoint" << std::endl
+      << grad_corr_boundary * c.cwiseProduct(omegas.col(0))
+        / unnormed_marginal
+      << std::endl;
     }
   }
+
+  // CHECK -- do we need to add the unormalizing term?
 
   return ops_partials.build(log_marginal_density);
 }
