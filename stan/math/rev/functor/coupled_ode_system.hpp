@@ -85,16 +85,15 @@ struct coupled_ode_system {
    * @param[in] x_int integer data
    * @param[in, out] msgs stream for messages
    */
-  coupled_ode_system(const F& f, const std::vector<T1>& y0,
-                     const Args&... args, std::ostream* msgs)
+  coupled_ode_system(const F& f, const std::vector<T1>& y0, const Args&... args,
+                     std::ostream* msgs)
       : f_(f),
         y0_(y0),
-	args_tuple_(args...),
-	y0_vars_(internal::count_vars(y0_)),
-	args_vars_(internal::count_vars(args...)),
+        args_tuple_(args...),
+        y0_vars_(internal::count_vars(y0_)),
+        args_vars_(internal::count_vars(args...)),
         N_(y0.size()),
-        msgs_(msgs) {
-  }
+        msgs_(msgs) {}
 
   /**
    * Calculates the derivative of the coupled ode system with respect
@@ -110,23 +109,26 @@ struct coupled_ode_system {
    * @throw exception if the base ode function does not return the
    *    expected number of derivatives, N.
    */
-  template<bool return_type_is_var = is_var<ReturnType>::value>
-  std::enable_if_t<return_type_is_var>
-  operator()(const std::vector<double>& z, std::vector<double>& dz_dt,
-                  double t) const {
+  template <bool return_type_is_var = is_var<ReturnType>::value>
+  std::enable_if_t<return_type_is_var> operator()(const std::vector<double>& z,
+                                                  std::vector<double>& dz_dt,
+                                                  double t) const {
     using std::vector;
 
     try {
       start_nested();
 
       const vector<var> y_vars(z.begin(), z.begin() + N_);
-      auto local_args_tuple = apply([&](const Args&... args) {
-	  return std::tuple<decltype(internal::deep_copy(args))...>(internal::deep_copy(args)...);
-	}, args_tuple_);
+      auto local_args_tuple = apply(
+          [&](const Args&... args) {
+            return std::tuple<decltype(internal::deep_copy(args))...>(
+                internal::deep_copy(args)...);
+          },
+          args_tuple_);
 
-      vector<var> dy_dt_vars = apply([&](const Args&... args) {
-	  return f_(t, y_vars, args..., msgs_);
-	}, local_args_tuple);
+      vector<var> dy_dt_vars = apply(
+          [&](const Args&... args) { return f_(t, y_vars, args..., msgs_); },
+          local_args_tuple);
 
       check_size_match("coupled_ode_system", "dz_dt", dy_dt_vars.size(),
                        "states", N_);
@@ -148,10 +150,12 @@ struct coupled_ode_system {
           dz_dt[N_ + N_ * j + i] = temp_deriv;
         }
 
-	Eigen::VectorXd args_adjoints = Eigen::VectorXd::Zero(args_vars_);
-	apply([&](const Args&... args) {
-	    internal::accumulate_adjoints(args_adjoints.data(), args...);
-	  }, local_args_tuple);
+        Eigen::VectorXd args_adjoints = Eigen::VectorXd::Zero(args_vars_);
+        apply(
+            [&](const Args&... args) {
+              internal::accumulate_adjoints(args_adjoints.data(), args...);
+            },
+            local_args_tuple);
         for (size_t j = 0; j < args_vars_; j++) {
           double temp_deriv = args_adjoints(j);
           for (size_t k = 0; k < N_; k++) {
@@ -170,13 +174,12 @@ struct coupled_ode_system {
     recover_memory_nested();
   }
 
-  template<bool return_type_is_var = is_var<ReturnType>::value>
-  std::enable_if_t<not return_type_is_var>
-  operator()(const std::vector<double>& y, std::vector<double>& dy_dt,
-                  double t) const {
-    dy_dt = apply([&](const Args&... args) {
-	return f_(t, y, args..., msgs_);
-      }, args_tuple_);
+  template <bool return_type_is_var = is_var<ReturnType>::value>
+  std::enable_if_t<not return_type_is_var> operator()(
+      const std::vector<double>& y, std::vector<double>& dy_dt,
+      double t) const {
+    dy_dt = apply([&](const Args&... args) { return f_(t, y, args..., msgs_); },
+                  args_tuple_);
 
     check_size_match("coupled_ode_system", "y", y.size(), "dy_dt",
                      dy_dt.size());

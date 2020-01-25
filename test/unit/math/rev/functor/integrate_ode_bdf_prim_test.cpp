@@ -361,4 +361,3 @@ TEST(StanMathOde_integrate_ode_bdf, error_conditions_bad_ode) {
                                      1e-8, 1e-10, 1e6),
                    std::invalid_argument, error_msg);
 }
-

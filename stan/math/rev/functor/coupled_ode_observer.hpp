@@ -26,10 +26,11 @@ namespace math {
  * used in stan-math.
  *
  */
-template <typename T1, typename T_t0, typename T_ts, typename F, typename... Args>
+template <typename T1, typename T_t0, typename T_ts, typename F,
+          typename... Args>
 struct coupled_ode_observer {
   using ReturnType = return_type_t<T1, T_t0, T_ts, Args...>;
-  
+
   const F& f_;
   const std::vector<T1>& y0_;
   const T_t0& t0_;
@@ -60,12 +61,9 @@ struct coupled_ode_observer {
    * @param[out] msgs the print stream for warning messages.
    * @param[out] y reference to a vector of vector of the final return
    */
-  coupled_ode_observer(const F& f,
-		       const std::vector<T1>& y0,
-		       const T_t0& t0,
-                       const std::vector<T_ts>& ts,
-		       const Args&... args,
-		       std::ostream* msgs,
+  coupled_ode_observer(const F& f, const std::vector<T1>& y0, const T_t0& t0,
+                       const std::vector<T_ts>& ts, const Args&... args,
+                       std::ostream* msgs,
                        std::vector<std::vector<ReturnType>>& y)
       : f_(f),
         y0_(y0),
@@ -73,7 +71,7 @@ struct coupled_ode_observer {
         ts_(ts),
         msgs_(msgs),
         y_(y),
-	args_tuple_(args...),
+        args_tuple_(args...),
         N_(y0.size()),
         next_ts_index_(0) {}
 
@@ -90,12 +88,12 @@ struct coupled_ode_observer {
    * @param t time of solution. The time must correspond to the
    * element ts[next_ts_index_]
    */
-  template<bool return_type_is_var = is_var<ReturnType>::value>
-  std::enable_if_t<return_type_is_var>
-  operator()(const std::vector<double>& coupled_state, double t) {
+  template <bool return_type_is_var = is_var<ReturnType>::value>
+  std::enable_if_t<return_type_is_var> operator()(
+      const std::vector<double>& coupled_state, double t) {
     check_less("coupled_ode_observer", "time-state number", next_ts_index_,
                ts_.size());
-    
+
     std::vector<ReturnType> yt;
     yt.reserve(N_);
 
@@ -103,22 +101,31 @@ struct coupled_ode_observer {
     if (stan::is_var<T_ts>::value) {
       std::vector<double> y_dbl(coupled_state.begin(),
                                 coupled_state.begin() + N_);
-      dy_dt = apply([&](const Args&... args) {
-	  return f_(value_of(ts_[next_ts_index_]), y_dbl, value_of(args)..., msgs_);
-	}, args_tuple_);
-      check_size_match("coupled_ode_observer", "dy_dt", dy_dt.size(), "states", N_);
+      dy_dt = apply(
+          [&](const Args&... args) {
+            return f_(value_of(ts_[next_ts_index_]), y_dbl, value_of(args)...,
+                      msgs_);
+          },
+          args_tuple_);
+      check_size_match("coupled_ode_observer", "dy_dt", dy_dt.size(), "states",
+                       N_);
     }
 
     const size_t y0_vars = internal::count_vars(y0_);
-    const size_t args_vars = apply([&](const Args&... args) { return internal::count_vars(args...); }, args_tuple_);
+    const size_t args_vars = apply(
+        [&](const Args&... args) { return internal::count_vars(args...); },
+        args_tuple_);
     // When true this is 1 and not ts_.size() because there's
     //   only one time point involved with this output
     const size_t time_vars = (stan::is_var<T_ts>::value) ? 1 : 0;
     const size_t total_vars = y0_vars + args_vars + time_vars;
-    
+
     for (size_t j = 0; j < N_; j++) {
-      vari** varis = ChainableStack::instance_->memalloc_.alloc_array<vari*>(total_vars);
-      double* partials = ChainableStack::instance_->memalloc_.alloc_array<double>(total_vars);
+      vari** varis
+          = ChainableStack::instance_->memalloc_.alloc_array<vari*>(total_vars);
+      double* partials
+          = ChainableStack::instance_->memalloc_.alloc_array<double>(
+              total_vars);
 
       vari** varis_ptr = varis;
       double* partials_ptr = partials;
@@ -128,38 +135,41 @@ struct coupled_ode_observer {
       // iterate over parameters for each equation
       varis_ptr = internal::save_varis(varis_ptr, y0_);
       for (std::size_t k = 0; k < y0_vars; k++) {
-	//*varis_ptr = y0[k].vi_;
-	*partials_ptr = coupled_state[N_ + y0_vars * k + j];
-	partials_ptr++;
+        //*varis_ptr = y0[k].vi_;
+        *partials_ptr = coupled_state[N_ + y0_vars * k + j];
+        partials_ptr++;
       }
 
-      varis_ptr = apply([&varis_ptr](const Args&... args) {
-	  return internal::save_varis(varis_ptr, args...);
-	}, args_tuple_);
+      varis_ptr = apply(
+          [&varis_ptr](const Args&... args) {
+            return internal::save_varis(varis_ptr, args...);
+          },
+          args_tuple_);
       for (std::size_t k = 0; k < args_vars; k++) {
-	// dy[j]_dtheta[k]
-	// theta[k].vi_
-	*partials_ptr = coupled_state[N_ + N_ * y0_vars + N_ * k + j];
-	partials_ptr++;
+        // dy[j]_dtheta[k]
+        // theta[k].vi_
+        *partials_ptr = coupled_state[N_ + N_ * y0_vars + N_ * k + j];
+        partials_ptr++;
       }
 
       if (time_vars > 0) {
-	varis_ptr = internal::save_varis(varis_ptr, ts_[next_ts_index_]);
-	*partials_ptr = dy_dt[j];
-	partials_ptr++;
-	// dy[j]_dcurrent_t
+        varis_ptr = internal::save_varis(varis_ptr, ts_[next_ts_index_]);
+        *partials_ptr = dy_dt[j];
+        partials_ptr++;
+        // dy[j]_dcurrent_t
       }
 
-      yt.emplace_back(new precomputed_gradients_vari(coupled_state[j], total_vars, varis, partials));
+      yt.emplace_back(new precomputed_gradients_vari(
+          coupled_state[j], total_vars, varis, partials));
     }
 
     y_.emplace_back(yt);
     next_ts_index_++;
   }
 
-  template<bool return_type_is_var = is_var<ReturnType>::value>
-  std::enable_if_t<not return_type_is_var>
-  operator()(const std::vector<double>& coupled_state, double t) {
+  template <bool return_type_is_var = is_var<ReturnType>::value>
+  std::enable_if_t<not return_type_is_var> operator()(
+      const std::vector<double>& coupled_state, double t) {
     y_.emplace_back(coupled_state);
   }
 };

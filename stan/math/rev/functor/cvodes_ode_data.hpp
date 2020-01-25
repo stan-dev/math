@@ -33,6 +33,7 @@ class cvodes_ode_data {
   const size_t S_;
 
   using ode_data = cvodes_ode_data<F, T_initial, Args...>;
+
  public:
   const coupled_ode_system<T_initial, F, Args...> coupled_ode_;
   std::vector<double> coupled_state_;
@@ -63,18 +64,16 @@ class cvodes_ode_data {
    * @param[in] x_int integer data vector for the ODE.
    * @param[in] msgs stream to which messages are printed.
    */
-  cvodes_ode_data(const F& f,
-		  const std::vector<T_initial>& y0,
-		  const Args&... args,
-                  std::ostream* msgs)
+  cvodes_ode_data(const F& f, const std::vector<T_initial>& y0,
+                  const Args&... args, std::ostream* msgs)
       : f_(f),
         y0_(y0),
-	args_tuple_(args...),
+        args_tuple_(args...),
         N_(y0.size()),
         msgs_(msgs),
-	y0_vars_(internal::count_vars(y0_)),
-	args_vars_(internal::count_vars(args...)),
-	S_(y0_vars_ + args_vars_),
+        y0_vars_(internal::count_vars(y0_)),
+        args_vars_(internal::count_vars(args...)),
+        S_(y0_vars_ + args_vars_),
         coupled_ode_(f, y0, args..., msgs),
         coupled_state_(coupled_ode_.initial_state()),
         nv_state_(N_VMake_Serial(N_, &coupled_state_[0])),
@@ -140,9 +139,11 @@ class cvodes_ode_data {
    */
   inline void rhs(double t, const double y[], double dy_dt[]) const {
     const std::vector<double> y_vec(y, y + N_);
-    std::vector<double> dy_dt_vec = apply([&](const Args&... args) {
-	return f_(t, y_vec, value_of(args)..., msgs_);
-      }, args_tuple_);
+    std::vector<double> dy_dt_vec = apply(
+        [&](const Args&... args) {
+          return f_(t, y_vec, value_of(args)..., msgs_);
+        },
+        args_tuple_);
     check_size_match("cvodes_ode_data", "dz_dt", dy_dt_vec.size(), "states",
                      N_);
     std::move(dy_dt_vec.begin(), dy_dt_vec.end(), dy_dt);
@@ -158,9 +159,12 @@ class cvodes_ode_data {
   inline int jacobian_states(double t, const double y[], SUNMatrix J) const {
     start_nested();
     const std::vector<var> y_vec_var(y, y + N_);
-    auto ode_jacobian = apply([&](const Args&... args) {
-	return coupled_ode_system<var, F, decltype(value_of(args))...>(f_, y_vec_var, value_of(args)..., msgs_);
-      }, args_tuple_);
+    auto ode_jacobian = apply(
+        [&](const Args&... args) {
+          return coupled_ode_system<var, F, decltype(value_of(args))...>(
+              f_, y_vec_var, value_of(args)..., msgs_);
+        },
+        args_tuple_);
     std::vector<double>&& jacobian_y = std::vector<double>(ode_jacobian.size());
     ode_jacobian(ode_jacobian.initial_state(), jacobian_y, t);
     std::move(jacobian_y.begin() + N_, jacobian_y.end(), SM_DATA_D(J));

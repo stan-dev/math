@@ -53,7 +53,7 @@ void sho_finite_diff_test(double t0) {
   sho_value_test<harm_osc_ode_fun, var, double>(harm_osc, y0, t0, ts, theta, x,
                                                 x_int);
   sho_value_test<harm_osc_ode_fun, var, var>(harm_osc, y0, t0, ts, theta, x,
-                                            x_int);
+                                             x_int);
 }
 
 void sho_data_finite_diff_test(double t0) {
@@ -134,7 +134,7 @@ TEST(StanAgradRevOde_integrate_ode_bdf, harmonic_oscillator_error) {
   sho_error_test<double, var>(harm_osc, y0, t0, ts, theta, x, x_int, error_msg);
   sho_error_test<var, double>(harm_osc, y0, t0, ts, theta, x, x_int, error_msg);
   sho_error_test<var, var>(harm_osc, y0, t0, ts, theta, x, x_int, error_msg);
-  }
+}
 
 TEST(StanAgradRevOde_integrate_ode_bdf, lorenz_finite_diff) {
   lorenz_ode_fun lorenz;
@@ -304,4 +304,3 @@ TEST(StanAgradRevOde_integrate_ode_bdf, t0_as_param_AD) {
   res = integrate_ode_bdf(ode, y0v, t0v, ts, thetav, x, x_int);
   test_ad();
 }
-

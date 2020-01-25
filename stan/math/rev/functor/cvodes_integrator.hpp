@@ -68,10 +68,10 @@ class cvodes_integrator {
    * @return a vector of states, each state being a vector of the
    * same size as the state variable, corresponding to a time in ts.
    */
-  template <typename... Args, typename F, typename T_initial,
-	    typename T_t0, typename T_ts>
+  template <typename... Args, typename F, typename T_initial, typename T_t0,
+            typename T_ts>
   std::vector<std::vector<
-		typename stan::return_type<T_initial, T_t0, T_ts, Args...>::type>>
+      typename stan::return_type<T_initial, T_t0, T_ts, Args...>::type>>
   integrate(const F& f, const std::vector<T_initial>& y0, const T_t0& t0,
             const std::vector<T_ts>& ts, const Args&... args,
             std::ostream* msgs, double relative_tolerance,
@@ -88,8 +88,10 @@ class cvodes_integrator {
     check_finite(fun, "initial time", t0_dbl);
     check_finite(fun, "times", ts_dbl);
 
-    // Code from: https://stackoverflow.com/a/17340003 . Should probably do something better
-    std::vector<int> unused_temp{ 0, (check_finite(fun, "ode parameters and data", args), 0)... };
+    // Code from: https://stackoverflow.com/a/17340003 . Should probably do
+    // something better
+    std::vector<int> unused_temp{
+        0, (check_finite(fun, "ode parameters and data", args), 0)...};
 
     check_nonzero_size(fun, "times", ts);
     check_nonzero_size(fun, "initial state", y0);
@@ -108,7 +110,6 @@ class cvodes_integrator {
                        "", ", must be greater than 0");
     }
 
-
     const size_t y0_vars = internal::count_vars(y0);
     const size_t args_vars = internal::count_vars(args...);
     const size_t S = y0_vars + args_vars;
@@ -124,9 +125,10 @@ class cvodes_integrator {
     const size_t coupled_size = cvodes_data.coupled_ode_.size();
 
     using return_t = return_type_t<T_initial, T_t0, T_ts, Args...>;
-    
+
     std::vector<std::vector<return_t>> y;
-    coupled_ode_observer<T_initial, T_t0, T_ts, F, Args...> observer(f, y0, t0, ts, args..., msgs, y);
+    coupled_ode_observer<T_initial, T_t0, T_ts, F, Args...> observer(
+        f, y0, t0, ts, args..., msgs, y);
 
     try {
       check_flag_sundials(CVodeInit(cvodes_mem, &ode_data::cv_rhs, t0_dbl,
