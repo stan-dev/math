@@ -24,9 +24,7 @@ namespace math {
  * @return True if the first variable's value is the same as the
  * second's.
  */
-inline bool operator==(var a, var b) {
-  return a.val() == b.val();
-}
+inline bool operator==(var a, var b) { return a.val() == b.val(); }
 
 /**
  * Equality operator comparing a variable's value and a double
