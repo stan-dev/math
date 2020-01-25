@@ -29,9 +29,9 @@ std::vector<std::vector<double> > finite_diff_params(
   std::vector<std::vector<double> > ode_res_ub;
   std::vector<std::vector<double> > ode_res_lb;
 
-  ode_res_ub = stan::math::integrate_ode_rk45(f, y_in, t_in, ts, theta_ub, x,
+  ode_res_ub = stan::math::integrate_ode_rk45<std::vector<double>, std::vector<double>, std::vector<int>>(f, y_in, t_in, ts, theta_ub, x,
                                               x_int, &msgs);
-  ode_res_lb = stan::math::integrate_ode_rk45(f, y_in, t_in, ts, theta_lb, x,
+  ode_res_lb = stan::math::integrate_ode_rk45<std::vector<double>, std::vector<double>, std::vector<int>>(f, y_in, t_in, ts, theta_lb, x,
                                               x_int, &msgs);
 
   std::vector<std::vector<double> > results(ts.size());
@@ -65,9 +65,9 @@ std::vector<std::vector<double> > finite_diff_initial_position(
   std::vector<std::vector<double> > ode_res_ub;
   std::vector<std::vector<double> > ode_res_lb;
 
-  ode_res_ub = stan::math::integrate_ode_rk45(f, y_in_ub, t_in, ts, theta, x,
+  ode_res_ub = stan::math::integrate_ode_rk45<std::vector<double>, std::vector<double>, std::vector<int>>(f, y_in_ub, t_in, ts, theta, x,
                                               x_int, &msgs);
-  ode_res_lb = stan::math::integrate_ode_rk45(f, y_in_lb, t_in, ts, theta, x,
+  ode_res_lb = stan::math::integrate_ode_rk45<std::vector<double>, std::vector<double>, std::vector<int>>(f, y_in_lb, t_in, ts, theta, x,
                                               x_int, &msgs);
 
   std::vector<std::vector<double> > results(ts.size());
@@ -103,7 +103,7 @@ void test_ode_finite_diff_dv(const F& f, const double& t_in,
 
   std::vector<std::vector<stan::math::var> > ode_res;
 
-  ode_res = stan::math::integrate_ode_rk45(f, y_in, t_in, ts, theta_v, x, x_int,
+  ode_res = stan::math::integrate_ode_rk45<std::vector<stan::math::var>, std::vector<double>, std::vector<int>>(f, y_in, t_in, ts, theta_v, x, x_int,
                                            &msgs);
 
   for (size_t i = 0; i < ts.size(); i++) {
@@ -147,7 +147,7 @@ void test_ode_finite_diff_vd(const F& f, const double& t_in,
 
   std::vector<std::vector<stan::math::var> > ode_res;
 
-  ode_res = stan::math::integrate_ode_rk45(f, y_in_v, t_in, ts, theta, x, x_int,
+  ode_res = stan::math::integrate_ode_rk45<std::vector<double>, std::vector<double>, std::vector<int>>(f, y_in_v, t_in, ts, theta, x, x_int,
                                            &msgs);
 
   for (size_t i = 0; i < ts.size(); i++) {
@@ -206,7 +206,7 @@ void test_ode_finite_diff_vv(const F& f, const double& t_in,
 
   std::vector<std::vector<stan::math::var> > ode_res;
 
-  ode_res = stan::math::integrate_ode_rk45(f, y_in_v, t_in, ts, theta_v, x,
+  ode_res = stan::math::integrate_ode_rk45<std::vector<stan::math::var>, std::vector<double>, std::vector<int>>(f, y_in_v, t_in, ts, theta_v, x,
                                            x_int, &msgs);
 
   for (size_t i = 0; i < ts.size(); i++) {
@@ -242,13 +242,13 @@ void test_ode_error_conditions(F& f, const double& t0,
   using stan::math::integrate_ode_rk45;
   std::stringstream msgs;
 
-  ASSERT_NO_THROW(integrate_ode_rk45(f, y0, t0, ts, theta, x, x_int, 0));
+  ASSERT_NO_THROW((integrate_ode_rk45<std::vector<T2>, std::vector<double>, std::vector<int>>(f, y0, t0, ts, theta, x, x_int, 0)));
   ASSERT_EQ("", msgs.str());
 
   msgs.clear();
   std::vector<T1> y0_bad;
   EXPECT_THROW_MSG(
-      integrate_ode_rk45(f, y0_bad, t0, ts, theta, x, x_int, &msgs),
+		   (integrate_ode_rk45<std::vector<T2>, std::vector<double>, std::vector<int>>(f, y0_bad, t0, ts, theta, x, x_int, &msgs)),
       std::invalid_argument, "initial state has size 0");
   EXPECT_EQ("", msgs.str());
 
@@ -258,14 +258,14 @@ void test_ode_error_conditions(F& f, const double& t0,
   expected_msg << "initial time is " << t0_bad << ", but must be less than "
                << ts[0];
   EXPECT_THROW_MSG(
-      integrate_ode_rk45(f, y0, t0_bad, ts, theta, x, x_int, &msgs),
+		   (integrate_ode_rk45<std::vector<T2>, std::vector<double>, std::vector<int>>(f, y0, t0_bad, ts, theta, x, x_int, &msgs)),
       std::domain_error, expected_msg.str());
   EXPECT_EQ("", msgs.str());
 
   msgs.clear();
   std::vector<double> ts_bad;
   EXPECT_THROW_MSG(
-      integrate_ode_rk45(f, y0, t0, ts_bad, theta, x, x_int, &msgs),
+		   (integrate_ode_rk45<std::vector<T2>, std::vector<double>, std::vector<int>>(f, y0, t0, ts_bad, theta, x, x_int, &msgs)),
       std::invalid_argument, "times has size 0");
   EXPECT_EQ("", msgs.str());
 
@@ -273,14 +273,14 @@ void test_ode_error_conditions(F& f, const double& t0,
   ts_bad.push_back(3);
   ts_bad.push_back(1);
   EXPECT_THROW_MSG(
-      integrate_ode_rk45(f, y0, t0, ts_bad, theta, x, x_int, &msgs),
+		   (integrate_ode_rk45<std::vector<T2>, std::vector<double>, std::vector<int>>(f, y0, t0, ts_bad, theta, x, x_int, &msgs)),
       std::domain_error, "times is not a valid ordered vector");
   EXPECT_EQ("", msgs.str());
 
   msgs.clear();
   std::vector<T2> theta_bad;
   EXPECT_THROW_MSG(
-      integrate_ode_rk45(f, y0, t0, ts, theta_bad, x, x_int, &msgs),
+		   (integrate_ode_rk45<std::vector<T2>, std::vector<double>, std::vector<int>>(f, y0, t0, ts, theta_bad, x, x_int, &msgs)),
       std::out_of_range, "vector");
   EXPECT_EQ("", msgs.str());
 
@@ -288,7 +288,7 @@ void test_ode_error_conditions(F& f, const double& t0,
     msgs.clear();
     std::vector<double> x_bad;
     EXPECT_THROW_MSG(
-        integrate_ode_rk45(f, y0, t0, ts, theta, x_bad, x_int, &msgs),
+		     (integrate_ode_rk45<std::vector<T2>, std::vector<double>, std::vector<int>>(f, y0, t0, ts, theta, x_bad, x_int, &msgs)),
         std::out_of_range, "vector");
     EXPECT_EQ("", msgs.str());
   }
@@ -297,7 +297,7 @@ void test_ode_error_conditions(F& f, const double& t0,
     msgs.clear();
     std::vector<int> x_int_bad;
     EXPECT_THROW_MSG(
-        integrate_ode_rk45(f, y0, t0, ts, theta, x, x_int_bad, &msgs),
+		     (integrate_ode_rk45<std::vector<T2>, std::vector<double>, std::vector<int>>(f, y0, t0, ts, theta, x, x_int_bad, &msgs)),
         std::out_of_range, "vector");
     EXPECT_EQ("", msgs.str());
   }
@@ -316,27 +316,27 @@ void test_ode_error_conditions_nan(F& f, const double& t0,
   std::stringstream expected_is_nan;
   expected_is_nan << "is " << nan;
 
-  ASSERT_NO_THROW(integrate_ode_rk45(f, y0, t0, ts, theta, x, x_int, 0));
+  ASSERT_NO_THROW((integrate_ode_rk45<std::vector<T2>, std::vector<double>, std::vector<int>>(f, y0, t0, ts, theta, x, x_int, 0)));
   ASSERT_EQ("", msgs.str());
 
   msgs.clear();
   std::vector<T1> y0_bad = y0;
   y0_bad[0] = nan;
   EXPECT_THROW_MSG(
-      integrate_ode_rk45(f, y0_bad, t0, ts, theta, x, x_int, &msgs),
+		   (integrate_ode_rk45<std::vector<T2>, std::vector<double>, std::vector<int>>(f, y0_bad, t0, ts, theta, x, x_int, &msgs)),
       std::domain_error, "initial state");
   EXPECT_THROW_MSG(
-      integrate_ode_rk45(f, y0_bad, t0, ts, theta, x, x_int, &msgs),
+		   (integrate_ode_rk45<std::vector<T2>, std::vector<double>, std::vector<int>>(f, y0_bad, t0, ts, theta, x, x_int, &msgs)),
       std::domain_error, expected_is_nan.str());
   EXPECT_EQ("", msgs.str());
 
   msgs.clear();
   double t0_bad = nan;
   EXPECT_THROW_MSG(
-      integrate_ode_rk45(f, y0, t0_bad, ts, theta, x, x_int, &msgs),
+		   (integrate_ode_rk45<std::vector<T2>, std::vector<double>, std::vector<int>>(f, y0, t0_bad, ts, theta, x, x_int, &msgs)),
       std::domain_error, "initial time");
   EXPECT_THROW_MSG(
-      integrate_ode_rk45(f, y0, t0_bad, ts, theta, x, x_int, &msgs),
+		   (integrate_ode_rk45<std::vector<T2>, std::vector<double>, std::vector<int>>(f, y0, t0_bad, ts, theta, x, x_int, &msgs)),
       std::domain_error, expected_is_nan.str());
   EXPECT_EQ("", msgs.str());
 
@@ -344,10 +344,10 @@ void test_ode_error_conditions_nan(F& f, const double& t0,
   std::vector<double> ts_bad = ts;
   ts_bad[0] = nan;
   EXPECT_THROW_MSG(
-      integrate_ode_rk45(f, y0, t0, ts_bad, theta, x, x_int, &msgs),
+		   (integrate_ode_rk45<std::vector<T2>, std::vector<double>, std::vector<int>>(f, y0, t0, ts_bad, theta, x, x_int, &msgs)),
       std::domain_error, "times");
   EXPECT_THROW_MSG(
-      integrate_ode_rk45(f, y0, t0, ts_bad, theta, x, x_int, &msgs),
+		   (integrate_ode_rk45<std::vector<T2>, std::vector<double>, std::vector<int>>(f, y0, t0, ts_bad, theta, x, x_int, &msgs)),
       std::domain_error, expected_is_nan.str());
   EXPECT_EQ("", msgs.str());
 
@@ -355,10 +355,10 @@ void test_ode_error_conditions_nan(F& f, const double& t0,
   std::vector<T2> theta_bad = theta;
   theta_bad[0] = nan;
   EXPECT_THROW_MSG(
-      integrate_ode_rk45(f, y0, t0, ts, theta_bad, x, x_int, &msgs),
-      std::domain_error, "parameter vector");
+		   (integrate_ode_rk45<std::vector<T2>, std::vector<double>, std::vector<int>>(f, y0, t0, ts, theta_bad, x, x_int, &msgs)),
+      std::domain_error, "ode parameters and data");
   EXPECT_THROW_MSG(
-      integrate_ode_rk45(f, y0, t0, ts, theta_bad, x, x_int, &msgs),
+		   (integrate_ode_rk45<std::vector<T2>, std::vector<double>, std::vector<int>>(f, y0, t0, ts, theta_bad, x, x_int, &msgs)),
       std::domain_error, expected_is_nan.str());
   EXPECT_EQ("", msgs.str());
 
@@ -367,10 +367,10 @@ void test_ode_error_conditions_nan(F& f, const double& t0,
     std::vector<double> x_bad = x;
     x_bad[0] = nan;
     EXPECT_THROW_MSG(
-        integrate_ode_rk45(f, y0, t0, ts, theta, x_bad, x_int, &msgs),
-        std::domain_error, "continuous data");
+		     (integrate_ode_rk45<std::vector<T2>, std::vector<double>, std::vector<int>>(f, y0, t0, ts, theta, x_bad, x_int, &msgs)),
+        std::domain_error, "ode parameters and data");
     EXPECT_THROW_MSG(
-        integrate_ode_rk45(f, y0, t0, ts, theta, x_bad, x_int, &msgs),
+		     (integrate_ode_rk45<std::vector<T2>, std::vector<double>, std::vector<int>>(f, y0, t0, ts, theta, x_bad, x_int, &msgs)),
         std::domain_error, expected_is_nan.str());
     EXPECT_EQ("", msgs.str());
   }
@@ -391,41 +391,41 @@ void test_ode_error_conditions_inf(F& f, const double& t0,
   std::stringstream expected_is_neg_inf;
   expected_is_neg_inf << "is " << -inf;
 
-  ASSERT_NO_THROW(integrate_ode_rk45(f, y0, t0, ts, theta, x, x_int, 0));
+  ASSERT_NO_THROW((integrate_ode_rk45<std::vector<T2>, std::vector<double>, std::vector<int>>(f, y0, t0, ts, theta, x, x_int, 0)));
   ASSERT_EQ("", msgs.str());
 
   msgs.clear();
   std::vector<T1> y0_bad = y0;
   y0_bad[0] = inf;
   EXPECT_THROW_MSG(
-      integrate_ode_rk45(f, y0_bad, t0, ts, theta, x, x_int, &msgs),
+		   (integrate_ode_rk45<std::vector<T2>, std::vector<double>, std::vector<int>>(f, y0_bad, t0, ts, theta, x, x_int, &msgs)),
       std::domain_error, "initial state");
   EXPECT_THROW_MSG(
-      integrate_ode_rk45(f, y0_bad, t0, ts, theta, x, x_int, &msgs),
+		   (integrate_ode_rk45<std::vector<T2>, std::vector<double>, std::vector<int>>(f, y0_bad, t0, ts, theta, x, x_int, &msgs)),
       std::domain_error, expected_is_inf.str());
   y0_bad[0] = -inf;
   EXPECT_THROW_MSG(
-      integrate_ode_rk45(f, y0_bad, t0, ts, theta, x, x_int, &msgs),
+		   (integrate_ode_rk45<std::vector<T2>, std::vector<double>, std::vector<int>>(f, y0_bad, t0, ts, theta, x, x_int, &msgs)),
       std::domain_error, "initial state");
   EXPECT_THROW_MSG(
-      integrate_ode_rk45(f, y0_bad, t0, ts, theta, x, x_int, &msgs),
+		   (integrate_ode_rk45<std::vector<T2>, std::vector<double>, std::vector<int>>(f, y0_bad, t0, ts, theta, x, x_int, &msgs)),
       std::domain_error, expected_is_neg_inf.str());
   EXPECT_EQ("", msgs.str());
 
   msgs.clear();
   double t0_bad = inf;
   EXPECT_THROW_MSG(
-      integrate_ode_rk45(f, y0, t0_bad, ts, theta, x, x_int, &msgs),
+		   (integrate_ode_rk45<std::vector<T2>, std::vector<double>, std::vector<int>>(f, y0, t0_bad, ts, theta, x, x_int, &msgs)),
       std::domain_error, "initial time");
   EXPECT_THROW_MSG(
-      integrate_ode_rk45(f, y0, t0_bad, ts, theta, x, x_int, &msgs),
+		   (integrate_ode_rk45<std::vector<T2>, std::vector<double>, std::vector<int>>(f, y0, t0_bad, ts, theta, x, x_int, &msgs)),
       std::domain_error, expected_is_inf.str());
   t0_bad = -inf;
   EXPECT_THROW_MSG(
-      integrate_ode_rk45(f, y0, t0_bad, ts, theta, x, x_int, &msgs),
+		   (integrate_ode_rk45<std::vector<T2>, std::vector<double>, std::vector<int>>(f, y0, t0_bad, ts, theta, x, x_int, &msgs)),
       std::domain_error, "initial time");
   EXPECT_THROW_MSG(
-      integrate_ode_rk45(f, y0, t0_bad, ts, theta, x, x_int, &msgs),
+		   (integrate_ode_rk45<std::vector<T2>, std::vector<double>, std::vector<int>>(f, y0, t0_bad, ts, theta, x, x_int, &msgs)),
       std::domain_error, expected_is_neg_inf.str());
   EXPECT_EQ("", msgs.str());
 
@@ -433,17 +433,17 @@ void test_ode_error_conditions_inf(F& f, const double& t0,
   std::vector<double> ts_bad = ts;
   ts_bad[0] = inf;
   EXPECT_THROW_MSG(
-      integrate_ode_rk45(f, y0, t0, ts_bad, theta, x, x_int, &msgs),
+		   (integrate_ode_rk45<std::vector<T2>, std::vector<double>, std::vector<int>>(f, y0, t0, ts_bad, theta, x, x_int, &msgs)),
       std::domain_error, "times");
   EXPECT_THROW_MSG(
-      integrate_ode_rk45(f, y0, t0, ts_bad, theta, x, x_int, &msgs),
+		   (integrate_ode_rk45<std::vector<T2>, std::vector<double>, std::vector<int>>(f, y0, t0, ts_bad, theta, x, x_int, &msgs)),
       std::domain_error, expected_is_inf.str());
   ts_bad[0] = -inf;
   EXPECT_THROW_MSG(
-      integrate_ode_rk45(f, y0, t0, ts_bad, theta, x, x_int, &msgs),
+		   (integrate_ode_rk45<std::vector<T2>, std::vector<double>, std::vector<int>>(f, y0, t0, ts_bad, theta, x, x_int, &msgs)),
       std::domain_error, "times");
   EXPECT_THROW_MSG(
-      integrate_ode_rk45(f, y0, t0, ts_bad, theta, x, x_int, &msgs),
+		   (integrate_ode_rk45<std::vector<T2>, std::vector<double>, std::vector<int>>(f, y0, t0, ts_bad, theta, x, x_int, &msgs)),
       std::domain_error, expected_is_neg_inf.str());
   EXPECT_EQ("", msgs.str());
 
@@ -451,17 +451,17 @@ void test_ode_error_conditions_inf(F& f, const double& t0,
   std::vector<T2> theta_bad = theta;
   theta_bad[0] = inf;
   EXPECT_THROW_MSG(
-      integrate_ode_rk45(f, y0, t0, ts, theta_bad, x, x_int, &msgs),
-      std::domain_error, "parameter vector");
+		   (integrate_ode_rk45<std::vector<T2>, std::vector<double>, std::vector<int>>(f, y0, t0, ts, theta_bad, x, x_int, &msgs)),
+      std::domain_error, "ode parameters and data");
   EXPECT_THROW_MSG(
-      integrate_ode_rk45(f, y0, t0, ts, theta_bad, x, x_int, &msgs),
+		   (integrate_ode_rk45<std::vector<T2>, std::vector<double>, std::vector<int>>(f, y0, t0, ts, theta_bad, x, x_int, &msgs)),
       std::domain_error, expected_is_inf.str());
   theta_bad[0] = -inf;
   EXPECT_THROW_MSG(
-      integrate_ode_rk45(f, y0, t0, ts, theta_bad, x, x_int, &msgs),
-      std::domain_error, "parameter vector");
+		   (integrate_ode_rk45<std::vector<T2>, std::vector<double>, std::vector<int>>(f, y0, t0, ts, theta_bad, x, x_int, &msgs)),
+      std::domain_error, "ode parameters and data");
   EXPECT_THROW_MSG(
-      integrate_ode_rk45(f, y0, t0, ts, theta_bad, x, x_int, &msgs),
+		   (integrate_ode_rk45<std::vector<T2>, std::vector<double>, std::vector<int>>(f, y0, t0, ts, theta_bad, x, x_int, &msgs)),
       std::domain_error, expected_is_neg_inf.str());
   EXPECT_EQ("", msgs.str());
 
@@ -470,17 +470,17 @@ void test_ode_error_conditions_inf(F& f, const double& t0,
     std::vector<double> x_bad = x;
     x_bad[0] = inf;
     EXPECT_THROW_MSG(
-        integrate_ode_rk45(f, y0, t0, ts, theta, x_bad, x_int, &msgs),
-        std::domain_error, "continuous data");
+		     (integrate_ode_rk45<std::vector<T2>, std::vector<double>, std::vector<int>>(f, y0, t0, ts, theta, x_bad, x_int, &msgs)),
+        std::domain_error, "ode parameters and data");
     EXPECT_THROW_MSG(
-        integrate_ode_rk45(f, y0, t0, ts, theta, x_bad, x_int, &msgs),
+		     (integrate_ode_rk45<std::vector<T2>, std::vector<double>, std::vector<int>>(f, y0, t0, ts, theta, x_bad, x_int, &msgs)),
         std::domain_error, expected_is_inf.str());
     x_bad[0] = -inf;
     EXPECT_THROW_MSG(
-        integrate_ode_rk45(f, y0, t0, ts, theta, x_bad, x_int, &msgs),
-        std::domain_error, "continuous data");
+		     (integrate_ode_rk45<std::vector<T2>, std::vector<double>, std::vector<int>>(f, y0, t0, ts, theta, x_bad, x_int, &msgs)),
+        std::domain_error, "ode parameters and data");
     EXPECT_THROW_MSG(
-        integrate_ode_rk45(f, y0, t0, ts, theta, x_bad, x_int, &msgs),
+		     (integrate_ode_rk45<std::vector<T2>, std::vector<double>, std::vector<int>>(f, y0, t0, ts, theta, x_bad, x_int, &msgs)),
         std::domain_error, expected_is_neg_inf.str());
     EXPECT_EQ("", msgs.str());
   }
@@ -543,3 +543,4 @@ void test_ode(const F& f, const double& t_in, const std::vector<double>& ts,
   test_ode_error_conditions_dv(f, t_in, ts, y_in, theta, x, x_int);
   test_ode_error_conditions_vv(f, t_in, ts, y_in, theta, x, x_int);
 }
+

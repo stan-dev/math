@@ -1,11 +1,12 @@
-#ifndef STAN_MATH_PRIM_FUNCTOR_INTEGRATE_ODE_RK45_HPP
-#define STAN_MATH_PRIM_FUNCTOR_INTEGRATE_ODE_RK45_HPP
+#ifndef STAN_MATH_REV_FUNCTOR_INTEGRATE_ODE_RK45_HPP
+#define STAN_MATH_REV_FUNCTOR_INTEGRATE_ODE_RK45_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/functor/coupled_ode_system.hpp>
-#include <stan/math/prim/functor/coupled_ode_observer.hpp>
+#include <stan/math/rev/functor/coupled_ode_system.hpp>
+#include <stan/math/rev/functor/coupled_ode_observer.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/functor/apply.hpp>
 #include <boost/version.hpp>
 #if BOOST_VERSION == 106400
 #include <boost/serialization/array_wrapper.hpp>
@@ -66,26 +67,30 @@ namespace math {
  * @return a vector of states, each state being a vector of the
  * same size as the state variable, corresponding to a time in ts.
  */
-template <typename F, typename T1, typename T2, typename T_t0, typename T_ts>
-std::vector<std::vector<return_type_t<T1, T2, T_t0, T_ts>>> integrate_ode_rk45(
+
+template <typename ...Args, typename F, typename T1, typename T_t0, typename T_ts>
+std::vector<std::vector<return_type_t<T1, T_t0, T_ts, Args...>>> integrate_ode_rk45(
     const F& f, const std::vector<T1>& y0, const T_t0& t0,
-    const std::vector<T_ts>& ts, const std::vector<T2>& theta,
-    const std::vector<double>& x, const std::vector<int>& x_int,
-    std::ostream* msgs = nullptr, double relative_tolerance = 1e-6,
-    double absolute_tolerance = 1e-6, int max_num_steps = 1E6) {
+    const std::vector<T_ts>& ts,
+    const Args&... args,
+    std::ostream* msgs = nullptr,
+    double relative_tolerance = 1e-6,
+    double absolute_tolerance = 1e-6,
+    int max_num_steps = 1e6) {
   using boost::numeric::odeint::integrate_times;
   using boost::numeric::odeint::make_dense_output;
   using boost::numeric::odeint::max_step_checker;
   using boost::numeric::odeint::runge_kutta_dopri5;
-
+  
   const double t0_dbl = value_of(t0);
   const std::vector<double> ts_dbl = value_of(ts);
 
   check_finite("integrate_ode_rk45", "initial state", y0);
   check_finite("integrate_ode_rk45", "initial time", t0_dbl);
   check_finite("integrate_ode_rk45", "times", ts_dbl);
-  check_finite("integrate_ode_rk45", "parameter vector", theta);
-  check_finite("integrate_ode_rk45", "continuous data", x);
+
+  // Code from: https://stackoverflow.com/a/17340003 . Should probably do something better
+  std::vector<int> unused_temp{ 0, (check_finite("integrate_ode_rk45", "ode parameters and data", args), 0)... };
 
   check_nonzero_size("integrate_ode_rk45", "initial state", y0);
   check_nonzero_size("integrate_ode_rk45", "times", ts_dbl);
@@ -105,17 +110,17 @@ std::vector<std::vector<return_type_t<T1, T2, T_t0, T_ts>>> integrate_ode_rk45(
                      ", must be greater than 0");
   }
 
+  using return_t = return_type_t<T1, T_t0, T_ts, Args...>;
   // creates basic or coupled system by template specializations
-  coupled_ode_system<F, T1, T2> coupled_system(f, y0, theta, x, x_int, msgs);
+  coupled_ode_system<T1, F, Args...> coupled_system(f, y0, args..., msgs);
 
   // first time in the vector must be time of initial state
   std::vector<double> ts_vec(ts.size() + 1);
   ts_vec[0] = t0_dbl;
   std::copy(ts_dbl.begin(), ts_dbl.end(), ts_vec.begin() + 1);
 
-  std::vector<std::vector<return_type_t<T1, T2, T_t0, T_ts>>> y;
-  coupled_ode_observer<F, T1, T2, T_t0, T_ts> observer(f, y0, theta, t0, ts, x,
-                                                       x_int, msgs, y);
+  std::vector<std::vector<return_t>> y;
+  coupled_ode_observer<T1, T_t0, T_ts, F, Args...> observer(f, y0, t0, ts, args..., msgs, y);
   bool observer_initial_recorded = false;
 
   // avoid recording of the initial state which is included by the

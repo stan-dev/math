@@ -206,7 +206,7 @@ TEST(StanMathOde_integrate_ode_bdf, error_conditions_nan) {
   theta_bad[0] = nan;
   EXPECT_THROW_MSG(integrate_ode_bdf(harm_osc, y0, t0, ts, theta_bad, x, x_int,
                                      0, 1e-8, 1e-10, 1e6),
-                   std::domain_error, "parameter vector");
+                   std::domain_error, "ode parameters and data");
   EXPECT_THROW_MSG(integrate_ode_bdf(harm_osc, y0, t0, ts, theta_bad, x, x_int,
                                      0, 1e-8, 1e-10, 1e6),
                    std::domain_error, expected_is_nan.str());
@@ -216,7 +216,7 @@ TEST(StanMathOde_integrate_ode_bdf, error_conditions_nan) {
     x_bad[0] = nan;
     EXPECT_THROW_MSG(integrate_ode_bdf(harm_osc, y0, t0, ts, theta, x_bad,
                                        x_int, 0, 1e-8, 1e-10, 1e6),
-                     std::domain_error, "continuous data");
+                     std::domain_error, "ode parameters and data");
     EXPECT_THROW_MSG(integrate_ode_bdf(harm_osc, y0, t0, ts, theta, x_bad,
                                        x_int, 0, 1e-8, 1e-10, 1e6),
                      std::domain_error, expected_is_nan.str());
@@ -303,14 +303,14 @@ TEST(StanMathOde_integrate_ode_bdf, error_conditions_inf) {
   theta_bad[0] = inf;
   EXPECT_THROW_MSG(integrate_ode_bdf(harm_osc, y0, t0, ts, theta_bad, x, x_int,
                                      0, 1e-8, 1e-10, 1e6),
-                   std::domain_error, "parameter vector");
+                   std::domain_error, "ode parameters and data");
   EXPECT_THROW_MSG(integrate_ode_bdf(harm_osc, y0, t0, ts, theta_bad, x, x_int,
                                      0, 1e-8, 1e-10, 1e6),
                    std::domain_error, expected_is_inf.str());
   theta_bad[0] = -inf;
   EXPECT_THROW_MSG(integrate_ode_bdf(harm_osc, y0, t0, ts, theta_bad, x, x_int,
                                      0, 1e-8, 1e-10, 1e6),
-                   std::domain_error, "parameter vector");
+                   std::domain_error, "ode parameters and data");
   EXPECT_THROW_MSG(integrate_ode_bdf(harm_osc, y0, t0, ts, theta_bad, x, x_int,
                                      0, 1e-8, 1e-10, 1e6),
                    std::domain_error, expected_is_neg_inf.str());
@@ -320,14 +320,14 @@ TEST(StanMathOde_integrate_ode_bdf, error_conditions_inf) {
     x_bad[0] = inf;
     EXPECT_THROW_MSG(integrate_ode_bdf(harm_osc, y0, t0, ts, theta, x_bad,
                                        x_int, 0, 1e-8, 1e-10, 1e6),
-                     std::domain_error, "continuous data");
+                     std::domain_error, "ode parameters and data");
     EXPECT_THROW_MSG(integrate_ode_bdf(harm_osc, y0, t0, ts, theta, x_bad,
                                        x_int, 0, 1e-8, 1e-10, 1e6),
                      std::domain_error, expected_is_inf.str());
     x_bad[0] = -inf;
     EXPECT_THROW_MSG(integrate_ode_bdf(harm_osc, y0, t0, ts, theta, x_bad,
                                        x_int, 0, 1e-8, 1e-10, 1e6),
-                     std::domain_error, "continuous data");
+                     std::domain_error, "ode parameters and data");
     EXPECT_THROW_MSG(integrate_ode_bdf(harm_osc, y0, t0, ts, theta, x_bad,
                                        x_int, 0, 1e-8, 1e-10, 1e6),
                      std::domain_error, expected_is_neg_inf.str());
@@ -361,3 +361,4 @@ TEST(StanMathOde_integrate_ode_bdf, error_conditions_bad_ode) {
                                      1e-8, 1e-10, 1e6),
                    std::invalid_argument, error_msg);
 }
+

@@ -2,13 +2,12 @@
 #define STAN_MATH_REV_FUNCTOR_INTEGRATE_ODE_CVODES_HPP
 
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/functor/coupled_ode_system.hpp>
 #include <stan/math/rev/functor/cvodes_utils.hpp>
+#include <stan/math/rev/functor/coupled_ode_system.hpp>
 #include <stan/math/rev/functor/cvodes_ode_data.hpp>
+#include <stan/math/rev/functor/coupled_ode_observer.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/coupled_ode_observer.hpp>
-#include <stan/math/prim/functor/coupled_ode_system.hpp>
 #include <cvodes/cvodes.h>
 #include <sunlinsol/sunlinsol_dense.h>
 #include <algorithm>
@@ -69,18 +68,16 @@ class cvodes_integrator {
    * @return a vector of states, each state being a vector of the
    * same size as the state variable, corresponding to a time in ts.
    */
-  template <typename F, typename T_initial, typename T_param, typename T_t0,
-            typename T_ts>
+  template <typename... Args, typename F, typename T_initial,
+	    typename T_t0, typename T_ts>
   std::vector<std::vector<
-      typename stan::return_type<T_initial, T_param, T_t0, T_ts>::type>>
+		typename stan::return_type<T_initial, T_t0, T_ts, Args...>::type>>
   integrate(const F& f, const std::vector<T_initial>& y0, const T_t0& t0,
-            const std::vector<T_ts>& ts, const std::vector<T_param>& theta,
-            const std::vector<double>& x, const std::vector<int>& x_int,
+            const std::vector<T_ts>& ts, const Args&... args,
             std::ostream* msgs, double relative_tolerance,
             double absolute_tolerance,
             long int max_num_steps) {  // NOLINT(runtime/int)
     using initial_var = stan::is_var<T_initial>;
-    using param_var = stan::is_var<T_param>;
 
     const char* fun = "integrate_ode_cvodes";
 
@@ -90,8 +87,10 @@ class cvodes_integrator {
     check_finite(fun, "initial state", y0);
     check_finite(fun, "initial time", t0_dbl);
     check_finite(fun, "times", ts_dbl);
-    check_finite(fun, "parameter vector", theta);
-    check_finite(fun, "continuous data", x);
+
+    // Code from: https://stackoverflow.com/a/17340003 . Should probably do something better
+    std::vector<int> unused_temp{ 0, (check_finite(fun, "ode parameters and data", args), 0)... };
+
     check_nonzero_size(fun, "times", ts);
     check_nonzero_size(fun, "initial state", y0);
     check_ordered(fun, "times", ts_dbl);
@@ -109,12 +108,13 @@ class cvodes_integrator {
                        "", ", must be greater than 0");
     }
 
-    const size_t N = y0.size();
-    const size_t M = theta.size();
-    const size_t S = (initial_var::value ? N : 0) + (param_var::value ? M : 0);
 
-    using ode_data = cvodes_ode_data<F, T_initial, T_param>;
-    ode_data cvodes_data(f, y0, theta, x, x_int, msgs);
+    const size_t y0_vars = internal::count_vars(y0);
+    const size_t args_vars = internal::count_vars(args...);
+    const size_t S = y0_vars + args_vars;
+
+    using ode_data = cvodes_ode_data<F, T_initial, Args...>;
+    ode_data cvodes_data(f, y0, args..., msgs);
 
     void* cvodes_mem = CVodeCreate(Lmm);
     if (cvodes_mem == nullptr) {
@@ -123,11 +123,10 @@ class cvodes_integrator {
 
     const size_t coupled_size = cvodes_data.coupled_ode_.size();
 
-    std::vector<std::vector<
-        typename stan::return_type<T_initial, T_param, T_t0, T_ts>::type>>
-        y;
-    coupled_ode_observer<F, T_initial, T_param, T_t0, T_ts> observer(
-        f, y0, theta, t0, ts, x, x_int, msgs, y);
+    using return_t = return_type_t<T_initial, T_t0, T_ts, Args...>;
+    
+    std::vector<std::vector<return_t>> y;
+    coupled_ode_observer<T_initial, T_t0, T_ts, F, Args...> observer(f, y0, t0, ts, args..., msgs, y);
 
     try {
       check_flag_sundials(CVodeInit(cvodes_mem, &ode_data::cv_rhs, t0_dbl,

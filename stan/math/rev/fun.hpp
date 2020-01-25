@@ -10,6 +10,7 @@
 #include <stan/math/rev/fun/Phi.hpp>
 #include <stan/math/rev/fun/Phi_approx.hpp>
 #include <stan/math/rev/fun/abs.hpp>
+#include <stan/math/rev/fun/accumulate_adjoints.hpp>
 #include <stan/math/rev/fun/acos.hpp>
 #include <stan/math/rev/fun/acosh.hpp>
 #include <stan/math/rev/fun/as_bool.hpp>
@@ -30,8 +31,10 @@
 #include <stan/math/rev/fun/columns_dot_self.hpp>
 #include <stan/math/rev/fun/cos.hpp>
 #include <stan/math/rev/fun/cosh.hpp>
+#include <stan/math/rev/fun/count_vars.hpp>
 #include <stan/math/rev/fun/cov_exp_quad.hpp>
 #include <stan/math/rev/fun/crossprod.hpp>
+#include <stan/math/rev/fun/deep_copy.hpp>
 #include <stan/math/rev/fun/determinant.hpp>
 #include <stan/math/rev/fun/digamma.hpp>
 #include <stan/math/rev/fun/divide.hpp>
@@ -114,6 +117,7 @@
 #include <stan/math/rev/fun/rising_factorial.hpp>
 #include <stan/math/rev/fun/round.hpp>
 #include <stan/math/rev/fun/rows_dot_product.hpp>
+#include <stan/math/rev/fun/save_varis.hpp>
 #include <stan/math/rev/fun/sd.hpp>
 #include <stan/math/rev/fun/simplex_constrain.hpp>
 #include <stan/math/rev/fun/sin.hpp>
