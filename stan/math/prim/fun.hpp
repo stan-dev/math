@@ -40,7 +40,9 @@
 #include <stan/math/prim/fun/columns_dot_product.hpp>
 #include <stan/math/prim/fun/columns_dot_self.hpp>
 #include <stan/math/prim/fun/common_type.hpp>
+#include <stan/math/prim/fun/constant_vector.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/copysign.hpp>
 #include <stan/math/prim/fun/corr_constrain.hpp>
 #include <stan/math/prim/fun/corr_free.hpp>
 #include <stan/math/prim/fun/corr_matrix_constrain.hpp>
@@ -113,6 +115,7 @@
 #include <stan/math/prim/fun/hypot.hpp>
 #include <stan/math/prim/fun/identity_constrain.hpp>
 #include <stan/math/prim/fun/identity_free.hpp>
+#include <stan/math/prim/fun/identity_matrix.hpp>
 #include <stan/math/prim/fun/if_else.hpp>
 #include <stan/math/prim/fun/inc_beta.hpp>
 #include <stan/math/prim/fun/initialize.hpp>
@@ -126,6 +129,10 @@
 #include <stan/math/prim/fun/inverse.hpp>
 #include <stan/math/prim/fun/inverse_softmax.hpp>
 #include <stan/math/prim/fun/inverse_spd.hpp>
+#include <stan/math/prim/fun/isfinite.hpp>
+#include <stan/math/prim/fun/isinf.hpp>
+#include <stan/math/prim/fun/isnan.hpp>
+#include <stan/math/prim/fun/isnormal.hpp>
 #include <stan/math/prim/fun/is_any_nan.hpp>
 #include <stan/math/prim/fun/is_inf.hpp>
 #include <stan/math/prim/fun/is_nan.hpp>
@@ -196,6 +203,8 @@
 #include <stan/math/prim/fun/num_elements.hpp>
 #include <stan/math/prim/fun/offset_multiplier_constrain.hpp>
 #include <stan/math/prim/fun/offset_multiplier_free.hpp>
+#include <stan/math/prim/fun/one_hot_vector.hpp>
+#include <stan/math/prim/fun/ones_vector.hpp>
 #include <stan/math/prim/fun/ordered_constrain.hpp>
 #include <stan/math/prim/fun/ordered_free.hpp>
 #include <stan/math/prim/fun/owens_t.hpp>
@@ -239,7 +248,9 @@
 #include <stan/math/prim/fun/scaled_add.hpp>
 #include <stan/math/prim/fun/sd.hpp>
 #include <stan/math/prim/fun/segment.hpp>
+#include <stan/math/prim/fun/set_spaced_vector.hpp>
 #include <stan/math/prim/fun/sign.hpp>
+#include <stan/math/prim/fun/signbit.hpp>
 #include <stan/math/prim/fun/simplex_constrain.hpp>
 #include <stan/math/prim/fun/simplex_free.hpp>
 #include <stan/math/prim/fun/sin.hpp>
@@ -282,6 +293,7 @@
 #include <stan/math/prim/fun/typedefs.hpp>
 #include <stan/math/prim/fun/ub_constrain.hpp>
 #include <stan/math/prim/fun/ub_free.hpp>
+#include <stan/math/prim/fun/uniform_simplex.hpp>
 #include <stan/math/prim/fun/unit_vector_constrain.hpp>
 #include <stan/math/prim/fun/unit_vector_free.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
@@ -289,5 +301,6 @@
 #include <stan/math/prim/fun/variance.hpp>
 #include <stan/math/prim/fun/welford_covar_estimator.hpp>
 #include <stan/math/prim/fun/welford_var_estimator.hpp>
+#include <stan/math/prim/fun/zeros_vector.hpp>
 
 #endif
