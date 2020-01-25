@@ -306,7 +306,7 @@ struct adj_jac_vari : public vari {
   }
 
   template <typename... Pargs>
-  void prepare_x_vis(const var& x, const Pargs&... args) {
+  void prepare_x_vis(var& x, const Pargs&... args) {
     static constexpr int t = sizeof...(Targs) - sizeof...(Pargs) - 1;
     x_vis_[offsets_[t]] = x.vi_;
     prepare_x_vis(args...);

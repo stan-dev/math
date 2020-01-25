@@ -38,7 +38,7 @@ class inv_sqrt_vari : public op_v_vari {
    \f]
  *
  */
-inline var inv_sqrt(const var& a) {
+inline var inv_sqrt(var a) {
   return var(new internal::inv_sqrt_vari(a.vi_));
 }
 

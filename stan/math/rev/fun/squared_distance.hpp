@@ -38,19 +38,19 @@ class scal_squared_distance_dv_vari : public op_dv_vari {
 /**
  * Returns the squared distance.
  */
-inline var squared_distance(const var& a, const var& b) {
+inline var squared_distance(var a, var b) {
   return var(new scal_squared_distance_vv_vari(a.vi_, b.vi_));
 }
 /**
  * Returns the squared distance.
  */
-inline var squared_distance(const var& a, double b) {
+inline var squared_distance(var a, double b) {
   return var(new scal_squared_distance_vd_vari(a.vi_, b));
 }
 /**
  * Returns the squared distance.
  */
-inline var squared_distance(double a, const var& b) {
+inline var squared_distance(double a, var b) {
   return var(new scal_squared_distance_dv_vari(a, b.vi_));
 }
 

@@ -568,7 +568,7 @@ inline return_type_t<T1, T2> multiply(const T1& v, const T2& c) {
  * @return Product of scalar and matrix
  */
 template <int R, int C>
-inline Eigen::Matrix<var, R, C> multiply(const var& c,
+inline Eigen::Matrix<var, R, C> multiply(var c,
                                          const Eigen::Matrix<var, R, C>& m) {
   return m * c;
 }
@@ -602,7 +602,7 @@ inline Eigen::Matrix<var, R, C> multiply(const Arith& c,
  * @return Product of scalar and matrix
  */
 template <typename Arith, int R, int C, typename = require_arithmetic_t<Arith>>
-inline Eigen::Matrix<var, R, C> multiply(const var& c,
+inline Eigen::Matrix<var, R, C> multiply(var c,
                                          const Eigen::Matrix<Arith, R, C>& m) {
   return m * c;
 }
@@ -618,7 +618,7 @@ inline Eigen::Matrix<var, R, C> multiply(const var& c,
  */
 template <int R, int C>
 inline Eigen::Matrix<var, R, C> multiply(const Eigen::Matrix<var, R, C>& m,
-                                         const var& c) {
+                                         var c) {
   return m * c;
 }
 
@@ -635,7 +635,7 @@ inline Eigen::Matrix<var, R, C> multiply(const Eigen::Matrix<var, R, C>& m,
  */
 template <typename Arith, int R, int C, typename = require_arithmetic_t<Arith>>
 inline Eigen::Matrix<var, R, C> multiply(const Eigen::Matrix<Arith, R, C>& m,
-                                         const var& c) {
+                                         var c) {
   return m * c;
 }
 

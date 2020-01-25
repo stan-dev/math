@@ -21,7 +21,7 @@ class log1p_exp_v_vari : public op_v_vari {
  * Return the log of 1 plus the exponential of the specified
  * variable.
  */
-inline var log1p_exp(const var& a) {
+inline var log1p_exp(var a) {
   return var(new internal::log1p_exp_v_vari(a.vi_));
 }
 

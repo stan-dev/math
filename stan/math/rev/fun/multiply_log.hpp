@@ -71,7 +71,7 @@ class multiply_log_dv_vari : public op_dv_vari {
  * @param b Second variable.
  * @return Value of a*log(b)
  */
-inline var multiply_log(const var& a, const var& b) {
+inline var multiply_log(var a, var b) {
   return var(new internal::multiply_log_vv_vari(a.vi_, b.vi_));
 }
 /**
@@ -84,7 +84,7 @@ inline var multiply_log(const var& a, const var& b) {
  * @param b Second scalar.
  * @return Value of a*log(b)
  */
-inline var multiply_log(const var& a, double b) {
+inline var multiply_log(var a, double b) {
   return var(new internal::multiply_log_vd_vari(a.vi_, b));
 }
 /**
@@ -98,7 +98,7 @@ inline var multiply_log(const var& a, double b) {
  * @param b Second variable.
  * @return Value of a*log(b)
  */
-inline var multiply_log(double a, const var& b) {
+inline var multiply_log(double a, var b) {
   if (a == 1.0) {
     return log(b);
   }

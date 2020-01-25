@@ -20,7 +20,7 @@ namespace math {
  * @param u argument
  * @return trigamma function at argument
  */
-inline var trigamma(const var& u) { return trigamma_impl(u); }
+inline var trigamma(var u) { return trigamma_impl(u); }
 
 }  // namespace math
 }  // namespace stan

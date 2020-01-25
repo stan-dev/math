@@ -15,7 +15,7 @@ namespace math {
  * @param v input variable.
  * @return value of input.
  */
-inline double primitive_value(const var& v) { return v.val(); }
+inline double primitive_value(var v) { return v.val(); }
 
 }  // namespace math
 }  // namespace stan

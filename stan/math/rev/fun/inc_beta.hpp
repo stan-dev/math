@@ -35,7 +35,7 @@ class inc_beta_vvv_vari : public op_vvv_vari {
 
 }  // namespace internal
 
-inline var inc_beta(const var& a, const var& b, const var& c) {
+inline var inc_beta(var a, var b, var c) {
   return var(new internal::inc_beta_vvv_vari(a.vi_, b.vi_, c.vi_));
 }
 

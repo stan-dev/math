@@ -42,7 +42,7 @@ class hypot_vd_vari : public op_v_vari {
  * @param[in] b Length of second side.
  * @return Length of hypotenuse.
  */
-inline var hypot(const var& a, const var& b) {
+inline var hypot(var a, var b) {
   return var(new internal::hypot_vv_vari(a.vi_, b.vi_));
 }
 
@@ -58,7 +58,7 @@ inline var hypot(const var& a, const var& b) {
  * @param[in] b Length of second side.
  * @return Length of hypotenuse.
  */
-inline var hypot(const var& a, double b) {
+inline var hypot(var a, double b) {
   return var(new internal::hypot_vd_vari(a.vi_, b));
 }
 
@@ -101,7 +101,7 @@ inline var hypot(const var& a, double b) {
  * @param[in] b Length of second side.
  * @return Length of hypotenuse.
  */
-inline var hypot(double a, const var& b) {
+inline var hypot(double a, var b) {
   return var(new internal::hypot_vd_vari(b.vi_, a));
 }
 

@@ -27,13 +27,13 @@ class ops_partials_edge<double, var> {
  public:
   double partial_;
   broadcast_array<double> partials_;
-  explicit ops_partials_edge(const var& op)
+  explicit ops_partials_edge(var op)
       : partial_(0), partials_(partial_), operand_(op) {}
 
  private:
   template <typename, typename, typename, typename, typename, typename>
   friend class stan::math::operands_and_partials;
-  const var& operand_;
+  var operand_;
 
   void dump_partials(double* partials) { *partials = this->partial_; }
   void dump_operands(vari** varis) { *varis = this->operand_.vi_; }

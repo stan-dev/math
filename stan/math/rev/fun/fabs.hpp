@@ -47,7 +47,7 @@ namespace math {
  * @param a Input variable.
  * @return Absolute value of variable.
  */
-inline var fabs(const var& a) {
+inline var fabs(var a) {
   if (a.val() > 0.0) {
     return a;
   } else if (a.val() < 0.0) {

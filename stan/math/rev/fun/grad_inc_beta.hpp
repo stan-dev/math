@@ -33,8 +33,8 @@ namespace math {
  * @param[in] b b
  * @param[in] z z
  */
-inline void grad_inc_beta(var& g1, var& g2, const var& a, const var& b,
-                          const var& z) {
+inline void grad_inc_beta(var& g1, var& g2, var a, var b,
+                          var z) {
   var c1 = log(z);
   var c2 = log1m(z);
   var c3 = beta(a, b) * inc_beta(a, b, z);

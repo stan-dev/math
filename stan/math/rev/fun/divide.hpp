@@ -21,7 +21,7 @@ class matrix_scalar_divide_dv_vari : public vari {
   double invc_;
 
   explicit matrix_scalar_divide_dv_vari(const Eigen::Matrix<double, R, C>& m,
-                                        const var& c)
+                                        var c)
       : vari(0),
         rows_(m.rows()),
         cols_(m.cols()),
@@ -84,7 +84,7 @@ class matrix_scalar_divide_vv_vari : public vari {
   double invc_;
 
   explicit matrix_scalar_divide_vv_vari(const Eigen::Matrix<var, R, C>& m,
-                                        const var& c)
+                                        var c)
       : vari(0),
         rows_(m.rows()),
         cols_(m.cols()),
@@ -123,7 +123,7 @@ class matrix_scalar_divide_vv_vari : public vari {
  */
 template <int R, int C>
 inline Eigen::Matrix<var, R, C> divide(const Eigen::Matrix<double, R, C>& m,
-                                       const var& c) {
+                                       var c) {
   internal::matrix_scalar_divide_dv_vari<R, C>* baseVari
       = new internal::matrix_scalar_divide_dv_vari<R, C>(m, c);
   Eigen::Matrix<var, R, C> result(m.rows(), m.cols());
@@ -163,7 +163,7 @@ inline Eigen::Matrix<var, R, C> divide(const Eigen::Matrix<var, R, C>& m,
  */
 template <int R, int C>
 inline Eigen::Matrix<var, R, C> divide(const Eigen::Matrix<var, R, C>& m,
-                                       const var& c) {
+                                       var c) {
   internal::matrix_scalar_divide_vv_vari<R, C>* baseVari
       = new internal::matrix_scalar_divide_vv_vari<R, C>(m, c);
   Eigen::Matrix<var, R, C> result(m.rows(), m.cols());

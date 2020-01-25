@@ -52,7 +52,7 @@ class round_vari : public op_v_vari {
  * @param a Specified variable.
  * @return Rounded variable.
  */
-inline var round(const var& a) { return var(new internal::round_vari(a.vi_)); }
+inline var round(var a) { return var(new internal::round_vari(a.vi_)); }
 
 }  // namespace math
 }  // namespace stan

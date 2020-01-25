@@ -43,7 +43,7 @@ namespace math {
  * @param a Variable argument.
  * @return The corresponding unit normal cdf approximation.
  */
-inline var Phi_approx(const var& a) {
+inline var Phi_approx(var a) {
   double av = a.vi_->val_;
   double av_squared = av * av;
   double av_cubed = av * av_squared;

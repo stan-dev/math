@@ -34,7 +34,7 @@ class inv_cloglog_vari : public op_v_vari {
  * @return The inverse complementary log-log of the specified
  * argument.
  */
-inline var inv_cloglog(const var& a) {
+inline var inv_cloglog(var a) {
   return var(new internal::inv_cloglog_vari(a.vi_));
 }
 

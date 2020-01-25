@@ -55,7 +55,7 @@ class atanh_vari : public op_v_vari {
    * @return Inverse hyperbolic tangent of the variable.
    * @throw std::domain_error if a < -1 or a > 1
    */
-inline var atanh(const var& a) {
+inline var atanh(var a) {
   return var(new internal::atanh_vari(atanh(a.val()), a.vi_));
 }
 

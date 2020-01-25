@@ -58,7 +58,7 @@ class atan2_dv_vari : public op_dv_vari {
  * @param b Denominator variable.
  * @return The arc tangent of the fraction, in radians.
  */
-inline var atan2(const var& a, const var& b) {
+inline var atan2(var a, var b) {
   return var(new internal::atan2_vv_vari(a.vi_, b.vi_));
 }
 
@@ -74,7 +74,7 @@ inline var atan2(const var& a, const var& b) {
  * @param b Denominator scalar.
  * @return The arc tangent of the fraction, in radians.
  */
-inline var atan2(const var& a, double b) {
+inline var atan2(var a, double b) {
   return var(new internal::atan2_vd_vari(a.vi_, b));
 }
 
@@ -114,7 +114,7 @@ inline var atan2(const var& a, double b) {
  * @param b Denominator variable.
  * @return The arc tangent of the fraction, in radians.
  */
-inline var atan2(double a, const var& b) {
+inline var atan2(double a, var b) {
   return var(new internal::atan2_dv_vari(a, b.vi_));
 }
 

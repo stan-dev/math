@@ -55,19 +55,19 @@ class log_sum_exp_dv_vari : public op_dv_vari {
 /**
  * Returns the log sum of exponentials.
  */
-inline var log_sum_exp(const var& a, const var& b) {
+inline var log_sum_exp(var a, var b) {
   return var(new internal::log_sum_exp_vv_vari(a.vi_, b.vi_));
 }
 /**
  * Returns the log sum of exponentials.
  */
-inline var log_sum_exp(const var& a, double b) {
+inline var log_sum_exp(var a, double b) {
   return var(new internal::log_sum_exp_vd_vari(a.vi_, b));
 }
 /**
  * Returns the log sum of exponentials.
  */
-inline var log_sum_exp(double a, const var& b) {
+inline var log_sum_exp(double a, var b) {
   return var(new internal::log_sum_exp_dv_vari(a, b.vi_));
 }
 

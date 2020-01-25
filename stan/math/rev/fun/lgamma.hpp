@@ -27,7 +27,7 @@ class lgamma_vari : public op_v_vari {
  * @param a The variable.
  * @return Log gamma of the variable.
  */
-inline var lgamma(const var& a) {
+inline var lgamma(var a) {
   return var(new internal::lgamma_vari(lgamma(a.val()), a.vi_));
 }
 

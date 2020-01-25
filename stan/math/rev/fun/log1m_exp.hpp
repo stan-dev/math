@@ -29,7 +29,7 @@ class log1m_exp_v_vari : public op_v_vari {
  * @return Natural logarithm of one minus the exponential of the
  * argument.
  */
-inline var log1m_exp(const var& x) {
+inline var log1m_exp(var x) {
   return var(new internal::log1m_exp_v_vari(x.vi_));
 }
 

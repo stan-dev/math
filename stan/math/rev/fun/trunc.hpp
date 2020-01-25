@@ -52,7 +52,7 @@ class trunc_vari : public op_v_vari {
  * @param a Specified variable.
  * @return Truncation of the variable.
  */
-inline var trunc(const var& a) { return var(new internal::trunc_vari(a.vi_)); }
+inline var trunc(var a) { return var(new internal::trunc_vari(a.vi_)); }
 
 }  // namespace math
 }  // namespace stan

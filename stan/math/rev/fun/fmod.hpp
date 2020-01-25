@@ -97,7 +97,7 @@ class fmod_dv_vari : public op_dv_vari {
  * @return Floating pointer remainder of dividing the first variable
  * by the second.
  */
-inline var fmod(const var& a, const var& b) {
+inline var fmod(var a, var b) {
   return var(new internal::fmod_vv_vari(a.vi_, b.vi_));
 }
 
@@ -114,7 +114,7 @@ inline var fmod(const var& a, const var& b) {
  * @return Floating pointer remainder of dividing the first variable by
  * the second scalar.
  */
-inline var fmod(const var& a, double b) {
+inline var fmod(var a, double b) {
   return var(new internal::fmod_vd_vari(a.vi_, b));
 }
 
@@ -131,7 +131,7 @@ inline var fmod(const var& a, double b) {
  * @return Floating pointer remainder of dividing first scalar by
  * the second variable.
  */
-inline var fmod(double a, const var& b) {
+inline var fmod(double a, var b) {
   return var(new internal::fmod_dv_vari(a, b.vi_));
 }
 

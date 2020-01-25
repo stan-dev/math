@@ -40,15 +40,15 @@ class log_rising_factorial_dv_vari : public op_dv_vari {
 };
 }  // namespace internal
 
-inline var log_rising_factorial(const var& a, double b) {
+inline var log_rising_factorial(var a, double b) {
   return var(new internal::log_rising_factorial_vd_vari(a.vi_, b));
 }
 
-inline var log_rising_factorial(const var& a, const var& b) {
+inline var log_rising_factorial(var a, var b) {
   return var(new internal::log_rising_factorial_vv_vari(a.vi_, b.vi_));
 }
 
-inline var log_rising_factorial(double a, const var& b) {
+inline var log_rising_factorial(double a, var b) {
   return var(new internal::log_rising_factorial_dv_vari(a, b.vi_));
 }
 

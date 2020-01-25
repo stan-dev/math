@@ -28,7 +28,7 @@ struct apply_scalar_unary<F, var> {
    * @param x Argument variable.
    * @return Function applied to the variable.
    */
-  static inline return_t apply(const var& x) { return F::fun(x); }
+  static inline return_t apply(var x) { return F::fun(x); }
 };
 
 }  // namespace math

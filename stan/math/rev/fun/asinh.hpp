@@ -52,7 +52,7 @@ class asinh_vari : public op_v_vari {
  * @param a The variable.
  * @return Inverse hyperbolic sine of the variable.
  */
-inline var asinh(const var& a) {
+inline var asinh(var a) {
   return var(new internal::asinh_vari(asinh(a.val()), a.vi_));
 }
 

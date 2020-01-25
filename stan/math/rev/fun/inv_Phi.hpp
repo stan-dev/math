@@ -31,7 +31,7 @@ class inv_Phi_vari : public op_v_vari {
  * @param p Probability
  * @return The unit normal inverse cdf evaluated at p
  */
-inline var inv_Phi(const var& p) {
+inline var inv_Phi(var p) {
   return var(new internal::inv_Phi_vari(p.vi_));
 }
 

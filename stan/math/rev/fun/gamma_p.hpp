@@ -99,15 +99,15 @@ class gamma_p_dv_vari : public op_dv_vari {
 };
 }  // namespace internal
 
-inline var gamma_p(const var& a, const var& b) {
+inline var gamma_p(var a, var b) {
   return var(new internal::gamma_p_vv_vari(a.vi_, b.vi_));
 }
 
-inline var gamma_p(const var& a, double b) {
+inline var gamma_p(var a, double b) {
   return var(new internal::gamma_p_vd_vari(a.vi_, b));
 }
 
-inline var gamma_p(double a, const var& b) {
+inline var gamma_p(double a, var b) {
   return var(new internal::gamma_p_dv_vari(a, b.vi_));
 }
 

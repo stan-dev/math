@@ -58,7 +58,7 @@ class acosh_vari : public op_v_vari {
  * @param a The variable.
  * @return Inverse hyperbolic cosine of the variable.
  */
-inline var acosh(const var& a) {
+inline var acosh(var a) {
   return var(new internal::acosh_vari(acosh(a.val()), a.vi_));
 }
 

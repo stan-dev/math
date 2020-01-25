@@ -105,7 +105,7 @@ class pow_dv_vari : public op_dv_vari {
  * @param exponent Exponent variable.
  * @return Base raised to the exponent.
  */
-inline var pow(const var& base, const var& exponent) {
+inline var pow(var base, var exponent) {
   return {new internal::pow_vv_vari(base.vi_, exponent.vi_)};
 }
 
@@ -122,7 +122,7 @@ inline var pow(const var& base, const var& exponent) {
  * @return Base raised to the exponent.
  */
 template <typename Arith, require_arithmetic_t<Arith>...>
-inline var pow(const var& base, Arith exponent) {
+inline var pow(var base, Arith exponent) {
   if (exponent == 0.5) {
     return sqrt(base);
   }
@@ -157,7 +157,7 @@ inline var pow(const var& base, Arith exponent) {
  * @return Base raised to the exponent.
  */
 template <typename Arith, require_arithmetic_t<Arith>...>
-inline var pow(Arith base, const var& exponent) {
+inline var pow(Arith base, var exponent) {
   return {new internal::pow_dv_vari(base, exponent.vi_)};
 }
 

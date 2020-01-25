@@ -66,7 +66,7 @@ class beta_dv_vari : public op_dv_vari {
  * @param b var Argument
  * @return Result of beta function
  */
-inline var beta(const var& a, const var& b) {
+inline var beta(var a, var b) {
   return var(new internal::beta_vv_vari(a.vi_, b.vi_));
 }
 
@@ -88,7 +88,7 @@ inline var beta(const var& a, const var& b) {
  * @param b double Argument
  * @return Result of beta function
  */
-inline var beta(const var& a, double b) {
+inline var beta(var a, double b) {
   return var(new internal::beta_vd_vari(a.vi_, b));
 }
 
@@ -110,7 +110,7 @@ inline var beta(const var& a, double b) {
  * @param b var Argument
  * @return Result of beta function
  */
-inline var beta(double a, const var& b) {
+inline var beta(double a, var b) {
   return var(new internal::beta_dv_vari(a, b.vi_));
 }
 

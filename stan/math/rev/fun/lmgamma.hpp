@@ -24,7 +24,7 @@ class lmgamma_dv_vari : public op_dv_vari {
 };
 }  // namespace internal
 
-inline var lmgamma(int a, const var& b) {
+inline var lmgamma(int a, var b) {
   return var(new internal::lmgamma_dv_vari(a, b.vi_));
 }
 

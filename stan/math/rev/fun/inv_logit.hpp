@@ -29,7 +29,7 @@ class inv_logit_vari : public op_v_vari {
  * @param a Argument variable.
  * @return Inverse logit of argument.
  */
-inline var inv_logit(const var& a) {
+inline var inv_logit(var a) {
   return var(new internal::inv_logit_vari(a.vi_));
 }
 

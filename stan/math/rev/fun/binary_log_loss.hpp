@@ -59,7 +59,7 @@ class binary_log_loss_0_vari : public op_v_vari {
  * @param y_hat Response variable.
  * @return Log loss of response versus reference value.
  */
-inline var binary_log_loss(int y, const var& y_hat) {
+inline var binary_log_loss(int y, var y_hat) {
   if (y == 0) {
     return var(new internal::binary_log_loss_0_vari(y_hat.vi_));
   } else {

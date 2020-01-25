@@ -22,7 +22,7 @@ class bessel_second_kind_dv_vari : public op_dv_vari {
 };
 }  // namespace internal
 
-inline var bessel_second_kind(int v, const var& a) {
+inline var bessel_second_kind(int v, var a) {
   return var(new internal::bessel_second_kind_dv_vari(v, a.vi_));
 }
 

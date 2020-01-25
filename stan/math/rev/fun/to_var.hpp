@@ -35,7 +35,7 @@ inline var& to_var(var& x) { return x; }
  * @param[in,out] x An automatic differentiation variable.
  * @return The input automatic differentiation variable.
  */
-inline const var& to_var(const var& x) { return x; }
+inline var to_var(var x) { return x; }
 
 /**
  * Converts argument to an automatic differentiation variable.

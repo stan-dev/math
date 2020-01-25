@@ -13,7 +13,7 @@ namespace math {
  * Initialize variable to value.  (Function may look pointless, but
  * it's needed to bottom out recursion.)
  */
-inline void initialize_variable(var& variable, const var& value) {
+inline void initialize_variable(var& variable, var value) {
   variable = value;
 }
 
@@ -25,7 +25,7 @@ inline void initialize_variable(var& variable, const var& value) {
  */
 template <int R, int C>
 inline void initialize_variable(Eigen::Matrix<var, R, C>& matrix,
-                                const var& value) {
+                                var value) {
   matrix.fill(value);
 }
 
@@ -35,7 +35,7 @@ inline void initialize_variable(Eigen::Matrix<var, R, C>& matrix,
  * @tparam T type of elements in the vector
  */
 template <typename T>
-inline void initialize_variable(std::vector<T>& variables, const var& value) {
+inline void initialize_variable(std::vector<T>& variables, var value) {
   for (size_t i = 0; i < variables.size(); ++i) {
     initialize_variable(variables[i], value);
   }

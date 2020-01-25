@@ -17,7 +17,7 @@ namespace math {
  *
  * @return <code>1</code> if the value is infinite and <code>0</code> otherwise.
  */
-inline int is_inf(const var& v) { return is_inf(v.val()); }
+inline int is_inf(var v) { return is_inf(v.val()); }
 
 }  // namespace math
 }  // namespace stan

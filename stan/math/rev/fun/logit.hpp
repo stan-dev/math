@@ -14,7 +14,7 @@ namespace math {
  * @param u argument
  * @return log odds of argument
  */
-inline var logit(const var& u) {
+inline var logit(var u) {
   return var(new precomp_v_vari(logit(u.val()), u.vi_,
                                 1 / (u.val() - u.val() * u.val())));
 }

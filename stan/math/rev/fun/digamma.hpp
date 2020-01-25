@@ -17,7 +17,7 @@ class digamma_vari : public op_v_vari {
 };
 }  // namespace internal
 
-inline var digamma(const var& a) {
+inline var digamma(var a) {
   return var(new internal::digamma_vari(a.vi_));
 }
 

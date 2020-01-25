@@ -103,7 +103,7 @@ class fma_ddv_vari : public op_ddv_vari {
  * @param c Summand.
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
-inline var fma(const var& a, const var& b, const var& c) {
+inline var fma(var a, var b, var c) {
   return var(new internal::fma_vvv_vari(a.vi_, b.vi_, c.vi_));
 }
 
@@ -125,7 +125,7 @@ inline var fma(const var& a, const var& b, const var& c) {
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
 template <typename Tc, typename = require_arithmetic_t<Tc>>
-inline var fma(const var& a, const var& b, Tc&& c) {
+inline var fma(var a, var b, Tc&& c) {
   return var(new internal::fma_vvd_vari(a.vi_, b.vi_, c));
 }
 
@@ -178,7 +178,7 @@ inline var fma(Ta&& a, Tb&& b, Tc&& c) {
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
 template <typename Tb, typename Tc, typename = require_all_arithmetic_t<Tb, Tc>>
-inline var fma(const var& a, Tb&& b, Tc&& c) {
+inline var fma(var a, Tb&& b, Tc&& c) {
   return var(new internal::fma_vdd_vari(a.vi_, b, c));
 }
 
@@ -200,7 +200,7 @@ inline var fma(const var& a, Tb&& b, Tc&& c) {
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
 template <typename Ta, typename Tc, typename = require_all_arithmetic_t<Ta, Tc>>
-inline var fma(Ta&& a, const var& b, Tc&& c) {
+inline var fma(Ta&& a, var b, Tc&& c) {
   return var(new internal::fma_vdd_vari(b.vi_, a, c));
 }
 
@@ -222,7 +222,7 @@ inline var fma(Ta&& a, const var& b, Tc&& c) {
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
 template <typename Ta, typename Tb, typename = require_all_arithmetic_t<Ta, Tb>>
-inline var fma(Ta&& a, Tb&& b, const var& c) {
+inline var fma(Ta&& a, Tb&& b, var c) {
   return var(new internal::fma_ddv_vari(a, b, c.vi_));
 }
 
@@ -244,7 +244,7 @@ inline var fma(Ta&& a, Tb&& b, const var& c) {
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
 template <typename Ta, typename = require_arithmetic_t<Ta>>
-inline var fma(Ta&& a, const var& b, const var& c) {
+inline var fma(Ta&& a, var b, var c) {
   return var(new internal::fma_vdv_vari(b.vi_, a, c.vi_));  // a-b symmetry
 }
 

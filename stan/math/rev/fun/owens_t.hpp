@@ -61,7 +61,7 @@ class owens_t_dv_vari : public op_dv_vari {
  * @param a var parameter.
  * @return The Owen's T function.
  */
-inline var owens_t(const var& h, const var& a) {
+inline var owens_t(var h, var a) {
   return var(new internal::owens_t_vv_vari(h.vi_, a.vi_));
 }
 
@@ -75,7 +75,7 @@ inline var owens_t(const var& h, const var& a) {
  * @param a double parameter.
  * @return The Owen's T function.
  */
-inline var owens_t(const var& h, double a) {
+inline var owens_t(var h, double a) {
   return var(new internal::owens_t_vd_vari(h.vi_, a));
 }
 
@@ -89,7 +89,7 @@ inline var owens_t(const var& h, double a) {
  * @param a var parameter.
  * @return The Owen's T function.
  */
-inline var owens_t(double h, const var& a) {
+inline var owens_t(double h, var a) {
   return var(new internal::owens_t_dv_vari(h, a.vi_));
 }
 

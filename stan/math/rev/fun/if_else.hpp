@@ -15,7 +15,7 @@ namespace math {
  * @param y_true Variable to return if condition is true.
  * @param y_false Variable to return if condition is false.
  */
-inline var if_else(bool c, const var& y_true, const var& y_false) {
+inline var if_else(bool c, var y_true, var y_false) {
   return c ? y_true : y_false;
 }
 /**
@@ -27,7 +27,7 @@ inline var if_else(bool c, const var& y_true, const var& y_false) {
  * @param y_true Value to promote to variable and return if condition is true.
  * @param y_false Variable to return if condition is false.
  */
-inline var if_else(bool c, double y_true, const var& y_false) {
+inline var if_else(bool c, double y_true, var y_false) {
   if (c) {
     return var(y_true);
   } else {
@@ -43,7 +43,7 @@ inline var if_else(bool c, double y_true, const var& y_false) {
  * @param y_true Variable to return if condition is true.
  * @param y_false Value to promote to variable and return if condition is false.
  */
-inline var if_else(bool c, const var& y_true, double y_false) {
+inline var if_else(bool c, var y_true, double y_false) {
   if (c) {
     return y_true;
   } else {

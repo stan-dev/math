@@ -54,7 +54,7 @@ namespace math {
  * @return If the first variable's value is smaller than the
  * second's, the first variable, otherwise the second variable.
  */
-inline var fmin(const var& a, const var& b) {
+inline var fmin(var a, var b) {
   if (unlikely(is_nan(a))) {
     if (unlikely(is_nan(b))) {
       return var(new precomp_vv_vari(NOT_A_NUMBER, a.vi_, b.vi_, NOT_A_NUMBER,
@@ -82,7 +82,7 @@ inline var fmin(const var& a, const var& b) {
  * value, the first variable, otherwise the second value promoted to a fresh
  * variable.
  */
-inline var fmin(const var& a, double b) {
+inline var fmin(var a, double b) {
   if (unlikely(is_nan(a))) {
     if (unlikely(is_nan(b))) {
       return var(new precomp_v_vari(NOT_A_NUMBER, a.vi_, NOT_A_NUMBER));
@@ -109,7 +109,7 @@ inline var fmin(const var& a, double b) {
  * return the first value promoted to a variable, otherwise return the
  * second variable.
  */
-inline var fmin(double a, const var& b) {
+inline var fmin(double a, var b) {
   if (unlikely(is_nan(b))) {
     if (unlikely(is_nan(a))) {
       return var(new precomp_v_vari(NOT_A_NUMBER, b.vi_, NOT_A_NUMBER));

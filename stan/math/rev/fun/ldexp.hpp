@@ -16,7 +16,7 @@ class ldexp_vari : public op_vd_vari {
 };
 }  // namespace
 
-inline var ldexp(const var& a, int b) { return var(new ldexp_vari(a.vi_, b)); }
+inline var ldexp(var a, int b) { return var(new ldexp_vari(a.vi_, b)); }
 
 }  // namespace math
 }  // namespace stan
