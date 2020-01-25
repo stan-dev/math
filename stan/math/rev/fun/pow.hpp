@@ -106,7 +106,7 @@ class pow_dv_vari : public op_dv_vari {
  * @return Base raised to the exponent.
  */
 inline var pow(const var& base, const var& exponent) {
-  return var(new internal::pow_vv_vari(base.vi_, exponent.vi_));
+  return {new internal::pow_vv_vari(base.vi_, exponent.vi_)};
 }
 
 /**
@@ -121,7 +121,8 @@ inline var pow(const var& base, const var& exponent) {
  * @param exponent Exponent scalar.
  * @return Base raised to the exponent.
  */
-inline var pow(const var& base, double exponent) {
+template <typename Arith, require_arithmetic_t<Arith>...>
+inline var pow(const var& base, Arith exponent) {
   if (exponent == 0.5) {
     return sqrt(base);
   }
@@ -140,7 +141,7 @@ inline var pow(const var& base, double exponent) {
   if (exponent == -0.5) {
     return inv_sqrt(base);
   }
-  return var(new internal::pow_vd_vari(base.vi_, exponent));
+  return {new internal::pow_vd_vari(base.vi_, exponent)};
 }
 
 /**
@@ -155,8 +156,9 @@ inline var pow(const var& base, double exponent) {
  * @param exponent Exponent variable.
  * @return Base raised to the exponent.
  */
-inline var pow(double base, const var& exponent) {
-  return var(new internal::pow_dv_vari(base, exponent.vi_));
+template <typename Arith, require_arithmetic_t<Arith>...>
+inline var pow(Arith base, const var& exponent) {
+  return {new internal::pow_dv_vari(base, exponent.vi_)};
 }
 
 }  // namespace math
