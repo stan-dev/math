@@ -57,12 +57,14 @@ namespace math {
       alpha_log_norms(n + 1) = std::log(norm) + alpha_log_norms(n);
     }
 
-    // std::cout << "alpha in scope: " << std::endl
-    //           << alphas << std::endl
-    //           << "n_transitions: " << n_transitions << std::endl;
+    // std::cout << "alphas: " << alphas.col(n_transitions) * norm << std::endl;
 
     // CHECK -- do we need to "unnormalize" this?
-    return log(alphas.col(n_transitions).sum());
+    return log(alphas.col(n_transitions).sum())
+      + alpha_log_norms(n_transitions);
+    // return alpha_log_norms(n_transitions - 1)
+    //  - alpha_log_norms(n_transitions);
+    // return log(alphas.col(n_transitions).sum());
   }
 
 

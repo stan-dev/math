@@ -9,6 +9,7 @@
 #include <stan/math/prim/prob/hmm_marginal_lpdf.hpp>
 #include <boost/math/distributions.hpp>
 #include <boost/random.hpp>
+#include <test/unit/math/test_ad.hpp>
 #include <gtest/gtest.h>
 
 // In the proposed example, the latent sate x determines
@@ -105,8 +106,20 @@ TEST(hmm_marginal_lpdf, two_state) {
 
   var density_v = hmm_marginal_lpdf(log_omegas_v, Gamma_v, rho_v);
 
+  // Let's run Stan var.
+  // std::vector<var> psi(log_omegas.size() + Gamma.size() + rho.size());
+  // for (int j = 0; j < log_omegas.cols(); j++)
+  //   for (int i = 0; i < log_omegas.rows(); i++) {
+  //     psi[j * log_omegas.rows() + i] = log_omegas(i, j);
+  //     log_omegas_v(i, j) = psi[j * log_omegas.rows() + i];
+  //   }
+  //
+  // for (int j = 0; j < Gamma.cols(); j++)
+  //   for (int i = 0; i < Gamma.rows(); i++) {
+  //     psi
+  //   }
 
-  // finite diff computation
+  // preliminary finite diff computation
   double diff = 1e-6;
   Eigen::MatrixXd Gamma_l = Gamma, Gamma_u = Gamma;
   Gamma_l(0, 0) = Gamma(0, 0) - diff;
@@ -134,4 +147,63 @@ TEST(hmm_marginal_lpdf, two_state) {
       - hmm_marginal_lpdf(log_omegas_l, Gamma, rho)) / (2 * diff);
 
   std::cout << "omegas_diff: " << omegas_diff << std::endl;
+}
+
+
+TEST(hmm_marginal_lpdf, autodiff) {
+  using stan::math::hmm_marginal_lpdf;
+  using stan::math::var;
+
+  int n_states = 2,
+      n_transitions = 10;
+  double abs_mu = 1,
+         sigma = 1,
+         p1_init = 0.65,
+         gamma1 = 0.7,
+         gamma2 = 0.45;
+
+  // Simulate data
+  // CHECK -- make sure we recover the same results.
+  // If the rng is machine dependent, sub in with fixed data.
+  Eigen::VectorXd rho(n_states);
+  rho << p1_init, 1 - p1_init;
+
+  Eigen::MatrixXd Gamma(n_states, n_states);
+  Gamma << gamma1, gamma2, 1 - gamma1, 1 - gamma2;
+
+  Eigen::VectorXd obs_data(n_transitions + 1);
+
+  boost::random::mt19937 prng(1954);
+  boost::random::discrete_distribution<> cat_init{rho[0], rho[1]};
+  boost::random::discrete_distribution<>
+    cat_zero{Gamma.col(0)[0], Gamma.col(0)[1]};
+  boost::random::discrete_distribution<>
+    cat_one{Gamma.col(1)[0], Gamma.col(1)[1]};
+
+  boost::random::normal_distribution<> unit_normal(0, 1);
+
+  int state = cat_init(prng);
+  obs_data[0] = state_simu(unit_normal(prng), abs_mu, sigma, state);
+
+  for (int n = 0; n < n_transitions; n++) {
+    if (state == 0) state = cat_zero(prng);
+    else state = cat_one(prng);
+
+    obs_data[n + 1] = state_simu(unit_normal(prng), abs_mu, sigma, state);
+  }
+
+  // Compute observational densities
+  Eigen::MatrixXd log_omegas(n_states, n_transitions + 1);
+  for (int n = 0; n < n_transitions + 1; n++) {
+    log_omegas.col(n)[0] = state_lpdf(obs_data[n], abs_mu, sigma, 0);
+    log_omegas.col(n)[1] = state_lpdf(obs_data[n], abs_mu, sigma, 1);
+  }
+
+  auto hmm_functor = [](const auto& log_omegas,
+                        const auto& Gamma,
+                        const auto& rho) {
+    return hmm_marginal_lpdf(log_omegas, Gamma, rho);
+  };
+
+  stan::test::expect_ad(hmm_functor, log_omegas, Gamma, rho);
 }
