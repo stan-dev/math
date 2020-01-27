@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_REV_CORE_STD_ISINF_HPP
 #define STAN_MATH_REV_CORE_STD_ISINF_HPP
 
-#include <stan/math/prim/scal/fun/is_inf.hpp>
+#include <stan/math/prim/fun/is_inf.hpp>
 #include <stan/math/rev/core/var.hpp>
 
 namespace std {

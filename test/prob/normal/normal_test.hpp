@@ -80,6 +80,6 @@ class AgradDistributionNormal : public AgradDistributionTest {
                     const T3&, const T4&, const T5&) {
     using stan::math::pi;
     return -0.5 * (y - mu) * (y - mu) / (sigma * sigma) - log(sigma)
-           - log(sqrt(2.0 * pi()));
+           - log(stan::math::SQRT_TWO_PI);
   }
 };

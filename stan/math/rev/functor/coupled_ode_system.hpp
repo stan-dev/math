@@ -2,13 +2,13 @@
 #define STAN_MATH_REV_FUNCTOR_COUPLED_ODE_SYSTEM_HPP
 
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/prim/functor/coupled_ode_system.hpp>
-#include <stan/math/prim/arr/fun/value_of.hpp>
-#include <stan/math/prim/err.hpp>
 #include <stan/math/rev/fun/value_of_rec.hpp>
 #include <stan/math/rev/core.hpp>
-#include <ostream>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/functor/coupled_ode_system.hpp>
 #include <stdexcept>
+#include <ostream>
 #include <vector>
 
 namespace stan {
@@ -94,7 +94,7 @@ struct coupled_ode_system<F, double, var> {
         size_(N_ + N_ * M_),
         msgs_(msgs) {
     for (const var& p : theta) {
-      theta_nochain_.emplace_back(var(new vari(p.val(), false)));
+      theta_nochain_.emplace_back(new vari(p.val(), false));
     }
   }
 
@@ -119,7 +119,10 @@ struct coupled_ode_system<F, double, var> {
     try {
       start_nested();
 
-      const vector<var> y_vars(z.begin(), z.begin() + N_);
+      vector<var> y_vars;
+      y_vars.reserve(N_);
+      for (std::size_t i = 0; i < N_; ++i)
+        y_vars.emplace_back(new vari(z[i], false));
 
       vector<var> dy_dt_vars = f_(t, y_vars, theta_nochain_, x_, x_int_, msgs_);
 
@@ -276,7 +279,10 @@ struct coupled_ode_system<F, var, double> {
     try {
       start_nested();
 
-      const vector<var> y_vars(z.begin(), z.begin() + N_);
+      vector<var> y_vars;
+      y_vars.reserve(N_);
+      for (std::size_t i = 0; i < N_; ++i)
+        y_vars.emplace_back(new vari(z[i], false));
 
       vector<var> dy_dt_vars = f_(t, y_vars, theta_dbl_, x_, x_int_, msgs_);
 
@@ -429,7 +435,7 @@ struct coupled_ode_system<F, var, var> {
         size_(N_ + N_ * (N_ + M_)),
         msgs_(msgs) {
     for (const var& p : theta) {
-      theta_nochain_.emplace_back(var(new vari(p.val(), false)));
+      theta_nochain_.emplace_back(new vari(p.val(), false));
     }
   }
 
@@ -454,7 +460,10 @@ struct coupled_ode_system<F, var, var> {
     try {
       start_nested();
 
-      const vector<var> y_vars(z.begin(), z.begin() + N_);
+      vector<var> y_vars;
+      y_vars.reserve(N_);
+      for (std::size_t i = 0; i < N_; ++i)
+        y_vars.emplace_back(new vari(z[i], false));
 
       vector<var> dy_dt_vars = f_(t, y_vars, theta_nochain_, x_, x_int_, msgs_);
 

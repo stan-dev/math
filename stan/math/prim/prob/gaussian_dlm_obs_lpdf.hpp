@@ -3,19 +3,19 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/mat/fun/add.hpp>
-#include <stan/math/prim/mat/fun/dot_product.hpp>
-#include <stan/math/prim/mat/fun/inverse_spd.hpp>
-#include <stan/math/prim/mat/fun/log.hpp>
-#include <stan/math/prim/mat/fun/log_determinant_spd.hpp>
-#include <stan/math/prim/mat/fun/multiply.hpp>
-#include <stan/math/prim/mat/fun/quad_form.hpp>
-#include <stan/math/prim/mat/fun/quad_form_sym.hpp>
-#include <stan/math/prim/mat/fun/subtract.hpp>
-#include <stan/math/prim/mat/fun/tcrossprod.hpp>
-#include <stan/math/prim/mat/fun/trace_quad_form.hpp>
-#include <stan/math/prim/mat/fun/transpose.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/fun/add.hpp>
+#include <stan/math/prim/fun/dot_product.hpp>
+#include <stan/math/prim/fun/inverse_spd.hpp>
+#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/log_determinant_spd.hpp>
+#include <stan/math/prim/fun/multiply.hpp>
+#include <stan/math/prim/fun/quad_form.hpp>
+#include <stan/math/prim/fun/quad_form_sym.hpp>
+#include <stan/math/prim/fun/subtract.hpp>
+#include <stan/math/prim/fun/tcrossprod.hpp>
+#include <stan/math/prim/fun/trace_quad_form.hpp>
+#include <stan/math/prim/fun/transpose.hpp>
+#include <stan/math/prim/fun/constants.hpp>
 #include <cmath>
 
 /*
@@ -105,23 +105,12 @@ gaussian_dlm_obs_lpdf(
 
   T_lp lp(0);
   if (include_summand<propto>::value) {
-    lp -= 0.5 * LOG_TWO_PI * r * T;
+    lp -= HALF_LOG_TWO_PI * r * T;
   }
 
   if (include_summand<propto, T_y, T_F, T_G, T_V, T_W, T_m0, T_C0>::value) {
-    Eigen::Matrix<T_lp, Eigen::Dynamic, 1> m(n);
-    Eigen::Matrix<T_lp, Eigen::Dynamic, Eigen::Dynamic> C(n, n);
-
-    // TODO(anyone): how to recast matrices
-    for (int i = 0; i < m0.size(); i++) {
-      m(i) = m0(i);
-    }
-    for (int i = 0; i < C0.rows(); i++) {
-      for (int j = 0; j < C0.cols(); j++) {
-        C(i, j) = C0(i, j);
-      }
-    }
-
+    Eigen::Matrix<T_lp, Eigen::Dynamic, 1> m{m0};
+    Eigen::Matrix<T_lp, Eigen::Dynamic, Eigen::Dynamic> C{C0};
     Eigen::Matrix<return_type_t<T_y>, Eigen::Dynamic, 1> yi(r);
     Eigen::Matrix<T_lp, Eigen::Dynamic, 1> a(n);
     Eigen::Matrix<T_lp, Eigen::Dynamic, Eigen::Dynamic> R(n, n);
@@ -259,7 +248,7 @@ gaussian_dlm_obs_lpdf(
 
   T_lp lp(0);
   if (include_summand<propto>::value) {
-    lp += 0.5 * NEG_LOG_TWO_PI * r * T;
+    lp -= HALF_LOG_TWO_PI * r * T;
   }
 
   if (include_summand<propto, T_y, T_F, T_G, T_V, T_W, T_m0, T_C0>::value) {
@@ -269,18 +258,8 @@ gaussian_dlm_obs_lpdf(
     T_lp e;
     Eigen::Matrix<T_lp, Eigen::Dynamic, 1> A(n);
     Eigen::Matrix<T_lp, Eigen::Dynamic, 1> Fj(n);
-    Eigen::Matrix<T_lp, Eigen::Dynamic, 1> m(n);
-    Eigen::Matrix<T_lp, Eigen::Dynamic, Eigen::Dynamic> C(n, n);
-
-    // TODO(anyone): how to recast matrices
-    for (int i = 0; i < m0.size(); i++) {
-      m(i) = m0(i);
-    }
-    for (int i = 0; i < C0.rows(); i++) {
-      for (int j = 0; j < C0.cols(); j++) {
-        C(i, j) = C0(i, j);
-      }
-    }
+    Eigen::Matrix<T_lp, Eigen::Dynamic, 1> m{m0};
+    Eigen::Matrix<T_lp, Eigen::Dynamic, Eigen::Dynamic> C{C0};
 
     for (int i = 0; i < y.cols(); i++) {
       // Predict state

@@ -175,35 +175,7 @@ def main():
         },
     ]
     errors.extend(grep_patterns("rev", "stan/math/rev", rev_checks))
-
-    # Check for files inside stan/math/*/scal that contain stan/math/*/arr or stan/math/*/mat
-    scal_checks = [
-        {
-            "pattern": "<stan/math/.*/arr/",
-            "message": "File includes an array header file.",
-        },
-        {"pattern": "<vector>", "message": "File includes an std::vector header."},
-        {"pattern": "std::vector", "message": "File uses std::vector."},
-        {
-            "pattern": "<stan/math/.*/mat/",
-            "message": "File includes a matrix header file.",
-        },
-        {"pattern": "<Eigen", "message": "File includes an Eigen header."},
-        {"pattern": "Eigen::", "message": "File uses Eigen."},
-    ]
-    errors.extend(grep_patterns("scal", "stan/math/*/scal", scal_checks))
-
-    # Check for files inside stan/math/*/arr that contain stan/math/*/mat or Eigen
-    arr_checks = [
-        {
-            "pattern": "<stan/math/.*/mat/",
-            "message": "File includes an matrix header file.",
-        },
-        {"pattern": "<Eigen", "message": "File includes an Eigen header."},
-        {"pattern": "Eigen::", "message": "File uses Eigen."},
-    ]
-    errors.extend(grep_patterns("arr", "stan/math/*/arr", arr_checks))
-
+    
     # Check to make sure we use C++14 constructs in stan/math
     cpp14_checks = [
         {
@@ -256,16 +228,6 @@ def main():
         },
     ]
     errors.extend(grep_patterns("C++14", "stan/math", cpp14_checks))
-
-    # Check for includes of stan/math/*/meta/*.hpp inside stan/math, excluding meta.hpp files and the /meta subfolder
-    meta_checks = [
-        {
-            "pattern": "<stan/math/.*/meta/.*hpp",
-            "message": "File includes */meta/*.hpp header file. Should include meta.hpp",
-        }
-    ]
-    meta_exclude = ["stan/math/*/meta", "stan/math/*/meta.hpp"]
-    errors.extend(grep_patterns("meta", "stan/math", meta_checks, meta_exclude))
 
     #  Check that we do not use non-reentrant safe functions from std
     thread_safe_checks = [

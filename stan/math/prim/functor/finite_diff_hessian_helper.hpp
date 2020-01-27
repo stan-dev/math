@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_FUNCTOR_FINITE_DIFF_HESSIAN_HELPER_HPP
 #define STAN_MATH_PRIM_FUNCTOR_FINITE_DIFF_HESSIAN_HELPER_HPP
 
-#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 
 namespace stan {
 namespace math {

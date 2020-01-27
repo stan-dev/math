@@ -2,19 +2,19 @@
 #define STAN_MATH_REV_FUN_TRACE_INV_QUAD_FORM_LDLT_HPP
 
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/LDLT_alloc.hpp>
 #include <stan/math/rev/fun/LDLT_factor.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/typedefs.hpp>
 #include <type_traits>
 
 namespace stan {
 namespace math {
-
 namespace internal {
+
 template <typename T2, int R2, int C2, typename T3, int R3, int C3>
 class trace_inv_quad_form_ldlt_impl : public chainable_alloc {
  protected:
@@ -142,7 +142,18 @@ class trace_inv_quad_form_ldlt_vari : public vari {
  * Compute the trace of an inverse quadratic form.  I.E., this computes
  *       trace(B^T A^-1 B)
  * where the LDLT_factor of A is provided.
- **/
+ *
+ * @tparam T2 type of elements in the LDLT_factor
+ * @tparam R2 number of rows, can be Eigen::Dynamic
+ * @tparam C2 number of columns, can be Eigen::Dynamic
+ * @tparam T3 type of elements in the second matrix
+ * @tparam R3 number of rows, can be Eigen::Dynamic
+ * @tparam C3 number of columns, can be Eigen::Dynamic
+ *
+ * @param A an LDLT_factor
+ * @param B a matrix
+ * @return The trace of the inverse quadratic form.
+ */
 template <typename T2, int R2, int C2, typename T3, int R3, int C3,
           typename = require_any_var_t<T2, T3>>
 inline return_type_t<T2, T3> trace_inv_quad_form_ldlt(

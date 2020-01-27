@@ -6,8 +6,8 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/functor/mpi_cluster.hpp>
 #include <stan/math/prim/functor/mpi_distributed_apply.hpp>
-#include <stan/math/prim/mat/fun/to_array_1d.hpp>
-#include <stan/math/prim/mat/fun/dims.hpp>
+#include <stan/math/prim/fun/to_array_1d.hpp>
+#include <stan/math/prim/fun/dims.hpp>
 
 #include <mutex>
 #include <algorithm>

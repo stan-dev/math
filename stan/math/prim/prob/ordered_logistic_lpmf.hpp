@@ -3,11 +3,11 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/mat/fun/value_of.hpp>
-#include <stan/math/prim/scal/fun/inv_logit.hpp>
-#include <stan/math/prim/scal/fun/log1p_exp.hpp>
-#include <stan/math/prim/scal/fun/log_inv_logit_diff.hpp>
-#include <stan/math/prim/scal/fun/is_integer.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/fun/inv_logit.hpp>
+#include <stan/math/prim/fun/log1p_exp.hpp>
+#include <stan/math/prim/fun/log_inv_logit_diff.hpp>
+#include <stan/math/prim/fun/is_integer.hpp>
 #include <vector>
 
 namespace stan {
@@ -93,10 +93,8 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
                      size_c_old);
   }
 
-  for (int n = 0; n < N; n++) {
-    check_bounded(function, "Random variable", y_vec[n], 1, K);
-    check_finite(function, "Location parameter", lam_vec[n]);
-  }
+  check_bounded(function, "Random variable", y, 1, K);
+  check_finite(function, "Location parameter", lambda);
 
   for (int i = 0; i < C_l; i++) {
     check_ordered(function, "Cut-points", c_vec[i]);

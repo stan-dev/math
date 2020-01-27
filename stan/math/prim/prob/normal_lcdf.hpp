@@ -3,13 +3,13 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/erf.hpp>
-#include <stan/math/prim/scal/fun/erfc.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/log1p.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <stan/math/prim/scal/fun/square.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
+#include <stan/math/prim/fun/erf.hpp>
+#include <stan/math/prim/fun/erfc.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/log1p.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/square.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <cmath>
 #include <limits>
 
@@ -92,7 +92,7 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lcdf(const T_y& y,
           = -0.00233520497626869185443 - 0.0605183413124413191178 / x2
             - 0.527905102951428412248 / x4 - 1.87295284992346047209 / x6
             - 2.56852019228982242072 / x8 - 1.0 / x10;
-      cdf_log += LOG_HALF + log(1.0 / SQRT_PI + (temp_p / temp_q) / x2)
+      cdf_log += LOG_HALF + log(INV_SQRT_PI + (temp_p / temp_q) / x2)
                  - log(-scaled_diff) - x2;
     } else {
       // scaled_diff^10 term will overflow

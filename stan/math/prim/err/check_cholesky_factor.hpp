@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_ERR_CHECK_CHOLESKY_FACTOR_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/err/check_positive.hpp>
 #include <stan/math/prim/err/check_less_or_equal.hpp>
 #include <stan/math/prim/err/check_lower_triangular.hpp>
@@ -32,10 +32,7 @@ inline void check_cholesky_factor(
                       y.rows());
   check_positive(function, "columns of Cholesky factor", y.cols());
   check_lower_triangular(function, name, y);
-  for (int i = 0; i < y.cols(); ++i) {
-    // FIXME:  should report row
-    check_positive(function, name, y(i, i));
-  }
+  check_positive(function, name, y.diagonal());
 }
 
 }  // namespace math

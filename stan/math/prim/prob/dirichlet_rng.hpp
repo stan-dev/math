@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_PROB_DIRICHLET_RNG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/mat/fun/log_sum_exp.hpp>
+#include <stan/math/prim/fun/log_sum_exp.hpp>
 #include <boost/math/special_functions/gamma.hpp>
 #include <boost/random/gamma_distribution.hpp>
 #include <boost/random/uniform_real_distribution.hpp>

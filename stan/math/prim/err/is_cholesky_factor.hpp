@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_ERR_IS_CHOLESKY_FACTOR_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/err/is_positive.hpp>
 #include <stan/math/prim/err/is_lower_triangular.hpp>
 #include <stan/math/prim/err/is_less_or_equal.hpp>

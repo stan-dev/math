@@ -3,10 +3,10 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/scal/fun/erfc.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/scal/fun/value_of.hpp>
+#include <stan/math/prim/fun/erfc.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <cmath>
 
 namespace stan {
@@ -52,9 +52,8 @@ return_type_t<T_y, T_loc, T_scale> lognormal_cdf(const T_y& y, const T_loc& mu,
     const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
     const T_partials_return scaled_diff
         = (log(y_dbl) - mu_dbl) / (sigma_dbl * SQRT_TWO);
-    const T_partials_return rep_deriv = SQRT_TWO_OVER_SQRT_PI * 0.5
-                                        * exp(-scaled_diff * scaled_diff)
-                                        / sigma_dbl;
+    const T_partials_return rep_deriv
+        = INV_SQRT_TWO_PI * exp(-scaled_diff * scaled_diff) / sigma_dbl;
 
     const T_partials_return cdf_n = 0.5 * erfc(-scaled_diff);
     cdf *= cdf_n;

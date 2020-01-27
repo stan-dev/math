@@ -3,8 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/mat/fun/dims.hpp>
-#include <stan/math/prim/mat/fun/typedefs.hpp>
+#include <stan/math/prim/fun/dims.hpp>
+#include <stan/math/prim/fun/typedefs.hpp>
 
 #define STAN_REGISTER_MAP_RECT(CALLID, FUNCTOR)
 

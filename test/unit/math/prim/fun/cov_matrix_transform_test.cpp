@@ -34,9 +34,10 @@ TEST(prob_transform, cov_matrix_free_exception) {
   EXPECT_THROW(stan::math::cov_matrix_free(y), std::invalid_argument);
   y.resize(1, 2);
   EXPECT_THROW(stan::math::cov_matrix_free(y), std::invalid_argument);
-
   y.resize(2, 2);
   y << 0, 0, 0, 0;
+  EXPECT_THROW(stan::math::cov_matrix_free(y), std::domain_error);
+  y << 1, 0, 0, -1;
   EXPECT_THROW(stan::math::cov_matrix_free(y), std::domain_error);
 }
 TEST(covMatrixTransform, symmetry) {
