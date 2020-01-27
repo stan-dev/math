@@ -22,7 +22,7 @@ namespace math {
 template <typename T1, typename T2, typename = require_all_eigen_t<T1, T2>>
 auto elt_multiply(const T1& m1, const T2& m2) {
   check_matching_dims("elt_multiply", "m1", m1, "m2", m2);
-  return m1.cwiseProduct(m2);
+  return m1.cwiseProduct(m2).eval();
 }
 
 }  // namespace math

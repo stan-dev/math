@@ -21,7 +21,7 @@ namespace math {
 template <typename T1, typename T2, typename = require_all_eigen_t<T1, T2>>
 auto elt_divide(const T1& m1, const T2& m2) {
   check_matching_dims("elt_divide", "m1", m1, "m2", m2);
-  return (m1.array() / m2.array()).matrix();
+  return (m1.array() / m2.array()).matrix().eval();
 }
 
 /**
@@ -38,7 +38,7 @@ auto elt_divide(const T1& m1, const T2& m2) {
 template <typename T1, typename T2, typename = require_eigen_t<T1>,
           typename = require_stan_scalar_t<T2>>
 auto elt_divide(const T1& m, T2 s) {
-  return (m.array() / s).matrix();
+  return (m.array() / s).matrix().eval();
 }
 
 /**
@@ -55,7 +55,7 @@ auto elt_divide(const T1& m, T2 s) {
 template <typename T1, typename T2, typename = require_stan_scalar_t<T1>,
           typename = require_eigen_t<T2>>
 auto elt_divide(T1 s, const T2& m) {
-  return (s / m.array()).matrix();
+  return (s / m.array()).matrix().eval();
 }
 
 }  // namespace math

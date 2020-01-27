@@ -44,7 +44,7 @@ template <typename T1, typename T2, typename = require_eigen_t<T1>,
           typename = require_stan_scalar_t<T2>,
           typename = require_all_not_var_t<scalar_type_t<T1>, T2>>
 inline auto divide(const T1& m, T2 c) {
-  return m / c;
+  return (m / c).eval();
 }
 
 }  // namespace math

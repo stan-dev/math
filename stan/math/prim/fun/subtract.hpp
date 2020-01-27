@@ -22,7 +22,7 @@ namespace math {
 template <typename T1, typename T2, typename = require_all_eigen_t<T1, T2>>
 inline auto subtract(const T1& m1, const T2& m2) {
   check_matching_dims("subtract", "m1", m1, "m2", m2);
-  return m1 - m2;
+  return (m1 - m2).eval();
 }
 
 /**
@@ -38,7 +38,7 @@ inline auto subtract(const T1& m1, const T2& m2) {
 template <typename T1, typename T2, typename = require_stan_scalar_t<T1>,
           typename = require_eigen_t<T2>>
 inline auto subtract(const T1 c, const T2& m) {
-  return (c - m.array()).matrix();
+  return (c - m.array()).matrix().eval();
 }
 
 /**
@@ -54,7 +54,7 @@ inline auto subtract(const T1 c, const T2& m) {
 template <typename T1, typename T2, typename = require_eigen_t<T1>,
           typename = require_stan_scalar_t<T2>>
 inline auto subtract(const T1& m, const T2 c) {
-  return (m.array() - c).matrix();
+  return (m.array() - c).matrix().eval();
 }
 
 }  // namespace math

@@ -26,7 +26,7 @@ namespace math {
 template <typename T1, typename T2, typename = require_eigen_t<T1>,
           typename = require_stan_scalar_t<T2>>
 inline auto multiply(const T1& m, T2 c) {
-  return c * m;
+  return (c * m).eval();
 }
 
 /**
@@ -42,7 +42,7 @@ inline auto multiply(const T1& m, T2 c) {
 template <typename T1, typename T2, typename = require_stan_scalar_t<T1>,
           typename = require_eigen_t<T2>>
 inline auto multiply(T1 c, const T2& m) {
-  return c * m;
+  return (c * m).eval();
 }
 
 /**
@@ -66,7 +66,7 @@ template <typename T1, typename T2,
           typename = require_not_eigen_row_and_col_t<T1, T2>>
 inline auto multiply(const T1& m1, const T2& m2) {
   check_multiplicable("multiply", "m1", m1, "m2", m2);
-  return m1 * m2;
+  return (m1 * m2).eval();
 }
 
 /**
@@ -98,10 +98,10 @@ inline auto multiply(const T1& m1, const T2& m2) -> decltype((m1 * m2).eval()) {
     matrix_cl<double> m3_cl = m1_cl * m2_cl;
     return from_matrix_cl<T1::RowsAtCompileTime, T2::ColsAtCompileTime>(m3_cl);
   } else {
-    return m1 * m2;
+    return (m1 * m2).eval();
   }
 #else
-  return m1 * m2;
+  return (m1 * m2).eval();
 #endif
 }
 
