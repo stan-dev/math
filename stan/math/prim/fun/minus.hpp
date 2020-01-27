@@ -13,7 +13,7 @@ namespace math {
  */
 template <typename T>
 inline auto minus(const T& x) {
-  return -x;
+  return (-x).eval();
 }
 
 }  // namespace math

@@ -60,7 +60,7 @@ struct apply_scalar_unary<F, T, require_eigen_t<T>> {
    */
   static inline auto apply(const T& x) {
     return x.unaryExpr(
-        [](scalar_t x) { return apply_scalar_unary<F, scalar_t>::apply(x); });
+        [](scalar_t x) { return apply_scalar_unary<F, scalar_t>::apply(x); }).eval();
   }
 
   /**
