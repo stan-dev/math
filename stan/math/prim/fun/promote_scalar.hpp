@@ -86,7 +86,7 @@ struct promote_scalar_struct<T, std::vector<S>> {
   static std::vector<typename promote_scalar_type<T, S>::type> apply(
       const std::vector<S>& x) {
     using return_t = std::vector<typename promote_scalar_type<T, S>::type>;
-    using idx_t = typename index_type<return_t>::type;
+    using idx_t = index_type_t<return_t>;
     return_t y(x.size());
     for (idx_t i = 0; i < x.size(); ++i) {
       y[i] = promote_scalar_struct<T, S>::apply(x[i]);

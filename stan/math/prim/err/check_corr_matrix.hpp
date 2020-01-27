@@ -33,8 +33,8 @@ template <typename T_y>
 inline void check_corr_matrix(
     const char* function, const char* name,
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
-  using size_type = typename index_type<
-      Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> >::type;
+  using size_type
+      = index_type_t<Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>>;
 
   check_square(function, name, y);
   using std::fabs;
