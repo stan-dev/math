@@ -51,8 +51,8 @@ ordered_logistic_glm_lpmf(
   using std::exp;
   using std::isfinite;
 
-  typedef typename partials_return_type<T_y, T_x_scalar, T_beta_scalar,
-                                        T_cuts_scalar>::type T_partials_return;
+  using T_partials_return
+      = partials_return_t<T_y, T_x_scalar, T_beta_scalar, T_cuts_scalar>;
   typedef typename std::conditional_t<T_x_rows == 1, double, VectorXd>
       T_location;
 

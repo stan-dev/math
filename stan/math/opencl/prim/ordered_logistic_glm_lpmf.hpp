@@ -49,8 +49,7 @@ return_type_t<T_beta_scalar, T_cuts_scalar> ordered_logistic_glm_lpmf(
   using Eigen::Matrix;
   using Eigen::VectorXd;
   using std::isfinite;
-  using T_partials_return =
-      typename partials_return_type<T_beta_scalar, T_cuts_scalar>::type;
+  using T_partials_return = partials_return_t<T_beta_scalar, T_cuts_scalar>;
 
   static const char* function = "ordered_logistic_glm_lpmf";
 
