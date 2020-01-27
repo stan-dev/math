@@ -6,6 +6,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/log_sum_exp.hpp>
+#include <stan/math/prim/vectorize/apply_vector_unary.hpp>
 #include <cmath>
 #include <vector>
 
@@ -31,37 +32,35 @@ inline fvar<T> log_sum_exp(double x1, const fvar<T>& x2) {
 
 template <typename T>
 inline fvar<T> log_sum_exp(const fvar<T>& x1, double x2) {
-  using std::exp;
-  if (x2 == NEGATIVE_INFTY) {
-    return fvar<T>(x1.val_, x1.d_);
-  }
-  return fvar<T>(log_sum_exp(x1.val_, x2), x1.d_ / (1 + exp(x2 - x1.val_)));
+  return log_sum_exp(x2, x1);
 }
 
-template <typename T>
-fvar<T> log_sum_exp(const std::vector<fvar<T> >& v) {
-  using std::exp;
-  std::vector<T> vals(v.size());
-  for (size_t i = 0; i < v.size(); ++i) {
-    vals[i] = v[i].val_;
-  }
-  T deriv(0.0);
-  T denominator(0.0);
-  for (size_t i = 0; i < v.size(); ++i) {
-    T exp_vi = exp(vals[i]);
-    denominator += exp_vi;
-    deriv += v[i].d_ * exp_vi;
-  }
-  return fvar<T>(log_sum_exp(vals), deriv / denominator);
-}
+/**
+ * Return the log of the sum of the exponentiated values of the specified
+ * matrix of values.  The matrix may be a full matrix, a vector,
+ * a row vector, or a container of these.
+ *
+ * The function is defined as follows to prevent overflow in exponential
+ * calculations.
+ *
+ * \f$\log \sum_{n=1}^N \exp(x_n) = \max(x) + \log \sum_{n=1}^N \exp(x_n -
+ * \max(x))\f$.
+ *
+ * @tparam T Type of input vector or matrix.
+ * @param[in] x Matrix of specified values.
+ * @return The log of the sum of the exponentiated vector values.
+ */
+template <typename T, require_t<is_fvar<scalar_type_t<T>>>...>
+inline auto log_sum_exp(const T& x) {
+  return apply_vector_unary<T>::reduce(x, [&](const auto& v) {
+    using T_fvar_inner = typename value_type_t<decltype(v)>::Scalar;
+    using mat_type = Eigen::Matrix<T_fvar_inner, -1, -1>;
+    mat_type vals = v.val();
+    mat_type exp_vals = vals.array().exp();
 
-template <typename T, int R, int C>
-fvar<T> log_sum_exp(const Eigen::Matrix<fvar<T>, R, C>& v) {
-  Eigen::Matrix<T, R, C> vals = v.val();
-  Eigen::Matrix<T, R, C> exp_vals = vals.array().exp();
-
-  return fvar<T>(log_sum_exp(vals),
-                 v.d().cwiseProduct(exp_vals).sum() / exp_vals.sum());
+    return fvar<T_fvar_inner>(
+        log_sum_exp(vals), v.d().cwiseProduct(exp_vals).sum() / exp_vals.sum());
+  });
 }
 
 }  // namespace math
