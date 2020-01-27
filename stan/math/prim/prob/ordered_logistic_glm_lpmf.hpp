@@ -39,7 +39,7 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_x_scalar, int T_x_rows,
           typename T_beta_scalar, typename T_cuts_scalar>
-typename stan::return_type_t<T_x_scalar, T_beta_scalar, T_cuts_scalar>
+return_type_t<T_x_scalar, T_beta_scalar, T_cuts_scalar>
 ordered_logistic_glm_lpmf(
     const T_y& y, const Eigen::Matrix<T_x_scalar, T_x_rows, Eigen::Dynamic>& x,
     const Eigen::Matrix<T_beta_scalar, Eigen::Dynamic, 1>& beta,
@@ -195,7 +195,7 @@ ordered_logistic_glm_lpmf(
 
 template <typename T_y, typename T_x_scalar, int T_x_rows,
           typename T_beta_scalar, typename T_cuts_scalar>
-typename stan::return_type_t<T_x_scalar, T_beta_scalar, T_cuts_scalar>
+return_type_t<T_x_scalar, T_beta_scalar, T_cuts_scalar>
 ordered_logistic_glm_lpmf(
     const T_y& y, const Eigen::Matrix<T_x_scalar, T_x_rows, Eigen::Dynamic>& x,
     const Eigen::Matrix<T_beta_scalar, Eigen::Dynamic, 1>& beta,
