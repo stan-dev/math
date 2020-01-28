@@ -57,8 +57,8 @@ static const std::string multiply_transpose_kernel_code = STRINGIFY(
           // each thread copies WORK_PER_THREAD values to the
           // local memory
           for (int w = 0; w < WORK_PER_THREAD; w++) {
-            const A_temp_j = tiled_j + w * THREAD_BLOCK_SIZE_COL;
-            const AT_temp_j = j + w * THREAD_BLOCK_SIZE_COL;
+            const int A_temp_j = tiled_j + w * THREAD_BLOCK_SIZE_COL;
+            const int AT_temp_j = j + w * THREAD_BLOCK_SIZE_COL;
             if (A_temp_j >= N || i >= M) {
               A_local[thread_block_col + w * THREAD_BLOCK_SIZE_COL]
                      [thread_block_row]
