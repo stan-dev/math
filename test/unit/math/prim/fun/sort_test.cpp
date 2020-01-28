@@ -7,7 +7,7 @@
 
 template <typename T>
 void test_sort_asc() {
-  using stan::math::index_type;
+  using stan::math::index_type_t;
   using stan::math::sort_asc;
 
   T c(1);
@@ -73,7 +73,7 @@ TEST(MathMatrixPrimMat, sort_asc) {
 
 template <typename T>
 void test_sort_desc() {
-  using stan::math::index_type;
+  using stan::math::index_type_t;
   using stan::math::sort_desc;
 
   T c(1);
