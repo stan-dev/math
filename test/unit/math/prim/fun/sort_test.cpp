@@ -36,7 +36,7 @@ void test_sort_asc() {
 
   T z;
   EXPECT_NO_THROW(sort_asc(z));
-  EXPECT_EQ(typename index_type<T>::type(0), z.size());
+  EXPECT_EQ(index_type_t<T>(0), z.size());
 }
 
 TEST(MathMatrixPrimMat, sortAscStdVecNan) {
@@ -102,7 +102,7 @@ void test_sort_desc() {
 
   T z;
   EXPECT_NO_THROW(sort_desc(z));
-  EXPECT_EQ(typename index_type<T>::type(0), z.size());
+  EXPECT_EQ(index_type_t<T>(0), z.size());
 }
 
 TEST(MathMatrixPrimMat, sort_desc) {

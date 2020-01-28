@@ -10,7 +10,7 @@ using stan::math::var;
 using stan::scalar_type;
 using std::vector;
 
-typedef stan::math::index_type<Eigen::Matrix<double, 1, 1> >::type size_type;
+using size_type = stan::math::index_type_t<Eigen::Matrix<double, 1, 1>>;
 
 // ------------------------------------------------------------
 

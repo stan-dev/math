@@ -32,7 +32,7 @@ double dy2_dchi(double t, double omega, double chi) {
 class sho_functor {
  public:
   template <typename T0, typename T1, typename T2>
-  inline std::vector<typename stan::return_type<T1, T2>::type>
+  inline std::vector<stan::return_type_t<T1, T2>>
   // time
   // state
   // parameters
@@ -44,7 +44,7 @@ class sho_functor {
     if (y_in.size() != 2)
       throw std::domain_error("Functor called with inconsistent state");
 
-    std::vector<typename stan::return_type<T1, T2>::type> f;
+    std::vector<stan::return_type_t<T1, T2>> f;
     f.push_back(y_in.at(1));
     f.push_back(-theta.at(0) * theta.at(0) * y_in.at(0));
 

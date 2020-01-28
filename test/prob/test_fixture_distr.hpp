@@ -54,11 +54,10 @@ class AgradDistributionTestFixture : public ::testing::Test {
   typedef typename scalar_type<T4>::type Scalar4;
   typedef typename scalar_type<T5>::type Scalar5;
 
-  typedef typename stan::math::fvar<
-      typename stan::partials_return_type<T0, T1, T2, T3, T4, T5>::type>
-      T_fvar_return;
   typedef
-      typename stan::return_type<T0, T1, T2, T3, T4, T5>::type T_return_type;
+      typename stan::math::fvar<stan::partials_return_t<T0, T1, T2, T3, T4, T5>>
+          T_fvar_return;
+  using T_return_type = stan::return_type_t<T0, T1, T2, T3, T4, T5>;
 
   void call_all_versions() {
     vector<double> log_prob;

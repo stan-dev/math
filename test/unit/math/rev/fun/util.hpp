@@ -101,7 +101,7 @@ void expect_near_relative(double u, double v) {
     EXPECT_NEAR(0, relative_diff(u, v), 1e-7);
 }
 
-typedef stan::math::index_type<Eigen::Matrix<double, -1, -1> >::type size_type;
+using size_type = stan::math::index_type_t<Eigen::Matrix<double, -1, -1>>;
 
 // Returns a matrix with the contents of a
 // vector; Fills the matrix column-wise

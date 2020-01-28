@@ -45,7 +45,7 @@ class AgradCdfLogTest {
     typename T3, typename T4, typename T5,
     typename T6, typename T7, typename T8,
     typename T9>
-    typename stan::return_type<T_y, T_loc, T_scale>::type
+    stan::return_type_t<T_y, T_loc, T_scale>
     cdf_log(const T_y& y, const T_loc& mu, const T_scale& sigma,
     const T3&, const T4&, const T5&, const T6&, const T7&, const T8&, const T9&)
     { return stan::math::normal_cdf_log(y, mu, sigma);
@@ -55,7 +55,7 @@ class AgradCdfLogTest {
     typename T3, typename T4, typename T5,
     typename T6, typename T7, typename T8,
     typename T9>
-    typename stan::return_type<T_y, T_loc, T_scale>::type
+    stan::return_type_t<T_y, T_loc, T_scale>
     cdf_log_function(const T_y& y, const T_loc& mu, const T_scale& sigma,
     const T3&, const T4&, const T5&, const T6&, const T7&, const T8&, const T9&)
     { using stan::math::erf; return (0.5 + 0.5 * erf((y - mu) / (sigma *
@@ -82,11 +82,10 @@ class AgradCdfLogTestFixture : public ::testing::Test {
   typedef typename scalar_type<T4>::type Scalar4;
   typedef typename scalar_type<T5>::type Scalar5;
 
-  typedef typename stan::math::fvar<
-      typename stan::partials_return_type<T0, T1, T2, T3, T4, T5>::type>
-      T_fvar_return;
   typedef
-      typename stan::return_type<T0, T1, T2, T3, T4, T5>::type T_return_type;
+      typename stan::math::fvar<stan::partials_return_t<T0, T1, T2, T3, T4, T5>>
+          T_fvar_return;
+  using T_return_type = stan::return_type_t<T0, T1, T2, T3, T4, T5>;
 
   void call_all_versions() {
     vector<double> cdf_log;
