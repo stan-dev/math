@@ -116,7 +116,7 @@ TEST_F(IDASIntegratorTest, idas_ivp_system_yy0) {
       f, eq_id, yy0, yp0, theta, x_r, x_i, msgs};
   idas_integrator solver(1e-4, 1e-8, 1e6);
 
-  std::vector<std::vector<double> > yy = solver.integrate(dae, t0, ts);
+  std::vector<std::vector<double>> yy = solver.integrate(dae, t0, ts);
   EXPECT_NEAR(0.985172, yy[0][0], 1e-6);
   EXPECT_NEAR(0.0147939, yy[0][2], 1e-6);
   EXPECT_NEAR(0.905521, yy[1][0], 1e-6);
@@ -134,7 +134,7 @@ TEST_F(IDASIntegratorTest, forward_sensitivity_theta_chemical) {
 
   idas_forward_system<chemical_kinetics, double, double, var> dae(
       f, eq_id, yy0, yp0, theta_var, x_r, x_i, msgs);
-  std::vector<std::vector<var> > yy = solver.integrate(dae, t0, ts);
+  std::vector<std::vector<var>> yy = solver.integrate(dae, t0, ts);
   EXPECT_NEAR(0.985172, value_of(yy[0][0]), 1e-6);
   EXPECT_NEAR(0.0147939, value_of(yy[0][2]), 1e-6);
   EXPECT_NEAR(0.905519, value_of(yy[1][0]), 1e-6);
@@ -148,8 +148,8 @@ TEST_F(IDASIntegratorTest, forward_sensitivity_theta_chemical) {
   idas_forward_system<chemical_kinetics, double, double, double> dae1(
       f, eq_id, yy0, yp0, theta1, x_r, x_i, msgs),
       dae2(f, eq_id, yy0, yp0, theta2, x_r, x_i, msgs);
-  std::vector<std::vector<double> > yy1 = solver.integrate(dae1, t0, ts);
-  std::vector<std::vector<double> > yy2 = solver.integrate(dae2, t0, ts);
+  std::vector<std::vector<double>> yy1 = solver.integrate(dae1, t0, ts);
+  std::vector<std::vector<double>> yy2 = solver.integrate(dae2, t0, ts);
 
   double yys_finite_diff;
   for (size_t i = 0; i < yy.size(); ++i) {
@@ -181,7 +181,7 @@ TEST_F(IDASIntegratorTest, forward_sensitivity_theta_prey) {
 
   idas_forward_system<prey_predator_harvest, double, double, var> dae(
       f2, eq_id, yy0, yp0, theta_var, x_r, x_i, msgs);
-  std::vector<std::vector<var> > yy = solver.integrate(dae, t0, ts);
+  std::vector<std::vector<var>> yy = solver.integrate(dae, t0, ts);
 
   // test derivatives against central difference results
   std::vector<double> g;
@@ -191,8 +191,8 @@ TEST_F(IDASIntegratorTest, forward_sensitivity_theta_prey) {
   idas_forward_system<prey_predator_harvest, double, double, double> dae1(
       f2, eq_id, yy0, yp0, theta1, x_r, x_i, msgs),
       dae2(f2, eq_id, yy0, yp0, theta2, x_r, x_i, msgs);
-  std::vector<std::vector<double> > yy1 = solver.integrate(dae1, t0, ts);
-  std::vector<std::vector<double> > yy2 = solver.integrate(dae2, t0, ts);
+  std::vector<std::vector<double>> yy1 = solver.integrate(dae1, t0, ts);
+  std::vector<std::vector<double>> yy2 = solver.integrate(dae2, t0, ts);
 
   double yys_finite_diff;
   for (size_t i = 0; i < yy.size(); ++i) {

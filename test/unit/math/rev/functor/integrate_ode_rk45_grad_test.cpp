@@ -72,7 +72,7 @@ class test_functor_double_var_1 {
     std::vector<double> data;
     std::vector<int> data_int;
 
-    std::vector<std::vector<T> > ys = stan::math::integrate_ode_rk45(
+    std::vector<std::vector<T>> ys = stan::math::integrate_ode_rk45(
         sho, y0, t0, ts, theta, data, data_int, 0);
 
     return ys[0][0];
@@ -99,7 +99,7 @@ class test_functor_double_var_2 {
     std::vector<double> data;
     std::vector<int> data_int;
 
-    std::vector<std::vector<T> > ys = stan::math::integrate_ode_rk45(
+    std::vector<std::vector<T>> ys = stan::math::integrate_ode_rk45(
         sho, y0, t0, ts, theta, data, data_int, 0);
 
     return ys[0][1];
@@ -150,7 +150,7 @@ class test_functor_var_double_1 {
     std::vector<double> data;
     std::vector<int> data_int;
 
-    std::vector<std::vector<T> > ys = stan::math::integrate_ode_rk45(
+    std::vector<std::vector<T>> ys = stan::math::integrate_ode_rk45(
         sho, y0, t0, ts, theta, data, data_int, 0);
 
     return ys[0][0];
@@ -177,7 +177,7 @@ class test_functor_var_double_2 {
     std::vector<double> data;
     std::vector<int> data_int;
 
-    std::vector<std::vector<T> > ys = stan::math::integrate_ode_rk45(
+    std::vector<std::vector<T>> ys = stan::math::integrate_ode_rk45(
         sho, y0, t0, ts, theta, data, data_int, 0);
 
     return ys[0][1];
@@ -228,7 +228,7 @@ class test_functor_var_var_1 {
     std::vector<double> data;
     std::vector<int> data_int;
 
-    std::vector<std::vector<T> > ys = stan::math::integrate_ode_rk45(
+    std::vector<std::vector<T>> ys = stan::math::integrate_ode_rk45(
         sho, y0, t0, ts, theta, data, data_int, 0);
 
     return ys[0][0];
@@ -255,7 +255,7 @@ class test_functor_var_var_2 {
     std::vector<double> data;
     std::vector<int> data_int;
 
-    std::vector<std::vector<T> > ys = stan::math::integrate_ode_rk45(
+    std::vector<std::vector<T>> ys = stan::math::integrate_ode_rk45(
         sho, y0, t0, ts, theta, data, data_int, 0);
 
     return ys[0][1];

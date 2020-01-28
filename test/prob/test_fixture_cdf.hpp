@@ -16,7 +16,7 @@ using std::vector;
 
 class AgradCdfTest {
  public:
-  virtual void valid_values(vector<vector<double> >& /*parameters*/,
+  virtual void valid_values(vector<vector<double>>& /*parameters*/,
                             vector<double>& /* cdf */) {
     throw std::runtime_error("valid_values() not implemented");
   }
@@ -89,7 +89,7 @@ class AgradCdfTestFixture : public ::testing::Test {
 
   void call_all_versions() {
     vector<double> cdf;
-    vector<vector<double> > parameters;
+    vector<vector<double>> parameters;
     TestClass.valid_values(parameters, cdf);
 
     T0 p0 = get_params<T0>(parameters, 0);
@@ -106,7 +106,7 @@ class AgradCdfTestFixture : public ::testing::Test {
 
   void test_valid_values() {
     vector<double> expected_cdf;
-    vector<vector<double> > parameters;
+    vector<vector<double>> parameters;
     TestClass.valid_values(parameters, expected_cdf);
 
     for (size_t n = 0; n < parameters.size(); n++) {
@@ -286,19 +286,16 @@ class AgradCdfTestFixture : public ::testing::Test {
 
   // works for fvar<fvar<double> >
   double calculate_gradients_1storder(vector<double>& grad,
-                                      fvar<fvar<double> >& cdf,
-                                      vector<var>& x) {
+                                      fvar<fvar<double>>& cdf, vector<var>& x) {
     x.push_back(cdf.d_.val_);
     return cdf.val().val();
   }
   double calculate_gradients_2ndorder(vector<double>& grad,
-                                      fvar<fvar<double> >& cdf,
-                                      vector<var>& x) {
+                                      fvar<fvar<double>>& cdf, vector<var>& x) {
     return cdf.val().val();
   }
   double calculate_gradients_3rdorder(vector<double>& grad,
-                                      fvar<fvar<double> >& cdf,
-                                      vector<var>& x) {
+                                      fvar<fvar<double>>& cdf, vector<var>& x) {
     return cdf.val().val();
   }
 
@@ -322,19 +319,19 @@ class AgradCdfTestFixture : public ::testing::Test {
 
   // works for fvar<fvar<var> >
   double calculate_gradients_1storder(vector<double>& grad,
-                                      fvar<fvar<var> >& cdf, vector<var>& x) {
+                                      fvar<fvar<var>>& cdf, vector<var>& x) {
     cdf.val_.val_.grad(x, grad);
     stan::math::recover_memory();
     return cdf.val_.val_.val();
   }
   double calculate_gradients_2ndorder(vector<double>& grad,
-                                      fvar<fvar<var> >& cdf, vector<var>& x) {
+                                      fvar<fvar<var>>& cdf, vector<var>& x) {
     cdf.d_.val_.grad(x, grad);
     stan::math::recover_memory();
     return cdf.val_.val_.val();
   }
   double calculate_gradients_3rdorder(vector<double>& grad,
-                                      fvar<fvar<var> >& cdf, vector<var>& x) {
+                                      fvar<fvar<var>>& cdf, vector<var>& x) {
     cdf.d_.d_.grad(x, grad);
     stan::math::recover_memory();
     return cdf.val_.val_.val();
@@ -365,25 +362,25 @@ class AgradCdfTestFixture : public ::testing::Test {
       return;
     }
     vector<double> expected_cdf;
-    vector<vector<double> > parameters;
+    vector<vector<double>> parameters;
     TestClass.valid_values(parameters, expected_cdf);
 
     for (size_t n = 0; n < parameters.size(); n++) {
       vector<double> finite_diffs;
       vector<double> gradients;
 
-      if (!std::is_same<Scalar0, fvar<double> >::value
-          && !std::is_same<Scalar0, fvar<fvar<double> > >::value
-          && !std::is_same<Scalar1, fvar<double> >::value
-          && !std::is_same<Scalar1, fvar<fvar<double> > >::value
-          && !std::is_same<Scalar2, fvar<double> >::value
-          && !std::is_same<Scalar2, fvar<fvar<double> > >::value
-          && !std::is_same<Scalar3, fvar<double> >::value
-          && !std::is_same<Scalar3, fvar<fvar<double> > >::value
-          && !std::is_same<Scalar4, fvar<double> >::value
-          && !std::is_same<Scalar4, fvar<fvar<double> > >::value
-          && !std::is_same<Scalar5, fvar<double> >::value
-          && !std::is_same<Scalar5, fvar<fvar<double> > >::value) {
+      if (!std::is_same<Scalar0, fvar<double>>::value
+          && !std::is_same<Scalar0, fvar<fvar<double>>>::value
+          && !std::is_same<Scalar1, fvar<double>>::value
+          && !std::is_same<Scalar1, fvar<fvar<double>>>::value
+          && !std::is_same<Scalar2, fvar<double>>::value
+          && !std::is_same<Scalar2, fvar<fvar<double>>>::value
+          && !std::is_same<Scalar3, fvar<double>>::value
+          && !std::is_same<Scalar3, fvar<fvar<double>>>::value
+          && !std::is_same<Scalar4, fvar<double>>::value
+          && !std::is_same<Scalar4, fvar<fvar<double>>>::value
+          && !std::is_same<Scalar5, fvar<double>>::value
+          && !std::is_same<Scalar5, fvar<fvar<double>>>::value) {
         calculate_finite_diff(parameters[n], finite_diffs);
         Scalar0 p0 = get_param<Scalar0>(parameters[n], 0);
         Scalar1 p1 = get_param<Scalar1>(parameters[n], 1);
@@ -427,7 +424,7 @@ class AgradCdfTestFixture : public ::testing::Test {
       return;
     }
     vector<double> expected_cdf;
-    vector<vector<double> > parameters;
+    vector<vector<double>> parameters;
     TestClass.valid_values(parameters, expected_cdf);
 
     for (size_t n = 0; n < parameters.size(); n++) {
@@ -515,7 +512,7 @@ class AgradCdfTestFixture : public ::testing::Test {
 
     const size_t N_REPEAT = 3;
     vector<double> expected_cdf;
-    vector<vector<double> > parameters;
+    vector<vector<double>> parameters;
     TestClass.valid_values(parameters, expected_cdf);
 
     for (size_t n = 0; n < parameters.size(); n++) {
@@ -576,38 +573,38 @@ class AgradCdfTestFixture : public ::testing::Test {
       size_t pos_single = 0;
       size_t pos_multiple = 0;
       if (!is_constant_all<T0>::value && !is_empty<T0>::value
-          && !std::is_same<Scalar0, fvar<double> >::value
-          && !std::is_same<Scalar0, fvar<fvar<double> > >::value)
+          && !std::is_same<Scalar0, fvar<double>>::value
+          && !std::is_same<Scalar0, fvar<fvar<double>>>::value)
         test_multiple_gradient_values(
             is_vector<T0>::value, single_cdf, single_gradients1, pos_single,
             multiple_gradients1, pos_multiple, N_REPEAT);
       if (!is_constant_all<T1>::value && !is_empty<T1>::value
-          && !std::is_same<Scalar1, fvar<double> >::value
-          && !std::is_same<Scalar1, fvar<fvar<double> > >::value)
+          && !std::is_same<Scalar1, fvar<double>>::value
+          && !std::is_same<Scalar1, fvar<fvar<double>>>::value)
         test_multiple_gradient_values(
             is_vector<T1>::value, single_cdf, single_gradients1, pos_single,
             multiple_gradients1, pos_multiple, N_REPEAT);
       if (!is_constant_all<T2>::value && !is_empty<T2>::value
-          && !std::is_same<Scalar2, fvar<double> >::value
-          && !std::is_same<Scalar2, fvar<fvar<double> > >::value)
+          && !std::is_same<Scalar2, fvar<double>>::value
+          && !std::is_same<Scalar2, fvar<fvar<double>>>::value)
         test_multiple_gradient_values(
             is_vector<T2>::value, single_cdf, single_gradients1, pos_single,
             multiple_gradients1, pos_multiple, N_REPEAT);
       if (!is_constant_all<T3>::value && !is_empty<T3>::value
-          && !std::is_same<Scalar3, fvar<double> >::value
-          && !std::is_same<Scalar3, fvar<fvar<double> > >::value)
+          && !std::is_same<Scalar3, fvar<double>>::value
+          && !std::is_same<Scalar3, fvar<fvar<double>>>::value)
         test_multiple_gradient_values(
             is_vector<T3>::value, single_cdf, single_gradients1, pos_single,
             multiple_gradients1, pos_multiple, N_REPEAT);
       if (!is_constant_all<T4>::value && !is_empty<T4>::value
-          && !std::is_same<Scalar4, fvar<double> >::value
-          && !std::is_same<Scalar4, fvar<fvar<double> > >::value)
+          && !std::is_same<Scalar4, fvar<double>>::value
+          && !std::is_same<Scalar4, fvar<fvar<double>>>::value)
         test_multiple_gradient_values(
             is_vector<T4>::value, single_cdf, single_gradients1, pos_single,
             multiple_gradients1, pos_multiple, N_REPEAT);
       if (!is_constant_all<T5>::value && !is_empty<T5>::value
-          && !std::is_same<Scalar5, fvar<double> >::value
-          && !std::is_same<Scalar5, fvar<fvar<double> > >::value)
+          && !std::is_same<Scalar5, fvar<double>>::value
+          && !std::is_same<Scalar5, fvar<fvar<double>>>::value)
         test_multiple_gradient_values(
             is_vector<T5>::value, single_cdf, single_gradients1, pos_single,
             multiple_gradients1, pos_multiple, N_REPEAT);
@@ -615,38 +612,38 @@ class AgradCdfTestFixture : public ::testing::Test {
       pos_single = 0;
       pos_multiple = 0;
       if (!is_constant_all<T0>::value && !is_empty<T0>::value
-          && (std::is_same<Scalar0, fvar<var> >::value
-              || std::is_same<Scalar0, fvar<fvar<var> > >::value))
+          && (std::is_same<Scalar0, fvar<var>>::value
+              || std::is_same<Scalar0, fvar<fvar<var>>>::value))
         test_multiple_gradient_values(
             is_vector<T0>::value, single_cdf, single_gradients2, pos_single,
             multiple_gradients2, pos_multiple, N_REPEAT);
       if (!is_constant_all<T1>::value && !is_empty<T1>::value
-          && (std::is_same<Scalar1, fvar<var> >::value
-              || std::is_same<Scalar1, fvar<fvar<var> > >::value))
+          && (std::is_same<Scalar1, fvar<var>>::value
+              || std::is_same<Scalar1, fvar<fvar<var>>>::value))
         test_multiple_gradient_values(
             is_vector<T1>::value, single_cdf, single_gradients2, pos_single,
             multiple_gradients2, pos_multiple, N_REPEAT);
       if (!is_constant_all<T2>::value && !is_empty<T2>::value
-          && (std::is_same<Scalar2, fvar<var> >::value
-              || std::is_same<Scalar2, fvar<fvar<var> > >::value))
+          && (std::is_same<Scalar2, fvar<var>>::value
+              || std::is_same<Scalar2, fvar<fvar<var>>>::value))
         test_multiple_gradient_values(
             is_vector<T2>::value, single_cdf, single_gradients2, pos_single,
             multiple_gradients2, pos_multiple, N_REPEAT);
       if (!is_constant_all<T3>::value && !is_empty<T3>::value
-          && (std::is_same<Scalar3, fvar<var> >::value
-              || std::is_same<Scalar3, fvar<fvar<var> > >::value))
+          && (std::is_same<Scalar3, fvar<var>>::value
+              || std::is_same<Scalar3, fvar<fvar<var>>>::value))
         test_multiple_gradient_values(
             is_vector<T3>::value, single_cdf, single_gradients2, pos_single,
             multiple_gradients2, pos_multiple, N_REPEAT);
       if (!is_constant_all<T4>::value && !is_empty<T4>::value
-          && (std::is_same<Scalar4, fvar<var> >::value
-              || std::is_same<Scalar4, fvar<fvar<var> > >::value))
+          && (std::is_same<Scalar4, fvar<var>>::value
+              || std::is_same<Scalar4, fvar<fvar<var>>>::value))
         test_multiple_gradient_values(
             is_vector<T4>::value, single_cdf, single_gradients2, pos_single,
             multiple_gradients2, pos_multiple, N_REPEAT);
       if (!is_constant_all<T5>::value && !is_empty<T5>::value
-          && (std::is_same<Scalar5, fvar<var> >::value
-              || std::is_same<Scalar5, fvar<fvar<var> > >::value))
+          && (std::is_same<Scalar5, fvar<var>>::value
+              || std::is_same<Scalar5, fvar<fvar<var>>>::value))
         test_multiple_gradient_values(
             is_vector<T5>::value, single_cdf, single_gradients2, pos_single,
             multiple_gradients2, pos_multiple, N_REPEAT);
@@ -654,32 +651,32 @@ class AgradCdfTestFixture : public ::testing::Test {
       pos_single = 0;
       pos_multiple = 0;
       if (!is_constant_all<T0>::value && !is_empty<T0>::value
-          && std::is_same<Scalar0, fvar<fvar<var> > >::value)
+          && std::is_same<Scalar0, fvar<fvar<var>>>::value)
         test_multiple_gradient_values(
             is_vector<T0>::value, single_cdf, single_gradients3, pos_single,
             multiple_gradients3, pos_multiple, N_REPEAT);
       if (!is_constant_all<T1>::value && !is_empty<T1>::value
-          && std::is_same<Scalar1, fvar<fvar<var> > >::value)
+          && std::is_same<Scalar1, fvar<fvar<var>>>::value)
         test_multiple_gradient_values(
             is_vector<T1>::value, single_cdf, single_gradients3, pos_single,
             multiple_gradients3, pos_multiple, N_REPEAT);
       if (!is_constant_all<T2>::value && !is_empty<T2>::value
-          && std::is_same<Scalar2, fvar<fvar<var> > >::value)
+          && std::is_same<Scalar2, fvar<fvar<var>>>::value)
         test_multiple_gradient_values(
             is_vector<T2>::value, single_cdf, single_gradients3, pos_single,
             multiple_gradients3, pos_multiple, N_REPEAT);
       if (!is_constant_all<T3>::value && !is_empty<T3>::value
-          && std::is_same<Scalar3, fvar<fvar<var> > >::value)
+          && std::is_same<Scalar3, fvar<fvar<var>>>::value)
         test_multiple_gradient_values(
             is_vector<T3>::value, single_cdf, single_gradients3, pos_single,
             multiple_gradients3, pos_multiple, N_REPEAT);
       if (!is_constant_all<T4>::value && !is_empty<T4>::value
-          && std::is_same<Scalar4, fvar<fvar<var> > >::value)
+          && std::is_same<Scalar4, fvar<fvar<var>>>::value)
         test_multiple_gradient_values(
             is_vector<T4>::value, single_cdf, single_gradients3, pos_single,
             multiple_gradients3, pos_multiple, N_REPEAT);
       if (!is_constant_all<T5>::value && !is_empty<T5>::value
-          && std::is_same<Scalar5, fvar<fvar<var> > >::value)
+          && std::is_same<Scalar5, fvar<fvar<var>>>::value)
         test_multiple_gradient_values(
             is_vector<T5>::value, single_cdf, single_gradients3, pos_single,
             multiple_gradients3, pos_multiple, N_REPEAT);
@@ -690,7 +687,7 @@ class AgradCdfTestFixture : public ::testing::Test {
     using stan::math::value_of;
     const size_t N_REPEAT = 3;
     vector<double> expected_cdf;
-    vector<vector<double> > parameters;
+    vector<vector<double>> parameters;
     TestClass.valid_values(parameters, expected_cdf);
 
     if (!TestClass.has_lower_bound()) {
@@ -727,7 +724,7 @@ class AgradCdfTestFixture : public ::testing::Test {
     using stan::math::value_of;
     const size_t N_REPEAT = 3;
     vector<double> expected_cdf;
-    vector<vector<double> > parameters;
+    vector<vector<double>> parameters;
     TestClass.valid_values(parameters, expected_cdf);
 
     if (!TestClass.has_upper_bound()) {
@@ -768,7 +765,7 @@ class AgradCdfTestFixture : public ::testing::Test {
     }
     const size_t N_REPEAT = 0;
     vector<double> expected_cdf;
-    vector<vector<double> > parameters;
+    vector<vector<double>> parameters;
     TestClass.valid_values(parameters, expected_cdf);
 
     T0 p0 = get_repeated_params<T0>(parameters[0], 0, N_REPEAT);
@@ -785,7 +782,7 @@ class AgradCdfTestFixture : public ::testing::Test {
   }
 
   vector<double> first_valid_params() {
-    vector<vector<double> > params;
+    vector<vector<double>> params;
     vector<double> cdf;
 
     TestClass.valid_values(params, cdf);

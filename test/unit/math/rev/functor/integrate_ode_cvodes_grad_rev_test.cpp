@@ -77,7 +77,7 @@ class test_functor_double_var_1 {
     std::vector<double> data;
     std::vector<int> data_int;
 
-    std::vector<std::vector<T> > ys
+    std::vector<std::vector<T>> ys
         = (lmm_ == TEST_CVODES_ADAMS
                ? stan::math::integrate_ode_adams(sho, y0, t0, ts, theta, data,
                                                  data_int)
@@ -112,7 +112,7 @@ class test_functor_double_var_2 {
     std::vector<double> data;
     std::vector<int> data_int;
 
-    std::vector<std::vector<T> > ys
+    std::vector<std::vector<T>> ys
         = (lmm_ == TEST_CVODES_ADAMS
                ? stan::math::integrate_ode_adams(sho, y0, t0, ts, theta, data,
                                                  data_int)
@@ -187,7 +187,7 @@ class test_functor_var_double_1 {
     std::vector<double> data;
     std::vector<int> data_int;
 
-    std::vector<std::vector<T> > ys
+    std::vector<std::vector<T>> ys
         = (lmm_ == TEST_CVODES_ADAMS
                ? stan::math::integrate_ode_adams(sho, y0, t0, ts, theta, data,
                                                  data_int)
@@ -222,7 +222,7 @@ class test_functor_var_double_2 {
     std::vector<double> data;
     std::vector<int> data_int;
 
-    std::vector<std::vector<T> > ys
+    std::vector<std::vector<T>> ys
         = (lmm_ == TEST_CVODES_ADAMS
                ? stan::math::integrate_ode_adams(sho, y0, t0, ts, theta, data,
                                                  data_int)
@@ -297,7 +297,7 @@ class test_functor_var_var_1 {
     std::vector<double> data;
     std::vector<int> data_int;
 
-    std::vector<std::vector<T> > ys
+    std::vector<std::vector<T>> ys
         = (lmm_ == TEST_CVODES_ADAMS
                ? stan::math::integrate_ode_adams(sho, y0, t0, ts, theta, data,
                                                  data_int)
@@ -332,7 +332,7 @@ class test_functor_var_var_2 {
     std::vector<double> data;
     std::vector<int> data_int;
 
-    std::vector<std::vector<T> > ys
+    std::vector<std::vector<T>> ys
         = (lmm_ == TEST_CVODES_ADAMS
                ? stan::math::integrate_ode_adams(sho, y0, t0, ts, theta, data,
                                                  data_int)

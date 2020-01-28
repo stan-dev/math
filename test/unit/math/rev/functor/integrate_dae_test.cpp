@@ -77,7 +77,7 @@ struct StanIntegrateDAETest : public ::testing::Test {
 TEST_F(StanIntegrateDAETest, idas_ivp_system_yy0) {
   using stan::math::idas_forward_system;
   using stan::math::integrate_dae;
-  std::vector<std::vector<double> > yy
+  std::vector<std::vector<double>> yy
       = integrate_dae(f, yy0, yp0, t0, ts, theta, x_r, x_i, 1e-4, 1e-8);
   EXPECT_NEAR(0.985172, yy[0][0], 1e-6);
   EXPECT_NEAR(0.0147939, yy[0][2], 1e-6);
@@ -95,7 +95,7 @@ TEST_F(StanIntegrateDAETest, forward_sensitivity_theta) {
 
   std::vector<var> theta_var = to_var(theta);
 
-  std::vector<std::vector<var> > yy
+  std::vector<std::vector<var>> yy
       = integrate_dae(f, yy0, yp0, t0, ts, theta_var, x_r, x_i, 1e-5, 1e-12);
   EXPECT_NEAR(0.985172, value_of(yy[0][0]), 1e-6);
   EXPECT_NEAR(0.0147939, value_of(yy[0][2]), 1e-6);
@@ -111,8 +111,8 @@ TEST_F(StanIntegrateDAETest, forward_sensitivity_theta) {
   idas_forward_system<chemical_kinetics, double, double, double> dae1(
       f, eq_id, yy0, yp0, theta1, x_r, x_i, msgs),
       dae2(f, eq_id, yy0, yp0, theta2, x_r, x_i, msgs);
-  std::vector<std::vector<double> > yy1 = solver.integrate(dae1, t0, ts);
-  std::vector<std::vector<double> > yy2 = solver.integrate(dae2, t0, ts);
+  std::vector<std::vector<double>> yy1 = solver.integrate(dae1, t0, ts);
+  std::vector<std::vector<double>> yy2 = solver.integrate(dae2, t0, ts);
 
   double yys_finite_diff = (yy2[3][1] - yy1[3][1]) / (2.0 * theta[0] * h);
   stan::math::set_zero_all_adjoints();
