@@ -1,4 +1,5 @@
 #include <stan/math/prim.hpp>
+#include <test/unit/math/test_ad.hpp>
 
 TEST(MathFunctions, cosh_works_with_other_functions) {
   Eigen::VectorXd a(5);
