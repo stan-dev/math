@@ -18,6 +18,16 @@ TEST(MathFunctions, reverse_array) {
   for (int i = 0; i < x.size(); i++) {
     EXPECT_FLOAT_EQ(y[i], rev[i]);
   }
+
+  std::vector<std::vector<double>> cont_x{x0, x1, x};
+  std::vector<std::vector<double>> cont_rev{x, x1, x0};
+  std::vector<std::vector<double>> cont_y = stan::math::reverse(cont_x);
+  for (int i = 0; i < cont_x.size(); i++) {
+    EXPECT_EQ(cont_y[i].size(), cont_rev[i].size());
+    for (int j = 0; j < cont_y[i].size(); j++) {
+      EXPECT_FLOAT_EQ(cont_y[i][j], cont_rev[i][j]);
+    }
+  }
 }
 
 TEST(MathFunctions, reverse_vector) {
@@ -34,6 +44,13 @@ TEST(MathFunctions, reverse_vector) {
   Eigen::VectorXd rev(4);
   rev << -3, 4, -1.2, 7;
   expect_matrix_eq(rev, reverse(x));
+
+  std::vector<Eigen::VectorXd> cont_x{x0, x1, x};
+  std::vector<Eigen::VectorXd> cont_rev{x, x1, x0};
+  std::vector<Eigen::VectorXd> cont_y = stan::math::reverse(cont_x);
+  for (int i = 0; i < cont_x.size(); i++) {
+    expect_matrix_eq(cont_y[i], cont_rev[i]);
+  }
 }
 
 TEST(MathFunctions, reverse_row_vector) {
@@ -50,4 +67,11 @@ TEST(MathFunctions, reverse_row_vector) {
   Eigen::RowVectorXd rev(4);
   rev << -3, 4, -1.2, 7;
   expect_matrix_eq(rev, reverse(x));
+
+  std::vector<Eigen::RowVectorXd> cont_x{x0, x1, x};
+  std::vector<Eigen::RowVectorXd> cont_rev{x, x1, x0};
+  std::vector<Eigen::RowVectorXd> cont_y = stan::math::reverse(cont_x);
+  for (int i = 0; i < cont_x.size(); i++) {
+    expect_matrix_eq(cont_y[i], cont_rev[i]);
+  }
 }
