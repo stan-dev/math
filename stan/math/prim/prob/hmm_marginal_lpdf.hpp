@@ -12,8 +12,6 @@
 
 namespace stan {
 namespace math {
-  // TO DO -- add checks for arguments.
-
   /**
    * For a Hidden Markov Model with observation y, hidden state x,
    * and parameters theta, return the log marginal density, log
@@ -78,15 +76,17 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
   const Eigen::Matrix<T_omega, Eigen::Dynamic, Eigen::Dynamic>& log_omegas,
   const Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic>& Gamma,
   const Eigen::Matrix<T_rho, Eigen::Dynamic, 1>& rho) {
+  int n_states = log_omegas.rows();
+  int n_transitions = log_omegas.cols() - 1;
 
-  check_nonnegative("hmm_marginal_lpdf", "Gamma", Gamma);
   check_square("hmm_marginal_lpdf", "Gamma", Gamma);
+  check_consistent_size("hmm_marginal_lpdf", "Gamma", col(Gamma, 1),
+                        n_states);
   for (int i = 0; i < Gamma.rows(); i++) {
     check_simplex("hmm_marginal_lpdf", "Gamma[, i]", col(Gamma, i + 1));
   }
-  check_nonnegative("hmm_marginal_lpdf", "rho", rho);
+  check_consistent_size("hmm_marginal_lpdf", "rho", rho, n_states);
   check_simplex("hmm_marginal_lpdf", "rho", rho);
-
 
   using T_partials_return = partials_return_t<T_omega, T_Gamma, T_rho>;
   operands_and_partials<
@@ -95,8 +95,6 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
     Eigen::Matrix<T_rho, Eigen::Dynamic, 1>
   > ops_partials(log_omegas, Gamma, rho);
 
-  int n_states = log_omegas.rows();
-  int n_transitions = log_omegas.cols() - 1;
   Eigen::MatrixXd alphas(n_states, n_transitions + 1);
   Eigen::VectorXd alpha_log_norms(n_transitions + 1);
   Eigen::MatrixXd omegas;

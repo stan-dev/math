@@ -2,6 +2,7 @@
 #include <boost/math/distributions.hpp>
 #include <boost/random.hpp>
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
 // In the proposed example, the latent sate x determines
@@ -23,7 +24,7 @@ double state_simu(double normal_variate, double abs_mu, double sigma,
   return x * abs_mu + sigma * normal_variate;
 }
 
-TEST(hmm_marginal_lpdf, two_state) {
+TEST(hmm_marginal_lpdf, two_state_preliminary) {
   // NOTE: This first test is exploratory, and will eventually be deleted.
   using stan::math::hmm_marginal_lpdf;
   using stan::math::var;
@@ -164,7 +165,7 @@ hmm_marginal_test_wrapper (
  }
 
 
-TEST(hmm_marginal_lpdf, autodiff) {
+TEST(hmm_marginal_lpdf, two_state) {
   using stan::math::hmm_marginal_lpdf;
   using stan::math::var;
 
@@ -230,6 +231,8 @@ TEST(hmm_marginal_lpdf, autodiff) {
   };
 
   stan::test::ad_tolerances tols;
+
+  // Adjust tolerances to effectively not test hessians.
   double infinity = std::numeric_limits<double>::infinity();
   tols.hessian_val_ = infinity;
   tols.hessian_grad_ = infinity;
@@ -243,4 +246,77 @@ TEST(hmm_marginal_lpdf, autodiff) {
 
   stan::test::expect_ad(tols, hmm_functor, log_omegas,
                         Gamma_unconstrained, rho_unconstrained);
+}
+
+TEST(hmm_marginal_lpdf, exceptions) {
+  using Eigen::MatrixXd;
+  using Eigen::VectorXd;
+  using stan::math::hmm_marginal_lpdf;
+
+  int n_states = 2;
+  int n_transitions = 2;
+  MatrixXd log_omegas(n_states, n_transitions + 1);
+  MatrixXd Gamma(n_states, n_states);
+  VectorXd rho(n_states);
+
+  for (int i = 0; i < n_states; i++)
+    for (int j = 0; j < n_transitions + 1; j++)
+      log_omegas(i, j) = 1;
+
+  rho(0) = 0.65;
+  rho(1) = 0.35;
+  Gamma << 0.8, 0.6, 0.2, 0.4;
+
+  // Gamma is not square.
+  MatrixXd Gamma_rec(n_states, n_states + 1);
+  EXPECT_THROW_MSG(
+    hmm_marginal_lpdf(log_omegas, Gamma_rec, rho),
+    std::invalid_argument,
+    "hmm_marginal_lpdf: Expecting a square matrix; rows of Gamma (2) "
+    "and columns of Gamma (3) must match in size");
+
+  // Gamma has a column that is not a simplex.
+  MatrixXd Gamma_bad = Gamma;
+  Gamma_bad(0, 0) = Gamma(0, 0) + 1;
+  EXPECT_THROW_MSG(
+    hmm_marginal_lpdf(log_omegas, Gamma_bad, rho),
+    std::domain_error,
+    "hmm_marginal_lpdf: Gamma[, i] is not a valid simplex. "
+    "sum(Gamma[, i]) = 2, but should be 1"
+  )
+
+  // The size of Gamma is inconsistent with that of log_omega
+  MatrixXd Gamma_wrong_size(n_states + 1, n_states + 1);
+
+  EXPECT_THROW_MSG(
+    hmm_marginal_lpdf(log_omegas, Gamma_wrong_size, rho),
+    std::invalid_argument,
+    "hmm_marginal_lpdf: Gamma has dimension = 3, expecting dimension = 2;"
+    " a function was called with arguments of different scalar,"
+    " array, vector, or matrix types, and they were not consistently sized;"
+    "  all arguments must be scalars or multidimensional values of"
+    " the same shape."
+  )
+
+  // rho is not a simplex.
+  VectorXd rho_bad = rho;
+  rho_bad(0) = rho(0) + 1;
+  EXPECT_THROW_MSG(
+    hmm_marginal_lpdf(log_omegas, Gamma, rho_bad),
+    std::domain_error,
+    "hmm_marginal_lpdf: rho is not a valid simplex. "
+    "sum(rho) = 2, but should be 1"
+  )
+
+  // The size of rho is inconsistent with that of log_omega
+  VectorXd rho_wrong_size(n_states + 1);
+  EXPECT_THROW_MSG(
+    hmm_marginal_lpdf(log_omegas, Gamma, rho_wrong_size),
+    std::invalid_argument,
+    "hmm_marginal_lpdf: rho has dimension = 3, expecting dimension = 2;"
+    " a function was called with arguments of different scalar,"
+    " array, vector, or matrix types, and they were not consistently sized;"
+    "  all arguments must be scalars or multidimensional values of"
+    " the same shape."
+  )
 }
