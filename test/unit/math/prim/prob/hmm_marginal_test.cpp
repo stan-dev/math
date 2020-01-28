@@ -82,12 +82,12 @@ TEST(hmm_marginal_lpdf, two_state) {
                                      omegas_save);
 
   // CHECK this density -- e.g. compare to Michael's code.
-  std::cout << density << std::endl;  // 1.42004
+  // std::cout << density << std::endl;  // 1.42004
 
   // Run the code with partials and operands.
   density = hmm_marginal_lpdf(log_omegas, Gamma, rho);
 
-  std::cout << density << std::endl;
+  // std::cout << density << std::endl;
 
   // TEST GRADIENT EVALUATIONS
   Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
@@ -96,19 +96,6 @@ TEST(hmm_marginal_lpdf, two_state) {
   Eigen::Matrix<var, Eigen::Dynamic, 1> rho_v = rho;
 
   var density_v = hmm_marginal_lpdf(log_omegas_v, Gamma_v, rho_v);
-
-  // Let's run Stan var.
-  // std::vector<var> psi(log_omegas.size() + Gamma.size() + rho.size());
-  // for (int j = 0; j < log_omegas.cols(); j++)
-  //   for (int i = 0; i < log_omegas.rows(); i++) {
-  //     psi[j * log_omegas.rows() + i] = log_omegas(i, j);
-  //     log_omegas_v(i, j) = psi[j * log_omegas.rows() + i];
-  //   }
-  //
-  // for (int j = 0; j < Gamma.cols(); j++)
-  //   for (int i = 0; i < Gamma.rows(); i++) {
-  //     psi
-  //   }
 
   // preliminary finite diff computation
   double diff = 1e-6;
@@ -119,7 +106,7 @@ TEST(hmm_marginal_lpdf, two_state) {
     = (hmm_marginal_lpdf(log_omegas, Gamma_u, rho)
       - hmm_marginal_lpdf(log_omegas, Gamma_l, rho)) / (2 * diff);
 
-  std::cout << "gamma_diff: " << gamma_diff << std::endl;
+  // std::cout << "gamma_diff: " << gamma_diff << std::endl;
 
   Eigen::VectorXd rho_l = rho, rho_u = rho;
   rho_l(0) = rho(0) - diff;
@@ -128,7 +115,7 @@ TEST(hmm_marginal_lpdf, two_state) {
   = (hmm_marginal_lpdf(log_omegas, Gamma, rho_u)
     - hmm_marginal_lpdf(log_omegas, Gamma, rho_l)) / (2 * diff);
 
-  std::cout << "rho diff: " << rho_diff << std::endl;
+  // std::cout << "rho diff: " << rho_diff << std::endl;
 
   Eigen::MatrixXd log_omegas_u = log_omegas, log_omegas_l = log_omegas;
   log_omegas_l(0, 0) = log_omegas(0, 0) - diff;
@@ -137,7 +124,7 @@ TEST(hmm_marginal_lpdf, two_state) {
     = (hmm_marginal_lpdf(log_omegas_u, Gamma, rho)
       - hmm_marginal_lpdf(log_omegas_l, Gamma, rho)) / (2 * diff);
 
-  std::cout << "omegas_diff: " << omegas_diff << std::endl;
+  // std::cout << "omegas_diff: " << omegas_diff << std::endl;
 }
 
 
@@ -154,8 +141,6 @@ TEST(hmm_marginal_lpdf, autodiff) {
          gamma2 = 0.45;
 
   // Simulate data
-  // CHECK -- make sure we recover the same results.
-  // If the rng is machine dependent, sub in with fixed data.
   Eigen::VectorXd rho(n_states);
   rho << p1_init, 1 - p1_init;
 

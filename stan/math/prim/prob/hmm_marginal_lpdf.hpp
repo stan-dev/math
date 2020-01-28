@@ -13,22 +13,27 @@ namespace math {
 
   /**
    * For a Hidden Markov Model with observation y, hidden state x,
-   * and parameters theta, return the log marginal density log
+   * and parameters theta, return the log marginal density, log
    * pi(y | theta). In this setting, the hidden states are discrete
    * and take values over the finite space {1, ..., K}.
    * The marginal lpdf is obtained via a forward pass.
+   * The [in, out] argument are saved so that we can use then when
+   * calculating the derivatives.
    *
    * @param[in] log_omega log matrix of observational densities.
-   *                      The (i, j)th entry corresponds to the
-   *                      density of the ith observation, y_i,
-   *                      should x_i = j.
+   *              The (i, j)th entry corresponds to the
+   *              density of the ith observation, y_i,
+   *              given x_i = j.
    * @param[in] Gamma transition density between hidden states.
-   *                  The (i, j)th entry is the probability x_n = i,
-   *                  given x_{n - 1} = j.
+   *              The (i, j)th entry is the probability that x_n = i,
+   *              given x_{n - 1} = j.
    * @param[in] rho initial state
-   * @param[in] n_states cardinality of the space for x.
-   * @param[in, out] norm_norm log sum of the max coeff for each column
-   *                           of alpha.
+   * @param[in, out] alphas unnormalized partial marginal density.
+   *                   The jth column is the joint density over all
+   *                   observations y and the hidden state j.
+   * @param[in, out] alpha_log_norms max coefficient for column of alpha,
+   *                   to be used to normalize alphas.
+   * @param[in, out] omegas term-wise exponential of omegas.
    * @return log marginal density.
    */
   double hmm_marginal_lpdf(const Eigen::MatrixXd& log_omegas,
@@ -56,26 +61,20 @@ namespace math {
       alpha_log_norms(n + 1) = std::log(norm) + alpha_log_norms(n);
     }
 
-    // std::cout << "alphas: " << alphas.col(n_transitions) * norm << std::endl;
-
-    // CHECK -- do we need to "unnormalize" this?
     return log(alphas.col(n_transitions).sum())
       + alpha_log_norms(n_transitions);
-    // return alpha_log_norms(n_transitions - 1)
-    //  - alpha_log_norms(n_transitions);
-    // return log(alphas.col(n_transitions).sum());
   }
 
 
 /**
- * Overload function for template types.
+ * Overload function for template types. Compute the density
+ * and the requisite adjoint products.
  */
 template <typename T_omega, typename T_Gamma, typename T_rho>
 inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
   const Eigen::Matrix<T_omega, Eigen::Dynamic, Eigen::Dynamic>& log_omegas,
   const Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic>& Gamma,
   const Eigen::Matrix<T_rho, Eigen::Dynamic, 1>& rho) {
-  // CHECK -- do I need to pass n_states ?
   using T_partials_return = partials_return_t<T_omega, T_Gamma, T_rho>;
 
   operands_and_partials<
@@ -83,9 +82,6 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
     Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic>,
     Eigen::Matrix<T_rho, Eigen::Dynamic, 1>
   > ops_partials(log_omegas, Gamma, rho);
-
-  // operands_and_partials<T_omega, T_Gamma, T_rho>
-  //   ops_partials(log_omegas, Gamma, rho);
 
   int n_states = log_omegas.rows();
   int n_transitions = log_omegas.cols() - 1;
@@ -103,12 +99,6 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
   // Variables required for all three Jacobian-adjoint products.
   double norm_norm = alpha_log_norms(n_transitions);
   double unnormed_marginal = alphas.col(n_transitions).sum();
-
-  // std::cout << "alphas: " << std::endl << alphas << std::endl;
-  // std::cout << "unormed marginal: " << unnormed_marginal << std::endl;
-  // std::cout << "log_marginal_density: "
-  //           << value_of(log_marginal_density) << std::endl
-  //           << "n_transitions: " << n_transitions;
 
   std::vector<Eigen::VectorXd> kappa(n_transitions);
   kappa[n_transitions - 1] = Eigen::VectorXd::Ones(n_states);
@@ -134,10 +124,6 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
     Gamma_jacad.setZero();
 
     for (int n = n_transitions - 1; n >= 0; --n) {
-      // std::cout << "kappa: " << kappa[n] << std::endl
-      //           << "omegas: " << omegas.col(n + 1) << std::endl
-      //           << "alphas: " << alphas.col(n).transpose() << std::endl
-      //           << "grad_corr: " << grad_corr[n] << std::endl;
       Gamma_jacad += grad_corr[n]
                       * kappa[n].cwiseProduct(omegas.col(n + 1))
                       * alphas.col(n).transpose();
@@ -145,10 +131,6 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
 
     Gamma_jacad /= unnormed_marginal;
     ops_partials.edge2_.partials_ = Gamma_jacad;
-
-    // TEST
-    // std::cout << "Gamma jacad: " << std::endl
-    // << Gamma_jacad << std::endl;
   }
 
   bool sensitivities_for_omega_or_rho
@@ -177,24 +159,14 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
       log_omega_jacad
         = log_omega_jacad.cwiseProduct(omegas / unnormed_marginal);
       ops_partials.edge1_.partials_ = log_omega_jacad;
-
-      // std::cout << "log_omega_jacad" << std::endl
-      // << log_omega_jacad << std::endl;
     }
 
     if (!is_constant_all<T_rho>::value) {
       ops_partials.edge3_.partials_
         = grad_corr_boundary * c.cwiseProduct(omegas.col(0))
             / unnormed_marginal;
-
-      // std::cout << "rho adjoint" << std::endl
-      // << grad_corr_boundary * c.cwiseProduct(omegas.col(0))
-      //   / unnormed_marginal
-      // << std::endl;
     }
   }
-
-  // CHECK -- do we need to add the unormalizing term?
 
   return ops_partials.build(log_marginal_density);
 }
