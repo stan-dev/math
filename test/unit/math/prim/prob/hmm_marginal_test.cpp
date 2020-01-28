@@ -24,6 +24,7 @@ double state_simu(double normal_variate, double abs_mu, double sigma,
 }
 
 TEST(hmm_marginal_lpdf, two_state) {
+  // NOTE: This first test is exploratory, and will eventually be deleted.
   using stan::math::hmm_marginal_lpdf;
   using stan::math::var;
 
@@ -97,35 +98,70 @@ TEST(hmm_marginal_lpdf, two_state) {
 
   var density_v = hmm_marginal_lpdf(log_omegas_v, Gamma_v, rho_v);
 
-  // preliminary finite diff computation
-  double diff = 1e-6;
-  Eigen::MatrixXd Gamma_l = Gamma, Gamma_u = Gamma;
-  Gamma_l(0, 0) = Gamma(0, 0) - diff;
-  Gamma_u(0, 0) = Gamma(0, 0) + diff;
-  double gamma_diff
-    = (hmm_marginal_lpdf(log_omegas, Gamma_u, rho)
-      - hmm_marginal_lpdf(log_omegas, Gamma_l, rho)) / (2 * diff);
+  // Preliminary finite diff computation
+  // REMARK: not quite correct, since we constrain rho and so forth
+  // to be simplices.
+  // double diff = 1e-6;
+  // Eigen::MatrixXd Gamma_l = Gamma, Gamma_u = Gamma;
+  // Gamma_l(0, 0) = Gamma(0, 0) - diff;
+  // Gamma_u(0, 0) = Gamma(0, 0) + diff;
+  // double gamma_diff
+  //   = (hmm_marginal_lpdf(log_omegas, Gamma_u, rho)
+  //     - hmm_marginal_lpdf(log_omegas, Gamma_l, rho)) / (2 * diff);
 
   // std::cout << "gamma_diff: " << gamma_diff << std::endl;
 
-  Eigen::VectorXd rho_l = rho, rho_u = rho;
-  rho_l(0) = rho(0) - diff;
-  rho_u(0) = rho(0) + diff;
-  double rho_diff
-  = (hmm_marginal_lpdf(log_omegas, Gamma, rho_u)
-    - hmm_marginal_lpdf(log_omegas, Gamma, rho_l)) / (2 * diff);
+  // Eigen::VectorXd rho_l = rho, rho_u = rho;
+  // rho_l(0) = rho(0) - diff;
+  // rho_u(0) = rho(0) + diff;
+  // double rho_diff
+  // = (hmm_marginal_lpdf(log_omegas, Gamma, rho_u)
+  //   - hmm_marginal_lpdf(log_omegas, Gamma, rho_l)) / (2 * diff);
 
   // std::cout << "rho diff: " << rho_diff << std::endl;
 
-  Eigen::MatrixXd log_omegas_u = log_omegas, log_omegas_l = log_omegas;
-  log_omegas_l(0, 0) = log_omegas(0, 0) - diff;
-  log_omegas_u(0, 0) = log_omegas(0, 0) + diff;
-  double omegas_diff
-    = (hmm_marginal_lpdf(log_omegas_u, Gamma, rho)
-      - hmm_marginal_lpdf(log_omegas_l, Gamma, rho)) / (2 * diff);
+  // Eigen::MatrixXd log_omegas_u = log_omegas, log_omegas_l = log_omegas;
+  // log_omegas_l(0, 0) = log_omegas(0, 0) - diff;
+  // log_omegas_u(0, 0) = log_omegas(0, 0) + diff;
+  // double omegas_diff
+  //   = (hmm_marginal_lpdf(log_omegas_u, Gamma, rho)
+  //     - hmm_marginal_lpdf(log_omegas_l, Gamma, rho)) / (2 * diff);
 
   // std::cout << "omegas_diff: " << omegas_diff << std::endl;
 }
+
+/**
+ * Wrapper around hmm_marginal_density which passes rho and
+ * Gamma without the last element of each column. We recover
+ * the last element using the fact each column sums to 1.
+ * The purpose of this function is to do finite diff benchmarking,
+ * without breaking the simplex constraint.
+ */
+template <typename T_omega, typename T_Gamma, typename T_rho>
+inline stan::return_type_t<T_omega, T_Gamma, T_rho>
+hmm_marginal_test_wrapper (
+  const Eigen::Matrix<T_omega, Eigen::Dynamic, Eigen::Dynamic>& log_omegas,
+  const Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic>&
+    Gamma_unconstrained,
+  const std::vector<T_rho>& rho_unconstrained) {
+  using stan::math::sum;
+  using stan::math::col;
+  int n_states = log_omegas.rows();
+
+  Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic>
+    Gamma(n_states, n_states);
+  for (int j = 0; j < n_states; j++) {
+    Gamma(n_states - 1, j) = 1 - sum(col(Gamma_unconstrained, j + 1));
+    for (int i = 0; i < n_states - 1; i++) {
+      Gamma(i, j) = Gamma_unconstrained(i, j);
+    }
+  }
+  Eigen::Matrix<T_rho, Eigen::Dynamic, 1> rho(n_states);
+  rho(1) = 1 - sum(rho_unconstrained);
+  for (int i = 0; i < n_states - 1; i++) rho(i) = rho_unconstrained[i];
+
+  return stan::math::hmm_marginal_lpdf(log_omegas, Gamma, rho);
+ }
 
 
 TEST(hmm_marginal_lpdf, autodiff) {
@@ -175,12 +211,23 @@ TEST(hmm_marginal_lpdf, autodiff) {
     log_omegas.col(n)[1] = state_lpdf(obs_data[n], abs_mu, sigma, 1);
   }
 
-  auto hmm_functor = [](const auto& log_omegas,
-                        const auto& Gamma,
-                        const auto& rho) {
-    return hmm_marginal_lpdf(log_omegas, Gamma, rho);
-  };
+  // Construct "uncontrained" versions of rho and Gamma, without
+  // the final element which can be determnied using the fact
+  // the columns sum to 1. This allows us to do finite diff tests,
+  // without violating the simplex constraint of rho and Gamma.
+  std::vector<double> rho_unconstrained(n_states - 1);
+  for (int i = 0; i < rho.size() - 1; i++)
+    rho_unconstrained[i] = rho(i);
 
+  Eigen::MatrixXd
+    Gamma_unconstrained = Gamma.block(0, 0, n_states - 1, n_states);
+
+  auto hmm_functor = [](const auto& log_omegas,
+                        const auto& Gamma_unconstrained,
+                        const auto& rho_unconstrained) {
+    return hmm_marginal_test_wrapper(log_omegas, Gamma_unconstrained,
+                                     rho_unconstrained);
+  };
 
   stan::test::ad_tolerances tols;
   double infinity = std::numeric_limits<double>::infinity();
@@ -194,5 +241,6 @@ TEST(hmm_marginal_lpdf, autodiff) {
   tols.grad_hessian_hessian_ = infinity;
   tols.grad_hessian_grad_hessian_ = infinity;
 
-  stan::test::expect_ad(tols, hmm_functor, log_omegas, Gamma, rho);
+  stan::test::expect_ad(tols, hmm_functor, log_omegas,
+                        Gamma_unconstrained, rho_unconstrained);
 }

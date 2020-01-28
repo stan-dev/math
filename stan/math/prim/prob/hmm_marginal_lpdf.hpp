@@ -2,6 +2,9 @@
 #define STAN_MATH_REV_FUN_HMM_MARGINAL_LPDF_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/col.hpp>
+#include <stan/math/prim/fun/transpose.hpp>
 #include <stan/math/rev/fun/value_of_rec.hpp>
 #include <stan/math/rev/core.hpp>
 #include <Eigen/Core>
@@ -75,8 +78,17 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
   const Eigen::Matrix<T_omega, Eigen::Dynamic, Eigen::Dynamic>& log_omegas,
   const Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic>& Gamma,
   const Eigen::Matrix<T_rho, Eigen::Dynamic, 1>& rho) {
-  using T_partials_return = partials_return_t<T_omega, T_Gamma, T_rho>;
 
+  check_nonnegative("hmm_marginal_lpdf", "Gamma", Gamma);
+  check_square("hmm_marginal_lpdf", "Gamma", Gamma);
+  for (int i = 0; i < Gamma.rows(); i++) {
+    check_simplex("hmm_marginal_lpdf", "Gamma[, i]", col(Gamma, i + 1));
+  }
+  check_nonnegative("hmm_marginal_lpdf", "rho", rho);
+  check_simplex("hmm_marginal_lpdf", "rho", rho);
+
+
+  using T_partials_return = partials_return_t<T_omega, T_Gamma, T_rho>;
   operands_and_partials<
     Eigen::Matrix<T_omega, Eigen::Dynamic, Eigen::Dynamic>,
     Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic>,
