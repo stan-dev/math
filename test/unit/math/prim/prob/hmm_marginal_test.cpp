@@ -1,11 +1,3 @@
-// #include <stan/math/prim.hpp>
-// #include <test/unit/math/prim/prob/vector_rng_test_helper.hpp>
-// #include <test/unit/math/prim/prob/util.hpp>
-// #include <boost/math/distributions.hpp>
-// #include <boost/random/mersenne_twister.hpp>
-// #include <limits>
-// #include <vector>
-
 #include <stan/math/prim/prob/hmm_marginal_lpdf.hpp>
 #include <boost/math/distributions.hpp>
 #include <boost/random.hpp>
@@ -16,7 +8,6 @@
 // the observational distribution:
 //  (i) normal(mu, sigma)
 //  (ii) normal(-mu, sigma)
-
 double state_lpdf(double y, double abs_mu, double sigma, int state) {
   int x  = (-2 * state + 1);
   double chi =  (y + x * abs_mu) / sigma;
@@ -205,5 +196,18 @@ TEST(hmm_marginal_lpdf, autodiff) {
     return hmm_marginal_lpdf(log_omegas, Gamma, rho);
   };
 
-  stan::test::expect_ad(hmm_functor, log_omegas, Gamma, rho);
+
+  stan::test::ad_tolerances tols;
+  double infinity = std::numeric_limits<double>::infinity();
+  tols.hessian_val_ = infinity;
+  tols.hessian_grad_ = infinity;
+  tols.hessian_hessian_ = infinity;
+  tols.hessian_fvar_val_ = infinity;
+  tols.hessian_fvar_grad_ = infinity;
+  tols.hessian_fvar_hessian_ = infinity;
+  tols.grad_hessian_val_ = infinity;
+  tols.grad_hessian_hessian_ = infinity;
+  tols.grad_hessian_grad_hessian_ = infinity;
+
+  stan::test::expect_ad(tols, hmm_functor, log_omegas, Gamma, rho);
 }

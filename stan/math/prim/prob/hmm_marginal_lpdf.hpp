@@ -2,8 +2,7 @@
 #define STAN_MATH_REV_FUN_HMM_MARGINAL_LPDF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/rev/fun/value_of.hpp>
+#include <stan/math/rev/fun/value_of_rec.hpp>
 #include <stan/math/rev/core.hpp>
 #include <Eigen/Core>
 #include <iostream>
@@ -93,12 +92,12 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
   Eigen::MatrixXd alphas(n_states, n_transitions + 1);
   Eigen::VectorXd alpha_log_norms(n_transitions + 1);
   Eigen::MatrixXd omegas;
-  Eigen::MatrixXd Gamma_dbl = value_of(Gamma);
+  Eigen::MatrixXd Gamma_dbl = value_of_rec(Gamma);
 
   T_partials_return log_marginal_density
-    = hmm_marginal_lpdf(value_of(log_omegas),
+    = hmm_marginal_lpdf(value_of_rec(log_omegas),
                         Gamma_dbl,
-                        value_of(rho),
+                        value_of_rec(rho),
                         alphas, alpha_log_norms, omegas);
 
   // Variables required for all three Jacobian-adjoint products.
@@ -148,8 +147,8 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
     ops_partials.edge2_.partials_ = Gamma_jacad;
 
     // TEST
-    std::cout << "Gamma jacad: " << std::endl
-    << Gamma_jacad << std::endl;
+    // std::cout << "Gamma jacad: " << std::endl
+    // << Gamma_jacad << std::endl;
   }
 
   bool sensitivities_for_omega_or_rho
@@ -174,13 +173,13 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
 
     if (!is_constant_all<T_omega>::value) {
       log_omega_jacad.col(0) = grad_corr_boundary
-                                 * c.cwiseProduct(value_of(rho));
+                                 * c.cwiseProduct(value_of_rec(rho));
       log_omega_jacad
         = log_omega_jacad.cwiseProduct(omegas / unnormed_marginal);
       ops_partials.edge1_.partials_ = log_omega_jacad;
 
-      std::cout << "log_omega_jacad" << std::endl
-      << log_omega_jacad << std::endl;
+      // std::cout << "log_omega_jacad" << std::endl
+      // << log_omega_jacad << std::endl;
     }
 
     if (!is_constant_all<T_rho>::value) {
@@ -188,10 +187,10 @@ inline return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_lpdf(
         = grad_corr_boundary * c.cwiseProduct(omegas.col(0))
             / unnormed_marginal;
 
-      std::cout << "rho adjoint" << std::endl
-      << grad_corr_boundary * c.cwiseProduct(omegas.col(0))
-        / unnormed_marginal
-      << std::endl;
+      // std::cout << "rho adjoint" << std::endl
+      // << grad_corr_boundary * c.cwiseProduct(omegas.col(0))
+      //   / unnormed_marginal
+      // << std::endl;
     }
   }
 
