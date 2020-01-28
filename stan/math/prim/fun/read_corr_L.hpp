@@ -36,6 +36,13 @@ template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
     const Eigen::Array<T, Eigen::Dynamic, 1>& CPCs,  // on (-1, 1)
     size_t K) {
+  if (K == 0) {
+    return {};
+  }
+  if (K == 1) {
+    return Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>::Identity(1, 1);
+  }
+
   using std::sqrt;
   Eigen::Array<T, Eigen::Dynamic, 1> temp;
   Eigen::Array<T, Eigen::Dynamic, 1> acc(K - 1);
@@ -89,6 +96,13 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
     const Eigen::Array<T, Eigen::Dynamic, 1>& CPCs, size_t K, T& log_prob) {
+  if (K == 0) {
+    return {};
+  }
+  if (K == 1) {
+    return Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>::Identity(1, 1);
+  }
+
   Eigen::Matrix<T, Eigen::Dynamic, 1> values(CPCs.rows() - 1);
   size_t pos = 0;
   // no need to abs() because this Jacobian determinant

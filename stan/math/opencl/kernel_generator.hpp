@@ -16,6 +16,7 @@
 #include <stan/math/opencl/kernel_generator/binary_operation.hpp>
 #include <stan/math/opencl/kernel_generator/unary_function_cl.hpp>
 #include <stan/math/opencl/kernel_generator/block.hpp>
+#include <stan/math/opencl/kernel_generator/select.hpp>
 
 #endif
 #endif

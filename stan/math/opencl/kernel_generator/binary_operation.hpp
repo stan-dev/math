@@ -24,14 +24,14 @@ namespace math {
 /**
  * Represents a binary operation in kernel generator expressions.
  * @tparam Derived derived type
+ * @tparam T_res scalar type of the result
  * @tparam T_a type of first argument
  * @tparam T_b type of second argument
  */
-template <typename Derived, typename T_a, typename T_b>
-class binary_operation
-    : public operation_cl<Derived, common_scalar_t<T_a, T_b>, T_a, T_b> {
+template <typename Derived, typename T_res, typename T_a, typename T_b>
+class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
  public:
-  using Scalar = common_scalar_t<T_a, T_b>;
+  using Scalar = T_res;
   using base = operation_cl<Derived, Scalar, T_a, T_b>;
   using base::var_name;
 
@@ -87,117 +87,108 @@ class binary_operation
 };
 
 /**
- * Represents addition in kernel generator expressions.
- * @tparam T_a type of first expression
- * @tparam T_b type of second expression
- */
-template <typename T_a, typename T_b>
-class addition_ : public binary_operation<addition_<T_a, T_b>, T_a, T_b> {
- public:
-  /**
-   * Constructor.
-   * @param a first expression
-   * @param b second expression
-   */
-  addition_(T_a&& a, T_b&& b)  // NOLINT
-      : binary_operation<addition_<T_a, T_b>, T_a, T_b>(
-          std::forward<T_a>(a), std::forward<T_b>(b), "+") {}
-};
+  This macro is used to allow passing comma as part of a parameter in another
+  macro.
+  */
+#define COMMA ,
 
 /**
- * Addition of two kernel generator expressions.
- * @tparam T_a type of first expression
- * @tparam T_b type of second expression
- * @param a first argument
- * @param b second argument
- * @return Addition of given expressions
- */
-template <typename T_a, typename T_b,
-          typename = require_all_valid_expressions_t<T_a, T_b>>
-inline addition_<as_operation_cl_t<T_a>, as_operation_cl_t<T_b>> operator+(
-    T_a&& a, T_b&& b) {  // NOLINT
-  return {as_operation_cl(std::forward<T_a>(a)),
-          as_operation_cl(std::forward<T_b>(b))};
-}
-
-/**
- * Represents subtraction in kernel generator expressions.
- * @tparam T_a type of first expression
- * @tparam T_b type of second expression
- */
-template <typename T_a, typename T_b>
-class subtraction_ : public binary_operation<subtraction_<T_a, T_b>, T_a, T_b> {
- public:
-  /**
-   * Constructor.
-   * @param a first expression
-   * @param b second expression
-   */
-  subtraction_(T_a&& a, T_b&& b)  // NOLINT
-      : binary_operation<subtraction_<T_a, T_b>, T_a, T_b>(
-          std::forward<T_a>(a), std::forward<T_b>(b), "-") {}
-};
-
-/**
- * Subtraction of two kernel generator expressions.
- * @tparam T_a type of first expression
- * @tparam T_b type of second expression
- * @param a first expression
- * @param b second expression
- * @return Subtraction of given expressions
- */
-template <typename T_a, typename T_b,
-          typename = require_all_valid_expressions_t<T_a, T_b>>
-inline subtraction_<as_operation_cl_t<T_a>, as_operation_cl_t<T_b>> operator-(
-    T_a&& a, T_b&& b) {  // NOLINT
-  return {as_operation_cl(std::forward<T_a>(a)),
-          as_operation_cl(std::forward<T_b>(b))};
-}
-
-/**
- * Represents element-wise multiplication in kernel generator expressions.
- * @tparam T_a type of first expression
- * @tparam T_b type of second expression
- */
-template <typename T_a, typename T_b,
-          typename = require_all_valid_expressions_t<T_a, T_b>>
-class elewise_multiplication_
-    : public binary_operation<elewise_multiplication_<T_a, T_b>, T_a, T_b> {
- public:
-  /**
-   * Constructor.
-   * @param a first expression
-   * @param b second expression
-   */
-  elewise_multiplication_(T_a&& a, T_b&& b)  // NOLINT
-      : binary_operation<elewise_multiplication_<T_a, T_b>, T_a, T_b>(
-          std::forward<T_a>(a), std::forward<T_b>(b), "*") {}
-
-  /**
-   * View of a matrix that would be the result of evaluating this expression.
-   * @return view
-   */
-  inline matrix_cl_view view() const {
-    using base = binary_operation<elewise_multiplication_<T_a, T_b>, T_a, T_b>;
-    return both(std::get<0>(base::arguments_).view(),
-                std::get<1>(base::arguments_).view());
+  Defines a new binary operation in kernel generator.
+  @param class_name The name of the class this macro will define to represent
+  this operation
+  @param function_name The name of the function this macro will define that will
+  be used to create this operation.
+  @param scalar_type_expr The type of the scalar in the result of this
+  operation. Can be a C++ expression that uses \c T_a and \c T_b as types of the
+  scalars in the arguments to this operation.
+  @param operation String containing operator that is used to implement this
+  operation in kernel. Should be a valid infix operator in OpenCL C.
+  */
+#define ADD_BINARY_OPERATION(class_name, function_name, scalar_type_expr,     \
+                             operation)                                       \
+  template <typename T_a, typename T_b>                                       \
+  class class_name : public binary_operation<class_name<T_a, T_b>,            \
+                                             scalar_type_expr, T_a, T_b> {    \
+   public:                                                                    \
+    class_name(T_a&& a, T_b&& b) /* NOLINT */                                 \
+        : binary_operation<class_name<T_a, T_b>, scalar_type_expr, T_a, T_b>( \
+            std::forward<T_a>(a), std::forward<T_b>(b), operation) {}         \
+  };                                                                          \
+                                                                              \
+  template <typename T_a, typename T_b,                                       \
+            typename = require_all_valid_expressions_t<T_a, T_b>>             \
+  inline class_name<as_operation_cl_t<T_a>, as_operation_cl_t<T_b>>           \
+  function_name(T_a&& a, T_b&& b) { /* NOLINT */                              \
+    return {as_operation_cl(std::forward<T_a>(a)),                            \
+            as_operation_cl(std::forward<T_b>(b))};                           \
   }
-};
 
 /**
- * Element-wise multiplication of two kernel generator expressions.
- * @tparam T_a type of first expression
- * @tparam T_b type of second expression
- * @param a first expression
- * @param b second expression
- * @return Element-wise multiplication of given expressions
- */
-template <typename T_a, typename T_b>
-inline elewise_multiplication_<as_operation_cl_t<T_a>, as_operation_cl_t<T_b>>
-elewise_multiplication(T_a&& a, T_b&& b) {  // NOLINT
-  return {as_operation_cl(std::forward<T_a>(a)),
-          as_operation_cl(std::forward<T_b>(b))};
-}
+  Defines a new binary operation in kernel generator that needs to implement
+  custom function that determines the view of the result.
+  @param class_name The name of the class this macro will define to represent
+  this operation
+  @param function_name The name of the function this macro will define that will
+  be used to create this operation.
+  @param scalar_type_expr The type of the scalar in the result of this
+  operation. Can be a C++ expression that uses \c T_a and \c T_b as types of the
+  scalars in the arguments to this operation.
+  @param operation String containing operator that is used to implement this
+  operation in kernel. Should be a valid infix operator in OpenCL C.
+  @param ... Code that implements body of the \c .view() member function of the
+  class that represents this expression. Should return an object of type
+  matrix_cl_view. Can use \c base::arguments_ to access arguments to this
+  expression. This is a variadic argument to allow commas in code with no
+  special handling.
+  */
+#define ADD_BINARY_OPERATION_WITH_CUSTOM_VIEW(                                \
+    class_name, function_name, scalar_type_expr, operation, ...)              \
+  template <typename T_a, typename T_b>                                       \
+  class class_name : public binary_operation<class_name<T_a, T_b>,            \
+                                             scalar_type_expr, T_a, T_b> {    \
+   public:                                                                    \
+    class_name(T_a&& a, T_b&& b) /* NOLINT */                                 \
+        : binary_operation<class_name<T_a, T_b>, scalar_type_expr, T_a, T_b>( \
+            std::forward<T_a>(a), std::forward<T_b>(b), operation) {}         \
+    inline matrix_cl_view view() const { __VA_ARGS__; }                       \
+  };                                                                          \
+                                                                              \
+  template <typename T_a, typename T_b,                                       \
+            typename = require_all_valid_expressions_t<T_a, T_b>>             \
+  inline class_name<as_operation_cl_t<T_a>, as_operation_cl_t<T_b>>           \
+  function_name(T_a&& a, T_b&& b) { /* NOLINT */                              \
+    return {as_operation_cl(std::forward<T_a>(a)),                            \
+            as_operation_cl(std::forward<T_b>(b))};                           \
+  }
+
+ADD_BINARY_OPERATION(addition_, operator+, common_scalar_t<T_a COMMA T_b>, "+");
+ADD_BINARY_OPERATION(subtraction_, operator-, common_scalar_t<T_a COMMA T_b>,
+                     "-");
+ADD_BINARY_OPERATION_WITH_CUSTOM_VIEW(
+    elewise_multiplication_, elewise_multiplication,
+    common_scalar_t<T_a COMMA T_b>, "*",
+    using base = binary_operation<elewise_multiplication_<T_a, T_b>,
+                                  common_scalar_t<T_a, T_b>, T_a, T_b>;
+    return both(std::get<0>(base::arguments_).view(),
+                std::get<1>(base::arguments_).view()););
+ADD_BINARY_OPERATION_WITH_CUSTOM_VIEW(
+    elewise_division_, elewise_division, common_scalar_t<T_a COMMA T_b>, "/",
+    using base = binary_operation<elewise_division_<T_a, T_b>,
+                                  common_scalar_t<T_a, T_b>, T_a, T_b>;
+    return either(std::get<0>(base::arguments_).view(),
+                  invert(std::get<1>(base::arguments_).view())););
+ADD_BINARY_OPERATION(less_than_, operator<, bool, "<");
+ADD_BINARY_OPERATION_WITH_CUSTOM_VIEW(less_than_or_equal_, operator<=, bool,
+                                      "<=", return matrix_cl_view::Entire);
+ADD_BINARY_OPERATION(greater_than_, operator>, bool, ">");
+ADD_BINARY_OPERATION_WITH_CUSTOM_VIEW(greater_than_or_equal_, operator>=, bool,
+                                      ">=", return matrix_cl_view::Entire);
+ADD_BINARY_OPERATION_WITH_CUSTOM_VIEW(equals_, operator==, bool,
+                                      "==", return matrix_cl_view::Entire);
+ADD_BINARY_OPERATION(not_equals_, operator!=, bool, "!=");
+
+ADD_BINARY_OPERATION(logical_or_, operator||, bool, "||");
+ADD_BINARY_OPERATION(logical_and_, operator&&, bool, "&&");
 
 /**
  * Multiplication of a scalar and a kernel generator expression.
@@ -248,50 +239,9 @@ inline matrix_cl<double> operator*(const T_a& a, const T_b& b) {
                                       as_operation_cl(b).eval());
 }
 
-/**
- * Represents element-wise division in kernel generator expressions.
- * @tparam T_a type of first expression
- * @tparam T_b type of second expression
- */
-template <typename T_a, typename T_b>
-class elewise_division_
-    : public binary_operation<elewise_division_<T_a, T_b>, T_a, T_b> {
- public:
-  /**
-   * Constructor.
-   * @param a first expression
-   * @param b second expression
-   */
-  elewise_division_(T_a&& a, T_b&& b)  // NOLINT
-      : binary_operation<elewise_division_<T_a, T_b>, T_a, T_b>(
-          std::forward<T_a>(a), std::forward<T_b>(b), "/") {}
-
-  /**
-   * View of a matrix that would be the result of evaluating this expression.
-   * @return view
-   */
-  inline matrix_cl_view view() const {
-    using base = binary_operation<elewise_division_<T_a, T_b>, T_a, T_b>;
-    return either(std::get<0>(base::arguments_).view(),
-                  invert(std::get<1>(base::arguments_).view()));
-  }
-};
-
-/**
- * Element-wise division of two kernel generator expressions.
- * @tparam T_a type of first expression
- * @tparam T_b type of second expression
- * @param a first expression
- * @param b second expression
- * @return Element-wise division of given expressions
- */
-template <typename T_a, typename T_b,
-          typename = require_all_valid_expressions_t<T_a, T_b>>
-inline elewise_division_<as_operation_cl_t<T_a>, as_operation_cl_t<T_b>>
-elewise_division(T_a&& a, T_b&& b) {  // NOLINT
-  return {as_operation_cl(std::forward<T_a>(a)),
-          as_operation_cl(std::forward<T_b>(b))};
-}
+#undef COMMA
+#undef ADD_BINARY_OPERATION
+#undef ADD_BINARY_OPERATION_WITH_CUSTOM_VIEW
 
 }  // namespace math
 }  // namespace stan
