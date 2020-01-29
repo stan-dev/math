@@ -3,14 +3,9 @@
 #include <gtest/gtest.h>
 
 TEST(MathFunctions, ones_vector) {
-  using stan::math::ones_vector;
-
-  Eigen::VectorXd u0 = ones_vector(0);
-  EXPECT_EQ(0, u0.size());
-
-  for (int K = 1; K < 5; K++) {
+  for (int K = 0; K < 5; K++) {
     Eigen::VectorXd y = Eigen::VectorXd::Constant(K, 1);
-    expect_matrix_eq(y, ones_vector(K));
+    expect_matrix_eq(y, stan::math::ones_vector(K));
   }
 }
 

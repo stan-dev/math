@@ -3,14 +3,9 @@
 #include <vector>
 
 TEST(MathFunctions, zeros_int_array) {
-  using stan::math::zeros_int_array;
-
-  std::vector<int> u0 = zeros_int_array(0);
-  EXPECT_EQ(0, u0.size());
-
-  for (int K = 1; K < 5; K++) {
-    std::vector<int> u = zeros_int_array(K);
-    std::vector<int> v(K);
+  for (int K = 0; K < 5; K++) {
+    std::vector<int> u = stan::math::zeros_int_array(K);
+    std::vector<int> v(K, 0);
     EXPECT_EQ(u.size(), v.size());
     for (int i = 0; i < K; i++) {
       EXPECT_EQ(u[i], v[i]);
