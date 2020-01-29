@@ -59,7 +59,7 @@ return_type_t<T_rate> poisson_lccdf(const T_n& n, const T_rate& lambda) {
       lgamma_n_plus_one[i] = lgamma(n_vec[i] + 1.0);
     }
     for (size_t i = 0; i < size_lambda; i++) {
-      log_lambda[i] = log(lambda_vec[i]);
+      log_lambda[i] = log(value_of(lambda_vec[i]));
     }
   }
 
