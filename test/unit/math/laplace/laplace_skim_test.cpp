@@ -96,7 +96,7 @@ TEST(laplace, skm) {
 
   // DATA AND TRANSFORMED DATA BLOCK
   int N = 100;
-  int M = 2;  // options: 2, 50, 100, 150, 200
+  int M = 200;  // options: 2, 50, 100, 150, 200
 
   std::string data_directory = "test/unit/math/laplace/skim_data/" +
     std::to_string(M) + "_" + std::to_string(N) + "/";
@@ -182,7 +182,8 @@ TEST(laplace, skm) {
   for (int m = 0; m < M; m++) parm_vec[m] = parm(m);
   marginal_density.grad(parm_vec, g);
 
-  std::cout << "LAPLACE MARGINAL AND VARI CLASS"
+  std::cout << "LAPLACE MARGINAL AND VARI CLASS" << std::endl
+            << "M: " << M << std::endl
             << "density: " << marginal_density << std::endl
             << "autodiff grad: ";
   // for (size_t i = 0; i < parm.size(); i++) std::cout << g[i] << " ";
