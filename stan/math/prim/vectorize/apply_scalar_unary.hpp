@@ -59,8 +59,11 @@ struct apply_scalar_unary<F, T, require_eigen_t<T>> {
    * by F to the specified matrix.
    */
   static inline auto apply(const T& x) {
-    return x.unaryExpr(
-        [](scalar_t x) { return apply_scalar_unary<F, scalar_t>::apply(x); });
+    return x
+        .unaryExpr([](scalar_t x) {
+          return apply_scalar_unary<F, scalar_t>::apply(x);
+        })
+        .eval();
   }
 
   /**
