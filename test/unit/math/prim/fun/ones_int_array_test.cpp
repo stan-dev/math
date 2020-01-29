@@ -1,15 +1,12 @@
 #include <stan/math/prim.hpp>
+#include <test/unit/math/prim/fun/expect_matrix_eq.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
 TEST(MathFunctions, ones_int_array) {
   for (int K = 0; K < 5; K++) {
-    std::vector<int> u = stan::math::ones_int_array(K);
     std::vector<int> v(K, 1);
-    EXPECT_EQ(u.size(), v.size());
-    for (int i = 0; i < K; i++) {
-      EXPECT_EQ(u[i], v[i]);
-    }
+    expect_std_vector_eq(v, stan::math::ones_int_array(K));
   }
 }
 

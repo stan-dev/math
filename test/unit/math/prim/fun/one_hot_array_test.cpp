@@ -1,20 +1,14 @@
 #include <stan/math/prim.hpp>
+#include <test/unit/math/prim/fun/expect_matrix_eq.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
 TEST(MathFunctions, one_hot_array) {
-  using stan::math::one_hot_array;
-
   for (int K = 1; K < 5; K++) {
     for (int k = 1; k <= K; k++) {
-      std::vector<double> u = one_hot_array(K, k);
       std::vector<double> v(K);
       v[k - 1] = 1;
-
-      EXPECT_EQ(u.size(), v.size());
-      for (int i = 0; i < K; i++) {
-        EXPECT_FLOAT_EQ(u[i], v[i]);
-      }
+      expect_std_vector_eq(v, stan::math::one_hot_array(K, k));
     }
   }
 }
