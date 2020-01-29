@@ -1,13 +1,13 @@
 #include <stan/math/mix.hpp>
 #include <test/unit/math/test_ad.hpp>
 
-TEST(mathMixScalFun, normal_lcdf) {
+TEST(mathMixScalFun, normal_cdf) {
   auto f = [](const double mu, const double sigma) {
-    return [=](const auto& y) { return stan::math::normal_lcdf(y, mu, sigma); };
+    return [=](const auto& y) { return stan::math::normal_cdf(y, mu, sigma); };
   };
 
   stan::test::expect_ad(f(0.0, 1.0), -50.0);
-  stan::test::expect_ad(f(0.0, 1.0), -20.0 * stan::math::SQRT_TWO);
+  stan::test::expect_ad(f(0.0, 1.0), -19.0);
   stan::test::expect_ad(f(0.0, 1.0), -5.5);
   stan::test::expect_ad(f(0.0, 1.0), 0.0);
   stan::test::expect_ad(f(0.0, 1.0), 0.15);
