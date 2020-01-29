@@ -45,7 +45,7 @@ inline auto inv(const T& x) {
 template <typename Derived,
           typename = require_eigen_vt<std::is_arithmetic, Derived>>
 inline auto inv(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().inverse().matrix().eval();
+  return x.derived().array().inverse().matrix();
 }
 
 /**
@@ -57,7 +57,7 @@ inline auto inv(const Eigen::MatrixBase<Derived>& x) {
 template <typename Derived,
           typename = require_eigen_vt<std::is_arithmetic, Derived>>
 inline auto inv(const Eigen::ArrayBase<Derived>& x) {
-  return x.derived().inverse().eval();
+  return x.derived().inverse();
 }
 
 }  // namespace math

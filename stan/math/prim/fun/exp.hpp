@@ -60,7 +60,7 @@ inline auto exp(const T& x) {
 template <typename Derived,
           typename = require_eigen_vt<std::is_arithmetic, Derived>>
 inline auto exp(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().exp().matrix().eval();
+  return x.derived().array().exp().matrix();
 }
 
 }  // namespace math

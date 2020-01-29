@@ -62,7 +62,7 @@ inline auto round(const T& x) {
 template <typename Derived,
           typename = require_eigen_vt<std::is_arithmetic, Derived>>
 inline auto round(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().round().matrix().eval();
+  return x.derived().array().round().matrix();
 }
 
 }  // namespace math
