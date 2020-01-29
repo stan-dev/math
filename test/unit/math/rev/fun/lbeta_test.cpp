@@ -26,11 +26,12 @@ struct identity_tolerances {
   relative_tolerance gradient;
 };
 
-template<class F1, class F2> void expect_identity(
-  const std::string& msg, const identity_tolerances& tolerances, 
-  const F1 lh, const F2 rh, double x_dbl, double y_dbl) {
+template <class F1, class F2>
+void expect_identity(const std::string& msg,
+                     const identity_tolerances& tolerances, const F1 lh,
+                     const F2 rh, double x_dbl, double y_dbl) {
   using stan::math::var;
-  
+
   stan::math::start_nested();
 
   var x(x_dbl);
@@ -53,11 +54,14 @@ template<class F1, class F2> void expect_identity(
   std::stringstream args;
   args << std::setprecision(22) << "args = [" << x << "," << y << "]";
   double tol_val = tolerances.value(left_dbl, right_dbl);
-  EXPECT_NEAR(left_dbl, right_dbl, tol_val) << "value, " << args.str() << ": " << msg;
+  EXPECT_NEAR(left_dbl, right_dbl, tol_val)
+      << "value, " << args.str() << ": " << msg;
 
-  for(size_t i = 0; i < gradients_left.size(); ++i) {
-    double tol_grad = tolerances.gradient(gradients_left[i], gradients_right[i]);
-    EXPECT_NEAR(gradients_left[i], gradients_right[i], tol_grad) << "grad_" << i << ", " << args.str() << ": " << msg;
+  for (size_t i = 0; i < gradients_left.size(); ++i) {
+    double tol_grad
+        = tolerances.gradient(gradients_left[i], gradients_right[i]);
+    EXPECT_NEAR(gradients_left[i], gradients_right[i], tol_grad)
+        << "grad_" << i << ", " << args.str() << ": " << msg;
   }
 
   stan::math::recover_memory_nested();
@@ -71,14 +75,16 @@ TEST(MathFunctions, lbeta_identities_gradient) {
   std::vector<double> to_test
       = {1e-100, 1e-8, 1e-1, 1, 1 + 1e-6, 1e3, 1e30, 1e100};
 
-  identity_tolerances tol { {1e-15, 1e-15}, {1e-10,1e-10}};
+  identity_tolerances tol{{1e-15, 1e-15}, {1e-10, 1e-10}};
 
   for (double x : to_test) {
     for (double y : to_test) {
       auto rh = [](const var& a, const var& b) {
         return stan::math::log_sum_exp(lbeta(a + 1, b), lbeta(a, b + 1));
       };
-      expect_identity("succesors", tol, static_cast<var(*)(const var&, const var&)>(lbeta), rh, x, y);
+      expect_identity("succesors", tol,
+                      static_cast<var (*)(const var&, const var&)>(lbeta), rh,
+                      x, y);
     }
   }
 
@@ -100,7 +106,6 @@ TEST(MathFunctions, lbeta_identities_gradient) {
     EXPECT_NEAR(lh, rh, tol.value(lh, rh)) << msg.str();
   }
 }
-
 
 namespace lbeta_test_internal {
 struct TestValue {
