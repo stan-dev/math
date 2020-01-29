@@ -50,7 +50,7 @@ inline auto inv_sqrt(const T& x) {
 template <typename Derived,
           typename = require_eigen_vt<std::is_arithmetic, Derived>>
 inline auto inv_sqrt(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().rsqrt().matrix();
+  return x.derived().array().rsqrt().matrix().eval();
 }
 
 /**
@@ -62,7 +62,7 @@ inline auto inv_sqrt(const Eigen::MatrixBase<Derived>& x) {
 template <typename Derived,
           typename = require_eigen_vt<std::is_arithmetic, Derived>>
 inline auto inv_sqrt(const Eigen::ArrayBase<Derived>& x) {
-  return x.derived().rsqrt();
+  return x.derived().rsqrt().eval();
 }
 
 }  // namespace math

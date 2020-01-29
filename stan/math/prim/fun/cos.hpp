@@ -45,7 +45,7 @@ inline auto cos(const T& x) {
 template <typename Derived,
           typename = require_eigen_vt<std::is_arithmetic, Derived>>
 inline auto cos(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().cos().matrix();
+  return x.derived().array().cos().matrix().eval();
 }
 
 }  // namespace math

@@ -45,7 +45,7 @@ inline auto sin(const T& x) {
 template <typename Derived,
           typename = require_eigen_vt<std::is_arithmetic, Derived>>
 inline auto sin(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().sin().matrix();
+  return x.derived().array().sin().matrix().eval();
 }
 
 }  // namespace math
