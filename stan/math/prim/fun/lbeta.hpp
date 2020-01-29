@@ -113,7 +113,7 @@ return_type_t<T1, T2> lbeta(const T1 a, const T2 b) {
   T_ret stirling_diff = lgamma_stirling_diff(x) + lgamma_stirling_diff(y)
                         - lgamma_stirling_diff(x + y);
   T_ret stirling = (x - 0.5) * log(x_over_xy) + y * log1m(x_over_xy)
-                   + 0.5 * (LOG_TWO_PI - log(y));
+                   + HALF_LOG_TWO_PI - 0.5 * log(y);
   return stirling + stirling_diff;
 }
 

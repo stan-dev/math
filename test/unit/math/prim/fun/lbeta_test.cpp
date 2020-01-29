@@ -101,11 +101,12 @@ TEST(MathFunctions, lbeta_stirling_cutoff) {
 
     double diff_before = at - before;
     double diff_after = after - at;
-    double tol = std::max(
-        1e-15 * (0.5 * (fabs(diff_before) + fabs(diff_after))), 5e-14);
+    double tol
+        = std::max(1e-15 * (0.5 * (fabs(diff_before) + fabs(diff_after))),
+                   1e-14 * fabs(at));
 
     EXPECT_NEAR(diff_before, diff_after, tol)
-        << "diff before and after cutoff: x = " << x
-        << "; cutoff = " << lgamma_stirling_diff_useful;
+        << "diff before and after cutoff: x = " << x << "; before = " << before
+        << "; at = " << at << "; after = " << after;
   }
 }

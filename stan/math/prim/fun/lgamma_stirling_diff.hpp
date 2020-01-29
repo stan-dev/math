@@ -38,16 +38,14 @@ constexpr double lgamma_stirling_diff_useful = 10;
  * @param x value
  * @return Difference between lgamma(x) and its Stirling approximation.
  */
-
 template <typename T>
 return_type_t<T> lgamma_stirling_diff(const T x) {
+  using T_ret = return_type_t<T>;
+
   if (is_nan(value_of_rec(x))) {
     return NOT_A_NUMBER;
   }
-  typedef return_type_t<T> T_Ret;
-
-  static const char* function = "lgamma_stirling_diff";
-  check_nonnegative(function, "argument", x);
+  check_nonnegative("lgamma_stirling_diff", "argument", x);
 
   if (x == 0) {
     return INFTY;
@@ -65,9 +63,9 @@ return_type_t<T> lgamma_stirling_diff(const T x) {
       0.00641025641025641025641026,  -0.0295506535947712418300654};
 
   constexpr int n_stirling_terms = 6;
-  T result(0.0);
-  T multiplier = inv(x);
-  T inv_x_squared = inv(square(x));
+  T_ret result(0.0);
+  T_ret multiplier = inv(x);
+  T_ret inv_x_squared = square(multiplier);
   for (int n = 0; n < n_stirling_terms; n++) {
     if (n > 0) {
       multiplier *= inv_x_squared;
