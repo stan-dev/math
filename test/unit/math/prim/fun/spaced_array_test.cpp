@@ -1,36 +1,20 @@
 #include <stan/math/prim.hpp>
+#include <test/unit/math/prim/fun/expect_matrix_eq.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 #include <vector>
 
+void expect_spaced_array(int K, double low, double high,
+                         const std::vector<double>& expected) {
+  std::vector<double> found = stan::math::spaced_array(K, low, high);
+  expect_std_vector_eq(expected, found);
+}
+
 TEST(MathFunctions, spaced_array) {
-  using stan::math::spaced_array;
-
-  std::vector<double> u0 = spaced_array(0, 1, 2);
-  EXPECT_EQ(0, u0.size());
-
-  double low = 1;
-  double high = 5;
-  std::vector<double> u11 = spaced_array(1, low, high);
-  EXPECT_EQ(1, u11.size());
-  EXPECT_FLOAT_EQ(high, u11[0]);
-
-  int K = 5;
-  std::vector<double> u1 = spaced_array(K, 1, 5);
-  std::vector<double> v1{1, 2, 3, 4, 5};
-
-  EXPECT_EQ(K, u1.size());
-  for (int i = 0; i < K; i++) {
-    EXPECT_FLOAT_EQ(u1[i], v1[i]);
-  }
-
-  std::vector<double> u2 = spaced_array(K, -2, 2);
-  std::vector<double> v2{-2, -1, 0, 1, 2};
-
-  EXPECT_EQ(K, u2.size());
-  for (int i = 0; i < K; i++) {
-    EXPECT_FLOAT_EQ(u2[i], v2[i]);
-  }
+  expect_spaced_array(0, 1, 5, {});
+  expect_spaced_array(1, 1, 5, {5});
+  expect_spaced_array(5, 1, 5, {1, 2, 3, 4, 5});
+  expect_spaced_array(5, -2, 2, {-2, -1, 0, 1, 2});
 }
 
 TEST(MathFunctions, spaced_array_throw) {

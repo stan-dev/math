@@ -1,38 +1,29 @@
 #include <stan/math/prim.hpp>
+#include <test/unit/math/prim/fun/expect_matrix_eq.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 
+void expect_spaced_vector(int K, double low, double high,
+                          const Eigen::VectorXd& expected) {
+  Eigen::VectorXd found = stan::math::spaced_vector(K, low, high);
+  expect_matrix_eq(expected, found);
+}
+
 TEST(MathFunctions, spaced_vector) {
-  using Eigen::VectorXd;
-  using stan::math::spaced_vector;
+  expect_spaced_vector(0, 1, 5, {});
 
-  VectorXd u0 = spaced_vector(0, 1, 2);
-  EXPECT_EQ(0, u0.size());
-
-  double low = 1;
-  double high = 5;
-  VectorXd u11 = spaced_vector(1, low, high);
-  EXPECT_EQ(1, u11.size());
-  EXPECT_FLOAT_EQ(high, u11[0]);
+  Eigen::VectorXd v(1);
+  v << 5;
+  expect_spaced_vector(1, 1, 5, v);
 
   int K = 5;
-  VectorXd u1 = spaced_vector(K, 1, 5);
-  VectorXd v1(K);
+  Eigen::VectorXd v1(K);
   v1 << 1, 2, 3, 4, 5;
+  expect_spaced_vector(K, 1, 5, v1);
 
-  EXPECT_EQ(K, u1.size());
-  for (int i = 0; i < K; i++) {
-    EXPECT_FLOAT_EQ(u1[i], v1[i]);
-  }
-
-  VectorXd u2 = spaced_vector(K, -2, 2);
-  VectorXd v2(K);
+  Eigen::VectorXd v2(K);
   v2 << -2, -1, 0, 1, 2;
-
-  EXPECT_EQ(K, u2.size());
-  for (int i = 0; i < K; i++) {
-    EXPECT_FLOAT_EQ(u2[i], v2[i]);
-  }
+  expect_spaced_vector(K, -2, 2, v2);
 }
 
 TEST(MathFunctions, spaced_vector_throw) {
