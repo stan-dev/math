@@ -45,7 +45,7 @@ inline auto tan(const T& x) {
 template <typename Derived,
           typename = require_eigen_vt<std::is_arithmetic, Derived>>
 inline auto tan(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().tan().matrix();
+  return x.derived().array().tan().matrix().eval();
 }
 
 }  // namespace math

@@ -36,11 +36,12 @@ namespace math {
  * @param[in] v Vector to transform.
  * @return Unit simplex result of the softmax transform of the vector.
  */
-template <typename T>
-inline Eigen::Matrix<T, Eigen::Dynamic, 1> log_softmax(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& v) {
-  check_nonzero_size("log_softmax", "v", v);
-  return v.array() - log_sum_exp(v);
+template <typename T, require_t<std::is_arithmetic<scalar_type_t<T>>>...>
+inline auto log_softmax(const T& x) {
+  return apply_vector_unary<T>::apply(x, [&](const auto& v) {
+    check_nonzero_size("log_softmax", "v", v);
+    return (v.array() - log_sum_exp(v)).matrix().eval();
+  });
 }
 
 }  // namespace math
