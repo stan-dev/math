@@ -54,7 +54,7 @@ inline auto sqrt(const T& x) {
 template <typename Derived,
           typename = require_eigen_vt<std::is_arithmetic, Derived>>
 inline auto sqrt(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().sqrt().matrix().eval();
+  return x.derived().array().sqrt().matrix();
 }
 
 }  // namespace math

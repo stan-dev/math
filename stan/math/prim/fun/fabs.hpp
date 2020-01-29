@@ -45,7 +45,7 @@ inline typename apply_scalar_unary<fabs_fun, T>::return_t fabs(const T& x) {
 template <typename Derived,
           typename = require_eigen_vt<std::is_arithmetic, Derived>>
 inline auto fabs(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().abs().matrix().eval();
+  return x.derived().array().abs().matrix();
 }
 
 /**
@@ -57,7 +57,7 @@ inline auto fabs(const Eigen::MatrixBase<Derived>& x) {
 template <typename Derived,
           typename = require_eigen_vt<std::is_arithmetic, Derived>>
 inline auto fabs(const Eigen::ArrayBase<Derived>& x) {
-  return x.derived().abs().eval();
+  return x.derived().abs();
 }
 
 }  // namespace math

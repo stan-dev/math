@@ -45,7 +45,7 @@ inline auto tanh(const T& x) {
 template <typename Derived,
           typename = require_eigen_vt<std::is_arithmetic, Derived>>
 inline auto tanh(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().tanh().matrix().eval();
+  return x.derived().array().tanh().matrix();
 }
 
 }  // namespace math
