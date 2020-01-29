@@ -51,7 +51,7 @@ BIT=32
 ```
 If the test suite isn't built first, client code using numerical integration routines such as `integrate_ode_bdf` may fail to link because the libraries haven't been built yet. Obviously these files and directories would need to be added to the downstream project makefile's LDLIBS variable, or equivalent.
 ```
-$ make lib/sundials_3.1.0/lib/libsundials_cvodes.a lib/sundials_3.1.0/lib/libsundials_nvecserial.a
-make: 'lib/sundials_3.1.0/lib/libsundials_cvodes.a' is up to date.
-make: 'lib/sundials_3.1.0/lib/libsundials_nvecserial.a' is up to date.
+$ make lib/sundials_3.1.1/lib/libsundials_cvodes.a lib/sundials_3.1.1/lib/libsundials_nvecserial.a
+make: 'lib/sundials_3.1.1/lib/libsundials_cvodes.a' is up to date.
+make: 'lib/sundials_3.1.1/lib/libsundials_nvecserial.a' is up to date.
 ```
