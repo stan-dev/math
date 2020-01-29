@@ -3,14 +3,11 @@
 #include <gtest/gtest.h>
 
 TEST(MathFunctions, one_hot_row_vector) {
-  using Eigen::RowVectorXd;
-  using stan::math::one_hot_row_vector;
-
   for (int K = 1; K < 5; K++) {
     for (int k = 1; k <= K; k++) {
       Eigen::RowVectorXd y = Eigen::RowVectorXd::Zero(K);
       y[k - 1] = 1;
-      expect_matrix_eq(y, one_hot_row_vector(K, k));
+      expect_matrix_eq(y, stan::math::one_hot_row_vector(K, k));
     }
   }
 }
