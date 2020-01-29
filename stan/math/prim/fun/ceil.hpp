@@ -45,7 +45,7 @@ inline auto ceil(const T& x) {
 template <typename Derived,
           typename = require_eigen_vt<std::is_arithmetic, Derived>>
 inline auto ceil(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().ceil().matrix();
+  return x.derived().array().ceil().matrix().eval();
 }
 
 }  // namespace math
