@@ -1,6 +1,8 @@
 #ifndef STAN_MATH_PRIM_FUN_MINUS_HPP
 #define STAN_MATH_PRIM_FUN_MINUS_HPP
 
+#include <stan/math/prim/meta.hpp>
+
 namespace stan {
 namespace math {
 
@@ -12,7 +14,7 @@ namespace math {
  * @return Negation of subtrahend.
  */
 template <typename T>
-inline auto minus(const T& x) {
+inline plain_type_t<T> minus(const T& x) {
   return -x;
 }
 
