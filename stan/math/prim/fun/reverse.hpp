@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_FUN_REVERSE_HPP
 #define STAN_MATH_PRIM_FUN_REVERSE_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <algorithm>
 #include <vector>
