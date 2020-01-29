@@ -23,7 +23,7 @@ template <typename T>
 inline void check_consistent_size(const char* function, const char* name,
                                   const T& x, size_t expected_size) {
   if (!is_vector<T>::value
-      || (is_vector<T>::value && expected_size == size(x))) {
+      || (is_vector<T>::value && expected_size == stan::math::size(x))) {
     return;
   }
 
