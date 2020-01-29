@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUN_SPACED_ARRAY_HPP
 
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <vector>
 
 namespace stan {
@@ -32,18 +33,9 @@ inline std::vector<double> spaced_array(int K, double low, double high) {
   if (K == 0) {
     return {};
   }
-  if (K == 1) {
-    return {high};
-  }
 
-  double spacing = (high - low) / (K - 1);
-  std::vector<double> v(K);
-  v[0] = low;
-  for (int i = 1; i < K; i++) {
-    v[i] = v[i - 1] + spacing;
-  }
-
-  return v;
+  Eigen::VectorXd v = Eigen::VectorXd::LinSpaced(K, low, high);
+  return {&v[0], &v[0] + K};
 }
 
 }  // namespace math
