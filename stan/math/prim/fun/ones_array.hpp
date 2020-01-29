@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 
 /**
- * Return an array of ones
+ * Return an array of ones.
  *
  * @param K size of the array
  * @return An array of size K with all elements initialised to 1.

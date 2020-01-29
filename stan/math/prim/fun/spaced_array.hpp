@@ -8,10 +8,10 @@ namespace stan {
 namespace math {
 
 /**
- * Return an array of linearly spaced elements
+ * Return an array of linearly spaced elements.
  *
  * This produces an array from low to high (included) with elements spaced
- * as (high - low) / (K - 1). For K=1, the arry will contain the high value;
+ * as (high - low) / (K - 1). For K=1, the array will contain the high value;
  * for K=0 it returns an empty array.
  *
  * @param K size of the array

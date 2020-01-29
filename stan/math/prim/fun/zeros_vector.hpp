@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 
 /**
- * Return a vector of zeros
+ * Return a vector of zeros.
  *
  * @param K size of the vector
  * @return A vector of size K with all elements initialised to 0.

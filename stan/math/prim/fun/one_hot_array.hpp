@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 
 /**
- * Return an array with 1 in the k-th position and zero elsewhere
+ * Return an array with 1 in the k-th position and zero elsewhere.
  *
  * @param K size of the array
  * @param k position of the 1 (indexing from 1)
