@@ -5,6 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/is_any_nan.hpp>
+#include <stan/math/prim/fun/log1p.hpp>
 #include <stan/math/prim/fun/lbeta.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 
@@ -94,7 +95,7 @@ inline return_type_t<T_N, T_n> binomial_coefficient_log(const T_N N,
   if (N_plus_1 < lgamma_stirling_diff_useful) {
     return lgamma(N_plus_1) - lgamma(n + 1) - lgamma(N_plus_1 - n);
   }
-  return -lbeta(N - n + 1, n + 1) - log(N_plus_1);
+  return -lbeta(N - n + 1, n + 1) - log1p(N);
 }
 
 }  // namespace math
