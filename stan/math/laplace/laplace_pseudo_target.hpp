@@ -11,7 +11,7 @@ namespace math {
    * Function to compute the pseudo target, $\tilde Z$,
    * with a custom derivative method.
    */
-   double laplace_pseudo_target (
+   inline double laplace_pseudo_target (
      const Eigen::MatrixXd& K,
      const Eigen::VectorXd& a,
      const Eigen::MatrixXd& R,
@@ -76,7 +76,7 @@ namespace math {
    * Overload function for case where K is passed as a matrix of var.
    */
   template <typename T>
-    T laplace_pseudo_target (
+    inline T laplace_pseudo_target (
       const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& K,
       const Eigen::VectorXd& a,
       const Eigen::MatrixXd& R,

@@ -20,7 +20,12 @@
 // "Gaussian Processes for Machine Learning",
 // Algorithms 3.1 and 5.1.
 // The MIT Press, 2006.
-// Note: where I didn't conflict with my own notation, I used their notation,
+// &
+// Margossian,
+// "The Search for simulation algorithms in pathological spaces"
+// Algorithms 3 and 5
+// Thesis proposal, 2020
+// Note 1: where I didn't conflict with my own notation, I used their notation,
 // which significantly helps when debuging the code.
 
 namespace stan {
@@ -188,6 +193,7 @@ namespace math {
                                     tolerance, max_num_steps);
   }
 
+  // TO DO -- remove this code from final implementation.
   /**
    * A structure to compute sensitivities of the covariance
    * function using forward mode autodiff. The functor is formatted
@@ -196,41 +202,42 @@ namespace math {
    *
    * TO DO: make this structure no templated. See comment by @SteveBronder.
    */
-  template <typename K>
-  struct covariance_sensitivities {
-    /* input data for the covariance function. */
-    std::vector<Eigen::VectorXd> x_;
-    /* additional fixed real variable */
-    std::vector<double> delta_;
-    /* additional fixed integer variable */
-    std::vector<int> delta_int_;
-    /* structure to compute the covariance function. */
-    K covariance_function_;
-    /* ostream for printing statements inside covariance function */
-    std::ostream* msgs_;
-
-    covariance_sensitivities (const std::vector<Eigen::VectorXd>& x,
-                              const std::vector<double>& delta,
-                              const std::vector<int>& delta_int,
-                              const K& covariance_function,
-                              std::ostream* msgs) :
-    // TO DO -- make covariance function the first argument
-    x_(x), delta_(delta), delta_int_(delta_int),
-    covariance_function_(covariance_function), msgs_(msgs) { }
-
-    template <typename T>
-    Eigen::Matrix<T, Eigen::Dynamic, 1>
-    operator() (const Eigen::Matrix<T, Eigen::Dynamic, 1>& phi) const {
-      return to_vector(covariance_function_(phi, x_, delta_,
-                                            delta_int_, msgs_));
-    }
-  };
+  // template <typename K>
+  // struct covariance_sensitivities {
+  //   /* input data for the covariance function. */
+  //   std::vector<Eigen::VectorXd> x_;
+  //   /* additional fixed real variable */
+  //   std::vector<double> delta_;
+  //   /* additional fixed integer variable */
+  //   std::vector<int> delta_int_;
+  //   /* structure to compute the covariance function. */
+  //   K covariance_function_;
+  //   /* ostream for printing statements inside covariance function */
+  //   std::ostream* msgs_;
+  //
+  //   covariance_sensitivities (const std::vector<Eigen::VectorXd>& x,
+  //                             const std::vector<double>& delta,
+  //                             const std::vector<int>& delta_int,
+  //                             const K& covariance_function,
+  //                             std::ostream* msgs) :
+  //   // TO DO -- make covariance function the first argument
+  //   x_(x), delta_(delta), delta_int_(delta_int),
+  //   covariance_function_(covariance_function), msgs_(msgs) { }
+  //
+  //   template <typename T>
+  //   Eigen::Matrix<T, Eigen::Dynamic, 1>
+  //   operator() (const Eigen::Matrix<T, Eigen::Dynamic, 1>& phi) const {
+  //     return to_vector(covariance_function_(phi, x_, delta_,
+  //                                           delta_int_, msgs_));
+  //   }
+  // };
 
   /**
    * The vari class for the laplace marginal density.
    * The method is adapted from algorithm 5.1 in Rasmussen & Williams,
-   * "Gaussian Processes for Machine Learning".
-   * The covariance function is differentiated using forward autodiff.
+   * "Gaussian Processes for Machine Learning"
+   * with modifications described in my (Charles Margossian)
+   * thesis proposal.
    *
    * To make computation efficient, variables produced during the
    * Newton step are stored and reused. To avoid storing these variables
@@ -284,10 +291,7 @@ namespace math {
       // compute derivatives of covariance matrix with respect to phi.
       // EXPERIMENT: reverse-mode variation
 
-      // Now compute the full gradient (using algorithm 5.1 of R & W)
-      // CHECK: is there an efficient way to solve / divide a diagonal matrix?
-
-      auto start = std::chrono::system_clock::now();
+      // auto start = std::chrono::system_clock::now();
 
       Eigen::MatrixXd R;
       {
@@ -310,17 +314,10 @@ namespace math {
      phi_adj_ = Eigen::VectorXd(phi_size_);
      start_nested();
      try {
-       start = std::chrono::system_clock::now();
+       //  = std::chrono::system_clock::now();
        Matrix<var, Dynamic, 1> phi_v = value_of(phi);
        Matrix<var, Dynamic, Dynamic>
          K_var = covariance_function(phi_v, x, delta, delta_int, msgs);
-
-       // var s1 = 0.5 * quad_form(K_var, a) - 0.5 * trace(multiply(R, K_var));
-       // Matrix<var, Dynamic, 1> b = multiply(K_var, l_grad);
-       // Matrix<var, Dynamic, 1> s3 = b - covariance * (R * b);
-       // var Z = dot_product(s2, s3);
-       // var Z = s1 + dot_product(s2, s3);
-
        var Z = laplace_pseudo_target(K_var, a, R, l_grad, s2);
 
        set_zero_all_adjoints_nested();
@@ -334,14 +331,14 @@ namespace math {
      }
      recover_memory_nested();
 
-     auto end = std::chrono::system_clock::now();
-     std::chrono::duration<double> time = end - start;
-     std::cout << "diffentiation time: " << time.count() << std::endl;
+     // auto end = std::chrono::system_clock::now();
+     // std::chrono::duration<double> time = end - ;
+     // std::cout << "diffentiation time: " << time.count() << std::endl;
 
       // Implementation with fwd mode computation of C,
       // and then following R&W's scheme.
       /*
-      start = std::chrono::system_clock::now();
+       = std::chrono::system_clock::now();
       covariance_sensitivities<K> f(x, delta, delta_int,
                                     covariance_function, msgs);
       Eigen::MatrixXd diff_cov;
@@ -363,7 +360,7 @@ namespace math {
         phi_adj_[j] = s1 + s2.dot(s3);
       }
       end = std::chrono::system_clock::now();
-      time = end - start;
+      time = end - ;
       std::cout << "Former diff: " << time.count() << std::endl;
       */
     }
@@ -423,7 +420,7 @@ namespace math {
     Eigen::MatrixXd covariance;
 
     // TEST
-    auto start = std::chrono::system_clock::now();
+    // auto start = std::chrono::system_clock::now();
 
     marginal_density_dbl
       = laplace_marginal_density(diff_likelihood,
@@ -436,9 +433,9 @@ namespace math {
                                  tolerance, max_num_steps);
 
     // TEST
-    auto end = std::chrono::system_clock::now();
-    std::chrono::duration<double> elapsed_time = end - start;
-    std::cout << "Evaluation time: " << elapsed_time.count() << std::endl;
+    // auto end = std::chrono::system_clock::now();
+    // std::chrono::duration<double> elapsed_time = end - start;
+    // std::cout << "Evaluation time: " << elapsed_time.count() << std::endl;
 
     // TEST
     // start = std::chrono::system_clock::now();
@@ -457,7 +454,6 @@ namespace math {
 
     return marginal_density;
   }
-
 
 }  // namespace math
 }  // namespace stan
