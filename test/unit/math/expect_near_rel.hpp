@@ -3,6 +3,7 @@
 
 #include <stan/math.hpp>
 #include <gtest/gtest.h>
+#include <test/unit/math/relative_tolerance.hpp>
 #include <string>
 #include <vector>
 
@@ -31,24 +32,12 @@ namespace internal {
  * @param tol relative tolerance
  */
 template <typename T1, typename T2, require_all_stan_scalar_t<T1, T2>...>
-void expect_near_rel_finite(const std::string& msg, const T1& x1, const T2& x2,
-                            double tol = 1e-8) {
-  using stan::math::fabs;
-  // if either arg near zero, must use absolute tolerance as rel tol -> 2
-  if (fabs(x1) < tol || fabs(x2) < tol) {
-    EXPECT_NEAR(x1, x2, tol) << "expect_near_rel_finite(" << x1 << ", " << x2
-                             << ", absolute tolerance = " << tol << ")"
-                             << "; absolute diff = " << fabs(x1 - x2)
-                             << "    in: " << msg << std::endl;
-    return;
-  }
-  auto avg = 0.5 * (fabs(x1) + fabs(x2));
-  auto relative_diff = (x1 - x2) / avg;
-  EXPECT_NEAR(0, relative_diff, tol)
-      << "expect_near_rel_finite(" << x1 << ", " << x2
-      << ", relative tolerance = " << tol << ")"
-      << "; relative diff = " << relative_diff << std::endl
-      << "    in: " << msg << std::endl;
+void expect_near_rel_finite(
+    const std::string& msg, const T1& x1, const T2& x2,
+    const relative_tolerance tol = default_relative_tolerance) {
+  double tol_val = tol.inexact<T1,T2>(x1, x2);
+  EXPECT_NEAR(x1, x2, tol_val)
+      << "expect_near_rel_finite in: " << msg << std::endl;
 }
 
 template <typename EigMat1, typename EigMat2,
@@ -89,7 +78,7 @@ void expect_near_rel_finite(const std::string& msg, const std::vector<T1>& x1,
  */
 template <typename T1, typename T2, require_all_stan_scalar_t<T1, T2>...>
 void expect_near_rel(const std::string& msg, const T1& x1, const T2& x2,
-                     double tol = 1e-8) {
+                     relative_tolerance tol = default_relative_tolerance) {
   if (stan::math::is_nan(x1) || stan::math::is_nan(x2))
     EXPECT_TRUE(stan::math::is_nan(x1) && stan::math::is_nan(x2))
         << "expect_near_rel(" << x1 << ", " << x2 << ")" << std::endl
@@ -120,7 +109,7 @@ void expect_near_rel(const std::string& msg, const T1& x1, const T2& x2,
 template <typename EigMat1, typename EigMat2,
           require_all_eigen_t<EigMat1, EigMat2>...>
 void expect_near_rel(const std::string& msg, EigMat1&& x1, EigMat2&& x2,
-                     double tol = 1e-8) {
+                     relative_tolerance tol = default_relative_tolerance) {
   EXPECT_EQ(x1.rows(), x2.rows()) << "expect_near_rel (Eigen::Matrix)"
                                   << " rows must be same size."
                                   << " x1.rows() = " << x1.rows()
@@ -141,7 +130,8 @@ void expect_near_rel(const std::string& msg, EigMat1&& x1, EigMat2&& x2,
 
 template <typename T1, typename T2>
 void expect_near_rel(const std::string& msg, const std::vector<T1>& x1,
-                     const std::vector<T2>& x2, double tol = 1e-8) {
+                     const std::vector<T2>& x2, 
+                     relative_tolerance tol = default_relative_tolerance) {
   EXPECT_EQ(x1.size(), x2.size()) << "expect_near_rel (std::vector):"
                                   << " vectors must be same size."
                                   << " x1.size() = " << x1.size()
