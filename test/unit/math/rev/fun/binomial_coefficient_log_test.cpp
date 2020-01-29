@@ -40,18 +40,8 @@ TEST(MathFunctions, binomial_coefficient_log_identities) {
       var k(k_dbl);
       var val;
       
-      // if(n_dbl > 0 && k_dbl > 0) {
-      //  val = log(binomial_coefficient_log(n, k)) -
-      //   log(binomial_coefficient_log(n - 1, k) + 
-      //     binomial_coefficient_log(n - 1, k - 1));
-      // } else {
-      //   val = binomial_coefficient_log(n, k) - 
-      //     binomial_coefficient_log(n - 1, k) - 
-      //     binomial_coefficient_log(n - 1, k - 1);
-      // }
       val = binomial_coefficient_log(n, k) / 
-        log_sum_exp(binomial_coefficient_log(n - 1, k),
-          binomial_coefficient_log(n - 1, k - 1));
+          (binomial_coefficient_log(n - 1, k - 1) + log(n) - log(k)) ;
 
       std::vector<var> vars;
       vars.push_back(n);
@@ -65,7 +55,8 @@ TEST(MathFunctions, binomial_coefficient_log_identities) {
       }
 
       std::stringstream msg;
-      msg << std::setprecision(22) << " recurrence: n = " << n << ", k = " << k
+      msg << std::setprecision(22) << " (n - 1) choose (k - 1): n = " << n 
+        << ", k = " << k
         << std::endl << "val = " << binomial_coefficient_log(n_dbl, k_dbl);
 
       EXPECT_NEAR(value_of(val), 1, 1e-8) << "val" << msg.str();

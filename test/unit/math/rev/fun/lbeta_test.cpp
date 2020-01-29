@@ -8,6 +8,100 @@
 #include <cmath>
 #include <functional>
 
+struct relative_tolerance {
+  double tol;
+  double tol_min;
+
+  double operator()(const double x) const {
+    return std::max(tol * fabs(x), tol_min);
+  }
+
+  double operator()(const double x, const double y) const {
+    return std::max(tol * 0.5 * (fabs(x) + fabs(y)), tol_min);
+  }
+};
+
+struct identity_tolerances {
+  relative_tolerance value;
+  relative_tolerance gradient;
+};
+
+template<class F1, class F2> void expect_identity(
+  const std::string& msg, const identity_tolerances& tolerances, 
+  const F1 lh, const F2 rh, double x_dbl, double y_dbl) {
+  using stan::math::var;
+  
+  stan::math::start_nested();
+
+  var x(x_dbl);
+  var y(y_dbl);
+
+  std::vector<var> vars = {x, y};
+
+  var left = lh(x, y);
+  double left_dbl = value_of(left);
+  std::vector<double> gradients_left;
+  left.grad(vars, gradients_left);
+
+  stan::math::set_zero_all_adjoints_nested();
+
+  var right = rh(x, y);
+  double right_dbl = value_of(right);
+  std::vector<double> gradients_right;
+  right.grad(vars, gradients_right);
+
+  std::stringstream args;
+  args << std::setprecision(22) << "args = [" << x << "," << y << "]";
+  double tol_val = tolerances.value(left_dbl, right_dbl);
+  EXPECT_NEAR(left_dbl, right_dbl, tol_val) << "value, " << args.str() << ": " << msg;
+
+  for(size_t i = 0; i < gradients_left.size(); ++i) {
+    double tol_grad = tolerances.gradient(gradients_left[i], gradients_right[i]);
+    EXPECT_NEAR(gradients_left[i], gradients_right[i], tol_grad) << "grad_" << i << ", " << args.str() << ": " << msg;
+  }
+
+  stan::math::recover_memory_nested();
+}
+
+TEST(MathFunctions, lbeta_identities_gradient) {
+  using stan::math::lbeta;
+  using stan::math::pi;
+  using stan::math::var;
+
+  std::vector<double> to_test
+      = {1e-100, 1e-8, 1e-1, 1, 1 + 1e-6, 1e3, 1e30, 1e100};
+
+  identity_tolerances tol { {1e-15, 1e-15}, {1e-10,1e-10}};
+
+  for (double x : to_test) {
+    for (double y : to_test) {
+      auto rh = [](const var& a, const var& b) {
+        return stan::math::log_sum_exp(lbeta(a + 1, b), lbeta(a, b + 1));
+      };
+      expect_identity("succesors", tol, static_cast<var(*)(const var&, const var&)>(lbeta), rh, x, y);
+    }
+  }
+
+  for (double x : to_test) {
+    if (x < 1) {
+      std::stringstream msg;
+      msg << std::setprecision(22) << "sin: x = " << x;
+      double lh = lbeta(x, 1.0 - x);
+      double rh = log(pi()) - log(sin(pi() * x));
+      EXPECT_NEAR(lh, rh, tol.value(lh, rh)) << msg.str();
+    }
+  }
+
+  for (double x : to_test) {
+    std::stringstream msg;
+    msg << std::setprecision(22) << "inv: x = " << x;
+    double lh = lbeta(x, 1.0);
+    double rh = -log(x);
+    EXPECT_NEAR(lh, rh, tol.value(lh, rh)) << msg.str();
+  }
+}
+
+
 namespace lbeta_test_internal {
 struct TestValue {
   double x;
