@@ -8,8 +8,10 @@ namespace stan {
 namespace test {
 
 struct relative_tolerance {
-  const double tol;
-  const double tol_min;
+  double tol;
+  double tol_min;
+
+  relative_tolerance() : tol(1e-8), tol_min(1e-14) {}
 
   relative_tolerance(const double tol_)  // NOLINT
       : tol(tol_), tol_min(std::max(1e-14, tol_ * tol_)) {}
@@ -26,13 +28,11 @@ struct relative_tolerance {
 
   // Computes tolerance given two inexact values
   template <typename T1, typename T2, require_all_stan_scalar_t<T1, T2>...>
-  double inexact(const T1& x, const T1& y) const {
+  double inexact(const T1& x, const T2& y) const {
     using stan::math::fabs;
     return std::max(tol * 0.5 * (fabs(x) + fabs(y)), tol_min);
   }
 };
-
-const relative_tolerance default_relative_tolerance(1e-8, 1e-14);
 
 }  // namespace test
 }  // namespace stan
