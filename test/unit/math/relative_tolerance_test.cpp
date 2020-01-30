@@ -13,7 +13,7 @@ TEST(testUnitMath, RelativeTolerance) {
   EXPECT_FLOAT_EQ(t_8.exact(1e-6), 1e-14);
   EXPECT_FLOAT_EQ(t_8.exact(1e-14), 1e-14);
   EXPECT_FLOAT_EQ(t_8.exact(0), 1e-14);
-  
+
   EXPECT_FLOAT_EQ(t_8.inexact(-1e3, 3e3), 2e-5);
   EXPECT_FLOAT_EQ(t_8.inexact(1, 1000), 5.005e-6);
   EXPECT_FLOAT_EQ(t_8.inexact(1e-5, -8e-6), 9e-14);
@@ -27,7 +27,7 @@ TEST(testUnitMath, RelativeTolerance) {
   EXPECT_FLOAT_EQ(t_4.exact(-1e-3), 1e-7);
   EXPECT_FLOAT_EQ(t_4.exact(1e-5), 1e-8);
   EXPECT_FLOAT_EQ(t_4.exact(0), 1e-8);
-  
+
   EXPECT_FLOAT_EQ(t_4.inexact(-1e3, 3e3), 2e-1);
   EXPECT_FLOAT_EQ(t_4.inexact(2e-5, 0), 1e-8);
   EXPECT_FLOAT_EQ(t_4.inexact(0, 1), 5e-5);
@@ -38,8 +38,7 @@ TEST(testUnitMath, RelativeTolerance) {
   EXPECT_FLOAT_EQ(t_16_10.exact(-500), 1e-10);
   EXPECT_FLOAT_EQ(t_16_10.exact(1e-3), 1e-10);
   EXPECT_FLOAT_EQ(t_16_10.exact(-1e-5), 1e-10);
-  
+
   EXPECT_FLOAT_EQ(t_16_10.inexact(-5e6, 1e-14), 2.5e-10);
   EXPECT_FLOAT_EQ(t_16_10.inexact(1e-315, 1e-2), 1e-10);
 }
-

@@ -15,8 +15,8 @@ void expect_match_autodiff(const F& f, Eigen::VectorXd x) {
 
   EXPECT_FLOAT_EQ(fx, fx_fd);
   EXPECT_EQ(grad_fx.size(), grad_fx_fd.size());
-  stan::test::expect_near_rel("expect_match_autodiff", 
-    grad_fx, grad_fx_fd, stan::test::relative_tolerance(1e-7, 1e-9));
+  stan::test::expect_near_rel("expect_match_autodiff", grad_fx, grad_fx_fd,
+                              stan::test::relative_tolerance(1e-7, 1e-9));
 }
 
 TEST(MathMixMatFunctor, FiniteDiffGradientAuto) {
