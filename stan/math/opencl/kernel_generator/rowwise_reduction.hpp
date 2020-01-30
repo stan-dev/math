@@ -78,8 +78,8 @@ class rowwise_reduction
     }
     res.body += var_name + " = " + operation::generate(var_name, var_name_arg)
                 + ";\n";
-    res.body += "printf(\"%d, %d: iter %d, adding %lf\\n\", " + i + ", "
-        + j + ", " + var_name + "_j, " + var_name_arg + ");\n";
+    res.body += "printf(\"%d, %d: iter %d, adding %lf\\n\", " + i + ", " + j
+                + ", " + var_name + "_j, " + var_name_arg + ");\n";
     res.body += "}\n";
     res.body += "printf(\"%d, %d: end_result %lf\\n\", " + i + ", " + j + ", "
                 + var_name + ");";
