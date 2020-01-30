@@ -11,11 +11,9 @@ struct relative_tolerance {
   double tol;
   double tol_min;
 
-  relative_tolerance() : tol(1e-8), tol_min(1e-14) {}
+  relative_tolerance() : tol(1e-8), tol_min(1e-16) {}
 
   relative_tolerance(const double tol_)  // NOLINT
-                                         //: tol(tol_), tol_min(std::max(1e-14,
-                                         // tol_ * tol_)) {}
       : tol(tol_), tol_min(tol_ * tol_) {}
 
   relative_tolerance(const double tol_, const double tol_min_)

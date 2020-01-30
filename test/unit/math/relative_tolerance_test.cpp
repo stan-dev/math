@@ -6,19 +6,20 @@
 TEST(testUnitMath, RelativeTolerance) {
   using stan::test::relative_tolerance;
 
-  // Note that default tol_min is 1e-14 in this case
+  // Note that default tol_min is 1e-16 in this case
   relative_tolerance t_8(1e-8);
   EXPECT_FLOAT_EQ(t_8.exact(1e3), 1e-5);
   EXPECT_FLOAT_EQ(t_8.exact(1), 1e-8);
   EXPECT_FLOAT_EQ(t_8.exact(1e-6), 1e-14);
-  EXPECT_FLOAT_EQ(t_8.exact(1e-14), 1e-14);
-  EXPECT_FLOAT_EQ(t_8.exact(0), 1e-14);
+  EXPECT_FLOAT_EQ(t_8.exact(1e-6), 1e-14);
+  EXPECT_FLOAT_EQ(t_8.exact(1e-14), 1e-16);
+  EXPECT_FLOAT_EQ(t_8.exact(0), 1e-16);
 
   EXPECT_FLOAT_EQ(t_8.inexact(-1e3, 3e3), 2e-5);
   EXPECT_FLOAT_EQ(t_8.inexact(1, 1000), 5.005e-6);
   EXPECT_FLOAT_EQ(t_8.inexact(1e-5, -8e-6), 9e-14);
   EXPECT_FLOAT_EQ(t_8.inexact(0, 2e3), 1e-5);
-  EXPECT_FLOAT_EQ(t_8.inexact(0, 1e-10), 1e-14);
+  EXPECT_FLOAT_EQ(t_8.inexact(0, 1e-10), 1e-16);
 
   // Default tol_min is 1e-8
   relative_tolerance t_4(1e-4);
