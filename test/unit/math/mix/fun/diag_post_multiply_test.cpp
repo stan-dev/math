@@ -52,7 +52,7 @@ TEST(MathMixMatFun, diagPostMultiply) {
 
   stan::test::ad_tolerances tols;
   tols.hessian_hessian_ = relative_tolerance(1e-4, 2e-2);
-  tols.hessian_fvar_hessian_ = relative_tolerance(1e-4, 2e-2);  
+  tols.hessian_fvar_hessian_ = relative_tolerance(1e-4, 2e-2);
 
   Eigen::MatrixXd a33(3, 3);
   a33 << 1, 10, 100, 1000, 2, -4, 8, -16, 32;

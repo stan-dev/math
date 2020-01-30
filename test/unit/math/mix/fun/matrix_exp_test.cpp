@@ -21,7 +21,6 @@ TEST(MathMixMatFun, matrixExp) {
   tols.hessian_hessian_ = relative_tolerance(5e-4, 1e-3);
   tols.hessian_fvar_hessian_ = relative_tolerance(5e-4, 1e-3);
 
-
   a = -1;
   b = 2;
   double c = 1;
