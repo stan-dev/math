@@ -62,18 +62,27 @@ class rowwise_reduction
     kernel_parts res;
     res.body_start
         = type_str<Scalar>() + " " + var_name + " = " + init_ + ";\n";
+    res.body_start += "printf(\"%d, %d: init %lf, view %d\\n\", " + i + ", " + j
+                      + ", " + var_name + ", " + var_name + "_view);\n";
     if (PassZero) {
+      std::cout << "generating PassZero version" << std::endl;
       res.body_start += "for(int " + var_name + "_j = contains_nonzero("
                         + var_name + "_view, LOWER) ? 0 : " + i + "; "
                         + var_name + "_j < (contains_nonzero(" + var_name
                         + "_view, UPPER) ? " + var_name + "_cols : " + i
                         + " + 1); " + var_name + "_j++){\n";
     } else {
+      std::cout << "generating full version" << std::endl;
       res.body_start += "for(int " + var_name + "_j = 0; " + var_name + "_j < "
                         + var_name + "_cols; " + var_name + "_j++){\n";
     }
     res.body += var_name + " = " + operation::generate(var_name, var_name_arg)
-                + ";\n}\n";
+                + ";\n";
+    res.body += "printf(\"%d, %d: iter %d, adding %lf\\n\", " + i + ", "
+        + j + ", " + var_name + "_j, " + var_name_arg + ");\n";
+    res.body += "}\n";
+    res.body += "printf(\"%d, %d: end_result %lf\\n\", " + i + ", " + j + ", "
+                + var_name + ");";
     res.args = "int " + var_name + "_view, int " + var_name + "_cols, ";
     return res;
   }
