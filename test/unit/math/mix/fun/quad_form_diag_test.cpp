@@ -29,12 +29,12 @@ TEST(MathMixMatFun, quadFormDiag) {
   tols.hessian_fvar_hessian_ = relative_tolerance(5e-4, 1e-3);
 
   // matched sizes
-  stan::test::expect_ad(f, m00, v0);
-  stan::test::expect_ad(f, m11, v1);
-  stan::test::expect_ad(f, m22, v2);
-  stan::test::expect_ad(f, m33, v3);
+  stan::test::expect_ad(tols, f, m00, v0);
+  stan::test::expect_ad(tols, f, m11, v1);
+  stan::test::expect_ad(tols, f, m22, v2);
+  stan::test::expect_ad(tols, f, m33, v3);
 
   // exceptions from mismached sizes
-  stan::test::expect_ad(f, m33, v2);
-  stan::test::expect_ad(f, m22, v3);
+  stan::test::expect_ad(tols, f, m33, v2);
+  stan::test::expect_ad(tols, f, m22, v3);
 }
