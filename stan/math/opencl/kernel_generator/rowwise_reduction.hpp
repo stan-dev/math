@@ -13,6 +13,7 @@
 #include <type_traits>
 #include <set>
 #include <utility>
+#include <iostream>
 
 namespace stan {
 namespace math {

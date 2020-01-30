@@ -1,12 +1,12 @@
 #ifdef STAN_OPENCL
 
-#include <iostream>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math.hpp>
 #include <gtest/gtest.h>
+#include <iostream>
 
 using Eigen::MatrixXd;
 using stan::math::matrix_cl;
