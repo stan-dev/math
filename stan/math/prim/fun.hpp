@@ -233,6 +233,7 @@
 #include <stan/math/prim/fun/rep_row_vector.hpp>
 #include <stan/math/prim/fun/rep_vector.hpp>
 #include <stan/math/prim/fun/resize.hpp>
+#include <stan/math/prim/fun/reverse.hpp>
 #include <stan/math/prim/fun/rising_factorial.hpp>
 #include <stan/math/prim/fun/round.hpp>
 #include <stan/math/prim/fun/row.hpp>

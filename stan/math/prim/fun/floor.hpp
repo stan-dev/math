@@ -45,7 +45,7 @@ inline auto floor(const T& x) {
 template <typename Derived,
           typename = require_eigen_vt<std::is_arithmetic, Derived>>
 inline auto floor(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().floor().matrix();
+  return x.derived().array().floor().matrix().eval();
 }
 
 }  // namespace math

@@ -18,3 +18,11 @@ TEST(MathFunctions, log_inv_logit_nan) {
 
   EXPECT_TRUE(std::isnan(stan::math::log_inv_logit(nan)));
 }
+
+TEST(MathFunctions, log_inv_logit_works_with_other_functions) {
+  Eigen::VectorXd a(5);
+  a << 1.1, 1.2, 1.3, 1.4, 1.5;
+  Eigen::RowVectorXd b(5);
+  b << 1.1, 1.2, 1.3, 1.4, 1.5;
+  stan::math::multiply(a, stan::math::log_inv_logit(b));
+}

@@ -45,7 +45,7 @@ inline auto log10(const T& x) {
 template <typename Derived,
           typename = require_eigen_vt<std::is_arithmetic, Derived>>
 inline auto log10(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().log10().matrix();
+  return x.derived().array().log10().matrix().eval();
 }
 
 }  // namespace math
