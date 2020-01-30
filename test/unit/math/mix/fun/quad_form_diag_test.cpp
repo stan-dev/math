@@ -1,6 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
 
 TEST(MathMixMatFun, quadFormDiag) {
+  using stan::test::relative_tolerance;
+
   auto f = [](const auto& x, const auto& y) {
     return stan::math::quad_form_diag(x, y);
   };
@@ -21,6 +23,10 @@ TEST(MathMixMatFun, quadFormDiag) {
   m33 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
   Eigen::VectorXd v3(3);
   v3 << 1, 2, 3;
+
+  stan::test::ad_tolerances tols;
+  tols.hessian_hessian_ = relative_tolerance(5e-4, 1e-3);
+  tols.hessian_fvar_hessian_ = relative_tolerance(5e-4, 1e-3);
 
   // matched sizes
   stan::test::expect_ad(f, m00, v0);
