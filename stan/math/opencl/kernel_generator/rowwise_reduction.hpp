@@ -66,8 +66,9 @@ class rowwise_reduction
       res.body_start += "for(int " + var_name + "_j = contains_nonzero("
                         + var_name + "_view, LOWER) ? 0 : " + i + "; "
                         + var_name + "_j < (contains_nonzero(" + var_name
-                        + "_view, UPPER) ? " + var_name + "_cols : " + i
-                        + " + 1); " + var_name + "_j++){\n";
+                        + "_view, UPPER) ? " + var_name + "_cols : min("
+                        + var_name + "_cols, " + i + " + 1)); " + var_name
+                        + "_j++){\n";
     } else {
       res.body_start += "for(int " + var_name + "_j = 0; " + var_name + "_j < "
                         + var_name + "_cols; " + var_name + "_j++){\n";
