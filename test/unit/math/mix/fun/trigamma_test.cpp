@@ -24,10 +24,10 @@ TEST(mathMixMatFun, trigamma) {
   tols2.gradient_fvar_grad_ = relative_tolerance(1e-4, 1e-3);
   tols2.hessian_grad_ = relative_tolerance(1e-4, 1e-3);
   tols2.hessian_fvar_grad_ = relative_tolerance(1e-4, 1e-3);
-  tols2.hessian_hessian_ = relative_tolerance(1e-4, 1e-2);
-  tols2.hessian_fvar_hessian_ = relative_tolerance(1e-4, 1e-2);
-  tols2.grad_hessian_hessian_ = relative_tolerance(1e-2, 1e-1);
-  tols2.grad_hessian_grad_hessian_ = relative_tolerance(1e-2, 1e-1);
+  tols2.hessian_hessian_ = relative_tolerance(1e2, 1);
+  tols2.hessian_fvar_hessian_ = relative_tolerance(1e2, 1);
+  tols2.grad_hessian_hessian_ = relative_tolerance(1, 1);
+  tols2.grad_hessian_grad_hessian_ = relative_tolerance(1, 1);
 
   expect_unary_vectorized(tols2, f, -20, 1, 5);
 }
