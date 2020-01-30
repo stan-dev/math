@@ -1,0 +1,4 @@
+#ifndef CHECK_VECTOR_INDEX_H
+#define CHECK_VECTOR_INDEX_H
+
+#endif // CHECK_VECTOR_INDEX_H
