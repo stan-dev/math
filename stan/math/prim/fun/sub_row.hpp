@@ -10,7 +10,7 @@ namespace math {
 /**
  * Return a 1 x nrows subrow starting at (i-1, j-1).
  *
- * @tparam T type of elements in the matrix
+ * @tparam T type of the matrix
  * @param m Matrix Input matrix.
  * @param i Starting row + 1.
  * @param j Starting column + 1.

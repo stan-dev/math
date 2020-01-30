@@ -12,7 +12,7 @@ namespace math {
  * Return the specified number of elements as a vector or row vector (same as
  * input) from the front of the specified vector or row vector.
  *
- * @tparam T type of elements in the vector
+ * @tparam T type of the vector
  * @param v Vector input.
  * @param n Size of return.
  * @return The first n elements of v.
