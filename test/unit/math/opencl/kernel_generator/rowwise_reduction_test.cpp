@@ -6,7 +6,6 @@
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math.hpp>
 #include <gtest/gtest.h>
-#include <iostream>
 
 using Eigen::MatrixXd;
 using stan::math::matrix_cl;
@@ -69,14 +68,9 @@ TEST(MathMatrixCL, rowwise_sum_triangular_test) {
   matrix_cl<double> res1_cl = stan::math::rowwise_sum(m_cl);
   MatrixXd res1 = stan::math::from_matrix_cl(res1_cl);
   MatrixXd correct1 = m12.rowwise().sum();
-  std::cout << "correct1" << std::endl << correct1 << std::endl << std::endl;
-  std::cout << "res1" << std::endl << res1 << std::endl << std::endl;
   EXPECT_EQ(correct1.rows(), res1.rows());
   EXPECT_EQ(correct1.cols(), res1.cols());
   EXPECT_MATRIX_NEAR(correct1, res1, 1e-9);
-
-  std::cout << "############ STARTING SECOND TEST ########################"
-            << std::endl;
 
   m_cl.view(stan::math::matrix_cl_view::Upper);
 
@@ -86,8 +80,6 @@ TEST(MathMatrixCL, rowwise_sum_triangular_test) {
   matrix_cl<double> res3_cl = stan::math::rowwise_sum(m_cl);
   MatrixXd res3 = stan::math::from_matrix_cl(res3_cl);
   MatrixXd correct3 = m34.rowwise().sum();
-  std::cout << "correct3" << std::endl << correct3 << std::endl << std::endl;
-  std::cout << "res3" << std::endl << res3 << std::endl << std::endl;
   EXPECT_EQ(correct3.rows(), res3.rows());
   EXPECT_EQ(correct3.cols(), res3.cols());
   EXPECT_MATRIX_NEAR(correct3, res3, 1e-9);
