@@ -52,11 +52,11 @@ struct ad_tolerances {
 
         hessian_val_(1e-8),
         hessian_grad_(1e-4),
-        hessian_hessian_(1e-3, 1e-4),
+        hessian_hessian_(1e-4, 1e-3),
 
         hessian_fvar_val_(1e-8),
         hessian_fvar_grad_(1e-4),
-        hessian_fvar_hessian_(1e-3, 1e-4),
+        hessian_fvar_hessian_(1e-4, 1e-3),
 
         grad_hessian_val_(1e-8),
         grad_hessian_hessian_(1e-3),
