@@ -80,6 +80,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
   }
 
   template <typename T, require_t<is_var<scalar_type_t<T>>>...,
+	    require_not_t<is_var<T>>...,
             typename... Pargs>
   static double* accumulate_adjoints(double* dest, const std::vector<T>& x,
                                      const Pargs&... args) {
@@ -164,7 +165,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
 
         var sub_sum_v = apply(
             [&](auto&&... args) {
-              return ReduceFunction()(r.begin(), r.end() - 1, local_sub_slice,
+              return ReduceFunction()(r.begin() + 1, r.end(), local_sub_slice,
                                       msgs_, args...);
             },
             args_tuple_local_copy);
@@ -204,6 +205,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
   }
 
   template <typename T, require_t<is_var<scalar_type_t<T>>>...,
+	    require_not_t<is_var<T>>...,
             typename... Pargs>
   size_t count_var_impl(size_t count, const std::vector<T>& x,
                         const Pargs&... args) const {
@@ -260,6 +262,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
   }
 
   template <typename T, require_t<is_var<scalar_type_t<T>>>...,
+	    require_not_t<is_var<T>>...,
             typename... Pargs>
   vari** save_varis(vari** dest, const std::vector<T>& x,
                     const Pargs&... args) const {

@@ -32,7 +32,7 @@ struct reduce_sum_impl {
     if (num_jobs == 0)
       return 0.0;
 
-    return ReduceFunction()(0, vmapped.size() - 1, vmapped, msgs, args...);
+    return ReduceFunction()(1, vmapped.size(), vmapped, msgs, args...);
   }
 };
 
@@ -71,7 +71,7 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
 
       sum_ += apply(
           [&](auto&&... args) {
-            return ReduceFunction()(r.begin(), r.end() - 1, sub_slice, msgs_,
+            return ReduceFunction()(r.begin() + 1, r.end(), sub_slice, msgs_,
                                     args...);
           },
           args_tuple_);
