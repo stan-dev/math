@@ -122,6 +122,28 @@ TEST(StanMath_reduce_sum, double_slice) {
                    stan::math::reduce_sum<double_slice_lpdf>(data, 0, msgs));
 }
 
+struct start_end_lpdf {
+  inline auto operator()(std::size_t start, std::size_t end,
+                         const std::vector<int>&, std::ostream* msgs,
+                         const std::vector<int>& data) const {
+    int sum = 0;
+    EXPECT_GE(start, 1);
+    EXPECT_LE(end, data.size());
+    for (size_t i = start - 1; i < end; i++) {
+      sum += data[i];
+    }
+    return sum;
+  }
+};
+
+TEST(StanMath_reduce_sum, start_end_slice) {
+  stan::math::init_threadpool_tbb();
+
+  std::vector<int> data(5, 10);
+
+  EXPECT_EQ(50, stan::math::reduce_sum<start_end_lpdf>(data, 0, msgs, data));
+}
+
 struct int_arg_lpdf {
   inline auto operator()(std::size_t start, std::size_t end,
                          const std::vector<double>& sub_slice,

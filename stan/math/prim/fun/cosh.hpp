@@ -1,9 +1,8 @@
 #ifndef STAN_MATH_PRIM_FUN_COSH_HPP
 #define STAN_MATH_PRIM_FUN_COSH_HPP
 
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <cmath>
 
 namespace stan {
@@ -45,7 +44,7 @@ inline typename apply_scalar_unary<cosh_fun, T>::return_t cosh(const T& x) {
 template <typename Derived,
           typename = require_eigen_vt<std::is_arithmetic, Derived>>
 inline auto cosh(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().cosh().matrix();
+  return x.derived().array().cosh().matrix().eval();
 }
 
 }  // namespace math

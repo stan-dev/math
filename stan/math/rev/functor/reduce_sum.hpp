@@ -80,8 +80,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
   }
 
   template <typename T, require_t<is_var<scalar_type_t<T>>>...,
-	    require_not_t<is_var<T>>...,
-            typename... Pargs>
+            require_not_t<is_var<T>>..., typename... Pargs>
   static double* accumulate_adjoints(double* dest, const std::vector<T>& x,
                                      const Pargs&... args) {
     for (size_t i = 0; i < x.size(); ++i) {
@@ -205,8 +204,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
   }
 
   template <typename T, require_t<is_var<scalar_type_t<T>>>...,
-	    require_not_t<is_var<T>>...,
-            typename... Pargs>
+            require_not_t<is_var<T>>..., typename... Pargs>
   size_t count_var_impl(size_t count, const std::vector<T>& x,
                         const Pargs&... args) const {
     for (size_t i = 0; i < x.size(); i++) {
@@ -262,8 +260,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
   }
 
   template <typename T, require_t<is_var<scalar_type_t<T>>>...,
-	    require_not_t<is_var<T>>...,
-            typename... Pargs>
+            require_not_t<is_var<T>>..., typename... Pargs>
   vari** save_varis(vari** dest, const std::vector<T>& x,
                     const Pargs&... args) const {
     for (size_t i = 0; i < x.size(); ++i) {

@@ -47,6 +47,31 @@ TEST(MathMix_reduce_sum, double_slice) {
   stan::test::expect_ad(f, data);
 }
 
+struct start_end_lpdf {
+  template <typename T>
+  inline auto operator()(std::size_t start, std::size_t end,
+                         const std::vector<T>&, std::ostream* msgs,
+                         const std::vector<T>& data) const {
+    T sum = 0;
+    EXPECT_GE(start, 0);
+    EXPECT_LE(end, data.size() - 1);
+    for (size_t i = start; i <= end; i++) {
+      sum += data[i];
+    }
+    return sum;
+  }
+};
+
+TEST(StanMath_reduce_sum, start_end_slice) {
+  auto start_end = [](const auto& arg) {
+    return stan::math::reduce_sum<start_end_lpdf>(arg, 0, msgs, arg);
+  };
+
+  std::vector<double> data(5, 1.0);
+
+  stan::test::expect_ad(start_end, data);
+}
+
 auto fi = [](const auto&... args) {
   return stan::math::reduce_sum<sum_lpdf>(std::vector<int>(2, 10.0), 0, msgs,
                                           args...);
