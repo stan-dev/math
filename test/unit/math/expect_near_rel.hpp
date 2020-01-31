@@ -15,14 +15,8 @@ namespace internal {
 /**
  * Test that the specified values are within the specified tolerance
  * on relative error, and if not, fail the embedded google test.
- *
- * <p>Relative error is defined to be the error `u - v` rescaled by the
- * average absolute value,
- * `rel_err(u, v) = (u - v) / (0.5 * (abs(u) * + abs(v))).`
- *
- * <p>If at least one of `u` or `v` is zero, the absolute error is
- * tested at the specified tolerance, because the relative error
- * reduces to a constant.
+ * 
+ * Uses relative_tolerance::inexact to compute the tolerance.
  *
  * @tparam T1 type of first argument
  * @tparam T2 type of second argument
