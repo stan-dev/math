@@ -34,6 +34,8 @@ return_type_t<T_location, T_precision> neg_binomial_2_cdf(
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_location> mu_vec(mu);
   scalar_seq_view<T_precision> phi_vec(phi);
+  size_t size_phi = size(phi);
+  size_t size_n_phi = max_size(n, phi);
   size_t max_size_seq_view = max_size(n, mu, phi);
 
   operands_and_partials<T_location, T_precision> ops_partials(mu, phi);
@@ -48,18 +50,18 @@ return_type_t<T_location, T_precision> neg_binomial_2_cdf(
 
   VectorBuilder<!is_constant_all<T_precision>::value, T_partials_return,
                 T_precision>
-      digamma_phi_vec(size(phi));
-
-  VectorBuilder<!is_constant_all<T_precision>::value, T_partials_return,
+      digamma_phi_vec(size_phi);
+  VectorBuilder<!is_constant_all<T_precision>::value, T_partials_return, T_n,
                 T_precision>
-      digamma_sum_vec(size(phi));
+      digamma_sum_vec(size_n_phi);
 
   if (!is_constant_all<T_precision>::value) {
-    for (size_t i = 0; i < size(phi); i++) {
+    for (size_t i = 0; i < size_phi; i++) {
+      digamma_phi_vec[i] = digamma(value_of(phi_vec[i]));
+    }
+    for (size_t i = 0; i < size_n_phi; i++) {
       const T_partials_return n_dbl = value_of(n_vec[i]);
       const T_partials_return phi_dbl = value_of(phi_vec[i]);
-
-      digamma_phi_vec[i] = digamma(phi_dbl);
       digamma_sum_vec[i] = digamma(n_dbl + phi_dbl + 1);
     }
   }
@@ -104,7 +106,7 @@ return_type_t<T_location, T_precision> neg_binomial_2_cdf(
   }
 
   if (!is_constant_all<T_precision>::value) {
-    for (size_t i = 0; i < size(phi); ++i) {
+    for (size_t i = 0; i < size_phi; ++i) {
       ops_partials.edge2_.partials_[i] *= P;
     }
   }

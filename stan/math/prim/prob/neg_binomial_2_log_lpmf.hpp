@@ -48,58 +48,54 @@ return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_log_location> eta_vec(eta);
   scalar_seq_view<T_precision> phi_vec(phi);
+  size_t size_eta = size(eta);
+  size_t size_phi = size(phi);
+  size_t size_eta_phi = max_size(eta, phi);
+  size_t size_n_phi = max_size(n, phi);
   size_t max_size_seq_view = max_size(n, eta, phi);
 
   operands_and_partials<T_log_location, T_precision> ops_partials(eta, phi);
 
-  size_t len_ep = max_size(eta, phi);
-  size_t len_np = max_size(n, phi);
-
-  VectorBuilder<true, T_partials_return, T_log_location> eta__(size(eta));
-  for (size_t i = 0, max_size_seq_view = size(eta); i < max_size_seq_view;
-       ++i) {
-    eta__[i] = value_of(eta_vec[i]);
+  VectorBuilder<true, T_partials_return, T_log_location> eta_val(size_eta);
+  for (size_t i = 0; i < size_eta; ++i) {
+    eta_val[i] = value_of(eta_vec[i]);
   }
 
-  VectorBuilder<true, T_partials_return, T_precision> phi__(size(phi));
-  for (size_t i = 0, max_size_seq_view = size(phi); i < max_size_seq_view;
-       ++i) {
-    phi__[i] = value_of(phi_vec[i]);
-  }
-
-  VectorBuilder<true, T_partials_return, T_precision> log_phi(size(phi));
-  for (size_t i = 0, max_size_seq_view = size(phi); i < max_size_seq_view;
-       ++i) {
-    log_phi[i] = log(phi__[i]);
+  VectorBuilder<true, T_partials_return, T_precision> phi_val(size_phi);
+  VectorBuilder<true, T_partials_return, T_precision> log_phi(size_phi);
+  for (size_t i = 0; i < size_phi; ++i) {
+    phi_val[i] = value_of(phi_vec[i]);
+    log_phi[i] = log(phi_val[i]);
   }
 
   VectorBuilder<true, T_partials_return, T_log_location, T_precision>
-      logsumexp_eta_logphi(len_ep);
-  for (size_t i = 0; i < len_ep; ++i) {
-    logsumexp_eta_logphi[i] = log_sum_exp(eta__[i], log_phi[i]);
+      logsumexp_eta_logphi(size_eta_phi);
+  for (size_t i = 0; i < size_eta_phi; ++i) {
+    logsumexp_eta_logphi[i] = log_sum_exp(eta_val[i], log_phi[i]);
   }
 
-  VectorBuilder<true, T_partials_return, T_n, T_precision> n_plus_phi(len_np);
-  for (size_t i = 0; i < len_np; ++i) {
-    n_plus_phi[i] = n_vec[i] + phi__[i];
+  VectorBuilder<true, T_partials_return, T_n, T_precision> n_plus_phi(
+      size_n_phi);
+  for (size_t i = 0; i < size_n_phi; ++i) {
+    n_plus_phi[i] = n_vec[i] + phi_val[i];
   }
 
   for (size_t i = 0; i < max_size_seq_view; i++) {
-    if (phi__[i] > 1e5) {
+    if (phi_val[i] > 1e5) {
       // TODO(martinmodrak) This is wrong (doesn't pass propto information),
       // and inaccurate for n = 0, but shouldn't break most models.
       // Also the 1e5 cutoff is way too low.
       // Will be adressed better once PR #1497 is merged
-      logp += poisson_log_lpmf(n_vec[i], eta__[i]);
+      logp += poisson_log_lpmf(n_vec[i], eta_val[i]);
     } else {
       if (include_summand<propto>::value) {
         logp -= lgamma(n_vec[i] + 1.0);
       }
       if (include_summand<propto, T_precision>::value) {
-        logp += multiply_log(phi__[i], phi__[i]) - lgamma(phi__[i]);
+        logp += multiply_log(phi_val[i], phi_val[i]) - lgamma(phi_val[i]);
       }
       if (include_summand<propto, T_log_location>::value) {
-        logp += n_vec[i] * eta__[i];
+        logp += n_vec[i] * eta_val[i];
       }
       if (include_summand<propto, T_precision>::value) {
         logp += lgamma(n_plus_phi[i]);
@@ -109,12 +105,12 @@ return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
 
     if (!is_constant_all<T_log_location>::value) {
       ops_partials.edge1_.partials_[i]
-          += n_vec[i] - n_plus_phi[i] / (phi__[i] / exp(eta__[i]) + 1.0);
+          += n_vec[i] - n_plus_phi[i] / (phi_val[i] / exp(eta_val[i]) + 1.0);
     }
     if (!is_constant_all<T_precision>::value) {
       ops_partials.edge2_.partials_[i]
-          += 1.0 - n_plus_phi[i] / (exp(eta__[i]) + phi__[i]) + log_phi[i]
-             - logsumexp_eta_logphi[i] - digamma(phi__[i])
+          += 1.0 - n_plus_phi[i] / (exp(eta_val[i]) + phi_val[i]) + log_phi[i]
+             - logsumexp_eta_logphi[i] - digamma(phi_val[i])
              + digamma(n_plus_phi[i]);
     }
   }

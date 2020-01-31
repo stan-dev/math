@@ -36,6 +36,8 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_cdf(const T_n& n,
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_shape> alpha_vec(alpha);
   scalar_seq_view<T_inv_scale> beta_vec(beta);
+  size_t size_alpha = size(alpha);
+  size_t size_n_alpha = max_size(n, alpha);
   size_t max_size_seq_view = max_size(n, alpha, beta);
 
   operands_and_partials<T_shape, T_inv_scale> ops_partials(alpha, beta);
@@ -49,17 +51,17 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_cdf(const T_n& n,
   }
 
   VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
-      digamma_alpha_vec(size(alpha));
-
+      digamma_alpha_vec(size_alpha);
   VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
-      digamma_sum_vec(size(alpha));
+      digamma_sum_vec(size_n_alpha);
 
   if (!is_constant_all<T_shape>::value) {
-    for (size_t i = 0; i < size(alpha); i++) {
+    for (size_t i = 0; i < size_alpha; i++) {
+      digamma_alpha_vec[i] = digamma(value_of(alpha_vec[i]));
+    }
+    for (size_t i = 0; i < size_n_alpha; i++) {
       const T_partials_return n_dbl = value_of(n_vec[i]);
       const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
-
-      digamma_alpha_vec[i] = digamma(alpha_dbl);
       digamma_sum_vec[i] = digamma(n_dbl + alpha_dbl + 1);
     }
   }
@@ -96,7 +98,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_cdf(const T_n& n,
   }
 
   if (!is_constant_all<T_shape>::value) {
-    for (size_t i = 0; i < size(alpha); ++i) {
+    for (size_t i = 0; i < size_alpha; ++i) {
       ops_partials.edge1_.partials_[i] *= P;
     }
   }
