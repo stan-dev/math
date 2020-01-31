@@ -15,7 +15,7 @@ namespace internal {
 /**
  * Test that the specified values are within the specified tolerance
  * on relative error, and if not, fail the embedded google test.
- * 
+ *
  * Uses relative_tolerance::inexact to compute the tolerance.
  *
  * @tparam T1 type of first argument

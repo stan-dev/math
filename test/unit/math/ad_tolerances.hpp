@@ -15,7 +15,7 @@ namespace test {
  * if the function is implemented using only forward mode, and end
  * with the quantity being calculated; for example,
  * `hessian_fvar_grad_` is the gradient calculated by the `hessian`
- * function using forward-mode autodiff. Those get interpreted as 
+ * function using forward-mode autodiff. Those get interpreted as
  * relative tolerances, see `relative_tolerance` class more details.
  *
  * `gradient_val_`: 1e-8;  `gradient_grad_`: 1e-4

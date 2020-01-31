@@ -10,16 +10,16 @@ namespace test {
 /**
  * Struct holding information about relative tolerance and the minimal absolute
  * tolerance that should be tested against. The final tolerance is computed as
- * max(tol * fabs(x), tol_min)  
- * Where x is either an exact value to be tested against or average of 
+ * max(tol * fabs(x), tol_min)
+ * Where x is either an exact value to be tested against or average of
  * two inexact values to be compared.
  */
 struct relative_tolerance {
-  /** 
+  /**
    * The relative tolerance
    */
   double tol;
-  /** 
+  /**
    * The minimal absolute tolerance
    */
   double tol_min;
@@ -46,7 +46,7 @@ struct relative_tolerance {
 
   /**
    * Computes tolerance around an exact target value.
-   * 
+   *
    * @tparam T1 the type of argument, must be scalar
    * @param[in] x the target value
    * @return tolerance
@@ -59,7 +59,7 @@ struct relative_tolerance {
 
   /**
    * Computes tolerance for comparing two inexact values.
-   * 
+   *
    * @tparam T1 the type of first argument, must be scalar
    * @tparam T2 the type of second argument, must be scalar
    * @param[in] x first value that will be compared
