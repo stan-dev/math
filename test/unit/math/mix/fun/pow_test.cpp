@@ -1,5 +1,29 @@
 #include <test/unit/math/test_ad.hpp>
+#include <cmath>
 #include <limits>
+
+template <typename T>
+void expect_arith_instantiate() {
+  using stan::math::pow;
+  using std::pow;
+  auto a = pow(T(1.0), 1);
+  auto b = pow(T(1.0), 1.0);
+  auto c = pow(1, T(1.0));
+  auto d = pow(1.0, T(1.0));
+}
+
+// this one's been tricky to instantiate, so test all instances
+TEST(mathMixScalFun, powInstantiations) {
+  using stan::math::fvar;
+  using stan::math::var;
+  expect_arith_instantiate<int>();
+  expect_arith_instantiate<double>();
+  expect_arith_instantiate<var>();
+  expect_arith_instantiate<fvar<double>>();
+  expect_arith_instantiate<fvar<fvar<double>>>();
+  expect_arith_instantiate<fvar<var>>();
+  expect_arith_instantiate<fvar<fvar<var>>>();
+}
 
 TEST(mathMixScalFun, pow) {
   auto f = [](const auto& x1, const auto& x2) {
