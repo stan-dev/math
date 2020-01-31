@@ -3,11 +3,13 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/inc_beta.hpp>
 #include <stan/math/prim/fun/inc_beta_dda.hpp>
 #include <stan/math/prim/fun/inc_beta_ddz.hpp>
+#include <stan/math/prim/fun/inv.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <limits>
 
@@ -73,29 +75,30 @@ return_type_t<T_location, T_precision> neg_binomial_2_cdf(
       return ops_partials.build(1.0);
     }
 
-    const T_partials_return n_dbl = value_of(n_vec[i]);
+    const T_partials_return n_dbl_p1 = value_of(n_vec[i]) + 1;
     const T_partials_return mu_dbl = value_of(mu_vec[i]);
     const T_partials_return phi_dbl = value_of(phi_vec[i]);
-
-    const T_partials_return p_dbl = phi_dbl / (mu_dbl + phi_dbl);
-    const T_partials_return d_dbl
-        = 1.0 / ((mu_dbl + phi_dbl) * (mu_dbl + phi_dbl));
-
-    const T_partials_return P_i = inc_beta(phi_dbl, n_dbl + 1.0, p_dbl);
+    const T_partials_return inv_mu_plus_phi = inv(mu_dbl + phi_dbl);
+    const T_partials_return p_dbl = phi_dbl * inv_mu_plus_phi;
+    const T_partials_return d_dbl = square(inv_mu_plus_phi);
+    const T_partials_return P_i = inc_beta(phi_dbl, n_dbl_p1, p_dbl);
+    const T_partials_return inc_beta_ddz_i
+        = is_constant_all<T_location, T_precision>::value
+              ? 0
+              : inc_beta_ddz(phi_dbl, n_dbl_p1, p_dbl) * d_dbl / P_i;
 
     P *= P_i;
 
     if (!is_constant_all<T_location>::value) {
-      ops_partials.edge1_.partials_[i]
-          += -inc_beta_ddz(phi_dbl, n_dbl + 1.0, p_dbl) * phi_dbl * d_dbl / P_i;
+      ops_partials.edge1_.partials_[i] -= inc_beta_ddz_i * phi_dbl;
     }
 
     if (!is_constant_all<T_precision>::value) {
       ops_partials.edge2_.partials_[i]
-          += inc_beta_dda(phi_dbl, n_dbl + 1, p_dbl, digamma_phi_vec[i],
+          += inc_beta_dda(phi_dbl, n_dbl_p1, p_dbl, digamma_phi_vec[i],
                           digamma_sum_vec[i])
                  / P_i
-             + inc_beta_ddz(phi_dbl, n_dbl + 1.0, p_dbl) * mu_dbl * d_dbl / P_i;
+             + inc_beta_ddz_i * mu_dbl;
     }
   }
 

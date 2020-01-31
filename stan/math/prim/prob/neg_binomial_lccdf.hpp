@@ -3,13 +3,15 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/size_zero.hpp>
-#include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/beta.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/fun/inc_beta.hpp>
+#include <stan/math/prim/fun/inv.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/square.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <cmath>
 #include <limits>
 
@@ -87,8 +89,9 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lccdf(
     const T_partials_return n_dbl = value_of(n_vec[i]);
     const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
     const T_partials_return beta_dbl = value_of(beta_vec[i]);
-    const T_partials_return p_dbl = beta_dbl / (1.0 + beta_dbl);
-    const T_partials_return d_dbl = 1.0 / ((1.0 + beta_dbl) * (1.0 + beta_dbl));
+    const T_partials_return inv_beta_p1 = inv(beta_dbl + 1);
+    const T_partials_return p_dbl = beta_dbl * inv_beta_p1;
+    const T_partials_return d_dbl = square(inv_beta_p1);
     const T_partials_return Pi = 1.0 - inc_beta(alpha_dbl, n_dbl + 1.0, p_dbl);
     const T_partials_return beta_func = stan::math::beta(n_dbl + 1, alpha_dbl);
 
@@ -106,7 +109,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lccdf(
     if (!is_constant_all<T_inv_scale>::value) {
       ops_partials.edge2_.partials_[i] -= d_dbl * pow(1 - p_dbl, n_dbl)
                                           * pow(p_dbl, alpha_dbl - 1)
-                                          / beta_func / Pi;
+                                          / (beta_func * Pi);
     }
   }
 

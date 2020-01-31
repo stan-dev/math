@@ -61,6 +61,15 @@ return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
     eta_val[i] = value_of(eta_vec[i]);
   }
 
+  VectorBuilder<!is_constant_all<T_log_location, T_precision>::value,
+                T_partials_return, T_log_location>
+      exp_eta(size_eta);
+  if (!is_constant_all<T_log_location, T_precision>::value) {
+    for (size_t i = 0; i < size_eta; ++i) {
+      exp_eta[i] = exp(eta_val[i]);
+    }
+  }
+
   VectorBuilder<true, T_partials_return, T_precision> phi_val(size_phi);
   VectorBuilder<true, T_partials_return, T_precision> log_phi(size_phi);
   for (size_t i = 0; i < size_phi; ++i) {
@@ -105,11 +114,11 @@ return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
 
     if (!is_constant_all<T_log_location>::value) {
       ops_partials.edge1_.partials_[i]
-          += n_vec[i] - n_plus_phi[i] / (phi_val[i] / exp(eta_val[i]) + 1.0);
+          += n_vec[i] - n_plus_phi[i] / (phi_val[i] / exp_eta[i] + 1.0);
     }
     if (!is_constant_all<T_precision>::value) {
       ops_partials.edge2_.partials_[i]
-          += 1.0 - n_plus_phi[i] / (exp(eta_val[i]) + phi_val[i]) + log_phi[i]
+          += 1.0 - n_plus_phi[i] / (exp_eta[i] + phi_val[i]) + log_phi[i]
              - logsumexp_eta_logphi[i] - digamma(phi_val[i])
              + digamma(n_plus_phi[i]);
     }

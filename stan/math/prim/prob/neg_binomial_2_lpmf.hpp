@@ -3,10 +3,10 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/size_zero.hpp>
-#include <stan/math/prim/fun/multiply_log.hpp>
 #include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/fun/multiply_log.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/prob/poisson_lpmf.hpp>
 #include <cmath>
@@ -62,10 +62,13 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
     log_phi[i] = log(phi_val[i]);
   }
 
+  VectorBuilder<true, T_partials_return, T_location, T_precision> mu_plus_phi(
+      size_mu_phi);
   VectorBuilder<true, T_partials_return, T_location, T_precision>
       log_mu_plus_phi(size_mu_phi);
   for (size_t i = 0; i < size_mu_phi; ++i) {
-    log_mu_plus_phi[i] = log(mu_val[i] + phi_val[i]);
+    mu_plus_phi[i] = mu_val[i] + phi_val[i];
+    log_mu_plus_phi[i] = log(mu_plus_phi[i]);
   }
 
   VectorBuilder<true, T_partials_return, T_n, T_precision> n_plus_phi(
@@ -95,18 +98,18 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
       if (include_summand<propto, T_precision>::value) {
         logp += lgamma(n_plus_phi[i]);
       }
-      logp -= (n_plus_phi[i]) * log_mu_plus_phi[i];
+      logp -= n_plus_phi[i] * log_mu_plus_phi[i];
     }
 
     if (!is_constant_all<T_location>::value) {
       ops_partials.edge1_.partials_[i]
-          += n_vec[i] / mu_val[i] - n_plus_phi[i] / (mu_val[i] + phi_val[i]);
+          += n_vec[i] / mu_val[i] - n_plus_phi[i] / mu_plus_phi[i];
     }
     if (!is_constant_all<T_precision>::value) {
-      ops_partials.edge2_.partials_[i]
-          += 1.0 - n_plus_phi[i] / (mu_val[i] + phi_val[i]) + log_phi[i]
-             - log_mu_plus_phi[i] - digamma(phi_val[i])
-             + digamma(n_plus_phi[i]);
+      ops_partials.edge2_.partials_[i] += 1.0 - n_plus_phi[i] / mu_plus_phi[i]
+                                          + log_phi[i] - log_mu_plus_phi[i]
+                                          - digamma(phi_val[i])
+                                          + digamma(n_plus_phi[i]);
     }
   }
   return ops_partials.build(logp);
