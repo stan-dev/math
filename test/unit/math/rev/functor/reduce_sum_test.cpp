@@ -182,7 +182,7 @@ struct grouped_count_lpdf {
     // num_terms << "; size = " << sub_slice.size() << std::endl;
     VecT lambda_slice(num_terms);
     for (std::size_t i = 0; i != num_terms; ++i)
-      lambda_slice[i] = lambda[gidx[start + i - 1]];
+      lambda_slice[i] = lambda[gidx[start + i]];
 
     return stan::math::poisson_lpmf(sub_slice, lambda_slice);
   }
@@ -321,8 +321,8 @@ struct slice_group_count_lpdf {
     const std::size_t num_groups = end - start + 1;
     T result = 0.0;
     for (std::size_t i = 0; i != num_groups; ++i) {
-      std::vector<int> y_group(y.begin() + gsidx[start + i - 1],
-                               y.begin() + gsidx[start + i]);
+      std::vector<int> y_group(y.begin() + gsidx[start + i],
+                               y.begin() + gsidx[start + i + 1]);
       result += stan::math::poisson_lpmf(y_group, lambda_slice[i]);
     }
     return result;
