@@ -47,11 +47,7 @@ return_type_t<T_prob> categorical_lpmf(
 
   int lb = 1;
 
-  for (size_t i = 0; i < ns.size(); ++i) {
-    check_bounded(function, "element of outcome array", ns[i], lb,
-                  theta.size());
-  }
-
+  check_bounded(function, "element of outcome array", ns, lb, theta.size());
   check_simplex(function, "Probabilities parameter", theta);
 
   if (!include_summand<propto, T_prob>::value) {

@@ -38,10 +38,8 @@ namespace math {
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> corr_matrix_constrain(
     const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
-    typename math::index_type<Eigen::Matrix<T, Eigen::Dynamic, 1>>::type k) {
-  using Eigen::Dynamic;
-  using Eigen::Matrix;
-  using size_type = typename index_type<Matrix<T, Dynamic, 1>>::type;
+    math::index_type_t<Eigen::Matrix<T, Eigen::Dynamic, 1>> k) {
+  using size_type = index_type_t<Eigen::Matrix<T, Eigen::Dynamic, 1>>;
 
   size_type k_choose_2 = (k * (k - 1)) / 2;
   check_size_match("cov_matrix_constrain", "x.size()", x.size(), "k_choose_2",
@@ -75,17 +73,14 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> corr_matrix_constrain(
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> corr_matrix_constrain(
     const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
-    typename math::index_type<Eigen::Matrix<T, Eigen::Dynamic, 1>>::type k,
-    T& lp) {
+    math::index_type_t<Eigen::Matrix<T, Eigen::Dynamic, 1>> k, T& lp) {
+  using size_type = index_type_t<Eigen::Matrix<T, Eigen::Dynamic, 1>>;
   using Eigen::Array;
-  using Eigen::Dynamic;
-  using Eigen::Matrix;
-  using size_type = typename index_type<Matrix<T, Dynamic, 1>>::type;
 
   size_type k_choose_2 = (k * (k - 1)) / 2;
   check_size_match("cov_matrix_constrain", "x.size()", x.size(), "k_choose_2",
                    k_choose_2);
-  Array<T, Dynamic, 1> cpcs(k_choose_2);
+  Array<T, Eigen::Dynamic, 1> cpcs(k_choose_2);
   for (size_type i = 0; i < k_choose_2; ++i) {
     cpcs[i] = corr_constrain(x[i], lp);
   }

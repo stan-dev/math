@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -45,7 +44,7 @@ inline auto tan(const T& x) {
 template <typename Derived,
           typename = require_eigen_vt<std::is_arithmetic, Derived>>
 inline auto tan(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().tan().matrix();
+  return x.derived().array().tan().matrix().eval();
 }
 
 }  // namespace math

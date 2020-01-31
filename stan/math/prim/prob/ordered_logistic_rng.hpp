@@ -19,9 +19,7 @@ inline int ordered_logistic_rng(
 
   check_finite(function, "Location parameter", eta);
   check_greater(function, "Size of cut points parameter", c.size(), 0);
-  for (int i = 1; i < c.size(); ++i) {
-    check_greater(function, "Cut points parameter", c(i), c(i - 1));
-  }
+  check_ordered(function, "Cut points parameter", c);
   check_finite(function, "Cut points parameter", c(c.size() - 1));
   check_finite(function, "Cut points parameter", c(0));
 

@@ -113,6 +113,7 @@
 #include <stan/math/prim/fun/hypot.hpp>
 #include <stan/math/prim/fun/identity_constrain.hpp>
 #include <stan/math/prim/fun/identity_free.hpp>
+#include <stan/math/prim/fun/identity_matrix.hpp>
 #include <stan/math/prim/fun/if_else.hpp>
 #include <stan/math/prim/fun/inc_beta.hpp>
 #include <stan/math/prim/fun/initialize.hpp>
@@ -196,6 +197,14 @@
 #include <stan/math/prim/fun/num_elements.hpp>
 #include <stan/math/prim/fun/offset_multiplier_constrain.hpp>
 #include <stan/math/prim/fun/offset_multiplier_free.hpp>
+#include <stan/math/prim/fun/one_hot_array.hpp>
+#include <stan/math/prim/fun/one_hot_int_array.hpp>
+#include <stan/math/prim/fun/one_hot_row_vector.hpp>
+#include <stan/math/prim/fun/one_hot_vector.hpp>
+#include <stan/math/prim/fun/ones_array.hpp>
+#include <stan/math/prim/fun/ones_int_array.hpp>
+#include <stan/math/prim/fun/ones_row_vector.hpp>
+#include <stan/math/prim/fun/ones_vector.hpp>
 #include <stan/math/prim/fun/ordered_constrain.hpp>
 #include <stan/math/prim/fun/ordered_free.hpp>
 #include <stan/math/prim/fun/owens_t.hpp>
@@ -229,6 +238,7 @@
 #include <stan/math/prim/fun/rep_row_vector.hpp>
 #include <stan/math/prim/fun/rep_vector.hpp>
 #include <stan/math/prim/fun/resize.hpp>
+#include <stan/math/prim/fun/reverse.hpp>
 #include <stan/math/prim/fun/rising_factorial.hpp>
 #include <stan/math/prim/fun/round.hpp>
 #include <stan/math/prim/fun/row.hpp>
@@ -252,6 +262,9 @@
 #include <stan/math/prim/fun/sort_indices.hpp>
 #include <stan/math/prim/fun/sort_indices_asc.hpp>
 #include <stan/math/prim/fun/sort_indices_desc.hpp>
+#include <stan/math/prim/fun/spaced_array.hpp>
+#include <stan/math/prim/fun/spaced_row_vector.hpp>
+#include <stan/math/prim/fun/spaced_vector.hpp>
 #include <stan/math/prim/fun/sqrt.hpp>
 #include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/squared_distance.hpp>
@@ -282,6 +295,7 @@
 #include <stan/math/prim/fun/typedefs.hpp>
 #include <stan/math/prim/fun/ub_constrain.hpp>
 #include <stan/math/prim/fun/ub_free.hpp>
+#include <stan/math/prim/fun/uniform_simplex.hpp>
 #include <stan/math/prim/fun/unit_vector_constrain.hpp>
 #include <stan/math/prim/fun/unit_vector_free.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
@@ -289,5 +303,9 @@
 #include <stan/math/prim/fun/variance.hpp>
 #include <stan/math/prim/fun/welford_covar_estimator.hpp>
 #include <stan/math/prim/fun/welford_var_estimator.hpp>
+#include <stan/math/prim/fun/zeros_array.hpp>
+#include <stan/math/prim/fun/zeros_int_array.hpp>
+#include <stan/math/prim/fun/zeros_row_vector.hpp>
+#include <stan/math/prim/fun/zeros_vector.hpp>
 
 #endif
