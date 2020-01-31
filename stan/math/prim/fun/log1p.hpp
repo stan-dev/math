@@ -6,7 +6,6 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/is_nan.hpp>
 #include <stan/math/prim/fun/log1p.hpp>
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {

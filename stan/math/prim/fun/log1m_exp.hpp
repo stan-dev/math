@@ -5,7 +5,6 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/expm1.hpp>
 #include <stan/math/prim/fun/log1m.hpp>
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {

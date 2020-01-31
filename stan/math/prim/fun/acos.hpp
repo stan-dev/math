@@ -1,9 +1,8 @@
 #ifndef STAN_MATH_PRIM_FUN_ACOS_HPP
 #define STAN_MATH_PRIM_FUN_ACOS_HPP
 
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <cmath>
 
 namespace stan {
