@@ -98,15 +98,15 @@ doxygen:
 .PHONY: clean clean-doxygen clean-deps clean-all
 clean:
 	@echo '  removing test executables'
-	$(shell find test -type f -name "*_test$(EXE)" -exec rm {} +)
-	$(shell find test -type f -name "*_test.d" -exec rm {} +)
-	$(shell find test -type f -name "*_test.d.*" -exec rm {} +)
-	$(shell find test -type f -name "*_test.xml" -exec rm {} +)
-	$(shell find test -type f -name "*.o" -exec rm {} +)
-	$(RM) $(wildcard $(GTEST)/src/gtest-all.o)
+	@$(RM) $(call findfiles,test,*_test$(EXE))
+	@$(RM) $(call findfiles,test,*_test.d)
+	@$(RM) $(call findfiles,test,*_test.d.*)
+	@$(RM) $(call findfiles,test,*_test.xml)
+	@$(RM) $(call findfiles,test,*.o)
+	@$(RM) $(wildcard $(GTEST)/src/gtest-all.o)
 	@echo '  removing generated test files'
-	$(RM) $(wildcard test/prob/generate_tests$(EXE))
-	$(shell find test/prob -name '*_generated_*_test.cpp' -type f -exec rm {} +)
+	@$(RM) $(wildcard test/prob/generate_tests$(EXE))
+	@$(RM) $(call findfiles,test/prob,*_generated_*_test.cpp)
 
 clean-doxygen:
 	@echo '  removing doxygen'
@@ -114,9 +114,13 @@ clean-doxygen:
 
 clean-deps:
 	@echo '  removing dependency files'
-	$(shell find stan test lib -type f -name '*.d' -exec rm {} +)
-	$(shell find stan test lib -type f -name '*.d.*' -exec rm {} +)
-	$(shell find stan  -type f -name '*.dSYM' -exec rm {} +)
+	@$(RM) $(call findfiles,stan,*.d)
+	@$(RM) $(call findfiles,test,*.d)
+	@$(RM) $(call findfiles,lib,*.d)
+	@$(RM) $(call findfiles,stan,*.d.*)
+	@$(RM) $(call findfiles,test,*.d.*)
+	@$(RM) $(call findfiles,lib,*.d.*)
+	@$(RM) $(call findfiles,stan,*.dSYM)
 
 clean-all: clean clean-doxygen clean-deps clean-libraries
 

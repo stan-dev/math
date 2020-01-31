@@ -1,8 +1,10 @@
 #ifndef STAN_MATH_PRIM_META_HPP
 #define STAN_MATH_PRIM_META_HPP
 
-#include <stan/math/prim/meta/append_return_type.hpp>
 #include <stan/math/prim/meta/ad_promotable.hpp>
+#include <stan/math/prim/meta/append_return_type.hpp>
+#include <stan/math/prim/meta/apply_scalar_unary.hpp>
+#include <stan/math/prim/meta/apply_vector_unary.hpp>
 #include <stan/math/prim/meta/as_array_or_scalar.hpp>
 #include <stan/math/prim/meta/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/meta/bool_constant.hpp>

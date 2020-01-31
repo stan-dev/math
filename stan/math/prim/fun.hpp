@@ -40,7 +40,6 @@
 #include <stan/math/prim/fun/columns_dot_product.hpp>
 #include <stan/math/prim/fun/columns_dot_self.hpp>
 #include <stan/math/prim/fun/common_type.hpp>
-#include <stan/math/prim/fun/constant_vector.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/copysign.hpp>
 #include <stan/math/prim/fun/corr_constrain.hpp>
@@ -203,7 +202,13 @@
 #include <stan/math/prim/fun/num_elements.hpp>
 #include <stan/math/prim/fun/offset_multiplier_constrain.hpp>
 #include <stan/math/prim/fun/offset_multiplier_free.hpp>
+#include <stan/math/prim/fun/one_hot_array.hpp>
+#include <stan/math/prim/fun/one_hot_int_array.hpp>
+#include <stan/math/prim/fun/one_hot_row_vector.hpp>
 #include <stan/math/prim/fun/one_hot_vector.hpp>
+#include <stan/math/prim/fun/ones_array.hpp>
+#include <stan/math/prim/fun/ones_int_array.hpp>
+#include <stan/math/prim/fun/ones_row_vector.hpp>
 #include <stan/math/prim/fun/ones_vector.hpp>
 #include <stan/math/prim/fun/ordered_constrain.hpp>
 #include <stan/math/prim/fun/ordered_free.hpp>
@@ -238,6 +243,7 @@
 #include <stan/math/prim/fun/rep_row_vector.hpp>
 #include <stan/math/prim/fun/rep_vector.hpp>
 #include <stan/math/prim/fun/resize.hpp>
+#include <stan/math/prim/fun/reverse.hpp>
 #include <stan/math/prim/fun/rising_factorial.hpp>
 #include <stan/math/prim/fun/round.hpp>
 #include <stan/math/prim/fun/row.hpp>
@@ -248,7 +254,6 @@
 #include <stan/math/prim/fun/scaled_add.hpp>
 #include <stan/math/prim/fun/sd.hpp>
 #include <stan/math/prim/fun/segment.hpp>
-#include <stan/math/prim/fun/set_spaced_vector.hpp>
 #include <stan/math/prim/fun/sign.hpp>
 #include <stan/math/prim/fun/signbit.hpp>
 #include <stan/math/prim/fun/simplex_constrain.hpp>
@@ -263,6 +268,9 @@
 #include <stan/math/prim/fun/sort_indices.hpp>
 #include <stan/math/prim/fun/sort_indices_asc.hpp>
 #include <stan/math/prim/fun/sort_indices_desc.hpp>
+#include <stan/math/prim/fun/spaced_array.hpp>
+#include <stan/math/prim/fun/spaced_row_vector.hpp>
+#include <stan/math/prim/fun/spaced_vector.hpp>
 #include <stan/math/prim/fun/sqrt.hpp>
 #include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/squared_distance.hpp>
@@ -301,6 +309,9 @@
 #include <stan/math/prim/fun/variance.hpp>
 #include <stan/math/prim/fun/welford_covar_estimator.hpp>
 #include <stan/math/prim/fun/welford_var_estimator.hpp>
+#include <stan/math/prim/fun/zeros_array.hpp>
+#include <stan/math/prim/fun/zeros_int_array.hpp>
+#include <stan/math/prim/fun/zeros_row_vector.hpp>
 #include <stan/math/prim/fun/zeros_vector.hpp>
 
 #endif
