@@ -124,13 +124,12 @@ TEST(StanMath_reduce_sum, double_slice) {
 
 struct start_end_lpdf {
   inline auto operator()(std::size_t start, std::size_t end,
-                         const std::vector<int>&,
-                         std::ostream* msgs,
-			 const std::vector<int>& data) const {
+                         const std::vector<int>&, std::ostream* msgs,
+                         const std::vector<int>& data) const {
     int sum = 0;
     EXPECT_GE(start, 1);
     EXPECT_LE(end, data.size());
-    for(size_t i = start - 1; i < end; i++) {
+    for (size_t i = start - 1; i < end; i++) {
       sum += data[i];
     }
     return sum;
