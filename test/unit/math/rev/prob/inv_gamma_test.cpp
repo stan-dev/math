@@ -1,4 +1,4 @@
-#include <stan/math/rev/scal.hpp>
+#include <stan/math/rev.hpp>
 #include <boost/math/tools/numerical_differentiation.hpp>
 #include <boost/math/special_functions/digamma.hpp>
 #include <gtest/gtest.h>
