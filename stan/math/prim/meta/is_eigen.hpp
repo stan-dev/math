@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_META_IS_EIGEN_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/meta/bool_constant.hpp>
 #include <stan/math/prim/meta/disjunction.hpp>
 #include <type_traits>
 
@@ -33,6 +34,24 @@ struct is_eigen_base<Eigen::EigenBase<T>> : std::true_type {};
 
 }  // namespace internal
 
+namespace internal {
+/*
+ * Underlying implimenation to check if a type is derived from EigenBase
+ */
+template <typename T>
+struct is_eigen_dense_base
+    : std::integral_constant<bool,
+                             std::is_base_of<Eigen::DenseBase<T>, T>::value> {};
+
+template <typename T>
+struct is_eigen_dense_base<Eigen::DenseBase<T>> : std::true_type {};
+
+template <typename T>
+struct is_eigen_dense_base<Eigen::MatrixBase<T>> : std::true_type {};
+
+}  // namespace internal
+
+
 /*
  * Checks whether type T is derived from EigenBase. If true this will have a
  * static member function named value with a type of true, else value is false.
@@ -43,14 +62,21 @@ struct is_eigen<
     : std::true_type {};
 
 namespace internal {
-template <typename T>
+template <typename T, typename Enable = void>
 struct is_eigen_matrix_impl : std::false_type {};
-template <typename T, int R, int C>
-struct is_eigen_matrix_impl<Eigen::Matrix<T, R, C>> : std::true_type {};
 template <typename T>
-struct is_eigen_matrix_impl<Eigen::SparseMatrix<T>> : std::true_type {};
+struct is_eigen_matrix_impl<T,
+ std::enable_if_t<internal::is_eigen_dense_base<T>::value>> :
+ bool_constant<T::RowsAtCompileTime != 1 && T::ColsAtCompileTime != 1> {};
+
 }  // namespace internal
 
+
+/*
+ * Checks whether type T is derived from Eigen::DenseBase and has columns and
+ * rows greater than 1. If true this will have a
+ * static member function named value with a type of true, else value is false.
+ */
 template <typename T>
 struct is_eigen_matrix : internal::is_eigen_matrix_impl<std::decay_t<T>> {};
 
