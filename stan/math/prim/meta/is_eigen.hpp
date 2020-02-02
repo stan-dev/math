@@ -51,7 +51,6 @@ struct is_eigen_dense_base<Eigen::MatrixBase<T>> : std::true_type {};
 
 }  // namespace internal
 
-
 /*
  * Checks whether type T is derived from EigenBase. If true this will have a
  * static member function named value with a type of true, else value is false.
@@ -65,12 +64,11 @@ namespace internal {
 template <typename T, typename Enable = void>
 struct is_eigen_matrix_impl : std::false_type {};
 template <typename T>
-struct is_eigen_matrix_impl<T,
- std::enable_if_t<internal::is_eigen_dense_base<T>::value>> :
- bool_constant<T::RowsAtCompileTime != 1 && T::ColsAtCompileTime != 1> {};
+struct is_eigen_matrix_impl<
+    T, std::enable_if_t<internal::is_eigen_dense_base<T>::value>>
+    : bool_constant<T::RowsAtCompileTime != 1 && T::ColsAtCompileTime != 1> {};
 
 }  // namespace internal
-
 
 /*
  * Checks whether type T is derived from Eigen::DenseBase and has columns and
