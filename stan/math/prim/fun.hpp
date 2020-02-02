@@ -228,6 +228,9 @@
 #include <stan/math/prim/fun/quad_form.hpp>
 #include <stan/math/prim/fun/quad_form_diag.hpp>
 #include <stan/math/prim/fun/quad_form_sym.hpp>
+#include <stan/math/prim/fun/range_array.hpp>
+#include <stan/math/prim/fun/range_row_vector.hpp>
+#include <stan/math/prim/fun/range_vector.hpp>
 #include <stan/math/prim/fun/rank.hpp>
 #include <stan/math/prim/fun/read_corr_L.hpp>
 #include <stan/math/prim/fun/read_corr_matrix.hpp>
