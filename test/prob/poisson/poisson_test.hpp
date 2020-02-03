@@ -43,27 +43,26 @@ class AgradDistributionsPoisson : public AgradDistributionTest {
 
   template <class T_n, class T_rate, typename T2, typename T3, typename T4,
             typename T5>
-  typename stan::return_type<T_n, T_rate>::type log_prob(const T_n& n,
-                                                         const T_rate& lambda,
-                                                         const T2&, const T3&,
-                                                         const T4&, const T5&) {
+  stan::return_type_t<T_n, T_rate> log_prob(const T_n& n, const T_rate& lambda,
+                                            const T2&, const T3&, const T4&,
+                                            const T5&) {
     return stan::math::poisson_log(n, lambda);
   }
 
   template <bool propto, class T_n, class T_rate, typename T2, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_n, T_rate>::type log_prob(const T_n& n,
-                                                         const T_rate& lambda,
-                                                         const T2&, const T3&,
-                                                         const T4&, const T5&) {
+  stan::return_type_t<T_n, T_rate> log_prob(const T_n& n, const T_rate& lambda,
+                                            const T2&, const T3&, const T4&,
+                                            const T5&) {
     return stan::math::poisson_log<propto>(n, lambda);
   }
 
   template <class T_n, class T_rate, typename T2, typename T3, typename T4,
             typename T5>
-  typename stan::return_type<T_n, T_rate>::type log_prob_function(
-      const T_n& n, const T_rate& lambda, const T2&, const T3&, const T4&,
-      const T5&) {
+  stan::return_type_t<T_n, T_rate> log_prob_function(const T_n& n,
+                                                     const T_rate& lambda,
+                                                     const T2&, const T3&,
+                                                     const T4&, const T5&) {
     using boost::math::lgamma;
     using stan::math::LOG_ZERO;
     using stan::math::multiply_log;
