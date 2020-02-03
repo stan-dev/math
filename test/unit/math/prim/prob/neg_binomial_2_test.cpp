@@ -29,11 +29,11 @@ class NegativeBinomial2TestRig : public VectorIntRNGTestRig {
   }
 };
 
-TEST(ProbDistributionsNegativeBinomial2, errorCheck) {
+TEST(ProbDistributionsNegBinomial2, errorCheck) {
   check_dist_throws_all_types(NegativeBinomial2TestRig());
 }
 
-TEST(ProbDistributionsNegativeBinomial2, distributionCheck) {
+TEST(ProbDistributionsNegBinomial2, distributionCheck) {
   check_counts_real_real(NegativeBinomial2TestRig());
 }
 
@@ -200,7 +200,7 @@ TEST(ProbDistributionsNegBinomial2, chiSquareGoodnessFitTest3) {
   EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
 }
 
-TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest4) {
+TEST(ProbDistributionsNegBinomial2, chiSquareGoodnessFitTest4) {
   boost::random::mt19937 rng;
   int N = 1000;
   int K = stan::math::round(2 * std::pow(N, 0.4));
@@ -237,7 +237,7 @@ TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest4) {
   EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
 }
 
-TEST(ProbDistributionsNegBinomial, extreme_values) {
+TEST(ProbDistributionsNegBinomial2, extreme_values) {
   int N = 100;
   double mu = 8;
   double phi = 1e12;

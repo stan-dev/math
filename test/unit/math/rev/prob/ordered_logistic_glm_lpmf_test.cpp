@@ -15,11 +15,10 @@ using stan::math::var;
 using std::vector;
 
 template <bool propto, typename T_x, typename T_beta, typename T_cuts>
-typename stan::return_type<T_x, T_beta, T_cuts>::type
-ordered_logistic_glm_simple_lpmf(const vector<int>& y,
-                                 const Matrix<T_x, Dynamic, Dynamic>& x,
-                                 const T_beta& beta, const T_cuts& cuts) {
-  typedef typename stan::return_type<T_x, T_beta>::type T_x_beta;
+stan::return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_simple_lpmf(
+    const vector<int>& y, const Matrix<T_x, Dynamic, Dynamic>& x,
+    const T_beta& beta, const T_cuts& cuts) {
+  using T_x_beta = stan::return_type_t<T_x, T_beta>;
   using stan::math::as_column_vector_or_scalar;
 
   auto& beta_col = as_column_vector_or_scalar(beta);

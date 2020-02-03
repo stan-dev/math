@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/exp.hpp>
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -87,7 +86,7 @@ inline auto inv_cloglog(const T& x) {
 template <typename Derived,
           typename = require_eigen_vt<std::is_arithmetic, Derived>>
 inline auto inv_cloglog(const Eigen::MatrixBase<Derived>& x) {
-  return (1 - exp(-exp(x.derived().array()))).matrix();
+  return (1 - exp(-exp(x.derived().array()))).matrix().eval();
 }
 
 /**
@@ -99,7 +98,7 @@ inline auto inv_cloglog(const Eigen::MatrixBase<Derived>& x) {
 template <typename Derived,
           typename = require_eigen_vt<std::is_arithmetic, Derived>>
 inline auto inv_cloglog(const Eigen::ArrayBase<Derived>& x) {
-  return 1 - exp(-exp(x.derived()));
+  return (1 - exp(-exp(x.derived()))).eval();
 }
 
 }  // namespace math

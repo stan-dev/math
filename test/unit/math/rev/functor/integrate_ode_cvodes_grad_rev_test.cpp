@@ -35,7 +35,7 @@ double dy2_dchi(double t, double omega, double chi) {
 class sho_functor {
  public:
   template <typename T0, typename T1, typename T2>
-  inline std::vector<typename stan::return_type<T1, T2>::type> operator()(
+  inline std::vector<stan::return_type_t<T1, T2>> operator()(
       const T0& t_in,                 // time
       const std::vector<T1>& y_in,    // state
       const std::vector<T2>& theta,   // parameters
@@ -45,7 +45,7 @@ class sho_functor {
     if (y_in.size() != 2)
       throw std::domain_error("Functor called with inconsistent state");
 
-    std::vector<typename stan::return_type<T1, T2>::type> f;
+    std::vector<stan::return_type_t<T1, T2>> f;
     f.push_back(y_in.at(1));
     f.push_back(-theta.at(0) * theta.at(0) * y_in.at(0));
 
@@ -77,7 +77,7 @@ class test_functor_double_var_1 {
     std::vector<double> data;
     std::vector<int> data_int;
 
-    std::vector<std::vector<T> > ys
+    std::vector<std::vector<T>> ys
         = (lmm_ == TEST_CVODES_ADAMS
                ? stan::math::integrate_ode_adams(sho, y0, t0, ts, theta, data,
                                                  data_int)
@@ -112,7 +112,7 @@ class test_functor_double_var_2 {
     std::vector<double> data;
     std::vector<int> data_int;
 
-    std::vector<std::vector<T> > ys
+    std::vector<std::vector<T>> ys
         = (lmm_ == TEST_CVODES_ADAMS
                ? stan::math::integrate_ode_adams(sho, y0, t0, ts, theta, data,
                                                  data_int)
@@ -187,7 +187,7 @@ class test_functor_var_double_1 {
     std::vector<double> data;
     std::vector<int> data_int;
 
-    std::vector<std::vector<T> > ys
+    std::vector<std::vector<T>> ys
         = (lmm_ == TEST_CVODES_ADAMS
                ? stan::math::integrate_ode_adams(sho, y0, t0, ts, theta, data,
                                                  data_int)
@@ -222,7 +222,7 @@ class test_functor_var_double_2 {
     std::vector<double> data;
     std::vector<int> data_int;
 
-    std::vector<std::vector<T> > ys
+    std::vector<std::vector<T>> ys
         = (lmm_ == TEST_CVODES_ADAMS
                ? stan::math::integrate_ode_adams(sho, y0, t0, ts, theta, data,
                                                  data_int)
@@ -297,7 +297,7 @@ class test_functor_var_var_1 {
     std::vector<double> data;
     std::vector<int> data_int;
 
-    std::vector<std::vector<T> > ys
+    std::vector<std::vector<T>> ys
         = (lmm_ == TEST_CVODES_ADAMS
                ? stan::math::integrate_ode_adams(sho, y0, t0, ts, theta, data,
                                                  data_int)
@@ -332,7 +332,7 @@ class test_functor_var_var_2 {
     std::vector<double> data;
     std::vector<int> data_int;
 
-    std::vector<std::vector<T> > ys
+    std::vector<std::vector<T>> ys
         = (lmm_ == TEST_CVODES_ADAMS
                ? stan::math::integrate_ode_adams(sho, y0, t0, ts, theta, data,
                                                  data_int)
