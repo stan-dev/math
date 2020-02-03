@@ -4,8 +4,8 @@
 #include <limits>
 
 TEST(ErrorHandlingMatrix, checkMultiplicableMatrix) {
-  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y;
-  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> x;
+  Eigen::MatrixXd y;
+  Eigen::MatrixXd x;
 
   y.resize(3, 3);
   x.resize(3, 3);
@@ -28,31 +28,28 @@ TEST(ErrorHandlingMatrix, checkMultiplicableMatrix) {
 }
 
 TEST(ErrorHandlingMatrix, checkMultiplicableMatrix_0) {
-  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y;
-  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> x;
+  Eigen::MatrixXd y;
+  Eigen::MatrixXd x;
 
   x.resize(3, 0);
   y.resize(0, 3);
-  EXPECT_THROW(
-      stan::math::check_multiplicable("checkMultiplicable", "x", x, "y", y),
-      std::invalid_argument);
+  EXPECT_NO_THROW(
+      stan::math::check_multiplicable("checkMultiplicable", "x", x, "y", y));
 
   x.resize(0, 4);
   y.resize(4, 3);
-  EXPECT_THROW(
-      stan::math::check_multiplicable("checkMultiplicable", "x", x, "y", y),
-      std::invalid_argument);
+  EXPECT_NO_THROW(
+      stan::math::check_multiplicable("checkMultiplicable", "x", x, "y", y));
 
   x.resize(3, 4);
   y.resize(4, 0);
-  EXPECT_THROW(
-      stan::math::check_multiplicable("checkMultiplicable", "x", x, "y", y),
-      std::invalid_argument);
+  EXPECT_NO_THROW(
+      stan::math::check_multiplicable("checkMultiplicable", "x", x, "y", y));
 }
 
 TEST(ErrorHandlingMatrix, checkMultiplicableMatrix_nan) {
-  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y;
-  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> x;
+  Eigen::MatrixXd y;
+  Eigen::MatrixXd x;
   double nan = std::numeric_limits<double>::quiet_NaN();
 
   y.resize(3, 3);
