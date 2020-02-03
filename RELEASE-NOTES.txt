@@ -1,6 +1,48 @@
 Stan Math Library Release Notes
 
 ======================================================================
+v3.1.0 (24 January 2020)
+======================================================================
+
+## Features
+We upgraded the Boost library to version 1.72.0.
+
+[SteveBonder](https://github.com/SteveBronder) put in a ton of effort to refactor the [math docs site](http://mc-stan.org/math/) and clean up the doxygen. Steve also added var specialization for matrix_cl. [t4c1](https://github.com/t4c1) generalized signatures of element-wise matrix functions which now accept and return expressions, added broadcasting to the GLM functions and extended that functionality to GPU GLM function. He also added the JIT compilation for dynamically generating OpenCL kernels that is now able to deal with matrices, scalars, unary and binary element-wise matrix operations and the block() function. This will enable much faster adoptation of GPU support for all remaining Stan Math function. Tadej also optimized the matrix_cl constructor for the case of constructing from rvalue and extened matrix_cl to accept Eigen::Map.
+[peterwicksstringfield](https://github.com/peterwicksstringfield) added the specialized derivative for the for matrix/scalar and the matrix power function. [wds15](https://github.com/wds15) added a change to the makefiles that enables easier building of custom .cpp files that use Stan Math. [mcol](https://github.com/mcol) added implementations of std_normal_cdf, std_normal_lcdf, std_normal_lccdf and std_normal_rng. [rok-cesnovar](https://github.com/rok-cesnovar) simplified turning on threading in the makefiles.
+
+## Developer-aimed features
+[bob-carpenter](https://github.com/bob-carpenter) extended the autodiff test framework for ternary functions and consolidated most of rev and fwd tests into mix. Bob also improved test coverage for all real-valued functions of two or fewer arguments. [rok-cesnovar](https://github.com/rok-cesnovar) flattened the arr,scal and mat subfolders to simplify the codebase and renamed the length() and length_mvt() functions to size() and size_mvt(), cleaned up the unit test names and added a restriction to enforce unique test names in the Stan Math codebase.
+[mcol](https://github.com/mcol) cleaned up the use of constants in the codebase and added missing documentation for template parameters. [SteveBonder](https://github.com/SteveBronder) extended with require metaprogramming traits for is_container and is_string_convertible.
+
+## Fixes
+[PhilClemson](https://github.com/PhilClemson) improved numerical precision of normal lcdf. [martinmodrak](https://github.com/martinmodrak) fixed some notable edge cases for neg_binomial_2 and neg_binomial_2_log. [SteveBonder](https://github.com/SteveBronder) fixed a bug with the beta_binomial_lpmf function. [rok-cesnovar](https://github.com/rok-cesnovar) fixed a bug in poisson_log_glm that caused the sampling statement fails to not fit and resolved include-what-you-use issues in the codebase.
+
+[mcol](https://github.com/mcol) has cleaned up a lot of the codebase: simplifiying and optimizing the exp_mod_normal_*, VectorBuilder, pareto_type_2, poisson_log_lpmf, poisson_lpmf, beta binomial CDF/CCDF functions. Marco also did an amazing job fixing and cleaning the behaviour and adding testing for edge cases in:
+
+* corr_matrix_transform
+* determinant
+* hypergeometric_lpmf
+* inverse
+* inverse_spd
+* log_determinant
+* log_determinant_spd
+* log_sum_exp
+* matrix_exp_multiply
+* matrix_exp_pade
+* mdivide_left_ldlt
+* mdivide_right_ldlt
+* scale_matrix_exp_multiply
+* singular_values
+* trace_inv_quad_form_ldlt
+* trace_gen_inv_quad_form_ldlt
+* von_mises_lpdf
+* von_mises_rng
+
+Last but not least he cleaned up the use of trailing underscores in our codebase, compiler warnings when building the Kinsol library, removed the use of some boost functions that are now available in C++11, cleaned up some uninitialized variable in tests, fixed the bug that cause overpromotion in muliply functions, cleaned up unnecessary checks in _lpmf/_lpdf functions, renamed dirichlet_lpmf to dirichlet_lpdf and stan::math::domain_error to throw_domain_error, removed uses of boost::promote_args and boost/math/tools/promotion.hpp, removed the unused functions stan::math::sub(), locscale_contrain and locscale_free.
+
+[martinmodrak](https://github.com/martinmodrak) fixed some notable edge cases for neg_binomial_2 and neg_binomial_2_log. [wds15](https://github.com/wds15) fixed the static init order bug. [bgoodri](https://github.com/bgoodri) fixed a bug that issued a warning for catching without a constant reference. [peterwicksstringfield](https://github.com/peterwicksstringfield) cleaned up some potentialy misleading docs in negated require template metaprograms and other documentation and also cleaned up the use of ibeta and fixed the loop order in loops dealing with Eigen matrics.[seantalts](https://github.com/seantalts) refactored integrate_1d to use std::ostream* instead of std::ostream&. [mitzimorris](https://github.com/mitzimorris) cleaned up the doxygen config file of unneeded directives.
+
+======================================================================
 v3.0.0 (18 October 2019)
 ======================================================================
 

@@ -1,5 +1,5 @@
 // Arguments: Ints, Doubles, Doubles
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 #include <boost/math/special_functions/binomial.hpp>
 
 using stan::math::var;
@@ -59,15 +59,17 @@ class AgradCdfLogNegBinomial2 : public AgradCdfLogTest {
 
   template <typename T_n, typename T_location, typename T_precision,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_location, T_precision>::type cdf_log(
-      const T_n& n, const T_location& alpha, const T_precision& beta, const T3&,
-      const T4&, const T5&) {
+  stan::return_type_t<T_location, T_precision> cdf_log(const T_n& n,
+                                                       const T_location& alpha,
+                                                       const T_precision& beta,
+                                                       const T3&, const T4&,
+                                                       const T5&) {
     return stan::math::neg_binomial_2_cdf_log(n, alpha, beta);
   }
 
   template <typename T_n, typename T_location, typename T_precision,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_location, T_precision>::type cdf_log_function(
+  stan::return_type_t<T_location, T_precision> cdf_log_function(
       const T_n& nn, const T_location& mu, const T_precision& phi, const T3&,
       const T4&, const T5&) {
     using stan::math::binomial_coefficient_log;
@@ -75,10 +77,10 @@ class AgradCdfLogNegBinomial2 : public AgradCdfLogTest {
     using std::exp;
     using std::log;
 
-    typename stan::return_type<T_location, T_precision>::type cdf(0);
+    stan::return_type_t<T_location, T_precision> cdf(0);
 
     for (int n = 0; n <= nn; n++) {
-      typename stan::return_type<T_location, T_precision>::type lp(0);
+      stan::return_type_t<T_location, T_precision> lp(0);
       if (n != 0)
         lp += binomial_coefficient_log<
             typename stan::scalar_type<T_precision>::type>(n + phi - 1.0, n);

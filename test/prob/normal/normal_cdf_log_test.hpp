@@ -1,5 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 
 using stan::math::square;
 using stan::math::var;
@@ -70,20 +70,22 @@ class AgradCdfLogNormal : public AgradCdfLogTest {
 
   template <typename T_y, typename T_loc, typename T_scale, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale>::type cdf_log(
-      const T_y& y, const T_loc& mu, const T_scale& sigma, const T3&, const T4&,
-      const T5&) {
+  stan::return_type_t<T_y, T_loc, T_scale> cdf_log(const T_y& y,
+                                                   const T_loc& mu,
+                                                   const T_scale& sigma,
+                                                   const T3&, const T4&,
+                                                   const T5&) {
     return stan::math::normal_cdf_log(y, mu, sigma);
   }
 
   template <typename T_y, typename T_loc, typename T_scale, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale>::type cdf_log_function(
+  stan::return_type_t<T_y, T_loc, T_scale> cdf_log_function(
       const T_y& y, const T_loc& mu, const T_scale& sigma, const T3&, const T4&,
       const T5&) {
     using stan::math::LOG_HALF;
-    using stan::math::SQRT_2;
     using stan::math::SQRT_PI;
+    using stan::math::SQRT_TWO;
     using std::exp;
     using std::log;
     using std::log1p;
@@ -101,9 +103,9 @@ class AgradCdfLogNormal : public AgradCdfLogTest {
            0.527905102951428412248,   1.87295284992346047209,
            2.56852019228982242072,    1.0};
     stan::return_type_t<T_y, T_loc, T_scale> scaled_diff(0.0);
-    scaled_diff += (y - mu) / (sigma * SQRT_2);
+    scaled_diff += (y - mu) / (sigma * SQRT_TWO);
     stan::return_type_t<T_y, T_loc, T_scale> sigma2pi(0.0);
-    sigma2pi += sigma * SQRT_2;
+    sigma2pi += sigma * SQRT_TWO;
 
     // use erfc() instead of erf() in order to retain precision since for x>0
     // erfc()->0

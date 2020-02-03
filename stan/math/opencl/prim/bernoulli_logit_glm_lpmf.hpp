@@ -2,18 +2,14 @@
 #define STAN_MATH_OPENCL_PRIM_BERNOULLI_LOGIT_GLM_LPMF_HPP
 #ifdef STAN_OPENCL
 
-#include <stan/math/prim/mat/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/scal/err/check_consistent_sizes.hpp>
-#include <stan/math/prim/scal/err/check_bounded.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
-#include <stan/math/prim/mat/fun/value_of_rec.hpp>
-#include <stan/math/prim/mat/fun/sum.hpp>
-#include <stan/math/prim/arr/fun/value_of_rec.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <stan/math/prim/mat/fun/value_of.hpp>
-#include <stan/math/prim/arr/fun/value_of.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/sum.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/kernels/bernoulli_logit_glm_lpmf.hpp>
@@ -26,7 +22,7 @@ namespace math {
 /** \ingroup opencl
  * Returns the log PMF of the Generalized Linear Model (GLM)
  * with Bernoulli distribution and logit link function.
- * This is an overload of the GLM in prim/mat/prob/bernoulli_logit_glm_lpmf.hpp
+ * This is an overload of the GLM in prim/prob/bernoulli_logit_glm_lpmf.hpp
  * that is implemented in OpenCL.
  * @tparam T_alpha type of the intercept(s);
  * this can be a vector (of the same length as y) of intercepts or a single
@@ -65,7 +61,7 @@ return_type_t<T_alpha, T_beta> bernoulli_logit_glm_lpmf(
   check_consistent_size(function, "Weight vector", beta, M);
   if (is_vector<T_alpha>::value) {
     check_size_match(function, "Rows of ", "x_cl", N, "size of ", "alpha",
-                     length(alpha));
+                     size(alpha));
   }
 
   if (N == 0) {
@@ -102,7 +98,7 @@ return_type_t<T_alpha, T_beta> bernoulli_logit_glm_lpmf(
     opencl_kernels::bernoulli_logit_glm(
         cl::NDRange(local_size * wgs), cl::NDRange(local_size), logp_cl,
         theta_derivative_cl, theta_derivative_sum_cl, y_cl, x_cl, alpha_cl,
-        beta_cl, N, M, y_cl.size() != 1, length(alpha) != 1,
+        beta_cl, N, M, y_cl.size() != 1, size(alpha) != 1,
         need_theta_derivative, need_theta_derivative_sum);
   } catch (const cl::Error &e) {
     check_opencl_error(function, e);

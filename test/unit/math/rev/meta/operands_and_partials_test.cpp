@@ -1,9 +1,5 @@
-#include <stan/math/rev/arr.hpp>
-#include <stan/math/rev/mat.hpp>
-#include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/mat/fun/typedefs.hpp>
-#include <stan/math/prim/mat.hpp>
-#include <stan/math/prim/meta.hpp>
+#include <stan/math/rev.hpp>
+#include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 

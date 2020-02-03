@@ -8,9 +8,12 @@ def runTests(String testPath) {
     finally { junit 'test/**/*.xml' }
 }
 
-def runTestsWin(String testPath) {
+def runTestsWin(String testPath, boolean buildLibs = true) {
     withEnv(['PATH+TBB=./lib/tbb']) {
        bat "echo $PATH"
+       if (buildLibs){
+           bat "mingw32-make.exe -f make/standalone math-libs"
+       }
        bat "runTests.py -j${env.PARALLEL} ${testPath} --make-only"
        try { bat "runTests.py -j${env.PARALLEL} ${testPath}" }
        finally { junit 'test/**/*.xml' }
@@ -245,8 +248,9 @@ pipeline {
                     steps {
                         deleteDirWin()
                         unstash 'MathSetup'
+                        bat "mingw32-make.exe -f make/standalone math-libs"
                         bat "mingw32-make -j${env.PARALLEL} test-headers"
-                        runTestsWin("test/unit")
+                        runTestsWin("test/unit", false)
                     }
                 }
                 stage('Windows Threading') {

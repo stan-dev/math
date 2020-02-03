@@ -1,5 +1,5 @@
 // Arguments: Doubles, Doubles
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
@@ -51,29 +51,27 @@ class AgradDistributionsExponential : public AgradDistributionTest {
 
   template <typename T_y, typename T_inv_scale, typename T2, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_inv_scale>::type log_prob(
-      const T_y& y, const T_inv_scale& beta, const T2&, const T3&, const T4&,
-      const T5&) {
+  stan::return_type_t<T_y, T_inv_scale> log_prob(const T_y& y,
+                                                 const T_inv_scale& beta,
+                                                 const T2&, const T3&,
+                                                 const T4&, const T5&) {
     return stan::math::exponential_log(y, beta);
   }
 
   template <bool propto, typename T_y, typename T_inv_scale, typename T2,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_y, T_inv_scale>::type log_prob(
-      const T_y& y, const T_inv_scale& beta, const T2&, const T3&, const T4&,
-      const T5&) {
+  stan::return_type_t<T_y, T_inv_scale> log_prob(const T_y& y,
+                                                 const T_inv_scale& beta,
+                                                 const T2&, const T3&,
+                                                 const T4&, const T5&) {
     return stan::math::exponential_log<propto>(y, beta);
   }
 
   template <typename T_y, typename T_inv_scale, typename T2, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_inv_scale>::type log_prob_function(
+  stan::return_type_t<T_y, T_inv_scale> log_prob_function(
       const T_y& y, const T_inv_scale& beta, const T2&, const T3&, const T4&,
       const T5&) {
-    using boost::math::lgamma;
-    using stan::math::NEG_LOG_TWO_OVER_TWO;
-    using stan::math::multiply_log;
-
     return log(beta) - beta * y;
   }
 };

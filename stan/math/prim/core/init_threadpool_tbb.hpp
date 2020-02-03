@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_CORE_INIT_THREADPOOL_TBB_HPP
 #define STAN_MATH_PRIM_CORE_INIT_THREADPOOL_TBB_HPP
 
-#include <stan/math/prim/scal/err/invalid_argument.hpp>
+#include <stan/math/prim/err/invalid_argument.hpp>
 
 #include <boost/lexical_cast.hpp>
 
@@ -47,7 +47,7 @@ inline int get_num_threads() {
                          "The STAN_NUM_THREADS environment variable is '",
                          "' but it must be positive or -1");
       }
-    } catch (boost::bad_lexical_cast) {
+    } catch (const boost::bad_lexical_cast&) {
       invalid_argument("get_num_threads(int)", "STAN_NUM_THREADS",
                        env_stan_num_threads,
                        "The STAN_NUM_THREADS environment variable is '",

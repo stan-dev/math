@@ -1,6 +1,6 @@
-#include <stan/math/fwd/scal.hpp>
+#include <stan/math/fwd.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/prim/scal/fun/promote_type_test_util.hpp>
+#include <test/unit/math/prim/fun/promote_type_test_util.hpp>
 
 TEST(MathMetaFwd, value_type) {
   using stan::math::child_type;

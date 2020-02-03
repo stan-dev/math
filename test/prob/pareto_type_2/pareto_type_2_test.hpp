@@ -1,5 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles, Doubles
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
@@ -60,7 +60,7 @@ class AgradDistributionParetoType2 : public AgradDistributionTest {
 
   template <class T_y, class T_loc, class T_scale, class T_shape, typename T4,
             typename T5>
-  typename stan::return_type<T_y, T_scale, T_shape, T_loc>::type log_prob(
+  stan::return_type_t<T_y, T_scale, T_shape, T_loc> log_prob(
       const T_y& y, const T_loc& mu, const T_scale& lambda,
       const T_shape& alpha, const T4&, const T5&) {
     return stan::math::pareto_type_2_log(y, mu, lambda, alpha);
@@ -68,7 +68,7 @@ class AgradDistributionParetoType2 : public AgradDistributionTest {
 
   template <bool propto, class T_y, class T_loc, class T_scale, class T_shape,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale, T_shape>::type log_prob(
+  stan::return_type_t<T_y, T_loc, T_scale, T_shape> log_prob(
       const T_y& y, const T_loc& mu, const T_scale& lambda,
       const T_shape& alpha, const T4&, const T5&) {
     return stan::math::pareto_type_2_log<propto>(y, mu, lambda, alpha);
@@ -76,9 +76,9 @@ class AgradDistributionParetoType2 : public AgradDistributionTest {
 
   template <class T_y, class T_loc, class T_scale, class T_shape, typename T4,
             typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale, T_shape>::type
-  log_prob_function(const T_y& y, const T_loc& mu, const T_scale& lambda,
-                    const T_shape& alpha, const T4&, const T5&) {
+  stan::return_type_t<T_y, T_loc, T_scale, T_shape> log_prob_function(
+      const T_y& y, const T_loc& mu, const T_scale& lambda,
+      const T_shape& alpha, const T4&, const T5&) {
     return log(alpha) - log(lambda) - (alpha + 1.0) * log1p((y - mu) / lambda);
   }
 };

@@ -1,10 +1,11 @@
 #ifndef STAN_MATH_REV_CORE_OPERATOR_UNARY_NEGATIVE_HPP
 #define STAN_MATH_REV_CORE_OPERATOR_UNARY_NEGATIVE_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/v_vari.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
-#include <limits>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/is_nan.hpp>
 
 namespace stan {
 namespace math {
@@ -15,7 +16,7 @@ class neg_vari : public op_v_vari {
   explicit neg_vari(vari* avi) : op_v_vari(-(avi->val_), avi) {}
   void chain() {
     if (unlikely(is_nan(avi_->val_))) {
-      avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
+      avi_->adj_ = NOT_A_NUMBER;
     } else {
       avi_->adj_ -= adj_;
     }
@@ -47,9 +48,7 @@ class neg_vari : public op_v_vari {
  * @param a Argument variable.
  * @return Negation of variable.
  */
-inline var operator-(const var& a) {
-  return var(new internal::neg_vari(a.vi_));
-}
+inline var operator-(var a) { return {new internal::neg_vari(a.vi_)}; }
 
 }  // namespace math
 }  // namespace stan

@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_FWD_META_OPERANDS_AND_PARTIALS_HPP
 #define STAN_MATH_FWD_META_OPERANDS_AND_PARTIALS_HPP
 
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/meta/length.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/meta/size.hpp>
 #include <stan/math/prim/meta/broadcast_array.hpp>
 #include <stan/math/prim/meta/operands_and_partials.hpp>
 #include <stan/math/fwd/core/fvar.hpp>
@@ -11,6 +11,7 @@
 namespace stan {
 namespace math {
 namespace internal {
+
 template <typename Dx>
 class ops_partials_edge<Dx, fvar<Dx>> {
  public:
@@ -38,7 +39,7 @@ class ops_partials_edge<Dx, fvar<Dx>> {
  * primitives, reverse mode, and forward mode variables
  * seamlessly.
  *
- * Conceptually, this class is used when we want to manually calculate
+ * Conceptually, this class is used when we want to calculate manually
  * the derivative of a function and store this manual result on the
  * autodiff stack in a sort of "compressed" form. Think of it like an
  * easy-to-use interface to rev/core/precomputed_gradients.
@@ -108,6 +109,7 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, fvar<Dx>> {
 };
 
 namespace internal {
+
 // Vectorized Univariate
 template <typename Dx>
 class ops_partials_edge<Dx, std::vector<fvar<Dx>>> {
@@ -198,9 +200,9 @@ class ops_partials_edge<Dx, std::vector<std::vector<fvar<Dx>>>> {
   using partial_t = std::vector<Dx>;
   std::vector<partial_t> partials_vec_;
   explicit ops_partials_edge(const Op& ops)
-      : partials_vec_(length(ops)), operands_(ops) {
-    for (size_t i = 0; i < length(ops); ++i) {
-      partials_vec_[i] = partial_t(length(ops[i]), 0.0);
+      : partials_vec_(stan::math::size(ops)), operands_(ops) {
+    for (size_t i = 0; i < stan::math::size(ops); ++i) {
+      partials_vec_[i] = partial_t(stan::math::size(ops[i]), 0.0);
     }
   }
 
@@ -219,6 +221,7 @@ class ops_partials_edge<Dx, std::vector<std::vector<fvar<Dx>>>> {
     return derivative;
   }
 };
+
 }  // namespace internal
 }  // namespace math
 }  // namespace stan

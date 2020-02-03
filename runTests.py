@@ -36,7 +36,7 @@ def processCLIArgs():
 
     tests_help_msg = "The path(s) to the test case(s) to run.\n"
     tests_help_msg += "Example: 'test/unit', 'test/prob', and/or\n"
-    tests_help_msg += "         'test/unit/math/prim/scal/fun/abs_test.cpp'"
+    tests_help_msg += "         'test/unit/math/prim/fun/abs_test.cpp'"
     parser.add_argument("tests", nargs="+", type=str,
                         help=tests_help_msg)
     f_help_msg = "Only tests with file names matching these will be executed.\n"

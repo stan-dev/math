@@ -4,6 +4,7 @@
 #include <stan/math/rev/core/vari.hpp>
 #include <stan/math/rev/core/grad.hpp>
 #include <stan/math/rev/core/chainable_alloc.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <boost/math/tools/config.hpp>
 #include <ostream>
 #include <vector>
@@ -24,7 +25,7 @@ static void grad(vari* vi);
  * an arena-based memory manager scoped to a single gradient
  * calculation.
  *
- * An var is constructed with a double and used like any
+ * A var is constructed with a double and used like any
  * other scalar.  Arithmetical functions like negation, addition,
  * and subtraction, as well as a range of mathematical functions
  * like exponentiation and powers are overridden to operate on
@@ -371,7 +372,7 @@ class var {
    * @param b The variable to add to this variable.
    * @return The result of adding the specified variable to this variable.
    */
-  inline var& operator+=(const var& b);
+  inline var& operator+=(var b);
 
   /**
    * The compound add/assignment operator for scalars (C++).
@@ -383,7 +384,8 @@ class var {
    * @param b The scalar to add to this variable.
    * @return The result of adding the specified variable to this variable.
    */
-  inline var& operator+=(double b);
+  template <typename Arith, require_arithmetic_t<Arith>...>
+  inline var& operator+=(Arith b);
 
   /**
    * The compound subtract/assignment operator for variables (C++).
@@ -396,7 +398,7 @@ class var {
    * @return The result of subtracting the specified variable from
    * this variable.
    */
-  inline var& operator-=(const var& b);
+  inline var& operator-=(var b);
 
   /**
    * The compound subtract/assignment operator for scalars (C++).
@@ -409,7 +411,8 @@ class var {
    * @return The result of subtracting the specified variable from this
    * variable.
    */
-  inline var& operator-=(double b);
+  template <typename Arith, require_arithmetic_t<Arith>...>
+  inline var& operator-=(Arith b);
 
   /**
    * The compound multiply/assignment operator for variables (C++).
@@ -422,7 +425,7 @@ class var {
    * @return The result of multiplying this variable by the
    * specified variable.
    */
-  inline var& operator*=(const var& b);
+  inline var& operator*=(var b);
 
   /**
    * The compound multiply/assignment operator for scalars (C++).
@@ -435,7 +438,8 @@ class var {
    * @return The result of multplying this variable by the specified
    * variable.
    */
-  inline var& operator*=(double b);
+  template <typename Arith, require_arithmetic_t<Arith>...>
+  inline var& operator*=(Arith b);
 
   /**
    * The compound divide/assignment operator for variables (C++).  If this
@@ -447,7 +451,7 @@ class var {
    * @return The result of dividing this variable by the
    * specified variable.
    */
-  inline var& operator/=(const var& b);
+  inline var& operator/=(var b);
 
   /**
    * The compound divide/assignment operator for scalars (C++).
@@ -460,10 +464,11 @@ class var {
    * @return The result of dividing this variable by the specified
    * variable.
    */
-  inline var& operator/=(double b);
+  template <typename Arith, require_arithmetic_t<Arith>...>
+  inline var& operator/=(Arith b);
 
   /**
-   * Write the value of this auto-dif variable and its adjoint to
+   * Write the value of this autodiff variable and its adjoint to
    * the specified output stream.
    *
    * @param os Output stream to which to write.

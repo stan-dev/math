@@ -1,5 +1,5 @@
 // Arguments: Ints, Doubles, Doubles
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 #include <boost/math/special_functions/binomial.hpp>
 
 using stan::math::var;
@@ -41,25 +41,27 @@ class AgradCdfLogNegBinomial : public AgradCdfLogTest {
 
   template <typename T_n, typename T_shape, typename T_inv_scale, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_shape, T_inv_scale>::type cdf_log(
-      const T_n& n, const T_shape& alpha, const T_inv_scale& beta, const T3&,
-      const T4&, const T5&) {
+  stan::return_type_t<T_shape, T_inv_scale> cdf_log(const T_n& n,
+                                                    const T_shape& alpha,
+                                                    const T_inv_scale& beta,
+                                                    const T3&, const T4&,
+                                                    const T5&) {
     return stan::math::neg_binomial_cdf_log(n, alpha, beta);
   }
 
   template <typename T_n, typename T_shape, typename T_inv_scale, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_shape, T_inv_scale>::type cdf_log_function(
+  stan::return_type_t<T_shape, T_inv_scale> cdf_log_function(
       const T_n& n, const T_shape& alpha, const T_inv_scale& beta, const T3&,
       const T4&, const T5&) {
     using stan::math::binomial_coefficient_log;
     using std::exp;
     using std::log;
 
-    typename stan::return_type<T_shape, T_inv_scale>::type cdf(0);
+    stan::return_type_t<T_shape, T_inv_scale> cdf(0);
 
     for (int i = 0; i <= n; i++) {
-      typename stan::return_type<T_shape, T_inv_scale>::type temp;
+      stan::return_type_t<T_shape, T_inv_scale> temp;
       temp = binomial_coefficient_log(i + alpha - 1, i);
 
       cdf += exp(temp + alpha * log(beta / (1 + beta))

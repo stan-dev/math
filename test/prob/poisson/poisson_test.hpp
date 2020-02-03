@@ -1,6 +1,6 @@
 // Arguments: Ints, Doubles
-#include <stan/math/prim/scal.hpp>
-#include <boost/math/special_functions/fpclassify.hpp>
+#include <stan/math/prim.hpp>
+#include <cmath>
 
 using stan::math::var;
 using std::numeric_limits;
@@ -43,27 +43,26 @@ class AgradDistributionsPoisson : public AgradDistributionTest {
 
   template <class T_n, class T_rate, typename T2, typename T3, typename T4,
             typename T5>
-  typename stan::return_type<T_n, T_rate>::type log_prob(const T_n& n,
-                                                         const T_rate& lambda,
-                                                         const T2&, const T3&,
-                                                         const T4&, const T5&) {
+  stan::return_type_t<T_n, T_rate> log_prob(const T_n& n, const T_rate& lambda,
+                                            const T2&, const T3&, const T4&,
+                                            const T5&) {
     return stan::math::poisson_log(n, lambda);
   }
 
   template <bool propto, class T_n, class T_rate, typename T2, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_n, T_rate>::type log_prob(const T_n& n,
-                                                         const T_rate& lambda,
-                                                         const T2&, const T3&,
-                                                         const T4&, const T5&) {
+  stan::return_type_t<T_n, T_rate> log_prob(const T_n& n, const T_rate& lambda,
+                                            const T2&, const T3&, const T4&,
+                                            const T5&) {
     return stan::math::poisson_log<propto>(n, lambda);
   }
 
   template <class T_n, class T_rate, typename T2, typename T3, typename T4,
             typename T5>
-  typename stan::return_type<T_n, T_rate>::type log_prob_function(
-      const T_n& n, const T_rate& lambda, const T2&, const T3&, const T4&,
-      const T5&) {
+  stan::return_type_t<T_n, T_rate> log_prob_function(const T_n& n,
+                                                     const T_rate& lambda,
+                                                     const T2&, const T3&,
+                                                     const T4&, const T5&) {
     using boost::math::lgamma;
     using stan::math::LOG_ZERO;
     using stan::math::multiply_log;
@@ -71,7 +70,7 @@ class AgradDistributionsPoisson : public AgradDistributionTest {
     if (lambda == 0)
       return n == 0 ? 0 : LOG_ZERO;
 
-    if (boost::math::isinf(lambda))
+    if (stan::math::is_inf(lambda))
       return LOG_ZERO;
 
     return -lgamma(n + 1.0) + multiply_log(n, lambda) - lambda;

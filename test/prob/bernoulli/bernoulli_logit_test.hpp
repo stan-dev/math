@@ -1,5 +1,5 @@
 // Arguments: Ints, Doubles
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
@@ -62,27 +62,26 @@ class AgradDistributionsBernoulliLogistic : public AgradDistributionTest {
 
   template <class T_n, class T_prob, typename T2, typename T3, typename T4,
             typename T5>
-  typename stan::return_type<T_n, T_prob>::type log_prob(const T_n& n,
-                                                         const T_prob& theta,
-                                                         const T2&, const T3&,
-                                                         const T4&, const T5&) {
+  stan::return_type_t<T_n, T_prob> log_prob(const T_n& n, const T_prob& theta,
+                                            const T2&, const T3&, const T4&,
+                                            const T5&) {
     return stan::math::bernoulli_logit_log(n, theta);
   }
 
   template <bool propto, class T_n, class T_prob, typename T2, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_n, T_prob>::type log_prob(const T_n& n,
-                                                         const T_prob& theta,
-                                                         const T2&, const T3&,
-                                                         const T4&, const T5&) {
+  stan::return_type_t<T_n, T_prob> log_prob(const T_n& n, const T_prob& theta,
+                                            const T2&, const T3&, const T4&,
+                                            const T5&) {
     return stan::math::bernoulli_logit_log<propto>(n, theta);
   }
 
   template <class T_n, class T_prob, typename T2, typename T3, typename T4,
             typename T5>
-  typename stan::return_type<T_n, T_prob>::type log_prob_function(
-      const T_n& n, const T_prob& theta, const T2&, const T3&, const T4&,
-      const T5&) {
+  stan::return_type_t<T_n, T_prob> log_prob_function(const T_n& n,
+                                                     const T_prob& theta,
+                                                     const T2&, const T3&,
+                                                     const T4&, const T5&) {
     using stan::math::log1m;
     using std::log;
     T_prob ntheta = (2 * n - 1) * theta;

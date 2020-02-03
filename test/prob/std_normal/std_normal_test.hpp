@@ -1,5 +1,5 @@
 // Arguments: Doubles
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
@@ -28,23 +28,21 @@ class AgradDistributionStdNormal : public AgradDistributionTest {
 
   template <typename T_y, typename T1, typename T2, typename T3, typename T4,
             typename T5>
-  typename stan::return_type<T_y>::type log_prob(const T_y& y, const T1&,
-                                                 const T2&, const T3&,
-                                                 const T4&, const T5&) {
+  stan::return_type_t<T_y> log_prob(const T_y& y, const T1&, const T2&,
+                                    const T3&, const T4&, const T5&) {
     return stan::math::std_normal_lpdf(y);
   }
 
   template <bool propto, typename T_y, typename T1, typename T2, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y>::type log_prob(const T_y& y, const T1&,
-                                                 const T2&, const T3&,
-                                                 const T4&, const T5&) {
+  stan::return_type_t<T_y> log_prob(const T_y& y, const T1&, const T2&,
+                                    const T3&, const T4&, const T5&) {
     return stan::math::std_normal_lpdf<propto>(y);
   }
 
   template <typename T_y, typename T1, typename T2, typename T3, typename T4,
             typename T5>
-  typename stan::return_type<T_y, T1, T2, T3, T4, T5>::type log_prob_function(
+  stan::return_type_t<T_y, T1, T2, T3, T4, T5> log_prob_function(
       const T_y& y, const T1&, const T2&, const T3&, const T4&, const T5&) {
     using stan::math::pi;
     return -0.5 * y * y - log(sqrt(2.0 * pi()));

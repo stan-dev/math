@@ -3,12 +3,9 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/meta.hpp>
-
-#include <stan/math/prim/scal/err/check_bounded.hpp>
-#include <stan/math/prim/scal/err/check_consistent_size.hpp>
-#include <stan/math/prim/scal/err/check_finite.hpp>
-#include <stan/math/prim/scal/fun/size_zero.hpp>
-#include <stan/math/prim/mat/fun/sum.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/sum.hpp>
 #include <Eigen/Core>
 
 #include <stan/math/opencl/matrix_cl.hpp>

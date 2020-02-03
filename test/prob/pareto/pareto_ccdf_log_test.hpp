@@ -1,5 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
@@ -53,15 +53,17 @@ class AgradCcdfLogPareto : public AgradCcdfLogTest {
 
   template <typename T_y, typename T_scale, typename T_shape, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_scale, T_shape>::type ccdf_log(
-      const T_y& y, const T_scale& y_min, const T_shape& alpha, const T3&,
-      const T4&, const T5&) {
+  stan::return_type_t<T_y, T_scale, T_shape> ccdf_log(const T_y& y,
+                                                      const T_scale& y_min,
+                                                      const T_shape& alpha,
+                                                      const T3&, const T4&,
+                                                      const T5&) {
     return stan::math::pareto_ccdf_log(y, y_min, alpha);
   }
 
   template <typename T_y, typename T_scale, typename T_shape, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_scale, T_shape>::type ccdf_log_function(
+  stan::return_type_t<T_y, T_scale, T_shape> ccdf_log_function(
       const T_y& y, const T_scale& y_min, const T_shape& alpha, const T3&,
       const T4&, const T5&) {
     using std::exp;

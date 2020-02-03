@@ -1,5 +1,5 @@
 // Arguments: Ints, Doubles, Doubles
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 #include <stdexcept>
 
 using stan::math::var;
@@ -47,23 +47,27 @@ class AgradDistributionsNegBinomial : public AgradDistributionTest {
 
   template <class T_n, class T_shape, class T_inv_scale, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_shape, T_inv_scale>::type log_prob(
-      const T_n& n, const T_shape& alpha, const T_inv_scale& beta, const T3&,
-      const T4&, const T5&) {
+  stan::return_type_t<T_shape, T_inv_scale> log_prob(const T_n& n,
+                                                     const T_shape& alpha,
+                                                     const T_inv_scale& beta,
+                                                     const T3&, const T4&,
+                                                     const T5&) {
     return stan::math::neg_binomial_log(n, alpha, beta);
   }
 
   template <bool propto, class T_n, class T_shape, class T_inv_scale,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_shape, T_inv_scale>::type log_prob(
-      const T_n& n, const T_shape& alpha, const T_inv_scale& beta, const T3&,
-      const T4&, const T5) {
+  stan::return_type_t<T_shape, T_inv_scale> log_prob(const T_n& n,
+                                                     const T_shape& alpha,
+                                                     const T_inv_scale& beta,
+                                                     const T3&, const T4&,
+                                                     const T5) {
     return stan::math::neg_binomial_log<propto>(n, alpha, beta);
   }
 
   template <class T_n, class T_shape, class T_inv_scale, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_shape, T_inv_scale>::type log_prob_function(
+  stan::return_type_t<T_shape, T_inv_scale> log_prob_function(
       const T_n& n, const T_shape& alpha, const T_inv_scale& beta, const T3&,
       const T4&, const T5&) {
     using stan::math::binomial_coefficient_log;

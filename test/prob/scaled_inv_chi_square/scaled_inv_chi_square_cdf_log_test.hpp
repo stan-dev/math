@@ -1,5 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
@@ -53,15 +53,16 @@ class AgradCdfLogScaledInvChiSquare : public AgradCdfLogTest {
 
   template <typename T_y, typename T_dof, typename T_scale, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_dof, T_scale>::type cdf_log(
-      const T_y& y, const T_dof& nu, const T_scale& s, const T3&, const T4&,
-      const T5&) {
+  stan::return_type_t<T_y, T_dof, T_scale> cdf_log(const T_y& y,
+                                                   const T_dof& nu,
+                                                   const T_scale& s, const T3&,
+                                                   const T4&, const T5&) {
     return stan::math::scaled_inv_chi_square_cdf_log(y, nu, s);
   }
 
   template <typename T_y, typename T_dof, typename T_scale, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_dof, T_scale>::type cdf_log_function(
+  stan::return_type_t<T_y, T_dof, T_scale> cdf_log_function(
       const T_y& y, const T_dof& nu, const T_scale& s, const T3&, const T4&,
       const T5&) {
     using stan::math::gamma_q;

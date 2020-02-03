@@ -114,7 +114,7 @@ cd build
 cmake ..
 cd ..
 
-git rm -rf INSTALL_GUIDE.pdf config/ doc/ examples/ test/ */cvode */ida */arkode */kinsol
+git rm -rf INSTALL_GUIDE.pdf config/ doc/ examples/ test/ */cvode */ida */arkode
 find . -name CMakeLists.txt -exec git rm {} \;
 git commit -m "upgrading to sundials v${sundials_version}; pruning files"
 
@@ -146,10 +146,6 @@ find src -name "*.c_orig" -exec rm {} \;
 git add src include/stan_sundials_printf_override.hpp
 git commit -m "upgrading to sundials v${sundials_version}; removing printf and fprintf for CRAN"
 
-# 7. Get rid of troublesome c files not needed
-git rm src/sundials/sundials_spfgmr.c src/sundials/sundials_spgmr.c
-git commit -m "upgrading to sundials v${sundials_version}; removing troublesome and not needed sundials c modules"
-
 cat <<EOF
 
 
@@ -160,6 +156,6 @@ cat <<EOF
 
     Please check the upgrade worked by running a test with CVODES linked.
     Example (from Math home directory):
-      ./runTests.py test/unit/math/rev/mat/functor/cvodes_ode_data_prim_test.cpp
+      ./runTests.py test/unit/math/rev/functor/cvodes_ode_data_prim_test.cpp
 
 EOF

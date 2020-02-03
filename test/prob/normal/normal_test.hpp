@@ -1,5 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
@@ -59,27 +59,31 @@ class AgradDistributionNormal : public AgradDistributionTest {
 
   template <typename T_y, typename T_loc, typename T_scale, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale>::type log_prob(
-      const T_y& y, const T_loc& mu, const T_scale& sigma, const T3&, const T4&,
-      const T5&) {
+  stan::return_type_t<T_y, T_loc, T_scale> log_prob(const T_y& y,
+                                                    const T_loc& mu,
+                                                    const T_scale& sigma,
+                                                    const T3&, const T4&,
+                                                    const T5&) {
     return stan::math::normal_log(y, mu, sigma);
   }
 
   template <bool propto, typename T_y, typename T_loc, typename T_scale,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale>::type log_prob(
-      const T_y& y, const T_loc& mu, const T_scale& sigma, const T3&, const T4&,
-      const T5&) {
+  stan::return_type_t<T_y, T_loc, T_scale> log_prob(const T_y& y,
+                                                    const T_loc& mu,
+                                                    const T_scale& sigma,
+                                                    const T3&, const T4&,
+                                                    const T5&) {
     return stan::math::normal_log<propto>(y, mu, sigma);
   }
 
   template <typename T_y, typename T_loc, typename T_scale, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale, T3, T4, T5>::type
-  log_prob_function(const T_y& y, const T_loc& mu, const T_scale& sigma,
-                    const T3&, const T4&, const T5&) {
+  stan::return_type_t<T_y, T_loc, T_scale, T3, T4, T5> log_prob_function(
+      const T_y& y, const T_loc& mu, const T_scale& sigma, const T3&, const T4&,
+      const T5&) {
     using stan::math::pi;
     return -0.5 * (y - mu) * (y - mu) / (sigma * sigma) - log(sigma)
-           - log(sqrt(2.0 * pi()));
+           - log(stan::math::SQRT_TWO_PI);
   }
 };

@@ -1,5 +1,5 @@
 // Arguments: Doubles, Doubles, Ints, Doubles, Doubles
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
@@ -71,7 +71,7 @@ class AgradDistributionNormalSufficient : public AgradDistributionTest {
 
   template <typename T_y, typename T_s, typename T_n, typename T_loc,
             typename T_scale, typename T5>
-  typename stan::return_type<T_y, T_s, T_n, T_loc, T_scale>::type log_prob(
+  stan::return_type_t<T_y, T_s, T_n, T_loc, T_scale> log_prob(
       const T_y& y_bar, const T_s& s_squared, const T_n& n_obs, const T_loc& mu,
       const T_scale& sigma, const T5&) {
     return stan::math::normal_sufficient_lpdf(y_bar, s_squared, n_obs, mu,
@@ -80,7 +80,7 @@ class AgradDistributionNormalSufficient : public AgradDistributionTest {
 
   template <bool propto, typename T_y, typename T_s, typename T_n,
             typename T_loc, typename T_scale, typename T5>
-  typename stan::return_type<T_y, T_s, T_n, T_loc, T_scale>::type log_prob(
+  stan::return_type_t<T_y, T_s, T_n, T_loc, T_scale> log_prob(
       const T_y& y_bar, const T_s& s_squared, const T_n& n_obs, const T_loc& mu,
       const T_scale& sigma, const T5&) {
     return stan::math::normal_sufficient_lpdf<propto>(y_bar, s_squared, n_obs,
@@ -89,13 +89,13 @@ class AgradDistributionNormalSufficient : public AgradDistributionTest {
 
   template <typename T_y, typename T_s, typename T_n, typename T_loc,
             typename T_scale, typename T5>
-  typename stan::return_type<T_y, T_s, T_n, T_loc, T_scale>::type
-  log_prob_function(const T_y& y_bar, const T_s& s_squared, const T_n& n_obs,
-                    const T_loc& mu, const T_scale& sigma, const T5&) {
+  stan::return_type_t<T_y, T_s, T_n, T_loc, T_scale> log_prob_function(
+      const T_y& y_bar, const T_s& s_squared, const T_n& n_obs, const T_loc& mu,
+      const T_scale& sigma, const T5&) {
     using stan::math::include_summand;
     using stan::math::pi;
     using stan::math::square;
-    typename stan::return_type<T_y, T_s, T_n, T_loc, T_scale>::type lp(0.0);
+    stan::return_type_t<T_y, T_s, T_n, T_loc, T_scale> lp(0.0);
     if (include_summand<true, T_scale>::value)
       lp -= n_obs * log(sigma);
 

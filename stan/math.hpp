@@ -145,6 +145,6 @@
  * type.
  */
 
-#include <stan/math/rev/mat.hpp>
+#include <stan/math/rev.hpp>
 
 #endif

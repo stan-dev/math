@@ -10,7 +10,7 @@
  * \ingroup opencl
  * \defgroup opencl_kernels OpenCL Kernels
  */
-#include <stan/math/prim/mat/fun/Eigen.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/opencl_context.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
@@ -45,15 +45,7 @@
 #include <stan/math/opencl/prim/poisson_log_glm_lpmf.hpp>
 #include <stan/math/opencl/prim/transpose.hpp>
 
-#include <stan/math/opencl/err/check_diagonal_zeros.hpp>
-#include <stan/math/opencl/err/check_invalid_matrix_view.hpp>
-#include <stan/math/opencl/err/check_matching_dims.hpp>
-#include <stan/math/opencl/err/check_nan.hpp>
-#include <stan/math/opencl/err/check_opencl.hpp>
-#include <stan/math/opencl/err/check_mat_size_one.hpp>
-#include <stan/math/opencl/err/check_square.hpp>
-#include <stan/math/opencl/err/check_symmetric.hpp>
-#include <stan/math/opencl/err/check_vector.hpp>
+#include <stan/math/opencl/err.hpp>
 
 #endif
 #endif

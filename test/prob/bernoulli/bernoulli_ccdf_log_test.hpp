@@ -1,5 +1,5 @@
 // Arguments: Ints, Doubles
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
@@ -32,18 +32,18 @@ class AgradCcdfLogBernoulli : public AgradCcdfLogTest {
 
   template <typename T_n, typename T_prob, typename T2, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_prob>::type ccdf_log(const T_n& n,
-                                                    const T_prob& theta,
-                                                    const T2&, const T3&,
-                                                    const T4&, const T5&) {
+  stan::return_type_t<T_prob> ccdf_log(const T_n& n, const T_prob& theta,
+                                       const T2&, const T3&, const T4&,
+                                       const T5&) {
     return stan::math::bernoulli_ccdf_log(n, theta);
   }
 
   template <typename T_n, typename T_prob, typename T2, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_prob>::type ccdf_log_function(
-      const T_n& n, const T_prob& theta, const T2&, const T3&, const T4&,
-      const T5&) {
+  stan::return_type_t<T_prob> ccdf_log_function(const T_n& n,
+                                                const T_prob& theta, const T2&,
+                                                const T3&, const T4&,
+                                                const T5&) {
     if (n < 0)
       return 0.0;
     if (n < 1)
