@@ -85,6 +85,34 @@ TEST(MathMatrixCL, rowwise_sum_triangular_test) {
   EXPECT_MATRIX_NEAR(correct3, res3, 1e-9);
 }
 
+TEST(MathMatrixCL, rowwise_sum_one_col_test) {
+  MatrixXd m(3, 1);
+  m << 1.1, 1.2, 1.3;
+
+  matrix_cl<double> m_cl(m);
+
+  matrix_cl<double> res1_cl = stan::math::rowwise_sum(m_cl);
+  MatrixXd res1 = stan::math::from_matrix_cl(res1_cl);
+  MatrixXd correct1 = m.rowwise().sum();
+  EXPECT_EQ(correct1.rows(), res1.rows());
+  EXPECT_EQ(correct1.cols(), res1.cols());
+  EXPECT_MATRIX_NEAR(correct1, res1, 1e-9);
+}
+
+TEST(MathMatrixCL, rowwise_sum_one_row_test) {
+  MatrixXd m(1, 3);
+  m << 1.1, 1.2, 1.3;
+
+  matrix_cl<double> m_cl(m);
+
+  matrix_cl<double> res1_cl = stan::math::rowwise_sum(m_cl);
+  MatrixXd res1 = stan::math::from_matrix_cl(res1_cl);
+  MatrixXd correct1 = m.rowwise().sum();
+  EXPECT_EQ(correct1.rows(), res1.rows());
+  EXPECT_EQ(correct1.cols(), res1.cols());
+  EXPECT_MATRIX_NEAR(correct1, res1, 1e-9);
+}
+
 TEST(MathMatrixCL, rowwise_sum_zero_rows_test) {
   matrix_cl<double> m_cl(0, 3);
 
@@ -104,6 +132,14 @@ TEST(MathMatrixCL, rowwise_sum_zero_cols_test) {
   EXPECT_EQ(correct1.rows(), res1.rows());
   EXPECT_EQ(correct1.cols(), res1.cols());
   EXPECT_MATRIX_NEAR(correct1, res1, 1e-9);
+}
+
+TEST(MathMatrixCL, rowwise_sum_zero_rows_and_cols_test) {
+  matrix_cl<double> m_cl(0, 0);
+
+  matrix_cl<double> res1_cl = stan::math::rowwise_sum(m_cl);
+  EXPECT_EQ(0, res1_cl.rows());
+  EXPECT_EQ(1, res1_cl.cols());
 }
 
 #endif

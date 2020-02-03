@@ -2,16 +2,16 @@
 #define STAN_MATH_OPENCL_KERNEL_GENERATOR_ROWWISE_REDUCTION_HPP
 #ifdef STAN_OPENCL
 
-#include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/opencl/kernel_generator/type_str.hpp>
-#include <stan/math/opencl/kernel_generator/name_generator.hpp>
-#include <stan/math/opencl/kernel_generator/operation_cl.hpp>
+#include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/is_valid_expression.hpp>
+#include <stan/math/opencl/kernel_generator/name_generator.hpp>
+#include <stan/math/opencl/kernel_generator/operation_cl.hpp>
+#include <stan/math/opencl/kernel_generator/type_str.hpp>
+#include <set>
 #include <string>
 #include <type_traits>
-#include <set>
 #include <utility>
 
 namespace stan {
@@ -60,17 +60,17 @@ class rowwise_reduction
   inline kernel_parts generate(const std::string& i, const std::string& j,
                                const std::string& var_name_arg) const {
     kernel_parts res;
-    res.body_start
+    res.body_prefix
         = type_str<Scalar>() + " " + var_name + " = " + init_ + ";\n";
     if (PassZero) {
-      res.body_start += "for(int " + var_name + "_j = contains_nonzero("
+      res.body_prefix += "for(int " + var_name + "_j = contains_nonzero("
                         + var_name + "_view, LOWER) ? 0 : " + i + "; "
                         + var_name + "_j < (contains_nonzero(" + var_name
                         + "_view, UPPER) ? " + var_name + "_cols : min("
                         + var_name + "_cols, " + i + " + 1)); " + var_name
                         + "_j++){\n";
     } else {
-      res.body_start += "for(int " + var_name + "_j = 0; " + var_name + "_j < "
+      res.body_prefix += "for(int " + var_name + "_j = 0; " + var_name + "_j < "
                         + var_name + "_cols; " + var_name + "_j++){\n";
     }
     res.body += var_name + " = " + operation::generate(var_name, var_name_arg)
