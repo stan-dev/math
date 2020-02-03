@@ -5,6 +5,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/dot_product.hpp>
 #include <stan/math/fwd/core.hpp>
+#include <stan/math/fwd/fun/typedefs.hpp>
 
 namespace stan {
 namespace math {
