@@ -19,7 +19,8 @@ namespace math {
  * @param m2 Second matrix or expression.
  * @return Difference between first matrix and second matrix.
  */
-template <typename Mat1, typename Mat2, typename = require_all_eigen_t<Mat1, Mat2>>
+template <typename Mat1, typename Mat2,
+          typename = require_all_eigen_t<Mat1, Mat2>>
 inline auto subtract(const Mat1& m1, const Mat2& m2) {
   check_matching_dims("subtract", "m1", m1, "m2", m2);
   return (m1 - m2).eval();

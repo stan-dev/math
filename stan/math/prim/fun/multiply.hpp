@@ -61,8 +61,8 @@ inline auto multiply(Scal c, const Mat& m) {
  */
 template <typename Mat1, typename Mat2,
           typename = require_all_eigen_vt<std::is_arithmetic, Mat1, Mat2>,
-          typename
-          = require_any_not_same_t<double, value_type_t<Mat1>, value_type_t<Mat2>>,
+          typename = require_any_not_same_t<double, value_type_t<Mat1>,
+                                            value_type_t<Mat2>>,
           typename = require_not_eigen_row_and_col_t<Mat1, Mat2>>
 inline auto multiply(const Mat1& m1, const Mat2& m2) {
   check_multiplicable("multiply", "m1", m1, "m2", m2);
@@ -84,11 +84,13 @@ inline auto multiply(const Mat1& m1, const Mat2& m2) {
  * @throw <code>std::invalid_argument</code> if the number of columns of m1 does
  * not match the number of rows of m2.
  */
-template <typename Mat1, typename Mat2, typename = require_all_eigen_t<Mat1, Mat2>,
+template <typename Mat1, typename Mat2,
+          typename = require_all_eigen_t<Mat1, Mat2>,
           typename
           = require_all_same_t<double, value_type_t<Mat1>, value_type_t<Mat2>>,
           typename = require_not_eigen_row_and_col_t<Mat1, Mat2>>
-inline auto multiply(const Mat1& m1, const Mat2& m2) -> decltype((m1 * m2).eval()) {
+inline auto multiply(const Mat1& m1, const Mat2& m2)
+    -> decltype((m1 * m2).eval()) {
   check_multiplicable("multiply", "m1", m1, "m2", m2);
 #ifdef STAN_OPENCL
   if (m1.rows() * m1.cols() * m2.cols()
@@ -96,7 +98,8 @@ inline auto multiply(const Mat1& m1, const Mat2& m2) -> decltype((m1 * m2).eval(
     matrix_cl<double> m1_cl(m1);
     matrix_cl<double> m2_cl(m2);
     matrix_cl<double> m3_cl = m1_cl * m2_cl;
-    return from_matrix_cl<Mat1::RowsAtCompileTime, Mat2::ColsAtCompileTime>(m3_cl);
+    return from_matrix_cl<Mat1::RowsAtCompileTime, Mat2::ColsAtCompileTime>(
+        m3_cl);
   } else {
     return (m1 * m2).eval();
   }

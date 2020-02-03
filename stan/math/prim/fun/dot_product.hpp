@@ -33,9 +33,9 @@ inline auto dot_product(const Vec1 &v1, const Vec2 &v2) {
  * @param v2 Second array.
  * @param length Length of both arrays.
  */
-template<typename Scalar1, typename Scalar2,
-         typename = require_all_stan_scalar_t<Scalar1, Scalar2>,
-         typename = require_all_not_var_t<Scalar1, Scalar2>>
+template <typename Scalar1, typename Scalar2,
+          typename = require_all_stan_scalar_t<Scalar1, Scalar2>,
+          typename = require_all_not_var_t<Scalar1, Scalar2>>
 inline auto dot_product(const Scalar1 *v1, const Scalar2 *v2, size_t length) {
   return_type_t<Scalar1, Scalar2> result = 0;
   for (size_t i = 0; i < length; i++) {
@@ -51,11 +51,11 @@ inline auto dot_product(const Scalar1 *v1, const Scalar2 *v2, size_t length) {
  * @param v2 Second array.
  * @throw std::domain_error if the vectors are not the same size.
  */
-template<typename Scalar1, typename Scalar2,
-         typename = require_all_stan_scalar_t<Scalar1, Scalar2>,
-         typename = require_all_not_var_t<Scalar1, Scalar2>>
+template <typename Scalar1, typename Scalar2,
+          typename = require_all_stan_scalar_t<Scalar1, Scalar2>,
+          typename = require_all_not_var_t<Scalar1, Scalar2>>
 inline auto dot_product(const std::vector<Scalar1> &v1,
-                          const std::vector<Scalar2> &v2) {
+                        const std::vector<Scalar2> &v2) {
   check_matching_sizes("dot_product", "v1", v1, "v2", v2);
   return dot_product(&v1[0], &v2[0], v1.size());
 }

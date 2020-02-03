@@ -193,11 +193,12 @@ class dot_product_vari : public vari {
  */
 template <typename Vec1, typename Vec2,
           typename = require_all_eigen_vector_t<Vec1, Vec2>,
-          typename = require_any_eigen_vt<is_var, Vec1, Vec2>,
-          typename = void>
+          typename = require_any_eigen_vt<is_var, Vec1, Vec2>, typename = void>
 inline auto dot_product(const Vec1& v1, const Vec2& v2) {
   check_matching_sizes("dot_product", "v1", v1, "v2", v2);
-  return var(new internal::dot_product_vari<value_type_t<Vec1>, value_type_t<Vec2>>(v1, v2));
+  return var(
+      new internal::dot_product_vari<value_type_t<Vec1>, value_type_t<Vec2>>(
+          v1, v2));
 }
 
 /**

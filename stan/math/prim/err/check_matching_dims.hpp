@@ -24,9 +24,11 @@ namespace math {
  * @throw <code>std::invalid_argument</code> if the dimensions of the
  *    matrices do not match
  */
-template <typename Mat1, typename Mat2, typename = require_all_eigen_t<Mat1, Mat2>>
+template <typename Mat1, typename Mat2,
+          typename = require_all_eigen_t<Mat1, Mat2>>
 inline void check_matching_dims(const char* function, const char* name1,
-                                const Mat1& y1, const char* name2, const Mat2& y2) {
+                                const Mat1& y1, const char* name2,
+                                const Mat2& y2) {
   check_size_match(function, "Rows of ", name1, y1.rows(), "rows of ", name2,
                    y2.rows());
   check_size_match(function, "Columns of ", name1, y1.cols(), "columns of ",
@@ -52,7 +54,8 @@ inline void check_matching_dims(const char* function, const char* name1,
 template <bool check_compile, typename Mat1, typename Mat2,
           typename = require_all_eigen_t<Mat1, Mat2>>
 inline void check_matching_dims(const char* function, const char* name1,
-                                const Mat1& y1, const char* name2, const Mat2& y2) {
+                                const Mat1& y1, const char* name2,
+                                const Mat2& y2) {
   if (check_compile
       && (static_cast<int>(Mat1::RowsAtCompileTime)
               != static_cast<int>(Mat2::RowsAtCompileTime)
