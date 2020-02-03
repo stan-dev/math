@@ -18,9 +18,9 @@ namespace math {
  * @param[in] y Specified scalar.
  * @return Scalar divided by the scalar.
  */
-template <typename T1, typename T2,
-          typename = require_all_stan_scalar_t<T1, T2>>
-inline return_type_t<T1, T2> divide(const T1& x, const T2& y) {
+template <typename Scal1, typename Scal2,
+          typename = require_all_stan_scalar_t<Scal1, Scal2>>
+inline return_type_t<Scal1, Scal2> divide(const Scal1& x, const Scal2& y) {
   return x / y;
 }
 
@@ -34,16 +34,16 @@ inline int divide(int x, int y) {
 /**
  * Return matrix divided by scalar.
  *
- * @tparam T1 type of the matrix or expression
- * @tparam T2 type of the scalar
+ * @tparam Mat type of the matrix or expression
+ * @tparam Scal type of the scalar
  * @param[in] m specified matrix or expression
  * @param[in] c specified scalar
  * @return matrix divided by the scalar
  */
-template <typename T1, typename T2, typename = require_eigen_t<T1>,
-          typename = require_stan_scalar_t<T2>,
-          typename = require_all_not_var_t<scalar_type_t<T1>, T2>>
-inline auto divide(const T1& m, T2 c) {
+template <typename Mat, typename Scal, typename = require_eigen_t<Mat>,
+          typename = require_stan_scalar_t<Scal>,
+          typename = require_all_not_var_t<scalar_type_t<Mat>, Scal>>
+inline auto divide(const Mat& m, Scal c) {
   return (m / c).eval();
 }
 

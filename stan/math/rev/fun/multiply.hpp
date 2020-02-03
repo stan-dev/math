@@ -555,15 +555,15 @@ class multiply_mat_vari<Ta, 1, Ca, double, 1> : public vari {
  * @param[in] B Matrix
  * @return Product of scalar and matrix.
  */
-template <typename T1, typename T2, typename = require_all_eigen_t<T1, T2>,
-          typename = require_any_var_t<value_type_t<T1>, value_type_t<T2>>,
-          typename = require_not_eigen_row_and_col_t<T1, T2>, typename = void>
-inline auto multiply(const T1& A, const T2& B) {
-  using Ta = value_type_t<T1>;
-  using Tb = value_type_t<T2>;
-  constexpr int Ra = T1::RowsAtCompileTime;
-  constexpr int Ca = T1::ColsAtCompileTime;
-  constexpr int Cb = T2::ColsAtCompileTime;
+template <typename Mat1, typename Mat2, typename = require_all_eigen_t<Mat1, Mat2>,
+          typename = require_any_eigen_vt<is_var, Mat1, Mat2>,
+          typename = require_not_eigen_row_and_col_t<Mat1, Mat2>, typename = void>
+inline auto multiply(const Mat1& A, const Mat2& B) {
+  using Ta = value_type_t<Mat1>;
+  using Tb = value_type_t<Mat2>;
+  constexpr int Ra = Mat1::RowsAtCompileTime;
+  constexpr int Ca = Mat1::ColsAtCompileTime;
+  constexpr int Cb = Mat2::ColsAtCompileTime;
   check_multiplicable("multiply", "A", A, "B", B);
   check_not_nan("multiply", "A", A);
   check_not_nan("multiply", "B", B);
@@ -582,28 +582,27 @@ inline auto multiply(const T1& A, const T2& B) {
  * Return the scalar product of a row vector and
  * a vector.
  *
- * @tparam Ta type of elements in matrix A
- * @tparam Ca number of columns in matrix A and rows in matrix B
- * @tparam Tb type of elements in matrix B
+ * @tparam RowVec type of row vector A
+ * @tparam ColVec type of column vector B
  *
  * @param[in] A Row vector
  * @param[in] B Column vector
  * @return Scalar product of row vector and vector
  */
-template <typename T1, typename T2,
-          typename = require_any_var_t<value_type_t<T1>, value_type_t<T2>>,
-          typename = require_eigen_row_and_col_t<T1, T2>>
-inline var multiply(const T1& A, const T2& B) {
-  using Ta = value_type_t<T1>;
-  using Tb = value_type_t<T2>;
-  constexpr int Ca = T1::ColsAtCompileTime;
+template <typename RowVec, typename ColVec,
+          typename = require_any_var_t<value_type_t<RowVec>, value_type_t<ColVec>>,
+          typename = require_eigen_row_and_col_t<RowVec, ColVec>>
+inline var multiply(const RowVec& A, const ColVec& B) {
+  using RowVecScalar = value_type_t<RowVec>;
+  using ColVecScalar = value_type_t<ColVec>;
+  constexpr int Ca = RowVec::ColsAtCompileTime;
   check_multiplicable("multiply", "A", A, "B", B);
   check_not_nan("multiply", "A", A);
   check_not_nan("multiply", "B", B);
 
   // Memory managed with the arena allocator.
-  multiply_mat_vari<Ta, 1, Ca, Tb, 1>* baseVari
-      = new multiply_mat_vari<Ta, 1, Ca, Tb, 1>(A, B);
+  multiply_mat_vari<RowVecScalar, 1, Ca, ColVecScalar, 1>* baseVari
+      = new multiply_mat_vari<RowVecScalar, 1, Ca, ColVecScalar, 1>(A, B);
   var AB_v;
   AB_v.vi_ = baseVari->variRefAB_;
   return AB_v;

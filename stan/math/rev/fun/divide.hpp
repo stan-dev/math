@@ -115,17 +115,17 @@ class matrix_scalar_divide_vv_vari : public vari {
 /**
  * Return matrix divided by scalar.
  *
- * @tparam T type of the matrix or expression
+ * @tparam Mat type of the matrix or expression
  * @param[in] m specified matrix or expression
  * @param[in] c specified scalar
  * @return matrix divided by the scalar
  */
-template <typename T, typename = require_eigen_vt<std::is_arithmetic, T>>
-inline auto divide(const T& m, const var& c) {
+template <typename Mat, typename = require_eigen_vt<std::is_arithmetic, Mat>>
+inline auto divide(const Mat& m, const var& c) {
   auto* baseVari
-      = new internal::matrix_scalar_divide_dv_vari<T::RowsAtCompileTime,
-                                                   T::ColsAtCompileTime>(m, c);
-  Eigen::Matrix<var, T::RowsAtCompileTime, T::ColsAtCompileTime> result(
+      = new internal::matrix_scalar_divide_dv_vari<Mat::RowsAtCompileTime,
+                                                   Mat::ColsAtCompileTime>(m, c);
+  Eigen::Matrix<var, Mat::RowsAtCompileTime, Mat::ColsAtCompileTime> result(
       m.rows(), m.cols());
   result.vi()
       = Eigen::Map<matrix_vi>(baseVari->adjResultRef_, m.rows(), m.cols());
@@ -135,17 +135,17 @@ inline auto divide(const T& m, const var& c) {
 /**
  * Return matrix divided by scalar.
  *
- * @tparam T type of the matrix or expression
+ * @tparam Mat type of the matrix or expression
  * @param[in] m specified matrix or expression
  * @param[in] c specified scalar
  * @return matrix divided by the scalar
  */
-template <typename T, typename = require_eigen_vt<is_var, T>>
-inline auto divide(const T& m, const double& c) {
+template <typename Mat, typename = require_eigen_vt<is_var, Mat>>
+inline auto divide(const Mat& m, const double& c) {
   auto* baseVari
-      = new internal::matrix_scalar_divide_vd_vari<T::RowsAtCompileTime,
-                                                   T::ColsAtCompileTime>(m, c);
-  Eigen::Matrix<var, T::RowsAtCompileTime, T::ColsAtCompileTime> result(
+      = new internal::matrix_scalar_divide_vd_vari<Mat::RowsAtCompileTime,
+                                                   Mat::ColsAtCompileTime>(m, c);
+  Eigen::Matrix<var, Mat::RowsAtCompileTime, Mat::ColsAtCompileTime> result(
       m.rows(), m.cols());
   result.vi()
       = Eigen::Map<matrix_vi>(baseVari->adjResultRef_, m.rows(), m.cols());
@@ -155,17 +155,17 @@ inline auto divide(const T& m, const double& c) {
 /**
  * Return matrix divided by scalar.
  *
- * @tparam T type of the matrix or expression
+ * @tparam Mat type of the matrix or expression
  * @param[in] m specified matrix or expression
  * @param[in] c specified scalar
  * @return matrix divided by the scalar
  */
-template <typename T, typename = require_eigen_vt<is_var, T>, typename = void>
-inline auto divide(const T& m, const var& c) {
+template <typename Mat, typename = require_eigen_vt<is_var, Mat>, typename = void>
+inline auto divide(const Mat& m, const var& c) {
   auto* baseVari
-      = new internal::matrix_scalar_divide_vv_vari<T::RowsAtCompileTime,
-                                                   T::ColsAtCompileTime>(m, c);
-  Eigen::Matrix<var, T::RowsAtCompileTime, T::ColsAtCompileTime> result(
+      = new internal::matrix_scalar_divide_vv_vari<Mat::RowsAtCompileTime,
+                                                   Mat::ColsAtCompileTime>(m, c);
+  Eigen::Matrix<var, Mat::RowsAtCompileTime, Mat::ColsAtCompileTime> result(
       m.rows(), m.cols());
   result.vi()
       = Eigen::Map<matrix_vi>(baseVari->adjResultRef_, m.rows(), m.cols());

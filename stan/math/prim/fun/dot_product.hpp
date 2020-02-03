@@ -18,22 +18,26 @@ namespace math {
  * @throw std::domain_error If the vectors are not the same
  * size or if they are both not vector dimensioned.
  */
-template <typename T1, typename T2,
-          typename = require_all_eigen_vector_t<T1, T2>>
-inline auto dot_product(const T1 &v1, const T2 &v2) {
+template <typename Vec1, typename Vec2,
+          typename = require_all_eigen_vector_t<Vec1, Vec2>,
+          typename = require_all_not_eigen_vt<is_var, Vec1, Vec2>>
+inline auto dot_product(const Vec1 &v1, const Vec2 &v2) {
   check_matching_sizes("dot_product", "v1", v1, "v2", v2);
   return v1.dot(v2);
 }
 
 /**
- * Returns the dot product of the specified arrays of doubles.
+ * Returns the dot product of the specified arrays.
  *
  * @param v1 First array.
  * @param v2 Second array.
  * @param length Length of both arrays.
  */
-inline double dot_product(const double *v1, const double *v2, size_t length) {
-  double result = 0;
+template<typename Scalar1, typename Scalar2,
+         typename = require_all_stan_scalar_t<Scalar1, Scalar2>,
+         typename = require_all_not_var_t<Scalar1, Scalar2>>
+inline auto dot_product(const Scalar1 *v1, const Scalar2 *v2, size_t length) {
+  return_type_t<Scalar1, Scalar2> result = 0;
   for (size_t i = 0; i < length; i++) {
     result += v1[i] * v2[i];
   }
@@ -41,14 +45,17 @@ inline double dot_product(const double *v1, const double *v2, size_t length) {
 }
 
 /**
- * Returns the dot product of the specified arrays of doubles.
+ * Returns the dot product of the specified arrays.
  *
  * @param v1 First array.
  * @param v2 Second array.
  * @throw std::domain_error if the vectors are not the same size.
  */
-inline double dot_product(const std::vector<double> &v1,
-                          const std::vector<double> &v2) {
+template<typename Scalar1, typename Scalar2,
+         typename = require_all_stan_scalar_t<Scalar1, Scalar2>,
+         typename = require_all_not_var_t<Scalar1, Scalar2>>
+inline auto dot_product(const std::vector<Scalar1> &v1,
+                          const std::vector<Scalar2> &v2) {
   check_matching_sizes("dot_product", "v1", v1, "v2", v2);
   return dot_product(&v1[0], &v2[0], v1.size());
 }

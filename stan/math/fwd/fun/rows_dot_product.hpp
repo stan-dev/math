@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/fwd/fun/dot_product.hpp>
+#include <stan/math/prim/fun/dot_product.hpp>
 #include <stan/math/fwd/core.hpp>
 
 namespace stan {
