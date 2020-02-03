@@ -53,7 +53,7 @@ return_type_t<T_y, T_dof, T_scale> wishart_lpdf(
   using Eigen::Lower;
   using Eigen::Matrix;
 
-  typename index_type<Matrix<T_scale, Dynamic, Dynamic> >::type k = W.rows();
+  index_type_t<Matrix<T_scale, Dynamic, Dynamic>> k = W.rows();
   return_type_t<T_y, T_dof, T_scale> lp(0.0);
   check_greater(function, "Degrees of freedom parameter", nu, k - 1);
   check_square(function, "random variable", W);
@@ -81,7 +81,7 @@ return_type_t<T_y, T_dof, T_scale> wishart_lpdf(
 
   if (include_summand<propto, T_scale, T_y>::value) {
     Matrix<return_type_t<T_y, T_scale>, Dynamic, Dynamic> Sinv_W(
-        mdivide_left_ldlt(ldlt_S, static_cast<Matrix<T_y, Dynamic, Dynamic> >(
+        mdivide_left_ldlt(ldlt_S, static_cast<Matrix<T_y, Dynamic, Dynamic>>(
                                       W.template selfadjointView<Lower>())));
     lp -= 0.5 * trace(Sinv_W);
   }

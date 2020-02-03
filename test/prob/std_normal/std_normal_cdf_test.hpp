@@ -35,16 +35,15 @@ class AgradCdfStdNormal : public AgradCdfTest {
 
   template <typename T_y, typename T1, typename T2, typename T3, typename T4,
             typename T5>
-  typename stan::return_type<T_y>::type cdf(const T_y& y, const T1&, const T2&,
-                                            const T3&, const T4&, const T5&) {
+  stan::return_type_t<T_y> cdf(const T_y& y, const T1&, const T2&, const T3&,
+                               const T4&, const T5&) {
     return stan::math::std_normal_cdf(y);
   }
 
   template <typename T_y, typename T1, typename T2, typename T3, typename T4,
             typename T5>
-  typename stan::return_type<T_y>::type cdf_function(const T_y& y, const T1&,
-                                                     const T2&, const T3&,
-                                                     const T4&, const T5&) {
+  stan::return_type_t<T_y> cdf_function(const T_y& y, const T1&, const T2&,
+                                        const T3&, const T4&, const T5&) {
     using stan::math::SQRT_TWO;
     return (0.5 + 0.5 * erf(y / SQRT_TWO));
   }

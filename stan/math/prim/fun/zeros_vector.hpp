@@ -8,14 +8,14 @@ namespace stan {
 namespace math {
 
 /**
- * Return a vector of zeros
+ * Return a vector of zeros.
  *
  * @param K size of the vector
  * @return A vector of size K with all elements initialised to 0.
  * @throw std::domain_error if K is negative.
  */
 inline Eigen::VectorXd zeros_vector(int K) {
-  check_nonnegative("ones_vector", "size", K);
+  check_nonnegative("zeros_vector", "size", K);
   return Eigen::VectorXd::Zero(K);
 }
 

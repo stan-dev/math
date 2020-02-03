@@ -5,7 +5,6 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/log1p_exp.hpp>
-#include <stan/math/prim/vectorize/apply_vector_unary.hpp>
 #include <cmath>
 #include <vector>
 

@@ -1,8 +1,9 @@
-#ifndef STAN_MATH_PRIM_VECTORIZE_APPLY_VECTOR_UNARY_HPP
-#define STAN_MATH_PRIM_VECTORIZE_APPLY_VECTOR_UNARY_HPP
+#ifndef STAN_MATH_PRIM_META_APPLY_VECTOR_UNARY_HPP
+#define STAN_MATH_PRIM_META_APPLY_VECTOR_UNARY_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/meta/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/meta/require_generics.hpp>
 #include <vector>
 
 namespace stan {

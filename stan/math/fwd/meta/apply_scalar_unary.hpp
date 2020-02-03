@@ -1,7 +1,7 @@
-#ifndef STAN_MATH_FWD_VECTORIZE_APPLY_SCALAR_UNARY_HPP
-#define STAN_MATH_FWD_VECTORIZE_APPLY_SCALAR_UNARY_HPP
+#ifndef STAN_MATH_FWD_META_APPLY_SCALAR_UNARY_HPP
+#define STAN_MATH_FWD_META_APPLY_SCALAR_UNARY_HPP
 
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
+#include <stan/math/prim/meta/apply_scalar_unary.hpp>
 #include <stan/math/fwd/core/fvar.hpp>
 
 namespace stan {

@@ -23,7 +23,7 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> positive_ordered_constrain(
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::exp;
-  using size_type = typename index_type<Matrix<T, Dynamic, 1>>::type;
+  using size_type = index_type_t<Matrix<T, Dynamic, 1>>;
 
   size_type k = x.size();
   Matrix<T, Dynamic, 1> y(k);
@@ -52,9 +52,7 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> positive_ordered_constrain(
 template <typename T>
 inline Eigen::Matrix<T, Eigen::Dynamic, 1> positive_ordered_constrain(
     const Eigen::Matrix<T, Eigen::Dynamic, 1>& x, T& lp) {
-  using Eigen::Dynamic;
-  using Eigen::Matrix;
-  using size_type = typename index_type<Matrix<T, Dynamic, 1>>::type;
+  using size_type = index_type_t<Eigen::Matrix<T, Eigen::Dynamic, 1>>;
 
   for (size_type i = 0; i < x.size(); ++i) {
     lp += x(i);
