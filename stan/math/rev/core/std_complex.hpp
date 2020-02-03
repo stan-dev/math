@@ -1,6 +1,15 @@
 #ifndef STAN_MATH_REV_CORE_STD_COMPLEX_HPP
 #define STAN_MATH_REV_CORE_STD_COMPLEX_HPP
 
+#include <stan/math/fwd/core/std_iterator_traits.hpp>
+#include <stan/math/rev/core/std_iterator_traits.hpp>
+#include <stan/math/prim/fun/signbit.hpp>
+#include <stan/math/prim/fun/isinf.hpp>
+#include <stan/math/prim/fun/isfinite.hpp>
+#include <stan/math/prim/fun/isnan.hpp>
+#include <stan/math/prim/fun/isnormal.hpp>
+#include <stan/math/prim/fun/copysign.hpp>
+
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/fun/value_of_rec.hpp>
 #include <stan/math/prim/meta.hpp>
@@ -30,199 +39,6 @@
 #include <type_traits>
 
 #include <iostream>
-
-// BEGIN PR 1
-// ===================================================================
-// specialization of std:: and overloads
-// -------------------------------------
-// std::iterator_traits<var>         stan/math/rev/core/std_iterator_traits.hpp
-// std::iterator_traits<fvar<T>>     stan/math/fwd/core/std_iterator_traits.hpp
-// stan::math::signbit               stan/math/prim/fun/signbit.hpp
-// stan::math::isinf                 stan/math/prim/fun/isinf.hpp
-// stan::math::isfinite              stan/math/prim/fun/isfinite.hpp
-// stan::math::isnan                 stan/math/prim/fun/isnan.hpp
-// stan::math::isnormal              stan/math/prim/fun/isnormal.hpp
-// stan::math::copysign              stan/math/prim/fun/copysign.hpp
-
-// std SPECIALIZATIONS (no complex)
-namespace std {
-/**
- * Specialization of iterator traits for Stan math.  These all take
- * the form of typedefs.
- */
-template <>
-struct iterator_traits<stan::math::var> {
-  /**
-   * Iterator category for traits.
-   */
-  typedef random_access_iterator_tag iterator_category;
-
-  /**
-   * Type for difference between pointers.
-   */
-  typedef ptrdiff_t difference_type;
-
-  /**
-   * Type for value of pointer to values.
-   */
-  typedef stan::math::var value_type;
-
-  /**
-   * Type of pointer to variables.
-   */
-  typedef stan::math::var* pointer;
-
-  /**
-   * Type of reference to variables.
-   */
-  typedef stan::math::var& reference;
-};
-}  // namespace std
-
-namespace std {
-/**
- * Specialization of iterator traits for Stan math.  These all take
- * the form of typedefs.
- */
-template <typename T>
-struct iterator_traits<stan::math::fvar<T>> {
-  /**
-   * Iterator category for traits.
-   */
-  typedef random_access_iterator_tag iterator_category;
-
-  /**
-   * Type for difference between pointers.
-   */
-  typedef ptrdiff_t difference_type;
-
-  /**
-   * Type for value of pointer to values.
-   */
-  typedef stan::math::fvar<T> value_type;
-
-  /**
-   * Type of pointer to variables.
-   */
-  typedef stan::math::fvar<T>* pointer;
-
-  /**
-   * Type of reference to variables.
-   */
-  typedef stan::math::fvar<T>& reference;
-};
-}  // namespace std
-
-namespace stan {
-namespace math {
-/**
- * Return `true` if the specified argument is negative and `false`
- * otherwise.
- *
- * Overloads `std::signbit` from `<cmath>` for argument-dependent
- * lookup.
- *
- * @tparam T type of argument
- * @param[in] v argument
- * @return `true` if the argument is negative
- */
-template <typename T>
-inline bool signbit(const T& v) {
-  using std::signbit;
-  return signbit(v.val());
-}
-
-/**
- * Return true if specified argument is infinite (positive or
- * negative).
- *
- * Overloads `std::isinf` from `<cmath>` for argument-dependent
- * lookup.
- *
- * @tparam T type of argument
- * @param[in] v argument
- * @return true if argument is infinite
- */
-template <typename T>
-inline bool isinf(const T& v) {
-  using std::isinf;
-  return isinf(v.val());
-}
-
-/**
- * Return true if specified argument is finite (not infinite and not
- * not-a-number).
- *
- * Overloads `std::isfinite` from `<cmath>` for argument-dependent
- * lookup.
- *
- * @tparam T type of argument
- * @param[in] v argument
- * @return true if argument is finite
- */
-template <typename T>
-inline bool isfinite(const T& v) {
-  using std::isfinite;
-  return isfinite(v.val());
-}
-
-/**
- * Return true if specified argument is not-a-number.
- *
- * Overloads `std::isnan` from `<cmath>` for argument-dependent
- * lookup.
- *
- * @tparam T type of argument
- * @param[in] v argument
- * @return true if argument is not-a-number
- */
-template <typename T>
-inline bool isnan(const T& v) {
-  using std::isnan;
-  return isnan(v.val());
-}
-
-/**
- * Return true if specified argument is normal.  A number is normal if
- * it is finite, non-zero and not subnormal.
- *
- * Overloads `std::isnormal` from `<cmath>` for argument-dependent
- * lookup.
- *
- * @tparam T type of argument
- * @param[in] v argument
- * @return true if argument is normal
- */
-template <typename T>
-inline bool isnormal(const T& v) {
-  using std::isnormal;
-  return isnormal(v.val());
-}
-
-/**
- * Return the negation of the first argument if the first and second
- * argument have different signs, otherwise return a copy of the first
- * argument.  For the sake of this function, zero is considered
- * positive.  This function uses negation rather than literally copying
- * signs to preserve derivatives.
- *
- * Overload of `std::copysign` from `cmath` for argument-dependent
- * lookup.
- *
- * @tparam T type of first argument
- * @tparam U type of second argument
- * @param[in] x first complex argument
- * @param[in] y second complex argument
- * @return copy of second argument, negated if necessary to match sign
- * of first argument
- */
-template <typename T, typename U>
-inline T copysign(const T& x, const U& y) {
-  // 0 is considered positive
-  return (x < 0 && y >= 0) || (x > 0 && y < 0) ? -x : x;
-}
-}  // namespace math
-}  // namespace stan
 
 // PR 2
 // =============================================================

@@ -91,22 +91,13 @@ inline var operator+(var a, var b) {
  *
  * \f$\frac{d}{dx} (x + c) = 1\f$.
  *
-<<<<<<< HEAD
- * @tparam T type of second scalar operand
-=======
  * @tparam Arith An arithmetic type
->>>>>>> b3dde68ece20db22da4979175c07a4d42ccdc050
  * @param a First variable operand.
  * @param b Second scalar operand.
  * @return Result of adding variable and scalar.
  */
-<<<<<<< HEAD
-template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
-inline var operator+(const var& a, T b) {
-=======
 template <typename Arith, require_arithmetic_t<Arith>...>
 inline var operator+(var a, Arith b) {
->>>>>>> b3dde68ece20db22da4979175c07a4d42ccdc050
   if (b == 0.0) {
     return a;
   }
