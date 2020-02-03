@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/inv_logit.hpp>
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {

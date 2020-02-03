@@ -49,12 +49,12 @@ inline Eigen::Matrix<double, -1, Cb> scale_matrix_exp_multiply(
  * @return exponential of At multiplies B
  */
 template <typename Tt, typename Ta, typename Tb, int Cb>
-inline Eigen::Matrix<stan::return_type_t<Tt, Ta, Tb>, -1, Cb>
+inline Eigen::Matrix<return_type_t<Tt, Ta, Tb>, -1, Cb>
 scale_matrix_exp_multiply(const Tt& t, const Eigen::Matrix<Ta, -1, -1>& A,
                           const Eigen::Matrix<Tb, -1, Cb>& B) {
   check_square("scale_matrix_exp_multiply", "input matrix", A);
   if (A.size() == 0 && B.rows() == 0) {
-    return Eigen::Matrix<stan::return_type_t<Tt, Ta, Tb>, -1, Cb>(0, B.cols());
+    return Eigen::Matrix<return_type_t<Tt, Ta, Tb>, -1, Cb>(0, B.cols());
   }
 
   check_multiplicable("scale_matrix_exp_multiply", "A", A, "B", B);

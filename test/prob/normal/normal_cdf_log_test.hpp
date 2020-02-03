@@ -70,15 +70,17 @@ class AgradCdfLogNormal : public AgradCdfLogTest {
 
   template <typename T_y, typename T_loc, typename T_scale, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale>::type cdf_log(
-      const T_y& y, const T_loc& mu, const T_scale& sigma, const T3&, const T4&,
-      const T5&) {
+  stan::return_type_t<T_y, T_loc, T_scale> cdf_log(const T_y& y,
+                                                   const T_loc& mu,
+                                                   const T_scale& sigma,
+                                                   const T3&, const T4&,
+                                                   const T5&) {
     return stan::math::normal_cdf_log(y, mu, sigma);
   }
 
   template <typename T_y, typename T_loc, typename T_scale, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale>::type cdf_log_function(
+  stan::return_type_t<T_y, T_loc, T_scale> cdf_log_function(
       const T_y& y, const T_loc& mu, const T_scale& sigma, const T3&, const T4&,
       const T5&) {
     using stan::math::LOG_HALF;

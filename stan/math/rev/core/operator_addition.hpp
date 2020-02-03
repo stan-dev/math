@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_CORE_OPERATOR_ADDITION_HPP
 #define STAN_MATH_REV_CORE_OPERATOR_ADDITION_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/vv_vari.hpp>
 #include <stan/math/rev/core/vd_vari.hpp>
@@ -79,8 +80,8 @@ class add_vd_vari : public op_vd_vari {
  * @param b Second variable operand.
  * @return Variable result of adding two variables.
  */
-inline var operator+(const var& a, const var& b) {
-  return var(new internal::add_vv_vari(a.vi_, b.vi_));
+inline var operator+(var a, var b) {
+  return {new internal::add_vv_vari(a.vi_, b.vi_)};
 }
 
 /**
@@ -90,17 +91,26 @@ inline var operator+(const var& a, const var& b) {
  *
  * \f$\frac{d}{dx} (x + c) = 1\f$.
  *
+<<<<<<< HEAD
  * @tparam T type of second scalar operand
+=======
+ * @tparam Arith An arithmetic type
+>>>>>>> b3dde68ece20db22da4979175c07a4d42ccdc050
  * @param a First variable operand.
  * @param b Second scalar operand.
  * @return Result of adding variable and scalar.
  */
+<<<<<<< HEAD
 template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
 inline var operator+(const var& a, T b) {
+=======
+template <typename Arith, require_arithmetic_t<Arith>...>
+inline var operator+(var a, Arith b) {
+>>>>>>> b3dde68ece20db22da4979175c07a4d42ccdc050
   if (b == 0.0) {
     return a;
   }
-  return var(new internal::add_vd_vari(a.vi_, b));
+  return {new internal::add_vd_vari(a.vi_, b)};
 }
 
 /**
@@ -110,17 +120,17 @@ inline var operator+(const var& a, T b) {
  *
  * \f$\frac{d}{dy} (c + y) = 1\f$.
  *
- * @tparam T type of first scalar operand
+ * @tparam Arith An arithmetic type
  * @param a First scalar operand.
  * @param b Second variable operand.
  * @return Result of adding variable and scalar.
  */
-template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
-inline var operator+(T a, const var& b) {
+template <typename Arith, require_arithmetic_t<Arith>...>
+inline var operator+(Arith a, var b) {
   if (a == 0.0) {
     return b;
   }
-  return var(new internal::add_vd_vari(b.vi_, a));  // by symmetry
+  return {new internal::add_vd_vari(b.vi_, a)};  // by symmetry
 }
 
 }  // namespace math

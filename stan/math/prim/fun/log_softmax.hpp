@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_FUN_LOG_SOFTMAX_HPP
 #define STAN_MATH_PRIM_FUN_LOG_SOFTMAX_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/log_sum_exp.hpp>
-#include <stan/math/prim/vectorize/apply_vector_unary.hpp>
 
 namespace stan {
 namespace math {

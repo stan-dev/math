@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_CORE_OPERATOR_MULTIPLICATION_HPP
 #define STAN_MATH_REV_CORE_OPERATOR_MULTIPLICATION_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/vv_vari.hpp>
 #include <stan/math/rev/core/vd_vari.hpp>
@@ -78,8 +79,8 @@ class multiply_vd_vari : public op_vd_vari {
  * @param b Second variable operand.
  * @return Variable result of multiplying operands.
  */
-inline var operator*(const var& a, const var& b) {
-  return var(new internal::multiply_vv_vari(a.vi_, b.vi_));
+inline var operator*(var a, var b) {
+  return {new internal::multiply_vv_vari(a.vi_, b.vi_)};
 }
 
 /**
@@ -89,17 +90,17 @@ inline var operator*(const var& a, const var& b) {
  *
  * \f$\frac{\partial}{\partial x} (x * c) = c\f$, and
  *
- * @tparam T scalar type of second operand
+ * @tparam Arith An arithmetic type
  * @param a Variable operand.
  * @param b Scalar operand.
  * @return Variable result of multiplying operands.
  */
-template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
-inline var operator*(const var& a, T b) {
+template <typename Arith, require_arithmetic_t<Arith>...>
+inline var operator*(var a, Arith b) {
   if (b == 1.0) {
     return a;
   }
-  return var(new internal::multiply_vd_vari(a.vi_, b));
+  return {new internal::multiply_vd_vari(a.vi_, b)};
 }
 
 /**
@@ -109,17 +110,17 @@ inline var operator*(const var& a, T b) {
  *
  * \f$\frac{\partial}{\partial y} (c * y) = c\f$.
  *
- * @tparam T scalar type of first operand
+ * @tparam Arith An arithmetic type
  * @param a Scalar operand.
  * @param b Variable operand.
  * @return Variable result of multiplying the operands.
  */
-template <typename T, typename = std::enable_if_t<std::is_arithmetic<T>::value>>
-inline var operator*(T a, const var& b) {
+template <typename Arith, require_arithmetic_t<Arith>...>
+inline var operator*(Arith a, var b) {
   if (a == 1.0) {
     return b;
   }
-  return var(new internal::multiply_vd_vari(b.vi_, a));  // by symmetry
+  return {new internal::multiply_vd_vari(b.vi_, a)};  // by symmetry
 }
 
 }  // namespace math

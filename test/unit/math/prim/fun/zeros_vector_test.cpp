@@ -3,15 +3,9 @@
 #include <gtest/gtest.h>
 
 TEST(MathFunctions, zeros_vector) {
-  using Eigen::VectorXd;
-  using stan::math::zeros_vector;
-
-  VectorXd u0 = zeros_vector(0);
-  EXPECT_EQ(0, u0.size());
-
-  for (int K = 1; K < 5; K++) {
+  for (int K = 0; K < 5; K++) {
     Eigen::VectorXd v = Eigen::VectorXd::Zero(K);
-    expect_matrix_eq(v, zeros_vector(K));
+    expect_matrix_eq(v, stan::math::zeros_vector(K));
   }
 }
 

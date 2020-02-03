@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_CORE_OPERATOR_UNARY_NOT_HPP
 
 #include <stan/math/rev/core/var.hpp>
+#include <stan/math/prim/meta.hpp>
 
 namespace stan {
 namespace math {
@@ -13,7 +14,7 @@ namespace math {
  * @param[in] x argument
  * @return negation of argument value
  */
-inline bool operator!(const var& x) { return !x.val(); }
+inline bool operator!(var x) { return !x.val(); }
 
 }  // namespace math
 }  // namespace stan
