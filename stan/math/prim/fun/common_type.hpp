@@ -7,6 +7,7 @@
 
 namespace stan {
 namespace math {
+
 /**
  * Struct which calculates type promotion given two types.
  *

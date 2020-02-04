@@ -109,17 +109,17 @@
  *
  * In general, these methods allow Stan to have more generic types so that the
  * library can forward along Eigen expression and have better move semantics.
- * For instance, the below code will accept any arbitrary eigen expression
+ * For instance, the code below will accept any arbitrary Eigen expression
  * that, if it's an rvalue, can be forwarded to another function.
  *
  *~~~~~{.cpp}
- *  template <typename Mat1, typename Mat2,
+ * template <typename Mat1, typename Mat2,
  * require_all_eigen_vt<is_arithmetic, Mat1, Mat2>...>
  * inline auto a_func(Mat1&& m1, Mat2&& m2) {
  *   check_nan(m1);
  *   check_nan(m2);
  *   // If m1 and/or m2 is an rvalue it will be moved over to this function
- *  // instead of copied to an lvalue
+ *   // instead of copied to an lvalue
  *   auto B = another_func(std::forward<Mat1>(m1), std::forward<Mat2>(m2)); //
  *(3) return B;
  *~~~~~
@@ -141,7 +141,7 @@
  * certain conditions while @c _st methods check that the objects @c scalar_type
  * fulfills certain conditions. @c value_type and @c scalar_type differ in that
  * @c value_type is the first level of a container while @c scalar_type
- * recursivly goes through containers of containers till it comes to a simple
+ * recursively goes through containers of containers till it comes to a simple
  * type.
  */
 

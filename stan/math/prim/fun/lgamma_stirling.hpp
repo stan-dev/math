@@ -12,14 +12,12 @@ namespace math {
 /**
  * Return the Stirling approximation to the lgamma function.
  *
-
    \f[
    \mbox{lgamma_stirling}(x) =
     \frac{1}{2} \log(2\pi) + (x-\frac{1}{2})*\log(x) - x
    \f]
-
  *
- * @tparam T Type of value.
+ * @tparam T type of value
  * @param x value
  * @return Stirling's approximation to lgamma(x).
  */

@@ -31,7 +31,7 @@ namespace math {
  * proportionality constant.
  * @tparam T (optional). A type
  * @tparam T_pack (optional). A parameter pack of types. This is used to
- * extend the applicabiity of the function to an arbitrary number of types.
+ * extend the applicability of the function to an arbitrary number of types.
  */
 template <bool propto, typename T = double, typename... T_pack>
 struct include_summand

@@ -32,7 +32,7 @@ inline void check_consistent_sizes(const char* function, const char* name1,
 }
 
 /**
- * Check if the dimension of x1, x2, and x3 areconsistent.
+ * Check if the dimension of x1, x2, and x3 are consistent.
  * Consistent size is defined as having the same size if vector-like or
  * being a scalar.
  * @tparam T1 Type of x1
@@ -61,7 +61,7 @@ inline void check_consistent_sizes(const char* function, const char* name1,
 }
 
 /**
- * Check if the dimension of x1, x2, x3, and x4are consistent.
+ * Check if the dimension of x1, x2, x3, and x4 are consistent.
  * Consistent size is defined as having the same size if
  * vector-like or being a scalar.
  * @tparam T1 Type of x1

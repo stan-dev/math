@@ -79,6 +79,7 @@ inline auto inv_cloglog(const T& x) {
 
 /**
  * Version of inv_cloglog() that accepts Eigen Matrix or matrix expressions.
+ *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
  * @return 1 - exp(-exp()) applied to each value in x.
@@ -91,6 +92,7 @@ inline auto inv_cloglog(const Eigen::MatrixBase<Derived>& x) {
 
 /**
  * Version of inv_cloglog() that accepts Eigen Array or array expressions.
+ *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
  * @return 1 - exp(-exp()) applied to each value in x.
