@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(ProbDistributionsNegBinomial, derivatives) {
+TEST(ProbDistributionsNegBinomial2, derivatives) {
   using stan::math::is_nan;
   using stan::math::neg_binomial_2_lpmf;
   using stan::math::var;
@@ -46,7 +46,7 @@ TEST(ProbDistributionsNegBinomial, derivatives) {
   }
 }
 
-TEST(ProbDistributionsNegBinomial, derivatives_diff_sizes) {
+TEST(ProbDistributionsNegBinomial2, derivatives_diff_sizes) {
   using stan::math::neg_binomial_2_lpmf;
   using stan::math::var;
 
