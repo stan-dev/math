@@ -171,6 +171,7 @@ class var {
    *
    * @param x Value of the variable.
    */
+  // NOLINTNEXTLINE
   var(unsigned int x)
       : vi_(new vari(static_cast<double>(x), false)) {}  // NOLINT
 
