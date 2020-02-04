@@ -54,7 +54,8 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_cdf(const T_n& n,
 
   VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
       digamma_alpha_vec(size_alpha);
-  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
+  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_n,
+                T_shape>
       digamma_sum_vec(size_n_alpha);
 
   if (!is_constant_all<T_shape>::value) {
