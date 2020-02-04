@@ -57,19 +57,18 @@ class AgradCcdfLogRayleigh : public AgradCcdfLogTest {
 
   template <typename T_y, typename T_scale, typename T2, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_scale>::type ccdf_log(const T_y& y,
-                                                          const T_scale& sigma,
-                                                          const T2&, const T3&,
-                                                          const T4&,
-                                                          const T5&) {
+  stan::return_type_t<T_y, T_scale> ccdf_log(const T_y& y, const T_scale& sigma,
+                                             const T2&, const T3&, const T4&,
+                                             const T5&) {
     return stan::math::rayleigh_ccdf_log(y, sigma);
   }
 
   template <typename T_y, typename T_scale, typename T2, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_scale>::type ccdf_log_function(
-      const T_y& y, const T_scale& sigma, const T2&, const T3&, const T4&,
-      const T5&) {
+  stan::return_type_t<T_y, T_scale> ccdf_log_function(const T_y& y,
+                                                      const T_scale& sigma,
+                                                      const T2&, const T3&,
+                                                      const T4&, const T5&) {
     return -0.5 * y * y / (sigma * sigma);
   }
 };

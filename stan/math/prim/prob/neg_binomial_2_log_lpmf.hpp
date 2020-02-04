@@ -20,9 +20,7 @@ template <bool propto, typename T_n, typename T_log_location,
           typename T_precision>
 return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
     const T_n& n, const T_log_location& eta, const T_precision& phi) {
-  typedef
-      typename stan::partials_return_type<T_n, T_log_location,
-                                          T_precision>::type T_partials_return;
+  using T_partials_return = partials_return_t<T_n, T_log_location, T_precision>;
 
   static const char* function = "neg_binomial_2_log_lpmf";
 
@@ -126,6 +124,7 @@ inline return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
     const T_n& n, const T_log_location& eta, const T_precision& phi) {
   return neg_binomial_2_log_lpmf<false>(n, eta, phi);
 }
+
 }  // namespace math
 }  // namespace stan
 #endif

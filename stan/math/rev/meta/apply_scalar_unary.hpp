@@ -1,7 +1,7 @@
-#ifndef STAN_MATH_REV_VECTORIZE_APPLY_SCALAR_UNARY_HPP
-#define STAN_MATH_REV_VECTORIZE_APPLY_SCALAR_UNARY_HPP
+#ifndef STAN_MATH_REV_META_APPLY_SCALAR_UNARY_HPP
+#define STAN_MATH_REV_META_APPLY_SCALAR_UNARY_HPP
 
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
+#include <stan/math/prim/meta/apply_scalar_unary.hpp>
 #include <stan/math/rev/core/var.hpp>
 
 namespace stan {

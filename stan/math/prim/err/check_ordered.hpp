@@ -24,10 +24,9 @@ namespace math {
 template <typename T_y>
 void check_ordered(const char* function, const char* name,
                    const Eigen::Matrix<T_y, Eigen::Dynamic, 1>& y) {
-  typedef
-      typename index_type<Eigen::Matrix<T_y, Eigen::Dynamic, 1> >::type size_t;
+  using size_type = index_type_t<Eigen::Matrix<T_y, Eigen::Dynamic, 1>>;
 
-  for (size_t n = 1; n < y.size(); n++) {
+  for (size_type n = 1; n < y.size(); n++) {
     if (!(y[n] > y[n - 1])) {
       std::ostringstream msg1;
       msg1 << "is not a valid ordered vector."
@@ -69,6 +68,7 @@ void check_ordered(const char* function, const char* name,
     }
   }
 }
+
 }  // namespace math
 }  // namespace stan
 #endif

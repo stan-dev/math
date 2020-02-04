@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/boost_policy.hpp>
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <boost/math/special_functions/digamma.hpp>
 
 namespace stan {
