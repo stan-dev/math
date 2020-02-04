@@ -15,7 +15,7 @@ namespace test {
  * two inexact values to be compared.
  */
 class relative_tolerance {
-public:
+ public:
   /**
    * Construct with default tolerances
    */
@@ -39,15 +39,15 @@ public:
   double tol() const { return tol_; }
   double tol_min() const { return tol_min_; }
 
-  relative_tolerance change_tol(double tol) const { 
+  relative_tolerance change_tol(double tol) const {
     return relative_tolerance(tol, tol_min_);
   }
 
-  relative_tolerance change_tol_min(double tol_min) const { 
+  relative_tolerance change_tol_min(double tol_min) const {
     return relative_tolerance(tol_, tol_min);
   }
 
-  relative_tolerance operator *(double a) const {
+  relative_tolerance operator*(double a) const {
     return relative_tolerance(a * tol_, a * tol_min_);
   }
 
@@ -78,7 +78,8 @@ public:
     using stan::math::fabs;
     return std::max(tol_ * 0.5 * (fabs(x) + fabs(y)), tol_min_);
   }
-private:
+
+ private:
   /**
    * The relative tolerance
    */
