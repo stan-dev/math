@@ -83,7 +83,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
     lambda[i] = alpha_dbl / beta_dbl;
     alpha_log_beta_over_1p_beta[i] = alpha_dbl * log_beta_m_log1p_beta[i];
     if (!is_constant_all<T_inv_scale>::value) {
-      lambda_m_alpha_over_1p_beta[i] = lambda[i] - alpha_dbl / (1.0 + beta_dbl);
+      lambda_m_alpha_over_1p_beta[i] = lambda[i] - alpha_dbl / (1 + beta_dbl);
     }
   }
 
