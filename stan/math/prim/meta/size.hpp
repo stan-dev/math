@@ -9,8 +9,9 @@
 namespace stan {
 namespace math {
 /** \ingroup type_trait
- * Returns the length of primitive scalar types
- * that are always of length 1.
+ * Return 1, which is the length of scalar types.
+ *
+ * @return 1
  */
 template <typename T, typename = require_stan_scalar_t<T>>
 inline size_t size(const T& /*x*/) {
@@ -18,14 +19,29 @@ inline size_t size(const T& /*x*/) {
 }
 
 /** \ingroup type_trait
- * Returns the size of the provided Eigen matrix, expression or std::vector.
+ * Return the size of the specified standard vector.
  *
- * @param m input  \c Eigen \c Matrix, expression or std::vector
- * @tparam T type of m
+ * @tparam T value type of vector
+ * @param[in] m vector whose size is returned
  */
-template <typename T, typename = require_not_stan_scalar_t<T>, typename = void>
-inline size_t size(const T& m) {
+template <typename T>
+inline size_t size(const std::vector<T>& m) {
   return m.size();
+}
+
+/**
+ * Return the size of the specified Eigen matrix, vector, or row
+ * vector.
+ *
+ * @tparam T value type
+ * @tparam R row specification
+ * @tparam C column specification
+ * @param[in] x matrix, vector, or row vector
+ * @return size of argument
+ */
+template <typename T, int R, int C>
+inline size_t size(const Eigen::Matrix<T, R, C>& x) {
+  return x.size();
 }
 }  // namespace math
 }  // namespace stan

@@ -10,31 +10,32 @@ TEST(MathMetaPrim, size_scalar) {
 
 TEST(MathMetaPrim, size_vector) {
   using stan::math::size;
+
+  std::vector<int> a(5);
+  EXPECT_EQ(5U, size(a));
+
   std::vector<double> x(10);
   EXPECT_EQ(10U, size(x));
 
-  std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> x2(3);
+  std::vector<Eigen::MatrixXd> x2(3);
   EXPECT_EQ(3U, size(x2));
 
-  std::vector<Eigen::Matrix<double, 1, Eigen::Dynamic>> x3(7);
+  std::vector<Eigen::RowVectorXd> x3(7);
   EXPECT_EQ(7U, size(x3));
 
-  std::vector<Eigen::Matrix<double, Eigen::Dynamic, 1>> x4(9);
+  std::vector<Eigen::VectorXd> x4(9);
   EXPECT_EQ(9U, size(x4));
 }
 
 TEST(MathMetaPrim, size_matrices) {
   using stan::math::size;
 
-  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m(2, 3);
-  m << 1, 2, 3, 4, 5, 6;
+  Eigen::MatrixXd m(2, 3);
   EXPECT_EQ(6U, size(m));
 
-  Eigen::Matrix<double, Eigen::Dynamic, 1> rv(2);
-  rv << 1, 2;
+  Eigen::RowVectorXd rv(2);
   EXPECT_EQ(2U, size(rv));
 
-  Eigen::Matrix<double, 1, Eigen::Dynamic> v(2);
-  v << 1, 2;
+  Eigen::VectorXd v(2);
   EXPECT_EQ(2U, size(v));
 }
