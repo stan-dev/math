@@ -8,41 +8,48 @@ namespace stan {
 namespace test {
 
 /**
- * Struct holding information about relative tolerance and the minimal absolute
+ * Class holding information about relative tolerance and the minimal absolute
  * tolerance that should be tested against. The final tolerance is computed as
  * max(tol * fabs(x), tol_min)
  * Where x is either an exact value to be tested against or average of
  * two inexact values to be compared.
  */
-struct relative_tolerance {
-  /**
-   * The relative tolerance
-   */
-  double tol;
-  /**
-   * The minimal absolute tolerance
-   */
-  double tol_min;
-
+class relative_tolerance {
+public:
   /**
    * Construct with default tolerances
    */
-  relative_tolerance() : tol(1e-8), tol_min(1e-14) {}
+  relative_tolerance() : tol_(1e-8), tol_min_(1e-14) {}
 
   /**
    * Construct with default tol_min (max(tol_ * tol_, 1e-14))
    * @param tol_ the relative tolerance
    */
-  relative_tolerance(const double tol_)  // NOLINT
-      : tol(tol_), tol_min(std::max(tol_ * tol_, 1e-14)) {}
+  relative_tolerance(const double tol)  // NOLINT
+      : tol_(tol), tol_min_(std::max(tol * tol, 1e-14)) {}
 
   /**
    * Construct fully specified
    * @param[in] tol_ the relative tolerance
    * @param[in] tol_min_ the minimum absolute tolerance
    */
-  relative_tolerance(const double tol_, const double tol_min_)
-      : tol(tol_), tol_min(tol_min_) {}
+  relative_tolerance(const double tol, const double tol_min)
+      : tol_(tol), tol_min_(tol_min) {}
+
+  double tol() const { return tol_; }
+  double tol_min() const { return tol_min_; }
+
+  relative_tolerance change_tol(double tol) const { 
+    return relative_tolerance(tol, tol_min_);
+  }
+
+  relative_tolerance change_tol_min(double tol_min) const { 
+    return relative_tolerance(tol_, tol_min);
+  }
+
+  relative_tolerance operator *(double a) const {
+    return relative_tolerance(a * tol_, a * tol_min_);
+  }
 
   /**
    * Computes tolerance around an exact target value.
@@ -54,7 +61,7 @@ struct relative_tolerance {
   template <typename T1, require_stan_scalar_t<T1>...>
   double exact(const T1& x) const {
     using stan::math::fabs;
-    return std::max(tol * fabs(x), tol_min);
+    return std::max(tol_ * fabs(x), tol_min_);
   }
 
   /**
@@ -69,8 +76,17 @@ struct relative_tolerance {
   template <typename T1, typename T2, require_all_stan_scalar_t<T1, T2>...>
   double inexact(const T1& x, const T2& y) const {
     using stan::math::fabs;
-    return std::max(tol * 0.5 * (fabs(x) + fabs(y)), tol_min);
+    return std::max(tol_ * 0.5 * (fabs(x) + fabs(y)), tol_min_);
   }
+private:
+  /**
+   * The relative tolerance
+   */
+  double tol_;
+  /**
+   * The minimal absolute tolerance
+   */
+  double tol_min_;
 };
 
 }  // namespace test
