@@ -71,8 +71,7 @@ class cvodes_integrator {
    */
   template <typename F, typename T_initial, typename T_param, typename T_t0,
             typename T_ts>
-  std::vector<std::vector<
-      typename stan::return_type<T_initial, T_param, T_t0, T_ts>::type>>
+  std::vector<std::vector<return_type_t<T_initial, T_param, T_t0, T_ts>>>
   integrate(const F& f, const std::vector<T_initial>& y0, const T_t0& t0,
             const std::vector<T_ts>& ts, const std::vector<T_param>& theta,
             const std::vector<double>& x, const std::vector<int>& x_int,
@@ -123,9 +122,7 @@ class cvodes_integrator {
 
     const size_t coupled_size = cvodes_data.coupled_ode_.size();
 
-    std::vector<std::vector<
-        typename stan::return_type<T_initial, T_param, T_t0, T_ts>::type>>
-        y;
+    std::vector<std::vector<return_type_t<T_initial, T_param, T_t0, T_ts>>> y;
     coupled_ode_observer<F, T_initial, T_param, T_t0, T_ts> observer(
         f, y0, theta, t0, ts, x, x_int, msgs, y);
 
