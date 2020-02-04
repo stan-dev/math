@@ -84,6 +84,7 @@ TEST(thread_stack_instance, child_instances) {
   // thread will be different at initialization (if STAN_THREADS is
   // set)
   stan::math::var a = 1;
+  stan::math::var b = a * a;
 
   ChainableStack::AutodiffStackStorage* main_ad_stack
       = ChainableStack::instance_;
