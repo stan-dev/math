@@ -570,6 +570,6 @@ TEST(ProbDistributionsNegBinomial2Log, derivatives_diff_sizes) {
   double eps = 1e-6;
   double grad_diff = (neg_binomial_2_log_lpmf(N, mu_dbl + eps, phi_dbl)
                       - neg_binomial_2_log_lpmf(N, mu_dbl - eps, phi_dbl))
-                      / (2 * eps);
+                     / (2 * eps);
   EXPECT_FLOAT_EQ(grad_diff, gradients[0]);
 }
