@@ -37,6 +37,7 @@ inline auto cos(const T& x) {
 
 /**
  * Version of cos() that accepts Eigen Matrix or matrix expressions.
+ *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
  * @return Cosine of each value in x.

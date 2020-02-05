@@ -136,7 +136,7 @@ class opencl_context_base {
   }
 
  protected:
-  cl::Context context_;  // Manages the the device, queue, platform, memory,etc.
+  cl::Context context_;  // Manages the the device, queue, platform, memory, etc
   cl::CommandQueue command_queue_;       // job queue for device, one per device
   std::vector<cl::Platform> platforms_;  // Vector of available platforms
   cl::Platform platform_;                // The platform for compiling kernels

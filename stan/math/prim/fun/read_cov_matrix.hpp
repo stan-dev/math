@@ -28,7 +28,6 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_cov_matrix(
 }
 
 /**
- *
  * Builds a covariance matrix from CPCs and standard deviations
  *
  * @tparam T type of elements in the arrays

@@ -6,7 +6,7 @@
 
 /*
  * VectorIntRNGTestRig is a subclass of VectorRNGTestRig specialized for
- * testing random numbers generated from continuous distributions.
+ * testing random numbers generated from discrete distributions.
  *
  * A test rig that inherits from VectorIntRNGTestRig must implement the
  * function "pmf" and supply values for test_points_ on top of the requirements

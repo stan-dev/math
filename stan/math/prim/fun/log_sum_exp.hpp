@@ -18,7 +18,6 @@ namespace math {
  *
  * where \f$m = max(a, b)\f$.
  *
- *
    \f[
    \mbox{log\_sum\_exp}(x, y) =
    \begin{cases}
@@ -43,6 +42,8 @@ namespace math {
    \end{cases}
    \f]
  *
+ * @tparam T1 type of the first variable
+ * @tparam T2 type of the second variable
  * @param a the first variable
  * @param b the second variable
  */
@@ -71,8 +72,8 @@ inline return_type_t<T1, T2> log_sum_exp(const T2& a, const T1& b) {
  * \f$\log \sum_{n=1}^N \exp(x_n) = \max(x) + \log \sum_{n=1}^N \exp(x_n -
  * \max(x))\f$.
  *
- * @tparam T Type of input vector or matrix.
- * @param[in] x Matrix of specified values.
+ * @tparam T type of input vector or matrix
+ * @param[in] x matrix of specified values
  * @return The log of the sum of the exponentiated vector values.
  */
 template <typename T, require_t<std::is_arithmetic<scalar_type_t<T>>>...>

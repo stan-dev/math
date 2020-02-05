@@ -18,7 +18,6 @@ namespace math {
  *
  * This function is only defined for x < 0
  *
-
    \f[
    \mbox{log1m\_exp}(x) =
    \begin{cases}

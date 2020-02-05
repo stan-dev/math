@@ -23,7 +23,7 @@ namespace math {
  * @param alpha shape parameter
  * @param sigma scale parameter
  * @return log probability density or log sum of probability densities
- * @throw std::domain_error if y is negative, alpha sigma is nonpositive
+ * @throw std::domain_error if y is negative, alpha or sigma are nonpositive
  */
 template <bool propto, typename T_y, typename T_shape, typename T_scale>
 return_type_t<T_y, T_shape, T_scale> weibull_lpdf(const T_y& y,
