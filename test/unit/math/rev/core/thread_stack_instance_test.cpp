@@ -91,13 +91,13 @@ TEST(thread_stack_instance, child_instances) {
 
   auto thread_tester = [&]() -> void {
     ChainableStack thread_instance;
-    EXPECT_TRUE(main_ad_stack->var_stack_.size()
+    EXPECT_TRUE(main_ad_stack->var_stack_.size() + stan::math::ChainableStack::instance_->var_nochain_stack_.size()
 #ifdef STAN_THREADS
                 >
 #else
                 ==
 #endif
-                ChainableStack::instance_->var_stack_.size());
+                ChainableStack::instance_->var_stack_.size() + stan::math::ChainableStack::instance_->var_nochain_stack_.size());
   };
 
   std::thread other_work(thread_tester);
