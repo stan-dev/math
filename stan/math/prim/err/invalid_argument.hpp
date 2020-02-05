@@ -35,7 +35,7 @@ inline void invalid_argument(const char* function, const char* name, const T& y,
  * Throw an invalid_argument exception with a consistently formatted message.
  * This is an abstraction for all Stan functions to use when throwing
  * invalid argument. This will allow us to change the behavior for all
- * functions at once. (We've already changed behavior mulitple times up
+ * functions at once. (We've already changed behavior multiple times up
  * to Stan v2.5.0.)
  * The message is: "<function>: <name> <msg1><y>"
  * @tparam T Type of variable

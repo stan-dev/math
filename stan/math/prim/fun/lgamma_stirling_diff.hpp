@@ -34,7 +34,7 @@ constexpr double lgamma_stirling_diff_useful = 10;
    \f]
 
  *
- * @tparam T Type of value.
+ * @tparam T type of value
  * @param x value
  * @return Difference between lgamma(x) and its Stirling approximation.
  */

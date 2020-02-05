@@ -54,6 +54,7 @@ inline auto round(const T& x) {
 
 /**
  * Version of round() that accepts Eigen Matrix or matrix expressions.
+ *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
  * @return Rounded value of each value in x.

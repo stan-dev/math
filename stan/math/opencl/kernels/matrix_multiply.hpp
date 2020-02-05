@@ -49,7 +49,7 @@ static const std::string matrix_multiply_kernel_code = STRINGIFY(
       for (int w = 0; w < WORK_PER_THREAD; w++) {
         acc[w] = 0.0;
       }
-      // the number of tiles for each scalar product in the matrix mulitply
+      // the number of tiles for each scalar product in the matrix multiply
       const int num_tiles = (K + THREAD_BLOCK_SIZE - 1) / THREAD_BLOCK_SIZE;
       // in case of splitting the matrix multiply we need
       // use split_offset_tiles the threads assigned part

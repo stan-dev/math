@@ -21,8 +21,8 @@ namespace math {
  * of a and b up to 12500 and z = 0.999.
  *
  * @tparam T scalar types of arguments
- * @param a a
- * @param b b
+ * @param a first argument
+ * @param b second argument
  * @param z upper bound of the integral
  * @param digamma_a value of digamma(a)
  * @param digamma_ab value of digamma(b)

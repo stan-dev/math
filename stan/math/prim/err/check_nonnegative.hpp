@@ -13,7 +13,7 @@ namespace internal {
 template <typename T_y, bool is_vec>
 struct nonnegative {
   static void check(const char* function, const char* name, const T_y& y) {
-    // have to use not is_unsigned. is_signed will be false
+    // have to use not is_unsigned. is_signed will be false for
     // floating point types that have no unsigned versions.
     if (!std::is_unsigned<T_y>::value && !(y >= 0)) {
       throw_domain_error(function, name, y, "is ", ", but must be >= 0!");
