@@ -15,7 +15,6 @@ namespace math {
  * The main use of this function is to cut down on intermediate
  * values during algorithmic differentiation.
  *
- *
    \f[
    \mbox{log1m}(x) =
    \begin{cases}

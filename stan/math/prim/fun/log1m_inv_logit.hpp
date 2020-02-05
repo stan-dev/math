@@ -12,7 +12,6 @@ namespace math {
  * Returns the natural logarithm of 1 minus the inverse logit
  * of the specified argument.
  *
- *
    \f[
    \mbox{log1m\_inv\_logit}(x) =
    \begin{cases}

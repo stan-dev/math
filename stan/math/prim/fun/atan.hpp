@@ -37,6 +37,7 @@ inline typename apply_scalar_unary<atan_fun, T>::return_t atan(const T& x) {
 
 /**
  * Version of atan() that accepts Eigen Matrix or matrix expressions.
+ *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
  * @return Elementwise atan of members of container.
