@@ -39,7 +39,6 @@
 #include <stan/math/prim/fun/cols.hpp>
 #include <stan/math/prim/fun/columns_dot_product.hpp>
 #include <stan/math/prim/fun/columns_dot_self.hpp>
-#include <stan/math/prim/fun/common_type.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/copysign.hpp>
 #include <stan/math/prim/fun/corr_constrain.hpp>
@@ -96,6 +95,7 @@
 #include <stan/math/prim/fun/fmin.hpp>
 #include <stan/math/prim/fun/gamma_p.hpp>
 #include <stan/math/prim/fun/gamma_q.hpp>
+#include <stan/math/prim/fun/get.hpp>
 #include <stan/math/prim/fun/get_base1.hpp>
 #include <stan/math/prim/fun/get_base1_lhs.hpp>
 #include <stan/math/prim/fun/get_lp.hpp>
@@ -183,6 +183,8 @@
 #include <stan/math/prim/fun/matrix_exp_multiply.hpp>
 #include <stan/math/prim/fun/matrix_power.hpp>
 #include <stan/math/prim/fun/max.hpp>
+#include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/max_size_mvt.hpp>
 #include <stan/math/prim/fun/mdivide_left.hpp>
 #include <stan/math/prim/fun/mdivide_left_ldlt.hpp>
 #include <stan/math/prim/fun/mdivide_left_spd.hpp>
@@ -264,6 +266,8 @@
 #include <stan/math/prim/fun/sin.hpp>
 #include <stan/math/prim/fun/singular_values.hpp>
 #include <stan/math/prim/fun/sinh.hpp>
+#include <stan/math/prim/fun/size.hpp>
+#include <stan/math/prim/fun/size_mvt.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/softmax.hpp>
 #include <stan/math/prim/fun/sort_asc.hpp>

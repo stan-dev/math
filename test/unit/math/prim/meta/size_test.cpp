@@ -1,14 +1,14 @@
-#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMetaPrim, size_scalar) {
+TEST(MathPrimFun, size_scalar) {
   using stan::math::size;
   EXPECT_EQ(1U, size(27.0));
   EXPECT_EQ(1U, size(3));
 }
 
-TEST(MathMetaPrim, size_vector) {
+TEST(MathPrimFun, size_vector) {
   using stan::math::size;
   std::vector<double> x(10);
   EXPECT_EQ(10U, size(x));
@@ -23,7 +23,7 @@ TEST(MathMetaPrim, size_vector) {
   EXPECT_EQ(9U, size(x4));
 }
 
-TEST(MathMetaPrim, size_matrices) {
+TEST(MathPrimFun, size_matrices) {
   using stan::math::size;
 
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m(2, 3);
