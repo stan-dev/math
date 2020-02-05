@@ -14,35 +14,31 @@ size_t count_vars_impl(size_t count) { return count; }
 
 template <typename... Pargs>
 size_t count_vars_impl(size_t count, const std::vector<var>& x,
-		      const Pargs&... args);
+                       const Pargs&... args);
 
-template <typename T, require_t<is_var<scalar_type_t<T>>>...,
-	  typename... Pargs>
+template <typename T, require_t<is_var<scalar_type_t<T>>>..., typename... Pargs>
 size_t count_vars_impl(size_t count, const std::vector<T>& x,
-		      const Pargs&... args);
+                       const Pargs&... args);
 
 template <typename Mat, require_eigen_vt<is_var, Mat>..., typename... Pargs>
-size_t count_vars_impl(size_t count, const Mat& x,
-		      const Pargs&... args);
+size_t count_vars_impl(size_t count, const Mat& x, const Pargs&... args);
 
 template <typename... Pargs>
-size_t count_vars_impl(size_t count, const var& x,
-		      const Pargs&... args);
+size_t count_vars_impl(size_t count, const var& x, const Pargs&... args);
 
 template <typename... Pargs, typename Arith,
-	  require_arithmetic_t<scalar_type_t<Arith>>...>
+          require_arithmetic_t<scalar_type_t<Arith>>...>
 size_t count_vars_impl(size_t count, Arith& x, const Pargs&... args);
 
 template <typename... Pargs>
 size_t count_vars_impl(size_t count, const std::vector<var>& x,
-		      const Pargs&... args) {
+                       const Pargs&... args) {
   return count_vars_impl(count + x.size(), args...);
 }
 
-template <typename T, require_t<is_var<scalar_type_t<T>>>...,
-	  typename... Pargs>
+template <typename T, require_t<is_var<scalar_type_t<T>>>..., typename... Pargs>
 size_t count_vars_impl(size_t count, const std::vector<T>& x,
-		      const Pargs&... args) {
+                       const Pargs&... args) {
   for (size_t i = 0; i < x.size(); i++) {
     count = count_vars_impl(count, x[i]);
   }
@@ -50,19 +46,17 @@ size_t count_vars_impl(size_t count, const std::vector<T>& x,
 }
 
 template <typename Mat, require_eigen_vt<is_var, Mat>..., typename... Pargs>
-size_t count_vars_impl(size_t count, const Mat& x,
-		      const Pargs&... args) {
+size_t count_vars_impl(size_t count, const Mat& x, const Pargs&... args) {
   return count_vars_impl(count + x.size(), args...);
 }
 
 template <typename... Pargs>
-size_t count_vars_impl(size_t count, const var& x,
-		      const Pargs&... args) {
+size_t count_vars_impl(size_t count, const var& x, const Pargs&... args) {
   return count_vars_impl(count + 1, args...);
 }
 
 template <typename... Pargs, typename Arith,
-	  require_arithmetic_t<scalar_type_t<Arith>>...>
+          require_arithmetic_t<scalar_type_t<Arith>>...>
 size_t count_vars_impl(size_t count, Arith& x, const Pargs&... args) {
   return count_vars_impl(count, args...);
 }

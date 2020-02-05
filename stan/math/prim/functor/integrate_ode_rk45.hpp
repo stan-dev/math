@@ -80,7 +80,7 @@ std::vector<std::vector<return_type_t<T1, T_t0, T_ts, Args...>>> integrate_ode_r
   using boost::numeric::odeint::make_dense_output;
   using boost::numeric::odeint::max_step_checker;
   using boost::numeric::odeint::runge_kutta_dopri5;
-  
+
   const double t0_dbl = value_of(t0);
   const std::vector<double> ts_dbl = value_of(ts);
 
@@ -88,8 +88,11 @@ std::vector<std::vector<return_type_t<T1, T_t0, T_ts, Args...>>> integrate_ode_r
   check_finite("integrate_ode_rk45", "initial time", t0_dbl);
   check_finite("integrate_ode_rk45", "times", ts_dbl);
 
-  // Code from: https://stackoverflow.com/a/17340003 . Should probably do something better
-  std::vector<int> unused_temp{ 0, (check_finite("integrate_ode_rk45", "ode parameters and data", args), 0)... };
+  // Code from: https://stackoverflow.com/a/17340003 . Should probably do
+  // something better
+  std::vector<int> unused_temp{
+      0, (check_finite("integrate_ode_rk45", "ode parameters and data", args),
+          0)...};
 
   check_nonzero_size("integrate_ode_rk45", "initial state", y0);
   check_nonzero_size("integrate_ode_rk45", "times", ts_dbl);
@@ -119,7 +122,6 @@ std::vector<std::vector<return_type_t<T1, T_t0, T_ts, Args...>>> integrate_ode_r
   std::copy(ts_dbl.begin(), ts_dbl.end(), ts_vec.begin() + 1);
 
   std::vector<std::vector<return_t>> y;
-  //coupled_ode_observer<T1, T_t0, T_ts, F, Args...> observer(f, y0, t0, ts, args..., msgs, y);
   bool observer_initial_recorded = false;
   size_t time_index = 0;
   

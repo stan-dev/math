@@ -13,47 +13,41 @@ namespace internal {
 double* accumulate_adjoints(double* x) { return x; }
 
 template <typename... Pargs>
-double* accumulate_adjoints(double* dest, const var& x,
-			    const Pargs&... args);
+double* accumulate_adjoints(double* dest, const var& x, const Pargs&... args);
 
 template <typename... Pargs>
 double* accumulate_adjoints(double* dest, const std::vector<var>& x,
-			    const Pargs&... args);
+                            const Pargs&... args);
 
-template <typename T, require_t<is_var<scalar_type_t<T>>>...,
-	  typename... Pargs>
+template <typename T, require_t<is_var<scalar_type_t<T>>>..., typename... Pargs>
 double* accumulate_adjoints(double* dest, const std::vector<T>& x,
-			    const Pargs&... args);
+                            const Pargs&... args);
 
 template <typename... Pargs, typename Mat, require_eigen_vt<is_var, Mat>...>
-double* accumulate_adjoints(double* dest, const Mat& x,
-			    const Pargs&... args);
+double* accumulate_adjoints(double* dest, const Mat& x, const Pargs&... args);
 
 template <typename Arith, require_arithmetic_t<scalar_type_t<Arith>>...,
-	  typename... Pargs>
-double* accumulate_adjoints(double* dest, Arith&& x,
-			    const Pargs&... args);
+          typename... Pargs>
+double* accumulate_adjoints(double* dest, Arith&& x, const Pargs&... args);
 
 template <typename... Pargs>
-double* accumulate_adjoints(double* dest, const var& x,
-			    const Pargs&... args) {
+double* accumulate_adjoints(double* dest, const var& x, const Pargs&... args) {
   *dest += x.adj();
   return accumulate_adjoints(dest + 1, args...);
 }
 
 template <typename... Pargs>
 double* accumulate_adjoints(double* dest, const std::vector<var>& x,
-			    const Pargs&... args) {
+                            const Pargs&... args) {
   for (size_t i = 0; i < x.size(); ++i) {
     dest[i] += x[i].adj();
   }
   return accumulate_adjoints(dest + x.size(), args...);
 }
 
-template <typename T, require_t<is_var<scalar_type_t<T>>>...,
-	  typename... Pargs>
+template <typename T, require_t<is_var<scalar_type_t<T>>>..., typename... Pargs>
 double* accumulate_adjoints(double* dest, const std::vector<T>& x,
-			    const Pargs&... args) {
+                            const Pargs&... args) {
   for (size_t i = 0; i < x.size(); ++i) {
     dest = accumulate_adjoints(dest, x[i]);
   }
@@ -61,8 +55,7 @@ double* accumulate_adjoints(double* dest, const std::vector<T>& x,
 }
 
 template <typename... Pargs, typename Mat, require_eigen_vt<is_var, Mat>...>
-double* accumulate_adjoints(double* dest, const Mat& x,
-			    const Pargs&... args) {
+double* accumulate_adjoints(double* dest, const Mat& x, const Pargs&... args) {
   for (size_t i = 0; i < x.size(); ++i) {
     dest[i] += x(i).adj();
   }
@@ -70,9 +63,8 @@ double* accumulate_adjoints(double* dest, const Mat& x,
 }
 
 template <typename Arith, require_arithmetic_t<scalar_type_t<Arith>>...,
-	  typename... Pargs>
-double* accumulate_adjoints(double* dest, Arith&& x,
-			    const Pargs&... args) {
+          typename... Pargs>
+double* accumulate_adjoints(double* dest, Arith&& x, const Pargs&... args) {
   return accumulate_adjoints(dest, args...);
 }
 

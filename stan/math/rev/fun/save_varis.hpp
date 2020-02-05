@@ -16,19 +16,16 @@ template <typename... Pargs>
 vari** save_varis(vari** dest, const var& x, const Pargs&... args);
 
 template <typename... Pargs>
-vari** save_varis(vari** dest, const std::vector<var>& x,
-		  const Pargs&... args);
+vari** save_varis(vari** dest, const std::vector<var>& x, const Pargs&... args);
 
-template <typename T, require_t<is_var<scalar_type_t<T>>>...,
-	  typename... Pargs>
-vari** save_varis(vari** dest, const std::vector<T>& x,
-		  const Pargs&... args);
+template <typename T, require_t<is_var<scalar_type_t<T>>>..., typename... Pargs>
+vari** save_varis(vari** dest, const std::vector<T>& x, const Pargs&... args);
 
 template <typename... Pargs, typename Mat, require_eigen_vt<is_var, Mat>...>
 vari** save_varis(vari** dest, const Mat& x, const Pargs&... args);
 
 template <typename R, require_arithmetic_t<scalar_type_t<R>>...,
-	  typename... Pargs>
+          typename... Pargs>
 vari** save_varis(vari** dest, const R& x, const Pargs&... args);
 
 template <typename... Pargs>
@@ -39,17 +36,15 @@ vari** save_varis(vari** dest, const var& x, const Pargs&... args) {
 
 template <typename... Pargs>
 vari** save_varis(vari** dest, const std::vector<var>& x,
-		  const Pargs&... args) {
+                  const Pargs&... args) {
   for (size_t i = 0; i < x.size(); ++i) {
     dest[i] = x[i].vi_;
   }
   return save_varis(dest + x.size(), args...);
 }
 
-template <typename T, require_t<is_var<scalar_type_t<T>>>...,
-	  typename... Pargs>
-vari** save_varis(vari** dest, const std::vector<T>& x,
-		  const Pargs&... args) {
+template <typename T, require_t<is_var<scalar_type_t<T>>>..., typename... Pargs>
+vari** save_varis(vari** dest, const std::vector<T>& x, const Pargs&... args) {
   for (size_t i = 0; i < x.size(); ++i) {
     dest = save_varis(dest, x[i]);
   }
@@ -65,7 +60,7 @@ vari** save_varis(vari** dest, const Mat& x, const Pargs&... args) {
 }
 
 template <typename R, require_arithmetic_t<scalar_type_t<R>>...,
-	  typename... Pargs>
+          typename... Pargs>
 vari** save_varis(vari** dest, const R& x, const Pargs&... args) {
   return save_varis(dest, args...);
 }

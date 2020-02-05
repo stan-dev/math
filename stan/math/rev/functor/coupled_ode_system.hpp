@@ -90,12 +90,11 @@ struct coupled_ode_system_impl<false, T_initial, T_t0, T_ts, F, Args...> {
 			  const Args&... args, std::ostream* msgs)
       : f_(f),
         y0_(y0),
-	args_tuple_(args...),
-	y0_vars_(internal::count_vars(y0_)),
-	args_vars_(internal::count_vars(args...)),
+        args_tuple_(args...),
+        y0_vars_(internal::count_vars(y0_)),
+        args_vars_(internal::count_vars(args...)),
         N_(y0.size()),
-        msgs_(msgs) {
-  }
+        msgs_(msgs) {}
 
   /**
    * Calculates the derivative of the coupled ode system with respect
@@ -119,13 +118,16 @@ struct coupled_ode_system_impl<false, T_initial, T_t0, T_ts, F, Args...> {
       start_nested();
 
       const vector<var> y_vars(z.begin(), z.begin() + N_);
-      auto local_args_tuple = apply([&](const Args&... args) {
-	  return std::tuple<decltype(internal::deep_copy(args))...>(internal::deep_copy(args)...);
-	}, args_tuple_);
+      auto local_args_tuple = apply(
+          [&](const Args&... args) {
+            return std::tuple<decltype(internal::deep_copy(args))...>(
+                internal::deep_copy(args)...);
+          },
+          args_tuple_);
 
-      vector<var> dy_dt_vars = apply([&](const Args&... args) {
-	  return f_(t, y_vars, args..., msgs_);
-	}, local_args_tuple);
+      vector<var> dy_dt_vars = apply(
+          [&](const Args&... args) { return f_(t, y_vars, args..., msgs_); },
+          local_args_tuple);
 
       check_size_match("coupled_ode_system", "dz_dt", dy_dt_vars.size(),
                        "states", N_);
@@ -147,10 +149,12 @@ struct coupled_ode_system_impl<false, T_initial, T_t0, T_ts, F, Args...> {
           dz_dt[N_ + N_ * j + i] = temp_deriv;
         }
 
-	Eigen::VectorXd args_adjoints = Eigen::VectorXd::Zero(args_vars_);
-	apply([&](const Args&... args) {
-	    internal::accumulate_adjoints(args_adjoints.data(), args...);
-	  }, local_args_tuple);
+        Eigen::VectorXd args_adjoints = Eigen::VectorXd::Zero(args_vars_);
+        apply(
+            [&](const Args&... args) {
+              internal::accumulate_adjoints(args_adjoints.data(), args...);
+            },
+            local_args_tuple);
         for (size_t j = 0; j < args_vars_; j++) {
           double temp_deriv = args_adjoints(j);
           for (size_t k = 0; k < N_; k++) {
