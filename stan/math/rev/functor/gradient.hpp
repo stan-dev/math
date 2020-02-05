@@ -81,28 +81,12 @@ class param_packed {
     param_packed(const F& f) : f_(f) {};
 
     var operator() (const Eigen::Matrix<var, Eigen::Dynamic, 1>& x) const {
-      // auto f_bound = std::bind(f_, x(x.size() - N - 1));
-      // param_packed<N - 1, decltype(f_bound)> p(f_bound);
-      // return p(x);
       return invoke_packed<N,F>::invoke(f_, x);
     }
 
   private:
     const F& f_;
 };
-
-// template <typename F> 
-// class param_packed<0, F> {
-//   public:
-//     param_packed(const F& f) : f_(f) {};
-
-//     var operator() (const Eigen::Matrix<var, Eigen::Dynamic, 1>& x) const {
-//       return f_();
-//     }
-//   private:
-//     const F& f_;
-// };
-
 
 template <typename F, typename... Ts>
 void gradient(const F& f, 
