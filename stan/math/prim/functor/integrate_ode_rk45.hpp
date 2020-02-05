@@ -1,10 +1,9 @@
-#ifndef STAN_MATH_REV_FUNCTOR_INTEGRATE_ODE_RK45_HPP
-#define STAN_MATH_REV_FUNCTOR_INTEGRATE_ODE_RK45_HPP
+#ifndef STAN_MATH_PRIM_FUNCTOR_INTEGRATE_ODE_RK45_HPP
+#define STAN_MATH_PRIM_FUNCTOR_INTEGRATE_ODE_RK45_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/rev/functor/coupled_ode_system.hpp>
-#include <stan/math/rev/functor/coupled_ode_observer.hpp>
+#include <stan/math/prim/functor/coupled_ode_system.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/apply.hpp>
 #include <boost/version.hpp>
@@ -68,7 +67,7 @@ namespace math {
  * same size as the state variable, corresponding to a time in ts.
  */
 
-template <typename ...Args, typename F, typename T1, typename T_t0, typename T_ts>
+template <typename... Args, typename F, typename T1, typename T_t0, typename T_ts>
 std::vector<std::vector<return_type_t<T1, T_t0, T_ts, Args...>>> integrate_ode_rk45(
     const F& f, const std::vector<T1>& y0, const T_t0& t0,
     const std::vector<T_ts>& ts,
@@ -112,7 +111,7 @@ std::vector<std::vector<return_type_t<T1, T_t0, T_ts, Args...>>> integrate_ode_r
 
   using return_t = return_type_t<T1, T_t0, T_ts, Args...>;
   // creates basic or coupled system by template specializations
-  coupled_ode_system<T1, F, Args...> coupled_system(f, y0, args..., msgs);
+  coupled_ode_system<T1, T_t0, T_ts, F, Args...> coupled_system(f, y0, args..., msgs);
 
   // first time in the vector must be time of initial state
   std::vector<double> ts_vec(ts.size() + 1);
@@ -120,9 +119,10 @@ std::vector<std::vector<return_type_t<T1, T_t0, T_ts, Args...>>> integrate_ode_r
   std::copy(ts_dbl.begin(), ts_dbl.end(), ts_vec.begin() + 1);
 
   std::vector<std::vector<return_t>> y;
-  coupled_ode_observer<T1, T_t0, T_ts, F, Args...> observer(f, y0, t0, ts, args..., msgs, y);
+  //coupled_ode_observer<T1, T_t0, T_ts, F, Args...> observer(f, y0, t0, ts, args..., msgs, y);
   bool observer_initial_recorded = false;
-
+  size_t time_index = 0;
+  
   // avoid recording of the initial state which is included by the
   // conventions of odeint in the output
   auto filtered_observer
@@ -131,7 +131,8 @@ std::vector<std::vector<return_type_t<T1, T_t0, T_ts, Args...>>> integrate_ode_r
       observer_initial_recorded = true;
       return;
     }
-    observer(coupled_state, t);
+    y.emplace_back(coupled_system.build_output(coupled_state, ts[time_index]));
+    time_index++;
   };
 
   // the coupled system creates the coupled initial state

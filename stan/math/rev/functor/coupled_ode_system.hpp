@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_FUNCTOR_COUPLED_ODE_SYSTEM_HPP
 
 #include <stan/math/rev/fun/value_of.hpp>
+#include <stan/math/prim/functor/coupled_ode_system.hpp>
 #include <stan/math/rev/functor/cvodes_utils.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
@@ -61,12 +62,12 @@ namespace math {
  *          std::vector<double> x, std::vector<int>x_int, std::ostream*
  * msgs)</code>
  */
-template <typename T1, typename F, typename... Args>
-struct coupled_ode_system {
-  using ReturnType = return_type_t<T1, Args...>;
+template <typename T_initial, typename T_t0, typename T_ts, typename F, typename... Args>
+struct coupled_ode_system_impl<false, T_initial, T_t0, T_ts, F, Args...> {
+  using T_Return = return_type_t<T_initial, T_t0, T_ts, Args...>;
 
   const F& f_;
-  const std::vector<T1>& y0_;
+  const std::vector<T_initial>& y0_;
   std::tuple<const Args&...> args_tuple_;
   const size_t y0_vars_;
   const size_t args_vars_;
@@ -85,8 +86,8 @@ struct coupled_ode_system {
    * @param[in] x_int integer data
    * @param[in, out] msgs stream for messages
    */
-  coupled_ode_system(const F& f, const std::vector<T1>& y0,
-                     const Args&... args, std::ostream* msgs)
+  coupled_ode_system_impl(const F& f, const std::vector<T_initial>& y0,
+			  const Args&... args, std::ostream* msgs)
       : f_(f),
         y0_(y0),
 	args_tuple_(args...),
@@ -110,9 +111,7 @@ struct coupled_ode_system {
    * @throw exception if the base ode function does not return the
    *    expected number of derivatives, N.
    */
-  template<bool return_type_is_var = is_var<ReturnType>::value>
-  std::enable_if_t<return_type_is_var>
-  operator()(const std::vector<double>& z, std::vector<double>& dz_dt,
+  void operator()(const std::vector<double>& z, std::vector<double>& dz_dt,
                   double t) const {
     using std::vector;
 
@@ -170,16 +169,66 @@ struct coupled_ode_system {
     recover_memory_nested();
   }
 
-  template<bool return_type_is_var = is_var<ReturnType>::value>
-  std::enable_if_t<not return_type_is_var>
-  operator()(const std::vector<double>& y, std::vector<double>& dy_dt,
-                  double t) const {
-    dy_dt = apply([&](const Args&... args) {
-	return f_(t, y, args..., msgs_);
-      }, args_tuple_);
+  template<typename T_t>
+  std::vector<var> build_output(const std::vector<double>& coupled_state, const T_t& t) const {
+    std::vector<double> y_dbl(coupled_state.data(), coupled_state.data() + N_);
 
-    check_size_match("coupled_ode_system", "y", y.size(), "dy_dt",
-                     dy_dt.size());
+    std::vector<var> yt;
+    yt.reserve(N_);
+    
+    std::vector<double> dy_dt;
+    if (is_var<T_t>::value) {
+      std::vector<double> y_dbl(coupled_state.begin(),
+                                coupled_state.begin() + N_);
+      /*vector<var> dy_dt_vars = apply([&](const Args&... args) {
+	  return f_(t, y_vars, args..., msgs_);
+	  }, local_args_tuple);*/
+      dy_dt = apply([&](auto&&... args) {
+	  return f_(value_of(t), y_dbl, value_of(args)..., msgs_);
+	}, args_tuple_);
+      check_size_match("coupled_ode_observer", "dy_dt", dy_dt.size(), "states", N_);
+    }
+    
+    for (size_t j = 0; j < N_; j++) {
+      // When true this is 1 and not ts_.size() because there's
+      //   only one time point involved with this output
+      const size_t total_vars = y0_vars_ + args_vars_ + ((is_var<T_t>::value) ? 1 : 0);
+
+      vari** varis = ChainableStack::instance_->memalloc_.alloc_array<vari*>(total_vars);
+      double* partials = ChainableStack::instance_->memalloc_.alloc_array<double>(total_vars);
+
+      vari** varis_ptr = varis;
+      double* partials_ptr = partials;
+
+      // iterate over parameters for each equation
+      varis_ptr = internal::save_varis(varis_ptr, y0_);
+      for (std::size_t k = 0; k < y0_vars_; k++) {
+	//*varis_ptr = y0[k].vi_;
+	*partials_ptr = coupled_state[N_ + y0_vars_ * k + j];
+	partials_ptr++;
+      }
+
+      varis_ptr = apply([&varis_ptr](auto&&... args) {
+	  return internal::save_varis(varis_ptr, args...);
+	}, args_tuple_);
+      for (std::size_t k = 0; k < args_vars_; k++) {
+	// dy[j]_dtheta[k]
+	// theta[k].vi_
+	*partials_ptr = coupled_state[N_ + N_ * y0_vars_ + N_ * k + j];
+	partials_ptr++;
+      }
+
+      if ((stan::is_var<T_t>::value) ? 1 : 0) {
+	varis_ptr = internal::save_varis(varis_ptr, t);
+	*partials_ptr = dy_dt[j];
+	partials_ptr++;
+	// dy[j]_dcurrent_t
+      }
+
+      yt.emplace_back(new precomputed_gradients_vari(coupled_state[j], total_vars, varis, partials));
+    }
+
+    return yt;
   }
 
   /**
