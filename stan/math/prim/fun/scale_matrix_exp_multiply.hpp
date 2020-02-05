@@ -14,7 +14,7 @@ namespace math {
  *
  * Specialized for double values for efficiency.
  *
- * @tparam Cb Columns matrix B
+ * @tparam Cb number of columns in matrix B, can be Eigen::Dynamic
  * @param[in] A Matrix
  * @param[in] B Matrix
  * @param[in] t double
@@ -42,7 +42,7 @@ inline Eigen::Matrix<double, -1, Cb> scale_matrix_exp_multiply(
  *
  * @tparam Ta scalar type matrix A
  * @tparam Tb scalar type matrix B
- * @tparam Cb Columns matrix B
+ * @tparam Cb number of columns in matrix B, can be Eigen::Dynamic
  * @param[in] A Matrix
  * @param[in] B Matrix
  * @param[in] t double

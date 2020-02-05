@@ -33,8 +33,8 @@ namespace math {
  * \right.
  * \f$
  *
- * @tparam T Type of input vector to transform.
- * @param[in] x Vector to transform.
+ * @tparam T type of input vector to transform
+ * @param[in] x vector to transform
  * @return log unit simplex result of the softmax transform of the vector.
  */
 template <typename T, require_t<std::is_arithmetic<scalar_type_t<T>>>...>
@@ -44,6 +44,7 @@ inline auto log_softmax(const T& x) {
     return (v.array() - log_sum_exp(v)).matrix().eval();
   });
 }
+
 }  // namespace math
 }  // namespace stan
 #endif

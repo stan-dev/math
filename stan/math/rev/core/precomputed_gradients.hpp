@@ -41,6 +41,9 @@ class precomputed_gradients_vari : public vari {
    * Construct a precomputed vari with the specified value,
    * operands, and gradients.
    *
+   * @tparam Arith An arithmetic type
+   * @tparam VecVar A vector of vars
+   * @tparam VecArith A vector of arithmetic types
    * @param[in] val The value of the variable.
    * @param[in] vars Vector of operands.
    * @param[in] gradients Vector of partial derivatives of value
@@ -85,7 +88,7 @@ class precomputed_gradients_vari : public vari {
  *
  * @tparam Arith An arithmetic type
  * @tparam VecVar A vector of vars
- * @tparam VecArith A vector of
+ * @tparam VecArith A vector of arithmetic types
  * @param[in] value The value of the resulting dependent variable.
  * @param[in] operands operands.
  * @param[in] gradients vector of partial derivatives of result with

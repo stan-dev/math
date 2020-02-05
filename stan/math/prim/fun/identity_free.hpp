@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUN_IDENTITY_FREE_HPP
 
 #include <stan/math/prim/meta.hpp>
+
 namespace stan {
 namespace math {
 
@@ -22,7 +23,6 @@ inline T identity_free(const T& y) {
 }
 
 }  // namespace math
-
 }  // namespace stan
 
 #endif

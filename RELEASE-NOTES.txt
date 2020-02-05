@@ -434,7 +434,7 @@ Bug Fixes
 --------------------------------------------------
 * beta_rng no longer returns NaN
 * fixed memory issue with cholesky_decompose in reverse-mode (#415)
-* no more mulitple definitions when including Stan headers in
+* no more multiple definitions when including Stan headers in
   multiple source files (#394)
 * fixed broken _MSC_VER conditionals and remove math.h includes (#370)
 
