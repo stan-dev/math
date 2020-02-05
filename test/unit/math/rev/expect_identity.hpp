@@ -24,16 +24,15 @@ void expect_identity(const std::string& msg, const F& f, const G& g, Ts... xs) {
 
   std::stringstream msg_val;
   msg_val << msg << ": value";
-  expect_near_rel(msg_val.str(), value_f, value_g);  
-  for(size_t i = 0; i < grad_f.size(); ++i) {
+  expect_near_rel(msg_val.str(), value_f, value_g);
+  for (size_t i = 0; i < grad_f.size(); ++i) {
     std::stringstream msg_grad;
     msg_grad << msg << ": grad(" << i << ")";
     expect_near_rel(msg_grad.str(), grad_f(i), grad_g(i));
   }
-
 }
 
-}
-}
+}  // namespace test
+}  // namespace stan
 
 #endif

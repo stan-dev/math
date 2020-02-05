@@ -4,17 +4,13 @@
 #include <gtest/gtest.h>
 
 TEST(MathFunctions, log_sum_exp_identities_rev) {
-  using stan::test::expect_identity;
   using stan::math::log_sum_exp;
   using stan::math::var;
+  using stan::test::expect_identity;
 
-  auto lh1 = [](const var& x) {
-    return log_sum_exp(x, x);
-  };
+  auto lh1 = [](const var& x) { return log_sum_exp(x, x); };
 
-  auto rh1 = [](const var& x) {
-    return stan::math::LOG_TWO + x;
-  };
+  auto rh1 = [](const var& x) { return stan::math::LOG_TWO + x; };
 
   expect_identity("Duplicate argument", lh1, rh1, 1e10);
 
@@ -22,9 +18,7 @@ TEST(MathFunctions, log_sum_exp_identities_rev) {
     return log_sum_exp(1e5 + x, 1e5 + y);
   };
 
-  auto rh2 = [](const var& x, const var& y) {
-    return 1e5 + log_sum_exp(x, y);
-  };
+  auto rh2 = [](const var& x, const var& y) { return 1e5 + log_sum_exp(x, y); };
 
   expect_identity("Multiplication", lh2, rh2, 1e10, 2e10);
   // log(exp(1e5))
