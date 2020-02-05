@@ -142,6 +142,9 @@
 #include <stan/math/prim/fun/ldexp.hpp>
 #include <stan/math/prim/fun/LDLT_factor.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/fun/linspaced_array.hpp>
+#include <stan/math/prim/fun/linspaced_row_vector.hpp>
+#include <stan/math/prim/fun/linspaced_vector.hpp>
 #include <stan/math/prim/fun/lmgamma.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log10.hpp>
@@ -268,9 +271,6 @@
 #include <stan/math/prim/fun/sort_indices.hpp>
 #include <stan/math/prim/fun/sort_indices_asc.hpp>
 #include <stan/math/prim/fun/sort_indices_desc.hpp>
-#include <stan/math/prim/fun/spaced_array.hpp>
-#include <stan/math/prim/fun/spaced_row_vector.hpp>
-#include <stan/math/prim/fun/spaced_vector.hpp>
 #include <stan/math/prim/fun/sqrt.hpp>
 #include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/squared_distance.hpp>
