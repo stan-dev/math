@@ -81,7 +81,7 @@ class invoke_packed<0, F, Ts...> {
 template <size_t N, typename F>
 class param_packed {
  public:
-  param_packed(const F& f) : f_(f){};
+  explicit param_packed(const F& f) : f_(f) {}
 
   var operator()(const Eigen::Matrix<var, Eigen::Dynamic, 1>& x) const {
     return invoke_packed<N, F>::invoke(f_, x);
