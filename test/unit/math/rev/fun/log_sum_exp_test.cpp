@@ -2,6 +2,7 @@
 #include <stan/math/rev.hpp>
 #include <test/unit/math/rev/expect_identity.hpp>
 #include <gtest/gtest.h>
+#include <vector>
 
 TEST(MathFunctions, log_sum_exp_identities_rev) {
   using stan::math::log_sum_exp;
