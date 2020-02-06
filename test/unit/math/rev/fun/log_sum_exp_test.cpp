@@ -8,18 +8,40 @@ TEST(MathFunctions, log_sum_exp_identities_rev) {
   using stan::math::var;
   using stan::test::expect_identity;
 
-  auto lh1 = [](const var& x) { return log_sum_exp(x, x); };
+  std::vector<double> values_to_check = 
+   {1e-8, 3e-5, 8e-1, 1, 8.6, 4.3e3, 9.6e6, 9e9, 1.8e15, 4.3e30};
 
-  auto rh1 = [](const var& x) { return stan::math::LOG_TWO + x; };
+  auto lh_duplicate = [](const var& x) { return log_sum_exp(x, x); };
+  auto rh_duplicate = [](const var& x) { return stan::math::LOG_TWO + x; };
 
-  expect_identity("Duplicate argument", lh1, rh1, 1e10);
+  auto lh_plus_one = [](const var& x) { return log_sum_exp(x, x + 1); };
+  auto rh_plus_one = [](const var& x) { return x + log(1 + stan::math::e()); };
 
-  auto lh2 = [](const var& x, const var& y) {
+  for(double x : values_to_check) {
+    expect_identity("Duplicate argument", lh_duplicate, rh_duplicate, x);
+    expect_identity("Plus one", lh_plus_one, rh_plus_one, x);
+  }
+
+  auto lh_multiply = [](const var& x, const var& y) {
     return log_sum_exp(1e5 + x, 1e5 + y);
   };
 
-  auto rh2 = [](const var& x, const var& y) { return 1e5 + log_sum_exp(x, y); };
+  auto rh_multiply = [](const var& x, const var& y) { 
+    return 1e5 + log_sum_exp(x, y); 
+  };
+  auto lh_orig = [](const var& x, const var& y) {
+    return log_sum_exp(x, y);
+  };
 
-  expect_identity("Multiplication", lh2, rh2, 1e10, 2e10);
+  auto rh_distribute = [](const var& x, const var& y) {
+    return x + log_sum_exp(0, y - x); 
+  };
+
+  for(double x : values_to_check) {
+    for(double y : values_to_check) {
+      expect_identity("Multiply", lh_multiply, rh_multiply, x, y);
+      expect_identity("Distribute", lh_orig, rh_distribute, x, y);
+    }
+  }  
   // log(exp(1e5))
 }
