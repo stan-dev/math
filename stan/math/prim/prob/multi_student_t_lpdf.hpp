@@ -3,11 +3,13 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/prob/multi_normal_log.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/is_inf.hpp>
 #include <stan/math/prim/fun/log1p.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/fun/max_size_mvt.hpp>
+#include <stan/math/prim/fun/size_mvt.hpp>
+#include <stan/math/prim/prob/multi_normal_log.hpp>
 #include <cmath>
 #include <cstdlib>
 

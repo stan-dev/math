@@ -3,11 +3,13 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/size.hpp>
 #include <boost/random/chi_squared_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 
 namespace stan {
 namespace math {
+
 /** \ingroup prob_dists
  * Return a pseudorandom inverse chi squared variate with the nu
  * degrees of freedom using the specified random number generator.

@@ -1,8 +1,8 @@
-#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMetaPrim, get_vector) {
+TEST(MathPrimFun, get_vector) {
   using stan::get;
 
   std::vector<double> x(3);
@@ -10,13 +10,13 @@ TEST(MathMetaPrim, get_vector) {
   EXPECT_EQ(5.0, get(x, 1));
 }
 
-TEST(MathMetaPrim, get_scalar) {
+TEST(MathPrimFun, get_scalar) {
   using stan::get;
 
   EXPECT_FLOAT_EQ(2.0, get(2.0, 1));
 }
 
-TEST(MathMetaPrim, get_matrix) {
+TEST(MathPrimFun, get_matrix) {
   using stan::get;
 
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m(2, 3);

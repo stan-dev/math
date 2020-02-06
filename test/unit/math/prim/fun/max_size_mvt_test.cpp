@@ -1,8 +1,8 @@
-#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMetaPrim, max_size_mvt) {
+TEST(MathPrimFun, max_size_mvt) {
   using stan::math::max_size_mvt;
 
   double x1 = 0, x2 = 1.0, x3 = -1.0, x4 = 4.0;
