@@ -58,49 +58,6 @@ void gradient(const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
   recover_memory_nested();
 }
 
-template <size_t N, typename F, typename... Ts>
-class invoke_packed {
- public:
-  static var invoke(const F& f,
-                    const Eigen::Matrix<var, Eigen::Dynamic, 1>& x_arr,
-                    Ts... xs) {
-    return invoke_packed<N - 1, F, const var&, Ts...>::invoke(
-        f, x_arr, x_arr(x_arr.size() - N), xs...);
-  }
-};
-
-template <typename F, typename... Ts>
-class invoke_packed<0, F, Ts...> {
- public:
-  static var invoke(const F& f, const Eigen::Matrix<var, Eigen::Dynamic, 1>&,
-                    Ts... xs) {
-    return f(xs...);
-  }
-};
-
-template <size_t N, typename F>
-class param_packed {
- public:
-  explicit param_packed(const F& f) : f_(f) {}
-
-  var operator()(const Eigen::Matrix<var, Eigen::Dynamic, 1>& x) const {
-    return invoke_packed<N, F>::invoke(f_, x);
-  }
-
- private:
-  const F& f_;
-};
-
-template <typename F, typename... Ts>
-void gradient(const F& f, double& fx,
-              Eigen::Matrix<double, Eigen::Dynamic, 1>& grad_fx, Ts... xs) {
-  // double x_vec[] = {xs...};
-  Eigen::Matrix<double, sizeof...(xs), 1> x(xs...);
-  // x.resize(sizeof...(xs));
-  // x << x_vec;
-  gradient(param_packed<sizeof...(xs), F>(f), x, fx, grad_fx);
-}
-
 }  // namespace math
 }  // namespace stan
 #endif
