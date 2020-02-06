@@ -4,6 +4,7 @@
 
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
+#include <stan/math/opencl/kernel_generator/colwise_reduction.hpp>
 #include <CL/cl2.hpp>
 #include <string>
 #include <set>
@@ -23,16 +24,19 @@ operation_cl<Derived, Scalar, Args...>::get_kernel_source_for_evaluating_into(
   auto lhs_expression = as_operation_cl(lhs);
   std::set<const operation_cl_base*> generated;
   name_generator ng;
-  kernel_parts parts = derived().get_kernel_parts(generated, ng, "i", "j");
-  kernel_parts out_parts
-      = lhs_expression.get_kernel_parts_lhs(generated, ng, "i", "j");
+  kernel_parts parts = derived().get_whole_kernel_parts(generated, ng, "i", "j",
+                                                        lhs_expression);
   std::string src = "kernel void calculate(" + parts.args +
-                    out_parts.args.substr(0, out_parts.args.size() - 2) +
-                    "){\n"
-                    "int i = get_global_id(0);\n"
-                    "int j = get_global_id(1);\n"
-                    + parts.body +
-                    out_parts.body + " = " + var_name + ";\n}";
+                    "const int rows, const int cols){\n"
+                    "const int i = get_global_id(0);\n"
+                    "const int j = get_global_id(1);\n"
+                    "const int lid_i = get_local_id(0);\n"
+                    "const int lsize_i = get_local_size(0);\n"
+                    "const int wg_id_i = get_group_id(0);\n"
+                    "const int n_groups_i = get_num_groups(0);\n"
+                    + parts.initialization +
+                    + "if(i < rows && j < cols){\n" + parts.body + "}\n"
+                    + parts.reduction + "}";
   return src;
 }
 

@@ -23,8 +23,6 @@ namespace math {
  * @tparam operation type with member function generate that accepts two
  * variable names and returns OpenCL source code for reduction operation_cl
  * @tparam PassZero whether \c operation passes trough zeros
- * @tparam Rowwise whether this is row wise reduction
- * @tparam Colwise whether this is column wise reduction
  */
 
 template <typename Derived, typename T, typename operation, bool PassZero>

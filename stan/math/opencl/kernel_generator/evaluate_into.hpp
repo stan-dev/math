@@ -23,15 +23,15 @@ void operation_cl<Derived, Scalar, Args...>::evaluate_into(
   using cache = operation_cl<Derived, Scalar, Args...>::cache<T_lhs>;
   const auto& lhs_expression = as_operation_cl(lhs);
 
-  int n_rows = derived().rows();
-  int n_cols = derived().cols();
+  int n_rows = derived().thread_rows();
+  int n_cols = derived().thread_cols();
   const char* function = "evaluate_into";
   check_positive(function, "number of rows", n_rows);
   check_positive(function, "number of columns", n_cols);
-  check_size_match(function, "Rows of ", "*this", n_rows, "rows of ",
+  check_size_match(function, "Rows of ", "*this", derived().rows(), "rows of ",
                    "lhs_expression", lhs_expression.rows());
-  check_size_match(function, "Columns of ", "*this", n_cols, "columns of ",
-                   "lhs_expression", lhs_expression.cols());
+  check_size_match(function, "Columns of ", "*this", derived().cols(),
+                   "columns of ", "lhs_expression", lhs_expression.cols());
   try {
     if (cache::kernel() == nullptr) {
       cache::source = get_kernel_source_for_evaluating_into(lhs);
@@ -43,11 +43,16 @@ void operation_cl<Derived, Scalar, Args...>::evaluate_into(
     std::set<const operation_cl_base*> generated;
     derived().set_args(generated, cache::kernel, arg_num);
     lhs_expression.set_args(generated, cache::kernel, arg_num);
+    cache::kernel.setArg(arg_num++, n_rows);
+    cache::kernel.setArg(arg_num++, n_cols);
+
+    int local_rows = opencl_context.base_opts().at("LOCAL_SIZE_");
+    int wgs_rows = (n_rows + local_rows - 1) / local_rows;
 
     cl::Event e;
     opencl_context.queue().enqueueNDRangeKernel(cache::kernel, cl::NullRange,
-                                                cl::NDRange(n_rows, n_cols),
-                                                cl::NullRange, nullptr, &e);
+                                                cl::NDRange(local_rows * wgs_rows, n_cols),
+                                                cl::NDRange(local_rows, 1), nullptr, &e);
     derived().add_read_event(e);
     lhs_expression.add_write_event(e);
   } catch (cl::Error e) {
