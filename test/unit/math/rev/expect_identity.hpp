@@ -9,8 +9,6 @@
 namespace stan {
 namespace test {
 
-
-
 template <typename F, typename G, typename... Ts>
 void expect_identity(const std::string& msg, const F& f, const G& g, Ts... xs) {
   using stan::math::gradient;
@@ -27,14 +25,13 @@ void expect_identity(const std::string& msg, const F& f, const G& g, Ts... xs) {
   double value_g;
   Eigen::Matrix<double, Eigen::Dynamic, 1> grad_g;
 
-
   gradient(packed_f, x_vec, value_f, grad_f);
   gradient(packed_g, x_vec, value_g, grad_g);
 
   std::stringstream x_strstr;
   x_strstr << std::setprecision(24) << " for params: ";
-  for(size_t i = 0; i < x_vec.size(); ++i) {
-    if(i > 0) {
+  for (size_t i = 0; i < x_vec.size(); ++i) {
+    if (i > 0) {
       x_strstr << ", ";
     }
     x_strstr << x_vec(i);

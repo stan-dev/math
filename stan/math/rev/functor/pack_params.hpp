@@ -42,6 +42,6 @@ class pack_params {
   const F& f_;
 };
 
-}
-}
+}  // namespace math
+}  // namespace stan
 #endif
