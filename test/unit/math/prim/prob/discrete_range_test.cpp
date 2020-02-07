@@ -2,40 +2,38 @@
 #include <boost/math/distributions.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <gtest/gtest.h>
-#include <limits>
 #include <vector>
 
 TEST(ProbDistributionsDiscreteRange, error_check) {
   using stan::math::discrete_range_rng;
   boost::random::mt19937 rng;
 
-  double nan = std::numeric_limits<double>::quiet_NaN();
-  double inf = std::numeric_limits<double>::infinity();
+  std::vector<int> lower{5, 11, -15};
+  std::vector<int> upper{7, 15, -10};
 
-  Eigen::VectorXd lower(3);
-  Eigen::VectorXd upper(3);
-
-  lower << 5.0, 11.0, -15.0;
-  upper << 5.0, 15.0, -10.0;
   EXPECT_NO_THROW(discrete_range_rng(lower, upper, rng));
   EXPECT_THROW(discrete_range_rng(lower, 10, rng), std::domain_error);
   EXPECT_THROW(discrete_range_rng(10, upper, rng), std::domain_error);
 
-  lower << -1e3, 1.1e3, 1e4;
-  upper << -1e2, 1.2e3, 1e5;
-  EXPECT_NO_THROW(discrete_range_rng(lower, upper, rng));
-
-  EXPECT_THROW(discrete_range_rng(nan, upper, rng), std::domain_error);
-  EXPECT_THROW(discrete_range_rng(inf, upper, rng), std::domain_error);
-  EXPECT_THROW(discrete_range_rng(-inf, upper, rng), std::domain_error);
-  EXPECT_THROW(discrete_range_rng(lower, nan, rng), std::domain_error);
-  EXPECT_THROW(discrete_range_rng(lower, inf, rng), std::domain_error);
-  EXPECT_THROW(discrete_range_rng(lower, -inf, rng), std::domain_error);
-
-  Eigen::VectorXd vec2(2);
-  vec2 << 1, 2;
+  std::vector<int> vec2{1, 2};
   EXPECT_THROW(discrete_range_rng(lower, vec2, rng), std::invalid_argument);
   EXPECT_THROW(discrete_range_rng(vec2, upper, rng), std::invalid_argument);
+}
+
+TEST(ProbDistributionsDiscreteRange, boundary_values) {
+  using stan::math::discrete_range_rng;
+  boost::random::mt19937 rng;
+
+  std::vector<int> lower{-5, 11, 17};
+  EXPECT_EQ(lower, discrete_range_rng(lower, lower, rng));
+
+  std::vector<int> upper(lower);
+  for (int i = 0; i < upper.size(); i++) {
+    ++upper[i];
+  }
+
+  EXPECT_LE(lower, discrete_range_rng(lower, upper, rng));
+  EXPECT_GE(upper, discrete_range_rng(lower, upper, rng));
 }
 
 TEST(ProbDistributionsDiscreteRange, chiSquareGoodnessFitTest) {
@@ -48,19 +46,12 @@ TEST(ProbDistributionsDiscreteRange, chiSquareGoodnessFitTest) {
   int K = upper - lower + 1;
   boost::math::chi_squared mydist(K - 1);
 
-  int bin[K];
-  double expect[K];
-  double prop = static_cast<double>(N) / K;
-  for (int i = 0; i < K; i++) {
-    bin[i] = 0;
-    expect[i] = prop;
-  }
+  std::vector<int> bin(K, 0);
+  std::vector<double> expect(K, static_cast<double>(N) / K);
 
-  int count = 0;
-  while (count < N) {
+  for (int count = 0; count < N; ++count) {
     int a = stan::math::discrete_range_rng(lower, upper, rng);
-    bin[a - lower]++;
-    count++;
+    ++bin[a - lower];
   }
 
   double chi = 0;

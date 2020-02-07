@@ -11,25 +11,24 @@ namespace stan {
 namespace math {
 
 /** \ingroup prob_dists
- * Return a discrete random variate for the given lower and upper bounds
+ * Return an integer random variate between the given lower and upper bounds
  * (inclusive) using the specified random number generator.
  *
  * `lower` and `upper` can each be a scalar or a one-dimensional container.
  * Any non-scalar inputs must be the same size.
  *
- * @tparam T_lower type of lower bound
- * @tparam T_upper type of upper bound
+ * @tparam T_lower type of lower bound, either int or std::vector<int>
+ * @tparam T_upper type of upper bound, either int or std::vector<int>
  * @tparam RNG type of random number generator
  *
  * @param lower lower bound
  * @param upper upper bound
  * @param rng random number generator
- * @return A (sequence of) discrete random variate(s) between `lower` and
+ * @return A (sequence of) integer random variate(s) between `lower` and
  * `upper`, both bounds included.
- * @throw std::domain_error if lower or upper are non-finite, or if upper
- * is smaller than lower
+ * @throw std::domain_error if upper is smaller than lower.
  * @throw std::invalid_argument if non-scalar arguments are of different
- * sizes
+ * sizes.
  */
 template <typename T_lower, typename T_upper, class RNG>
 inline typename VectorBuilder<true, int, T_lower, T_upper>::type
@@ -39,8 +38,6 @@ discrete_range_rng(const T_lower& lower, const T_upper& upper, RNG& rng) {
 
   static const char* function = "discrete_range_rng";
 
-  check_finite(function, "Lower bound parameter", lower);
-  check_finite(function, "Upper bound parameter", upper);
   check_consistent_sizes(function, "Lower bound parameter", lower,
                          "Upper bound parameter", upper);
   check_greater_or_equal(function, "Upper bound parameter", upper, lower);
