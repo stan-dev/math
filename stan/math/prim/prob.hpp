@@ -75,6 +75,8 @@
 #include <stan/math/prim/prob/dirichlet_lpdf.hpp>
 #include <stan/math/prim/prob/dirichlet_lpmf.hpp>
 #include <stan/math/prim/prob/dirichlet_rng.hpp>
+#include <stan/math/prim/prob/discrete_range_log.hpp>
+#include <stan/math/prim/prob/discrete_range_lpmf.hpp>
 #include <stan/math/prim/prob/discrete_range_rng.hpp>
 #include <stan/math/prim/prob/double_exponential_ccdf_log.hpp>
 #include <stan/math/prim/prob/double_exponential_cdf.hpp>
