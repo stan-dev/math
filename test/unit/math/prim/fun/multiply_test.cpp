@@ -1,5 +1,6 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
+#include <iostream>
 
 TEST(MathMatrixPrimMat, multiply_c_v) {
   stan::math::vector_d v(3);
@@ -55,7 +56,7 @@ TEST(MathMatrixPrimMat, multiply_m_v_exception) {
 
   m.resize(3, 0);
   v.resize(0);
-  EXPECT_THROW(stan::math::multiply(m, v), std::invalid_argument);
+  EXPECT_NO_THROW(stan::math::multiply(m, v));
 
   m.resize(2, 3);
   v.resize(2);
@@ -71,14 +72,14 @@ TEST(MathMatrixPrimMat, multiply_rv_m_exception) {
 
   rv.resize(0);
   m.resize(0, 3);
-  EXPECT_THROW(stan::math::multiply(rv, m), std::invalid_argument);
+  EXPECT_NO_THROW(stan::math::multiply(rv, m));
 
   rv.resize(3);
   m.resize(2, 3);
   EXPECT_THROW(stan::math::multiply(rv, m), std::invalid_argument);
 }
 TEST(MathMatrixPrimMat, multiply_m_m_exception) {
-  stan::math::matrix_d m1, m2;
+  stan::math::matrix_d m1, m2, m3;
 
   m1.resize(1, 3);
   m2.resize(3, 5);
@@ -86,7 +87,7 @@ TEST(MathMatrixPrimMat, multiply_m_m_exception) {
 
   m1.resize(2, 0);
   m2.resize(0, 3);
-  EXPECT_THROW(stan::math::multiply(m1, m2), std::invalid_argument);
+  EXPECT_NO_THROW(stan::math::multiply(m1, m2));
 
   m1.resize(4, 3);
   m2.resize(2, 3);
