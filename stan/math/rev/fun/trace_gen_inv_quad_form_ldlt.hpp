@@ -42,8 +42,8 @@ inline var trace_gen_inv_quad_form_ldlt(const Eigen::Matrix<T1, R1, C1> &D,
     return 0;
   }
 
-  check_multiplicable("trace_gen_inv_quad_form_ldlt", "A", A, "B", B);
-  check_multiplicable("trace_gen_inv_quad_form_ldlt", "B", B, "D", D);
+  check_multiplicable_positive("trace_gen_inv_quad_form_ldlt", "A", A, "B", B);
+  check_multiplicable_positive("trace_gen_inv_quad_form_ldlt", "B", B, "D", D);
 
   internal::trace_inv_quad_form_ldlt_impl<T2, R2, C2, T3, R3, C3> *_impl
       = new internal::trace_inv_quad_form_ldlt_impl<T2, R2, C2, T3, R3, C3>(

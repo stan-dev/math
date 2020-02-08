@@ -36,7 +36,7 @@ inline return_type_t<T1, T2> trace_inv_quad_form_ldlt(
     return 0;
   }
 
-  check_multiplicable("trace_inv_quad_form_ldlt", "A", A, "B", B);
+  check_multiplicable_positive("trace_inv_quad_form_ldlt", "A", A, "B", B);
 
   return trace(multiply(transpose(B), mdivide_left_ldlt(A, B)));
 }

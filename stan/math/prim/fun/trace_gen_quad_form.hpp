@@ -41,8 +41,8 @@ inline return_type_t<TD, TA, TB> trace_gen_quad_form(
     const Eigen::Matrix<TB, RB, CB> &B) {
   check_square("trace_gen_quad_form", "A", A);
   check_square("trace_gen_quad_form", "D", D);
-  check_multiplicable("trace_gen_quad_form", "A", A, "B", B);
-  check_multiplicable("trace_gen_quad_form", "B", B, "D", D);
+  check_multiplicable_positive("trace_gen_quad_form", "A", A, "B", B);
+  check_multiplicable_positive("trace_gen_quad_form", "B", B, "D", D);
   return trace(multiply(multiply(D, transpose(B)), multiply(A, B)));
 }
 
@@ -74,8 +74,8 @@ inline double trace_gen_quad_form(const Eigen::Matrix<double, RD, CD> &D,
                                   const Eigen::Matrix<double, RB, CB> &B) {
   check_square("trace_gen_quad_form", "A", A);
   check_square("trace_gen_quad_form", "D", D);
-  check_multiplicable("trace_gen_quad_form", "A", A, "B", B);
-  check_multiplicable("trace_gen_quad_form", "B", B, "D", D);
+  check_multiplicable_positive("trace_gen_quad_form", "A", A, "B", B);
+  check_multiplicable_positive("trace_gen_quad_form", "B", B, "D", D);
   return (D * B.transpose() * A * B).trace();
 }
 

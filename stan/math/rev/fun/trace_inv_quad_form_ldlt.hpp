@@ -162,7 +162,7 @@ inline return_type_t<T2, T3> trace_inv_quad_form_ldlt(
     return 0;
   }
 
-  check_multiplicable("trace_inv_quad_form_ldlt", "A", A, "B", B);
+  check_multiplicable_positive("trace_inv_quad_form_ldlt", "A", A, "B", B);
 
   internal::trace_inv_quad_form_ldlt_impl<T2, R2, C2, T3, R3, C3> *impl_
       = new internal::trace_inv_quad_form_ldlt_impl<T2, R2, C2, T3, R3, C3>(A,

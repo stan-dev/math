@@ -46,8 +46,8 @@ inline return_type_t<T1, T2, T3> trace_gen_inv_quad_form_ldlt(
     return 0;
   }
 
-  check_multiplicable("trace_gen_inv_quad_form_ldlt", "A", A, "B", B);
-  check_multiplicable("trace_gen_inv_quad_form_ldlt", "B", B, "D", D);
+  check_multiplicable_positive("trace_gen_inv_quad_form_ldlt", "A", A, "B", B);
+  check_multiplicable_positive("trace_gen_inv_quad_form_ldlt", "B", B, "D", D);
 
   return trace(multiply(multiply(D, transpose(B)), mdivide_left_ldlt(A, B)));
 }

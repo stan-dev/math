@@ -25,7 +25,7 @@ template <int RA, int CA, int RB, int CB>
 inline double trace_quad_form(const Eigen::Matrix<double, RA, CA> &A,
                               const Eigen::Matrix<double, RB, CB> &B) {
   check_square("trace_quad_form", "A", A);
-  check_multiplicable("trace_quad_form", "A", A, "B", B);
+  check_multiplicable_positive("trace_quad_form", "A", A, "B", B);
 
   return (B.transpose() * A * B).trace();
 }

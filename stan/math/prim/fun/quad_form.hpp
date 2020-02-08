@@ -14,7 +14,7 @@ template <int RA, int CA, int RB, int CB, typename T>
 inline Eigen::Matrix<T, CB, CB> quad_form(const Eigen::Matrix<T, RA, CA>& A,
                                           const Eigen::Matrix<T, RB, CB>& B) {
   check_square("quad_form", "A", A);
-  check_multiplicable("quad_form", "A", A, "B", B);
+  check_multiplicable_positive("quad_form", "A", A, "B", B);
   return B.transpose() * A * B;
 }
 
@@ -22,7 +22,7 @@ template <int RA, int CA, int RB, typename T>
 inline T quad_form(const Eigen::Matrix<T, RA, CA>& A,
                    const Eigen::Matrix<T, RB, 1>& B) {
   check_square("quad_form", "A", A);
-  check_multiplicable("quad_form", "A", A, "B", B);
+  check_multiplicable_positive("quad_form", "A", A, "B", B);
   return B.dot(A * B);
 }
 

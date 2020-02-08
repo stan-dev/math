@@ -78,7 +78,7 @@ template <typename Ta, int Ra, int Ca, typename Tb, int Rb, int Cb,
 inline return_type_t<Ta, Tb> trace_quad_form(
     const Eigen::Matrix<Ta, Ra, Ca>& A, const Eigen::Matrix<Tb, Rb, Cb>& B) {
   check_square("trace_quad_form", "A", A);
-  check_multiplicable("trace_quad_form", "A", A, "B", B);
+  check_multiplicable_positive("trace_quad_form", "A", A, "B", B);
 
   internal::trace_quad_form_vari_alloc<Ta, Ra, Ca, Tb, Rb, Cb>* baseVari
       = new internal::trace_quad_form_vari_alloc<Ta, Ra, Ca, Tb, Rb, Cb>(A, B);

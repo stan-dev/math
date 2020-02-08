@@ -102,7 +102,7 @@ inline typename std::enable_if<std::is_same<Ta, var>::value
 quad_form(const Eigen::Matrix<Ta, Ra, Ca>& A,
           const Eigen::Matrix<Tb, Rb, Cb>& B) {
   check_square("quad_form", "A", A);
-  check_multiplicable("quad_form", "A", A, "B", B);
+  check_multiplicable_positive("quad_form", "A", A, "B", B);
 
   internal::quad_form_vari<Ta, Ra, Ca, Tb, Rb, Cb>* baseVari
       = new internal::quad_form_vari<Ta, Ra, Ca, Tb, Rb, Cb>(A, B);
@@ -116,7 +116,7 @@ inline typename std::enable_if<
 quad_form(const Eigen::Matrix<Ta, Ra, Ca>& A,
           const Eigen::Matrix<Tb, Rb, 1>& B) {
   check_square("quad_form", "A", A);
-  check_multiplicable("quad_form", "A", A, "B", B);
+  check_multiplicable_positive("quad_form", "A", A, "B", B);
 
   internal::quad_form_vari<Ta, Ra, Ca, Tb, Rb, 1>* baseVari
       = new internal::quad_form_vari<Ta, Ra, Ca, Tb, Rb, 1>(A, B);
