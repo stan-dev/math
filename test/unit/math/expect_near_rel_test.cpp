@@ -9,10 +9,10 @@ TEST(testUnitMath, ExpectNearRelScalar) {
   expect_near_rel("test A1", 0, 0, 1e-16);
   expect_near_rel("test A2", 0, 0.0, 1e-16);
   expect_near_rel("test A3", 0.0, 0, 1e-16);
-  expect_near_rel("test B1", 0, 1e-8, 1e-5);
-  expect_near_rel("test B2", 0.0, 1e-8, 1e-5);
-  expect_near_rel("test C1", 1e-8, 0, 1e-5);
-  expect_near_rel("test C2", 1e-8, 0.0, 1e-5);
+  expect_near_rel("test B1", 0, 1e-8, 1e-4);
+  expect_near_rel("test B2", 0.0, 1e-8, 1e-4);
+  expect_near_rel("test C1", 1e-8, 0, 1e-4);
+  expect_near_rel("test C2", 1e-8, 0.0, 1e-4);
 
   // non-zero examples
   expect_near_rel("test D1", 1, 1, 1e-16);
@@ -33,6 +33,7 @@ TEST(testUnitMath, ExpectNearRelScalar) {
 TEST(testUnitMath, ExpectNearRelMatrix) {
   using Eigen::Matrix;
   using stan::test::expect_near_rel;
+  using stan::test::relative_tolerance;
   typedef Matrix<double, -1, 1> v_t;
   typedef Matrix<double, 1, -1> rv_t;
   typedef Matrix<double, -1, -1> m_t;
@@ -57,7 +58,7 @@ TEST(testUnitMath, ExpectNearRelMatrix) {
   m_t d2(2, 3);
   d1 << 1, 2, 3, 0, 0, 0 - 1e-8;
   d2 << 1 + 1e-8, 2 - 1e-8, 3, 0, 0 + 1e-8, 0;
-  expect_near_rel("test D", d1, d2, 1e-6);
+  expect_near_rel("test D", d1, d2, relative_tolerance(1e-6, 1e-8));
 
   // these will fail
   // v_t e1(1);
@@ -82,7 +83,7 @@ TEST(testUnitMath, ExpectNearRelVector) {
 
   expect_near_rel("test C", v_t{1, 1, 1}, v_t{1 + 1e-8, 1 - 1e-9, 1}, 1e-6);
 
-  expect_near_rel("test D", v_t{0, 0, 0}, v_t{0, 0 + 1e-6, 0 - 1e-6}, 1e-4);
+  expect_near_rel("test D", v_t{0, 0, 0}, v_t{0, 0 + 9e-9, 0 - 9e-9}, 1e-4);
 
   // ones after here fail
   // expect_near_rel("test E", v_t{1}, v_t{1, 2}, 1e-6);
@@ -91,6 +92,7 @@ TEST(testUnitMath, ExpectNearRelVector) {
 
 TEST(testUnitMath, ExpectNearRelVectorNesting) {
   using stan::test::expect_near_rel;
+  using stan::test::relative_tolerance;
   using std::vector;
   typedef vector<double> v_t;
   typedef vector<v_t> vv_t;
@@ -102,19 +104,19 @@ TEST(testUnitMath, ExpectNearRelVectorNesting) {
   expect_near_rel("test A", vv_t{}, vv_t{}, 1e-10);
 
   expect_near_rel("test B", vv_t{v_t{1, 2, 3}, v_t{0, 0, 0}},
-                  vv_t{v_t{1, 2, 3}, v_t{0, 0 + 1e-6, 0 - 1e-6}}, 1e-5);
+                  vv_t{v_t{1, 2, 3}, v_t{0, 0 + 1e-6, 0 - 1e-6}}, 1e-3);
 
   expect_near_rel(
       "test C",
       vvv_t{vv_t{v_t{1, 2, 3}, v_t{0, 0, 0}}, vv_t{v_t{1, 2, 3}, v_t{0, 0, 0}}},
       vvv_t{vv_t{v_t{1, 2, 3}, v_t{0, 0 + 1e-6, 0 - 1e-6}},
             vv_t{v_t{1, 2, 3}, v_t{0, 0 + 1e-6, 0 - 1e-6}}},
-      1e-5);
+      relative_tolerance(1e-5, 1e-6));
 
   ev_t d1(3);
   ev_t d2(3);
   d1 << 1, 0, 0;
-  d2 << 1 + 1e-8, 0 + 1e-8, 0;
+  d2 << 1 + 1e-8, 0 + 1e-12, 0;
   vev_t e1{d1, d2};
   vev_t e2{d2, d1};
   expect_near_rel("test E", e1, e2, 1e-6);

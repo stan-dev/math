@@ -37,6 +37,7 @@ inline typename apply_scalar_unary<fabs_fun, T>::return_t fabs(const T& x) {
 
 /**
  * Version of fabs() that accepts Eigen Matrix or matrix expressions.
+ *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
  * @return Absolute value of each value in x.
@@ -49,6 +50,7 @@ inline auto fabs(const Eigen::MatrixBase<Derived>& x) {
 
 /**
  * Version of fabs() that accepts Eigen Array or array expressions.
+ *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
  * @return Absolute value of each value in x.

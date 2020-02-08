@@ -6,6 +6,7 @@
 
 namespace stan {
 namespace math {
+
 /**
  * Compute B^T A B
  **/

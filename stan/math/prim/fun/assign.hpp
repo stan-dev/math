@@ -56,8 +56,8 @@ inline void assign(T_lhs& x, const T_rhs& y) {
  * compatible.  The shapes are specified in the row and column
  * template parameters.
  *
- * @tparam T_lhs Type of left-hand side matrix elements.
- * @tparam T_rhs Type of right-hand side matrix elements.
+ * @tparam T_lhs type of elements in the left-hand side matrix
+ * @tparam T_rhs type of elements in the right-hand side matrix
  * @tparam R1 number of rows in the left-hand side matrix or Eigen::Dynamic
  * @tparam C1 number of columns in the left-hand side matrix or Eigen::Dynamic
  * @tparam R2 number of rows in the right-hand side matrix or Eigen::Dynamic
@@ -94,10 +94,10 @@ inline void assign(Eigen::Matrix<T_lhs, R1, C1>& x,
  * <code>Eigen::Matrix</code> types and whose shapes match.  The
  * shapes are specified in the row and column template parameters.
  *
- * @tparam T_lhs Type of left-hand side matrix elements.
- * @tparam T_rhs Type of right-hand side matrix elements.
- * @tparam R number of rows or Eigen::Dynamic
- * @tparam C number of columns or Eigen::Dynamic
+ * @tparam T_lhs type of elements in the left-hand side matrix
+ * @tparam T_rhs type of elements in the right-hand side matrix
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
  *
  * @param x Left-hand side matrix.
  * @param y Right-hand side matrix.
@@ -127,10 +127,10 @@ inline void assign(Eigen::Matrix<T_lhs, R, C>& x,
  * used, which still holds onto a reference to the contained
  * matrix and thus still updates the appropriate values.
  *
- * @tparam T_lhs Type of matrix block elements.
- * @tparam T Type of right-hand side matrix elements.
- * @tparam R number of rows or Eigen::Dynamic
- * @tparam C number of columns or Eigen::Dynamic
+ * @tparam T_lhs type of matrix block elements
+ * @tparam T type of elements in the right-hand side matrix
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
  *
  * @param x Left-hand side block view of matrix.
  * @param y Right-hand side matrix.
@@ -162,8 +162,8 @@ inline void assign(Eigen::Block<T_lhs> x, const Eigen::Matrix<T, R, C>& y) {
  * assigned to a <code>std::vector&lt;double&gt;</code> using this
  * function.
  *
- * @tparam T_lhs Type of left-hand side vector elements.
- * @tparam T_rhs Type of right-hand side vector elements.
+ * @tparam T_lhs type of elements in the left-hand side vector
+ * @tparam T_rhs type of elements in the right-hand side vector
  * @param x Left-hand side vector.
  * @param y Right-hand side vector.
  * @throw std::invalid_argument if sizes do not match.

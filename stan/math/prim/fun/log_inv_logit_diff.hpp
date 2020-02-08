@@ -25,10 +25,10 @@ namespace math {
     \frac{\partial }{\partial x} = -\frac{e^y}{e^x-e^y}-\frac{e^y}{e^y+1}
    \f]
  *
- * @tparam T1 Type of x argument.
- * @tparam T2 Type of y argument.
- * @param x Argument.
- * @param y Argument.
+ * @tparam T1 type of x argument
+ * @tparam T2 type of y argument
+ * @param x first argument
+ * @param y second argument
  * @return Result of log difference of inverse logits of arguments.
  */
 template <typename T1, typename T2>

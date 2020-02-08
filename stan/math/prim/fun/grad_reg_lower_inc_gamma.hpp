@@ -60,7 +60,7 @@ namespace math {
  *     \sum_n=0^\infty \frac{z^{a+n}}{\Gamma(a+n+1)}\psi^0(a+n+1)
  * \f]
  *
- * This caclulation is sufficiently accurate for small $a$ and
+ * This calculation is sufficiently accurate for small $a$ and
  * small $z$.  For larger values and $a$ and $z$ we use it in its
  * log form:
  *

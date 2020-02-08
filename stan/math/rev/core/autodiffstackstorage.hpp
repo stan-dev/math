@@ -48,8 +48,8 @@ namespace math {
  * (gcc, clang, Intel) extension which requires initialization with a
  * compile time constant expression. The C++11 keyword thread_local
  * does allow for constant and dynamic initialization of the
- * TLS. Thus, only the __thread keyword gurantees that constant
- * initialization and it's implied speedup, is used.
+ * TLS. Thus, only the __thread keyword guarantees that constant
+ * initialization and its implied speedup, is used.
  *
  * The initialzation of the AD instance at run-time is handled by the
  * lifetime of a AutodiffStackSingleton object. More specifically, the
