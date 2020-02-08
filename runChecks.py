@@ -57,7 +57,7 @@ def check_non_unique_test_names():
             for y in duplicates[x]:
                 duplicates_error_msg += "\t" + y + "\n"
         errors.append(
-            "Tests or test fixtures with non-unqiue names found in test/unit:\n\n" +
+            "Tests or test fixtures with non-unique names found in test/unit:\n\n" +
             duplicates_error_msg
         )
     return errors

@@ -74,15 +74,17 @@ class AgradCdfSkewNormal : public AgradCdfTest {
 
   template <typename T_y, typename T_loc, typename T_scale, typename T_shape,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale, T_shape>::type cdf(
-      const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& alpha,
-      const T4&, const T5&) {
+  stan::return_type_t<T_y, T_loc, T_scale, T_shape> cdf(const T_y& y,
+                                                        const T_loc& mu,
+                                                        const T_scale& sigma,
+                                                        const T_shape& alpha,
+                                                        const T4&, const T5&) {
     return stan::math::skew_normal_cdf(y, mu, sigma, alpha);
   }
 
   template <typename T_y, typename T_loc, typename T_scale, typename T_shape,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale, T_shape>::type cdf_function(
+  stan::return_type_t<T_y, T_loc, T_scale, T_shape> cdf_function(
       const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& alpha,
       const T4&, const T5&) {
     using stan::math::owens_t;

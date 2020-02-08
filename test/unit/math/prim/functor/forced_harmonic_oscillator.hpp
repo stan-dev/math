@@ -7,7 +7,7 @@
 
 struct forced_harm_osc_ode_fun {
   template <typename T0, typename T1, typename T2>
-  inline std::vector<typename stan::return_type<T1, T2>::type>
+  inline std::vector<stan::return_type_t<T1, T2>>
   // initial time
   // initial positions
   // parameters
@@ -20,7 +20,7 @@ struct forced_harm_osc_ode_fun {
       throw std::domain_error(
           "this function was called with inconsistent state");
 
-    std::vector<typename stan::return_type<T1, T2>::type> res;
+    std::vector<stan::return_type_t<T1, T2>> res;
     res.push_back(y_in.at(1));
     res.push_back(-y_in.at(0) * sin(theta.at(1) * t_in)
                   - theta.at(0) * y_in.at(1));

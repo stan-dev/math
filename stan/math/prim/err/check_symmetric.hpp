@@ -33,8 +33,8 @@ inline void check_symmetric(
     const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
   check_square(function, name, y);
   using std::fabs;
-  using size_type = typename index_type<
-      Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>>::type;
+  using size_type
+      = index_type_t<Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>>;
 
   size_type k = y.rows();
   if (k <= 1) {

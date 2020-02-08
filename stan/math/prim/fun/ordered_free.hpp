@@ -29,7 +29,7 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> ordered_free(
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::log;
-  using size_type = typename index_type<Matrix<T, Dynamic, 1>>::type;
+  using size_type = index_type_t<Matrix<T, Dynamic, 1>>;
 
   size_type k = y.size();
   Matrix<T, Dynamic, 1> x(k);

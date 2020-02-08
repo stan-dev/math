@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/log1m_exp.hpp>
+#include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
 #include <cmath>
@@ -39,7 +40,7 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_x_scalar, int T_x_rows,
           typename T_beta_scalar, typename T_cuts_scalar>
-typename stan::return_type_t<T_x_scalar, T_beta_scalar, T_cuts_scalar>
+return_type_t<T_x_scalar, T_beta_scalar, T_cuts_scalar>
 ordered_logistic_glm_lpmf(
     const T_y& y, const Eigen::Matrix<T_x_scalar, T_x_rows, Eigen::Dynamic>& x,
     const Eigen::Matrix<T_beta_scalar, Eigen::Dynamic, 1>& beta,
@@ -51,8 +52,8 @@ ordered_logistic_glm_lpmf(
   using std::exp;
   using std::isfinite;
 
-  typedef typename partials_return_type<T_y, T_x_scalar, T_beta_scalar,
-                                        T_cuts_scalar>::type T_partials_return;
+  using T_partials_return
+      = partials_return_t<T_y, T_x_scalar, T_beta_scalar, T_cuts_scalar>;
   typedef typename std::conditional_t<T_x_rows == 1, double, VectorXd>
       T_location;
 
@@ -195,7 +196,7 @@ ordered_logistic_glm_lpmf(
 
 template <typename T_y, typename T_x_scalar, int T_x_rows,
           typename T_beta_scalar, typename T_cuts_scalar>
-typename stan::return_type_t<T_x_scalar, T_beta_scalar, T_cuts_scalar>
+return_type_t<T_x_scalar, T_beta_scalar, T_cuts_scalar>
 ordered_logistic_glm_lpmf(
     const T_y& y, const Eigen::Matrix<T_x_scalar, T_x_rows, Eigen::Dynamic>& x,
     const Eigen::Matrix<T_beta_scalar, Eigen::Dynamic, 1>& beta,

@@ -17,6 +17,7 @@
 #include <stan/math/opencl/kernel_generator/unary_function_cl.hpp>
 #include <stan/math/opencl/kernel_generator/block.hpp>
 #include <stan/math/opencl/kernel_generator/select.hpp>
+#include <stan/math/opencl/kernel_generator/rowwise_reduction.hpp>
 
 #endif
 #endif

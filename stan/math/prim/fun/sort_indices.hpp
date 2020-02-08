@@ -61,7 +61,7 @@ class index_comparator {
  */
 template <bool ascending, typename C>
 std::vector<int> sort_indices(const C& xs) {
-  using idx_t = typename index_type<C>::type;
+  using idx_t = index_type_t<C>;
   idx_t xs_size = xs.size();
   std::vector<int> idxs;
   idxs.resize(xs_size);
