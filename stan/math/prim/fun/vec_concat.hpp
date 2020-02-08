@@ -19,10 +19,12 @@ inline const std::vector<T>& vec_concat(const std::vector<T>& v1) {
 }
 
 /**
- * Gets the event stack from a vector of events and other arguments.
- * @param v1 A event stack to roll up.
- * @param args variadic arcs passed down to the next recursion.
- * @tparam Args Types for variadic.
+ * Get the event stack from a vector of events and other arguments.
+ *
+ * @tparam T type of elements in the array
+ * @tparam Args types for variadic arguments
+ * @param v1 event stack to roll up
+ * @param args variadic arguments passed down to the next recursion
  * @return Vector of OpenCL events
  */
 template <typename T, typename... Args>
@@ -32,6 +34,7 @@ inline const std::vector<T> vec_concat(const std::vector<T>& v1,
   vec.insert(vec.end(), v1.begin(), v1.end());
   return vec;
 }
+
 }  // namespace math
 }  // namespace stan
 

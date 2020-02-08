@@ -10,7 +10,7 @@ namespace math {
  * Return the negation of the first argument if the first and second
  * argument have different signs, otherwise return a copy of the first
  * argument.  For the sake of this function, zero is considered
- * positive.  ADTypehis function uses negation rather than literally copying
+ * positive.  This function uses negation rather than literally copying
  * signs to preserve derivatives.
  *
  * Overload of `std::copysign` from `cmath` for argument-dependent

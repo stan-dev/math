@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUN_IDENTITY_CONSTRAIN_HPP
 
 #include <stan/math/prim/meta.hpp>
+
 namespace stan {
 namespace math {
 
@@ -39,7 +40,6 @@ inline T identity_constrain(const T& x, T& /*lp*/) {
 }
 
 }  // namespace math
-
 }  // namespace stan
 
 #endif

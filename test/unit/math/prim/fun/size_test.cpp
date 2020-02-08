@@ -2,7 +2,13 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMatrixPrimMat, size) {
+TEST(MathPrimFun, size_scalar) {
+  using stan::math::size;
+  EXPECT_EQ(1U, size(27.0));
+  EXPECT_EQ(1U, size(3));
+}
+
+TEST(MathPrimFun, size_vector) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::size;
@@ -40,4 +46,20 @@ TEST(MathMatrixPrimMat, size) {
 
   vector<vector<vector<Matrix<double, Dynamic, 1> > > > g(14);
   EXPECT_EQ(14, size(g));
+}
+
+TEST(MathPrimFun, size_matrices) {
+  using stan::math::size;
+
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m(2, 3);
+  m << 1, 2, 3, 4, 5, 6;
+  EXPECT_EQ(6U, size(m));
+
+  Eigen::Matrix<double, Eigen::Dynamic, 1> rv(2);
+  rv << 1, 2;
+  EXPECT_EQ(2U, size(rv));
+
+  Eigen::Matrix<double, 1, Eigen::Dynamic> v(2);
+  v << 1, 2;
+  EXPECT_EQ(2U, size(v));
 }

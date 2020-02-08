@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/check_consistent_size.hpp>
+#include <stan/math/prim/fun/size.hpp>
 #include <algorithm>
 
 namespace stan {
@@ -25,14 +26,14 @@ template <typename T1, typename T2>
 inline void check_consistent_sizes(const char* function, const char* name1,
                                    const T1& x1, const char* name2,
                                    const T2& x2) {
-  size_t max_size = std::max(is_vector<T1>::value * size(x1),
-                             is_vector<T2>::value * size(x2));
+  size_t max_size = std::max(is_vector<T1>::value * stan::math::size(x1),
+                             is_vector<T2>::value * stan::math::size(x2));
   check_consistent_size(function, name1, x1, max_size);
   check_consistent_size(function, name2, x2, max_size);
 }
 
 /**
- * Check if the dimension of x1, x2, and x3 areconsistent.
+ * Check if the dimension of x1, x2, and x3 are consistent.
  * Consistent size is defined as having the same size if vector-like or
  * being a scalar.
  * @tparam T1 Type of x1
@@ -52,16 +53,17 @@ inline void check_consistent_sizes(const char* function, const char* name1,
                                    const T1& x1, const char* name2,
                                    const T2& x2, const char* name3,
                                    const T3& x3) {
-  size_t max_size = std::max(is_vector<T1>::value * size(x1),
-                             std::max(is_vector<T2>::value * size(x2),
-                                      is_vector<T3>::value * size(x3)));
+  size_t max_size
+      = std::max(is_vector<T1>::value * stan::math::size(x1),
+                 std::max(is_vector<T2>::value * stan::math::size(x2),
+                          is_vector<T3>::value * stan::math::size(x3)));
   check_consistent_size(function, name1, x1, max_size);
   check_consistent_size(function, name2, x2, max_size);
   check_consistent_size(function, name3, x3, max_size);
 }
 
 /**
- * Check if the dimension of x1, x2, x3, and x4are consistent.
+ * Check if the dimension of x1, x2, x3, and x4 are consistent.
  * Consistent size is defined as having the same size if
  * vector-like or being a scalar.
  * @tparam T1 Type of x1
@@ -85,11 +87,11 @@ inline void check_consistent_sizes(const char* function, const char* name1,
                                    const T2& x2, const char* name3,
                                    const T3& x3, const char* name4,
                                    const T4& x4) {
-  size_t max_size
-      = std::max(is_vector<T1>::value * size(x1),
-                 std::max(is_vector<T2>::value * size(x2),
-                          std::max(is_vector<T3>::value * size(x3),
-                                   is_vector<T4>::value * size(x4))));
+  size_t max_size = std::max(
+      is_vector<T1>::value * stan::math::size(x1),
+      std::max(is_vector<T2>::value * stan::math::size(x2),
+               std::max(is_vector<T3>::value * stan::math::size(x3),
+                        is_vector<T4>::value * stan::math::size(x4))));
   check_consistent_size(function, name1, x1, max_size);
   check_consistent_size(function, name2, x2, max_size);
   check_consistent_size(function, name3, x3, max_size);
@@ -103,8 +105,10 @@ inline void check_consistent_sizes(const char* function, const char* name1,
                                    const T4& x4, const char* name5,
                                    const T5& x5) {
   size_t max_size = std::max(
-      size(x1),
-      std::max(size(x2), std::max(size(x3), std::max(size(x4), size(x5)))));
+      stan::math::size(x1),
+      std::max(stan::math::size(x2),
+               std::max(stan::math::size(x3),
+                        std::max(stan::math::size(x4), stan::math::size(x5)))));
   check_consistent_size(function, name1, x1, max_size);
   check_consistent_size(function, name2, x2, max_size);
   check_consistent_size(function, name3, x3, max_size);

@@ -26,9 +26,9 @@ namespace math {
  *   multiplicable_positive
  */
 template <typename T1, typename T2>
-inline void check_multiplicable_positive(const char* function, const char* name1,
-                                const T1& y1, const char* name2, const T2& y2) {
-
+inline void check_multiplicable_positive(const char* function,
+                                         const char* name1, const T1& y1,
+                                         const char* name2, const T2& y2) {
   check_positive(function, name1, "rows()", y1.rows());
   check_positive(function, name2, "cols()", y2.cols());
   check_size_match(function, "Columns of ", name1, y1.cols(), "Rows of ", name2,

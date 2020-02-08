@@ -14,8 +14,8 @@ namespace math {
  * incomplete beta function, I_{z}(a, b) with respect to z.
  *
  * @tparam T scalar types of arguments
- * @param a a
- * @param b b
+ * @param a first argument
+ * @param b second argument
  * @param z upper bound of the integral
  * @return partial derivative of the incomplete beta with respect to z
  *

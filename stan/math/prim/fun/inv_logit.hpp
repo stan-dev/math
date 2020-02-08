@@ -20,7 +20,6 @@ namespace math {
  *
  * The inverse to this function is <code>logit</code>.
  *
- *
  \f[
  \mbox{inv\_logit}(y) =
  \begin{cases}

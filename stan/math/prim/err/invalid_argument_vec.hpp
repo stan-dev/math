@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/invalid_argument.hpp>
+#include <stan/math/prim/fun/get.hpp>
 #include <sstream>
 #include <string>
 
@@ -13,7 +14,7 @@ namespace math {
  * Throw an invalid argument exception with a consistently formatted message.
  * This is an abstraction for all Stan functions to use when throwing
  * invalid arguments. This will allow us to change the behavior for all
- * functions at once. (We've already changed behavior mulitple times up
+ * functions at once. (We've already changed behavior multiple times up
  * to Stan v2.5.0.)
  * The message is:
  * "<function>: <name>[<i+error_index>] <msg1><y>"
@@ -42,7 +43,7 @@ inline void invalid_argument_vec(const char* function, const char* name,
  * Throw an invalid argument exception with a consistently formatted message.
  * This is an abstraction for all Stan functions to use when throwing
  * invalid arguments. This will allow us to change the behavior for all
- * functions at once. (We've already changed behavior mulitple times up
+ * functions at once. (We've already changed behavior multiple times up
  * to Stan v2.5.0.)
  * The message is:
  * "<function>: <name>[<i+error_index>] <msg1><y>"
