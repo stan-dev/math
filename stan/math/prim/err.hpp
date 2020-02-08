@@ -24,6 +24,7 @@
 #include <stan/math/prim/err/check_matching_dims.hpp>
 #include <stan/math/prim/err/check_matching_sizes.hpp>
 #include <stan/math/prim/err/check_multiplicable.hpp>
+#include <stan/math/prim/err/check_multiplicable_positive.hpp>
 #include <stan/math/prim/err/check_nonempty.hpp>
 #include <stan/math/prim/err/check_nonnegative.hpp>
 #include <stan/math/prim/err/check_nonzero_size.hpp>
