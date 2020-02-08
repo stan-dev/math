@@ -20,7 +20,7 @@ namespace math {
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Matrix to test
- * @throw <code>std::domain_error</code> if y is not a valid Choleksy
+ * @throw <code>std::domain_error</code> if y is not a valid Cholesky
  *   factor, if number of rows is less than the number of columns,
  *   if there are 0 columns, or if any element in matrix is NaN
  */

@@ -106,7 +106,7 @@ class pow_dv_vari : public op_dv_vari {
  * @return Base raised to the exponent.
  */
 inline var pow(const var& base, const var& exponent) {
-  return var(new internal::pow_vv_vari(base.vi_, exponent.vi_));
+  return {new internal::pow_vv_vari(base.vi_, exponent.vi_)};
 }
 
 /**
@@ -117,11 +117,18 @@ inline var pow(const var& base, const var& exponent) {
  *
  * \f$\frac{d}{dx} \mbox{pow}(x, c) = c x^{c-1}\f$.
  *
+ * The template parameters are coded as they are so that arithmetic
+ * types will not be promoted into the `var` slots.
+ *
+ * @tparam Var var type
+ * @tparam Arith arithmetic type
  * @param base Base variable.
  * @param exponent Exponent scalar.
  * @return Base raised to the exponent.
  */
-inline var pow(const var& base, double exponent) {
+template <typename Var, typename Arith, require_var_t<Var>...,
+          require_arithmetic_t<Arith>...>
+inline var pow(const Var& base, Arith exponent) {
   if (exponent == 0.5) {
     return sqrt(base);
   }
@@ -140,7 +147,7 @@ inline var pow(const var& base, double exponent) {
   if (exponent == -0.5) {
     return inv_sqrt(base);
   }
-  return var(new internal::pow_vd_vari(base.vi_, exponent));
+  return {new internal::pow_vd_vari(base.vi_, exponent)};
 }
 
 /**
@@ -151,12 +158,20 @@ inline var pow(const var& base, double exponent) {
  *
  * \f$\frac{d}{d y} \mbox{pow}(c, y) = c^y \log c \f$.
  *
+ * The template parameters are coded as they are so that arithmetic
+ * types will not be promoted into the `var` slots.
+ *
+ * @tparam Var var type
+ * @tparam Arith arithmetic type
+ *
  * @param base Base scalar.
  * @param exponent Exponent variable.
  * @return Base raised to the exponent.
  */
-inline var pow(double base, const var& exponent) {
-  return var(new internal::pow_dv_vari(base, exponent.vi_));
+template <typename Arith, typename Var, require_arithmetic_t<Arith>...,
+          require_var_t<Var>>
+inline var pow(Arith base, const Var& exponent) {
+  return {new internal::pow_dv_vari(base, exponent.vi_)};
 }
 
 }  // namespace math

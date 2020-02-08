@@ -2,7 +2,7 @@
 #define STAN_MATH_FWD_META_OPERANDS_AND_PARTIALS_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/meta/size.hpp>
+#include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/meta/broadcast_array.hpp>
 #include <stan/math/prim/meta/operands_and_partials.hpp>
 #include <stan/math/fwd/core/fvar.hpp>

@@ -41,8 +41,8 @@ namespace math {
    \end{cases}
    \f]
  *
- * @tparam T1 Type of first value.
- * @tparam T2 Type of second value.
+ * @tparam T1 type of first value
+ * @tparam T2 type of second value
  * @param a First value
  * @param b Second value
  * @return Beta function applied to the two values.

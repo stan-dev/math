@@ -1,7 +1,7 @@
-#ifndef STAN_MATH_PRIM_META_MAX_SIZE_HPP
-#define STAN_MATH_PRIM_META_MAX_SIZE_HPP
+#ifndef STAN_MATH_PRIM_FUN_MAX_SIZE_HPP
+#define STAN_MATH_PRIM_FUN_MAX_SIZE_HPP
 
-#include <stan/math/prim/meta/size.hpp>
+#include <stan/math/prim/fun/size.hpp>
 
 namespace stan {
 namespace math {
@@ -40,6 +40,7 @@ size_t max_size(const T1& x1, const T2& x2, const T3& x3, const T4& x4,
   result = result > size(x5) ? result : size(x5);
   return result;
 }
+
 }  // namespace math
 }  // namespace stan
 #endif

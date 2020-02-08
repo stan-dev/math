@@ -27,11 +27,8 @@ namespace math {
 template <typename T>
 Eigen::Matrix<T, Eigen::Dynamic, 1> simplex_free(
     const Eigen::Matrix<T, Eigen::Dynamic, 1>& x) {
-  using Eigen::Dynamic;
-  using Eigen::Matrix;
   using std::log;
-
-  using size_type = typename index_type<Matrix<T, Dynamic, 1>>::type;
+  using size_type = index_type_t<Eigen::Matrix<T, Eigen::Dynamic, 1>>;
 
   check_simplex("stan::math::simplex_free", "Simplex variable", x);
   int Km1 = x.size() - 1;

@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_PROB_BETA_LOG_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/prob/beta_lpdf.hpp>
 
 namespace stan {

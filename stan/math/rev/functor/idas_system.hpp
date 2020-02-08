@@ -112,7 +112,7 @@ class idas_system {
   static constexpr bool is_var_par = stan::is_var<Tpar>::value;
   static constexpr bool need_sens = is_var_yy0 || is_var_yp0 || is_var_par;
 
-  using scalar_type = typename stan::return_type<Tyy, Typ, Tpar>::type;
+  using scalar_type = return_type_t<Tyy, Typ, Tpar>;
   using return_type = std::vector<std::vector<scalar_type> >;
 
   /**

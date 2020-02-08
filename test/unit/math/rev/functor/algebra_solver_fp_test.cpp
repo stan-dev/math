@@ -32,12 +32,12 @@ struct FP_exp_func_test : public ::testing::Test {
    */
   struct FP_exp_func {
     template <typename T0, typename T1>
-    inline Eigen::Matrix<typename stan::return_type<T0, T1>::type, -1, 1>
-    operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& x,
-               const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
-               const std::vector<double>& x_r, const std::vector<int>& x_i,
-               std::ostream* pstream__) const {
-      using scalar = typename stan::return_type<T0, T1>::type;
+    inline Eigen::Matrix<stan::return_type_t<T0, T1>, -1, 1> operator()(
+        const Eigen::Matrix<T0, Eigen::Dynamic, 1>& x,
+        const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
+        const std::vector<double>& x_r, const std::vector<int>& x_i,
+        std::ostream* pstream__) const {
+      using scalar = stan::return_type_t<T0, T1>;
       Eigen::Matrix<scalar, Eigen::Dynamic, 1> z(1);
       z(0) = stan::math::exp(-y(0) * x(0));
       return z;
@@ -91,12 +91,12 @@ struct FP_2d_func_test : public ::testing::Test {
    */
   struct FP_2d_func {
     template <typename T0, typename T1>
-    inline Eigen::Matrix<typename stan::return_type<T0, T1>::type, -1, 1>
-    operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& x,
-               const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
-               const std::vector<double>& x_r, const std::vector<int>& x_i,
-               std::ostream* pstream__) const {
-      using scalar = typename stan::return_type<T0, T1>::type;
+    inline Eigen::Matrix<stan::return_type_t<T0, T1>, -1, 1> operator()(
+        const Eigen::Matrix<T0, Eigen::Dynamic, 1>& x,
+        const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
+        const std::vector<double>& x_r, const std::vector<int>& x_i,
+        std::ostream* pstream__) const {
+      using scalar = stan::return_type_t<T0, T1>;
       Eigen::Matrix<scalar, Eigen::Dynamic, 1> z(2);
       z(0) = y(0) * sqrt(x(1));
       z(1) = y(1) * sqrt(y(2) - x(0) * x(0));
@@ -155,12 +155,12 @@ struct FP_degenerated_func_test : public ::testing::Test {
    */
   struct FP_degenerated_func {
     template <typename T0, typename T1>
-    inline Eigen::Matrix<typename stan::return_type<T0, T1>::type, -1, 1>
-    operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& x,
-               const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
-               const std::vector<double>& x_r, const std::vector<int>& x_i,
-               std::ostream* pstream__) const {
-      using scalar = typename stan::return_type<T0, T1>::type;
+    inline Eigen::Matrix<stan::return_type_t<T0, T1>, -1, 1> operator()(
+        const Eigen::Matrix<T0, Eigen::Dynamic, 1>& x,
+        const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
+        const std::vector<double>& x_r, const std::vector<int>& x_i,
+        std::ostream* pstream__) const {
+      using scalar = stan::return_type_t<T0, T1>;
       Eigen::Matrix<scalar, Eigen::Dynamic, 1> z(2);
       z(0) = y(0) + (x(0) - y(0)) * y(1) / x(1);
       z(1) = y(0) + (x(1) - y(0)) * y(1) / x(0);
@@ -218,12 +218,12 @@ struct FP_direct_prod_func_test : public ::testing::Test {
    */
   struct FP_direct_prod_func {
     template <typename T0, typename T1>
-    inline Eigen::Matrix<typename stan::return_type<T0, T1>::type, -1, 1>
-    operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& x,
-               const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
-               const std::vector<double>& x_r, const std::vector<int>& x_i,
-               std::ostream* pstream__) const {
-      using scalar = typename stan::return_type<T0, T1>::type;
+    inline Eigen::Matrix<stan::return_type_t<T0, T1>, -1, 1> operator()(
+        const Eigen::Matrix<T0, Eigen::Dynamic, 1>& x,
+        const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
+        const std::vector<double>& x_r, const std::vector<int>& x_i,
+        std::ostream* pstream__) const {
+      using scalar = stan::return_type_t<T0, T1>;
       const size_t n = x.size();
       Eigen::Matrix<scalar, -1, 1> z(n);
       const size_t m = 10;
@@ -249,12 +249,12 @@ struct FP_direct_prod_func_test : public ::testing::Test {
    */
   struct FP_direct_prod_newton_func {
     template <typename T0, typename T1>
-    inline Eigen::Matrix<typename stan::return_type<T0, T1>::type, -1, 1>
-    operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& x,
-               const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
-               const std::vector<double>& x_r, const std::vector<int>& x_i,
-               std::ostream* pstream__) const {
-      using scalar = typename stan::return_type<T0, T1>::type;
+    inline Eigen::Matrix<stan::return_type_t<T0, T1>, -1, 1> operator()(
+        const Eigen::Matrix<T0, Eigen::Dynamic, 1>& x,
+        const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
+        const std::vector<double>& x_r, const std::vector<int>& x_i,
+        std::ostream* pstream__) const {
+      using scalar = stan::return_type_t<T0, T1>;
       const size_t n = x.size();
       Eigen::Matrix<scalar, -1, 1> z(n);
       z = FP_direct_prod_func()(x, y, x_r, x_i, pstream__);

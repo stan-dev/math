@@ -39,8 +39,8 @@
 #include <stan/math/prim/fun/cols.hpp>
 #include <stan/math/prim/fun/columns_dot_product.hpp>
 #include <stan/math/prim/fun/columns_dot_self.hpp>
-#include <stan/math/prim/fun/common_type.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/copysign.hpp>
 #include <stan/math/prim/fun/corr_constrain.hpp>
 #include <stan/math/prim/fun/corr_free.hpp>
 #include <stan/math/prim/fun/corr_matrix_constrain.hpp>
@@ -95,6 +95,7 @@
 #include <stan/math/prim/fun/fmin.hpp>
 #include <stan/math/prim/fun/gamma_p.hpp>
 #include <stan/math/prim/fun/gamma_q.hpp>
+#include <stan/math/prim/fun/get.hpp>
 #include <stan/math/prim/fun/get_base1.hpp>
 #include <stan/math/prim/fun/get_base1_lhs.hpp>
 #include <stan/math/prim/fun/get_lp.hpp>
@@ -127,6 +128,10 @@
 #include <stan/math/prim/fun/inverse.hpp>
 #include <stan/math/prim/fun/inverse_softmax.hpp>
 #include <stan/math/prim/fun/inverse_spd.hpp>
+#include <stan/math/prim/fun/isfinite.hpp>
+#include <stan/math/prim/fun/isinf.hpp>
+#include <stan/math/prim/fun/isnan.hpp>
+#include <stan/math/prim/fun/isnormal.hpp>
 #include <stan/math/prim/fun/is_any_nan.hpp>
 #include <stan/math/prim/fun/is_inf.hpp>
 #include <stan/math/prim/fun/is_nan.hpp>
@@ -137,6 +142,9 @@
 #include <stan/math/prim/fun/ldexp.hpp>
 #include <stan/math/prim/fun/LDLT_factor.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/fun/linspaced_array.hpp>
+#include <stan/math/prim/fun/linspaced_row_vector.hpp>
+#include <stan/math/prim/fun/linspaced_vector.hpp>
 #include <stan/math/prim/fun/lmgamma.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log10.hpp>
@@ -175,6 +183,8 @@
 #include <stan/math/prim/fun/matrix_exp_multiply.hpp>
 #include <stan/math/prim/fun/matrix_power.hpp>
 #include <stan/math/prim/fun/max.hpp>
+#include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/max_size_mvt.hpp>
 #include <stan/math/prim/fun/mdivide_left.hpp>
 #include <stan/math/prim/fun/mdivide_left_ldlt.hpp>
 #include <stan/math/prim/fun/mdivide_left_spd.hpp>
@@ -250,11 +260,14 @@
 #include <stan/math/prim/fun/sd.hpp>
 #include <stan/math/prim/fun/segment.hpp>
 #include <stan/math/prim/fun/sign.hpp>
+#include <stan/math/prim/fun/signbit.hpp>
 #include <stan/math/prim/fun/simplex_constrain.hpp>
 #include <stan/math/prim/fun/simplex_free.hpp>
 #include <stan/math/prim/fun/sin.hpp>
 #include <stan/math/prim/fun/singular_values.hpp>
 #include <stan/math/prim/fun/sinh.hpp>
+#include <stan/math/prim/fun/size.hpp>
+#include <stan/math/prim/fun/size_mvt.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/softmax.hpp>
 #include <stan/math/prim/fun/sort_asc.hpp>
@@ -262,9 +275,6 @@
 #include <stan/math/prim/fun/sort_indices.hpp>
 #include <stan/math/prim/fun/sort_indices_asc.hpp>
 #include <stan/math/prim/fun/sort_indices_desc.hpp>
-#include <stan/math/prim/fun/spaced_array.hpp>
-#include <stan/math/prim/fun/spaced_row_vector.hpp>
-#include <stan/math/prim/fun/spaced_vector.hpp>
 #include <stan/math/prim/fun/sqrt.hpp>
 #include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/squared_distance.hpp>
