@@ -659,10 +659,12 @@ template <typename... Types>
 using require_any_eigen_matrix_t = require_any_t<is_eigen_matrix<Types>...>;
 
 template <typename... Types>
-using require_all_not_eigen_matrix_t = require_all_not_t<is_eigen_matrix<Types>...>;
+using require_all_not_eigen_matrix_t
+    = require_all_not_t<is_eigen_matrix<Types>...>;
 
 template <typename... Types>
-using require_any_not_eigen_matrix_t = require_any_not_t<is_eigen_matrix<Types>...>;
+using require_any_not_eigen_matrix_t
+    = require_any_not_t<is_eigen_matrix<Types>...>;
 
 template <typename T>
 using require_eigen_vector_t = require_t<is_eigen_vector<T>>;
@@ -835,7 +837,8 @@ using require_all_not_eigen_vt
     = require_all_not_t<is_eigen_value_check<TypeCheck, Check>...>;
 
 template <template <class...> class TypeCheck, class... Check>
-using require_eigen_matrix_vt = require_t<is_eigen_matrix_value_check<TypeCheck, Check...>>;
+using require_eigen_matrix_vt
+    = require_t<is_eigen_matrix_value_check<TypeCheck, Check...>>;
 
 template <template <class...> class TypeCheck, class... Check>
 using require_not_eigen_matrix_vt
@@ -993,9 +996,9 @@ template <template <class...> class TypeCheck, class... Check>
 using require_all_not_eigen_st
     = require_all_not_t<is_eigen_scalar_check<TypeCheck, Check>...>;
 
-
 template <template <class...> class TypeCheck, class... Check>
-using require_eigen_matrix_st = require_t<is_eigen_matrix_scalar_check<TypeCheck, Check...>>;
+using require_eigen_matrix_st
+    = require_t<is_eigen_matrix_scalar_check<TypeCheck, Check...>>;
 
 template <template <class...> class TypeCheck, class... Check>
 using require_not_eigen_matrix_st
@@ -1016,7 +1019,6 @@ using require_all_eigen_matrix_st
 template <template <class...> class TypeCheck, class... Check>
 using require_all_not_eigen_matrix_st
     = require_all_not_t<is_eigen_matrix_scalar_check<TypeCheck, Check>...>;
-
 
 template <template <class...> class TypeCheck, class... Check>
 using require_eigen_vector_st
