@@ -5,6 +5,8 @@
 #include <stan/math/prim/err/throw_domain_error.hpp>
 #include <stan/math/prim/err/throw_domain_error_vec.hpp>
 #include <stan/math/prim/err/invalid_argument.hpp>
+#include <stan/math/prim/fun/get.hpp>
+#include <stan/math/prim/fun/size.hpp>
 #include <type_traits>
 #include <string>
 

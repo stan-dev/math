@@ -20,10 +20,10 @@ namespace math {
    \end{cases}
    \f]
  *
- * @tparam T1 Type of first argument.
- * @tparam T2 Type of second argument.
- * @param x1 First argument
- * @param x2 Second argument
+ * @tparam T1 type of first argument
+ * @tparam T2 type of second argument
+ * @param x1 first argument
+ * @param x2 second argument
  * @return <code>true</code> if both x1 and x2 are not equal to 0.
  */
 template <typename T1, typename T2>

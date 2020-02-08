@@ -10,6 +10,7 @@
 namespace stan {
 namespace math {
 namespace internal {
+
 /**
  * Find the optimal next size for the FFT so that
  * a minimum number of zeros are padded.

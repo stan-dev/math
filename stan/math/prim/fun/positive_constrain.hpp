@@ -47,7 +47,6 @@ inline T positive_constrain(const T& x, T& lp) {
 }
 
 }  // namespace math
-
 }  // namespace stan
 
 #endif

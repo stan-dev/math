@@ -17,7 +17,7 @@ namespace math {
  * <p>The implementation of <code>square(x)</code> is just
  * <code>x * x</code>.  Given this, this method is mainly useful
  * in cases where <code>x</code> is not a simple primitive type,
- * particularly when it is an auto-dif type.
+ * particularly when it is an autodiff type.
  *
  * @param x Input to square.
  * @return Square of input.
@@ -52,6 +52,7 @@ inline auto square(const T& x) {
 
 /**
  * Version of square() that accepts Eigen Matrix or matrix expressions.
+ *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
  * @return Each value in x squared.

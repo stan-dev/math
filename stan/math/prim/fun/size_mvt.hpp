@@ -1,6 +1,5 @@
-
-#ifndef STAN_MATH_PRIM_META_SIZE_MVT_HPP
-#define STAN_MATH_PRIM_META_SIZE_MVT_HPP
+#ifndef STAN_MATH_PRIM_FUN_SIZE_MVT_HPP
+#define STAN_MATH_PRIM_FUN_SIZE_MVT_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stdexcept>

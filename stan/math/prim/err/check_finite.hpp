@@ -5,9 +5,11 @@
 #include <stan/math/prim/err/is_scal_finite.hpp>
 #include <stan/math/prim/err/throw_domain_error.hpp>
 #include <stan/math/prim/err/throw_domain_error_vec.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/get.hpp>
+#include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <cmath>
 
 namespace stan {
