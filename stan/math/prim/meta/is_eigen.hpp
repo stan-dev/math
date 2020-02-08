@@ -84,8 +84,8 @@ struct is_eigen_matrix_impl<T,
 }  // namespace internal
 
 /*
- * Checks whether type T is derived from Eigen::DenseBase and has columns and
- * rows greater than 1. If true this will have a
+ * Checks whether type T is derived from Eigen::MatrixBase and has columns and
+ * rows not equal to 1. If true this will have a
  * static member function named value with a type of true, else value is false.
  */
 template <typename T>
