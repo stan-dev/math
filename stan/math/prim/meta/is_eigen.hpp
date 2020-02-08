@@ -46,11 +46,23 @@ struct is_eigen_dense_base
 template <typename T>
 struct is_eigen_dense_base<Eigen::DenseBase<T>> : std::true_type {};
 
-template <typename T>
-struct is_eigen_dense_base<Eigen::MatrixBase<T>> : std::true_type {};
 
 }  // namespace internal
 
+namespace internal {
+/*
+ * Underlying implimenation to check if a type is derived from EigenBase
+ */
+template <typename T>
+struct is_eigen_matrix_base
+    : std::integral_constant<bool,
+                             std::is_base_of<Eigen::MatrixBase<T>, T>::value> {};
+
+template <typename T>
+struct is_eigen_matrix_base<Eigen::MatrixBase<T>> : std::true_type {};
+
+
+}  // namespace internal
 
 /*
  * Checks whether type T is derived from EigenBase. If true this will have a
@@ -66,7 +78,7 @@ template <typename T, typename Enable = void>
 struct is_eigen_matrix_impl : std::false_type {};
 template <typename T>
 struct is_eigen_matrix_impl<T,
- std::enable_if_t<internal::is_eigen_dense_base<T>::value>> :
+ std::enable_if_t<internal::is_eigen_matrix_base<T>::value>> :
  bool_constant<T::RowsAtCompileTime != 1 && T::ColsAtCompileTime != 1> {};
 
 }  // namespace internal
