@@ -212,7 +212,7 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_ldlt(
     return res;
   }
 
-  check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);
+  check_multiplicable_positive("mdivide_left_ldlt", "A", A, "b", b);
 
   internal::mdivide_left_ldlt_vv_vari<R1, C1, R2, C2> *baseVari
       = new internal::mdivide_left_ldlt_vv_vari<R1, C1, R2, C2>(A, b);
@@ -245,7 +245,7 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_ldlt(
     return res;
   }
 
-  check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);
+  check_multiplicable_positive("mdivide_left_ldlt", "A", A, "b", b);
 
   internal::mdivide_left_ldlt_vd_vari<R1, C1, R2, C2> *baseVari
       = new internal::mdivide_left_ldlt_vd_vari<R1, C1, R2, C2>(A, b);
@@ -278,7 +278,7 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_ldlt(
     return res;
   }
 
-  check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);
+  check_multiplicable_positive("mdivide_left_ldlt", "A", A, "b", b);
 
   internal::mdivide_left_ldlt_dv_vari<R1, C1, R2, C2> *baseVari
       = new internal::mdivide_left_ldlt_dv_vari<R1, C1, R2, C2>(A, b);

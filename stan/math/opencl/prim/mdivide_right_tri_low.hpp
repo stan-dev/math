@@ -23,7 +23,7 @@ template <typename T1, typename T2,
 inline matrix_cl<return_type_t<T1, T2>> mdivide_right_tri_low(
     const matrix_cl<T2>& b, const matrix_cl<T1>& A) {
   check_square("mdivide_right_tri_low (OpenCL)", "A", A);
-  check_multiplicable("mdivide_right_tri_low (OpenCL)", "b", b, "A", A);
+  check_multiplicable_positive("mdivide_right_tri_low (OpenCL)", "b", b, "A", A);
   return b * tri_inverse<matrix_cl_view::Lower>(A);
 }
 

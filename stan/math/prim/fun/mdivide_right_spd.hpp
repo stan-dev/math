@@ -31,7 +31,7 @@ namespace math {
 template <typename T1, typename T2, int R1, int C1, int R2, int C2>
 inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_right_spd(
     const Eigen::Matrix<T1, R1, C1> &b, const Eigen::Matrix<T2, R2, C2> &A) {
-  check_multiplicable("mdivide_right_spd", "b", b, "A", A);
+  check_multiplicable_positive("mdivide_right_spd", "b", b, "A", A);
   check_pos_definite("mdivide_right_spd", "A", A);
   // FIXME: After allowing for general MatrixBase in mdivide_left_spd,
   //        change to b.transpose()

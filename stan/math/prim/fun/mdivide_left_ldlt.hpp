@@ -34,7 +34,7 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_left_ldlt(
     return Eigen::Matrix<return_type_t<T1, T2>, R1, C2>(0, b.cols());
   }
 
-  check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);
+  check_multiplicable_positive("mdivide_left_ldlt", "A", A, "b", b);
 
   return A.solve(
       promote_common<Eigen::Matrix<T1, R2, C2>, Eigen::Matrix<T2, R2, C2> >(b));

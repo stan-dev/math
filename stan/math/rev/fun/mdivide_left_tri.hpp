@@ -317,7 +317,7 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_tri(
   Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
 
   check_square("mdivide_left_tri", "A", A);
-  check_multiplicable("mdivide_left_tri", "A", A, "b", b);
+  check_multiplicable_positive("mdivide_left_tri", "A", A, "b", b);
 
   // NOTE: this is not a memory leak, this vari is used in the
   // expression graph to evaluate the adjoint, but is not needed
@@ -338,7 +338,7 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_tri(
   Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
 
   check_square("mdivide_left_tri", "A", A);
-  check_multiplicable("mdivide_left_tri", "A", A, "b", b);
+  check_multiplicable_positive("mdivide_left_tri", "A", A, "b", b);
 
   // NOTE: this is not a memory leak, this vari is used in the
   // expression graph to evaluate the adjoint, but is not needed
@@ -359,7 +359,7 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_tri(
   Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
 
   check_square("mdivide_left_tri", "A", A);
-  check_multiplicable("mdivide_left_tri", "A", A, "b", b);
+  check_multiplicable_positive("mdivide_left_tri", "A", A, "b", b);
 
   // NOTE: this is not a memory leak, this vari is used in the
   // expression graph to evaluate the adjoint, but is not needed

@@ -24,7 +24,7 @@ template <typename T1, typename T2,
 inline matrix_cl<return_type_t<T1, T2>> mdivide_left_tri_low(
     const matrix_cl<T1>& A, const matrix_cl<T2>& b) {
   check_square("mdivide_left_tri_low", "A", A);
-  check_multiplicable("mdivide_left_tri_low", "A", A, "b", b);
+  check_multiplicable_positive("mdivide_left_tri_low", "A", A, "b", b);
   return tri_inverse<matrix_cl_view::Lower>(A) * b;
 }
 
