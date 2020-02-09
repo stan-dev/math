@@ -145,7 +145,6 @@ inline var operator+(Arith a, var b) {
                                                           a)};  // by symmetry
 }
 
-
 }  // namespace math
 }  // namespace stan
 #endif
