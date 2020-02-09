@@ -59,10 +59,9 @@ TEST(MathMixMatFun, mdivideLeftSpd) {
   stan::test::expect_ad(f, c, a);
   stan::test::expect_ad(f, c, d);
 
-  // FIXME(carpenter): double throws (correct) but var doesn't (incorrect)
   // exceptions: not pos def
-  // stan::test::expect_ad(f, m33, m33);
-  // stan::test::expect_ad(f, m33, v3);
+  stan::test::expect_ad(f, m33, m33);
+  stan::test::expect_ad(f, m33, v3);
 
   // exceptions: wrong sizes
   stan::test::expect_ad(f, m33, m44);
