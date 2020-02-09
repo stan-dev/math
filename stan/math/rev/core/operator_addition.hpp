@@ -4,38 +4,55 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/op_vari.hpp>
-#include <stan/math/rev/core/vd_vari.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/is_any_nan.hpp>
+#include <type_traits>
 
 namespace stan {
 namespace math {
 
 namespace internal {
-template <typename Av, typename Bv>
-class add_vv_vari : public op_vari<Av, Bv> {
+
+template <typename T>
+struct is_vari : bool_constant<std::is_base_of<vari, std::remove_pointer_t<std::decay_t<T>>>::value> {};
+
+template <typename T>
+using require_vari_t = require_t<is_vari<T>>;
+
+template <typename... Types>
+using require_all_vari_t = require_all_t<is_vari<Types>...>;
+
+template <typename T1, typename T2, typename= void>
+class add_vari  {
+  static_assert(1, "If you see this please report a bug!");
+};
+
+template <typename T1, typename T2>
+class add_vari<T1, T2, require_all_vari_t<T1, T2>> : public op_vari<T1, T2> {
  public:
-  add_vv_vari(vari* avi, vari* bvi)
-      : op_vari<Av, Bv>(avi->val_ + bvi->val_, avi, bvi) {}
+  add_vari(T1 avi, T2 bvi)
+      : op_vari<T2, T1>(avi->val_ + bvi->val_, avi, bvi) {}
   void chain() {
-    if (unlikely(is_any_nan(this->template get<0>()->val_, this->template get<1>()->val_))) {
-      this->template get<0>()->adj_ = NOT_A_NUMBER;
-      this->template get<1>()->adj_ = NOT_A_NUMBER;
+    if (unlikely(is_any_nan(std::get<0>(this->vi())->val_, std::get<1>(this->vi())->val_))) {
+      std::get<0>(this->vi())->adj_ = NOT_A_NUMBER;
+      std::get<1>(this->vi())->adj_ = NOT_A_NUMBER;
     } else {
-      this->template get<0>()->adj_ += this->adj_;
-      this->template get<1>()->adj_ += this->adj_;
+      std::get<0>(this->vi())->adj_ += this->adj_;
+      std::get<1>(this->vi())->adj_ += this->adj_;
     }
   }
 };
 
-class add_vd_vari : public op_vd_vari {
+template <typename T1, typename T2>
+class add_vari<T1, T2,
+  require_t<conjunction<is_vari<T1>, std::is_floating_point<T2>>>> : public op_vari<T1, T2> {
  public:
-  add_vd_vari(vari* avi, double b) : op_vd_vari(avi->val_ + b, avi, b) {}
+  add_vari(T1 avi, T2 b) : op_vari<T1, T2>(avi->val_ + b, avi, b) {}
   void chain() {
-    if (unlikely(is_any_nan(avi_->val_, bd_))) {
-      avi_->adj_ = NOT_A_NUMBER;
+    if (unlikely(is_any_nan(std::get<0>(this->vi())->val_, std::get<1>(this->vi())))) {
+      std::get<0>(this->vi())->adj_ = NOT_A_NUMBER;
     } else {
-      avi_->adj_ += adj_;
+      std::get<0>(this->vi())->adj_ += this->adj_;
     }
   }
 };
@@ -80,7 +97,7 @@ class add_vd_vari : public op_vd_vari {
  * @return Variable result of adding two variables.
  */
 inline var operator+(var a, var b) {
-  return {new internal::add_vv_vari<vari*, vari*>(a.vi_, b.vi_)};
+  return {new internal::add_vari<decltype(a.vi_), decltype(b.vi_)>(a.vi_, b.vi_)};
 }
 
 /**
@@ -100,7 +117,7 @@ inline var operator+(var a, Arith b) {
   if (b == 0.0) {
     return a;
   }
-  return {new internal::add_vd_vari(a.vi_, b)};
+  return {new internal::add_vari<decltype(a.vi_), double>(a.vi_, b)};
 }
 
 /**
@@ -120,7 +137,7 @@ inline var operator+(Arith a, var b) {
   if (a == 0.0) {
     return b;
   }
-  return {new internal::add_vd_vari(b.vi_, a)};  // by symmetry
+  return {new internal::add_vari<decltype(b.vi_), double>(b.vi_, a)};  // by symmetry
 }
 
 }  // namespace math
