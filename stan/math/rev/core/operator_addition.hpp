@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
-#include <stan/math/rev/core/vv_vari.hpp>
+#include <stan/math/rev/core/op_vari.hpp>
 #include <stan/math/rev/core/vd_vari.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/is_any_nan.hpp>
@@ -12,17 +12,18 @@ namespace stan {
 namespace math {
 
 namespace internal {
-class add_vv_vari : public op_vv_vari {
+template <typename Av, typename Bv>
+class add_vv_vari : public op_vari<Av, Bv> {
  public:
   add_vv_vari(vari* avi, vari* bvi)
-      : op_vv_vari(avi->val_ + bvi->val_, avi, bvi) {}
+      : op_vari<Av, Bv>(avi->val_ + bvi->val_, avi, bvi) {}
   void chain() {
-    if (unlikely(is_any_nan(avi_->val_, bvi_->val_))) {
-      avi_->adj_ = NOT_A_NUMBER;
-      bvi_->adj_ = NOT_A_NUMBER;
+    if (unlikely(is_any_nan(this->template get<0>()->val_, this->template get<1>()->val_))) {
+      this->template get<0>()->adj_ = NOT_A_NUMBER;
+      this->template get<1>()->adj_ = NOT_A_NUMBER;
     } else {
-      avi_->adj_ += adj_;
-      bvi_->adj_ += adj_;
+      this->template get<0>()->adj_ += this->adj_;
+      this->template get<1>()->adj_ += this->adj_;
     }
   }
 };
@@ -79,7 +80,7 @@ class add_vd_vari : public op_vd_vari {
  * @return Variable result of adding two variables.
  */
 inline var operator+(var a, var b) {
-  return {new internal::add_vv_vari(a.vi_, b.vi_)};
+  return {new internal::add_vv_vari<vari*, vari*>(a.vi_, b.vi_)};
 }
 
 /**
