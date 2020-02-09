@@ -14,7 +14,8 @@ namespace math {
 namespace internal {
 
 template <typename T>
-struct is_vari : bool_constant<std::is_base_of<vari, std::remove_pointer_t<std::decay_t<T>>>::value> {};
+struct is_vari : bool_constant<std::is_base_of<
+                     vari, std::remove_pointer_t<std::decay_t<T>>>::value> {};
 
 template <typename T>
 using require_vari_t = require_t<is_vari<T>>;
@@ -22,18 +23,18 @@ using require_vari_t = require_t<is_vari<T>>;
 template <typename... Types>
 using require_all_vari_t = require_all_t<is_vari<Types>...>;
 
-template <typename T1, typename T2, typename= void>
-class add_vari  {
+template <typename T1, typename T2, typename = void>
+class add_vari {
   static_assert(1, "If you see this please report a bug!");
 };
 
 template <typename T1, typename T2>
 class add_vari<T1, T2, require_all_vari_t<T1, T2>> : public op_vari<T1, T2> {
  public:
-  add_vari(T1 avi, T2 bvi)
-      : op_vari<T2, T1>(avi->val_ + bvi->val_, avi, bvi) {}
+  add_vari(T1 avi, T2 bvi) : op_vari<T2, T1>(avi->val_ + bvi->val_, avi, bvi) {}
   void chain() {
-    if (unlikely(is_any_nan(std::get<0>(this->vi())->val_, std::get<1>(this->vi())->val_))) {
+    if (unlikely(is_any_nan(std::get<0>(this->vi())->val_,
+                            std::get<1>(this->vi())->val_))) {
       std::get<0>(this->vi())->adj_ = NOT_A_NUMBER;
       std::get<1>(this->vi())->adj_ = NOT_A_NUMBER;
     } else {
@@ -45,11 +46,13 @@ class add_vari<T1, T2, require_all_vari_t<T1, T2>> : public op_vari<T1, T2> {
 
 template <typename T1, typename T2>
 class add_vari<T1, T2,
-  require_t<conjunction<is_vari<T1>, std::is_floating_point<T2>>>> : public op_vari<T1, T2> {
+               require_t<conjunction<is_vari<T1>, std::is_floating_point<T2>>>>
+    : public op_vari<T1, T2> {
  public:
   add_vari(T1 avi, T2 b) : op_vari<T1, T2>(avi->val_ + b, avi, b) {}
   void chain() {
-    if (unlikely(is_any_nan(std::get<0>(this->vi())->val_, std::get<1>(this->vi())))) {
+    if (unlikely(is_any_nan(std::get<0>(this->vi())->val_,
+                            std::get<1>(this->vi())))) {
       std::get<0>(this->vi())->adj_ = NOT_A_NUMBER;
     } else {
       std::get<0>(this->vi())->adj_ += this->adj_;
@@ -97,7 +100,8 @@ class add_vari<T1, T2,
  * @return Variable result of adding two variables.
  */
 inline var operator+(var a, var b) {
-  return {new internal::add_vari<decltype(a.vi_), decltype(b.vi_)>(a.vi_, b.vi_)};
+  return {
+      new internal::add_vari<decltype(a.vi_), decltype(b.vi_)>(a.vi_, b.vi_)};
 }
 
 /**
@@ -137,7 +141,8 @@ inline var operator+(Arith a, var b) {
   if (a == 0.0) {
     return b;
   }
-  return {new internal::add_vari<decltype(b.vi_), double>(b.vi_, a)};  // by symmetry
+  return {new internal::add_vari<decltype(b.vi_), double>(b.vi_,
+                                                          a)};  // by symmetry
 }
 
 }  // namespace math

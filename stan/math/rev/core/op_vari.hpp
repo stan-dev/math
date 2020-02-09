@@ -16,27 +16,25 @@ namespace math {
 template <typename... Types>
 class op_vari : public vari {
  protected:
-    std::tuple<Types...> vi_; // Holds the objects needed in the reverse pass.
+  std::tuple<Types...> vi_;  // Holds the objects needed in the reverse pass.
  public:
-   /**
-    * Get an element from the tuple of vari ops. Because of name lookup rules
-    *  this function needs to be called as \c this->template get<N>()
-    * @tparam Ind The index of the tuple to retrieve.
-    * @return the element inside of the tuple at index Ind.
-    */
-   template <std::size_t Ind>
-   auto& get() {
-     return std::get<Ind>(vi_);
-   }
+  /**
+   * Get an element from the tuple of vari ops. Because of name lookup rules
+   *  this function needs to be called as \c this->template get<N>()
+   * @tparam Ind The index of the tuple to retrieve.
+   * @return the element inside of the tuple at index Ind.
+   */
+  template <std::size_t Ind>
+  auto& get() {
+    return std::get<Ind>(vi_);
+  }
 
-   /**
-    * Return a reference to the tuple holding the vari ops. This is commonly
-    *  used in conjunction with \c std::get<N>()
-    * @return The tuple holding the vari ops.
-    */
-   auto& vi() {
-     return vi_;
-   }
+  /**
+   * Return a reference to the tuple holding the vari ops. This is commonly
+   *  used in conjunction with \c std::get<N>()
+   * @return The tuple holding the vari ops.
+   */
+  auto& vi() { return vi_; }
 
   /**
    * Constructor for passing in vari and ops objects.
