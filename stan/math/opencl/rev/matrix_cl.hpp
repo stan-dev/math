@@ -28,11 +28,11 @@ class matrix_cl<T, require_var_t<T>> {
    */
   const int rows_;
   const int cols_;
-  mutable matrix_cl<double> val_;
-  mutable matrix_cl<double> adj_;
   matrix_cl_view view_{matrix_cl_view::Entire};
 
  public:
+  mutable matrix_cl<double> val_;
+  mutable matrix_cl<double> adj_;
   using Scalar = T;
   using type = T;
   inline int rows() const { return rows_; }
