@@ -16,6 +16,7 @@
 #include <stan/math/rev/core/grad.hpp>
 #include <stan/math/rev/core/matrix_vari.hpp>
 #include <stan/math/rev/core/nested_size.hpp>
+#include <stan/math/rev/core/op_vari.hpp>
 #include <stan/math/rev/core/operator_addition.hpp>
 #include <stan/math/rev/core/operator_divide_equal.hpp>
 #include <stan/math/rev/core/operator_division.hpp>
