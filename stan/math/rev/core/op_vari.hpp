@@ -18,7 +18,6 @@ class op_vari : public vari {
  protected:
   std::tuple<Types...> vi_;  // Holds the objects needed in the reverse pass.
  public:
-   
   /**
    * Get an element from the tuple of vari ops. Because of name lookup rules
    *  this function needs to be called as \c this->template get<N>()
