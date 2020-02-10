@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUNCTOR_COUPLED_ODE_SYSTEM_HPP
 
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/size.hpp>
 #include <ostream>
 #include <vector>
 

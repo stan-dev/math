@@ -55,7 +55,9 @@ void autocovariance(const std::vector<T>& y, std::vector<T>& acov,
  *     Eigen::FFT<double> fft;
  * </pre>
  *
- * @tparam T Scalar type.
+ * @tparam T scalar type
+ * @tparam DerivedA type of the first matrix
+ * @tparam DerivedB type of the second matrix
  * @param y Input sequence.
  * @param acov Autocovariance.
  * @param fft FFT engine instance.
@@ -106,7 +108,9 @@ void autocovariance(const std::vector<T>& y, std::vector<T>& acov) {
  * <p>This method is just a light wrapper around the three-argument
  * autocovariance function
  *
- * @tparam T Scalar type.
+ * @tparam T scalar type
+ * @tparam DerivedA type of the first matrix
+ * @tparam DerivedB type of the second matrix
  * @param y Input sequence.
  * @param acov Autocovariances.
  */

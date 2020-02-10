@@ -1,12 +1,13 @@
-#ifndef STAN_MATH_PRIM_FUN_COMMON_TYPE_HPP
-#define STAN_MATH_PRIM_FUN_COMMON_TYPE_HPP
+#ifndef STAN_MATH_PRIM_META_COMMON_TYPE_HPP
+#define STAN_MATH_PRIM_META_COMMON_TYPE_HPP
 
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/meta/return_type.hpp>
 #include <vector>
 
 namespace stan {
 namespace math {
+
 /**
  * Struct which calculates type promotion given two types.
  *

@@ -8,12 +8,11 @@ namespace stan {
 namespace math {
 
 /**
- * Calculated the value of the first argument
+ * Calculate the value of the first argument
  * times log of the second argument while behaving
  * properly with 0 inputs.
  *
  * \f$ a * \log b \f$.
- *
  *
    \f[
    \mbox{multiply\_log}(x, y) =
@@ -42,9 +41,10 @@ namespace math {
    \end{cases}
    \f]
  *
+ * @tparam T_a type of the first variable
+ * @tparam T_b type of the second variable
  * @param a the first variable
  * @param b the second variable
- *
  * @return a * log(b)
  */
 template <typename T_a, typename T_b>

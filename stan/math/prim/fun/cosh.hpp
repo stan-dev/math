@@ -37,6 +37,7 @@ inline typename apply_scalar_unary<cosh_fun, T>::return_t cosh(const T& x) {
 
 /**
  * Version of cosh() that accepts Eigen Matrix or matrix expressions.
+ *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
  * @return Hyberbolic cosine of x.

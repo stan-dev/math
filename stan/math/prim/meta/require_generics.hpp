@@ -828,11 +828,11 @@ using require_all_not_eigen_vector_vt
  */
 
 /**
- * Check a templated type to see if it and it's inner type pass a condiational
+ * Check a templated type to see if it and its inner type pass a conditional
  * test.
  * @tparam ContainerCheck Templated struct or alias that wraps a static constant
  * scalar called type. Used to check the container satisfies a particular type
- * check. used like template <typename T, require_container_st<is_std_vector,
+ * check. Used like template <typename T, require_container_st<is_std_vector,
  * is_var, T>...>
  */
 template <template <class...> class ContainerCheck,

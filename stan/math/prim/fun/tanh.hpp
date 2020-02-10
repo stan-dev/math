@@ -37,6 +37,7 @@ inline auto tanh(const T& x) {
 
 /**
  * Version of tanh() that accepts Eigen Matrix or matrix expressions.
+ *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
  * @return Hyperbolic tangent of each value in x.

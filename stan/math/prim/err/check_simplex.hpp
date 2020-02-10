@@ -16,7 +16,7 @@ namespace math {
  * Check if the specified vector is simplex.
  * To be a simplex, all values must be greater than or equal to 0
  * and the values must sum to 1.
- * A valid simplex is one where the sum of hte elements is equal
+ * A valid simplex is one where the sum of the elements is equal
  * to 1.  This function tests that the sum is within the tolerance
  * specified by <code>CONSTRAINT_TOLERANCE</code>. This function
  * only accepts Eigen vectors, statically typed vectors, not
