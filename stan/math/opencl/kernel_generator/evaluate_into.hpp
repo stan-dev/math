@@ -46,13 +46,17 @@ void operation_cl<Derived, Scalar, Args...>::evaluate_into(
     cache::kernel.setArg(arg_num++, n_rows);
     cache::kernel.setArg(arg_num++, n_cols);
 
-    int local_rows = opencl_context.base_opts().at("LOCAL_SIZE_");
-    int wgs_rows = (n_rows + local_rows - 1) / local_rows;
+    int local = opencl_context.base_opts().at("LOCAL_SIZE_");
+    int wgs_rows = (n_rows + local - 1) / local;
+    int wgs_cols = (n_cols + local - 1) / local;
+
+    int desired_wgs = opencl_context.compute_units() * 4;
+    int wpt = wgs_rows * wgs_cols / desired_wgs;
 
     cl::Event e;
     opencl_context.queue().enqueueNDRangeKernel(cache::kernel, cl::NullRange,
-                                                cl::NDRange(local_rows * wgs_rows, n_cols),
-                                                cl::NDRange(local_rows, 1), nullptr, &e);
+                                                cl::NDRange(local * wgs_rows, wgs_cols),
+                                                cl::NDRange(local, 1), nullptr, &e);
     derived().add_read_event(e);
     lhs_expression.add_write_event(e);
   } catch (cl::Error e) {

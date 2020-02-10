@@ -96,6 +96,7 @@ class opencl_context_base {
                                                    &device_properties);
       device_.getInfo<size_t>(CL_DEVICE_MAX_WORK_GROUP_SIZE,
                               &max_thread_block_size_);
+      compute_units_ = device_.getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>();
 
       context_ = cl::Context(device_);
       if (device_properties & CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE) {
@@ -146,6 +147,7 @@ class opencl_context_base {
   std::string device_name_;          // The name of OpenCL device
   size_t max_thread_block_size_;  // The maximum size of a block of workers on
                                   // the device
+  int compute_units_;             // Number of compute units on the device
   bool in_order_;                 // Whether to use out of order execution.
   // Holds Default parameter values for each Kernel.
   using map_base_opts = std::map<std::string, int>;
@@ -350,6 +352,16 @@ class opencl_context {
    */
   inline int max_thread_block_size() {
     return opencl_context_base::getInstance().max_thread_block_size_;
+  }
+
+  /** \ingroup opencl
+   * Returns the number of compute units, defined by CL_DEVICE_MAX_COMPUTE_UNITS
+   * of the device in the context. This equals number of cores for a CPU or
+   * streaming multiprocessors for NVidia GPU. To fully utilize a device
+   * at least as many work units must be launched in a kernel.
+   */
+  inline int compute_units() {
+    return opencl_context_base::getInstance().compute_units_;
   }
 
   /** \ingroup opencl

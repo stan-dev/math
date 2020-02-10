@@ -26,17 +26,24 @@ operation_cl<Derived, Scalar, Args...>::get_kernel_source_for_evaluating_into(
   name_generator ng;
   kernel_parts parts = derived().get_whole_kernel_parts(generated, ng, "i", "j",
                                                         lhs_expression);
-  std::string src = "kernel void calculate(" + parts.args +
-                    "const int rows, const int cols){\n"
-                    "const int i = get_global_id(0);\n"
-                    "const int j = get_global_id(1);\n"
-                    "const int lid_i = get_local_id(0);\n"
-                    "const int lsize_i = get_local_size(0);\n"
-                    "const int wg_id_i = get_group_id(0);\n"
-                    "const int n_groups_i = get_num_groups(0);\n"
-                    + parts.initialization +
-                    + "if(i < rows && j < cols){\n" + parts.body + "}\n"
-                    + parts.reduction + "}";
+  std::string src =
+      "kernel void calculate(" + parts.args + "const int rows, const int cols){\n"
+      "const int gid_i = get_global_id(0);\n"
+      "const int gid_j = get_global_id(1);\n"
+      "const int lid_i = get_local_id(0);\n"
+      "const int lsize_i = get_local_size(0);\n"
+      "const int wg_id_i = get_group_id(0);\n"
+      "const int n_groups_i = get_num_groups(0);\n"
+      "const int i = gid_i;\n"
+      + parts.initialization +
+      "int j0 = gid_j * LOCAL_SIZE_;\n"
+      "for(int j = j0; j<min(cols, j0 + LOCAL_SIZE_); j++){\n"
+      "if(i < rows){\n"
+      + parts.body +
+      "}\n"
+      + parts.reduction +
+      "}\n"
+      "}";
   return src;
 }
 
