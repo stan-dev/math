@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_FUN_PROMOTE_COMMON_HPP
 #define STAN_MATH_PRIM_FUN_PROMOTE_COMMON_HPP
 
-#include <stan/math/prim/fun/common_type.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/promote_elements.hpp>
 
 namespace stan {

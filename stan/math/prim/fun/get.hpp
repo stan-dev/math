@@ -1,8 +1,7 @@
-#ifndef STAN_MATH_PRIM_META_GET_HPP
-#define STAN_MATH_PRIM_META_GET_HPP
+#ifndef STAN_MATH_PRIM_FUN_GET_HPP
+#define STAN_MATH_PRIM_FUN_GET_HPP
 
-#include <stan/math/prim/meta/require_generics.hpp>
-#include <stan/math/prim/meta/scalar_type.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <cmath>
 #include <cstddef>

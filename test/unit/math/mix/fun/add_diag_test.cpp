@@ -1,6 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/ad_tolerances.hpp>
 
 TEST(MathMixMatFun, addDiag) {
+  using stan::test::relative_tolerance;
   auto f
       = [](const auto& x, const auto& y) { return stan::math::add_diag(x, y); };
 
@@ -22,18 +24,21 @@ TEST(MathMixMatFun, addDiag) {
   Eigen::MatrixXd m23(2, 3);
   m23 << 1, 1, 1, 1, 1, 1;
 
+  stan::test::ad_tolerances tol;
+  tol.hessian_hessian_ = relative_tolerance(1e-4, 1e-3);
+  tol.hessian_fvar_hessian_ = relative_tolerance(1e-4, 1e-3);
   // these are OK calls
-  stan::test::expect_ad(f, m00, d);
-  stan::test::expect_ad(f, m00, v0);
-  stan::test::expect_ad(f, m11, d);
-  stan::test::expect_ad(f, m11, v1);
-  stan::test::expect_ad(f, m22, d);
-  stan::test::expect_ad(f, m22, v2);
-  stan::test::expect_ad(f, m23, d);
-  stan::test::expect_ad(f, m23, v2);
+  stan::test::expect_ad(tol, f, m00, d);
+  stan::test::expect_ad(tol, f, m00, v0);
+  stan::test::expect_ad(tol, f, m11, d);
+  stan::test::expect_ad(tol, f, m11, v1);
+  stan::test::expect_ad(tol, f, m22, d);
+  stan::test::expect_ad(tol, f, m22, v2);
+  stan::test::expect_ad(tol, f, m23, d);
+  stan::test::expect_ad(tol, f, m23, v2);
 
   // these throw
-  stan::test::expect_ad(f, m11, v2);
-  stan::test::expect_ad(f, m22, v1);
-  stan::test::expect_ad(f, m23, v1);
+  stan::test::expect_ad(tol, f, m11, v2);
+  stan::test::expect_ad(tol, f, m22, v1);
+  stan::test::expect_ad(tol, f, m23, v1);
 }

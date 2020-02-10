@@ -3,8 +3,9 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/binomial_coefficient_log.hpp>
+#include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
 
 namespace stan {
 namespace math {
@@ -29,6 +30,9 @@ double hypergeometric_lpmf(const T_n& n, const T_N& N, const T_a& a,
 
   double logp(0.0);
   check_bounded(function, "Successes variable", n, 0, a);
+  check_consistent_sizes(function, "Successes variable", n, "Draws parameter",
+                         N, "Successes in population parameter", a,
+                         "Failures in population parameter", b);
   check_greater_or_equal(function, "Draws parameter", N, n);
   for (size_t i = 0; i < max_size_seq_view; i++) {
     check_bounded(function, "Draws parameter minus successes variable",
@@ -36,9 +40,6 @@ double hypergeometric_lpmf(const T_n& n, const T_N& N, const T_a& a,
     check_bounded(function, "Draws parameter", N_vec[i], 0,
                   a_vec[i] + b_vec[i]);
   }
-  check_consistent_sizes(function, "Successes variable", n, "Draws parameter",
-                         N, "Successes in population parameter", a,
-                         "Failures in population parameter", b);
 
   if (!include_summand<propto>::value) {
     return 0.0;
