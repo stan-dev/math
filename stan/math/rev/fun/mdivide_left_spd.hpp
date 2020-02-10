@@ -147,6 +147,7 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_spd(
 
   check_square("mdivide_left_spd", "A", A);
   check_multiplicable("mdivide_left_spd", "A", A, "b", b);
+  check_pos_definite("mdivide_left_spd", "A", A);
 
   // NOTE: this is not a memory leak, this vari is used in the
   // expression graph to evaluate the adjoint, but is not needed
@@ -167,6 +168,7 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_spd(
 
   check_square("mdivide_left_spd", "A", A);
   check_multiplicable("mdivide_left_spd", "A", A, "b", b);
+  check_pos_definite("mdivide_left_spd", "A", A);
 
   // NOTE: this is not a memory leak, this vari is used in the
   // expression graph to evaluate the adjoint, but is not needed
@@ -187,6 +189,7 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_spd(
 
   check_square("mdivide_left_spd", "A", A);
   check_multiplicable("mdivide_left_spd", "A", A, "b", b);
+  check_pos_definite("mdivide_left_spd", "A", A);
 
   // NOTE: this is not a memory leak, this vari is used in the
   // expression graph to evaluate the adjoint, but is not needed
