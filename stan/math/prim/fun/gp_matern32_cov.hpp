@@ -7,6 +7,7 @@
 #include <stan/math/prim/fun/divide.hpp>
 #include <stan/math/prim/fun/divide_columns.hpp>
 #include <stan/math/prim/fun/distance.hpp>
+#include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/squared_distance.hpp>
 #include <cmath>

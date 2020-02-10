@@ -1,7 +1,7 @@
-#ifndef STAN_MATH_PRIM_META_MAX_SIZE_MVT_HPP
-#define STAN_MATH_PRIM_META_MAX_SIZE_MVT_HPP
+#ifndef STAN_MATH_PRIM_FUN_MAX_SIZE_MVT_HPP
+#define STAN_MATH_PRIM_FUN_MAX_SIZE_MVT_HPP
 
-#include <stan/math/prim/meta/size_mvt.hpp>
+#include <stan/math/prim/fun/size_mvt.hpp>
 #include <cstdlib>
 
 namespace stan {
@@ -30,6 +30,7 @@ size_t max_size_mvt(const T1& x1, const T2& x2, const T3& x3, const T4& x4) {
   result = result > size_mvt(x4) ? result : size_mvt(x4);
   return result;
 }
+
 }  // namespace math
 }  // namespace stan
 #endif

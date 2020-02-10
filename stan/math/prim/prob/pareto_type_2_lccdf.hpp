@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <cmath>
@@ -25,13 +26,14 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lccdf(
 
   T_partials_return P(0.0);
 
-  check_greater_or_equal(function, "Random variable", y, mu);
   check_not_nan(function, "Random variable", y);
   check_nonnegative(function, "Random variable", y);
   check_positive_finite(function, "Scale parameter", lambda);
   check_positive_finite(function, "Shape parameter", alpha);
-  check_consistent_sizes(function, "Random variable", y, "Scale parameter",
-                         lambda, "Shape parameter", alpha);
+  check_consistent_sizes(function, "Random variable", y, "Location parameter",
+                         mu, "Scale parameter", lambda, "Shape parameter",
+                         alpha);
+  check_greater_or_equal(function, "Random variable", y, mu);
 
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_loc> mu_vec(mu);

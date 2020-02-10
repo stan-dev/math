@@ -1,8 +1,8 @@
-#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMetaPrim, size_mvt_scalar) {
+TEST(MathPrimFun, size_mvt_scalar) {
   using stan::math::size_mvt;
 
   double x1;
@@ -12,7 +12,7 @@ TEST(MathMetaPrim, size_mvt_scalar) {
   EXPECT_THROW(size_mvt(x2), std::invalid_argument);
 }
 
-TEST(MathMetaPrim, size_mvt_matrices_vectors) {
+TEST(MathPrimFun, size_mvt_matrices_vectors) {
   using stan::math::size_mvt;
 
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> x1(2, 3);

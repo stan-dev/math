@@ -88,19 +88,6 @@ VEC cgradvec(AVAR f, AVEC x) {
   return g;
 }
 
-double relative_diff(double u, double v) {
-  return 2 * (u - v) / (fabs(u) + fabs(v));
-}
-
-void expect_near_relative(double u, double v) {
-  if (u == v)
-    SUCCEED();
-  else if (u == 0 || v == 0)
-    EXPECT_NEAR(0, (u - v), 1e-7);
-  else
-    EXPECT_NEAR(0, relative_diff(u, v), 1e-7);
-}
-
 using size_type = stan::math::index_type_t<Eigen::Matrix<double, -1, -1>>;
 
 // Returns a matrix with the contents of a
