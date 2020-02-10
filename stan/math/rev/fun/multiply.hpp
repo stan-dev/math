@@ -673,7 +673,7 @@ template <typename Ta, int Ra, int Ca, typename Tb, int Cb,
           typename = require_any_var_t<Ta, Tb>>
 inline Eigen::Matrix<var, Ra, Cb> multiply(const Eigen::Matrix<Ta, Ra, Ca>& A,
                                            const Eigen::Matrix<Tb, Ca, Cb>& B) {
-  check_multiplicable("multiply", "A", A, "B", B);
+  check_size_match("multiply", "Columns of A", A.cols(), "Rows of B", B.rows());
   check_not_nan("multiply", "A", A);
   check_not_nan("multiply", "B", B);
 
@@ -703,7 +703,7 @@ template <typename Ta, int Ca, typename Tb,
           typename = require_any_var_t<Ta, Tb>>
 inline var multiply(const Eigen::Matrix<Ta, 1, Ca>& A,
                     const Eigen::Matrix<Tb, Ca, 1>& B) {
-  check_multiplicable("multiply", "A", A, "B", B);
+  check_matching_sizes("multiply", "A", A, "B", B);
   check_not_nan("multiply", "A", A);
   check_not_nan("multiply", "B", B);
 

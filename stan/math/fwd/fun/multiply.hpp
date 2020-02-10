@@ -59,7 +59,8 @@ template <typename T, int R1, int C1, int R2, int C2>
 inline Eigen::Matrix<fvar<T>, R1, C2> multiply(
     const Eigen::Matrix<fvar<T>, R1, C1>& m1,
     const Eigen::Matrix<fvar<T>, R2, C2>& m2) {
-  check_multiplicable("multiply", "m1", m1, "m2", m2);
+  check_size_match("multiply", "Columns of m1", m1.cols(), "Rows of m2",
+                   m2.rows());
   Eigen::Matrix<fvar<T>, R1, C2> result(m1.rows(), m2.cols());
   for (size_type i = 0; i < m1.rows(); i++) {
     Eigen::Matrix<fvar<T>, 1, C1> crow = m1.row(i);
@@ -75,7 +76,8 @@ template <typename T, int R1, int C1, int R2, int C2>
 inline Eigen::Matrix<fvar<T>, R1, C2> multiply(
     const Eigen::Matrix<fvar<T>, R1, C1>& m1,
     const Eigen::Matrix<double, R2, C2>& m2) {
-  check_multiplicable("multiply", "m1", m1, "m2", m2);
+  check_size_match("multiply", "Columns of m1", m1.cols(), "Rows of m2",
+                   m2.rows());
   Eigen::Matrix<fvar<T>, R1, C2> result(m1.rows(), m2.cols());
   for (size_type i = 0; i < m1.rows(); i++) {
     Eigen::Matrix<fvar<T>, 1, C1> crow = m1.row(i);
@@ -91,7 +93,8 @@ template <typename T, int R1, int C1, int R2, int C2>
 inline Eigen::Matrix<fvar<T>, R1, C2> multiply(
     const Eigen::Matrix<double, R1, C1>& m1,
     const Eigen::Matrix<fvar<T>, R2, C2>& m2) {
-  check_multiplicable("multiply", "m1", m1, "m2", m2);
+  check_size_match("multiply", "Columns of m1", m1.cols(), "Rows of m2",
+                   m2.rows());
   Eigen::Matrix<fvar<T>, R1, C2> result(m1.rows(), m2.cols());
   for (size_type i = 0; i < m1.rows(); i++) {
     Eigen::Matrix<double, 1, C1> crow = m1.row(i);
@@ -106,21 +109,22 @@ inline Eigen::Matrix<fvar<T>, R1, C2> multiply(
 template <typename T, int C1, int R2>
 inline fvar<T> multiply(const Eigen::Matrix<fvar<T>, 1, C1>& rv,
                         const Eigen::Matrix<fvar<T>, R2, 1>& v) {
-  check_multiplicable("multiply", "rv", rv, "v", v);
+  check_matching_sizes("multiply", "rv", rv, "v", v);
   return dot_product(rv, v);
 }
 
 template <typename T, int C1, int R2>
 inline fvar<T> multiply(const Eigen::Matrix<fvar<T>, 1, C1>& rv,
                         const Eigen::Matrix<double, R2, 1>& v) {
-  check_multiplicable("multiply", "rv", rv, "v", v);
+  check_matching_sizes("multiply", "rv", rv, "v", v);
   return dot_product(rv, v);
 }
 
 template <typename T, int C1, int R2>
 inline fvar<T> multiply(const Eigen::Matrix<double, 1, C1>& rv,
                         const Eigen::Matrix<fvar<T>, R2, 1>& v) {
-  check_multiplicable("multiply", "rv", rv, "v", v);
+  check_matching_sizes("multiply", "rv", rv, "v", v);
+
   return dot_product(rv, v);
 }
 
