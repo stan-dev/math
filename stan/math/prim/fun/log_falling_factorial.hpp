@@ -15,7 +15,6 @@ namespace math {
  * Return the natural log of the falling factorial of the
  * specified arguments.
  *
-
    \f[
    \mbox{log\_falling\_factorial}(x, n) =
    \begin{cases}

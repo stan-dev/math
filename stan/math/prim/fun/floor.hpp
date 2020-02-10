@@ -37,6 +37,7 @@ inline auto floor(const T& x) {
 
 /**
  * Version of floor() that accepts Eigen Matrix or matrix expressions.
+ *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
  * @return Greatest integer <= each value in x.

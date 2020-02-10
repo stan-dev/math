@@ -10,7 +10,7 @@ namespace stan {
 namespace math {
 
 /**
- * Return the partial derivative of the specified multiivariate
+ * Return the partial derivative of the specified multivariate
  * function at the specified argument.
  *
  * @tparam T Argument type

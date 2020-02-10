@@ -47,8 +47,8 @@ void fill(T& x, const S& y) {
  * Each container in the specified standard vector is filled
  * recursively by calling <code>fill</code>.
  *
- * @tparam T Type of container in vector.
- * @tparam S Type of value.
+ * @tparam T type of elements in the vector
+ * @tparam S type of value
  * @param[in] x Container.
  * @param[in, out] y Value.
  */
