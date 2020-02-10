@@ -16,18 +16,25 @@ namespace math {
 
 /** \ingroup prob_dists
  * Return the log PMF of a discrete range for the given y, lower and upper
- * bound.
+ * bound (all integers).
+ *
+ \f{eqnarray*}{
+   y &\sim& \mbox{\sf{discrete\_range}}(lower, upper) \\
+     \log(p (y \, |\, lower, upper))
+        &=& \log \left( \frac{1}{upper - lower + 1} \right) \\
+        &=& -\log (upper - lower + 1)
+ \f}
  *
  * `lower` and `upper` can each be a scalar or a one-dimensional container.
- * Any non-scalar inputs must be the same size.
+ * Any container arguments must be the same size.
  *
  * @tparam T_y type of scalar, either int or std::vector<int>
  * @tparam T_lower type of lower bound, either int or std::vector<int>
  * @tparam T_upper type of upper bound, either int or std::vector<int>
  *
- * @param y random variable
- * @param lower lower bound
- * @param upper upper bound
+ * @param y integer random variable
+ * @param lower integer lower bound
+ * @param upper integer upper bound
  * @return Log probability. If containers are supplied, returns the log sum
  * of the probabilities.
  * @throw std::domain_error if upper is smaller than lower.
@@ -38,7 +45,6 @@ template <bool propto, typename T_y, typename T_lower, typename T_upper>
 double discrete_range_lpmf(const T_y& y, const T_lower& lower,
                            const T_upper& upper) {
   static const char* function = "discrete_range_lpmf";
-
   using std::log;
 
   if (size_zero(y, lower, upper)) {
@@ -53,8 +59,6 @@ double discrete_range_lpmf(const T_y& y, const T_lower& lower,
   if (!include_summand<propto>::value) {
     return 0.0;
   }
-
-  double logp(0.0);
 
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_lower> lower_vec(lower);
@@ -78,6 +82,7 @@ double discrete_range_lpmf(const T_y& y, const T_lower& lower,
     log_upper_minus_lower[i] = log(upper_dbl - lower_dbl + 1);
   }
 
+  double logp(0.0);
   for (size_t n = 0; n < N; n++) {
     logp -= log_upper_minus_lower[n];
   }
