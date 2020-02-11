@@ -95,12 +95,10 @@ class quad_form_vari : public vari {
 };
 }  // namespace internal
 
-template <typename Ta, int Ra, int Ca, typename Tb, int Rb, int Cb>
-inline typename std::enable_if<std::is_same<Ta, var>::value
-                                   || std::is_same<Tb, var>::value,
-                               Eigen::Matrix<var, Cb, Cb> >::type
-quad_form(const Eigen::Matrix<Ta, Ra, Ca>& A,
-          const Eigen::Matrix<Tb, Rb, Cb>& B) {
+template <typename Ta, int Ra, int Ca, typename Tb, int Rb, int Cb,
+          require_any_var_t<Ta, Tb>...>
+inline Eigen::Matrix<var, Cb, Cb> quad_form(
+    const Eigen::Matrix<Ta, Ra, Ca>& A, const Eigen::Matrix<Tb, Rb, Cb>& B) {
   check_square("quad_form", "A", A);
   check_multiplicable("quad_form", "A", A, "B", B);
 
@@ -110,11 +108,10 @@ quad_form(const Eigen::Matrix<Ta, Ra, Ca>& A,
   return baseVari->impl_->C_;
 }
 
-template <typename Ta, int Ra, int Ca, typename Tb, int Rb>
-inline typename std::enable_if<
-    std::is_same<Ta, var>::value || std::is_same<Tb, var>::value, var>::type
-quad_form(const Eigen::Matrix<Ta, Ra, Ca>& A,
-          const Eigen::Matrix<Tb, Rb, 1>& B) {
+template <typename Ta, int Ra, int Ca, typename Tb, int Rb,
+          require_any_var_t<Ta, Tb>...>
+inline var quad_form(const Eigen::Matrix<Ta, Ra, Ca>& A,
+                     const Eigen::Matrix<Tb, Rb, 1>& B) {
   check_square("quad_form", "A", A);
   check_multiplicable("quad_form", "A", A, "B", B);
 
