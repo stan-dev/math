@@ -3,7 +3,7 @@
 
 using std::vector;
 
-class AgradDistributionsHypergeometric : public AgradDistributionTest {
+class AgradDistributionsDiscreteRange : public AgradDistributionTest {
  public:
   void valid_values(vector<vector<double>>& parameters,
                     vector<double>& log_prob) {
