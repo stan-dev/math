@@ -41,7 +41,7 @@ TEST(MathMatrixCL, colwise_min_test) {
   matrix_cl<double> res_cl = stan::math::colwise_min(m_cl);
   MatrixXd raw_res = stan::math::from_matrix_cl(res_cl);
   EXPECT_GE(m.rows(), raw_res.rows());
-  MatrixXd res = raw_res.colwise().sum();
+  MatrixXd res = raw_res.colwise().minCoeff();
   MatrixXd correct = m.colwise().minCoeff();
   EXPECT_EQ(correct.rows(), res.rows());
   EXPECT_EQ(correct.cols(), res.cols());
@@ -49,7 +49,7 @@ TEST(MathMatrixCL, colwise_min_test) {
 }
 
 TEST(MathMatrixCL, colwise_max_test) {
-  MatrixXd m(3, 2);
+  MatrixXd m(2, 3);
   m << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6;
 
   matrix_cl<double> m_cl(m);
@@ -57,7 +57,7 @@ TEST(MathMatrixCL, colwise_max_test) {
   matrix_cl<double> res_cl = stan::math::colwise_max(m_cl);
   MatrixXd raw_res = stan::math::from_matrix_cl(res_cl);
   EXPECT_GE(m.rows(), raw_res.rows());
-  MatrixXd res = raw_res.colwise().sum();
+  MatrixXd res = raw_res.colwise().maxCoeff();
   MatrixXd correct = m.colwise().maxCoeff();
   EXPECT_EQ(correct.rows(), res.rows());
   EXPECT_EQ(correct.cols(), res.cols());
