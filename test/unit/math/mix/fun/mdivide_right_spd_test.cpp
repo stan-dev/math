@@ -53,6 +53,7 @@ TEST(MathMixMatFun, mdivideRightSpd) {
   Eigen::MatrixXd m33 = Eigen::MatrixXd::Zero(3, 3);
   Eigen::MatrixXd m44 = Eigen::MatrixXd::Zero(4, 4);
   Eigen::VectorXd v3 = Eigen::VectorXd::Zero(3);
+  Eigen::RowVectorXd rv3 = Eigen::RowVectorXd::Zero(3);
   Eigen::RowVectorXd rv4 = Eigen::RowVectorXd::Zero(4);
 
   // exceptions: wrong sizes
@@ -62,8 +63,7 @@ TEST(MathMixMatFun, mdivideRightSpd) {
   // exceptions: wrong types
   stan::test::expect_ad(f, v3, m33);
 
-  // FIXME(carpenter): double throws (correct) but var doesn't (incorrect)
   // exceptions: not pos def
-  // stan::test::expect_ad(f, m33, m33);
-  // stan::test::expect_ad(f, m33, v3);
+  stan::test::expect_ad(f, m33, m33);
+  stan::test::expect_ad(f, rv3, m33);
 }
