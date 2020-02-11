@@ -8,8 +8,21 @@ namespace stan {
 namespace math {
 
 /**
- * Compute B^T A B
- **/
+ * Compute the quadratic form B^T A B.
+ *
+ * @tparam RA number of rows in the square matrix, can be Eigen::Dynamic
+ * @tparam CA number of columns in the square matrix, can be Eigen::Dynamic
+ * @tparam RB number of rows in the second matrix, can be Eigen::Dynamic
+ * @tparam CB number of columns in the second matrix, can be Eigen::Dynamic
+ * @tparam T type of elements
+ *
+ * @param A square matrix
+ * @param B second matrix
+ * @return The quadratic form B^T A B, which is a symmetric matrix of size CB
+ * (although symmetry is not guaranteed due to numerical precision).
+ * @throws std::invalid_argument if A is not square, or if A cannot be
+ * multiplied by B
+ */
 template <int RA, int CA, int RB, int CB, typename T>
 inline Eigen::Matrix<T, CB, CB> quad_form(const Eigen::Matrix<T, RA, CA>& A,
                                           const Eigen::Matrix<T, RB, CB>& B) {
@@ -18,6 +31,20 @@ inline Eigen::Matrix<T, CB, CB> quad_form(const Eigen::Matrix<T, RA, CA>& A,
   return B.transpose() * A * B;
 }
 
+/**
+ * Compute the quadratic form B^T A B.
+ *
+ * @tparam RA number of rows in the square matrix, can be Eigen::Dynamic
+ * @tparam CA number of columns in the square matrix, can be Eigen::Dynamic
+ * @tparam RB number of rows in the vector, can be Eigen::Dynamic
+ * @tparam T type of elements
+ *
+ * @param A square matrix
+ * @param B vector
+ * @return The quadratic form B^T A B, which is a scalar.
+ * @throws std::invalid_argument if A is not square, or if A cannot be
+ * multiplied by B
+ */
 template <int RA, int CA, int RB, typename T>
 inline T quad_form(const Eigen::Matrix<T, RA, CA>& A,
                    const Eigen::Matrix<T, RB, 1>& B) {

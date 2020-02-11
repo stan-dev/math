@@ -7,6 +7,22 @@
 namespace stan {
 namespace math {
 
+/**
+ * Compute the quadratic form B^T A B.
+ *
+ * @tparam RA number of rows in the symmetric matrix, can be Eigen::Dynamic
+ * @tparam CA number of columns in the symmetric matrix, can be Eigen::Dynamic
+ * @tparam RB number of rows in the second matrix, can be Eigen::Dynamic
+ * @tparam CB number of columns in the second matrix, can be Eigen::Dynamic
+ * @tparam TA type of elements
+ *
+ * @param A symmetric matrix
+ * @param B second matrix
+ * @return The quadratic form B^T A B, which is guaranteed to be a symmetric
+ * matrix of size CB.
+ * @throws std::invalid_argument if A is not symmetric, or if A cannot be
+ * multiplied by B
+ */
 template <int RA, int CA, int RB, int CB, typename T>
 inline Eigen::Matrix<T, CB, CB> quad_form_sym(
     const Eigen::Matrix<T, RA, CA>& A, const Eigen::Matrix<T, RB, CB>& B) {
@@ -16,6 +32,20 @@ inline Eigen::Matrix<T, CB, CB> quad_form_sym(
   return T(0.5) * (ret + ret.transpose());
 }
 
+/**
+ * Compute the quadratic form B^T A B.
+ *
+ * @tparam RA number of rows in the symmetric matrix, can be Eigen::Dynamic
+ * @tparam CA number of columns in the symmetric matrix, can be Eigen::Dynamic
+ * @tparam RB number of rows in the vector, can be Eigen::Dynamic
+ * @tparam T type of elements
+ *
+ * @param A symmetric matrix
+ * @param B vector
+ * @return The quadratic form B^T A B, which is a scalar.
+ * @throws std::invalid_argument if A is not symmetric, or if A cannot be
+ * multiplied by B
+ */
 template <int RA, int CA, int RB, typename T>
 inline T quad_form_sym(const Eigen::Matrix<T, RA, CA>& A,
                        const Eigen::Matrix<T, RB, 1>& B) {

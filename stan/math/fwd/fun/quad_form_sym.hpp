@@ -8,40 +8,58 @@
 namespace stan {
 namespace math {
 
-template <int RA, int CA, int RB, int CB, typename T>
-inline Eigen::Matrix<fvar<T>, CB, CB> quad_form_sym(
-    const Eigen::Matrix<fvar<T>, RA, CA>& A,
-    const Eigen::Matrix<double, RB, CB>& B) {
+/**
+ * Compute the quadratic form B^T A B.
+ *
+ * @tparam TA type of elements in the symmetric matrix
+ * @tparam RA number of rows in the symmetric matrix, can be Eigen::Dynamic
+ * @tparam CA number of columns in the symmetric matrix, can be Eigen::Dynamic
+ * @tparam TB type of elements in the second matrix
+ * @tparam RB number of rows in the second matrix, can be Eigen::Dynamic
+ * @tparam CB number of columns in the second matrix, can be Eigen::Dynamic
+ *
+ * @param A symmetric matrix
+ * @param B second matrix
+ * @return The quadratic form B^T A B, which is guaranteed to be a symmetric
+ * matrix of size CB.
+ * @throws std::invalid_argument if A is not symmetric, or if A cannot be
+ * multiplied by B
+ */
+template <typename TA, int RA, int CA, typename TB, int RB, int CB,
+          require_any_fvar_t<TA, TB>...>
+inline Eigen::Matrix<return_type_t<TA, TB>, CB, CB> quad_form_sym(
+    const Eigen::Matrix<TA, RA, CA>& A, const Eigen::Matrix<TB, RB, CB>& B) {
+  using T = return_type_t<TA, TB>;
   check_multiplicable("quad_form_sym", "A", A, "B", B);
   check_symmetric("quad_form_sym", "A", A);
-  Eigen::Matrix<fvar<T>, CB, CB> ret(multiply(transpose(B), multiply(A, B)));
+  Eigen::Matrix<T, CB, CB> ret(multiply(transpose(B), multiply(A, B)));
   return T(0.5) * (ret + transpose(ret));
 }
 
-template <int RA, int CA, int RB, typename T>
-inline fvar<T> quad_form_sym(const Eigen::Matrix<fvar<T>, RA, CA>& A,
-                             const Eigen::Matrix<double, RB, 1>& B) {
+/**
+ * Compute the quadratic form B^T A B.
+ *
+ * @tparam TA type of elements in the symmetric matrix
+ * @tparam RA number of rows in the symmetric matrix, can be Eigen::Dynamic
+ * @tparam CA number of columns in the symmetric matrix, can be Eigen::Dynamic
+ * @tparam TB type of elements in the vector
+ * @tparam RB number of rows in the vector, can be Eigen::Dynamic
+ *
+ * @param A symmetric matrix
+ * @param B vector
+ * @return The quadratic form B^T A B, which is a scalar.
+ * @throws std::invalid_argument if A is not symmetric, or if A cannot be
+ * multiplied by B
+ */
+template <typename TA, int RA, int CA, typename TB, int RB,
+          require_any_fvar_t<TA, TB>...>
+inline return_type_t<TA, TB> quad_form_sym(const Eigen::Matrix<TA, RA, CA>& A,
+                                           const Eigen::Matrix<TB, RB, 1>& B) {
   check_multiplicable("quad_form_sym", "A", A, "B", B);
   check_symmetric("quad_form_sym", "A", A);
   return dot_product(B, multiply(A, B));
 }
-template <int RA, int CA, int RB, int CB, typename T>
-inline Eigen::Matrix<fvar<T>, CB, CB> quad_form_sym(
-    const Eigen::Matrix<double, RA, CA>& A,
-    const Eigen::Matrix<fvar<T>, RB, CB>& B) {
-  check_multiplicable("quad_form_sym", "A", A, "B", B);
-  check_symmetric("quad_form_sym", "A", A);
-  Eigen::Matrix<fvar<T>, CB, CB> ret(multiply(transpose(B), multiply(A, B)));
-  return T(0.5) * (ret + transpose(ret));
-}
 
-template <int RA, int CA, int RB, typename T>
-inline fvar<T> quad_form_sym(const Eigen::Matrix<double, RA, CA>& A,
-                             const Eigen::Matrix<fvar<T>, RB, 1>& B) {
-  check_multiplicable("quad_form_sym", "A", A, "B", B);
-  check_symmetric("quad_form_sym", "A", A);
-  return dot_product(B, multiply(A, B));
-}
 }  // namespace math
 }  // namespace stan
 

@@ -11,6 +11,23 @@
 namespace stan {
 namespace math {
 
+/**
+ * Compute the quadratic form B^T A B.
+ *
+ * @tparam Ta type of elements in the symmetric matrix
+ * @tparam Ra number of rows in the symmetric matrix, can be Eigen::Dynamic
+ * @tparam Ca number of columns in the symmetric matrix, can be Eigen::Dynamic
+ * @tparam Tb type of elements in the second matrix
+ * @tparam Rb number of rows in the second matrix, can be Eigen::Dynamic
+ * @tparam Cb number of columns in the second matrix, can be Eigen::Dynamic
+ *
+ * @param A symmetric matrix
+ * @param B second matrix
+ * @return The quadratic form B^T A B, which is guaranteed to be a symmetric
+ * matrix of size Cb.
+ * @throws std::invalid_argument if A is not symmetric, or if A cannot be
+ * multiplied by B
+ */
 template <typename Ta, int Ra, int Ca, typename Tb, int Rb, int Cb,
           require_any_var_t<Ta, Tb>...>
 inline Eigen::Matrix<var, Cb, Cb> quad_form_sym(
@@ -24,6 +41,21 @@ inline Eigen::Matrix<var, Cb, Cb> quad_form_sym(
   return baseVari->impl_->C_;
 }
 
+/**
+ * Compute the quadratic form B^T A B.
+ *
+ * @tparam Ta type of elements in the symmetric matrix
+ * @tparam Ra number of rows in the symmetric matrix, can be Eigen::Dynamic
+ * @tparam Ca number of columns in the symmetric matrix, can be Eigen::Dynamic
+ * @tparam Tb type of elements in the vector
+ * @tparam Rb number of rows in the vector, can be Eigen::Dynamic
+ *
+ * @param A symmetric matrix
+ * @param B vector
+ * @return The quadratic form B^T A B, which is a scalar.
+ * @throws std::invalid_argument if A is not symmetric, or if A cannot be
+ * multiplied by B
+ */
 template <typename Ta, int Ra, int Ca, typename Tb, int Rb,
           require_any_var_t<Ta, Tb>...>
 inline var quad_form_sym(const Eigen::Matrix<Ta, Ra, Ca>& A,
