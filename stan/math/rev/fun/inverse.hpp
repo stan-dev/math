@@ -70,12 +70,17 @@ class inverse_vari : public vari {
 /**
  * Reverse mode specialization of calculating the inverse of the matrix.
  *
- * @param m Specified matrix.
- * @return Inverse of the matrix.
+ * @param m specified matrix
+ * @return Inverse of the matrix (an empty matrix if the specified matrix has
+ * size zero).
+ * @throw std::invalid_argument if the matrix is not square.
  */
 inline matrix_v inverse(const matrix_v &m) {
   check_square("inverse", "m", m);
-  check_nonempty("inverse", "m", m);
+  if (m.size() == 0) {
+    return matrix_v(0, 0);
+  }
+
   matrix_v res(m.rows(), m.cols());
   internal::inverse_vari *baseVari = new internal::inverse_vari(m);
   res.vi() = Eigen::Map<matrix_vi>(baseVari->vari_ref_A_inv_, res.rows(),
