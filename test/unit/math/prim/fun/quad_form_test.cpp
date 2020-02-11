@@ -3,7 +3,6 @@
 
 TEST(MathMatrixPrim, quad_form_mat) {
   using stan::math::matrix_d;
-  using stan::math::quad_form;
 
   matrix_d ad(4, 4);
   matrix_d bd(4, 2);
@@ -13,7 +12,7 @@ TEST(MathMatrixPrim, quad_form_mat) {
       1.0, 112.0;
 
   // double-double
-  matrix_d resd = quad_form(ad, bd);
+  matrix_d resd = stan::math::quad_form(ad, bd);
   EXPECT_FLOAT_EQ(26033, resd(0, 0));
   EXPECT_FLOAT_EQ(3456, resd(0, 1));
   EXPECT_FLOAT_EQ(3396, resd(1, 0));
@@ -22,7 +21,6 @@ TEST(MathMatrixPrim, quad_form_mat) {
 
 TEST(MathMatrixPrim, quad_form_vec) {
   using stan::math::matrix_d;
-  using stan::math::quad_form;
   using stan::math::vector_d;
 
   matrix_d ad(4, 4);
@@ -34,6 +32,6 @@ TEST(MathMatrixPrim, quad_form_vec) {
       1.0, 112.0;
 
   // double-double
-  res = quad_form(ad, bd);
+  res = stan::math::quad_form(ad, bd);
   EXPECT_FLOAT_EQ(26033, res);
 }
