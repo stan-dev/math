@@ -42,7 +42,8 @@ return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
   scalar_seq_view<T_rate> lambda_vec(lambda);
   size_t max_size_seq_view = max_size(n, lambda);
 
-  for (size_t i = 0, size_lambda = stan::math::size(lambda); i < size_lambda; i++) {
+  for (size_t i = 0, size_lambda = stan::math::size(lambda); i < size_lambda;
+       i++) {
     if (is_inf(lambda_vec[i])) {
       return LOG_ZERO;
     }
