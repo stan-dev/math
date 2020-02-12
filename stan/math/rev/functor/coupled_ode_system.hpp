@@ -116,50 +116,45 @@ struct coupled_ode_system<F, double, var> {
                   double t) const {
     using std::vector;
 
-    try {
-      start_nested();
+    // Run nested autodiff in this scope
+    local_nested_autodiff nested;
 
-      vector<var> y_vars;
-      y_vars.reserve(N_);
-      for (std::size_t i = 0; i < N_; ++i)
-        y_vars.emplace_back(new vari(z[i], false));
+    vector<var> y_vars;
+    y_vars.reserve(N_);
+    for (std::size_t i = 0; i < N_; ++i)
+      y_vars.emplace_back(new vari(z[i], false));
 
-      vector<var> dy_dt_vars = f_(t, y_vars, theta_nochain_, x_, x_int_, msgs_);
+    vector<var> dy_dt_vars = f_(t, y_vars, theta_nochain_, x_, x_int_, msgs_);
 
-      check_size_match("coupled_ode_system", "dz_dt", dy_dt_vars.size(),
-                       "states", N_);
+    check_size_match("coupled_ode_system", "dz_dt", dy_dt_vars.size(),
+                      "states", N_);
 
-      for (size_t i = 0; i < N_; i++) {
-        dz_dt[i] = dy_dt_vars[i].val();
-        dy_dt_vars[i].grad();
+    for (size_t i = 0; i < N_; i++) {
+      dz_dt[i] = dy_dt_vars[i].val();
+      dy_dt_vars[i].grad();
 
-        for (size_t j = 0; j < M_; j++) {
-          // orders derivatives by equation (i.e. if there are 2 eqns
-          // (y1, y2) and 2 parameters (a, b), dy_dt will be ordered as:
-          // dy1_dt, dy2_dt, dy1_da, dy2_da, dy1_db, dy2_db
-          double temp_deriv = theta_nochain_[j].adj();
-          const size_t offset = N_ + N_ * j;
-          for (size_t k = 0; k < N_; k++) {
-            temp_deriv += z[offset + k] * y_vars[k].adj();
-          }
-
-          dz_dt[offset + i] = temp_deriv;
+      for (size_t j = 0; j < M_; j++) {
+        // orders derivatives by equation (i.e. if there are 2 eqns
+        // (y1, y2) and 2 parameters (a, b), dy_dt will be ordered as:
+        // dy1_dt, dy2_dt, dy1_da, dy2_da, dy1_db, dy2_db
+        double temp_deriv = theta_nochain_[j].adj();
+        const size_t offset = N_ + N_ * j;
+        for (size_t k = 0; k < N_; k++) {
+          temp_deriv += z[offset + k] * y_vars[k].adj();
         }
 
-        set_zero_all_adjoints_nested();
-        // Parameters stored on the outer (non-nested) nochain stack are not
-        // reset to zero by the last call. This is done as a separate step here.
-        // See efficiency note above on template specalization for more details
-        // on this.
-        for (size_t j = 0; j < M_; ++j) {
-          theta_nochain_[j].vi_->set_zero_adjoint();
-        }
+        dz_dt[offset + i] = temp_deriv;
       }
-    } catch (const std::exception& e) {
-      recover_memory_nested();
-      throw;
+
+      nested.set_zero_all_adjoints();
+      // Parameters stored on the outer (non-nested) nochain stack are not
+      // reset to zero by the last call. This is done as a separate step here.
+      // See efficiency note above on template specalization for more details
+      // on this.
+      for (size_t j = 0; j < M_; ++j) {
+        theta_nochain_[j].vi_->set_zero_adjoint();
+      }
     }
-    recover_memory_nested();
   }
 
   /**
@@ -276,44 +271,39 @@ struct coupled_ode_system<F, var, double> {
                   double t) const {
     using std::vector;
 
-    try {
-      start_nested();
+    // Run nested autodiff in this scope
+    local_nested_autodiff nested;
 
-      vector<var> y_vars;
-      y_vars.reserve(N_);
-      for (std::size_t i = 0; i < N_; ++i)
-        y_vars.emplace_back(new vari(z[i], false));
+    vector<var> y_vars;
+    y_vars.reserve(N_);
+    for (std::size_t i = 0; i < N_; ++i)
+      y_vars.emplace_back(new vari(z[i], false));
 
-      vector<var> dy_dt_vars = f_(t, y_vars, theta_dbl_, x_, x_int_, msgs_);
+    vector<var> dy_dt_vars = f_(t, y_vars, theta_dbl_, x_, x_int_, msgs_);
 
-      check_size_match("coupled_ode_system", "dz_dt", dy_dt_vars.size(),
-                       "states", N_);
+    check_size_match("coupled_ode_system", "dz_dt", dy_dt_vars.size(),
+                      "states", N_);
 
-      for (size_t i = 0; i < N_; i++) {
-        dz_dt[i] = dy_dt_vars[i].val();
-        dy_dt_vars[i].grad();
+    for (size_t i = 0; i < N_; i++) {
+      dz_dt[i] = dy_dt_vars[i].val();
+      dy_dt_vars[i].grad();
 
-        for (size_t j = 0; j < N_; j++) {
-          // orders derivatives by equation (i.e. if there are 2 eqns
-          // (y1, y2) and 2 initial conditions (y0_a, y0_b), dy_dt will be
-          // ordered as: dy1_dt, dy2_dt, dy1_d{y0_a}, dy2_d{y0_a}, dy1_d{y0_b},
-          // dy2_d{y0_b}
-          double temp_deriv = 0;
-          const size_t offset = N_ + N_ * j;
-          for (size_t k = 0; k < N_; k++) {
-            temp_deriv += z[offset + k] * y_vars[k].adj();
-          }
-
-          dz_dt[offset + i] = temp_deriv;
+      for (size_t j = 0; j < N_; j++) {
+        // orders derivatives by equation (i.e. if there are 2 eqns
+        // (y1, y2) and 2 initial conditions (y0_a, y0_b), dy_dt will be
+        // ordered as: dy1_dt, dy2_dt, dy1_d{y0_a}, dy2_d{y0_a}, dy1_d{y0_b},
+        // dy2_d{y0_b}
+        double temp_deriv = 0;
+        const size_t offset = N_ + N_ * j;
+        for (size_t k = 0; k < N_; k++) {
+          temp_deriv += z[offset + k] * y_vars[k].adj();
         }
 
-        set_zero_all_adjoints_nested();
+        dz_dt[offset + i] = temp_deriv;
       }
-    } catch (const std::exception& e) {
-      recover_memory_nested();
-      throw;
+
+      nested.set_zero_all_adjoints();
     }
-    recover_memory_nested();
   }
 
   /**
@@ -457,60 +447,55 @@ struct coupled_ode_system<F, var, var> {
                   double t) const {
     using std::vector;
 
-    try {
-      start_nested();
+    // Run nested autodiff in this scope
+    local_nested_autodiff nested;
 
-      vector<var> y_vars;
-      y_vars.reserve(N_);
-      for (std::size_t i = 0; i < N_; ++i)
-        y_vars.emplace_back(new vari(z[i], false));
+    vector<var> y_vars;
+    y_vars.reserve(N_);
+    for (std::size_t i = 0; i < N_; ++i)
+      y_vars.emplace_back(new vari(z[i], false));
 
-      vector<var> dy_dt_vars = f_(t, y_vars, theta_nochain_, x_, x_int_, msgs_);
+    vector<var> dy_dt_vars = f_(t, y_vars, theta_nochain_, x_, x_int_, msgs_);
 
-      check_size_match("coupled_ode_system", "dz_dt", dy_dt_vars.size(),
-                       "states", N_);
+    check_size_match("coupled_ode_system", "dz_dt", dy_dt_vars.size(),
+                      "states", N_);
 
-      for (size_t i = 0; i < N_; i++) {
-        dz_dt[i] = dy_dt_vars[i].val();
-        dy_dt_vars[i].grad();
+    for (size_t i = 0; i < N_; i++) {
+      dz_dt[i] = dy_dt_vars[i].val();
+      dy_dt_vars[i].grad();
 
-        for (size_t j = 0; j < N_; j++) {
-          // orders derivatives by equation (i.e. if there are 2 eqns
-          // (y1, y2) and 2 parameters (a, b), dy_dt will be ordered as:
-          // dy1_dt, dy2_dt, dy1_da, dy2_da, dy1_db, dy2_db
-          double temp_deriv = 0;
-          const size_t offset = N_ + N_ * j;
-          for (size_t k = 0; k < N_; k++) {
-            temp_deriv += z[offset + k] * y_vars[k].adj();
-          }
-
-          dz_dt[offset + i] = temp_deriv;
+      for (size_t j = 0; j < N_; j++) {
+        // orders derivatives by equation (i.e. if there are 2 eqns
+        // (y1, y2) and 2 parameters (a, b), dy_dt will be ordered as:
+        // dy1_dt, dy2_dt, dy1_da, dy2_da, dy1_db, dy2_db
+        double temp_deriv = 0;
+        const size_t offset = N_ + N_ * j;
+        for (size_t k = 0; k < N_; k++) {
+          temp_deriv += z[offset + k] * y_vars[k].adj();
         }
 
-        for (size_t j = 0; j < M_; j++) {
-          double temp_deriv = theta_nochain_[j].adj();
-          const size_t offset = N_ + N_ * N_ + N_ * j;
-          for (size_t k = 0; k < N_; k++) {
-            temp_deriv += z[offset + k] * y_vars[k].adj();
-          }
-
-          dz_dt[offset + i] = temp_deriv;
-        }
-
-        set_zero_all_adjoints_nested();
-        // Parameters stored on the outer (non-nested) nochain stack are not
-        // reset to zero by the last call. This is done as a separate step here.
-        // See efficiency note above on template specalization for more details
-        // on this.
-        for (size_t j = 0; j < M_; ++j) {
-          theta_nochain_[j].vi_->set_zero_adjoint();
-        }
+        dz_dt[offset + i] = temp_deriv;
       }
-    } catch (const std::exception& e) {
-      recover_memory_nested();
-      throw;
+
+      for (size_t j = 0; j < M_; j++) {
+        double temp_deriv = theta_nochain_[j].adj();
+        const size_t offset = N_ + N_ * N_ + N_ * j;
+        for (size_t k = 0; k < N_; k++) {
+          temp_deriv += z[offset + k] * y_vars[k].adj();
+        }
+
+        dz_dt[offset + i] = temp_deriv;
+      }
+
+      nested.set_zero_all_adjoints();
+      // Parameters stored on the outer (non-nested) nochain stack are not
+      // reset to zero by the last call. This is done as a separate step here.
+      // See efficiency note above on template specalization for more details
+      // on this.
+      for (size_t j = 0; j < M_; ++j) {
+        theta_nochain_[j].vi_->set_zero_adjoint();
+      }
     }
-    recover_memory_nested();
   }
 
   /**

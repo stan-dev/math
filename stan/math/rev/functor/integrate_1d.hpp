@@ -36,28 +36,25 @@ inline double gradient_of_f(const F &f, const double &x, const double &xc,
                             const std::vector<int> &x_i, size_t n,
                             std::ostream *msgs) {
   double gradient = 0.0;
-  start_nested();
+
+  // Run nested autodiff in this scope
+  local_nested_autodiff nested;
+
   std::vector<var> theta_var(theta_vals.size());
-  try {
-    for (size_t i = 0; i < theta_vals.size(); i++) {
-      theta_var[i] = theta_vals[i];
-    }
-    var fx = f(x, xc, theta_var, x_r, x_i, msgs);
-    fx.grad();
-    gradient = theta_var[n].adj();
-    if (is_nan(gradient)) {
-      if (fx.val() == 0) {
-        gradient = 0;
-      } else {
-        throw_domain_error("gradient_of_f", "The gradient of f", n,
-                           "is nan for parameter ", "");
-      }
-    }
-  } catch (const std::exception &e) {
-    recover_memory_nested();
-    throw;
+  for (size_t i = 0; i < theta_vals.size(); i++) {
+    theta_var[i] = theta_vals[i];
   }
-  recover_memory_nested();
+  var fx = f(x, xc, theta_var, x_r, x_i, msgs);
+  fx.grad();
+  gradient = theta_var[n].adj();
+  if (is_nan(gradient)) {
+    if (fx.val() == 0) {
+      gradient = 0;
+    } else {
+      throw_domain_error("gradient_of_f", "The gradient of f", n,
+                          "is nan for parameter ", "");
+    }
+  }
 
   return gradient;
 }

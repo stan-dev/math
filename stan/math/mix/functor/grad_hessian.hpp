@@ -50,29 +50,25 @@ void grad_hessian(
   int d = x.size();
   H.resize(d, d);
   grad_H.resize(d, Matrix<double, Dynamic, Dynamic>(d, d));
-  try {
-    for (int i = 0; i < d; ++i) {
-      for (int j = i; j < d; ++j) {
-        start_nested();
-        Matrix<fvar<fvar<var> >, Dynamic, 1> x_ffvar(d);
-        for (int k = 0; k < d; ++k) {
-          x_ffvar(k)
-              = fvar<fvar<var> >(fvar<var>(x(k), i == k), fvar<var>(j == k, 0));
-        }
-        fvar<fvar<var> > fx_ffvar = f(x_ffvar);
-        H(i, j) = fx_ffvar.d_.d_.val();
-        H(j, i) = H(i, j);
-        grad(fx_ffvar.d_.d_.vi_);
-        for (int k = 0; k < d; ++k) {
-          grad_H[i](j, k) = x_ffvar(k).val_.val_.adj();
-          grad_H[j](i, k) = grad_H[i](j, k);
-        }
-        recover_memory_nested();
+  for (int i = 0; i < d; ++i) {
+    for (int j = i; j < d; ++j) {
+      // Run nested autodiff in this scope
+      local_nested_autodiff nested;
+
+      Matrix<fvar<fvar<var> >, Dynamic, 1> x_ffvar(d);
+      for (int k = 0; k < d; ++k) {
+        x_ffvar(k)
+            = fvar<fvar<var> >(fvar<var>(x(k), i == k), fvar<var>(j == k, 0));
+      }
+      fvar<fvar<var> > fx_ffvar = f(x_ffvar);
+      H(i, j) = fx_ffvar.d_.d_.val();
+      H(j, i) = H(i, j);
+      grad(fx_ffvar.d_.d_.vi_);
+      for (int k = 0; k < d; ++k) {
+        grad_H[i](j, k) = x_ffvar(k).val_.val_.adj();
+        grad_H[j](i, k) = grad_H[i](j, k);
       }
     }
-  } catch (const std::exception& e) {
-    recover_memory_nested();
-    throw;
   }
 }
 

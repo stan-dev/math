@@ -24,34 +24,30 @@ struct map_rect_reduce<F, var, var> {
     const size_type num_job_specific_params = job_specific_params.rows();
     matrix_d out(1 + num_shared_params + num_job_specific_params, 0);
 
-    try {
-      start_nested();
-      vector_v shared_params_v = to_var(shared_params);
-      vector_v job_specific_params_v = to_var(job_specific_params);
+    // Run nested autodiff in this scope
+    local_nested_autodiff nested;
 
-      vector_v fx_v
-          = F()(shared_params_v, job_specific_params_v, x_r, x_i, msgs);
+    vector_v shared_params_v = to_var(shared_params);
+    vector_v job_specific_params_v = to_var(job_specific_params);
 
-      const size_type size_f = fx_v.rows();
+    vector_v fx_v
+        = F()(shared_params_v, job_specific_params_v, x_r, x_i, msgs);
 
-      out.resize(Eigen::NoChange, size_f);
+    const size_type size_f = fx_v.rows();
 
-      for (size_type i = 0; i < size_f; ++i) {
-        out(0, i) = fx_v(i).val();
-        set_zero_all_adjoints_nested();
-        fx_v(i).grad();
-        for (size_type j = 0; j < num_shared_params; ++j) {
-          out(1 + j, i) = shared_params_v(j).vi_->adj_;
-        }
-        for (size_type j = 0; j < num_job_specific_params; ++j) {
-          out(1 + num_shared_params + j, i)
-              = job_specific_params_v(j).vi_->adj_;
-        }
+    out.resize(Eigen::NoChange, size_f);
+
+    for (size_type i = 0; i < size_f; ++i) {
+      out(0, i) = fx_v(i).val();
+      nested.set_zero_all_adjoints();
+      fx_v(i).grad();
+      for (size_type j = 0; j < num_shared_params; ++j) {
+        out(1 + j, i) = shared_params_v(j).vi_->adj_;
       }
-      recover_memory_nested();
-    } catch (const std::exception& e) {
-      recover_memory_nested();
-      throw;
+      for (size_type j = 0; j < num_job_specific_params; ++j) {
+        out(1 + num_shared_params + j, i)
+            = job_specific_params_v(j).vi_->adj_;
+      }
     }
     return out;
   }
@@ -67,28 +63,24 @@ struct map_rect_reduce<F, double, var> {
     const size_type num_job_specific_params = job_specific_params.rows();
     matrix_d out(1 + num_job_specific_params, 0);
 
-    try {
-      start_nested();
-      vector_v job_specific_params_v = to_var(job_specific_params);
+    // Run nested autodiff in this scope
+    local_nested_autodiff nested;
 
-      vector_v fx_v = F()(shared_params, job_specific_params_v, x_r, x_i, msgs);
+    vector_v job_specific_params_v = to_var(job_specific_params);
 
-      const size_type size_f = fx_v.rows();
+    vector_v fx_v = F()(shared_params, job_specific_params_v, x_r, x_i, msgs);
 
-      out.resize(Eigen::NoChange, size_f);
+    const size_type size_f = fx_v.rows();
 
-      for (size_type i = 0; i < size_f; ++i) {
-        out(0, i) = fx_v(i).val();
-        set_zero_all_adjoints_nested();
-        fx_v(i).grad();
-        for (size_type j = 0; j < num_job_specific_params; ++j) {
-          out(1 + j, i) = job_specific_params_v(j).vi_->adj_;
-        }
+    out.resize(Eigen::NoChange, size_f);
+
+    for (size_type i = 0; i < size_f; ++i) {
+      out(0, i) = fx_v(i).val();
+      nested.set_zero_all_adjoints();
+      fx_v(i).grad();
+      for (size_type j = 0; j < num_job_specific_params; ++j) {
+        out(1 + j, i) = job_specific_params_v(j).vi_->adj_;
       }
-      recover_memory_nested();
-    } catch (const std::exception& e) {
-      recover_memory_nested();
-      throw;
     }
     return out;
   }
@@ -104,31 +96,28 @@ struct map_rect_reduce<F, var, double> {
     const size_type num_shared_params = shared_params.rows();
     matrix_d out(1 + num_shared_params, 0);
 
-    try {
-      start_nested();
-      vector_v shared_params_v = to_var(shared_params);
+  // Run nested autodiff in this scope
+  local_nested_autodiff nested;
 
-      vector_v fx_v = F()(shared_params_v, job_specific_params, x_r, x_i, msgs);
+  vector_v shared_params_v = to_var(shared_params);
 
-      const size_type size_f = fx_v.rows();
+  vector_v fx_v = F()(shared_params_v, job_specific_params, x_r, x_i, msgs);
 
-      out.resize(Eigen::NoChange, size_f);
+  const size_type size_f = fx_v.rows();
 
-      for (size_type i = 0; i < size_f; ++i) {
-        out(0, i) = fx_v(i).val();
-        set_zero_all_adjoints_nested();
-        fx_v(i).grad();
-        for (size_type j = 0; j < num_shared_params; ++j) {
-          out(1 + j, i) = shared_params_v(j).vi_->adj_;
-        }
-      }
-      recover_memory_nested();
-    } catch (const std::exception& e) {
-      recover_memory_nested();
-      throw;
+  out.resize(Eigen::NoChange, size_f);
+
+  for (size_type i = 0; i < size_f; ++i) {
+    out(0, i) = fx_v(i).val();
+    nested.set_zero_all_adjoints();
+    fx_v(i).grad();
+    for (size_type j = 0; j < num_shared_params; ++j) {
+      out(1 + j, i) = shared_params_v(j).vi_->adj_;
     }
-    return out;
   }
+  
+  return out;
+}
 };
 
 }  // namespace internal

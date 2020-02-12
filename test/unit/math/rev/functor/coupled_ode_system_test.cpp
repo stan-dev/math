@@ -18,7 +18,8 @@ struct StanAgradRevOde : public ::testing::Test {
 TEST_F(StanAgradRevOde, coupled_ode_system_dv) {
   using stan::math::coupled_ode_system;
 
-  stan::math::start_nested();
+  // Run nested autodiff in this scope
+  stan::math::local_nested_autodiff nested;
 
   harm_osc_ode_fun harm_osc;
 
@@ -49,14 +50,15 @@ TEST_F(StanAgradRevOde, coupled_ode_system_dv) {
   EXPECT_EQ(stack_size, stan::math::nested_size())
       << "expecting no new things on the stack";
 
+  std::cout << "A" << std::endl;
   system(z0, dz_dt, t0);
+  std::cout << "B" << std::endl;
 
   EXPECT_FLOAT_EQ(0.5, dz_dt[0]);
   EXPECT_FLOAT_EQ(-1.075, dz_dt[1]);
   EXPECT_FLOAT_EQ(2, dz_dt[2]);
   EXPECT_FLOAT_EQ(-1.8, dz_dt[3]);
 
-  stan::math::recover_memory_nested();
 }
 TEST_F(StanAgradRevOde, initial_state_dv) {
   using stan::math::coupled_ode_system;
@@ -164,7 +166,8 @@ TEST_F(StanAgradRevOde, memory_recovery_exception_dv) {
 TEST_F(StanAgradRevOde, coupled_ode_system_vd) {
   using stan::math::coupled_ode_system;
 
-  stan::math::start_nested();
+  // Run nested autodiff in this scope
+  stan::math::local_nested_autodiff nested;
 
   harm_osc_ode_fun harm_osc;
 
@@ -208,9 +211,8 @@ TEST_F(StanAgradRevOde, coupled_ode_system_vd) {
   EXPECT_FLOAT_EQ(-1.0 * 1.0 - 0.15 * 0.0, dz_dt[3]);
   EXPECT_FLOAT_EQ(0.0 * 0.0 + 1.0 * 1.0, dz_dt[4]);
   EXPECT_FLOAT_EQ(-1.0 * 0.0 - 0.15 * 1.0, dz_dt[5]);
-
-  stan::math::recover_memory_nested();
 }
+
 TEST_F(StanAgradRevOde, initial_state_vd) {
   using stan::math::coupled_ode_system;
   using stan::math::var;
@@ -317,7 +319,9 @@ TEST_F(StanAgradRevOde, memory_recovery_exception_vd) {
 TEST_F(StanAgradRevOde, coupled_ode_system_vv) {
   using stan::math::coupled_ode_system;
 
-  stan::math::start_nested();
+  // Run nested autodiff in this scope
+  stan::math::local_nested_autodiff nested;
+  
   const size_t N = 2;
   const size_t M = 1;
   const size_t z_size = N + N * N + N * M;
@@ -369,8 +373,6 @@ TEST_F(StanAgradRevOde, coupled_ode_system_vv) {
   EXPECT_FLOAT_EQ(-0.15, dz_dt[5]);
   EXPECT_FLOAT_EQ(0, dz_dt[6]);
   EXPECT_FLOAT_EQ(-0.5, dz_dt[7]);
-
-  stan::math::recover_memory_nested();
 }
 TEST_F(StanAgradRevOde, initial_state_vv) {
   using stan::math::coupled_ode_system;
