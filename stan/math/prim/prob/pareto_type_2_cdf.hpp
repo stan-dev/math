@@ -85,17 +85,17 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_cdf(
     }
   }
   if (!is_constant_all<T_loc>::value) {
-    for (size_t n = 0; n < size(mu); ++n) {
+    for (size_t n = 0; n < stan::math::size(mu); ++n) {
       ops_partials.edge2_.partials_[n] *= P;
     }
   }
   if (!is_constant_all<T_scale>::value) {
-    for (size_t n = 0; n < size(lambda); ++n) {
+    for (size_t n = 0; n < stan::math::size(lambda); ++n) {
       ops_partials.edge3_.partials_[n] *= P;
     }
   }
   if (!is_constant_all<T_shape>::value) {
-    for (size_t n = 0; n < size(alpha); ++n) {
+    for (size_t n = 0; n < stan::math::size(alpha); ++n) {
       ops_partials.edge4_.partials_[n] *= P;
     }
   }

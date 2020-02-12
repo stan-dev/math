@@ -70,7 +70,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lcdf(const T_y& y,
   if (!is_constant_all<T_dof>::value) {
     digammaHalf = digamma(0.5);
 
-    for (size_t i = 0; i < size(nu); i++) {
+    for (size_t i = 0; i < stan::math::size(nu); i++) {
       const T_partials_return nu_dbl = value_of(nu_vec[i]);
 
       digammaNu_vec[i] = digamma(0.5 * nu_dbl);

@@ -51,7 +51,7 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
                 T_scale>
       log_sigma(size(sigma));
   if (include_summand<propto, T_scale>::value) {
-    for (size_t n = 0; n < size(sigma); n++) {
+    for (size_t n = 0; n < stan::math::size(sigma); n++) {
       log_sigma[n] = log(value_of(sigma_vec[n]));
     }
   }
@@ -63,12 +63,12 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
                 T_partials_return, T_scale>
       inv_sigma_sq(size(sigma));
   if (include_summand<propto, T_y, T_loc, T_scale>::value) {
-    for (size_t n = 0; n < size(sigma); n++) {
+    for (size_t n = 0; n < stan::math::size(sigma); n++) {
       inv_sigma[n] = 1 / value_of(sigma_vec[n]);
     }
   }
   if (include_summand<propto, T_y, T_loc, T_scale>::value) {
-    for (size_t n = 0; n < size(sigma); n++) {
+    for (size_t n = 0; n < stan::math::size(sigma); n++) {
       inv_sigma_sq[n] = inv_sigma[n] * inv_sigma[n];
     }
   }

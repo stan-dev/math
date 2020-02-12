@@ -71,7 +71,7 @@ return_type_t<T_y, T_dof> chi_square_lcdf(const T_y& y, const T_dof& nu) {
       digamma_vec(size(nu));
 
   if (!is_constant_all<T_dof>::value) {
-    for (size_t i = 0; i < size(nu); i++) {
+    for (size_t i = 0; i < stan::math::size(nu); i++) {
       const T_partials_return alpha_dbl = value_of(nu_vec[i]) * 0.5;
       gamma_vec[i] = tgamma(alpha_dbl);
       digamma_vec[i] = digamma(alpha_dbl);

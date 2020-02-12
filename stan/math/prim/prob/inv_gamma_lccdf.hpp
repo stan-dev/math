@@ -63,7 +63,7 @@ return_type_t<T_y, T_shape, T_scale> inv_gamma_lccdf(const T_y& y,
       digamma_vec(size(alpha));
 
   if (!is_constant_all<T_shape>::value) {
-    for (size_t i = 0; i < size(alpha); i++) {
+    for (size_t i = 0; i < stan::math::size(alpha); i++) {
       const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
       gamma_vec[i] = tgamma(alpha_dbl);
       digamma_vec[i] = digamma(alpha_dbl);

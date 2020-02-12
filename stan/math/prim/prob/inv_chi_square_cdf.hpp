@@ -71,7 +71,7 @@ return_type_t<T_y, T_dof> inv_chi_square_cdf(const T_y& y, const T_dof& nu) {
       digamma_vec(size(nu));
 
   if (!is_constant_all<T_dof>::value) {
-    for (size_t i = 0; i < size(nu); i++) {
+    for (size_t i = 0; i < stan::math::size(nu); i++) {
       const T_partials_return nu_dbl = value_of(nu_vec[i]);
       gamma_vec[i] = tgamma(0.5 * nu_dbl);
       digamma_vec[i] = digamma(0.5 * nu_dbl);
@@ -114,7 +114,7 @@ return_type_t<T_y, T_dof> inv_chi_square_cdf(const T_y& y, const T_dof& nu) {
     }
   }
   if (!is_constant_all<T_dof>::value) {
-    for (size_t n = 0; n < size(nu); ++n) {
+    for (size_t n = 0; n < stan::math::size(nu); ++n) {
       ops_partials.edge2_.partials_[n] *= P;
     }
   }

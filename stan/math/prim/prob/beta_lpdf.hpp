@@ -19,7 +19,7 @@ namespace math {
 
 /** \ingroup prob_dists
  * The log of the beta density for the specified scalar(s) given the specified
- * sample size(s). y, alpha, or beta can each either be scalar or a vector.
+ * sample stan::math::size(s). y, alpha, or beta can each either be scalar or a vector.
  * Any vector inputs must be the same length.
  *
  * <p> The result log probability is defined to be the sum of
@@ -28,8 +28,8 @@ namespace math {
  * Prior sample sizes, alpha and beta, must be greater than 0.
  *
  * @param y (Sequence of) scalar(s).
- * @param alpha (Sequence of) prior sample size(s).
- * @param beta (Sequence of) prior sample size(s).
+ * @param alpha (Sequence of) prior sample stan::math::size(s).
+ * @param beta (Sequence of) prior sample stan::math::size(s).
  * @return The log of the product of densities.
  * @tparam T_y Type of scalar outcome.
  * @tparam T_scale_succ Type of prior scale for successes.
@@ -97,7 +97,7 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
   VectorBuilder<!is_constant_all<T_scale_succ>::value, T_partials_return,
                 T_scale_succ>
       digamma_alpha(size(alpha));
-  for (size_t n = 0; n < size(alpha); n++) {
+  for (size_t n = 0; n < stan::math::size(alpha); n++) {
     if (include_summand<propto, T_scale_succ>::value) {
       lgamma_alpha[n] = lgamma(value_of(alpha_vec[n]));
     }
@@ -113,7 +113,7 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
                 T_scale_fail>
       digamma_beta(size(beta));
 
-  for (size_t n = 0; n < size(beta); n++) {
+  for (size_t n = 0; n < stan::math::size(beta); n++) {
     if (include_summand<propto, T_scale_fail>::value) {
       lgamma_beta[n] = lgamma(value_of(beta_vec[n]));
     }

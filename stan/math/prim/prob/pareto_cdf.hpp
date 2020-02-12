@@ -88,12 +88,12 @@ return_type_t<T_y, T_scale, T_shape> pareto_cdf(const T_y& y,
     }
   }
   if (!is_constant_all<T_scale>::value) {
-    for (size_t n = 0; n < size(y_min); ++n) {
+    for (size_t n = 0; n < stan::math::size(y_min); ++n) {
       ops_partials.edge2_.partials_[n] *= P;
     }
   }
   if (!is_constant_all<T_shape>::value) {
-    for (size_t n = 0; n < size(alpha); ++n) {
+    for (size_t n = 0; n < stan::math::size(alpha); ++n) {
       ops_partials.edge3_.partials_[n] *= P;
     }
   }

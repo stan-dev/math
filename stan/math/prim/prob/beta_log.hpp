@@ -10,7 +10,7 @@ namespace math {
 
 /** \ingroup prob_dists
  * The log of the beta density for the specified scalar(s) given the specified
- * sample size(s). y, alpha, or beta can each either be scalar or a vector.
+ * sample stan::math::size(s). y, alpha, or beta can each either be scalar or a vector.
  * Any vector inputs must be the same length.
  *
  * <p> The result log probability is defined to be the sum of
@@ -21,8 +21,8 @@ namespace math {
  * @deprecated use <code>beta_lpdf</code>
  *
  * @param y (Sequence of) scalar(s).
- * @param alpha (Sequence of) prior sample size(s).
- * @param beta (Sequence of) prior sample size(s).
+ * @param alpha (Sequence of) prior sample stan::math::size(s).
+ * @param beta (Sequence of) prior sample stan::math::size(s).
  * @return The log of the product of densities.
  * @tparam T_y Type of scalar outcome.
  * @tparam T_scale_succ Type of prior scale for successes.

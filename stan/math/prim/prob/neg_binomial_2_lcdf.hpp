@@ -32,7 +32,7 @@ return_type_t<T_location, T_precision> neg_binomial_2_lcdf(
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_location> mu_vec(mu);
   scalar_seq_view<T_precision> phi_vec(phi);
-  size_t size_n = size(n);
+  size_t size_n = stan::math::size(n);
   size_t size_phi_mu = max_size(mu, phi);
 
   for (size_t i = 0; i < size_n; i++) {

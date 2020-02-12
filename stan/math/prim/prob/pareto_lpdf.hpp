@@ -70,7 +70,7 @@ return_type_t<T_y, T_scale, T_shape> pareto_lpdf(const T_y& y,
                 T_partials_return, T_scale>
       log_y_min(size(y_min));
   if (include_summand<propto, T_scale, T_shape>::value) {
-    for (size_t n = 0; n < size(y_min); n++) {
+    for (size_t n = 0; n < stan::math::size(y_min); n++) {
       log_y_min[n] = log(value_of(y_min_vec[n]));
     }
   }
@@ -79,7 +79,7 @@ return_type_t<T_y, T_scale, T_shape> pareto_lpdf(const T_y& y,
                 T_shape>
       log_alpha(size(alpha));
   if (include_summand<propto, T_shape>::value) {
-    for (size_t n = 0; n < size(alpha); n++) {
+    for (size_t n = 0; n < stan::math::size(alpha); n++) {
       log_alpha[n] = log(value_of(alpha_vec[n]));
     }
   }

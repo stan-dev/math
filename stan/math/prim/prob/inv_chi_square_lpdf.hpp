@@ -83,7 +83,7 @@ return_type_t<T_y, T_dof> inv_chi_square_lpdf(const T_y& y, const T_dof& nu) {
       lgamma_half_nu(size(nu));
   VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
       digamma_half_nu_over_two(size(nu));
-  for (size_t i = 0; i < size(nu); i++) {
+  for (size_t i = 0; i < stan::math::size(nu); i++) {
     T_partials_return half_nu = 0.5 * value_of(nu_vec[i]);
     if (include_summand<propto, T_dof>::value) {
       lgamma_half_nu[i] = lgamma(half_nu);

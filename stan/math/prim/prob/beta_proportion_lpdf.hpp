@@ -123,7 +123,7 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
   VectorBuilder<!is_constant_all<T_prec>::value, T_partials_return, T_prec>
       digamma_kappa(size(kappa));
 
-  for (size_t n = 0; n < size(kappa); n++) {
+  for (size_t n = 0; n < stan::math::size(kappa); n++) {
     if (include_summand<propto, T_prec>::value) {
       lgamma_kappa[n] = lgamma(value_of(kappa_vec[n]));
     }

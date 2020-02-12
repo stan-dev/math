@@ -61,7 +61,7 @@ ordered_logistic_glm_lpmf(
 
   const size_t N_instances = T_x_rows == 1 ? stan::math::size(y) : x.rows();
   const size_t N_attributes = x.cols();
-  const size_t N_classes = size(cuts) + 1;
+  const size_t N_classes = stan::math::size(cuts) + 1;
 
   check_consistent_size(function, "Vector of dependent variables", y,
                         N_instances);
