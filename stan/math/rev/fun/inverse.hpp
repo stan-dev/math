@@ -78,7 +78,7 @@ class inverse_vari : public vari {
 inline matrix_v inverse(const matrix_v &m) {
   check_square("inverse", "m", m);
   if (m.size() == 0) {
-    return matrix_v(0, 0);
+    return {};
   }
 
   matrix_v res(m.rows(), m.cols());
