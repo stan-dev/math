@@ -1,6 +1,6 @@
 #include <stan/math.hpp>
 #include <gtest/gtest.h>
-#include <cmath> 
+#include <cmath>
 
 TEST(MathFunctions, expInt) {
   EXPECT_FLOAT_EQ(std::exp(3), stan::math::exp(3));
