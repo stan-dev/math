@@ -82,7 +82,7 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
                 T_partials_return, T_y>
       log1m_y(size(y));
 
-  for (size_t n = 0; n < size(y); n++) {
+  for (size_t n = 0; n < stan::math::size(y); n++) {
     if (include_summand<propto, T_y, T_scale_succ>::value) {
       log_y[n] = log(value_of(y_vec[n]));
     }

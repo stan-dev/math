@@ -76,7 +76,7 @@ return_type_t<T_y, T_shape, T_scale> weibull_cdf(const T_y& y,
   }
 
   if (!is_constant_all<T_y>::value) {
-    for (size_t n = 0; n < size(y); ++n) {
+    for (size_t n = 0; n < stan::math::size(y); ++n) {
       ops_partials.edge1_.partials_[n] *= cdf;
     }
   }

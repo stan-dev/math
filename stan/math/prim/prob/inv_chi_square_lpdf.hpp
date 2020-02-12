@@ -54,7 +54,7 @@ return_type_t<T_y, T_dof> inv_chi_square_lpdf(const T_y& y, const T_dof& nu) {
   scalar_seq_view<T_dof> nu_vec(nu);
   size_t N = max_size(y, nu);
 
-  for (size_t n = 0; n < size(y); n++) {
+  for (size_t n = 0; n < stan::math::size(y); n++) {
     if (value_of(y_vec[n]) <= 0) {
       return LOG_ZERO;
     }
@@ -65,7 +65,7 @@ return_type_t<T_y, T_dof> inv_chi_square_lpdf(const T_y& y, const T_dof& nu) {
   VectorBuilder<include_summand<propto, T_y, T_dof>::value, T_partials_return,
                 T_y>
       log_y(size(y));
-  for (size_t i = 0; i < size(y); i++) {
+  for (size_t i = 0; i < stan::math::size(y); i++) {
     if (include_summand<propto, T_y, T_dof>::value) {
       log_y[i] = log(value_of(y_vec[i]));
     }
@@ -73,7 +73,7 @@ return_type_t<T_y, T_dof> inv_chi_square_lpdf(const T_y& y, const T_dof& nu) {
 
   VectorBuilder<include_summand<propto, T_y>::value, T_partials_return, T_y>
       inv_y(size(y));
-  for (size_t i = 0; i < size(y); i++) {
+  for (size_t i = 0; i < stan::math::size(y); i++) {
     if (include_summand<propto, T_y>::value) {
       inv_y[i] = 1.0 / value_of(y_vec[i]);
     }

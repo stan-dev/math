@@ -53,7 +53,7 @@ return_type_t<T_y, T_scale, T_shape> pareto_lpdf(const T_y& y,
                 T_y>
       log_y(size(y));
   if (include_summand<propto, T_y, T_shape>::value) {
-    for (size_t n = 0; n < size(y); n++) {
+    for (size_t n = 0; n < stan::math::size(y); n++) {
       log_y[n] = log(value_of(y_vec[n]));
     }
   }
@@ -61,7 +61,7 @@ return_type_t<T_y, T_scale, T_shape> pareto_lpdf(const T_y& y,
   VectorBuilder<!is_constant_all<T_y, T_shape>::value, T_partials_return, T_y>
       inv_y(size(y));
   if (!is_constant_all<T_y, T_shape>::value) {
-    for (size_t n = 0; n < size(y); n++) {
+    for (size_t n = 0; n < stan::math::size(y); n++) {
       inv_y[n] = 1 / value_of(y_vec[n]);
     }
   }
