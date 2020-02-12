@@ -127,8 +127,7 @@ class idas_forward_system : public idas_system<F, Tyy, Typ, Tpar> {
       MatrixXd J, r;
       VectorXd f_val;
 
-      auto fyy
-          = [&t, &vyp, &vtheta, &N, &dae](const matrix_v& x) -> vector_v {
+      auto fyy = [&t, &vyp, &vtheta, &N, &dae](const matrix_v& x) -> vector_v {
         std::vector<var> yy(x.data(), x.data() + N);
         auto eval
             = dae->f_(t, yy, vyp, vtheta, dae->x_r_, dae->x_i_, dae->msgs_);
@@ -138,8 +137,7 @@ class idas_forward_system : public idas_system<F, Tyy, Typ, Tpar> {
       stan::math::jacobian(fyy, vec_yy, f_val, J);
       r = J * yys_mat;
 
-      auto fyp
-          = [&t, &vyy, &vtheta, &N, &dae](const matrix_v& x) -> vector_v {
+      auto fyp = [&t, &vyy, &vtheta, &N, &dae](const matrix_v& x) -> vector_v {
         std::vector<var> yp(x.data(), x.data() + N);
         auto eval
             = dae->f_(t, vyy, yp, vtheta, dae->x_r_, dae->x_i_, dae->msgs_);

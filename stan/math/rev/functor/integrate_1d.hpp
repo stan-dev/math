@@ -52,7 +52,7 @@ inline double gradient_of_f(const F &f, const double &x, const double &xc,
       gradient = 0;
     } else {
       throw_domain_error("gradient_of_f", "The gradient of f", n,
-                          "is nan for parameter ", "");
+                         "is nan for parameter ", "");
     }
   }
 

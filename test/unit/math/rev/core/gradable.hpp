@@ -22,9 +22,7 @@ struct gradable {
       EXPECT_FLOAT_EQ(g_expected_(i), g[i]);
   }
 
-  double adj() {
-    return f_.adj();
-  }
+  double adj() { return f_.adj(); }
 };
 
 gradable setup_quad_form() {

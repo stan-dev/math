@@ -58,7 +58,6 @@ TEST_F(StanAgradRevOde, coupled_ode_system_dv) {
   EXPECT_FLOAT_EQ(-1.075, dz_dt[1]);
   EXPECT_FLOAT_EQ(2, dz_dt[2]);
   EXPECT_FLOAT_EQ(-1.8, dz_dt[3]);
-
 }
 TEST_F(StanAgradRevOde, initial_state_dv) {
   using stan::math::coupled_ode_system;
@@ -321,7 +320,7 @@ TEST_F(StanAgradRevOde, coupled_ode_system_vv) {
 
   // Run nested autodiff in this scope
   stan::math::local_nested_autodiff nested;
-  
+
   const size_t N = 2;
   const size_t M = 1;
   const size_t z_size = N + N * N + N * M;

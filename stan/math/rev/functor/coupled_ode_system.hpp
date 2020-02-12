@@ -126,8 +126,8 @@ struct coupled_ode_system<F, double, var> {
 
     vector<var> dy_dt_vars = f_(t, y_vars, theta_nochain_, x_, x_int_, msgs_);
 
-    check_size_match("coupled_ode_system", "dz_dt", dy_dt_vars.size(),
-                      "states", N_);
+    check_size_match("coupled_ode_system", "dz_dt", dy_dt_vars.size(), "states",
+                     N_);
 
     for (size_t i = 0; i < N_; i++) {
       dz_dt[i] = dy_dt_vars[i].val();
@@ -281,8 +281,8 @@ struct coupled_ode_system<F, var, double> {
 
     vector<var> dy_dt_vars = f_(t, y_vars, theta_dbl_, x_, x_int_, msgs_);
 
-    check_size_match("coupled_ode_system", "dz_dt", dy_dt_vars.size(),
-                      "states", N_);
+    check_size_match("coupled_ode_system", "dz_dt", dy_dt_vars.size(), "states",
+                     N_);
 
     for (size_t i = 0; i < N_; i++) {
       dz_dt[i] = dy_dt_vars[i].val();
@@ -457,8 +457,8 @@ struct coupled_ode_system<F, var, var> {
 
     vector<var> dy_dt_vars = f_(t, y_vars, theta_nochain_, x_, x_int_, msgs_);
 
-    check_size_match("coupled_ode_system", "dz_dt", dy_dt_vars.size(),
-                      "states", N_);
+    check_size_match("coupled_ode_system", "dz_dt", dy_dt_vars.size(), "states",
+                     N_);
 
     for (size_t i = 0; i < N_; i++) {
       dz_dt[i] = dy_dt_vars[i].val();

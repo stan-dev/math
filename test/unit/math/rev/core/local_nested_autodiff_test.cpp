@@ -10,13 +10,12 @@ struct AgradLocalNested : public testing::Test {
   }
 };
 
-
 TEST_F(AgradLocalNested, local_nested_autodiff_base) {
   {
     stan::math::local_nested_autodiff nested;
     EXPECT_THROW(stan::math::recover_memory(), std::logic_error);
   }
-  stan::math::recover_memory(); // Should not throw
+  stan::math::recover_memory();  // Should not throw
 
   gradable g_out = setup_quad_form();
   for (int i = 0; i < 100; ++i) {
@@ -25,7 +24,7 @@ TEST_F(AgradLocalNested, local_nested_autodiff_base) {
     g.test();
     nested.set_zero_all_adjoints();
     EXPECT_EQ(g.adj(), 0);
-  }  
+  }
   g_out.test();
 }
 
@@ -50,7 +49,7 @@ TEST_F(AgradLocalNested, local_nested_autodiff_Gradient1) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradLocalNested,local_nested_autodiff_Gradient2) {
+TEST_F(AgradLocalNested, local_nested_autodiff_Gradient2) {
   using stan::math::local_nested_autodiff;
 
   gradable g0 = setup_quad_form();
@@ -85,7 +84,7 @@ TEST_F(AgradLocalNested, local_nested_autodiff_Gradient3) {
         gradable g3 = setup_quad_form();
         {
           local_nested_autodiff nested4;
-          gradable g4 = setup_simple();          
+          gradable g4 = setup_simple();
           g4.test();
         }
         g3.test();

@@ -11,30 +11,24 @@ namespace math {
 /**
  * A class following the RAII idiom to start and recover nested autodiff scopes.
  * This is the preferred way to use nested autodiff. Example:
- * 
+ *
  * var a; // allocated normally
  * {
  *    local_nested_autodiff nested; // Starts nested autodiff
- * 
+ *
  *    var nested_var; //allocated on the nested stack
  *    // Do stuff on the nested stack
- * 
+ *
  *    // Nested stack is automatically recovered at the end of scope where
- *    // nested was declared, including exceptions, returns, etc. 
+ *    // nested was declared, including exceptions, returns, etc.
  * }
  * var b;
  */
 class local_nested_autodiff {
-public:
-  local_nested_autodiff()
-  {
-    start_nested();
-  }
+ public:
+  local_nested_autodiff() { start_nested(); }
 
-  ~local_nested_autodiff()
-  {
-    recover_memory_nested();
-  }
+  ~local_nested_autodiff() { recover_memory_nested(); }
 
   // Prevent undesirable operations
   local_nested_autodiff(const local_nested_autodiff&) = delete;
@@ -45,9 +39,7 @@ public:
    * Reset all adjoint values in this nested stack
    * to zero.
    **/
-  void set_zero_all_adjoints() {
-    set_zero_all_adjoints_nested();
-  }
+  void set_zero_all_adjoints() { set_zero_all_adjoints_nested(); }
 };
 
 }  // namespace math

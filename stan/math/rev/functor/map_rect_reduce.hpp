@@ -30,8 +30,7 @@ struct map_rect_reduce<F, var, var> {
     vector_v shared_params_v = to_var(shared_params);
     vector_v job_specific_params_v = to_var(job_specific_params);
 
-    vector_v fx_v
-        = F()(shared_params_v, job_specific_params_v, x_r, x_i, msgs);
+    vector_v fx_v = F()(shared_params_v, job_specific_params_v, x_r, x_i, msgs);
 
     const size_type size_f = fx_v.rows();
 
@@ -45,8 +44,7 @@ struct map_rect_reduce<F, var, var> {
         out(1 + j, i) = shared_params_v(j).vi_->adj_;
       }
       for (size_type j = 0; j < num_job_specific_params; ++j) {
-        out(1 + num_shared_params + j, i)
-            = job_specific_params_v(j).vi_->adj_;
+        out(1 + num_shared_params + j, i) = job_specific_params_v(j).vi_->adj_;
       }
     }
     return out;
@@ -96,28 +94,28 @@ struct map_rect_reduce<F, var, double> {
     const size_type num_shared_params = shared_params.rows();
     matrix_d out(1 + num_shared_params, 0);
 
-  // Run nested autodiff in this scope
-  local_nested_autodiff nested;
+    // Run nested autodiff in this scope
+    local_nested_autodiff nested;
 
-  vector_v shared_params_v = to_var(shared_params);
+    vector_v shared_params_v = to_var(shared_params);
 
-  vector_v fx_v = F()(shared_params_v, job_specific_params, x_r, x_i, msgs);
+    vector_v fx_v = F()(shared_params_v, job_specific_params, x_r, x_i, msgs);
 
-  const size_type size_f = fx_v.rows();
+    const size_type size_f = fx_v.rows();
 
-  out.resize(Eigen::NoChange, size_f);
+    out.resize(Eigen::NoChange, size_f);
 
-  for (size_type i = 0; i < size_f; ++i) {
-    out(0, i) = fx_v(i).val();
-    nested.set_zero_all_adjoints();
-    fx_v(i).grad();
-    for (size_type j = 0; j < num_shared_params; ++j) {
-      out(1 + j, i) = shared_params_v(j).vi_->adj_;
+    for (size_type i = 0; i < size_f; ++i) {
+      out(0, i) = fx_v(i).val();
+      nested.set_zero_all_adjoints();
+      fx_v(i).grad();
+      for (size_type j = 0; j < num_shared_params; ++j) {
+        out(1 + j, i) = shared_params_v(j).vi_->adj_;
+      }
     }
+
+    return out;
   }
-  
-  return out;
-}
 };
 
 }  // namespace internal
