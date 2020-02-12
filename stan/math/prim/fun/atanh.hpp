@@ -22,9 +22,9 @@ namespace math {
 inline double atanh(double x) {
   if (is_nan(x)) {
     return x;
-  } else {	
-    check_bounded("atanh", "x", x, -1.0, 1.0);	
-    return std::atanh(x);	
+  } else {
+    check_bounded("atanh", "x", x, -1.0, 1.0);
+    return std::atanh(x);
   }
 }
 

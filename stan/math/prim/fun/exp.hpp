@@ -36,7 +36,8 @@ struct exp_fun {
  * @param[in] x container
  * @return Elementwise application of exponentiation to the argument.
  */
-template <typename T, typename = require_not_eigen_vt<std::is_arithmetic, T>, typename = require_not_double_or_int_t<T>>
+template <typename T, typename = require_not_eigen_vt<std::is_arithmetic, T>,
+          typename = require_not_double_or_int_t<T>>
 inline auto exp(const T& x) {
   return apply_scalar_unary<exp_fun, T>::apply(x);
 }

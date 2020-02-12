@@ -19,11 +19,11 @@ namespace math {
  * @throw std::domain_error If argument is less than 1.
  */
 inline double acosh(double x) {
-  if (is_nan(x)) {	  
+  if (is_nan(x)) {
     return x;
-  } else {	
-    check_greater_or_equal("acosh", "x", x, 1.0);	
-    return std::acosh(x);	
+  } else {
+    check_greater_or_equal("acosh", "x", x, 1.0);
+    return std::acosh(x);
   }
 }
 
