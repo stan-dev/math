@@ -59,9 +59,9 @@ gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
   check_positive_finite("gp_matern52_cov", "length scale", length_scale);
 
   T_s sigma_sq = square(sigma);
-  T_l root_5_inv_l = sqrt(5.0) / length_scale;
+  T_l root_5_inv_l = std::sqrt(5.0) / length_scale;
   T_l inv_l_sq_5_3 = 5.0 / (3.0 * square(length_scale));
-  T_l neg_root_5_inv_l = -sqrt(5.0) / length_scale;
+  T_l neg_root_5_inv_l = -std::sqrt(5.0) / length_scale;
 
   for (size_t i = 0; i < x_size; ++i) {
     cov(i, i) = sigma_sq;
@@ -125,7 +125,7 @@ gp_matern52_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
                    "number of length scales", l_size);
 
   T_s sigma_sq = square(sigma);
-  double root_5 = sqrt(5.0);
+  double root_5 = std::sqrt(5.0);
   double five_thirds = 5.0 / 3.0;
   double neg_root_5 = -root_5;
 
@@ -196,9 +196,9 @@ gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   check_positive_finite("gp_matern52_cov", "length scale", length_scale);
 
   T_s sigma_sq = square(sigma);
-  T_l root_5_inv_l = sqrt(5.0) / length_scale;
+  T_l root_5_inv_l = std::sqrt(5.0) / length_scale;
   T_l inv_l_sq_5_3 = 5.0 / (3.0 * square(length_scale));
-  T_l neg_root_5_inv_l = -sqrt(5.0) / length_scale;
+  T_l neg_root_5_inv_l = -std::sqrt(5.0) / length_scale;
 
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
@@ -273,7 +273,7 @@ gp_matern52_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
                    "number of length scales", l_size);
 
   T_s sigma_sq = square(sigma);
-  double root_5 = sqrt(5.0);
+  double root_5 = std::sqrt(5.0);
   double five_thirds = 5.0 / 3.0;
   double neg_root_5 = -root_5;
 

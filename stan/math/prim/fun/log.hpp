@@ -36,7 +36,7 @@ struct log_fun {
  * @param[in] x container
  * @return Elementwise application of natural log to the argument.
  */
-template <typename T, typename = require_not_eigen_vt<std::is_arithmetic, T>>
+template <typename T, typename = require_not_eigen_vt<std::is_arithmetic, T>, typename = require_not_double_or_int_t<T>>
 inline auto log(const T& x) {
   return apply_scalar_unary<log_fun, T>::apply(x);
 }

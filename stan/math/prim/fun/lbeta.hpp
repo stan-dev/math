@@ -12,6 +12,7 @@
 #include <stan/math/prim/fun/log_sum_exp.hpp>
 #include <stan/math/prim/fun/log1m.hpp>
 #include <stan/math/prim/fun/multiply_log.hpp>
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -64,6 +65,7 @@ namespace math {
  */
 template <typename T1, typename T2>
 return_type_t<T1, T2> lbeta(const T1 a, const T2 b) {
+  using std::log;
   using T_ret = return_type_t<T1, T2>;
 
   if (is_any_nan(a, b)) {

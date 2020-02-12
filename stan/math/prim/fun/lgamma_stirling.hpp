@@ -23,6 +23,7 @@ namespace math {
  */
 template <typename T>
 return_type_t<T> lgamma_stirling(const T x) {
+  using std::log;
   return HALF_LOG_TWO_PI + (x - 0.5) * log(x) - x;
 }
 

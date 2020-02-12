@@ -41,7 +41,6 @@ gp_matern32_cov(const std::vector<T_x> &x, const T_s &sigma,
                 const T_l &length_scale) {
   using std::exp;
   using std::pow;
-  using std::sqrt;
 
   size_t x_size = size(x);
   Eigen::Matrix<return_type_t<T_x, T_s, T_l>, Eigen::Dynamic, Eigen::Dynamic>
@@ -66,8 +65,8 @@ gp_matern32_cov(const std::vector<T_x> &x, const T_s &sigma,
   check_positive_finite(function, "length scale", length_scale);
 
   T_s sigma_sq = square(sigma);
-  T_l root_3_inv_l = sqrt(3.0) / length_scale;
-  T_l neg_root_3_inv_l = -1.0 * sqrt(3.0) / length_scale;
+  T_l root_3_inv_l = std::sqrt(3.0) / length_scale;
+  T_l neg_root_3_inv_l = -1.0 * std::sqrt(3.0) / length_scale;
 
   for (size_t i = 0; i < x_size; ++i) {
     cov(i, i) = sigma_sq;
@@ -130,8 +129,8 @@ gp_matern32_cov(const std::vector<Eigen::Matrix<T_x, -1, 1>> &x,
                    "number of length scales", l_size);
 
   T_s sigma_sq = square(sigma);
-  double root_3 = sqrt(3.0);
-  double neg_root_3 = -1.0 * sqrt(3.0);
+  double root_3 = std::sqrt(3.0);
+  double neg_root_3 = -1.0 * std::sqrt(3.0);
 
   std::vector<Eigen::Matrix<return_type_t<T_x, T_l>, -1, 1>> x_new
       = divide_columns(x, length_scale);
@@ -209,8 +208,8 @@ gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   check_positive_finite(function, "length scale", length_scale);
 
   T_s sigma_sq = square(sigma);
-  T_l root_3_inv_l_sq = sqrt(3.0) / length_scale;
-  T_l neg_root_3_inv_l_sq = -1.0 * sqrt(3.0) / length_scale;
+  T_l root_3_inv_l_sq = std::sqrt(3.0) / length_scale;
+  T_l neg_root_3_inv_l_sq = -1.0 * std::sqrt(3.0) / length_scale;
 
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
@@ -290,8 +289,8 @@ gp_matern32_cov(const std::vector<Eigen::Matrix<T_x1, -1, 1>> &x1,
   }
 
   T_s sigma_sq = square(sigma);
-  double root_3 = sqrt(3.0);
-  double neg_root_3 = -1.0 * sqrt(3.0);
+  double root_3 = std::sqrt(3.0);
+  double neg_root_3 = -1.0 * std::sqrt(3.0);
 
   std::vector<Eigen::Matrix<return_type_t<T_x1, T_l>, -1, 1>> x1_new
       = divide_columns(x1, length_scale);
