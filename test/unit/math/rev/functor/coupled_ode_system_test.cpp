@@ -50,9 +50,7 @@ TEST_F(StanAgradRevOde, coupled_ode_system_dv) {
   EXPECT_EQ(stack_size, stan::math::nested_size())
       << "expecting no new things on the stack";
 
-  std::cout << "A" << std::endl;
   system(z0, dz_dt, t0);
-  std::cout << "B" << std::endl;
 
   EXPECT_FLOAT_EQ(0.5, dz_dt[0]);
   EXPECT_FLOAT_EQ(-1.075, dz_dt[1]);
