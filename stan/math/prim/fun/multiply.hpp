@@ -23,8 +23,8 @@ namespace math {
  * @param c scalar
  * @return product of matrix and scalar
  */
-template <typename Mat, typename Scal, typename = require_eigen_t<Mat>,
-          typename = require_stan_scalar_t<Scal>>
+template <typename Mat, typename Scal, require_eigen_t<Mat>* = nullptr,
+          require_stan_scalar_t<Scal>* = nullptr>
 inline auto multiply(const Mat& m, Scal c) {
   return (c * m).eval();
 }
@@ -39,8 +39,8 @@ inline auto multiply(const Mat& m, Scal c) {
  * @param m matrix
  * @return product of scalar and matrix
  */
-template <typename Scal, typename Mat, typename = require_stan_scalar_t<Scal>,
-          typename = require_eigen_t<Mat>>
+template <typename Scal, typename Mat, require_stan_scalar_t<Scal>* = nullptr,
+          require_eigen_t<Mat>* = nullptr>
 inline auto multiply(Scal c, const Mat& m) {
   return (c * m).eval();
 }
@@ -60,10 +60,10 @@ inline auto multiply(Scal c, const Mat& m) {
  * not match the number of rows of m2.
  */
 template <typename Mat1, typename Mat2,
-          typename = require_all_eigen_vt<std::is_arithmetic, Mat1, Mat2>,
-          typename = require_any_not_same_t<double, value_type_t<Mat1>,
-                                            value_type_t<Mat2>>,
-          typename = require_not_eigen_row_and_col_t<Mat1, Mat2>>
+          require_all_eigen_vt<std::is_arithmetic, Mat1, Mat2>* = nullptr,
+          require_any_not_same_t<double, value_type_t<Mat1>,
+                                 value_type_t<Mat2>>* = nullptr,
+          require_not_eigen_row_and_col_t<Mat1, Mat2>* = nullptr>
 inline auto multiply(const Mat1& m1, const Mat2& m2) {
   check_size_match("multiply", "Columns of m1", m1.cols(), "Rows of m2",
                    m2.rows());
@@ -86,10 +86,10 @@ inline auto multiply(const Mat1& m1, const Mat2& m2) {
  * not match the number of rows of m2.
  */
 template <typename Mat1, typename Mat2,
-          typename = require_all_eigen_t<Mat1, Mat2>,
-          typename
-          = require_all_same_t<double, value_type_t<Mat1>, value_type_t<Mat2>>,
-          typename = require_not_eigen_row_and_col_t<Mat1, Mat2>>
+          require_all_eigen_t<Mat1, Mat2>* = nullptr,
+          require_all_same_t<double, value_type_t<Mat1>,
+                             value_type_t<Mat2>>* = nullptr,
+          require_not_eigen_row_and_col_t<Mat1, Mat2>* = nullptr>
 inline auto multiply(const Mat1& m1, const Mat2& m2)
     -> decltype((m1 * m2).eval()) {
   check_size_match("multiply", "Columns of m1", m1.cols(), "Rows of m2",
@@ -124,9 +124,9 @@ inline auto multiply(const Mat1& m1, const Mat2& m2)
  * @throw <code>std::invalid_argument</code> if rv and v are not the same size
  */
 template <typename RowVec, typename ColVec,
-          typename
-          = require_all_not_var_t<scalar_type_t<RowVec>, scalar_type_t<ColVec>>,
-          typename = require_eigen_row_and_col_t<RowVec, ColVec>>
+          require_all_not_var_t<scalar_type_t<RowVec>,
+                                scalar_type_t<ColVec>>* = nullptr,
+          require_eigen_row_and_col_t<RowVec, ColVec>* = nullptr>
 inline auto multiply(const RowVec& rv, const ColVec& v) {
   check_matching_sizes("multiply", "rv", rv, "v", v);
   return dot_product(rv, v);
@@ -142,7 +142,7 @@ inline auto multiply(const RowVec& rv, const ColVec& v) {
  * @return product
  */
 template <typename Scalar1, typename Scalar2,
-          typename = require_all_stan_scalar_t<Scalar1, Scalar2>>
+          require_all_stan_scalar_t<Scalar1, Scalar2>* = nullptr>
 inline return_type_t<Scalar1, Scalar2> multiply(Scalar1 m, Scalar2 c) {
   return c * m;
 }

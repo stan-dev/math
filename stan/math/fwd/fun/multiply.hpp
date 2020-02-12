@@ -12,10 +12,9 @@ namespace stan {
 namespace math {
 
 template <typename Mat1, typename Mat2,
-          typename = require_all_eigen_vt<is_fvar, Mat1, Mat2>,
-          typename = require_same_vt<Mat1, Mat2>,
-          typename = require_not_eigen_row_and_col_t<Mat1, Mat2>,
-          unsigned int = 0>
+          require_all_eigen_vt<is_fvar, Mat1, Mat2>* = nullptr,
+          require_same_vt<Mat1, Mat2>* = nullptr,
+          require_not_eigen_row_and_col_t<Mat1, Mat2>* = nullptr>
 inline auto multiply(const Mat1& m1, const Mat2& m2) {
   check_size_match("multiply", "Columns of m1", m1.cols(), "Rows of m2",
                    m2.rows());
@@ -23,9 +22,9 @@ inline auto multiply(const Mat1& m1, const Mat2& m2) {
 }
 
 template <typename Mat1, typename Mat2,
-          typename = require_eigen_vt<is_fvar, Mat1>,
-          typename = require_eigen_vt<std::is_floating_point, Mat2>,
-          typename = require_not_eigen_row_and_col_t<Mat1, Mat2>, int = 0>
+          require_eigen_vt<is_fvar, Mat1>* = nullptr,
+          require_eigen_vt<std::is_floating_point, Mat2>* = nullptr,
+          require_not_eigen_row_and_col_t<Mat1, Mat2>* = nullptr>
 inline auto multiply(const Mat1& m1, const Mat2& m2) {
   check_size_match("multiply", "Columns of m1", m1.cols(), "Rows of m2",
                    m2.rows());
@@ -44,9 +43,9 @@ inline auto multiply(const Mat1& m1, const Mat2& m2) {
 }
 
 template <typename Mat1, typename Mat2,
-          typename = require_eigen_vt<std::is_floating_point, Mat1>,
-          typename = require_eigen_vt<is_fvar, Mat2>,
-          typename = require_not_eigen_row_and_col_t<Mat1, Mat2>, char = 0>
+          require_eigen_vt<std::is_floating_point, Mat1>* = nullptr,
+          require_eigen_vt<is_fvar, Mat2>* = nullptr,
+          require_not_eigen_row_and_col_t<Mat1, Mat2>* = nullptr>
 inline auto multiply(const Mat1& m1, const Mat2& m2) {
   check_size_match("multiply", "Columns of m1", m1.cols(), "Rows of m2",
                    m2.rows());

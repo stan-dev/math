@@ -555,10 +555,10 @@ class multiply_mat_vari<Ta, 1, Ca, double, 1> : public vari {
  * @param[in] B Matrix
  * @return Product of scalar and matrix.
  */
-template <
-    typename Mat1, typename Mat2, typename = require_all_eigen_t<Mat1, Mat2>,
-    typename = require_any_eigen_vt<is_var, Mat1, Mat2>,
-    typename = require_not_eigen_row_and_col_t<Mat1, Mat2>, typename = void>
+template <typename Mat1, typename Mat2,
+          require_all_eigen_t<Mat1, Mat2>* = nullptr,
+          require_any_eigen_vt<is_var, Mat1, Mat2>* = nullptr,
+          require_not_eigen_row_and_col_t<Mat1, Mat2>* = nullptr>
 inline auto multiply(const Mat1& A, const Mat2& B) {
   using Ta = value_type_t<Mat1>;
   using Tb = value_type_t<Mat2>;
@@ -590,10 +590,10 @@ inline auto multiply(const Mat1& A, const Mat2& B) {
  * @param[in] B Column vector
  * @return Scalar product of row vector and vector
  */
-template <typename RowVec, typename ColVec,
-          typename
-          = require_any_var_t<value_type_t<RowVec>, value_type_t<ColVec>>,
-          typename = require_eigen_row_and_col_t<RowVec, ColVec>>
+template <
+    typename RowVec, typename ColVec,
+    require_any_var_t<value_type_t<RowVec>, value_type_t<ColVec>>* = nullptr,
+    require_eigen_row_and_col_t<RowVec, ColVec>* = nullptr>
 inline var multiply(const RowVec& A, const ColVec& B) {
   using RowVecScalar = value_type_t<RowVec>;
   using ColVecScalar = value_type_t<ColVec>;
