@@ -35,8 +35,7 @@ inline auto multiply(const Mat1& m1, const Mat2& m2) {
     Eigen::Matrix<value_type_t<Mat1>, 1, Mat1::ColsAtCompileTime> crow
         = m1.row(i);
     for (size_type j = 0; j < m2.cols(); j++) {
-      auto ccol = m2.col(j);
-      result(i, j) = dot_product(crow, ccol);
+      result(i, j) = dot_product(crow, m2.col(j));
     }
   }
   return result;

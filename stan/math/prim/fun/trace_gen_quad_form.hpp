@@ -32,7 +32,7 @@ template <typename TD, typename TA, typename TB,
           typename = require_all_eigen_t<TD, TA, TB>,
           typename = require_all_not_var_t<value_type_t<TD>, value_type_t<TA>,
                                            value_type_t<TB>>,
-          typename = require_any_not_same_vt<double, TD, TA, TB>>
+          typename = require_any_not_eigen_vt<std::is_arithmetic, TD, TA, TB>>
 inline auto trace_gen_quad_form(const TD &D, const TA &A, const TB &B) {
   check_square("trace_gen_quad_form", "A", A);
   check_square("trace_gen_quad_form", "D", D);
@@ -44,7 +44,7 @@ inline auto trace_gen_quad_form(const TD &D, const TA &A, const TB &B) {
 /**
  * Return the trace of D times the quadratic form of B and A.
  * That is, `trace_gen_quad_form(D, A, B) = trace(D * B' * A * B).`
- * This is the double-only overload to allow Eigen's expression
+ * This is the overload for arithmetic types to allow Eigen's expression
  * templates to be used for efficiency.
  *
  * @tparam TD type of the first matrix or expression
@@ -60,8 +60,7 @@ inline auto trace_gen_quad_form(const TD &D, const TA &A, const TB &B) {
  * be multiplied by D.
  */
 template <typename TD, typename TA, typename TB,
-          typename = require_all_eigen_t<TD, TA, TB>,
-          typename = require_all_same_vt<double, TD, TA, TB>>
+          typename = require_all_eigen_vt<std::is_arithmetic, TD, TA, TB>>
 inline double trace_gen_quad_form(const TD &D, const TA &A, const TB &B) {
   check_square("trace_gen_quad_form", "A", A);
   check_square("trace_gen_quad_form", "D", D);
