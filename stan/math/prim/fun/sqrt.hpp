@@ -30,8 +30,7 @@ struct sqrt_fun {
  * @param x container
  * @return Square root of each value in x.
  */
-template <typename T, typename = require_not_eigen_vt<std::is_arithmetic, T>,
-          typename = require_not_double_or_int_t<T>>
+template <typename T, typename = require_not_eigen_vt<std::is_arithmetic, T>>
 inline auto sqrt(const T& x) {
   return apply_scalar_unary<sqrt_fun, T>::apply(x);
 }

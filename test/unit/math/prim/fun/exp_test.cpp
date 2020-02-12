@@ -1,11 +1,10 @@
 #include <stan/math.hpp>
 #include <gtest/gtest.h>
+#include <cmath> 
 
 TEST(MathFunctions, expInt) {
-  using stan::math::exp;
-  using std::exp;
-  EXPECT_FLOAT_EQ(std::exp(3), exp(3));
-  EXPECT_FLOAT_EQ(std::exp(3.0), exp(3.0));
+  EXPECT_FLOAT_EQ(std::exp(3), stan::math::exp(3));
+  EXPECT_FLOAT_EQ(std::exp(3.0), stan::math::exp(3.0));
 }
 
 TEST(MathFunctions, exp_works_with_other_functions) {

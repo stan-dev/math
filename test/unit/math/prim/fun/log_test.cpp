@@ -1,11 +1,10 @@
 #include <stan/math.hpp>
 #include <gtest/gtest.h>
+#include <cmath>
 
 TEST(MathFunctions, logInt) {
-  using stan::math::log;
-  using std::log;
-  EXPECT_FLOAT_EQ(std::log(3), log(3));
-  EXPECT_FLOAT_EQ(std::log(3.0), log(3.0));
+  EXPECT_FLOAT_EQ(std::log(3), stan::math::log(3));
+  EXPECT_FLOAT_EQ(std::log(3.0), stan::math::log(3.0));
 }
 
 TEST(MathFunctions, log_works_with_other_functions) {
