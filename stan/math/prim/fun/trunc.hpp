@@ -8,24 +8,6 @@ namespace stan {
 namespace math {
 
 /**
- * Return the nearest integral value that is not larger in
- * magnitude than the specified argument.
- *
- * @param[in] x Argument.
- * @return The truncated argument.
- */
-inline double trunc(double x) { return std::trunc(x); }
-
-/**
- * Return the nearest integral value that is not larger in
- * magnitude than the specified argument.
- *
- * @param[in] x Argument.
- * @return The truncated argument.
- */
-inline double trunc(int x) { return std::trunc(x); }
-
-/**
  * Structure to wrap trunc() so it can be vectorized.
  */
 struct trunc_fun {
@@ -39,6 +21,7 @@ struct trunc_fun {
    */
   template <typename T>
   static inline T fun(const T& x) {
+    using std::trunc;
     return trunc(x);
   }
 };

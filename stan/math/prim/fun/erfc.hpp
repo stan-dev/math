@@ -8,27 +8,6 @@ namespace stan {
 namespace math {
 
 /**
- * Return the complementary error function of the specified value.
- *
- * \f[
- * \mbox{erfc}(x) = 1 - \frac{2}{\sqrt{\pi}} \int_0^x e^{-t^2} dt
- * \f]
- *
- * @param[in] x Argument.
- * @return Complementary error function of the argument.
- */
-inline double erfc(double x) { return std::erfc(x); }
-
-/**
- * Return the error function of the specified argument.  This
- * version is required to disambiguate <code>erfc(int)</code>.
- *
- * @param[in] x Argument.
- * @return Complementary error function value of the argument.
- */
-inline double erfc(int x) { return std::erfc(x); }
-
-/**
  * Structure to wrap erfc() so that it can be vectorized.
  *
  * @tparam T type of variable
@@ -38,6 +17,7 @@ inline double erfc(int x) { return std::erfc(x); }
 struct erfc_fun {
   template <typename T>
   static inline T fun(const T& x) {
+    using std::erfc;
     return erfc(x);
   }
 };

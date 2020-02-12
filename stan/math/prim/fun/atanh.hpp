@@ -20,12 +20,8 @@ namespace math {
  * @throw std::domain_error If argument is not in [-1, 1].
  */
 inline double atanh(double x) {
-  if (is_nan(x)) {
-    return x;
-  } else {
-    check_bounded("atanh", "x", x, -1.0, 1.0);
-    return std::atanh(x);
-  }
+  check_bounded("atanh", "x", x, -1.0, 1.0);
+  return std::atanh(x);
 }
 
 /**
@@ -36,12 +32,8 @@ inline double atanh(double x) {
  * @throw std::domain_error If argument is less than 1.
  */
 inline double atanh(int x) {
-  if (is_nan(x)) {
-    return x;
-  } else {
-    check_bounded("atanh", "x", x, -1, 1);
-    return std::atanh(x);
-  }
+  check_bounded("atanh", "x", x, -1, 1);
+  return std::atanh(x);
 }
 
 /**

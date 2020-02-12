@@ -27,12 +27,8 @@ namespace math {
  * @throw std::domain_error If argument is less than -1.
  */
 inline double log1p(double x) {
-  if (is_nan(x)) {
-    return x;
-  } else {
-    check_greater_or_equal("log1p", "x", x, -1.0);
-    return std::log1p(x);
-  }
+  check_greater_or_equal("log1p", "x", x, -1.0);
+  return std::log1p(x);
 }
 
 /**
@@ -45,12 +41,8 @@ inline double log1p(double x) {
  * @throw std::domain_error If argument is less than -1.
  */
 inline double log1p(int x) {
-  if (is_nan(x)) {
-    return x;
-  } else {
-    check_greater_or_equal("log1p", "x", x, -1);
-    return std::log1p(x);
-  }
+  check_greater_or_equal("log1p", "x", x, -1);
+  return std::log1p(x);
 }
 
 /**

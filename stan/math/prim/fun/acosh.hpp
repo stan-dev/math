@@ -19,16 +19,8 @@ namespace math {
  * @throw std::domain_error If argument is less than 1.
  */
 inline double acosh(double x) {
-  if (is_nan(x)) {
-    return x;
-  } else {
-    check_greater_or_equal("acosh", "x", x, 1.0);
-#ifdef _WIN32
-    if (is_inf(x))
-      return x;
-#endif
-    return std::acosh(x);
-  }
+  check_greater_or_equal("acosh", "x", x, 1.0);
+  return std::acosh(x);
 }
 
 /**
@@ -39,16 +31,8 @@ inline double acosh(double x) {
  * @throw std::domain_error If argument is less than 1.
  */
 inline double acosh(int x) {
-  if (is_nan(x)) {
-    return x;
-  } else {
-    check_greater_or_equal("acosh", "x", x, 1);
-#ifdef _WIN32
-    if (is_inf(x))
-      return x;
-#endif
-    return std::acosh(x);
-  }
+  check_greater_or_equal("acosh", "x", x, 1);
+  return std::acosh(x);
 }
 
 /**

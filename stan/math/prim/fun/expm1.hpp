@@ -8,24 +8,6 @@ namespace stan {
 namespace math {
 
 /**
- * Return the natural exponentiation of x minus one.
- * Returns infinity for infinity argument and -infinity for
- * -infinity argument.
- *
- * @param[in] x Argument.
- * @return Natural exponentiation of argument minus one.
- */
-inline double expm1(double x) { return std::expm1(x); }
-
-/**
- * Integer version of expm1.
- *
- * @param[in] x Argument.
- * @return Natural exponentiation of argument minus one.
- */
-inline double expm1(int x) { return std::expm1(x); }
-
-/**
  * Structure to wrap expm1() so that it can be vectorized.
  *
  * @tparam T type of variable
@@ -35,6 +17,7 @@ inline double expm1(int x) { return std::expm1(x); }
 struct expm1_fun {
   template <typename T>
   static inline T fun(const T& x) {
+    using std::expm1;
     return expm1(x);
   }
 };

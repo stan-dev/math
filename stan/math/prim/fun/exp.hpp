@@ -9,15 +9,6 @@ namespace stan {
 namespace math {
 
 /**
- * Return the natural exponential of the specified argument.  This
- * version is required to disambiguate <code>exp(int)</code>.
- *
- * @param[in] x Argument.
- * @return Natural exponential of argument.
- */
-inline double exp(int x) { return std::exp(x); }
-
-/**
  * Structure to wrap <code>exp()</code> so that it can be
  * vectorized.
  */
