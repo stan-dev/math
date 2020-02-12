@@ -9,7 +9,10 @@ namespace stan {
 namespace math {
 
 /**
- * Compute the quadratic form B^T A B.
+ * Return the quadratic form \f$ B^T A B \f$.
+ *
+ * Symmetry of the resulting matrix is not guaranteed due to numerical
+ * precision.
  *
  * @tparam Ta type of elements in the square matrix
  * @tparam Ra number of rows in the square matrix, can be Eigen::Dynamic
@@ -20,8 +23,7 @@ namespace math {
  *
  * @param A square matrix
  * @param B second matrix
- * @return The quadratic form B^T A B, which is a symmetric matrix of size Cb
- * (although symmetry is not guaranteed due to numerical precision).
+ * @return The quadratic form, which is a symmetric matrix of size Cb.
  * @throws std::invalid_argument if A is not square, or if A cannot be
  * multiplied by B
  */
@@ -35,7 +37,7 @@ inline Eigen::Matrix<return_type_t<Ta, Tb>, Cb, Cb> quad_form(
 }
 
 /**
- * Compute the quadratic form B^T A B.
+ * Return the quadratic form \f$ B^T A B \f$.
  *
  * @tparam Ta type of elements in the square matrix
  * @tparam Ra number of rows in the square matrix, can be Eigen::Dynamic
@@ -45,7 +47,7 @@ inline Eigen::Matrix<return_type_t<Ta, Tb>, Cb, Cb> quad_form(
  *
  * @param A square matrix
  * @param B vector
- * @return The quadratic form B^T A B, which is a scalar.
+ * @return The quadratic form (a scalar).
  * @throws std::invalid_argument if A is not square, or if A cannot be
  * multiplied by B
  */
