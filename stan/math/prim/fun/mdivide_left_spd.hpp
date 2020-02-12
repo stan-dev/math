@@ -30,14 +30,15 @@ namespace math {
 template <typename T1, typename T2, int R1, int C1, int R2, int C2>
 inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_left_spd(
     const Eigen::Matrix<T1, R1, C1> &A, const Eigen::Matrix<T2, R2, C2> &b) {
-  check_multiplicable("mdivide_left_spd", "A", A, "b", b);
-  check_pos_definite("mdivide_left_spd", "A", A);
-  return promote_common<Eigen::Matrix<T1, R1, C1>, Eigen::Matrix<T2, R1, C1> >(
-             A)
-      .llt()
-      .solve(
-          promote_common<Eigen::Matrix<T1, R2, C2>, Eigen::Matrix<T2, R2, C2> >(
-              b));
+  static const char* function = "mdivide_left_spd";
+  check_multiplicable(function, "A", A, "b", b);
+  check_positive(function, "rows", A.rows());
+  check_symmetric(function, "A", A);
+  check_not_nan(function, "A", A);
+
+  auto llt = Eigen::Matrix<return_type_t<T1, T2>, R1, C1>(A).llt();
+  check_pos_definite(function, "A", llt);
+  return llt.solve(Eigen::Matrix<return_type_t<T1, T2>, R2, C2>(b));
 }
 
 }  // namespace math
