@@ -147,7 +147,7 @@ template <int R1, int C1, int R2, int C2>
 inline Eigen::Matrix<var, R1, C2> mdivide_left_spd(
     const Eigen::Matrix<var, R1, C1> &A, const Eigen::Matrix<var, R2, C2> &b) {
   Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
-  static const char* function = "mdivide_left_spd";
+  static const char *function = "mdivide_left_spd";
   check_multiplicable(function, "A", A, "b", b);
   check_positive(function, "rows", A.rows());
   check_symmetric(function, "A", A);
@@ -168,7 +168,7 @@ template <int R1, int C1, int R2, int C2>
 inline Eigen::Matrix<var, R1, C2> mdivide_left_spd(
     const Eigen::Matrix<var, R1, C1> &A,
     const Eigen::Matrix<double, R2, C2> &b) {
-  static const char* function = "mdivide_left_spd";
+  static const char *function = "mdivide_left_spd";
   check_multiplicable(function, "A", A, "b", b);
   check_positive(function, "rows", A.rows());
   check_symmetric(function, "A", A);
@@ -190,7 +190,7 @@ template <int R1, int C1, int R2, int C2>
 inline Eigen::Matrix<var, R1, C2> mdivide_left_spd(
     const Eigen::Matrix<double, R1, C1> &A,
     const Eigen::Matrix<var, R2, C2> &b) {
-  static const char* function = "mdivide_left_spd";
+  static const char *function = "mdivide_left_spd";
   check_multiplicable(function, "A", A, "b", b);
   check_positive(function, "rows", A.rows());
   check_symmetric(function, "A", A);
