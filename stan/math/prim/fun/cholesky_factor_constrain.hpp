@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <cmath>
 #include <stdexcept>

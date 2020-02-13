@@ -6,6 +6,7 @@
 #include <stan/math/prim/fun/beta.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/digamma.hpp>
+#include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/F32.hpp>
 #include <stan/math/prim/fun/grad_F32.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>

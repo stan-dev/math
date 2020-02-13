@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUN_MATRIX_EXP_2X2_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/sqrt.hpp>
 #include <cmath>
 
