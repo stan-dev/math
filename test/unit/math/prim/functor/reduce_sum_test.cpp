@@ -127,9 +127,9 @@ struct start_end_lpdf {
                          const std::vector<int>&, std::ostream* msgs,
                          const std::vector<int>& data) const {
     int sum = 0;
-    EXPECT_GE(start, 1);
-    EXPECT_LE(end, data.size());
-    for (size_t i = start - 1; i < end; i++) {
+    EXPECT_GE(start, 0);
+    EXPECT_LE(end, data.size() - 1);
+    for (size_t i = start; i <= end; i++) {
       sum += data[i];
     }
     return sum;

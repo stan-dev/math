@@ -128,7 +128,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
           msgs_(msgs),
           args_tuple_(args...),
           sum_(0.0),
-          args_adjoints_(Eigen::VectorXd::Zero(num_shared_terms_)) {}
+          args_adjoints_(0) {}
 
     recursive_reducer(recursive_reducer& other, tbb::split)
         : num_shared_terms_(other.num_shared_terms_),
@@ -137,11 +137,15 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
           msgs_(other.msgs_),
           args_tuple_(other.args_tuple_),
           sum_(0.0),
-          args_adjoints_(Eigen::VectorXd::Zero(num_shared_terms_)) {}
+          args_adjoints_(0) {}
 
     void operator()(const tbb::blocked_range<size_t>& r) {
       if (r.empty())
         return;
+
+      if(args_adjoints_.size() == 0) {
+	args_adjoints_ = Eigen::VectorXd::Zero(num_shared_terms_);
+      }
 
       try {
         start_nested();
@@ -189,7 +193,11 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
 
     void join(const recursive_reducer& rhs) {
       sum_ += rhs.sum_;
-      args_adjoints_ += rhs.args_adjoints_;
+      if(args_adjoints_.size() != 0 && rhs.args_adjoints_.size() != 0) {
+	args_adjoints_ += rhs.args_adjoints_;
+      } else if(args_adjoints_.size() == 0 && rhs.args_adjoints_.size() != 0) {
+	args_adjoints_ = rhs.args_adjoints_;
+      }
     }
   };
 
