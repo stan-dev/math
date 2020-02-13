@@ -96,7 +96,7 @@ vector<string> tokenize_arguments(const string& arguments) {
   return tokens;
 }
 
-size_t stan::math::size(const vector<vector<string> >& sequences) {
+size_t size(const vector<vector<string> >& sequences) {
   if (sequences.size() == 0)
     return 0;
   size_t N = 1;
@@ -370,9 +370,9 @@ int create_files(const int& argc, const char* argv[], const int& index,
 
   int num_tests;
   if (index == 1)
-    num_tests = stan::math::size(argument_sequence);
+    num_tests = size(argument_sequence);
   else
-    num_tests = stan::math::size(argument_sequence)
+    num_tests = size(argument_sequence)
                 - std::pow(3 + ROW_VECTORS, num_ints(arguments))
                       * std::pow(3 + ROW_VECTORS, num_doubles(arguments));
 
