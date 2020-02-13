@@ -51,7 +51,7 @@ class ops_partials_edge {
   void dump_partials(ViewElt* /* partials */) const {}  // reverse mode
   void dump_operands(void* /* operands */) const {}     // reverse mode
   ViewElt dx() const { return 0; }                      // used for fvars
-  int size() const { return 0; }            // reverse mode
+  int size() const { return 0; }                        // reverse mode
 };
 }  // namespace internal
 
