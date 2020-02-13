@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/floor.hpp>
 #include <stan/math/prim/fun/inv_square.hpp>
 #include <stan/math/prim/fun/square.hpp>
 #include <cmath>
