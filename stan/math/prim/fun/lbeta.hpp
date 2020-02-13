@@ -9,6 +9,7 @@
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/lgamma_stirling.hpp>
 #include <stan/math/prim/fun/lgamma_stirling_diff.hpp>
+#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log_sum_exp.hpp>
 #include <stan/math/prim/fun/log1m.hpp>
 #include <stan/math/prim/fun/multiply_log.hpp>

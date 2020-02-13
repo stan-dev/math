@@ -10,6 +10,7 @@
 #include <stan/math/prim/fun/is_any_nan.hpp>
 #include <stan/math/prim/fun/is_inf.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1p.hpp>
 #include <stan/math/prim/fun/sqrt.hpp>
 #include <stan/math/prim/fun/tgamma.hpp>

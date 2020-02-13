@@ -6,6 +6,7 @@
 #include <stan/math/prim/fun/beta.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/inc_beta.hpp>
+#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>

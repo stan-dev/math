@@ -10,6 +10,7 @@
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/is_inf.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log_sum_exp.hpp>
 #include <stan/math/prim/fun/log1p.hpp>
 #include <stan/math/prim/fun/log1p_exp.hpp>

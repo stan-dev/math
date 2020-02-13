@@ -6,6 +6,7 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/multiply_lower_tri_self_transpose.hpp>
 #include <cmath>
 

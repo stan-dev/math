@@ -7,6 +7,7 @@
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/gamma_p.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
