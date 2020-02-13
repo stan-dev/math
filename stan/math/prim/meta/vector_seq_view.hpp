@@ -36,7 +36,7 @@ class vector_seq_view<Eigen::Matrix<S, Eigen::Dynamic, 1> > {
  public:
   explicit vector_seq_view(const Eigen::Matrix<S, Eigen::Dynamic, 1>& m)
       : m_(m) {}
-  int stan::math::size() const { return 1; }
+  int size() const { return 1; }
   Eigen::Matrix<S, Eigen::Dynamic, 1> operator[](int /* i */) const {
     return m_;
   }
@@ -61,7 +61,7 @@ class vector_seq_view<Eigen::Matrix<S, 1, Eigen::Dynamic> > {
  public:
   explicit vector_seq_view(const Eigen::Matrix<S, 1, Eigen::Dynamic>& m)
       : m_(m) {}
-  int stan::math::size() const { return 1; }
+  int size() const { return 1; }
   Eigen::Matrix<S, 1, Eigen::Dynamic> operator[](int /* i */) const {
     return m_;
   }
@@ -87,7 +87,7 @@ class vector_seq_view<std::vector<Eigen::Matrix<S, Eigen::Dynamic, 1> > > {
   explicit vector_seq_view(
       const std::vector<Eigen::Matrix<S, Eigen::Dynamic, 1> >& v)
       : v_(v) {}
-  int stan::math::size() const { return v_.size(); }
+  int size() const { return v_.size(); }
   Eigen::Matrix<S, Eigen::Dynamic, 1> operator[](int i) const { return v_[i]; }
 
  private:
@@ -111,7 +111,7 @@ class vector_seq_view<std::vector<Eigen::Matrix<S, 1, Eigen::Dynamic> > > {
   explicit vector_seq_view(
       const std::vector<Eigen::Matrix<S, 1, Eigen::Dynamic> >& v)
       : v_(v) {}
-  int stan::math::size() const { return v_.size(); }
+  int size() const { return v_.size(); }
   Eigen::Matrix<S, 1, Eigen::Dynamic> operator[](int i) const { return v_[i]; }
 
  private:

@@ -35,7 +35,7 @@ class scalar_seq_view<
   auto& operator[](int i) const { return c_[i]; }
   auto& operator[](int i) { return c_[i]; }
 
-  int stan::math::size() const { return c_.size(); }
+  int size() const { return c_.size(); }
 
  private:
   eval_return_type_t<C> c_;
@@ -55,7 +55,7 @@ class scalar_seq_view<
   auto& operator[](int /* i */) const { return t_; }
   auto& operator[](int /* i */) { return t_; }
 
-  int stan::math::size() const { return 1; }
+  int size() const { return 1; }
 
  private:
   C t_;

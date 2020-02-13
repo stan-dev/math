@@ -105,7 +105,7 @@ class coupled_ode_system<F, double, double> {
    *
    * @return size of the coupled system.
    */
-  int stan::math::size() const { return size_; }
+  int size() const { return size_; }
 
   /**
    * Returns the initial state of the coupled system. Here, it is
