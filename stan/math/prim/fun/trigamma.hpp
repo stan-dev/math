@@ -46,7 +46,7 @@ inline T trigamma_impl(const T& x) {
   double b6 = inv(42.0);
   double b8 = -inv(30.0);
 
-  // negative integers and zero return postiive infinity
+  // negative integers and zero return positive infinity
   // see http://mathworld.wolfram.com/PolygammaFunction.html
   if (x <= 0.0 && floor(x) == x) {
     value = positive_infinity();

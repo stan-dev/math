@@ -22,7 +22,6 @@ namespace math {
  *
  * <code> = log_sum_exp(0, x)</code>.
  *
- *
    \f[
    \mbox{log1p\_exp}(x) =
    \begin{cases}

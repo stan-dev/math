@@ -55,6 +55,7 @@ namespace math {
  * @return Owen's T function applied to the arguments.
  */
 inline double owens_t(double h, double a) { return boost::math::owens_t(h, a); }
+
 }  // namespace math
 }  // namespace stan
 

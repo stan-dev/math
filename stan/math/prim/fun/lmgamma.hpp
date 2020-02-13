@@ -10,7 +10,7 @@ namespace math {
 
 /**
  * Return the natural logarithm of the multivariate gamma function
- * with the speciifed dimensions and argument.
+ * with the specified dimensions and argument.
  *
  * <p>The multivariate gamma function \f$\Gamma_k(x)\f$ for
  * dimensionality \f$k\f$ and argument \f$x\f$ is defined by
@@ -18,7 +18,6 @@ namespace math {
  * <p>\f$\Gamma_k(x) = \pi^{k(k-1)/4} \, \prod_{j=1}^k \Gamma(x + (1 - j)/2)\f$,
  *
  * where \f$\Gamma()\f$ is the gamma function.
- *
  *
    \f[
    \mbox{lmgamma}(n, x) =
@@ -45,10 +44,10 @@ namespace math {
    \frac{\partial \, \ln\Gamma_n(x)}{\partial x} = \sum_{j=1}^n \Psi(x + (1 - j)
  / 2) \f]
  *
+ * @tparam T type of scalar
  * @param k Number of dimensions.
  * @param x Function argument.
  * @return Natural log of the multivariate gamma function.
- * @tparam T Type of scalar.
  */
 template <typename T>
 inline return_type_t<T> lmgamma(int k, T x) {

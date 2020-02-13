@@ -4,7 +4,7 @@
 #include <vector>
 
 template <typename T0, typename T1, typename T2>
-inline std::vector<typename stan::return_type<T1, T2>::type>
+inline std::vector<stan::return_type_t<T1, T2>>
 // initial time
 // initial positions
 // parameters
@@ -13,7 +13,7 @@ inline std::vector<typename stan::return_type<T1, T2>::type>
 lorenz_ode(const T0& t_in, const std::vector<T1>& y_in,
            const std::vector<T2>& theta, const std::vector<double>& x,
            const std::vector<int>& x_int) {
-  std::vector<typename stan::return_type<T1, T2>::type> res;
+  std::vector<stan::return_type_t<T1, T2>> res;
   res.push_back(theta.at(0) * (y_in.at(1) - y_in.at(0)));
   res.push_back(theta.at(1) * y_in.at(0) - y_in.at(1)
                 - y_in.at(0) * y_in.at(2));
@@ -23,7 +23,7 @@ lorenz_ode(const T0& t_in, const std::vector<T1>& y_in,
 
 struct lorenz_ode_fun {
   template <typename T0, typename T1, typename T2>
-  inline std::vector<typename stan::return_type<T1, T2>::type>
+  inline std::vector<stan::return_type_t<T1, T2>>
   // initial time
   // initial positions
   // parameters

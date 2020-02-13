@@ -10,6 +10,7 @@
 
 namespace stan {
 namespace math {
+
 /**
  * Return <code>true</code> if the matrix is square, and no element
  * not on the main diagonal is <code>NaN</code>.
@@ -25,8 +26,8 @@ inline bool is_symmetric(
     return false;
   }
 
-  using size_type = typename index_type<
-      Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>>::type;
+  using size_type
+      = index_type_t<Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>>;
 
   size_type k = y.rows();
   if (k == 1) {

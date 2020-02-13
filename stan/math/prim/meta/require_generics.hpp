@@ -39,7 +39,7 @@ struct is_double_or_int
  * @tparam The type to check
  */
 template <typename T>
-struct is_var_or_fvar
+struct is_autodiff
     : bool_constant<math::disjunction<is_var<std::decay_t<T>>,
                                       is_fvar<std::decay_t<T>>>::value> {};
 
@@ -529,24 +529,22 @@ using require_any_not_fvar_t
     = require_any_not_t<is_fvar<std::decay_t<Types>>...>;
 
 template <typename T>
-using require_var_or_fvar_t = require_t<is_var_or_fvar<T>>;
+using require_autodiff_t = require_t<is_autodiff<T>>;
 
 template <typename T>
-using require_not_var_or_fvar_t = require_not_t<is_var_or_fvar<T>>;
+using require_not_autodiff_t = require_not_t<is_autodiff<T>>;
 
 template <typename... Types>
-using require_all_var_or_fvar_t = require_all_t<is_var_or_fvar<Types>...>;
+using require_all_autodiff_t = require_all_t<is_autodiff<Types>...>;
 
 template <typename... Types>
-using require_any_var_or_fvar_t = require_any_t<is_var_or_fvar<Types>...>;
+using require_any_autodiff_t = require_any_t<is_autodiff<Types>...>;
 
 template <typename... Types>
-using require_all_not_var_or_fvar_t
-    = require_all_not_t<is_var_or_fvar<Types>...>;
+using require_all_not_autodiff_t = require_all_not_t<is_autodiff<Types>...>;
 
 template <typename... Types>
-using require_any_not_var_or_fvar_t
-    = require_any_not_t<is_var_or_fvar<Types>...>;
+using require_any_not_autodiff_t = require_any_not_t<is_autodiff<Types>...>;
 
 template <typename T>
 using require_stan_scalar_t = require_t<is_stan_scalar<T>>;
@@ -830,11 +828,11 @@ using require_all_not_eigen_vector_vt
  */
 
 /**
- * Check a templated type to see if it and it's inner type pass a condiational
+ * Check a templated type to see if it and its inner type pass a conditional
  * test.
  * @tparam ContainerCheck Templated struct or alias that wraps a static constant
  * scalar called type. Used to check the container satisfies a particular type
- * check. used like template <typename T, require_container_st<is_std_vector,
+ * check. Used like template <typename T, require_container_st<is_std_vector,
  * is_var, T>...>
  */
 template <template <class...> class ContainerCheck,

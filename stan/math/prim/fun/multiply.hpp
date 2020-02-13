@@ -72,7 +72,8 @@ template <int R1, int C1, int R2, int C2, typename T1, typename T2,
           typename = require_all_arithmetic_t<T1, T2>>
 inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> multiply(
     const Eigen::Matrix<T1, R1, C1>& m1, const Eigen::Matrix<T2, R2, C2>& m2) {
-  check_multiplicable("multiply", "m1", m1, "m2", m2);
+  check_size_match("multiply", "Columns of m1", m1.cols(), "Rows of m2",
+                   m2.rows());
 #ifdef STAN_OPENCL
   if (m1.rows() * m1.cols() * m2.cols()
       > opencl_context.tuning_opts().multiply_dim_prod_worth_transfer) {

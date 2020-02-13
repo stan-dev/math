@@ -40,7 +40,7 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> to_matrix(
     const std::vector<Eigen::Matrix<T, 1, Eigen::Dynamic> >& x) {
   int rows = x.size();
   if (rows == 0) {
-    return Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>(0, 0);
+    return {};
   }
   int cols = x[0].size();
   Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> result(rows, cols);
@@ -65,8 +65,7 @@ inline Eigen::Matrix<return_type_t<T, double>, Eigen::Dynamic, Eigen::Dynamic>
 to_matrix(const std::vector<std::vector<T> >& x) {
   size_t rows = x.size();
   if (rows == 0) {
-    return Eigen::Matrix<return_type_t<T, double>, Eigen::Dynamic,
-                         Eigen::Dynamic>(0, 0);
+    return {};
   }
   size_t cols = x[0].size();
   Eigen::Matrix<return_type_t<T, double>, Eigen::Dynamic, Eigen::Dynamic>

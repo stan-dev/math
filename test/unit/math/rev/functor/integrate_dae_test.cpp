@@ -17,16 +17,15 @@
 
 struct chemical_kinetics {
   template <typename T0, typename TYY, typename TYP, typename TPAR>
-  inline std::vector<typename stan::return_type<TYY, TYP, TPAR>::type>
-  operator()(const T0& t_in, const std::vector<TYY>& yy,
-             const std::vector<TYP>& yp, const std::vector<TPAR>& theta,
-             const std::vector<double>& x_r, const std::vector<int>& x_i,
-             std::ostream* msgs) const {
+  inline std::vector<stan::return_type_t<TYY, TYP, TPAR>> operator()(
+      const T0& t_in, const std::vector<TYY>& yy, const std::vector<TYP>& yp,
+      const std::vector<TPAR>& theta, const std::vector<double>& x_r,
+      const std::vector<int>& x_i, std::ostream* msgs) const {
     if (yy.size() != 3 || yp.size() != 3)
       throw std::domain_error(
           "this function was called with inconsistent state");
 
-    std::vector<typename stan::return_type<TYY, TYP, TPAR>::type> res(3);
+    std::vector<stan::return_type_t<TYY, TYP, TPAR>> res(3);
 
     auto yy1 = yy.at(0);
     auto yy2 = yy.at(1);
@@ -78,7 +77,7 @@ struct StanIntegrateDAETest : public ::testing::Test {
 TEST_F(StanIntegrateDAETest, idas_ivp_system_yy0) {
   using stan::math::idas_forward_system;
   using stan::math::integrate_dae;
-  std::vector<std::vector<double> > yy
+  std::vector<std::vector<double>> yy
       = integrate_dae(f, yy0, yp0, t0, ts, theta, x_r, x_i, 1e-4, 1e-8);
   EXPECT_NEAR(0.985172, yy[0][0], 1e-6);
   EXPECT_NEAR(0.0147939, yy[0][2], 1e-6);
@@ -96,7 +95,7 @@ TEST_F(StanIntegrateDAETest, forward_sensitivity_theta) {
 
   std::vector<var> theta_var = to_var(theta);
 
-  std::vector<std::vector<var> > yy
+  std::vector<std::vector<var>> yy
       = integrate_dae(f, yy0, yp0, t0, ts, theta_var, x_r, x_i, 1e-5, 1e-12);
   EXPECT_NEAR(0.985172, value_of(yy[0][0]), 1e-6);
   EXPECT_NEAR(0.0147939, value_of(yy[0][2]), 1e-6);
@@ -112,8 +111,8 @@ TEST_F(StanIntegrateDAETest, forward_sensitivity_theta) {
   idas_forward_system<chemical_kinetics, double, double, double> dae1(
       f, eq_id, yy0, yp0, theta1, x_r, x_i, msgs),
       dae2(f, eq_id, yy0, yp0, theta2, x_r, x_i, msgs);
-  std::vector<std::vector<double> > yy1 = solver.integrate(dae1, t0, ts);
-  std::vector<std::vector<double> > yy2 = solver.integrate(dae2, t0, ts);
+  std::vector<std::vector<double>> yy1 = solver.integrate(dae1, t0, ts);
+  std::vector<std::vector<double>> yy2 = solver.integrate(dae2, t0, ts);
 
   double yys_finite_diff = (yy2[3][1] - yy1[3][1]) / (2.0 * theta[0] * h);
   stan::math::set_zero_all_adjoints();

@@ -11,7 +11,7 @@ std::ostringstream *msgs = nullptr;
 
 struct f1 {
   template <typename T1, typename T2, typename T3>
-  inline typename stan::return_type<T1, T2, T3>::type operator()(
+  inline stan::return_type_t<T1, T2, T3> operator()(
       const T1 &x, const T2 &xc, const std::vector<T3> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
       std::ostream *msgs) const {
@@ -21,7 +21,7 @@ struct f1 {
 
 struct f2 {
   template <typename T1, typename T2, typename T3>
-  inline typename stan::return_type<T1, T2, T3>::type operator()(
+  inline stan::return_type_t<T1, T2, T3> operator()(
       const T1 &x, const T2 &xc, const std::vector<T3> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
       std::ostream *msgs) const {
@@ -31,7 +31,7 @@ struct f2 {
 
 struct f3 {
   template <typename T1, typename T2, typename T3>
-  inline typename stan::return_type<T1, T2, T3>::type operator()(
+  inline stan::return_type_t<T1, T2, T3> operator()(
       const T1 &x, const T2 &xc, const std::vector<T3> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
       std::ostream *msgs) const {
@@ -42,7 +42,7 @@ struct f3 {
 
 struct f4 {
   template <typename T1, typename T2, typename T3>
-  inline typename stan::return_type<T1, T2, T3>::type operator()(
+  inline stan::return_type_t<T1, T2, T3> operator()(
       const T1 &x, const T2 &xc, const std::vector<T3> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
       std::ostream *msgs) const {
@@ -52,7 +52,7 @@ struct f4 {
 
 struct f5 {
   template <typename T1, typename T2, typename T3>
-  inline typename stan::return_type<T1, T2, T3>::type operator()(
+  inline stan::return_type_t<T1, T2, T3> operator()(
       const T1 &x, const T2 &xc, const std::vector<T3> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
       std::ostream *msgs) const {
@@ -62,7 +62,7 @@ struct f5 {
 
 struct f6 {
   template <typename T1, typename T2, typename T3>
-  inline typename stan::return_type<T1, T2, T3>::type operator()(
+  inline stan::return_type_t<T1, T2, T3> operator()(
       const T1 &x, const T2 &xc, const std::vector<T3> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
       std::ostream *msgs) const {
@@ -72,7 +72,7 @@ struct f6 {
 
 struct f7 {
   template <typename T1, typename T2, typename T3>
-  inline typename stan::return_type<T1, T2, T3>::type operator()(
+  inline stan::return_type_t<T1, T2, T3> operator()(
       const T1 &x, const T2 &xc, const std::vector<T3> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
       std::ostream *msgs) const {
@@ -82,7 +82,7 @@ struct f7 {
 
 struct f8 {
   template <typename T1, typename T2, typename T3>
-  inline typename stan::return_type<T1, T2, T3>::type operator()(
+  inline stan::return_type_t<T1, T2, T3> operator()(
       const T1 &x, const T2 &xc, const std::vector<T3> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
       std::ostream *msgs) const {
@@ -92,7 +92,7 @@ struct f8 {
 
 struct f10 {
   template <typename T1, typename T2, typename T3>
-  inline typename stan::return_type<T1, T2, T3>::type operator()(
+  inline stan::return_type_t<T1, T2, T3> operator()(
       const T1 &x, const T2 &xc, const std::vector<T3> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
       std::ostream *msgs) const {
@@ -102,7 +102,7 @@ struct f10 {
 
 struct f11 {
   template <typename T1, typename T2, typename T3>
-  inline typename stan::return_type<T1, T2, T3>::type operator()(
+  inline stan::return_type_t<T1, T2, T3> operator()(
       const T1 &x, const T2 &xc, const std::vector<T3> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
       std::ostream *msgs) const {
@@ -113,7 +113,7 @@ struct f11 {
 
 struct f12 {
   template <typename T1, typename T2, typename T3>
-  inline typename stan::return_type<T1, T2, T3>::type operator()(
+  inline stan::return_type_t<T1, T2, T3> operator()(
       const T1 &x, const T2 &xc, const std::vector<T3> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
       std::ostream *msgs) const {
@@ -126,7 +126,7 @@ struct f12 {
 
 struct f13 {
   template <typename T1, typename T2, typename T3>
-  inline typename stan::return_type<T1, T2, T3>::type operator()(
+  inline stan::return_type_t<T1, T2, T3> operator()(
       const T1 &x, const T2 &xc, const std::vector<T3> &theta,
       const std::vector<double> &x_r, const std::vector<int> &x_i,
       std::ostream *msgs) const {
@@ -169,7 +169,7 @@ double get_adjoint_if_var(double v) {
  * The prototype for f is:
  *   struct f10 {
  *     template <typename T1, typename T2, typename T3>
- *     inline typename stan::return_type<T1, T2, T3>::type operator()(
+ *     inline stan::return_type_t<T1, T2, T3> operator()(
  *         const T1& x, const T2& xc, const std::vector<T3>& theta, const
  * std::vector<double>& x_r, const std::vector<int>& x_i, std::ostream& msgs)
  * const {

@@ -2,8 +2,10 @@
 #define STAN_MATH_PRIM_ERR_IS_NOT_NAN_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/value_of_rec.hpp>
+#include <stan/math/prim/fun/get.hpp>
 #include <stan/math/prim/fun/is_nan.hpp>
+#include <stan/math/prim/fun/size.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 
 namespace stan {
 namespace math {

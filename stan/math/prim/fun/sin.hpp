@@ -37,6 +37,7 @@ inline auto sin(const T& x) {
 
 /**
  * Version of sin() that accepts Eigen Matrix or matrix expressions.
+ *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
  * @return Sine of each value in x.
