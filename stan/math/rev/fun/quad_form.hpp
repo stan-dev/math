@@ -95,12 +95,29 @@ class quad_form_vari : public vari {
 };
 }  // namespace internal
 
-template <typename Ta, int Ra, int Ca, typename Tb, int Rb, int Cb>
-inline typename std::enable_if<std::is_same<Ta, var>::value
-                                   || std::is_same<Tb, var>::value,
-                               Eigen::Matrix<var, Cb, Cb> >::type
-quad_form(const Eigen::Matrix<Ta, Ra, Ca>& A,
-          const Eigen::Matrix<Tb, Rb, Cb>& B) {
+/**
+ * Return the quadratic form \f$ B^T A B \f$.
+ *
+ * Symmetry of the resulting matrix is not guaranteed due to numerical
+ * precision.
+ *
+ * @tparam Ta type of elements in the square matrix
+ * @tparam Ra number of rows in the square matrix, can be Eigen::Dynamic
+ * @tparam Ca number of columns in the square matrix, can be Eigen::Dynamic
+ * @tparam Tb type of elements in the second matrix
+ * @tparam Rb number of rows in the second matrix, can be Eigen::Dynamic
+ * @tparam Cb number of columns in the second matrix, can be Eigen::Dynamic
+ *
+ * @param A square matrix
+ * @param B second matrix
+ * @return The quadratic form, which is a symmetric matrix of size Cb.
+ * @throws std::invalid_argument if A is not square, or if A cannot be
+ * multiplied by B
+ */
+template <typename Ta, int Ra, int Ca, typename Tb, int Rb, int Cb,
+          require_any_var_t<Ta, Tb>...>
+inline Eigen::Matrix<var, Cb, Cb> quad_form(
+    const Eigen::Matrix<Ta, Ra, Ca>& A, const Eigen::Matrix<Tb, Rb, Cb>& B) {
   check_square("quad_form", "A", A);
   check_multiplicable("quad_form", "A", A, "B", B);
 
@@ -110,11 +127,25 @@ quad_form(const Eigen::Matrix<Ta, Ra, Ca>& A,
   return baseVari->impl_->C_;
 }
 
-template <typename Ta, int Ra, int Ca, typename Tb, int Rb>
-inline typename std::enable_if<
-    std::is_same<Ta, var>::value || std::is_same<Tb, var>::value, var>::type
-quad_form(const Eigen::Matrix<Ta, Ra, Ca>& A,
-          const Eigen::Matrix<Tb, Rb, 1>& B) {
+/**
+ * Return the quadratic form \f$ B^T A B \f$.
+ *
+ * @tparam Ta type of elements in the square matrix
+ * @tparam Ra number of rows in the square matrix, can be Eigen::Dynamic
+ * @tparam Ca number of columns in the square matrix, can be Eigen::Dynamic
+ * @tparam Tb type of elements in the vector
+ * @tparam Rb number of rows in the vector, can be Eigen::Dynamic
+ *
+ * @param A square matrix
+ * @param B vector
+ * @return The quadratic form (a scalar).
+ * @throws std::invalid_argument if A is not square, or if A cannot be
+ * multiplied by B
+ */
+template <typename Ta, int Ra, int Ca, typename Tb, int Rb,
+          require_any_var_t<Ta, Tb>...>
+inline var quad_form(const Eigen::Matrix<Ta, Ra, Ca>& A,
+                     const Eigen::Matrix<Tb, Rb, 1>& B) {
   check_square("quad_form", "A", A);
   check_multiplicable("quad_form", "A", A, "B", B);
 
