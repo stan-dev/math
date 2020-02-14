@@ -16,7 +16,6 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_corr_constrain(
     const Eigen::Matrix<T, Eigen::Dynamic, 1>& y, int K) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using std::sqrt;
   int k_choose_2 = (K * (K - 1)) / 2;
   check_size_match("cholesky_corr_constrain", "y.size()", y.size(),
                    "k_choose_2", k_choose_2);
@@ -35,10 +34,10 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_corr_constrain(
     x(i, 0) = z(k++);
     T sum_sqs(square(x(i, 0)));
     for (int j = 1; j < i; ++j) {
-      x(i, j) = z(k++) * sqrt(1.0 - sum_sqs);
+      x(i, j) = z(k++) * std::sqrt(1.0 - sum_sqs);
       sum_sqs += square(x(i, j));
     }
-    x(i, i) = sqrt(1.0 - sum_sqs);
+    x(i, i) = std::sqrt(1.0 - sum_sqs);
   }
   return x;
 }

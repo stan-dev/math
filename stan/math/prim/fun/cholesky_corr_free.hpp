@@ -3,8 +3,8 @@
 
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/corr_free.hpp>
+#include <stan/math/prim/fun/square.hpp>
 #include <cmath>
 
 namespace stan {
@@ -15,7 +15,6 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> cholesky_corr_free(
     const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& x) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using std::sqrt;
 
   check_square("cholesky_corr_free", "x", x);
   // should validate lower-triangular, unit lengths
@@ -27,7 +26,7 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> cholesky_corr_free(
     z(k++) = corr_free(x(i, 0));
     double sum_sqs = square(x(i, 0));
     for (int j = 1; j < i; ++j) {
-      z(k++) = corr_free(x(i, j) / sqrt(1.0 - sum_sqs));
+      z(k++) = corr_free(x(i, j) / std::sqrt(1.0 - sum_sqs));
       sum_sqs += square(x(i, j));
     }
   }

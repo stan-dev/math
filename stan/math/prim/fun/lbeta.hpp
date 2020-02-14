@@ -12,7 +12,6 @@
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log_sum_exp.hpp>
 #include <stan/math/prim/fun/log1m.hpp>
-#include <stan/math/prim/fun/multiply_log.hpp>
 
 namespace stan {
 namespace math {
