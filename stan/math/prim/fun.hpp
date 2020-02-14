@@ -147,6 +147,7 @@
 #include <stan/math/prim/fun/linspaced_vector.hpp>
 #include <stan/math/prim/fun/lmgamma.hpp>
 #include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/logb.hpp>
 #include <stan/math/prim/fun/log10.hpp>
 #include <stan/math/prim/fun/log1m.hpp>
 #include <stan/math/prim/fun/log1m_exp.hpp>

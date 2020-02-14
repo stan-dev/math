@@ -3,6 +3,7 @@
 
 #include <test/unit/math/util.hpp>
 #include <stan/math.hpp>
+#include <complex>
 #include <string>
 #include <vector>
 
@@ -103,6 +104,23 @@ struct deserializer {
       y(i) = read(x(i));
     return y;
   }
+
+  /**
+   * Read a standard complex number comforming to the shape of the
+   * specified argument. The specified argument is only used for its
+   * shape---there is no relationship between the value type of the
+   * argument and the type of the result.
+   *
+   * @tparam U type of pattern value type
+   * @param x pattern argument to determine result shape
+   * @return deserialized value with shape and size matching argument
+   */
+  template <typename U>
+  std::complex<T> read(const std::complex<U>& x) {
+    T re = read(x.re_);
+    T im = read(x.im_);
+    return {re, im};
+  }
 };
 
 /**
@@ -137,6 +155,18 @@ struct serializer {
   template <typename U>
   void write(const U& x) {
     vals_.push_back(x);
+  }
+
+  /**
+   * Serialize the specified standard vector.
+   *
+   * @tparam U value type of compoex; must be assignable to T
+   * @param x complex number to serialize
+   */
+  template <typename U>
+  void write(const std::complex<U>& x) {
+    write(x.re_);
+    write(x.im_);
   }
 
   /**
