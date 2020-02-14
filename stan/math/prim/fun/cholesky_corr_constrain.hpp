@@ -4,6 +4,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/log1m.hpp>
+#include <stan/math/prim/fun/sqrt.hpp>
 #include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/corr_constrain.hpp>
 #include <cmath>
@@ -34,10 +35,10 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_corr_constrain(
     x(i, 0) = z(k++);
     T sum_sqs(square(x(i, 0)));
     for (int j = 1; j < i; ++j) {
-      x(i, j) = z(k++) * std::sqrt(1.0 - sum_sqs);
+      x(i, j) = z(k++) * sqrt(1.0 - sum_sqs);
       sum_sqs += square(x(i, j));
     }
-    x(i, i) = std::sqrt(1.0 - sum_sqs);
+    x(i, i) = sqrt(1.0 - sum_sqs);
   }
   return x;
 }
