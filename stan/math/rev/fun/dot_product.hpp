@@ -183,26 +183,22 @@ class dot_product_vari : public vari {
 /**
  * Returns the dot product.
  *
- * @tparam T1 type of elements in the first vector
- * @tparam R1 number of rows, can be Eigen::Dynamic
- * @tparam C1 number of columns, can be Eigen::Dynamic
- * @tparam T2 type of elements in the second vector
- * @tparam R2 number of rows, can be Eigen::Dynamic
- * @tparam C2 number of columns, can be Eigen::Dynamic
+ * @tparam T1 type of the first vector
+ * @tparam T2 type of the second vector
  *
- * @param[in] v1 First column vector.
- * @param[in] v2 Second column vector.
+ * @param[in] v1 First row or column vector.
+ * @param[in] v2 Second row or column vector.
  * @return Dot product of the vectors.
  * @throw std::domain_error if length of v1 is not equal to length of v2.
  */
-template <typename T1, int R1, int C1, typename T2, int R2, int C2,
-          typename = require_any_var_t<T1, T2>>
-inline return_type_t<T1, T2> dot_product(const Eigen::Matrix<T1, R1, C1>& v1,
-                                         const Eigen::Matrix<T2, R2, C2>& v2) {
-  check_vector("dot_product", "v1", v1);
-  check_vector("dot_product", "v2", v2);
+template <typename Vec1, typename Vec2,
+          typename = require_all_eigen_vector_t<Vec1, Vec2>,
+          typename = require_any_eigen_vt<is_var, Vec1, Vec2>, typename = void>
+inline auto dot_product(const Vec1& v1, const Vec2& v2) {
   check_matching_sizes("dot_product", "v1", v1, "v2", v2);
-  return var(new internal::dot_product_vari<T1, T2>(v1, v2));
+  return var(
+      new internal::dot_product_vari<value_type_t<Vec1>, value_type_t<Vec2>>(
+          v1, v2));
 }
 
 /**
