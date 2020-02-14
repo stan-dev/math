@@ -2,8 +2,8 @@
 #define STAN_MATH_FWD_FUN_QUAD_FORM_HPP
 
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/fun/dot_product.hpp>
 #include <stan/math/fwd/fun/multiply.hpp>
+#include <stan/math/prim/fun/dot_product.hpp>
 
 namespace stan {
 namespace math {
