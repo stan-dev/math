@@ -17,6 +17,7 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_corr_constrain(
     const Eigen::Matrix<T, Eigen::Dynamic, 1>& y, int K) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using std::sqrt;
   int k_choose_2 = (K * (K - 1)) / 2;
   check_size_match("cholesky_corr_constrain", "y.size()", y.size(),
                    "k_choose_2", k_choose_2);

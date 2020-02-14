@@ -4,6 +4,9 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/promote_common.hpp>
+#ifdef STAN_OPENCL
+#include <stan/math/opencl/opencl.hpp>
+#endif
 
 namespace stan {
 namespace math {
