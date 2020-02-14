@@ -164,7 +164,7 @@ class cvodes_ode_data {
    */
   inline int jacobian_states(double t, const double y[], SUNMatrix J) const {
     // Run nested autodiff in this scope
-    local_nested_autodiff nested;
+    nested_rev_autodiff nested;
 
     const std::vector<var> y_vec_var(y, y + N_);
     coupled_ode_system<F, var, double> ode_jacobian(f_, y_vec_var, theta_dbl_,

@@ -52,7 +52,7 @@ void hessian(const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
   }
   for (int i = 0; i < x.size(); ++i) {
     // Run nested autodiff in this scope
-    local_nested_autodiff nested;
+    nested_rev_autodiff nested;
 
     Eigen::Matrix<fvar<var>, Eigen::Dynamic, 1> x_fvar(x.size());
     for (int j = 0; j < x.size(); ++j) {

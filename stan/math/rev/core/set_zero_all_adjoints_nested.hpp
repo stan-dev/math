@@ -14,7 +14,7 @@ namespace math {
  * Reset all adjoint values in the top nested portion of the stack
  * to zero.
  *
- * It is preferred to use the <code>local_nested_autodiff</code> class for
+ * It is preferred to use the <code>nested_rev_autodiff</code> class for
  * nested autodiff class as it handles recovery of memory automatically.
  */
 static void set_zero_all_adjoints_nested() {

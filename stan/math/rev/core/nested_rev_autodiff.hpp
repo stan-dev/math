@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_REV_CORE_LOCAL_NESTED_AUTODIFF_HPP
-#define STAN_MATH_REV_CORE_LOCAL_NESTED_AUTODIFF_HPP
+#ifndef STAN_MATH_REV_CORE_nested_rev_autodiff_HPP
+#define STAN_MATH_REV_CORE_nested_rev_autodiff_HPP
 
 #include <stan/math/rev/core/recover_memory_nested.hpp>
 #include <stan/math/rev/core/set_zero_all_adjoints_nested.hpp>
@@ -14,7 +14,7 @@ namespace math {
  *
  * var a; // allocated normally
  * {
- *    local_nested_autodiff nested; // Starts nested autodiff
+ *    nested_rev_autodiff nested; // Starts nested autodiff
  *
  *    var nested_var; //allocated on the nested stack
  *    // Do stuff on the nested stack
@@ -24,15 +24,15 @@ namespace math {
  * }
  * var b;
  */
-class local_nested_autodiff {
+class nested_rev_autodiff {
  public:
-  local_nested_autodiff() { start_nested(); }
+  nested_rev_autodiff() { start_nested(); }
 
-  ~local_nested_autodiff() { recover_memory_nested(); }
+  ~nested_rev_autodiff() { recover_memory_nested(); }
 
   // Prevent undesirable operations
-  local_nested_autodiff(const local_nested_autodiff&) = delete;
-  local_nested_autodiff& operator=(const local_nested_autodiff&) = delete;
+  nested_rev_autodiff(const nested_rev_autodiff&) = delete;
+  nested_rev_autodiff& operator=(const nested_rev_autodiff&) = delete;
   void* operator new(std::size_t) = delete;
 
   /**

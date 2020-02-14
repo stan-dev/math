@@ -19,7 +19,7 @@ TEST_F(StanAgradRevOde, coupled_ode_system_dv) {
   using stan::math::coupled_ode_system;
 
   // Run nested autodiff in this scope
-  stan::math::local_nested_autodiff nested;
+  stan::math::nested_rev_autodiff nested;
 
   harm_osc_ode_fun harm_osc;
 
@@ -164,7 +164,7 @@ TEST_F(StanAgradRevOde, coupled_ode_system_vd) {
   using stan::math::coupled_ode_system;
 
   // Run nested autodiff in this scope
-  stan::math::local_nested_autodiff nested;
+  stan::math::nested_rev_autodiff nested;
 
   harm_osc_ode_fun harm_osc;
 
@@ -317,7 +317,7 @@ TEST_F(StanAgradRevOde, coupled_ode_system_vv) {
   using stan::math::coupled_ode_system;
 
   // Run nested autodiff in this scope
-  stan::math::local_nested_autodiff nested;
+  stan::math::nested_rev_autodiff nested;
 
   const size_t N = 2;
   const size_t M = 1;

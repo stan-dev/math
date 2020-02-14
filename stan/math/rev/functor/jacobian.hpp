@@ -17,7 +17,7 @@ void jacobian(const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
   using Eigen::Dynamic;
   using Eigen::Matrix;
   // Run nested autodiff in this scope
-  local_nested_autodiff nested;
+  nested_rev_autodiff nested;
 
   Matrix<var, Dynamic, 1> x_var(x);
   Matrix<var, Dynamic, 1> fx_var = f(x_var);

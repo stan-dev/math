@@ -122,7 +122,7 @@ class idas_forward_system : public idas_system<F, Tyy, Typ, Tpar> {
       auto yps_mat = matrix_d_from_NVarray(yps, ns);
 
       // Run nested autodiff in this scope
-      stan::math::local_nested_autodiff nested;
+      stan::math::nested_rev_autodiff nested;
 
       MatrixXd J, r;
       VectorXd f_val;

@@ -38,7 +38,7 @@ inline double gradient_of_f(const F &f, const double &x, const double &xc,
   double gradient = 0.0;
 
   // Run nested autodiff in this scope
-  local_nested_autodiff nested;
+  nested_rev_autodiff nested;
 
   std::vector<var> theta_var(theta_vals.size());
   for (size_t i = 0; i < theta_vals.size(); i++) {

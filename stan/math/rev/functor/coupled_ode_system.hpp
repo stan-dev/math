@@ -117,7 +117,7 @@ struct coupled_ode_system<F, double, var> {
     using std::vector;
 
     // Run nested autodiff in this scope
-    local_nested_autodiff nested;
+    nested_rev_autodiff nested;
 
     vector<var> y_vars;
     y_vars.reserve(N_);
@@ -272,7 +272,7 @@ struct coupled_ode_system<F, var, double> {
     using std::vector;
 
     // Run nested autodiff in this scope
-    local_nested_autodiff nested;
+    nested_rev_autodiff nested;
 
     vector<var> y_vars;
     y_vars.reserve(N_);
@@ -448,7 +448,7 @@ struct coupled_ode_system<F, var, var> {
     using std::vector;
 
     // Run nested autodiff in this scope
-    local_nested_autodiff nested;
+    nested_rev_autodiff nested;
 
     vector<var> y_vars;
     y_vars.reserve(N_);

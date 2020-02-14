@@ -20,7 +20,7 @@ void grad_tr_mat_times_hessian(
   using Eigen::Matrix;
 
   // Run nested autodiff in this scope
-  local_nested_autodiff nested;
+  nested_rev_autodiff nested;
 
   grad_tr_MH.resize(x.size());
 

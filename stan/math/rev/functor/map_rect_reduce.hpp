@@ -25,7 +25,7 @@ struct map_rect_reduce<F, var, var> {
     matrix_d out(1 + num_shared_params + num_job_specific_params, 0);
 
     // Run nested autodiff in this scope
-    local_nested_autodiff nested;
+    nested_rev_autodiff nested;
 
     vector_v shared_params_v = to_var(shared_params);
     vector_v job_specific_params_v = to_var(job_specific_params);
@@ -62,7 +62,7 @@ struct map_rect_reduce<F, double, var> {
     matrix_d out(1 + num_job_specific_params, 0);
 
     // Run nested autodiff in this scope
-    local_nested_autodiff nested;
+    nested_rev_autodiff nested;
 
     vector_v job_specific_params_v = to_var(job_specific_params);
 
@@ -95,7 +95,7 @@ struct map_rect_reduce<F, var, double> {
     matrix_d out(1 + num_shared_params, 0);
 
     // Run nested autodiff in this scope
-    local_nested_autodiff nested;
+    nested_rev_autodiff nested;
 
     vector_v shared_params_v = to_var(shared_params);
 

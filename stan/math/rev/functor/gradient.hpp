@@ -42,7 +42,7 @@ template <typename F>
 void gradient(const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
               double& fx, Eigen::Matrix<double, Eigen::Dynamic, 1>& grad_fx) {
   // Run nested autodiff in this scope
-  local_nested_autodiff nested;
+  nested_rev_autodiff nested;
 
   Eigen::Matrix<var, Eigen::Dynamic, 1> x_var(x.size());
   for (int i = 0; i < x.size(); ++i)

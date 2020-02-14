@@ -19,7 +19,7 @@ void hessian_times_vector(const F& f,
   using Eigen::Matrix;
 
   // Run nested autodiff in this scope
-  local_nested_autodiff nested;
+  nested_rev_autodiff nested;
 
   Matrix<var, Eigen::Dynamic, 1> x_var(x.size());
   for (int i = 0; i < x_var.size(); ++i) {

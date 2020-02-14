@@ -53,7 +53,7 @@ void grad_hessian(
   for (int i = 0; i < d; ++i) {
     for (int j = i; j < d; ++j) {
       // Run nested autodiff in this scope
-      local_nested_autodiff nested;
+      nested_rev_autodiff nested;
 
       Matrix<fvar<fvar<var> >, Dynamic, 1> x_ffvar(d);
       for (int k = 0; k < d; ++k) {

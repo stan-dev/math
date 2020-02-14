@@ -10,7 +10,7 @@ namespace math {
  * Record the current position so that <code>recover_memory_nested()</code>
  * can find it.
  *
- * It is preferred to use the <code>local_nested_autodiff</code> class for
+ * It is preferred to use the <code>nested_rev_autodiff</code> class for
  * nested autodiff as it handles recovery of memory automatically.
  */
 static inline void start_nested() {
