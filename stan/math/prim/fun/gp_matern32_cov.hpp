@@ -70,8 +70,8 @@ gp_matern32_cov(const std::vector<T_x> &x, const T_s &sigma,
     cov(i, i) = sigma_sq;
     for (size_t j = i + 1; j < x_size; ++j) {
       return_type_t<T_x> dist = distance(x[i], x[j]);
-      cov(i, j) = sigma_sq * (1.0 + root_3_inv_l * dist)
-                  * exp(-root_3_inv_l * dist);
+      cov(i, j)
+          = sigma_sq * (1.0 + root_3_inv_l * dist) * exp(-root_3_inv_l * dist);
       cov(j, i) = cov(i, j);
     }
   }
