@@ -72,10 +72,13 @@ class colwise_reduction
     kernel_parts out_parts = result.get_kernel_parts_lhs(generated, ng, i, j);
 
     parts.args += out_parts.args;
-    parts.reduction += "if (lid_i == 0) {\n"
-                     + result.var_name + "_global[j * blocks_rows + idx % blocks_rows] = "
-                            + derived().var_name + "_local[0];\n"
-                     "}\n";
+    parts.reduction +=
+        "if ((lid == 0 && i_local != 0) || "
+            "(i_local == 0 && (j_local < min(j_local_max, local_cols) || "
+                              "i_local_max == local_rows - 1))) {\n"
+        + result.var_name + "_global[j * blocks_rows + idx % blocks_rows] = "
+         + derived().var_name + "_local[lid];\n"
+        "}\n";
     return parts;
   }
 
@@ -95,19 +98,27 @@ class colwise_reduction
         + var_name + "_local[LOCAL_SIZE_];\n";
     res.body = var_name + " = " + var_name_arg + ";\n";
     res.reduction =
-          var_name + "_local[lid_i] = " + var_name + ";\n"
-          "barrier(CLK_LOCAL_MEM_FENCE);\n"
-          "for (int step = lsize_i / REDUCTION_STEP_SIZE; "
-                "step > 0; step /= REDUCTION_STEP_SIZE) {\n"
-          "  if (lid_i < step) {\n"
-          "    for (int i = 1; i < REDUCTION_STEP_SIZE; i++) {\n"
-          "      " + var_name + "_local[lid_i] = " +
-        Operation::generate(var_name + "_local[lid_i]",
-                            var_name + "_local[lid_i + step * i]") + ";\n"
-          "    }\n"
-          "  }\n"
-          "  barrier(CLK_LOCAL_MEM_FENCE);\n"
-          "}\n";
+        "if(lid == 0 && i_local != 0){\n"
+        "  " + var_name + " = "  + Operation::generate(var_name,
+                                                    var_name + "_local[lsize - i_local]")+ ";\n"
+        "}\n"
+        "barrier(CLK_LOCAL_MEM_FENCE);\n"
+        + var_name + "_local[lid] = " + var_name + ";\n"
+        "for (int step = lsize / REDUCTION_STEP_SIZE; "
+              "step > 0; "
+              "step /= REDUCTION_STEP_SIZE) {\n"
+        "  barrier(CLK_LOCAL_MEM_FENCE);\n"
+        "  for (int next = lid + step; next < lid + step * REDUCTION_STEP_SIZE; next+=step) {\n"
+        "    int idx_next = idx_local - lid + next;\n"
+        "    int next_j = idx_next / local_rows;\n"
+        "    if(next >= lsize || next_j > j_local || (i_local - i_local_min * (j_local == j_local_min)) % local_rows >= step){\n"
+        "      break;\n"
+        "    }\n"
+        "    " + var_name + "_local[lid] = " +
+        Operation::generate(var_name + "_local[lid]",
+                            var_name + "_local[next]") + ";\n"
+        "  }\n"
+        "}\n";
     return res;
   }
 
@@ -118,9 +129,9 @@ class colwise_reduction
    */
   inline int rows() const {
     int local_rows = opencl_context.base_opts().at("LOCAL_SIZE_");
-    int wgs_rows
+    int blocks_rows
         = (std::get<0>(arguments_).rows() + local_rows - 1) / local_rows;
-    return wgs_rows;
+    return blocks_rows;
   }
 
   /**
