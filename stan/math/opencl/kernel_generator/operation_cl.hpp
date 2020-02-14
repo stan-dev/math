@@ -67,6 +67,8 @@ class operation_cl : public operation_cl_base {
   }
 
  public:
+  using Deriv = Derived;
+  static const bool require_specific_local_size;
   // number of arguments this operation has
   static constexpr int N = sizeof...(Args);
   // value representing a not yet determined size
@@ -319,6 +321,9 @@ template <typename Derived, typename Scalar, typename... Args>
 template <typename T_lhs>
 std::string operation_cl<Derived, Scalar, Args...>::cache<T_lhs>::source;
 
+template <typename Derived, typename Scalar, typename... Args>
+const bool operation_cl<Derived, Scalar, Args...>::require_specific_local_size =
+    std::max({false, std::decay_t<Args>::Deriv::require_specific_local_size...});
 }  // namespace math
 }  // namespace stan
 

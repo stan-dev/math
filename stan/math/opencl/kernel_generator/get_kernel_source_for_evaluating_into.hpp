@@ -26,27 +26,46 @@ operation_cl<Derived, Scalar, Args...>::get_kernel_source_for_evaluating_into(
   name_generator ng;
   kernel_parts parts = derived().get_whole_kernel_parts(generated, ng, "i", "j",
                                                         lhs_expression);
-  std::string src =
-      "kernel void calculate(" + parts.args + "const int rows, const int cols){\n"
-      "const int gid_i = get_global_id(0);\n"
-      "const int lid_i = get_local_id(0);\n"
-      "const int lsize_i = get_local_size(0);\n"
-      "const int wg_id_i = get_group_id(0);\n"
-      "const int n_groups_i = get_num_groups(0);\n"
-      "const int blocks_rows = (rows + lsize_i - 1) / lsize_i;\n"
-      "const int blocks_cols = (cols + lsize_i - 1) / lsize_i;\n"
-      "for (int idx = wg_id_i; idx < blocks_rows * blocks_cols; idx += n_groups_i){\n"
-      "const int i = lsize_i * (idx % blocks_rows) + lid_i;\n"
-      "const int j0 = lsize_i * (idx / blocks_rows);\n"
-      "for(int j = j0; j<min(cols, j0 + lsize_i); j++){\n"
-      + parts.initialization +
-      "if(i < rows){\n"
-      + parts.body +
-      "}\n"
-      + parts.reduction +
-      "}\n"
-      "}\n"
-      "}";
+  std::string src;
+  if(Derived::require_specific_local_size){
+    src =
+        "kernel void calculate(" + parts.args + "const int rows, const int cols){\n"
+        "const int gid_i = get_global_id(0);\n"
+        "const int lid_i = get_local_id(0);\n"
+        "const int lsize_i = get_local_size(0);\n"
+        "const int wg_id_i = get_group_id(0);\n"
+        "const int n_groups_i = get_num_groups(0);\n"
+        "const int blocks_rows = (rows + lsize_i - 1) / lsize_i;\n"
+        "const int blocks_cols = (cols + lsize_i - 1) / lsize_i;\n"
+        "for (int idx = wg_id_i; idx < blocks_rows * blocks_cols; idx += n_groups_i){\n"
+        "const int i = lsize_i * (idx % blocks_rows) + lid_i;\n"
+        "const int j0 = lsize_i * (idx / blocks_rows);\n"
+        "for(int j = j0; j<min(cols, j0 + lsize_i); j++){\n"
+        + parts.initialization +
+        "if(i < rows){\n"
+        + parts.body +
+        "}\n"
+        + parts.reduction +
+        "}\n"
+        "}\n"
+        "}\n";
+  }
+  else{
+    src =
+        "kernel void calculate(" + parts.args +"const int rows, const int cols){\n"
+        "int gid_i = get_global_id(0);\n"
+        "int gid_j = get_global_id(1);\n"
+        "int gsize_i = get_global_size(0);\n"
+        "int gsize_j = get_global_size(1);\n"
+        "for(int j = gid_j; j < cols; j += gsize_j){\n"
+        "for(int i = gid_i; i < rows; i += gsize_i){\n"
+        + parts.initialization
+        + parts.body
+        + parts.reduction +
+        "}\n"
+        "}\n"
+        "}\n";
+  }
   return src;
 }
 

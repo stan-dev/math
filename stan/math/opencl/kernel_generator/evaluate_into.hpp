@@ -46,16 +46,30 @@ void operation_cl<Derived, Scalar, Args...>::evaluate_into(
     cache::kernel.setArg(arg_num++, n_rows);
     cache::kernel.setArg(arg_num++, n_cols);
 
-    int local = opencl_context.base_opts().at("LOCAL_SIZE_");
-    int wgs_rows = (n_rows + local - 1) / local;
-    int wgs_cols = (n_cols + local - 1) / local;
     int desired_wgs = opencl_context.compute_units() * 4;
-    int wgs = std::min(wgs_rows * wgs_cols, desired_wgs);
+    int local = opencl_context.base_opts().at("LOCAL_SIZE_");
 
     cl::Event e;
-    opencl_context.queue().enqueueNDRangeKernel(cache::kernel, cl::NullRange,
-                                                cl::NDRange(local * wgs),
-                                                cl::NDRange(local), nullptr, &e);
+    if(Derived::require_specific_local_size){
+      int wgs_rows = (n_rows + local - 1) / local;
+      int wgs_cols = (n_cols + local - 1) / local;
+      int wgs = std::min(wgs_rows * wgs_cols, desired_wgs);
+
+      opencl_context.queue().enqueueNDRangeKernel(cache::kernel, cl::NullRange,
+                                                  cl::NDRange(local * wgs),
+                                                  cl::NDRange(local), nullptr, &e);
+    }
+    else{
+      int desired_threads = desired_wgs * local;
+      int wpt = std::max(1, n_rows * n_cols / desired_threads);
+      int threads_cols = (n_cols + wpt - 1) / wpt;
+      int wpt_rows = std::max(1, wpt * threads_cols / n_cols);
+      int threads_rows = (n_rows + wpt_rows - 1) / wpt_rows;
+
+      opencl_context.queue().enqueueNDRangeKernel(cache::kernel, cl::NullRange,
+                                                  cl::NDRange(threads_rows, threads_cols),
+                                                  cl::NullRange, nullptr, &e);
+    }
     derived().add_read_event(e);
     lhs_expression.add_write_event(e);
   } catch (cl::Error e) {
