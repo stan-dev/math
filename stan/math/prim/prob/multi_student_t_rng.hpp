@@ -44,6 +44,7 @@ multi_student_t_rng(
   check_not_nan(function, "Degrees of freedom parameter", nu);
   check_positive(function, "Degrees of freedom parameter", nu);
   check_positive(function, "Covariance matrix rows", S.rows());
+  check_not_nan(function, "Covariance matrix", S);
   check_symmetric(function, "Covariance matrix", S);
   Eigen::LLT<Eigen::MatrixXd> llt_of_S = S.llt();
   check_pos_definite(function, "covariance matrix argument", llt_of_S);
