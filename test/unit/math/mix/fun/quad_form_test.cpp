@@ -1,11 +1,10 @@
 #include <test/unit/math/test_ad.hpp>
 #include <test/unit/math/ad_tolerances.hpp>
 
-TEST(MathMixMatFun, quadFormSym) {
+TEST(MathMixMatFun, quadForm) {
+  using stan::test::relative_tolerance;
   auto f = [](const auto& x, const auto& y) {
-    // symmetrize the input matrix
-    auto x_sym = ((x + x.transpose()) * 0.5).eval();
-    return stan::math::quad_form_sym(x_sym, y);
+    return stan::math::quad_form(x, y);
   };
 
   Eigen::MatrixXd a00;
@@ -46,16 +45,4 @@ TEST(MathMixMatFun, quadFormSym) {
   stan::test::expect_ad(f, a11, v1);
   stan::test::expect_ad(f, a22, v2);
   stan::test::expect_ad(tols, f, a44, v4);
-
-  // asymmetric case should throw
-
-  auto g = [](const auto& x, const auto& y) {
-    return stan::math::quad_form_sym(x, y);
-  };
-
-  Eigen::MatrixXd u(4, 4);
-  u << 2, 3, 4, 5, 6, 10, 2, 2, 7, 2, 7, 1, 8, 2, 1, 112;
-  Eigen::MatrixXd v(4, 2);
-  v << 100, 10, 0, 1, -3, -3, 5, 2;
-  stan::test::expect_ad(g, u, v);
 }
