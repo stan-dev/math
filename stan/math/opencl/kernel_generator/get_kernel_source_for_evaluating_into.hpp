@@ -40,7 +40,7 @@ operation_cl<Derived, Scalar, Args...>::get_kernel_source_for_evaluating_into(
         "for (int idx = wg_id_i; idx < blocks_rows * blocks_cols; idx += n_groups_i){\n"
         "const int i = lsize_i * (idx % blocks_rows) + lid_i;\n"
         "const int j0 = lsize_i * (idx / blocks_rows);\n"
-        "for(int j = j0; j<min(cols, j0 + lsize_i); j++){\n"
+        "for(int j = j0; j < min(cols, j0 + lsize_i); j++){\n"
         + parts.initialization +
         "if(i < rows){\n"
         + parts.body +

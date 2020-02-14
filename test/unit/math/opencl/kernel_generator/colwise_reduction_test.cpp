@@ -5,6 +5,7 @@
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math.hpp>
+#include <test/unit/math/opencl/kernel_generator/reference_kernel.hpp>
 #include <gtest/gtest.h>
 
 using Eigen::Dynamic;
@@ -17,12 +18,23 @@ using stan::math::matrix_cl;
     EXPECT_NEAR(A(i), B(i), DELTA);
 
 TEST(MathMatrixCL, colwise_sum_test) {
+  std::string kernel_filename = "colwise_sum.cl";
   MatrixXd m(3, 2);
   m << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6;
 
   matrix_cl<double> m_cl(m);
 
-  matrix_cl<double> res_cl = stan::math::colwise_sum(m_cl);
+  auto tmp = stan::math::colwise_sum(m_cl);
+
+  matrix_cl<double> res_cl;
+  std::string kernel_src = tmp.get_kernel_source_for_evaluating_into(res_cl);
+  stan::test::store_reference_kernel_if_needed(kernel_filename, kernel_src);
+  std::string expected_kernel_src
+      = stan::test::load_reference_kernel(kernel_filename);
+  EXPECT_EQ(expected_kernel_src, kernel_src);
+
+  res_cl = tmp;
+
   MatrixXd raw_res = stan::math::from_matrix_cl(res_cl);
   EXPECT_GE(m.rows(), raw_res.rows());
   MatrixXd res = raw_res.colwise().sum();
