@@ -37,6 +37,7 @@ multi_normal_rng(const T_loc& mu,
   static const char* function = "multi_normal_rng";
 
   check_positive(function, "Covariance matrix rows", S.rows());
+  check_not_nan(function, "Covariance matrix", S);
   check_symmetric(function, "Covariance matrix", S);
   Eigen::LLT<Eigen::MatrixXd> llt_of_S = S.llt();
   check_pos_definite("multi_normal_rng", "covariance matrix argument",
