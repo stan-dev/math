@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_FUN_TRACE_HPP
 #define STAN_MATH_PRIM_FUN_TRACE_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 
 namespace stan {
@@ -16,12 +17,12 @@ namespace math {
  * @param[in] m Specified matrix.
  * @return Trace of the matrix.
  */
-template <typename T>
-inline T trace(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& m) {
+template <typename T, typename = require_eigen_t<T>>
+inline value_type_t<T> trace(const T& m) {
   return m.trace();
 }
 
-template <typename T>
+template <typename T, typename = require_not_eigen_t<T>, typename = void>
 inline T trace(const T& m) {
   return m;
 }

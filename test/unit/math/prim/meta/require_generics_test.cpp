@@ -1032,3 +1032,28 @@ TEST(requires_prim_mat, any_not_std_vector_eigen_st_test) {
       stan::require_any_not_std_vector_st,
       std_vector_eigen_x>::any_not<std::is_floating_point>();
 }
+
+TEST(requires_prim_mat, eigen_row_and_col) {
+  using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
+  using stan::require_eigen_row_and_col_t;
+  using stan::require_not_eigen_row_and_col_t;
+  using stan::test::require_variadic_checker;
+  EXPECT_TRUE((require_variadic_checker<require_eigen_row_and_col_t,
+                                        RowVectorXd, VectorXd>::value));
+  EXPECT_FALSE((require_variadic_checker<require_not_eigen_row_and_col_t,
+                                         RowVectorXd, VectorXd>::value));
+
+  EXPECT_FALSE((require_variadic_checker<require_eigen_row_and_col_t, VectorXd,
+                                         VectorXd>::value));
+  EXPECT_TRUE((require_variadic_checker<require_not_eigen_row_and_col_t,
+                                        VectorXd, VectorXd>::value));
+  EXPECT_FALSE((require_variadic_checker<require_eigen_row_and_col_t,
+                                         RowVectorXd, RowVectorXd>::value));
+  EXPECT_TRUE((require_variadic_checker<require_not_eigen_row_and_col_t,
+                                        RowVectorXd, RowVectorXd>::value));
+  EXPECT_FALSE((require_variadic_checker<require_eigen_row_and_col_t, VectorXd,
+                                         RowVectorXd>::value));
+  EXPECT_TRUE((require_variadic_checker<require_not_eigen_row_and_col_t,
+                                        VectorXd, RowVectorXd>::value));
+}
