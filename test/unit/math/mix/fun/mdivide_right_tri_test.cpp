@@ -8,6 +8,7 @@ TEST(MathMixMatFun, mdivideRightTri) {
     return stan::math::mdivide_right_tri<Eigen::Upper>(x, y);
   };
 
+  // size zero inputs
   Eigen::MatrixXd m00(0, 0);
   Eigen::RowVectorXd rv0(0);
   stan::test::expect_ad(f, m00, m00);

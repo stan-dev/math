@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_FUN_MDIVIDE_LEFT_SPD_HPP
 #define STAN_MATH_PRIM_FUN_MDIVIDE_LEFT_SPD_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/promote_common.hpp>
 
 namespace stan {
 namespace math {
