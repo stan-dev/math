@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/log1m.hpp>
 #include <stan/math/prim/fun/square.hpp>
+#include <stan/math/prim/fun/tanh.hpp>
 #include <cmath>
 
 namespace stan {
