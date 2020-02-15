@@ -32,9 +32,8 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_left(
   check_square("mdivide_left", "A", A);
   check_multiplicable("mdivide_left", "A", A, "b", b);
 
-  return Eigen::Matrix<return_type_t<T1, T2>, R1, C1>(A)
-      .lu()
-      .solve(Eigen::Matrix<return_type_t<T1, T2>, R2, C2>(b));
+  return Eigen::Matrix<return_type_t<T1, T2>, R1, C1>(A).lu().solve(
+      Eigen::Matrix<return_type_t<T1, T2>, R2, C2>(b));
 }
 
 }  // namespace math
