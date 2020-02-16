@@ -18,6 +18,10 @@ TEST(MathMatrixPrim, quad_form_sym_mat) {
   EXPECT_EQ(0, resd.rows());
   EXPECT_EQ(0, resd.cols());
 
+  resd = quad_form_sym(m0, m02);
+  EXPECT_EQ(2, resd.rows());
+  EXPECT_EQ(2, resd.cols());
+
   matrix_d m1(1, 1);
   m1 << 2;
   resd = quad_form_sym(m1, m1);

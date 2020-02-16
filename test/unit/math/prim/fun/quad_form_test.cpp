@@ -7,7 +7,14 @@ TEST(MathMatrixPrim, quad_form_mat) {
 
   matrix_d resd;
   matrix_d m0;
-  EXPECT_THROW(quad_form(m0, m0), std::invalid_argument);
+  resd = quad_form(m0, m0);
+  EXPECT_EQ(0, resd.rows());
+  EXPECT_EQ(0, resd.cols());
+
+  matrix_d m02(0, 2);
+  resd = quad_form(m0, m02);
+  EXPECT_EQ(2, resd.rows());
+  EXPECT_EQ(2, resd.cols());
 
   matrix_d m1(1, 1);
   m1 << 2;
@@ -43,7 +50,7 @@ TEST(MathMatrixPrim, quad_form_vec) {
 
   matrix_d m0;
   vector_d v0;
-  EXPECT_THROW(quad_form(m0, v0), std::invalid_argument);
+  EXPECT_FLOAT_EQ(0, quad_form(m0, v0));
 
   matrix_d m1(1, 1);
   m1 << 2;
