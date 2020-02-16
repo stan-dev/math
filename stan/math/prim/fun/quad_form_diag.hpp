@@ -13,7 +13,8 @@ quad_form_diag(const Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic>& mat,
                const Eigen::Matrix<T2, R, C>& vec) {
   check_vector("quad_form_diag", "vec", vec);
   check_square("quad_form_diag", "mat", mat);
-  check_multiplicable("quad_form_diag", "mat", mat, "vec", vec);
+  check_size_match("quad_form_diag", "rows of mat", mat.rows(), "size of vec",
+                   vec.size());
   return vec.asDiagonal() * mat * vec.asDiagonal();
 }
 
