@@ -149,9 +149,11 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_spd(
   Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
   static const char *function = "mdivide_left_spd";
   check_multiplicable(function, "A", A, "b", b);
-  check_positive(function, "rows", A.rows());
   check_symmetric(function, "A", A);
   check_not_nan(function, "A", A);
+  if (A.size() == 0) {
+    return res;
+  }
 
   // NOTE: this is not a memory leak, this vari is used in the
   // expression graph to evaluate the adjoint, but is not needed
@@ -168,11 +170,14 @@ template <int R1, int C1, int R2, int C2>
 inline Eigen::Matrix<var, R1, C2> mdivide_left_spd(
     const Eigen::Matrix<var, R1, C1> &A,
     const Eigen::Matrix<double, R2, C2> &b) {
+  Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
   static const char *function = "mdivide_left_spd";
   check_multiplicable(function, "A", A, "b", b);
-  check_positive(function, "rows", A.rows());
   check_symmetric(function, "A", A);
   check_not_nan(function, "A", A);
+  if (A.size() == 0) {
+    return res;
+  }
 
   // NOTE: this is not a memory leak, this vari is used in the
   // expression graph to evaluate the adjoint, but is not needed
@@ -181,7 +186,6 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_spd(
   internal::mdivide_left_spd_vd_vari<R1, C1, R2, C2> *baseVari
       = new internal::mdivide_left_spd_vd_vari<R1, C1, R2, C2>(A, b);
 
-  Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
   res.vi() = Eigen::Map<matrix_vi>(&baseVari->variRefC_[0], b.rows(), b.cols());
   return res;
 }
@@ -190,11 +194,14 @@ template <int R1, int C1, int R2, int C2>
 inline Eigen::Matrix<var, R1, C2> mdivide_left_spd(
     const Eigen::Matrix<double, R1, C1> &A,
     const Eigen::Matrix<var, R2, C2> &b) {
+  Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
   static const char *function = "mdivide_left_spd";
   check_multiplicable(function, "A", A, "b", b);
-  check_positive(function, "rows", A.rows());
   check_symmetric(function, "A", A);
   check_not_nan(function, "A", A);
+  if (A.size() == 0) {
+    return res;
+  }
 
   // NOTE: this is not a memory leak, this vari is used in the
   // expression graph to evaluate the adjoint, but is not needed
@@ -203,7 +210,6 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_spd(
   internal::mdivide_left_spd_dv_vari<R1, C1, R2, C2> *baseVari
       = new internal::mdivide_left_spd_dv_vari<R1, C1, R2, C2>(A, b);
 
-  Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
   res.vi() = Eigen::Map<matrix_vi>(&baseVari->variRefC_[0], b.rows(), b.cols());
 
   return res;

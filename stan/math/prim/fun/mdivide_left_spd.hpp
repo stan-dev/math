@@ -32,9 +32,11 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_left_spd(
     const Eigen::Matrix<T1, R1, C1> &A, const Eigen::Matrix<T2, R2, C2> &b) {
   static const char *function = "mdivide_left_spd";
   check_multiplicable(function, "A", A, "b", b);
-  check_positive(function, "rows", A.rows());
   check_symmetric(function, "A", A);
   check_not_nan(function, "A", A);
+  if (A.size() == 0) {
+    return Eigen::Matrix<return_type_t<T1, T2>, R1, C2>(0, b.cols());
+  }
 
   auto llt = Eigen::Matrix<return_type_t<T1, T2>, R1, C1>(A).llt();
   check_pos_definite(function, "A", llt);

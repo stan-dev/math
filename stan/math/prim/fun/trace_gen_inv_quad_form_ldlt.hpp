@@ -42,12 +42,11 @@ inline return_type_t<T1, T2, T3> trace_gen_inv_quad_form_ldlt(
     const Eigen::Matrix<T1, R1, C1> &D, const LDLT_factor<T2, R2, C2> &A,
     const Eigen::Matrix<T3, R3, C3> &B) {
   check_square("trace_gen_inv_quad_form_ldlt", "D", D);
-  if (D.size() == 0 && A.cols() == 0 && B.rows() == 0 && B.cols() == 0) {
-    return 0;
-  }
-
   check_multiplicable("trace_gen_inv_quad_form_ldlt", "A", A, "B", B);
   check_multiplicable("trace_gen_inv_quad_form_ldlt", "B", B, "D", D);
+  if (D.size() == 0 && A.cols() == 0) {
+    return 0;
+  }
 
   return trace(multiply(multiply(D, transpose(B)), mdivide_left_ldlt(A, B)));
 }

@@ -17,6 +17,9 @@ inline Eigen::Matrix<fvar<T>, R1, C1> mdivide_right_tri_low(
     const Eigen::Matrix<fvar<T>, R2, C2> &b) {
   check_square("mdivide_right_tri_low", "b", b);
   check_multiplicable("mdivide_right_tri_low", "A", A, "b", b);
+  if (b.size() == 0) {
+    return Eigen::Matrix<fvar<T>, R1, C2>(A.rows(), 0);
+  }
 
   Eigen::Matrix<T, R1, C2> A_mult_inv_b(A.rows(), b.cols());
   Eigen::Matrix<T, R1, C2> deriv_A_mult_inv_b(A.rows(), b.cols());
@@ -58,6 +61,9 @@ inline Eigen::Matrix<fvar<T>, R1, C2> mdivide_right_tri_low(
     const Eigen::Matrix<double, R2, C2> &b) {
   check_square("mdivide_right_tri_low", "b", b);
   check_multiplicable("mdivide_right_tri_low", "A", A, "b", b);
+  if (b.size() == 0) {
+    return Eigen::Matrix<fvar<T>, R1, C2>(A.rows(), 0);
+  }
 
   Eigen::Matrix<T, R2, C2> deriv_b_mult_inv_b(b.rows(), b.cols());
   Eigen::Matrix<T, R1, C1> val_A(A.rows(), A.cols());
@@ -87,6 +93,9 @@ inline Eigen::Matrix<fvar<T>, R1, C2> mdivide_right_tri_low(
     const Eigen::Matrix<fvar<T>, R2, C2> &b) {
   check_square("mdivide_right_tri_low", "b", b);
   check_multiplicable("mdivide_right_tri_low", "A", A, "b", b);
+  if (b.size() == 0) {
+    return Eigen::Matrix<fvar<T>, R1, C2>(A.rows(), 0);
+  }
 
   Eigen::Matrix<T, R1, C2> A_mult_inv_b(A.rows(), b.cols());
   Eigen::Matrix<T, R2, C2> deriv_b_mult_inv_b(b.rows(), b.cols());

@@ -20,11 +20,10 @@ template <int Cb>
 inline Eigen::Matrix<double, -1, Cb> matrix_exp_multiply(
     const Eigen::MatrixXd& A, const Eigen::Matrix<double, -1, Cb>& B) {
   check_square("matrix_exp_multiply", "input matrix", A);
-  if (A.size() == 0 && B.rows() == 0) {
+  check_multiplicable("matrix_exp_multiply", "A", A, "B", B);
+  if (A.size() == 0) {
     return Eigen::Matrix<double, -1, Cb>(0, B.cols());
   }
-
-  check_multiplicable("matrix_exp_multiply", "A", A, "B", B);
 
   return matrix_exp_action_handler().action(A, B);
 }

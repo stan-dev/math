@@ -7,7 +7,16 @@ TEST(MathMatrixPrim, quad_form_sym_mat) {
 
   matrix_d resd;
   matrix_d m0;
-  EXPECT_THROW(quad_form_sym(m0, m0), std::invalid_argument);
+
+  matrix_d m02(0, 2);
+  matrix_d m22(2, 2);
+  m22 << 1, 2, 2, 4;
+  EXPECT_THROW(quad_form_sym(m02, m22), std::invalid_argument);
+  EXPECT_THROW(quad_form_sym(m22, m02), std::invalid_argument);
+
+  resd = quad_form_sym(m0, m0);
+  EXPECT_EQ(0, resd.rows());
+  EXPECT_EQ(0, resd.cols());
 
   matrix_d m1(1, 1);
   m1 << 2;
@@ -50,7 +59,7 @@ TEST(MathMatrixPrim, quad_form_sym_vec) {
 
   matrix_d m0;
   vector_d v0;
-  EXPECT_THROW(quad_form_sym(m0, v0), std::invalid_argument);
+  EXPECT_EQ(0, quad_form_sym(m0, v0));
 
   matrix_d m1(1, 1);
   m1 << 2;

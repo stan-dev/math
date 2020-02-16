@@ -36,6 +36,9 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_left_tri(
     const Eigen::Matrix<T1, R1, C1> &A, const Eigen::Matrix<T2, R2, C2> &b) {
   check_square("mdivide_left_tri", "A", A);
   check_multiplicable("mdivide_left_tri", "A", A, "b", b);
+  if (A.rows() == 0) {
+    return Eigen::Matrix<return_type_t<T1, T2>, R1, C2>(0, b.cols());
+  }
 
   return Eigen::Matrix<return_type_t<T1, T2>, R1, C1>(A)
       .template triangularView<TriView>()
@@ -57,6 +60,10 @@ template <int TriView, typename T, int R1, int C1>
 inline Eigen::Matrix<T, R1, C1> mdivide_left_tri(
     const Eigen::Matrix<T, R1, C1> &A) {
   check_square("mdivide_left_tri", "A", A);
+  if (A.rows() == 0) {
+    return {};
+  }
+
   int n = A.rows();
   Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> b;
   b.setIdentity(n, n);
@@ -89,6 +96,10 @@ inline Eigen::Matrix<double, R1, C2> mdivide_left_tri(
     const Eigen::Matrix<double, R2, C2> &b) {
   check_square("mdivide_left_tri", "A", A);
   check_multiplicable("mdivide_left_tri", "A", A, "b", b);
+  if (A.rows() == 0) {
+    return Eigen::MatrixXd(0, b.cols());
+  }
+
 #ifdef STAN_OPENCL
   if (A.rows()
       >= opencl_context.tuning_opts().tri_inverse_size_worth_transfer) {
@@ -122,6 +133,10 @@ template <Eigen::UpLoType TriView, int R1, int C1>
 inline Eigen::Matrix<double, R1, C1> mdivide_left_tri(
     const Eigen::Matrix<double, R1, C1> &A) {
   check_square("mdivide_left_tri", "A", A);
+  if (A.rows() == 0) {
+    return {};
+  }
+
   const int n = A.rows();
 #ifdef STAN_OPENCL
   if (A.rows()
