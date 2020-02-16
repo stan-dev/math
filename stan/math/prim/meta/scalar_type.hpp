@@ -53,11 +53,22 @@ struct scalar_type<T, std::enable_if_t<is_std_vector<T>::value>> {
  * Template metaprogram defining the base scalar type of
  * values stored in an Eigen matrix.
  *
- * @tparam T type of matrix.
+ * @tparam T value type of matrix
  */
 template <typename T>
 struct scalar_type<T, std::enable_if_t<is_eigen<T>::value>> {
   using type = scalar_type_t<typename std::decay_t<T>::Scalar>;
+};
+
+/** \ingroup type_trait
+ * Template metaprogram defining the base scalar type of
+ * values stored in a complex number.
+ *
+ * @tparam T value type of complex number
+ */
+template <typename T>
+struct scalar_type<std::complex<T>> {
+  using type = T;
 };
 }  // namespace stan
 #endif
