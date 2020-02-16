@@ -28,6 +28,7 @@ TEST(MathMatrixPrim, mdivide_left_size_zero) {
   stan::math::matrix_d m1, m2, res;
 
   m1.resize(2, 2);
+  m1 << 3, 5, 7, 11;
   m2.resize(2, 0);
   res = mdivide_left(m1, m2);
   EXPECT_EQ(m1.rows(), res.rows());

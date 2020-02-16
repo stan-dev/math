@@ -29,6 +29,7 @@ TEST(MathMatrixPrim, mdivide_right_size_zero) {
 
   m1.resize(0, 2);
   m2.resize(2, 2);
+  m2 << 3, 5, 7, 11;
   res = mdivide_right(m1, m2);
   EXPECT_EQ(m1.rows(), res.rows());
   EXPECT_EQ(m2.cols(), res.cols());
