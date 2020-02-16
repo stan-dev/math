@@ -59,7 +59,7 @@ class complex<stan::math::var>
    */
   template <typename T,
             typename = std::enable_if_t<std::is_arithmetic<T>::value>>
-  complex(T x) : complex_base(x) {}
+  complex(T x) : complex_base(x) {}  // NOLINT(runtime/explicit)
 
   /**
    * Destroy this complex number.  The implementation is a no-op.

@@ -1,5 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 #include <complex>
+#include <vector>
 
 template <typename T, typename S>
 void test_constructor_init_type() {
@@ -43,9 +44,9 @@ void test_std_complex_constructor() {
   test_constructor_init_type<T, float>();
   test_constructor_init_type<T, double>();
   test_constructor_init_type<T, long double>();
-  test_constructor_init_type<T, short>();
+  test_constructor_init_type<T, short>();  // NOLINT(runtime/int)
   test_constructor_init_type<T, int>();
-  test_constructor_init_type<T, long int>();
+  test_constructor_init_type<T, long int>();  // NOLINT(runtime/int)
 }
 
 template <typename T>
