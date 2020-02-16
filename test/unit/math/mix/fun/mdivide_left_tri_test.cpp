@@ -1,5 +1,4 @@
 #include <test/unit/math/test_ad.hpp>
-#include <limits>
 
 TEST(MathMixMatFun, mdivideLeftTri) {
   auto f = [](const auto& x, const auto& y) {
@@ -8,6 +7,12 @@ TEST(MathMixMatFun, mdivideLeftTri) {
   auto f_up = [](const auto& x, const auto& y) {
     return stan::math::mdivide_left_tri<Eigen::Upper>(x, y);
   };
+
+  // size zero inputs
+  Eigen::MatrixXd m00(0, 0);
+  Eigen::VectorXd v0(0);
+  stan::test::expect_ad(f, m00, v0);
+  stan::test::expect_ad(f, m00, m00);
 
   // signature 1 of 2: matrix-matrix
   Eigen::MatrixXd aa(1, 1);
@@ -22,11 +27,6 @@ TEST(MathMixMatFun, mdivideLeftTri) {
   cc << 3;
   stan::test::expect_ad(f, aa, cc);
   stan::test::expect_ad(f_up, aa, cc);
-
-  Eigen::MatrixXd m00(0, 0);
-  Eigen::VectorXd v0(0);
-  stan::test::expect_ad(f, m00, v0);
-  stan::test::expect_ad(f, m00, m00);
 
   Eigen::MatrixXd a(2, 2);
   a << 2, 0, 5, 7;

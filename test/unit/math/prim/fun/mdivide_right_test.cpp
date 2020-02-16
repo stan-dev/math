@@ -1,34 +1,38 @@
 #include <stan/math/prim.hpp>
+#include <test/unit/math/prim/fun/expect_matrix_eq.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathMatrixPrimMat, mdivide_right_val) {
-  using stan::math::mdivide_right;
+TEST(MathMatrixPrim, mdivide_right_val) {
   stan::math::matrix_d Ad(2, 2);
-  stan::math::matrix_d I;
-
   Ad << 2.0, 3.0, 5.0, 7.0;
 
-  I = mdivide_right(Ad, Ad);
-  EXPECT_NEAR(1.0, I(0, 0), 1.0E-12);
-  EXPECT_NEAR(0.0, I(0, 1), 1.0E-12);
-  EXPECT_NEAR(0.0, I(1, 0), 1.0E-12);
-  EXPECT_NEAR(1.0, I(1, 1), 1.0e-12);
+  stan::math::matrix_d I = Eigen::MatrixXd::Identity(2, 2);
+  expect_matrix_eq(I, stan::math::mdivide_left(Ad, Ad));
 }
 
-TEST(MathMatrixPrimMat, mdivide_right_val2) {
-  using stan::math::mdivide_right;
+TEST(MathMatrixPrim, mdivide_right_val2) {
   stan::math::row_vector_d b(5);
   stan::math::matrix_d A(5, 5);
   stan::math::row_vector_d expected(5);
-  stan::math::row_vector_d x;
 
   b << 19, 150, -170, 140, 31;
   A << 1, 8, -9, 7, 5, 0, 1, 0, 4, 4, 0, 0, 1, 2, 5, 0, 0, 0, 1, -5, 0, 0, 0, 0,
       1;
   expected << 19, -2, 1, 13, 4;
-  x = mdivide_right(b, A);
 
-  ASSERT_EQ(expected.size(), x.size());
-  for (int n = 0; n < expected.size(); n++)
-    EXPECT_FLOAT_EQ(expected(n), x(n));
+  expect_matrix_eq(expected, stan::math::mdivide_right(b, A));
+}
+
+TEST(MathMatrixPrim, mdivide_right_size_zero) {
+  using stan::math::mdivide_right;
+  stan::math::matrix_d m1, m2;
+
+  m1.resize(0, 2);
+  m2.resize(2, 2);
+  m2 << 3, 5, 7, 11;
+  EXPECT_THROW(mdivide_right(m1, m2), std::invalid_argument);
+
+  m1.resize(2, 0);
+  m2.resize(0, 0);
+  EXPECT_THROW(mdivide_right(m1, m2), std::invalid_argument);
 }
