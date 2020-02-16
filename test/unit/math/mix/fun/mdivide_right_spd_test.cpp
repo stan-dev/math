@@ -8,22 +8,25 @@ TEST(MathMixMatFun, mdivideRightSpd) {
     return stan::math::mdivide_right_spd(x, y_sym);
   };
 
-  // signature 1 of 2: matrix / matrix
+  // size zero inputs
+  Eigen::MatrixXd m00(0, 0);
+  Eigen::MatrixXd m20(2, 0);
+  Eigen::RowVectorXd rv0(0);
+  stan::test::expect_ad(f, m00, m00);
+  stan::test::expect_ad(f, m20, m00);
+  stan::test::expect_ad(f, rv0, m00);
+
   Eigen::MatrixXd aa(1, 1);
   aa << 1;
   Eigen::MatrixXd bb(1, 1);
   bb << 2;
   stan::test::expect_ad(f, aa, bb);
+  Eigen::MatrixXd a0(0, 1);
+  stan::test::expect_ad(f, a0, bb);
 
-  // signature 2 of 2: row-vector/ matrix
   Eigen::RowVectorXd cc(1);
   cc << 3;
   stan::test::expect_ad(f, cc, aa);
-
-  Eigen::MatrixXd m00(0, 0);
-  Eigen::RowVectorXd rv0(0);
-  stan::test::expect_ad(f, m00, m00);
-  stan::test::expect_ad(f, rv0, m00);
 
   Eigen::MatrixXd a(2, 2);
   a << 2, 3, 3, 7;
@@ -46,15 +49,19 @@ TEST(MathMixMatFun, mdivideRightSpd) {
   stan::test::expect_ad(f, d, a);
   stan::test::expect_ad(f, d, b);
 
-  // exceptions: not symmetric
-  stan::test::expect_ad(f, a, c);
-  stan::test::expect_ad(f, d, c);
-
   Eigen::MatrixXd m33 = Eigen::MatrixXd::Zero(3, 3);
   Eigen::MatrixXd m44 = Eigen::MatrixXd::Zero(4, 4);
   Eigen::VectorXd v3 = Eigen::VectorXd::Zero(3);
   Eigen::RowVectorXd rv3 = Eigen::RowVectorXd::Zero(3);
   Eigen::RowVectorXd rv4 = Eigen::RowVectorXd::Zero(4);
+
+  // exceptions: not symmetric
+  stan::test::expect_ad(f, a, c);
+  stan::test::expect_ad(f, d, c);
+
+  // exceptions: not pos def
+  stan::test::expect_ad(f, m33, m33);
+  stan::test::expect_ad(f, rv3, m33);
 
   // exceptions: wrong sizes
   stan::test::expect_ad(f, m33, m44);
@@ -62,8 +69,4 @@ TEST(MathMixMatFun, mdivideRightSpd) {
 
   // exceptions: wrong types
   stan::test::expect_ad(f, v3, m33);
-
-  // exceptions: not pos def
-  stan::test::expect_ad(f, m33, m33);
-  stan::test::expect_ad(f, rv3, m33);
 }

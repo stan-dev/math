@@ -6,8 +6,9 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/distance.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/inv.hpp>
+#include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/inv_square.hpp>
+#include <stan/math/prim/fun/sin.hpp>
 #include <stan/math/prim/fun/square.hpp>
 #include <cmath>
 #include <vector>
