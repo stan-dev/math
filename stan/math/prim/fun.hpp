@@ -228,7 +228,6 @@
 #include <stan/math/prim/fun/prob_constrain.hpp>
 #include <stan/math/prim/fun/prob_free.hpp>
 #include <stan/math/prim/fun/prod.hpp>
-#include <stan/math/prim/fun/promote_common.hpp>
 #include <stan/math/prim/fun/promote_elements.hpp>
 #include <stan/math/prim/fun/promote_scalar.hpp>
 #include <stan/math/prim/fun/qr_Q.hpp>
