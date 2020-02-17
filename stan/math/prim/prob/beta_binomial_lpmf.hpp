@@ -116,13 +116,13 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
 
   VectorBuilder<!is_constant_all<T_size1>::value, T_partials_return, T_size1>
       digamma_alpha(size(alpha));
-  for (size_t i = 0; i < size(alpha); i++)
+  for (size_t i = 0; i < stan::math::size(alpha); i++)
     if (!is_constant_all<T_size1>::value)
       digamma_alpha[i] = digamma(value_of(alpha_vec[i]));
 
   VectorBuilder<!is_constant_all<T_size2>::value, T_partials_return, T_size2>
       digamma_beta(size(beta));
-  for (size_t i = 0; i < size(beta); i++)
+  for (size_t i = 0; i < stan::math::size(beta); i++)
     if (!is_constant_all<T_size2>::value)
       digamma_beta[i] = digamma(value_of(beta_vec[i]));
 

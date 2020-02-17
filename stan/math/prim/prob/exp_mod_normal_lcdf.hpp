@@ -54,7 +54,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf(
   scalar_seq_view<T_inv_scale> lambda_vec(lambda);
   size_t N = max_size(y, mu, sigma, lambda);
 
-  for (size_t n = 0, size_y = size(y); n < size_y; n++) {
+  for (size_t n = 0, size_y = stan::math::size(y); n < size_y; n++) {
     if (is_inf(y_vec[n])) {
       return ops_partials.build(y_vec[n] < 0 ? negative_infinity() : 0);
     }

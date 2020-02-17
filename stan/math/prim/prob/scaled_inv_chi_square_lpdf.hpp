@@ -72,7 +72,7 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
   VectorBuilder<include_summand<propto, T_dof, T_y, T_scale>::value,
                 T_partials_return, T_dof>
       half_nu(size(nu));
-  for (size_t i = 0; i < size(nu); i++) {
+  for (size_t i = 0; i < stan::math::size(nu); i++) {
     if (include_summand<propto, T_dof, T_y, T_scale>::value) {
       half_nu[i] = 0.5 * value_of(nu_vec[i]);
     }
@@ -81,7 +81,7 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
   VectorBuilder<include_summand<propto, T_dof, T_y>::value, T_partials_return,
                 T_y>
       log_y(size(y));
-  for (size_t i = 0; i < size(y); i++) {
+  for (size_t i = 0; i < stan::math::size(y); i++) {
     if (include_summand<propto, T_dof, T_y>::value) {
       log_y[i] = log(value_of(y_vec[i]));
     }
@@ -90,7 +90,7 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
   VectorBuilder<include_summand<propto, T_dof, T_y, T_scale>::value,
                 T_partials_return, T_y>
       inv_y(size(y));
-  for (size_t i = 0; i < size(y); i++) {
+  for (size_t i = 0; i < stan::math::size(y); i++) {
     if (include_summand<propto, T_dof, T_y, T_scale>::value) {
       inv_y[i] = 1.0 / value_of(y_vec[i]);
     }
@@ -99,7 +99,7 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
   VectorBuilder<include_summand<propto, T_dof, T_scale>::value,
                 T_partials_return, T_scale>
       log_s(size(s));
-  for (size_t i = 0; i < size(s); i++) {
+  for (size_t i = 0; i < stan::math::size(s); i++) {
     if (include_summand<propto, T_dof, T_scale>::value) {
       log_s[i] = log(value_of(s_vec[i]));
     }
@@ -111,7 +111,7 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
       lgamma_half_nu(size(nu));
   VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
       digamma_half_nu_over_two(size(nu));
-  for (size_t i = 0; i < size(nu); i++) {
+  for (size_t i = 0; i < stan::math::size(nu); i++) {
     if (include_summand<propto, T_dof>::value) {
       lgamma_half_nu[i] = lgamma(half_nu[i]);
     }

@@ -52,7 +52,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
   scalar_seq_view<T_inv_scale> lambda_vec(lambda);
   size_t N = max_size(y, mu, sigma, lambda);
 
-  for (size_t n = 0, size_y = size(y); n < size_y; n++) {
+  for (size_t n = 0, size_y = stan::math::size(y); n < size_y; n++) {
     if (is_inf(y_vec[n]) && y_vec[n] < 0.0) {
       return ops_partials.build(0.0);
     }
@@ -108,22 +108,22 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
   }
 
   if (!is_constant_all<T_y>::value) {
-    for (size_t n = 0; n < size(y); ++n) {
+    for (size_t n = 0; n < stan::math::size(y); ++n) {
       ops_partials.edge1_.partials_[n] *= cdf;
     }
   }
   if (!is_constant_all<T_loc>::value) {
-    for (size_t n = 0; n < size(mu); ++n) {
+    for (size_t n = 0; n < stan::math::size(mu); ++n) {
       ops_partials.edge2_.partials_[n] *= cdf;
     }
   }
   if (!is_constant_all<T_scale>::value) {
-    for (size_t n = 0; n < size(sigma); ++n) {
+    for (size_t n = 0; n < stan::math::size(sigma); ++n) {
       ops_partials.edge3_.partials_[n] *= cdf;
     }
   }
   if (!is_constant_all<T_inv_scale>::value) {
-    for (size_t n = 0; n < size(lambda); ++n) {
+    for (size_t n = 0; n < stan::math::size(lambda); ++n) {
       ops_partials.edge4_.partials_[n] *= cdf;
     }
   }

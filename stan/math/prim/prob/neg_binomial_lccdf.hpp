@@ -47,8 +47,8 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lccdf(
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_shape> alpha_vec(alpha);
   scalar_seq_view<T_inv_scale> beta_vec(beta);
-  size_t size_n = size(n);
-  size_t size_alpha = size(alpha);
+  size_t size_n = stan::math::size(n);
+  size_t size_alpha = stan::math::size(alpha);
   size_t size_n_alpha = max_size(n, alpha);
   size_t max_size_seq_view = max_size(n, alpha, beta);
 

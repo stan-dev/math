@@ -53,8 +53,8 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_shape> alpha_vec(alpha);
   scalar_seq_view<T_inv_scale> beta_vec(beta);
-  size_t size_alpha = size(alpha);
-  size_t size_beta = size(beta);
+  size_t size_alpha = stan::math::size(alpha);
+  size_t size_beta = stan::math::size(beta);
   size_t size_alpha_beta = max_size(alpha, beta);
   size_t max_size_seq_view = max_size(n, alpha, beta);
 

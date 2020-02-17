@@ -18,7 +18,7 @@ namespace math {
  */
 template <typename T_y>
 inline bool is_positive(const T_y& y) {
-  for (size_t n = 0; n < size(y); ++n) {
+  for (size_t n = 0; n < stan::math::size(y); ++n) {
     if (!(stan::get(y, n) > 0)) {
       return false;
     }
