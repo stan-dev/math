@@ -4,9 +4,10 @@
 
 template <class F>
 void test_dot_product(const F& f) {
+  using stan::test::relative_tolerance;
   stan::test::ad_tolerances tols;
-  tols.hessian_hessian_ = 1e-2;       // default is 1e-3
-  tols.hessian_fvar_hessian_ = 1e-2;  // default is 1e-3
+  tols.hessian_hessian_ = relative_tolerance(1e-3, 1e-3);
+  tols.hessian_fvar_hessian_ = relative_tolerance(1e-3, 1e-3);
 
   // size 0
   Eigen::VectorXd v0(0);

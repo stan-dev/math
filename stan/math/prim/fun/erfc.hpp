@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_FUN_ERFC_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {

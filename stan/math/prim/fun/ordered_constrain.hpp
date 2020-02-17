@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/exp.hpp>
 #include <cmath>
 
 namespace stan {
@@ -24,8 +25,7 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> ordered_constrain(
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::exp;
-
-  using size_type = typename index_type<Matrix<T, Dynamic, 1>>::type;
+  using size_type = index_type_t<Matrix<T, Dynamic, 1>>;
 
   size_type k = x.size();
   Matrix<T, Dynamic, 1> y(k);
@@ -54,10 +54,7 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> ordered_constrain(
 template <typename T>
 inline Eigen::Matrix<T, Eigen::Dynamic, 1> ordered_constrain(
     const Eigen::Matrix<T, Eigen::Dynamic, 1>& x, T& lp) {
-  using Eigen::Dynamic;
-  using Eigen::Matrix;
-
-  using size_type = typename index_type<Matrix<T, Dynamic, 1>>::type;
+  using size_type = index_type_t<Eigen::Matrix<T, Eigen::Dynamic, 1>>;
 
   for (size_type i = 1; i < x.size(); ++i) {
     lp += x(i);

@@ -85,23 +85,33 @@ class trace_gen_quad_form_vari : public vari {
 };
 }  // namespace internal
 
-template <typename Td, int Rd, int Cd, typename Ta, int Ra, int Ca, typename Tb,
-          int Rb, int Cb, typename = require_any_var_t<Td, Ta, Tb>>
-inline var trace_gen_quad_form(const Eigen::Matrix<Td, Rd, Cd>& D,
-                               const Eigen::Matrix<Ta, Ra, Ca>& A,
-                               const Eigen::Matrix<Tb, Rb, Cb>& B) {
+template <typename Td, typename Ta, typename Tb,
+          typename = require_any_var_t<value_type_t<Td>, value_type_t<Ta>,
+                                       value_type_t<Tb>>,
+          typename = require_all_eigen_t<Td, Ta, Tb>>
+inline var trace_gen_quad_form(const Td& D, const Ta& A, const Tb& B) {
+  using Td_scal = value_type_t<Td>;
+  using Ta_scal = value_type_t<Ta>;
+  using Tb_scal = value_type_t<Tb>;
+  constexpr int Rd = Td::RowsAtCompileTime;
+  constexpr int Cd = Td::ColsAtCompileTime;
+  constexpr int Ra = Ta::RowsAtCompileTime;
+  constexpr int Ca = Ta::ColsAtCompileTime;
+  constexpr int Rb = Tb::RowsAtCompileTime;
+  constexpr int Cb = Tb::ColsAtCompileTime;
   check_square("trace_gen_quad_form", "A", A);
   check_square("trace_gen_quad_form", "D", D);
   check_multiplicable("trace_gen_quad_form", "A", A, "B", B);
   check_multiplicable("trace_gen_quad_form", "B", B, "D", D);
 
-  internal::trace_gen_quad_form_vari_alloc<Td, Rd, Cd, Ta, Ra, Ca, Tb, Rb, Cb>*
-      baseVari
-      = new internal::trace_gen_quad_form_vari_alloc<Td, Rd, Cd, Ta, Ra, Ca, Tb,
-                                                     Rb, Cb>(D, A, B);
+  auto* baseVari
+      = new internal::trace_gen_quad_form_vari_alloc<Td_scal, Rd, Cd, Ta_scal,
+                                                     Ra, Ca, Tb_scal, Rb, Cb>(
+          D, A, B);
 
-  return var(new internal::trace_gen_quad_form_vari<Td, Rd, Cd, Ta, Ra, Ca, Tb,
-                                                    Rb, Cb>(baseVari));
+  return var(
+      new internal::trace_gen_quad_form_vari<Td_scal, Rd, Cd, Ta_scal, Ra, Ca,
+                                             Tb_scal, Rb, Cb>(baseVari));
 }
 
 }  // namespace math

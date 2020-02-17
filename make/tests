@@ -40,7 +40,7 @@ test/unit/multiple_translation_units_test$(EXE): test/unit/libmultiple.so
 # CVODES tests
 ##
 
-CVODES_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *cvodes*_test.cpp) $(shell find test -name *_bdf_*_test.cpp) $(shell find test -name *_adams_*_test.cpp))
+CVODES_TESTS := $(subst .cpp,$(EXE),$(call findfiles,test,*cvodes*_test.cpp) $(call findfiles,test,*_bdf_*_test.cpp) $(call findfiles,test,*_adams_*_test.cpp))
 $(CVODES_TESTS) : $(LIBSUNDIALS)
 
 
@@ -49,7 +49,7 @@ $(CVODES_TESTS) : $(LIBSUNDIALS)
 # IDAS tests
 ##
 
-IDAS_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *idas*_test.cpp) $(shell find test -name *_dae*_test.cpp))
+IDAS_TESTS := $(subst .cpp,$(EXE),$(call findfiles,test,*idas*_test.cpp) $(call findfiles,test,*_dae*_test.cpp))
 $(IDAS_TESTS) : $(LIBSUNDIALS)
 
 
@@ -58,7 +58,7 @@ $(IDAS_TESTS) : $(LIBSUNDIALS)
 # KINSOL tests
 ##
 
-ALGEBRA_SOLVER_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *algebra_solver*_test.cpp))
+ALGEBRA_SOLVER_TESTS := $(subst .cpp,$(EXE),$(call findfiles,test,*algebra_solver*_test.cpp))
 $(ALGEBRA_SOLVER_TESTS) : $(LIBSUNDIALS)
 
 
@@ -67,7 +67,7 @@ $(ALGEBRA_SOLVER_TESTS) : $(LIBSUNDIALS)
 # Target to verify header files within Stan has
 # enough include calls
 ##
-HEADER_TESTS := $(addsuffix -test,$(shell find stan -name '*.hpp' -type f))
+HEADER_TESTS := $(addsuffix -test,$(call findfiles,stan,*.hpp))
 
 ifeq ($(OS),Windows_NT)
   DEV_NULL = nul
@@ -86,6 +86,7 @@ test/dummy.cpp:
 .PHONY: test-headers
 test-headers: $(HEADER_TESTS)
 
+ifdef GENERATE_DISTRIBUTION_TESTS
 ############################################################
 ##
 # Test generator for distribution tests
@@ -108,3 +109,4 @@ LIST_OF_GENERATED_TESTS := $(shell find test/prob -type f -name '*_test.hpp' | s
 
 .PHONY: generate-tests
 generate-tests: $(LIST_OF_GENERATED_TESTS)
+endif

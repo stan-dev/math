@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUN_FINITE_DIFF_STEPSIZE_HPP
 
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/fabs.hpp>
 #include <cmath>
 
 namespace stan {

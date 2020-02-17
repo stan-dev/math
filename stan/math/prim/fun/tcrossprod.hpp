@@ -19,7 +19,7 @@ namespace math {
 template <int R, int C>
 inline Eigen::MatrixXd tcrossprod(const Eigen::Matrix<double, R, C>& M) {
   if (M.rows() == 0) {
-    return matrix_d(0, 0);
+    return {};
   }
   if (M.rows() == 1) {
     return M * M.transpose();

@@ -33,9 +33,10 @@ typename stan::scalar_type<T>::type g3(const T& x) {
 
 template <typename T>
 void expect_cov_matrix_transform(const T& x) {
+  using stan::test::relative_tolerance;
   stan::test::ad_tolerances tols;
-  tols.hessian_hessian_ = 1e-2;
-  tols.hessian_fvar_hessian_ = 1e-2;
+  tols.hessian_hessian_ = relative_tolerance(1e-3, 1e-3);
+  tols.hessian_fvar_hessian_ = relative_tolerance(1e-3, 1e-3);
 
   auto f1 = [](const auto& x) { return g1(x); };
   auto f2 = [](const auto& x) { return g2(x); };

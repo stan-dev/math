@@ -4,7 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/inv.hpp>
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
+#include <stan/math/prim/fun/sqrt.hpp>
 #include <cmath>
 
 namespace stan {
@@ -43,6 +43,7 @@ inline auto inv_sqrt(const T& x) {
 
 /**
  * Version of inv_sqrt() that accepts Eigen Matrix or matrix expressions.
+ *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
  * @return Arc cosine of each variable in the container, in radians.
@@ -55,6 +56,7 @@ inline auto inv_sqrt(const Eigen::MatrixBase<Derived>& x) {
 
 /**
  * Version of inv_sqrt() that accepts Eigen Array or array expressions.
+ *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
  * @return Arc cosine of each variable in the container, in radians.

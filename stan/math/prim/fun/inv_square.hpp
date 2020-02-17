@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_FUN_INV_SQUARE_HPP
 #define STAN_MATH_PRIM_FUN_INV_SQUARE_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/inv_square.hpp>
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
 
 namespace stan {
 namespace math {

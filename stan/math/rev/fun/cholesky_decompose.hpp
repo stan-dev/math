@@ -376,14 +376,14 @@ class cholesky_opencl : public vari {
  */
 inline Eigen::Matrix<var, -1, -1> cholesky_decompose(
     const Eigen::Matrix<var, -1, -1>& A) {
-  check_square("cholesky_decompose", "A", A);
+  check_not_nan("cholesky_decompose", "A", A);
   Eigen::Matrix<double, -1, -1> L_A(value_of_rec(A));
 #ifdef STAN_OPENCL
   L_A = cholesky_decompose(L_A);
 #else
   check_symmetric("cholesky_decompose", "A", A);
   Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>, Eigen::Lower> L_factor(L_A);
-  check_pos_definite("cholesky_decompose", "m", L_factor);
+  check_pos_definite("cholesky_decompose", "A", L_factor);
 #endif
   // Memory allocated in arena.
   // cholesky_scalar gradient faster for small matrices compared to

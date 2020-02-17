@@ -3,9 +3,11 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/multiply_lower_tri_self_transpose.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/multiply_lower_tri_self_transpose.hpp>
 #include <cmath>
 
 namespace stan {
@@ -31,7 +33,7 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cov_matrix_constrain(
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::exp;
-  using index_t = typename index_type<Matrix<T, Dynamic, Dynamic>>::type;
+  using index_t = index_type_t<Matrix<T, Dynamic, Dynamic>>;
 
   Matrix<T, Dynamic, Dynamic> L(K, K);
   check_size_match("cov_matrix_constrain", "x.size()", x.size(),
@@ -72,7 +74,7 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cov_matrix_constrain(
   using Eigen::Matrix;
   using std::exp;
   using std::log;
-  using index_t = typename index_type<Matrix<T, Dynamic, Dynamic>>::type;
+  using index_t = index_type_t<Matrix<T, Dynamic, Dynamic>>;
   check_size_match("cov_matrix_constrain", "x.size()", x.size(),
                    "K + (K choose 2)", (K * (K + 1)) / 2);
   Matrix<T, Dynamic, Dynamic> L(K, K);

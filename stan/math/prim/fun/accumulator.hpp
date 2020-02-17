@@ -14,7 +14,7 @@ namespace math {
  * Class to accumulate values and eventually return their sum.  If
  * no values are ever added, the return value is 0.
  *
- * This class is useful for speeding up auto-diff of long sums
+ * This class is useful for speeding up autodiff of long sums
  * because it uses the <code>sum()</code> operation (either from
  * <code>stan::math</code> or one defined by argument-dependent lookup.
  *
@@ -88,7 +88,7 @@ class accumulator {
   /**
    * Recursively add each entry in the specified standard vector
    * to the buffer.  This will allow vectors of primitives,
-   * auto-diff variables to be added; if the vector entries
+   * autodiff variables to be added; if the vector entries
    * are collections, their elements are recursively added.
    *
    * @tparam S Type of value to recursively add.

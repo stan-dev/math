@@ -8,7 +8,6 @@
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/fun/multiply.hpp>
 #include <stan/math/fwd/fun/to_fvar.hpp>
-#include <stan/math/fwd/fun/typedefs.hpp>
 #include <vector>
 
 namespace stan {

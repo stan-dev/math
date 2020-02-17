@@ -1,9 +1,8 @@
 #ifndef STAN_MATH_PRIM_FUN_CEIL_HPP
 #define STAN_MATH_PRIM_FUN_CEIL_HPP
 
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/vectorize/apply_scalar_unary.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <cmath>
 
 namespace stan {
@@ -38,6 +37,7 @@ inline auto ceil(const T& x) {
 
 /**
  * Version of ceil() that accepts Eigen Matrix or matrix expressions.
+ *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression
  * @return Least integer >= each value in x.

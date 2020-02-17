@@ -3,8 +3,11 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/fabs.hpp>
 #include <stan/math/prim/fun/inc_beta.hpp>
 #include <stan/math/prim/fun/inc_beta_dda.hpp>
+#include <stan/math/prim/fun/inv.hpp>
+#include <stan/math/prim/fun/log.hpp>
 #include <cmath>
 
 namespace stan {
@@ -24,8 +27,8 @@ T inc_beta_dda(T a, T b, T z, T digamma_a, T digamma_ab);
  * of a and b up to 12500 and z = 0.999.
  *
  * @tparam T scalar types of arguments
- * @param a a
- * @param b b
+ * @param a first argument
+ * @param b second argument
  * @param z upper bound of the integral
  * @param digamma_b value of digamma(b)
  * @param digamma_ab value of digamma(b)

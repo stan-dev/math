@@ -1,6 +1,6 @@
 #include <stan/math/mix.hpp>
+#include <test/unit/math/expect_near_rel.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/rev/fun/util.hpp>
 #include <vector>
 
 template <typename F>
@@ -15,8 +15,8 @@ void expect_match_autodiff(const F& f, Eigen::VectorXd x) {
 
   EXPECT_FLOAT_EQ(fx, fx_fd);
   EXPECT_EQ(grad_fx.size(), grad_fx_fd.size());
-  for (size_t i = 0; i < grad_fx.size(); ++i)
-    expect_near_relative(grad_fx(i), grad_fx_fd(i));
+  stan::test::expect_near_rel("expect_match_autodiff", grad_fx, grad_fx_fd,
+                              stan::test::relative_tolerance(1e-7, 1e-9));
 }
 
 TEST(MathMixMatFunctor, FiniteDiffGradientAuto) {

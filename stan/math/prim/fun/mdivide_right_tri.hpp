@@ -1,11 +1,12 @@
 #ifndef STAN_MATH_PRIM_FUN_MDIVIDE_RIGHT_TRI_HPP
 #define STAN_MATH_PRIM_FUN_MDIVIDE_RIGHT_TRI_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/mdivide_left_tri.hpp>
-#include <stan/math/prim/fun/promote_common.hpp>
-#include <stan/math/prim/fun/transpose.hpp>
+#ifdef STAN_OPENCL
+#include <stan/math/opencl/opencl.hpp>
+#endif
 
 namespace stan {
 namespace math {
@@ -38,18 +39,15 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_right_tri(
   check_square("mdivide_right_tri", "A", A);
   check_multiplicable("mdivide_right_tri", "b", b, "A", A);
   if (TriView != Eigen::Lower && TriView != Eigen::Upper) {
-    throw_domain_error("mdivide_left_tri",
+    throw_domain_error("mdivide_right_tri",
                        "triangular view must be Eigen::Lower or Eigen::Upper",
                        "", "");
   }
-  return promote_common<Eigen::Matrix<T1, R2, C2>, Eigen::Matrix<T2, R2, C2> >(
-             A)
+
+  return Eigen::Matrix<return_type_t<T1, T2>, R2, C2>(A)
       .template triangularView<TriView>()
       .transpose()
-      .solve(
-          promote_common<Eigen::Matrix<T1, R1, C1>, Eigen::Matrix<T2, R1, C1> >(
-              b)
-              .transpose())
+      .solve(Eigen::Matrix<return_type_t<T1, T2>, R1, C1>(b).transpose())
       .transpose();
 }
 

@@ -4,14 +4,12 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/is_any_nan.hpp>
+#include <stan/math/prim/fun/is_inf.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
-#include <stan/math/prim/fun/lgamma_stirling.hpp>
 #include <stan/math/prim/fun/lgamma_stirling_diff.hpp>
-#include <stan/math/prim/fun/log_sum_exp.hpp>
+#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1m.hpp>
-#include <stan/math/prim/fun/multiply_log.hpp>
 
 namespace stan {
 namespace math {
@@ -56,11 +54,11 @@ namespace math {
    \end{cases}
    \f]
  *
+ * @tparam T1 type of first value
+ * @tparam T2 type of second value
  * @param a First value
  * @param b Second value
  * @return Log of the beta function applied to the two values.
- * @tparam T1 Type of first value.
- * @tparam T2 Type of second value.
  */
 template <typename T1, typename T2>
 return_type_t<T1, T2> lbeta(const T1 a, const T2 b) {
