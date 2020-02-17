@@ -46,7 +46,6 @@ namespace math {
 template <typename T, typename L, typename U>
 inline return_type_t<T, L, U> lub_constrain(const T& x, const L& lb,
                                             const U& ub) {
-  using std::exp;
   check_less("lub_constrain", "lb", lb, ub);
   if (lb == NEGATIVE_INFTY) {
     return ub_constrain(x, ub);
@@ -54,29 +53,14 @@ inline return_type_t<T, L, U> lub_constrain(const T& x, const L& lb,
   if (ub == INFTY) {
     return lb_constrain(x, lb);
   }
-
-  T inv_logit_x;
-  if (x > 0) {
-    inv_logit_x = inv_logit(x);
-    // Prevent x from reaching one unless it really really should.
-    if (x < INFTY && inv_logit_x == 1) {
-      inv_logit_x = 1 - 1e-15;
-    }
-  } else {
-    inv_logit_x = inv_logit(x);
-    // Prevent x from reaching zero unless it really really should.
-    if (x > NEGATIVE_INFTY && inv_logit_x == 0) {
-      inv_logit_x = 1e-15;
-    }
-  }
-  return fma(ub - lb, inv_logit_x, lb);
+  return fma(ub - lb, inv_logit(x), lb);
 }
 
 /**
  * Return the lower- and upper-bounded scalar derived by
  * transforming the specified free scalar given the specified
  * lower and upper bounds and increment the specified log
- * probability with the log absolute Jacobian determinant.
+ * density with the log absolute Jacobian determinant.
  *
  * <p>The transform is as defined in
  * <code>lub_constrain(T, double, double)</code>.  The log absolute
@@ -113,9 +97,9 @@ inline return_type_t<T, L, U> lub_constrain(const T& x, const L& lb,
  *   the free scalar.
  * @throw std::domain_error if ub <= lb
  */
-template <typename T, typename L, typename U>
+template <typename T, typename L, typename U, typename S>
 inline return_type_t<T, L, U> lub_constrain(const T& x, const L& lb,
-                                            const U& ub, T& lp) {
+                                            const U& ub, S& lp) {
   using std::exp;
   using std::log;
   check_less("lub_constrain", "lb", lb, ub);
@@ -130,18 +114,10 @@ inline return_type_t<T, L, U> lub_constrain(const T& x, const L& lb,
     T exp_minus_x = exp(-x);
     inv_logit_x = inv_logit(x);
     lp += log(ub - lb) - x - 2 * log1p(exp_minus_x);
-    // Prevent x from reaching one unless it really really should.
-    if (x < INFTY && inv_logit_x == 1) {
-      inv_logit_x = 1 - 1e-15;
-    }
   } else {
     T exp_x = exp(x);
     inv_logit_x = inv_logit(x);
     lp += log(ub - lb) + x - 2 * log1p(exp_x);
-    // Prevent x from reaching zero unless it really really should.
-    if (x > NEGATIVE_INFTY && inv_logit_x == 0) {
-      inv_logit_x = 1e-15;
-    }
   }
   return fma(ub - lb, inv_logit_x, lb);
 }
