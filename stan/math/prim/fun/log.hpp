@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/log.hpp>
 #include <cmath>
 
 namespace stan {

@@ -2,8 +2,10 @@
 #define STAN_MATH_PRIM_FUN_MATRIX_EXP_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/matrix_exp_pade.hpp>
 #include <stan/math/prim/fun/matrix_exp_2x2.hpp>
+#include <stan/math/prim/fun/square.hpp>
 #include <cmath>
 
 namespace stan {

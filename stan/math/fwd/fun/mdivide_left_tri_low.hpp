@@ -13,7 +13,7 @@ namespace stan {
 namespace math {
 
 template <typename T, int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<fvar<T>, R1, C1> mdivide_left_tri_low(
+inline Eigen::Matrix<fvar<T>, R1, C2> mdivide_left_tri_low(
     const Eigen::Matrix<fvar<T>, R1, C1>& A,
     const Eigen::Matrix<fvar<T>, R2, C2>& b) {
   check_square("mdivide_left_tri_low", "A", A);
@@ -54,7 +54,7 @@ inline Eigen::Matrix<fvar<T>, R1, C1> mdivide_left_tri_low(
 }
 
 template <typename T, int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<fvar<T>, R1, C1> mdivide_left_tri_low(
+inline Eigen::Matrix<fvar<T>, R1, C2> mdivide_left_tri_low(
     const Eigen::Matrix<double, R1, C1>& A,
     const Eigen::Matrix<fvar<T>, R2, C2>& b) {
   check_square("mdivide_left_tri_low", "A", A);
@@ -90,7 +90,7 @@ inline Eigen::Matrix<fvar<T>, R1, C1> mdivide_left_tri_low(
 }
 
 template <typename T, int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<fvar<T>, R1, C1> mdivide_left_tri_low(
+inline Eigen::Matrix<fvar<T>, R1, C2> mdivide_left_tri_low(
     const Eigen::Matrix<fvar<T>, R1, C1>& A,
     const Eigen::Matrix<double, R2, C2>& b) {
   check_square("mdivide_left_tri_low", "A", A);

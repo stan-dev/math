@@ -8,22 +8,25 @@ TEST(MathMixMatFun, mdivideLeftSpd) {
     return stan::math::mdivide_left_spd(x_sym, y);
   };
 
-  // signature 1 of 2: matrix-matrix
+  // size zero inputs
+  Eigen::MatrixXd m00(0, 0);
+  Eigen::MatrixXd m02(0, 2);
+  Eigen::VectorXd v0(0);
+  stan::test::expect_ad(f, m00, m00);
+  stan::test::expect_ad(f, m00, m02);
+  stan::test::expect_ad(f, m00, v0);
+
   Eigen::MatrixXd aa(1, 1);
   aa << 1;
   Eigen::MatrixXd bb(1, 1);
   bb << 2;
   stan::test::expect_ad(f, aa, bb);
+  Eigen::MatrixXd b0(1, 0);
+  stan::test::expect_ad(f, aa, b0);
 
-  // signature 2 of 2: matrix-vector
   Eigen::VectorXd cc(1);
   cc << 3;
   stan::test::expect_ad(f, aa, cc);
-
-  Eigen::MatrixXd m00(0, 0);
-  Eigen::VectorXd v0(0);
-  stan::test::expect_ad(f, m00, v0);
-  stan::test::expect_ad(f, m00, m00);
 
   Eigen::MatrixXd a(2, 2);
   a << 2, 3, 3, 7;
@@ -45,15 +48,12 @@ TEST(MathMixMatFun, mdivideLeftSpd) {
   // matrix, vector : ditto
   stan::test::expect_ad(f, a, d);
   stan::test::expect_ad(f, b, d);
-  stan::test::expect_ad(f, a, d);
-  stan::test::expect_ad(f, b, d);
 
   Eigen::MatrixXd m33 = Eigen::MatrixXd::Zero(3, 3);
   Eigen::MatrixXd m44 = Eigen::MatrixXd::Zero(4, 4);
   Eigen::VectorXd v3 = Eigen::VectorXd::Zero(3);
   Eigen::VectorXd v4 = Eigen::VectorXd::Zero(4);
   Eigen::RowVectorXd rv3 = Eigen::RowVectorXd::Zero(3);
-  Eigen::RowVectorXd rv4 = Eigen::RowVectorXd::Zero(4);
 
   // exceptions: not symmetric
   stan::test::expect_ad(f, c, a);
