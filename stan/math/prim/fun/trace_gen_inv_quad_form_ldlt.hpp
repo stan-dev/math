@@ -44,7 +44,7 @@ inline return_type_t<T1, T2, T3> trace_gen_inv_quad_form_ldlt(
   check_square("trace_gen_inv_quad_form_ldlt", "D", D);
   check_multiplicable("trace_gen_inv_quad_form_ldlt", "A", A, "B", B);
   check_multiplicable("trace_gen_inv_quad_form_ldlt", "B", B, "D", D);
-  if (D.size() == 0 && A.cols() == 0) {
+  if (D.size() == 0 || A.cols() == 0) {
     return 0;
   }
 
