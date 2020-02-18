@@ -41,7 +41,7 @@ return_type_t<T_y, T_scale> rayleigh_cdf(const T_y& y, const T_scale& sigma) {
   size_t N = max_size(y, sigma);
 
   VectorBuilder<true, T_partials_return, T_scale> inv_sigma(size(sigma));
-  for (size_t i = 0; i < size(sigma); i++) {
+  for (size_t i = 0; i < stan::math::size(sigma); i++) {
     inv_sigma[i] = 1.0 / value_of(sigma_vec[i]);
   }
 

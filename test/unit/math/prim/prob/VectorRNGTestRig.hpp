@@ -42,10 +42,11 @@
  * input vectors. These should cause invalid_argument errors.
  *
  * The output of generate_samples must be of
- *   size(out) == stan::math::size(p1) if only p1 is used
- *   size(out) == stan::math::max_size(p1, p2) if p1 and p2 are used
- *   size(out) == stan::math::max_size(p1, p2, p3) if all parameters are used
- * It must be defined to take three arguments, but not all must be used.
+ *   stan::math::size(out) == stan::math::size(p1) if only p1 is used
+ *   stan::math::size(out) == stan::math::max_size(p1, p2) if p1 and p2 are used
+ *   stan::math::size(out) == stan::math::max_size(p1, p2, p3) if all parameters
+ * are used It must be defined to take three arguments, but not all must be
+ * used.
  *
  * good_p1_ and bad_p1_ should be initialized to lists of valid and invalid
  * floating point parameters for the first parameter of the tested RNG

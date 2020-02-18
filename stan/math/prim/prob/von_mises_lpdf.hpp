@@ -60,7 +60,7 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
   VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
                 T_scale>
       log_bessel0(size(kappa));
-  for (size_t i = 0; i < size(kappa); i++) {
+  for (size_t i = 0; i < stan::math::size(kappa); i++) {
     kappa_dbl[i] = value_of(kappa_vec[i]);
     if (include_summand<propto, T_scale>::value) {
       log_bessel0[i]

@@ -50,8 +50,8 @@ return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_log_location> eta_vec(eta);
   scalar_seq_view<T_precision> phi_vec(phi);
-  size_t size_eta = size(eta);
-  size_t size_phi = size(phi);
+  size_t size_eta = stan::math::size(eta);
+  size_t size_phi = stan::math::size(phi);
   size_t size_eta_phi = max_size(eta, phi);
   size_t size_n_phi = max_size(n, phi);
   size_t max_size_seq_view = max_size(n, eta, phi);

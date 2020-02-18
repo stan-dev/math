@@ -74,11 +74,11 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   check_consistent_size(function, "Weight vector", beta, M);
   if (is_vector<T_scale>::value) {
     check_size_match(function, "Rows of ", "x_cl", N, "size of ", "sigma",
-                     size(sigma));
+                     stan::math::size(sigma));
   }
   if (is_vector<T_alpha>::value) {
     check_size_match(function, "Rows of ", "x_cl", N, "size of ", "alpha",
-                     size(alpha));
+                     stan::math::size(alpha));
   }
 
   if (!include_summand<propto, T_alpha, T_beta, T_scale>::value) {
@@ -128,9 +128,9 @@ return_type_t<T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
         mu_derivative_cl, mu_derivative_sum_cl,
         y_minus_mu_over_sigma_squared_sum_cl, sigma_derivative_cl,
         log_sigma_sum_cl, y_cl, x_cl, alpha_cl, beta_cl, sigma_cl, N, M,
-        y_cl.size() != 1, size(alpha) != 1, size(sigma) != 1,
-        need_mu_derivative, need_mu_derivative_sum, need_sigma_derivative,
-        need_log_sigma_sum);
+        y_cl.size() != 1, stan::math::size(alpha) != 1,
+        stan::math::size(sigma) != 1, need_mu_derivative,
+        need_mu_derivative_sum, need_sigma_derivative, need_log_sigma_sum);
   } catch (const cl::Error &e) {
     check_opencl_error(function, e);
   }
