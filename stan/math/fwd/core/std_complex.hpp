@@ -21,49 +21,33 @@ class complex<stan::math::fvar<T>>
   using complex_type = complex<value_type>;
 
   /**
-   * Constructs complex number from real part or with default zero
-   * value, setting imaginary part to zero.  This is also the nullary
-   * constructor.
-   *
-   * @param[in] re the real part (default zero).
-   */
-  complex(const value_type& re = value_type(0))  // NOLINT(runtime/explicit)
-      : stan::math::complex_base<stan::math::fvar<T>>(re) {}
-
-  /**
-   * Construct a complex number with the real and imaginary components
-   * that are copies of those of the specified complex number.
-   *
-   * @tparam V value type of complex argument
-   * @param[in] other another complex to use as source
-   */
-  template <typename V>
-  complex(const complex<V>& other)
-      : stan::math::complex_base<stan::math::fvar<T>>(other) {}
-
-  /**
    * Construct complex number from real and imaginary parts.
    *
-   * @tparam V1 type of real part
-   * @tparam V2 type of imaginary part
+   * @tparam U type of real part
+   * @tparam V type of imaginary part
    * @param[in] re real part
    * @param[in] im imaginary part
    */
-  template <typename V1, typename V2>
-  complex(const V1& re, const V2& im)
-      : stan::math::complex_base<stan::math::fvar<T>>(re, im) {}
+  template <typename U, typename V>
+  complex(const U& re, const V& im) : base_t(re, im) {}
 
   /**
-   * Construct a complex number with the specified real component and
-   * zero imaginary component.
+   * Constructs complex number from argument, which may be a scalar or
+   * a complex number.  If it is a scalar, the real part is set to the
+   * scalar value and the imaginary part to zero;  if it is complex,
+   * the real and imaginary parts are set to those of the argument.
    *
-   * @tparam V type of real component
-   * @param[in] re real component
+   * @tparam U type of argument
+   * @param[in] x the scalar or complex argument
    */
-  template <typename V,
-            typename = std::enable_if_t<std::is_arithmetic<V>::value>>
-  complex(V re)  // NOLINT(runtime/explicit)
-      : stan::math::complex_base<stan::math::fvar<T>>(re) {}
+  template <typename U>
+  complex(const U& x) : base_t(x) {}  // NOLINT(runtime/explicit)
+
+  /**
+   * Construct a complex number with zero real and imaginary
+   * components.
+   */
+  complex() : base_t() {}
 
   /**
    * Destroy this complex number.
