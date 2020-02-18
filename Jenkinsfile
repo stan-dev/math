@@ -25,6 +25,21 @@ def deleteDirWin() {
     deleteDir()
 }
 
+def sourceCodePaths(){
+    // These paths will be passed to git diff
+    // If there are changes to them, CI/CD will continue else skip
+    def paths = ['src', 'make', 'lib', 'test', 'runTests.py', 'runChecks.py', 'makefile', 'Jenkinsfile', '.clang-format']
+    def bashArray = ""
+
+    for(path in paths){
+        bashArray += path + (path != paths[paths.size() - 1] ? " " : "")
+    }
+
+    return bashArray
+}
+
+def skipRemainingStages = true
+
 def utils = new org.stan.Utils()
 
 def isBranch(String b) { env.BRANCH_NAME == b }
@@ -57,6 +72,7 @@ pipeline {
     }
     environment {
         STAN_NUM_THREADS = '4'
+        scPaths = sourceCodePaths()
     }
     stages {
         stage('Kill previous builds') {
@@ -145,7 +161,42 @@ pipeline {
                 }
             }
         }
+        stage('Verify changes') {
+            agent any
+            steps{
+                script {         
+
+                    def commitHash = sh(script: "git rev-parse HEAD | tr '\\n' ' '", returnStdout: true)
+                    sh(script: "git pull && git checkout develop", returnStdout: false)
+
+                    def bashScript = """
+                        for i in ${scPaths};
+                        do
+                            git diff ${commitHash}develop -- \$i
+                        done
+                    """
+
+                    def differences = sh(script: bashScript, returnStdout: true)
+
+                    println differences
+
+                    if (differences?.trim()) {
+                        println "There are differences in the source code, CI/CD will run."
+                        skipRemainingStages = false
+                    }
+                    else{
+                        println "There aren't any differences in the source code, CI/CD will not run."
+                        skipRemainingStages = true
+                    }
+                }
+            }
+        }
         stage('Headers checks') {
+            when {
+                expression {
+                    !skipRemainingStages
+                }
+            }
             parallel {
               stage('Headers check') {
                 agent any
@@ -173,6 +224,11 @@ pipeline {
            }
         }
         stage('Always-run tests part 1') {
+            when {
+                expression {
+                    !skipRemainingStages
+                }
+            }
             parallel {
                 stage('Linux Unit with MPI') {
                     agent { label 'linux && mpi' }
@@ -202,6 +258,11 @@ pipeline {
             }
         }
         stage('Always-run tests part 2') {
+            when {
+                expression {
+                    !skipRemainingStages
+                }
+            }
             parallel {
                 stage('Distribution tests') {
                     agent { label "distribution-tests" }
@@ -267,7 +328,16 @@ pipeline {
             }
         }
         stage('Additional merge tests') {
-            when { anyOf { branch 'develop'; branch 'master' } }
+            //when { anyOf { branch 'develop'; branch 'master' } }
+            when { 
+                anyOf { 
+                    branch 'develop'
+                    branch 'master'
+                    expression { 
+                        !skipRemainingStages
+                    }
+                } 
+            }
             parallel {
                 stage('Linux Unit with Threading') {
                     agent { label 'linux' }
@@ -294,7 +364,16 @@ pipeline {
             }
         }
         stage('Upstream tests') {
-            when { expression { env.BRANCH_NAME ==~ /PR-\d+/ } }
+            when { 
+                anyOf {
+                    expression { 
+                        env.BRANCH_NAME ==~ /PR-\d+/ 
+                    }
+                    expression { 
+                        !skipRemainingStages
+                    }
+                }
+            }
             steps {
                 build(job: "Stan/${stan_pr()}",
                         parameters: [string(name: 'math_pr', value: env.BRANCH_NAME),
@@ -303,7 +382,14 @@ pipeline {
         }
         stage('Upload doxygen') {
             agent any
-            when { branch 'develop'}
+            when { 
+                anyOf { 
+                    branch 'develop'
+                    expression { 
+                        !skipRemainingStages
+                    }
+                } 
+            }
             steps {
                 deleteDir()
                 retry(3) { checkout scm }
