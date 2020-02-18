@@ -8,13 +8,21 @@
 
 TEST(MathMatrixPrim, mdivide_left_tri_low_val) {
   using stan::math::mdivide_left_tri_low;
-  stan::math::matrix_d I = Eigen::MatrixXd::Identity(2, 2);
 
+  stan::math::matrix_d I = Eigen::MatrixXd::Identity(2, 2);
   stan::math::matrix_d Ad(2, 2);
   Ad << 2.0, 0.0, 5.0, 7.0;
   expect_matrix_eq(I, mdivide_left_tri_low(Ad, Ad));
 
   stan::math::matrix_d A_Ainv = Ad * mdivide_left_tri_low(Ad);
+  EXPECT_MATRIX_NEAR(I, A_Ainv, 1e-15);
+
+  I = Eigen::MatrixXd::Identity(1, 1);
+  Ad.resize(1, 1);
+  Ad << 2;
+  expect_matrix_eq(I, mdivide_left_tri_low(Ad, Ad));
+
+  A_Ainv = Ad * mdivide_left_tri_low(Ad);
   EXPECT_MATRIX_NEAR(I, A_Ainv, 1e-15);
 }
 
