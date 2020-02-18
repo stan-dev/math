@@ -166,6 +166,9 @@ pipeline {
             steps{
                 script {         
 
+                    retry(3) { checkout scm }
+                    sh "git clean -xffd"
+
                     def commitHash = sh(script: "git rev-parse HEAD | tr '\\n' ' '", returnStdout: true)
                     sh(script: "git pull && git checkout develop", returnStdout: false)
 
@@ -188,6 +191,11 @@ pipeline {
                         println "There aren't any differences in the source code, CI/CD will not run."
                         skipRemainingStages = true
                     }
+                }
+            }
+            post {
+                always {
+                    deleteDir()
                 }
             }
         }
@@ -365,7 +373,7 @@ pipeline {
         }
         stage('Upstream tests') {
             when { 
-                anyOf {
+                allOf {
                     expression { 
                         env.BRANCH_NAME ==~ /PR-\d+/ 
                     }
