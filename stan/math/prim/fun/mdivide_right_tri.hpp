@@ -44,7 +44,7 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_right_tri(
                        "", "");
   }
   if (A.rows() == 0) {
-    return Eigen::Matrix<return_type_t<T1, T2>, R1, C2>(b.rows(), 0);
+    return {b.rows(), 0};
   }
 
   return Eigen::Matrix<return_type_t<T1, T2>, R2, C2>(A)
@@ -81,7 +81,7 @@ inline Eigen::Matrix<double, R1, C2> mdivide_right_tri(
   check_square("mdivide_right_tri", "A", A);
   check_multiplicable("mdivide_right_tri", "b", b, "A", A);
   if (A.rows() == 0) {
-    return Eigen::Matrix<double, R1, C2>(b.rows(), 0);
+    return {b.rows(), 0};
   }
 
 #ifdef STAN_OPENCL

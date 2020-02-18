@@ -29,7 +29,7 @@ inline Eigen::Matrix<double, -1, Cb> scale_matrix_exp_multiply(
   check_square("scale_matrix_exp_multiply", "input matrix", A);
   check_multiplicable("scale_matrix_exp_multiply", "A", A, "B", B);
   if (A.size() == 0) {
-    return Eigen::Matrix<double, -1, Cb>(0, B.cols());
+    return {0, B.cols()};
   }
 
   return matrix_exp_action_handler().action(A, B, t);
@@ -56,7 +56,7 @@ scale_matrix_exp_multiply(const Tt& t, const Eigen::Matrix<Ta, -1, -1>& A,
   check_square("scale_matrix_exp_multiply", "input matrix", A);
   check_multiplicable("scale_matrix_exp_multiply", "A", A, "B", B);
   if (A.size() == 0) {
-    return Eigen::Matrix<return_type_t<Tt, Ta, Tb>, -1, Cb>(0, B.cols());
+    return {0, B.cols()};
   }
 
   return multiply(matrix_exp(multiply(A, t)), B);

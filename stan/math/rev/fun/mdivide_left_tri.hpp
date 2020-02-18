@@ -314,12 +314,10 @@ class mdivide_left_tri_vd_vari : public vari {
 template <Eigen::UpLoType TriView, int R1, int C1, int R2, int C2>
 inline Eigen::Matrix<var, R1, C2> mdivide_left_tri(
     const Eigen::Matrix<var, R1, C1> &A, const Eigen::Matrix<var, R2, C2> &b) {
-  Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
-
   check_square("mdivide_left_tri", "A", A);
   check_multiplicable("mdivide_left_tri", "A", A, "b", b);
   if (A.rows() == 0) {
-    return res;
+    return {0, b.cols()};
   }
 
   // NOTE: this is not a memory leak, this vari is used in the
@@ -329,6 +327,7 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_tri(
   internal::mdivide_left_tri_vv_vari<TriView, R1, C1, R2, C2> *baseVari
       = new internal::mdivide_left_tri_vv_vari<TriView, R1, C1, R2, C2>(A, b);
 
+  Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
   res.vi()
       = Eigen::Map<matrix_vi>(&(baseVari->variRefC_[0]), b.rows(), b.cols());
 
@@ -338,12 +337,10 @@ template <Eigen::UpLoType TriView, int R1, int C1, int R2, int C2>
 inline Eigen::Matrix<var, R1, C2> mdivide_left_tri(
     const Eigen::Matrix<double, R1, C1> &A,
     const Eigen::Matrix<var, R2, C2> &b) {
-  Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
-
   check_square("mdivide_left_tri", "A", A);
   check_multiplicable("mdivide_left_tri", "A", A, "b", b);
   if (A.rows() == 0) {
-    return res;
+    return {0, b.cols()};
   }
 
   // NOTE: this is not a memory leak, this vari is used in the
@@ -353,6 +350,7 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_tri(
   internal::mdivide_left_tri_dv_vari<TriView, R1, C1, R2, C2> *baseVari
       = new internal::mdivide_left_tri_dv_vari<TriView, R1, C1, R2, C2>(A, b);
 
+  Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
   res.vi()
       = Eigen::Map<matrix_vi>(&(baseVari->variRefC_[0]), b.rows(), b.cols());
 
@@ -362,12 +360,10 @@ template <Eigen::UpLoType TriView, int R1, int C1, int R2, int C2>
 inline Eigen::Matrix<var, R1, C2> mdivide_left_tri(
     const Eigen::Matrix<var, R1, C1> &A,
     const Eigen::Matrix<double, R2, C2> &b) {
-  Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
-
   check_square("mdivide_left_tri", "A", A);
   check_multiplicable("mdivide_left_tri", "A", A, "b", b);
   if (A.rows() == 0) {
-    return res;
+    return {0, b.cols()};
   }
 
   // NOTE: this is not a memory leak, this vari is used in the
@@ -377,6 +373,7 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left_tri(
   internal::mdivide_left_tri_vd_vari<TriView, R1, C1, R2, C2> *baseVari
       = new internal::mdivide_left_tri_vd_vari<TriView, R1, C1, R2, C2>(A, b);
 
+  Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
   res.vi()
       = Eigen::Map<matrix_vi>(&(baseVari->variRefC_[0]), b.rows(), b.cols());
 

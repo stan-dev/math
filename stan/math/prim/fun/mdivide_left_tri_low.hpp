@@ -36,7 +36,7 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_left_tri_low(
   check_square("mdivide_left_tri_low", "A", A);
   check_multiplicable("mdivide_left_tri_low", "A", A, "b", b);
   if (A.rows() == 0) {
-    return Eigen::Matrix<return_type_t<T1, T2>, R1, C2>(0, b.cols());
+    return {0, b.cols()};
   }
 
   return mdivide_left_tri<Eigen::Lower>(A, b);

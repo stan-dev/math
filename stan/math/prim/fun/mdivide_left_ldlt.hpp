@@ -32,7 +32,7 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_left_ldlt(
     const LDLT_factor<T1, R1, C1> &A, const Eigen::Matrix<T2, R2, C2> &b) {
   check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);
   if (A.cols() == 0) {
-    return Eigen::Matrix<return_type_t<T1, T2>, R1, C2>(0, b.cols());
+    return {0, b.cols()};
   }
 
   return A.solve(Eigen::Matrix<return_type_t<T1, T2>, R2, C2>(b));

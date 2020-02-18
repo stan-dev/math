@@ -32,7 +32,7 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_right_ldlt(
     const Eigen::Matrix<T1, R1, C1> &b, const LDLT_factor<T2, R2, C2> &A) {
   check_multiplicable("mdivide_right_ldlt", "b", b, "A", A);
   if (A.rows() == 0) {
-    return Eigen::Matrix<return_type_t<T1, T2>, R1, C2>(b.rows(), 0);
+    return {b.rows(), 0};
   }
 
   return transpose(mdivide_left_ldlt(A, transpose(b)));
@@ -44,7 +44,7 @@ inline Eigen::Matrix<double, R1, C2> mdivide_right_ldlt(
     const LDLT_factor<double, R2, C2> &A) {
   check_multiplicable("mdivide_right_ldlt", "b", b, "A", A);
   if (A.rows() == 0) {
-    return Eigen::Matrix<double, R1, C2>(b.rows(), 0);
+    return {b.rows(), 0};
   }
 
   return A.solveRight(b);

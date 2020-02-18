@@ -208,14 +208,14 @@ template <int R1, int C1, int R2, int C2>
 inline Eigen::Matrix<var, R1, C2> mdivide_left_ldlt(
     const LDLT_factor<var, R1, C1> &A, const Eigen::Matrix<var, R2, C2> &b) {
   check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);
-  Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
   if (A.cols() == 0) {
-    return res;
+    return {0, b.cols()};
   }
 
   internal::mdivide_left_ldlt_vv_vari<R1, C1, R2, C2> *baseVari
       = new internal::mdivide_left_ldlt_vv_vari<R1, C1, R2, C2>(A, b);
 
+  Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
   res.vi() = Eigen::Map<matrix_vi>(baseVari->variRefC_, res.rows(), res.cols());
 
   return res;
@@ -240,14 +240,14 @@ template <int R1, int C1, int R2, int C2>
 inline Eigen::Matrix<var, R1, C2> mdivide_left_ldlt(
     const LDLT_factor<var, R1, C1> &A, const Eigen::Matrix<double, R2, C2> &b) {
   check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);
-  Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
   if (A.cols() == 0) {
-    return res;
+    return {0, b.cols()};
   }
 
   internal::mdivide_left_ldlt_vd_vari<R1, C1, R2, C2> *baseVari
       = new internal::mdivide_left_ldlt_vd_vari<R1, C1, R2, C2>(A, b);
 
+  Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
   res.vi() = Eigen::Map<matrix_vi>(baseVari->variRefC_, res.rows(), res.cols());
 
   return res;
@@ -272,14 +272,14 @@ template <int R1, int C1, int R2, int C2>
 inline Eigen::Matrix<var, R1, C2> mdivide_left_ldlt(
     const LDLT_factor<double, R1, C1> &A, const Eigen::Matrix<var, R2, C2> &b) {
   check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);
-  Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
   if (A.cols() == 0) {
-    return res;
+    return {0, b.cols()};
   }
 
   internal::mdivide_left_ldlt_dv_vari<R1, C1, R2, C2> *baseVari
       = new internal::mdivide_left_ldlt_dv_vari<R1, C1, R2, C2>(A, b);
 
+  Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
   res.vi() = Eigen::Map<matrix_vi>(baseVari->variRefC_, res.rows(), res.cols());
 
   return res;

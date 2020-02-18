@@ -32,7 +32,7 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_right(
   check_square("mdivide_right", "A", A);
   check_multiplicable("mdivide_right", "b", b, "A", A);
   if (A.size() == 0) {
-    return Eigen::Matrix<return_type_t<T1, T2>, R1, C2>(b.rows(), 0);
+    return {b.rows(), 0};
   }
 
   return Eigen::Matrix<return_type_t<T1, T2>, R2, C2>(A)

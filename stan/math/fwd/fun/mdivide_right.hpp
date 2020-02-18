@@ -20,7 +20,7 @@ inline Eigen::Matrix<fvar<T>, R1, C2> mdivide_right(
   check_square("mdivide_right", "b", b);
   check_multiplicable("mdivide_right", "A", A, "b", b);
   if (b.size() == 0) {
-    return Eigen::Matrix<fvar<T>, R1, C2>(A.rows(), 0);
+    return {A.rows(), 0};
   }
 
   Eigen::Matrix<T, R1, C2> A_mult_inv_b(A.rows(), b.cols());
@@ -62,7 +62,7 @@ inline Eigen::Matrix<fvar<T>, R1, C2> mdivide_right(
   check_square("mdivide_right", "b", b);
   check_multiplicable("mdivide_right", "A", A, "b", b);
   if (b.size() == 0) {
-    return Eigen::Matrix<fvar<T>, R1, C2>(A.rows(), 0);
+    return {A.rows(), 0};
   }
 
   Eigen::Matrix<T, R2, C2> deriv_b_mult_inv_b(b.rows(), b.cols());
@@ -86,7 +86,7 @@ inline Eigen::Matrix<fvar<T>, R1, C2> mdivide_right(
   check_square("mdivide_right", "b", b);
   check_multiplicable("mdivide_right", "A", A, "b", b);
   if (b.size() == 0) {
-    return Eigen::Matrix<fvar<T>, R1, C2>(A.rows(), 0);
+    return {A.rows(), 0};
   }
 
   Eigen::Matrix<T, R1, C2> A_mult_inv_b(A.rows(), b.cols());
