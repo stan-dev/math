@@ -341,8 +341,13 @@ pipeline {
                 anyOf { 
                     branch 'develop'
                     branch 'master'
-                    expression { 
-                        !skipRemainingStages
+                    allOf {
+                        expression { 
+                            !skipRemainingStages
+                        }
+                        not expression { 
+                            env.BRANCH_NAME ==~ /PR-\d+/ 
+                        }
                     }
                 } 
             }
@@ -390,14 +395,7 @@ pipeline {
         }
         stage('Upload doxygen') {
             agent any
-            when { 
-                anyOf { 
-                    branch 'develop'
-                    expression { 
-                        !skipRemainingStages
-                    }
-                } 
-            }
+            when { branch 'develop'}
             steps {
                 deleteDir()
                 retry(3) { checkout scm }
