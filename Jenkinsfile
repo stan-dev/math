@@ -200,11 +200,6 @@ pipeline {
             }
         }
         stage('Headers checks') {
-            when {
-                expression {
-                    !skipRemainingStages
-                }
-            }
             parallel {
               stage('Headers check') {
                 agent any
@@ -336,21 +331,7 @@ pipeline {
             }
         }
         stage('Additional merge tests') {
-            //when { anyOf { branch 'develop'; branch 'master' } }
-            when { 
-                anyOf { 
-                    branch 'develop'
-                    branch 'master'
-                    allOf {
-                        expression { 
-                            !skipRemainingStages
-                        }
-                        not expression { 
-                            env.BRANCH_NAME ==~ /PR-\d+/ 
-                        }
-                    }
-                } 
-            }
+            when { anyOf { branch 'develop'; branch 'master' } }
             parallel {
                 stage('Linux Unit with Threading') {
                     agent { label 'linux' }
