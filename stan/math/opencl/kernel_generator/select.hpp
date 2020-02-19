@@ -70,6 +70,19 @@ class select_ : public operation_cl<select_<T_condition, T_then, T_else>,
   }
 
   /**
+   * Creates a deep copy of this expression.
+   * @return copy of \c *this
+   */
+  inline select_<std::remove_reference_t<T_condition>,
+                 std::remove_reference_t<T_then>,
+                 std::remove_reference_t<T_else>>
+  deep_copy() {
+    return {std::get<0>(arguments_).deep_copy(),
+            std::get<1>(arguments_).deep_copy(),
+            std::get<2>(arguments_).deep_copy()};
+  }
+
+  /**
    * generates kernel code for this (select) operation.
    * @param i row index variable name
    * @param j column index variable name

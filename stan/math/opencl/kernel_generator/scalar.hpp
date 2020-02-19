@@ -37,6 +37,14 @@ class scalar_ : public operation_cl<scalar_<T>, T> {
   explicit scalar_(const T a) : a_(a) {}
 
   /**
+   * Creates a deep copy of this expression.
+   * @return copy of \c *this
+   */
+  inline scalar_<T> deep_copy(){
+    return scalar_<T>(a_);
+  }
+
+  /**
    * generates kernel code for this expression.
    * @param i row index variable name
    * @param j column index variable name
@@ -81,6 +89,22 @@ class scalar_ : public operation_cl<scalar_<T>, T> {
    * @return view
    */
   inline matrix_cl_view view() const { return matrix_cl_view::Entire; }
+
+  /**
+   * Determine index of bottom diagonal written.
+   * @return number of columns
+   */
+  inline int bottom_diagonal() const {
+    return std::numeric_limits<int>::min();
+  }
+
+  /**
+   * Determine index of top diagonal written.
+   * @return number of columns
+   */
+  inline int top_diagonal() const {
+    return std::numeric_limits<int>::max();
+  }
 };
 
 }  // namespace math

@@ -58,6 +58,15 @@ class block_
   }
 
   /**
+   * Creates a deep copy of this expression.
+   * @return copy of \c *this
+   */
+  inline block_<std::remove_reference_t<T>> deep_copy() {
+    return {std::get<0>(arguments_).deep_copy(), start_row_, start_col_, rows_,
+            cols_};
+  }
+
+  /**
    * Generates kernel code for this expression.
    * @param i row index variable name
    * @param j column index variable name
@@ -227,10 +236,11 @@ class block_
  */
 template <typename T,
           typename = require_all_valid_expressions_and_none_scalar_t<T>>
-inline block_<as_operation_cl_t<T>> block(T&& a, int start_row, int start_col,
-                                          int rows, int cols) {
-  return block_<as_operation_cl_t<T>>(as_operation_cl(std::forward<T>(a)),
-                                      start_row, start_col, rows, cols);
+inline block_<std::remove_reference_t<as_operation_cl_t<T>>> block(
+    T&& a, int start_row, int start_col, int rows, int cols) {
+  return block_<std::remove_reference_t<as_operation_cl_t<T>>>(
+      as_operation_cl(std::forward<T>(a)).deep_copy(), start_row, start_col,
+      rows, cols);
 }
 
 }  // namespace math

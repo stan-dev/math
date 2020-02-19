@@ -46,7 +46,7 @@ class rowwise_reduction
    * @param a the expression to reduce
    * @param init OpenCL source code of initialization value for reduction
    */
-  rowwise_reduction(T&& a, const std::string& init)
+  explicit rowwise_reduction(T&& a, const std::string& init)
       : base(std::forward<T>(a)), init_(init) {}
 
   /**
@@ -121,7 +121,7 @@ class rowwise_reduction
 
   /**
    * Determine index of top diagonal written.
-   * @return number of columns
+   * @return top diagonal
    */
   inline int top_diagonal() const { return 1; }
 };
@@ -149,10 +149,19 @@ struct sum_op {
 template <typename T>
 class rowwise_sum_
     : public rowwise_reduction<rowwise_sum_<T>, T, sum_op, true> {
+  using base = rowwise_reduction<rowwise_sum_<T>, T, sum_op, true>;
+  using base::arguments_;
+
  public:
-  explicit rowwise_sum_(T&& a)
-      : rowwise_reduction<rowwise_sum_<T>, T, sum_op, true>(std::forward<T>(a),
-                                                            "0") {}
+  explicit rowwise_sum_(T&& a) : base(std::forward<T>(a), "0") {}
+
+  /**
+   * Creates a deep copy of this expression.
+   * @return copy of \c *this
+   */
+  inline rowwise_sum_<std::remove_reference_t<T>> deep_copy() {
+    return rowwise_sum_<std::remove_reference_t<T>>{std::get<0>(arguments_)};
+  }
 };
 
 /**
@@ -165,7 +174,7 @@ template <typename T,
           typename = require_all_valid_expressions_and_none_scalar_t<T>>
 inline rowwise_sum_<as_operation_cl_t<T>> rowwise_sum(T&& a) {
   return rowwise_sum_<as_operation_cl_t<T>>(
-      as_operation_cl(std::forward<T>(a)));
+      as_operation_cl(std::forward<T>(a)).deep_copy());
 }
 
 /**
@@ -205,11 +214,19 @@ class rowwise_max_
     : public rowwise_reduction<
           rowwise_max_<T>, T,
           max_op<typename std::remove_reference_t<T>::Scalar>, false> {
- public:
   using op = max_op<typename std::remove_reference_t<T>::Scalar>;
-  explicit rowwise_max_(T&& a)
-      : rowwise_reduction<rowwise_max_<T>, T, op, false>(std::forward<T>(a),
-                                                         op::init()) {}
+  using base = rowwise_reduction<rowwise_max_<T>, T, op, false>;
+  using base::arguments_;
+
+ public:
+  explicit rowwise_max_(T&& a) : base(std::forward<T>(a), op::init()) {}
+  /**
+   * Creates a deep copy of this expression.
+   * @return copy of \c *this
+   */
+  inline rowwise_max_<std::remove_reference_t<T>> deep_copy() {
+    return rowwise_max_<std::remove_reference_t<T>>{std::get<0>(arguments_)};
+  }
 };
 
 /**
@@ -222,7 +239,7 @@ template <typename T,
           typename = require_all_valid_expressions_and_none_scalar_t<T>>
 inline rowwise_max_<as_operation_cl_t<T>> rowwise_max(T&& a) {
   return rowwise_max_<as_operation_cl_t<T>>(
-      as_operation_cl(std::forward<T>(a)));
+      as_operation_cl(std::forward<T>(a)).deep_copy());
 }
 
 /**
@@ -262,11 +279,19 @@ class rowwise_min_
     : public rowwise_reduction<
           rowwise_min_<T>, T,
           min_op<typename std::remove_reference_t<T>::Scalar>, false> {
- public:
   using op = min_op<typename std::remove_reference_t<T>::Scalar>;
-  explicit rowwise_min_(T&& a)
-      : rowwise_reduction<rowwise_min_<T>, T, op, false>(std::forward<T>(a),
-                                                         op::init()) {}
+  using base = rowwise_reduction<rowwise_min_<T>, T, op, false>;
+  using base::arguments_;
+
+ public:
+  explicit rowwise_min_(T&& a) : base(std::forward<T>(a), op::init()) {}
+  /**
+   * Creates a deep copy of this expression.
+   * @return copy of \c *this
+   */
+  inline rowwise_min_<std::remove_reference_t<T>> deep_copy() {
+    return rowwise_min_<std::remove_reference_t<T>>{std::get<0>(arguments_)};
+  }
 };
 
 /**
@@ -279,7 +304,7 @@ template <typename T,
           typename = require_all_valid_expressions_and_none_scalar_t<T>>
 inline rowwise_min_<as_operation_cl_t<T>> rowwise_min(T&& a) {
   return rowwise_min_<as_operation_cl_t<T>>(
-      as_operation_cl(std::forward<T>(a)));
+      as_operation_cl(std::forward<T>(a)).deep_copy());
 }
 
 }  // namespace math

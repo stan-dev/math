@@ -45,6 +45,14 @@ class load_
   explicit load_(T&& a) : a_(std::forward<T>(a)) {}
 
   /**
+   * Creates a deep copy of this expression.
+   * @return copy of \c *this
+   */
+  inline load_<T&> deep_copy(){
+    return load_<T&>(a_);
+  }
+
+  /**
    * generates kernel code for this expression.
    * @param i row index variable name
    * @param j column index variable name
