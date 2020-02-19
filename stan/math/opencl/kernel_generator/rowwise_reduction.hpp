@@ -174,9 +174,10 @@ class rowwise_sum_
  */
 template <typename T,
           typename = require_all_valid_expressions_and_none_scalar_t<T>>
-inline rowwise_sum_<as_operation_cl_t<T>> rowwise_sum(T&& a) {
-  return rowwise_sum_<as_operation_cl_t<T>>(
-      as_operation_cl(std::forward<T>(a)).deep_copy());
+inline auto rowwise_sum(T&& a) {
+  auto&& arg_copy = as_operation_cl(std::forward<T>(a)).deep_copy();
+  return rowwise_sum_<std::remove_reference_t<decltype(arg_copy)>>(
+      std::move(arg_copy));
 }
 
 /**
@@ -241,11 +242,11 @@ class rowwise_max_
  */
 template <typename T,
           typename = require_all_valid_expressions_and_none_scalar_t<T>>
-inline rowwise_max_<as_operation_cl_t<T>> rowwise_max(T&& a) {
-  return rowwise_max_<as_operation_cl_t<T>>(
-      as_operation_cl(std::forward<T>(a)).deep_copy());
+inline auto rowwise_max(T&& a) {
+  auto&& arg_copy = as_operation_cl(std::forward<T>(a)).deep_copy();
+  return rowwise_max_<std::remove_reference_t<decltype(arg_copy)>>(
+      std::move(arg_copy));
 }
-
 /**
  * Operation for min reduction.
  * @tparam T type to reduce
@@ -308,9 +309,10 @@ class rowwise_min_
  */
 template <typename T,
           typename = require_all_valid_expressions_and_none_scalar_t<T>>
-inline rowwise_min_<as_operation_cl_t<T>> rowwise_min(T&& a) {
-  return rowwise_min_<as_operation_cl_t<T>>(
-      as_operation_cl(std::forward<T>(a)).deep_copy());
+inline auto rowwise_min(T&& a) {
+  auto&& arg_copy = as_operation_cl(std::forward<T>(a)).deep_copy();
+  return rowwise_min_<std::remove_reference_t<decltype(arg_copy)>>(
+      std::move(arg_copy));
 }
 
 }  // namespace math
