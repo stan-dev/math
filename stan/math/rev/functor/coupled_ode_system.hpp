@@ -119,7 +119,7 @@ struct coupled_ode_system<F, double, var> {
     // Run nested autodiff in this scope
     nested_rev_autodiff nested;
 
-      vector<var> y_vars(z.begin(), z.begin() + N_);
+    vector<var> y_vars(z.begin(), z.begin() + N_);
 
     vector<var> dy_dt_vars = f_(t, y_vars, theta_nochain_, x_, x_int_, msgs_);
 
@@ -271,7 +271,7 @@ struct coupled_ode_system<F, var, double> {
     // Run nested autodiff in this scope
     nested_rev_autodiff nested;
 
-      vector<var> y_vars(z.begin(), z.begin() + N_);
+    vector<var> y_vars(z.begin(), z.begin() + N_);
 
     vector<var> dy_dt_vars = f_(t, y_vars, theta_dbl_, x_, x_int_, msgs_);
 
@@ -444,7 +444,7 @@ struct coupled_ode_system<F, var, var> {
     // Run nested autodiff in this scope
     nested_rev_autodiff nested;
 
-      vector<var> y_vars(z.begin(), z.begin() + N_);
+    vector<var> y_vars(z.begin(), z.begin() + N_);
 
     vector<var> dy_dt_vars = f_(t, y_vars, theta_nochain_, x_, x_int_, msgs_);
 
