@@ -14,19 +14,19 @@ class AgradCcdfLogDiscreteRange : public AgradCcdfLogTest {
     param[1] = 1;  // lower
     param[2] = 5;  // upper
     parameters.push_back(param);
-    ccdf_log.push_back(-0.916290731874154995573);  // expected ccdf_log
+    ccdf_log.push_back(log(2.0 / 5));  // expected ccdf_log
 
     param[0] = 9;   // y
     param[1] = 5;   // lower
     param[2] = 15;  // upper
     parameters.push_back(param);
-    ccdf_log.push_back(-0.606135803570315601085);  // expected ccdf_log
+    ccdf_log.push_back(log(6.0 / 11));  // expected ccdf_log
 
     param[0] = 0;   // y
     param[1] = -4;  // lower
     param[2] = 5;   // upper
     parameters.push_back(param);
-    ccdf_log.push_back(-0.693147180559945286227);  // expected ccdf_log
+    ccdf_log.push_back(log(5.0 / 10));  // expected ccdf_log
   }
 
   void invalid_values(vector<size_t>& /*index*/, vector<double>& /*value*/) {

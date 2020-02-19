@@ -14,19 +14,19 @@ class AgradCdfDiscreteRange : public AgradCdfTest {
     param[1] = 1;  // lower
     param[2] = 5;  // upper
     parameters.push_back(param);
-    cdf.push_back(0.6);  // expected cdf
+    cdf.push_back(3.0 / 5);  // expected cdf
 
     param[0] = 9;   // y
     param[1] = 5;   // lower
     param[2] = 15;  // upper
     parameters.push_back(param);
-    cdf.push_back(0.454545454545454530315);  // expected cdf
+    cdf.push_back(5.0 / 11);  // expected cdf
 
     param[0] = 0;   // y
     param[1] = -4;  // lower
     param[2] = 5;   // upper
     parameters.push_back(param);
-    cdf.push_back(0.5);  // expected cdf
+    cdf.push_back(5.0 / 10);  // expected cdf
   }
 
   void invalid_values(vector<size_t>& /*index*/, vector<double>& /*value*/) {
