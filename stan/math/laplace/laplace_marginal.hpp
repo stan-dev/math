@@ -48,6 +48,8 @@ namespace math {
    *
    * @tparam D structure type for the likelihood object.
    * @tparam K structure type for the covariance object.
+   * @tparam Tx type of x, which can in Stan be passed as a matrix or
+   *            an array of vectors.
    * @param[in] D structure to compute and differentiate the log likelihood.
    * @param[in] K structure to compute the covariance function.
    * @param[in] phi the global parameter (input for the covariance function).
@@ -69,12 +71,13 @@ namespace math {
    * @param[in] max_num_steps maximum number of steps for the Newton solver.
    * @return the log marginal density, p(y | phi).
    */
-  template <typename D, typename K>
+  template <typename D, typename K, typename Tx>
   double
   laplace_marginal_density (const D& diff_likelihood,
                             const K& covariance_function,
                             const Eigen::VectorXd& phi,
-                            const std::vector<Eigen::VectorXd>& x,
+                            // const std::vector<Eigen::VectorXd>& x,
+                            const Tx& x,
                             const std::vector<double>& delta,
                             const std::vector<int>& delta_int,
                             Eigen::MatrixXd& covariance,
@@ -152,6 +155,8 @@ namespace math {
    * @tparam T type of the initial guess.
    * @tparam D structure type for the likelihood object.
    * @tparam K structure type for the covariance object.
+   * @tparam Tx type of spatial data for covariance: in Stan, this can
+   *            either be a matrix or an array of vectors.
    * @param[in] D structure to compute and differentiate the log likelihood.
    *            The object stores the sufficient stats for the observations.
    * @param[in] K structure to compute the covariance function.
@@ -166,12 +171,13 @@ namespace math {
    * @param[in] max_num_steps maximum number of steps for the Newton solver.
    * @return the log maginal density, p(y | phi).
    */
-  template <typename T, typename D, typename K>
+  template <typename T, typename D, typename K, typename Tx>
   double
   laplace_marginal_density (const D& diff_likelihood,
                             const K& covariance_function,
                             const Eigen::VectorXd& phi,
-                            const std::vector<Eigen::VectorXd>& x,
+                            const Tx& x,
+                            // const std::vector<Eigen::VectorXd>& x,
                             const std::vector<double>& delta,
                             const std::vector<int>& delta_int,
                             const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta_0,
@@ -195,6 +201,8 @@ namespace math {
    * vector and one output vector.
    *
    * TO DO: make this structure no templated. See comment by @SteveBronder.
+   * TO DO: remove this structure for final code: new differentiation
+   * algorithm does not require it.
    */
   template <typename K>
   struct covariance_sensitivities {
@@ -249,12 +257,13 @@ namespace math {
     /* An object to store the sensitivities of phi. */
     Eigen::VectorXd phi_adj_;
 
-    template <typename T, typename K, typename D>
+    template <typename T, typename K, typename D, typename Tx>
     laplace_marginal_density_vari
       (const D& diff_likelihood,
        const K& covariance_function,
        const Eigen::Matrix<T, Eigen::Dynamic, 1>& phi,
-       const std::vector<Eigen::VectorXd>& x,
+       const Tx& x,
+       // const std::vector<Eigen::VectorXd>& x,
        const std::vector<double>& delta,
        const std::vector<int>& delta_int,
        double marginal_density,
@@ -393,6 +402,7 @@ namespace math {
    * @tparam T1 type of the global parameters.
    * @tparam D structure type for the likelihood object.
    * @tparam K structure type for the covariance object.
+   *@tparam Tx type for the spatial data passed to the covariance.
    * @param[in] D structure to compute and differentiate the log likelihood.
    *            The object stores the sufficient stats for the observations.
    * @param[in] K structure to compute the covariance function.
@@ -405,12 +415,13 @@ namespace math {
    * @param[in] max_num_steps maximum number of steps for the Newton solver.
    * @return the log maginal density, p(y | phi).
    */
-  template <typename T0, typename T1, typename D, typename K>
+  template <typename T0, typename T1, typename D, typename K, typename Tx>
   T1 laplace_marginal_density
       (const D& diff_likelihood,
        const K& covariance_function,
        const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,
-       const std::vector<Eigen::VectorXd>& x,
+       const Tx& x,
+       // const std::vector<Eigen::VectorXd>& x,
        const std::vector<double>& delta,
        const std::vector<int>& delta_int,
        const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,

@@ -73,6 +73,27 @@ namespace math {
       theta_0, msgs, tolerance, max_num_steps);
   }
 
+  // Add signature that takes x as a matrix instead of a vector.
+  template <typename T0, typename T1, typename K>
+  T1 laplace_marginal_bernoulli
+    (const std::vector<int>& y,
+     const std::vector<int>& n_samples,
+     const K& covariance_function,
+     const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,
+     const Eigen::MatrixXd& x,
+     const std::vector<double>& delta,
+     const std::vector<int>& delta_int,
+     const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,
+     std::ostream* msgs = nullptr,
+     double tolerance = 1e-6,
+     long int max_num_steps = 100) {
+  return laplace_marginal_density(
+    diff_logistic_log(to_vector(n_samples), to_vector(y)),
+    covariance_function,
+    phi, x, delta, delta_int,
+    theta_0, msgs, tolerance, max_num_steps);
+  }
+
 }  // namespace math
 }  // namespace stan
 

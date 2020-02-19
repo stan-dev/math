@@ -55,15 +55,52 @@ struct K_functor {
         X2(n, m) = x_tot[N + n](m);
       }
 
-    // CHECK -- how does Stan create such an object?
-    // Eigen::Matrix<T, -1, 1> one_matrix(N, N);
-    // for (int i = 0; i < N; i++)
-    //   for (int j = 0; j < N; j++) one_matrix(i, j) = 1;
+    Eigen::Matrix<T, -1, -1>
+      K1 = multiply(diag_post_multiply(X, lambda_tilde), transpose(X));
+    Eigen::Matrix<T, -1, -1>
+      K2 = multiply(diag_post_multiply(X2, lambda_tilde), transpose(X2));
 
-    // std::cout << X.rows() << " " << X.cols() << std::endl
-    //           << lambda_tilde.size() << std::endl
-    //           << lambda_tilde.transpose() << std::endl;
-              // << diag_post_multiply(X, lambda_tilde).rows() << std::endl;
+    Eigen::Matrix<T, -1, -1> K;
+    K = square(eta) * square(add(K1, 1)) +
+        (square(alpha) - 0.5 * square(eta)) * K2 +
+        (square(phi) - square(eta)) * K1;
+    K = add(0.5 + square(psi) - 0.5 * square(eta), K);
+
+    // Add jitter to make linear algebra more numerically stable
+    for (int n = 0; n < N; n++) K(n, n) += square(sigma) + 1e-7;
+    return K;
+  }
+};
+
+// Overload structure for case where x is passed as a matrix.
+struct K_functor2 {
+  template <typename T>
+  Eigen::Matrix<T, -1, -1>
+  operator()(const Eigen::Matrix<T, -1, 1>& parm,
+             const Eigen::MatrixXd& x_tot,
+             const std::vector<double>& delta,
+             const std::vector<int>& delta_int,
+             std::ostream* pstream) const {
+    using stan::math::add;
+    using stan::math::multiply;
+    using stan::math::diag_post_multiply;
+    using stan::math::square;
+    using stan::math::transpose;
+
+    int N = delta_int[0];
+    int M = delta_int[1];
+
+    Eigen::Matrix<T, -1, 1> lambda_tilde(M);
+    for (int m = 0; m < M; m++) lambda_tilde[m] = parm[m];
+
+    T eta = parm[M];
+    T alpha = parm[M + 1];
+    T phi = parm[M + 2];
+    T sigma = parm[M + 3];
+    double psi = delta[0];
+
+    Eigen::MatrixXd X = x_tot.block(0, 0, N, M);
+    Eigen::MatrixXd X2 = x_tot.block(N, 0, N, M);
 
     Eigen::Matrix<T, -1, -1>
       K1 = multiply(diag_post_multiply(X, lambda_tilde), transpose(X));
@@ -81,6 +118,7 @@ struct K_functor {
     return K;
   }
 };
+
 
 TEST(laplace, skm) {
   using stan::math::diff_logistic_log;
@@ -127,12 +165,15 @@ TEST(laplace, skm) {
   std::vector<int> n_samples(N, 1);
   VectorXd theta_0 = VectorXd::Zero(N);
 
+  MatrixXd X2 = square(X);
+
   std::vector<VectorXd> x_tot(2 * N);
-  {
-    MatrixXd X2 = square(X);
-    for (int n = 0; n < N; n++) x_tot[n] = X.block(n, 0, 1, M).transpose();
-    for (int n = 0; n < N; n++) x_tot[N + n] = X2.block(n, 0, 1, M).transpose();
-  }
+  for (int n = 0; n < N; n++) x_tot[n] = X.block(n, 0, 1, M).transpose();
+  for (int n = 0; n < N; n++) x_tot[N + n] = X2.block(n, 0, 1, M).transpose();
+
+  Eigen::MatrixXd x_tot_m(2 * N, M);
+  x_tot_m.block(0, 0, N, M) = X;
+  x_tot_m.block(N, 0, N, M) = X2;
 
   // PARAMETERS BLOCK
   // lambda term is defined above
@@ -158,7 +199,7 @@ TEST(laplace, skm) {
   parm(M + 2) = phi;
   parm(M + 3) = sigma;
 
-  K_functor K;
+  // K_functor K;
   // for (int i = 0; i < parm.size(); i++) std::cout << parm(i) << " ";
   // std::cout << std::endl;
   // std::cout << "x_tot" << std::endl;
@@ -171,8 +212,11 @@ TEST(laplace, skm) {
 
   auto start = std::chrono::system_clock::now();
 
-  var marginal_density = laplace_marginal_bernoulli(y, n_samples, K_functor(),
-                                      parm, x_tot, delta, delta_int, theta_0);
+  // var marginal_density = laplace_marginal_bernoulli(y, n_samples, K_functor(),
+  //                                     parm, x_tot, delta, delta_int, theta_0);
+
+  var marginal_density = laplace_marginal_bernoulli(y, n_samples, K_functor2(),
+                           parm, x_tot_m, delta, delta_int, theta_0);
 
   auto end = std::chrono::system_clock::now();
   std::chrono::duration<double> elapsed_time = end - start;
