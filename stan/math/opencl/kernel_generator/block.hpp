@@ -236,11 +236,10 @@ class block_
  */
 template <typename T,
           typename = require_all_valid_expressions_and_none_scalar_t<T>>
-inline block_<std::remove_reference_t<as_operation_cl_t<T>>> block(
-    T&& a, int start_row, int start_col, int rows, int cols) {
-  return block_<std::remove_reference_t<as_operation_cl_t<T>>>(
-      as_operation_cl(std::forward<T>(a)).deep_copy(), start_row, start_col,
-      rows, cols);
+inline auto block(T&& a, int start_row, int start_col, int rows, int cols) {
+  auto&& a_operation = as_operation_cl(std::forward<T>(a)).deep_copy();
+  return block_<std::remove_reference_t<decltype(a_operation)>>(
+      std::move(a_operation), start_row, start_col, rows, cols);
 }
 
 }  // namespace math
