@@ -18,13 +18,9 @@ namespace math {
  * @param log_prob the log probability value to increment with the Jacobian
  * @return Covariance matrix for specified partial correlations.
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_cov_matrix(
-    const Eigen::Array<T, Eigen::Dynamic, 1>& CPCs,
-    const Eigen::Array<T, Eigen::Dynamic, 1>& sds, T& log_prob) {
-  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> L
-      = read_cov_L(CPCs, sds, log_prob);
-  return multiply_lower_tri_self_transpose(L);
+template <typename EigArr1, typename EigArr2, typename T, typename = require_all_eigen_t<EigArr1, EigArr2>>
+auto read_cov_matrix(EigArr1&& CPCs, EigArr2&& sds, T& log_prob) {
+  return multiply_lower_tri_self_transpose(read_cov_L(CPCs, sds, log_prob));
 }
 
 /**
@@ -34,14 +30,10 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_cov_matrix(
  * @param CPCs in (-1, 1)
  * @param sds in (0, inf)
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_cov_matrix(
-    const Eigen::Array<T, Eigen::Dynamic, 1>& CPCs,
-    const Eigen::Array<T, Eigen::Dynamic, 1>& sds) {
-  size_t K = sds.rows();
-  Eigen::DiagonalMatrix<T, Eigen::Dynamic> D(K);
-  D.diagonal() = sds;
-  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> L = D * read_corr_L(CPCs, K);
+ template <typename EigArr1, typename EigArr2, typename = require_all_eigen_t<EigArr1, EigArr2>>
+ auto read_cov_matrix(EigArr1&& CPCs, EigArr2&& sds) {
+  using eigen_scalar = return_type_t<value_type_t<EigArr1>, value_type_t<EigArr2>>;
+  Eigen::Matrix<eigen_scalar, Eigen::Dynamic, Eigen::Dynamic> L = sds.matrix().asDiagonal() * read_corr_L(CPCs, sds.rows());
   return multiply_lower_tri_self_transpose(L);
 }
 
