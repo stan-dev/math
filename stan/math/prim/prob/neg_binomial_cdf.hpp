@@ -40,7 +40,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_cdf(const T_n& n,
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_shape> alpha_vec(alpha);
   scalar_seq_view<T_inv_scale> beta_vec(beta);
-  size_t size_alpha = size(alpha);
+  size_t size_alpha = stan::math::size(alpha);
   size_t size_n_alpha = max_size(n, alpha);
   size_t max_size_seq_view = max_size(n, alpha, beta);
 
@@ -48,7 +48,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_cdf(const T_n& n,
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
-  for (size_t i = 0; i < size(n); i++) {
+  for (size_t i = 0; i < stan::math::size(n); i++) {
     if (value_of(n_vec[i]) < 0) {
       return ops_partials.build(0.0);
     }
@@ -109,7 +109,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_cdf(const T_n& n,
   }
 
   if (!is_constant_all<T_inv_scale>::value) {
-    for (size_t i = 0; i < size(beta); ++i) {
+    for (size_t i = 0; i < stan::math::size(beta); ++i) {
       ops_partials.edge2_.partials_[i] *= P;
     }
   }

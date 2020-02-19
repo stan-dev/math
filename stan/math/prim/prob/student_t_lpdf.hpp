@@ -84,7 +84,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
   VectorBuilder<include_summand<propto, T_y, T_dof, T_loc, T_scale>::value,
                 T_partials_return, T_dof>
       half_nu(size(nu));
-  for (size_t i = 0; i < size(nu); i++) {
+  for (size_t i = 0; i < stan::math::size(nu); i++) {
     half_nu[i] = 0.5 * value_of(nu_vec[i]);
   }
 
@@ -93,7 +93,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
   VectorBuilder<include_summand<propto, T_dof>::value, T_partials_return, T_dof>
       lgamma_half_nu_plus_half(size(nu));
   if (include_summand<propto, T_dof>::value) {
-    for (size_t i = 0; i < size(nu); i++) {
+    for (size_t i = 0; i < stan::math::size(nu); i++) {
       lgamma_half_nu[i] = lgamma(half_nu[i]);
       lgamma_half_nu_plus_half[i] = lgamma(half_nu[i] + 0.5);
     }
@@ -104,7 +104,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
   VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
       digamma_half_nu_plus_half(size(nu));
   if (!is_constant_all<T_dof>::value) {
-    for (size_t i = 0; i < size(nu); i++) {
+    for (size_t i = 0; i < stan::math::size(nu); i++) {
       digamma_half_nu[i] = digamma(half_nu[i]);
       digamma_half_nu_plus_half[i] = digamma(half_nu[i] + 0.5);
     }
@@ -112,7 +112,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
 
   VectorBuilder<include_summand<propto, T_dof>::value, T_partials_return, T_dof>
       log_nu(size(nu));
-  for (size_t i = 0; i < size(nu); i++) {
+  for (size_t i = 0; i < stan::math::size(nu); i++) {
     if (include_summand<propto, T_dof>::value) {
       log_nu[i] = log(value_of(nu_vec[i]));
     }
@@ -121,7 +121,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
   VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
                 T_scale>
       log_sigma(size(sigma));
-  for (size_t i = 0; i < size(sigma); i++) {
+  for (size_t i = 0; i < stan::math::size(sigma); i++) {
     if (include_summand<propto, T_scale>::value) {
       log_sigma[i] = log(value_of(sigma_vec[i]));
     }

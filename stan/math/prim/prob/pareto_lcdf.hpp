@@ -48,7 +48,7 @@ return_type_t<T_y, T_scale, T_shape> pareto_lcdf(const T_y& y,
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
-  for (size_t i = 0; i < size(y); i++) {
+  for (size_t i = 0; i < stan::math::size(y); i++) {
     if (value_of(y_vec[i]) < value_of(y_min_vec[i])) {
       return ops_partials.build(negative_infinity());
     }

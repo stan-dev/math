@@ -65,7 +65,7 @@ return_type_t<T_y, T_loc, T_scale> gumbel_lpdf(const T_y& y, const T_loc& mu,
   VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
                 T_scale>
       log_beta(size(beta));
-  for (size_t i = 0; i < size(beta); i++) {
+  for (size_t i = 0; i < stan::math::size(beta); i++) {
     inv_beta[i] = 1.0 / value_of(beta_vec[i]);
     if (include_summand<propto, T_scale>::value) {
       log_beta[i] = log(value_of(beta_vec[i]));

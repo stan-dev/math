@@ -65,7 +65,7 @@ return_type_t<T_y, T_inv_scale> exponential_lpdf(const T_y& y,
   VectorBuilder<include_summand<propto, T_inv_scale>::value, T_partials_return,
                 T_inv_scale>
       log_beta(size(beta));
-  for (size_t i = 0; i < size(beta); i++) {
+  for (size_t i = 0; i < stan::math::size(beta); i++) {
     if (include_summand<propto, T_inv_scale>::value) {
       log_beta[i] = log(value_of(beta_vec[i]));
     }

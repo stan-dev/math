@@ -44,7 +44,8 @@ return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
   scalar_seq_view<T_log_rate> alpha_vec(alpha);
   size_t max_size_seq_view = max_size(n, alpha);
 
-  for (size_t i = 0, size_alpha = size(alpha); i < size_alpha; i++) {
+  for (size_t i = 0, size_alpha = stan::math::size(alpha); i < size_alpha;
+       i++) {
     if (INFTY == alpha_vec[i]) {
       return LOG_ZERO;
     }
@@ -60,7 +61,7 @@ return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
   VectorBuilder<include_summand<propto>::value, T_partials_return, T_n>
       lgamma_n_plus_one(size(n));
   if (include_summand<propto>::value) {
-    for (size_t i = 0, size_n = size(n); i < size_n; i++) {
+    for (size_t i = 0, size_n = stan::math::size(n); i < size_n; i++) {
       lgamma_n_plus_one[i] = lgamma(n_vec[i] + 1.0);
     }
   }
@@ -68,7 +69,8 @@ return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
   VectorBuilder<include_summand<propto, T_log_rate>::value, T_partials_return,
                 T_log_rate>
       exp_alpha(size(alpha));
-  for (size_t i = 0, size_alpha = size(alpha); i < size_alpha; i++) {
+  for (size_t i = 0, size_alpha = stan::math::size(alpha); i < size_alpha;
+       i++) {
     exp_alpha[i] = exp(value_of(alpha_vec[i]));
   }
 
