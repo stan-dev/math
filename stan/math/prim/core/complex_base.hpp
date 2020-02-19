@@ -76,8 +76,8 @@ class complex_base {
    * @param[in] other another complex to use as source
    */
   template <typename T>
-  complex_base(const std::complex<T>& other)
-      : complex_base(other.real(), other.imag()) {}  // NOLINT(runtime/explicit)
+  complex_base(const std::complex<T>& other)  // NOLINT(runtime/explicit)
+      : complex_base(other.real(), other.imag()) {}
 
   /**
    * Destroy this complex number.
