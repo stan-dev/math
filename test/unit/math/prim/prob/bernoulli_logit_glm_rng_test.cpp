@@ -29,7 +29,8 @@ TEST(ProbDistributionsBernoulliLogitGlm, vectorized) {
   Eigen::RowVectorXd beta_vector_t(3);
   beta_vector_t = beta_vector;
 
-  // Can't use VectorRNGTestRig since size(alpha) != size(beta) in general.
+  // Can't use VectorRNGTestRig since stan::math::size(alpha) !=
+  // stan::math::size(beta) in general.
 
   EXPECT_NO_THROW(stan::math::bernoulli_logit_glm_rng(x, alpha, beta, rng));
   EXPECT_NO_THROW(

@@ -53,7 +53,7 @@ categorical_logit_glm_lpmf(
   using std::exp;
   using std::log;
 
-  const size_t N_instances = T_x_rows == 1 ? size(y) : x.rows();
+  const size_t N_instances = T_x_rows == 1 ? stan::math::size(y) : x.rows();
   const size_t N_attributes = x.cols();
   const size_t N_classes = beta.cols();
 

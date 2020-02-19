@@ -34,7 +34,7 @@ inline typename VectorBuilder<true, double, T_inv>::type exponential_rng(
   check_positive_finite(function, "Inverse scale parameter", beta);
 
   scalar_seq_view<T_inv> beta_vec(beta);
-  size_t N = size(beta);
+  size_t N = stan::math::size(beta);
   VectorBuilder<true, double, T_inv> output(N);
 
   for (size_t n = 0; n < N; ++n) {

@@ -56,7 +56,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
                 T_scale>
       log_lambda(size(lambda));
   if (include_summand<propto, T_scale>::value) {
-    for (size_t n = 0; n < size(lambda); n++) {
+    for (size_t n = 0; n < stan::math::size(lambda); n++) {
       log_lambda[n] = log(value_of(lambda_vec[n]));
     }
   }
@@ -65,7 +65,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
                 T_shape>
       log_alpha(size(alpha));
   if (include_summand<propto, T_shape>::value) {
-    for (size_t n = 0; n < size(alpha); n++) {
+    for (size_t n = 0; n < stan::math::size(alpha); n++) {
       log_alpha[n] = log(value_of(alpha_vec[n]));
     }
   }
@@ -73,7 +73,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
   VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
       inv_alpha(size(alpha));
   if (!is_constant_all<T_shape>::value) {
-    for (size_t n = 0; n < size(alpha); n++) {
+    for (size_t n = 0; n < stan::math::size(alpha); n++) {
       inv_alpha[n] = 1 / value_of(alpha_vec[n]);
     }
   }

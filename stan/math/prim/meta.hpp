@@ -9,7 +9,6 @@
 #include <stan/math/prim/meta/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/meta/bool_constant.hpp>
 #include <stan/math/prim/meta/child_type.hpp>
-#include <stan/math/prim/meta/common_type.hpp>
 #include <stan/math/prim/meta/contains_fvar.hpp>
 #include <stan/math/prim/meta/contains_std_vector.hpp>
 #include <stan/math/prim/meta/contains_vector.hpp>

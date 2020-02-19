@@ -41,8 +41,8 @@ return_type_t<T_rate> poisson_lccdf(const T_n& n, const T_rate& lambda) {
 
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_rate> lambda_vec(lambda);
-  size_t size_n = size(n);
-  size_t size_lambda = size(lambda);
+  size_t size_n = stan::math::size(n);
+  size_t size_lambda = stan::math::size(lambda);
   size_t max_size_seq_view = max_size(n, lambda);
 
   // Explicit return for extreme values

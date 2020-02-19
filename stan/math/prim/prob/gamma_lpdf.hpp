@@ -66,7 +66,7 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
   scalar_seq_view<T_shape> alpha_vec(alpha);
   scalar_seq_view<T_inv_scale> beta_vec(beta);
 
-  for (size_t n = 0; n < size(y); n++) {
+  for (size_t n = 0; n < stan::math::size(y); n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
     if (y_dbl < 0) {
       return LOG_ZERO;
@@ -82,7 +82,7 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
                 T_y>
       log_y(size(y));
   if (include_summand<propto, T_y, T_shape>::value) {
-    for (size_t n = 0; n < size(y); n++) {
+    for (size_t n = 0; n < stan::math::size(y); n++) {
       if (value_of(y_vec[n]) > 0) {
         log_y[n] = log(value_of(y_vec[n]));
       }
@@ -94,7 +94,7 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
       lgamma_alpha(size(alpha));
   VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
       digamma_alpha(size(alpha));
-  for (size_t n = 0; n < size(alpha); n++) {
+  for (size_t n = 0; n < stan::math::size(alpha); n++) {
     if (include_summand<propto, T_shape>::value) {
       lgamma_alpha[n] = lgamma(value_of(alpha_vec[n]));
     }
@@ -107,7 +107,7 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
                 T_partials_return, T_inv_scale>
       log_beta(size(beta));
   if (include_summand<propto, T_shape, T_inv_scale>::value) {
-    for (size_t n = 0; n < size(beta); n++) {
+    for (size_t n = 0; n < stan::math::size(beta); n++) {
       log_beta[n] = log(value_of(beta_vec[n]));
     }
   }

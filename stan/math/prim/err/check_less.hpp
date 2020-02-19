@@ -18,7 +18,7 @@ struct less {
   static void check(const char* function, const char* name, const T_y& y,
                     const T_high& high) {
     scalar_seq_view<T_high> high_vec(high);
-    for (size_t n = 0; n < size(high); n++) {
+    for (size_t n = 0; n < stan::math::size(high); n++) {
       if (!(y < high_vec[n])) {
         std::stringstream msg;
         msg << ", but must be less than ";
@@ -35,7 +35,7 @@ struct less<T_y, T_high, true> {
   static void check(const char* function, const char* name, const T_y& y,
                     const T_high& high) {
     scalar_seq_view<T_high> high_vec(high);
-    for (size_t n = 0; n < size(y); n++) {
+    for (size_t n = 0; n < stan::math::size(y); n++) {
       if (!(stan::get(y, n) < high_vec[n])) {
         std::stringstream msg;
         msg << ", but must be less than ";

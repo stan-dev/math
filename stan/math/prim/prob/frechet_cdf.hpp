@@ -68,17 +68,17 @@ return_type_t<T_y, T_shape, T_scale> frechet_cdf(const T_y& y,
   }
 
   if (!is_constant_all<T_y>::value) {
-    for (size_t n = 0; n < size(y); ++n) {
+    for (size_t n = 0; n < stan::math::size(y); ++n) {
       ops_partials.edge1_.partials_[n] *= cdf;
     }
   }
   if (!is_constant_all<T_shape>::value) {
-    for (size_t n = 0; n < size(alpha); ++n) {
+    for (size_t n = 0; n < stan::math::size(alpha); ++n) {
       ops_partials.edge2_.partials_[n] *= cdf;
     }
   }
   if (!is_constant_all<T_scale>::value) {
-    for (size_t n = 0; n < size(sigma); ++n) {
+    for (size_t n = 0; n < stan::math::size(sigma); ++n) {
       ops_partials.edge3_.partials_[n] *= cdf;
     }
   }
