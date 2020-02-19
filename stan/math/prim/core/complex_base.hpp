@@ -41,7 +41,7 @@ class complex_base {
   using complex_type = std::complex<value_type>;
 
   /**
-   * Construct a complex base with the specified real and complex
+   * Construct a complex base with the specified real and imaginary
    * parts.
    *
    * @tparam T real type (must be assignable to `V`)
@@ -50,18 +50,24 @@ class complex_base {
    * @param[in] im imaginary part (default 0)
    */
   template <typename T, typename U>
-  complex_base(const T& re, const U& im = U(0))  // NOLINT(runtime/explicit)
-      : re_(re), im_(im) {}
+  complex_base(const T& re, const U& im) : re_(re), im_(im) {}
 
   /**
-   * Constructs complex number from real and imaginary parts.
+   * Construct a complex base with the specified real part and a zero
+   * imaginary part.
    *
-   * @param[in] re the real part
-   * @param[in] im the imaginary part
+   * @tparam T real type (must be assignable to `V`)
+   * @param[in] re real part
    */
-  complex_base(const value_type& re = value_type(0),
-               const value_type& im = value_type(0))
-      : re_(re), im_(im) {}
+  template <typename T>
+  complex_base(const T& re)  // NOLINT(runtime/explicit)
+      : complex_base(re, 0) {}
+
+  /**
+   * Construct a complex base with the specified real part and zero
+   * imaginary part.
+   */
+  complex_base() : complex_base(0, 0) {}
 
   /**
    * Constructs the complex number from the specified complex number
@@ -92,66 +98,12 @@ class complex_base {
    * Assign the specified value to the real part of this complex number
    * and set imaginary part to zero.
    *
-   * @param[in] x value to assign
-   * @return this complex number
-   */
-  complex_type& operator=(const V& x) {
-    re_ = x;
-    im_ = 0;
-    return derived_complex_ref();
-  }
-
-  /**
-   * Assign the specified value to the real part of this complex number
-   * and set imaginary part to zero.
-   *
-   * @param[in] x value to assign
-   * @return this complex number
-   */
-  complex_type& operator=(float x) {
-    re_ = x;
-    im_ = 0;
-    return derived_complex_ref();
-  }
-
-  /**
-   * Assign the specified value to the real part of this complex number
-   * and set imaginary part to zero.
-   *
-   * @param[in] x value to assign
-   * @return this complex number
-   */
-  complex_type& operator=(double x) {
-    re_ = x;
-    im_ = 0;
-    return derived_complex_ref();
-  }
-
-  /**
-   * Assign the specified value to the real part of this complex number
-   * and set imaginary part to zero.
-   *
-   * @param[in] x value to assign
-   * @return this complex number
-   */
-  complex_type& operator=(long double x) {
-    re_ = x;
-    im_ = 0;
-    return derived_complex_ref();
-  }
-
-  /**
-   * Assign the specified value to the real part of this complex number
-   * and set imaginary part to zero.
-   *
    * @tparam T type of value, which must be assignable to the complex
    * value type
    * @param[in] x value to assign
    * @return this complex number
    */
-  template <typename T,
-            typename
-            = typename std::enable_if_t<std::is_assignable<V, T>::value>>
+  template <typename T>
   complex_type& operator=(const T& x) {
     re_ = x;
     im_ = 0;
@@ -169,12 +121,6 @@ class complex_base {
    */
   template <typename T>
   complex_type& operator=(const std::complex<T>& x) {
-    re_ = x.real();
-    im_ = x.imag();
-    return derived_complex_ref();
-  }
-
-  complex_type& operator=(const std::complex<V>& x) {
     re_ = x.real();
     im_ = x.imag();
     return derived_complex_ref();

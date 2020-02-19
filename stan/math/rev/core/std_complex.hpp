@@ -16,18 +16,38 @@ template <>
 class complex<stan::math::var>
     : public stan::math::complex_base<stan::math::var> {
  public:
-  using base_t = complex_base<stan::math::var>;
+  using base_t = stan::math::complex_base<stan::math::var>;
 
   /**
-   * Constructs complex number from real part or with default zero
-   * value, setting imaginary part to zero.  This is the nullary
-   * constructor when the default of zero is used for the real
-   * component.
+   * Construct complex number from real and imaginary parts.
    *
-   * @param[in] re the real part (defaults to zero)
+   * @tparam T type of real part
+   * @tparam U type of imaginary part
+   * @param[in] re real part
+   * @param[in] im imaginary part
    */
-  complex(const value_type& re = value_type(0))  // NOLINT(runtime/explicit)
-      : complex_base(re) {}
+  template <typename T, typename U>
+  complex(const T& re, const U& im) : base_t(re, im) {}
+
+  /**
+   * Constructs complex number from the specified argument, which may
+   * be a scalar or complex number.  If the argument is a real type,
+   * then it is assigned to the real component and the imaginary
+   * component is set to zero; if it is a complex argument, the real
+   * and imaginary components are set to their values in the argument.
+   *
+   * @tparam T type of argument
+   * @param[in] re scalar or complex argument
+   */
+  template <typename T>
+  complex(const T& x)  // NOLINT(runtime/explicit)
+      : base_t(x) {}
+
+  /**
+   * Construct a complex number with zero real part and zero imaginary
+   * part.
+   */
+  complex() : base_t() {}
 
   /**
    * Construct a complex number with the same real and imaginary
@@ -37,29 +57,7 @@ class complex<stan::math::var>
    * @param[in] other another complex to use as source
    */
   template <typename V>
-  complex(const complex<V>& other) : complex_base(other) {}
-
-  /**
-   * Construct complex number from real and imaginary parts.
-   *
-   * @tparam V1 type of real part
-   * @tparam V2 type of imaginary part
-   * @param[in] re real part
-   * @param[in] im imaginary part
-   */
-  template <typename V1, typename V2>
-  complex(const V1& re, const V2& im) : complex_base(re, im) {}
-
-  /**
-   * Construct a complex number with the specified real component and
-   * zero imaginary component.
-   *
-   * @tparam T arithmetic type of argument
-   * @param[in] x real component
-   */
-  template <typename T,
-            typename = std::enable_if_t<std::is_arithmetic<T>::value>>
-  complex(T x) : complex_base(x) {}  // NOLINT(runtime/explicit)
+  complex(const complex<V>& other) : base_t(other) {}
 
   /**
    * Destroy this complex number.  The implementation is a no-op.
