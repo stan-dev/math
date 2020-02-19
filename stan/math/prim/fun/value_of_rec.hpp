@@ -110,6 +110,21 @@ template <typename T, typename = require_same_st<T, double>,
 inline const T& value_of_rec(const T& x) {
   return x;
 }
+
+/**
+ * Return the complex number with real and imaginary parts given by
+ * the value of the real and imaginary parts of the argument.
+ *
+ * @tparam T value type of complex argument
+ * @param[in] complex argument
+ * @return complex number with real and imaginary parts given by
+ * values of real and imaginary parts of the argument
+ */
+template <typename T>
+inline std::complex<double> value_of_rec(const std::complex<T>& z) {
+  return {value_of_rec(z.real()), value_of_rec(z.imag())};
+}
+
 }  // namespace math
 }  // namespace stan
 

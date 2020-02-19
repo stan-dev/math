@@ -9,8 +9,8 @@ TEST(AgradMix, value_of_rec) {
   using stan::math::var;
 
   fvar<var> fv_a(5.0);
-  fvar<fvar<var> > ffv_a(5.0);
-  fvar<fvar<fvar<fvar<fvar<var> > > > > fffffv_a(5.0);
+  fvar<fvar<var>> ffv_a(5.0);
+  fvar<fvar<fvar<fvar<fvar<var>>>>> fffffv_a(5.0);
 
   EXPECT_FLOAT_EQ(5.0, value_of_rec(fv_a));
   EXPECT_FLOAT_EQ(5.0, value_of_rec(ffv_a));
@@ -23,13 +23,13 @@ TEST(MathMatrixMixArr, value_of_rec) {
   using stan::math::var;
   using std::vector;
 
-  vector<fvar<fvar<var> > > a;
+  vector<fvar<fvar<var>>> a;
   for (size_t i = 0; i < 10; ++i)
-    a.push_back(fvar<fvar<var> >(i + 1));
+    a.push_back(fvar<fvar<var>>(i + 1));
 
-  vector<fvar<fvar<var> > > b;
+  vector<fvar<fvar<var>>> b;
   for (size_t i = 10; i < 15; ++i)
-    b.push_back(fvar<fvar<var> >(i + 1));
+    b.push_back(fvar<fvar<var>>(i + 1));
 
   vector<double> d_a = value_of_rec(a);
   vector<double> d_b = value_of_rec(b);
@@ -62,9 +62,9 @@ TEST(AgradMixMatrix, value_of_rec) {
   Eigen::Matrix<fvar<var>, 5, 1> fv_b;
   ::fill(b_vals, fv_b);
 
-  Eigen::Matrix<fvar<fvar<var> >, 2, 5> ffv_a;
+  Eigen::Matrix<fvar<fvar<var>>, 2, 5> ffv_a;
   ::fill(a_vals, ffv_a);
-  Eigen::Matrix<fvar<fvar<var> >, 5, 1> ffv_b;
+  Eigen::Matrix<fvar<fvar<var>>, 5, 1> ffv_b;
   ::fill(b_vals, ffv_b);
 
   Eigen::MatrixXd d_fv_a = value_of_rec(fv_a);
@@ -82,4 +82,24 @@ TEST(AgradMixMatrix, value_of_rec) {
       EXPECT_FLOAT_EQ(a_vals[j * 2 + i], d_fv_a(i, j));
       EXPECT_FLOAT_EQ(a_vals[j * 2 + i], d_ffv_a(i, j));
     }
+}
+
+template <typename T>
+void test_value_of_rec_complex() {
+  using stan::math::value_of_rec;
+  std::complex<T> z(1, 2);
+  std::complex<double> zv = value_of_rec(z);
+  EXPECT_EQ(1, zv.real());
+  EXPECT_EQ(2, zv.imag());
+}
+
+TEST(mathMixFun, valueOfRecComplex) {
+  using stan::math::fvar;
+  using stan::math::var;
+  test_value_of_rec_complex<double>();
+  test_value_of_rec_complex<var>();
+  test_value_of_rec_complex<fvar<double>>();
+  test_value_of_rec_complex<fvar<fvar<double>>>();
+  test_value_of_rec_complex<fvar<var>>();
+  test_value_of_rec_complex<fvar<fvar<var>>>();
 }
