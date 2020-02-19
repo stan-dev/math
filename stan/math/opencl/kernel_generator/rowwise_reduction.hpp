@@ -160,7 +160,9 @@ class rowwise_sum_
    * @return copy of \c *this
    */
   inline rowwise_sum_<std::remove_reference_t<T>> deep_copy() {
-    return rowwise_sum_<std::remove_reference_t<T>>{std::get<0>(arguments_)};
+    auto&& arg_copy = std::get<0>(arguments_).deep_copy();
+    return rowwise_sum_<std::remove_reference_t<decltype(arg_copy)>>(
+        std::move(arg_copy));
   }
 };
 
@@ -224,8 +226,10 @@ class rowwise_max_
    * Creates a deep copy of this expression.
    * @return copy of \c *this
    */
-  inline rowwise_max_<std::remove_reference_t<T>> deep_copy() {
-    return rowwise_max_<std::remove_reference_t<T>>{std::get<0>(arguments_)};
+  inline auto deep_copy() {
+    auto&& arg_copy = std::get<0>(arguments_).deep_copy();
+    return rowwise_max_<std::remove_reference_t<decltype(arg_copy)>>(
+        std::move(arg_copy));
   }
 };
 
@@ -289,8 +293,10 @@ class rowwise_min_
    * Creates a deep copy of this expression.
    * @return copy of \c *this
    */
-  inline rowwise_min_<std::remove_reference_t<T>> deep_copy() {
-    return rowwise_min_<std::remove_reference_t<T>>{std::get<0>(arguments_)};
+  inline auto deep_copy() {
+    auto&& arg_copy = std::get<0>(arguments_).deep_copy();
+    return rowwise_min_<std::remove_reference_t<decltype(arg_copy)>>(
+        std::move(arg_copy));
   }
 };
 

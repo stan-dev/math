@@ -83,9 +83,10 @@ class unary_function_cl
                                                                               \
    public:                                                                    \
     explicit fun##_(T&& a) : base(std::forward<T>(a), #fun) {}                \
-    inline fun##_<std::remove_reference_t<T>> deep_copy() {                   \
-      return fun##_<std::remove_reference_t<T>>{                              \
-          std::get<0>(arguments_).deep_copy()};                               \
+    inline auto deep_copy() {                                                 \
+      auto&& arg_copy = std::get<0>(arguments_).deep_copy();                  \
+      return fun##_<std::remove_reference_t<decltype(arg_copy)>>{             \
+          std::move(arg_copy)};                                               \
     }                                                                         \
     inline matrix_cl_view view() const { return matrix_cl_view::Entire; }     \
   };                                                                          \
@@ -110,9 +111,10 @@ class unary_function_cl
                                                                               \
    public:                                                                    \
     explicit fun##_(T&& a) : base(std::forward<T>(a), #fun) {}                \
-    inline fun##_<std::remove_reference_t<T>> deep_copy() {                   \
-      return fun##_<std::remove_reference_t<T>>{                              \
-          std::get<0>(arguments_).deep_copy()};                               \
+    inline auto deep_copy() {                                                 \
+      auto&& arg_copy = std::get<0>(arguments_).deep_copy();                  \
+      return fun##_<std::remove_reference_t<decltype(arg_copy)>>{             \
+          std::move(arg_copy)};                                               \
     }                                                                         \
   };                                                                          \
                                                                               \

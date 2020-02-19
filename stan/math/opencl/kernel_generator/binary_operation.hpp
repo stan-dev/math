@@ -116,11 +116,12 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
    public:                                                                    \
     class_name(T_a&& a, T_b&& b) /* NOLINT */                                 \
         : base(std::forward<T_a>(a), std::forward<T_b>(b), operation) {}      \
-    inline class_name<std::remove_reference_t<T_a>,                           \
-                      std::remove_reference_t<T_b>>                           \
-    deep_copy() {                                                             \
-      return {std::get<0>(arguments_).deep_copy(),                            \
-              std::get<1>(arguments_).deep_copy()};                           \
+    inline auto deep_copy() {                                                 \
+      auto&& a_copy = std::get<0>(arguments_).deep_copy();                    \
+      auto&& b_copy = std::get<1>(arguments_).deep_copy();                    \
+      return class_name<std::remove_reference_t<decltype(a_copy)>,            \
+                        std::remove_reference_t<decltype(b_copy)>>(           \
+          std::move(a_copy), std::move(b_copy));                              \
     }                                                                         \
   };                                                                          \
                                                                               \
@@ -162,11 +163,12 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
    public:                                                                    \
     class_name(T_a&& a, T_b&& b) /* NOLINT */                                 \
         : base(std::forward<T_a>(a), std::forward<T_b>(b), operation) {}      \
-    inline class_name<std::remove_reference_t<T_a>,                           \
-                      std::remove_reference_t<T_b>>                           \
-    deep_copy() {                                                             \
-      return {std::get<0>(arguments_).deep_copy(),                            \
-              std::get<1>(arguments_).deep_copy()};                           \
+    inline auto deep_copy() {                                                 \
+      auto&& a_copy = std::get<0>(arguments_).deep_copy();                    \
+      auto&& b_copy = std::get<1>(arguments_).deep_copy();                    \
+      return class_name<std::remove_reference_t<decltype(a_copy)>,            \
+                        std::remove_reference_t<decltype(b_copy)>>(           \
+          std::move(a_copy), std::move(b_copy));                              \
     }                                                                         \
     inline matrix_cl_view view() const { __VA_ARGS__; }                       \
   };                                                                          \

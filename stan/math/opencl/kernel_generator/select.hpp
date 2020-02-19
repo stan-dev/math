@@ -73,13 +73,14 @@ class select_ : public operation_cl<select_<T_condition, T_then, T_else>,
    * Creates a deep copy of this expression.
    * @return copy of \c *this
    */
-  inline select_<std::remove_reference_t<T_condition>,
-                 std::remove_reference_t<T_then>,
-                 std::remove_reference_t<T_else>>
-  deep_copy() {
-    return {std::get<0>(arguments_).deep_copy(),
-            std::get<1>(arguments_).deep_copy(),
-            std::get<2>(arguments_).deep_copy()};
+  inline auto deep_copy() {
+    auto&& condition_copy = std::get<0>(arguments_).deep_copy();
+    auto&& then_copy = std::get<0>(arguments_).deep_copy();
+    auto&& else_copy = std::get<0>(arguments_).deep_copy();
+    return select_<std::remove_reference_t<decltype(condition_copy)>,
+                   std::remove_reference_t<decltype(then_copy)>,
+                   std::remove_reference_t<decltype(else_copy)>>(
+        std::move(condition_copy), std::move(then_copy), std::move(else_copy));
   }
 
   /**

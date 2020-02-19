@@ -61,9 +61,10 @@ class block_
    * Creates a deep copy of this expression.
    * @return copy of \c *this
    */
-  inline block_<std::remove_reference_t<T>> deep_copy() {
-    return {std::get<0>(arguments_).deep_copy(), start_row_, start_col_, rows_,
-            cols_};
+  inline auto deep_copy() {
+    auto&& arg_copy = std::get<0>(arguments_).deep_copy();
+    return block_<std::remove_reference_t<decltype(arg_copy)>>{
+        std::move(arg_copy), start_row_, start_col_, rows_, cols_};
   }
 
   /**
