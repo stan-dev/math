@@ -15,7 +15,7 @@ namespace math {
 /**
  * Return the Cholesky factor of the correlation matrix of the
  * specified dimensionality corresponding to the specified
- * canonical partial correlations.
+ * canonical partial correlations (CPCs).
  *
  * It is generally better to work with the Cholesky factor rather
  * than the correlation matrix itself when the determinant,
@@ -25,30 +25,29 @@ namespace math {
  * <p>See <code>read_corr_matrix(Array, size_t, T)</code>
  * for more information.
  *
- * @tparam T type of elements in the array
+ * @tparam EigArr type type of the eigen array
  * @param CPCs The (K choose 2) canonical partial correlations in
  * (-1, 1).
  * @param K Dimensionality of correlation matrix.
  * @return Cholesky factor of correlation matrix for specified
  * canonical partial correlations.
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
-    const Eigen::Array<T, Eigen::Dynamic, 1>& CPCs,  // on (-1, 1)
-    size_t K) {
+template <typename EigArr, typename = require_t<is_eigen_array<EigArr>>>
+auto read_corr_L(EigArr& CPCs, size_t K) {
+  using eigen_scalar = value_type_t<EigArr>;
   if (K == 0) {
-    return {};
+    return Eigen::Matrix<eigen_scalar, -1 , -1>::Identity(0, 0).eval();
   }
   if (K == 1) {
-    return Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>::Identity(1, 1);
+    return Eigen::Matrix<eigen_scalar, -1, -1>::Identity(1, 1).eval();
   }
 
   using std::sqrt;
-  Eigen::Array<T, Eigen::Dynamic, 1> temp;
-  Eigen::Array<T, Eigen::Dynamic, 1> acc(K - 1);
+  Eigen::Array<eigen_scalar, -1, 1> temp;
+  Eigen::Array<eigen_scalar, -1, 1> acc(K - 1);
   acc.setOnes();
   // Cholesky factor of correlation matrix
-  Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic> L(K, K);
+  Eigen::Array<eigen_scalar, -1, -1> L(K, K);
   L.setZero();
 
   size_t position = 0;
@@ -56,17 +55,17 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
 
   L(0, 0) = 1.0;
   L.col(0).tail(pull) = temp = CPCs.head(pull);
-  acc.tail(pull) = T(1.0) - temp.square();
+  acc.tail(pull) = eigen_scalar(1.0) - temp.square();
   for (size_t i = 1; i < (K - 1); i++) {
     position += pull;
     pull--;
     temp = CPCs.segment(position, pull);
     L(i, i) = sqrt(acc(i - 1));
     L.col(i).tail(pull) = temp * acc.tail(pull).sqrt();
-    acc.tail(pull) *= T(1.0) - temp.square();
+    acc.tail(pull) *= eigen_scalar(1.0) - temp.square();
   }
   L(K - 1, K - 1) = sqrt(acc(K - 2));
-  return L.matrix();
+  return L.matrix().eval();
 }
 
 /**
@@ -93,17 +92,17 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
  * @return Cholesky factor of correlation matrix for specified
  * partial correlations.
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
-    const Eigen::Array<T, Eigen::Dynamic, 1>& CPCs, size_t K, T& log_prob) {
+template <typename EigArr, typename KK, typename LP, typename = require_t<is_eigen_array<EigArr>>>
+auto read_corr_L(EigArr&& CPCs, KK K, LP log_prob) {
+    using eigen_scalar = value_type_t<EigArr>;
   if (K == 0) {
-    return {};
+    return Eigen::Matrix<eigen_scalar, -1 , -1>::Identity(0, 0).eval();
   }
   if (K == 1) {
-    return Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>::Identity(1, 1);
+    return Eigen::Matrix<eigen_scalar, -1, -1>::Identity(1, 1).eval();
   }
 
-  Eigen::Matrix<T, Eigen::Dynamic, 1> values(CPCs.rows() - 1);
+  Eigen::Matrix<eigen_scalar, Eigen::Dynamic, 1> values(CPCs.rows() - 1);
   size_t pos = 0;
   // no need to abs() because this Jacobian determinant
   // is strictly positive (and triangular)

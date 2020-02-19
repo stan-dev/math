@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/log1m.hpp>
 #include <stan/math/prim/fun/square.hpp>
+#include <stan/math/prim/fun/tanh.hpp>
 #include <cmath>
 
 namespace stan {
@@ -22,7 +23,7 @@ namespace math {
  * @return tanh transform of value
  */
 template <typename T>
-inline T corr_constrain(const T& x) {
+inline auto corr_constrain(const T& x) {
   using std::tanh;
   return tanh(x);
 }
@@ -41,11 +42,21 @@ inline T corr_constrain(const T& x) {
  * @param[in] x value
  * @param[in,out] lp log density accumulator
  */
-template <typename T>
-inline T corr_constrain(const T& x, T& lp) {
+template <typename T, typename T2, typename = require_all_stan_scalar_t<T, T2>>
+inline auto corr_constrain(const T& x, T2& lp) {
   using std::tanh;
-  T tanh_x = tanh(x);
-  lp += log1m(square(tanh_x));
+  auto tanh_x = tanh(x);
+  lp += sum(log1m(square(tanh_x)));
+  return tanh_x;
+}
+
+template <typename T, typename T2,
+  typename = require_stan_scalar_t<T2>,
+  typename = require_eigen_t<T>>
+inline auto corr_constrain(const T& x, T2& lp) {
+  using std::tanh;
+  typename T::PlainObject tanh_x = tanh(x);
+  lp += sum(log1m(square(tanh_x)));
   return tanh_x;
 }
 

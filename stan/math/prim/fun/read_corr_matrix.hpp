@@ -21,15 +21,13 @@ namespace math {
  * @return Cholesky factor of correlation matrix for specified
  * canonical partial correlations.
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_corr_matrix(
-    const Eigen::Array<T, Eigen::Dynamic, 1>& CPCs, size_t K) {
+template <typename EigArr, typename = require_t<is_eigen_array<EigArr>>>
+auto read_corr_matrix(EigArr&& CPCs, size_t K) {
+  using eigen_scalar = value_type_t<EigArr>;
   if (K == 0) {
-    return {};
+    return Eigen::Matrix<eigen_scalar, -1 , -1>::Identity(0, 0).eval();
   }
-
-  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> L = read_corr_L(CPCs, K);
-  return multiply_lower_tri_self_transpose(L);
+  return multiply_lower_tri_self_transpose(read_corr_L(std::forward<EigArr>(CPCs), K));
 }
 
 /**
@@ -50,16 +48,13 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_corr_matrix(
  * Jacobian determinant.
  * @return Correlation matrix for specified partial correlations.
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> read_corr_matrix(
-    const Eigen::Array<T, Eigen::Dynamic, 1>& CPCs, size_t K, T& log_prob) {
+template <typename EigArr, typename = require_t<is_eigen_array<EigArr>>>
+auto read_corr_matrix(EigArr&& CPCs, size_t K, value_type_t<EigArr> log_prob) {
+  using eigen_scalar = value_type_t<EigArr>;
   if (K == 0) {
-    return {};
+    return Eigen::Matrix<eigen_scalar, -1 , -1>::Identity(0, 0).eval();
   }
-
-  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> L
-      = read_corr_L(CPCs, K, log_prob);
-  return multiply_lower_tri_self_transpose(L);
+  return multiply_lower_tri_self_transpose(read_corr_L(std::forward<EigArr>(CPCs), K, log_prob));
 }
 
 }  // namespace math

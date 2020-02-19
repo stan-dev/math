@@ -55,10 +55,12 @@ template <typename T>
 struct is_eigen_matrix : internal::is_eigen_matrix_impl<std::decay_t<T>> {};
 
 namespace internal {
-template <typename T>
+template <typename T, typename Enable = void>
 struct is_eigen_array_impl : std::false_type {};
-template <typename T, int R, int C>
-struct is_eigen_array_impl<Eigen::Array<T, R, C>> : std::true_type {};
+template <typename T>
+struct is_eigen_array_impl<T,
+ std::enable_if_t<std::is_base_of<Eigen::ArrayBase<T>, T>::value>> :
+  std::true_type {};
 }  // namespace internal
 
 template <typename T>

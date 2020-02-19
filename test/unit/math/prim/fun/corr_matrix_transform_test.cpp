@@ -13,6 +13,18 @@ TEST(prob_transform, corr_matrix_j) {
   expect_matrix_eq(x, xrt);
 }
 
+TEST(prob_transform, corr_matrix_j3x3) {
+  size_t K = 3;
+  size_t K_choose_2 = 3;
+  Eigen::VectorXd x(K_choose_2);
+  x << -1.0, 3.0, 2.0;
+  double lp = -12.9;
+  Eigen::MatrixXd y = stan::math::corr_matrix_constrain(x, K);
+  Eigen::VectorXd xrt = stan::math::corr_matrix_free(y);
+  expect_matrix_eq(x, xrt);
+}
+
+
 TEST(prob_transform, corr_matrix_j2x2) {
   // tests K=2 boundary case
   size_t K = 2;

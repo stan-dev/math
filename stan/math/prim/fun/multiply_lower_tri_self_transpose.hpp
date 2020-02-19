@@ -16,27 +16,19 @@ namespace math {
  * transpose.
  * @throw std::domain_error If the input matrix is not square.
  */
-inline matrix_d multiply_lower_tri_self_transpose(const matrix_d& L) {
+template <typename EigMat, typename = require_eigen_t<EigMat>>
+inline auto multiply_lower_tri_self_transpose(EigMat&& L) {
   int K = L.rows();
   if (K == 0) {
-    return L;
+    return Eigen::Matrix<value_type_t<EigMat>, -1, -1>(0, 0);
   }
   if (K == 1) {
-    matrix_d result(1, 1);
+    Eigen::Matrix<value_type_t<EigMat>, -1, -1> result(1, 1);
     result(0) = square(L(0));  // first elt, so don't need double idx
     return result;
   }
-  int J = L.cols();
-  matrix_d LLt(K, K);
-  matrix_d Lt = L.transpose();
-  for (int m = 0; m < K; ++m) {
-    int k = (J < m + 1) ? J : m + 1;
-    LLt(m, m) = Lt.col(m).head(k).squaredNorm();
-    for (int n = (m + 1); n < K; ++n) {
-      LLt(n, m) = LLt(m, n) = Lt.col(m).head(k).dot(Lt.col(n).head(k));
-    }
-  }
-  return LLt;
+  Eigen::Matrix<value_type_t<EigMat>, -1, -1> LLLT = L.template triangularView<Eigen::Lower>() * L.transpose();
+  return LLLT;
 }
 
 }  // namespace math

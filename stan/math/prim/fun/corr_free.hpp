@@ -25,7 +25,7 @@ namespace math {
  * @return free scalar that transforms to the specified input
  */
 template <typename T>
-inline T corr_free(const T& y) {
+inline auto corr_free(T&& y) {
   check_bounded("lub_free", "Correlation variable", y, -1.0, 1.0);
   return atanh(y);
 }

@@ -18,7 +18,7 @@ namespace math {
  * @return Input transformed to be positive.
  */
 template <typename T>
-inline T positive_constrain(const T& x) {
+inline auto positive_constrain(const T& x) {
   using std::exp;
   return exp(x);
 }
@@ -39,10 +39,17 @@ inline T positive_constrain(const T& x) {
  * @param lp log density reference.
  * @return positive constrained version of unconstrained value
  */
-template <typename T>
-inline T positive_constrain(const T& x, T& lp) {
+template <typename T1, typename T2, typename = require_all_stan_scalar_t<T1, T2>>
+inline auto positive_constrain(T1&& x, T2&& lp) {
   using std::exp;
   lp += x;
+  return exp(x);
+}
+
+template <typename T1, typename T2, typename = require_stan_scalar_t<T2>, typename = require_eigen_t<T1>>
+inline auto positive_constrain(T1&& x, T2&& lp) {
+  using std::exp;
+  lp += x.sum();
   return exp(x);
 }
 
