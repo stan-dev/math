@@ -40,9 +40,7 @@ class scalar_ : public operation_cl<scalar_<T>, T> {
    * Creates a deep copy of this expression.
    * @return copy of \c *this
    */
-  inline scalar_<T> deep_copy(){
-    return scalar_<T>(a_);
-  }
+  inline scalar_<T> deep_copy() { return scalar_<T>(a_); }
 
   /**
    * generates kernel code for this expression.
@@ -94,17 +92,13 @@ class scalar_ : public operation_cl<scalar_<T>, T> {
    * Determine index of bottom diagonal written.
    * @return number of columns
    */
-  inline int bottom_diagonal() const {
-    return std::numeric_limits<int>::min();
-  }
+  inline int bottom_diagonal() const { return std::numeric_limits<int>::min(); }
 
   /**
    * Determine index of top diagonal written.
    * @return number of columns
    */
-  inline int top_diagonal() const {
-    return std::numeric_limits<int>::max();
-  }
+  inline int top_diagonal() const { return std::numeric_limits<int>::max(); }
 };
 
 }  // namespace math

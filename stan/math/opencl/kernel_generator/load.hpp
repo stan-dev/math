@@ -48,9 +48,7 @@ class load_
    * Creates a deep copy of this expression.
    * @return copy of \c *this
    */
-  inline load_<T&> deep_copy(){
-    return load_<T&>(a_);
-  }
+  inline load_<T&> deep_copy() { return load_<T&>(a_); }
 
   /**
    * generates kernel code for this expression.
