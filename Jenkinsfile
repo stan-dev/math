@@ -28,7 +28,7 @@ def deleteDirWin() {
 def sourceCodePaths(){
     // These paths will be passed to git diff
     // If there are changes to them, CI/CD will continue else skip
-    def paths = ['src', 'make', 'lib', 'test', 'runTests.py', 'runChecks.py', 'makefile', 'Jenkinsfile', '.clang-format']
+    def paths = ['stan', 'make', 'lib', 'test', 'runTests.py', 'runChecks.py', 'makefile', 'Jenkinsfile', '.clang-format']
     def bashArray = ""
 
     for(path in paths){
@@ -200,6 +200,11 @@ pipeline {
             }
         }
         stage('Headers checks') {
+            when {
+                expression {
+                    !skipRemainingStages
+                }
+            }
             parallel {
               stage('Headers check') {
                 agent any
