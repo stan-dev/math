@@ -170,12 +170,12 @@ pipeline {
                     sh "git clean -xffd"
 
                     def commitHash = sh(script: "git rev-parse HEAD | tr '\\n' ' '", returnStdout: true)
-                    sh(script: "git pull && git checkout develop", returnStdout: false)
+                    sh(script: "git pull && git checkout ${CHANGE_TARGET}", returnStdout: false)
 
                     def bashScript = """
                         for i in ${scPaths};
                         do
-                            git diff ${commitHash}develop -- \$i
+                            git diff ${commitHash} ${CHANGE_TARGET} -- \$i
                         done
                     """
 
