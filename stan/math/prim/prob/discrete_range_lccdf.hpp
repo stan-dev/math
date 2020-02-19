@@ -8,7 +8,6 @@
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
-#include <stan/math/prim/fun/value_of.hpp>
 #include <cmath>
 
 namespace stan {
@@ -38,12 +37,10 @@ template <typename T_y, typename T_lower, typename T_upper>
 double discrete_range_lccdf(const T_y& y, const T_lower& lower,
                             const T_upper& upper) {
   static const char* function = "discrete_range_lccdf";
-
   if (size_zero(y, lower, upper)) {
-    return 0.0;
+    return 0;
   }
 
-  check_not_nan(function, "Random variable", y);
   check_consistent_sizes(function, "Lower bound parameter", lower,
                          "Upper bound parameter", upper);
   check_greater_or_equal(function, "Upper bound parameter", upper, lower);
@@ -51,28 +48,25 @@ double discrete_range_lccdf(const T_y& y, const T_lower& lower,
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_lower> lower_vec(lower);
   scalar_seq_view<T_upper> upper_vec(upper);
-  size_t size_y_lower = max_size(y, lower);
   size_t N = max_size(y, lower, upper);
 
   for (size_t n = 0; n < N; ++n) {
-    const double y_dbl = value_of(y_vec[n]);
-    if (y_dbl < value_of(lower_vec[n])) {
+    const int y_dbl = y_vec[n];
+    if (y_dbl < lower_vec[n]) {
       return 0;
     }
-    if (y_dbl > value_of(upper_vec[n])) {
+    if (y_dbl > upper_vec[n]) {
       return LOG_ZERO;
     }
   }
 
   double ccdf(0.0);
   for (size_t n = 0; n < N; n++) {
-    const double y_dbl = value_of(y_vec[n]);
-    const double lower_dbl = value_of(lower_vec[n]);
-    const double upper_dbl = value_of(upper_vec[n]);
-
+    const int y_dbl = y_vec[n];
+    const int lower_dbl = lower_vec[n];
+    const int upper_dbl = upper_vec[n];
     ccdf += log(upper_dbl - y_dbl) - log(upper_dbl - lower_dbl + 1);
   }
-
   return ccdf;
 }
 
