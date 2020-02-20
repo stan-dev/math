@@ -77,29 +77,9 @@ struct log_inv_logit_fun {
  * @param x container
  * @return elementwise log_inv_logit of members of container
  */
-template <typename T,
-          require_not_container_st<is_container, std::is_arithmetic, T>...>
+template <typename T>
 inline auto log_inv_logit(const T& x) {
   return apply_scalar_unary<log_inv_logit_fun, T>::apply(x);
-}
-
-/**
- * Version of log_inv_logit() that accepts Eigen Matrix/Array objects or
- * expressions. The input is cast to double (a no-op for objects already
- * of type double) as Eigen's log1p() does not take integer inputs.
- *
- * @tparam T Type of x
- * @param x Eigen Matrix/Array or expression
- * @return log(inv_logit()) of each variable in the container.
- */
-template <typename T,
-          require_container_st<is_container, std::is_arithmetic, T>...>
-inline auto log_inv_logit(const T& x) {
-  return apply_vector_unary<T>::apply(x, [&](const auto& v) {
-    const auto& v_array = v.derived().template cast<double>().array().eval();
-    return  (v_array < 0.0).select(v_array - v_array.exp().log1p(),
-                                   -(-v_array).exp().log1p());
-  });
 }
 
 }  // namespace math
