@@ -80,9 +80,25 @@ struct logit_fun {
  * @param x container
  * @return elementwise logit of container elements
  */
-template <typename T>
+template <typename T,
+          require_not_container_st<is_container, std::is_arithmetic, T>...>
 inline auto logit(const T& x) {
   return apply_scalar_unary<logit_fun, T>::apply(x);
+}
+
+/**
+ * Version of logit() that accepts Eigen Matrix/Array objects or expressions.
+ *
+ * @tparam T Type of x
+ * @param x Eigen Matrix/Array or expression
+ * @return the logit of each variable in the container.
+ */
+template <typename T,
+          require_container_st<is_container, std::is_arithmetic, T>...>
+inline auto logit(const T& x) {
+  return apply_vector_unary<T>::apply(x, [&](const auto& v) {
+    return (v.derived().array() / (1 - v.derived().array())).log();
+  });
 }
 
 }  // namespace math

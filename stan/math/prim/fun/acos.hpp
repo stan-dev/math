@@ -30,21 +30,25 @@ struct acos_fun {
  * @param x container
  * @return Arc cosine of each variable in the container, in radians.
  */
-template <typename T, typename = require_not_eigen_vt<std::is_arithmetic, T>>
+template <typename T,
+          require_not_container_st<is_container, std::is_arithmetic, T>...>
 inline auto acos(const T& x) {
   return apply_scalar_unary<acos_fun, T>::apply(x);
 }
 
 /**
- * Version of acos() that accepts Eigen Matrix or matrix expressions.
- * @tparam Derived derived type of x
- * @param x Matrix or matrix expression
+ * Version of acos() that accepts Eigen Matrix/Array objects or expressions.
+ *
+ * @tparam T Type of x
+ * @param x Eigen Matrix/Array or expression
  * @return Arc cosine of each variable in the container, in radians.
  */
-template <typename Derived,
-          typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto acos(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().acos().matrix().eval();
+template <typename T,
+          require_container_st<is_container, std::is_arithmetic, T>...>
+inline auto acos(const T& x) {
+  return apply_vector_unary<T>::apply(x, [&](const auto& v) {
+    return v.derived().array().acos();
+  });
 }
 
 }  // namespace math

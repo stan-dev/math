@@ -30,35 +30,26 @@ struct inv_fun {
  * @param x container
  * @return 1 divided by each value in x.
  */
-template <typename T, typename = require_not_eigen_vt<std::is_arithmetic, T>>
+template <typename T,
+          require_not_container_st<is_container, std::is_arithmetic, T>...>
 inline auto inv(const T& x) {
   return apply_scalar_unary<inv_fun, T>::apply(x);
 }
 
 /**
- * Version of inv() that accepts Eigen Matrix or matrix expressions.
+ * Version of inv() that accepts Eigen Matrix/Array objects or expressions.
  *
- * @tparam Derived derived type of x
+ * @tparam T Type of x
+ * @param x Eigen Matrix/Array or expression
  * @param x Matrix or matrix expression
  * @return 1 divided by each value in x.
  */
-template <typename Derived,
-          typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto inv(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().inverse().matrix().eval();
-}
-
-/**
- * Version of inv() that accepts Eigen Array or array expressions.
- *
- * @tparam Derived derived type of x
- * @param x Matrix or matrix expression
- * @return 1 divided by each value in x.
- */
-template <typename Derived,
-          typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto inv(const Eigen::ArrayBase<Derived>& x) {
-  return x.derived().inverse().eval();
+template <typename T,
+          require_container_st<is_container, std::is_arithmetic, T>...>
+inline auto inv(const T& x) {
+  return apply_vector_unary<T>::apply(x, [&](const auto& v) {
+    return v.derived().array().inverse();
+  });
 }
 
 }  // namespace math

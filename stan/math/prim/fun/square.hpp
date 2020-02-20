@@ -45,22 +45,25 @@ struct square_fun {
  * @param x container
  * @return Each value in x squared.
  */
-template <typename T>
+template <typename T,
+          require_not_container_st<is_container, std::is_arithmetic, T>...>
 inline auto square(const T& x) {
   return apply_scalar_unary<square_fun, T>::apply(x);
 }
 
 /**
- * Version of square() that accepts Eigen Matrix or matrix expressions.
+ * Version of square() that accepts Eigen Matrix/Array objects or expressions.
  *
- * @tparam Derived derived type of x
- * @param x Matrix or matrix expression
+ * @tparam T Type of x
+ * @param x Eigen Matrix/Array or expression
  * @return Each value in x squared.
  */
-template <typename Derived,
-          typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto square(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().square().matrix();
+template <typename T,
+          require_container_st<is_container, std::is_arithmetic, T>...>
+inline auto square(const T& x) {
+  return apply_vector_unary<T>::apply(x, [&](const auto& v) {
+    return v.derived().array().square();
+  });
 }
 
 }  // namespace math

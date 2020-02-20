@@ -7,7 +7,6 @@
 
 namespace stan {
 namespace math {
-
 /**
  * Return the natural exponential of the specified argument.  This
  * version is required to disambiguate <code>exp(int)</code>.
@@ -45,21 +44,25 @@ struct exp_fun {
  * @param[in] x container
  * @return Elementwise application of exponentiation to the argument.
  */
-template <typename T, typename = require_not_eigen_vt<std::is_arithmetic, T>>
+template <typename T,
+          require_not_container_st<is_container, std::is_arithmetic, T>...>
 inline auto exp(const T& x) {
   return apply_scalar_unary<exp_fun, T>::apply(x);
 }
 
 /**
- * Version of exp() that accepts Eigen Matrix or matrix expressions.
- * @tparam Derived derived type of x
- * @param x Matrix or matrix expression
+ * Version of exp() that accepts Eigen Matrix/Array objects or expressions.
+ *
+ * @tparam T Type of x
+ * @param x Eigen Matrix/Array or expression
  * @return Elementwise application of exponentiation to the argument.
  */
-template <typename Derived,
-          typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto exp(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().exp().matrix().eval();
+template <typename T,
+          require_container_st<is_container, std::is_arithmetic, T>...>
+inline auto exp(const T& x) {
+  return apply_vector_unary<T>::apply(x, [&](const auto& v) {
+    return v.derived().array().exp();
+  });
 }
 
 }  // namespace math

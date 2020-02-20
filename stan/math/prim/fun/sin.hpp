@@ -30,22 +30,25 @@ struct sin_fun {
  * @param x angles in radians
  * @return Sine of each value in x.
  */
-template <typename T, typename = require_not_eigen_vt<std::is_arithmetic, T>>
+template <typename T,
+          require_not_container_st<is_container, std::is_arithmetic, T>...>
 inline auto sin(const T& x) {
   return apply_scalar_unary<sin_fun, T>::apply(x);
 }
 
 /**
- * Version of sin() that accepts Eigen Matrix or matrix expressions.
+ * Version of sin() that accepts Eigen Matrix/Array objects or expressions.
  *
- * @tparam Derived derived type of x
- * @param x Matrix or matrix expression
+ * @tparam T Type of x
+ * @param x Eigen Matrix/Array or expression
  * @return Sine of each value in x.
  */
-template <typename Derived,
-          typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto sin(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().sin().matrix().eval();
+template <typename T,
+          require_container_st<is_container, std::is_arithmetic, T>...>
+inline auto sin(const T& x) {
+  return apply_vector_unary<T>::apply(x, [&](const auto& v) {
+    return v.derived().array().sin();
+  });
 }
 
 }  // namespace math

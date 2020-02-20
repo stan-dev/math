@@ -30,22 +30,25 @@ struct log10_fun {
  * @param x container
  * @return Log base-10 applied to each value in x.
  */
-template <typename T, typename = require_not_eigen_vt<std::is_arithmetic, T>>
+template <typename T,
+          require_not_container_st<is_container, std::is_arithmetic, T>...>
 inline auto log10(const T& x) {
   return apply_scalar_unary<log10_fun, T>::apply(x);
 }
 
 /**
- * Version of log10() that accepts Eigen Matrix or matrix expressions.
+ * Version of log10() that accepts Eigen Matrix/Array objects or expressions.
  *
- * @tparam Derived derived type of x
- * @param x Matrix or matrix expression
- * @return Arc cosine of each variable in the container, in radians.
+ * @tparam T Type of x
+ * @param x Eigen Matrix/Array or expression
+ * @return Log base-10 of each variable in the container.
  */
-template <typename Derived,
-          typename = require_eigen_vt<std::is_arithmetic, Derived>>
-inline auto log10(const Eigen::MatrixBase<Derived>& x) {
-  return x.derived().array().log10().matrix().eval();
+template <typename T,
+          require_container_st<is_container, std::is_arithmetic, T>...>
+inline auto log10(const T& x) {
+  return apply_vector_unary<T>::apply(x, [&](const auto& v) {
+    return v.derived().array().log10();
+  });
 }
 
 }  // namespace math

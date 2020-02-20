@@ -840,6 +840,11 @@ template <template <class...> class ContainerCheck,
 using require_container_st = require_t<
     container_scalar_type_check_base<ContainerCheck, TypeCheck, Check...>>;
 
+template <template <class...> class ContainerCheck,
+          template <class...> class TypeCheck, class... Check>
+using require_not_container_st = require_not_t<
+    container_scalar_type_check_base<ContainerCheck, TypeCheck, Check...>>;
+
 template <template <class...> class TypeCheck, class... Check>
 using require_std_vector_st
     = require_t<is_std_vector_scalar_check<TypeCheck, Check...>>;
