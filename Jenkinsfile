@@ -162,20 +162,33 @@ pipeline {
             }
         }
         stage('Verify changes') {
-            agent any
-            steps{
+            agent { label 'linux' }
+            steps {
                 script {         
 
                     retry(3) { checkout scm }
-                    sh "git clean -xffd"
+                    sh 'git clean -xffd'
 
                     def commitHash = sh(script: "git rev-parse HEAD | tr '\\n' ' '", returnStdout: true)
-                    sh(script: "git pull && git checkout ${CHANGE_TARGET}", returnStdout: false)
+                    def changeTarget = ""
+
+                    if (env.CHANGE_TARGET) {
+                        println "This build is a PR, checking out target branch to compare changes."
+                        changeTarget = env.CHANGE_TARGET
+                        sh(script: "git pull && git checkout ${changeTarget}", returnStdout: false)
+                    }
+                    else{
+                        println "This build is not PR, checking out current branch and extract HEAD^1 commit to compare changes."
+                        sh(script: "git pull && git checkout ${env.BRANCH_NAME}", returnStdout: false)
+                        changeTarget = sh(script: "git rev-parse HEAD^1 | tr '\\n' ' '", returnStdout: true)
+                    }
+
+                    println "Comparing differences between current ${commitHash} and target ${changeTarget}"
 
                     def bashScript = """
-                        for i in ${scPaths};
+                        for i in ${env.scPaths};
                         do
-                            git diff ${commitHash} ${CHANGE_TARGET} -- \$i
+                            git diff ${commitHash} ${changeTarget} -- \$i
                         done
                     """
 
@@ -191,11 +204,6 @@ pipeline {
                         println "There aren't any differences in the source code, CI/CD will not run."
                         skipRemainingStages = true
                     }
-                }
-            }
-            post {
-                always {
-                    deleteDir()
                 }
             }
         }
