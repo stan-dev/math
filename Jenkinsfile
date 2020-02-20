@@ -351,7 +351,17 @@ pipeline {
             }
         }
         stage('Additional merge tests') {
-            when { anyOf { branch 'develop'; branch 'master' } }
+            when { 
+                allOf {
+                    anyOf {
+                        branch 'develop'
+                        branch 'master'
+                    }
+                    expression {
+                        !skipRemainingStages
+                    }
+                }
+            }
             parallel {
                 stage('Linux Unit with Threading') {
                     agent { label 'linux' }
