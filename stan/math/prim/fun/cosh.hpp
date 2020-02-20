@@ -46,9 +46,8 @@ inline auto cosh(const T& x) {
 template <typename T,
           require_container_st<is_container, std::is_arithmetic, T>...>
 inline auto cosh(const T& x) {
-  return apply_vector_unary<T>::apply(x, [&](const auto& v) {
-    return v.derived().array().cosh();
-  });
+  return apply_vector_unary<T>::apply(
+      x, [&](const auto& v) { return v.derived().array().cosh(); });
 }
 }  // namespace math
 }  // namespace stan

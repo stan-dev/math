@@ -97,8 +97,8 @@ struct apply_vector_unary<T, require_std_vector_vt<is_stan_scalar, T>> {
    */
   template <typename F>
   static inline auto apply(const T& x, const F& f) {
-    using T_return =
-      typename plain_type_t<decltype(f(as_column_vector_or_scalar(x)))>::Scalar;
+    using T_return = typename plain_type_t<decltype(
+        f(as_column_vector_or_scalar(x)))>::Scalar;
     std::vector<T_return> result(x.size());
     Eigen::Map<Eigen::Matrix<T_return, -1, 1>>(result.data(), result.size())
         = f(as_column_vector_or_scalar(x)).matrix();

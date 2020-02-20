@@ -46,9 +46,8 @@ inline auto asin(const T& x) {
 template <typename T,
           require_container_st<is_container, std::is_arithmetic, T>...>
 inline auto asin(const T& x) {
-  return apply_vector_unary<T>::apply(x, [&](const auto& v) {
-    return v.derived().array().asin();
-  });
+  return apply_vector_unary<T>::apply(
+      x, [&](const auto& v) { return v.derived().array().asin(); });
 }
 
 }  // namespace math

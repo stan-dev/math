@@ -25,7 +25,8 @@ inline auto inv_square(const T& x) {
 }
 
 /**
- * Version of inv_square() that accepts Eigen Matrix/Array objects or expressions.
+ * Version of inv_square() that accepts Eigen Matrix/Array objects or
+ * expressions.
  *
  * @tparam T Type of x
  * @param x Eigen Matrix/Array or expression
@@ -34,9 +35,8 @@ inline auto inv_square(const T& x) {
 template <typename T,
           require_container_st<is_container, std::is_arithmetic, T>...>
 inline auto inv_square(const T& x) {
-  return apply_vector_unary<T>::apply(x, [&](const auto& v) {
-    return v.derived().array().square().inverse();
-  });
+  return apply_vector_unary<T>::apply(
+      x, [&](const auto& v) { return v.derived().array().square().inverse(); });
 }
 
 }  // namespace math

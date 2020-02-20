@@ -52,9 +52,8 @@ inline auto inv_sqrt(const T& x) {
 template <typename T,
           require_container_st<is_container, std::is_arithmetic, T>...>
 inline auto inv_sqrt(const T& x) {
-  return apply_vector_unary<T>::apply(x, [&](const auto& v) {
-    return v.derived().array().rsqrt();
-  });
+  return apply_vector_unary<T>::apply(
+      x, [&](const auto& v) { return v.derived().array().rsqrt(); });
 }
 
 }  // namespace math
