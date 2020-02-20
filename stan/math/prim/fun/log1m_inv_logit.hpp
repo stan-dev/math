@@ -86,7 +86,9 @@ inline auto log1m_inv_logit(const T& x) {
 }
 
 /**
- * Version of log1m_inv_logit() that accepts Eigen Matrix/Array objects or expressions.
+ * Version of log1m_inv_logit() that accepts Eigen Matrix/Array objects
+ * or expressions. The input is cast to double (a no-op for objects already
+ * of type double) as Eigen's log1p() does not take integer inputs.
  *
  * @tparam T Type of x
  * @param x Eigen Matrix/Array or expression
