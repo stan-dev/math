@@ -172,10 +172,12 @@ class mdivide_left_vd_vari : public vari {
 };
 }  // namespace internal
 
-template <int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<var, R1, C2> mdivide_left(
-    const Eigen::Matrix<var, R1, C1> &A, const Eigen::Matrix<var, R2, C2> &b) {
-  Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
+template <typename T1, typename T2,
+          require_all_eigen_vt<is_var, T1, T2> * = nullptr>
+inline Eigen::Matrix<var, T1::RowsAtCompileTime, T2::ColsAtCompileTime>
+mdivide_left(const T1 &A, const T2 &b) {
+  Eigen::Matrix<var, T1::RowsAtCompileTime, T2::ColsAtCompileTime> res(
+      b.rows(), b.cols());
 
   check_square("mdivide_left", "A", A);
   check_multiplicable("mdivide_left", "A", A, "b", b);
@@ -184,19 +186,22 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left(
   // expression graph to evaluate the adjoint, but is not needed
   // for the returned matrix.  Memory will be cleaned up with the
   // arena allocator.
-  internal::mdivide_left_vv_vari<R1, C1, R2, C2> *baseVari
-      = new internal::mdivide_left_vv_vari<R1, C1, R2, C2>(A, b);
+  auto *baseVari = new internal::mdivide_left_vv_vari<
+      T1::RowsAtCompileTime, T1::ColsAtCompileTime, T2::RowsAtCompileTime,
+      T2::ColsAtCompileTime>(A, b);
 
   res.vi() = Eigen::Map<matrix_vi>(baseVari->variRefC_, res.rows(), res.cols());
 
   return res;
 }
 
-template <int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<var, R1, C2> mdivide_left(
-    const Eigen::Matrix<var, R1, C1> &A,
-    const Eigen::Matrix<double, R2, C2> &b) {
-  Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
+template <typename T1, typename T2, require_eigen_vt<is_var, T1> * = nullptr,
+          require_eigen_t<T2> * = nullptr,
+          require_same_vt<double, T2> * = nullptr>
+inline Eigen::Matrix<var, T1::RowsAtCompileTime, T2::ColsAtCompileTime>
+mdivide_left(const T1 &A, const T2 &b) {
+  Eigen::Matrix<var, T1::RowsAtCompileTime, T2::ColsAtCompileTime> res(
+      b.rows(), b.cols());
 
   check_square("mdivide_left", "A", A);
   check_multiplicable("mdivide_left", "A", A, "b", b);
@@ -205,19 +210,22 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left(
   // expression graph to evaluate the adjoint, but is not needed
   // for the returned matrix.  Memory will be cleaned up with the
   // arena allocator.
-  internal::mdivide_left_vd_vari<R1, C1, R2, C2> *baseVari
-      = new internal::mdivide_left_vd_vari<R1, C1, R2, C2>(A, b);
+  auto *baseVari = new internal::mdivide_left_vd_vari<
+      T1::RowsAtCompileTime, T1::ColsAtCompileTime, T2::RowsAtCompileTime,
+      T2::ColsAtCompileTime>(A, b);
 
   res.vi() = Eigen::Map<matrix_vi>(baseVari->variRefC_, res.rows(), res.cols());
 
   return res;
 }
 
-template <int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<var, R1, C2> mdivide_left(
-    const Eigen::Matrix<double, R1, C1> &A,
-    const Eigen::Matrix<var, R2, C2> &b) {
-  Eigen::Matrix<var, R1, C2> res(b.rows(), b.cols());
+template <typename T1, typename T2, require_eigen_t<T1> * = nullptr,
+          require_same_vt<double, T1> * = nullptr,
+          require_eigen_vt<is_var, T2> * = nullptr>
+inline Eigen::Matrix<var, T1::RowsAtCompileTime, T2::ColsAtCompileTime>
+mdivide_left(const T1 &A, const T2 &b) {
+  Eigen::Matrix<var, T1::RowsAtCompileTime, T2::ColsAtCompileTime> res(
+      b.rows(), b.cols());
 
   check_square("mdivide_left", "A", A);
   check_multiplicable("mdivide_left", "A", A, "b", b);
@@ -226,8 +234,9 @@ inline Eigen::Matrix<var, R1, C2> mdivide_left(
   // expression graph to evaluate the adjoint, but is not needed
   // for the returned matrix.  Memory will be cleaned up with the
   // arena allocator.
-  internal::mdivide_left_dv_vari<R1, C1, R2, C2> *baseVari
-      = new internal::mdivide_left_dv_vari<R1, C1, R2, C2>(A, b);
+  auto *baseVari = new internal::mdivide_left_dv_vari<
+      T1::RowsAtCompileTime, T1::ColsAtCompileTime, T2::RowsAtCompileTime,
+      T2::ColsAtCompileTime>(A, b);
 
   res.vi() = Eigen::Map<matrix_vi>(baseVari->variRefC_, res.rows(), res.cols());
 

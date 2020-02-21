@@ -23,13 +23,13 @@ namespace math {
  *   lower triangular or if any element in the upper triangular
  *   portion is NaN
  */
-template <typename T_y>
-inline void check_lower_triangular(
-    const char* function, const char* name,
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
+template <typename T_y, require_eigen_t<T_y>* = nullptr>
+inline void check_lower_triangular(const char* function, const char* name,
+                                   const T_y& y) {
+  const Eigen::Ref<const plain_type_t<T_y>>& y_ref = y;
   for (int n = 1; n < y.cols(); ++n) {
     for (int m = 0; m < n && m < y.rows(); ++m) {
-      if (y(m, n) != 0) {
+      if (y_ref(m, n) != 0) {
         std::stringstream msg;
         msg << "is not lower triangular;"
             << " " << name << "[" << stan::error_index::value + m << ","

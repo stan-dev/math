@@ -13,30 +13,29 @@ namespace math {
  * Return the result of stacking the rows of the first argument
  * matrix on top of the second argument matrix.
  *
- * The inputs can be
- * (matrix, matrix),
- * (matrix, row_vector),
- * (row_vector, matrix), or
- * (row_vector, row_vector),
- * and the output is always a matrix.
+ * Given input types result in following outputs:
+ * (matrix, matrix) -> matrix,
+ * (matrix, row_vector) -> matrix,
+ * (row_vector, matrix) -> matrix,
+ * (row_vector, row_vector) -> matrix,
+ * (vector, vector) -> vector.
  *
- * @tparam T1 type of elements in first matrix
- * @tparam T2 type of elements in second matrix
- * @tparam R1 number of rows in the first matrix, can be Eigen::Dynamic
- * @tparam C1 number of columns in the first matrix, can be Eigen::Dynamic
- * @tparam R2 number of rows in the second matrix, can be Eigen::Dynamic
- * @tparam C2 number of columns in the second matrix, can be Eigen::Dynamic
+ * @tparam T1 type of the first matrix
+ * @tparam T2 type of the second matrix
  *
  * @param A First matrix.
  * @param B Second matrix.
  * @return Result of stacking first matrix on top of second.
  */
-template <typename T1, typename T2, int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<return_type_t<T1, T2>, Eigen::Dynamic, Eigen::Dynamic>
-append_row(const Eigen::Matrix<T1, R1, C1>& A,
-           const Eigen::Matrix<T2, R2, C2>& B) {
+template <typename T1, typename T2, require_all_eigen_t<T1, T2>* = nullptr>
+inline auto append_row(const T1& A, const T2& B) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using T_return = return_type_t<T1, T2>;
+  constexpr int col_type
+      = (T1::ColsAtCompileTime == 1 && T2::ColsAtCompileTime == 1)
+            ? 1
+            : Eigen::Dynamic;
 
   int Arows = A.rows();
   int Brows = B.rows();
@@ -44,114 +43,9 @@ append_row(const Eigen::Matrix<T1, R1, C1>& A,
   int Bcols = B.cols();
   check_size_match("append_row", "columns of A", Acols, "columns of B", Bcols);
 
-  Matrix<return_type_t<T1, T2>, Dynamic, Dynamic> result(Arows + Brows, Acols);
-  for (int j = 0; j < Acols; j++) {
-    for (int i = 0; i < Arows; i++) {
-      result(i, j) = A(i, j);
-    }
-    for (int i = Arows, k = 0; k < Brows; i++, k++) {
-      result(i, j) = B(k, j);
-    }
-  }
-  return result;
-}
-
-/**
- * Return the result of stacking the first vector on top of the
- * second vector, with the result being a vector.
- *
- * This function applies to (vector, vector) and returns a vector.
- *
- * @tparam T1 type of elements in first vector
- * @tparam T2 type of elements in second vector
- * @tparam R1 number of rows in the first vector, can be Eigen::Dynamic
- * @tparam R2 number of rows in the second vector, can be Eigen::Dynamic
- *
- * @param A First vector.
- * @param B Second vector.
- * @return Result of stacking first vector on top of the second
- * vector.
- */
-template <typename T1, typename T2, int R1, int R2>
-inline Eigen::Matrix<return_type_t<T1, T2>, Eigen::Dynamic, 1> append_row(
-    const Eigen::Matrix<T1, R1, 1>& A, const Eigen::Matrix<T2, R2, 1>& B) {
-  using Eigen::Dynamic;
-  using Eigen::Matrix;
-
-  int Asize = A.size();
-  int Bsize = B.size();
-  Matrix<return_type_t<T1, T2>, 1, Dynamic> result(Asize + Bsize);
-  for (int i = 0; i < Asize; i++) {
-    result(i) = A(i);
-  }
-  for (int i = 0, j = Asize; i < Bsize; i++, j++) {
-    result(j) = B(i);
-  }
-  return result;
-}
-
-/**
- * Return the result of stacking the rows of the first argument
- * matrix on top of the second argument matrix.  This is an
- * overload for the case when the scalar types of the two input
- * matrix are the same.
- *
- * The inputs can be
- * (matrix, matrix),
- * (matrix, row_vector),
- * (row_vector, matrix), or
- * (row_vector, row_vector),
- * and the output is always a matrix.
- *
- * @tparam T type of elements in both matrices
- * @tparam R1 number of rows in the first matrix, can be Eigen::Dynamic
- * @tparam C1 number of columns in the first matrix, can be Eigen::Dynamic
- * @tparam R2 number of rows in the second matrix, can be Eigen::Dynamic
- * @tparam C2 number of columns in the second matrix, can be Eigen::Dynamic
- *
- * @param A First matrix.
- * @param B Second matrix.
- * @return Result of stacking first matrix on top of second.
- */
-template <typename T, int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> append_row(
-    const Eigen::Matrix<T, R1, C1>& A, const Eigen::Matrix<T, R2, C2>& B) {
-  using Eigen::Dynamic;
-  using Eigen::Matrix;
-
-  check_size_match("append_row", "columns of A", A.cols(), "columns of B",
-                   B.cols());
-
-  Matrix<T, Dynamic, Dynamic> result(A.rows() + B.rows(), A.cols());
-  result << A, B;
-  return result;
-}
-
-/**
- * Return the result of stacking the first vector on top of the
- * second vector, with the result being a vector.  This is an
- * overloaded template function for the case where both inputs
- * have the same scalar type.
- *
- * This function applies to (vector, vector) and returns a vector.
- *
- * @tparam T type of elements in both vectors
- * @tparam R1 number of rows in the first vector, can be Eigen::Dynamic
- * @tparam R2 number of rows in the second vector, can be Eigen::Dynamic
- *
- * @param A First vector.
- * @param B Second vector.
- * @return Result of stacking first vector on top of the second
- * vector.
- */
-template <typename T, int R1, int R2>
-inline Eigen::Matrix<T, Eigen::Dynamic, 1> append_row(
-    const Eigen::Matrix<T, R1, 1>& A, const Eigen::Matrix<T, R2, 1>& B) {
-  using Eigen::Dynamic;
-  using Eigen::Matrix;
-
-  Matrix<T, Dynamic, 1> result(A.size() + B.size());
-  result << A, B;
+  Matrix<T_return, Dynamic, col_type> result(Arows + Brows, Acols);
+  result.topRows(Arows) = A.template cast<T_return>();
+  result.bottomRows(Brows) = B.template cast<T_return>();
   return result;
 }
 
@@ -161,21 +55,20 @@ inline Eigen::Matrix<T, Eigen::Dynamic, 1> append_row(
  *
  * This function applies to (scalar, vector) and returns a vector.
  *
- * @tparam T1 type of the scalar
- * @tparam T2 type of elements in the vector
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
+ * @tparam Scal type of the scalar
+ * @tparam ColVec type of the vector
  *
  * @param A scalar.
  * @param B vector.
  * @return Result of stacking the scalar on top of the vector.
  */
-template <typename T1, typename T2, int R, int C>
-inline Eigen::Matrix<return_type_t<T1, T2>, Eigen::Dynamic, 1> append_row(
-    const T1& A, const Eigen::Matrix<T2, R, C>& B) {
+template <typename Scal, typename ColVec, require_stan_scalar_t<Scal>* = nullptr,
+          require_t<is_eigen_col_vector<ColVec>>* = nullptr>
+inline Eigen::Matrix<return_type_t<Scal, ColVec>, Eigen::Dynamic, 1> append_row(
+    const Scal& A, const ColVec& B) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using return_type = return_type_t<T1, T2>;
+  using return_type = return_type_t<Scal, ColVec>;
 
   Matrix<return_type, Dynamic, 1> result(B.size() + 1);
   result << A, B.template cast<return_type>();
@@ -188,21 +81,21 @@ inline Eigen::Matrix<return_type_t<T1, T2>, Eigen::Dynamic, 1> append_row(
  *
  * This function applies to (vector, scalar) and returns a vector.
  *
- * @tparam T1 type of elements in the vector
- * @tparam T2 type of the scalar
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
+ * @tparam ColVec type of the vector
+ * @tparam Scal type of the scalar
  *
  * @param A vector.
  * @param B scalar.
  * @return Result of stacking the vector on top of the scalar.
  */
-template <typename T1, typename T2, int R, int C>
-inline Eigen::Matrix<return_type_t<T1, T2>, Eigen::Dynamic, 1> append_row(
-    const Eigen::Matrix<T1, R, C>& A, const T2& B) {
+template <typename ColVec, typename Scal,
+          require_t<is_eigen_col_vector<ColVec>>* = nullptr,
+          require_stan_scalar_t<Scal>* = nullptr>
+inline Eigen::Matrix<return_type_t<ColVec, Scal>, Eigen::Dynamic, 1> append_row(
+    const ColVec& A, const Scal& B) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using return_type = return_type_t<T1, T2>;
+  using return_type = return_type_t<ColVec, Scal>;
 
   Matrix<return_type, Dynamic, 1> result(A.size() + 1);
   result << A.template cast<return_type>(), B;

@@ -12,10 +12,18 @@
 namespace stan {
 namespace math {
 
-template <typename T, int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<fvar<T>, R1, C2> mdivide_left_tri_low(
-    const Eigen::Matrix<fvar<T>, R1, C1>& A,
-    const Eigen::Matrix<fvar<T>, R2, C2>& b) {
+template <typename T1, typename T2,
+          require_all_eigen_vt<is_fvar, T1, T2>* = nullptr,
+          require_same_vt<T1, T2>* = nullptr>
+inline Eigen::Matrix<value_type_t<T1>, T1::RowsAtCompileTime,
+                     T2::ColsAtCompileTime>
+mdivide_left_tri_low(const T1& A, const T2& b) {
+  using T = typename value_type_t<T1>::Scalar;
+  constexpr int R1 = T1::RowsAtCompileTime;
+  constexpr int C1 = T1::ColsAtCompileTime;
+  constexpr int R2 = T2::RowsAtCompileTime;
+  constexpr int C2 = T2::ColsAtCompileTime;
+
   check_square("mdivide_left_tri_low", "A", A);
   check_multiplicable("mdivide_left_tri_low", "A", A, "b", b);
 
@@ -29,17 +37,19 @@ inline Eigen::Matrix<fvar<T>, R1, C2> mdivide_left_tri_low(
   val_A.setZero();
   deriv_A.setZero();
 
+  const Eigen::Ref<const plain_type_t<T1>>& A_ref = A;
   for (size_type j = 0; j < A.cols(); j++) {
     for (size_type i = j; i < A.rows(); i++) {
-      val_A(i, j) = A(i, j).val_;
-      deriv_A(i, j) = A(i, j).d_;
+      val_A(i, j) = A_ref(i, j).val_;
+      deriv_A(i, j) = A_ref(i, j).d_;
     }
   }
 
+  const Eigen::Ref<const plain_type_t<T2>>& b_ref = b;
   for (size_type j = 0; j < b.cols(); j++) {
     for (size_type i = 0; i < b.rows(); i++) {
-      val_b(i, j) = b(i, j).val_;
-      deriv_b(i, j) = b(i, j).d_;
+      val_b(i, j) = b_ref(i, j).val_;
+      deriv_b(i, j) = b_ref(i, j).d_;
     }
   }
 
@@ -53,10 +63,18 @@ inline Eigen::Matrix<fvar<T>, R1, C2> mdivide_left_tri_low(
   return to_fvar(inv_A_mult_b, deriv);
 }
 
-template <typename T, int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<fvar<T>, R1, C2> mdivide_left_tri_low(
-    const Eigen::Matrix<double, R1, C1>& A,
-    const Eigen::Matrix<fvar<T>, R2, C2>& b) {
+template <typename T1, typename T2, require_eigen_t<T1>* = nullptr,
+          require_same_vt<double, T1>* = nullptr,
+          require_eigen_vt<is_fvar, T2>* = nullptr>
+inline Eigen::Matrix<value_type_t<T2>, T1::RowsAtCompileTime,
+                     T2::ColsAtCompileTime>
+mdivide_left_tri_low(const T1& A, const T2& b) {
+  using T = typename value_type_t<T2>::Scalar;
+  constexpr int R1 = T1::RowsAtCompileTime;
+  constexpr int C1 = T1::ColsAtCompileTime;
+  constexpr int R2 = T2::RowsAtCompileTime;
+  constexpr int C2 = T2::ColsAtCompileTime;
+
   check_square("mdivide_left_tri_low", "A", A);
   check_multiplicable("mdivide_left_tri_low", "A", A, "b", b);
 
@@ -67,16 +85,18 @@ inline Eigen::Matrix<fvar<T>, R1, C2> mdivide_left_tri_low(
   Eigen::Matrix<double, R1, C1> val_A(A.rows(), A.cols());
   val_A.setZero();
 
+  const Eigen::Ref<const plain_type_t<T1>>& A_ref = A;
   for (size_type j = 0; j < A.cols(); j++) {
     for (size_type i = j; i < A.rows(); i++) {
-      val_A(i, j) = A(i, j);
+      val_A(i, j) = A_ref(i, j);
     }
   }
 
+  const Eigen::Ref<const plain_type_t<T2>>& b_ref = b;
   for (size_type j = 0; j < b.cols(); j++) {
     for (size_type i = 0; i < b.rows(); i++) {
-      val_b(i, j) = b(i, j).val_;
-      deriv_b(i, j) = b(i, j).d_;
+      val_b(i, j) = b_ref(i, j).val_;
+      deriv_b(i, j) = b_ref(i, j).d_;
     }
   }
 
@@ -89,10 +109,18 @@ inline Eigen::Matrix<fvar<T>, R1, C2> mdivide_left_tri_low(
   return to_fvar(inv_A_mult_b, deriv);
 }
 
-template <typename T, int R1, int C1, int R2, int C2>
-inline Eigen::Matrix<fvar<T>, R1, C2> mdivide_left_tri_low(
-    const Eigen::Matrix<fvar<T>, R1, C1>& A,
-    const Eigen::Matrix<double, R2, C2>& b) {
+template <typename T1, typename T2, require_eigen_vt<is_fvar, T1>* = nullptr,
+          require_eigen_t<T2>* = nullptr,
+          require_same_vt<double, T2>* = nullptr>
+inline Eigen::Matrix<value_type_t<T1>, T1::RowsAtCompileTime,
+                     T2::ColsAtCompileTime>
+mdivide_left_tri_low(const T1& A, const T2& b) {
+  using T = typename value_type_t<T1>::Scalar;
+  constexpr int R1 = T1::RowsAtCompileTime;
+  constexpr int C1 = T1::ColsAtCompileTime;
+  constexpr int R2 = T2::RowsAtCompileTime;
+  constexpr int C2 = T2::ColsAtCompileTime;
+
   check_square("mdivide_left_tri_low", "A", A);
   check_multiplicable("mdivide_left_tri_low", "A", A, "b", b);
 
@@ -103,10 +131,11 @@ inline Eigen::Matrix<fvar<T>, R1, C2> mdivide_left_tri_low(
   val_A.setZero();
   deriv_A.setZero();
 
+  const Eigen::Ref<const plain_type_t<T1>>& A_ref = A;
   for (size_type j = 0; j < A.cols(); j++) {
     for (size_type i = j; i < A.rows(); i++) {
-      val_A(i, j) = A(i, j).val_;
-      deriv_A(i, j) = A(i, j).d_;
+      val_A(i, j) = A_ref(i, j).val_;
+      deriv_A(i, j) = A_ref(i, j).d_;
     }
   }
 

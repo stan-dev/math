@@ -175,3 +175,11 @@ TEST(MathMatrixPrimMat, append_col) {
   correct_type_row_vector(append_col(rv3, -4.31));
   correct_type_row_vector(append_col(5.23, rv3));
 }
+
+
+TEST(MathMatrixPrimMat, append_col_different_types) {
+  Eigen::MatrixXd m_d(3, 3);
+  Eigen::MatrixXi m_i(3, 3);
+
+  EXPECT_NO_THROW(stan::math::append_col(m_d, m_i));
+}

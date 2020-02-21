@@ -20,22 +20,22 @@ namespace math {
  * @throw std::domain_error If the input matrix is not square or
  *  lower triangular
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> chol2inv(
-    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& L) {
-  check_square("chol2inv", "L", L);
-  check_lower_triangular("chol2inv", "L", L);
+template <typename T, require_eigen_t<T>* = nullptr>
+plain_type_t<T> chol2inv(const T& L) {
+  const Eigen::Ref<const plain_type_t<T>>& L_ref = L;
+  check_square("chol2inv", "L", L_ref);
+  check_lower_triangular("chol2inv", "L", L_ref);
   int K = L.rows();
-  using matrix_t = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
+  using matrix_t = plain_type_t<T>;
   if (K == 0) {
-    return L;
+    return L_ref;
   }
   if (K == 1) {
     matrix_t X(1, 1);
-    X.coeffRef(0) = inv_square(L.coeff(0));
+    X.coeffRef(0) = inv_square(L_ref.coeff(0, 0));
     return X;
   }
-  matrix_t L_inv = mdivide_left_tri_low(L, matrix_t::Identity(K, K).eval());
+  matrix_t L_inv = mdivide_left_tri_low(L_ref, matrix_t::Identity(K, K).eval());
   matrix_t X(K, K);
   for (int k = 0; k < K; ++k) {
     X.coeffRef(k, k) = dot_self(L_inv.col(k).tail(K - k).eval());
