@@ -27,8 +27,7 @@ inline auto multiply_lower_tri_self_transpose(EigMat&& L) {
     result(0) = square(L(0));  // first elt, so don't need double idx
     return result;
   }
-  Eigen::Matrix<value_type_t<EigMat>, -1, -1> LLLT = L.template triangularView<Eigen::Lower>() * L.transpose();
-  return LLLT;
+  return (L.template triangularView<Eigen::Lower>() * L.transpose()).eval();
 }
 
 }  // namespace math

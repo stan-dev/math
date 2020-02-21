@@ -42,7 +42,7 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> corr_matrix_constrain(
   using size_type = index_type_t<Eigen::Matrix<T, Eigen::Dynamic, 1>>;
 
   size_type k_choose_2 = (k * (k - 1)) / 2;
-  check_size_match("cov_matrix_constrain", "x.size()", x.size(), "k_choose_2",
+  check_size_match("corr_matrix_constrain", "x.size()", x.size(), "k_choose_2",
                    k_choose_2);
   Eigen::Array<T, -1, 1> cpcs = corr_constrain(x.head(k_choose_2).array()).array();
   return read_corr_matrix(cpcs, k);
@@ -75,7 +75,7 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> corr_matrix_constrain(
   using Eigen::Array;
 
   size_type k_choose_2 = (k * (k - 1)) / 2;
-  check_size_match("cov_matrix_constrain", "x.size()", x.size(), "k_choose_2",
+  check_size_match("corr_matrix_constrain", "x.size()", x.size(), "k_choose_2",
                    k_choose_2);
   Eigen::Array<T, Eigen::Dynamic, 1> cpcs = corr_constrain(x.head(k_choose_2).array(), lp).array();
   return read_corr_matrix(cpcs, k, lp);

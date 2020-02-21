@@ -24,28 +24,23 @@ namespace math {
  * covariance matrix.
  * @throws std::invalid_argument if (x.size() != K + (K choose 2)).
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cov_matrix_constrain(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
-    typename math::index_type<Eigen::Matrix<T, Eigen::Dynamic, 1>>::type K) {
+ template <typename EigMat, typename Index, typename = require_eigen_t<EigMat>>
+auto cov_matrix_constrain(EigMat&& x, Index K) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::exp;
-  using index_t = index_type_t<Matrix<T, Dynamic, Dynamic>>;
-
-  Matrix<T, Dynamic, Dynamic> L(K, K);
+  using eigen_scalar = value_type_t<EigMat>;
   check_size_match("cov_matrix_constrain", "x.size()", x.size(),
                    "K + (K choose 2)", (K * (K + 1)) / 2);
-  int i = 0;
-  for (index_t m = 0; m < K; ++m) {
-    for (int n = 0; n < m; ++n) {
-      L(m, n) = x(i++);
-    }
-    L(m, m) = exp(x(i++));
-    for (index_t n = m + 1; n < K; ++n) {
-      L(m, n) = 0.0;
-    }
+  Eigen::Matrix<eigen_scalar, Dynamic, Dynamic> L(K, K);
+  int kk = 0;
+  // NOTE: Why does x come in row major order?
+  for (Index jj = 0; jj < K; jj++) {
+    L.row(jj).segment(0, jj + 1) = x.segment(jj + kk, jj + 1);
+    kk += jj;
   }
+  L.diagonal().array() = L.diagonal().array().exp();
+  L.template triangularView<Eigen::StrictlyUpper>().setZero();
   return multiply_lower_tri_self_transpose(L);
 }
 
@@ -62,35 +57,27 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cov_matrix_constrain(
  * @param lp Reference
  * @throws std::domain_error if (x.size() != K + (K choose 2)).
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cov_matrix_constrain(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
-    typename math::index_type<
-        Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>>::type K,
-    T& lp) {
+template <typename EigMat, typename Index, typename T, typename = require_eigen_t<EigMat>>
+auto cov_matrix_constrain(EigMat&& x, Index K, T& lp) {
+// TODO(Restrict these?)
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::exp;
   using std::log;
-  using index_t = index_type_t<Matrix<T, Dynamic, Dynamic>>;
+  using eigen_scalar = value_type_t<EigMat>;
   check_size_match("cov_matrix_constrain", "x.size()", x.size(),
                    "K + (K choose 2)", (K * (K + 1)) / 2);
-  Matrix<T, Dynamic, Dynamic> L(K, K);
-  int i = 0;
-  for (index_t m = 0; m < K; ++m) {
-    for (index_t n = 0; n < m; ++n) {
-      L(m, n) = x(i++);
-    }
-    L(m, m) = exp(x(i++));
-    for (index_t n = m + 1; n < K; ++n) {
-      L(m, n) = 0.0;
-    }
+  Eigen::Matrix<eigen_scalar, Dynamic, Dynamic> L(K, K);
+  int kk = 0;
+  for (Index jj = 0; jj < K; jj++) {
+    L.row(jj).segment(0, jj + 1) = x.segment(jj + kk, jj + 1);
+    kk += jj;
   }
+  L.diagonal().array() = L.diagonal().array().exp();
+  L.template triangularView<Eigen::StrictlyUpper>().setZero();
   // Jacobian for complete transform, including exp() above
   lp += (K * LOG_TWO);  // needless constant; want propto
-  for (index_t k = 0; k < K; ++k) {
-    lp += (K - k + 1) * log(L(k, k));  // only +1 because index from 0
-  }
+  lp += ((K - Eigen::ArrayXd::LinSpaced(K, 1, K)) * log(L.diagonal()).array()).sum();  // only +1 because index from 0
   return multiply_lower_tri_self_transpose(L);
 }
 

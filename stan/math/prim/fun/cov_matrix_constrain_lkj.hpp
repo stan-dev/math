@@ -28,19 +28,12 @@ namespace math {
  * @return Covariance matrix derived from the unconstrained partial
  * correlations and deviations.
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cov_matrix_constrain_lkj(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& x, size_t k) {
-  size_t k_choose_2 = (k * (k - 1)) / 2;
-  Eigen::Array<T, Eigen::Dynamic, 1> cpcs(k_choose_2);
-  int pos = 0;
-  for (size_t i = 0; i < k_choose_2; ++i) {
-    cpcs[i] = corr_constrain(x(pos++));
-  }
-  Eigen::Array<T, Eigen::Dynamic, 1> sds(k);
-  for (size_t i = 0; i < k; ++i) {
-    sds[i] = positive_constrain(x(pos++));
-  }
+template <typename EigMat, typename = require_eigen_t<EigMat>>
+auto cov_matrix_constrain_lkj(EigMat&& x, size_t k) {
+      using eigen_scalar = value_type_t<EigMat>;
+      size_t k_choose_2 = (k * (k - 1)) / 2;
+      Eigen::Array<eigen_scalar, Eigen::Dynamic, 1> cpcs = corr_constrain(x.head(k_choose_2).array());
+      Eigen::Array<eigen_scalar, Eigen::Dynamic, 1> sds = positive_constrain(x.segment(k_choose_2, k).array());
   return read_cov_matrix(cpcs, sds);
 }
 
@@ -68,19 +61,12 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cov_matrix_constrain_lkj(
  * @return Covariance matrix derived from the unconstrained partial
  * correlations and deviations.
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cov_matrix_constrain_lkj(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& x, size_t k, T& lp) {
+template <typename EigMat, typename T, typename = require_eigen_t<EigMat>>
+auto cov_matrix_constrain_lkj(EigMat&& x, size_t k, T& lp) {
+  using eigen_scalar = value_type_t<EigMat>;
   size_t k_choose_2 = (k * (k - 1)) / 2;
-  Eigen::Array<T, Eigen::Dynamic, 1> cpcs(k_choose_2);
-  int pos = 0;
-  for (size_t i = 0; i < k_choose_2; ++i) {
-    cpcs[i] = corr_constrain(x(pos++), lp);
-  }
-  Eigen::Array<T, Eigen::Dynamic, 1> sds(k);
-  for (size_t i = 0; i < k; ++i) {
-    sds[i] = positive_constrain(x(pos++), lp);
-  }
+  Eigen::Array<eigen_scalar, Eigen::Dynamic, 1> cpcs = corr_constrain(x.head(k_choose_2).array(), lp);
+  Eigen::Array<eigen_scalar, Eigen::Dynamic, 1> sds = positive_constrain(x.segment(k_choose_2, k).array(), lp);
   return read_cov_matrix(cpcs, sds, lp);
 }
 
