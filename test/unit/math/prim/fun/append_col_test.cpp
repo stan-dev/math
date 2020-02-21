@@ -176,7 +176,6 @@ TEST(MathMatrixPrimMat, append_col) {
   correct_type_row_vector(append_col(5.23, rv3));
 }
 
-
 TEST(MathMatrixPrimMat, append_col_different_types) {
   Eigen::MatrixXd m_d(3, 3);
   Eigen::MatrixXi m_i(3, 3);

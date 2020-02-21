@@ -325,7 +325,7 @@ mdivide_left_tri(const T1 &A, const T2 &b) {
   // expression graph to evaluate the adjoint, but is not needed
   // for the returned matrix.  Memory will be cleaned up with the
   // arena allocator.
-  auto* baseVari = new internal::mdivide_left_tri_vv_vari<
+  auto *baseVari = new internal::mdivide_left_tri_vv_vari<
       TriView, T1::RowsAtCompileTime, T1::ColsAtCompileTime,
       T2::RowsAtCompileTime, T2::ColsAtCompileTime>(A, b);
 
@@ -350,7 +350,7 @@ mdivide_left_tri(const T1 &A, const T2 &b) {
   // expression graph to evaluate the adjoint, but is not needed
   // for the returned matrix.  Memory will be cleaned up with the
   // arena allocator.
-  auto* baseVari = new internal::mdivide_left_tri_dv_vari<
+  auto *baseVari = new internal::mdivide_left_tri_dv_vari<
       TriView, T1::RowsAtCompileTime, T1::ColsAtCompileTime,
       T2::RowsAtCompileTime, T2::ColsAtCompileTime>(A, b);
 
@@ -375,7 +375,7 @@ mdivide_left_tri(const T1 &A, const T2 &b) {
   // expression graph to evaluate the adjoint, but is not needed
   // for the returned matrix.  Memory will be cleaned up with the
   // arena allocator.
-  auto* baseVari = new internal::mdivide_left_tri_vd_vari<
+  auto *baseVari = new internal::mdivide_left_tri_vd_vari<
       TriView, T1::RowsAtCompileTime, T1::ColsAtCompileTime,
       T2::RowsAtCompileTime, T2::ColsAtCompileTime>(A, b);
 

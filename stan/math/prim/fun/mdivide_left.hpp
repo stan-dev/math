@@ -20,7 +20,8 @@ namespace math {
  * @throws std::domain_error if A is not square or the rows of b don't
  * match the size of A.
  */
-template <typename T1, typename T2, require_all_eigen_vt<std::is_arithmetic, T1, T2>* = nullptr>
+template <typename T1, typename T2,
+          require_all_eigen_vt<std::is_arithmetic, T1, T2>* = nullptr>
 inline Eigen::Matrix<return_type_t<T1, T2>, T1::RowsAtCompileTime,
                      T2::ColsAtCompileTime>
 mdivide_left(const T1& A, const T2& b) {

@@ -28,7 +28,7 @@ namespace math {
 template <Eigen::UpLoType TriView, typename T1, typename T2,
           require_all_eigen_t<T1, T2> * = nullptr,
           require_any_not_same_vt<double, T1, T2> * = nullptr,
-          require_all_not_eigen_vt<is_var, T1, T2>* = nullptr>
+          require_all_not_eigen_vt<is_var, T1, T2> * = nullptr>
 inline Eigen::Matrix<return_type_t<T1, T2>, T1::RowsAtCompileTime,
                      T2::ColsAtCompileTime>
 mdivide_left_tri(const T1 &A, const T2 &b) {

@@ -41,7 +41,8 @@ inline void print_mat_size(std::ostream& o) {
  * @param x Left-hand side.
  * @param y Right-hand side.
  */
-template <typename T_lhs, typename T_rhs, require_all_stan_scalar_t<T_lhs, T_rhs>* = nullptr>
+template <typename T_lhs, typename T_rhs,
+          require_all_stan_scalar_t<T_lhs, T_rhs>* = nullptr>
 inline void assign(T_lhs& x, const T_rhs& y) {
   x = y;
 }
@@ -61,7 +62,8 @@ inline void assign(T_lhs& x, const T_rhs& y) {
  * @param y Right-hand side matrix.
  * @throw std::invalid_argument if sizes do not match.
  */
-template <typename T_lhs, typename T_rhs, require_all_eigen_t<T_lhs, T_rhs>* = nullptr>
+template <typename T_lhs, typename T_rhs,
+          require_all_eigen_t<T_lhs, T_rhs>* = nullptr>
 inline void assign(T_lhs&& x, const T_rhs& y) {
   check_matching_dims("assign", "left-hand-side", x, "right-hand-side", y);
   x = y.template cast<value_type_t<T_lhs>>();

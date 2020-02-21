@@ -65,7 +65,8 @@ inline auto append_col(const T1& A, const T2& B) {
  * @param B row vector.
  * @return Result of stacking the scalar on top of the row vector.
  */
-template <typename Scal, typename RowVec, require_stan_scalar_t<Scal>* = nullptr,
+template <typename Scal, typename RowVec,
+          require_stan_scalar_t<Scal>* = nullptr,
           require_t<is_eigen_row_vector<RowVec>>* = nullptr>
 inline Eigen::Matrix<return_type_t<Scal, RowVec>, 1, Eigen::Dynamic> append_col(
     const Scal& A, const RowVec& B) {
