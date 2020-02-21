@@ -8,6 +8,7 @@ TEST(MathMixMatFun, quadForm) {
   };
 
   Eigen::MatrixXd a00;
+  Eigen::MatrixXd a02(0, 2);
   Eigen::MatrixXd a11(1, 1);
   a11 << 1;
   Eigen::MatrixXd b11(1, 1);
@@ -36,6 +37,9 @@ TEST(MathMixMatFun, quadForm) {
   tols.hessian_fvar_hessian_ = 2e-1;
 
   stan::test::expect_ad(f, a00, a00);
+  stan::test::expect_ad(f, a00, a02);
+  stan::test::expect_ad(f, a02, a22);
+
   stan::test::expect_ad(f, a11, b11);
   stan::test::expect_ad(tols, f, a22, b22);
   stan::test::expect_ad(f, a22, b23);

@@ -16,8 +16,7 @@ template <typename Mat1, typename Mat2,
           require_same_vt<Mat1, Mat2>* = nullptr,
           require_not_eigen_row_and_col_t<Mat1, Mat2>* = nullptr>
 inline auto multiply(const Mat1& m1, const Mat2& m2) {
-  check_size_match("multiply", "Columns of m1", m1.cols(), "Rows of m2",
-                   m2.rows());
+  check_multiplicable("multiply", "m1", m1, "m2", m2);
   return m1 * m2;
 }
 
@@ -26,8 +25,7 @@ template <typename Mat1, typename Mat2,
           require_eigen_vt<std::is_floating_point, Mat2>* = nullptr,
           require_not_eigen_row_and_col_t<Mat1, Mat2>* = nullptr>
 inline auto multiply(const Mat1& m1, const Mat2& m2) {
-  check_size_match("multiply", "Columns of m1", m1.cols(), "Rows of m2",
-                   m2.rows());
+  check_multiplicable("multiply", "m1", m1, "m2", m2);
   Eigen::Matrix<value_type_t<Mat1>, Mat1::RowsAtCompileTime,
                 Mat2::ColsAtCompileTime>
       result(m1.rows(), m2.cols());
@@ -46,8 +44,7 @@ template <typename Mat1, typename Mat2,
           require_eigen_vt<is_fvar, Mat2>* = nullptr,
           require_not_eigen_row_and_col_t<Mat1, Mat2>* = nullptr>
 inline auto multiply(const Mat1& m1, const Mat2& m2) {
-  check_size_match("multiply", "Columns of m1", m1.cols(), "Rows of m2",
-                   m2.rows());
+  check_multiplicable("multiply", "m1", m1, "m2", m2);
   Eigen::Matrix<value_type_t<Mat2>, Mat1::RowsAtCompileTime,
                 Mat2::ColsAtCompileTime>
       result(m1.rows(), m2.cols());
