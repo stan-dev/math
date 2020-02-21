@@ -25,3 +25,13 @@ TEST(ProbDiscreteRange, lcdf_boundaries) {
   EXPECT_FLOAT_EQ(std::log(1.0 / 5), discrete_range_lcdf(lower, lower, upper));
   EXPECT_FLOAT_EQ(0, discrete_range_lcdf(upper, lower, upper));
 }
+
+TEST(ProbDiscreteRange, lcdf_out_of_support) {
+  using stan::math::discrete_range_lcdf;
+  int lower = 1;
+  int upper = 5;
+
+  EXPECT_FLOAT_EQ(stan::math::LOG_ZERO,
+                  discrete_range_lcdf(lower - 1, lower, upper));
+  EXPECT_FLOAT_EQ(0.0, discrete_range_lcdf(upper + 1, lower, upper));
+}
