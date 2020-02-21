@@ -92,8 +92,8 @@ template <typename Mat1, typename Mat2,
           require_not_eigen_row_and_col_t<Mat1, Mat2>* = nullptr>
 inline auto multiply(const Mat1& m1, const Mat2& m2)
     -> decltype((m1 * m2).eval()) {
-  check_size_match("multiply", "Columns of m1", m1.cols(), "Rows of m2",
-                   m2.rows());
+  check_multiplicable("multiply", "m1", m1, "m2", m2);
+
 #ifdef STAN_OPENCL
   if (m1.rows() * m1.cols() * m2.cols()
       > opencl_context.tuning_opts().multiply_dim_prod_worth_transfer) {
@@ -128,7 +128,7 @@ template <typename RowVec, typename ColVec,
                                 scalar_type_t<ColVec>>* = nullptr,
           require_eigen_row_and_col_t<RowVec, ColVec>* = nullptr>
 inline auto multiply(const RowVec& rv, const ColVec& v) {
-  check_matching_sizes("multiply", "rv", rv, "v", v);
+  check_multiplicable("multiply", "rv", rv, "v", v);
   return dot_product(rv, v);
 }
 

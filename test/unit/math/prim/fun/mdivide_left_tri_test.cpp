@@ -26,6 +26,37 @@ TEST(MathMatrixPrim, mdivide_left_tri_val) {
   expect_matrix_eq(I, mdivide_left_tri<Eigen::Upper>(Ad, Ad));
 }
 
+TEST(MathMatrixPrim, mdivide_left_tri_size_zero) {
+  using stan::math::mdivide_left_tri;
+  stan::math::matrix_d Ad(0, 0);
+  stan::math::matrix_d b0(0, 2);
+  stan::math::matrix_d I;
+
+  I = mdivide_left_tri<Eigen::Lower>(Ad, Ad);
+  EXPECT_EQ(0, I.rows());
+  EXPECT_EQ(0, I.cols());
+
+  I = mdivide_left_tri<Eigen::Upper>(Ad, Ad);
+  EXPECT_EQ(0, I.rows());
+  EXPECT_EQ(0, I.cols());
+
+  I = mdivide_left_tri<Eigen::Lower>(Ad);
+  EXPECT_EQ(0, I.rows());
+  EXPECT_EQ(0, I.cols());
+
+  I = mdivide_left_tri<Eigen::Upper>(Ad);
+  EXPECT_EQ(0, I.rows());
+  EXPECT_EQ(0, I.cols());
+
+  I = mdivide_left_tri<Eigen::Lower>(Ad, b0);
+  EXPECT_EQ(0, I.rows());
+  EXPECT_EQ(b0.cols(), I.cols());
+
+  I = mdivide_left_tri<Eigen::Upper>(Ad, b0);
+  EXPECT_EQ(0, I.rows());
+  EXPECT_EQ(b0.cols(), I.cols());
+}
+
 #ifdef STAN_OPENCL
 void mdivide_left_tri_lower_cl_test(int size) {
   boost::random::mt19937 rng;

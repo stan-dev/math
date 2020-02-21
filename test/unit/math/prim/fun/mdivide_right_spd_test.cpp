@@ -18,14 +18,18 @@ TEST(MathMatrixPrim, mdivide_right_spd_val) {
 
 TEST(MathMatrixPrim, mdivide_right_spd_size_zero) {
   using stan::math::mdivide_right_spd;
-  stan::math::matrix_d m1, m2;
+  stan::math::matrix_d m1, m2, res;
 
   m1.resize(0, 2);
   m2.resize(2, 2);
   m2 << 7, 2, 2, 4;
-  EXPECT_THROW(mdivide_right_spd(m1, m2), std::invalid_argument);
+  res = mdivide_right_spd(m1, m2);
+  EXPECT_EQ(m1.rows(), res.rows());
+  EXPECT_EQ(m2.cols(), res.cols());
 
   m1.resize(2, 0);
   m2.resize(0, 0);
-  EXPECT_THROW(mdivide_right_spd(m1, m2), std::invalid_argument);
+  res = mdivide_right_spd(m1, m2);
+  EXPECT_EQ(m1.rows(), res.rows());
+  EXPECT_EQ(m2.cols(), res.cols());
 }
