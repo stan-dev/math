@@ -25,9 +25,10 @@ template <typename EigArr, typename = require_t<is_eigen_array<EigArr>>>
 auto read_corr_matrix(EigArr&& CPCs, size_t K) {
   using eigen_scalar = value_type_t<EigArr>;
   if (K == 0) {
-    return Eigen::Matrix<eigen_scalar, -1 , -1>::Identity(0, 0).eval();
+    return Eigen::Matrix<eigen_scalar, -1, -1>::Identity(0, 0).eval();
   }
-  return multiply_lower_tri_self_transpose(read_corr_L(std::forward<EigArr>(CPCs), K));
+  return multiply_lower_tri_self_transpose(
+      read_corr_L(std::forward<EigArr>(CPCs), K));
 }
 
 /**
@@ -52,9 +53,10 @@ template <typename EigArr, typename = require_t<is_eigen_array<EigArr>>>
 auto read_corr_matrix(EigArr&& CPCs, size_t K, value_type_t<EigArr> log_prob) {
   using eigen_scalar = value_type_t<EigArr>;
   if (K == 0) {
-    return Eigen::Matrix<eigen_scalar, -1 , -1>::Identity(0, 0).eval();
+    return Eigen::Matrix<eigen_scalar, -1, -1>::Identity(0, 0).eval();
   }
-  return multiply_lower_tri_self_transpose(read_corr_L(std::forward<EigArr>(CPCs), K, log_prob));
+  return multiply_lower_tri_self_transpose(
+      read_corr_L(std::forward<EigArr>(CPCs), K, log_prob));
 }
 
 }  // namespace math

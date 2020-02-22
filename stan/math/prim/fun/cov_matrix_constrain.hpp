@@ -24,7 +24,7 @@ namespace math {
  * covariance matrix.
  * @throws std::invalid_argument if (x.size() != K + (K choose 2)).
  */
- template <typename EigMat, typename Index, typename = require_eigen_t<EigMat>>
+template <typename EigMat, typename Index, typename = require_eigen_t<EigMat>>
 auto cov_matrix_constrain(EigMat&& x, Index K) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -57,9 +57,10 @@ auto cov_matrix_constrain(EigMat&& x, Index K) {
  * @param lp Reference
  * @throws std::domain_error if (x.size() != K + (K choose 2)).
  */
-template <typename EigMat, typename Index, typename T, typename = require_eigen_t<EigMat>>
+template <typename EigMat, typename Index, typename T,
+          typename = require_eigen_t<EigMat>>
 auto cov_matrix_constrain(EigMat&& x, Index K, T& lp) {
-// TODO(Restrict these?)
+  // TODO(Restrict these?)
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::exp;
@@ -77,7 +78,8 @@ auto cov_matrix_constrain(EigMat&& x, Index K, T& lp) {
   L.template triangularView<Eigen::StrictlyUpper>().setZero();
   // Jacobian for complete transform, including exp() above
   lp += (K * LOG_TWO);  // needless constant; want propto
-  lp += ((K - Eigen::ArrayXd::LinSpaced(K, 1, K)) * log(L.diagonal()).array()).sum();  // only +1 because index from 0
+  lp += ((K - Eigen::ArrayXd::LinSpaced(K, 1, K)) * log(L.diagonal()).array())
+            .sum();  // only +1 because index from 0
   return multiply_lower_tri_self_transpose(L);
 }
 

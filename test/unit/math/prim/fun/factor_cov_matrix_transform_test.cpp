@@ -13,17 +13,12 @@ TEST(probTransform, factorCovMatrix) {
 
   Matrix<double, Dynamic, Dynamic> Sigma = L.transpose() * L;
 
-  Array<double, Dynamic, 1> CPCs(3);  // must be sized coming in
-  Array<double, Dynamic, 1> sds(3);   // must be sized coming in
-
   // just check it doesn't bomb
-  factor_cov_matrix(Sigma, CPCs, sds);
+  factor_cov_matrix(Sigma);
 
   // example of sizing for K=2
   L.resize(2, 2);
   L << 1.7, 0, -2.3, 0.5;
   Sigma = L.transpose() * L;
-  CPCs.resize(1);
-  sds.resize(2);
-  factor_cov_matrix(Sigma, CPCs, sds);
+  factor_cov_matrix(Sigma);
 }

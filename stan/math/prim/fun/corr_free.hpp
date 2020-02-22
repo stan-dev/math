@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 
 /**
- * Return the unconstrained scalar that when transformed to
+ * Return the unconstrained object that when transformed to
  * a valid correlation produces the specified value.
  *
  * <p>This function inverts the transform defined for

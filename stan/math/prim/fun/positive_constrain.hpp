@@ -40,7 +40,8 @@ inline auto positive_constrain(T&& x) {
  * @param lp log density reference.
  * @return positive constrained version of unconstrained value
  */
-template <typename T1, typename T2, typename = require_all_stan_scalar_t<T1, T2>>
+template <typename T1, typename T2,
+          typename = require_all_stan_scalar_t<T1, T2>>
 inline auto positive_constrain(T1&& x, T2&& lp) {
   using std::exp;
   lp += x;
@@ -64,7 +65,8 @@ inline auto positive_constrain(T1&& x, T2&& lp) {
  * @param lp log density reference.
  * @return positive constrained version of unconstrained value
  */
-template <typename T1, typename T2, typename = require_stan_scalar_t<T2>, typename = require_eigen_t<T1>>
+template <typename T1, typename T2, typename = require_stan_scalar_t<T2>,
+          typename = require_eigen_t<T1>>
 inline auto positive_constrain(T1&& x, T2&& lp) {
   using std::exp;
   lp += x.sum();

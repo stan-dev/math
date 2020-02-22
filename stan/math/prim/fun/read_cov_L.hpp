@@ -22,7 +22,8 @@ namespace math {
  * @return Cholesky factor of covariance matrix for specified
  * partial correlations.
  */
-template <typename Eig1, typename Eig2, typename T, typename = require_all_eigen_t<Eig1, Eig2>>
+template <typename Eig1, typename Eig2, typename T,
+          typename = require_all_eigen_t<Eig1, Eig2>>
 auto read_cov_L(Eig1&& CPCs, Eig2&& sds, T& log_prob) {
   auto K = sds.rows();
   // adjust due to transformation from correlations to covariances

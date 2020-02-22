@@ -30,28 +30,22 @@ namespace math {
  *    factorized by factor_cov_matrix() or if the sds returned by
  *    factor_cov_matrix() on log scale are unconstrained.
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, 1> corr_matrix_free(
-    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& y) {
+template <typename EigMat, typename = require_eigen_t<EigMat>>
+inline auto corr_matrix_free(EigMat&& y) {
   check_square("corr_matrix_free", "y", y);
   check_nonzero_size("corr_matrix_free", "y", y);
 
   using Eigen::Array;
   using Eigen::Dynamic;
-  using size_type = index_type_t<Eigen::Matrix<T, Eigen::Dynamic, 1>>;
+  using eigen_scalar = value_type_t<EigMat>;
 
-  size_type k = y.rows();
-  size_type k_choose_2 = (k * (k - 1)) / 2;
-  Array<T, Dynamic, 1> x(k_choose_2);
-  Array<T, Dynamic, 1> sds(k);
-  bool successful = factor_cov_matrix(y, x, sds);
-  if (!successful) {
-    throw_domain_error("corr_matrix_free", "factor_cov_matrix failed on y", y,
-                       "");
-  }
-  check_bounded("corr_matrix_free", "log(sd)", sds, -CONSTRAINT_TOLERANCE,
-                CONSTRAINT_TOLERANCE);
-  return x.matrix();
+  auto k = y.rows();
+  auto k_choose_2 = (k * (k - 1)) / 2;
+  auto ret_vals = factor_cov_matrix(std::forward<EigMat>(y));
+  check_bounded("corr_matrix_free", "log(sd)", std::get<1>(ret_vals),
+   -CONSTRAINT_TOLERANCE, CONSTRAINT_TOLERANCE);
+  // NOTE: removing eval here causes vector of zeros to return (???)
+  return std::get<0>(ret_vals).matrix().eval();
 }
 
 }  // namespace math

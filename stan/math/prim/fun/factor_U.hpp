@@ -19,23 +19,27 @@ namespace math {
  * @param U Sigma matrix
  * @param CPCs fill this unbounded
  */
-template <typename T>
-void factor_U(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& U,
-              Eigen::Array<T, Eigen::Dynamic, 1>& CPCs) {
+template <typename EigMat, typename = require_eigen_t<EigMat>>
+auto factor_U(EigMat&& UU) {
+  using eigen_scalar = value_type_t<EigMat>;
+  // NOTE: Couldn't figure out the ref trick here
+  Eigen::Matrix<eigen_scalar, Eigen::Dynamic, Eigen::Dynamic> U = UU;
   size_t K = U.rows();
   size_t position = 0;
   size_t pull = K - 1;
-
+  auto k = U.rows();
+  auto k_choose_2 = (k * (k - 1)) / 2;
+  Eigen::Array<eigen_scalar, Eigen::Dynamic, 1> CPCs(k_choose_2);
   if (K == 2) {
     CPCs(0) = atanh(U(0, 1));
-    return;
+    return CPCs;
   }
 
-  Eigen::Array<T, 1, Eigen::Dynamic> temp = U.row(0).tail(pull);
+  Eigen::Array<eigen_scalar, 1, Eigen::Dynamic> temp = U.row(0).tail(pull);
 
   CPCs.head(pull) = temp;
 
-  Eigen::Array<T, Eigen::Dynamic, 1> acc(K);
+  Eigen::Array<eigen_scalar, Eigen::Dynamic, 1> acc(K);
   acc(0) = -0.0;
   acc.tail(pull) = 1.0 - temp.square();
   for (size_t i = 1; i < (K - 1); i++) {
@@ -47,6 +51,7 @@ void factor_U(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& U,
     acc.tail(pull) *= 1.0 - temp.square();
   }
   CPCs = 0.5 * ((1.0 + CPCs) / (1.0 - CPCs)).log();  // now unbounded
+  return CPCs;
 }
 
 }  // namespace math

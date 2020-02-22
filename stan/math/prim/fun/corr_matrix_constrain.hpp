@@ -29,22 +29,21 @@ namespace math {
  * <p>The free vector entries are first constrained to be
  * valid correlation values using <code>corr_constrain(T)</code>.
  *
- * @tparam T type of scalar
+ * @tparam EigMat type of scalar
  * @param x Vector of unconstrained partial correlations.
  * @param k Dimensionality of returned correlation matrix.
  * @throw std::invalid_argument if x is not a valid correlation
  * matrix.
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> corr_matrix_constrain(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
-    math::index_type_t<Eigen::Matrix<T, Eigen::Dynamic, 1>> k) {
-  using size_type = index_type_t<Eigen::Matrix<T, Eigen::Dynamic, 1>>;
-
-  size_type k_choose_2 = (k * (k - 1)) / 2;
+template <typename EigVec, typename Index,
+          typename = require_eigen_vector_t<EigVec>>
+auto corr_matrix_constrain(EigVec&& x, Index k) {
+  using eigen_scalar = value_type_t<EigVec>;
+  auto k_choose_2 = (k * (k - 1)) / 2;
   check_size_match("corr_matrix_constrain", "x.size()", x.size(), "k_choose_2",
                    k_choose_2);
-  Eigen::Array<T, -1, 1> cpcs = corr_constrain(x.head(k_choose_2).array()).array();
+  Eigen::Array<eigen_scalar, Eigen::Dynamic, 1> cpcs
+      = corr_constrain(x.head(k_choose_2).array()).array();
   return read_corr_matrix(cpcs, k);
 }
 
@@ -67,17 +66,15 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> corr_matrix_constrain(
  * @param k Dimensionality of returned correlation matrix.
  * @param lp Log probability reference to increment.
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> corr_matrix_constrain(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
-    math::index_type_t<Eigen::Matrix<T, Eigen::Dynamic, 1>> k, T& lp) {
-  using size_type = index_type_t<Eigen::Matrix<T, Eigen::Dynamic, 1>>;
-  using Eigen::Array;
-
-  size_type k_choose_2 = (k * (k - 1)) / 2;
+template <typename EigVec, typename Index, typename T,
+          typename = require_eigen_vector_t<EigVec>>
+auto corr_matrix_constrain(EigVec&& x, Index k, T& lp) {
+  using eigen_scalar = value_type_t<EigVec>;
+  auto k_choose_2 = (k * (k - 1)) / 2;
   check_size_match("corr_matrix_constrain", "x.size()", x.size(), "k_choose_2",
                    k_choose_2);
-  Eigen::Array<T, Eigen::Dynamic, 1> cpcs = corr_constrain(x.head(k_choose_2).array(), lp).array();
+  Eigen::Array<eigen_scalar, Eigen::Dynamic, 1> cpcs
+      = corr_constrain(x.head(k_choose_2).array(), lp).array();
   return read_corr_matrix(cpcs, k, lp);
 }
 

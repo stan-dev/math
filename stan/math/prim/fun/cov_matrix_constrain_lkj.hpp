@@ -30,10 +30,12 @@ namespace math {
  */
 template <typename EigMat, typename = require_eigen_t<EigMat>>
 auto cov_matrix_constrain_lkj(EigMat&& x, size_t k) {
-      using eigen_scalar = value_type_t<EigMat>;
-      size_t k_choose_2 = (k * (k - 1)) / 2;
-      Eigen::Array<eigen_scalar, Eigen::Dynamic, 1> cpcs = corr_constrain(x.head(k_choose_2).array());
-      Eigen::Array<eigen_scalar, Eigen::Dynamic, 1> sds = positive_constrain(x.segment(k_choose_2, k).array());
+  using eigen_scalar = value_type_t<EigMat>;
+  size_t k_choose_2 = (k * (k - 1)) / 2;
+  Eigen::Array<eigen_scalar, Eigen::Dynamic, 1> cpcs
+      = corr_constrain(x.head(k_choose_2).array());
+  Eigen::Array<eigen_scalar, Eigen::Dynamic, 1> sds
+      = positive_constrain(x.segment(k_choose_2, k).array());
   return read_cov_matrix(cpcs, sds);
 }
 
@@ -65,8 +67,10 @@ template <typename EigMat, typename T, typename = require_eigen_t<EigMat>>
 auto cov_matrix_constrain_lkj(EigMat&& x, size_t k, T& lp) {
   using eigen_scalar = value_type_t<EigMat>;
   size_t k_choose_2 = (k * (k - 1)) / 2;
-  Eigen::Array<eigen_scalar, Eigen::Dynamic, 1> cpcs = corr_constrain(x.head(k_choose_2).array(), lp);
-  Eigen::Array<eigen_scalar, Eigen::Dynamic, 1> sds = positive_constrain(x.segment(k_choose_2, k).array(), lp);
+  Eigen::Array<eigen_scalar, Eigen::Dynamic, 1> cpcs
+      = corr_constrain(x.head(k_choose_2).array(), lp);
+  Eigen::Array<eigen_scalar, Eigen::Dynamic, 1> sds
+      = positive_constrain(x.segment(k_choose_2, k).array(), lp);
   return read_cov_matrix(cpcs, sds, lp);
 }
 

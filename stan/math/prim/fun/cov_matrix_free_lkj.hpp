@@ -27,32 +27,21 @@ namespace math {
  *    factorized by factor_cov_matrix()
  */
 template <typename EigMat, typename = require_eigen_t<EigMat>>
-auto cov_matrix_free_lkj(EigMat&& y) {
-  using Eigen::Array;
+inline auto cov_matrix_free_lkj(EigMat&& y) {
   using Eigen::Dynamic;
-  using Eigen::Matrix;
   using eigen_scalar = value_type_t<EigMat>;
-  using size_type = index_type_t<Matrix<eigen_scalar, Dynamic, Dynamic>>;
+  using size_type = index_type_t<Eigen::Matrix<eigen_scalar, Dynamic, Dynamic>>;
 
   check_nonzero_size("cov_matrix_free_lkj", "y", y);
   check_square("cov_matrix_free_lkj", "y", y);
   size_type k = y.rows();
   size_type k_choose_2 = (k * (k - 1)) / 2;
-  Array<eigen_scalar, Dynamic, 1> cpcs(k_choose_2);
-  Array<eigen_scalar, Dynamic, 1> sds(k);
-  bool successful = factor_cov_matrix(y, cpcs, sds);
-  if (!successful) {
-    throw_domain_error("cov_matrix_free_lkj", "factor_cov_matrix failed on y",
-                       "", "");
-  }
-  Matrix<eigen_scalar, Dynamic, 1> x(k_choose_2 + k);
-  size_type pos = 0;
-  for (size_type i = 0; i < k_choose_2; ++i) {
-    x[pos++] = cpcs[i];
-  }
-  for (size_type i = 0; i < k; ++i) {
-    x[pos++] = sds[i];
-  }
+  auto ret_vals = factor_cov_matrix(std::forward<EigMat>(y));
+  const Eigen::Array<eigen_scalar, Dynamic, 1> cpcs = std::get<0>(ret_vals);
+  const Eigen::Array<eigen_scalar, Dynamic, 1> sds = std::get<1>(ret_vals);
+  Eigen::Matrix<eigen_scalar, Dynamic, 1> x(k_choose_2 + k);
+  x.head(k_choose_2) = cpcs.head(k_choose_2);
+  x.segment(k_choose_2, k) = sds.head(k);
   return x;
 }
 

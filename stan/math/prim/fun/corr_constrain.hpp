@@ -11,7 +11,7 @@ namespace stan {
 namespace math {
 
 /**
- * Return the result of transforming the specified scalar to have
+ * Return the result of transforming the specified object to have
  * a valid correlation value between -1 and 1 (inclusive).
  *
  * <p>The transform used is the hyperbolic tangent function,
@@ -39,6 +39,7 @@ inline auto corr_constrain(const T& x) {
  * <p>\f$\log | \frac{d}{dx} \tanh x  | = \log (1 - \tanh^2 x)\f$.
  *
  * @tparam T Type of scalar.
+ * @tparam T2 Type of log prob
  * @param[in] x value
  * @param[in,out] lp log density accumulator
  */
@@ -50,9 +51,23 @@ inline auto corr_constrain(const T& x, T2& lp) {
   return tanh_x;
 }
 
-template <typename T, typename T2,
-  typename = require_stan_scalar_t<T2>,
-  typename = require_eigen_t<T>>
+/**
+ * Return the result of transforming the specified eigen matrix to have
+ * a valid correlation value between -1 and 1 (inclusive).
+ *
+ * <p>The transform used is as specified for
+ * <code>corr_constrain(T)</code>.  The log absolute Jacobian
+ * determinant is
+ *
+ * <p>\f$\log | \frac{d}{dx} \tanh x  | = \log (1 - \tanh^2 x)\f$.
+ *
+ * @tparam T Type of Eigen.
+ * @tparam T2 Type of log density accumulator.
+ * @param[in] x value.
+ * @param[in,out] lp log density accumulator.
+ */
+template <typename T, typename T2, typename = require_stan_scalar_t<T2>,
+          typename = require_eigen_t<T>>
 inline auto corr_constrain(const T& x, T2& lp) {
   using std::tanh;
   typename T::PlainObject tanh_x = tanh(x);

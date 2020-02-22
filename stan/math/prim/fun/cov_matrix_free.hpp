@@ -32,8 +32,8 @@ namespace math {
  * @throw std::domain_error if <code>y</code> is not square,
  * has zero dimensionality, or has a non-positive diagonal element.
  */
- template <typename EigMat, typename = require_eigen_t<EigMat>>
- auto cov_matrix_free(EigMat&& y) {
+template <typename EigMat, typename = require_eigen_t<EigMat>>
+auto cov_matrix_free(EigMat&& y) {
   using eigen_scalar = value_type_t<EigMat>;
   check_square("cov_matrix_free", "y", y);
   check_nonzero_size("cov_matrix_free", "y", y);
@@ -43,7 +43,8 @@ namespace math {
   check_positive("cov_matrix_free", "y", y.diagonal());
   // FIXME: see Eigen LDLT for rank-revealing version -- use that
   // even if less efficient?
-  Eigen::Matrix<eigen_scalar, Eigen::Dynamic, Eigen::Dynamic> L = y.llt().matrixL();
+  Eigen::Matrix<eigen_scalar, Eigen::Dynamic, Eigen::Dynamic> L
+      = y.llt().matrixL();
   Eigen::Matrix<eigen_scalar, Eigen::Dynamic, 1> x((K * (K + 1)) / 2);
   int kk = 0;
   for (auto jj = 0; jj < K; jj++) {

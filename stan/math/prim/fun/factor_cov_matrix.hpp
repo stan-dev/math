@@ -4,6 +4,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/factor_U.hpp>
 #include <cstddef>
+#include <tuple>
 
 namespace stan {
 namespace math {
@@ -21,34 +22,28 @@ namespace math {
  * @param[out] sds fill this unbounded (does not resize)
  * @return false if any of the diagonals of Sigma are 0
  */
-template <typename T>
-bool factor_cov_matrix(
-    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& Sigma,
-    Eigen::Array<T, Eigen::Dynamic, 1>& CPCs,
-    Eigen::Array<T, Eigen::Dynamic, 1>& sds) {
+template <typename EigMat, typename = require_eigen_t<EigMat>>
+inline auto factor_cov_matrix(EigMat&& Sigma) {
+  using eigen_scalar = value_type_t<EigMat>;
+  Eigen::Array<eigen_scalar, Eigen::Dynamic, 1> sds = Sigma.diagonal().array();
   size_t K = sds.rows();
-
-  sds = Sigma.diagonal().array();
   if ((sds <= 0.0).any()) {
-    return false;
+    throw_domain_error("factor_cov_matrix", "failed on y", "", "");
   }
   sds = sds.sqrt();
-
-  Eigen::DiagonalMatrix<T, Eigen::Dynamic> D(K);
+  Eigen::DiagonalMatrix<eigen_scalar, Eigen::Dynamic> D(K);
   D.diagonal() = sds.inverse();
   sds = sds.log();  // now unbounded
 
-  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> R = D * Sigma * D;
+  Eigen::Matrix<eigen_scalar, Eigen::Dynamic, Eigen::Dynamic> R = D * Sigma * D;
   // to hopefully prevent pivoting due to floating point error
   R.diagonal().setOnes();
-  Eigen::LDLT<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > ldlt;
-  ldlt = R.ldlt();
+  auto ldlt = R.ldlt();
   if (!ldlt.isPositive()) {
-    return false;
+    throw_domain_error("factor_cov_matrix", "failed on y", "", "");
   }
-  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> U = ldlt.matrixU();
-  factor_U(U, CPCs);
-  return true;
+  Eigen::Array<eigen_scalar, Eigen::Dynamic, 1> CPCs = factor_U(ldlt.matrixU());
+  return std::make_tuple(CPCs, sds);
 }
 
 }  // namespace math

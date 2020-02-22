@@ -11,6 +11,8 @@ TEST(prob_transform, corr_matrix_j) {
   Eigen::MatrixXd y = stan::math::corr_matrix_constrain(x, K, lp);
   Eigen::VectorXd xrt = stan::math::corr_matrix_free(y);
   expect_matrix_eq(x, xrt);
+  Eigen::VectorXd xrt_rval = stan::math::corr_matrix_free(stan::math::corr_matrix_constrain(x, K, lp));
+  expect_matrix_eq(x, xrt_rval);
 }
 
 TEST(prob_transform, corr_matrix_j3x3) {
