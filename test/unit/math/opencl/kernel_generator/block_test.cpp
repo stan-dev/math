@@ -108,4 +108,22 @@ TEST(MathMatrixCL, lhs_block_test) {
   EXPECT_MATRIX_NEAR(res, correct, 1e-9);
 }
 
+TEST(MathMatrixCL, two_blocks_of_same_expression) {
+  using stan::math::block;
+  MatrixXd m(2, 3);
+  m << 1, 2, 3, 4, 5, 6;
+
+  matrix_cl<double> m_cl(m);
+
+  auto tmp = m_cl + 1;
+  auto tmp2 = block(tmp, 0, 0, 2, 2) + block(tmp, 0, 1, 2, 2);
+
+  matrix_cl<double> res_cl = tmp2;
+
+  MatrixXd res = stan::math::from_matrix_cl(res_cl);
+  MatrixXd correct = (m.block(0, 0, 2, 2) + m.block(0, 1, 2, 2)).array() + 2;
+
+  EXPECT_MATRIX_NEAR(res, correct, 1e-9);
+}
+
 #endif
