@@ -4,9 +4,9 @@
 #include <complex>
 #include <vector>
 
-using stan::return_type;
 using stan::math::fvar;
 using stan::math::var;
+using stan::return_type;
 using d_t = double;
 using v_t = var;
 using fd_t = fvar<double>;
