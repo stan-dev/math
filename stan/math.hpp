@@ -19,8 +19,8 @@
 /**
  * \defgroup type_trait Type Traits
  * The type traits in Stan math are a mix of custom traits for detecting
- *  value and container types of Eigen matrices and standard vectors as well
- *  as backports of C++17 traits.
+ * value and container types of Eigen matrices, standard vectors, standard
+ * complex numbers, and backports of C++17 traits.
  */
 
 /**
