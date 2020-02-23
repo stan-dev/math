@@ -78,9 +78,16 @@ class unary_function_cl
 #define ADD_UNARY_FUNCTION(fun)                                               \
   template <typename T>                                                       \
   class fun##_ : public unary_function_cl<fun##_<T>, T> {                     \
+    using base = unary_function_cl<fun##_<T>, T>;                             \
+    using base::arguments_;                                                   \
+                                                                              \
    public:                                                                    \
-    explicit fun##_(T&& a)                                                    \
-        : unary_function_cl<fun##_<T>, T>(std::forward<T>(a), #fun) {}        \
+    explicit fun##_(T&& a) : base(std::forward<T>(a), #fun) {}                \
+    inline auto deep_copy() {                                                 \
+      auto&& arg_copy = std::get<0>(arguments_).deep_copy();                  \
+      return fun##_<std::remove_reference_t<decltype(arg_copy)>>{             \
+          std::move(arg_copy)};                                               \
+    }                                                                         \
     inline matrix_cl_view view() const { return matrix_cl_view::Entire; }     \
   };                                                                          \
                                                                               \
@@ -99,9 +106,16 @@ class unary_function_cl
 #define ADD_UNARY_FUNCTION_PASS_ZERO(fun)                                     \
   template <typename T>                                                       \
   class fun##_ : public unary_function_cl<fun##_<T>, T> {                     \
+    using base = unary_function_cl<fun##_<T>, T>;                             \
+    using base::arguments_;                                                   \
+                                                                              \
    public:                                                                    \
-    explicit fun##_(T&& a)                                                    \
-        : unary_function_cl<fun##_<T>, T>(std::forward<T>(a), #fun) {}        \
+    explicit fun##_(T&& a) : base(std::forward<T>(a), #fun) {}                \
+    inline auto deep_copy() {                                                 \
+      auto&& arg_copy = std::get<0>(arguments_).deep_copy();                  \
+      return fun##_<std::remove_reference_t<decltype(arg_copy)>>{             \
+          std::move(arg_copy)};                                               \
+    }                                                                         \
   };                                                                          \
                                                                               \
   template <typename T, typename Cond                                         \
