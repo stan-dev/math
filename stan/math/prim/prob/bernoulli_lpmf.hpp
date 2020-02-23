@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1m.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
@@ -95,9 +96,9 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
 
       if (!is_constant_all<T_prob>::value) {
         if (n_int == 1) {
-          ops_partials.edge1_.partials_[n] += 1.0 / theta_dbl;
+          ops_partials.edge1_.partials_[n] += inv(theta_dbl);
         } else {
-          ops_partials.edge1_.partials_[n] += 1.0 / (theta_dbl - 1);
+          ops_partials.edge1_.partials_[n] += inv(theta_dbl - 1);
         }
       }
     }
