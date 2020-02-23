@@ -67,29 +67,31 @@ return_type_t<T_prob> binomial_lcdf(const T_n& n, const T_N& N,
   // but treated as negative infinity
   for (size_t i = 0; i < stan::math::size(n); i++) {
     if (value_of(n_vec[i]) < 0) {
-      return ops_partials.build(negative_infinity());
+      return ops_partials.build(NEGATIVE_INFTY);
     }
   }
 
   for (size_t i = 0; i < max_size_seq_view; i++) {
-    // Explicit results for extreme values
-    // The gradients are technically ill-defined, but treated as zero
-    if (value_of(n_vec[i]) >= value_of(N_vec[i])) {
-      continue;
-    }
     const T_partials_return n_dbl = value_of(n_vec[i]);
     const T_partials_return N_dbl = value_of(N_vec[i]);
+
+    // Explicit results for extreme values
+    // The gradients are technically ill-defined, but treated as zero
+    if (n_dbl >= N_dbl) {
+      continue;
+    }
+
     const T_partials_return theta_dbl = value_of(theta_vec[i]);
-    const T_partials_return betafunc = beta(N_dbl - n_dbl, n_dbl + 1);
     const T_partials_return Pi
         = inc_beta(N_dbl - n_dbl, n_dbl + 1, 1 - theta_dbl);
 
     P += log(Pi);
 
     if (!is_constant_all<T_prob>::value) {
+      const T_partials_return denom = beta(N_dbl - n_dbl, n_dbl + 1) * Pi;
       ops_partials.edge1_.partials_[i]
           -= pow(theta_dbl, n_dbl) * pow(1 - theta_dbl, N_dbl - n_dbl - 1)
-             / betafunc / Pi;
+             / denom;
     }
   }
   return ops_partials.build(P);
