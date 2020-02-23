@@ -33,7 +33,7 @@ namespace math {
  * canonical partial correlations.
  */
 template <typename EigArr, typename = require_t<is_eigen_array<EigArr>>>
-auto read_corr_L(EigArr& CPCs, size_t K) {
+auto read_corr_L(EigArr&& CPCs, size_t K) {
   using eigen_scalar = value_type_t<EigArr>;
   if (K == 0) {
     return Eigen::Matrix<eigen_scalar, -1, -1>::Identity(0, 0).eval();

@@ -18,16 +18,21 @@ namespace math {
  */
 template <typename EigMat, typename = require_eigen_t<EigMat>>
 inline auto multiply_lower_tri_self_transpose(EigMat&& L) {
+  using eigen_scalar = value_type_t<EigMat>;
   int K = L.rows();
   if (K == 0) {
     return Eigen::Matrix<value_type_t<EigMat>, -1, -1>(0, 0);
   }
   if (K == 1) {
-    Eigen::Matrix<value_type_t<EigMat>, -1, -1> result(1, 1);
+    Eigen::Matrix<eigen_scalar, -1, -1> result(1, 1);
     result(0) = square(L(0));  // first elt, so don't need double idx
     return result;
   }
-  return (L.template triangularView<Eigen::Lower>() * L.transpose()).eval();
+  Eigen::Matrix<eigen_scalar, -1, -1> LT = Eigen::MatrixXd::Zero(K, K);
+  Eigen::Matrix<eigen_scalar, -1, -1> LL = L.template triangularView<Eigen::Lower>();
+  LT.template selfadjointView<Eigen::Lower>().rankUpdate(LL);
+  LT.template triangularView<Eigen::Upper>() = LT.transpose();
+  return LT;
 }
 
 }  // namespace math

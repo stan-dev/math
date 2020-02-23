@@ -35,9 +35,9 @@ auto cov_matrix_constrain(EigMat&& x, Index K) {
   Eigen::Matrix<eigen_scalar, Dynamic, Dynamic> L(K, K);
   int kk = 0;
   // NOTE: Why does x come in row major order?
-  for (Index jj = 0; jj < K; jj++) {
-    L.row(jj).segment(0, jj + 1) = x.segment(jj + kk, jj + 1);
-    kk += jj;
+  for (Index i = 0; i < K; i++) {
+    L.row(i).segment(0, i + 1) = x.segment(i + kk, i + 1);
+    kk += i;
   }
   L.diagonal().array() = L.diagonal().array().exp();
   L.template triangularView<Eigen::StrictlyUpper>().setZero();
@@ -70,9 +70,10 @@ auto cov_matrix_constrain(EigMat&& x, Index K, T& lp) {
                    "K + (K choose 2)", (K * (K + 1)) / 2);
   Eigen::Matrix<eigen_scalar, Dynamic, Dynamic> L(K, K);
   int kk = 0;
-  for (Index jj = 0; jj < K; jj++) {
-    L.row(jj).segment(0, jj + 1) = x.segment(jj + kk, jj + 1);
-    kk += jj;
+  // NOTE: x comes in with row major ordered lower triangular as vector
+  for (Index i = 0; i < K; i++) {
+    L.row(i).segment(0, i + 1) = x.segment(i + kk, i + 1);
+    kk += i;
   }
   L.diagonal().array() = L.diagonal().array().exp();
   L.template triangularView<Eigen::StrictlyUpper>().setZero();

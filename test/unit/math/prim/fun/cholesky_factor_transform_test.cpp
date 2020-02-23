@@ -23,6 +23,19 @@ TEST(ProbTransform, choleskyFactor) {
   EXPECT_EQ(x2.cols(), x.cols());
   for (int i = 0; i < 3; ++i)
     EXPECT_FLOAT_EQ(x(i), x2(i));
+
+  Matrix<double, Dynamic, 1> xx(10);
+  xx << 1, 2, 3, 4, 5, 6, 7, 8, 9, 10;
+  Matrix<double, Dynamic, Dynamic> yy = cholesky_factor_constrain(xx, 4, 4);
+
+  Matrix<double, Dynamic, 1> x3 = cholesky_factor_free(yy);
+
+  EXPECT_EQ(x3.size(), xx.size());
+  EXPECT_EQ(x3.rows(), xx.rows());
+  EXPECT_EQ(x3.cols(), xx.cols());
+  for (int i = 0; i < 10; ++i)
+    EXPECT_FLOAT_EQ(xx(i), x3(i));
+
 }
 TEST(ProbTransform, choleskyFactorLogJacobian) {
   using Eigen::Dynamic;
@@ -39,22 +52,29 @@ TEST(ProbTransform, choleskyFactorLogJacobian) {
   EXPECT_FLOAT_EQ(1.9 + 2.3, lp);
 
   x.resize(3);
-  x << 1, 2, 3;
+  x << 1.0, 2.0, 3.0;
   lp = 7.2;
   cholesky_factor_constrain(x, 2, 2, lp);
   EXPECT_FLOAT_EQ(7.2 + 1 + 3, lp);
 
   x.resize(6);
-  x << 1.001, 2, 3.01, 4, 5, 6.1;
+  x << 1.001, 2.0, 3.01, 4.0, 5.0, 6.1;
   lp = 1.2;
   cholesky_factor_constrain(x, 3, 3, lp);
   EXPECT_FLOAT_EQ(1.2 + 1.001 + 3.01 + 6.1, lp);
 
   x.resize(9);
   lp = 1.2;
-  x << 1.001, 2, 3.01, 4, 5, 6.1, 7, 8, 9;
+  x << 1.001, 2.0, 3.01, 4.0, 5.0, 6.1, 7.0, 8.0, 9.0;
   cholesky_factor_constrain(x, 4, 3, lp);
   EXPECT_FLOAT_EQ(1.2 + 1.001 + 3.01 + 6.1, lp);
+
+  x.resize(15);
+  lp = 1.2;
+  for (int i = 0; i < 15; i++) {
+    x(i) = i;
+  }
+  cholesky_factor_constrain(x, 5, 5, lp);
 }
 TEST(ProbTransform, choleskyFactorConstrainError) {
   using Eigen::Dynamic;

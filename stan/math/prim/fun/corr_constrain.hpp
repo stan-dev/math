@@ -23,9 +23,9 @@ namespace math {
  * @return tanh transform of value
  */
 template <typename T>
-inline auto corr_constrain(const T& x) {
+inline auto corr_constrain(T&& x) {
   using std::tanh;
-  return tanh(x);
+  return tanh(std::forward<T>(x));
 }
 
 /**
@@ -44,7 +44,7 @@ inline auto corr_constrain(const T& x) {
  * @param[in,out] lp log density accumulator
  */
 template <typename T, typename T2, typename = require_all_stan_scalar_t<T, T2>>
-inline auto corr_constrain(const T& x, T2& lp) {
+inline auto corr_constrain(T x, T2& lp) {
   using std::tanh;
   auto tanh_x = tanh(x);
   lp += sum(log1m(square(tanh_x)));
@@ -68,9 +68,9 @@ inline auto corr_constrain(const T& x, T2& lp) {
  */
 template <typename T, typename T2, typename = require_stan_scalar_t<T2>,
           typename = require_eigen_t<T>>
-inline auto corr_constrain(const T& x, T2& lp) {
+inline auto corr_constrain(T&& x, T2& lp) {
   using std::tanh;
-  typename T::PlainObject tanh_x = tanh(x);
+  typename T::PlainObject tanh_x = tanh(std::forward<T>(x));
   lp += sum(log1m(square(tanh_x)));
   return tanh_x;
 }

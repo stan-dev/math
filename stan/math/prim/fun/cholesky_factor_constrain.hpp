@@ -22,9 +22,9 @@ namespace math {
  * @param N Number of columns
  * @return Cholesky factor
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_factor_constrain(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& x, int M, int N) {
+template <typename EigVec, typename = require_eigen_t<EigVec>>
+auto cholesky_factor_constrain(EigVec&& x, int M, int N) {
+  using eigen_scalar = value_type_t<EigVec>;
   using std::exp;
   check_greater_or_equal("cholesky_factor_constrain",
                          "num rows (must be greater or equal to num cols)", M,
@@ -32,25 +32,15 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_factor_constrain(
   check_size_match("cholesky_factor_constrain", "x.size()", x.size(),
                    "((N * (N + 1)) / 2 + (M - N) * N)",
                    ((N * (N + 1)) / 2 + (M - N) * N));
-  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> y(M, N);
-  T zero(0);
-  int pos = 0;
-
-  for (int m = 0; m < N; ++m) {
-    for (int n = 0; n < m; ++n) {
-      y(m, n) = x(pos++);
-    }
-    y(m, m) = exp(x(pos++));
-    for (int n = m + 1; n < N; ++n) {
-      y(m, n) = zero;
-    }
+  Eigen::Matrix<eigen_scalar, Eigen::Dynamic, Eigen::Dynamic> y(M, N);
+  int kk = 0;
+  // NOTE: Why does x come in row major order?
+  for (auto i = 0; i < N; i++) {
+    y.row(i).segment(0, i + 1) = x.segment(i + kk, i + 1);
+    kk += i;
   }
-
-  for (int m = N; m < M; ++m) {
-    for (int n = 0; n < N; ++n) {
-      y(m, n) = x(pos++);
-    }
-  }
+  y.template triangularView<Eigen::StrictlyUpper>().setZero();
+  y.diagonal().array() = y.diagonal().array().exp();
   return y;
 }
 
@@ -68,20 +58,22 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_factor_constrain(
  * @param lp Log probability that is incremented with the log Jacobian
  * @return Cholesky factor
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_factor_constrain(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& x, int M, int N, T& lp) {
+template <typename EigMat, typename Index1, typename Index2, typename T, typename = require_eigen_t<EigMat>>
+auto cholesky_factor_constrain(const EigMat& xx, Index1 M, Index2 N, T& lp) {
+  using eigen_scalar = value_type_t<EigMat>;
+  const Eigen::Ref<const typename EigMat::PlainObject>& x = xx;
   check_size_match("cholesky_factor_constrain", "x.size()", x.size(),
                    "((N * (N + 1)) / 2 + (M - N) * N)",
                    ((N * (N + 1)) / 2 + (M - N) * N));
   int pos = 0;
-  std::vector<T> log_jacobians(N);
-  for (int n = 0; n < N; ++n) {
+  Eigen::Matrix<eigen_scalar, -1, 1> log_jacobians(N);
+  for (auto n = 0; n < N; ++n) {
     pos += n;
-    log_jacobians[n] = x(pos++);
+    log_jacobians[n] = x.coeffRef(pos);
+    pos++;
   }
   lp += sum(log_jacobians);
-  return cholesky_factor_constrain(x, M, N);
+  return cholesky_factor_constrain(std::forward<EigMat>(x), M, N);
 }
 
 }  // namespace math

@@ -45,7 +45,7 @@ template <typename T1, typename T2,
 inline auto positive_constrain(T1&& x, T2&& lp) {
   using std::exp;
   lp += x;
-  return exp(std::forward<T1>(x));
+  return exp(x);
 }
 
 /**

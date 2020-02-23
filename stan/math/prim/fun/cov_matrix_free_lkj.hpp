@@ -37,11 +37,9 @@ inline auto cov_matrix_free_lkj(EigMat&& y) {
   size_type k = y.rows();
   size_type k_choose_2 = (k * (k - 1)) / 2;
   auto ret_vals = factor_cov_matrix(std::forward<EigMat>(y));
-  const Eigen::Array<eigen_scalar, Dynamic, 1> cpcs = std::get<0>(ret_vals);
-  const Eigen::Array<eigen_scalar, Dynamic, 1> sds = std::get<1>(ret_vals);
   Eigen::Matrix<eigen_scalar, Dynamic, 1> x(k_choose_2 + k);
-  x.head(k_choose_2) = cpcs.head(k_choose_2);
-  x.segment(k_choose_2, k) = sds.head(k);
+  x.head(k_choose_2) = std::get<0>(ret_vals).head(k_choose_2);
+  x.segment(k_choose_2, k) = std::get<1>(ret_vals).head(k);
   return x;
 }
 

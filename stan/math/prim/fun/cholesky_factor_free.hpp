@@ -19,27 +19,20 @@ namespace math {
  * @return Unconstrained parameters for Cholesky factor.
  * @throw std::domain_error If the matrix is not a Cholesky factor.
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, 1> cholesky_factor_free(
-    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& y) {
+template <typename EigMat, typename = require_eigen_t<EigMat>>
+auto cholesky_factor_free(EigMat&& y) {
+  using eigen_scalar = value_type_t<EigMat>;
   using std::log;
   check_cholesky_factor("cholesky_factor_free", "y", y);
   int M = y.rows();
   int N = y.cols();
-  Eigen::Matrix<T, Eigen::Dynamic, 1> x((N * (N + 1)) / 2 + (M - N) * N);
-  int pos = 0;
-
-  for (int m = 0; m < N; ++m) {
-    for (int n = 0; n < m; ++n) {
-      x(pos++) = y(m, n);
-    }
-    x(pos++) = log(y(m, m));
-  }
-
-  for (int m = N; m < M; ++m) {
-    for (int n = 0; n < N; ++n) {
-      x(pos++) = y(m, n);
-    }
+  Eigen::Matrix<eigen_scalar, Eigen::Dynamic, 1> x((N * (N + 1)) / 2 + (M - N) * N);
+  // NOTE: Couldn't figure out indexing for col major :-(
+  int kk = 0;
+  for (auto i = 0; i < M; i++) {
+    x.segment(i + kk, i + 1) = y.row(i).segment(0, i + 1);
+    kk += i;
+    x(i + kk) = log(x(i + kk));
   }
   return x;
 }

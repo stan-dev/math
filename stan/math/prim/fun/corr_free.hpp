@@ -27,7 +27,7 @@ namespace math {
 template <typename T>
 inline auto corr_free(T&& y) {
   check_bounded("lub_free", "Correlation variable", y, -1.0, 1.0);
-  return atanh(y);
+  return atanh(std::forward<T>(y));
 }
 
 }  // namespace math

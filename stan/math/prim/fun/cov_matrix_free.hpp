@@ -46,11 +46,12 @@ auto cov_matrix_free(EigMat&& y) {
   Eigen::Matrix<eigen_scalar, Eigen::Dynamic, Eigen::Dynamic> L
       = y.llt().matrixL();
   Eigen::Matrix<eigen_scalar, Eigen::Dynamic, 1> x((K * (K + 1)) / 2);
+  // NOTE: Couldn't figure out indexing for col major :-(
   int kk = 0;
-  for (auto jj = 0; jj < K; jj++) {
-    x.segment(jj + kk, jj + 1) = L.row(jj).segment(0, jj + 1);
-    kk += jj;
-    x(jj + kk) = log(x(jj + kk));
+  for (auto i = 0; i < K; i++) {
+    x.segment(i + kk, i + 1) = L.row(i).segment(0, i + 1);
+    kk += i;
+    x(i + kk) = log(x(i + kk));
   }
   return x;
 }

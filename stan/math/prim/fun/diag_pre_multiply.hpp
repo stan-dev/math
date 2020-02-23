@@ -7,9 +7,9 @@
 namespace stan {
 namespace math {
 
-template <typename T1, typename T2, int R1, int C1, int R2, int C2>
-Eigen::Matrix<return_type_t<T1, T2>, R2, C2> diag_pre_multiply(
-    const Eigen::Matrix<T1, R1, C1>& m1, const Eigen::Matrix<T2, R2, C2>& m2) {
+template <typename EigMat1, typename EigMat2,
+ typename = require_all_eigen_t<EigMat1, EigMat2>>
+auto diag_pre_multiply(EigMat1&& m1, EigMat2&& m2) {
   check_vector("diag_pre_multiply", "m1", m1);
   check_size_match("diag_pre_multiply", "m1.size()", m1.size(), "m2.rows()",
                    m2.rows());
