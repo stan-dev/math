@@ -73,6 +73,9 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
     }
   }
 
+  size_t size_y = stan::math::size(y);
+  size_t size_alpha = stan::math::size(alpha);
+  size_t size_beta = stan::math::size(beta);
   size_t N = max_size(y, alpha, beta);
   operands_and_partials<T_y, T_shape, T_inv_scale> ops_partials(y, alpha, beta);
 
@@ -80,34 +83,33 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
 
   VectorBuilder<include_summand<propto, T_y, T_shape>::value, T_partials_return,
                 T_y>
-      log_y(size(y));
+      log_y(size_y);
   if (include_summand<propto, T_y, T_shape>::value) {
-    for (size_t n = 0; n < stan::math::size(y); n++) {
-      if (value_of(y_vec[n]) > 0) {
-        log_y[n] = log(value_of(y_vec[n]));
-      }
+    for (size_t n = 0; n < size_y; n++) {
+      log_y[n] = log(value_of(y_vec[n]));
     }
   }
 
   VectorBuilder<include_summand<propto, T_shape>::value, T_partials_return,
                 T_shape>
-      lgamma_alpha(size(alpha));
+      lgamma_alpha(size_alpha);
   VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
-      digamma_alpha(size(alpha));
-  for (size_t n = 0; n < stan::math::size(alpha); n++) {
+      digamma_alpha(size_alpha);
+  for (size_t n = 0; n < size_alpha; n++) {
+    const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
     if (include_summand<propto, T_shape>::value) {
-      lgamma_alpha[n] = lgamma(value_of(alpha_vec[n]));
+      lgamma_alpha[n] = lgamma(alpha_dbl);
     }
     if (!is_constant_all<T_shape>::value) {
-      digamma_alpha[n] = digamma(value_of(alpha_vec[n]));
+      digamma_alpha[n] = digamma(alpha_dbl);
     }
   }
 
   VectorBuilder<include_summand<propto, T_shape, T_inv_scale>::value,
                 T_partials_return, T_inv_scale>
-      log_beta(size(beta));
+      log_beta(size_beta);
   if (include_summand<propto, T_shape, T_inv_scale>::value) {
-    for (size_t n = 0; n < stan::math::size(beta); n++) {
+    for (size_t n = 0; n < size_beta; n++) {
       log_beta[n] = log(value_of(beta_vec[n]));
     }
   }
