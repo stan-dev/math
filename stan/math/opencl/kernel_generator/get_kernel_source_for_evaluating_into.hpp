@@ -29,7 +29,8 @@ operation_cl<Derived, Scalar, Args...>::get_kernel_source_for_evaluating_into(
   std::string src;
   if (Derived::require_specific_local_size) {
     src =
-        "kernel void calculate(" + parts.args + "const int rows, const int cols){\n"
+        "kernel void calculate(" + parts.args +
+        "const int rows, const int cols){\n"
         "const int gid_i = get_global_id(0);\n"
         "const int lid_i = get_local_id(0);\n"
         "const int lsize_i = get_local_size(0);\n"
@@ -52,7 +53,8 @@ operation_cl<Derived, Scalar, Args...>::get_kernel_source_for_evaluating_into(
         "}\n";
   } else {
     src =
-        "kernel void calculate(" + parts.args.substr(0, parts.args.size() - 2) + "){\n"
+        "kernel void calculate(" + parts.args.substr(0, parts.args.size() - 2) +
+        "){\n"
         "int i = get_global_id(0);\n"
         "int j = get_global_id(1);\n"
         + parts.initialization
