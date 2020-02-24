@@ -11,8 +11,8 @@ namespace math {
  * matrix, vector, or row vector.
  *
  * @tparam T type of elements in the matrix
- * @tparam R number of rows or Eigen::Dynamic
- * @tparam C number of columns or Eigen::Dynamic
+ * @tparam R number of rows, can be Eigen::Dynamic
+ * @tparam C number of columns, can be Eigen::Dynamic
  * @param[in] m Input matrix, vector, or row vector.
  * @return Number of columns.
  */

@@ -25,7 +25,7 @@ template <int R, int C>
 inline Eigen::Matrix<var, -1, -1> tcrossprod(
     const Eigen::Matrix<var, R, C>& M) {
   if (M.rows() == 0) {
-    return matrix_v(0, 0);
+    return {};
   }
   // if (M.rows() == 1)
   //   return M * M.transpose();

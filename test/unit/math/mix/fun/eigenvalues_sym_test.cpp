@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
 
 TEST(MathMixMatFun, eigenvaluesSym) {
+  using stan::test::relative_tolerance;
   auto f = [](const auto& y) {
     // need to maintain symmetry for finite diffs
     auto a = ((y + y.transpose()) * 0.5).eval();
@@ -35,6 +36,6 @@ TEST(MathMixMatFun, eigenvaluesSym) {
   a22 << 1, 2, 2, 1;
   tols.hessian_hessian_ = 5e-1;
   tols.hessian_fvar_hessian_ = 5e-1;
-  tols.grad_hessian_grad_hessian_ = 5e-1;
+  tols.grad_hessian_grad_hessian_ = relative_tolerance(1e-1, 5e-1);
   stan::test::expect_ad(tols, f, a22);
 }

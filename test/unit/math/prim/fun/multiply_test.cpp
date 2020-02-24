@@ -1,7 +1,7 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathMatrixPrimMat, multiply_c_v) {
+TEST(MathMatrixPrim, multiply_c_v) {
   stan::math::vector_d v(3);
   v << 1, 2, 3;
   stan::math::vector_d result = stan::math::multiply(2.0, v);
@@ -9,7 +9,7 @@ TEST(MathMatrixPrimMat, multiply_c_v) {
   EXPECT_FLOAT_EQ(4.0, result(1));
   EXPECT_FLOAT_EQ(6.0, result(2));
 }
-TEST(MathMatrixPrimMat, multiply_c_rv) {
+TEST(MathMatrixPrim, multiply_c_rv) {
   stan::math::row_vector_d rv(3);
   rv << 1, 2, 3;
   stan::math::row_vector_d result = stan::math::multiply(2.0, rv);
@@ -17,7 +17,7 @@ TEST(MathMatrixPrimMat, multiply_c_rv) {
   EXPECT_FLOAT_EQ(4.0, result(1));
   EXPECT_FLOAT_EQ(6.0, result(2));
 }
-TEST(MathMatrixPrimMat, multiply_c_m) {
+TEST(MathMatrixPrim, multiply_c_m) {
   stan::math::matrix_d m(2, 3);
   m << 1, 2, 3, 4, 5, 6;
   stan::math::matrix_d result = stan::math::multiply(2.0, m);
@@ -29,7 +29,45 @@ TEST(MathMatrixPrimMat, multiply_c_m) {
   EXPECT_FLOAT_EQ(12.0, result(1, 2));
 }
 
-TEST(MathMatrixPrimMat, multiply_rv_v_exception) {
+TEST(MathMatrixPrim, multiply_size_zero) {
+  stan::math::matrix_d m1, m2, res;
+  stan::math::vector_d v;
+  stan::math::row_vector_d rv;
+
+  rv.resize(0);
+  v.resize(0);
+  EXPECT_NO_THROW(stan::math::multiply(rv, v));
+  EXPECT_NO_THROW(stan::math::multiply(v, rv));
+  EXPECT_NO_THROW(stan::math::multiply(3, v));
+  EXPECT_NO_THROW(stan::math::multiply(v, 3));
+  EXPECT_NO_THROW(stan::math::multiply(3, rv));
+  EXPECT_NO_THROW(stan::math::multiply(rv, 3));
+
+  m1.resize(3, 0);
+  v.resize(0);
+  res = stan::math::multiply(m1, v);
+  EXPECT_EQ(m1.rows(), res.rows());
+  EXPECT_EQ(v.cols(), res.cols());
+
+  rv.resize(0);
+  m2.resize(0, 3);
+  res = stan::math::multiply(rv, m2);
+  EXPECT_EQ(rv.rows(), res.rows());
+  EXPECT_EQ(m2.cols(), res.cols());
+
+  m1.resize(2, 0);
+  m2.resize(0, 3);
+  res = stan::math::multiply(m1, m2);
+  EXPECT_EQ(m1.rows(), res.rows());
+  EXPECT_EQ(m2.cols(), res.cols());
+
+  EXPECT_NO_THROW(stan::math::multiply(m1, 3));
+  EXPECT_NO_THROW(stan::math::multiply(m2, 3));
+  EXPECT_NO_THROW(stan::math::multiply(3, m1));
+  EXPECT_NO_THROW(stan::math::multiply(3, m2));
+}
+
+TEST(MathMatrixPrim, multiply_rv_v_exception) {
   stan::math::row_vector_d rv;
   stan::math::vector_d v;
 
@@ -37,15 +75,11 @@ TEST(MathMatrixPrimMat, multiply_rv_v_exception) {
   v.resize(3);
   EXPECT_NO_THROW(stan::math::multiply(rv, v));
 
-  rv.resize(0);
-  v.resize(0);
-  EXPECT_NO_THROW(stan::math::multiply(rv, v));
-
   rv.resize(2);
   v.resize(3);
   EXPECT_THROW(stan::math::multiply(rv, v), std::invalid_argument);
 }
-TEST(MathMatrixPrimMat, multiply_m_v_exception) {
+TEST(MathMatrixPrim, multiply_m_v_exception) {
   stan::math::matrix_d m;
   stan::math::vector_d v;
 
@@ -53,15 +87,11 @@ TEST(MathMatrixPrimMat, multiply_m_v_exception) {
   v.resize(5);
   EXPECT_NO_THROW(stan::math::multiply(m, v));
 
-  m.resize(3, 0);
-  v.resize(0);
-  EXPECT_THROW(stan::math::multiply(m, v), std::invalid_argument);
-
   m.resize(2, 3);
   v.resize(2);
   EXPECT_THROW(stan::math::multiply(m, v), std::invalid_argument);
 }
-TEST(MathMatrixPrimMat, multiply_rv_m_exception) {
+TEST(MathMatrixPrim, multiply_rv_m_exception) {
   stan::math::row_vector_d rv;
   stan::math::matrix_d m;
 
@@ -69,31 +99,23 @@ TEST(MathMatrixPrimMat, multiply_rv_m_exception) {
   m.resize(3, 5);
   EXPECT_NO_THROW(stan::math::multiply(rv, m));
 
-  rv.resize(0);
-  m.resize(0, 3);
-  EXPECT_THROW(stan::math::multiply(rv, m), std::invalid_argument);
-
   rv.resize(3);
   m.resize(2, 3);
   EXPECT_THROW(stan::math::multiply(rv, m), std::invalid_argument);
 }
-TEST(MathMatrixPrimMat, multiply_m_m_exception) {
+TEST(MathMatrixPrim, multiply_m_m_exception) {
   stan::math::matrix_d m1, m2;
 
   m1.resize(1, 3);
   m2.resize(3, 5);
   EXPECT_NO_THROW(stan::math::multiply(m1, m2));
 
-  m1.resize(2, 0);
-  m2.resize(0, 3);
-  EXPECT_THROW(stan::math::multiply(m1, m2), std::invalid_argument);
-
   m1.resize(4, 3);
   m2.resize(2, 3);
   EXPECT_THROW(stan::math::multiply(m1, m2), std::invalid_argument);
 }
 
-TEST(MathMatrixPrimMat, multiply) {
+TEST(MathMatrixPrim, multiply) {
   stan::math::vector_d v0;
   stan::math::row_vector_d rv0;
   stan::math::matrix_d m0;
@@ -107,7 +129,7 @@ TEST(MathMatrixPrimMat, multiply) {
   EXPECT_NO_THROW(multiply(2.0, m0));
 }
 
-TEST(MathMatrixPrimMat, multiply_int) {
+TEST(MathMatrixPrim, multiply_int) {
   using stan::math::assign;
   using stan::math::multiply;
 
@@ -120,7 +142,7 @@ TEST(MathMatrixPrimMat, multiply_int) {
   assign(t_vec, multiply(vec, d_int));
 }
 
-TEST(MathMatrixPrimMat, multiply_vector_int) {
+TEST(MathMatrixPrim, multiply_vector_int) {
   using stan::math::multiply;
   using stan::math::vector_d;
 
@@ -139,7 +161,7 @@ TEST(MathMatrixPrimMat, multiply_vector_int) {
   for (int i = 0; i < A.size(); i++)    \
     EXPECT_NEAR(A(i), B(i), DELTA);
 
-TEST(MathMatrixPrimMat, multiply_opencl) {
+TEST(MathMatrixPrim, multiply_opencl) {
   int multiply_dim_prod_worth_transfer
       = stan::math::opencl_context.tuning_opts()
             .multiply_dim_prod_worth_transfer;

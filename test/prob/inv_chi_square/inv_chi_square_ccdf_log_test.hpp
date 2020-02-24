@@ -42,18 +42,18 @@ class AgradCcdfLogInvChiSquare : public AgradCcdfLogTest {
 
   template <typename T_y, typename T_dof, typename T2, typename T3, typename T4,
             typename T5>
-  typename stan::return_type<T_y, T_dof>::type ccdf_log(const T_y& y,
-                                                        const T_dof& nu,
-                                                        const T2&, const T3&,
-                                                        const T4&, const T5&) {
+  stan::return_type_t<T_y, T_dof> ccdf_log(const T_y& y, const T_dof& nu,
+                                           const T2&, const T3&, const T4&,
+                                           const T5&) {
     return stan::math::inv_chi_square_ccdf_log(y, nu);
   }
 
   template <typename T_y, typename T_dof, typename T2, typename T3, typename T4,
             typename T5>
-  typename stan::return_type<T_y, T_dof>::type ccdf_log_function(
-      const T_y& y, const T_dof& nu, const T2&, const T3&, const T4&,
-      const T5&) {
+  stan::return_type_t<T_y, T_dof> ccdf_log_function(const T_y& y,
+                                                    const T_dof& nu, const T2&,
+                                                    const T3&, const T4&,
+                                                    const T5&) {
     using stan::math::gamma_p;
 
     return log(1.0 - gamma_p(0.5 * nu, 0.5 / y));

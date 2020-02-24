@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
 
 TEST(mathMixMatFun, traceGenQuadForm) {
+  using stan::test::relative_tolerance;
   auto f = [](const auto& x1, const auto& x2, const auto& x3) {
     return stan::math::trace_gen_quad_form(x1, x2, x3);
   };
@@ -19,8 +20,8 @@ TEST(mathMixMatFun, traceGenQuadForm) {
   stan::test::expect_ad(f, c11, a11, b11);
 
   stan::test::ad_tolerances tols;
-  tols.hessian_hessian_ = 1e-1;
-  tols.hessian_fvar_hessian_ = 1e-1;
+  tols.hessian_hessian_ = relative_tolerance(1e-1, 1e-1);
+  tols.hessian_fvar_hessian_ = relative_tolerance(1e-1, 1e-1);
 
   Eigen::MatrixXd a(4, 4);
   a << 2, 3, 4, 5, 6, 10, 2, 2, 7, 2, 7, 1, 8, 2, 1, 112;

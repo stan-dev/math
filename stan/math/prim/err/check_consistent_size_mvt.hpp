@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/invalid_argument.hpp>
+#include <stan/math/prim/fun/size_mvt.hpp>
 #include <sstream>
 #include <string>
 #include <type_traits>

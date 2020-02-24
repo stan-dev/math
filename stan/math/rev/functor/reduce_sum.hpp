@@ -143,8 +143,8 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       if (r.empty())
         return;
 
-      if(args_adjoints_.size() == 0) {
-	args_adjoints_ = Eigen::VectorXd::Zero(num_shared_terms_);
+      if (args_adjoints_.size() == 0) {
+        args_adjoints_ = Eigen::VectorXd::Zero(num_shared_terms_);
       }
 
       try {
@@ -192,10 +192,10 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
 
     void join(const recursive_reducer& rhs) {
       sum_ += rhs.sum_;
-      if(args_adjoints_.size() != 0 && rhs.args_adjoints_.size() != 0) {
-	args_adjoints_ += rhs.args_adjoints_;
-      } else if(args_adjoints_.size() == 0 && rhs.args_adjoints_.size() != 0) {
-	args_adjoints_ = rhs.args_adjoints_;
+      if (args_adjoints_.size() != 0 && rhs.args_adjoints_.size() != 0) {
+        args_adjoints_ += rhs.args_adjoints_;
+      } else if (args_adjoints_.size() == 0 && rhs.args_adjoints_.size() != 0) {
+        args_adjoints_ = rhs.args_adjoints_;
       }
     }
   };

@@ -19,16 +19,15 @@
 
 struct chemical_kinetics {
   template <typename T0, typename TYY, typename TYP, typename TPAR>
-  inline std::vector<typename stan::return_type<TYY, TYP, TPAR>::type>
-  operator()(const T0& t_in, const std::vector<TYY>& yy,
-             const std::vector<TYP>& yp, const std::vector<TPAR>& theta,
-             const std::vector<double>& x_r, const std::vector<int>& x_i,
-             std::ostream* msgs) const {
+  inline std::vector<stan::return_type_t<TYY, TYP, TPAR>> operator()(
+      const T0& t_in, const std::vector<TYY>& yy, const std::vector<TYP>& yp,
+      const std::vector<TPAR>& theta, const std::vector<double>& x_r,
+      const std::vector<int>& x_i, std::ostream* msgs) const {
     if (yy.size() != 3 || yp.size() != 3)
       throw std::domain_error(
           "this function was called with inconsistent state");
 
-    std::vector<typename stan::return_type<TYY, TYP, TPAR>::type> res(3);
+    std::vector<stan::return_type_t<TYY, TYP, TPAR>> res(3);
 
     auto yy1 = yy.at(0);
     auto yy2 = yy.at(1);

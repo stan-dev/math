@@ -32,6 +32,7 @@ template <typename T>
 inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
     const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& m) {
   check_symmetric("cholesky_decompose", "m", m);
+  check_not_nan("cholesky_decompose", "m", m);
   Eigen::LLT<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > llt(m.rows());
   llt.compute(m);
   check_pos_definite("cholesky_decompose", "m", llt);
@@ -56,7 +57,7 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
 template <>
 inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
     const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& m) {
-  check_square("cholesky_decompose", "m", m);
+  check_not_nan("cholesky_decompose", "m", m);
 #ifdef STAN_OPENCL
   if (m.rows() >= opencl_context.tuning_opts().cholesky_size_worth_transfer) {
     matrix_cl<double> m_chol(m);

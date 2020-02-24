@@ -15,7 +15,7 @@ namespace math {
  * specified lower- and upper-bounded scalar given the specified
  * bounds.
  *
- * <p>The transfrom in <code>lub_constrain(T, double, double)</code>,
+ * <p>The transform in <code>lub_constrain(T, double, double)</code>,
  * is reversed by a transformed and scaled logit,
  *
  * <p>\f$f^{-1}(y) = \mbox{logit}(\frac{y - L}{U - L})\f$

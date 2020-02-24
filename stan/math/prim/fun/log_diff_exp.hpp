@@ -14,7 +14,6 @@ namespace math {
  *
  * This function is only defined for x >= y
  *
- *
    \f[
    \mbox{log\_diff\_exp}(x, y) =
    \begin{cases}
@@ -42,6 +41,10 @@ namespace math {
    \end{cases}
    \f]
  *
+ * @tparam T1 type of the first argument
+ * @tparam T2 type of the second argument
+ * @param x first argument
+ * @param y second argument
  */
 template <typename T1, typename T2>
 inline return_type_t<T1, T2> log_diff_exp(const T1 x, const T2 y) {

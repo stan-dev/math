@@ -11,6 +11,11 @@ namespace math {
 /**
  * Returns the dot product of the specified vectors.
  *
+ * @tparam R1 number of rows in the first vector, can be Eigen::Dynamic
+ * @tparam C1 number of columns in the first vector, can be Eigen::Dynamic
+ * @tparam R2 number of rows in the second vector, can be Eigen::Dynamic
+ * @tparam C2 number of columns in the second vector, can be Eigen::Dynamic
+ *
  * @param v1 First vector.
  * @param v2 Second vector.
  * @return Dot product of the vectors.

@@ -38,27 +38,26 @@ class AgradDistributionsInvChiSquare : public AgradDistributionTest {
 
   template <typename T_y, typename T_dof, typename T2, typename T3, typename T4,
             typename T5>
-  typename stan::return_type<T_y, T_dof>::type log_prob(const T_y& y,
-                                                        const T_dof& nu,
-                                                        const T2&, const T3&,
-                                                        const T4&, const T5&) {
+  stan::return_type_t<T_y, T_dof> log_prob(const T_y& y, const T_dof& nu,
+                                           const T2&, const T3&, const T4&,
+                                           const T5&) {
     return stan::math::inv_chi_square_log(y, nu);
   }
 
   template <bool propto, typename T_y, typename T_dof, typename T2, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_dof>::type log_prob(const T_y& y,
-                                                        const T_dof& nu,
-                                                        const T2&, const T3&,
-                                                        const T4&, const T5&) {
+  stan::return_type_t<T_y, T_dof> log_prob(const T_y& y, const T_dof& nu,
+                                           const T2&, const T3&, const T4&,
+                                           const T5&) {
     return stan::math::inv_chi_square_log<propto>(y, nu);
   }
 
   template <typename T_y, typename T_dof, typename T2, typename T3, typename T4,
             typename T5>
-  typename stan::return_type<T_y, T_dof>::type log_prob_function(
-      const T_y& y, const T_dof& nu, const T2&, const T3&, const T4&,
-      const T5&) {
+  stan::return_type_t<T_y, T_dof> log_prob_function(const T_y& y,
+                                                    const T_dof& nu, const T2&,
+                                                    const T3&, const T4&,
+                                                    const T5&) {
     using boost::math::lgamma;
     using stan::math::HALF_LOG_TWO;
     using stan::math::multiply_log;

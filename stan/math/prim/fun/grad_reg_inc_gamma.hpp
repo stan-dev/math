@@ -23,9 +23,11 @@ namespace math {
  * for large z, the series is numerically inaccurate due to cancellation
  * and the asymptotic expansion is used.
  *
- * @param a   shape parameter, a > 0
- * @param z   location z >= 0
- * @param g   stan::math::tgamma(a) (precomputed value)
+ * @tparam T1 type of the shape parameter
+ * @tparam T2 type of the location parameter
+ * @param a shape parameter, a > 0
+ * @param z location z >= 0
+ * @param g stan::math::tgamma(a) (precomputed value)
  * @param dig boost::math::digamma(a) (precomputed value)
  * @param precision required precision; applies to series expansion only
  * @param max_steps number of steps to take.

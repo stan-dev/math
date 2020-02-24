@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
 
 TEST(mathMixMatFun, scaleMatrixExpMultiply) {
+  using stan::test::relative_tolerance;
   auto f = [](const auto& t, const auto& a, const auto& b) {
     return stan::math::scale_matrix_exp_multiply(t, a, b);
   };
@@ -27,8 +28,8 @@ TEST(mathMixMatFun, scaleMatrixExpMultiply) {
   stan::test::expect_ad(f, t, a11, b14);
 
   stan::test::ad_tolerances tols;
-  tols.hessian_hessian_ = 1e-2;
-  tols.hessian_fvar_hessian_ = 1e-2;
+  tols.hessian_hessian_ = relative_tolerance(1e-4, 1e-2);
+  tols.hessian_fvar_hessian_ = relative_tolerance(1e-4, 1e-2);
 
   // 3 x 1
   Eigen::MatrixXd a33(3, 3);

@@ -3,13 +3,17 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/size_zero.hpp>
-#include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/beta.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/fun/inc_beta.hpp>
+#include <stan/math/prim/fun/inv.hpp>
+#include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/size.hpp>
+#include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/square.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <cmath>
 #include <limits>
 
@@ -33,39 +37,46 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lccdf(
   check_consistent_sizes(function, "Failures variable", n, "Shape parameter",
                          alpha, "Inverse scale parameter", beta);
 
-  scalar_seq_view<T_n> n_vec(n);
-  scalar_seq_view<T_shape> alpha_vec(alpha);
-  scalar_seq_view<T_inv_scale> beta_vec(beta);
-  size_t max_size_seq_view = max_size(n, alpha, beta);
-
   using std::exp;
   using std::log;
   using std::pow;
 
   operands_and_partials<T_shape, T_inv_scale> ops_partials(alpha, beta);
 
+  scalar_seq_view<T_n> n_vec(n);
+  scalar_seq_view<T_shape> alpha_vec(alpha);
+  scalar_seq_view<T_inv_scale> beta_vec(beta);
+  size_t size_n = size(n);
+  size_t size_alpha = size(alpha);
+  size_t size_n_alpha = max_size(n, alpha);
+  size_t max_size_seq_view = max_size(n, alpha, beta);
+
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
-  for (size_t i = 0; i < size(n); i++) {
+  for (size_t i = 0; i < size_n; i++) {
     if (value_of(n_vec[i]) < 0) {
       return ops_partials.build(0.0);
     }
   }
 
+  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_n>
+      digammaN_vec(size_n);
   VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
-      digammaN_vec(size(alpha));
-  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
-      digammaAlpha_vec(size(alpha));
-  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
-      digammaSum_vec(size(alpha));
+      digammaAlpha_vec(size_alpha);
+  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_n,
+                T_shape>
+      digammaSum_vec(size_n_alpha);
 
   if (!is_constant_all<T_shape>::value) {
-    for (size_t i = 0; i < size(alpha); i++) {
+    for (size_t i = 0; i < size_n; i++) {
+      digammaN_vec[i] = digamma(value_of(n_vec[i]) + 1);
+    }
+    for (size_t i = 0; i < size_alpha; i++) {
+      digammaAlpha_vec[i] = digamma(value_of(alpha_vec[i]));
+    }
+    for (size_t i = 0; i < size_n_alpha; i++) {
       const T_partials_return n_dbl = value_of(n_vec[i]);
       const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
-
-      digammaN_vec[i] = digamma(n_dbl + 1);
-      digammaAlpha_vec[i] = digamma(alpha_dbl);
       digammaSum_vec[i] = digamma(n_dbl + alpha_dbl + 1);
     }
   }
@@ -80,8 +91,9 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lccdf(
     const T_partials_return n_dbl = value_of(n_vec[i]);
     const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
     const T_partials_return beta_dbl = value_of(beta_vec[i]);
-    const T_partials_return p_dbl = beta_dbl / (1.0 + beta_dbl);
-    const T_partials_return d_dbl = 1.0 / ((1.0 + beta_dbl) * (1.0 + beta_dbl));
+    const T_partials_return inv_beta_p1 = inv(beta_dbl + 1);
+    const T_partials_return p_dbl = beta_dbl * inv_beta_p1;
+    const T_partials_return d_dbl = square(inv_beta_p1);
     const T_partials_return Pi = 1.0 - inc_beta(alpha_dbl, n_dbl + 1.0, p_dbl);
     const T_partials_return beta_func = stan::math::beta(n_dbl + 1, alpha_dbl);
 
@@ -99,7 +111,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lccdf(
     if (!is_constant_all<T_inv_scale>::value) {
       ops_partials.edge2_.partials_[i] -= d_dbl * pow(1 - p_dbl, n_dbl)
                                           * pow(p_dbl, alpha_dbl - 1)
-                                          / beta_func / Pi;
+                                          / (beta_func * Pi);
     }
   }
 
