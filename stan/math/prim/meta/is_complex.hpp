@@ -39,9 +39,6 @@ struct is_complex<
     T, std::enable_if_t<internal::is_complex_impl<std::decay_t<T>>::value>>
     : std::true_type {};
 
-template <typename T>
-bool is_complex_v = is_complex<T>::value;
-
 }  // namespace stan
 
 #endif

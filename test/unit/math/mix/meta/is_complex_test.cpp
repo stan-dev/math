@@ -7,7 +7,6 @@
 template <bool expected, typename T>
 void expect_is_complex() {
   EXPECT_EQ(expected, stan::is_complex<T>::value);
-  EXPECT_EQ(expected, stan::is_complex_v<T>);
 }
 
 template <typename T>
