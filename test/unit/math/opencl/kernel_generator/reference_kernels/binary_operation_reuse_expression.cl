@@ -1,4 +1,4 @@
-kernel void calculate(__global double* var4_global, int var4_rows, int var4_view, __global double* var5_global, int var5_rows, int var5_view, __global double* var8_global, int var8_rows, int var8_view, __global double* var9_global, int var9_rows, int var9_view, const int rows, const int cols){
+kernel void calculate(__global double* var4_global, int var4_rows, int var4_view, __global double* var5_global, int var5_rows, int var5_view, __global double* var8_global, int var8_rows, int var8_view, __global double* var9_global, int var9_rows, int var9_view){
 int i = get_global_id(0);
 int j = get_global_id(1);
 double var4 = 0; if (!((!contains_nonzero(var4_view, LOWER) && j < i) || (!contains_nonzero(var4_view, UPPER) && j > i))) {var4 = var4_global[i + var4_rows * j];}

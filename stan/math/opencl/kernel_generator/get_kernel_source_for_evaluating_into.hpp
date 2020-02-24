@@ -53,7 +53,7 @@ operation_cl<Derived, Scalar, Args...>::get_kernel_source_for_evaluating_into(
   }
   else{
     src =
-        "kernel void calculate(" + parts.args +"const int rows, const int cols){\n"
+        "kernel void calculate(" + parts.args.substr(0, parts.args.size() - 2) + "){\n"
         "int i = get_global_id(0);\n"
         "int j = get_global_id(1);\n"
         + parts.initialization

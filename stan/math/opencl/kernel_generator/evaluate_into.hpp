@@ -43,11 +43,11 @@ void operation_cl<Derived, Scalar, Args...>::evaluate_into(
     std::set<const operation_cl_base*> generated;
     derived().set_args(generated, cache::kernel, arg_num);
     lhs_expression.set_args(generated, cache::kernel, arg_num);
-    cache::kernel.setArg(arg_num++, n_rows);
-    cache::kernel.setArg(arg_num++, n_cols);
 
     cl::Event e;
     if(Derived::require_specific_local_size){
+      cache::kernel.setArg(arg_num++, n_rows);
+      cache::kernel.setArg(arg_num++, n_cols);
       int local = opencl_context.base_opts().at("LOCAL_SIZE_");
       int wgs_rows = (n_rows + local - 1) / local;
       int wgs_cols = (n_cols + local - 1) / local;
