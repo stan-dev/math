@@ -35,6 +35,9 @@ mdivide_left_tri(const T1 &A, const T2 &b) {
   using T_return = return_type_t<T1, T2>;
   check_square("mdivide_left_tri", "A", A);
   check_multiplicable("mdivide_left_tri", "A", A, "b", b);
+  if (A.rows() == 0) {
+    return {0, b.cols()};
+  }
 
   return A.template cast<T_return>()
       .eval()
@@ -55,6 +58,10 @@ template <Eigen::UpLoType TriView, typename T, require_eigen_t<T> * = nullptr,
           require_not_same_vt<double, T> * = nullptr>
 inline plain_type_t<T> mdivide_left_tri(const T &A) {
   check_square("mdivide_left_tri", "A", A);
+  if (A.rows() == 0) {
+    return {};
+  }
+
   int n = A.rows();
   plain_type_t<T> b = plain_type_t<T>::Identity(n, n);
   A.template triangularView<TriView>().solveInPlace(b);
@@ -83,6 +90,10 @@ inline Eigen::Matrix<double, T1::RowsAtCompileTime, T2::ColsAtCompileTime>
 mdivide_left_tri(const T1 &A, const T2 &b) {
   check_square("mdivide_left_tri", "A", A);
   check_multiplicable("mdivide_left_tri", "A", A, "b", b);
+  if (A.rows() == 0) {
+    return {0, b.cols()};
+  }
+
 #ifdef STAN_OPENCL
   if (A.rows()
       >= opencl_context.tuning_opts().tri_inverse_size_worth_transfer) {
@@ -115,6 +126,10 @@ template <Eigen::UpLoType TriView, typename T, require_eigen_t<T> * = nullptr,
           require_same_vt<double, T> * = nullptr>
 inline plain_type_t<T> mdivide_left_tri(const T &A) {
   check_square("mdivide_left_tri", "A", A);
+  if (A.rows() == 0) {
+    return {};
+  }
+
   const int n = A.rows();
 #ifdef STAN_OPENCL
   if (A.rows()

@@ -315,11 +315,11 @@ template <Eigen::UpLoType TriView, typename T1, typename T2,
           require_all_eigen_vt<is_var, T1, T2> * = nullptr>
 inline Eigen::Matrix<var, T1::RowsAtCompileTime, T2::ColsAtCompileTime>
 mdivide_left_tri(const T1 &A, const T2 &b) {
-  Eigen::Matrix<var, T1::RowsAtCompileTime, T2::ColsAtCompileTime> res(
-      b.rows(), b.cols());
-
   check_square("mdivide_left_tri", "A", A);
   check_multiplicable("mdivide_left_tri", "A", A, "b", b);
+  if (A.rows() == 0) {
+    return {0, b.cols()};
+  }
 
   // NOTE: this is not a memory leak, this vari is used in the
   // expression graph to evaluate the adjoint, but is not needed
@@ -329,6 +329,8 @@ mdivide_left_tri(const T1 &A, const T2 &b) {
       TriView, T1::RowsAtCompileTime, T1::ColsAtCompileTime,
       T2::RowsAtCompileTime, T2::ColsAtCompileTime>(A, b);
 
+  Eigen::Matrix<var, T1::RowsAtCompileTime, T2::ColsAtCompileTime> res(
+      b.rows(), b.cols());
   res.vi()
       = Eigen::Map<matrix_vi>(&(baseVari->variRefC_[0]), b.rows(), b.cols());
 
@@ -340,11 +342,11 @@ template <Eigen::UpLoType TriView, typename T1, typename T2,
           require_eigen_vt<is_var, T2> * = nullptr>
 inline Eigen::Matrix<var, T1::RowsAtCompileTime, T2::ColsAtCompileTime>
 mdivide_left_tri(const T1 &A, const T2 &b) {
-  Eigen::Matrix<var, T1::RowsAtCompileTime, T2::ColsAtCompileTime> res(
-      b.rows(), b.cols());
-
   check_square("mdivide_left_tri", "A", A);
   check_multiplicable("mdivide_left_tri", "A", A, "b", b);
+  if (A.rows() == 0) {
+    return {0, b.cols()};
+  }
 
   // NOTE: this is not a memory leak, this vari is used in the
   // expression graph to evaluate the adjoint, but is not needed
@@ -354,6 +356,8 @@ mdivide_left_tri(const T1 &A, const T2 &b) {
       TriView, T1::RowsAtCompileTime, T1::ColsAtCompileTime,
       T2::RowsAtCompileTime, T2::ColsAtCompileTime>(A, b);
 
+  Eigen::Matrix<var, T1::RowsAtCompileTime, T2::ColsAtCompileTime> res(
+      b.rows(), b.cols());
   res.vi()
       = Eigen::Map<matrix_vi>(&(baseVari->variRefC_[0]), b.rows(), b.cols());
 
@@ -365,11 +369,11 @@ template <Eigen::UpLoType TriView, typename T1, typename T2,
           require_same_vt<double, T2> * = nullptr>
 inline Eigen::Matrix<var, T1::RowsAtCompileTime, T2::ColsAtCompileTime>
 mdivide_left_tri(const T1 &A, const T2 &b) {
-  Eigen::Matrix<var, T1::RowsAtCompileTime, T2::ColsAtCompileTime> res(
-      b.rows(), b.cols());
-
   check_square("mdivide_left_tri", "A", A);
   check_multiplicable("mdivide_left_tri", "A", A, "b", b);
+  if (A.rows() == 0) {
+    return {0, b.cols()};
+  }
 
   // NOTE: this is not a memory leak, this vari is used in the
   // expression graph to evaluate the adjoint, but is not needed
@@ -379,6 +383,8 @@ mdivide_left_tri(const T1 &A, const T2 &b) {
       TriView, T1::RowsAtCompileTime, T1::ColsAtCompileTime,
       T2::RowsAtCompileTime, T2::ColsAtCompileTime>(A, b);
 
+  Eigen::Matrix<var, T1::RowsAtCompileTime, T2::ColsAtCompileTime> res(
+      b.rows(), b.cols());
   res.vi()
       = Eigen::Map<matrix_vi>(&(baseVari->variRefC_[0]), b.rows(), b.cols());
 

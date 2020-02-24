@@ -26,6 +26,9 @@ mdivide_left_tri_low(const T1& A, const T2& b) {
 
   check_square("mdivide_left_tri_low", "A", A);
   check_multiplicable("mdivide_left_tri_low", "A", A, "b", b);
+  if (A.size() == 0) {
+    return {0, b.cols()};
+  }
 
   Eigen::Matrix<T, R1, C2> inv_A_mult_b(A.rows(), b.cols());
   Eigen::Matrix<T, R1, C2> inv_A_mult_deriv_b(A.rows(), b.cols());
@@ -77,6 +80,9 @@ mdivide_left_tri_low(const T1& A, const T2& b) {
 
   check_square("mdivide_left_tri_low", "A", A);
   check_multiplicable("mdivide_left_tri_low", "A", A, "b", b);
+  if (A.size() == 0) {
+    return {0, b.cols()};
+  }
 
   Eigen::Matrix<T, R1, C2> inv_A_mult_b(A.rows(), b.cols());
   Eigen::Matrix<T, R1, C2> inv_A_mult_deriv_b(A.rows(), b.cols());
@@ -123,6 +129,9 @@ mdivide_left_tri_low(const T1& A, const T2& b) {
 
   check_square("mdivide_left_tri_low", "A", A);
   check_multiplicable("mdivide_left_tri_low", "A", A, "b", b);
+  if (A.size() == 0) {
+    return {0, b.cols()};
+  }
 
   Eigen::Matrix<T, R1, C2> inv_A_mult_b(A.rows(), b.cols());
   Eigen::Matrix<T, R1, C1> inv_A_mult_deriv_A(A.rows(), A.cols());

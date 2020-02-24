@@ -565,7 +565,7 @@ inline auto multiply(const Mat1& A, const Mat2& B) {
   constexpr int Ra = Mat1::RowsAtCompileTime;
   constexpr int Ca = Mat1::ColsAtCompileTime;
   constexpr int Cb = Mat2::ColsAtCompileTime;
-  check_size_match("multiply", "Columns of A", A.cols(), "Rows of B", B.rows());
+  check_multiplicable("multiply", "A", A, "B", B);
   check_not_nan("multiply", "A", A);
   check_not_nan("multiply", "B", B);
 
@@ -598,7 +598,7 @@ inline var multiply(const RowVec& A, const ColVec& B) {
   using RowVecScalar = value_type_t<RowVec>;
   using ColVecScalar = value_type_t<ColVec>;
   constexpr int Ca = RowVec::ColsAtCompileTime;
-  check_matching_sizes("multiply", "A", A, "B", B);
+  check_multiplicable("multiply", "A", A, "B", B);
   check_not_nan("multiply", "A", A);
   check_not_nan("multiply", "B", B);
 

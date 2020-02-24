@@ -27,6 +27,9 @@ inline Eigen::Matrix<return_type_t<T1, T2>, T1::RowsAtCompileTime,
 mdivide_left(const T1& A, const T2& b) {
   check_square("mdivide_left", "A", A);
   check_multiplicable("mdivide_left", "A", A, "b", b);
+  if (A.size() == 0) {
+    return {0, b.cols()};
+  }
 
   return Eigen::Matrix<return_type_t<T1, T2>, T1::RowsAtCompileTime,
                        T1::ColsAtCompileTime>(A)

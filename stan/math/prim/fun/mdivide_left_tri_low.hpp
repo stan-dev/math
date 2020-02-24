@@ -33,6 +33,10 @@ inline Eigen::Matrix<return_type_t<T1, T2>, T1::RowsAtCompileTime,
 mdivide_left_tri_low(const T1& A, const T2& b) {
   check_square("mdivide_left_tri_low", "A", A);
   check_multiplicable("mdivide_left_tri_low", "A", A, "b", b);
+  if (A.rows() == 0) {
+    return {0, b.cols()};
+  }
+
   return mdivide_left_tri<Eigen::Lower>(A, b);
 }
 
@@ -40,6 +44,10 @@ template <typename T, require_eigen_t<T>* = nullptr,
           require_not_eigen_vt<is_fvar, T>* = nullptr>
 inline plain_type_t<T> mdivide_left_tri_low(const T& A) {
   check_square("mdivide_left_tri_low", "A", A);
+  if (A.rows() == 0) {
+    return {};
+  }
+
   return mdivide_left_tri<Eigen::Lower>(A);
 }
 
