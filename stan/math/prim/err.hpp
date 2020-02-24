@@ -43,6 +43,7 @@
 #include <stan/math/prim/err/check_symmetric.hpp>
 #include <stan/math/prim/err/check_unit_vector.hpp>
 #include <stan/math/prim/err/check_vector.hpp>
+#include <stan/math/prim/err/check_vector_index.hpp>
 #include <stan/math/prim/err/constraint_tolerance.hpp>
 #include <stan/math/prim/err/domain_error.hpp>
 #include <stan/math/prim/err/domain_error_vec.hpp>
