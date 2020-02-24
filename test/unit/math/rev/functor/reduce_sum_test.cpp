@@ -65,7 +65,6 @@ TEST(v3_reduce_sum, gradient) {
   typedef boost::counting_iterator<std::size_t> count_iter;
   using stan::math::var;
 
-
   var lambda_v = lambda_d;
 
   std::vector<int> idata;

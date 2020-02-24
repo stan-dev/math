@@ -153,10 +153,10 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
         // create a deep copy of all var's so that these are not
         // linked to any outer AD tree
         Vec local_sub_slice;
-	local_sub_slice.reserve(r.size());
+        local_sub_slice.reserve(r.size());
         for (int i = r.begin(); i < r.end(); ++i) {
           local_sub_slice.emplace_back(deep_copy(vmapped_[i]));
-	}
+        }
 
         auto args_tuple_local_copy = apply(
             [&](auto&&... args) {
@@ -177,7 +177,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
         sum_ += sub_sum_v.val();
 
         accumulate_adjoints(sliced_partials_ + r.begin(), local_sub_slice);
-	
+
         apply(
             [&](auto&&... args) {
               return accumulate_adjoints(args_adjoints_.data(), args...);
