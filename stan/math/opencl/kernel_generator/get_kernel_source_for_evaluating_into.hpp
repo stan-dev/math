@@ -27,7 +27,7 @@ operation_cl<Derived, Scalar, Args...>::get_kernel_source_for_evaluating_into(
   kernel_parts parts = derived().get_whole_kernel_parts(generated, ng, "i", "j",
                                                         lhs_expression);
   std::string src;
-  if(Derived::require_specific_local_size){
+  if (Derived::require_specific_local_size) {
     src =
         "kernel void calculate(" + parts.args + "const int rows, const int cols){\n"
         "const int gid_i = get_global_id(0);\n"
@@ -50,8 +50,7 @@ operation_cl<Derived, Scalar, Args...>::get_kernel_source_for_evaluating_into(
         + parts.reduction +
         "}\n"
         "}\n";
-  }
-  else{
+  } else {
     src =
         "kernel void calculate(" + parts.args.substr(0, parts.args.size() - 2) + "){\n"
         "int i = get_global_id(0);\n"

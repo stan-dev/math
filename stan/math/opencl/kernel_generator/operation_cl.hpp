@@ -142,7 +142,8 @@ class operation_cl : public operation_cl_base {
   template <typename T_result>
   kernel_parts get_whole_kernel_parts(
       std::set<const operation_cl_base*>& generated, name_generator& ng,
-      const std::string& i, const std::string& j, const T_result& result) const {
+      const std::string& i, const std::string& j,
+      const T_result& result) const {
     kernel_parts parts = derived().get_kernel_parts(generated, ng, i, j);
     kernel_parts out_parts = result.get_kernel_parts_lhs(generated, ng, i, j);
 
@@ -324,8 +325,9 @@ template <typename T_lhs>
 std::string operation_cl<Derived, Scalar, Args...>::cache<T_lhs>::source;
 
 template <typename Derived, typename Scalar, typename... Args>
-const bool operation_cl<Derived, Scalar, Args...>::require_specific_local_size =
-    std::max({false, std::decay_t<Args>::Deriv::require_specific_local_size...});
+const bool operation_cl<Derived, Scalar, Args...>::require_specific_local_size
+    = std::max({false,
+                std::decay_t<Args>::Deriv::require_specific_local_size...});
 }  // namespace math
 }  // namespace stan
 
