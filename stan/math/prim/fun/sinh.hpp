@@ -49,7 +49,7 @@ inline auto sinh(const Eigen::MatrixBase<Derived>& x) {
 }
 
 /**
- * Version of acos() that accepts Eigen Array or array expressions.
+ * Version of sinh() that accepts Eigen Array or array expressions.
  *
  * @tparam Derived derived type of x
  * @param x Matrix or matrix expression

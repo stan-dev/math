@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/read_corr_L.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 

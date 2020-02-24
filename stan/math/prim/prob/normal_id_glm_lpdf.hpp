@@ -69,7 +69,7 @@ return_type_t<T_y, T_x_scalar, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
 
   static const char *function = "normal_id_glm_lpdf";
 
-  const size_t N_instances = T_x_rows == 1 ? size(y) : x.rows();
+  const size_t N_instances = T_x_rows == 1 ? stan::math::size(y) : x.rows();
   const size_t N_attributes = x.cols();
 
   check_consistent_size(function, "Vector of dependent variables", y,

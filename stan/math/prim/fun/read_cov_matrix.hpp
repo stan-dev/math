@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_FUN_READ_COV_MATRIX_HPP
 #define STAN_MATH_PRIM_FUN_READ_COV_MATRIX_HPP
 
+#include <stan/math/prim/fun/read_corr_L.hpp>
 #include <stan/math/prim/fun/read_cov_L.hpp>
 #include <stan/math/prim/fun/multiply_lower_tri_self_transpose.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>

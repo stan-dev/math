@@ -69,7 +69,7 @@ return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
   }
 
   VectorBuilder<true, T_partials_return, T_prob> log1m_theta(size(theta));
-  for (size_t i = 0; i < size(theta); ++i) {
+  for (size_t i = 0; i < stan::math::size(theta); ++i) {
     log1m_theta[i] = log1m(value_of(theta_vec[i]));
   }
 

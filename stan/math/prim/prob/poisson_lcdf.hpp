@@ -4,8 +4,10 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/gamma_q.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
@@ -39,8 +41,8 @@ return_type_t<T_rate> poisson_lcdf(const T_n& n, const T_rate& lambda) {
 
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_rate> lambda_vec(lambda);
-  size_t size_n = size(n);
-  size_t size_lambda = size(lambda);
+  size_t size_n = stan::math::size(n);
+  size_t size_lambda = stan::math::size(lambda);
   size_t max_size_seq_view = max_size(n, lambda);
 
   // Explicit return for extreme values

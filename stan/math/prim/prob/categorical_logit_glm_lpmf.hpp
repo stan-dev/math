@@ -3,6 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <Eigen/Core>
@@ -51,7 +53,7 @@ categorical_logit_glm_lpmf(
   using std::exp;
   using std::log;
 
-  const size_t N_instances = T_x_rows == 1 ? size(y) : x.rows();
+  const size_t N_instances = T_x_rows == 1 ? stan::math::size(y) : x.rows();
   const size_t N_attributes = x.cols();
   const size_t N_classes = beta.cols();
 

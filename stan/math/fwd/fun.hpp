@@ -23,7 +23,6 @@
 #include <stan/math/fwd/fun/determinant.hpp>
 #include <stan/math/fwd/fun/digamma.hpp>
 #include <stan/math/fwd/fun/divide.hpp>
-#include <stan/math/fwd/fun/dot_product.hpp>
 #include <stan/math/fwd/fun/dot_self.hpp>
 #include <stan/math/fwd/fun/Eigen_NumTraits.hpp>
 #include <stan/math/fwd/fun/erf.hpp>
@@ -92,6 +91,7 @@
 #include <stan/math/fwd/fun/primitive_value.hpp>
 #include <stan/math/fwd/fun/qr_Q.hpp>
 #include <stan/math/fwd/fun/qr_R.hpp>
+#include <stan/math/fwd/fun/quad_form.hpp>
 #include <stan/math/fwd/fun/quad_form_sym.hpp>
 #include <stan/math/fwd/fun/rising_factorial.hpp>
 #include <stan/math/fwd/fun/round.hpp>

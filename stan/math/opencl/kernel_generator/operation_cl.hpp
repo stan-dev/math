@@ -297,7 +297,8 @@ class operation_cl : public operation_cl_base {
    */
   inline int bottom_diagonal() const {
     return index_apply<N>([&](auto... Is) {
-      return std::min({std::get<Is>(arguments_).bottom_diagonal()...});
+      return std::min(std::initializer_list<int>(
+          {std::get<Is>(arguments_).bottom_diagonal()...}));
     });
   }
 
@@ -308,7 +309,8 @@ class operation_cl : public operation_cl_base {
    */
   inline int top_diagonal() const {
     return index_apply<N>([&](auto... Is) {
-      return std::max({std::get<Is>(arguments_).top_diagonal()...});
+      return std::max(std::initializer_list<int>(
+          {std::get<Is>(arguments_).top_diagonal()...}));
     });
   }
 };

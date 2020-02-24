@@ -6,6 +6,7 @@
 #include <stan/math/prim/fun/fma.hpp>
 #include <stan/math/prim/fun/identity_constrain.hpp>
 #include <stan/math/prim/fun/multiply_log.hpp>
+#include <stan/math/prim/fun/size.hpp>
 #include <cmath>
 
 namespace stan {

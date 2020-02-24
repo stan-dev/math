@@ -6,6 +6,7 @@
 #include <stan/math/prim/fun/abs.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/squared_distance.hpp>
+#include <stan/math/prim/fun/sqrt.hpp>
 #include <cmath>
 
 namespace stan {
