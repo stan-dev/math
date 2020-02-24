@@ -157,7 +157,7 @@ class rowwise_sum_
    * Creates a deep copy of this expression.
    * @return copy of \c *this
    */
-  inline rowwise_sum_<std::remove_reference_t<T>> deep_copy() {
+  inline auto deep_copy() {
     auto&& arg_copy = std::get<0>(arguments_).deep_copy();
     return rowwise_sum_<std::remove_reference_t<decltype(arg_copy)>>(
         std::move(arg_copy));

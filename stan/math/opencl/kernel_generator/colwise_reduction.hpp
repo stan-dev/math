@@ -24,7 +24,8 @@ namespace math {
  * be efficient column wise reductions are only done partially. That means
  * instead of 1 row kernel output will have a few rows that need to be reduced
  * to obtain final result. This can be done in a separate kernel or after
- * copying to CPU.
+ * copying to CPU. Also column wise reductions can not be used as arguments to
+ * other operations - they can only be evaluated.
  * @tparam Derived derived type
  * @tparam T type of first argument
  * @tparam operation type with member function generate that accepts two
@@ -149,9 +150,21 @@ class colwise_reduction
  */
 template <typename T>
 class colwise_sum_ : public colwise_reduction<colwise_sum_<T>, T, sum_op> {
+  using base = colwise_reduction<colwise_sum_<T>, T, sum_op>;
+  using base::arguments_;
+
  public:
   explicit colwise_sum_(T&& a)
       : colwise_reduction<colwise_sum_<T>, T, sum_op>(std::forward<T>(a), "0") {
+  }
+  /**
+   * Creates a deep copy of this expression.
+   * @return copy of \c *this
+   */
+  inline auto deep_copy() {
+    auto&& arg_copy = std::get<0>(arguments_).deep_copy();
+    return colwise_sum_<std::remove_reference_t<decltype(arg_copy)>>(
+        std::move(arg_copy));
   }
 };
 
@@ -160,16 +173,18 @@ class colwise_sum_ : public colwise_reduction<colwise_sum_<T>, T, sum_op> {
  * be efficient column wise reductions are only done partially. That means
  * instead of 1 row kernel output will have a few rows that need to be reduced
  * to obtain final result. This can be done in a separate kernel or after
- * copying to CPU.
+ * copying to CPU. Also column wise reductions can not be used as arguments to
+ * other operations - they can only be evaluated.
  * @tparam T type of input expression
  * @param a expression to reduce
  * @return sum
  */
 template <typename T,
           typename = require_all_valid_expressions_and_none_scalar_t<T>>
-inline colwise_sum_<as_operation_cl_t<T>> colwise_sum(T&& a) {
-  return colwise_sum_<as_operation_cl_t<T>>(
-      as_operation_cl(std::forward<T>(a)));
+inline auto colwise_sum(T&& a) {
+  auto&& arg_copy = as_operation_cl(std::forward<T>(a)).deep_copy();
+  return colwise_sum_<std::remove_reference_t<decltype(arg_copy)>>(
+      std::move(arg_copy));
 }
 
 /**
@@ -180,11 +195,25 @@ template <typename T>
 class colwise_max_ : public colwise_reduction<
                          colwise_max_<T>, T,
                          max_op<typename std::remove_reference_t<T>::Scalar>> {
+  using base
+      = colwise_reduction<colwise_max_<T>, T,
+                          max_op<typename std::remove_reference_t<T>::Scalar>>;
+  using base::arguments_;
+
  public:
   using op = max_op<typename std::remove_reference_t<T>::Scalar>;
   explicit colwise_max_(T&& a)
       : colwise_reduction<colwise_max_<T>, T, op>(std::forward<T>(a),
                                                   op::init()) {}
+  /**
+   * Creates a deep copy of this expression.
+   * @return copy of \c *this
+   */
+  inline auto deep_copy() {
+    auto&& arg_copy = std::get<0>(arguments_).deep_copy();
+    return colwise_max_<std::remove_reference_t<decltype(arg_copy)>>(
+        std::move(arg_copy));
+  }
 };
 
 /**
@@ -192,16 +221,18 @@ class colwise_max_ : public colwise_reduction<
  * be efficient column wise reductions are only done partially. That means
  * instead of 1 row kernel output will have a few rows that need to be reduced
  * to obtain final result. This can be done in a separate kernel or after
- * copying to CPU.
+ * copying to CPU. Also column wise reductions can not be used as arguments to
+ * other operations - they can only be evaluated.
  * @tparam T type of input expression
  * @param a expression to reduce
  * @return max
  */
 template <typename T,
           typename = require_all_valid_expressions_and_none_scalar_t<T>>
-inline colwise_max_<as_operation_cl_t<T>> colwise_max(T&& a) {
-  return colwise_max_<as_operation_cl_t<T>>(
-      as_operation_cl(std::forward<T>(a)));
+inline auto colwise_max(T&& a) {
+  auto&& arg_copy = as_operation_cl(std::forward<T>(a)).deep_copy();
+  return colwise_max_<std::remove_reference_t<decltype(arg_copy)>>(
+      std::move(arg_copy));
 }
 
 /**
@@ -212,11 +243,25 @@ template <typename T>
 class colwise_min_ : public colwise_reduction<
                          colwise_min_<T>, T,
                          min_op<typename std::remove_reference_t<T>::Scalar>> {
+  using base
+      = colwise_reduction<colwise_min_<T>, T,
+                          min_op<typename std::remove_reference_t<T>::Scalar>>;
+  using base::arguments_;
+
  public:
   using op = min_op<typename std::remove_reference_t<T>::Scalar>;
   explicit colwise_min_(T&& a)
       : colwise_reduction<colwise_min_<T>, T, op>(std::forward<T>(a),
                                                   op::init()) {}
+  /**
+   * Creates a deep copy of this expression.
+   * @return copy of \c *this
+   */
+  inline auto deep_copy() {
+    auto&& arg_copy = std::get<0>(arguments_).deep_copy();
+    return colwise_min_<std::remove_reference_t<decltype(arg_copy)>>(
+        std::move(arg_copy));
+  }
 };
 
 /**
@@ -224,16 +269,18 @@ class colwise_min_ : public colwise_reduction<
  * be efficient column wise reductions are only done partially. That means
  * instead of 1 row kernel output will have a few rows that need to be reduced
  * to obtain final result. This can be done in a separate kernel or after
- * copying to CPU.
+ * copying to CPU. Also column wise reductions can not be used as arguments to
+ * other operations - they can only be evaluated.
  * @tparam T type of input expression
  * @param a expression to reduce
  * @return min
  */
 template <typename T,
           typename = require_all_valid_expressions_and_none_scalar_t<T>>
-inline colwise_min_<as_operation_cl_t<T>> colwise_min(T&& a) {
-  return colwise_min_<as_operation_cl_t<T>>(
-      as_operation_cl(std::forward<T>(a)));
+inline auto colwise_min(T&& a) {
+  auto&& arg_copy = as_operation_cl(std::forward<T>(a)).deep_copy();
+  return colwise_min_<std::remove_reference_t<decltype(arg_copy)>>(
+      std::move(arg_copy));
 }
 
 }  // namespace math

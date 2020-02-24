@@ -46,11 +46,9 @@ void operation_cl<Derived, Scalar, Args...>::evaluate_into(
     cache::kernel.setArg(arg_num++, n_rows);
     cache::kernel.setArg(arg_num++, n_cols);
 
-    int desired_wgs = opencl_context.compute_units() * 4;
-    int local = opencl_context.base_opts().at("LOCAL_SIZE_");
-
     cl::Event e;
     if(Derived::require_specific_local_size){
+      int local = opencl_context.base_opts().at("LOCAL_SIZE_");
       int wgs_rows = (n_rows + local - 1) / local;
       int wgs_cols = (n_cols + local - 1) / local;
 
