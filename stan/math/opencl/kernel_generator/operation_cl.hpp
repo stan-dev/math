@@ -293,7 +293,7 @@ class operation_cl : public operation_cl_base {
   /**
    * Determine index of bottom diagonal written. Some subclasses may need to
    * override this.
-   * @return number of columns
+   * @return index of bottom diagonal
    */
   inline int bottom_diagonal() const {
     return index_apply<N>([&](auto... Is) {
@@ -305,7 +305,7 @@ class operation_cl : public operation_cl_base {
   /**
    * Determine index of top diagonal written. Some subclasses may need to
    * override this.
-   * @return number of columns
+   * @return index of top diagonal
    */
   inline int top_diagonal() const {
     return index_apply<N>([&](auto... Is) {

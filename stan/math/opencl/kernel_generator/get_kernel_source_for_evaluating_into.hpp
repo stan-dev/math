@@ -34,36 +34,31 @@ operation_cl<Derived, Scalar, Args...>::get_kernel_source_for_evaluating_into(
         "const int lid_i = get_local_id(0);\n"
         "const int lsize_i = get_local_size(0);\n"
         "const int wg_id_i = get_group_id(0);\n"
+        "const int wg_id_j = get_group_id(1);\n"
         "const int n_groups_i = get_num_groups(0);\n"
         "const int blocks_rows = (rows + lsize_i - 1) / lsize_i;\n"
         "const int blocks_cols = (cols + lsize_i - 1) / lsize_i;\n"
-        "for (int idx = wg_id_i; idx < blocks_rows * blocks_cols; idx += n_groups_i){\n"
-        "const int i = lsize_i * (idx % blocks_rows) + lid_i;\n"
-        "const int j0 = lsize_i * (idx / blocks_rows);\n"
-        "for(int j = j0; j < min(cols, j0 + lsize_i); j++){\n"
+        "const int i0 = lsize_i * wg_id_i;\n"
+        "const int i = i0 + lid_i;\n"
+        "const int j0 = lsize_i * wg_id_j;\n"
+        "for(int lid_j = 0; lid_j < min(cols - j0, lsize_i); lid_j++){\n"
+        "const int j = j0 + lid_j;\n"
         + parts.initialization +
         "if(i < rows){\n"
         + parts.body +
         "}\n"
         + parts.reduction +
         "}\n"
-        "}\n"
         "}\n";
   }
   else{
     src =
         "kernel void calculate(" + parts.args +"const int rows, const int cols){\n"
-        "int gid_i = get_global_id(0);\n"
-        "int gid_j = get_global_id(1);\n"
-        "int gsize_i = get_global_size(0);\n"
-        "int gsize_j = get_global_size(1);\n"
-        "for(int j = gid_j; j < cols; j += gsize_j){\n"
-        "for(int i = gid_i; i < rows; i += gsize_i){\n"
+        "int i = get_global_id(0);\n"
+        "int j = get_global_id(1);\n"
         + parts.initialization
         + parts.body
         + parts.reduction +
-        "}\n"
-        "}\n"
         "}\n";
   }
   return src;

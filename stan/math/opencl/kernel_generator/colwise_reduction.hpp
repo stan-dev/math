@@ -74,7 +74,7 @@ class colwise_reduction
 
     parts.args += out_parts.args;
     parts.reduction += "if (lid_i == 0) {\n"
-                     + result.var_name + "_global[j * blocks_rows + idx % blocks_rows] = "
+                     + result.var_name + "_global[j * blocks_rows + wg_id_i] = "
                             + derived().var_name + "_local[0];\n"
                      "}\n";
     return parts;
