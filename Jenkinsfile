@@ -281,9 +281,15 @@ pipeline {
             }
         }
         stage('Always-run tests part 2') {
-            when {
-                expression {
-                    !skipRemainingStages
+            when { 
+                allOf {
+                    anyOf {
+                        branch 'develop'
+                        branch 'master'
+                    }
+                    expression {
+                        !skipRemainingStages
+                    }
                 }
             }
             parallel {
