@@ -50,6 +50,7 @@ return_type_t<T_y, T_dof> chi_square_cdf(const T_y& y, const T_dof& nu) {
 
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_dof> nu_vec(nu);
+  size_t size_nu = stan::math::size(nu);
   size_t N = max_size(y, nu);
 
   operands_and_partials<T_y, T_dof> ops_partials(y, nu);
@@ -65,16 +66,17 @@ return_type_t<T_y, T_dof> chi_square_cdf(const T_y& y, const T_dof& nu) {
   using std::exp;
   using std::pow;
 
+  VectorBuilder<!is_constant_all<T_y, T_dof>::value, T_partials_return, T_dof>
+      tgamma_vec(size_nu);
   VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
-      gamma_vec(size(nu));
-  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
-      digamma_vec(size(nu));
-
-  if (!is_constant_all<T_dof>::value) {
-    for (size_t i = 0; i < stan::math::size(nu); i++) {
-      const T_partials_return alpha_dbl = value_of(nu_vec[i]) * 0.5;
-      gamma_vec[i] = tgamma(alpha_dbl);
-      digamma_vec[i] = digamma(alpha_dbl);
+      digamma_vec(size_nu);
+  if (!is_constant_all<T_y, T_dof>::value) {
+    for (size_t i = 0; i < size_nu; i++) {
+      const T_partials_return half_nu_dbl = 0.5 * value_of(nu_vec[i]);
+      tgamma_vec[i] = tgamma(half_nu_dbl);
+      if (!is_constant_all<T_dof>::value) {
+        digamma_vec[i] = digamma(half_nu_dbl);
+      }
     }
   }
 
@@ -85,23 +87,21 @@ return_type_t<T_y, T_dof> chi_square_cdf(const T_y& y, const T_dof& nu) {
       continue;
     }
 
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return alpha_dbl = value_of(nu_vec[n]) * 0.5;
-    const T_partials_return beta_dbl = 0.5;
-
-    const T_partials_return Pn = gamma_p(alpha_dbl, beta_dbl * y_dbl);
+    const T_partials_return half_nu_dbl = 0.5 * value_of(nu_vec[n]);
+    const T_partials_return half_y_dbl = 0.5 * value_of(y_vec[n]);
+    const T_partials_return Pn = gamma_p(half_nu_dbl, half_y_dbl);
 
     cdf *= Pn;
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] += beta_dbl * exp(-beta_dbl * y_dbl)
-                                          * pow(beta_dbl * y_dbl, alpha_dbl - 1)
-                                          / tgamma(alpha_dbl) / Pn;
+      ops_partials.edge1_.partials_[n] += 0.5 * exp(-half_y_dbl)
+                                          * pow(half_y_dbl, half_nu_dbl - 1)
+                                          / (tgamma_vec[n] * Pn);
     }
     if (!is_constant_all<T_dof>::value) {
       ops_partials.edge2_.partials_[n]
           -= 0.5
-             * grad_reg_inc_gamma(alpha_dbl, beta_dbl * y_dbl, gamma_vec[n],
+             * grad_reg_inc_gamma(half_nu_dbl, half_y_dbl, tgamma_vec[n],
                                   digamma_vec[n])
              / Pn;
     }
@@ -113,7 +113,7 @@ return_type_t<T_y, T_dof> chi_square_cdf(const T_y& y, const T_dof& nu) {
     }
   }
   if (!is_constant_all<T_dof>::value) {
-    for (size_t n = 0; n < stan::math::size(nu); ++n) {
+    for (size_t n = 0; n < size_nu; ++n) {
       ops_partials.edge2_.partials_[n] *= cdf;
     }
   }

@@ -8,10 +8,12 @@
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/gamma_p.hpp>
 #include <stan/math/prim/fun/grad_reg_inc_gamma.hpp>
+#include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/tgamma.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <cmath>
@@ -35,12 +37,11 @@ namespace math {
 template <typename T_y, typename T_dof>
 return_type_t<T_y, T_dof> inv_chi_square_lccdf(const T_y& y, const T_dof& nu) {
   using T_partials_return = partials_return_t<T_y, T_dof>;
+  static const char* function = "inv_chi_square_lccdf";
 
   if (size_zero(y, nu)) {
     return 0.0;
   }
-
-  static const char* function = "inv_chi_square_lccdf";
 
   T_partials_return P(0.0);
 
@@ -52,13 +53,15 @@ return_type_t<T_y, T_dof> inv_chi_square_lccdf(const T_y& y, const T_dof& nu) {
 
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_dof> nu_vec(nu);
+  size_t size_y = stan::math::size(y);
+  size_t size_nu = stan::math::size(nu);
   size_t N = max_size(y, nu);
 
   operands_and_partials<T_y, T_dof> ops_partials(y, nu);
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
-  for (size_t i = 0; i < stan::math::size(y); i++) {
+  for (size_t i = 0; i < size_y; i++) {
     if (value_of(y_vec[i]) == 0) {
       return ops_partials.build(0.0);
     }
@@ -68,16 +71,24 @@ return_type_t<T_y, T_dof> inv_chi_square_lccdf(const T_y& y, const T_dof& nu) {
   using std::log;
   using std::pow;
 
-  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
-      gamma_vec(size(nu));
-  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
-      digamma_vec(size(nu));
+  VectorBuilder<true, T_partials_return, T_y> half_y_inv(size_y);
+  for (size_t i = 0; i < size_y; i++) {
+    half_y_inv[i] = 0.5 * inv(value_of(y_vec[i]));
+  }
 
-  if (!is_constant_all<T_dof>::value) {
-    for (size_t i = 0; i < stan::math::size(nu); i++) {
-      const T_partials_return nu_dbl = value_of(nu_vec[i]);
-      gamma_vec[i] = tgamma(0.5 * nu_dbl);
-      digamma_vec[i] = digamma(0.5 * nu_dbl);
+  VectorBuilder<true, T_partials_return, T_dof> half_nu(size_nu);
+  VectorBuilder<!is_constant_all<T_y, T_dof>::value, T_partials_return, T_dof>
+      tgamma_vec(size_nu);
+  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
+      digamma_vec(size_nu);
+  for (size_t i = 0; i < size_nu; i++) {
+    const T_partials_return half_nu_dbl = 0.5 * value_of(nu_vec[i]);
+    half_nu[i] = half_nu_dbl;
+    if (!is_constant_all<T_y, T_dof>::value) {
+      tgamma_vec[i] = tgamma(half_nu[i]);
+    }
+    if (!is_constant_all<T_dof>::value) {
+      digamma_vec[i] = digamma(half_nu_dbl);
     }
   }
 
@@ -85,27 +96,22 @@ return_type_t<T_y, T_dof> inv_chi_square_lccdf(const T_y& y, const T_dof& nu) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
     if (value_of(y_vec[n]) == INFTY) {
-      return ops_partials.build(negative_infinity());
+      return ops_partials.build(NEGATIVE_INFTY);
     }
 
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return y_inv_dbl = 1.0 / y_dbl;
-    const T_partials_return nu_dbl = value_of(nu_vec[n]);
-
-    const T_partials_return Pn = gamma_p(0.5 * nu_dbl, 0.5 * y_inv_dbl);
+    const T_partials_return Pn = gamma_p(half_nu[n], half_y_inv[n]);
 
     P += log(Pn);
 
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n]
-          -= 0.5 * y_inv_dbl * y_inv_dbl * exp(-0.5 * y_inv_dbl)
-             * pow(0.5 * y_inv_dbl, 0.5 * nu_dbl - 1) / tgamma(0.5 * nu_dbl)
-             / Pn;
+          -= 2 * square(half_y_inv[n]) * exp(-half_y_inv[n])
+             * pow(half_y_inv[n], half_nu[n] - 1) / (tgamma_vec[n] * Pn);
     }
     if (!is_constant_all<T_dof>::value) {
       ops_partials.edge2_.partials_[n]
           -= 0.5
-             * grad_reg_inc_gamma(0.5 * nu_dbl, 0.5 * y_inv_dbl, gamma_vec[n],
+             * grad_reg_inc_gamma(half_nu[n], half_y_inv[n], tgamma_vec[n],
                                   digamma_vec[n])
              / Pn;
     }

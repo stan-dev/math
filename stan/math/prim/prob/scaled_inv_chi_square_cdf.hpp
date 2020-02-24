@@ -8,9 +8,11 @@
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/gamma_q.hpp>
 #include <stan/math/prim/fun/grad_reg_inc_gamma.hpp>
+#include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/tgamma.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <cmath>
@@ -22,26 +24,26 @@ namespace math {
  * The CDF of a scaled inverse chi-squared density for y with the
  * specified degrees of freedom parameter and scale parameter.
  *
+ * @tparam T_y type of scalar
+ * @tparam T_dof type of degrees of freedom
+ * @tparam T_scale type of scale
  * @param y A scalar variable.
  * @param nu Degrees of freedom.
  * @param s Scale parameter.
  * @throw std::domain_error if nu is not greater than 0
  * @throw std::domain_error if s is not greater than 0.
  * @throw std::domain_error if y is not greater than 0.
- * @tparam T_y Type of scalar.
- * @tparam T_dof Type of degrees of freedom.
  */
 template <typename T_y, typename T_dof, typename T_scale>
 return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_cdf(const T_y& y,
                                                              const T_dof& nu,
                                                              const T_scale& s) {
   using T_partials_return = partials_return_t<T_y, T_dof, T_scale>;
+  static const char* function = "scaled_inv_chi_square_cdf";
 
   if (size_zero(y, nu, s)) {
     return 1.0;
   }
-
-  static const char* function = "scaled_inv_chi_square_cdf";
 
   T_partials_return P(1.0);
 
@@ -56,6 +58,8 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_cdf(const T_y& y,
   scalar_seq_view<T_y> y_vec(y);
   scalar_seq_view<T_dof> nu_vec(nu);
   scalar_seq_view<T_scale> s_vec(s);
+  size_t size_y = stan::math::size(y);
+  size_t size_nu = stan::math::size(nu);
   size_t N = max_size(y, nu, s);
 
   operands_and_partials<T_y, T_dof, T_scale> ops_partials(y, nu, s);
@@ -71,15 +75,18 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_cdf(const T_y& y,
   using std::exp;
   using std::pow;
 
-  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
-      gamma_vec(size(nu));
-  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
-      digamma_vec(size(nu));
+  VectorBuilder<true, T_partials_return, T_y> inv_y(size_y);
+  for (size_t i = 0; i < size_y; i++) {
+    inv_y[i] = inv(value_of(y_vec[i]));
+  }
 
-  if (!is_constant_all<T_dof>::value) {
-    for (size_t i = 0; i < stan::math::size(nu); i++) {
-      const T_partials_return half_nu_dbl = 0.5 * value_of(nu_vec[i]);
-      gamma_vec[i] = tgamma(half_nu_dbl);
+  VectorBuilder<true, T_partials_return, T_dof> tgamma_vec(size_nu);
+  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
+      digamma_vec(size_nu);
+  for (size_t i = 0; i < size_nu; i++) {
+    const T_partials_return half_nu_dbl = 0.5 * value_of(nu_vec[i]);
+    tgamma_vec[i] = tgamma(half_nu_dbl);
+    if (!is_constant_all<T_dof>::value) {
       digamma_vec[i] = digamma(half_nu_dbl);
     }
   }
@@ -91,38 +98,35 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_cdf(const T_y& y,
       continue;
     }
 
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return y_inv_dbl = 1.0 / y_dbl;
     const T_partials_return half_nu_dbl = 0.5 * value_of(nu_vec[n]);
     const T_partials_return s_dbl = value_of(s_vec[n]);
-    const T_partials_return half_s2_overx_dbl = 0.5 * s_dbl * s_dbl * y_inv_dbl;
-    const T_partials_return half_nu_s2_overx_dbl
-        = 2.0 * half_nu_dbl * half_s2_overx_dbl;
+    const T_partials_return s2_over_y = square(s_dbl) * inv_y[n];
+    const T_partials_return half_nu_s2_over_y = half_nu_dbl * s2_over_y;
 
-    const T_partials_return Pn = gamma_q(half_nu_dbl, half_nu_s2_overx_dbl);
+    const T_partials_return Pn = gamma_q(half_nu_dbl, half_nu_s2_over_y);
     const T_partials_return gamma_p_deriv
-        = exp(-half_nu_s2_overx_dbl)
-          * pow(half_nu_s2_overx_dbl, half_nu_dbl - 1) / tgamma(half_nu_dbl);
+        = exp(-half_nu_s2_over_y) * pow(half_nu_s2_over_y, half_nu_dbl - 1)
+          / tgamma_vec[n];
 
     P *= Pn;
 
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n]
-          += half_nu_s2_overx_dbl * y_inv_dbl * gamma_p_deriv / Pn;
+          += half_nu_s2_over_y * inv_y[n] * gamma_p_deriv / Pn;
     }
 
     if (!is_constant_all<T_dof>::value) {
       ops_partials.edge2_.partials_[n]
-          += (0.5
-                  * grad_reg_inc_gamma(half_nu_dbl, half_nu_s2_overx_dbl,
-                                       gamma_vec[n], digamma_vec[n])
-              - half_s2_overx_dbl * gamma_p_deriv)
+          += 0.5
+             * (grad_reg_inc_gamma(half_nu_dbl, half_nu_s2_over_y,
+                                   tgamma_vec[n], digamma_vec[n])
+                - s2_over_y * gamma_p_deriv)
              / Pn;
     }
 
     if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n]
-          += -2.0 * half_nu_dbl * s_dbl * y_inv_dbl * gamma_p_deriv / Pn;
+          += -2.0 * half_nu_dbl * s_dbl * inv_y[n] * gamma_p_deriv / Pn;
     }
   }
 

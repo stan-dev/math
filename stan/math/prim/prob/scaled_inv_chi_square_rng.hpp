@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/square.hpp>
 #include <boost/random/chi_squared_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 
@@ -34,7 +35,6 @@ inline typename VectorBuilder<true, double, T_deg, T_scale>::type
 scaled_inv_chi_square_rng(const T_deg& nu, const T_scale& s, RNG& rng) {
   using boost::random::chi_squared_distribution;
   using boost::variate_generator;
-
   static const char* function = "scaled_inv_chi_square_rng";
 
   check_positive_finite(function, "Degrees of freedom parameter", nu);
@@ -50,7 +50,7 @@ scaled_inv_chi_square_rng(const T_deg& nu, const T_scale& s, RNG& rng) {
   for (size_t n = 0; n < N; ++n) {
     variate_generator<RNG&, chi_squared_distribution<> > chi_square_rng(
         rng, chi_squared_distribution<>(nu_vec[n]));
-    output[n] = nu_vec[n] * s_vec[n] * s_vec[n] / chi_square_rng();
+    output[n] = nu_vec[n] * square(s_vec[n]) / chi_square_rng();
   }
 
   return output.data();
