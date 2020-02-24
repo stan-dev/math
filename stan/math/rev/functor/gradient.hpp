@@ -43,9 +43,7 @@ void gradient(const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
               double& fx, Eigen::Matrix<double, Eigen::Dynamic, 1>& grad_fx) {
   start_nested();
   try {
-    Eigen::Matrix<var, Eigen::Dynamic, 1> x_var(x.size());
-    for (int i = 0; i < x.size(); ++i)
-      x_var(i) = var(new vari(x(i), false));
+    Eigen::Matrix<var, Eigen::Dynamic, 1> x_var(x);
     var fx_var = f(x_var);
     fx = fx_var.val();
     grad_fx.resize(x.size());

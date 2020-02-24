@@ -3,9 +3,9 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/divide.hpp>
 #include <stan/math/prim/fun/divide_columns.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/sqrt.hpp>
 #include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/squared_distance.hpp>
@@ -61,7 +61,6 @@ gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
   T_s sigma_sq = square(sigma);
   T_l root_5_inv_l = sqrt(5.0) / length_scale;
   T_l inv_l_sq_5_3 = 5.0 / (3.0 * square(length_scale));
-  T_l neg_root_5_inv_l = -sqrt(5.0) / length_scale;
 
   for (size_t i = 0; i < x_size; ++i) {
     cov(i, i) = sigma_sq;
@@ -70,7 +69,7 @@ gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
       return_type_t<T_x> dist = sqrt(sq_distance);
       cov(i, j) = sigma_sq
                   * (1.0 + root_5_inv_l * dist + inv_l_sq_5_3 * sq_distance)
-                  * exp(neg_root_5_inv_l * dist);
+                  * exp(-root_5_inv_l * dist);
       cov(j, i) = cov(i, j);
     }
   }
@@ -127,7 +126,6 @@ gp_matern52_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
   T_s sigma_sq = square(sigma);
   double root_5 = sqrt(5.0);
   double five_thirds = 5.0 / 3.0;
-  double neg_root_5 = -root_5;
 
   std::vector<Eigen::Matrix<return_type_t<T_x, T_l>, -1, 1>> x_new
       = divide_columns(x, length_scale);
@@ -139,7 +137,7 @@ gp_matern52_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
           = squared_distance(x_new[i], x_new[j]);
       return_type_t<T_x, T_l> dist = sqrt(sq_distance);
       cov(i, j) = sigma_sq * (1.0 + root_5 * dist + five_thirds * sq_distance)
-                  * exp(neg_root_5 * dist);
+                  * exp(-root_5 * dist);
       cov(j, i) = cov(i, j);
     }
   }
@@ -198,7 +196,6 @@ gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   T_s sigma_sq = square(sigma);
   T_l root_5_inv_l = sqrt(5.0) / length_scale;
   T_l inv_l_sq_5_3 = 5.0 / (3.0 * square(length_scale));
-  T_l neg_root_5_inv_l = -sqrt(5.0) / length_scale;
 
   for (size_t i = 0; i < x1_size; ++i) {
     for (size_t j = 0; j < x2_size; ++j) {
@@ -206,7 +203,7 @@ gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
       return_type_t<T_x1, T_x2> dist = sqrt(sq_distance);
       cov(i, j) = sigma_sq
                   * (1.0 + root_5_inv_l * dist + inv_l_sq_5_3 * sq_distance)
-                  * exp(neg_root_5_inv_l * dist);
+                  * exp(-root_5_inv_l * dist);
     }
   }
   return cov;
@@ -288,7 +285,7 @@ gp_matern52_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
           = squared_distance(x1_new[i], x2_new[j]);
       return_type_t<T_x1, T_x2, T_l> dist = sqrt(sq_distance);
       cov(i, j) = sigma_sq * (1.0 + root_5 * dist + five_thirds * sq_distance)
-                  * exp(neg_root_5 * dist);
+                  * exp(-root_5 * dist);
     }
   }
   return cov;

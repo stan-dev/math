@@ -34,7 +34,7 @@ inline typename VectorBuilder<true, double, T_deg>::type chi_square_rng(
   check_positive_finite(function, "Degrees of freedom parameter", nu);
 
   scalar_seq_view<T_deg> nu_vec(nu);
-  size_t N = size(nu);
+  size_t N = stan::math::size(nu);
   VectorBuilder<true, double, T_deg> output(N);
 
   for (size_t n = 0; n < N; ++n) {

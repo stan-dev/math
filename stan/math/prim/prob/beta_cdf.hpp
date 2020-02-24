@@ -61,7 +61,7 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
-  for (size_t i = 0; i < size(y); i++) {
+  for (size_t i = 0; i < stan::math::size(y); i++) {
     if (value_of(y_vec[i]) <= 0) {
       return ops_partials.build(0.0);
     }
@@ -125,17 +125,17 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
   }
 
   if (!is_constant_all<T_y>::value) {
-    for (size_t n = 0; n < size(y); ++n) {
+    for (size_t n = 0; n < stan::math::size(y); ++n) {
       ops_partials.edge1_.partials_[n] *= P;
     }
   }
   if (!is_constant_all<T_scale_succ>::value) {
-    for (size_t n = 0; n < size(alpha); ++n) {
+    for (size_t n = 0; n < stan::math::size(alpha); ++n) {
       ops_partials.edge2_.partials_[n] *= P;
     }
   }
   if (!is_constant_all<T_scale_fail>::value) {
-    for (size_t n = 0; n < size(beta); ++n) {
+    for (size_t n = 0; n < stan::math::size(beta); ++n) {
       ops_partials.edge3_.partials_[n] *= P;
     }
   }

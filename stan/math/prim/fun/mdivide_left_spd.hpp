@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_FUN_MDIVIDE_LEFT_SPD_HPP
 #define STAN_MATH_PRIM_FUN_MDIVIDE_LEFT_SPD_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/promote_common.hpp>
 
 namespace stan {
 namespace math {
@@ -32,9 +32,11 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_left_spd(
     const Eigen::Matrix<T1, R1, C1> &A, const Eigen::Matrix<T2, R2, C2> &b) {
   static const char *function = "mdivide_left_spd";
   check_multiplicable(function, "A", A, "b", b);
-  check_positive(function, "rows", A.rows());
   check_symmetric(function, "A", A);
   check_not_nan(function, "A", A);
+  if (A.size() == 0) {
+    return {0, b.cols()};
+  }
 
   auto llt = Eigen::Matrix<return_type_t<T1, T2>, R1, C1>(A).llt();
   check_pos_definite(function, "A", llt);

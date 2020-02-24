@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_PRIM_FUN_MDIVIDE_LEFT_TRI_HPP
 #define STAN_MATH_PRIM_FUN_MDIVIDE_LEFT_TRI_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/promote_common.hpp>
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/opencl.hpp>
 #endif
@@ -36,12 +36,13 @@ inline Eigen::Matrix<return_type_t<T1, T2>, R1, C2> mdivide_left_tri(
     const Eigen::Matrix<T1, R1, C1> &A, const Eigen::Matrix<T2, R2, C2> &b) {
   check_square("mdivide_left_tri", "A", A);
   check_multiplicable("mdivide_left_tri", "A", A, "b", b);
-  return promote_common<Eigen::Matrix<T1, R1, C1>, Eigen::Matrix<T2, R1, C1> >(
-             A)
+  if (A.rows() == 0) {
+    return {0, b.cols()};
+  }
+
+  return Eigen::Matrix<return_type_t<T1, T2>, R1, C1>(A)
       .template triangularView<TriView>()
-      .solve(
-          promote_common<Eigen::Matrix<T1, R2, C2>, Eigen::Matrix<T2, R2, C2> >(
-              b));
+      .solve(Eigen::Matrix<return_type_t<T1, T2>, R2, C2>(b));
 }
 
 /**
@@ -59,6 +60,10 @@ template <int TriView, typename T, int R1, int C1>
 inline Eigen::Matrix<T, R1, C1> mdivide_left_tri(
     const Eigen::Matrix<T, R1, C1> &A) {
   check_square("mdivide_left_tri", "A", A);
+  if (A.rows() == 0) {
+    return {};
+  }
+
   int n = A.rows();
   Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> b;
   b.setIdentity(n, n);
@@ -91,6 +96,10 @@ inline Eigen::Matrix<double, R1, C2> mdivide_left_tri(
     const Eigen::Matrix<double, R2, C2> &b) {
   check_square("mdivide_left_tri", "A", A);
   check_multiplicable("mdivide_left_tri", "A", A, "b", b);
+  if (A.rows() == 0) {
+    return {0, b.cols()};
+  }
+
 #ifdef STAN_OPENCL
   if (A.rows()
       >= opencl_context.tuning_opts().tri_inverse_size_worth_transfer) {
@@ -124,6 +133,10 @@ template <Eigen::UpLoType TriView, int R1, int C1>
 inline Eigen::Matrix<double, R1, C1> mdivide_left_tri(
     const Eigen::Matrix<double, R1, C1> &A) {
   check_square("mdivide_left_tri", "A", A);
+  if (A.rows() == 0) {
+    return {};
+  }
+
   const int n = A.rows();
 #ifdef STAN_OPENCL
   if (A.rows()

@@ -5,6 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/inv.hpp>
+#include <stan/math/prim/fun/is_nan.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/lgamma_stirling.hpp>
 #include <stan/math/prim/fun/square.hpp>

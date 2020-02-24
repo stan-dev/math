@@ -4,7 +4,9 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/fabs.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/sign.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
@@ -66,7 +68,7 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
   VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
                 T_scale>
       log_sigma(size(sigma));
-  for (size_t i = 0; i < size(sigma); i++) {
+  for (size_t i = 0; i < stan::math::size(sigma); i++) {
     const T_partials_return sigma_dbl = value_of(sigma_vec[i]);
     inv_sigma[i] = 1.0 / sigma_dbl;
     if (include_summand<propto, T_scale>::value) {

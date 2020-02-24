@@ -79,7 +79,7 @@ class var {
    *
    * @param x Value of the variable.
    */
-  var(float x) : vi_(new vari(static_cast<double>(x))) {}  // NOLINT
+  var(float x) : vi_(new vari(static_cast<double>(x), false)) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -88,7 +88,7 @@ class var {
    *
    * @param x Value of the variable.
    */
-  var(double x) : vi_(new vari(x)) {}  // NOLINT
+  var(double x) : vi_(new vari(x, false)) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -97,7 +97,7 @@ class var {
    *
    * @param x Value of the variable.
    */
-  var(long double x) : vi_(new vari(x)) {}  // NOLINT
+  var(long double x) : vi_(new vari(x, false)) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -106,7 +106,7 @@ class var {
    *
    * @param x Value of the variable.
    */
-  var(bool x) : vi_(new vari(static_cast<double>(x))) {}  // NOLINT
+  var(bool x) : vi_(new vari(static_cast<double>(x), false)) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -115,7 +115,7 @@ class var {
    *
    * @param x Value of the variable.
    */
-  var(char x) : vi_(new vari(static_cast<double>(x))) {}  // NOLINT
+  var(char x) : vi_(new vari(static_cast<double>(x), false)) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -124,7 +124,7 @@ class var {
    *
    * @param x Value of the variable.
    */
-  var(short x) : vi_(new vari(static_cast<double>(x))) {}  // NOLINT
+  var(short x) : vi_(new vari(static_cast<double>(x), false)) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -133,7 +133,7 @@ class var {
    *
    * @param x Value of the variable.
    */
-  var(int x) : vi_(new vari(static_cast<double>(x))) {}  // NOLINT
+  var(int x) : vi_(new vari(static_cast<double>(x), false)) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -142,7 +142,7 @@ class var {
    *
    * @param x Value of the variable.
    */
-  var(long x) : vi_(new vari(static_cast<double>(x))) {}  // NOLINT
+  var(long x) : vi_(new vari(static_cast<double>(x), false)) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -152,7 +152,7 @@ class var {
    * @param x Value of the variable.
    */
   var(unsigned char x)  // NOLINT(runtime/explicit)
-      : vi_(new vari(static_cast<double>(x))) {}
+      : vi_(new vari(static_cast<double>(x), false)) {}
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -162,16 +162,7 @@ class var {
    * @param x Value of the variable.
    */
   // NOLINTNEXTLINE
-  var(unsigned short x) : vi_(new vari(static_cast<double>(x))) {}
-
-  /**
-   * Construct a variable from the specified arithmetic argument
-   * by constructing a new <code>vari</code> with the argument
-   * cast to <code>double</code>, and a zero adjoint.
-   *
-   * @param x Value of the variable.
-   */
-  var(unsigned int x) : vi_(new vari(static_cast<double>(x))) {}  // NOLINT
+  var(unsigned short x) : vi_(new vari(static_cast<double>(x), false)) {}
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -181,7 +172,19 @@ class var {
    * @param x Value of the variable.
    */
   // NOLINTNEXTLINE
-  var(unsigned long x) : vi_(new vari(static_cast<double>(x))) {}  // NOLINT
+  var(unsigned int x)
+      : vi_(new vari(static_cast<double>(x), false)) {}  // NOLINT
+
+  /**
+   * Construct a variable from the specified arithmetic argument
+   * by constructing a new <code>vari</code> with the argument
+   * cast to <code>double</code>, and a zero adjoint.
+   *
+   * @param x Value of the variable.
+   */
+  // NOLINTNEXTLINE
+  var(unsigned long x)
+      : vi_(new vari(static_cast<double>(x), false)) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -193,7 +196,7 @@ class var {
    */
   explicit var(const std::complex<double>& x) {
     if (imag(x) == 0) {
-      vi_ = new vari(real(x));
+      vi_ = new vari(real(x), false);
     } else {
       std::stringstream ss;
       ss << "Imaginary part of std::complex used to construct var"
@@ -214,7 +217,7 @@ class var {
    */
   explicit var(const std::complex<float>& x) {
     if (imag(x) == 0) {
-      vi_ = new vari(static_cast<double>(real(x)));
+      vi_ = new vari(static_cast<double>(real(x)), false);
     } else {
       std::stringstream ss;
       ss << "Imaginary part of std::complex used to construct var"
@@ -235,7 +238,7 @@ class var {
    */
   explicit var(const std::complex<long double>& x) {
     if (imag(x) == 0) {
-      vi_ = new vari(static_cast<double>(real(x)));
+      vi_ = new vari(static_cast<double>(real(x)), false);
     } else {
       std::stringstream ss;
       ss << "Imaginary part of std::complex used to construct var"
@@ -259,7 +262,7 @@ class var {
    *
    * @param x Value of the variable.
    */
-  var(size_t x) : vi_(new vari(static_cast<double>(x))) {}  // NOLINT
+  var(size_t x) : vi_(new vari(static_cast<double>(x), false)) {}  // NOLINT
 
   /**
    * Construct a variable from the specified arithmetic argument
@@ -268,7 +271,7 @@ class var {
    *
    * @param x Value of the variable.
    */
-  var(ptrdiff_t x) : vi_(new vari(static_cast<double>(x))) {}  // NOLINT
+  var(ptrdiff_t x) : vi_(new vari(static_cast<double>(x), false)) {}  // NOLINT
 #endif
 
 #ifdef BOOST_MATH_USE_FLOAT128
@@ -283,7 +286,7 @@ class var {
    *
    * @param x Value of the variable.
    */
-  var(__float128 x) : vi_(new vari(static_cast<double>(x))) {}  // NOLINT
+  var(__float128 x) : vi_(new vari(static_cast<double>(x), false)) {}  // NOLINT
 
 #endif
 
