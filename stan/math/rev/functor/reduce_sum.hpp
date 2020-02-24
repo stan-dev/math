@@ -23,15 +23,15 @@ template <typename ReduceFunction, typename ReturnType, typename Vec,
 struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
                        Vec, Args...> {
   template <typename T, require_arithmetic_t<scalar_type_t<T>>...>
-  static const T& deep_copy(const T& arg) {
+  static inline const T& deep_copy(const T& arg) {
     return arg;
   }
 
-  static var deep_copy(const var& arg) {
+  static inline var deep_copy(const var& arg) {
     return var(new vari(arg.val(), false));
   }
 
-  static std::vector<var> deep_copy(const std::vector<var>& arg) {
+  static inline std::vector<var> deep_copy(const std::vector<var>& arg) {
     std::vector<var> copy(arg.size());
     for (size_t i = 0; i < arg.size(); ++i) {
       copy[i] = new vari(arg[i].val(), false);
@@ -40,7 +40,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
   }
 
   template <typename T, require_t<is_var<scalar_type_t<T>>>...>
-  static std::vector<T> deep_copy(const std::vector<T>& arg) {
+  static inline std::vector<T> deep_copy(const std::vector<T>& arg) {
     std::vector<T> copy(arg.size());
     for (size_t i = 0; i < arg.size(); ++i) {
       copy[i] = deep_copy(arg[i]);
@@ -49,7 +49,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
   }
 
   template <int RowType, int ColType>
-  static Eigen::Matrix<var, RowType, ColType> deep_copy(
+  static inline Eigen::Matrix<var, RowType, ColType> deep_copy(
       const Eigen::Matrix<var, RowType, ColType>& arg) {
     Eigen::Matrix<var, RowType, ColType> copy(arg.rows(), arg.cols());
     for (size_t i = 0; i < arg.size(); ++i) {
@@ -152,12 +152,11 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
 
         // create a deep copy of all var's so that these are not
         // linked to any outer AD tree
-        Vec local_sub_slice(r.size());
-        int ii = 0;
+        Vec local_sub_slice;
+	local_sub_slice.reserve(r.size());
         for (int i = r.begin(); i < r.end(); ++i) {
-          local_sub_slice[ii] = deep_copy(vmapped_[i]);
-          ii++;
-        }
+          local_sub_slice.emplace_back(deep_copy(vmapped_[i]));
+	}
 
         auto args_tuple_local_copy = apply(
             [&](auto&&... args) {
@@ -178,7 +177,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
         sum_ += sub_sum_v.val();
 
         accumulate_adjoints(sliced_partials_ + r.begin(), local_sub_slice);
-
+	
         apply(
             [&](auto&&... args) {
               return accumulate_adjoints(args_adjoints_.data(), args...);

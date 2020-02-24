@@ -65,6 +65,7 @@ TEST(v3_reduce_sum, gradient) {
   typedef boost::counting_iterator<std::size_t> count_iter;
   using stan::math::var;
 
+
   var lambda_v = lambda_d;
 
   std::vector<int> idata;
@@ -256,7 +257,7 @@ TEST(v3_reduce_sum, grouped_gradient_eigen) {
   const std::size_t elems = groups * elems_per_group;
   const std::size_t num_iter = 1000;
 
-  Eigen::Matrix<int, -1, 1> data(elems);
+  std::vector<int> data(elems);
   std::vector<int> gidx(elems);
 
   for (std::size_t i = 0; i != elems; ++i) {
