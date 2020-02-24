@@ -11,7 +11,6 @@
 #include <stan/math/prim/fun/sign.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
-#include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <cmath>
 
@@ -63,11 +62,7 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
   size_t N = max_size(y, mu, sigma);
   operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
 
-  VectorBuilder<include_summand<propto, T_y, T_loc, T_scale>::value,
-                T_partials_return, T_scale>
-      inv_sigma(size_sigma);
-  VectorBuilder<!is_constant_all<T_scale>::value, T_partials_return, T_scale>
-      inv_sigma_squared(size_sigma);
+  VectorBuilder<true, T_partials_return, T_scale> inv_sigma(size_sigma);
   VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
                 T_scale>
       log_sigma(size_sigma);
@@ -77,15 +72,13 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
     if (include_summand<propto, T_scale>::value) {
       log_sigma[i] = log(sigma_dbl);
     }
-    if (!is_constant_all<T_scale>::value) {
-      inv_sigma_squared[i] = square(inv_sigma[i]);
-    }
   }
 
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);
     const T_partials_return mu_dbl = value_of(mu_vec[n]);
-    const T_partials_return scaled_diff = fabs(y_dbl - mu_dbl) * inv_sigma[n];
+    const T_partials_return y_m_mu = y_dbl - mu_dbl;
+    const T_partials_return scaled_diff = fabs(y_m_mu) * inv_sigma[n];
 
     if (include_summand<propto>::value) {
       logp -= LOG_TWO;
@@ -97,7 +90,7 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
 
     T_partials_return rep_deriv = is_constant_all<T_y, T_loc>::value
                                       ? 0
-                                      : sign(scaled_diff) * inv_sigma[n];
+                                      : sign(y_m_mu) * inv_sigma[n];
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] -= rep_deriv;
     }
@@ -105,7 +98,7 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
       ops_partials.edge2_.partials_[n] += rep_deriv;
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_[n] -= inv_sigma[n] * (1 + scaled_diff);
+      ops_partials.edge3_.partials_[n] -= inv_sigma[n] * (1 - scaled_diff);
     }
   }
   return ops_partials.build(logp);
