@@ -88,9 +88,8 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
     }
     logp -= scaled_diff;
 
-    T_partials_return rep_deriv = is_constant_all<T_y, T_loc>::value
-                                      ? 0
-                                      : sign(y_m_mu) * inv_sigma[n];
+    T_partials_return rep_deriv
+        = is_constant_all<T_y, T_loc>::value ? 0 : sign(y_m_mu) * inv_sigma[n];
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] -= rep_deriv;
     }
