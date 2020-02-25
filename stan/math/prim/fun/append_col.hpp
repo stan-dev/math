@@ -72,10 +72,10 @@ inline Eigen::Matrix<return_type_t<Scal, RowVec>, 1, Eigen::Dynamic> append_col(
     const Scal& A, const RowVec& B) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using return_type = return_type_t<Scal, RowVec>;
+  using T_return = return_type_t<Scal, RowVec>;
 
-  Matrix<return_type, 1, Dynamic> result(B.size() + 1);
-  result << A, B.template cast<return_type>();
+  Matrix<T_return, 1, Dynamic> result(B.size() + 1);
+  result << A, B.template cast<T_return>();
   return result;
 }
 
@@ -100,10 +100,10 @@ inline Eigen::Matrix<return_type_t<RowVec, Scal>, 1, Eigen::Dynamic> append_col(
     const RowVec& A, const Scal& B) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using return_type = return_type_t<RowVec, Scal>;
+  using T_return = return_type_t<RowVec, Scal>;
 
-  Matrix<return_type, 1, Dynamic> result(A.size() + 1);
-  result << A.template cast<return_type>(), B;
+  Matrix<T_return, 1, Dynamic> result(A.size() + 1);
+  result << A.template cast<T_return>(), B;
   return result;
 }
 

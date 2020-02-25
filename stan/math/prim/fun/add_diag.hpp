@@ -22,7 +22,7 @@ namespace math {
  */
 template <typename T_m, typename T_a, typename = require_eigen_t<T_m>,
           typename
-          = require_t<disjunction<is_eigen_vector<T_a>, is_stan_scalar<T_a>>>>
+          = require_any_t<is_eigen_vector<T_a>, is_stan_scalar<T_a>>>
 inline typename Eigen::Matrix<return_type_t<T_m, T_a>, Eigen::Dynamic,
                               Eigen::Dynamic>
 add_diag(const T_m &mat, const T_a &to_add) {

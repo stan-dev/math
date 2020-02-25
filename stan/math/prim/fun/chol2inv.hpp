@@ -26,17 +26,17 @@ plain_type_t<T> chol2inv(const T& L) {
   check_square("chol2inv", "L", L_ref);
   check_lower_triangular("chol2inv", "L", L_ref);
   int K = L.rows();
-  using matrix_t = plain_type_t<T>;
+  using T_result = plain_type_t<T>;
   if (K == 0) {
     return L_ref;
   }
   if (K == 1) {
-    matrix_t X(1, 1);
+    T_result X(1, 1);
     X.coeffRef(0) = inv_square(L_ref.coeff(0, 0));
     return X;
   }
-  matrix_t L_inv = mdivide_left_tri_low(L_ref, matrix_t::Identity(K, K).eval());
-  matrix_t X(K, K);
+  T_result L_inv = mdivide_left_tri_low(L_ref, T_result::Identity(K, K));
+  T_result X(K, K);
   for (int k = 0; k < K; ++k) {
     X.coeffRef(k, k) = dot_self(L_inv.col(k).tail(K - k).eval());
     for (int j = k + 1; j < K; ++j) {

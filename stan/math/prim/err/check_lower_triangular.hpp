@@ -35,7 +35,7 @@ inline void check_lower_triangular(const char* function, const char* name,
             << " " << name << "[" << stan::error_index::value + m << ","
             << stan::error_index::value + n << "]=";
         std::string msg_str(msg.str());
-        throw_domain_error(function, name, y(m, n), msg_str.c_str());
+        throw_domain_error(function, name, y_ref(m, n), msg_str.c_str());
       }
     }
   }

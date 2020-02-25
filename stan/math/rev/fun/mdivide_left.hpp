@@ -198,8 +198,7 @@ mdivide_left(const T1 &A, const T2 &b) {
 }
 
 template <typename T1, typename T2, require_eigen_vt<is_var, T1> * = nullptr,
-          require_eigen_t<T2> * = nullptr,
-          require_same_vt<double, T2> * = nullptr>
+          require_eigen_vt<std::is_arithmetic,T2> * = nullptr>
 inline Eigen::Matrix<var, T1::RowsAtCompileTime, T2::ColsAtCompileTime>
 mdivide_left(const T1 &A, const T2 &b) {
   check_square("mdivide_left", "A", A);
@@ -223,8 +222,7 @@ mdivide_left(const T1 &A, const T2 &b) {
   return res;
 }
 
-template <typename T1, typename T2, require_eigen_t<T1> * = nullptr,
-          require_same_vt<double, T1> * = nullptr,
+template <typename T1, typename T2, require_eigen_vt<std::is_arithmetic,T1> * = nullptr,
           require_eigen_vt<is_var, T2> * = nullptr>
 inline Eigen::Matrix<var, T1::RowsAtCompileTime, T2::ColsAtCompileTime>
 mdivide_left(const T1 &A, const T2 &b) {
