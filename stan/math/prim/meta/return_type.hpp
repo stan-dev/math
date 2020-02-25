@@ -29,7 +29,7 @@ struct real_return {
 template <typename T, typename... Ts>
 struct real_return<T, Ts...> {
   using type
-      = promote_args_t<base_type_decay_t<T>, typename real_return<Ts...>::type>;
+      = promote_args_t<base_type_t<T>, typename real_return<Ts...>::type>;
 };
 
 /**
