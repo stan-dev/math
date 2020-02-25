@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUN_NUM_ELEMENTS_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <vector>
 
 namespace stan {
@@ -14,7 +15,7 @@ namespace math {
  * @param x Argument of primitive type.
  * @return 1
  */
-template <typename T>
+template <typename T, typename = require_stan_scalar_t<T>>
 inline int num_elements(const T& x) {
   return 1;
 }
@@ -22,15 +23,13 @@ inline int num_elements(const T& x) {
 /**
  * Returns the size of the specified matrix.
  *
- * @tparam T type of elements in the matrix
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
+ * @tparam T type of the matrix
  *
  * @param m argument matrix
  * @return size of matrix
  */
-template <typename T, int R, int C>
-inline int num_elements(const Eigen::Matrix<T, R, C>& m) {
+template <typename T, typename = require_eigen_t<T>, typename = void>
+inline int num_elements(const T& m) {
   return m.size();
 }
 
