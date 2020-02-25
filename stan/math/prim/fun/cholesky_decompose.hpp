@@ -31,7 +31,7 @@ namespace math {
  */
 template <typename T, require_eigen_t<T>* = nullptr,
           require_not_same_vt<double, T>* = nullptr,
-          require_not_eigen_vt<is_var,T>* = nullptr>
+          require_not_eigen_vt<is_var, T>* = nullptr>
 inline Eigen::Matrix<value_type_t<T>, T::RowsAtCompileTime,
                      T::ColsAtCompileTime>
 cholesky_decompose(const T& m) {
@@ -82,8 +82,8 @@ cholesky_decompose(const T& m) {
   }
 #else
   check_symmetric("cholesky_decompose", "m", m);
-  Eigen::LLT<Eigen::Matrix<double, T::RowsArCompileTime, T::ColsAtCompileTime> > llt(
-      m.rows());
+  Eigen::LLT<Eigen::Matrix<double, T::RowsArCompileTime, T::ColsAtCompileTime> >
+      llt(m.rows());
   llt.compute(m);
   check_pos_definite("cholesky_decompose", "m", llt);
   return llt.matrixL();

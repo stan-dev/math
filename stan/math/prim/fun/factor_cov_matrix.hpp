@@ -42,7 +42,7 @@ bool factor_cov_matrix(const T_Sigma& Sigma, T_CPCs& CPCs, T_sds& sds) {
   Eigen::Matrix<T_scalar, Eigen::Dynamic, Eigen::Dynamic> R = D * Sigma_ref * D;
   // to hopefully prevent pivoting due to floating point error
   R.diagonal().setOnes();
-  Eigen::LDLT<Eigen::Matrix<T_scalar, Eigen::Dynamic, Eigen::Dynamic> > ldlt;
+  Eigen::LDLT<Eigen::Matrix<T_scalar, Eigen::Dynamic, Eigen::Dynamic>> ldlt;
   ldlt = R.ldlt();
   if (!ldlt.isPositive()) {
     return false;

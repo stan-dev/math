@@ -15,7 +15,7 @@ namespace stan {
 namespace math {
 
 template <typename Mat1, typename Mat2,
-          require_all_eigen_t<Mat1,Mat2>* = nullptr,
+          require_all_eigen_t<Mat1, Mat2>* = nullptr,
           require_any_eigen_vt<is_var, Mat1, Mat2>* = nullptr>
 inline Eigen::Matrix<return_type_t<Mat1, Mat2>, 1, Mat1::ColsAtCompileTime>
 columns_dot_product(const Mat1& v1, const Mat2& v2) {

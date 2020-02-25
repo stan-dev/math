@@ -41,7 +41,8 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
     return {};
   }
   if (K == 1) {
-    return Eigen::Matrix<T_scalar, Eigen::Dynamic, Eigen::Dynamic>::Identity(1, 1);
+    return Eigen::Matrix<T_scalar, Eigen::Dynamic, Eigen::Dynamic>::Identity(1,
+                                                                             1);
   }
 
   using std::sqrt;

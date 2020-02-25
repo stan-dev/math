@@ -22,8 +22,8 @@ namespace math {
  * @return Cholesky factor
  */
 template <typename T, require_eigen_vector_t<T>* = nullptr>
-Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic> cholesky_factor_constrain(
-    const T& x, int M, int N) {
+Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
+cholesky_factor_constrain(const T& x, int M, int N) {
   using std::exp;
   using T_scalar = value_type_t<T>;
   check_greater_or_equal("cholesky_factor_constrain",
@@ -68,8 +68,8 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic> cholesky_factor_c
  * @return Cholesky factor
  */
 template <typename T, require_eigen_vector_t<T>* = nullptr>
-Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic> cholesky_factor_constrain(
-    const T& x, int M, int N, value_type_t<T>& lp) {
+Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
+cholesky_factor_constrain(const T& x, int M, int N, value_type_t<T>& lp) {
   check_size_match("cholesky_factor_constrain", "x.size()", x.size(),
                    "((N * (N + 1)) / 2 + (M - N) * N)",
                    ((N * (N + 1)) / 2 + (M - N) * N));

@@ -29,7 +29,8 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> cholesky_factor_free(
   check_cholesky_factor("cholesky_factor_free", "y", y_ref);
   int M = y.rows();
   int N = y.cols();
-  Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> x((N * (N + 1)) / 2 + (M - N) * N);
+  Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> x((N * (N + 1)) / 2
+                                                      + (M - N) * N);
   int pos = 0;
 
   for (int m = 0; m < N; ++m) {

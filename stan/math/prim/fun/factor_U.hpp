@@ -34,7 +34,8 @@ void factor_U(const T_U& U, T_CPCs& CPCs) {
     return;
   }
 
-  Eigen::Array<value_type_t<T_U>, 1, Eigen::Dynamic> temp = U_ref.row(0).tail(pull);
+  Eigen::Array<value_type_t<T_U>, 1, Eigen::Dynamic> temp
+      = U_ref.row(0).tail(pull);
 
   CPCs.head(pull) = temp;
 

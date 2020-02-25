@@ -24,7 +24,8 @@ template <typename T_CPCs, typename T_sds,
           require_all_eigen_vector_t<T_CPCs, T_sds>* = nullptr,
           require_same_vt<T_CPCs, T_sds>* = nullptr>
 Eigen::Matrix<value_type_t<T_CPCs>, Eigen::Dynamic, Eigen::Dynamic>
-read_cov_matrix(const T_CPCs& CPCs, const T_sds& sds, value_type_t<T_CPCs>& log_prob) {
+read_cov_matrix(const T_CPCs& CPCs, const T_sds& sds,
+                value_type_t<T_CPCs>& log_prob) {
   Eigen::Matrix<value_type_t<T_CPCs>, Eigen::Dynamic, Eigen::Dynamic> L
       = read_cov_L(CPCs, sds, log_prob);
   return multiply_lower_tri_self_transpose(L);
@@ -41,13 +42,13 @@ read_cov_matrix(const T_CPCs& CPCs, const T_sds& sds, value_type_t<T_CPCs>& log_
 template <typename T_CPCs, typename T_sds,
           require_all_eigen_vector_t<T_CPCs, T_sds>* = nullptr,
           require_same_vt<T_CPCs, T_sds>* = nullptr>
-Eigen::Matrix<value_type_t<T_CPCs>, Eigen::Dynamic, Eigen::Dynamic> read_cov_matrix(
-    const T_CPCs& CPCs,
-    const T_sds& sds) {
+Eigen::Matrix<value_type_t<T_CPCs>, Eigen::Dynamic, Eigen::Dynamic>
+read_cov_matrix(const T_CPCs& CPCs, const T_sds& sds) {
   size_t K = sds.rows();
   Eigen::DiagonalMatrix<value_type_t<T_CPCs>, Eigen::Dynamic> D(K);
   D.diagonal() = sds;
-  Eigen::Matrix<value_type_t<T_CPCs>, Eigen::Dynamic, Eigen::Dynamic> L = D * read_corr_L(CPCs, K);
+  Eigen::Matrix<value_type_t<T_CPCs>, Eigen::Dynamic, Eigen::Dynamic> L
+      = D * read_corr_L(CPCs, K);
   return multiply_lower_tri_self_transpose(L);
 }
 
