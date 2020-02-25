@@ -9,8 +9,8 @@ TEST(MathMetaPrim, ScalarTypeScal) {
   test::expect_same_type<int, stan::scalar_type<int>::type>();
 }
 
-TEST(MathMetaPrim, ScalarTypeComplex) {
-  test::expect_same_type<double,
+TEST(MathMetaPrim, ScalarTypeComplexBasic) {
+  test::expect_same_type<std::complex<double>,
                          stan::scalar_type<std::complex<double>>::type>();
 }
 
