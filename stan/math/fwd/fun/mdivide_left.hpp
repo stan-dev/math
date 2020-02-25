@@ -54,7 +54,8 @@ mdivide_left(const T1& A, const T2& b) {
   return to_fvar(inv_A_mult_b, deriv);
 }
 
-template <typename T1, typename T2, require_eigen_vt<std::is_arithmetic, T1>* = nullptr,
+template <typename T1, typename T2,
+          require_eigen_vt<std::is_arithmetic, T1>* = nullptr,
           require_eigen_vt<is_fvar, T2>* = nullptr>
 inline Eigen::Matrix<value_type_t<T2>, T1::RowsAtCompileTime,
                      T2::ColsAtCompileTime>

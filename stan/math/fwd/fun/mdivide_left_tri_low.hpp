@@ -44,7 +44,9 @@ mdivide_left_tri_low(const T1& A, const T2& b) {
 
   Eigen::Matrix<T, S1, C2> inv_A_mult_b = mdivide_left(val_A, b_ref.val());
 
-  return to_fvar(inv_A_mult_b, mdivide_left(val_A, b_ref.d()) - multiply(mdivide_left(val_A, deriv_A), inv_A_mult_b));
+  return to_fvar(inv_A_mult_b,
+                 mdivide_left(val_A, b_ref.d())
+                     - multiply(mdivide_left(val_A, deriv_A), inv_A_mult_b));
 }
 
 template <typename T1, typename T2, require_eigen_t<T1>* = nullptr,
@@ -74,7 +76,8 @@ mdivide_left_tri_low(const T1& A, const T2& b) {
     }
   }
 
-  return to_fvar(mdivide_left(val_A, b_ref.val()), mdivide_left(val_A, b_ref.d()));
+  return to_fvar(mdivide_left(val_A, b_ref.val()),
+                 mdivide_left(val_A, b_ref.d()));
 }
 
 template <typename T1, typename T2, require_eigen_vt<is_fvar, T1>* = nullptr,
@@ -108,7 +111,8 @@ mdivide_left_tri_low(const T1& A, const T2& b) {
 
   Eigen::Matrix<T, S1, C2> inv_A_mult_b = mdivide_left(val_A, b);
 
-  return to_fvar(inv_A_mult_b, -multiply(mdivide_left(val_A, deriv_A), inv_A_mult_b));
+  return to_fvar(inv_A_mult_b,
+                 -multiply(mdivide_left(val_A, deriv_A), inv_A_mult_b));
 }
 
 }  // namespace math
