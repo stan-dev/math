@@ -109,10 +109,20 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
   template <typename T_a, typename T_b>                                       \
   class class_name : public binary_operation<class_name<T_a, T_b>,            \
                                              scalar_type_expr, T_a, T_b> {    \
+    using base                                                                \
+        = binary_operation<class_name<T_a, T_b>, scalar_type_expr, T_a, T_b>; \
+    using base::arguments_;                                                   \
+                                                                              \
    public:                                                                    \
     class_name(T_a&& a, T_b&& b) /* NOLINT */                                 \
-        : binary_operation<class_name<T_a, T_b>, scalar_type_expr, T_a, T_b>( \
-              std::forward<T_a>(a), std::forward<T_b>(b), operation) {}       \
+        : base(std::forward<T_a>(a), std::forward<T_b>(b), operation) {}      \
+    inline auto deep_copy() {                                                 \
+      auto&& a_copy = std::get<0>(arguments_).deep_copy();                    \
+      auto&& b_copy = std::get<1>(arguments_).deep_copy();                    \
+      return class_name<std::remove_reference_t<decltype(a_copy)>,            \
+                        std::remove_reference_t<decltype(b_copy)>>(           \
+          std::move(a_copy), std::move(b_copy));                              \
+    }                                                                         \
   };                                                                          \
                                                                               \
   template <typename T_a, typename T_b,                                       \
@@ -146,10 +156,20 @@ class binary_operation : public operation_cl<Derived, T_res, T_a, T_b> {
   template <typename T_a, typename T_b>                                       \
   class class_name : public binary_operation<class_name<T_a, T_b>,            \
                                              scalar_type_expr, T_a, T_b> {    \
+    using base                                                                \
+        = binary_operation<class_name<T_a, T_b>, scalar_type_expr, T_a, T_b>; \
+    using base::arguments_;                                                   \
+                                                                              \
    public:                                                                    \
     class_name(T_a&& a, T_b&& b) /* NOLINT */                                 \
-        : binary_operation<class_name<T_a, T_b>, scalar_type_expr, T_a, T_b>( \
-              std::forward<T_a>(a), std::forward<T_b>(b), operation) {}       \
+        : base(std::forward<T_a>(a), std::forward<T_b>(b), operation) {}      \
+    inline auto deep_copy() {                                                 \
+      auto&& a_copy = std::get<0>(arguments_).deep_copy();                    \
+      auto&& b_copy = std::get<1>(arguments_).deep_copy();                    \
+      return class_name<std::remove_reference_t<decltype(a_copy)>,            \
+                        std::remove_reference_t<decltype(b_copy)>>(           \
+          std::move(a_copy), std::move(b_copy));                              \
+    }                                                                         \
     inline matrix_cl_view view() const { __VA_ARGS__; }                       \
   };                                                                          \
                                                                               \

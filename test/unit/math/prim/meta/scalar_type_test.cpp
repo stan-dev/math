@@ -54,8 +54,21 @@ TEST(MathMetaPrim, ScalarTypeMat) {
   using test::expect_same_type;
 
   expect_same_type<double, scalar_type<MatrixXd>::type>();
+  expect_same_type<double, scalar_type<const MatrixXd>::type>();
+  expect_same_type<double, scalar_type<MatrixXd&>::type>();
+  expect_same_type<double, scalar_type<const MatrixXd&>::type>();
   expect_same_type<double, scalar_type<VectorXd>::type>();
   expect_same_type<double, scalar_type<RowVectorXd>::type>();
   expect_same_type<double, scalar_type<vector<double>>::type>();
   expect_same_type<double, scalar_type<vector<MatrixXd>>::type>();
+}
+TEST(MathMetaPrim, ScalarTypeComplex) {
+  using stan::scalar_type;
+  using stan::scalar_type_t;
+  using test::expect_same_type;
+  using c_d = std::complex<double>;
+  expect_same_type<c_d, scalar_type_t<c_d>>();
+  expect_same_type<c_d, scalar_type_t<const c_d>>();
+  expect_same_type<c_d, scalar_type<c_d&>::type>();
+  expect_same_type<c_d, scalar_type_t<const c_d&>>();
 }
