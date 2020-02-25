@@ -23,8 +23,6 @@ namespace math {
  * @tparam operation type with member function generate that accepts two
  * variable names and returns OpenCL source code for reduction operation_cl
  * @tparam PassZero whether \c operation passes trough zeros
- * @tparam Rowwise whether this is row wise reduction
- * @tparam Colwise whether this is column wise reduction
  */
 
 template <typename Derived, typename T, typename operation, bool PassZero>
@@ -159,7 +157,7 @@ class rowwise_sum_
    * Creates a deep copy of this expression.
    * @return copy of \c *this
    */
-  inline rowwise_sum_<std::remove_reference_t<T>> deep_copy() {
+  inline auto deep_copy() {
     auto&& arg_copy = std::get<0>(arguments_).deep_copy();
     return rowwise_sum_<std::remove_reference_t<decltype(arg_copy)>>(
         std::move(arg_copy));
