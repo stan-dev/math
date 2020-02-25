@@ -30,20 +30,19 @@ namespace math {
  *    factorized by factor_cov_matrix() or if the sds returned by
  *    factor_cov_matrix() on log scale are unconstrained.
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, 1> corr_matrix_free(
-    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& y) {
+template <typename T, require_eigen_t<T>* = nullptr>
+Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> corr_matrix_free(
+    const T& y) {
+  using Eigen::Array;
+  using Eigen::Dynamic;
+
   check_square("corr_matrix_free", "y", y);
   check_nonzero_size("corr_matrix_free", "y", y);
 
-  using Eigen::Array;
-  using Eigen::Dynamic;
-  using size_type = index_type_t<Eigen::Matrix<T, Eigen::Dynamic, 1>>;
-
-  size_type k = y.rows();
-  size_type k_choose_2 = (k * (k - 1)) / 2;
-  Array<T, Dynamic, 1> x(k_choose_2);
-  Array<T, Dynamic, 1> sds(k);
+  Eigen::Index k = y.rows();
+  Eigen::Index k_choose_2 = (k * (k - 1)) / 2;
+  Array<value_type_t<T>, Dynamic, 1> x(k_choose_2);
+  Array<value_type_t<T>, Dynamic, 1> sds(k);
   bool successful = factor_cov_matrix(y, x, sds);
   if (!successful) {
     throw_domain_error("corr_matrix_free", "factor_cov_matrix failed on y", y,

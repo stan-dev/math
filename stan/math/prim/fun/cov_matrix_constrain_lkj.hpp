@@ -68,18 +68,19 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cov_matrix_constrain_lkj(
  * @return Covariance matrix derived from the unconstrained partial
  * correlations and deviations.
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cov_matrix_constrain_lkj(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& x, size_t k, T& lp) {
+template <typename T, require_eigen_vector_t<T>* = nullptr>
+Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
+cov_matrix_constrain_lkj(const T& x, size_t k, value_type_t<T>& lp) {
+  const Eigen::Ref<const plain_type_t<T>>& x_ref = x;
   size_t k_choose_2 = (k * (k - 1)) / 2;
-  Eigen::Array<T, Eigen::Dynamic, 1> cpcs(k_choose_2);
+  Eigen::Array<value_type_t<T>, Eigen::Dynamic, 1> cpcs(k_choose_2);
   int pos = 0;
   for (size_t i = 0; i < k_choose_2; ++i) {
-    cpcs[i] = corr_constrain(x[pos++], lp);
+    cpcs[i] = corr_constrain(x_ref[pos++], lp);
   }
-  Eigen::Array<T, Eigen::Dynamic, 1> sds(k);
+  Eigen::Array<value_type_t<T>, Eigen::Dynamic, 1> sds(k);
   for (size_t i = 0; i < k; ++i) {
-    sds[i] = positive_constrain(x[pos++], lp);
+    sds[i] = positive_constrain(x_ref[pos++], lp);
   }
   return read_cov_matrix(cpcs, sds, lp);
 }

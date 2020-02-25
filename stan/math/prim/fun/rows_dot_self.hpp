@@ -9,14 +9,13 @@ namespace math {
 /**
  * Returns the dot product of each row of a matrix with itself.
  *
- * @tparam T type of elements in the matrix
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
+ * @tparam T type of the matrix
  *
  * @param x matrix
  */
-template <typename T, int R, int C>
-inline Eigen::Matrix<T, R, 1> rows_dot_self(const Eigen::Matrix<T, R, C>& x) {
+template <typename T, require_eigen_t<T>* = nullptr>
+inline Eigen::Matrix<value_type_t<T>, T::RowsAtCompileTime, 1> rows_dot_self(
+    const T& x) {
   return x.rowwise().squaredNorm();
 }
 
