@@ -14,6 +14,9 @@ namespace math {
  * is nothing on the nested stack, then a
  * <code>std::logic_error</code> exception is thrown.
  *
+ * It is preferred to use the <code>nested_rev_autodiff</code> class for
+ * nested autodiff as it handles recovery of memory automatically.
+ *
  * @throw std::logic_error if <code>empty_nested()</code> returns
  * <code>true</code>
  */
