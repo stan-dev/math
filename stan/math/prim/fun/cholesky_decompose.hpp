@@ -82,7 +82,7 @@ cholesky_decompose(const T& m) {
   }
 #else
   check_symmetric("cholesky_decompose", "m", m);
-  Eigen::LLT<Eigen::Matrix<double, T::RowsArCompileTime, T::ColsAtCompileTime> >
+  Eigen::LLT<Eigen::Matrix<double, T::RowsAtCompileTime, T::ColsAtCompileTime> >
       llt(m.rows());
   llt.compute(m);
   check_pos_definite("cholesky_decompose", "m", llt);
