@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_FUN_CHOLESKY_DECOMPOSE_HPP
 #define STAN_MATH_PRIM_FUN_CHOLESKY_DECOMPOSE_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #ifdef STAN_OPENCL
@@ -20,7 +21,7 @@ namespace math {
  * <p>\f$A = L \times L^T\f$.
  *
  * @tparam T type of elements in the matrix
- * @param m Symmetrix matrix.
+ * @param m Symmetric matrix.
  * @return Square root of matrix.
  * @note Because OpenCL only works on doubles there are two
  * <code>cholesky_decompose</code> functions. One that works on doubles
@@ -28,13 +29,19 @@ namespace math {
  * @throw std::domain_error if m is not a symmetric matrix or
  *   if m is not positive definite (if m has more than 0 elements)
  */
-template <typename T>
-inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
-    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& m) {
-  check_symmetric("cholesky_decompose", "m", m);
-  check_not_nan("cholesky_decompose", "m", m);
-  Eigen::LLT<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > llt(m.rows());
-  llt.compute(m);
+template <typename T, require_eigen_t<T>* = nullptr,
+          require_not_same_vt<double, T>* = nullptr,
+          require_not_eigen_vt<is_var,T>* = nullptr>
+inline Eigen::Matrix<value_type_t<T>, T::RowsAtCompileTime,
+                     T::ColsAtCompileTime>
+cholesky_decompose(const T& m) {
+  eval_return_type_t<T>& m_eval = m.eval();
+  check_symmetric("cholesky_decompose", "m", m_eval);
+  check_not_nan("cholesky_decompose", "m", m_eval);
+  Eigen::LLT<Eigen::Matrix<value_type_t<T>, T::RowsAtCompileTime,
+                           T::ColsAtCompileTime> >
+      llt(m.rows());
+  llt.compute(m_eval);
   check_pos_definite("cholesky_decompose", "m", llt);
   return llt.matrixL();
 }
@@ -46,7 +53,7 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
  * original matrix \f$A\f$ is given by
  * <p>\f$A = L \times L^T\f$.
  *
- * @param m Symmetrix matrix.
+ * @param m Symmetric matrix.
  * @return Square root of matrix.
  * @note Because OpenCL only works on doubles there are two
  * <code>cholesky_decompose</code> functions. One that works on doubles
@@ -54,25 +61,28 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
  * @throw std::domain_error if m is not a symmetric matrix or
  *   if m is not positive definite (if m has more than 0 elements)
  */
-template <>
-inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> cholesky_decompose(
-    const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& m) {
+template <typename T, require_eigen_t<T>* = nullptr,
+          require_same_vt<double, T>* = nullptr>
+inline Eigen::Matrix<double, T::RowsAtCompileTime, T::ColsAtCompileTime>
+cholesky_decompose(const T& m) {
+  eval_return_type_t<T>& m_eval = m.eval();
   check_not_nan("cholesky_decompose", "m", m);
 #ifdef STAN_OPENCL
   if (m.rows() >= opencl_context.tuning_opts().cholesky_size_worth_transfer) {
-    matrix_cl<double> m_chol(m);
-    return from_matrix_cl(cholesky_decompose(m_chol));
+    matrix_cl<double> m_cl(m);
+    return from_matrix_cl(cholesky_decompose(m_cl));
   } else {
     check_symmetric("cholesky_decompose", "m", m);
-    Eigen::LLT<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > llt(
-        m.rows());
+    Eigen::LLT<
+        Eigen::Matrix<double, T::RowsAtCompileTime, T::ColsAtCompileTime> >
+        llt(m.rows());
     llt.compute(m);
     check_pos_definite("cholesky_decompose", "m", llt);
     return llt.matrixL();
   }
 #else
   check_symmetric("cholesky_decompose", "m", m);
-  Eigen::LLT<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > llt(
+  Eigen::LLT<Eigen::Matrix<double, T::RowsArCompileTime, T::ColsAtCompileTime> > llt(
       m.rows());
   llt.compute(m);
   check_pos_definite("cholesky_decompose", "m", llt);

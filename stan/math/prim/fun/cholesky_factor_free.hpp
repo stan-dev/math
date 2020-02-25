@@ -20,26 +20,28 @@ namespace math {
  * @return Unconstrained parameters for Cholesky factor.
  * @throw std::domain_error If the matrix is not a Cholesky factor.
  */
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, 1> cholesky_factor_free(
-    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& y) {
+template <typename T, require_eigen_t<T>* = nullptr>
+Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> cholesky_factor_free(
+    const T& y) {
   using std::log;
-  check_cholesky_factor("cholesky_factor_free", "y", y);
+
+  const Eigen::Ref<const plain_type_t<T>>& y_ref = y;
+  check_cholesky_factor("cholesky_factor_free", "y", y_ref);
   int M = y.rows();
   int N = y.cols();
-  Eigen::Matrix<T, Eigen::Dynamic, 1> x((N * (N + 1)) / 2 + (M - N) * N);
+  Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> x((N * (N + 1)) / 2 + (M - N) * N);
   int pos = 0;
 
   for (int m = 0; m < N; ++m) {
     for (int n = 0; n < m; ++n) {
-      x(pos++) = y(m, n);
+      x(pos++) = y_ref(m, n);
     }
-    x(pos++) = log(y(m, m));
+    x(pos++) = log(y_ref(m, m));
   }
 
   for (int m = N; m < M; ++m) {
     for (int n = 0; n < N; ++n) {
-      x(pos++) = y(m, n);
+      x(pos++) = y_ref(m, n);
     }
   }
   return x;

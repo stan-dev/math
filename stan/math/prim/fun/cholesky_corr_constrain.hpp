@@ -12,20 +12,22 @@
 namespace stan {
 namespace math {
 
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_corr_constrain(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& y, int K) {
+template <typename T, require_t<is_eigen_vector<T>>* = nullptr>
+Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic> cholesky_corr_constrain(
+    const T& y, int K) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::sqrt;
+  using T_scalar = value_type_t<T>;
   int k_choose_2 = (K * (K - 1)) / 2;
   check_size_match("cholesky_corr_constrain", "y.size()", y.size(),
                    "k_choose_2", k_choose_2);
-  Matrix<T, Dynamic, 1> z(k_choose_2);
+  Matrix<T_scalar, Dynamic, 1> z(k_choose_2);
+  const Eigen::Ref<const plain_type_t<T>>& y_ref = y;
   for (int i = 0; i < k_choose_2; ++i) {
-    z(i) = corr_constrain(y(i));
+    z[i] = corr_constrain(y_ref[i]);
   }
-  Matrix<T, Dynamic, Dynamic> x(K, K);
+  Matrix<T_scalar, Dynamic, Dynamic> x(K, K);
   if (K == 0) {
     return x;
   }
@@ -34,7 +36,7 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_corr_constrain(
   int k = 0;
   for (int i = 1; i < K; ++i) {
     x(i, 0) = z(k++);
-    T sum_sqs(square(x(i, 0)));
+    T_scalar sum_sqs(square(x(i, 0)));
     for (int j = 1; j < i; ++j) {
       x(i, j) = z(k++) * sqrt(1.0 - sum_sqs);
       sum_sqs += square(x(i, j));
@@ -45,20 +47,22 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_corr_constrain(
 }
 
 // FIXME to match above after debugged
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_corr_constrain(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& y, int K, T& lp) {
+template <typename T, require_t<is_eigen_vector<T>>* = nullptr>
+Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic> cholesky_corr_constrain(
+    const T& y, int K, value_type_t<T>& lp) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::sqrt;
+  using T_scalar = value_type_t<T>;
   int k_choose_2 = (K * (K - 1)) / 2;
   check_size_match("cholesky_corr_constrain", "y.size()", y.size(),
                    "k_choose_2", k_choose_2);
-  Matrix<T, Dynamic, 1> z(k_choose_2);
+  Matrix<T_scalar, Dynamic, 1> z(k_choose_2);
+  const Eigen::Ref<const plain_type_t<T>>& y_ref = y;
   for (int i = 0; i < k_choose_2; ++i) {
-    z(i) = corr_constrain(y(i), lp);
+    z[i] = corr_constrain(y_ref[i], lp);
   }
-  Matrix<T, Dynamic, Dynamic> x(K, K);
+  Matrix<T_scalar, Dynamic, Dynamic> x(K, K);
   if (K == 0) {
     return x;
   }
@@ -67,7 +71,7 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> cholesky_corr_constrain(
   int k = 0;
   for (int i = 1; i < K; ++i) {
     x(i, 0) = z(k++);
-    T sum_sqs = square(x(i, 0));
+    T_scalar sum_sqs = square(x(i, 0));
     for (int j = 1; j < i; ++j) {
       lp += 0.5 * log1m(sum_sqs);
       x(i, j) = z(k++) * sqrt(1.0 - sum_sqs);
