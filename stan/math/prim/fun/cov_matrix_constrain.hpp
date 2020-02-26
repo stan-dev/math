@@ -20,7 +20,8 @@ namespace math {
  *
  * <p>See <code>cov_matrix_free()</code> for the inverse transform.
  *
- * @tparam T type of the vector
+ * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
+ * have one compile-time dimmension equal to 1)
  * @param x The vector to convert to a covariance matrix.
  * @param K The number of rows and columns of the resulting
  * covariance matrix.
@@ -39,13 +40,10 @@ cov_matrix_constrain(const T& x, Eigen::Index K) {
   const Eigen::Ref<const plain_type_t<T>>& x_ref = x;
   int i = 0;
   for (Eigen::Index m = 0; m < K; ++m) {
-    for (int n = 0; n < m; ++n) {
-      L(m, n) = x_ref.coeff(i++);
-    }
-    L(m, m) = exp(x_ref.coeff(i++));
-    for (Eigen::Index n = m + 1; n < K; ++n) {
-      L(m, n) = 0.0;
-    }
+    L.row(m).head(m) = x_ref.segment(i,m);
+    i+=m;
+    L.coeffRef(m, m) = exp(x_ref.coeff(i++));
+    L.row(m).tail(K-m-1).setZero();
   }
   return multiply_lower_tri_self_transpose(L);
 }
@@ -57,7 +55,8 @@ cov_matrix_constrain(const T& x, Eigen::Index K) {
  *
  * <p>See <code>cov_matrix_free()</code> for the inverse transform.
  *
- * @tparam T type of the vector
+ * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
+ * have one compile-time dimmension equal to 1)
  * @param x The vector to convert to a covariance matrix.
  * @param K The dimensions of the resulting covariance matrix.
  * @param lp Reference
@@ -76,18 +75,15 @@ cov_matrix_constrain(const T& x, Eigen::Index K, value_type_t<T>& lp) {
   const Eigen::Ref<const plain_type_t<T>>& x_ref = x;
   int i = 0;
   for (Eigen::Index m = 0; m < K; ++m) {
-    for (Eigen::Index n = 0; n < m; ++n) {
-      L(m, n) = x_ref(i++);
-    }
-    L(m, m) = exp(x_ref(i++));
-    for (Eigen::Index n = m + 1; n < K; ++n) {
-      L(m, n) = 0.0;
-    }
+    L.row(m).head(m) = x_ref.segment(i,m);
+    i+=m;
+    L.coeffRef(m, m) = exp(x_ref.coeff(i++));
+    L.row(m).tail(K-m-1).setZero();
   }
   // Jacobian for complete transform, including exp() above
   lp += (K * LOG_TWO);  // needless constant; want propto
   for (Eigen::Index k = 0; k < K; ++k) {
-    lp += (K - k + 1) * log(L(k, k));  // only +1 because index from 0
+    lp += (K - k + 1) * log(L.coeff(k, k));  // only +1 because index from 0
   }
   return multiply_lower_tri_self_transpose(L);
 }

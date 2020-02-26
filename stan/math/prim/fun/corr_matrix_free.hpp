@@ -20,7 +20,7 @@ namespace math {
  * needs to compute the \f$k \choose 2\f$ partial correlations
  * and then free those.
  *
- * @tparam T type of scalar
+ * @tparam T type of the matrix (must be derived from \c Eigen::MatrixBase)
  * @param y The correlation matrix to free.
  * @return Vector of unconstrained values that produce the
  * specified correlation matrix when transformed.

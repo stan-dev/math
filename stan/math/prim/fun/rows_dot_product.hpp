@@ -10,8 +10,10 @@ namespace math {
 /**
  * Returns the dot product of rows of the specified matrices.
  *
- * @tparam Mat1 type of the first matrix
- * @tparam Mat2 type of the second matrix
+ * @tparam Mat1 type of the first matrix (must be derived from \c
+ * Eigen::MatrixBase)
+ * @tparam Mat2 type of the second matrix (must be derived from \c
+ * Eigen::MatrixBase)
  *
  * @param v1 Matrix of first vectors.
  * @param v2 Matrix of second vectors.

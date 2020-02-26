@@ -18,7 +18,7 @@ namespace math {
  * inverse first factors out the deviations, then applies the
  * freeing transform of <code>corr_matrix_free(Matrix&)</code>.
  *
- * @tparam T type of elements in the matrix
+ * @tparam T type of the matrix (must be derived from \c Eigen::MatrixBase)
  * @param y Covariance matrix to free.
  * @return Vector of unconstrained values that transforms to the
  * specified covariance matrix.
@@ -39,20 +39,12 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> cov_matrix_free_lkj(
   check_square("cov_matrix_free_lkj", "y", y);
   Eigen::Index k = y.rows();
   Eigen::Index k_choose_2 = (k * (k - 1)) / 2;
-  Array<T_scalar, Dynamic, 1> cpcs(k_choose_2);
-  Array<T_scalar, Dynamic, 1> sds(k);
-  bool successful = factor_cov_matrix(y, cpcs, sds);
+  Matrix<T_scalar, Dynamic, 1> x(k_choose_2 + k);
+  bool successful
+      = factor_cov_matrix(y, x.head(k_choose_2).array(), x.tail(k).array());
   if (!successful) {
     throw_domain_error("cov_matrix_free_lkj", "factor_cov_matrix failed on y",
                        "", "");
-  }
-  Matrix<T_scalar, Dynamic, 1> x(k_choose_2 + k);
-  Eigen::Index pos = 0;
-  for (Eigen::Index i = 0; i < k_choose_2; ++i) {
-    x[pos++] = cpcs[i];
-  }
-  for (Eigen::Index i = 0; i < k; ++i) {
-    x[pos++] = sds[i];
   }
   return x;
 }

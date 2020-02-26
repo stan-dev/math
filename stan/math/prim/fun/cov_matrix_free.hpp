@@ -25,7 +25,7 @@ namespace math {
  * function to work), the symmetric view of its lower-triangular
  * view must be positive definite.
  *
- * @tparam T type of elements in the matrix
+ * @tparam T type of the matrix (must be derived from \c Eigen::MatrixBase)
  * @param y Matrix of dimensions K by K such that he symmetric
  * view of the lower-triangular view is positive definite.
  * @return Vector of size K plus (K choose 2) in (-inf, inf)
@@ -50,10 +50,9 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> cov_matrix_free(const T& y) {
   plain_type_t<T> L = llt.matrixL();
   int i = 0;
   for (int m = 0; m < K; ++m) {
-    for (int n = 0; n < m; ++n) {
-      x(i++) = L(m, n);
-    }
-    x(i++) = log(L(m, m));
+    x.segment(i,m) = L.row(m).head(m);
+    i+=m;
+    x.coeffRef(i++) = log(L.coeff(m, m));
   }
   return x;
 }

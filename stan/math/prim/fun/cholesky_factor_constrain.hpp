@@ -17,7 +17,8 @@ namespace math {
  * specified vector.  A total of (N choose 2) + N + (M - N) * N
  * elements are required to read an M by N Cholesky factor.
  *
- * @tparam T type of the vector
+ * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
+ * have one compile-time dimmension equal to 1)
  * @param x Vector of unconstrained values
  * @return Cholesky factor
  */
@@ -38,19 +39,15 @@ cholesky_factor_constrain(const T& x, int M, int N) {
 
   const Eigen::Ref<const plain_type_t<T>>& x_ref = x;
   for (int m = 0; m < N; ++m) {
-    for (int n = 0; n < m; ++n) {
-      y(m, n) = x_ref(pos++);
-    }
-    y(m, m) = exp(x_ref(pos++));
-    for (int n = m + 1; n < N; ++n) {
-      y(m, n) = zero;
-    }
+    y.row(m).head(m) = x_ref.segment(pos, m);
+    pos += m;
+    y.coeffRef(m, m) = exp(x_ref.coeff(pos++));
+    y.row(m).tail(N - m - 1).setZero();
   }
 
   for (int m = N; m < M; ++m) {
-    for (int n = 0; n < N; ++n) {
-      y(m, n) = x_ref(pos++);
-    }
+    y.row(m) = x_ref.segment(pos, N);
+    pos += N;
   }
   return y;
 }
@@ -62,7 +59,8 @@ cholesky_factor_constrain(const T& x, int M, int N) {
  * of (N choose 2) + N + N * (M - N) free parameters are required to read
  * an M by N Cholesky factor.
  *
- * @tparam T type of elements in the matrix
+ * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
+ * have one compile-time dimmension equal to 1)
  * @param x Vector of unconstrained values
  * @param lp Log probability that is incremented with the log Jacobian
  * @return Cholesky factor
@@ -74,13 +72,11 @@ cholesky_factor_constrain(const T& x, int M, int N, value_type_t<T>& lp) {
                    "((N * (N + 1)) / 2 + (M - N) * N)",
                    ((N * (N + 1)) / 2 + (M - N) * N));
   int pos = 0;
-  std::vector<value_type_t<T>> log_jacobians(N);
   const Eigen::Ref<const plain_type_t<T>>& x_ref = x;
   for (int n = 0; n < N; ++n) {
     pos += n;
-    log_jacobians[n] = x_ref(pos++);
+    lp += x_ref.coeff(pos++);
   }
-  lp += sum(log_jacobians);
   return cholesky_factor_constrain(x_ref, M, N);
 }
 

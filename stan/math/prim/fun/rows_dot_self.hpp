@@ -10,7 +10,8 @@ namespace math {
 /**
  * Returns the dot product of each row of a matrix with itself.
  *
- * @tparam T type of the matrix
+ * @tparam T type of the matrix (must be derived from \c
+ * Eigen::MatrixBase)
  *
  * @param x matrix
  */

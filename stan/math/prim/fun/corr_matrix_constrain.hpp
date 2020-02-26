@@ -29,7 +29,8 @@ namespace math {
  * <p>The free vector entries are first constrained to be
  * valid correlation values using <code>corr_constrain(T)</code>.
  *
- * @tparam T type of vector
+ * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
+ * have one compile-time dimmension equal to 1)
  * @param x Vector of unconstrained partial correlations.
  * @param k Dimensionality of returned correlation matrix.
  * @throw std::invalid_argument if x is not a valid correlation
@@ -41,12 +42,7 @@ corr_matrix_constrain(const T& x, Eigen::Index k) {
   Eigen::Index k_choose_2 = (k * (k - 1)) / 2;
   check_size_match("cov_matrix_constrain", "x.size()", x.size(), "k_choose_2",
                    k_choose_2);
-  Eigen::Array<value_type_t<T>, Eigen::Dynamic, 1> cpcs(k_choose_2);
-  const Eigen::Ref<const plain_type_t<T>>& x_ref = x;
-  for (Eigen::Index i = 0; i < k_choose_2; ++i) {
-    cpcs[i] = corr_constrain(x_ref[i]);
-  }
-  return read_corr_matrix(cpcs, k);
+  return read_corr_matrix(corr_constrain(x), k);
 }
 
 /**
@@ -63,7 +59,8 @@ corr_matrix_constrain(const T& x, Eigen::Index k) {
  * defined in <code>corr_constrain(T, double)</code> for
  * this function.
  *
- * @tparam T type of vector
+ * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
+ * have one compile-time dimmension equal to 1)
  * @param x Vector of unconstrained partial correlations.
  * @param k Dimensionality of returned correlation matrix.
  * @param lp Log probability reference to increment.
@@ -71,17 +68,10 @@ corr_matrix_constrain(const T& x, Eigen::Index k) {
 template <typename T>
 Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
 corr_matrix_constrain(const T& x, Eigen::Index k, value_type_t<T>& lp) {
-  using Eigen::Array;
-
   Eigen::Index k_choose_2 = (k * (k - 1)) / 2;
   check_size_match("cov_matrix_constrain", "x.size()", x.size(), "k_choose_2",
                    k_choose_2);
-  Array<value_type_t<T>, Eigen::Dynamic, 1> cpcs(k_choose_2);
-  const Eigen::Ref<const plain_type_t<T>>& x_ref = x;
-  for (Eigen::Index i = 0; i < k_choose_2; ++i) {
-    cpcs[i] = corr_constrain(x_ref[i], lp);
-  }
-  return read_corr_matrix(cpcs, k, lp);
+  return read_corr_matrix(corr_constrain(x, lp), k, lp);
 }
 
 }  // namespace math

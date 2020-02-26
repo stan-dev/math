@@ -25,7 +25,8 @@ namespace math {
  * <p>See <code>read_corr_matrix(Array, size_t, T)</code>
  * for more information.
  *
- * @tparam T type of the array
+ * @tparam T type of the array (must be derived from \c Eigen::ArrayBase and
+ * have one compile-time dimmension equal to 1)
  * @param CPCs The (K choose 2) canonical partial correlations in
  * (-1, 1).
  * @param K Dimensionality of correlation matrix.
@@ -86,7 +87,8 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
  * extended onion method Journal of Multivariate Analysis 100
  * (2009) 1989–2001 </li></ul>
  *
- * @tparam T type of the array
+ * @tparam T type of the array (must be derived from \c Eigen::ArrayBase and
+ * have one compile-time dimmension equal to 1)
  * @param CPCs The (K choose 2) canonical partial correlations in
  * (-1, 1).
  * @param K Dimensionality of correlation matrix.
@@ -107,20 +109,21 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
                                                                              1);
   }
 
-  Eigen::Matrix<T_scalar, Eigen::Dynamic, 1> values(CPCs.rows() - 1);
+  const Eigen::Ref<const plain_type_t<T>>& CPCs_ref = CPCs;
   size_t pos = 0;
+  T_scalar acc = 0;
   // no need to abs() because this Jacobian determinant
   // is strictly positive (and triangular)
   // see inverse of Jacobian in equation 11 of LKJ paper
   for (size_t k = 1; k <= (K - 2); k++) {
     for (size_t i = k + 1; i <= K; i++) {
-      values(pos) = (K - k - 1) * log1m(square(CPCs(pos)));
+      acc += (K - k - 1) * log1m(square(CPCs_ref(pos)));
       pos++;
     }
   }
 
-  log_prob += 0.5 * sum(values);
-  return read_corr_L(CPCs, K);
+  log_prob += 0.5 * acc;
+  return read_corr_L(CPCs_ref, K);
 }
 
 }  // namespace math

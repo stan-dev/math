@@ -15,7 +15,8 @@ namespace math {
  * the specified Cholesky factor.  A Cholesky factor must be lower
  * triangular and have positive diagonal elements.
  *
- * @tparam T type of elements in the Cholesky factor
+ * @tparam T type of the Cholesky factor (must be derived from \c
+ * Eigen::MatrixBase)
  * @param y Cholesky factor.
  * @return Unconstrained parameters for Cholesky factor.
  * @throw std::domain_error If the matrix is not a Cholesky factor.
@@ -34,16 +35,14 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> cholesky_factor_free(
   int pos = 0;
 
   for (int m = 0; m < N; ++m) {
-    for (int n = 0; n < m; ++n) {
-      x(pos++) = y_ref(m, n);
-    }
-    x(pos++) = log(y_ref(m, m));
+    x.segment(pos, m) = y_ref.row(m).head(m);
+    pos += m;
+    x.coeffRef(pos++) = log(y_ref.coeff(m, m));
   }
 
   for (int m = N; m < M; ++m) {
-    for (int n = 0; n < N; ++n) {
-      x(pos++) = y_ref(m, n);
-    }
+    x.segment(pos, N) = y_ref.row(m);
+    pos += N;
   }
   return x;
 }
