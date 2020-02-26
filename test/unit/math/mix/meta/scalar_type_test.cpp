@@ -3,8 +3,6 @@
 #include <test/unit/util.hpp>
 #include <vector>
 
-
-
 template <typename R, typename T>
 void expect_base() {
   using stan::scalar_type_t;
@@ -36,14 +34,14 @@ void test_base() {
     Unless we start using std::reference_wrapper<T>.
 
  test/unit/math/mix/meta/scalar_type_test.cpp:57:18:   required from here
- /usr/include/c++/8/ext/new_allocator.h:63:26: error: forming pointer to reference type ‘double&’
-       typedef _Tp*       pointer;
+ /usr/include/c++/8/ext/new_allocator.h:63:26: error: forming pointer to
+ reference type ‘double&’ typedef _Tp*       pointer;
                           ^~~~~~~
- /usr/include/c++/8/ext/new_allocator.h:64:26: error: forming pointer to reference type ‘double&’
-       typedef const _Tp* const_pointer;
+ /usr/include/c++/8/ext/new_allocator.h:64:26: error: forming pointer to
+ reference type ‘double&’ typedef const _Tp* const_pointer;
                           ^~~~~~~~~~~~~
    */
-  //expect_base<T, vector<T&>>();
+  // expect_base<T, vector<T&>>();
   expect_base<T, vector<vector<T>>>();
   expect_base<T, Matrix<T, -1, -1>>();
   expect_base<T, Matrix<T, 1, -1>>();
@@ -77,7 +75,6 @@ TEST(MathMetaPrim, scalarType) {
   test_base<fv_t>();
   test_base<ffv_t>();
 }
-
 
 TEST(MathMetaPrim, ScalarTypeArrayConstConst) {
   using stan::scalar_type;
