@@ -33,7 +33,7 @@ void test_base() {
 
   // array types
   expect_base<T, std::vector<T>>();
-  expect_base<T, std::vector<const T>>();
+  expect_base<T, std::vector<std::vector<T>>>();
 
   // matrix types
   expect_base<T, Eigen::Matrix<T, -1, -1>>();
