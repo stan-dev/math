@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_MPI_ENVIONMENT_HPP
 #define STAN_MATH_MPI_ENVIONMENT_HPP
 
-#include <stan/math/prim/scal/err/check_greater_or_equal.hpp>
+#include <stan/math/prim/err/check_greater_or_equal.hpp>
 #ifdef STAN_LANG_MPI
 #include <boost/mpi.hpp>
 #endif
