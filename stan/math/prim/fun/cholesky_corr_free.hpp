@@ -11,8 +11,7 @@ namespace stan {
 namespace math {
 
 template <typename T, require_eigen_t<T>* = nullptr>
-auto cholesky_corr_free(
-    const T& x) {
+auto cholesky_corr_free(const T& x) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 

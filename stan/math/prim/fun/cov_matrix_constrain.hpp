@@ -40,10 +40,10 @@ cov_matrix_constrain(const T& x, Eigen::Index K) {
   const Eigen::Ref<const plain_type_t<T>>& x_ref = x;
   int i = 0;
   for (Eigen::Index m = 0; m < K; ++m) {
-    L.row(m).head(m) = x_ref.segment(i,m);
-    i+=m;
+    L.row(m).head(m) = x_ref.segment(i, m);
+    i += m;
     L.coeffRef(m, m) = exp(x_ref.coeff(i++));
-    L.row(m).tail(K-m-1).setZero();
+    L.row(m).tail(K - m - 1).setZero();
   }
   return multiply_lower_tri_self_transpose(L);
 }
@@ -75,10 +75,10 @@ cov_matrix_constrain(const T& x, Eigen::Index K, value_type_t<T>& lp) {
   const Eigen::Ref<const plain_type_t<T>>& x_ref = x;
   int i = 0;
   for (Eigen::Index m = 0; m < K; ++m) {
-    L.row(m).head(m) = x_ref.segment(i,m);
-    i+=m;
+    L.row(m).head(m) = x_ref.segment(i, m);
+    i += m;
     L.coeffRef(m, m) = exp(x_ref.coeff(i++));
-    L.row(m).tail(K-m-1).setZero();
+    L.row(m).tail(K - m - 1).setZero();
   }
   // Jacobian for complete transform, including exp() above
   lp += (K * LOG_TWO);  // needless constant; want propto

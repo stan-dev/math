@@ -29,8 +29,8 @@ inline auto corr_constrain(const T& x) {
 }
 
 /**
- * Return the result of transforming the specified scalar or container of values to have
- * a valid correlation value between -1 and 1 (inclusive).
+ * Return the result of transforming the specified scalar or container of values
+ * to have a valid correlation value between -1 and 1 (inclusive).
  *
  * <p>The transform used is as specified for
  * <code>corr_constrain(T)</code>.  The log absolute Jacobian

@@ -50,8 +50,8 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> cov_matrix_free(const T& y) {
   plain_type_t<T> L = llt.matrixL();
   int i = 0;
   for (int m = 0; m < K; ++m) {
-    x.segment(i,m) = L.row(m).head(m);
-    i+=m;
+    x.segment(i, m) = L.row(m).head(m);
+    i += m;
     x.coeffRef(i++) = log(L.coeff(m, m));
   }
   return x;
