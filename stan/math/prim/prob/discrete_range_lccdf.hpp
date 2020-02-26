@@ -52,7 +52,7 @@ double discrete_range_lccdf(const T_y& y, const T_lower& lower,
   size_t N = max_size(y, lower, upper);
 
   for (size_t n = 0; n < N; ++n) {
-    const int y_dbl = valude_of(y_vec[n]);
+    const int y_dbl = value_of(y_vec[n]);
     if (y_dbl < lower_vec[n]) {
       return 0;
     }
