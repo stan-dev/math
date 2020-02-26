@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 
 /*
- * The implemention of the work by Awad H. Al-Mohy and Nicholas J. Higham
+ * The implementation of the work by Awad H. Al-Mohy and Nicholas J. Higham
  * "Computing the Action of the Matrix Exponential,
  * with an Application to Exponential Integrators"
  * Read More: https://epubs.siam.org/doi/abs/10.1137/100788860

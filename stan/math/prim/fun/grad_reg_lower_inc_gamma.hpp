@@ -25,7 +25,7 @@ namespace math {
  * Computes the gradient of the lower regularized incomplete
  * gamma function.
  *
- * The lower incomlete gamma function
+ * The lower incomplete gamma function
  * derivative w.r.t it's first parameter (a) seems to have no
  * standard source.  It also appears to have no widely known
  * approximate implementation.  Gautschi (1979) has a thorough

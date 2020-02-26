@@ -200,8 +200,8 @@ class opencl_context {
 
   /** \ingroup opencl
    * Returns the description of the OpenCL platform and device that is used.
-   * Devices will be an OpenCL and Platforms are a specific OpenCL implimenation
-   * such as AMD SDK's or Nvidia's OpenCL implimentation.
+   * Devices will be an OpenCL and Platforms are a specific OpenCL
+   * implementation such as AMD SDK's or Nvidia's OpenCL implementation.
    */
   inline std::string description() const {
     std::ostringstream msg;
@@ -257,7 +257,7 @@ class opencl_context {
   /** \ingroup opencl
    * Returns the description of the OpenCL platforms and devices that
    * are available. Devices will be an OpenCL and Platforms are a specific
-   * OpenCL implimenation such as AMD SDK's or Nvidia's OpenCL implimentation.
+   * OpenCL implementation such as AMD SDK's or Nvidia's OpenCL implementation.
    */
   inline std::string capabilities() const {
     std::vector<cl::Platform> all_platforms;

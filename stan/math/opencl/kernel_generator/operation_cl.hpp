@@ -133,7 +133,7 @@ class operation_cl : public operation_cl_base {
   /**
    * Generates kernel code for assigning this expression into result expression.
    * @param[in,out] generated set of (pointer to) already generated operations
-   * @param name_gen name generator for this kernel
+   * @param ng name generator for this kernel
    * @param i row index variable name
    * @param j column index variable name
    * @param result expression into which result is to be assigned

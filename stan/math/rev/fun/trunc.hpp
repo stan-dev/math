@@ -23,7 +23,7 @@ class trunc_vari : public op_v_vari {
 }  // namespace internal
 
 /**
- * Returns the truncatation of the specified variable (C99).
+ * Returns the truncation of the specified variable (C99).
  *
  * See ::trunc() for the double-based version.
  *

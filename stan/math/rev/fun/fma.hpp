@@ -231,7 +231,7 @@ inline var fma(Ta&& a, Tb&& b, const var& c) {
  * (C99).  This function returns the product of the first two
  * arguments plus the third argument.
  *
- * The partial derivaties are
+ * The partial derivatives are
  *
  * \f$\frac{\partial}{\partial y} (c * y) + z = c\f$, and
  *

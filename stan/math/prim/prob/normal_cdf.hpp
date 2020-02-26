@@ -24,7 +24,7 @@ namespace math {
  *
  * @param y A scalar variate.
  * @param mu The location of the normal distribution.
- * @param sigma The scale of the normal distriubtion
+ * @param sigma The scale of the normal distribution
  * @return The unit normal cdf evaluated at the specified arguments.
  * @tparam T_y Type of y.
  * @tparam T_loc Type of mean parameter.

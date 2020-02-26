@@ -47,7 +47,7 @@ struct KinsolFixedPointEnv {
   const std::vector<double>& x_r_;
   /** integer data */
   const std::vector<int>& x_i_;
-  /** messege stream */
+  /** message stream */
   std::ostream* msgs_;
   /** KINSOL memory block */
   void* mem_;
@@ -129,7 +129,7 @@ struct KinsolFixedPointEnv {
 };
 
 /*
- * Calculate Jacobian Jxy(Jacobian of unkonwn x w.r.t. the * param y)
+ * Calculate Jacobian Jxy(Jacobian of unknown x w.r.t. the * param y)
  * given the solution. Specifically, for
  *
  *  x - f(x, y) = 0
@@ -152,7 +152,7 @@ struct FixedPointADJac {
    * @tparam F RHS functor type
    * @param x fixed point solution
    * @param y RHS parameters
-   * @param env KINSOL working envionment, see doc for @c KinsolFixedPointEnv.
+   * @param env KINSOL working environment, see doc for @c KinsolFixedPointEnv.
    */
   template <typename F>
   inline Eigen::Matrix<stan::math::var, -1, 1> operator()(
@@ -227,8 +227,8 @@ struct FixedPointSolver<KinsolFixedPointEnv<F>, fp_jac_type> {
    * Solve FP using KINSOL
    *
    * @param x initial point and final solution.
-   * @param env KINSOL solution envionment
-   * @param f_tol Function tolenrance
+   * @param env KINSOL solution environment
+   * @param f_tol Function tolerance
    * @param max_num_steps max nb. of iterations.
    */
   void kinsol_solve_fp(Eigen::VectorXd& x, KinsolFixedPointEnv<F>& env,
@@ -264,8 +264,8 @@ struct FixedPointSolver<KinsolFixedPointEnv<F>, fp_jac_type> {
    *
    * @param x initial point and final solution.
    * @param y RHS functor parameters
-   * @param env KINSOL solution envionment
-   * @param f_tol Function tolenrance
+   * @param env KINSOL solution environment
+   * @param f_tol Function tolerance
    * @param max_num_steps max nb. of iterations.
    */
   template <typename T1>
@@ -285,8 +285,8 @@ struct FixedPointSolver<KinsolFixedPointEnv<F>, fp_jac_type> {
    *
    * @param x initial point and final solution.
    * @param y RHS functor parameters
-   * @param env KINSOL solution envionment
-   * @param f_tol Function tolenrance
+   * @param env KINSOL solution environment
+   * @param f_tol Function tolerance
    * @param max_num_steps max nb. of iterations.
    */
   template <typename T1>
@@ -318,7 +318,7 @@ struct FixedPointSolver<KinsolFixedPointEnv<F>, fp_jac_type> {
  * tolerance, and the maximum number of steps.
  *
  * @tparam F type of equation system function.
- * @tparam T type of initial guess vector. The final soluton
+ * @tparam T type of initial guess vector. The final solution
  *           type doesn't depend on initial guess type,
  *           but we allow initial guess to be either data or param.
  * @tparam T_u type of scaling vector for unknowns. We allow

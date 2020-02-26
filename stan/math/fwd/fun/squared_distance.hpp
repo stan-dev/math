@@ -19,7 +19,7 @@ namespace math {
  *
  * @param v1 First vector.
  * @param v2 Second vector.
- * @return Dot product of the vectors.
+ * @return Square of distance between vectors.
  * @throw std::domain_error If the vectors are not the same
  * size or if they are both not vector dimensioned.
  */
@@ -45,7 +45,7 @@ inline fvar<T> squared_distance(const Eigen::Matrix<fvar<T>, R, C>& v1,
  *
  * @param v1 First vector.
  * @param v2 Second vector.
- * @return Dot product of the vectors.
+ * @return Square of distance between vectors.
  * @throw std::domain_error If the vectors are not the same
  * size or if they are both not vector dimensioned.
  */
@@ -70,7 +70,7 @@ inline fvar<T> squared_distance(const Eigen::Matrix<fvar<T>, R1, C1>& v1,
  *
  * @param v1 First vector.
  * @param v2 Second vector.
- * @return Dot product of the vectors.
+ * @return Square of distance between vectors.
  * @throw std::domain_error If the vectors are not the same
  * size or if they are both not vector dimensioned.
  */
@@ -96,7 +96,7 @@ inline fvar<T> squared_distance(const Eigen::Matrix<double, R, C>& v1,
  *
  * @param v1 First vector.
  * @param v2 Second vector.
- * @return Dot product of the vectors.
+ * @return Square of distance between vectors.
  * @throw std::domain_error If the vectors are not the same
  * size or if they are both not vector dimensioned.
  */
@@ -121,7 +121,7 @@ inline fvar<T> squared_distance(const Eigen::Matrix<double, R1, C1>& v1,
  *
  * @param v1 First vector.
  * @param v2 Second vector.
- * @return Dot product of the vectors.
+ * @return Square of distance between vectors.
  * @throw std::domain_error If the vectors are not the same
  * size or if they are both not vector dimensioned.
  */
@@ -147,7 +147,7 @@ inline fvar<T> squared_distance(const Eigen::Matrix<fvar<T>, R, C>& v1,
  *
  * @param v1 First vector.
  * @param v2 Second vector.
- * @return Dot product of the vectors.
+ * @return Square of distance between vectors.
  * @throw std::domain_error If the vectors are not the same
  * size or if they are both not vector dimensioned.
  */

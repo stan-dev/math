@@ -693,7 +693,7 @@ using require_any_not_container_t
     = require_any_not_t<is_container<std::decay_t<Types>>...>;
 
 /**
- * Check a templated type to see if it and it's inner type pass a condiational
+ * Check a templated type to see if it and it's inner type pass a conditional
  * test.
  * @tparam ContainerCheck Templated struct or alias that wraps a static constant
  * value called type. Used to check the container satisfies a particular type

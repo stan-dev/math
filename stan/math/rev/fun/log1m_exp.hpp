@@ -22,7 +22,7 @@ class log1m_exp_v_vari : public op_v_vari {
  * Return the log of 1 minus the exponential of the specified
  * variable.
  *
- * <p>The deriative of <code>log(1 - exp(x))</code> with respect
+ * <p>The derivative of <code>log(1 - exp(x))</code> with respect
  * to <code>x</code> is <code>-1 / expm1(-x)</code>.
  *
  * @param[in] x Argument.
