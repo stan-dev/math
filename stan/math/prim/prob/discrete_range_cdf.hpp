@@ -8,6 +8,7 @@
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <cmath>
 
 namespace stan {
@@ -51,7 +52,7 @@ double discrete_range_cdf(const T_y& y, const T_lower& lower,
   size_t N = max_size(y, lower, upper);
 
   for (size_t n = 0; n < N; ++n) {
-    const int y_dbl = y_vec[n];
+    const int y_dbl = value_of(y_vec[n]);
     if (y_dbl < lower_vec[n]) {
       return 0;
     }
@@ -62,9 +63,9 @@ double discrete_range_cdf(const T_y& y, const T_lower& lower,
 
   double cdf(1.0);
   for (size_t n = 0; n < N; n++) {
-    const double y_dbl = y_vec[n];
-    const double lower_dbl = lower_vec[n];
-    const double upper_dbl = upper_vec[n];
+    const double y_dbl = value_of(y_vec[n]);
+    const double lower_dbl = value_of(lower_vec[n]);
+    const double upper_dbl = value_of(upper_vec[n]);
     cdf *= (y_dbl - lower_dbl + 1) / (upper_dbl - lower_dbl + 1);
   }
   return cdf;
