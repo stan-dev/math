@@ -99,6 +99,22 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...> {
   }
 
   /**
+   * Sets the dimensions of the underlying expressions if possible. If not
+   * checks whether they have correct dimensions.
+   * @param rows desired number of rows
+   * @param cols desired number of columns
+   * @throws std::invalid_argument desired dimensions do not match with
+   * dimensions of underlying expression that can not be resized.
+   */
+  inline void check_assign_dimensions(int rows, int cols) const {
+    index_apply<N>([&](auto... Is) {
+      (void)std::initializer_list<int>{
+          (std::get<Is>(this->arguments_).check_assign_dimensions(rows, cols),
+           0)...};
+    });
+  }
+
+  /**
    * Adds write event to any matrices used by nested expressions.
    * @param e the event to add
    */

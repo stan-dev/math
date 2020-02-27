@@ -34,8 +34,7 @@ namespace math {
  */
 template <typename Derived, typename T, typename Operation>
 class colwise_reduction
-    : public operation_cl<Derived, typename std::remove_reference_t<T>::Scalar,
-                          T> {
+    : public operation_cl<Derived, typename std::remove_reference_t<T>::Scalar, T> {
  public:
   using Scalar = typename std::remove_reference_t<T>::Scalar;
   using base = operation_cl<Derived, Scalar, T>;
@@ -64,6 +63,8 @@ class colwise_reduction
    * @param j column index variable name
    * @param result expression into which result is to be assigned
    * @return part of kernel with code for this and nested expressions
+   * @throws std::invalid_argument dimensions of expression and result can not
+   * be resized.
    */
   template <typename T_result>
   kernel_parts get_whole_kernel_parts(
