@@ -35,6 +35,8 @@ class ad_tape_observer : public tbb::task_scheduler_observer {
     observe(true);             // activates the observer
   }
 
+  ~ad_tape_observer() { observe(false); }
+
   void on_scheduler_entry(bool worker) {
     std::lock_guard<std::mutex> thread_tape_map_lock(thread_tape_map_mutex_);
     const std::thread::id thread_id = std::this_thread::get_id();
